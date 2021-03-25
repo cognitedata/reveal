@@ -142,10 +142,7 @@ export function FileTable(props: FileTableProps) {
 
             <Menu.Item disabled>Attach events file</Menu.Item>
 
-            <Menu.Item
-              disabled={!menu.annotationsAvailable}
-              onClick={handleAnnotationEdit}
-            >
+            <Menu.Item onClick={handleAnnotationEdit}>
               Edit annotations
             </Menu.Item>
 

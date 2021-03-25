@@ -7,10 +7,7 @@ import { FileDetailEdit } from 'src/pages/Preview/components/FileDetails/FileDet
 import { RouteComponentProps, useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import {
-  resetEditHistory,
-  selectNonRejectedAnnotations,
-} from 'src/store/previewSlice';
+import { resetEditHistory } from 'src/store/previewSlice';
 import { getLink, workflowRoutes } from 'src/pages/Workflow/workflowRoutes';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { v3Client as sdk } from '@cognite/cdf-sdk-singleton';
@@ -54,10 +51,6 @@ const AnnotationsEdit = (props: RouteComponentProps<{ fileId: string }>) => {
     selectFileById(uploadedFiles, fileId)
   );
 
-  const nonRejectedAnnotations = useSelector(({ previewSlice }: RootState) =>
-    selectNonRejectedAnnotations(previewSlice, fileId)
-  );
-
   if (!file) {
     // navigate to upload step if file is not available(if the user uses a direct link)
     history.push(getLink(workflowRoutes.upload));
@@ -91,7 +84,7 @@ const AnnotationsEdit = (props: RouteComponentProps<{ fileId: string }>) => {
                 style={{ overflow: 'hidden', height: `calc(100% - 45px)` }}
                 disabled
               >
-                <Contextualization annotations={nonRejectedAnnotations} />
+                <Contextualization fileId={fileId} />
               </Tabs.Pane>
               <Tabs.Pane
                 title="File Details"

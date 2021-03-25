@@ -9,13 +9,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import {
   resetEditHistory,
-  selectNonRejectedAnnotations,
-  selectVisibleAnnotationsByFileId,
+  selectVisibleNonRejectedAnnotationsByFileId,
+  updateAnnotation,
 } from 'src/store/previewSlice';
 import { getLink, workflowRoutes } from 'src/pages/Workflow/workflowRoutes';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { v3Client as sdk } from '@cognite/cdf-sdk-singleton';
 import { selectFileById } from 'src/store/uploadedFilesSlice';
+import { ImagePreviewEditMode } from 'src/pages/Preview/Types';
 
 const AnnotationContainer = styled.div`
   width: 100%;
@@ -55,13 +56,19 @@ const ImageReview = (props: RouteComponentProps<{ fileId: string }>) => {
     selectFileById(uploadedFiles, fileId)
   );
 
-  const nonRejectedAnnotations = useSelector(({ previewSlice }: RootState) =>
-    selectNonRejectedAnnotations(previewSlice, fileId)
+  const visibleNonRejectedAnnotations = useSelector(
+    ({ previewSlice }: RootState) =>
+      selectVisibleNonRejectedAnnotationsByFileId(previewSlice, fileId)
   );
 
-  const visibleAnnotations = useSelector(({ previewSlice }: RootState) =>
-    selectVisibleAnnotationsByFileId(previewSlice, fileId)
-  );
+  const [
+    imagePreviewEditable,
+    imagePreviewCreatable,
+  ] = useSelector((state: RootState) => [
+    state.previewSlice.imagePreview.editable ===
+      ImagePreviewEditMode.Modifiable,
+    state.previewSlice.imagePreview.editable === ImagePreviewEditMode.Creatable,
+  ]);
 
   if (!file) {
     // navigate to upload step if file is not available(if the user uses a direct link)
@@ -73,13 +80,34 @@ const ImageReview = (props: RouteComponentProps<{ fileId: string }>) => {
     dispatch(resetEditHistory());
   }, []);
 
+  const handleCreateAnnotation = (annotation: any) => {
+    console.log('created annotation: ', annotation);
+  };
+
+  const handleModifyAnnotation = (annotation: any) => {
+    console.log('modified annotation: ', annotation);
+
+    if (imagePreviewEditable) {
+      dispatch(
+        updateAnnotation({ id: annotation.id, boundingBox: annotation.box })
+      );
+    }
+  };
+
   return (
     <>
       <AnnotationContainer>
         <FilePreviewMetadataContainer>
           <FilePreviewContainer>
             {file && (
-              <ImagePreview fileObj={file} annotations={visibleAnnotations} />
+              <ImagePreview
+                fileObj={file}
+                annotations={visibleNonRejectedAnnotations}
+                editable={imagePreviewEditable}
+                creatable={imagePreviewCreatable}
+                onCreateAnnotation={handleCreateAnnotation}
+                onUpdateAnnotation={handleModifyAnnotation}
+              />
             )}
           </FilePreviewContainer>
           <TabsContainer className="z-8">
@@ -97,7 +125,7 @@ const ImageReview = (props: RouteComponentProps<{ fileId: string }>) => {
                 key="context"
                 style={{ overflow: 'hidden', height: `calc(100% - 45px)` }}
               >
-                <Contextualization annotations={nonRejectedAnnotations} />
+                <Contextualization fileId={fileId} />
               </Tabs.Pane>
               <Tabs.Pane
                 title="File Details"
