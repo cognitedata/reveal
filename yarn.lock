@@ -1458,7 +1458,7 @@
     "@cognite/sdk-provider" "^1.0.0"
     react-query "^3.5.0"
 
-"@cognite/sdk@^3.3.0", "@cognite/sdk@^3.3.2", "@cognite/sdk@^3.4.0":
+"@cognite/sdk@^3.3.0", "@cognite/sdk@^3.3.2":
   version "3.4.0"
   resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-3.4.0.tgz#d165f066dfd8223de11ad9b28638e7ecd0c5a89b"
   integrity sha512-BQfW473UIeqQULruFLMJpHYV+e9qtZp9qUwjBdVEOhh1KsNMlWekxvO3ATUeSylRiH5Sy8DFWMdKPE2XlrYWCw==
