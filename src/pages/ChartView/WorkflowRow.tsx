@@ -187,7 +187,7 @@ export default function WorkflowRow({
           </SourceItem>
         </Dropdown>
       </td>
-      <td colSpan={2} />
+      <td colSpan={3} />
     </SourceRow>
   );
 }

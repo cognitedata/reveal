@@ -21,7 +21,7 @@ export const useAssetAnnotations = (file?: File) => {
   );
 };
 
-export const useFilesAssetAppearsIn = (asset?: Asset) => {
+export const useFilesAssetAppearsIn = (asset?: Asset, enabled = true) => {
   const sdk = useSDK();
 
   return useQuery<File[]>(
@@ -29,7 +29,7 @@ export const useFilesAssetAppearsIn = (asset?: Asset) => {
     async () => {
       return listFilesAnnotatedWithAssetId(sdk, asset!);
     },
-    { enabled: !!asset }
+    { enabled: !!asset && enabled }
   );
 };
 

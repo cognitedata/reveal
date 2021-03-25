@@ -242,6 +242,11 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
               <SourceName>Description</SourceName>
             </SourceItem>
           </th>
+          <th style={{ width: 100 }}>
+            <SourceItem>
+              <SourceName>P&amp;IDs</SourceName>
+            </SourceItem>
+          </th>
         </>
       )}
       {isDataQualityMode && (
