@@ -23,7 +23,8 @@ export function handleDetermineSectorsInput(
   sectorRepository: Repository,
   sectorCuller: SectorCuller,
   modelStateHandler: ModelStateHandler,
-  collectStatisticsCallback: (spendage: SectorLoadingSpendage) => void
+  collectStatisticsCallback: (spendage: SectorLoadingSpendage) => void,
+  progressCallback: (sectorsLoaded: number, sectorsScheduled: number) => void
 ): OperatorFunction<DetermineSectorsInput, ConsumedSector> {
   return publish((source$: Observable<DetermineSectorsInput>) => {
     const updateSector = (input: DetermineSectorsInput) => {
@@ -35,15 +36,37 @@ export function handleDetermineSectorsInput(
       const prioritizedResult = sectorCuller.determineSectors(input);
       collectStatisticsCallback(prioritizedResult.spendage);
 
-      return from(prioritizedResult.wantedSectors).pipe(
+      let progress = 0;
+      function reportNewSectorsDone(count: number) {
+        progress += count;
+        progressCallback(progress, wantedSectorsCount);
+      }
+
+      const modelStateChanged = modelStateHandler.hasStateChanged.bind(modelStateHandler);
+      const changedSectors = prioritizedResult.wantedSectors.filter(modelStateChanged);
+      const wantedSectorsCount = changedSectors.length;
+      progressCallback(0, wantedSectorsCount);
+
+      return from(changedSectors).pipe(
         subscribeOn(asyncScheduler),
-        filter(modelStateHandler.hasStateChanged.bind(modelStateHandler)),
-        bufferCount(5),
+        bufferCount(20),
         mergeMap(batch => {
           const filteredSectorsPromise = sectorCuller.filterSectorsToLoad(input, batch);
           return from(filteredSectorsPromise).pipe(
-            mergeMap(x => x),
-            mergeMap(x => sectorRepository.loadSector(x))
+            tap(filtered => {
+              // We consider sectors that we no longer want to load as done, report progress
+              reportNewSectorsDone(batch.length - filtered.length);
+            }),
+            mergeMap(filtered => filtered), // flatten
+            filter(modelStateChanged),
+            mergeMap(async x => {
+              try {
+                const consumedSector = await sectorRepository.loadSector(x);
+                return consumedSector;
+              } finally {
+                reportNewSectorsDone(1);
+              }
+            })
           );
         }, 1)
       );

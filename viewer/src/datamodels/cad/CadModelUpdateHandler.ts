@@ -3,14 +3,7 @@
  */
 
 import * as THREE from 'three';
-// eslint-disable-next-line prettier/prettier
-import {
-  Subject,
-  Observable,
-  combineLatest,
-  
-  asyncScheduler
-} from 'rxjs';
+import { Subject, Observable, combineLatest, asyncScheduler, BehaviorSubject } from 'rxjs';
 import { CadNode } from './CadNode';
 import { scan, share, startWith, auditTime, filter, map, finalize, observeOn } from 'rxjs/operators';
 import { SectorCuller } from './sector/culling/SectorCuller';
@@ -25,6 +18,8 @@ import { CadModelSectorBudget, defaultCadModelSectorBudget } from './CadModelSec
 import { DetermineSectorsInput, SectorLoadingSpendage } from './sector/culling/types';
 import { ModelStateHandler } from './sector/ModelStateHandler';
 
+const notLoadingState: LoadingState = { isLoading: false, itemsLoaded: 0, itemsRequested: 0 };
+
 export class CadModelUpdateHandler {
   private readonly _sectorRepository: Repository;
   private readonly _sectorCuller: SectorCuller;
@@ -38,6 +33,7 @@ export class CadModelUpdateHandler {
   private readonly _loadingHintsSubject: Subject<CadLoadingHints> = new Subject();
   private readonly _modelSubject: Subject<{ model: CadNode; operation: 'add' | 'remove' }> = new Subject();
   private readonly _budgetSubject: Subject<CadModelSectorBudget> = new Subject();
+  private readonly _progressSubject: Subject<LoadingState> = new BehaviorSubject<LoadingState>(notLoadingState);
 
   private readonly _updateObservable: Observable<ConsumedSector>;
 
@@ -84,12 +80,26 @@ export class CadModelUpdateHandler {
     const collectStatisticsCallback = (spendage: SectorLoadingSpendage) => {
       this._lastSpendage = spendage;
     };
+    const reportProgressCallback = (itemsLoaded: number, itemsRequested: number) => {
+      const state: LoadingState = {
+        isLoading: itemsRequested > itemsLoaded,
+        itemsRequested,
+        itemsLoaded
+      };
+      this._progressSubject.next(state);
+    };
     this._updateObservable = combinator.pipe(
       observeOn(asyncScheduler), // Schedule tasks on macro task queue (setInterval)
       auditTime(250), // Take the last value every 250ms // TODO 07-08-2020 j-bjorne: look into throttle
       map(createDetermineSectorsInput), // Map from array to interface (enables destructuring)
       filter(loadingEnabled), // should we load?
-      handleDetermineSectorsInput(sectorRepository, sectorCuller, this._modelStateHandler, collectStatisticsCallback),
+      handleDetermineSectorsInput(
+        sectorRepository,
+        sectorCuller,
+        this._modelStateHandler,
+        collectStatisticsCallback,
+        reportProgressCallback
+      ),
       finalize(() => {
         this._sectorRepository.clear(); // clear the cache once this is unsubscribed from.
       })
@@ -102,6 +112,7 @@ export class CadModelUpdateHandler {
 
   updateCamera(camera: THREE.PerspectiveCamera): void {
     this._cameraSubject.next(camera);
+    this._progressSubject.next({ isLoading: false, itemsLoaded: 0, itemsRequested: 0 });
   }
 
   set clippingPlanes(value: THREE.Plane[]) {
@@ -144,7 +155,7 @@ export class CadModelUpdateHandler {
   }
 
   getLoadingStateObserver(): Observable<LoadingState> {
-    return this._sectorRepository.getLoadingStateObserver();
+    return this._progressSubject;
   }
 
   /* When loading hints of a cadmodel changes, propagate the event down to the stream and either add or remove

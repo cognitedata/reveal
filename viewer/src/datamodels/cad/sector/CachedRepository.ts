@@ -6,28 +6,17 @@ import { Repository } from './Repository';
 import { WantedSector, SectorGeometry, ConsumedSector } from './types';
 import { LevelOfDetail } from './LevelOfDetail';
 import { OperatorFunction, Observable, from, zip, onErrorResumeNext, defer, scheduled, asyncScheduler } from 'rxjs';
-import {
-  mergeMap,
-  map,
-  tap,
-  shareReplay,
-  take,
-  retry,
-  reduce,
-  catchError,
-  throttleTime,
-  startWith
-} from 'rxjs/operators';
+import { mergeMap, map, tap, shareReplay, take, retry, reduce, catchError } from 'rxjs/operators';
 import { CadSectorParser } from './CadSectorParser';
 import { SimpleAndDetailedToSector3D } from './SimpleAndDetailedToSector3D';
 import { MemoryRequestCache } from '../../../utilities/cache/MemoryRequestCache';
 import { ParseCtmResult, ParseSectorResult } from '@cognite/reveal-parser-worker';
 import { TriangleMesh, InstancedMeshFile, InstancedMesh } from '../rendering/types';
-import { assertNever, createOffsetsArray, LoadingState } from '../../../utilities';
+import { assertNever, createOffsetsArray } from '../../../utilities';
 import { trackError } from '../../../utilities/metrics';
 import { BinaryFileProvider } from '../../../utilities/networking/types';
 import { Group } from 'three';
-import { RxTaskTracker } from '../../../utilities/RxTaskTracker';
+
 import { groupMeshesByNumber } from './groupMeshesByNumber';
 import { MostFrequentlyUsedCache } from '../../../utilities/MostFrequentlyUsedCache';
 
@@ -46,7 +35,6 @@ export class CachedRepository implements Repository {
   private readonly _modelSectorProvider: BinaryFileProvider;
   private readonly _modelDataParser: CadSectorParser;
   private readonly _modelDataTransformer: SimpleAndDetailedToSector3D;
-  private readonly _taskTracker: RxTaskTracker = new RxTaskTracker();
   private readonly _concurrentCtmRequests: number;
 
   constructor(
@@ -64,21 +52,6 @@ export class CachedRepository implements Repository {
   clear() {
     this._consumedSectorCache.clear();
     this._ctmFileCache.clear();
-  }
-
-  getLoadingStateObserver(): Observable<LoadingState> {
-    return this._taskTracker.getTaskTrackerObservable().pipe(
-      throttleTime(30, asyncScheduler, { leading: true, trailing: true }), // Take 1 emission every 30ms
-      map(
-        ({ taskCount, taskCompleted }) =>
-          ({
-            isLoading: taskCount != taskCompleted,
-            itemsRequested: taskCount,
-            itemsLoaded: taskCompleted
-          } as LoadingState)
-      ),
-      startWith({ isLoading: false, itemsRequested: 0, itemsLoaded: 0 })
-    );
   }
 
   // TODO j-bjorne 16-04-2020: Should look into ways of not sending in discarded sectors,
