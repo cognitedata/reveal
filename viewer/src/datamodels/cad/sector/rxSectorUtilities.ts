@@ -6,10 +6,10 @@ import { DetermineSectorsInput, SectorLoadingSpendage } from './culling/types';
 import { LevelOfDetail } from './LevelOfDetail';
 import { SectorCuller } from './culling/SectorCuller';
 import { OperatorFunction, from, Observable, asyncScheduler, EMPTY } from 'rxjs';
-import { ConsumedSector } from './types';
+import { ConsumedSector, WantedSector } from './types';
 import { ModelStateHandler } from './ModelStateHandler';
 import { Repository } from './Repository';
-import { filter, switchMap, tap, publish, subscribeOn } from 'rxjs/operators';
+import { filter, switchMap, tap, publish, subscribeOn, bufferCount, mergeMap } from 'rxjs/operators';
 
 /**
  * Creates a RxJS operator for loading sectors given camera, budget etc input.
@@ -31,12 +31,17 @@ export function handleDetermineSectorsInput(
       if (cameraInMotion) {
         return EMPTY;
       }
+      // Initial prioritization
       const prioritizedResult = sectorCuller.determineSectors(input);
       collectStatisticsCallback(prioritizedResult.spendage);
+
       return from(prioritizedResult.wantedSectors).pipe(
         subscribeOn(asyncScheduler),
         filter(modelStateHandler.hasStateChanged.bind(modelStateHandler)),
-        sectorRepository.loadSector()
+        bufferCount(5),
+        mergeMap(batch => {
+          return from(filterSectorBatch(batch)).pipe(mergeMap(x => sectorRepository.loadSector(x)));
+        }, 1)
       );
     };
 
@@ -46,6 +51,10 @@ export function handleDetermineSectorsInput(
       })
     );
   });
+}
+
+export function filterSectorBatch(batch: WantedSector[]): WantedSector[] {
+  return batch;
 }
 
 export function loadingEnabled({ cadModelsMetadata, loadingHints }: DetermineSectorsInput) {

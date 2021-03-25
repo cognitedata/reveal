@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { OperatorFunction, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { ConsumedSector, WantedSector, SectorGeometry } from './types';
 import { SectorQuads } from '../rendering/types';
 import { LoadingState } from '../../../utilities';
@@ -11,7 +11,7 @@ import { LoadingState } from '../../../utilities';
 export type SectorId = number;
 
 export interface Repository {
-  loadSector(): OperatorFunction<WantedSector, ConsumedSector>;
+  loadSector(sector: WantedSector): Promise<ConsumedSector>;
 
   getLoadingStateObserver(): Observable<LoadingState>;
   getParsedData(): Observable<{ blobUrl: string; lod: string; data: SectorGeometry | SectorQuads }>;
