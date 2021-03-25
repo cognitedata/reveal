@@ -185,6 +185,12 @@ export const TimeseriesChart = ({
         start: presetZoom[0].getTime(),
         end: presetZoom[1].getTime(),
       },
+      calculateGranularity(
+            presetZoom.map(el => el.valueOf()),
+            numberOfPoints
+      ),
+      numberOfPoints,
+      ['count', 'min', 'max', 'average']
     ],
     async () =>
       (
