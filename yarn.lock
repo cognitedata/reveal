@@ -1416,10 +1416,10 @@
     react-query "^3.7.1"
     styled-components "^5.1.0"
 
-"@cognite/sdk-core@^1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-1.2.0.tgz#919a664b73c074de9558bcf8cf91e9cecd3f028b"
-  integrity sha512-RcrvPFUotytag3jfb8frYKGEmpfns34p/RpVQgyshxWcrKwu7tMA3k3lhCTwkVd/mfUsrG1J9ZDvRn2HH4D9nA==
+"@cognite/sdk-core@^1.2.1":
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-1.2.1.tgz#c338262709ba7107d124f1e6d0dbeaa0e88e5744"
+  integrity sha512-the7r6UU2OT5ipjy5TF00AjAux8c3mTpF8dWmGJUNMoTeIpvvUbDQ84kC8IaFyR0D1O4QqxdAn4jAKc7C5KpAA==
   dependencies:
     "@azure/msal-browser" "^2.11.0"
     cross-fetch "^3.0.4"
@@ -1428,12 +1428,12 @@
     query-string "^5.1.1"
     url "^0.11.0"
 
-"@cognite/sdk@^3.3.0", "@cognite/sdk@^3.5.0":
-  version "3.5.0"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-3.5.0.tgz#87e14f0ed5b52067f8925b6b33fcc5a9c4212f52"
-  integrity sha512-nDQF71wZcglDxtGZ6lUzzB9Mhk4SJPpaz0vY6pyCn7+DWiKOwWhY1KE/DI7719L4PXLF0yWWzLQ7rw+DvLDbBQ==
+"@cognite/sdk@^3.3.0", "@cognite/sdk@^3.5.1":
+  version "3.5.1"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-3.5.1.tgz#08500eb5ea50ccd7fa3799c642edd016539687ab"
+  integrity sha512-mJfnBv+UtqoJ/jGW5a37pJnWEIPsLYGsZVay7zcL/J4IibDMv+ByToIyqD4Zj8KLMF5OsnzsSsdgMohMb4Adkw==
   dependencies:
-    "@cognite/sdk-core" "^1.2.0"
+    "@cognite/sdk-core" "^1.2.1"
     lodash "^4.17.11"
 
 "@csstools/convert-colors@^1.4.0":
