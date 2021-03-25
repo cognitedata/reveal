@@ -4,7 +4,9 @@ import { Checkbox, Detail, Icon, PrimaryTooltip } from '@cognite/cogs.js';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { setExtractExif } from 'src/store/uploadedFilesSlice';
+import { setDataSetIds, setExtractExif } from 'src/store/uploadedFilesSlice';
+import { DataSetSelect } from '@cognite/data-exploration';
+import 'antd/dist/antd.css';
 
 export interface FileUploadOptionProps {
   isDisabled?: boolean;
@@ -14,7 +16,7 @@ export function FileUploadOption({ isDisabled }: FileUploadOptionProps) {
   const queryClient = new QueryClient();
   const dispatch = useDispatch();
 
-  // const { dataSetIds } = useSelector((state: RootState) => state.uploadedFiles);
+  const { dataSetIds } = useSelector((state: RootState) => state.uploadedFiles);
   const { extractExif } = useSelector(
     (state: RootState) => state.uploadedFiles
   );
@@ -27,15 +29,12 @@ export function FileUploadOption({ isDisabled }: FileUploadOptionProps) {
             <Detail strong>Add files to data set</Detail>
             <Detail color="#8C8C8C">(Optional)</Detail>
           </DatasetTextContainer>
-          {/* <DataSetFilter // TODO: use the new component in explorer once it is available
-            isDisabled={isDisabled}
-            resourceType="file"
-            value={dataSetIds}
-            setValue={(value) => {
+          <DataSetSelect
+            onSelectionChange={(value) => {
               dispatch(setDataSetIds(value));
             }}
-            isMulti={false}
-          /> */}
+            selectedDataSetIds={dataSetIds}
+          />
         </DatasetContainer>
       </QueryClientProvider>
       <Checkbox

@@ -13,7 +13,6 @@ import FilePicker from 'src/components/FileUploader/FilePicker';
 import exifr from 'exifr';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { InternalId } from '@cognite/cdf-sdk-singleton';
 import { SpacedRow } from './SpacedRow';
 import { getMIMEType } from './utils/FileUtils';
 import { sleep } from './utils';
@@ -261,7 +260,7 @@ export const FileUploader = ({
         name: file.name,
         mimeType: mimeType || undefined,
         source: 'CDF Vision',
-        dataSetId: dataSetIds ? (dataSetIds[0] as InternalId).id : undefined,
+        dataSetId: dataSetIds ? dataSetIds[0] : undefined,
         // I can see directory in api docs, but looks like SDK misses it
         // https://docs.cognite.com/api/v1/#operation/initFileUpload
         ...(assetIds && { assetIds }),

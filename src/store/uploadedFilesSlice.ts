@@ -6,7 +6,6 @@ import {
 } from '@reduxjs/toolkit';
 import {
   FileInfo,
-  IdEither,
   InternalId,
   Label,
   Metadata,
@@ -125,7 +124,7 @@ export const updateFileById = createAsyncThunk<
 
 type State = {
   uploadedFiles: Array<FileInfo>;
-  dataSetIds?: IdEither[];
+  dataSetIds?: number[];
   extractExif?: boolean;
 };
 
@@ -157,7 +156,7 @@ const uploadedFilesSlice = createSlice({
     addUploadedFile(state, action: PayloadAction<FileInfo>) {
       state.uploadedFiles = state.uploadedFiles.concat(action.payload);
     },
-    setDataSetIds(state, action: PayloadAction<IdEither[] | undefined>) {
+    setDataSetIds(state, action: PayloadAction<number[] | undefined>) {
       state.dataSetIds = action.payload;
     },
     setExtractExif(state, action: PayloadAction<boolean>) {
