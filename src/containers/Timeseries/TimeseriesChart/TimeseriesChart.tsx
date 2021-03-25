@@ -121,6 +121,7 @@ export type TimeseriesChartProps = {
   defaultOption?: TIME_OPTION_KEY;
   cacheToDate?: boolean;
   showCustomRangePicker?: boolean;
+  disabled?: boolean;
 } & Omit<
   LineChartProps,
   | 'values'
@@ -143,6 +144,7 @@ export const TimeseriesChart = ({
   showCustomRangePicker = false,
   dateRange,
   onDateRangeChange,
+  disabled = false,
   ...otherProps
 }: TimeseriesChartProps) => {
   const sdk = useSDK();
@@ -185,6 +187,12 @@ export const TimeseriesChart = ({
         start: presetZoom[0].getTime(),
         end: presetZoom[1].getTime(),
       },
+      calculateGranularity(
+        presetZoom.map(el => el.valueOf()),
+        numberOfPoints
+      ),
+      numberOfPoints,
+      ['count', 'min', 'max', 'average'],
     ],
     async () =>
       (
@@ -202,6 +210,7 @@ export const TimeseriesChart = ({
       )[0],
     {
       staleTime: Infinity,
+      enabled: !disabled,
     }
   );
   return (
