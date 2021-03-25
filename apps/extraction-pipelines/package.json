@@ -40,7 +40,7 @@
     "match-sorter": "^6.1.0",
     "moment": "^2.29.1",
     "query-string": "^6.13.8",
-    "react": "^17.0.1",
+    "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-hook-form": "^6.15.4",
     "react-i18next": "^11.8.5",
