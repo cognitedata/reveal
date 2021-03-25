@@ -240,7 +240,7 @@ const Statistics = ({
     enabled: !!statisticsCall,
   });
 
-  const statistics = (data as any) as Statistics;
+  const statistics = (data as any) as Statistics | undefined;
 
   return (
     <Container>
@@ -248,18 +248,14 @@ const Statistics = ({
       <p>{sourceItem?.type}</p>
       <h3>Name:</h3>
       <p>{sourceItem?.name}</p>
-      {statistics && (
-        <>
-          <h3>Average:</h3>
-          <p>{statistics.average}</p>
-          <h3>Min:</h3>
-          <p>{statistics.min}</p>
-          <h3>Max:</h3>
-          <p>{statistics.max}</p>
-          <h3>Mean:</h3>
-          <p>{statistics.mean}</p>
-        </>
-      )}
+      <h3>Average:</h3>
+      <p>{statistics ? statistics.average : '-'}</p>
+      <h3>Min:</h3>
+      <p>{statistics ? statistics.min : '-'}</p>
+      <h3>Max:</h3>
+      <p>{statistics ? statistics.max : '-'}</p>
+      <h3>Mean:</h3>
+      <p>{statistics ? statistics.mean : '-'}</p>
       {statisticsCall && (
         <FunctionCall
           id={statisticsCall.functionId}
@@ -268,7 +264,11 @@ const Statistics = ({
           renderCall={({ status }) => renderStatusIcon(status)}
         />
       )}
-      <button type="button" onClick={() => handleCalculateStatistics()}>
+      <button
+        style={{ marginLeft: 10 }}
+        type="button"
+        onClick={() => handleCalculateStatistics()}
+      >
         Refresh
       </button>
     </Container>
