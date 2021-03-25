@@ -3,6 +3,7 @@ import { Chart, ChartTimeSeries } from 'reducers/charts/types';
 import { Dropdown, Icon, Menu } from '@cognite/cogs.js';
 import { units } from 'utils/units';
 import EditableText from 'components/EditableText';
+import { PnidButton } from 'components/SearchResultTable/PnidButton';
 import {
   SourceItem,
   SourceCircle,
@@ -211,6 +212,17 @@ export default function TimeSeriesRow({
           <td>
             <SourceItem>
               <SourceName>{description}</SourceName>
+            </SourceItem>
+          </td>
+          <td>
+            <SourceItem>
+              <SourceName>
+                <PnidButton
+                  timeseriesId={tsId}
+                  showTooltip={false}
+                  hideWhenEmpty={false}
+                />
+              </SourceName>
             </SourceItem>
           </td>
         </>

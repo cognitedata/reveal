@@ -22,7 +22,7 @@ export default function WorkflowRows({
     <>
       {(chart.workflowCollection?.length || 0) > 0 && (
         <tr>
-          <TypeLabel colSpan={5}>Calculations</TypeLabel>
+          <TypeLabel colSpan={6}>Calculations</TypeLabel>
         </tr>
       )}
       {chart.workflowCollection?.map((flow) => (

@@ -1,1 +1,1 @@
-export type Modes = 'workspace' | 'editor' | 'report';
+export type Modes = 'workspace' | 'editor' | 'report' | 'file';

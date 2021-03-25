@@ -22,12 +22,13 @@ export default function TimeSeriesRows({
   const isWorkspaceMode = mode === 'workspace';
   const isEditorMode = mode === 'editor';
   const isDataQualityMode = mode === 'report';
+  const isFileViewerMode = mode === 'file';
 
   return (
     <>
       {(chart?.timeSeriesCollection?.length || 0) > 0 && (
         <tr>
-          <TypeLabel colSpan={5}>Time series</TypeLabel>
+          <TypeLabel colSpan={6}>Time series</TypeLabel>
         </tr>
       )}
       {chart?.timeSeriesCollection?.map((t) => (
@@ -40,6 +41,7 @@ export default function TimeSeriesRows({
           disabled={isEditorMode}
           isDataQualityMode={isDataQualityMode}
           isWorkspaceMode={isWorkspaceMode}
+          isFileViewerMode={isFileViewerMode}
           key={t.id}
         />
       ))}

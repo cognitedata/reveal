@@ -13,9 +13,8 @@ import {
   SourceItem,
   SourceName,
 } from 'pages/ChartView/elements';
-import TimeSeriesRow from 'pages/ChartView/TimeSeriesRow';
-import { ChartTimeSeries } from 'reducers/charts/types';
 import { useChart } from 'hooks/firebase';
+import TimeSeriesRows from 'pages/ChartView/TimeSeriesRows';
 
 export const FileView = () => {
   const { chartId, assetId } = useParams<{
@@ -58,6 +57,11 @@ export const FileView = () => {
           <SourceName>Description</SourceName>
         </SourceItem>
       </th>
+      <th style={{ width: 100 }}>
+        <SourceItem>
+          <SourceName>P&amp;IDs</SourceName>
+        </SourceItem>
+      </th>
     </tr>
   );
 
@@ -89,18 +93,12 @@ export const FileView = () => {
               <SourceTable>
                 <thead>{sourceTableHeaderRow}</thead>
                 <tbody>
-                  {chart.timeSeriesCollection?.map((t: ChartTimeSeries) => (
-                    <TimeSeriesRow
-                      mutate={() => {}}
-                      chart={chart}
-                      timeseries={t}
-                      setDataQualityReport={() => {}}
-                      active={false}
-                      disabled={false}
-                      key={t.id}
-                      isFileViewerMode
-                    />
-                  ))}
+                  <TimeSeriesRows
+                    chart={chart}
+                    updateChart={() => {}}
+                    setDataQualityReport={() => {}}
+                    mode="file"
+                  />
                 </tbody>
               </SourceTable>
             </SourceTableWrapper>
@@ -122,6 +120,8 @@ const FileSidebar = styled.div`
   width: 25%;
   height: 100%;
   border-right: 1px solid var(--cogs-greyscale-grey3);
+  display: flex;
+  flex-direction: column;
 `;
 
 const FileViewerContainer = styled.div`
