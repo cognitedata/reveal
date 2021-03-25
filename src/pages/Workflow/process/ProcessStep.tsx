@@ -72,14 +72,12 @@ export default function ProcessStep() {
         dispatch(showFileMetadataPreview());
       },
     };
-    if (status === 'Completed') {
-      menuActions.annotationsAvailable = annotationsCount > 0;
-      menuActions.onAnnotationEditClick = () => {
-        history.push(
-          getParamLink(workflowRoutes.review, ':fileId', String(file.id))
-        );
-      };
-    }
+    menuActions.annotationsAvailable = annotationsCount > 0;
+    menuActions.onAnnotationEditClick = () => {
+      history.push(
+        getParamLink(workflowRoutes.review, ':fileId', String(file.id))
+      );
+    };
 
     return {
       id: file.id,

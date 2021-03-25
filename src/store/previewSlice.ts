@@ -1,5 +1,7 @@
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
+  AnnotationBoundingBox,
+  AnnotationDrawerMode,
   AnnotationStatus,
   AnnotationUtils,
   VisionAnnotation,
@@ -18,6 +20,7 @@ import {
 import { RootState } from 'src/store/rootReducer';
 import { generateKeyValueArray } from 'src/utils/FormatUtils';
 import { Label } from '@cognite/cdf-sdk-singleton';
+import { ImagePreviewEditMode } from 'src/pages/Preview/Types';
 
 export interface VisionAnnotationState extends VisionAnnotation {
   id: string;
@@ -36,6 +39,16 @@ interface VisionModelState {
 export type FileInfoValueState = string | Label[] | null | undefined;
 
 type State = {
+  drawer: {
+    show: boolean;
+    mode: number | null;
+  };
+  selectedAnnotations: string[];
+  imagePreview: {
+    editable: number;
+    createdBoundingBoxes: {};
+    modifiedBoundingBoxes: {};
+  };
   annotations: {
     byId: Record<string, VisionAnnotationState>;
     allIds: string[];
@@ -52,6 +65,16 @@ type State = {
 };
 
 const initialState: State = {
+  selectedAnnotations: [],
+  drawer: {
+    show: false,
+    mode: null,
+  },
+  imagePreview: {
+    editable: ImagePreviewEditMode.NotEditable,
+    createdBoundingBoxes: {},
+    modifiedBoundingBoxes: {},
+  },
   annotations: {
     byId: {},
     allIds: [],
@@ -82,6 +105,51 @@ const previewSlice = createSlice({
       const visibility = state.annotations.byId[id].show;
       state.annotations.byId[id].show = !visibility;
     },
+    selectAnnotation(state, action: PayloadAction<string>) {
+      if (!state.selectedAnnotations.includes(action.payload)) {
+        state.selectedAnnotations.push(action.payload);
+      }
+    },
+    deselectAnnotation(state, action: PayloadAction<string>) {
+      const annotationIdIndex = state.selectedAnnotations.findIndex(
+        (item) => item === action.payload
+      );
+      if (annotationIdIndex >= 0) {
+        state.selectedAnnotations.splice(annotationIdIndex, 1);
+      }
+    },
+    showAnnotationDrawer(state, action: PayloadAction<AnnotationDrawerMode>) {
+      state.drawer.show = true;
+      state.drawer.mode = action.payload;
+    },
+    closeAnnotationDrawer(state) {
+      state.drawer.show = false;
+    },
+    setImagePreviewEditState(
+      state,
+      action: PayloadAction<ImagePreviewEditMode>
+    ) {
+      state.imagePreview.editable = action.payload;
+    },
+    updateAnnotation(
+      state,
+      action: PayloadAction<{ id: string; boundingBox: AnnotationBoundingBox }>
+    ) {
+      const annotation = state.annotations.byId[action.payload.id];
+      annotation.box = action.payload.boundingBox;
+    },
+    deleteSelectedAnnotations(state) {
+      const { selectedAnnotations } = state;
+      selectedAnnotations.forEach((annId) => {
+        const annotation = state.annotations.byId[annId];
+        const models = state.models.byId[annotation.modelId];
+        models.annotations = models.annotations.filter(
+          (item) => item !== annotation.id
+        );
+        delete state.annotations.byId[annotation.id];
+        state.annotations.allIds = Object.keys(state.annotations.byId);
+      });
+    },
     annotationApproval(
       state,
       action: PayloadAction<{
@@ -93,15 +161,6 @@ const previewSlice = createSlice({
       const annotation = state.annotations.byId[annotationId];
 
       annotation.status = status;
-
-      if (status === AnnotationStatus.Deleted) {
-        // delete annotation if deleted
-        const models = state.models.byId[annotation.modelId];
-        models.annotations = models.annotations.filter(
-          (item) => item !== annotation.id
-        );
-        delete state.annotations.byId[annotation.id];
-      }
     },
     toggleMetaDataTableEditMode(state, action: PayloadAction<MetadataItem[]>) {
       const editMode = state.metadataEdit;
@@ -266,6 +325,13 @@ const previewSlice = createSlice({
 export default previewSlice.reducer;
 export const {
   toggleAnnotationVisibility,
+  selectAnnotation,
+  deselectAnnotation,
+  showAnnotationDrawer,
+  closeAnnotationDrawer,
+  setImagePreviewEditState,
+  updateAnnotation,
+  deleteSelectedAnnotations,
   annotationApproval,
   toggleMetaDataTableEditMode,
   fileInfoEdit,
@@ -278,6 +344,16 @@ const resetEditHistoryState = (state: State) => {
   state.metadataEdit = false;
   state.fileMetaData = {};
   state.fileDetails = {};
+  state.drawer = {
+    show: false,
+    mode: null,
+  };
+  state.imagePreview = {
+    editable: 0,
+    createdBoundingBoxes: {},
+    modifiedBoundingBoxes: {},
+  };
+  state.selectedAnnotations = [];
 };
 
 export const selectModelIdsByFileId = (
@@ -317,11 +393,26 @@ export const selectAnnotationsByFileId = createSelector(
   }
 );
 
-export const selectNonRejectedAnnotations = createSelector(
+export const selectAnnotationsByFileIdModelType = createSelector(
   selectAnnotationsByFileId,
-  (annotationIdsByFile) => {
-    return annotationIdsByFile.filter(
-      (item) => item.status !== AnnotationStatus.Deleted
+  selectModelsByFileId,
+  (_, fileId: string, modelType: DetectionModelType) => modelType,
+  (allAnnotations, models, modelType) => {
+    const modelId = models.find((item) => item.modelType === modelType)
+      ?.modelId;
+
+    if (modelId) {
+      return allAnnotations.filter((item) => item.modelId === modelId);
+    }
+    return [];
+  }
+);
+
+export const selectNonRejectedAnnotationsByFileIdModelType = createSelector(
+  selectAnnotationsByFileIdModelType,
+  (annotationIdsByFileAndModelType) => {
+    return annotationIdsByFileAndModelType.filter(
+      (item) => item.status !== AnnotationStatus.Rejected
     );
   }
 );
@@ -330,6 +421,15 @@ export const selectVisibleAnnotationsByFileId = createSelector(
   selectAnnotationsByFileId,
   (annotationIdsByFile) => {
     return annotationIdsByFile.filter((item) => item.show);
+  }
+);
+
+export const selectVisibleNonRejectedAnnotationsByFileId = createSelector(
+  selectVisibleAnnotationsByFileId,
+  (visibleAnnotationIdsByFile) => {
+    return visibleAnnotationIdsByFile.filter(
+      (item) => item.status !== AnnotationStatus.Rejected
+    );
   }
 );
 

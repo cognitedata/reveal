@@ -2,8 +2,13 @@ import { Annotation, DetectionModelType } from 'src/api/types';
 
 export enum AnnotationStatus {
   Verified = 'verified',
-  Deleted = 'deleted',
+  Rejected = 'deleted',
   Unhandled = 'unhandled',
+}
+
+export enum AnnotationDrawerMode {
+  LinkAsset,
+  AddAnnotation,
 }
 
 export type DrawFunction = (
@@ -22,17 +27,19 @@ export type AnnotationStyle = {
   draw?: DrawFunction;
 };
 
+export type AnnotationBoundingBox = {
+  xMax: number;
+  xMin: number;
+  yMax: number;
+  yMin: number;
+};
+
 export interface VisionAnnotation extends Omit<Annotation, 'shape'> {
   displayId: number;
   label: string;
   type: string;
   color: string;
-  box: {
-    xMax: number;
-    xMin: number;
-    yMax: number;
-    yMin: number;
-  };
+  box: AnnotationBoundingBox;
   source: string;
   status: AnnotationStatus;
   version: number;

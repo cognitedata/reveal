@@ -2,7 +2,17 @@ import React from 'react';
 import { Button, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { AnnotationsTable } from 'src/pages/Preview/components/AnnotationsTable/AnnotationsTable';
-import { VisionAnnotationState } from 'src/store/previewSlice';
+import {
+  deleteSelectedAnnotations,
+  selectNonRejectedAnnotationsByFileIdModelType,
+  setImagePreviewEditState,
+  showAnnotationDrawer,
+} from 'src/store/previewSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { AnnotationDrawerMode } from 'src/utils/AnnotationUtils';
+import { RootState } from 'src/store/rootReducer';
+import { DetectionModelType } from 'src/api/types';
+import { ImagePreviewEditMode } from 'src/pages/Preview/Types';
 
 const Container = styled.div`
   height: 100%;
@@ -30,18 +40,56 @@ const TitleRow = styled.div``;
 //   padding-left: 5px;
 // `;
 
-const EditContainer = styled.div`
-  display: flex;
-  justify-content: flex-end;
-`;
+export const Contextualization = ({ fileId }: { fileId: string }) => {
+  const dispatch = useDispatch();
 
-const StyledButton = styled(Button)`
-  margin-left: 10px;
-`;
+  const selectedAnnotationIds = useSelector(
+    (state: RootState) => state.previewSlice.selectedAnnotations
+  );
 
-export const Contextualization = (props: {
-  annotations: VisionAnnotationState[];
-}) => {
+  const nonRejectedTagAnnotations = useSelector(({ previewSlice }: RootState) =>
+    selectNonRejectedAnnotationsByFileIdModelType(
+      previewSlice,
+      fileId,
+      DetectionModelType.Tag
+    )
+  );
+
+  const nonRejectedOtherAnnotations = useSelector(
+    ({ previewSlice }: RootState) =>
+      selectNonRejectedAnnotationsByFileIdModelType(
+        previewSlice,
+        fileId,
+        DetectionModelType.Text
+      )
+  );
+
+  const editMode = useSelector(
+    (state: RootState) =>
+      state.previewSlice.imagePreview.editable ===
+      ImagePreviewEditMode.Modifiable
+  );
+
+  const handleAddAnnotation = () => {
+    dispatch(showAnnotationDrawer(AnnotationDrawerMode.AddAnnotation));
+  };
+
+  const handleLinkAsset = () => {
+    dispatch(showAnnotationDrawer(AnnotationDrawerMode.LinkAsset));
+  };
+
+  const handleDeleteAnnotations = () => {
+    dispatch(deleteSelectedAnnotations());
+  };
+
+  const handleEditPolygon = () => {
+    if (editMode) {
+      dispatch(setImagePreviewEditState(ImagePreviewEditMode.NotEditable));
+    } else {
+      dispatch(setImagePreviewEditState(ImagePreviewEditMode.Modifiable));
+    }
+  };
+
   return (
     <Container>
       <TitleRow>
@@ -54,8 +102,8 @@ export const Contextualization = (props: {
       {/*      value="v1" */}
       {/*      placeholder */}
       {/*      options={[ */}
-      {/*        { value: 'v1', label: 'ML Corrossion v1' }, */}
-      {/*        { value: 'v2', label: 'ML Corrossion v2' }, */}
+      {/*        { value: 'v1', label: 'ML Corrosion v1' }, */}
+      {/*        { value: 'v2', label: 'ML Corrosion v2' }, */}
       {/*      ]} */}
       {/*    /> */}
       {/*  </SelectContainer> */}
@@ -64,17 +112,63 @@ export const Contextualization = (props: {
       {/*  </Button> */}
       {/* </ModelSelectContainer> */}
       <EditContainer>
-        <StyledButton type="primary" icon="Edit">
+        <StyledButton type="primary" icon="Edit" onClick={handleAddAnnotation}>
           Add Annotations
         </StyledButton>
-        <StyledButton type="secondary" icon="Polygon">
-          Edit polygon
+        {editMode ? (
+          <StyledButton
+            type="secondary"
+            icon="Upload"
+            onClick={handleEditPolygon}
+          >
+            Finish Editing
+          </StyledButton>
+        ) : (
+          <StyledButton
+            type="secondary"
+            icon="Polygon"
+            onClick={handleEditPolygon}
+          >
+            Edit polygon
+          </StyledButton>
+        )}
+        <StyledButton type="secondary" icon="Plus" onClick={handleLinkAsset}>
+          Link to asset
         </StyledButton>
-        <StyledButton type="secondary" icon="Delete">
+        <StyledButton
+          type="secondary"
+          icon="Delete"
+          disabled={!selectedAnnotationIds.length}
+          onClick={handleDeleteAnnotations}
+        >
           Delete
         </StyledButton>
       </EditContainer>
-      <AnnotationsTable annotations={props.annotations} />
+      <TableContainer>
+        <AnnotationsTable
+          annotations={nonRejectedTagAnnotations}
+          selectedAnnotationIds={selectedAnnotationIds}
+          mode={DetectionModelType.Tag}
+        />
+        <AnnotationsTable
+          annotations={nonRejectedOtherAnnotations}
+          selectedAnnotationIds={selectedAnnotationIds}
+          mode={DetectionModelType.Text}
+        />
+      </TableContainer>
     </Container>
   );
 };
+
+const EditContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+`;
+
+const StyledButton = styled(Button)`
+  margin-left: 10px;
+`;
+
+const TableContainer = styled.div`
+  overflow-y: auto;
+`;
