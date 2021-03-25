@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import moment from 'moment';
 import { Icon, Checkbox } from '@cognite/cogs.js';
 import { TimeseriesChart } from '@cognite/data-exploration';
@@ -6,6 +6,7 @@ import { Timeseries } from '@cognite/sdk';
 import { useAssetTimeseresSearch } from 'hooks/useSearch';
 import styled from 'styled-components/macro';
 import { PnidButton } from 'components/SearchResultTable';
+import DelayedComponent from 'components/DelayedComponent';
 
 type Props = {
   query: string;
@@ -17,6 +18,7 @@ export const SearchResultTable = ({
   query,
   onTimeseriesClick,
 }: Props) => {
+  const listRef = useRef(null);
   const {
     data: assets = [],
     isFetching,
@@ -44,7 +46,7 @@ export const SearchResultTable = ({
   const sparklineEndDate = moment().endOf('day').toDate();
 
   return (
-    <AssetList>
+    <AssetList ref={listRef}>
       {assets.map(({ asset, ts }) => (
         <li key={asset.id}>
           <AssetItem>
@@ -56,12 +58,14 @@ export const SearchResultTable = ({
               <span style={{ marginLeft: 10, flexGrow: 2 }}>
                 {asset.description}
               </span>
-              <PnidButton asset={asset} />
+              <DelayedComponent delay={100}>
+                <PnidButton asset={asset} />
+              </DelayedComponent>
               <AssetCount>{ts.length} </AssetCount>
             </Row>
             <Row>
               <TSList>
-                {ts.map((t) => (
+                {ts.map((t, i) => (
                   <TSItem key={t.id}>
                     <Row>
                       <div style={{ padding: 5 }}>
@@ -69,20 +73,23 @@ export const SearchResultTable = ({
                       </div>
                       <span>{t.name}</span>
                       <span>{t.description}</span>
-                      <TimeseriesChart
-                        height={65}
-                        showSmallerTicks
-                        timeseriesId={t.id}
-                        numberOfPoints={100}
-                        showAxis="horizontal"
-                        timeOptions={[]}
-                        showContextGraph={false}
-                        showPoints={false}
-                        enableTooltip={false}
-                        showGridLine="none"
-                        minRowTicks={2}
-                        dateRange={[sparklineStartDate, sparklineEndDate]}
-                      />
+                      <DelayedComponent delay={250 + i}>
+                        <TimeseriesChart
+                          height={65}
+                          showSmallerTicks
+                          timeseriesId={t.id}
+                          numberOfPoints={25}
+                          showAxis="horizontal"
+                          timeOptions={[]}
+                          showContextGraph={false}
+                          showPoints={false}
+                          enableTooltip={false}
+                          showGridLine="none"
+                          minRowTicks={2}
+                          dateRange={[sparklineStartDate, sparklineEndDate]}
+                        />
+                      </DelayedComponent>
+
                       <Checkbox
                         onClick={(e) => {
                           e.preventDefault();
