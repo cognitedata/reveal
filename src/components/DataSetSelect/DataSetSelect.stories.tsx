@@ -20,7 +20,7 @@ export default {
 export const Example = () => (
   <DataSetSelect
     onSelectionChange={action('onSelectionChange')}
-    style={{ minWidth: '306px', maxHeight: '36px' }}
+    style={{ minWidth: '306px', maxHeight: '40px' }}
     multiple
     selectedDataSetIds={[]}
   />
