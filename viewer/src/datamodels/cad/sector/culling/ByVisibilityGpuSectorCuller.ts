@@ -26,6 +26,7 @@ import { CadModelMetadata } from '../../CadModelMetadata';
 import { SectorMetadata, WantedSector } from '../types';
 import { toThreeVector3 } from '../../../../utilities';
 import { CadModelSectorBudget } from '../../CadModelSectorBudget';
+import { AlreadyLoadedGeometryDepthTextureProvider } from './AlreadyLoadedGeometryTextureProvider';
 
 /**
  * Options for creating GpuBasedSectorCuller.
@@ -35,7 +36,7 @@ export type ByVisibilityGpuSectorCullerOptions = {
    * Callback that returns a depth texture providing the depth
    * of allready loaded geometry.
    */
-  // alreadyLoadedGeometryDepthTextureProvider: () => THREE.DepthTexture;
+  alreadyLoadedGeometryDepthTextureProvider: AlreadyLoadedGeometryDepthTextureProvider;
 
   /**
    * Optional callback for determining the cost of a sector. The default unit of the cost
@@ -131,8 +132,9 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
   private readonly options: Required<ByVisibilityGpuSectorCullerOptions>;
   private readonly takenSectors: TakenSectorMap;
 
-  constructor(options?: ByVisibilityGpuSectorCullerOptions) {
+  constructor(options: ByVisibilityGpuSectorCullerOptions) {
     this.options = {
+      alreadyLoadedGeometryDepthTextureProvider: options.alreadyLoadedGeometryDepthTextureProvider,
       determineSectorCost: options && options.determineSectorCost ? options.determineSectorCost : computeSectorCost,
       logCallback:
         options && options.logCallback
@@ -140,7 +142,15 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
           : // No logging
             () => {},
 
-      coverageUtil: options && options.coverageUtil ? options.coverageUtil : new GpuOrderSectorsByVisibilityCoverage()
+      coverageUtil:
+        options && options.coverageUtil
+          ? options.coverageUtil
+          : (() => {
+              const util = new GpuOrderSectorsByVisibilityCoverage();
+              const canvasElement = util.createDebugCanvas();
+              document.body.appendChild(canvasElement);
+              return util;
+            })()
     };
     this.takenSectors = new TakenSectorMap(this.options.determineSectorCost);
   }
@@ -187,7 +197,8 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
   }
 
   filterSectorsToLoad(_input: DetermineSectorsInput, wantedSectors: WantedSector[]): Promise<WantedSector[]> {
-    return Promise.resolve(wantedSectors);
+    console.log(`============ FILTER ${wantedSectors.length} sectors ========================`);
+    return Promise.resolve(wantedSectors.filter(x => x.levelOfDetail === LevelOfDetail.Detailed));
   }
 
   private update(

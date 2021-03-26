@@ -12,6 +12,9 @@ import { LocalModelDataClient } from '../utilities/networking/LocalModelDataClie
 import { RevealOptions } from './types';
 import { initMetrics } from '../utilities/metrics';
 import { RenderOptions } from '..';
+import { EffectRenderManager } from '../datamodels/cad/rendering/EffectRenderManager';
+import { CadMaterialManager } from '../datamodels/cad/CadMaterialManager';
+import { AlreadyLoadedGeometryDepthTextureProvider } from '../datamodels/cad/sector/culling/AlreadyLoadedGeometryTextureProvider';
 
 /**
  * Used to create an instance of reveal manager that works with localhost.
@@ -36,6 +39,18 @@ export function createCdfRevealManager(
   return createRevealManager(client.project, modelDataClient, revealOptions);
 }
 
+class DepthTextureProvider implements AlreadyLoadedGeometryDepthTextureProvider {
+  private readonly _renderManager: EffectRenderManager;
+
+  constructor(renderManager: EffectRenderManager) {
+    this._renderManager = renderManager;
+  }
+
+  provideAlreadyLoadedDepthTexture(): THREE.DepthTexture {
+    return this._renderManager.getOcclusionDepthTexture();
+  }
+}
+
 /**
  * Used to create an instance of reveal manager.
  * @internal
@@ -55,8 +70,11 @@ export function createRevealManager<T>(
     constructorOptions: revealOptions
   });
 
-  const cadManager = createCadManager(client, revealOptions);
-  const pointCloudManager = createPointCloudManager(client);
   const renderOptions: RenderOptions = revealOptions.renderOptions || {};
-  return new RevealManager(cadManager, pointCloudManager, renderOptions);
+  const materialManager = new CadMaterialManager();
+  const renderManager = new EffectRenderManager(materialManager, renderOptions);
+  const alreadyLoadedProvider = new DepthTextureProvider(renderManager);
+  const cadManager = createCadManager(client, materialManager, alreadyLoadedProvider, revealOptions);
+  const pointCloudManager = createPointCloudManager(client);
+  return new RevealManager(cadManager, renderManager, pointCloudManager);
 }

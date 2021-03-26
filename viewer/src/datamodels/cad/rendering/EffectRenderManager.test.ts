@@ -5,14 +5,14 @@
 import * as THREE from 'three';
 import { RenderOptions } from '../../..';
 
-import { MaterialManager } from '../MaterialManager';
+import { CadMaterialManager } from '../CadMaterialManager';
 import { EffectRenderManager } from './EffectRenderManager';
 import { RenderMode } from './RenderMode';
 
 type Mutable<T> = { -readonly [P in keyof T]: T[P] };
 
 describe('EffectRenderManager', () => {
-  const materialManager = new MaterialManager();
+  const materialManager = new CadMaterialManager();
   const context: WebGLRenderingContext = require('gl')(64, 64, { preserveDrawingBuffer: true });
   const renderer = new THREE.WebGLRenderer({ context });
   const camera = new THREE.PerspectiveCamera();

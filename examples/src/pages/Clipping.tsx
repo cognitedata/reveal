@@ -38,19 +38,7 @@ export function Clipping() {
       renderer.setClearColor('#444');
       renderer.setSize(window.innerWidth, window.innerHeight);
 
-      const coverageUtil = new reveal.internal.GpuOrderSectorsByVisibilityCoverage();
-      const sectorCuller = new reveal.internal.ByVisibilityGpuSectorCuller({
-        coverageUtil,
-        logCallback: console.log,
-      });
-      const debugCanvas = coverageUtil.createDebugCanvas({
-        width: 160,
-        height: 100,
-      });
-      debugCanvas.style.position = 'absolute';
-      canvasRef.current!.parentElement!.appendChild(debugCanvas);
-
-      const revealOptions = { internal: { sectorCuller } };
+      const revealOptions = {  };
       let model: reveal.CadNode;
       if(modelRevision) {
         revealManager = reveal.createCdfRevealManager(client, revealOptions);

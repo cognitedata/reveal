@@ -12,7 +12,7 @@ import { NodeAppearanceProvider } from './NodeAppearance';
 import { RootSectorNode } from './sector/RootSectorNode';
 import { RenderMode } from './rendering/RenderMode';
 import { CadLoadingHints } from './CadLoadingHints';
-import { MaterialManager } from './MaterialManager';
+import { CadMaterialManager } from './CadMaterialManager';
 import { CadModelMetadata } from './CadModelMetadata';
 import { suggestCameraConfig } from './cameraconfig';
 import { toThreeVector3, NumericRange } from '../../utilities';
@@ -38,7 +38,7 @@ export class CadNode extends THREE.Object3D {
 
   private readonly _rootSector: RootSectorNode;
   private readonly _cadModelMetadata: CadModelMetadata;
-  private readonly _materialManager: MaterialManager;
+  private readonly _materialManager: CadMaterialManager;
   private readonly _sectorScene: SectorScene;
   private readonly _previousCameraMatrix = new THREE.Matrix4();
 
@@ -46,7 +46,7 @@ export class CadNode extends THREE.Object3D {
     loadingHintsChanged: new EventTrigger<LoadingHintsChangeListener>()
   };
 
-  constructor(model: CadModelMetadata, materialManager: MaterialManager) {
+  constructor(model: CadModelMetadata, materialManager: CadMaterialManager) {
     super();
     this.type = 'CadNode';
     this.name = 'Sector model';

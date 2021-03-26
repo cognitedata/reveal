@@ -14,8 +14,7 @@ import {
   createRendererDebugWidget,
   applyRenderingFilters,
   RenderMode,
-  RenderOptions,
-  applySectorOverride,
+  RenderOptions
 } from '../utils/renderer-debug-widget';
 import { CogniteClient } from '@cognite/sdk';
 import {
@@ -25,7 +24,6 @@ import {
   createLocalRevealManager,
 } from '@cognite/reveal/experimental';
 import { getParamsFromURL } from '../utils/example-helpers';
-import { OverrideSectorCuller } from '../utils/OverrideSectorCuller';
 import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
 import { RevealOptions } from '@cognite/reveal/public/types';
 
@@ -79,9 +77,7 @@ export function SideBySide() {
       });
       client.loginWithOAuth({ project });
 
-      const sectorCuller1 = new OverrideSectorCuller();
       const revealOptions1: RevealOptions = {
-        internal: { sectorCuller: sectorCuller1 },
         logMetrics: false
       }
       let model1: CadNode;
@@ -97,9 +93,7 @@ export function SideBySide() {
         );
       }
 
-      const sectorCuller2 = new OverrideSectorCuller();
       const revealOptions2: RevealOptions = {
-        internal: { sectorCuller: sectorCuller2 },
         logMetrics: false
       };
       let model2: CadNode;
@@ -189,7 +183,6 @@ export function SideBySide() {
             (controlsNeedUpdate || revealManager1.needsRedraw))
         ) {
           applyRenderingFilters(scene1, options1.renderFilter);
-          applySectorOverride(sectorCuller1, options1.overrideWantedSectors);
           renderer1.render(scene1, camera);
           revealManager1.resetRedraw();
         }
@@ -199,7 +192,6 @@ export function SideBySide() {
             (controlsNeedUpdate || revealManager2.needsRedraw))
         ) {
           applyRenderingFilters(scene2, options2.renderFilter);
-          applySectorOverride(sectorCuller2, options2.overrideWantedSectors);
           renderer2.render(scene2, camera);
           revealManager2.resetRedraw();
         }

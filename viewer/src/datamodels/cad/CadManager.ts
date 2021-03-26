@@ -11,14 +11,14 @@ import { Subscription, Observable } from 'rxjs';
 import { NodeAppearanceProvider } from './NodeAppearance';
 import { trackError } from '../../utilities/metrics';
 
-import { MaterialManager } from './MaterialManager';
+import { CadMaterialManager } from './CadMaterialManager';
 import { RenderMode } from './rendering/RenderMode';
 import { LoadingState } from '../../utilities';
 import { CadModelSectorBudget } from './CadModelSectorBudget';
 import { CadModelSectorLoadStatistics } from './CadModelSectorLoadStatistics';
 
 export class CadManager<TModelIdentifier> {
-  private readonly _materialManager: MaterialManager;
+  private readonly _materialManager: CadMaterialManager;
   private readonly _cadModelMetadataRepository: CadModelMetadataRepository<TModelIdentifier>;
   private readonly _cadModelFactory: CadModelFactory;
   private readonly _cadModelUpdateHandler: CadModelUpdateHandler;
@@ -49,7 +49,7 @@ export class CadManager<TModelIdentifier> {
   }
 
   constructor(
-    materialManger: MaterialManager,
+    materialManger: CadMaterialManager,
     cadModelMetadataRepository: CadModelMetadataRepository<TModelIdentifier>,
     cadModelFactory: CadModelFactory,
     cadModelUpdateHandler: CadModelUpdateHandler

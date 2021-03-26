@@ -2,10 +2,10 @@
  * Copyright 2021 Cognite AS
  */
 
-import { MaterialManager } from '../MaterialManager';
-import { RenderMode } from './RenderMode';
 import * as THREE from 'three';
 
+import { CadMaterialManager } from '../CadMaterialManager';
+import { RenderMode } from './RenderMode';
 import { CogniteColors, isMobileOrTablet } from '../../../utilities';
 import { CadNode } from '..';
 import { Cognite3DModel } from '../../../migration';
@@ -15,7 +15,7 @@ import { outlineDetectionShaders, fxaaShaders, ssaoShaders, ssaoBlurCombineShade
 import { SsaoSampleQuality } from '../../../public/types';
 
 export class EffectRenderManager {
-  private readonly _materialManager: MaterialManager;
+  private readonly _materialManager: CadMaterialManager;
   private readonly _orthographicCamera: THREE.OrthographicCamera;
 
   // Simple scene with a single triangle with UVs [0,1] in both directions
@@ -107,7 +107,7 @@ export class EffectRenderManager {
     return multiSampleCountHint;
   }
 
-  constructor(materialManager: MaterialManager, options: RenderOptions) {
+  constructor(materialManager: CadMaterialManager, options: RenderOptions) {
     this._renderOptions = options;
     this._materialManager = materialManager;
     this._orthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
@@ -278,6 +278,10 @@ export class EffectRenderManager {
     this.setupFxaaScene();
 
     this._isInitialized = true;
+  }
+
+  public getOcclusionDepthTexture(): THREE.DepthTexture {
+    return this._compositionTarget.depthTexture;
   }
 
   private supportsSsao(renderer: THREE.WebGLRenderer, ssaoParameters: SsaoParameters) {

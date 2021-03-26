@@ -14,7 +14,7 @@ interface MaterialsWrapper {
   nodeAppearanceProvider?: NodeAppearanceProvider;
 }
 
-export class MaterialManager {
+export class CadMaterialManager {
   get clippingPlanes(): THREE.Plane[] {
     return this._clippingPlanes;
   }
@@ -36,6 +36,7 @@ export class MaterialManager {
       material.clipIntersection = intersection;
     });
   }
+
   private _renderMode: RenderMode = RenderMode.Color;
   private readonly materialsMap: Map<string, MaterialsWrapper> = new Map();
   // TODO: j-bjorne 29-04-2020: Move into separate cliping manager?

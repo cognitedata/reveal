@@ -4,7 +4,7 @@
 import * as THREE from 'three';
 
 import { DetermineSectorsInput, SectorCost } from './types';
-import { MaterialManager } from '../../MaterialManager';
+import { CadMaterialManager } from '../../CadMaterialManager';
 import { OrderSectorsByVisibilityCoverage } from './OrderSectorsByVisibilityCoverage';
 import { ByVisibilityGpuSectorCuller, LevelOfDetail } from '../../../../internal';
 import { SectorMetadata, CadNode, CadModelMetadata } from '../../../../experimental';
@@ -15,7 +15,7 @@ import { CadModelSectorBudget } from '../../CadModelSectorBudget';
 import { PropType } from '../../../../utilities/reflection';
 
 describe('ByVisibilityGpuSectorCuller', () => {
-  const materialManager = new MaterialManager();
+  const materialManager = new CadMaterialManager();
   const setModelsMock: PropType<OrderSectorsByVisibilityCoverage, 'setModels'> = jest.fn();
   const setClippingMock: PropType<OrderSectorsByVisibilityCoverage, 'setClipping'> = jest.fn();
   const orderSectorsByVisibilityMock: PropType<
