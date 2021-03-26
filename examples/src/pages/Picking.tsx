@@ -73,13 +73,18 @@ export function Picking() {
         }
       };
 
+      // Set up the renderer
+      const renderer = new THREE.WebGLRenderer({ canvas: canvasRef.current! });
+      renderer.setClearColor('#444');
+      renderer.setSize(window.innerWidth, window.innerHeight);
+
       const revealOptions: RevealOptions = { nodeAppearanceProvider, logMetrics: false };
       let model: reveal.CadNode;
       if (modelRevision) {
-        revealManager = reveal.createCdfRevealManager(client, revealOptions);
+        revealManager = reveal.createCdfRevealManager(client, renderer, revealOptions);
         model = await revealManager.addModel('cad', modelRevision, nodeAppearanceProvider);
       } else if (modelUrl) {
-        revealManager = reveal.createLocalRevealManager(revealOptions);
+        revealManager = reveal.createLocalRevealManager(renderer, revealOptions);
         model = await revealManager.addModel('cad', modelUrl, nodeAppearanceProvider);
       } else {
         throw new Error(
@@ -87,11 +92,6 @@ export function Picking() {
         );
       }
       scene.add(model);
-
-      // Set up the renderer
-      const renderer = new THREE.WebGLRenderer({ canvas: canvasRef.current! });
-      renderer.setClearColor('#444');
-      renderer.setSize(window.innerWidth, window.innerHeight);
 
       const { position, target, near, far } = model.suggestCameraConfig();
       const camera = new THREE.PerspectiveCamera(

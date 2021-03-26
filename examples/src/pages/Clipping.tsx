@@ -41,10 +41,10 @@ export function Clipping() {
       const revealOptions = {  };
       let model: reveal.CadNode;
       if(modelRevision) {
-        revealManager = reveal.createCdfRevealManager(client, revealOptions);
+        revealManager = reveal.createCdfRevealManager(client, renderer, revealOptions);
         model = await revealManager.addModel('cad', modelRevision);
       } else if(modelUrl) {
-        revealManager = reveal.createLocalRevealManager(revealOptions);
+        revealManager = reveal.createLocalRevealManager(renderer, revealOptions);
         model = await revealManager.addModel('cad', modelUrl);
       } else {
         throw new Error(

@@ -13,6 +13,7 @@ import { RootSectorNode } from '../sector/RootSectorNode';
 import { AntiAliasingMode, defaultRenderOptions, RenderOptions, SsaoParameters } from '../../..';
 import { outlineDetectionShaders, fxaaShaders, ssaoShaders, ssaoBlurCombineShaders } from './shaders';
 import { SsaoSampleQuality } from '../../../public/types';
+import { WebGLRendererStateHelper } from '../../../utilities/WebGLRendererStateHelper';
 
 export class EffectRenderManager {
   private readonly _materialManager: CadMaterialManager;
@@ -295,10 +296,10 @@ export class EffectRenderManager {
   public render(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera, scene: THREE.Scene) {
     this.ensureInitialized(renderer);
 
+    const renderStateHelper = new WebGLRendererStateHelper(renderer);
     const original = {
       autoClear: renderer.autoClear,
       clearAlpha: renderer.getClearAlpha(),
-      renderTarget: renderer.getRenderTarget(),
       renderMode: this._materialManager.getRenderMode()
     };
     this.updateRenderSize(renderer);
@@ -317,7 +318,7 @@ export class EffectRenderManager {
 
       renderer.info.autoReset = false;
       renderer.info.reset();
-      renderer.autoClear = false;
+      renderStateHelper.autoClear = false;
 
       // Clear targets
       this.clearTarget(renderer, this._ghostObjectRenderTarget);
@@ -377,7 +378,7 @@ export class EffectRenderManager {
           this.renderComposition(renderer, camera, this._compositionTarget);
 
           // Anti-aliased version to screen
-          renderer.autoClear = original.autoClear;
+          renderStateHelper.autoClear = original.autoClear;
 
           if (supportsSsao) {
             this.renderSsao(renderer, this._ssaoTarget, camera);
@@ -404,9 +405,7 @@ export class EffectRenderManager {
       }
     } finally {
       // Restore state
-      renderer.autoClear = original.autoClear;
-      renderer.setClearAlpha(original.clearAlpha);
-      renderer.setRenderTarget(original.renderTarget);
+      renderStateHelper.resetState();
       this._materialManager.setRenderMode(original.renderMode);
 
       this._rootSectorNodeBuffer.forEach(p => {

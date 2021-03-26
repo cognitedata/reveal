@@ -18,25 +18,31 @@ import { AlreadyLoadedGeometryDepthTextureProvider } from '../datamodels/cad/sec
 
 /**
  * Used to create an instance of reveal manager that works with localhost.
+ * @param renderer
  * @param revealOptions
  * @returns RevealManager instance.
  */
-export function createLocalRevealManager(revealOptions: RevealOptions = {}): RevealManager<LocalModelIdentifier> {
+export function createLocalRevealManager(
+  renderer: THREE.WebGLRenderer,
+  revealOptions: RevealOptions = {}
+): RevealManager<LocalModelIdentifier> {
   const modelDataClient = new LocalModelDataClient();
-  return createRevealManager('local', modelDataClient, revealOptions);
+  return createRevealManager('local', modelDataClient, renderer, revealOptions);
 }
 
 /**
  * Used to create an instance of reveal manager that works with the CDF.
  * @param client
+ * @param renderer
  * @param revealOptions
  */
 export function createCdfRevealManager(
   client: CogniteClient,
+  renderer: THREE.WebGLRenderer,
   revealOptions: RevealOptions = {}
 ): RevealManager<CdfModelIdentifier> {
   const modelDataClient = new CdfModelDataClient(client);
-  return createRevealManager(client.project, modelDataClient, revealOptions);
+  return createRevealManager(client.project, modelDataClient, renderer, revealOptions);
 }
 
 class DepthTextureProvider implements AlreadyLoadedGeometryDepthTextureProvider {
@@ -56,11 +62,13 @@ class DepthTextureProvider implements AlreadyLoadedGeometryDepthTextureProvider 
  * @internal
  * @param project
  * @param client
+ * @param renderer
  * @param revealOptions
  */
 export function createRevealManager<T>(
   project: string,
   client: ModelDataClient<T>,
+  renderer: THREE.WebGLRenderer,
   revealOptions: RevealOptions = {}
 ): RevealManager<T> {
   const applicationId = client.getApplicationIdentifier();
@@ -74,7 +82,7 @@ export function createRevealManager<T>(
   const materialManager = new CadMaterialManager();
   const renderManager = new EffectRenderManager(materialManager, renderOptions);
   const alreadyLoadedProvider = new DepthTextureProvider(renderManager);
-  const cadManager = createCadManager(client, materialManager, alreadyLoadedProvider, revealOptions);
+  const cadManager = createCadManager(client, renderer, materialManager, alreadyLoadedProvider, revealOptions);
   const pointCloudManager = createPointCloudManager(client);
   return new RevealManager(cadManager, renderManager, pointCloudManager);
 }

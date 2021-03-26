@@ -8,6 +8,7 @@ import { SectorMetadata } from '../types';
 import { coverageShaders } from '../../rendering/shaders';
 import { CadModelMetadata } from '../../CadModelMetadata';
 import { toThreeJsBox3, Box3 } from '../../../../utilities';
+import { WebGLRendererStateHelper } from '../../../../utilities/WebGLRendererStateHelper';
 
 type SectorContainer = {
   model: CadModelMetadata;
@@ -29,13 +30,9 @@ const identityRotation = new THREE.Quaternion();
  */
 export interface OrderSectorsByVisibleCoverageOptions {
   /**
-   * Optional WebGL context to use for rendering of coverage.
+   * Renderer used to render coverage.
    */
-  glContext?: WebGLRenderingContext;
-  /**
-   * Optional size of the framebuffer used for rendering coverage.
-   */
-  renderSize?: THREE.Vector2;
+  renderer: THREE.WebGLRenderer;
 }
 
 export type PrioritizedSectorIdentifier = {
@@ -106,25 +103,15 @@ export class GpuOrderSectorsByVisibilityCoverage {
     side: THREE.DoubleSide
   });
 
-  constructor(options?: OrderSectorsByVisibleCoverageOptions) {
-    const context = (options || {}).glContext;
-    const renderSize = (options || {}).renderSize || new THREE.Vector2(640, 480);
-    this._renderer = new THREE.WebGLRenderer({
-      context,
-      antialias: false,
-      alpha: false,
-      precision: 'lowp',
-      stencil: false
-    });
-    this._renderer.setClearColor('#FFFFFF');
-    this._renderer.localClippingEnabled = true;
-    this.renderTarget = new THREE.WebGLRenderTarget(renderSize.width, renderSize.height, {
+  constructor(options: OrderSectorsByVisibleCoverageOptions) {
+    this._renderer = options.renderer;
+    const size = this._renderer.getSize(new THREE.Vector2());
+    this.renderTarget = new THREE.WebGLRenderTarget(size.width, size.height, {
       generateMipmaps: false,
       type: THREE.UnsignedByteType,
       format: THREE.RGBAFormat,
       stencilBuffer: true
     });
-    this._renderer.setRenderTarget(this.renderTarget);
   }
 
   dispose() {
@@ -189,21 +176,30 @@ export class GpuOrderSectorsByVisibilityCoverage {
       this.debugRenderer.render(this.scene, camera);
     }
 
-    // 1. Render to offscreen buffer
-    this._renderer.render(this.scene, camera);
+    const stateHelper = new WebGLRendererStateHelper(this._renderer);
+    try {
+      stateHelper.setClearColor('#FFFFFF');
+      stateHelper.localClippingEnabled = true;
+      stateHelper.setRenderTarget(this.renderTarget);
 
-    // 2. Prepare buffer for reading from GPU
-    this.prepareBuffers();
+      // 1. Render to offscreen buffer
+      this._renderer.render(this.scene, camera);
 
-    // 3. Read back result from GPU
-    this._renderer.readRenderTargetPixels(
-      this.renderTarget,
-      0,
-      0,
-      this.renderTarget.width,
-      this.renderTarget.height,
-      this.buffers.rtBuffer
-    );
+      // 2. Prepare buffer for reading from GPU
+      this.prepareBuffers();
+
+      // 3. Read back result from GPU
+      this._renderer.readRenderTargetPixels(
+        this.renderTarget,
+        0,
+        0,
+        this.renderTarget.width,
+        this.renderTarget.height,
+        this.buffers.rtBuffer
+      );
+    } finally {
+      stateHelper.resetState();
+    }
 
     // 4. Unpack GPU result to something more convinient
     const sectorVisibility = this.unpackSectorVisibility(

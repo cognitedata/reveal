@@ -23,23 +23,26 @@ import { AlreadyLoadedGeometryDepthTextureProvider } from './sector/culling/Alre
 
 export function createLocalCadManager(
   client: LocalModelDataClient,
+  renderer: THREE.WebGLRenderer,
   materialManager: CadMaterialManager,
   alreadyLoadedGeometryProvider: AlreadyLoadedGeometryDepthTextureProvider,
   options: RevealOptions = {}
 ): CadManager<LocalModelIdentifier> {
-  return createCadManager(client, materialManager, alreadyLoadedGeometryProvider, options);
+  return createCadManager(client, renderer, materialManager, alreadyLoadedGeometryProvider, options);
 }
 export function createCdfCadManager(
   client: CdfModelDataClient,
+  renderer: THREE.WebGLRenderer,
   materialManager: CadMaterialManager,
   alreadyLoadedGeometryProvider: AlreadyLoadedGeometryDepthTextureProvider,
   options: RevealOptions = {}
 ): CadManager<CdfModelIdentifier> {
-  return createCadManager(client, materialManager, alreadyLoadedGeometryProvider, options);
+  return createCadManager(client, renderer, materialManager, alreadyLoadedGeometryProvider, options);
 }
 
 export function createCadManager<T>(
   client: ModelDataClient<T>,
+  renderer: THREE.WebGLRenderer,
   materialManager: CadMaterialManager,
   alreadyLoadedGeometryProvider: AlreadyLoadedGeometryDepthTextureProvider,
   options: RevealOptions
@@ -52,6 +55,7 @@ export function createCadManager<T>(
   const cachedSectorRepository = new CachedRepository(client, modelDataParser, modelDataTransformer);
   const { internal } = options;
   const cullerOptions: ByVisibilityGpuSectorCullerOptions = {
+    renderer,
     alreadyLoadedGeometryDepthTextureProvider: alreadyLoadedGeometryProvider
   };
   const sectorCuller =

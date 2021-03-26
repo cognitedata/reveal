@@ -132,7 +132,14 @@ export function TestViewer(props: Props) {
         }
       };
 
-      revealManager = reveal.createLocalRevealManager({ logMetrics: false, renderOptions: renderOptions });
+      let renderer = new THREE.WebGLRenderer({
+        canvas: canvas.current,
+      });
+      renderer.setClearColor('#444');
+      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.localClippingEnabled = true;
+
+      revealManager = reveal.createLocalRevealManager(renderer, { logMetrics: false, renderOptions: renderOptions });
       setupLoadingStateHandler(revealManager);
 
       let model: reveal.internal.PointCloudNode | reveal.CadNode;
@@ -148,13 +155,6 @@ export function TestViewer(props: Props) {
       }
 
       scene.add(model);
-
-      let renderer = new THREE.WebGLRenderer({
-        canvas: canvas.current,
-      });
-      renderer.setClearColor('#444');
-      renderer.setPixelRatio(window.devicePixelRatio);
-      renderer.localClippingEnabled = true;
 
       let cameraConfig = getCameraConfig(model);
 

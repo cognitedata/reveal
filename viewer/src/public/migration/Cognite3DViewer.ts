@@ -232,7 +232,7 @@ export class Cognite3DViewer {
 
     const revealOptions = createRevealManagerOptions(options);
 
-    this._revealManager = createCdfRevealManager(this.sdkClient, revealOptions);
+    this._revealManager = createCdfRevealManager(this.sdkClient, this._renderer, revealOptions);
     this.startPointerEventListeners();
 
     this._revealManager.setRenderTarget(

@@ -91,10 +91,10 @@ export function SimplePointcloud() {
       let pointCloudNode: reveal.internal.PointCloudNode;
       if(modelRevision) {
         await client.authenticate();
-        revealManager = reveal.createCdfRevealManager(client, { logMetrics: false });
+        revealManager = reveal.createCdfRevealManager(client, renderer, { logMetrics: false });
         pointCloudNode = await revealManager.addModel('pointcloud', modelRevision);
       } else if(modelUrl) {
-        revealManager = reveal.createLocalRevealManager({ logMetrics: false });
+        revealManager = reveal.createLocalRevealManager(renderer, { logMetrics: false });
         pointCloudNode = await revealManager.addModel('pointcloud', modelUrl);
       } else {
         throw new Error(

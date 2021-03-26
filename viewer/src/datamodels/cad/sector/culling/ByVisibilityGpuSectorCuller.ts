@@ -33,6 +33,11 @@ import { AlreadyLoadedGeometryDepthTextureProvider } from './AlreadyLoadedGeomet
  */
 export type ByVisibilityGpuSectorCullerOptions = {
   /**
+   * Renderer used to determine what sector to load.
+   */
+  renderer: THREE.WebGLRenderer;
+
+  /**
    * Callback that returns a depth texture providing the depth
    * of allready loaded geometry.
    */
@@ -134,6 +139,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
 
   constructor(options: ByVisibilityGpuSectorCullerOptions) {
     this.options = {
+      renderer: options.renderer,
       alreadyLoadedGeometryDepthTextureProvider: options.alreadyLoadedGeometryDepthTextureProvider,
       determineSectorCost: options && options.determineSectorCost ? options.determineSectorCost : computeSectorCost,
       logCallback:
@@ -146,7 +152,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
         options && options.coverageUtil
           ? options.coverageUtil
           : (() => {
-              const util = new GpuOrderSectorsByVisibilityCoverage();
+              const util = new GpuOrderSectorsByVisibilityCoverage({ renderer: options.renderer });
               const canvasElement = util.createDebugCanvas();
               document.body.appendChild(canvasElement);
               return util;
@@ -198,7 +204,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
 
   filterSectorsToLoad(_input: DetermineSectorsInput, wantedSectors: WantedSector[]): Promise<WantedSector[]> {
     console.log(`============ FILTER ${wantedSectors.length} sectors ========================`);
-    return Promise.resolve(wantedSectors.filter(x => x.levelOfDetail === LevelOfDetail.Detailed));
+    return Promise.resolve(wantedSectors); //.filter(x => x.levelOfDetail === LevelOfDetail.Detailed));
   }
 
   private update(
