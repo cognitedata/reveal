@@ -72,7 +72,12 @@ export const FileView = () => {
           <Button
             icon="ArrowBack"
             style={{ marginBottom: 20 }}
-            onClick={() => history.push(`/${chartId}`)}
+            onClick={() =>
+              history.push({
+                pathname: `/${chartId}`,
+                search: history.location.search,
+              })
+            }
           >
             Back to chart
           </Button>

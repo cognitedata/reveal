@@ -21,9 +21,10 @@ import {
 import { nanoid } from 'nanoid';
 import { Chart } from 'reducers/charts/types';
 import { getEntryColor } from 'utils/colors';
-import { useLoginStatus } from 'hooks';
+import { useLoginStatus, useQueryString } from 'hooks';
 import { useQueryClient } from 'react-query';
 import { duplicate } from 'utils/charts';
+import { SEARCH_KEY } from 'utils/constants';
 import { Modes } from 'pages/types';
 import TimeSeriesRows from './TimeSeriesRows';
 import WorkflowRows from './WorkflowRows';
@@ -51,8 +52,11 @@ type ChartViewProps = {
 
 const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   const history = useHistory();
+  const { item: query, setItem: setQuery } = useQueryString(SEARCH_KEY);
+
   const cache = useQueryClient();
   const { data: login } = useLoginStatus();
+
   const { chartId = chartIdProp } = useParams<{ chartId: string }>();
   const { data: chart, isError, isFetched } = useChart(chartId);
 
@@ -101,6 +105,15 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   const [workspaceMode, setWorkspaceMode] = useState<Modes>('workspace');
   const isWorkspaceMode = workspaceMode === 'workspace';
   const isDataQualityMode = workspaceMode === 'report';
+
+  /**
+   * Open search drawer if query is present in the url
+   */
+  useEffect(() => {
+    if (query !== '' && !showSearch) {
+      setShowSearch(true);
+    }
+  }, [query, showSearch]);
 
   const [dataQualityReport, setDataQualityReport] = useState<{
     timeSeriesId?: string;
@@ -210,6 +223,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
 
   const handleCloseSearch = () => {
     setShowSearch(false);
+    setQuery('');
     setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
   };
 

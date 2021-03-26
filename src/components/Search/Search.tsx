@@ -1,8 +1,10 @@
-import React, { ChangeEvent, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import { Button, Input, Tooltip } from '@cognite/cogs.js';
 import SearchResultList from 'components/SearchResultTable/SearchResultList';
 import styled from 'styled-components/macro';
-import { useDebounce } from 'use-debounce/lib';
+import { SEARCH_KEY } from 'utils/constants';
+import { useQueryString } from 'hooks';
+import debounce from 'lodash/debounce';
 
 type SearchProps = {
   visible: boolean;
@@ -11,7 +13,23 @@ type SearchProps = {
 
 const Search = ({ visible, onClose }: SearchProps) => {
   const [searchInputValue, setSearchInputValue] = useState('');
-  const [debouncedQuery] = useDebounce(searchInputValue, 100);
+  const { item: urlQuery, setItem: setUrlQuery } = useQueryString(SEARCH_KEY);
+  const debouncedSetUrlQuery = debounce(setUrlQuery, 200);
+
+  useEffect(() => {
+    if (searchInputValue !== urlQuery) {
+      setSearchInputValue(urlQuery);
+    }
+    // Should NOT run when searchInputValue changes
+    // eslint-disable-next-line
+  }, [urlQuery, setSearchInputValue]);
+
+  useEffect(() => {
+    if (searchInputValue !== urlQuery) {
+      debouncedSetUrlQuery(encodeURIComponent(searchInputValue));
+    }
+    return () => debouncedSetUrlQuery.cancel();
+  }, [searchInputValue, urlQuery, debouncedSetUrlQuery]);
 
   const handleSearchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
@@ -43,7 +61,7 @@ const Search = ({ visible, onClose }: SearchProps) => {
           </Tooltip>
         </SearchBar>
         <SearchResultsContainer>
-          <SearchResultList query={debouncedQuery} />
+          <SearchResultList query={urlQuery} />
         </SearchResultsContainer>
       </ContentWrapper>
     </SearchContainer>

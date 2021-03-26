@@ -38,6 +38,7 @@
     "mixpanel-browser": "^2.41.0",
     "nanoid": "^3.1.22",
     "plotly.js-basic-dist": "^1.58.4",
+    "query-string": "^7.0.0",
     "react": "^17.0.1",
     "react-datepicker": "^3.6.0",
     "react-dom": "^17.0.1",

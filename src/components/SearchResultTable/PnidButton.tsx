@@ -45,9 +45,12 @@ export const PnidButton = ({
         variant="ghost"
         icon="SearchDocuments"
         onClick={() =>
-          history.push(
-            `/${chartId}/files/${asset ? asset?.id : linkedAsset?.id}`
-          )
+          history.push({
+            pathname: `/${chartId}/files/${
+              asset ? asset?.id : linkedAsset?.id
+            }`,
+            search: history.location.search,
+          })
         }
       />
     </WithTooltip>
