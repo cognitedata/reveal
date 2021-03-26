@@ -42,7 +42,7 @@ Tables:
 
 The data set is used to store image files such as board previews and a customer logo.
 
-This is optinal requirement since when system admin logs in to the app for the first time, the _data set_ will be created automatically with attribute `externalId='digital-cockpit'`.
+This is optinal requirement since when system admin logs in to the app for the first time, the _data set_ will be created automatically.
 
 Creating it manually gives you possibility to restrict the capability `files:write` and `files:read` to this data set for the **dc-system-admin** group, and also more options in configuring the data set itself.
 

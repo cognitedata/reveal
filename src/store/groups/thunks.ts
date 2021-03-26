@@ -12,7 +12,7 @@ export const fetchUserGroups = (apiClient: ApiClient) => async (
 ) => {
   dispatch(actions.loadGroups());
   try {
-    const groups: Group[] = await apiClient.getUserGroups();
+    const groups: Group[] = await apiClient.getUserGroups(false);
     dispatch(actions.loadedGroups(groups));
     const isAdmin = checkIsAdmin(groups);
     Sentry.addBreadcrumb({

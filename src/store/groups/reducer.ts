@@ -32,7 +32,7 @@ export const GroupsReducer = createReducer(initialState)
       loading: false,
       loaded: true,
       error: '',
-      groups: action.payload,
+      groups: (action.payload as Group[]).filter((group) => !!group.sourceId),
       isAdmin: checkIsAdmin(action.payload as Group[]),
       filter: [],
     })

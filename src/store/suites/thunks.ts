@@ -17,6 +17,20 @@ export const fetchSuites = (apiClient: ApiClient, metrics?: Metrics) => async (
     const suites: Suite[] = await getSuites(apiClient);
     dispatch(actions.loadedSuitesTable(suites as Suite[]));
   } catch (e) {
+    if (e?.status === 404) {
+      dispatch(actions.loadedSuitesTable([]));
+      if (e.message.includes('database not found')) {
+        console.warn(
+          'In order to use digital-cockpit, a database named `digital-cockpit` needs to be created in RAW'
+        );
+      }
+      if (e.message.includes('table not found')) {
+        console.warn(
+          'In order to use digital-cockpit, a table named `suites` needs to be created in the database `digital-cockpit` in RAW'
+        );
+      }
+      return;
+    }
     dispatch(actions.loadSuitesTableFailed());
     if (e?.code === 403 && metrics) {
       metrics.track('NotAuthorizedUser');

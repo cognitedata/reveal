@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Loader, Title, Button, Icon, Graphic } from '@cognite/cogs.js';
+import { Loader, Title, Button, Icon, Graphic, Body } from '@cognite/cogs.js';
 import Glider from 'react-glider';
 import Suitebar from 'components/suitebar/Suitebar';
 import { SmallTile, Tile } from 'components/tiles';
@@ -19,13 +19,17 @@ import {
 } from 'store/suites/selectors';
 import { modalOpen } from 'store/modals/actions';
 import { ModalType } from 'store/modals/types';
-import { getGroupsState, isAdmin } from 'store/groups/selectors';
+import {
+  getGroupsState,
+  isAdmin as isAdminSelector,
+} from 'store/groups/selectors';
 import { UserSpaceState } from 'store/userSpace/types';
 import { fetchUserSpace } from 'store/userSpace/thunks';
 import { getLastVisited, getUserSpace } from 'store/userSpace/selectors';
 import { ApiClientContext } from 'providers/ApiClientProvider';
 import 'glider-js/glider.min.css';
 import { useMetrics } from 'utils/metrics';
+import { ADMIN_GROUP_NAME } from 'constants/cdf';
 
 const Home = () => {
   const itemsToDisplay = 6;
@@ -34,9 +38,9 @@ const Home = () => {
   const { loading: suitesLoading, loaded: suitesLoaded, suites } = useSelector(
     getSuitesTableState
   );
-  const admin = useSelector(isAdmin);
+  const isAdmin = useSelector(isAdminSelector);
   const { filter: groupsFilter } = useSelector(getGroupsState);
-  const canEdit = admin && !groupsFilter?.length;
+  const canEdit = isAdmin && !groupsFilter?.length;
 
   const apiClient = useContext(ApiClientContext);
   const {
@@ -95,6 +99,22 @@ const Home = () => {
         <NoItemsContainer>
           <Graphic type="DataSets" />
           <Title level={5}>You don’t have any suites yet.</Title>
+          <Body>
+            {canEdit ? (
+              <Button
+                variant="outline"
+                type="secondary"
+                icon="Plus"
+                iconPlacement="left"
+                onClick={() => handleOpenModal('CreateSuite')}
+                style={{ marginTop: 8 }}
+              >
+                New suite
+              </Button>
+            ) : (
+              `You must have the user group ${ADMIN_GROUP_NAME} to setup this area`
+            )}
+          </Body>
         </NoItemsContainer>
       ) : (
         <OverviewContainer>
