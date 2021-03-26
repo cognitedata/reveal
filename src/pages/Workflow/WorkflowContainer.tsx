@@ -95,7 +95,7 @@ export default function WorkflowContainer(props: WorkflowContainerProps) {
         )}
       </MainContent>
 
-      <BottomNavContainer {...props} />
+      <BottomNavContainer />
     </VerticalContainer>
   );
 }
