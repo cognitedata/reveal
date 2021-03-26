@@ -141,9 +141,9 @@ export const SourceTable = styled.table`
 
   th {
     position: sticky;
-    top: 0px;
+    top: -1px;
     background-color: white;
-    z-index: ${Layers.MAXIMUM};
+    z-index: ${Layers.TABLE_HEADER};
     margin-bottom: -1px;
     box-shadow: inset 0 1px 0 var(--cogs-greyscale-grey2),
       inset 0 -2px 0 var(--cogs-greyscale-grey2);
@@ -159,7 +159,17 @@ export const TypeLabel = styled.td`
 `;
 export const SourceRow = styled.tr`
   background: ${(props: { isActive: boolean }) =>
-    props.isActive ? 'var(--cogs-greyscale-grey1)' : 'none'};
+    props.isActive ? 'var(--cogs-greyscale-grey3)' : 'none'};
+
+  &&:nth-child(even) {
+    background: #ffffff;
+  }
+  &&:nth-child(odd) {
+    background: var(--cogs-greyscale-grey1);
+  }
+  &&:hover {
+    background: var(--cogs-greyscale-grey3);
+  }
 `;
 
 export const SourceCircle = styled.span`
@@ -188,7 +198,7 @@ export const SourceItem = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  height: 50px;
+  height: 36px;
   text-overflow: ellipsis;
   cursor: pointer;
 

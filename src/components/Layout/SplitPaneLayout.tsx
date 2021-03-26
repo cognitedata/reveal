@@ -1,6 +1,8 @@
 import React from 'react';
 import styled from 'styled-components/macro';
 import SplitPane from 'react-split-pane';
+import Layers from 'utils/z-index';
+import handle from './dragHandle.svg';
 
 export const StyledSplitPane = styled(SplitPane)`
   .Pane {
@@ -20,11 +22,27 @@ export const StyledSplitPane = styled(SplitPane)`
     transition: all 0.35s ease;
   }
   .Resizer.horizontal {
+    position: relative;
     width: 100%;
     height: 4px;
-    background: linear-gradient(90deg, #ff6918 0%, #fc2574 99.6%);
+    border-bottom: 1px solid var(--cogs-greyscale-grey3);
     opacity: 1;
+    margin-bottom: 13px;
     cursor: row-resize;
+
+    &::before {
+      content: url(${handle});
+      position: absolute;
+      z-index: ${Layers.MAXIMUM};
+      top: -7px;
+      width: 36px;
+      height: 24px;
+      left: calc(50% - 10px);
+      background: white;
+      border: 1px solid var(--cogs-greyscale-grey3);
+      border-radius: 5px;
+      padding: 3px 9px;
+    }
   }
   .Resizer.disabled {
     cursor: not-allowed;

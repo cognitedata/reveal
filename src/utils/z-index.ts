@@ -2,6 +2,7 @@ import { createLayers } from '@cognite/z-index';
 
 const LAYERS = [
   'MAXIMUM',
+  'TABLE_HEADER',
 
   // Insert your other levels here, ordered how they should be ordered in the
   // z-order hierarchy.

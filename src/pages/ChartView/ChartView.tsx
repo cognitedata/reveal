@@ -344,7 +344,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
           )}
         </Header>
         <ChartContainer>
-          <SplitPaneLayout>
+          <SplitPaneLayout defaultSize={200}>
             <TopPaneWrapper className="chart">
               <ChartWrapper>
                 <PlotlyChartComponent
