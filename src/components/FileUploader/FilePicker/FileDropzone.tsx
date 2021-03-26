@@ -48,7 +48,7 @@ export function FileDropzone(props: FilesDropzoneProps) {
     <div
       ref={rootElRef}
       {...props}
-      title={fileDropzoneTitle}
+      // title={fileDropzoneTitle}
       onDragOver={enterDropZone}
       onDragLeave={leaveDropZone}
       onDrop={onDrop}

@@ -124,6 +124,8 @@ export const updateFileById = createAsyncThunk<
 
 type State = {
   uploadedFiles: Array<FileInfo>;
+  dataSetIds?: number[];
+  extractExif?: boolean;
 };
 
 // For debugging
@@ -136,6 +138,8 @@ type State = {
 // }, data);
 const initialState: State = {
   uploadedFiles: [],
+  dataSetIds: undefined,
+  extractExif: false,
   // eslint-disable-next-line global-require
   // uploadedFiles: data,
 };
@@ -151,6 +155,12 @@ const uploadedFilesSlice = createSlice({
     },
     addUploadedFile(state, action: PayloadAction<FileInfo>) {
       state.uploadedFiles = state.uploadedFiles.concat(action.payload);
+    },
+    setDataSetIds(state, action: PayloadAction<number[] | undefined>) {
+      state.dataSetIds = action.payload;
+    },
+    setExtractExif(state, action: PayloadAction<boolean>) {
+      state.extractExif = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -188,7 +198,12 @@ const uploadedFilesSlice = createSlice({
   },
 });
 
-export const { setUploadedFiles, addUploadedFile } = uploadedFilesSlice.actions;
+export const {
+  setUploadedFiles,
+  addUploadedFile,
+  setDataSetIds,
+  setExtractExif,
+} = uploadedFilesSlice.actions;
 
 export default uploadedFilesSlice.reducer;
 

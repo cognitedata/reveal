@@ -12,6 +12,9 @@ export function getHumanReadableFileSize(
   sizeInBytes: number,
   precision = 2
 ): string {
+  if (sizeInBytes === 0) {
+    return `0 B`;
+  }
   if (sizeInBytes < 1) {
     return `${sizeInBytes.toPrecision(precision)} B`;
   }

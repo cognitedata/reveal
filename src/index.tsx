@@ -22,6 +22,7 @@ import App from './App';
 const lifecycles = singleSpaReact({
   // @ts-ignore no idea what's the type issue here but can't care less
   React,
+  // @ts-ignore
   ReactDOM,
   rootComponent: App,
   // @ts-ignore

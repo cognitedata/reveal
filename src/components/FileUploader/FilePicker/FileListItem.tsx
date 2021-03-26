@@ -3,6 +3,7 @@ import { getHumanReadableFileSize } from 'src/components/FileUploader/utils/getH
 import styled from 'styled-components';
 import { Detail, Icon } from '@cognite/cogs.js';
 import React from 'react';
+import { Progress } from 'antd';
 
 type FileListItemProps = {
   file: CogsFileInfo;
@@ -20,11 +21,9 @@ export function FileListItem({ file, onRemove }: FileListItemProps) {
         <FileStatusColumn file={file} />
       </DetailStyled>
 
-      <IconRemove
-        type="XCompact"
-        style={{ visibility: file.status === 'done' ? 'hidden' : 'visible' }}
-        onClick={() => onRemove(file)}
-      />
+      {file.status !== 'done' && (
+        <IconRemove type="XCompact" onClick={() => onRemove(file)} />
+      )}
     </FileListItemContainer>
   );
 }
@@ -33,11 +32,26 @@ type FileStatusColumnProps = { file: CogsFileInfo };
 
 function FileStatusColumn({ file }: FileStatusColumnProps) {
   if (file.status === 'done') {
-    return <Icon type="Check" />;
+    return (
+      <>
+        {getHumanReadableFileSize(file.size, 0)}
+        <Icon
+          type="Check"
+          style={{ color: '#31C25A', marginLeft: '17.45px' }}
+        />
+      </>
+    );
   }
   if (file.status === 'uploading') {
-    // todo: fancy progress bar
-    return <>Uploading... {file.percent.toFixed(0)}%</>;
+    return (
+      <Progress
+        percent={file.percent}
+        size="small"
+        type="line"
+        strokeColor="#31C25A"
+        showInfo={false}
+      />
+    );
   }
   if (file.status === 'paused') {
     return <>Paused</>;

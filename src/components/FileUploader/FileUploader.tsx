@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, message } from 'antd';
 import UploadGCS from '@cognite/gcs-browser-upload';
-import { FileUploadResponse, FileInfo } from '@cognite/sdk';
-import { Button } from '@cognite/cogs.js';
+import { FileUploadResponse, FileInfo, FileGeoLocation } from '@cognite/sdk';
+import { Button, Icon, Title } from '@cognite/cogs.js';
 import { useSDK } from '@cognite/sdk-provider';
 import { getHumanReadableFileSize } from 'src/components/FileUploader/utils/getHumanReadableFileSize';
 import {
@@ -11,6 +11,8 @@ import {
 } from 'src/components/FileUploader/FilePicker/types';
 import FilePicker from 'src/components/FileUploader/FilePicker';
 import exifr from 'exifr';
+import { useSelector } from 'react-redux';
+import { RootState } from 'src/store/rootReducer';
 import { SpacedRow } from './SpacedRow';
 import { getMIMEType } from './utils/FileUtils';
 import { sleep } from './utils';
@@ -137,6 +139,10 @@ export const FileUploader = ({
   ...props
 }: FileUploaderProps) => {
   const sdk = useSDK();
+  const { dataSetIds } = useSelector((state: RootState) => state.uploadedFiles);
+  const { extractExif } = useSelector(
+    (state: RootState) => state.uploadedFiles
+  );
   const [fileList, setFileList] = useState<Array<CogsFileInfo | CogsFile>>(
     (initialUploadedFiles || []).map((file) => {
       const f: CogsFileInfo = {
@@ -213,11 +219,7 @@ export const FileUploader = ({
     );
   };
 
-  const uploadFile = async (file: CogsFile) => {
-    // eslint-disable-next-line no-param-reassign
-    file.status = 'uploading';
-    // since we patch files we trigger list updates to have things rendered with new info
-    setFileList((list) => [...list]);
+  const parseExif = async (file: File) => {
     const coordinates = await exifr.gps(file);
     const exifTags = await exifr.parse(file, [
       'ISO',
@@ -229,28 +231,57 @@ export const FileUploader = ({
       'FocalLength',
     ]);
 
+    const geoLocation =
+      coordinates &&
+      ({
+        type: 'Feature',
+        geometry: {
+          type: 'Point',
+          coordinates: [
+            Number(coordinates.longitude.toFixed(6)),
+            Number(coordinates.latitude.toFixed(6)),
+          ],
+        },
+      } as FileGeoLocation);
+
+    return { geoLocation, exifTags };
+  };
+
+  const uploadFile = async (file: CogsFile) => {
+    // eslint-disable-next-line no-param-reassign
+    file.status = 'uploading';
+
+    // since we patch files we trigger list updates to have things rendered with new info
+    setFileList((list) => [...list]);
+
     const mimeType = getMIMEType(file.name);
-    console.log(exifTags);
     try {
       const fileMetadata = (await sdk.files.upload({
         name: file.name,
         mimeType: mimeType || undefined,
         source: 'CDF Vision',
-        geoLocation: coordinates && {
-          type: 'Feature',
-          geometry: {
-            type: 'Point',
-            coordinates: [
-              Number(coordinates.longitude.toFixed(6)),
-              Number(coordinates.latitude.toFixed(6)),
-            ],
-          },
-        },
-        metadata: exifTags && exifTags,
+        dataSetId: dataSetIds ? dataSetIds[0] : undefined,
         // I can see directory in api docs, but looks like SDK misses it
         // https://docs.cognite.com/api/v1/#operation/initFileUpload
         ...(assetIds && { assetIds }),
       })) as FileUploadResponse;
+
+      // Add exif data async to the file if selected, after the file is uploaded
+      if (extractExif) {
+        parseExif(file).then((data) => {
+          if (data.exifTags || data.geoLocation) {
+            sdk.files.update([
+              {
+                id: fileMetadata.id,
+                update: {
+                  geoLocation: { set: data.geoLocation },
+                  metadata: { set: data.exifTags },
+                },
+              },
+            ]);
+          }
+        });
+      }
 
       if (!fileMetadata || !fileMetadata.uploadUrl || !fileMetadata.id) {
         onUploadFailure('Unable to create file');
@@ -343,45 +374,31 @@ export const FileUploader = ({
     });
   };
 
-  const pauseUpload = () => {
-    setFileList((list) =>
-      list.map((file) => {
-        if (file.status === 'uploading') {
-          if (currentUploads[file.uid]) {
-            currentUploads[file.uid].pause();
-          }
-          // eslint-disable-next-line no-param-reassign
-          file.status = 'paused';
-        }
-        return file;
-      })
-    );
+  const removeFiles = () => {
+    setFileList((list) => list.filter((el) => el.status === 'done'));
   };
 
   const removeFile = (file: CogsFileInfo) => {
     clearLocalUploadMetadata(file);
     setFileList((list) => list.filter((el) => el.uid !== file.uid));
   };
-
   return (
     <div>
       <FilePicker
         onRemove={removeFile}
         files={fileList}
+        optionDisabled={fileList.some(({ status }) => status === 'uploading')}
         onChange={(files) => {
           setFileList(files);
         }}
         onError={(err) => message.error(err.message)}
         fileListChildren={
-          fileList.length ? (
-            <UploadControlButtons
-              fileList={fileList}
-              onUploadPause={pauseUpload}
-              onUploadResume={startOrResumeAllUploads}
-              onUploadStart={startUpload}
-              onUploadStop={stopUpload}
-            />
-          ) : null
+          <UploadControlButtons
+            fileList={fileList}
+            onUploadStart={startUpload}
+            onUploadStop={stopUpload}
+            onRemoveFiles={removeFiles}
+          />
         }
         {...props}
       >
@@ -395,42 +412,45 @@ type UploadControlButtonsProps = {
   fileList: CogsFileInfo[];
   onUploadStart: () => unknown;
   onUploadStop: () => unknown;
-  onUploadPause: () => unknown;
-  onUploadResume: () => unknown;
+  onRemoveFiles: () => unknown;
 };
 
 enum STATUS {
   NO_FILES,
   READY_TO_START,
   STARTED,
-  PAUSED,
+  DONE,
 }
 
 function UploadControlButtons({
   fileList,
   onUploadStart,
   onUploadStop,
-  onUploadPause,
-  onUploadResume,
+  onRemoveFiles,
 }: UploadControlButtonsProps) {
   let uploaderButton;
   let uploadStatus = STATUS.NO_FILES;
-
   if (fileList.find(({ status }) => status === 'uploading')) {
     uploadStatus = STATUS.STARTED;
-  } else if (fileList.find(({ status }) => status === 'paused')) {
-    uploadStatus = STATUS.PAUSED;
   } else if (fileList.find(({ status }) => status === 'idle')) {
     uploadStatus = STATUS.READY_TO_START;
+  } else if (
+    fileList.length &&
+    fileList.every(({ status }) => status === 'done')
+  ) {
+    uploadStatus = STATUS.DONE;
   }
 
   switch (uploadStatus) {
     case STATUS.NO_FILES:
       uploaderButton = (
         <>
-          <div style={{ flex: 1 }} />
           <Button type="primary" icon="Upload" disabled>
-            Upload
+            Upload files
+          </Button>
+          <div style={{ flex: 1 }} />
+          <Button type="ghost-danger" disabled>
+            Remove all
           </Button>
         </>
       );
@@ -438,9 +458,12 @@ function UploadControlButtons({
     case STATUS.READY_TO_START:
       uploaderButton = (
         <>
-          <div style={{ flex: 1 }} />
           <Button type="primary" onClick={onUploadStart} icon="Upload">
-            Upload
+            Upload files
+          </Button>
+          <div style={{ flex: 1 }} />
+          <Button type="ghost-danger" onClick={onRemoveFiles}>
+            Remove all
           </Button>
         </>
       );
@@ -448,22 +471,29 @@ function UploadControlButtons({
     case STATUS.STARTED:
       uploaderButton = (
         <>
-          <Button onClick={onUploadStop}>Cancel Upload</Button>
+          <Button type="primary" loading icon="Loading">
+            Uploading files
+          </Button>
           <div style={{ flex: 1 }} />
-          <Button type="primary" onClick={onUploadPause} icon="Loading">
-            Pause Upload
+          <Button type="danger" onClick={onUploadStop} icon="XLarge">
+            Cancel Upload
           </Button>
         </>
       );
       break;
-    case STATUS.PAUSED:
+    case STATUS.DONE:
       uploaderButton = (
         <>
-          <Button onClick={onUploadStop}>Cancel Upload</Button>
-          <div style={{ flex: 1 }} />
-          <Button type="primary" onClick={onUploadResume}>
-            Continue Upload
-          </Button>
+          <Title level={5} style={{ color: '#31C25A' }}>
+            <Icon
+              type="Checkmark"
+              style={{ marginRight: '8.7px' }}
+              onMouseOver={() => {
+                console.log('Mouse');
+              }}
+            />
+            Files uploaded
+          </Title>
         </>
       );
       break;

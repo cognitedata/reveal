@@ -4,9 +4,9 @@ import { Button, Title } from '@cognite/cogs.js';
 import { margin } from 'src/cogs-variables';
 import { FilePickerHeadless } from './FilePickerHeadless';
 import { FileDropzone } from './FileDropzone';
+import { FileUploadOption } from './FileUploadOption';
 import { CogsFile, CogsFileInfo } from './types';
 import { FileList } from './FileList';
-
 import DocumentsImg from './img/Documents.svg';
 
 export interface FilePickerProps {
@@ -17,6 +17,7 @@ export interface FilePickerProps {
   onError?: (error: Error) => unknown;
   children: React.ReactNode;
   fileListChildren?: React.ReactNode;
+  optionDisabled?: boolean;
 }
 
 // that component gives you the default UI version of FilePicker,
@@ -29,6 +30,7 @@ export function FilePicker({
   onRemove,
   children,
   fileListChildren,
+  optionDisabled,
 }: FilePickerProps) {
   return (
     <div>
@@ -37,14 +39,13 @@ export function FilePicker({
           <FileDropzoneStyled>
             <FilePickerContainer>
               <div>
+                <FileUploadOption isDisabled={optionDisabled || false} />
                 <Title level={5} style={{ margin: `${margin.default} 0` }}>
                   Drag and drop files:
                 </Title>
-
                 <div className="dropzone-cta">{children}</div>
 
                 <FilePickerButtonsContainer>
-                  <Title level={6}>Or manually select from your device:</Title>
                   <Button
                     style={{ marginRight: 16 }}
                     icon="FolderStroke"
@@ -77,16 +78,13 @@ export function FilePicker({
 const FilePickerContainer = styled.div`
   display: grid;
   column-gap: 80px;
-  grid-template-columns: repeat(auto-fill, 626px);
+  grid-template-columns: repeat(auto-fill, 649px);
+  align-items: flex-end;
 `;
 
 const FilePickerButtonsContainer = styled.div`
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  > * {
-    flex-grow: 1;
-  }
 `;
 
 const FileDropzoneStyled = styled(FileDropzone)`

@@ -1,16 +1,8 @@
 import React, { useEffect } from 'react';
 import { LazyWrapper } from 'src/components/LazyWrapper';
-import {
-  Route,
-  RouteComponentProps,
-  Switch,
-  useHistory,
-  Link,
-} from 'react-router-dom';
+import { Route, RouteComponentProps, Switch, Link } from 'react-router-dom';
 import { Steps as AntdSteps } from 'antd';
-import { PrevNextNav } from 'src/pages/Workflow/components/PrevNextNav';
 import styled from 'styled-components';
-import { ProcessStepActionButtons } from 'src/pages/Workflow/process/ProcessStepActionButtons';
 import {
   getLink,
   workflowRoutes,
@@ -22,6 +14,7 @@ import { RootState } from 'src/store/rootReducer';
 import { FileMetadataPreview } from 'src/pages/Workflow/process/FileMetadataPreview';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { toggleFileMetadataPreview } from 'src/store/processSlice';
+import BottomNavContainer from './BottomNavContainer';
 
 const { Step } = AntdSteps;
 
@@ -41,7 +34,6 @@ function getStepNumberByStepName(stepName: WorkflowStepKey) {
 type WorkflowContainerProps = RouteComponentProps<{ step: WorkflowStepKey }>;
 
 export default function WorkflowContainer(props: WorkflowContainerProps) {
-  const history = useHistory();
   const dispatch = useDispatch();
 
   const showDrawer = useSelector(
@@ -103,36 +95,7 @@ export default function WorkflowContainer(props: WorkflowContainerProps) {
         )}
       </MainContent>
 
-      <BottomNavContainer className="z-4">
-        <Switch>
-          <Route
-            key="upload-step"
-            path={workflowRoutes.upload}
-            exact
-            component={() => (
-              <PrevNextNav
-                prevBtnProps={{
-                  onClick() {
-                    history.goBack();
-                  },
-                }}
-                nextBtnProps={{
-                  onClick() {
-                    history.push(getLink(workflowRoutes.process));
-                  },
-                }}
-              />
-            )}
-          />
-
-          <Route
-            key="process-step"
-            path={workflowRoutes.process}
-            exact
-            component={ProcessStepActionButtons}
-          />
-        </Switch>
-      </BottomNavContainer>
+      <BottomNavContainer />
     </VerticalContainer>
   );
 }
@@ -141,10 +104,6 @@ const MainContent = styled.div`
   flex: 1;
   display: flex;
   overflow: auto;
-`;
-
-const BottomNavContainer = styled.div`
-  width: 100vw;
 `;
 
 const StepContainer = styled.div`
