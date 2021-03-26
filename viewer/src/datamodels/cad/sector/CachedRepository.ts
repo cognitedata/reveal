@@ -246,9 +246,14 @@ export class CachedRepository implements Repository {
     };
   }
 
-  private nameGroup(wantedSector: WantedSector): OperatorFunction<Group, Group> {
+  private nameGroup(
+    wantedSector: WantedSector
+  ): OperatorFunction<
+    { sectorMeshes: THREE.Group; instancedMeshes: InstancedMeshFile[] },
+    { sectorMeshes: THREE.Group; instancedMeshes: InstancedMeshFile[] }
+  > {
     return tap(group => {
-      group.name = `Quads ${wantedSector.metadata.id}`;
+      group.sectorMeshes.name = `Quads ${wantedSector.metadata.id}`;
     });
   }
 
@@ -263,7 +268,7 @@ export class CachedRepository implements Repository {
         map(sectorQuads => ({ ...wantedSector, data: sectorQuads })),
         this._modelDataTransformer.transform(),
         this.nameGroup(wantedSector),
-        map(group => ({ ...wantedSector, group })),
+        map(group => ({ ...wantedSector, group: group.sectorMeshes, instancedMeshes: group.instancedMeshes })),
         shareReplay(1),
         take(1)
       )
@@ -301,7 +306,7 @@ export class CachedRepository implements Repository {
               return { ...wantedSector, data };
             }),
             this._modelDataTransformer.transform(),
-            map(group => ({ ...wantedSector, group })),
+            map(group => ({ ...wantedSector, group: group.sectorMeshes, instancedMeshes: group.instancedMeshes })),
             shareReplay(1),
             take(1)
           );
@@ -435,7 +440,6 @@ export class CachedRepository implements Repository {
           fileId,
           indices,
           vertices,
-          normals,
           instances: instancedMeshes
         };
         finalMeshes.push(mesh);

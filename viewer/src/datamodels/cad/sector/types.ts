@@ -31,6 +31,7 @@ export interface ConsumedSector {
   metadata: SectorMetadata;
   levelOfDetail: LevelOfDetail;
   group: THREE.Group | undefined;
+  instancedMeshes: InstancedMeshFile[] | undefined;
 }
 
 export interface ParsedSector {
