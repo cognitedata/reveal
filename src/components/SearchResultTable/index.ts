@@ -1,2 +1,2 @@
-export * from './SearchResultTable';
+export * from './SearchResultList';
 export * from './PnidButton';

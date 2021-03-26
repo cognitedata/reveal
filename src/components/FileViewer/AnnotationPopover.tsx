@@ -5,7 +5,7 @@ import { Body, Checkbox, Icon, Menu, Overline, Title } from '@cognite/cogs.js';
 import { useAsset, useAssetTimeseries } from 'hooks/api';
 import styled from 'styled-components/macro';
 import { TimeseriesChart } from '@cognite/data-exploration';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { useParams } from 'react-router-dom';
 import { useChart, useUpdateChart } from 'hooks/firebase';
 import { Timeseries } from '@cognite/sdk';
@@ -66,12 +66,12 @@ export const TimeseriesList = ({ assetId }: { assetId: number }) => {
 
   const { data: timeseries = [], isLoading } = useAssetTimeseries(assetId);
 
-  const sparklineStartDate = moment()
+  const sparklineStartDate = dayjs()
     .subtract(1, 'years')
     .startOf('day')
     .toDate();
 
-  const sparklineEndDate = moment().endOf('day').toDate();
+  const sparklineEndDate = dayjs().endOf('day').toDate();
 
   const handleTimeSeriesClick = async (timeSeries: Timeseries) => {
     if (chart) {
