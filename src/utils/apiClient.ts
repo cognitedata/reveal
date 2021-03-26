@@ -29,8 +29,8 @@ export class ApiClient {
     return this.makeGETRequest('/suites');
   }
 
-  getUserGroups(): Promise<Group[]> {
-    return this.makeGETRequest('/groups');
+  getUserGroups(linkedOnly: boolean = true): Promise<Group[]> {
+    return this.makeGETRequest(`/groups?linkedOnly=${linkedOnly}`);
   }
 
   getUserSpace(): Promise<UserSpacePayload> {

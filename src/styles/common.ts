@@ -48,6 +48,10 @@ export const NoItemsContainer = styled.div`
   align-items: center;
   justify-content: center;
   text-align: center;
+  margin-top: 62px;
+  .cogs-graphic {
+    margin-bottom: 16px;
+  }
 `;
 
 export const EllipsisText = styled.span`
