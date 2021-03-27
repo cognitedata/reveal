@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Router } from 'react-router-dom';
 import { createApiClient, createClient } from 'utils';
 import { TenantProvider } from 'providers/TenantProvider';
@@ -8,6 +8,7 @@ import GlobalStyles from 'global-styles';
 import { Provider as ReduxProvider } from 'react-redux';
 import store from 'store';
 import { History } from 'history';
+import { AuthProvider } from '@cognite/react-container';
 
 type Props = {
   children?: React.ReactNode;
@@ -15,24 +16,33 @@ type Props = {
   history: History;
 };
 
-const cdfClient = createClient();
-const apiClient = createApiClient();
-
 const AppProviders: React.FC<Props> = ({
   children,
   tenant,
   history,
-}: Props): JSX.Element => (
-  <ReduxProvider store={store}>
-    <CdfClientProvider client={cdfClient}>
-      <ApiClientProvider apiClient={apiClient}>
-        <TenantProvider tenant={tenant}>
-          <GlobalStyles />
-          <Router history={history}>{children}</Router>
-        </TenantProvider>
-      </ApiClientProvider>
-    </CdfClientProvider>
-  </ReduxProvider>
-);
+}: Props): JSX.Element => {
+  const { client } = useContext(AuthProvider);
+  const cdfClient = createClient(
+    {
+      appId: 'digital-cockpit',
+      dbName: 'digital-cockpit',
+      dataSetName: 'digital-cockpit',
+    },
+    client
+  );
+  const apiClient = createApiClient(undefined, client);
+  return (
+    <ReduxProvider store={store}>
+      <CdfClientProvider client={cdfClient}>
+        <ApiClientProvider apiClient={apiClient}>
+          <TenantProvider tenant={tenant}>
+            <GlobalStyles />
+            <Router history={history}>{children}</Router>
+          </TenantProvider>
+        </ApiClientProvider>
+      </CdfClientProvider>
+    </ReduxProvider>
+  );
+};
 
 export default AppProviders;

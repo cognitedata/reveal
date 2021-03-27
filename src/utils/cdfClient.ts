@@ -20,8 +20,8 @@ export class CdfClient {
   readonly dbName: string;
   readonly dataSetName: string;
 
-  constructor(options: CdfClientOptions) {
-    this.cogniteClient = new CogniteClient(options);
+  constructor(options: CdfClientOptions, client?: CogniteClient) {
+    this.cogniteClient = client || new CogniteClient(options);
     this.dbName = options.dbName;
     this.dataSetName = options.dataSetName;
   }
@@ -70,6 +70,9 @@ const DEFAULT_CONFIG: CdfClientOptions = {
   dataSetName: 'digital-cockpit',
 };
 
-export function createClient(options: CdfClientOptions = DEFAULT_CONFIG) {
-  return new CdfClient(options);
+export function createClient(
+  options: CdfClientOptions = DEFAULT_CONFIG,
+  client?: CogniteClient
+) {
+  return new CdfClient(options, client);
 }

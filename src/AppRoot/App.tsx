@@ -1,11 +1,11 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { usePossibleTenant } from 'hooks';
-import { validateTenant } from 'utils/tenant';
 import {
   createBrowserHistory as createNewBrowserHistory,
   History,
 } from 'history';
-import { Body } from '@cognite/cogs.js';
+import { Container } from '@cognite/react-container';
+import sidecar from 'utils/sidecar';
 import Authentication from './Authentication';
 import AppProviders from './AppProviders';
 import ErrorBoundary from './ErrorBoundary';
@@ -15,28 +15,14 @@ const AppRoot = (): JSX.Element => {
 
   const history = useMemo(() => createBrowserHistory(tenant), [tenant]);
 
-  const [tenantOk, setTenantOk] = useState(false);
-
-  useEffect(() => {
-    validateTenant(tenant).then((valid) => {
-      if (valid) {
-        setTenantOk(valid);
-      } else if (tenant) {
-        window.location.pathname = '/';
-      }
-    });
-  }, [tenant]);
-
-  if (!tenantOk || !tenant) {
-    return <Body>Missing tenant name</Body>;
-  }
-
   return (
-    <AppProviders history={history} tenant={tenant}>
-      <ErrorBoundary>
-        <Authentication />
-      </ErrorBoundary>
-    </AppProviders>
+    <Container sidecar={sidecar}>
+      <AppProviders history={history} tenant={tenant}>
+        <ErrorBoundary>
+          <Authentication />
+        </ErrorBoundary>
+      </AppProviders>
+    </Container>
   );
 };
 

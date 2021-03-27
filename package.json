@@ -24,6 +24,7 @@
   "dependencies": {
     "@cognite/gcs-browser-upload": "^1.1.0",
     "@cognite/metrics": "^0.1.2",
+    "@cognite/react-container": "^0.9.1",
     "@cognite/sdk": "^4.0.0",
     "@cognite/z-index": "^0.1.0",
     "@sentry/browser": "^6.2.3",

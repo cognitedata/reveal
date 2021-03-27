@@ -2,11 +2,9 @@ import React, { useContext, useEffect, useState } from 'react';
 import { TenantContext } from 'providers/TenantProvider';
 import { CdfClientContext } from 'providers/CdfClientProvider';
 import { useDispatch, useSelector } from 'react-redux';
-import { authenticate } from 'store/auth/thunks';
 import { fetchSuites } from 'store/suites/thunks';
 import { fetchUserGroups } from 'store/groups/thunks';
 import { RootDispatcher } from 'store/types';
-import { getAuthState } from 'store/auth/selectors';
 import { getGroupsState } from 'store/groups/selectors';
 import { Loader } from '@cognite/cogs.js';
 import { getSuitesTableState } from 'store/suites/selectors';
@@ -15,14 +13,15 @@ import ErrorPage from 'pages/ErrorPage';
 import { getMetrics } from 'utils/metrics';
 import { Metrics as CogniteMetrics } from '@cognite/metrics';
 import { getDataSet } from 'store/config/thunks';
+import { AuthProvider } from '@cognite/react-container';
 import Routes from './Routes';
 
 const Authentication = (): JSX.Element => {
   const tenant = useContext(TenantContext);
   const client = useContext(CdfClientContext);
+  const { authState } = useContext(AuthProvider);
   const apiClient = useContext(ApiClientContext);
   const dispatch = useDispatch<RootDispatcher>();
-  const { authenticating, authenticated, userId } = useSelector(getAuthState);
   const {
     loading: suitesLoading,
     loaded: suitesLoaded,
@@ -35,36 +34,16 @@ const Authentication = (): JSX.Element => {
     isAdmin,
   } = useSelector(getGroupsState);
 
-  const [authenticateDispatched, setAuthenticateDispatched] = useState(false);
   const [fetchDispatched, setFetchDispatched] = useState(false);
   const [retrieveDataSetDispatched, setRetrieveDataSetDispatched] = useState(
     false
   );
 
-  const loading = authenticating || suitesLoading || groupsLoading;
+  const loading = suitesLoading || groupsLoading;
   const dataLoaded = suitesLoaded && groupsLoaded;
   const hasError = suitesLoadError || groupsLoadError;
 
   const Metrics = getMetrics();
-
-  // authentication
-  useEffect(() => {
-    const auth = async () => {
-      await dispatch(authenticate(tenant, client, apiClient));
-      setAuthenticateDispatched(true);
-    };
-    if (!authenticateDispatched && !authenticating && !authenticated) {
-      auth();
-    }
-  }, [
-    client,
-    apiClient,
-    tenant,
-    authenticateDispatched,
-    dispatch,
-    authenticating,
-    authenticated,
-  ]);
 
   // fetch suites & groups
   useEffect(() => {
@@ -75,24 +54,28 @@ const Authentication = (): JSX.Element => {
         fetchSuites(apiClient, Metrics.create('Auth') as CogniteMetrics)
       );
     };
-    if (authenticated && !fetchDispatched && !loading && !hasError) {
-      Metrics.identify(userId);
+    if (
+      authState?.authenticated &&
+      !fetchDispatched &&
+      !loading &&
+      !hasError &&
+      authState.email
+    ) {
+      Metrics.identify(authState.email);
       Metrics.people({
-        name: userId,
-        $email: userId,
+        name: authState.email,
+        $email: authState.email,
       });
       Metrics.props({ tenant });
       fetch();
     }
   }, [
-    client,
     apiClient,
     dispatch,
-    authenticated,
+    authState,
     loading,
     hasError,
     fetchDispatched,
-    userId,
     tenant,
     Metrics,
   ]);
@@ -109,7 +92,9 @@ const Authentication = (): JSX.Element => {
     return <ErrorPage />;
   }
 
-  return <>{authenticated && dataLoaded ? <Routes /> : <Loader />}</>;
+  return (
+    <>{authState?.authenticated && dataLoaded ? <Routes /> : <Loader />}</>
+  );
 };
 
 export default Authentication;
