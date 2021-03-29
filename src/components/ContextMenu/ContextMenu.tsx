@@ -21,11 +21,24 @@ type ContextMenuProps = {
   visible?: boolean;
 };
 
-type Statistics = {
+type StatisticsResult = {
+  statistics: StatisticsData[];
+};
+
+type StatisticsData = {
   min: number;
   max: number;
   average: number;
   mean: number;
+  kurtosis: number;
+  median: number;
+  q25: number;
+  q50: number;
+  q75: number;
+  raw: boolean;
+  skewness: number;
+  std: number;
+  tag: string;
 };
 
 const menuOptions = [
@@ -190,8 +203,8 @@ const Statistics = ({
                     : 'does-not-exist',
               },
             ],
-            start_time: chart.dateFrom,
-            end_time: chart.dateTo,
+            start_time: new Date(chart.dateFrom).getTime(),
+            end_time: new Date(chart.dateTo).getTime(),
             granularity: calculateGranularity(
               [
                 new Date(chart.dateFrom).getTime(),
@@ -240,22 +253,34 @@ const Statistics = ({
     enabled: !!statisticsCall,
   });
 
-  const statistics = (data as any) as Statistics | undefined;
+  const { results } = (data as any) || {};
+  const { statistics = [] } = (results as StatisticsResult) || {};
+  const statisticsForSource = statistics[0];
 
   return (
     <Container>
-      <h3>Type:</h3>
-      <p>{sourceItem?.type}</p>
       <h3>Name:</h3>
       <p>{sourceItem?.name}</p>
-      <h3>Average:</h3>
-      <p>{statistics ? statistics.average : '-'}</p>
       <h3>Min:</h3>
-      <p>{statistics ? statistics.min : '-'}</p>
+      <p>{statisticsForSource ? statisticsForSource.min : '-'}</p>
       <h3>Max:</h3>
-      <p>{statistics ? statistics.max : '-'}</p>
+      <p>{statisticsForSource ? statisticsForSource.max : '-'}</p>
       <h3>Mean:</h3>
-      <p>{statistics ? statistics.mean : '-'}</p>
+      <p>{statisticsForSource ? statisticsForSource.mean : '-'}</p>
+      <h3>Median:</h3>
+      <p>{statisticsForSource ? statisticsForSource.median : '-'}</p>
+      <h3>Standard Deviation:</h3>
+      <p>{statisticsForSource ? statisticsForSource.std : '-'}</p>
+      <h3>25th Percentile:</h3>
+      <p>{statisticsForSource ? statisticsForSource.q25 : '-'}</p>
+      <h3>50th Percentile:</h3>
+      <p>{statisticsForSource ? statisticsForSource.q50 : '-'}</p>
+      <h3>75th Percentile:</h3>
+      <p>{statisticsForSource ? statisticsForSource.q75 : '-'}</p>
+      <h3>Skewness:</h3>
+      <p>{statisticsForSource ? statisticsForSource.q25 : '-'}</p>
+      <h3>Kurtosis:</h3>
+      <p>{statisticsForSource ? statisticsForSource.kurtosis : '-'}</p>
       {statisticsCall && (
         <FunctionCall
           id={statisticsCall.functionId}
