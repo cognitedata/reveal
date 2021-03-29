@@ -9,7 +9,7 @@ type WebGLRendererState = {
   clearAlpha?: number;
   size?: THREE.Vector2;
   localClippingEnabled?: boolean;
-  renderTarget?: THREE.WebGLRenderTarget;
+  renderTarget?: THREE.WebGLRenderTarget | null;
 };
 
 export class WebGLRendererStateHelper {
@@ -46,7 +46,7 @@ export class WebGLRendererStateHelper {
     this._renderer.autoClear = enabled;
   }
 
-  setRenderTarget(renderTarget: THREE.WebGLRenderTarget) {
+  setRenderTarget(renderTarget: THREE.WebGLRenderTarget | null) {
     this._originalState = { renderTarget, ...this._originalState };
     this._renderer.setRenderTarget(renderTarget);
   }
