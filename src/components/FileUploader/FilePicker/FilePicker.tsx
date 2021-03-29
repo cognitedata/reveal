@@ -49,14 +49,14 @@ export function FilePicker({
                   <Button
                     style={{ marginRight: 16 }}
                     icon="FolderStroke"
-                    variant="outline"
+                    type="tertiary"
                     onClick={openSelectDirectoryDialogue}
                   >
                     Add folder
                   </Button>
                   <Button
                     icon="Image"
-                    variant="outline"
+                    type="tertiary"
                     onClick={openSelectFileDialogue}
                   >
                     Add files

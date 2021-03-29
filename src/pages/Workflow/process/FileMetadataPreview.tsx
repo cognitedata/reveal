@@ -10,12 +10,12 @@ import {
   metadataEditMode,
   selectUpdatedFileDetails,
   selectUpdatedFileMeta,
-} from 'src/store/previewSlice';
+} from 'src/store/uploadedFilesSlice';
 import isEqual from 'lodash-es/isEqual';
 import { VisionFileDetails } from 'src/components/FileMetadata/Types';
-import { updateFileById } from 'src/store/uploadedFilesSlice';
 import styled from 'styled-components';
 import { toggleFileMetadataPreview } from 'src/store/processSlice';
+import { updateFileInfoField } from 'src/store/thunks/updateFileInfoField';
 
 export const FileMetadataPreview = () => {
   const dispatch = useDispatch();
@@ -28,8 +28,8 @@ export const FileMetadataPreview = () => {
     selectUpdatedFileDetails(state, String(fileId))
   );
 
-  const tableEditMode = useSelector(({ previewSlice }: RootState) =>
-    metadataEditMode(previewSlice)
+  const tableEditMode = useSelector(({ uploadedFiles }: RootState) =>
+    metadataEditMode(uploadedFiles)
   );
 
   const fileMetadata = useSelector((state: RootState) =>
@@ -45,13 +45,16 @@ export const FileMetadataPreview = () => {
   };
 
   const onFieldChange = (key: string, value: any) => {
-    if (!isEqual(fileDetails[key as keyof VisionFileDetails], value)) {
+    if (
+      fileDetails &&
+      !isEqual(fileDetails[key as keyof VisionFileDetails], value)
+    ) {
       dispatch(fileInfoEdit({ key, value }));
     }
   };
 
   const updateFileInfo = (key: string) => {
-    dispatch(updateFileById({ fileId, key }));
+    dispatch(updateFileInfoField({ fileId, key }));
   };
 
   const onEditModeChange = (mode: boolean) => {
@@ -65,9 +68,9 @@ export const FileMetadataPreview = () => {
       <CloseButtonRow>
         <CloseButton
           icon="Close"
-          variant="ghost"
-          type="secondary"
+          type="ghost"
           onClick={onClose}
+          aria-label="close button"
         />
       </CloseButtonRow>
       <Content>
@@ -87,11 +90,13 @@ export const FileMetadataPreview = () => {
             editMode={tableEditMode}
             data={fileMetadata}
           />
-          <FileMetadataFieldsContainer
-            info={fileDetails}
-            onFieldChange={onFieldChange}
-            updateInfo={updateFileInfo}
-          />
+          {fileDetails && (
+            <FileMetadataFieldsContainer
+              info={fileDetails}
+              onFieldChange={onFieldChange}
+              updateInfo={updateFileInfo}
+            />
+          )}
         </DetailsContainer>
       </Content>
     </Container>

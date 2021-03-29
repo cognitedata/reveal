@@ -9,7 +9,7 @@ import ReactBaseTable, {
   ColumnShape,
 } from 'react-base-table';
 import store from 'src/store';
-import { fileMetaDataEdit } from 'src/store/previewSlice';
+import { fileMetaDataEdit } from 'src/store/uploadedFilesSlice';
 import { MetadataItem } from 'src/components/FileMetadata/Types';
 
 const Container = styled.div`

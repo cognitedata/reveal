@@ -1,13 +1,12 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { VideoPreview } from 'src/pages/Preview/components/VideoPreview/VideoPreview';
 import { DataExplorationProvider, Tabs } from '@cognite/data-exploration';
 import { Contextualization } from 'src/pages/Preview/components/Contextualization/Contextualization';
 import { FileDetailEdit } from 'src/pages/Preview/components/FileDetails/FileDetailEdit';
 import { RouteComponentProps, useHistory } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { resetEditHistory } from 'src/store/previewSlice';
 import { getLink, workflowRoutes } from 'src/pages/Workflow/workflowRoutes';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { v3Client as sdk } from '@cognite/cdf-sdk-singleton';
@@ -44,7 +43,6 @@ const queryClient = new QueryClient();
 
 const AnnotationsEdit = (props: RouteComponentProps<{ fileId: string }>) => {
   const history = useHistory();
-  const dispatch = useDispatch();
   const { fileId } = props.match.params;
 
   const file = useSelector(({ uploadedFiles }: RootState) =>
@@ -56,10 +54,6 @@ const AnnotationsEdit = (props: RouteComponentProps<{ fileId: string }>) => {
     history.push(getLink(workflowRoutes.upload));
     return null;
   }
-
-  useEffect(() => {
-    dispatch(resetEditHistory());
-  }, []);
 
   return (
     <>

@@ -1,12 +1,16 @@
 import React, { useMemo } from 'react';
 import {
   CogniteFileViewer,
+  ProposedCogniteAnnotation,
   ViewerEditCallbacks,
 } from '@cognite/react-picture-annotation';
 import { FileInfo, v3Client as sdk } from '@cognite/cdf-sdk-singleton';
 import { Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { VisionAnnotationState } from 'src/store/previewSlice';
+import {
+  VisibleAnnotations,
+  VisionAnnotationState,
+} from 'src/store/previewSlice';
 import { AnnotationStyle, AnnotationUtils } from 'src/utils/AnnotationUtils';
 
 const LoaderContainer = styled.div`
@@ -19,16 +23,16 @@ const LoaderContainer = styled.div`
 
 type FilePreviewProps = {
   fileObj: FileInfo;
-  annotations: VisionAnnotationState[];
+  annotations: VisibleAnnotations[];
   editable: boolean;
   creatable: boolean;
   onCreateAnnotation: (annotation: any) => void;
   onUpdateAnnotation: (annotation: any) => void;
 };
 
-export interface StyledVisionAnnotation extends VisionAnnotationState {
+export type StyledVisionAnnotation = Required<VisionAnnotationState> & {
   mark: AnnotationStyle;
-}
+};
 
 const LoaderView = () => {
   return (
@@ -60,7 +64,7 @@ export const ImagePreview: React.FC<FilePreviewProps> = ({
     [onCreateAnnotation, onUpdateAnnotation]
   );
 
-  const styledAnnotations: StyledVisionAnnotation[] = annotations.map(
+  const styledAnnotations: ProposedCogniteAnnotation[] = annotations.map(
     (item) => ({
       ...item,
       mark: AnnotationUtils.getAnnotationStyle(item.color, item.status),

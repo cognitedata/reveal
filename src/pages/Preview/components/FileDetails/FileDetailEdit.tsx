@@ -9,13 +9,13 @@ import {
   metadataEditMode,
   selectUpdatedFileDetails,
   selectUpdatedFileMeta,
-} from 'src/store/previewSlice';
-import { updateFileById } from 'src/store/uploadedFilesSlice';
+} from 'src/store/uploadedFilesSlice';
 import isEqual from 'lodash-es/isEqual';
 import { FileMetadataFieldsContainer } from 'src/components/FileMetadata/FileMetadataFieldsContainer';
 import { MetadataTableToolBar } from 'src/components/FileMetadata/MetadataTableToolBar';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import { VisionFileDetailKey } from 'src/components/FileMetadata/Types';
+import { updateFileInfoField } from 'src/store/thunks/updateFileInfoField';
 
 const Container = styled.div`
   width: 100%;
@@ -49,8 +49,8 @@ export const FileDetailEdit: React.FC<FileDetailCompProps> = ({
     selectUpdatedFileDetails(state, String(fileObj.id))
   );
 
-  const tableEditMode = useSelector(({ previewSlice }: RootState) =>
-    metadataEditMode(previewSlice)
+  const tableEditMode = useSelector(({ uploadedFiles }: RootState) =>
+    metadataEditMode(uploadedFiles)
   );
 
   const fileMetadata = useSelector((state: RootState) =>
@@ -58,13 +58,15 @@ export const FileDetailEdit: React.FC<FileDetailCompProps> = ({
   );
 
   const onFieldChange = (key: VisionFileDetailKey, value: any) => {
-    if (!isEqual(fileDetails[key], value)) {
-      dispatch(fileInfoEdit({ key, value }));
+    if (fileDetails) {
+      if (!isEqual(fileDetails[key], value)) {
+        dispatch(fileInfoEdit({ key, value }));
+      }
     }
   };
 
   const updateFileInfo = (key: string) => {
-    dispatch(updateFileById({ fileId: fileObj.id, key }));
+    dispatch(updateFileInfoField({ fileId: fileObj.id, key }));
   };
 
   const onEditModeChange = (mode: boolean) => {
@@ -89,11 +91,13 @@ export const FileDetailEdit: React.FC<FileDetailCompProps> = ({
         <Title level={3}>File Details</Title>
       </TitleRow>
       <DetailsContainer ref={detailContainer}>
-        <FileMetadataFieldsContainer
-          info={fileDetails}
-          onFieldChange={onFieldChange}
-          updateInfo={updateFileInfo}
-        />
+        {fileDetails && (
+          <FileMetadataFieldsContainer
+            info={fileDetails}
+            onFieldChange={onFieldChange}
+            updateInfo={updateFileInfo}
+          />
+        )}
         <MetadataTableToolBar
           editMode={tableEditMode}
           metadata={fileMetadata}

@@ -1,132 +1,51 @@
-import {
-  createAsyncThunk,
-  createSelector,
-  createSlice,
-  PayloadAction,
-} from '@reduxjs/toolkit';
-import {
-  FileInfo,
-  InternalId,
-  Label,
-  Metadata,
-  v3Client as sdk,
-} from '@cognite/cdf-sdk-singleton';
-import { ThunkConfig } from 'src/store/common';
+import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { Asset, FileInfo, Label, Metadata } from '@cognite/cdf-sdk-singleton';
 import { ToastUtils } from 'src/utils/ToastUtils';
-import isEqual from 'lodash-es/isEqual';
+import { ReactText } from 'react';
+import { RootState } from 'src/store/rootReducer';
+import { createFileInfo, createFileState } from 'src/store/util/StateUtils';
+import { UpdateFiles } from 'src/store/thunks/UpdateFiles';
+import {
+  MetadataItem,
+  VisionFileDetails,
+} from 'src/components/FileMetadata/Types';
+import { updateFileInfoField } from 'src/store/thunks/updateFileInfoField';
+import { generateKeyValueArray } from 'src/utils/FormatUtils';
+import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
 
-export const deleteFilesById = createAsyncThunk<
-  InternalId[],
-  InternalId[],
-  ThunkConfig
->('uploadedFiles/deleteFileById', async (fileIds) => {
-  if (!fileIds) {
-    throw new Error('Ids not provided!');
-  }
-  await sdk.files.delete(fileIds);
-  return fileIds;
-});
+export type FileState = {
+  id: ReactText;
+  createdTime: number;
+  lastUpdatedTime: number;
+  mimeType?: string;
+  name: string;
+  source?: string;
+  uploaded: boolean;
+  uploadedTime?: number;
+  labels?: Label[];
+  metadata?: Metadata;
+  linkedAnnotations: string[];
+};
 
-export const updateFileById = createAsyncThunk<
-  FileInfo[],
-  { fileId: number; key: string },
-  ThunkConfig
->('uploadedFiles/updateFileById', async ({ fileId, key }, { getState }) => {
-  if (!fileId) {
-    throw new Error('Id not provided!');
-  }
+export type FileInfoValueState = string | Label[] | null;
 
-  const fileDetails = getState().uploadedFiles.uploadedFiles.find(
-    (file) => file.id === fileId
-  );
-
-  if (!fileDetails) {
-    return [];
-  }
-  const editedFileDetails = getState().previewSlice.fileDetails;
-
-  if (key) {
-    let updateInfoSet = {};
-
-    switch (key) {
-      case 'labels': {
-        if (!Object.keys(editedFileDetails).includes(key)) {
-          return [];
-        }
-        const newLabels = (editedFileDetails[key] as Label[]) || [];
-        const existingLabels: Label[] =
-          (fileDetails && fileDetails.labels) || [];
-        const addedLabels: Label[] = [];
-        const removedLabels: Label[] = [];
-        existingLabels.forEach((existingLbl) => {
-          const found = newLabels.find(
-            (newLabel) => existingLbl.externalId === newLabel.externalId
-          );
-          if (!found) {
-            removedLabels.push(existingLbl);
-          }
-        });
-        newLabels.forEach((newLbl) => {
-          const found = existingLabels.find(
-            (existingLbl) => existingLbl.externalId === newLbl.externalId
-          );
-          if (!found) {
-            addedLabels.push(newLbl);
-          }
-        });
-        updateInfoSet = {
-          [key]: { add: addedLabels, remove: removedLabels },
-        };
-        break;
-      }
-      case 'metadata': {
-        const metadata: Metadata = {};
-
-        const editedFileMeta = getState().previewSlice.fileMetaData;
-        const metaKeys = Object.keys(editedFileMeta);
-
-        metaKeys.forEach((rowId) => {
-          const row = editedFileMeta[parseInt(rowId, 10)];
-          metadata[row.key] = row.value.toString();
-        });
-
-        if (isEqual(metadata, fileDetails?.metadata)) {
-          return [];
-        }
-
-        updateInfoSet = {
-          [key]: { set: metadata },
-        };
-        break;
-      }
-      default: {
-        const value = editedFileDetails[key];
-        if (
-          !Object.keys(editedFileDetails).includes(key) ||
-          isEqual(value, fileDetails[key as keyof FileInfo])
-        ) {
-          return [];
-        }
-        if (value === undefined || value === '' || value === null) {
-          updateInfoSet = { [key]: { setNull: true } };
-        } else {
-          updateInfoSet = { [key]: { set: value } };
-        }
-      }
-    }
-
-    const payload = [{ id: fileId, update: updateInfoSet }];
-    const fileInfo = await sdk.files.update(payload);
-    return fileInfo;
-  }
-  throw new Error('Update Data is Empty!');
-});
-
-type State = {
-  uploadedFiles: Array<FileInfo>;
+export type UploadedFilesState = {
   dataSetIds?: number[];
   extractExif?: boolean;
+  files: {
+    byId: Record<ReactText, FileState>;
+    allIds: ReactText[];
+  };
+  metadataEdit: boolean;
+  fileDetails: Record<string, FileInfoValueState>;
+  fileMetaData: Record<number, MetadataItem>;
+  loadingField: string | null;
 };
+
+export type VisionAsset = Omit<
+  Omit<Asset, 'createdTime'>,
+  'lastUpdatedTime'
+> & { createdTime: number; lastUpdatedTime: number };
 
 // For debugging
 // const data = require('./fakeFiles.json');
@@ -136,12 +55,20 @@ type State = {
 //   data[key].createdTime = new Date(data[key].createdTime);
 //   data[key].lastUpdatedTime = new Date(data[key].lastUpdatedTime);
 // }, data);
-const initialState: State = {
-  uploadedFiles: [],
+const initialState: UploadedFilesState = {
   dataSetIds: undefined,
   extractExif: false,
   // eslint-disable-next-line global-require
-  // uploadedFiles: data,
+  // files: require('./fakeFiles.json'),
+
+  files: {
+    byId: {},
+    allIds: [],
+  },
+  metadataEdit: false,
+  fileDetails: {},
+  fileMetaData: {},
+  loadingField: null,
 };
 
 const uploadedFilesSlice = createSlice({
@@ -149,12 +76,86 @@ const uploadedFilesSlice = createSlice({
   initialState,
   /* eslint-disable no-param-reassign */
   reducers: {
-    setUploadedFiles(state, action: PayloadAction<State>) {
-      const { uploadedFiles } = action.payload;
-      state.uploadedFiles = uploadedFiles;
+    setUploadedFiles: {
+      prepare: (files: FileInfo[]) => {
+        return { payload: files.map((file) => createFileState(file)) };
+      },
+      reducer: (state, action: PayloadAction<FileState[]>) => {
+        const files = action.payload;
+
+        // clear file state
+        state.files.byId = {};
+        state.files.allIds = [];
+
+        files.forEach((file) => {
+          updateFileState(state, file);
+        });
+      },
     },
-    addUploadedFile(state, action: PayloadAction<FileInfo>) {
-      state.uploadedFiles = state.uploadedFiles.concat(action.payload);
+    addUploadedFile: {
+      prepare: (file: FileInfo) => {
+        return { payload: createFileState(file) };
+      },
+      reducer: (state, action: PayloadAction<FileState>) => {
+        updateFileState(state, action.payload);
+      },
+    },
+    toggleMetaDataTableEditMode(state, action: PayloadAction<MetadataItem[]>) {
+      const editMode = state.metadataEdit;
+
+      if (editMode) {
+        // filter rows with empty keys and empty values when finishing edit mode
+        const metaRowKeys = Object.keys(state.fileMetaData);
+        metaRowKeys.forEach((rowKey) => {
+          const metaKey = state.fileMetaData[parseInt(rowKey, 10)].key;
+          const metaValue = state.fileMetaData[parseInt(rowKey, 10)].value;
+
+          if (!(metaKey && metaValue)) {
+            delete state.fileMetaData[parseInt(rowKey, 10)];
+          }
+        });
+      } else {
+        // set metadata when starting edit mode
+        state.fileMetaData = {};
+        action.payload.forEach((item, index) => {
+          state.fileMetaData[index] = item;
+        });
+      }
+      state.metadataEdit = !editMode;
+    },
+    fileInfoEdit(
+      state,
+      action: PayloadAction<{
+        key: string;
+        value: FileInfoValueState;
+      }>
+    ) {
+      state.fileDetails[action.payload.key] = action.payload.value || null;
+    },
+    fileMetaDataEdit(
+      state,
+      action: PayloadAction<{
+        index: number;
+        key: string;
+        value: string;
+      }>
+    ) {
+      state.fileMetaData[action.payload.index] = {
+        key: action.payload.key,
+        value: action.payload.value || '',
+      };
+    },
+    fileMetaDataAddRow(state, action: PayloadAction<MetadataItem[]>) {
+      state.metadataEdit = true;
+      state.fileMetaData = {};
+      const metaLength = Object.keys(action.payload).length;
+      action.payload.forEach((item, index) => {
+        state.fileMetaData[index] = item;
+      });
+      state.fileMetaData[metaLength] = { key: '', value: '' };
+    },
+    resetEditHistory(state) {
+      resetEditHistoryState(state);
     },
     setDataSetIds(state, action: PayloadAction<number[] | undefined>) {
       state.dataSetIds = action.payload;
@@ -166,23 +167,36 @@ const uploadedFilesSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(deleteFilesById.fulfilled, (state, { payload }) => {
       payload.forEach((fileId) => {
-        const fileIndex = state.uploadedFiles.findIndex(
-          (file) => file.id === fileId.id
-        );
-        if (fileIndex >= 0) {
-          state.uploadedFiles.splice(fileIndex, 1);
-        }
+        deleteFileById(state, fileId.id);
       });
     });
 
-    builder.addCase(updateFileById.fulfilled, (state, { payload }) => {
-      payload.forEach((fileInfo) => {
-        const fileIndex = state.uploadedFiles.findIndex(
-          (file) => file.id === fileInfo.id
-        );
-        if (fileIndex >= 0) {
-          state.uploadedFiles[fileIndex] = fileInfo;
-        }
+    // On Update File //
+
+    builder.addCase(updateFileInfoField.fulfilled, (state, { meta }) => {
+      const field = meta.arg.key;
+      if (field === 'metadata') {
+        state.fileMetaData = {};
+      } else {
+        delete state.fileDetails[field];
+      }
+      state.loadingField = null;
+    });
+
+    builder.addCase(updateFileInfoField.pending, (state, { meta }) => {
+      const field = meta.arg.key;
+      state.loadingField = field;
+    });
+
+    builder.addCase(updateFileInfoField.rejected, (state, { meta }) => {
+      const field = meta.arg.key;
+      delete state.fileDetails[field];
+      state.loadingField = null;
+    });
+
+    builder.addCase(UpdateFiles.fulfilled, (state, { payload }) => {
+      payload.forEach((fileState) => {
+        updateFileState(state, fileState);
       });
 
       if (payload.length) {
@@ -190,7 +204,7 @@ const uploadedFilesSlice = createSlice({
       }
     });
 
-    builder.addCase(updateFileById.rejected, (_, { error }) => {
+    builder.addCase(UpdateFiles.rejected, (_, { error }) => {
       if (error && error.message) {
         ToastUtils.onFailure(error?.message);
       }
@@ -201,19 +215,92 @@ const uploadedFilesSlice = createSlice({
 export const {
   setUploadedFiles,
   addUploadedFile,
+  fileInfoEdit,
+  fileMetaDataEdit,
+  toggleMetaDataTableEditMode,
+  fileMetaDataAddRow,
+  resetEditHistory,
   setDataSetIds,
   setExtractExif,
 } = uploadedFilesSlice.actions;
 
 export default uploadedFilesSlice.reducer;
 
-export const uploadedFiles = (state: State): Array<FileInfo> =>
-  state.uploadedFiles;
-
-export const selectFileById = createSelector(
-  (_: State, fileId: string) => fileId,
-  uploadedFiles,
-  (fileId, files) => {
-    return files.find((f) => f.id === parseInt(fileId, 10))!;
+export const selectAllFiles = createSelector(
+  (state: UploadedFilesState) => state.files.allIds,
+  (state) => state.files.byId,
+  (allIds, allFiles) => {
+    return allIds.map((id) => createFileInfo(allFiles[id]));
   }
 );
+
+export const selectFileById = createSelector(
+  (_: UploadedFilesState, fileId: string) => fileId,
+  (state) => state.files.byId,
+  (fileId, files) => {
+    const file = files[fileId];
+    return file ? createFileInfo(file) : null;
+  }
+);
+
+// metadata selectors //
+
+export const metadataEditMode = (state: UploadedFilesState): boolean =>
+  state.metadataEdit;
+
+export const editedFileDetails = (
+  state: UploadedFilesState
+): Record<string, FileInfoValueState> => state.fileDetails;
+
+export const editedFileMeta = (
+  state: UploadedFilesState
+): Record<number, MetadataItem> => state.fileMetaData;
+
+export const selectUpdatedFileDetails = createSelector(
+  (state: RootState) => editedFileDetails(state.uploadedFiles),
+  (state: RootState, id: string) => selectFileById(state.uploadedFiles, id),
+  (editedInfo, fileInfo) => {
+    if (fileInfo) {
+      const mergedInfo: VisionFileDetails = {
+        ...fileInfo,
+        ...editedInfo,
+      };
+      return mergedInfo;
+    }
+    return null;
+  }
+);
+
+export const selectUpdatedFileMeta = createSelector(
+  (state: RootState) => editedFileMeta(state.uploadedFiles),
+  (state: RootState, id: string) => selectFileById(state.uploadedFiles, id),
+  (editedMeta, fileInfo) => {
+    let metadata: MetadataItem[] = generateKeyValueArray(fileInfo?.metadata);
+
+    if (Object.keys(editedMeta).length > 0) {
+      metadata = Object.values(editedMeta);
+    }
+    return metadata;
+  }
+);
+
+// state helper functions
+
+const resetEditHistoryState = (state: UploadedFilesState) => {
+  state.metadataEdit = false;
+  state.fileMetaData = {};
+  state.fileDetails = {};
+};
+
+const deleteFileById = (state: UploadedFilesState, id: ReactText) => {
+  delete state.files.byId[id];
+  state.files.allIds = Object.keys(state.files.byId);
+};
+
+const updateFileState = (state: UploadedFilesState, file: FileState) => {
+  const hasInState = !!state.files.byId[file.id];
+  state.files.byId[file.id] = file;
+  if (!hasInState) {
+    state.files.allIds.push(file.id);
+  }
+};

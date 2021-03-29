@@ -5,7 +5,8 @@ import { margin } from 'src/cogs-variables';
 import { Detail, Title } from '@cognite/cogs.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { addUploadedFile } from 'src/store/uploadedFilesSlice';
+import { addUploadedFile, selectAllFiles } from 'src/store/uploadedFilesSlice';
+import { updateLinkedAssets } from 'src/store/thunks/updateLinkedAssets';
 
 const FileUploaderWrapper = styled.div`
   margin: ${margin.default} 0;
@@ -13,21 +14,20 @@ const FileUploaderWrapper = styled.div`
 
 export default function UploadStep() {
   const dispatch = useDispatch();
-  const { uploadedFiles } = useSelector(
-    (state: RootState) => state.uploadedFiles
+  const uploadedFiles = useSelector((state: RootState) =>
+    selectAllFiles(state.uploadedFiles)
   );
   // todo: remove this once development is complete
   // useEffect(() => {
   //   dispatch(
   //     fetchFilesById([
-  //       { id: 8733204951981 },
+  //       { id: 6222346415226562 },
   //       { id: 3901383492989027 },
 
   // extra annotations
   // { id: 7962558153749325 },
   // { id: 8646165667023788 },
   // { id: 8733204951981 },
-  // { id: 3901383492989027 },
   // { id: 3209660507140892 },
   // { id: 8844487098733620 },
   // { id: 7727379776722125 },
@@ -55,6 +55,12 @@ export default function UploadStep() {
   const onUploadSuccess = React.useCallback(
     (file) => {
       dispatch(addUploadedFile(file));
+      dispatch(
+        updateLinkedAssets({
+          fileId: file.id.toString(),
+          assetIds: file.assetIds,
+        })
+      );
     },
     [dispatch]
   );

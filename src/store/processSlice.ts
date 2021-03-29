@@ -3,8 +3,9 @@ import { fetchJobById, createAnnotationJob } from 'src/api/annotationJob';
 import { fetchUntilComplete } from 'src/utils';
 import { AnnotationJob, DetectionModelType } from 'src/api/types';
 import { getFakeQueuedJob } from 'src/api/utils';
-import { fileProcessUpdate, ThunkConfig } from 'src/store/common';
-import { deleteFilesById } from 'src/store/uploadedFilesSlice';
+import { fileProcessUpdate } from 'src/store/commonActions';
+import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
+import { ThunkConfig } from 'src/store/rootReducer';
 
 type State = {
   selectedFileId: number | null;
@@ -61,8 +62,7 @@ export const postAnnotationJob = createAsyncThunk<
   async ({ modelType, fileId }, { dispatch, getState }) => {
     const createdJob = await createAnnotationJob(modelType, fileId);
 
-    const doesFileExist = () =>
-      getState().uploadedFiles.uploadedFiles.find((file) => file.id === fileId);
+    const doesFileExist = () => getState().uploadedFiles.files.byId[fileId];
 
     await fetchUntilComplete<AnnotationJob>(
       () => fetchJobById(createdJob.type, createdJob.jobId),

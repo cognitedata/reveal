@@ -34,12 +34,16 @@ export type AnnotationBoundingBox = {
   yMin: number;
 };
 
-export interface VisionAnnotation extends Omit<Annotation, 'shape'> {
-  displayId: number;
+export interface LinkedAnnotation extends Annotation {
+  linkedAssetId?: number;
+  linkedAssetExternalId?: string;
+}
+
+export interface VisionAnnotation extends Omit<LinkedAnnotation, 'shape'> {
   label: string;
   type: string;
   color: string;
-  box: AnnotationBoundingBox;
+  box?: AnnotationBoundingBox;
   source: string;
   status: AnnotationStatus;
   version: number;
@@ -114,28 +118,31 @@ export class AnnotationUtils {
   }
 
   public static convertToAnnotations(
-    annotations: Annotation[],
+    annotations: LinkedAnnotation[],
     modelType: DetectionModelType
   ): VisionAnnotation[] {
-    return annotations.map<VisionAnnotation>((value, index) => {
-      return {
-        displayId: index,
-        color: AnnotationUtils.getAnnotationColor(modelType),
-        label: String(index),
-        type: value.shape.type,
-        box: {
-          xMin: value.shape.vertices[0].x,
-          yMin: value.shape.vertices[0].y,
-          xMax: value.shape.vertices[1].x,
-          yMax: value.shape.vertices[1].y,
-        },
-        source: 'ocr',
-        version: 1,
-        status: AnnotationStatus.Unhandled,
-        description: value.description,
-        confidence: value.confidence,
-        attributes: value.attributes,
-      };
-    });
+    return annotations.map<VisionAnnotation>(
+      (value: LinkedAnnotation, index: any) => {
+        return {
+          color: AnnotationUtils.getAnnotationColor(modelType),
+          label: String(index),
+          type: value.shape?.type || '',
+          box: value.shape && {
+            xMin: value.shape.vertices[0].x,
+            yMin: value.shape.vertices[0].y,
+            xMax: value.shape.vertices[1].x,
+            yMax: value.shape.vertices[1].y,
+          },
+          source: 'ocr',
+          version: 1,
+          status: AnnotationStatus.Unhandled,
+          description: value.description,
+          confidence: value.confidence,
+          attributes: value.attributes,
+          linkedAssetId: value.linkedAssetId,
+          linkedAssetExternalId: value.linkedAssetExternalId,
+        };
+      }
+    );
   }
 }

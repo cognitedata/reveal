@@ -152,9 +152,7 @@ export function FileTable(props: FileTableProps) {
 
         return (
           <Dropdown content={MenuContent}>
-            <Button type="secondary" variant="ghost">
-              •••
-            </Button>
+            <Button type="ghost">•••</Button>
           </Dropdown>
         );
       },

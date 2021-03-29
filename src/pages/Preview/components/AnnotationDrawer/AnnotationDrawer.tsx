@@ -33,9 +33,9 @@ export const AnnotationDrawer = (props: {
         <DrawerCloseButtonRow>
           <DrawerCloseButton
             icon="Close"
-            variant="ghost"
-            type="secondary"
+            type="ghost"
             onClick={onClose}
+            aria-label="close drawer"
           />
         </DrawerCloseButtonRow>
         <DrawerBodyContent>

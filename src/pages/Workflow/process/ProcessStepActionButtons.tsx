@@ -8,6 +8,7 @@ import { useAnnotationJobs } from 'src/store/hooks/useAnnotationJobs';
 import { createLink } from '@cognite/cdf-utilities';
 import { RootState } from 'src/store/rootReducer';
 import { message } from 'antd';
+import { selectAllFiles } from 'src/store/uploadedFilesSlice';
 
 export const ProcessStepActionButtons = () => {
   const history = useHistory();
@@ -15,8 +16,8 @@ export const ProcessStepActionButtons = () => {
   const selectedDetectionModels = useSelector(
     (state: RootState) => state.processSlice.selectedDetectionModels
   );
-  const { uploadedFiles } = useSelector(
-    (state: RootState) => state.uploadedFiles
+  const uploadedFiles = useSelector((state: RootState) =>
+    selectAllFiles(state.uploadedFiles)
   );
 
   const [detectBtnClicked, setDetectBtnClicked] = useState(false);

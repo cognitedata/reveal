@@ -5,12 +5,10 @@ import { Button, Popconfirm, Title } from '@cognite/cogs.js';
 import { RouteComponentProps, useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import {
-  closeAnnotationDrawer,
-  resetEditHistory,
-} from 'src/store/previewSlice';
+import { closeAnnotationDrawer, resetPreview } from 'src/store/previewSlice';
 import { getLink, workflowRoutes } from 'src/pages/Workflow/workflowRoutes';
-import { deleteFilesById, selectFileById } from 'src/store/uploadedFilesSlice';
+import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
+import { resetEditHistory, selectFileById } from 'src/store/uploadedFilesSlice';
 import ImageReview from 'src/pages/Preview/ImageReview';
 import VideoReview from 'src/pages/Preview/VideoReview';
 import { isVideo } from 'src/components/FileUploader/utils/FileUtils';
@@ -103,6 +101,7 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
 
   useEffect(() => {
     dispatch(resetEditHistory());
+    dispatch(resetPreview());
   }, []);
 
   return (

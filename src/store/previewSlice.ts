@@ -7,19 +7,12 @@ import {
   VisionAnnotation,
 } from 'src/utils/AnnotationUtils';
 import { DetectionModelType } from 'src/api/types';
-import { fileProcessUpdate } from 'src/store/common';
 import {
-  deleteFilesById,
-  selectFileById,
-  updateFileById,
-} from 'src/store/uploadedFilesSlice';
-import {
-  MetadataItem,
-  VisionFileDetails,
-} from 'src/components/FileMetadata/Types';
-import { RootState } from 'src/store/rootReducer';
-import { generateKeyValueArray } from 'src/utils/FormatUtils';
-import { Label } from '@cognite/cdf-sdk-singleton';
+  addAnnotations,
+  deleteAnnotations,
+  fileProcessUpdate,
+} from 'src/store/commonActions';
+import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
 import { ImagePreviewEditMode } from 'src/pages/Preview/Types';
 
 export interface VisionAnnotationState extends VisionAnnotation {
@@ -29,14 +22,17 @@ export interface VisionAnnotationState extends VisionAnnotation {
   show: boolean;
 }
 
-interface VisionModelState {
+export interface VisibleAnnotations extends VisionAnnotationState {
+  box: AnnotationBoundingBox;
+  show: true;
+}
+
+export interface VisionModelState {
   modelId: string;
   fileId: string;
   modelType: DetectionModelType;
   annotations: string[];
 }
-
-export type FileInfoValueState = string | Label[] | null | undefined;
 
 type State = {
   drawer: {
@@ -50,6 +46,7 @@ type State = {
     modifiedBoundingBoxes: {};
   };
   annotations: {
+    counter: number;
     byId: Record<string, VisionAnnotationState>;
     allIds: string[];
   };
@@ -58,10 +55,6 @@ type State = {
     allIds: string[];
   };
   modelsByFileId: Record<string, string[]>;
-  metadataEdit: boolean;
-  fileDetails: Record<string, FileInfoValueState>;
-  fileMetaData: Record<number, MetadataItem>;
-  loadingField: string | null;
 };
 
 const initialState: State = {
@@ -76,6 +69,7 @@ const initialState: State = {
     modifiedBoundingBoxes: {},
   },
   annotations: {
+    counter: 0,
     byId: {},
     allIds: [],
   },
@@ -84,10 +78,6 @@ const initialState: State = {
     allIds: [],
   },
   modelsByFileId: {},
-  metadataEdit: false,
-  fileDetails: {},
-  fileMetaData: {},
-  loadingField: null,
 };
 
 const previewSlice = createSlice({
@@ -138,89 +128,37 @@ const previewSlice = createSlice({
       const annotation = state.annotations.byId[action.payload.id];
       annotation.box = action.payload.boundingBox;
     },
-    deleteSelectedAnnotations(state) {
-      const { selectedAnnotations } = state;
-      selectedAnnotations.forEach((annId) => {
-        const annotation = state.annotations.byId[annId];
-        const models = state.models.byId[annotation.modelId];
-        models.annotations = models.annotations.filter(
-          (item) => item !== annotation.id
-        );
-        delete state.annotations.byId[annotation.id];
-        state.annotations.allIds = Object.keys(state.annotations.byId);
-      });
-    },
-    annotationApproval(
-      state,
-      action: PayloadAction<{
-        annotationId: string;
-        status: AnnotationStatus;
-      }>
-    ) {
-      const { status, annotationId } = action.payload;
-      const annotation = state.annotations.byId[annotationId];
+    annotationApproval: {
+      prepare: (id: string, status: AnnotationStatus) => {
+        return { payload: { annotationId: id, status } };
+      },
+      reducer: (
+        state,
+        action: PayloadAction<{
+          annotationId: string;
+          status: AnnotationStatus;
+        }>
+      ) => {
+        const { status, annotationId } = action.payload;
+        const annotation = state.annotations.byId[annotationId];
 
-      annotation.status = status;
+        annotation.status = status;
+      },
     },
-    toggleMetaDataTableEditMode(state, action: PayloadAction<MetadataItem[]>) {
-      const editMode = state.metadataEdit;
-
-      if (editMode) {
-        // filter rows with empty keys and empty values when finishing edit mode
-        const metaRowKeys = Object.keys(state.fileMetaData);
-        metaRowKeys.forEach((rowKey) => {
-          const metaKey = state.fileMetaData[parseInt(rowKey, 10)].key;
-          const metaValue = state.fileMetaData[parseInt(rowKey, 10)].value;
-
-          if (!(metaKey && metaValue)) {
-            delete state.fileMetaData[parseInt(rowKey, 10)];
-          }
-        });
-      } else {
-        // set metadata when starting edit mode
-        state.fileMetaData = {};
-        action.payload.forEach((item, index) => {
-          state.fileMetaData[index] = item;
-        });
-      }
-      state.metadataEdit = !editMode;
-    },
-    fileInfoEdit(
-      state,
-      action: PayloadAction<{
-        key: string;
-        value: FileInfoValueState;
-      }>
-    ) {
-      state.fileDetails[action.payload.key] = action.payload.value;
-    },
-    fileMetaDataEdit(
-      state,
-      action: PayloadAction<{
-        index: number;
-        key: string;
-        value: string;
-      }>
-    ) {
-      state.fileMetaData[action.payload.index] = {
-        key: action.payload.key,
-        value: action.payload.value || '',
-      };
-    },
-    fileMetaDataAddRow(state, action: PayloadAction<MetadataItem[]>) {
-      state.metadataEdit = true;
-      state.fileMetaData = {};
-      const metaLength = Object.keys(action.payload).length;
-      action.payload.forEach((item, index) => {
-        state.fileMetaData[index] = item;
-      });
-      state.fileMetaData[metaLength] = { key: '', value: '' };
-    },
-    resetEditHistory(state) {
-      resetEditHistoryState(state);
+    resetPreview(state) {
+      resetPreviewState(state);
     },
   },
   extraReducers: (builder) => {
+    builder.addCase(addAnnotations, (state, { payload }) => {
+      const { annotations, fileId, type, status } = payload;
+
+      addAnnotationsToState(state, annotations, fileId, type, status);
+    });
+
+    builder.addCase(deleteAnnotations, (state, { payload }) => {
+      deleteAnnotationsByIds(state, payload);
+    });
     // On Delete File //
 
     builder.addCase(deleteFilesById.fulfilled, (state, { payload }) => {
@@ -244,79 +182,25 @@ const previewSlice = createSlice({
       });
     });
 
-    // On Update File //
-
-    builder.addCase(updateFileById.fulfilled, (state, { meta }) => {
-      const field = meta.arg.key;
-      if (field === 'metadata') {
-        state.fileMetaData = {};
-      } else {
-        delete state.fileDetails[field];
-      }
-      state.loadingField = null;
-    });
-
-    builder.addCase(updateFileById.pending, (state, { meta }) => {
-      const field = meta.arg.key;
-      state.loadingField = field;
-    });
-
-    builder.addCase(updateFileById.rejected, (state, { meta }) => {
-      const field = meta.arg.key;
-      delete state.fileDetails[field];
-      state.loadingField = null;
-    });
-
     // On Job Update //
 
     builder.addCase(fileProcessUpdate, (state, { payload }) => {
       const { job, fileId } = payload;
 
       if (job.status === 'Completed') {
-        if (!state.modelsByFileId[fileId]) {
-          state.modelsByFileId[fileId] = [];
-        }
-
-        // update model
-        const modelId = AnnotationUtils.getModelId(String(fileId), job.type);
-
-        const fileModelArr = state.modelsByFileId[fileId];
-
-        if (fileModelArr && !fileModelArr.includes(modelId)) {
-          fileModelArr.push(modelId);
-        }
-
-        state.models.byId[modelId] = {
-          modelId,
-          modelType: job.type,
-          fileId: fileId.toString(),
-          annotations: [],
-        };
-
-        state.models.allIds = Object.keys(state.models.byId);
-
         const { annotations } = job.items[0];
         const visionAnnotations = AnnotationUtils.convertToAnnotations(
           annotations,
           job.type
         );
 
-        visionAnnotations.forEach((item) => {
-          const id = AnnotationUtils.generateAnnotationId(
-            String(fileId),
-            job.type,
-            item.displayId
-          );
-          state.models.byId[modelId].annotations.push(id);
-          state.annotations.byId[id] = {
-            id,
-            ...item,
-            modelId,
-            show: true,
-          };
-        });
-
-        state.annotations.allIds = Object.keys(state.annotations.byId);
+        addAnnotationsToState(
+          state,
+          visionAnnotations,
+          fileId.toString(),
+          job.type,
+          AnnotationStatus.Unhandled
+        );
       }
     });
   },
@@ -331,19 +215,13 @@ export const {
   closeAnnotationDrawer,
   setImagePreviewEditState,
   updateAnnotation,
-  deleteSelectedAnnotations,
   annotationApproval,
-  toggleMetaDataTableEditMode,
-  fileInfoEdit,
-  fileMetaDataEdit,
-  fileMetaDataAddRow,
-  resetEditHistory,
+  resetPreview,
 } = previewSlice.actions;
 
-const resetEditHistoryState = (state: State) => {
-  state.metadataEdit = false;
-  state.fileMetaData = {};
-  state.fileDetails = {};
+// state helper functions
+
+const resetPreviewState = (state: State) => {
   state.drawer = {
     show: false,
     mode: null,
@@ -355,6 +233,70 @@ const resetEditHistoryState = (state: State) => {
   };
   state.selectedAnnotations = [];
 };
+
+export const addAnnotationsToState = (
+  state: State,
+  annotations: VisionAnnotation[],
+  fileId: string,
+  type: DetectionModelType,
+  status: AnnotationStatus
+) => {
+  const modelId = AnnotationUtils.getModelId(String(fileId), type);
+
+  // update models
+  if (!state.models.byId[modelId]) {
+    state.models.byId[modelId] = {
+      modelId,
+      modelType: type,
+      fileId,
+      annotations: [],
+    };
+
+    state.models.allIds = Object.keys(state.models.byId);
+  }
+
+  // update file models
+  const fileModels = state.modelsByFileId[fileId];
+  if (!fileModels) {
+    state.modelsByFileId[fileId] = [modelId];
+  } else if (fileModels && !fileModels.includes(modelId)) {
+    fileModels.push(modelId);
+  }
+
+  // update annotations
+
+  annotations.forEach((item) => {
+    const id = AnnotationUtils.generateAnnotationId(
+      String(fileId),
+      type,
+      state.annotations.counter++
+    );
+    state.models.byId[modelId].annotations.push(id);
+    state.annotations.byId[id] = {
+      id,
+      ...item,
+      modelId,
+      show: true,
+      status,
+    };
+  });
+
+  state.annotations.allIds = Object.keys(state.annotations.byId);
+};
+
+const deleteAnnotationsByIds = (state: State, annotationIds: string[]) => {
+  annotationIds.forEach((annId) => {
+    const annotation = state.annotations.byId[annId];
+    const model = state.models.byId[annotation.modelId];
+    model.annotations = model.annotations.filter(
+      (item) => item !== annotation.id
+    );
+    delete state.annotations.byId[annotation.id];
+    state.annotations.allIds = Object.keys(state.annotations.byId);
+  });
+};
+
+// selectors
 
 export const selectModelIdsByFileId = (
   state: State,
@@ -420,7 +362,7 @@ export const selectNonRejectedAnnotationsByFileIdModelType = createSelector(
 export const selectVisibleAnnotationsByFileId = createSelector(
   selectAnnotationsByFileId,
   (annotationIdsByFile) => {
-    return annotationIdsByFile.filter((item) => item.show);
+    return annotationIdsByFile.filter((item) => !!item.box && item.show);
   }
 );
 
@@ -430,41 +372,5 @@ export const selectVisibleNonRejectedAnnotationsByFileId = createSelector(
     return visibleAnnotationIdsByFile.filter(
       (item) => item.status !== AnnotationStatus.Rejected
     );
-  }
-);
-
-// metadata selectors //
-
-export const metadataEditMode = (state: State): boolean => state.metadataEdit;
-
-export const editedFileDetails = (
-  state: State
-): Record<string, FileInfoValueState> => state.fileDetails;
-
-export const editedFileMeta = (state: State): Record<number, MetadataItem> =>
-  state.fileMetaData;
-
-export const selectUpdatedFileDetails = createSelector(
-  (state: RootState) => editedFileDetails(state.previewSlice),
-  (state: RootState, id: string) => selectFileById(state.uploadedFiles, id),
-  (editedInfo, fileInfo) => {
-    const mergedInfo: VisionFileDetails = {
-      ...fileInfo,
-      ...editedInfo,
-    };
-    return mergedInfo;
-  }
-);
-
-export const selectUpdatedFileMeta = createSelector(
-  (state: RootState) => editedFileMeta(state.previewSlice),
-  (state: RootState, id: string) => selectFileById(state.uploadedFiles, id),
-  (editedMeta, fileInfo) => {
-    let metadata: MetadataItem[] = generateKeyValueArray(fileInfo.metadata);
-
-    if (Object.keys(editedMeta).length > 0) {
-      metadata = Object.values(editedMeta);
-    }
-    return metadata;
   }
 );

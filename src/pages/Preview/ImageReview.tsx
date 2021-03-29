@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { ImagePreview } from 'src/pages/Preview/components/ImagePreview/ImagePreview';
 import { DataExplorationProvider, Tabs } from '@cognite/data-exploration';
@@ -8,9 +8,9 @@ import { RouteComponentProps, useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import {
-  resetEditHistory,
   selectVisibleNonRejectedAnnotationsByFileId,
   updateAnnotation,
+  VisibleAnnotations,
 } from 'src/store/previewSlice';
 import { getLink, workflowRoutes } from 'src/pages/Workflow/workflowRoutes';
 import { QueryClient, QueryClientProvider } from 'react-query';
@@ -58,7 +58,10 @@ const ImageReview = (props: RouteComponentProps<{ fileId: string }>) => {
 
   const visibleNonRejectedAnnotations = useSelector(
     ({ previewSlice }: RootState) =>
-      selectVisibleNonRejectedAnnotationsByFileId(previewSlice, fileId)
+      selectVisibleNonRejectedAnnotationsByFileId(
+        previewSlice,
+        fileId
+      ) as VisibleAnnotations[]
   );
 
   const [
@@ -75,10 +78,6 @@ const ImageReview = (props: RouteComponentProps<{ fileId: string }>) => {
     history.push(getLink(workflowRoutes.upload));
     return null;
   }
-
-  useEffect(() => {
-    dispatch(resetEditHistory());
-  }, []);
 
   const handleCreateAnnotation = (annotation: any) => {
     console.log('created annotation: ', annotation);

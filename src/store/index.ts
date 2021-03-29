@@ -4,16 +4,7 @@ import rootReducer from './rootReducer';
 
 const index = configureStore({
   reducer: rootReducer,
-  middleware: getDefaultMiddleware({
-    serializableCheck: {
-      ignoredActions: [
-        'uploadedFiles/addUploadedFile',
-        'uploadedFiles/setUploadedFiles',
-        'uploadedFiles/updateFileById/fulfilled',
-      ],
-      ignoredPaths: ['uploadedFiles'],
-    },
-  }),
+  middleware: getDefaultMiddleware({}),
 });
 
 if (process.env.NODE_ENV === 'development' && module.hot) {

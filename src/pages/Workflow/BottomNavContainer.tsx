@@ -8,12 +8,13 @@ import { getLink, workflowRoutes } from 'src/pages/Workflow/workflowRoutes';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { createLink } from '@cognite/cdf-utilities';
+import { selectAllFiles } from 'src/store/uploadedFilesSlice';
 
 export default function BottomNavContainer() {
   const history = useHistory();
 
-  const files = useSelector(
-    ({ uploadedFiles }: RootState) => uploadedFiles.uploadedFiles
+  const files = useSelector((state: RootState) =>
+    selectAllFiles(state.uploadedFiles)
   );
 
   return (

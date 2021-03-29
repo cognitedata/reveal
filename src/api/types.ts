@@ -19,7 +19,7 @@ export type Annotation = {
   description: string;
   confidence: number;
   attributes: any;
-  shape: {
+  shape?: {
     type: ShapeType;
     vertices: Array<Vertex>;
   };

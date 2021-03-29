@@ -3,7 +3,6 @@ import { Button, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { AnnotationsTable } from 'src/pages/Preview/components/AnnotationsTable/AnnotationsTable';
 import {
-  deleteSelectedAnnotations,
   selectNonRejectedAnnotationsByFileIdModelType,
   setImagePreviewEditState,
   showAnnotationDrawer,
@@ -13,6 +12,7 @@ import { AnnotationDrawerMode } from 'src/utils/AnnotationUtils';
 import { RootState } from 'src/store/rootReducer';
 import { DetectionModelType } from 'src/api/types';
 import { ImagePreviewEditMode } from 'src/pages/Preview/Types';
+import { DeleteAnnotationsAndRemoveLinkedAssets } from 'src/store/thunks/DeleteAnnotationsAndRemoveLinkedAssets';
 
 const Container = styled.div`
   height: 100%;
@@ -79,7 +79,7 @@ export const Contextualization = ({ fileId }: { fileId: string }) => {
   };
 
   const handleDeleteAnnotations = () => {
-    dispatch(deleteSelectedAnnotations());
+    dispatch(DeleteAnnotationsAndRemoveLinkedAssets(selectedAnnotationIds));
   };
 
   const handleEditPolygon = () => {
@@ -107,7 +107,7 @@ export const Contextualization = ({ fileId }: { fileId: string }) => {
       {/*      ]} */}
       {/*    /> */}
       {/*  </SelectContainer> */}
-      {/*  <Button variant="outline" type="secondary" icon="Scan"> */}
+      {/*  <Button type="tertiary" type="secondary" icon="Scan"> */}
       {/*    Detect Annotations */}
       {/*  </Button> */}
       {/* </ModelSelectContainer> */}
@@ -127,6 +127,11 @@ export const Contextualization = ({ fileId }: { fileId: string }) => {
           <StyledButton
             type="secondary"
             icon="Polygon"
+            disabled={
+              nonRejectedOtherAnnotations.length +
+                nonRejectedTagAnnotations.length ===
+              0
+            }
             onClick={handleEditPolygon}
           >
             Edit polygon

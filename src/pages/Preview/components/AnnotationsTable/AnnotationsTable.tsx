@@ -20,6 +20,7 @@ import {
 } from 'src/store/previewSlice';
 import { AnnotationStatus } from 'src/utils/AnnotationUtils';
 import { DetectionModelType } from 'src/api/types';
+import { LinkFileAssetsByAnnotationId } from 'src/store/thunks/LinkFileAssetsByAnnotationId';
 
 const TableContainer = styled.div`
   width: 100%;
@@ -72,24 +73,6 @@ const RejectBtn = styled(Button)`
   background: #eb5757;
 `;
 
-const ShowHideBtn = styled(Button)`
-  padding: 4px;
-`;
-
-interface BadgeProps {
-  backgroundColor: string;
-}
-const AnnotationBadge = styled.div<BadgeProps>`
-  width: 28px;
-  height: 28px;
-  border-radius: 4px;
-  background-color: ${(props) => props.backgroundColor};
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
 const MenuContent = (
   <Menu>
     <Menu.Header>Component menu</Menu.Header>
@@ -104,36 +87,26 @@ const MenuContent = (
 );
 
 const ApproveButtons = (props: {
-  id: string;
+  onApprove: (status: AnnotationStatus) => void;
   approveStatus: AnnotationStatus;
 }) => {
-  const dispatch = useDispatch();
-
   if (props.approveStatus === AnnotationStatus.Unhandled) {
     return (
       <>
         <AcceptBtn
           type="primary"
           icon="Check"
+          aria-label="verify annotation"
           onClick={() => {
-            dispatch(
-              annotationApproval({
-                annotationId: props.id,
-                status: AnnotationStatus.Verified,
-              })
-            );
+            props.onApprove(AnnotationStatus.Verified);
           }}
         />
         <RejectBtn
           type="primary"
           icon="Close"
+          aria-label="reject annotation"
           onClick={() => {
-            dispatch(
-              annotationApproval({
-                annotationId: props.id,
-                status: AnnotationStatus.Rejected,
-              })
-            );
+            props.onApprove(AnnotationStatus.Rejected);
           }}
         />
       </>
@@ -147,6 +120,76 @@ const ApproveButtons = (props: {
     );
   }
   return null;
+};
+
+interface ButtonProps {
+  color?: string;
+  disablestyle?: string;
+}
+
+const ShowHideBtn = styled(Button)<ButtonProps>`
+  padding: 4px;
+  color: ${(props) => props.color || 'black'};
+  cursor: ${(props) => props.disablestyle === 'true' && 'default'};
+`;
+
+interface BadgeProps {
+  backgroundColor: string;
+}
+
+const AnnotationBadge = styled.div<BadgeProps>`
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  background-color: ${(props) => props.backgroundColor};
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const DisabledLine = styled.div`
+  height: 40px;
+  border-left: 2px solid #595959;
+  transform: translate(-15px, 0) rotate(45deg);
+`;
+
+export const VisibilityButton = (props: {
+  show: boolean;
+  color: string;
+  value: number;
+  disabled: boolean;
+  onClick: () => void;
+}) => {
+  if (props.disabled) {
+    return (
+      <ShowHideBtn
+        color="#BFBFBF"
+        type="tertiary"
+        icon="EyeShow"
+        iconPlacement="right"
+        disablestyle="true"
+      >
+        <AnnotationBadge backgroundColor="#E8E8E8">
+          {props.value}
+        </AnnotationBadge>
+        <DisabledLine />
+      </ShowHideBtn>
+    );
+  }
+
+  return (
+    <ShowHideBtn
+      type="tertiary"
+      icon={props.show ? 'EyeShow' : 'EyeHide'}
+      iconPlacement="right"
+      onClick={props.onClick}
+    >
+      <AnnotationBadge backgroundColor={props.color}>
+        {props.value}
+      </AnnotationBadge>
+    </ShowHideBtn>
+  );
 };
 
 export const AnnotationsTable = ({
@@ -178,6 +221,14 @@ export const AnnotationsTable = ({
 
   const annotationsAvailable = annotations.length > 0;
 
+  const handleApprovalState = (
+    annotation: VisionAnnotationState,
+    status: AnnotationStatus
+  ) => {
+    dispatch(annotationApproval(annotation.id, status));
+    dispatch(LinkFileAssetsByAnnotationId(annotation.id));
+  };
+
   return (
     <TableContainer>
       <Header>
@@ -193,7 +244,7 @@ export const AnnotationsTable = ({
       </Header>
       <Body>
         {annotationsAvailable &&
-          checkableAnnotations.map((annotation) => {
+          checkableAnnotations.map((annotation, index) => {
             return (
               <StyledRow
                 key={annotation.id}
@@ -211,7 +262,9 @@ export const AnnotationsTable = ({
                 <StyledCol span={5}>
                   <ApproveButtons
                     approveStatus={annotation.status}
-                    id={annotation.id}
+                    onApprove={(status: AnnotationStatus) =>
+                      handleApprovalState(annotation, status)
+                    }
                   />
                 </StyledCol>
                 <StyledCol span={12}>
@@ -230,23 +283,20 @@ export const AnnotationsTable = ({
                   </AnnotationLbl>
                 </StyledCol>
                 <StyledCol span={5}>
-                  <ShowHideBtn
-                    type="secondary"
-                    variant="outline"
-                    icon={annotation.show ? 'EyeShow' : 'EyeHide'}
-                    iconPlacement="right"
-                    onClick={() =>
+                  <VisibilityButton
+                    show={annotation.show}
+                    color={annotation.color}
+                    value={index}
+                    disabled={!annotation.box}
+                    aria-label="show / hide-annotation"
+                    onClick={() => {
                       dispatch(
                         toggleAnnotationVisibility({
                           annotationId: annotation.id,
                         })
-                      )
-                    }
-                  >
-                    <AnnotationBadge backgroundColor={annotation.color}>
-                      {annotation.displayId}
-                    </AnnotationBadge>
-                  </ShowHideBtn>
+                      );
+                    }}
+                  />
                 </StyledCol>
               </StyledRow>
             );

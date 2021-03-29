@@ -5,7 +5,7 @@ import { MetadataItem } from 'src/components/FileMetadata/Types';
 import {
   fileMetaDataAddRow,
   toggleMetaDataTableEditMode,
-} from 'src/store/previewSlice';
+} from 'src/store/uploadedFilesSlice';
 import { useDispatch } from 'react-redux';
 
 const TableToolBar = styled.div`

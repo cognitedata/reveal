@@ -28,7 +28,7 @@ import {
   GridTable,
   GridCellProps,
 } from '@cognite/data-exploration';
-import { resetEditHistory } from 'src/store/previewSlice';
+import { resetEditHistory, selectAllFiles } from 'src/store/uploadedFilesSlice';
 import styled from 'styled-components';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
 
@@ -36,8 +36,8 @@ const queryClient = new QueryClient();
 
 export default function ProcessStep() {
   const history = useHistory();
-  const { uploadedFiles } = useSelector(
-    (state: RootState) => state.uploadedFiles
+  const uploadedFiles = useSelector((state: RootState) =>
+    selectAllFiles(state.uploadedFiles)
   );
   const { jobsByFileId, selectedDetectionModels } = useSelector(
     (state: RootState) => state.processSlice

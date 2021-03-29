@@ -44,6 +44,7 @@ const CopyButtonContainer = (props: {
       type="link"
       icon="Copy"
       iconPlacement="right"
+      aria-label="copy button"
     />
   );
 };

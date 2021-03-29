@@ -10,7 +10,7 @@ import { RootState } from 'src/store/rootReducer';
 const useIsFieldSavePending = (id: string) => {
   const [loading, setLoadingState] = useState<boolean>(false);
   const loadingField = useSelector(
-    ({ previewSlice }: RootState) => previewSlice.loadingField
+    ({ uploadedFiles }: RootState) => uploadedFiles.loadingField
   );
 
   useEffect(() => {
