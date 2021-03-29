@@ -41,9 +41,9 @@ export const updateLinkedAssets = createAsyncThunk<
 
           const annotations = AnnotationUtils.convertToAnnotations(
             assets.map((asset) => ({
-              description: asset.externalId || '',
+              text: asset.externalId || '',
               confidence: 1,
-              attributes: null,
+              data: null,
               linkedAssetId: asset.id,
               linkedAssetExternalId: asset.externalId,
             })),

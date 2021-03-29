@@ -15,7 +15,7 @@ export abstract class BaseDetectionModelDataProvider
   postJob(fileId: number) {
     return sdk
       .post<AnnotationJobResponse>(this.url, {
-        data: { files: [{ id: fileId }] },
+        data: { items: [{ fileId }] },
       })
       .then((response) => {
         if (response.status === 201 || response.status === 200) {

@@ -278,7 +278,7 @@ export const AnnotationsTable = ({
                       readOnly
                       fullWidth
                       style={{ width: `100%` }}
-                      value={annotation.description}
+                      value={annotation.text}
                     />
                   </AnnotationLbl>
                 </StyledCol>

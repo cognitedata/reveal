@@ -10,17 +10,17 @@ export interface DetectionModelDataProvider {
 }
 
 export type JobStatus = 'Queued' | 'Running' | 'Completed' | 'Failed';
-export type ShapeType = 'points' | 'rectangle' | 'polygon' | 'polyline';
+export type RegionType = 'points' | 'rectangle' | 'polygon' | 'polyline';
 export type Vertex = {
   x: number;
   y: number;
 };
 export type Annotation = {
-  description: string;
+  text: string;
   confidence: number;
-  attributes: any;
-  shape?: {
-    type: ShapeType;
+  data: any;
+  region?: {
+    shape: RegionType;
     vertices: Array<Vertex>;
   };
 };
@@ -53,7 +53,6 @@ export interface AnnotationJobCompleted extends AnnotationJobBase {
   startTime: number;
   statusTime: number;
   jobId: number;
-  options?: any;
   items: Array<AnnotationJobResultItem>;
 }
 export interface AnnotationJobFailed extends AnnotationJobBase {

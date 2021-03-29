@@ -40,7 +40,7 @@ export const LinkFileAssetsByAnnotationId = createAsyncThunk<
 
       if (model.modelType === DetectionModelType.Tag) {
         const { fileId } = model;
-        updateFile(fileId, annotation.description);
+        updateFile(fileId, annotation.text);
       }
     }
   }

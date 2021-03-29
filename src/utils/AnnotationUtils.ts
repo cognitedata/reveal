@@ -39,7 +39,7 @@ export interface LinkedAnnotation extends Annotation {
   linkedAssetExternalId?: string;
 }
 
-export interface VisionAnnotation extends Omit<LinkedAnnotation, 'shape'> {
+export interface VisionAnnotation extends Omit<LinkedAnnotation, 'region'> {
   label: string;
   type: string;
   color: string;
@@ -126,19 +126,19 @@ export class AnnotationUtils {
         return {
           color: AnnotationUtils.getAnnotationColor(modelType),
           label: String(index),
-          type: value.shape?.type || '',
-          box: value.shape && {
-            xMin: value.shape.vertices[0].x,
-            yMin: value.shape.vertices[0].y,
-            xMax: value.shape.vertices[1].x,
-            yMax: value.shape.vertices[1].y,
+          type: value.region?.shape || '',
+          box: value.region && {
+            xMin: value.region.vertices[0].x,
+            yMin: value.region.vertices[0].y,
+            xMax: value.region.vertices[1].x,
+            yMax: value.region.vertices[1].y,
           },
           source: 'ocr',
           version: 1,
           status: AnnotationStatus.Unhandled,
-          description: value.description,
+          text: value.text,
           confidence: value.confidence,
-          attributes: value.attributes,
+          data: value.data,
           linkedAssetId: value.linkedAssetId,
           linkedAssetExternalId: value.linkedAssetExternalId,
         };

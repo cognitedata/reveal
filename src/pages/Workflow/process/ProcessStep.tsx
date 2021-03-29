@@ -59,7 +59,7 @@ export default function ProcessStep() {
     // for now API always return single item, because it doesn't support multiple files upload,
     // but response already have items like if you could upload multiple files
     jobs.forEach((job) => {
-      if ('items' in job && job.items[0]) {
+      if ('items' in job && job.items[0].annotations) {
         annotationsCount += job.items[0].annotations.length;
       }
     });
