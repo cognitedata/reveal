@@ -44,7 +44,13 @@ export function getYaxisUpdatesFromEventData(
       .filter((key) => key.includes('yaxis'))
       .reduce((result: { [key: string]: any }, key) => {
         const axisIndex = (+key.split('.')[0].split('yaxis')[1] || 1) - 1;
-        const { id = '', type = '' } = seriesData[axisIndex] || {};
+        const series = seriesData[axisIndex];
+        const { id = '', type = '' } = series;
+        const isAutoscale = key.includes('autorange');
+
+        const range = isAutoscale
+          ? []
+          : ((result[id] || {}).range || []).concat(eventdata[key]);
 
         return {
           ...result,
@@ -52,7 +58,7 @@ export function getYaxisUpdatesFromEventData(
             ...(result[id] || {}),
             id,
             type,
-            range: ((result[id] || {}).range || []).concat(eventdata[key]),
+            range,
           },
         };
       }, {})
@@ -63,10 +69,18 @@ export function getYaxisUpdatesFromEventData(
 
 export function getXaxisUpdateFromEventData(
   eventdata: PlotlyEventData
-): number[] {
-  return Object.keys(eventdata)
-    .filter((key) => key.includes('xaxis'))
-    .map((key) => eventdata[key]);
+): string[] {
+  const xaxisKeys = Object.keys(eventdata).filter((key) =>
+    key.includes('xaxis')
+  );
+
+  const isAutoscale = xaxisKeys.some((key) => key.includes('autorange'));
+
+  const range = isAutoscale
+    ? []
+    : xaxisKeys.map((key) => new Date(eventdata[key]).toJSON());
+
+  return range;
 }
 
 export function calculateStackedYRange(

@@ -154,7 +154,7 @@ export function covertTSToChartTS(
 
 export function updateSourceAxisForChart(
   chart: Chart,
-  { x, y }: { x: number[]; y: AxisUpdate[] }
+  { x, y }: { x: string[]; y: AxisUpdate[] }
 ) {
   const updatedChart = {
     ...chart,

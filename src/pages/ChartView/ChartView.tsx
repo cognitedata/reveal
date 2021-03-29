@@ -155,7 +155,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   };
 
   const handleChangeSourceAxis = debounce(
-    ({ x, y }: { x: number[]; y: AxisUpdate[] }) => {
+    ({ x, y }: { x: string[]; y: AxisUpdate[] }) => {
       if (chart) {
         const updatedChart = updateSourceAxisForChart(chart, { x, y });
         updateChart(updatedChart);
