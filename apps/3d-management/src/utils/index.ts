@@ -12,6 +12,7 @@ export * from './revealUtils';
 export * from './queryKeys';
 export * from './sdk/3dApiUtils';
 export * from './sortNaturally';
+export * from './sleep';
 
 export { styleScope } from './styleScope';
 

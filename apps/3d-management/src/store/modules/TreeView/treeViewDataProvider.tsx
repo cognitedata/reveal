@@ -70,6 +70,7 @@ export async function fetchRootTreeNodes({
     modelId,
     revisionId,
     parent: { nodeId: rootNode.id, treeIndex: 0 },
+    params: { limit: 1000 }, // increased limit to avoid D3M-50 behavior when it's most confusing
   });
 
   return treeData;

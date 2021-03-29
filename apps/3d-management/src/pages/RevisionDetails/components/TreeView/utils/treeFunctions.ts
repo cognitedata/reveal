@@ -179,3 +179,24 @@ export function getAncestors(
 
   return undefined;
 }
+
+/**
+ * Iterate over every node of passed tree with ability to skip branches.
+ * Branch iteration can be skipped if callback returns `false`.
+ * @param treeData
+ * @param callback
+ */
+export function traverseTree(
+  treeData: TreeDataNode[] | CustomDataNode[],
+  callback: (
+    key: typeof node['key'],
+    node: ArrayElement<typeof treeData>
+  ) => boolean | void
+) {
+  treeData.forEach((dataNode) => {
+    const { key, children } = dataNode;
+    if (callback(key, dataNode) !== false) {
+      traverseTree(children || [], callback);
+    }
+  });
+}

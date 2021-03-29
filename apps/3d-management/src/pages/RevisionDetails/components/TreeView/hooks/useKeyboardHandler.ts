@@ -2,11 +2,11 @@ import React, { useEffect } from 'react';
 import {
   getAncestors,
   getNodeByTreeIndex,
+  traverseTree,
 } from 'src/pages/RevisionDetails/components/TreeView/utils/treeFunctions';
 import {
   calcRangeKeys,
   convertKeysToSelectedNodes,
-  traverseNodesKey,
 } from 'src/pages/RevisionDetails/components/TreeView/utils/treeViewMultiselectionUtils';
 import { TreeDataNode } from 'src/pages/RevisionDetails/components/TreeView/types';
 import { treeDataNodeToSelectedNode } from 'src/pages/RevisionDetails/components/TreeView/utils/converters';
@@ -72,7 +72,7 @@ export function useKeyboardHandler(props: Props) {
           );
         }
 
-        traverseNodesKey([getNodeByTreeIndex(treeData, key)!], (currentKey) => {
+        traverseTree([getNodeByTreeIndex(treeData, key)!], (currentKey) => {
           if (
             typeof currentKey !== 'number' ||
             childrenToUncheck.has(currentKey)
@@ -92,7 +92,7 @@ export function useKeyboardHandler(props: Props) {
       const setOfNewCheckedNodes = new Set(checkedKeys);
 
       selectedKeys.forEach((selectedNodeKey) => {
-        traverseNodesKey(
+        traverseTree(
           [getNodeByTreeIndex(treeData, selectedNodeKey)!],
           (childKey) => {
             if (

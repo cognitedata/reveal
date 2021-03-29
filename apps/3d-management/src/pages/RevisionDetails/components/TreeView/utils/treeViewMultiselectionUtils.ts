@@ -1,35 +1,11 @@
-import {
-  CustomDataNode,
-  TreeDataNode,
-} from 'src/pages/RevisionDetails/components/TreeView/types';
+import { TreeDataNode } from 'src/pages/RevisionDetails/components/TreeView/types';
 import { SelectedNode, TreeIndex } from 'src/store/modules/TreeView';
-import { ArrayElement } from 'src/utils/types';
+import { traverseTree } from './treeFunctions';
 
 enum Record {
   None,
   Start,
   End,
-}
-
-/**
- * Iterate over every node of passed tree with ability to skip branches.
- * Branch iteration can be skipped if callback returns `false`.
- * @param treeData
- * @param callback
- */
-export function traverseNodesKey(
-  treeData: TreeDataNode[] | CustomDataNode[],
-  callback: (
-    key: typeof node['key'],
-    node: ArrayElement<typeof treeData>
-  ) => boolean | void
-) {
-  treeData.forEach((dataNode) => {
-    const { key, children } = dataNode;
-    if (callback(key, dataNode) !== false) {
-      traverseNodesKey(children || [], callback);
-    }
-  });
 }
 
 export function calcRangeKeys({
@@ -57,7 +33,7 @@ export function calcRangeKeys({
     return key === startKey || key === endKey;
   }
 
-  traverseNodesKey(treeData, (key: TreeIndex | string) => {
+  traverseTree(treeData, (key: TreeIndex | string) => {
     if (record === Record.End || typeof key !== 'number') {
       return false;
     }
@@ -88,7 +64,7 @@ export function convertKeysToNodes(
   const restKeys: Array<TreeIndex> = [...keys];
   const nodes: Array<TreeDataNode> = [];
 
-  traverseNodesKey(treeData, (key, node) => {
+  traverseTree(treeData, (key, node) => {
     if (typeof key !== 'number') {
       return false;
     }
