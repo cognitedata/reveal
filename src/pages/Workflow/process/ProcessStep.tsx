@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import {
   FileTable,
-  MenuActions,
+  FileActions,
   TableDataItem,
 } from 'src/pages/Workflow/components/FileTable/FileTable';
 
@@ -64,12 +64,17 @@ export default function ProcessStep() {
       }
     });
 
-    const menuActions: MenuActions = {
+    const menuActions: FileActions = {
       annotationsAvailable: false,
       showMetadataPreview: (fileId: number) => {
         dispatch(setSelectedFileId(fileId));
         dispatch(resetEditHistory());
         dispatch(showFileMetadataPreview());
+      },
+      onReviewClick: (fileId: number) => {
+        history.push(
+          getParamLink(workflowRoutes.review, ':fileId', String(fileId))
+        );
       },
     };
     menuActions.annotationsAvailable = annotationsCount > 0;

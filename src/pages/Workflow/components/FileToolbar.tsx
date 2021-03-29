@@ -1,5 +1,5 @@
 import React from 'react';
-import { Checkbox, Button, ButtonGroup, Detail } from '@cognite/cogs.js';
+import { ButtonGroup, Detail } from '@cognite/cogs.js';
 import { DetectionModelSelect } from 'src/pages/Workflow/process/DetectionModelSelect';
 import styled from 'styled-components';
 
@@ -17,20 +17,16 @@ export const FileToolbar = ({
   return (
     <>
       <Container>
-        <CheckboxContainer>
-          <Checkbox name="select-all">Select all</Checkbox>
-        </CheckboxContainer>
-
         <ModelSelector>
           <Detail strong>ML model</Detail>
           <DetectionModelSelect value={value} onChange={onChange} />
         </ModelSelector>
-
+        {/* 
         <DeleteContainer>
           <Button type="secondary" icon="Delete">
             Delete
           </Button>
-        </DeleteContainer>
+        </DeleteContainer> */}
 
         <ButtonGroup onButtonClicked={onViewChange} currentKey={currentView}>
           <ButtonGroup.Button key="list" icon="List" title="List" size="small">
@@ -54,19 +50,15 @@ const Container = styled.div`
   align-items: flex-end;
 `;
 
-const CheckboxContainer = styled.div`
-  margin-right: auto;
-`;
-
 const ModelSelector = styled.div`
   padding-right: 15px;
   max-width: 340px;
   width: 340px;
 `;
 
-const DeleteContainer = styled.div`
-  padding-right: 15px;
-`;
+// const DeleteContainer = styled.div`
+//   padding-right: 15px;
+// `;
 
 const HorizontalLine = styled.div`
   border: 1px solid #e8e8e8;
