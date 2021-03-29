@@ -97,8 +97,10 @@ export class CadMaterialManager {
   setRenderMode(mode: RenderMode) {
     this._renderMode = mode;
     const transparent = mode === RenderMode.Ghost;
+    const colorWrite = mode !== RenderMode.DepthBufferOnly;
     this.applyToAllMaterials(material => {
       material.uniforms.renderMode.value = mode;
+      material.colorWrite = colorWrite;
       material.transparent = transparent;
     });
   }

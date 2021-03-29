@@ -281,16 +281,49 @@ export class EffectRenderManager {
     this._isInitialized = true;
   }
 
-  public getOcclusionDepthTexture(): THREE.DepthTexture {
-    return this._compositionTarget.depthTexture;
-  }
-
   private supportsSsao(renderer: THREE.WebGLRenderer, ssaoParameters: SsaoParameters) {
     return (
       !isMobileOrTablet() &&
       (renderer.capabilities.isWebGL2 || renderer.extensions.has('EXT_frag_depth')) &&
       ssaoParameters.sampleSize !== SsaoSampleQuality.None
     );
+  }
+
+  public renderDepthOnly(
+    renderer: THREE.WebGLRenderer,
+    target: THREE.WebGLRenderTarget | null,
+    camera: THREE.PerspectiveCamera,
+    scene: THREE.Scene
+  ) {
+    this.ensureInitialized(renderer);
+    const original = {
+      renderMode: this._materialManager.getRenderMode()
+    };
+    const renderStateHelper = new WebGLRendererStateHelper(renderer);
+    this._materialManager.setRenderMode(RenderMode.DepthBufferOnly);
+
+    try {
+      this.traverseForRootSectorNode(scene);
+      this.extractCadNodes(scene);
+
+      this.clearTarget(renderer, target);
+      const { hasBackElements, hasInFrontElements, hasGhostElements } = this.splitToScenes();
+
+      if (hasBackElements && !hasGhostElements) {
+        this.renderNormalCadModelsFromBaseScene(renderer, camera);
+      } else if (hasBackElements && hasGhostElements) {
+        this.renderNormalCadModels(renderer, camera);
+        this._normalSceneBuilder.restoreOriginalScene();
+      }
+      if (hasInFrontElements) {
+        this.renderInFrontCadModels(renderer, camera);
+        this._inFrontSceneBuilder.restoreOriginalScene();
+      }
+    } finally {
+      this._materialManager.setRenderMode(original.renderMode);
+      renderStateHelper.resetState();
+      this.restoreCadNodes();
+    }
   }
 
   public render(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera, scene: THREE.Scene) {
@@ -302,16 +335,10 @@ export class EffectRenderManager {
       clearAlpha: renderer.getClearAlpha(),
       renderMode: this._materialManager.getRenderMode()
     };
-    this.updateRenderSize(renderer);
 
-    this.traverseForRootSectorNode(scene);
-
-    this._rootSectorNodeBuffer.forEach(p => {
-      if (p[1].parent !== scene && !(p[1].parent instanceof Cognite3DModel)) {
-        throw new Error('CadNode must be put at scene root');
-      }
-      this._cadScene.add(p[0]);
-    });
+    renderer.info.autoReset = false;
+    renderer.info.reset();
+    renderStateHelper.autoClear = false;
 
     try {
       this.updateRenderSize(renderer);
@@ -319,6 +346,9 @@ export class EffectRenderManager {
       renderer.info.autoReset = false;
       renderer.info.reset();
       renderStateHelper.autoClear = false;
+
+      this.traverseForRootSectorNode(scene);
+      this.extractCadNodes(scene);
 
       // Clear targets
       this.clearTarget(renderer, this._ghostObjectRenderTarget);
@@ -407,12 +437,24 @@ export class EffectRenderManager {
       // Restore state
       renderStateHelper.resetState();
       this._materialManager.setRenderMode(original.renderMode);
-
-      this._rootSectorNodeBuffer.forEach(p => {
-        p[1].add(p[0]);
-      });
-      this._rootSectorNodeBuffer.clear();
+      this.restoreCadNodes();
     }
+  }
+
+  private restoreCadNodes() {
+    this._rootSectorNodeBuffer.forEach(p => {
+      p[1].add(p[0]);
+    });
+    this._rootSectorNodeBuffer.clear();
+  }
+
+  private extractCadNodes(scene: THREE.Scene) {
+    this._rootSectorNodeBuffer.forEach(p => {
+      if (p[1].parent !== scene && !(p[1].parent instanceof Cognite3DModel)) {
+        throw new Error('CadNode must be put at scene root');
+      }
+      this._cadScene.add(p[0]);
+    });
   }
 
   public setRenderTarget(target: THREE.WebGLRenderTarget | null, autoSetTargetSize: boolean = true) {

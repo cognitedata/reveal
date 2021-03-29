@@ -176,7 +176,7 @@ export function Migration() {
       gui.add(guiState, 'revisionId').name('Revision ID');
       gui.add(guiActions, 'addModel').name('Load model');
       gui.add(guiActions, 'fitToModel').name('Fit camera');
-      const renderModes = [undefined, 'Color', 'Normal', 'TreeIndex', 'PackColorAndNormal', 'Depth', 'Effects', 'Ghost', 'LOD'];
+      const renderModes = [undefined, 'Color', 'Normal', 'TreeIndex', 'PackColorAndNormal', 'Depth', 'Effects', 'Ghost', 'LOD', 'DepthOnly'];
       gui.add(guiState, 'renderMode', renderModes).name('Render mode').onFinishChange(value => {
         const renderMode = renderModes.indexOf(value);
         cadModels.forEach(m => {
