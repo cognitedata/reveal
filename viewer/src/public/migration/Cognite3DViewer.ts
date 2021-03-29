@@ -991,7 +991,7 @@ export class Cognite3DViewer {
 
     this.renderer.setSize(width, height);
     this.renderer.render(this.scene, screenshotCamera);
-    this._revealManager.render(this.renderer, screenshotCamera, this.scene);
+    this._revealManager.render(screenshotCamera, this.scene);
     const url = this.renderer.domElement.toDataURL();
 
     this.renderer.setSize(originalWidth, originalHeight);
@@ -1220,7 +1220,7 @@ export class Cognite3DViewer {
         const frameNumber = this.renderer.info.render.frame;
         const start = Date.now();
         this.triggerUpdateCameraNearAndFar();
-        this._revealManager.render(this.renderer, this.camera, this.scene);
+        this._revealManager.render(this.camera, this.scene);
         renderController.clearNeedsRedraw();
         this._revealManager.resetRedraw();
         this._slicingNeedsUpdate = false;

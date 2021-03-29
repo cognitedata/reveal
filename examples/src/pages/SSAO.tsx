@@ -100,7 +100,7 @@ export function SSAO() {
         }
 
         if (controlsNeedUpdate || revealManager.needsRedraw || needsResize) {
-          revealManager.render(renderer, camera, scene);
+          revealManager.render(camera, scene);
           revealManager.resetRedraw();
         }
       });

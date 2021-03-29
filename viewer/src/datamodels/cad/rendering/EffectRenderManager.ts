@@ -54,7 +54,6 @@ export class EffectRenderManager {
   // Used to build _infrontScene during render()
   private readonly _inFrontSceneBuilder: TemporarySceneBuilder;
 
-  private _isInitialized: boolean = false;
   private _renderOptions: RenderOptions;
 
   private _combineOutlineDetectionMaterial: THREE.ShaderMaterial;
@@ -82,10 +81,11 @@ export class EffectRenderManager {
   };
 
   private readonly _rootSectorNodeBuffer: Set<[RootSectorNode, CadNode]> = new Set();
-  private readonly outlineTexelSize = 2;
+  private readonly _outlineTexelSize = 2;
 
-  private renderTarget: THREE.WebGLRenderTarget | null;
-  private autoSetTargetSize: boolean = false;
+  private readonly _renderer: THREE.WebGLRenderer;
+  private _renderTarget: THREE.WebGLRenderTarget | null;
+  private _autoSetTargetSize: boolean = false;
 
   public set renderOptions(options: RenderOptions) {
     const ssaoParameters = this.ssaoParameters(options);
@@ -108,12 +108,13 @@ export class EffectRenderManager {
     return multiSampleCountHint;
   }
 
-  constructor(materialManager: CadMaterialManager, options: RenderOptions) {
+  constructor(renderer: THREE.WebGLRenderer, materialManager: CadMaterialManager, options: RenderOptions) {
+    this._renderer = renderer;
     this._renderOptions = options;
     this._materialManager = materialManager;
     this._orthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
-    this.renderTarget = null;
+    this._renderTarget = null;
 
     this._cadScene = new THREE.Scene();
     this._cadScene.autoUpdate = false;
@@ -131,24 +132,6 @@ export class EffectRenderManager {
     this._ssaoBlurScene.autoUpdate = false;
     this._emptyScene = new THREE.Scene();
     this._emptyScene.autoUpdate = false;
-    this._normalSceneBuilder = new TemporarySceneBuilder(this._normalScene);
-    this._inFrontSceneBuilder = new TemporarySceneBuilder(this._inFrontScene);
-
-    // Initialize dummy targets and materials untill properly initialized
-    this._customObjectRenderTarget = this._ghostObjectRenderTarget = this._normalRenderedCadModelTarget = this._inFrontRenderedCadModelTarget = this._compositionTarget = this._ssaoTarget = this._ssaoBlurTarget = new THREE.WebGLRenderTarget(
-      0,
-      0
-    );
-    this._combineOutlineDetectionMaterial = new THREE.ShaderMaterial({});
-    this._ssaoMaterial = new THREE.ShaderMaterial({});
-    this._ssaoBlurMaterial = new THREE.ShaderMaterial({});
-    this._fxaaMaterial = new THREE.ShaderMaterial({});
-  }
-
-  private ensureInitialized(renderer: THREE.WebGLRenderer) {
-    if (this._isInitialized) {
-      return;
-    }
 
     const isWebGL2 = renderer.capabilities.isWebGL2;
     const outlineColorTexture = this.createOutlineColorTexture();
@@ -257,7 +240,7 @@ export class EffectRenderManager {
       fragmentShader: ssaoBlurCombineShaders.fragment
     });
 
-    const diffuseTexture = this.supportsSsao(renderer, ssaoParameters)
+    const diffuseTexture = this.supportsSsao(ssaoParameters)
       ? this._ssaoBlurTarget.texture
       : this._compositionTarget.texture;
 
@@ -278,45 +261,40 @@ export class EffectRenderManager {
     this.setupSsaoBlurCombineScene();
     this.setupFxaaScene();
 
-    this._isInitialized = true;
+    this._normalSceneBuilder = new TemporarySceneBuilder(this._normalScene);
+    this._inFrontSceneBuilder = new TemporarySceneBuilder(this._inFrontScene);
   }
 
-  private supportsSsao(renderer: THREE.WebGLRenderer, ssaoParameters: SsaoParameters) {
+  private supportsSsao(ssaoParameters: SsaoParameters) {
     return (
       !isMobileOrTablet() &&
-      (renderer.capabilities.isWebGL2 || renderer.extensions.has('EXT_frag_depth')) &&
+      (this._renderer.capabilities.isWebGL2 || this._renderer.extensions.has('EXT_frag_depth')) &&
       ssaoParameters.sampleSize !== SsaoSampleQuality.None
     );
   }
 
-  public renderDepthOnly(
-    renderer: THREE.WebGLRenderer,
-    target: THREE.WebGLRenderTarget | null,
-    camera: THREE.PerspectiveCamera,
-    scene: THREE.Scene
-  ) {
-    this.ensureInitialized(renderer);
+  public renderDepthOnly(target: THREE.WebGLRenderTarget | null, camera: THREE.PerspectiveCamera, scene: THREE.Scene) {
     const original = {
       renderMode: this._materialManager.getRenderMode()
     };
-    const renderStateHelper = new WebGLRendererStateHelper(renderer);
+    const renderStateHelper = new WebGLRendererStateHelper(this._renderer);
     this._materialManager.setRenderMode(RenderMode.DepthBufferOnly);
 
     try {
       this.traverseForRootSectorNode(scene);
       this.extractCadNodes(scene);
 
-      this.clearTarget(renderer, target);
+      this.clearTarget(target);
       const { hasBackElements, hasInFrontElements, hasGhostElements } = this.splitToScenes();
 
       if (hasBackElements && !hasGhostElements) {
-        this.renderNormalCadModelsFromBaseScene(renderer, camera);
+        this.renderNormalCadModelsFromBaseScene(camera);
       } else if (hasBackElements && hasGhostElements) {
-        this.renderNormalCadModels(renderer, camera);
+        this.renderNormalCadModels(camera);
         this._normalSceneBuilder.restoreOriginalScene();
       }
       if (hasInFrontElements) {
-        this.renderInFrontCadModels(renderer, camera);
+        this.renderInFrontCadModels(camera);
         this._inFrontSceneBuilder.restoreOriginalScene();
       }
     } finally {
@@ -326,8 +304,8 @@ export class EffectRenderManager {
     }
   }
 
-  public render(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera, scene: THREE.Scene) {
-    this.ensureInitialized(renderer);
+  public render(camera: THREE.PerspectiveCamera, scene: THREE.Scene) {
+    const renderer = this._renderer;
 
     const renderStateHelper = new WebGLRendererStateHelper(renderer);
     const original = {
@@ -351,13 +329,13 @@ export class EffectRenderManager {
       this.extractCadNodes(scene);
 
       // Clear targets
-      this.clearTarget(renderer, this._ghostObjectRenderTarget);
-      this.clearTarget(renderer, this._compositionTarget);
-      this.clearTarget(renderer, this._customObjectRenderTarget);
+      this.clearTarget(this._ghostObjectRenderTarget);
+      this.clearTarget(this._compositionTarget);
+      this.clearTarget(this._customObjectRenderTarget);
       // We use alpha to store special state for the next targets
       renderer.setClearAlpha(0.0);
-      this.clearTarget(renderer, this._normalRenderedCadModelTarget);
-      this.clearTarget(renderer, this._inFrontRenderedCadModelTarget);
+      this.clearTarget(this._normalRenderedCadModelTarget);
+      this.clearTarget(this._inFrontRenderedCadModelTarget);
       renderer.setClearAlpha(original.clearAlpha);
 
       const lastFrameSceneState = { ...this._lastFrameSceneState };
@@ -366,41 +344,41 @@ export class EffectRenderManager {
       this._lastFrameSceneState = { hasBackElements, hasInFrontElements, hasGhostElements, hasCustomObjects };
 
       if (hasBackElements && !hasGhostElements) {
-        this.renderNormalCadModelsFromBaseScene(renderer, camera);
+        this.renderNormalCadModelsFromBaseScene(camera);
       } else if (hasBackElements && hasGhostElements) {
-        this.renderNormalCadModels(renderer, camera);
+        this.renderNormalCadModels(camera);
         this._normalSceneBuilder.restoreOriginalScene();
-        this.renderGhostedCadModelsFromBaseScene(renderer, camera);
+        this.renderGhostedCadModelsFromBaseScene(camera);
       } else if (!hasBackElements && hasGhostElements) {
-        this.renderGhostedCadModelsFromBaseScene(renderer, camera);
+        this.renderGhostedCadModelsFromBaseScene(camera);
       }
 
       if (hasInFrontElements) {
-        this.renderInFrontCadModels(renderer, camera);
+        this.renderInFrontCadModels(camera);
         this._inFrontSceneBuilder.restoreOriginalScene();
       }
       if (hasCustomObjects) {
-        this.renderCustomObjects(renderer, scene, camera);
+        this.renderCustomObjects(scene, camera);
       }
 
       if (renderer.capabilities.isWebGL2) {
         // Due to how WebGL2 works and how ThreeJS applies changes from 'clear', we need to
         // render something for the clear to have effect
         if (!hasBackElements && lastFrameSceneState.hasBackElements) {
-          this.explicitFlushRender(renderer, camera, this._normalRenderedCadModelTarget);
+          this.explicitFlushRender(camera, this._normalRenderedCadModelTarget);
         }
         if (!hasGhostElements && lastFrameSceneState.hasGhostElements) {
-          this.explicitFlushRender(renderer, camera, this._ghostObjectRenderTarget);
+          this.explicitFlushRender(camera, this._ghostObjectRenderTarget);
         }
         if (!hasInFrontElements && lastFrameSceneState.hasInFrontElements) {
-          this.explicitFlushRender(renderer, camera, this._inFrontRenderedCadModelTarget);
+          this.explicitFlushRender(camera, this._inFrontRenderedCadModelTarget);
         }
         if (!hasCustomObjects && lastFrameSceneState.hasInFrontElements) {
-          this.explicitFlushRender(renderer, camera, this._customObjectRenderTarget);
+          this.explicitFlushRender(camera, this._customObjectRenderTarget);
         }
       }
 
-      const supportsSsao = this.supportsSsao(renderer, this.ssaoParameters(this._renderOptions));
+      const supportsSsao = this.supportsSsao(this.ssaoParameters(this._renderOptions));
 
       switch (this.antiAliasingMode) {
         case AntiAliasingMode.FXAA:
@@ -415,7 +393,7 @@ export class EffectRenderManager {
             this.renderBlurredSsao(renderer, this._ssaoBlurTarget);
           }
 
-          this.renderAntiAlias(renderer, this.renderTarget);
+          this.renderAntiAlias(renderer, this._renderTarget);
           break;
 
         case AntiAliasingMode.NoAA:
@@ -424,9 +402,9 @@ export class EffectRenderManager {
           if (supportsSsao) {
             this.renderComposition(renderer, camera, this._compositionTarget);
             this.renderSsao(renderer, this._ssaoTarget, camera);
-            this.renderBlurredSsao(renderer, this.renderTarget);
+            this.renderBlurredSsao(renderer, this._renderTarget);
           } else {
-            this.renderComposition(renderer, camera, this.renderTarget);
+            this.renderComposition(renderer, camera, this._renderTarget);
           }
           break;
 
@@ -458,22 +436,18 @@ export class EffectRenderManager {
   }
 
   public setRenderTarget(target: THREE.WebGLRenderTarget | null, autoSetTargetSize: boolean = true) {
-    this.autoSetTargetSize = autoSetTargetSize;
-    this.renderTarget = target;
+    this._autoSetTargetSize = autoSetTargetSize;
+    this._renderTarget = target;
   }
 
-  private clearTarget(renderer: THREE.WebGLRenderer, target: THREE.WebGLRenderTarget | null) {
-    renderer.setRenderTarget(target);
-    renderer.clear();
+  private clearTarget(target: THREE.WebGLRenderTarget | null) {
+    this._renderer.setRenderTarget(target);
+    this._renderer.clear();
   }
 
-  private explicitFlushRender(
-    renderer: THREE.WebGLRenderer,
-    camera: THREE.Camera,
-    target: THREE.WebGLRenderTarget | null
-  ) {
-    renderer.setRenderTarget(target);
-    renderer.render(this._emptyScene, camera);
+  private explicitFlushRender(camera: THREE.Camera, target: THREE.WebGLRenderTarget | null) {
+    this._renderer.setRenderTarget(target);
+    this._renderer.render(this._emptyScene, camera);
   }
 
   private splitToScenes(): { hasBackElements: boolean; hasInFrontElements: boolean; hasGhostElements: boolean } {
@@ -532,33 +506,33 @@ export class EffectRenderManager {
     return result;
   }
 
-  private renderNormalCadModels(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera) {
+  private renderNormalCadModels(camera: THREE.PerspectiveCamera) {
     this._normalSceneBuilder.populateTemporaryScene();
-    renderer.setRenderTarget(this._normalRenderedCadModelTarget);
-    renderer.render(this._normalScene, camera);
+    this._renderer.setRenderTarget(this._normalRenderedCadModelTarget);
+    this._renderer.render(this._normalScene, camera);
   }
 
-  private renderNormalCadModelsFromBaseScene(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera) {
-    renderer.setRenderTarget(this._normalRenderedCadModelTarget);
-    renderer.render(this._cadScene, camera);
+  private renderNormalCadModelsFromBaseScene(camera: THREE.PerspectiveCamera) {
+    this._renderer.setRenderTarget(this._normalRenderedCadModelTarget);
+    this._renderer.render(this._cadScene, camera);
   }
 
-  private renderInFrontCadModels(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera) {
+  private renderInFrontCadModels(camera: THREE.PerspectiveCamera) {
     this._inFrontSceneBuilder.populateTemporaryScene();
-    renderer.setRenderTarget(this._inFrontRenderedCadModelTarget);
+    this._renderer.setRenderTarget(this._inFrontRenderedCadModelTarget);
     this._materialManager.setRenderMode(RenderMode.Effects);
-    renderer.render(this._inFrontScene, camera);
+    this._renderer.render(this._inFrontScene, camera);
   }
 
-  private renderGhostedCadModelsFromBaseScene(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera) {
-    renderer.setRenderTarget(this._ghostObjectRenderTarget);
+  private renderGhostedCadModelsFromBaseScene(camera: THREE.PerspectiveCamera) {
+    this._renderer.setRenderTarget(this._ghostObjectRenderTarget);
     this._materialManager.setRenderMode(RenderMode.Ghost);
-    renderer.render(this._cadScene, camera);
+    this._renderer.render(this._cadScene, camera);
   }
 
-  private renderCustomObjects(renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.PerspectiveCamera) {
-    renderer.setRenderTarget(this._customObjectRenderTarget);
-    renderer.render(scene, camera);
+  private renderCustomObjects(scene: THREE.Scene, camera: THREE.PerspectiveCamera) {
+    this._renderer.setRenderTarget(this._customObjectRenderTarget);
+    this._renderer.render(scene, camera);
   }
 
   private updateRenderSize(renderer: THREE.WebGLRenderer) {
@@ -566,12 +540,12 @@ export class EffectRenderManager {
     renderer.getSize(renderSize);
 
     if (
-      this.renderTarget &&
-      this.autoSetTargetSize &&
-      renderSize.x !== this.renderTarget.width &&
-      renderSize.y !== this.renderTarget.height
+      this._renderTarget &&
+      this._autoSetTargetSize &&
+      renderSize.x !== this._renderTarget.width &&
+      renderSize.y !== this._renderTarget.height
     ) {
-      this.renderTarget.setSize(renderSize.x, renderSize.y);
+      this._renderTarget.setSize(renderSize.x, renderSize.y);
     }
 
     if (
@@ -587,8 +561,8 @@ export class EffectRenderManager {
       this._ssaoBlurTarget.setSize(renderSize.x, renderSize.y);
 
       this._combineOutlineDetectionMaterial.uniforms.texelSize.value = new THREE.Vector2(
-        this.outlineTexelSize / renderSize.x,
-        this.outlineTexelSize / renderSize.y
+        this._outlineTexelSize / renderSize.x,
+        this._outlineTexelSize / renderSize.y
       );
 
       this._combineOutlineDetectionMaterial.uniforms.resolution.value = renderSize;
@@ -616,8 +590,6 @@ export class EffectRenderManager {
   }
 
   private setSsaoParameters(params: SsaoParameters) {
-    if (!this._isInitialized) return;
-
     const defaultSsaoParameters = defaultRenderOptions.ssaoRenderParameters;
 
     this._ssaoMaterial.uniforms.sampleRadius.value = params.sampleRadius;

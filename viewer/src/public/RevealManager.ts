@@ -167,8 +167,8 @@ export class RevealManager<TModelIdentifier> {
     }
   }
 
-  public render(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera, scene: THREE.Scene) {
-    this._effectRenderManager.render(renderer, camera, scene);
+  public render(camera: THREE.PerspectiveCamera, scene: THREE.Scene) {
+    this._effectRenderManager.render(camera, scene);
   }
 
   /**

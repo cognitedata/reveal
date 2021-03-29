@@ -144,7 +144,7 @@ export function Picking() {
           pickingNeedsUpdate ||
           revealManager.needsRedraw
         ) {
-          revealManager.render(renderer, camera, scene);
+          revealManager.render(camera, scene);
           pickingNeedsUpdate = false;
           revealManager.resetRedraw();
         }

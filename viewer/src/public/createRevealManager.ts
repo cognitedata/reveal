@@ -1,7 +1,7 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-
+import * as THREE from 'three';
 import { LocalModelIdentifier, CdfModelIdentifier, ModelDataClient } from '../utilities/networking/types';
 import { CdfModelDataClient } from '../utilities/networking/CdfModelDataClient';
 import { CogniteClient } from '@cognite/sdk';
@@ -53,7 +53,7 @@ class DepthTextureProvider implements AlreadyLoadedGeometryDepthTextureProvider 
   }
 
   provideAlreadyLoadedDepthTexture(): THREE.DepthTexture {
-    return this._renderManager.getOcclusionDepthTexture();
+    return new THREE.DepthTexture(100, 100);
   }
 }
 
@@ -80,7 +80,7 @@ export function createRevealManager<T>(
 
   const renderOptions: RenderOptions = revealOptions.renderOptions || {};
   const materialManager = new CadMaterialManager();
-  const renderManager = new EffectRenderManager(materialManager, renderOptions);
+  const renderManager = new EffectRenderManager(renderer, materialManager, renderOptions);
   const alreadyLoadedProvider = new DepthTextureProvider(renderManager);
   const cadManager = createCadManager(client, renderer, materialManager, alreadyLoadedProvider, revealOptions);
   const pointCloudManager = createPointCloudManager(client);
