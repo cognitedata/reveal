@@ -9,12 +9,14 @@ import ReactBaseTable, {
 } from 'react-base-table';
 import { TimeDisplay } from '@cognite/data-exploration';
 import { JobStatus } from 'src/api/types';
+import styled from 'styled-components';
 import { TableWrapper } from './FileTableWrapper';
 
-export type MenuActions = {
+export type FileActions = {
   annotationsAvailable: boolean;
   onAnnotationEditClick?: () => void;
   showMetadataPreview: (fileId: number) => void;
+  onReviewClick?: (fileId: number) => void;
 };
 
 export type TableDataItem = {
@@ -24,7 +26,7 @@ export type TableDataItem = {
   status: JobStatus | '';
   statusTime: number;
   annotationsCount: number;
-  menu: MenuActions;
+  menu: FileActions;
 };
 
 type CellRenderer = {
@@ -115,9 +117,10 @@ export function FileTable(props: FileTableProps) {
     },
     {
       key: 'action',
-      title: 'Action',
+      title: 'File Actions',
       dataKey: 'menu',
-      width: 100,
+      align: Column.Alignment.CENTER,
+      width: 200,
       cellRenderer: ({ rowData }: CellRenderer) => {
         const { menu } = rowData;
         const handleAnnotationEdit = () => {
@@ -140,8 +143,6 @@ export function FileTable(props: FileTableProps) {
           >
             <Menu.Item onClick={handleMetadataEdit}>Edit metadata</Menu.Item>
 
-            <Menu.Item disabled>Attach events file</Menu.Item>
-
             <Menu.Item onClick={handleAnnotationEdit}>
               Edit annotations
             </Menu.Item>
@@ -150,10 +151,26 @@ export function FileTable(props: FileTableProps) {
           </Menu>
         );
 
+        const handleReview = () => {
+          if (menu?.onReviewClick) {
+            menu.onReviewClick(rowData.id);
+          }
+        };
+
         return (
-          <Dropdown content={MenuContent}>
-            <Button type="ghost">•••</Button>
-          </Dropdown>
+          <ActionContainer>
+            <Button
+              type="secondary"
+              icon="ArrowRight"
+              style={{ marginRight: '10px' }}
+              onClick={handleReview}
+            >
+              Review
+            </Button>
+            <Dropdown content={MenuContent}>
+              <Button type="secondary" icon="MoreOverflowEllipsisHorizontal" />
+            </Dropdown>
+          </ActionContainer>
         );
       },
     },
@@ -174,3 +191,7 @@ export function FileTable(props: FileTableProps) {
     </TableWrapper>
   );
 }
+
+const ActionContainer = styled.div`
+  justify-content: space-between;
+`;
