@@ -52,7 +52,7 @@
     "single-spa-react": "^3.2.0",
     "styled-components": "^5.2.1",
     "systemjs-webpack-interop": "^2.3.6",
-    "yup": "^0.32.8"
+    "yup": "^0.32.9"
   },
   "devDependencies": {
     "@cognite/babel-plugin-styled-components": "^1.10.7",
