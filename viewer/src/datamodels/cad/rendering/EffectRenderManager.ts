@@ -19,6 +19,9 @@ export class EffectRenderManager {
   private readonly _materialManager: CadMaterialManager;
   private readonly _orthographicCamera: THREE.OrthographicCamera;
 
+  // Original input scene containing all geometry
+  private readonly _originalScene: THREE.Scene;
+
   // Simple scene with a single triangle with UVs [0,1] in both directions
   // used for combining outputs into a single output
   private readonly _compositionScene: THREE.Scene;
@@ -108,7 +111,12 @@ export class EffectRenderManager {
     return multiSampleCountHint;
   }
 
-  constructor(renderer: THREE.WebGLRenderer, materialManager: CadMaterialManager, options: RenderOptions) {
+  constructor(
+    renderer: THREE.WebGLRenderer,
+    scene: THREE.Scene,
+    materialManager: CadMaterialManager,
+    options: RenderOptions
+  ) {
     this._renderer = renderer;
     this._renderOptions = options;
     this._materialManager = materialManager;
@@ -116,6 +124,7 @@ export class EffectRenderManager {
 
     this._renderTarget = null;
 
+    this._originalScene = scene;
     this._cadScene = new THREE.Scene();
     this._cadScene.autoUpdate = false;
     this._normalScene = new THREE.Scene();
@@ -304,8 +313,9 @@ export class EffectRenderManager {
     }
   }
 
-  public render(camera: THREE.PerspectiveCamera, scene: THREE.Scene) {
+  public render(camera: THREE.PerspectiveCamera) {
     const renderer = this._renderer;
+    const scene = this._originalScene;
 
     const renderStateHelper = new WebGLRendererStateHelper(renderer);
     const original = {

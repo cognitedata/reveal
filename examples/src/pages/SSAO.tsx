@@ -47,10 +47,10 @@ export function SSAO() {
 
       let model: reveal.CadNode;
       if (modelRevision) {
-        revealManager = reveal.createCdfRevealManager(client, renderer, { logMetrics: false });
+        revealManager = reveal.createCdfRevealManager(client, renderer, scene, { logMetrics: false });
         model = await revealManager.addModel('cad', modelRevision, nodeAppearanceProvider);
       } else if (modelUrl) {
-        revealManager = reveal.createLocalRevealManager(renderer, { logMetrics: false });
+        revealManager = reveal.createLocalRevealManager(renderer, scene, { logMetrics: false });
         model = await revealManager.addModel('cad', modelUrl, nodeAppearanceProvider);
       } else {
         throw new Error(
@@ -100,7 +100,7 @@ export function SSAO() {
         }
 
         if (controlsNeedUpdate || revealManager.needsRedraw || needsResize) {
-          revealManager.render(camera, scene);
+          revealManager.render(camera);
           revealManager.resetRedraw();
         }
       });

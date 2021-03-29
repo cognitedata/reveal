@@ -49,10 +49,10 @@ export function TwoModels() {
 
       let model: reveal.CadNode;
       if(modelRevision) {
-        revealManager = reveal.createCdfRevealManager(client, renderer, { logMetrics: false });
+        revealManager = reveal.createCdfRevealManager(client, renderer, scene, { logMetrics: false });
         model = await revealManager.addModel('cad', modelRevision);
       } else if(modelUrl) {
-        revealManager = reveal.createLocalRevealManager(renderer, { logMetrics: false });
+        revealManager = reveal.createLocalRevealManager(renderer, scene, { logMetrics: false });
         model = await revealManager.addModel('cad', modelUrl);
       } else {
         throw new Error(
@@ -64,7 +64,7 @@ export function TwoModels() {
       if(modelRevision2) {
         model2 = await revealManager.addModel('cad', modelRevision2);
       } else if(modelUrl2) {
-        revealManager = reveal.createLocalRevealManager(renderer);
+        revealManager = reveal.createLocalRevealManager(renderer, scene);
         model2 = await revealManager.addModel('cad', modelUrl2);
       } else {
         throw new Error(

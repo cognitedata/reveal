@@ -19,30 +19,34 @@ import { AlreadyLoadedGeometryDepthTextureProvider } from '../datamodels/cad/sec
 /**
  * Used to create an instance of reveal manager that works with localhost.
  * @param renderer
+ * @param scene
  * @param revealOptions
  * @returns RevealManager instance.
  */
 export function createLocalRevealManager(
   renderer: THREE.WebGLRenderer,
+  scene: THREE.Scene,
   revealOptions: RevealOptions = {}
 ): RevealManager<LocalModelIdentifier> {
   const modelDataClient = new LocalModelDataClient();
-  return createRevealManager('local', modelDataClient, renderer, revealOptions);
+  return createRevealManager('local', modelDataClient, renderer, scene, revealOptions);
 }
 
 /**
  * Used to create an instance of reveal manager that works with the CDF.
  * @param client
  * @param renderer
+ * @param scene
  * @param revealOptions
  */
 export function createCdfRevealManager(
   client: CogniteClient,
   renderer: THREE.WebGLRenderer,
+  scene: THREE.Scene,
   revealOptions: RevealOptions = {}
 ): RevealManager<CdfModelIdentifier> {
   const modelDataClient = new CdfModelDataClient(client);
-  return createRevealManager(client.project, modelDataClient, renderer, revealOptions);
+  return createRevealManager(client.project, modelDataClient, renderer, scene, revealOptions);
 }
 
 class DepthTextureProvider implements AlreadyLoadedGeometryDepthTextureProvider {
@@ -63,12 +67,14 @@ class DepthTextureProvider implements AlreadyLoadedGeometryDepthTextureProvider 
  * @param project
  * @param client
  * @param renderer
+ * @param scene
  * @param revealOptions
  */
 export function createRevealManager<T>(
   project: string,
   client: ModelDataClient<T>,
   renderer: THREE.WebGLRenderer,
+  scene: THREE.Scene,
   revealOptions: RevealOptions = {}
 ): RevealManager<T> {
   const applicationId = client.getApplicationIdentifier();
@@ -80,7 +86,7 @@ export function createRevealManager<T>(
 
   const renderOptions: RenderOptions = revealOptions.renderOptions || {};
   const materialManager = new CadMaterialManager();
-  const renderManager = new EffectRenderManager(renderer, materialManager, renderOptions);
+  const renderManager = new EffectRenderManager(renderer, scene, materialManager, renderOptions);
   const alreadyLoadedProvider = new DepthTextureProvider(renderManager);
   const cadManager = createCadManager(client, renderer, materialManager, alreadyLoadedProvider, revealOptions);
   const pointCloudManager = createPointCloudManager(client);

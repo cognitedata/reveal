@@ -81,10 +81,10 @@ export function Picking() {
       const revealOptions: RevealOptions = { nodeAppearanceProvider, logMetrics: false };
       let model: reveal.CadNode;
       if (modelRevision) {
-        revealManager = reveal.createCdfRevealManager(client, renderer, revealOptions);
+        revealManager = reveal.createCdfRevealManager(client, renderer, scene, revealOptions);
         model = await revealManager.addModel('cad', modelRevision, nodeAppearanceProvider);
       } else if (modelUrl) {
-        revealManager = reveal.createLocalRevealManager(renderer, revealOptions);
+        revealManager = reveal.createLocalRevealManager(renderer, scene, revealOptions);
         model = await revealManager.addModel('cad', modelUrl, nodeAppearanceProvider);
       } else {
         throw new Error(
@@ -144,7 +144,7 @@ export function Picking() {
           pickingNeedsUpdate ||
           revealManager.needsRedraw
         ) {
-          revealManager.render(camera, scene);
+          revealManager.render(camera);
           pickingNeedsUpdate = false;
           revealManager.resetRedraw();
         }

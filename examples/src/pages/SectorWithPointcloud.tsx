@@ -152,10 +152,10 @@ export function SectorWithPointcloud() {
 
       let model: reveal.CadNode;
       if (modelRevision) {
-        revealManager = reveal.createCdfRevealManager(client, renderer, { logMetrics: false });
+        revealManager = reveal.createCdfRevealManager(client, renderer, scene, { logMetrics: false });
         model = await revealManager.addModel('cad', modelRevision);
       } else if (modelUrl) {
-        revealManager = reveal.createLocalRevealManager(renderer, { logMetrics: false });
+        revealManager = reveal.createLocalRevealManager(renderer, scene, { logMetrics: false });
         model = await revealManager.addModel('cad', modelUrl);
       } else {
         throw new Error(

@@ -139,7 +139,7 @@ export function TestViewer(props: Props) {
       renderer.setPixelRatio(window.devicePixelRatio);
       renderer.localClippingEnabled = true;
 
-      revealManager = reveal.createLocalRevealManager(renderer, { logMetrics: false, renderOptions: renderOptions });
+      revealManager = reveal.createLocalRevealManager(renderer, scene, { logMetrics: false, renderOptions: renderOptions });
       setupLoadingStateHandler(revealManager);
 
       let model: reveal.internal.PointCloudNode | reveal.CadNode;
@@ -211,7 +211,7 @@ export function TestViewer(props: Props) {
         }
 
         if (controlsNeedUpdate || revealManager.needsRedraw || needsResize) {
-          revealManager.render(camera, scene);
+          revealManager.render(camera);
 
           if (testEnv.postRender) {
             testEnv.postRender();
