@@ -11,7 +11,7 @@ import {
 
 import { FileToolbar } from 'src/pages/Workflow/components/FileToolbar';
 import { Title } from '@cognite/cogs.js';
-import { DetectionModelType, JobStatus } from 'src/api/types';
+import { DetectionModelType } from 'src/api/types';
 import {
   getParamLink,
   workflowRoutes,
@@ -22,7 +22,7 @@ import {
   setSelectedFileId,
   showFileMetadataPreview,
 } from 'src/store/processSlice';
-import { getFileJobsResultingStatus } from 'src/pages/Workflow/components/FileTable/getFileJobsResultingStatus';
+import { getFileJobsStatus } from 'src/pages/Workflow/components/FileTable/getFileJobsResultingStatus';
 import {
   FileGridPreview,
   GridTable,
@@ -49,10 +49,10 @@ export default function ProcessStep() {
   const tableData: Array<TableDataItem> = uploadedFiles.map((file) => {
     const jobs = jobsByFileId[file.id] || [];
     let annotationsCount = 0;
-    let status: JobStatus | '' = '';
     let statusTime = 0;
+
+    const annotationStatus = getFileJobsStatus(jobs);
     if (jobs.length) {
-      status = getFileJobsResultingStatus(jobs);
       statusTime = Math.max(...jobs.map((job) => job.statusTime));
     }
 
@@ -88,10 +88,10 @@ export default function ProcessStep() {
       id: file.id,
       name: file.name,
       mimeType: file.mimeType || '',
-      status,
       statusTime,
       annotationsCount,
       menu: menuActions,
+      annotationStatus,
     };
   });
   return (
