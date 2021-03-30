@@ -61,6 +61,7 @@ export function TestViewer(props: Props) {
     isLoading: true,
     itemsLoaded: 0,
     itemsRequested: 0,
+    itemsCulled: 0
   });
 
   const setupLoadingStateHandler = (

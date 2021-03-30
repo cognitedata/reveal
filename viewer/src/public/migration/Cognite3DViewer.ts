@@ -252,7 +252,7 @@ export class Cognite3DViewer {
             this.spinner.hide();
           }
           if (options.onLoading) {
-            options.onLoading(loadingState.itemsLoaded, loadingState.itemsRequested);
+            options.onLoading(loadingState.itemsLoaded, loadingState.itemsRequested, loadingState.itemsCulled);
           }
         },
         error =>

@@ -16,7 +16,7 @@ CameraControls.install({ THREE });
 
 export function Simple() {
   const canvas = useRef<HTMLCanvasElement>(null);
-  const [loadingState, setLoadingState] = useState<reveal.utilities.LoadingState>({ isLoading: false, itemsLoaded: 0, itemsRequested: 0 });
+  const [loadingState, setLoadingState] = useState<reveal.utilities.LoadingState>({ isLoading: false, itemsLoaded: 0, itemsRequested: 0, itemsCulled: 0 });
 
   useEffect(() => {
     let revealManager: reveal.RevealManager<unknown>;

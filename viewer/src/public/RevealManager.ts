@@ -246,14 +246,15 @@ export class RevealManager<TModelIdentifier> {
         .pipe(
           observeOn(asyncScheduler),
           subscribeOn(asyncScheduler),
-          map(
-            ([cadLoadingState, pointCloudLoadingState]) =>
-              ({
-                isLoading: cadLoadingState.isLoading || pointCloudLoadingState.isLoading,
-                itemsLoaded: cadLoadingState.itemsLoaded + pointCloudLoadingState.itemsLoaded,
-                itemsRequested: cadLoadingState.itemsRequested + pointCloudLoadingState.itemsRequested
-              } as LoadingState)
-          ),
+          map(([cadLoadingState, pointCloudLoadingState]) => {
+            const state: LoadingState = {
+              isLoading: cadLoadingState.isLoading || pointCloudLoadingState.isLoading,
+              itemsLoaded: cadLoadingState.itemsLoaded + pointCloudLoadingState.itemsLoaded,
+              itemsRequested: cadLoadingState.itemsRequested + pointCloudLoadingState.itemsRequested,
+              itemsCulled: cadLoadingState.itemsCulled + pointCloudLoadingState.itemsCulled
+            };
+            return state;
+          }),
           distinctUntilChanged((x, y) => x.itemsLoaded === y.itemsLoaded && x.itemsRequested === y.itemsRequested)
         )
         .subscribe(this.notifyLoadingStateChanged.bind(this), error =>

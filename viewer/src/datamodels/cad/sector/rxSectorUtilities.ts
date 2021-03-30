@@ -24,7 +24,7 @@ export function handleDetermineSectorsInput(
   sectorCuller: SectorCuller,
   modelStateHandler: ModelStateHandler,
   collectStatisticsCallback: (spendage: SectorLoadingSpendage) => void,
-  progressCallback: (sectorsLoaded: number, sectorsScheduled: number) => void
+  progressCallback: (sectorsLoaded: number, sectorsScheduled: number, sectorsCulled: number) => void
 ): OperatorFunction<DetermineSectorsInput, ConsumedSector> {
   return publish((source$: Observable<DetermineSectorsInput>) => {
     const updateSector = (input: DetermineSectorsInput) => {
@@ -37,15 +37,17 @@ export function handleDetermineSectorsInput(
       collectStatisticsCallback(prioritizedResult.spendage);
 
       let progress = 0;
-      function reportNewSectorsDone(count: number) {
-        progress += count;
-        progressCallback(progress, wantedSectorsCount);
+      let culled = 0;
+      function reportNewSectorsDone(newlyLoaded: number, newlyCulled: number) {
+        progress += newlyLoaded + newlyCulled;
+        culled += newlyCulled;
+        progressCallback(progress, wantedSectorsCount, culled);
       }
 
       const modelStateChanged = modelStateHandler.hasStateChanged.bind(modelStateHandler);
       const changedSectors = prioritizedResult.wantedSectors.filter(modelStateChanged);
       const wantedSectorsCount = changedSectors.length;
-      progressCallback(0, wantedSectorsCount);
+      progressCallback(0, wantedSectorsCount, culled);
 
       return from(changedSectors).pipe(
         subscribeOn(asyncScheduler),
@@ -55,7 +57,7 @@ export function handleDetermineSectorsInput(
           return from(filteredSectorsPromise).pipe(
             tap(filtered => {
               // We consider sectors that we no longer want to load as done, report progress
-              reportNewSectorsDone(batch.length - filtered.length);
+              reportNewSectorsDone(0, batch.length - filtered.length);
             }),
             mergeMap(filtered => filtered), // flatten
             filter(modelStateChanged),
@@ -64,7 +66,7 @@ export function handleDetermineSectorsInput(
                 const consumedSector = await sectorRepository.loadSector(x);
                 return consumedSector;
               } finally {
-                reportNewSectorsDone(1);
+                reportNewSectorsDone(1, 0);
               }
             })
           );

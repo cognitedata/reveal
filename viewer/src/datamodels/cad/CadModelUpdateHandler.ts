@@ -18,7 +18,7 @@ import { CadModelSectorBudget, defaultCadModelSectorBudget } from './CadModelSec
 import { DetermineSectorsInput, SectorLoadingSpendage } from './sector/culling/types';
 import { ModelStateHandler } from './sector/ModelStateHandler';
 
-const notLoadingState: LoadingState = { isLoading: false, itemsLoaded: 0, itemsRequested: 0 };
+const notLoadingState: LoadingState = { isLoading: false, itemsLoaded: 0, itemsRequested: 0, itemsCulled: 0 };
 
 export class CadModelUpdateHandler {
   private readonly _sectorRepository: Repository;
@@ -80,11 +80,12 @@ export class CadModelUpdateHandler {
     const collectStatisticsCallback = (spendage: SectorLoadingSpendage) => {
       this._lastSpendage = spendage;
     };
-    const reportProgressCallback = (itemsLoaded: number, itemsRequested: number) => {
+    const reportProgressCallback = (loaded: number, requested: number, culled: number) => {
       const state: LoadingState = {
-        isLoading: itemsRequested > itemsLoaded,
-        itemsRequested,
-        itemsLoaded
+        isLoading: requested > loaded,
+        itemsRequested: requested,
+        itemsLoaded: loaded,
+        itemsCulled: culled
       };
       this._progressSubject.next(state);
     };
@@ -112,7 +113,7 @@ export class CadModelUpdateHandler {
 
   updateCamera(camera: THREE.PerspectiveCamera): void {
     this._cameraSubject.next(camera);
-    this._progressSubject.next({ isLoading: false, itemsLoaded: 0, itemsRequested: 0 });
+    this._progressSubject.next(notLoadingState);
   }
 
   set clippingPlanes(value: THREE.Plane[]) {

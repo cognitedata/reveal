@@ -70,7 +70,7 @@ export function Migration() {
       client.loginWithOAuth({ project });
       await client.authenticate();
 
-      const progress = (itemsLoaded: number, itemsRequested: number) => console.log(`loaded ${itemsLoaded}/${itemsRequested}`);
+      const progress = (itemsLoaded: number, itemsRequested: number, itemsCulled: number) => console.log(`loaded ${itemsLoaded}/${itemsRequested} (culled: ${itemsCulled})`);
       // Prepare viewer
       viewer = new Cognite3DViewer({
         sdk: client,
