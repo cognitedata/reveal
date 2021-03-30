@@ -21,15 +21,15 @@ export const useAssetAnnotations = (file?: File) => {
   );
 };
 
-export const useFilesAssetAppearsIn = (asset?: Asset) => {
+export const useFilesAssetAppearsIn = (asset?: Asset, enabled = true) => {
   const sdk = useSDK();
 
   return useQuery<File[]>(
-    ['files', asset?.id],
+    ['annotated-files', { assetId: asset?.id }],
     async () => {
       return listFilesAnnotatedWithAssetId(sdk, asset!);
     },
-    { enabled: !!asset }
+    { enabled: !!asset && enabled }
   );
 };
 

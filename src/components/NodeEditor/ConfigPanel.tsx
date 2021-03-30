@@ -64,13 +64,14 @@ const ConfigPanel = ({
   context,
 }: ConfigPanelProps) => {
   const [workingNode, setWorkingNode] = useState<StorableNode>(node);
+  const [isDirty, setDirty] = useState(false);
 
   useEffect(() => {
     if (node.id !== workingNode.id) {
       setWorkingNode(node);
     }
   }, [node, workingNode.id]);
-  const [isDirty, setDirty] = useState(false);
+
   const NodeSpecificConfigPanel = defaultNodeOptions.find(
     (opt) => opt.effectId === node?.functionEffectReference
   )?.configPanel;

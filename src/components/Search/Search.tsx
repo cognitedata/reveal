@@ -1,16 +1,10 @@
-import React, { ChangeEvent, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import { Button, Input, Tooltip } from '@cognite/cogs.js';
-import { SearchResultTable } from 'components/SearchResultTable';
+import SearchResultList from 'components/SearchResultTable/SearchResultList';
 import styled from 'styled-components/macro';
-import { Timeseries } from '@cognite/sdk';
-import { useDebounce } from 'use-debounce/lib';
-import { useChart, useUpdateChart } from 'hooks/firebase';
-import { useParams } from 'react-router-dom';
-import {
-  addTimeseries,
-  removeTimeseries,
-  covertTSToChartTS,
-} from 'utils/charts';
+import { SEARCH_KEY } from 'utils/constants';
+import { useQueryString } from 'hooks';
+import debounce from 'lodash/debounce';
 
 type SearchProps = {
   visible: boolean;
@@ -18,32 +12,28 @@ type SearchProps = {
 };
 
 const Search = ({ visible, onClose }: SearchProps) => {
-  const { chartId } = useParams<{ chartId: string }>();
   const [searchInputValue, setSearchInputValue] = useState('');
-  const [debouncedQuery] = useDebounce(searchInputValue, 100);
-  const { data: chart } = useChart(chartId);
-  const { mutate: updateChart } = useUpdateChart();
+  const { item: urlQuery, setItem: setUrlQuery } = useQueryString(SEARCH_KEY);
+  const debouncedSetUrlQuery = debounce(setUrlQuery, 200);
+
+  useEffect(() => {
+    if (searchInputValue !== urlQuery) {
+      setSearchInputValue(urlQuery);
+    }
+    // Should NOT run when searchInputValue changes
+    // eslint-disable-next-line
+  }, [urlQuery, setSearchInputValue]);
+
+  useEffect(() => {
+    if (searchInputValue !== urlQuery) {
+      debouncedSetUrlQuery(encodeURIComponent(searchInputValue));
+    }
+    return () => debouncedSetUrlQuery.cancel();
+  }, [searchInputValue, urlQuery, debouncedSetUrlQuery]);
 
   const handleSearchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     setSearchInputValue(value);
-  };
-
-  const handleTimeSeriesClick = async (timeSeries: Timeseries) => {
-    if (chart) {
-      const tsToRemove = chart.timeSeriesCollection?.find(
-        (t) => t.tsId === timeSeries.id
-      );
-      if (tsToRemove) {
-        updateChart({ chart: removeTimeseries(chart, tsToRemove.id) });
-      } else {
-        const ts = covertTSToChartTS(
-          timeSeries,
-          chart.timeSeriesCollection?.length || 0
-        );
-        updateChart({ chart: addTimeseries(chart, ts) });
-      }
-    }
   };
 
   return (
@@ -71,11 +61,7 @@ const Search = ({ visible, onClose }: SearchProps) => {
           </Tooltip>
         </SearchBar>
         <SearchResultsContainer>
-          <SearchResultTable
-            selectedIds={chart?.timeSeriesCollection?.map((t) => t.tsId)}
-            query={debouncedQuery}
-            onTimeseriesClick={handleTimeSeriesClick}
-          />
+          <SearchResultList query={urlQuery} />
         </SearchResultsContainer>
       </ContentWrapper>
     </SearchContainer>

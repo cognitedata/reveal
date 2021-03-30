@@ -21,9 +21,10 @@ import {
 import { nanoid } from 'nanoid';
 import { Chart, ChartTimeSeries, ChartWorkflow } from 'reducers/charts/types';
 import { getEntryColor } from 'utils/colors';
-import { useLoginStatus } from 'hooks';
+import { useLoginStatus, useQueryString } from 'hooks';
 import { useQueryClient } from 'react-query';
 import { duplicate, updateSourceAxisForChart } from 'utils/charts';
+import { SEARCH_KEY } from 'utils/constants';
 import { Modes } from 'pages/types';
 import { ContextMenu } from 'components/ContextMenu';
 import TimeSeriesRows from './TimeSeriesRows';
@@ -52,8 +53,11 @@ type ChartViewProps = {
 
 const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   const history = useHistory();
+  const { item: query, setItem: setQuery } = useQueryString(SEARCH_KEY);
+
   const cache = useQueryClient();
   const { data: login } = useLoginStatus();
+
   const { chartId = chartIdProp } = useParams<{ chartId: string }>();
   const { data: chart, isError, isFetched } = useChart(chartId);
   const [showContextMenu, setShowContextMenu] = useState(false);
@@ -105,6 +109,15 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   const [workspaceMode, setWorkspaceMode] = useState<Modes>('workspace');
   const isWorkspaceMode = workspaceMode === 'workspace';
   const isDataQualityMode = workspaceMode === 'report';
+
+  /**
+   * Open search drawer if query is present in the url
+   */
+  useEffect(() => {
+    if (query !== '' && !showSearch) {
+      setShowSearch(true);
+    }
+  }, [query, showSearch]);
 
   const [dataQualityReport, setDataQualityReport] = useState<{
     timeSeriesId?: string;
@@ -207,6 +220,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
 
   const handleCloseSearch = async () => {
     setShowSearch(false);
+    setQuery('');
     setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
   };
 
@@ -256,6 +270,11 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
               <SourceName>Description</SourceName>
             </SourceItem>
           </th>
+          <th style={{ width: 100 }}>
+            <SourceItem>
+              <SourceName>P&amp;IDs</SourceName>
+            </SourceItem>
+          </th>
           <th>
             <SourceItem>
               <SourceName>Actions</SourceName>
@@ -288,7 +307,9 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
           onNewWorkflowClick={handleClickNewWorkflow}
         />
       )}
-      <Search visible={showSearch} onClose={handleCloseSearch} />
+      {showSearch && (
+        <Search visible={showSearch} onClose={handleCloseSearch} />
+      )}
       <ContentWrapper showSearch={showSearch}>
         <Header>
           <hgroup>
@@ -342,7 +363,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
           )}
         </Header>
         <ChartContainer>
-          <SplitPaneLayout>
+          <SplitPaneLayout defaultSize={200}>
             <TopPaneWrapper className="chart">
               <ChartWrapper>
                 <PlotlyChartComponent

@@ -18,6 +18,7 @@ import Plotly, {
 import { convertLineStyle } from 'components/PlotlyChart';
 import { useSDK } from '@cognite/sdk-provider';
 import { functionResponseKey } from 'utils/cogniteFunctions';
+import FunctionCall from 'components/FunctionCall';
 import {
   AxisUpdate,
   calculateStackedYRange,
@@ -298,14 +299,23 @@ const PlotlyChartComponent = ({
   };
 
   return (
-    <Plot
-      data={data as Plotly.Data[]}
-      layout={(layout as unknown) as Plotly.Layout}
-      config={config as Plotly.Config}
-      onRelayout={handleRelayout}
-      useResizeHandler
-      style={{ width: '100%', height: '100%' }}
-    />
+    <>
+      <Plot
+        data={data as Plotly.Data[]}
+        layout={(layout as unknown) as Plotly.Layout}
+        config={config as Plotly.Config}
+        onRelayout={handleRelayout}
+        useResizeHandler
+        style={{ width: '100%', height: '100%' }}
+      />
+      {calls?.map((call) => (
+        <FunctionCall
+          key={`${call.functionId}/${call.callId}`}
+          id={call.functionId}
+          callId={call.callId}
+        />
+      ))}
+    </>
   );
 };
 

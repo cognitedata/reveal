@@ -8,7 +8,7 @@ export default styled.div`
 
   main,
   #chart-view {
-    height: 100%;
+    height: calc(100% - 56px);
     display: flex;
     flex-direction: row;
   }

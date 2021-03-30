@@ -6,13 +6,13 @@ import {
 } from 'utils/cogniteFunctions';
 
 type Call = CogniteFunctionCall & {
-  response?: string;
+  response?: string | null;
 };
 
 interface Props {
   id: number;
   callId?: number;
-  renderCall: (call: Call) => JSX.Element | null;
+  renderCall?: (call: Call) => JSX.Element | null;
   renderLoading?: () => JSX.Element | null;
 }
 
@@ -23,7 +23,7 @@ interface InnerProps extends Props {
 function InnerFunctionCall({
   id,
   callId,
-  renderCall,
+  renderCall = () => null,
   renderLoading,
 }: InnerProps) {
   const [refetchInterval, setInterval] = useState<number | false>(1000);
@@ -31,16 +31,25 @@ function InnerFunctionCall({
   const { data: call, isError: callError } = useFunctionCall(id, callId, {
     refetchInterval,
   });
-  const { data: response, isError: responseError } = useFunctionReponse(
-    id,
-    callId,
-    {
-      enabled: call?.status === 'Completed',
-    }
-  );
+  const {
+    data: response,
+    isError: responseError,
+    refetch: refetchResponse,
+  } = useFunctionReponse(id, callId, {
+    // Some other compoment could have called this hook prematurly, setting it in a completed state
+    // in the query cache with null as the response body. It is therefore refetch below then the
+    // status is Completed.
+    enabled: call?.status === 'Completed',
+  });
 
   const apiError = callError || responseError;
   const callStatus = call?.status;
+  useEffect(() => {
+    if (response === null && call?.status === 'Completed') {
+      refetchResponse();
+    }
+  }, [call?.status, response, refetchResponse]);
+
   useEffect(() => {
     if ((callStatus && callStatus !== 'Running') || apiError) {
       setInterval(false);

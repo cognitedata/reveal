@@ -120,7 +120,14 @@ export default function WorkflowRow({
             fade={!enabled}
           />
           {call && (
-            <div style={{ marginRight: 10 }}>
+            <div
+              style={{
+                marginRight: 10,
+                height: '100%',
+                display: 'flex',
+                alignItems: 'center',
+              }}
+            >
               <FunctionCall
                 id={call.functionId}
                 callId={call.callId}
@@ -199,7 +206,7 @@ export default function WorkflowRow({
               </Dropdown>
             </div>
           </td>
-          <td colSpan={2} />
+          <td colSpan={3} />
           <td>
             <SourceItem>
               <SourceName>

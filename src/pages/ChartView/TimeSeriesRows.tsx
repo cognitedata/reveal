@@ -8,7 +8,7 @@ type Props = {
   updateChart: (c: Chart) => void;
   mode: string;
   selectedSourceId?: string;
-  onRowClick: (id: string | undefined) => void;
+  onRowClick?: (id: string | undefined) => void;
   setDataQualityReport: (input: {
     timeSeriesId: string;
     reportType: string;
@@ -19,12 +19,13 @@ export default function TimeSeriesRows({
   updateChart,
   setDataQualityReport,
   mode,
-  onRowClick,
+  onRowClick = () => {},
   selectedSourceId,
 }: Props) {
   const isWorkspaceMode = mode === 'workspace';
   const isEditorMode = mode === 'editor';
   const isDataQualityMode = mode === 'report';
+  const isFileViewerMode = mode === 'file';
 
   return (
     <>
@@ -45,6 +46,7 @@ export default function TimeSeriesRows({
           setDataQualityReport={setDataQualityReport}
           isSelected={selectedSourceId === t.id}
           disabled={isEditorMode}
+          isFileViewerMode={isFileViewerMode}
         />
       ))}
     </>

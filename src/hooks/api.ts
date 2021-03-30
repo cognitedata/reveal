@@ -30,3 +30,28 @@ export const useAssetTimeseries = (assetId?: number) => {
     { enabled: !!assetId }
   );
 };
+
+export const useLinkedAsset = (timeseriesId?: number, enabled = true) => {
+  const sdk = useSDK();
+
+  return useQuery(
+    ['assets', 'timeseriesId', timeseriesId],
+    async () => {
+      const timeseries = await sdk.timeseries.retrieve([{ id: timeseriesId! }]);
+
+      if (timeseries.length === 0) {
+        return undefined;
+      }
+
+      const { assetId } = timeseries[0];
+
+      if (!assetId) {
+        return undefined;
+      }
+
+      const assets = await sdk.assets.retrieve([{ id: assetId }]);
+      return assets[0];
+    },
+    { enabled: enabled && !!timeseriesId }
+  );
+};
