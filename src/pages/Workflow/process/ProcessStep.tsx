@@ -18,6 +18,7 @@ import {
 } from 'src/pages/Workflow/workflowRoutes';
 import { useHistory } from 'react-router-dom';
 import {
+  detectAnnotations,
   setSelectedDetectionModels,
   setSelectedFileId,
   showFileMetadataPreview,
@@ -31,6 +32,7 @@ import {
 import { resetEditHistory, selectAllFiles } from 'src/store/uploadedFilesSlice';
 import styled from 'styled-components';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
+import { message } from 'antd';
 
 const queryClient = new QueryClient();
 
@@ -94,6 +96,20 @@ export default function ProcessStep() {
       annotationStatus,
     };
   });
+
+  const onDetectClick = () => {
+    if (!selectedDetectionModels.length) {
+      message.error('Please select ML models to use for detection');
+      return;
+    }
+    dispatch(
+      detectAnnotations({
+        fileIds: uploadedFiles.map(({ id }) => id),
+        detectionModels: selectedDetectionModels,
+      })
+    );
+  };
+
   return (
     <>
       <QueryClientProvider client={queryClient}>
@@ -105,6 +121,7 @@ export default function ProcessStep() {
           }
           currentView={currentView}
           onViewChange={setCurrentView}
+          onDetectClick={onDetectClick}
         />
         <Container>
           {currentView === 'grid' ? (

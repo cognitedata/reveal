@@ -9,7 +9,7 @@ export function useAnnotationJobs() {
     const isPollingFinished = uploadedFiles.every((file) => {
       const jobs = jobsByFileId[file.id];
       if (!jobs || !jobs.length) {
-        return false;
+        return true;
       }
       return jobs.every(
         (job) => job.status === 'Completed' || job.status === 'Failed'

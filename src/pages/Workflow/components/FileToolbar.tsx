@@ -1,32 +1,43 @@
 import React from 'react';
-import { ButtonGroup, Detail } from '@cognite/cogs.js';
+import { Button, ButtonGroup, Detail } from '@cognite/cogs.js';
 import { DetectionModelSelect } from 'src/pages/Workflow/process/DetectionModelSelect';
 import styled from 'styled-components';
+import { useAnnotationJobs } from 'src/store/hooks/useAnnotationJobs';
 
 export const FileToolbar = ({
   onViewChange,
   currentView = 'list',
   value,
   onChange,
+  onDetectClick,
 }: {
   onViewChange?: (view: string) => void;
   currentView?: string;
   value?: any;
   onChange?: any;
+  onDetectClick?: any;
 }) => {
+  const { isPollingFinished } = useAnnotationJobs();
   return (
     <>
       <Container>
-        <ModelSelector>
-          <Detail strong>ML model</Detail>
-          <DetectionModelSelect value={value} onChange={onChange} />
-        </ModelSelector>
-        {/* 
-        <DeleteContainer>
-          <Button type="secondary" icon="Delete">
-            Delete
+        <ModelOptions>
+          <ModelSelector>
+            <Detail strong>Select Machine Learning Model(s):</Detail>
+            <DetectionModelSelect value={value} onChange={onChange} />
+          </ModelSelector>
+          <Button
+            icon={isPollingFinished ? 'Scan' : 'Loading'}
+            disabled={!isPollingFinished}
+            onClick={onDetectClick}
+            style={{
+              background: 'var(--cogs-gradient-midnightblue)',
+              color: '#fff',
+            }}
+          >
+            Detect
           </Button>
-        </DeleteContainer> */}
+        </ModelOptions>
 
         <ButtonGroup onButtonClicked={onViewChange} currentKey={currentView}>
           <ButtonGroup.Button key="list" icon="List" title="List" size="small">
@@ -44,7 +55,7 @@ export const FileToolbar = ({
 
 const Container = styled.div`
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: bottom;
   padding: 15px 0;
   align-items: flex-end;
@@ -56,9 +67,11 @@ const ModelSelector = styled.div`
   width: 340px;
 `;
 
-// const DeleteContainer = styled.div`
-//   padding-right: 15px;
-// `;
+const ModelOptions = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+`;
 
 const HorizontalLine = styled.div`
   border: 1px solid #e8e8e8;
