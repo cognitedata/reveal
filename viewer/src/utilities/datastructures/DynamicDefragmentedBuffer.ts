@@ -42,9 +42,9 @@ export class DynamicDefragmentedBuffer<T extends TypedArray> {
 
   public add(array: T): { batchId: number; bufferIsReallocated: boolean } {
     let isReallocated = false;
-    //TODO: do this in one-shot instead of potensially allocating many times
-    while (this._numFilled + array.length > this._buffer.length) {
-      this.incrementBufferSize();
+    if (this._numFilled + array.length > this._buffer.length) {
+      const newSize = Math.pow(2, Math.ceil(Math.log2(this._numFilled + array.length)));
+      this.allocateNewBuffer(newSize);
       isReallocated = true;
     }
 
@@ -114,8 +114,8 @@ export class DynamicDefragmentedBuffer<T extends TypedArray> {
     return batchId;
   }
 
-  private incrementBufferSize(): void {
-    const newSize = this._buffer.length * 2;
+  private allocateNewBuffer(newSize: number): void {
+    //const newSize = this._buffer.length * 2;
 
     const newBuffer = new this._type(newSize);
     newBuffer.set(this._buffer);
