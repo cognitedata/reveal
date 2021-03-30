@@ -89,7 +89,7 @@
     "prettier": "^2.2.1",
     "pretty-quick": "^3.1.0",
     "react-query-devtools": "^2.6.3",
-    "react-scripts": "4.0.1",
+    "react-scripts": "4.0.3",
     "redux-mock-store": "^1.5.4",
     "sinon": "^9.2.4",
     "source-map-explorer": "^2.5.2",
