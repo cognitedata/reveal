@@ -13,7 +13,13 @@ type FileListItemProps = {
 export function FileListItem({ file, onRemove }: FileListItemProps) {
   return (
     <FileListItemContainer>
-      <DetailStyled strong style={{ flexGrow: 1 }}>
+      <DetailStyled strong>
+        <Icon
+          type="Image"
+          style={{
+            marginRight: '16px',
+          }}
+        />
         {file.name}
       </DetailStyled>
 
@@ -70,6 +76,8 @@ const FileListItemContainer = styled.div`
 const DetailStyled = styled(Detail)`
   letter-spacing: -0.004em !important;
   color: inherit !important;
+  display: flex;
+  flex-direction: row;
 `;
 
 const IconRemove = styled(Icon)`
