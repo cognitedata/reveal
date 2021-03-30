@@ -40,9 +40,12 @@ export class DynamicDefragmentedBuffer<T extends TypedArray> {
     this._buffer = new type(minimalPowerOfTwo);
   }
 
-  public add(array: T): number {
-    if (this._numFilled + array.length > this._buffer.length) {
+  public add(array: T): { batchId: number; bufferIsReallocated: boolean } {
+    let isReallocated = false;
+    //TODO: do this in one-shot instead of potensially allocating many times
+    while (this._numFilled + array.length > this._buffer.length) {
       this.incrementBufferSize();
+      isReallocated = true;
     }
 
     this._buffer.set(array, this._numFilled);
@@ -51,7 +54,7 @@ export class DynamicDefragmentedBuffer<T extends TypedArray> {
 
     this._numFilled += array.length;
 
-    return batchId;
+    return { batchId: batchId, bufferIsReallocated: isReallocated };
   }
 
   public remove(batchId: number) {
@@ -78,6 +81,13 @@ export class DynamicDefragmentedBuffer<T extends TypedArray> {
 
     if (next) {
       next.prev = prev;
+    }
+
+    let currentBatch = next;
+
+    while (currentBatch) {
+      currentBatch.from -= batch.count;
+      currentBatch = currentBatch.next;
     }
 
     this._batchMap.delete(batchId);

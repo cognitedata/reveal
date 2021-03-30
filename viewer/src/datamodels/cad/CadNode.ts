@@ -200,9 +200,13 @@ export class CadNode extends THREE.Object3D {
     }
   }
 
-  public updateInstanedMeshes(instanceMeshFiles: InstancedMeshFile[], modelIdentifier: string, sectorId: number) {
+  public updateInstancedMeshes(instanceMeshFiles: InstancedMeshFile[], modelIdentifier: string, sectorId: number) {
     for (const instanceMeshFile of instanceMeshFiles) {
       this._instancedMeshManager.addInstanceMeshes(instanceMeshFile, modelIdentifier, sectorId);
     }
+  }
+
+  public discardInstancedMeshes(sectorId: number) {
+    this._instancedMeshManager.removeSectorInstancedMeshes(sectorId);
   }
 }

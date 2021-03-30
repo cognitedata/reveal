@@ -8,7 +8,7 @@ import { groupBy, distinctUntilKeyChanged, withLatestFrom, mergeMap, filter, map
 
 import { SectorGeometry, SectorMetadata, WantedSector, ConsumedSector } from './types';
 import { Materials } from '../rendering/materials';
-import { createInstancedMeshes } from '../rendering/instancedMeshes';
+
 import { InstancedMeshFile, SectorQuads } from '../rendering/types';
 import { disposeAttributeArrayOnUpload } from '../../../utilities/disposeAttributeArrayOnUpload';
 import { toThreeJsBox3 } from '../../../utilities';
@@ -112,10 +112,10 @@ export function consumeSectorDetailed(
   for (const triangleMesh of triangleMeshes) {
     obj.add(triangleMesh);
   }
-  const instanceMeshes = createInstancedMeshes(sector.instanceMeshes, bounds, materials.instancedMesh);
-  for (const instanceMesh of instanceMeshes) {
-    //obj.add(instanceMesh);
-  }
+  // const instanceMeshes = createInstancedMeshes(sector.instanceMeshes, bounds, materials.instancedMesh);
+  // for (const instanceMesh of instanceMeshes) {
+  //   //obj.add(instanceMesh);
+  // }
 
   return { sectorMeshes: obj, instancedMeshes: sector.instanceMeshes };
 }
