@@ -112,10 +112,6 @@ export function consumeSectorDetailed(
   for (const triangleMesh of triangleMeshes) {
     obj.add(triangleMesh);
   }
-  // const instanceMeshes = createInstancedMeshes(sector.instanceMeshes, bounds, materials.instancedMesh);
-  // for (const instanceMesh of instanceMeshes) {
-  //   //obj.add(instanceMesh);
-  // }
 
   return { sectorMeshes: obj, instancedMeshes: sector.instanceMeshes };
 }
