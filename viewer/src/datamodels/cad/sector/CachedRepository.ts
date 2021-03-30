@@ -43,7 +43,6 @@ import { TriangleMesh, InstancedMeshFile, InstancedMesh, SectorQuads } from '../
 import { createOffsetsArray, LoadingState } from '../../../utilities';
 import { trackError } from '../../../utilities/metrics';
 import { BinaryFileProvider } from '../../../utilities/networking/types';
-import { Group } from 'three';
 import { RxTaskTracker } from '../../../utilities/RxTaskTracker';
 import { groupMeshesByNumber } from './groupMeshesByNumber';
 
@@ -406,7 +405,6 @@ export class CachedRepository implements Repository {
 
         const indices = ctm.indices;
         const vertices = ctm.vertices;
-        const normals = ctm.normals;
         const instancedMeshes: InstancedMesh[] = [];
 
         const fileTriangleOffsets = new Float64Array(meshIndices.map(i => triangleOffsets[i]));
