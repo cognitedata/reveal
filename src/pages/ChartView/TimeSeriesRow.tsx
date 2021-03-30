@@ -21,12 +21,7 @@ type Props = {
   isSelected?: boolean;
   onRowClick?: (id?: string) => void;
   isWorkspaceMode?: boolean;
-  isDataQualityMode?: boolean;
   isFileViewerMode?: boolean;
-  setDataQualityReport: (input: {
-    timeSeriesId: string;
-    reportType: string;
-  }) => void;
 };
 export default function TimeSeriesRow({
   mutate,
@@ -36,9 +31,7 @@ export default function TimeSeriesRow({
   disabled = false,
   isSelected = false,
   isWorkspaceMode = false,
-  isDataQualityMode = false,
   isFileViewerMode = false,
-  setDataQualityReport,
 }: Props) {
   const {
     id,
@@ -238,43 +231,6 @@ export default function TimeSeriesRow({
           <td>
             <SourceItem>
               <SourceName />
-            </SourceItem>
-          </td>
-        </>
-      )}
-      {isDataQualityMode && (
-        <>
-          <td>
-            <Dropdown
-              content={
-                <Menu>
-                  <Menu.Header>
-                    <span style={{ wordBreak: 'break-word' }}>
-                      Select data quality report
-                    </span>
-                  </Menu.Header>
-                  <Menu.Item
-                    onClick={() =>
-                      setDataQualityReport({
-                        timeSeriesId: id,
-                        reportType: 'gaps',
-                      })
-                    }
-                  >
-                    Gap Analysis
-                  </Menu.Item>
-                </Menu>
-              }
-            >
-              <SourceItem style={{ justifyContent: 'space-between' }}>
-                <SourceName>Reports</SourceName>
-                <Icon style={{ marginRight: 10 }} type="CaretDown" />
-              </SourceItem>
-            </Dropdown>
-          </td>
-          <td>
-            <SourceItem>
-              <Icon type="TriangleWarning" />
             </SourceItem>
           </td>
         </>

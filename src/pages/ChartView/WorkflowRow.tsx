@@ -57,9 +57,7 @@ export default function WorkflowRow({
   const [idHack, setIdHack] = useState(0);
   const { id, enabled, color, name, calls, unit, preferredUnit } = workflow;
   const call = calls?.sort((c) => c.callDate)[0];
-
   const isWorkspaceMode = mode === 'workspace';
-  const isDataQualityMode = mode === 'report';
 
   const update = (wfId: string, diff: Partial<ChartWorkflow>) => {
     mutate(updateWorkflow(chart, wfId, diff));
@@ -224,11 +222,6 @@ export default function WorkflowRow({
               </SourceName>
             </SourceItem>
           </td>
-        </>
-      )}
-      {isDataQualityMode && (
-        <>
-          <td colSpan={2} />
         </>
       )}
     </SourceRow>

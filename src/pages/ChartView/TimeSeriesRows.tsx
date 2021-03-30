@@ -9,22 +9,16 @@ type Props = {
   mode: string;
   selectedSourceId?: string;
   onRowClick?: (id: string | undefined) => void;
-  setDataQualityReport: (input: {
-    timeSeriesId: string;
-    reportType: string;
-  }) => void;
 };
 export default function TimeSeriesRows({
   chart,
   updateChart,
-  setDataQualityReport,
   mode,
   onRowClick = () => {},
   selectedSourceId,
 }: Props) {
   const isWorkspaceMode = mode === 'workspace';
   const isEditorMode = mode === 'editor';
-  const isDataQualityMode = mode === 'report';
   const isFileViewerMode = mode === 'file';
 
   return (
@@ -40,10 +34,8 @@ export default function TimeSeriesRows({
           mutate={updateChart}
           chart={chart}
           timeseries={t}
-          isDataQualityMode={isDataQualityMode}
           isWorkspaceMode={isWorkspaceMode}
           onRowClick={onRowClick}
-          setDataQualityReport={setDataQualityReport}
           isSelected={selectedSourceId === t.id}
           disabled={isEditorMode}
           isFileViewerMode={isFileViewerMode}
