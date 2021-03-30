@@ -71,13 +71,6 @@ export class CadManager<TModelIdentifier> {
           if (!sectorNode) {
             throw new Error(`Could not find 3D node for sector ${sector.metadata.id} - invalid id?`);
           }
-          if (sectorNode.group) {
-            sectorNode.group.userData.refCount -= 1;
-            if (sectorNode.group.userData.refCount === 0) {
-              sectorNode.resetGeometry();
-            }
-            sectorNode.remove(sectorNode.group);
-          }
           if (sector.group) {
             sectorNode.add(sector.group);
           }
