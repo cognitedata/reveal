@@ -1,5 +1,6 @@
-import { Button, Dropdown, Icon, Menu } from '@cognite/cogs.js';
 import React from 'react';
+import { Button, Title, Dropdown, Icon, Menu, Body } from '@cognite/cogs.js';
+import { TimeDisplay, Divider } from '@cognite/data-exploration';
 
 import AutoSizer from 'react-virtualized-auto-sizer';
 import ReactBaseTable, {
@@ -7,12 +8,14 @@ import ReactBaseTable, {
   Column,
   ColumnShape,
 } from 'react-base-table';
-import { TimeDisplay } from '@cognite/data-exploration';
+
+import styled from 'styled-components';
 import { TableWrapper } from './FileTableWrapper';
 import {
   AnnotationStatusAndCount,
   DetectionModelStatusAndCount,
 } from '../../types';
+import { Popover } from './Popover';
 
 export type FileActions = {
   annotationsAvailable: boolean;
@@ -37,7 +40,125 @@ type CellRenderer = {
 
 type FileTableProps = Omit<BaseTableProps<TableDataItem>, 'width'>;
 
-function AnnotationCell({ rowData }: CellRenderer) {
+const GridLayout = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr 1fr;
+  grid-template-rows: auto;
+  grid-template-areas: 'icon name name . count';
+  padding-bottom: 23px;
+`;
+
+const GridIcon = styled.div`
+  grid-area: icon;
+`;
+
+const GridName = styled.div`
+  grid-area: name;
+`;
+const GridCount = styled.div`
+  grid-area: count;
+`;
+
+function PopoverContent(
+  gdprDetctionStatus: DetectionModelStatusAndCount,
+  tagDetctionStatus: DetectionModelStatusAndCount,
+  genericDetctionStatus: DetectionModelStatusAndCount
+) {
+  return (
+    <>
+      <Body level={1}> Detections </Body>
+      <Divider.Horizontal />
+      {gdprDetctionStatus.status && (
+        <GridLayout>
+          <GridIcon>
+            <Button
+              icon="WarningStroke"
+              size="small"
+              style={{
+                marginRight: '5px',
+                backgroundColor: '#FBE9ED',
+                color: '#B30539',
+                borderRadius: '15px',
+              }}
+            />
+          </GridIcon>
+          <GridName>
+            <Title level={5}> GDPR </Title>
+          </GridName>
+          <GridCount style={{ color: '#B30539' }}>
+            [
+            {gdprDetctionStatus.count !== undefined
+              ? gdprDetctionStatus.count
+              : '–'}
+            ]
+          </GridCount>
+        </GridLayout>
+      )}
+      {tagDetctionStatus.status && (
+        <GridLayout>
+          <GridIcon>
+            <Button
+              icon="Link"
+              size="small"
+              style={{
+                marginRight: '5px',
+                backgroundColor: '#F4DAF8',
+                color: '#C945DB',
+                borderRadius: '15px',
+              }}
+            />
+          </GridIcon>
+          <GridName>
+            <Title level={5}> Assets </Title>
+          </GridName>
+          <GridCount style={{ color: '#C945DB' }}>
+            [
+            {tagDetctionStatus.count !== undefined
+              ? tagDetctionStatus.count
+              : '–'}
+            ]
+          </GridCount>
+        </GridLayout>
+      )}
+
+      {genericDetctionStatus.status && (
+        <GridLayout>
+          <GridIcon>
+            <Button
+              icon="Scan"
+              size="small"
+              style={{
+                marginRight: '5px',
+                backgroundColor: '#E8E8E8',
+                borderRadius: '15px',
+              }}
+            />
+          </GridIcon>
+          <GridName>
+            <Title level={5}> Genric </Title>
+          </GridName>
+          <GridCount>
+            [
+            {genericDetctionStatus.count !== undefined
+              ? genericDetctionStatus.count
+              : '–'}
+            ]
+          </GridCount>
+        </GridLayout>
+      )}
+    </>
+  );
+}
+
+function AnnotationCell({
+  rowData: {
+    annotationStatus: {
+      gdprDetctionStatus,
+      tagDetctionStatus,
+      genericDetctionStatus,
+    },
+  },
+}: CellRenderer) {
   const setBadge = ({ status, count }: DetectionModelStatusAndCount) => {
     if (status === 'Running') {
       return <Icon type="Loading" />;
@@ -50,54 +171,58 @@ function AnnotationCell({ rowData }: CellRenderer) {
   const setOpacity = (status: string | undefined) =>
     status === 'Completed' || status === 'Running' ? 1.0 : 0.5;
   return (
-    <div>
-      {rowData.annotationStatus.gdprDetctionStatus.status && (
-        <Button
-          icon="WarningFilled"
-          size="small"
-          style={{
-            marginRight: '5px',
-            backgroundColor: '#FBE9ED',
-            color: '#B30539',
-            opacity: setOpacity(
-              rowData.annotationStatus.gdprDetctionStatus.status
-            ),
-          }}
-        >
-          {setBadge(rowData.annotationStatus.gdprDetctionStatus)}
-        </Button>
+    <Popover
+      placement="bottom"
+      trigger="click"
+      content={PopoverContent(
+        gdprDetctionStatus,
+        tagDetctionStatus,
+        genericDetctionStatus
       )}
-      {rowData.annotationStatus.tagDetctionStatus.status && (
-        <Button
-          icon="Link"
-          size="small"
-          style={{
-            marginRight: '5px',
-            backgroundColor: '#F4DAF8',
-            color: '#C945DB',
-            opacity: setOpacity(
-              rowData.annotationStatus.tagDetctionStatus.status
-            ),
-          }}
-        >
-          {setBadge(rowData.annotationStatus.tagDetctionStatus)}{' '}
-        </Button>
-      )}
-      {rowData.annotationStatus.genericDetctionStatus.status && (
-        <Button
-          icon="Scan"
-          size="small"
-          style={{
-            backgroundColor: '#E8E8E8',
-            opacity: setOpacity(
-              rowData.annotationStatus.genericDetctionStatus.status
-            ),
-          }}
-        >
-          {setBadge(rowData.annotationStatus.genericDetctionStatus)}
-        </Button>
-      )}
-    </div>
+    >
+      <>
+        {gdprDetctionStatus.status && (
+          <Button
+            icon="WarningFilled"
+            size="small"
+            style={{
+              marginRight: '5px',
+              backgroundColor: '#FBE9ED',
+              color: '#B30539',
+              opacity: setOpacity(gdprDetctionStatus.status),
+            }}
+          >
+            {setBadge(gdprDetctionStatus)}
+          </Button>
+        )}
+        {tagDetctionStatus.status && (
+          <Button
+            icon="Link"
+            size="small"
+            style={{
+              marginRight: '5px',
+              backgroundColor: '#F4DAF8',
+              color: '#C945DB',
+              opacity: setOpacity(tagDetctionStatus.status),
+            }}
+          >
+            {setBadge(tagDetctionStatus)}
+          </Button>
+        )}
+        {genericDetctionStatus.status && (
+          <Button
+            icon="Scan"
+            size="small"
+            style={{
+              backgroundColor: '#E8E8E8',
+              opacity: setOpacity(genericDetctionStatus.status),
+            }}
+          >
+            {setBadge(genericDetctionStatus)}
+          </Button>
+        )}
+      </>
+    </Popover>
   );
 }
 
