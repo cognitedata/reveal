@@ -51,46 +51,52 @@ function AnnotationCell({ rowData }: CellRenderer) {
     status === 'Completed' || status === 'Running' ? 1.0 : 0.5;
   return (
     <div>
-      <Button
-        icon="WarningFilled"
-        size="small"
-        style={{
-          marginRight: '5px',
-          backgroundColor: '#FBE9ED',
-          color: '#B30539',
-          opacity: setOpacity(
-            rowData.annotationStatus.gdprDetctionStatus.status
-          ),
-        }}
-      >
-        {setBadge(rowData.annotationStatus.gdprDetctionStatus)}
-      </Button>
-      <Button
-        icon="Link"
-        size="small"
-        style={{
-          marginRight: '5px',
-          backgroundColor: '#F4DAF8',
-          color: '#C945DB',
-          opacity: setOpacity(
-            rowData.annotationStatus.tagDetctionStatus.status
-          ),
-        }}
-      >
-        {setBadge(rowData.annotationStatus.tagDetctionStatus)}{' '}
-      </Button>
-      <Button
-        icon="Scan"
-        size="small"
-        style={{
-          backgroundColor: '#E8E8E8',
-          opacity: setOpacity(
-            rowData.annotationStatus.genericDetctionStatus.status
-          ),
-        }}
-      >
-        {setBadge(rowData.annotationStatus.genericDetctionStatus)}
-      </Button>
+      {rowData.annotationStatus.gdprDetctionStatus.status && (
+        <Button
+          icon="WarningFilled"
+          size="small"
+          style={{
+            marginRight: '5px',
+            backgroundColor: '#FBE9ED',
+            color: '#B30539',
+            opacity: setOpacity(
+              rowData.annotationStatus.gdprDetctionStatus.status
+            ),
+          }}
+        >
+          {setBadge(rowData.annotationStatus.gdprDetctionStatus)}
+        </Button>
+      )}
+      {rowData.annotationStatus.tagDetctionStatus.status && (
+        <Button
+          icon="Link"
+          size="small"
+          style={{
+            marginRight: '5px',
+            backgroundColor: '#F4DAF8',
+            color: '#C945DB',
+            opacity: setOpacity(
+              rowData.annotationStatus.tagDetctionStatus.status
+            ),
+          }}
+        >
+          {setBadge(rowData.annotationStatus.tagDetctionStatus)}{' '}
+        </Button>
+      )}
+      {rowData.annotationStatus.genericDetctionStatus.status && (
+        <Button
+          icon="Scan"
+          size="small"
+          style={{
+            backgroundColor: '#E8E8E8',
+            opacity: setOpacity(
+              rowData.annotationStatus.genericDetctionStatus.status
+            ),
+          }}
+        >
+          {setBadge(rowData.annotationStatus.genericDetctionStatus)}
+        </Button>
+      )}
     </div>
   );
 }
