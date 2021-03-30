@@ -1,4 +1,4 @@
-import { Badge, Button, Dropdown, Menu } from '@cognite/cogs.js';
+import { Button, Dropdown, Icon, Menu } from '@cognite/cogs.js';
 import React from 'react';
 
 import AutoSizer from 'react-virtualized-auto-sizer';
@@ -8,9 +8,11 @@ import ReactBaseTable, {
   ColumnShape,
 } from 'react-base-table';
 import { TimeDisplay } from '@cognite/data-exploration';
-import { JobStatus } from 'src/api/types';
-import styled from 'styled-components';
 import { TableWrapper } from './FileTableWrapper';
+import {
+  AnnotationStatusAndCount,
+  DetectionModelStatusAndCount,
+} from '../../types';
 
 export type FileActions = {
   annotationsAvailable: boolean;
@@ -23,10 +25,10 @@ export type TableDataItem = {
   id: number;
   mimeType: string;
   name: string;
-  status: JobStatus | '';
   statusTime: number;
-  annotationsCount: number;
   menu: FileActions;
+  annotationsCount: number;
+  annotationStatus: AnnotationStatusAndCount;
 };
 
 type CellRenderer = {
@@ -36,36 +38,139 @@ type CellRenderer = {
 type FileTableProps = Omit<BaseTableProps<TableDataItem>, 'width'>;
 
 function AnnotationCell({ rowData }: CellRenderer) {
-  const getMessage = () => {
-    switch (rowData.status) {
-      case 'Queued': {
-        return 'ML queued';
-      }
-      case 'Running': {
-        return 'Detecting...';
-      }
-      case 'Completed': {
-        return rowData.annotationsCount
-          ? 'Annotations detected'
-          : 'No annotations detected';
-      }
-      case 'Failed': {
-        return 'Error occurred';
-      }
-      default: {
-        return 'Run ML to detect';
-      }
+  const setBadge = ({ status, count }: DetectionModelStatusAndCount) => {
+    if (status === 'Running') {
+      return <Icon type="Loading" />;
+    }
+    if (count !== undefined && status !== 'Queued') {
+      return String(count);
+    }
+    return '–';
+  };
+  const setOpacity = (status: string | undefined) =>
+    status === 'Completed' || status === 'Running' ? 1.0 : 0.5;
+  return (
+    <div>
+      {rowData.annotationStatus.gdprDetctionStatus.status && (
+        <Button
+          icon="WarningFilled"
+          size="small"
+          style={{
+            marginRight: '5px',
+            backgroundColor: '#FBE9ED',
+            color: '#B30539',
+            opacity: setOpacity(
+              rowData.annotationStatus.gdprDetctionStatus.status
+            ),
+          }}
+        >
+          {setBadge(rowData.annotationStatus.gdprDetctionStatus)}
+        </Button>
+      )}
+      {rowData.annotationStatus.tagDetctionStatus.status && (
+        <Button
+          icon="Link"
+          size="small"
+          style={{
+            marginRight: '5px',
+            backgroundColor: '#F4DAF8',
+            color: '#C945DB',
+            opacity: setOpacity(
+              rowData.annotationStatus.tagDetctionStatus.status
+            ),
+          }}
+        >
+          {setBadge(rowData.annotationStatus.tagDetctionStatus)}{' '}
+        </Button>
+      )}
+      {rowData.annotationStatus.genericDetctionStatus.status && (
+        <Button
+          icon="Scan"
+          size="small"
+          style={{
+            backgroundColor: '#E8E8E8',
+            opacity: setOpacity(
+              rowData.annotationStatus.genericDetctionStatus.status
+            ),
+          }}
+        >
+          {setBadge(rowData.annotationStatus.genericDetctionStatus)}
+        </Button>
+      )}
+    </div>
+  );
+}
+
+function StatusCell({
+  rowData: { annotationStatus, statusTime },
+}: CellRenderer) {
+  const annotations = Object.keys(annotationStatus) as Array<
+    keyof AnnotationStatusAndCount
+  >;
+  if (
+    annotations.some((key) => annotationStatus[key].status === 'Completed') &&
+    !annotations.some((key) =>
+      ['Running', 'Queued'].includes(annotationStatus[key].status)
+    )
+  ) {
+    return (
+      <div>
+        Processed <TimeDisplay value={statusTime} relative withTooltip />
+      </div>
+    );
+  }
+  if (annotations.some((key) => annotationStatus[key].status === 'Running')) {
+    return <div style={{ textTransform: 'capitalize' }}>Running</div>;
+  }
+
+  if (annotations.some((key) => annotationStatus[key].status === 'Queued')) {
+    return <div style={{ textTransform: 'capitalize' }}>Queued</div>;
+  }
+
+  return <div style={{ textTransform: 'capitalize' }}>Unprocessed</div>;
+}
+
+function ActionCell({ rowData }: CellRenderer) {
+  const { menu } = rowData;
+
+  const handleMetadataEdit = () => {
+    if (menu?.showMetadataPreview) {
+      menu.showMetadataPreview(rowData.id);
+    }
+  };
+  // todo: bind actions
+  const MenuContent = (
+    <Menu
+      style={{
+        color: 'black' /* typpy styles make color to be white here ... */,
+      }}
+    >
+      <Menu.Item onClick={handleMetadataEdit}>Edit metadata</Menu.Item>
+
+      <Menu.Item>Delete</Menu.Item>
+    </Menu>
+  );
+
+  const handleReview = () => {
+    if (menu?.onReviewClick) {
+      menu.onReviewClick(rowData.id);
     }
   };
 
-  const badge = rowData.annotationsCount
-    ? String(rowData.annotationsCount)
-    : '–';
-
   return (
     <div>
-      <Badge text={badge} size={13} background="purple" />
-      {` ${getMessage()}`}
+      <Button
+        type="secondary"
+        icon="ArrowRight"
+        iconPlacement="right"
+        style={{ marginRight: '10px' }}
+        onClick={handleReview}
+      >
+        Review
+      </Button>
+      <Dropdown content={MenuContent}>
+        <Button type="secondary" icon="MoreOverflowEllipsisHorizontal" />
+      </Dropdown>
     </div>
   );
 }
@@ -91,27 +196,14 @@ export function FileTable(props: FileTableProps) {
       width: 250,
       align: Column.Alignment.CENTER,
       // ML processing job status: Queued, In Progress, Processed <DateTime>
-      cellRenderer: ({ rowData }: CellRenderer) => {
-        if (rowData.status === 'Completed') {
-          return (
-            <div>
-              Processed{' '}
-              <TimeDisplay value={rowData.statusTime} relative withTooltip />
-            </div>
-          );
-        }
-        return (
-          <div style={{ textTransform: 'capitalize' }}>
-            {rowData.status.toLowerCase() || '–'}
-          </div>
-        );
-      },
+      cellRenderer: StatusCell,
     },
     {
       key: 'annotations',
       title: 'Annotations',
       width: 0,
       flexGrow: 1,
+      align: Column.Alignment.CENTER,
       // ML based or custom annotations count for the file
       cellRenderer: AnnotationCell,
     },
@@ -121,58 +213,7 @@ export function FileTable(props: FileTableProps) {
       dataKey: 'menu',
       align: Column.Alignment.CENTER,
       width: 200,
-      cellRenderer: ({ rowData }: CellRenderer) => {
-        const { menu } = rowData;
-        const handleAnnotationEdit = () => {
-          if (menu?.onAnnotationEditClick) {
-            menu.onAnnotationEditClick();
-          }
-        };
-
-        const handleMetadataEdit = () => {
-          if (menu?.showMetadataPreview) {
-            menu.showMetadataPreview(rowData.id);
-          }
-        };
-        // todo: bind actions
-        const MenuContent = (
-          <Menu
-            style={{
-              color: 'black' /* typpy styles make color to be white here ... */,
-            }}
-          >
-            <Menu.Item onClick={handleMetadataEdit}>Edit metadata</Menu.Item>
-
-            <Menu.Item onClick={handleAnnotationEdit}>
-              Edit annotations
-            </Menu.Item>
-
-            <Menu.Item>Delete</Menu.Item>
-          </Menu>
-        );
-
-        const handleReview = () => {
-          if (menu?.onReviewClick) {
-            menu.onReviewClick(rowData.id);
-          }
-        };
-
-        return (
-          <ActionContainer>
-            <Button
-              type="secondary"
-              icon="ArrowRight"
-              style={{ marginRight: '10px' }}
-              onClick={handleReview}
-            >
-              Review
-            </Button>
-            <Dropdown content={MenuContent}>
-              <Button type="secondary" icon="MoreOverflowEllipsisHorizontal" />
-            </Dropdown>
-          </ActionContainer>
-        );
-      },
+      cellRenderer: ActionCell,
     },
   ];
 
@@ -191,7 +232,3 @@ export function FileTable(props: FileTableProps) {
     </TableWrapper>
   );
 }
-
-const ActionContainer = styled.div`
-  justify-content: space-between;
-`;
