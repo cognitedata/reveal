@@ -10,8 +10,7 @@ import { CadModelUpdateHandler } from './CadModelUpdateHandler';
 import { Subscription, Observable } from 'rxjs';
 import { NodeAppearanceProvider } from './NodeAppearance';
 import { trackError } from '../../utilities/metrics';
-import { SectorGeometry } from './sector/types';
-import { SectorQuads } from './rendering/types';
+
 import { MaterialManager } from './MaterialManager';
 import { RenderMode } from './rendering/RenderMode';
 import { LoadingState } from '../../utilities';
@@ -180,10 +179,6 @@ export class CadManager<TModelIdentifier> {
 
   getLoadingStateObserver(): Observable<LoadingState> {
     return this._cadModelUpdateHandler.getLoadingStateObserver();
-  }
-
-  getParsedData(): Observable<{ blobUrl: string; lod: string; data: SectorGeometry | SectorQuads }> {
-    return this._cadModelUpdateHandler.getParsedData();
   }
 
   private markNeedsRedraw(): void {
