@@ -12,7 +12,6 @@ import {
 } from 'reducers/charts/types';
 import styled from 'styled-components/macro';
 import { functionResponseKey, useCallFunction } from 'utils/cogniteFunctions';
-import { calculateGranularity } from 'utils/timeseries';
 
 type ContextMenuProps = {
   chart: Chart;
@@ -205,14 +204,6 @@ const Statistics = ({
             ],
             start_time: new Date(chart.dateFrom).getTime(),
             end_time: new Date(chart.dateTo).getTime(),
-            granularity: calculateGranularity(
-              [
-                new Date(chart.dateFrom).getTime(),
-                new Date(chart.dateTo).getTime(),
-              ],
-              1000
-            ),
-            aggregate: 'average',
           },
         },
       },
