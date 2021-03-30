@@ -70,7 +70,11 @@ export function Migration() {
       client.loginWithOAuth({ project });
       await client.authenticate();
 
-      const progress = (itemsLoaded: number, itemsRequested: number, itemsCulled: number) => console.log(`loaded ${itemsLoaded}/${itemsRequested} (culled: ${itemsCulled})`);
+      const progress = (itemsLoaded: number, itemsRequested: number, itemsCulled: number) => {
+        guiState.debug.loadedSectors.statistics.culledCount = itemsCulled;
+        console.log(`loaded ${itemsLoaded}/${itemsRequested} (culled: ${itemsCulled})`);
+        
+      };
       // Prepare viewer
       viewer = new Cognite3DViewer({
         sdk: client,
@@ -136,6 +140,7 @@ export function Migration() {
               maxSectorDepthOfInsideSectors: 0,
               simpleSectorCount: 0,
               detailedSectorCount: 0,
+              culledCount: 0,
               forceDetailedSectorCount: 0,
               downloadSizeMb: 0
             }
@@ -234,6 +239,7 @@ export function Migration() {
       debugSectorsGui.add(guiState.debug.loadedSectors.statistics, 'simpleSectorCount').name('# simple sectors');
       debugSectorsGui.add(guiState.debug.loadedSectors.statistics, 'detailedSectorCount').name('# detailed sectors');
       debugSectorsGui.add(guiState.debug.loadedSectors.statistics, 'forceDetailedSectorCount').name('# force detailed sectors');
+      debugSectorsGui.add(guiState.debug.loadedSectors.statistics, 'culledCount').name('# culled sectors');
       debugSectorsGui.add(guiState.debug.loadedSectors.statistics, 'downloadSizeMb').name('Download size (Mb)');
       
       setInterval(() => {
