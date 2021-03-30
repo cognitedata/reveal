@@ -51,11 +51,14 @@ export function useSelectedNodesHighlights({
                 treeIndex,
                 nodeId,
                 onSuccess: () => {
-                  if (treeViewRef.current) {
-                    treeViewRef.current.scrollTo({
-                      key: treeIndex,
-                    });
-                  }
+                  // if node is not rendered in the DOM yet, scrollTo won't work
+                  setTimeout(() => {
+                    if (treeViewRef.current) {
+                      treeViewRef.current.scrollTo({
+                        key: treeIndex,
+                      });
+                    }
+                  }, 200);
                 },
               })
             );
