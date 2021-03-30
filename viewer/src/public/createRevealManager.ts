@@ -56,8 +56,18 @@ class DepthTextureProvider implements AlreadyLoadedGeometryDepthTextureProvider 
     this._renderManager = renderManager;
   }
 
-  provideAlreadyLoadedDepthTexture(): THREE.DepthTexture {
-    return new THREE.DepthTexture(100, 100);
+  renderDepthToTarget(target: THREE.WebGLRenderTarget | null, camera: THREE.PerspectiveCamera): void {
+    const original = {
+      renderTarget: this._renderManager.getRenderTarget(),
+      autoSize: this._renderManager.getRenderTargetAutoSize()
+    };
+    try {
+      this._renderManager.setRenderTarget(target);
+      this._renderManager.renderDepthOnly(camera);
+    } finally {
+      this._renderManager.setRenderTarget(original.renderTarget);
+      this._renderManager.setRenderTargetAutoSize(original.autoSize);
+    }
   }
 }
 

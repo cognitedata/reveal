@@ -3,5 +3,5 @@
  */
 
 export interface AlreadyLoadedGeometryDepthTextureProvider {
-  provideAlreadyLoadedDepthTexture(): THREE.DepthTexture;
+  renderDepthToTarget(target: THREE.WebGLRenderTarget | null, camera: THREE.PerspectiveCamera): void;
 }

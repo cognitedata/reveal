@@ -282,7 +282,7 @@ export class EffectRenderManager {
     );
   }
 
-  public renderDepthOnly(target: THREE.WebGLRenderTarget | null, camera: THREE.PerspectiveCamera, scene: THREE.Scene) {
+  public renderDepthOnly(camera: THREE.PerspectiveCamera) {
     const original = {
       renderMode: this._materialManager.getRenderMode()
     };
@@ -290,16 +290,16 @@ export class EffectRenderManager {
     this._materialManager.setRenderMode(RenderMode.DepthBufferOnly);
 
     try {
-      this.traverseForRootSectorNode(scene);
-      this.extractCadNodes(scene);
+      this.traverseForRootSectorNode(this._originalScene);
+      this.extractCadNodes(this._originalScene);
 
-      this.clearTarget(target);
+      this.clearTarget(this._renderTarget);
       const { hasBackElements, hasInFrontElements, hasGhostElements } = this.splitToScenes();
 
       if (hasBackElements && !hasGhostElements) {
-        this.renderNormalCadModelsFromBaseScene(camera);
+        this.renderNormalCadModelsFromBaseScene(camera, this._renderTarget);
       } else if (hasBackElements && hasGhostElements) {
-        this.renderNormalCadModels(camera);
+        this.renderNormalCadModels(camera, this._renderTarget);
         this._normalSceneBuilder.restoreOriginalScene();
       }
       if (hasInFrontElements) {
@@ -445,9 +445,20 @@ export class EffectRenderManager {
     });
   }
 
-  public setRenderTarget(target: THREE.WebGLRenderTarget | null, autoSetTargetSize: boolean = true) {
-    this._autoSetTargetSize = autoSetTargetSize;
+  public setRenderTarget(target: THREE.WebGLRenderTarget | null) {
     this._renderTarget = target;
+  }
+
+  public getRenderTarget(): THREE.WebGLRenderTarget | null {
+    return this._renderTarget;
+  }
+
+  public setRenderTargetAutoSize(autoSize: boolean) {
+    this._autoSetTargetSize = autoSize;
+  }
+
+  public getRenderTargetAutoSize(): boolean {
+    return this._autoSetTargetSize;
   }
 
   private clearTarget(target: THREE.WebGLRenderTarget | null) {
@@ -516,20 +527,29 @@ export class EffectRenderManager {
     return result;
   }
 
-  private renderNormalCadModels(camera: THREE.PerspectiveCamera) {
+  private renderNormalCadModels(
+    camera: THREE.PerspectiveCamera,
+    target: THREE.WebGLRenderTarget | null = this._normalRenderedCadModelTarget
+  ) {
     this._normalSceneBuilder.populateTemporaryScene();
-    this._renderer.setRenderTarget(this._normalRenderedCadModelTarget);
+    this._renderer.setRenderTarget(target);
     this._renderer.render(this._normalScene, camera);
   }
 
-  private renderNormalCadModelsFromBaseScene(camera: THREE.PerspectiveCamera) {
-    this._renderer.setRenderTarget(this._normalRenderedCadModelTarget);
+  private renderNormalCadModelsFromBaseScene(
+    camera: THREE.PerspectiveCamera,
+    target: THREE.WebGLRenderTarget | null = this._normalRenderedCadModelTarget
+  ) {
+    this._renderer.setRenderTarget(target);
     this._renderer.render(this._cadScene, camera);
   }
 
-  private renderInFrontCadModels(camera: THREE.PerspectiveCamera) {
+  private renderInFrontCadModels(
+    camera: THREE.PerspectiveCamera,
+    target: THREE.WebGLRenderTarget | null = this._inFrontRenderedCadModelTarget
+  ) {
     this._inFrontSceneBuilder.populateTemporaryScene();
-    this._renderer.setRenderTarget(this._inFrontRenderedCadModelTarget);
+    this._renderer.setRenderTarget(target);
     this._materialManager.setRenderMode(RenderMode.Effects);
     this._renderer.render(this._inFrontScene, camera);
   }
