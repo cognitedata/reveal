@@ -206,6 +206,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
 
   filterSectorsToLoad(input: DetermineSectorsInput, wantedSectors: WantedSector[]): Promise<WantedSector[]> {
     const filtered = this.options.coverageUtil.cullOccludedSectors(input.camera, wantedSectors);
+    console.log(`Filtered ${wantedSectors.length} to ${filtered.length} sectors`);
     return Promise.resolve(filtered);
   }
 
