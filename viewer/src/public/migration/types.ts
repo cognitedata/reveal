@@ -17,11 +17,11 @@ export type Color = {
   b: number;
 };
 /**
- * Callback to monitor downloaded requests and progress.
+ * Callback to monitor loaded requests and progress.
  * Use OnLoadingCallback instead of onProgress/onComplete.
  * @module @cognite/reveal
  */
-export type OnLoadingCallback = (itemsDownloaded: number, itemsRequested: number) => void;
+export type OnLoadingCallback = (itemsLoaded: number, itemsRequested: number) => void;
 
 /**
  * @module @cognite/reveal
