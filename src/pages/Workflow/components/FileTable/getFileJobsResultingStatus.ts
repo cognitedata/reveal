@@ -1,5 +1,5 @@
 import { JobStatus, AnnotationJob, DetectionModelType } from 'src/api/types';
-import { AnnotationStatusAndCount } from '../../types';
+import { AnnotationsBadgeProps } from 'src/pages/Workflow/types';
 
 export function getFileJobsResultingStatus(
   jobs: Array<{
@@ -23,36 +23,31 @@ export function getFileJobsResultingStatus(
 
 function getModelBadgeData(jobs: AnnotationJob[]) {
   if (jobs.length) {
-    let count = 0;
+    let modelGenerated = 0;
     jobs.forEach((job) => {
       if ('items' in job && job.items[0].annotations) {
-        count += job.items[0].annotations.length;
+        modelGenerated += job.items[0].annotations.length;
       }
     });
 
     const status = getFileJobsResultingStatus(jobs);
-    return { status, count };
+    return { status, modelGenerated };
   }
-  return { status: '' as JobStatus, count: undefined };
+  return {};
 }
 
 export function getFileJobsStatus(
   jobs: AnnotationJob[]
-): AnnotationStatusAndCount {
+): AnnotationsBadgeProps {
   if (!jobs.length) {
     return {
-      gdprDetctionStatus: { status: '' as JobStatus, count: undefined },
-      tagDetctionStatus: { status: '' as JobStatus, count: undefined },
-      genericDetctionStatus: {
-        status: '' as JobStatus,
-        count: undefined,
-      },
+      gdpr: {},
+      tag: {},
+      textAndObjects: {},
     };
   }
   const [tag, gdpr, generic] = jobs.reduce(
-    // Use "deconstruction" style assignment
     (result, job) => {
-      // result[element <= 10 ? 0 : 1].push(element); // Determine and push to small/large arr
       if (job.type === DetectionModelType.Tag) {
         result[0].push(job);
       }
@@ -67,8 +62,8 @@ export function getFileJobsStatus(
   );
 
   return {
-    gdprDetctionStatus: getModelBadgeData(gdpr),
-    tagDetctionStatus: getModelBadgeData(tag),
-    genericDetctionStatus: getModelBadgeData(generic),
+    gdpr: getModelBadgeData(gdpr),
+    tag: getModelBadgeData(tag),
+    textAndObjects: getModelBadgeData(generic),
   };
 }

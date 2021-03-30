@@ -53,7 +53,7 @@ export default function ProcessStep() {
     let annotationsCount = 0;
     let statusTime = 0;
 
-    const annotationStatus = getFileJobsStatus(jobs);
+    const annotationsBadgeProps = getFileJobsStatus(jobs);
     if (jobs.length) {
       statusTime = Math.max(...jobs.map((job) => job.statusTime));
     }
@@ -93,7 +93,7 @@ export default function ProcessStep() {
       statusTime,
       annotationsCount,
       menu: menuActions,
-      annotationStatus,
+      annotationsBadgeProps,
     };
   });
 

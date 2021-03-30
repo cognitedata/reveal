@@ -1,6 +1,6 @@
 import React from 'react';
-import { Button, Title, Dropdown, Icon, Menu, Body } from '@cognite/cogs.js';
-import { TimeDisplay, Divider } from '@cognite/data-exploration';
+import { TimeDisplay } from '@cognite/data-exploration';
+import { Button, Dropdown, Menu } from '@cognite/cogs.js';
 
 import AutoSizer from 'react-virtualized-auto-sizer';
 import ReactBaseTable, {
@@ -9,13 +9,11 @@ import ReactBaseTable, {
   ColumnShape,
 } from 'react-base-table';
 
-import styled from 'styled-components';
+import { Popover } from 'src/components/Common/Popover';
+import { AnnotationsBadgeProps } from 'src/pages/Workflow/types';
 import { TableWrapper } from './FileTableWrapper';
-import {
-  AnnotationStatusAndCount,
-  DetectionModelStatusAndCount,
-} from '../../types';
-import { Popover } from './Popover';
+import { AnnotationsBadge } from '../AnnotationsBadge/AnnotationsBadge';
+import { AnnotationsBadgePopoverContent } from '../AnnotationsBadge/AnnotationsBadgePopoverContent';
 
 export type FileActions = {
   annotationsAvailable: boolean;
@@ -31,7 +29,7 @@ export type TableDataItem = {
   statusTime: number;
   menu: FileActions;
   annotationsCount: number;
-  annotationStatus: AnnotationStatusAndCount;
+  annotationsBadgeProps: AnnotationsBadgeProps;
 };
 
 type CellRenderer = {
@@ -40,202 +38,16 @@ type CellRenderer = {
 
 type FileTableProps = Omit<BaseTableProps<TableDataItem>, 'width'>;
 
-const GridLayout = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 2fr 1fr 1fr;
-  grid-template-rows: auto;
-  grid-template-areas: 'icon name name . count';
-  padding-bottom: 23px;
-`;
-
-const GridIcon = styled.div`
-  grid-area: icon;
-`;
-
-const GridName = styled.div`
-  grid-area: name;
-`;
-const GridCount = styled.div`
-  grid-area: count;
-`;
-
-function PopoverContent(
-  gdprDetctionStatus: DetectionModelStatusAndCount,
-  tagDetctionStatus: DetectionModelStatusAndCount,
-  genericDetctionStatus: DetectionModelStatusAndCount
-) {
-  return (
-    <>
-      <Body level={1}> Detections </Body>
-      <Divider.Horizontal />
-      {gdprDetctionStatus.status && (
-        <GridLayout>
-          <GridIcon>
-            <Button
-              icon="WarningStroke"
-              size="small"
-              style={{
-                marginRight: '5px',
-                backgroundColor: '#FBE9ED',
-                color: '#B30539',
-                borderRadius: '15px',
-              }}
-            />
-          </GridIcon>
-          <GridName>
-            <Title level={5}> GDPR </Title>
-          </GridName>
-          <GridCount style={{ color: '#B30539' }}>
-            [
-            {gdprDetctionStatus.count !== undefined
-              ? gdprDetctionStatus.count
-              : '–'}
-            ]
-          </GridCount>
-        </GridLayout>
-      )}
-      {tagDetctionStatus.status && (
-        <GridLayout>
-          <GridIcon>
-            <Button
-              icon="Link"
-              size="small"
-              style={{
-                marginRight: '5px',
-                backgroundColor: '#F4DAF8',
-                color: '#C945DB',
-                borderRadius: '15px',
-              }}
-            />
-          </GridIcon>
-          <GridName>
-            <Title level={5}> Assets </Title>
-          </GridName>
-          <GridCount style={{ color: '#C945DB' }}>
-            [
-            {tagDetctionStatus.count !== undefined
-              ? tagDetctionStatus.count
-              : '–'}
-            ]
-          </GridCount>
-        </GridLayout>
-      )}
-
-      {genericDetctionStatus.status && (
-        <GridLayout>
-          <GridIcon>
-            <Button
-              icon="Scan"
-              size="small"
-              style={{
-                marginRight: '5px',
-                backgroundColor: '#E8E8E8',
-                borderRadius: '15px',
-              }}
-            />
-          </GridIcon>
-          <GridName>
-            <Title level={5}> Genric </Title>
-          </GridName>
-          <GridCount>
-            [
-            {genericDetctionStatus.count !== undefined
-              ? genericDetctionStatus.count
-              : '–'}
-            ]
-          </GridCount>
-        </GridLayout>
-      )}
-    </>
-  );
-}
-
-function AnnotationCell({
-  rowData: {
-    annotationStatus: {
-      gdprDetctionStatus,
-      tagDetctionStatus,
-      genericDetctionStatus,
-    },
-  },
-}: CellRenderer) {
-  const setBadge = ({ status, count }: DetectionModelStatusAndCount) => {
-    if (status === 'Running') {
-      return <Icon type="Loading" />;
-    }
-    if (count !== undefined && status !== 'Queued') {
-      return String(count);
-    }
-    return '–';
-  };
-  const setOpacity = (status: string | undefined) =>
-    status === 'Completed' || status === 'Running' ? 1.0 : 0.5;
-  return (
-    <Popover
-      placement="bottom"
-      trigger="click"
-      content={PopoverContent(
-        gdprDetctionStatus,
-        tagDetctionStatus,
-        genericDetctionStatus
-      )}
-    >
-      <>
-        {gdprDetctionStatus.status && (
-          <Button
-            icon="WarningFilled"
-            size="small"
-            style={{
-              marginRight: '5px',
-              backgroundColor: '#FBE9ED',
-              color: '#B30539',
-              opacity: setOpacity(gdprDetctionStatus.status),
-            }}
-          >
-            {setBadge(gdprDetctionStatus)}
-          </Button>
-        )}
-        {tagDetctionStatus.status && (
-          <Button
-            icon="Link"
-            size="small"
-            style={{
-              marginRight: '5px',
-              backgroundColor: '#F4DAF8',
-              color: '#C945DB',
-              opacity: setOpacity(tagDetctionStatus.status),
-            }}
-          >
-            {setBadge(tagDetctionStatus)}
-          </Button>
-        )}
-        {genericDetctionStatus.status && (
-          <Button
-            icon="Scan"
-            size="small"
-            style={{
-              backgroundColor: '#E8E8E8',
-              opacity: setOpacity(genericDetctionStatus.status),
-            }}
-          >
-            {setBadge(genericDetctionStatus)}
-          </Button>
-        )}
-      </>
-    </Popover>
-  );
-}
-
 function StatusCell({
-  rowData: { annotationStatus, statusTime },
+  rowData: { annotationsBadgeProps: badgeProps, statusTime },
 }: CellRenderer) {
-  const annotations = Object.keys(annotationStatus) as Array<
-    keyof AnnotationStatusAndCount
+  const annotations = Object.keys(badgeProps) as Array<
+    keyof AnnotationsBadgeProps
   >;
   if (
-    annotations.some((key) => annotationStatus[key].status === 'Completed') &&
+    annotations.some((key) => badgeProps[key]?.status === 'Completed') &&
     !annotations.some((key) =>
-      ['Running', 'Queued'].includes(annotationStatus[key].status)
+      ['Running', 'Queued'].includes(badgeProps[key]?.status || '')
     )
   ) {
     return (
@@ -244,11 +56,11 @@ function StatusCell({
       </div>
     );
   }
-  if (annotations.some((key) => annotationStatus[key].status === 'Running')) {
+  if (annotations.some((key) => badgeProps[key]?.status === 'Running')) {
     return <div style={{ textTransform: 'capitalize' }}>Running</div>;
   }
 
-  if (annotations.some((key) => annotationStatus[key].status === 'Queued')) {
+  if (annotations.some((key) => badgeProps[key]?.status === 'Queued')) {
     return <div style={{ textTransform: 'capitalize' }}>Queued</div>;
   }
 
@@ -271,7 +83,6 @@ function ActionCell({ rowData }: CellRenderer) {
       }}
     >
       <Menu.Item onClick={handleMetadataEdit}>Edit metadata</Menu.Item>
-
       <Menu.Item>Delete</Menu.Item>
     </Menu>
   );
@@ -330,7 +141,21 @@ export function FileTable(props: FileTableProps) {
       flexGrow: 1,
       align: Column.Alignment.CENTER,
       // ML based or custom annotations count for the file
-      cellRenderer: AnnotationCell,
+      cellRenderer: ({
+        rowData: { annotationsBadgeProps: annotationCellProps },
+      }: CellRenderer) => {
+        return (
+          annotationCellProps && (
+            <Popover
+              placement="bottom"
+              trigger="click"
+              content={AnnotationsBadgePopoverContent(annotationCellProps)}
+            >
+              <>{AnnotationsBadge(annotationCellProps)}</>
+            </Popover>
+          )
+        );
+      },
     },
     {
       key: 'action',
