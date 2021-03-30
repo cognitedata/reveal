@@ -14,6 +14,8 @@ import { AntiAliasingMode, defaultRenderOptions, RenderOptions, SsaoParameters }
 import { outlineDetectionShaders, fxaaShaders, ssaoShaders, ssaoBlurCombineShaders } from './shaders';
 import { SsaoSampleQuality } from '../../../public/types';
 import { WebGLRendererStateHelper } from '../../../utilities/WebGLRendererStateHelper';
+import { SectorNode } from '../sector/SectorNode';
+import { LevelOfDetail } from '../sector/LevelOfDetail';
 
 export class EffectRenderManager {
   private readonly _materialManager: CadMaterialManager;
@@ -282,7 +284,7 @@ export class EffectRenderManager {
     );
   }
 
-  public renderDepthOnly(camera: THREE.PerspectiveCamera) {
+  public renderDetailedToDepthOnly(camera: THREE.PerspectiveCamera) {
     const original = {
       renderMode: this._materialManager.getRenderMode()
     };
@@ -290,6 +292,7 @@ export class EffectRenderManager {
     this._materialManager.setRenderMode(RenderMode.DepthBufferOnly);
 
     try {
+      this.setVisibilityOfSectors(LevelOfDetail.Simple, false);
       this.traverseForRootSectorNode(this._originalScene);
       this.extractCadNodes(this._originalScene);
 
@@ -310,6 +313,7 @@ export class EffectRenderManager {
       this._materialManager.setRenderMode(original.renderMode);
       renderStateHelper.resetState();
       this.restoreCadNodes();
+      this.setVisibilityOfSectors(LevelOfDetail.Simple, true);
     }
   }
 
@@ -774,6 +778,14 @@ export class EffectRenderManager {
         objectStack.push(...element.children);
       }
     }
+  }
+
+  private setVisibilityOfSectors(levelOfDetail: LevelOfDetail, visible: boolean) {
+    this._originalScene.traverse(x => {
+      if (x instanceof SectorNode && x.levelOfDetail === levelOfDetail) {
+        x.visible = visible;
+      }
+    });
   }
 }
 

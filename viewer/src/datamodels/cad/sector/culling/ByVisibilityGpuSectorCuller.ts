@@ -205,9 +205,8 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
   }
 
   filterSectorsToLoad(input: DetermineSectorsInput, wantedSectors: WantedSector[]): Promise<WantedSector[]> {
-    console.log(`============ FILTER ${wantedSectors.length} sectors ========================`);
     const filtered = this.options.coverageUtil.cullOccludedSectors(input.camera, wantedSectors);
-    return Promise.resolve(wantedSectors); //.filter(x => x.levelOfDetail === LevelOfDetail.Detailed));
+    return Promise.resolve(filtered);
   }
 
   private update(
@@ -228,7 +227,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     const prioritized = coverageUtil.orderSectorsByVisibility(camera);
 
     // Add high details for all sectors the camera is inside or near
-    // this.addHighDetailsForNearSectors(camera, models, budget, takenSectors, clippingPlanes, clipIntersection);
+    this.addHighDetailsForNearSectors(camera, models, budget, takenSectors, clippingPlanes, clipIntersection);
 
     let debugAccumulatedPriority = 0.0;
     const prioritizedLength = prioritized.length;

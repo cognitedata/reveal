@@ -63,7 +63,7 @@ class DepthTextureProvider implements AlreadyLoadedGeometryDepthTextureProvider 
     };
     try {
       this._renderManager.setRenderTarget(target);
-      this._renderManager.renderDepthOnly(camera);
+      this._renderManager.renderDetailedToDepthOnly(camera);
     } finally {
       this._renderManager.setRenderTarget(original.renderTarget);
       this._renderManager.setRenderTargetAutoSize(original.autoSize);
