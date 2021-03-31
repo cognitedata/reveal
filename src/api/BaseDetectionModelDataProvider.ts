@@ -11,11 +11,16 @@ export abstract class BaseDetectionModelDataProvider
   implements DetectionModelDataProvider {
   protected abstract url: string;
 
-  // batch mode is not supported yet, but later there could be an array of fileIds
-  postJob(fileId: number) {
+  postJob(fileIds: number[]) {
     return sdk
       .post<AnnotationJobResponse>(this.url, {
-        data: { items: [{ fileId }] },
+        data: {
+          items: fileIds.map((id) => {
+            return {
+              fileId: id,
+            };
+          }),
+        },
       })
       .then((response) => {
         if (response.status === 201 || response.status === 200) {

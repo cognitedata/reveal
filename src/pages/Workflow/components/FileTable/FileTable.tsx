@@ -16,8 +16,6 @@ import { AnnotationsBadge } from '../AnnotationsBadge/AnnotationsBadge';
 import { AnnotationsBadgePopoverContent } from '../AnnotationsBadge/AnnotationsBadgePopoverContent';
 
 export type FileActions = {
-  annotationsAvailable: boolean;
-  onAnnotationEditClick?: () => void;
   showMetadataPreview: (fileId: number) => void;
   onReviewClick?: (fileId: number) => void;
 };
@@ -28,7 +26,6 @@ export type TableDataItem = {
   name: string;
   statusTime: number;
   menu: FileActions;
-  annotationsCount: number;
   annotationsBadgeProps: AnnotationsBadgeProps;
 };
 
