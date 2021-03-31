@@ -89,7 +89,7 @@ function ToolbarTreeViewComponent(props: TreeViewWrapperProps) {
       return;
     }
 
-    dispatch(
+    await dispatch(
       loadNodeChildren({
         parent: {
           nodeId: treeNode.meta.id,

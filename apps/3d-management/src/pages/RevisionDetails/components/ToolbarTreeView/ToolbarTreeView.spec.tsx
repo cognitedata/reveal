@@ -79,7 +79,19 @@ describe('ToolbarTreeView test cases', () => {
       .getAllByRole('img')
       .find((el) => el.getAttribute('aria-label') === 'plus-square');
     userEvent.click(expandBtn!);
+
+    // must show loading icon
+    expect(
+      await screen.findByRole('img', { name: /loading/i })
+    ).toBeInTheDocument();
+
+    // shows children
     expect(await screen.findByText('Cube (4)')).toBeTruthy();
+
+    // hides loading icon
+    expect(
+      screen.queryByRole('img', { name: /loading/i })
+    ).not.toBeInTheDocument();
   });
 
   it('loads more children when "Load more" button is clicked', async () => {
