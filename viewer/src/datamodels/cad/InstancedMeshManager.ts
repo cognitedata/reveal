@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 
-import { DynamicDefragmentedBuffer } from '../../utilities/datastructures/dynamicDefragmentedBuffer';
+import { DynamicDefragmentedBuffer } from '../../utilities/datastructures/DynamicDefragmentedBuffer';
 import { MaterialManager } from './MaterialManager';
 import { InstancedMesh, InstancedMeshFile } from './rendering/types';
 

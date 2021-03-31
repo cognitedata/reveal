@@ -3,7 +3,7 @@
  */
 
 import 'jest-extended';
-import { DynamicDefragmentedBuffer } from './dynamicDefragmentedBuffer';
+import { DynamicDefragmentedBuffer } from './DynamicDefragmentedBuffer';
 
 describe('DynamicDefragmentedBuffer', () => {
   test('empty array, returns empty', () => {

@@ -115,8 +115,6 @@ export class DynamicDefragmentedBuffer<T extends TypedArray> {
   }
 
   private allocateNewBuffer(newSize: number): void {
-    //const newSize = this._buffer.length * 2;
-
     const newBuffer = new this._type(newSize);
     newBuffer.set(this._buffer);
 
