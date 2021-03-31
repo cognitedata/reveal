@@ -40,7 +40,7 @@
     "react-scripts": "3.4.4",
     "redux-devtools-extension": "^2.13.9",
     "redux-thunk": "^2.3.0",
-    "styled-components": "^5.2.1",
+    "styled-components": "^5.2.3",
     "typesafe-actions": "^5.1.0"
   },
   "devDependencies": {
