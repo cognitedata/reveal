@@ -101,7 +101,6 @@ export const FileView = () => {
                   <TimeSeriesRows
                     chart={chart}
                     updateChart={() => {}}
-                    setDataQualityReport={() => {}}
                     mode="file"
                   />
                 </tbody>

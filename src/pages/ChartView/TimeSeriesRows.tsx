@@ -8,20 +8,10 @@ type Props = {
   chart: Chart;
   updateChart: (c: Chart) => void;
   mode: Modes;
-  setDataQualityReport: (input: {
-    timeSeriesId: string;
-    reportType: string;
-  }) => void;
 };
-export default function TimeSeriesRows({
-  chart,
-  updateChart,
-  setDataQualityReport,
-  mode,
-}: Props) {
+export default function TimeSeriesRows({ chart, updateChart, mode }: Props) {
   const isWorkspaceMode = mode === 'workspace';
   const isEditorMode = mode === 'editor';
-  const isDataQualityMode = mode === 'report';
   const isFileViewerMode = mode === 'file';
 
   return (
@@ -36,10 +26,8 @@ export default function TimeSeriesRows({
           mutate={updateChart}
           chart={chart}
           timeseries={t}
-          setDataQualityReport={setDataQualityReport}
           active={false}
           disabled={isEditorMode}
-          isDataQualityMode={isDataQualityMode}
           isWorkspaceMode={isWorkspaceMode}
           isFileViewerMode={isFileViewerMode}
           key={t.id}
