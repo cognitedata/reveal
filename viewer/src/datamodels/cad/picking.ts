@@ -7,6 +7,7 @@ import * as THREE from 'three';
 import { CadNode } from './CadNode';
 import { RenderMode } from './rendering/RenderMode';
 import { IntersectInput } from '../base/types';
+import { WebGLRendererStateHelper } from '../../utilities/WebGLRendererStateHelper';
 
 export interface PickingInput {
   normalizedCoords: {
@@ -162,22 +163,19 @@ function pickPixelColor(input: PickingInput, clearColor: THREE.Color, clearAlpha
   };
   pickCamera.setViewOffset(domElement.clientWidth, domElement.clientHeight, absoluteCoords.x, absoluteCoords.y, 1, 1);
 
-  const currentClearColor = renderer.getClearColor().clone();
-  const currentClearAlpha = renderer.getClearAlpha();
-  const currentRenderTarget = renderer.getRenderTarget();
-
+  const stateHelper = new WebGLRendererStateHelper(renderer);
   try {
     const { width, height } = renderer.getSize(new THREE.Vector2());
     renderTarget.setSize(width, height);
-    renderer.setRenderTarget(renderTarget);
-    renderer.setClearColor(clearColor, clearAlpha);
+    stateHelper.setRenderTarget(renderTarget);
+    stateHelper.setClearColor(clearColor);
+    stateHelper.setClearAlpha(clearAlpha);
+
     renderer.clearColor();
     renderer.render(scene, pickCamera);
-
     renderer.readRenderTargetPixels(renderTarget, 0, 0, 1, 1, pixelBuffer);
   } finally {
-    renderer.setRenderTarget(currentRenderTarget);
-    renderer.setClearColor(currentClearColor, currentClearAlpha);
+    stateHelper.resetState();
   }
   return pixelBuffer;
 }
