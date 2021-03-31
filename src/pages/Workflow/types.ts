@@ -1,12 +1,19 @@
 import { JobStatus } from 'src/api/types';
 
-export type DetectionModelStatusAndCount = {
-  status: JobStatus;
-  count?: number;
+export type AnnotationCounts = {
+  modelGenerated?: number;
+  manuallyGenerated?: number;
+  verified?: number;
+  rejected?: number;
+  unhandled?: number;
 };
 
-export type AnnotationStatusAndCount = {
-  gdprDetctionStatus: DetectionModelStatusAndCount;
-  tagDetctionStatus: DetectionModelStatusAndCount;
-  genericDetctionStatus: DetectionModelStatusAndCount;
-};
+export interface ModelStatusAndAnnotationCounts extends AnnotationCounts {
+  status?: JobStatus;
+}
+
+export interface AnnotationsBadgeProps {
+  gdpr?: ModelStatusAndAnnotationCounts;
+  tag?: ModelStatusAndAnnotationCounts;
+  textAndObjects?: ModelStatusAndAnnotationCounts;
+}

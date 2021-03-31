@@ -1,5 +1,6 @@
-import { Button, Dropdown, Icon, Menu } from '@cognite/cogs.js';
 import React from 'react';
+import { TimeDisplay } from '@cognite/data-exploration';
+import { Button, Dropdown, Menu } from '@cognite/cogs.js';
 
 import AutoSizer from 'react-virtualized-auto-sizer';
 import ReactBaseTable, {
@@ -7,12 +8,12 @@ import ReactBaseTable, {
   Column,
   ColumnShape,
 } from 'react-base-table';
-import { TimeDisplay } from '@cognite/data-exploration';
+
+import { Popover } from 'src/components/Common/Popover';
+import { AnnotationsBadgeProps } from 'src/pages/Workflow/types';
 import { TableWrapper } from './FileTableWrapper';
-import {
-  AnnotationStatusAndCount,
-  DetectionModelStatusAndCount,
-} from '../../types';
+import { AnnotationsBadge } from '../AnnotationsBadge/AnnotationsBadge';
+import { AnnotationsBadgePopoverContent } from '../AnnotationsBadge/AnnotationsBadgePopoverContent';
 
 export type FileActions = {
   annotationsAvailable: boolean;
@@ -28,7 +29,7 @@ export type TableDataItem = {
   statusTime: number;
   menu: FileActions;
   annotationsCount: number;
-  annotationStatus: AnnotationStatusAndCount;
+  annotationsBadgeProps: AnnotationsBadgeProps;
 };
 
 type CellRenderer = {
@@ -37,80 +38,16 @@ type CellRenderer = {
 
 type FileTableProps = Omit<BaseTableProps<TableDataItem>, 'width'>;
 
-function AnnotationCell({ rowData }: CellRenderer) {
-  const setBadge = ({ status, count }: DetectionModelStatusAndCount) => {
-    if (status === 'Running') {
-      return <Icon type="Loading" />;
-    }
-    if (count !== undefined && status !== 'Queued') {
-      return String(count);
-    }
-    return '–';
-  };
-  const setOpacity = (status: string | undefined) =>
-    status === 'Completed' || status === 'Running' ? 1.0 : 0.5;
-  return (
-    <div>
-      {rowData.annotationStatus.gdprDetctionStatus.status && (
-        <Button
-          icon="WarningFilled"
-          size="small"
-          style={{
-            marginRight: '5px',
-            backgroundColor: '#FBE9ED',
-            color: '#B30539',
-            opacity: setOpacity(
-              rowData.annotationStatus.gdprDetctionStatus.status
-            ),
-          }}
-        >
-          {setBadge(rowData.annotationStatus.gdprDetctionStatus)}
-        </Button>
-      )}
-      {rowData.annotationStatus.tagDetctionStatus.status && (
-        <Button
-          icon="Link"
-          size="small"
-          style={{
-            marginRight: '5px',
-            backgroundColor: '#F4DAF8',
-            color: '#C945DB',
-            opacity: setOpacity(
-              rowData.annotationStatus.tagDetctionStatus.status
-            ),
-          }}
-        >
-          {setBadge(rowData.annotationStatus.tagDetctionStatus)}{' '}
-        </Button>
-      )}
-      {rowData.annotationStatus.genericDetctionStatus.status && (
-        <Button
-          icon="Scan"
-          size="small"
-          style={{
-            backgroundColor: '#E8E8E8',
-            opacity: setOpacity(
-              rowData.annotationStatus.genericDetctionStatus.status
-            ),
-          }}
-        >
-          {setBadge(rowData.annotationStatus.genericDetctionStatus)}
-        </Button>
-      )}
-    </div>
-  );
-}
-
 function StatusCell({
-  rowData: { annotationStatus, statusTime },
+  rowData: { annotationsBadgeProps: badgeProps, statusTime },
 }: CellRenderer) {
-  const annotations = Object.keys(annotationStatus) as Array<
-    keyof AnnotationStatusAndCount
+  const annotations = Object.keys(badgeProps) as Array<
+    keyof AnnotationsBadgeProps
   >;
   if (
-    annotations.some((key) => annotationStatus[key].status === 'Completed') &&
+    annotations.some((key) => badgeProps[key]?.status === 'Completed') &&
     !annotations.some((key) =>
-      ['Running', 'Queued'].includes(annotationStatus[key].status)
+      ['Running', 'Queued'].includes(badgeProps[key]?.status || '')
     )
   ) {
     return (
@@ -119,11 +56,11 @@ function StatusCell({
       </div>
     );
   }
-  if (annotations.some((key) => annotationStatus[key].status === 'Running')) {
+  if (annotations.some((key) => badgeProps[key]?.status === 'Running')) {
     return <div style={{ textTransform: 'capitalize' }}>Running</div>;
   }
 
-  if (annotations.some((key) => annotationStatus[key].status === 'Queued')) {
+  if (annotations.some((key) => badgeProps[key]?.status === 'Queued')) {
     return <div style={{ textTransform: 'capitalize' }}>Queued</div>;
   }
 
@@ -146,7 +83,6 @@ function ActionCell({ rowData }: CellRenderer) {
       }}
     >
       <Menu.Item onClick={handleMetadataEdit}>Edit metadata</Menu.Item>
-
       <Menu.Item>Delete</Menu.Item>
     </Menu>
   );
@@ -205,7 +141,21 @@ export function FileTable(props: FileTableProps) {
       flexGrow: 1,
       align: Column.Alignment.CENTER,
       // ML based or custom annotations count for the file
-      cellRenderer: AnnotationCell,
+      cellRenderer: ({
+        rowData: { annotationsBadgeProps: annotationCellProps },
+      }: CellRenderer) => {
+        return (
+          annotationCellProps && (
+            <Popover
+              placement="bottom"
+              trigger="click"
+              content={AnnotationsBadgePopoverContent(annotationCellProps)}
+            >
+              <>{AnnotationsBadge(annotationCellProps)}</>
+            </Popover>
+          )
+        );
+      },
     },
     {
       key: 'action',
