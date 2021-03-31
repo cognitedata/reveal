@@ -34,7 +34,7 @@ void updateFragmentColor(int renderMode, vec4 color, float treeIndex, vec3 norma
         vec3 albedo = min(vec3(0.8) * (0.4 + 0.6 * amplitude), 1.0);
         gl_FragColor = vec4(albedo, 0.2);
     } else if (renderMode == RenderTypeDepthBufferOnly) {
-        gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+        gl_FragColor = vec4(1.0, 0.0, 1.0, 1.0);
     } else if (renderMode == RenderTypePackColorAndNormal) {
         vec3 hsv = rgb2hsv(color.rgb);
         float a = 0.0;
