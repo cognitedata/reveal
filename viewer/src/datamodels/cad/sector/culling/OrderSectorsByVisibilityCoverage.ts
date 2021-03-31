@@ -204,7 +204,7 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
     if (this._debugImageElement) {
       this.renderSectors(null, camera);
       this._debugImageElement.src = this._renderer.domElement.toDataURL();
-      console.log(this._debugImageElement.src);
+      // console.log(this._debugImageElement.src);
     }
 
     this.renderSectors(this.renderTarget, camera);
@@ -282,8 +282,10 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
     const visibilityValue = visible ? 1.0 : 0.0;
     this.containers.forEach(container => {
       for (let i = 0; i < container.sectors.length; ++i) {
-        container.attributesValues[5 * i + 4] = visibilityValue;
+        const id = container.sectors[i].id;
+        container.attributesValues[5 * (container.sectorIdOffset + id) + 4] = visibilityValue;
       }
+      container.attributesBuffer.needsUpdate = true;
     });
   }
 
@@ -295,7 +297,7 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
       if (container === undefined) {
         throw new Error(`Sector ${s} is from a model not added`);
       }
-      container.attributesValues[5 * id + 4] = visibilityValue;
+      container.attributesValues[5 * (container.sectorIdOffset + id) + 4] = visibilityValue;
       container.attributesBuffer.needsUpdate = true;
     });
   }
@@ -420,7 +422,6 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
 
       const instanceMatrix = new THREE.Matrix4().compose(translation, identityRotation, scale);
       mesh.setMatrixAt(sectorId, instanceMatrix);
-
       instanceValues[5 * sectorId + 0] = sectorIdOffset + sectorId;
       instanceValues[5 * sectorId + 1] = coverage.x;
       instanceValues[5 * sectorId + 2] = coverage.y;
