@@ -13,11 +13,12 @@ const NavigationItem: React.FC<Props> = ({ dataItem }: Props) => {
   const location = useLocation();
   return (
     <NavigationItemContainer
+      className="nav-item"
       selected={location?.pathname?.startsWith(`/suites/${dataItem.key}`)}
     >
       <SuiteAvatar color={dataItem.color} title={dataItem.title} />
       <Tooltip content={dataItem.title}>
-        <Body level={2} as={SuiteTitle}>
+        <Body level={2} as={SuiteTitle} className="nav-item-text">
           {dataItem.title}
         </Body>
       </Tooltip>
