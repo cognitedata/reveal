@@ -42,7 +42,7 @@ export interface OrderSectorsByVisibleCoverageOptions {
    * Initializes a render target with already loaded geometry for pre-load
    * occlusion.
    */
-  alreadyLoadedProvider: OccludingGeometryProvider;
+  occludingGeometryProvider: OccludingGeometryProvider;
 }
 
 export type PrioritizedSectorIdentifier = {
@@ -119,7 +119,7 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
 
   constructor(options: OrderSectorsByVisibleCoverageOptions) {
     this._renderer = options.renderer;
-    this._alreadyLoadedProvider = options.alreadyLoadedProvider;
+    this._alreadyLoadedProvider = options.occludingGeometryProvider;
 
     const size = this._renderer.getSize(new THREE.Vector2());
     this.renderTarget = new THREE.WebGLRenderTarget(size.width, size.height, {

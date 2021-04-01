@@ -11,10 +11,7 @@ import { CadMaterialManager } from './CadMaterialManager';
 import { CadSectorParser } from './sector/CadSectorParser';
 import { CachedRepository } from './sector/CachedRepository';
 import { SimpleAndDetailedToSector3D } from './sector/SimpleAndDetailedToSector3D';
-import {
-  ByVisibilityGpuSectorCuller,
-  ByVisibilityGpuSectorCullerOptions
-} from './sector/culling/ByVisibilityGpuSectorCuller';
+import { createDefaultSectorCuller } from './sector/culling/ByVisibilityGpuSectorCuller';
 import { LocalModelDataClient } from '../../utilities/networking/LocalModelDataClient';
 import { CdfModelDataClient } from '../../utilities/networking/CdfModelDataClient';
 import { LocalModelIdentifier, CdfModelIdentifier, ModelDataClient } from '../../utilities/networking/types';
@@ -54,12 +51,10 @@ export function createCadManager<T>(
   const modelDataTransformer = new SimpleAndDetailedToSector3D(materialManager);
   const cachedSectorRepository = new CachedRepository(client, modelDataParser, modelDataTransformer);
   const { internal } = options;
-  const cullerOptions: ByVisibilityGpuSectorCullerOptions = {
-    renderer,
-    occludingGeometryProvider
-  };
   const sectorCuller =
-    internal && internal.sectorCuller ? internal.sectorCuller : new ByVisibilityGpuSectorCuller(cullerOptions);
+    internal && internal.sectorCuller
+      ? internal.sectorCuller
+      : createDefaultSectorCuller(renderer, occludingGeometryProvider);
   const cadModelUpdateHandler = new CadModelUpdateHandler(cachedSectorRepository, sectorCuller);
   return new CadManager(materialManager, cadModelMetadataRepository, cadModelFactory, cadModelUpdateHandler);
 }

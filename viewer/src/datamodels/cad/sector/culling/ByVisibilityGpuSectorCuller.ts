@@ -38,12 +38,6 @@ export type ByVisibilityGpuSectorCullerOptions = {
   renderer: THREE.WebGLRenderer;
 
   /**
-   * Callback that returns a depth texture providing the depth
-   * of allready loaded geometry.
-   */
-  occludingGeometryProvider: OccludingGeometryProvider;
-
-  /**
    * Optional callback for determining the cost of a sector. The default unit of the cost
    * function is bytes downloaded.
    */
@@ -52,7 +46,7 @@ export type ByVisibilityGpuSectorCullerOptions = {
   /**
    * Use a custom coverage utility to determine how "visible" each sector is.
    */
-  coverageUtil?: OrderSectorsByVisibilityCoverage;
+  coverageUtil: OrderSectorsByVisibilityCoverage;
 
   /**
    * Logging function for debugging.
@@ -140,23 +134,13 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
   constructor(options: ByVisibilityGpuSectorCullerOptions) {
     this.options = {
       renderer: options.renderer,
-      occludingGeometryProvider: options.occludingGeometryProvider,
       determineSectorCost: options && options.determineSectorCost ? options.determineSectorCost : computeSectorCost,
       logCallback:
         options && options.logCallback
           ? options.logCallback
           : // No logging
             () => {},
-      coverageUtil:
-        options && options.coverageUtil
-          ? options.coverageUtil
-          : (() => {
-              const util = new GpuOrderSectorsByVisibilityCoverage({
-                renderer: options.renderer,
-                alreadyLoadedProvider: options.occludingGeometryProvider
-              });
-              return util;
-            })()
+      coverageUtil: options.coverageUtil
     };
     this.takenSectors = new TakenSectorMap(this.options.determineSectorCost);
   }
@@ -354,4 +338,12 @@ function computeSectorCost(metadata: SectorMetadata, lod: LevelOfDetail): Sector
     default:
       throw new Error(`Can't compute cost for lod ${lod}`);
   }
+}
+
+export function createDefaultSectorCuller(
+  renderer: THREE.WebGLRenderer,
+  occludingGeometryProvider: OccludingGeometryProvider
+): SectorCuller {
+  const coverageUtil = new GpuOrderSectorsByVisibilityCoverage({ renderer, occludingGeometryProvider });
+  return new ByVisibilityGpuSectorCuller({ renderer, coverageUtil });
 }
