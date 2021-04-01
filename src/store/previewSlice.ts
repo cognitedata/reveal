@@ -14,6 +14,7 @@ import {
 } from 'src/store/commonActions';
 import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
 import { ImagePreviewEditMode } from 'src/pages/Preview/Types';
+import { AnnotationCounts } from 'src/pages/Workflow/types';
 
 export interface VisionAnnotationState extends VisionAnnotation {
   id: string;
@@ -373,5 +374,43 @@ export const selectVisibleNonRejectedAnnotationsByFileId = createSelector(
     return visibleAnnotationIdsByFile.filter(
       (item) => item.status !== AnnotationStatus.Rejected
     );
+  }
+);
+
+export const getAnnotationCountByModelType = createSelector(
+  selectAnnotationsByFileIdModelType,
+  (annotations) => {
+    let [modelGenerated, manuallyGenerated, verified, unhandled, rejected] = [
+      0,
+      0,
+      0,
+      0,
+      0,
+    ];
+
+    annotations.forEach((ann) => {
+      if (ann.source === 'user') {
+        manuallyGenerated++;
+      } else {
+        modelGenerated++;
+      }
+      if (ann.status === AnnotationStatus.Verified) {
+        verified++;
+      }
+      if (ann.status === AnnotationStatus.Unhandled) {
+        unhandled++;
+      }
+      if (ann.status === AnnotationStatus.Rejected) {
+        rejected++;
+      }
+    });
+
+    return {
+      modelGenerated,
+      manuallyGenerated,
+      verified,
+      unhandled,
+      rejected,
+    } as AnnotationCounts;
   }
 );
