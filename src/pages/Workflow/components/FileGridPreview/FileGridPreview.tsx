@@ -168,7 +168,7 @@ const PreviewCell = styled.div`
       }
     }
     :hover {
-      border: 1px solid #b30539;
+      box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.15);
     }
   }
 
