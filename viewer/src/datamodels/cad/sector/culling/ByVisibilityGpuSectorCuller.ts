@@ -26,7 +26,7 @@ import { CadModelMetadata } from '../../CadModelMetadata';
 import { SectorMetadata, WantedSector } from '../types';
 import { toThreeVector3 } from '../../../../utilities';
 import { CadModelSectorBudget } from '../../CadModelSectorBudget';
-import { AlreadyLoadedGeometryDepthTextureProvider } from './AlreadyLoadedGeometryTextureProvider';
+import { OccludingGeometryProvider } from './OccludingGeometryProvider';
 
 /**
  * Options for creating GpuBasedSectorCuller.
@@ -41,7 +41,7 @@ export type ByVisibilityGpuSectorCullerOptions = {
    * Callback that returns a depth texture providing the depth
    * of allready loaded geometry.
    */
-  alreadyLoadedGeometryDepthTextureProvider: AlreadyLoadedGeometryDepthTextureProvider;
+  occludingGeometryProvider: OccludingGeometryProvider;
 
   /**
    * Optional callback for determining the cost of a sector. The default unit of the cost
@@ -140,7 +140,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
   constructor(options: ByVisibilityGpuSectorCullerOptions) {
     this.options = {
       renderer: options.renderer,
-      alreadyLoadedGeometryDepthTextureProvider: options.alreadyLoadedGeometryDepthTextureProvider,
+      occludingGeometryProvider: options.occludingGeometryProvider,
       determineSectorCost: options && options.determineSectorCost ? options.determineSectorCost : computeSectorCost,
       logCallback:
         options && options.logCallback
@@ -153,10 +153,8 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
           : (() => {
               const util = new GpuOrderSectorsByVisibilityCoverage({
                 renderer: options.renderer,
-                alreadyLoadedProvider: options.alreadyLoadedGeometryDepthTextureProvider
+                alreadyLoadedProvider: options.occludingGeometryProvider
               });
-              const canvasElement = util.createDebugCanvas();
-              document.body.appendChild(canvasElement);
               return util;
             })()
     };

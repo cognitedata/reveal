@@ -20,7 +20,7 @@ describe('EffectRenderManager', () => {
   const options: RenderOptions = {};
 
   test('construct', () => {
-    expect(() => new EffectRenderManager(materialManager, options)).not.toThrow();
+    expect(() => new EffectRenderManager(renderer, scene, materialManager, options)).not.toThrow();
   });
 
   test('render() resets settings after completed', () => {
@@ -30,10 +30,10 @@ describe('EffectRenderManager', () => {
     renderer.setClearAlpha(0.77);
     materialManager.setRenderMode(RenderMode.PackColorAndNormal);
 
-    const effectManager = new EffectRenderManager(materialManager, options);
+    const effectManager = new EffectRenderManager(renderer, scene, materialManager, options);
 
     // Act
-    effectManager.render(renderer, camera, scene);
+    effectManager.render(camera);
 
     // Assert
     expect(renderer.getRenderTarget()).toBe(target);
@@ -47,11 +47,11 @@ describe('EffectRenderManager', () => {
       multiSampleCountHint: 4
     };
     const webgl1Renderer = new THREE.WebGL1Renderer({ context });
-    const effectManager = new EffectRenderManager(materialManager, options);
+    const effectManager = new EffectRenderManager(renderer, scene, materialManager, options);
     const setRenderTargetSpy = jest.spyOn(webgl1Renderer, 'setRenderTarget');
 
     // Act
-    effectManager.render(webgl1Renderer, camera, scene);
+    effectManager.render(camera);
 
     // Assert
     expect(setRenderTargetSpy).toBeCalled();
@@ -72,11 +72,11 @@ describe('EffectRenderManager', () => {
     const options: RenderOptions = {
       multiSampleCountHint: 4
     };
-    const effectManager = new EffectRenderManager(materialManager, options);
+    const effectManager = new EffectRenderManager(renderer, scene, materialManager, options);
     const setRenderTargetSpy = jest.spyOn(webgl2Renderer, 'setRenderTarget');
 
     // Act
-    effectManager.render(webgl2Renderer, camera, scene);
+    effectManager.render(camera);
 
     // Assert
     expect(setRenderTargetSpy).toBeCalled();

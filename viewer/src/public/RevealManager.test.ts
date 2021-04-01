@@ -21,13 +21,16 @@ describe('RevealManager', () => {
     dispose: jest.fn()
   };
   let manager: RevealManager<{ id: number }>;
+  let renderer: THREE.WebGLRenderer;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    manager = createRevealManager('test', mockClient, { internal: { sectorCuller } });
+    manager = createRevealManager('test', mockClient, renderer, new THREE.Scene(), { internal: { sectorCuller } });
   });
 
   beforeAll(() => {
+    const context: WebGLRenderingContext = require('gl')(64, 64, { preserveDrawingBuffer: true });
+    renderer = new THREE.WebGLRenderer({ context });
     jest.useFakeTimers();
   });
 

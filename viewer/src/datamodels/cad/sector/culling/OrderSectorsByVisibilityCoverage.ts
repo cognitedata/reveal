@@ -9,7 +9,7 @@ import { coverageShaders } from '../../rendering/shaders';
 import { CadModelMetadata } from '../../CadModelMetadata';
 import { toThreeJsBox3, Box3 } from '../../../../utilities';
 import { WebGLRendererStateHelper } from '../../../../utilities/WebGLRendererStateHelper';
-import { AlreadyLoadedGeometryDepthTextureProvider } from './AlreadyLoadedGeometryTextureProvider';
+import { OccludingGeometryProvider } from './OccludingGeometryProvider';
 
 type SectorContainer = {
   model: CadModelMetadata;
@@ -42,7 +42,7 @@ export interface OrderSectorsByVisibleCoverageOptions {
    * Initializes a render target with already loaded geometry for pre-load
    * occlusion.
    */
-  alreadyLoadedProvider: AlreadyLoadedGeometryDepthTextureProvider;
+  alreadyLoadedProvider: OccludingGeometryProvider;
 }
 
 export type PrioritizedSectorIdentifier = {
@@ -100,7 +100,7 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
   private sectorIdOffset = 0;
   private readonly scene = new THREE.Scene();
   private readonly _renderer: THREE.WebGLRenderer;
-  private readonly _alreadyLoadedProvider: AlreadyLoadedGeometryDepthTextureProvider;
+  private readonly _alreadyLoadedProvider: OccludingGeometryProvider;
   // private debugRenderer?: THREE.WebGLRenderer;
   private _debugImageElement?: HTMLImageElement;
   private readonly renderTarget: THREE.WebGLRenderTarget;
@@ -266,7 +266,7 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
       this._renderer.clear(true, true);
 
       // 2. Render already loaded geometry to offscreen buffer
-      this._alreadyLoadedProvider.renderDepthToTarget(renderTarget, camera);
+      this._alreadyLoadedProvider.renderOccludingGeometry(renderTarget, camera);
 
       // 3. Render to offscreen buffer
       this._renderer.render(this.scene, camera);

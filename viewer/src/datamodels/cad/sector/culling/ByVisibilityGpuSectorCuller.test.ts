@@ -22,6 +22,8 @@ describe('ByVisibilityGpuSectorCuller', () => {
     OrderSectorsByVisibilityCoverage,
     'orderSectorsByVisibility'
   > = jest.fn();
+  const context: WebGLRenderingContext = require('gl')(64, 64, { preserveDrawingBuffer: true });
+  const renderer = new THREE.WebGLRenderer({ context });
 
   const coverageUtil: OrderSectorsByVisibilityCoverage = {
     setModels: setModelsMock,
@@ -29,6 +31,9 @@ describe('ByVisibilityGpuSectorCuller', () => {
     orderSectorsByVisibility: camera => {
       orderSectorsByVisibilityMock(camera);
       return [];
+    },
+    cullOccludedSectors: (_camera, sectors) => {
+      return sectors;
     },
     dispose: jest.fn()
   };
@@ -39,7 +44,7 @@ describe('ByVisibilityGpuSectorCuller', () => {
   });
 
   test('determineSectors sets models to coverage utility', () => {
-    const culler = new ByVisibilityGpuSectorCuller({ coverageUtil });
+    const culler = new ByVisibilityGpuSectorCuller({ renderer, occludingGeometryProvider, coverageUtil });
     const model = createCadModelMetadata(generateSectorTree(1));
     const input = createDetermineSectorInput(camera, model);
     culler.determineSectors(input);

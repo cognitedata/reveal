@@ -14,7 +14,7 @@ import { initMetrics } from '../utilities/metrics';
 import { RenderOptions } from '..';
 import { EffectRenderManager } from '../datamodels/cad/rendering/EffectRenderManager';
 import { CadMaterialManager } from '../datamodels/cad/CadMaterialManager';
-import { AlreadyLoadedGeometryDepthTextureProvider } from '../datamodels/cad/sector/culling/AlreadyLoadedGeometryTextureProvider';
+import { OccludingGeometryProvider } from '../datamodels/cad/sector/culling/OccludingGeometryProvider';
 
 /**
  * Used to create an instance of reveal manager that works with localhost.
@@ -49,14 +49,14 @@ export function createCdfRevealManager(
   return createRevealManager(client.project, modelDataClient, renderer, scene, revealOptions);
 }
 
-class DepthTextureProvider implements AlreadyLoadedGeometryDepthTextureProvider {
+class RenderAlreadyLoadedGeometryProvider implements OccludingGeometryProvider {
   private readonly _renderManager: EffectRenderManager;
 
   constructor(renderManager: EffectRenderManager) {
     this._renderManager = renderManager;
   }
 
-  renderDepthToTarget(target: THREE.WebGLRenderTarget | null, camera: THREE.PerspectiveCamera): void {
+  renderOccludingGeometry(target: THREE.WebGLRenderTarget | null, camera: THREE.PerspectiveCamera): void {
     const original = {
       renderTarget: this._renderManager.getRenderTarget(),
       autoSize: this._renderManager.getRenderTargetAutoSize()
@@ -97,7 +97,7 @@ export function createRevealManager<T>(
   const renderOptions: RenderOptions = revealOptions.renderOptions || {};
   const materialManager = new CadMaterialManager();
   const renderManager = new EffectRenderManager(renderer, scene, materialManager, renderOptions);
-  const alreadyLoadedProvider = new DepthTextureProvider(renderManager);
+  const alreadyLoadedProvider = new RenderAlreadyLoadedGeometryProvider(renderManager);
   const cadManager = createCadManager(client, renderer, materialManager, alreadyLoadedProvider, revealOptions);
   const pointCloudManager = createPointCloudManager(client);
   return new RevealManager(cadManager, renderManager, pointCloudManager);
