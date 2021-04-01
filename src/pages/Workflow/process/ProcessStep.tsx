@@ -24,15 +24,11 @@ import {
   showFileMetadataPreview,
 } from 'src/store/processSlice';
 import { getFileJobsStatus } from 'src/pages/Workflow/components/FileTable/getFileJobsResultingStatus';
-import {
-  FileGridPreview,
-  GridTable,
-  GridCellProps,
-} from '@cognite/data-exploration';
+import { GridTable, GridCellProps } from '@cognite/data-exploration';
 import { resetEditHistory, selectAllFiles } from 'src/store/uploadedFilesSlice';
 import styled from 'styled-components';
-import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import { message } from 'antd';
+import { FileGridPreview } from '../components/FileGridPreview/FileGridPreview';
 
 const queryClient = new QueryClient();
 
@@ -126,20 +122,9 @@ export default function ProcessStep() {
         <Container>
           {currentView === 'grid' ? (
             <GridTable
-              data={uploadedFiles}
-              onItemClicked={(item: FileInfo) => {
-                history.push(
-                  getParamLink(
-                    workflowRoutes.review,
-                    ':fileId',
-                    String(item.id)
-                  )
-                );
-              }}
-              isSelected={() => {}}
+              data={tableData}
               selectionMode="multiple"
-              onSelect={() => {}} // TODO: add to state for batch operations
-              renderCell={(cellProps: GridCellProps<FileInfo>) => (
+              renderCell={(cellProps: GridCellProps<TableDataItem>) => (
                 <FileGridPreview {...cellProps} />
               )}
             />
