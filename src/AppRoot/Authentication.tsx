@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { TenantContext } from 'providers/TenantProvider';
 import { CdfClientContext } from 'providers/CdfClientProvider';
 import { useDispatch, useSelector } from 'react-redux';

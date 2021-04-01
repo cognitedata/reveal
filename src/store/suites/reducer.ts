@@ -31,7 +31,7 @@ export const SuitesReducer = createReducer(initialState)
   )
   .handleAction(
     SuitesTableActionTypes.SUITES_TABLE_LOADED,
-    (state: SuitesTableState, action: SuitesTableRootAction) => ({
+    (_: SuitesTableState, action: SuitesTableRootAction) => ({
       loading: false,
       loadFailed: false,
       loaded: true,

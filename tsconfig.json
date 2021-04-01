@@ -14,8 +14,11 @@
     "isolatedModules": true,
     "downlevelIteration": true,
     "noEmit": true,
-    "jsx": "react",
-    "baseUrl": "src"
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "jsx": "react-jsx",
+    "baseUrl": "src",
+    "noFallthroughCasesInSwitch": true
   },
   "include": ["src"]
 }
