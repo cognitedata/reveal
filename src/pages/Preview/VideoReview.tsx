@@ -4,7 +4,7 @@ import { VideoPreview } from 'src/pages/Preview/components/VideoPreview/VideoPre
 import { DataExplorationProvider, Tabs } from '@cognite/data-exploration';
 import { Contextualization } from 'src/pages/Preview/components/Contextualization/Contextualization';
 import { FileDetailEdit } from 'src/pages/Preview/components/FileDetails/FileDetailEdit';
-import { RouteComponentProps, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { getLink, workflowRoutes } from 'src/pages/Workflow/workflowRoutes';
@@ -41,9 +41,9 @@ const TabsContainer = styled.div`
 
 const queryClient = new QueryClient();
 
-const AnnotationsEdit = (props: RouteComponentProps<{ fileId: string }>) => {
+const AnnotationsEdit = (props: { fileId: string }) => {
   const history = useHistory();
-  const { fileId } = props.match.params;
+  const { fileId } = props;
 
   const file = useSelector(({ uploadedFiles }: RootState) =>
     selectFileById(uploadedFiles, fileId)

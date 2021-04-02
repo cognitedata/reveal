@@ -3,7 +3,7 @@ import { AnnotationJob, DetectionModelType } from 'src/api/types';
 import { AnnotationStatus, VisionAnnotation } from 'src/utils/AnnotationUtils';
 
 export const fileProcessUpdate = createAction<{
-  fileId: string | number;
+  fileId: number;
   job: AnnotationJob;
 }>('fileProcessUpdate');
 
@@ -14,4 +14,6 @@ export const addAnnotations = createAction<{
   status: AnnotationStatus;
 }>('addAnnotations');
 
-export const deleteAnnotations = createAction<string[]>('deleteAnnotations');
+export const deleteAnnotationsFromState = createAction<string[]>(
+  'deleteAnnotations'
+);
