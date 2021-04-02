@@ -1,9 +1,11 @@
 import { createAsyncThunk, unwrapResult } from '@reduxjs/toolkit';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { fetchAssets } from 'src/store/thunks/fetchAssets';
-import { AnnotationStatus } from 'src/utils/AnnotationUtils';
+import { AnnotationStatus, AnnotationUtils } from 'src/utils/AnnotationUtils';
 import { DetectionModelType } from 'src/api/types';
 import { UpdateFiles } from 'src/store/thunks/UpdateFiles';
+import { SaveAnnotations } from 'src/store/thunks/SaveAnnotations';
+import { VisionAnnotationState } from 'src/store/previewSlice';
 
 export const LinkFileAssetsByAnnotationId = createAsyncThunk<
   void,
@@ -12,25 +14,42 @@ export const LinkFileAssetsByAnnotationId = createAsyncThunk<
 >(
   'LinkFileAssetsByAnnotationId',
   async (annotationId, { getState, dispatch }) => {
-    const updateFile = (fileId: string, assetExternalId: string) => {
-      dispatch(fetchAssets([{ externalId: assetExternalId }]))
-        .then(unwrapResult)
-        .then((assets) => {
-          const ids = assets.map((asset) => asset.id);
+    const updateFileAndSaveAnnotation = async (
+      fileId: string,
+      assetExternalId: string,
+      annotation: VisionAnnotationState
+    ) => {
+      const assetResponse = await dispatch(
+        fetchAssets([{ externalId: assetExternalId }])
+      );
+      const assets = unwrapResult(assetResponse);
 
+      if (assets && assets.length) {
+        const asset = assets[0];
+
+        const unsavedAnnotation = AnnotationUtils.convertToAnnotation({
+          ...annotation,
+          linkedResourceId: asset.id,
+          linkedResourceExternalId: asset.externalId,
+          linkedResourceType: 'asset',
+        });
+
+        await Promise.all([
+          dispatch(SaveAnnotations([unsavedAnnotation])),
           dispatch(
             UpdateFiles([
               {
                 id: Number(fileId),
                 update: {
                   assetIds: {
-                    add: ids,
+                    add: [asset.id],
                   },
                 },
               },
             ])
-          );
-        });
+          ),
+        ]);
+      }
     };
 
     const annotation = getState().previewSlice.annotations.byId[annotationId];
@@ -40,7 +59,7 @@ export const LinkFileAssetsByAnnotationId = createAsyncThunk<
 
       if (model.modelType === DetectionModelType.Tag) {
         const { fileId } = model;
-        updateFile(fileId, annotation.text);
+        await updateFileAndSaveAnnotation(fileId, annotation.text, annotation);
       }
     }
   }

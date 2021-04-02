@@ -1,3 +1,5 @@
+import { AnnotationStatus } from 'src/utils/AnnotationUtils';
+
 export enum DetectionModelType {
   Text = 1,
   Tag,
@@ -15,20 +17,41 @@ export type Vertex = {
   x: number;
   y: number;
 };
-export type Annotation = {
+
+export interface Annotation {
   text: string;
-  confidence: number;
   data: any;
   region?: {
     shape: RegionType;
     vertices: Array<Vertex>;
   };
-};
+  annotatedResourceId: number;
+  annotatedResourceExternalId?: string;
+  annotatedResourceType: 'file';
+  linkedResourceId?: number;
+  linkedResourceExternalId?: string;
+  linkedResourceType?: 'asset' | 'file';
+  annotationType: string;
+  source: string;
+  status: AnnotationStatus;
+  id: number;
+  createdTime: number;
+  lastUpdatedTime: number;
+}
+
+export interface DetectedAnnotation {
+  text: string;
+  region?: {
+    shape: RegionType;
+    vertices: Array<Vertex>;
+  };
+  confidence: number;
+}
 
 export type AnnotationJobResultItem = {
   fileId: number;
   fileExternalId?: string;
-  annotations: Array<Annotation>;
+  annotations: Array<DetectedAnnotation>;
   width?: number;
   height?: number;
 };

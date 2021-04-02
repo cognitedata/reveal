@@ -68,6 +68,7 @@ export const ImagePreview: React.FC<FilePreviewProps> = ({
     (item) => ({
       ...item,
       mark: AnnotationUtils.getAnnotationStyle(item.color, item.status),
+      version: 1,
     })
   );
 
