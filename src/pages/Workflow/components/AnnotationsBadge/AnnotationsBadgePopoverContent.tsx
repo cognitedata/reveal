@@ -90,8 +90,8 @@ export function AnnotationsBadgePopoverContent({
           status: textAndObjects.status,
           title: 'Text and Objects',
           icon: 'Scan',
-          backgroundColor: '#E8E8E8',
-          color: '#404040',
+          backgroundColor: '#FFE1D1',
+          color: '#FF8746',
           modelGenerated: textAndObjects.modelGenerated,
           manuallyGenerated: textAndObjects.manuallyGenerated,
         })}

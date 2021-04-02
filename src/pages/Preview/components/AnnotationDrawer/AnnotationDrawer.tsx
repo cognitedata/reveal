@@ -8,12 +8,12 @@ export const AnnotationDrawer = (props: {
   visible: boolean;
   onClose: () => void;
   title: string;
-  content: JSX.Element;
   disableFooterButtons: boolean;
   onCreate: () => void;
-  onDestroy: () => void;
+  onDelete: () => void;
+  children: any;
 }) => {
-  const { title, visible, onClose, content } = props;
+  const { title, visible, onClose, children } = props;
   return (
     <Drawer
       placement="right"
@@ -42,7 +42,7 @@ export const AnnotationDrawer = (props: {
           <DrawerTitleRow>
             <Title level={3}>{title}</Title>
           </DrawerTitleRow>
-          <DrawerDetailsContainer>{content}</DrawerDetailsContainer>
+          <DrawerDetailsContainer>{children}</DrawerDetailsContainer>
           <DrawerFooterRow>
             <Divider.Horizontal />
             <DrawerFooterButtonRow>
@@ -57,7 +57,7 @@ export const AnnotationDrawer = (props: {
               <DrawerDeleteButton
                 type="danger"
                 icon="Delete"
-                onClick={props.onDestroy}
+                onClick={props.onDelete}
                 disabled={props.disableFooterButtons}
               />
             </DrawerFooterButtonRow>
