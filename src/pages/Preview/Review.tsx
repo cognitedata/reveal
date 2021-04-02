@@ -5,7 +5,12 @@ import { Button, Popconfirm, Title } from '@cognite/cogs.js';
 import { RouteComponentProps, useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { closeAnnotationDrawer, resetPreview } from 'src/store/previewSlice';
+import {
+  closeAnnotationDrawer,
+  createAnnotation,
+  resetEditState,
+  resetPreview,
+} from 'src/store/previewSlice';
 import { getLink, workflowRoutes } from 'src/pages/Workflow/workflowRoutes';
 import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
 import { resetEditHistory, selectFileById } from 'src/store/uploadedFilesSlice';
@@ -16,6 +21,7 @@ import { AnnotationDrawer } from 'src/pages/Preview/components/AnnotationDrawer/
 import { AnnotationDrawerMode } from 'src/utils/AnnotationUtils';
 import { ImageReviewDrawerContent } from 'src/pages/Preview/components/AnnotationDrawerContent/ImageReviewAnnotationDrawerContent';
 import { ImagePreviewEditMode } from 'src/pages/Preview/Types';
+import { AddAnnotationsFromEditModeAssetIds } from 'src/store/thunks/AddAnnotationsFromEditModeAssetIds';
 
 const Container = styled.div`
   width: 100%;
@@ -95,9 +101,17 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
     dispatch(closeAnnotationDrawer());
   };
 
-  const handleOnDrawerCreate = () => {};
+  const handleOnDrawerCreate = () => {
+    if (drawerMode === AnnotationDrawerMode.AddAnnotation) {
+      dispatch(createAnnotation({ fileId, type: drawerMode }));
+    } else if (drawerMode === AnnotationDrawerMode.LinkAsset) {
+      dispatch(AddAnnotationsFromEditModeAssetIds(fileId));
+    }
+  };
 
-  const handleOnDrawerDestroy = () => {};
+  const handleOnDrawerDelete = () => {
+    dispatch(resetEditState());
+  };
 
   useEffect(() => {
     dispatch(resetEditHistory());
@@ -122,9 +136,9 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
           </Button>
         </ToolBar>
         {isVideo(file) ? (
-          <VideoReview {...props} />
+          <VideoReview fileId={fileId} />
         ) : (
-          <ImageReview {...props} />
+          <ImageReview fileId={fileId} drawerMode={drawerMode} />
         )}
         <AnnotationDrawer
           visible={showDrawer}
@@ -135,20 +149,16 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
           }
           disableFooterButtons={imagePreviewEditable}
           onClose={handleOnCloseDrawer}
-          content={getDrawerContent(drawerMode)}
           onCreate={handleOnDrawerCreate}
-          onDestroy={handleOnDrawerDestroy}
-        />
+          onDelete={handleOnDrawerDelete}
+        >
+          {!isVideo(file) && drawerMode !== null && (
+            <ImageReviewDrawerContent mode={drawerMode} />
+          )}
+        </AnnotationDrawer>
       </Container>
     </>
   );
-};
-
-export const getDrawerContent = (mode: number | null) => {
-  if (mode === null) {
-    return <></>;
-  }
-  return <ImageReviewDrawerContent mode={mode} />;
 };
 
 export default Review;

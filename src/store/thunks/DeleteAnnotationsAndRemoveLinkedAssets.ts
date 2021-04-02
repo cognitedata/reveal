@@ -1,8 +1,9 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { AnnotationStatus } from 'src/utils/AnnotationUtils';
-import { deleteAnnotations } from 'src/store/commonActions';
 import { UpdateFiles } from 'src/store/thunks/UpdateFiles';
+import { DeleteAnnotations } from 'src/store/thunks/DeleteAnnotations';
+import { deleteAnnotationsFromState } from 'src/store/commonActions';
 import { VisionAnnotationState } from '../previewSlice';
 
 export const DeleteAnnotationsAndRemoveLinkedAssets = createAsyncThunk<
@@ -27,15 +28,16 @@ export const DeleteAnnotationsAndRemoveLinkedAssets = createAsyncThunk<
       );
     };
 
+    const annotations = annotationIds.map(
+      (id) => getState().previewSlice.annotations.byId[id]
+    );
     const linkedAnnotations: VisionAnnotationState[] = [];
 
-    annotationIds.forEach((id) => {
-      const annotation = getState().previewSlice.annotations.byId[id];
-
+    annotations.forEach((annotation) => {
       if (
         annotation &&
         annotation.status === AnnotationStatus.Verified &&
-        annotation.linkedAssetId
+        annotation.linkedResourceId
       ) {
         linkedAnnotations.push(annotation);
       }
@@ -46,10 +48,18 @@ export const DeleteAnnotationsAndRemoveLinkedAssets = createAsyncThunk<
         linkedAnnotations[0].modelId
       ];
       const { fileId } = model;
-      const assetIds = linkedAnnotations.map((ann) => ann.linkedAssetId!);
+      const assetIds = linkedAnnotations.map((ann) => ann.linkedResourceId!);
       removeAssetIdsFromFile(fileId, assetIds);
     }
 
-    dispatch(deleteAnnotations(linkedAnnotations.map((ann) => ann.id)));
+    const savedAnnotationIds = annotations
+      .filter((ann) => !!ann.lastUpdatedTime)
+      .map((ann) => parseInt(ann.id, 10));
+
+    if (savedAnnotationIds && savedAnnotationIds.length) {
+      dispatch(DeleteAnnotations(savedAnnotationIds));
+    }
+
+    dispatch(deleteAnnotationsFromState(annotations.map((ann) => ann.id!)));
   }
 );

@@ -4,11 +4,12 @@ import { ImagePreview } from 'src/pages/Preview/components/ImagePreview/ImagePre
 import { DataExplorationProvider, Tabs } from '@cognite/data-exploration';
 import { Contextualization } from 'src/pages/Preview/components/Contextualization/Contextualization';
 import { FileDetailEdit } from 'src/pages/Preview/components/FileDetails/FileDetailEdit';
-import { RouteComponentProps, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import {
-  selectVisibleNonRejectedAnnotationsByFileId,
+  addPolygon,
+  selectVisibleNonRejectAndEditModeAnnotations,
   updateAnnotation,
   VisibleAnnotations,
 } from 'src/store/previewSlice';
@@ -17,6 +18,9 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { v3Client as sdk } from '@cognite/cdf-sdk-singleton';
 import { selectFileById } from 'src/store/uploadedFilesSlice';
 import { ImagePreviewEditMode } from 'src/pages/Preview/Types';
+import { ProposedCogniteAnnotation } from '@cognite/react-picture-annotation';
+import { AnnotationDrawerMode } from 'src/utils/AnnotationUtils';
+import { DetectionModelType } from 'src/api/types';
 
 const AnnotationContainer = styled.div`
   width: 100%;
@@ -47,18 +51,18 @@ const TabsContainer = styled.div`
 
 const queryClient = new QueryClient();
 
-const ImageReview = (props: RouteComponentProps<{ fileId: string }>) => {
+const ImageReview = (props: { fileId: string; drawerMode: number | null }) => {
   const history = useHistory();
   const dispatch = useDispatch();
-  const { fileId } = props.match.params;
+  const { fileId, drawerMode } = props;
 
   const file = useSelector(({ uploadedFiles }: RootState) =>
     selectFileById(uploadedFiles, fileId)
   );
 
-  const visibleNonRejectedAnnotations = useSelector(
+  const visibleNonRejectedAnnotationsAndEditModeAnnotation = useSelector(
     ({ previewSlice }: RootState) =>
-      selectVisibleNonRejectedAnnotationsByFileId(
+      selectVisibleNonRejectAndEditModeAnnotations(
         previewSlice,
         fileId
       ) as VisibleAnnotations[]
@@ -79,8 +83,24 @@ const ImageReview = (props: RouteComponentProps<{ fileId: string }>) => {
     return null;
   }
 
-  const handleCreateAnnotation = (annotation: any) => {
+  const handleCreateAnnotation = (annotation: ProposedCogniteAnnotation) => {
     console.log('created annotation: ', annotation);
+
+    if (imagePreviewCreatable) {
+      if (drawerMode === AnnotationDrawerMode.AddAnnotation) {
+        dispatch(
+          addPolygon({
+            box: annotation.box,
+            modelType: DetectionModelType.Text,
+          })
+        );
+      }
+      if (drawerMode === AnnotationDrawerMode.LinkAsset) {
+        dispatch(
+          addPolygon({ box: annotation.box, modelType: DetectionModelType.Tag })
+        );
+      }
+    }
   };
 
   const handleModifyAnnotation = (annotation: any) => {
@@ -101,7 +121,7 @@ const ImageReview = (props: RouteComponentProps<{ fileId: string }>) => {
             {file && (
               <ImagePreview
                 fileObj={file}
-                annotations={visibleNonRejectedAnnotations}
+                annotations={visibleNonRejectedAnnotationsAndEditModeAnnotation}
                 editable={imagePreviewEditable}
                 creatable={imagePreviewCreatable}
                 onCreateAnnotation={handleCreateAnnotation}
