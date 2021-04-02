@@ -1,10 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { FileInfo as File } from '@cognite/sdk';
-import {
-  Loader,
-  SelectableItemsProps,
-  useFileIcon,
-} from '@cognite/data-exploration';
+import { Loader, useFileIcon } from '@cognite/data-exploration';
 
 import { Body, DocumentIcon, Button, Dropdown, Menu } from '@cognite/cogs.js';
 import { Popover } from 'src/components/Common/Popover';
@@ -16,12 +12,10 @@ import { AnnotationsBadgePopoverContent } from '../AnnotationsBadge/AnnotationsB
 export const FileGridPreview = ({
   item,
   style,
-  onClick,
 }: {
   item: TableDataItem;
   style?: React.CSSProperties;
-  onClick?: () => void;
-} & SelectableItemsProps) => {
+}) => {
   const [imageUrl, setImage] = useState<string | undefined>(undefined);
   const { data, isError } = useFileIcon({
     id: item.id,
@@ -87,7 +81,7 @@ export const FileGridPreview = ({
   );
 
   return (
-    <PreviewCell onClick={onClick} style={style}>
+    <PreviewCell style={style}>
       <div className="preview">
         {image}
         <div className="footer">
