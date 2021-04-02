@@ -141,17 +141,15 @@ export function FileTable(props: FileTableProps) {
       flexGrow: 1,
       align: Column.Alignment.CENTER,
       // ML based or custom annotations count for the file
-      cellRenderer: ({
-        rowData: { annotationsBadgeProps: annotationCellProps },
-      }: CellRenderer) => {
+      cellRenderer: ({ rowData: { annotationsBadgeProps } }: CellRenderer) => {
         return (
-          annotationCellProps && (
+          annotationsBadgeProps && (
             <Popover
               placement="bottom"
               trigger="click"
-              content={AnnotationsBadgePopoverContent(annotationCellProps)}
+              content={AnnotationsBadgePopoverContent(annotationsBadgeProps)}
             >
-              <>{AnnotationsBadge(annotationCellProps)}</>
+              <>{AnnotationsBadge(annotationsBadgeProps)}</>
             </Popover>
           )
         );

@@ -64,7 +64,8 @@ export function AnnotationsBadge({
           icon="Scan"
           size="small"
           style={{
-            backgroundColor: '#E8E8E8',
+            backgroundColor: '#FFE1D1',
+            color: '#FF8746',
             opacity: setOpacity(textAndObjects?.status),
           }}
         >

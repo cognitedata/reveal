@@ -3,20 +3,48 @@ import { Button, ButtonGroup, Detail } from '@cognite/cogs.js';
 import { DetectionModelSelect } from 'src/pages/Workflow/process/DetectionModelSelect';
 import styled from 'styled-components';
 import { useAnnotationJobs } from 'src/store/hooks/useAnnotationJobs';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from 'src/store/rootReducer';
+import {
+  detectAnnotations,
+  setSelectedDetectionModels,
+} from 'src/store/processSlice';
+import { DetectionModelType } from 'src/api/types';
+import { selectAllFiles } from 'src/store/uploadedFilesSlice';
+import { message } from 'antd';
 
 export const FileToolbar = ({
   onViewChange,
   currentView = 'list',
-  value,
-  onChange,
-  onDetectClick,
 }: {
   onViewChange?: (view: string) => void;
   currentView?: string;
-  value?: any;
-  onChange?: any;
-  onDetectClick?: any;
 }) => {
+  const dispatch = useDispatch();
+  const uploadedFiles = useSelector((state: RootState) =>
+    selectAllFiles(state.uploadedFiles)
+  );
+  const selectedDetectionModels = useSelector(
+    (state: RootState) => state.processSlice.selectedDetectionModels
+  );
+
+  const onDetectClick = () => {
+    if (!selectedDetectionModels.length) {
+      message.error('Please select ML models to use for detection');
+      return;
+    }
+    dispatch(
+      detectAnnotations({
+        fileIds: uploadedFiles.map(({ id }) => id),
+        detectionModels: selectedDetectionModels,
+      })
+    );
+  };
+
+  const onChange = (models: Array<DetectionModelType>) => {
+    dispatch(setSelectedDetectionModels(models));
+  };
+
   const { isPollingFinished } = useAnnotationJobs();
   return (
     <>
@@ -24,7 +52,10 @@ export const FileToolbar = ({
         <ModelOptions>
           <ModelSelector>
             <Detail strong>Select Machine Learning Model(s):</Detail>
-            <DetectionModelSelect value={value} onChange={onChange} />
+            <DetectionModelSelect
+              value={selectedDetectionModels}
+              onChange={onChange}
+            />
           </ModelSelector>
           <Button
             icon={isPollingFinished ? 'Scan' : 'Loading'}
