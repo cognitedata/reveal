@@ -27,7 +27,7 @@ export class WebGLRendererStateHelper {
       clearAlpha: this._renderer.getClearAlpha(),
       ...this._originalState
     };
-    this._renderer.setClearColor(color);
+    this._renderer.setClearColor(color, alpha);
   }
 
   setSize(width: number, height: number) {
@@ -58,8 +58,6 @@ export class WebGLRendererStateHelper {
       this._renderer.setClearColor(this._originalState.clearColor, this._originalState.clearAlpha);
     } else if (this._originalState.clearColor !== undefined) {
       this._renderer.setClearColor(this._originalState.clearColor);
-    } else if (this._originalState.clearAlpha !== undefined) {
-      this._renderer.setClearAlpha(this._originalState.clearAlpha);
     }
     if (this._originalState.localClippingEnabled !== undefined) {
       this._renderer.localClippingEnabled = this._originalState.localClippingEnabled;
