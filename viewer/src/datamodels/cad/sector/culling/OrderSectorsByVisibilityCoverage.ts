@@ -126,8 +126,9 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
       generateMipmaps: false,
       type: THREE.UnsignedByteType,
       format: THREE.RGBAFormat,
-      stencilBuffer: true
+      stencilBuffer: false
     });
+    this._renderer.setRenderTarget(this.renderTarget);
   }
 
   dispose() {
@@ -257,10 +258,15 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
   private renderSectors(renderTarget: THREE.WebGLRenderTarget | null, camera: THREE.PerspectiveCamera): void {
     const stateHelper = new WebGLRendererStateHelper(this._renderer);
     try {
-      stateHelper.setClearColor('#FFFFFF');
       stateHelper.localClippingEnabled = true;
-      stateHelper.setRenderTarget(renderTarget);
+      stateHelper.setRenderTarget(this.renderTarget);
+      stateHelper.setClearColor('#FFFFFF', 0.0);
       stateHelper.autoClear = false;
+
+      // stateHelper.setClearColor('#FFFFFF');
+      // stateHelper.localClippingEnabled = true;
+      // stateHelper.setRenderTarget(renderTarget);
+      // stateHelper.autoClear = false;
 
       // 1. Clear render target (depth + color)
       this._renderer.clear(true, true);

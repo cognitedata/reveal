@@ -168,8 +168,7 @@ function pickPixelColor(input: PickingInput, clearColor: THREE.Color, clearAlpha
     const { width, height } = renderer.getSize(new THREE.Vector2());
     renderTarget.setSize(width, height);
     stateHelper.setRenderTarget(renderTarget);
-    stateHelper.setClearColor(clearColor);
-    stateHelper.setClearAlpha(clearAlpha);
+    stateHelper.setClearColor(clearColor, clearAlpha);
 
     renderer.clearColor();
     renderer.render(scene, pickCamera);

@@ -21,14 +21,13 @@ export class WebGLRendererStateHelper {
     this._originalState = {};
   }
 
-  setClearColor(color: THREE.Color | number | string) {
-    this._originalState = { clearColor: this._renderer.getClearColor().clone(), ...this._originalState };
+  setClearColor(color: THREE.Color | number | string, alpha?: number) {
+    this._originalState = {
+      clearColor: this._renderer.getClearColor().clone(),
+      clearAlpha: this._renderer.getClearAlpha(),
+      ...this._originalState
+    };
     this._renderer.setClearColor(color);
-  }
-
-  setClearAlpha(alpha: number) {
-    this._originalState = { clearAlpha: this._renderer.getClearAlpha(), ...this._originalState };
-    this._renderer.setClearAlpha(alpha);
   }
 
   setSize(width: number, height: number) {
@@ -55,10 +54,11 @@ export class WebGLRendererStateHelper {
     if (this._originalState.autoClear !== undefined) {
       this._renderer.autoClear = this._originalState.autoClear;
     }
-    if (this._originalState.clearColor !== undefined) {
+    if (this._originalState.clearColor !== undefined && this._originalState.clearAlpha !== undefined) {
+      this._renderer.setClearColor(this._originalState.clearColor, this._originalState.clearAlpha);
+    } else if (this._originalState.clearColor !== undefined) {
       this._renderer.setClearColor(this._originalState.clearColor);
-    }
-    if (this._originalState.clearAlpha !== undefined) {
+    } else if (this._originalState.clearAlpha !== undefined) {
       this._renderer.setClearAlpha(this._originalState.clearAlpha);
     }
     if (this._originalState.localClippingEnabled !== undefined) {
