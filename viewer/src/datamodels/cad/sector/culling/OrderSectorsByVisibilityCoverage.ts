@@ -97,6 +97,12 @@ export interface OrderSectorsByVisibilityCoverage {
  * much of the geometry covers of the bounding box.
  */
 export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibilityCoverage {
+  /**
+   * Factor of how big render target we use for determining visibility of sectors
+   * compared to the full render size.
+   */
+  private static readonly CoverageRenderTargetScalingFactor = 4.0;
+
   private sectorIdOffset = 0;
   private readonly scene = new THREE.Scene();
   private readonly _renderer: THREE.WebGLRenderer;
@@ -266,8 +272,14 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
     this._renderer.getSize(size);
 
     if (!this.buffers.size.equals(size)) {
-      const rtWidth = Math.max(Math.floor(size.width / 4), 64);
-      const rtHeight = Math.max(Math.floor(size.height / 4), 64);
+      const rtWidth = Math.max(
+        Math.floor(size.width * GpuOrderSectorsByVisibilityCoverage.CoverageRenderTargetScalingFactor),
+        64
+      );
+      const rtHeight = Math.max(
+        Math.floor(size.height * GpuOrderSectorsByVisibilityCoverage.CoverageRenderTargetScalingFactor),
+        64
+      );
       console.log('Coverage size: ', rtWidth, rtHeight);
       this.renderTarget.setSize(rtWidth, rtHeight);
 
@@ -287,6 +299,7 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
       stateHelper.setRenderTarget(this.renderTarget);
       stateHelper.setClearColor('#FFFFFF', 0.0);
       stateHelper.autoClear = false;
+      stateHelper.setSize(this.buffers.size.width, this.buffers.size.height);
 
       // 1. Clear render target (depth + color)
       this._renderer.clear(true, true);
