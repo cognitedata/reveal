@@ -292,6 +292,7 @@ export class EffectRenderManager {
     this._materialManager.setRenderMode(RenderMode.DepthBufferOnly);
 
     try {
+      renderStateHelper.setRenderTarget(null);
       this.setVisibilityOfSectors(LevelOfDetail.Simple, false);
       this.traverseForRootSectorNode(this._originalScene);
       this.extractCadNodes(this._originalScene);
