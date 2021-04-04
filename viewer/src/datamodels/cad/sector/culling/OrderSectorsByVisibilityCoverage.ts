@@ -101,7 +101,7 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
    * Factor of how big render target we use for determining visibility of sectors
    * compared to the full render size.
    */
-  private static readonly CoverageRenderTargetScalingFactor = 4.0;
+  private static readonly CoverageRenderTargetScalingFactor = 1.0 / 4.0;
 
   private sectorIdOffset = 0;
   private readonly scene = new THREE.Scene();
