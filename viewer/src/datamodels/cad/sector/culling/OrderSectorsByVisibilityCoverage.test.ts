@@ -14,7 +14,7 @@ import { OccludingGeometryProvider } from './OccludingGeometryProvider';
 
 describe('OrderSectorsByVisibilityCoverage', () => {
   const glContext: WebGLRenderingContext = require('gl')(64, 64);
-  const renderer = new THREE.WebGLRenderer({ context: glContext });
+  let renderer: THREE.WebGLRenderer;
   const identityMatrix = new THREE.Matrix4().identity();
   const singleSectorScene = createStubScene([0, [], Box3.fromBounds(-1, -1, -1, 1, 1, 1)]);
   const cadModel = createStubModel('model', singleSectorScene, identityMatrix);
@@ -22,12 +22,26 @@ describe('OrderSectorsByVisibilityCoverage', () => {
     renderOccludingGeometry: jest.fn()
   };
 
+  beforeEach(() => {
+    renderer = new THREE.WebGLRenderer({ context: glContext });
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
   test('orderSectorsByVisibility() returns empty array when there are no models', () => {
     // Arrange
     const camera = new THREE.PerspectiveCamera();
     const coverageUtil = new GpuOrderSectorsByVisibilityCoverage({ renderer, occludingGeometryProvider });
 
     // Act
+    glContext.clearColor(1, 1, 1, 1);
+    jest
+      .spyOn(renderer, 'readRenderTargetPixels')
+      .mockImplementation((_target, _x, _y, _width, _height, buffer: Uint8Array) => {
+        buffer.fill(255); // White - i.e. no sector
+      });
     const arrays = coverageUtil.orderSectorsByVisibility(camera);
 
     // Assert
@@ -41,7 +55,11 @@ describe('OrderSectorsByVisibilityCoverage', () => {
     const camera = new THREE.PerspectiveCamera();
 
     // Act
-    glContext.clearColor(1, 1, 1, 1);
+    jest
+      .spyOn(renderer, 'readRenderTargetPixels')
+      .mockImplementation((_target, _x, _y, _width, _height, buffer: Uint8Array) => {
+        buffer.fill(255); // White - i.e. no sector
+      });
     const result = util.orderSectorsByVisibility(camera);
 
     // Assert
@@ -81,6 +99,14 @@ describe('OrderSectorsByVisibilityCoverage', () => {
     camera.updateProjectionMatrix();
 
     // Act
+    jest
+      .spyOn(renderer, 'readRenderTargetPixels')
+      .mockImplementation((_target, _x, _y, _width, _height, buffer: Uint8Array) => {
+        buffer.fill(255); // White - i.e. no sector
+        // One pixel for value 1 - i.e. sector 0 of model 2
+        buffer.set([0, 0, 1, 255]);
+      });
+
     glContext.clearColor(0, 0, 1.0 / 255, 1); // Store 1 in output
     const result = util.orderSectorsByVisibility(camera);
 
@@ -89,39 +115,6 @@ describe('OrderSectorsByVisibilityCoverage', () => {
     expect(result[0].sectorId).toBe(0);
     expect(result[0].priority).toBe(1.0);
     expect(result[0].model).toBe(model2);
-  });
-
-  test('with clipping plane, sets renderer clipping planes', () => {
-    // Arrange
-    // Scene has one root with two children
-    const scene = createStubScene([
-      0,
-      [
-        // Split space in two along X axis
-        [1, [], Box3.fromBounds(-1, -1, -1, -0.1, 1, 1)],
-        [2, [], Box3.fromBounds(0.1, -1, -1, 1, 1, 1)]
-      ],
-      Box3.fromBounds(-1, -1, -1, 1, 1, 1)
-    ]);
-    const model = createStubModel('model1', scene, identityMatrix);
-    const util = new GpuOrderSectorsByVisibilityCoverage({ renderer, occludingGeometryProvider });
-    util.setModels([model]);
-
-    const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 20.0);
-    camera.position.set(0, 0, -10.0);
-    camera.lookAt(0, 0, 0);
-    camera.updateProjectionMatrix();
-    glContext.clearColor(0, 0, 0, 1);
-
-    // Act
-    const planes = [
-      new THREE.Plane().setFromNormalAndCoplanarPoint(new THREE.Vector3(-1, 0, 0), new THREE.Vector3(-10, 0, 0))
-    ];
-    util.setClipping(planes, false);
-    const sectors = util.orderSectorsByVisibility(camera);
-
-    // Assert
-    expect(sectors).toBeEmpty();
   });
 });
 
