@@ -47,7 +47,7 @@ describe('EffectRenderManager', () => {
       multiSampleCountHint: 4
     };
     const webgl1Renderer = new THREE.WebGL1Renderer({ context });
-    const effectManager = new EffectRenderManager(renderer, scene, materialManager, options);
+    const effectManager = new EffectRenderManager(webgl1Renderer, scene, materialManager, options);
     const setRenderTargetSpy = jest.spyOn(webgl1Renderer, 'setRenderTarget');
 
     // Act
@@ -58,6 +58,11 @@ describe('EffectRenderManager', () => {
     const callWithMultiTarget = setRenderTargetSpy.mock.calls.find(
       x => x[0] instanceof THREE.WebGLMultisampleRenderTarget
     );
+    const callWithSingleTarget = setRenderTargetSpy.mock.calls.find(
+      x => x[0] instanceof THREE.WebGLRenderTarget && !(x[0] instanceof THREE.WebGLMultisampleRenderTarget)
+    );
+
+    expect(callWithSingleTarget).toBeDefined();
     expect(callWithMultiTarget).toBeUndefined();
   });
 
@@ -72,7 +77,7 @@ describe('EffectRenderManager', () => {
     const options: RenderOptions = {
       multiSampleCountHint: 4
     };
-    const effectManager = new EffectRenderManager(renderer, scene, materialManager, options);
+    const effectManager = new EffectRenderManager(webgl2Renderer, scene, materialManager, options);
     const setRenderTargetSpy = jest.spyOn(webgl2Renderer, 'setRenderTarget');
 
     // Act
@@ -83,6 +88,7 @@ describe('EffectRenderManager', () => {
     const callWithMultiTarget = setRenderTargetSpy.mock.calls.find(
       x => x[0] instanceof THREE.WebGLMultisampleRenderTarget
     );
+
     expect(callWithMultiTarget).toBeDefined();
   });
 });

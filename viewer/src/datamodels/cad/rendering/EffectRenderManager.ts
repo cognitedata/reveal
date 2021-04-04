@@ -292,7 +292,7 @@ export class EffectRenderManager {
     this._materialManager.setRenderMode(RenderMode.DepthBufferOnly);
 
     try {
-      renderStateHelper.setRenderTarget(null);
+      renderStateHelper.setRenderTarget(this._renderTarget);
       this.setVisibilityOfSectors(LevelOfDetail.Simple, false);
       this.traverseForRootSectorNode(this._originalScene);
       this.extractCadNodes(this._originalScene);
@@ -337,6 +337,7 @@ export class EffectRenderManager {
     renderStateHelper.autoClear = false;
 
     try {
+      renderStateHelper.setRenderTarget(this._renderTarget);
       this.updateRenderSize(renderer);
 
       renderer.info.autoReset = false;
@@ -432,6 +433,7 @@ export class EffectRenderManager {
     } finally {
       // Restore state
       renderStateHelper.resetState();
+      // renderer.setRenderTarget(original.renderTarget);
       this._materialManager.setRenderMode(original.renderMode);
       this.restoreCadNodes();
     }

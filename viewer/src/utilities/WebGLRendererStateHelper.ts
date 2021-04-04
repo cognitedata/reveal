@@ -9,7 +9,7 @@ type WebGLRendererState = {
   clearAlpha?: number;
   size?: THREE.Vector2;
   localClippingEnabled?: boolean;
-  renderTarget?: THREE.WebGLRenderTarget | null;
+  renderTarget?: THREE.RenderTarget | null;
 };
 
 export class WebGLRendererStateHelper {
@@ -45,8 +45,8 @@ export class WebGLRendererStateHelper {
     this._renderer.autoClear = enabled;
   }
 
-  setRenderTarget(renderTarget: THREE.WebGLRenderTarget | null) {
-    this._originalState = { renderTarget, ...this._originalState };
+  setRenderTarget(renderTarget: THREE.RenderTarget | null) {
+    this._originalState = { renderTarget: this._renderer.getRenderTarget(), ...this._originalState };
     this._renderer.setRenderTarget(renderTarget);
   }
 
@@ -54,10 +54,8 @@ export class WebGLRendererStateHelper {
     if (this._originalState.autoClear !== undefined) {
       this._renderer.autoClear = this._originalState.autoClear;
     }
-    if (this._originalState.clearColor !== undefined && this._originalState.clearAlpha !== undefined) {
+    if (this._originalState.clearColor !== undefined) {
       this._renderer.setClearColor(this._originalState.clearColor, this._originalState.clearAlpha);
-    } else if (this._originalState.clearColor !== undefined) {
-      this._renderer.setClearColor(this._originalState.clearColor);
     }
     if (this._originalState.localClippingEnabled !== undefined) {
       this._renderer.localClippingEnabled = this._originalState.localClippingEnabled;
