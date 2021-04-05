@@ -296,8 +296,8 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
     const stateHelper = new WebGLRendererStateHelper(this._renderer);
     try {
       stateHelper.localClippingEnabled = true;
-      stateHelper.setRenderTarget(this.renderTarget);
-      stateHelper.setClearColor('#FFFFFF', 0.0);
+      stateHelper.setRenderTarget(renderTarget);
+      stateHelper.setClearColor('#FFFFFF', 1.0);
       stateHelper.autoClear = false;
       stateHelper.setSize(this.buffers.size.width, this.buffers.size.height);
 
