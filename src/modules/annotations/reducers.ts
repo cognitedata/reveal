@@ -19,7 +19,7 @@ export const deleteAnnotationsError = (
   state: AnnotationsState,
   action: any
 ) => {
-  const { id: fileId } = action.meta.args.file;
+  const { id: fileId } = action.meta.arg.file;
   if (!state.byFileId[fileId]) {
     state.byFileId[fileId] = {};
   }

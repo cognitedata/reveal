@@ -3,6 +3,7 @@ import { useParams, useHistory } from 'react-router-dom';
 import { Input } from '@cognite/cogs.js';
 import { Flex, IconButton } from 'components/Common';
 import { trackUsage, PNID_METRICS } from 'utils/Metrics';
+import { Popover } from '@cognite/data-exploration';
 
 interface FilterBarProps {
   query: string;
@@ -24,9 +25,11 @@ export default function FilterBar({ query, setQuery }: FilterBarProps) {
         onChange={(e) => setQuery(e.currentTarget.value)}
         value={query}
       />
-      <IconButton type="primary" icon="Document" onClick={onContextualizeNew}>
-        Contextualize a new file
-      </IconButton>
+      <Popover placement="left-end" content={<div>Hello</div>} trigger="hover">
+        <IconButton type="primary" icon="Document" onClick={onContextualizeNew}>
+          Contextualize a new file
+        </IconButton>
+      </Popover>
     </Flex>
   );
 }

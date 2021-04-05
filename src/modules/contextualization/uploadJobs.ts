@@ -106,25 +106,25 @@ export const startConvertFileToSvgJob = (
     dispatch: ThunkDispatch<any, any, UploadJobActions>,
     getState: () => RootState
   ) => {
-    const file = itemSelector(getState())(fileId);
+    const state = getState();
+    const files = await sdk.files.retrieve([{ id: fileId }]);
+    const [file] = files;
 
     if (!file) {
       return Promise.resolve(undefined);
     }
 
-    const { jobStarted } =
-      getState().fileContextualization.uploadJobs[fileId] || {};
-
+    const { jobStarted } = state.fileContextualization.uploadJobs[fileId] || {};
     if (jobStarted) {
       return Promise.resolve(
-        getState().fileContextualization.uploadJobs[fileId].jobId
+        state.fileContextualization.uploadJobs[fileId].jobId
       );
     }
 
     const timer = trackTimedUsage('Contextualization.PnidParsing.UploadJob', {
       fileId,
     });
-    const { grayscale } = getState().fileContextualization.pnidOption;
+    const { grayscale } = state.fileContextualization.pnidOption;
 
     const annotationsWithLabels = addLabelsToAnnotations(annotations, getState);
 
@@ -232,7 +232,8 @@ export const startConvertFileToSvgJob = (
             timer.stop({ success: false, jobId });
           }
         })
-        .catch(() => {
+        .catch((e) => {
+          console.log('error is', e);
           dispatch({ type: UPLOAD_JOB_ERROR, fileId });
           reject();
           timer.stop({ success: false });

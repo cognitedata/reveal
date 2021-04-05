@@ -280,10 +280,14 @@ export const hardDeleteAnnotationsForFile = {
     'annotations/hardDeleteAnnotationsForFile',
     async ({ file }: { file: FileInfo }, { getState }: { getState: any }) => {
       const fileId = file.id;
-      const annotations = getState().annotations.byFileId[fileId];
+      const { annotations } = getState().annotations.byFileId[fileId];
       if (!annotations) throw Error();
-      await hardDeleteAnnotations(sdk, annotations);
-      return { annotations, fileId };
+      try {
+        const res = await hardDeleteAnnotations(sdk, annotations);
+        return { annotations, fileId, res };
+      } catch (e) {
+        throw Error(e);
+      }
     }
   ),
   rejected: deleteAnnotationsError,

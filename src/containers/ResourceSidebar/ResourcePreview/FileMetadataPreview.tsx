@@ -77,7 +77,7 @@ export const FileMetadataPreview = ({
       {extraActions}
       {file && file.mimeType === 'application/pdf' && (
         <div style={{ height: 800, marginTop: 24, marginBottom: 24 }}>
-          <CogniteFileViewer fileId={fileId} />
+          <CogniteFileViewer fileId={fileId} editMode={false} />
         </div>
       )}
       <Collapse>

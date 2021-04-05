@@ -1,11 +1,10 @@
-import React, { useEffect, useContext, useState } from 'react';
+import React, { useEffect, useContext } from 'react';
 import ResourceSelectionContext from 'context/ResourceSelectionContext';
 import {
   FilePreview as CogniteFilePreview,
   ErrorFeedback,
   Loader,
 } from '@cognite/data-exploration';
-import { trackUsage } from 'utils/Metrics';
 import { useSDK } from '@cognite/sdk-provider';
 import { CogniteFileViewer } from '@cognite/react-picture-annotation';
 import { useCdfItem, usePermissions } from '@cognite/sdk-react-query-hooks';
@@ -21,9 +20,14 @@ export type FilePreviewTabType =
   | 'events'
   | 'assets';
 
-export const FilePreview = ({ fileId }: { fileId: number }) => {
+export const FilePreview = ({
+  fileId,
+  editMode,
+}: {
+  fileId: number;
+  editMode: boolean;
+}) => {
   const sdk = useSDK();
-  const [editMode, setEditMode] = useState<boolean>(false);
   const { resourcesState, setResourcesState } = useContext(
     ResourceSelectionContext
   );
@@ -45,11 +49,6 @@ export const FilePreview = ({ fileId }: { fileId: number }) => {
     }
   }, [isActive, resourcesState, fileId, setResourcesState]);
 
-  useEffect(() => {
-    trackUsage('Exploration.Preview.File', { fileId });
-    setEditMode(false);
-  }, [fileId]);
-
   const { data: fileInfo, isFetched, isError, error } = useCdfItem<FileInfo>(
     'files',
     {
@@ -70,22 +69,20 @@ export const FilePreview = ({ fileId }: { fileId: number }) => {
   }
 
   return (
-    <>
-      <CogniteFileViewer.Provider sdk={sdk} disableAutoFetch>
-        <div
-          style={{
-            flex: '1',
-            display: 'flex',
-            flexDirection: 'column',
-          }}
-        >
-          <CogniteFilePreview
-            fileId={fileId!}
-            creatable={editMode}
-            contextualization={writeAccess}
-          />
-        </div>
-      </CogniteFileViewer.Provider>
-    </>
+    <CogniteFileViewer.Provider sdk={sdk}>
+      <div
+        style={{
+          flex: '1',
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
+        <CogniteFilePreview
+          fileId={fileId!}
+          creatable={editMode}
+          contextualization={writeAccess}
+        />
+      </div>
+    </CogniteFileViewer.Provider>
   );
 };
