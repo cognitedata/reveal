@@ -280,7 +280,6 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
         Math.floor(size.height * GpuOrderSectorsByVisibilityCoverage.CoverageRenderTargetScalingFactor),
         64
       );
-      console.log('Coverage size: ', rtWidth, rtHeight);
       this.renderTarget.setSize(rtWidth, rtHeight);
 
       // Ensure buffer can hold all pixels from render target
