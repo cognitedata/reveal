@@ -30,7 +30,7 @@ export default function ResultsOverview() {
   const [selectedKeys, setSelectedKeys] = useState([] as number[]);
 
   const annotationsByFileId = useAnnotationsForFiles(selectedKeys);
-  console.log(' got it as ', annotationsByFileId);
+
   const { tenant, assetsDataKitId, filesDataKitId } = useParams<{
     tenant: string;
     filesDataKitId: string;
