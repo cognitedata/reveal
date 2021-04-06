@@ -14,9 +14,9 @@ import { stubAnnotation } from './utils';
 type Props = { file: FileInfo };
 
 export default function TagsDetectedTotal({ file }: Props): JSX.Element {
-  const { data: annotations } = useAnnotations(file.id);
+  const { data: annotations, isFetched } = useAnnotations(file.id);
 
-  if (!annotations) {
+  if (!isFetched) {
     return <Spin size="small" />;
   }
 
