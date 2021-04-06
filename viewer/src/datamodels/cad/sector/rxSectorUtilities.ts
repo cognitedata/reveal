@@ -12,6 +12,12 @@ import { Repository } from './Repository';
 import { filter, switchMap, tap, publish, subscribeOn, bufferCount, mergeMap } from 'rxjs/operators';
 
 /**
+ * How many sectors to load per batch before doing another filtering pass, i.e. perform culling to determing
+ * potential visibile sectors.
+ */
+const SectorLoadingBatchSize = 20;
+
+/**
  * Creates a RxJS operator for loading sectors given camera, budget etc input.
  * @param sectorRepository Repository to store sectors in
  * @param sectorCuller Culler used to prioritize sectors for loading
@@ -51,7 +57,7 @@ export function handleDetermineSectorsInput(
 
       return from(changedSectors).pipe(
         subscribeOn(asyncScheduler),
-        bufferCount(20),
+        bufferCount(SectorLoadingBatchSize),
         mergeMap(batch => {
           const filteredSectorsPromise = sectorCuller.filterSectorsToLoad(input, batch);
           return from(filteredSectorsPromise).pipe(
