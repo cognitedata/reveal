@@ -61,6 +61,7 @@ export function handleDetermineSectorsInput(
         mergeMap(batch => {
           const filteredSectorsPromise = sectorCuller.filterSectorsToLoad(input, batch);
           return from(filteredSectorsPromise).pipe(
+            subscribeOn(asyncScheduler),
             tap(filtered => {
               // We consider sectors that we no longer want to load as done, report progress
               reportNewSectorsDone(0, batch.length - filtered.length);

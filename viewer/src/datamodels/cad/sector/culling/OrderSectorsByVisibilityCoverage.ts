@@ -212,7 +212,6 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
     if (this._debugImageElement) {
       this.renderSectors(null, camera);
       this._debugImageElement.src = this._renderer.domElement.toDataURL();
-      // console.log(this._debugImageElement.src);
     }
 
     this.ensureBuffersCorrectSize();
