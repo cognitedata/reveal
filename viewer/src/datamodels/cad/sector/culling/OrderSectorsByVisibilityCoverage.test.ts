@@ -76,7 +76,12 @@ describe('OrderSectorsByVisibilityCoverage', () => {
     camera.updateProjectionMatrix();
 
     // Act
-    glContext.clearColor(0, 0, 0, 1); // Store 0 in output
+    jest
+      .spyOn(renderer, 'readRenderTargetPixels')
+      .mockImplementation((_target, _x, _y, _width, _height, buffer: Uint8Array) => {
+        buffer.fill(255); // White - i.e. no sector
+        buffer.set([0, 0, 0, 255], 0); // Sector ID 0 with 1.0 distance
+      });
     const result = util.orderSectorsByVisibility(camera);
 
     // Assert
