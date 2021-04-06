@@ -21,6 +21,8 @@ import { modalOpen } from 'store/modals/actions';
 import { getConfigState } from 'store/config/selectors';
 import { addConfigItems } from 'store/config/actions';
 import useHelpCenter from 'hooks/useHelpCenter';
+import { apiClient } from 'utils';
+import { setNotification } from 'store/notification/actions';
 import CustomerLogo from './CustomerLogo';
 import {
   GroupPreview,
@@ -66,6 +68,31 @@ const AppHeader: React.FC = () => {
     history.push('/');
   };
 
+  // TODO(CM-406)
+  const syncSuites = async () => {
+    if (
+      // eslint-disable-next-line no-alert
+      window.confirm(
+        `Do you want to copy suites from RAW database to DB-Service?`
+      )
+    ) {
+      await apiClient.syncSuites();
+      dispatch(setNotification(`Suites successfully copied`));
+    }
+  };
+  // TODO(CM-406)
+  const syncLastVisited = async () => {
+    if (
+      // eslint-disable-next-line no-alert
+      window.confirm(
+        `Do you want to copy lastVisited data from RAW database to DB-Service?`
+      )
+    ) {
+      await apiClient.syncLastVisited();
+      dispatch(setNotification(`lastVisited data successfully copied`));
+    }
+  };
+
   useEffect(() => {
     const fetchCustomerLogoUrl = async () => {
       try {
@@ -96,6 +123,34 @@ const AppHeader: React.FC = () => {
   }
 
   const adminActions = [
+    {
+      key: 'settings',
+      component: (
+        <Tooltip content="Settings">
+          <Icon
+            type="Settings"
+            data-testid="select-settings-menu"
+            onClick={() => metrics.track('Settings_Click')}
+          />
+        </Tooltip>
+      ),
+      menu: (
+        <Menu>
+          <Menu.Header>System admin</Menu.Header>
+          <Menu.Item appendIcon="Upload" onClick={() => openUploadLogoModal()}>
+            Upload customer logo
+          </Menu.Item>
+          {/* TODO(CM-406) */}
+          <Menu.Item appendIcon="Upload" onClick={syncSuites}>
+            Copy suites data from RAW to db-service
+          </Menu.Item>
+          {/* TODO(CM-406) */}
+          <Menu.Item appendIcon="Upload" onClick={syncLastVisited}>
+            Copy lastVisited data from RAW to db-service
+          </Menu.Item>
+        </Menu>
+      ),
+    },
     {
       key: 'view',
       component: (

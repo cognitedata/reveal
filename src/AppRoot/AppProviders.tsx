@@ -26,7 +26,6 @@ const AppProviders: React.FC<Props> = ({
   const cdfClient = createClient(
     {
       appId: 'digital-cockpit',
-      dbName: 'digital-cockpit',
       dataSetName: 'digital-cockpit',
     },
     client

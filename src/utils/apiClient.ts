@@ -1,12 +1,12 @@
-import {
-  ClientOptions,
-  CogniteClient,
-  Group,
-  ListResponse,
-} from '@cognite/sdk';
+import { ClientOptions, CogniteClient, Group } from '@cognite/sdk';
 import { LastVisited, UserSpacePayload } from 'store/userSpace/types';
-import { SuiteRow } from 'store/suites/types';
+import { Suite } from 'store/suites/types';
 import sidecar from './sidecar';
+
+type AppDataResponse = {
+  suites: Suite[];
+  groups: Group[];
+};
 
 type dcClientOptions = {
   baseUrl: string;
@@ -21,16 +21,24 @@ export class ApiClient {
 
   constructor(options: ApiClientOptions, client?: CogniteClient) {
     this.appId = options.appId;
-    this.baseUrl = options.baseUrl;
+    this.baseUrl = `${options.baseUrl}/v2`;
     this.client = client;
   }
 
-  getSuitesRows(): Promise<ListResponse<SuiteRow[]>> {
+  getAppData(linkedGroupsOnly: boolean = true): Promise<AppDataResponse> {
+    return this.makeGETRequest(`/appData?linkedGroupsOnly=${linkedGroupsOnly}`);
+  }
+
+  getSuites(): Promise<Suite[]> {
     return this.makeGETRequest('/suites');
   }
 
-  getUserGroups(linkedOnly: boolean = true): Promise<Group[]> {
-    return this.makeGETRequest(`/groups?linkedOnly=${linkedOnly}`);
+  saveSuite(suite: Suite): Promise<void> {
+    return this.makePOSTRequest('/suites', { data: { suite } });
+  }
+
+  deleteSuite(suiteKey: string): Promise<void> {
+    return this.makeDELETERequest('/suites', { data: { key: suiteKey } });
   }
 
   getUserSpace(): Promise<UserSpacePayload> {
@@ -40,6 +48,13 @@ export class ApiClient {
     return this.makePOSTRequest('/lastVisited', {
       lastVisited,
     });
+  }
+  // TODO(CM-406) methods to move data from RAW to DB Service
+  syncSuites() {
+    return this.makeGETRequest('/suites/sync');
+  }
+  syncLastVisited() {
+    return this.makeGETRequest('/lastVisited/sync');
   }
 
   /**
@@ -75,6 +90,25 @@ export class ApiClient {
 
     return response.status === 200
       ? Promise.resolve<T>(await response.data)
+      : // eslint-disable-next-line prefer-promise-reject-errors
+        Promise.reject((await response.data)?.error as Error);
+  }
+
+  /**
+   * Helper DELETE function
+   * @private
+   */
+  private async makeDELETERequest<T extends object>(url: string, data?: T) {
+    if (!this.client) {
+      throw new Error('Unreachable code');
+    }
+    const response = await this.client.delete(this.baseUrl + url, {
+      withCredentials: true,
+      data,
+    });
+
+    return response.status === 200
+      ? Promise.resolve(await response.data)
       : // eslint-disable-next-line prefer-promise-reject-errors
         Promise.reject((await response.data)?.error as Error);
   }

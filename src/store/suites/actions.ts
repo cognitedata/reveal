@@ -14,16 +14,16 @@ export const loadSuitesTableFailed = createAction(
   SuitesTableActionTypes.SUITES_TABLE_LOAD_FAILED
 )<void>();
 
-export const insertSuiteTableRow = createAction(
-  SuitesTableActionTypes.SUITES_TABLE_ROW_INSERT
+export const saveSuite = createAction(
+  SuitesTableActionTypes.SUITE_SAVE
 )<void>();
 
-export const suiteTableRowError = createAction(
-  SuitesTableActionTypes.SUITES_TABLE_ROW_ERROR
+export const suiteError = createAction(
+  SuitesTableActionTypes.SUITE_ERROR
 )<void>();
 
-export const deleteSuiteTableRow = createAction(
-  SuitesTableActionTypes.SUITES_TABLE_ROW_DELETE
+export const deleteSuite = createAction(
+  SuitesTableActionTypes.SUITE_DELETE
 )<void>();
 
 export const fetchImgUrls = createAction(

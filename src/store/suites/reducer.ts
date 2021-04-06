@@ -48,18 +48,18 @@ export const SuitesReducer = createReducer(initialState)
     })
   )
   .handleAction(
-    SuitesTableActionTypes.SUITES_TABLE_ROW_INSERT,
-    (state: SuitesTableState) => ({ ...state, loading: true, error: '' })
+    SuitesTableActionTypes.SUITE_SAVE,
+    (state: SuitesTableState) => ({ ...state, loading: true })
   )
   .handleAction(
-    SuitesTableActionTypes.SUITES_TABLE_ROW_ERROR,
+    SuitesTableActionTypes.SUITE_ERROR,
     (state: SuitesTableState) => ({
       ...state,
       loading: false,
     })
   )
   .handleAction(
-    SuitesTableActionTypes.SUITES_TABLE_ROW_DELETE,
+    SuitesTableActionTypes.SUITE_DELETE,
     (state: SuitesTableState) => ({
       ...state,
       loading: true,
