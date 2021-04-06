@@ -306,9 +306,6 @@ export class EffectRenderManager {
         this.renderNormalCadModels(camera, this._renderTarget);
         this._normalSceneBuilder.restoreOriginalScene();
       }
-      // if (hasGhostElements) {
-      //   this.renderGhostedCadModelsFromBaseScene(camera);
-      // }
       if (hasInFrontElements) {
         this.renderInFrontCadModels(camera);
         this._inFrontSceneBuilder.restoreOriginalScene();
