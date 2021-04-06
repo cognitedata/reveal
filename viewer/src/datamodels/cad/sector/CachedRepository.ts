@@ -64,10 +64,11 @@ export class CachedRepository implements Repository {
     }
 
     switch (sector.levelOfDetail) {
-      case LevelOfDetail.Detailed:
+      case LevelOfDetail.Detailed: {
         const loadOperation = this.loadDetailedSectorFromNetwork(sector).toPromise();
         this._consumedSectorCache.forceInsert(cacheKey, loadOperation);
         return loadOperation;
+      }
 
       case LevelOfDetail.Simple: {
         const loadOperation = this.loadSimpleSectorFromNetwork(sector).toPromise();
