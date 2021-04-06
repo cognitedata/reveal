@@ -1,9 +1,10 @@
 import { createAsyncThunk, unwrapResult } from '@reduxjs/toolkit';
 import { ThunkConfig } from 'src/store/rootReducer';
-import { AnnotationUtils } from 'src/utils/AnnotationUtils';
+import { AnnotationStatus, AnnotationUtils } from 'src/utils/AnnotationUtils';
 import { fetchAssets } from 'src/store/thunks/fetchAssets';
 import { UpdateFiles } from 'src/store/thunks/UpdateFiles';
-import { SaveAnnotations } from 'src/store/thunks/SaveAnnotations';
+import { DetectionModelType } from 'src/api/types';
+import { addAnnotations } from 'src/store/commonActions';
 import { resetEditState } from '../previewSlice';
 
 export const AddAnnotationsFromEditModeAssetIds = createAsyncThunk<
@@ -24,25 +25,52 @@ export const AddAnnotationsFromEditModeAssetIds = createAsyncThunk<
       // update annotations
 
       const boundingBox = editState.annotation?.box;
-      const annotations = assets.map((asset) =>
-        AnnotationUtils.createAnnotationFromAsset(asset, fileId, boundingBox)
-      );
 
-      await Promise.all([
-        dispatch(SaveAnnotations(annotations)),
-        dispatch(
-          UpdateFiles([
-            {
-              id: Number(fileId),
-              update: {
-                assetIds: {
-                  add: editState.selectedAssetIds,
-                },
+      // add annotations without bounding box as virtual annotations
+      const assetVisionAnnotations = assets.map((asset) =>
+        AnnotationUtils.createVisionAnnotationStub(
+          asset.name,
+          DetectionModelType.Tag,
+          parseInt(fileId, 10),
+          boundingBox,
+          undefined,
+          'user',
+          AnnotationStatus.Verified,
+          undefined,
+          'vision/tagdetection',
+          undefined,
+          asset.id,
+          asset.externalId,
+          boundingBox
+            ? undefined
+            : AnnotationUtils.generateAnnotationId(
+                fileId,
+                'vision/tagdetection',
+                asset.id
+              ),
+          undefined,
+          undefined,
+          !boundingBox
+        )
+      );
+      // const annotations = assetVisionAnnotations.map((item) =>
+      //   AnnotationUtils.convertToAnnotation(item)
+      // );
+      // dispatch(SaveAnnotations(annotations));
+      dispatch(addAnnotations(assetVisionAnnotations));
+
+      dispatch(
+        UpdateFiles([
+          {
+            id: Number(fileId),
+            update: {
+              assetIds: {
+                add: editState.selectedAssetIds,
               },
             },
-          ])
-        ),
-      ]);
+          },
+        ])
+      );
       dispatch(resetEditState());
     }
   }

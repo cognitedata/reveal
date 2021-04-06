@@ -1,11 +1,11 @@
 import { createAsyncThunk, unwrapResult } from '@reduxjs/toolkit';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { fetchAssets } from 'src/store/thunks/fetchAssets';
-import { AnnotationStatus, AnnotationUtils } from 'src/utils/AnnotationUtils';
+import { AnnotationStatus } from 'src/utils/AnnotationUtils';
 import { DetectionModelType } from 'src/api/types';
 import { UpdateFiles } from 'src/store/thunks/UpdateFiles';
-import { SaveAnnotations } from 'src/store/thunks/SaveAnnotations';
 import { VisionAnnotationState } from 'src/store/previewSlice';
+import { addAnnotations } from 'src/store/commonActions';
 
 export const LinkFileAssetsByAnnotationId = createAsyncThunk<
   void,
@@ -27,28 +27,39 @@ export const LinkFileAssetsByAnnotationId = createAsyncThunk<
       if (assets && assets.length) {
         const asset = assets[0];
 
-        const unsavedAnnotation = AnnotationUtils.convertToAnnotation({
-          ...annotation,
-          linkedResourceId: asset.id,
-          linkedResourceExternalId: asset.externalId,
-          linkedResourceType: 'asset',
-        });
+        dispatch(
+          addAnnotations([
+            {
+              ...annotation,
+              linkedResourceId: asset.id,
+              linkedResourceExternalId: asset.externalId,
+              linkedResourceType: 'asset',
+            },
+          ])
+        );
 
-        await Promise.all([
-          dispatch(SaveAnnotations([unsavedAnnotation])),
-          dispatch(
-            UpdateFiles([
-              {
-                id: Number(fileId),
-                update: {
-                  assetIds: {
-                    add: [asset.id],
-                  },
+        // if (annotation.box) {
+        //   const unsavedAnnotation = AnnotationUtils.convertToAnnotation({
+        //     ...annotation,
+        //     linkedResourceId: asset.id,
+        //     linkedResourceExternalId: asset.externalId,
+        //     linkedResourceType: 'asset',
+        //   });
+        //   dispatch(SaveAnnotations([unsavedAnnotation]));
+        // }
+
+        await dispatch(
+          UpdateFiles([
+            {
+              id: Number(fileId),
+              update: {
+                assetIds: {
+                  add: [asset.id],
                 },
               },
-            ])
-          ),
-        ]);
+            },
+          ])
+        );
       }
     };
 

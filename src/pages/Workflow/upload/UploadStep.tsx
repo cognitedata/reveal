@@ -6,7 +6,7 @@ import { Detail, Title } from '@cognite/cogs.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { addUploadedFile, selectAllFiles } from 'src/store/uploadedFilesSlice';
-import { updateLinkedAssets } from 'src/store/thunks/updateLinkedAssets';
+import { PopulateAnnotations } from 'src/store/thunks/PopulateAnnotations';
 
 const FileUploaderWrapper = styled.div`
   margin: ${margin.default} 0;
@@ -56,7 +56,7 @@ export default function UploadStep() {
     (file) => {
       dispatch(addUploadedFile(file));
       dispatch(
-        updateLinkedAssets({
+        PopulateAnnotations({
           fileId: file.id.toString(),
           assetIds: file.assetIds,
         })

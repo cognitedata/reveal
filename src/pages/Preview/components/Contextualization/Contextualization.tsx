@@ -3,7 +3,7 @@ import { Button, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { AnnotationsTable } from 'src/pages/Preview/components/AnnotationsTable/AnnotationsTable';
 import {
-  selectNonRejectedAnnotationsByFileIdModelType,
+  selectNonRejectedAnnotationsByFileIdModelTypes,
   setImagePreviewEditState,
   showAnnotationDrawer,
 } from 'src/store/previewSlice';
@@ -48,20 +48,17 @@ export const Contextualization = ({ fileId }: { fileId: string }) => {
   );
 
   const nonRejectedTagAnnotations = useSelector(({ previewSlice }: RootState) =>
-    selectNonRejectedAnnotationsByFileIdModelType(
-      previewSlice,
-      fileId,
-      DetectionModelType.Tag
-    )
+    selectNonRejectedAnnotationsByFileIdModelTypes(previewSlice, fileId, [
+      DetectionModelType.Tag,
+    ])
   );
 
   const nonRejectedOtherAnnotations = useSelector(
     ({ previewSlice }: RootState) =>
-      selectNonRejectedAnnotationsByFileIdModelType(
-        previewSlice,
-        fileId,
-        DetectionModelType.Text
-      )
+      selectNonRejectedAnnotationsByFileIdModelTypes(previewSlice, fileId, [
+        DetectionModelType.Text,
+        DetectionModelType.GDPR,
+      ])
   );
 
   const editMode = useSelector(

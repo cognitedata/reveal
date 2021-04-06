@@ -1,9 +1,11 @@
 import {
   Annotation,
+  AnnotationSource,
+  AnnotationType,
   DetectedAnnotation,
   DetectionModelType,
+  RegionType,
 } from 'src/api/types';
-import { VisionAsset } from 'src/store/uploadedFilesSlice';
 
 export enum AnnotationStatus {
   Verified = 'verified',
@@ -51,12 +53,13 @@ export interface VisionAnnotation
   > {
   id?: string;
   label: string;
-  type: string;
+  type: RegionType;
   color: string;
   box?: AnnotationBoundingBox;
   status: AnnotationStatus;
   createdTime?: number;
   lastUpdatedTime?: number;
+  virtual?: boolean;
 }
 
 export const ModelTypeColorMap = {
@@ -65,15 +68,15 @@ export const ModelTypeColorMap = {
   [DetectionModelType.GDPR]: '#2F80ED',
 };
 
-export const ModelTypeSourceMap = {
+export const ModelTypeSourceMap: { [key: number]: AnnotationSource } = {
   [DetectionModelType.Text]: 'vision/ocr',
   [DetectionModelType.Tag]: 'vision/tagdetection',
   [DetectionModelType.GDPR]: 'vision/objectdetection',
 };
 export const ModelTypeAnnotationTypeMap = {
-  [DetectionModelType.Text]: 'ocr',
-  [DetectionModelType.Tag]: 'tagdetection',
-  [DetectionModelType.GDPR]: 'objectdetection',
+  [DetectionModelType.Text]: 'vision/ocr',
+  [DetectionModelType.Tag]: 'vision/tagdetection',
+  [DetectionModelType.GDPR]: 'vision/objectdetection',
 };
 
 export class AnnotationUtils {
@@ -89,10 +92,10 @@ export class AnnotationUtils {
 
   public static generateAnnotationId(
     fileId: string,
-    modelType: number,
+    type: AnnotationType,
     index: number
   ): string {
-    return `${index}-${AnnotationUtils.getModelId(fileId, modelType)}`;
+    return `${index}-${type}-${fileId}`;
   }
 
   public static getAnnotationStyle(
@@ -139,115 +142,93 @@ export class AnnotationUtils {
   }
 
   public static convertToVisionAnnotations(
-    annotations: Annotation[] | DetectedAnnotation[] | UnsavedAnnotation[],
-    modelType: DetectionModelType,
-    fileId: number | string
+    annotations: Annotation[] | UnsavedAnnotation[]
   ): VisionAnnotation[] {
-    return annotations.map(
-      (value: Annotation | DetectedAnnotation | UnsavedAnnotation) => {
-        let ann: VisionAnnotation = {
-          color: AnnotationUtils.getAnnotationColor(modelType),
-          text: value.text,
-          label: value.text,
-          type: value.region?.shape || '',
-          box: value.region && {
-            xMin: value.region.vertices[0].x,
-            yMin: value.region.vertices[0].y,
-            xMax: value.region.vertices[1].x,
-            yMax: value.region.vertices[1].y,
-          },
-          annotationType:
-            (value as UnsavedAnnotation).annotationType ||
-            ModelTypeAnnotationTypeMap[modelType],
-          source:
-            (value as UnsavedAnnotation).source ||
-            ModelTypeSourceMap[modelType],
-          status:
-            (value as UnsavedAnnotation).status || AnnotationStatus.Unhandled,
-          data: (value as UnsavedAnnotation).data || {},
-          annotatedResourceId:
-            (value as UnsavedAnnotation).annotatedResourceId ||
-            (typeof fileId === 'number' ? fileId : parseInt(fileId, 10)),
-          annotatedResourceExternalId: (value as UnsavedAnnotation)
-            .annotatedResourceExternalId,
-          annotatedResourceType:
-            (value as UnsavedAnnotation).annotatedResourceType || 'file',
-          linkedResourceId: (value as UnsavedAnnotation).linkedResourceId,
-          linkedResourceExternalId: (value as UnsavedAnnotation)
-            .linkedResourceExternalId,
-          linkedResourceType: (value as UnsavedAnnotation).linkedResourceType,
+    return annotations.map((value: Annotation | UnsavedAnnotation) => {
+      let ann = AnnotationUtils.createVisionAnnotationStub(
+        value.text,
+        AnnotationUtils.getAnnotationsDetectionModelType(value),
+        value.annotatedResourceId,
+        value.region && {
+          xMin: value.region.vertices[0].x,
+          yMin: value.region.vertices[0].y,
+          xMax: value.region.vertices[1].x,
+          yMax: value.region.vertices[1].y,
+        },
+        value.region && value.region.shape,
+        value.source,
+        value.status,
+        value.data,
+        value.annotationType,
+        value.annotatedResourceExternalId,
+        value.linkedResourceId,
+        value.linkedResourceExternalId
+      );
+
+      if (isAnnotation(value)) {
+        ann = {
+          ...ann,
+          id: value.id.toString(),
+          createdTime: value.createdTime,
+          lastUpdatedTime: value.lastUpdatedTime,
         };
-        if (isAnnotation(value)) {
-          ann = {
-            ...ann,
-            id: value.id.toString(),
-            createdTime: value.createdTime,
-            lastUpdatedTime: value.lastUpdatedTime,
-          };
-        }
-        return ann;
       }
-    );
+      return ann;
+    });
   }
 
-  public static createAnnotationStub(
+  public static createVisionAnnotationStub(
     text: string,
-    modelType: DetectionModelType
+    modelType: DetectionModelType,
+    fileId: number,
+    box?: AnnotationBoundingBox,
+    type: RegionType = 'rectangle',
+    source: AnnotationSource = 'user',
+    status = AnnotationStatus.Unhandled,
+    data = {},
+    annotationType: AnnotationType = 'vision/ocr',
+    fileExternalId?: string,
+    assetId?: number,
+    assetExternalId?: string,
+    id?: string,
+    createdTime?: number,
+    lastUpdatedTime?: number,
+    virtual = false
   ): VisionAnnotation {
     return {
       color: AnnotationUtils.getAnnotationColor(modelType),
-      type: 'rectangle',
-      source: 'user',
-      status: AnnotationStatus.Verified,
+      type,
+      source,
+      status,
       text,
       label: text,
-      data: undefined,
-      annotatedResourceId: 0,
+      data,
+      annotatedResourceId: fileId,
       annotatedResourceType: 'file',
-      annotationType: 'vision/user-annotation',
-    };
-  }
-
-  public static createAnnotationFromAsset(
-    asset: VisionAsset,
-    fileId: string,
-    box?: AnnotationBoundingBox
-  ): UnsavedAnnotation {
-    return {
-      text: asset.name || '',
-      data: {},
-      ...(box && {
-        region: {
-          shape: 'rectangle',
-          vertices: [
-            {
-              x: box.xMin,
-              y: box.yMin,
-            },
-            {
-              x: box.xMax,
-              y: box.yMax,
-            },
-          ],
-        },
+      annotatedResourceExternalId: fileExternalId!,
+      annotationType,
+      id,
+      box,
+      ...(!!assetId && {
+        linkedResourceId: assetId,
+        linkedResourceExternalId: assetExternalId,
+        linkedResourceType: 'asset',
       }),
-      linkedResourceId: asset.id,
-      linkedResourceExternalId: asset.externalId,
-      linkedResourceType: 'asset',
-      annotatedResourceId: parseInt(fileId, 10),
-      annotatedResourceType: 'file',
-      annotationType: 'vision/tagdetection',
-      status: AnnotationStatus.Verified,
-      source: 'user',
+      createdTime,
+      lastUpdatedTime,
+      virtual,
     };
   }
 
   public static convertToAnnotation(
     value: VisionAnnotation
-  ): UnsavedAnnotation {
-    return {
-      region: value.box && {
-        shape: 'rectangle',
+  ): Annotation | UnsavedAnnotation {
+    if (!value.box) {
+      throw new Error('Bounding box cannot be empty!');
+    }
+    const ann: UnsavedAnnotation = {
+      region: {
+        shape: value.type,
         vertices: [
           {
             x: value.box.xMin,
@@ -270,11 +251,44 @@ export class AnnotationUtils {
       annotatedResourceType: value.annotatedResourceType,
       annotationType: value.annotationType,
     };
+
+    if (!!value.id && !!value.lastUpdatedTime && !!value.createdTime) {
+      const savedAnn: Annotation = {
+        ...ann,
+        id: parseInt(value.id, 10),
+        createdTime: value.createdTime,
+        lastUpdatedTime: value.lastUpdatedTime,
+      };
+      return savedAnn;
+    }
+    return ann;
   }
+
+  public static getAnnotationsDetectionModelType = (
+    ann: Annotation | UnsavedAnnotation
+  ): DetectionModelType => {
+    if (
+      ann.linkedResourceType === 'asset' &&
+      (ann.linkedResourceId || ann.linkedResourceExternalId)
+    ) {
+      return DetectionModelType.Tag;
+    }
+
+    if (ann.source === 'vision/objectdetection') {
+      return DetectionModelType.GDPR;
+    }
+    return DetectionModelType.Text;
+  };
 }
 
-const isAnnotation = (
+export const isAnnotation = (
   ann: DetectedAnnotation | Annotation | UnsavedAnnotation
 ): ann is Annotation => {
-  return !!(ann as Annotation).id;
+  return !!(ann as Annotation).id && !!(ann as Annotation).lastUpdatedTime;
+};
+
+export const isUnSavedAnnotation = (
+  ann: DetectedAnnotation | Annotation | UnsavedAnnotation
+): ann is UnsavedAnnotation => {
+  return !(ann as Annotation).lastUpdatedTime;
 };

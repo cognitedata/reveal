@@ -153,7 +153,7 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
           onDelete={handleOnDrawerDelete}
         >
           {!isVideo(file) && drawerMode !== null && (
-            <ImageReviewDrawerContent mode={drawerMode} />
+            <ImageReviewDrawerContent mode={drawerMode} fileId={fileId} />
           )}
         </AnnotationDrawer>
       </Container>

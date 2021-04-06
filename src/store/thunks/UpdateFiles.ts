@@ -3,7 +3,7 @@ import { FileChangeUpdate, v3Client as sdk } from '@cognite/cdf-sdk-singleton';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { createFileState } from 'src/store/util/StateUtils';
 import { FileState } from 'src/store/uploadedFilesSlice';
-import { updateLinkedAssets } from 'src/store/thunks/updateLinkedAssets';
+import { PopulateAnnotations } from 'src/store/thunks/PopulateAnnotations';
 
 export const UpdateFiles = createAsyncThunk<
   FileState[],
@@ -13,7 +13,7 @@ export const UpdateFiles = createAsyncThunk<
   const files = await sdk.files.update(params);
   files.forEach((file) => {
     dispatch(
-      updateLinkedAssets({
+      PopulateAnnotations({
         fileId: file.id.toString(),
         assetIds: file.assetIds,
       })

@@ -17,22 +17,32 @@ export type Vertex = {
   x: number;
   y: number;
 };
+export type AnnotationType =
+  | 'vision/ocr'
+  | 'vision/tagdetection'
+  | 'vision/objectdetection';
+export type AnnotationSource =
+  | 'vision/ocr'
+  | 'vision/tagdetection'
+  | 'vision/objectdetection'
+  | 'user';
 
+export type AnnotationRegion = {
+  shape: RegionType;
+  vertices: Array<Vertex>;
+};
 export interface Annotation {
   text: string;
   data: any;
-  region?: {
-    shape: RegionType;
-    vertices: Array<Vertex>;
-  };
+  region?: AnnotationRegion;
   annotatedResourceId: number;
   annotatedResourceExternalId?: string;
   annotatedResourceType: 'file';
   linkedResourceId?: number;
   linkedResourceExternalId?: string;
   linkedResourceType?: 'asset' | 'file';
-  annotationType: string;
-  source: string;
+  annotationType: AnnotationType;
+  source: AnnotationSource;
   status: AnnotationStatus;
   id: number;
   createdTime: number;
@@ -41,10 +51,7 @@ export interface Annotation {
 
 export interface DetectedAnnotation {
   text: string;
-  region?: {
-    shape: RegionType;
-    vertices: Array<Vertex>;
-  };
+  region: AnnotationRegion;
   confidence: number;
 }
 
