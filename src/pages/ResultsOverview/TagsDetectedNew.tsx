@@ -1,26 +1,30 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
 import { Colors, Badge, Body } from '@cognite/cogs.js';
 import { Spin, Popover } from 'antd';
-import { selectAnnotationsForSource } from 'modules/annotations';
 import { selectAnnotationColor } from 'utils/AnnotationUtils';
+import { useAnnotations } from '@cognite/data-exploration';
 import { stubAnnotation } from './utils';
 
 type Props = { file: any };
 export default function TagsDetectedNew({ file }: Props): JSX.Element {
   const { parsingJob } = file;
-  const annotationBySourceMap = useSelector(selectAnnotationsForSource);
+
+  const { data: allAnnotations } = useAnnotations(file.id, undefined, true);
+  const newAnnotations = allAnnotations.filter(
+    (el) => el.source === `job:${parsingJob?.jobId}`
+  );
 
   if (!parsingJob || !parsingJob.jobDone) {
     return <Spin size="small" />;
   }
 
-  const annotations = annotationBySourceMap(file.id, `job:${parsingJob.jobId}`);
-  const newAssets = annotations.filter((el: any) => el.resourceType === 'asset')
-    .length;
-  const newFiles = annotations.filter((el: any) => el.resourceType === 'file')
-    .length;
-  const leftOver = annotations.length - newAssets - newFiles;
+  const newAssets = newAnnotations.filter(
+    (el: any) => el.resourceType === 'asset'
+  ).length;
+  const newFiles = newAnnotations.filter(
+    (el: any) => el.resourceType === 'file'
+  ).length;
+  const leftOver = newAnnotations.length - newAssets - newFiles;
 
   return (
     <Popover
@@ -66,7 +70,7 @@ export default function TagsDetectedNew({ file }: Props): JSX.Element {
       <Body level={2}>
         <Badge
           background={Colors.midblue.hex()}
-          text={`${annotations.length}`}
+          text={`${newAnnotations.length}`}
           size={14}
         />{' '}
         New Tags

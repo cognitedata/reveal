@@ -8,7 +8,6 @@ import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { FileInfo } from '@cognite/sdk';
 
 import { checkPermission } from 'modules/app';
-import { listAnnotations, selectAnnotations } from 'modules/annotations';
 import { startConvertFileToSvgJob } from 'modules/contextualization/uploadJobs';
 import { retrieveItemsById as retrieve } from 'modules/files';
 import { ResourceSidebar } from 'containers/ResourceSidebar';
@@ -22,7 +21,9 @@ import {
   Metadata,
   useRelatedResourceCounts,
   ResourceItem,
+  useAnnotations,
 } from '@cognite/data-exploration';
+import { convertEventsToAnnotations } from '@cognite/annotations';
 import {
   Wrapper,
   ContentWrapper,
@@ -59,6 +60,8 @@ export default function FileOverview() {
 
   const fileIdNumber = Number(fileId);
 
+  const { data: annotations } = useAnnotations(fileIdNumber);
+
   const { data: fileInfo, isFetched, isError, error } = useCdfItem<FileInfo>(
     'files',
     {
@@ -66,7 +69,6 @@ export default function FileOverview() {
     }
   );
 
-  const annotations = useSelector(selectAnnotations)(fileIdNumber);
   const { jobDone, jobError, jobStarted } = useSelector(
     (state: RootState) =>
       state.fileContextualization.uploadJobs[fileIdNumber] || {}
@@ -75,18 +77,6 @@ export default function FileOverview() {
   useEffect(() => {
     dispatch(retrieve({ ids: [{ id: fileIdNumber }] }));
   }, [dispatch, fileIdNumber]);
-
-  useEffect(() => {
-    if (fileInfo) {
-      dispatch(
-        listAnnotations.action({
-          file: fileInfo,
-          shouldClear: false,
-          includeDeleted: true,
-        })
-      );
-    }
-  }, [dispatch, fileInfo, editMode]);
 
   useEffect(() => {
     if (jobDone && !jobError) {
@@ -186,15 +176,13 @@ export default function FileOverview() {
                   style={{ marginRight: '0px' }}
                   loading={jobStarted}
                   onClick={() => {
-                    console.log(
-                      'I have been summoned',
-                      canEditFiles,
-                      annotations
-                    );
                     if (canEditFiles) {
                       if (annotations) {
                         dispatch(
-                          startConvertFileToSvgJob(fileIdNumber, annotations)
+                          startConvertFileToSvgJob(
+                            fileIdNumber,
+                            convertEventsToAnnotations(annotations)
+                          )
                         );
                       }
                     } else {

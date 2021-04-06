@@ -3,13 +3,11 @@ import { reducer as appReducer } from 'modules/app';
 import { reducer as filesReducer } from 'modules/files';
 import { reducer as assetsReducer } from 'modules/assets';
 import { reducer as datasetsReducer } from 'modules/datasets';
-import { reducer as annotationsReducer } from 'modules/annotations';
 import { reducer as selectionReducer } from 'modules/selection';
 import { reducer as fileContextualizationReducer } from 'modules/contextualization';
 
 const createRootReducer = () =>
   combineReducers({
-    annotations: annotationsReducer,
     app: appReducer,
     assets: assetsReducer,
     files: filesReducer,

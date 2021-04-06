@@ -1,27 +1,28 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
 import { FileInfo } from '@cognite/sdk';
 import { Badge, Body } from '@cognite/cogs.js';
 import { Spin, Popover } from 'antd';
-import { selectAnnotations } from 'modules/annotations';
 import {
   getPnIdAnnotationCategories,
   selectAnnotationColor,
 } from 'utils/AnnotationUtils';
 import { Flex } from 'components/Common';
+import { useAnnotations } from '@cognite/data-exploration';
+import { convertEventsToAnnotations } from '@cognite/annotations';
 import { stubAnnotation } from './utils';
 
 type Props = { file: FileInfo };
 
 export default function TagsDetectedTotal({ file }: Props): JSX.Element {
-  const annotationsMap = useSelector(selectAnnotations);
-  const annotations = annotationsMap(file.id);
+  const { data: annotations } = useAnnotations(file.id);
 
   if (!annotations) {
     return <Spin size="small" />;
   }
 
-  const annotationDetails = getPnIdAnnotationCategories(annotations);
+  const annotationDetails = getPnIdAnnotationCategories(
+    convertEventsToAnnotations(annotations)
+  );
 
   const {
     Asset: { count: assetCount },

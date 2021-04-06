@@ -26,11 +26,11 @@ import {
 } from 'antd';
 import { Button, Icon, Tooltip, Title } from '@cognite/cogs.js';
 import { usePrevious } from 'hooks/CustomHooks';
-import { FileHoverPreview, AssetHoverPreview } from 'containers/HoverPreview';
 import StickyBottomRow from 'components/StickyBottomRow';
 import { Popover } from 'components/Common';
 import { ResourceSidebar } from 'containers/ResourceSidebar';
 import NoNamePreview from 'components/NoNamePreview';
+import { AssetSmallPreview, FileSmallPreview } from '@cognite/data-exploration';
 import AssetSearchBar from './AssetSearchBar';
 import FileSearchBar from './FileSearchBar';
 import { searchCountSelector, searchItemSelector } from './selectors';
@@ -52,7 +52,7 @@ const getColumns = (type: ResourceType) => {
                   <div style={{ display: 'flex', alignItems: 'center' }}>
                     <Popover
                       style={{ marginRight: '6px', display: 'flex' }}
-                      content={<AssetHoverPreview asset={item} />}
+                      content={<AssetSmallPreview assetId={item.id} />}
                     >
                       <Icon type="DataStudio" />
                     </Popover>
@@ -64,7 +64,7 @@ const getColumns = (type: ResourceType) => {
                   <div style={{ display: 'flex', alignItems: 'center' }}>
                     <Popover
                       style={{ marginRight: '6px', display: 'flex' }}
-                      content={<FileHoverPreview file={item as FileInfo} />}
+                      content={<FileSmallPreview fileId={item.id} />}
                     >
                       <Icon type="Document" />
                     </Popover>

@@ -1,12 +1,18 @@
 import React from 'react';
-import { message, Modal, Tooltip } from 'antd';
+import { message, Modal, notification, Tooltip } from 'antd';
 import { Button } from '@cognite/cogs.js';
 import { usePermissions, useCdfItem } from '@cognite/sdk-react-query-hooks';
-import { ResourceItem } from '@cognite/data-exploration';
-import { useDispatch } from 'react-redux';
-import { hardDeleteAnnotationsForFile } from 'modules/annotations';
+import { ResourceItem, useAnnotations } from '@cognite/data-exploration';
+import sdk from 'sdk-singleton';
 
 import { FileInfo } from '@cognite/sdk';
+import {
+  CogniteAnnotation,
+  convertEventsToAnnotations,
+  hardDeleteAnnotations,
+} from '@cognite/annotations';
+import { sleep } from 'utils/utils';
+import { useQueryClient, useMutation } from 'react-query';
 
 export const ClearTagsButton = ({
   id,
@@ -17,8 +23,35 @@ export const ClearTagsButton = ({
 }) => {
   const { data: filesAcl } = usePermissions('filesAcl', 'WRITE');
   const { data: eventsAcl } = usePermissions('eventsAcl', 'WRITE');
+  const client = useQueryClient();
+
   const writeAccess = filesAcl && eventsAcl;
-  const dispatch = useDispatch();
+
+  const onSuccess = () => {
+    const invalidate = () =>
+      client.invalidateQueries(['cdf', 'events', 'list']);
+    invalidate();
+    // The sleep shouldn't be necessary, but await (POST /resource
+    // {data}) && await(POST /resource/byids) might not return the
+    // newly created item.
+    sleep(500).then(invalidate);
+    sleep(1500).then(invalidate);
+    sleep(5000).then(invalidate);
+
+    notification.success({
+      message: 'Annotation saved!',
+    });
+  };
+
+  const persistedAnnotations = useAnnotations(id);
+
+  const { mutate: deleteAnnotations } = useMutation(
+    (annotations: CogniteAnnotation[]) =>
+      hardDeleteAnnotations(sdk, annotations),
+    {
+      onSuccess,
+    }
+  );
 
   const { data: fileInfo } = useCdfItem<FileInfo>('files', {
     id: Number(id!),
@@ -62,8 +95,9 @@ export const ClearTagsButton = ({
       onOk: async () => {
         setEditMode(false);
         if (fileInfo) {
-          await dispatch(
-            hardDeleteAnnotationsForFile.action({ file: fileInfo })
+          // Make sure annotations are updated
+          deleteAnnotations(
+            convertEventsToAnnotations(persistedAnnotations.data)
           );
         }
         return message.success(

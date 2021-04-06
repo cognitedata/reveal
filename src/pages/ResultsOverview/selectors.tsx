@@ -11,11 +11,6 @@ export const getDataKitItems = (
     (assetDataKit: any, fileDataKit: any) => ({ assetDataKit, fileDataKit })
   );
 
-export const getAnnotationsByFileId = createSelector(
-  (state: RootState) => state.annotations.byFileId,
-  (annotationsByFileId: any) => annotationsByFileId
-);
-
 export const getPnidOptions = createSelector(
   (state: RootState) => state.fileContextualization.pnidOption,
   (pnidOptions: any) => {

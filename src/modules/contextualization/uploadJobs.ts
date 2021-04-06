@@ -11,7 +11,7 @@ import {
   CogniteAnnotation,
   summarizeAssetIdsFromAnnotations,
 } from '@cognite/annotations';
-import { itemSelector as fileSelector, itemSelector } from 'modules/files';
+import { itemSelector as fileSelector } from 'modules/files';
 import { itemSelector as assetSelector } from 'modules/assets';
 import { ModelStatus } from 'modules/types';
 import * as UploadJobs from './uploadJobs';
@@ -232,8 +232,7 @@ export const startConvertFileToSvgJob = (
             timer.stop({ success: false, jobId });
           }
         })
-        .catch((e) => {
-          console.log('error is', e);
+        .catch(() => {
           dispatch({ type: UPLOAD_JOB_ERROR, fileId });
           reject();
           timer.stop({ success: false });

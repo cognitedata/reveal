@@ -31,6 +31,7 @@ export const FilePreview = ({
   const { resourcesState, setResourcesState } = useContext(
     ResourceSelectionContext
   );
+
   const isActive = resourcesState.some(
     (el: { state: string; id: number; type: string }) =>
       isMatch(el, { state: 'active', id: fileId, type: 'file' })

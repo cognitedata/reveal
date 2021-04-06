@@ -1,15 +1,12 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import {
-  FileMetadataPreview,
-  AssetMetadataPreview,
-} from 'containers/ResourceSidebar';
 import queryString from 'query-string';
 import { Drawer } from 'antd';
 import { onResourceSelected } from 'modules/app';
 import Layers from 'utils/zindex';
 import { useDispatch } from 'react-redux';
+import { AssetSmallPreview, FileSmallPreview } from '@cognite/data-exploration';
 
 const DetailsWrapper = styled.div`
   pointer-events: all;
@@ -64,17 +61,17 @@ export const ResourceSidebar = ({
   const renderResourceDetails = () => {
     if (previewFileId && Number.isInteger(Number(previewFileId))) {
       return (
-        <FileMetadataPreview
+        <FileSmallPreview
           fileId={previewFileId as number}
-          extraActions={extraActions}
+          extras={extraActions}
         />
       );
     }
     if (previewAssetId && Number.isInteger(Number(previewAssetId))) {
       return (
-        <AssetMetadataPreview
+        <AssetSmallPreview
           assetId={previewAssetId as number}
-          extraActions={extraActions}
+          extras={extraActions}
         />
       );
     }

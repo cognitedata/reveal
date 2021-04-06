@@ -8,3 +8,6 @@ export const getContainer = () => {
   const el = els.item(0)! as HTMLElement;
   return el;
 };
+
+export const sleep = (milliseconds: number) =>
+  new Promise((resolve) => setTimeout(resolve, milliseconds));

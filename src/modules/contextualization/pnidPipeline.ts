@@ -6,7 +6,6 @@ import { removeExtension } from 'utils/AnnotationUtils';
 import { trackTimedUsage } from 'utils/Metrics';
 import { FileInfo, Asset } from '@cognite/sdk';
 import { dataKitItemsSelectorFactory } from 'modules/selection';
-import { listAnnotations } from 'modules/annotations';
 import { startPnidParsingJob, resetPnidParsingJobs } from './parsingJobs';
 import { loadDataKits } from './utils';
 
@@ -86,14 +85,6 @@ export const startPnidParsingPipeline = (
       await previousPromise;
       return Promise.all(
         nextSet.map(async (file) => {
-          // fetch deleted too
-          await dispatch(
-            listAnnotations.action({
-              file,
-              shouldClear: true,
-              includeDeleted: true,
-            })
-          );
           await dispatch(
             startPnidParsingJob(
               file,
