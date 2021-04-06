@@ -4,19 +4,33 @@ import styled from 'styled-components/macro';
 import { availableColors } from 'utils/colors';
 
 export const AppearanceDropdown = ({
-  onColorSelected,
-  onWeightSelected,
-  onStyleSelected,
+  update,
 }: {
-  onColorSelected: (color: string) => void;
-  onWeightSelected: (weight: number) => void;
-  onStyleSelected: (style: 'solid' | 'dashed' | 'dotted') => void;
+  update: (diff: any) => void;
 }) => {
   return (
     <DropdownWrapper>
-      <ColorDropdown onColorSelected={onColorSelected} />
-      <WeightDropdown onWeightSelected={onWeightSelected} />
-      <TypeDropdown onStyleSelected={onStyleSelected} />
+      <ColorDropdown
+        onColorSelected={(newColor) =>
+          update({
+            color: newColor,
+          })
+        }
+      />
+      <WeightDropdown
+        onWeightSelected={(newWeight) =>
+          update({
+            lineWeight: newWeight,
+          })
+        }
+      />
+      <TypeDropdown
+        onStyleSelected={(newStyle) =>
+          update({
+            lineStyle: newStyle,
+          })
+        }
+      />
     </DropdownWrapper>
   );
 };

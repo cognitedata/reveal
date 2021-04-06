@@ -4,7 +4,6 @@ import { Button, Dropdown, Icon, Menu, toast } from '@cognite/cogs.js';
 import { useHistory, useParams } from 'react-router-dom';
 import NodeEditor from 'components/NodeEditor';
 import SplitPaneLayout from 'components/Layout/SplitPaneLayout';
-import DataQualityReport from 'components/DataQualityReport';
 import PlotlyChartComponent from 'components/PlotlyChart/PlotlyChart';
 import DateRangeSelector from 'components/DateRangeSelector';
 import { AxisUpdate } from 'components/PlotlyChart';
@@ -104,7 +103,6 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   const [showSearch, setShowSearch] = useState(false);
   const [workspaceMode, setWorkspaceMode] = useState<Modes>('workspace');
   const isWorkspaceMode = workspaceMode === 'workspace';
-  const isDataQualityMode = workspaceMode === 'report';
 
   /**
    * Open search drawer if query is present in the url
@@ -114,11 +112,6 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
       setShowSearch(true);
     }
   }, [query, showSearch]);
-
-  const [dataQualityReport, setDataQualityReport] = useState<{
-    timeSeriesId?: string;
-    reportType?: string;
-  }>({});
 
   const handleClickNewWorkflow = () => {
     if (chart) {
@@ -158,10 +151,6 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
       <div>This chart does not seem to exist. You might not have access</div>
     );
   }
-
-  const handleCloseDataQualityReport = () => {
-    setDataQualityReport({});
-  };
 
   const handleChangeSourceAxis = debounce(
     ({ x, y }: { x: number[]; y: AxisUpdate[] }) => {
@@ -263,20 +252,6 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
           </th>
         </>
       )}
-      {isDataQualityMode && (
-        <>
-          <th style={{ width: 200 }}>
-            <SourceItem>
-              <SourceName>Data Quality Reports</SourceName>
-            </SourceItem>
-          </th>
-          <th>
-            <SourceItem>
-              <SourceName>Warnings</SourceName>
-            </SourceItem>
-          </th>
-        </>
-      )}
     </tr>
   );
 
@@ -364,7 +339,6 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                         chart={chart}
                         updateChart={updateChart}
                         mode={workspaceMode}
-                        setDataQualityReport={setDataQualityReport}
                       />
                       <WorkflowRows
                         chart={chart}
@@ -405,20 +379,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
               Calculations
             </span>
           </BottombarItem>
-          <BottombarItem
-            isActive={workspaceMode === 'report'}
-            onClick={() => setWorkspaceMode('report')}
-          >
-            <ToolbarIcon type="BarChart" />
-            <span style={{ paddingLeft: 10, paddingRight: 10 }}>
-              Data Quality Report
-            </span>
-          </BottombarItem>
         </BottombarWrapper>
-        <DataQualityReport
-          handleClose={handleCloseDataQualityReport}
-          {...dataQualityReport}
-        />
       </ContentWrapper>
     </ChartViewContainer>
   );
