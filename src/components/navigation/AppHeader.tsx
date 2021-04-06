@@ -76,8 +76,12 @@ const AppHeader: React.FC = () => {
         `Do you want to copy suites from RAW database to DB-Service?`
       )
     ) {
-      await apiClient.syncSuites();
-      dispatch(setNotification(`Suites successfully copied`));
+      try {
+        await apiClient.syncSuites();
+        dispatch(setNotification(`Suites successfully copied`));
+      } catch (e) {
+        dispatch(setHttpError('Failed to copy suites to DB-Service', e));
+      }
     }
   };
   // TODO(CM-406)
@@ -88,8 +92,12 @@ const AppHeader: React.FC = () => {
         `Do you want to copy lastVisited data from RAW database to DB-Service?`
       )
     ) {
-      await apiClient.syncLastVisited();
-      dispatch(setNotification(`lastVisited data successfully copied`));
+      try {
+        await apiClient.syncLastVisited();
+        dispatch(setNotification(`lastVisited data successfully copied`));
+      } catch (e) {
+        dispatch(setHttpError('Failed to copy lastVisited to DB-Service', e));
+      }
     }
   };
 
