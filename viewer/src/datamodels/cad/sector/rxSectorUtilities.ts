@@ -65,7 +65,7 @@ export function handleDetermineSectorsInput(
               // We consider sectors that we no longer want to load as done, report progress
               reportNewSectorsDone(0, batch.length - filtered.length);
             }),
-            mergeMap(filtered => filtered), // flatten
+            mergeMap(filtered => filtered), // flatten array (WantedSector[] -> WantedSector)
             filter(modelStateChanged),
             mergeMap(async x => {
               try {
