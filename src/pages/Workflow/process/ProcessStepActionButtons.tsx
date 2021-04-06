@@ -9,6 +9,7 @@ import { createLink } from '@cognite/cdf-utilities';
 import { RootState } from 'src/store/rootReducer';
 import { message } from 'antd';
 import { selectAllFiles } from 'src/store/uploadedFilesSlice';
+import { SaveAvailableAnnotations } from 'src/store/thunks/SaveAvailableAnnotations';
 
 export const ProcessStepActionButtons = () => {
   const history = useHistory();
@@ -26,6 +27,7 @@ export const ProcessStepActionButtons = () => {
 
   const onNextClicked = () => {
     if (isPollingFinished) {
+      dispatch(SaveAvailableAnnotations());
       history.push(createLink('/explore/search/file')); // data-exploration app
     } else {
       if (!selectedDetectionModels.length) {

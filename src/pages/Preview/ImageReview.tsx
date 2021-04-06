@@ -90,6 +90,7 @@ const ImageReview = (props: { fileId: string; drawerMode: number | null }) => {
       if (drawerMode === AnnotationDrawerMode.AddAnnotation) {
         dispatch(
           addPolygon({
+            fileId,
             box: annotation.box,
             modelType: DetectionModelType.Text,
           })
@@ -97,7 +98,11 @@ const ImageReview = (props: { fileId: string; drawerMode: number | null }) => {
       }
       if (drawerMode === AnnotationDrawerMode.LinkAsset) {
         dispatch(
-          addPolygon({ box: annotation.box, modelType: DetectionModelType.Tag })
+          addPolygon({
+            fileId,
+            box: annotation.box,
+            modelType: DetectionModelType.Tag,
+          })
         );
       }
     }

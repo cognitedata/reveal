@@ -12,9 +12,11 @@ import {
   AnnotationDrawerMode,
   AnnotationStatus,
   AnnotationUtils,
+  ModelTypeAnnotationTypeMap,
+  ModelTypeSourceMap,
   VisionAnnotation,
 } from 'src/utils/AnnotationUtils';
-import { DetectionModelType } from 'src/api/types';
+import { AnnotationType, DetectionModelType } from 'src/api/types';
 import {
   addAnnotations,
   deleteAnnotationsFromState,
@@ -98,16 +100,19 @@ const initialState: State = {
 };
 
 // Actions
-
-export const editLabelAddAnnotation = createAction<string>(
-  'editLabelAddAnnotation'
-);
-
-type Polygon = {
+type LabelEdit = {
+  fileId: string;
+  label: string;
+};
+type PolygonEdit = {
+  fileId: string;
   box: AnnotationBoundingBox;
   modelType: DetectionModelType;
 };
-export const addPolygon = createAction<Polygon>('addPolygon');
+export const editLabelAddAnnotation = createAction<LabelEdit>(
+  'editLabelAddAnnotation'
+);
+export const addPolygon = createAction<PolygonEdit>('addPolygon');
 
 const previewSlice = createSlice({
   name: 'previewSlice',
@@ -180,19 +185,14 @@ const previewSlice = createSlice({
       action: PayloadAction<{ fileId: string; type: AnnotationDrawerMode }>
     ) {
       if (action.payload.type === AnnotationDrawerMode.AddAnnotation) {
-        const editModeAnnotation = state.drawer.annotation;
+        const editModeAnnotationData = state.drawer.annotation;
 
-        if (editModeAnnotation) {
-          addEditAnnotationsToState(
-            state,
-            [editModeAnnotation as VisionAnnotation],
-            action.payload.fileId,
-            DetectionModelType.Text,
-            AnnotationStatus.Verified
-          );
+        if (editModeAnnotationData) {
+          addEditAnnotationsToState(state, [
+            editModeAnnotationData as VisionAnnotation,
+          ]);
+          state.drawer.annotation = null;
         }
-
-        state.drawer.annotation = null;
       }
     },
     selectAssetsIds(state, action: PayloadAction<number[]>) {
@@ -208,9 +208,7 @@ const previewSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(addAnnotations, (state, { payload }) => {
-      const { annotations, fileId, type, status } = payload;
-
-      addEditAnnotationsToState(state, annotations, fileId, type, status);
+      addEditAnnotationsToState(state, payload);
     });
 
     builder.addCase(deleteAnnotationsFromState, (state, { payload }) => {
@@ -247,57 +245,54 @@ const previewSlice = createSlice({
       if (job.status === 'Completed') {
         const annotations =
           job.items.find((x) => x.fileId === fileId)?.annotations || [];
-        const visionAnnotations = AnnotationUtils.convertToVisionAnnotations(
-          annotations,
-          job.type,
-          fileId
+        const visionAnnotations = annotations.map((ann) =>
+          AnnotationUtils.createVisionAnnotationStub(
+            ann.text,
+            job.type,
+            fileId,
+            {
+              xMin: ann.region.vertices[0].x,
+              yMin: ann.region.vertices[0].y,
+              xMax: ann.region.vertices[1].x,
+              yMax: ann.region.vertices[1].y,
+            },
+            undefined,
+            ModelTypeSourceMap[job.type],
+            undefined,
+            undefined,
+            ModelTypeAnnotationTypeMap[job.type] as AnnotationType
+          )
         );
-
-        addEditAnnotationsToState(
-          state,
-          visionAnnotations,
-          fileId.toString(),
-          job.type,
-          AnnotationStatus.Unhandled
-        );
+        addEditAnnotationsToState(state, visionAnnotations);
       }
     });
 
     // Matchers
 
     const isLabelEdit = (
-      action: PayloadAction<string> | PayloadAction<Polygon>
-    ): action is PayloadAction<string> => {
-      return typeof action.payload === 'string';
+      action: PayloadAction<LabelEdit> | PayloadAction<PolygonEdit>
+    ): action is PayloadAction<LabelEdit> => {
+      return !!(action as PayloadAction<LabelEdit>).payload.label;
     };
 
     builder.addMatcher(
       isAnyOf(editLabelAddAnnotation, addPolygon),
       (state, action) => {
         if (state.drawer.annotation === null) {
-          let annotation;
-
-          if (isLabelEdit(action)) {
-            annotation = AnnotationUtils.createAnnotationStub(
-              action.payload,
-              DetectionModelType.Text
-            );
-          } else {
-            annotation = AnnotationUtils.createAnnotationStub(
-              '',
-              action.payload.modelType
-            );
-          }
-
-          state.drawer.annotation = {
-            ...annotation,
-            modelId: '',
-            show: true,
-            status: AnnotationStatus.Verified,
-          };
+          state.drawer.annotation = AnnotationUtils.createVisionAnnotationStub(
+            '',
+            isLabelEdit(action)
+              ? DetectionModelType.Text
+              : action.payload.modelType,
+            parseInt(action.payload.fileId, 10),
+            undefined,
+            'rectangle',
+            'user',
+            AnnotationStatus.Verified
+          );
         }
         if (isLabelEdit(action)) {
-          state.drawer.annotation.text = action.payload;
+          state.drawer.annotation.text = action.payload.label;
         } else {
           state.drawer.annotation.box = action.payload.box;
         }
@@ -356,50 +351,64 @@ const resetPreviewState = (state: State) => {
 
 export const addEditAnnotationsToState = (
   state: State,
-  annotations: VisionAnnotation[],
-  fileId: string,
-  type: DetectionModelType,
-  status: AnnotationStatus
+  annotations: VisionAnnotation[]
 ) => {
-  const modelId = AnnotationUtils.getModelId(String(fileId), type);
-
-  // update models
-  if (!state.models.byId[modelId]) {
-    state.models.byId[modelId] = {
-      modelId,
-      modelType: type,
-      fileId,
-      annotations: [],
-    };
-
-    state.models.allIds = Object.keys(state.models.byId);
-  }
-
-  // update file models
-  const fileModels = state.modelsByFileId[fileId];
-  if (!fileModels) {
-    state.modelsByFileId[fileId] = [modelId];
-  } else if (fileModels && !fileModels.includes(modelId)) {
-    fileModels.push(modelId);
-  }
-
-  // update annotations
-
   annotations.forEach((item) => {
+    // update models
+    const modelType = AnnotationUtils.getAnnotationsDetectionModelType(item);
+    const modelId = AnnotationUtils.getModelId(
+      String(item.annotatedResourceId),
+      modelType
+    );
+    const fileId = String(item.annotatedResourceId);
+
+    if (!state.models.byId[modelId]) {
+      state.models.byId[modelId] = {
+        modelId,
+        modelType,
+        fileId,
+        annotations: [],
+      };
+
+      state.models.allIds = Object.keys(state.models.byId);
+
+      // update file models
+      const fileModels = state.modelsByFileId[fileId];
+      if (!fileModels) {
+        state.modelsByFileId[fileId] = [modelId];
+      } else if (fileModels && !fileModels.includes(modelId)) {
+        fileModels.push(modelId);
+      }
+    }
+
+    // update annotations
     const generatedId = AnnotationUtils.generateAnnotationId(
-      String(fileId),
-      type,
+      String(item.annotatedResourceId),
+      item.annotationType,
       state.annotations.counter++
     );
     const id = item.id || generatedId;
-    state.models.byId[modelId].annotations.push(id);
-    state.annotations.byId[id] = {
-      id,
-      ...item,
-      modelId,
-      show: true,
-      status,
-    };
+
+    const annotation = state.annotations.byId[id];
+    if (annotation) {
+      state.annotations.byId[id] = { ...item, ...annotation };
+    } else {
+      if (state.models.byId[modelId].annotations.includes(id)) {
+        // todo: remove this check after development complete
+        console.error(
+          'possible Error! annotation not available but available in model ids'
+        );
+      }
+
+      state.models.byId[modelId].annotations.push(id);
+
+      state.annotations.byId[id] = {
+        ...item,
+        id,
+        modelId,
+        show: true,
+      };
+    }
   });
 
   state.annotations.allIds = Object.keys(state.annotations.byId);
@@ -474,12 +483,24 @@ export const selectAnnotationsByFileIdModelType = createSelector(
   }
 );
 
-export const selectNonRejectedAnnotationsByFileIdModelType = createSelector(
-  selectAnnotationsByFileIdModelType,
-  (annotationIdsByFileAndModelType) => {
-    return annotationIdsByFileAndModelType.filter(
-      (item) => item.status !== AnnotationStatus.Rejected
-    );
+export const selectNonRejectedAnnotationsByFileIdModelTypes = createSelector(
+  selectAnnotationsByFileId,
+  selectModelsByFileId,
+  (state: State, fileId: string, modelTypes: DetectionModelType[]) =>
+    modelTypes,
+  (annotationByFileId, modelsByFileId, modelTypes) => {
+    const modelIds = modelsByFileId
+      .filter((item) => modelTypes.includes(item.modelType))
+      .map((model) => model.modelId);
+
+    if (modelIds && modelIds.length) {
+      return annotationByFileId.filter(
+        (item) =>
+          modelIds.includes(item.modelId) &&
+          item.status !== AnnotationStatus.Rejected
+      );
+    }
+    return [];
   }
 );
 

@@ -57,7 +57,7 @@ export type VisionAsset = Omit<
 // }, data);
 const initialState: UploadedFilesState = {
   dataSetIds: undefined,
-  extractExif: false,
+  extractExif: true,
   // eslint-disable-next-line global-require
   // files: require('./fakeFiles.json'),
 
