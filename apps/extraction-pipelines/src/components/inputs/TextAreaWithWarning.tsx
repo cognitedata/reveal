@@ -1,13 +1,8 @@
 import React, { ChangeEvent, FunctionComponent } from 'react';
 import { Colors } from '@cognite/cogs.js';
-import styled from 'styled-components';
-import { DivFlex } from '../../styles/flex/StyledFlex';
-import { InputWarningIcon } from '../icons/InputWarningIcon';
-
-const StyledTextArea = styled.textarea`
-  width: 100%;
-  height: 10rem;
-`;
+import { StyledTextArea } from 'styles/StyledForm';
+import { DivFlex } from 'styles/flex/StyledFlex';
+import { InputWarningIcon } from 'components/icons/InputWarningIcon';
 
 interface OwnProps {
   value: string | number;

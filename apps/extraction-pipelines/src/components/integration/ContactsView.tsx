@@ -4,10 +4,9 @@ import { SINGLE_INTEGRATION_CONTACTS } from 'utils/constants';
 import { TableHeadings } from 'components/table/IntegrationTableCol';
 import ContactsList from 'components/ContactInformation/ContactsList';
 import { Integration } from 'model/Integration';
-import {
-  AdditionalInfo,
-  DetailWrapper,
-} from 'components/integration/IntegrationView';
+import { AdditionalInfo } from 'components/integration/IntegrationView';
+import { StyledTitle2 } from 'styles/StyledHeadings';
+import { PageWrapperColumn } from 'styles/StyledPage';
 
 interface ContactsViewProps {
   integration: Integration | null;
@@ -24,8 +23,8 @@ export const ContactsView: FunctionComponent<ContactsViewProps> = ({
   }, [integrationId]);
 
   return (
-    <DetailWrapper>
-      <h2>{TableHeadings.CONTACTS}</h2>
+    <PageWrapperColumn>
+      <StyledTitle2>{TableHeadings.CONTACTS}</StyledTitle2>
       <AdditionalInfo>
         People listed as contacts for this integration
       </AdditionalInfo>
@@ -33,6 +32,6 @@ export const ContactsView: FunctionComponent<ContactsViewProps> = ({
         <span className="info-label" />
         <ContactsList title={TableHeadings.CONTACTS} contacts={contacts} />
       </span>
-    </DetailWrapper>
+    </PageWrapperColumn>
   );
 };

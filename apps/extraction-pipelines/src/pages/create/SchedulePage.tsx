@@ -1,47 +1,28 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import { Colors, Radio } from '@cognite/cogs.js';
+import { Radio } from '@cognite/cogs.js';
 import { useHistory } from 'react-router-dom';
-import { useForm, FormProvider } from 'react-hook-form';
-import * as yup from 'yup';
+import { FormProvider, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ErrorMessage } from '@hookform/error-message';
-import styled from 'styled-components';
 import { createLink } from '@cognite/cdf-utilities';
 import { SupportedScheduleStrings } from 'components/integrations/cols/Schedule';
 import { RegisterIntegrationLayout } from 'components/layout/RegisterIntegrationLayout';
 import { ButtonPlaced } from 'styles/StyledButton';
 import { GridH2Wrapper } from 'styles/StyledPage';
 import { NEXT } from 'utils/constants';
-import { CreateFormWrapper } from 'styles/StyledForm';
+import { CreateFormWrapper, StyledRadioGroup } from 'styles/StyledForm';
 import {
   CONTACTS_PAGE_PATH,
   DATA_SET_PAGE_PATH,
 } from 'routing/CreateRouteConfig';
 import CronInput from 'components/inputs/cron/CronInput';
-import { DivFlex } from 'styles/flex/StyledFlex';
-import { CRON_REQUIRED, cronValidator } from 'utils/validation/cronValidation';
 import { useStoredRegisterIntegration } from 'hooks/useStoredRegisterIntegration';
 import { mapModelToInput, mapScheduleInputToModel } from 'utils/cronUtils';
 import { createUpdateSpec } from 'utils/contactsUtils';
 import { useAppEnv } from 'hooks/useAppEnv';
 import { useDetailsUpdate } from 'hooks/details/useDetailsUpdate';
-
-const CronWrapper = styled(DivFlex)`
-  margin: 1rem 2rem;
-  padding: 1rem 0 0 0;
-  border-top: 0.0625rem solid ${Colors['greyscale-grey3'].hex()};
-  border-bottom: 0.0625rem solid ${Colors['greyscale-grey3'].hex()};
-`;
-const StyledRadioGroup = styled.fieldset`
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 1rem;
-  legend {
-    font-weight: bold;
-    font-size: initial;
-    margin-bottom: 0;
-  }
-`;
+import { CronWrapper } from 'components/integration/Schedule';
+import { scheduleSchema } from 'utils/validation/integrationSchemas';
 
 interface SchedulePageProps {}
 
@@ -52,18 +33,7 @@ export interface ScheduleFormInput {
 
 export const INTEGRATION_SCHEDULE_HEADING: Readonly<string> =
   'Integration schedule';
-const SCHEDULE_REQUIRED: Readonly<string> = 'Schedule is required';
-const scheduleSchema = yup.object().shape({
-  schedule: yup.string().required(SCHEDULE_REQUIRED),
-  cron: yup.string().when('schedule', {
-    is: (val: SupportedScheduleStrings) =>
-      val === SupportedScheduleStrings.SCHEDULED,
-    then: yup
-      .string()
-      .required(CRON_REQUIRED)
-      .test('cron-expression', 'Cron not valid', cronValidator),
-  }),
-});
+
 const SchedulePage: FunctionComponent<SchedulePageProps> = () => {
   const history = useHistory();
   const { project } = useAppEnv();

@@ -7,15 +7,7 @@ import { getMockResponse } from 'utils/mockResponse';
 import { INTEGRATIONS } from 'utils/baseURL';
 import { TableHeadings } from 'components/table/IntegrationTableCol';
 import { DetailFieldNames } from 'model/Integration';
-import { DATE_FORMAT } from 'components/TimeDisplay/TimeDisplay';
-import { uppercaseFirstWord } from 'utils/primitivesUtils';
-import {
-  NO_META_DATA,
-  NO_RAW_TABLES_MESSAGE,
-  NO_SCHEDULE,
-  NO_DATA_SET_ID_SET,
-  SINGLE_INTEGRATION,
-} from 'utils/constants';
+import { NO_SCHEDULE, SINGLE_INTEGRATION } from 'utils/constants';
 import { IntegrationView } from 'components/integration/IntegrationView';
 import { trackUsage } from 'utils/Metrics';
 
@@ -35,68 +27,48 @@ describe('IntegrationView', () => {
     expect(trackUsage).toHaveBeenCalledWith(SINGLE_INTEGRATION, {
       id: mockIntegration.id,
     });
-
     expect(
-      screen.getAllByText(new RegExp(TableHeadings.LATEST_RUN, 'i'))
-    ).toBeDefined();
-
-    expect(
-      screen.getByText(new RegExp(DetailFieldNames.DESCRIPTION, 'i'))
+      screen.getByText(new RegExp(TableHeadings.NAME, 'i'))
     ).toBeInTheDocument();
-    expect(screen.getByText(mockIntegration.description)).toBeInTheDocument();
+    expect(screen.getByText(mockIntegration.name)).toBeInTheDocument();
 
     expect(
       screen.getByText(new RegExp(DetailFieldNames.EXTERNAL_ID, 'i'))
     ).toBeInTheDocument();
     expect(screen.getByText(mockIntegration.externalId)).toBeInTheDocument();
 
-    expect(screen.getByText(TableHeadings.LAST_SEEN)).toBeInTheDocument();
     expect(
-      screen.getByText(
-        new RegExp(moment(mockIntegration.lastSeen).format(DATE_FORMAT), 'i')
-      )
+      screen.getByText(new RegExp(DetailFieldNames.ID, 'i'))
     ).toBeInTheDocument();
+    expect(screen.getByText(mockIntegration.id)).toBeInTheDocument();
 
     expect(
-      screen.getByText(new RegExp(TableHeadings.SCHEDULE, 'i'))
+      screen.getByText(new RegExp(DetailFieldNames.CREATED_BY, 'i'))
     ).toBeInTheDocument();
-    expect(screen.getByText('At 09:00 AM')).toBeInTheDocument();
+    expect(screen.getByText(mockIntegration.createdBy)).toBeInTheDocument();
 
     expect(
       screen.getByText(new RegExp(DetailFieldNames.CREATED_TIME, 'i'))
     ).toBeInTheDocument();
     expect(
-      screen.getByText(
-        new RegExp(moment(mockIntegration.createdTime).format(DATE_FORMAT), 'i')
-      )
+      screen.getByText(moment(mockIntegration.createdTime).fromNow())
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(new RegExp(DetailFieldNames.LAST_UPDATED_TIME, 'i'))
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(moment(mockIntegration.lastUpdatedTime).fromNow())
     ).toBeInTheDocument();
 
     expect(
-      screen.getByText(new RegExp(TableHeadings.DATA_SET, 'i'))
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(new RegExp(mockIntegration.dataSet.name, 'i'))
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(new RegExp(mockIntegration.dataSetId, 'i'))
-    ).toBeInTheDocument();
+      screen.getAllByText(new RegExp(TableHeadings.SCHEDULE, 'i')).length
+    ).toEqual(1);
+    expect(screen.getByText('At 09:00 AM')).toBeInTheDocument();
 
     expect(
-      screen.getAllByText(new RegExp(DetailFieldNames.RAW_TABLE, 'i'))
-    ).toBeDefined();
-    mockIntegration.rawTables.forEach(({ tableName, dbName }) => {
-      expect(screen.getByText(dbName)).toBeInTheDocument();
-      expect(screen.getByText(tableName)).toBeInTheDocument();
-    });
-    expect(
-      screen.getByText(new RegExp(DetailFieldNames.META_DATA, 'i'))
+      screen.getByText(new RegExp(DetailFieldNames.DESCRIPTION, 'i'))
     ).toBeInTheDocument();
-    Object.entries(mockIntegration.metadata).forEach(([k, v]) => {
-      expect(
-        screen.getByText(new RegExp(uppercaseFirstWord(k), 'i'))
-      ).toBeInTheDocument();
-      expect(screen.getByText(v)).toBeInTheDocument();
-    });
+    expect(screen.getByText(mockIntegration.description)).toBeInTheDocument();
   });
 
   test('Renders with minimal required info', () => {
@@ -111,9 +83,8 @@ describe('IntegrationView', () => {
       route: `${INTEGRATIONS}/${mockIntegration.id}`,
     });
     expect(screen.getByText(mockIntegration.externalId)).toBeInTheDocument();
-    expect(screen.getByText(NO_META_DATA)).toBeInTheDocument();
+    expect(screen.getByText(mockIntegration.id)).toBeInTheDocument();
+    expect(screen.getByText(mockIntegration.name)).toBeInTheDocument();
     expect(screen.getByText(NO_SCHEDULE)).toBeInTheDocument();
-    expect(screen.getByText(NO_RAW_TABLES_MESSAGE)).toBeInTheDocument();
-    expect(screen.getByText(NO_DATA_SET_ID_SET)).toBeInTheDocument();
   });
 });

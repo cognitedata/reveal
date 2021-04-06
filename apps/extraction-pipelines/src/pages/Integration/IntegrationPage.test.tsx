@@ -79,7 +79,7 @@ describe('IntegrationPage', () => {
       PROJECT_ITERA_INT_GREEN,
       PROJECT_ITERA_INT_GREEN,
       ORIGIN_DEV,
-      undefined,
+      mockIntegration,
       '/'
     );
     render(<IntegrationPage />, { wrapper });
@@ -89,25 +89,8 @@ describe('IntegrationPage', () => {
     const contactsBtn = screen.getByText(CONTACTS);
     expect(contactsBtn).toBeInTheDocument();
     // check some details are renderd
-    expect(screen.getByText(mockIntegration.name)).toBeInTheDocument();
-    expect(screen.getByText(mockIntegration.dataSetId)).toBeInTheDocument();
-    expect(screen.getByText(mockIntegration?.lastMessage)).toBeInTheDocument();
-    expect(
-      screen.getByText(mockIntegration?.rawTables[0].dbName)
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(mockIntegration?.rawTables[0].tableName)
-    ).toBeInTheDocument();
+    expect(screen.getAllByText(mockIntegration.name).length).toEqual(2); // heading and field
     expect(screen.getByText(mockIntegration.externalId)).toBeInTheDocument();
-    // check contacts are not on this page
-    expect(
-      screen.queryByText(mockIntegration.contacts[0].name)
-    ).not.toBeInTheDocument();
-    // navigate to contacts
-    fireEvent.click(contactsBtn);
-    expect(
-      screen.getByText(mockIntegration.contacts[0].name)
-    ).toBeInTheDocument();
     // navigate to runs
     fireEvent.click(runsLink);
     expect(

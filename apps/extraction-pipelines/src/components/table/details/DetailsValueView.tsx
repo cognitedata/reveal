@@ -14,6 +14,7 @@ import {
   IntegrationRawTable,
 } from 'model/Integration';
 import RawTable from 'components/integrations/cols/RawTable';
+import EmailLink from 'components/buttons/EmailLink';
 
 interface DetailsValueViewProps {
   fieldValue: IntegrationFieldValue;
@@ -22,7 +23,10 @@ interface DetailsValueViewProps {
 
 const DetailsValueView = ({ fieldValue, fieldName }: DetailsValueViewProps) => {
   switch (fieldName) {
+    case 'lastUpdatedTime':
+    case 'lastSeen':
     case 'createdTime':
+    case 'latestRun':
       return (
         <RelativeTimeWithTooltip id={fieldName} time={fieldValue as number} />
       );
@@ -62,25 +66,23 @@ const DetailsValueView = ({ fieldValue, fieldName }: DetailsValueViewProps) => {
           <InteractiveCopy text={`${fieldValue}`} copyType="externalId" />
         </InteractiveCopyWrapper>
       );
-    case 'lastSeen': {
+    case 'id':
       return (
-        <RelativeTimeWithTooltip id={fieldName} time={fieldValue as number} />
+        <InteractiveCopyWrapper id={fieldName}>
+          {fieldValue} <InteractiveCopy text={`${fieldValue}`} copyType="id" />
+        </InteractiveCopyWrapper>
       );
-    }
     case 'status': {
       return <StatusMarker id={fieldName} status={fieldValue as Status} />;
     }
-    case 'latestRun': {
-      return (
-        <RelativeTimeWithTooltip id={fieldName} time={fieldValue as number} />
-      );
-    }
     case 'name':
     case 'description':
-    case 'lastUpdatedTime':
     case 'lastSuccess':
     case 'lastFailure':
     case 'metadata':
+    case 'createdBy': {
+      return <>{fieldValue && <EmailLink email={fieldValue as string} />}</>;
+    }
     case 'contacts':
       return <span id={fieldName}>{fieldValue}</span>;
     default:

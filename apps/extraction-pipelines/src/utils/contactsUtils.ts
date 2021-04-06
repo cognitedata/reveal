@@ -1,18 +1,16 @@
+import { IntegrationFieldName, IntegrationFieldValue } from 'model/Integration';
 import { IntegrationUpdateSpec } from './IntegrationsAPI';
-import {
-  IntegrationFieldName,
-  IntegrationFieldValue,
-} from '../model/Integration';
 
+export type UpdateSpec = {
+  id: number;
+  fieldName: IntegrationFieldName;
+  fieldValue: IntegrationFieldValue;
+};
 export const createUpdateSpec = ({
   id,
   fieldName,
   fieldValue,
-}: {
-  id: number;
-  fieldName: IntegrationFieldName;
-  fieldValue: IntegrationFieldValue;
-}): IntegrationUpdateSpec[] => {
+}: UpdateSpec): IntegrationUpdateSpec[] => {
   return [
     {
       id: `${id}`,

@@ -1,7 +1,6 @@
 import React, { FunctionComponent } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ErrorMessage } from '@hookform/error-message';
 import { createLink } from '@cognite/cdf-utilities';
@@ -14,6 +13,7 @@ import { useStoredRegisterIntegration } from 'hooks/useStoredRegisterIntegration
 import { HeadingLabel } from 'components/inputs/HeadingLabel';
 import { TaskList, taskListItems } from 'pages/create/TaskList';
 import { InputController } from 'components/inputs/InputController';
+import { nameSchema } from 'utils/validation/integrationSchemas';
 
 interface NamePageProps {}
 
@@ -22,10 +22,7 @@ interface NameFormInput {
 }
 
 export const INTEGRATION_NAME_HEADING: Readonly<string> = 'Integration name';
-export const NAME_REQUIRED: Readonly<string> = 'Integration name is required';
-const nameSchema = yup.object().shape({
-  name: yup.string().required(NAME_REQUIRED),
-});
+
 const NamePage: FunctionComponent<NamePageProps> = () => {
   const history = useHistory();
   const {

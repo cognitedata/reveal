@@ -3,10 +3,7 @@ import { fireEvent, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import { QueryClient } from 'react-query';
 import { renderRegisterContext } from 'utils/test/render';
-import NamePage, {
-  INTEGRATION_NAME_HEADING,
-  NAME_REQUIRED,
-} from 'pages/create/NamePage';
+import NamePage, { INTEGRATION_NAME_HEADING } from 'pages/create/NamePage';
 import { BACK, NEXT } from 'utils/constants';
 import {
   CDF_ENV_GREENFIELD,
@@ -15,6 +12,7 @@ import {
 } from 'utils/baseURL';
 import { NAME_PATH } from 'routing/CreateRouteConfig';
 import 'utils/test/windowLocation';
+import { NAME_REQUIRED } from 'utils/validation/integrationSchemas';
 
 describe('NamePage', () => {
   window.location.href =

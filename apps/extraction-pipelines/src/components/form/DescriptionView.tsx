@@ -3,23 +3,23 @@ import { Button, Colors, Detail } from '@cognite/cogs.js';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import styled from 'styled-components';
-import * as yup from 'yup';
-import { StyledForm } from './NameView';
-import { useIntegration } from '../../hooks/details/IntegrationContext';
-import { useAppEnv } from '../../hooks/useAppEnv';
-import { useDetailsUpdate } from '../../hooks/details/useDetailsUpdate';
-import { createUpdateSpec } from '../../utils/contactsUtils';
-import ValidationError from './ValidationError';
-import { InputWarningIcon } from '../icons/InputWarningIcon';
-import { AlignedSpan } from './ContactsView';
-import { DetailFieldNames } from '../../model/Integration';
-import MessageDialog from '../buttons/MessageDialog';
+import { useIntegration } from 'hooks/details/IntegrationContext';
+import { useAppEnv } from 'hooks/useAppEnv';
+import { useDetailsUpdate } from 'hooks/details/useDetailsUpdate';
+import { createUpdateSpec } from 'utils/contactsUtils';
+import ValidationError from 'components/form/ValidationError';
+import { InputWarningIcon } from 'components/icons/InputWarningIcon';
+import { AlignedSpan } from 'components/form/ContactsView';
+import { DetailFieldNames } from 'model/Integration';
+import MessageDialog from 'components/buttons/MessageDialog';
+import { SERVER_ERROR_CONTENT, SERVER_ERROR_TITLE } from 'utils/constants';
 import {
-  SERVER_ERROR_CONTENT,
-  SERVER_ERROR_TITLE,
-} from '../../utils/constants';
+  descriptionSchema,
+  MAX_DESC_LENGTH,
+} from 'utils/validation/integrationSchemas';
+import { StyledForm } from './NameView';
 
-const DescriptionStyledForm = styled((props) => (
+export const DescriptionStyledForm = styled((props) => (
   <StyledForm {...props}>{props.children}</StyledForm>
 ))`
   height: 4rem;
@@ -58,23 +58,15 @@ const GridTextArea = styled((props) => <div {...props}>{props.children}</div>)`
     text-align: right;
   }
 `;
-const CountSpan = styled((props) => <span {...props}>{props.children}</span>)`
+export const CountSpan = styled((props) => (
+  <span {...props}>{props.children}</span>
+))`
   align-self: flex-start;
 `;
 
 interface OwnProps {}
 
 type Props = OwnProps;
-const MAX_DESC_LENGTH: Readonly<number> = 500;
-const schema = yup.object().shape({
-  description: yup
-    .string()
-    .required('Description is required')
-    .max(
-      MAX_DESC_LENGTH,
-      `Description can only contain ${MAX_DESC_LENGTH} characters`
-    ),
-});
 
 const DescriptionView: FunctionComponent<Props> = () => {
   const {
@@ -87,7 +79,7 @@ const DescriptionView: FunctionComponent<Props> = () => {
   const [errorVisible, setErrorVisible] = useState(false);
 
   const { register, errors, getValues, trigger, watch } = useForm({
-    resolver: yupResolver(schema),
+    resolver: yupResolver(descriptionSchema),
     defaultValues: {
       description: integration?.description,
     },

@@ -1,9 +1,14 @@
 import { Integration } from 'model/Integration';
-import React, { PropsWithChildren, useContext, useState } from 'react';
+import React, {
+  Dispatch,
+  PropsWithChildren,
+  useContext,
+  useState,
+} from 'react';
 
 interface ContextProps {
   integration: Integration | null;
-  setIntegration: (integration: Integration) => void;
+  setIntegration: Dispatch<React.SetStateAction<Integration | null>>;
 }
 
 const SelectedIntegrationContext = React.createContext<

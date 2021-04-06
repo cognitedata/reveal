@@ -1,7 +1,10 @@
 import styled from 'styled-components';
 import { Colors, Title } from '@cognite/cogs.js';
 import React from 'react';
-import { mainContentSpaceAround } from 'styles/StyledVariables';
+import {
+  mainContentSpaceAround,
+  mainContentSpaceSides,
+} from 'styles/StyledVariables';
 import { StyledRouterLink } from 'components/integrations/cols/Name';
 import { MainFullWidthGrid } from 'styles/grid/StyledGrid';
 
@@ -66,4 +69,12 @@ export const MainWithAsidesWrapper = styled(MainFullWidthGrid)`
   .description {
     grid-area: description;
   }
+`;
+export const PageWrapperColumn = styled.div`
+  overflow-y: auto;
+  height: calc(100vh - 15rem);
+  display: flex;
+  flex-direction: column;
+  padding: 0 ${mainContentSpaceSides};
+  scroll-behavior: smooth;
 `;

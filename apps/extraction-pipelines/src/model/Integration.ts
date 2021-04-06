@@ -22,6 +22,7 @@ export interface RegisterIntegrationInfo {
 export interface Integration extends Omit<RegisterIntegrationInfo, 'id'> {
   id: number;
   createdTime: number; // milliseconds
+  createdBy?: string; // milliseconds
   lastUpdatedTime: number; // milliseconds
   dataSet?: DataSetModel;
   lastSuccess?: number; // milliseconds
@@ -31,16 +32,26 @@ export interface Integration extends Omit<RegisterIntegrationInfo, 'id'> {
   rawTables?: IntegrationRawTable[];
 }
 
-export type IntegrationFieldName = keyof Integration | 'status' | 'latestRun';
+export type IntegrationFieldName =
+  | keyof Integration
+  | 'status'
+  | 'latestRun'
+  | keyof MetaData;
 export type IntegrationFieldValue =
   | Integration[keyof Integration]
+  | MetaData
   | moment.Moment
   | null;
 
 export enum DetailFieldNames {
   EXTERNAL_ID = 'External id',
+  ID = 'Internal id',
   DESCRIPTION = 'Description',
   CREATED_TIME = 'Created time',
+  LAST_UPDATED_TIME = 'Last updated time',
+  CREATED_BY = 'Created by',
+  SOURCE = 'Source',
+  STATE = 'State',
   RAW_TABLE = 'Raw tables',
   META_DATA = 'Metadata',
   CONTACT = 'Contact',

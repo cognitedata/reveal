@@ -1,6 +1,6 @@
-import { Integration } from '../model/Integration';
-import { DataSetModel } from '../model/DataSetModel';
-import { StatusRow } from '../model/Runs';
+import { Integration } from 'model/Integration';
+import { DataSetModel } from 'model/DataSetModel';
+import { StatusRow } from 'model/Runs';
 
 export const mockDataSetResponse = () => [
   {
@@ -33,6 +33,7 @@ const mockResponseV2 = {
       lastUpdatedTime: 1584137100000,
       externalId: 'dataIntegration0001',
       name: 'Azure Integration',
+      createdBy: 'test@test.no',
       description: 'Dummy integration to Azure',
       dataSetId: '1398950266713987',
       rawTables: [

@@ -1,20 +1,22 @@
 import React, { FunctionComponent } from 'react';
 import styled from 'styled-components';
-import DetailsValueView from '../table/details/DetailsValueView';
-import { TableHeadings } from '../table/IntegrationTableCol';
+import DetailsValueView from 'components/table/details/DetailsValueView';
+import { TableHeadings } from 'components/table/IntegrationTableCol';
 import {
   DetailFieldNames,
   IntegrationFieldName,
   IntegrationFieldValue,
-} from '../../model/Integration';
-import { PaddedGridDiv } from '../../styles/grid/StyledGrid';
+} from 'model/Integration';
+import { PaddedGridDiv } from 'styles/grid/StyledGrid';
 
 export const FieldGrid = styled((props) => (
   <PaddedGridDiv {...props}>{props.children}</PaddedGridDiv>
 ))`
   grid-template-columns: 8rem 5fr;
-  span {
+  span,
+  a {
     width: fit-content;
+    margin-left: 1rem;
   }
 `;
 interface OwnProps {

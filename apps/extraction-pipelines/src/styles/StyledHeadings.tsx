@@ -25,3 +25,16 @@ export const HeadingWithUnderline = styled((props) => (
     transition: width 0.3s cubic-bezier(0.645, 0.045, 0.355, 1) 0s;
   }
 `;
+export const StyledTitle2 = styled((props) => (
+  <Title {...props} level={2}>
+    {props.children}
+  </Title>
+))`
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+`;
+export const StyledTitle3 = styled((props) => (
+  <Title {...props} level={3}>
+    {props.children}
+  </Title>
+))``;

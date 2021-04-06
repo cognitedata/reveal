@@ -19,10 +19,7 @@ import { useSelectedIntegration } from 'hooks/useSelectedIntegration';
 import { INTEGRATIONS } from 'utils/baseURL';
 import { useAppEnv } from 'hooks/useAppEnv';
 import InteractiveCopyWithText from 'components/InteractiveCopyWithText';
-import {
-  IntegrationView,
-  Wrapper,
-} from 'components/integration/IntegrationView';
+import { IntegrationView } from 'components/integration/IntegrationView';
 import { useDataSets } from 'hooks/useDataSets';
 import { RouterParams } from 'routing/RoutingConfig';
 import { RunLogsView } from 'components/integration/RunLogsView';
@@ -121,9 +118,7 @@ const IntegrationPage: FunctionComponent<IntegrationPageProps> = () => {
           <RunLogsView integration={integration} />
         </Route>
         <Route path={`${path}/contacts`}>
-          <Wrapper>
-            <ContactsView integration={integration} />
-          </Wrapper>
+          <ContactsView integration={integration} />
         </Route>
       </Switch>
     </FullPageLayout>
