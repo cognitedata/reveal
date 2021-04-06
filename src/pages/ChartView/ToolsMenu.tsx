@@ -10,27 +10,7 @@ export default function ToolsMenu({ update }: Props) {
     <Menu.Submenu
       content={
         <Menu>
-          <Menu.Submenu
-            content={
-              <AppearanceDropdown
-                onColorSelected={(newColor) =>
-                  update({
-                    color: newColor,
-                  })
-                }
-                onWeightSelected={(newWeight) =>
-                  update({
-                    lineWeight: newWeight,
-                  })
-                }
-                onStyleSelected={(newStyle) =>
-                  update({
-                    lineStyle: newStyle,
-                  })
-                }
-              />
-            }
-          >
+          <Menu.Submenu content={<AppearanceDropdown update={update} />}>
             <span>Appearance</span>
           </Menu.Submenu>
           <Menu.Submenu
