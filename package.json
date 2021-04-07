@@ -32,7 +32,7 @@
     "d3-array": "^2.12.0",
     "d3-time-format": "^3.0.0",
     "history": "^4.10.1",
-    "mime-types": "^2.1.29",
+    "mime-types": "^2.1.30",
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
     "query-string": "^7.0.0",
