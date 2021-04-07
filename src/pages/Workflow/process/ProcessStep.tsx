@@ -44,7 +44,13 @@ export default function ProcessStep() {
     const jobs =
       useSelector(
         (state: RootState) => state.processSlice.jobsByFileId[file.id],
-        (prev, next) => prev?.[file.id] === next?.[file.id]
+        (prev, next) => {
+          const values =
+            prev?.map((job, index) => {
+              return next?.[index].status === job.status;
+            }) || [];
+          return values.every((item) => item);
+        }
       ) || [];
     let statusTime = 0;
 
