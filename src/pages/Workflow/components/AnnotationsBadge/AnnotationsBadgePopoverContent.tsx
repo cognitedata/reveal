@@ -53,8 +53,9 @@ export function AnnotationsBadgePopoverContent({
           <Body level={1}> Manually Generated </Body>
         </GridManuallyGenerated>
         <GridManuallyGeneratedCount style={{ color: data.color }}>
-          [{data.manuallyGenerated !== undefined ? data.manuallyGenerated : '–'}
-          ]
+          {data.manuallyGenerated !== undefined
+            ? data.manuallyGenerated
+            : '[–]'}
         </GridManuallyGeneratedCount>
       </GridLayout>
     );

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import {
   FileTable,
@@ -20,11 +20,14 @@ import {
   setSelectedFileId,
   showFileMetadataPreview,
 } from 'src/store/processSlice';
-import { getFileJobsStatus } from 'src/pages/Workflow/components/FileTable/getFileJobsResultingStatus';
-import { GridTable, GridCellProps } from '@cognite/data-exploration';
+
+import { GridCellProps, GridTable } from '@cognite/data-exploration';
 import { resetEditHistory, selectAllFiles } from 'src/store/uploadedFilesSlice';
 import styled from 'styled-components';
+import { getAnnotationCountByModelType } from 'src/store/previewSlice';
+import { DetectionModelType } from 'src/api/types';
 import { FileGridPreview } from '../components/FileGridPreview/FileGridPreview';
+import { AnnotationsBadgeProps } from '../types';
 
 const queryClient = new QueryClient();
 
@@ -33,18 +36,65 @@ export default function ProcessStep() {
   const uploadedFiles = useSelector((state: RootState) =>
     selectAllFiles(state.uploadedFiles)
   );
-  const jobsByFileId = useSelector(
-    (state: RootState) => state.processSlice.jobsByFileId
-  );
 
   const dispatch = useDispatch();
   const [currentView, setCurrentView] = useState<string>('list');
 
   const tableData: Array<TableDataItem> = uploadedFiles.map((file) => {
-    const jobs = jobsByFileId[file.id] || [];
+    const jobs =
+      useSelector(
+        (state: RootState) => state.processSlice.jobsByFileId[file.id],
+        (prev, next) => prev?.[file.id] === next?.[file.id]
+      ) || [];
     let statusTime = 0;
 
-    const annotationsBadgeProps = getFileJobsStatus(jobs, file.id);
+    const gdprCounts = useSelector(
+      (state: RootState) =>
+        getAnnotationCountByModelType(
+          state.previewSlice,
+          file.id.toString(),
+          DetectionModelType.GDPR
+        ),
+      shallowEqual
+    );
+
+    const tagCounts = useSelector(
+      (state: RootState) =>
+        getAnnotationCountByModelType(
+          state.previewSlice,
+          file.id.toString(),
+          DetectionModelType.Tag
+        ),
+      shallowEqual
+    );
+
+    const textAndObjectsCounts = useSelector(
+      (state: RootState) =>
+        getAnnotationCountByModelType(
+          state.previewSlice,
+          file.id.toString(),
+          DetectionModelType.Text
+        ),
+      shallowEqual
+    );
+    const annotationsBadgeProps = {
+      gdpr: {
+        ...gdprCounts,
+        status: jobs.find((item) => item.type === DetectionModelType.GDPR)
+          ?.status,
+      },
+      tag: {
+        ...tagCounts,
+        status: jobs.find((item) => item.type === DetectionModelType.Tag)
+          ?.status,
+      },
+      textAndObjects: {
+        ...textAndObjectsCounts,
+        status: jobs.find((item) => item.type === DetectionModelType.Text)
+          ?.status,
+      },
+    } as AnnotationsBadgeProps;
+
     if (jobs.length) {
       statusTime = Math.max(...jobs.map((job) => job.statusTime));
     }

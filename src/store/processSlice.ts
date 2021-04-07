@@ -128,19 +128,6 @@ const processSlice = createSlice({
     ) {
       state.selectedDetectionModels = action.payload;
     },
-    updateJob(
-      state,
-      action: PayloadAction<{
-        fileId: string | number;
-        job: AnnotationJob;
-      }>
-    ) {
-      const { fileId, job } = action.payload;
-      const existingJobs = state.jobsByFileId[fileId] || [];
-      state.jobsByFileId[fileId] = existingJobs.map((existingJob) =>
-        existingJob.jobId === job.jobId ? job : existingJob
-      );
-    },
     removeJobByType(
       state,
       action: PayloadAction<{
@@ -159,9 +146,14 @@ const processSlice = createSlice({
     builder.addCase(fileProcessUpdate, (state, { payload }) => {
       const { fileId, job } = payload;
       const existingJobs = state.jobsByFileId[fileId] || [];
-      state.jobsByFileId[fileId] = existingJobs.map((existingJob) =>
-        existingJob.jobId === job.jobId ? job : existingJob
+      const currentJob = existingJobs.find(
+        (existingJob) => existingJob.jobId === job.jobId
       );
+      if (currentJob && currentJob.status !== job.status) {
+        state.jobsByFileId[fileId] = existingJobs.map((existingJob) =>
+          existingJob.jobId === job.jobId ? job : existingJob
+        );
+      }
     });
 
     builder.addCase(deleteFilesById.fulfilled, (state, { payload }) => {
@@ -212,7 +204,6 @@ const processSlice = createSlice({
 });
 
 export const {
-  updateJob,
   removeJobByType,
   setSelectedDetectionModels,
   toggleFileMetadataPreview,
