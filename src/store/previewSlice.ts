@@ -156,7 +156,7 @@ const previewSlice = createSlice({
     ) {
       state.imagePreview.editable = action.payload;
     },
-    updateAnnotation(
+    updateAnnotationBoundingBox(
       state,
       action: PayloadAction<{ id: string; boundingBox: AnnotationBoundingBox }>
     ) {
@@ -197,6 +197,51 @@ const previewSlice = createSlice({
     },
     selectAssetsIds(state, action: PayloadAction<number[]>) {
       state.drawer.selectedAssetIds = action.payload;
+    },
+    addTagAnnotations(state, action: PayloadAction<VisionAnnotation[]>) {
+      if (!action.payload.length) {
+        return;
+      }
+      const modelId = AnnotationUtils.getModelId(
+        String(action.payload[0].annotatedResourceId),
+        DetectionModelType.Tag
+      );
+      const model = state.models.byId[modelId];
+      const tagAnnotations =
+        model?.annotations.map((annId) => state.annotations.byId[annId]) || [];
+      const freshTagAnnotations: VisionAnnotation[] = [];
+
+      action.payload.forEach((linkedAnnotation) => {
+        const annWithSameAsset =
+          tagAnnotations.find(
+            (ann) => ann.linkedResourceId === linkedAnnotation.linkedResourceId
+          ) ||
+          tagAnnotations.find(
+            (ann) =>
+              ann.linkedResourceExternalId ===
+              linkedAnnotation.linkedResourceExternalId
+          );
+
+        if (annWithSameAsset) {
+          state.annotations.byId[annWithSameAsset.id] = {
+            ...annWithSameAsset,
+            ...createVisionAnnotationState(
+              linkedAnnotation,
+              annWithSameAsset.id!,
+              modelId,
+              true
+            ),
+            createdTime: annWithSameAsset.createdTime,
+            lastUpdatedTime: annWithSameAsset.lastUpdatedTime,
+          };
+        } else {
+          freshTagAnnotations.push(linkedAnnotation);
+        }
+      });
+
+      if (freshTagAnnotations.length) {
+        addEditAnnotationsToState(state, freshTagAnnotations);
+      }
     },
     resetEditState(state) {
       state.drawer.annotation = null;
@@ -323,10 +368,11 @@ export const {
   showAnnotationDrawer,
   closeAnnotationDrawer,
   setImagePreviewEditState,
-  updateAnnotation,
+  updateAnnotationBoundingBox,
   annotationApproval,
   createAnnotation,
   selectAssetsIds,
+  addTagAnnotations,
   resetEditState,
   resetPreview,
 } = previewSlice.actions;
@@ -390,7 +436,10 @@ export const addEditAnnotationsToState = (
 
     const annotation = state.annotations.byId[id];
     if (annotation) {
-      state.annotations.byId[id] = { ...item, ...annotation };
+      state.annotations.byId[id] = {
+        ...createVisionAnnotationState(item, id, modelId, true),
+        ...annotation,
+      };
     } else {
       if (state.models.byId[modelId].annotations.includes(id)) {
         // todo: remove this check after development complete
@@ -401,12 +450,12 @@ export const addEditAnnotationsToState = (
 
       state.models.byId[modelId].annotations.push(id);
 
-      state.annotations.byId[id] = {
-        ...item,
+      state.annotations.byId[id] = createVisionAnnotationState(
+        item,
         id,
         modelId,
-        show: true,
-      };
+        true
+      );
     }
   });
 
@@ -569,3 +618,17 @@ export const getAnnotationCountByModelType = createSelector(
     } as AnnotationCounts;
   }
 );
+
+const createVisionAnnotationState = (
+  annotation: VisionAnnotation,
+  id: string,
+  modelId: string,
+  show = true
+): VisionAnnotationState => {
+  return {
+    ...annotation,
+    id,
+    modelId,
+    show,
+  };
+};

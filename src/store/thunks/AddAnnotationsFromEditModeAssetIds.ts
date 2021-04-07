@@ -4,17 +4,18 @@ import { AnnotationStatus, AnnotationUtils } from 'src/utils/AnnotationUtils';
 import { fetchAssets } from 'src/store/thunks/fetchAssets';
 import { UpdateFiles } from 'src/store/thunks/UpdateFiles';
 import { DetectionModelType } from 'src/api/types';
-import { addAnnotations } from 'src/store/commonActions';
-import { resetEditState } from '../previewSlice';
+import { FileInfo } from '@cognite/cdf-sdk-singleton';
+import { addTagAnnotations, resetEditState } from '../previewSlice';
 
 export const AddAnnotationsFromEditModeAssetIds = createAsyncThunk<
   void,
-  string,
+  FileInfo,
   ThunkConfig
 >(
   'AddAnnotationsFromEditModeAssetIds',
-  async (fileId, { getState, dispatch }) => {
-    const editState = getState().previewSlice.drawer;
+  async (file, { getState, dispatch }) => {
+    const annotationState = getState().previewSlice;
+    const editState = annotationState.drawer;
 
     const assetInternalIds = editState.selectedAssetIds?.map((id) => ({ id }));
 
@@ -31,38 +32,28 @@ export const AddAnnotationsFromEditModeAssetIds = createAsyncThunk<
         AnnotationUtils.createVisionAnnotationStub(
           asset.name,
           DetectionModelType.Tag,
-          parseInt(fileId, 10),
+          file.id,
           boundingBox,
           undefined,
           'user',
           AnnotationStatus.Verified,
           undefined,
           'vision/tagdetection',
-          undefined,
+          file.externalId,
           asset.id,
           asset.externalId,
-          boundingBox
-            ? undefined
-            : AnnotationUtils.generateAnnotationId(
-                fileId,
-                'vision/tagdetection',
-                asset.id
-              ),
           undefined,
           undefined,
-          !boundingBox
+          undefined,
+          false
         )
       );
-      // const annotations = assetVisionAnnotations.map((item) =>
-      //   AnnotationUtils.convertToAnnotation(item)
-      // );
-      // dispatch(SaveAnnotations(annotations));
-      dispatch(addAnnotations(assetVisionAnnotations));
+      dispatch(addTagAnnotations(assetVisionAnnotations));
 
       dispatch(
         UpdateFiles([
           {
-            id: Number(fileId),
+            id: Number(file.id),
             update: {
               assetIds: {
                 add: editState.selectedAssetIds,

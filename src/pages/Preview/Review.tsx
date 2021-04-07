@@ -43,7 +43,7 @@ const ToolBar = styled.div`
   width: 100%;
   box-sizing: border-box;
   display: grid;
-  grid-template-columns: 70px auto 130px 150px;
+  grid-template-columns: 70px auto 130px;
   grid-column-gap: 16px;
 `;
 
@@ -105,8 +105,9 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
     if (drawerMode === AnnotationDrawerMode.AddAnnotation) {
       dispatch(createAnnotation({ fileId, type: drawerMode }));
     } else if (drawerMode === AnnotationDrawerMode.LinkAsset) {
-      dispatch(AddAnnotationsFromEditModeAssetIds(fileId));
+      dispatch(AddAnnotationsFromEditModeAssetIds(file));
     }
+    dispatch(closeAnnotationDrawer());
   };
 
   const handleOnDrawerDelete = () => {
@@ -131,9 +132,6 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
           </Button>
           <Title level={3}>{file?.name}</Title>
           <DeleteButton onConfirm={handleFileDelete} />
-          <Button type="primary" shape="round" icon="Upload">
-            Save To CDF
-          </Button>
         </ToolBar>
         {isVideo(file) ? (
           <VideoReview fileId={fileId} />
