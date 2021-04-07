@@ -173,6 +173,7 @@ const PreviewCell = styled.div`
     background: #fff;
     border-top-left-radius: inherit;
     border-top-right-radius: inherit;
+    overflow: auto;
   }
   .cogs-body-1 {
     overflow: hidden;
