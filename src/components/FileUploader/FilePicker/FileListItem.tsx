@@ -13,23 +13,21 @@ type FileListItemProps = {
 export function FileListItem({ file, onRemove }: FileListItemProps) {
   return (
     <FileListItemContainer>
-      <DetailStyled strong>
+      <div className="nameAndIcon">
         <Icon
           type="Image"
           style={{
             marginRight: '16px',
           }}
         />
-        {file.name}
-      </DetailStyled>
-
-      <DetailStyled strong style={{ minWidth: 55, textAlign: 'right' }}>
+        <DetailStyled strong>{file.name}</DetailStyled>
+      </div>
+      <div className="sizeAndStatus">
         <FileStatusColumn file={file} />
-      </DetailStyled>
-
-      {file.status !== 'done' && (
-        <IconRemove type="XCompact" onClick={() => onRemove(file)} />
-      )}
+        {file.status !== 'done' && (
+          <IconRemove type="XCompact" onClick={() => onRemove(file)} />
+        )}
+      </div>
     </FileListItemContainer>
   );
 }
@@ -40,7 +38,9 @@ function FileStatusColumn({ file }: FileStatusColumnProps) {
   if (file.status === 'done') {
     return (
       <>
-        {getHumanReadableFileSize(file.size, 0)}
+        <DetailStyled strong>
+          {getHumanReadableFileSize(file.size, 0)}
+        </DetailStyled>
         <Icon
           type="Check"
           style={{ color: '#31C25A', marginLeft: '17.45px' }}
@@ -56,13 +56,16 @@ function FileStatusColumn({ file }: FileStatusColumnProps) {
         type="line"
         strokeColor="#31C25A"
         showInfo={false}
+        style={{ width: '50%' }}
       />
     );
   }
   if (file.status === 'paused') {
-    return <>Paused</>;
+    return <DetailStyled strong>Paused</DetailStyled>;
   }
-  return <>{getHumanReadableFileSize(file.size, 0)}</>;
+  return (
+    <DetailStyled strong>{getHumanReadableFileSize(file.size, 0)}</DetailStyled>
+  );
 }
 
 const FileListItemContainer = styled.div`
@@ -71,13 +74,28 @@ const FileListItemContainer = styled.div`
   color: #8c8c8c;
   justify-content: space-between;
   align-items: center;
+  flex-direction: row;
+
+  .nameAndIcon {
+    display: flex;
+    color: inherit !important;
+  }
+
+  .sizeAndStatus {
+    display: flex;
+    justify-content: flex-end;
+    color: inherit !important;
+    width: 200px;
+  }
 `;
 
 const DetailStyled = styled(Detail)`
   letter-spacing: -0.004em !important;
   color: inherit !important;
-  display: flex;
-  flex-direction: row;
+  text-overflow: ellipsis !important;
+  white-space: nowrap;
+  max-width: 200px;
+  overflow: hidden;
 `;
 
 const IconRemove = styled(Icon)`
