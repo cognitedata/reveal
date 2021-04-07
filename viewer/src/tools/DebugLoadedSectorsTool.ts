@@ -17,6 +17,7 @@ export type DebugLoadedSectorsToolOptions = {
   showDetailedSectors?: boolean;
   showDiscardedSectors?: boolean;
   colorBy?: 'depth' | 'lod' | 'loadedTimestamp';
+  oldSectorThreshold: number;
   leafsOnly?: boolean;
 };
 
@@ -40,6 +41,7 @@ export class DebugLoadedSectorsTool extends Cognite3DViewerToolBase {
       showDiscardedSectors: false,
       showSimpleSectors: true,
       colorBy: 'lod',
+      oldSectorThreshold: 10000,
       leafsOnly: false,
       ...options
     };
@@ -106,14 +108,11 @@ export class DebugLoadedSectorsTool extends Cognite3DViewerToolBase {
           }
         }
         case 'loadedTimestamp': {
-          debugger;
-          const timestampRange = allSelectedNodes.reduce(
-            (v, p) => ({ min: Math.min(p.updatedTimestamp, v.min), max: Math.max(p.updatedTimestamp, v.max) }),
-            { min: Infinity, max: -Infinity }
-          );
-          // Give more precision to recently loaded sectors
-          const s =
-            1.0 - Math.pow((node.updatedTimestamp - timestampRange.min) / (timestampRange.max - timestampRange.min), 4);
+          // Note! Horribly slow since we do this for every sector, but since this is a debug tool
+          // we consider it OK
+          const nodesByTimestamp = [...allSelectedNodes].sort((a, b) => a.updatedTimestamp - b.updatedTimestamp);
+          const indexOfNode = nodesByTimestamp.findIndex(x => x === node);
+          const s = (nodesByTimestamp.length - 1 - indexOfNode) / Math.max(nodesByTimestamp.length - 1, 1);
           return new THREE.Color(Colors.green).lerpHSL(Colors.red, s);
         }
 
