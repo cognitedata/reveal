@@ -8,6 +8,7 @@ import styled from 'styled-components';
 import { AnnotationsBadge } from '../AnnotationsBadge/AnnotationsBadge';
 import { TableDataItem } from '../FileTable/FileTable';
 import { AnnotationsBadgePopoverContent } from '../AnnotationsBadge/AnnotationsBadgePopoverContent';
+import { AnnotationsBadgeProps } from '../../types';
 
 export const FileGridPreview = ({
   item,
@@ -79,6 +80,14 @@ export const FileGridPreview = ({
       <Menu.Item>Delete</Menu.Item>
     </Menu>
   );
+  const annotations = Object.keys(item.annotationsBadgeProps) as Array<
+    keyof AnnotationsBadgeProps
+  >;
+  const reviewDisabled = annotations.some((key) =>
+    ['Queued', 'Running'].includes(
+      item.annotationsBadgeProps[key]?.status || ''
+    )
+  );
 
   return (
     <PreviewCell style={style}>
@@ -111,6 +120,7 @@ export const FileGridPreview = ({
               iconPlacement="right"
               onClick={handleReview}
               size="small"
+              disabled={reviewDisabled}
             >
               Review
             </Button>
