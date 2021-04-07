@@ -7,7 +7,6 @@ import {
   TreeLoadMoreNode,
 } from 'src/pages/RevisionDetails/components/TreeView/types';
 import { Cognite3DModel, Cognite3DViewer } from '@cognite/reveal';
-import { fireErrorNotification, logToSentry } from 'src/utils';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from 'src/store';
 import {
@@ -25,6 +24,8 @@ import {
 import Spinner from 'src/components/Spinner';
 import styled from 'styled-components';
 import { treeViewFocusContainerId } from 'src/pages/RevisionDetails/components/ToolbarTreeView/treeViewFocusContainerId';
+import ErrorBoundary from 'src/components/ErrorBoundary';
+import { Button, Title } from '@cognite/cogs.js';
 import { NodeInfoModal } from './NodeInfoModal';
 
 import { useResizeHandler } from './hooks/useResizeHander';
@@ -63,14 +64,6 @@ function ToolbarTreeViewComponent(props: TreeViewWrapperProps) {
       dispatch(resetTreeViewState());
     };
   }, [modelId, revisionId, dispatch]);
-
-  useEffect(() => {
-    if (state.error) {
-      fireErrorNotification({
-        message: state.error.message,
-      });
-    }
-  }, [state.error]);
 
   useSelectedNodesHighlights({
     viewer: props.viewer,
@@ -128,8 +121,7 @@ function ToolbarTreeViewComponent(props: TreeViewWrapperProps) {
     return <Spinner />;
   }
   if (state.error) {
-    logToSentry(state.error);
-    return <p>{state.error.message}</p>;
+    throw state.error;
   }
   return (
     <TreeView
@@ -165,29 +157,58 @@ export function ToolbarTreeView({ style, ...restProps }: ToolbarTreeViewProps) {
   >(undefined);
 
   return (
-    <Container>
-      <Container
-        style={style}
-        ref={treeViewContainer}
-        id={treeViewFocusContainerId}
-        tabIndex={
-          -1 /* antd Tree doesn't support keyboard handling, focus, tabindex, that's why it's done here */
-        }
-      >
-        <ToolbarTreeViewComponent
-          {...restProps}
-          height={treeViewHeight}
-          onNodeInfoRequested={(treeIndex) => {
-            setNodeInfoTreeIndex(treeIndex);
-            setInfoModalOpen(true);
-          }}
+    <ErrorBoundary
+      FallbackComponent={({ error, resetErrorBoundary }) => {
+        return (
+          <div role="alert" style={{ maxHeight: '100%', textAlign: 'left' }}>
+            <Title level={4}>Something went wrong.</Title>
+
+            <div style={{ margin: '16px 0' }}>
+              <p>We have been notified and will fix it.</p>
+              <Button onClick={resetErrorBoundary} type="primary">
+                Reload component
+              </Button>
+            </div>
+
+            <pre
+              style={{
+                textAlign: 'left',
+                whiteSpace: 'pre-wrap',
+                maxWidth: '100%',
+                maxHeight: '100%',
+                overflow: 'auto',
+              }}
+            >
+              {error.message}
+            </pre>
+          </div>
+        );
+      }}
+    >
+      <Container>
+        <Container
+          style={style}
+          ref={treeViewContainer}
+          id={treeViewFocusContainerId}
+          tabIndex={
+            -1 /* antd Tree doesn't support keyboard handling, focus, tabindex, that's why it's done here */
+          }
+        >
+          <ToolbarTreeViewComponent
+            {...restProps}
+            height={treeViewHeight}
+            onNodeInfoRequested={(treeIndex) => {
+              setNodeInfoTreeIndex(treeIndex);
+              setInfoModalOpen(true);
+            }}
+          />
+        </Container>
+        <NodeInfoModal
+          treeIndex={nodeInfoTreeIndex}
+          onClose={() => setInfoModalOpen(false)}
+          visible={infoModalOpen}
         />
       </Container>
-      <NodeInfoModal
-        treeIndex={nodeInfoTreeIndex}
-        onClose={() => setInfoModalOpen(false)}
-        visible={infoModalOpen}
-      />
-    </Container>
+    </ErrorBoundary>
   );
 }

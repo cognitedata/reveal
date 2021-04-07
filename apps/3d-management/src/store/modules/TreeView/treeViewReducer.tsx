@@ -182,6 +182,11 @@ export default function treeDataReducer(
         error: action.payload.error,
       };
     }
+    case 'treeView/resetState': {
+      return {
+        ...getInitialState(),
+      };
+    }
   }
 
   return prevState;

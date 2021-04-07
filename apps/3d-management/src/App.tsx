@@ -24,36 +24,36 @@ export const App = () => {
   const queryCache = new QueryCache();
 
   return (
-    <ErrorBoundary>
-      <GlobalStyles>
-        <AuthWrapper
-          subAppName={subAppName}
-          showLoader
-          includeGroups
-          loadingScreen={<Loader />}
-        >
-          <Provider store={store}>
-            <ThemeProvider theme={theme}>
-              <ConnectedRouter history={history}>
-                <FlagProvider
-                  appName={subAppName}
-                  apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
-                  projectName={projectName}
-                >
-                  <SubAppWrapper>
+    <GlobalStyles>
+      <AuthWrapper
+        subAppName={subAppName}
+        showLoader
+        includeGroups
+        loadingScreen={<Loader />}
+      >
+        <Provider store={store}>
+          <ThemeProvider theme={theme}>
+            <ConnectedRouter history={history}>
+              <FlagProvider
+                appName={subAppName}
+                apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
+                projectName={projectName}
+              >
+                <SubAppWrapper>
+                  <ErrorBoundary>
                     <PageTitle title={APP_TITLE} />
                     <ReactQueryCacheProvider queryCache={queryCache}>
                       <ReactQueryDevtools initialIsOpen={false} />
                       <Routes />
                     </ReactQueryCacheProvider>
-                  </SubAppWrapper>
-                </FlagProvider>
-              </ConnectedRouter>
-            </ThemeProvider>
-          </Provider>
-        </AuthWrapper>
-      </GlobalStyles>
-    </ErrorBoundary>
+                  </ErrorBoundary>
+                </SubAppWrapper>
+              </FlagProvider>
+            </ConnectedRouter>
+          </ThemeProvider>
+        </Provider>
+      </AuthWrapper>
+    </GlobalStyles>
   );
 };
 
