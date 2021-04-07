@@ -68,7 +68,7 @@ export function AnnotationsBadgePopoverContent({
         row({
           status: gdpr.status,
           title: 'GDPR',
-          icon: 'WarningStroke',
+          icon: 'WarningFilled',
           backgroundColor: '#FBE9ED',
           color: '#B30539',
           modelGenerated: gdpr.modelGenerated,
