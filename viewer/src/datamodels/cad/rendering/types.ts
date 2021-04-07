@@ -15,7 +15,6 @@ export type InstancedMeshFile = {
   readonly fileId: number;
   readonly indices: Uint32Array;
   readonly vertices: Float32Array;
-  readonly normals: Float32Array | undefined;
   readonly instances: InstancedMesh[];
 };
 

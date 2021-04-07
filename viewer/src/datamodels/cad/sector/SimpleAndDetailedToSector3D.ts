@@ -8,7 +8,7 @@ import { OperatorFunction, Observable, asapScheduler, scheduled } from 'rxjs';
 import { filter, map, mergeAll, publish } from 'rxjs/operators';
 
 import { CadMaterialManager } from '../CadMaterialManager';
-import { SectorQuads } from '../rendering/types';
+import { InstancedMeshFile, SectorQuads } from '../rendering/types';
 
 import { SectorGeometry, ParsedSector } from './types';
 import { LevelOfDetail } from './LevelOfDetail';
@@ -22,7 +22,7 @@ export class SimpleAndDetailedToSector3D {
     this.materialManager = materialManager;
   }
 
-  transform(): OperatorFunction<ParsedSector, THREE.Group> {
+  transform(): OperatorFunction<ParsedSector, { sectorMeshes: THREE.Group; instancedMeshes: InstancedMeshFile[] }> {
     return publish((source: Observable<ParsedSector>) => {
       const detailedObservable: Observable<ParsedSector> = source.pipe(
         filter((parsedSector: ParsedSector) => parsedSector.levelOfDetail === LevelOfDetail.Detailed)
