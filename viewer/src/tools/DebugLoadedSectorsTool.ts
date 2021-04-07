@@ -16,7 +16,7 @@ export type DebugLoadedSectorsToolOptions = {
   showSimpleSectors?: boolean;
   showDetailedSectors?: boolean;
   showDiscardedSectors?: boolean;
-  colorBy?: 'depth' | 'lod';
+  colorBy?: 'depth' | 'lod' | 'loadedTimestamp';
   leafsOnly?: boolean;
 };
 
@@ -65,29 +65,35 @@ export class DebugLoadedSectorsTool extends Cognite3DViewerToolBase {
     shouldShowLod[LevelOfDetail.Simple] = this._options.showSimpleSectors;
     shouldShowLod[LevelOfDetail.Detailed] = this._options.showDetailedSectors;
 
+    const selectedSectorNodes: SectorNode[] = [];
     this._model.cadNode.traverse(node => {
       if (isSectorNode(node)) {
         const sectorNode = node as SectorNode;
 
         if (shouldShowLod[sectorNode.levelOfDetail] && (!this._options.leafsOnly || isLeaf(sectorNode))) {
-          const bboxNode = this.createBboxNodeFor(sectorNode);
-          this._boundingBoxes.add(bboxNode);
+          selectedSectorNodes.push(sectorNode);
         }
       }
+    });
+
+    selectedSectorNodes.forEach(sectorNode => {
+      const bboxNode = this.createBboxNodeFor(sectorNode, selectedSectorNodes);
+      this._boundingBoxes.add(bboxNode);
     });
     this._boundingBoxes.updateMatrixWorld(true);
 
     this._viewer.forceRerender();
   }
 
-  private createBboxNodeFor(node: SectorNode) {
+  private createBboxNodeFor(node: SectorNode, allSelectedNodes: SectorNode[]) {
     const options = this._options;
     function determineColor() {
       switch (options.colorBy) {
-        case 'depth':
+        case 'depth': {
           const s = Math.min(1.0, node.depth / 8);
           return new THREE.Color(Colors.green).lerpHSL(Colors.red, s);
-        case 'lod':
+        }
+        case 'lod': {
           switch (node.levelOfDetail) {
             case LevelOfDetail.Simple:
               return Colors.yellow;
@@ -98,6 +104,19 @@ export class DebugLoadedSectorsTool extends Cognite3DViewerToolBase {
             default:
               assertNever(node.levelOfDetail);
           }
+        }
+        case 'loadedTimestamp': {
+          debugger;
+          const timestampRange = allSelectedNodes.reduce(
+            (v, p) => ({ min: Math.min(p.updatedTimestamp, v.min), max: Math.max(p.updatedTimestamp, v.max) }),
+            { min: Infinity, max: -Infinity }
+          );
+          // Give more precision to recently loaded sectors
+          const s =
+            1.0 - Math.pow((node.updatedTimestamp - timestampRange.min) / (timestampRange.max - timestampRange.min), 4);
+          return new THREE.Color(Colors.green).lerpHSL(Colors.red, s);
+        }
+
         default:
           assertNever(options.colorBy);
       }
