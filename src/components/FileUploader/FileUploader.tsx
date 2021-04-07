@@ -11,8 +11,9 @@ import {
 } from 'src/components/FileUploader/FilePicker/types';
 import FilePicker from 'src/components/FileUploader/FilePicker';
 import exifr from 'exifr';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
+import { setAllFilesStatus } from 'src/store/uploadedFilesSlice';
 import { SpacedRow } from './SpacedRow';
 import { getMIMEType } from './utils/FileUtils';
 import { sleep } from './utils';
@@ -141,8 +142,7 @@ export const FileUploader = ({
   ...props
 }: FileUploaderProps) => {
   const sdk = useSDK();
-  const { dataSetIds } = useSelector((state: RootState) => state.uploadedFiles);
-  const { extractExif } = useSelector(
+  const { dataSetIds, extractExif } = useSelector(
     (state: RootState) => state.uploadedFiles
   );
   const [fileList, setFileList] = useState<Array<CogsFileInfo | CogsFile>>(
@@ -438,6 +438,7 @@ function UploadControlButtons({
   onUploadStop,
   onRemoveFiles,
 }: UploadControlButtonsProps) {
+  const dispatch = useDispatch();
   let uploaderButton;
   let uploadStatus = STATUS.NO_FILES;
   if (fileList.find(({ status }) => status === 'uploading')) {
@@ -510,6 +511,14 @@ function UploadControlButtons({
     default:
       uploaderButton = null;
   }
+
+  useEffect(() => {
+    if (uploadStatus === STATUS.DONE) {
+      dispatch(setAllFilesStatus(true));
+    } else {
+      dispatch(setAllFilesStatus(false));
+    }
+  }, [uploadStatus]);
 
   return <SpacedRow style={{ marginTop: '12px' }}>{uploaderButton}</SpacedRow>;
 }

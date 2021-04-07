@@ -12,7 +12,9 @@ import { selectAllFiles } from 'src/store/uploadedFilesSlice';
 
 export default function BottomNavContainer() {
   const history = useHistory();
-
+  const { allFilesStatus } = useSelector(
+    (state: RootState) => state.uploadedFiles
+  );
   const files = useSelector((state: RootState) =>
     selectAllFiles(state.uploadedFiles)
   );
@@ -32,7 +34,7 @@ export default function BottomNavContainer() {
                 },
               }}
               nextBtnProps={{
-                disabled: !files.length,
+                disabled: !allFilesStatus,
                 onClick() {
                   history.push(getLink(workflowRoutes.process));
                 },
