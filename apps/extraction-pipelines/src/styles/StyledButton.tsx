@@ -7,7 +7,7 @@ type ButtonPlacedProps = DivFlexProps & { mb?: number };
 export const ButtonPlaced = styled(Button)`
   align-self: ${(props: ButtonPlacedProps) => props.self ?? 'flex-start'};
   margin-bottom: ${(props: ButtonPlacedProps) =>
-    `${props.mb ? `${props.mb}rem` : bottomSpacing}`};
+    `${props.mb !== undefined ? `${props.mb}rem` : bottomSpacing}`};
 `;
 
 export const LinkWrapper = styled.div`

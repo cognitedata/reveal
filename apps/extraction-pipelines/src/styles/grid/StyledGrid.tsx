@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { Colors } from '@cognite/cogs.js';
+import { pageDividerBorder } from 'styles/StyledVariables';
 
 export const PaddedGridDiv = styled.div`
   display: grid;
@@ -79,7 +80,7 @@ export const MainFullWidthGrid = styled.div`
   grid-area: main;
   display: grid;
   grid-template-columns: auto;
-  border-top: 0.0625rem solid ${Colors['greyscale-grey3'].hex()};
+  border-top: ${pageDividerBorder};
 `;
 
 export const SimpleGrid = styled.div`

@@ -9,11 +9,8 @@ import {
   ORIGIN_DEV,
   PROJECT_ITERA_INT_GREEN,
 } from 'utils/baseURL';
-import { EMAIL_LABEL, NAME_LABEL, NEXT, WIZARD_HEADING } from 'utils/constants';
-import {
-  CREATE_INTEGRATION_PAGE_PATH,
-  withTenant,
-} from 'routing/CreateRouteConfig';
+import { EMAIL_LABEL, NAME_LABEL, NEXT } from 'utils/constants';
+import { NAME_PAGE_PATH, withTenant } from 'routing/CreateRouteConfig';
 import 'utils/test/windowLocation';
 import { INTEGRATION_DOCUMENTATION_HEADING } from 'pages/create/DocumentationPage';
 import { INTEGRATION_SCHEDULE_HEADING } from 'pages/create/SchedulePage';
@@ -39,7 +36,7 @@ describe('Register', () => {
     project: PROJECT_ITERA_INT_GREEN,
     cdfEnv: CDF_ENV_GREENFIELD,
     origin: ORIGIN_DEV,
-    route: withTenant(CREATE_INTEGRATION_PAGE_PATH),
+    route: withTenant(NAME_PAGE_PATH),
     initRegisterIntegration: {},
   };
   beforeEach(() => {
@@ -57,10 +54,6 @@ describe('Register', () => {
       </React.Suspense>,
       { ...props }
     );
-
-    const lazyElement = await screen.findByText(WIZARD_HEADING);
-    expect(lazyElement).toBeInTheDocument();
-    fireEvent.click(screen.getByText(NEXT));
 
     // // name page
     await waitFor(() => {

@@ -6,7 +6,7 @@ import {
   UseControllerOptions,
 } from 'react-hook-form';
 
-interface InputControllerProps
+export interface InputControllerProps
   extends Pick<UseControllerOptions, 'name' | 'control' | 'defaultValue'> {
   inputId: string;
 }

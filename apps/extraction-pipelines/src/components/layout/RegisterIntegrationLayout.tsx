@@ -6,7 +6,7 @@ import {
   MainWithAsidesWrapper,
 } from 'styles/StyledPage';
 import { INTEGRATIONS_OVERVIEW_PAGE_PATH } from 'routing/RoutingConfig';
-import { INTEGRATION_OVERVIEW, REGISTER_INTEGRATION } from 'utils/constants';
+import { INTEGRATION_OVERVIEW, ADD_INTEGRATION } from 'utils/constants';
 import { BackBtn } from 'components/buttons/BackBtn';
 import { PageTitle } from 'styles/StyledHeadings';
 
@@ -23,7 +23,7 @@ export const RegisterIntegrationLayout: FunctionComponent<RegisterIntegrationLay
       <GridBreadCrumbsWrapper to={createLink(INTEGRATIONS_OVERVIEW_PAGE_PATH)}>
         {INTEGRATION_OVERVIEW}
       </GridBreadCrumbsWrapper>
-      <PageTitle>{REGISTER_INTEGRATION}</PageTitle>
+      <PageTitle>{ADD_INTEGRATION}</PageTitle>
       <MainWithAsidesWrapper>
         {backPath && <BackBtn path={backPath} />}
         {children}

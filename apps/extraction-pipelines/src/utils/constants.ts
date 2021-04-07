@@ -66,7 +66,7 @@ export const RUNS: Readonly<string> = 'Runs';
 export const CONTACTS: Readonly<string> = 'Contacts';
 
 // Page headings
-export const REGISTER_INTEGRATION: Readonly<string> = 'Register integration';
+export const ADD_INTEGRATION: Readonly<string> = 'Add integration';
 
 // Tracking constants
 export const ACTION: Readonly<string> = 'Action';

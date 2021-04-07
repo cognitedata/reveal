@@ -1,10 +1,9 @@
 import React, { FunctionComponent } from 'react';
 import { Colors } from '@cognite/cogs.js';
 import { useHistory } from 'react-router-dom';
-import { useForm, FormProvider } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { ErrorMessage } from '@hookform/error-message';
 import styled from 'styled-components';
 import { createLink } from '@cognite/cdf-utilities';
 import { ButtonPlaced } from 'styles/StyledButton';
@@ -22,6 +21,7 @@ import {
   MetaData,
   RegisterMetaData,
 } from 'components/inputs/metadata/RegisterMetaData';
+import { FullTextArea } from 'components/inputs/FullTextArea';
 
 const DividerLine = styled.hr`
   height: 0.125rem;
@@ -34,10 +34,10 @@ const WithBottomBorder = styled.div`
   padding-bottom: 2rem;
   border-bottom: 0.125rem solid ${Colors['greyscale-grey3'].hex()};
 `;
-const StyledTextArea = styled.textarea`
-  width: 80%;
+export const StyledTextArea = styled.textarea`
   height: 10rem;
   padding-bottom: 2rem;
+  margin-bottom: 2rem;
   border-bottom: 0.125rem solid ${Colors['greyscale-grey3'].hex()};
   &.has-error {
     border-color: ${Colors.danger.hex()};
@@ -59,10 +59,13 @@ interface DocumentationFormInput {
 
 export const INTEGRATION_DOCUMENTATION_HEADING: Readonly<string> =
   'Integration documentation';
-export const DESCRIPTION_LABEL: Readonly<string> = 'Describe the integration';
-const documentationSchema = yup.object().shape({
+export const DESCRIPTION_HINT: Readonly<string> =
+  'For users of data a good description of data content and other relevant metrics connected to data will give value for them to know the data better. Please enter a description.';
+export const DESCRIPTION_LABEL: Readonly<string> = 'Description (optional)';
+export const descriptionRule = {
   description: yup.string(),
-});
+};
+const documentationSchema = yup.object().shape(descriptionRule);
 const DocumentationPage: FunctionComponent<DescriptionPageProps> = () => {
   const history = useHistory();
   const {
@@ -79,7 +82,7 @@ const DocumentationPage: FunctionComponent<DescriptionPageProps> = () => {
     },
     reValidateMode: 'onSubmit',
   });
-  const { register, handleSubmit, errors, setError } = methods;
+  const { control, handleSubmit, errors, setError } = methods;
   const handleNext = (fields: DocumentationFormInput) => {
     setStoredIntegration((prev) => ({
       ...prev,
@@ -128,28 +131,14 @@ const DocumentationPage: FunctionComponent<DescriptionPageProps> = () => {
       </WithBottomBorder>
       <FormProvider {...methods}>
         <CreateFormWrapper onSubmit={handleSubmit(handleNext)}>
-          <label htmlFor="integration-description" className="input-label">
-            {DESCRIPTION_LABEL}
-          </label>
-          <span id="description-hint" className="input-hint" />
-          <ErrorMessage
+          <FullTextArea
+            name="description"
+            control={control}
+            defaultValue=""
+            labelText={DESCRIPTION_LABEL}
+            hintText={DESCRIPTION_HINT}
+            inputId="integration-description"
             errors={errors}
-            name="description"
-            render={({ message }) => (
-              <span id="description-error" className="error-message">
-                {message}
-              </span>
-            )}
-          />
-          <StyledTextArea
-            id="integration-description"
-            name="description"
-            cols={30}
-            rows={10}
-            ref={register}
-            className={`cogs-input ${errors.description ? 'has-error' : ''}`}
-            aria-invalid={!!errors.description}
-            aria-describedby="description-hint description-error"
           />
           <DividerLine />
           <RegisterMetaData />

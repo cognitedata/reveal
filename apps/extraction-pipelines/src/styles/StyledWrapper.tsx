@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import React from 'react';
+import { DivFlex } from 'styles/flex/StyledFlex';
 
 export const WrapperMargin = styled.div`
   margin: 1rem;
@@ -17,4 +18,14 @@ export const CenterFullVH = styled.div`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+`;
+
+export const PriSecBtnWrapper = styled((props) => (
+  <DivFlex content="center" {...props}>
+    {props.children}
+  </DivFlex>
+))`
+  .cogs-btn-primary {
+    margin-right: 2rem;
+  }
 `;
