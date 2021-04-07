@@ -3,7 +3,6 @@
  */
 
 import * as THREE from 'three';
-import { Matrix4 } from 'three';
 import { InstancedMeshManager } from './InstancedMeshManager';
 import { MaterialManager } from './MaterialManager';
 import { InstancedMesh, InstancedMeshFile } from './rendering/types';
@@ -38,7 +37,7 @@ describe('intersectCadNodes', () => {
       triangleCount: 3,
       treeIndices: new Float32Array([0]),
       colors: new Uint8Array([1, 0, 0, 0]),
-      instanceMatrices: new Float32Array(new Matrix4().toArray())
+      instanceMatrices: new Float32Array(new THREE.Matrix4().toArray())
     };
 
     const instancedMeshFile: InstancedMeshFile = {
@@ -85,7 +84,7 @@ describe('intersectCadNodes', () => {
       triangleCount: 3,
       treeIndices: new Float32Array([0]),
       colors: new Uint8Array([1, 0, 0, 0]),
-      instanceMatrices: new Float32Array(new Matrix4().toArray())
+      instanceMatrices: new Float32Array(new THREE.Matrix4().toArray())
     };
 
     const instancedMeshFile: InstancedMeshFile = {
