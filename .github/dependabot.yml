@@ -7,15 +7,7 @@ updates:
   schedule:
     interval: "weekly"
     day: "sunday"
+  rebase-strategy: "auto"
   open-pull-requests-limit: 10
   labels:
   - auto-merge
-  ignore:
-  - dependency-name: eslint
-    versions:
-    - ">= 7.a"
-    - "< 8"
-  - dependency-name: history
-    versions:
-    - ">= 5.a"
-    - "< 6"
