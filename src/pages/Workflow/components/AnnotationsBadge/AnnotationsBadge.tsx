@@ -73,7 +73,7 @@ export function AnnotationsBadge({
         </Button>
       )}
       {!gdpr?.status && !tag?.status && !textAndObjects?.status && (
-        <>No annatations</>
+        <>No annotations</>
       )}
     </>
   );
