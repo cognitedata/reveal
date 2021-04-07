@@ -28,7 +28,7 @@ describe('ModelStateHandler', () => {
   test('hasStateChanged for added model, updates sectors', () => {
     const modelStateHandler = new ModelStateHandler();
     modelStateHandler.addModel(simple.blobUrl);
-    const consumedSimple: ConsumedSector = { ...simple, group: undefined };
+    const consumedSimple: ConsumedSector = { ...simple, group: undefined, instancedMeshes: undefined };
 
     modelStateHandler.updateState(consumedSimple);
     expect(modelStateHandler.hasStateChanged(simple)).toBe(false);
@@ -44,7 +44,7 @@ describe('ModelStateHandler', () => {
     modelStateHandler.addModel(simple.blobUrl);
     const sectors = [simple, detailed, discarded];
     sectors.forEach(wantedSector => {
-      const consumedSector = { ...wantedSector, group: undefined };
+      const consumedSector: ConsumedSector = { ...wantedSector, group: undefined, instancedMeshes: undefined };
       modelStateHandler.updateState(consumedSector);
       expect(modelStateHandler.hasStateChanged(wantedSector)).toBe(false);
     });

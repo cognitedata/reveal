@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 
 import { SectorGeometry, SectorScene } from './sector/types';
-import { SectorQuads } from './rendering/types';
+import { InstancedMeshFile, SectorQuads } from './rendering/types';
 
 import { NodeAppearanceProvider } from './NodeAppearance';
 
@@ -17,6 +17,7 @@ import { CadModelMetadata } from './CadModelMetadata';
 import { suggestCameraConfig } from './cameraconfig';
 import { toThreeVector3, NumericRange } from '../../utilities';
 import { EventTrigger } from '../../utilities/events';
+import { InstancedMeshManager } from './InstancedMeshManager';
 
 export type ParseCallbackDelegate = (parsed: { lod: string; data: SectorGeometry | SectorQuads }) => void;
 
@@ -45,6 +46,7 @@ export class CadNode extends THREE.Object3D {
   private readonly _events = {
     loadingHintsChanged: new EventTrigger<LoadingHintsChangeListener>()
   };
+  private readonly _instancedMeshManager: InstancedMeshManager;
 
   constructor(model: CadModelMetadata, materialManager: MaterialManager) {
     super();
@@ -52,7 +54,15 @@ export class CadNode extends THREE.Object3D {
     this.name = 'Sector model';
     this._materialManager = materialManager;
 
+    const instancedMeshGroup = new THREE.Group();
+    instancedMeshGroup.name = 'InstancedMeshes';
+
+    this._instancedMeshManager = new InstancedMeshManager(instancedMeshGroup, materialManager);
+
     const rootSector = new RootSectorNode(model);
+
+    rootSector.add(instancedMeshGroup);
+
     this._cadModelMetadata = model;
     const { scene } = model;
 
@@ -190,5 +200,15 @@ export class CadNode extends THREE.Object3D {
       default:
         throw new Error(`Unsupported event '${event}'`);
     }
+  }
+
+  public updateInstancedMeshes(instanceMeshFiles: InstancedMeshFile[], modelIdentifier: string, sectorId: number) {
+    for (const instanceMeshFile of instanceMeshFiles) {
+      this._instancedMeshManager.addInstanceMeshes(instanceMeshFile, modelIdentifier, sectorId);
+    }
+  }
+
+  public discardInstancedMeshes(sectorId: number) {
+    this._instancedMeshManager.removeSectorInstancedMeshes(sectorId);
   }
 }
