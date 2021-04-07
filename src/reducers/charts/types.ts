@@ -25,6 +25,7 @@ export type ChartTimeSeries = {
   tsExternalId?: string;
   lineWeight?: number;
   lineStyle?: 'solid' | 'dashed' | 'dotted';
+  displayMode?: 'lines' | 'markers';
   enabled: boolean;
   unit?: string;
   originalUnit?: string;
@@ -53,6 +54,7 @@ export type ChartWorkflow = {
   name: string;
   lineWeight?: number;
   lineStyle?: 'solid' | 'dashed' | 'dotted';
+  displayMode?: 'lines' | 'markers';
   unit?: string;
   preferredUnit?: string;
   color: string;

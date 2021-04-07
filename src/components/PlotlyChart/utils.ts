@@ -25,6 +25,7 @@ export type SeriesData = {
   color: string | undefined;
   width: number | undefined;
   dash: string;
+  mode: string | undefined;
   unit: string | undefined;
   datapoints: Datapoints | DatapointAggregate[];
 };

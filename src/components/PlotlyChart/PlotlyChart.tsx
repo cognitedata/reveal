@@ -128,6 +128,7 @@ const PlotlyChartComponent = ({
           t.preferredUnit
         ),
         dash: convertLineStyle(t.lineStyle),
+        mode: t.displayMode,
         unit: units.find(
           (unitOption) => unitOption.value === t.preferredUnit?.toLowerCase()
         )?.label,
@@ -140,6 +141,7 @@ const PlotlyChartComponent = ({
           range: workflow.range,
           name: workflow.name,
           color: workflow.color,
+          mode: workflow.displayMode,
           width: workflow.lineWeight,
           dash: convertLineStyle(workflow.lineStyle),
           unit: units.find(
@@ -157,10 +159,10 @@ const PlotlyChartComponent = ({
     ] || [];
 
   const data = seriesData.map(
-    ({ name, color, width, dash, datapoints }, index) => {
+    ({ name, color, mode, width, dash, datapoints }, index) => {
       return {
         type: 'scatter',
-        mode: 'line',
+        mode: mode || 'lines',
         name,
         marker: {
           color,
