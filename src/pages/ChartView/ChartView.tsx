@@ -326,6 +326,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                   chart={chart}
                   onAxisChange={(update) => handleChangeSourceAxis(update)}
                   isInSearch={showSearch}
+                  cacheTimeseries
                 />
               </ChartWrapper>
             </TopPaneWrapper>

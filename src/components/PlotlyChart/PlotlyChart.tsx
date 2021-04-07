@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useQueries } from 'react-query';
 import zipWith from 'lodash/zipWith';
 import { Call, Chart } from 'reducers/charts/types';
@@ -35,6 +35,7 @@ type ChartProps = {
   isPreview?: boolean;
   isInSearch?: boolean;
   defaultStackedMode?: boolean;
+  cacheTimeseries?: boolean;
 };
 
 // Use "basic" version of plotly.js to reduce bundle size
@@ -46,15 +47,36 @@ const PlotlyChartComponent = ({
   isPreview,
   isInSearch,
   defaultStackedMode = false,
+  cacheTimeseries = false,
 }: ChartProps) => {
   const sdk = useSDK();
   const pointsPerSeries = isPreview ? 100 : 1000;
   const [dragmode, setDragmode] = useState<'zoom' | 'pan'>('pan');
   const [stackedMode, setStackedMode] = useState<boolean>(defaultStackedMode);
+  const [cache, setCache] = useState<Record<string, DatapointAggregate[]>>({});
 
   const enabledTimeSeries = (chart.timeSeriesCollection || []).filter(
     ({ enabled }) => enabled
   );
+
+  useEffect(() => {
+    if (!cacheTimeseries) {
+      return;
+    }
+
+    const ids = enabledTimeSeries?.map((t) => t.tsId)?.map((i) => `${i}`) || [];
+    const c = { ...cache };
+    let updateCache = false;
+    Object.keys(cache).forEach((k) => {
+      if (!ids.includes(k)) {
+        updateCache = true;
+        delete c[k];
+      }
+    });
+    if (updateCache) {
+      setCache(c);
+    }
+  }, [cache, enabledTimeSeries, cacheTimeseries]);
 
   const queries = enabledTimeSeries?.map(({ tsId }) => ({
     items: [{ id: tsId }],
@@ -73,10 +95,32 @@ const PlotlyChartComponent = ({
       queryKey: ['timeseries', q],
       queryFn: async (): Promise<DatapointAggregate[]> => {
         const r = await sdk.datapoints.retrieve(q as DatapointsMultiQuery);
-        return r[0]?.datapoints || [];
+        return r[0]?.datapoints || ([] as DatapointAggregate[]);
       },
     }))
   );
+
+  useEffect(() => {
+    if (!cacheTimeseries) {
+      return;
+    }
+    let updateCache = false;
+    const c = { ...cache };
+    queryResult.forEach((r, i) => {
+      if (
+        r.isFetched &&
+        r.data &&
+        queries[i].items[0].id &&
+        c[queries[i].items[0].id.toString()] !== r.data
+      ) {
+        updateCache = true;
+        c[queries[i].items[0].id.toString()] = r.data as DatapointAggregate[];
+      }
+    });
+    if (updateCache) {
+      setCache(c);
+    }
+  }, [queryResult, cache, queries, cacheTimeseries]);
 
   const enabledWorkflows = !isPreview
     ? chart.workflowCollection?.filter((flow) => flow?.enabled)
@@ -122,8 +166,9 @@ const PlotlyChartComponent = ({
         width: t.lineWeight,
         range: t.range,
         name: t.name,
+        outdatedData: !!cache[t.tsId] && !queryResult[i]?.data,
         datapoints: convertUnits(
-          (queryResult[i]?.data || []) as DatapointAggregate[],
+          (queryResult[i]?.data || cache[t.tsId] || []) as DatapointAggregate[],
           t.unit,
           t.preferredUnit
         ),
@@ -159,10 +204,11 @@ const PlotlyChartComponent = ({
     ] || [];
 
   const data = seriesData.map(
-    ({ name, color, mode, width, dash, datapoints }, index) => {
+    ({ name, color, mode, width, dash, datapoints, outdatedData }, index) => {
       return {
         type: 'scatter',
         mode: mode || 'lines',
+        opacity: outdatedData ? 0.5 : 1,
         name,
         marker: {
           color,
@@ -241,6 +287,7 @@ const PlotlyChartComponent = ({
         visible: !isPreview,
         linecolor: color,
         linewidth: 1,
+
         tickcolor: color,
         tickwidth: 1,
         side: 'right',

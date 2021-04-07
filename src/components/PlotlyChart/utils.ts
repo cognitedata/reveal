@@ -28,6 +28,7 @@ export type SeriesData = {
   mode: string | undefined;
   unit: string | undefined;
   datapoints: Datapoints | DatapointAggregate[];
+  outdatedData?: boolean;
 };
 
 export type AxisUpdate = {

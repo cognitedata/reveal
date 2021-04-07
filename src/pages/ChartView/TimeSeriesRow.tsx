@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
+import dayjs from 'dayjs';
+import { useIsFetching, useQueryClient } from 'react-query';
 import { Chart, ChartTimeSeries } from 'reducers/charts/types';
-import { Dropdown, Icon, Menu } from '@cognite/cogs.js';
+import { AllIconTypes, Dropdown, Icon, Menu, Tooltip } from '@cognite/cogs.js';
 import { units } from 'utils/units';
+import { calculateGranularity } from 'utils/timeseries';
 import EditableText from 'components/EditableText';
 import { PnidButton } from 'components/SearchResultTable/PnidButton';
 import {
@@ -12,6 +15,64 @@ import {
   SourceRow,
 } from './elements';
 import TimeSeriesMenu from './TimeSeriesMenu';
+
+type LoadingProps = {
+  tsId: number;
+  dateFrom: string;
+  dateTo: string;
+};
+
+const LoadingFeedback = ({ tsId, dateFrom, dateTo }: LoadingProps) => {
+  const queryCache = useQueryClient();
+  const cacheKey = [
+    'timeseries',
+    {
+      items: [{ id: tsId }],
+      start: new Date(dateFrom),
+      end: new Date(dateTo),
+      limit: 1000,
+      aggregates: ['average'],
+      granularity: calculateGranularity(
+        [new Date(dateFrom).getTime(), new Date(dateTo).getTime()],
+        1000
+      ),
+    },
+  ];
+  const queryState = queryCache.getQueryState(cacheKey);
+  const isFetching = useIsFetching(cacheKey);
+
+  const getStatus = (): AllIconTypes | undefined => {
+    if (isFetching) {
+      return 'Loading';
+    }
+    switch (queryState?.status) {
+      case 'error':
+        return 'Close';
+      case 'success':
+        return 'Check';
+      default:
+        return undefined;
+    }
+  };
+  const status = getStatus();
+  const updated = queryState?.errorUpdatedAt || queryState?.dataUpdatedAt;
+
+  if (!status) {
+    return null;
+  }
+
+  if (updated) {
+    return (
+      <Tooltip
+        placement="right"
+        content={`Updated ${dayjs(updated).format('YYYY-MM-DD hh:mm Z')}`}
+      >
+        <Icon style={{ marginRight: 10 }} type={status} />
+      </Tooltip>
+    );
+  }
+  return <Icon style={{ marginRight: 10 }} type={status} />;
+};
 
 type Props = {
   mutate: (c: Chart) => void;
@@ -43,7 +104,6 @@ export default function TimeSeriesRow({
     tsId,
     tsExternalId,
   } = timeseries;
-
   const [isEditingName, setIsEditingName] = useState<boolean>(false);
 
   // Increasing this will cause a fresh render where the dropdown is closed
@@ -115,6 +175,11 @@ export default function TimeSeriesRow({
             }}
             color={color}
             fade={!enabled}
+          />
+          <LoadingFeedback
+            tsId={tsId}
+            dateFrom={chart.dateFrom}
+            dateTo={chart.dateTo}
           />
           <SourceName title={name}>
             {!isFileViewerMode && (
