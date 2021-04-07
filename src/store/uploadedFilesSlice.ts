@@ -32,6 +32,7 @@ export type FileInfoValueState = string | Label[] | null;
 export type UploadedFilesState = {
   dataSetIds?: number[];
   extractExif?: boolean;
+  allFilesStatus?: boolean;
   files: {
     byId: Record<ReactText, FileState>;
     allIds: ReactText[];
@@ -58,6 +59,7 @@ export type VisionAsset = Omit<
 const initialState: UploadedFilesState = {
   dataSetIds: undefined,
   extractExif: true,
+  allFilesStatus: false,
   // eslint-disable-next-line global-require
   // files: require('./fakeFiles.json'),
 
@@ -122,6 +124,9 @@ const uploadedFilesSlice = createSlice({
         });
       }
       state.metadataEdit = !editMode;
+    },
+    setAllFilesStatus(state, action: PayloadAction<boolean>) {
+      state.allFilesStatus = action.payload;
     },
     fileInfoEdit(
       state,
@@ -222,6 +227,7 @@ export const {
   resetEditHistory,
   setDataSetIds,
   setExtractExif,
+  setAllFilesStatus,
 } = uploadedFilesSlice.actions;
 
 export default uploadedFilesSlice.reducer;
