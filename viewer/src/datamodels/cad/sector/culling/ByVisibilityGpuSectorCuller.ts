@@ -27,7 +27,6 @@ import { SectorMetadata, WantedSector } from '../types';
 import { toThreeVector3 } from '../../../../utilities';
 import { CadModelSectorBudget } from '../../CadModelSectorBudget';
 import { OccludingGeometryProvider } from './OccludingGeometryProvider';
-import { yieldProcessing } from '../../../../__testutilities__/wait';
 
 /**
  * Options for creating GpuBasedSectorCuller.
@@ -187,8 +186,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     return { spendage, wantedSectors: wanted };
   }
 
-  async filterSectorsToLoad(input: DetermineSectorsInput, wantedSectors: WantedSector[]): Promise<WantedSector[]> {
-    await yieldProcessing();
+  filterSectorsToLoad(input: DetermineSectorsInput, wantedSectors: WantedSector[]): Promise<WantedSector[]> {
     const filtered = this.options.coverageUtil.cullOccludedSectors(input.camera, wantedSectors);
     return Promise.resolve(filtered);
   }

@@ -14,7 +14,7 @@ import { initMetrics } from '../utilities/metrics';
 import { RenderOptions } from '..';
 import { EffectRenderManager } from '../datamodels/cad/rendering/EffectRenderManager';
 import { CadMaterialManager } from '../datamodels/cad/CadMaterialManager';
-import { OccludingGeometryProvider } from '../datamodels/cad/sector/culling/OccludingGeometryProvider';
+import { RenderAlreadyLoadedGeometryProvider } from '../datamodels/cad/rendering/RenderAlreadyLoadedGeometryProvider';
 
 /**
  * Used to create an instance of reveal manager that works with localhost.
@@ -47,28 +47,6 @@ export function createCdfRevealManager(
 ): RevealManager<CdfModelIdentifier> {
   const modelDataClient = new CdfModelDataClient(client);
   return createRevealManager(client.project, modelDataClient, renderer, scene, revealOptions);
-}
-
-class RenderAlreadyLoadedGeometryProvider implements OccludingGeometryProvider {
-  private readonly _renderManager: EffectRenderManager;
-
-  constructor(renderManager: EffectRenderManager) {
-    this._renderManager = renderManager;
-  }
-
-  renderOccludingGeometry(target: THREE.WebGLRenderTarget | null, camera: THREE.PerspectiveCamera): void {
-    const original = {
-      renderTarget: this._renderManager.getRenderTarget(),
-      autoSize: this._renderManager.getRenderTargetAutoSize()
-    };
-    try {
-      this._renderManager.setRenderTarget(target);
-      this._renderManager.renderDetailedToDepthOnly(camera);
-    } finally {
-      this._renderManager.setRenderTarget(original.renderTarget);
-      this._renderManager.setRenderTargetAutoSize(original.autoSize);
-    }
-  }
 }
 
 /**
