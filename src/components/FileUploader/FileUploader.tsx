@@ -53,6 +53,7 @@ export type FileUploaderProps = {
   accept?: string;
   assetIds?: number[];
   maxTotalSizeInBytes?: number;
+  maxFileCount?: number;
   onUploadSuccess?: (file: FileInfo) => void;
   onFileListChange?: (fileList: CogsFileInfo[]) => void;
   onUploadFailure?: (error: string) => void;
@@ -131,6 +132,7 @@ export const FileUploader = ({
   children,
   assetIds,
   maxTotalSizeInBytes,
+  maxFileCount,
   onUploadSuccess = () => {},
   onUploadFailure = alert,
   onCancel = () => {},
@@ -188,6 +190,14 @@ export const FileUploader = ({
   };
 
   const startOrResumeAllUploads = () => {
+    if (maxFileCount && fileList.length > maxFileCount) {
+      onUploadFailure(
+        `You exceeded the upload limit for number of files by ${
+          fileList.length - maxFileCount
+        }. Please remove some files for uploading.`
+      );
+      return;
+    }
     if (maxTotalSizeInBytes) {
       const totalSize = fileList.reduce((totalSizeAcc, file) => {
         return totalSizeAcc + file.size;
