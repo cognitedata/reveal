@@ -481,7 +481,7 @@ function UploadControlButtons({
     case STATUS.STARTED:
       uploaderButton = (
         <>
-          <Button type="primary" loading icon="Loading">
+          <Button type="primary" icon="Loading">
             Uploading files
           </Button>
           <div style={{ flex: 1 }} />

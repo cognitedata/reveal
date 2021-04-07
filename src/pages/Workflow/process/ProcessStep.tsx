@@ -42,24 +42,14 @@ export default function ProcessStep() {
 
   const tableData: Array<TableDataItem> = uploadedFiles.map((file) => {
     const jobs = jobsByFileId[file.id] || [];
-    let annotationsCount = 0;
     let statusTime = 0;
 
-    const annotationsBadgeProps = getFileJobsStatus(jobs);
+    const annotationsBadgeProps = getFileJobsStatus(jobs, file.id);
     if (jobs.length) {
       statusTime = Math.max(...jobs.map((job) => job.statusTime));
     }
 
-    // for now API always return single item, because it doesn't support multiple files upload,
-    // but response already have items like if you could upload multiple files
-    jobs.forEach((job) => {
-      if ('items' in job && job.items[0].annotations) {
-        annotationsCount += job.items[0].annotations.length;
-      }
-    });
-
     const menuActions: FileActions = {
-      annotationsAvailable: false,
       showMetadataPreview: (fileId: number) => {
         dispatch(setSelectedFileId(fileId));
         dispatch(resetEditHistory());
@@ -71,19 +61,12 @@ export default function ProcessStep() {
         );
       },
     };
-    menuActions.annotationsAvailable = annotationsCount > 0;
-    menuActions.onAnnotationEditClick = () => {
-      history.push(
-        getParamLink(workflowRoutes.review, ':fileId', String(file.id))
-      );
-    };
 
     return {
       id: file.id,
       name: file.name,
       mimeType: file.mimeType || '',
       statusTime,
-      annotationsCount,
       menu: menuActions,
       annotationsBadgeProps,
     };

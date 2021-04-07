@@ -39,30 +39,44 @@ export const detectAnnotations = createAsyncThunk<
       );
     }
 
+    const batchSize = 10;
     const { jobsByFileId } = getState().processSlice;
-    // TODO: send batch of files
-    fileIds.forEach((fileId) => {
+    const batchFileIdsList: number[][] = fileIds.reduce((acc, _, i) => {
+      if (i % batchSize === 0) {
+        acc.push(fileIds.slice(i, i + batchSize));
+      }
+      return acc;
+    }, [] as number[][]);
+
+    batchFileIdsList.forEach((batchFileIds) => {
       detectionModels.forEach((modelType) => {
-        const existingJobs = jobsByFileId[fileId] || [];
-        if (!existingJobs.find((job) => job.type === modelType)) {
-          dispatch(postAnnotationJob({ modelType, fileId }));
-        }
+        const filteredBatchFileIds = batchFileIds.filter((fileId: number) => {
+          const existingJobs = jobsByFileId[fileId] || [];
+          return !existingJobs.find((job) => job.type === modelType);
+        });
+
+        dispatch(
+          postAnnotationJob({
+            modelType,
+            fileIds: filteredBatchFileIds,
+          })
+        );
       });
     });
   }
 );
 
-// for passed fileId create job and setup polling on it
 export const postAnnotationJob = createAsyncThunk<
   AnnotationJob,
-  { modelType: DetectionModelType; fileId: number },
+  { modelType: DetectionModelType; fileIds: number[] },
   ThunkConfig
 >(
   'process/postAnnotationJobs',
-  async ({ modelType, fileId }, { dispatch, getState }) => {
-    const createdJob = await createAnnotationJob(modelType, fileId);
+  async ({ modelType, fileIds }, { dispatch, getState }) => {
+    const createdJob = await createAnnotationJob(modelType, fileIds);
 
-    const doesFileExist = () => getState().uploadedFiles.files.byId[fileId];
+    const doesFileExist = (fileId: number) =>
+      getState().uploadedFiles.files.byId[fileId];
 
     await fetchUntilComplete<AnnotationJob>(
       () => fetchJobById(createdJob.type, createdJob.jobId),
@@ -70,18 +84,22 @@ export const postAnnotationJob = createAsyncThunk<
         isCompleted: (latestJobVersion) =>
           latestJobVersion.status === 'Completed' ||
           latestJobVersion.status === 'Failed' ||
-          !doesFileExist(), // we don't want to poll jobs for removed files
+          !fileIds.some(doesFileExist), // we don't want to poll jobs for removed files
 
         onTick: (latestJobVersion) => {
-          if (doesFileExist()) {
-            dispatch(fileProcessUpdate({ fileId, job: latestJobVersion }));
-          }
+          fileIds.forEach((fileId) => {
+            if (doesFileExist(fileId)) {
+              dispatch(fileProcessUpdate({ fileId, job: latestJobVersion }));
+            }
+          });
         },
 
         onError: (error) => {
-          dispatch(removeJobByType({ fileId, modelType }));
-          // eslint-disable-next-line no-console
-          console.error(error); // todo better error handling of polling errors
+          fileIds.forEach((fileId) => {
+            dispatch(removeJobByType({ fileId, modelType }));
+            // eslint-disable-next-line no-console
+            console.error(error); // todo better error handling of polling errors
+          });
         },
       }
     );
@@ -155,33 +173,39 @@ const processSlice = createSlice({
     /* postAnnotationJobs */
 
     builder.addCase(postAnnotationJob.pending, (state, { meta }) => {
-      const { fileId, modelType } = meta.arg;
-      const existingJobs = state.jobsByFileId[fileId] || [];
-      existingJobs.push({
-        ...getFakeQueuedJob(),
-        type: modelType,
+      const { fileIds, modelType } = meta.arg;
+      fileIds.forEach((fileId) => {
+        const existingJobs = state.jobsByFileId[fileId] || [];
+        existingJobs.push({
+          ...getFakeQueuedJob(),
+          type: modelType,
+        });
+        state.jobsByFileId[fileId] = existingJobs;
       });
-      state.jobsByFileId[fileId] = existingJobs;
     });
 
     builder.addCase(postAnnotationJob.fulfilled, (state, { payload, meta }) => {
       const newJob = payload;
-      const { fileId, modelType } = meta.arg;
-      const existingJobs = state.jobsByFileId[fileId] || [];
-      state.jobsByFileId[fileId] = existingJobs.map((existingJob) =>
-        existingJob.type === modelType ? newJob : existingJob
-      );
+      const { fileIds, modelType } = meta.arg;
+      fileIds.forEach((fileId) => {
+        const existingJobs = state.jobsByFileId[fileId] || [];
+        state.jobsByFileId[fileId] = existingJobs.map((existingJob) =>
+          existingJob.type === modelType ? newJob : existingJob
+        );
+      });
     });
 
     builder.addCase(postAnnotationJob.rejected, (state, { error, meta }) => {
-      const { fileId, modelType } = meta.arg;
-      const existingJobs = state.jobsByFileId[fileId] || [];
-      state.jobsByFileId[fileId] = existingJobs.filter(
-        (existingJob) => existingJob.type !== modelType
-      );
-      state.error = error.message;
-      // eslint-disable-next-line no-console
-      console.error(error); // todo remove later once ui can handle that
+      const { fileIds, modelType } = meta.arg;
+      fileIds.forEach((fileId) => {
+        const existingJobs = state.jobsByFileId[fileId] || [];
+        state.jobsByFileId[fileId] = existingJobs.filter(
+          (existingJob) => existingJob.type !== modelType
+        );
+        state.error = error.message;
+        // eslint-disable-next-line no-console
+        console.error(error); // todo remove later once ui can handle that
+      });
     });
   },
   /* eslint-enable no-param-reassign */

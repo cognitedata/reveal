@@ -288,7 +288,8 @@ const previewSlice = createSlice({
       const { job, fileId } = payload;
 
       if (job.status === 'Completed') {
-        const { annotations } = job.items[0];
+        const annotations =
+          job.items.find((x) => x.fileId === fileId)?.annotations || [];
         const visionAnnotations = annotations.map((ann) =>
           AnnotationUtils.createVisionAnnotationStub(
             ann.text,

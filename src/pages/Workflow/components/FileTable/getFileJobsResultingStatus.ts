@@ -21,12 +21,14 @@ export function getFileJobsResultingStatus(
   return status;
 }
 
-function getModelBadgeData(jobs: AnnotationJob[]) {
+function getModelBadgeData(jobs: AnnotationJob[], fileId: number) {
   if (jobs.length) {
     let modelGenerated = 0;
     jobs.forEach((job) => {
-      if ('items' in job && job.items[0].annotations) {
-        modelGenerated += job.items[0].annotations.length;
+      if ('items' in job) {
+        const annotations = job.items.find((x) => x.fileId === fileId)
+          ?.annotations;
+        modelGenerated += annotations?.length || 0;
       }
     });
 
@@ -37,7 +39,8 @@ function getModelBadgeData(jobs: AnnotationJob[]) {
 }
 
 export function getFileJobsStatus(
-  jobs: AnnotationJob[]
+  jobs: AnnotationJob[],
+  fileId: number
 ): AnnotationsBadgeProps {
   if (!jobs.length) {
     return {
@@ -62,8 +65,8 @@ export function getFileJobsStatus(
   );
 
   return {
-    gdpr: getModelBadgeData(gdpr),
-    tag: getModelBadgeData(tag),
-    textAndObjects: getModelBadgeData(generic),
+    gdpr: getModelBadgeData(gdpr, fileId),
+    tag: getModelBadgeData(tag, fileId),
+    textAndObjects: getModelBadgeData(generic, fileId),
   };
 }

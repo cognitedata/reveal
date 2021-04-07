@@ -28,4 +28,7 @@ storybook-static/
 
 .idea
 
+.husky/*
+
 **/fakeFiles.json
+**/fakeVideoFiles.json

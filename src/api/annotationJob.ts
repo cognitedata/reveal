@@ -28,14 +28,12 @@ function getDetectionModelDataProvider(
   }
 }
 
-// when api will support putting many files to one job you should change that function
-// to accept many files and simplify postAnnotationJobs thunk
 export async function createAnnotationJob(
   detectionModel: DetectionModelType,
-  fileId: number
+  fileIds: number[]
 ): Promise<AnnotationJob> {
   const dataProvider = getDetectionModelDataProvider(detectionModel);
-  const job = await dataProvider.postJob(fileId);
+  const job = await dataProvider.postJob(fileIds);
   return {
     type: detectionModel,
     ...job,
