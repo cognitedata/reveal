@@ -4,16 +4,21 @@
 
 import * as THREE from 'three';
 
-import { SectorMetadata } from '../types';
+import { SectorMetadata, WantedSector } from '../types';
 import { coverageShaders } from '../../rendering/shaders';
 import { CadModelMetadata } from '../../CadModelMetadata';
 import { toThreeJsBox3, Box3 } from '../../../../utilities';
+import { WebGLRendererStateHelper } from '../../../../utilities/WebGLRendererStateHelper';
+import { OccludingGeometryProvider } from './OccludingGeometryProvider';
 
 type SectorContainer = {
   model: CadModelMetadata;
   sectors: SectorMetadata[];
   sectorIdOffset: number;
   renderable: THREE.Object3D;
+  attributesBuffer: THREE.InstancedInterleavedBuffer;
+  attributesValues: Float32Array;
+  mesh: THREE.Mesh;
 };
 
 type SectorVisibility = {
@@ -29,13 +34,15 @@ const identityRotation = new THREE.Quaternion();
  */
 export interface OrderSectorsByVisibleCoverageOptions {
   /**
-   * Optional WebGL context to use for rendering of coverage.
+   * Renderer used to render coverage.
    */
-  glContext?: WebGLRenderingContext;
+  renderer: THREE.WebGLRenderer;
+
   /**
-   * Optional size of the framebuffer used for rendering coverage.
+   * Initializes a render target with already loaded geometry for pre-load
+   * occlusion.
    */
-  renderSize?: THREE.Vector2;
+  occludingGeometryProvider: OccludingGeometryProvider;
 }
 
 export type PrioritizedSectorIdentifier = {
@@ -75,6 +82,8 @@ export interface OrderSectorsByVisibilityCoverage {
    */
   setClipping(planes: THREE.Plane[] | null, clipIntersection: boolean): void;
 
+  cullOccludedSectors(camera: THREE.PerspectiveCamera, sectors: WantedSector[]): WantedSector[];
+
   /**
    * Estimates how visible the different sectors for the models added are and returns
    * a prioritized list.
@@ -87,14 +96,23 @@ export interface OrderSectorsByVisibilityCoverage {
  * Estimates sector visibility by rendering their bounds with a pattern confirming to how
  * much of the geometry covers of the bounding box.
  */
-export class GpuOrderSectorsByVisibilityCoverage {
+export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibilityCoverage {
+  /**
+   * Factor of how big render target we use for determining visibility of sectors
+   * compared to the full render size.
+   */
+  private static readonly CoverageRenderTargetScalingFactor = 1.0 / 4.0;
+
   private sectorIdOffset = 0;
   private readonly scene = new THREE.Scene();
   private readonly _renderer: THREE.WebGLRenderer;
-  private debugRenderer?: THREE.WebGLRenderer;
+  private readonly _alreadyLoadedProvider: OccludingGeometryProvider;
+  // private debugRenderer?: THREE.WebGLRenderer;
+  private _debugImageElement?: HTMLImageElement;
   private readonly renderTarget: THREE.WebGLRenderTarget;
   private readonly containers: Map<string, SectorContainer> = new Map();
   private readonly buffers = {
+    size: new THREE.Vector2(),
     rtBuffer: new Uint8Array(),
     sectorVisibilityBuffer: [] as SectorVisibility[]
   };
@@ -106,55 +124,38 @@ export class GpuOrderSectorsByVisibilityCoverage {
     side: THREE.DoubleSide
   });
 
-  constructor(options?: OrderSectorsByVisibleCoverageOptions) {
-    const context = (options || {}).glContext;
-    const renderSize = (options || {}).renderSize || new THREE.Vector2(640, 480);
-    this._renderer = new THREE.WebGLRenderer({
-      context,
-      antialias: false,
-      alpha: false,
-      precision: 'lowp',
-      stencil: false
-    });
-    this._renderer.setClearColor('#FFFFFF');
-    this._renderer.localClippingEnabled = true;
-    this.renderTarget = new THREE.WebGLRenderTarget(renderSize.width, renderSize.height, {
+  constructor(options: OrderSectorsByVisibleCoverageOptions) {
+    this._renderer = options.renderer;
+    this._alreadyLoadedProvider = options.occludingGeometryProvider;
+
+    // Note! Rener target will be resize before actual use
+    this.renderTarget = new THREE.WebGLRenderTarget(1, 1, {
       generateMipmaps: false,
       type: THREE.UnsignedByteType,
       format: THREE.RGBAFormat,
-      stencilBuffer: true
+      stencilBuffer: false
     });
     this._renderer.setRenderTarget(this.renderTarget);
   }
 
   dispose() {
     this._renderer.dispose();
-    if (this.debugRenderer) {
-      this.debugRenderer.dispose();
-    }
   }
 
   get renderer(): THREE.WebGLRenderer {
     return this._renderer;
   }
 
-  createDebugCanvas(options?: { width: number; height: number }): HTMLCanvasElement {
-    if (this.debugRenderer) {
+  createDebugCanvas(options?: { width: number; height: number }): HTMLElement {
+    if (this._debugImageElement) {
       throw new Error('createDebugCanvas() can only be called once');
     }
     const width = options ? options.width : this.renderTarget.width;
     const height = options ? options.height : this.renderTarget.height;
-
-    this.debugRenderer = new THREE.WebGLRenderer({
-      antialias: false,
-      alpha: false,
-      stencil: false
-    });
-    this.debugRenderer.localClippingEnabled = true;
-    this.debugRenderer.setClearColor('white');
-    this.debugRenderer.setSize(width, height);
-
-    return this.debugRenderer.domElement;
+    this._debugImageElement = document.createElement('img');
+    this._debugImageElement.style.width = `${width}px`;
+    this._debugImageElement.style.height = `${height}px`;
+    return this._debugImageElement;
   }
 
   setModels(models: CadModelMetadata[]) {
@@ -182,20 +183,41 @@ export class GpuOrderSectorsByVisibilityCoverage {
     this.coverageMaterial.clipIntersection = clipIntersection;
   }
 
-  orderSectorsByVisibility(camera: THREE.Camera): PrioritizedSectorIdentifier[] {
-    // render to debug renderer first as rendering to offscreen buffer
-    // first causes last frame to be read in step 3.
-    if (this.debugRenderer) {
-      this.debugRenderer.render(this.scene, camera);
+  cullOccludedSectors(camera: THREE.PerspectiveCamera, sectors: WantedSector[]): WantedSector[] {
+    try {
+      // Only render sectors we are interested in
+      this.setAllSectorsVisible(false);
+      this.setSectorsVisibility(sectors, true);
+
+      const ordered = this.orderSectorsByVisibility(camera);
+      const filtered = sectors.filter(toBeFiltered => {
+        const container = this.containers.get(toBeFiltered.blobUrl);
+        if (container === undefined) {
+          throw new Error(`Model ${toBeFiltered.blobUrl} is not registered`);
+        }
+        const isCameraInsideSector = isWithinSectorBounds(container.model, toBeFiltered.metadata, camera.position);
+        // Note! O(N), but N is number of input sectors (i.e. low)
+        const found = ordered.some(
+          x => x.model.blobUrl === toBeFiltered.blobUrl && x.sectorId === toBeFiltered.metadata.id
+        );
+        return found || isCameraInsideSector;
+      });
+      return filtered;
+    } finally {
+      this.setAllSectorsVisible(true);
+    }
+  }
+
+  orderSectorsByVisibility(camera: THREE.PerspectiveCamera): PrioritizedSectorIdentifier[] {
+    if (this._debugImageElement) {
+      this.renderSectors(null, camera);
+      this._debugImageElement.src = this._renderer.domElement.toDataURL();
     }
 
-    // 1. Render to offscreen buffer
-    this._renderer.render(this.scene, camera);
+    this.ensureBuffersCorrectSize();
+    this.renderSectors(this.renderTarget, camera);
 
-    // 2. Prepare buffer for reading from GPU
-    this.prepareBuffers();
-
-    // 3. Read back result from GPU
+    // Read back result from GPU
     this._renderer.readRenderTargetPixels(
       this.renderTarget,
       0,
@@ -205,14 +227,14 @@ export class GpuOrderSectorsByVisibilityCoverage {
       this.buffers.rtBuffer
     );
 
-    // 4. Unpack GPU result to something more convinient
+    // Unpack GPU result to sector IDs with visibility score
     const sectorVisibility = this.unpackSectorVisibility(
       this.renderTarget.width,
       this.renderTarget.height,
       this.buffers.rtBuffer
     );
 
-    // 5. Map to IDs that the world understands
+    // Map to IDs that the world understands
     const totalWeight = sectorVisibility.reduce((weight, x) => x.weight + weight, 0);
     const result = sectorVisibility
       .filter(x => x.weight > 0)
@@ -240,26 +262,111 @@ export class GpuOrderSectorsByVisibilityCoverage {
     return result;
   }
 
+  private readonly _ensureBuffersCorrectSizeVars = {
+    size: new THREE.Vector2()
+  };
+
+  private ensureBuffersCorrectSize() {
+    const { size } = this._ensureBuffersCorrectSizeVars;
+    this._renderer.getSize(size);
+
+    if (!this.buffers.size.equals(size)) {
+      const rtWidth = Math.max(
+        Math.floor(size.width * GpuOrderSectorsByVisibilityCoverage.CoverageRenderTargetScalingFactor),
+        64
+      );
+      const rtHeight = Math.max(
+        Math.floor(size.height * GpuOrderSectorsByVisibilityCoverage.CoverageRenderTargetScalingFactor),
+        64
+      );
+      this.renderTarget.setSize(rtWidth, rtHeight);
+
+      // Ensure buffer can hold all pixels from render target
+      if (this.buffers.rtBuffer.length < 4 * rtWidth * rtHeight) {
+        this.buffers.rtBuffer = new Uint8Array(4 * rtWidth * rtHeight);
+      }
+
+      this.buffers.size.copy(size);
+    }
+  }
+
+  private renderSectors(renderTarget: THREE.WebGLRenderTarget | null, camera: THREE.PerspectiveCamera): void {
+    const stateHelper = new WebGLRendererStateHelper(this._renderer);
+    try {
+      stateHelper.localClippingEnabled = true;
+      stateHelper.setRenderTarget(renderTarget);
+      stateHelper.setClearColor('#FFFFFF', 1.0);
+      stateHelper.autoClear = false;
+      stateHelper.setSize(this.buffers.size.width, this.buffers.size.height);
+
+      // 1. Clear render target (depth + color)
+      this._renderer.clear(true, true);
+
+      // 2. Render already loaded geometry to offscreen buffer
+      this._alreadyLoadedProvider.renderOccludingGeometry(renderTarget, camera);
+
+      // 3. Render to offscreen buffer
+      this._renderer.render(this.scene, camera);
+    } finally {
+      stateHelper.resetState();
+    }
+  }
+
+  private setAllSectorsVisible(visible: boolean) {
+    const visibilityValue = visible ? 1.0 : 0.0;
+    this.containers.forEach(container => {
+      for (let i = 0; i < container.sectors.length; ++i) {
+        const id = container.sectors[i].id;
+        container.attributesValues[5 * (container.sectorIdOffset + id) + 4] = visibilityValue;
+      }
+      container.attributesBuffer.needsUpdate = true;
+    });
+  }
+
+  private setSectorsVisibility(sectors: WantedSector[], visible: boolean) {
+    const visibilityValue = visible ? 1.0 : 0.0;
+    sectors.forEach(s => {
+      const id = s.metadata.id;
+      const container = this.containers.get(s.blobUrl);
+      if (container === undefined) {
+        throw new Error(`Sector ${s} is from a model not added`);
+      }
+      container.attributesValues[5 * (container.sectorIdOffset + id) + 4] = visibilityValue;
+      container.attributesBuffer.needsUpdate = true;
+    });
+  }
+
   private removeModel(modelIdentifier: string) {
     const container = this.containers.get(modelIdentifier);
     if (!container) {
       throw new Error(`Could not find model '${modelIdentifier}'`);
     }
+    container.mesh.geometry.dispose();
     this.scene.remove(container.renderable);
     this.containers.delete(modelIdentifier);
   }
 
   private addModel(model: CadModelMetadata) {
     const sectors = model.scene.getAllSectors();
-    const mesh = this.createSectorTreeMesh(this.sectorIdOffset, sectors, model.modelMatrix);
+    const [mesh, attributesBuffer, attributesValues] = this.createSectorTreeGeometry(this.sectorIdOffset, sectors);
+
+    const group = new THREE.Group();
+    group.matrixAutoUpdate = false;
+    group.applyMatrix4(model.modelMatrix);
+    group.updateMatrixWorld();
+    group.add(mesh);
+
     this.containers.set(model.blobUrl, {
       model,
       sectors,
       sectorIdOffset: this.sectorIdOffset,
-      renderable: mesh
+      renderable: group,
+      mesh,
+      attributesBuffer,
+      attributesValues
     });
     this.sectorIdOffset += sectors.length;
-    this.scene.add(mesh);
+    this.scene.add(group);
   }
 
   private updateModel(container: SectorContainer, model: CadModelMetadata) {
@@ -292,6 +399,7 @@ export class GpuOrderSectorsByVisibilityCoverage {
     }
 
     const sectorVisibility = this.buffers.sectorVisibilityBuffer;
+    resetVisibilityInformation(sectorVisibility);
     const halfHeight = renderTargetHeight / 2;
     const halfWidth = renderTargetWidth / 2;
     for (let y = 0; y < renderTargetHeight; y++) {
@@ -316,34 +424,13 @@ export class GpuOrderSectorsByVisibilityCoverage {
     return sectorVisibility;
   }
 
-  private prepareBuffers() {
-    // Ensure buffer can hold all pixels from render target
-    if (this.buffers.rtBuffer.length < 4 * this.renderTarget.width * this.renderTarget.height) {
-      this.buffers.rtBuffer = new Uint8Array(4 * this.renderTarget.width * this.renderTarget.height);
-    }
-
-    // Blank visibility information
-    for (let i = 0; i < this.buffers.sectorVisibilityBuffer.length; i++) {
-      const entry = this.buffers.sectorVisibilityBuffer[i];
-      if (entry) {
-        entry.weight = 0;
-      }
-    }
-  }
-
-  private createSectorTreeMesh(
+  private createSectorTreeGeometry(
     sectorIdOffset: number,
-    sectors: SectorMetadata[],
-    modelMatrix: THREE.Matrix4
-  ): THREE.Object3D {
-    const group = new THREE.Group();
-    group.matrixAutoUpdate = false;
-    group.applyMatrix4(modelMatrix);
-    group.updateMatrixWorld();
-
+    sectors: SectorMetadata[]
+  ): [THREE.Mesh, THREE.InstancedInterleavedBuffer, Float32Array] {
     const sectorCount = sectors.length;
 
-    const instanceValues = new Float32Array(4 * sectorCount); // sectorId, coverageFactor[3]
+    const instanceValues = new Float32Array(5 * sectorCount); // sectorId, coverageFactor[3], visibility
     const boxGeometry = new THREE.BoxBufferGeometry();
     const mesh = new THREE.InstancedMesh(boxGeometry, this.coverageMaterial, sectorCount);
 
@@ -355,11 +442,11 @@ export class GpuOrderSectorsByVisibilityCoverage {
 
       const instanceMatrix = new THREE.Matrix4().compose(translation, identityRotation, scale);
       mesh.setMatrixAt(sectorId, instanceMatrix);
-
-      instanceValues[4 * sectorId + 0] = sectorIdOffset + sectorId;
-      instanceValues[4 * sectorId + 1] = coverage.x;
-      instanceValues[4 * sectorId + 2] = coverage.y;
-      instanceValues[4 * sectorId + 3] = coverage.z;
+      instanceValues[5 * sectorId + 0] = sectorIdOffset + sectorId;
+      instanceValues[5 * sectorId + 1] = coverage.x;
+      instanceValues[5 * sectorId + 2] = coverage.y;
+      instanceValues[5 * sectorId + 3] = coverage.z;
+      instanceValues[5 * sectorId + 4] = 1.0; // visible
     };
 
     const coverageFactors = new THREE.Vector3(); // Allocate once only
@@ -372,11 +459,32 @@ export class GpuOrderSectorsByVisibilityCoverage {
       addSector(sector.bounds, sector.id, coverageFactors);
     });
 
-    const buffer = new THREE.InstancedInterleavedBuffer(instanceValues, 4);
+    const buffer = new THREE.InstancedInterleavedBuffer(instanceValues, 5);
     boxGeometry.setAttribute('a_sectorId', new THREE.InterleavedBufferAttribute(buffer, 1, 0));
     boxGeometry.setAttribute('a_coverageFactor', new THREE.InterleavedBufferAttribute(buffer, 3, 1));
+    boxGeometry.setAttribute('a_visible', new THREE.InterleavedBufferAttribute(buffer, 1, 4));
 
-    group.add(mesh);
-    return group;
+    return [mesh, buffer, instanceValues];
+  }
+}
+
+const isCameraInsideSectorVars = {
+  sectorBounds: new THREE.Box3()
+};
+
+function isWithinSectorBounds(model: CadModelMetadata, metadata: SectorMetadata, point: THREE.Vector3) {
+  const { sectorBounds } = isCameraInsideSectorVars;
+  toThreeJsBox3(sectorBounds, metadata.bounds);
+  sectorBounds.applyMatrix4(model.modelMatrix);
+  return sectorBounds.containsPoint(point);
+}
+
+function resetVisibilityInformation(sectorVisibility: SectorVisibility[]) {
+  // Blank visibility information
+  for (let i = 0; i < sectorVisibility.length; i++) {
+    const entry = sectorVisibility[i];
+    if (entry) {
+      entry.weight = 0;
+    }
   }
 }

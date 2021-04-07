@@ -44,12 +44,12 @@ export class RevealManager<TModelIdentifier> {
 
   constructor(
     cadManager: CadManager<TModelIdentifier>,
-    pointCloudManager: PointCloudManager<TModelIdentifier>,
-    renderOptions: RenderOptions
+    renderManager: EffectRenderManager,
+    pointCloudManager: PointCloudManager<TModelIdentifier>
   ) {
+    this._effectRenderManager = renderManager;
     this._cadManager = cadManager;
     this._pointCloudManager = pointCloudManager;
-    this._effectRenderManager = new EffectRenderManager(this._cadManager.materialManager, renderOptions);
     this.initLoadingStateObserver(this._cadManager, this._pointCloudManager);
     this._updateSubject = new Subject();
     this._updateSubject
@@ -167,8 +167,8 @@ export class RevealManager<TModelIdentifier> {
     }
   }
 
-  public render(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera, scene: THREE.Scene) {
-    this._effectRenderManager.render(renderer, camera, scene);
+  public render(camera: THREE.PerspectiveCamera) {
+    this._effectRenderManager.render(camera);
   }
 
   /**
@@ -177,7 +177,8 @@ export class RevealManager<TModelIdentifier> {
    * @param autoSetTargetSize Auto size target to fit canvas.
    */
   public setRenderTarget(target: THREE.WebGLRenderTarget | null, autoSetTargetSize: boolean = true) {
-    this._effectRenderManager.setRenderTarget(target, autoSetTargetSize);
+    this._effectRenderManager.setRenderTarget(target);
+    this._effectRenderManager.setRenderTargetAutoSize(autoSetTargetSize);
   }
 
   public addModel(
@@ -245,14 +246,15 @@ export class RevealManager<TModelIdentifier> {
         .pipe(
           observeOn(asyncScheduler),
           subscribeOn(asyncScheduler),
-          map(
-            ([cadLoadingState, pointCloudLoadingState]) =>
-              ({
-                isLoading: cadLoadingState.isLoading || pointCloudLoadingState.isLoading,
-                itemsLoaded: cadLoadingState.itemsLoaded + pointCloudLoadingState.itemsLoaded,
-                itemsRequested: cadLoadingState.itemsRequested + pointCloudLoadingState.itemsRequested
-              } as LoadingState)
-          ),
+          map(([cadLoadingState, pointCloudLoadingState]) => {
+            const state: LoadingState = {
+              isLoading: cadLoadingState.isLoading || pointCloudLoadingState.isLoading,
+              itemsLoaded: cadLoadingState.itemsLoaded + pointCloudLoadingState.itemsLoaded,
+              itemsRequested: cadLoadingState.itemsRequested + pointCloudLoadingState.itemsRequested,
+              itemsCulled: cadLoadingState.itemsCulled + pointCloudLoadingState.itemsCulled
+            };
+            return state;
+          }),
           distinctUntilChanged((x, y) => x.itemsLoaded === y.itemsLoaded && x.itemsRequested === y.itemsRequested)
         )
         .subscribe(this.notifyLoadingStateChanged.bind(this), error =>

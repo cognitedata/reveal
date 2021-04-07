@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 
 import { DynamicDefragmentedBuffer } from '../../utilities/datastructures/DynamicDefragmentedBuffer';
-import { MaterialManager } from './MaterialManager';
+import { CadMaterialManager } from './CadMaterialManager';
 import { InstancedMesh, InstancedMeshFile } from './rendering/types';
 
 export class InstancedMeshManager {
@@ -31,9 +31,9 @@ export class InstancedMeshManager {
   >;
 
   private readonly _instancedMeshGroup: THREE.Group;
-  private readonly _materialManager: MaterialManager;
+  private readonly _materialManager: CadMaterialManager;
 
-  constructor(instancedMeshGroup: THREE.Group, materialManager: MaterialManager) {
+  constructor(instancedMeshGroup: THREE.Group, materialManager: CadMaterialManager) {
     this._materialManager = materialManager;
 
     this._instancedGeometryMap = new Map();

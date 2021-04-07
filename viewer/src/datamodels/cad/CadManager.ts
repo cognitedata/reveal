@@ -11,7 +11,7 @@ import { Subscription, Observable } from 'rxjs';
 import { NodeAppearanceProvider } from './NodeAppearance';
 import { trackError } from '../../utilities/metrics';
 
-import { MaterialManager } from './MaterialManager';
+import { CadMaterialManager } from './CadMaterialManager';
 import { RenderMode } from './rendering/RenderMode';
 import { LoadingState } from '../../utilities';
 import { CadModelSectorBudget } from './CadModelSectorBudget';
@@ -19,7 +19,7 @@ import { CadModelSectorLoadStatistics } from './CadModelSectorLoadStatistics';
 import { LevelOfDetail } from './sector/LevelOfDetail';
 
 export class CadManager<TModelIdentifier> {
-  private readonly _materialManager: MaterialManager;
+  private readonly _materialManager: CadMaterialManager;
   private readonly _cadModelMetadataRepository: CadModelMetadataRepository<TModelIdentifier>;
   private readonly _cadModelFactory: CadModelFactory;
   private readonly _cadModelUpdateHandler: CadModelUpdateHandler;
@@ -50,7 +50,7 @@ export class CadManager<TModelIdentifier> {
   }
 
   constructor(
-    materialManger: MaterialManager,
+    materialManger: CadMaterialManager,
     cadModelMetadataRepository: CadModelMetadataRepository<TModelIdentifier>,
     cadModelFactory: CadModelFactory,
     cadModelUpdateHandler: CadModelUpdateHandler
@@ -81,13 +81,6 @@ export class CadManager<TModelIdentifier> {
           const sectorNode = sectorNodeParent!.sectorNodeMap.get(sector.metadata.id);
           if (!sectorNode) {
             throw new Error(`Could not find 3D node for sector ${sector.metadata.id} - invalid id?`);
-          }
-          if (sectorNode.group) {
-            sectorNode.group.userData.refCount -= 1;
-            if (sectorNode.group.userData.refCount === 0) {
-              sectorNode.resetGeometry();
-            }
-            sectorNode.remove(sectorNode.group);
           }
           if (sector.group) {
             sectorNode.add(sector.group);
