@@ -106,9 +106,10 @@ export function Migration() {
             pointCloudModels.push(model);
             pointCloudParams.apply();
           }
-
-          createGeometryFilterStateFromBounds(bounds, guiState.geometryFilter);
-          geometryFilterGui.updateDisplay();
+          if (createGeometryFilterFromState(guiState.geometryFilter) === undefined) {
+            createGeometryFilterStateFromBounds(bounds, guiState.geometryFilter);
+            geometryFilterGui.updateDisplay();
+          }
         } catch (e) {
           console.error(e);
           alert(`Model ID is invalid or is not supported`);
@@ -196,10 +197,13 @@ export function Migration() {
         }
       };
 
-      gui.add(guiState, 'modelId').name('Model ID');
-      gui.add(guiState, 'revisionId').name('Revision ID');
+      const modelGui = gui.addFolder('Model');
+      modelGui.add(guiState, 'modelId').name('Model ID');
+      modelGui.add(guiState, 'revisionId').name('Revision ID');
+      modelGui.add(guiActions, 'addModel').name('Load model');
+      modelGui.add(guiActions, 'fitToModel').name('Fit camera');
 
-      const geometryFilterGui = gui.addFolder('Geometry Filter');
+      const geometryFilterGui = modelGui.addFolder('Geometry Filter');
       let geometryFilterPreview: THREE.Object3D | undefined = undefined;
       function updateGeometryFilterPreview() {
         if (geometryFilterPreview) {
@@ -211,18 +215,18 @@ export function Migration() {
           viewer.addObject3D(geometryFilterPreview);
         }
       }
-      geometryFilterGui.add(guiState.geometryFilter.center, 'x', -1000, 1000).name('CenterX').onChange(updateGeometryFilterPreview);
-      geometryFilterGui.add(guiState.geometryFilter.center, 'y', -1000, 1000).name('CenterY').onChange(updateGeometryFilterPreview);
-      geometryFilterGui.add(guiState.geometryFilter.center, 'z', -1000, 1000).name('CenterZ').onChange(updateGeometryFilterPreview);
-      geometryFilterGui.add(guiState.geometryFilter.size, 'x', 0, 100).name('SizeX').onChange(updateGeometryFilterPreview);
-      geometryFilterGui.add(guiState.geometryFilter.size, 'y', 0, 100).name('SizeY').onChange(updateGeometryFilterPreview);
-      geometryFilterGui.add(guiState.geometryFilter.size, 'z', 0, 100).name('SizeZ').onChange(updateGeometryFilterPreview);
+      geometryFilterGui.add(guiState.geometryFilter.center, 'x', -1000, 1000, 1).name('CenterX').onChange(updateGeometryFilterPreview);
+      geometryFilterGui.add(guiState.geometryFilter.center, 'y', -1000, 1000, 1).name('CenterY').onChange(updateGeometryFilterPreview);
+      geometryFilterGui.add(guiState.geometryFilter.center, 'z', -1000, 1000, 1).name('CenterZ').onChange(updateGeometryFilterPreview);
+      geometryFilterGui.add(guiState.geometryFilter.size, 'x', 0, 100, 1).name('SizeX').onChange(updateGeometryFilterPreview);
+      geometryFilterGui.add(guiState.geometryFilter.size, 'y', 0, 100, 1).name('SizeY').onChange(updateGeometryFilterPreview);
+      geometryFilterGui.add(guiState.geometryFilter.size, 'z', 0, 100, 1).name('SizeZ').onChange(updateGeometryFilterPreview);
       geometryFilterGui.add(guiActions, 'applyGeometryFilter').name('Apply and reload');
       geometryFilterGui.add(guiActions, 'resetGeometryFilter').name('Reset and reload');
-      gui.add(guiActions, 'addModel').name('Load model');
-      gui.add(guiActions, 'fitToModel').name('Fit camera');
+
+      const renderGui = gui.addFolder('Rendering');
       const renderModes = [undefined, 'Color', 'Normal', 'TreeIndex', 'PackColorAndNormal', 'Depth', 'Effects', 'Ghost', 'LOD'];
-      gui.add(guiState, 'renderMode', renderModes).name('Render mode').onFinishChange(value => {
+      renderGui.add(guiState, 'renderMode', renderModes).name('Render mode').onFinishChange(value => {
         const renderMode = renderModes.indexOf(value);
         cadModels.forEach(m => {
           const cadNode: CadNode = (m as any).cadNode;
@@ -230,7 +234,7 @@ export function Migration() {
         });
         viewer.forceRerender();
       });
-      gui.add(guiState, 'antiAliasing',
+      renderGui.add(guiState, 'antiAliasing',
         [
           'disabled', 'fxaa', 'msaa4', 'msaa8', 'msaa16',
           'msaa4+fxaa', 'msaa8+fxaa', 'msaa16+fxaa'
@@ -238,7 +242,7 @@ export function Migration() {
           urlParams.set('antialias', v);
           window.location.href = url.toString();
         });
-      gui.add(guiState, 'ssaoQuality',
+        renderGui.add(guiState, 'ssaoQuality',
         [
           'disabled', 'medium', 'high', 'veryhigh'
         ]).name('SSAO').onFinishChange(v => {
@@ -247,7 +251,6 @@ export function Migration() {
         });
 
       const debugGui = gui.addFolder('Debug');
-
       const debugStatsGui = debugGui.addFolder('Statistics');
       debugStatsGui.add(guiState.debug.stats, 'drawCalls').name('Draw Calls');
       debugStatsGui.add(guiState.debug.stats, 'points').name('Points');
