@@ -10,7 +10,7 @@ import { RootState } from 'src/store/rootReducer';
 import {
   addPolygon,
   selectVisibleNonRejectAndEditModeAnnotations,
-  updateAnnotation,
+  updateAnnotationBoundingBox,
   VisibleAnnotations,
 } from 'src/store/previewSlice';
 import { getLink, workflowRoutes } from 'src/pages/Workflow/workflowRoutes';
@@ -113,7 +113,10 @@ const ImageReview = (props: { fileId: string; drawerMode: number | null }) => {
 
     if (imagePreviewEditable) {
       dispatch(
-        updateAnnotation({ id: annotation.id, boundingBox: annotation.box })
+        updateAnnotationBoundingBox({
+          id: annotation.id,
+          boundingBox: annotation.box,
+        })
       );
     }
   };

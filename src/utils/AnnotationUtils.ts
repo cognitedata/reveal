@@ -223,11 +223,8 @@ export class AnnotationUtils {
   public static convertToAnnotation(
     value: VisionAnnotation
   ): Annotation | UnsavedAnnotation {
-    if (!value.box) {
-      throw new Error('Bounding box cannot be empty!');
-    }
     const ann: UnsavedAnnotation = {
-      region: {
+      region: value.box && {
         shape: value.type,
         vertices: [
           {
