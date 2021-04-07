@@ -15,8 +15,6 @@ type State = {
   error?: string;
 };
 
-const BATCHSIZE = 10;
-
 const initialState: State = {
   selectedFileId: null,
   showFileMetadataDrawer: false,
