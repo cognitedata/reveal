@@ -16,6 +16,7 @@ import { RenderMode } from './rendering/RenderMode';
 import { LoadingState } from '../../utilities';
 import { CadModelSectorBudget } from './CadModelSectorBudget';
 import { CadModelSectorLoadStatistics } from './CadModelSectorLoadStatistics';
+import { LevelOfDetail } from './sector/LevelOfDetail';
 
 export class CadManager<TModelIdentifier> {
   private readonly _materialManager: MaterialManager;
@@ -66,6 +67,16 @@ export class CadManager<TModelIdentifier> {
             // Model has been removed - results can come in for a period just after removal
             return;
           }
+
+          if (sector.instancedMeshes && sector.levelOfDetail === LevelOfDetail.Detailed) {
+            cadModel.updateInstancedMeshes(sector.instancedMeshes, sector.blobUrl, sector.metadata.id);
+          } else if (
+            sector.levelOfDetail === LevelOfDetail.Simple ||
+            sector.levelOfDetail === LevelOfDetail.Discarded
+          ) {
+            cadModel.discardInstancedMeshes(sector.metadata.id);
+          }
+
           const sectorNodeParent = cadModel.rootSector;
           const sectorNode = sectorNodeParent!.sectorNodeMap.get(sector.metadata.id);
           if (!sectorNode) {
