@@ -232,7 +232,7 @@ export class Cognite3DViewer {
 
     const revealOptions = createRevealManagerOptions(options);
 
-    this._revealManager = createCdfRevealManager(this.sdkClient, revealOptions);
+    this._revealManager = createCdfRevealManager(this.sdkClient, this._renderer, this.scene, revealOptions);
     this.startPointerEventListeners();
 
     this._revealManager.setRenderTarget(
@@ -252,7 +252,7 @@ export class Cognite3DViewer {
             this.spinner.hide();
           }
           if (options.onLoading) {
-            options.onLoading(loadingState.itemsLoaded, loadingState.itemsRequested);
+            options.onLoading(loadingState.itemsLoaded, loadingState.itemsRequested, loadingState.itemsCulled);
           }
         },
         error =>
@@ -991,7 +991,7 @@ export class Cognite3DViewer {
 
     this.renderer.setSize(width, height);
     this.renderer.render(this.scene, screenshotCamera);
-    this._revealManager.render(this.renderer, screenshotCamera, this.scene);
+    this._revealManager.render(screenshotCamera);
     const url = this.renderer.domElement.toDataURL();
 
     this.renderer.setSize(originalWidth, originalHeight);
@@ -1220,7 +1220,7 @@ export class Cognite3DViewer {
         const frameNumber = this.renderer.info.render.frame;
         const start = Date.now();
         this.triggerUpdateCameraNearAndFar();
-        this._revealManager.render(this.renderer, this.camera, this.scene);
+        this._revealManager.render(this.camera);
         renderController.clearNeedsRedraw();
         this._revealManager.resetRedraw();
         this._slicingNeedsUpdate = false;

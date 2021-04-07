@@ -4,12 +4,12 @@
 
 import * as THREE from 'three';
 import { InstancedMeshManager } from './InstancedMeshManager';
-import { MaterialManager } from './MaterialManager';
+import { CadMaterialManager } from './CadMaterialManager';
 import { InstancedMesh, InstancedMeshFile } from './rendering/types';
 
-jest.mock('./MaterialManager', () => {
+jest.mock('./CadMaterialManager', () => {
   return {
-    MaterialManager: jest.fn().mockImplementation(() => {
+    CadMaterialManager: jest.fn().mockImplementation(() => {
       return {
         getModelMaterials: () => {
           return { instancedMesh: undefined };
@@ -24,7 +24,7 @@ describe('intersectCadNodes', () => {
   let meshManager: InstancedMeshManager;
 
   beforeEach(() => {
-    const materialManager = new MaterialManager();
+    const materialManager = new CadMaterialManager();
     group = new THREE.Group();
 
     meshManager = new InstancedMeshManager(group, materialManager);

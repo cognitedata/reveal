@@ -10,6 +10,7 @@ const int RenderTypeDepth = 5;
 const int RenderTypeEffects = 6;
 const int RenderTypeGhost = 7;
 const int RenderTypeLOD = 8;
+const int RenderTypeDepthBufferOnly = 9;
 
 #include <packing>
 
@@ -32,6 +33,8 @@ void updateFragmentColor(int renderMode, vec4 color, float treeIndex, vec3 norma
         float amplitude = max(0.0, dot(normal, vec3(0.0, 0.0, 1.0)));
         vec3 albedo = min(vec3(0.8) * (0.4 + 0.6 * amplitude), 1.0);
         gl_FragColor = vec4(albedo, 0.2);
+    } else if (renderMode == RenderTypeDepthBufferOnly) {
+        gl_FragColor = vec4(1.0, 0.0, 1.0, 1.0);
     } else if (renderMode == RenderTypePackColorAndNormal) {
         vec3 hsv = rgb2hsv(color.rgb);
         float a = 0.0;

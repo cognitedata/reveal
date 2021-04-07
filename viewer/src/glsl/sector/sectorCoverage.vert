@@ -2,15 +2,18 @@
 
 attribute mediump float a_sectorId;
 attribute lowp vec3 a_coverageFactor;
+attribute lowp float a_visible;
 
 varying mediump vec3 v_color;
 varying lowp float v_coverageFactor;
 varying lowp vec2 v_seed;
+varying lowp float v_visible;
 
 varying vec3 v_viewPosition;
 
 void main()
 {
+    v_visible = a_visible;
     v_color = packIntToColor(a_sectorId);
     v_coverageFactor = abs(dot(a_coverageFactor, normal));
     // A seed to ensure that two overlapping sectors A and B 

@@ -26,11 +26,17 @@ import { CadModelMetadata } from '../../CadModelMetadata';
 import { SectorMetadata, WantedSector } from '../types';
 import { toThreeVector3 } from '../../../../utilities';
 import { CadModelSectorBudget } from '../../CadModelSectorBudget';
+import { OccludingGeometryProvider } from './OccludingGeometryProvider';
 
 /**
  * Options for creating GpuBasedSectorCuller.
  */
 export type ByVisibilityGpuSectorCullerOptions = {
+  /**
+   * Renderer used to determine what sector to load.
+   */
+  renderer: THREE.WebGLRenderer;
+
   /**
    * Optional callback for determining the cost of a sector. The default unit of the cost
    * function is bytes downloaded.
@@ -40,7 +46,7 @@ export type ByVisibilityGpuSectorCullerOptions = {
   /**
    * Use a custom coverage utility to determine how "visible" each sector is.
    */
-  coverageUtil?: OrderSectorsByVisibilityCoverage;
+  coverageUtil: OrderSectorsByVisibilityCoverage;
 
   /**
    * Logging function for debugging.
@@ -125,16 +131,16 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
   private readonly options: Required<ByVisibilityGpuSectorCullerOptions>;
   private readonly takenSectors: TakenSectorMap;
 
-  constructor(options?: ByVisibilityGpuSectorCullerOptions) {
+  constructor(options: ByVisibilityGpuSectorCullerOptions) {
     this.options = {
+      renderer: options.renderer,
       determineSectorCost: options && options.determineSectorCost ? options.determineSectorCost : computeSectorCost,
       logCallback:
         options && options.logCallback
           ? options.logCallback
           : // No logging
             () => {},
-
-      coverageUtil: options && options.coverageUtil ? options.coverageUtil : new GpuOrderSectorsByVisibilityCoverage()
+      coverageUtil: options.coverageUtil
     };
     this.takenSectors = new TakenSectorMap(this.options.determineSectorCost);
   }
@@ -178,6 +184,11 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
       accumulatedPriority
     };
     return { spendage, wantedSectors: wanted };
+  }
+
+  filterSectorsToLoad(input: DetermineSectorsInput, wantedSectors: WantedSector[]): Promise<WantedSector[]> {
+    const filtered = this.options.coverageUtil.cullOccludedSectors(input.camera, wantedSectors);
+    return Promise.resolve(filtered);
   }
 
   private update(
@@ -326,4 +337,12 @@ function computeSectorCost(metadata: SectorMetadata, lod: LevelOfDetail): Sector
     default:
       throw new Error(`Can't compute cost for lod ${lod}`);
   }
+}
+
+export function createDefaultSectorCuller(
+  renderer: THREE.WebGLRenderer,
+  occludingGeometryProvider: OccludingGeometryProvider
+): SectorCuller {
+  const coverageUtil = new GpuOrderSectorsByVisibilityCoverage({ renderer, occludingGeometryProvider });
+  return new ByVisibilityGpuSectorCuller({ renderer, coverageUtil });
 }

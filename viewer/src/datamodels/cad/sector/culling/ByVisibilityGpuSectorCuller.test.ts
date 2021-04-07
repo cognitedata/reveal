@@ -4,7 +4,7 @@
 import * as THREE from 'three';
 
 import { DetermineSectorsInput, SectorCost } from './types';
-import { MaterialManager } from '../../MaterialManager';
+import { CadMaterialManager } from '../../CadMaterialManager';
 import { OrderSectorsByVisibilityCoverage } from './OrderSectorsByVisibilityCoverage';
 import { ByVisibilityGpuSectorCuller, LevelOfDetail } from '../../../../internal';
 import { SectorMetadata, CadNode, CadModelMetadata } from '../../../../experimental';
@@ -15,13 +15,15 @@ import { CadModelSectorBudget } from '../../CadModelSectorBudget';
 import { PropType } from '../../../../utilities/reflection';
 
 describe('ByVisibilityGpuSectorCuller', () => {
-  const materialManager = new MaterialManager();
+  const materialManager = new CadMaterialManager();
   const setModelsMock: PropType<OrderSectorsByVisibilityCoverage, 'setModels'> = jest.fn();
   const setClippingMock: PropType<OrderSectorsByVisibilityCoverage, 'setClipping'> = jest.fn();
   const orderSectorsByVisibilityMock: PropType<
     OrderSectorsByVisibilityCoverage,
     'orderSectorsByVisibility'
   > = jest.fn();
+  const context: WebGLRenderingContext = require('gl')(64, 64, { preserveDrawingBuffer: true });
+  const renderer = new THREE.WebGLRenderer({ context });
 
   const coverageUtil: OrderSectorsByVisibilityCoverage = {
     setModels: setModelsMock,
@@ -29,6 +31,9 @@ describe('ByVisibilityGpuSectorCuller', () => {
     orderSectorsByVisibility: camera => {
       orderSectorsByVisibilityMock(camera);
       return [];
+    },
+    cullOccludedSectors: (_camera, sectors) => {
+      return sectors;
     },
     dispose: jest.fn()
   };
@@ -39,7 +44,7 @@ describe('ByVisibilityGpuSectorCuller', () => {
   });
 
   test('determineSectors sets models to coverage utility', () => {
-    const culler = new ByVisibilityGpuSectorCuller({ coverageUtil });
+    const culler = new ByVisibilityGpuSectorCuller({ renderer, coverageUtil });
     const model = createCadModelMetadata(generateSectorTree(1));
     const input = createDetermineSectorInput(camera, model);
     culler.determineSectors(input);
@@ -48,7 +53,7 @@ describe('ByVisibilityGpuSectorCuller', () => {
 
   test('determineSectors sets clip planes to coverage utility', () => {
     const clippingPlanes = [new THREE.Plane(), new THREE.Plane()];
-    const culler = new ByVisibilityGpuSectorCuller({ coverageUtil });
+    const culler = new ByVisibilityGpuSectorCuller({ renderer, coverageUtil });
     const model = createCadModelMetadata(generateSectorTree(1));
     const input = createDetermineSectorInput(camera, model);
     input.clippingPlanes = clippingPlanes;
@@ -59,7 +64,7 @@ describe('ByVisibilityGpuSectorCuller', () => {
 
   test('determineSectors returns sectors for all models', () => {
     // Arrange
-    const culler = new ByVisibilityGpuSectorCuller({ coverageUtil });
+    const culler = new ByVisibilityGpuSectorCuller({ renderer, coverageUtil });
     const model1 = createCadModelMetadata(generateSectorTree(1));
     const model2 = createCadModelMetadata(generateSectorTree(1));
     const input = createDetermineSectorInput(camera, [model1, model2]);
@@ -94,7 +99,7 @@ describe('ByVisibilityGpuSectorCuller', () => {
           return { downloadSize: 0, drawCalls: 0 };
       }
     };
-    const culler = new ByVisibilityGpuSectorCuller({ coverageUtil, determineSectorCost });
+    const culler = new ByVisibilityGpuSectorCuller({ renderer, coverageUtil, determineSectorCost });
     const model = createCadModelMetadata(generateSectorTree(2, 2));
     const cadNode = new CadNode(model, materialManager);
     Object.defineProperty(cadNode, 'cadModel', { get: jest.fn().mockReturnValue(model) });
@@ -135,7 +140,7 @@ describe('ByVisibilityGpuSectorCuller', () => {
           return { downloadSize: 0, drawCalls: 0 };
       }
     };
-    const culler = new ByVisibilityGpuSectorCuller({ coverageUtil, determineSectorCost });
+    const culler = new ByVisibilityGpuSectorCuller({ renderer, coverageUtil, determineSectorCost });
     const model = createCadModelMetadata(generateSectorTree(2, 2));
     const cadNode = new CadNode(model, materialManager);
     Object.defineProperty(cadNode, 'cadModel', { get: jest.fn().mockReturnValue(model) });
@@ -165,7 +170,7 @@ describe('ByVisibilityGpuSectorCuller', () => {
   });
 
   test('dispose() disposes coverge utility', () => {
-    const culler = new ByVisibilityGpuSectorCuller({ coverageUtil });
+    const culler = new ByVisibilityGpuSectorCuller({ renderer, coverageUtil });
     culler.dispose();
     expect(coverageUtil.dispose).toBeCalledTimes(1);
   });

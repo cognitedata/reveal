@@ -7,7 +7,7 @@ import * as THREE from 'three';
 import { OperatorFunction, Observable, asapScheduler, scheduled } from 'rxjs';
 import { filter, map, mergeAll, publish } from 'rxjs/operators';
 
-import { MaterialManager } from '../MaterialManager';
+import { CadMaterialManager } from '../CadMaterialManager';
 import { InstancedMeshFile, SectorQuads } from '../rendering/types';
 
 import { SectorGeometry, ParsedSector } from './types';
@@ -16,9 +16,9 @@ import { consumeSectorDetailed, consumeSectorSimple } from './sectorUtilities';
 import { toThreeJsBox3 } from '../../../utilities';
 
 export class SimpleAndDetailedToSector3D {
-  private readonly materialManager: MaterialManager;
+  private readonly materialManager: CadMaterialManager;
 
-  constructor(materialManager: MaterialManager) {
+  constructor(materialManager: CadMaterialManager) {
     this.materialManager = materialManager;
   }
 
