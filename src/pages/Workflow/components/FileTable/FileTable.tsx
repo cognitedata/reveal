@@ -36,15 +36,17 @@ type CellRenderer = {
 type FileTableProps = Omit<BaseTableProps<TableDataItem>, 'width'>;
 
 function StatusCell({
-  rowData: { annotationsBadgeProps: badgeProps, statusTime },
+  rowData: { annotationsBadgeProps, statusTime },
 }: CellRenderer) {
-  const annotations = Object.keys(badgeProps) as Array<
+  const annotations = Object.keys(annotationsBadgeProps) as Array<
     keyof AnnotationsBadgeProps
   >;
   if (
-    annotations.some((key) => badgeProps[key]?.status === 'Completed') &&
+    annotations.some(
+      (key) => annotationsBadgeProps[key]?.status === 'Completed'
+    ) &&
     !annotations.some((key) =>
-      ['Running', 'Queued'].includes(badgeProps[key]?.status || '')
+      ['Running', 'Queued'].includes(annotationsBadgeProps[key]?.status || '')
     )
   ) {
     return (
@@ -53,11 +55,15 @@ function StatusCell({
       </div>
     );
   }
-  if (annotations.some((key) => badgeProps[key]?.status === 'Running')) {
+  if (
+    annotations.some((key) => annotationsBadgeProps[key]?.status === 'Running')
+  ) {
     return <div style={{ textTransform: 'capitalize' }}>Running</div>;
   }
 
-  if (annotations.some((key) => badgeProps[key]?.status === 'Queued')) {
+  if (
+    annotations.some((key) => annotationsBadgeProps[key]?.status === 'Queued')
+  ) {
     return <div style={{ textTransform: 'capitalize' }}>Queued</div>;
   }
 
@@ -90,6 +96,15 @@ function ActionCell({ rowData }: CellRenderer) {
     }
   };
 
+  const annotations = Object.keys(rowData.annotationsBadgeProps) as Array<
+    keyof AnnotationsBadgeProps
+  >;
+  const reviewDisabled = annotations.some((key) =>
+    ['Queued', 'Running'].includes(
+      rowData.annotationsBadgeProps[key]?.status || ''
+    )
+  );
+
   return (
     <div>
       <Button
@@ -98,6 +113,7 @@ function ActionCell({ rowData }: CellRenderer) {
         iconPlacement="right"
         style={{ marginRight: '10px' }}
         onClick={handleReview}
+        disabled={reviewDisabled}
       >
         Review
       </Button>

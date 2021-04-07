@@ -41,12 +41,14 @@ export const detectAnnotations = createAsyncThunk<
       );
     }
 
+    const batchSize = 10;
     const { jobsByFileId } = getState().processSlice;
-    const batchFileIdsList: number[][] = fileIds
-      .map((_, i) =>
-        i % BATCHSIZE === 0 ? fileIds.slice(i, i + BATCHSIZE) : null
-      )
-      .filter((x): x is number[] => !!x);
+    const batchFileIdsList: number[][] = fileIds.reduce((acc, _, i) => {
+      if (i % batchSize === 0) {
+        acc.push(fileIds.slice(i, i + batchSize));
+      }
+      return acc;
+    }, [] as number[][]);
 
     batchFileIdsList.forEach((batchFileIds) => {
       detectionModels.forEach((modelType) => {
@@ -83,8 +85,8 @@ export const postAnnotationJob = createAsyncThunk<
       {
         isCompleted: (latestJobVersion) =>
           latestJobVersion.status === 'Completed' ||
-          latestJobVersion.status === 'Failed',
-        // || !doesFileExist(), // TODO: we don't want to poll jobs for removed files
+          latestJobVersion.status === 'Failed' ||
+          !fileIds.some(doesFileExist), // we don't want to poll jobs for removed files
 
         onTick: (latestJobVersion) => {
           fileIds.forEach((fileId) => {
