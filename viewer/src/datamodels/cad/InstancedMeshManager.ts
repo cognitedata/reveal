@@ -153,7 +153,7 @@ export class InstancedMeshManager {
     instance: InstancedMesh,
     instanceIdentifier: string
   ) {
-    const bufferGeometry = this.createInstancedBufferGeometry(
+    const [bufferGeometry, updateAttributesCallback] = this.createInstancedBufferGeometry(
       geometryAttributes.vertices,
       geometryAttributes.indices,
       currentAttributes.treeIndexBuffer,
@@ -161,11 +161,11 @@ export class InstancedMeshManager {
       currentAttributes.instanceMatrixBuffer
     );
 
-    bufferGeometry[0].setDrawRange(instance.triangleOffset * 3, instance.triangleCount * 3);
+    bufferGeometry.setDrawRange(instance.triangleOffset * 3, instance.triangleCount * 3);
 
     currentAttributes.mesh.geometry.dispose();
 
-    currentAttributes.mesh.geometry = bufferGeometry[0];
+    currentAttributes.mesh.geometry = bufferGeometry;
 
     currentAttributes.mesh.count = currentAttributes.treeIndexBuffer.length;
 
@@ -174,7 +174,7 @@ export class InstancedMeshManager {
       treeIndexBuffer: currentAttributes.treeIndexBuffer,
       colorBuffer: currentAttributes.colorBuffer,
       instanceMatrixBuffer: currentAttributes.instanceMatrixBuffer,
-      updateAttributes: bufferGeometry[1]
+      updateAttributes: updateAttributesCallback
     });
   }
 
@@ -208,7 +208,7 @@ export class InstancedMeshManager {
       sectorId
     );
 
-    const instanceGeometry = this.createInstancedBufferGeometry(
+    const [instanceGeometry, updateAttributesCallback] = this.createInstancedBufferGeometry(
       geometryAttributes.vertices,
       geometryAttributes.indices,
       dynamicTreeIndicesBuffer,
@@ -216,9 +216,9 @@ export class InstancedMeshManager {
       dynamicinstanceMatricesBuffer
     );
 
-    instanceGeometry[0].setDrawRange(instance.triangleOffset * 3, instance.triangleCount * 3);
+    instanceGeometry.setDrawRange(instance.triangleOffset * 3, instance.triangleCount * 3);
 
-    const instanceMesh = new THREE.InstancedMesh(instanceGeometry[0], material, dynamicTreeIndicesBuffer.length);
+    const instanceMesh = new THREE.InstancedMesh(instanceGeometry, material, dynamicTreeIndicesBuffer.length);
 
     instanceMesh.frustumCulled = false;
 
@@ -227,7 +227,7 @@ export class InstancedMeshManager {
       treeIndexBuffer: dynamicTreeIndicesBuffer,
       colorBuffer: dynamicColorsBuffer,
       instanceMatrixBuffer: dynamicinstanceMatricesBuffer,
-      updateAttributes: instanceGeometry[1]
+      updateAttributes: updateAttributesCallback
     });
 
     this._instancedMeshGroup.add(instanceMesh);

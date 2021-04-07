@@ -46,7 +46,7 @@ export class CadNode extends THREE.Object3D {
   private readonly _events = {
     loadingHintsChanged: new EventTrigger<LoadingHintsChangeListener>()
   };
-  private _instancedMeshManager: InstancedMeshManager;
+  private readonly _instancedMeshManager: InstancedMeshManager;
 
   constructor(model: CadModelMetadata, materialManager: MaterialManager) {
     super();
@@ -55,6 +55,8 @@ export class CadNode extends THREE.Object3D {
     this._materialManager = materialManager;
 
     const instancedMeshGroup = new THREE.Group();
+    instancedMeshGroup.name = 'InstancedMeshes';
+
     this._instancedMeshManager = new InstancedMeshManager(instancedMeshGroup, materialManager);
 
     const rootSector = new RootSectorNode(model);
