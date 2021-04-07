@@ -73,12 +73,13 @@ export default function UploadStep() {
         <FileUploader
           initialUploadedFiles={uploadedFiles}
           accept={['.jpeg', '.jpg', '.png', '.tiff'].join(', ')}
-          maxTotalSizeInBytes={5 * 1024 ** 3 /* 5 GB */}
+          maxTotalSizeInBytes={1 * 1024 ** 3 /* 5 GB */}
+          maxFileCount={30}
           onUploadSuccess={onUploadSuccess}
         >
           <AcceptMessage>
             <b>* Supported files: </b>
-            jpeg, png, tiff. Total size limit: 5 GB.
+            jpeg, png, tiff. Limit: 30 files with a total size of 1 GB.
           </AcceptMessage>
         </FileUploader>
       </FileUploaderWrapper>
