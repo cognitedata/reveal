@@ -48,7 +48,7 @@
     "react-virtualized-auto-sizer": "^1.0.5",
     "react-window": "^1.8.6",
     "react-window-infinite-loader": "^1.0.7",
-    "styled-components": "^5.2.1",
+    "styled-components": "^5.2.3",
     "use-debounce": "^6.0.0",
     "uuid": "^8.3.2"
   },
