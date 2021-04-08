@@ -17,11 +17,16 @@ export type Color = {
   b: number;
 };
 /**
- * Callback to monitor downloaded requests and progress.
+ * Callback to monitor loaded requests and progress.
  * Use OnLoadingCallback instead of onProgress/onComplete.
  * @module @cognite/reveal
+ *
+ * @param itemsLoaded Number of items loaded so far in this batch.
+ * @param itemsRequested Total number of items to load in this batch.
+ * @param itemsCulled Number of items deemed unnecessary to load in this batch.
+ * @version itemsCulled is new in 2.0.0
  */
-export type OnLoadingCallback = (itemsDownloaded: number, itemsRequested: number) => void;
+export type OnLoadingCallback = (itemsLoaded: number, itemsRequested: number, itemsCulled: number) => void;
 
 /**
  * @module @cognite/reveal
@@ -41,6 +46,34 @@ export interface Cognite3DViewerOptions {
    * @version new in 1.3.0
    */
   renderTargetOptions?: { target: THREE.WebGLRenderTarget; autoSetSize?: boolean };
+
+  /**
+   * When false, camera near and far planes will not be updated automatically (defaults to true).
+   * This can be useful when you have custom content in the 3D view and need to better
+   * control the view frustum.
+   *
+   * When automatic camera near/far planes are disabled, you are responsible for setting
+   * this on your own.
+   * @example
+   * ```
+   * viewer.camera.near = 0.1;
+   * viewer.camera.far = 1000.0;
+   * viewer.camera.updateProjectionMatrix();
+   * ```
+   *
+   * @version new in 1.4.0
+   */
+  automaticCameraNearFar?: boolean;
+
+  /**
+   * When false, the sensitivity of the camera controls will not be updated automatically.
+   * This can be useful to better control the sensitivity of the 3D navigation.
+   *
+   * When not set, control the sensitivity of the camera using `viewer.cameraControls.minDistance`
+   * and `viewer.cameraControls.maxDistance`.
+   * @version new in 1.4.0
+   */
+  automaticControlsSensitivity?: boolean;
 
   /** @deprecated And ignored. */
   highlightColor?: THREE.Color;
@@ -94,6 +127,11 @@ export interface Cognite3DViewerOptions {
    * @version new in 1.4.0
    */
   ssaoQualityHint?: 'medium' | 'high' | 'veryhigh' | 'disabled';
+
+  /**
+   * Enables / disables visualizing the edges of geometry. Defaults to true.
+   */
+  enableEdges?: boolean;
 
   /** Callback to download stream progress. */
   onLoading?: OnLoadingCallback;

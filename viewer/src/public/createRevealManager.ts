@@ -1,7 +1,7 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-
+import * as THREE from 'three';
 import { LocalModelIdentifier, CdfModelIdentifier, ModelDataClient } from '../utilities/networking/types';
 import { CdfModelDataClient } from '../utilities/networking/CdfModelDataClient';
 import { CogniteClient } from '@cognite/sdk';
@@ -12,28 +12,41 @@ import { LocalModelDataClient } from '../utilities/networking/LocalModelDataClie
 import { RevealOptions } from './types';
 import { initMetrics } from '../utilities/metrics';
 import { RenderOptions } from '..';
+import { EffectRenderManager } from '../datamodels/cad/rendering/EffectRenderManager';
+import { CadMaterialManager } from '../datamodels/cad/CadMaterialManager';
+import { RenderAlreadyLoadedGeometryProvider } from '../datamodels/cad/rendering/RenderAlreadyLoadedGeometryProvider';
 
 /**
  * Used to create an instance of reveal manager that works with localhost.
+ * @param renderer
+ * @param scene
  * @param revealOptions
  * @returns RevealManager instance.
  */
-export function createLocalRevealManager(revealOptions: RevealOptions = {}): RevealManager<LocalModelIdentifier> {
+export function createLocalRevealManager(
+  renderer: THREE.WebGLRenderer,
+  scene: THREE.Scene,
+  revealOptions: RevealOptions = {}
+): RevealManager<LocalModelIdentifier> {
   const modelDataClient = new LocalModelDataClient();
-  return createRevealManager('local', modelDataClient, revealOptions);
+  return createRevealManager('local', modelDataClient, renderer, scene, revealOptions);
 }
 
 /**
  * Used to create an instance of reveal manager that works with the CDF.
  * @param client
+ * @param renderer
+ * @param scene
  * @param revealOptions
  */
 export function createCdfRevealManager(
   client: CogniteClient,
+  renderer: THREE.WebGLRenderer,
+  scene: THREE.Scene,
   revealOptions: RevealOptions = {}
 ): RevealManager<CdfModelIdentifier> {
   const modelDataClient = new CdfModelDataClient(client);
-  return createRevealManager(client.project, modelDataClient, revealOptions);
+  return createRevealManager(client.project, modelDataClient, renderer, scene, revealOptions);
 }
 
 /**
@@ -41,11 +54,15 @@ export function createCdfRevealManager(
  * @internal
  * @param project
  * @param client
+ * @param renderer
+ * @param scene
  * @param revealOptions
  */
 export function createRevealManager<T>(
   project: string,
   client: ModelDataClient<T>,
+  renderer: THREE.WebGLRenderer,
+  scene: THREE.Scene,
   revealOptions: RevealOptions = {}
 ): RevealManager<T> {
   const applicationId = client.getApplicationIdentifier();
@@ -55,8 +72,11 @@ export function createRevealManager<T>(
     constructorOptions: revealOptions
   });
 
-  const cadManager = createCadManager(client, revealOptions);
-  const pointCloudManager = createPointCloudManager(client);
   const renderOptions: RenderOptions = revealOptions.renderOptions || {};
-  return new RevealManager(cadManager, pointCloudManager, renderOptions);
+  const materialManager = new CadMaterialManager();
+  const renderManager = new EffectRenderManager(renderer, scene, materialManager, renderOptions);
+  const alreadyLoadedProvider = new RenderAlreadyLoadedGeometryProvider(renderManager);
+  const cadManager = createCadManager(client, renderer, materialManager, alreadyLoadedProvider, revealOptions);
+  const pointCloudManager = createPointCloudManager(client);
+  return new RevealManager(cadManager, renderManager, pointCloudManager);
 }

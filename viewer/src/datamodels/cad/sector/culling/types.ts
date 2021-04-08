@@ -18,6 +18,45 @@ export interface DetermineSectorsInput {
   budget: CadModelSectorBudget;
 }
 
+/**
+ * Statistics for how much data is required to load set of sectors.
+ */
+export type SectorLoadingSpendage = {
+  /**
+   * Estimated number of bytes to download sectors.
+   */
+  readonly downloadSize: number;
+  /**
+   * Estimated number of draw calls required to draw the sectors.
+   */
+  readonly drawCalls: number;
+
+  /**
+   * Total number of sectors to load.
+   */
+  readonly loadedSectorCount: number;
+  /**
+   * Number of 'simple' sectors to load.
+   */
+  readonly simpleSectorCount: number;
+  /**
+   * Number of 'detailed' sectors to load.
+   */
+  readonly detailedSectorCount: number;
+  /**
+   * How many sectors that was "forced prioritized".
+   */
+  readonly forcedDetailedSectorCount: number;
+  /**
+   * The total number of sectors in models we are loading.
+   */
+  readonly totalSectorCount: number;
+  /**
+   * How much of the prioritized nodes that are loaded (between 0 and 1).
+   */
+  readonly accumulatedPriority: number;
+};
+
 export type SectorCost = {
   downloadSize: number;
   drawCalls: number;

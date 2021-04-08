@@ -9,14 +9,15 @@ import {
   quadGeometry,
   coneGeometry,
   trapeziumGeometry,
-  torusLODs,
-  nutGeometry
+  nutGeometry,
+  torusGeometry
 } from './primitiveGeometries';
 import { Materials } from './materials';
 import { ParsePrimitiveAttribute } from '@cognite/reveal-parser-worker';
 import { disposeAttributeArrayOnUpload } from '../../../utilities/disposeAttributeArrayOnUpload';
+import assert from 'assert';
 
-export function* createPrimitives(sector: SectorGeometry, materials: Materials) {
+export function* createPrimitives(sector: SectorGeometry, materials: Materials, bounds: THREE.Box3) {
   const primitives = sector.primitives;
 
   if (hasAny(primitives.boxCollection)) {
@@ -26,27 +27,30 @@ export function* createPrimitives(sector: SectorGeometry, materials: Materials) 
     yield createCircles(primitives.circleCollection, primitives.circleAttributes, materials.circle);
   }
   if (hasAny(primitives.coneCollection)) {
-    yield createCones(primitives.coneCollection, primitives.coneAttributes, materials.cone);
+    yield createCones(primitives.coneCollection, primitives.coneAttributes, materials.cone, bounds);
   }
   if (hasAny(primitives.eccentricConeCollection)) {
     yield createEccentricCones(
       primitives.eccentricConeCollection,
       primitives.eccentricConeAttributes,
-      materials.eccentricCone
+      materials.eccentricCone,
+      bounds
     );
   }
   if (hasAny(primitives.ellipsoidSegmentCollection)) {
     yield createEllipsoidSegments(
       primitives.ellipsoidSegmentCollection,
       primitives.ellipsoidSegmentAttributes,
-      materials.ellipsoidSegment
+      materials.ellipsoidSegment,
+      bounds
     );
   }
   if (hasAny(primitives.generalCylinderCollection)) {
     yield createGeneralCylinders(
       primitives.generalCylinderCollection,
       primitives.generalCylinderAttributes,
-      materials.generalCylinder
+      materials.generalCylinder,
+      bounds
     );
   }
   if (hasAny(primitives.generalRingCollection)) {
@@ -59,7 +63,8 @@ export function* createPrimitives(sector: SectorGeometry, materials: Materials) 
     yield createSphericalSegments(
       primitives.sphericalSegmentCollection,
       primitives.sphericalSegmentAttributes,
-      materials.sphericalSegment
+      materials.sphericalSegment,
+      bounds
     );
   }
   if (hasAny(primitives.torusSegmentCollection)) {
@@ -167,11 +172,10 @@ function createBoxes(
   geometry.setAttribute('position', boxGeometry.position);
   geometry.setAttribute('normal', boxGeometry.normal);
   setAttributes(geometry, boxCollection, boxAttributes, mesh);
+  setBoundsFromInstanceMatrices(geometry);
 
   mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
 
-  // TODO add frustum culling back for all meshes after adding proper boudning boxes
-  mesh.frustumCulled = false;
   mesh.name = `Primitives (Boxes)`;
 
   return mesh;
@@ -189,10 +193,9 @@ function createCircles(
   geometry.setAttribute('position', quadGeometry.position);
   geometry.setAttribute('normal', quadGeometry.position);
   setAttributes(geometry, circleCollection, circleAttributes, mesh);
+  setBoundsFromInstanceMatrices(geometry);
 
   mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
-
-  mesh.frustumCulled = false;
 
   mesh.name = `Primitives (Circles)`;
   return mesh;
@@ -201,7 +204,8 @@ function createCircles(
 function createCones(
   coneCollection: Uint8Array,
   coneAttributes: Map<string, ParsePrimitiveAttribute>,
-  material: THREE.ShaderMaterial
+  material: THREE.ShaderMaterial,
+  bounds: THREE.Box3
 ) {
   const geometry = new THREE.InstancedBufferGeometry();
   const mesh = new THREE.Mesh(geometry, material);
@@ -209,8 +213,8 @@ function createCones(
   geometry.setIndex(coneGeometry.index);
   geometry.setAttribute('position', coneGeometry.position);
   setAttributes(geometry, coneCollection, coneAttributes, mesh);
+  setBoundsFromBox(geometry, bounds);
 
-  mesh.frustumCulled = false;
   mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
   mesh.name = `Primitives (Cones)`;
   return mesh;
@@ -219,7 +223,8 @@ function createCones(
 function createEccentricCones(
   eccentericConeCollection: Uint8Array,
   eccentericConeAttributes: Map<string, ParsePrimitiveAttribute>,
-  material: THREE.ShaderMaterial
+  material: THREE.ShaderMaterial,
+  bounds: THREE.Box3
 ) {
   const geometry = new THREE.InstancedBufferGeometry();
   const mesh = new THREE.Mesh(geometry, material);
@@ -227,8 +232,8 @@ function createEccentricCones(
   geometry.setIndex(coneGeometry.index);
   geometry.setAttribute('position', coneGeometry.position);
   setAttributes(geometry, eccentericConeCollection, eccentericConeAttributes, mesh);
+  setBoundsFromBox(geometry, bounds);
 
-  mesh.frustumCulled = false;
   mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
   mesh.name = `Primitives (EccentricCones)`;
   return mesh;
@@ -237,7 +242,8 @@ function createEccentricCones(
 function createEllipsoidSegments(
   ellipsoidSegmentCollection: Uint8Array,
   ellipsoidSegmentAttributes: Map<string, ParsePrimitiveAttribute>,
-  material: THREE.ShaderMaterial
+  material: THREE.ShaderMaterial,
+  bounds: THREE.Box3
 ) {
   const geometry = new THREE.InstancedBufferGeometry();
   const mesh = new THREE.Mesh(geometry, material);
@@ -245,8 +251,8 @@ function createEllipsoidSegments(
   geometry.setIndex(coneGeometry.index);
   geometry.setAttribute('position', coneGeometry.position);
   setAttributes(geometry, ellipsoidSegmentCollection, ellipsoidSegmentAttributes, mesh);
+  setBoundsFromBox(geometry, bounds);
 
-  mesh.frustumCulled = false;
   mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
   mesh.name = `Primitives (EllipsoidSegments)`;
   return mesh;
@@ -255,7 +261,8 @@ function createEllipsoidSegments(
 function createGeneralCylinders(
   generalCylinderCollection: Uint8Array,
   generalCylinderAttributes: Map<string, ParsePrimitiveAttribute>,
-  material: THREE.ShaderMaterial
+  material: THREE.ShaderMaterial,
+  bounds: THREE.Box3
 ) {
   const geometry = new THREE.InstancedBufferGeometry();
   const mesh = new THREE.Mesh(geometry, material);
@@ -263,8 +270,8 @@ function createGeneralCylinders(
   geometry.setIndex(coneGeometry.index);
   geometry.setAttribute('position', coneGeometry.position);
   setAttributes(geometry, generalCylinderCollection, generalCylinderAttributes, mesh);
+  setBoundsFromBox(geometry, bounds);
 
-  mesh.frustumCulled = false;
   mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
   mesh.name = `Primitives (GeneralCylinders)`;
   return mesh;
@@ -281,8 +288,8 @@ function createGeneralRings(
   geometry.setIndex(quadGeometry.index);
   geometry.setAttribute('position', quadGeometry.position);
   setAttributes(geometry, generalRingCollection, generalRingAttributes, mesh);
+  setBoundsFromInstanceMatrices(geometry);
 
-  mesh.frustumCulled = false;
   mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
   mesh.name = `Primitives (GeneralRings)`;
   return mesh;
@@ -291,7 +298,8 @@ function createGeneralRings(
 function createSphericalSegments(
   sphericalSegmentCollection: Uint8Array,
   sphericalSegmentAttributes: Map<string, ParsePrimitiveAttribute>,
-  material: THREE.ShaderMaterial
+  material: THREE.ShaderMaterial,
+  bounds: THREE.Box3
 ) {
   const geometry = new THREE.InstancedBufferGeometry();
   const mesh = new THREE.Mesh(geometry, material);
@@ -299,6 +307,7 @@ function createSphericalSegments(
   geometry.setIndex(coneGeometry.index);
   geometry.setAttribute('position', coneGeometry.position);
   setAttributes(geometry, sphericalSegmentCollection, sphericalSegmentAttributes, mesh);
+  setBoundsFromBox(geometry, bounds);
 
   // TODO We need to set the radius manually here because
   // we are reusing the ellipsoid shader. We should
@@ -309,7 +318,6 @@ function createSphericalSegments(
   geometry.setAttribute(`a_horizontalRadius`, geometry.getAttribute('a_radius'));
   geometry.setAttribute(`a_verticalRadius`, geometry.getAttribute('a_radius'));
 
-  mesh.frustumCulled = false;
   mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
   mesh.name = `Primitives (EllipsoidSegments)`;
   return mesh;
@@ -327,8 +335,8 @@ function createQuads(
   geometry.setAttribute('position', quadGeometry.position);
   geometry.setAttribute('normal', quadGeometry.normal);
   setAttributes(geometry, quadCollection, quadAttributes, mesh);
+  setBoundsFromInstanceMatrices(geometry);
 
-  mesh.frustumCulled = false;
   mesh.name = `Primitives (Quads)`;
   return mesh;
 }
@@ -344,19 +352,11 @@ function createTrapeziums(
   geometry.setIndex(trapeziumGeometry.index);
   geometry.setAttribute('position', trapeziumGeometry.position);
   setAttributes(geometry, trapeziumCollection, trapeziumAttributes, mesh);
+  setBoundsFromVertexAttributes(geometry);
 
-  mesh.frustumCulled = false;
   mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
   mesh.name = `Primitives (Trapeziums)`;
   return mesh;
-}
-
-function calcLODDistance(size: number, lodLevel: number, numLevels: number): number {
-  if (lodLevel >= numLevels - 1) {
-    return 0;
-  }
-  const scaleFactor = 15; // Seems to be a reasonable number
-  return size * scaleFactor ** (numLevels - 1 - lodLevel);
 }
 
 function createTorusSegments(
@@ -364,53 +364,17 @@ function createTorusSegments(
   torusSegmentAttributes: Map<string, ParsePrimitiveAttribute>,
   material: THREE.ShaderMaterial
 ) {
-  const sizes = getTorusSizes(torusSegmentCollection, torusSegmentAttributes);
-  if (!sizes) {
-    throw new Error('Torus segments are missing size attribute');
-  }
-  const biggestTorus = sizes.reduce((acc, size) => Math.max(acc, size));
-  const lod = new THREE.LOD();
-  lod.name = 'Primitives (TorusSegments)';
+  const geometry = new THREE.InstancedBufferGeometry();
+  const mesh = new THREE.Mesh(geometry, material);
 
-  for (const [level, torus] of torusLODs.entries()) {
-    const geometry = new THREE.InstancedBufferGeometry();
-    const mesh = new THREE.Mesh(geometry, material);
+  geometry.setIndex(torusGeometry.index);
+  geometry.setAttribute('position', torusGeometry.position);
+  setAttributes(geometry, torusSegmentCollection, torusSegmentAttributes, mesh);
+  setBoundsFromInstanceMatrices(geometry);
 
-    geometry.setIndex(torus.index);
-    geometry.setAttribute('position', torus.position);
-
-    setAttributes(geometry, torusSegmentCollection, torusSegmentAttributes, mesh);
-
-    mesh.frustumCulled = false;
-    mesh.name = `Primitives (TorusSegments) - LOD ${level}`;
-
-    lod.addLevel(mesh, calcLODDistance(biggestTorus, level, torusLODs.length));
-
-    mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
-  }
-
-  return lod;
-}
-
-function getTorusSizes(
-  torusSegmentCollection: Uint8Array,
-  torusSegmentAttributes: Map<string, ParsePrimitiveAttribute>
-) {
-  const collectionStride = Array.from(torusSegmentAttributes.values()).reduce((sum, element) => sum + element.size, 0);
-
-  const numberOfTorusSegments = torusSegmentCollection.length / collectionStride;
-
-  const sizes = new Float32Array(numberOfTorusSegments);
-
-  const collectionView = new DataView(torusSegmentCollection.buffer);
-  const sizeAttribute = torusSegmentAttributes.get('size')!;
-  const sizeAttributeOffset = sizeAttribute.offset;
-
-  for (let i = 0; i < numberOfTorusSegments; i++) {
-    sizes[i] = collectionView.getFloat32(i * collectionStride + sizeAttributeOffset!, true);
-  }
-
-  return sizes;
+  mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
+  mesh.name = `Primitives (TorusSegments)`;
+  return mesh;
 }
 
 function createNuts(
@@ -425,16 +389,105 @@ function createNuts(
   geometry.setAttribute('position', nutGeometry.position);
   geometry.setAttribute('normal', nutGeometry.normal);
   setAttributes(geometry, nutCollection, nutAttributes, mesh);
+  setBoundsFromInstanceMatrices(geometry);
 
-  mesh.frustumCulled = false;
   mesh.name = `Primitives (Nuts)`;
   return mesh;
 }
-
 function updateMaterialInverseModelMatrix(
   material: THREE.ShaderMaterial | THREE.RawShaderMaterial,
   matrixWorld: THREE.Matrix4
 ) {
   const inverseModelMatrix: THREE.Matrix4 = material.uniforms.inverseModelMatrix.value;
   inverseModelMatrix.copy(matrixWorld).invert();
+}
+
+function setBoundsFromBox(geometry: THREE.InstancedBufferGeometry, bounds: THREE.Box3) {
+  geometry.boundingSphere = geometry.boundingSphere || new THREE.Sphere();
+  bounds.getBoundingSphere(geometry.boundingSphere);
+}
+
+const setBoundingSphereFromVerticesVars = {
+  baseBoundingBox: new THREE.Box3(),
+  instanceBoundingBox: new THREE.Box3(),
+  instanceMatrix: new THREE.Matrix4(),
+  p: new THREE.Vector3()
+};
+
+function setBoundsFromInstanceMatrices(geometry: THREE.InstancedBufferGeometry) {
+  const { baseBoundingBox, instanceBoundingBox, instanceMatrix, p } = setBoundingSphereFromVerticesVars;
+  baseBoundingBox.makeEmpty();
+  const bbox = new THREE.Box3();
+
+  // Determine base bounding box
+  const positionAttribute = geometry.getAttribute('position');
+  for (let i = 0; i < positionAttribute.count; ++i) {
+    p.set(positionAttribute.getX(i), positionAttribute.getY(i), positionAttribute.getZ(i));
+    baseBoundingBox.expandByPoint(p);
+  }
+
+  // Apply instance matrix to bounds to compute real bounds
+  const matCol0Attribute = geometry.getAttribute('a_instanceMatrix_column_0');
+  const matCol1Attribute = geometry.getAttribute('a_instanceMatrix_column_1');
+  const matCol2Attribute = geometry.getAttribute('a_instanceMatrix_column_2');
+  const matCol3Attribute = geometry.getAttribute('a_instanceMatrix_column_3');
+  assert(
+    matCol0Attribute !== undefined &&
+      matCol1Attribute !== undefined &&
+      matCol2Attribute !== undefined &&
+      matCol3Attribute !== undefined
+  );
+
+  for (let i = 0; i < matCol0Attribute.count; ++i) {
+    /* eslint-disable */
+    instanceMatrix.set(
+      matCol0Attribute.getX(i), matCol1Attribute.getX(i), matCol2Attribute.getX(i), matCol3Attribute.getX(i),
+      matCol0Attribute.getY(i), matCol1Attribute.getY(i), matCol2Attribute.getY(i), matCol3Attribute.getY(i),
+      matCol0Attribute.getZ(i), matCol1Attribute.getZ(i), matCol2Attribute.getZ(i), matCol3Attribute.getZ(i),
+      matCol0Attribute.getW(i), matCol1Attribute.getW(i), matCol2Attribute.getW(i), matCol3Attribute.getW(i),
+    );
+    /* eslint-enable */
+    instanceBoundingBox.copy(baseBoundingBox).applyMatrix4(instanceMatrix);
+    bbox.expandByPoint(instanceBoundingBox.min);
+    bbox.expandByPoint(instanceBoundingBox.max);
+  }
+  geometry.boundingBox = bbox;
+  geometry.boundingSphere = geometry.boundingSphere || new THREE.Sphere();
+  geometry.boundingBox.getBoundingSphere(geometry.boundingSphere);
+}
+
+const setBoundsFromVertexAttributesVars = {
+  bbox: new THREE.Box3(),
+  p: new THREE.Vector3()
+};
+
+function setBoundsFromVertexAttributes(geometry: THREE.InstancedBufferGeometry) {
+  const { bbox, p } = setBoundsFromVertexAttributesVars;
+  bbox.makeEmpty();
+
+  const vertex1Attribute = geometry.getAttribute('a_vertex1');
+  const vertex2Attribute = geometry.getAttribute('a_vertex2');
+  const vertex3Attribute = geometry.getAttribute('a_vertex3');
+  const vertex4Attribute = geometry.getAttribute('a_vertex4');
+  assert(
+    vertex1Attribute !== undefined &&
+      vertex2Attribute !== undefined &&
+      vertex3Attribute !== undefined &&
+      vertex4Attribute !== undefined
+  );
+
+  for (let i = 0; i < vertex1Attribute.count; ++i) {
+    p.set(vertex1Attribute.getX(i), vertex1Attribute.getY(i), vertex1Attribute.getZ(i));
+    bbox.expandByPoint(p);
+    p.set(vertex2Attribute.getX(i), vertex2Attribute.getY(i), vertex2Attribute.getZ(i));
+    bbox.expandByPoint(p);
+    p.set(vertex3Attribute.getX(i), vertex3Attribute.getY(i), vertex3Attribute.getZ(i));
+    bbox.expandByPoint(p);
+    p.set(vertex4Attribute.getX(i), vertex4Attribute.getY(i), vertex4Attribute.getZ(i));
+    bbox.expandByPoint(p);
+  }
+
+  geometry.boundingBox = bbox;
+  geometry.boundingSphere = geometry.boundingSphere || new THREE.Sphere();
+  geometry.boundingBox.getBoundingSphere(geometry.boundingSphere);
 }

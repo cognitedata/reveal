@@ -34,7 +34,6 @@ import {
   defaultRenderOptions,
   DisposedDelegate,
   SceneRenderedDelegate,
-  SectorNodeIdToTreeIndexMapLoadedEvent,
   SsaoParameters,
   SsaoSampleQuality
 } from '../types';
@@ -57,6 +56,7 @@ import {
   RevealOptions
 } from '../..';
 import { PropType } from '../../utilities/reflection';
+import { CadModelSectorLoadStatistics } from '../../datamodels/cad/CadModelSectorLoadStatistics';
 
 type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered' | 'disposed';
 
@@ -123,6 +123,9 @@ export class Cognite3DViewer {
   private readonly models: CogniteModelBase[] = [];
   private readonly extraObjects: THREE.Object3D[] = [];
 
+  private readonly _automaticNearFarPlane: boolean;
+  private readonly _automaticControlsSensitivity: boolean;
+
   private isDisposed = false;
 
   private readonly renderController: RenderController;
@@ -177,6 +180,13 @@ export class Cognite3DViewer {
     this._revealManager.cadBudget = budget;
   }
 
+  /**
+   * @internal
+   */
+  public get cadLoadedStatistics(): CadModelSectorLoadStatistics {
+    return this._revealManager.cadLoadedStatistics;
+  }
+
   constructor(options: Cognite3DViewerOptions) {
     if (options.enableCache) {
       throw new NotSupportedInMigrationWrapperError('Cache is not supported');
@@ -186,6 +196,9 @@ export class Cognite3DViewer {
     }
 
     this._renderer = options.renderer || new THREE.WebGLRenderer();
+    this._automaticNearFarPlane = options.automaticCameraNearFar !== undefined ? options.automaticCameraNearFar : true;
+    this._automaticControlsSensitivity =
+      options.automaticControlsSensitivity !== undefined ? options.automaticControlsSensitivity : true;
 
     this.canvas.style.width = '640px';
     this.canvas.style.height = '480px';
@@ -204,8 +217,11 @@ export class Cognite3DViewer {
     this.camera.lookAt(new THREE.Vector3());
 
     this.scene = new THREE.Scene();
+    this.scene.autoUpdate = false;
     this.controls = new ComboControls(this.camera, this.canvas);
     this.controls.dollyFactor = 0.992;
+    this.controls.minDistance = 1.0;
+    this.controls.maxDistance = 100.0;
     this.controls.addEventListener('cameraChange', event => {
       const { position, target } = event.camera;
       this._events.cameraChange.fire(position.clone(), target.clone());
@@ -216,7 +232,7 @@ export class Cognite3DViewer {
 
     const revealOptions = createRevealManagerOptions(options);
 
-    this._revealManager = createCdfRevealManager(this.sdkClient, revealOptions);
+    this._revealManager = createCdfRevealManager(this.sdkClient, this._renderer, this.scene, revealOptions);
     this.startPointerEventListeners();
 
     this._revealManager.setRenderTarget(
@@ -236,7 +252,7 @@ export class Cognite3DViewer {
             this.spinner.hide();
           }
           if (options.onLoading) {
-            options.onLoading(loadingState.itemsLoaded, loadingState.itemsRequested);
+            options.onLoading(loadingState.itemsLoaded, loadingState.itemsRequested, loadingState.itemsCulled);
           }
         },
         error =>
@@ -466,17 +482,6 @@ export class Cognite3DViewer {
     const model3d = new Cognite3DModel(modelId, revisionId, cadNode, this.sdkClient);
     this.models.push(model3d);
     this.scene.add(model3d);
-    this._subscription.add(
-      fromEventPattern<SectorNodeIdToTreeIndexMapLoadedEvent>(
-        h => this._revealManager.on('nodeIdToTreeIndexMapLoaded', h),
-        h => this._revealManager.off('nodeIdToTreeIndexMapLoaded', h)
-      ).subscribe(event => {
-        // TODO 2020-07-05 larsmoa: Fix a better way of identifying a model than blobUrl
-        if (event.blobUrl === cadNode.cadModelMetadata.blobUrl) {
-          model3d.updateNodeIdMaps(event.nodeIdToTreeIndexMap);
-        }
-      })
-    );
 
     if (options.geometryFilter) {
       const geometryFilter = transformGeometryFilterToModelSpace(options.geometryFilter, model3d);
@@ -612,6 +617,7 @@ export class Cognite3DViewer {
       return;
     }
     this.scene.add(object);
+    object.updateMatrixWorld(true);
     this.extraObjects.push(object);
     this.renderController.redraw();
     this.triggerUpdateCameraNearAndFar(true);
@@ -773,6 +779,16 @@ export class Cognite3DViewer {
       return;
     }
     this.controls.setState(this.getCameraPosition(), target);
+  }
+
+  /**
+   * Gets the camera controller. See https://www.npmjs.com/package/@cognite/three-combo-controls
+   * for documentation. Note that by default the `minDistance` setting of the controls will
+   * be automatic. This can be disabled using {@link Cognite3DViewerOptions.automaticControlsSensitivity}.
+   * @version new in 1.4.0
+   */
+  get cameraControls(): ComboControls {
+    return this.controls;
   }
 
   /**
@@ -975,7 +991,7 @@ export class Cognite3DViewer {
 
     this.renderer.setSize(width, height);
     this.renderer.render(this.scene, screenshotCamera);
-    this._revealManager.render(this.renderer, screenshotCamera, this.scene);
+    this._revealManager.render(screenshotCamera);
     const url = this.renderer.domElement.toDataURL();
 
     this.renderer.setSize(originalWidth, originalHeight);
@@ -1204,7 +1220,7 @@ export class Cognite3DViewer {
         const frameNumber = this.renderer.info.render.frame;
         const start = Date.now();
         this.triggerUpdateCameraNearAndFar();
-        this._revealManager.render(this.renderer, this.camera, this.scene);
+        this._revealManager.render(this.camera);
         renderController.clearNeedsRedraw();
         this._revealManager.resetRedraw();
         this._slicingNeedsUpdate = false;
@@ -1260,6 +1276,10 @@ export class Cognite3DViewer {
     if (this.isDisposed) {
       return;
     }
+    if (!this._automaticControlsSensitivity && !this._automaticNearFarPlane) {
+      return;
+    }
+
     const {
       combinedBbox,
       bbox,
@@ -1273,13 +1293,17 @@ export class Cognite3DViewer {
     combinedBbox.makeEmpty();
     this.models.forEach(model => {
       model.getModelBoundingBox(bbox);
-      combinedBbox.expandByPoint(bbox.min);
-      combinedBbox.expandByPoint(bbox.max);
+      if (!bbox.isEmpty()) {
+        combinedBbox.expandByPoint(bbox.min);
+        combinedBbox.expandByPoint(bbox.max);
+      }
     });
     this.extraObjects.forEach(obj => {
       bbox.setFromObject(obj);
-      combinedBbox.expandByPoint(bbox.min);
-      combinedBbox.expandByPoint(bbox.max);
+      if (!bbox.isEmpty()) {
+        combinedBbox.expandByPoint(bbox.min);
+        combinedBbox.expandByPoint(bbox.max);
+      }
     });
     getBoundingBoxCorners(combinedBbox, corners);
     camera.getWorldPosition(cameraPosition);
@@ -1311,15 +1335,19 @@ export class Cognite3DViewer {
     }
 
     // Apply
-    camera.near = near;
-    camera.far = far;
-    camera.updateProjectionMatrix();
-    // The minDistance of the camera controller determines at which distance
-    // we will push the target in front of us instead of getting closer to it.
-    // This is also used to determine the speed of the camera when flying with ASDW.
-    // We want to either let it be controlled by the near plane if we are far away,
-    // but no more than a fraction of the bounding box of the system if inside
-    this.controls.minDistance = Math.min(Math.max(diagonal * 0.02, 0.1 * near), 10.0);
+    if (this._automaticNearFarPlane) {
+      camera.near = near;
+      camera.far = far;
+      camera.updateProjectionMatrix();
+    }
+    if (this._automaticControlsSensitivity) {
+      // The minDistance of the camera controller determines at which distance
+      // we will push the target in front of us instead of getting closer to it.
+      // This is also used to determine the speed of the camera when flying with ASDW.
+      // We want to either let it be controlled by the near plane if we are far away,
+      // but no more than a fraction of the bounding box of the system if inside
+      this.controls.minDistance = Math.min(Math.max(diagonal * 0.02, 0.1 * near), 10.0);
+    }
   }
 
   /** @private */
@@ -1519,11 +1547,15 @@ function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions): Reve
   revealOptions.internal = { sectorCuller: viewerOptions._sectorCuller };
   const { antiAliasing, multiSampleCount } = determineAntiAliasingMode(viewerOptions.antiAliasingHint);
   const ssaoRenderParameters = determineSsaoRenderParameters(viewerOptions.ssaoQualityHint);
+  const edgeDetectionParameters = {
+    enabled: viewerOptions.enableEdges ?? defaultRenderOptions.edgeDetectionParameters.enabled
+  };
 
   revealOptions.renderOptions = {
     antiAliasing,
     multiSampleCountHint: multiSampleCount,
-    ssaoRenderParameters
+    ssaoRenderParameters,
+    edgeDetectionParameters
   };
   return revealOptions;
 }

@@ -8,15 +8,13 @@ import { groupBy, distinctUntilKeyChanged, withLatestFrom, mergeMap, filter, map
 
 import { SectorGeometry, SectorMetadata, WantedSector, ConsumedSector } from './types';
 import { Materials } from '../rendering/materials';
-import { createPrimitives } from '../rendering/primitives';
-import { createTriangleMeshes } from '../rendering/triangleMeshes';
-import { createInstancedMeshes } from '../rendering/instancedMeshes';
-import { SectorQuads } from '../rendering/types';
+
+import { InstancedMeshFile, SectorQuads } from '../rendering/types';
 import { disposeAttributeArrayOnUpload } from '../../../utilities/disposeAttributeArrayOnUpload';
 import { toThreeJsBox3 } from '../../../utilities';
 import { traverseDepthFirst } from '../../../utilities/objectTraversal';
-
-const emptyGeometry = new THREE.Geometry();
+import { createTriangleMeshes } from '../rendering/triangleMeshes';
+import { createPrimitives } from '../rendering/primitives';
 
 const quadVertexData = new Float32Array([
   /* eslint-disable prettier/prettier */
@@ -32,12 +30,16 @@ const quadVertexData = new Float32Array([
 
 const quadVertexBufferAttribute = new THREE.Float32BufferAttribute(quadVertexData.buffer, 3);
 
-export function consumeSectorSimple(sector: SectorQuads, materials: Materials): THREE.Group {
+export function consumeSectorSimple(
+  sector: SectorQuads,
+  sectorBounds: THREE.Box3,
+  materials: Materials
+): { sectorMeshes: THREE.Group; instancedMeshes: InstancedMeshFile[] } {
   const group = new THREE.Group();
   const stride = 3 + 1 + 3 + 16;
   if (sector.buffer.byteLength === 0) {
     // No data, just skip
-    return new THREE.Group();
+    return { sectorMeshes: new THREE.Group(), instancedMeshes: [] };
   }
   if (sector.buffer.byteLength % stride !== 0) {
     throw new Error(`Expected buffer size to be multiple of ${stride}, but got ${sector.buffer.byteLength}`);
@@ -76,12 +78,12 @@ export function consumeSectorSimple(sector: SectorQuads, materials: Materials): 
 
   setTreeIndeciesToUserData();
 
-  // obj.name = `Quads ${sectorId}`;
-  // TODO 20191028 dragly figure out why the quads are being culled wrongly and if we
-  // can avoid disabling it entirely
-  obj.frustumCulled = false;
+  obj.geometry.boundingSphere = new THREE.Sphere();
+  sectorBounds.getBoundingSphere(obj.geometry.boundingSphere);
+
   group.add(obj);
-  return group;
+
+  return { sectorMeshes: group, instancedMeshes: [] };
 
   function setTreeIndeciesToUserData() {
     const treeIndexAttributeOffset = 3;
@@ -95,10 +97,14 @@ export function consumeSectorSimple(sector: SectorQuads, materials: Materials): 
   }
 }
 
-export function consumeSectorDetailed(sector: SectorGeometry, metadata: SectorMetadata, materials: Materials) {
+export function consumeSectorDetailed(
+  sector: SectorGeometry,
+  metadata: SectorMetadata,
+  materials: Materials
+): { sectorMeshes: THREE.Group; instancedMeshes: InstancedMeshFile[] } {
   const bounds = toThreeJsBox3(new THREE.Box3(), metadata.bounds);
   const obj = new THREE.Group();
-  for (const primtiveRoot of createPrimitives(sector, materials)) {
+  for (const primtiveRoot of createPrimitives(sector, materials, bounds)) {
     obj.add(primtiveRoot);
   }
 
@@ -106,24 +112,8 @@ export function consumeSectorDetailed(sector: SectorGeometry, metadata: SectorMe
   for (const triangleMesh of triangleMeshes) {
     obj.add(triangleMesh);
   }
-  const instanceMeshes = createInstancedMeshes(sector.instanceMeshes, bounds, materials.instancedMesh);
-  for (const instanceMesh of instanceMeshes) {
-    obj.add(instanceMesh);
-  }
 
-  return obj;
-}
-
-export function discardSector(group: THREE.Group) {
-  const meshes: THREE.Mesh[] = group.children.filter(x => x instanceof THREE.Mesh).map(x => x as THREE.Mesh);
-  for (const mesh of meshes) {
-    if (mesh.geometry) {
-      mesh.geometry.dispose();
-      // NOTE: Forcefully creating a new reference here to make sure
-      // there are no lingering references to the large geometry buffer
-      mesh.geometry = emptyGeometry;
-    }
-  }
+  return { sectorMeshes: obj, instancedMeshes: sector.instanceMeshes };
 }
 
 export function distinctUntilLevelOfDetailChanged() {

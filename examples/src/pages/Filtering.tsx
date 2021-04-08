@@ -50,12 +50,18 @@ export function Filtering() {
         logMetrics: false
       }
 
+      const renderer = new THREE.WebGLRenderer({
+        canvas: canvasRef.current!,
+      });
+      renderer.setClearColor('#444');
+      renderer.setSize(window.innerWidth, window.innerHeight);
+
       let model: reveal.CadNode;
       if(modelRevision) {
-        revealManager = reveal.createCdfRevealManager(client, revealOptions);
+        revealManager = reveal.createCdfRevealManager(client, renderer, scene, revealOptions);
         model = await revealManager.addModel('cad', modelRevision);
       } else if(modelUrl) {
-        revealManager = reveal.createLocalRevealManager(revealOptions);
+        revealManager = reveal.createLocalRevealManager(renderer, scene, revealOptions);
         model = await revealManager.addModel('cad', modelUrl);
       } else {
         throw new Error(
@@ -79,11 +85,6 @@ export function Filtering() {
         shadingNeedsUpdate = true;
       });
 
-      const renderer = new THREE.WebGLRenderer({
-        canvas: canvasRef.current!,
-      });
-      renderer.setClearColor('#444');
-      renderer.setSize(window.innerWidth, window.innerHeight);
 
       const { position, target, near, far } = model.suggestCameraConfig();
       const camera = new THREE.PerspectiveCamera(

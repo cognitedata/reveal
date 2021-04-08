@@ -31,6 +31,8 @@ module.exports = {
         'examples/pointcloud',
         'examples/pointcloud-intersections',
         'examples/antialiasing',
+        'examples/cad-explode',
+        'examples/combine-models'
       ],
     },
     {
