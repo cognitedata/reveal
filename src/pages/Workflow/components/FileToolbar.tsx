@@ -35,7 +35,7 @@ export const FileToolbar = ({
       return;
     }
 
-    if (uploadedFiles.filter((file) => !isVideo(file)).length) {
+    if (uploadedFiles.filter((file) => isVideo(file)).length) {
       notification.warning({
         message: 'Skipping video files',
         description:
