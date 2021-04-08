@@ -11,6 +11,11 @@ export default styled.div`
     height: calc(100% - 56px);
     display: flex;
     flex-direction: row;
+
+    /** Hide "More" button from the Cogs tabs component that showed up on some zoom levels */
+    .rc-tabs-nav-more {
+      display: none;
+    }
   }
   #chart-view {
     height: 100%;
