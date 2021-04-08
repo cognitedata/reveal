@@ -99,15 +99,18 @@ describe('File Search Bar', () => {
       </Provider>
     );
 
-    expect(container.find('input').length).toBe(3);
+    expect(container.find('input#search').length).toBe(1);
 
     container
-      .find('input')
+      .find('input#search')
       .last()
       .simulate('change', { target: { value: 'Hello' } });
 
     expect(updateFilter).toHaveBeenCalledTimes(1);
-    expect(updateFilter).toHaveBeenCalledWith({ filter: { source: 'Hello' } });
+    expect(updateFilter).toHaveBeenCalledWith({
+      filter: {},
+      search: { name: 'Hello' },
+    });
   });
 
   it('source filter', () => {
