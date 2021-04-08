@@ -13,10 +13,12 @@ export function getDetectionModelEndpoint(modelType: DetectionModelType) {
   }/context/vision/${mapping[modelType]}`;
 }
 
-export function getFakeQueuedJob(): AnnotationJobQueued {
+export function getFakeQueuedJob(
+  modelType: DetectionModelType
+): AnnotationJobQueued {
   const now = Date.now();
   return {
-    jobId: -1,
+    jobId: 0 - (modelType as number),
     createdTime: now,
     status: 'Queued',
     startTime: null,

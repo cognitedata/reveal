@@ -5,7 +5,7 @@ import { Loader, useFileIcon } from '@cognite/data-exploration';
 import { Body, DocumentIcon, Button, Dropdown, Menu } from '@cognite/cogs.js';
 import { Popover } from 'src/components/Common/Popover';
 import styled from 'styled-components';
-import { useAnnotationCounter } from 'src/store/processSlice';
+import { useAnnotationCounter } from 'src/store/hooks/useAnnotationCounter';
 import { AnnotationsBadge } from '../AnnotationsBadge/AnnotationsBadge';
 import { TableDataItem } from '../FileTable/FileTable';
 import { AnnotationsBadgePopoverContent } from '../AnnotationsBadge/AnnotationsBadgePopoverContent';

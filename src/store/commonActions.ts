@@ -1,10 +1,11 @@
 import { createAction } from '@reduxjs/toolkit';
-import { AnnotationJob } from 'src/api/types';
+import { AnnotationJob, DetectionModelType } from 'src/api/types';
 import { VisionAnnotation } from 'src/utils/AnnotationUtils';
 
 export const fileProcessUpdate = createAction<{
-  fileId: number;
+  fileIds: number[];
   job: AnnotationJob;
+  modelType: DetectionModelType;
 }>('fileProcessUpdate');
 
 export const addAnnotations = createAction<VisionAnnotation[]>(

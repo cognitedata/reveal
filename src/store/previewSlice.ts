@@ -313,30 +313,32 @@ const previewSlice = createSlice({
     // On Job Update //
 
     builder.addCase(fileProcessUpdate, (state, { payload }) => {
-      const { job, fileId } = payload;
+      const { job } = payload;
 
       if (job.status === 'Completed') {
-        const annotations =
-          job.items.find((x) => x.fileId === fileId)?.annotations || [];
-        const visionAnnotations = annotations.map((ann) =>
-          AnnotationUtils.createVisionAnnotationStub(
-            ann.text,
-            job.type,
-            fileId,
-            {
-              xMin: ann.region.vertices[0].x,
-              yMin: ann.region.vertices[0].y,
-              xMax: ann.region.vertices[1].x,
-              yMax: ann.region.vertices[1].y,
-            },
-            undefined,
-            ModelTypeSourceMap[job.type],
-            undefined,
-            undefined,
-            ModelTypeAnnotationTypeMap[job.type] as AnnotationType
-          )
-        );
-        addEditAnnotationsToState(state, visionAnnotations);
+        job.items.forEach((fileAnn) => {
+          const { annotations } = fileAnn;
+
+          const visionAnnotations = annotations.map((ann) =>
+            AnnotationUtils.createVisionAnnotationStub(
+              ann.text,
+              job.type,
+              fileAnn.fileId,
+              {
+                xMin: ann.region.vertices[0].x,
+                yMin: ann.region.vertices[0].y,
+                xMax: ann.region.vertices[1].x,
+                yMax: ann.region.vertices[1].y,
+              },
+              undefined,
+              ModelTypeSourceMap[job.type],
+              undefined,
+              undefined,
+              ModelTypeAnnotationTypeMap[job.type] as AnnotationType
+            )
+          );
+          addEditAnnotationsToState(state, visionAnnotations);
+        });
       }
     });
 
