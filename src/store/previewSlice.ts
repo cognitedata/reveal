@@ -29,6 +29,7 @@ import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
 import { DeleteAnnotations } from 'src/store/thunks/DeleteAnnotations';
 import { ToastUtils } from 'src/utils/ToastUtils';
 import { AnnotationCounts } from 'src/pages/Workflow/types';
+import { SaveAvailableAnnotations } from 'src/store/thunks/SaveAvailableAnnotations';
 
 export interface VisionAnnotationState extends Omit<VisionAnnotation, 'id'> {
   id: string;
@@ -310,6 +311,13 @@ const previewSlice = createSlice({
         );
         addEditAnnotationsToState(state, visionAnnotations);
       }
+    });
+
+    builder.addCase(SaveAvailableAnnotations.fulfilled, (state) => {
+      resetPreviewState(state);
+      state.annotations = initialState.annotations;
+      state.models = initialState.models;
+      state.modelsByFileId = initialState.modelsByFileId;
     });
 
     // Matchers
