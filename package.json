@@ -51,7 +51,7 @@
     "@rescripts/cli": "^0.0.15",
     "@rescripts/rescript-use-babel-config": "^0.0.12",
     "@rescripts/utilities": "^0.0.8",
-    "@testing-library/jest-dom": "^5.11.9",
+    "@testing-library/jest-dom": "^5.11.10",
     "@testing-library/react": "^11.2.5",
     "@types/jest": "^26.0.21",
     "@types/lodash": "^4.14.168",
