@@ -1073,9 +1073,10 @@
     jwt-decode "^3.1.2"
     lodash "^4.17.20"
 
-"@cognite/cogs.js@^2.17.0":
-  version "2.20.0"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-2.20.0.tgz#734123e870d4ca1a6bd599bb66bce1c86b21f1bc"
+"@cognite/cogs.js@3.4.2":
+  version "3.4.2"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.4.2.tgz#4a26e8a75c0f56c680ead18febf440a01f6f9354"
+  integrity sha512-qZFbCMsBkAJVJsLX9faS7Jhd0/SHOXI8jDWgzNgemnjXUyWSA48bcqoLQLDFl59UBq+sa9Lv+RtJ+VGLkm4N9g==
   dependencies:
     "@testing-library/react-hooks" "^5.0.3"
     "@tippyjs/react" "4.2.3"
@@ -1094,11 +1095,12 @@
     react-toastify "^6.0.9"
     tippy.js "6.2.0"
 
-"@cognite/cogs.js@^2.7.2":
-  version "2.9.0"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-2.9.0.tgz#a5f50a0fb9a02e634539b33599ccc8f39425b625"
+"@cognite/cogs.js@^2.17.0":
+  version "2.20.0"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-2.20.0.tgz#734123e870d4ca1a6bd599bb66bce1c86b21f1bc"
   dependencies:
-    "@tippyjs/react" "4.0.2"
+    "@testing-library/react-hooks" "^5.0.3"
+    "@tippyjs/react" "4.2.3"
     "@types/react-date-range" "^1.1.2"
     color "^3.1.2"
     dayjs "^1.9.7"
@@ -1197,6 +1199,19 @@
 "@cognite/react-i18n@^0.3.0":
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/@cognite/react-i18n/-/react-i18n-0.3.0.tgz#7f7fe5e84584723628d421aae88d41a954963227"
+  dependencies:
+    i18next "^19.8.4"
+    i18next-chained-backend "^2.0.1"
+    i18next-localstorage-backend "^3.1.1"
+    i18next-locize-backend "^4.1.1"
+    i18next-pseudo "^2.2.0"
+    i18next-xhr-backend "^3.2.2"
+    react-i18next "^11.8.5"
+
+"@cognite/react-i18n@^0.3.1":
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/@cognite/react-i18n/-/react-i18n-0.3.2.tgz#86a1b6854a4c6d356fcc931b118cb3311ec56ad3"
+  integrity sha512-kttiy7jZ1URKzsYKlNxnFNMx+N0OpjLpH3Ty7o+S9TJAB3wzVFFjJms7XOfbXOhHj08/APcak/QLkH2aKtYUNA==
   dependencies:
     i18next "^19.8.4"
     i18next-chained-backend "^2.0.1"
@@ -1626,7 +1641,7 @@
     "@nodelib/fs.scandir" "2.1.4"
     fastq "^1.6.0"
 
-"@popperjs/core@^2.3.2", "@popperjs/core@^2.4.4":
+"@popperjs/core@^2.3.2":
   version "2.6.0"
   resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.6.0.tgz#f022195afdfc942e088ee2101285a1d31c7d727f"
 
@@ -1857,13 +1872,6 @@
   resolved "https://registry.yarnpkg.com/@testing-library/testcafe/-/testcafe-4.3.1.tgz#327b401381ca019828b58beb9621dd58695393ee"
   dependencies:
     "@testing-library/dom" "^7.27.1"
-
-"@tippyjs/react@4.0.2":
-  version "4.0.2"
-  resolved "https://registry.yarnpkg.com/@tippyjs/react/-/react-4.0.2.tgz#fadd14f1e36dd4f63f5f241cc78f3a1bb8394250"
-  dependencies:
-    prop-types "^15.6.2"
-    tippy.js "^6.2.0"
 
 "@tippyjs/react@4.2.3":
   version "4.2.3"
@@ -11935,12 +11943,6 @@ tippy.js@6.2.0:
   resolved "https://registry.yarnpkg.com/tippy.js/-/tippy.js-6.2.0.tgz#b6c35dc15a9eb7fe91a562d65469c1a3277f26f6"
   dependencies:
     "@popperjs/core" "^2.3.2"
-
-tippy.js@^6.2.0:
-  version "6.2.7"
-  resolved "https://registry.yarnpkg.com/tippy.js/-/tippy.js-6.2.7.tgz#62fb34eda23f7d78151ddca922b62818c1ab9869"
-  dependencies:
-    "@popperjs/core" "^2.4.4"
 
 tippy.js@^6.3.1:
   version "6.3.1"

@@ -101,3 +101,18 @@ export const GroupPreview = styled.div`
     background-color: var(--cogs-greyscale-grey6);
   }
 `;
+
+export const GroupItemWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+
+  .cogs-menu-item {
+    &:hover {
+      background: rgba(74, 103, 251, 0.1);
+    }
+
+    &.selected {
+      color: inherit;
+    }
+  }
+`;
