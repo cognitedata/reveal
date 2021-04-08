@@ -128,16 +128,13 @@ const Metadata = ({
 }) => {
   return (
     <Container>
-      <h3>Name:</h3>
-      <p>{sourceItem?.name}</p>
-      <h3>Color:</h3>
-      <p>
-        <ColorCircle color={sourceItem?.color} />
+      <h3>Selected:</h3>
+      <p style={{ display: 'flex' }}>
+        <span style={{ paddingRight: 10 }}>
+          <ColorCircle color={sourceItem?.color} />
+        </span>
+        {sourceItem?.name}
       </p>
-      <h3>Line style:</h3>
-      <p>{sourceItem?.lineStyle}</p>
-      <h3>Line weight:</h3>
-      <p>{sourceItem?.lineWeight}</p>
     </Container>
   );
 };
@@ -250,8 +247,13 @@ const Statistics = ({
 
   return (
     <Container>
-      <h3>Name:</h3>
-      <p>{sourceItem?.name}</p>
+      <h3>Selected:</h3>
+      <p style={{ display: 'flex' }}>
+        <span style={{ paddingRight: 10 }}>
+          <ColorCircle color={sourceItem?.color} />
+        </span>
+        {sourceItem?.name}
+      </p>
       <h3>Min:</h3>
       <p>{statisticsForSource ? statisticsForSource.min : '-'}</p>
       <h3>Max:</h3>
