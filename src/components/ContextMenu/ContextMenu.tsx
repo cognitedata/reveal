@@ -254,41 +254,47 @@ const Statistics = ({
         </span>
         {sourceItem?.name}
       </p>
-      <h3>Min:</h3>
-      <p>{statisticsForSource ? statisticsForSource.min : '-'}</p>
-      <h3>Max:</h3>
-      <p>{statisticsForSource ? statisticsForSource.max : '-'}</p>
-      <h3>Mean:</h3>
-      <p>{statisticsForSource ? statisticsForSource.mean : '-'}</p>
-      <h3>Median:</h3>
-      <p>{statisticsForSource ? statisticsForSource.median : '-'}</p>
-      <h3>Standard Deviation:</h3>
-      <p>{statisticsForSource ? statisticsForSource.std : '-'}</p>
-      <h3>25th Percentile:</h3>
-      <p>{statisticsForSource ? statisticsForSource.q25 : '-'}</p>
-      <h3>50th Percentile:</h3>
-      <p>{statisticsForSource ? statisticsForSource.q50 : '-'}</p>
-      <h3>75th Percentile:</h3>
-      <p>{statisticsForSource ? statisticsForSource.q75 : '-'}</p>
-      <h3>Skewness:</h3>
-      <p>{statisticsForSource ? statisticsForSource.q25 : '-'}</p>
-      <h3>Kurtosis:</h3>
-      <p>{statisticsForSource ? statisticsForSource.kurtosis : '-'}</p>
-      {statisticsCall && (
-        <FunctionCall
-          id={statisticsCall.functionId}
-          callId={statisticsCall.callId}
-          renderLoading={() => renderStatusIcon('Running')}
-          renderCall={({ status }) => renderStatusIcon(status)}
-        />
+      {sourceItem?.type === 'timeseries' ? (
+        <>
+          <h3>Min:</h3>
+          <p>{statisticsForSource ? statisticsForSource.min : '-'}</p>
+          <h3>Max:</h3>
+          <p>{statisticsForSource ? statisticsForSource.max : '-'}</p>
+          <h3>Mean:</h3>
+          <p>{statisticsForSource ? statisticsForSource.mean : '-'}</p>
+          <h3>Median:</h3>
+          <p>{statisticsForSource ? statisticsForSource.median : '-'}</p>
+          <h3>Standard Deviation:</h3>
+          <p>{statisticsForSource ? statisticsForSource.std : '-'}</p>
+          <h3>25th Percentile:</h3>
+          <p>{statisticsForSource ? statisticsForSource.q25 : '-'}</p>
+          <h3>50th Percentile:</h3>
+          <p>{statisticsForSource ? statisticsForSource.q50 : '-'}</p>
+          <h3>75th Percentile:</h3>
+          <p>{statisticsForSource ? statisticsForSource.q75 : '-'}</p>
+          <h3>Skewness:</h3>
+          <p>{statisticsForSource ? statisticsForSource.q25 : '-'}</p>
+          <h3>Kurtosis:</h3>
+          <p>{statisticsForSource ? statisticsForSource.kurtosis : '-'}</p>
+          {statisticsCall && (
+            <FunctionCall
+              id={statisticsCall.functionId}
+              callId={statisticsCall.callId}
+              renderLoading={() => renderStatusIcon('Running')}
+              renderCall={({ status }) => renderStatusIcon(status)}
+            />
+          )}
+          <button
+            style={{ marginLeft: 10 }}
+            type="button"
+            onClick={() => handleCalculateStatistics()}
+          >
+            Refresh
+          </button>
+        </>
+      ) : (
+        <p>(currently unavailable for calculations)</p>
       )}
-      <button
-        style={{ marginLeft: 10 }}
-        type="button"
-        onClick={() => handleCalculateStatistics()}
-      >
-        Refresh
-      </button>
     </Container>
   );
 };
