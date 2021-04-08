@@ -276,7 +276,7 @@ export function Migration() {
       
       const debugSectorsGui = debugGui.addFolder('Loaded sectors');
 
-      debugSectorsGui.add(guiState.debug.loadedSectors.options, 'colorBy', ['lod', 'depth']).name('Color by');
+      debugSectorsGui.add(guiState.debug.loadedSectors.options, 'colorBy', ['lod', 'depth', 'loadedTimestamp']).name('Color by');
       debugSectorsGui.add(guiState.debug.loadedSectors.options, 'leafsOnly').name('Leaf nodes only');
       debugSectorsGui.add(guiState.debug.loadedSectors.options, 'showSimpleSectors').name('Show simple sectors');
       debugSectorsGui.add(guiState.debug.loadedSectors.options, 'showDetailedSectors').name('Show detailed sectors');
@@ -319,7 +319,7 @@ export function Migration() {
         debugSectorsGui.updateDisplay();
       }, 500);
 
-      debugSectorsGui.add(guiActions, 'showSectorBoundingBoxes').name('Show loaded sectors');
+      debugSectorsGui.add(guiActions, 'showSectorBoundingBoxes').name('Show sectors');
       debugGui.add(guiActions, 'showCameraHelper').name('Show camera');
       debugGui.add(guiActions, 'showBoundsForAllGeometries').name('Show geometry bounds');
       debugGui.add(guiState.debug, 'suspendLoading').name('Suspend loading').onFinishChange(suspend => {
