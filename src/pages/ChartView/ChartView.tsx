@@ -31,8 +31,6 @@ import WorkflowRows from './WorkflowRows';
 import RunWorkflows from './RunWorkflowsButton';
 import {
   BottomPaneWrapper,
-  BottombarItem,
-  BottombarWrapper,
   ChartContainer,
   ChartViewContainer,
   ChartWrapper,
@@ -42,7 +40,6 @@ import {
   SourceName,
   SourceTable,
   SourceTableWrapper,
-  ToolbarIcon,
   TopPaneWrapper,
 } from './elements';
 
