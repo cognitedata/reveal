@@ -515,10 +515,10 @@ export class Cognite3DViewer {
       throw new NotSupportedInMigrationWrapperError('geometryFilter is not supported for point clouds');
     }
     if (options.orthographicCamera) {
-      throw new NotSupportedInMigrationWrapperError('ortographicsCamera is not supported');
+      throw new NotSupportedInMigrationWrapperError('ortographicsCamera is not supported for point clouds');
     }
     if (options.onComplete) {
-      throw new NotSupportedInMigrationWrapperError('onComplete is not supported');
+      throw new NotSupportedInMigrationWrapperError('onComplete is not supported for point clouds');
     }
 
     const { modelId, revisionId } = options;
@@ -1619,7 +1619,7 @@ function determineSsaoRenderParameters(quality: SsaoQuality): SsaoParameters {
 }
 
 function transformGeometryFilterToModelSpace(filter: GeometryFilter, model: Cognite3DModel): GeometryFilter {
-  if (filter.boundingBox === undefined) {
+  if (filter.boundingBox === undefined || filter.isBoundingBoxInModelCoordinates) {
     return filter;
   }
 

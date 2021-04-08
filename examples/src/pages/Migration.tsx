@@ -26,10 +26,18 @@ export function Migration() {
     const gui = new dat.GUI({ width: 500 });
     let viewer: Cognite3DViewer;
 
+    function createGeometryFilter(input: string | null): { center: THREE.Vector3, size: THREE.Vector3 } | undefined  {
+      if (input === null) return undefined;
+      const parsed = JSON.parse(input) as { center: THREE.Vector3, size: THREE.Vector3 };
+      return { center: new THREE.Vector3().copy(parsed.center), size: new THREE.Vector3().copy(parsed.size) };
+    }
+
     async function main() {
       const url = new URL(window.location.href);
       const urlParams = url.searchParams;
       const project = urlParams.get('project');
+      const geometryFilterInput = urlParams.get('geometryFilter');
+      const geometryFilter = createGeometryFilter(geometryFilterInput);
       const baseUrl = urlParams.get('baseUrl') || undefined;
       if (!project) {
         throw new Error('Must provide "project"as URL parameter');
@@ -102,6 +110,10 @@ export function Migration() {
             pointCloudModels.push(model);
             pointCloudParams.apply();
           }
+          if (createGeometryFilterFromState(guiState.geometryFilter) === undefined) {
+            createGeometryFilterStateFromBounds(bounds, guiState.geometryFilter);
+            geometryFilterGui.updateDisplay();
+          }
         } catch (e) {
           console.error(e);
           alert(`Model ID is invalid or is not supported`);
@@ -114,6 +126,10 @@ export function Migration() {
       const guiState = {
         modelId: 0,
         revisionId: 0,
+        geometryFilter: 
+          geometryFilter !== undefined 
+          ? geometryFilter 
+          : { center: new THREE.Vector3(), size: new THREE.Vector3() },
         antiAliasing: urlParams.get('antialias'),
         ssaoQuality: urlParams.get('ssao'),
         debug: {
@@ -157,6 +173,7 @@ export function Migration() {
           addModel({
             modelId: guiState.modelId,
             revisionId: guiState.revisionId,
+            geometryFilter: createGeometryFilterFromState(guiState.geometryFilter)
           }),
         fitToModel: () => {
           const model = cadModels[0] || pointCloudModels[0];
@@ -174,15 +191,47 @@ export function Migration() {
         },
         showBoundsForAllGeometries: () => {
           cadModels.forEach(m => showBoundsForAllGeometries(m));
+        },
+        applyGeometryFilter: () => {
+          urlParams.set('geometryFilter', JSON.stringify(guiState.geometryFilter));
+          window.location.href = url.toString();
+        },
+        resetGeometryFilter: () => {
+          urlParams.delete('geometryFilter');
+          window.location.href = url.toString();
         }
       };
 
-      gui.add(guiState, 'modelId').name('Model ID');
-      gui.add(guiState, 'revisionId').name('Revision ID');
-      gui.add(guiActions, 'addModel').name('Load model');
-      gui.add(guiActions, 'fitToModel').name('Fit camera');
-      const renderModes = [undefined, 'Color', 'Normal', 'TreeIndex', 'PackColorAndNormal', 'Depth', 'Effects', 'Ghost', 'LOD', 'DepthOnly'];
-      gui.add(guiState, 'renderMode', renderModes).name('Render mode').onFinishChange(value => {
+      const modelGui = gui.addFolder('Model');
+      modelGui.add(guiState, 'modelId').name('Model ID');
+      modelGui.add(guiState, 'revisionId').name('Revision ID');
+      modelGui.add(guiActions, 'addModel').name('Load model');
+      modelGui.add(guiActions, 'fitToModel').name('Fit camera');
+
+      const geometryFilterGui = modelGui.addFolder('Geometry Filter');
+      let geometryFilterPreview: THREE.Object3D | undefined = undefined;
+      function updateGeometryFilterPreview() {
+        if (geometryFilterPreview) {
+          viewer.removeObject3D(geometryFilterPreview);
+        }
+        const geometryFilter = createGeometryFilterFromState(guiState.geometryFilter);
+        if (geometryFilter) {
+          geometryFilterPreview = new THREE.Box3Helper(geometryFilter.boundingBox, new THREE.Color('cyan'));
+          viewer.addObject3D(geometryFilterPreview);
+        }
+      }
+      geometryFilterGui.add(guiState.geometryFilter.center, 'x', -1000, 1000, 1).name('CenterX').onChange(updateGeometryFilterPreview);
+      geometryFilterGui.add(guiState.geometryFilter.center, 'y', -1000, 1000, 1).name('CenterY').onChange(updateGeometryFilterPreview);
+      geometryFilterGui.add(guiState.geometryFilter.center, 'z', -1000, 1000, 1).name('CenterZ').onChange(updateGeometryFilterPreview);
+      geometryFilterGui.add(guiState.geometryFilter.size, 'x', 0, 100, 1).name('SizeX').onChange(updateGeometryFilterPreview);
+      geometryFilterGui.add(guiState.geometryFilter.size, 'y', 0, 100, 1).name('SizeY').onChange(updateGeometryFilterPreview);
+      geometryFilterGui.add(guiState.geometryFilter.size, 'z', 0, 100, 1).name('SizeZ').onChange(updateGeometryFilterPreview);
+      geometryFilterGui.add(guiActions, 'applyGeometryFilter').name('Apply and reload');
+      geometryFilterGui.add(guiActions, 'resetGeometryFilter').name('Reset and reload');
+
+      const renderGui = gui.addFolder('Rendering');
+      const renderModes = [undefined, 'Color', 'Normal', 'TreeIndex', 'PackColorAndNormal', 'Depth', 'Effects', 'Ghost', 'LOD'];
+      renderGui.add(guiState, 'renderMode', renderModes).name('Render mode').onFinishChange(value => {
         const renderMode = renderModes.indexOf(value);
         cadModels.forEach(m => {
           const cadNode: CadNode = (m as any).cadNode;
@@ -190,7 +239,7 @@ export function Migration() {
         });
         viewer.forceRerender();
       });
-      gui.add(guiState, 'antiAliasing',
+      renderGui.add(guiState, 'antiAliasing',
         [
           'disabled', 'fxaa', 'msaa4', 'msaa8', 'msaa16',
           'msaa4+fxaa', 'msaa8+fxaa', 'msaa16+fxaa'
@@ -198,7 +247,7 @@ export function Migration() {
           urlParams.set('antialias', v);
           window.location.href = url.toString();
         });
-      gui.add(guiState, 'ssaoQuality',
+        renderGui.add(guiState, 'ssaoQuality',
         [
           'disabled', 'medium', 'high', 'veryhigh'
         ]).name('SSAO').onFinishChange(v => {
@@ -207,7 +256,6 @@ export function Migration() {
         });
 
       const debugGui = gui.addFolder('Debug');
-
       const debugStatsGui = debugGui.addFolder('Statistics');
       debugStatsGui.add(guiState.debug.stats, 'drawCalls').name('Draw Calls');
       debugStatsGui.add(guiState.debug.stats, 'points').name('Points');
@@ -373,7 +421,7 @@ export function Migration() {
       if (modelIdStr && revisionIdStr) {
         const modelId = Number.parseInt(modelIdStr, 10);
         const revisionId = Number.parseInt(revisionIdStr, 10);
-        await addModel({ modelId, revisionId });
+        await addModel({ modelId, revisionId, geometryFilter: createGeometryFilterFromState(guiState.geometryFilter) });
       }
 
       let expandTool: ExplodedViewTool | null;
@@ -515,4 +563,19 @@ export function Migration() {
     };
   });
   return <CanvasWrapper ref={canvasWrapperRef} />;
+}
+
+function createGeometryFilterStateFromBounds(bounds: THREE.Box3, out: { center: THREE.Vector3, size: THREE.Vector3 }) {
+  bounds.getCenter(out.center);
+  bounds.getSize(out.size);
+  return out;
+}
+
+function createGeometryFilterFromState(state: { center: THREE.Vector3, size: THREE.Vector3 }):
+ { boundingBox: THREE.Box3, isBoundingBoxInModelCoordinates: true } | undefined {
+  state.size.clamp(new THREE.Vector3(0,0,0), new THREE.Vector3(Infinity, Infinity, Infinity));
+  if (state.size.equals(new THREE.Vector3(0,0,0))) {
+    return undefined;
+  }
+  return { boundingBox: new THREE.Box3().setFromCenterAndSize(state.center, state.size), isBoundingBoxInModelCoordinates: true };
 }
