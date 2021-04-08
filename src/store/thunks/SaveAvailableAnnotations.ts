@@ -1,4 +1,4 @@
-import { createAsyncThunk, unwrapResult } from '@reduxjs/toolkit';
+import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ThunkConfig } from 'src/store/rootReducer';
 import {
   AnnotationUtils,
@@ -6,10 +6,6 @@ import {
   isUnSavedAnnotation,
 } from 'src/utils/AnnotationUtils';
 import { SaveAnnotations } from 'src/store/thunks/SaveAnnotations';
-import {
-  addAnnotations,
-  deleteAnnotationsFromState,
-} from 'src/store/commonActions';
 import { UpdateAnnotations } from 'src/store/thunks/UpdateAnnotations';
 
 export const SaveAvailableAnnotations = createAsyncThunk<
@@ -31,20 +27,20 @@ export const SaveAvailableAnnotations = createAsyncThunk<
   const updateTheseAnnotations = annotations.filter(isAnnotation);
   const createTheseAnnotations = annotations.filter(isUnSavedAnnotation);
 
-  const responses = await Promise.all([
+  await Promise.all([
     dispatch(SaveAnnotations(createTheseAnnotations)),
     dispatch(UpdateAnnotations(updateTheseAnnotations)),
   ]);
 
-  const [savedVisionAnnotations, updatedVisionAnnotations] = responses
-    .map((res) => unwrapResult(res))
-    .map((res) => res.data.items)
-    .map((ann) => AnnotationUtils.convertToVisionAnnotations(ann));
-
-  dispatch(
-    deleteAnnotationsFromState(
-      annotationsWithoutVirtualAssetAnnotations.map((item) => item.id)
-    )
-  );
-  addAnnotations(savedVisionAnnotations.concat(updatedVisionAnnotations));
+  // const [savedVisionAnnotations, updatedVisionAnnotations] = responses
+  //   .map((res) => unwrapResult(res))
+  //   .map((res) => res.data.items)
+  //   .map((ann) => AnnotationUtils.convertToVisionAnnotations(ann));
+  //
+  // dispatch(
+  //   deleteAnnotationsFromState(
+  //     annotationsWithoutVirtualAssetAnnotations.map((item) => item.id)
+  //   )
+  // );
+  // addAnnotations(savedVisionAnnotations.concat(updatedVisionAnnotations));
 });

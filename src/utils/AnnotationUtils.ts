@@ -60,12 +60,21 @@ export interface VisionAnnotation
   createdTime?: number;
   lastUpdatedTime?: number;
   virtual?: boolean;
+  modelType: DetectionModelType;
 }
 
-export const ModelTypeColorMap = {
-  [DetectionModelType.Text]: '#C945DB',
-  [DetectionModelType.Tag]: '#FF6918',
-  [DetectionModelType.GDPR]: '#2F80ED',
+export const ModelTypeStyleMap = {
+  [DetectionModelType.Text]: { color: '#FF8746', backgroundColor: '#FFE1D1' },
+  [DetectionModelType.Tag]: {
+    color: '#C945DB',
+    backgroundColor: '#F4DAF8',
+  },
+  [DetectionModelType.GDPR]: { color: '#b30539', backgroundColor: '#fbe9ed' },
+};
+export const ModelTypeIconMap: { [key: number]: string } = {
+  [DetectionModelType.Text]: 'Scan',
+  [DetectionModelType.Tag]: 'ResourceAssets',
+  [DetectionModelType.GDPR]: 'WarningFilled',
 };
 
 export const ModelTypeSourceMap: { [key: number]: AnnotationSource } = {
@@ -87,7 +96,7 @@ export class AnnotationUtils {
   }
 
   public static getAnnotationColor(modelType: DetectionModelType): string {
-    return ModelTypeColorMap[modelType];
+    return ModelTypeStyleMap[modelType].color;
   }
 
   public static generateAnnotationId(
@@ -197,6 +206,7 @@ export class AnnotationUtils {
   ): VisionAnnotation {
     return {
       color: AnnotationUtils.getAnnotationColor(modelType),
+      modelType,
       type,
       source,
       status,

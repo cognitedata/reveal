@@ -29,6 +29,7 @@ import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
 import { DeleteAnnotations } from 'src/store/thunks/DeleteAnnotations';
 import { ToastUtils } from 'src/utils/ToastUtils';
 import { AnnotationCounts } from 'src/pages/Workflow/types';
+import { SaveAvailableAnnotations } from 'src/store/thunks/SaveAvailableAnnotations';
 
 export interface VisionAnnotationState extends Omit<VisionAnnotation, 'id'> {
   id: string;
@@ -56,7 +57,10 @@ type State = {
     annotation: Partial<VisionAnnotationState> | null;
     selectedAssetIds: number[];
   };
-  selectedAnnotations: string[];
+  selectedAnnotations: {
+    asset: string[];
+    other: string[];
+  };
   imagePreview: {
     editable: number;
     createdBoundingBoxes: {};
@@ -75,7 +79,10 @@ type State = {
 };
 
 const initialState: State = {
-  selectedAnnotations: [],
+  selectedAnnotations: {
+    asset: [],
+    other: [],
+  },
   drawer: {
     show: false,
     mode: null,
@@ -129,17 +136,38 @@ const previewSlice = createSlice({
       const visibility = state.annotations.byId[id].show;
       state.annotations.byId[id].show = !visibility;
     },
-    selectAnnotation(state, action: PayloadAction<string>) {
-      if (!state.selectedAnnotations.includes(action.payload)) {
-        state.selectedAnnotations.push(action.payload);
+    selectAnnotation(
+      state,
+      action: PayloadAction<{ id: string; asset: boolean }>
+    ) {
+      const annId = action.payload.id;
+      if (action.payload.asset) {
+        if (!state.selectedAnnotations.asset.includes(annId)) {
+          state.selectedAnnotations.asset.push(annId);
+        }
+      } else if (!state.selectedAnnotations.other.includes(annId)) {
+        state.selectedAnnotations.other.push(annId);
       }
     },
-    deselectAnnotation(state, action: PayloadAction<string>) {
-      const annotationIdIndex = state.selectedAnnotations.findIndex(
-        (item) => item === action.payload
-      );
-      if (annotationIdIndex >= 0) {
-        state.selectedAnnotations.splice(annotationIdIndex, 1);
+    deselectAnnotation(
+      state,
+      action: PayloadAction<{ id: string; asset: boolean }>
+    ) {
+      const annId = action.payload.id;
+      if (action.payload.asset) {
+        const assetAnnotationIdIndex = state.selectedAnnotations.asset.findIndex(
+          (item) => item === annId
+        );
+        if (assetAnnotationIdIndex >= 0) {
+          state.selectedAnnotations.asset.splice(assetAnnotationIdIndex, 1);
+        }
+      } else {
+        const otherAnnotationIdIndex = state.selectedAnnotations.other.findIndex(
+          (item) => item === annId
+        );
+        if (otherAnnotationIdIndex >= 0) {
+          state.selectedAnnotations.other.splice(otherAnnotationIdIndex, 1);
+        }
       }
     },
     showAnnotationDrawer(state, action: PayloadAction<AnnotationDrawerMode>) {
@@ -187,7 +215,7 @@ const previewSlice = createSlice({
       if (action.payload.type === AnnotationDrawerMode.AddAnnotation) {
         const editModeAnnotationData = state.drawer.annotation;
 
-        if (editModeAnnotationData) {
+        if (editModeAnnotationData && editModeAnnotationData.text) {
           addEditAnnotationsToState(state, [
             editModeAnnotationData as VisionAnnotation,
           ]);
@@ -312,12 +340,19 @@ const previewSlice = createSlice({
       }
     });
 
+    builder.addCase(SaveAvailableAnnotations.fulfilled, (state) => {
+      resetPreviewState(state);
+      state.annotations = initialState.annotations;
+      state.models = initialState.models;
+      state.modelsByFileId = initialState.modelsByFileId;
+    });
+
     // Matchers
 
     const isLabelEdit = (
       action: PayloadAction<LabelEdit> | PayloadAction<PolygonEdit>
     ): action is PayloadAction<LabelEdit> => {
-      return !!(action as PayloadAction<LabelEdit>).payload.label;
+      return 'label' in (action as PayloadAction<LabelEdit>).payload;
     };
 
     builder.addMatcher(
@@ -392,7 +427,7 @@ const resetPreviewState = (state: State) => {
     createdBoundingBoxes: {},
     modifiedBoundingBoxes: {},
   };
-  state.selectedAnnotations = [];
+  state.selectedAnnotations = { asset: [], other: [] };
 };
 
 export const addEditAnnotationsToState = (
@@ -401,7 +436,7 @@ export const addEditAnnotationsToState = (
 ) => {
   annotations.forEach((item) => {
     // update models
-    const modelType = AnnotationUtils.getAnnotationsDetectionModelType(item);
+    const { modelType } = item;
     const modelId = AnnotationUtils.getModelId(
       String(item.annotatedResourceId),
       modelType
@@ -473,7 +508,10 @@ const deleteAnnotationsByIds = (state: State, annotationIds: string[]) => {
     delete state.annotations.byId[annotation.id];
     state.annotations.allIds = Object.keys(state.annotations.byId);
   });
-  state.selectedAnnotations = state.selectedAnnotations.filter(
+  state.selectedAnnotations.asset = state.selectedAnnotations.asset.filter(
+    (id) => !annotationIds.includes(id)
+  );
+  state.selectedAnnotations.other = state.selectedAnnotations.other.filter(
     (id) => !annotationIds.includes(id)
   );
 };
@@ -532,7 +570,7 @@ export const selectAnnotationsByFileIdModelType = createSelector(
   }
 );
 
-export const selectNonRejectedAnnotationsByFileIdModelTypes = createSelector(
+export const selectAnnotationsByFileIdModelTypes = createSelector(
   selectAnnotationsByFileId,
   selectModelsByFileId,
   (state: State, fileId: string, modelTypes: DetectionModelType[]) =>
@@ -543,10 +581,8 @@ export const selectNonRejectedAnnotationsByFileIdModelTypes = createSelector(
       .map((model) => model.modelId);
 
     if (modelIds && modelIds.length) {
-      return annotationByFileId.filter(
-        (item) =>
-          modelIds.includes(item.modelId) &&
-          item.status !== AnnotationStatus.Rejected
+      return annotationByFileId.filter((item) =>
+        modelIds.includes(item.modelId)
       );
     }
     return [];

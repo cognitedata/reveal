@@ -3,7 +3,7 @@ import { Button, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { AnnotationsTable } from 'src/pages/Preview/components/AnnotationsTable/AnnotationsTable';
 import {
-  selectNonRejectedAnnotationsByFileIdModelTypes,
+  selectAnnotationsByFileIdModelTypes,
   setImagePreviewEditState,
   showAnnotationDrawer,
 } from 'src/store/previewSlice';
@@ -12,7 +12,6 @@ import { AnnotationDrawerMode } from 'src/utils/AnnotationUtils';
 import { RootState } from 'src/store/rootReducer';
 import { DetectionModelType } from 'src/api/types';
 import { ImagePreviewEditMode } from 'src/pages/Preview/Types';
-import { DeleteAnnotationsAndRemoveLinkedAssets } from 'src/store/thunks/DeleteAnnotationsAndRemoveLinkedAssets';
 
 const Container = styled.div`
   height: 100%;
@@ -47,15 +46,15 @@ export const Contextualization = ({ fileId }: { fileId: string }) => {
     (state: RootState) => state.previewSlice.selectedAnnotations
   );
 
-  const nonRejectedTagAnnotations = useSelector(({ previewSlice }: RootState) =>
-    selectNonRejectedAnnotationsByFileIdModelTypes(previewSlice, fileId, [
+  const tagAnnotations = useSelector(({ previewSlice }: RootState) =>
+    selectAnnotationsByFileIdModelTypes(previewSlice, fileId, [
       DetectionModelType.Tag,
     ])
   );
 
-  const nonRejectedOtherAnnotations = useSelector(
+  const gdprAndTextAndObjectAnnotations = useSelector(
     ({ previewSlice }: RootState) =>
-      selectNonRejectedAnnotationsByFileIdModelTypes(previewSlice, fileId, [
+      selectAnnotationsByFileIdModelTypes(previewSlice, fileId, [
         DetectionModelType.Text,
         DetectionModelType.GDPR,
       ])
@@ -73,10 +72,6 @@ export const Contextualization = ({ fileId }: { fileId: string }) => {
 
   const handleLinkAsset = () => {
     dispatch(showAnnotationDrawer(AnnotationDrawerMode.LinkAsset));
-  };
-
-  const handleDeleteAnnotations = () => {
-    dispatch(DeleteAnnotationsAndRemoveLinkedAssets(selectedAnnotationIds));
   };
 
   const handleEditPolygon = () => {
@@ -125,8 +120,7 @@ export const Contextualization = ({ fileId }: { fileId: string }) => {
             type="secondary"
             icon="Polygon"
             disabled={
-              nonRejectedOtherAnnotations.length +
-                nonRejectedTagAnnotations.length ===
+              gdprAndTextAndObjectAnnotations.length + tagAnnotations.length ===
               0
             }
             onClick={handleEditPolygon}
@@ -137,24 +131,16 @@ export const Contextualization = ({ fileId }: { fileId: string }) => {
         <StyledButton type="secondary" icon="Plus" onClick={handleLinkAsset}>
           Link to asset
         </StyledButton>
-        <StyledButton
-          type="secondary"
-          icon="Delete"
-          disabled={!selectedAnnotationIds.length}
-          onClick={handleDeleteAnnotations}
-        >
-          Delete
-        </StyledButton>
       </EditContainer>
       <TableContainer>
         <AnnotationsTable
-          annotations={nonRejectedTagAnnotations}
-          selectedAnnotationIds={selectedAnnotationIds}
+          annotations={tagAnnotations}
+          selectedAnnotationIds={selectedAnnotationIds.asset}
           mode={DetectionModelType.Tag}
         />
         <AnnotationsTable
-          annotations={nonRejectedOtherAnnotations}
-          selectedAnnotationIds={selectedAnnotationIds}
+          annotations={gdprAndTextAndObjectAnnotations}
+          selectedAnnotationIds={selectedAnnotationIds.other}
           mode={DetectionModelType.Text}
         />
       </TableContainer>
@@ -172,5 +158,6 @@ const StyledButton = styled(Button)`
 `;
 
 const TableContainer = styled.div`
+  padding-top: 25px;
   overflow-y: auto;
 `;

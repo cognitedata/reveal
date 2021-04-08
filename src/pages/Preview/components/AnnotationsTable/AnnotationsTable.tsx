@@ -1,15 +1,13 @@
 import {
+  AllIconTypes,
   Button,
   Checkbox,
   Col,
-  Dropdown,
   Input,
-  Menu,
   Row,
 } from '@cognite/cogs.js';
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
-import { Divider } from '@cognite/data-exploration';
 import { useDispatch } from 'react-redux';
 import {
   annotationApproval,
@@ -18,9 +16,14 @@ import {
   toggleAnnotationVisibility,
   VisionAnnotationState,
 } from 'src/store/previewSlice';
-import { AnnotationStatus } from 'src/utils/AnnotationUtils';
+import {
+  AnnotationStatus,
+  ModelTypeIconMap,
+  ModelTypeStyleMap,
+} from 'src/utils/AnnotationUtils';
 import { DetectionModelType } from 'src/api/types';
-import { LinkFileAssetsByAnnotationId } from 'src/store/thunks/LinkFileAssetsByAnnotationId';
+import { HandleFileAssetLinksByAnnotationId } from 'src/store/thunks/HandleFileAssetLinksByAnnotationId';
+import { DeleteAnnotationsAndRemoveLinkedAssets } from 'src/store/thunks/DeleteAnnotationsAndRemoveLinkedAssets';
 
 const TableContainer = styled.div`
   width: 100%;
@@ -38,10 +41,6 @@ const Body = styled.div`
   width: 100%;
 `;
 
-const StyledHeaderRow = styled(Row)`
-  padding: 8px;
-`;
-
 const StyledRow = styled(Row)`
   padding: 8px;
 
@@ -56,139 +55,88 @@ const StyledRow = styled(Row)`
 const StyledCol = styled(Col)`
   display: flex;
   align-items: center;
+  justify-content: center;
 `;
 
 const AnnotationLbl = styled.div`
   width: 100%;
-  padding-right: 10px;
+  padding: 10px 10px;
   box-sizing: content-box;
 `;
 
-const AcceptBtn = styled(Button)`
-  background: #6fcf97;
+interface ApproveButtonProps {
+  status: AnnotationStatus;
+}
+
+const AcceptBtn = styled(Button)<ApproveButtonProps>`
+  color: ${(props) =>
+    props.status === AnnotationStatus.Verified ? '#EDFFF4' : '#059B85'};
+  background: ${(props) =>
+    props.status === AnnotationStatus.Verified ? '#6FCF97' : '#EDFFF4'};
 `;
 
-const RejectBtn = styled(Button)`
-  margin-left: 10px;
-  background: #eb5757;
+const RejectBtn = styled(Button)<ApproveButtonProps>`
+  color: ${(props) =>
+    props.status === AnnotationStatus.Rejected ? '#fbe9ed' : '#eb5757'};
+  background: ${(props) =>
+    props.status === AnnotationStatus.Rejected ? '#EB5757' : '#fbe9ed'};
 `;
 
-const MenuContent = (
-  <Menu>
-    <Menu.Header>Component menu</Menu.Header>
-    <Menu.Item>Option 1</Menu.Item>
-    <Menu.Item appendIcon="ThreeD">
-      <span>Option 2</span>
-    </Menu.Item>
+// const MenuContent = (
+//   <Menu>
+//      <Menu.Header>Component menu</Menu.Header>
+//      <Menu.Item>Option 1</Menu.Item>
+//      <Menu.Divider />
+//   </Menu>
+// );
 
-    <Menu.Item>Option 3</Menu.Item>
-    <Menu.Divider />
-  </Menu>
-);
-
-const ApproveButtons = (props: {
-  onApprove: (status: AnnotationStatus) => void;
-  approveStatus: AnnotationStatus;
-}) => {
-  if (props.approveStatus === AnnotationStatus.Unhandled) {
-    return (
-      <>
-        <AcceptBtn
-          type="primary"
-          icon="Check"
-          aria-label="verify annotation"
-          onClick={() => {
-            props.onApprove(AnnotationStatus.Verified);
-          }}
-        />
-        <RejectBtn
-          type="primary"
-          icon="Close"
-          aria-label="reject annotation"
-          onClick={() => {
-            props.onApprove(AnnotationStatus.Rejected);
-          }}
-        />
-      </>
-    );
-  }
-  if (props.approveStatus === AnnotationStatus.Verified) {
-    return (
-      <Dropdown content={MenuContent}>
-        <Button icon="MoreOverflowEllipsisHorizontal" iconPlacement="left" />
-      </Dropdown>
-    );
-  }
-  return null;
-};
-
-interface ButtonProps {
+interface ShowHideButtonProps {
   color?: string;
+  background?: string;
   disablestyle?: string;
 }
 
-const ShowHideBtn = styled(Button)<ButtonProps>`
+const ShowHideBtn = styled(Button)<ShowHideButtonProps>`
+  height: 28px;
+  width: 28px;
   padding: 4px;
   color: ${(props) => props.color || 'black'};
+  background: ${(props) => props.background || 'black'};
   cursor: ${(props) => props.disablestyle === 'true' && 'default'};
-`;
-
-interface BadgeProps {
-  backgroundColor: string;
-}
-
-const AnnotationBadge = styled.div<BadgeProps>`
-  width: 28px;
-  height: 28px;
-  border-radius: 4px;
-  background-color: ${(props) => props.backgroundColor};
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const DisabledLine = styled.div`
-  height: 40px;
-  border-left: 2px solid #595959;
-  transform: translate(-15px, 0) rotate(45deg);
+  opacity: ${(props) => props.disablestyle === 'true' && 0.4};
+  border: 1px solid ${(props) => props.color || 'black'};
+  border-radius: 5px;
 `;
 
 export const VisibilityButton = (props: {
   show: boolean;
   color: string;
-  value: number;
+  background: string;
   disabled: boolean;
   onClick: () => void;
 }) => {
   if (props.disabled) {
     return (
       <ShowHideBtn
-        color="#BFBFBF"
-        type="tertiary"
-        icon="EyeShow"
-        iconPlacement="right"
         disablestyle="true"
-      >
-        <AnnotationBadge backgroundColor="#E8E8E8">
-          {props.value}
-        </AnnotationBadge>
-        <DisabledLine />
-      </ShowHideBtn>
+        color={props.color}
+        background={props.background}
+        type="tertiary"
+        icon="EyeHide"
+        iconPlacement="right"
+      />
     );
   }
 
   return (
     <ShowHideBtn
+      color={props.color}
+      background={props.background}
       type="tertiary"
       icon={props.show ? 'EyeShow' : 'EyeHide'}
       iconPlacement="right"
       onClick={props.onClick}
-    >
-      <AnnotationBadge backgroundColor={props.color}>
-        {props.value}
-      </AnnotationBadge>
-    </ShowHideBtn>
+    />
   );
 };
 
@@ -205,9 +153,13 @@ export const AnnotationsTable = ({
 
   const handleOnAnnotationSelect = (id: string, nextState: boolean) => {
     if (nextState) {
-      dispatch(selectAnnotation(id));
+      dispatch(
+        selectAnnotation({ id, asset: mode === DetectionModelType.Tag })
+      );
     } else {
-      dispatch(deselectAnnotation(id));
+      dispatch(
+        deselectAnnotation({ id, asset: mode === DetectionModelType.Tag })
+      );
     }
   };
 
@@ -226,27 +178,36 @@ export const AnnotationsTable = ({
     status: AnnotationStatus
   ) => {
     dispatch(annotationApproval(annotation.id, status));
-    dispatch(LinkFileAssetsByAnnotationId(annotation.id));
+    dispatch(HandleFileAssetLinksByAnnotationId(annotation.id));
+  };
+
+  const handleDeleteAnnotations = () => {
+    dispatch(DeleteAnnotationsAndRemoveLinkedAssets(selectedAnnotationIds));
   };
 
   return (
     <TableContainer>
       <Header>
-        <StyledHeaderRow>
-          <StyledCol span={2}> </StyledCol>
-          <StyledCol span={5}>Action</StyledCol>
-          <StyledCol span={12}>
-            {mode === DetectionModelType.Tag ? 'Asset tag' : 'Annotations'}
-          </StyledCol>
-          <StyledCol span={5}>Polygon</StyledCol>
-        </StyledHeaderRow>
-        <Divider.Horizontal />
+        <TitleRow>
+          <div>
+            {mode === DetectionModelType.Tag ? 'Asset tags' : 'Annotations'}
+          </div>
+          <DeleteButton
+            type="ghost-danger"
+            icon="Delete"
+            disabled={!selectedAnnotationIds.length}
+            onClick={handleDeleteAnnotations}
+          >
+            Delete Selected
+          </DeleteButton>
+        </TitleRow>
       </Header>
       <Body>
         {annotationsAvailable &&
-          checkableAnnotations.map((annotation, index) => {
+          checkableAnnotations.map((annotation) => {
             return (
               <StyledRow
+                cols={21}
                 key={annotation.id}
                 className={annotation.checked ? 'active' : ''}
               >
@@ -259,45 +220,91 @@ export const AnnotationsTable = ({
                     }
                   />
                 </StyledCol>
-                <StyledCol span={5}>
-                  <ApproveButtons
-                    approveStatus={annotation.status}
-                    onApprove={(status: AnnotationStatus) =>
-                      handleApprovalState(annotation, status)
-                    }
-                  />
+                <StyledCol span={6}>
+                  <ColContainer>
+                    <VerticalLine />
+                    <AcceptBtn
+                      type="primary"
+                      icon="Check"
+                      status={annotation.status}
+                      aria-label="verify annotation"
+                      onClick={() => {
+                        handleApprovalState(
+                          annotation,
+                          AnnotationStatus.Verified
+                        );
+                      }}
+                    />
+                    <RejectBtn
+                      type="primary"
+                      icon="Close"
+                      status={annotation.status}
+                      aria-label="reject annotation"
+                      onClick={() => {
+                        handleApprovalState(
+                          annotation,
+                          AnnotationStatus.Rejected
+                        );
+                      }}
+                    />
+                    <VerticalLine />
+                  </ColContainer>
                 </StyledCol>
-                <StyledCol span={12}>
+                <StyledCol span={10}>
                   <AnnotationLbl>
                     <Input
                       icon={
-                        mode === DetectionModelType.Tag
-                          ? 'ResourceAssets'
-                          : undefined
+                        ModelTypeIconMap[annotation.modelType] as AllIconTypes
                       }
                       readOnly
                       fullWidth
-                      style={{ width: `100%` }}
+                      style={{
+                        width: `100%`,
+                        backgroundColor:
+                          (annotation.status === AnnotationStatus.Verified &&
+                            '#EDFFF4') ||
+                          (annotation.status === AnnotationStatus.Rejected &&
+                            '#fbe9ed') ||
+                          'white',
+                        color: '#595959',
+                      }}
                       value={annotation.text}
                     />
                   </AnnotationLbl>
                 </StyledCol>
-                <StyledCol span={5}>
-                  <VisibilityButton
-                    show={annotation.show}
-                    color={annotation.color}
-                    value={index}
-                    disabled={!annotation.box}
-                    aria-label="show / hide-annotation"
-                    onClick={() => {
-                      dispatch(
-                        toggleAnnotationVisibility({
-                          annotationId: annotation.id,
-                        })
-                      );
-                    }}
-                  />
+                <StyledCol span={3}>
+                  <ColContainer>
+                    <VerticalLine />
+                    <VisibilityButton
+                      show={annotation.show}
+                      color={ModelTypeStyleMap[annotation.modelType].color}
+                      background={
+                        ModelTypeStyleMap[annotation.modelType].backgroundColor
+                      }
+                      disabled={
+                        !annotation.box ||
+                        annotation.status === AnnotationStatus.Rejected
+                      }
+                      aria-label="show / hide-annotation"
+                      onClick={() => {
+                        dispatch(
+                          toggleAnnotationVisibility({
+                            annotationId: annotation.id,
+                          })
+                        );
+                      }}
+                    />
+                    {/* <VerticalLine /> */}
+                  </ColContainer>
                 </StyledCol>
+                {/* <StyledCol span={3}> */}
+                {/*  <Dropdown> */}
+                {/*    <Button */}
+                {/*      icon="MoreOverflowEllipsisHorizontal" */}
+                {/*      iconPlacement="left" */}
+                {/*    /> */}
+                {/*  </Dropdown> */}
+                {/* </StyledCol> */}
               </StyledRow>
             );
           })}
@@ -320,4 +327,31 @@ const EmptyPlaceHolderContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+`;
+
+const TitleRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #e8e8e8;
+  color: #8c8c8c;
+`;
+
+const DeleteButton = styled(Button)`
+  margin: 10px;
+  color: #8c8c8c;
+`;
+
+const VerticalLine = styled.div`
+  width: 0px;
+  height: 20px;
+  border-left: 1px solid #e8e8e8;
+`;
+
+const ColContainer = styled.div`
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 `;

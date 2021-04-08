@@ -12,6 +12,7 @@ import {
 import { updateFileInfoField } from 'src/store/thunks/updateFileInfoField';
 import { generateKeyValueArray } from 'src/utils/FormatUtils';
 import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
+import { SaveAvailableAnnotations } from 'src/store/thunks/SaveAvailableAnnotations';
 
 export type FileState = {
   id: ReactText;
@@ -25,6 +26,7 @@ export type FileState = {
   labels?: Label[];
   metadata?: Metadata;
   linkedAnnotations: string[];
+  assetIds?: number[];
 };
 
 export type FileInfoValueState = string | Label[] | null;
@@ -205,6 +207,16 @@ const uploadedFilesSlice = createSlice({
       if (error && error.message) {
         ToastUtils.onFailure(error?.message);
       }
+    });
+
+    builder.addCase(SaveAvailableAnnotations.fulfilled, (state) => {
+      state.dataSetIds = initialState.dataSetIds;
+      state.extractExif = initialState.extractExif;
+      state.files = initialState.files;
+      state.metadataEdit = initialState.metadataEdit;
+      state.fileDetails = initialState.fileDetails;
+      state.fileMetaData = initialState.fileMetaData;
+      state.loadingField = initialState.loadingField;
     });
   },
 });

@@ -5,6 +5,7 @@ import { AnnotationJob, DetectionModelType } from 'src/api/types';
 import { getFakeQueuedJob } from 'src/api/utils';
 import { fileProcessUpdate } from 'src/store/commonActions';
 import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
+import { SaveAvailableAnnotations } from 'src/store/thunks/SaveAvailableAnnotations';
 import { RootState, ThunkConfig } from 'src/store/rootReducer';
 import { shallowEqual, useSelector } from 'react-redux';
 import { getAnnotationCountByModelType } from 'src/store/previewSlice';
@@ -201,6 +202,14 @@ const processSlice = createSlice({
         // eslint-disable-next-line no-console
         console.error(error); // todo remove later once ui can handle that
       });
+    });
+
+    builder.addCase(SaveAvailableAnnotations.fulfilled, (state) => {
+      state.selectedFileId = initialState.selectedFileId;
+      state.jobsByFileId = initialState.jobsByFileId;
+      state.error = initialState.error;
+      state.showFileMetadataDrawer = initialState.showFileMetadataDrawer;
+      state.selectedDetectionModels = initialState.selectedDetectionModels;
     });
   },
   /* eslint-enable no-param-reassign */
