@@ -6,14 +6,14 @@ import { AnnotationsBadgeProps } from 'src/pages/Workflow/types';
 import { selectJobsByFileId } from 'src/store/processSlice';
 
 export const useAnnotationCounter = (fileId: number) => {
-  console.log('Calling selector');
+  // console.log('Calling selector');
   const jobs = useSelector((state: RootState) =>
     selectJobsByFileId(state.processSlice, fileId)
   );
   const statusJobMap = new Map(jobs.map((i) => [i.type, i.status]));
 
   const counts = useSelector((state: RootState) => {
-    console.log('Counter selector');
+    // console.log('Counter selector');
     return {
       gdpr: getAnnotationCountByModelType(
         state.previewSlice,

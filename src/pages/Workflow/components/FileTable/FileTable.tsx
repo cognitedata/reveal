@@ -141,7 +141,11 @@ function ActionRendrer(
         Review
       </Button>
       <Dropdown content={MenuContent}>
-        <Button type="secondary" icon="MoreOverflowEllipsisHorizontal" />
+        <Button
+          type="secondary"
+          icon="MoreOverflowEllipsisHorizontal"
+          aria-label="dropdown button"
+        />
       </Dropdown>
     </div>
   );
@@ -155,7 +159,7 @@ export function FileTable(props: FileTableProps) {
   console.log('Render table');
 
   const Cell = (cellProps: any) => {
-    console.log('Calling cell rendrers');
+    // console.log('Calling cell rendrers');
 
     if (['status', 'annotations', 'action'].includes(cellProps.column.key)) {
       const annotationsBadgeProps = useAnnotationCounter(cellProps.rowData.id);

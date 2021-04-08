@@ -37,6 +37,7 @@ export function AnnotationsBadgePopoverContent({
               color: data.color,
               borderRadius: '15px',
             }}
+            aria-label={`${data.title} icon`}
           />
         </GridIcon>
         <GridName>
