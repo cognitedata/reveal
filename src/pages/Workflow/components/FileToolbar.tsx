@@ -11,7 +11,8 @@ import {
 } from 'src/store/processSlice';
 import { DetectionModelType } from 'src/api/types';
 import { selectAllFiles } from 'src/store/uploadedFilesSlice';
-import { message } from 'antd';
+import { message, notification } from 'antd';
+import { isVideo } from 'src/components/FileUploader/utils/FileUtils';
 
 export const FileToolbar = ({
   onViewChange,
@@ -33,9 +34,19 @@ export const FileToolbar = ({
       message.error('Please select ML models to use for detection');
       return;
     }
+
+    if (uploadedFiles.filter((file) => !isVideo(file)).length) {
+      notification.warning({
+        message: 'Skipping video files',
+        description:
+          'Automatic contextualization is currently not supported for videos.',
+      });
+    }
     dispatch(
       detectAnnotations({
-        fileIds: uploadedFiles.map(({ id }) => id),
+        fileIds: uploadedFiles
+          .filter((file) => !isVideo(file))
+          .map(({ id }) => id),
         detectionModels: selectedDetectionModels,
       })
     );
