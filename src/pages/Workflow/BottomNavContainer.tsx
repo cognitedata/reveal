@@ -1,22 +1,16 @@
 import React from 'react';
 import { Route, Switch, useHistory } from 'react-router-dom';
-import { Modal } from 'antd';
 import { PrevNextNav } from 'src/pages/Workflow/components/PrevNextNav';
 import styled from 'styled-components';
 import { ProcessStepActionButtons } from 'src/pages/Workflow/process/ProcessStepActionButtons';
 import { getLink, workflowRoutes } from 'src/pages/Workflow/workflowRoutes';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { createLink } from '@cognite/cdf-utilities';
-import { selectAllFiles } from 'src/store/uploadedFilesSlice';
 
 export default function BottomNavContainer() {
   const history = useHistory();
   const { allFilesStatus } = useSelector(
     (state: RootState) => state.uploadedFiles
-  );
-  const files = useSelector((state: RootState) =>
-    selectAllFiles(state.uploadedFiles)
   );
 
   return (
@@ -40,17 +34,7 @@ export default function BottomNavContainer() {
                 },
               }}
               skipBtnProps={{
-                disabled: !files.length,
-                onClick() {
-                  Modal.confirm({
-                    title: 'Just so you know',
-                    content:
-                      'By skipping processing you will be taken back to the home page. Your files are uploaded to Cognite Data Fusion and can be processed later.',
-                    onOk: () => {
-                      history.push(createLink('/explore/search/file'));
-                    },
-                  });
-                },
+                disabled: !allFilesStatus, // TODO: add check if processing has been done when state is added
               }}
             />
           )}
