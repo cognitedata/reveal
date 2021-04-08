@@ -71,7 +71,7 @@ export const ContextMenu = ({
   sourceItem,
   onClose,
 }: ContextMenuProps) => {
-  const [selectedMenu, setSelectedMenu] = useState<string>('metadata');
+  const [selectedMenu, setSelectedMenu] = useState<string>('statistics');
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
 
   const handleMenuClick = (value: string) => {
