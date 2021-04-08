@@ -11,7 +11,6 @@ import {
 import styled from 'styled-components';
 import { Integration } from 'model/Integration';
 import { IdEither } from '@cognite/sdk';
-import { ContactsView } from 'components/integration/ContactsView';
 import { FullPageLayout } from 'components/layout/FullPageLayout';
 import { LinkWrapper } from 'styles/StyledButton';
 import { useIntegrationById } from 'hooks/useIntegration';
@@ -116,9 +115,6 @@ const IntegrationPage: FunctionComponent<IntegrationPageProps> = () => {
         </Route>
         <Route path={`${path}/logs`}>
           <RunLogsView integration={integration} />
-        </Route>
-        <Route path={`${path}/contacts`}>
-          <ContactsView integration={integration} />
         </Route>
       </Switch>
     </FullPageLayout>

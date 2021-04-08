@@ -80,6 +80,4 @@ export const NAVIGATION: Readonly<string> = 'Navigation'; // + href
 export const SEARCH: Readonly<string> = 'Search'; // + query
 export const SINGLE_INTEGRATION: Readonly<string> = 'Integration.Details'; // + id
 export const SINGLE_INTEGRATION_RUNS: Readonly<string> = 'Integration.Runs'; // + id
-export const SINGLE_INTEGRATION_CONTACTS: Readonly<string> =
-  'Integration.Contacts'; // + id
 export const SORT: Readonly<string> = 'Sort'; // + field
