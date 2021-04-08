@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
-import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import {
   FileTable,
@@ -24,10 +24,7 @@ import {
 import { GridCellProps, GridTable } from '@cognite/data-exploration';
 import { resetEditHistory, selectAllFiles } from 'src/store/uploadedFilesSlice';
 import styled from 'styled-components';
-import { getAnnotationCountByModelType } from 'src/store/previewSlice';
-import { DetectionModelType } from 'src/api/types';
 import { FileGridPreview } from '../components/FileGridPreview/FileGridPreview';
-import { AnnotationsBadgeProps } from '../types';
 
 const queryClient = new QueryClient();
 
@@ -41,70 +38,6 @@ export default function ProcessStep() {
   const [currentView, setCurrentView] = useState<string>('list');
 
   const tableData: Array<TableDataItem> = uploadedFiles.map((file) => {
-    const jobs =
-      useSelector(
-        (state: RootState) => state.processSlice.jobsByFileId[file.id],
-        (prev, next) => {
-          const values =
-            prev?.map((job, index) => {
-              return next?.[index].status === job.status;
-            }) || [];
-          return values.every((item) => item);
-        }
-      ) || [];
-    let statusTime = 0;
-
-    const gdprCounts = useSelector(
-      (state: RootState) =>
-        getAnnotationCountByModelType(
-          state.previewSlice,
-          file.id.toString(),
-          DetectionModelType.GDPR
-        ),
-      shallowEqual
-    );
-
-    const tagCounts = useSelector(
-      (state: RootState) =>
-        getAnnotationCountByModelType(
-          state.previewSlice,
-          file.id.toString(),
-          DetectionModelType.Tag
-        ),
-      shallowEqual
-    );
-
-    const textAndObjectsCounts = useSelector(
-      (state: RootState) =>
-        getAnnotationCountByModelType(
-          state.previewSlice,
-          file.id.toString(),
-          DetectionModelType.Text
-        ),
-      shallowEqual
-    );
-    const annotationsBadgeProps = {
-      gdpr: {
-        ...gdprCounts,
-        status: jobs.find((item) => item.type === DetectionModelType.GDPR)
-          ?.status,
-      },
-      tag: {
-        ...tagCounts,
-        status: jobs.find((item) => item.type === DetectionModelType.Tag)
-          ?.status,
-      },
-      textAndObjects: {
-        ...textAndObjectsCounts,
-        status: jobs.find((item) => item.type === DetectionModelType.Text)
-          ?.status,
-      },
-    } as AnnotationsBadgeProps;
-
-    if (jobs.length) {
-      statusTime = Math.max(...jobs.map((job) => job.statusTime));
-    }
-
     const menuActions: FileActions = {
       showMetadataPreview: (fileId: number) => {
         dispatch(setSelectedFileId(fileId));
@@ -122,12 +55,15 @@ export default function ProcessStep() {
       id: file.id,
       name: file.name,
       mimeType: file.mimeType || '',
-      statusTime,
       menu: menuActions,
-      annotationsBadgeProps,
     };
   });
+  /* eslint-disable react/prop-types */
+  const renderGridCell = (props: GridCellProps<TableDataItem>) => {
+    return <FileGridPreview item={props.item} style={props.style} />;
+  };
 
+  console.log('Re-rendering process page');
   return (
     <>
       <QueryClientProvider client={queryClient}>
@@ -135,12 +71,7 @@ export default function ProcessStep() {
         <FileToolbar currentView={currentView} onViewChange={setCurrentView} />
         <Container>
           {currentView === 'grid' ? (
-            <GridTable
-              data={tableData}
-              renderCell={(props: GridCellProps<TableDataItem>) => (
-                <FileGridPreview item={props.item} style={props.style} />
-              )}
-            />
+            <GridTable data={tableData} renderCell={renderGridCell} />
           ) : (
             <FileTable data={tableData} />
           )}

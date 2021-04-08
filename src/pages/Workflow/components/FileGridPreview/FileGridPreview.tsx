@@ -5,6 +5,7 @@ import { Loader, useFileIcon } from '@cognite/data-exploration';
 import { Body, DocumentIcon, Button, Dropdown, Menu } from '@cognite/cogs.js';
 import { Popover } from 'src/components/Common/Popover';
 import styled from 'styled-components';
+import { useAnnotationCounter } from 'src/store/processSlice';
 import { AnnotationsBadge } from '../AnnotationsBadge/AnnotationsBadge';
 import { TableDataItem } from '../FileTable/FileTable';
 import { AnnotationsBadgePopoverContent } from '../AnnotationsBadge/AnnotationsBadgePopoverContent';
@@ -80,13 +81,13 @@ export const FileGridPreview = ({
       <Menu.Item>Delete</Menu.Item>
     </Menu>
   );
-  const annotations = Object.keys(item.annotationsBadgeProps) as Array<
+  const annotationsBadgeProps = useAnnotationCounter(item.id);
+
+  const annotations = Object.keys(annotationsBadgeProps) as Array<
     keyof AnnotationsBadgeProps
   >;
   const reviewDisabled = annotations.some((key) =>
-    ['Queued', 'Running'].includes(
-      item.annotationsBadgeProps[key]?.status || ''
-    )
+    ['Queued', 'Running'].includes(annotationsBadgeProps[key]?.status || '')
   );
 
   return (
@@ -101,17 +102,13 @@ export const FileGridPreview = ({
             </Dropdown>
           </div>
           <div className="badge">
-            {item.annotationsBadgeProps && (
-              <Popover
-                placement="bottom"
-                trigger="click"
-                content={AnnotationsBadgePopoverContent(
-                  item.annotationsBadgeProps
-                )}
-              >
-                <>{AnnotationsBadge(item.annotationsBadgeProps)}</>
-              </Popover>
-            )}
+            <Popover
+              placement="bottom"
+              trigger="click"
+              content={AnnotationsBadgePopoverContent(annotationsBadgeProps)}
+            >
+              <>{AnnotationsBadge(annotationsBadgeProps)}</>
+            </Popover>
           </div>
           <div className="review">
             <Button
