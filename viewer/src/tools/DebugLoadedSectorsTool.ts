@@ -17,7 +17,6 @@ export type DebugLoadedSectorsToolOptions = {
   showDetailedSectors?: boolean;
   showDiscardedSectors?: boolean;
   colorBy?: 'depth' | 'lod' | 'loadedTimestamp';
-  oldSectorThreshold: number;
   leafsOnly?: boolean;
 };
 
@@ -41,7 +40,6 @@ export class DebugLoadedSectorsTool extends Cognite3DViewerToolBase {
       showDiscardedSectors: false,
       showSimpleSectors: true,
       colorBy: 'lod',
-      oldSectorThreshold: 10000,
       leafsOnly: false,
       ...options
     };
