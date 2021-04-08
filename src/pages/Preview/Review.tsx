@@ -77,6 +77,11 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
       state.previewSlice.imagePreview.editable ===
       ImagePreviewEditMode.Creatable
   );
+  const addAnnotationTextNotAvailable = useSelector(
+    (state: RootState) =>
+      state.previewSlice.drawer.mode === AnnotationDrawerMode.AddAnnotation &&
+      !state.previewSlice.drawer.annotation?.text
+  );
 
   const file = useSelector(({ uploadedFiles }: RootState) =>
     selectFileById(uploadedFiles, fileId)
@@ -145,7 +150,9 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
               ? 'Link to Asset'
               : 'Add annotations'
           }
-          disableFooterButtons={imagePreviewEditable}
+          disableFooterButtons={
+            imagePreviewEditable || addAnnotationTextNotAvailable
+          }
           onClose={handleOnCloseDrawer}
           onCreate={handleOnDrawerCreate}
           onDelete={handleOnDrawerDelete}

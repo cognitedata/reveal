@@ -26,6 +26,7 @@ export type FileState = {
   labels?: Label[];
   metadata?: Metadata;
   linkedAnnotations: string[];
+  assetIds?: number[];
 };
 
 export type FileInfoValueState = string | Label[] | null;
