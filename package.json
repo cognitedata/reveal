@@ -20,7 +20,7 @@
     "@cognite/data-exploration": "0.5.9",
     "@cognite/metrics": "^0.1.7",
     "@cognite/react-picture-annotation": "^1.12.0",
-    "@reduxjs/toolkit": "^1.5.0",
+    "@reduxjs/toolkit": "^1.5.1",
     "@sentry/browser": "^6.2.3",
     "@types/react-redux": "^7.1.16",
     "antd": "^4.14.0",
