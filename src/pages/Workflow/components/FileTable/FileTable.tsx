@@ -11,9 +11,10 @@ import ReactBaseTable, {
 
 import { Popover } from 'src/components/Common/Popover';
 import { AnnotationsBadgeProps } from 'src/pages/Workflow/types';
-import { useAnnotationCounter } from 'src/store/processSlice';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
+import { useAnnotationCounter } from 'src/store/hooks/useAnnotationCounter';
+import { selectJobsByFileId } from 'src/store/processSlice';
 import { TableWrapper } from './FileTableWrapper';
 import { AnnotationsBadge } from '../AnnotationsBadge/AnnotationsBadge';
 import { AnnotationsBadgePopoverContent } from '../AnnotationsBadge/AnnotationsBadgePopoverContent';
@@ -44,17 +45,9 @@ function StatusRendrer(
     keyof AnnotationsBadgeProps
   >;
 
-  const jobs =
-    useSelector(
-      (state: RootState) => state.processSlice.jobsByFileId[id],
-      (prev, next) => {
-        const values =
-          prev?.map((job, index) => {
-            return next?.[index].status === job.status;
-          }) || [];
-        return values.every((i) => i);
-      }
-    ) || [];
+  const jobs = useSelector((state: RootState) =>
+    selectJobsByFileId(state.processSlice, id)
+  );
   if (
     annotations.some(
       (key) => annotationsBadgeProps[key]?.status === 'Completed'
@@ -148,7 +141,11 @@ function ActionRendrer(
         Review
       </Button>
       <Dropdown content={MenuContent}>
-        <Button type="secondary" icon="MoreOverflowEllipsisHorizontal" />
+        <Button
+          type="secondary"
+          icon="MoreOverflowEllipsisHorizontal"
+          aria-label="dropdown button"
+        />
       </Dropdown>
     </div>
   );
@@ -162,7 +159,7 @@ export function FileTable(props: FileTableProps) {
   console.log('Render table');
 
   const Cell = (cellProps: any) => {
-    console.log('Calling cell rendrers');
+    // console.log('Calling cell rendrers');
 
     if (['status', 'annotations', 'action'].includes(cellProps.column.key)) {
       const annotationsBadgeProps = useAnnotationCounter(cellProps.rowData.id);
