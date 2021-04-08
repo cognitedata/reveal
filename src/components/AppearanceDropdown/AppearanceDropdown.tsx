@@ -3,20 +3,37 @@ import React from 'react';
 import styled from 'styled-components/macro';
 import { availableColors } from 'utils/colors';
 
+type LineStyle = 'none' | 'solid' | 'dashed' | 'dotted';
+
 export const AppearanceDropdown = ({
-  onColorSelected,
-  onWeightSelected,
-  onStyleSelected,
+  update,
 }: {
-  onColorSelected: (color: string) => void;
-  onWeightSelected: (weight: number) => void;
-  onStyleSelected: (style: 'solid' | 'dashed' | 'dotted') => void;
+  update: (diff: any) => void;
 }) => {
   return (
     <DropdownWrapper>
-      <ColorDropdown onColorSelected={onColorSelected} />
-      <WeightDropdown onWeightSelected={onWeightSelected} />
-      <TypeDropdown onStyleSelected={onStyleSelected} />
+      <ColorDropdown
+        onColorSelected={(newColor) =>
+          update({
+            color: newColor,
+          })
+        }
+      />
+      <WeightDropdown
+        onWeightSelected={(newWeight) =>
+          update({
+            lineWeight: newWeight,
+          })
+        }
+      />
+      <TypeDropdown
+        onStyleSelected={(newStyle) => {
+          update({
+            displayMode: newStyle === 'none' ? 'markers' : 'lines',
+            lineStyle: newStyle,
+          });
+        }}
+      />
     </DropdownWrapper>
   );
 };
@@ -65,20 +82,15 @@ export const WeightDropdown = ({
 export const TypeDropdown = ({
   onStyleSelected,
 }: {
-  onStyleSelected: (style: 'solid' | 'dashed' | 'dotted') => void;
+  onStyleSelected: (style: LineStyle) => void;
 }) => {
-  const styleOptions = ['solid', 'dashed', 'dotted'];
+  const styleOptions: LineStyle[] = ['solid', 'dashed', 'dotted', 'none'];
 
   return (
     <Menu>
       <Menu.Header>Type</Menu.Header>
       {styleOptions.map((style) => (
-        <Menu.Item
-          key={style}
-          onClick={() =>
-            onStyleSelected(style as 'solid' | 'dashed' | 'dotted')
-          }
-        >
+        <Menu.Item key={style} onClick={() => onStyleSelected(style)}>
           <TypePreview type={style} />
           {style}
         </Menu.Item>
@@ -99,7 +111,7 @@ const TypePreview = ({ type }: { type: string }) => (
   </PreviewContainer>
 );
 
-const DropdownWrapper = styled(Menu)`
+const DropdownWrapper = styled.div`
   display: flex;
   flex-direction: row;
 `;

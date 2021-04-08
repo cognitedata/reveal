@@ -2,11 +2,12 @@ import React from 'react';
 import { Chart } from 'reducers/charts/types';
 import TimeSeriesRow from './TimeSeriesRow';
 import { TypeLabel } from './elements';
+import { Modes } from 'pages/types';
 
 type Props = {
   chart: Chart;
   updateChart: (c: Chart) => void;
-  mode: string;
+  mode: Modes;
   selectedSourceId?: string;
   onRowClick?: (id: string | undefined) => void;
 };

@@ -1,6 +1,6 @@
 {
   "name": "@cognite/cognite-charts",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "start": "./scripts/start.sh",
@@ -47,8 +47,8 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
     "react-split-pane": "^0.1.92",
-    "styled-components": "^5.2.1",
-    "use-debounce": "^6.0.0"
+    "styled-components": "^5.2.3",
+    "use-debounce": "^6.0.1"
   },
   "devDependencies": {
     "@cognite/eslint-config": "^1.6.0",

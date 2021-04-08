@@ -8,7 +8,7 @@ import {
   convertTimeseriesToWorkflow,
 } from 'utils/charts';
 import { useLoginStatus } from 'hooks';
-import ToolsMenu from './ToolsMenu';
+import { AppearanceDropdown } from 'components/AppearanceDropdown';
 
 type Props = {
   chartId: string;
@@ -43,7 +43,9 @@ export default function TimeSeriesMenu({
     mutate({ chart: convertTimeseriesToWorkflow(chart, id) });
   return (
     <Menu>
-      <ToolsMenu update={update} />
+      <Menu.Submenu content={<AppearanceDropdown update={update} />}>
+        <span>Appearance</span>
+      </Menu.Submenu>
       <Menu.Item
         onClick={() => {
           if (startRenaming) startRenaming();
