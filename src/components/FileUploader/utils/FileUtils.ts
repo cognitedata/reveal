@@ -32,4 +32,4 @@ export const isFileOfType = (file?: FileInfo, type?: string[]) => {
   return (type || []).some((el) => query.includes(el));
 };
 
-export const isVideo = (file?: FileInfo) => isFileOfType(file, ['mp4', 'm4v']);
+export const isVideo = (file?: FileInfo) => isFileOfType(file, ['mp4']);
