@@ -1,8 +1,8 @@
 import React from 'react';
 import { Chart } from 'reducers/charts/types';
+import { Modes } from 'pages/types';
 import TimeSeriesRow from './TimeSeriesRow';
 import { TypeLabel } from './elements';
-import { Modes } from 'pages/types';
 
 type Props = {
   chart: Chart;
