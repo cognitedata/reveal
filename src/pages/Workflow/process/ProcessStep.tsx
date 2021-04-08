@@ -20,8 +20,8 @@ import {
   setSelectedFileId,
   showFileMetadataPreview,
 } from 'src/store/processSlice';
-import { getFileJobsStatus } from 'src/pages/Workflow/components/FileTable/getFileJobsResultingStatus';
-import { GridTable, GridCellProps } from '@cognite/data-exploration';
+
+import { GridCellProps, GridTable } from '@cognite/data-exploration';
 import { resetEditHistory, selectAllFiles } from 'src/store/uploadedFilesSlice';
 import styled from 'styled-components';
 import { FileGridPreview } from '../components/FileGridPreview/FileGridPreview';
@@ -33,22 +33,11 @@ export default function ProcessStep() {
   const uploadedFiles = useSelector((state: RootState) =>
     selectAllFiles(state.uploadedFiles)
   );
-  const jobsByFileId = useSelector(
-    (state: RootState) => state.processSlice.jobsByFileId
-  );
 
   const dispatch = useDispatch();
   const [currentView, setCurrentView] = useState<string>('list');
 
   const tableData: Array<TableDataItem> = uploadedFiles.map((file) => {
-    const jobs = jobsByFileId[file.id] || [];
-    let statusTime = 0;
-
-    const annotationsBadgeProps = getFileJobsStatus(jobs, file.id);
-    if (jobs.length) {
-      statusTime = Math.max(...jobs.map((job) => job.statusTime));
-    }
-
     const menuActions: FileActions = {
       showMetadataPreview: (fileId: number) => {
         dispatch(setSelectedFileId(fileId));
@@ -66,12 +55,15 @@ export default function ProcessStep() {
       id: file.id,
       name: file.name,
       mimeType: file.mimeType || '',
-      statusTime,
       menu: menuActions,
-      annotationsBadgeProps,
     };
   });
+  /* eslint-disable react/prop-types */
+  const renderGridCell = (props: GridCellProps<TableDataItem>) => {
+    return <FileGridPreview item={props.item} style={props.style} />;
+  };
 
+  console.log('Re-rendering process page');
   return (
     <>
       <QueryClientProvider client={queryClient}>
@@ -79,12 +71,7 @@ export default function ProcessStep() {
         <FileToolbar currentView={currentView} onViewChange={setCurrentView} />
         <Container>
           {currentView === 'grid' ? (
-            <GridTable
-              data={tableData}
-              renderCell={(props: GridCellProps<TableDataItem>) => (
-                <FileGridPreview item={props.item} style={props.style} />
-              )}
-            />
+            <GridTable data={tableData} renderCell={renderGridCell} />
           ) : (
             <FileTable data={tableData} />
           )}

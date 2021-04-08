@@ -50,14 +50,6 @@ export type VisionAsset = Omit<
   'lastUpdatedTime'
 > & { createdTime: number; lastUpdatedTime: number };
 
-// For debugging
-// const data = require('./fakeFiles.json');
-
-// Object.keys(data).forEach((key) => {
-//   data[key].uploadedTime = new Date(data[key].uploadedTime);
-//   data[key].createdTime = new Date(data[key].createdTime);
-//   data[key].lastUpdatedTime = new Date(data[key].lastUpdatedTime);
-// }, data);
 const initialState: UploadedFilesState = {
   dataSetIds: undefined,
   extractExif: true,

@@ -1,26 +1,49 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import {
+  createAsyncThunk,
+  createSelector,
+  createSlice,
+  PayloadAction,
+} from '@reduxjs/toolkit';
 import { fetchJobById, createAnnotationJob } from 'src/api/annotationJob';
 import { fetchUntilComplete } from 'src/utils';
 import { AnnotationJob, DetectionModelType } from 'src/api/types';
 import { getFakeQueuedJob } from 'src/api/utils';
 import { fileProcessUpdate } from 'src/store/commonActions';
 import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
-import { ThunkConfig } from 'src/store/rootReducer';
 import { SaveAvailableAnnotations } from 'src/store/thunks/SaveAvailableAnnotations';
+import { ThunkConfig } from 'src/store/rootReducer';
+import isEqual from 'lodash-es/isEqual';
 
+export type JobState = AnnotationJob & {
+  fileIds: number[];
+};
 type State = {
   selectedFileId: number | null;
   showFileMetadataDrawer: boolean;
   selectedDetectionModels: Array<DetectionModelType>;
-  jobsByFileId: Record<string, Array<AnnotationJob> | undefined>;
   error?: string;
+  files: {
+    byId: Record<number, { jobIds: number[] }>;
+    allIds: number[];
+  };
+  jobs: {
+    byId: Record<number, JobState>;
+    allIds: number[];
+  };
 };
 
 const initialState: State = {
   selectedFileId: null,
   showFileMetadataDrawer: false,
   selectedDetectionModels: [DetectionModelType.Text],
-  jobsByFileId: {},
+  files: {
+    byId: {},
+    allIds: [],
+  },
+  jobs: {
+    byId: {},
+    allIds: [],
+  },
   // eslint-disable-next-line global-require
   // jobsByFileId: require('./fakeJobs.json'),
   error: undefined,
@@ -41,7 +64,7 @@ export const detectAnnotations = createAsyncThunk<
     }
 
     const batchSize = 10;
-    const { jobsByFileId } = getState().processSlice;
+    const { files, jobs } = getState().processSlice;
     const batchFileIdsList: number[][] = fileIds.reduce((acc, _, i) => {
       if (i % batchSize === 0) {
         acc.push(fileIds.slice(i, i + batchSize));
@@ -52,8 +75,13 @@ export const detectAnnotations = createAsyncThunk<
     batchFileIdsList.forEach((batchFileIds) => {
       detectionModels.forEach((modelType) => {
         const filteredBatchFileIds = batchFileIds.filter((fileId: number) => {
-          const existingJobs = jobsByFileId[fileId] || [];
-          return !existingJobs.find((job) => job.type === modelType);
+          const fileJobIds = files.byId[fileId]?.jobIds;
+          return (
+            !fileJobIds ||
+            !fileJobIds
+              .map((jobId) => jobs.byId[jobId])
+              .some((job) => job.type === modelType)
+          );
         });
 
         dispatch(
@@ -88,19 +116,15 @@ export const postAnnotationJob = createAsyncThunk<
           !fileIds.some(doesFileExist), // we don't want to poll jobs for removed files
 
         onTick: (latestJobVersion) => {
-          fileIds.forEach((fileId) => {
-            if (doesFileExist(fileId)) {
-              dispatch(fileProcessUpdate({ fileId, job: latestJobVersion }));
-            }
-          });
+          dispatch(
+            fileProcessUpdate({ modelType, fileIds, job: latestJobVersion })
+          );
         },
 
         onError: (error) => {
-          fileIds.forEach((fileId) => {
-            dispatch(removeJobByType({ fileId, modelType }));
-            // eslint-disable-next-line no-console
-            console.error(error); // todo better error handling of polling errors
-          });
+          dispatch(removeJobById(createdJob.jobId));
+          // eslint-disable-next-line no-console
+          console.error(error); // todo better error handling of polling errors
         },
       }
     );
@@ -129,89 +153,91 @@ const processSlice = createSlice({
     ) {
       state.selectedDetectionModels = action.payload;
     },
-    updateJob(
-      state,
-      action: PayloadAction<{
-        fileId: string | number;
-        job: AnnotationJob;
-      }>
-    ) {
-      const { fileId, job } = action.payload;
-      const existingJobs = state.jobsByFileId[fileId] || [];
-      state.jobsByFileId[fileId] = existingJobs.map((existingJob) =>
-        existingJob.jobId === job.jobId ? job : existingJob
-      );
-    },
-    removeJobByType(
-      state,
-      action: PayloadAction<{
-        fileId: string | number;
-        modelType: DetectionModelType;
-      }>
-    ) {
-      const { fileId, modelType } = action.payload;
-      const existingJobs = state.jobsByFileId[fileId] || [];
-      state.jobsByFileId[fileId] = existingJobs.filter(
-        (existingJob) => existingJob.type !== modelType
+    removeJobById(state, action: PayloadAction<number>) {
+      const existingJob = state.jobs.byId[action.payload];
+      if (existingJob) {
+        const { fileIds } = existingJob;
+        fileIds.forEach((id) => {
+          const file = state.files.byId[id];
+          if (file && file.jobIds.includes(action.payload)) {
+            state.files.byId[id].jobIds = file.jobIds.filter(
+              (jid) => jid !== action.payload
+            );
+          }
+        });
+      }
+      delete state.jobs.byId[action.payload];
+      state.files.allIds = Object.keys(state.files.byId).map((id) =>
+        parseInt(id, 10)
       );
     },
   },
   extraReducers: (builder) => {
     builder.addCase(fileProcessUpdate, (state, { payload }) => {
-      const { fileId, job } = payload;
-      const existingJobs = state.jobsByFileId[fileId] || [];
-      state.jobsByFileId[fileId] = existingJobs.map((existingJob) =>
-        existingJob.jobId === job.jobId ? job : existingJob
-      );
+      const { fileIds, job, modelType } = payload;
+      addJobToState(state, fileIds, job, modelType);
     });
 
     builder.addCase(deleteFilesById.fulfilled, (state, { payload }) => {
-      payload.forEach((fileId) => {
-        delete state.jobsByFileId[fileId.id];
+      payload.forEach((intId) => {
+        delete state.files.byId[intId.id];
       });
+      state.files.allIds = Object.keys(state.files.byId).map((id) =>
+        parseInt(id, 10)
+      );
     });
 
     /* postAnnotationJobs */
 
     builder.addCase(postAnnotationJob.pending, (state, { meta }) => {
       const { fileIds, modelType } = meta.arg;
-      fileIds.forEach((fileId) => {
-        const existingJobs = state.jobsByFileId[fileId] || [];
-        existingJobs.push({
-          ...getFakeQueuedJob(),
-          type: modelType,
-        });
-        state.jobsByFileId[fileId] = existingJobs;
-      });
+
+      addJobToState(
+        state,
+        fileIds,
+        { ...getFakeQueuedJob(modelType), type: modelType },
+        modelType
+      );
     });
 
     builder.addCase(postAnnotationJob.fulfilled, (state, { payload, meta }) => {
       const newJob = payload;
       const { fileIds, modelType } = meta.arg;
-      fileIds.forEach((fileId) => {
-        const existingJobs = state.jobsByFileId[fileId] || [];
-        state.jobsByFileId[fileId] = existingJobs.map((existingJob) =>
-          existingJob.type === modelType ? newJob : existingJob
-        );
-      });
+      addJobToState(state, fileIds, newJob, modelType);
     });
 
     builder.addCase(postAnnotationJob.rejected, (state, { error, meta }) => {
       const { fileIds, modelType } = meta.arg;
-      fileIds.forEach((fileId) => {
-        const existingJobs = state.jobsByFileId[fileId] || [];
-        state.jobsByFileId[fileId] = existingJobs.filter(
-          (existingJob) => existingJob.type !== modelType
+      const queuedJob = state.jobs.byId[getFakeQueuedJob(modelType).jobId];
+
+      if (queuedJob) {
+        // remove or update queued job
+        fileIds.forEach((id) => {
+          const file = state.files.byId[id];
+          if (file && file.jobIds.includes(queuedJob.jobId)) {
+            state.files.byId[id].jobIds = file.jobIds.filter(
+              (jid) => jid !== queuedJob.jobId
+            );
+          }
+        });
+
+        const filteredFileIds = queuedJob.fileIds.filter(
+          (fid) => !fileIds.includes(fid)
         );
-        state.error = error.message;
-        // eslint-disable-next-line no-console
-        console.error(error); // todo remove later once ui can handle that
-      });
+        state.jobs.byId[queuedJob.jobId].fileIds = filteredFileIds;
+
+        if (!filteredFileIds.length) {
+          delete state.jobs.byId[queuedJob.jobId];
+        }
+      }
+
+      state.error = error.message;
     });
 
     builder.addCase(SaveAvailableAnnotations.fulfilled, (state) => {
-      state.selectedFileId = initialState.selectedFileId;
-      state.jobsByFileId = initialState.jobsByFileId;
+      state.selectedFileId = null;
+      state.jobs = initialState.jobs;
+      state.files = initialState.files;
       state.error = initialState.error;
       state.showFileMetadataDrawer = initialState.showFileMetadataDrawer;
       state.selectedDetectionModels = initialState.selectedDetectionModels;
@@ -221,8 +247,7 @@ const processSlice = createSlice({
 });
 
 export const {
-  updateJob,
-  removeJobByType,
+  removeJobById,
   setSelectedDetectionModels,
   toggleFileMetadataPreview,
   showFileMetadataPreview,
@@ -230,3 +255,71 @@ export const {
 } = processSlice.actions;
 
 export default processSlice.reducer;
+
+const addJobToState = (
+  state: State,
+  fileIds: number[],
+  job: AnnotationJob,
+  modelType: DetectionModelType
+) => {
+  /* eslint-disable  no-param-reassign */
+  const jobState: JobState = { ...job, fileIds, type: modelType };
+  const existingJob = state.jobs.byId[job.jobId];
+  if (!existingJob || !isEqual(jobState, existingJob)) {
+    if (existingJob) {
+      // for fake queued state
+      const fileIdSet = new Set(existingJob.fileIds);
+      jobState.fileIds.forEach((item) => fileIdSet.add(item));
+      jobState.fileIds = Array.from(fileIdSet);
+    }
+    state.jobs.byId[job.jobId] = jobState;
+    state.jobs.allIds = Object.keys(state.jobs.byId).map((id) =>
+      parseInt(id, 10)
+    );
+  }
+  if (!existingJob) {
+    jobState.fileIds.forEach((fileId) => {
+      if (!state.files.byId[fileId]) {
+        state.files.byId[fileId] = { jobIds: [] };
+      }
+      const fileState = state.files.byId[fileId];
+      // if jobid with same model type exists replace the job id with new job
+      const fileJobIds = fileState.jobIds;
+
+      const existingJobTypes = fileJobIds.map((id) => state.jobs.byId[id].type);
+      if (!fileJobIds.includes(jobState.jobId)) {
+        const indexOfExistingJobWithSameModelType = existingJobTypes.findIndex(
+          (type) => type === jobState.type
+        );
+        if (indexOfExistingJobWithSameModelType >= 0) {
+          fileJobIds.splice(indexOfExistingJobWithSameModelType, 1);
+        }
+        fileJobIds.push(jobState.jobId);
+      }
+    });
+    state.files.allIds = Object.keys(state.files.byId).map((id) =>
+      parseInt(id, 10)
+    );
+  }
+  /* eslint-enable  no-param-reassign */
+};
+
+// selectors
+
+export const selectAllFiles = (
+  state: State
+): { [id: number]: { jobIds: number[] } } => state.files.byId;
+
+export const selectAllJobs = (state: State): { [id: number]: JobState } =>
+  state.jobs.byId;
+
+export const selectJobIdsByFileId = (state: State, fileId: number): number[] =>
+  state.files.byId[fileId]?.jobIds || [];
+
+export const selectJobsByFileId = createSelector(
+  selectJobIdsByFileId,
+  selectAllJobs,
+  (fileJobIds, allJobs) => {
+    return fileJobIds.map((jid) => allJobs[jid]);
+  }
+);

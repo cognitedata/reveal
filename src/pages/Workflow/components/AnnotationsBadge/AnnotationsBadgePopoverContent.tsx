@@ -37,6 +37,7 @@ export function AnnotationsBadgePopoverContent({
               color: data.color,
               borderRadius: '15px',
             }}
+            aria-label={`${data.title} icon`}
           />
         </GridIcon>
         <GridName>
@@ -53,8 +54,9 @@ export function AnnotationsBadgePopoverContent({
           <Body level={1}> Manually Generated </Body>
         </GridManuallyGenerated>
         <GridManuallyGeneratedCount style={{ color: data.color }}>
-          [{data.manuallyGenerated !== undefined ? data.manuallyGenerated : '–'}
-          ]
+          {data.manuallyGenerated !== undefined
+            ? data.manuallyGenerated
+            : '[–]'}
         </GridManuallyGeneratedCount>
       </GridLayout>
     );

@@ -11,6 +11,10 @@ import ReactBaseTable, {
 
 import { Popover } from 'src/components/Common/Popover';
 import { AnnotationsBadgeProps } from 'src/pages/Workflow/types';
+import { useSelector } from 'react-redux';
+import { RootState } from 'src/store/rootReducer';
+import { useAnnotationCounter } from 'src/store/hooks/useAnnotationCounter';
+import { selectJobsByFileId } from 'src/store/processSlice';
 import { TableWrapper } from './FileTableWrapper';
 import { AnnotationsBadge } from '../AnnotationsBadge/AnnotationsBadge';
 import { AnnotationsBadgePopoverContent } from '../AnnotationsBadge/AnnotationsBadgePopoverContent';
@@ -24,9 +28,7 @@ export type TableDataItem = {
   id: number;
   mimeType: string;
   name: string;
-  statusTime: number;
   menu: FileActions;
-  annotationsBadgeProps: AnnotationsBadgeProps;
 };
 
 type CellRenderer = {
@@ -35,12 +37,17 @@ type CellRenderer = {
 
 type FileTableProps = Omit<BaseTableProps<TableDataItem>, 'width'>;
 
-function StatusCell({
-  rowData: { annotationsBadgeProps, statusTime },
-}: CellRenderer) {
+function StatusRendrer(
+  { rowData: { id } }: CellRenderer,
+  annotationsBadgeProps: AnnotationsBadgeProps
+) {
   const annotations = Object.keys(annotationsBadgeProps) as Array<
     keyof AnnotationsBadgeProps
   >;
+
+  const jobs = useSelector((state: RootState) =>
+    selectJobsByFileId(state.processSlice, id)
+  );
   if (
     annotations.some(
       (key) => annotationsBadgeProps[key]?.status === 'Completed'
@@ -49,6 +56,11 @@ function StatusCell({
       ['Running', 'Queued'].includes(annotationsBadgeProps[key]?.status || '')
     )
   ) {
+    let statusTime = 0;
+    if (jobs.length) {
+      statusTime = Math.max(...jobs.map((job) => job.statusTime));
+    }
+
     return (
       <div>
         Processed <TimeDisplay value={statusTime} relative withTooltip />
@@ -70,14 +82,28 @@ function StatusCell({
   return <div style={{ textTransform: 'capitalize' }}>Unprocessed</div>;
 }
 
-function ActionCell({ rowData }: CellRenderer) {
-  const { menu } = rowData;
+function AnnotationRendrer(annotationsBadgeProps: AnnotationsBadgeProps) {
+  return (
+    <Popover
+      placement="bottom"
+      trigger="click"
+      content={AnnotationsBadgePopoverContent(annotationsBadgeProps)}
+    >
+      <>{AnnotationsBadge(annotationsBadgeProps)}</>
+    </Popover>
+  );
+}
 
+function ActionRendrer(
+  { rowData: { menu, id } }: CellRenderer,
+  annotationsBadgeProps: AnnotationsBadgeProps
+) {
   const handleMetadataEdit = () => {
     if (menu?.showMetadataPreview) {
-      menu.showMetadataPreview(rowData.id);
+      menu.showMetadataPreview(id);
     }
   };
+
   // todo: bind actions
   const MenuContent = (
     <Menu
@@ -92,17 +118,14 @@ function ActionCell({ rowData }: CellRenderer) {
 
   const handleReview = () => {
     if (menu?.onReviewClick) {
-      menu.onReviewClick(rowData.id);
+      menu.onReviewClick(id);
     }
   };
-
-  const annotations = Object.keys(rowData.annotationsBadgeProps) as Array<
+  const annotations = Object.keys(annotationsBadgeProps) as Array<
     keyof AnnotationsBadgeProps
   >;
   const reviewDisabled = annotations.some((key) =>
-    ['Queued', 'Running'].includes(
-      rowData.annotationsBadgeProps[key]?.status || ''
-    )
+    ['Queued', 'Running'].includes(annotationsBadgeProps[key]?.status || '')
   );
 
   return (
@@ -118,13 +141,47 @@ function ActionCell({ rowData }: CellRenderer) {
         Review
       </Button>
       <Dropdown content={MenuContent}>
-        <Button type="secondary" icon="MoreOverflowEllipsisHorizontal" />
+        <Button
+          type="secondary"
+          icon="MoreOverflowEllipsisHorizontal"
+          aria-label="dropdown button"
+        />
       </Dropdown>
     </div>
   );
 }
 
+function stringRenderer(cellProps: { cellData: string }) {
+  return <div>{cellProps.cellData}</div>;
+}
+
 export function FileTable(props: FileTableProps) {
+  console.log('Render table');
+
+  const Cell = (cellProps: any) => {
+    // console.log('Calling cell rendrers');
+
+    if (['status', 'annotations', 'action'].includes(cellProps.column.key)) {
+      const annotationsBadgeProps = useAnnotationCounter(cellProps.rowData.id);
+
+      if (cellProps.column.key === 'status') {
+        return StatusRendrer(cellProps, annotationsBadgeProps);
+      }
+      if (cellProps.column.key === 'annotations') {
+        return AnnotationRendrer(annotationsBadgeProps);
+      }
+      if (cellProps.column.key === 'action') {
+        return ActionRendrer(cellProps, annotationsBadgeProps);
+      }
+    }
+
+    return stringRenderer(cellProps);
+  };
+
+  const components = {
+    TableCell: Cell,
+  };
+
   const columns: ColumnShape<TableDataItem>[] = [
     {
       key: 'name',
@@ -144,8 +201,6 @@ export function FileTable(props: FileTableProps) {
       title: 'Status',
       width: 250,
       align: Column.Alignment.CENTER,
-      // ML processing job status: Queued, In Progress, Processed <DateTime>
-      cellRenderer: StatusCell,
     },
     {
       key: 'annotations',
@@ -153,20 +208,6 @@ export function FileTable(props: FileTableProps) {
       width: 0,
       flexGrow: 1,
       align: Column.Alignment.CENTER,
-      // ML based or custom annotations count for the file
-      cellRenderer: ({ rowData: { annotationsBadgeProps } }: CellRenderer) => {
-        return (
-          annotationsBadgeProps && (
-            <Popover
-              placement="bottom"
-              trigger="click"
-              content={AnnotationsBadgePopoverContent(annotationsBadgeProps)}
-            >
-              <>{AnnotationsBadge(annotationsBadgeProps)}</>
-            </Popover>
-          )
-        );
-      },
     },
     {
       key: 'action',
@@ -174,7 +215,6 @@ export function FileTable(props: FileTableProps) {
       dataKey: 'menu',
       align: Column.Alignment.CENTER,
       width: 200,
-      cellRenderer: ActionCell,
     },
   ];
 
@@ -186,6 +226,7 @@ export function FileTable(props: FileTableProps) {
             columns={columns}
             maxHeight={Infinity}
             width={width}
+            components={components}
             {...props}
           />
         )}

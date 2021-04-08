@@ -306,11 +306,11 @@ export const FileUploader = ({
         file,
         uploadUrl,
         (info: { uploadedBytes: number; totalBytes: number }) => {
-          console.log(
-            'file chunk response',
-            file.name,
-            `${(info.uploadedBytes / info.totalBytes) * 100}%`
-          );
+          // console.log(
+          //   'file chunk response',
+          //   file.name,
+          //   `${(info.uploadedBytes / info.totalBytes) * 100}%`
+          // );
 
           // eslint-disable-next-line no-param-reassign
           file.percent = (info.uploadedBytes / info.totalBytes) * 100;
