@@ -190,9 +190,12 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   };
 
   const handleSourceClick = async (sourceId?: string) => {
+    setSelectedSourceId(sourceId);
+  };
+
+  const handleInfoClick = async (sourceId?: string) => {
     const isSameSource = sourceId === selectedSourceId;
     const showMenu = isSameSource ? !showContextMenu : true;
-    setSelectedSourceId(sourceId);
     setShowContextMenu(showMenu);
     setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
   };
@@ -266,7 +269,12 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
           </th>
           <th>
             <SourceItem>
-              <SourceName>Actions</SourceName>
+              <SourceName>Details</SourceName>
+            </SourceItem>
+          </th>
+          <th>
+            <SourceItem>
+              <SourceName>Edit</SourceName>
             </SourceItem>
           </th>
         </>
@@ -361,6 +369,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                         mode={workspaceMode}
                         selectedSourceId={selectedSourceId}
                         onRowClick={handleSourceClick}
+                        onInfoClick={handleInfoClick}
                       />
                       <WorkflowRows
                         chart={chart}
@@ -369,6 +378,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                         setMode={setWorkspaceMode}
                         selectedSourceId={selectedSourceId}
                         onRowClick={handleSourceClick}
+                        onInfoClick={handleInfoClick}
                       />
                     </tbody>
                   </SourceTable>
@@ -385,24 +395,6 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
             </BottomPaneWrapper>
           </SplitPaneLayout>
         </ChartContainer>
-        <BottombarWrapper>
-          <BottombarItem
-            isActive={workspaceMode === 'workspace'}
-            onClick={() => setWorkspaceMode('workspace')}
-          >
-            <ToolbarIcon type="Timeseries" />
-            <span style={{ paddingLeft: 10, paddingRight: 10 }}>Workspace</span>
-          </BottombarItem>
-          <BottombarItem
-            isActive={workspaceMode === 'editor'}
-            onClick={() => setWorkspaceMode('editor')}
-          >
-            <ToolbarIcon type="Edit" />
-            <span style={{ paddingLeft: 10, paddingRight: 10 }}>
-              Calculations
-            </span>
-          </BottombarItem>
-        </BottombarWrapper>
       </ContentWrapper>
       <ContextMenu
         chart={chart}

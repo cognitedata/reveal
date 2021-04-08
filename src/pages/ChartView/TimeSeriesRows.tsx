@@ -9,13 +9,15 @@ type Props = {
   updateChart: (c: Chart) => void;
   mode: Modes;
   selectedSourceId?: string;
-  onRowClick?: (id: string | undefined) => void;
+  onRowClick?: (id?: string) => void;
+  onInfoClick?: (id?: string) => void;
 };
 export default function TimeSeriesRows({
   chart,
   updateChart,
   mode,
   onRowClick = () => {},
+  onInfoClick = () => {},
   selectedSourceId,
 }: Props) {
   const isWorkspaceMode = mode === 'workspace';
@@ -37,6 +39,7 @@ export default function TimeSeriesRows({
           timeseries={t}
           isWorkspaceMode={isWorkspaceMode}
           onRowClick={onRowClick}
+          onInfoClick={onInfoClick}
           isSelected={selectedSourceId === t.id}
           disabled={isEditorMode}
           isFileViewerMode={isFileViewerMode}

@@ -4,7 +4,7 @@ import {
   ChartWorkflow,
   FunctionCallStatus,
 } from 'reducers/charts/types';
-import { Dropdown, Icon, Menu } from '@cognite/cogs.js';
+import { Button, Dropdown, Icon, Menu } from '@cognite/cogs.js';
 import FunctionCall from 'components/FunctionCall';
 import { updateWorkflow } from 'utils/charts';
 import EditableText from 'components/EditableText';
@@ -38,6 +38,7 @@ type Props = {
   workflow: ChartWorkflow;
   isSelected?: boolean;
   onRowClick?: (id?: string) => void;
+  onInfoClick?: (id?: string) => void;
   setMode?: (m: Modes) => void;
   mode: string;
   mutate: (c: Chart) => void;
@@ -46,6 +47,7 @@ export default function WorkflowRow({
   chart,
   workflow,
   onRowClick = () => {},
+  onInfoClick = () => {},
   mode,
   setMode = () => {},
   isSelected = false,
@@ -208,17 +210,32 @@ export default function WorkflowRow({
           <td>
             <SourceItem>
               <SourceName>
-                <button
-                  type="button"
+                <Button
+                  variant="ghost"
+                  icon="Info"
+                  onClick={(event) => {
+                    if (isSelected) {
+                      event.stopPropagation();
+                    }
+                    onInfoClick(id);
+                  }}
+                />
+              </SourceName>
+            </SourceItem>
+          </td>
+          <td>
+            <SourceItem>
+              <SourceName>
+                <Button
+                  variant="ghost"
+                  icon="YAxis"
                   onClick={(event) => {
                     if (isSelected) {
                       event.stopPropagation();
                     }
                     setMode('editor');
                   }}
-                >
-                  Edit
-                </button>
+                />
               </SourceName>
             </SourceItem>
           </td>

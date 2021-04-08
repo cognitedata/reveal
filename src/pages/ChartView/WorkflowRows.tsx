@@ -10,7 +10,8 @@ type Props = {
   mode: string;
   setMode: (m: Modes) => void;
   selectedSourceId?: string;
-  onRowClick: (id: string | undefined) => void;
+  onRowClick: (id?: string) => void;
+  onInfoClick: (id?: string) => void;
 };
 
 export default function WorkflowRows({
@@ -20,6 +21,7 @@ export default function WorkflowRows({
   setMode,
   selectedSourceId,
   onRowClick,
+  onInfoClick,
 }: Props) {
   return (
     <>
@@ -35,6 +37,7 @@ export default function WorkflowRows({
           chart={chart}
           isSelected={selectedSourceId === flow.id}
           onRowClick={onRowClick}
+          onInfoClick={onInfoClick}
           mode={mode}
           setMode={setMode}
           mutate={updateChart}

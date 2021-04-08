@@ -2,7 +2,14 @@ import React, { useState } from 'react';
 import dayjs from 'dayjs';
 import { useIsFetching, useQueryClient } from 'react-query';
 import { Chart, ChartTimeSeries } from 'reducers/charts/types';
-import { AllIconTypes, Dropdown, Icon, Menu, Tooltip } from '@cognite/cogs.js';
+import {
+  AllIconTypes,
+  Button,
+  Dropdown,
+  Icon,
+  Menu,
+  Tooltip,
+} from '@cognite/cogs.js';
 import { units } from 'utils/units';
 import { calculateGranularity } from 'utils/timeseries';
 import EditableText from 'components/EditableText';
@@ -81,6 +88,7 @@ type Props = {
   disabled?: boolean;
   isSelected?: boolean;
   onRowClick?: (id?: string) => void;
+  onInfoClick?: (id?: string) => void;
   isWorkspaceMode?: boolean;
   isFileViewerMode?: boolean;
 };
@@ -89,6 +97,7 @@ export default function TimeSeriesRow({
   chart,
   timeseries,
   onRowClick = () => {},
+  onInfoClick = () => {},
   disabled = false,
   isSelected = false,
   isWorkspaceMode = false,
@@ -289,6 +298,22 @@ export default function TimeSeriesRow({
                   timeseriesId={tsId}
                   showTooltip={false}
                   hideWhenEmpty={false}
+                />
+              </SourceName>
+            </SourceItem>
+          </td>
+          <td>
+            <SourceItem>
+              <SourceName>
+                <Button
+                  variant="ghost"
+                  icon="Info"
+                  onClick={(event) => {
+                    if (isSelected) {
+                      event.stopPropagation();
+                    }
+                    onInfoClick(id);
+                  }}
                 />
               </SourceName>
             </SourceItem>
