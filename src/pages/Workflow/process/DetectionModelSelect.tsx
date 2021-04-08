@@ -10,11 +10,11 @@ type SelectOption = {
 
 const availableDetectionModels: Array<SelectOption> = [
   {
-    label: 'Text detection',
+    label: 'Text & object detection',
     value: DetectionModelType.Text,
   },
   {
-    label: 'Tag detection',
+    label: 'Asset tag detection',
     value: DetectionModelType.Tag,
   },
   {

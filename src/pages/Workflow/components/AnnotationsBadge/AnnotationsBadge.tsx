@@ -47,7 +47,7 @@ export function AnnotationsBadge({
       )}
       {tag?.status && (
         <Button
-          icon="Link"
+          icon="ResourceAssets"
           size="small"
           style={{
             marginRight: '5px',
