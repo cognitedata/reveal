@@ -78,7 +78,7 @@ export function AnnotationsBadgePopoverContent({
         row({
           status: tag.status,
           title: 'Assets',
-          icon: 'Link',
+          icon: 'ResourceAssets',
           backgroundColor: '#F4DAF8',
           color: '#C945DB',
           modelGenerated: tag.modelGenerated,

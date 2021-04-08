@@ -94,8 +94,8 @@ const Container = styled.div`
 
 const ModelSelector = styled.div`
   padding-right: 15px;
-  max-width: 340px;
-  width: 340px;
+  max-width: 100%;
+  min-width: 340px;
 `;
 
 const ModelOptions = styled.div`
