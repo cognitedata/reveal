@@ -14,6 +14,7 @@ export class SectorNode extends THREE.Group {
 
   private _group?: THREE.Group;
   private _lod = LevelOfDetail.Discarded;
+  private _updatedTimestamp: number = Date.now();
 
   constructor(sectorId: number, sectorPath: string, bounds: THREE.Box3) {
     super();
@@ -31,10 +32,15 @@ export class SectorNode extends THREE.Group {
     return this._group;
   }
 
+  get updatedTimestamp(): number {
+    return this._updatedTimestamp;
+  }
+
   updateGeometry(geomtryGroup: THREE.Group | undefined, levelOfDetail: LevelOfDetail) {
     this.resetGeometry();
     this._group = geomtryGroup;
     this._lod = levelOfDetail;
+    this._updatedTimestamp = Date.now();
     this.visible = this._lod !== LevelOfDetail.Discarded;
     this.updateMatrixWorld(true);
   }
@@ -54,6 +60,7 @@ export class SectorNode extends THREE.Group {
 
     this._group = undefined;
     this._lod = LevelOfDetail.Discarded;
+    this._updatedTimestamp = Date.now();
   }
 }
 
