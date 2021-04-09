@@ -1,7 +1,7 @@
 import {
   AnnotationJob,
   DetectionModelDataProvider,
-  DetectionModelType,
+  VisionAPIType,
 } from 'src/api/types';
 import { OCRDetectionDataProvider } from 'src/api/ocr/OCRDetectionDataProvider';
 import { MockDataProvider } from 'src/api/MockDataProvider';
@@ -9,16 +9,16 @@ import { TagDetectionDataProvider } from 'src/api/tagDetection/TagDetectionDataP
 import { ObjectDetectionDataProvider } from 'src/api/objectDetection/ObjectDetectionDataProvider';
 
 function getDetectionModelDataProvider(
-  modelType: DetectionModelType
+  modelType: VisionAPIType
 ): DetectionModelDataProvider {
   switch (modelType) {
-    case DetectionModelType.Text: {
+    case VisionAPIType.OCR: {
       return new OCRDetectionDataProvider();
     }
-    case DetectionModelType.Tag: {
+    case VisionAPIType.TagDetection: {
       return new TagDetectionDataProvider();
     }
-    case DetectionModelType.GDPR: {
+    case VisionAPIType.ObjectDetection: {
       return new ObjectDetectionDataProvider();
     }
     default: {
@@ -29,7 +29,7 @@ function getDetectionModelDataProvider(
 }
 
 export async function createAnnotationJob(
-  detectionModel: DetectionModelType,
+  detectionModel: VisionAPIType,
   fileIds: number[]
 ): Promise<AnnotationJob> {
   const dataProvider = getDetectionModelDataProvider(detectionModel);
@@ -41,7 +41,7 @@ export async function createAnnotationJob(
 }
 
 export async function fetchJobById(
-  detectionModel: DetectionModelType,
+  detectionModel: VisionAPIType,
   jobId: number
 ): Promise<AnnotationJob> {
   const dataProvider = getDetectionModelDataProvider(detectionModel);

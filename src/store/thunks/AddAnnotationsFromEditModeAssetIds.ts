@@ -3,7 +3,7 @@ import { ThunkConfig } from 'src/store/rootReducer';
 import { AnnotationStatus, AnnotationUtils } from 'src/utils/AnnotationUtils';
 import { fetchAssets } from 'src/store/thunks/fetchAssets';
 import { UpdateFiles } from 'src/store/thunks/UpdateFiles';
-import { DetectionModelType } from 'src/api/types';
+import { VisionAPIType } from 'src/api/types';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import { addTagAnnotations, resetEditState } from '../previewSlice';
 
@@ -31,7 +31,7 @@ export const AddAnnotationsFromEditModeAssetIds = createAsyncThunk<
       const assetVisionAnnotations = assets.map((asset) =>
         AnnotationUtils.createVisionAnnotationStub(
           asset.name,
-          DetectionModelType.Tag,
+          VisionAPIType.TagDetection,
           file.id,
           boundingBox,
           undefined,

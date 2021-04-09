@@ -5,7 +5,7 @@ import {
   AnnotationUtils,
   VisionAnnotation,
 } from 'src/utils/AnnotationUtils';
-import { DetectionModelType } from 'src/api/types';
+import { VisionAPIType } from 'src/api/types';
 import { fetchAssets } from 'src/store/thunks/fetchAssets';
 import { addAnnotations } from 'src/store/commonActions';
 import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
@@ -58,7 +58,7 @@ export const PopulateAnnotations = createAsyncThunk<
       const availableTagAnnotations = getAvailableAnnotationsForModelType(
         annotationState,
         String(fileId),
-        DetectionModelType.Tag
+        VisionAPIType.TagDetection
       );
 
       const assetIdsOfTagAnnotations = new Set(
@@ -73,7 +73,7 @@ export const PopulateAnnotations = createAsyncThunk<
       linkedAssetVirtualAnnotations = assetsWithoutAnnotations.map((asset) =>
         AnnotationUtils.createVisionAnnotationStub(
           asset.name,
-          DetectionModelType.Tag,
+          VisionAPIType.TagDetection,
           parseInt(fileId, 10),
           undefined,
           undefined,
@@ -108,7 +108,7 @@ export const PopulateAnnotations = createAsyncThunk<
 const getAvailableAnnotationsForModelType = (
   annotationState: any,
   fileId: string,
-  modelType: DetectionModelType
+  modelType: VisionAPIType
 ) => {
   const modelId = AnnotationUtils.getModelId(fileId, modelType);
   const model = annotationState.models.byId[modelId];

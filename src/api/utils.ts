@@ -1,12 +1,16 @@
-import { AnnotationJobQueued, DetectionModelType } from 'src/api/types';
+import {
+  AnnotationJobQueued,
+  DetectionModelCategory,
+  VisionAPIType,
+} from 'src/api/types';
 import { v3Client as sdk } from '@cognite/cdf-sdk-singleton';
 
 // it's not strictly necessary to have that mapping, but it's just handy to have an overview in one place
-export function getDetectionModelEndpoint(modelType: DetectionModelType) {
-  const mapping: Record<DetectionModelType, string> = {
-    [DetectionModelType.Text]: 'ocr',
-    [DetectionModelType.Tag]: 'tagdetection',
-    [DetectionModelType.GDPR]: 'objectdetection',
+export function getDetectionModelEndpoint(modelType: VisionAPIType) {
+  const mapping: Record<VisionAPIType, string> = {
+    [VisionAPIType.OCR]: 'ocr',
+    [VisionAPIType.TagDetection]: 'tagdetection',
+    [VisionAPIType.ObjectDetection]: 'objectdetection',
   };
   return `${sdk.getBaseUrl()}/api/playground/projects/${
     sdk.project
@@ -14,7 +18,7 @@ export function getDetectionModelEndpoint(modelType: DetectionModelType) {
 }
 
 export function getFakeQueuedJob(
-  modelType: DetectionModelType
+  modelType: VisionAPIType
 ): AnnotationJobQueued {
   const now = Date.now();
   return {
@@ -24,4 +28,20 @@ export function getFakeQueuedJob(
     startTime: null,
     statusTime: now,
   };
+}
+
+export function toVisionAPIModels(modelTypes: DetectionModelCategory[]) {
+  const models: VisionAPIType[] = [];
+  modelTypes.forEach((modelType) => {
+    if (modelType === DetectionModelCategory.AssetTag) {
+      models.push(VisionAPIType.TagDetection);
+    }
+    if (modelType === DetectionModelCategory.GDPR) {
+      models.push(VisionAPIType.ObjectDetection);
+    }
+    if (modelType === DetectionModelCategory.TextAndObjects) {
+      models.push(VisionAPIType.OCR, VisionAPIType.ObjectDetection);
+    }
+  });
+  return models.filter((x, i, a) => a.indexOf(x) === i);
 }

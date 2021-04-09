@@ -20,7 +20,7 @@ import { selectFileById } from 'src/store/uploadedFilesSlice';
 import { ImagePreviewEditMode } from 'src/pages/Preview/Types';
 import { ProposedCogniteAnnotation } from '@cognite/react-picture-annotation';
 import { AnnotationDrawerMode } from 'src/utils/AnnotationUtils';
-import { DetectionModelType } from 'src/api/types';
+import { VisionAPIType } from 'src/api/types';
 
 const AnnotationContainer = styled.div`
   width: 100%;
@@ -92,7 +92,7 @@ const ImageReview = (props: { fileId: string; drawerMode: number | null }) => {
           addPolygon({
             fileId,
             box: annotation.box,
-            modelType: DetectionModelType.Text,
+            modelType: VisionAPIType.OCR,
           })
         );
       }
@@ -101,7 +101,7 @@ const ImageReview = (props: { fileId: string; drawerMode: number | null }) => {
           addPolygon({
             fileId,
             box: annotation.box,
-            modelType: DetectionModelType.Tag,
+            modelType: VisionAPIType.TagDetection,
           })
         );
       }

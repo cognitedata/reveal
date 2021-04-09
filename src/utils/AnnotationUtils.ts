@@ -3,7 +3,7 @@ import {
   AnnotationSource,
   AnnotationType,
   DetectedAnnotation,
-  DetectionModelType,
+  VisionAPIType,
   RegionType,
 } from 'src/api/types';
 
@@ -60,32 +60,38 @@ export interface VisionAnnotation
   createdTime?: number;
   lastUpdatedTime?: number;
   virtual?: boolean;
-  modelType: DetectionModelType;
+  modelType: VisionAPIType;
 }
 
 export const ModelTypeStyleMap = {
-  [DetectionModelType.Text]: { color: '#FF8746', backgroundColor: '#FFE1D1' },
-  [DetectionModelType.Tag]: {
+  [VisionAPIType.OCR]: {
+    color: '#FF8746',
+    backgroundColor: '#FFE1D1',
+  },
+  [VisionAPIType.TagDetection]: {
     color: '#C945DB',
     backgroundColor: '#F4DAF8',
   },
-  [DetectionModelType.GDPR]: { color: '#b30539', backgroundColor: '#fbe9ed' },
+  [VisionAPIType.ObjectDetection]: {
+    color: '#FF8746',
+    backgroundColor: '#FFE1D1',
+  },
 };
 export const ModelTypeIconMap: { [key: number]: string } = {
-  [DetectionModelType.Text]: 'Scan',
-  [DetectionModelType.Tag]: 'ResourceAssets',
-  [DetectionModelType.GDPR]: 'WarningFilled',
+  [VisionAPIType.OCR]: 'Scan',
+  [VisionAPIType.TagDetection]: 'ResourceAssets',
+  [VisionAPIType.ObjectDetection]: 'Scan',
 };
 
 export const ModelTypeSourceMap: { [key: number]: AnnotationSource } = {
-  [DetectionModelType.Text]: 'vision/ocr',
-  [DetectionModelType.Tag]: 'vision/tagdetection',
-  [DetectionModelType.GDPR]: 'vision/objectdetection',
+  [VisionAPIType.OCR]: 'vision/ocr',
+  [VisionAPIType.TagDetection]: 'vision/tagdetection',
+  [VisionAPIType.ObjectDetection]: 'vision/objectdetection',
 };
 export const ModelTypeAnnotationTypeMap = {
-  [DetectionModelType.Text]: 'vision/ocr',
-  [DetectionModelType.Tag]: 'vision/tagdetection',
-  [DetectionModelType.GDPR]: 'vision/objectdetection',
+  [VisionAPIType.OCR]: 'vision/ocr',
+  [VisionAPIType.TagDetection]: 'vision/tagdetection',
+  [VisionAPIType.ObjectDetection]: 'vision/objectdetection',
 };
 
 export class AnnotationUtils {
@@ -95,7 +101,7 @@ export class AnnotationUtils {
     return `${modelType}-${fileId}`;
   }
 
-  public static getAnnotationColor(modelType: DetectionModelType): string {
+  public static getAnnotationColor(modelType: VisionAPIType): string {
     return ModelTypeStyleMap[modelType].color;
   }
 
@@ -188,7 +194,7 @@ export class AnnotationUtils {
 
   public static createVisionAnnotationStub(
     text: string,
-    modelType: DetectionModelType,
+    modelType: VisionAPIType,
     fileId: number,
     box?: AnnotationBoundingBox,
     type: RegionType = 'rectangle',
@@ -205,7 +211,10 @@ export class AnnotationUtils {
     virtual = false
   ): VisionAnnotation {
     return {
-      color: AnnotationUtils.getAnnotationColor(modelType),
+      color:
+        text === 'person'
+          ? '#b30539'
+          : AnnotationUtils.getAnnotationColor(modelType),
       modelType,
       type,
       source,
@@ -273,18 +282,18 @@ export class AnnotationUtils {
 
   public static getAnnotationsDetectionModelType = (
     ann: Annotation | UnsavedAnnotation
-  ): DetectionModelType => {
+  ): VisionAPIType => {
     if (
       ann.linkedResourceType === 'asset' &&
       (ann.linkedResourceId || ann.linkedResourceExternalId)
     ) {
-      return DetectionModelType.Tag;
+      return VisionAPIType.TagDetection;
     }
 
     if (ann.source === 'vision/objectdetection') {
-      return DetectionModelType.GDPR;
+      return VisionAPIType.ObjectDetection;
     }
-    return DetectionModelType.Text;
+    return VisionAPIType.OCR;
   };
 }
 

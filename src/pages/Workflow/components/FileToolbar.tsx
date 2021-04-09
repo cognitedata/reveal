@@ -9,7 +9,7 @@ import {
   selectIsPollingComplete,
   setSelectedDetectionModels,
 } from 'src/store/processSlice';
-import { DetectionModelType } from 'src/api/types';
+import { DetectionModelCategory } from 'src/api/types';
 import { selectAllFiles } from 'src/store/uploadedFilesSlice';
 import { message, notification } from 'antd';
 import { isVideo } from 'src/components/FileUploader/utils/FileUtils';
@@ -52,7 +52,7 @@ export const FileToolbar = ({
     );
   };
 
-  const onChange = (models: Array<DetectionModelType>) => {
+  const onChange = (models: Array<DetectionModelCategory>) => {
     dispatch(setSelectedDetectionModels(models));
   };
 

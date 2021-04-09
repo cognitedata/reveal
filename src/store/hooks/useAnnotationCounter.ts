@@ -1,9 +1,10 @@
 import { shallowEqual, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { getAnnotationCountByModelType } from 'src/store/previewSlice';
-import { DetectionModelType } from 'src/api/types';
+import { JobStatus, VisionAPIType } from 'src/api/types';
 import { AnnotationsBadgeProps } from 'src/pages/Workflow/types';
 import { selectJobsByFileId } from 'src/store/processSlice';
+import { getFileJobsResultingStatus } from 'src/pages/Workflow/components/FileTable/getFileJobsResultingStatus';
 
 export const useAnnotationCounter = (fileId: number) => {
   // console.log('Calling selector');
@@ -20,17 +21,18 @@ export const useAnnotationCounter = (fileId: number) => {
       gdpr: getAnnotationCountByModelType(
         state.previewSlice,
         fileId.toString(),
-        DetectionModelType.GDPR
+        [VisionAPIType.ObjectDetection],
+        true
       ),
       tag: getAnnotationCountByModelType(
         state.previewSlice,
         fileId.toString(),
-        DetectionModelType.Tag
+        [VisionAPIType.TagDetection]
       ),
       textAndObjects: getAnnotationCountByModelType(
         state.previewSlice,
         fileId.toString(),
-        DetectionModelType.Text
+        [VisionAPIType.OCR, VisionAPIType.ObjectDetection]
       ),
     };
   }, shallowEqual);
@@ -38,18 +40,24 @@ export const useAnnotationCounter = (fileId: number) => {
   const annotationsBadgeProps = {
     gdpr: {
       ...counts.gdpr,
-      status: statusJobMap.get(DetectionModelType.GDPR)?.status,
-      statusTime: statusJobMap.get(DetectionModelType.GDPR)?.statusTime,
+      status: statusJobMap.get(VisionAPIType.ObjectDetection)?.status,
+      statusTime: statusJobMap.get(VisionAPIType.ObjectDetection)?.statusTime,
     },
     tag: {
       ...counts.tag,
-      status: statusJobMap.get(DetectionModelType.Tag)?.status,
-      statusTime: statusJobMap.get(DetectionModelType.Tag)?.statusTime,
+      status: statusJobMap.get(VisionAPIType.TagDetection)?.status,
+      statusTime: statusJobMap.get(VisionAPIType.TagDetection)?.statusTime,
     },
     textAndObjects: {
       ...counts.textAndObjects,
-      status: statusJobMap.get(DetectionModelType.Text)?.status,
-      statusTime: statusJobMap.get(DetectionModelType.Text)?.statusTime,
+      status: getFileJobsResultingStatus([
+        { status: statusJobMap.get(VisionAPIType.OCR)?.status as JobStatus },
+        {
+          status: statusJobMap.get(VisionAPIType.ObjectDetection)
+            ?.status as JobStatus,
+        },
+      ]),
+      statusTime: statusJobMap.get(VisionAPIType.OCR)?.statusTime, // BUG: should take bothe statusTimes into account
     },
   } as AnnotationsBadgeProps;
 

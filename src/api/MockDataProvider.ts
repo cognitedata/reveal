@@ -2,7 +2,7 @@ import {
   AnnotationJobCompleted,
   AnnotationJobQueued,
   DetectionModelDataProvider,
-  DetectionModelType,
+  VisionAPIType,
 } from 'src/api/types';
 import { singleton } from '@keenondrums/singleton';
 import { getFakeQueuedJob } from 'src/api/utils';
@@ -10,12 +10,12 @@ import { getFakeQueuedJob } from 'src/api/utils';
 @singleton
 export class MockDataProvider implements DetectionModelDataProvider {
   postJob(_requestBody: any): Promise<AnnotationJobQueued> {
-    return Promise.resolve(getFakeQueuedJob(DetectionModelType.Text));
+    return Promise.resolve(getFakeQueuedJob(VisionAPIType.OCR));
   }
 
   fetchJobById(jobId: number): Promise<AnnotationJobCompleted> {
     return Promise.resolve({
-      ...getFakeQueuedJob(DetectionModelType.Text),
+      ...getFakeQueuedJob(VisionAPIType.OCR),
       jobId,
       fileId: -1,
       fileExternalId: '-1',

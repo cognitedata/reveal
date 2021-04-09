@@ -2,7 +2,7 @@ import { createAsyncThunk, unwrapResult } from '@reduxjs/toolkit';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { fetchAssets } from 'src/store/thunks/fetchAssets';
 import { AnnotationStatus } from 'src/utils/AnnotationUtils';
-import { DetectionModelType } from 'src/api/types';
+import { VisionAPIType } from 'src/api/types';
 import { UpdateFiles } from 'src/store/thunks/UpdateFiles';
 import { VisionAnnotationState } from 'src/store/previewSlice';
 import { addAnnotations } from 'src/store/commonActions';
@@ -103,7 +103,7 @@ export const HandleFileAssetLinksByAnnotationId = createAsyncThunk<
     const model = getState().previewSlice.models.byId[annotation.modelId];
     const file = getState().uploadedFiles.files.byId[model.fileId];
 
-    if (model.modelType === DetectionModelType.Tag) {
+    if (model.modelType === VisionAPIType.TagDetection) {
       await updateFileAndAnnotation(file, annotation.text, annotation);
     }
   }

@@ -10,7 +10,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { AnnotationDrawerMode } from 'src/utils/AnnotationUtils';
 import { RootState } from 'src/store/rootReducer';
-import { DetectionModelType } from 'src/api/types';
+import { VisionAPIType } from 'src/api/types';
 import { ImagePreviewEditMode } from 'src/pages/Preview/Types';
 
 const Container = styled.div`
@@ -48,15 +48,15 @@ export const Contextualization = ({ fileId }: { fileId: string }) => {
 
   const tagAnnotations = useSelector(({ previewSlice }: RootState) =>
     selectAnnotationsByFileIdModelTypes(previewSlice, fileId, [
-      DetectionModelType.Tag,
+      VisionAPIType.TagDetection,
     ])
   );
 
   const gdprAndTextAndObjectAnnotations = useSelector(
     ({ previewSlice }: RootState) =>
       selectAnnotationsByFileIdModelTypes(previewSlice, fileId, [
-        DetectionModelType.Text,
-        DetectionModelType.GDPR,
+        VisionAPIType.OCR,
+        VisionAPIType.ObjectDetection,
       ])
   );
 
@@ -136,12 +136,12 @@ export const Contextualization = ({ fileId }: { fileId: string }) => {
         <AnnotationsTable
           annotations={tagAnnotations}
           selectedAnnotationIds={selectedAnnotationIds.asset}
-          mode={DetectionModelType.Tag}
+          mode={VisionAPIType.TagDetection}
         />
         <AnnotationsTable
           annotations={gdprAndTextAndObjectAnnotations}
           selectedAnnotationIds={selectedAnnotationIds.other}
-          mode={DetectionModelType.Text}
+          mode={VisionAPIType.OCR}
         />
       </TableContainer>
     </Container>

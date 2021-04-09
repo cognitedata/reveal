@@ -1,8 +1,14 @@
 import { AnnotationStatus } from 'src/utils/AnnotationUtils';
 
-export enum DetectionModelType {
-  Text = 1,
-  Tag,
+export enum VisionAPIType {
+  OCR = 1,
+  TagDetection,
+  ObjectDetection,
+}
+
+export enum DetectionModelCategory {
+  TextAndObjects,
+  AssetTag,
   GDPR,
 }
 
@@ -97,5 +103,5 @@ export type AnnotationJobResponse =
 
 // some extension over api response for more convenient usage in app
 export type AnnotationJob = AnnotationJobResponse & {
-  type: DetectionModelType;
+  type: VisionAPIType;
 };

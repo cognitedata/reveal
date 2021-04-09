@@ -1,29 +1,29 @@
 import React from 'react';
 import { Select } from '@cognite/cogs.js';
 import { Props as SelectProps } from 'react-select';
-import { DetectionModelType } from 'src/api/types';
+import { DetectionModelCategory } from 'src/api/types';
 
 type SelectOption = {
   label: string;
-  value: DetectionModelType;
+  value: DetectionModelCategory;
 };
 
 const availableDetectionModels: Array<SelectOption> = [
   {
     label: 'Text & object detection',
-    value: DetectionModelType.Text,
+    value: DetectionModelCategory.TextAndObjects,
   },
   {
     label: 'Asset tag detection',
-    value: DetectionModelType.Tag,
+    value: DetectionModelCategory.AssetTag,
   },
   {
     label: 'GDPR violations detection',
-    value: DetectionModelType.GDPR,
+    value: DetectionModelCategory.GDPR,
   },
 ];
 
-function toOption(modelType: DetectionModelType): SelectOption {
+function toOption(modelType: DetectionModelCategory): SelectOption {
   const option = availableDetectionModels.find(
     ({ value }) => value === modelType
   );
@@ -33,13 +33,13 @@ function toOption(modelType: DetectionModelType): SelectOption {
   return option;
 }
 
-function fromOption({ value }: SelectOption): DetectionModelType {
+function fromOption({ value }: SelectOption): DetectionModelCategory {
   return value;
 }
 
 // fixme cogs select must accept OptionType generic
 type Props = Omit<
-  SelectProps<{ label: string; value: DetectionModelType }>,
+  SelectProps<{ label: string; value: DetectionModelCategory }>,
   'theme'
 > & {
   onChange: (value: Array<SelectOption['value']>) => unknown;

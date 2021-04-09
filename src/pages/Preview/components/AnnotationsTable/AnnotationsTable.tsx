@@ -21,7 +21,7 @@ import {
   ModelTypeIconMap,
   ModelTypeStyleMap,
 } from 'src/utils/AnnotationUtils';
-import { DetectionModelType } from 'src/api/types';
+import { VisionAPIType } from 'src/api/types';
 import { HandleFileAssetLinksByAnnotationId } from 'src/store/thunks/HandleFileAssetLinksByAnnotationId';
 import { DeleteAnnotationsAndRemoveLinkedAssets } from 'src/store/thunks/DeleteAnnotationsAndRemoveLinkedAssets';
 
@@ -156,11 +156,17 @@ export const AnnotationsTable = ({
   const handleOnAnnotationSelect = (id: string, nextState: boolean) => {
     if (nextState) {
       dispatch(
-        selectAnnotation({ id, asset: mode === DetectionModelType.Tag })
+        selectAnnotation({
+          id,
+          asset: mode === VisionAPIType.TagDetection,
+        })
       );
     } else {
       dispatch(
-        deselectAnnotation({ id, asset: mode === DetectionModelType.Tag })
+        deselectAnnotation({
+          id,
+          asset: mode === VisionAPIType.TagDetection,
+        })
       );
     }
   };
@@ -192,7 +198,7 @@ export const AnnotationsTable = ({
       <Header>
         <TitleRow>
           <div>
-            {mode === DetectionModelType.Tag ? 'Asset tags' : 'Annotations'}
+            {mode === VisionAPIType.TagDetection ? 'Asset tags' : 'Annotations'}
           </div>
           <DeleteButton
             type="ghost-danger"
@@ -256,7 +262,11 @@ export const AnnotationsTable = ({
                   <AnnotationLbl>
                     <Input
                       icon={
-                        ModelTypeIconMap[annotation.modelType] as AllIconTypes
+                        annotation.text === 'person'
+                          ? 'WarningFilled'
+                          : (ModelTypeIconMap[
+                              annotation.modelType
+                            ] as AllIconTypes)
                       }
                       readOnly
                       fullWidth
@@ -279,9 +289,16 @@ export const AnnotationsTable = ({
                     <VerticalLine />
                     <VisibilityButton
                       show={annotation.show}
-                      color={ModelTypeStyleMap[annotation.modelType].color}
+                      color={
+                        annotation.text === 'person'
+                          ? '#b30539'
+                          : ModelTypeStyleMap[annotation.modelType].color
+                      }
                       background={
-                        ModelTypeStyleMap[annotation.modelType].backgroundColor
+                        annotation.text === 'person'
+                          ? '#fbe9ed'
+                          : ModelTypeStyleMap[annotation.modelType]
+                              .backgroundColor
                       }
                       disabled={
                         !annotation.box ||
@@ -313,7 +330,7 @@ export const AnnotationsTable = ({
         {!annotationsAvailable && (
           <EmptyPlaceHolderContainer>
             <span>
-              {mode === DetectionModelType.Tag
+              {mode === VisionAPIType.TagDetection
                 ? 'No assets linked to file'
                 : 'No annotations detected'}
             </span>

@@ -16,7 +16,7 @@ import {
   ModelTypeSourceMap,
   VisionAnnotation,
 } from 'src/utils/AnnotationUtils';
-import { AnnotationType, DetectionModelType } from 'src/api/types';
+import { AnnotationType, VisionAPIType } from 'src/api/types';
 import {
   addAnnotations,
   deleteAnnotationsFromState,
@@ -46,7 +46,7 @@ export interface VisibleAnnotations extends VisionAnnotationState {
 export interface VisionModelState {
   modelId: string;
   fileId: string;
-  modelType: DetectionModelType;
+  modelType: VisionAPIType;
   annotations: string[];
 }
 
@@ -114,7 +114,7 @@ type LabelEdit = {
 type PolygonEdit = {
   fileId: string;
   box: AnnotationBoundingBox;
-  modelType: DetectionModelType;
+  modelType: VisionAPIType;
 };
 export const editLabelAddAnnotation = createAction<LabelEdit>(
   'editLabelAddAnnotation'
@@ -232,7 +232,7 @@ const previewSlice = createSlice({
       }
       const modelId = AnnotationUtils.getModelId(
         String(action.payload[0].annotatedResourceId),
-        DetectionModelType.Tag
+        VisionAPIType.TagDetection
       );
       const model = state.models.byId[modelId];
       const tagAnnotations =
@@ -363,9 +363,7 @@ const previewSlice = createSlice({
         if (state.drawer.annotation === null) {
           state.drawer.annotation = AnnotationUtils.createVisionAnnotationStub(
             '',
-            isLabelEdit(action)
-              ? DetectionModelType.Text
-              : action.payload.modelType,
+            isLabelEdit(action) ? VisionAPIType.OCR : action.payload.modelType,
             parseInt(action.payload.fileId, 10),
             undefined,
             'rectangle',
@@ -560,7 +558,7 @@ export const selectAnnotationsByFileId = createSelector(
 export const selectAnnotationsByFileIdModelType = createSelector(
   selectAnnotationsByFileId,
   selectModelsByFileId,
-  (_, fileId: string, modelType: DetectionModelType) => modelType,
+  (_, fileId: string, modelType: VisionAPIType) => modelType,
   (allAnnotations, models, modelType) => {
     const modelId = models.find((item) => item.modelType === modelType)
       ?.modelId;
@@ -575,8 +573,7 @@ export const selectAnnotationsByFileIdModelType = createSelector(
 export const selectAnnotationsByFileIdModelTypes = createSelector(
   selectAnnotationsByFileId,
   selectModelsByFileId,
-  (state: State, fileId: string, modelTypes: DetectionModelType[]) =>
-    modelTypes,
+  (state: State, fileId: string, modelTypes: VisionAPIType[]) => modelTypes,
   (annotationByFileId, modelsByFileId, modelTypes) => {
     const modelIds = modelsByFileId
       .filter((item) => modelTypes.includes(item.modelType))
@@ -621,8 +618,10 @@ export const selectVisibleNonRejectAndEditModeAnnotations = createSelector(
 );
 
 export const getAnnotationCountByModelType = createSelector(
-  selectAnnotationsByFileIdModelType,
-  (annotations) => {
+  selectAnnotationsByFileIdModelTypes,
+  (_, fileId: string, modelType: VisionAPIType[], gdpr: boolean = false) =>
+    gdpr,
+  (annotations, gdpr) => {
     let [modelGenerated, manuallyGenerated, verified, unhandled, rejected] = [
       0,
       0,
@@ -631,6 +630,11 @@ export const getAnnotationCountByModelType = createSelector(
       0,
     ];
 
+    if (gdpr) {
+      annotations = annotations.filter((ann) => ann.label === 'person');
+    } else {
+      annotations = annotations.filter((ann) => ann.label !== 'person');
+    }
     annotations.forEach((ann) => {
       if (ann.source === 'user') {
         manuallyGenerated++;
