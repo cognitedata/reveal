@@ -284,13 +284,12 @@ const Statistics = ({
               renderCall={({ status }) => renderStatusIcon(status)}
             />
           )}
-          <button
+          <Button
             style={{ marginLeft: 10 }}
-            type="button"
             onClick={() => handleCalculateStatistics()}
           >
             Refresh
-          </button>
+          </Button>
         </>
       ) : (
         <p>(currently unavailable for calculations)</p>
