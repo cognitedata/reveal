@@ -156,7 +156,7 @@ function pickPixelColor(input: PickingInput, clearColor: THREE.Color, clearAlpha
   const { scene, camera, normalizedCoords, renderer, domElement } = input;
 
   // Prepare camera that only renders the single pixel we are interested in
-  const pickCamera = camera.clone();
+  const pickCamera = camera.clone() as THREE.PerspectiveCamera;
   const absoluteCoords = {
     x: ((normalizedCoords.x + 1.0) / 2.0) * domElement.clientWidth,
     y: ((1.0 - normalizedCoords.y) / 2.0) * domElement.clientHeight

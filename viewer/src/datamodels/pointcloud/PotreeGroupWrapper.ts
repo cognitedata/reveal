@@ -46,7 +46,7 @@ export class PotreeGroupWrapper extends THREE.Object3D {
     this.name = 'Potree point cloud wrapper';
     this.add(this.potreeGroup);
 
-    const onAfterRenderTrigger = new THREE.Mesh(new THREE.Geometry());
+    const onAfterRenderTrigger = new THREE.Mesh(new THREE.BufferGeometry());
     onAfterRenderTrigger.name = 'onAfterRender trigger (no geometry)';
     onAfterRenderTrigger.frustumCulled = false;
     onAfterRenderTrigger.onAfterRender = () => {
