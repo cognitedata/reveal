@@ -1,15 +1,18 @@
 import { useHistory } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import React from 'react';
 import { PrevNextNav } from 'src/pages/Workflow/components/PrevNextNav';
 import { getLink, workflowRoutes } from 'src/pages/Workflow/workflowRoutes';
-import { useAnnotationJobs } from 'src/store/hooks/useAnnotationJobs';
 import { createLink } from '@cognite/cdf-utilities';
 import { SaveAvailableAnnotations } from 'src/store/thunks/SaveAvailableAnnotations';
+import { RootState } from 'src/store/rootReducer';
+import { selectIsPollingComplete } from 'src/store/processSlice';
 
 export const ProcessStepActionButtons = () => {
   const history = useHistory();
-  const { isPollingFinished } = useAnnotationJobs();
+  const isPollingFinished = useSelector((state: RootState) => {
+    return selectIsPollingComplete(state.processSlice);
+  });
 
   const dispatch = useDispatch();
 

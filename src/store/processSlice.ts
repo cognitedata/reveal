@@ -323,3 +323,20 @@ export const selectJobsByFileId = createSelector(
     return fileJobIds.map((jid) => allJobs[jid]);
   }
 );
+
+export const selectIsPollingComplete = createSelector(
+  selectAllFiles,
+  selectAllJobs,
+  (allFiles, allJobs) => {
+    return Object.keys(allFiles).every((fileId) => {
+      const fileJobs = allFiles[parseInt(fileId, 10)].jobIds;
+      if (!fileJobs || !fileJobs.length) {
+        return true;
+      }
+      return fileJobs.every((jobId) => {
+        const job = allJobs[jobId];
+        return job.status === 'Completed' || job.status === 'Failed';
+      });
+    });
+  }
+);

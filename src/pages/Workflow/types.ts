@@ -10,6 +10,7 @@ export type AnnotationCounts = {
 
 export interface ModelStatusAndAnnotationCounts extends AnnotationCounts {
   status?: JobStatus;
+  statusTime: number;
 }
 
 export interface AnnotationsBadgeProps {

@@ -22,7 +22,7 @@ export async function fetchUntilComplete<Data>(
     onComplete = noop,
     onTick = noop,
     onError = noop,
-    pollingInterval = 3000,
+    pollingInterval = 7000,
   }: Options<Data>
 ) {
   try {

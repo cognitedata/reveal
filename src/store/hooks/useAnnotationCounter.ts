@@ -10,7 +10,9 @@ export const useAnnotationCounter = (fileId: number) => {
   const jobs = useSelector((state: RootState) =>
     selectJobsByFileId(state.processSlice, fileId)
   );
-  const statusJobMap = new Map(jobs.map((i) => [i.type, i.status]));
+  const statusJobMap = new Map(
+    jobs.map((i) => [i.type, { status: i.status, statusTime: i.statusTime }])
+  );
 
   const counts = useSelector((state: RootState) => {
     // console.log('Counter selector');
@@ -36,15 +38,18 @@ export const useAnnotationCounter = (fileId: number) => {
   const annotationsBadgeProps = {
     gdpr: {
       ...counts.gdpr,
-      status: statusJobMap.get(DetectionModelType.GDPR),
+      status: statusJobMap.get(DetectionModelType.GDPR)?.status,
+      statusTime: statusJobMap.get(DetectionModelType.GDPR)?.statusTime,
     },
     tag: {
       ...counts.tag,
-      status: statusJobMap.get(DetectionModelType.Tag),
+      status: statusJobMap.get(DetectionModelType.Tag)?.status,
+      statusTime: statusJobMap.get(DetectionModelType.Tag)?.statusTime,
     },
     textAndObjects: {
       ...counts.textAndObjects,
-      status: statusJobMap.get(DetectionModelType.Text),
+      status: statusJobMap.get(DetectionModelType.Text)?.status,
+      statusTime: statusJobMap.get(DetectionModelType.Text)?.statusTime,
     },
   } as AnnotationsBadgeProps;
 

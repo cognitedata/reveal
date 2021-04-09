@@ -11,10 +11,7 @@ import ReactBaseTable, {
 
 import { Popover } from 'src/components/Common/Popover';
 import { AnnotationsBadgeProps } from 'src/pages/Workflow/types';
-import { useSelector } from 'react-redux';
-import { RootState } from 'src/store/rootReducer';
 import { useAnnotationCounter } from 'src/store/hooks/useAnnotationCounter';
-import { selectJobsByFileId } from 'src/store/processSlice';
 import { TableWrapper } from './FileTableWrapper';
 import { AnnotationsBadge } from '../AnnotationsBadge/AnnotationsBadge';
 import { AnnotationsBadgePopoverContent } from '../AnnotationsBadge/AnnotationsBadgePopoverContent';
@@ -38,16 +35,13 @@ type CellRenderer = {
 type FileTableProps = Omit<BaseTableProps<TableDataItem>, 'width'>;
 
 function StatusRendrer(
-  { rowData: { id } }: CellRenderer,
+  cellProps: CellRenderer,
   annotationsBadgeProps: AnnotationsBadgeProps
 ) {
   const annotations = Object.keys(annotationsBadgeProps) as Array<
     keyof AnnotationsBadgeProps
   >;
 
-  const jobs = useSelector((state: RootState) =>
-    selectJobsByFileId(state.processSlice, id)
-  );
   if (
     annotations.some(
       (key) => annotationsBadgeProps[key]?.status === 'Completed'
@@ -57,8 +51,10 @@ function StatusRendrer(
     )
   ) {
     let statusTime = 0;
-    if (jobs.length) {
-      statusTime = Math.max(...jobs.map((job) => job.statusTime));
+    if (annotations.length) {
+      statusTime = Math.max(
+        ...annotations.map((key) => annotationsBadgeProps[key]?.statusTime || 0)
+      );
     }
 
     return (

@@ -2,11 +2,11 @@ import React from 'react';
 import { Button, ButtonGroup, Detail } from '@cognite/cogs.js';
 import { DetectionModelSelect } from 'src/pages/Workflow/process/DetectionModelSelect';
 import styled from 'styled-components';
-import { useAnnotationJobs } from 'src/store/hooks/useAnnotationJobs';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import {
   detectAnnotations,
+  selectIsPollingComplete,
   setSelectedDetectionModels,
 } from 'src/store/processSlice';
 import { DetectionModelType } from 'src/api/types';
@@ -56,7 +56,9 @@ export const FileToolbar = ({
     dispatch(setSelectedDetectionModels(models));
   };
 
-  const { isPollingFinished } = useAnnotationJobs();
+  const isPollingFinished = useSelector((state: RootState) => {
+    return selectIsPollingComplete(state.processSlice);
+  });
   return (
     <>
       <Container>

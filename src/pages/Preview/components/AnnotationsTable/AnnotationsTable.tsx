@@ -124,6 +124,7 @@ export const VisibilityButton = (props: {
         type="tertiary"
         icon="EyeHide"
         iconPlacement="right"
+        aria-label="show/hide annotation"
       />
     );
   }
@@ -136,6 +137,7 @@ export const VisibilityButton = (props: {
       icon={props.show ? 'EyeShow' : 'EyeHide'}
       iconPlacement="right"
       onClick={props.onClick}
+      aria-label="show/hide annotation"
     />
   );
 };
