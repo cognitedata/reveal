@@ -302,6 +302,10 @@ export default function TimeSeriesRow({
               </SourceName>
             </SourceItem>
           </td>
+        </>
+      )}
+      {isWorkspaceMode && (
+        <>
           <td>
             <SourceItem>
               <SourceName>
