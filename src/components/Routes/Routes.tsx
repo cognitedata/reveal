@@ -10,7 +10,6 @@ const Routes = () => {
   const metrics = useMetrics('Routes');
   const history = useHistory();
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     return history.listen((location) => {
       metrics.track('Page view', { pathname: location.pathname });
