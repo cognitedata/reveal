@@ -149,7 +149,8 @@ const mockResponseV2 = {
       lastSuccess: 1584065800000,
       lastFailure: 1584066700000,
       lastSeen: 1604271600000,
-      lastMessage: 'This is a mock failed run error message',
+      lastMessage:
+        'This is a failed run. Error message with a longer text for detailed description of error',
       schedule: 'On Trigger',
       contacts: [
         {

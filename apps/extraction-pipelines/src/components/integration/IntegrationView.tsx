@@ -10,6 +10,7 @@ import { bottomSpacing } from 'styles/StyledVariables';
 import { GeneralInfoSection } from 'components/integration/GeneralInfoSection';
 import { StyledTitle3 } from 'styles/StyledHeadings';
 import { PageWrapperColumn } from 'styles/StyledPage';
+import { LatestRun } from 'components/integration/LatestRun';
 
 export const Hint = styled.span``;
 
@@ -83,7 +84,9 @@ export const IntegrationView: FunctionComponent<IntegrationViewProps> = () => {
         </StyledSection>
         <span>Integration information</span>
       </TopSection>
-      <MiddleSection />
+      <MiddleSection>
+        <LatestRun integration={integration} />
+      </MiddleSection>
       <MiddleSectionGrid>
         <GeneralInfoSection />
       </MiddleSectionGrid>

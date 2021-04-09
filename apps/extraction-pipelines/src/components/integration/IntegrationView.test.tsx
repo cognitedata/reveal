@@ -56,9 +56,6 @@ describe('IntegrationView', () => {
     expect(
       screen.getByText(new RegExp(DetailFieldNames.LAST_UPDATED_TIME, 'i'))
     ).toBeInTheDocument();
-    expect(
-      screen.getByText(moment(mockIntegration.lastUpdatedTime).fromNow())
-    ).toBeInTheDocument();
 
     expect(
       screen.getAllByText(new RegExp(TableHeadings.SCHEDULE, 'i')).length

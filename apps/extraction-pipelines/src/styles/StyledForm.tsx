@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import React from 'react';
 import { Button, Colors } from '@cognite/cogs.js';
 import { PaddedGridForm } from 'styles/grid/StyledGrid';
+import { bottomSpacing } from 'styles/StyledVariables';
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   inputWidth?: number;
@@ -37,6 +38,12 @@ export const CreateFormWrapper = styled.form`
     grid-area: btn;
   }
 `;
+
+export const Hint = styled.span`
+  color: ${Colors['greyscale-grey6'].hex()};
+  margin-bottom: ${bottomSpacing};
+`;
+
 export const StyledTextArea = styled.textarea`
   width: 100%;
   height: 10rem;
