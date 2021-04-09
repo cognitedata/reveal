@@ -21,7 +21,7 @@
     "@cognite/cdf-utilities": "^0.7.3",
     "@cognite/cogs.js": "1.30.3",
     "@cognite/react-feature-flags": "^0.0.2",
-    "@cognite/reveal": "^1.4.0",
+    "@cognite/reveal": "^1.5.0",
     "@cognite/z-index": "^0.1.0",
     "@google-cloud/storage": "^5.7.2",
     "@sentry/browser": "^5.30.0",
