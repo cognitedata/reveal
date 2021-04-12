@@ -1,7 +1,7 @@
 import React from 'react';
 import { Menu } from '@cognite/cogs.js';
-import { useChart, useUpdateChart } from 'hooks/firebase';
-import { ChartWorkflow } from 'reducers/charts/types';
+import { useUpdateChart } from 'hooks/firebase';
+import { Chart, ChartWorkflow } from 'reducers/charts/types';
 import {
   updateWorkflow,
   removeWorkflow,
@@ -11,7 +11,7 @@ import { useLoginStatus } from 'hooks';
 import { AppearanceDropdown } from 'components/AppearanceDropdown';
 
 type Props = {
-  chartId: string;
+  chart: Chart;
   id: string;
   closeMenu?: () => void;
   startRenaming?: () => void;
@@ -19,17 +19,16 @@ type Props = {
 
 export default function WorkflowMenu({
   id,
-  chartId,
+  chart,
   closeMenu,
   startRenaming,
 }: Props) {
   const { data: login } = useLoginStatus();
-  const { data: chart } = useChart(chartId);
   const { mutate } = useUpdateChart();
 
   const wf = chart?.workflowCollection?.find((t) => t.id === id);
 
-  if (!chart || !login?.user || !wf) {
+  if (!login?.user || !wf) {
     return null;
   }
 

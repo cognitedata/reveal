@@ -200,7 +200,7 @@ export default function WorkflowRow({
             <Dropdown
               content={
                 <WorkflowMenu
-                  chartId={id}
+                  chart={chart}
                   id={id}
                   closeMenu={() => setIdHack(idHack + 1)}
                   startRenaming={() => setIsEditingName(true)}
