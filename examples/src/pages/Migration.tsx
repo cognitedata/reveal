@@ -538,6 +538,10 @@ export function Migration() {
     
 
     function showBoundsForAllGeometries(model: Cognite3DModel) {
+      const boxes = new THREE.Group();
+      model.getModelTransformation(boxes.matrix);
+      boxes.matrixWorldNeedsUpdate = true;
+      
       model.traverse(x => {
         if (x instanceof THREE.Mesh) {
           const mesh = x;
@@ -548,10 +552,12 @@ export function Migration() {
             box.applyMatrix4(mesh.matrixWorld);
 
             const boxHelper = new THREE.Box3Helper(box);
-            viewer.addObject3D(boxHelper);
+            boxes.add(boxHelper);
+            //viewer.addObject3D(boxHelper);
           }
         }
       });
+      viewer.addObject3D(boxes);
     }
 
 

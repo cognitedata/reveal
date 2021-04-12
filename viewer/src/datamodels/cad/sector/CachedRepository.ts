@@ -58,6 +58,8 @@ export class CachedRepository implements Repository {
   async loadSector(sector: WantedSector): Promise<ConsumedSector> {
     const cacheKey = this.wantedSectorCacheKey(sector);
     if (this._consumedSectorCache.has(cacheKey)) {
+      const cached = await this._consumedSectorCache.get(cacheKey);
+      console.log(`loadSector cached ${cached}`);
       return this._consumedSectorCache.get(cacheKey);
     }
 
@@ -65,16 +67,20 @@ export class CachedRepository implements Repository {
       case LevelOfDetail.Detailed: {
         const loadOperation = this.loadDetailedSectorFromNetwork(sector).toPromise();
         this._consumedSectorCache.forceInsert(cacheKey, loadOperation);
-        return loadOperation;
+        const result = await loadOperation;
+        return result;
       }
 
       case LevelOfDetail.Simple: {
         const loadOperation = this.loadSimpleSectorFromNetwork(sector).toPromise();
         this._consumedSectorCache.forceInsert(cacheKey, loadOperation);
-        return loadOperation;
+        const result = await loadOperation;
+        console.log(`loadSector simple ${result}`);
+        return result;
       }
 
       case LevelOfDetail.Discarded:
+        console.log('discarded');
         return {
           blobUrl: sector.blobUrl,
           metadata: sector.metadata,
@@ -84,6 +90,7 @@ export class CachedRepository implements Repository {
         };
 
       default:
+        debugger;
         assertNever(sector.levelOfDetail);
     }
   }

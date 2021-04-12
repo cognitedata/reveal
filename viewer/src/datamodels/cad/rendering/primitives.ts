@@ -10,75 +10,97 @@ import {
   coneGeometry,
   trapeziumGeometry,
   nutGeometry,
-  torusGeometry
+  torusGeometry,
+  boxGeometryBoundingBox,
+  quadGeometryBoundingBox,
+  trapeziumGeometryBoundingBox,
+  torusGeometryBoundingBox,
+  nutGeometryBoundingBox
 } from './primitiveGeometries';
 import { Materials } from './materials';
 import { ParsePrimitiveAttribute } from '@cognite/reveal-parser-worker';
 import { disposeAttributeArrayOnUpload } from '../../../utilities/disposeAttributeArrayOnUpload';
 import assert from 'assert';
 
-export function* createPrimitives(sector: SectorGeometry, materials: Materials, bounds: THREE.Box3) {
+export function* createPrimitives(
+  sector: SectorGeometry,
+  materials: Materials,
+  bounds: THREE.Box3,
+  clipBox: THREE.Box3 | undefined
+) {
   const primitives = sector.primitives;
 
   if (hasAny(primitives.boxCollection)) {
-    yield createBoxes(primitives.boxCollection, primitives.boxAttributes, materials.box);
+    yield createBoxes(primitives.boxCollection, primitives.boxAttributes, materials.box, clipBox);
   }
   if (hasAny(primitives.circleCollection)) {
-    yield createCircles(primitives.circleCollection, primitives.circleAttributes, materials.circle);
+    yield createCircles(primitives.circleCollection, primitives.circleAttributes, materials.circle, clipBox);
   }
-  if (hasAny(primitives.coneCollection)) {
-    yield createCones(primitives.coneCollection, primitives.coneAttributes, materials.cone, bounds);
-  }
-  if (hasAny(primitives.eccentricConeCollection)) {
-    yield createEccentricCones(
-      primitives.eccentricConeCollection,
-      primitives.eccentricConeAttributes,
-      materials.eccentricCone,
-      bounds
-    );
-  }
-  if (hasAny(primitives.ellipsoidSegmentCollection)) {
-    yield createEllipsoidSegments(
-      primitives.ellipsoidSegmentCollection,
-      primitives.ellipsoidSegmentAttributes,
-      materials.ellipsoidSegment,
-      bounds
-    );
-  }
-  if (hasAny(primitives.generalCylinderCollection)) {
-    yield createGeneralCylinders(
-      primitives.generalCylinderCollection,
-      primitives.generalCylinderAttributes,
-      materials.generalCylinder,
-      bounds
-    );
-  }
+  // if (hasAny(primitives.coneCollection)) {
+  //   yield createCones(primitives.coneCollection, primitives.coneAttributes, materials.cone, bounds);
+  // }
+  // if (hasAny(primitives.eccentricConeCollection)) {
+  //   yield createEccentricCones(
+  //     primitives.eccentricConeCollection,
+  //     primitives.eccentricConeAttributes,
+  //     materials.eccentricCone,
+  //     bounds
+  //   );
+  // }
+  // if (hasAny(primitives.ellipsoidSegmentCollection)) {
+  //   yield createEllipsoidSegments(
+  //     primitives.ellipsoidSegmentCollection,
+  //     primitives.ellipsoidSegmentAttributes,
+  //     materials.ellipsoidSegment,
+  //     bounds
+  //   );
+  // }
+  // if (hasAny(primitives.generalCylinderCollection)) {
+  //   yield createGeneralCylinders(
+  //     primitives.generalCylinderCollection,
+  //     primitives.generalCylinderAttributes,
+  //     materials.generalCylinder,
+  //     bounds
+  //   );
+  // }
   if (hasAny(primitives.generalRingCollection)) {
-    yield createGeneralRings(primitives.generalRingCollection, primitives.generalRingAttributes, materials.generalRing);
+    yield createGeneralRings(
+      primitives.generalRingCollection,
+      primitives.generalRingAttributes,
+      materials.generalRing,
+      clipBox
+    );
   }
   if (hasAny(primitives.quadCollection)) {
-    yield createQuads(primitives.quadCollection, primitives.quadAttributes, materials.quad);
+    yield createQuads(primitives.quadCollection, primitives.quadAttributes, materials.quad, clipBox);
   }
-  if (hasAny(primitives.sphericalSegmentCollection)) {
-    yield createSphericalSegments(
-      primitives.sphericalSegmentCollection,
-      primitives.sphericalSegmentAttributes,
-      materials.sphericalSegment,
-      bounds
-    );
-  }
+  // if (hasAny(primitives.sphericalSegmentCollection)) {
+  //   yield createSphericalSegments(
+  //     primitives.sphericalSegmentCollection,
+  //     primitives.sphericalSegmentAttributes,
+  //     materials.sphericalSegment,
+  //     bounds
+  //   );
+  // }
+
   if (hasAny(primitives.torusSegmentCollection)) {
     yield createTorusSegments(
       primitives.torusSegmentCollection,
       primitives.torusSegmentAttributes,
-      materials.torusSegment
+      materials.torusSegment,
+      clipBox
     );
   }
-  if (hasAny(primitives.trapeziumCollection)) {
-    yield createTrapeziums(primitives.trapeziumCollection, primitives.trapeziumAttributes, materials.trapezium);
-  }
+  // if (hasAny(primitives.trapeziumCollection)) {
+  //   yield createTrapeziums(
+  //     primitives.trapeziumCollection,
+  //     primitives.trapeziumAttributes,
+  //     materials.trapezium,
+  //     clipBox
+  //   );
+  // }
   if (hasAny(primitives.nutCollection)) {
-    yield createNuts(primitives.nutCollection, primitives.nutAttributes, materials.nut);
+    yield createNuts(primitives.nutCollection, primitives.nutAttributes, materials.nut, clipBox);
   }
 }
 
@@ -95,13 +117,12 @@ function splitMatrix(attributes: Map<string, ParsePrimitiveAttribute>) {
     return;
   }
 
+  const size = matrixAttribute.size / matrixColumns;
   for (let i = 0; i < matrixColumns; i++) {
-    const size = matrixAttribute!.size / matrixColumns;
-    const columnAttribute = {
+    const columnAttribute: ParsePrimitiveAttribute = {
       size,
-      offset: matrixAttribute!.offset + size * i
-    } as ParsePrimitiveAttribute;
-
+      offset: matrixAttribute.offset + size * i
+    };
     attributes.set('instanceMatrix_column_' + i, columnAttribute);
   }
 
@@ -163,15 +184,23 @@ function setAttributes(
 function createBoxes(
   boxCollection: Uint8Array,
   boxAttributes: Map<string, ParsePrimitiveAttribute>,
-  material: THREE.ShaderMaterial
+  material: THREE.ShaderMaterial,
+  clipBox: THREE.Box3 | undefined
 ) {
+  const filteredCollection = filterPrimitivesOutsideClipBoxByBaseBoundsAndInstanceMatrix(
+    boxCollection,
+    boxAttributes,
+    boxGeometryBoundingBox,
+    clipBox
+  );
+
   const geometry = new THREE.InstancedBufferGeometry();
   const mesh = new THREE.Mesh(geometry, material);
 
   geometry.setIndex(boxGeometry.index);
   geometry.setAttribute('position', boxGeometry.position);
   geometry.setAttribute('normal', boxGeometry.normal);
-  setAttributes(geometry, boxCollection, boxAttributes, mesh);
+  setAttributes(geometry, filteredCollection, boxAttributes, mesh);
   setBoundsFromInstanceMatrices(geometry);
 
   mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
@@ -184,15 +213,23 @@ function createBoxes(
 function createCircles(
   circleCollection: Uint8Array,
   circleAttributes: Map<string, ParsePrimitiveAttribute>,
-  material: THREE.ShaderMaterial
+  material: THREE.ShaderMaterial,
+  clipBox: THREE.Box3 | undefined
 ) {
+  const filteredCollection = filterPrimitivesOutsideClipBoxByBaseBoundsAndInstanceMatrix(
+    circleCollection,
+    circleAttributes,
+    quadGeometryBoundingBox,
+    clipBox
+  );
+
   const geometry = new THREE.InstancedBufferGeometry();
   const mesh = new THREE.Mesh(geometry, material);
 
   geometry.setIndex(quadGeometry.index);
   geometry.setAttribute('position', quadGeometry.position);
   geometry.setAttribute('normal', quadGeometry.position);
-  setAttributes(geometry, circleCollection, circleAttributes, mesh);
+  setAttributes(geometry, filteredCollection, circleAttributes, mesh);
   setBoundsFromInstanceMatrices(geometry);
 
   mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
@@ -205,7 +242,9 @@ function createCones(
   coneCollection: Uint8Array,
   coneAttributes: Map<string, ParsePrimitiveAttribute>,
   material: THREE.ShaderMaterial,
-  bounds: THREE.Box3
+  bounds: THREE.Box3,
+  // TODO 2021-04-12 larsmoa: Add support for clipBox to createCones
+  _clipBox: THREE.Box3 | undefined
 ) {
   const geometry = new THREE.InstancedBufferGeometry();
   const mesh = new THREE.Mesh(geometry, material);
@@ -224,7 +263,9 @@ function createEccentricCones(
   eccentericConeCollection: Uint8Array,
   eccentericConeAttributes: Map<string, ParsePrimitiveAttribute>,
   material: THREE.ShaderMaterial,
-  bounds: THREE.Box3
+  bounds: THREE.Box3,
+  // TODO 2021-04-12 larsmoa: Add support for clipBox to createEccentricCones
+  _clipBox: THREE.Box3 | undefined
 ) {
   const geometry = new THREE.InstancedBufferGeometry();
   const mesh = new THREE.Mesh(geometry, material);
@@ -243,7 +284,9 @@ function createEllipsoidSegments(
   ellipsoidSegmentCollection: Uint8Array,
   ellipsoidSegmentAttributes: Map<string, ParsePrimitiveAttribute>,
   material: THREE.ShaderMaterial,
-  bounds: THREE.Box3
+  bounds: THREE.Box3,
+  // TODO 2021-04-12 larsmoa: Add support for clipBox to createEllipsoidSegments
+  _clipBox: THREE.Box3 | undefined
 ) {
   const geometry = new THREE.InstancedBufferGeometry();
   const mesh = new THREE.Mesh(geometry, material);
@@ -262,7 +305,9 @@ function createGeneralCylinders(
   generalCylinderCollection: Uint8Array,
   generalCylinderAttributes: Map<string, ParsePrimitiveAttribute>,
   material: THREE.ShaderMaterial,
-  bounds: THREE.Box3
+  bounds: THREE.Box3,
+  // TODO 2021-04-12 larsmoa: Add support for clipBox to createGeneralCylinders
+  _clipBox: THREE.Box3 | undefined
 ) {
   const geometry = new THREE.InstancedBufferGeometry();
   const mesh = new THREE.Mesh(geometry, material);
@@ -280,14 +325,22 @@ function createGeneralCylinders(
 function createGeneralRings(
   generalRingCollection: Uint8Array,
   generalRingAttributes: Map<string, ParsePrimitiveAttribute>,
-  material: THREE.ShaderMaterial
+  material: THREE.ShaderMaterial,
+  clipBox: THREE.Box3 | undefined
 ) {
+  const filteredCollection = filterPrimitivesOutsideClipBoxByBaseBoundsAndInstanceMatrix(
+    generalRingCollection,
+    generalRingAttributes,
+    quadGeometryBoundingBox,
+    clipBox
+  );
+
   const geometry = new THREE.InstancedBufferGeometry();
   const mesh = new THREE.Mesh(geometry, material);
 
   geometry.setIndex(quadGeometry.index);
   geometry.setAttribute('position', quadGeometry.position);
-  setAttributes(geometry, generalRingCollection, generalRingAttributes, mesh);
+  setAttributes(geometry, filteredCollection, generalRingAttributes, mesh);
   setBoundsFromInstanceMatrices(geometry);
 
   mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
@@ -299,7 +352,9 @@ function createSphericalSegments(
   sphericalSegmentCollection: Uint8Array,
   sphericalSegmentAttributes: Map<string, ParsePrimitiveAttribute>,
   material: THREE.ShaderMaterial,
-  bounds: THREE.Box3
+  bounds: THREE.Box3,
+  // TODO 2021-04-12 larsmoa: Add support for clipBox to createGeneralCylinders
+  _clipBox: THREE.Box3 | undefined
 ) {
   const geometry = new THREE.InstancedBufferGeometry();
   const mesh = new THREE.Mesh(geometry, material);
@@ -326,15 +381,23 @@ function createSphericalSegments(
 function createQuads(
   quadCollection: Uint8Array,
   quadAttributes: Map<string, ParsePrimitiveAttribute>,
-  material: THREE.ShaderMaterial
+  material: THREE.ShaderMaterial,
+  clipBox: THREE.Box3 | undefined
 ) {
+  const filteredCollection = filterPrimitivesOutsideClipBoxByBaseBoundsAndInstanceMatrix(
+    quadCollection,
+    quadAttributes,
+    quadGeometryBoundingBox,
+    clipBox
+  );
+
   const geometry = new THREE.InstancedBufferGeometry();
   const mesh = new THREE.Mesh(geometry, material);
 
   geometry.setIndex(quadGeometry.index);
   geometry.setAttribute('position', quadGeometry.position);
   geometry.setAttribute('normal', quadGeometry.normal);
-  setAttributes(geometry, quadCollection, quadAttributes, mesh);
+  setAttributes(geometry, filteredCollection, quadAttributes, mesh);
   setBoundsFromInstanceMatrices(geometry);
 
   mesh.name = `Primitives (Quads)`;
@@ -344,14 +407,22 @@ function createQuads(
 function createTrapeziums(
   trapeziumCollection: Uint8Array,
   trapeziumAttributes: Map<string, ParsePrimitiveAttribute>,
-  material: THREE.ShaderMaterial
+  material: THREE.ShaderMaterial,
+  clipBox: THREE.Box3 | undefined
 ) {
+  const filteredCollection = filterPrimitivesOutsideClipBoxByBaseBoundsAndInstanceMatrix(
+    trapeziumCollection,
+    trapeziumAttributes,
+    trapeziumGeometryBoundingBox,
+    clipBox
+  );
+
   const geometry = new THREE.InstancedBufferGeometry();
   const mesh = new THREE.Mesh(geometry, material);
 
   geometry.setIndex(trapeziumGeometry.index);
   geometry.setAttribute('position', trapeziumGeometry.position);
-  setAttributes(geometry, trapeziumCollection, trapeziumAttributes, mesh);
+  setAttributes(geometry, filteredCollection, trapeziumAttributes, mesh);
   setBoundsFromVertexAttributes(geometry);
 
   mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
@@ -362,14 +433,22 @@ function createTrapeziums(
 function createTorusSegments(
   torusSegmentCollection: Uint8Array,
   torusSegmentAttributes: Map<string, ParsePrimitiveAttribute>,
-  material: THREE.ShaderMaterial
+  material: THREE.ShaderMaterial,
+  clipBox: THREE.Box3 | undefined
 ) {
+  const filteredCollection = filterPrimitivesOutsideClipBoxByBaseBoundsAndInstanceMatrix(
+    torusSegmentCollection,
+    torusSegmentAttributes,
+    torusGeometryBoundingBox,
+    clipBox
+  );
+
   const geometry = new THREE.InstancedBufferGeometry();
   const mesh = new THREE.Mesh(geometry, material);
 
   geometry.setIndex(torusGeometry.index);
   geometry.setAttribute('position', torusGeometry.position);
-  setAttributes(geometry, torusSegmentCollection, torusSegmentAttributes, mesh);
+  setAttributes(geometry, filteredCollection, torusSegmentAttributes, mesh);
   setBoundsFromInstanceMatrices(geometry);
 
   mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
@@ -380,20 +459,29 @@ function createTorusSegments(
 function createNuts(
   nutCollection: Uint8Array,
   nutAttributes: Map<string, ParsePrimitiveAttribute>,
-  material: THREE.ShaderMaterial
+  material: THREE.ShaderMaterial,
+  clipBox: THREE.Box3 | undefined
 ) {
+  const filteredCollection = filterPrimitivesOutsideClipBoxByBaseBoundsAndInstanceMatrix(
+    nutCollection,
+    nutAttributes,
+    nutGeometryBoundingBox,
+    clipBox
+  );
+
   const geometry = new THREE.InstancedBufferGeometry();
   const mesh = new THREE.Mesh(geometry, material);
 
   geometry.setIndex(nutGeometry.index);
   geometry.setAttribute('position', nutGeometry.position);
   geometry.setAttribute('normal', nutGeometry.normal);
-  setAttributes(geometry, nutCollection, nutAttributes, mesh);
+  setAttributes(geometry, filteredCollection, nutAttributes, mesh);
   setBoundsFromInstanceMatrices(geometry);
 
   mesh.name = `Primitives (Nuts)`;
   return mesh;
 }
+
 function updateMaterialInverseModelMatrix(
   material: THREE.ShaderMaterial | THREE.RawShaderMaterial,
   matrixWorld: THREE.Matrix4
@@ -490,4 +578,63 @@ function setBoundsFromVertexAttributes(geometry: THREE.InstancedBufferGeometry) 
   geometry.boundingBox = bbox;
   geometry.boundingSphere = geometry.boundingSphere || new THREE.Sphere();
   geometry.boundingBox.getBoundingSphere(geometry.boundingSphere);
+}
+
+function filterPrimitivesOutsideClipBoxByBaseBoundsAndInstanceMatrix(
+  attributesByteValues: Uint8Array,
+  attributes: Map<string, ParsePrimitiveAttribute>,
+  baseBox: THREE.Box3,
+  clipBox?: THREE.Box3
+): Uint8Array {
+  if (clipBox === undefined) {
+    return attributesByteValues;
+  }
+
+  const elementSize = Array.from(attributes.values()).reduce((a, b) => a + b.size, 0);
+  const elementCount = attributesByteValues.length / elementSize;
+
+  const attributeFloatValues = new Float32Array(attributesByteValues.buffer);
+  const instanceMatrixAttribute = attributes.get('instanceMatrix');
+  assert(instanceMatrixAttribute !== undefined);
+  const instanceMatrix = new THREE.Matrix4();
+  const instanceBbox = new THREE.Box3();
+
+  const filteredByteValues = new Uint8Array(attributesByteValues.length);
+  let filteredCount = 0;
+  for (let i = 0; i < elementCount; ++i) {
+    const offset = (i * elementSize + instanceMatrixAttribute.offset) / attributeFloatValues.BYTES_PER_ELEMENT;
+    // Note! set() accepts row-major, stored column-major
+    instanceMatrix.set(
+      attributeFloatValues[offset + 0],
+      attributeFloatValues[offset + 4],
+      attributeFloatValues[offset + 8],
+      attributeFloatValues[offset + 12],
+
+      attributeFloatValues[offset + 1],
+      attributeFloatValues[offset + 5],
+      attributeFloatValues[offset + 9],
+      attributeFloatValues[offset + 13],
+
+      attributeFloatValues[offset + 2],
+      attributeFloatValues[offset + 6],
+      attributeFloatValues[offset + 10],
+      attributeFloatValues[offset + 14],
+
+      attributeFloatValues[offset + 3],
+      attributeFloatValues[offset + 7],
+      attributeFloatValues[offset + 11],
+      attributeFloatValues[offset + 15]
+    );
+
+    instanceBbox.copy(baseBox);
+    instanceBbox.applyMatrix4(instanceMatrix);
+    if (clipBox.intersectsBox(instanceBbox)) {
+      const elementValues = attributesByteValues.slice(i * elementSize, (i + 1) * elementSize);
+      filteredByteValues.set(elementValues, filteredCount * elementSize);
+      filteredCount++;
+    }
+  }
+
+  console.log('filtered', elementCount, 'to', filteredCount, 'primitives');
+  return filteredByteValues.slice(0, filteredCount * elementSize);
 }

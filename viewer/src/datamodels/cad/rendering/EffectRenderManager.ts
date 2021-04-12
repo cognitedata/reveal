@@ -547,8 +547,12 @@ export class EffectRenderManager {
     camera: THREE.PerspectiveCamera,
     target: THREE.WebGLRenderTarget | null = this._normalRenderedCadModelTarget
   ) {
-    this._renderer.setRenderTarget(target);
-    this._renderer.render(this._cadScene, camera);
+    try {
+      this._renderer.setRenderTarget(target);
+      this._renderer.render(this._cadScene, camera);
+    } catch (error) {
+      debugger;
+    }
   }
 
   private renderInFrontCadModels(
