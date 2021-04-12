@@ -38,6 +38,6 @@ export const pinTypes: Record<PinTypeIdentifier, PinType> = {
   },
 };
 
-export const isWorkflowRunnable = (nodes: Node[]) => {
-  return nodes.length > 0 && nodes.filter((node) => !node.outputPins);
+export const isWorkflowRunnable = (nodes?: Node[]) => {
+  return nodes && nodes.length > 0 && nodes.filter((node) => !node.outputPins);
 };

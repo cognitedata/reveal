@@ -28,7 +28,7 @@ import { Modes } from 'pages/types';
 import { ContextMenu } from 'components/ContextMenu';
 import TimeSeriesRows from './TimeSeriesRows';
 import WorkflowRows from './WorkflowRows';
-import RunWorkflows from './RunWorkflowsButton';
+
 import {
   BottomPaneWrapper,
   ChartContainer,
@@ -310,7 +310,6 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
           </section>
           {!showSearch && (
             <section className="actions">
-              <RunWorkflows chart={chart} update={updateChart} />
               <SharingDropdown chart={chart} />
               <Dropdown
                 content={

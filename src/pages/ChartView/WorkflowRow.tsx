@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   Chart,
   ChartWorkflow,
@@ -10,6 +10,10 @@ import { updateWorkflow } from 'utils/charts';
 import EditableText from 'components/EditableText';
 import { units } from 'utils/units';
 import { Modes } from 'pages/types';
+import { useCallFunction } from 'utils/cogniteFunctions';
+import { getStepsFromWorkflow } from 'utils/transforms';
+import { calculateGranularity } from 'utils/timeseries';
+import { isWorkflowRunnable } from 'components/NodeEditor/utils';
 import {
   SourceItem,
   SourceSquare,
@@ -53,6 +57,10 @@ export default function WorkflowRow({
   isSelected = false,
   mutate,
 }: Props) {
+  const { mutate: callFunction, data, isSuccess, reset } = useCallFunction(
+    'simple_calc-master'
+  );
+
   const [isEditingName, setIsEditingName] = useState<boolean>(false);
 
   // Increasing this will cause a fresh render where the dropdown is closed
@@ -64,6 +72,46 @@ export default function WorkflowRow({
   const update = (wfId: string, diff: Partial<ChartWorkflow>) => {
     mutate(updateWorkflow(chart, wfId, diff));
   };
+
+  const { dateTo, dateFrom } = chart;
+  const { nodes, connections } = workflow;
+  const steps = useMemo(
+    () => isWorkflowRunnable(nodes) && getStepsFromWorkflow(nodes, connections),
+    [nodes, connections]
+  );
+  const computation = useMemo(
+    () =>
+      steps && {
+        steps,
+        start_time: new Date(dateFrom).getTime(),
+        end_time: new Date(dateTo).getTime(),
+        granularity: calculateGranularity(
+          [new Date(dateFrom).getTime(), new Date(dateTo).getTime()],
+          1000
+        ),
+      },
+    [steps, dateFrom, dateTo]
+  );
+
+  useEffect(() => {
+    if (computation) {
+      callFunction({
+        data: { computation_graph: computation },
+      });
+    }
+  }, [computation, callFunction]);
+
+  useEffect(() => {
+    if (isSuccess && data) {
+      const newCall = { ...data, callDate: Date.now() };
+      mutate(
+        updateWorkflow(chart, workflow.id, {
+          calls: call ? [newCall, call] : [newCall],
+        })
+      );
+      reset();
+    }
+  }, [chart, workflow.id, data, isSuccess, mutate, reset, call]);
 
   const inputUnitOption = units.find(
     (unitOption) => unitOption.value === unit?.toLowerCase()
@@ -152,7 +200,7 @@ export default function WorkflowRow({
             <Dropdown
               content={
                 <WorkflowMenu
-                  chartId={chart.id}
+                  chartId={id}
                   id={id}
                   closeMenu={() => setIdHack(idHack + 1)}
                   startRenaming={() => setIsEditingName(true)}

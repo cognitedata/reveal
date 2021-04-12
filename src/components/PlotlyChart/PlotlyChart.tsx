@@ -126,21 +126,42 @@ const PlotlyChartComponent = ({
     ? chart.workflowCollection?.filter((flow) => flow?.enabled)
     : [];
 
-  const calls = (enabledWorkflows || [])
-    .map((wf) => wf.calls?.[0])
-    .filter(Boolean) as Call[];
+  const calls = (enabledWorkflows || []).map((wf) => wf.calls?.[0]) as (
+    | Call
+    | undefined
+  )[];
+  const oldCalls = (enabledWorkflows || []).map((wf) => wf.calls?.[1]) as (
+    | Call
+    | undefined
+  )[];
 
   const functionResults = useQueries(
     calls.map((c) => ({
-      queryKey: functionResponseKey(c.functionId, c.callId),
+      queryKey: functionResponseKey(c?.functionId!, c?.callId!),
       queryFn: (): Promise<string | undefined> =>
         sdk
           .get(
-            `/api/playground/projects/${sdk.project}/functions/${c.functionId}/calls/${c.callId}/response`
+            `/api/playground/projects/${sdk.project}/functions/${c?.functionId}/calls/${c?.callId}/response`
           )
           .then((r) => r.data.response),
       retry: 1,
       retryDelay: 1000,
+      enabled: !!c?.functionId && !!c?.callId,
+    }))
+  );
+
+  const oldFunctionResults = useQueries(
+    oldCalls.map((c) => ({
+      queryKey: functionResponseKey(c?.functionId!, c?.callId!),
+      queryFn: (): Promise<string | undefined> =>
+        sdk
+          .get(
+            `/api/playground/projects/${sdk.project}/functions/${c?.functionId}/calls/${c?.callId}/response`
+          )
+          .then((r) => r.data.response),
+      retry: 1,
+      retryDelay: 1000,
+      enabled: !!c?.functionId && !!c?.callId,
     }))
   );
 
@@ -183,6 +204,8 @@ const PlotlyChartComponent = ({
         .map((workflow, i) => ({
           id: workflow?.id,
           type: 'workflow',
+          outdatedData:
+            !functionResults?.[i]?.data && !!oldFunctionResults?.[i]?.data,
           range: workflow.range,
           name: workflow.name,
           color: workflow.color,
@@ -195,7 +218,9 @@ const PlotlyChartComponent = ({
           )?.label,
           datapoints: convertUnits(
             transformSimpleCalcResult(
-              (functionResults?.[i]?.data as any) || {}
+              (functionResults?.[i]?.data as any) ||
+                (oldFunctionResults?.[i]?.data as any) ||
+                {}
             ),
             workflow.unit,
             workflow.preferredUnit
@@ -357,13 +382,16 @@ const PlotlyChartComponent = ({
         useResizeHandler
         style={{ width: '100%', height: '100%' }}
       />
-      {calls?.map((call) => (
-        <FunctionCall
-          key={`${call.functionId}/${call.callId}`}
-          id={call.functionId}
-          callId={call.callId}
-        />
-      ))}
+      {[...calls, ...oldCalls].map(
+        (call) =>
+          call && (
+            <FunctionCall
+              key={`${call.functionId}/${call.callId}`}
+              id={call.functionId}
+              callId={call.callId}
+            />
+          )
+      )}
     </>
   );
 };

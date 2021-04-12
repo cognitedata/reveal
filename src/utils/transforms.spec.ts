@@ -110,7 +110,7 @@ describe('getStepsFromWorkflow', () => {
       connections: {},
     };
 
-    const steps = getStepsFromWorkflow(workflow);
+    const steps = getStepsFromWorkflow(workflow.nodes, workflow.connections);
 
     expect(steps).toEqual([]);
   });
@@ -324,7 +324,7 @@ describe('getStepsFromWorkflow', () => {
       },
     };
 
-    const steps = getStepsFromWorkflow(workflow);
+    const steps = getStepsFromWorkflow(workflow.nodes, workflow.connections);
 
     expect(steps).toEqual([]);
   });
@@ -653,7 +653,7 @@ describe('getStepsFromWorkflow', () => {
       name: 'New Calculation',
     };
 
-    const steps = getStepsFromWorkflow(workflow);
+    const steps = getStepsFromWorkflow(workflow.nodes, workflow.connections);
 
     expect(steps).toEqual([
       {
@@ -785,7 +785,7 @@ describe('getStepsFromWorkflow', () => {
       name: 'New Calculation',
     };
 
-    const steps = getStepsFromWorkflow(workflow);
+    const steps = getStepsFromWorkflow(workflow.nodes, workflow.connections);
 
     expect(steps).toEqual([
       {
@@ -1190,7 +1190,7 @@ describe('getStepsFromWorkflow', () => {
       },
     };
 
-    const steps = getStepsFromWorkflow(workflow);
+    const steps = getStepsFromWorkflow(workflow.nodes, workflow.connections);
 
     expect(steps).toEqual([
       {
