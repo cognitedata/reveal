@@ -64,7 +64,7 @@
     "@types/sinon": "^9.0.11",
     "@types/styled-components": "^5.1.9",
     "commitizen": "^4.2.3",
-    "concurrently": "^6.0.0",
+    "concurrently": "^6.0.1",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-prettier": "^7.2.0",
     "eslint-plugin-import": "^2.22.1",
