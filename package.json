@@ -68,7 +68,7 @@
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-prettier": "^7.2.0",
     "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-jest": "^24.3.2",
+    "eslint-plugin-jest": "^24.3.5",
     "eslint-plugin-lodash": "^7.2.0",
     "eslint-plugin-prettier": "^3.3.1",
     "eslint-plugin-testcafe": "^0.2.1",
@@ -84,7 +84,7 @@
     "serve": "^11.3.2",
     "sinon": "^9.2.4",
     "testcafe": "^1.13.0",
-    "typescript": "^4.2.3"
+    "typescript": "^4.2.4"
   },
   "eslintConfig": {
     "extends": "react-app"
