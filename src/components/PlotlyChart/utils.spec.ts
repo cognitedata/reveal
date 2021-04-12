@@ -1,3 +1,4 @@
+import { addMinutes } from 'date-fns';
 import {
   getYaxisUpdatesFromEventData,
   getXaxisUpdateFromEventData,
@@ -73,6 +74,71 @@ describe('getYaxisUpdatesFromEventData', () => {
     ]);
   });
 
+  it('handles autoscale input', () => {
+    const eventdata = {
+      'xaxis.autorange': true,
+      'yaxis.autorange': true,
+      'yaxis2.autorange': true,
+      'yaxis3.autorange': true,
+    };
+
+    const seriesData = [
+      {
+        id: 'VAL_RESERVOIR_PT_well01',
+        type: 'timeseries',
+        range: [1459.8294756630028, 1491.8053766553744],
+        name: 'VAL_RESERVOIR_PT_well01',
+        color: '#8E44AD',
+        width: 2,
+        dash: 'solid',
+        unit: 'PSI',
+        datapoints: [],
+      },
+      {
+        id: 'VAL_RESERVOIR_PT_well09',
+        type: 'timeseries',
+        range: [1456.247265175954, 1488.6541100613447],
+        name: 'VAL_RESERVOIR_PT_well09',
+        color: '#e1b12c',
+        width: 2,
+        dash: 'solid',
+        unit: 'PSI',
+        datapoints: [],
+      },
+      {
+        id: 'VAL_RESERVOIR_PT_well07',
+        type: 'timeseries',
+        range: [1523.9999095776425, 1523.9999896001514],
+        name: 'VAL_RESERVOIR_PT_well07',
+        color: '#0097e6',
+        width: 2,
+        dash: 'solid',
+        unit: 'PSI',
+        datapoints: [],
+      },
+    ];
+
+    const axisUpdates = getYaxisUpdatesFromEventData(seriesData, eventdata);
+
+    expect(axisUpdates).toEqual([
+      {
+        id: 'VAL_RESERVOIR_PT_well01',
+        type: 'timeseries',
+        range: [],
+      },
+      {
+        id: 'VAL_RESERVOIR_PT_well09',
+        type: 'timeseries',
+        range: [],
+      },
+      {
+        id: 'VAL_RESERVOIR_PT_well07',
+        type: 'timeseries',
+        range: [],
+      },
+    ]);
+  });
+
   it('handles empty input', () => {
     const eventdata = {};
 
@@ -134,9 +200,28 @@ describe('getXaxisUpdate', () => {
     const axisUpdates = getXaxisUpdateFromEventData(eventdata);
 
     expect(axisUpdates).toEqual([
-      '2021-01-02 10:14:11.8191',
-      '2021-02-14 09:17:59.1984',
+      addMinutes(
+        new Date('2021-01-02T10:14:11.819Z'),
+        new Date('2021-01-02T10:14:11.819Z').getTimezoneOffset()
+      ).toJSON(),
+      addMinutes(
+        new Date('2021-02-14T09:17:59.198Z'),
+        new Date('2021-02-14T09:17:59.198Z').getTimezoneOffset()
+      ).toJSON(),
     ]);
+  });
+
+  it('handles autoscale input', () => {
+    const eventdata = {
+      'xaxis.autorange': true,
+      'yaxis.autorange': true,
+      'yaxis2.autorange': true,
+      'yaxis3.autorange': true,
+    };
+
+    const axisUpdates = getXaxisUpdateFromEventData(eventdata);
+
+    expect(axisUpdates).toEqual([]);
   });
 
   it('handles empty input', () => {

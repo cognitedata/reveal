@@ -2,7 +2,14 @@ import React, { useState } from 'react';
 import dayjs from 'dayjs';
 import { useIsFetching, useQueryClient } from 'react-query';
 import { Chart, ChartTimeSeries } from 'reducers/charts/types';
-import { AllIconTypes, Dropdown, Icon, Menu, Tooltip } from '@cognite/cogs.js';
+import {
+  AllIconTypes,
+  Button,
+  Dropdown,
+  Icon,
+  Menu,
+  Tooltip,
+} from '@cognite/cogs.js';
 import { units } from 'utils/units';
 import { calculateGranularity } from 'utils/timeseries';
 import EditableText from 'components/EditableText';
@@ -79,7 +86,9 @@ type Props = {
   chart: Chart;
   timeseries: ChartTimeSeries;
   disabled?: boolean;
-  active?: boolean;
+  isSelected?: boolean;
+  onRowClick?: (id?: string) => void;
+  onInfoClick?: (id?: string) => void;
   isWorkspaceMode?: boolean;
   isFileViewerMode?: boolean;
 };
@@ -87,8 +96,10 @@ export default function TimeSeriesRow({
   mutate,
   chart,
   timeseries,
-  active = false,
+  onRowClick = () => {},
+  onInfoClick = () => {},
   disabled = false,
+  isSelected = false,
   isWorkspaceMode = false,
   isFileViewerMode = false,
 }: Props) {
@@ -163,9 +174,13 @@ export default function TimeSeriesRow({
   ));
 
   return (
-    <SourceRow key={id} isActive={false}>
+    <SourceRow
+      key={id}
+      onClick={() => !disabled && onRowClick(id)}
+      isActive={isSelected}
+    >
       <td>
-        <SourceItem isActive={active} isDisabled={disabled} key={id}>
+        <SourceItem isDisabled={disabled} key={id}>
           <SourceCircle
             onClick={(event) => {
               event.stopPropagation();
@@ -217,44 +232,48 @@ export default function TimeSeriesRow({
       {isWorkspaceMode && (
         <>
           <td>
-            <Dropdown
-              content={
-                <Menu>
-                  <Menu.Header>
-                    <span style={{ wordBreak: 'break-word' }}>
-                      Select input unit (override)
-                    </span>
-                  </Menu.Header>
-                  {unitOverrideMenuItems}
-                </Menu>
-              }
-            >
-              <SourceItem>
-                <SourceName>
-                  {inputUnitOption?.label}
-                  {inputUnitOption?.value !== originalUnit?.toLowerCase() &&
-                    ' *'}
-                </SourceName>
-              </SourceItem>
-            </Dropdown>
+            <div role="none" onClick={(event) => event.stopPropagation()}>
+              <Dropdown
+                content={
+                  <Menu>
+                    <Menu.Header>
+                      <span style={{ wordBreak: 'break-word' }}>
+                        Select input unit (override)
+                      </span>
+                    </Menu.Header>
+                    {unitOverrideMenuItems}
+                  </Menu>
+                }
+              >
+                <SourceItem>
+                  <SourceName>
+                    {inputUnitOption?.label}
+                    {inputUnitOption?.value !== originalUnit?.toLowerCase() &&
+                      ' *'}
+                  </SourceName>
+                </SourceItem>
+              </Dropdown>
+            </div>
           </td>
           <td>
-            <Dropdown
-              content={
-                <Menu>
-                  <Menu.Header>
-                    <span style={{ wordBreak: 'break-word' }}>
-                      Select preferred unit
-                    </span>
-                  </Menu.Header>
-                  {unitConversionMenuItems}
-                </Menu>
-              }
-            >
-              <SourceItem>
-                <SourceName>{preferredUnitOption?.label}</SourceName>
-              </SourceItem>
-            </Dropdown>
+            <div role="none" onClick={(event) => event.stopPropagation()}>
+              <Dropdown
+                content={
+                  <Menu>
+                    <Menu.Header>
+                      <span style={{ wordBreak: 'break-word' }}>
+                        Select preferred unit
+                      </span>
+                    </Menu.Header>
+                    {unitConversionMenuItems}
+                  </Menu>
+                }
+              >
+                <SourceItem>
+                  <SourceName>{preferredUnitOption?.label}</SourceName>
+                </SourceItem>
+              </Dropdown>
+            </div>
           </td>
         </>
       )}
@@ -281,6 +300,31 @@ export default function TimeSeriesRow({
                   hideWhenEmpty={false}
                 />
               </SourceName>
+            </SourceItem>
+          </td>
+        </>
+      )}
+      {isWorkspaceMode && (
+        <>
+          <td>
+            <SourceItem>
+              <SourceName>
+                <Button
+                  variant="ghost"
+                  icon="Info"
+                  onClick={(event) => {
+                    if (isSelected) {
+                      event.stopPropagation();
+                    }
+                    onInfoClick(id);
+                  }}
+                />
+              </SourceName>
+            </SourceItem>
+          </td>
+          <td>
+            <SourceItem>
+              <SourceName />
             </SourceItem>
           </td>
         </>

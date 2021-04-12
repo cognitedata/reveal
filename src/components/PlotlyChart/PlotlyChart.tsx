@@ -31,7 +31,7 @@ import StackedChartIconPath from './StackedChartIcon';
 
 type ChartProps = {
   chart: Chart;
-  onAxisChange?: ({ x, y }: { x: number[]; y: AxisUpdate[] }) => void;
+  onAxisChange?: ({ x, y }: { x: string[]; y: AxisUpdate[] }) => void;
   isPreview?: boolean;
   isInSearch?: boolean;
   defaultStackedMode?: boolean;
@@ -179,7 +179,7 @@ const PlotlyChartComponent = ({
         )?.label,
       })),
       ...(enabledWorkflows || [])
-        .filter((wf) => wf.enabled)
+        .filter((workflow) => workflow.enabled)
         .map((workflow, i) => ({
           id: workflow?.id,
           type: 'workflow',

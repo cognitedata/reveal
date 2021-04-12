@@ -8,8 +8,18 @@ type Props = {
   chart: Chart;
   updateChart: (c: Chart) => void;
   mode: Modes;
+  selectedSourceId?: string;
+  onRowClick?: (id?: string) => void;
+  onInfoClick?: (id?: string) => void;
 };
-export default function TimeSeriesRows({ chart, updateChart, mode }: Props) {
+export default function TimeSeriesRows({
+  chart,
+  updateChart,
+  mode,
+  onRowClick = () => {},
+  onInfoClick = () => {},
+  selectedSourceId,
+}: Props) {
   const isWorkspaceMode = mode === 'workspace';
   const isEditorMode = mode === 'editor';
   const isFileViewerMode = mode === 'file';
@@ -18,19 +28,21 @@ export default function TimeSeriesRows({ chart, updateChart, mode }: Props) {
     <>
       {(chart?.timeSeriesCollection?.length || 0) > 0 && (
         <tr>
-          <TypeLabel colSpan={6}>Time series</TypeLabel>
+          <TypeLabel colSpan={10}>Time series</TypeLabel>
         </tr>
       )}
       {chart?.timeSeriesCollection?.map((t) => (
         <TimeSeriesRow
+          key={t.id}
           mutate={updateChart}
           chart={chart}
           timeseries={t}
-          active={false}
-          disabled={isEditorMode}
           isWorkspaceMode={isWorkspaceMode}
+          onRowClick={onRowClick}
+          onInfoClick={onInfoClick}
+          isSelected={selectedSourceId === t.id}
+          disabled={isEditorMode}
           isFileViewerMode={isFileViewerMode}
-          key={t.id}
         />
       ))}
     </>

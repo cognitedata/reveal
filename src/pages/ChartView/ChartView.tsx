@@ -18,20 +18,19 @@ import {
   useDeleteChart,
 } from 'hooks/firebase';
 import { nanoid } from 'nanoid';
-import { Chart } from 'reducers/charts/types';
+import { Chart, ChartTimeSeries, ChartWorkflow } from 'reducers/charts/types';
 import { getEntryColor } from 'utils/colors';
 import { useLoginStatus, useQueryString } from 'hooks';
 import { useQueryClient } from 'react-query';
-import { duplicate } from 'utils/charts';
+import { duplicate, updateSourceAxisForChart } from 'utils/charts';
 import { SEARCH_KEY } from 'utils/constants';
 import { Modes } from 'pages/types';
+import { ContextMenu } from 'components/ContextMenu';
 import TimeSeriesRows from './TimeSeriesRows';
 import WorkflowRows from './WorkflowRows';
 import RunWorkflows from './RunWorkflowsButton';
 import {
   BottomPaneWrapper,
-  BottombarItem,
-  BottombarWrapper,
   ChartContainer,
   ChartViewContainer,
   ChartWrapper,
@@ -41,7 +40,6 @@ import {
   SourceName,
   SourceTable,
   SourceTableWrapper,
-  ToolbarIcon,
   TopPaneWrapper,
 } from './elements';
 
@@ -58,6 +56,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
 
   const { chartId = chartIdProp } = useParams<{ chartId: string }>();
   const { data: chart, isError, isFetched } = useChart(chartId);
+  const [showContextMenu, setShowContextMenu] = useState(false);
 
   const {
     mutateAsync,
@@ -98,7 +97,9 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     });
   }, [chartId, login, cache]);
 
-  const [activeSourceItem, setActiveSourceItem] = useState<string>();
+  const [selectedSourceId, setSelectedSourceId] = useState<
+    string | undefined
+  >();
 
   const [showSearch, setShowSearch] = useState(false);
   const [workspaceMode, setWorkspaceMode] = useState<Modes>('workspace');
@@ -153,30 +154,10 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   }
 
   const handleChangeSourceAxis = debounce(
-    ({ x, y }: { x: number[]; y: AxisUpdate[] }) => {
+    ({ x, y }: { x: string[]; y: AxisUpdate[] }) => {
       if (chart) {
-        const newChart = {
-          ...chart,
-        };
-
-        if (x.length === 2) {
-          newChart.dateFrom = `${x[0]}`;
-          newChart.dateTo = `${x[1]}`;
-        }
-
-        if (y.length > 0) {
-          y.forEach((update) => {
-            newChart.timeSeriesCollection = newChart.timeSeriesCollection?.map(
-              (t) => (t.id === update.id ? { ...t, range: update.range } : t)
-            );
-            newChart.workflowCollection = newChart.workflowCollection?.map(
-              (wf) =>
-                wf.id === update.id ? { ...wf, range: update.range } : wf
-            );
-          });
-        }
-
-        updateChart(newChart);
+        const updatedChart = updateSourceAxisForChart(chart, { x, y });
+        updateChart(updatedChart);
       }
     },
     500
@@ -205,16 +186,49 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     }
   };
 
-  const handleOpenSearch = () => {
+  const handleSourceClick = async (sourceId?: string) => {
+    setSelectedSourceId(sourceId);
+  };
+
+  const handleInfoClick = async (sourceId?: string) => {
+    const isSameSource = sourceId === selectedSourceId;
+    const showMenu = isSameSource ? !showContextMenu : true;
+    setShowContextMenu(showMenu);
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
+  };
+
+  const handleCloseContextMenu = async () => {
+    setShowContextMenu(false);
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
+  };
+
+  const handleOpenSearch = async () => {
     setShowSearch(true);
     setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
   };
 
-  const handleCloseSearch = () => {
+  const handleCloseSearch = async () => {
     setShowSearch(false);
     setQuery('');
     setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
   };
+
+  const selectedSourceItem = [
+    ...(chart.timeSeriesCollection || []).map(
+      (ts) =>
+        ({
+          type: 'timeseries',
+          ...ts,
+        } as ChartTimeSeries)
+    ),
+    ...(chart.workflowCollection || []).map(
+      (wf) =>
+        ({
+          type: 'workflow',
+          ...wf,
+        } as ChartWorkflow)
+    ),
+  ].find(({ id }) => id === selectedSourceId);
 
   const sourceTableHeaderRow = (
     <tr>
@@ -248,6 +262,16 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
           <th style={{ width: 100 }}>
             <SourceItem>
               <SourceName>P&amp;IDs</SourceName>
+            </SourceItem>
+          </th>
+          <th>
+            <SourceItem>
+              <SourceName>Details</SourceName>
+            </SourceItem>
+          </th>
+          <th>
+            <SourceItem>
+              <SourceName>Edit</SourceName>
             </SourceItem>
           </th>
         </>
@@ -340,21 +364,26 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                         chart={chart}
                         updateChart={updateChart}
                         mode={workspaceMode}
+                        selectedSourceId={selectedSourceId}
+                        onRowClick={handleSourceClick}
+                        onInfoClick={handleInfoClick}
                       />
                       <WorkflowRows
                         chart={chart}
-                        setActive={setActiveSourceItem}
-                        setMode={setWorkspaceMode}
                         updateChart={updateChart}
-                        activeWorkflow={activeSourceItem}
+                        mode={workspaceMode}
+                        setMode={setWorkspaceMode}
+                        selectedSourceId={selectedSourceId}
+                        onRowClick={handleSourceClick}
+                        onInfoClick={handleInfoClick}
                       />
                     </tbody>
                   </SourceTable>
                 </SourceTableWrapper>
-                {workspaceMode === 'editor' && !!activeSourceItem && (
+                {workspaceMode === 'editor' && !!selectedSourceId && (
                   <NodeEditor
                     mutate={mutateAsync}
-                    workflowId={activeSourceItem}
+                    workflowId={selectedSourceId}
                     setWorkspaceMode={setWorkspaceMode}
                     chart={chart}
                   />
@@ -363,25 +392,13 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
             </BottomPaneWrapper>
           </SplitPaneLayout>
         </ChartContainer>
-        <BottombarWrapper>
-          <BottombarItem
-            isActive={workspaceMode === 'workspace'}
-            onClick={() => setWorkspaceMode('workspace')}
-          >
-            <ToolbarIcon type="Timeseries" />
-            <span style={{ paddingLeft: 10, paddingRight: 10 }}>Workspace</span>
-          </BottombarItem>
-          <BottombarItem
-            isActive={workspaceMode === 'editor'}
-            onClick={() => setWorkspaceMode('editor')}
-          >
-            <ToolbarIcon type="Edit" />
-            <span style={{ paddingLeft: 10, paddingRight: 10 }}>
-              Calculations
-            </span>
-          </BottombarItem>
-        </BottombarWrapper>
       </ContentWrapper>
+      <ContextMenu
+        chart={chart}
+        visible={showContextMenu}
+        onClose={handleCloseContextMenu}
+        sourceItem={selectedSourceItem}
+      />
     </ChartViewContainer>
   );
 };
