@@ -23,7 +23,7 @@ window.THREE = THREE;
 export function Migration() {
   const canvasWrapperRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    const gui = new dat.GUI({ width: 500 });
+    const gui = new dat.GUI({ width: Math.min(500, 0.8*window.innerWidth) });
     let viewer: Cognite3DViewer;
 
     function createGeometryFilter(input: string | null): { center: THREE.Vector3, size: THREE.Vector3 } | undefined  {
