@@ -17,7 +17,7 @@
     "@cognite/sdk-react-query-hooks": "^3.0.0",
     "@sentry/browser": "^5.29.2",
     "@types/react-datepicker": "^3.1.7",
-    "antd": "^4.15.0",
+    "antd": "^4.15.1",
     "history": "^4.10.1",
     "lodash": "^4.17.21",
     "mixpanel-browser": "^2.41.0",
