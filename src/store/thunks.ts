@@ -26,20 +26,25 @@ export const fetchAppData = (apiClient: ApiClient, metrics: Metrics) => async (
     getMetrics().people({ isAdmin });
   } catch (e) {
     if (e?.status === 404) {
-      // is it still needed?
-      dispatch(groupActions.loadedGroups([]));
       dispatch(suiteActions.loadedSuitesTable([]));
       dispatch(setHttpError('Failed to fetch app data', e));
       Sentry.captureException(e);
     } else if (e?.status === 403) {
-      dispatch(groupActions.loadedGroups([]));
       dispatch(suiteActions.loadedSuitesTable([]));
       metrics.track('NotAuthorizedUser');
     } else {
-      dispatch(groupActions.loadGroupsError(e));
       dispatch(suiteActions.loadSuitesTableFailed(e));
       dispatch(setHttpError('Failed to fetch app data', e));
       Sentry.captureException(e);
+    }
+
+    // try to load user groups
+    try {
+      const groups = await apiClient.getUserGroups();
+      dispatch(groupActions.loadedGroups(groups));
+    } catch (error) {
+      dispatch(setHttpError('Failed to fetch user groups', e));
+      Sentry.captureException(error);
     }
   }
 };

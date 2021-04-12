@@ -29,16 +29,20 @@ export class ApiClient {
     return this.makeGETRequest(`/appData?linkedGroupsOnly=${linkedGroupsOnly}`);
   }
 
+  getUserGroups(linkedOnly: boolean = true): Promise<Group[]> {
+    return this.makeGETRequest(`/groups?linkedOnly=${linkedOnly}`);
+  }
+
   getSuites(): Promise<Suite[]> {
     return this.makeGETRequest('/suites');
   }
 
   saveSuite(suite: Suite): Promise<void> {
-    return this.makePOSTRequest('/suites', { data: { suite } });
+    return this.makePOSTRequest('/suites', { suite });
   }
 
   deleteSuite(suiteKey: string): Promise<void> {
-    return this.makeDELETERequest('/suites', { data: { key: suiteKey } });
+    return this.makeDELETERequest('/suites', { key: suiteKey });
   }
 
   getUserSpace(): Promise<UserSpacePayload> {

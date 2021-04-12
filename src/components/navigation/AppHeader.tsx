@@ -21,8 +21,8 @@ import { modalOpen } from 'store/modals/actions';
 import { getConfigState } from 'store/config/selectors';
 import { addConfigItems } from 'store/config/actions';
 import useHelpCenter from 'hooks/useHelpCenter';
-import { apiClient } from 'utils';
 import { setNotification } from 'store/notification/actions';
+import { ApiClientContext } from 'providers/ApiClientProvider';
 import CustomerLogo from './CustomerLogo';
 import {
   GroupPreview,
@@ -44,6 +44,8 @@ const AppHeader: React.FC = () => {
   const tenant = usePossibleTenant();
 
   const client = useContext(CdfClientContext);
+  const apiClient = useContext(ApiClientContext);
+
   const [customerLogoUrl, setCustomerLogoUrl] = useState('');
   const { toggleHelpCenter } = useHelpCenter();
 
@@ -149,11 +151,11 @@ const AppHeader: React.FC = () => {
             Upload customer logo
           </Menu.Item>
           {/* TODO(CM-406) */}
-          <Menu.Item appendIcon="Upload" onClick={syncSuites}>
+          <Menu.Item onClick={syncSuites}>
             Copy suites data from RAW to db-service
           </Menu.Item>
           {/* TODO(CM-406) */}
-          <Menu.Item appendIcon="Upload" onClick={syncLastVisited}>
+          <Menu.Item onClick={syncLastVisited}>
             Copy lastVisited data from RAW to db-service
           </Menu.Item>
         </Menu>
