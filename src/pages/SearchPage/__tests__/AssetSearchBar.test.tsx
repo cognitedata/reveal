@@ -131,23 +131,4 @@ describe('Asset Search Bar', () => {
     expect(updateFilter).toHaveBeenCalledTimes(1);
     expect(updateFilter).toBeCalledWith({ filter: { source: 'Hello' } });
   });
-
-  it('assetId filter', () => {
-    const updateFilter = jest.fn();
-    const container = mount(
-      <Provider store={store}>
-        <MemoryRouter>
-          <AssetSearchBar filter={{ filter: {} }} updateFilter={updateFilter} />
-        </MemoryRouter>
-      </Provider>
-    );
-
-    container.find(AssetSelect).simulate('click');
-
-    container.find('.ant-select-dropdown-menu-item').first().simulate('click');
-
-    expect(container.find(AssetSelect).text()).toContain(
-      'Asset Select Correct'
-    );
-  });
 });
