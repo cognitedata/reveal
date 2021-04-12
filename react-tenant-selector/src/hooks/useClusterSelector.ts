@@ -10,11 +10,6 @@ export const getNewDomain = (hostname: string, cluster: string) => {
     return [app, cluster, domain, tld].join('.');
   }
   if (sections.length === 4) {
-    if (sections[0] === 'preview' || sections[0] === 'staging') {
-      // eg: preview.foo.cogniteapp.com
-      const [type, app, domain, tld] = sections;
-      return [type, app, cluster, domain, tld].join('.');
-    }
     if (
       sections[1] === 'preview' ||
       sections[1] === 'staging' ||
@@ -29,31 +24,15 @@ export const getNewDomain = (hostname: string, cluster: string) => {
     return [app, cluster, domain, tld].join('.');
   }
   if (sections.length === 5) {
-    if (sections[0] === 'preview' || sections[0] === 'staging') {
-      // eg: foo.preview.cluster.cogniteapp.com
-      const [type, app, _cluster, domain, tld] = sections;
-      return [type, app, cluster, domain, tld].join('.');
-    }
     if (
       sections[1] === 'preview' ||
       sections[1] === 'staging' ||
       sections[1] === 'pr'
     ) {
-      // Handle 1234.pr.foo.cogniteapp.com edge case
-      if (Number.isNaN(+sections[0])) {
-        // eg: foo.preview.cluster.cogniteapp.com
-        const [app, type, _cluster, domain, tld] = sections;
-        return [app, type, cluster, domain, tld].join('.');
-      }
+      // eg: foo.preview.cluster.cogniteapp.com
+      const [app, type, _cluster, domain, tld] = sections;
+      return [app, type, cluster, domain, tld].join('.');
     }
-    // eg: 1234.pr.foo.cogniteapp.com
-    const [num, pr, app, domain, tld] = sections;
-    return [num, pr, app, cluster, domain, tld].join('.');
-  }
-  if (sections.length === 6) {
-    // eg: 1234.pr.foo.cluster.cogniteapp.com
-    const [num, pr, app, _cluster, domain, tld] = sections;
-    return [num, pr, app, cluster, domain, tld].join('.');
   }
   throw new Error('Domain is not supported');
 };
