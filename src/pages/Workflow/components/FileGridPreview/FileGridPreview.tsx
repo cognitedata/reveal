@@ -2,10 +2,21 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { FileInfo as File } from '@cognite/sdk';
 import { Loader, useFileIcon } from '@cognite/data-exploration';
 
-import { Body, DocumentIcon, Button, Dropdown, Menu } from '@cognite/cogs.js';
+import {
+  Body,
+  DocumentIcon,
+  Button,
+  Dropdown,
+  Menu,
+  Tooltip,
+} from '@cognite/cogs.js';
 import { Popover } from 'src/components/Common/Popover';
 import styled from 'styled-components';
 import { useAnnotationCounter } from 'src/store/hooks/useAnnotationCounter';
+import { selectUpdatedFileDetails } from 'src/store/uploadedFilesSlice';
+import { useSelector } from 'react-redux';
+import exifIcon from 'src/assets/exifIcon.svg';
+import { RootState } from 'src/store/rootReducer';
 import { AnnotationsBadge } from '../AnnotationsBadge/AnnotationsBadge';
 import { TableDataItem } from '../FileTable/FileTable';
 import { AnnotationsBadgePopoverContent } from '../AnnotationsBadge/AnnotationsBadgePopoverContent';
@@ -77,7 +88,7 @@ export const FileGridPreview = ({
         color: 'black' /* typpy styles make color to be white here ... */,
       }}
     >
-      <Menu.Item onClick={handleMetadataEdit}>Edit metadata</Menu.Item>
+      <Menu.Item onClick={handleMetadataEdit}>Edit file details</Menu.Item>
       <Menu.Item>Delete</Menu.Item>
     </Menu>
   );
@@ -89,13 +100,25 @@ export const FileGridPreview = ({
   const reviewDisabled = annotations.some((key) =>
     ['Queued', 'Running'].includes(annotationsBadgeProps[key]?.status || '')
   );
-
+  const fileDetails = useSelector((state: RootState) =>
+    selectUpdatedFileDetails(state, String(item.id))
+  );
   return (
     <PreviewCell style={style}>
       <div className="preview">
         {image}
         <div className="footer">
-          <div className="name">{item.name}</div>
+          <div className="nameAndExif">
+            <div className="name">{item.name}</div>
+            {fileDetails?.geoLocation && (
+              <Tooltip content="EXIF data added">
+                <div className="exif">
+                  <img src={exifIcon} alt="exifIcon" />
+                </div>
+              </Tooltip>
+            )}
+          </div>
+
           <div className="action">
             <Dropdown content={MenuContent}>
               <Button type="ghost" icon="MoreOverflowEllipsisHorizontal" />
@@ -151,10 +174,23 @@ const PreviewCell = styled.div`
       grid-template-areas:
         'name name name . action'
         'badge badge badge . review';
+      .nameAndExif {
+        display: flex;
+        height: inherit;
+        width: inherit;
+        white-space: nowrap;
+      }
       .name {
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;
+        grid-area: name;
+        white-space: nowrap;
+        max-width: 150px;
+      }
+      .exif > img {
+        width: 11px;
+        padding-bottom: 15px;
         grid-area: name;
       }
       .action {

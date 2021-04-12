@@ -2,7 +2,10 @@ import styled from 'styled-components';
 import { Input, Title } from '@cognite/cogs.js';
 import React, { ReactText, useEffect } from 'react';
 import { TableWrapper } from 'src/pages/Workflow/components/FileTable/FileTableWrapper';
-import { TableDataItem } from 'src/pages/Workflow/components/FileTable/FileTable';
+import {
+  ExifIcon,
+  TableDataItem,
+} from 'src/pages/Workflow/components/FileTable/FileTable';
 import ReactBaseTable, {
   BaseTableProps,
   Column,
@@ -10,7 +13,11 @@ import ReactBaseTable, {
 } from 'react-base-table';
 import store from 'src/store';
 import { fileMetaDataEdit } from 'src/store/uploadedFilesSlice';
-import { MetadataItem } from 'src/components/FileMetadata/Types';
+import {
+  MetadataItem,
+  VisionFileDetails,
+} from 'src/components/FileMetadata/Types';
+import exifIcon from 'src/assets/exifIcon.svg';
 
 const Container = styled.div`
   width: 100%;
@@ -19,6 +26,8 @@ const Container = styled.div`
 
 const TitleHeader = styled.div`
   margin-bottom: 18px;
+  display: flex;
+  align-items: center;
 `;
 
 type TableProps = Omit<Omit<BaseTableProps<TableDataItem>, 'width'>, 'height'>;
@@ -28,6 +37,7 @@ type MetadataTableProps = TableProps & {
   editMode: boolean;
   data: MetadataItem[];
   columnWidth: number;
+  details: VisionFileDetails | null;
 };
 
 const { dispatch } = store;
@@ -114,6 +124,11 @@ export const MetaDataTable = (props: MetadataTableProps) => {
     <Container>
       <TitleHeader>
         <Title level={6}>{props.title}</Title>
+        {props.details?.geoLocation && (
+          <ExifIcon>
+            <img src={exifIcon} alt="exifIcon" />
+          </ExifIcon>
+        )}
       </TitleHeader>
       <TableWrapper>
         <ReactBaseTable<MetadataItem>

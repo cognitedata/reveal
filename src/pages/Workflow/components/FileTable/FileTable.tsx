@@ -1,6 +1,6 @@
 import React from 'react';
 import { TimeDisplay } from '@cognite/data-exploration';
-import { Button, Dropdown, Menu } from '@cognite/cogs.js';
+import { Button, Dropdown, Menu, Tooltip } from '@cognite/cogs.js';
 
 import AutoSizer from 'react-virtualized-auto-sizer';
 import ReactBaseTable, {
@@ -8,10 +8,14 @@ import ReactBaseTable, {
   Column,
   ColumnShape,
 } from 'react-base-table';
-
+import exifIcon from 'src/assets/exifIcon.svg';
 import { Popover } from 'src/components/Common/Popover';
 import { AnnotationsBadgeProps } from 'src/pages/Workflow/types';
 import { useAnnotationCounter } from 'src/store/hooks/useAnnotationCounter';
+import styled from 'styled-components';
+import { selectUpdatedFileDetails } from 'src/store/uploadedFilesSlice';
+import { useSelector } from 'react-redux';
+import { RootState } from 'src/store/rootReducer';
 import { TableWrapper } from './FileTableWrapper';
 import { AnnotationsBadge } from '../AnnotationsBadge/AnnotationsBadge';
 import { AnnotationsBadgePopoverContent } from '../AnnotationsBadge/AnnotationsBadgePopoverContent';
@@ -90,6 +94,24 @@ function AnnotationRendrer(annotationsBadgeProps: AnnotationsBadgeProps) {
   );
 }
 
+function NameRenderer({ rowData: { name, id } }: CellRenderer) {
+  const fileDetails = useSelector((state: RootState) =>
+    selectUpdatedFileDetails(state, String(id))
+  );
+  return (
+    <FileRow>
+      <FileNameText>{name}</FileNameText>
+      {fileDetails?.geoLocation && (
+        <Tooltip content="EXIF data added">
+          <ExifIcon>
+            <img src={exifIcon} alt="exifIcon" />
+          </ExifIcon>
+        </Tooltip>
+      )}
+    </FileRow>
+  );
+}
+
 function ActionRendrer(
   { rowData: { menu, id } }: CellRenderer,
   annotationsBadgeProps: AnnotationsBadgeProps
@@ -107,7 +129,7 @@ function ActionRendrer(
         color: 'black' /* typpy styles make color to be white here ... */,
       }}
     >
-      <Menu.Item onClick={handleMetadataEdit}>Edit metadata</Menu.Item>
+      <Menu.Item onClick={handleMetadataEdit}>Edit file details</Menu.Item>
       <Menu.Item>Delete</Menu.Item>
     </Menu>
   );
@@ -152,14 +174,14 @@ function stringRenderer(cellProps: { cellData: string }) {
 }
 
 export function FileTable(props: FileTableProps) {
-  console.log('Render table');
-
   const Cell = (cellProps: any) => {
-    // console.log('Calling cell rendrers');
-
-    if (['status', 'annotations', 'action'].includes(cellProps.column.key)) {
+    if (
+      ['name', 'status', 'annotations', 'action'].includes(cellProps.column.key)
+    ) {
       const annotationsBadgeProps = useAnnotationCounter(cellProps.rowData.id);
-
+      if (cellProps.column.key === 'name') {
+        return NameRenderer(cellProps);
+      }
       if (cellProps.column.key === 'status') {
         return StatusRendrer(cellProps, annotationsBadgeProps);
       }
@@ -230,3 +252,27 @@ export function FileTable(props: FileTableProps) {
     </TableWrapper>
   );
 }
+
+export const FileRow = styled.div`
+  display: flex;
+  flex: 1 1 auto;
+  height: inherit;
+  width: inherit;
+  align-items: center;
+`;
+
+export const FileNameText = styled.div`
+  display: flex;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  flex: 0 1 auto;
+`;
+
+export const ExifIcon = styled.div`
+  display: flex;
+  padding-bottom: 15px;
+  padding-right: 0px;
+  padding-left: 0px;
+  flex: 0 0 auto;
+`;

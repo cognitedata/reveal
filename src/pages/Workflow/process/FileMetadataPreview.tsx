@@ -84,11 +84,12 @@ export const FileMetadataPreview = () => {
             onEditModeChange={onEditModeChange}
           />
           <MetaDataTable
-            title="MetaData"
+            title="Metadata"
             rowHeight={35}
             columnWidth={180}
             editMode={tableEditMode}
             data={fileMetadata}
+            details={fileDetails}
           />
           {fileDetails && (
             <FileMetadataFieldsContainer

@@ -10,6 +10,7 @@ import {
   selectUpdatedFileDetails,
   selectUpdatedFileMeta,
 } from 'src/store/uploadedFilesSlice';
+
 import isEqual from 'lodash-es/isEqual';
 import { FileMetadataFieldsContainer } from 'src/components/FileMetadata/FileMetadataFieldsContainer';
 import { MetadataTableToolBar } from 'src/components/FileMetadata/MetadataTableToolBar';
@@ -84,7 +85,7 @@ export const FileDetailEdit: React.FC<FileDetailCompProps> = ({
       }
     }, 100);
   };
-
+  console.log(fileDetails);
   return (
     <Container>
       <TitleRow>
@@ -105,11 +106,12 @@ export const FileDetailEdit: React.FC<FileDetailCompProps> = ({
           onEditModeChange={onEditModeChange}
         />
         <MetaDataTable
-          title="MetaData"
+          title="Metadata"
           rowHeight={35}
           editMode={tableEditMode}
           data={fileMetadata}
           columnWidth={250}
+          details={fileDetails}
         />
       </DetailsContainer>
     </Container>
