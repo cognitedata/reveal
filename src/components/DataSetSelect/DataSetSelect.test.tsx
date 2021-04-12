@@ -56,34 +56,6 @@ describe('Data set Select', () => {
     jest.clearAllMocks();
   });
 
-  it('can select option', () => {
-    // Test first render and effect
-    const mockFunction = jest.fn();
-    const container = mount(
-      <Provider store={store}>
-        <MemoryRouter>
-          <DataSetSelect
-            onDataSetSelected={mockFunction}
-            resourceType="assets"
-          />
-        </MemoryRouter>
-      </Provider>
-    );
-    const wrapper = container.find(Select);
-
-    // Test second render and effect
-    expect(container.find('li[role="option"]').length).toBe(0);
-
-    wrapper.simulate('click');
-    const options = container.find('li[role="option"]');
-    expect(options.length).toBe(2);
-
-    expect(options.at(0).text()).toEqual('Entity Matcher Output');
-
-    options.at(0).simulate('click');
-    expect(mockFunction).toBeCalled();
-  });
-
   it('can select multiple option', () => {
     // Test first render and effect
     let selectedIds: number[] = [];

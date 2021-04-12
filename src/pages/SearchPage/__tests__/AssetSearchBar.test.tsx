@@ -4,7 +4,6 @@ import { MemoryRouter } from 'react-router-dom';
 import { mount } from 'enzyme';
 import * as DataSetSelectors from 'modules/datasets/selectors';
 import { mockStore } from 'utils/mockStore';
-import AssetSelect from 'components/AssetSelect';
 import AssetSearchBar from '../AssetSearchBar';
 
 const initialStoreState: any = {
