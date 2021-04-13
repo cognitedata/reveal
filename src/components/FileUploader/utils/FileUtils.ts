@@ -4,7 +4,8 @@
 import mime from 'mime-types';
 import { FileInfo } from '@cognite/sdk';
 
-export const getMIMEType = (fileURI: string) => mime.lookup(fileURI);
+export const getMIMEType = (fileURI: string) =>
+  mime.lookup(fileURI) || 'application/octet-stream';
 
 export const PREVIEWABLE_FILE_TYPES = ['png', 'jpeg', 'jpg', 'svg', 'pdf'];
 
