@@ -18,11 +18,19 @@ import { SpacedRow } from './SpacedRow';
 import { getMIMEType } from './utils/FileUtils';
 import { sleep } from './utils';
 
-const GCSUploader = (
-  file: Blob,
-  uploadUrl: string,
-  callback: (info: any) => void = () => {}
-) => {
+type GCSUploaderOptions = {
+  file: Blob;
+  uploadUrl: string;
+  contentType: string;
+  onChunkUpload: (info: any) => void;
+};
+
+const GCSUploader = ({
+  file,
+  uploadUrl,
+  contentType,
+  onChunkUpload = () => {},
+}: GCSUploaderOptions) => {
   // This is what is recommended from google when uploading files.
   // https://github.com/QubitProducts/gcs-browser-upload
   /*
@@ -41,9 +49,10 @@ const GCSUploader = (
   return new UploadGCS({
     id: 'cognite-data-fusion-upload',
     url: uploadUrl,
+    contentType,
     file,
     chunkSize: 262144 * chunkMultiple,
-    onChunkUpload: callback,
+    onChunkUpload,
   });
 };
 
@@ -268,7 +277,7 @@ export const FileUploader = ({
     try {
       const fileMetadata = (await sdk.files.upload({
         name: file.name,
-        mimeType: mimeType || undefined,
+        mimeType,
         source: 'CDF Vision',
         dataSetId: dataSetIds ? dataSetIds[0] : undefined,
         // I can see directory in api docs, but looks like SDK misses it
@@ -302,10 +311,14 @@ export const FileUploader = ({
 
       const { uploadUrl, id } = fileMetadata;
 
-      currentUploads[file.uid] = await GCSUploader(
+      currentUploads[file.uid] = await GCSUploader({
         file,
         uploadUrl,
-        (info: { uploadedBytes: number; totalBytes: number }) => {
+        contentType: mimeType,
+        onChunkUpload: (info: {
+          uploadedBytes: number;
+          totalBytes: number;
+        }) => {
           // console.log(
           //   'file chunk response',
           //   file.name,
@@ -316,8 +329,8 @@ export const FileUploader = ({
           file.percent = (info.uploadedBytes / info.totalBytes) * 100;
 
           setFileList((list) => [...list]);
-        }
-      );
+        },
+      });
 
       await currentUploads[file.uid].start();
 
