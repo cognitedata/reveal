@@ -21,11 +21,13 @@ export const fetchSuites = (apiClient: ApiClient, metrics?: Metrics) => async (
     if (e?.status === 404) {
       dispatch(actions.loadedSuitesTable([]));
       if (e.message.includes('database not found')) {
+        // eslint-disable-next-line no-console
         console.warn(
           'In order to use digital-cockpit, a database named `digital-cockpit` needs to be created in RAW'
         );
       }
       if (e.message.includes('table not found')) {
+        // eslint-disable-next-line no-console
         console.warn(
           'In order to use digital-cockpit, a table named `suites` needs to be created in the database `digital-cockpit` in RAW'
         );

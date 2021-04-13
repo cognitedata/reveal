@@ -15,7 +15,7 @@ const initialState: NotificationState = {
 export const NotificationReducer = createReducer(initialState)
   .handleAction(
     NotificationTypes.SET_ERROR,
-    (state: NotificationState, action: NotificationRootAction) => ({
+    (_: NotificationState, action: NotificationRootAction) => ({
       type: 'error',
       title: isArray(action.payload) ? action.payload[0] : action.payload,
       message: isArray(action.payload)
@@ -25,7 +25,7 @@ export const NotificationReducer = createReducer(initialState)
   )
   .handleAction(
     NotificationTypes.SET_NOTIFICATION,
-    (state: NotificationState, action: NotificationRootAction) => ({
+    (_: NotificationState, action: NotificationRootAction) => ({
       type: 'success',
       title: isArray(action.payload) ? action.payload[0] : action.payload,
       message: isArray(action.payload)

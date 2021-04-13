@@ -1,4 +1,3 @@
-import React from 'react';
 import PageLayout from 'pages/PageLayout';
 import { Title, Graphic } from '@cognite/cogs.js';
 import { NoItemsContainer } from 'styles/common';

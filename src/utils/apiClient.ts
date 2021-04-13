@@ -74,7 +74,7 @@ export class ApiClient {
     });
 
     return response.status === 200
-      ? Promise.resolve(await response.data)
+      ? Promise.resolve<T>(await response.data)
       : // eslint-disable-next-line prefer-promise-reject-errors
         Promise.reject((await response.data)?.error as Error);
   }
