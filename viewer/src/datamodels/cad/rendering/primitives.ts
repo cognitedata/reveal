@@ -21,6 +21,10 @@ import { Materials } from './materials';
 import { ParsePrimitiveAttribute } from '@cognite/reveal-parser-worker';
 import { disposeAttributeArrayOnUpload } from '../../../utilities/disposeAttributeArrayOnUpload';
 import assert from 'assert';
+import {
+  computeBoundingBoxFromCenterAndRadiusAttributes,
+  computeBoundingBoxFromInstanceMatrixAttributes
+} from './computeBoundingBoxFromAttributes';
 
 export function* createPrimitives(
   sector: SectorGeometry,
@@ -36,17 +40,18 @@ export function* createPrimitives(
   if (hasAny(primitives.circleCollection)) {
     yield createCircles(primitives.circleCollection, primitives.circleAttributes, materials.circle, clipBox);
   }
-  // if (hasAny(primitives.coneCollection)) {
-  //   yield createCones(primitives.coneCollection, primitives.coneAttributes, materials.cone, bounds);
-  // }
-  // if (hasAny(primitives.eccentricConeCollection)) {
-  //   yield createEccentricCones(
-  //     primitives.eccentricConeCollection,
-  //     primitives.eccentricConeAttributes,
-  //     materials.eccentricCone,
-  //     bounds
-  //   );
-  // }
+  if (hasAny(primitives.coneCollection)) {
+    yield createCones(primitives.coneCollection, primitives.coneAttributes, materials.cone, bounds, clipBox);
+  }
+  if (hasAny(primitives.eccentricConeCollection)) {
+    yield createEccentricCones(
+      primitives.eccentricConeCollection,
+      primitives.eccentricConeAttributes,
+      materials.eccentricCone,
+      bounds,
+      clipBox
+    );
+  }
   // if (hasAny(primitives.ellipsoidSegmentCollection)) {
   //   yield createEllipsoidSegments(
   //     primitives.ellipsoidSegmentCollection,
@@ -55,14 +60,16 @@ export function* createPrimitives(
   //     bounds
   //   );
   // }
-  // if (hasAny(primitives.generalCylinderCollection)) {
-  //   yield createGeneralCylinders(
-  //     primitives.generalCylinderCollection,
-  //     primitives.generalCylinderAttributes,
-  //     materials.generalCylinder,
-  //     bounds
-  //   );
-  // }
+  if (hasAny(primitives.generalCylinderCollection)) {
+    const cylinders = createGeneralCylinders(
+      primitives.generalCylinderCollection,
+      primitives.generalCylinderAttributes,
+      materials.generalCylinder,
+      bounds,
+      clipBox
+    );
+    if (cylinders) yield cylinders;
+  }
   if (hasAny(primitives.generalRingCollection)) {
     yield createGeneralRings(
       primitives.generalRingCollection,
@@ -243,15 +250,16 @@ function createCones(
   coneAttributes: Map<string, ParsePrimitiveAttribute>,
   material: THREE.ShaderMaterial,
   bounds: THREE.Box3,
-  // TODO 2021-04-12 larsmoa: Add support for clipBox to createCones
-  _clipBox: THREE.Box3 | undefined
+  clipBox: THREE.Box3 | undefined
 ) {
+  const filteredCollection = filterPrimitivesOutsideClipBoxByCenterAndRadius(coneCollection, coneAttributes, clipBox);
+
   const geometry = new THREE.InstancedBufferGeometry();
   const mesh = new THREE.Mesh(geometry, material);
 
   geometry.setIndex(coneGeometry.index);
   geometry.setAttribute('position', coneGeometry.position);
-  setAttributes(geometry, coneCollection, coneAttributes, mesh);
+  setAttributes(geometry, filteredCollection, coneAttributes, mesh);
   setBoundsFromBox(geometry, bounds);
 
   mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
@@ -264,15 +272,20 @@ function createEccentricCones(
   eccentericConeAttributes: Map<string, ParsePrimitiveAttribute>,
   material: THREE.ShaderMaterial,
   bounds: THREE.Box3,
-  // TODO 2021-04-12 larsmoa: Add support for clipBox to createEccentricCones
-  _clipBox: THREE.Box3 | undefined
+  clipBox: THREE.Box3 | undefined
 ) {
+  const filteredCollection = filterPrimitivesOutsideClipBoxByCenterAndRadius(
+    eccentericConeCollection,
+    eccentericConeAttributes,
+    clipBox
+  );
+
   const geometry = new THREE.InstancedBufferGeometry();
   const mesh = new THREE.Mesh(geometry, material);
 
   geometry.setIndex(coneGeometry.index);
   geometry.setAttribute('position', coneGeometry.position);
-  setAttributes(geometry, eccentericConeCollection, eccentericConeAttributes, mesh);
+  setAttributes(geometry, filteredCollection, eccentericConeAttributes, mesh);
   setBoundsFromBox(geometry, bounds);
 
   mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
@@ -306,15 +319,26 @@ function createGeneralCylinders(
   generalCylinderAttributes: Map<string, ParsePrimitiveAttribute>,
   material: THREE.ShaderMaterial,
   bounds: THREE.Box3,
-  // TODO 2021-04-12 larsmoa: Add support for clipBox to createGeneralCylinders
-  _clipBox: THREE.Box3 | undefined
-) {
+  clipBox: THREE.Box3 | undefined
+): THREE.Mesh | null {
+  const filteredCollection = filterPrimitivesOutsideClipBoxByCenterAndRadius(
+    generalCylinderCollection,
+    generalCylinderAttributes,
+    clipBox,
+    'radius',
+    'radius'
+  );
+  if (filteredCollection.length === 0) {
+    console.log('SKIP');
+    return null;
+  }
+
   const geometry = new THREE.InstancedBufferGeometry();
   const mesh = new THREE.Mesh(geometry, material);
 
   geometry.setIndex(coneGeometry.index);
   geometry.setAttribute('position', coneGeometry.position);
-  setAttributes(geometry, generalCylinderCollection, generalCylinderAttributes, mesh);
+  setAttributes(geometry, filteredCollection, generalCylinderAttributes, mesh);
   setBoundsFromBox(geometry, bounds);
 
   mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
@@ -596,38 +620,20 @@ function filterPrimitivesOutsideClipBoxByBaseBoundsAndInstanceMatrix(
   const attributeFloatValues = new Float32Array(attributesByteValues.buffer);
   const instanceMatrixAttribute = attributes.get('instanceMatrix');
   assert(instanceMatrixAttribute !== undefined);
-  const instanceMatrix = new THREE.Matrix4();
   const instanceBbox = new THREE.Box3();
 
   const filteredByteValues = new Uint8Array(attributesByteValues.length);
   let filteredCount = 0;
   for (let i = 0; i < elementCount; ++i) {
-    const offset = (i * elementSize + instanceMatrixAttribute.offset) / attributeFloatValues.BYTES_PER_ELEMENT;
-    // Note! set() accepts row-major, stored column-major
-    instanceMatrix.set(
-      attributeFloatValues[offset + 0],
-      attributeFloatValues[offset + 4],
-      attributeFloatValues[offset + 8],
-      attributeFloatValues[offset + 12],
-
-      attributeFloatValues[offset + 1],
-      attributeFloatValues[offset + 5],
-      attributeFloatValues[offset + 9],
-      attributeFloatValues[offset + 13],
-
-      attributeFloatValues[offset + 2],
-      attributeFloatValues[offset + 6],
-      attributeFloatValues[offset + 10],
-      attributeFloatValues[offset + 14],
-
-      attributeFloatValues[offset + 3],
-      attributeFloatValues[offset + 7],
-      attributeFloatValues[offset + 11],
-      attributeFloatValues[offset + 15]
+    computeBoundingBoxFromInstanceMatrixAttributes(
+      instanceMatrixAttribute,
+      attributeFloatValues,
+      elementSize,
+      i,
+      baseBox,
+      instanceBbox
     );
 
-    instanceBbox.copy(baseBox);
-    instanceBbox.applyMatrix4(instanceMatrix);
     if (clipBox.intersectsBox(instanceBbox)) {
       const elementValues = attributesByteValues.slice(i * elementSize, (i + 1) * elementSize);
       filteredByteValues.set(elementValues, filteredCount * elementSize);
@@ -636,5 +642,57 @@ function filterPrimitivesOutsideClipBoxByBaseBoundsAndInstanceMatrix(
   }
 
   console.log('filtered', elementCount, 'to', filteredCount, 'primitives');
+  return filteredByteValues.slice(0, filteredCount * elementSize);
+}
+
+function filterPrimitivesOutsideClipBoxByCenterAndRadius(
+  attributesByteValues: Uint8Array,
+  attributes: Map<string, ParsePrimitiveAttribute>,
+  clipBox: THREE.Box3 | undefined,
+  radiusAattributeName: string = 'radiusA',
+  radiusBattributeName: string = 'radiusB'
+): Uint8Array {
+  if (clipBox === undefined) {
+    return attributesByteValues;
+  }
+
+  const elementSize = Array.from(attributes.values()).reduce((a, b) => a + b.size, 0);
+  const elementCount = attributesByteValues.length / elementSize;
+
+  const attributeFloatValues = new Float32Array(attributesByteValues.buffer);
+  const centerAattribute = attributes.get('centerA');
+  const centerBattribute = attributes.get('centerB');
+  const radiusAattribute = attributes.get(radiusAattributeName);
+  const radiusBattribute = attributes.get(radiusBattributeName);
+  assert(
+    centerAattribute !== undefined &&
+      centerBattribute !== undefined &&
+      radiusAattribute !== undefined &&
+      radiusBattribute !== undefined
+  );
+  const instanceBbox = new THREE.Box3();
+
+  const filteredByteValues = new Uint8Array(attributesByteValues.length);
+  let filteredCount = 0;
+  for (let i = 0; i < elementCount; ++i) {
+    computeBoundingBoxFromCenterAndRadiusAttributes(
+      centerAattribute,
+      centerBattribute,
+      radiusAattribute,
+      radiusBattribute,
+      attributeFloatValues,
+      elementSize,
+      i,
+      instanceBbox
+    );
+
+    if (clipBox.intersectsBox(instanceBbox)) {
+      const elementValues = attributesByteValues.slice(i * elementSize, (i + 1) * elementSize);
+      filteredByteValues.set(elementValues, filteredCount * elementSize);
+      filteredCount++;
+    }
+  }
+
+  console.log('filtered', elementCount, 'to', filteredCount, 'primitives [RADIUS]');
   return filteredByteValues.slice(0, filteredCount * elementSize);
 }
