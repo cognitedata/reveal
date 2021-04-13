@@ -50,7 +50,7 @@
     "@ffmpeg-installer/ffmpeg": "^1.0.20",
     "@testing-library/jest-dom": "^5.11.10",
     "@testing-library/react": "^11.2.5",
-    "@testing-library/testcafe": "^4.3.1",
+    "@testing-library/testcafe": "^4.4.0",
     "@types/fetch-mock": "^7.3.3",
     "@types/jest": "^26.0.22",
     "@types/lodash": "^4.14.168",
