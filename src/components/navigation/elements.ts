@@ -6,32 +6,49 @@ export const SidebarContainer = styled.div<{ open: boolean }>`
   min-width: 298px;
   width: 298px;
   border-right: 1px solid var(--cogs-color-strokes-default);
-  padding: 16px 24px;
+  padding: 20px 24px;
   z-index: ${layers.LEFT_SIDEBAR};
   background: var(--cogs-white);
-  transform: ${({ open }) => (open ? 'translateX(0)' : 'translateX(-286px)')};
-  ${({ open }) => !open && 'position: fixed'};
-  transition: all 0.3s ease-in-out;
+  position: relative;
+  margin-left: ${({ open }) => (open ? '0px' : '-242px')};
+  ${({ open }) => !open && 'padding: 16px 4px'};
+  &:hover .collapse-button {
+    opacity: 1;
+  }
+  .nav-item {
+    ${({ open }) => !open && 'justify-content: flex-end'};
+  }
+  .nav-item-text {
+    ${({ open }) => !open && 'display: none'};
+  }
 `;
 
 export const CollapseButton = styled.div<{ open: boolean }>`
+  opacity: ${({ open }) => (open ? '0' : '1')};
   display: flex;
   cursor: pointer;
-  padding: 12px;
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
   position: absolute;
-  left: 278px;
-  top: 112px;
+  right: 0;
+  top: 12px;
+  justify-content: center;
+  align-items: center;
+  transform: translateX(50%);
+  color: var(--cogs-primary);
+  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.08), 0px 1px 2px rgba(0, 0, 0, 0.08),
+    0px 1px 4px rgba(0, 0, 0, 0.06);
   border-radius: 20px;
   background: var(--cogs-white);
   border-right: 1px solid var(--cogs-color-strokes-default);
   overflow: hidden;
+  transition: all 0.2s;
   &:hover {
-    ${({ open }) =>
-      !open &&
-      'border-radius: 0 20px 20px 0; width: 56px; padding-left: 28px;'};
-    transition: all 0.3s ease-in-out;
+    background: var(--cogs-primary);
+    color: white;
+  }
+  .cogs-icon {
+    width: 12px;
   }
 `;
 
@@ -51,7 +68,7 @@ export const SuiteTitle = styled.span`
 export const NavigationItemContainer = styled.div<{ selected?: boolean }>`
   display: flex;
   align-items: center;
-  padding: 4px;
+  padding: 6px 0;
   background-color: ${({ selected }) =>
     selected ? 'var(--cogs-midblue-8)' : 'var(--cogs-white)'};
 
