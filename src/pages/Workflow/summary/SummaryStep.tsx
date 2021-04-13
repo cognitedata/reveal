@@ -70,27 +70,23 @@ export default function SummaryStep() {
     <>
       <QueryClientProvider client={queryClient}>
         <Title level={2}>Process summary</Title>
-        <FileToolbar currentView={currentView} onViewChange={setCurrentView} />
         <Container>
-          <h1>{Object.keys(stats).map((keys) => console.log(keys))}</h1>
-          <h2>{Object.values(stats).map((vals) => console.log(vals))}</h2>
+          <h1>{Object.keys(stats).map((keys) => keys)}</h1>
+          <h2>{Object.values(stats).map((vals) => vals)}</h2>
           <PrevNextNav
             prevBtnProps={{
               onClick: () => history.push(getLink(workflowRoutes.upload)),
               disabled: false,
-              children: 'Up10ad m0r3',
-              title: 'Upload more',
+              children: 'Upload more',
             }}
             skipBtnProps={{
               disabled: false,
               children: 'Continue processing files',
-              title: 'Continue processing filez',
             }}
             nextBtnProps={{
               onClick: onNextClicked,
               disabled: false,
               children: 'Finish processing',
-              title: 'F1n1sh pr0cess1ng',
             }}
           />
         </Container>

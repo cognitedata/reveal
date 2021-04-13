@@ -24,6 +24,9 @@ const UploadStep = (props: RouteComponentProps) =>
 const ProcessStep = (props: RouteComponentProps) =>
   LazyWrapper(props, () => import('src/pages/Workflow/process/ProcessStep'));
 
+const SummaryStep = (props: RouteComponentProps) =>
+  LazyWrapper(props, () => import('src/pages/Workflow/summary/SummaryStep'));
+
 function getStepNumberByStepName(stepName: WorkflowStepKey) {
   if (stepName === 'process') {
     return 1;
@@ -82,6 +85,12 @@ export default function WorkflowContainer(props: WorkflowContainerProps) {
                 path={workflowRoutes.process}
                 exact
                 component={ProcessStep}
+              />
+              <Route
+                key="summary"
+                path={workflowRoutes.summary}
+                exact
+                component={SummaryStep}
               />
             </Switch>
           </StepContent>
