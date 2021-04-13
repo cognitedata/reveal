@@ -1073,10 +1073,10 @@
     jwt-decode "^3.1.2"
     lodash "^4.17.20"
 
-"@cognite/cogs.js@3.4.2":
-  version "3.4.2"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.4.2.tgz#4a26e8a75c0f56c680ead18febf440a01f6f9354"
-  integrity sha512-qZFbCMsBkAJVJsLX9faS7Jhd0/SHOXI8jDWgzNgemnjXUyWSA48bcqoLQLDFl59UBq+sa9Lv+RtJ+VGLkm4N9g==
+"@cognite/cogs.js@3.8.2":
+  version "3.8.2"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.8.2.tgz#22c9b74e687a9720fae0227745c86261ad5db2f2"
+  integrity sha512-6YckccXoCu1m+T4neQiLozixKX33hc7/4zy5kpBffpm2/YfZTxwKzK2r6tMHkNl8eig9dVWeH8bD8h/VwNWYBw==
   dependencies:
     "@testing-library/react-hooks" "^5.0.3"
     "@tippyjs/react" "4.2.3"

@@ -1,14 +1,14 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Avatar, Icon, TopBar, Menu, Tooltip, Graphic } from '@cognite/cogs.js';
 import { useDispatch, useSelector } from 'react-redux';
+import { AuthProvider } from '@cognite/react-container';
 import {
   getGroupsState,
   getUsersGroupNames,
   isAdmin,
 } from 'store/groups/selectors';
-import { getUserId } from 'store/auth/selectors';
 import defaultCustomerLogo from 'images/default_logo.png';
-import { CustomMenuItem } from 'styles/common';
+import { CustomMenuItem, CustomMenuLink } from 'styles/common';
 import { usePossibleTenant } from 'hooks';
 import { CdfClientContext } from 'providers/CdfClientProvider';
 import { clearGroupsFilter, setGroupsFilter } from 'store/groups/actions';
@@ -22,14 +22,18 @@ import { getConfigState } from 'store/config/selectors';
 import { addConfigItems } from 'store/config/actions';
 import useHelpCenter from 'hooks/useHelpCenter';
 import CustomerLogo from './CustomerLogo';
-import { GroupPreview, LogoWrapper, GroupItemWrapper } from './elements';
+import {
+  GroupPreview,
+  LogoWrapper,
+  GroupItemWrapper,
+  AppHeaderWrapper,
+} from './elements';
 import UserMenu from './UserMenu';
-import HelpCenterTooltip from './HelpCenter/HelpCenterTooltip';
 
 const AppHeader: React.FC = () => {
   const dispatch = useDispatch();
   const admin = useSelector(isAdmin);
-  const email = useSelector(getUserId);
+  const { authState } = useContext(AuthProvider);
   const { filter: groupsFilter } = useSelector(getGroupsState);
   const history = useHistory();
   const metrics = useMetrics('AppHeader');
@@ -91,7 +95,7 @@ const AppHeader: React.FC = () => {
     return null;
   }
 
-  const actions = [
+  const adminActions = [
     {
       key: 'view',
       component: (
@@ -123,51 +127,52 @@ const AppHeader: React.FC = () => {
               </Menu.Item>
             ))}
           </GroupItemWrapper>
+          <Menu.Divider />
           <Menu.Header>Edit Access Groups</Menu.Header>
           <Menu.Item
             key="cogniteDataFusion"
             style={{ display: 'flex', justifyContent: 'space-between' }}
           >
             {/* Update link to the correct one */}
-            <a href="/" key="cdf-link" target="_blank">
+            <CustomMenuLink href="/" key="cdf-link" target="_blank">
               Cognite Data Fusion
-            </a>
+            </CustomMenuLink>
             <Icon type="ExternalLink" />
           </Menu.Item>
         </Menu>
       ),
     },
+  ];
+
+  const actions = [
     {
       key: 'help',
       onClick: toggleHelpCenter,
-      component: <HelpCenterTooltip />,
+      component: <Icon type="Help" />,
     },
     {
       key: 'user',
       component: (
         <Avatar
-          text={email}
+          text={authState?.email || ''}
           onClick={() => metrics.track('ProfileMenu_Click')}
         />
       ),
       menu: (
         <UserMenu
-          email={email}
+          email={authState?.email || ''}
           client={client}
           openUploadLogoModal={openUploadLogoModal}
+          isAdmin={admin}
         />
       ),
     },
   ];
 
-  const adminActions = ['view', 'settings'];
-
-  const filteredActions = !admin
-    ? actions.filter((action) => !adminActions.includes(action.key))
-    : actions;
+  const filteredActions = admin ? [...adminActions, ...actions] : actions;
 
   return (
-    <>
+    <AppHeaderWrapper>
       {!!groupsFilter?.length && (
         <GroupPreview data-testid="user-group-preview-bar">
           <TopBar>
@@ -212,7 +217,7 @@ const AppHeader: React.FC = () => {
           />
         </TopBar.Left>
         <TopBar.Right>
-          <TopBar.Item>
+          <TopBar.Item className="topbar-logo-wrapper">
             <LogoWrapper>
               <TopBar.Logo
                 onLogoClick={goHome}
@@ -223,7 +228,7 @@ const AppHeader: React.FC = () => {
           <TopBar.Actions actions={filteredActions} />
         </TopBar.Right>
       </TopBar>
-    </>
+    </AppHeaderWrapper>
   );
 };
 

@@ -23,7 +23,7 @@ const HelpCenter = ({ isVisible, onClose }: HelpCenterProps) => {
         isVisible={isVisible}
         onClose={() => onClose()}
         topBarHeight={56}
-        rootCssSelector=".routes"
+        rootCssSelector=".content"
         documentationTitle={t('documentation-title', 'Documentation')}
         documentation={documentation}
         privacyPolicyTitle={t('privacy-policy', 'Privacy policy')}

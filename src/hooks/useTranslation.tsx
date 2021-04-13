@@ -36,17 +36,14 @@ export type TComponentWrapper = (props: TransProps) => React.ReactElement;
 const useTranslation = (namespace: string) => {
   const { t, i18n } = useTranslationFromLibrary(namespace);
 
-  const availableLanguages = [
-    { name: 'English', code: 'en' },
-    { name: 'Norsk Bokmål', code: 'nb' },
-  ] as const;
+  const availableLanguages = [{ name: 'English', code: 'en' }] as const;
 
   const TransWrapperComponent: TComponentWrapper = (props: TransProps) => (
     <Trans i18n={i18n} t={t} {...props} />
   );
 
   const changeLanguage = (code: string) => {
-    localStorage.setItem('MP_APP_LANG', code);
+    localStorage.setItem('DT_APP_LANG', code);
     i18next.changeLanguage(code);
   };
 
