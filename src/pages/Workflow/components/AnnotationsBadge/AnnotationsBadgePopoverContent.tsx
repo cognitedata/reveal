@@ -5,6 +5,7 @@ import { Button, Title, Body, Icon } from '@cognite/cogs.js';
 import { AnnotationsBadgeProps } from 'src/pages/Workflow/types';
 import { Divider } from '@cognite/data-exploration';
 import { JobStatus } from 'src/api/types';
+import { showBadge, showGDPRBadge } from './AnnotationsBadge';
 
 export function AnnotationsBadgePopoverContent({
   gdpr,
@@ -66,7 +67,8 @@ export function AnnotationsBadgePopoverContent({
       <Body level={1}> Detections </Body>
       <Divider.Horizontal />
 
-      {gdpr?.status &&
+      {gdpr &&
+        showGDPRBadge(gdpr) &&
         row({
           status: gdpr.status,
           title: 'GDPR',
@@ -76,7 +78,8 @@ export function AnnotationsBadgePopoverContent({
           modelGenerated: gdpr.modelGenerated,
           manuallyGenerated: gdpr.manuallyGenerated,
         })}
-      {tag?.status &&
+      {tag &&
+        showBadge(tag) &&
         row({
           status: tag.status,
           title: 'Assets',
@@ -87,7 +90,8 @@ export function AnnotationsBadgePopoverContent({
           manuallyGenerated: tag.manuallyGenerated,
         })}
 
-      {textAndObjects?.status &&
+      {textAndObjects &&
+        showBadge(textAndObjects) &&
         row({
           status: textAndObjects.status,
           title: 'Text and Objects',
@@ -97,6 +101,9 @@ export function AnnotationsBadgePopoverContent({
           modelGenerated: textAndObjects.modelGenerated,
           manuallyGenerated: textAndObjects.manuallyGenerated,
         })}
+      {!showBadge(gdpr) && !showBadge(tag) && !showBadge(textAndObjects) && (
+        <>No annotations</>
+      )}
     </>
   );
 }

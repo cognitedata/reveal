@@ -5,6 +5,17 @@ import {
   ModelStatusAndAnnotationCounts,
 } from 'src/pages/Workflow/types';
 
+export const showBadge = (
+  badgeCounts: ModelStatusAndAnnotationCounts | undefined
+) => {
+  return badgeCounts?.manuallyGenerated || badgeCounts?.status;
+};
+
+export const showGDPRBadge = (
+  badgeCounts: ModelStatusAndAnnotationCounts | undefined
+) => {
+  return !!(badgeCounts?.modelGenerated && badgeCounts?.modelGenerated > 0);
+};
 export function AnnotationsBadge({
   gdpr,
   tag,
@@ -31,7 +42,7 @@ export function AnnotationsBadge({
 
   return (
     <>
-      {gdpr?.status && (
+      {gdpr && showGDPRBadge(gdpr) && (
         <Button
           icon="WarningFilled"
           size="small"
@@ -45,7 +56,7 @@ export function AnnotationsBadge({
           {setBadge(gdpr)}
         </Button>
       )}
-      {tag?.status && (
+      {tag && showBadge(tag) && (
         <Button
           icon="ResourceAssets"
           size="small"
@@ -59,7 +70,7 @@ export function AnnotationsBadge({
           {setBadge(tag)}
         </Button>
       )}
-      {textAndObjects?.status && (
+      {textAndObjects && showBadge(textAndObjects) && (
         <Button
           icon="Scan"
           size="small"
@@ -72,7 +83,7 @@ export function AnnotationsBadge({
           {setBadge(textAndObjects)}
         </Button>
       )}
-      {!gdpr?.status && !tag?.status && !textAndObjects?.status && (
+      {!showBadge(gdpr) && !showBadge(tag) && !showBadge(textAndObjects) && (
         <>No annotations</>
       )}
     </>
