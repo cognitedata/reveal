@@ -69,7 +69,33 @@ export function getYaxisUpdatesFromEventData(
   return axisUpdates;
 }
 
+function getAutoScaleRange(seriesData: SeriesData[]) {
+  let min: Date | undefined;
+  let max: Date | undefined;
+
+  seriesData.forEach((series) => {
+    if (Array.isArray(series.datapoints)) {
+      series.datapoints.forEach((datapoint) => {
+        if ('timestamp' in datapoint) {
+          if (min === undefined || datapoint.timestamp < min) {
+            min = datapoint.timestamp;
+          }
+          if (max === undefined || datapoint.timestamp > max) {
+            max = datapoint.timestamp;
+          }
+        }
+      });
+    }
+  });
+
+  min = min || new Date();
+  max = max || new Date();
+
+  return [min.toJSON(), max.toJSON()];
+}
+
 export function getXaxisUpdateFromEventData(
+  seriesData: SeriesData[],
   eventdata: PlotlyEventData
 ): string[] {
   const xaxisKeys = Object.keys(eventdata).filter((key) =>
@@ -79,7 +105,7 @@ export function getXaxisUpdateFromEventData(
   const isAutoscale = xaxisKeys.some((key) => key.includes('autorange'));
 
   const range = isAutoscale
-    ? []
+    ? getAutoScaleRange(seriesData)
     : xaxisKeys.map((key) => new Date(eventdata[key]).toJSON());
 
   return range;

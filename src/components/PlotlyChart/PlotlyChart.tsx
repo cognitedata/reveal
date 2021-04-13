@@ -259,14 +259,14 @@ const PlotlyChartComponent = ({
   );
 
   const handleRelayout = (eventdata: PlotlyEventData) => {
+    const x = getXaxisUpdateFromEventData(seriesData, eventdata);
+    // Should not edit the saved y-axis ranges if in stacked mode or in search
+    const y = !(stackedMode || isInSearch)
+      ? getYaxisUpdatesFromEventData(seriesData, eventdata)
+      : [];
+
     if (onAxisChange) {
-      onAxisChange({
-        x: getXaxisUpdateFromEventData(eventdata),
-        // Should not edit the saved y-axis ranges if in stacked mode or in search
-        y: !(stackedMode || isInSearch)
-          ? getYaxisUpdatesFromEventData(seriesData, eventdata)
-          : [],
-      });
+      onAxisChange({ x, y });
     }
 
     setDragmode(eventdata.dragmode || dragmode);
