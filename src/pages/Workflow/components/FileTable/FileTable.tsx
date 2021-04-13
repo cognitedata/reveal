@@ -86,7 +86,7 @@ function AnnotationRendrer(annotationsBadgeProps: AnnotationsBadgeProps) {
   return (
     <Popover
       placement="bottom"
-      trigger="click"
+      trigger="mouseenter click"
       content={AnnotationsBadgePopoverContent(annotationsBadgeProps)}
     >
       <>{AnnotationsBadge(annotationsBadgeProps)}</>

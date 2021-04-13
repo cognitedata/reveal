@@ -127,7 +127,7 @@ export const FileGridPreview = ({
           <div className="badge">
             <Popover
               placement="bottom"
-              trigger="click"
+              trigger="mouseenter click"
               content={AnnotationsBadgePopoverContent(annotationsBadgeProps)}
             >
               <>{AnnotationsBadge(annotationsBadgeProps)}</>
