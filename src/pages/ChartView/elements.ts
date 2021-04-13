@@ -3,25 +3,13 @@ import styled from 'styled-components/macro';
 import Layers from 'utils/z-index';
 
 export const Header = styled.header`
+  height: 60px;
   background: var(--cogs-greyscale-grey1);
   border-bottom: 1px solid var(--cogs-greyscale-grey4);
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  hgroup {
-    display: flex;
-    flex-direction: column;
-    padding: 16px 24px;
-    h1,
-    h4 {
-      padding: 0;
-      margin: 0;
-      text-align: left;
-    }
-    h4 {
-      color: var(--cogs-greyscale-grey5);
-    }
-  }
+  justify-content: ${(props: { inSearch: boolean }) =>
+    props.inSearch ? 'flex-end' : 'space-between'};
   .actions {
     display: flex;
     margin-right: 24px;
@@ -87,7 +75,7 @@ export const ContentWrapper = styled.div`
   flex-direction: column;
   max-height: 100%;
   width: ${(props: { showSearch: boolean }) =>
-    props.showSearch ? '70%' : 'calc(100% - 56px)'};
+    props.showSearch ? '70%' : '100%'};
 `;
 
 export const ToolbarIcon = styled(Icon)`

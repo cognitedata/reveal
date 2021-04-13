@@ -153,6 +153,7 @@ export const useChart = (id: string) => {
     ['chart', id],
     async () => (await charts().doc(id).get()).data() as Chart,
     {
+      enabled: !!id,
       staleTime: Infinity,
     }
   );

@@ -1,28 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import debounce from 'lodash/debounce';
-import { Button, Dropdown, Icon, Menu, toast } from '@cognite/cogs.js';
-import { useHistory, useParams } from 'react-router-dom';
+import { Button, Icon, toast } from '@cognite/cogs.js';
+import { useParams } from 'react-router-dom';
 import NodeEditor from 'components/NodeEditor';
 import SplitPaneLayout from 'components/Layout/SplitPaneLayout';
 import PlotlyChartComponent from 'components/PlotlyChart/PlotlyChart';
 import DateRangeSelector from 'components/DateRangeSelector';
 import { AxisUpdate } from 'components/PlotlyChart';
 import Search from 'components/Search';
-import { Toolbar } from 'components/Toolbar';
-import SharingDropdown from 'components/SharingDropdown/SharingDropdown';
-import EditableText from 'components/EditableText';
-import {
-  charts,
-  useChart,
-  useUpdateChart,
-  useDeleteChart,
-} from 'hooks/firebase';
+import { charts, useChart, useUpdateChart } from 'hooks/firebase';
 import { nanoid } from 'nanoid';
 import { Chart, ChartTimeSeries, ChartWorkflow } from 'reducers/charts/types';
 import { getEntryColor } from 'utils/colors';
 import { useLoginStatus, useQueryString } from 'hooks';
 import { useQueryClient } from 'react-query';
-import { duplicate, updateSourceAxisForChart } from 'utils/charts';
+import { updateSourceAxisForChart } from 'utils/charts';
 import { SEARCH_KEY } from 'utils/constants';
 import { Modes } from 'pages/types';
 import { ContextMenu } from 'components/ContextMenu';
@@ -48,7 +40,6 @@ type ChartViewProps = {
 };
 
 const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
-  const history = useHistory();
   const { item: query, setItem: setQuery } = useQueryString(SEARCH_KEY);
 
   const cache = useQueryClient();
@@ -69,8 +60,6 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
       chart: updatedChart,
       skipPersist: login?.user !== updatedChart.user,
     });
-
-  const { mutate: deleteChart } = useDeleteChart();
 
   useEffect(() => {
     if (updateError) {
@@ -162,29 +151,6 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     },
     500
   );
-
-  const onDeleteSuccess = () => {
-    history.push('/');
-  };
-
-  const onDeleteError = () => {
-    toast.error('There was a problem deleting the chart. Try again!');
-  };
-
-  const handleDeleteChart = async () => {
-    deleteChart(chart.id, {
-      onSuccess: onDeleteSuccess,
-      onError: onDeleteError,
-    });
-  };
-
-  const handleDuplicateChart = async () => {
-    if (login?.user) {
-      const newChart = duplicate(chart, login.user);
-      await updateChart(newChart);
-      history.push(`/${newChart.id}`);
-    }
-  };
 
   const handleSourceClick = async (sourceId?: string) => {
     setSelectedSourceId(sourceId);
@@ -281,65 +247,28 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
 
   return (
     <ChartViewContainer id="chart-view">
-      {!showSearch && (
-        <Toolbar
-          onSearchClick={handleOpenSearch}
-          onNewWorkflowClick={handleClickNewWorkflow}
-        />
-      )}
       {showSearch && (
         <Search visible={showSearch} onClose={handleCloseSearch} />
       )}
       <ContentWrapper showSearch={showSearch}>
-        <Header>
-          <hgroup>
-            <h1>
-              <EditableText
-                value={chart.name}
-                onChange={(value) => {
-                  if (chart) {
-                    updateChart({ ...chart, name: value });
-                  }
-                }}
-              />
-            </h1>
-            <h4>by {chart?.user}</h4>
-          </hgroup>
+        <Header inSearch={showSearch}>
+          {!showSearch && (
+            <section className="actions">
+              <Button icon="Plus" type="primary" onClick={handleOpenSearch}>
+                Add time series
+              </Button>
+              <Button
+                icon="YAxis"
+                variant="ghost"
+                onClick={handleClickNewWorkflow}
+              >
+                Add calculation
+              </Button>
+            </section>
+          )}
           <section className="daterange">
             <DateRangeSelector chart={chart} />
           </section>
-          {!showSearch && (
-            <section className="actions">
-              <SharingDropdown chart={chart} />
-              <Dropdown
-                content={
-                  <Menu>
-                    <Menu.Item onClick={() => handleDuplicateChart()}>
-                      <Icon type="Duplicate" />
-                      <span>Duplicate</span>
-                    </Menu.Item>
-                    {login?.user === chart.user && (
-                      <Menu.Item onClick={() => handleDeleteChart()}>
-                        <Icon type="Delete" />
-                        <span>Delete</span>
-                      </Menu.Item>
-                    )}
-                    <Menu.Item disabled>
-                      {/* disabled doesn't change the color */}
-                      <span style={{ color: 'var(--cogs-greyscale-grey5)' }}>
-                        <Icon type="Download" />
-                        Export
-                      </span>
-                    </Menu.Item>
-                  </Menu>
-                }
-              >
-                <Button icon="Down" iconPlacement="right">
-                  Actions
-                </Button>
-              </Dropdown>
-            </section>
-          )}
         </Header>
         <ChartContainer>
           <SplitPaneLayout defaultSize={200}>
