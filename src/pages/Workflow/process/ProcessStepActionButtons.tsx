@@ -46,7 +46,10 @@ export const ProcessStepActionButtons = () => {
         title: '',
       }}
       skipBtnProps={{
-        disabled: !allFilesStatus || !!Object.keys(annotations).length,
+        disabled:
+          !isPollingFinished ||
+          !allFilesStatus ||
+          !!Object.keys(annotations).length,
       }}
     />
   );
