@@ -132,10 +132,11 @@ class FileUploader extends React.Component<Props, State> {
 
     message.info('Starting Upload...');
     const file = this.state.fileList![0];
+    const mimeType = this.getMIMEType(file.name);
 
     const { uploadUrl, id } = (await v3Client.files.upload({
       name: file.name,
-      mimeType: this.getMIMEType(file.name),
+      mimeType,
       source: '3d-models',
     })) as v3.FileUploadResponse;
 
@@ -156,6 +157,7 @@ class FileUploader extends React.Component<Props, State> {
       id: 'file',
       url: uploadUrl,
       file,
+      contentType: mimeType,
       chunkSize: 262144 * chunkMultiple,
       onChunkUpload: (info) => {
         if (file.status !== 'uploading') {
