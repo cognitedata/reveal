@@ -22,7 +22,6 @@ export function computeBoundingBoxFromCenterAndRadiusAttributes(
   out: THREE.Box3
 ): THREE.Box3 {
   const { centerA, centerB, sphere, box } = computeBoundingBoxFromCenterAndRadiusAttributesVars;
-  out.makeEmpty();
 
   function readAttribute(attribute: ParsePrimitiveAttribute, idx: number = 0): number {
     const offset = (elementIndex * elementSize + attribute.offset) / attributeFloatValues.BYTES_PER_ELEMENT;
@@ -50,6 +49,55 @@ export function computeBoundingBoxFromCenterAndRadiusAttributes(
   sphere.getBoundingBox(box);
   out.expandByPoint(box.min);
   out.expandByPoint(box.max);
+  return out;
+}
+
+const computeBoundingBoxFromVertexAttributesVars = {
+  vertex1: new THREE.Vector3(),
+  vertex2: new THREE.Vector3(),
+  vertex3: new THREE.Vector3(),
+  vertex4: new THREE.Vector3()
+};
+
+export function computeBoundingBoxFromVertexAttributes(
+  vertex1Attribute: ParsePrimitiveAttribute,
+  vertex2Attribute: ParsePrimitiveAttribute,
+  vertex3Attribute: ParsePrimitiveAttribute,
+  vertex4Attribute: ParsePrimitiveAttribute,
+  attributeFloatValues: Float32Array,
+  elementSize: number,
+  elementIndex: number,
+  out: THREE.Box3
+): THREE.Box3 {
+  const { vertex1, vertex2, vertex3, vertex4 } = computeBoundingBoxFromVertexAttributesVars;
+
+  function readAttribute(attribute: ParsePrimitiveAttribute, idx: number = 0): number {
+    const offset = (elementIndex * elementSize + attribute.offset) / attributeFloatValues.BYTES_PER_ELEMENT;
+    return attributeFloatValues[offset + idx];
+  }
+
+  vertex1.set(
+    readAttribute(vertex1Attribute, 0),
+    readAttribute(vertex1Attribute, 1),
+    readAttribute(vertex1Attribute, 2)
+  );
+  vertex2.set(
+    readAttribute(vertex2Attribute, 0),
+    readAttribute(vertex2Attribute, 1),
+    readAttribute(vertex2Attribute, 2)
+  );
+  vertex3.set(
+    readAttribute(vertex3Attribute, 0),
+    readAttribute(vertex3Attribute, 1),
+    readAttribute(vertex3Attribute, 2)
+  );
+  vertex4.set(
+    readAttribute(vertex4Attribute, 0),
+    readAttribute(vertex4Attribute, 1),
+    readAttribute(vertex4Attribute, 2)
+  );
+
+  out.setFromPoints([vertex1, vertex2, vertex3, vertex4]);
   return out;
 }
 
