@@ -32,10 +32,10 @@ describe('SuiteOverview', () => {
 
   it('should render', () => {
     const suitesTable = getEmptySuitesTable();
-    const component = render(<SuiteOverview />, {
+    const view = render(<SuiteOverview />, {
       state: { suitesTable },
     });
-    expect(component).toBeTruthy();
+    expect(view).toBeTruthy();
   });
 
   it('should fetch image preview urls', () => {
