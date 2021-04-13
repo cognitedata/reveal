@@ -17,10 +17,6 @@ const availableDetectionModels: Array<SelectOption> = [
     label: 'Asset tag detection',
     value: DetectionModelCategory.AssetTag,
   },
-  {
-    label: 'GDPR violations detection',
-    value: DetectionModelCategory.GDPR,
-  },
 ];
 
 function toOption(modelType: DetectionModelCategory): SelectOption {
