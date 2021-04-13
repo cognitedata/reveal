@@ -40,11 +40,7 @@ export function PrevNextNav({
           </Button>
         )}
       </Skip>
-      <Button
-        type="primary"
-        {...nextBtnProps}
-        title={nextBtnProps?.disabled ? 'Upload files to proceed' : ''}
-      >
+      <Button type="primary" {...nextBtnProps}>
         {nextBtnProps?.children || 'Process files'}
       </Button>
     </PrevNextRoot>
