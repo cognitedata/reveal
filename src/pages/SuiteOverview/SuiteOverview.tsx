@@ -177,7 +177,7 @@ const SuiteOverview: React.FC = () => {
               ))}
             </LargeTilesContainer>
             <TilesContainer>
-              <Title level={6}>All boards</Title>
+              {/* <Title level={6}>All boards</Title> */}
               {boards?.map((board: Board) => (
                 <React.Fragment key={board.key}>
                   {!isEqual(board.type, 'infographics') && (

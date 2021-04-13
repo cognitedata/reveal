@@ -20,6 +20,8 @@ module.exports = {
     'react/jsx-props-no-spreading': ['off'],
     'react/static-property-placement': ['off'],
     'react/state-in-constructor': ['off'],
+    'react/require-default-props': ['off'],
+    'react/react-in-jsx-scope': ['off'],
 
     'jest/expect-expect': ['off'],
     'jest/no-test-callback': ['off'],
@@ -31,11 +33,9 @@ module.exports = {
     'lodash/prefer-is-nil': ['off'],
     'lodash/prefer-get': ['off'],
 
-    '@typescript-eslint/no-unused-vars': [
-      'error',
-      { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
-    ],
+    '@typescript-eslint/no-unused-vars': ['off'],
     'react/prop-types': ['off'],
     'no-unused-expressions': ['off'],
+    'typescript-eslint/no-unused-vars': ['off'],
   },
 };
