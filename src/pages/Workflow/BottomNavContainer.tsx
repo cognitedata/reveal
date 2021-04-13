@@ -6,12 +6,17 @@ import { ProcessStepActionButtons } from 'src/pages/Workflow/process/ProcessStep
 import { getLink, workflowRoutes } from 'src/pages/Workflow/workflowRoutes';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
+import { annotationsById } from 'src/store/previewSlice';
 
 export default function BottomNavContainer() {
   const history = useHistory();
   const { allFilesStatus } = useSelector(
     (state: RootState) => state.uploadedFiles
   );
+
+  const annotations = useSelector((state: RootState) => {
+    return annotationsById(state.previewSlice);
+  });
 
   return (
     <Container className="z-4">
@@ -29,12 +34,13 @@ export default function BottomNavContainer() {
               }}
               nextBtnProps={{
                 disabled: !allFilesStatus,
+                title: !allFilesStatus ? 'Upload files to proceed' : '',
                 onClick() {
                   history.push(getLink(workflowRoutes.process));
                 },
               }}
               skipBtnProps={{
-                disabled: !allFilesStatus, // TODO: add check if processing has been done when state is added
+                disabled: !allFilesStatus || !!Object.keys(annotations).length,
               }}
             />
           )}

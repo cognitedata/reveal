@@ -7,11 +7,20 @@ import { createLink } from '@cognite/cdf-utilities';
 import { SaveAvailableAnnotations } from 'src/store/thunks/SaveAvailableAnnotations';
 import { RootState } from 'src/store/rootReducer';
 import { selectIsPollingComplete } from 'src/store/processSlice';
+import { annotationsById } from 'src/store/previewSlice';
 
 export const ProcessStepActionButtons = () => {
   const history = useHistory();
   const isPollingFinished = useSelector((state: RootState) => {
     return selectIsPollingComplete(state.processSlice);
+  });
+
+  const { allFilesStatus } = useSelector(
+    (state: RootState) => state.uploadedFiles
+  );
+
+  const annotations = useSelector((state: RootState) => {
+    return annotationsById(state.previewSlice);
   });
 
   const dispatch = useDispatch();
@@ -21,6 +30,9 @@ export const ProcessStepActionButtons = () => {
     history.push(createLink('/explore/search/file')); // data-exploration app
   };
 
+  const disableComplete =
+    !isPollingFinished || !Object.keys(annotations).length;
+
   return (
     <PrevNextNav
       prevBtnProps={{
@@ -29,10 +41,15 @@ export const ProcessStepActionButtons = () => {
       }}
       nextBtnProps={{
         onClick: onNextClicked,
-        children: 'Complete',
-        disabled: !isPollingFinished, // TODO: add check if processing has been done when state is added
-        loading: !isPollingFinished,
+        children: 'Finish processing',
+        disabled: disableComplete,
         title: '',
+      }}
+      skipBtnProps={{
+        disabled:
+          !isPollingFinished ||
+          !allFilesStatus ||
+          !!Object.keys(annotations).length,
       }}
     />
   );

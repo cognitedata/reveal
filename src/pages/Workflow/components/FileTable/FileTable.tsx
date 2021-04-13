@@ -267,6 +267,7 @@ export const FileNameText = styled.div`
   white-space: nowrap;
   overflow: hidden;
   flex: 0 1 auto;
+  display: inline-block;
 `;
 
 export const ExifIcon = styled.div`

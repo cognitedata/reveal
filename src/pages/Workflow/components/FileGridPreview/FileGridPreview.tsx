@@ -187,6 +187,7 @@ const PreviewCell = styled.div`
         grid-area: name;
         white-space: nowrap;
         max-width: 150px;
+        margin: auto;
       }
       .exif > img {
         width: 11px;

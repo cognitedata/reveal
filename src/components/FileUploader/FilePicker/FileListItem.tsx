@@ -56,6 +56,8 @@ function FileStatusColumn({ file }: FileStatusColumnProps) {
         type="line"
         strokeColor="#31C25A"
         showInfo={false}
+        trailColor="#E8E8E8"
+        strokeLinecap="round"
         style={{ width: '50%' }}
       />
     );
