@@ -61,7 +61,7 @@ The container has one prop of the sidecar. You can add these keys to your sideca
 > Get the current login token
 
 ```ts
-import { getLAuthProvideroginToken } from '@cognite/react-container';
+import { AuthProvider } from '@cognite/react-container';
 
 ...
 
