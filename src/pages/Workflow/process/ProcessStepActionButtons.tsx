@@ -41,7 +41,7 @@ export const ProcessStepActionButtons = () => {
       }}
       nextBtnProps={{
         onClick: onNextClicked,
-        children: 'Complete',
+        children: 'Finish processing',
         disabled: disableComplete,
         title: '',
       }}
