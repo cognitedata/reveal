@@ -90,4 +90,26 @@ describe('filterPrimitivesOutsideClipBoxByVertices', () => {
     const filteredFloats = new Float32Array(filtered.buffer);
     expect(filteredFloats).toEqual(original.subarray(0, original.length / 2));
   });
+
+  test('one accepted, one reject - returns filtered', () => {
+    // Arrange
+    const original = new Float32Array([
+      // Element 1
+      ...[1, 1, 1],
+      ...[2, 2, 2],
+      ...[3, 3, 3],
+      ...[4, 4, 4],
+      // Element 2
+      ...[11, 11, 11],
+      ...[12, 12, 12],
+      ...[13, 13, 13],
+      ...[14, 14, 14]
+    ]);
+    const bytes = new Uint8Array(original.buffer);
+    const clipBox = new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(2, 2, 2));
+
+    const filtered = filterPrimitivesOutsideClipBoxByVertices(bytes, attributes, clipBox);
+    const filteredFloats = new Float32Array(filtered.buffer);
+    expect(filteredFloats).toEqual(original.subarray(0, original.length / 2));
+  });
 });
