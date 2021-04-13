@@ -147,7 +147,7 @@ function ActionRendrer(
   );
 
   return (
-    <div>
+    <Action>
       <Button
         type="secondary"
         icon="ArrowRight"
@@ -165,7 +165,7 @@ function ActionRendrer(
           aria-label="dropdown button"
         />
       </Dropdown>
-    </div>
+    </Action>
   );
 }
 
@@ -252,6 +252,11 @@ export function FileTable(props: FileTableProps) {
     </TableWrapper>
   );
 }
+
+export const Action = styled.div`
+  display: flex;
+  align-items: flex-end;
+`;
 
 export const FileRow = styled.div`
   display: flex;
