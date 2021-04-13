@@ -22,7 +22,7 @@ export const UserSpaceReducer = createReducer(initialState)
   )
   .handleAction(
     UserSpaceActionTypes.USER_SPACE_LOADED,
-    (state: UserSpaceState, action: UserSpaceRootAction) => ({
+    (_: UserSpaceState, action: UserSpaceRootAction) => ({
       loading: false,
       loaded: true,
       lastVisited: (action.payload as UserSpacePayload)?.lastVisited,
