@@ -23,13 +23,6 @@ export const ProcessStepActionButtons = () => {
     return annotationsById(state.previewSlice);
   });
 
-  const dispatch = useDispatch();
-
-  const onNextClicked = () => {
-    dispatch(SaveAvailableAnnotations());
-    history.push(createLink('/explore/search/file')); // data-exploration app
-  };
-
   const disableComplete =
     !isPollingFinished || !Object.keys(annotations).length;
 
@@ -40,7 +33,7 @@ export const ProcessStepActionButtons = () => {
         disabled: !isPollingFinished,
       }}
       nextBtnProps={{
-        onClick: onNextClicked,
+        onClick: () => history.push(getLink(workflowRoutes.summary)),
         children: 'Finish processing',
         disabled: disableComplete,
         title: '',
