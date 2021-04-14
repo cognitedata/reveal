@@ -6,6 +6,7 @@ import * as THREE from 'three';
 import { ParsePrimitiveAttribute } from '@cognite/reveal-parser-worker';
 
 import {
+  filterPrimitivesOutsideClipBoxByBaseBoundsAndInstanceMatrix,
   filterPrimitivesOutsideClipBoxByCenterAndRadius,
   filterPrimitivesOutsideClipBoxByVertices
 } from './filterPrimitives';
@@ -90,25 +91,37 @@ describe('filterPrimitivesOutsideClipBoxByVertices', () => {
     const filteredFloats = new Float32Array(filtered.buffer);
     expect(filteredFloats).toEqual(original.subarray(0, original.length / 2));
   });
+});
+
+describe('filterPrimitivesOutsideClipBoxByBaseBoundsAndInstanceMatrix', () => {
+  let attributes: Map<string, ParsePrimitiveAttribute>;
+  let unitBox: THREE.Box3;
+
+  beforeEach(() => {
+    attributes = new Map<string, ParsePrimitiveAttribute>([['instanceMatrix', { offset: 0, size: 16 * 4 }]]);
+    unitBox = new THREE.Box3(new THREE.Vector3(-1, -1, -1), new THREE.Vector3(1, 1, 1));
+  });
+
+  test('no clipbox, returns original', () => {
+    const original = new Uint8Array(16 * 4);
+    const filtered = filterPrimitivesOutsideClipBoxByBaseBoundsAndInstanceMatrix(
+      original,
+      attributes,
+      unitBox,
+      undefined
+    );
+    expect(filtered).toBe(original);
+  });
 
   test('one accepted, one reject - returns filtered', () => {
     // Arrange
-    const original = new Float32Array([
-      // Element 1
-      ...[1, 1, 1],
-      ...[2, 2, 2],
-      ...[3, 3, 3],
-      ...[4, 4, 4],
-      // Element 2
-      ...[11, 11, 11],
-      ...[12, 12, 12],
-      ...[13, 13, 13],
-      ...[14, 14, 14]
-    ]);
+    const identityMatrix = new THREE.Matrix4().identity();
+    const translateMatrix = new THREE.Matrix4().makeTranslation(100, 100, 100);
+    const original = new Float32Array([...identityMatrix.elements, ...translateMatrix.elements]);
     const bytes = new Uint8Array(original.buffer);
     const clipBox = new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(2, 2, 2));
 
-    const filtered = filterPrimitivesOutsideClipBoxByVertices(bytes, attributes, clipBox);
+    const filtered = filterPrimitivesOutsideClipBoxByBaseBoundsAndInstanceMatrix(bytes, attributes, unitBox, clipBox);
     const filteredFloats = new Float32Array(filtered.buffer);
     expect(filteredFloats).toEqual(original.subarray(0, original.length / 2));
   });

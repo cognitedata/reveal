@@ -16,7 +16,7 @@ export function filterPrimitivesOutsideClipBoxByBaseBoundsAndInstanceMatrix(
   attributesByteValues: Uint8Array,
   attributes: Map<string, ParsePrimitiveAttribute>,
   baseBox: THREE.Box3,
-  clipBox?: THREE.Box3
+  clipBox: THREE.Box3 | undefined
 ): Uint8Array {
   if (clipBox === undefined) {
     return attributesByteValues;
