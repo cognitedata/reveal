@@ -8,6 +8,7 @@ import { ParsePrimitiveAttribute } from '@cognite/reveal-parser-worker';
 import assert from 'assert';
 import {
   computeBoundingBoxFromCenterAndRadiusAttributes,
+  computeBoundingBoxFromEllipseAttributes,
   computeBoundingBoxFromInstanceMatrixAttributes,
   computeBoundingBoxFromVertexAttributes
 } from './computeBoundingBoxFromAttributes';
@@ -23,7 +24,7 @@ function filterPrimitivesOutsideClipBox(
     outBox: THREE.Box3
   ) => void
 ): Uint8Array {
-  const elementSize = Array.from(attributes.values()).reduce((a, b) => a + b.size, 0);
+  const elementSize = Array.from(attributes.values()).reduce((a, b) => Math.max(a, b.offset + b.size), 0);
   const elementCount = attributesByteValues.length / elementSize;
   const attributeFloatValues = new Float32Array(attributesByteValues.buffer);
 
@@ -142,6 +143,45 @@ export function filterPrimitivesOutsideClipBoxByVertices(
         vertex2attribute,
         vertex3attribute,
         vertex4attribute,
+        attributeFloatValues,
+        elementSize,
+        index,
+        outBox
+      );
+    }
+  );
+}
+
+export function filterPrimitivesOutsideClipBoxByEllipse(
+  attributesByteValues: Uint8Array,
+  attributes: Map<string, ParsePrimitiveAttribute>,
+  clipBox: THREE.Box3 | undefined,
+  radius1AttributeName: string = 'horizontalRadius',
+  radius2AttributeName: string = 'verticalRadius'
+): Uint8Array {
+  if (clipBox === undefined) {
+    return attributesByteValues;
+  }
+  const centerAttribute = attributes.get('center');
+  const horizontalRadiusAttribute = attributes.get(radius1AttributeName);
+  const verticalRadiusAttribute = attributes.get(radius2AttributeName);
+  const heightAttribute = attributes.get('height');
+  assert(
+    centerAttribute !== undefined &&
+      horizontalRadiusAttribute !== undefined &&
+      verticalRadiusAttribute !== undefined &&
+      heightAttribute !== undefined
+  );
+  return filterPrimitivesOutsideClipBox(
+    attributesByteValues,
+    attributes,
+    clipBox,
+    (index, elementSize, attributeFloatValues, outBox) => {
+      computeBoundingBoxFromEllipseAttributes(
+        centerAttribute,
+        horizontalRadiusAttribute,
+        verticalRadiusAttribute,
+        heightAttribute,
         attributeFloatValues,
         elementSize,
         index,

@@ -23,6 +23,7 @@ import assert from 'assert';
 import {
   filterPrimitivesOutsideClipBoxByBaseBoundsAndInstanceMatrix,
   filterPrimitivesOutsideClipBoxByCenterAndRadius,
+  filterPrimitivesOutsideClipBoxByEllipse,
   filterPrimitivesOutsideClipBoxByVertices
 } from './filterPrimitives';
 
@@ -52,14 +53,15 @@ export function* createPrimitives(
       clipBox
     );
   }
-  // if (hasAny(primitives.ellipsoidSegmentCollection)) {
-  //   yield createEllipsoidSegments(
-  //     primitives.ellipsoidSegmentCollection,
-  //     primitives.ellipsoidSegmentAttributes,
-  //     materials.ellipsoidSegment,
-  //     bounds
-  //   );
-  // }
+  if (hasAny(primitives.ellipsoidSegmentCollection)) {
+    yield createEllipsoidSegments(
+      primitives.ellipsoidSegmentCollection,
+      primitives.ellipsoidSegmentAttributes,
+      materials.ellipsoidSegment,
+      bounds,
+      clipBox
+    );
+  }
   if (hasAny(primitives.generalCylinderCollection)) {
     const cylinders = createGeneralCylinders(
       primitives.generalCylinderCollection,
@@ -81,14 +83,15 @@ export function* createPrimitives(
   if (hasAny(primitives.quadCollection)) {
     yield createQuads(primitives.quadCollection, primitives.quadAttributes, materials.quad, clipBox);
   }
-  // if (hasAny(primitives.sphericalSegmentCollection)) {
-  //   yield createSphericalSegments(
-  //     primitives.sphericalSegmentCollection,
-  //     primitives.sphericalSegmentAttributes,
-  //     materials.sphericalSegment,
-  //     bounds
-  //   );
-  // }
+  if (hasAny(primitives.sphericalSegmentCollection)) {
+    yield createSphericalSegments(
+      primitives.sphericalSegmentCollection,
+      primitives.sphericalSegmentAttributes,
+      materials.sphericalSegment,
+      bounds,
+      clipBox
+    );
+  }
 
   if (hasAny(primitives.torusSegmentCollection)) {
     yield createTorusSegments(
@@ -298,15 +301,19 @@ function createEllipsoidSegments(
   ellipsoidSegmentAttributes: Map<string, ParsePrimitiveAttribute>,
   material: THREE.ShaderMaterial,
   bounds: THREE.Box3,
-  // TODO 2021-04-12 larsmoa: Add support for clipBox to createEllipsoidSegments
-  _clipBox: THREE.Box3 | undefined
+  clipBox: THREE.Box3 | undefined
 ) {
+  const filteredCollection = filterPrimitivesOutsideClipBoxByEllipse(
+    ellipsoidSegmentCollection,
+    ellipsoidSegmentAttributes,
+    clipBox
+  );
   const geometry = new THREE.InstancedBufferGeometry();
   const mesh = new THREE.Mesh(geometry, material);
 
   geometry.setIndex(coneGeometry.index);
   geometry.setAttribute('position', coneGeometry.position);
-  setAttributes(geometry, ellipsoidSegmentCollection, ellipsoidSegmentAttributes, mesh);
+  setAttributes(geometry, filteredCollection, ellipsoidSegmentAttributes, mesh);
   setBoundsFromBox(geometry, bounds);
 
   mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
@@ -377,15 +384,22 @@ function createSphericalSegments(
   sphericalSegmentAttributes: Map<string, ParsePrimitiveAttribute>,
   material: THREE.ShaderMaterial,
   bounds: THREE.Box3,
-  // TODO 2021-04-12 larsmoa: Add support for clipBox to createGeneralCylinders
-  _clipBox: THREE.Box3 | undefined
+  clipBox: THREE.Box3 | undefined
 ) {
+  const filteredCollection = filterPrimitivesOutsideClipBoxByEllipse(
+    sphericalSegmentCollection,
+    sphericalSegmentAttributes,
+    clipBox,
+    'radius',
+    'radius'
+  );
+
   const geometry = new THREE.InstancedBufferGeometry();
   const mesh = new THREE.Mesh(geometry, material);
 
   geometry.setIndex(coneGeometry.index);
   geometry.setAttribute('position', coneGeometry.position);
-  setAttributes(geometry, sphericalSegmentCollection, sphericalSegmentAttributes, mesh);
+  setAttributes(geometry, filteredCollection, sphericalSegmentAttributes, mesh);
   setBoundsFromBox(geometry, bounds);
 
   // TODO We need to set the radius manually here because
