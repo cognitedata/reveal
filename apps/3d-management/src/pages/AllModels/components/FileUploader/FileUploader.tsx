@@ -187,10 +187,11 @@ class FileUploader extends React.Component<Props, State> {
         fileInfo = await getFileInfo();
         /* eslint-enable no-await-in-loop */
       }
-      console.log('fileInfo', fileInfo);
+      if (!fileInfo.uploaded) {
+        throw new Error(`File with id=${id} is never marked as uploaded`);
+      }
       this.props.onUploadSuccess(fileInfo.id);
     } catch (e) {
-      console.error(e);
       if (e.code === 401) {
         // eslint-disable-next-line no-alert
         alert('Authorization is expired. The page will be reloaded');
