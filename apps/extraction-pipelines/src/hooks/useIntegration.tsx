@@ -1,10 +1,10 @@
 import { useQuery } from 'react-query';
-import { useAppEnv } from './useAppEnv';
-import { getIntegrationById } from '../utils/IntegrationsAPI';
-import { Integration } from '../model/Integration';
-import { SDKError } from '../model/SDKErrors';
+import { getIntegrationById } from 'utils/IntegrationsAPI';
+import { Integration } from 'model/Integration';
+import { SDKError } from 'model/SDKErrors';
+import { useAppEnv } from 'hooks/useAppEnv';
 
-export const useIntegrationById = (integrationId?: string) => {
+export const useIntegrationById = (integrationId?: number) => {
   const { project } = useAppEnv();
   return useQuery<Integration, SDKError>(
     ['integration', integrationId, project],

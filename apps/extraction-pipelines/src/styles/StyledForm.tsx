@@ -39,6 +39,9 @@ export const CreateFormWrapper = styled.form`
   }
 `;
 
+export const StyledLabel = styled.label`
+  font-weight: bold;
+`;
 export const Hint = styled.span`
   color: ${Colors['greyscale-grey6'].hex()};
   margin-bottom: ${bottomSpacing};
@@ -47,14 +50,28 @@ export const Hint = styled.span`
 export const StyledTextArea = styled.textarea`
   width: 100%;
   height: 10rem;
+  padding-top: 0.5rem;
+  &.has-error {
+    border-color: ${Colors.danger.hex()};
+  }
 `;
 
 export const EditButton = styled((props) => (
-  <Button type="ghost" icon="Edit" iconPlacement="right" {...props}>
+  <Button
+    type="ghost"
+    icon="Edit"
+    iconPlacement="right"
+    className="edit-button"
+    {...props}
+  >
     {props.children}
   </Button>
 ))`
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr 3rem;
+  text-align: left;
+  grid-column-gap: 1rem;
+  height: fit-content;
 `;
 export const StyledForm = styled((props) => (
   <PaddedGridForm {...props}>{props.children}</PaddedGridForm>

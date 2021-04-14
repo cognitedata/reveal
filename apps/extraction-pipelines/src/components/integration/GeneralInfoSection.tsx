@@ -16,12 +16,13 @@ import {
 } from 'utils/validation/integrationSchemas';
 import { StyledTitle2 } from 'styles/StyledHeadings';
 import TextAreaField from 'components/integration/TextAreaField';
+import { GENERAL_INFO_HEADING } from 'utils/constants';
 
 const GeneralInfoWrapper = styled(DetailsGrid)`
   padding: 1rem;
   border-right: 1px solid ${Colors['greyscale-grey2'].hex()};
 `;
-const GENERAL_INFO_HEADING: Readonly<string> = 'General Info';
+
 export const GeneralInfoSection: FunctionComponent = () => {
   const { integration } = useSelectedIntegration();
   if (!integration) {

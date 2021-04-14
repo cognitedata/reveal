@@ -59,7 +59,7 @@ const IntegrationPage: FunctionComponent<IntegrationPageProps> = () => {
   const { origin } = useAppEnv();
   const { id } = useParams<RouterParams>();
   const { integration, setIntegration } = useSelectedIntegration();
-  const int = useIntegrationById(id);
+  const int = useIntegrationById(parseInt(id, 10));
   const dataSetId: IdEither[] = int.data?.dataSetId
     ? [{ id: parseInt(int.data.dataSetId, 10) }]
     : [];

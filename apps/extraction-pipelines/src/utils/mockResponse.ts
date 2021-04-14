@@ -64,6 +64,7 @@ const mockResponseV2 = {
       ],
       metadata: {
         sourceSystem: 'Azure',
+        documentation: 'This is the documentation for this integration',
       },
       id: 825964439209154,
     },

@@ -65,6 +65,12 @@ export const DETAILS: Readonly<string> = 'Details';
 export const RUNS: Readonly<string> = 'Runs';
 export const CONTACTS: Readonly<string> = 'Contacts';
 
+// General information
+export const GENERAL_INFO_HEADING: Readonly<string> = 'General Info';
+
+// Documentation
+export const DOCUMENTATION_HEADING: Readonly<string> = 'Documentation';
+
 // Page headings
 export const ADD_INTEGRATION: Readonly<string> = 'Add integration';
 

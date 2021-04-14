@@ -10,6 +10,7 @@ import { bottomSpacing } from 'styles/StyledVariables';
 import { GeneralInfoSection } from 'components/integration/GeneralInfoSection';
 import { StyledTitle3 } from 'styles/StyledHeadings';
 import { PageWrapperColumn } from 'styles/StyledPage';
+import { DocumentationSection } from 'components/integration/DocumentationSection';
 import { LatestRun } from 'components/integration/LatestRun';
 
 export const Hint = styled.span``;
@@ -90,7 +91,9 @@ export const IntegrationView: FunctionComponent<IntegrationViewProps> = () => {
       <MiddleSectionGrid>
         <GeneralInfoSection />
       </MiddleSectionGrid>
-      <BottomSection />
+      <BottomSection>
+        <DocumentationSection />
+      </BottomSection>
     </PageWrapperColumn>
   );
 };
