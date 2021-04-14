@@ -34,7 +34,6 @@ export function* createPrimitives(
   clipBox: THREE.Box3 | undefined
 ) {
   const primitives = sector.primitives;
-
   if (hasAny(primitives.boxCollection)) {
     yield createBoxes(primitives.boxCollection, primitives.boxAttributes, materials.box, clipBox);
   }

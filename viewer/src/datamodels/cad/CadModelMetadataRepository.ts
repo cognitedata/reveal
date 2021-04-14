@@ -45,6 +45,7 @@ export class CadModelMetadataRepository<TModelIdentifier>
 
     return {
       blobUrl,
+      geometryClipBox: undefined,
       modelMatrix,
       inverseModelMatrix,
       cameraConfiguration: transformCameraConfiguration(cameraConfiguration, modelMatrix),

@@ -129,7 +129,7 @@ export class CachedRepository implements Repository {
         this.catchWantedSectorError(wantedSector, 'loadSimpleSectorFromNetwork'),
         mergeMap(buffer => this._modelDataParser.parseF3D(new Uint8Array(buffer))),
         map(sectorQuads => ({ ...wantedSector, data: sectorQuads })),
-        map(parsedSector => this._modelDataTransformer.transformSector(parsedSector, undefined)),
+        map(parsedSector => this._modelDataTransformer.transformSector(parsedSector, wantedSector.geometryClipBox)),
         this.nameGroup(wantedSector),
         map(group => ({ ...wantedSector, group: group.sectorMeshes, instancedMeshes: group.instancedMeshes })),
         shareReplay(1),
@@ -140,8 +140,7 @@ export class CachedRepository implements Repository {
   }
 
   private loadDetailedSectorFromNetwork(wantedSector: WantedSector): Observable<ConsumedSector> {
-    const networkObservable =
-      /*onErrorResumeNext(*/
+    const networkObservable = onErrorResumeNext(
       scheduled(
         defer(() => {
           const indexFile = wantedSector.metadata.indexFile;
@@ -168,15 +167,15 @@ export class CachedRepository implements Repository {
             map(data => {
               return { ...wantedSector, data };
             }),
-            map(parsedSector => this._modelDataTransformer.transformSector(parsedSector, undefined)),
+            map(parsedSector => this._modelDataTransformer.transformSector(parsedSector, wantedSector.geometryClipBox)),
             map(group => ({ ...wantedSector, group: group.sectorMeshes, instancedMeshes: group.instancedMeshes })),
             shareReplay(1),
             take(1)
           );
         }),
         asyncScheduler
-      );
-    /*);*/
+      )
+    );
     return networkObservable;
   }
 

@@ -473,11 +473,16 @@ export class Cognite3DViewer {
     if (options.onComplete) {
       throw new NotSupportedInMigrationWrapperError('onComplete is not supported');
     }
-    const { modelId, revisionId } = options;
-    const cadNode = await this._revealManager.addModel('cad', {
-      modelId,
-      revisionId
-    });
+    const { modelId, revisionId, geometryFilter } = options;
+    const cadNode = await this._revealManager.addModel(
+      'cad',
+      {
+        modelId,
+        revisionId
+      },
+      undefined,
+      geometryFilter
+    );
 
     const model3d = new Cognite3DModel(modelId, revisionId, cadNode, this.sdkClient);
     this.models.push(model3d);

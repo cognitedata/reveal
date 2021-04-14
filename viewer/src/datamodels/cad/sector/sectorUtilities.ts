@@ -36,13 +36,7 @@ const quadVertexData = new Float32Array([
 
 const quadVertexBufferAttribute = new THREE.Float32BufferAttribute(quadVertexData.buffer, 3);
 
-const cadFromCdfToThreeMatrix = new THREE.Matrix4().set(1, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1);
-const clipBox = new THREE.Box3()
-  // .setFromCenterAndSize(new THREE.Vector3(307, 62, -102), new THREE.Vector3(20, 5, 20))
-  .setFromCenterAndSize(new THREE.Vector3(297, 525, -92), new THREE.Vector3(20, 5, 20))
-  .applyMatrix4(cadFromCdfToThreeMatrix.clone().invert());
-
-function isClipped(mesh: THREE.Mesh): boolean {
+function isClipped(mesh: THREE.Mesh, clipBox: THREE.Box3): boolean {
   if (mesh.geometry.boundingBox === null) {
     console.error(mesh.name, 'does not have bounding box');
     return true;
@@ -58,7 +52,7 @@ function isClipped(mesh: THREE.Mesh): boolean {
   return clipped;
 }
 
-function filterInstanceMeshes(instanceMeshFile: InstancedMeshFile) {
+function filterInstanceMeshes(instanceMeshFile: InstancedMeshFile, clipBox: THREE.Box3) {
   const vertices = instanceMeshFile.vertices;
   const baseBounds = new THREE.Box3();
   const instanceBounds = new THREE.Box3();
@@ -192,6 +186,13 @@ export function consumeSectorDetailed(
   clipBox: THREE.Box3 | undefined
 ): { sectorMeshes: THREE.Group; instancedMeshes: InstancedMeshFile[] } {
   const bounds = toThreeJsBox3(new THREE.Box3(), metadata.bounds);
+
+  if (clipBox !== undefined && clipBox.containsBox(bounds)) {
+    // If sector bounds is fully inside clip Box, nothing will be clipped so don't go the extra mile
+    // to check
+    clipBox = undefined;
+  }
+
   const obj = new THREE.Group();
   for (const primtiveRoot of createPrimitives(sector, materials, bounds, clipBox)) {
     // if (!isClipped(primtiveRoot)) {

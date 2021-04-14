@@ -43,6 +43,7 @@ export interface ParsedSector {
 
 export interface WantedSector {
   blobUrl: string;
+  geometryClipBox: THREE.Box3 | undefined;
   levelOfDetail: LevelOfDetail;
   metadata: SectorMetadata;
 }

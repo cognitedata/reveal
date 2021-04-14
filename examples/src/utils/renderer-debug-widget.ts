@@ -400,6 +400,7 @@ function updateWantedSectorOverride(
       blobUrl: cadNode.cadModelMetadata.blobUrl,
       levelOfDetail,
       metadata: node,
+      geometryClipBox: undefined
     };
   }
 

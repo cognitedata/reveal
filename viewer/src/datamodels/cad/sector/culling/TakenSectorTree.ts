@@ -53,14 +53,15 @@ export class TakenSectorTree {
     }, 0);
   }
 
-  toWantedSectors(modelBlobUrl: string): PrioritizedWantedSector[] {
+  toWantedSectors(modelBlobUrl: string, geometryClipBox: THREE.Box3 | undefined): PrioritizedWantedSector[] {
     return this.sectors
       .map(sector => {
         const wanted: PrioritizedWantedSector = {
           levelOfDetail: sector.lod,
           metadata: sector.sector,
           priority: sector.priority,
-          blobUrl: modelBlobUrl
+          blobUrl: modelBlobUrl,
+          geometryClipBox
         };
         return wanted;
       })

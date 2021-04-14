@@ -18,7 +18,7 @@ import { assertNever, LoadingState } from '../utilities';
 import { PointCloudNode } from '../datamodels/pointcloud/PointCloudNode';
 import { CadModelSectorBudget } from '../datamodels/cad/CadModelSectorBudget';
 import { CadModelSectorLoadStatistics } from '../datamodels/cad/CadModelSectorLoadStatistics';
-import { RenderOptions } from '..';
+import { GeometryFilter, RenderOptions } from '..';
 import { EventTrigger } from '../utilities/events';
 
 /* eslint-disable jsdoc/require-jsdoc */
@@ -184,13 +184,15 @@ export class RevealManager<TModelIdentifier> {
   public addModel(
     type: 'cad',
     modelIdentifier: TModelIdentifier,
-    nodeAppearanceProvider?: NodeAppearanceProvider
+    nodeAppearanceProvider?: NodeAppearanceProvider,
+    geometryFilter?: GeometryFilter
   ): Promise<CadNode>;
   public addModel(type: 'pointcloud', modelIdentifier: TModelIdentifier): Promise<PointCloudNode>;
   public async addModel(
     type: SupportedModelTypes,
     modelIdentifier: TModelIdentifier,
-    nodeAppearanceProvider?: NodeAppearanceProvider
+    nodeAppearanceProvider?: NodeAppearanceProvider,
+    geometryFilter?: GeometryFilter
   ): Promise<PointCloudNode | CadNode> {
     trackLoadModel(
       {
@@ -204,10 +206,16 @@ export class RevealManager<TModelIdentifier> {
 
     switch (type) {
       case 'cad': {
-        return this._cadManager.addModel(modelIdentifier, nodeAppearanceProvider);
+        return this._cadManager.addModel(modelIdentifier, geometryFilter, nodeAppearanceProvider);
       }
 
       case 'pointcloud': {
+        if (geometryFilter !== undefined) {
+          throw new Error('geometryFilter not supported for point clouds');
+        }
+        if (nodeAppearanceProvider !== undefined) {
+          throw new Error('nodeApperanceProvider not supported for point clouds');
+        }
         return this._pointCloudManager.addModel(modelIdentifier);
       }
 
