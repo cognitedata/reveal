@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useQueries } from 'react-query';
+import styled from 'styled-components/macro';
 import zipWith from 'lodash/zipWith';
 import { Call, Chart } from 'reducers/charts/types';
 import {
@@ -238,7 +239,7 @@ const PlotlyChartComponent = ({
         marker: {
           color,
         },
-        line: { color, width: width || 2, dash: dash || 'solid' },
+        line: { color, width: width || 1, dash: dash || 'solid' },
         yaxis: `y${index !== 0 ? index + 1 : ''}`,
         x: (datapoints as (
           | Datapoints
@@ -285,6 +286,7 @@ const PlotlyChartComponent = ({
     showlegend: false,
     dragmode,
     annotations: [],
+    shapes: [],
   };
 
   const yAxisDefaults = {
@@ -346,6 +348,42 @@ const PlotlyChartComponent = ({
           yshift: 5,
         });
       }
+
+      /**
+       * Display y-axes top and bottom markers
+       */
+      (layout.shapes as any).push(
+        ...[
+          // Top axis marker
+          {
+            type: 'line',
+            xref: 'paper',
+            yref: 'paper',
+            x0: 0.05 * index,
+            y0: 1,
+            x1: 0.05 * index + 0.005,
+            y1: 1,
+            line: {
+              color,
+              width: 1,
+            },
+          },
+          // Bottom axis marker
+          {
+            type: 'line',
+            xref: 'paper',
+            yref: 'paper',
+            x0: 0.05 * index,
+            y0: 0,
+            x1: 0.05 * index + 0.005,
+            y1: 0,
+            line: {
+              color,
+              width: 1,
+            },
+          },
+        ]
+      );
     }
   });
 
@@ -373,7 +411,7 @@ const PlotlyChartComponent = ({
   };
 
   return (
-    <>
+    <PlotWrapper>
       <Plot
         data={data as Plotly.Data[]}
         layout={(layout as unknown) as Plotly.Layout}
@@ -392,8 +430,18 @@ const PlotlyChartComponent = ({
             />
           )
       )}
-    </>
+    </PlotWrapper>
   );
 };
+
+const PlotWrapper = styled.div`
+  height: 100%;
+  width: 100%;
+
+  // Expanding the y-axis hitbox
+  .nsdrag {
+    width: 40px;
+  }
+`;
 
 export default PlotlyChartComponent;

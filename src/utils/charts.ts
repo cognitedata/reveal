@@ -145,7 +145,7 @@ export function covertTSToChartTS(
     originalUnit: ts.unit || '*',
     preferredUnit: ts.unit || '*',
     color: availableColors[preExistingCount || 0 % availableColors.length],
-    lineWeight: 2,
+    lineWeight: 1,
     lineStyle: 'solid',
     displayMode: 'lines',
     enabled: true,

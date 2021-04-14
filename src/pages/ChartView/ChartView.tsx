@@ -113,7 +113,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
             id: nanoid(),
             name: 'New Calculation',
             color: getEntryColor(),
-            lineWeight: 2,
+            lineWeight: 1,
             lineStyle: 'solid',
             enabled: true,
             nodes: [],
