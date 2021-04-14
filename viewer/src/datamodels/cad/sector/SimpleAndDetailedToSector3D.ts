@@ -23,7 +23,6 @@ export class SimpleAndDetailedToSector3D {
     parsedSector: ParsedSector,
     clipBox: THREE.Box3 | undefined
   ): { sectorMeshes: THREE.Group; instancedMeshes: InstancedMeshFile[] } {
-    debugger;
     switch (parsedSector.levelOfDetail) {
       case LevelOfDetail.Detailed:
         return consumeSectorDetailed(
