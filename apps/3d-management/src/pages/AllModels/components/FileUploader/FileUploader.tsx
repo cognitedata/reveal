@@ -8,8 +8,8 @@ import UploadGCS from 'gcs-browser-upload';
 import mime from 'mime-types';
 import styled from 'styled-components';
 import { v3, v3Client } from '@cognite/cdf-sdk-singleton';
-import { fireErrorNotification } from 'src/utils/notifications';
-import { DEFAULT_MARGIN_V, getContainer } from 'src/utils';
+import { fireErrorNotification, logToSentry } from 'src/utils/notifications';
+import { DEFAULT_MARGIN_V, getContainer, sleep } from 'src/utils';
 
 const { Dragger } = Upload;
 const { confirm } = Modal;
@@ -33,9 +33,10 @@ const ButtonRow = styled.div`
 
 enum STATUS {
   WAITING = 1,
-  READY = 2,
-  STARTED = 3,
-  PAUSED = 4,
+  READY,
+  STARTING,
+  STARTED,
+  PAUSED,
 }
 
 const defaultState = {
@@ -117,15 +118,14 @@ class FileUploader extends React.Component<Props, State> {
   };
 
   startUpload = async () => {
-    if (this.state.uploadStatus !== STATUS.READY) {
-      return;
-    }
+    this.setState({ uploadStatus: STATUS.STARTING });
 
     if (this.props.beforeUploadStart) {
       try {
         await this.props.beforeUploadStart();
       } catch (e) {
         this.props.onUploadFailure();
+        this.setState({ uploadStatus: STATUS.READY });
         return;
       }
     }
@@ -172,13 +172,36 @@ class FileUploader extends React.Component<Props, State> {
 
     try {
       await this.currentUpload!.start();
+
+      // Files are not available through the files API immediately after upload
+      // so we making sure that they are available to avoid revisions endpoint to fail
+      const getFileInfo = (): Promise<v3.FileInfo> =>
+        v3Client.files.retrieve([{ id }]).then((r) => r[0]);
+
+      let fileInfo = await getFileInfo();
+      let retries = 0;
+      while (!fileInfo.uploaded && retries <= 3) {
+        retries += 1;
+        /* eslint-disable no-await-in-loop */
+        await sleep(retries * 1500);
+        fileInfo = await getFileInfo();
+        /* eslint-enable no-await-in-loop */
+      }
+      console.log('fileInfo', fileInfo);
+      this.props.onUploadSuccess(fileInfo.id);
     } catch (e) {
-      // catch CORS errors
+      console.error(e);
+      if (e.code === 401) {
+        // eslint-disable-next-line no-alert
+        alert('Authorization is expired. The page will be reloaded');
+
+        // eslint-disable-next-line no-restricted-globals
+        location.reload();
+      } else {
+        logToSentry(e);
+        message.error(`Unable to upload ${file.name} on server.`);
+      }
     }
-
-    this.props.onUploadSuccess(id);
-
-    message.info('Upload complete, starting processing job to render 3d model');
 
     this.currentUpload.meta.reset(); // clears the locally stored metadata
     this.setState(defaultState);
@@ -249,6 +272,13 @@ class FileUploader extends React.Component<Props, State> {
         uploaderButton = (
           <Button type="primary" onClick={this.startUpload} icon="Upload">
             Upload
+          </Button>
+        );
+        break;
+      case STATUS.STARTING:
+        uploaderButton = (
+          <Button type="primary" icon="Loading" disabled>
+            Uploading
           </Button>
         );
         break;

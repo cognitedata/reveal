@@ -28,11 +28,12 @@ const generateErrorMessage = (errorCode: number): string => {
 };
 
 export const logToSentry = (error) => {
-  if (process.env.NODE_ENV === 'development') {
+  if (
+    process.env.NODE_ENV === 'development' ||
+    process.env.NODE_ENV === 'test'
+  ) {
     // eslint-disable-next-line no-console
     console.error(error);
-  } else if (process.env.NODE_ENV === 'test') {
-    throw error;
   } else {
     Sentry.captureException(error);
   }

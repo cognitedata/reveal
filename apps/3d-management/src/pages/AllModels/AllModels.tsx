@@ -20,6 +20,7 @@ import { RouteComponentProps } from 'react-router';
 import { useCreateModelMutation } from 'src/hooks/models';
 import { useModels } from 'src/hooks/models/useModels';
 import { useCreateRevisionMutation } from 'src/hooks/revisions';
+import message from 'antd/lib/message';
 
 const { Step } = Steps;
 
@@ -146,6 +147,9 @@ export default function AllModels(props: Props) {
             );
           }}
           onUploadSuccess={async (fileId) => {
+            message.info(
+              'Upload complete, starting processing job to render 3d model'
+            );
             metrics.track('Revisions.New');
 
             if (createdModel) {
@@ -159,6 +163,7 @@ export default function AllModels(props: Props) {
             setIsModalVisible(false);
             setCreatedModel(undefined);
             setCurrentUploadStep(0);
+            modelsQuery.refetch();
           }}
           onUploadFailure={() => {
             closeModal();
