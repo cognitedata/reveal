@@ -141,3 +141,35 @@ export function computeBoundingBoxFromInstanceMatrixAttributes(
   out.copy(baseBoundingBox).applyMatrix4(instanceMatrix);
   return out;
 }
+
+const computeBoundingBoxFromEllipseAttributesVars = {
+  center: new THREE.Vector3(),
+  size: new THREE.Vector3()
+};
+
+export function computeBoundingBoxFromEllipseAttributes(
+  centerAttribute: ParsePrimitiveAttribute,
+  radius1Attribute: ParsePrimitiveAttribute,
+  radius2Attribute: ParsePrimitiveAttribute,
+  heightAttribute: ParsePrimitiveAttribute,
+  attributeFloatValues: Float32Array,
+  elementSize: number,
+  elementIndex: number,
+  out: THREE.Box3
+): THREE.Box3 {
+  const { center, size } = computeBoundingBoxFromEllipseAttributesVars;
+
+  function readAttribute(attribute: ParsePrimitiveAttribute, idx: number = 0): number {
+    const offset = (elementIndex * elementSize + attribute.offset) / attributeFloatValues.BYTES_PER_ELEMENT;
+    return attributeFloatValues[offset + idx];
+  }
+
+  center.set(readAttribute(centerAttribute, 0), readAttribute(centerAttribute, 1), readAttribute(centerAttribute, 2));
+  const radius1 = readAttribute(radius1Attribute);
+  const radius2 = readAttribute(radius2Attribute);
+  const height = readAttribute(heightAttribute);
+  const extent = 2.0 * Math.max(radius1, radius2, height);
+  size.set(extent, extent, extent);
+  out.setFromCenterAndSize(center, size);
+  return out;
+}

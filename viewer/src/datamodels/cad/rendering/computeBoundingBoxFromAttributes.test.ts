@@ -6,6 +6,7 @@ import * as THREE from 'three';
 import { ParsePrimitiveAttribute } from '@cognite/reveal-parser-worker';
 import {
   computeBoundingBoxFromCenterAndRadiusAttributes,
+  computeBoundingBoxFromEllipseAttributes,
   computeBoundingBoxFromInstanceMatrixAttributes,
   computeBoundingBoxFromVertexAttributes
 } from './computeBoundingBoxFromAttributes';
@@ -203,7 +204,7 @@ describe('computeBoundingBoxFromVertexAttributes', () => {
   }
 });
 
-describe('computeBoundingBoxFromInstanceMatrix', () => {
+describe('computeBoundingBoxFromInstanceMatrixAttributes', () => {
   let instanceMatrixAttribute: ParsePrimitiveAttribute;
   let elementSize: number;
 
@@ -253,5 +254,66 @@ describe('computeBoundingBoxFromInstanceMatrix', () => {
 
     // Assert
     expect(result).toEqual(baseBbox.applyMatrix4(matrix));
+  });
+});
+
+describe('computeBoundingBoxFromEllipseAttributes', () => {
+  let centerAttribute: ParsePrimitiveAttribute;
+  let radius1Attribute: ParsePrimitiveAttribute;
+  let radius2Attribute: ParsePrimitiveAttribute;
+  let heightAttribute: ParsePrimitiveAttribute;
+  let elementSize: number;
+
+  beforeEach(() => {
+    centerAttribute = { offset: 0, size: 3 * 4 };
+    radius1Attribute = { offset: 12, size: 4 };
+    radius2Attribute = { offset: 16, size: 4 };
+    heightAttribute = { offset: 20, size: 4 };
+    elementSize = 24;
+  });
+
+  test('unit bbox with identity transform, returns unit bbox', () => {
+    // Arange
+    const baseBbox = new THREE.Box3(new THREE.Vector3(-1, -1, -1), new THREE.Vector3(1, 1, 1));
+    const matrix = new THREE.Matrix4().identity();
+    const valuesAsFloats = new Float32Array(matrix.toArray());
+
+    // Act
+    const result = computeBoundingBoxFromEllipseAttributes(
+      centerAttribute,
+      radius1Attribute,
+      radius2Attribute,
+      heightAttribute,
+      valuesAsFloats,
+      elementSize,
+      0,
+      new THREE.Box3()
+    );
+
+    // Assert
+    expect(result).toEqual(baseBbox);
+  });
+
+  test('complex bbox with complex transform, returns transformed bbox', () => {
+    // Arange
+    const values = [1, 2, 3, 2, 3, 4];
+    const valuesAsFloats = new Float32Array(values);
+
+    // Act
+    const result = computeBoundingBoxFromEllipseAttributes(
+      centerAttribute,
+      radius1Attribute,
+      radius2Attribute,
+      heightAttribute,
+      valuesAsFloats,
+      elementSize,
+      0,
+      new THREE.Box3()
+    );
+
+    // Assert
+    expect(result).toEqual(
+      new THREE.Box3().setFromCenterAndSize(new THREE.Vector3(1, 2, 3), new THREE.Vector3(8, 8, 8))
+    );
   });
 });
