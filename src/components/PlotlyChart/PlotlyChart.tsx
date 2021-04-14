@@ -392,6 +392,7 @@ const PlotlyChartComponent = ({
     responsive: true,
     scrollZoom: true,
     displaylogo: false,
+    displayModeBar: true,
     modeBarButtons: [
       [
         {
