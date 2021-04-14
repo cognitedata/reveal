@@ -43,7 +43,7 @@ export type Suite = {
   description: string;
   boards: Board[];
   color: string;
-  createdTime: number;
+  order: number;
 };
 
 export type ImgUrlLink = FileLink & IdEither;
