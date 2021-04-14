@@ -41,8 +41,6 @@ function filterPrimitivesOutsideClipBox(
       filteredCount++;
     }
   }
-
-  console.log('filtered', elementCount, 'to', filteredCount, 'primitives');
   return filteredByteValues.slice(0, filteredCount * elementSize);
 }
 

@@ -58,8 +58,6 @@ export class CachedRepository implements Repository {
   async loadSector(sector: WantedSector): Promise<ConsumedSector> {
     const cacheKey = this.wantedSectorCacheKey(sector);
     if (this._consumedSectorCache.has(cacheKey)) {
-      const cached = await this._consumedSectorCache.get(cacheKey);
-      console.log(`loadSector cached ${cached}`);
       return this._consumedSectorCache.get(cacheKey);
     }
 
@@ -75,12 +73,10 @@ export class CachedRepository implements Repository {
         const loadOperation = this.loadSimpleSectorFromNetwork(sector).toPromise();
         this._consumedSectorCache.forceInsert(cacheKey, loadOperation);
         const result = await loadOperation;
-        console.log(`loadSector simple ${result}`);
         return result;
       }
 
       case LevelOfDetail.Discarded:
-        console.log('discarded');
         return {
           blobUrl: sector.blobUrl,
           metadata: sector.metadata,
@@ -133,7 +129,7 @@ export class CachedRepository implements Repository {
         this.catchWantedSectorError(wantedSector, 'loadSimpleSectorFromNetwork'),
         mergeMap(buffer => this._modelDataParser.parseF3D(new Uint8Array(buffer))),
         map(sectorQuads => ({ ...wantedSector, data: sectorQuads })),
-        this._modelDataTransformer.transform(),
+        map(parsedSector => this._modelDataTransformer.transformSector(parsedSector, undefined)),
         this.nameGroup(wantedSector),
         map(group => ({ ...wantedSector, group: group.sectorMeshes, instancedMeshes: group.instancedMeshes })),
         shareReplay(1),
@@ -144,7 +140,8 @@ export class CachedRepository implements Repository {
   }
 
   private loadDetailedSectorFromNetwork(wantedSector: WantedSector): Observable<ConsumedSector> {
-    const networkObservable = onErrorResumeNext(
+    const networkObservable =
+      /*onErrorResumeNext(*/
       scheduled(
         defer(() => {
           const indexFile = wantedSector.metadata.indexFile;
@@ -171,15 +168,15 @@ export class CachedRepository implements Repository {
             map(data => {
               return { ...wantedSector, data };
             }),
-            this._modelDataTransformer.transform(),
+            map(parsedSector => this._modelDataTransformer.transformSector(parsedSector, undefined)),
             map(group => ({ ...wantedSector, group: group.sectorMeshes, instancedMeshes: group.instancedMeshes })),
             shareReplay(1),
             take(1)
           );
         }),
         asyncScheduler
-      )
-    );
+      );
+    /*);*/
     return networkObservable;
   }
 

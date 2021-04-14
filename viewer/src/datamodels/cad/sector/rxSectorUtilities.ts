@@ -71,7 +71,6 @@ export function handleDetermineSectorsInput(
             mergeMap(async x => {
               try {
                 const consumedSector = await sectorRepository.loadSector(x);
-                console.log(`Loaded ${consumedSector}`);
                 return consumedSector;
               } finally {
                 reportNewSectorsDone(1, 0);

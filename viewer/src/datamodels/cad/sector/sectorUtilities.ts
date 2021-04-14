@@ -188,7 +188,8 @@ export function consumeSectorSimple(
 export function consumeSectorDetailed(
   sector: SectorGeometry,
   metadata: SectorMetadata,
-  materials: Materials
+  materials: Materials,
+  clipBox: THREE.Box3 | undefined
 ): { sectorMeshes: THREE.Group; instancedMeshes: InstancedMeshFile[] } {
   const bounds = toThreeJsBox3(new THREE.Box3(), metadata.bounds);
   const obj = new THREE.Group();
