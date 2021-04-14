@@ -11102,9 +11102,9 @@ react-list@^0.8.13:
   dependencies:
     prop-types "15"
 
-react-modal@^3.11.2, react-modal@^3.12.1:
-  version "3.12.1"
-  resolved "https://registry.yarnpkg.com/react-modal/-/react-modal-3.12.1.tgz#38c33f70d81c33d02ff1ed115530443a3dc2afd3"
+react-modal@^3.11.2, react-modal@^3.13.1:
+  version "3.13.1"
+  resolved "https://registry.yarnpkg.com/react-modal/-/react-modal-3.13.1.tgz#a02dce63bbfee7582936f1e9835d518ef8f56453"
   dependencies:
     exenv "^1.2.0"
     prop-types "^15.5.10"
