@@ -53,7 +53,7 @@ export class TakenSectorTree {
     }, 0);
   }
 
-  toWantedSectors(modelBlobUrl: string, geometryClipBox: THREE.Box3 | undefined): PrioritizedWantedSector[] {
+  toWantedSectors(modelBlobUrl: string, geometryClipBox: THREE.Box3 | null): PrioritizedWantedSector[] {
     return this.sectors
       .map(sector => {
         const wanted: PrioritizedWantedSector = {

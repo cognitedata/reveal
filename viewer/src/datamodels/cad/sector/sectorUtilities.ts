@@ -183,18 +183,18 @@ export function consumeSectorDetailed(
   sector: SectorGeometry,
   metadata: SectorMetadata,
   materials: Materials,
-  clipBox: THREE.Box3 | undefined
+  geometryClipBox: THREE.Box3 | null
 ): { sectorMeshes: THREE.Group; instancedMeshes: InstancedMeshFile[] } {
   const bounds = toThreeJsBox3(new THREE.Box3(), metadata.bounds);
 
-  if (clipBox !== undefined && clipBox.containsBox(bounds)) {
+  if (geometryClipBox !== null && geometryClipBox.containsBox(bounds)) {
     // If sector bounds is fully inside clip Box, nothing will be clipped so don't go the extra mile
     // to check
-    clipBox = undefined;
+    geometryClipBox = null;
   }
 
   const obj = new THREE.Group();
-  for (const primtiveRoot of createPrimitives(sector, materials, bounds, clipBox)) {
+  for (const primtiveRoot of createPrimitives(sector, materials, bounds, geometryClipBox)) {
     // if (!isClipped(primtiveRoot)) {
     obj.add(primtiveRoot);
     // }

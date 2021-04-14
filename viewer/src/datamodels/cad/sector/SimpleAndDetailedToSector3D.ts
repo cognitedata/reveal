@@ -21,7 +21,7 @@ export class SimpleAndDetailedToSector3D {
 
   transformSector(
     parsedSector: ParsedSector,
-    clipBox: THREE.Box3 | undefined
+    geometryClipBox: THREE.Box3 | null
   ): { sectorMeshes: THREE.Group; instancedMeshes: InstancedMeshFile[] } {
     switch (parsedSector.levelOfDetail) {
       case LevelOfDetail.Detailed:
@@ -29,7 +29,7 @@ export class SimpleAndDetailedToSector3D {
           parsedSector.data as SectorGeometry,
           parsedSector.metadata,
           this.materialManager.getModelMaterials(parsedSector.blobUrl)!,
-          clipBox
+          geometryClipBox
         );
 
       case LevelOfDetail.Simple:

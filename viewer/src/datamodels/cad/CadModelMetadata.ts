@@ -12,12 +12,12 @@ export interface CadModelMetadata {
    */
   readonly blobUrl: string;
   /**
-   * If set, geometry outside this box might be clipped
+   * If not null, geometry outside this box might be clipped
    * away to avoid representing unused geometry. Will typically
    * be used with geometry filters where only a part of the model
    * is loaded.
    */
-  readonly geometryClipBox: THREE.Box3 | undefined;
+  readonly geometryClipBox: THREE.Box3 | null;
   /**
    * Matrix transforming from coordinates of the model to ThreeJS
    * coordinates.

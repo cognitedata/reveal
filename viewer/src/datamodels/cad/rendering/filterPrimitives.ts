@@ -48,9 +48,9 @@ export function filterPrimitivesOutsideClipBoxByBaseBoundsAndInstanceMatrix(
   attributesByteValues: Uint8Array,
   attributes: Map<string, ParsePrimitiveAttribute>,
   baseBox: THREE.Box3,
-  clipBox: THREE.Box3 | undefined
+  geometryClipBox: THREE.Box3 | null
 ): Uint8Array {
-  if (clipBox === undefined) {
+  if (geometryClipBox === null) {
     return attributesByteValues;
   }
   const instanceMatrixAttribute = attributes.get('instanceMatrix');
@@ -58,7 +58,7 @@ export function filterPrimitivesOutsideClipBoxByBaseBoundsAndInstanceMatrix(
   return filterPrimitivesOutsideClipBox(
     attributesByteValues,
     attributes,
-    clipBox,
+    geometryClipBox,
     (index, elementSize, attributeFloatValues, outBox) => {
       computeBoundingBoxFromInstanceMatrixAttributes(
         instanceMatrixAttribute,
@@ -75,11 +75,11 @@ export function filterPrimitivesOutsideClipBoxByBaseBoundsAndInstanceMatrix(
 export function filterPrimitivesOutsideClipBoxByCenterAndRadius(
   attributesByteValues: Uint8Array,
   attributes: Map<string, ParsePrimitiveAttribute>,
-  clipBox: THREE.Box3 | undefined,
+  geometryClipBox: THREE.Box3 | null,
   radiusAattributeName: string = 'radiusA',
   radiusBattributeName: string = 'radiusB'
 ): Uint8Array {
-  if (clipBox === undefined) {
+  if (geometryClipBox === null) {
     return attributesByteValues;
   }
 
@@ -96,7 +96,7 @@ export function filterPrimitivesOutsideClipBoxByCenterAndRadius(
   return filterPrimitivesOutsideClipBox(
     attributesByteValues,
     attributes,
-    clipBox,
+    geometryClipBox,
     (index, elementSize, attributeFloatValues, outBox) => {
       computeBoundingBoxFromCenterAndRadiusAttributes(
         centerAattribute,
@@ -115,9 +115,9 @@ export function filterPrimitivesOutsideClipBoxByCenterAndRadius(
 export function filterPrimitivesOutsideClipBoxByVertices(
   attributesByteValues: Uint8Array,
   attributes: Map<string, ParsePrimitiveAttribute>,
-  clipBox: THREE.Box3 | undefined
+  geometryClipBox: THREE.Box3 | null
 ): Uint8Array {
-  if (clipBox === undefined) {
+  if (geometryClipBox === null) {
     return attributesByteValues;
   }
 
@@ -134,7 +134,7 @@ export function filterPrimitivesOutsideClipBoxByVertices(
   return filterPrimitivesOutsideClipBox(
     attributesByteValues,
     attributes,
-    clipBox,
+    geometryClipBox,
     (index, elementSize, attributeFloatValues, outBox) => {
       computeBoundingBoxFromVertexAttributes(
         vertex1attribute,
@@ -153,11 +153,11 @@ export function filterPrimitivesOutsideClipBoxByVertices(
 export function filterPrimitivesOutsideClipBoxByEllipse(
   attributesByteValues: Uint8Array,
   attributes: Map<string, ParsePrimitiveAttribute>,
-  clipBox: THREE.Box3 | undefined,
+  geometryClipBox: THREE.Box3 | null,
   radius1AttributeName: string = 'horizontalRadius',
   radius2AttributeName: string = 'verticalRadius'
 ): Uint8Array {
-  if (clipBox === undefined) {
+  if (geometryClipBox === null) {
     return attributesByteValues;
   }
   const centerAttribute = attributes.get('center');
@@ -173,7 +173,7 @@ export function filterPrimitivesOutsideClipBoxByEllipse(
   return filterPrimitivesOutsideClipBox(
     attributesByteValues,
     attributes,
-    clipBox,
+    geometryClipBox,
     (index, elementSize, attributeFloatValues, outBox) => {
       computeBoundingBoxFromEllipseAttributes(
         centerAttribute,

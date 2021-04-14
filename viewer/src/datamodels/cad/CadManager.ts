@@ -194,9 +194,9 @@ export class CadManager<TModelIdentifier> {
 function determineGeometryClipBox(
   geometryFilter: GeometryFilter | undefined,
   cadModel: CadModelMetadata
-): THREE.Box3 | undefined {
+): THREE.Box3 | null {
   if (geometryFilter === undefined || geometryFilter.boundingBox === undefined) {
-    return undefined;
+    return null;
   }
   if (!geometryFilter.isBoundingBoxInModelCoordinates) {
     return geometryFilter.boundingBox;
