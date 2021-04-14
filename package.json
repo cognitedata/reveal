@@ -72,7 +72,7 @@
     "eslint-plugin-lodash": "^7.2.0",
     "eslint-plugin-prettier": "^3.3.1",
     "eslint-plugin-testcafe": "^0.2.1",
-    "eslint-plugin-testing-library": "^4.0.0",
+    "eslint-plugin-testing-library": "^4.0.1",
     "fetch-mock": "^9.11.0",
     "git-cz": "^4.7.6",
     "husky": "^6.0.0",
