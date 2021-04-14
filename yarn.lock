@@ -6062,9 +6062,9 @@ eslint-plugin-testing-library@^3.9.2:
   dependencies:
     "@typescript-eslint/experimental-utils" "^3.10.1"
 
-eslint-plugin-testing-library@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-testing-library/-/eslint-plugin-testing-library-4.0.0.tgz#87c7f292e0890b75ca443e8282d0a8b67d52c6a7"
+eslint-plugin-testing-library@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-testing-library/-/eslint-plugin-testing-library-4.0.1.tgz#c4e6e2992034fc3a46950cd9a3b19600f567fc61"
   dependencies:
     "@typescript-eslint/experimental-utils" "^4.21.0"
 
