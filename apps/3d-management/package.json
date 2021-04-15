@@ -45,7 +45,7 @@
     "redux-actions": "^2.6.5",
     "redux-devtools-extension": "^2.13.9",
     "redux-thunk": "^2.3.0",
-    "single-spa-react": "^4.1.0",
+    "single-spa-react": "^4.1.1",
     "styled-components": "^5.2.1",
     "three": "0.123.0"
   },
