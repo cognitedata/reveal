@@ -36,7 +36,7 @@ function filterPrimitivesOutsideClipBox(
     getBoundsOfElementsCallback(i, elementSize, attributeFloatValues, instanceBbox);
 
     if (clipBox.intersectsBox(instanceBbox)) {
-      const elementValues = attributesByteValues.slice(i * elementSize, (i + 1) * elementSize);
+      const elementValues = attributesByteValues.subarray(i * elementSize, (i + 1) * elementSize);
       filteredByteValues.set(elementValues, filteredCount * elementSize);
       filteredCount++;
     }

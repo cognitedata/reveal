@@ -122,7 +122,8 @@ export class CachedRepository implements Repository {
   }
 
   private loadSimpleSectorFromNetwork(wantedSector: WantedSector): Observable<ConsumedSector> {
-    const networkObservable: Observable<ConsumedSector> = onErrorResumeNext(
+    const networkObservable: Observable<ConsumedSector> =
+      /*onErrorResumeNext(*/
       defer(() =>
         this._modelSectorProvider.getBinaryFile(wantedSector.blobUrl, wantedSector.metadata.facesFile.fileName!)
       ).pipe(
@@ -134,8 +135,8 @@ export class CachedRepository implements Repository {
         map(group => ({ ...wantedSector, group: group.sectorMeshes, instancedMeshes: group.instancedMeshes })),
         shareReplay(1),
         take(1)
-      )
-    );
+      );
+    /*);*/
     return networkObservable;
   }
 
@@ -283,10 +284,10 @@ export class CachedRepository implements Repository {
           for (let i = 0; i < fileMeshIndices.length; i++) {
             const meshIdx = meshIndices[fileMeshIndices[i]];
             const treeIndex = treeIndices[meshIdx];
-            const instanceMatrix = instanceMatrices.slice(meshIdx * 16, meshIdx * 16 + 16);
+            const instanceMatrix = instanceMatrices.subarray(meshIdx * 16, meshIdx * 16 + 16);
             instanceMatrixBuffer.set(instanceMatrix, i * 16);
             treeIndicesBuffer[i] = treeIndex;
-            const color = colors.slice(meshIdx * 4, meshIdx * 4 + 4);
+            const color = colors.subarray(meshIdx * 4, meshIdx * 4 + 4);
             colorBuffer.set(color, i * 4);
           }
           instancedMeshes.push({

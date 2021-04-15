@@ -36,7 +36,6 @@ export function createSimpleGeometryMesh(
   sectorBounds: THREE.Box3,
   geometryClipBox: THREE.Box3 | null
 ): THREE.Group {
-  debugger;
   const attributeByteValues = new Uint8Array(attributeValues.buffer);
   const filteredByteValues = filterPrimitivesOutsideClipBoxByBaseBoundsAndInstanceMatrix(
     attributeByteValues,
