@@ -10,31 +10,18 @@ import { SectorGeometry, SectorMetadata, WantedSector, ConsumedSector } from './
 import { Materials } from '../rendering/materials';
 
 import { InstancedMeshFile, SectorQuads } from '../rendering/types';
-import { disposeAttributeArrayOnUpload } from '../../../utilities/disposeAttributeArrayOnUpload';
+
 import { toThreeJsBox3 } from '../../../utilities';
 import { traverseDepthFirst } from '../../../utilities/objectTraversal';
 import { createTriangleMeshes } from '../rendering/triangleMeshes';
 import { createPrimitives } from '../rendering/primitives';
-
-const quadVertexData = new Float32Array([
-  /* eslint-disable prettier/prettier */
-  -0.5, -0.5, 0.0,
-  0.5, -0.5, 0.0,
-  0.5, 0.5, 0.0,
-
-  0.5, 0.5, 0.0,
-  -0.5, 0.5, 0.0,
-  -0.5, -0.5, 0.0,
-  /*  eslint-enable prettier/prettier  */
-]);
+import { createSimpleGeometryMesh } from '../rendering/createSimpleGeometryMesh';
 
 (window as any).clipped = 0;
 (window as any).notClipped = 0;
 (window as any).clippedInstances = 0;
 (window as any).notClippedInstances = 0;
 (window as any).clippedInstanceTreeIndices = [];
-
-const quadVertexBufferAttribute = new THREE.Float32BufferAttribute(quadVertexData.buffer, 3);
 
 function isClipped(mesh: THREE.Mesh, clipBox: THREE.Box3): boolean {
   if (mesh.geometry.boundingBox === null) {
@@ -115,68 +102,16 @@ function filterInstanceMeshes(instanceMeshFile: InstancedMeshFile, clipBox: THRE
 export function consumeSectorSimple(
   sector: SectorQuads,
   sectorBounds: THREE.Box3,
-  materials: Materials
+  materials: Materials,
+  geometryClipBox: THREE.Box3 | null
 ): { sectorMeshes: THREE.Group; instancedMeshes: InstancedMeshFile[] } {
-  const group = new THREE.Group();
-  const stride = 3 + 1 + 3 + 16;
   if (sector.buffer.byteLength === 0) {
     // No data, just skip
     return { sectorMeshes: new THREE.Group(), instancedMeshes: [] };
   }
-  if (sector.buffer.byteLength % stride !== 0) {
-    throw new Error(`Expected buffer size to be multiple of ${stride}, but got ${sector.buffer.byteLength}`);
-  }
 
-  const geometry = new THREE.InstancedBufferGeometry();
-
-  const interleavedBuffer32 = new THREE.InstancedInterleavedBuffer(sector.buffer, stride);
-  const color = new THREE.InterleavedBufferAttribute(interleavedBuffer32, 3, 0, true);
-  const treeIndex = new THREE.InterleavedBufferAttribute(interleavedBuffer32, 1, 3, false);
-  const normal = new THREE.InterleavedBufferAttribute(interleavedBuffer32, 3, 4, true);
-  const matrix0 = new THREE.InterleavedBufferAttribute(interleavedBuffer32, 4, 7, false);
-  const matrix1 = new THREE.InterleavedBufferAttribute(interleavedBuffer32, 4, 11, false);
-  const matrix2 = new THREE.InterleavedBufferAttribute(interleavedBuffer32, 4, 15, false);
-  const matrix3 = new THREE.InterleavedBufferAttribute(interleavedBuffer32, 4, 19, false);
-
-  geometry.setAttribute('position', quadVertexBufferAttribute);
-  geometry.setAttribute('color', color);
-  geometry.setAttribute('treeIndex', treeIndex);
-  geometry.setAttribute('normal', normal);
-  geometry.setAttribute('matrix0', matrix0);
-  geometry.setAttribute('matrix1', matrix1);
-  geometry.setAttribute('matrix2', matrix2);
-  geometry.setAttribute('matrix3', matrix3);
-
-  const obj = new THREE.Mesh(geometry, materials.simple);
-  obj.onAfterRender = () => {
-    disposeAttributeArrayOnUpload.bind(interleavedBuffer32)();
-    obj.onAfterRender = () => {};
-  };
-
-  obj.onBeforeRender = () => {
-    const inverseModelMatrix: THREE.Matrix4 = materials.simple.uniforms.inverseModelMatrix.value;
-    inverseModelMatrix.copy(obj.matrixWorld).invert();
-  };
-
-  setTreeIndeciesToUserData();
-
-  obj.geometry.boundingSphere = new THREE.Sphere();
-  sectorBounds.getBoundingSphere(obj.geometry.boundingSphere);
-
-  // group.add(obj);
-
+  const group = createSimpleGeometryMesh(sector.buffer, materials, sectorBounds, geometryClipBox);
   return { sectorMeshes: group, instancedMeshes: [] };
-
-  function setTreeIndeciesToUserData() {
-    const treeIndexAttributeOffset = 3;
-
-    const treeIndecies = new Set();
-
-    for (let i = 0; i < sector.buffer.length / stride; i++) {
-      treeIndecies.add(sector.buffer[i * stride + treeIndexAttributeOffset]);
-    }
-    obj.userData.treeIndices = treeIndecies;
-  }
 }
 
 export function consumeSectorDetailed(

@@ -36,7 +36,8 @@ export class SimpleAndDetailedToSector3D {
         return consumeSectorSimple(
           parsedSector.data as SectorQuads,
           toThreeJsBox3(new THREE.Box3(), parsedSector.metadata.bounds),
-          this.materialManager.getModelMaterials(parsedSector.blobUrl)!
+          this.materialManager.getModelMaterials(parsedSector.blobUrl)!,
+          geometryClipBox
         );
 
       case LevelOfDetail.Discarded:
