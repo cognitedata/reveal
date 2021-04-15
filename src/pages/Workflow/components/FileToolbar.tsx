@@ -13,6 +13,7 @@ import { DetectionModelCategory } from 'src/api/types';
 import { selectAllFiles } from 'src/store/uploadedFilesSlice';
 import { message, notification } from 'antd';
 import { isVideo } from 'src/components/FileUploader/utils/FileUtils';
+import { toastProps } from 'src/utils/ToastUtils';
 
 export const FileToolbar = ({
   onViewChange,
@@ -59,9 +60,22 @@ export const FileToolbar = ({
   const isPollingFinished = useSelector((state: RootState) => {
     return selectIsPollingComplete(state.processSlice);
   });
+
+  const showDrawer = useSelector(
+    (state: RootState) => state.processSlice.showFileMetadataDrawer
+  );
+
   return (
     <>
       <Container>
+        {isPollingFinished || showDrawer
+          ? notification.info({
+              ...toastProps,
+              duration: 0.01,
+              style: { ...toastProps.style, visibility: 'collapse' },
+            })
+          : notification.info({ ...toastProps, duration: 0 })}
+
         <ModelOptions>
           <ModelSelector>
             <Detail strong>Select Machine Learning Model(s):</Detail>
