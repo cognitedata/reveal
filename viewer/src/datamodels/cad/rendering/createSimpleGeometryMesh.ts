@@ -66,7 +66,7 @@ export function createSimpleGeometryMesh(
     inverseModelMatrix.copy(obj.matrixWorld).invert();
   };
 
-  setTreeIndeciesToUserData();
+  setTreeIndicesToUserData();
 
   obj.geometry.boundingSphere = new THREE.Sphere();
   sectorBounds.getBoundingSphere(obj.geometry.boundingSphere);
@@ -75,7 +75,7 @@ export function createSimpleGeometryMesh(
 
   return group;
 
-  function setTreeIndeciesToUserData() {
+  function setTreeIndicesToUserData() {
     const treeIndexAttributeOffset = 3;
 
     const treeIndices = new Set();
