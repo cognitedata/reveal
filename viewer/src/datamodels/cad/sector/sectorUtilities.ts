@@ -138,12 +138,11 @@ export function consumeSectorDetailed(
   const triangleMeshes = createTriangleMeshes(sector.triangleMeshes, bounds, materials.triangleMesh);
   for (const triangleMesh of triangleMeshes) {
     // if (!isClipped(triangleMesh)) {
-    // obj.add(triangleMesh);
+    obj.add(triangleMesh);
     // }
   }
   // sector.instanceMeshes.forEach(x => filterInstanceMeshes(x));
-  // return { sectorMeshes: obj, instancedMeshes: sector.instanceMeshes };
-  return { sectorMeshes: obj, instancedMeshes: [] };
+  return { sectorMeshes: obj, instancedMeshes: sector.instanceMeshes };
 }
 
 export function distinctUntilLevelOfDetailChanged() {
