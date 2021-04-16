@@ -15,13 +15,15 @@ import { DivFlex } from 'styles/flex/StyledFlex';
 import { FormProvider, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { mapModelToInput, mapScheduleInputToModel } from 'utils/cronUtils';
-import { createUpdateSpec } from 'utils/contactsUtils';
 import { ContactBtnTestIds } from 'components/form/ContactsView';
 import MessageDialog from 'components/buttons/MessageDialog';
 import { SERVER_ERROR_CONTENT, SERVER_ERROR_TITLE } from 'utils/constants';
 import { Integration, IntegrationFieldName } from 'model/Integration';
 import { useAppEnv } from 'hooks/useAppEnv';
-import { useDetailsUpdate } from 'hooks/details/useDetailsUpdate';
+import {
+  createUpdateSpec,
+  useDetailsUpdate,
+} from 'hooks/details/useDetailsUpdate';
 import { EditButton, StyledForm, StyledRadioGroup } from 'styles/StyledForm';
 import { scheduleSchema } from 'utils/validation/integrationSchemas';
 
@@ -70,25 +72,19 @@ export const Schedule: FunctionComponent<ScheduleProps> = ({
     if (integration && project) {
       const schedule = mapScheduleInputToModel(field);
       const items = createUpdateSpec({
+        project,
         id: integration.id,
         fieldValue: schedule,
         fieldName: 'schedule',
       });
-      await mutate(
-        {
-          project,
-          items,
-          id: integration.id,
+      await mutate(items, {
+        onError: () => {
+          setErrorVisible(true);
         },
-        {
-          onError: () => {
-            setErrorVisible(true);
-          },
-          onSuccess: () => {
-            setIsEdit(false);
-          },
-        }
-      );
+        onSuccess: () => {
+          setIsEdit(false);
+        },
+      });
     }
   };
 

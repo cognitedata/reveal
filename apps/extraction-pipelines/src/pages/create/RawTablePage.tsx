@@ -23,9 +23,12 @@ import { ButtonPlaced } from 'styles/StyledButton';
 import { IntegrationRawTable } from 'model/Integration';
 import { useStoredRegisterIntegration } from 'hooks/useStoredRegisterIntegration';
 import { mapStoredToDefault } from 'utils/raw/rawUtils';
-import { createUpdateSpec } from 'utils/contactsUtils';
+
 import { useAppEnv } from 'hooks/useAppEnv';
-import { useDetailsUpdate } from 'hooks/details/useDetailsUpdate';
+import {
+  useDetailsUpdate,
+  createUpdateSpec,
+} from 'hooks/details/useDetailsUpdate';
 
 const ConditionalWrapper = styled(DivFlex)`
   margin: 1rem 2rem;
@@ -109,29 +112,23 @@ const RawTablePage: FunctionComponent<RawTablePageProps> = () => {
 
     if (storedIntegration?.id && project) {
       const items = createUpdateSpec({
+        project,
         id: storedIntegration.id,
         fieldName: 'rawTables',
         fieldValue: selected,
       });
-      mutate(
-        {
-          project,
-          items,
-          id: storedIntegration.id,
+      mutate(items, {
+        onSuccess: () => {
+          history.push(createLink(DOCUMENTATION_PAGE_PATH));
         },
-        {
-          onSuccess: () => {
-            history.push(createLink(DOCUMENTATION_PAGE_PATH));
-          },
-          onError: (serverError) => {
-            setError('rawTables', {
-              type: 'server',
-              message: serverError.data.message,
-              shouldFocus: true,
-            });
-          },
-        }
-      );
+        onError: (serverError) => {
+          setError('rawTables', {
+            type: 'server',
+            message: serverError.data.message,
+            shouldFocus: true,
+          });
+        },
+      });
     } else {
       setError('datasetId', {
         type: 'No id',

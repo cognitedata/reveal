@@ -25,8 +25,10 @@ import DataSetIdInput, {
 import { useStoredRegisterIntegration } from 'hooks/useStoredRegisterIntegration';
 import { getDataSetPageValues } from 'utils/dataSetUtils';
 import { useDataSetsList } from 'hooks/useDataSetsList';
-import { createUpdateSpec } from 'utils/contactsUtils';
-import { useDetailsUpdate } from 'hooks/details/useDetailsUpdate';
+import {
+  useDetailsUpdate,
+  createUpdateSpec,
+} from 'hooks/details/useDetailsUpdate';
 import { useAppEnv } from 'hooks/useAppEnv';
 
 const DataSetIdWrapper = styled(DivFlex)`
@@ -105,29 +107,23 @@ const DataSetPage: FunctionComponent<DataSetPageProps> = () => {
       case DataSetOptions.NO: {
         if (storedIntegration?.id && project) {
           const items = createUpdateSpec({
+            project,
             id: storedIntegration.id,
             fieldName: 'dataSetId',
             fieldValue: valueToStore,
           });
-          mutate(
-            {
-              project,
-              items,
-              id: storedIntegration.id,
+          mutate(items, {
+            onSuccess: () => {
+              history.push(createLink(RAW_TABLE_PAGE_PATH));
             },
-            {
-              onSuccess: () => {
-                history.push(createLink(RAW_TABLE_PAGE_PATH));
-              },
-              onError: (serverError) => {
-                setError('datasetId', {
-                  type: 'server',
-                  message: serverError.data.message,
-                  shouldFocus: true,
-                });
-              },
-            }
-          );
+            onError: (serverError) => {
+              setError('datasetId', {
+                type: 'server',
+                message: serverError.data.message,
+                shouldFocus: true,
+              });
+            },
+          });
         } else {
           setError('datasetId', {
             type: 'No id',

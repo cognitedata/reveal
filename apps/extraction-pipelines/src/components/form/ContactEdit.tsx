@@ -2,7 +2,7 @@ import React, { FunctionComponent, useState } from 'react';
 import { Button, Colors } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { ArrayField, useFormContext } from 'react-hook-form';
-import { InputWithError } from '../inputs/InputWithError';
+import { InputWithError } from 'components/inputs/InputWithError';
 import {
   CONTACT_EMAIL_TEST_ID,
   CONTACT_NAME_TEST_ID,
@@ -17,16 +17,18 @@ import {
   ROLE_PLACEHOLDER,
   SERVER_ERROR_CONTENT,
   SERVER_ERROR_TITLE,
-} from '../../utils/constants';
-import { SwitchWithRef } from '../inputs/SwitchRef';
-import { InputWarningIcon } from '../icons/InputWarningIcon';
-import { ContactBtnTestIds } from './ContactsView';
-import MessageDialog from '../buttons/MessageDialog';
-import { useIntegration } from '../../hooks/details/IntegrationContext';
-import { useAppEnv } from '../../hooks/useAppEnv';
-import { useDetailsUpdate } from '../../hooks/details/useDetailsUpdate';
-import { User } from '../../model/User';
-import { createUpdateSpec } from '../../utils/contactsUtils';
+} from 'utils/constants';
+import { SwitchWithRef } from 'components/inputs/SwitchRef';
+import { InputWarningIcon } from 'components/icons/InputWarningIcon';
+import { ContactBtnTestIds } from 'components/form/ContactsView';
+import MessageDialog from 'components/buttons/MessageDialog';
+import { useIntegration } from 'hooks/details/IntegrationContext';
+import { useAppEnv } from 'hooks/useAppEnv';
+import {
+  createUpdateSpec,
+  useDetailsUpdate,
+} from 'hooks/details/useDetailsUpdate';
+import { User } from 'model/User';
 
 const EditWrapper = styled.div`
   padding: 1rem 0.75rem;
@@ -103,34 +105,28 @@ export const ContactEdit: FunctionComponent<ContactEditProps> = ({
         return contact;
       });
       const items = createUpdateSpec({
+        project,
         id: integration.id,
         fieldValue: contactsToSave,
         fieldName: 'contacts',
       });
 
-      await mutate(
-        {
-          project,
-          items,
-          id: integration.id,
+      await mutate(items, {
+        onError: () => {
+          setErrorVisible(true);
         },
-        {
-          onError: () => {
-            setErrorVisible(true);
-          },
-          onSuccess: () => {
-            dispatch({
-              type: 'UPDATE_CONTACT',
-              payload: { index, contact: actual },
-            });
-            dispatch({
-              type: 'REMOVE_CHANGE',
-              payload: { index, name: 'contacts' },
-            });
-            setIsEdit(false);
-          },
-        }
-      );
+        onSuccess: () => {
+          dispatch({
+            type: 'UPDATE_CONTACT',
+            payload: { index, contact: actual },
+          });
+          dispatch({
+            type: 'REMOVE_CHANGE',
+            payload: { index, name: 'contacts' },
+          });
+          setIsEdit(false);
+        },
+      });
     }
   }
 

@@ -5,8 +5,10 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import styled from 'styled-components';
 import { useIntegration } from 'hooks/details/IntegrationContext';
 import { useAppEnv } from 'hooks/useAppEnv';
-import { useDetailsUpdate } from 'hooks/details/useDetailsUpdate';
-import { createUpdateSpec } from 'utils/contactsUtils';
+import {
+  useDetailsUpdate,
+  createUpdateSpec,
+} from 'hooks/details/useDetailsUpdate';
 import ValidationError from 'components/form/ValidationError';
 import { InputWarningIcon } from 'components/icons/InputWarningIcon';
 import { AlignedSpan } from 'components/form/ContactsView';
@@ -91,30 +93,24 @@ const DescriptionView: FunctionComponent<Props> = () => {
     const description = getValues('description');
     if (valid && integration && project && description) {
       const items = createUpdateSpec({
+        project,
         id: integration.id,
         fieldValue: description,
         fieldName: 'description',
       });
-      await mutate(
-        {
-          project,
-          items,
-          id: integration.id,
+      await mutate(items, {
+        onError: () => {
+          setErrorVisible(true);
         },
-        {
-          onError: () => {
-            setErrorVisible(true);
-          },
-          onSuccess: () => {
-            dispatch({ type: 'UPDATE_DESCRIPTION', payload: { description } });
-            dispatch({
-              type: 'REMOVE_CHANGE',
-              payload: { name: 'description' },
-            });
-            setIsEdit(false);
-          },
-        }
-      );
+        onSuccess: () => {
+          dispatch({ type: 'UPDATE_DESCRIPTION', payload: { description } });
+          dispatch({
+            type: 'REMOVE_CHANGE',
+            payload: { name: 'description' },
+          });
+          setIsEdit(false);
+        },
+      });
     }
   };
 

@@ -14,9 +14,12 @@ import { CreateFormWrapper } from 'styles/StyledForm';
 import { RAW_TABLE_PAGE_PATH } from 'routing/CreateRouteConfig';
 import { INTEGRATIONS_OVERVIEW_PAGE_PATH } from 'routing/RoutingConfig';
 import { REGISTER } from 'utils/constants';
-import { useDetailsUpdate } from 'hooks/details/useDetailsUpdate';
+import {
+  useDetailsUpdate,
+  createUpdateSpec,
+} from 'hooks/details/useDetailsUpdate';
 import { useAppEnv } from 'hooks/useAppEnv';
-import { createUpdateSpec } from 'utils/contactsUtils';
+
 import {
   MetaData,
   RegisterMetaData,
@@ -90,29 +93,23 @@ const DocumentationPage: FunctionComponent<DescriptionPageProps> = () => {
     }));
     if (storedIntegration?.id && project) {
       const items = createUpdateSpec({
+        project,
         id: storedIntegration.id,
         fieldName: 'description',
         fieldValue: fields.description,
       });
-      mutate(
-        {
-          project,
-          items,
-          id: storedIntegration.id,
+      mutate(items, {
+        onSuccess: () => {
+          history.push(createLink(INTEGRATIONS_OVERVIEW_PAGE_PATH));
         },
-        {
-          onSuccess: () => {
-            history.push(createLink(INTEGRATIONS_OVERVIEW_PAGE_PATH));
-          },
-          onError: (serverError) => {
-            setError('description', {
-              type: 'server',
-              message: serverError.data.message,
-              shouldFocus: true,
-            });
-          },
-        }
-      );
+        onError: (serverError) => {
+          setError('description', {
+            type: 'server',
+            message: serverError.data.message,
+            shouldFocus: true,
+          });
+        },
+      });
     } else {
       setError('description', {
         type: 'No id',

@@ -35,6 +35,7 @@ describe('IntegrationView', () => {
       id: mockIntegration.id,
     });
     await waitFor(() => {
+      screen.getByText(new RegExp(TableHeadings.NAME, 'i'));
       screen.getByText(GENERAL_INFO_HEADING);
       screen.getByText(DOCUMENTATION_HEADING);
     });
@@ -79,16 +80,20 @@ describe('IntegrationView', () => {
     expect(screen.getByText(mockIntegration.description)).toBeInTheDocument();
   });
 
-  test('Renders with minimal required info', () => {
+  test('Renders with minimal required info', async () => {
     const mockIntegration = {
       id: 123,
       externalId: 'lisa.external.id',
       name: 'My integration',
     };
+    sdkv3.get.mockResolvedValue({ data: mockIntegration });
     renderWithSelectedIntegrationContext(<IntegrationView />, {
       initIntegration: mockIntegration,
       client: new QueryClient(),
       route: `${INTEGRATIONS}/${mockIntegration.id}`,
+    });
+    await waitFor(() => {
+      screen.getByText(mockIntegration.externalId);
     });
     expect(screen.getByText(mockIntegration.externalId)).toBeInTheDocument();
     expect(screen.getByText(mockIntegration.id)).toBeInTheDocument();

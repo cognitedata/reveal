@@ -58,22 +58,24 @@ const IntegrationPage: FunctionComponent<IntegrationPageProps> = () => {
   const { path, url } = useRouteMatch();
   const { origin } = useAppEnv();
   const { id } = useParams<RouterParams>();
-  const { integration, setIntegration } = useSelectedIntegration();
-  const int = useIntegrationById(parseInt(id, 10));
-  const dataSetId: IdEither[] = int.data?.dataSetId
-    ? [{ id: parseInt(int.data.dataSetId, 10) }]
+  const { setIntegration } = useSelectedIntegration();
+  const { data: integration, isLoading } = useIntegrationById(parseInt(id, 10));
+  const dataSetId: IdEither[] = integration?.dataSetId
+    ? [{ id: parseInt(integration.dataSetId, 10) }]
     : [];
   const dataset = useDataSets(dataSetId);
+
   useEffect(() => {
-    if (int.data || dataset.data) {
+    if (integration || dataset.data) {
       const res: Integration = {
-        ...int.data,
+        ...integration,
         ...(dataset.data && { dataSet: dataset.data[0] }),
       } as Integration;
       setIntegration(res);
     }
-  }, [int.data, dataset.data, setIntegration]);
-  if (int.isLoading || dataset.isLoading) {
+  }, [integration, dataset.data, setIntegration]);
+
+  if (isLoading || dataset.isLoading) {
     return <Loader />;
   }
   return (
@@ -114,7 +116,7 @@ const IntegrationPage: FunctionComponent<IntegrationPageProps> = () => {
           <IntegrationView />
         </Route>
         <Route path={`${path}/logs`}>
-          <RunLogsView integration={integration} />
+          <RunLogsView integration={integration ?? null} />
         </Route>
       </Switch>
     </FullPageLayout>

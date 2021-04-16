@@ -18,9 +18,12 @@ import {
 import CronInput from 'components/inputs/cron/CronInput';
 import { useStoredRegisterIntegration } from 'hooks/useStoredRegisterIntegration';
 import { mapModelToInput, mapScheduleInputToModel } from 'utils/cronUtils';
-import { createUpdateSpec } from 'utils/contactsUtils';
+
 import { useAppEnv } from 'hooks/useAppEnv';
-import { useDetailsUpdate } from 'hooks/details/useDetailsUpdate';
+import {
+  useDetailsUpdate,
+  createUpdateSpec,
+} from 'hooks/details/useDetailsUpdate';
 import { CronWrapper } from 'components/integration/Schedule';
 import { scheduleSchema } from 'utils/validation/integrationSchemas';
 
@@ -68,29 +71,23 @@ const SchedulePage: FunctionComponent<SchedulePageProps> = () => {
     });
     if (storedIntegration?.id && project) {
       const items = createUpdateSpec({
+        project,
         id: storedIntegration.id,
         fieldName: 'schedule',
         fieldValue: schedule,
       });
-      mutate(
-        {
-          project,
-          items,
-          id: storedIntegration.id,
+      mutate(items, {
+        onSuccess: () => {
+          history.push(createLink(DATA_SET_PAGE_PATH));
         },
-        {
-          onSuccess: () => {
-            history.push(createLink(DATA_SET_PAGE_PATH));
-          },
-          onError: (serverError) => {
-            setError('schedule', {
-              type: 'server',
-              message: serverError.data.message,
-              shouldFocus: true,
-            });
-          },
-        }
-      );
+        onError: (serverError) => {
+          setError('schedule', {
+            type: 'server',
+            message: serverError.data.message,
+            shouldFocus: true,
+          });
+        },
+      });
     } else {
       setError('schedule', {
         type: 'No id',

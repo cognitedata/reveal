@@ -35,9 +35,11 @@ import { CreateFormWrapper } from 'styles/StyledForm';
 import { contactsRule } from 'utils/validation/contactsSchema';
 import { useStoredRegisterIntegration } from 'hooks/useStoredRegisterIntegration';
 import { DivFlex } from 'styles/flex/StyledFlex';
-import { createUpdateSpec } from 'utils/contactsUtils';
 import { useAppEnv } from 'hooks/useAppEnv';
-import { useDetailsUpdate } from 'hooks/details/useDetailsUpdate';
+import {
+  useDetailsUpdate,
+  createUpdateSpec,
+} from 'hooks/details/useDetailsUpdate';
 import {
   EXTERNAL_ID_PAGE_PATH,
   SCHEDULE_PAGE_PATH,
@@ -155,29 +157,23 @@ const ContactsPage: FunctionComponent<ContactsPageProps> = () => {
     });
     if (storedIntegration?.id && project) {
       const items = createUpdateSpec({
+        project,
         id: storedIntegration.id,
         fieldName: 'contacts',
         fieldValue: field.contacts ?? [],
       });
-      mutate(
-        {
-          project,
-          items,
-          id: storedIntegration.id,
+      mutate(items, {
+        onSuccess: () => {
+          history.push(createLink(SCHEDULE_PAGE_PATH));
         },
-        {
-          onSuccess: () => {
-            history.push(createLink(SCHEDULE_PAGE_PATH));
-          },
-          onError: (serverError) => {
-            setError('contacts', {
-              type: 'server',
-              message: serverError.data.message,
-              shouldFocus: true,
-            });
-          },
-        }
-      );
+        onError: (serverError) => {
+          setError('contacts', {
+            type: 'server',
+            message: serverError.data.message,
+            shouldFocus: true,
+          });
+        },
+      });
     } else {
       setError('contacts', {
         type: 'No id',

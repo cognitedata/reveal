@@ -12,10 +12,11 @@ import { ContactBtnTestIds } from 'components/form/ContactsView';
 import MessageDialog from 'components/buttons/MessageDialog';
 import { SERVER_ERROR_CONTENT, SERVER_ERROR_TITLE } from 'utils/constants';
 import { DefaultValues } from 'react-hook-form/dist/types/form';
-import { createUpdateSpec, UpdateSpec } from 'utils/contactsUtils';
 import { useAppEnv } from 'hooks/useAppEnv';
-import { useDetailsUpdate } from 'hooks/details/useDetailsUpdate';
-import { useSelectedIntegration } from 'hooks/useSelectedIntegration';
+import {
+  useDetailsUpdate,
+  createUpdateSpec,
+} from 'hooks/details/useDetailsUpdate';
 import { DivFlex } from 'styles/flex/StyledFlex';
 import ValidationError from 'components/form/ValidationError';
 import { AnyObjectSchema } from 'yup';
@@ -41,7 +42,6 @@ const EditableField = <Fields extends FieldValues>({
   const [isEdit, setIsEdit] = useState(false);
   const { project } = useAppEnv();
   const { mutate } = useDetailsUpdate();
-  const { setIntegration } = useSelectedIntegration();
   const [errorVisible, setErrorVisible] = useState(false);
 
   const { control, handleSubmit, errors } = useForm<
@@ -52,30 +52,19 @@ const EditableField = <Fields extends FieldValues>({
     reValidateMode: 'onSubmit',
   });
   const onSave = async (field: FieldValues) => {
-    const update: UpdateSpec = {
-      id: integration.id,
-      fieldValue: field[name],
-      fieldName: name,
-    };
     if (integration && project) {
-      const items = createUpdateSpec(update);
       await mutate(
-        {
+        createUpdateSpec({
           project,
-          items,
           id: integration.id,
-        },
+          fieldValue: field[name],
+          fieldName: name,
+        }),
         {
           onError: () => {
             setErrorVisible(true);
           },
           onSuccess: () => {
-            setIntegration((prev) => {
-              return {
-                ...(prev && prev),
-                ...{ [update.fieldName]: update.fieldValue },
-              } as Integration;
-            });
             setIsEdit(false);
           },
         }

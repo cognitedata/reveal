@@ -27,8 +27,13 @@ describe('GeneralInfo', () => {
   });
   test('Interact with form', async () => {
     sdkv3.post.mockResolvedValue({ data: { items: [mock] } });
-    render(<GeneralInfoSection integration={mock} />, {
+    sdkv3.get.mockResolvedValueOnce({ data: mock });
+
+    render(<GeneralInfoSection />, {
       wrapper: wrapper.wrapper,
+    });
+    await waitFor(() => {
+      screen.getByText(mock.name);
     });
     const name = screen.getByText(mock.name);
     expect(name).toBeInTheDocument();
@@ -45,6 +50,7 @@ describe('GeneralInfo', () => {
     fireEvent.change(screen.getByDisplayValue(mock.name), {
       target: { value: newName },
     });
+    sdkv3.get.mockResolvedValueOnce({ data: { ...mock, name: newName } });
     fireEvent.click(screen.getByTestId(`${ContactBtnTestIds.SAVE_BTN}name`));
     await waitFor(() => {
       screen.getByText(newName);

@@ -1,11 +1,11 @@
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
-import { get, getBaseUrl } from './baseURL';
 import {
   Integration,
   IntegrationFieldValue,
   RegisterIntegrationInfo,
-} from '../model/Integration';
-import { IntegrationAPIResponse } from '../model/IntegrationAPIResponse';
+} from 'model/Integration';
+import { IntegrationAPIResponse } from 'model/IntegrationAPIResponse';
+import { get, getBaseUrl } from 'utils/baseURL';
 
 export const getIntegrations = async (
   project: string
@@ -15,7 +15,7 @@ export const getIntegrations = async (
 };
 
 export const getIntegrationById = async (
-  integrationId: string,
+  integrationId: number,
   project: string
 ): Promise<Integration> => {
   const response = await get<Integration>(`/${integrationId}`, project);

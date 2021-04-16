@@ -1,13 +1,16 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { Button, Popconfirm, Tooltip } from '@cognite/cogs.js';
 import { ArrayField } from 'react-hook-form';
-import { useDetailsUpdate } from 'hooks/details/useDetailsUpdate';
-import { createUpdateSpec } from 'utils/contactsUtils';
+import {
+  useDetailsUpdate,
+  createUpdateSpec,
+} from 'hooks/details/useDetailsUpdate';
+
 import { isValidContactListAfterRemove } from 'utils/validation/contactValidation';
-import { AlignedSpan, ContactBtnTestIds } from './ContactsView';
-import { useIntegration } from '../../hooks/details/IntegrationContext';
-import { useAppEnv } from '../../hooks/useAppEnv';
-import EmailLink from '../buttons/EmailLink';
+import { AlignedSpan, ContactBtnTestIds } from 'components/form/ContactsView';
+import { useIntegration } from 'hooks/details/IntegrationContext';
+import { useAppEnv } from 'hooks/useAppEnv';
+import EmailLink from 'components/buttons/EmailLink';
 import {
   CONTACT_NOTIFICATION_TEST_ID,
   CANCEL,
@@ -19,11 +22,11 @@ import {
   NOTIFICATION_DIALOG_TITLE,
   NOTIFICATION_DIALOG_CONTENT,
   REMOVE_DIALOG_TEXT_PART,
-} from '../../utils/constants';
-import { GridRowStyle } from '../../styles/grid/StyledGrid';
-import { SwitchWithRef } from '../inputs/SwitchRef';
+} from 'utils/constants';
+import { GridRowStyle } from 'styles/grid/StyledGrid';
+import { SwitchWithRef } from 'components/inputs/SwitchRef';
+import MessageDialog from 'components/buttons/MessageDialog';
 import { ContactEdit } from './ContactEdit';
-import MessageDialog from '../buttons/MessageDialog';
 
 interface OwnProps {
   field: Partial<ArrayField<Record<string, any>, 'id'>>;
@@ -69,26 +72,20 @@ export const ContactView: FunctionComponent<Props> = ({
     if (project && integration) {
       const contacts = integration.contacts.filter((_, idx) => idx !== index);
       const items = createUpdateSpec({
+        project,
         id: integration.id,
         fieldName: 'contacts',
         fieldValue: contacts,
       });
-      await mutate(
-        {
-          project,
-          items,
-          id: integration.id,
+      await mutate(items, {
+        onError: () => {
+          setErrorVisible(true);
         },
-        {
-          onError: () => {
-            setErrorVisible(true);
-          },
-          onSuccess: () => {
-            dispatch({ type: 'REMOVE_CONTACT', payload: { index } });
-            remove(index);
-          },
-        }
-      );
+        onSuccess: () => {
+          dispatch({ type: 'REMOVE_CONTACT', payload: { index } });
+          remove(index);
+        },
+      });
     }
   };
 

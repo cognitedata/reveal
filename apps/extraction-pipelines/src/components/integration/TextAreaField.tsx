@@ -8,15 +8,15 @@ import {
 } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import styled from 'styled-components';
-import { Integration } from 'model/Integration';
 import { ContactBtnTestIds } from 'components/form/ContactsView';
 import MessageDialog from 'components/buttons/MessageDialog';
 import { SERVER_ERROR_CONTENT, SERVER_ERROR_TITLE } from 'utils/constants';
-import { createUpdateSpec, UpdateSpec } from 'utils/contactsUtils';
 import { useAppEnv } from 'hooks/useAppEnv';
-import { useDetailsUpdate } from 'hooks/details/useDetailsUpdate';
+import {
+  createUpdateSpec,
+  useDetailsUpdate,
+} from 'hooks/details/useDetailsUpdate';
 import { bottomSpacing } from 'styles/StyledVariables';
-import { useSelectedIntegration } from 'hooks/useSelectedIntegration';
 import { DivFlex } from 'styles/flex/StyledFlex';
 import ValidationError from 'components/form/ValidationError';
 import { EditButton, StyledForm, StyledTextArea } from 'styles/StyledForm';
@@ -47,7 +47,6 @@ const TextAreaField = <Fields extends FieldValues>({
   const [isEdit, setIsEdit] = useState(false);
   const { project } = useAppEnv();
   const { mutate } = useDetailsUpdate();
-  const { setIntegration } = useSelectedIntegration();
   const [errorVisible, setErrorVisible] = useState(false);
 
   const { control, handleSubmit, errors, watch } = useForm({
@@ -55,34 +54,21 @@ const TextAreaField = <Fields extends FieldValues>({
     reValidateMode: 'onSubmit',
   });
   const onSave = async (field: FieldValues) => {
-    const update: UpdateSpec = {
-      id: integration.id,
-      fieldValue: field[name],
-      fieldName: name,
-    };
     if (integration && project) {
-      const items = createUpdateSpec(update);
-      await mutate(
-        {
-          project,
-          items,
-          id: integration.id,
+      const items = createUpdateSpec({
+        project,
+        id: integration.id,
+        fieldValue: field[name],
+        fieldName: name,
+      });
+      await mutate(items, {
+        onError: () => {
+          setErrorVisible(true);
         },
-        {
-          onError: () => {
-            setErrorVisible(true);
-          },
-          onSuccess: () => {
-            setIntegration((prev) => {
-              return {
-                ...(prev && prev),
-                ...{ [update.fieldName]: update.fieldValue },
-              } as Integration;
-            });
-            setIsEdit(false);
-          },
-        }
-      );
+        onSuccess: () => {
+          setIsEdit(false);
+        },
+      });
     }
   };
 

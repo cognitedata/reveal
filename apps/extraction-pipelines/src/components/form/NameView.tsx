@@ -5,18 +5,17 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import styled from 'styled-components';
 import MessageDialog from 'components/buttons/MessageDialog';
-import { TableHeadings } from '../table/IntegrationTableCol';
-import { useIntegration } from '../../hooks/details/IntegrationContext';
-import { createUpdateSpec } from '../../utils/contactsUtils';
-import { useAppEnv } from '../../hooks/useAppEnv';
-import { useDetailsUpdate } from '../../hooks/details/useDetailsUpdate';
-import { AlignedSpan, ContactBtnTestIds } from './ContactsView';
-import { PaddedGridForm } from '../../styles/grid/StyledGrid';
-import InputWithWarning from '../inputs/InputWithWarning';
+import { TableHeadings } from 'components/table/IntegrationTableCol';
+import { useIntegration } from 'hooks/details/IntegrationContext';
+import { useAppEnv } from 'hooks/useAppEnv';
 import {
-  SERVER_ERROR_CONTENT,
-  SERVER_ERROR_TITLE,
-} from '../../utils/constants';
+  createUpdateSpec,
+  useDetailsUpdate,
+} from 'hooks/details/useDetailsUpdate';
+import { PaddedGridForm } from 'styles/grid/StyledGrid';
+import InputWithWarning from 'components/inputs/InputWithWarning';
+import { SERVER_ERROR_CONTENT, SERVER_ERROR_TITLE } from 'utils/constants';
+import { AlignedSpan, ContactBtnTestIds } from './ContactsView';
 
 interface OwnProps {}
 
@@ -52,27 +51,21 @@ const NameView: FunctionComponent<Props> = () => {
     const name = getValues('name');
     if (valid && integration && project && name) {
       const items = createUpdateSpec({
+        project,
         id: integration.id,
         fieldValue: name,
         fieldName: 'name',
       });
-      await mutate(
-        {
-          project,
-          items,
-          id: integration.id,
+      await mutate(items, {
+        onError: () => {
+          setErrorVisible(true);
         },
-        {
-          onError: () => {
-            setErrorVisible(true);
-          },
-          onSuccess: () => {
-            dispatch({ type: 'UPDATE_NAME', payload: { name } });
-            dispatch({ type: 'REMOVE_CHANGE', payload: { name: 'name' } });
-            setIsEdit(false);
-          },
-        }
-      );
+        onSuccess: () => {
+          dispatch({ type: 'UPDATE_NAME', payload: { name } });
+          dispatch({ type: 'REMOVE_CHANGE', payload: { name: 'name' } });
+          setIsEdit(false);
+        },
+      });
     }
   };
 

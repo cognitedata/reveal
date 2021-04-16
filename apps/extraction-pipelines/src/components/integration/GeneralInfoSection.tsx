@@ -16,6 +16,7 @@ import {
 } from 'utils/validation/integrationSchemas';
 import { StyledTitle2 } from 'styles/StyledHeadings';
 import TextAreaField from 'components/integration/TextAreaField';
+import { useIntegrationById } from 'hooks/useIntegration';
 import { GENERAL_INFO_HEADING } from 'utils/constants';
 
 const GeneralInfoWrapper = styled(DetailsGrid)`
@@ -24,7 +25,8 @@ const GeneralInfoWrapper = styled(DetailsGrid)`
 `;
 
 export const GeneralInfoSection: FunctionComponent = () => {
-  const { integration } = useSelectedIntegration();
+  const { integration: selectedIntegration } = useSelectedIntegration();
+  const { data: integration } = useIntegrationById(selectedIntegration?.id);
   if (!integration) {
     return <p>No integration found</p>;
   }
