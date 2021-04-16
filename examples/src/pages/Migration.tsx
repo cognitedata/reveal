@@ -233,7 +233,6 @@ export function Migration() {
       const renderModes = ['Color', 'Normal', 'TreeIndex', 'PackColorAndNormal', 'Depth', 'Effects', 'Ghost', 'LOD', 'DepthBufferOnly (N/A)', 'GeometryType'];
       renderGui.add(guiState, 'renderMode', renderModes).name('Render mode').onFinishChange(value => {
         const renderMode = renderModes.indexOf(value) + 1;
-        console.log('renderMode', value, renderMode);
         cadModels.forEach(m => {
           const cadNode: CadNode = (m as any).cadNode;
           cadNode.renderMode = renderMode;
