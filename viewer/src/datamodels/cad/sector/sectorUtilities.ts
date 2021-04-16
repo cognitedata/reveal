@@ -16,6 +16,7 @@ import { traverseDepthFirst } from '../../../utilities/objectTraversal';
 import { createTriangleMeshes } from '../rendering/triangleMeshes';
 import { createPrimitives } from '../rendering/primitives';
 import { createSimpleGeometryMesh } from '../rendering/createSimpleGeometryMesh';
+import { filterInstanceMesh } from '../rendering/filterInstanceMesh';
 
 (window as any).clipped = 0;
 (window as any).notClipped = 0;
@@ -37,66 +38,6 @@ function isClipped(mesh: THREE.Mesh, clipBox: THREE.Box3): boolean {
     (window as any).notClipped++;
   }
   return clipped;
-}
-
-function filterInstanceMeshes(instanceMeshFile: InstancedMeshFile, clipBox: THREE.Box3) {
-  const vertices = instanceMeshFile.vertices;
-  const baseBounds = new THREE.Box3();
-  const instanceBounds = new THREE.Box3();
-  const p = new THREE.Vector3();
-  const instanceMatrix = new THREE.Matrix4();
-
-  for (let i = 0; i < vertices.length; i += 3) {
-    p.set(vertices[3 * i + 0], vertices[3 * i + 1], vertices[3 * i + 2]);
-    baseBounds.expandByPoint(p);
-  }
-
-  for (let i = 0; i < instanceMeshFile.instances.length; i++) {
-    const mesh = instanceMeshFile.instances[i];
-    baseBounds.makeEmpty();
-    for (let j = mesh.triangleOffset; j < mesh.triangleOffset + mesh.triangleCount; ++j) {
-      p.set(vertices[3 * j + 0], vertices[3 * j + 1], vertices[3 * j + 2]);
-      baseBounds.expandByPoint(p);
-    }
-
-    const m = mesh.instanceMatrices;
-    let allClipped = true;
-    for (let j = 0; j < mesh.treeIndices.length; j++) {
-      const idx = 16 * j;
-      instanceMatrix.set(
-        m[idx + 0],
-        m[idx + 1],
-        m[idx + 2],
-        m[idx + 3],
-        m[idx + 4],
-        m[idx + 5],
-        m[idx + 6],
-        m[idx + 7],
-        m[idx + 8],
-        m[idx + 9],
-        m[idx + 10],
-        m[idx + 11],
-        m[idx + 12],
-        m[idx + 13],
-        m[idx + 14],
-        m[idx + 15]
-      );
-      instanceBounds.copy(baseBounds).applyMatrix4(instanceMatrix);
-      const clipped = !clipBox.intersectsBox(instanceBounds);
-      allClipped = allClipped && clipped;
-      if (clipped) {
-        (window as any).clippedInstances++;
-        (window as any).clippedInstanceTreeIndices.push(mesh.treeIndices[j]);
-      } else {
-        (window as any).notClippedInstances++;
-      }
-    }
-    if (allClipped) {
-      instanceMeshFile.instances.splice(i, 1);
-      i--;
-      console.log('ALL CLIPPED');
-    }
-  }
 }
 
 export function consumeSectorSimple(
@@ -141,8 +82,22 @@ export function consumeSectorDetailed(
     obj.add(triangleMesh);
     // }
   }
-  // sector.instanceMeshes.forEach(x => filterInstanceMeshes(x));
-  return { sectorMeshes: obj, instancedMeshes: sector.instanceMeshes };
+
+  const instanceMeshes = sector.instanceMeshes
+    .map(instanceMeshFile => {
+      const filteredMeshes = instanceMeshFile.instances
+        .map(mesh => filterInstanceMesh(instanceMeshFile.vertices, instanceMeshFile.indices, mesh, geometryClipBox))
+        .filter(x => x.treeIndices.length > 0);
+      const filteredInstanceMeshFile: InstancedMeshFile = {
+        fileId: instanceMeshFile.fileId,
+        vertices: instanceMeshFile.vertices,
+        indices: instanceMeshFile.indices,
+        instances: filteredMeshes
+      };
+      return filteredInstanceMeshFile;
+    })
+    .filter(x => x.instances.length > 0);
+  return { sectorMeshes: obj, instancedMeshes: instanceMeshes };
 }
 
 export function distinctUntilLevelOfDetailChanged() {
