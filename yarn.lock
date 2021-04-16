@@ -1431,6 +1431,13 @@
   optionalDependencies:
     typescript "^3.6"
 
+"@cognite/intercom-helper@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@cognite/intercom-helper/-/intercom-helper-0.1.0.tgz#5333a752b53930bf27156b56e21c134cd3bffab8"
+  integrity sha512-nxQUpQiiQzajXa9TtUCD98YP41HC3HdI+E8U/6BIFbQn3FYXWkaoYJIsJ4d/wR+JxvnDx+CeuA3Q2vQGnJMGNA==
+  dependencies:
+    axios "^0.21.1"
+
 "@cognite/metrics@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@cognite/metrics/-/metrics-1.0.0.tgz#ae76c9b0a205767e9282b19f6f71e907ced026ee"

@@ -7,6 +7,7 @@ type Sidecar = {
   cdfApiBaseUrl: string;
   cdfCluster: string;
   docsSiteBaseUrl: string;
+  intercom: string;
   nomaApiBaseUrl: string;
 };
 
@@ -57,6 +58,7 @@ const generateBaseUrls = (cluster: string, prod: boolean = false) => {
   applicationName: 'React Demo (staging)',
   docsSiteBaseUrl: 'https://docs.cognite.com',
   nomaApiBaseUrl: 'https://noma.development.cognite.ai',
+  intercom: 'ou1uyk2p',
   ...((window as any).__cogniteSidecar || {}),
 };
 

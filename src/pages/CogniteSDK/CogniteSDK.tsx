@@ -2,28 +2,10 @@ import * as React from 'react';
 import { AuthConsumer, AuthContext } from '@cognite/react-container';
 import { Asset, CogniteClient } from '@cognite/sdk';
 import { Title, Body, A } from '@cognite/cogs.js';
-import styled from 'styled-components/macro';
 import { useTranslation, Trans } from 'react-i18next';
 
+import { Elevation, Content } from './elements';
 import { Container, Code } from '../elements';
-
-const Elevation = styled.div`
-  width: 300px;
-  height: 128px;
-  background: white;
-  margin: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const Content = styled.div`
-  background: white;
-  margin: 32px;
-  display: flex;
-  text-align: left;
-  justify-content: left;
-`;
 
 const CogniteSDKPageWrapper: React.FC = () => (
   <AuthConsumer>

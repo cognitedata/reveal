@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@cognite/cogs.js": "2.8.0",
+    "@cognite/intercom-helper": "^0.1.0",
     "@cognite/metrics": "^1.0.0",
     "@cognite/react-container": "^0.9.0",
     "@cognite/react-errors": "^0.0.4",
