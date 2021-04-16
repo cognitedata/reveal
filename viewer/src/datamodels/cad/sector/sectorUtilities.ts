@@ -18,28 +18,6 @@ import { createPrimitives } from '../rendering/primitives';
 import { createSimpleGeometryMesh } from '../rendering/createSimpleGeometryMesh';
 import { filterInstanceMesh } from '../rendering/filterInstanceMesh';
 
-(window as any).clipped = 0;
-(window as any).notClipped = 0;
-(window as any).clippedInstances = 0;
-(window as any).notClippedInstances = 0;
-(window as any).clippedInstanceTreeIndices = [];
-
-function isClipped(mesh: THREE.Mesh, clipBox: THREE.Box3): boolean {
-  if (mesh.geometry.boundingBox === null) {
-    console.error(mesh.name, 'does not have bounding box');
-    return true;
-  }
-
-  const clipped = !clipBox.intersectsBox(mesh.geometry.boundingBox);
-  if (clipped) {
-    console.log(mesh.name, 'clipped', mesh.geometry.boundingBox);
-    (window as any).clipped++;
-  } else {
-    (window as any).notClipped++;
-  }
-  return clipped;
-}
-
 export function consumeSectorSimple(
   sector: SectorQuads,
   sectorBounds: THREE.Box3,
