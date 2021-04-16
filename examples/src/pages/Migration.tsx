@@ -230,9 +230,10 @@ export function Migration() {
       geometryFilterGui.add(guiActions, 'resetGeometryFilter').name('Reset and reload');
 
       const renderGui = gui.addFolder('Rendering');
-      const renderModes = [undefined, 'Color', 'Normal', 'TreeIndex', 'PackColorAndNormal', 'Depth', 'Effects', 'Ghost', 'LOD'];
+      const renderModes = ['Color', 'Normal', 'TreeIndex', 'PackColorAndNormal', 'Depth', 'Effects', 'Ghost', 'LOD', 'DepthBufferOnly (N/A)', 'GeometryType'];
       renderGui.add(guiState, 'renderMode', renderModes).name('Render mode').onFinishChange(value => {
-        const renderMode = renderModes.indexOf(value);
+        const renderMode = renderModes.indexOf(value) + 1;
+        console.log('renderMode', value, renderMode);
         cadModels.forEach(m => {
           const cadNode: CadNode = (m as any).cadNode;
           cadNode.renderMode = renderMode;
