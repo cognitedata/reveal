@@ -9,7 +9,6 @@ import {
   StyledTitleCard,
 } from 'styles/StyledCard';
 import { TableHeadings } from 'components/table/IntegrationTableCol';
-import StatusMarker from 'components/integrations/cols/StatusMarker';
 import { calculateStatus } from 'utils/integrationUtils';
 import { Status } from 'model/Status';
 import { useRuns } from 'hooks/useRuns';
@@ -23,7 +22,8 @@ import {
 import { StatusRun } from 'model/Runs';
 import moment from 'moment';
 import { useSelectedIntegration } from 'hooks/useSelectedIntegration';
-import { ErrorFeedback } from '../error/ErrorFeedback';
+import { LatestRunMessage } from 'components/integration/LatestRunMessage';
+import { ErrorFeedback } from 'components/error/ErrorFeedback';
 
 export const INVESTIGATE_RUN_LINK: Readonly<string> = 'Investigate latest runs';
 export const GENERAL_INFO_LINK: Readonly<string> = 'View general info';
@@ -63,7 +63,11 @@ export const RunScheduleHartbeat: FunctionComponent = () => {
       <CardInWrapper>
         <StyledTitleCard>
           <Icon type="Calendar" />
-          {TableHeadings.LATEST_RUN} <StatusMarker status={lastRun.status} />
+          {TableHeadings.LATEST_RUN}
+          <LatestRunMessage
+            status={lastRun.status}
+            message={integration?.lastMessage}
+          />
         </StyledTitleCard>
         <CardValue>
           <TimeDisplay value={lastRun.time} relative />

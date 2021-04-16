@@ -34,10 +34,15 @@ export const Card2Sides = styled.div`
 `;
 
 export const StyledTitleCard = styled.h2`
+  display: flex;
+  align-items: center;
   font-size: 1rem;
   .cogs-icon,
   .cogs-tag {
-    margin-right: 1rem;
+    margin: 0.5rem 1rem 0.5rem 0;
+  }
+  > span {
+    margin-left: 1rem;
   }
 `;
 export const CardValue = styled.span`

@@ -4,20 +4,21 @@ import React, {
   useEffect,
   useState,
 } from 'react';
-import { Button, Title, Tooltip } from '@cognite/cogs.js';
+import { Button, Icon, Title, Tooltip } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { ErrorIcon } from '../icons/ErrorIcon';
-import { CANCEL, OK } from '../../utils/constants';
+import { CANCEL, OK } from 'utils/constants';
+import { ErrorIcon } from 'components/icons/ErrorIcon';
 
 export const DialogStyle = styled.div`
   display: grid;
   grid-template-areas:
-    'icon heading heading'
+    'icon heading close'
     'nothing content content'
     'empty cancel btn';
   column-gap: 0.75rem;
 
-  .cogs-icon {
+  .cogs-icon,
+  svg {
     grid-area: icon;
     align-self: center;
   }
@@ -28,6 +29,9 @@ export const DialogStyle = styled.div`
   #dialog-cancel-btn {
     grid-area: cancel;
   }
+  #dialog-close-btn {
+    grid-area: close;
+  }
   .cogs-title-4 {
     grid-area: heading;
     align-self: center;
@@ -36,15 +40,20 @@ export const DialogStyle = styled.div`
   }
   .content {
     grid-area: content;
-    width: 15rem;
+    width: ${(props: { dialogWidth?: number }) =>
+      props.dialogWidth ? `${props.dialogWidth}rem` : '15rem'};
     margin-top: 0.5rem;
     margin-bottom: 0;
+    margin-right: 1rem;
   }
 `;
 interface OwnProps {
   visible: boolean;
-  handleClickError: () => void;
   title: string;
+  width?: number;
+  icon?: React.ReactNode;
+  handleClickError?: () => void;
+  handleClose?: () => void;
   handleCancel?: () => void;
   contentText?: string;
   cancelBtnText?: string;
@@ -58,9 +67,12 @@ const MessageDialog: FunctionComponent<Props> = ({
   handleCancel,
   handleClickError,
   title,
+  width,
+  handleClose,
   contentText = '',
   confirmBtnText = OK,
   cancelBtnText = CANCEL,
+  icon = <ErrorIcon />,
   children,
 }: PropsWithChildren<Props>) => {
   const [showError, setShowError] = useState(false);
@@ -74,18 +86,30 @@ const MessageDialog: FunctionComponent<Props> = ({
     <Tooltip
       className="cogs-popconfirm z-4 save-btn"
       content={
-        <DialogStyle>
-          <ErrorIcon />
+        <DialogStyle dialogWidth={width}>
+          {icon}
           <Title level={4}>{title}</Title>
+          {handleClose && (
+            <Button
+              id="dialog-close-btn"
+              type="ghost"
+              onClick={handleClose}
+              aria-label="Close"
+            >
+              <Icon type="Close" />
+            </Button>
+          )}
           <p className="content">{contentText}</p>
           {handleCancel && (
             <Button id="dialog-cancel-btn" onClick={handleCancel}>
               {cancelBtnText}
             </Button>
           )}
-          <Button type="primary" onClick={handleClickError}>
-            {confirmBtnText}
-          </Button>
+          {handleClickError && (
+            <Button type="primary" onClick={handleClickError}>
+              {confirmBtnText}
+            </Button>
+          )}
         </DialogStyle>
       }
       interactive
