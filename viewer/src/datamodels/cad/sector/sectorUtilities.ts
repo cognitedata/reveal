@@ -49,16 +49,12 @@ export function consumeSectorDetailed(
 
   const obj = new THREE.Group();
   for (const primitiveRoot of createPrimitives(sector, materials, bounds, geometryClipBox)) {
-    // if (!isClipped(primtiveRoot)) {
     obj.add(primitiveRoot);
-    // }
   }
 
   const triangleMeshes = createTriangleMeshes(sector.triangleMeshes, bounds, materials.triangleMesh, geometryClipBox);
   for (const triangleMesh of triangleMeshes) {
-    // if (!isClipped(triangleMesh)) {
     obj.add(triangleMesh);
-    // }
   }
 
   const instanceMeshes = sector.instanceMeshes
