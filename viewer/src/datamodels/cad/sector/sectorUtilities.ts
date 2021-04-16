@@ -129,13 +129,13 @@ export function consumeSectorDetailed(
   }
 
   const obj = new THREE.Group();
-  for (const primtiveRoot of createPrimitives(sector, materials, bounds, geometryClipBox)) {
+  for (const primitiveRoot of createPrimitives(sector, materials, bounds, geometryClipBox)) {
     // if (!isClipped(primtiveRoot)) {
-    obj.add(primtiveRoot);
+    obj.add(primitiveRoot);
     // }
   }
 
-  const triangleMeshes = createTriangleMeshes(sector.triangleMeshes, bounds, materials.triangleMesh);
+  const triangleMeshes = createTriangleMeshes(sector.triangleMeshes, bounds, materials.triangleMesh, null);
   for (const triangleMesh of triangleMeshes) {
     // if (!isClipped(triangleMesh)) {
     obj.add(triangleMesh);

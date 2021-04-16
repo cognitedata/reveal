@@ -2,13 +2,11 @@
  * Copyright 2020 Cognite AS
  */
 
-import * as THREE from 'three';
 import { InstancedMesh, InstancedMeshFile, ParseCtmResult, ParseSectorResult, SectorGeometry, TriangleMesh } from "./types";
 
 export async function createDetailedGeometry(
   i3dFile: ParseSectorResult,
-  ctmFiles: Map<string, ParseCtmResult>,
-  geometryClipBox: THREE.Box3 | null
+  ctmFiles: Map<string, ParseCtmResult>
 ): Promise<SectorGeometry> {
   const { instanceMeshes, triangleMeshes } = i3dFile;
 
