@@ -135,7 +135,7 @@ export function consumeSectorDetailed(
     // }
   }
 
-  const triangleMeshes = createTriangleMeshes(sector.triangleMeshes, bounds, materials.triangleMesh, null);
+  const triangleMeshes = createTriangleMeshes(sector.triangleMeshes, bounds, materials.triangleMesh, geometryClipBox);
   for (const triangleMesh of triangleMeshes) {
     // if (!isClipped(triangleMesh)) {
     obj.add(triangleMesh);
