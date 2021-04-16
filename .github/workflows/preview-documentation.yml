@@ -16,7 +16,7 @@ jobs:
         with:
           persist-credentials: false
           path: reveal
-   
+
       - name: Initialize variables
         run: |
           echo "PR_NUMBER=$(jq --raw-output .pull_request.number $GITHUB_EVENT_PATH)" >> $GITHUB_ENV
@@ -56,10 +56,10 @@ jobs:
           cp -R build/* "docs-preview/$PR_NUMBER/"
 
       - name: Checkout reveal-docs-preview 🛎️
-        uses: actions/checkout@v2 
+        uses: actions/checkout@v2
         with:
           repository: cognitedata/reveal-docs-preview
-          token: ${{ secrets.ACCESS_TOKEN }}
+          token: ${{ secrets.REVEAL_REPO_ACCESS_TOKEN }}
           path: reveal-docs-preview
           persist-credentials: false
           ref: master
@@ -72,7 +72,7 @@ jobs:
             git rm -r ${{ env.PR_NUMBER }}
           fi
 
-      - name: Copy build docs to preview documentation 
+      - name: Copy build docs to preview documentation
         run: |
           cp -vR reveal/documentation/docs-preview/* reveal-docs-preview/
 
@@ -88,7 +88,7 @@ jobs:
         id: deploy
         uses: ad-m/github-push-action@master
         with:
-          github_token: ${{ secrets.ACCESS_TOKEN }}
+          github_token: ${{ secrets.REVEAL_REPO_ACCESS_TOKEN }}
           directory: reveal-docs-preview
           branch: master
           repository: cognitedata/reveal-docs-preview
@@ -100,14 +100,14 @@ jobs:
         run: |
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action"
-          git pull https://git:${{ secrets.ACCESS_TOKEN }}@github.com/cognitedata/reveal-docs-preview.git --commit --ff
-        
+          git pull https://git:${{ secrets.REVEAL_REPO_ACCESS_TOKEN }}@github.com/cognitedata/reveal-docs-preview.git --commit --ff
+
       - name: Retry deploy 🚀 - push
         id: deploy2
         uses: ad-m/github-push-action@master
         if: steps.deploy.outcome=='failure'
         with:
-          github_token: ${{ secrets.ACCESS_TOKEN }}
+          github_token: ${{ secrets.REVEAL_REPO_ACCESS_TOKEN }}
           directory: reveal-docs-preview
           branch: master
           repository: cognitedata/reveal-docs-preview
