@@ -28,6 +28,12 @@ export const CustomLink = styled.a`
 export const CustomMenuItem = styled.div`
   width: inherit;
   text-align: left;
+  margin-left: 5px;
+`;
+
+export const CustomMenuLink = styled.a`
+  color: #262626;
+  margin-left: 5px;
 `;
 
 export const OverviewContainer = styled.div`

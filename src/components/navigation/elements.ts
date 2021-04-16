@@ -1,3 +1,4 @@
+import { Menu } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
 import layers from 'utils/zindex';
 
@@ -75,12 +76,22 @@ export const LogoWrapper = styled.div`
     padding-left: 36px;
     padding-bottom: 8px;
   }
+
+  .cogs-topbar--item__logo {
+    border-left: none;
+  }
 `;
 
 export const CogniteLogo = styled.div`
   padding: 0 24px;
   & .cogs-topbar--item {
     border-left: 0;
+  }
+`;
+
+export const AppHeaderWrapper = styled.div`
+  .topbar-logo-wrapper {
+    border-left: none;
   }
 `;
 
@@ -99,5 +110,34 @@ export const GroupPreview = styled.div`
   }
   .cogs-topbar .cogs-topbar--item__action:hover {
     background-color: var(--cogs-greyscale-grey6);
+  }
+`;
+
+export const GroupItemWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  .cogs-menu-item {
+    &:hover {
+      background: rgba(74, 103, 251, 0.05);
+    }
+
+    &.selected {
+      color: inherit;
+      background: rgba(74, 103, 251, 0.1);
+    }
+  }
+`;
+
+export const MenuItemWrapper = styled(Menu)`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  .cogs-menu-item {
+    &:hover {
+      background: rgba(74, 103, 251, 0.05);
+    }
   }
 `;
