@@ -3807,25 +3807,6 @@
     lodash "^4.17.15"
     prop-types "^15.5.10"
 
-"@visx/shape@1.7.0":
-  version "1.7.0"
-  resolved "https://registry.yarnpkg.com/@visx/shape/-/shape-1.7.0.tgz#2a89abf875a6925a6c969de0dc8a6beaa09d00ea"
-  integrity sha512-4tYDYDZ7Nkw+N5IzF+EJmySRkBZuH40QsGqkbg+idLppAxQfDIeS11nDZlG/sRK0FKAkkvCFtw3lPXqNvrNW+w==
-  dependencies:
-    "@types/classnames" "^2.2.9"
-    "@types/d3-path" "^1.0.8"
-    "@types/d3-shape" "^1.3.1"
-    "@types/lodash" "^4.14.146"
-    "@types/react" "*"
-    "@visx/curve" "1.7.0"
-    "@visx/group" "1.7.0"
-    "@visx/scale" "1.7.0"
-    classnames "^2.2.5"
-    d3-path "^1.0.5"
-    d3-shape "^1.2.0"
-    lodash "^4.17.15"
-    prop-types "^15.5.10"
-
 "@visx/shape@1.8.0", "@visx/shape@^1.7.0":
   version "1.8.0"
   resolved "https://registry.yarnpkg.com/@visx/shape/-/shape-1.8.0.tgz#e9e1d584011aabd142bf8501edf1da4b5f29dee3"
@@ -3858,15 +3839,15 @@
     prop-types "^15.7.2"
     reduce-css-calc "^1.3.0"
 
-"@visx/threshold@^1.7.0":
-  version "1.7.0"
-  resolved "https://registry.yarnpkg.com/@visx/threshold/-/threshold-1.7.0.tgz#21cc1c1a2ee5edd73066bb644f620d3a64544768"
-  integrity sha512-vYNbBaMadjqfq4N8QupVbA7DZ5rTLm5MJkj9LbrcnqFCNoxDTkjer9xKsM0yCIgFPBeU4DAIu/qP+f32TEuPng==
+"@visx/threshold@^1.8.0":
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/@visx/threshold/-/threshold-1.8.0.tgz#88aa878aa883c6d12e7f831956c5edfd587abe9e"
+  integrity sha512-TbpjmzHwvcfo52y36xLgkoNgOeUR5xzkNDqOAb5Y7z9Pmd7jnYygKyefx3lNftlQ51LTnm5iLUEliTVb8VioYQ==
   dependencies:
     "@types/classnames" "^2.2.9"
     "@types/react" "*"
     "@visx/clip-path" "1.7.0"
-    "@visx/shape" "1.7.0"
+    "@visx/shape" "1.8.0"
     classnames "^2.2.5"
     prop-types "^15.5.10"
 
