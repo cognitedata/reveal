@@ -634,6 +634,8 @@ export const getAnnotationCountByModelType = createSelector(
 
     if (gdpr) {
       annotations = annotations.filter((ann) => ann.label === 'person');
+    } else {
+      annotations = annotations.filter((ann) => ann.label !== 'person');
     }
     annotations.forEach((ann) => {
       if (ann.source === 'user') {
