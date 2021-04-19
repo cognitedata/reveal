@@ -20,7 +20,10 @@ describe('PotreeGroupWrapper', () => {
   });
 
   test('getLoadingStateObserver() triggers true after add', async done => {
-    const dummyNode: Potree.PointCloudOctreeNode = new THREE.Mesh(new THREE.Geometry(), new THREE.PointsMaterial());
+    const dummyNode: Potree.PointCloudOctreeNode = new THREE.Mesh(
+      new THREE.BufferGeometry(),
+      new THREE.PointsMaterial()
+    );
     const model = new PotreeNodeWrapper(dummyNode);
     const manager = new PotreeGroupWrapper(pollLoadingStatusInterval);
 

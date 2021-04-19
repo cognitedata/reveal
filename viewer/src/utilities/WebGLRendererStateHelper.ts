@@ -23,7 +23,7 @@ export class WebGLRendererStateHelper {
 
   setClearColor(color: THREE.Color | number | string, alpha?: number) {
     this._originalState = {
-      clearColor: this._renderer.getClearColor().clone(),
+      clearColor: this._renderer.getClearColor(new THREE.Color()).clone(),
       clearAlpha: this._renderer.getClearAlpha(),
       ...this._originalState
     };
