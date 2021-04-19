@@ -1317,10 +1317,10 @@
     react-toastify "^6.0.9"
     tippy.js "6.2.0"
 
-"@cognite/cogs.js@^3.7.2":
-  version "3.7.2"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.7.2.tgz#14c262926aa3c57adfb01f544064403ec2d0c4f0"
-  integrity sha512-iejlDJBzl6CuOpCR2dDbqxFa5mtoCaFCKvhGh8PsCCMDehOXSljneRW4YF/HLvuKEy95sC+5dfq54jJ5Yvuwmw==
+"@cognite/cogs.js@^3.8.3":
+  version "3.8.3"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.8.3.tgz#fbb1a04033c6980b73b0612bec072ef814d48fc2"
+  integrity sha512-EuBXaLUgPa65hi9fXYQPx+APmcdn/D4/VvUNCc3sE+wxmdvmg0VDLueiizxGsdbKt8VqHpO2IAPBbjtkGatp5w==
   dependencies:
     "@testing-library/react-hooks" "^5.0.3"
     "@tippyjs/react" "4.2.3"
@@ -2873,6 +2873,13 @@
   integrity sha512-3UuR4MoWf5spNgrG6cwsmT9DdRghcR4IDFOzNZ6+wcmacxkFykcb5ji0nNVm9ckBT4BCxvCrJJbM4+EYsEEVIg==
   dependencies:
     "@types/react" "^16"
+
+"@types/react-modal@^3.12.0":
+  version "3.12.0"
+  resolved "https://registry.yarnpkg.com/@types/react-modal/-/react-modal-3.12.0.tgz#91fa86a76fd7fc57e36d2cf9b76efe5735a855a1"
+  integrity sha512-UnHu/YO73NZLwqFpju/c0tqiswR0UHIfeO16rkfLVJUIMfQsl7X0CBm99H5XXgBMe/PgtQ/Rkud72iuRBr1TeA==
+  dependencies:
+    "@types/react" "*"
 
 "@types/react-redux@^7.1.16":
   version "7.1.16"
