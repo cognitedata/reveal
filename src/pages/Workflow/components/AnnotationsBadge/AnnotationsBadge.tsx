@@ -19,7 +19,8 @@ export const showGDPRBadge = (
 export function AnnotationsBadge({
   gdpr,
   tag,
-  textAndObjects,
+  text,
+  objects,
 }: AnnotationsBadgeProps) {
   const setBadge = ({ status, ...counts }: ModelStatusAndAnnotationCounts) => {
     if (status === 'Running') {
@@ -42,20 +43,6 @@ export function AnnotationsBadge({
 
   return (
     <>
-      {gdpr && showGDPRBadge(gdpr) && (
-        <Button
-          icon="WarningFilled"
-          size="small"
-          style={{
-            marginRight: '5px',
-            backgroundColor: '#FBE9ED',
-            color: '#B30539',
-            opacity: setOpacity(gdpr.status),
-          }}
-        >
-          {setBadge(gdpr)}
-        </Button>
-      )}
       {tag && showBadge(tag) && (
         <Button
           icon="ResourceAssets"
@@ -64,28 +51,57 @@ export function AnnotationsBadge({
             marginRight: '5px',
             backgroundColor: '#F4DAF8',
             color: '#C945DB',
-            opacity: setOpacity(tag.status),
+            opacity: setOpacity(tag?.status),
           }}
         >
           {setBadge(tag)}
         </Button>
       )}
-      {textAndObjects && showBadge(textAndObjects) && (
+      {text && showBadge(text) && (
         <Button
           icon="Scan"
           size="small"
           style={{
-            backgroundColor: '#FFE1D1',
-            color: '#FF8746',
-            opacity: setOpacity(textAndObjects?.status),
+            marginRight: '5px',
+            backgroundColor: '#F0FCF8',
+            color: '#404040',
+            opacity: setOpacity(text?.status),
           }}
         >
-          {setBadge(textAndObjects)}
+          {setBadge(text)}
         </Button>
       )}
-      {!showBadge(gdpr) && !showBadge(tag) && !showBadge(textAndObjects) && (
-        <>No annotations</>
+      {objects && showBadge(objects) && (
+        <Button
+          icon="Scan"
+          size="small"
+          style={{
+            marginRight: '5px',
+            backgroundColor: '#FFE1D1',
+            color: '#FF8746',
+            opacity: setOpacity(objects?.status),
+          }}
+        >
+          {setBadge(objects)}
+        </Button>
       )}
+      {gdpr && showGDPRBadge(gdpr) && (
+        <Button
+          icon="Personrounded"
+          size="small"
+          style={{
+            backgroundColor: '#D3F7FB',
+            color: '#1AA3C1',
+            opacity: setOpacity(gdpr?.status),
+          }}
+        >
+          {setBadge(gdpr)}
+        </Button>
+      )}
+      {!showBadge(gdpr) &&
+        !showBadge(tag) &&
+        !showBadge(text) &&
+        !showBadge(objects) && <>No annotations</>}
     </>
   );
 }

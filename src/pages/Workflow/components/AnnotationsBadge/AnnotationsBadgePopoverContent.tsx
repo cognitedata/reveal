@@ -10,7 +10,8 @@ import { showBadge, showGDPRBadge } from './AnnotationsBadge';
 export function AnnotationsBadgePopoverContent({
   gdpr,
   tag,
-  textAndObjects,
+  text,
+  objects,
 }: AnnotationsBadgeProps) {
   const row = (data: any) => {
     const setBadge = (count: number, status: JobStatus) => {
@@ -66,44 +67,54 @@ export function AnnotationsBadgePopoverContent({
     <>
       <Body level={1}> Detections </Body>
       <Divider.Horizontal />
-
-      {gdpr &&
-        showGDPRBadge(gdpr) &&
-        row({
-          status: gdpr.status,
-          title: 'GDPR',
-          icon: 'WarningFilled',
-          backgroundColor: '#FBE9ED',
-          color: '#B30539',
-          modelGenerated: gdpr.modelGenerated,
-          manuallyGenerated: gdpr.manuallyGenerated,
-        })}
       {tag &&
         showBadge(tag) &&
         row({
           status: tag.status,
-          title: 'Assets',
+          title: 'Asset',
           icon: 'ResourceAssets',
           backgroundColor: '#F4DAF8',
           color: '#C945DB',
           modelGenerated: tag.modelGenerated,
           manuallyGenerated: tag.manuallyGenerated,
         })}
-
-      {textAndObjects &&
-        showBadge(textAndObjects) &&
+      {text &&
+        showBadge(text) &&
         row({
-          status: textAndObjects.status,
-          title: 'Text and Objects',
+          status: text.status,
+          title: 'Text',
+          icon: 'Scan',
+          backgroundColor: '#F0FCF8',
+          color: '#404040',
+          modelGenerated: text.modelGenerated,
+          manuallyGenerated: text.manuallyGenerated,
+        })}
+      {objects &&
+        showBadge(objects) &&
+        row({
+          status: objects.status,
+          title: 'Object',
           icon: 'Scan',
           backgroundColor: '#FFE1D1',
           color: '#FF8746',
-          modelGenerated: textAndObjects.modelGenerated,
-          manuallyGenerated: textAndObjects.manuallyGenerated,
+          modelGenerated: objects.modelGenerated,
+          manuallyGenerated: objects.manuallyGenerated,
         })}
-      {!showBadge(gdpr) && !showBadge(tag) && !showBadge(textAndObjects) && (
-        <>No annotations</>
-      )}
+      {gdpr &&
+        showGDPRBadge(gdpr) &&
+        row({
+          status: gdpr.status,
+          title: 'People',
+          icon: 'Personrounded',
+          backgroundColor: '#D3F7FB',
+          color: '#1AA3C1',
+          modelGenerated: gdpr.modelGenerated,
+          manuallyGenerated: gdpr.manuallyGenerated,
+        })}
+      {!showBadge(gdpr) &&
+        !showBadge(tag) &&
+        !showBadge(text) &&
+        !showBadge(objects) && <>No annotations</>}
     </>
   );
 }

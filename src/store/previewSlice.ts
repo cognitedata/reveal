@@ -363,7 +363,9 @@ const previewSlice = createSlice({
         if (state.drawer.annotation === null) {
           state.drawer.annotation = AnnotationUtils.createVisionAnnotationStub(
             '',
-            isLabelEdit(action) ? VisionAPIType.OCR : action.payload.modelType,
+            isLabelEdit(action)
+              ? VisionAPIType.ObjectDetection // TODO: Why is this needed?
+              : action.payload.modelType,
             parseInt(action.payload.fileId, 10),
             undefined,
             'rectangle',
