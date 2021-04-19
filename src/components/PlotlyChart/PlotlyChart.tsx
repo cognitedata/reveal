@@ -255,6 +255,15 @@ const PlotlyChartComponent = ({
             ? datapoint.average
             : (datapoint as DoubleDatapoint).value
         ),
+        hovertemplate:
+          '%{y} &#183; <span style="color:#8c8c8c">%{fullData.name}</span><extra></extra>',
+        hoverlabel: {
+          bgcolor: '#ffffff',
+          bordercolor: color,
+          font: {
+            color: '#333333',
+          },
+        },
       };
     }
   );
@@ -282,7 +291,14 @@ const PlotlyChartComponent = ({
       type: 'date',
       domain: showYAxis ? [0.06 * (seriesData.length - 1), 1] : [0, 1],
       range: [chart.dateFrom, chart.dateTo],
+      showspikes: true,
+      spikemode: 'across',
+      spikethickness: 1,
+      spikecolor: '#bfbfbf',
+      spikedash: 'solid',
     },
+    spikedistance: -1,
+    hovermode: 'x',
     showlegend: false,
     dragmode,
     annotations: [],
