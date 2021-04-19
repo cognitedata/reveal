@@ -272,11 +272,17 @@ describe('computeBoundingBoxFromEllipseAttributes', () => {
     elementSize = 24;
   });
 
-  test('unit bbox with identity transform, returns unit bbox', () => {
+  test('unit ellipse, returns unit bbox', () => {
     // Arange
     const baseBbox = new THREE.Box3(new THREE.Vector3(-1, -1, -1), new THREE.Vector3(1, 1, 1));
-    const matrix = new THREE.Matrix4().identity();
-    const valuesAsFloats = new Float32Array(matrix.toArray());
+    const valuesAsFloats = new Float32Array([
+      // Center
+      ...[0, 0, 0],
+      // Radius 1, 2 and height
+      1,
+      1,
+      1
+    ]);
 
     // Act
     const result = computeBoundingBoxFromEllipseAttributes(
