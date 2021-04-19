@@ -2,11 +2,13 @@ import React from 'react';
 import { Icon } from '@cognite/cogs.js';
 import { DetailFieldNames } from 'model/Integration';
 import InteractiveCopy from 'components/InteractiveCopy';
-import { IntegrationAction } from 'components/menu/IntegrationsTableActions';
 import { useIntegration } from 'hooks/details/IntegrationContext';
 import { StyledHeader, StyledH2 } from 'styles/StyledModal';
 import { ToggleableConfirmDialog } from 'components/buttons/ToggleableConfirmDialog';
 
+export enum IntegrationAction {
+  VIEW_EDIT_DETAILS = 'View/edit integration',
+}
 interface IntegrationModalHeadingProps {
   onCancel: () => void;
   // eslint-disable-next-line react/require-default-props

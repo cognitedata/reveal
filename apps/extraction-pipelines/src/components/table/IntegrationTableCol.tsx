@@ -3,20 +3,19 @@ import { Cell, CellProps, Column, HeaderProps } from 'react-table';
 import { calculateStatus } from 'utils/integrationUtils';
 import styled from 'styled-components';
 import { Button } from '@cognite/cogs.js';
-import { Integration } from '../../model/Integration';
-import UserGroup from '../integrations/cols/UserGroup';
-import Name from '../integrations/cols/Name';
-import Schedule from '../integrations/cols/Schedule';
-import IntegrationsTableActions from '../menu/IntegrationsTableActions';
-import { DataSet } from '../integrations/cols/DataSet';
-import StatusMarker from '../integrations/cols/StatusMarker';
-import StatusFilterDropdown from './StatusFilterDropdown';
-import { User } from '../../model/User';
-import RelativeTimeWithTooltip from '../integrations/cols/RelativeTimeWithTooltip';
-import SorterIndicator from './SorterIndicator';
-import MessageIcon from '../message/MessageIcon';
-import { Status } from '../../model/Status';
-import { DataSetModel } from '../../model/DataSetModel';
+import { Integration } from 'model/Integration';
+import UserGroup from 'components/integrations/cols/UserGroup';
+import Name from 'components/integrations/cols/Name';
+import Schedule from 'components/integrations/cols/Schedule';
+import { DataSet } from 'components/integrations/cols/DataSet';
+import StatusMarker from 'components/integrations/cols/StatusMarker';
+import StatusFilterDropdown from 'components/table/StatusFilterDropdown';
+import { User } from 'model/User';
+import RelativeTimeWithTooltip from 'components/integrations/cols/RelativeTimeWithTooltip';
+import SorterIndicator from 'components/table/SorterIndicator';
+import MessageIcon from 'components/message/MessageIcon';
+import { Status } from 'model/Status';
+import { DataSetModel } from 'model/DataSetModel';
 
 export enum TableHeadings {
   NAME = 'Name',
@@ -189,16 +188,6 @@ export const getIntegrationTableCol = (
         const { contacts } = row.original;
         return <UserGroup users={contacts} />;
       },
-      disableSortBy: true,
-      disableFilters: true,
-    },
-    {
-      id: 'options',
-      Header: 'Actions',
-      Cell: ({ row }: Cell<Integration>) => {
-        return <IntegrationsTableActions integration={row.original} />;
-      },
-      width: 50,
       disableSortBy: true,
       disableFilters: true,
     },
