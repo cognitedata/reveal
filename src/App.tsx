@@ -12,11 +12,13 @@ import GlobalStyles from 'styles/GlobalStyles';
 import { setupSentry } from 'utils/setupSentry';
 import store, { persistedState, loadLocalStorage } from 'store';
 import RootApp from 'pages/App';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { Loader } from '@cognite/cogs.js';
+import { CogniteClient } from '@cognite/sdk';
 
 const App = () => {
   const tenant = window.location.pathname.split('/')[1];
   const history = createBrowserHistory();
-
   if (!tenant) {
     throw new Error('tenant missing');
   }
@@ -25,8 +27,7 @@ const App = () => {
 
   useEffect(() => {
     loadLocalStorage(LS_KEY, store);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [LS_KEY]);
 
   const updateLocalStorage = debounce(() => {
     const localStorageContent = persistedState(store.getState());
@@ -35,10 +36,18 @@ const App = () => {
 
   store.subscribe(updateLocalStorage);
 
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+        staleTime: 10 * 60 * 1000, // Pretty long
+      },
+    },
+  });
+
   useEffect(() => {
     cogsStyles.use();
     setupSentry();
-
     return () => {
       cogsStyles.unuse();
     };
@@ -46,26 +55,33 @@ const App = () => {
 
   return (
     // If styles are broken please check: .rescripts#PrefixWrap(
-    <AntStyles>
+    <QueryClientProvider client={queryClient}>
       <GlobalStyles>
-        <SubAppWrapper>
-          <AuthWrapper subAppName="context-ui-pnid">
-            <SDKProvider sdk={sdk}>
-              <Provider store={store}>
-                <Router history={history}>
-                  <Switch>
-                    <Route
-                      path="/:tenant/pnid_parsing_new"
-                      component={RootApp}
-                    />
-                  </Switch>
-                </Router>
-              </Provider>
-            </SDKProvider>
-          </AuthWrapper>
-        </SubAppWrapper>
+        <AntStyles>
+          <SubAppWrapper>
+            <AuthWrapper
+              showLoader
+              includeGroups
+              loadingScreen={<Loader darkMode={false} />}
+              subAppName="context-ui-pnid"
+            >
+              <SDKProvider sdk={(sdk as unknown) as CogniteClient}>
+                <Provider store={store}>
+                  <Router history={history}>
+                    <Switch>
+                      <Route
+                        path="/:tenant/pnid_parsing_new"
+                        component={RootApp}
+                      />
+                    </Switch>
+                  </Router>
+                </Provider>
+              </SDKProvider>
+            </AuthWrapper>
+          </SubAppWrapper>
+        </AntStyles>
       </GlobalStyles>
-    </AntStyles>
+    </QueryClientProvider>
   );
 };
 

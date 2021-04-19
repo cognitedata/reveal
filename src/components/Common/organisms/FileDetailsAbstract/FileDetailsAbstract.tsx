@@ -68,7 +68,7 @@ export const FileDetailsAbstract = ({
 
       {actions && (
         <InfoCell noBorders>
-          <Row type="flex" gutter={12} justify="start" className="button-row">
+          <Row gutter={12} justify="start" className="button-row">
             {actions}
           </Row>
         </InfoCell>

@@ -18,7 +18,6 @@ export default function StickyBottomRow(props: {
   return (
     <Row
       justify={justify}
-      type="flex"
       align="middle"
       style={{
         background: 'white',

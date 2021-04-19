@@ -19,7 +19,7 @@ export default function ResultsTable(props: ResultsTableProps): JSX.Element {
   const { rows, selectedKeys, setSelectedKeys, setRenderFeedback } = props;
   const history = useHistory();
   const { search } = history.location;
-  const { page } = queryString.parse(search, { parseNumbers: true });
+  const { page = 1 } = queryString.parse(search, { parseNumbers: true });
 
   const columns = [
     { dataIndex: 'name', title: 'Name', key: 'name' },
@@ -60,7 +60,6 @@ export default function ResultsTable(props: ResultsTableProps): JSX.Element {
       }),
     });
   };
-
   return (
     <Table
       rowSelection={{
@@ -73,7 +72,7 @@ export default function ResultsTable(props: ResultsTableProps): JSX.Element {
       rowKey="id"
       pagination={{
         onChange: onPaginationChange,
-        current: (page || 0) as number,
+        current: Number(page),
       }}
     />
   );

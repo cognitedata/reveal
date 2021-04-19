@@ -2,14 +2,14 @@ import React from 'react';
 import styled from 'styled-components';
 import { Popover as AntDPopover } from 'antd';
 import Layers from 'utils/zindex';
-import { TooltipPlacement, TooltipTrigger } from 'antd/lib/tooltip';
+import { TooltipProps } from 'antd/lib/tooltip';
 
 interface PopoverProps {
   children: React.ReactNode;
   content: React.ReactNode;
-  placement?: TooltipPlacement;
+  placement?: TooltipProps['placement'];
   style?: React.CSSProperties;
-  trigger?: TooltipTrigger;
+  trigger?: TooltipProps['trigger'];
   mouseEnterDelay?: number;
   onVisibleChange?: (visible: boolean) => void;
 }

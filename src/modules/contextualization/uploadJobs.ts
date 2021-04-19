@@ -11,7 +11,7 @@ import {
   CogniteAnnotation,
   summarizeAssetIdsFromAnnotations,
 } from '@cognite/annotations';
-import { itemSelector as fileSelector, itemSelector } from 'modules/files';
+import { itemSelector as fileSelector } from 'modules/files';
 import { itemSelector as assetSelector } from 'modules/assets';
 import { ModelStatus } from 'modules/types';
 import * as UploadJobs from './uploadJobs';
@@ -106,25 +106,25 @@ export const startConvertFileToSvgJob = (
     dispatch: ThunkDispatch<any, any, UploadJobActions>,
     getState: () => RootState
   ) => {
-    const file = itemSelector(getState())(fileId);
+    const state = getState();
+    const files = await sdk.files.retrieve([{ id: fileId }]);
+    const [file] = files;
 
     if (!file) {
       return Promise.resolve(undefined);
     }
 
-    const { jobStarted } =
-      getState().fileContextualization.uploadJobs[fileId] || {};
-
+    const { jobStarted } = state.fileContextualization.uploadJobs[fileId] || {};
     if (jobStarted) {
       return Promise.resolve(
-        getState().fileContextualization.uploadJobs[fileId].jobId
+        state.fileContextualization.uploadJobs[fileId].jobId
       );
     }
 
     const timer = trackTimedUsage('Contextualization.PnidParsing.UploadJob', {
       fileId,
     });
-    const { grayscale } = getState().fileContextualization.pnidOption;
+    const { grayscale } = state.fileContextualization.pnidOption;
 
     const annotationsWithLabels = addLabelsToAnnotations(annotations, getState);
 

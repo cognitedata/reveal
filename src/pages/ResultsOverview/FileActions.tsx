@@ -1,15 +1,16 @@
 import React, { useMemo } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Button, Tooltip } from '@cognite/cogs.js';
 import { message, Dropdown, Menu } from 'antd';
-import { ClickParam } from 'antd/lib/menu';
-import { FileInfo } from '@cognite/sdk';
 import { checkPermission } from 'modules/app';
+import { useAnnotations } from '@cognite/data-exploration';
+import sdk from 'sdk-singleton';
+
 import {
-  linkFileWithAssetsFromAnnotations,
-  selectAnnotations,
-} from 'modules/annotations';
+  convertEventsToAnnotations,
+  linkFileToAssetIds,
+} from '@cognite/annotations';
 
 type Props = { file: any; setRenderFeedback: (shouldSet: boolean) => any };
 
@@ -17,7 +18,6 @@ export default function FileActions({
   file,
   setRenderFeedback,
 }: Props): JSX.Element {
-  const dispatch = useDispatch();
   const history = useHistory();
 
   const { tenant, assetsDataKitId, filesDataKitId, optionsId } = useParams<{
@@ -33,16 +33,18 @@ export default function FileActions({
   );
 
   const jobFinished = file && file.parsingJob && file.parsingJob.jobDone;
-  const annotationsMap = useSelector(selectAnnotations);
-  const canEditFiles = useSelector(getCanEditFiles);
-  const annotations = annotationsMap(file.id);
 
-  const onLinkAssetsClick = (e: ClickParam, fileToLink: FileInfo) => {
+  const canEditFiles = useSelector(getCanEditFiles);
+
+  const { data: annotations } = useAnnotations(file.id);
+
+  const onLinkAssetsClick = async (e: any) => {
     switch (e.key) {
       case 'link':
         if (canEditFiles) {
-          dispatch(
-            linkFileWithAssetsFromAnnotations.action({ fileId: fileToLink.id })
+          await linkFileToAssetIds(
+            sdk,
+            convertEventsToAnnotations(annotations)
           );
         } else {
           setRenderFeedback(true);
@@ -89,7 +91,7 @@ export default function FileActions({
                 : 'There is no annotations to be linked to this file.'
             }
           >
-            <Menu onClick={(e) => onLinkAssetsClick(e, file)}>
+            <Menu onClick={(e) => onLinkAssetsClick(e)}>
               <Menu.Item key="link" disabled={!annotations?.length}>
                 Link assets to P&ID file
               </Menu.Item>

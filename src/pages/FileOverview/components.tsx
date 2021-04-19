@@ -1,5 +1,5 @@
+import { Colors } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import Layers from 'utils/zindex';
 
 export const Wrapper = styled.div`
   display: flex;
@@ -15,17 +15,30 @@ export const ContentWrapper = styled.div`
   box-sizing: border-box;
 `;
 
-export const Header = styled.div`
-  display: flex;
-  padding: 20px 24px;
-  box-shadow: 0px 0px 6px #cdcdcd;
-  border-radius: 12px;
-  flex-direction: row;
-  align-items: center;
-  z-index: ${Layers.MINIMUM};
-  margin-top: 40px;
-  background: #fff;
-  button {
-    margin-right: 26px;
+export const TitleRowWrapper = styled.div`
+  h1 {
+    margin: 0;
   }
+  margin: 16px 0px;
+  padding-left: 16px;
+  border-bottom: 1px solid ${Colors['greyscale-grey3'].hex()};
+  padding-bottom: 10px;
+  display: flex;
+`;
+
+export const NameWrapper = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+export const NameHeader = styled.h1`
+  color: inherit;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+`;
+
+export const TabTitle = styled.span`
+  font-size: 14px;
+  font-weight: 600;
 `;

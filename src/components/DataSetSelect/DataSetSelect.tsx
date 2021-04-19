@@ -126,7 +126,7 @@ const DataSetSelect = ({
         showSearch
         style={style}
         disabled={disabled}
-        mode={multiple ? 'multiple' : 'default'}
+        mode={multiple ? 'multiple' : undefined}
         placeholder="Select data sets"
         value={multiple ? currentSelection : currentSelection[0]}
         onChange={(id: any) => {

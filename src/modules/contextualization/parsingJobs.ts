@@ -7,8 +7,11 @@ import { createPendingAnnotationsFromJob } from 'utils/AnnotationUtils';
 import { trackTimedUsage } from 'utils/Metrics';
 import { FileInfo, Asset } from '@cognite/sdk';
 import sdk from 'sdk-singleton';
-import { createAnnotations, selectAnnotations } from 'modules/annotations';
 import { ModelStatus } from 'modules/types';
+import {
+  createAnnotations,
+  listAnnotationsForFile,
+} from '@cognite/annotations';
 import { dataKitItemsSelectorFactory } from '../selection';
 
 export const PNID_PARSING_JOB_ID_METADATA_FIELD =
@@ -153,9 +156,10 @@ export const startPnidParsingJob = (
                 const files = getFiles(state) as FileInfo[];
 
                 // load all existing annotations
-                const existingAnnotations = selectAnnotations(state)(
-                  file.id,
-                  true
+                const existingAnnotations = await listAnnotationsForFile(
+                  sdk,
+                  file,
+                  false
                 );
 
                 // generate valid annotations
@@ -169,9 +173,7 @@ export const startPnidParsingJob = (
                 );
 
                 // create and finish the job
-                await dispatch(
-                  createAnnotations.action({ file, pendingAnnotations })
-                );
+                await createAnnotations(sdk, pendingAnnotations);
 
                 await dispatch({
                   type: PARSING_JOB_DONE,
@@ -304,9 +306,10 @@ export const startDocumentParsingJob = (
                 const filesData = getFiles(state) as FileInfo[];
 
                 // load all existing annotations
-                const existingAnnotations = selectAnnotations(state)(
-                  file.id,
-                  true
+                const existingAnnotations = await listAnnotationsForFile(
+                  sdk,
+                  file,
+                  false
                 );
                 const flattenedEntities: Array<any> = data.items
                   .map((el: any) =>
@@ -327,9 +330,7 @@ export const startDocumentParsingJob = (
                 );
 
                 // create and finish the job
-                await dispatch(
-                  createAnnotations.action({ file, pendingAnnotations })
-                );
+                await createAnnotations(sdk, pendingAnnotations);
 
                 await dispatch({
                   type: PARSING_JOB_DONE,

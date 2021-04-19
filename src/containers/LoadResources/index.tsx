@@ -48,7 +48,7 @@ export default function LoadResources(props: LoadResourcesProps) {
         header={jobDone ? 'Resources loaded' : 'Getting your data...'}
         key="1"
       >
-        <Row align="middle" type="flex">
+        <Row align="middle">
           <Col span={4}>
             <p>Files</p>
           </Col>
@@ -56,7 +56,7 @@ export default function LoadResources(props: LoadResourcesProps) {
             <DataKitLoadingProgress id={fileDataKitId} />
           </Col>
         </Row>
-        <Row align="middle" type="flex">
+        <Row align="middle">
           <Col span={4}>
             <p>Assets</p>
           </Col>
@@ -64,7 +64,7 @@ export default function LoadResources(props: LoadResourcesProps) {
             <DataKitLoadingProgress id={assetDataKitId} />
           </Col>
         </Row>
-        <Row align="middle" type="flex">
+        <Row align="middle">
           <Col span={4}>
             <p>Matching tags in P&ID to assets</p>
           </Col>

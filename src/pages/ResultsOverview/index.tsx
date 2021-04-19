@@ -16,19 +16,21 @@ import LoadResources from 'containers/LoadResources';
 import MissingPermissionFeedback from 'components/MissingPermissionFeedback';
 import { Flex } from 'components/Common';
 import { canDeploySelectedFiles } from 'utils/FilesUtils';
+import { useAnnotationsForFiles } from 'hooks/useAnnotationsForFiles';
 import ResultsTable from './ResultsTable';
 import {
   getDataKitItems,
   getPnidOptions,
   getFileContextualizationJobs,
-  getAnnotationsByFileId,
 } from './selectors';
 
 export default function ResultsOverview() {
   const history = useHistory();
   const dispatch = useDispatch();
-
   const [selectedKeys, setSelectedKeys] = useState([] as number[]);
+
+  const annotationsByFileId = useAnnotationsForFiles(selectedKeys);
+
   const { tenant, assetsDataKitId, filesDataKitId } = useParams<{
     tenant: string;
     filesDataKitId: string;
@@ -54,7 +56,6 @@ export default function ResultsOverview() {
   const { assetDataKit, fileDataKit } = useSelector(
     getDataKitItems(assetsDataKitId, filesDataKitId)
   );
-  const annotationsByFileId = useSelector(getAnnotationsByFileId);
   const { partialMatch, grayscale } = useSelector(getPnidOptions);
   const { parsingJobs, uploadJobs } = useSelector(getFileContextualizationJobs);
 
@@ -85,10 +86,8 @@ export default function ResultsOverview() {
   const startUploadJob = () => {
     if (canEditFiles) {
       selectedKeys.forEach((key) => {
-        if (annotationsByFileId[key].annotations) {
-          dispatch(
-            startConvertFileToSvgJob(key, annotationsByFileId[key].annotations)
-          );
+        if (annotationsByFileId[key]) {
+          dispatch(startConvertFileToSvgJob(key, annotationsByFileId[key]));
         } else {
           const file = files.find((el) => el.id === key);
           if (file) {

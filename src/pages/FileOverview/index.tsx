@@ -1,21 +1,41 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { notification } from 'antd';
-import { Button, Icon, Title, Tooltip } from '@cognite/cogs.js';
+import { notification, Divider, Space } from 'antd';
+import { Button, Title, Badge, Colors } from '@cognite/cogs.js';
 import { RootState } from 'store';
+import { useCdfItem } from '@cognite/sdk-react-query-hooks';
+import { FileInfo } from '@cognite/sdk';
 
 import { checkPermission } from 'modules/app';
-import { listAnnotations, selectAnnotations } from 'modules/annotations';
 import { startConvertFileToSvgJob } from 'modules/contextualization/uploadJobs';
-import {
-  itemSelector as fileItemSelector,
-  retrieveItemsById as retrieve,
-} from 'modules/files';
+import { retrieveItemsById as retrieve } from 'modules/files';
 import { ResourceSidebar } from 'containers/ResourceSidebar';
-import { CogniteFileViewer } from 'components/CogniteFileViewer';
+import { ContextFileViewer as CogniteFileViewer } from 'components/CogniteFileViewer';
 import MissingPermissionFeedback from 'components/MissingPermissionFeedback';
-import { Wrapper, ContentWrapper, Header } from './components';
+import {
+  ErrorFeedback,
+  Loader,
+  Tabs,
+  FileDetails,
+  Metadata,
+  useRelatedResourceCounts,
+  ResourceItem,
+  useAnnotations,
+} from '@cognite/data-exploration';
+import { convertEventsToAnnotations } from '@cognite/annotations';
+import {
+  Wrapper,
+  ContentWrapper,
+  TitleRowWrapper,
+  TabTitle,
+} from './components';
+import TitleRowActions from './TitleRowActions';
+import { ResourceDetailTabContent } from './ResourceDetailTabContent';
+import { EditFileButton } from './EditFileButton';
+import { ClearTagsButton } from './ClearTagsButton';
+
+export type FilePreviewTabType = 'preview' | 'details' | 'files' | 'assets';
 
 export default function FileOverview() {
   const {
@@ -34,11 +54,21 @@ export default function FileOverview() {
   const dispatch = useDispatch();
   const history = useHistory();
 
+  const [activeTab, setActiveTab] = useState<FilePreviewTabType>('preview');
+  const [renderFeedback, setRenderFeedback] = useState(false);
+  const [editMode, setEditMode] = useState<boolean>(false);
+
   const fileIdNumber = Number(fileId);
 
-  // @ts-ignore
-  const file = useSelector(fileItemSelector)(fileIdNumber);
-  const annotations = useSelector(selectAnnotations)(fileIdNumber);
+  const { data: annotations } = useAnnotations(fileIdNumber);
+
+  const { data: fileInfo, isFetched, isError, error } = useCdfItem<FileInfo>(
+    'files',
+    {
+      id: fileIdNumber,
+    }
+  );
+
   const { jobDone, jobError, jobStarted } = useSelector(
     (state: RootState) =>
       state.fileContextualization.uploadJobs[fileIdNumber] || {}
@@ -67,30 +97,16 @@ export default function FileOverview() {
     }
   }, [jobDone, jobError]);
 
-  useEffect(() => {
-    if (file) {
-      dispatch(
-        listAnnotations.action({
-          file,
-          shouldClear: false,
-          includeDeleted: true,
-        })
-      );
-    }
-  }, [dispatch, file]);
-
-  const getPermission = useMemo(() => checkPermission('filesAcl', 'WRITE'), []);
-  const canEditFiles = useSelector(getPermission);
-  const [renderFeedback, setRenderFeedback] = useState(false);
-  return (
-    <Wrapper>
-      {renderFeedback && (
-        <MissingPermissionFeedback key="filesAcl" acl="filesAcl" type="WRITE" />
-      )}
-      <Header>
+  const BackButton = () => (
+    <div
+      style={{
+        display: 'inline-block',
+        overflow: 'hidden',
+      }}
+    >
+      <Space>
         <Button
-          shape="round"
-          icon="ArrowLeft"
+          icon="ArrowBack"
           onClick={() =>
             history.push(
               `/${tenant}/pnid_parsing_new/pipeline/${filesDataKitId}/${assetsDataKitId}/${optionsId}`
@@ -98,41 +114,133 @@ export default function FileOverview() {
           }
         >
           Back
-        </Button>
+        </Button>{' '}
+        <Divider type="vertical" style={{ height: '36px' }} />
+      </Space>
+    </div>
+  );
+  const getPermission = useMemo(() => checkPermission('filesAcl', 'WRITE'), []);
+  const canEditFiles = useSelector(getPermission);
+
+  const resourceDetails: ResourceItem = {
+    type: 'file',
+    id: fileIdNumber,
+    externalId: fileInfo?.externalId || '',
+  };
+
+  const { counts } = useRelatedResourceCounts(resourceDetails);
+
+  if (!isFetched) {
+    return <Loader />;
+  }
+
+  if (isError) {
+    return <ErrorFeedback error={error} />;
+  }
+
+  if (!fileInfo) {
+    return <>File {fileId} not found!</>;
+  }
+
+  return (
+    <Wrapper>
+      {renderFeedback && (
+        <MissingPermissionFeedback key="filesAcl" acl="filesAcl" type="WRITE" />
+      )}
+      <TitleRowWrapper>
+        <BackButton />
         <Title level={3} style={{ flex: 1 }}>
-          {file ? file.name : 'Loading...'}
+          {fileInfo.name}
         </Title>
-        <Tooltip
-          placement="left"
-          content="This will create or update an interactive SVG linked to the assets for this file."
-        >
-          <Icon type="Help" style={{ marginRight: '24px', fontSize: '18px' }} />
-        </Tooltip>
-        <Button
-          shape="round"
-          type="primary"
-          icon="Upload"
-          style={{ marginRight: '0px' }}
-          loading={jobStarted}
-          onClick={() => {
-            if (canEditFiles) {
-              if (annotations) {
-                dispatch(startConvertFileToSvgJob(fileIdNumber, annotations));
-              }
-            } else {
-              setRenderFeedback(true);
-            }
+        <div
+          style={{
+            display: 'inline-block',
+            overflow: 'hidden',
           }}
         >
-          Save to CDF
-        </Button>
-      </Header>
-      <ContentWrapper>
-        <CogniteFileViewer
-          fileId={fileIdNumber}
-          onFileClicked={(newFile) => history.push(`${newFile.id}`)}
-        />
-      </ContentWrapper>
+          <TitleRowActions
+            actions={
+              <>
+                <EditFileButton
+                  item={{ type: 'file', id: fileIdNumber }}
+                  isActive={editMode}
+                  onClick={() => {
+                    setEditMode((mode) => !mode);
+                  }}
+                />
+                <ClearTagsButton id={fileIdNumber} setEditMode={setEditMode} />
+                <Button
+                  shape="round"
+                  type="primary"
+                  icon="Upload"
+                  style={{ marginRight: '0px' }}
+                  loading={jobStarted}
+                  onClick={() => {
+                    if (canEditFiles) {
+                      if (annotations) {
+                        dispatch(
+                          startConvertFileToSvgJob(
+                            fileIdNumber,
+                            convertEventsToAnnotations(annotations)
+                          )
+                        );
+                      }
+                    } else {
+                      setRenderFeedback(true);
+                    }
+                  }}
+                >
+                  Save to CDF
+                </Button>
+              </>
+            }
+          />
+        </div>
+      </TitleRowWrapper>
+      <Tabs
+        tab={activeTab}
+        onTabChange={(newTab) => {
+          setActiveTab(newTab as FilePreviewTabType);
+        }}
+      >
+        <Tabs.Pane key="preview" title={<TabTitle>Preview</TabTitle>}>
+          <ContentWrapper>
+            <CogniteFileViewer fileId={fileIdNumber} editMode={editMode} />
+          </ContentWrapper>
+        </Tabs.Pane>
+        <Tabs.Pane title={<TabTitle>File details</TabTitle>} key="info">
+          <FileDetails file={fileInfo} />
+          <Metadata metadata={fileInfo.metadata} />
+        </Tabs.Pane>
+        <Tabs.Pane
+          key="assets"
+          title={
+            <>
+              <TabTitle>Assets</TabTitle>
+              <Badge
+                text={counts.asset}
+                background={Colors['greyscale-grey3'].hex()}
+              />
+            </>
+          }
+        >
+          <ResourceDetailTabContent resource={resourceDetails} type="asset" />
+        </Tabs.Pane>
+        <Tabs.Pane
+          key="files"
+          title={
+            <>
+              <TabTitle>P&IDs</TabTitle>
+              <Badge
+                text={counts.file}
+                background={Colors['greyscale-grey3'].hex()}
+              />
+            </>
+          }
+        >
+          <ResourceDetailTabContent resource={resourceDetails} type="file" />
+        </Tabs.Pane>
+      </Tabs>
       <ResourceSidebar />
     </Wrapper>
   );

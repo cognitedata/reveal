@@ -75,6 +75,7 @@ export default function FileSearchBar({
           <p>Search</p>
           <Input
             disabled={dataSetsOnly}
+            id="search"
             prefix={
               <Icon
                 type="Search"
