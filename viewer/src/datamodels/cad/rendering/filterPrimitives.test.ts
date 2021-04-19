@@ -26,7 +26,7 @@ describe('filterPrimitivesOutsideClipBoxByCenterAndRadius', () => {
 
   test('no clipbox, returns original', () => {
     const original = new Uint8Array(32);
-    const filtered = filterPrimitivesOutsideClipBoxByCenterAndRadius(original, attributes, undefined);
+    const filtered = filterPrimitivesOutsideClipBoxByCenterAndRadius(original, attributes, null);
     expect(filtered).toBe(original);
   });
 
@@ -67,7 +67,7 @@ describe('filterPrimitivesOutsideClipBoxByVertices', () => {
 
   test('no clipbox, returns original', () => {
     const original = new Uint8Array(48);
-    const filtered = filterPrimitivesOutsideClipBoxByVertices(original, attributes, undefined);
+    const filtered = filterPrimitivesOutsideClipBoxByVertices(original, attributes, null);
     expect(filtered).toBe(original);
   });
 
@@ -105,12 +105,7 @@ describe('filterPrimitivesOutsideClipBoxByBaseBoundsAndInstanceMatrix', () => {
 
   test('no clipbox, returns original', () => {
     const original = new Uint8Array(16 * 4);
-    const filtered = filterPrimitivesOutsideClipBoxByBaseBoundsAndInstanceMatrix(
-      original,
-      attributes,
-      unitBox,
-      undefined
-    );
+    const filtered = filterPrimitivesOutsideClipBoxByBaseBoundsAndInstanceMatrix(original, attributes, unitBox, null);
     expect(filtered).toBe(original);
   });
 
@@ -142,7 +137,7 @@ describe('filterPrimitivesOutsideClipBoxByEllipse', () => {
 
   test('no clipbox, returns original', () => {
     const original = new Uint8Array(48);
-    const filtered = filterPrimitivesOutsideClipBoxByEllipse(original, attributes, undefined);
+    const filtered = filterPrimitivesOutsideClipBoxByEllipse(original, attributes, null);
     expect(filtered).toBe(original);
   });
 

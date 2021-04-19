@@ -138,7 +138,8 @@ function createStubModel(blobUrl: string, scene: SectorScene, modelMatrix: THREE
     blobUrl,
     modelMatrix,
     inverseModelMatrix: new THREE.Matrix4().copy(modelMatrix).invert(),
-    scene
+    scene,
+    geometryClipBox: null
   };
   return cadModel;
 }
