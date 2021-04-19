@@ -16,8 +16,8 @@ import LoadResources from 'containers/LoadResources';
 import MissingPermissionFeedback from 'components/MissingPermissionFeedback';
 import { Flex } from 'components/Common';
 import { canDeploySelectedFiles } from 'utils/FilesUtils';
+import { useAnnotationsForFiles } from 'hooks/useAnnotationsForFiles';
 import ResultsTable from './ResultsTable';
-import { useAnnotationsForFiles } from '../../hooks/useAnnotationsForFiles';
 import {
   getDataKitItems,
   getPnidOptions,

@@ -17,8 +17,6 @@ import {
 import { ResourceActionsProvider } from 'context/ResourceActionsContext';
 import { ResourceSelectionProvider } from 'context/ResourceSelectionContext';
 
-const Spinner = () => <Loader />;
-
 export default function App() {
   const dispatch = useDispatch();
   const history = useHistory();
@@ -79,7 +77,7 @@ export default function App() {
   ];
 
   return (
-    <Suspense fallback={<Spinner />}>
+    <Suspense fallback={<Loader />}>
       <FileContextualizationContextProvider>
         <ResourceSelectionProvider allowEdit mode="multiple">
           <ResourceActionsProvider>

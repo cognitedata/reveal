@@ -27,7 +27,7 @@ export const ClearTagsButton = ({
 
   const writeAccess = filesAcl && eventsAcl;
 
-  const onSuccess = () => {
+  const onDeleteSuccess = () => {
     const invalidate = () =>
       client.invalidateQueries(['cdf', 'events', 'list']);
     invalidate();
@@ -49,7 +49,7 @@ export const ClearTagsButton = ({
     (annotations: CogniteAnnotation[]) =>
       hardDeleteAnnotations(sdk, annotations),
     {
-      onSuccess,
+      onSuccess: onDeleteSuccess,
     }
   );
 
@@ -83,7 +83,7 @@ export const ClearTagsButton = ({
     );
   }
 
-  const onClick = () =>
+  const onDeleteClick = () =>
     Modal.confirm({
       title: 'Are you sure?',
       content: (
@@ -109,7 +109,7 @@ export const ClearTagsButton = ({
 
   return (
     <Tooltip title="Clear tags">
-      <Button icon="DeleteAlt" key={id} onClick={onClick} />
+      <Button icon="DeleteAlt" key={id} onClick={onDeleteClick} />
     </Tooltip>
   );
 };

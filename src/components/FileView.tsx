@@ -10,6 +10,8 @@ import { CogniteFileViewer } from '@cognite/react-picture-annotation';
 import { useCdfItem, usePermissions } from '@cognite/sdk-react-query-hooks';
 import { FileInfo } from '@cognite/sdk';
 import isMatch from 'lodash/isMatch';
+import { Flex } from 'components/Common';
+import { Alert } from 'antd';
 
 export type FilePreviewTabType =
   | 'preview'
@@ -66,24 +68,20 @@ export const FilePreview = ({
   }
 
   if (!fileInfo) {
-    return <>File {fileId} not found!</>;
+    return (
+      <Alert message={`File ${fileId} not found`} type="warning" closable />
+    );
   }
 
   return (
     <CogniteFileViewer.Provider sdk={sdk}>
-      <div
-        style={{
-          flex: '1',
-          display: 'flex',
-          flexDirection: 'column',
-        }}
-      >
+      <Flex column style={{ flex: '1' }}>
         <CogniteFilePreview
           fileId={fileId!}
           creatable={editMode}
           contextualization={writeAccess}
         />
-      </div>
+      </Flex>
     </CogniteFileViewer.Provider>
   );
 };
