@@ -88,7 +88,7 @@ export const FileGridPreview = ({
         color: 'black' /* typpy styles make color to be white here ... */,
       }}
     >
-      <Menu.Item onClick={handleMetadataEdit}>Edit file details</Menu.Item>
+      <Menu.Item onClick={handleMetadataEdit}>File details</Menu.Item>
       <Menu.Item>Delete</Menu.Item>
     </Menu>
   );
@@ -127,7 +127,7 @@ export const FileGridPreview = ({
           <div className="badge">
             <Popover
               placement="bottom"
-              trigger="click"
+              trigger="mouseenter click"
               content={AnnotationsBadgePopoverContent(annotationsBadgeProps)}
             >
               <>{AnnotationsBadge(annotationsBadgeProps)}</>

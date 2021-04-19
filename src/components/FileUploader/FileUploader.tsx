@@ -470,7 +470,7 @@ function UploadControlButtons({
       uploaderButton = (
         <>
           <Button type="primary" icon="Upload" disabled>
-            Upload files
+            Upload files to CDF
           </Button>
           <div style={{ flex: 1 }} />
           <Button type="ghost-danger" disabled>
@@ -483,7 +483,7 @@ function UploadControlButtons({
       uploaderButton = (
         <>
           <Button type="primary" onClick={onUploadStart} icon="Upload">
-            Upload files
+            Upload files to CDF
           </Button>
           <div style={{ flex: 1 }} />
           <Button type="ghost-danger" onClick={onRemoveFiles}>

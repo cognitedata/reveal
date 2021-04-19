@@ -50,7 +50,5 @@ const TableContainer = styled.div`
   & > *:nth-child(even) {
     background-color: #fbfbfb;
   }
-
-  box-shadow: 0 0 20px -5px rgba(133, 145, 243, 0.2);
   border-radius: 10px;
 `;

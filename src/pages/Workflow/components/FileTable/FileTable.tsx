@@ -86,7 +86,7 @@ function AnnotationRendrer(annotationsBadgeProps: AnnotationsBadgeProps) {
   return (
     <Popover
       placement="bottom"
-      trigger="click"
+      trigger="mouseenter click"
       content={AnnotationsBadgePopoverContent(annotationsBadgeProps)}
     >
       <>{AnnotationsBadge(annotationsBadgeProps)}</>
@@ -147,7 +147,7 @@ function ActionRendrer(
   );
 
   return (
-    <div>
+    <Action>
       <Button
         type="secondary"
         icon="ArrowRight"
@@ -165,7 +165,7 @@ function ActionRendrer(
           aria-label="dropdown button"
         />
       </Dropdown>
-    </div>
+    </Action>
   );
 }
 
@@ -238,7 +238,11 @@ export function FileTable(props: FileTableProps) {
 
   return (
     <TableWrapper>
-      <AutoSizer style={{ width: 'auto', height: 'auto' }}>
+      <AutoSizer
+        style={{
+          width: 'auto',
+        }}
+      >
         {({ width }) => (
           <ReactBaseTable<TableDataItem>
             columns={columns}
@@ -252,6 +256,11 @@ export function FileTable(props: FileTableProps) {
     </TableWrapper>
   );
 }
+
+export const Action = styled.div`
+  display: flex;
+  align-items: flex-end;
+`;
 
 export const FileRow = styled.div`
   display: flex;

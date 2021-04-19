@@ -295,8 +295,8 @@ export const TableWrapper = styled(TableWrapperInner)(
   (props: { disableScroll?: boolean }) => css`
     width: 100%;
     height: 100%;
-    overflow-x: auto;
-    overflow-y: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
     .row {
       transition: 0.3s all;
       border-bottom: 1px solid ${lightGrey};
