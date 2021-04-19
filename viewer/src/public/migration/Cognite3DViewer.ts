@@ -986,7 +986,7 @@ export class Cognite3DViewer {
 
     const { width: originalWidth, height: originalHeight } = this.canvas;
 
-    const screenshotCamera = this.camera.clone();
+    const screenshotCamera = this.camera.clone() as THREE.PerspectiveCamera;
     adjustCamera(screenshotCamera, width, height);
 
     this.renderer.setSize(width, height);
