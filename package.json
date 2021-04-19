@@ -28,7 +28,7 @@
     "@visx/shape": "^1.7.0",
     "@visx/threshold": "^1.7.0",
     "@visx/tooltip": "^1.7.2",
-    "antd": "^4.15.1",
+    "antd": "^4.15.2",
     "d3-array": "^2.12.1",
     "d3-time-format": "^3.0.0",
     "history": "^4.10.1",
