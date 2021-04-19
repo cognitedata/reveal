@@ -423,7 +423,7 @@ const PlotlyChartComponent = ({
           },
         },
       ],
-      ['pan2d', 'zoom2d', 'zoomIn2d', 'zoomOut2d', 'autoScale2d'],
+      ['autoScale2d'],
     ] as (ModeBarDefaultButtons[] | ModeBarButton[])[],
   };
 
@@ -458,6 +458,21 @@ const PlotWrapper = styled.div`
   // Expanding the y-axis hitbox
   .nsdrag {
     width: 40px;
+  }
+
+  .ewdrag {
+    height: 100%;
+    transform: translateY(-100%);
+  }
+
+  .edrag {
+    height: 100%;
+    transform: translateY(-100%);
+  }
+
+  .wdrag {
+    height: 100%;
+    transform: translateY(-100%);
   }
 `;
 
