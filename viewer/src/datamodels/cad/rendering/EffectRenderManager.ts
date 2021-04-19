@@ -16,6 +16,7 @@ import { SsaoSampleQuality } from '../../../public/types';
 import { WebGLRendererStateHelper } from '../../../utilities/WebGLRendererStateHelper';
 import { SectorNode } from '../sector/SectorNode';
 import { LevelOfDetail } from '../sector/LevelOfDetail';
+import { BufferAttribute } from 'three';
 
 export class EffectRenderManager {
   private readonly _materialManager: CadMaterialManager;
@@ -757,15 +758,12 @@ export class EffectRenderManager {
   }
 
   private createRenderTriangle() {
-    const geometry = new THREE.Geometry();
-    geometry.vertices.push(new THREE.Vector3(-1, -1, 0));
-    geometry.vertices.push(new THREE.Vector3(3, -1, 0));
-    geometry.vertices.push(new THREE.Vector3(-1, 3, 0));
+    const geometry = new THREE.BufferGeometry();
+    const vertices = new Float32Array([-1, -1, 0, 3, -1, 0, -1, 3, 0]);
+    const uvs = new Float32Array([0, 0, 2, 0, 0, 2]);
 
-    const face = new THREE.Face3(0, 1, 2);
-    geometry.faces.push(face);
-
-    geometry.faceVertexUvs[0].push([new THREE.Vector2(0, 0), new THREE.Vector2(2, 0), new THREE.Vector2(0, 2)]);
+    geometry.setAttribute('position', new BufferAttribute(vertices, 3));
+    geometry.setAttribute('uv', new BufferAttribute(uvs, 2));
 
     return geometry;
   }

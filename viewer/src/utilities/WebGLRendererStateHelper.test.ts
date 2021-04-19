@@ -18,7 +18,7 @@ describe('WebGLRendererStateHelper', () => {
 
   test('setClearColor()', () => {
     renderer.setClearColor('#AABBCC', 0.5);
-    const originalColor = renderer.getClearColor();
+    const originalColor = renderer.getClearColor(new THREE.Color());
     const originalAlpha = renderer.getClearAlpha();
 
     const helper = new WebGLRendererStateHelper(renderer);
