@@ -12,6 +12,7 @@ import { sleep } from 'utils';
 export const GCSUploader = (
   file: Blob | UploadFile,
   uploadUrl: string,
+  contentType: string,
   callback: (info: any) => void = () => {}
 ) => {
   // This is what is recommended from google when uploading files.
@@ -27,6 +28,7 @@ export const GCSUploader = (
   return new UploadGCS({
     id: 'cognite-data-fusion-upload',
     url: uploadUrl,
+    contentType,
     file,
     chunkSize: 262144 * chunkMultiple,
     onChunkUpload: callback,
@@ -85,10 +87,11 @@ export const FileUploader = ({
 
     fileList.forEach(async file => {
       const mimeType = getMIMEType(file.name);
+      const fallbackMimeType = 'application/octet-stream';
 
       const fileMetadata = (await sdk.files.upload({
         name: file.name,
-        mimeType: mimeType || undefined,
+        mimeType: mimeType || fallbackMimeType,
         source: 'Cognite Data Fusion',
         ...(assetIds && { assetIds }),
       })) as FileUploadResponse;
@@ -114,6 +117,7 @@ export const FileUploader = ({
       currentUploads[file.uid] = await GCSUploader(
         file,
         uploadUrl,
+        mimeType || fallbackMimeType,
         (info: any) => {
           file.response = info;
           file.percent = (info.uploadedBytes / info.totalBytes) * 100;
