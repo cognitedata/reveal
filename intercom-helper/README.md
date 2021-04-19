@@ -1,6 +1,6 @@
 # @cognite/intercom-helper
 
-A collection of intercom methods
+A collection of Intercom methods, including handling of Intercom Identity Verification.
 
 ## Installation
 
@@ -10,7 +10,7 @@ yarn add @cognite/intercom-helper
 
 ## How to use
 
-Before anything else, start by initializing intercom.
+Before anything else, start by initializing Intercom.
 
 ```js
 import { intercomInitialization } from '@cognite/intercom-helper';
@@ -55,3 +55,5 @@ intercomHelper.identityVerification({
 
 `user_id` can only be manually set on boot, and is automatically set by the `identityVerification` method.
 `user_id` is not meant to be modified by the `update` method.
+
+You can see an example of this setup in [`react-demo-app`](https://github.com/cognitedata/react-demo-app/blob/master/src/pages/Intercom/Intercom.tsx).
