@@ -59,7 +59,7 @@ export function AnnotationsBadge({
       )}
       {text && showBadge(text) && (
         <Button
-          icon="Scan"
+          icon="TextScan"
           size="small"
           style={{
             marginRight: '5px',

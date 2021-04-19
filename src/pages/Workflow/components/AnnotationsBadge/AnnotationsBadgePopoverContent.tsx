@@ -83,7 +83,7 @@ export function AnnotationsBadgePopoverContent({
         row({
           status: text.status,
           title: 'Text',
-          icon: 'Scan',
+          icon: 'TextScan',
           backgroundColor: '#F0FCF8',
           color: '#404040',
           modelGenerated: text.modelGenerated,
