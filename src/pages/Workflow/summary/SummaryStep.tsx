@@ -84,14 +84,14 @@ export default function SummaryStep() {
             <StatsCarouselContainer>
               <StatsCarouselLeft>
                 {Object.entries(stats).map((pair) => (
-                  <Button
+                  <FancyButton
                     onClick={() => {
                       setStatView(pair[0]);
                       console.log('Just set statView:', statView);
                     }}
                   >
                     {pair[1].text} : {pair[1].value}
-                  </Button>
+                  </FancyButton>
                 ))}
               </StatsCarouselLeft>
               {statView === 'totalFilesUploaded' && (
@@ -211,6 +211,7 @@ const StatsCarouselLeft = styled.div`
   justify-content: center;
   overflow: auto;
   padding: 1em;
+  padding-right: 105px;
 `;
 
 const FileIconContainer = styled.div`
@@ -226,4 +227,8 @@ const SummaryContainer = styled.div`
   display: flex;
   margin: auto;
   padding: 10px;
+`;
+
+const FancyButton = styled.button`
+  background: white;
 `;
