@@ -15,7 +15,7 @@ export const TimeDisplay = ({
   relative,
   withTooltip,
 }: TimeDisplayProps) => {
-  if (value === undefined) {
+  if (value === undefined || value === 0) {
     return null;
   }
 

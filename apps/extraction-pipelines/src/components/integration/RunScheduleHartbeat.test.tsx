@@ -1,7 +1,7 @@
 import { getMockResponse, mockDataRunsResponse } from 'utils/mockResponse';
 import { renderWithSelectedIntegrationContext } from 'utils/test/render';
 import { QueryClient } from 'react-query';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { TableHeadings } from 'components/table/IntegrationTableCol';
 import React from 'react';
 import {
@@ -15,14 +15,20 @@ import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import moment from 'moment';
 
 describe('RunScheduleHartbeat', () => {
-  test('Renders information', () => {
+  test('Renders information', async () => {
     const mockIntegration = getMockResponse()[0];
-    sdkv3.get.mockResolvedValue({
+    sdkv3.get.mockResolvedValueOnce({
+      data: mockIntegration,
+    });
+    sdkv3.get.mockResolvedValueOnce({
       data: { items: mockDataRunsResponse.items },
     });
     renderWithSelectedIntegrationContext(<RunScheduleHartbeat />, {
       initIntegration: mockIntegration,
       client: new QueryClient(),
+    });
+    await waitFor(() => {
+      screen.getByText(TableHeadings.LATEST_RUN);
     });
     expect(
       screen.getByText(parseCron(mockIntegration.schedule))

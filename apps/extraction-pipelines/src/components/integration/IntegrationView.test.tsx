@@ -71,8 +71,8 @@ describe('IntegrationView', () => {
 
     expect(
       screen.getAllByText(new RegExp(TableHeadings.SCHEDULE, 'i')).length
-    ).toEqual(1);
-    expect(screen.getByText('At 09:00 AM')).toBeInTheDocument();
+    ).toEqual(2); // general info and top bar
+    expect(screen.getAllByText('At 09:00 AM').length).toEqual(2);
 
     expect(
       screen.getByText(new RegExp(DetailFieldNames.DESCRIPTION, 'i'))
@@ -98,6 +98,6 @@ describe('IntegrationView', () => {
     expect(screen.getByText(mockIntegration.externalId)).toBeInTheDocument();
     expect(screen.getByText(mockIntegration.id)).toBeInTheDocument();
     expect(screen.getByText(mockIntegration.name)).toBeInTheDocument();
-    expect(screen.getByText(NO_SCHEDULE)).toBeInTheDocument();
+    expect(screen.getAllByText(NO_SCHEDULE).length).toEqual(2);
   });
 });

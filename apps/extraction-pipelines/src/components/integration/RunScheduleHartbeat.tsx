@@ -22,17 +22,19 @@ import {
 import { StatusRun } from 'model/Runs';
 import moment from 'moment';
 import { useSelectedIntegration } from 'hooks/useSelectedIntegration';
+import { useIntegrationById } from 'hooks/useIntegration';
 import { LatestRunMessage } from 'components/integration/LatestRunMessage';
 import { ErrorFeedback } from 'components/error/ErrorFeedback';
 
 export const INVESTIGATE_RUN_LINK: Readonly<string> = 'Investigate latest runs';
 export const GENERAL_INFO_LINK: Readonly<string> = 'View general info';
 export const RUNS_OVERVIEW_LINK: Readonly<string> = 'Overview runs';
-export const HARTBEAT_HEADING: Readonly<string> = 'Hartbeat (last seen)';
-export const HARTBEAT_LINK: Readonly<string> = 'Overview hartbeat';
+export const LAST_CONNECTED_HEADING: Readonly<string> = 'Last connected';
+export const CONNECTIONS_LINK: Readonly<string> = 'View all connections';
 
 export const RunScheduleHartbeat: FunctionComponent = () => {
-  const { integration } = useSelectedIntegration();
+  const { integration: selectedIntegration } = useSelectedIntegration();
+  const { data: integration } = useIntegrationById(selectedIntegration?.id);
   const { data, error } = useRuns(integration?.externalId);
   if (error) {
     return <ErrorFeedback error={error} />;
@@ -97,14 +99,14 @@ export const RunScheduleHartbeat: FunctionComponent = () => {
       <CardInWrapper>
         <StyledTitleCard>
           <Icon type="Checkmark" />
-          {HARTBEAT_HEADING}
+          {LAST_CONNECTED_HEADING}
         </StyledTitleCard>
         <CardValue>
           {integration?.lastSeen && (
             <TimeDisplay value={integration.lastSeen} relative />
           )}
         </CardValue>
-        <a href="#overview-hartbeat-heading">{HARTBEAT_LINK}</a>
+        <a href="#overview-hartbeat-heading">{CONNECTIONS_LINK}</a>
       </CardInWrapper>
     </CardWrapper>
   );

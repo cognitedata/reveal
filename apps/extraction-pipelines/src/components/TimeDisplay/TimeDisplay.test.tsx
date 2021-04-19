@@ -23,4 +23,8 @@ describe('TimeDisplay', () => {
       expect(screen.getByText(expected)).toBeInTheDocument();
     });
   });
+  test('Render nothing when value is 0', () => {
+    render(<TimeDisplay value={0} />);
+    expect(screen.queryByText('1970-01-01 01:00:00')).not.toBeInTheDocument();
+  });
 });

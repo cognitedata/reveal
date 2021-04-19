@@ -51,12 +51,12 @@ export const CardValue = styled.span`
 
 export const CardWrapper = styled.div`
   display: flex;
-  background: white;
+  background-color: ${Colors['greyscale-grey1'].hex()};
   border-radius: 8px;
   & > div {
     flex: 1;
     margin: 1rem;
-    border-right: 1px solid ${Colors['greyscale-grey2'].hex()};
+    border-right: 1px solid ${Colors['greyscale-grey3'].hex()};
     justify-content: space-between;
     &:last-child {
       border-right: none;
