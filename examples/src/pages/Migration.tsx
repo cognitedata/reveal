@@ -553,7 +553,6 @@ export function Migration() {
 
             const boxHelper = new THREE.Box3Helper(box);
             boxes.add(boxHelper);
-            //viewer.addObject3D(boxHelper);
           }
         }
       });
