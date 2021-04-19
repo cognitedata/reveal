@@ -3,33 +3,17 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import {
-  FileTable,
-  FileActions,
-  TableDataItem,
-} from 'src/pages/Workflow/components/FileTable/FileTable';
 
-import { FileToolbar } from 'src/pages/Workflow/components/FileToolbar';
-import { Button, Title } from '@cognite/cogs.js';
-import {
-  getLink,
-  getParamLink,
-  workflowRoutes,
-} from 'src/pages/Workflow/workflowRoutes';
+import { Title } from '@cognite/cogs.js';
+import { getLink, workflowRoutes } from 'src/pages/Workflow/workflowRoutes';
 import { useHistory } from 'react-router-dom';
-import {
-  setSelectedFileId,
-  showFileMetadataPreview,
-} from 'src/store/processSlice';
 
-import { GridCellProps, GridTable } from '@cognite/data-exploration';
-import { resetEditHistory, selectAllFiles } from 'src/store/uploadedFilesSlice';
+import { selectAllFiles } from 'src/store/uploadedFilesSlice';
 import styled from 'styled-components';
 
 import { SaveAvailableAnnotations } from 'src/store/thunks/SaveAvailableAnnotations';
 import { createLink } from '@cognite/cdf-utilities';
 import { annotationsById } from 'src/store/previewSlice';
-import { margin } from 'src/cogs-variables';
 import { PrevNextNav } from '../components/PrevNextNav';
 import FileIcon from './assets/FileIcon.svg';
 import FileBland from './assets/FileBland.svg';
@@ -45,7 +29,8 @@ export default function SummaryStep() {
   const uploadedFiles = useSelector((state: RootState) =>
     selectAllFiles(state.uploadedFiles)
   );
-  const [currentView, setCurrentView] = useState<string>('list');
+
+  console.log('uploadedFiles ->', uploadedFiles);
   const [statView, setStatView] = useState('totalFilesUploaded');
 
   const dispatch = useDispatch();
@@ -53,28 +38,44 @@ export default function SummaryStep() {
     dispatch(SaveAvailableAnnotations());
     history.push(createLink('/explore/search/file')); // data-exploration app
   };
-  // update with actual data
-  const stats = {
-    totalFilesUploaded: { text: 'Total files uploaded', value: 29 },
-    filesWithExif: { text: 'Files with exif', value: 25 },
-    userReviewedFiles: { text: 'User-Reviewed files', value: 23 },
-    modelDetections: { text: 'Model Detection', value: 420 },
-    gdprCases: { text: 'GDPR Cases', value: 12 },
-  };
   // eslint-disable-next-line prettier/prettier
   // eslint-disable-next-line dot-notation
-
   const annotations = useSelector((state: RootState) => {
     return annotationsById(state.previewSlice);
   });
-  const annotationStats = { number: Object.keys(annotations).length };
-  console.log(
-    'annotations: ',
-    annotations,
-    ' | annotationStats: ',
-    annotationStats
-  );
-  console.log('here', uploadedFiles.length, uploadedFiles);
+  let GDPRCases = 0;
+
+  console.log('annotations: ', annotations);
+  // eslint-disable-next-line array-callback-return
+  Object.entries(annotations).map((arr) => {
+    if (arr[1].label === 'person') {
+      GDPRCases += 1;
+    }
+    console.log('xx', arr[1].label);
+  });
+
+  let filesWithExif = 0;
+  // eslint-disable-next-line array-callback-return
+  Object.entries(uploadedFiles).map((file) => {
+    if (file[1]?.metadata || file[1]?.geoLocation) {
+      filesWithExif += 1;
+    }
+  });
+
+  const stats = {
+    totalFilesUploaded: {
+      text: 'Total files uploaded',
+      value: uploadedFiles?.length, // ok
+    },
+    filesWithExif: { text: 'Files with exif', value: filesWithExif }, // ok
+    userReviewedFiles: { text: 'User-Reviewed files', value: 23 }, // need reviewed stat
+    modelDetections: {
+      text: 'Model Detection',
+      value: Object.keys(annotations).length, // ok?
+    },
+    gdprCases: { text: 'GDPR Cases', value: GDPRCases }, // need to do resolved out of total
+  };
+
   return (
     <>
       <QueryClientProvider client={queryClient}>
@@ -97,14 +98,18 @@ export default function SummaryStep() {
               {statView === 'totalFilesUploaded' && (
                 <StatsCarouselRight>
                   {Array.from({ length: stats[statView].value }, () => (
-                    <img src={FileIcon} alt="FileIcon" />
+                    <FileIconContainer>
+                      <img src={FileIcon} alt="FileIcon" />
+                    </FileIconContainer>
                   ))}
                 </StatsCarouselRight>
               )}
               {statView === 'filesWithExif' && (
                 <StatsCarouselRight>
                   {Array.from({ length: stats[statView].value }, () => (
-                    <img src={FileWithExifIcon} alt="FileWithExifIcon" />
+                    <FileIconContainer>
+                      <img src={FileWithExifIcon} alt="FileWithExifIcon" />
+                    </FileIconContainer>
                   ))}
                   {stats[statView].value < stats.totalFilesUploaded.value &&
                     Array.from(
@@ -114,11 +119,9 @@ export default function SummaryStep() {
                           stats[statView].value,
                       },
                       () => (
-                        <img
-                          style={{ marginTop: 'auto' }}
-                          src={FileBland}
-                          alt="FileBland"
-                        />
+                        <FileIconContainer>
+                          <img src={FileBland} alt="FileBland" />
+                        </FileIconContainer>
                       )
                     )}
                 </StatsCarouselRight>
@@ -126,7 +129,9 @@ export default function SummaryStep() {
               {statView === 'userReviewedFiles' && (
                 <StatsCarouselRight>
                   {Array.from({ length: stats[statView].value }, () => (
-                    <img src={FileWasReviewed} alt="FileWasReviewed" />
+                    <FileIconContainer>
+                      <img src={FileWasReviewed} alt="FileWasReviewed" />
+                    </FileIconContainer>
                   ))}
                   {stats[statView].value < stats.totalFilesUploaded.value &&
                     Array.from(
@@ -135,21 +140,32 @@ export default function SummaryStep() {
                           stats.totalFilesUploaded.value -
                           stats[statView].value,
                       },
-                      () => <img src={FileBland} alt="FileBland" />
+                      () => (
+                        <FileIconContainer>
+                          <img src={FileBland} alt="FileBland" />
+                        </FileIconContainer>
+                      )
                     )}
                 </StatsCarouselRight>
               )}
               {statView === 'modelDetections' && (
                 <StatsCarouselRight>
                   {Array.from({ length: stats[statView].value }, () => (
-                    <img src={FileWithAnnotations} alt="FileWithAnnotations" />
+                    <FileIconContainer>
+                      <img
+                        src={FileWithAnnotations}
+                        alt="FileWithAnnotations"
+                      />
+                    </FileIconContainer>
                   ))}
                 </StatsCarouselRight>
               )}
               {statView === 'gdprCases' && (
                 <StatsCarouselRight>
                   {Array.from({ length: stats[statView].value }, () => (
-                    <img src={FileResolvedGDPR} alt="FileResolvedGDPR" />
+                    <FileIconContainer>
+                      <img src={FileResolvedGDPR} alt="FileResolvedGDPR" />
+                    </FileIconContainer>
                   ))}
                 </StatsCarouselRight>
               )}
@@ -205,9 +221,8 @@ const StatsCarouselRight = styled.div`
   overflow: scroll;
 `;
 const StatsCarouselLeft = styled.div`
-  display: grid;
-  grid-template-columns: 1 fr;
-  grid-template-rows: repeat(5, 1fr);
+  display: flex;
+  flex-direction: column;
   justify-content: center;
   overflow: auto;
   padding: 1em;
@@ -215,20 +230,14 @@ const StatsCarouselLeft = styled.div`
 `;
 
 const FileIconContainer = styled.div`
-  display: flex;
-  justify-content: space-around;
-`;
-const StatsHeader = styled.div`
-  display: flex;
-  justify-content: left;
-  font-size: 50px;
-`;
-const SummaryContainer = styled.div`
-  display: flex;
-  margin: auto;
-  padding: 10px;
+  margin-top: auto;
+  padding: 5px;
+  bottom: 0px;
 `;
 
 const FancyButton = styled.button`
   background: white;
+  border: none;
+  border-radius: 10px;
+  padding: 1rem;
 `;
