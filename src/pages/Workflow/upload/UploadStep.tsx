@@ -17,40 +17,6 @@ export default function UploadStep() {
   const uploadedFiles = useSelector((state: RootState) =>
     selectAllFiles(state.uploadedFiles)
   );
-  // todo: remove this once development is complete
-  // useEffect(() => {
-  //   dispatch(
-  //     fetchFilesById([
-  //       { id: 6222346415226562 },
-  //       { id: 3901383492989027 },
-
-  // extra annotations
-  // { id: 7962558153749325 },
-  // { id: 8646165667023788 },
-  // { id: 8733204951981 },
-  // { id: 3209660507140892 },
-  // { id: 8844487098733620 },
-  // { id: 7727379776722125 },
-  // { id: 7871961702513784 },
-  // { id: 4286208028122389 },
-  // { id: 8493116004320656 },
-  // { id: 8617846943808843 },
-  // { id: 8560196409695472 },
-  // { id: 5321798654141050 },
-  // { id: 5388021067081511 },
-  // { id: 5392828158462405 },
-  // { id: 5761490615168510 },
-  // { id: 419785695857473 },
-  // { id: 5754923033166049 },
-  // { id: 6864386057523862 },
-  // { id: 5991021003187976 },
-  // { id: 7038879180279229 },
-  // { id: 7203969359502821 },
-  // { id: 7366624065249523 },
-  // { id: 7501645377424303 },
-  //     ])
-  //   );
-  // }, []);
 
   const onUploadSuccess = React.useCallback(
     (file) => {
@@ -73,7 +39,7 @@ export default function UploadStep() {
         <FileUploader
           initialUploadedFiles={uploadedFiles}
           accept={['.jpeg', '.jpg', '.png', '.tiff', '.mp4'].join(', ')}
-          maxTotalSizeInBytes={1 * 1024 ** 3 /* 5 GB */}
+          maxTotalSizeInBytes={1 * 1024 ** 3 /* 1 GB */}
           maxFileCount={30}
           onUploadSuccess={onUploadSuccess}
         >
