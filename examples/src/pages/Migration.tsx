@@ -544,7 +544,7 @@ export function Migration() {
       model.traverse(x => {
         if (x instanceof THREE.Mesh) {
           const mesh = x;
-          const geometry: THREE.Geometry | THREE.BufferGeometry = mesh.geometry;
+          const geometry: THREE.BufferGeometry = mesh.geometry;
 
           if (geometry.boundingBox !== null) {
             const box = geometry.boundingBox.clone();

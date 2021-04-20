@@ -1,3 +1,7 @@
+#![allow(
+    clippy::upper_case_acronyms
+)]
+
 use byteorder::{LittleEndian, ReadBytesExt};
 use num_derive::FromPrimitive;
 use serde::{Deserialize, Serialize};

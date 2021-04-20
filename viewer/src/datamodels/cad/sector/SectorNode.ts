@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import { LevelOfDetail } from './LevelOfDetail';
 
-const emptyGeometry = new THREE.Geometry();
+const emptyGeometry = new THREE.BufferGeometry();
 
 export class SectorNode extends THREE.Group {
   public readonly sectorId: number;
