@@ -9,8 +9,10 @@ import {
   DatapointsMultiQuery,
   DoubleDatapoint,
 } from '@cognite/sdk';
+import { Button } from '@cognite/cogs.js';
 import { calculateGranularity } from 'utils/timeseries';
 import { convertUnits, units } from 'utils/units';
+import Layers from 'utils/z-index';
 import createPlotlyComponent from 'react-plotly.js/factory';
 import Plotly, {
   ModeBarButton,
@@ -55,6 +57,7 @@ const PlotlyChartComponent = ({
   const [dragmode, setDragmode] = useState<'zoom' | 'pan'>('pan');
   const [stackedMode, setStackedMode] = useState<boolean>(defaultStackedMode);
   const [cache, setCache] = useState<Record<string, DatapointAggregate[]>>({});
+  const [yAxisLocked, setYAxisLocked] = useState<boolean>(true);
 
   const enabledTimeSeries = (chart.timeSeriesCollection || []).filter(
     ({ enabled }) => enabled
@@ -308,6 +311,7 @@ const PlotlyChartComponent = ({
   const yAxisDefaults = {
     hoverformat: '.2f',
     zeroline: false,
+    fixedrange: yAxisLocked,
   };
 
   seriesData.forEach(({ unit, color, range, datapoints }, index) => {
@@ -428,37 +432,72 @@ const PlotlyChartComponent = ({
   };
 
   return (
-    <PlotWrapper>
-      <Plot
-        data={data as Plotly.Data[]}
-        layout={(layout as unknown) as Plotly.Layout}
-        config={config as Plotly.Config}
-        onRelayout={handleRelayout}
-        useResizeHandler
-        style={{ width: '100%', height: '100%' }}
-      />
-      {[...calls, ...oldCalls].map(
-        (call) =>
-          call && (
-            <FunctionCall
-              key={`${call.functionId}/${call.callId}`}
-              id={call.functionId}
-              callId={call.callId}
-            />
-          )
-      )}
-    </PlotWrapper>
+    <ChartingContainer>
+      <AdjustButton
+        type="secondary"
+        variant="outline"
+        icon="YAxis"
+        onClick={() => setYAxisLocked(!yAxisLocked)}
+        left={5 * seriesData.length}
+        className="adjust-button"
+        style={{ background: 'white' }}
+      >
+        {yAxisLocked ? 'Adjust Y axis' : 'Finish'}
+      </AdjustButton>
+      <PlotWrapper>
+        <Plot
+          data={data as Plotly.Data[]}
+          layout={(layout as unknown) as Plotly.Layout}
+          config={config as Plotly.Config}
+          onRelayout={handleRelayout}
+          useResizeHandler
+          style={{ width: '100%', height: '100%' }}
+        />
+        {[...calls, ...oldCalls].map(
+          (call) =>
+            call && (
+              <FunctionCall
+                key={`${call.functionId}/${call.callId}`}
+                id={call.functionId}
+                callId={call.callId}
+              />
+            )
+        )}
+      </PlotWrapper>
+    </ChartingContainer>
   );
 };
+
+const ChartingContainer = styled.div`
+  height: 100%;
+  width: 100%;
+
+  & > .adjust-button {
+    visibility: hidden;
+  }
+
+  &:hover > .adjust-button {
+    visibility: visible;
+  }
+`;
 
 const PlotWrapper = styled.div`
   height: 100%;
   width: 100%;
-
   // Expanding the y-axis hitbox
   .nsdrag {
     width: 40px;
   }
+`;
+
+const AdjustButton = styled(Button)`
+  position: absolute;
+  background-color: white;
+  top: 50px;
+  left: ${(props: { left: number }) => props.left}%;
+  margin-left: 40px;
+  z-index: ${Layers.MAXIMUM};
+  background: white;
 `;
 
 export default PlotlyChartComponent;
