@@ -153,6 +153,7 @@ export const FileGridPreview = ({
 
 const PreviewCell = styled.div`
   margin-top: 30px;
+  padding-left: 20px;
   .preview {
     height: 90%;
     width: 90%;
