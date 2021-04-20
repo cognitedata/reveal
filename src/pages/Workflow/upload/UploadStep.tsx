@@ -1,5 +1,5 @@
 import { FileUploader } from 'src/components/FileUploader';
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { margin } from 'src/cogs-variables';
 import { Detail, Title } from '@cognite/cogs.js';
@@ -7,7 +7,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { addUploadedFile, selectAllFiles } from 'src/store/uploadedFilesSlice';
 import { PopulateAnnotations } from 'src/store/thunks/PopulateAnnotations';
-import { fetchFilesById } from 'src/store/thunks/fetchFilesById';
 
 const FileUploaderWrapper = styled.div`
   margin: ${margin.default} 0;

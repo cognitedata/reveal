@@ -51,7 +51,7 @@ export default function SummaryStep() {
     if (arr[1].label === 'person') {
       GDPRCases += 1;
     }
-    console.log('xx', arr[1].label);
+    console.log('label:', arr[1].label);
   });
 
   let filesWithExif = 0;
