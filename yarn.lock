@@ -1309,10 +1309,10 @@
     react-toastify "^6.0.9"
     tippy.js "6.2.0"
 
-"@cognite/cogs.js@^3.10.0":
-  version "3.10.0"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.10.0.tgz#253042418fed524c7f937474429a5bed61971eda"
-  integrity sha512-iLkgTFBgKKRHb3yz0MRsBtdgeXgyexko8wBxDZc2uegB//TTSY1o+GsgBfKEIMvwGVR+MNFE7waYuFVrG2nRzg==
+"@cognite/cogs.js@^3.10.1":
+  version "3.10.1"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.10.1.tgz#d4f3fada2b67a5827528867c9f714560308495c5"
+  integrity sha512-QIPhWemaoDWotKtEivPvBgVpb+ModJ2sPvG9nDHaFmJ9z3lki3qHOZpquQM2qjMFX/hXh0x+W8EtTLyU6NX15Q==
   dependencies:
     "@testing-library/react-hooks" "^5.0.3"
     "@tippyjs/react" "4.2.3"

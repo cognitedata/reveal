@@ -7,7 +7,7 @@ import { RootState } from 'src/store/rootReducer';
 import { selectIsPollingComplete } from 'src/store/processSlice';
 import { annotationsById } from 'src/store/previewSlice';
 import { Modal } from '@cognite/cogs.js';
-import AntStyles from 'src/styles/AntStyles';
+import { getContainer } from 'src/utils';
 import SummaryStep from '../summary/SummaryStep';
 
 export const ProcessStepActionButtons = () => {
@@ -24,16 +24,6 @@ export const ProcessStepActionButtons = () => {
     return annotationsById(state.previewSlice);
   });
 
-  const customStyles = {
-    content: {
-      // top: '50%',
-      // left: '50%',
-      // right: 'auto',
-      // bottom: 'auto',
-      transform: 'translate(100%, 100%)',
-    },
-  };
-
   const onCancel = () => {
     console.log('cancel');
     setModalOpen(false);
@@ -45,18 +35,17 @@ export const ProcessStepActionButtons = () => {
   // CogsModal isn't working
   return (
     <>
-      <AntStyles>
-        <Modal
-          footer={() => <></>}
-          visible={isModalOpen}
-          width={800}
-          closable={false}
-          onCancel={onCancel}
-          style={customStyles.content}
-        >
-          <SummaryStep />
-        </Modal>
-      </AntStyles>
+      <Modal
+        getContainer={getContainer}
+        footer={() => <></>}
+        visible={isModalOpen}
+        width={800}
+        closable={false}
+        onCancel={onCancel}
+        // style={customStyles.content}
+      >
+        <SummaryStep />
+      </Modal>
       <PrevNextNav
         prevBtnProps={{
           onClick: () => history.push(getLink(workflowRoutes.upload)),
