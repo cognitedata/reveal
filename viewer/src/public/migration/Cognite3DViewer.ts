@@ -647,6 +647,16 @@ export class Cognite3DViewer {
   }
 
   /**
+   * Add an object that will be considered a UI object. It will be rendered in the last stage and with orthographic projection.
+   * @param object
+   */
+  addUiObject(object: THREE.Object3D): void {
+    if (this.isDisposed) return;
+
+    this._revealManager.addUiObject(object);
+  }
+
+  /**
    * Sets the color used as the clear color of the renderer.
    * @param color
    */

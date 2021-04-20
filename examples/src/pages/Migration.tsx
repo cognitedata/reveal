@@ -15,7 +15,7 @@ import {
   PotreePointColorType,
   PotreePointShape
 } from '@cognite/reveal';
-import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool } from '@cognite/reveal/tools';
+import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, AxisViewTool } from '@cognite/reveal/tools';
 import { CadNode } from '@cognite/reveal/experimental';
 
 window.THREE = THREE;
@@ -274,6 +274,8 @@ export function Migration() {
         guiState.debug.stats.renderTime = sceneRenderedEventArgs.renderTime;
         debugStatsGui.updateDisplay();
       });
+
+      const asd = new AxisViewTool(viewer);
       
       const debugSectorsGui = debugGui.addFolder('Loaded sectors');
 

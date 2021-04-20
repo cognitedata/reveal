@@ -92,11 +92,21 @@ export class EffectRenderManager {
   private _renderTarget: THREE.WebGLRenderTarget | null;
   private _autoSetTargetSize: boolean = false;
 
+  private _uiObjects: Set<THREE.Object3D> = new Set();
+
   public set renderOptions(options: RenderOptions) {
     const ssaoParameters = this.ssaoParameters(options);
     const inputSsaoOptions = { ...ssaoParameters };
     this.setSsaoParameters(inputSsaoOptions);
     this._renderOptions = { ...options, ssaoRenderParameters: { ...ssaoParameters } };
+  }
+
+  public addUiObject(object: THREE.Object3D) {
+    this._uiObjects.add(object);
+  }
+
+  public removeUiObject(object: THREE.Object3D) {
+    this._uiObjects.delete(object);
   }
 
   private ssaoParameters(renderOptions: RenderOptions): SsaoParameters {
@@ -122,7 +132,8 @@ export class EffectRenderManager {
     this._renderer = renderer;
     this._renderOptions = options;
     this._materialManager = materialManager;
-    this._orthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+    this._orthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 5);
+    this._orthographicCamera.position.set(0, 0, 2);
 
     this._renderTarget = null;
 
@@ -406,10 +417,10 @@ export class EffectRenderManager {
 
           if (supportsSsao) {
             this.renderSsao(renderer, this._ssaoTarget, camera);
-            this.renderBlurredSsao(renderer, this._ssaoBlurTarget);
+            this.renderPostProcessStep(renderer, this._ssaoBlurTarget, this._ssaoBlurScene);
           }
 
-          this.renderAntiAlias(renderer, this._renderTarget);
+          this.renderPostProcessStep(renderer, this._renderTarget, this._fxaaScene);
           break;
 
         case AntiAliasingMode.NoAA:
@@ -418,7 +429,7 @@ export class EffectRenderManager {
           if (supportsSsao) {
             this.renderComposition(renderer, camera, this._compositionTarget);
             this.renderSsao(renderer, this._ssaoTarget, camera);
-            this.renderBlurredSsao(renderer, this._renderTarget);
+            this.renderPostProcessStep(renderer, this._renderTarget, this._fxaaScene);
           } else {
             this.renderComposition(renderer, camera, this._renderTarget);
           }
@@ -622,8 +633,7 @@ export class EffectRenderManager {
     this._combineOutlineDetectionMaterial.uniforms.cameraNear.value = camera.near;
     this._combineOutlineDetectionMaterial.uniforms.cameraFar.value = camera.far;
 
-    renderer.setRenderTarget(target);
-    renderer.render(this._compositionScene, this._orthographicCamera);
+    this.renderPostProcessStep(renderer, target, this._compositionScene);
   }
 
   private setSsaoParameters(params: SsaoParameters) {
@@ -650,22 +660,37 @@ export class EffectRenderManager {
     }
   }
 
+  private renderPostProcessStep(
+    renderer: THREE.WebGLRenderer,
+    target: THREE.WebGLRenderTarget | null,
+    scene: THREE.Scene
+  ) {
+    renderer.setRenderTarget(target);
+    const testScene = new THREE.Scene();
+
+    renderer.render(scene, this._orthographicCamera);
+    if (target === this._renderTarget) {
+      this._uiObjects.forEach(obj => {
+        testScene.add(obj);
+      });
+
+      renderer.compile(testScene, this._orthographicCamera);
+
+      renderer.autoClear = false;
+      const renderSize = renderer.getSize(new THREE.Vector2());
+      renderer.setViewport(renderSize.x - 128, 0, 128, 128);
+      renderer.clearDepth();
+      renderer.render(testScene, this._orthographicCamera);
+      renderer.setViewport(0, 0, renderSize.x, renderSize.y);
+      renderer.autoClear = true;
+    }
+  }
+
   private renderSsao(renderer: THREE.WebGLRenderer, target: THREE.WebGLRenderTarget | null, camera: THREE.Camera) {
     this._ssaoMaterial.uniforms.inverseProjectionMatrix.value = camera.projectionMatrixInverse;
     this._ssaoMaterial.uniforms.projMatrix.value = camera.projectionMatrix;
 
-    renderer.setRenderTarget(target);
-    renderer.render(this._ssaoScene, this._orthographicCamera);
-  }
-
-  private renderBlurredSsao(renderer: THREE.WebGLRenderer, target: THREE.WebGLRenderTarget | null) {
-    renderer.setRenderTarget(target);
-    renderer.render(this._ssaoBlurScene, this._orthographicCamera);
-  }
-
-  private renderAntiAlias(renderer: THREE.WebGLRenderer, target: THREE.WebGLRenderTarget | null) {
-    renderer.setRenderTarget(target);
-    renderer.render(this._fxaaScene, this._orthographicCamera);
+    this.renderPostProcessStep(renderer, target, this._ssaoScene);
   }
 
   private createOutlineColorTexture(): THREE.DataTexture {
@@ -758,9 +783,9 @@ export class EffectRenderManager {
 
   private createRenderTriangle() {
     const geometry = new THREE.Geometry();
-    geometry.vertices.push(new THREE.Vector3(-1, -1, 0));
-    geometry.vertices.push(new THREE.Vector3(3, -1, 0));
-    geometry.vertices.push(new THREE.Vector3(-1, 3, 0));
+    geometry.vertices.push(new THREE.Vector3(-1, -1, -1));
+    geometry.vertices.push(new THREE.Vector3(3, -1, -1));
+    geometry.vertices.push(new THREE.Vector3(-1, 3, -1));
 
     const face = new THREE.Face3(0, 1, 2);
     geometry.faces.push(face);

@@ -233,6 +233,14 @@ export class RevealManager<TModelIdentifier> {
     }
   }
 
+  public addUiObject(object: THREE.Object3D) {
+    this._effectRenderManager.addUiObject(object);
+  }
+
+  public removeUiObject(object: THREE.Object3D) {
+    this._effectRenderManager.removeUiObject(object);
+  }
+
   private notifyLoadingStateChanged(loadingState: LoadingState) {
     this._events.loadingStateChanged.fire(loadingState);
   }
