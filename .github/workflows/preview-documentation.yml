@@ -3,7 +3,7 @@ name: preview-documentation
 on:
   push:
     branches:
-      - mn/*
+      - 'mn/**'
 
 jobs:
   build-and-deploy:
