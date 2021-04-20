@@ -28,7 +28,7 @@ describe('DocumentationSection', () => {
   });
   test('Interacts with documentation', async () => {
     sdkv3.post.mockResolvedValue({ data: { items: [mock] } });
-    sdkv3.get.mockResolvedValue({ data: mock });
+    sdkv3.get.mockResolvedValueOnce({ data: mock });
     render(<DocumentationSection />, {
       wrapper: wrapper.wrapper,
     });
@@ -44,13 +44,13 @@ describe('DocumentationSection', () => {
     fireEvent.change(documentation, {
       target: { value: newDocumentation },
     });
-    fireEvent.click(screen.getByTestId(`${TEST_ID_BTN_SAVE}documentation`));
     sdkv3.get.mockResolvedValueOnce({
       data: {
         ...mock,
         metadata: { ...mock.metadata, documentation: newDocumentation },
       },
     });
+    fireEvent.click(screen.getByTestId(`${TEST_ID_BTN_SAVE}documentation`));
     await waitFor(() => {
       screen.getByText(newDocumentation);
     });

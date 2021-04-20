@@ -73,6 +73,48 @@ export const EditButton = styled((props) => (
   grid-column-gap: 1rem;
   height: fit-content;
 `;
+
+export const SwitchButton = styled.button`
+  width: 6rem;
+  background: white;
+  border: 0.125rem solid ${Colors.primary.hex()};
+  border-radius: 0.2rem;
+  padding: 0.2rem;
+  &:focus {
+    outline: -webkit-focus-ring-color auto 0.0625rem;
+    outline-offset: 0.0625rem;
+  }
+  .on,
+  .off {
+    margin: 1rem 0.3rem;
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.2rem;
+  }
+  &[role='switch'][aria-checked='true'] {
+    .on {
+      background: ${Colors.primary.hex()};
+      color: white;
+    }
+    .off {
+      background: white;
+      color: ${Colors.primary.hex()};
+    }
+  }
+  &[role='switch'][aria-checked='false'] {
+    .on {
+      background: white;
+      color: ${Colors.primary.hex()};
+    }
+    .off {
+      background: ${Colors.primary.hex()};
+      color: white;
+    }
+  }
+`;
+
+export const ErrorSpan = styled.span`
+  color: ${Colors.danger.hex()};
+`;
 export const StyledForm = styled((props) => (
   <PaddedGridForm {...props}>{props.children}</PaddedGridForm>
 ))`

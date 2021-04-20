@@ -20,7 +20,8 @@ import {
 
 describe('<Home />', () => {
   test('Renders Home page', async () => {
-    sdkv3.get.mockResolvedValue({ data: { items: getMockResponse() } });
+    sdkv3.get.mockResolvedValueOnce({ data: { items: getMockResponse() } });
+    sdkv3.get.mockResolvedValueOnce({ data: getMockResponse()[0] });
     sdkv3.datasets.retrieve.mockResolvedValue([]);
     const history = createMemoryHistory();
     const route = `/${PROJECT_ITERA_INT_GREEN}/${INTEGRATIONS}`;
@@ -30,7 +31,8 @@ describe('<Home />', () => {
       client,
       ORIGIN_DEV,
       PROJECT_ITERA_INT_GREEN,
-      CDF_ENV_GREENFIELD
+      CDF_ENV_GREENFIELD,
+      getMockResponse()[0]
     );
     render(
       <Router history={history}>

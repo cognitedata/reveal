@@ -10,7 +10,9 @@ import { Button, Colors, Icon } from '@cognite/cogs.js';
 import { bottomSpacing } from 'styles/StyledVariables';
 import { StyledTitle2 } from 'styles/StyledHeadings';
 import {
+  CLOSE,
   DOCUMENTATION_HEADING,
+  SAVE,
   SERVER_ERROR_CONTENT,
   SERVER_ERROR_TITLE,
 } from 'utils/constants';
@@ -176,7 +178,7 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
                 type="primary"
                 htmlType="submit"
                 aria-controls="documentation"
-                aria-label="Save"
+                aria-label={SAVE}
                 data-testid={`${TEST_ID_BTN_SAVE}documentation`}
               >
                 <Icon type="Checkmark" />
@@ -187,7 +189,7 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
               className="edit-form-btn"
               onClick={onCancel}
               aria-controls="documentation"
-              aria-label="Close"
+              aria-label={CLOSE}
               data-testid={`${ContactBtnTestIds.CANCEL_BTN}documentation`}
             >
               <Icon type="Close" />

@@ -1,5 +1,7 @@
 import moment from 'moment';
-import { LastStatuses, Status, StatusObj } from '../model/Status';
+import { User } from 'model/User';
+import { FieldValues } from 'react-hook-form';
+import { LastStatuses, Status, StatusObj } from 'model/Status';
 
 export const calculateStatus = (status: LastStatuses): StatusObj => {
   return calculate(status);
@@ -42,4 +44,33 @@ export const calculate = ({
     status: Status.NOT_ACTIVATED,
     time: 0,
   };
+};
+export const updateContactField = (
+  contacts: User[],
+  fieldName: keyof User,
+  idx: number
+) => {
+  return contacts.map((c: User, i: number) => {
+    if (i === idx) {
+      return { ...c, ...{ [fieldName]: !c[fieldName] } };
+    }
+    return c;
+  });
+};
+export const updateContact = (
+  contacts: User[],
+  contactField: FieldValues,
+  index: number
+) => {
+  return contacts.map((c: User, i: number) => {
+    if (i === index) {
+      return { ...c, ...contactField };
+    }
+    return c;
+  });
+};
+export const removeContactByIdx = (contacts: User[], index: number) => {
+  return contacts.filter((c: User, i: number) => {
+    return i !== index;
+  });
 };

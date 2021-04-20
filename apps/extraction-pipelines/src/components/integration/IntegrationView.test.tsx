@@ -35,13 +35,13 @@ describe('IntegrationView', () => {
       id: mockIntegration.id,
     });
     await waitFor(() => {
-      screen.getByText(new RegExp(TableHeadings.NAME, 'i'));
+      screen.getAllByText(new RegExp(TableHeadings.NAME, 'i'));
       screen.getByText(GENERAL_INFO_HEADING);
       screen.getByText(DOCUMENTATION_HEADING);
     });
     expect(
-      screen.getByText(new RegExp(TableHeadings.NAME, 'i'))
-    ).toBeInTheDocument();
+      screen.getAllByText(new RegExp(TableHeadings.NAME, 'i')).length
+    ).toEqual(2); // integration name heading, contacts heading name
     expect(screen.getByText(mockIntegration.name)).toBeInTheDocument();
 
     expect(

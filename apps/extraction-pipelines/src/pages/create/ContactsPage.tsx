@@ -31,7 +31,7 @@ import {
   REMOVE_CONTACT,
   ROLE_LABEL,
 } from 'utils/constants';
-import { CreateFormWrapper } from 'styles/StyledForm';
+import { CreateFormWrapper, SwitchButton } from 'styles/StyledForm';
 import { contactsRule } from 'utils/validation/contactsSchema';
 import { useStoredRegisterIntegration } from 'hooks/useStoredRegisterIntegration';
 import { DivFlex } from 'styles/flex/StyledFlex';
@@ -50,46 +50,8 @@ const ContactWrapper = styled.section`
   display: flex;
   flex-direction: column;
   border-bottom: 0.125rem solid ${Colors['greyscale-grey6'].hex()};
+  padding-bottom: 1rem;
   margin-bottom: 1rem;
-`;
-
-const Switchbutton = styled.button`
-  width: 6rem;
-  background: white;
-  border: 0.125rem solid ${Colors.primary.hex()};
-  border-radius: 0.2rem;
-  padding: 0.2rem;
-  margin-bottom: 1rem;
-  &:focus {
-    outline: -webkit-focus-ring-color auto 0.0625rem;
-    outline-offset: 0.0625rem;
-  }
-  .on,
-  .off {
-    margin: 1rem 0.3rem;
-    padding: 0.2rem 0.4rem;
-    border-radius: 0.2rem;
-  }
-  &[role='switch'][aria-checked='true'] {
-    .on {
-      background: ${Colors.primary.hex()};
-      color: white;
-    }
-    .off {
-      background: white;
-      color: ${Colors.primary.hex()};
-    }
-  }
-  &[role='switch'][aria-checked='false'] {
-    .on {
-      background: white;
-      color: ${Colors.primary.hex()};
-    }
-    .off {
-      background: ${Colors.primary.hex()};
-      color: white;
-    }
-  }
 `;
 
 interface ContactsPageProps {}
@@ -323,7 +285,7 @@ const ContactsPage: FunctionComponent<ContactsPageProps> = () => {
 
                     <Controller
                       as={
-                        <Switchbutton
+                        <SwitchButton
                           id={`integration-contacts-notification-${index}`}
                           role="switch"
                           type="button"
@@ -335,7 +297,7 @@ const ContactsPage: FunctionComponent<ContactsPageProps> = () => {
                         >
                           <span className="on">On</span>
                           <span className="off">Off</span>
-                        </Switchbutton>
+                        </SwitchButton>
                       }
                       name={`contacts[${index}].sendNotification`}
                       control={control}

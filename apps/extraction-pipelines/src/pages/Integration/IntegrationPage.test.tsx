@@ -86,8 +86,8 @@ describe('IntegrationPage', () => {
     expect(screen.getByText(DETAILS)).toBeInTheDocument();
     const runsLink = screen.getByText(RUNS);
     expect(runsLink).toBeInTheDocument();
-    const contactsBtn = screen.getByText(CONTACTS);
-    expect(contactsBtn).toBeInTheDocument();
+    const contactsBtn = screen.getAllByText(CONTACTS);
+    expect(contactsBtn.length).toEqual(2); // heading and link
     // check some details are renderd
     expect(screen.getAllByText(mockIntegration.name).length).toEqual(2); // heading and field
     expect(screen.getByText(mockIntegration.externalId)).toBeInTheDocument();

@@ -9,7 +9,33 @@ const SCHEDULE_REQUIRED: Readonly<string> = 'Schedule is required';
 export const nameRule = {
   name: yup.string().required(NAME_REQUIRED),
 };
+export const CONTACT_NAME_REQUIRED: Readonly<string> = 'Name is required';
+export const contactNameRule = {
+  name: yup.string().required(CONTACT_NAME_REQUIRED),
+};
+export const CONTACT_EMAIL_REQUIRED: Readonly<string> = 'Email is required';
+export const emailRule = {
+  email: yup.string().required(CONTACT_EMAIL_REQUIRED),
+};
+export const roleRule = {
+  role: yup.string(),
+};
+export const sentNotificationRule = {
+  sendNotification: yup.boolean(),
+};
 export const nameSchema = yup.object().shape(nameRule);
+export const contactNameSchema = yup.object().shape(contactNameRule);
+export const contactEmailSchema = yup.object().shape(emailRule);
+export const contactRoleSchema = yup.object().shape(roleRule);
+export const contactSendNotificationSchema = yup
+  .object()
+  .shape(sentNotificationRule);
+export const contactSchema = yup.object().shape({
+  ...contactNameRule,
+  ...emailRule,
+  ...roleRule,
+  ...sentNotificationRule,
+});
 
 export const descriptionSchema = yup.object().shape({
   description: yup

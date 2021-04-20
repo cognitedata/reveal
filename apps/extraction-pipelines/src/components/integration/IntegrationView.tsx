@@ -10,6 +10,7 @@ import { GeneralInfoSection } from 'components/integration/GeneralInfoSection';
 import { PageWrapperColumn } from 'styles/StyledPage';
 import { DocumentationSection } from 'components/integration/DocumentationSection';
 import { LatestRun } from 'components/integration/LatestRun';
+import { ContactsSection } from 'components/integration/ContactsSection';
 import { RunScheduleHartbeat } from 'components/integration/RunScheduleHartbeat';
 
 const MiddleSection = styled.section`
@@ -64,6 +65,7 @@ export const IntegrationView: FunctionComponent<IntegrationViewProps> = () => {
       </MiddleSection>
       <MiddleSectionGrid>
         <GeneralInfoSection />
+        <ContactsSection />
       </MiddleSectionGrid>
       <BottomSection>
         <DocumentationSection />
