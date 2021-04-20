@@ -119,10 +119,10 @@ export function useKeyboardHandler(props: Props) {
           if (setOfNewCheckedNodes.has(parentKey)) {
             return;
           }
-          let parentNode: TreeDataNode = parents[key];
+          let parentNode: TreeDataNode = parents[parentKey];
           if (!parentNode) {
             parentNode = getNodeByTreeIndex(treeData, parentKey)!;
-            parents[key] = parentNode!;
+            parents[parentKey] = parentNode!;
           }
 
           if (

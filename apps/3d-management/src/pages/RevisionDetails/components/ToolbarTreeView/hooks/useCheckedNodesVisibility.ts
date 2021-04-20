@@ -4,6 +4,7 @@ import debounce from 'lodash/debounce';
 import { Cognite3DModel } from '@cognite/reveal';
 import { TreeDataNode } from 'src/pages/RevisionDetails/components/TreeView/types';
 import { traverseTree } from 'src/pages/RevisionDetails/components/TreeView/utils/treeFunctions';
+import { subtreeHasTreeIndex } from 'src/store/modules/TreeView/treeViewUtils';
 
 type Args = {
   model: Cognite3DModel;
@@ -33,15 +34,6 @@ export function useCheckedNodesVisibility({
           // use to avoid calling hide/show node multiple times
           const hiddenTreeRanges: Array<[number, number]> = [];
 
-          // for the initial render when prevSet is null
-          // we simply hide all nodes and show what's need to be shown
-          // because we have no idea about the actual model visibility state
-          if (!prevCheckedKeysRef.current) {
-            hiddenTreeRanges.push([0, newTreeData[0].meta.subtreeSize]);
-            nodesHidingArgs.push([0, true]);
-            prevCheckedKeysRef.current = new Set();
-          }
-
           traverseTree(newTreeData, (key, node) => {
             if (!('meta' in node) || typeof key !== 'number') {
               return false;
@@ -62,15 +54,37 @@ export function useCheckedNodesVisibility({
               return false;
             }
 
-            if (prevCheckedKeysRef.current!.has(key)) {
+            if (
+              !hiddenTreeRanges.find(
+                ([start, end]) => key >= start && key < end
+              )
+            ) {
+              const allKnownChildrenAreHidden = ![
+                ...checkedKeysSet.values(),
+              ].some((checkedIndex) => subtreeHasTreeIndex(node, checkedIndex));
+
+              const hadCheckedChildBefore = [
+                ...prevCheckedKeysRef.current!.values(),
+              ].some((previouslyCheckedKey) =>
+                subtreeHasTreeIndex(node, previouslyCheckedKey)
+              );
+
+              // should be hidden with applyToChildren=true
               if (
-                !hiddenTreeRanges.find(
-                  ([start, end]) => key >= start && key < end
-                )
+                node.meta.subtreeSize > 1 &&
+                (!node.children || allKnownChildrenAreHidden)
               ) {
-                nodesHidingArgs.push([key, node.meta.subtreeSize > 1]);
+                if (hadCheckedChildBefore) {
+                  nodesHidingArgs.push([key, true]);
+                }
                 hiddenTreeRanges.push([key, key + node.meta.subtreeSize]);
+                return false;
               }
+
+              if (prevCheckedKeysRef.current!.has(key)) {
+                nodesHidingArgs.push([key, false]);
+              }
+              hiddenTreeRanges.push([key, key + 1]);
             }
 
             // must keep looking for every visible children
@@ -79,7 +93,7 @@ export function useCheckedNodesVisibility({
 
           await Promise.all<any>(
             nodesHidingArgs.map(([treeIndex, applyToChildren]) => {
-              if (treeIndex === 0) {
+              if (treeIndex === 0 && applyToChildren) {
                 return model.hideAllNodes();
               }
               return model.hideNodeByTreeIndex(
@@ -91,7 +105,7 @@ export function useCheckedNodesVisibility({
           );
           await Promise.all<any>(
             nodesShowingArgs.map(([treeIndex, applyToChildren]) => {
-              if (treeIndex === 0) {
+              if (treeIndex === 0 && applyToChildren) {
                 return model.showAllNodes();
               }
               return model.showNodeByTreeIndex(treeIndex, applyToChildren);
@@ -114,6 +128,18 @@ export function useCheckedNodesVisibility({
     if (!treeData.length) {
       return;
     }
+
+    // while this hook is the only source of visibility updates,
+    // we can assume we know that before everything was visible
+    if (!prevCheckedKeysRef.current) {
+      prevCheckedKeysRef.current = new Set<number>();
+      traverseTree(treeData, (key) => {
+        if (typeof key === 'number') {
+          prevCheckedKeysRef.current!.add(key);
+        }
+      });
+    }
+
     nodesVisibilityChanged(treeData, new Set(checkedKeys));
   }, [nodesVisibilityChanged, checkedKeys, treeData]);
 }

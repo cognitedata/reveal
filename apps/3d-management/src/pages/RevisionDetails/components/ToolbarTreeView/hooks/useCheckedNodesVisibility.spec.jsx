@@ -8,9 +8,24 @@ function TestComponent({ model, treeData, checkedKeys }) {
   useCheckedNodesVisibility({ model, treeData, checkedKeys });
   return null;
 }
-
 describe('useCheckedNodesVisibility tests', () => {
   it('correctly updates nodes visibility in reveal', async () => {
+    const allTreeIndexes = [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+    ].sort();
     const treeData = [
       {
         key: 0,
@@ -19,7 +34,7 @@ describe('useCheckedNodesVisibility tests', () => {
           treeIndex: 0,
           depth: 0,
           name: 'RootNode',
-          subtreeSize: 10,
+          subtreeSize: allTreeIndexes.length,
         },
         children: [
           {
@@ -116,13 +131,49 @@ describe('useCheckedNodesVisibility tests', () => {
               subtreeSize: 2,
             },
           },
+          {
+            key: 10, // 10, 11, 12, (13)
+            meta: {
+              id: 10,
+              treeIndex: 10,
+              parentId: 7587176698924415,
+              depth: 1,
+              name: 'Fake child with partially fetched children',
+              subtreeSize: 4,
+            },
+            children: [
+              {
+                key: 11,
+                meta: {
+                  id: 11,
+                  treeIndex: 11,
+                  parentId: 10,
+                  depth: 1,
+                  name: '11',
+                  subtreeSize: 1,
+                },
+              },
+              {
+                key: 12,
+                meta: {
+                  id: 12,
+                  treeIndex: 12,
+                  parentId: 10,
+                  depth: 1,
+                  name: '12',
+                  subtreeSize: 1,
+                },
+              },
+              // 13 is not fetched, but must be correctly visible/hidden in reveal
+            ],
+          },
         ],
       },
     ];
 
     const modelMock = {
-      allTreeIndexes: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-      ownCheckedNodes: new Set([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+      allTreeIndexes,
+      ownCheckedNodes: new Set(allTreeIndexes),
 
       async showNodeByTreeIndex(treeIndex, applyToChildren) {
         if (applyToChildren) {
@@ -148,7 +199,7 @@ describe('useCheckedNodesVisibility tests', () => {
         modelMock.ownCheckedNodes.clear();
       },
       async showAllNodes() {
-        modelMock.ownCheckedNodes = new Set(modelMock.allTreeIndexes);
+        modelMock.ownCheckedNodes = new Set(allTreeIndexes);
       },
     };
 
@@ -157,23 +208,24 @@ describe('useCheckedNodesVisibility tests', () => {
       <TestComponent
         model={modelMock}
         treeData={treeData}
-        checkedKeys={[0, 1, 2, 3, 4, 5, 6, 7, 8]}
+        checkedKeys={[0, 1, 2, 3, 4, 5, 6, 7, 8, /* 9 */ 10, 11, 12 /* 13 */]}
       />
     );
 
     await sleep(300);
 
-    expect([...modelMock.ownCheckedNodes].sort()).toEqual(
-      // eslint-disable-next-line prettier/prettier
-      [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-    );
+    expect([...modelMock.ownCheckedNodes].sort()).toEqual(allTreeIndexes);
 
     // uncheck one leaf [2]
+    debugger;
     rerender(
       <TestComponent
         model={modelMock}
         treeData={treeData}
-        checkedKeys={[1, 3, 4, 5, 6, 7, 8]}
+        checkedKeys={
+          // eslint-disable-next-line prettier/prettier
+          [/* 0, */ 1, /* 2, */ 3, 4, 5, 6, 7, 8, /* 9 */ 10, 11, 12 /* 13 */]
+        }
       />
     );
 
@@ -181,7 +233,7 @@ describe('useCheckedNodesVisibility tests', () => {
 
     expect([...modelMock.ownCheckedNodes].sort()).toEqual(
       // eslint-disable-next-line prettier/prettier
-      [1, 3, 4, 5, 6, 7, 8, 9]
+      [1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13].sort()
     );
 
     // uncheck all
@@ -194,6 +246,9 @@ describe('useCheckedNodesVisibility tests', () => {
     expect([...modelMock.ownCheckedNodes].sort()).toEqual([]);
 
     // check a child with children [3]
+
+    const hideNodeByTreeIndexSpy = jest.spyOn(modelMock, 'hideNodeByTreeIndex');
+    const hideAllNodesSpy = jest.spyOn(modelMock, 'hideAllNodes');
     rerender(
       <TestComponent
         model={modelMock}
@@ -204,6 +259,8 @@ describe('useCheckedNodesVisibility tests', () => {
 
     await sleep(300);
 
+    expect(hideNodeByTreeIndexSpy).not.toHaveBeenCalled();
+    expect(hideAllNodesSpy).not.toHaveBeenCalled();
     expect([...modelMock.ownCheckedNodes].sort()).toEqual([3, 4, 5, 6, 7]);
 
     // check all [0]
@@ -211,7 +268,24 @@ describe('useCheckedNodesVisibility tests', () => {
       <TestComponent
         model={modelMock}
         treeData={treeData}
-        checkedKeys={[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]}
+        checkedKeys={[0, 1, 2, 3, 4, 5, 6, 7, 8, /* 9 */ 10, 11, 12 /* 13 */]}
+      />
+    );
+
+    await sleep(300);
+
+    expect([...modelMock.ownCheckedNodes].sort()).toEqual(allTreeIndexes);
+
+    // uncheck one of the loaded nodes [11] - other children [12,13] must be visible
+
+    rerender(
+      <TestComponent
+        model={modelMock}
+        treeData={treeData}
+        checkedKeys={
+          // eslint-disable-next-line prettier/prettier
+          [/* 0, */ 1, 2, 3, 4, 5, 6, 7, 8, /* 9, 10, 11, */ 12 /* 13 */]
+        }
       />
     );
 
@@ -219,7 +293,67 @@ describe('useCheckedNodesVisibility tests', () => {
 
     expect([...modelMock.ownCheckedNodes].sort()).toEqual(
       // eslint-disable-next-line prettier/prettier
-      [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+      [/* 0, */ 1, 2, 3, 4, 5, 6, 7, 8, 9, /* 10, 11, */ 12, 13].sort()
     );
-  });
+
+    // uncheck both of the loaded nodes [11, 12] - all known unchecked - so hide [10..13] completely
+
+    rerender(
+      <TestComponent
+        model={modelMock}
+        treeData={treeData}
+        checkedKeys={
+          // eslint-disable-next-line prettier/prettier
+          [/* 0, */ 1, 2, 3, 4, 5, 6, 7, 8 /* 9, 10, 11, 12, 13 */]
+        }
+      />
+    );
+
+    await sleep(300);
+
+    expect([...modelMock.ownCheckedNodes].sort()).toEqual(
+      // eslint-disable-next-line prettier/prettier
+      [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    );
+
+    // check [12] back again. [13] shouldn't be visible because it was hidden
+
+    rerender(
+      <TestComponent
+        model={modelMock}
+        treeData={treeData}
+        checkedKeys={
+          // eslint-disable-next-line prettier/prettier
+          [/* 0, */ 1, 2, 3, 4, 5, 6, 7, 8, /* 9, 10, 11, */ 12 /* 13 */]
+        }
+      />
+    );
+
+    await sleep(300);
+
+    expect([...modelMock.ownCheckedNodes].sort()).toEqual(
+      // eslint-disable-next-line prettier/prettier
+      [/* 0, */ 1, 2, 3, 4, 5, 6, 7, 8, 9, /* 10, 11, */ 12 /* 13 */].sort()
+    );
+
+    // hide [3] and check [11]. The whole [10-13] is visible.
+
+    rerender(
+      <TestComponent
+        model={modelMock}
+        treeData={treeData}
+        checkedKeys={
+          // eslint-disable-next-line prettier/prettier
+          [/* 0, */ 1, 2, /* 3, 4, 5, 6, 7, */ 8, /* 9, */ 10, 11, 12 /* 13 */]
+        }
+      />
+    );
+
+    await sleep(300);
+
+    expect([...modelMock.ownCheckedNodes].sort()).toEqual(
+      // eslint-disable-next-line prettier/prettier
+      [/* 0, */ 1, 2, /* 3, 4, 5, 6, 7, */ 8, 9, 10, 11, 12, 13].sort()
+    );
+  }, 19212983218937128973);
 });

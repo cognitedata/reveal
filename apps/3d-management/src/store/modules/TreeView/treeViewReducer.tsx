@@ -3,11 +3,15 @@ import { Actions, TreeViewState } from 'src/store/modules/TreeView/types';
 import {
   addChildrenIntoTree,
   getNodeByTreeIndex,
+  traverseTree,
   updateNodeById,
 } from 'src/pages/RevisionDetails/components/TreeView/utils/treeFunctions';
 import { TreeDataNode } from 'src/pages/RevisionDetails/components/TreeView/types';
 import { LoadMore } from 'src/pages/RevisionDetails/components/TreeView/LoadMore';
-import { getNewCheckedNodes } from 'src/store/modules/TreeView/treeViewUtils';
+import {
+  getCheckedNodesAndStateOfUnknownChildren,
+  subtreeHasTreeIndex,
+} from 'src/store/modules/TreeView/treeViewUtils';
 
 export function getInitialState(): TreeViewState {
   return {
@@ -16,6 +20,7 @@ export function getInitialState(): TreeViewState {
     revisionId: null,
     modelId: null,
     treeData: [],
+    nodeUnknownChildrenAreHidden: {},
     checkedNodes: [0], // to avoid viewer be blocked by tree loading
     expandedNodes: [0],
     selectedNodes: [],
@@ -41,8 +46,8 @@ export default function treeDataReducer(
       return {
         ...prevState,
         treeData: action.payload,
-        checkedNodes: getNewCheckedNodes(
-          prevState.checkedNodes,
+        ...getCheckedNodesAndStateOfUnknownChildren(
+          prevState,
           0,
           action.payload[0]!.children
         ),
@@ -58,9 +63,48 @@ export default function treeDataReducer(
     }
 
     case 'treeView/nodeChecked': {
+      // we also should mark nodeUnknownChildrenAreHidden as true if every child got uncheked
+      const nodeUnknownChildrenAreHidden = {
+        ...prevState.nodeUnknownChildrenAreHidden,
+      };
+      const checkedNodes = action.payload;
+
+      const nodeIsStrictlyUnchecked = (node: TreeDataNode): boolean => {
+        return !checkedNodes.some((checkedKey) =>
+          subtreeHasTreeIndex(node, checkedKey)
+        );
+      };
+
+      traverseTree(prevState.treeData, (_, node) => {
+        if (!('meta' in node)) {
+          return false;
+        }
+        if (nodeIsStrictlyUnchecked(node)) {
+          traverseTree([node], (uncheckedKey, childNode) => {
+            if ('meta' in childNode && childNode.meta.subtreeSize > 1) {
+              nodeUnknownChildrenAreHidden[uncheckedKey] = true;
+            }
+            return true;
+          });
+          return false;
+        }
+        if (checkedNodes.includes(node.key)) {
+          Object.keys(nodeUnknownChildrenAreHidden).forEach(
+            (prevHiddenKeyStr) => {
+              if (subtreeHasTreeIndex(node, +prevHiddenKeyStr)) {
+                delete nodeUnknownChildrenAreHidden[prevHiddenKeyStr];
+              }
+            }
+          );
+          return false;
+        }
+        return true;
+      });
+
       return {
         ...prevState,
-        checkedNodes: action.payload,
+        nodeUnknownChildrenAreHidden,
+        checkedNodes,
       };
     }
     case 'treeView/nodeSelected': {
@@ -90,8 +134,8 @@ export default function treeDataReducer(
           action.payload.parentTreeIndex,
           action.payload.subtreeItems
         ) as TreeDataNode[],
-        checkedNodes: getNewCheckedNodes(
-          prevState.checkedNodes,
+        ...getCheckedNodesAndStateOfUnknownChildren(
+          prevState,
           action.payload.parentTreeIndex,
           action.payload.subtreeItems
         ),
@@ -150,8 +194,8 @@ export default function treeDataReducer(
             children: newChildren,
           }
         ),
-        checkedNodes: getNewCheckedNodes(
-          prevState.checkedNodes,
+        ...getCheckedNodesAndStateOfUnknownChildren(
+          prevState,
           parentNode.key,
           action.payload.subtreeItems
         ),

@@ -50,8 +50,6 @@ function treeNode(
 }
 
 function getTreeData(): TreeDataNode[] {
-  // todo: would be easier to read tests
-  //  if name will be equal to treeIndex
   return [
     treeNode({
       treeIndex: 0,
@@ -561,13 +559,12 @@ describe('NodesTreeView test cases', () => {
     });
 
     it('toggles the selected nodes on SPACE/ENTER is pressed', async () => {
-      const selectedNodes = convertKeysToSelectedNodes(getTreeData(), [1, 21]);
       const onCheck = jest.fn();
       render(
         <TreeViewStateful
           checkedKeys={[]}
           onCheck={onCheck}
-          selectedNodes={selectedNodes}
+          selectedNodes={convertKeysToSelectedNodes(getTreeData(), [1, 21])}
         />
       );
 
@@ -577,7 +574,42 @@ describe('NodesTreeView test cases', () => {
         key: TrackedKeys[' '],
       });
       expect(onCheck).toBeCalledTimes(1);
-      expect(onCheck).toBeCalledWith([1, 2, 3, 4, 5, 21, 22]);
+      expect(onCheck).toBeCalledWith(
+        // eslint-disable-next-line prettier/prettier
+        [/* 0, */ 1, 2, 3, 4, 5, /* 11, */ 21, 22]
+      );
+    });
+
+    it('correctly updates checked hierarchy on SPACE/ENTER is pressed', async () => {
+      const onCheck = jest.fn();
+      render(
+        <TreeViewStateful
+          checkedKeys={[/* 0, 1, 2, 3, 4, 5, */ 11, 21, 22]}
+          onCheck={onCheck}
+          selectedNodes={convertKeysToSelectedNodes(getTreeData(), [22])}
+        />
+      );
+
+      (await screen.findByTestId(treeViewFocusContainerId)).focus();
+
+      fireEvent.keyDown(document.activeElement!, {
+        key: TrackedKeys[' '],
+      });
+      expect(onCheck).toHaveBeenNthCalledWith(
+        1,
+        // eslint-disable-next-line prettier/prettier
+        [/* 0, 1, 2, 3, 4, 5, */ 11 /* 21, 22 */]
+      );
+
+      fireEvent.keyDown(document.activeElement!, {
+        key: TrackedKeys[' '],
+      });
+      expect(onCheck).toHaveBeenNthCalledWith(
+        2,
+        // eslint-disable-next-line prettier/prettier
+        [/* 0, 1, 2, 3, 4, 5, */ 11, 22, 21]
+      );
+      expect(onCheck).toBeCalledTimes(2);
     });
   });
 });

@@ -33,7 +33,7 @@ import {
 } from 'src/pages/RevisionDetails/components/TreeView/utils/treeFunctions';
 import { node3dToTreeDataNode } from 'src/pages/RevisionDetails/components/TreeView/utils/converters';
 import {
-  getNewCheckedNodes,
+  getCheckedNodesAndStateOfUnknownChildren,
   getSafeDispatch,
 } from 'src/store/modules/TreeView/treeViewUtils';
 
@@ -167,6 +167,7 @@ export const expandArbitraryNode = (() => {
         revisionId,
         treeData,
         checkedNodes,
+        nodeUnknownChildrenAreHidden,
       } = getState().treeView;
 
       if (!revisionId || !modelId || !treeData.length) {
@@ -217,7 +218,10 @@ export const expandArbitraryNode = (() => {
           }
 
           let parent = treeBranch[0] as TreeDataNode;
-          let newCheckedNodes = checkedNodes;
+          let newCheckedNodesAndStateOfUnknownChildren = {
+            checkedNodes,
+            nodeUnknownChildrenAreHidden,
+          };
 
           // we don't check root since we always have it
           for (let i = 1; i < nodes.length; i++) {
@@ -235,8 +239,8 @@ export const expandArbitraryNode = (() => {
             const newChildren: CustomDataNode[] = node3dToTreeDataNode([
               nodes[i],
             ]);
-            newCheckedNodes = getNewCheckedNodes(
-              newCheckedNodes,
+            newCheckedNodesAndStateOfUnknownChildren = getCheckedNodesAndStateOfUnknownChildren(
+              newCheckedNodesAndStateOfUnknownChildren,
               parent.key,
               newChildren
             );
@@ -273,7 +277,10 @@ export const expandArbitraryNode = (() => {
 
           safeDispatch({
             type: 'treeView/loadAncestorsOk',
-            payload: { treeData: treeBranch, checkedNodes: newCheckedNodes },
+            payload: {
+              treeData: treeBranch,
+              ...newCheckedNodesAndStateOfUnknownChildren,
+            },
           });
         }
 

@@ -63,7 +63,11 @@ export type InitialFetchError = {
 
 export type LoadAncestorsOk = {
   type: 'treeView/loadAncestorsOk';
-  payload: { treeData: Array<TreeDataNode>; checkedNodes: Array<TreeIndex> };
+  payload: {
+    treeData: Array<TreeDataNode>;
+    checkedNodes: Array<TreeIndex>;
+    nodeUnknownChildrenAreHidden: Record<number, boolean>;
+  };
 };
 export type LoadAncestorsError = {
   type: 'treeView/loadAncestorsError';
@@ -101,6 +105,13 @@ export type SelectedNode = {
 
 export type TreeViewState = {
   checkedNodes: Array<TreeIndex>;
+
+  /*
+   * Used to determine if newly fetched child nodes should be in checked state or not.
+   * If falsy - not-fetched nodes must be checked.
+   */
+  nodeUnknownChildrenAreHidden: Record<number, boolean>;
+
   error: Error | null;
   expandedNodes: Array<TreeIndex>;
 

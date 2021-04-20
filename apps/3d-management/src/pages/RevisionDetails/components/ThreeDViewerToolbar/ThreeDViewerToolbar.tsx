@@ -160,14 +160,16 @@ export default function ThreeDViewerToolbar(props: Props) {
       {showTreeView && (
         <>
           <MenuSection>
-            <Switch
-              name="ghostMode"
-              size="small"
-              onChange={(nextState) => dispatch(toggleGhostMode(nextState))}
-              value={ghostModeEnabled}
-            >
-              Ghost mode
-            </Switch>
+            <FixSmallCogsSwitch>
+              <Switch
+                name="ghostMode"
+                size="small"
+                onChange={(nextState) => dispatch(toggleGhostMode(nextState))}
+                value={ghostModeEnabled}
+              >
+                Ghost mode
+              </Switch>
+            </FixSmallCogsSwitch>
           </MenuSection>
           <div
             style={{
@@ -189,3 +191,11 @@ export default function ThreeDViewerToolbar(props: Props) {
     </ToolbarStyled>
   );
 }
+
+// todo: migrate to cogs 3.x and remove that
+const FixSmallCogsSwitch = styled.div`
+  label.cogs-switch {
+    display: flex !important;
+    align-items: center !important;
+  }
+`;
