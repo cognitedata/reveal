@@ -1,11 +1,10 @@
 name: preview-documentation
 
 on:
-  pull_request:
-    branches-ignore:
-      - 'dependabot/**'
+  push:
+    branches:
+      - mn/rename-acces-token
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   build-and-deploy:
     name: Publish documentation preview
