@@ -106,7 +106,6 @@ export const FileToolbar = ({
           </ButtonGroup.Button>
         </ButtonGroup>
       </Container>
-      <HorizontalLine hidden={currentView === 'list'} />
     </>
   );
 };
@@ -129,9 +128,4 @@ const ModelOptions = styled.div`
   display: flex;
   flex-direction: row;
   align-items: flex-end;
-`;
-
-const HorizontalLine = styled.div`
-  border: 1px solid #e8e8e8;
-  visibility: ${(props) => (props.hidden ? 'hidden' : 'visible')};
 `;
