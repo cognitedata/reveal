@@ -459,21 +459,6 @@ const PlotWrapper = styled.div`
   .nsdrag {
     width: 40px;
   }
-
-  .ewdrag {
-    height: 100%;
-    transform: translateY(-100%);
-  }
-
-  .edrag {
-    height: 100%;
-    transform: translateY(-100%);
-  }
-
-  .wdrag {
-    height: 100%;
-    transform: translateY(-100%);
-  }
 `;
 
 export default PlotlyChartComponent;
