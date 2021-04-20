@@ -10,6 +10,8 @@ import {
   VisionFileDetailKey,
   VisionFileDetails,
 } from 'src/components/FileMetadata/Types';
+import { Title } from '@cognite/cogs.js';
+import { MapView } from '../MapView/MapView';
 
 export const FileMetadataFieldsContainer = (props: {
   info: VisionFileDetails;
@@ -19,6 +21,23 @@ export const FileMetadataFieldsContainer = (props: {
   const { info, updateInfo, onFieldChange } = props;
   return (
     <DetailsFormContainer>
+      <TitleContainer>
+        <Title level={6}>Geolocation</Title>
+      </TitleContainer>
+      {info.geoLocation && (
+        <FileDetailFieldView
+          id="geoLocation"
+          title="Longitude, latitude: "
+          placeholder="None Set"
+          value={info.geoLocation?.geometry.coordinates.join(', ')}
+          copyable
+        />
+      )}
+      <MapView geoLocation={info.geoLocation || undefined} />
+      <TitleContainer>
+        <Title level={6}>File Details</Title>
+      </TitleContainer>
+
       <FileDetailFieldView
         id="name"
         title="File name"
@@ -70,15 +89,6 @@ export const FileMetadataFieldsContainer = (props: {
           onInput={onFieldChange}
         />
       )}
-      {info.geoLocation && (
-        <FileDetailFieldView
-          id="geoLocation"
-          title="Geolocation (lon, lat)"
-          placeholder="None Set"
-          value={info.geoLocation?.geometry.coordinates.join(', ')}
-          copyable
-        />
-      )}
       <DataSetFieldView fileId={info.id} />
 
       <FieldRow>
@@ -124,4 +134,9 @@ const FieldRow = styled.div`
 const FieldItem = styled.div`
   width: 145px;
   margin-right: 40px;
+`;
+
+const TitleContainer = styled.div`
+  padding-top: 10px;
+  padding-bottom: 10px;
 `;
