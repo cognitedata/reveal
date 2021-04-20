@@ -8,7 +8,6 @@ import {
   ORIGIN_DEV,
   PROJECT_ITERA_INT_GREEN,
 } from 'utils/baseURL';
-import { SupportedScheduleStrings } from 'components/integrations/cols/Schedule';
 import { CRON_INVALID } from 'utils/validation/cronValidation';
 import { CRON_LABEL } from 'components/inputs/cron/CronInput';
 import { BACK, NEXT } from 'utils/constants';
@@ -35,18 +34,7 @@ describe('SchedulePage', () => {
   test('Renders', () => {
     renderRegisterContext(<SchedulePage />, { ...props });
     expect(screen.getByText(INTEGRATION_SCHEDULE_HEADING)).toBeInTheDocument();
-    expect(
-      screen.getByLabelText(SupportedScheduleStrings.NOT_DEFINED)
-    ).toBeInTheDocument();
-    expect(
-      screen.getByLabelText(SupportedScheduleStrings.ON_TRIGGER)
-    ).toBeInTheDocument();
-    expect(
-      screen.getByLabelText(SupportedScheduleStrings.CONTINUOUS)
-    ).toBeInTheDocument();
-    expect(
-      screen.getByLabelText(SupportedScheduleStrings.SCHEDULED)
-    ).toBeInTheDocument();
+    expect(screen.getByText('Select...')).toBeInTheDocument();
   });
 
   test('Interact with form', async () => {
@@ -57,16 +45,11 @@ describe('SchedulePage', () => {
       ...props,
       initRegisterIntegration: { id: 123123123 },
     });
-    const onTriggerInput = screen.getByLabelText(
-      SupportedScheduleStrings.ON_TRIGGER
-    );
-    fireEvent.click(onTriggerInput);
-    await waitFor(() => {
-      expect(onTriggerInput).toBeChecked();
-    });
+    const scheduleSelect = screen.getByLabelText('Schedule');
+    fireEvent.click(scheduleSelect);
+    fireEvent.keyDown(scheduleSelect, { key: 'Down', code: 'ArrowDown' });
+    fireEvent.keyDown(scheduleSelect, { key: 'Enter', code: 'Enter' });
 
-    const scheduled = screen.getByLabelText(SupportedScheduleStrings.SCHEDULED);
-    fireEvent.click(scheduled);
     await waitFor(() => {
       screen.getByLabelText(CRON_LABEL);
     });

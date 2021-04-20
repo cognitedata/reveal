@@ -64,6 +64,9 @@ describe('GeneralInfo', () => {
     fireEvent.change(screen.getByDisplayValue(mock.externalId), {
       target: { value: newExternalId },
     });
+    sdkv3.get.mockResolvedValueOnce({
+      data: { ...mock, externalId: newExternalId },
+    });
     fireEvent.click(
       screen.getByTestId(`${ContactBtnTestIds.SAVE_BTN}externalId`)
     );
@@ -75,24 +78,22 @@ describe('GeneralInfo', () => {
 
     // schedule
     fireEvent.click(schedule);
-    const newSchedule = SupportedScheduleStrings.CONTINUOUS;
-    fireEvent.change(screen.getByDisplayValue(mock.schedule), {
-      target: { value: newSchedule },
-    });
-    fireEvent.click(
-      screen.getByTestId(`${ContactBtnTestIds.SAVE_BTN}schedule`)
-    );
+    fireEvent.keyDown(schedule, { key: 'Down', code: 'ArrowDown' });
+    fireEvent.keyDown(schedule, { key: 'Enter', code: 'Enter' });
+    const newSchedule = SupportedScheduleStrings.SCHEDULED;
     await waitFor(() => {
       screen.getByText(newSchedule);
     });
     fireEvent.click(screen.getByText(newSchedule));
-    expect(screen.getByDisplayValue(newSchedule)).toBeInTheDocument();
 
     // description
     fireEvent.click(description);
     const newDescription = 'Describe the integration';
     fireEvent.change(screen.getByDisplayValue(mock.description), {
       target: { value: newDescription },
+    });
+    sdkv3.get.mockResolvedValueOnce({
+      data: { ...mock, description: newDescription },
     });
     fireEvent.click(
       screen.getByTestId(`${ContactBtnTestIds.SAVE_BTN}description`)

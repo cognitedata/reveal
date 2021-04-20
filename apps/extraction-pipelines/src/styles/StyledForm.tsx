@@ -122,6 +122,7 @@ export const StyledForm = styled((props) => (
   height: 4rem;
   overflow: hidden;
   transition: height 0.66s ease-out;
+  padding: 1rem;
   &.expands {
     height: 15rem;
   }

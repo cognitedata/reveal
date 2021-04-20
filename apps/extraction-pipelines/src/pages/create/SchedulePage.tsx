@@ -1,5 +1,4 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import { Radio } from '@cognite/cogs.js';
 import { useHistory } from 'react-router-dom';
 import { FormProvider, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -10,15 +9,17 @@ import { RegisterIntegrationLayout } from 'components/layout/RegisterIntegration
 import { ButtonPlaced } from 'styles/StyledButton';
 import { GridH2Wrapper } from 'styles/StyledPage';
 import { NEXT } from 'utils/constants';
-import { CreateFormWrapper, StyledRadioGroup } from 'styles/StyledForm';
+import { CreateFormWrapper, Hint } from 'styles/StyledForm';
 import {
   CONTACTS_PAGE_PATH,
   DATA_SET_PAGE_PATH,
 } from 'routing/CreateRouteConfig';
 import CronInput from 'components/inputs/cron/CronInput';
 import { useStoredRegisterIntegration } from 'hooks/useStoredRegisterIntegration';
-import { mapModelToInput, mapScheduleInputToModel } from 'utils/cronUtils';
-
+import {
+  mapModelToInput,
+  mapScheduleInputToScheduleValue,
+} from 'utils/cronUtils';
 import { useAppEnv } from 'hooks/useAppEnv';
 import {
   useDetailsUpdate,
@@ -26,6 +27,8 @@ import {
 } from 'hooks/details/useDetailsUpdate';
 import { CronWrapper } from 'components/integration/Schedule';
 import { scheduleSchema } from 'utils/validation/integrationSchemas';
+import { ScheduleSelector } from 'components/inputs/ScheduleSelector';
+import { OptionTypeBase } from 'react-select';
 
 interface SchedulePageProps {}
 
@@ -65,7 +68,7 @@ const SchedulePage: FunctionComponent<SchedulePageProps> = () => {
   }, [scheduleValue]);
 
   const handleNext = (field: ScheduleFormInput) => {
-    const schedule = mapScheduleInputToModel(field);
+    const schedule = mapScheduleInputToScheduleValue(field);
     setStoredIntegration((prev) => {
       return { ...prev, schedule };
     });
@@ -96,8 +99,8 @@ const SchedulePage: FunctionComponent<SchedulePageProps> = () => {
       });
     }
   };
-  const radioChanged = (value: string) => {
-    setValue('schedule', value);
+  const selectChanged = (selected: OptionTypeBase) => {
+    setValue('schedule', selected.value);
   };
 
   return (
@@ -105,72 +108,39 @@ const SchedulePage: FunctionComponent<SchedulePageProps> = () => {
       <GridH2Wrapper>{INTEGRATION_SCHEDULE_HEADING}</GridH2Wrapper>
       <FormProvider {...methods}>
         <CreateFormWrapper onSubmit={handleSubmit(handleNext)} inputWidth={50}>
-          <StyledRadioGroup>
-            <legend>Schedule</legend>
-            <span id="schedule-hint" className="input-hint">
-              Select whether your integration runs according to a defined
-              schedule, is triggered by some irregular automatic or manual
-              event, or pushes data continuously, such as streaming or
-              continuous polling for new data.
-            </span>
-            <ErrorMessage
-              errors={errors}
-              name="schedule"
-              render={({ message }) => (
-                <span id="schedule-error" className="error-message">
-                  {message}
-                </span>
-              )}
-            />
-            <Radio
-              id="scheduled"
-              name="schedule"
-              value={SupportedScheduleStrings.SCHEDULED}
-              checked={SupportedScheduleStrings.SCHEDULED === scheduleValue}
-              onChange={radioChanged}
-              aria-controls="cron-expression"
-              aria-expanded={showCron}
-            >
-              {SupportedScheduleStrings.SCHEDULED}
-            </Radio>
-            {showCron && (
-              <CronWrapper
-                id="cron-expression"
-                role="region"
-                direction="column"
-                align="flex-start"
-              >
-                <CronInput />
-              </CronWrapper>
+          <label htmlFor="schedule-selector" className="input-label">
+            Schedule
+          </label>
+          <Hint id="schedule-hint" className="input-hint">
+            Select whether your integration runs according to a defined
+            schedule, is triggered by some irregular automatic or manual event,
+            or pushes data continuously, such as streaming or continuous polling
+            for new data.
+          </Hint>
+          <ErrorMessage
+            errors={errors}
+            name="schedule"
+            render={({ message }) => (
+              <span id="schedule-error" className="error-message">
+                {message}
+              </span>
             )}
-            <Radio
-              id="continuous"
-              name="schedule"
-              checked={SupportedScheduleStrings.CONTINUOUS === scheduleValue}
-              onChange={radioChanged}
-              value={SupportedScheduleStrings.CONTINUOUS}
+          />
+          <ScheduleSelector
+            inputId="schedule-selector"
+            schedule={scheduleValue}
+            onSelectChange={selectChanged}
+          />
+          {showCron && (
+            <CronWrapper
+              id="cron-expression"
+              role="region"
+              direction="column"
+              align="flex-start"
             >
-              {SupportedScheduleStrings.CONTINUOUS}
-            </Radio>
-            <Radio
-              id="on-trigger"
-              name="schedule"
-              checked={SupportedScheduleStrings.ON_TRIGGER === scheduleValue}
-              onChange={radioChanged}
-              value={SupportedScheduleStrings.ON_TRIGGER}
-            >
-              {SupportedScheduleStrings.ON_TRIGGER}
-            </Radio>
-            <Radio
-              id="not-defined"
-              name="schedule"
-              onChange={radioChanged}
-              checked={SupportedScheduleStrings.NOT_DEFINED === scheduleValue}
-              value={SupportedScheduleStrings.NOT_DEFINED}
-            >
-              {SupportedScheduleStrings.NOT_DEFINED}
-            </Radio>
-          </StyledRadioGroup>
+              <CronInput />
+            </CronWrapper>
+          )}
           <ButtonPlaced type="primary" htmlType="submit">
             {NEXT}
           </ButtonPlaced>

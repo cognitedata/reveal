@@ -1,7 +1,7 @@
 import { SupportedScheduleStrings } from 'components/integrations/cols/Schedule';
 import {
   mapModelToInput,
-  mapScheduleInputToModel,
+  mapScheduleInputToScheduleValue,
   parseCron,
 } from './cronUtils';
 
@@ -32,7 +32,7 @@ describe('Cron Utils', () => {
       field: {
         schedule: SupportedScheduleStrings.NOT_DEFINED,
       },
-      expected: undefined,
+      expected: '',
     },
     {
       desc: 'scheduled cron to cron',
@@ -69,7 +69,7 @@ describe('Cron Utils', () => {
   ];
   mapCases.forEach(({ desc, field, expected }) => {
     test(`mapScheduleInputToModel - ${desc}`, () => {
-      const res = mapScheduleInputToModel(field);
+      const res = mapScheduleInputToScheduleValue(field);
       expect(res).toEqual(expected);
     });
   });

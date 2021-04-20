@@ -5,7 +5,7 @@ import { ScheduleFormInput } from 'pages/create/SchedulePage';
 export const parseCron = (cron: string) => {
   return cronstureToString(cron);
 };
-export const mapScheduleInputToModel = (field: ScheduleFormInput) => {
+export const mapScheduleInputToScheduleValue = (field: ScheduleFormInput) => {
   switch (field.schedule) {
     case SupportedScheduleStrings.ON_TRIGGER:
     case SupportedScheduleStrings.CONTINUOUS: {
@@ -15,7 +15,7 @@ export const mapScheduleInputToModel = (field: ScheduleFormInput) => {
       return field.cron;
     }
     case SupportedScheduleStrings.NOT_DEFINED: {
-      return undefined;
+      return '';
     }
     default:
       return undefined;

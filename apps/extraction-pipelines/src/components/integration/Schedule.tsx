@@ -4,7 +4,7 @@ import React, {
   useEffect,
   useState,
 } from 'react';
-import { Button, Colors, Detail, Icon, Radio } from '@cognite/cogs.js';
+import { Button, Colors, Detail, Icon } from '@cognite/cogs.js';
 import DisplaySchedule, {
   SupportedScheduleStrings,
 } from 'components/integrations/cols/Schedule';
@@ -14,22 +14,27 @@ import styled from 'styled-components';
 import { DivFlex } from 'styles/flex/StyledFlex';
 import { FormProvider, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { mapModelToInput, mapScheduleInputToModel } from 'utils/cronUtils';
+import {
+  mapModelToInput,
+  mapScheduleInputToScheduleValue,
+} from 'utils/cronUtils';
 import { ContactBtnTestIds } from 'components/form/ContactsView';
 import MessageDialog from 'components/buttons/MessageDialog';
 import { SERVER_ERROR_CONTENT, SERVER_ERROR_TITLE } from 'utils/constants';
 import { Integration, IntegrationFieldName } from 'model/Integration';
 import { useAppEnv } from 'hooks/useAppEnv';
 import {
-  createUpdateSpec,
   useDetailsUpdate,
+  createUpdateSpec,
 } from 'hooks/details/useDetailsUpdate';
-import { EditButton, StyledForm, StyledRadioGroup } from 'styles/StyledForm';
+import { EditButton, StyledForm } from 'styles/StyledForm';
 import { scheduleSchema } from 'utils/validation/integrationSchemas';
+import { ScheduleSelector } from 'components/inputs/ScheduleSelector';
+import { OptionTypeBase } from 'react-select';
 
 export const CronWrapper = styled(DivFlex)`
-  margin: 1rem 0rem 1rem 2rem;
-  padding: 1rem 0 0 0;
+  margin: 1rem 0 1rem 2rem;
+  padding: 1rem 0;
   border-top: 0.0625rem solid ${Colors['greyscale-grey3'].hex()};
   border-bottom: 0.0625rem solid ${Colors['greyscale-grey3'].hex()};
 `;
@@ -70,7 +75,7 @@ export const Schedule: FunctionComponent<ScheduleProps> = ({
 
   const onSave = async (field: ScheduleFormInput) => {
     if (integration && project) {
-      const schedule = mapScheduleInputToModel(field);
+      const schedule = mapScheduleInputToScheduleValue(field);
       const items = createUpdateSpec({
         project,
         id: integration.id,
@@ -99,8 +104,8 @@ export const Schedule: FunctionComponent<ScheduleProps> = ({
   function onCancel() {
     setIsEdit(false);
   }
-  const radioChanged = (value: string) => {
-    setValue('schedule', value);
+  const selectChanged = (selected: OptionTypeBase) => {
+    setValue('schedule', selected.value);
   };
   return (
     <FormProvider {...methods}>
@@ -110,20 +115,17 @@ export const Schedule: FunctionComponent<ScheduleProps> = ({
         }`}
         onSubmit={handleSubmit(onSave)}
       >
-        <Detail strong>{label}</Detail>
+        <Detail strong>
+          <label htmlFor="schedule-selector">{label}</label>
+        </Detail>
         {isEdit ? (
-          <StyledRadioGroup>
-            <Radio
-              id="scheduled"
-              name={name}
-              value={SupportedScheduleStrings.SCHEDULED}
-              checked={SupportedScheduleStrings.SCHEDULED === scheduleValue}
-              onChange={radioChanged}
-              aria-controls="cron-expression"
-              aria-expanded={showCron}
-            >
-              {SupportedScheduleStrings.SCHEDULED}
-            </Radio>
+          <DivFlex direction="column" align="stretch">
+            <ScheduleSelector
+              inputId="schedule-selector"
+              schedule={scheduleValue}
+              onSelectChange={selectChanged}
+              handleOnBlur={handleSubmit(onSave)}
+            />
             {showCron && (
               <CronWrapper
                 id="cron-expression"
@@ -134,34 +136,7 @@ export const Schedule: FunctionComponent<ScheduleProps> = ({
                 <CronInput />
               </CronWrapper>
             )}
-            <Radio
-              id="continuous"
-              name={name}
-              checked={SupportedScheduleStrings.CONTINUOUS === scheduleValue}
-              onChange={radioChanged}
-              value={SupportedScheduleStrings.CONTINUOUS}
-            >
-              {SupportedScheduleStrings.CONTINUOUS}
-            </Radio>
-            <Radio
-              id="on-trigger"
-              name={name}
-              checked={SupportedScheduleStrings.ON_TRIGGER === scheduleValue}
-              onChange={radioChanged}
-              value={SupportedScheduleStrings.ON_TRIGGER}
-            >
-              {SupportedScheduleStrings.ON_TRIGGER}
-            </Radio>
-            <Radio
-              id="not-defined"
-              name={name}
-              onChange={radioChanged}
-              checked={SupportedScheduleStrings.NOT_DEFINED === scheduleValue}
-              value={SupportedScheduleStrings.NOT_DEFINED}
-            >
-              {SupportedScheduleStrings.NOT_DEFINED}
-            </Radio>
-          </StyledRadioGroup>
+          </DivFlex>
         ) : (
           <EditButton
             onClick={onEditClick}

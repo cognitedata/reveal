@@ -14,7 +14,6 @@ import { NAME_PAGE_PATH, withTenant } from 'routing/CreateRouteConfig';
 import 'utils/test/windowLocation';
 import { INTEGRATION_DOCUMENTATION_HEADING } from 'pages/create/DocumentationPage';
 import { INTEGRATION_SCHEDULE_HEADING } from 'pages/create/SchedulePage';
-import { SupportedScheduleStrings } from 'components/integrations/cols/Schedule';
 import {
   DataSetOptions,
   INTEGRATION_DATA_SET_HEADING,
@@ -117,10 +116,11 @@ describe('Register', () => {
     await waitFor(() => {
       screen.getByText(INTEGRATION_SCHEDULE_HEADING);
     });
-    const triggerOption = screen.getByLabelText(
-      SupportedScheduleStrings.ON_TRIGGER
-    );
-    fireEvent.click(triggerOption);
+    const scheduleSelect = screen.getByLabelText('Schedule');
+    fireEvent.click(scheduleSelect);
+    fireEvent.keyDown(scheduleSelect, { key: 'Down', code: 'ArrowDown' });
+    fireEvent.keyDown(scheduleSelect, { key: 'Down', code: 'ArrowDown' });
+    fireEvent.keyDown(scheduleSelect, { key: 'Enter', code: 'Enter' });
     fireEvent.click(screen.getByText(NEXT));
 
     // data set page
