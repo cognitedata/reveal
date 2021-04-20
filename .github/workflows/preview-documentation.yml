@@ -21,7 +21,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: cognitedata/reveal-docs-preview
-          ssh-key: ${{ secrets.REVEAL_DOCS_PREVIEW_PUB }}
+          ssh-key: ${{ secrets.REVEAL_DOCS_PREVIEW_PK }}
           path: reveal-docs-preview
           persist-credentials: true
           ref: master
