@@ -16,5 +16,6 @@ export interface ModelStatusAndAnnotationCounts extends AnnotationCounts {
 export interface AnnotationsBadgeProps {
   gdpr?: ModelStatusAndAnnotationCounts;
   tag?: ModelStatusAndAnnotationCounts;
-  textAndObjects?: ModelStatusAndAnnotationCounts;
+  text?: ModelStatusAndAnnotationCounts;
+  objects?: ModelStatusAndAnnotationCounts;
 }
