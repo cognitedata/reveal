@@ -6,12 +6,8 @@ import {
 } from '@reduxjs/toolkit';
 import { fetchJobById, createAnnotationJob } from 'src/api/annotationJob';
 import { fetchUntilComplete } from 'src/utils';
-import {
-  AnnotationJob,
-  VisionAPIType,
-  DetectionModelCategory,
-} from 'src/api/types';
-import { getFakeQueuedJob, toVisionAPIModels } from 'src/api/utils';
+import { AnnotationJob, VisionAPIType } from 'src/api/types';
+import { getFakeQueuedJob } from 'src/api/utils';
 import { fileProcessUpdate } from 'src/store/commonActions';
 import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
 import { SaveAvailableAnnotations } from 'src/store/thunks/SaveAvailableAnnotations';
@@ -24,7 +20,7 @@ export type JobState = AnnotationJob & {
 type State = {
   selectedFileId: number | null;
   showFileMetadataDrawer: boolean;
-  selectedDetectionModels: Array<DetectionModelCategory>;
+  selectedDetectionModels: Array<VisionAPIType>;
   error?: string;
   files: {
     byId: Record<number, { jobIds: number[] }>;
@@ -39,7 +35,7 @@ type State = {
 const initialState: State = {
   selectedFileId: null,
   showFileMetadataDrawer: false,
-  selectedDetectionModels: [DetectionModelCategory.TextAndObjects],
+  selectedDetectionModels: [VisionAPIType.OCR],
   files: {
     byId: {},
     allIds: [],
@@ -56,7 +52,7 @@ const initialState: State = {
 // for requested files, create annotation jobs with requested detectionModels and setup polling on these jobs
 export const detectAnnotations = createAsyncThunk<
   void,
-  { fileIds: Array<number>; detectionModels: Array<DetectionModelCategory> },
+  { fileIds: Array<number>; detectionModels: Array<VisionAPIType> },
   ThunkConfig
 >(
   'process/detectAnnotations',
@@ -76,10 +72,8 @@ export const detectAnnotations = createAsyncThunk<
       return acc;
     }, [] as number[][]);
 
-    const VisionAPIModels = toVisionAPIModels(detectionModels);
-
     batchFileIdsList.forEach((batchFileIds) => {
-      VisionAPIModels.forEach((modelType) => {
+      detectionModels.forEach((modelType) => {
         const filteredBatchFileIds = batchFileIds.filter((fileId: number) => {
           const fileJobIds = files.byId[fileId]?.jobIds;
           return (
@@ -155,7 +149,7 @@ const processSlice = createSlice({
     },
     setSelectedDetectionModels(
       state,
-      action: PayloadAction<Array<DetectionModelCategory>>
+      action: PayloadAction<Array<VisionAPIType>>
     ) {
       state.selectedDetectionModels = action.payload;
     },

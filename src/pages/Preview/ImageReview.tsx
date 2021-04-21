@@ -92,7 +92,7 @@ const ImageReview = (props: { fileId: string; drawerMode: number | null }) => {
           addPolygon({
             fileId,
             box: annotation.box,
-            modelType: VisionAPIType.OCR,
+            modelType: VisionAPIType.ObjectDetection, // TODO: should depend on model type
           })
         );
       }

@@ -6,12 +6,6 @@ export enum VisionAPIType {
   ObjectDetection,
 }
 
-export enum DetectionModelCategory {
-  TextAndObjects,
-  AssetTag,
-  GDPR,
-}
-
 export interface DetectionModelDataProvider {
   postJob(requestBody: any): Promise<AnnotationJobResponse>;
   fetchJobById(jobId: number): Promise<AnnotationJobResponse>;

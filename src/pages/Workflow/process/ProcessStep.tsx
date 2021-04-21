@@ -71,7 +71,11 @@ export default function ProcessStep() {
         <FileToolbar currentView={currentView} onViewChange={setCurrentView} />
         <Container>
           {currentView === 'grid' ? (
-            <GridTable data={tableData} renderCell={renderGridCell} />
+            <GridTable
+              data={tableData}
+              renderCell={renderGridCell}
+              minCellWidth={350}
+            />
           ) : (
             <FileTable data={tableData} />
           )}
