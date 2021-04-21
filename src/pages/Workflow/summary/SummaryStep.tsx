@@ -96,13 +96,9 @@ export default function SummaryStep() {
                 <StatsCarouselRight>
                   {Array.from(
                     { length: stats[statView].value },
-                    (i: number) => (
-                      <FileIconContainer>
-                        <img
-                          key={`${statView}_${i}`}
-                          src={FileIcon}
-                          alt="FileIcon"
-                        />
+                    (_, i: number) => (
+                      <FileIconContainer key={`${statView}_${i}`}>
+                        <img src={FileIcon} alt="FileIcon" />
                       </FileIconContainer>
                     )
                   )}
@@ -112,13 +108,9 @@ export default function SummaryStep() {
                 <StatsCarouselRight>
                   {Array.from(
                     { length: stats[statView].value },
-                    (i: number) => (
-                      <FileIconContainer>
-                        <img
-                          key={`${statView}_${i}`}
-                          src={FileWithExifIcon}
-                          alt="FileWithExifIcon"
-                        />
+                    (_, i: number) => (
+                      <FileIconContainer key={`${statView}_${i}`}>
+                        <img src={FileWithExifIcon} alt="FileWithExifIcon" />
                       </FileIconContainer>
                     )
                   )}
@@ -129,13 +121,9 @@ export default function SummaryStep() {
                           stats.totalFilesUploaded.value -
                           stats[statView].value,
                       },
-                      (i: number) => (
-                        <FileIconContainer>
-                          <img
-                            key={`${statView}_${i}`}
-                            src={FileBland}
-                            alt="FileBland"
-                          />
+                      (_, i: number) => (
+                        <FileIconContainer key={`${statView}_${i}`}>
+                          <img src={FileBland} alt="FileBland" />
                         </FileIconContainer>
                       )
                     )}
@@ -145,13 +133,9 @@ export default function SummaryStep() {
                 <StatsCarouselRight>
                   {Array.from(
                     { length: stats[statView].value },
-                    (i: number) => (
-                      <FileIconContainer>
-                        <img
-                          key={`${statView}_${i}`}
-                          src={FileWasReviewed}
-                          alt="FileWasReviewed"
-                        />
+                    (_, i: number) => (
+                      <FileIconContainer key={`${statView}_${i}`}>
+                        <img src={FileWasReviewed} alt="FileWasReviewed" />
                       </FileIconContainer>
                     )
                   )}
@@ -162,13 +146,9 @@ export default function SummaryStep() {
                           stats.totalFilesUploaded.value -
                           stats[statView].value,
                       },
-                      (i: number) => (
-                        <FileIconContainer>
-                          <img
-                            key={`${statView}_${i}`}
-                            src={FileBland}
-                            alt="FileBland"
-                          />
+                      (_, i: number) => (
+                        <FileIconContainer key={`${statView}_${i}`}>
+                          <img src={FileBland} alt="FileBland" />
                         </FileIconContainer>
                       )
                     )}
@@ -178,10 +158,9 @@ export default function SummaryStep() {
                 <StatsCarouselRight>
                   {Array.from(
                     { length: stats[statView].value },
-                    (i: number) => (
-                      <FileIconContainer>
+                    (_, i: number) => (
+                      <FileIconContainer key={`${statView}_${i}`}>
                         <img
-                          key={`${statView}_${i}`}
                           src={FileWithAnnotations}
                           alt="FileWithAnnotations"
                         />
@@ -194,13 +173,9 @@ export default function SummaryStep() {
                 <StatsCarouselRight>
                   {Array.from(
                     { length: stats[statView].value },
-                    (i: number) => (
-                      <FileIconContainer>
-                        <img
-                          key={`${statView}_${i}`}
-                          src={FileResolvedGDPR}
-                          alt="FileResolvedGDPR"
-                        />
+                    (_, i: number) => (
+                      <FileIconContainer key={`${statView}_${i}`}>
+                        <img src={FileResolvedGDPR} alt="FileResolvedGDPR" />
                       </FileIconContainer>
                     )
                   )}

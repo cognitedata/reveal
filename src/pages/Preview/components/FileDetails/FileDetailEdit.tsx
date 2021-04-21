@@ -85,7 +85,7 @@ export const FileDetailEdit: React.FC<FileDetailCompProps> = ({
       }
     }, 100);
   };
-  
+
   return (
     <Container>
       <TitleRow>
