@@ -12,11 +12,11 @@ import {
 } from '@cognite/cogs.js';
 import { Popover } from 'src/components/Common/Popover';
 import styled from 'styled-components';
-import { useAnnotationCounter } from 'src/store/hooks/useAnnotationCounter';
 import { selectUpdatedFileDetails } from 'src/store/uploadedFilesSlice';
 import { useSelector } from 'react-redux';
 import exifIcon from 'src/assets/exifIcon.svg';
 import { RootState } from 'src/store/rootReducer';
+import { makeAnnotationBadgePropsByFileId } from 'src/store/processSlice';
 import { AnnotationsBadge } from '../AnnotationsBadge/AnnotationsBadge';
 import { TableDataItem } from '../FileTable/FileTable';
 import { AnnotationsBadgePopoverContent } from '../AnnotationsBadge/AnnotationsBadgePopoverContent';
@@ -92,7 +92,14 @@ export const FileGridPreview = ({
       <Menu.Item>Delete</Menu.Item>
     </Menu>
   );
-  const annotationsBadgeProps = useAnnotationCounter(item.id);
+
+  const selectAnnotationBadgeProps = useMemo(
+    makeAnnotationBadgePropsByFileId,
+    []
+  );
+  const annotationsBadgeProps = useSelector((state: RootState) =>
+    selectAnnotationBadgeProps(state, item.id)
+  );
 
   const annotations = Object.keys(annotationsBadgeProps) as Array<
     keyof AnnotationsBadgeProps

@@ -28,7 +28,10 @@ import { SaveAnnotations } from 'src/store/thunks/SaveAnnotations';
 import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
 import { DeleteAnnotations } from 'src/store/thunks/DeleteAnnotations';
 import { ToastUtils } from 'src/utils/ToastUtils';
-import { AnnotationCounts } from 'src/pages/Workflow/types';
+import {
+  AnnotationCounts,
+  AnnotationsBadgeProps,
+} from 'src/pages/Workflow/types';
 import { SaveAvailableAnnotations } from 'src/store/thunks/SaveAvailableAnnotations';
 
 export interface VisionAnnotationState extends Omit<VisionAnnotation, 'id'> {
@@ -363,7 +366,9 @@ const previewSlice = createSlice({
         if (state.drawer.annotation === null) {
           state.drawer.annotation = AnnotationUtils.createVisionAnnotationStub(
             '',
-            isLabelEdit(action) ? VisionAPIType.OCR : action.payload.modelType,
+            isLabelEdit(action)
+              ? VisionAPIType.ObjectDetection // TODO: Why is this needed?
+              : action.payload.modelType,
             parseInt(action.payload.fileId, 10),
             undefined,
             'rectangle',
@@ -617,46 +622,42 @@ export const selectVisibleNonRejectAndEditModeAnnotations = createSelector(
   }
 );
 
-export const getAnnotationCountByModelType = createSelector(
-  selectAnnotationsByFileIdModelTypes,
-  (_, fileId: string, modelType: VisionAPIType[], gdpr: boolean = false) =>
-    gdpr,
-  (annotations, gdpr) => {
-    let [modelGenerated, manuallyGenerated, verified, unhandled, rejected] = [
-      0,
-      0,
-      0,
-      0,
-      0,
-    ];
+export const selectModelAnnotationCountsByFileId = createSelector(
+  annotationsById,
+  selectModelsByFileId,
+  (allAnnotations, modelsByFile) => {
+    const annotationBadgeProps: AnnotationsBadgeProps = {
+      tag: {},
+      gdpr: {},
+      text: {},
+      objects: {},
+    };
+    modelsByFile.forEach((model) => {
+      const annotations: VisionAnnotationState[] = model.annotations.map(
+        (annId) => allAnnotations[annId]
+      );
 
-    if (gdpr) {
-      annotations = annotations.filter((ann) => ann.label === 'person');
-    }
-    annotations.forEach((ann) => {
-      if (ann.source === 'user') {
-        manuallyGenerated++;
-      } else {
-        modelGenerated++;
+      if (model.modelType === VisionAPIType.OCR) {
+        annotationBadgeProps.text = generateAnnotationCount(annotations);
       }
-      if (ann.status === AnnotationStatus.Verified) {
-        verified++;
+      if (model.modelType === VisionAPIType.TagDetection) {
+        annotationBadgeProps.tag = generateAnnotationCount(annotations);
       }
-      if (ann.status === AnnotationStatus.Unhandled) {
-        unhandled++;
-      }
-      if (ann.status === AnnotationStatus.Rejected) {
-        rejected++;
+
+      if (model.modelType === VisionAPIType.ObjectDetection) {
+        const objectNonGDPRAnnotations: VisionAnnotationState[] =
+          annotations.filter((ann) => ann.label !== 'person') || [];
+        const objectGDPRAnnotations: VisionAnnotationState[] =
+          annotations.filter((ann) => ann.label === 'person') || [];
+        annotationBadgeProps.objects = generateAnnotationCount(
+          objectNonGDPRAnnotations
+        );
+        annotationBadgeProps.gdpr = generateAnnotationCount(
+          objectGDPRAnnotations
+        );
       }
     });
-
-    return {
-      modelGenerated,
-      manuallyGenerated,
-      verified,
-      unhandled,
-      rejected,
-    } as AnnotationCounts;
+    return annotationBadgeProps;
   }
 );
 
@@ -672,4 +673,39 @@ const createVisionAnnotationState = (
     modelId,
     show,
   };
+};
+
+const generateAnnotationCount = (annotations: VisionAnnotationState[]) => {
+  let [modelGenerated, manuallyGenerated, verified, unhandled, rejected] = [
+    0,
+    0,
+    0,
+    0,
+    0,
+  ];
+
+  annotations.forEach((ann) => {
+    if (ann.source === 'user') {
+      manuallyGenerated++;
+    } else {
+      modelGenerated++;
+    }
+    if (ann.status === AnnotationStatus.Verified) {
+      verified++;
+    }
+    if (ann.status === AnnotationStatus.Unhandled) {
+      unhandled++;
+    }
+    if (ann.status === AnnotationStatus.Rejected) {
+      rejected++;
+    }
+  });
+
+  return {
+    modelGenerated,
+    manuallyGenerated,
+    verified,
+    unhandled,
+    rejected,
+  } as AnnotationCounts;
 };

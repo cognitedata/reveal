@@ -9,11 +9,11 @@ import {
   selectIsPollingComplete,
   setSelectedDetectionModels,
 } from 'src/store/processSlice';
-import { DetectionModelCategory } from 'src/api/types';
 import { selectAllFiles } from 'src/store/uploadedFilesSlice';
 import { message, notification } from 'antd';
 import { isVideo } from 'src/components/FileUploader/utils/FileUtils';
 import { toastProps } from 'src/utils/ToastUtils';
+import { VisionAPIType } from 'src/api/types';
 
 export const FileToolbar = ({
   onViewChange,
@@ -53,7 +53,7 @@ export const FileToolbar = ({
     );
   };
 
-  const onChange = (models: Array<DetectionModelCategory>) => {
+  const onChange = (models: Array<VisionAPIType>) => {
     dispatch(setSelectedDetectionModels(models));
   };
 

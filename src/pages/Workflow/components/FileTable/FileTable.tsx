@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { TimeDisplay } from '@cognite/data-exploration';
 import { Button, Dropdown, Menu, Tooltip } from '@cognite/cogs.js';
 
@@ -11,11 +11,11 @@ import ReactBaseTable, {
 import exifIcon from 'src/assets/exifIcon.svg';
 import { Popover } from 'src/components/Common/Popover';
 import { AnnotationsBadgeProps } from 'src/pages/Workflow/types';
-import { useAnnotationCounter } from 'src/store/hooks/useAnnotationCounter';
 import styled from 'styled-components';
 import { selectUpdatedFileDetails } from 'src/store/uploadedFilesSlice';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
+import { makeAnnotationBadgePropsByFileId } from 'src/store/processSlice';
 import { TableWrapper } from './FileTableWrapper';
 import { AnnotationsBadge } from '../AnnotationsBadge/AnnotationsBadge';
 import { AnnotationsBadgePopoverContent } from '../AnnotationsBadge/AnnotationsBadgePopoverContent';
@@ -38,10 +38,15 @@ type CellRenderer = {
 
 type FileTableProps = Omit<BaseTableProps<TableDataItem>, 'width'>;
 
-function StatusRendrer(
-  cellProps: CellRenderer,
-  annotationsBadgeProps: AnnotationsBadgeProps
-) {
+function StatusRendrer({ rowData: { id } }: CellRenderer) {
+  const selectAnnotationBadgeProps = useMemo(
+    makeAnnotationBadgePropsByFileId,
+    []
+  );
+  const annotationsBadgeProps = useSelector((state: RootState) =>
+    selectAnnotationBadgeProps(state, id)
+  );
+
   const annotations = Object.keys(annotationsBadgeProps) as Array<
     keyof AnnotationsBadgeProps
   >;
@@ -82,7 +87,14 @@ function StatusRendrer(
   return <div style={{ textTransform: 'capitalize' }}>Unprocessed</div>;
 }
 
-function AnnotationRendrer(annotationsBadgeProps: AnnotationsBadgeProps) {
+function AnnotationRendrer({ rowData: { id } }: CellRenderer) {
+  const selectAnnotationBadgeProps = useMemo(
+    makeAnnotationBadgePropsByFileId,
+    []
+  );
+  const annotationsBadgeProps = useSelector((state: RootState) =>
+    selectAnnotationBadgeProps(state, id)
+  );
   return (
     <Popover
       placement="bottom"
@@ -112,10 +124,15 @@ function NameRenderer({ rowData: { name, id } }: CellRenderer) {
   );
 }
 
-function ActionRendrer(
-  { rowData: { menu, id } }: CellRenderer,
-  annotationsBadgeProps: AnnotationsBadgeProps
-) {
+function ActionRendrer({ rowData: { menu, id } }: CellRenderer) {
+  const selectAnnotationBadgeProps = useMemo(
+    makeAnnotationBadgePropsByFileId,
+    []
+  );
+  const annotationsBadgeProps = useSelector((state: RootState) =>
+    selectAnnotationBadgeProps(state, id)
+  );
+
   const handleMetadataEdit = () => {
     if (menu?.showMetadataPreview) {
       menu.showMetadataPreview(id);
@@ -175,22 +192,17 @@ function stringRenderer(cellProps: { cellData: string }) {
 
 export function FileTable(props: FileTableProps) {
   const Cell = (cellProps: any) => {
-    if (
-      ['name', 'status', 'annotations', 'action'].includes(cellProps.column.key)
-    ) {
-      const annotationsBadgeProps = useAnnotationCounter(cellProps.rowData.id);
-      if (cellProps.column.key === 'name') {
-        return NameRenderer(cellProps);
-      }
-      if (cellProps.column.key === 'status') {
-        return StatusRendrer(cellProps, annotationsBadgeProps);
-      }
-      if (cellProps.column.key === 'annotations') {
-        return AnnotationRendrer(annotationsBadgeProps);
-      }
-      if (cellProps.column.key === 'action') {
-        return ActionRendrer(cellProps, annotationsBadgeProps);
-      }
+    if (cellProps.column.key === 'name') {
+      return NameRenderer(cellProps);
+    }
+    if (cellProps.column.key === 'status') {
+      return StatusRendrer(cellProps);
+    }
+    if (cellProps.column.key === 'annotations') {
+      return AnnotationRendrer(cellProps);
+    }
+    if (cellProps.column.key === 'action') {
+      return ActionRendrer(cellProps);
     }
 
     return stringRenderer(cellProps);

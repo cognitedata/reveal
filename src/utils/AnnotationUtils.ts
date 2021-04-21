@@ -65,8 +65,8 @@ export interface VisionAnnotation
 
 export const ModelTypeStyleMap = {
   [VisionAPIType.OCR]: {
-    color: '#FF8746',
-    backgroundColor: '#FFE1D1',
+    color: '#404040',
+    backgroundColor: '#F0FCF8',
   },
   [VisionAPIType.TagDetection]: {
     color: '#C945DB',
@@ -213,7 +213,7 @@ export class AnnotationUtils {
     return {
       color:
         text === 'person'
-          ? '#b30539'
+          ? '#1AA3C1'
           : AnnotationUtils.getAnnotationColor(modelType),
       modelType,
       type,

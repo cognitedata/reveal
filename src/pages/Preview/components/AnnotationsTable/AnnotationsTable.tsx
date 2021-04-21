@@ -263,7 +263,7 @@ export const AnnotationsTable = ({
                     <Input
                       icon={
                         annotation.text === 'person'
-                          ? 'WarningFilled'
+                          ? 'Personrounded'
                           : (ModelTypeIconMap[
                               annotation.modelType
                             ] as AllIconTypes)
@@ -291,12 +291,12 @@ export const AnnotationsTable = ({
                       show={annotation.show}
                       color={
                         annotation.text === 'person'
-                          ? '#b30539'
+                          ? '#1AA3C1'
                           : ModelTypeStyleMap[annotation.modelType].color
                       }
                       background={
                         annotation.text === 'person'
-                          ? '#fbe9ed'
+                          ? '#D3F7FB'
                           : ModelTypeStyleMap[annotation.modelType]
                               .backgroundColor
                       }

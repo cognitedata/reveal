@@ -141,7 +141,7 @@ export const Contextualization = ({ fileId }: { fileId: string }) => {
         <AnnotationsTable
           annotations={gdprAndTextAndObjectAnnotations}
           selectedAnnotationIds={selectedAnnotationIds.other}
-          mode={VisionAPIType.OCR}
+          mode={VisionAPIType.ObjectDetection} // TODO: only used to check if it is a tagdetection (?), refactor
         />
       </TableContainer>
     </Container>

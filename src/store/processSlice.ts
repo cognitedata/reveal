@@ -6,17 +6,16 @@ import {
 } from '@reduxjs/toolkit';
 import { fetchJobById, createAnnotationJob } from 'src/api/annotationJob';
 import { fetchUntilComplete } from 'src/utils';
-import {
-  AnnotationJob,
-  VisionAPIType,
-  DetectionModelCategory,
-} from 'src/api/types';
-import { getFakeQueuedJob, toVisionAPIModels } from 'src/api/utils';
+import { AnnotationJob, VisionAPIType } from 'src/api/types';
+import { getFakeQueuedJob } from 'src/api/utils';
 import { fileProcessUpdate } from 'src/store/commonActions';
 import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
 import { SaveAvailableAnnotations } from 'src/store/thunks/SaveAvailableAnnotations';
-import { ThunkConfig } from 'src/store/rootReducer';
+import { RootState, ThunkConfig } from 'src/store/rootReducer';
 import isEqual from 'lodash-es/isEqual';
+import { AnnotationsBadgeProps } from 'src/pages/Workflow/types';
+import { selectModelAnnotationCountsByFileId } from 'src/store/previewSlice';
+import { createSelectorCreator, defaultMemoize } from 'reselect';
 
 export type JobState = AnnotationJob & {
   fileIds: number[];
@@ -24,7 +23,7 @@ export type JobState = AnnotationJob & {
 type State = {
   selectedFileId: number | null;
   showFileMetadataDrawer: boolean;
-  selectedDetectionModels: Array<DetectionModelCategory>;
+  selectedDetectionModels: Array<VisionAPIType>;
   error?: string;
   files: {
     byId: Record<number, { jobIds: number[] }>;
@@ -39,7 +38,7 @@ type State = {
 const initialState: State = {
   selectedFileId: null,
   showFileMetadataDrawer: false,
-  selectedDetectionModels: [DetectionModelCategory.TextAndObjects],
+  selectedDetectionModels: [VisionAPIType.OCR],
   files: {
     byId: {},
     allIds: [],
@@ -56,7 +55,7 @@ const initialState: State = {
 // for requested files, create annotation jobs with requested detectionModels and setup polling on these jobs
 export const detectAnnotations = createAsyncThunk<
   void,
-  { fileIds: Array<number>; detectionModels: Array<DetectionModelCategory> },
+  { fileIds: Array<number>; detectionModels: Array<VisionAPIType> },
   ThunkConfig
 >(
   'process/detectAnnotations',
@@ -76,10 +75,8 @@ export const detectAnnotations = createAsyncThunk<
       return acc;
     }, [] as number[][]);
 
-    const VisionAPIModels = toVisionAPIModels(detectionModels);
-
     batchFileIdsList.forEach((batchFileIds) => {
-      VisionAPIModels.forEach((modelType) => {
+      detectionModels.forEach((modelType) => {
         const filteredBatchFileIds = batchFileIds.filter((fileId: number) => {
           const fileJobIds = files.byId[fileId]?.jobIds;
           return (
@@ -155,7 +152,7 @@ const processSlice = createSlice({
     },
     setSelectedDetectionModels(
       state,
-      action: PayloadAction<Array<DetectionModelCategory>>
+      action: PayloadAction<Array<VisionAPIType>>
     ) {
       state.selectedDetectionModels = action.payload;
     },
@@ -346,3 +343,64 @@ export const selectIsPollingComplete = createSelector(
     });
   }
 );
+
+export const selectJobsStatusesByFileId = createSelector(
+  selectJobsByFileId,
+  (fileJobs) => {
+    const annotationBadgeProps: AnnotationsBadgeProps = {
+      tag: {},
+      gdpr: {},
+      text: {},
+      objects: {},
+    };
+    fileJobs.forEach((job) => {
+      const statusData = { status: job.status, statusTime: job.statusTime };
+      if (job.type === VisionAPIType.OCR) {
+        annotationBadgeProps.text = statusData;
+      }
+      if (job.type === VisionAPIType.TagDetection) {
+        annotationBadgeProps.tag = statusData;
+      }
+      if (job.type === VisionAPIType.ObjectDetection) {
+        annotationBadgeProps.objects = statusData;
+        annotationBadgeProps.gdpr = statusData;
+      }
+    });
+    return annotationBadgeProps;
+  }
+);
+
+const createDeepEqualSelector = createSelectorCreator(defaultMemoize, isEqual);
+
+export const makeAnnotationBadgePropsByFileId = () => {
+  return createDeepEqualSelector(
+    (state: RootState, fileId: number) => fileId,
+    (state: RootState, fileId: number) =>
+      selectModelAnnotationCountsByFileId(
+        state.previewSlice,
+        fileId.toString()
+      ),
+    (state: RootState, fileId: number) =>
+      selectJobsStatusesByFileId(state.processSlice, fileId),
+    (fileId, modelAnnotationCounts, modelJobStatuses) => {
+      return {
+        text: {
+          ...modelAnnotationCounts.text,
+          ...modelJobStatuses.text,
+        },
+        tag: {
+          ...modelAnnotationCounts.tag,
+          ...modelJobStatuses.tag,
+        },
+        objects: {
+          ...modelAnnotationCounts.objects,
+          ...modelJobStatuses.objects,
+        },
+        gdpr: {
+          ...modelAnnotationCounts.gdpr,
+          ...modelJobStatuses.gdpr,
+        },
+      };
+    }
+  );
+};
