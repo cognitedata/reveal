@@ -17,6 +17,12 @@ export const SmallTileContainer = styled(TileBasic)`
   border: 1px solid var(--cogs-greyscale-grey4);
 `;
 
+export const ApplicationTileContainer = styled(SmallTileContainer)`
+  position: relative;
+  flex-direction: column;
+  margin: 0 48px 24px 0;
+`;
+
 export const TileContainer = styled(TileBasic)`
   position: relative;
   flex-direction: column;
@@ -56,6 +62,11 @@ export const TilePreview = styled.div`
   height: 184px;
   background-color: var(--cogs-white);
   padding: 12px;
+`;
+
+export const ApplicationTileHeader = styled(TileHeader)`
+  justify-content: normal;
+  border-bottom: none;
 `;
 
 export const LargeTileContainer = styled(TileBasic)`

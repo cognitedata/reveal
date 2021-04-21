@@ -30,7 +30,7 @@ export const Tile: React.FC<Props> = ({
   view = 'suite',
 }: Props) => {
   const isBoard = view === 'board';
-  const { setAsLastvisited } = useLastVisited(dataItem);
+  const { setAsLastvisited } = useLastVisited(dataItem.key);
 
   const renderPreview = (item: Board | Suite) => {
     if ((item as Board).embedTag) {

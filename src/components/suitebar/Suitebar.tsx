@@ -5,19 +5,19 @@ import { SuitbarContainer, MainContent } from './elements';
 interface Props {
   leftCustomHeader?: React.ReactNode;
   headerText?: string;
-  actionButton?: React.ReactNode;
+  actionsPanel?: React.ReactNode;
 }
 
 const Suitebar: React.FC<Props> = ({
   leftCustomHeader,
   headerText,
-  actionButton,
+  actionsPanel,
 }: Props) => (
   <SuitbarContainer>
     <MainContent>
       {leftCustomHeader}
       {!leftCustomHeader && <Title level={5}>{headerText}</Title>}
-      <div>{actionButton}</div>
+      <div>{actionsPanel}</div>
     </MainContent>
   </SuitbarContainer>
 );

@@ -2,6 +2,7 @@ import { ClientOptions, CogniteClient, Group } from '@cognite/sdk';
 import { LastVisited, UserSpacePayload } from 'store/userSpace/types';
 import { Suite } from 'store/suites/types';
 import sidecar from './sidecar';
+import { ApplicationItem } from 'store/config/types';
 
 type AppDataResponse = {
   suites: Suite[];
@@ -59,6 +60,13 @@ export class ApiClient {
   }
   syncLastVisited() {
     return this.makeGETRequest('/lastVisited/sync');
+  }
+
+  getApplications(): Promise<string[]> {
+    return this.makeGETRequest('/applications');
+  }
+  saveApplications(applications: string[]): Promise<void> {
+    return this.makePOSTRequest('/applications', applications);
   }
 
   /**

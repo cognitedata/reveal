@@ -1,20 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Icon, Overline } from '@cognite/cogs.js';
+import { A, Icon, Overline } from '@cognite/cogs.js';
 import { useSelector } from 'react-redux';
 import { getSuitesTableState } from 'store/suites/selectors';
 import { Suite } from 'store/suites/types';
 import { useMetrics } from 'utils/metrics';
-import NavigationItem from './NavigationItem';
+import { ApplicationItem } from 'store/config/types';
+import { getApplications } from 'store/config/selectors';
+import SuiteNavigationItem from './SuiteNavigationItem';
+import ApplicationNavigationItem from './ApplicationNavigationItem';
 import {
   TitleContainer,
-  AvailableSuitesContainer,
+  ItemsContainer,
   CollapseButton,
   SidebarContainer,
 } from './elements';
 
 const LeftSidebar: React.FC = () => {
   const { suites } = useSelector(getSuitesTableState);
+  const applications = useSelector(getApplications);
   const metrics = useMetrics('LeftSidebar');
 
   const sideBarState = JSON.parse(
@@ -36,7 +40,23 @@ const LeftSidebar: React.FC = () => {
     setOpen(() => !isOpen);
   };
 
-  const renderNavigationItem = (item: Suite) => (
+  const renderApplicationItem = (item: ApplicationItem) => (
+    <A
+      href={item.url}
+      key={item.key}
+      target="_blank"
+      onClick={() =>
+        metrics.track('Application_Click', {
+          key: item.key,
+          application: item.title,
+        })
+      }
+    >
+      <ApplicationNavigationItem item={item} />
+    </A>
+  );
+
+  const renderSuiteNavigationItem = (item: Suite) => (
     <NavLink
       to={`/suites/${item.key}`}
       key={item.key}
@@ -44,7 +64,7 @@ const LeftSidebar: React.FC = () => {
         metrics.track('Suite_Click', { suiteKey: item.key, suite: item.title })
       }
     >
-      <NavigationItem dataItem={item} />
+      <SuiteNavigationItem dataItem={item} />
     </NavLink>
   );
 
@@ -60,12 +80,22 @@ const LeftSidebar: React.FC = () => {
           style={{ width: 12 }}
         />
       </CollapseButton>
+      {applications.length && (
+        <>
+          <TitleContainer>
+            <Overline level={2}>Applications</Overline>
+          </TitleContainer>
+          <ItemsContainer>
+            {applications.map((item) => renderApplicationItem(item))}
+          </ItemsContainer>
+        </>
+      )}
       <TitleContainer>
         <Overline level={2}>Suites</Overline>
       </TitleContainer>
-      <AvailableSuitesContainer>
-        {suites?.map((suite) => renderNavigationItem(suite))}
-      </AvailableSuitesContainer>
+      <ItemsContainer>
+        {suites?.map((suite) => renderSuiteNavigationItem(suite))}
+      </ItemsContainer>
     </SidebarContainer>
   );
 };

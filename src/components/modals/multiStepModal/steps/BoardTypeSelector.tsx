@@ -16,7 +16,7 @@ const options = [
   { value: 'powerbi', label: 'PowerBI' },
   { value: 'plotly', label: 'Plotly' },
   { value: 'spotfire', label: 'Spotfire' },
-  { value: 'application', label: 'Application' },
+  { value: 'application', label: 'Application' }, // to delete?
   { value: 'infographics', label: 'Infographics' },
   { value: 'other', label: 'Other' },
 ];
