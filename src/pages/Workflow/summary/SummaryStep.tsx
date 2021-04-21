@@ -83,6 +83,7 @@ export default function SummaryStep() {
               <StatsCarouselLeft>
                 {Object.entries(stats).map((pair) => (
                   <FancyButton
+                    key={pair[0]}
                     onClick={() => {
                       setStatView(pair[0]);
                     }}
@@ -93,20 +94,34 @@ export default function SummaryStep() {
               </StatsCarouselLeft>
               {statView === 'totalFilesUploaded' && (
                 <StatsCarouselRight>
-                  {Array.from({ length: stats[statView].value }, () => (
-                    <FileIconContainer>
-                      <img src={FileIcon} alt="FileIcon" />
-                    </FileIconContainer>
-                  ))}
+                  {Array.from(
+                    { length: stats[statView].value },
+                    (i: number) => (
+                      <FileIconContainer>
+                        <img
+                          key={`${statView}_${i}`}
+                          src={FileIcon}
+                          alt="FileIcon"
+                        />
+                      </FileIconContainer>
+                    )
+                  )}
                 </StatsCarouselRight>
               )}
               {statView === 'filesWithExif' && (
                 <StatsCarouselRight>
-                  {Array.from({ length: stats[statView].value }, () => (
-                    <FileIconContainer>
-                      <img src={FileWithExifIcon} alt="FileWithExifIcon" />
-                    </FileIconContainer>
-                  ))}
+                  {Array.from(
+                    { length: stats[statView].value },
+                    (i: number) => (
+                      <FileIconContainer>
+                        <img
+                          key={`${statView}_${i}`}
+                          src={FileWithExifIcon}
+                          alt="FileWithExifIcon"
+                        />
+                      </FileIconContainer>
+                    )
+                  )}
                   {stats[statView].value < stats.totalFilesUploaded.value &&
                     Array.from(
                       {
@@ -114,9 +129,13 @@ export default function SummaryStep() {
                           stats.totalFilesUploaded.value -
                           stats[statView].value,
                       },
-                      () => (
+                      (i: number) => (
                         <FileIconContainer>
-                          <img src={FileBland} alt="FileBland" />
+                          <img
+                            key={`${statView}_${i}`}
+                            src={FileBland}
+                            alt="FileBland"
+                          />
                         </FileIconContainer>
                       )
                     )}
@@ -124,11 +143,18 @@ export default function SummaryStep() {
               )}
               {statView === 'userReviewedFiles' && (
                 <StatsCarouselRight>
-                  {Array.from({ length: stats[statView].value }, () => (
-                    <FileIconContainer>
-                      <img src={FileWasReviewed} alt="FileWasReviewed" />
-                    </FileIconContainer>
-                  ))}
+                  {Array.from(
+                    { length: stats[statView].value },
+                    (i: number) => (
+                      <FileIconContainer>
+                        <img
+                          key={`${statView}_${i}`}
+                          src={FileWasReviewed}
+                          alt="FileWasReviewed"
+                        />
+                      </FileIconContainer>
+                    )
+                  )}
                   {stats[statView].value < stats.totalFilesUploaded.value &&
                     Array.from(
                       {
@@ -136,9 +162,13 @@ export default function SummaryStep() {
                           stats.totalFilesUploaded.value -
                           stats[statView].value,
                       },
-                      () => (
+                      (i: number) => (
                         <FileIconContainer>
-                          <img src={FileBland} alt="FileBland" />
+                          <img
+                            key={`${statView}_${i}`}
+                            src={FileBland}
+                            alt="FileBland"
+                          />
                         </FileIconContainer>
                       )
                     )}
@@ -146,23 +176,34 @@ export default function SummaryStep() {
               )}
               {statView === 'modelDetections' && (
                 <StatsCarouselRight>
-                  {Array.from({ length: stats[statView].value }, () => (
-                    <FileIconContainer>
-                      <img
-                        src={FileWithAnnotations}
-                        alt="FileWithAnnotations"
-                      />
-                    </FileIconContainer>
-                  ))}
+                  {Array.from(
+                    { length: stats[statView].value },
+                    (i: number) => (
+                      <FileIconContainer>
+                        <img
+                          key={`${statView}_${i}`}
+                          src={FileWithAnnotations}
+                          alt="FileWithAnnotations"
+                        />
+                      </FileIconContainer>
+                    )
+                  )}
                 </StatsCarouselRight>
               )}
               {statView === 'gdprCases' && (
                 <StatsCarouselRight>
-                  {Array.from({ length: stats[statView].value }, () => (
-                    <FileIconContainer>
-                      <img src={FileResolvedGDPR} alt="FileResolvedGDPR" />
-                    </FileIconContainer>
-                  ))}
+                  {Array.from(
+                    { length: stats[statView].value },
+                    (i: number) => (
+                      <FileIconContainer>
+                        <img
+                          key={`${statView}_${i}`}
+                          src={FileResolvedGDPR}
+                          alt="FileResolvedGDPR"
+                        />
+                      </FileIconContainer>
+                    )
+                  )}
                 </StatsCarouselRight>
               )}
             </StatsCarouselContainer>

@@ -55,6 +55,7 @@ export const ProcessStepActionButtons = () => {
             <Button onClick={() => setModalOpen(false)} disabled={false}>
               Continue processing files
             </Button>
+            <div style={{ padding: '10px' }} />
             <Button onClick={onNextClicked} disabled={false} type="primary">
               Finish processing
             </Button>
