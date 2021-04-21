@@ -59,7 +59,7 @@ jobs:
           deploy_key: ${{ secrets.REVEAL_DOCS_PREVIEW_DK_PK }}
           external_repository: cognitedata/reveal-docs-preview
           publish_branch: master
-          publish_dir: "docs-preview/${{ env.PR_NUMBER }}/"
+          publish_dir: "reveal/documentation/docs-preview/${{ env.PR_NUMBER }}/"
           destination_dir: "${{ env.PR_NUMBER }}"
 
       - name: Add comment about preview URL
