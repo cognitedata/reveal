@@ -36,4 +36,4 @@ jobs:
           deploy_key: ${{ secrets.REVEAL_DOCS_DK_PK }}
           external_repository: cognitedata/reveal-docs
           publish_branch: master
-          publish_dir: reveal/documentation/build
+          publish_dir: documentation/build
