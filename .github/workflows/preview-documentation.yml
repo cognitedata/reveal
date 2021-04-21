@@ -20,44 +20,38 @@ jobs:
           echo "PR_NUMBER=$(jq --raw-output .pull_request.number $GITHUB_EVENT_PATH)" >> $GITHUB_ENV
           echo "name=PR_NUMBER::$PR_NUMBER" >> $GITHUB_ENV
 
-#      - name: Build Reveal
-#        working-directory: reveal/viewer
-#        run: |
-#          yarn
-#          yarn build:prod
-#
-#      - name: Update Docosaurus base URL
-#        uses: jacobtomlinson/gha-find-replace@master
-#        with:
-#          find: "baseUrl: .*"
-#          replace: "baseUrl: '/reveal-docs-preview/${{ env.PR_NUMBER }}/',"
-#          include: "docusaurus.config.js"
-#
-#      - name: Update Docosaurus title
-#        uses: jacobtomlinson/gha-find-replace@master
-#        with:
-#          find: "title: .*"
-#          replace: "title: 'Reveal documentation (preview #${{ env.PR_NUMBER }})',"
-#          include: "docusaurus.config.js"
-#
-#      - name: Install and Build documentation 🔧
-#        working-directory: reveal/documentation
-#        run: |
-#          yarn
-#          yarn build
+      - name: Build Reveal
+        working-directory: reveal/viewer
+        run: |
+          yarn
+          yarn build:prod
 
-#      - name: Create preview folder structure
-#        working-directory: reveal/documentation
-#        run: |
-#          mkdir -p "docs-preview/$PR_NUMBER"
-#          ls "docs-preview/"
-#          cp -R build/* "docs-preview/$PR_NUMBER/"
+      - name: Update Docosaurus base URL
+        uses: jacobtomlinson/gha-find-replace@master
+        with:
+          find: "baseUrl: .*"
+          replace: "baseUrl: '/reveal-docs-preview/${{ env.PR_NUMBER }}/',"
+          include: "docusaurus.config.js"
 
-      - name: Fake preview folder structure
+      - name: Update Docosaurus title
+        uses: jacobtomlinson/gha-find-replace@master
+        with:
+          find: "title: .*"
+          replace: "title: 'Reveal documentation (preview #${{ env.PR_NUMBER }})',"
+          include: "docusaurus.config.js"
+
+      - name: Install and Build documentation 🔧
+        working-directory: reveal/documentation
+        run: |
+          yarn
+          yarn build
+
+      - name: Create preview folder structure
         working-directory: reveal/documentation
         run: |
           mkdir -p "docs-preview/$PR_NUMBER"
-          echo 123 >> docs-preview/$PR_NUMBER/fakebuild.txt
+          ls "docs-preview/"
+          cp -R build/* "docs-preview/$PR_NUMBER/"
 
       - name: Checkout reveal-docs-preview 🛎️
         uses: actions/checkout@v2
