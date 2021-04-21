@@ -16,7 +16,7 @@ jobs:
           path: reveal
 
       - name: Setup SSH Key
-      - run: |
+        run: |
           mkdir ~/.ssh
           echo "${{ secrets.SECRET_PRIVATE_DEPLOY_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
@@ -30,7 +30,6 @@ jobs:
 
       - name: Test checkout
         run: ls reveal-docs-preview
-
 
 #      - name: Initialize variables
 #        run: |
