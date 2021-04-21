@@ -98,7 +98,7 @@ jobs:
         run: |
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action"
-          git pull https://git:${{ secrets.REVEAL_REPO_ACCESS_TOKEN }}@github.com/cognitedata/reveal-docs-preview.git --commit --ff
+          git pull https://git:${{ secrets.REVEAL_DOCS_PREVIEW_DK_PK }}@github.com/cognitedata/reveal-docs-preview.git --commit --ff
 
       - name: Retry deploy 🚀 - push
         id: deploy2
