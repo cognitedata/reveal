@@ -1,11 +1,10 @@
 name: preview-documentation
 
 on:
-  pull_request:
-    branches-ignore:
-      - 'dependabot/**'
+  push:
+    branches:
+      - 'mn/**'
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   build-and-deploy:
     name: Publish documentation preview
@@ -14,110 +13,128 @@ jobs:
       - name: Checkout 🛎️
         uses: actions/checkout@v2 # If you're using actions/checkout@v2 you must set persist-credentials to false in most cases for the deployment to work correctly.
         with:
-          persist-credentials: false
           path: reveal
-   
-      - name: Initialize variables
-        run: |
-          echo "PR_NUMBER=$(jq --raw-output .pull_request.number $GITHUB_EVENT_PATH)" >> $GITHUB_ENV
-          echo "name=PR_NUMBER::$PR_NUMBER" >> $GITHUB_ENV
 
-      - name: Build Reveal
-        working-directory: reveal/viewer
-        run: |
-          yarn
-          yarn build:prod
-
-      - name: Update Docosaurus base URL
-        uses: jacobtomlinson/gha-find-replace@master
-        with:
-          find: "baseUrl: .*"
-          replace: "baseUrl: '/reveal-docs-preview/${{ env.PR_NUMBER }}/',"
-          include: "docusaurus.config.js"
-
-      - name: Update Docosaurus title
-        uses: jacobtomlinson/gha-find-replace@master
-        with:
-          find: "title: .*"
-          replace: "title: 'Reveal documentation (preview #${{ env.PR_NUMBER }})',"
-          include: "docusaurus.config.js"
-
-      - name: Install and Build documentation 🔧
-        working-directory: reveal/documentation
-        run: |
-          yarn
-          yarn build
-
-      - name: Create preview folder structure
-        working-directory: reveal/documentation
-        run: |
-          mkdir -p "docs-preview/$PR_NUMBER"
-          ls "docs-preview/"
-          cp -R build/* "docs-preview/$PR_NUMBER/"
+      - name: Setup SSH Key
+      - run: |
+          mkdir ~/.ssh
+          echo "${{ secrets.SECRET_PRIVATE_DEPLOY_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
 
       - name: Checkout reveal-docs-preview 🛎️
-        uses: actions/checkout@v2 
+        uses: actions/checkout@v2
         with:
           repository: cognitedata/reveal-docs-preview
-          token: ${{ secrets.ACCESS_TOKEN }}
           path: reveal-docs-preview
-          persist-credentials: false
           ref: master
 
-      - name: Clean PR deployment folder
-        working-directory: reveal-docs-preview
-        run: |
-          if [[ -d "${{ env.PR_NUMBER }}" ]]
-          then
-            git rm -r ${{ env.PR_NUMBER }}
-          fi
+      - name: Test checkout
+        run: ls reveal-docs-preview
 
-      - name: Copy build docs to preview documentation 
-        run: |
-          cp -vR reveal/documentation/docs-preview/* reveal-docs-preview/
+#      - name: Initialize variables
+#        run: |
+#          echo "PR_NUMBER=$(jq --raw-output .pull_request.number $GITHUB_EVENT_PATH)" >> $GITHUB_ENV
+#          echo "name=PR_NUMBER::$PR_NUMBER" >> $GITHUB_ENV
+#
+#      - name: Build Reveal
+#        working-directory: reveal/viewer
+#        run: |
+#          yarn
+#          yarn build:prod
+#
+#      - name: Update Docosaurus base URL
+#        uses: jacobtomlinson/gha-find-replace@master
+#        with:
+#          find: "baseUrl: .*"
+#          replace: "baseUrl: '/reveal-docs-preview/${{ env.PR_NUMBER }}/',"
+#          include: "docusaurus.config.js"
+#
+#      - name: Update Docosaurus title
+#        uses: jacobtomlinson/gha-find-replace@master
+#        with:
+#          find: "title: .*"
+#          replace: "title: 'Reveal documentation (preview #${{ env.PR_NUMBER }})',"
+#          include: "docusaurus.config.js"
+#
+#      - name: Install and Build documentation 🔧
+#        working-directory: reveal/documentation
+#        run: |
+#          yarn
+#          yarn build
+#
+#      - name: Create preview folder structure
+#        working-directory: reveal/documentation
+#        run: |
+#          mkdir -p "docs-preview/$PR_NUMBER"
+#          ls "docs-preview/"
+#          cp -R build/* "docs-preview/$PR_NUMBER/"
 
-      - name: Commit documentation
-        working-directory: reveal-docs-preview
-        run: |
-          git config --global user.email "action@github.com"
-          git config --global user.name "GitHub Action"
-          git add -A ${{ env.PR_NUMBER }}
-          git commit -m "Publish documentation for PR #${{ env.PR_NUMBER }} (ref ${{ github.sha }})"
 
-      - name: Deploy 🚀
-        id: deploy
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.ACCESS_TOKEN }}
-          directory: reveal-docs-preview
-          branch: master
-          repository: cognitedata/reveal-docs-preview
-        continue-on-error: true
+#      - name: Checkout reveal-docs-preview 🛎️
+#        uses: actions/checkout@v2
+#        with:
+#          repository: cognitedata/reveal-docs-preview
+#          ssh-key: ${{ secrets.REVEAL_DOCS_PREVIEW_PUB }}
+#          path: reveal-docs-preview
+#          persist-credentials: true
+#          ref: master
 
-      - name: Retry deploy 🚀 - pull
-        working-directory: reveal-docs-preview
-        if: steps.deploy.outcome=='failure'
-        run: |
-          git config --global user.email "action@github.com"
-          git config --global user.name "GitHub Action"
-          git pull https://git:${{ secrets.ACCESS_TOKEN }}@github.com/cognitedata/reveal-docs-preview.git --commit --ff
-        
-      - name: Retry deploy 🚀 - push
-        id: deploy2
-        uses: ad-m/github-push-action@master
-        if: steps.deploy.outcome=='failure'
-        with:
-          github_token: ${{ secrets.ACCESS_TOKEN }}
-          directory: reveal-docs-preview
-          branch: master
-          repository: cognitedata/reveal-docs-preview
-
-      - name: Add comment about preview URL
-        uses: unsplash/comment-on-pr@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          msg: |
-            :orange_book: Documentation preview is available from
-            https://cognitedata.github.io/reveal-docs-preview/${{ env.PR_NUMBER }}/docs/next/.
-          check_for_duplicate_msg: true
+#      - name: Clean PR deployment folder
+#        working-directory: reveal-docs-preview
+#        run: |
+#          if [[ -d "${{ env.PR_NUMBER }}" ]]
+#          then
+#            git rm -r ${{ env.PR_NUMBER }}
+#          fi
+#
+#      - name: Copy build docs to preview documentation
+#        run: |
+#          cp -vR reveal/documentation/docs-preview/* reveal-docs-preview/
+#
+#      - name: Commit documentation
+#        working-directory: reveal-docs-preview
+#        run: |
+#          git config --global user.email "action@github.com"
+#          git config --global user.name "GitHub Action"
+#          git add -A ${{ env.PR_NUMBER }}
+#          git commit -m "Publish documentation for PR #${{ env.PR_NUMBER }} (ref ${{ github.sha }})"
+#
+#      - name: Deploy 🚀
+#        id: deploy
+#        uses: ad-m/github-push-action@master
+#        with:
+#          # fixme: use deploy keys
+#          github_token: ${{ secrets.REVEAL_REPO_ACCESS_TOKEN }}
+#          directory: reveal-docs-preview
+#          branch: master
+#          repository: cognitedata/reveal-docs-preview
+#        continue-on-error: true
+#
+#      - name: Retry deploy 🚀 - pull
+#        working-directory: reveal-docs-preview
+#        if: steps.deploy.outcome=='failure'
+#        run: |
+#          git config --global user.email "action@github.com"
+#          git config --global user.name "GitHub Action"
+#          git pull https://git:${{ secrets.REVEAL_REPO_ACCESS_TOKEN }}@github.com/cognitedata/reveal-docs-preview.git --commit --ff
+#
+#      # fixme: use deploy keys
+#      - name: Retry deploy 🚀 - push
+#        id: deploy2
+#        uses: ad-m/github-push-action@master
+#        if: steps.deploy.outcome=='failure'
+#        with:
+#          github_token: ${{ secrets.REVEAL_REPO_ACCESS_TOKEN }}
+#          directory: reveal-docs-preview
+#          branch: master
+#          repository: cognitedata/reveal-docs-preview
+#
+#      - name: Add comment about preview URL
+#        uses: unsplash/comment-on-pr@master
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        with:
+#          msg: |
+#            :orange_book: Documentation preview is available from
+#            https://cognitedata.github.io/reveal-docs-preview/${{ env.PR_NUMBER }}/docs/next/.
+#          check_for_duplicate_msg: true
