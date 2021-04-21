@@ -46,58 +46,66 @@ jobs:
           yarn
           yarn build
 
-      - name: Create preview folder structure
-        working-directory: reveal/documentation
-        run: |
-          mkdir -p "docs-preview/$PR_NUMBER"
-          ls "docs-preview/"
-          cp -R build/* "docs-preview/$PR_NUMBER/"
-
-      - name: Checkout reveal-docs-preview 🛎️
-        uses: actions/checkout@v2
+      - name: Test reveal-docs deploy
+        uses: peaceiris/actions-gh-pages@v3
         with:
-          repository: cognitedata/reveal-docs-preview
-          ssh-key: ${{ secrets.REVEAL_DOCS_PREVIEW_DK_PK }}
-          path: reveal-docs-preview
-          ref: master
+          deploy_key: ${{ secrets.REVEAL_DOCS_DK_PK }}
+          external_repository: cognitedata/reveal-docs
+          publish_branch: master
+          publish_dir: reveal/documentation/build
 
-      - name: Clean PR deployment folder
-        working-directory: reveal-docs-preview
-        run: |
-          if [[ -d "${{ env.PR_NUMBER }}" ]]
-          then
-            git rm -r ${{ env.PR_NUMBER }}
-          fi
-
-      - name: Copy build docs to preview documentation
-        run: |
-          cp -vR reveal/documentation/docs-preview/* reveal-docs-preview/
-
-      - name: Commit documentation
-        working-directory: reveal-docs-preview
-        run: |
-          git config --global user.email "action@github.com"
-          git config --global user.name "GitHub Action"
-          git add -A ${{ env.PR_NUMBER }}
-          git commit -m "Publish documentation for PR #${{ env.PR_NUMBER }} (ref ${{ github.sha }})"
-
-      - name: Deploy 🚀
-        id: deploy
-        working-directory: reveal-docs-preview
-        run: git push
-
-      - name: Retry deploy 🚀
-        working-directory: reveal-docs-preview
-        if: steps.deploy.outcome=='failure'
-        run: |
-          git pull --commit --ff && git push
-
-      - name: Add comment about preview URL
-        uses: unsplash/comment-on-pr@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          msg: |
-            :orange_book: Documentation preview is available from
-            https://cognitedata.github.io/reveal-docs-preview/${{ env.PR_NUMBER }}/docs/next/.
-          check_for_duplicate_msg: true
+#      - name: Create preview folder structure
+#        working-directory: reveal/documentation
+#        run: |
+#          mkdir -p "docs-preview/$PR_NUMBER"
+#          ls "docs-preview/"
+#          cp -R build/* "docs-preview/$PR_NUMBER/"
+#
+#      - name: Checkout reveal-docs-preview 🛎️
+#        uses: actions/checkout@v2
+#        with:
+#          repository: cognitedata/reveal-docs-preview
+#          ssh-key: ${{ secrets.REVEAL_DOCS_PREVIEW_DK_PK }}
+#          path: reveal-docs-preview
+#          ref: master
+#
+#      - name: Clean PR deployment folder
+#        working-directory: reveal-docs-preview
+#        run: |
+#          if [[ -d "${{ env.PR_NUMBER }}" ]]
+#          then
+#            git rm -r ${{ env.PR_NUMBER }}
+#          fi
+#
+#      - name: Copy build docs to preview documentation
+#        run: |
+#          cp -vR reveal/documentation/docs-preview/* reveal-docs-preview/
+#
+#      - name: Commit documentation
+#        working-directory: reveal-docs-preview
+#        run: |
+#          git config --global user.email "action@github.com"
+#          git config --global user.name "GitHub Action"
+#          git add -A ${{ env.PR_NUMBER }}
+#          git commit -m "Publish documentation for PR #${{ env.PR_NUMBER }} (ref ${{ github.sha }})"
+#
+#      - name: Deploy 🚀
+#        id: deploy
+#        working-directory: reveal-docs-preview
+#        run: git push
+#
+#      - name: Retry deploy 🚀
+#        working-directory: reveal-docs-preview
+#        if: steps.deploy.outcome=='failure'
+#        run: |
+#          git pull --commit --ff && git push
+#
+#      - name: Add comment about preview URL
+#        uses: unsplash/comment-on-pr@master
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        with:
+#          msg: |
+#            :orange_book: Documentation preview is available from
+#            https://cognitedata.github.io/reveal-docs-preview/${{ env.PR_NUMBER }}/docs/next/.
+#          check_for_duplicate_msg: true
