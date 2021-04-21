@@ -12,16 +12,15 @@ jobs:
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v2 # If you're using actions/checkout@v2 you must set persist-credentials to false in most cases for the deployment to work correctly.
-        with:
-          path: reveal
 
       - name: Initialize variables
         run: |
+          pwd
           echo "PR_NUMBER=$(jq --raw-output .pull_request.number $GITHUB_EVENT_PATH)" >> $GITHUB_ENV
           echo "name=PR_NUMBER::$PR_NUMBER" >> $GITHUB_ENV
 
       - name: Build Reveal
-        working-directory: reveal/viewer
+        working-directory: viewer
         run: |
           yarn
           yarn build:prod
@@ -41,7 +40,7 @@ jobs:
           include: "docusaurus.config.js"
 
       - name: Install and Build documentation 🔧
-        working-directory: reveal/documentation
+        working-directory: documentation
         run: |
           yarn
           yarn build
@@ -52,7 +51,7 @@ jobs:
           deploy_key: ${{ secrets.REVEAL_DOCS_PREVIEW_DK_PK }}
           external_repository: cognitedata/reveal-docs-preview
           publish_branch: master
-          publish_dir: reveal/documentation/docs-preview/build
+          publish_dir: documentation/docs-preview/build
           destination_dir: ${{ env.PR_NUMBER }}
 
       - name: Add comment about preview URL
