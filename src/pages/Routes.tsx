@@ -7,6 +7,8 @@ import FileOverview from 'pages/FileOverview';
 import Options from 'pages/Options';
 import LandingPage from 'pages/LandingPage';
 import GroupsRequired from 'components/GroupsRequired';
+import Breadcrumbs from 'components/Breadcrumbs';
+import { PageWrapper } from 'components/Common';
 
 const PDF_FILTER = {
   files: {
@@ -16,81 +18,106 @@ const PDF_FILTER = {
   },
 };
 
+const defaultBreadcrumbs = [
+  { title: 'Interactive engineering diagrams', path: '/pnid_parsing_new' },
+];
+
+const flowBreadcrumbs = {
+  title: 'Contextualize engineering diagrams',
+};
+
+const getBreadcrumbs = () => {
+  if (window.location.pathname.includes('pipeline'))
+    return [...defaultBreadcrumbs, flowBreadcrumbs];
+  return defaultBreadcrumbs;
+};
 export default function Routes() {
-  const match = useRouteMatch<{ tenant: string; fileId?: string }>();
+  const match = useRouteMatch<{ tenant: string }>();
 
   return (
-    <GroupsRequired>
-      <Switch>
-        <Route
-          exact
-          path={`${match.path}`}
-          render={() => (
-            <>
-              <PageTitle title="P&ID Contextualization" />
-              <LandingPage />
-            </>
-          )}
-        />
-        <Route
-          exact
-          path={`${match.path}/pipeline`}
-          render={() => (
-            <>
-              <PageTitle title="P&ID Contextualization" />
-              <SearchPage
-                type="files"
-                secondaryType="P&ID"
-                key="fileSearch"
-                defaultFilters={PDF_FILTER}
-              />
-            </>
-          )}
-        />
-        <Route
-          exact
-          path={`${match.path}/pipeline/:filesDataKitId`}
-          render={() => (
-            <>
-              <PageTitle title="P&ID Contextualization" />
-              <SearchPage
-                type="assets"
-                secondaryType="tags"
-                key="assetSearch"
-              />
-            </>
-          )}
-        />
-        <Route
-          exact
-          path={`${match.path}/pipeline/:filesDataKitId/:assetsDataKitId`}
-          render={() => (
-            <>
-              <PageTitle title="P&ID Contextualization" />
-              <Options />
-            </>
-          )}
-        />
-        <Route
-          exact
-          path={`${match.path}/pipeline/:filesDataKitId/:assetsDataKitId/:optionsId`}
-          render={() => (
-            <>
-              <PageTitle title="P&ID Contextualization" />
-              <ResultsOverview />
-            </>
-          )}
-        />
-        <Route
-          exact
-          path={`${match.path}/pipeline/:filesDataKitId/:assetsDataKitId/:optionsId/pnid/:fileId`}
-          render={() => (
-            <>
-              <PageTitle title="P&ID Contextualization" /> <FileOverview />
-            </>
-          )}
-        />
-      </Switch>
-    </GroupsRequired>
+    <>
+      <Breadcrumbs breadcrumbs={getBreadcrumbs()} />
+      <PageWrapper>
+        <GroupsRequired>
+          <Switch>
+            <Route
+              exact
+              path={`${match.path}`}
+              render={() => (
+                <div>
+                  <PageTitle title="Interactive engineering diagrams" />
+                  <LandingPage />
+                </div>
+              )}
+            />
+            <Route
+              exact
+              path={`${match.path}/pipeline`}
+              render={() => (
+                <div>
+                  <PageTitle title="Contextualize engineering diagrams" />
+                  <SearchPage
+                    type="files"
+                    secondaryType="P&ID"
+                    key="fileSearch"
+                    defaultFilters={PDF_FILTER}
+                  />
+                </div>
+              )}
+            />
+            <Route
+              exact
+              path={`${match.path}/pipeline/:filesDataKitId`}
+              render={() => (
+                <div>
+                  <PageTitle title="Contextualize engineering diagrams" />
+                  <SearchPage
+                    type="assets"
+                    secondaryType="tags"
+                    key="assetSearch"
+                  />
+                </div>
+              )}
+            />
+            <Route
+              exact
+              path={`${match.path}/pipeline/:filesDataKitId/:assetsDataKitId`}
+              render={() => (
+                <div>
+                  <PageTitle title="Contextualize engineering diagrams" />
+                  <Breadcrumbs
+                    breadcrumbs={[...defaultBreadcrumbs, flowBreadcrumbs]}
+                  />
+                  <Options />
+                </div>
+              )}
+            />
+            <Route
+              exact
+              path={`${match.path}/pipeline/:filesDataKitId/:assetsDataKitId/:optionsId`}
+              render={() => (
+                <div>
+                  <PageTitle title="Contextualize engineering diagrams" />
+                  <Breadcrumbs
+                    breadcrumbs={[...defaultBreadcrumbs, flowBreadcrumbs]}
+                  />
+                  <ResultsOverview />
+                </div>
+              )}
+            />
+            <Route
+              exact
+              path={`${match.path}/pipeline/:filesDataKitId/:assetsDataKitId/:optionsId/pnid/:fileId`}
+              render={() => (
+                <div>
+                  <PageTitle title="Contextualize engineering diagrams" />
+                  <FileOverview />
+                </div>
+              )}
+            />
+          </Switch>
+        </GroupsRequired>
+      </PageWrapper>
+    </>
   );
 }

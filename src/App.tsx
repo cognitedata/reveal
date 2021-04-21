@@ -58,7 +58,7 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <GlobalStyles>
         <AntStyles>
-          <SubAppWrapper>
+          <SubAppWrapper padding={false}>
             <AuthWrapper
               showLoader
               includeGroups

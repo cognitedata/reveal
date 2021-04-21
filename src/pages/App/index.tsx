@@ -1,13 +1,18 @@
 import React, { useEffect, useMemo, Suspense } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useRouteMatch, useHistory } from 'react-router-dom';
+import {
+  useRouteMatch,
+  useHistory,
+  Route,
+  Switch,
+  Redirect,
+  useLocation,
+} from 'react-router-dom';
 import { RootState } from 'store';
 import sdk, { getAuthState } from 'sdk-singleton';
 import queryString from 'query-string';
 import { trackUsage } from 'utils/Metrics';
 import { setCdfEnv, setTenant, fetchUserGroups } from 'modules/app';
-import SwitchWithBreadcrumbs from 'components/SwitchWithBreadcrumbs';
-import pnidBreadcrumbs from 'pages/breadcrumbs';
 import NotFound from 'pages/NotFound';
 import {
   Loader,
@@ -22,6 +27,8 @@ export default function App() {
   const history = useHistory();
   const { location } = history;
   const { username } = getAuthState();
+
+  const { pathname, search, hash } = useLocation();
 
   const cdfEnv = queryString.parse(window.location.search).env as string;
   const {
@@ -60,7 +67,6 @@ export default function App() {
   const routes = [
     {
       path: '/:tenant/pnid_parsing_new',
-      breadcrumbs: pnidBreadcrumbs,
       component: useMemo(
         () =>
           React.lazy(
@@ -82,7 +88,23 @@ export default function App() {
         <ResourceSelectionProvider allowEdit mode="multiple">
           <ResourceActionsProvider>
             <DataExplorationProvider sdk={sdk}>
-              <SwitchWithBreadcrumbs routes={routes} />
+              <Switch>
+                <Redirect
+                  from="/:url*(/+)"
+                  to={{
+                    pathname: pathname.slice(0, -1),
+                    search,
+                    hash,
+                  }}
+                />
+                {routes.map((route) => (
+                  <Route
+                    key={route.path}
+                    path={route.path}
+                    component={route.component}
+                  />
+                ))}
+              </Switch>
             </DataExplorationProvider>
           </ResourceActionsProvider>
         </ResourceSelectionProvider>
