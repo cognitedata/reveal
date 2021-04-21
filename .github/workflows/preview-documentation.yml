@@ -27,7 +27,7 @@ jobs:
           repository: cognitedata/reveal-docs-preview
           path: reveal-docs-preview
           ref: master
-          ssh-key: ${{ secrets.SECRET_PRIVATE_DEPLOY_KEY }}
+          ssh-key: ${{ secrets.REVEAL_DOCS_PREVIEW_DK_PK }}
 
       - name: Test checkout
         run: ls reveal-docs-preview
