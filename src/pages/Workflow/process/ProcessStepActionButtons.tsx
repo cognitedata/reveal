@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { PrevNextNav } from 'src/pages/Workflow/components/PrevNextNav';
 import { getLink, workflowRoutes } from 'src/pages/Workflow/workflowRoutes';
 import { RootState } from 'src/store/rootReducer';
 import { selectIsPollingComplete } from 'src/store/processSlice';
 import { annotationsById } from 'src/store/previewSlice';
-import { Modal } from '@cognite/cogs.js';
+import { Button, Modal } from '@cognite/cogs.js';
 import { getContainer } from 'src/utils';
+import { createLink } from '@cognite/cdf-utilities';
+import { SaveAvailableAnnotations } from 'src/store/thunks/SaveAvailableAnnotations';
+import styled from 'styled-components';
 import SummaryStep from '../summary/SummaryStep';
 
 export const ProcessStepActionButtons = () => {
@@ -25,24 +28,42 @@ export const ProcessStepActionButtons = () => {
   });
 
   const onCancel = () => {
-    console.log('cancel');
     setModalOpen(false);
   };
-  // Make sure to bind modal to your appElement (https://reactcommunity.org/react-modal/accessibility/)
-  // const disableComplete =
-  //   !isPollingFinished || !Object.keys(annotations).length;
+  const dispatch = useDispatch();
+  const onNextClicked = () => {
+    dispatch(SaveAvailableAnnotations());
+    history.push(createLink('/explore/search/file')); // data-exploration app
+  };
+
+  const disableComplete =
+    !isPollingFinished || !Object.keys(annotations).length;
   const [isModalOpen, setModalOpen] = useState(false);
-  // CogsModal isn't working
   return (
     <>
       <Modal
         getContainer={getContainer}
-        footer={() => <></>}
+        footer={
+          <FooterContainer>
+            <Button
+              onClick={() => history.push(getLink(workflowRoutes.upload))}
+              disabled={false}
+            >
+              Upload More
+            </Button>
+            <div style={{ flexGrow: 1 }} />
+            <Button onClick={() => setModalOpen(false)} disabled={false}>
+              Continue processing files
+            </Button>
+            <Button onClick={onNextClicked} disabled={false} type="primary">
+              Finish processing
+            </Button>
+          </FooterContainer>
+        }
         visible={isModalOpen}
         width={800}
         closable={false}
         onCancel={onCancel}
-        // style={customStyles.content}
       >
         <SummaryStep />
       </Modal>
@@ -54,8 +75,7 @@ export const ProcessStepActionButtons = () => {
         nextBtnProps={{
           onClick: () => setModalOpen(true),
           children: 'Finish processing',
-          disabled: false, // disableComplete, #DEBUGGING PURPOSES
-          title: '',
+          disabled: disableComplete,
         }}
         skipBtnProps={{
           disabled:
@@ -67,3 +87,7 @@ export const ProcessStepActionButtons = () => {
     </>
   );
 };
+
+const FooterContainer = styled.div`
+  display: flex;
+`;

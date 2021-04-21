@@ -1,20 +1,15 @@
 import React, { useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 
 import { Title } from '@cognite/cogs.js';
-import { getLink, workflowRoutes } from 'src/pages/Workflow/workflowRoutes';
-import { useHistory } from 'react-router-dom';
 
 import { selectAllFiles } from 'src/store/uploadedFilesSlice';
 import styled from 'styled-components';
 
-import { SaveAvailableAnnotations } from 'src/store/thunks/SaveAvailableAnnotations';
-import { createLink } from '@cognite/cdf-utilities';
 import { annotationsById } from 'src/store/previewSlice';
-import { PrevNextNav } from '../components/PrevNextNav';
 import FileIcon from './assets/FileIcon.svg';
 import FileBland from './assets/FileBland.svg';
 import FileWithExifIcon from './assets/FileWithExifIcon.svg';
@@ -25,35 +20,31 @@ import FileWasReviewed from './assets/FileWasReviewed.svg';
 const queryClient = new QueryClient();
 
 export default function SummaryStep() {
-  const history = useHistory();
   const uploadedFiles = useSelector((state: RootState) =>
     selectAllFiles(state.uploadedFiles)
   );
 
-  console.log('uploadedFiles ->', uploadedFiles);
   const [statView, setStatView] = useState('totalFilesUploaded');
 
-  const dispatch = useDispatch();
-  const onNextClicked = () => {
-    dispatch(SaveAvailableAnnotations());
-    history.push(createLink('/explore/search/file')); // data-exploration app
-  };
-  // eslint-disable-next-line prettier/prettier
-  // eslint-disable-next-line dot-notation
   const annotations = useSelector((state: RootState) => {
     return annotationsById(state.previewSlice);
   });
-  let GDPRCases = 0;
-
-  console.log('annotations: ', annotations);
+  const GDPRFiles: number[] = [];
+  const reviewStats: number[] = [];
   // eslint-disable-next-line array-callback-return
   Object.entries(annotations).map((arr) => {
-    if (arr[1].label === 'person') {
-      GDPRCases += 1;
+    const aID = arr[1].annotatedResourceId;
+    if (arr[1].status !== 'unhandled' && !reviewStats.includes(aID)) {
+      reviewStats.push(aID);
     }
-    console.log('label:', arr[1].label);
+    if (arr[1].label === 'person' && !GDPRFiles.includes(aID)) {
+      GDPRFiles.push(aID);
+    }
   });
 
+  const NotReviewedGDPRFiles = GDPRFiles.filter(
+    (file) => !reviewStats.includes(file)
+  );
   let filesWithExif = 0;
   // eslint-disable-next-line array-callback-return
   Object.entries(uploadedFiles).map((file) => {
@@ -65,15 +56,21 @@ export default function SummaryStep() {
   const stats = {
     totalFilesUploaded: {
       text: 'Total files uploaded',
-      value: uploadedFiles?.length, // ok
+      value: uploadedFiles?.length,
     },
-    filesWithExif: { text: 'Files with exif', value: filesWithExif }, // ok
-    userReviewedFiles: { text: 'User-Reviewed files', value: 23 }, // need reviewed stat
+    filesWithExif: { text: 'Files with exif', value: filesWithExif },
+    userReviewedFiles: {
+      text: 'User-Reviewed files',
+      value: reviewStats.length,
+    },
     modelDetections: {
       text: 'Model Detection',
-      value: Object.keys(annotations).length, // ok?
+      value: Object.keys(annotations).length,
     },
-    gdprCases: { text: 'GDPR Cases', value: GDPRCases }, // need to do resolved out of total
+    gdprCases: {
+      text: 'Unresolved GDPR Cases',
+      value: NotReviewedGDPRFiles.length,
+    },
   };
 
   return (
@@ -88,7 +85,6 @@ export default function SummaryStep() {
                   <FancyButton
                     onClick={() => {
                       setStatView(pair[0]);
-                      console.log('Just set statView:', statView);
                     }}
                   >
                     {pair[1].text} : {pair[1].value}
@@ -171,22 +167,6 @@ export default function SummaryStep() {
               )}
             </StatsCarouselContainer>
           </CarouselContainer>
-          <PrevNextNav
-            prevBtnProps={{
-              onClick: () => history.push(getLink(workflowRoutes.upload)),
-              disabled: false,
-              children: 'Upload more',
-            }}
-            skipBtnProps={{
-              disabled: false,
-              children: 'Continue processing files',
-            }}
-            nextBtnProps={{
-              onClick: onNextClicked,
-              disabled: false,
-              children: 'Finish processing',
-            }}
-          />
         </Container>
       </QueryClientProvider>
     </>
@@ -216,8 +196,7 @@ const StatsCarouselRight = styled.div`
   grid-template-rows: repeat(5, 1fr);
   border-radius: inherit;
   padding: 1em;
-  width: 40rem;
-  max-height: 20rem;
+  max-height: 18rem;
   overflow: scroll;
 `;
 const StatsCarouselLeft = styled.div`
