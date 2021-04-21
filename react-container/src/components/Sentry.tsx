@@ -15,7 +15,7 @@ export const ConditionalSentry: React.FC<{
   children: React.ReactElement;
   disabled?: boolean;
 }> = ({ disabled, children }) => (
-  <ConditionalWrapperWithProps condition={disabled} wrap={Sentry}>
+  <ConditionalWrapperWithProps condition={!disabled} wrap={Sentry}>
     {children}
   </ConditionalWrapperWithProps>
 );

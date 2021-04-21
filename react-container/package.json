@@ -1,6 +1,6 @@
 {
   "name": "@cognite/react-container",
-  "version": "0.11.3",
+  "version": "0.11.4",
   "source": "src/index.ts",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",

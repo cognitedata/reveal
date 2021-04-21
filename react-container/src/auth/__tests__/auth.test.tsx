@@ -44,9 +44,31 @@ describe('getAuthHeaders', () => {
     expect(result.current).toEqual({ Authorization: 'Bearer token-test' });
   });
 
-  it('should default to api key if no token is set', () => {
-    const { result } = renderHook(() => getAuthHeaders());
+  it('should fallback to api key if token not found', () => {
+    const testKey = 'test-api-key-1';
+    process.env.REACT_APP_API_KEY = testKey;
+    const { result } = renderHook(() => getAuthHeaders(), {
+      wrapper: ({ children }) => (
+        <AuthProvider.Provider
+          value={{
+            authState: {
+              ...authState.authState,
+              token: undefined,
+              idToken: undefined,
+            },
+          }}
+        >
+          {children}
+        </AuthProvider.Provider>
+      ),
+    });
 
+    expect(result.current).toEqual({ 'api-key': testKey });
+  });
+
+  it('should default to api key if no token is set', () => {
+    process.env.REACT_APP_API_KEY = '';
+    const { result } = renderHook(() => getAuthHeaders());
     expect(result.current).toEqual({ 'api-key': '' });
   });
 

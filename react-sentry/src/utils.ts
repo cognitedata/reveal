@@ -29,15 +29,12 @@ export interface SentryProps {
 
 export const initSentry = ({ ignoreErrors, dsn }: SentryProps) => {
   const chosenDsn = dsn || process.env.REACT_APP_SENTRY_DSN;
-
   if (!chosenDsn) {
-    log(`${dsn}`, [], 2);
     log('Sentry DSN not found. Not initializing Sentry.', [], 2);
     return;
   }
 
   const enabled = !isLocalhost();
-
   if (!enabled) {
     log('Sentry disabled for localhost.', [], 1);
     return;

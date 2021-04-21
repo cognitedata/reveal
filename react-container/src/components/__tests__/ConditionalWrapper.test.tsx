@@ -28,6 +28,9 @@ describe('ConditionalWrapper', () => {
     expect(
       screen.getByText('This string is from wrapper props')
     ).toBeInTheDocument();
+
+    expect(screen.getByText('This is the test wrapper')).toBeInTheDocument();
+
     expect(screen.getByText('test-content 3')).toBeInTheDocument();
   });
 });

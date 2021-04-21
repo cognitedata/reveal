@@ -36,6 +36,7 @@ const TestWrapper: React.FC<{ otherProps: string }> = ({
 }) => {
   return (
     <>
+      <div>This is the test wrapper</div>
       <div>{otherProps}</div>
       <div>{children}</div>
     </>

@@ -1,3 +1,10 @@
+## 0.11.4 April 21 2021
+
+### Changes
+
+- BUG: sentry container enable flag was configured wrong
+- BUG: loop detector container enable flag was configured wrong
+
 ## 0.11.3 Mar 25 2021
 
 ### Changes

@@ -29,7 +29,7 @@ export const ConditionalLoopDetector: React.FC<{
   children: React.ReactElement;
   disabled?: boolean;
 }> = ({ disabled, children }) => (
-  <ConditionalWrapperWithProps condition={disabled} wrap={LoopDetector}>
+  <ConditionalWrapperWithProps condition={!disabled} wrap={LoopDetector}>
     {children}
   </ConditionalWrapperWithProps>
 );
