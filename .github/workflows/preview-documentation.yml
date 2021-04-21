@@ -1,9 +1,9 @@
 name: preview-documentation
 
 on:
-  push:
-    branches:
-      - 'mn/**'
+  pull_request:
+    branches-ignore:
+      - 'dependabot/**'
 
 jobs:
   build-and-deploy:
