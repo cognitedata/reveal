@@ -33,6 +33,13 @@ export enum SsaoSampleQuality {
 }
 
 /**
+ * Edge detection parameters supported by Reveal.
+ */
+export type EdgeDetectionParameters = {
+  enabled: boolean;
+};
+
+/**
  * Screen-space ambient occlusion parameters supported by Reveal.
  */
 export type SsaoParameters = {
@@ -67,6 +74,10 @@ export type RenderOptions = {
    * Determines the parameters used for ambient occlusion heuristic shading.
    */
   ssaoRenderParameters?: SsaoParameters;
+  /**
+   * Determines the parameters used for visualizing edges of the geometry.
+   */
+  edgeDetectionParameters?: EdgeDetectionParameters;
 };
 
 /**
@@ -75,7 +86,8 @@ export type RenderOptions = {
 export const defaultRenderOptions: Required<RenderOptions> = {
   antiAliasing: AntiAliasingMode.FXAA,
   multiSampleCountHint: 1,
-  ssaoRenderParameters: { sampleSize: SsaoSampleQuality.Default, sampleRadius: 1.0, depthCheckBias: 0.0125 }
+  ssaoRenderParameters: { sampleSize: SsaoSampleQuality.Default, sampleRadius: 1.0, depthCheckBias: 0.0125 },
+  edgeDetectionParameters: { enabled: true }
 };
 
 /**
@@ -93,22 +105,6 @@ export type RevealOptions = {
 };
 
 /**
- * Event notifying about a nodeId -> treeIndex map being loaded
- * as a result of parsing a sector.
- * @property blobUrl Identifies the model the nodeID map was loaded for.
- * @property nodeIdToTreeIndexMap Map defining a mapping from nodeId to treeIndex.
- */
-export type SectorNodeIdToTreeIndexMapLoadedEvent = {
-  blobUrl: string;
-  nodeIdToTreeIndexMap: Map<number, number>;
-};
-
-/**
- * Handler for SectorNodeIdToTreeIndexMapLoadedEvent.
- */
-export type SectorNodeIdToTreeIndexMapLoadedListener = (event: SectorNodeIdToTreeIndexMapLoadedEvent) => void;
-
-/**
  * Handler for events about data being loaded.
  */
 export type LoadingStateChangeListener = (loadingState: LoadingState) => any;
@@ -117,7 +113,6 @@ export * from '../datamodels/pointcloud/types';
 export * from './migration/types';
 
 export { CadLoadingHints } from '../datamodels/cad/CadLoadingHints';
-export { CadRenderHints } from '../datamodels/cad/rendering/CadRenderHints';
 
 export { SupportedModelTypes } from '../datamodels/base';
 export { CadModelMetadata } from '../datamodels/cad/CadModelMetadata';

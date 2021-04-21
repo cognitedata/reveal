@@ -4,6 +4,7 @@
 #pragma glslify: updateFragmentColor = require('../../base/updateFragmentColor.glsl')
 #pragma glslify: isSliced = require('../../base/isSliced.glsl', NUM_CLIPPING_PLANES=NUM_CLIPPING_PLANES, UNION_CLIPPING_PLANES=UNION_CLIPPING_PLANES)
 #pragma glslify: determineColor = require('../../base/determineColor.glsl');
+#pragma glslify: GeometryType = require('../../base/geometryTypes.glsl');
 
 #define PI 3.14159265359
 #define PI2 6.28318530718
@@ -138,5 +139,5 @@ void main() {
 #endif
 
     float fragDepth = updateFragmentDepth(p, projectionMatrix);
-    updateFragmentColor(renderMode, color, v_treeIndex, normal, fragDepth, matCapTexture, true);
+    updateFragmentColor(renderMode, color, v_treeIndex, normal, fragDepth, matCapTexture, GeometryType.Primitive);
 }

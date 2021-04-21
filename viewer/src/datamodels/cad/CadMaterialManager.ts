@@ -24,7 +24,7 @@ interface MaterialsWrapper {
   nodeTransformTextureBuilder: NodeTransformTextureBuilder;
 }
 
-export class MaterialManager {
+export class CadMaterialManager {
   private readonly _events = {
     materialsChanged: new EventTrigger<() => void>()
   };
@@ -157,8 +157,10 @@ export class MaterialManager {
   setRenderMode(mode: RenderMode) {
     this._renderMode = mode;
     const transparent = mode === RenderMode.Ghost;
+    const colorWrite = mode !== RenderMode.DepthBufferOnly;
     this.applyToAllMaterials(material => {
       material.uniforms.renderMode.value = mode;
+      material.colorWrite = colorWrite;
       material.transparent = transparent;
     });
     this.triggerMaterialsChanged();

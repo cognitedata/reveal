@@ -34,7 +34,6 @@ import {
   defaultRenderOptions,
   DisposedDelegate,
   SceneRenderedDelegate,
-  SectorNodeIdToTreeIndexMapLoadedEvent,
   SsaoParameters,
   SsaoSampleQuality
 } from '../types';
@@ -57,6 +56,7 @@ import {
   RevealOptions
 } from '../..';
 import { PropType } from '../../utilities/reflection';
+import { CadModelSectorLoadStatistics } from '../../datamodels/cad/CadModelSectorLoadStatistics';
 
 type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered' | 'disposed';
 
@@ -180,6 +180,13 @@ export class Cognite3DViewer {
     this._revealManager.cadBudget = budget;
   }
 
+  /**
+   * @internal
+   */
+  public get cadLoadedStatistics(): CadModelSectorLoadStatistics {
+    return this._revealManager.cadLoadedStatistics;
+  }
+
   constructor(options: Cognite3DViewerOptions) {
     if (options.enableCache) {
       throw new NotSupportedInMigrationWrapperError('Cache is not supported');
@@ -210,6 +217,7 @@ export class Cognite3DViewer {
     this.camera.lookAt(new THREE.Vector3());
 
     this.scene = new THREE.Scene();
+    this.scene.autoUpdate = false;
     this.controls = new ComboControls(this.camera, this.canvas);
     this.controls.dollyFactor = 0.992;
     this.controls.minDistance = 1.0;
@@ -224,7 +232,7 @@ export class Cognite3DViewer {
 
     const revealOptions = createRevealManagerOptions(options);
 
-    this._revealManager = createCdfRevealManager(this.sdkClient, revealOptions);
+    this._revealManager = createCdfRevealManager(this.sdkClient, this._renderer, this.scene, revealOptions);
     this.startPointerEventListeners();
 
     this._revealManager.setRenderTarget(
@@ -244,7 +252,7 @@ export class Cognite3DViewer {
             this.spinner.hide();
           }
           if (options.onLoading) {
-            options.onLoading(loadingState.itemsLoaded, loadingState.itemsRequested);
+            options.onLoading(loadingState.itemsLoaded, loadingState.itemsRequested, loadingState.itemsCulled);
           }
         },
         error =>
@@ -474,17 +482,6 @@ export class Cognite3DViewer {
     const model3d = new Cognite3DModel(modelId, revisionId, cadNode, this.sdkClient);
     this.models.push(model3d);
     this.scene.add(model3d);
-    this._subscription.add(
-      fromEventPattern<SectorNodeIdToTreeIndexMapLoadedEvent>(
-        h => this._revealManager.on('nodeIdToTreeIndexMapLoaded', h),
-        h => this._revealManager.off('nodeIdToTreeIndexMapLoaded', h)
-      ).subscribe(event => {
-        // TODO 2020-07-05 larsmoa: Fix a better way of identifying a model than blobUrl
-        if (event.blobUrl === cadNode.cadModelMetadata.blobUrl) {
-          model3d.updateNodeIdMaps(event.nodeIdToTreeIndexMap);
-        }
-      })
-    );
 
     if (options.geometryFilter) {
       const geometryFilter = transformGeometryFilterToModelSpace(options.geometryFilter, model3d);
@@ -518,10 +515,10 @@ export class Cognite3DViewer {
       throw new NotSupportedInMigrationWrapperError('geometryFilter is not supported for point clouds');
     }
     if (options.orthographicCamera) {
-      throw new NotSupportedInMigrationWrapperError('ortographicsCamera is not supported');
+      throw new NotSupportedInMigrationWrapperError('ortographicsCamera is not supported for point clouds');
     }
     if (options.onComplete) {
-      throw new NotSupportedInMigrationWrapperError('onComplete is not supported');
+      throw new NotSupportedInMigrationWrapperError('onComplete is not supported for point clouds');
     }
 
     const { modelId, revisionId } = options;
@@ -620,6 +617,7 @@ export class Cognite3DViewer {
       return;
     }
     this.scene.add(object);
+    object.updateMatrixWorld(true);
     this.extraObjects.push(object);
     this.renderController.redraw();
     this.triggerUpdateCameraNearAndFar(true);
@@ -988,12 +986,12 @@ export class Cognite3DViewer {
 
     const { width: originalWidth, height: originalHeight } = this.canvas;
 
-    const screenshotCamera = this.camera.clone();
+    const screenshotCamera = this.camera.clone() as THREE.PerspectiveCamera;
     adjustCamera(screenshotCamera, width, height);
 
     this.renderer.setSize(width, height);
     this.renderer.render(this.scene, screenshotCamera);
-    this._revealManager.render(this.renderer, screenshotCamera, this.scene);
+    this._revealManager.render(screenshotCamera);
     const url = this.renderer.domElement.toDataURL();
 
     this.renderer.setSize(originalWidth, originalHeight);
@@ -1222,7 +1220,7 @@ export class Cognite3DViewer {
         const frameNumber = this.renderer.info.render.frame;
         const start = Date.now();
         this.triggerUpdateCameraNearAndFar();
-        this._revealManager.render(this.renderer, this.camera, this.scene);
+        this._revealManager.render(this.camera);
         renderController.clearNeedsRedraw();
         this._revealManager.resetRedraw();
         this._slicingNeedsUpdate = false;
@@ -1549,11 +1547,15 @@ function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions): Reve
   revealOptions.internal = { sectorCuller: viewerOptions._sectorCuller };
   const { antiAliasing, multiSampleCount } = determineAntiAliasingMode(viewerOptions.antiAliasingHint);
   const ssaoRenderParameters = determineSsaoRenderParameters(viewerOptions.ssaoQualityHint);
+  const edgeDetectionParameters = {
+    enabled: viewerOptions.enableEdges ?? defaultRenderOptions.edgeDetectionParameters.enabled
+  };
 
   revealOptions.renderOptions = {
     antiAliasing,
     multiSampleCountHint: multiSampleCount,
-    ssaoRenderParameters
+    ssaoRenderParameters,
+    edgeDetectionParameters
   };
   return revealOptions;
 }
@@ -1617,7 +1619,7 @@ function determineSsaoRenderParameters(quality: SsaoQuality): SsaoParameters {
 }
 
 function transformGeometryFilterToModelSpace(filter: GeometryFilter, model: Cognite3DModel): GeometryFilter {
-  if (filter.boundingBox === undefined) {
+  if (filter.boundingBox === undefined || filter.isBoundingBoxInModelCoordinates) {
     return filter;
   }
 

@@ -17,11 +17,16 @@ export type Color = {
   b: number;
 };
 /**
- * Callback to monitor downloaded requests and progress.
+ * Callback to monitor loaded requests and progress.
  * Use OnLoadingCallback instead of onProgress/onComplete.
  * @module @cognite/reveal
+ *
+ * @param itemsLoaded Number of items loaded so far in this batch.
+ * @param itemsRequested Total number of items to load in this batch.
+ * @param itemsCulled Number of items deemed unnecessary to load in this batch.
+ * @version itemsCulled is new in 2.0.0
  */
-export type OnLoadingCallback = (itemsDownloaded: number, itemsRequested: number) => void;
+export type OnLoadingCallback = (itemsLoaded: number, itemsRequested: number, itemsCulled: number) => void;
 
 /**
  * @module @cognite/reveal
@@ -123,6 +128,11 @@ export interface Cognite3DViewerOptions {
    */
   ssaoQualityHint?: 'medium' | 'high' | 'veryhigh' | 'disabled';
 
+  /**
+   * Enables / disables visualizing the edges of geometry. Defaults to true.
+   */
+  enableEdges?: boolean;
+
   /** Callback to download stream progress. */
   onLoading?: OnLoadingCallback;
 
@@ -138,7 +148,23 @@ export interface Cognite3DViewerOptions {
  * @module @cognite/reveal
  */
 export interface GeometryFilter {
+  /**
+   * The bounds to load geometry within. By default this box is in CDF coordinate space which
+   * will be transformed into coordinates relative to the model using the the model transformation
+   * which can be specified using {@link https://docs.cognite.com/api/v1/#operation/update3DRevisions |the CDF API},
+   * or set in {@link https://fusion.cognite.com/ |Cognite Fusion}.
+   * @see {@link isBoundingBoxInModelCoordinates}.
+   */
   boundingBox?: THREE.Box3;
+
+  /**
+   * When set, the geometry filter {@link boundingBox} will be considered to be in "Reveal space".
+   * Rather than CDF space which is the default. When using Reveal space, the model transformation
+   * which can be specified using {@link https://docs.cognite.com/api/v1/#operation/update3DRevisions |the CDF API},
+   * or set in {@link https://fusion.cognite.com/ |Cognite Fusion}.
+   * @version New in 1.5.0
+   */
+  isBoundingBoxInModelCoordinates?: boolean;
 }
 
 /**

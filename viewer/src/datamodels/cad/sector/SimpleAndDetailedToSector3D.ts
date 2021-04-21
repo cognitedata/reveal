@@ -7,21 +7,22 @@ import * as THREE from 'three';
 import { OperatorFunction, Observable, asapScheduler, scheduled } from 'rxjs';
 import { filter, map, mergeAll, publish } from 'rxjs/operators';
 
-import { MaterialManager } from '../MaterialManager';
-import { SectorQuads } from '../rendering/types';
+import { CadMaterialManager } from '../CadMaterialManager';
+import { InstancedMeshFile, SectorQuads } from '../rendering/types';
 
 import { SectorGeometry, ParsedSector } from './types';
 import { LevelOfDetail } from './LevelOfDetail';
 import { consumeSectorDetailed, consumeSectorSimple } from './sectorUtilities';
+import { toThreeJsBox3 } from '../../../utilities';
 
 export class SimpleAndDetailedToSector3D {
-  private readonly materialManager: MaterialManager;
+  private readonly materialManager: CadMaterialManager;
 
-  constructor(materialManager: MaterialManager) {
+  constructor(materialManager: CadMaterialManager) {
     this.materialManager = materialManager;
   }
 
-  transform(): OperatorFunction<ParsedSector, THREE.Group> {
+  transform(): OperatorFunction<ParsedSector, { sectorMeshes: THREE.Group; instancedMeshes: InstancedMeshFile[] }> {
     return publish((source: Observable<ParsedSector>) => {
       const detailedObservable: Observable<ParsedSector> = source.pipe(
         filter((parsedSector: ParsedSector) => parsedSector.levelOfDetail === LevelOfDetail.Detailed)
@@ -45,6 +46,7 @@ export class SimpleAndDetailedToSector3D {
             map(parsedSector =>
               consumeSectorSimple(
                 parsedSector.data as SectorQuads,
+                toThreeJsBox3(new THREE.Box3(), parsedSector.metadata.bounds),
                 this.materialManager.getModelMaterials(parsedSector.blobUrl)!
               )
             )

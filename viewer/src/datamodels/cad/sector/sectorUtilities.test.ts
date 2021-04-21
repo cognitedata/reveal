@@ -10,7 +10,8 @@ import { createEmptySector } from '../../../__testutilities__/emptySector';
 import { createMaterials } from '../rendering/materials';
 import { RenderMode } from '../rendering/RenderMode';
 import { consumeSectorDetailed, consumeSectorSimple } from './sectorUtilities';
-import { TriangleMesh, InstancedMeshFile, InstancedMesh, SectorQuads } from '../rendering/types';
+import { TriangleMesh, SectorQuads } from '../rendering/types';
+import * as THREE from 'three';
 
 import 'jest-extended';
 
@@ -59,10 +60,10 @@ describe('sectorUtilities', () => {
       const sector = createEmptySector();
 
       // Act
-      const group = consumeSectorDetailed(sector, metadata, materials);
+      const { sectorMeshes } = consumeSectorDetailed(sector, metadata, materials);
 
       // Assert
-      expect(group.children).toBeEmpty();
+      expect(sectorMeshes.children).toBeEmpty();
     });
 
     test('single triangle mesh, adds geometry', () => {
@@ -71,22 +72,10 @@ describe('sectorUtilities', () => {
       const sector: SectorGeometry = Object.assign(createEmptySector(), { triangleMeshes } as SectorGeometry);
 
       // Act
-      const group = consumeSectorDetailed(sector, metadata, materials);
+      const { sectorMeshes } = consumeSectorDetailed(sector, metadata, materials);
 
       // Assert
-      expect(group.children.length).toBe(1);
-    });
-
-    test('single instance mesh, adds geometry', () => {
-      // Arrange
-      const instanceMeshes = [newInstanceMeshFile()];
-      const sector: SectorGeometry = Object.assign(createEmptySector(), { instanceMeshes } as SectorGeometry);
-
-      // Act
-      const group = consumeSectorDetailed(sector, metadata, materials);
-
-      // Assert
-      expect(group.children.length).toBe(1);
+      expect(sectorMeshes.children.length).toBe(1);
     });
 
     test('empty sector, produces no geometry', () => {
@@ -94,10 +83,10 @@ describe('sectorUtilities', () => {
       const sector = createEmptySector();
 
       // Act
-      const group = consumeSectorDetailed(sector, metadata, materials);
+      const { sectorMeshes } = consumeSectorDetailed(sector, metadata, materials);
 
       // Assert
-      expect(group.children).toBeEmpty();
+      expect(sectorMeshes.children).toBeEmpty();
     });
   });
 
@@ -110,11 +99,13 @@ describe('sectorUtilities', () => {
         buffer: new Float32Array(0)
       };
 
+      const bounds = new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1, 1, 1));
+
       // Act
-      const group = consumeSectorSimple(sector, materials);
+      const { sectorMeshes } = consumeSectorSimple(sector, bounds, materials);
 
       // Assert
-      expect(group.children).toBeEmpty();
+      expect(sectorMeshes.children).toBeEmpty();
     });
 
     test('single valid mesh, adds geometry', () => {
@@ -135,11 +126,13 @@ describe('sectorUtilities', () => {
         ])
       };
 
+      const bounds = new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1, 1, 1));
+
       // Act
-      const group = consumeSectorSimple(sector, materials);
+      const { sectorMeshes } = consumeSectorSimple(sector, bounds, materials);
 
       // Assert
-      expect(group.children).not.toBeEmpty();
+      expect(sectorMeshes.children).not.toBeEmpty();
     });
 
     test('buffer has two elements, success', () => {
@@ -169,11 +162,13 @@ describe('sectorUtilities', () => {
         ])
       };
 
+      const bounds = new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1, 1, 1));
+
       // Act
-      const group = consumeSectorSimple(sector, materials);
+      const { sectorMeshes } = consumeSectorSimple(sector, bounds, materials);
 
       // Assert
-      expect(group.children.length).toBe(1);
+      expect(sectorMeshes.children.length).toBe(1);
     });
 
     test('buffer has extra bytes, throws', () => {
@@ -196,8 +191,10 @@ describe('sectorUtilities', () => {
         ])
       };
 
+      const bounds = new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1, 1, 1));
+
       // Act
-      expect(() => consumeSectorSimple(sector, materials)).toThrowError();
+      expect(() => consumeSectorSimple(sector, bounds, materials)).toThrowError();
     });
 
     test('buffer missing bytes, throws', () => {
@@ -212,8 +209,10 @@ describe('sectorUtilities', () => {
         ])
       };
 
+      const bounds = new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1, 1, 1));
+
       // Act
-      expect(() => consumeSectorSimple(sector, materials)).toThrowError();
+      expect(() => consumeSectorSimple(sector, bounds, materials)).toThrowError();
     });
   });
 });
@@ -226,25 +225,5 @@ function newTriangleMesh(): TriangleMesh {
     vertices: new Float32Array(5),
     colors: new Uint8Array(30),
     normals: undefined
-  };
-}
-
-function newInstanceMeshFile(): InstancedMeshFile {
-  return {
-    fileId: 0,
-    indices: new Uint32Array(10),
-    vertices: new Float32Array(5),
-    normals: new Float32Array(5),
-    instances: [newInstanceMesh()]
-  };
-}
-
-function newInstanceMesh(): InstancedMesh {
-  return {
-    triangleCount: 4,
-    triangleOffset: 0,
-    colors: new Uint8Array(4),
-    instanceMatrices: new Float32Array(16),
-    treeIndices: new Float32Array(1)
   };
 }

@@ -16,7 +16,7 @@ CameraControls.install({ THREE });
 
 export function Simple() {
   const canvas = useRef<HTMLCanvasElement>(null);
-  const [loadingState, setLoadingState] = useState<reveal.utilities.LoadingState>({ isLoading: false, itemsLoaded: 0, itemsRequested: 0 });
+  const [loadingState, setLoadingState] = useState<reveal.utilities.LoadingState>({ isLoading: false, itemsLoaded: 0, itemsRequested: 0, itemsCulled: 0 });
 
   useEffect(() => {
     let revealManager: reveal.RevealManager<unknown>;
@@ -32,13 +32,19 @@ export function Simple() {
       const client = new CogniteClient({ appId: 'reveal.example.simple' });
       client.loginWithOAuth({ project });
 
+      const renderer = new THREE.WebGLRenderer({
+        canvas: canvas.current,
+      });
+      renderer.setClearColor('#444');
+      renderer.setPixelRatio(window.devicePixelRatio);
+
       const scene = new THREE.Scene();
       let model: reveal.CadNode;
       if (modelRevision) {
-        revealManager = reveal.createCdfRevealManager(client, { logMetrics: false });
+        revealManager = reveal.createCdfRevealManager(client, renderer, scene, { logMetrics: false });
         model = await revealManager.addModel('cad', modelRevision);
       } else if (modelUrl) {
-        revealManager = reveal.createLocalRevealManager({ logMetrics: false });
+        revealManager = reveal.createLocalRevealManager(renderer, scene, { logMetrics: false });
         model = await revealManager.addModel('cad', modelUrl);
       } else {
         throw new Error(
@@ -49,11 +55,6 @@ export function Simple() {
       revealManager.on('loadingStateChanged', setLoadingState);
 
       scene.add(model);
-      const renderer = new THREE.WebGLRenderer({
-        canvas: canvas.current,
-      });
-      renderer.setClearColor('#444');
-      renderer.setPixelRatio(window.devicePixelRatio);
 
       const { position, target, near, far } = model.suggestCameraConfig();
       const camera = new THREE.PerspectiveCamera(75, 2, near, far);

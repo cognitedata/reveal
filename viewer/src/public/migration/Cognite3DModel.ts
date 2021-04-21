@@ -9,13 +9,12 @@ import { CameraConfiguration } from './types';
 import { CogniteModelBase } from './CogniteModelBase';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import { NumericRange, Box3, toThreeJsBox3 } from '../../utilities';
-import { CadRenderHints, CadNode } from '../../experimental';
+import { CadNode } from '../../experimental';
 import { trackError } from '../../utilities/metrics';
 
 import { SupportedModelTypes, CadLoadingHints, CadModelMetadata } from '../types';
 import { callActionWithIndicesAsync } from '../../utilities/callActionWithIndicesAsync';
 import { CogniteClientNodeIdAndTreeIndexMapper } from '../../utilities/networking/CogniteClientNodeIdAndTreeIndexMapper';
-import { NodeAppearanceProvider } from '../../datamodels/cad/styling/NodeAppearanceProvider';
 import { NodeSet } from '../../datamodels/cad/styling';
 import { NodeAppearance } from '../../datamodels/cad';
 import { NodeTransformProvider } from '../../datamodels/cad/styling/NodeTransformProvider';
@@ -31,30 +30,8 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   /**
    * @internal
    */
-  private get nodeApperanceProvider(): NodeAppearanceProvider {
-    return this.cadNode.nodeAppearanceProvider;
-  }
-
-  /**
-   * @internal
-   */
   private get nodeTransformProvider(): NodeTransformProvider {
     return this.cadNode.nodeTransformProvider;
-  }
-
-  /**
-   * Get settings used for rendering.
-   */
-  get renderHints(): CadRenderHints {
-    return this.cadNode.renderHints;
-  }
-
-  /**
-   * Specify settings for rendering.
-   */
-  // TODO 2021-01-19 larsmoa: Remove rendering hints per model
-  set renderHints(hints: CadRenderHints) {
-    this.cadNode.renderHints = hints;
   }
 
   /**
@@ -161,7 +138,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * @version new in 2.0
    */
   addStyledNodeSet(nodes: NodeSet, appearance: NodeAppearance) {
-    this.nodeApperanceProvider.addStyledSet(nodes, appearance);
+    this.cadNode.nodeAppearanceProvider.addStyledSet(nodes, appearance);
   }
 
   /**
@@ -170,7 +147,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * @version new in 2.0
    */
   removeStyledNodeSet(nodes: NodeSet) {
-    this.nodeApperanceProvider.removeStyledSet(nodes);
+    this.cadNode.nodeAppearanceProvider.removeStyledSet(nodes);
   }
 
   /**
@@ -179,7 +156,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * @version new in 2.0
    */
   removeAllStyledNodeSets() {
-    this.nodeApperanceProvider.clear();
+    this.cadNode.nodeAppearanceProvider.clear();
   }
 
   /**
@@ -353,14 +330,6 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    */
   getModelTransformation(out?: THREE.Matrix4): THREE.Matrix4 {
     return this.cadNode.getModelTransformation(out);
-  }
-
-  /**
-   * @param sector
-   * @internal
-   */
-  updateNodeIdMaps(sector: Map<number, number>) {
-    this.nodeIdAndTreeIndexMaps.updateMaps(sector);
   }
 
   /**

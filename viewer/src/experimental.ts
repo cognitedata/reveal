@@ -13,7 +13,6 @@ export { NodeAppearance, DefaultNodeAppearance } from './datamodels/cad';
 
 export { CadModelMetadata, SuggestedCameraConfig } from './datamodels/cad/';
 export { SectorMetadata } from './datamodels/cad/sector/types';
-export { CadRenderHints } from './datamodels/cad/rendering/CadRenderHints';
 export { CadLoadingHints } from './datamodels/cad/CadLoadingHints';
 export { intersectCadNodes } from './datamodels/cad/picking';
 

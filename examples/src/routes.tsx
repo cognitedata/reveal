@@ -4,7 +4,6 @@
 
 import React, { ReactNode } from 'react';
 import { Simple } from './pages/Simple';
-import { SideBySide } from './pages/SideBySide';
 import { Clipping } from './pages/Clipping';
 import { Migration } from './pages/Migration';
 import { SectorWithPointcloud } from './pages/SectorWithPointcloud';
@@ -12,7 +11,6 @@ import { SimplePointcloud } from './pages/SimplePointcloud';
 import { SSAO } from './pages/SSAO';
 import { TwoModels } from './pages/TwoModels';
 import { WalkablePath } from './pages/WalkablePath';
-import { WebGLTwo } from './pages/WebGLTwo';
 
 import {
   cadTestBasePath,
@@ -93,14 +91,6 @@ export const exampleRoutes: Array<ExampleRoute> = [
     component: <SectorWithPointcloud />,
   },
   {
-    path:
-      `/side-by-side?project=${project}` +
-      `&modelId=${cadId}&revisionId=${cadRevisionId}` +
-      `&modelId2=${cad2Id}&revisionId2=${cad2RevisionId}`,
-    menuTitle: 'Side-by-side debugger for sector models',
-    component: <SideBySide />,
-  },
-  {
     path: `/simple-point-cloud?project=${project}&modelId=${pointCloudId}&revisionId=${pointCloudRevisionId}`,
     menuTitle: 'Simple Point Cloud',
     component: <SimplePointcloud />,
@@ -123,11 +113,6 @@ export const exampleRoutes: Array<ExampleRoute> = [
     path: '/walkable-path',
     menuTitle: 'Walkable Path',
     component: <WalkablePath />,
-  },
-  {
-    path: '/webgltwo',
-    menuTitle: 'WebGL 2.0',
-    component: <WebGLTwo />,
   },
 ].sort(menuTitleAz);
 

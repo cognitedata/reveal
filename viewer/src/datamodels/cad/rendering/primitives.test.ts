@@ -1,15 +1,12 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-
 import * as THREE from 'three';
-
 import { SectorGeometry } from '../sector/types';
 import { createPrimitives } from './primitives';
 import { createEmptySector } from '../../../__testutilities__/emptySector';
 import { createMaterials, Materials } from './materials';
 import { ParsePrimitiveAttribute } from '@cognite/reveal-parser-worker';
-import { InstancedBufferGeometry, LOD, Mesh } from 'three';
 import { RenderMode } from './RenderMode';
 
 function createMockAttributes(): Map<string, ParsePrimitiveAttribute> {
@@ -20,10 +17,29 @@ function createMockAttributes(): Map<string, ParsePrimitiveAttribute> {
   const mockAttribute2: ParsePrimitiveAttribute = { offset: 12, size: 12 };
 
   const treeIndexAttribute: ParsePrimitiveAttribute = { offset: 16, size: 4 };
+  const mockInstanceMatrix0: ParsePrimitiveAttribute = { offset: 20, size: 4 };
+  const mockInstanceMatrix1: ParsePrimitiveAttribute = { offset: 24, size: 4 };
+  const mockInstanceMatrix2: ParsePrimitiveAttribute = { offset: 28, size: 4 };
+  const mockInstanceMatrix3: ParsePrimitiveAttribute = { offset: 32, size: 4 };
+
+  const mockVertex1: ParsePrimitiveAttribute = { offset: 36, size: 3 };
+  const mockVertex2: ParsePrimitiveAttribute = { offset: 39, size: 3 };
+  const mockVertex3: ParsePrimitiveAttribute = { offset: 42, size: 3 };
+  const mockVertex4: ParsePrimitiveAttribute = { offset: 45, size: 3 };
 
   map.set('attrOne', mockAttribute0);
   map.set('attrTwo', mockAttribute1);
   map.set('attrThree', mockAttribute2);
+
+  map.set('instanceMatrix_column_0', mockInstanceMatrix0);
+  map.set('instanceMatrix_column_1', mockInstanceMatrix1);
+  map.set('instanceMatrix_column_2', mockInstanceMatrix2);
+  map.set('instanceMatrix_column_3', mockInstanceMatrix3);
+
+  map.set('vertex1', mockVertex1);
+  map.set('vertex2', mockVertex2);
+  map.set('vertex3', mockVertex3);
+  map.set('vertex4', mockVertex4);
 
   map.set('treeIndex', treeIndexAttribute);
 
@@ -48,6 +64,7 @@ describe('createPrimitives', () => {
     new THREE.DataTexture(new Uint8Array(64), 4, 4),
     new THREE.DataTexture(new Uint8Array(64), 4, 4)
   );
+  const bounds = new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1, 1, 1));
   let emptySector: SectorGeometry;
   let mockAttributes: Map<string, ParsePrimitiveAttribute>;
   let mockAttributeBuffer: Uint8Array;
@@ -59,7 +76,7 @@ describe('createPrimitives', () => {
   });
 
   test('no primitives doesnt return any nods', () => {
-    const nodes = Array.from(createPrimitives(emptySector, materials));
+    const nodes = Array.from(createPrimitives(emptySector, materials, bounds));
     expect(nodes).toBeEmpty();
   });
 
@@ -68,7 +85,7 @@ describe('createPrimitives', () => {
     boxSector.primitives.boxCollection = mockAttributeBuffer;
     boxSector.primitives.boxAttributes = mockAttributes;
 
-    testPrimitiveBase(boxSector, materials, mockAttributes, 'box', 2);
+    testPrimitiveBase(boxSector, materials, mockAttributes, 'box', bounds, 2);
   });
 
   test('Circle primitives, returns one geometry', () => {
@@ -76,7 +93,7 @@ describe('createPrimitives', () => {
     circleSector.primitives.circleCollection = mockAttributeBuffer;
     circleSector.primitives.circleAttributes = mockAttributes;
 
-    testPrimitiveBase(circleSector, materials, mockAttributes, 'circle', 2);
+    testPrimitiveBase(circleSector, materials, mockAttributes, 'circle', bounds, 2);
   });
 
   test('Cone primitives, returns one geometry', () => {
@@ -84,7 +101,7 @@ describe('createPrimitives', () => {
     coneSector.primitives.coneCollection = mockAttributeBuffer;
     coneSector.primitives.coneAttributes = mockAttributes;
 
-    testPrimitiveBase(coneSector, materials, mockAttributes, 'cone');
+    testPrimitiveBase(coneSector, materials, mockAttributes, 'cone', bounds);
   });
 
   test('Eccentric cone primitives, returns one geometry', () => {
@@ -92,7 +109,7 @@ describe('createPrimitives', () => {
     eccentricConeSector.primitives.eccentricConeCollection = mockAttributeBuffer;
     eccentricConeSector.primitives.eccentricConeAttributes = mockAttributes;
 
-    testPrimitiveBase(eccentricConeSector, materials, mockAttributes, 'eccentriccone');
+    testPrimitiveBase(eccentricConeSector, materials, mockAttributes, 'eccentriccone', bounds);
   });
 
   test('Ellipsoid segments primitives, returns one geometry', () => {
@@ -100,7 +117,7 @@ describe('createPrimitives', () => {
     ellipsoidSector.primitives.ellipsoidSegmentCollection = mockAttributeBuffer;
     ellipsoidSector.primitives.ellipsoidSegmentAttributes = mockAttributes;
 
-    testPrimitiveBase(ellipsoidSector, materials, mockAttributes, 'ellipsoid');
+    testPrimitiveBase(ellipsoidSector, materials, mockAttributes, 'ellipsoid', bounds);
   });
 
   test('General cylinder primitives, returns one geometry', () => {
@@ -108,7 +125,7 @@ describe('createPrimitives', () => {
     generalCylinderSector.primitives.generalCylinderCollection = mockAttributeBuffer;
     generalCylinderSector.primitives.generalCylinderAttributes = mockAttributes;
 
-    testPrimitiveBase(generalCylinderSector, materials, mockAttributes, 'generalcylinder');
+    testPrimitiveBase(generalCylinderSector, materials, mockAttributes, 'generalcylinder', bounds);
   });
 
   test('General ring primitives, returns one geometry', () => {
@@ -116,7 +133,7 @@ describe('createPrimitives', () => {
     generalRingSector.primitives.generalRingCollection = mockAttributeBuffer;
     generalRingSector.primitives.generalRingAttributes = mockAttributes;
 
-    testPrimitiveBase(generalRingSector, materials, mockAttributes, 'generalring');
+    testPrimitiveBase(generalRingSector, materials, mockAttributes, 'generalring', bounds);
   });
 
   test('Nut primitives, returns one geometry', () => {
@@ -124,7 +141,7 @@ describe('createPrimitives', () => {
     nutSector.primitives.nutCollection = mockAttributeBuffer;
     nutSector.primitives.nutAttributes = mockAttributes;
 
-    testPrimitiveBase(nutSector, materials, mockAttributes, 'nut', 2);
+    testPrimitiveBase(nutSector, materials, mockAttributes, 'nut', bounds, 2);
   });
 
   test('Quad primitives, returns one geometry', () => {
@@ -132,7 +149,7 @@ describe('createPrimitives', () => {
     quadSector.primitives.quadCollection = mockAttributeBuffer;
     quadSector.primitives.quadAttributes = mockAttributes;
 
-    testPrimitiveBase(quadSector, materials, mockAttributes, 'quad', 2);
+    testPrimitiveBase(quadSector, materials, mockAttributes, 'quad', bounds, 2);
   });
 
   test('Spherical segment primitives, returns one geometry', () => {
@@ -141,7 +158,7 @@ describe('createPrimitives', () => {
     sphericalSegmentSector.primitives.sphericalSegmentAttributes = mockAttributes;
 
     // The expected name is ellipsoid because we reuse that shader during rendering
-    testPrimitiveBase(sphericalSegmentSector, materials, mockAttributes, 'ellipsoidsegments', 3);
+    testPrimitiveBase(sphericalSegmentSector, materials, mockAttributes, 'ellipsoidsegments', bounds, 3);
   });
 
   test('Torus segment primitives, returns one geometry', () => {
@@ -152,24 +169,11 @@ describe('createPrimitives', () => {
     torusSegmentSector.primitives.torusSegmentCollection = new Uint8Array(mockAttributeBuffer.length + 4);
     torusSegmentSector.primitives.torusSegmentAttributes = mockAttributes;
 
+    testPrimitiveBase(torusSegmentSector, materials, mockAttributes, 'torussegment', bounds);
     const result = [];
 
-    for (const primitiveRoot of createPrimitives(torusSegmentSector, materials)) {
+    for (const primitiveRoot of createPrimitives(torusSegmentSector, materials, bounds)) {
       result.push(primitiveRoot);
-    }
-
-    expect(result.length).toBe(1);
-
-    const lodResult = result[0] as LOD;
-
-    expect(lodResult.name.toLowerCase().includes('torussegment')).toBeTrue();
-
-    for (const lodMesh of lodResult.children) {
-      const mesh = lodMesh as Mesh;
-      const geometry = mesh.geometry as InstancedBufferGeometry;
-
-      // one extra attribute is added (position/vertex)
-      expect(Object.entries(geometry.attributes).length).toBe(mockAttributes.size + 1);
     }
   });
 
@@ -178,7 +182,7 @@ describe('createPrimitives', () => {
     trapeziumSector.primitives.trapeziumCollection = mockAttributeBuffer;
     trapeziumSector.primitives.trapeziumAttributes = mockAttributes;
 
-    testPrimitiveBase(trapeziumSector, materials, mockAttributes, 'trapezium');
+    testPrimitiveBase(trapeziumSector, materials, mockAttributes, 'trapezium', bounds);
   });
 });
 
@@ -187,21 +191,22 @@ function testPrimitiveBase(
   materials: Materials,
   mockAttributes: Map<string, ParsePrimitiveAttribute>,
   expectedNameSubstring: string,
+  bounds: THREE.Box3,
   extraAttributes = 1
 ) {
   const result = [];
 
-  for (const primitiveRoot of createPrimitives(sector, materials)) {
+  for (const primitiveRoot of createPrimitives(sector, materials, bounds)) {
     result.push(primitiveRoot);
   }
 
   expect(result.length).toBe(1);
 
-  const meshResult = result[0] as Mesh;
+  const meshResult = result[0] as THREE.Mesh;
 
   expect(meshResult.name.toLowerCase().includes(expectedNameSubstring)).toBeTrue();
 
-  const geometry = meshResult.geometry as InstancedBufferGeometry;
+  const geometry = meshResult.geometry as THREE.InstancedBufferGeometry;
 
   // Should be additional attributes in the addition to our mock attributes
   // Because the f.ex position and other attributes may be added as well
