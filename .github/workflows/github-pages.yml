@@ -33,7 +33,7 @@ jobs:
       - name: Deploy documentation 🚀
         uses: peaceiris/actions-gh-pages@v3
         with:
-          deploy_key: ${{ secrets.REVEAL_DOCS_DK_PK }}
+          deploy_key: ${{ secrets.REVEAL_DOCS_DEPLOY_KEY }}
           external_repository: cognitedata/reveal-docs
           publish_branch: master
           publish_dir: documentation/build
