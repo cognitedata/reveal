@@ -15,11 +15,11 @@ jobs:
         with:
           path: reveal
 
-      - name: Setup SSH Key
-        run: |
-          mkdir ~/.ssh
-          echo "${{ secrets.SECRET_PRIVATE_DEPLOY_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
+#      - name: Setup SSH Key
+#        run: |
+#          mkdir ~/.ssh
+#          echo "${{ secrets.SECRET_PRIVATE_DEPLOY_KEY }}" > ~/.ssh/id_rsa
+#          chmod 600 ~/.ssh/id_rsa
 
       - name: Checkout reveal-docs-preview 🛎️
         uses: actions/checkout@v2
@@ -27,6 +27,7 @@ jobs:
           repository: cognitedata/reveal-docs-preview
           path: reveal-docs-preview
           ref: master
+          ssh-key: ${{ secrets.SECRET_PRIVATE_DEPLOY_KEY }}
 
       - name: Test checkout
         run: ls reveal-docs-preview
