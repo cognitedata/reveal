@@ -11,7 +11,6 @@ import { createMaterials } from '../rendering/materials';
 import { RenderMode } from '../rendering/RenderMode';
 import { consumeSectorDetailed, consumeSectorSimple } from './sectorUtilities';
 import { TriangleMesh, SectorQuads } from '../rendering/types';
-import * as THREE from 'three';
 
 import 'jest-extended';
 

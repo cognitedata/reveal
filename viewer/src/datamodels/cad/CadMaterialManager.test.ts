@@ -5,16 +5,16 @@
 import * as THREE from 'three';
 import { range } from 'lodash';
 import { IndexSet } from '../../utilities/IndexSet';
-import { MaterialManager } from './MaterialManager';
 import { RenderMode } from './rendering/RenderMode';
 import { ByTreeIndexNodeSet } from './styling';
 import { NumericRange } from '../../utilities';
+import { CadMaterialManager } from './CadMaterialManager';
 
-describe('MaterialManager', () => {
-  let manager: MaterialManager;
+describe('CadMaterialManager', () => {
+  let manager: CadMaterialManager;
 
   beforeEach(() => {
-    manager = new MaterialManager();
+    manager = new CadMaterialManager();
   });
 
   test('addModelMaterials creates material and initializes collections for model', () => {
