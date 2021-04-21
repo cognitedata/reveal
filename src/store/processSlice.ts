@@ -11,8 +11,11 @@ import { getFakeQueuedJob } from 'src/api/utils';
 import { fileProcessUpdate } from 'src/store/commonActions';
 import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
 import { SaveAvailableAnnotations } from 'src/store/thunks/SaveAvailableAnnotations';
-import { ThunkConfig } from 'src/store/rootReducer';
+import { RootState, ThunkConfig } from 'src/store/rootReducer';
 import isEqual from 'lodash-es/isEqual';
+import { AnnotationsBadgeProps } from 'src/pages/Workflow/types';
+import { selectModelAnnotationCountsByFileId } from 'src/store/previewSlice';
+import { createSelectorCreator, defaultMemoize } from 'reselect';
 
 export type JobState = AnnotationJob & {
   fileIds: number[];
@@ -340,3 +343,64 @@ export const selectIsPollingComplete = createSelector(
     });
   }
 );
+
+export const selectJobsStatusesByFileId = createSelector(
+  selectJobsByFileId,
+  (fileJobs) => {
+    const annotationBadgeProps: AnnotationsBadgeProps = {
+      tag: {},
+      gdpr: {},
+      text: {},
+      objects: {},
+    };
+    fileJobs.forEach((job) => {
+      const statusData = { status: job.status, statusTime: job.statusTime };
+      if (job.type === VisionAPIType.OCR) {
+        annotationBadgeProps.text = statusData;
+      }
+      if (job.type === VisionAPIType.TagDetection) {
+        annotationBadgeProps.tag = statusData;
+      }
+      if (job.type === VisionAPIType.ObjectDetection) {
+        annotationBadgeProps.objects = statusData;
+        annotationBadgeProps.gdpr = statusData;
+      }
+    });
+    return annotationBadgeProps;
+  }
+);
+
+const createDeepEqualSelector = createSelectorCreator(defaultMemoize, isEqual);
+
+export const makeAnnotationBadgePropsByFileId = () => {
+  return createDeepEqualSelector(
+    (state: RootState, fileId: number) => fileId,
+    (state: RootState, fileId: number) =>
+      selectModelAnnotationCountsByFileId(
+        state.previewSlice,
+        fileId.toString()
+      ),
+    (state: RootState, fileId: number) =>
+      selectJobsStatusesByFileId(state.processSlice, fileId),
+    (fileId, modelAnnotationCounts, modelJobStatuses) => {
+      return {
+        text: {
+          ...modelAnnotationCounts.text,
+          ...modelJobStatuses.text,
+        },
+        tag: {
+          ...modelAnnotationCounts.tag,
+          ...modelJobStatuses.tag,
+        },
+        objects: {
+          ...modelAnnotationCounts.objects,
+          ...modelJobStatuses.objects,
+        },
+        gdpr: {
+          ...modelAnnotationCounts.gdpr,
+          ...modelJobStatuses.gdpr,
+        },
+      };
+    }
+  );
+};
