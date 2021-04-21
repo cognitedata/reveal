@@ -89,31 +89,14 @@ jobs:
 
       - name: Deploy 🚀
         id: deploy
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.REVEAL_DOCS_PREVIEW_DK_PK }}
-          directory: reveal-docs-preview
-          branch: master
-          repository: cognitedata/reveal-docs-preview
-        continue-on-error: true
+        working-directory: reveal-docs-preview
+        run: git push
 
-      - name: Retry deploy 🚀 - pull
+      - name: Retry deploy 🚀
         working-directory: reveal-docs-preview
         if: steps.deploy.outcome=='failure'
         run: |
-          git config --global user.email "action@github.com"
-          git config --global user.name "GitHub Action"
-          git pull https://git:${{ secrets.REVEAL_DOCS_PREVIEW_DK_PK }}@github.com/cognitedata/reveal-docs-preview.git --commit --ff
-
-      - name: Retry deploy 🚀 - push
-        id: deploy2
-        uses: ad-m/github-push-action@master
-        if: steps.deploy.outcome=='failure'
-        with:
-          github_token: ${{ secrets.REVEAL_DOCS_PREVIEW_DK_PK }}
-          directory: reveal-docs-preview
-          branch: master
-          repository: cognitedata/reveal-docs-preview
+          git pull --commit --ff && git push
 
       - name: Add comment about preview URL
         uses: unsplash/comment-on-pr@master
