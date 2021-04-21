@@ -85,9 +85,6 @@ export default function Routes() {
               render={() => (
                 <div>
                   <PageTitle title="Contextualize engineering diagrams" />
-                  <Breadcrumbs
-                    breadcrumbs={[...defaultBreadcrumbs, flowBreadcrumbs]}
-                  />
                   <Options />
                 </div>
               )}
@@ -98,9 +95,6 @@ export default function Routes() {
               render={() => (
                 <div>
                   <PageTitle title="Contextualize engineering diagrams" />
-                  <Breadcrumbs
-                    breadcrumbs={[...defaultBreadcrumbs, flowBreadcrumbs]}
-                  />
                   <ResultsOverview />
                 </div>
               )}
