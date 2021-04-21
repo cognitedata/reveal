@@ -75,8 +75,8 @@ export default function ThreeDViewerToolbar(props: Props) {
 
   const [updateRevisionMutation] = useUpdateRevisionMutation();
 
-  const treeViewIsHiddenByFeatureFlag =
-    useFlag('3DM_tree_view_hidden') && isProduction();
+  const treeViewFeatureFlagIsEnabled =
+    useFlag('3DM_tree-view') || !isProduction();
 
   const updateInitialLocation = async (
     otherUpdates?: Partial<RevisionUpdatePayload>
@@ -109,7 +109,7 @@ export default function ThreeDViewerToolbar(props: Props) {
   };
 
   const showTreeView =
-    !treeViewIsHiddenByFeatureFlag &&
+    treeViewFeatureFlagIsEnabled &&
     !(props.model instanceof CognitePointCloudModel) &&
     !isOldViewer(props.viewer);
 
