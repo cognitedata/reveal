@@ -10,7 +10,12 @@ import {
   TimeseriesTable,
   TimeseriesSparklineCard,
 } from 'containers/Timeseries';
-import { GridTable, SpacedRow, RangePicker } from 'components';
+import {
+  GridTable,
+  SpacedRow,
+  RangePicker,
+  EnsureNonEmptyResource,
+} from 'components';
 import { ResultTableLoader } from 'containers/ResultTableLoader';
 import { RelatedResourceType } from 'hooks/RelatedResourcesHooks';
 import { TIME_SELECT } from 'containers';
@@ -56,58 +61,61 @@ export const TimeseriesSearchResults = ({
         onViewChange={setCurrentView}
         count={count}
       />
-      {showDatePicker && (
-        <SpacedRow style={{ marginBottom: 8 }}>
-          <Body level={4} style={{ alignSelf: 'center' }}>
-            Showing graph data from
-          </Body>
-          {onDateRangeChange && (
-            <RangePicker
-              initialRange={dateRange || stateDateRange}
-              onRangeChanged={onDateRangeChange || stateSetDateRange}
-            />
-          )}
-        </SpacedRow>
-      )}
-      <ResultTableLoader<Timeseries>
-        mode={showRelatedResources ? 'relatedResources' : 'search'}
-        type="timeSeries"
-        filter={filter}
-        query={query}
-        parentResource={parentResource}
-        relatedResourceType={relatedResourceType}
-        {...extraProps}
-      >
-        {props =>
-          currentView === 'grid' ? (
-            <GridTable<Timeseries>
-              {...props}
-              cellHeight={360}
-              minCellWidth={500}
-              onEndReached={() => props.onEndReached!({ distanceFromEnd: 0 })}
-              onItemClicked={timeseries => onClick(timeseries)}
-              {...extraProps}
-              renderCell={cellProps => (
-                <TimeseriesSparklineCard
-                  {...cellProps}
-                  dateRange={dateRange || stateDateRange}
-                  onDateRangeChange={onDateRangeChange || stateSetDateRange}
-                />
-              )}
-            />
-          ) : (
-            <TimeseriesTable
-              {...props}
-              onRowClick={file => {
-                onClick(file);
-                return true;
-              }}
-              dateRange={dateRange || stateDateRange}
-              onDateRangeChange={onDateRangeChange || stateSetDateRange}
-            />
-          )
-        }
-      </ResultTableLoader>
+      <EnsureNonEmptyResource api="timeSeries">
+        {showDatePicker && (
+          <SpacedRow style={{ marginBottom: 8 }}>
+            <Body level={4} style={{ alignSelf: 'center' }}>
+              Showing graph data from
+            </Body>
+            {onDateRangeChange && (
+              <RangePicker
+                initialRange={dateRange || stateDateRange}
+                onRangeChanged={onDateRangeChange || stateSetDateRange}
+              />
+            )}
+          </SpacedRow>
+        )}
+
+        <ResultTableLoader<Timeseries>
+          mode={showRelatedResources ? 'relatedResources' : 'search'}
+          type="timeSeries"
+          filter={filter}
+          query={query}
+          parentResource={parentResource}
+          relatedResourceType={relatedResourceType}
+          {...extraProps}
+        >
+          {props =>
+            currentView === 'grid' ? (
+              <GridTable<Timeseries>
+                {...props}
+                cellHeight={360}
+                minCellWidth={500}
+                onEndReached={() => props.onEndReached!({ distanceFromEnd: 0 })}
+                onItemClicked={timeseries => onClick(timeseries)}
+                {...extraProps}
+                renderCell={cellProps => (
+                  <TimeseriesSparklineCard
+                    {...cellProps}
+                    dateRange={dateRange || stateDateRange}
+                    onDateRangeChange={onDateRangeChange || stateSetDateRange}
+                  />
+                )}
+              />
+            ) : (
+              <TimeseriesTable
+                {...props}
+                onRowClick={file => {
+                  onClick(file);
+                  return true;
+                }}
+                dateRange={dateRange || stateDateRange}
+                onDateRangeChange={onDateRangeChange || stateSetDateRange}
+              />
+            )
+          }
+        </ResultTableLoader>
+      </EnsureNonEmptyResource>
     </>
   );
 };

@@ -10,6 +10,7 @@ import { ResourceItem } from 'types';
 import { SequenceTable } from 'containers/Sequences';
 import { ResultTableLoader } from 'containers/ResultTableLoader';
 import { RelatedResourceType } from 'hooks/RelatedResourcesHooks';
+import { EnsureNonEmptyResource } from 'components';
 
 export const SequenceSearchResults = ({
   query = '',
@@ -39,18 +40,23 @@ export const SequenceSearchResults = ({
       query={query}
       count={count}
     />
-    <ResultTableLoader<Sequence>
-      mode={showRelatedResources ? 'relatedResources' : 'search'}
-      type="sequence"
-      filter={filter}
-      query={query}
-      parentResource={parentResource}
-      relatedResourceType={relatedResourceType}
-      {...extraProps}
-    >
-      {props => (
-        <SequenceTable {...props} onRowClick={sequence => onClick(sequence)} />
-      )}
-    </ResultTableLoader>
+    <EnsureNonEmptyResource api="sequence">
+      <ResultTableLoader<Sequence>
+        mode={showRelatedResources ? 'relatedResources' : 'search'}
+        type="sequence"
+        filter={filter}
+        query={query}
+        parentResource={parentResource}
+        relatedResourceType={relatedResourceType}
+        {...extraProps}
+      >
+        {props => (
+          <SequenceTable
+            {...props}
+            onRowClick={sequence => onClick(sequence)}
+          />
+        )}
+      </ResultTableLoader>
+    </EnsureNonEmptyResource>
   </>
 );

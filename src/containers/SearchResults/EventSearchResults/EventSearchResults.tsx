@@ -10,6 +10,7 @@ import { ResourceItem } from 'types';
 import { EventTable } from 'containers/Events';
 import { ResultTableLoader } from 'containers/ResultTableLoader';
 import { RelatedResourceType } from 'hooks/RelatedResourcesHooks';
+import { EnsureNonEmptyResource } from 'components';
 
 export const EventSearchResults = ({
   query = '',
@@ -39,16 +40,20 @@ export const EventSearchResults = ({
       query={query}
       count={count}
     />
-    <ResultTableLoader<CogniteEvent>
-      mode={showRelatedResources ? 'relatedResources' : 'search'}
-      type="event"
-      filter={filter}
-      query={query}
-      parentResource={parentResource}
-      relatedResourceType={relatedResourceType}
-      {...extraProps}
-    >
-      {props => <EventTable {...props} onRowClick={event => onClick(event)} />}
-    </ResultTableLoader>
+    <EnsureNonEmptyResource api="event">
+      <ResultTableLoader<CogniteEvent>
+        mode={showRelatedResources ? 'relatedResources' : 'search'}
+        type="event"
+        filter={filter}
+        query={query}
+        parentResource={parentResource}
+        relatedResourceType={relatedResourceType}
+        {...extraProps}
+      >
+        {props => (
+          <EventTable {...props} onRowClick={event => onClick(event)} />
+        )}
+      </ResultTableLoader>
+    </EnsureNonEmptyResource>
   </>
 );

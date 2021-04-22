@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Button } from '@cognite/cogs.js';
 import { AssetFilterProps, Asset } from '@cognite/sdk';
-import { ButtonGroup } from 'components';
+import { ButtonGroup, EnsureNonEmptyResource } from 'components';
 import {
   AssetTable,
   AssetTreeTable,
@@ -66,7 +66,7 @@ export const AssetSearchResults = ({
           <Button icon="List" key="list" title="List" />
         </ButtonGroup>
       </SearchResultToolbar>
-      {content}
+      <EnsureNonEmptyResource api="asset">{content}</EnsureNonEmptyResource>
     </>
   );
 };

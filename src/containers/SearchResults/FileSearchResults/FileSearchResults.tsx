@@ -6,7 +6,7 @@ import {
   TableStateProps,
   DateRangeProps,
 } from 'CommonProps';
-import { GridTable } from 'components';
+import { GridTable, EnsureNonEmptyResource } from 'components';
 import { ResultTableLoader } from 'containers/ResultTableLoader';
 import { RelatedResourceType } from 'hooks/RelatedResourcesHooks';
 import { ResourceItem } from 'types';
@@ -51,35 +51,37 @@ export const FileSearchResults = ({
         allowEdit={allowEdit}
         count={count}
       />
-      <ResultTableLoader<FileInfo>
-        type="file"
-        mode={showRelatedResources ? 'relatedResources' : 'search'}
-        filter={filter}
-        query={query}
-        parentResource={parentResource}
-        relatedResourceType={relatedResourceType}
-        {...extraProps}
-      >
-        {props =>
-          currentView === 'grid' ? (
-            <GridTable
-              {...props}
-              onEndReached={() => props.onEndReached!({ distanceFromEnd: 0 })}
-              onItemClicked={file => onClick(file)}
-              {...extraProps}
-              renderCell={cellProps => <FileGridPreview {...cellProps} />}
-            />
-          ) : (
-            <FileTable
-              {...props}
-              onRowClick={file => {
-                onClick(file);
-                return true;
-              }}
-            />
-          )
-        }
-      </ResultTableLoader>
+      <EnsureNonEmptyResource api="file">
+        <ResultTableLoader<FileInfo>
+          type="file"
+          mode={showRelatedResources ? 'relatedResources' : 'search'}
+          filter={filter}
+          query={query}
+          parentResource={parentResource}
+          relatedResourceType={relatedResourceType}
+          {...extraProps}
+        >
+          {props =>
+            currentView === 'grid' ? (
+              <GridTable
+                {...props}
+                onEndReached={() => props.onEndReached!({ distanceFromEnd: 0 })}
+                onItemClicked={file => onClick(file)}
+                {...extraProps}
+                renderCell={cellProps => <FileGridPreview {...cellProps} />}
+              />
+            ) : (
+              <FileTable
+                {...props}
+                onRowClick={file => {
+                  onClick(file);
+                  return true;
+                }}
+              />
+            )
+          }
+        </ResultTableLoader>
+      </EnsureNonEmptyResource>
     </>
   );
 };
