@@ -20,7 +20,7 @@ import { BinaryFileProvider } from '../../../utilities/networking/types';
 import { groupMeshesByNumber } from './groupMeshesByNumber';
 import { MostFrequentlyUsedCache } from '../../../utilities/MostFrequentlyUsedCache';
 
-const emptyGeometry = new THREE.Geometry();
+const emptyGeometry = new THREE.BufferGeometry();
 
 type CtmFileRequest = { blobUrl: string; fileName: string };
 type CtmFileResult = { fileName: string; data: ParseCtmResult };
