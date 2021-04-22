@@ -57,7 +57,7 @@ export const ProcessStepActionButtons = () => {
             </Button>
             <div style={{ padding: '10px' }} />
             <Button onClick={onNextClicked} disabled={false} type="primary">
-              Finish processing
+              Finish Session
             </Button>
           </FooterContainer>
         }
@@ -75,7 +75,7 @@ export const ProcessStepActionButtons = () => {
         }}
         nextBtnProps={{
           onClick: () => setModalOpen(true),
-          children: 'Finish processing',
+          children: 'Session summary',
           disabled: disableComplete,
         }}
         skipBtnProps={{

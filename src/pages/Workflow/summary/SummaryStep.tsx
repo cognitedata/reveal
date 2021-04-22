@@ -14,7 +14,7 @@ import FileIcon from './assets/FileIcon.svg';
 import FileBland from './assets/FileBland.svg';
 import FileWithExifIcon from './assets/FileWithExifIcon.svg';
 import FileWithAnnotations from './assets/FileWithAnnotations.svg';
-import FileResolvedGDPR from './assets/FileResolvedGDPR.svg';
+import FileUnresolvedGDPR from './assets/FileUnresolvedGDPR.svg';
 import FileWasReviewed from './assets/FileWasReviewed.svg';
 
 const queryClient = new QueryClient();
@@ -31,6 +31,7 @@ export default function SummaryStep() {
   });
   const GDPRFiles: number[] = [];
   const reviewStats: number[] = [];
+  const filesWithDetections: number[] = [];
   // eslint-disable-next-line array-callback-return
   Object.entries(annotations).map((arr) => {
     const aID = arr[1].annotatedResourceId;
@@ -39,6 +40,9 @@ export default function SummaryStep() {
     }
     if (arr[1].label === 'person' && !GDPRFiles.includes(aID)) {
       GDPRFiles.push(aID);
+    }
+    if (!filesWithDetections.includes(aID)) {
+      filesWithDetections.push(aID);
     }
   });
 
@@ -64,8 +68,8 @@ export default function SummaryStep() {
       value: reviewStats.length,
     },
     modelDetections: {
-      text: 'Model Detection',
-      value: Object.keys(annotations).length,
+      text: 'Files with annotations',
+      value: filesWithDetections.length,
     },
     gdprCases: {
       text: 'Unresolved GDPR Cases',
@@ -175,7 +179,10 @@ export default function SummaryStep() {
                     { length: stats[statView].value },
                     (_, i: number) => (
                       <FileIconContainer key={`${statView}_${i}`}>
-                        <img src={FileResolvedGDPR} alt="FileResolvedGDPR" />
+                        <img
+                          src={FileUnresolvedGDPR}
+                          alt="FileUnresolvedGDPR"
+                        />
                       </FileIconContainer>
                     )
                   )}
@@ -213,7 +220,7 @@ const StatsCarouselRight = styled.div`
   border-radius: inherit;
   padding: 1em;
   max-height: 18rem;
-  overflow: scroll;
+  overflow-y: auto;
 `;
 const StatsCarouselLeft = styled.div`
   display: flex;
