@@ -32,12 +32,8 @@ export default function TimeSeriesMenu({
     return null;
   }
 
-  const update = (diff: Partial<ChartTimeSeries>, close: boolean = true) => {
+  const update = (diff: Partial<ChartTimeSeries>) =>
     mutate(updateTimeseries(chart, id, diff));
-    if (closeMenu && close) {
-      closeMenu();
-    }
-  };
   const remove = () => mutate(removeTimeseries(chart, id));
   const convert = () => mutate(convertTimeseriesToWorkflow(chart, id));
   return (
