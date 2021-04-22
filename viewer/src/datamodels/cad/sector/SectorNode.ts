@@ -47,15 +47,7 @@ export class SectorNode extends THREE.Group {
 
   resetGeometry() {
     if (this.group !== undefined) {
-      const meshes: THREE.Mesh[] = this.group.children.filter(x => x instanceof THREE.Mesh).map(x => x as THREE.Mesh);
-      for (const mesh of meshes) {
-        if (mesh.geometry) {
-          mesh.geometry.dispose();
-          // NOTE: Forcefully creating a new reference here to make sure
-          // there are no lingering references to the large geometry buffer
-          mesh.geometry = emptyGeometry;
-        }
-      }
+      this.remove(this.group);
     }
 
     this._group = undefined;

@@ -2,6 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
+import * as THREE from 'three';
+
 import { Repository } from './Repository';
 import { WantedSector, SectorGeometry, ConsumedSector } from './types';
 import { LevelOfDetail } from './LevelOfDetail';
@@ -18,18 +20,16 @@ import { BinaryFileProvider } from '../../../utilities/networking/types';
 import { groupMeshesByNumber } from './groupMeshesByNumber';
 import { MostFrequentlyUsedCache } from '../../../utilities/MostFrequentlyUsedCache';
 
+const emptyGeometry = new THREE.Geometry();
+
 type CtmFileRequest = { blobUrl: string; fileName: string };
 type CtmFileResult = { fileName: string; data: ParseCtmResult };
 
 // TODO: j-bjorne 16-04-2020: REFACTOR FINALIZE INTO SOME OTHER FILE PLEZ!
 export class CachedRepository implements Repository {
-  private readonly _consumedSectorCache: MemoryRequestCache<string, Promise<ConsumedSector>> = new MemoryRequestCache({
-    maxElementsInCache: 50
-  });
-  private readonly _ctmFileCache: MostFrequentlyUsedCache<
-    string,
-    Observable<CtmFileResult>
-  > = new MostFrequentlyUsedCache(10);
+  private readonly _consumedSectorCache: MemoryRequestCache<string, Promise<ConsumedSector>>;
+  private readonly _ctmFileCache: MostFrequentlyUsedCache<string, Observable<CtmFileResult>>;
+
   private readonly _modelSectorProvider: BinaryFileProvider;
   private readonly _modelDataParser: CadSectorParser;
   private readonly _modelDataTransformer: SimpleAndDetailedToSector3D;
@@ -45,6 +45,24 @@ export class CachedRepository implements Repository {
     this._modelDataParser = modelDataParser;
     this._modelDataTransformer = modelDataTransformer;
     this._concurrentCtmRequests = concurrentCtmRequest;
+
+    this._consumedSectorCache = new MemoryRequestCache(50, async consumedSector => {
+      const sector = await consumedSector;
+      if (sector.group !== undefined) {
+        const meshes: THREE.Mesh[] = sector.group.children
+          .filter(x => x instanceof THREE.Mesh)
+          .map(x => x as THREE.Mesh);
+        for (const mesh of meshes) {
+          if (mesh.geometry !== undefined) {
+            mesh.geometry.dispose();
+            // NOTE: Forcefully creating a new reference here to make sure
+            // there are no lingering references to the large geometry buffer
+            mesh.geometry = emptyGeometry;
+          }
+        }
+      }
+    });
+    this._ctmFileCache = new MostFrequentlyUsedCache(10);
   }
 
   clear() {
