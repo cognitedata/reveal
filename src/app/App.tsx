@@ -52,16 +52,16 @@ export default () => {
   }, []);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <AntStyles>
-        <SubAppWrapper padding={false}>
-          <AuthWrapper
-            showLoader
-            includeGroups
-            loadingScreen={<Loader darkMode={false} />}
-            subAppName="data-exploration"
-          >
-            <SDKProvider sdk={(sdkv3 as unknown) as CogniteClient}>
+    <SDKProvider sdk={(sdkv3 as unknown) as CogniteClient}>
+      <QueryClientProvider client={queryClient}>
+        <AntStyles>
+          <SubAppWrapper padding={false}>
+            <AuthWrapper
+              showLoader
+              includeGroups
+              loadingScreen={<Loader darkMode={false} />}
+              subAppName="data-exploration"
+            >
               <ThemeProvider theme={theme}>
                 <FlagProvider
                   apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
@@ -79,11 +79,11 @@ export default () => {
                 </FlagProvider>
               </ThemeProvider>
               <GlobalStyle theme={theme} />
-            </SDKProvider>
-          </AuthWrapper>
-        </SubAppWrapper>
-      </AntStyles>
-      <ReactQueryDevtools initialIsOpen={false} />
-    </QueryClientProvider>
+            </AuthWrapper>
+          </SubAppWrapper>
+        </AntStyles>
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
+    </SDKProvider>
   );
 };

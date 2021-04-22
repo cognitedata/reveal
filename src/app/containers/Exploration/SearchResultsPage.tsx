@@ -10,7 +10,6 @@ import {
   ResourceTypeTabs,
   getTitle,
   ResourceType,
-  EnsureNonEmptyResource,
 } from '@cognite/data-exploration';
 import { Colors } from '@cognite/cogs.js';
 import { Row, Col } from 'antd';
@@ -46,7 +45,7 @@ const Wrapper = styled.div`
 `;
 
 const getPageTitle = (query: string, resourceType: ResourceType): string => {
-  return `${query}${query ? ' in' : ''}  ${getTitle(resourceType, true)}`;
+  return `${query}${query ? ' in' : ''} ${getTitle(resourceType, true)}`;
 };
 
 function SearchPage() {
@@ -196,38 +195,36 @@ function SearchPage() {
             flexDirection: 'column',
           }}
         >
-          <EnsureNonEmptyResource api={currentResourceType}>
-            <SearchInputContainer align="middle">
-              {!showFilter ? (
-                <Col flex="none">
-                  <FilterToggleButton
-                    toggleOpen={() => setShowFilter(!showFilter)}
-                  />
-                </Col>
-              ) : undefined}
-              <Col flex="auto">
-                <ExplorationSearchBar />
+          <SearchInputContainer align="middle">
+            {!showFilter ? (
+              <Col flex="none">
+                <FilterToggleButton
+                  toggleOpen={() => setShowFilter(!showFilter)}
+                />
               </Col>
-            </SearchInputContainer>
-            {['file', 'asset'].includes(currentResourceType) ? (
-              <Row style={{ marginTop: 8, marginLeft: showFilter ? 8 : 0 }}>
-                <Col flex="auto">
-                  <LabelsQuickSelect
-                    key={currentResourceType}
-                    type={currentResourceType as 'file' | 'asset'}
-                  />
-                </Col>
-              </Row>
             ) : undefined}
-            <SearchResultWrapper
-              style={{
-                paddingRight: active ? 8 : 0,
-                paddingLeft: showFilter ? 8 : 0,
-              }}
-            >
-              {SearchResults()}
-            </SearchResultWrapper>
-          </EnsureNonEmptyResource>
+            <Col flex="auto">
+              <ExplorationSearchBar />
+            </Col>
+          </SearchInputContainer>
+          {['file', 'asset'].includes(currentResourceType) ? (
+            <Row style={{ marginTop: 8, marginLeft: showFilter ? 8 : 0 }}>
+              <Col flex="auto">
+                <LabelsQuickSelect
+                  key={currentResourceType}
+                  type={currentResourceType as 'file' | 'asset'}
+                />
+              </Col>
+            </Row>
+          ) : undefined}
+          <SearchResultWrapper
+            style={{
+              paddingRight: active ? 8 : 0,
+              paddingLeft: showFilter ? 8 : 0,
+            }}
+          >
+            {SearchResults()}
+          </SearchResultWrapper>
         </div>
 
         <div
