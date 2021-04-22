@@ -4,43 +4,32 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Button, Icon, Tooltip, Title } from '@cognite/cogs.js';
 import { message } from 'antd';
 import { FileInfo } from '@cognite/sdk';
-import { dataKitItemsSelectorFactory } from 'modules/selection';
+import { useWorkflowItems, loadWorkflow } from 'modules/workflows';
 import { checkPermission } from 'modules/app';
 import {
   startConvertFileToSvgJob,
   UploadJobState,
 } from 'modules/contextualization/uploadJobs';
-import { startPnidParsingPipeline } from 'modules/contextualization/pnidPipeline';
+import { startPnidParsingWorkflow } from 'modules/contextualization/pnidWorkflow';
 import { ParsingJobState } from 'modules/contextualization/parsingJobs';
+import { useAnnotationsForFiles, useActiveWorkflow } from 'hooks';
 import LoadResources from 'containers/LoadResources';
 import MissingPermissionFeedback from 'components/MissingPermissionFeedback';
 import { Flex } from 'components/Common';
 import { canDeploySelectedFiles } from 'utils/FilesUtils';
-import { useAnnotationsForFiles } from 'hooks/useAnnotationsForFiles';
+import { resourceSelection } from 'routes/paths';
+import { getWorkflowItems, getContextualizationJobs } from './selectors';
 import ResultsTable from './ResultsTable';
-import {
-  getDataKitItems,
-  getPnidOptions,
-  getFileContextualizationJobs,
-} from './selectors';
 
 export default function ResultsOverview() {
   const history = useHistory();
   const dispatch = useDispatch();
+  const { tenant } = useParams<{ tenant: string }>();
+
   const [selectedKeys, setSelectedKeys] = useState([] as number[]);
+  const [renderFeedback, setRenderFeedback] = useState(false);
+  const [jobRunning, setJobRunning] = useState(false);
 
-  const annotationsByFileId = useAnnotationsForFiles(selectedKeys);
-
-  const { tenant, assetsDataKitId, filesDataKitId } = useParams<{
-    tenant: string;
-    filesDataKitId: string;
-    assetsDataKitId: string;
-  }>();
-
-  const getFiles = useMemo(
-    () => dataKitItemsSelectorFactory(filesDataKitId, true),
-    [filesDataKitId]
-  );
   const getCanEditFiles = useMemo(
     () => checkPermission('filesAcl', 'WRITE'),
     []
@@ -49,39 +38,42 @@ export default function ResultsOverview() {
     () => checkPermission('filesAcl', 'READ'),
     []
   );
-
-  const files = useSelector(getFiles) as FileInfo[];
+  const { workflowId } = useActiveWorkflow();
+  const { diagrams, resources } = useWorkflowItems(workflowId, true);
+  const { workflow } = useSelector(getWorkflowItems(workflowId));
   const canEditFiles = useSelector(getCanEditFiles);
   const canReadFiles = useSelector(getCanReadFiles);
-  const { assetDataKit, fileDataKit } = useSelector(
-    getDataKitItems(assetsDataKitId, filesDataKitId)
-  );
-  const { partialMatch, grayscale } = useSelector(getPnidOptions);
-  const { parsingJobs, uploadJobs } = useSelector(getFileContextualizationJobs);
+  const { parsingJobs, uploadJobs } = useSelector(getContextualizationJobs);
+  const annotationsByFileId = useAnnotationsForFiles(selectedKeys);
 
   const isLoading = Object.values(uploadJobs).some((job: any) => !job.jobDone);
 
+  const startWorkflow = () => {
+    if (!jobRunning) {
+      if (diagrams?.length && Object.keys(resources ?? {}).length) {
+        setJobRunning(true);
+        dispatch(
+          startPnidParsingWorkflow.action({ workflowId, diagrams, resources })
+        );
+      } else {
+        dispatch(loadWorkflow({ workflowId }));
+      }
+    }
+  };
+
   useEffect(() => {
-    if (!assetDataKit || !fileDataKit) {
+    if (canEditFiles && canReadFiles) startWorkflow();
+    else setRenderFeedback(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [canEditFiles, canReadFiles, diagrams, resources]);
+
+  useEffect(() => {
+    if (!workflow) {
       message.error('Invalid Data Selections...');
-      history.push(`/${tenant}/pnid_parsing_new/pipeline`);
+      history.push(resourceSelection.path(tenant, String(workflowId)));
     }
-  }, [history, tenant, assetDataKit, fileDataKit]);
-  useEffect(() => {
-    if (canEditFiles && canReadFiles) {
-      dispatch(startPnidParsingPipeline(filesDataKitId, assetsDataKitId));
-    } else {
-      setRenderFeedback(true);
-    }
-  }, [
-    assetsDataKitId,
-    canEditFiles,
-    canReadFiles,
-    dispatch,
-    filesDataKitId,
-    grayscale,
-    partialMatch,
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [workflow]);
 
   const startUploadJob = () => {
     if (canEditFiles) {
@@ -89,9 +81,11 @@ export default function ResultsOverview() {
         if (annotationsByFileId[key]) {
           dispatch(startConvertFileToSvgJob(key, annotationsByFileId[key]));
         } else {
-          const file = files.find((el) => el.id === key);
-          if (file) {
-            message.error(`${file.name} has no annotations`);
+          const diagramToConvert = diagrams.find(
+            (diagram: FileInfo) => diagram.id === key
+          );
+          if (diagramToConvert) {
+            message.error(`${diagramToConvert.name} has no annotations`);
           } else {
             message.error(`we are still loading file ${key}`);
           }
@@ -102,20 +96,18 @@ export default function ResultsOverview() {
     }
   };
 
-  const rows = files
-    .filter((el) => !!el)
-    .map((file) => {
+  const rows = diagrams
+    .filter((diagram: FileInfo) => !!diagram)
+    .map((diagram: FileInfo) => {
       return {
-        ...file,
-        parsingJob: parsingJobs[file.id],
-        uploadJob: uploadJobs[file.id],
+        ...diagram,
+        parsingJob: parsingJobs[diagram.id],
+        uploadJob: uploadJobs[diagram.id],
       } as FileInfo & {
         parsingJob?: ParsingJobState;
         uploadJob?: UploadJobState;
       };
     });
-
-  const [renderFeedback, setRenderFeedback] = useState(false);
 
   return renderFeedback ? (
     <>
@@ -125,7 +117,7 @@ export default function ResultsOverview() {
   ) : (
     <Flex column>
       <Flex align style={{ width: '100%', justifyContent: 'space-between' }}>
-        <Title level={2}>Contextualize P&IDs</Title>
+        <Title level={2}>Review the contextualized P&IDs</Title>
         <Flex align style={{ justifyContent: 'flex-end' }}>
           <Tooltip
             placement="left"
@@ -163,10 +155,7 @@ export default function ResultsOverview() {
           margin: '12px 0',
         }}
       >
-        <LoadResources
-          assetDataKitId={assetsDataKitId}
-          fileDataKitId={filesDataKitId}
-        />
+        <LoadResources />
       </Flex>
       <Flex grow style={{ width: '100%', margin: '12px 0' }}>
         <ResultsTable

@@ -3,7 +3,7 @@ import {
   getLocalStorageContent as selectionLSContent,
   importLocalStorageContent as selectionLSImport,
   LSSelection,
-} from 'modules/selection';
+} from 'modules/workflows';
 import { RootState } from '.';
 
 type LSStorage = {
@@ -12,7 +12,7 @@ type LSStorage = {
 
 export function persistedState(state: RootState) {
   return {
-    selection: selectionLSContent(state.selection),
+    selection: selectionLSContent(state.workflows),
   };
 }
 

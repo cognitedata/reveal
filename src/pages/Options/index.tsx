@@ -1,39 +1,31 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams, useHistory, useRouteMatch } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { RootState } from 'store';
 import { Button, Checkbox, Input, Title } from '@cognite/cogs.js';
 import { Card } from 'antd';
-import { v4 as uuid } from 'uuid';
-import {
-  setOptions,
-  resetPnidParsingPipeline,
-} from 'modules/contextualization/pnidPipeline';
+import { moveToStep, changeOptions } from 'modules/workflows';
+import { useActiveWorkflow } from 'hooks';
 import { Flex } from 'components/Common';
 import StickyBottomRow from 'components/StickyBottomRow';
+import { reviewPage } from 'routes/paths';
 
 export default function Options() {
   const history = useHistory();
   const dispatch = useDispatch();
-  const match = useRouteMatch();
-  const [optionsChanged, setOptionsChanged] = useState(false);
-
-  const { filesDataKitId, assetsDataKitId } = useParams<{
-    filesDataKitId: string;
-    assetsDataKitId: string;
-  }>();
-
+  const { tenant } = useParams<{ tenant: string }>();
+  const { workflowId } = useActiveWorkflow();
   const { partialMatch, grayscale, minTokens } = useSelector(
-    (state: RootState) => state.fileContextualization.pnidOption
+    (state: RootState) => state.workflows.items[workflowId].options
   );
 
   const summarizePnID = () => {
-    const optionsId = uuid();
-    if (optionsChanged) {
-      dispatch(resetPnidParsingPipeline(filesDataKitId, assetsDataKitId));
-    }
-    history.push(`${match.url}/${optionsId}`);
+    history.push(reviewPage.path(tenant, workflowId));
   };
+
+  useEffect(() => {
+    dispatch(moveToStep('config'));
+  }, [dispatch]);
 
   return (
     <>
@@ -46,8 +38,7 @@ export default function Options() {
                 name="checkbox-partial"
                 value={partialMatch}
                 onChange={(checked: boolean) => {
-                  dispatch(setOptions({ partialMatch: checked }));
-                  setOptionsChanged(true);
+                  dispatch(changeOptions({ partialMatch: checked }));
                 }}
               >
                 Allow partial matches
@@ -65,8 +56,7 @@ export default function Options() {
                 name="checkbox-grayscale"
                 value={grayscale}
                 onChange={(checked: boolean) => {
-                  dispatch(setOptions({ grayscale: checked }));
-                  setOptionsChanged(true);
+                  dispatch(changeOptions({ grayscale: checked }));
                 }}
               >
                 Grayscale P&ID
@@ -89,8 +79,9 @@ export default function Options() {
                 min={1}
                 step={1}
                 onChange={(ev) => {
-                  dispatch(setOptions({ minTokens: Number(ev.target.value) }));
-                  setOptionsChanged(true);
+                  dispatch(
+                    changeOptions({ minTokens: Number(ev.target.value) })
+                  );
                 }}
               />
             }

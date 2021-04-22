@@ -8,6 +8,8 @@ import { trackUsage, PNID_METRICS } from 'utils/Metrics';
 import { dateSorter, stringCompare } from 'modules/contextualization/utils';
 import { PageTitle, Table, Loader, Flex, IconButton } from 'components/Common';
 import { searchItemSelector } from 'containers/SearchPage/selectors';
+import { createNewWorkflow } from 'modules/workflows';
+import { diagramSelection } from 'routes/paths';
 import FilterBar from './FilterBar';
 
 const Wrapper = styled.div`
@@ -159,10 +161,13 @@ export default function LandingPage() {
 function EmptyFilesList() {
   const { tenant } = useParams<{ tenant: string }>();
   const history = useHistory();
+  const dispatch = useDispatch();
 
   const onContextualizeNew = () => {
     trackUsage(PNID_METRICS.contextualization.start);
-    history.push(`/${tenant}/pnid_parsing_new/pipeline`);
+    const newWorkflowId = Number(new Date());
+    dispatch(createNewWorkflow(newWorkflowId));
+    history.push(diagramSelection.path(tenant, String(newWorkflowId)));
   };
 
   return (

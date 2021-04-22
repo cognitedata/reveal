@@ -1,20 +1,20 @@
-import { getPipelineIdFromPath, stringContains } from './utils';
+import { getWorkflowIdFromPath, stringContains } from './utils';
 
 describe('Utils test', () => {
-  describe('getPipelineIdFromPath', () => {
+  describe('getWorkflowIdFromPath', () => {
     it('returns false when there is no id', () => {
-      const noPipelineIdPath = 'https://dev.fusion.cogniteapp.com/';
-      expect(getPipelineIdFromPath(noPipelineIdPath)).toEqual(false);
+      const noWorkflowIdPath = 'https://dev.fusion.cogniteapp.com/';
+      expect(getWorkflowIdFromPath(noWorkflowIdPath)).toEqual(false);
     });
     it('returns the right id when its there', () => {
       const pathWithId =
-        'https://dev.fusion.cogniteapp.com/some-tenant/entity_matching/pipeline/43232';
-      expect(getPipelineIdFromPath(pathWithId)).toEqual('43232');
+        'https://dev.fusion.cogniteapp.com/some-tenant/entity_matching/workflow/43232';
+      expect(getWorkflowIdFromPath(pathWithId)).toEqual('43232');
     });
     it('return false when the id is invalid', () => {
       const invalidId =
-        'https://dev.fusion.cogniteapp.com/some-tenant/entity_matching/pipeline/23hello2321';
-      expect(getPipelineIdFromPath(invalidId)).toEqual(false);
+        'https://dev.fusion.cogniteapp.com/some-tenant/entity_matching/workflow/23hello2321';
+      expect(getWorkflowIdFromPath(invalidId)).toEqual(false);
     });
   });
   describe('stringContains', () => {

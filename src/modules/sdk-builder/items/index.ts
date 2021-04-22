@@ -13,26 +13,12 @@ import {
   createExternalIdMapSelector,
   createRetrieveSelector,
 } from './selectors';
+import { updateAction as update } from '../reducers';
 
 export default function buildItems<
   T extends InternalId & { externalId?: string },
   U extends { id: CogniteInternalId; update: any }
 >(resourceType: ResourceType) {
-  /**
-   * Updates the state[resourceType].items.list with actual data.
-   */
-  const updateItems = (state: any, action: PayloadAction<{ items: T[] }>) => {
-    const { items: itemsToUpdate } = action.payload;
-    const mappedItems: { [key: string]: T } = {};
-    itemsToUpdate.forEach((item: T) => {
-      mappedItems[item.id ?? item.externalId] = { ...item };
-    });
-    itemsToUpdate.forEach((item: T) => {
-      const mappedItem = mappedItems[item.id];
-      if (mappedItem) state.items.list[item.id] = mappedItem;
-    });
-  };
-
   /**
    * Retrieves items by their ids.
    * Shares a lot of code with retrieveByExternalId, could clean this up some time.
@@ -42,16 +28,15 @@ export default function buildItems<
       `${resourceType}/retrieveByIds`,
       async (
         { ids }: { ids: InternalId[] },
-        { dispatch, getState }: { dispatch: any; getState: any }
+        { dispatch }: { dispatch: any }
       ) => {
-        const items: any = await sdk[resourceType].retrieve(ids); // fix any
-        const state = getState()[resourceType];
-        const itemAction = {
-          payload: { items },
-          type: `${resourceType}/retrieveByIds`,
-        };
-        dispatch(updateItems(state, itemAction));
-        return { items, ids };
+        try {
+          const items: any = await sdk[resourceType].retrieve(ids); // fix any
+          dispatch(update(resourceType)(items));
+          return { items, ids };
+        } catch (error) {
+          return { items: [], ids: [] };
+        }
       }
     ),
     pending: (state: any, action: any) => {
@@ -95,15 +80,10 @@ export default function buildItems<
       `${resourceType}/retrieveByExternalIds`,
       async (
         { ids }: { ids: ExternalId[] },
-        { dispatch, getState }: { dispatch: any; getState: any }
+        { dispatch }: { dispatch: any }
       ) => {
         const items: any = await sdk[resourceType].retrieve(ids); // fix any
-        const state = getState()[resourceType];
-        const itemAction = {
-          payload: { items },
-          type: `${resourceType}/retrieveByExternalIds`,
-        };
-        dispatch(updateItems(state, itemAction));
+        dispatch(update(resourceType)(items));
         return {
           items,
           ids,
@@ -160,15 +140,10 @@ export default function buildItems<
       `${resourceType}/updateByIds`,
       async (
         { updates }: { updates: U[] },
-        { dispatch, getState }: { dispatch: any; getState: any }
+        { dispatch }: { dispatch: any }
       ) => {
         const items: any = await sdk[resourceType].update(updates); // fix any
-        const state = getState()[resourceType];
-        const itemAction = {
-          payload: { items },
-          type: `${resourceType}/updateByIds`,
-        };
-        dispatch(updateItems(state, itemAction));
+        dispatch(update(resourceType)(items));
         return {
           items,
           updates,
@@ -227,7 +202,6 @@ export default function buildItems<
   ) as any;
 
   return {
-    updateItems,
     retrieveItemsById,
     retrieveItemsByExternalId,
     updateItemsById,

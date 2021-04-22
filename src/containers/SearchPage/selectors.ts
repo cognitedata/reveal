@@ -4,7 +4,7 @@ import {
   getCountsSelector,
   getItemListSelector,
   getItemsSearchSelector,
-} from 'modules/selection';
+} from 'modules/workflows';
 
 export const searchCountSelector = (type: ResourceType, filter: Filter) =>
   createSelector(

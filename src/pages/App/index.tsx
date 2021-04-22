@@ -13,7 +13,6 @@ import sdk, { getAuthState } from 'sdk-singleton';
 import queryString from 'query-string';
 import { trackUsage } from 'utils/Metrics';
 import { setCdfEnv, setTenant, fetchUserGroups } from 'modules/app';
-import NotFound from 'pages/NotFound';
 import {
   Loader,
   FileContextualizationContextProvider,
@@ -21,13 +20,16 @@ import {
 } from '@cognite/data-exploration';
 import { ResourceActionsProvider } from 'context/ResourceActionsContext';
 import { ResourceSelectionProvider } from 'context/ResourceSelectionContext';
+import NotFound from 'pages/NotFound';
+import { staticRoot } from 'routes/paths';
+
+const Routes = React.lazy(() => import('routes'));
 
 export default function App() {
   const dispatch = useDispatch();
   const history = useHistory();
   const { location } = history;
   const { username } = getAuthState();
-
   const { pathname, search, hash } = useLocation();
 
   const cdfEnv = queryString.parse(window.location.search).env as string;
@@ -64,24 +66,6 @@ export default function App() {
     trackUsage('App.navigation');
   }, [location]);
 
-  const routes = [
-    {
-      path: '/:tenant/pnid_parsing_new',
-      component: useMemo(
-        () =>
-          React.lazy(
-            () =>
-              import(
-                'pages/Routes'
-                /* webpackChunkName: "pnid_parsing_new" */
-              )
-          ),
-        []
-      ),
-    },
-    { path: '/:tenant/*', component: NotFound },
-  ];
-
   return (
     <Suspense fallback={<Loader />}>
       <FileContextualizationContextProvider>
@@ -97,13 +81,12 @@ export default function App() {
                     hash,
                   }}
                 />
-                {routes.map((route) => (
-                  <Route
-                    key={route.path}
-                    path={route.path}
-                    component={route.component}
-                  />
-                ))}
+                <Route
+                  key={staticRoot}
+                  path={staticRoot}
+                  component={useMemo(() => Routes, [])}
+                />
+                <Route path="/:tenant/*" component={() => <NotFound />} />
               </Switch>
             </DataExplorationProvider>
           </ResourceActionsProvider>

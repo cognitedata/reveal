@@ -107,24 +107,23 @@ export const startConvertFileToSvgJob = (
     getState: () => RootState
   ) => {
     const state = getState();
-    const files = await sdk.files.retrieve([{ id: fileId }]);
-    const [file] = files;
+    const workflowId = state.workflows.active;
+    const file = fileSelector(state)(fileId);
+    const { grayscale } = state.workflows.items[workflowId].options;
 
     if (!file) {
       return Promise.resolve(undefined);
     }
 
-    const { jobStarted } = state.fileContextualization.uploadJobs[fileId] || {};
+    const { jobStarted } = state.contextualization.uploadJobs[fileId] || {};
+
     if (jobStarted) {
-      return Promise.resolve(
-        state.fileContextualization.uploadJobs[fileId].jobId
-      );
+      return Promise.resolve(state.contextualization.uploadJobs[fileId].jobId);
     }
 
     const timer = trackTimedUsage('Contextualization.PnidParsing.UploadJob', {
       fileId,
     });
-    const { grayscale } = state.fileContextualization.pnidOption;
 
     const annotationsWithLabels = addLabelsToAnnotations(annotations, getState);
 
@@ -322,7 +321,7 @@ export const uploadJobsReducer = (
 };
 
 export const makeNumPnidUploadJobSelector = createSelector(
-  (state: RootState) => state.fileContextualization.uploadJobs,
+  (state: RootState) => state.contextualization.uploadJobs,
   (uploadJobs) => (fileIds: number[]) => {
     const jobIds = new Set(Object.keys(uploadJobs));
     return fileIds.filter((fileId) => jobIds.has(`${fileId}`)).length;

@@ -7,23 +7,23 @@ export default { title: 'Molecules/Steps', decorator: withKnobs };
 const steps: StepsType[] = [
   {
     path: undefined,
-    breadcrumbs: ['Step 1'],
+    title: ['Step 1'],
   },
   {
     path: undefined,
-    breadcrumbs: ['Step 2'],
+    title: ['Step 2'],
   },
   {
     path: undefined,
-    breadcrumbs: ['Step 3'],
+    title: ['Step 3'],
   },
   {
     path: undefined,
-    breadcrumbs: ['Step 4'],
+    title: ['Step 4'],
   },
   {
     path: undefined,
-    breadcrumbs: ['Step 5'],
+    title: ['Step 5'],
   },
 ];
 

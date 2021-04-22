@@ -6,10 +6,11 @@ import { Button, Title, Badge, Colors } from '@cognite/cogs.js';
 import { RootState } from 'store';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { FileInfo } from '@cognite/sdk';
-
+import { useActiveWorkflow } from 'hooks';
 import { checkPermission } from 'modules/app';
 import { startConvertFileToSvgJob } from 'modules/contextualization/uploadJobs';
 import { retrieveItemsById as retrieve } from 'modules/files';
+import { reviewPage } from 'routes/paths';
 import { ResourceSidebar } from 'containers/ResourceSidebar';
 import { ContextFileViewer as CogniteFileViewer } from 'components/CogniteFileViewer';
 import MissingPermissionFeedback from 'components/MissingPermissionFeedback';
@@ -38,21 +39,13 @@ import { ClearTagsButton } from './ClearTagsButton';
 export type FilePreviewTabType = 'preview' | 'details' | 'files' | 'assets';
 
 export default function FileOverview() {
-  const {
-    fileId,
-    tenant,
-    filesDataKitId,
-    assetsDataKitId,
-    optionsId,
-  } = useParams<{
+  const { fileId, tenant } = useParams<{
     fileId: string;
     tenant: string;
-    filesDataKitId: string;
-    assetsDataKitId: string;
-    optionsId: string;
   }>();
   const dispatch = useDispatch();
   const history = useHistory();
+  const { workflowId } = useActiveWorkflow();
 
   const [activeTab, setActiveTab] = useState<FilePreviewTabType>('preview');
   const [renderFeedback, setRenderFeedback] = useState(false);
@@ -70,8 +63,7 @@ export default function FileOverview() {
   );
 
   const { jobDone, jobError, jobStarted } = useSelector(
-    (state: RootState) =>
-      state.fileContextualization.uploadJobs[fileIdNumber] || {}
+    (state: RootState) => state.contextualization.uploadJobs[fileIdNumber] || {}
   );
 
   useEffect(() => {
@@ -107,11 +99,7 @@ export default function FileOverview() {
       <Space>
         <Button
           icon="ArrowBack"
-          onClick={() =>
-            history.push(
-              `/${tenant}/pnid_parsing_new/pipeline/${filesDataKitId}/${assetsDataKitId}/${optionsId}`
-            )
-          }
+          onClick={() => history.push(reviewPage.path(tenant, workflowId))}
         >
           Back
         </Button>{' '}

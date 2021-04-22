@@ -131,12 +131,9 @@ describe('UploadJobs store', () => {
           .mockResolvedValue('testingValue');
 
         const initialStore = {
-          fileContextualization: {
+          contextualization: {
             uploadJobs: {
               ...UploadJobs.stuffForUnitTests.initialPnIDState,
-            },
-            pnidOption: {
-              grayscale: false,
             },
           },
           files: {
@@ -148,6 +145,10 @@ describe('UploadJobs store', () => {
             },
           },
           app: { loaded: false, groups: {} },
+          workflows: {
+            active: 1,
+            items: { 1: { options: { grayscale: false } } },
+          },
         };
         // @ts-ignore
         const store = mockStore(initialStore);
@@ -161,12 +162,9 @@ describe('UploadJobs store', () => {
           .mockResolvedValue('testingValue');
 
         const initialStore = {
-          fileContextualization: {
+          contextualization: {
             uploadJobs: {
               ...UploadJobs.stuffForUnitTests.initialPnIDState,
-            },
-            pnidOption: {
-              grayscale: false,
             },
           },
           files: {
@@ -179,6 +177,10 @@ describe('UploadJobs store', () => {
           },
           annotations: { byFileId: { 1: { annotations: [] } } },
           app: { loaded: false, groups: {} },
+          workflows: {
+            active: 1,
+            items: { 1: { options: { grayscale: false } } },
+          },
         };
         // @ts-ignore
         const store = mockStore(initialStore);
@@ -191,12 +193,9 @@ describe('UploadJobs store', () => {
           .spyOn(UploadJobs, 'downloadFile')
           .mockRejectedValue('testingValue');
         const initialStore = {
-          fileContextualization: {
+          contextualization: {
             uploadJobs: {
               ...UploadJobs.stuffForUnitTests.initialPnIDState,
-            },
-            pnidOption: {
-              grayscale: false,
             },
           },
           files: {
@@ -212,6 +211,10 @@ describe('UploadJobs store', () => {
             },
           },
           app: { loaded: false, groups: {} },
+          workflows: {
+            active: 1,
+            items: { 1: { options: { grayscale: false } } },
+          },
         };
         // @ts-ignore
 

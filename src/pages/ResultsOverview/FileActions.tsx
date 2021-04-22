@@ -1,16 +1,17 @@
 import React, { useMemo } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { Button, Tooltip } from '@cognite/cogs.js';
 import { message, Dropdown, Menu } from 'antd';
-import { checkPermission } from 'modules/app';
+import { Button, Tooltip } from '@cognite/cogs.js';
 import { useAnnotations } from '@cognite/data-exploration';
-import sdk from 'sdk-singleton';
-
 import {
   convertEventsToAnnotations,
   linkFileToAssetIds,
 } from '@cognite/annotations';
+import { Flex, IconButton } from 'components/Common';
+import sdk from 'sdk-singleton';
+import { checkPermission } from 'modules/app';
+import { diagramPreview } from 'routes/paths';
 
 type Props = { file: any; setRenderFeedback: (shouldSet: boolean) => any };
 
@@ -19,24 +20,26 @@ export default function FileActions({
   setRenderFeedback,
 }: Props): JSX.Element {
   const history = useHistory();
-
-  const { tenant, assetsDataKitId, filesDataKitId, optionsId } = useParams<{
+  const { tenant, workflowId } = useParams<{
     tenant: string;
-    filesDataKitId: string;
-    assetsDataKitId: string;
-    optionsId: string;
+    workflowId: string;
   }>();
 
   const getCanEditFiles = useMemo(
     () => checkPermission('filesAcl', 'WRITE'),
     []
   );
+  const canEditFiles = useSelector(getCanEditFiles);
+  const { data: annotations } = useAnnotations(file.id);
 
   const jobFinished = file && file.parsingJob && file.parsingJob.jobDone;
 
-  const canEditFiles = useSelector(getCanEditFiles);
-
-  const { data: annotations } = useAnnotations(file.id);
+  const onTooltipShow = () => {
+    if (jobFinished) {
+      return false;
+    }
+    return undefined;
+  };
 
   const onLinkAssetsClick = async (e: any) => {
     switch (e.key) {
@@ -52,31 +55,24 @@ export default function FileActions({
     }
   };
 
+  const onFileViewClick = () => {
+    if (file) {
+      history.push(diagramPreview.path(tenant, workflowId, file.id));
+    } else {
+      message.info('Please wait for the process to finish for this file.');
+    }
+  };
+
   return (
-    <>
+    <Flex row>
       <Tooltip
         placement="bottom-end"
         content="Please wait for the file to finish parsing."
-        onShow={() => {
-          if (jobFinished) {
-            return false;
-          }
-          return undefined;
-        }}
+        onShow={onTooltipShow}
       >
         <Button
           icon="ArrowRight"
-          onClick={() => {
-            if (file) {
-              history.push(
-                `/${tenant}/pnid_parsing_new/pipeline/${filesDataKitId}/${assetsDataKitId}/${optionsId}/pnid/${file.id}`
-              );
-            } else {
-              message.info(
-                'Please wait for the process to finish for this file.'
-              );
-            }
-          }}
+          onClick={onFileViewClick}
           disabled={!jobFinished}
         >
           View
@@ -91,7 +87,7 @@ export default function FileActions({
                 : 'There is no annotations to be linked to this file.'
             }
           >
-            <Menu onClick={(e) => onLinkAssetsClick(e)}>
+            <Menu onClick={onLinkAssetsClick}>
               <Menu.Item key="link" disabled={!annotations?.length}>
                 Link assets to P&ID file
               </Menu.Item>
@@ -99,18 +95,13 @@ export default function FileActions({
           </Tooltip>
         }
       >
-        <Button
-          style={{
-            marginLeft: '8px',
-            paddingLeft: '8px',
-            paddingRight: '8px',
-            width: 'auto',
-            minWidth: 'auto',
-          }}
+        <IconButton
           disabled={!(file && file.annotations && file.annotations.length > 0)}
           icon="HorizontalEllipsis"
+          square
+          style={{ marginLeft: '8px' }}
         />
       </Dropdown>
-    </>
+    </Flex>
   );
 }

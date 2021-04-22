@@ -1,59 +1,40 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
 import { Progress, Col, Row, Collapse } from 'antd';
 import { FileInfo } from '@cognite/sdk';
 import { selectParsingJobForFileId } from 'modules/contextualization/parsingJobs';
-import { dataKitItemsSelectorFactory } from 'modules/selection';
-import DataKitLoadingProgress from 'components/DataKitLoadingProgress';
+import { useWorkflowDiagrams } from 'modules/workflows/hooks';
+import { getActiveWorkflowId } from 'modules/workflows';
+import LoadingProgress from 'components/LoadingProgress';
 
-interface LoadResourcesProps {
-  assetDataKitId: string;
-  fileDataKitId: string;
-}
-export default function LoadResources(props: LoadResourcesProps) {
-  const { assetDataKitId, fileDataKitId } = props;
-  const [collapseExpanded, setCollapseExpanded] = useState<boolean>(true);
-
-  const getFiles = useMemo(
-    () => dataKitItemsSelectorFactory(fileDataKitId, true),
-    [fileDataKitId]
-  );
-  const files = useSelector(getFiles).filter((el) => !!el) as FileInfo[];
-
+export default function LoadResources() {
+  const workflowId = useSelector(getActiveWorkflowId);
   const getParsingJob = useSelector(selectParsingJobForFileId);
+  const diagrams = useWorkflowDiagrams(workflowId, true) as FileInfo[];
 
-  const filesCompleted = files.filter((el) => {
-    const jobStatus = getParsingJob(el.id);
-    if (jobStatus && jobStatus.jobDone) {
-      return true;
-    }
-    return false;
+  const diagramsCompleted = diagrams.filter((diagram) => {
+    const jobStatus = getParsingJob(diagram.id);
+    return jobStatus && jobStatus.jobDone;
   });
 
-  const jobDone = filesCompleted.length === files.length;
-
-  useEffect(() => {
-    setCollapseExpanded(jobDone);
-  }, [jobDone]);
+  const jobDone = diagramsCompleted.length === diagrams.length;
 
   const parsingJobPercent: number = Math.floor(
-    (filesCompleted.length / files.length) * 100
+    (diagramsCompleted.length / diagrams.length) * 100
   );
+
   return (
-    <Collapse
-      activeKey={collapseExpanded ? undefined : '1'}
-      onChange={() => setCollapseExpanded(!collapseExpanded)}
-    >
+    <Collapse defaultActiveKey={['1']}>
       <Collapse.Panel
         header={jobDone ? 'Resources loaded' : 'Getting your data...'}
         key="1"
       >
         <Row align="middle">
           <Col span={4}>
-            <p>Files</p>
+            <p>Diagrams</p>
           </Col>
           <Col span={20}>
-            <DataKitLoadingProgress id={fileDataKitId} />
+            <LoadingProgress type="diagrams" />
           </Col>
         </Row>
         <Row align="middle">
@@ -61,7 +42,7 @@ export default function LoadResources(props: LoadResourcesProps) {
             <p>Assets</p>
           </Col>
           <Col span={20}>
-            <DataKitLoadingProgress id={assetDataKitId} />
+            <LoadingProgress type="assets" />
           </Col>
         </Row>
         <Row align="middle">
@@ -71,7 +52,7 @@ export default function LoadResources(props: LoadResourcesProps) {
           <Col span={20}>
             <Progress
               percent={parsingJobPercent}
-              status={parsingJobPercent === files.length ? 'success' : 'active'}
+              status={parsingJobPercent === 100 ? 'success' : 'active'}
             />
           </Col>
         </Row>

@@ -3,8 +3,8 @@ import { reducer as appReducer } from 'modules/app';
 import { reducer as filesReducer } from 'modules/files';
 import { reducer as assetsReducer } from 'modules/assets';
 import { reducer as datasetsReducer } from 'modules/datasets';
-import { reducer as selectionReducer } from 'modules/selection';
-import { reducer as fileContextualizationReducer } from 'modules/contextualization';
+import { reducer as workflowsReducer } from 'modules/workflows';
+import { reducer as contextualizationReducer } from 'modules/contextualization';
 
 const createRootReducer = () =>
   combineReducers({
@@ -12,8 +12,8 @@ const createRootReducer = () =>
     assets: assetsReducer,
     files: filesReducer,
     datasets: datasetsReducer,
-    selection: selectionReducer,
-    fileContextualization: fileContextualizationReducer,
+    workflows: workflowsReducer,
+    contextualization: contextualizationReducer,
   });
 
 export default createRootReducer;

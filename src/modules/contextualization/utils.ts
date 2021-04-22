@@ -1,36 +1,5 @@
-import { AnyAction } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
-import { RootState } from 'store';
 import moment from 'moment';
 import message from 'antd/lib/message';
-import {
-  loadResourceSelection,
-  dataKitStatusSelectorFactory,
-} from '../selection';
-
-export const loadDataKits = (...dataKitIds: string[]) => {
-  return async (
-    dispatch: ThunkDispatch<any, any, AnyAction>,
-    getState: () => RootState
-  ) => {
-    const dataKitIdsMap = dataKitIds.map((dataKitId) => {
-      const { done, loading } = dataKitStatusSelectorFactory(
-        dataKitId,
-        true
-      )(getState());
-      if (!done && !loading) {
-        return dispatch(
-          loadResourceSelection({ selectionId: dataKitId, loadAll: true })
-        );
-      }
-      return Promise.resolve();
-    });
-    // eslint-disable-next-line
-    // TODO
-    // @ts-ignore
-    return Promise.all(dataKitIdsMap);
-  };
-};
 
 export const stringCompare = (a = '', b = '') => {
   const al = a.replace(/\s+/g, '');
@@ -66,16 +35,16 @@ export const stringContainsAny = (a = '', b: string[] = []) => {
   return b.some((query) => stringContains(a, query));
 };
 
-export const getPipelineIdFromPath = (path: string): string | false => {
+export const getWorkflowIdFromPath = (path: string): string | false => {
   const arrPath = path.split('/');
-  const indexOfPipeline = arrPath.findIndex((item) => item === 'pipeline');
+  const indexOfWorkflow = arrPath.findIndex((item) => item === 'workflow');
   const numberRegex = /^[0-9]*$/;
 
   if (
-    arrPath[indexOfPipeline + 1] &&
-    numberRegex.test(arrPath[indexOfPipeline + 1])
+    arrPath[indexOfWorkflow + 1] &&
+    numberRegex.test(arrPath[indexOfWorkflow + 1])
   ) {
-    return arrPath[indexOfPipeline + 1];
+    return arrPath[indexOfWorkflow + 1];
   }
   return false;
 };

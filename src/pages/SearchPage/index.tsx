@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useRouteMatch, useHistory } from 'react-router-dom';
+import { useRouteMatch, useHistory, useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { useDebouncedCallback } from 'use-debounce';
 import moment from 'moment';
@@ -9,10 +9,12 @@ import { FileInfo } from '@cognite/sdk';
 import { ResourceType, Filter } from 'modules/sdk-builder/types';
 import { doSearch } from 'modules/search';
 import {
+  moveToStep,
   PendingResourceSelection,
-  getActiveSelectionId,
+  getActiveWorkflowStep,
   createSelection as create,
-} from 'modules/selection';
+} from 'modules/workflows';
+
 import { dateSorter, stringCompare } from 'modules/contextualization/utils';
 import {
   Col,
@@ -25,11 +27,13 @@ import {
   Checkbox,
 } from 'antd';
 import { Button, Icon, Tooltip, Title } from '@cognite/cogs.js';
-import { usePrevious } from 'hooks/CustomHooks';
+import { usePrevious, useActiveWorkflow } from 'hooks';
+
 import StickyBottomRow from 'components/StickyBottomRow';
 import { Popover } from 'components/Common';
 import { ResourceSidebar } from 'containers/ResourceSidebar';
 import NoNamePreview from 'components/NoNamePreview';
+import { resourceSelection, configPage } from 'routes/paths';
 import { AssetSmallPreview, FileSmallPreview } from '@cognite/data-exploration';
 import AssetSearchBar from './AssetSearchBar';
 import FileSearchBar from './FileSearchBar';
@@ -161,6 +165,10 @@ export default function SearchPage({
   const history = useHistory();
   const match = useRouteMatch();
   const dispatch = useDispatch();
+  const { tenant } = useParams<{
+    tenant: string;
+  }>();
+  const { workflowId } = useActiveWorkflow();
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [currentType, setCurrentType] = useState<ResourceType>(type);
@@ -195,8 +203,7 @@ export default function SearchPage({
     currentType,
     delayedFilter
   );
-
-  const selectionId = useSelector(getActiveSelectionId)(type);
+  const step = useSelector(getActiveWorkflowStep);
 
   useEffect(() => {
     if (type !== currentType) {
@@ -270,21 +277,33 @@ export default function SearchPage({
     const selection: PendingResourceSelection = {
       type: currentType,
       endpoint: isSelectAll ? 'list' : 'retrieve',
-      query,
+      filter: query,
     };
     if (onNextClicked(selectionSize, selection)) {
       if (selectionSize === 0) {
         message.error('You have to select data to continue');
       }
       dispatch(create(selection));
+      nextStep();
     }
   };
 
-  useEffect(() => {
-    if (!selectionId) return;
-    history.push(`${match.url}/${selectionId}`);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectionId]);
+  const nextStep = () => {
+    if (step === 'diagramSelection') {
+      history.push(resourceSelection.path(tenant, workflowId));
+      dispatch(moveToStep('resourceSelection'));
+    }
+    if (step === 'resourceSelection') {
+      history.push(configPage.path(tenant, workflowId));
+    }
+    // eslint-disable-next-line
+    // TODO there are situations where the step can be none of the above.
+    // This needs to be fixed, however this is temporary DEV fix.
+    else {
+      history.push(resourceSelection.path(tenant, workflowId));
+      dispatch(moveToStep('resourceSelection'));
+    }
+  };
 
   const types = uniq([currentType, ...availableTypes]).map((t: string) => ({
     value: t,

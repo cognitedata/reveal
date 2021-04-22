@@ -1,8 +1,11 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
 import { useParams, useHistory } from 'react-router-dom';
 import { Input } from '@cognite/cogs.js';
-import { Flex, IconButton } from 'components/Common';
 import { trackUsage, PNID_METRICS } from 'utils/Metrics';
+import { Flex, IconButton } from 'components/Common';
+import { createNewWorkflow } from 'modules/workflows';
+import { diagramSelection } from 'routes/paths';
 
 interface FilterBarProps {
   query: string;
@@ -11,10 +14,13 @@ interface FilterBarProps {
 export default function FilterBar({ query, setQuery }: FilterBarProps) {
   const { tenant } = useParams<{ tenant: string }>();
   const history = useHistory();
+  const dispatch = useDispatch();
 
   const onContextualizeNew = () => {
     trackUsage(PNID_METRICS.contextualization.start);
-    history.push(`/${tenant}/pnid_parsing_new/pipeline`);
+    const newWorkflowId = Number(new Date());
+    dispatch(createNewWorkflow(newWorkflowId));
+    history.push(diagramSelection.path(tenant, String(newWorkflowId)));
   };
 
   return (
@@ -25,7 +31,7 @@ export default function FilterBar({ query, setQuery }: FilterBarProps) {
         value={query}
       />
       <IconButton type="primary" icon="Document" onClick={onContextualizeNew}>
-        Contextualize a new file
+        Contextualize new files
       </IconButton>
     </Flex>
   );

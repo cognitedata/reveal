@@ -12,7 +12,6 @@ import {
   createAnnotations,
   listAnnotationsForFile,
 } from '@cognite/annotations';
-import { dataKitItemsSelectorFactory } from '../selection';
 
 export const PNID_PARSING_JOB_ID_METADATA_FIELD =
   '__COGNITE_PNID_PARSING_JOB_ID';
@@ -23,12 +22,11 @@ const PARSING_JOB_CREATED = 'pnid/PARSING_JOB_CREATED';
 const PARSING_JOB_STATUS_UPDATED = 'pnid/PARSING_JOB_STATUS_UPDATED';
 const PARSING_JOB_DONE = 'pnid/PARSING_JOB_DONE';
 const PARSING_JOB_ERROR = 'pnid/PARSING_JOB_ERROR';
-const PARSING_JOB_RESET = 'pnid/PARSING_JOB_RESET';
 
 interface CreateParsingJobStartedAction
   extends Action<typeof PARSING_JOB_CREATE_STARTED> {
   fileId: number;
-  dataKitId: string;
+  workflowId: number;
 }
 interface ParsingJobCreatedAction extends Action<typeof PARSING_JOB_CREATED> {
   fileId: number;
@@ -47,16 +45,12 @@ interface ParsingJobDoneAction extends Action<typeof PARSING_JOB_DONE> {
 interface ParsingJobErrorAction extends Action<typeof PARSING_JOB_ERROR> {
   fileId: number;
 }
-interface ParsingJobResetAction extends Action<typeof PARSING_JOB_RESET> {
-  fileId: number;
-}
 type ParsingJobActions =
   | CreateParsingJobStartedAction
   | ParsingJobCreatedAction
   | ParsingJobStatusUpdatedAction
   | ParsingJobDoneAction
-  | ParsingJobErrorAction
-  | ParsingJobResetAction;
+  | ParsingJobErrorAction;
 
 const pnidApiRootPath = (project: string) =>
   `/api/playground/projects/${project}/context/pnid`;
@@ -86,31 +80,30 @@ export const startPnidParsingJob = (
   file: FileInfo,
   entities: string[],
   options: { partialMatch: boolean; grayscale: boolean; minTokens: number },
-  assetsDataKitId: string,
-  filesDataKitId: string
+  workflowId: number,
+  diagrams: any, // temporary
+  resources: any // temporary
 ) => {
   return async (
     dispatch: ThunkDispatch<any, any, ParsingJobActions>,
     getState: () => RootState
   ): Promise<number | undefined> => {
-    const getAssets = dataKitItemsSelectorFactory(assetsDataKitId, true);
-    const getFiles = dataKitItemsSelectorFactory(filesDataKitId, true);
     const onFail = () => {
       dispatch({ type: PARSING_JOB_ERROR, fileId: file.id });
       timer.stop({ success: false });
     };
 
-    const { jobStarted, dataKitId: oldJobDataSetId } =
-      getState().fileContextualization.parsingJobs[file.id] || {};
+    const { jobStarted, workflowId: oldWorkflowId } =
+      getState().contextualization.parsingJobs[file.id] || {};
 
-    if (jobStarted && assetsDataKitId === oldJobDataSetId) {
-      return getState().fileContextualization.parsingJobs[file.id].jobId;
+    if (jobStarted && workflowId === oldWorkflowId) {
+      return getState().contextualization.parsingJobs[file.id].jobId;
     }
 
     dispatch({
       type: PARSING_JOB_CREATE_STARTED,
       fileId: file.id,
-      dataKitId: assetsDataKitId,
+      workflowId,
     });
 
     const timer = trackTimedUsage('Contextualization.PnidParsing.ParsingJob', {
@@ -148,12 +141,10 @@ export const startPnidParsingJob = (
                 onFail();
                 reject();
               } else {
-                // completed
-                const state = getState();
-
+                // completed]
                 // load all entities to match to
-                const assets = getAssets(state) as Asset[];
-                const files = getFiles(state) as FileInfo[];
+                const assets = resources.assets as Asset[];
+                const files = diagrams as FileInfo[];
 
                 // load all existing annotations
                 const existingAnnotations = await listAnnotationsForFile(
@@ -208,32 +199,13 @@ export const startPnidParsingJob = (
     return undefined;
   };
 };
-export const resetPnidParsingJobs = (assetsDataKitId: string) => {
-  return async (
-    dispatch: ThunkDispatch<any, any, ParsingJobActions>,
-    getState: () => RootState
-  ): Promise<void> => {
-    const parsingJobs: ParsingJobStore =
-      getState().fileContextualization.parsingJobs || {};
-
-    Object.keys(parsingJobs)
-      .map(Number)
-      .map(
-        (fileId: number) =>
-          parsingJobs[fileId].dataKitId === assetsDataKitId &&
-          dispatch({
-            type: PARSING_JOB_RESET,
-            fileId,
-          })
-      );
-  };
-};
 
 export const startDocumentParsingJob = (
   file: FileInfo,
   entities: string[],
-  assetsDataKitId: string,
-  filesDataKitId: string
+  workflowId: number,
+  diagrams: any, // temporary
+  resources: any // temporary
 ) => {
   return async (
     dispatch: ThunkDispatch<any, any, ParsingJobActions>,
@@ -244,20 +216,17 @@ export const startDocumentParsingJob = (
       timer.stop({ success: false });
     };
 
-    const { jobStarted, dataKitId: oldJobDataSetId } =
-      getState().fileContextualization.parsingJobs[file.id] || {};
+    const { jobStarted, workflowId: oldWorkflowId } =
+      getState().contextualization.parsingJobs[file.id] || {};
 
-    if (jobStarted && assetsDataKitId === oldJobDataSetId) {
-      return getState().fileContextualization.parsingJobs[file.id].jobId;
+    if (jobStarted && workflowId === oldWorkflowId) {
+      return getState().contextualization.parsingJobs[file.id].jobId;
     }
-
-    const getAssets = dataKitItemsSelectorFactory(assetsDataKitId, true);
-    const getFiles = dataKitItemsSelectorFactory(filesDataKitId, true);
 
     dispatch({
       type: PARSING_JOB_CREATE_STARTED,
       fileId: file.id,
-      dataKitId: assetsDataKitId,
+      workflowId,
     });
 
     const timer = trackTimedUsage(
@@ -298,12 +267,9 @@ export const startDocumentParsingJob = (
                 reject();
               } else {
                 // completed
-                const state = getState();
-
                 // load all entities to match to
-                const assetsData = getAssets(state) as Asset[];
-
-                const filesData = getFiles(state) as FileInfo[];
+                const assetsData = resources.assets as Asset[];
+                const filesData = diagrams;
 
                 // load all existing annotations
                 const existingAnnotations = await listAnnotationsForFile(
@@ -378,7 +344,7 @@ export interface ParsingJobState {
   jobStatus: ModelStatus;
   jobDone: boolean;
   jobError: boolean;
-  dataKitId: string;
+  workflowId: number;
   annotations?: PnidResponseEntity[];
 }
 
@@ -412,7 +378,7 @@ export const parsingJobsReducer = (
           jobStatus: 'Queued',
           jobDone: false,
           jobError: false,
-          dataKitId: action.dataKitId,
+          workflowId: action.workflowId,
         },
       };
     }
@@ -445,11 +411,6 @@ export const parsingJobsReducer = (
         },
       };
     }
-    case PARSING_JOB_RESET: {
-      const next = state;
-      delete next[action.fileId];
-      return next;
-    }
 
     default: {
       return state;
@@ -458,7 +419,7 @@ export const parsingJobsReducer = (
 };
 
 export const makeNumPnidParsingJobSelector = createSelector(
-  (state: RootState) => state.fileContextualization.parsingJobs,
+  (state: RootState) => state.contextualization.parsingJobs,
   (parsingJobs) => (fileIds: number[]) => {
     const jobIds = new Set(Object.keys(parsingJobs));
     return fileIds.filter((fileId) => jobIds.has(`${fileId}`)).length;
@@ -466,7 +427,7 @@ export const makeNumPnidParsingJobSelector = createSelector(
 );
 
 export const selectParsingJobForFileId = createSelector(
-  (state: RootState) => state.fileContextualization.parsingJobs,
+  (state: RootState) => state.contextualization.parsingJobs,
   (jobMap) => (fileId: number) => {
     return jobMap[fileId];
   }
