@@ -31,7 +31,6 @@ export default function SummaryStep() {
   });
   const GDPRFiles: number[] = [];
   const reviewStats: number[] = [];
-  const filesWithDetections: number[] = [];
   // eslint-disable-next-line array-callback-return
   Object.entries(annotations).map((arr) => {
     const aID = arr[1].annotatedResourceId;
@@ -40,9 +39,6 @@ export default function SummaryStep() {
     }
     if (arr[1].label === 'person' && !GDPRFiles.includes(aID)) {
       GDPRFiles.push(aID);
-    }
-    if (!filesWithDetections.includes(aID)) {
-      filesWithDetections.push(aID);
     }
   });
 
@@ -59,20 +55,20 @@ export default function SummaryStep() {
 
   const stats = {
     totalFilesUploaded: {
-      text: 'Total files uploaded',
+      text: 'total files uploaded',
       value: uploadedFiles?.length,
     },
-    filesWithExif: { text: 'Files with exif', value: filesWithExif },
+    filesWithExif: { text: 'files with exif', value: filesWithExif },
     userReviewedFiles: {
-      text: 'User-Reviewed files',
+      text: 'user-reviewed files',
       value: reviewStats.length,
     },
     modelDetections: {
-      text: 'Files with annotations',
-      value: filesWithDetections.length,
+      text: 'detected tags, texts and objects ',
+      value: Object.keys(annotations).length,
     },
     gdprCases: {
-      text: 'Unresolved GDPR Cases',
+      text: 'unresolved GDPR Cases',
       value: NotReviewedGDPRFiles.length,
     },
   };
@@ -92,7 +88,7 @@ export default function SummaryStep() {
                       setStatView(pair[0]);
                     }}
                   >
-                    {pair[1].text} : {pair[1].value}
+                    <strong>{pair[1].value}</strong> {pair[1].text}
                   </FancyButton>
                 ))}
               </StatsCarouselLeft>
@@ -126,7 +122,7 @@ export default function SummaryStep() {
                           stats[statView].value,
                       },
                       (_, i: number) => (
-                        <FileIconContainer key={`${statView}_${i}`}>
+                        <FileIconContainer key={`${statView}__${i}`}>
                           <img src={FileBland} alt="FileBland" />
                         </FileIconContainer>
                       )
@@ -186,6 +182,17 @@ export default function SummaryStep() {
                       </FileIconContainer>
                     )
                   )}
+                  {stats[statView].value < GDPRFiles.length &&
+                    Array.from(
+                      {
+                        length: GDPRFiles.length - stats[statView].value,
+                      },
+                      (_, i: number) => (
+                        <FileIconContainer key={`${statView}__${i}`}>
+                          <img src={FileBland} alt="FileBland" />
+                        </FileIconContainer>
+                      )
+                    )}
                 </StatsCarouselRight>
               )}
             </StatsCarouselContainer>

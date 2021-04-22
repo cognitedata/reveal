@@ -2,7 +2,8 @@
 <rect x="0.5" y="0.5" width="29" height="29" rx="7.5" fill="#FAFAFA" stroke="#E8E8E8"/>
 <circle cx="21.5" cy="7.5" r="2.5" fill="#E8E8E8"/>
 <path d="M14.2691 10.5L7.5 22.4322L21 22.5L14.2691 10.5Z" fill="#E8E8E8"/>
-<rect x="3" y="33" width="6" height="4" rx="1" fill="#FBE9ED"/>
-<rect x="12" y="33" width="6" height="4" rx="1" fill="#F4DAF8"/>
-<rect x="21" y="33" width="6" height="4" rx="1" fill="#FFE1D1"/>
+<rect x="1" y="33" width="6" height="4" rx="1" fill="#D3F7FB"/>
+<rect x="8" y="33" width="6" height="4" rx="1" fill="#F0FCF8"/>
+<rect x="15" y="33" width="6" height="4" rx="1" fill="#F4DAF8"/>
+<rect x="22" y="33" width="6" height="4" rx="1" fill="#FFE1D1"/>
 </svg>

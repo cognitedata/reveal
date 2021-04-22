@@ -2,9 +2,10 @@
 <rect x="0.5" y="4.5" width="29" height="29" rx="7.5" fill="#FAFAFA" stroke="#E8E8E8"/>
 <circle cx="21.5" cy="11.5" r="2.5" fill="#E8E8E8"/>
 <path d="M14.2691 14.5L7.5 26.4322L21 26.5L14.2691 14.5Z" fill="#E8E8E8"/>
-<rect x="3" y="37" width="6" height="4" rx="1" fill="#FBE9ED"/>
-<rect x="12" y="37" width="6" height="4" rx="1" fill="#F4DAF8"/>
-<rect x="21" y="37" width="6" height="4" rx="1" fill="#FFE1D1"/>
+<rect x="1" y="37" width="6" height="4" rx="1" fill="#D3F7FB"/>
+<rect x="8" y="37" width="6" height="4" rx="1" fill="#F0FCF8"/>
+<rect x="15" y="37" width="6" height="4" rx="1" fill="#F4DAF8"/>
+<rect x="22" y="37" width="6" height="4" rx="1" fill="#FFE1D1"/>
 <path d="M26.5 0C26.2148 0 25.9282 2.87376 24.7812 4.125C23.6343 5.37624 21 5.8125 21 6C21 6.1875 23.6343 6.62376 24.7812 7.875C25.9282 9.12624 26.2148 12 26.5 12C26.7852 12 27.0718 9.12624 28.2188 7.875C29.3657 6.62376 32 6.1875 32 6C32 5.8125 29.3657 5.37624 28.2188 4.125C27.0718 2.87376 26.7852 0 26.5 0Z" fill="url(#paint0_linear)"/>
 <defs>
 <linearGradient id="paint0_linear" x1="26.5961" y1="-6" x2="14.6597" y2="4.75052" gradientUnits="userSpaceOnUse">
