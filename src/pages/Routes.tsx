@@ -18,18 +18,18 @@ const PDF_FILTER = {
   },
 };
 
-const defaultBreadcrumbs = [
-  { title: 'Interactive engineering diagrams', path: '/pnid_parsing_new' },
-];
-
-const flowBreadcrumbs = {
-  title: 'Contextualize engineering diagrams',
+const BREADCRUMBS = {
+  default: {
+    title: 'Interactive engineering diagrams',
+    path: '/pnid_parsing_new',
+  },
+  flow: { title: 'Contextualize engineering diagrams' },
 };
 
 const getBreadcrumbs = () => {
   if (window.location.pathname.includes('pipeline'))
-    return [...defaultBreadcrumbs, flowBreadcrumbs];
-  return defaultBreadcrumbs;
+    return [BREADCRUMBS.default, BREADCRUMBS.flow];
+  return [BREADCRUMBS.default];
 };
 export default function Routes() {
   const match = useRouteMatch<{ tenant: string }>();
