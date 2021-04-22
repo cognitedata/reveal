@@ -135,7 +135,6 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
       format: THREE.RGBAFormat,
       stencilBuffer: false
     });
-    this._renderer.setRenderTarget(this.renderTarget);
   }
 
   dispose() {

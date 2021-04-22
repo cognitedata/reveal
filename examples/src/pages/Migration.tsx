@@ -23,7 +23,7 @@ window.THREE = THREE;
 export function Migration() {
   const canvasWrapperRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    const gui = new dat.GUI({ width: 500 });
+    const gui = new dat.GUI({ width: Math.min(500, 0.8*window.innerWidth) });
     let viewer: Cognite3DViewer;
 
     function createGeometryFilter(input: string | null): { center: THREE.Vector3, size: THREE.Vector3 } | undefined  {
@@ -230,9 +230,10 @@ export function Migration() {
       geometryFilterGui.add(guiActions, 'resetGeometryFilter').name('Reset and reload');
 
       const renderGui = gui.addFolder('Rendering');
-      const renderModes = [undefined, 'Color', 'Normal', 'TreeIndex', 'PackColorAndNormal', 'Depth', 'Effects', 'Ghost', 'LOD'];
+      const renderModes = ['Color', 'Normal', 'TreeIndex', 'PackColorAndNormal', 'Depth', 'Effects', 'Ghost', 'LOD', 'DepthBufferOnly (N/A)', 'GeometryType'];
       renderGui.add(guiState, 'renderMode', renderModes).name('Render mode').onFinishChange(value => {
-        const renderMode = renderModes.indexOf(value);
+        const renderMode = renderModes.indexOf(value) + 1;
+        console.log('renderMode', value, renderMode);
         cadModels.forEach(m => {
           const cadNode: CadNode = (m as any).cadNode;
           cadNode.renderMode = renderMode;
@@ -541,7 +542,7 @@ export function Migration() {
       model.traverse(x => {
         if (x instanceof THREE.Mesh) {
           const mesh = x;
-          const geometry: THREE.Geometry | THREE.BufferGeometry = mesh.geometry;
+          const geometry: THREE.BufferGeometry = mesh.geometry;
 
           if (geometry.boundingBox !== null) {
             const box = geometry.boundingBox.clone();
