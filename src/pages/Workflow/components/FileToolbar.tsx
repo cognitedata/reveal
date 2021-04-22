@@ -104,6 +104,9 @@ export const FileToolbar = ({
           <ButtonGroup.Button key="grid" icon="Grid" title="Grid" size="small">
             Grid
           </ButtonGroup.Button>
+          <ButtonGroup.Button key="map" icon="Map" title="Map" size="small">
+            Map
+          </ButtonGroup.Button>
         </ButtonGroup>
       </Container>
     </>

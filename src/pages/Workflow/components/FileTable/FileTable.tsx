@@ -36,7 +36,7 @@ type CellRenderer = {
   rowData: TableDataItem;
 };
 
-type FileTableProps = Omit<BaseTableProps<TableDataItem>, 'width'>;
+export type FileTableProps = Omit<BaseTableProps<TableDataItem>, 'width'>;
 
 function StatusRendrer({ rowData: { id } }: CellRenderer) {
   const selectAnnotationBadgeProps = useMemo(

@@ -21,7 +21,11 @@ const mapPlaceHolder = () => {
   );
 };
 
-export const MapView = ({ geoLocation }: { geoLocation?: FileGeoLocation }) => {
+export const InlineMapView = ({
+  geoLocation,
+}: {
+  geoLocation?: FileGeoLocation;
+}) => {
   if (!geoLocation) {
     return mapPlaceHolder();
   }
@@ -53,7 +57,6 @@ export const MapView = ({ geoLocation }: { geoLocation?: FileGeoLocation }) => {
           maxHeight: 179,
           overflow: 'hidden',
         }}
-        zoom={[2]}
         fitBoundsOptions={{ duration: 0 }}
         fitBounds={bounds}
       >
