@@ -49,7 +49,7 @@ export const ChartActions = () => {
   const handleDuplicateChart = async () => {
     if (chart && login?.user) {
       const newChart = duplicate(chart, login.user);
-      await updateChart({ chart: newChart });
+      await updateChart(newChart);
       history.push(`/${newChart.id}`);
     }
   };

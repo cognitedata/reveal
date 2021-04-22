@@ -49,7 +49,7 @@ const TopBarWrapper = () => {
                   value={chart?.name || ''}
                   onChange={(value) => {
                     if (chart) {
-                      updateChart({ chart: { ...chart, name: value } });
+                      updateChart({ ...chart, name: value });
                     }
                   }}
                 />

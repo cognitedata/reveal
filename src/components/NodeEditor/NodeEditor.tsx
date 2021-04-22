@@ -34,7 +34,7 @@ type WorkflowEditorProps = {
   chart: Chart;
   workflowId: string;
   setWorkspaceMode: (m: Modes) => void;
-  mutate: (i: { chart: Chart; skipPersist?: boolean }) => void;
+  mutate: (chart: Chart) => void;
 };
 
 const WorkflowEditor = ({
@@ -54,17 +54,15 @@ const WorkflowEditor = ({
 
   const update = (diff: Partial<ChartWorkflow>) => {
     mutate({
-      chart: {
-        ...chart,
-        workflowCollection: chart.workflowCollection?.map((wf) =>
-          wf.id === workflowId
-            ? {
-                ...wf,
-                ...diff,
-              }
-            : wf
-        ),
-      },
+      ...chart,
+      workflowCollection: chart.workflowCollection?.map((wf) =>
+        wf.id === workflowId
+          ? {
+              ...wf,
+              ...diff,
+            }
+          : wf
+      ),
     });
   };
 

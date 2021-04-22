@@ -34,10 +34,8 @@ const SharingDropdown = ({ chart, disabled = false }: SharingDropdownProps) => {
 
   const handleToggleChartAccess = async () => {
     updateChart({
-      chart: {
-        ...chart,
-        public: !chart.public,
-      },
+      ...chart,
+      public: !chart.public,
     });
   };
 

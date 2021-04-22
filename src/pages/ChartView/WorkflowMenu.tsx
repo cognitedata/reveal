@@ -33,13 +33,13 @@ export default function WorkflowMenu({
   }
 
   const update = (diff: Partial<ChartWorkflow>, close: boolean = true) => {
-    mutate({ chart: updateWorkflow(chart, id, diff) });
+    mutate(updateWorkflow(chart, id, diff));
     if (closeMenu && close) {
       closeMenu();
     }
   };
-  const remove = () => mutate({ chart: removeWorkflow(chart, id) });
-  const duplicate = () => mutate({ chart: duplicateWorkflow(chart, id) });
+  const remove = () => mutate(removeWorkflow(chart, id));
+  const duplicate = () => mutate(duplicateWorkflow(chart, id));
 
   return (
     <Menu>

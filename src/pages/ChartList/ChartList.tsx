@@ -89,7 +89,7 @@ const ChartList = () => {
       public: false,
       version: CHART_VERSION,
     };
-    await updateChart({ chart: newChart });
+    await updateChart(newChart);
     history.push(`/${id}`);
   };
 

@@ -33,14 +33,13 @@ export default function TimeSeriesMenu({
   }
 
   const update = (diff: Partial<ChartTimeSeries>, close: boolean = true) => {
-    mutate({ chart: updateTimeseries(chart, id, diff) });
+    mutate(updateTimeseries(chart, id, diff));
     if (closeMenu && close) {
       closeMenu();
     }
   };
-  const remove = () => mutate({ chart: removeTimeseries(chart, id) });
-  const convert = () =>
-    mutate({ chart: convertTimeseriesToWorkflow(chart, id) });
+  const remove = () => mutate(removeTimeseries(chart, id));
+  const convert = () => mutate(convertTimeseriesToWorkflow(chart, id));
   return (
     <Menu>
       <Menu.Submenu content={<AppearanceDropdown update={update} />}>

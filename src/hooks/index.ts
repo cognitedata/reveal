@@ -19,7 +19,9 @@ const getSetItem = (key: string, history: ReturnType<typeof useHistory>) => (
 
 export const useLoginStatus = () => {
   const sdk = useSDK();
-  return useQuery(['login', 'status'], () => sdk.login.status());
+  return useQuery(['login', 'status'], () => sdk.login.status(), {
+    cacheTime: Infinity,
+  });
 };
 
 export const useIsChartOwner = (chart: Chart) => {

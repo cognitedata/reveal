@@ -8,6 +8,7 @@ import 'firebase/firestore';
 import 'firebase/auth';
 import { useLoginStatus } from 'hooks';
 import { Chart } from 'reducers/charts/types';
+import { IdInfo } from '@cognite/sdk';
 
 type EnvironmentConfig = {
   cognite: {
@@ -178,13 +179,9 @@ export const useDeleteChart = () => {
 export const useUpdateChart = () => {
   const cache = useQueryClient();
   return useMutation(
-    async ({
-      chart,
-      skipPersist = false,
-    }: {
-      chart: Chart;
-      skipPersist?: boolean;
-    }) => {
+    async (chart: Chart) => {
+      const skipPersist =
+        cache.getQueryData<IdInfo>(['login', 'status'])?.user !== chart.user;
       // skipPersist will result in only the local cache being updated.
       if (!skipPersist) {
         // The firestore SDK will retry indefinitely
@@ -200,13 +197,15 @@ export const useUpdateChart = () => {
       return chart.id;
     },
     {
-      onMutate({ chart, skipPersist }) {
+      onMutate(chart) {
+        const skipPersist =
+          cache.getQueryData<IdInfo>(['login', 'status'])?.user !== chart.user;
         cache.setQueryData(['chart', chart.id], {
           ...chart,
           dirty: skipPersist,
         });
       },
-      onError(_, { chart }) {
+      onError(_, chart) {
         cache.invalidateQueries(['chart', chart.id]);
       },
       onSettled() {

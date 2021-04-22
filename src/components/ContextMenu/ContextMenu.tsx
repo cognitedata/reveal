@@ -148,41 +148,39 @@ const Statistics = ({
 }) => {
   const sdk = useSDK();
   const { mutate: callFunction } = useCallFunction('individual_calc-master');
-  const { mutateAsync } = useUpdateChart();
+  const { mutate } = useUpdateChart();
 
   const update = (diff: Partial<ChartWorkflow | ChartTimeSeries>) => {
     if (!sourceItem) {
       return;
     }
 
-    mutateAsync({
-      chart: {
-        ...chart,
-        ...(sourceItem.type === 'timeseries'
-          ? {
-              timeSeriesCollection: chart.timeSeriesCollection?.map((ts) =>
-                ts.id === sourceItem.id
-                  ? {
-                      ...ts,
-                      ...diff,
-                    }
-                  : ts
-              ),
-            }
-          : {}),
-        ...(sourceItem.type === 'timeseries'
-          ? {
-              workflowCollection: chart.workflowCollection?.map((wf) =>
-                wf.id === sourceItem.id
-                  ? {
-                      ...wf,
-                      ...diff,
-                    }
-                  : wf
-              ),
-            }
-          : {}),
-      },
+    mutate({
+      ...chart,
+      ...(sourceItem.type === 'timeseries'
+        ? {
+            timeSeriesCollection: chart.timeSeriesCollection?.map((ts) =>
+              ts.id === sourceItem.id
+                ? {
+                    ...ts,
+                    ...diff,
+                  }
+                : ts
+            ),
+          }
+        : {}),
+      ...(sourceItem.type === 'timeseries'
+        ? {
+            workflowCollection: chart.workflowCollection?.map((wf) =>
+              wf.id === sourceItem.id
+                ? {
+                    ...wf,
+                    ...diff,
+                  }
+                : wf
+            ),
+          }
+        : {}),
     });
   };
 

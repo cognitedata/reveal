@@ -50,16 +50,10 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   const [showContextMenu, setShowContextMenu] = useState(false);
 
   const {
-    mutateAsync,
+    mutateAsync: updateChart,
     isError: updateError,
     error: updateErrorMsg,
   } = useUpdateChart();
-
-  const updateChart = (updatedChart: Chart) =>
-    mutateAsync({
-      chart: updatedChart,
-      skipPersist: login?.user !== updatedChart.user,
-    });
 
   useEffect(() => {
     if (updateError) {
@@ -310,7 +304,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                 </SourceTableWrapper>
                 {workspaceMode === 'editor' && !!selectedSourceId && (
                   <NodeEditor
-                    mutate={mutateAsync}
+                    mutate={updateChart}
                     workflowId={selectedSourceId}
                     setWorkspaceMode={setWorkspaceMode}
                     chart={chart}

@@ -58,13 +58,13 @@ export default function AssetSearchHit({ asset }: Props) {
         (t) => t.tsId === timeSeries.id
       );
       if (tsToRemove) {
-        updateChart({ chart: removeTimeseries(chart, tsToRemove.id) });
+        updateChart(removeTimeseries(chart, tsToRemove.id));
       } else {
         const newTs = covertTSToChartTS(
           timeSeries,
           chart.timeSeriesCollection?.length || 0
         );
-        updateChart({ chart: addTimeseries(chart, newTs) });
+        updateChart(addTimeseries(chart, newTs));
       }
     }
   };

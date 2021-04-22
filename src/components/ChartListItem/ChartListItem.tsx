@@ -27,7 +27,7 @@ const ChartListItem = ({ chart, view }: ChartListItemProps) => {
   const isChartOwner = useIsChartOwner(chart);
 
   const handleRenameChart = (name: string) => {
-    updateChart({ chart: { ...chart, name } });
+    updateChart({ ...chart, name });
     setIsEditingName(false);
   };
 
@@ -50,9 +50,7 @@ const ChartListItem = ({ chart, view }: ChartListItemProps) => {
   const handleDuplicateChart = () => {
     if (login?.user) {
       const newChart = duplicate(chart, login.user);
-      updateChart({ chart: newChart }).then(() =>
-        history.push(`/${newChart.id}`)
-      );
+      updateChart(newChart).then(() => history.push(`/${newChart.id}`));
     }
   };
 
