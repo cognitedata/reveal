@@ -322,34 +322,28 @@ const PlotlyChartComponent = ({
       ? JSON.parse(JSON.stringify(range))
       : undefined;
 
-    if (isInSearch) {
-      (layout as any)[`yaxis${index ? index + 1 : ''}`] = {
-        ...yAxisDefaults,
-        showticklabels: false,
-        domain: [index / seriesData.length, (index + 1) / seriesData.length],
-      };
-    } else {
-      (layout as any)[`yaxis${index ? index + 1 : ''}`] = {
-        ...yAxisDefaults,
-        visible: !isPreview,
-        linecolor: color,
-        linewidth: 1,
+    (layout as any)[`yaxis${index ? index + 1 : ''}`] = {
+      ...yAxisDefaults,
+      visible: showYAxis,
+      linecolor: color,
+      linewidth: 1,
 
-        tickcolor: color,
-        tickwidth: 1,
-        side: 'right',
-        overlaying: index !== 0 ? 'y' : undefined,
-        anchor: 'free',
-        position: 0.05 * index,
-        range: stackedMode
-          ? calculateStackedYRange(
-              datapoints as (Datapoints | DatapointAggregate)[],
-              index,
-              seriesData.length
-            )
-          : serializedYRange,
-      };
+      tickcolor: color,
+      tickwidth: 1,
+      side: 'right',
+      overlaying: index !== 0 ? 'y' : undefined,
+      anchor: 'free',
+      position: 0.05 * index,
+      range: stackedMode
+        ? calculateStackedYRange(
+            datapoints as (Datapoints | DatapointAggregate)[],
+            index,
+            seriesData.length
+          )
+        : serializedYRange,
+    };
 
+    if (showYAxis) {
       /**
        * Display units as annotations and manually placing them on top of y-axis lines
        * Plotly does not support labels on top of axes
@@ -433,17 +427,19 @@ const PlotlyChartComponent = ({
 
   return (
     <ChartingContainer>
-      <AdjustButton
-        type="secondary"
-        variant="outline"
-        icon="YAxis"
-        onClick={() => setYAxisLocked(!yAxisLocked)}
-        left={5 * seriesData.length}
-        className="adjust-button"
-        style={{ background: 'white' }}
-      >
-        {yAxisLocked ? 'Adjust Y axis' : 'Finish'}
-      </AdjustButton>
+      {!isPreview && !isInSearch && (
+        <AdjustButton
+          type="secondary"
+          variant="outline"
+          icon="YAxis"
+          onClick={() => setYAxisLocked(!yAxisLocked)}
+          left={5 * seriesData.length}
+          className="adjust-button"
+          style={{ background: 'white' }}
+        >
+          {yAxisLocked ? 'Adjust Y axis' : 'Finish'}
+        </AdjustButton>
+      )}
       <PlotWrapper>
         <Plot
           data={data as Plotly.Data[]}
