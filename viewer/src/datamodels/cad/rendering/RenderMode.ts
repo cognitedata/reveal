@@ -11,5 +11,6 @@ export enum RenderMode {
   Effects,
   Ghost,
   LOD,
-  DepthBufferOnly
+  DepthBufferOnly,
+  GeometryType
 }

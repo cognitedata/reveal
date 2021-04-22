@@ -2,6 +2,7 @@
 #pragma glslify: determineVisibility = require('../base/determineVisibility.glsl');
 #pragma glslify: determineColor = require('../base/determineColor.glsl')
 #pragma glslify: isSliced = require('../base/isSliced.glsl', NUM_CLIPPING_PLANES=NUM_CLIPPING_PLANES, UNION_CLIPPING_PLANES=UNION_CLIPPING_PLANES)
+#pragma glslify: GeometryType = require('../base/geometryTypes.glsl');
 
 uniform sampler2D colorDataTexture;
 uniform sampler2D overrideVisibilityPerTreeIndex;
@@ -26,5 +27,5 @@ void main() {
     }
 
     vec4 color = determineColor(v_color, colorDataTexture, treeIndexTextureSize, v_treeIndex);
-    updateFragmentColor(renderMode, color, v_treeIndex, v_normal, gl_FragCoord.z, matCapTexture, false);
+    updateFragmentColor(renderMode, color, v_treeIndex, v_normal, gl_FragCoord.z, matCapTexture, GeometryType.Quad);
 }

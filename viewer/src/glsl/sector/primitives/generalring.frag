@@ -4,6 +4,7 @@
 #pragma glslify: isSliced = require('../../base/isSliced.glsl', NUM_CLIPPING_PLANES=NUM_CLIPPING_PLANES, UNION_CLIPPING_PLANES=UNION_CLIPPING_PLANES)
 #pragma glslify: import('../../math/constants.glsl')
 #pragma glslify: determineColor = require('../../base/determineColor.glsl');
+#pragma glslify: GeometryType = require('../../base/geometryTypes.glsl');
 
 varying float v_oneMinusThicknessSqr;
 varying vec2 v_xy;
@@ -44,5 +45,5 @@ void main() {
         discard;
     }
 
-    updateFragmentColor(renderMode, color, v_treeIndex, normal, gl_FragCoord.z, matCapTexture, true);
+    updateFragmentColor(renderMode, color, v_treeIndex, normal, gl_FragCoord.z, matCapTexture, GeometryType.Primitive);
 }
