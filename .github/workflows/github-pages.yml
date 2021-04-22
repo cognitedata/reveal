@@ -1,11 +1,12 @@
 name: github-pages
 
 # Controls when the action will run. Triggers the workflow on push or pull request
-# events but only for the master branch
+# events but only for the master and version branches
 on:
   push:
     branches:
       - master
+      - 'version-**'
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -30,10 +31,10 @@ jobs:
           yarn
           yarn build
 
-      - name: Deploy 🚀
-        uses: JamesIves/github-pages-deploy-action@releases/v3
+      - name: Deploy documentation 🚀
+        uses: peaceiris/actions-gh-pages@v3
         with:
-          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-          BRANCH: master # The branch the action should deploy to.
-          FOLDER: documentation/build # The folder the action should deploy.
-          REPOSITORY_NAME: cognitedata/reveal-docs
+          deploy_key: ${{ secrets.REVEAL_DOCS_DEPLOY_KEY }}
+          external_repository: cognitedata/reveal-docs
+          publish_branch: master
+          publish_dir: documentation/build
