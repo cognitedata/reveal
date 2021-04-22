@@ -5,8 +5,6 @@
 import * as THREE from 'three';
 import { LevelOfDetail } from './LevelOfDetail';
 
-const emptyGeometry = new THREE.Geometry();
-
 export class SectorNode extends THREE.Group {
   public readonly sectorId: number;
   public readonly bounds: THREE.Box3;
