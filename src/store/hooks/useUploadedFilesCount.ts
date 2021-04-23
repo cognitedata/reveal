@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { selectAllFiles } from 'src/store/uploadedFilesSlice';
+import { selectAllFiles } from 'src/modules/Upload/uploadedFilesSlice';
 
 export function useUploadedFilesCount() {
   const uploadedFiles = useSelector((state: RootState) =>

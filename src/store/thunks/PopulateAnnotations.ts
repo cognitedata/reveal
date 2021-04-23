@@ -9,7 +9,7 @@ import { VisionAPIType } from 'src/api/types';
 import { fetchAssets } from 'src/store/thunks/fetchAssets';
 import { addAnnotations } from 'src/store/commonActions';
 import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
-import { VisionAnnotationState } from 'src/store/previewSlice';
+import { VisionAnnotationState } from 'src/modules/Preview/previewSlice';
 
 export const PopulateAnnotations = createAsyncThunk<
   void,
