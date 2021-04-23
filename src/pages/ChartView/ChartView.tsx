@@ -239,9 +239,14 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
               <SourceName>Last</SourceName>
             </SourceItem>
           </th>
-          <th style={{ width: 210, paddingRight: 8 }}>
+          <th style={{ width: 140, paddingRight: 8 }}>
             <SourceItem style={{ justifyContent: 'flex-end' }}>
-              <SourceName>Unit</SourceName>
+              <SourceName>Unit (input)</SourceName>
+            </SourceItem>
+          </th>
+          <th style={{ width: 140, paddingRight: 8 }}>
+            <SourceItem style={{ justifyContent: 'flex-end' }}>
+              <SourceName>Unit (output)</SourceName>
             </SourceItem>
           </th>
           <th style={{ width: 60, paddingLeft: 0 }}>

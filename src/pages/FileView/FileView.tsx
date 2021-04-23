@@ -47,18 +47,18 @@ export const FileView = () => {
           <SourceName>Name</SourceName>
         </SourceItem>
       </th>
-      <th style={{ width: 300 }}>
-        <SourceItem>
+      <th style={{ width: 300, paddingLeft: 0 }}>
+        <SourceItem style={{ justifyContent: 'center' }}>
           <SourceName>Source</SourceName>
         </SourceItem>
       </th>
-      <th>
-        <SourceItem>
+      <th style={{ paddingLeft: 0 }}>
+        <SourceItem style={{ justifyContent: 'center' }}>
           <SourceName>Description</SourceName>
         </SourceItem>
       </th>
-      <th style={{ width: 100 }}>
-        <SourceItem>
+      <th style={{ width: 100, paddingLeft: 0 }}>
+        <SourceItem style={{ justifyContent: 'center' }}>
           <SourceName>P&amp;IDs</SourceName>
         </SourceItem>
       </th>

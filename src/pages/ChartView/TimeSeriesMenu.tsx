@@ -21,9 +21,6 @@ export default function TimeSeriesMenu({ id, chartId }: Props) {
   const convert = () => mutate(convertTimeseriesToWorkflow(chart, id));
   return (
     <Menu>
-      <Menu.Item appendIcon="ScatterChart">
-        <span>Data Quality Report</span>
-      </Menu.Item>
       <Menu.Item onClick={() => convert()} appendIcon="YAxis">
         <span>Convert to calculation</span>
       </Menu.Item>

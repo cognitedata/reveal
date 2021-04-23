@@ -27,9 +27,6 @@ export default function WorkflowMenu({ id, chart, children }: Props) {
       <Menu.Item onClick={() => duplicate()} appendIcon="Duplicate">
         <span>Duplicate</span>
       </Menu.Item>
-      <Menu.Item appendIcon="ScatterChart">
-        <span>Data Quality Report</span>
-      </Menu.Item>
       {children}
     </Menu>
   );

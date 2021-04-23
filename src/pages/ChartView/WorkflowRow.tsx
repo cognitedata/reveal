@@ -5,7 +5,7 @@ import {
   FunctionCallStatus,
   ChartTimeSeries,
 } from 'reducers/charts/types';
-import { Button, Dropdown, Icon, Menu } from '@cognite/cogs.js';
+import { Button, Dropdown, Icon, Menu, Popconfirm } from '@cognite/cogs.js';
 import FunctionCall from 'components/FunctionCall';
 import { updateWorkflow, removeWorkflow } from 'utils/charts';
 import EditableText from 'components/EditableText';
@@ -60,15 +60,7 @@ export default function WorkflowRow({
   const [isEditingName, setIsEditingName] = useState<boolean>(false);
 
   // Increasing this will cause a fresh render where the dropdown is closed
-  const {
-    id,
-    enabled,
-    color,
-    name,
-    calls,
-    unit,
-    //  preferredUnit
-  } = workflow;
+  const { id, enabled, color, name, calls, unit, preferredUnit } = workflow;
   const call = calls?.sort((c) => c.callDate)[0];
   const isWorkspaceMode = mode === 'workspace';
 
@@ -120,13 +112,13 @@ export default function WorkflowRow({
     (unitOption) => unitOption.value === unit?.toLowerCase()
   );
 
-  // const preferredUnitOption = units.find(
-  //   (unitOption) => unitOption.value === preferredUnit?.toLowerCase()
-  // );
+  const preferredUnitOption = units.find(
+    (unitOption) => unitOption.value === preferredUnit?.toLowerCase()
+  );
 
-  // const unitConversionOptions = inputUnitOption?.conversions?.map(
-  //   (conversion) => units.find((unitOption) => unitOption.value === conversion)
-  // );
+  const unitConversionOptions = inputUnitOption?.conversions?.map(
+    (conversion) => units.find((unitOption) => unitOption.value === conversion)
+  );
 
   const unitOverrideMenuItems = units.map((unitOption) => (
     <Menu.Item
@@ -142,19 +134,19 @@ export default function WorkflowRow({
     </Menu.Item>
   ));
 
-  // const unitConversionMenuItems = unitConversionOptions?.map((unitOption) => (
-  //   <Menu.Item
-  //     key={unitOption?.value}
-  //     onClick={() =>
-  //       update(id, {
-  //         preferredUnit: unitOption?.value,
-  //       })
-  //     }
-  //   >
-  //     {unitOption?.label}{' '}
-  //     {preferredUnit?.toLowerCase() === unitOption?.value && ' (selected)'}
-  //   </Menu.Item>
-  // ));
+  const unitConversionMenuItems = unitConversionOptions?.map((unitOption) => (
+    <Menu.Item
+      key={unitOption?.value}
+      onClick={() =>
+        update(id, {
+          preferredUnit: unitOption?.value,
+        })
+      }
+    >
+      {unitOption?.label}{' '}
+      {preferredUnit?.toLowerCase() === unitOption?.value && ' (selected)'}
+    </Menu.Item>
+  ));
 
   const remove = () => mutate(removeWorkflow(chart, id));
 
@@ -234,8 +226,7 @@ export default function WorkflowRow({
               </Dropdown>
             </div>
           </td>
-          <td style={{ textAlign: 'center', paddingLeft: 0 }} />
-          {/* <td>
+          <td style={{ textAlign: 'right', paddingRight: 8 }}>
             <div role="none" onClick={(event) => event.stopPropagation()}>
               <Dropdown
                 content={
@@ -249,12 +240,13 @@ export default function WorkflowRow({
                   </Menu>
                 }
               >
-                <SourceItem>
-                  <SourceName>{preferredUnitOption?.label || '-'}</SourceName>
-                </SourceItem>
+                <Button icon="Down" iconPlacement="right">
+                  {preferredUnitOption?.label || '-'}
+                </Button>
               </Dropdown>
             </div>
-          </td> */}
+          </td>
+          <td />
           <td style={{ textAlign: 'center', paddingLeft: 0 }}>
             <Dropdown
               content={<AppearanceDropdown update={updateAppearance} />}
@@ -267,17 +259,17 @@ export default function WorkflowRow({
             </Dropdown>
           </td>
           <td style={{ textAlign: 'center', paddingLeft: 0 }}>
-            <Button
-              variant="outline"
-              icon="Delete"
-              onClick={(event) => {
-                if (isSelected) {
-                  event.stopPropagation();
-                }
-                remove();
-              }}
-              style={{ height: 28 }}
-            />
+            <Popconfirm
+              onConfirm={remove}
+              content={
+                <div style={{ textAlign: 'left' }}>
+                  Are you sure that you want to
+                  <br /> remove this Time Series?
+                </div>
+              }
+            >
+              <Button variant="outline" icon="Delete" style={{ height: 28 }} />
+            </Popconfirm>
           </td>
           <td style={{ textAlign: 'center', paddingLeft: 0 }}>
             <Button

@@ -9,6 +9,7 @@ import {
   Icon,
   Menu,
   Tooltip,
+  Popconfirm,
 } from '@cognite/cogs.js';
 import { units } from 'utils/units';
 import { calculateGranularity } from 'utils/timeseries';
@@ -104,7 +105,7 @@ export default function TimeSeriesRow({
     description,
     name,
     unit,
-    // preferredUnit,
+    preferredUnit,
     originalUnit,
     enabled,
     color,
@@ -130,13 +131,13 @@ export default function TimeSeriesRow({
     (unitOption) => unitOption.value === unit?.toLowerCase()
   );
 
-  // const preferredUnitOption = units.find(
-  //   (unitOption) => unitOption.value === preferredUnit?.toLowerCase()
-  // );
+  const preferredUnitOption = units.find(
+    (unitOption) => unitOption.value === preferredUnit?.toLowerCase()
+  );
 
-  // const unitConversionOptions = inputUnitOption?.conversions?.map(
-  //   (conversion) => units.find((unitOption) => unitOption.value === conversion)
-  // );
+  const unitConversionOptions = inputUnitOption?.conversions?.map(
+    (conversion) => units.find((unitOption) => unitOption.value === conversion)
+  );
 
   const unitOverrideMenuItems = units.map((unitOption) => (
     <Menu.Item
@@ -153,19 +154,19 @@ export default function TimeSeriesRow({
     </Menu.Item>
   ));
 
-  // const unitConversionMenuItems = unitConversionOptions?.map((unitOption) => (
-  //   <Menu.Item
-  //     key={unitOption?.value}
-  //     onClick={() =>
-  //       update(id, {
-  //         preferredUnit: unitOption?.value,
-  //       })
-  //     }
-  //   >
-  //     {unitOption?.label}{' '}
-  //     {preferredUnit?.toLowerCase() === unitOption?.value && ' (selected)'}
-  //   </Menu.Item>
-  // ));
+  const unitConversionMenuItems = unitConversionOptions?.map((unitOption) => (
+    <Menu.Item
+      key={unitOption?.value}
+      onClick={() =>
+        update(id, {
+          preferredUnit: unitOption?.value,
+        })
+      }
+    >
+      {unitOption?.label}{' '}
+      {preferredUnit?.toLowerCase() === unitOption?.value && ' (selected)'}
+    </Menu.Item>
+  ));
 
   const remove = () => mutate(removeTimeseries(chart, id));
 
@@ -246,7 +247,7 @@ export default function TimeSeriesRow({
               </Dropdown>
             </div>
           </td>
-          {/* <td>
+          <td style={{ textAlign: 'right', paddingRight: 8 }}>
             <div role="none" onClick={(event) => event.stopPropagation()}>
               <Dropdown
                 content={
@@ -260,12 +261,12 @@ export default function TimeSeriesRow({
                   </Menu>
                 }
               >
-                <SourceItem>
-                  <SourceName>{preferredUnitOption?.label}</SourceName>
-                </SourceItem>
+                <Button icon="Down" iconPlacement="right">
+                  {preferredUnitOption?.label}
+                </Button>
               </Dropdown>
             </div>
-          </td> */}
+          </td>
         </>
       )}
       {(isWorkspaceMode || isFileViewerMode) && (
@@ -289,17 +290,17 @@ export default function TimeSeriesRow({
             </Dropdown>
           </td>
           <td style={{ textAlign: 'center', paddingLeft: 0 }}>
-            <Button
-              variant="outline"
-              icon="Delete"
-              onClick={(event) => {
-                if (isSelected) {
-                  event.stopPropagation();
-                }
-                remove();
-              }}
-              style={{ height: 28 }}
-            />
+            <Popconfirm
+              onConfirm={remove}
+              content={
+                <div style={{ textAlign: 'left' }}>
+                  Are you sure that you want to
+                  <br /> remove this Time Series?
+                </div>
+              }
+            >
+              <Button variant="outline" icon="Delete" style={{ height: 28 }} />
+            </Popconfirm>
           </td>
         </>
       )}
