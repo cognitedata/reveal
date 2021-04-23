@@ -12,15 +12,11 @@ import {
 } from '@cognite/cogs.js';
 import { units } from 'utils/units';
 import { calculateGranularity } from 'utils/timeseries';
+import { removeTimeseries, updateTimeseries } from 'utils/charts';
 import EditableText from 'components/EditableText';
+import { AppearanceDropdown } from 'components/AppearanceDropdown';
 import { PnidButton } from 'components/SearchResultTable/PnidButton';
-import {
-  SourceItem,
-  SourceCircle,
-  SourceMenu,
-  SourceName,
-  SourceRow,
-} from './elements';
+import { SourceItem, SourceCircle, SourceName, SourceRow } from './elements';
 import TimeSeriesMenu from './TimeSeriesMenu';
 
 type LoadingProps = {
@@ -108,17 +104,15 @@ export default function TimeSeriesRow({
     description,
     name,
     unit,
-    preferredUnit,
+    // preferredUnit,
     originalUnit,
     enabled,
     color,
     tsId,
-    tsExternalId,
   } = timeseries;
   const [isEditingName, setIsEditingName] = useState<boolean>(false);
 
   // Increasing this will cause a fresh render where the dropdown is closed
-  const [idHack, setIdHack] = useState(0);
   const update = (_tsId: string, diff: Partial<ChartTimeSeries>) =>
     mutate({
       ...chart,
@@ -136,13 +130,13 @@ export default function TimeSeriesRow({
     (unitOption) => unitOption.value === unit?.toLowerCase()
   );
 
-  const preferredUnitOption = units.find(
-    (unitOption) => unitOption.value === preferredUnit?.toLowerCase()
-  );
+  // const preferredUnitOption = units.find(
+  //   (unitOption) => unitOption.value === preferredUnit?.toLowerCase()
+  // );
 
-  const unitConversionOptions = inputUnitOption?.conversions?.map(
-    (conversion) => units.find((unitOption) => unitOption.value === conversion)
-  );
+  // const unitConversionOptions = inputUnitOption?.conversions?.map(
+  //   (conversion) => units.find((unitOption) => unitOption.value === conversion)
+  // );
 
   const unitOverrideMenuItems = units.map((unitOption) => (
     <Menu.Item
@@ -159,19 +153,24 @@ export default function TimeSeriesRow({
     </Menu.Item>
   ));
 
-  const unitConversionMenuItems = unitConversionOptions?.map((unitOption) => (
-    <Menu.Item
-      key={unitOption?.value}
-      onClick={() =>
-        update(id, {
-          preferredUnit: unitOption?.value,
-        })
-      }
-    >
-      {unitOption?.label}{' '}
-      {preferredUnit?.toLowerCase() === unitOption?.value && ' (selected)'}
-    </Menu.Item>
-  ));
+  // const unitConversionMenuItems = unitConversionOptions?.map((unitOption) => (
+  //   <Menu.Item
+  //     key={unitOption?.value}
+  //     onClick={() =>
+  //       update(id, {
+  //         preferredUnit: unitOption?.value,
+  //       })
+  //     }
+  //   >
+  //     {unitOption?.label}{' '}
+  //     {preferredUnit?.toLowerCase() === unitOption?.value && ' (selected)'}
+  //   </Menu.Item>
+  // ));
+
+  const remove = () => mutate(removeTimeseries(chart, id));
+
+  const updateAppearance = (diff: Partial<ChartTimeSeries>) =>
+    mutate(updateTimeseries(chart, id, diff));
 
   return (
     <SourceRow
@@ -211,27 +210,21 @@ export default function TimeSeriesRow({
             )}
             {isFileViewerMode && name}
           </SourceName>
-          {!isFileViewerMode && (
-            <SourceMenu onClick={(e) => e.stopPropagation()} key={idHack}>
-              <Dropdown
-                content={
-                  <TimeSeriesMenu
-                    chartId={chart.id}
-                    id={id}
-                    closeMenu={() => setIdHack(idHack + 1)}
-                    startRenaming={() => setIsEditingName(true)}
-                  />
-                }
-              >
-                <Icon type="VerticalEllipsis" />
-              </Dropdown>
-            </SourceMenu>
-          )}
         </SourceItem>
       </td>
       {isWorkspaceMode && (
         <>
           <td>
+            <SourceItem>
+              <SourceName>{description}</SourceName>
+            </SourceItem>
+          </td>
+          <td>-</td>
+          <td>-</td>
+          <td>-</td>
+          <td>-</td>
+          <td>-</td>
+          <td style={{ textAlign: 'right', paddingRight: 8 }}>
             <div role="none" onClick={(event) => event.stopPropagation()}>
               <Dropdown
                 content={
@@ -245,17 +238,15 @@ export default function TimeSeriesRow({
                   </Menu>
                 }
               >
-                <SourceItem>
-                  <SourceName>
-                    {inputUnitOption?.label}
-                    {inputUnitOption?.value !== originalUnit?.toLowerCase() &&
-                      ' *'}
-                  </SourceName>
-                </SourceItem>
+                <Button icon="Down" iconPlacement="right">
+                  {inputUnitOption?.label}
+                  {inputUnitOption?.value !== originalUnit?.toLowerCase() &&
+                    ' *'}
+                </Button>
               </Dropdown>
             </div>
           </td>
-          <td>
+          {/* <td>
             <div role="none" onClick={(event) => event.stopPropagation()}>
               <Dropdown
                 content={
@@ -274,58 +265,69 @@ export default function TimeSeriesRow({
                 </SourceItem>
               </Dropdown>
             </div>
-          </td>
+          </td> */}
         </>
       )}
       {(isWorkspaceMode || isFileViewerMode) && (
         <>
-          <td>
-            <SourceItem>
-              <SourceName>
-                {tsExternalId ? `${tsExternalId} (${tsId})` : tsId}
-              </SourceName>
-            </SourceItem>
+          <td style={{ textAlign: 'center', paddingLeft: 0 }}>
+            <PnidButton
+              timeseriesId={tsId}
+              showTooltip={false}
+              hideWhenEmpty={false}
+            />
           </td>
-          <td>
-            <SourceItem>
-              <SourceName>{description}</SourceName>
-            </SourceItem>
+          <td style={{ textAlign: 'center', paddingLeft: 0 }}>
+            <Dropdown
+              content={<AppearanceDropdown update={updateAppearance} />}
+            >
+              <Button
+                variant="outline"
+                icon="Timeseries"
+                style={{ height: 28 }}
+              />
+            </Dropdown>
           </td>
-          <td>
-            <SourceItem>
-              <SourceName>
-                <PnidButton
-                  timeseriesId={tsId}
-                  showTooltip={false}
-                  hideWhenEmpty={false}
-                />
-              </SourceName>
-            </SourceItem>
+          <td style={{ textAlign: 'center', paddingLeft: 0 }}>
+            <Button
+              variant="outline"
+              icon="Delete"
+              onClick={(event) => {
+                if (isSelected) {
+                  event.stopPropagation();
+                }
+                remove();
+              }}
+              style={{ height: 28 }}
+            />
           </td>
         </>
       )}
       {isWorkspaceMode && (
         <>
-          <td>
-            <SourceItem>
-              <SourceName>
-                <Button
-                  variant="ghost"
-                  icon="Info"
-                  onClick={(event) => {
-                    if (isSelected) {
-                      event.stopPropagation();
-                    }
-                    onInfoClick(id);
-                  }}
-                />
-              </SourceName>
-            </SourceItem>
+          <td style={{ textAlign: 'center', paddingLeft: 0 }}>
+            <Button
+              variant="outline"
+              icon="Info"
+              onClick={(event) => {
+                if (isSelected) {
+                  event.stopPropagation();
+                }
+                onInfoClick(id);
+              }}
+              style={{ height: 28 }}
+            />
           </td>
-          <td>
-            <SourceItem>
-              <SourceName />
-            </SourceItem>
+          <td style={{ textAlign: 'center', paddingLeft: 0 }}>
+            {!isFileViewerMode && (
+              <Dropdown content={<TimeSeriesMenu chartId={chart.id} id={id} />}>
+                <Button
+                  variant="outline"
+                  icon="MoreOverflowEllipsisHorizontal"
+                  style={{ height: 28 }}
+                />
+              </Dropdown>
+            )}
           </td>
         </>
       )}

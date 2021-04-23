@@ -1,28 +1,17 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { Menu } from '@cognite/cogs.js';
 import { useUpdateChart } from 'hooks/firebase';
-import { Chart, ChartWorkflow } from 'reducers/charts/types';
-import {
-  updateWorkflow,
-  removeWorkflow,
-  duplicateWorkflow,
-} from 'utils/charts';
+import { Chart } from 'reducers/charts/types';
+import { duplicateWorkflow } from 'utils/charts';
 import { useLoginStatus } from 'hooks';
-import { AppearanceDropdown } from 'components/AppearanceDropdown';
 
 type Props = {
   chart: Chart;
   id: string;
-  closeMenu?: () => void;
-  startRenaming?: () => void;
+  children?: ReactNode;
 };
 
-export default function WorkflowMenu({
-  id,
-  chart,
-  closeMenu,
-  startRenaming,
-}: Props) {
+export default function WorkflowMenu({ id, chart, children }: Props) {
   const { data: login } = useLoginStatus();
   const { mutate } = useUpdateChart();
 
@@ -31,36 +20,17 @@ export default function WorkflowMenu({
   if (!login?.user || !wf) {
     return null;
   }
-
-  const update = (diff: Partial<ChartWorkflow>, close: boolean = true) => {
-    mutate(updateWorkflow(chart, id, diff));
-    if (closeMenu && close) {
-      closeMenu();
-    }
-  };
-  const remove = () => mutate(removeWorkflow(chart, id));
   const duplicate = () => mutate(duplicateWorkflow(chart, id));
 
   return (
     <Menu>
-      <Menu.Submenu content={<AppearanceDropdown update={update} />}>
-        <span>Appearance</span>
-      </Menu.Submenu>
-      <Menu.Item
-        onClick={() => {
-          if (startRenaming) startRenaming();
-          if (closeMenu) closeMenu();
-        }}
-        appendIcon="Edit"
-      >
-        <span>Rename</span>
-      </Menu.Item>
       <Menu.Item onClick={() => duplicate()} appendIcon="Duplicate">
         <span>Duplicate</span>
       </Menu.Item>
-      <Menu.Item onClick={() => remove()} appendIcon="Delete">
-        <span>Remove</span>
+      <Menu.Item appendIcon="ScatterChart">
+        <span>Data Quality Report</span>
       </Menu.Item>
+      {children}
     </Menu>
   );
 }
