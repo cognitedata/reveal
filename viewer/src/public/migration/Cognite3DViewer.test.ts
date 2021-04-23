@@ -20,6 +20,7 @@ describe('Cognite3DViewer', () => {
   const renderer = new THREE.WebGLRenderer({ context });
   const _sectorCuller: SectorCuller = {
     determineSectors: jest.fn(),
+    filterSectorsToLoad: jest.fn(),
     dispose: jest.fn()
   };
 

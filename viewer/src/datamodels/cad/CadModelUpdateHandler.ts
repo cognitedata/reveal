@@ -3,33 +3,29 @@
  */
 
 import * as THREE from 'three';
-// eslint-disable-next-line prettier/prettier
-import {
-  Subject,
-  Observable,
-  combineLatest,
-  
-  asyncScheduler
-} from 'rxjs';
+import { Subject, Observable, combineLatest, asyncScheduler, BehaviorSubject } from 'rxjs';
 import { CadNode } from './CadNode';
 import { scan, share, startWith, auditTime, filter, map, finalize, observeOn } from 'rxjs/operators';
 import { SectorCuller } from './sector/culling/SectorCuller';
 import { CadLoadingHints } from './CadLoadingHints';
-import { ConsumedSector, SectorGeometry } from './sector/types';
+import { ConsumedSector } from './sector/types';
 import { Repository } from './sector/Repository';
-import { SectorQuads } from './rendering/types';
+
 import { assertNever, emissionLastMillis, LoadingState } from '../../utilities';
 import { CadModelMetadata } from '.';
 import { loadingEnabled, handleDetermineSectorsInput } from './sector/rxSectorUtilities';
 import { CadModelSectorBudget, defaultCadModelSectorBudget } from './CadModelSectorBudget';
-import { DetermineSectorsInput } from './sector/culling/types';
+import { DetermineSectorsInput, SectorLoadingSpendage } from './sector/culling/types';
 import { ModelStateHandler } from './sector/ModelStateHandler';
+
+const notLoadingState: LoadingState = { isLoading: false, itemsLoaded: 0, itemsRequested: 0, itemsCulled: 0 };
 
 export class CadModelUpdateHandler {
   private readonly _sectorRepository: Repository;
   private readonly _sectorCuller: SectorCuller;
   private readonly _modelStateHandler: ModelStateHandler;
   private _budget: CadModelSectorBudget;
+  private _lastSpendage: SectorLoadingSpendage;
 
   private readonly _cameraSubject: Subject<THREE.PerspectiveCamera> = new Subject();
   private readonly _clippingPlaneSubject: Subject<THREE.Plane[]> = new Subject();
@@ -37,6 +33,7 @@ export class CadModelUpdateHandler {
   private readonly _loadingHintsSubject: Subject<CadLoadingHints> = new Subject();
   private readonly _modelSubject: Subject<{ model: CadNode; operation: 'add' | 'remove' }> = new Subject();
   private readonly _budgetSubject: Subject<CadModelSectorBudget> = new Subject();
+  private readonly _progressSubject: Subject<LoadingState> = new BehaviorSubject<LoadingState>(notLoadingState);
 
   private readonly _updateObservable: Observable<ConsumedSector>;
 
@@ -45,6 +42,16 @@ export class CadModelUpdateHandler {
     this._sectorCuller = sectorCuller;
     this._modelStateHandler = new ModelStateHandler();
     this._budget = defaultCadModelSectorBudget;
+    this._lastSpendage = {
+      downloadSize: 0,
+      drawCalls: 0,
+      loadedSectorCount: 0,
+      simpleSectorCount: 0,
+      detailedSectorCount: 0,
+      forcedDetailedSectorCount: 0,
+      totalSectorCount: 0,
+      accumulatedPriority: 0
+    };
 
     /* Creates and observable that emits an event when either of the observables emitts an item.
      * ------- new camera ---------\
@@ -70,12 +77,30 @@ export class CadModelUpdateHandler {
       ]).pipe(map(makeClippingInput)),
       this.loadingModelObservable()
     ]);
+    const collectStatisticsCallback = (spendage: SectorLoadingSpendage) => {
+      this._lastSpendage = spendage;
+    };
+    const reportProgressCallback = (loaded: number, requested: number, culled: number) => {
+      const state: LoadingState = {
+        isLoading: requested > loaded,
+        itemsRequested: requested,
+        itemsLoaded: loaded,
+        itemsCulled: culled
+      };
+      this._progressSubject.next(state);
+    };
     this._updateObservable = combinator.pipe(
       observeOn(asyncScheduler), // Schedule tasks on macro task queue (setInterval)
       auditTime(250), // Take the last value every 250ms // TODO 07-08-2020 j-bjorne: look into throttle
       map(createDetermineSectorsInput), // Map from array to interface (enables destructuring)
       filter(loadingEnabled), // should we load?
-      handleDetermineSectorsInput(sectorRepository, sectorCuller, this._modelStateHandler),
+      handleDetermineSectorsInput(
+        sectorRepository,
+        sectorCuller,
+        this._modelStateHandler,
+        collectStatisticsCallback,
+        reportProgressCallback
+      ),
       finalize(() => {
         this._sectorRepository.clear(); // clear the cache once this is unsubscribed from.
       })
@@ -88,6 +113,7 @@ export class CadModelUpdateHandler {
 
   updateCamera(camera: THREE.PerspectiveCamera): void {
     this._cameraSubject.next(camera);
+    this._progressSubject.next(notLoadingState);
   }
 
   set clippingPlanes(value: THREE.Plane[]) {
@@ -105,6 +131,10 @@ export class CadModelUpdateHandler {
   set budget(b: CadModelSectorBudget) {
     this._budget = b;
     this._budgetSubject.next(b);
+  }
+
+  get lastBudgetSpendage(): SectorLoadingSpendage {
+    return this._lastSpendage;
   }
 
   addModel(model: CadNode) {
@@ -126,11 +156,7 @@ export class CadModelUpdateHandler {
   }
 
   getLoadingStateObserver(): Observable<LoadingState> {
-    return this._sectorRepository.getLoadingStateObserver();
-  }
-
-  getParsedData(): Observable<{ blobUrl: string; lod: string; data: SectorGeometry | SectorQuads }> {
-    return this._sectorRepository.getParsedData();
+    return this._progressSubject;
   }
 
   /* When loading hints of a cadmodel changes, propagate the event down to the stream and either add or remove

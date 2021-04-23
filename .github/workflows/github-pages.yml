@@ -30,10 +30,10 @@ jobs:
           yarn
           yarn build
 
-      - name: Deploy 🚀
-        uses: JamesIves/github-pages-deploy-action@releases/v3
+      - name: Deploy documentation 🚀
+        uses: peaceiris/actions-gh-pages@v3
         with:
-          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-          BRANCH: master # The branch the action should deploy to.
-          FOLDER: documentation/build # The folder the action should deploy.
-          REPOSITORY_NAME: cognitedata/reveal-docs
+          deploy_key: ${{ secrets.REVEAL_DOCS_DEPLOY_KEY }}
+          external_repository: cognitedata/reveal-docs
+          publish_branch: master
+          publish_dir: documentation/build

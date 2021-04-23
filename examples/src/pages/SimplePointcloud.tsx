@@ -62,7 +62,7 @@ function initializeGui(
 
 export function SimplePointcloud() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [loadingState, setLoadingState] = useState<reveal.utilities.LoadingState>({ isLoading: false, itemsLoaded: 0, itemsRequested: 0 });
+  const [loadingState, setLoadingState] = useState<reveal.utilities.LoadingState>({ isLoading: false, itemsLoaded: 0, itemsRequested: 0, itemsCulled: 0 });
 
   useEffect(() => {
     let revealManager: reveal.RevealManager<unknown>;
@@ -91,10 +91,10 @@ export function SimplePointcloud() {
       let pointCloudNode: reveal.internal.PointCloudNode;
       if(modelRevision) {
         await client.authenticate();
-        revealManager = reveal.createCdfRevealManager(client, { logMetrics: false });
+        revealManager = reveal.createCdfRevealManager(client, renderer, scene, { logMetrics: false });
         pointCloudNode = await revealManager.addModel('pointcloud', modelRevision);
       } else if(modelUrl) {
-        revealManager = reveal.createLocalRevealManager({ logMetrics: false });
+        revealManager = reveal.createLocalRevealManager(renderer, scene, { logMetrics: false });
         pointCloudNode = await revealManager.addModel('pointcloud', modelUrl);
       } else {
         throw new Error(

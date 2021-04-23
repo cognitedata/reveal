@@ -5,7 +5,6 @@
 import * as THREE from 'three';
 import * as reveal from '@cognite/reveal/experimental';
 import dat from 'dat.gui';
-import { OverrideSectorCuller } from './OverrideSectorCuller';
 
 export type RenderFilter = {
   renderQuads: boolean;
@@ -97,17 +96,8 @@ export function createRendererDebugWidget(
     RenderMode.AlwaysRender,
     RenderMode.DisableRendering,
   ];
-  const renderStyleOptions = { showBoundingBoxes: false };
   gui.add(renderOptions, 'loadingEnabled').name('Loading enabled');
   gui.add(renderOptions, 'renderMode', renderModes).name('Render mode');
-  gui
-    .add(renderStyleOptions, 'showBoundingBoxes')
-    .name('Show bounding boxes')
-    .onChange(() => {
-      cadNode.renderHints = Object.assign(cadNode.renderHints || {}, {
-        showSectorBoundingBoxes: renderStyleOptions.showBoundingBoxes,
-      });
-    });
 
   // Basic render performance
   const statsGui = gui.addFolder('Stats');
@@ -355,16 +345,6 @@ export function applyRenderingFilters(
       x.visible = filter.renderQuads;
     }
   });
-}
-
-/**
- * Overrides sectors to load if wantedSectors is defined.
- */
-export function applySectorOverride(
-  culler: OverrideSectorCuller,
-  wantedSectors: reveal.internal.WantedSector[] | undefined
-) {
-  culler.overrideWantedSectors = wantedSectors;
 }
 
 function getMaterials(mesh: THREE.Mesh): THREE.Material[] {

@@ -1,4 +1,5 @@
-#![allow(unused_imports)]
+#![allow(unused_imports, clippy::upper_case_acronyms)]
+
 #[cfg(test)]
 #[macro_use]
 extern crate approx;

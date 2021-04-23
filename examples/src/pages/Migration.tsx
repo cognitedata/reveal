@@ -23,13 +23,22 @@ window.THREE = THREE;
 export function Migration() {
   const canvasWrapperRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    const gui = new dat.GUI({ width: 300 });
+    const gui = new dat.GUI({ width: Math.min(500, 0.8*window.innerWidth) });
     let viewer: Cognite3DViewer;
+
+    function createGeometryFilter(input: string | null): { center: THREE.Vector3, size: THREE.Vector3 } | undefined  {
+      if (input === null) return undefined;
+      const parsed = JSON.parse(input) as { center: THREE.Vector3, size: THREE.Vector3 };
+      return { center: new THREE.Vector3().copy(parsed.center), size: new THREE.Vector3().copy(parsed.size) };
+    }
 
     async function main() {
       const url = new URL(window.location.href);
       const urlParams = url.searchParams;
       const project = urlParams.get('project');
+      const geometryFilterInput = urlParams.get('geometryFilter');
+      const geometryFilter = createGeometryFilter(geometryFilterInput);
+      const baseUrl = urlParams.get('baseUrl') || undefined;
       if (!project) {
         throw new Error('Must provide "project"as URL parameter');
       }
@@ -65,11 +74,15 @@ export function Migration() {
       };
 
       // Login
-      const client = new CogniteClient({ appId: 'cognite.reveal.example' });
+      const client = new CogniteClient({ appId: 'cognite.reveal.example', baseUrl });
       client.loginWithOAuth({ project });
       await client.authenticate();
 
-      const progress = (itemsDownloaded: number, itemsRequested: number) => console.log('onDownload', itemsDownloaded, itemsRequested);
+      const progress = (itemsLoaded: number, itemsRequested: number, itemsCulled: number) => {
+        guiState.debug.loadedSectors.statistics.culledCount = itemsCulled;
+        console.log(`loaded ${itemsLoaded}/${itemsRequested} (culled: ${itemsCulled})`);
+        
+      };
       // Prepare viewer
       viewer = new Cognite3DViewer({
         sdk: client,
@@ -97,6 +110,10 @@ export function Migration() {
             pointCloudModels.push(model);
             pointCloudParams.apply();
           }
+          if (createGeometryFilterFromState(guiState.geometryFilter) === undefined) {
+            createGeometryFilterStateFromBounds(bounds, guiState.geometryFilter);
+            geometryFilterGui.updateDisplay();
+          }
         } catch (e) {
           console.error(e);
           alert(`Model ID is invalid or is not supported`);
@@ -109,9 +126,21 @@ export function Migration() {
       const guiState = {
         modelId: 0,
         revisionId: 0,
+        geometryFilter: 
+          geometryFilter !== undefined 
+          ? geometryFilter 
+          : { center: new THREE.Vector3(), size: new THREE.Vector3() },
         antiAliasing: urlParams.get('antialias'),
         ssaoQuality: urlParams.get('ssao'),
         debug: {
+          stats: {
+            drawCalls: 0,
+            points: 0,
+            triangles: 0,
+            geometries: 0,
+            textures: 0,
+            renderTime: 0
+          },
           loadedSectors: {
             options: {
               showSimpleSectors: true,
@@ -120,7 +149,17 @@ export function Migration() {
               colorBy: 'lod',
               leafsOnly: false
             } as DebugLoadedSectorsToolOptions,
-            tool: new DebugLoadedSectorsTool(viewer)
+            tool: new DebugLoadedSectorsTool(viewer),
+            statistics: {
+              insideSectors: 0,
+              maxSectorDepth: 0,
+              maxSectorDepthOfInsideSectors: 0,
+              simpleSectorCount: 0,
+              detailedSectorCount: 0,
+              culledCount: 0,
+              forceDetailedSectorCount: 0,
+              downloadSizeMb: 0
+            }
           },
           suspendLoading: false,
           ghostAllNodes: false,
@@ -134,6 +173,7 @@ export function Migration() {
           addModel({
             modelId: guiState.modelId,
             revisionId: guiState.revisionId,
+            geometryFilter: createGeometryFilterFromState(guiState.geometryFilter)
           }),
         fitToModel: () => {
           const model = cadModels[0] || pointCloudModels[0];
@@ -148,23 +188,59 @@ export function Migration() {
         },
         showCameraHelper: () => {
           guiState.showCameraTool.showCameraHelper();
+        },
+        showBoundsForAllGeometries: () => {
+          cadModels.forEach(m => showBoundsForAllGeometries(m));
+        },
+        applyGeometryFilter: () => {
+          urlParams.set('geometryFilter', JSON.stringify(guiState.geometryFilter));
+          window.location.href = url.toString();
+        },
+        resetGeometryFilter: () => {
+          urlParams.delete('geometryFilter');
+          window.location.href = url.toString();
         }
       };
 
-      gui.add(guiState, 'modelId').name('Model ID');
-      gui.add(guiState, 'revisionId').name('Revision ID');
-      gui.add(guiActions, 'addModel').name('Load model');
-      gui.add(guiActions, 'fitToModel').name('Fit camera');
-      const renderModes = [undefined, 'Color', 'Normal', 'TreeIndex', 'PackColorAndNormal', 'Depth', 'Effects', 'Ghost', 'LOD'];
-      gui.add(guiState, 'renderMode', renderModes).name('Render mode').onFinishChange(value => {
-        const renderMode = renderModes.indexOf(value);
+      const modelGui = gui.addFolder('Model');
+      modelGui.add(guiState, 'modelId').name('Model ID');
+      modelGui.add(guiState, 'revisionId').name('Revision ID');
+      modelGui.add(guiActions, 'addModel').name('Load model');
+      modelGui.add(guiActions, 'fitToModel').name('Fit camera');
+
+      const geometryFilterGui = modelGui.addFolder('Geometry Filter');
+      let geometryFilterPreview: THREE.Object3D | undefined = undefined;
+      function updateGeometryFilterPreview() {
+        if (geometryFilterPreview) {
+          viewer.removeObject3D(geometryFilterPreview);
+        }
+        const geometryFilter = createGeometryFilterFromState(guiState.geometryFilter);
+        if (geometryFilter) {
+          geometryFilterPreview = new THREE.Box3Helper(geometryFilter.boundingBox, new THREE.Color('cyan'));
+          viewer.addObject3D(geometryFilterPreview);
+        }
+      }
+      geometryFilterGui.add(guiState.geometryFilter.center, 'x', -1000, 1000, 1).name('CenterX').onChange(updateGeometryFilterPreview);
+      geometryFilterGui.add(guiState.geometryFilter.center, 'y', -1000, 1000, 1).name('CenterY').onChange(updateGeometryFilterPreview);
+      geometryFilterGui.add(guiState.geometryFilter.center, 'z', -1000, 1000, 1).name('CenterZ').onChange(updateGeometryFilterPreview);
+      geometryFilterGui.add(guiState.geometryFilter.size, 'x', 0, 100, 1).name('SizeX').onChange(updateGeometryFilterPreview);
+      geometryFilterGui.add(guiState.geometryFilter.size, 'y', 0, 100, 1).name('SizeY').onChange(updateGeometryFilterPreview);
+      geometryFilterGui.add(guiState.geometryFilter.size, 'z', 0, 100, 1).name('SizeZ').onChange(updateGeometryFilterPreview);
+      geometryFilterGui.add(guiActions, 'applyGeometryFilter').name('Apply and reload');
+      geometryFilterGui.add(guiActions, 'resetGeometryFilter').name('Reset and reload');
+
+      const renderGui = gui.addFolder('Rendering');
+      const renderModes = ['Color', 'Normal', 'TreeIndex', 'PackColorAndNormal', 'Depth', 'Effects', 'Ghost', 'LOD', 'DepthBufferOnly (N/A)', 'GeometryType'];
+      renderGui.add(guiState, 'renderMode', renderModes).name('Render mode').onFinishChange(value => {
+        const renderMode = renderModes.indexOf(value) + 1;
+        console.log('renderMode', value, renderMode);
         cadModels.forEach(m => {
           const cadNode: CadNode = (m as any).cadNode;
           cadNode.renderMode = renderMode;
         });
         viewer.forceRerender();
       });
-      gui.add(guiState, 'antiAliasing',
+      renderGui.add(guiState, 'antiAliasing',
         [
           'disabled', 'fxaa', 'msaa4', 'msaa8', 'msaa16',
           'msaa4+fxaa', 'msaa8+fxaa', 'msaa16+fxaa'
@@ -172,7 +248,7 @@ export function Migration() {
           urlParams.set('antialias', v);
           window.location.href = url.toString();
         });
-      gui.add(guiState, 'ssaoQuality',
+        renderGui.add(guiState, 'ssaoQuality',
         [
           'disabled', 'medium', 'high', 'veryhigh'
         ]).name('SSAO').onFinishChange(v => {
@@ -181,15 +257,72 @@ export function Migration() {
         });
 
       const debugGui = gui.addFolder('Debug');
+      const debugStatsGui = debugGui.addFolder('Statistics');
+      debugStatsGui.add(guiState.debug.stats, 'drawCalls').name('Draw Calls');
+      debugStatsGui.add(guiState.debug.stats, 'points').name('Points');
+      debugStatsGui.add(guiState.debug.stats, 'triangles').name('Triangles');
+      debugStatsGui.add(guiState.debug.stats, 'geometries').name('Geometries');
+      debugStatsGui.add(guiState.debug.stats, 'textures').name('Textures');
+      debugStatsGui.add(guiState.debug.stats, 'renderTime').name('Ms/frame');
+      
+      viewer.on('sceneRendered', sceneRenderedEventArgs => {
+        guiState.debug.stats.drawCalls = sceneRenderedEventArgs.renderer.info.render.calls;
+        guiState.debug.stats.points = sceneRenderedEventArgs.renderer.info.render.points;
+        guiState.debug.stats.triangles = sceneRenderedEventArgs.renderer.info.render.triangles;
+        guiState.debug.stats.geometries = sceneRenderedEventArgs.renderer.info.memory.geometries;
+        guiState.debug.stats.textures = sceneRenderedEventArgs.renderer.info.memory.textures;
+        guiState.debug.stats.renderTime = sceneRenderedEventArgs.renderTime;
+        debugStatsGui.updateDisplay();
+      });
+      
       const debugSectorsGui = debugGui.addFolder('Loaded sectors');
 
-      debugSectorsGui.add(guiState.debug.loadedSectors.options, 'colorBy', ['lod', 'depth']).name('Color by');
+      debugSectorsGui.add(guiState.debug.loadedSectors.options, 'colorBy', ['lod', 'depth', 'loadedTimestamp']).name('Color by');
       debugSectorsGui.add(guiState.debug.loadedSectors.options, 'leafsOnly').name('Leaf nodes only');
       debugSectorsGui.add(guiState.debug.loadedSectors.options, 'showSimpleSectors').name('Show simple sectors');
       debugSectorsGui.add(guiState.debug.loadedSectors.options, 'showDetailedSectors').name('Show detailed sectors');
       debugSectorsGui.add(guiState.debug.loadedSectors.options, 'showDiscardedSectors').name('Show discarded sectors');
-      debugSectorsGui.add(guiActions, 'showSectorBoundingBoxes').name('Show loaded sectors');
+      debugSectorsGui.add(guiState.debug.loadedSectors.statistics, 'insideSectors').name('# sectors@camera');
+      debugSectorsGui.add(guiState.debug.loadedSectors.statistics, 'maxSectorDepthOfInsideSectors').name('Max sector depth@camera');
+      debugSectorsGui.add(guiState.debug.loadedSectors.statistics, 'maxSectorDepth').name('Max sector tree depth');
+      debugSectorsGui.add(guiState.debug.loadedSectors.statistics, 'simpleSectorCount').name('# simple sectors');
+      debugSectorsGui.add(guiState.debug.loadedSectors.statistics, 'detailedSectorCount').name('# detailed sectors');
+      debugSectorsGui.add(guiState.debug.loadedSectors.statistics, 'forceDetailedSectorCount').name('# force detailed sectors');
+      debugSectorsGui.add(guiState.debug.loadedSectors.statistics, 'culledCount').name('# culled sectors');
+      debugSectorsGui.add(guiState.debug.loadedSectors.statistics, 'downloadSizeMb').name('Download size (Mb)');
+      
+      setInterval(() => {
+        let insideSectors = 0;
+        let maxInsideDepth = -1;
+        let maxDepth = -1;
+        const cameraPosition = viewer.getCameraPosition();
+        cadModels.forEach(m => {
+          m.traverse(x => {
+            // Hacky way to access internals of SectorNode
+            const depth = (x.hasOwnProperty('depth') && typeof (x as any).depth === 'number') ? (x as any).depth as number : 0;
+            if (x.hasOwnProperty('bounds') && (x as any).bounds instanceof THREE.Box3 && (x as any).bounds.containsPoint(cameraPosition)) {
+              insideSectors++;
+              maxInsideDepth = Math.max(maxInsideDepth, depth);
+            }
+            maxDepth = Math.max(maxDepth, depth);
+          })
+        });
+        guiState.debug.loadedSectors.statistics.insideSectors = insideSectors;
+        guiState.debug.loadedSectors.statistics.maxSectorDepth = maxDepth;
+        guiState.debug.loadedSectors.statistics.maxSectorDepthOfInsideSectors = maxInsideDepth;
+        // @ts-expect-error
+        const loadedStats = viewer._revealManager.cadLoadedStatistics;
+        guiState.debug.loadedSectors.statistics.simpleSectorCount = loadedStats.simpleSectorCount;
+        guiState.debug.loadedSectors.statistics.detailedSectorCount = loadedStats.detailedSectorCount;
+        guiState.debug.loadedSectors.statistics.forceDetailedSectorCount = loadedStats.forcedDetailedSectorCount;
+        guiState.debug.loadedSectors.statistics.downloadSizeMb = loadedStats.downloadSize / 1024 / 1024;
+
+        debugSectorsGui.updateDisplay();
+      }, 500);
+
+      debugSectorsGui.add(guiActions, 'showSectorBoundingBoxes').name('Show sectors');
       debugGui.add(guiActions, 'showCameraHelper').name('Show camera');
+      debugGui.add(guiActions, 'showBoundsForAllGeometries').name('Show geometry bounds');
       debugGui.add(guiState.debug, 'suspendLoading').name('Suspend loading').onFinishChange(suspend => {
         try {
           // @ts-expect-error
@@ -289,7 +422,7 @@ export function Migration() {
       if (modelIdStr && revisionIdStr) {
         const modelId = Number.parseInt(modelIdStr, 10);
         const revisionId = Number.parseInt(revisionIdStr, 10);
-        await addModel({ modelId, revisionId });
+        await addModel({ modelId, revisionId, geometryFilter: createGeometryFilterFromState(guiState.geometryFilter) });
       }
 
       let expandTool: ExplodedViewTool | null;
@@ -401,8 +534,27 @@ export function Migration() {
           planes.push(new THREE.Plane().setFromNormalAndCoplanarPoint(normal, point));
         }
         viewer.setSlicingPlanes(planes);
-      }
+      }     
     }
+    
+
+    function showBoundsForAllGeometries(model: Cognite3DModel) {
+      model.traverse(x => {
+        if (x instanceof THREE.Mesh) {
+          const mesh = x;
+          const geometry: THREE.BufferGeometry = mesh.geometry;
+
+          if (geometry.boundingBox !== null) {
+            const box = geometry.boundingBox.clone();
+            box.applyMatrix4(mesh.matrixWorld);
+
+            const boxHelper = new THREE.Box3Helper(box);
+            viewer.addObject3D(boxHelper);
+          }
+        }
+      });
+    }
+
 
     main();
 
@@ -412,4 +564,19 @@ export function Migration() {
     };
   });
   return <CanvasWrapper ref={canvasWrapperRef} />;
+}
+
+function createGeometryFilterStateFromBounds(bounds: THREE.Box3, out: { center: THREE.Vector3, size: THREE.Vector3 }) {
+  bounds.getCenter(out.center);
+  bounds.getSize(out.size);
+  return out;
+}
+
+function createGeometryFilterFromState(state: { center: THREE.Vector3, size: THREE.Vector3 }):
+ { boundingBox: THREE.Box3, isBoundingBoxInModelCoordinates: true } | undefined {
+  state.size.clamp(new THREE.Vector3(0,0,0), new THREE.Vector3(Infinity, Infinity, Infinity));
+  if (state.size.equals(new THREE.Vector3(0,0,0))) {
+    return undefined;
+  }
+  return { boundingBox: new THREE.Box3().setFromCenterAndSize(state.center, state.size), isBoundingBoxInModelCoordinates: true };
 }

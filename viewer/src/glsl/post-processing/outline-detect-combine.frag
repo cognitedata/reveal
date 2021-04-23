@@ -47,6 +47,11 @@ vec4 computeNeighborOutlineIndices(sampler2D colorTexture){
   return vec4(outlineIndex0, outlineIndex1, outlineIndex2, outlineIndex3);
 }
 
+float toViewZ(float depth, float near, float far){
+  float normalizedDepth = depth * 2.0 - 1.0;
+  return 2.0 * near * far / (far + near - normalizedDepth * (far - near)); 
+}
+
 vec4 computeNeighborAlphas(sampler2D colorTexture){
   float alpha0 = texture2D(colorTexture, vUv0).a;
   float alpha1 = texture2D(colorTexture, vUv1).a;
@@ -127,9 +132,12 @@ void main() {
     backDepth = customDepth;
     backAlbedo = customAlbedo;
   } else {
-    if(!any(equal(computeNeighborAlphas(tBack), vec4(0.0)))){
-      edgeStrength = edgeDetectionFilter(tBack, vUv, resolution) * edgeStrengthMultiplier;
-    }
+#if defined(EDGES)
+      if(!any(equal(computeNeighborAlphas(tBack), vec4(0.0)))){
+        float depthEdge = toViewZ(backDepth, cameraNear, cameraFar);
+        edgeStrength = (1.0 - smoothstep(10.0, 40.0, depthEdge)) * edgeDetectionFilter(tBack, vUv, resolution) * edgeStrengthMultiplier;
+      }
+#endif
   }
   
   float s = (1.0 - step(backDepth, ghostDepth)) * clampedGhostAlbedo.a;

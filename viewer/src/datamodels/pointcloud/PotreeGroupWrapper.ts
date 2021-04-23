@@ -46,7 +46,7 @@ export class PotreeGroupWrapper extends THREE.Object3D {
     this.name = 'Potree point cloud wrapper';
     this.add(this.potreeGroup);
 
-    const onAfterRenderTrigger = new THREE.Mesh(new THREE.Geometry());
+    const onAfterRenderTrigger = new THREE.Mesh(new THREE.BufferGeometry());
     onAfterRenderTrigger.name = 'onAfterRender trigger (no geometry)';
     onAfterRenderTrigger.frustumCulled = false;
     onAfterRenderTrigger.onAfterRender = () => {
@@ -109,11 +109,11 @@ export class PotreeGroupWrapper extends THREE.Object3D {
       map(x => {
         const [loadingState, forceLoading] = x;
         if (forceLoading && !loadingState.isLoading) {
-          return { isLoading: true, itemsLoaded: 0, itemsRequested: 1 };
+          return { isLoading: true, itemsLoaded: 0, itemsRequested: 1, itemsCulled: 0 };
         }
         return loadingState;
       }),
-      startWith({ isLoading: false, itemsLoaded: 0, itemsRequested: 0 }),
+      startWith({ isLoading: false, itemsLoaded: 0, itemsRequested: 0, itemsCulled: 0 }),
       distinctUntilChanged(),
       share()
     );
@@ -142,6 +142,7 @@ function getLoadingStateFromPotree(): LoadingState {
   return {
     isLoading: Potree.Global.numNodesLoading > 0,
     itemsLoaded: 0,
-    itemsRequested: Potree.Global.numNodesLoading
+    itemsRequested: Potree.Global.numNodesLoading,
+    itemsCulled: 0
   };
 }

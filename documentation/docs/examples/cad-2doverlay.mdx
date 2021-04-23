@@ -81,8 +81,10 @@ callback is triggered every time the HTML overlay is updated.
 // import { HtmlOverlayTool } from '@cognite/reveal/tools';
 
 function createOverlay() {
+  const pressure = Math.floor(Math.random() * 110);
+  const color = pressure < 30 ? '#fff' : (pressure > 80 ? '#aa1100' : '#aaaa00');
   const element = document.createElement('div');
-  element.innerText = `Overlay!`;
+  element.innerText = `${pressure} PSI`;
   element.style.cssText = `
     position: absolute;
     
@@ -93,7 +95,7 @@ function createOverlay() {
 
     /* Make it look nice */
     padding: 10px;
-    color: #fff;
+    color: ${color};
     background: #232323da;
     borderRadius: 0.25em;
     border: '#ffffff22 solid 2px;

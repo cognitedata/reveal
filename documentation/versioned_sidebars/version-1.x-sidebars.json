@@ -76,6 +76,10 @@
         {
           "type": "doc",
           "id": "version-1.x/examples/cad-explode"
+        },
+        {
+          "type": "doc",
+          "id": "version-1.x/examples/combine-models"
         }
       ]
     },
