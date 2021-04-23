@@ -43,5 +43,22 @@ jobs:
     #   make bootstrap
     #   make release
 
-    - name: Perform CodeQL Analysis
+    - name: Perform CodeQL Analysis for parser-worker/
       uses: github/codeql-action/analyze@v1
+      with:
+        paths: parser-worker
+
+    - name: Perform CodeQL Analysis for viewer/
+      uses: github/codeql-action/analyze@v1
+      with:
+        paths: viewer
+
+    - name: Perform CodeQL Analysis for examples/
+      uses: github/codeql-action/analyze@v1
+      with:
+        paths: examples
+
+    - name: Perform CodeQL Analysis for documentation/
+      uses: github/codeql-action/analyze@v1
+      with:
+        paths: documentation
