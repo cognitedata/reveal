@@ -14,6 +14,9 @@ type Mutable<T> = { -readonly [P in keyof T]: T[P] };
 describe('EffectRenderManager', () => {
   const materialManager = new CadMaterialManager();
   const context: WebGLRenderingContext = require('gl')(64, 64, { preserveDrawingBuffer: true });
+  // Emulate WebGL2
+  (context as WebGL2RenderingContext).createVertexArray = jest.fn();
+  (context as WebGL2RenderingContext).bindVertexArray = jest.fn();
   const renderer = new THREE.WebGLRenderer({ context });
   const camera = new THREE.PerspectiveCamera();
   const scene = new THREE.Scene();
