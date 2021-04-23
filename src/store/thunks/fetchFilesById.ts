@@ -2,7 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { InternalId, v3Client as sdk } from '@cognite/cdf-sdk-singleton';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { PopulateAnnotations } from 'src/store/thunks/PopulateAnnotations';
-import { setUploadedFiles } from 'src/store/uploadedFilesSlice';
+import { setUploadedFiles } from 'src/modules/Upload/uploadedFilesSlice';
 
 export const fetchFilesById = createAsyncThunk<void, InternalId[], ThunkConfig>(
   'uploadedFiles/fetchFiles',

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button, SegmentedControl, Detail } from '@cognite/cogs.js';
+import { DetectionModelSelect } from 'src/modules/Workflow/components/DetectionModelSelect';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
@@ -10,10 +11,9 @@ import {
 } from 'src/modules/Process/processSlice';
 import { selectAllFiles } from 'src/modules/Upload/uploadedFilesSlice';
 import { message, notification } from 'antd';
+import { isVideo } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
 import { toastProps } from 'src/utils/ToastUtils';
 import { VisionAPIType } from 'src/api/types';
-import { DetectionModelSelect } from 'src/modules/Workflow/components/DetectionModelSelect';
-import { isVideo } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
 
 export const FileToolbar = ({
   onViewChange,

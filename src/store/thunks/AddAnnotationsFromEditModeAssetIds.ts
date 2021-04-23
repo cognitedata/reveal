@@ -5,7 +5,10 @@ import { fetchAssets } from 'src/store/thunks/fetchAssets';
 import { UpdateFiles } from 'src/store/thunks/UpdateFiles';
 import { VisionAPIType } from 'src/api/types';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
-import { addTagAnnotations, resetEditState } from '../previewSlice';
+import {
+  addTagAnnotations,
+  resetEditState,
+} from '../../modules/Preview/previewSlice';
 
 export const AddAnnotationsFromEditModeAssetIds = createAsyncThunk<
   void,

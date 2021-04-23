@@ -1,7 +1,7 @@
 // state helper functions
 
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
-import { FileState } from 'src/store/uploadedFilesSlice';
+import { FileState } from 'src/modules/Upload/uploadedFilesSlice';
 
 // convert to state
 export const createFileState = (file: FileInfo): FileState => {

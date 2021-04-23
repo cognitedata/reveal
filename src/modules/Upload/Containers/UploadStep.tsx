@@ -1,15 +1,15 @@
+import { FileUploader } from 'src/modules/Common/Components/FileUploader';
 import React from 'react';
 import styled from 'styled-components';
+import { margin } from 'src/cogs-variables';
 import { Detail, Title } from '@cognite/cogs.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { PopulateAnnotations } from 'src/store/thunks/PopulateAnnotations';
-import { margin } from 'src/cogs-variables';
 import {
   addUploadedFile,
   selectAllFiles,
 } from 'src/modules/Upload/uploadedFilesSlice';
-import { FileUploader } from 'src/modules/Common/Components/FileUploader/FileUploader';
+import { PopulateAnnotations } from 'src/store/thunks/PopulateAnnotations';
 
 const FileUploaderWrapper = styled.div`
   margin: ${margin.default} 0;
