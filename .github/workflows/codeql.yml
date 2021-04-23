@@ -1,8 +1,10 @@
-name: "Code scanning - action"
+name: "CodeQL scan"
 
 on:
   pull_request:
-    branches: [master]
+    branches: 
+      - master
+      - 'version-**'
   schedule:
     - cron: '0 19 * * 0'
 
@@ -46,5 +48,5 @@ jobs:
     #   make bootstrap
     #   make release
 
-    - name: Perform CodeQL Analysis for parser-worker/
+    - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
