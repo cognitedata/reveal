@@ -29,7 +29,7 @@
     "exifr": "^6.2.0",
     "lodash": "^4.17.21",
     "lodash-es": "^4.17.21",
-    "mapbox-gl": "^2.2.0",
+    "mapbox-gl": "1.13.1",
     "react": "^16.14.0",
     "react-base-table": "^1.12.0",
     "react-dom": "^16.14.0",
