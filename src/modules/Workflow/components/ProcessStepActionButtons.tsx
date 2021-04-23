@@ -37,6 +37,12 @@ export const ProcessStepActionButtons = () => {
     history.push(createLink('/explore/search/file')); // data-exploration app
   };
 
+  const onUploadMoreClicked = () => {
+    dispatch(SaveAvailableAnnotations());
+    history.push(getLink(workflowRoutes.upload));
+    // Todo: Delete files
+  };
+
   const disableComplete =
     !isPollingFinished || !Object.keys(annotations).length;
   const [isModalOpen, setModalOpen] = useState(false);
@@ -46,10 +52,7 @@ export const ProcessStepActionButtons = () => {
         getContainer={getContainer}
         footer={
           <FooterContainer>
-            <Button
-              onClick={() => history.push(getLink(workflowRoutes.upload))}
-              disabled={false}
-            >
+            <Button onClick={onUploadMoreClicked} disabled={false}>
               Upload More
             </Button>
             <div style={{ flexGrow: 1 }} />
