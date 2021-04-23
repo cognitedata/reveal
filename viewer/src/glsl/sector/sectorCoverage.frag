@@ -3,13 +3,15 @@
 
 varying mediump vec3 v_color;
 varying lowp float v_coverageFactor;
+varying lowp float v_visible;
 varying lowp vec2 v_seed;
+
 
 varying vec3 v_viewPosition;
 
 void main() {
     
-    if(isSliced(v_viewPosition)){
+    if(v_visible != 1.0 || isSliced(v_viewPosition)){
       discard;
     }
 

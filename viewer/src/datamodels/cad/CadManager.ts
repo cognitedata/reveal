@@ -10,15 +10,16 @@ import { CadModelUpdateHandler } from './CadModelUpdateHandler';
 import { Subscription, Observable } from 'rxjs';
 import { NodeAppearanceProvider } from './NodeAppearance';
 import { trackError } from '../../utilities/metrics';
-import { SectorGeometry } from './sector/types';
-import { SectorQuads } from './rendering/types';
-import { MaterialManager } from './MaterialManager';
+
+import { CadMaterialManager } from './CadMaterialManager';
 import { RenderMode } from './rendering/RenderMode';
 import { LoadingState } from '../../utilities';
 import { CadModelSectorBudget } from './CadModelSectorBudget';
+import { CadModelSectorLoadStatistics } from './CadModelSectorLoadStatistics';
+import { LevelOfDetail } from './sector/LevelOfDetail';
 
 export class CadManager<TModelIdentifier> {
-  private readonly _materialManager: MaterialManager;
+  private readonly _materialManager: CadMaterialManager;
   private readonly _cadModelMetadataRepository: CadModelMetadataRepository<TModelIdentifier>;
   private readonly _cadModelFactory: CadModelFactory;
   private readonly _cadModelUpdateHandler: CadModelUpdateHandler;
@@ -41,8 +42,15 @@ export class CadManager<TModelIdentifier> {
     this._cadModelUpdateHandler.budget = budget;
   }
 
+  /**
+   * Returns statistics about how data loaded (or data about to be loaded).
+   */
+  get loadedStatistics(): CadModelSectorLoadStatistics {
+    return this._cadModelUpdateHandler.lastBudgetSpendage;
+  }
+
   constructor(
-    materialManger: MaterialManager,
+    materialManger: CadMaterialManager,
     cadModelMetadataRepository: CadModelMetadataRepository<TModelIdentifier>,
     cadModelFactory: CadModelFactory,
     cadModelUpdateHandler: CadModelUpdateHandler
@@ -59,20 +67,20 @@ export class CadManager<TModelIdentifier> {
             // Model has been removed - results can come in for a period just after removal
             return;
           }
-          if (cadModel.renderHints.showSectorBoundingBoxes) {
-            cadModel!.updateSectorBoundingBox(sector);
+
+          if (sector.instancedMeshes && sector.levelOfDetail === LevelOfDetail.Detailed) {
+            cadModel.updateInstancedMeshes(sector.instancedMeshes, sector.blobUrl, sector.metadata.id);
+          } else if (
+            sector.levelOfDetail === LevelOfDetail.Simple ||
+            sector.levelOfDetail === LevelOfDetail.Discarded
+          ) {
+            cadModel.discardInstancedMeshes(sector.metadata.id);
           }
+
           const sectorNodeParent = cadModel.rootSector;
           const sectorNode = sectorNodeParent!.sectorNodeMap.get(sector.metadata.id);
           if (!sectorNode) {
             throw new Error(`Could not find 3D node for sector ${sector.metadata.id} - invalid id?`);
-          }
-          if (sectorNode.group) {
-            sectorNode.group.userData.refCount -= 1;
-            if (sectorNode.group.userData.refCount === 0) {
-              sectorNode.resetGeometry();
-            }
-            sectorNode.remove(sectorNode.group);
           }
           if (sector.group) {
             sectorNode.add(sector.group);
@@ -164,10 +172,6 @@ export class CadManager<TModelIdentifier> {
 
   getLoadingStateObserver(): Observable<LoadingState> {
     return this._cadModelUpdateHandler.getLoadingStateObserver();
-  }
-
-  getParsedData(): Observable<{ blobUrl: string; lod: string; data: SectorGeometry | SectorQuads }> {
-    return this._cadModelUpdateHandler.getParsedData();
   }
 
   private markNeedsRedraw(): void {

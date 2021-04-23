@@ -5,22 +5,25 @@
 import * as THREE from 'three';
 import { RenderOptions } from '../../..';
 
-import { MaterialManager } from '../MaterialManager';
+import { CadMaterialManager } from '../CadMaterialManager';
 import { EffectRenderManager } from './EffectRenderManager';
 import { RenderMode } from './RenderMode';
 
 type Mutable<T> = { -readonly [P in keyof T]: T[P] };
 
 describe('EffectRenderManager', () => {
-  const materialManager = new MaterialManager();
+  const materialManager = new CadMaterialManager();
   const context: WebGLRenderingContext = require('gl')(64, 64, { preserveDrawingBuffer: true });
+  // Emulate WebGL2
+  (context as WebGL2RenderingContext).createVertexArray = jest.fn();
+  (context as WebGL2RenderingContext).bindVertexArray = jest.fn();
   const renderer = new THREE.WebGLRenderer({ context });
   const camera = new THREE.PerspectiveCamera();
   const scene = new THREE.Scene();
   const options: RenderOptions = {};
 
   test('construct', () => {
-    expect(() => new EffectRenderManager(materialManager, options)).not.toThrow();
+    expect(() => new EffectRenderManager(renderer, scene, materialManager, options)).not.toThrow();
   });
 
   test('render() resets settings after completed', () => {
@@ -30,10 +33,10 @@ describe('EffectRenderManager', () => {
     renderer.setClearAlpha(0.77);
     materialManager.setRenderMode(RenderMode.PackColorAndNormal);
 
-    const effectManager = new EffectRenderManager(materialManager, options);
+    const effectManager = new EffectRenderManager(renderer, scene, materialManager, options);
 
     // Act
-    effectManager.render(renderer, camera, scene);
+    effectManager.render(camera);
 
     // Assert
     expect(renderer.getRenderTarget()).toBe(target);
@@ -47,17 +50,22 @@ describe('EffectRenderManager', () => {
       multiSampleCountHint: 4
     };
     const webgl1Renderer = new THREE.WebGL1Renderer({ context });
-    const effectManager = new EffectRenderManager(materialManager, options);
+    const effectManager = new EffectRenderManager(webgl1Renderer, scene, materialManager, options);
     const setRenderTargetSpy = jest.spyOn(webgl1Renderer, 'setRenderTarget');
 
     // Act
-    effectManager.render(webgl1Renderer, camera, scene);
+    effectManager.render(camera);
 
     // Assert
     expect(setRenderTargetSpy).toBeCalled();
     const callWithMultiTarget = setRenderTargetSpy.mock.calls.find(
       x => x[0] instanceof THREE.WebGLMultisampleRenderTarget
     );
+    const callWithSingleTarget = setRenderTargetSpy.mock.calls.find(
+      x => x[0] instanceof THREE.WebGLRenderTarget && !(x[0] instanceof THREE.WebGLMultisampleRenderTarget)
+    );
+
+    expect(callWithSingleTarget).toBeDefined();
     expect(callWithMultiTarget).toBeUndefined();
   });
 
@@ -72,17 +80,18 @@ describe('EffectRenderManager', () => {
     const options: RenderOptions = {
       multiSampleCountHint: 4
     };
-    const effectManager = new EffectRenderManager(materialManager, options);
+    const effectManager = new EffectRenderManager(webgl2Renderer, scene, materialManager, options);
     const setRenderTargetSpy = jest.spyOn(webgl2Renderer, 'setRenderTarget');
 
     // Act
-    effectManager.render(webgl2Renderer, camera, scene);
+    effectManager.render(camera);
 
     // Assert
     expect(setRenderTargetSpy).toBeCalled();
     const callWithMultiTarget = setRenderTargetSpy.mock.calls.find(
       x => x[0] instanceof THREE.WebGLMultisampleRenderTarget
     );
+
     expect(callWithMultiTarget).toBeDefined();
   });
 });

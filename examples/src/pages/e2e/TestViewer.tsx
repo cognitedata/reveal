@@ -61,6 +61,7 @@ export function TestViewer(props: Props) {
     isLoading: true,
     itemsLoaded: 0,
     itemsRequested: 0,
+    itemsCulled: 0
   });
 
   const setupLoadingStateHandler = (
@@ -132,7 +133,14 @@ export function TestViewer(props: Props) {
         }
       };
 
-      revealManager = reveal.createLocalRevealManager({ logMetrics: false, renderOptions: renderOptions });
+      let renderer = new THREE.WebGLRenderer({
+        canvas: canvas.current,
+      });
+      renderer.setClearColor('#444');
+      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.localClippingEnabled = true;
+
+      revealManager = reveal.createLocalRevealManager(renderer, scene, { logMetrics: false, renderOptions: renderOptions });
       setupLoadingStateHandler(revealManager);
 
       let model: reveal.internal.PointCloudNode | reveal.CadNode;
@@ -148,13 +156,6 @@ export function TestViewer(props: Props) {
       }
 
       scene.add(model);
-
-      let renderer = new THREE.WebGLRenderer({
-        canvas: canvas.current,
-      });
-      renderer.setClearColor('#444');
-      renderer.setPixelRatio(window.devicePixelRatio);
-      renderer.localClippingEnabled = true;
 
       let cameraConfig = getCameraConfig(model);
 
@@ -211,7 +212,7 @@ export function TestViewer(props: Props) {
         }
 
         if (controlsNeedUpdate || revealManager.needsRedraw || needsResize) {
-          revealManager.render(renderer, camera, scene);
+          revealManager.render(camera);
 
           if (testEnv.postRender) {
             testEnv.postRender();

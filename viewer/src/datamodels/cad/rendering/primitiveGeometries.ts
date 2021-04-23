@@ -94,19 +94,11 @@ export const coneGeometry = (() => {
   };
 })();
 
-export const torusLODs = (() => {
-  //TODO: chris, 06.05.2020 - Reduce number of LODS
-  const parameters = [
-    [6, 4],
-    [9, 4],
-    [11, 6],
-    [16, 12],
-    [24, 16]
-  ];
+export const torusGeometry = (() => {
+  const tubularSegments = 7;
+  const radialSegments = 7;
   const transformFunc = (u: number, v: number) => [u, v * 2.0 * Math.PI];
-  return parameters.map(([radialSegments, tubularSegments]) =>
-    generatePlane3D(radialSegments, tubularSegments, transformFunc)
-  );
+  return generatePlane3D(radialSegments, tubularSegments, transformFunc);
 })();
 
 export const nutGeometry = (() => {

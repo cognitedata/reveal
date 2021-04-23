@@ -2,100 +2,67 @@
  * Copyright 2021 Cognite AS
  */
 
+import * as THREE from 'three';
+
 import { Repository } from './Repository';
 import { WantedSector, SectorGeometry, ConsumedSector } from './types';
 import { LevelOfDetail } from './LevelOfDetail';
-import {
-  OperatorFunction,
-  Observable,
-  from,
-  zip,
-  Subject,
-  onErrorResumeNext,
-  defer,
-  scheduled,
-  asyncScheduler,
-  merge,
-  NextObserver
-} from 'rxjs';
-import {
-  mergeMap,
-  map,
-  tap,
-  shareReplay,
-  take,
-  retry,
-  reduce,
-  distinct,
-  catchError,
-  throttleTime,
-  startWith,
-  filter,
-  subscribeOn,
-  mergeAll,
-  publish
-} from 'rxjs/operators';
+import { OperatorFunction, Observable, from, zip, onErrorResumeNext, defer, scheduled, asyncScheduler } from 'rxjs';
+import { mergeMap, map, tap, shareReplay, take, retry, reduce, catchError } from 'rxjs/operators';
 import { CadSectorParser } from './CadSectorParser';
 import { SimpleAndDetailedToSector3D } from './SimpleAndDetailedToSector3D';
 import { MemoryRequestCache } from '../../../utilities/cache/MemoryRequestCache';
 import { ParseCtmResult, ParseSectorResult } from '@cognite/reveal-parser-worker';
-import { TriangleMesh, InstancedMeshFile, InstancedMesh, SectorQuads } from '../rendering/types';
-import { createOffsetsArray, LoadingState } from '../../../utilities';
+import { TriangleMesh, InstancedMeshFile, InstancedMesh } from '../rendering/types';
+import { assertNever, createOffsetsArray } from '../../../utilities';
 import { trackError } from '../../../utilities/metrics';
 import { BinaryFileProvider } from '../../../utilities/networking/types';
-import { Group } from 'three';
-import { RxTaskTracker } from '../../../utilities/RxTaskTracker';
 import { groupMeshesByNumber } from './groupMeshesByNumber';
+import { MostFrequentlyUsedCache } from '../../../utilities/MostFrequentlyUsedCache';
 
-type KeyedWantedSector = { key: string; wantedSector: WantedSector };
-type WantedSecorWithRequestObservable = {
-  key: string;
-  wantedSector: WantedSector;
-  observable: Observable<ConsumedSector>;
-};
+const emptyGeometry = new THREE.BufferGeometry();
+
 type CtmFileRequest = { blobUrl: string; fileName: string };
 type CtmFileResult = { fileName: string; data: ParseCtmResult };
-type ParsedData = { blobUrl: string; lod: string; data: SectorGeometry | SectorQuads };
 
 // TODO: j-bjorne 16-04-2020: REFACTOR FINALIZE INTO SOME OTHER FILE PLEZ!
 export class CachedRepository implements Repository {
-  private readonly _consumedSectorCache: MemoryRequestCache<
-    string,
-    Observable<ConsumedSector>
-  > = new MemoryRequestCache({
-    maxElementsInCache: 50
-  });
-  private readonly _ctmFileCache: MemoryRequestCache<string, Observable<CtmFileResult>> = new MemoryRequestCache({
-    maxElementsInCache: 300
-  });
+  private readonly _consumedSectorCache: MemoryRequestCache<string, Promise<ConsumedSector>>;
+  private readonly _ctmFileCache: MostFrequentlyUsedCache<string, Observable<CtmFileResult>>;
+
   private readonly _modelSectorProvider: BinaryFileProvider;
   private readonly _modelDataParser: CadSectorParser;
   private readonly _modelDataTransformer: SimpleAndDetailedToSector3D;
-  private readonly _taskTracker: RxTaskTracker = new RxTaskTracker();
-
-  // Adding this to support parse map for migration wrapper. Should be removed later.
-  private readonly _parsedDataSubject: Subject<{
-    blobUrl: string;
-    sectorId: number;
-    lod: string;
-    data: SectorGeometry | SectorQuads;
-  }> = new Subject();
-
-  private readonly _concurrentNetworkOperations: number;
   private readonly _concurrentCtmRequests: number;
 
   constructor(
     modelSectorProvider: BinaryFileProvider,
     modelDataParser: CadSectorParser,
     modelDataTransformer: SimpleAndDetailedToSector3D,
-    concurrentNetworkOperations: number = 50,
     concurrentCtmRequest: number = 10
   ) {
     this._modelSectorProvider = modelSectorProvider;
     this._modelDataParser = modelDataParser;
     this._modelDataTransformer = modelDataTransformer;
-    this._concurrentNetworkOperations = concurrentNetworkOperations;
     this._concurrentCtmRequests = concurrentCtmRequest;
+
+    this._consumedSectorCache = new MemoryRequestCache(50, async consumedSector => {
+      const sector = await consumedSector;
+      if (sector.group !== undefined) {
+        const meshes: THREE.Mesh[] = sector.group.children
+          .filter(x => x instanceof THREE.Mesh)
+          .map(x => x as THREE.Mesh);
+        for (const mesh of meshes) {
+          if (mesh.geometry !== undefined) {
+            mesh.geometry.dispose();
+            // NOTE: Forcefully creating a new reference here to make sure
+            // there are no lingering references to the large geometry buffer
+            mesh.geometry = emptyGeometry;
+          }
+        }
+      }
+    });
+    this._ctmFileCache = new MostFrequentlyUsedCache(10);
   }
 
   clear() {
@@ -103,115 +70,40 @@ export class CachedRepository implements Repository {
     this._ctmFileCache.clear();
   }
 
-  getParsedData(): Observable<ParsedData> {
-    return this._parsedDataSubject.pipe(
-      distinct(keySelector => '' + keySelector.blobUrl + '.' + keySelector.sectorId + '.' + keySelector.lod)
-    ); // TODO: Should we do replay subject here instead of variable type?
-  }
-
-  getLoadingStateObserver(): Observable<LoadingState> {
-    return this._taskTracker.getTaskTrackerObservable().pipe(
-      throttleTime(30, asyncScheduler, { leading: true, trailing: true }), // Take 1 emission every 30ms
-      map(
-        ({ taskCount, taskCompleted }) =>
-          ({
-            isLoading: taskCount != taskCompleted,
-            itemsRequested: taskCount,
-            itemsLoaded: taskCompleted
-          } as LoadingState)
-      ),
-      startWith({ isLoading: false, itemsRequested: 0, itemsLoaded: 0 })
-    );
-  }
-
   // TODO j-bjorne 16-04-2020: Should look into ways of not sending in discarded sectors,
   // unless we want them to eventually set their priority to lower in the cache.
 
-  loadSector(): OperatorFunction<WantedSector, ConsumedSector> {
-    return publish((source$: Observable<WantedSector>) => {
-      /* Split wantedSectors into a pipe of discarded wantedSectors and a pipe of simple and detailed wantedSectors.
-       * ----------- wantedSectors -----------------------
-       * \---------- discarded wantedSectors -------------
-       *  \--------- simple and detailed wantedSectors ---
-       */
-      const discarded$ = source$.pipe(filter(wantedSector => wantedSector.levelOfDetail === LevelOfDetail.Discarded));
-      const simpleAndDetailed$ = source$.pipe(
-        filter(
-          wantedSector =>
-            wantedSector.levelOfDetail === LevelOfDetail.Simple || wantedSector.levelOfDetail === LevelOfDetail.Detailed
-        ),
-        map(wantedSector => ({ key: this.wantedSectorCacheKey(wantedSector), wantedSector }))
-      );
+  async loadSector(sector: WantedSector): Promise<ConsumedSector> {
+    const cacheKey = this.wantedSectorCacheKey(sector);
+    if (this._consumedSectorCache.has(cacheKey)) {
+      return this._consumedSectorCache.get(cacheKey);
+    }
 
-      /* Split simple and detailed wanted sectors into a pipe of cached request and uncached requests.
-       * ----------- simple and detailed wantedSectors ---
-       * \---------- cached wantedSectors ----------------
-       *  \--------- uncached wantedSectors --------------
-       */
-      const existsInCache = ({ key }: KeyedWantedSector) => this._consumedSectorCache.has(key);
-      const cached$ = simpleAndDetailed$.pipe(filter(existsInCache));
-      const uncached$ = simpleAndDetailed$.pipe(
-        filter((keyedWantedSector: KeyedWantedSector) => !existsInCache(keyedWantedSector))
-      );
+    switch (sector.levelOfDetail) {
+      case LevelOfDetail.Detailed: {
+        const loadOperation = this.loadDetailedSectorFromNetwork(sector).toPromise();
+        this._consumedSectorCache.forceInsert(cacheKey, loadOperation);
+        return loadOperation;
+      }
 
-      /* Merge simple and detailed pipeline, save observable to cache, and decrease loadcount
-       */
-      const getSimpleSectorFromNetwork = ({ key, wantedSector }: { key: string; wantedSector: WantedSector }) => ({
-        key,
-        wantedSector,
-        observable: this.loadSimpleSectorFromNetwork(wantedSector)
-      });
+      case LevelOfDetail.Simple: {
+        const loadOperation = this.loadSimpleSectorFromNetwork(sector).toPromise();
+        this._consumedSectorCache.forceInsert(cacheKey, loadOperation);
+        return loadOperation;
+      }
 
-      /* Split uncached wanted sectors into a pipe of simple wantedSectors and detailed wantedSectors. Increase load count
-       * ----------- uncached wantedSectors --------------
-       * \---------- simple wantedSectors ----------------
-       *  \--------- detailed wantedSectors --------------
-       */
-      const simple$ = uncached$.pipe(
-        subscribeOn(asyncScheduler),
-        filter(({ wantedSector }) => wantedSector.levelOfDetail == LevelOfDetail.Simple),
-        this._taskTracker.incrementTaskCountOnNext(),
-        map(getSimpleSectorFromNetwork)
-      );
+      case LevelOfDetail.Discarded:
+        return {
+          blobUrl: sector.blobUrl,
+          metadata: sector.metadata,
+          levelOfDetail: sector.levelOfDetail,
+          instancedMeshes: [],
+          group: undefined
+        };
 
-      const getDetailedSectorFromNetwork = ({ key, wantedSector }: { key: string; wantedSector: WantedSector }) => ({
-        key,
-        wantedSector,
-        observable: this.loadDetailedSectorFromNetwork(wantedSector)
-      });
-
-      const detailed$ = uncached$.pipe(
-        subscribeOn(asyncScheduler),
-        filter(({ wantedSector }) => wantedSector.levelOfDetail == LevelOfDetail.Detailed),
-        this._taskTracker.incrementTaskCountOnNext(),
-        map(getDetailedSectorFromNetwork)
-      );
-
-      const saveToCache = ({ key, observable }: WantedSecorWithRequestObservable) =>
-        this._consumedSectorCache.forceInsert(key, observable);
-
-      const network$ = merge(simple$, detailed$).pipe(
-        tap({
-          next: saveToCache
-        }),
-        map(({ observable }) => observable),
-        mergeAll(this._concurrentNetworkOperations),
-        this._taskTracker.incrementTaskCompletedOnNext()
-      );
-
-      const toDiscardedConsumedSector = (wantedSector: WantedSector) =>
-        ({ ...wantedSector, group: undefined } as ConsumedSector);
-
-      const getFromCache = ({ key }: KeyedWantedSector) => {
-        return this._consumedSectorCache.get(key);
-      };
-
-      return merge(
-        discarded$.pipe(map(toDiscardedConsumedSector)),
-        cached$.pipe(mergeMap(getFromCache)),
-        network$
-      ).pipe(this._taskTracker.resetOnComplete());
-    });
+      default:
+        assertNever(sector.levelOfDetail);
+    }
   }
 
   private catchWantedSectorError<T>(wantedSector: WantedSector, methodName: string) {
@@ -233,22 +125,14 @@ export class CachedRepository implements Repository {
     });
   }
 
-  private parsedDataObserver(wantedSector: WantedSector): NextObserver<SectorGeometry | SectorQuads> {
-    return {
-      next: data => {
-        this._parsedDataSubject.next({
-          blobUrl: wantedSector.blobUrl,
-          sectorId: wantedSector.metadata.id,
-          lod: wantedSector.levelOfDetail == LevelOfDetail.Simple ? 'simple' : 'detailed',
-          data
-        });
-      }
-    };
-  }
-
-  private nameGroup(wantedSector: WantedSector): OperatorFunction<Group, Group> {
+  private nameGroup(
+    wantedSector: WantedSector
+  ): OperatorFunction<
+    { sectorMeshes: THREE.Group; instancedMeshes: InstancedMeshFile[] },
+    { sectorMeshes: THREE.Group; instancedMeshes: InstancedMeshFile[] }
+  > {
     return tap(group => {
-      group.name = `Quads ${wantedSector.metadata.id}`;
+      group.sectorMeshes.name = `Quads ${wantedSector.metadata.id}`;
     });
   }
 
@@ -259,11 +143,10 @@ export class CachedRepository implements Repository {
       ).pipe(
         this.catchWantedSectorError(wantedSector, 'loadSimpleSectorFromNetwork'),
         mergeMap(buffer => this._modelDataParser.parseF3D(new Uint8Array(buffer))),
-        tap(this.parsedDataObserver(wantedSector)),
         map(sectorQuads => ({ ...wantedSector, data: sectorQuads })),
         this._modelDataTransformer.transform(),
         this.nameGroup(wantedSector),
-        map(group => ({ ...wantedSector, group })),
+        map(group => ({ ...wantedSector, group: group.sectorMeshes, instancedMeshes: group.instancedMeshes })),
         shareReplay(1),
         take(1)
       )
@@ -296,12 +179,11 @@ export class CachedRepository implements Repository {
           return zip(i3dFileObservable, ctmFilesObservable).pipe(
             this.catchWantedSectorError(wantedSector, 'loadDetailedSectorFromNetwork'),
             map(([i3dFile, ctmFiles]) => this.finalizeDetailed(i3dFile as ParseSectorResult, ctmFiles)),
-            tap(this.parsedDataObserver(wantedSector)),
             map(data => {
               return { ...wantedSector, data };
             }),
             this._modelDataTransformer.transform(),
-            map(group => ({ ...wantedSector, group })),
+            map(group => ({ ...wantedSector, group: group.sectorMeshes, instancedMeshes: group.instancedMeshes })),
             shareReplay(1),
             take(1)
           );
@@ -315,8 +197,9 @@ export class CachedRepository implements Repository {
   private loadCtmFile(): OperatorFunction<CtmFileRequest, CtmFileResult> {
     return mergeMap(ctmRequest => {
       const key = this.ctmFileCacheKey(ctmRequest);
-      if (this._ctmFileCache.has(key)) {
-        return this._ctmFileCache.get(key);
+      const ctmFile = this._ctmFileCache.get(key);
+      if (ctmFile !== undefined) {
+        return ctmFile;
       } else {
         return this.loadCtmFileFromNetwork(ctmRequest);
       }
@@ -334,7 +217,7 @@ export class CachedRepository implements Repository {
         take(1)
       )
     );
-    this._ctmFileCache.forceInsert(this.ctmFileCacheKey(ctmRequest), networkObservable);
+    this._ctmFileCache.set(this.ctmFileCacheKey(ctmRequest), networkObservable);
     return networkObservable;
   }
 
@@ -401,7 +284,6 @@ export class CachedRepository implements Repository {
 
         const indices = ctm.indices;
         const vertices = ctm.vertices;
-        const normals = ctm.normals;
         const instancedMeshes: InstancedMesh[] = [];
 
         const fileTriangleOffsets = new Float64Array(meshIndices.map(i => triangleOffsets[i]));
@@ -435,7 +317,6 @@ export class CachedRepository implements Repository {
           fileId,
           indices,
           vertices,
-          normals,
           instances: instancedMeshes
         };
         finalMeshes.push(mesh);

@@ -1,3 +1,5 @@
+#![allow(clippy::upper_case_acronyms)]
+
 use std::io::{self, BufRead, BufReader, Cursor, Read};
 
 use byteorder::{LittleEndian, ReadBytesExt};
