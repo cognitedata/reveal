@@ -3,7 +3,7 @@ import { ThunkConfig } from 'src/store/rootReducer';
 import { Label, Metadata } from '@cognite/cdf-sdk-singleton';
 import isEqual from 'lodash-es/isEqual';
 import { UpdateFiles } from 'src/store/thunks/UpdateFiles';
-import { FileState } from '../uploadedFilesSlice';
+import { FileState } from 'src/modules/Upload/uploadedFilesSlice';
 
 export const updateFileInfoField = createAsyncThunk<
   void,
@@ -15,13 +15,14 @@ export const updateFileInfoField = createAsyncThunk<
   }
 
   const fileState = getState().uploadedFiles;
+  const fileMetadataState = getState().fileMetadataSlice;
 
   const fileDetails = fileState.files.byId[fileId];
 
   if (!fileDetails) {
     return;
   }
-  const editedFileDetails = fileState.fileDetails;
+  const editedFileDetails = fileMetadataState.fileDetails;
 
   if (key) {
     let updateInfoSet = {};
@@ -60,7 +61,7 @@ export const updateFileInfoField = createAsyncThunk<
       case 'metadata': {
         const metadata: Metadata = {};
 
-        const editedFileMeta = fileState.fileMetaData;
+        const editedFileMeta = fileMetadataState.fileMetaData;
         const metaKeys = Object.keys(editedFileMeta);
 
         metaKeys.forEach((rowId) => {

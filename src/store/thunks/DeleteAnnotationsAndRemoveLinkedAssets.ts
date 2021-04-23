@@ -4,7 +4,7 @@ import { AnnotationStatus } from 'src/utils/AnnotationUtils';
 import { UpdateFiles } from 'src/store/thunks/UpdateFiles';
 import { DeleteAnnotations } from 'src/store/thunks/DeleteAnnotations';
 import { deleteAnnotationsFromState } from 'src/store/commonActions';
-import { VisionAnnotationState } from '../previewSlice';
+import { VisionAnnotationState } from '../../modules/Preview/previewSlice';
 
 export const DeleteAnnotationsAndRemoveLinkedAssets = createAsyncThunk<
   void,
