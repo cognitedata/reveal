@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { RawDB, RawDBTable } from 'cognite-sdk-v3';
-import { Graphic, Input, Table, Title } from '@cognite/cogs.js';
+import { Graphic, Input, Table } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { DivFlex } from 'styles/flex/StyledFlex';
 import { getDatabaseTables } from 'utils/raw/rawUtils';
@@ -8,6 +8,7 @@ import { SelectionColumns } from 'components/inputs/rawSelector/SelectedDBTables
 import { DatabaseTables } from 'components/inputs/rawSelector/DatabaseTables';
 import { DatabaseSelector } from 'components/inputs/rawSelector/DatabaseSelector';
 import { IntegrationRawTable } from 'model/Integration';
+import { StyledLabel } from 'styles/StyledForm';
 
 const Selector = styled.div`
   width: 100%;
@@ -135,8 +136,9 @@ const RawSelector = ({
     <>
       <Selector>
         <SearchWrapper>
-          <Title level={3}>{DBS_LABEL}</Title>
+          <StyledLabel htmlFor="search-database-input">{DBS_LABEL}</StyledLabel>
           <StyledInput
+            id="search-database-input"
             type="search"
             placeholder="Filter databases"
             onChange={(val) => setDbSearch(val.currentTarget.value)}
@@ -154,8 +156,11 @@ const RawSelector = ({
           />
         </SearchWrapper>
         <SearchWrapper>
-          <Title level={3}>{TABLES_LABEL}</Title>
+          <StyledLabel htmlFor="search-database-table-input">
+            {TABLES_LABEL}
+          </StyledLabel>
           <StyledInput
+            id="search-database-table-input"
             type="search"
             placeholder="Filter tables"
             onChange={(val) => setTableSearch(val.currentTarget.value)}

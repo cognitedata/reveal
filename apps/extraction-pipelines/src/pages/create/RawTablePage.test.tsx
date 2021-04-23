@@ -18,9 +18,9 @@ import RawTablePage, {
   RawTableOptions,
 } from 'pages/create/RawTablePage';
 import { useRawDBAndTables } from 'hooks/useRawDBAndTables';
-import { TABLE_REQUIRED } from 'components/inputs/rawSelector/ConnectRawTablesInput';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import { BACK, NEXT } from 'utils/constants';
+import { TABLE_REQUIRED } from 'utils/validation/integrationSchemas';
 
 jest.mock('hooks/useRawDBAndTables', () => {
   return {

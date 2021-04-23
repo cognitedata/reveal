@@ -13,7 +13,10 @@ export const StyledMenu = styled(Menu)`
   overflow-y: auto;
   label.cogs-checkbox {
     width: fit-content;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0;
+  }
+  .cogs-menu-item {
+    margin-bottom: 0.1rem;
   }
 `;
 

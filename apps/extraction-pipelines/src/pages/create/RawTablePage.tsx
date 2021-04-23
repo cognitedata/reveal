@@ -2,15 +2,12 @@ import React, { FunctionComponent, useEffect, useState } from 'react';
 import { Colors, Radio } from '@cognite/cogs.js';
 import { useHistory } from 'react-router-dom';
 import { FormProvider, useForm } from 'react-hook-form';
-import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ErrorMessage } from '@hookform/error-message';
 import styled from 'styled-components';
 import { createLink } from '@cognite/cdf-utilities';
 import { DivFlex } from 'styles/flex/StyledFlex';
-import ConnectRawTablesInput, {
-  TABLE_REQUIRED,
-} from 'components/inputs/rawSelector/ConnectRawTablesInput';
+import ConnectRawTablesInput from 'components/inputs/rawSelector/ConnectRawTablesInput';
 import {
   DATA_SET_PAGE_PATH,
   DOCUMENTATION_PAGE_PATH,
@@ -26,9 +23,10 @@ import { mapStoredToDefault } from 'utils/raw/rawUtils';
 
 import { useAppEnv } from 'hooks/useAppEnv';
 import {
-  useDetailsUpdate,
   createUpdateSpec,
+  useDetailsUpdate,
 } from 'hooks/details/useDetailsUpdate';
+import { rawTableSchema } from 'utils/validation/integrationSchemas';
 
 const ConditionalWrapper = styled(DivFlex)`
   margin: 1rem 2rem;
@@ -55,22 +53,6 @@ export const RAW_TABLE_LABEL: Readonly<string> =
 export const INTEGRATION_RAW_TABLE_HEADING: Readonly<string> =
   'Integration Raw Tables';
 export const RAW_TABLE_TIP: Readonly<string> = '***Put some hint here***';
-export const RAW_TABLE_REQUIRED: Readonly<string> = 'Raw table is required';
-const rawTableSchema = yup.object().shape({
-  rawTable: yup.string().required(RAW_TABLE_REQUIRED),
-  selectedRawTables: yup
-    .array()
-    .of(
-      yup.object().shape({
-        databaseName: yup.string(),
-        tableName: yup.string(),
-      })
-    )
-    .when('rawTable', {
-      is: (val: RawTableOptions) => val === RawTableOptions.YES,
-      then: yup.array().min(1, TABLE_REQUIRED),
-    }),
-});
 
 interface RawTablePageProps {}
 

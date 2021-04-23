@@ -1,6 +1,7 @@
 import * as yup from 'yup';
 import { SupportedScheduleStrings } from 'components/integrations/cols/Schedule';
 import { CRON_REQUIRED, cronValidator } from 'utils/validation/cronValidation';
+import { RawTableOptions } from 'pages/create/RawTablePage';
 
 export const NAME_REQUIRED: Readonly<string> = 'Integration name is required';
 export const MAX_DESC_LENGTH: Readonly<number> = 500;
@@ -65,3 +66,29 @@ export const documentationSchema = yup.object().shape({
       `Documentation can only contain ${MAX_DESC_LENGTH} characters`
     ),
 });
+export const TABLE_REQUIRED: Readonly<string> = 'Select a database table';
+export const RAW_TABLE_REQUIRED: Readonly<string> = 'Raw table is required';
+export const selectedRawTablesRule = {
+  selectedRawTables: yup.array().of(
+    yup.object().shape({
+      databaseName: yup.string(),
+      tableName: yup.string(),
+    })
+  ),
+};
+export const rawTableRules = {
+  rawTable: yup.string().required(RAW_TABLE_REQUIRED),
+  selectedRawTables: yup
+    .array()
+    .of(
+      yup.object().shape({
+        databaseName: yup.string(),
+        tableName: yup.string(),
+      })
+    )
+    .when('rawTable', {
+      is: (val: RawTableOptions) => val === RawTableOptions.YES,
+      then: yup.array().min(1, TABLE_REQUIRED),
+    }),
+};
+export const rawTableSchema = yup.object().shape(rawTableRules);

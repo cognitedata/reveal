@@ -5,12 +5,13 @@ import { ErrorMessage } from '@hookform/error-message';
 import RawSelector from 'components/inputs/rawSelector/RawSelector';
 import { useRawDBAndTables } from 'hooks/useRawDBAndTables';
 import { IntegrationRawTable } from 'model/Integration';
+import { Hint } from 'styles/StyledForm';
 
 interface ConnectRawTablesPageProps {}
 
 export const INTEGRATION_CONNECT_RAW_TABLES_HEADING: Readonly<string> =
   'Integration Connect Raw Tables';
-export const TABLE_REQUIRED: Readonly<string> = 'Select a database table';
+
 export const CONNECT_RAW_TABLES_HINT: Readonly<string> =
   'Select the name of the database and tables that your integration writes data to';
 
@@ -35,7 +36,7 @@ const ConnectRawTablesInput: FunctionComponent<ConnectRawTablesPageProps> = () =
 
   return (
     <>
-      <i className="description">{CONNECT_RAW_TABLES_HINT}</i>
+      <Hint>{CONNECT_RAW_TABLES_HINT}</Hint>
       <ErrorMessage
         errors={errors}
         name="selectedRawTables"
