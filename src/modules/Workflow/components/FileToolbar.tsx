@@ -117,6 +117,15 @@ export const FileToolbar = ({
           >
             Grid
           </SegmentedControl.Button>
+
+          <SegmentedControl.Button
+            key="map"
+            icon="Map"
+            title="Map"
+            size="small"
+          >
+            Map
+          </SegmentedControl.Button>
         </SegmentedControl>
       </Container>
     </>

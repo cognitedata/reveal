@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Icon } from '@cognite/cogs.js';
+import { Body, Button, Icon } from '@cognite/cogs.js';
 import {
   AnnotationsBadgeProps,
   ModelStatusAndAnnotationCounts,
@@ -101,7 +101,7 @@ export function AnnotationsBadge({
       {!showBadge(gdpr) &&
         !showBadge(tag) &&
         !showBadge(text) &&
-        !showBadge(objects) && <>No annotations</>}
+        !showBadge(objects) && <Body level={3}>No annotations</Body>}
     </>
   );
 }

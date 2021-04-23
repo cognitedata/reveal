@@ -25,6 +25,7 @@ import { GridCellProps, GridTable } from '@cognite/data-exploration';
 import { selectAllFiles } from 'src/modules/Upload/uploadedFilesSlice';
 import styled from 'styled-components';
 import { resetEditHistory } from 'src/modules/FileMetaData/fileMetadataSlice';
+import { MapView } from '../../Common/Components/MapView/MapView';
 import { FileGridPreview } from '../../Common/Components/FileGridPreview/FileGridPreview';
 
 const queryClient = new QueryClient();
@@ -64,23 +65,28 @@ export default function ProcessStep() {
     return <FileGridPreview item={props.item} style={props.style} />;
   };
 
+  const renderView = () => {
+    if (currentView === 'grid') {
+      return (
+        <GridTable
+          data={tableData}
+          renderCell={renderGridCell}
+          minCellWidth={350}
+        />
+      );
+    }
+    if (currentView === 'map') {
+      return <MapView data={tableData} />;
+    }
+    return <FileTable data={tableData} />;
+  };
   console.log('Re-rendering process page');
   return (
     <>
       <QueryClientProvider client={queryClient}>
         <Title level={2}>Process and detect annotations</Title>
         <FileToolbar currentView={currentView} onViewChange={setCurrentView} />
-        <Container>
-          {currentView === 'grid' ? (
-            <GridTable
-              data={tableData}
-              renderCell={renderGridCell}
-              minCellWidth={350}
-            />
-          ) : (
-            <FileTable data={tableData} />
-          )}
-        </Container>
+        <Container>{renderView()}</Container>
       </QueryClientProvider>
     </>
   );

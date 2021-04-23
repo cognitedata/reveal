@@ -11,7 +11,7 @@ import {
   VisionFileDetails,
 } from 'src/modules/FileMetaData/Components/FileMetadata/Types';
 import { Title } from '@cognite/cogs.js';
-import { MapView } from '../../../Common/Components/MapView/MapView';
+import { InlineMapView } from '../../../Common/Components/MapView/InlineMapView';
 
 export const FileMetadataFieldsContainer = (props: {
   info: VisionFileDetails;
@@ -33,7 +33,7 @@ export const FileMetadataFieldsContainer = (props: {
           copyable
         />
       )}
-      <MapView geoLocation={info.geoLocation || undefined} />
+      <InlineMapView geoLocation={info.geoLocation || undefined} />
       <TitleContainer>
         <Title level={6}>File Details</Title>
       </TitleContainer>

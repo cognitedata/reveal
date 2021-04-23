@@ -1,41 +1,48 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 
-import MapboxGl, { GeoJSONLayer } from 'react-mapbox-gl';
-import { FileGeoLocation } from '@cognite/sdk';
-import * as MapboxGL from 'mapbox-gl';
-import { Icon } from '@cognite/cogs.js';
-import { MAPBOX_TOKEN, MAPBOX_MAP_ID } from './constants';
+import ReactMapboxGl, { Layer, Feature, Popup } from 'react-mapbox-gl';
 
-const Map = MapboxGl({
+import { useSelector } from 'react-redux';
+import { RootState } from 'src/store/rootReducer';
+import { selectAllFiles } from 'src/modules/Upload/uploadedFilesSlice';
+import { FileInfo } from '@cognite/sdk';
+import * as MapboxGL from 'mapbox-gl';
+import { MAPBOX_TOKEN, MAPBOX_MAP_ID } from './constants';
+import 'mapbox-gl/dist/mapbox-gl.css';
+import { MapPopup } from './MapPopup';
+import { TableDataItem } from '../FileTable/FileTable';
+
+const Mapbox = ReactMapboxGl({
+  minZoom: 1,
+  maxZoom: 30,
   accessToken: MAPBOX_TOKEN,
   attributionControl: false,
 });
 
-const mapPlaceHolder = () => {
-  return (
-    <MapPlaceHolder>
-      <Icon type="Map" size={16} />
-      No location data
-    </MapPlaceHolder>
+export const MapView = (props: { data: TableDataItem[] }) => {
+  const [selectedFile, setSelectedFile] = useState<FileInfo>();
+  const [center, setCenter] = useState<[number, number]>();
+  const [zoom] = useState<[number] | undefined>([2]);
+
+  const fitBounds = undefined; // TODO: calculate this based on the provided data
+
+  const uploadedFiles = useSelector((state: RootState) =>
+    selectAllFiles(state.uploadedFiles)
   );
-};
 
-export const MapView = ({ geoLocation }: { geoLocation?: FileGeoLocation }) => {
-  if (!geoLocation) {
-    return mapPlaceHolder();
-  }
+  const handleStyleLoad = (map: MapboxGL.Map) => map.resize();
 
-  const coordinates = {
-    longitude: geoLocation.geometry.coordinates[0] as number,
-    latitude: geoLocation.geometry.coordinates[1] as number,
+  const mapStyle = {
+    display: 'flex',
+    width: '100%',
+    height: '100%',
+    overflow: 'hidden',
   };
 
-  const delta = 5;
-  const bounds: [[number, number], [number, number]] = [
-    [coordinates.longitude - delta, coordinates.latitude - delta],
-    [coordinates.longitude + delta, coordinates.latitude + delta],
-  ];
+  const flyToOptions = {
+    speed: 0.8,
+  };
 
   const circleLayout: MapboxGL.CircleLayout = { visibility: 'visible' };
   const circlePaint: MapboxGL.CirclePaint = {
@@ -43,38 +50,74 @@ export const MapView = ({ geoLocation }: { geoLocation?: FileGeoLocation }) => {
     'circle-radius': 7.5,
     'circle-stroke-color': 'white',
     'circle-stroke-width': 1,
+    'circle-color-transition': { duration: 0 },
   };
+
+  const features = Object.assign(
+    {},
+    ...uploadedFiles
+      .filter((f) => f.geoLocation && f)
+      .map((s) => ({
+        [s.id]: s.geoLocation?.geometry.coordinates as [number, number],
+      }))
+  );
+
+  const handleOnDrag = () => {
+    if (selectedFile) setSelectedFile(undefined);
+  };
+
   return (
-    <>
-      <Map
+    <Container>
+      <Mapbox
         style={MAPBOX_MAP_ID}
-        containerStyle={{
-          width: '100%',
-          maxHeight: 179,
-          overflow: 'hidden',
-        }}
-        zoom={[2]}
-        fitBoundsOptions={{ duration: 0 }}
-        fitBounds={bounds}
+        onStyleLoad={handleStyleLoad}
+        fitBounds={fitBounds}
+        center={center}
+        zoom={zoom}
+        containerStyle={mapStyle}
+        flyToOptions={flyToOptions}
+        onDrag={handleOnDrag}
+        onClick={handleOnDrag}
       >
-        <GeoJSONLayer
-          data={geoLocation}
-          circleLayout={circleLayout}
-          circlePaint={circlePaint}
-        />
-      </Map>
-    </>
+        <Layer type="circle" layout={circleLayout} paint={circlePaint}>
+          {Object.keys(features).map((f, _) => (
+            <Feature
+              key={f}
+              coordinates={features[f]}
+              onClick={() => {
+                setSelectedFile(
+                  uploadedFiles.find((file) => file.id.toString() === f)
+                );
+                setCenter(features[f]);
+              }}
+            />
+          ))}
+        </Layer>
+        {selectedFile ? (
+          <Popup
+            key={selectedFile.id}
+            coordinates={features[selectedFile.id.toString()]}
+            anchor="bottom"
+            offset={[0, -10]}
+            style={{
+              position: 'fixed',
+            }}
+          >
+            <MapPopup
+              item={props.data.find(
+                (element) => element.id === selectedFile.id
+              )}
+            />
+          </Popup>
+        ) : (
+          <div />
+        )}
+      </Mapbox>
+    </Container>
   );
 };
 
-const MapPlaceHolder = styled.div`
-  display: flex;
-  flex-direction: column;
+const Container = styled.div`
   width: 100%;
-  height: 179px;
-  background: #f5f5f5;
-  color: #8c8c8c;
-  margin: auto;
-  justify-content: center;
-  align-items: center;
+  height: 100%;
 `;
