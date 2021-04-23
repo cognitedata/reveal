@@ -41,6 +41,6 @@ If there is no CSP in your project or `apps-cdn.cognitedata.com` is whitelisted,
 
 In case if you see an error like that:
 
-> Refused to load the script 'https://cdn.jsdelivr.net/npm/@cognite/reveal-parser-worker@1.0.0/dist/cdn/reveal.parser.worker.js' because it violates the following Content Security Policy directive: "script-src 'self' https://localhost:* blob:"
+> Refused to load the script 'https://apps-cdn.cogniteapp.com/@cognite/reveal-parser-worker/1.1.0/reveal.parser.worker.js' because it violates the following Content Security Policy directive: "script-src 'self' https://localhost:* blob:"
 
-See the next steps in our [documentation](https://cognitedata.github.io/reveal/docs/installation#installation-for-projects-with-csp).
+See the next steps in our [documentation](https://cognitedata.github.io/reveal-docs/docs/installation#installation-for-projects-with-content-security-policy).
