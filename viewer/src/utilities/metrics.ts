@@ -26,8 +26,13 @@ let globalLogMetrics = true;
 const globalProps = {
   VERSION,
   project: 'unknown',
-  application: 'unknown'
+  application: 'unknown',
+  // Use a random identifier because we want to don't track users over multiple sessions to not
+  // violate GDPR.
+  sessionId: generateUuidv4()
 };
+// Don't identify users in MixPanel to avoid GDPR problems
+const mixpanelDistinctId = 'reveal-single-user';
 
 /**
  * Source: https://stackoverflow.com/a/2117523/167251
@@ -77,10 +82,7 @@ export function initMetrics(logMetrics: boolean, project: string, applicationId:
   // Reset device ID (even if we don't send it)
   mixpanel.reset();
 
-  // Use a random identifier because we want to don't track users over multiple sessions to not
-  // violate GDPR. This overrides "distinct_id".
-  const randomIdentifier = generateUuidv4();
-  mixpanel.identify(randomIdentifier);
+  mixpanel.identify(mixpanelDistinctId);
 
   if (project) {
     globalProps.project = project;
