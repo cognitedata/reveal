@@ -99,11 +99,11 @@ To publish a new version of `@cognite/reveal` or `@cognite/reveal-parser-worker`
 
 ### Git setup
 
-Checkout at some stable revision that you want to release (normally, the latest state from master)
-and create a new branch from it. 
+Checkout at some stable revision that you want to release (normally, the latest state from master or
+version-1 if you are releasing fix for a previous version) and create a new branch from it. 
 
 ```bash
-git checkout master
+git checkout master # or version-1 if you are releasing a hotfix to 1.x.x
 git pull
 git checkout -b <your_username>/<package-name>@<version_to_release>
 ```
