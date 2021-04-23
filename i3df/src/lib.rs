@@ -1,6 +1,4 @@
-#![allow(
-    clippy::upper_case_acronyms
-)]
+#![allow(clippy::upper_case_acronyms)]
 
 use std::io::{self, BufRead, BufReader, Cursor, Read};
 
