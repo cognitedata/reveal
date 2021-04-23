@@ -1,9 +1,8 @@
 # Reveal viewer
 
-Documentation for the latest version is available at [https://cognitedata.github.io/reveal/docs/](https://cognitedata.github.io/reveal/docs/)
+Documentation for the latest version is available at [https://cognitedata.github.io/reveal-docs/docs](https://cognitedata.github.io/reveal-docs/docs). Documentation for the next release is available from [https://cognitedata.github.io/reveal-docs/docs/next/](https://cognitedata.github.io/reveal-docs/docs/next/).
 
-We have [demos here](https://cognitedata.github.io/reveal/docs/examples/cad-basic)!
-
+The documentation has a bunch of [live examples](https://cognitedata.github.io/reveal-docs/docs/examples/cad-basic).
 ---
 
 ## Code Example
