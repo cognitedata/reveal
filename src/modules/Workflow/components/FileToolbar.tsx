@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, ButtonGroup, Detail } from '@cognite/cogs.js';
+import { Button, SegmentedControl, Detail } from '@cognite/cogs.js';
 import { DetectionModelSelect } from 'src/modules/Workflow/components/DetectionModelSelect';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
@@ -97,17 +97,36 @@ export const FileToolbar = ({
           </Button>
         </ModelOptions>
 
-        <ButtonGroup onButtonClicked={onViewChange} currentKey={currentView}>
-          <ButtonGroup.Button key="list" icon="List" title="List" size="small">
+        <SegmentedControl
+          onButtonClicked={onViewChange}
+          currentKey={currentView}
+        >
+          <SegmentedControl.Button
+            key="list"
+            icon="List"
+            title="List"
+            size="small"
+          >
             List
-          </ButtonGroup.Button>
-          <ButtonGroup.Button key="grid" icon="Grid" title="Grid" size="small">
+          </SegmentedControl.Button>
+          <SegmentedControl.Button
+            key="grid"
+            icon="Grid"
+            title="Grid"
+            size="small"
+          >
             Grid
-          </ButtonGroup.Button>
-          <ButtonGroup.Button key="map" icon="Map" title="Map" size="small">
+          </SegmentedControl.Button>
+
+          <SegmentedControl.Button
+            key="map"
+            icon="Map"
+            title="Map"
+            size="small"
+          >
             Map
-          </ButtonGroup.Button>
-        </ButtonGroup>
+          </SegmentedControl.Button>
+        </SegmentedControl>
       </Container>
     </>
   );
