@@ -93,7 +93,7 @@ export class EffectRenderManager {
   private _renderTarget: THREE.WebGLRenderTarget | null;
   private _autoSetTargetSize: boolean = false;
 
-  private _uiObjects: Set<THREE.Object3D> = new Set();
+  private _uiObjects: { objectGroup: THREE.Group; screenPos: THREE.Vector2 }[] = [];
 
   public set renderOptions(options: RenderOptions) {
     const ssaoParameters = this.ssaoParameters(options);
@@ -102,12 +102,15 @@ export class EffectRenderManager {
     this._renderOptions = { ...options, ssaoRenderParameters: { ...ssaoParameters } };
   }
 
-  public addUiObject(object: THREE.Object3D) {
-    this._uiObjects.add(object);
+  public addUiObject(objectGroup: THREE.Group, screenPos: THREE.Vector2) {
+    this._uiObjects.push({ objectGroup, screenPos });
   }
 
   public removeUiObject(object: THREE.Object3D) {
-    this._uiObjects.delete(object);
+    this._uiObjects = this._uiObjects.filter(p => {
+      const filteredObject = p.objectGroup;
+      return object !== filteredObject;
+    });
   }
 
   private ssaoParameters(renderOptions: RenderOptions): SsaoParameters {
@@ -133,8 +136,7 @@ export class EffectRenderManager {
     this._renderer = renderer;
     this._renderOptions = options;
     this._materialManager = materialManager;
-    this._orthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 5);
-    this._orthographicCamera.position.set(0, 0, 2);
+    this._orthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, -1, 1);
 
     this._renderTarget = null;
 
@@ -667,21 +669,22 @@ export class EffectRenderManager {
     scene: THREE.Scene
   ) {
     renderer.setRenderTarget(target);
-    const testScene = new THREE.Scene();
 
     renderer.render(scene, this._orthographicCamera);
-    if (target === this._renderTarget) {
-      this._uiObjects.forEach(obj => {
-        testScene.add(obj);
-      });
 
-      renderer.compile(testScene, this._orthographicCamera);
+    if (target === this._renderTarget) {
+      const renderSize = renderer.getSize(new THREE.Vector2());
 
       renderer.autoClear = false;
-      const renderSize = renderer.getSize(new THREE.Vector2());
-      renderer.setViewport(renderSize.x - 128, 0, 128, 128);
-      renderer.clearDepth();
-      renderer.render(testScene, this._orthographicCamera);
+      this._uiObjects.forEach(uiObject => {
+        const renderScene = new THREE.Scene();
+        renderScene.add(uiObject.objectGroup);
+
+        //renderer.setViewport(renderSize.x - uiObject.screenPos.x, 0, uiObject.screenPos.x, uiObject.screenPos.y);
+        renderer.clearDepth();
+        renderer.render(renderScene, this._orthographicCamera);
+      });
+
       renderer.setViewport(0, 0, renderSize.x, renderSize.y);
       renderer.autoClear = true;
     }

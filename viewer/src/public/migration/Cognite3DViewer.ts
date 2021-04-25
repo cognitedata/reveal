@@ -649,11 +649,12 @@ export class Cognite3DViewer {
   /**
    * Add an object that will be considered a UI object. It will be rendered in the last stage and with orthographic projection.
    * @param object
+   * @param screenPos
    */
-  addUiObject(object: THREE.Object3D): void {
+  addUiObject(object: THREE.Group, screenPos: THREE.Vector2): void {
     if (this.isDisposed) return;
 
-    this._revealManager.addUiObject(object);
+    this._revealManager.addUiObject(object, screenPos);
   }
 
   /**
