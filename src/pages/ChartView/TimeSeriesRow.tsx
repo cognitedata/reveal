@@ -263,7 +263,7 @@ export default function TimeSeriesRow({
           </SourceName>
         </SourceItem>
       </td>
-      {isWorkspaceMode && (
+      {(isWorkspaceMode || isFileViewerMode) && (
         <>
           <td>
             <SourceItem>
@@ -271,6 +271,10 @@ export default function TimeSeriesRow({
             </SourceItem>
           </td>
           <td>{statisticsForSource?.tag}</td>
+        </>
+      )}
+      {isWorkspaceMode && (
+        <>
           <td>{statisticsForSource?.min}</td>
           <td>{statisticsForSource?.max}</td>
           <td>{statisticsForSource?.median}</td>
@@ -309,39 +313,39 @@ export default function TimeSeriesRow({
         </>
       )}
       {(isWorkspaceMode || isFileViewerMode) && (
-        <>
-          <td style={{ textAlign: 'center', paddingLeft: 0 }}>
-            <PnidButton
-              timeseriesId={tsId}
-              showTooltip={false}
-              hideWhenEmpty={false}
+        <td style={{ textAlign: 'center', paddingLeft: 0 }}>
+          <PnidButton
+            timeseriesId={tsId}
+            showTooltip={false}
+            hideWhenEmpty={false}
+          />
+        </td>
+      )}
+      {isWorkspaceMode && (
+        <td style={{ textAlign: 'center', paddingLeft: 0 }}>
+          <Dropdown content={<AppearanceDropdown update={updateAppearance} />}>
+            <Button
+              variant="outline"
+              icon="Timeseries"
+              style={{ height: 28 }}
             />
-          </td>
-          <td style={{ textAlign: 'center', paddingLeft: 0 }}>
-            <Dropdown
-              content={<AppearanceDropdown update={updateAppearance} />}
-            >
-              <Button
-                variant="outline"
-                icon="Timeseries"
-                style={{ height: 28 }}
-              />
-            </Dropdown>
-          </td>
-          <td style={{ textAlign: 'center', paddingLeft: 0 }}>
-            <Popconfirm
-              onConfirm={remove}
-              content={
-                <div style={{ textAlign: 'left' }}>
-                  Are you sure that you want to
-                  <br /> remove this Time Series?
-                </div>
-              }
-            >
-              <Button variant="outline" icon="Delete" style={{ height: 28 }} />
-            </Popconfirm>
-          </td>
-        </>
+          </Dropdown>
+        </td>
+      )}
+      {(isWorkspaceMode || isFileViewerMode) && (
+        <td style={{ textAlign: 'center', paddingLeft: 0 }}>
+          <Popconfirm
+            onConfirm={() => remove()}
+            content={
+              <div style={{ textAlign: 'left' }}>
+                Are you sure that you want to
+                <br /> remove this Time Series?
+              </div>
+            }
+          >
+            <Button variant="outline" icon="Delete" style={{ height: 28 }} />
+          </Popconfirm>
+        </td>
       )}
       {isWorkspaceMode && (
         <>
@@ -360,13 +364,14 @@ export default function TimeSeriesRow({
           </td>
           <td style={{ textAlign: 'center', paddingLeft: 0 }}>
             {!isFileViewerMode && (
-              <Dropdown content={<TimeSeriesMenu chartId={chart.id} id={id} />}>
-                <Button
-                  variant="outline"
-                  icon="MoreOverflowEllipsisHorizontal"
-                  style={{ height: 28 }}
-                />
-              </Dropdown>
+              // <Dropdown content={<TimeSeriesMenu chartId={chart.id} id={id} />}>
+              <Button
+                variant="outline"
+                icon="MoreOverflowEllipsisHorizontal"
+                style={{ height: 28 }}
+                disabled
+              />
+              // </Dropdown>
             )}
           </td>
         </>

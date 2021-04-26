@@ -44,22 +44,37 @@ export const FileView = () => {
     <tr>
       <th style={{ width: 350 }}>
         <SourceItem>
-          <SourceName>Name</SourceName>
+          <SourceName>
+            <Icon
+              type="Eye"
+              style={{
+                marginLeft: 7,
+                marginRight: 20,
+                verticalAlign: 'middle',
+              }}
+            />
+            Name
+          </SourceName>
         </SourceItem>
       </th>
-      <th style={{ width: 300, paddingLeft: 0 }}>
-        <SourceItem style={{ justifyContent: 'center' }}>
-          <SourceName>Source</SourceName>
-        </SourceItem>
-      </th>
-      <th style={{ paddingLeft: 0 }}>
-        <SourceItem style={{ justifyContent: 'center' }}>
+      <th>
+        <SourceItem>
           <SourceName>Description</SourceName>
         </SourceItem>
       </th>
-      <th style={{ width: 100, paddingLeft: 0 }}>
+      <th style={{ width: 210 }}>
+        <SourceItem>
+          <SourceName>Tag</SourceName>
+        </SourceItem>
+      </th>
+      <th style={{ width: 50, paddingLeft: 0 }}>
         <SourceItem style={{ justifyContent: 'center' }}>
           <SourceName>P&amp;IDs</SourceName>
+        </SourceItem>
+      </th>
+      <th style={{ width: 50, paddingLeft: 0 }}>
+        <SourceItem style={{ justifyContent: 'center' }}>
+          <SourceName>Remove</SourceName>
         </SourceItem>
       </th>
     </tr>
