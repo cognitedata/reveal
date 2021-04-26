@@ -11,6 +11,7 @@ import { SectorGeometry, ParsedSector } from './types';
 import { LevelOfDetail } from './LevelOfDetail';
 import { consumeSectorDetailed, consumeSectorSimple } from './sectorUtilities';
 import { assertNever, toThreeJsBox3 } from '../../../utilities';
+import { AutoDisposeGroup } from '../../../utilities/three';
 
 export class SimpleAndDetailedToSector3D {
   private readonly materialManager: CadMaterialManager;
@@ -22,7 +23,7 @@ export class SimpleAndDetailedToSector3D {
   transformSector(
     parsedSector: ParsedSector,
     geometryClipBox: THREE.Box3 | null
-  ): { sectorMeshes: THREE.Group; instancedMeshes: InstancedMeshFile[] } {
+  ): { sectorMeshes: AutoDisposeGroup; instancedMeshes: InstancedMeshFile[] } {
     switch (parsedSector.levelOfDetail) {
       case LevelOfDetail.Detailed:
         return consumeSectorDetailed(

@@ -8,6 +8,7 @@ import { ParsePrimitiveAttribute } from '@cognite/reveal-parser-worker';
 import { disposeAttributeArrayOnUpload } from '../../../utilities/disposeAttributeArrayOnUpload';
 import { filterPrimitivesOutsideClipBoxByBaseBoundsAndInstanceMatrix } from './filterPrimitives';
 import { Materials } from './materials';
+import { Mesh } from 'three';
 
 const quadVertexData = new Float32Array([
   /* eslint-disable prettier/prettier */
@@ -35,7 +36,7 @@ export function createSimpleGeometryMesh(
   materials: Materials,
   sectorBounds: THREE.Box3,
   geometryClipBox: THREE.Box3 | null
-): THREE.Group {
+): THREE.Mesh | undefined {
   const attributeByteValues = new Uint8Array(attributeValues.buffer);
   const filteredByteValues = filterPrimitivesOutsideClipBoxByBaseBoundsAndInstanceMatrix(
     attributeByteValues,
@@ -45,11 +46,10 @@ export function createSimpleGeometryMesh(
   );
   if (filteredByteValues.byteLength === 0) {
     // No data, just skip
-    return new THREE.Group();
+    return undefined;
   }
 
   const filteredAttributeValues = new Float32Array(filteredByteValues.buffer);
-  const group = new THREE.Group();
   const stride = 3 + 1 + 3 + 16;
   if (filteredByteValues.byteLength % stride !== 0) {
     throw new Error(`Expected buffer size to be multiple of ${stride}, but got ${filteredAttributeValues.byteLength}`);
@@ -90,10 +90,7 @@ export function createSimpleGeometryMesh(
 
   obj.geometry.boundingSphere = new THREE.Sphere();
   sectorBounds.getBoundingSphere(obj.geometry.boundingSphere);
-
-  group.add(obj);
-
-  return group;
+  return obj;
 
   function setTreeIndicesToUserData() {
     const treeIndexAttributeOffset = 3;

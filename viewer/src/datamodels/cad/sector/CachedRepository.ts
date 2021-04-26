@@ -2,8 +2,6 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
-
 import { Repository } from './Repository';
 import { WantedSector, SectorGeometry, ConsumedSector } from './types';
 import { LevelOfDetail } from './LevelOfDetail';
@@ -19,8 +17,7 @@ import { trackError } from '../../../utilities/metrics';
 import { BinaryFileProvider } from '../../../utilities/networking/types';
 import { groupMeshesByNumber } from './groupMeshesByNumber';
 import { MostFrequentlyUsedCache } from '../../../utilities/MostFrequentlyUsedCache';
-
-const emptyGeometry = new THREE.BufferGeometry();
+import { AutoDisposeGroup } from '../../../utilities/three';
 
 type CtmFileRequest = { blobUrl: string; fileName: string };
 type CtmFileResult = { fileName: string; data: ParseCtmResult };
@@ -49,17 +46,8 @@ export class CachedRepository implements Repository {
     this._consumedSectorCache = new MemoryRequestCache(50, async consumedSector => {
       const sector = await consumedSector;
       if (sector.group !== undefined) {
-        const meshes: THREE.Mesh[] = sector.group.children
-          .filter(x => x instanceof THREE.Mesh)
-          .map(x => x as THREE.Mesh);
-        for (const mesh of meshes) {
-          if (mesh.geometry !== undefined) {
-            mesh.geometry.dispose();
-            // NOTE: Forcefully creating a new reference here to make sure
-            // there are no lingering references to the large geometry buffer
-            mesh.geometry = emptyGeometry;
-          }
-        }
+        // Dereference so GPU resources can be cleaned up if geomety isn't used anymore
+        sector.group.dereference();
       }
     });
     this._ctmFileCache = new MostFrequentlyUsedCache(10);
@@ -83,15 +71,16 @@ export class CachedRepository implements Repository {
       case LevelOfDetail.Detailed: {
         const loadOperation = this.loadDetailedSectorFromNetwork(sector).toPromise();
         this._consumedSectorCache.forceInsert(cacheKey, loadOperation);
-        const result = await loadOperation;
-        return result;
+        loadOperation.then(x => x.group?.reference());
+        return loadOperation;
       }
 
       case LevelOfDetail.Simple: {
         const loadOperation = this.loadSimpleSectorFromNetwork(sector).toPromise();
         this._consumedSectorCache.forceInsert(cacheKey, loadOperation);
-        const result = await loadOperation;
-        return result;
+        // Increase reference count to avoid geometry from being disposed
+        loadOperation.then(x => x.group?.reference());
+        return loadOperation;
       }
 
       case LevelOfDetail.Discarded:
@@ -131,8 +120,8 @@ export class CachedRepository implements Repository {
   private nameGroup(
     wantedSector: WantedSector
   ): OperatorFunction<
-    { sectorMeshes: THREE.Group; instancedMeshes: InstancedMeshFile[] },
-    { sectorMeshes: THREE.Group; instancedMeshes: InstancedMeshFile[] }
+    { sectorMeshes: AutoDisposeGroup; instancedMeshes: InstancedMeshFile[] },
+    { sectorMeshes: AutoDisposeGroup; instancedMeshes: InstancedMeshFile[] }
   > {
     return tap(group => {
       group.sectorMeshes.name = `Quads ${wantedSector.metadata.id}`;

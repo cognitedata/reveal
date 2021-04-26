@@ -17,19 +17,25 @@ import { createTriangleMeshes } from '../rendering/triangleMeshes';
 import { createPrimitives } from '../rendering/primitives';
 import { createSimpleGeometryMesh } from '../rendering/createSimpleGeometryMesh';
 import { filterInstanceMesh } from '../rendering/filterInstanceMesh';
+import { AutoDisposeGroup } from '../../../utilities/three';
 
 export function consumeSectorSimple(
   sector: SectorQuads,
   sectorBounds: THREE.Box3,
   materials: Materials,
   geometryClipBox: THREE.Box3 | null
-): { sectorMeshes: THREE.Group; instancedMeshes: InstancedMeshFile[] } {
+): { sectorMeshes: AutoDisposeGroup; instancedMeshes: InstancedMeshFile[] } {
+  const group = new AutoDisposeGroup();
+
   if (sector.buffer.byteLength === 0) {
     // No data, just skip
-    return { sectorMeshes: new THREE.Group(), instancedMeshes: [] };
+    return { sectorMeshes: new AutoDisposeGroup(), instancedMeshes: [] };
   }
 
-  const group = createSimpleGeometryMesh(sector.buffer, materials, sectorBounds, geometryClipBox);
+  const mesh = createSimpleGeometryMesh(sector.buffer, materials, sectorBounds, geometryClipBox);
+  if (mesh !== undefined) {
+    group.add(mesh);
+  }
   return { sectorMeshes: group, instancedMeshes: [] };
 }
 
@@ -38,7 +44,7 @@ export function consumeSectorDetailed(
   metadata: SectorMetadata,
   materials: Materials,
   geometryClipBox: THREE.Box3 | null
-): { sectorMeshes: THREE.Group; instancedMeshes: InstancedMeshFile[] } {
+): { sectorMeshes: AutoDisposeGroup; instancedMeshes: InstancedMeshFile[] } {
   const bounds = toThreeJsBox3(new THREE.Box3(), metadata.bounds);
 
   if (geometryClipBox !== null && geometryClipBox.containsBox(bounds)) {
@@ -47,16 +53,15 @@ export function consumeSectorDetailed(
     geometryClipBox = null;
   }
 
-  const obj = new THREE.Group();
+  const group = new AutoDisposeGroup();
   for (const primitiveRoot of createPrimitives(sector, materials, bounds, geometryClipBox)) {
-    obj.add(primitiveRoot);
+    group.add(primitiveRoot);
   }
 
   const triangleMeshes = createTriangleMeshes(sector.triangleMeshes, bounds, materials.triangleMesh, geometryClipBox);
   for (const triangleMesh of triangleMeshes) {
-    obj.add(triangleMesh);
+    group.add(triangleMesh);
   }
-
   const instanceMeshes = sector.instanceMeshes
     .map(instanceMeshFile => {
       const filteredMeshes = instanceMeshFile.instances
@@ -71,7 +76,7 @@ export function consumeSectorDetailed(
       return filteredInstanceMeshFile;
     })
     .filter(x => x.instances.length > 0);
-  return { sectorMeshes: obj, instancedMeshes: instanceMeshes };
+  return { sectorMeshes: group, instancedMeshes: instanceMeshes };
 }
 
 export function distinctUntilLevelOfDetailChanged() {
