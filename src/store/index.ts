@@ -10,7 +10,6 @@ export const history = createPreserveQueryAndHashHistory(createBrowserHistory, [
   'apikey',
 ])();
 
-console.log('env', process.env.NODE_ENV);
 const store: Store<any, AnyAction> =
   process.env.NODE_ENV === 'production' ? createStoreProd() : createStoreDev();
 
