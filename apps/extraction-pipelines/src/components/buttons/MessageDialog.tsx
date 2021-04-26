@@ -42,6 +42,7 @@ export const DialogStyle = styled.div`
     grid-area: content;
     width: ${(props: { dialogWidth?: number }) =>
       props.dialogWidth ? `${props.dialogWidth}rem` : '15rem'};
+    word-break: break-word;
     margin-top: 0.5rem;
     margin-bottom: 0;
     margin-right: 1rem;
@@ -53,8 +54,8 @@ interface OwnProps {
   width?: number;
   icon?: React.ReactNode;
   handleClickError?: () => void;
-  handleClose?: () => void;
-  handleCancel?: () => void;
+  handleClose?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  handleCancel?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   contentText?: string;
   cancelBtnText?: string;
   confirmBtnText?: string;

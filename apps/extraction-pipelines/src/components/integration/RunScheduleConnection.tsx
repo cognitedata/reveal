@@ -4,6 +4,7 @@ import { TimeDisplay } from 'components/TimeDisplay/TimeDisplay';
 import Schedule from 'components/integrations/cols/Schedule';
 import {
   CardInWrapper,
+  CardNavLink,
   CardValue,
   CardWrapper,
   StyledTitleCard,
@@ -25,14 +26,13 @@ import { useSelectedIntegration } from 'hooks/useSelectedIntegration';
 import { useIntegrationById } from 'hooks/useIntegration';
 import { LatestRunMessage } from 'components/integration/LatestRunMessage';
 import { ErrorFeedback } from 'components/error/ErrorFeedback';
+import { useLocation, useRouteMatch } from 'react-router-dom';
 
-export const INVESTIGATE_RUN_LINK: Readonly<string> = 'Investigate latest runs';
-export const GENERAL_INFO_LINK: Readonly<string> = 'View general info';
-export const RUNS_OVERVIEW_LINK: Readonly<string> = 'Overview runs';
-export const LAST_CONNECTED_HEADING: Readonly<string> = 'Last connected';
-export const CONNECTIONS_LINK: Readonly<string> = 'View all connections';
-
-export const RunScheduleHartbeat: FunctionComponent = () => {
+export const FAILED_PAST_WEEK_HEADING: Readonly<string> =
+  'Failed runs past week';
+export const RunScheduleConnection: FunctionComponent = () => {
+  const { search } = useLocation();
+  const { url } = useRouteMatch();
   const { integration: selectedIntegration } = useSelectedIntegration();
   const { data: integration } = useIntegrationById(selectedIntegration?.id);
   const { data, error } = useRuns(integration?.externalId);
@@ -62,52 +62,54 @@ export const RunScheduleHartbeat: FunctionComponent = () => {
 
   return (
     <CardWrapper className={`${lastRun.status.toLowerCase()}`}>
+      <CardNavLink to={`${url}/logs${search}`} exact>
+        <CardInWrapper>
+          <StyledTitleCard className="card-title">
+            <Icon type="Calendar" />
+            {TableHeadings.LATEST_RUN}
+            <LatestRunMessage
+              status={lastRun.status}
+              message={integration?.lastMessage}
+            />
+          </StyledTitleCard>
+          <CardValue className="card-value">
+            <TimeDisplay value={lastRun.time} relative />
+          </CardValue>
+          <Icon type="ArrowForward" />
+        </CardInWrapper>
+      </CardNavLink>
       <CardInWrapper>
-        <StyledTitleCard>
-          <Icon type="Calendar" />
-          {TableHeadings.LATEST_RUN}
-          <LatestRunMessage
-            status={lastRun.status}
-            message={integration?.lastMessage}
-          />
-        </StyledTitleCard>
-        <CardValue>
-          <TimeDisplay value={lastRun.time} relative />
-        </CardValue>
-        <a href="#latest-run-heading">{INVESTIGATE_RUN_LINK}</a>
-      </CardInWrapper>
-      <CardInWrapper>
-        <StyledTitleCard>
+        <StyledTitleCard className="card-title">
           <Icon type="Schedule" />
           {TableHeadings.SCHEDULE}
         </StyledTitleCard>
-        <CardValue>
+        <CardValue className="card-value">
           <Schedule id="top-schedule" schedule={integration?.schedule} />
         </CardValue>
-        <a href="#general-info-heading">{GENERAL_INFO_LINK}</a>
       </CardInWrapper>
       <CardInWrapper>
-        <StyledTitleCard>
+        <StyledTitleCard className="card-title">
           <Tag color="danger">{errorsInThePastWeek.length}</Tag>
-          Failed runs past week
+          {FAILED_PAST_WEEK_HEADING}
         </StyledTitleCard>
-        <CardValue>
+        <CardValue className="card-value">
           {errorsComparedToLastWeek} runs compared to last week
         </CardValue>
-        <a href="#overview-runs-heading">{RUNS_OVERVIEW_LINK}</a>
       </CardInWrapper>
-      <CardInWrapper>
-        <StyledTitleCard>
-          <Icon type="Checkmark" />
-          {LAST_CONNECTED_HEADING}
-        </StyledTitleCard>
-        <CardValue>
-          {integration?.lastSeen && (
-            <TimeDisplay value={integration.lastSeen} relative />
-          )}
-        </CardValue>
-        <a href="#overview-hartbeat-heading">{CONNECTIONS_LINK}</a>
-      </CardInWrapper>
+      <CardNavLink to={`${url}/logs${search}`} exact>
+        <CardInWrapper>
+          <StyledTitleCard className="card-title">
+            <Icon type="Checkmark" />
+            {TableHeadings.LAST_SEEN}
+          </StyledTitleCard>
+          <CardValue className="card-value">
+            {integration?.lastSeen && (
+              <TimeDisplay value={integration.lastSeen} relative />
+            )}
+          </CardValue>
+          <Icon type="ArrowForward" />
+        </CardInWrapper>
+      </CardNavLink>
     </CardWrapper>
   );
 };

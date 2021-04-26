@@ -5,16 +5,14 @@ import { screen, waitFor } from '@testing-library/react';
 import { TableHeadings } from 'components/table/IntegrationTableCol';
 import React from 'react';
 import {
-  GENERAL_INFO_LINK,
-  INVESTIGATE_RUN_LINK,
-  RUNS_OVERVIEW_LINK,
-  RunScheduleHartbeat,
-} from 'components/integration/RunScheduleHartbeat';
+  FAILED_PAST_WEEK_HEADING,
+  RunScheduleConnection,
+} from 'components/integration/RunScheduleConnection';
 import { parseCron } from 'utils/cronUtils';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import moment from 'moment';
 
-describe('RunScheduleHartbeat', () => {
+describe('RunScheduleConnection', () => {
   test('Renders information', async () => {
     const mockIntegration = getMockResponse()[0];
     sdkv3.get.mockResolvedValueOnce({
@@ -23,7 +21,7 @@ describe('RunScheduleHartbeat', () => {
     sdkv3.get.mockResolvedValueOnce({
       data: { items: mockDataRunsResponse.items },
     });
-    renderWithSelectedIntegrationContext(<RunScheduleHartbeat />, {
+    renderWithSelectedIntegrationContext(<RunScheduleConnection />, {
       initIntegration: mockIntegration,
       client: new QueryClient(),
     });
@@ -39,13 +37,13 @@ describe('RunScheduleHartbeat', () => {
   });
 
   test('Renders without integration', () => {
-    renderWithSelectedIntegrationContext(<RunScheduleHartbeat />, {
+    renderWithSelectedIntegrationContext(<RunScheduleConnection />, {
       initIntegration: null,
       client: new QueryClient(),
     });
-    expect(screen.getByText(INVESTIGATE_RUN_LINK)).toBeInTheDocument();
-    expect(screen.getByText(GENERAL_INFO_LINK)).toBeInTheDocument();
+    expect(screen.getByText(TableHeadings.LATEST_RUN)).toBeInTheDocument();
     expect(screen.getByText(TableHeadings.SCHEDULE)).toBeInTheDocument();
-    expect(screen.getByText(RUNS_OVERVIEW_LINK)).toBeInTheDocument();
+    expect(screen.getByText(FAILED_PAST_WEEK_HEADING)).toBeInTheDocument();
+    expect(screen.getByText(TableHeadings.LAST_SEEN)).toBeInTheDocument();
   });
 });

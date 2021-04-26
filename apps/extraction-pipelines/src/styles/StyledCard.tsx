@@ -1,12 +1,12 @@
 import styled from 'styled-components';
 import { Colors } from '@cognite/cogs.js';
+import { NavLink } from 'react-router-dom';
 
 export const Card2Sides = styled.div`
   flex: 1;
   display: flex;
   background: white;
   margin-right: 0.5rem;
-  padding: 1rem;
   border-radius: 8px;
   &:last-child {
     margin-right: 0;
@@ -18,9 +18,6 @@ export const Card2Sides = styled.div`
       .cogs-icon {
         margin-right: 1rem;
       }
-    }
-    a {
-      align-self: flex-end;
     }
     &:first-child {
       padding-right: 1rem;
@@ -46,6 +43,8 @@ export const StyledTitleCard = styled.h2`
   }
 `;
 export const CardValue = styled.span`
+  display: flex;
+  flex-direction: column;
   margin-left: 2rem;
 `;
 
@@ -53,11 +52,12 @@ export const CardWrapper = styled.div`
   display: flex;
   background-color: ${Colors['greyscale-grey1'].hex()};
   border-radius: 8px;
-  & > div {
+  & > div,
+  > a {
     flex: 1;
-    margin: 1rem;
     border-right: 1px solid ${Colors['greyscale-grey3'].hex()};
     justify-content: space-between;
+    color: ${Colors.black.hex()};
     &:last-child {
       border-right: none;
     }
@@ -65,10 +65,37 @@ export const CardWrapper = styled.div`
 `;
 
 export const CardInWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  a {
-    align-self: flex-end;
+  display: grid;
+  grid-template-areas: 'title arrow' 'value arrow';
+  grid-template-columns: auto 2rem;
+  grid-auto-rows: minmax(2rem, auto);
+  grid-column-gap: 1rem;
+  padding: 1rem;
+  height: 100%;
+  .card-title {
+    grid-area: title;
+    justify-self: start;
+  }
+  .card-value {
+    grid-area: value;
+  }
+  .cogs-icon-ArrowForward {
+    color: ${Colors.primary.hex()};
+    grid-area: arrow;
+    align-self: center;
     margin-right: 1rem;
+    margin-left: auto;
+  }
+`;
+
+export const CardNavLink = styled(NavLink)`
+  .cogs-icon-ArrowForward {
+    opacity: 0;
+  }
+  :hover {
+    background-color: ${Colors['midblue-7'].hex()};
+    .cogs-icon-ArrowForward {
+      opacity: 1;
+    }
   }
 `;

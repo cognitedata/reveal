@@ -23,7 +23,7 @@ export enum TableHeadings {
   LATEST_RUN = 'Latest run',
   DATA_SET = 'Destination data set',
   SCHEDULE = 'Schedule',
-  LAST_SEEN = 'Last seen',
+  LAST_SEEN = 'Last connected',
   CONTACTS = 'Contacts',
 }
 

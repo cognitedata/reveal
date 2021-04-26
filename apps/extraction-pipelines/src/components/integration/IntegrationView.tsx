@@ -6,18 +6,11 @@ import { useSelectedIntegration } from 'hooks/useSelectedIntegration';
 import { RouterParams } from 'routing/RoutingConfig';
 import { trackUsage } from 'utils/Metrics';
 import { SINGLE_INTEGRATION } from 'utils/constants';
-import { GeneralInfoSection } from 'components/integration/GeneralInfoSection';
 import { PageWrapperColumn } from 'styles/StyledPage';
 import { DocumentationSection } from 'components/integration/DocumentationSection';
-import { LatestRun } from 'components/integration/LatestRun';
+import { RunScheduleConnection } from 'components/integration/RunScheduleConnection';
 import { IntegrationInformation } from 'components/integration/IntegrationInformation';
-import { RunScheduleHartbeat } from 'components/integration/RunScheduleHartbeat';
 
-const MiddleSection = styled.section`
-  padding: 1rem;
-  border-bottom: 1px solid ${Colors['greyscale-grey7'].hex()};
-  margin-bottom: 1rem;
-`;
 const MiddleSectionGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -29,12 +22,6 @@ const TopSection = styled.section`
   display: flex;
   flex-direction: column;
   padding: 1rem;
-`;
-
-const BottomSection = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  margin-bottom: 2rem;
 `;
 
 export const createNoIntegrationFoundMessage = (id: string): Readonly<string> =>
@@ -58,18 +45,12 @@ export const IntegrationView: FunctionComponent<IntegrationViewProps> = () => {
   return (
     <PageWrapperColumn>
       <TopSection>
-        <RunScheduleHartbeat />
+        <RunScheduleConnection />
       </TopSection>
-      <MiddleSection>
-        <LatestRun integration={integration} />
-      </MiddleSection>
       <MiddleSectionGrid>
-        <GeneralInfoSection />
+        <DocumentationSection />
         <IntegrationInformation />
       </MiddleSectionGrid>
-      <BottomSection>
-        <DocumentationSection />
-      </BottomSection>
     </PageWrapperColumn>
   );
 };

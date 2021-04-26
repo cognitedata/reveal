@@ -1,11 +1,27 @@
 import React, { FunctionComponent, PropsWithChildren, useState } from 'react';
 import { Status } from 'model/Status';
 import { FailedRunMessageIcon } from 'components/icons/FailedRunMessageIcon';
-import { Button } from '@cognite/cogs.js';
+import { Button, Colors } from '@cognite/cogs.js';
 import { NO_ERROR_MESSAGE } from 'components/form/viewEditIntegration/FailMessageModal';
 import MessageDialog from 'components/buttons/MessageDialog';
 import StatusMarker from 'components/integrations/cols/StatusMarker';
+import styled from 'styled-components';
 
+const StyledButton = styled(Button)`
+  &.cogs-btn-secondary {
+    background-color: transparent;
+    :hover {
+      background-color: transparent;
+    }
+  }
+  .cogs-badge {
+    &.badge-fail {
+      span {
+        background-color: ${Colors.danger.hex()};
+      }
+    }
+  }
+`;
 interface LatestRunMessageProps {
   status: Status;
   message?: string;
@@ -20,10 +36,12 @@ export const LatestRunMessage: FunctionComponent<LatestRunMessageProps> = ({
     return <StatusMarker status={status} />;
   }
 
-  function onClick() {
+  function onClick(e: React.MouseEvent<HTMLButtonElement>) {
+    e.preventDefault();
     setShowError(false);
   }
-  const toggleError = () => {
+  const toggleError = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
     setShowError((prev) => !prev);
   };
   return (
@@ -35,14 +53,13 @@ export const LatestRunMessage: FunctionComponent<LatestRunMessageProps> = ({
         handleClose={onClick}
         icon={<FailedRunMessageIcon />}
       >
-        <Button
-          type="ghost"
+        <StyledButton
           aria-label="Click to view error message"
           onClick={toggleError}
         >
           <StatusMarker status={status} />
           <FailedRunMessageIcon />
-        </Button>
+        </StyledButton>
       </MessageDialog>
     </>
   );
