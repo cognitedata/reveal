@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Body, Button, Icon, Title } from '@cognite/cogs.js';
+import React, { useState, useEffect } from 'react';
+import { Body, Button, Icon, Title, toast } from '@cognite/cogs.js';
 import { FileInfo as File } from '@cognite/sdk';
 import { FileViewer } from 'components/FileViewer';
 import { FileList } from 'components/FileList';
@@ -13,7 +13,7 @@ import {
   SourceItem,
   SourceName,
 } from 'pages/ChartView/elements';
-import { useChart } from 'hooks/firebase';
+import { useChart, useUpdateChart } from 'hooks/firebase';
 import TimeSeriesRows from 'pages/ChartView/TimeSeriesRows';
 
 export const FileView = () => {
@@ -27,6 +27,21 @@ export const FileView = () => {
 
   const { data: chart } = useChart(chartId);
   const { data: asset, isFetched } = useAsset(Number(assetId));
+
+  const {
+    mutateAsync: updateChart,
+    isError: updateError,
+    error: updateErrorMsg,
+  } = useUpdateChart();
+
+  useEffect(() => {
+    if (updateError) {
+      toast.error('Chart could not be saved!');
+    }
+    if (updateError && updateErrorMsg) {
+      toast.error(JSON.stringify(updateErrorMsg, null, 2));
+    }
+  }, [updateError, updateErrorMsg]);
 
   if (!isFetched) {
     return <Icon type="Loading" />;
@@ -115,7 +130,7 @@ export const FileView = () => {
                 <tbody>
                   <TimeSeriesRows
                     chart={chart}
-                    updateChart={() => {}}
+                    updateChart={updateChart}
                     mode="file"
                   />
                 </tbody>

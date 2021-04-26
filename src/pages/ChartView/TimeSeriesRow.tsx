@@ -28,7 +28,7 @@ import {
   UnitMenuAside,
   UnitMenuHeader,
 } from './elements';
-import TimeSeriesMenu from './TimeSeriesMenu';
+// import TimeSeriesMenu from './TimeSeriesMenu';
 import { StatisticsResult } from '../../components/ContextMenu';
 
 type LoadingProps = {
