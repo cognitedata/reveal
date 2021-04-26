@@ -16,6 +16,7 @@ import {
 import { units } from 'utils/units';
 import { calculateGranularity } from 'utils/timeseries';
 import { removeTimeseries, updateTimeseries } from 'utils/charts';
+import { useLinkedAsset } from 'hooks/api';
 import EditableText from 'components/EditableText';
 import { AppearanceDropdown } from 'components/AppearanceDropdown';
 import { PnidButton } from 'components/SearchResultTable/PnidButton';
@@ -223,6 +224,8 @@ export default function TimeSeriesRow({
   const { statistics = [] } = (results as StatisticsResult) || {};
   const statisticsForSource = statistics[0];
 
+  const { data: linkedAsset } = useLinkedAsset(tsId, true);
+
   return (
     <SourceRow
       key={id}
@@ -270,7 +273,7 @@ export default function TimeSeriesRow({
               <SourceName>{description}</SourceName>
             </SourceItem>
           </td>
-          <td>{statisticsForSource?.tag}</td>
+          <td>{linkedAsset?.name}</td>
         </>
       )}
       {isWorkspaceMode && (

@@ -231,10 +231,7 @@ export default function WorkflowRow({
       {isWorkspaceMode && (
         <>
           <td>{name || 'noname'}</td>
-          <td />
-          <td />
-          <td />
-          <td />
+          <td colSpan={4} />
           <td style={{ textAlign: 'right', paddingRight: 8 }}>
             <Dropdown
               content={
