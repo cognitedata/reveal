@@ -33,6 +33,7 @@ export default function ResultsOverview() {
   const [selectedKeys, setSelectedKeys] = useState([] as number[]);
   const [renderFeedback, setRenderFeedback] = useState(false);
   const [jobRunning, setJobRunning] = useState(false);
+  const [workflowLoading, setWorkflowLoading] = useState(false);
 
   const getCanEditFiles = useMemo(
     () => checkPermission('filesAcl', 'WRITE'),
@@ -67,8 +68,9 @@ export default function ResultsOverview() {
         dispatch(
           startPnidParsingWorkflow.action({ workflowId, diagrams, resources })
         );
-      } else {
+      } else if (!workflowLoading) {
         dispatch(loadWorkflow({ workflowId }));
+        setWorkflowLoading(true);
       }
     }
   };
