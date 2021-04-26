@@ -29,19 +29,23 @@ class TimestampedContainer<T> {
 
 export interface MemoryRequestCacheOptions {
   maxElementsInCache?: number;
-  // remove?: RemoveDelegate<Key, Result>;
 }
 
 export class MemoryRequestCache<Key, Data> implements RequestCache<Key, Data> {
   private readonly _maxElementsInCache: number;
   private readonly _data: Map<Key, TimestampedContainer<Data>>;
+  private readonly _defaultCleanupCount: number;
+  private readonly _removeCallback: ((value: Data) => void) | undefined;
 
-  private _defaultCleanupCount: number;
-
-  constructor(options?: MemoryRequestCacheOptions, defaultCleanupCount: number = 10) {
+  constructor(
+    maxElementsInCache: number = 50,
+    removeCallback?: (value: Data) => void,
+    defaultCleanupCount: number = 10
+  ) {
     this._data = new Map();
-    this._maxElementsInCache = (options && options.maxElementsInCache) || 50;
+    this._maxElementsInCache = maxElementsInCache;
     this._defaultCleanupCount = defaultCleanupCount;
+    this._removeCallback = removeCallback;
   }
 
   has(id: Key) {
@@ -64,6 +68,12 @@ export class MemoryRequestCache<Key, Data> implements RequestCache<Key, Data> {
   }
 
   remove(id: Key) {
+    if (this._removeCallback !== undefined) {
+      const value = this._data.get(id);
+      if (value !== undefined) {
+        this._removeCallback(value.value);
+      }
+    }
     this._data.delete(id);
   }
 
@@ -89,7 +99,7 @@ export class MemoryRequestCache<Key, Data> implements RequestCache<Key, Data> {
     for (let i = 0; i < count; i++) {
       const entry = allResults.pop();
       if (entry !== undefined) {
-        this._data.delete(entry[0]);
+        this.remove(entry[0]);
       } else {
         return;
       }
@@ -97,6 +107,11 @@ export class MemoryRequestCache<Key, Data> implements RequestCache<Key, Data> {
   }
 
   clear() {
+    if (this._removeCallback !== undefined) {
+      for (const value of this._data.values()) {
+        this._removeCallback(value.value);
+      }
+    }
     this._data.clear();
   }
 }

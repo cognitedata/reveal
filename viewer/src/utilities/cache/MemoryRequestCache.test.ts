@@ -23,7 +23,7 @@ describe('MemoryRequestCache', () => {
 
   test('insert data after clearing cache', () => {
     // Arrange
-    const cache = new MemoryRequestCache<number, string>({ maxElementsInCache: 1 });
+    const cache = new MemoryRequestCache<number, string>(1);
     cache.insert(1, 'test');
     expect(() => cache.insert(2, 'overflow')).toThrow();
     cache.cleanCache(1);

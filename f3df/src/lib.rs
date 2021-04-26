@@ -1,7 +1,4 @@
-#![allow(
-    unused_imports,
-    clippy::upper_case_acronyms
-)]
+#![allow(unused_imports, clippy::upper_case_acronyms)]
 
 #[cfg(test)]
 #[macro_use]
