@@ -12,7 +12,7 @@ import { annotationsById } from 'src/modules/Preview/previewSlice';
 import styled from 'styled-components';
 import { Button, Modal } from '@cognite/cogs.js';
 import { getContainer } from 'src/utils';
-import SummaryStep from './summary/SummaryStep';
+import SummaryStep from '../../Process/Containers/SummaryStep';
 
 export const ProcessStepActionButtons = () => {
   const history = useHistory();

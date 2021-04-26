@@ -14,7 +14,7 @@ import FileIcon from './assets/FileIcon.svg';
 import FileBland from './assets/FileBland.svg';
 import FileWithExifIcon from './assets/FileWithExifIcon.svg';
 import FileWithAnnotations from './assets/FileWithAnnotations.svg';
-import FileUnresolvedGDPR from './assets/FileUnresolvedGDPR.svg';
+import FileUnresolvedPerson from './assets/FileUnresolvedPerson.svg';
 import FileWasReviewed from './assets/FileWasReviewed.svg';
 
 const queryClient = new QueryClient();
@@ -29,7 +29,7 @@ export default function SummaryStep() {
   const annotations = useSelector((state: RootState) => {
     return annotationsById(state.previewSlice);
   });
-  const GDPRFiles: number[] = [];
+  const PersonFiles: number[] = [];
   const reviewStats: number[] = [];
   // eslint-disable-next-line array-callback-return
   Object.entries(annotations).map((arr) => {
@@ -37,12 +37,12 @@ export default function SummaryStep() {
     if (arr[1].status !== 'unhandled' && !reviewStats.includes(aID)) {
       reviewStats.push(aID);
     }
-    if (arr[1].label === 'person' && !GDPRFiles.includes(aID)) {
-      GDPRFiles.push(aID);
+    if (arr[1].label === 'person' && !PersonFiles.includes(aID)) {
+      PersonFiles.push(aID);
     }
   });
 
-  const NotReviewedGDPRFiles = GDPRFiles.filter(
+  const NotReviewedPersonFiles = PersonFiles.filter(
     (file) => !reviewStats.includes(file)
   );
   let filesWithExif = 0;
@@ -67,9 +67,9 @@ export default function SummaryStep() {
       text: 'detected tags, texts and objects ',
       value: Object.keys(annotations).length,
     },
-    gdprCases: {
-      text: 'unresolved GDPR Cases',
-      value: NotReviewedGDPRFiles.length,
+    personCases: {
+      text: 'unresolved person detections',
+      value: NotReviewedPersonFiles.length,
     },
   };
 
@@ -82,14 +82,59 @@ export default function SummaryStep() {
             <StatsCarouselContainer>
               <StatsCarouselLeft>
                 {Object.entries(stats).map((pair) => (
-                  <FancyButton
-                    key={pair[0]}
-                    onClick={() => {
-                      setStatView(pair[0]);
-                    }}
-                  >
-                    <strong>{pair[1].value}</strong> {pair[1].text}
-                  </FancyButton>
+                  <>
+                    {statView === pair[0] && (
+                      <FancyButton
+                        key={pair[0]}
+                        style={{
+                          background: 'rgba(74, 103, 251, 0.1)',
+                        }}
+                        onClick={() => {
+                          setStatView(pair[0]);
+                        }}
+                      >
+                        <table>
+                          <tr>
+                            <td>
+                              <b
+                                style={{
+                                  fontSize: '20px',
+                                  paddingRight: '5px',
+                                }}
+                              >
+                                {pair[1].value}
+                              </b>
+                            </td>
+                            <td>{pair[1].text}</td>
+                          </tr>
+                        </table>
+                      </FancyButton>
+                    )}
+                    {statView !== pair[0] && (
+                      <FancyButton
+                        key={pair[0]}
+                        onClick={() => {
+                          setStatView(pair[0]);
+                        }}
+                      >
+                        <table>
+                          <tr>
+                            <td>
+                              <b
+                                style={{
+                                  fontSize: '20px',
+                                  paddingRight: '5px',
+                                }}
+                              >
+                                {pair[1].value}
+                              </b>
+                            </td>
+                            <td>{pair[1].text}</td>
+                          </tr>
+                        </table>
+                      </FancyButton>
+                    )}
+                  </>
                 ))}
               </StatsCarouselLeft>
               {statView === 'totalFilesUploaded' && (
@@ -169,23 +214,23 @@ export default function SummaryStep() {
                   )}
                 </StatsCarouselRight>
               )}
-              {statView === 'gdprCases' && (
+              {statView === 'personCases' && (
                 <StatsCarouselRight>
                   {Array.from(
                     { length: stats[statView].value },
                     (_, i: number) => (
                       <FileIconContainer key={`${statView}_${i}`}>
                         <img
-                          src={FileUnresolvedGDPR}
-                          alt="FileUnresolvedGDPR"
+                          src={FileUnresolvedPerson}
+                          alt="FileUnresolvedPerson"
                         />
                       </FileIconContainer>
                     )
                   )}
-                  {stats[statView].value < GDPRFiles.length &&
+                  {stats[statView].value < PersonFiles.length &&
                     Array.from(
                       {
-                        length: GDPRFiles.length - stats[statView].value,
+                        length: PersonFiles.length - stats[statView].value,
                       },
                       (_, i: number) => (
                         <FileIconContainer key={`${statView}__${i}`}>
@@ -236,6 +281,7 @@ const StatsCarouselLeft = styled.div`
   overflow: auto;
   padding: 1em;
   padding-right: 105px;
+  align-items: flex-start;
 `;
 
 const FileIconContainer = styled.div`
