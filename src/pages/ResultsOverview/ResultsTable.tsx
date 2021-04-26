@@ -1,12 +1,11 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { Table } from 'antd';
-import { FileInfo } from '@cognite/sdk';
 import queryString from 'query-string';
+import { useActiveWorkflow } from 'hooks';
 import PnidParsingStatus from './PnidParsingStatus';
-import TagsDetectedNew from './TagsDetectedNew';
-import TagsDetectedTotal from './TagsDetectedTotal';
 import FileActions from './FileActions';
+import TagsDetected from './TagsDetected';
 
 type ResultsTableProps = {
   rows: any;
@@ -17,7 +16,10 @@ type ResultsTableProps = {
 
 export default function ResultsTable(props: ResultsTableProps): JSX.Element {
   const { rows, selectedKeys, setSelectedKeys, setRenderFeedback } = props;
+
+  const { workflowId } = useActiveWorkflow();
   const history = useHistory();
+
   const { search } = history.location;
   const { page = 1 } = queryString.parse(search, { parseNumbers: true });
 
@@ -26,17 +28,16 @@ export default function ResultsTable(props: ResultsTableProps): JSX.Element {
     {
       title: 'Status',
       key: 'status',
-      render: (_: any, file: any) => <PnidParsingStatus file={file} />,
+      render: (_: any, file: any) => (
+        <PnidParsingStatus file={file} workflowId={workflowId} />
+      ),
     },
     {
-      title: 'New detected tags',
+      title: 'Relationships',
       key: 'annotations_new',
-      render: (_: any, file: any) => <TagsDetectedNew file={file} />,
-    },
-    {
-      title: 'Total detected tags',
-      key: 'annotations',
-      render: (file: FileInfo) => <TagsDetectedTotal file={file} />,
+      render: (_: any, file: any) => (
+        <TagsDetected fileId={file.id} workflowId={workflowId} />
+      ),
     },
     {
       title: 'Actions',

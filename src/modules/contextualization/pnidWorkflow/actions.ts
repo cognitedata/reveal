@@ -1,10 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { FileInfo, Asset } from '@cognite/sdk';
-import chunk from 'lodash/chunk';
-import { removeExtension } from 'utils/AnnotationUtils';
 import { trackTimedUsage } from 'utils/Metrics';
-// import { listAnnotations } from 'modules/annotations';
-import { startPnidParsingJob } from 'modules/contextualization/parsingJobs';
+import { startPnidParsingJob } from 'modules/contextualization/pnidParsing/actions';
 
 interface WorkflowStatus {
   completed: boolean;
@@ -31,7 +28,6 @@ export const startPnidParsingWorkflow = {
       const workflowStatus = activeWorkflow?.status;
       const {
         partialMatch = undefined,
-        grayscale = undefined,
         minTokens = undefined,
       } = activeWorkflow?.options;
 
@@ -43,32 +39,20 @@ export const startPnidParsingWorkflow = {
       );
 
       const assets = resources!.assets as Asset[];
-      const assetNames: string[] = assets.map((i) => i.name);
-      const chunkedDiagrams: FileInfo[][] = chunk(diagrams, 30);
-      chunkedDiagrams.reduce(
-        async (previousPromise: Promise<any>, nextChunk) => {
-          await previousPromise;
-          return Promise.all(
-            nextChunk.map(async (diagram: FileInfo) => {
-              await dispatch(
-                startPnidParsingJob(
-                  diagram,
-                  assetNames.concat(
-                    diagrams
-                      .filter((d: FileInfo) => d.id !== diagram.id)
-                      .map((d: FileInfo) => d.name)
-                      .map(removeExtension)
-                  ),
-                  { partialMatch, grayscale, minTokens },
-                  workflowId,
-                  diagrams,
-                  resources
-                )
-              );
-            })
-          );
-        },
-        Promise.resolve()
+
+      await dispatch(
+        startPnidParsingJob.action({
+          files: diagrams,
+          entities: [...assets, ...diagrams],
+          options: {
+            minTokens,
+            partialMatch,
+            searchField: 'name',
+          },
+          workflowId,
+          diagrams,
+          resources,
+        })
       );
       timer.stop();
     }

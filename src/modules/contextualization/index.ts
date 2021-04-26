@@ -1,10 +1,10 @@
 import { combineReducers } from '@reduxjs/toolkit';
-import { parsingJobsReducer } from './parsingJobs';
 import { uploadJobsReducer } from './uploadJobs';
+import { reducer as pnidParsingReducer } from './pnidParsing';
 
 const reducer = combineReducers({
-  parsingJobs: parsingJobsReducer,
   uploadJobs: uploadJobsReducer,
+  pnidParsing: pnidParsingReducer,
 });
 
 export { reducer };

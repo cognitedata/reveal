@@ -4,6 +4,7 @@ import createRootReducer from 'store/reducer';
 export function createStore(): any {
   const middleware = getDefaultMiddleware({
     serializableCheck: false, // this is disabled because it marked all dates and timestamps
+    immutableCheck: false,
   });
   // const enhancers = [];
   const store = configureStore({

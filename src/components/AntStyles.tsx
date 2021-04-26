@@ -8,6 +8,7 @@ import {
   notification,
   Dropdown,
   Spin,
+  message,
 } from 'antd';
 import { Icon, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 
@@ -136,6 +137,10 @@ CogsTooltip.defaultProps = {
 };
 
 notification.config({
+  getContainer: () => document.getElementsByClassName(ids.styleScope).item(0)!,
+});
+
+message.config({
   getContainer: () => document.getElementsByClassName(ids.styleScope).item(0)!,
 });
 

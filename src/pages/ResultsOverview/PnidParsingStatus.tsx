@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Colors, Badge } from '@cognite/cogs.js';
 import { Flex } from 'components/Common';
+import { useParsingJob } from 'modules/contextualization/pnidParsing/hooks';
 
 const Indicator = styled(Badge)`
   width: 12px;
@@ -13,21 +14,29 @@ const Indicator = styled(Badge)`
 `;
 
 type Props = {
+  workflowId: number;
   file: any;
 };
 
-export default function PnidParsingStatus({ file }: Props): JSX.Element {
-  const { uploadJob, parsingJob } = file;
+export default function PnidParsingStatus({
+  workflowId,
+  file,
+}: Props): JSX.Element {
+  const { uploadJob } = file;
+
+  const { status: parsingJobStatus, jobId } = useParsingJob(workflowId);
 
   if (uploadJob?.jobError) return <FailedStatus message="Failed to upload" />;
-  if (parsingJob?.jobError) return <FailedStatus message="Failed to parse" />;
+  if (parsingJobStatus === 'Failed')
+    return <FailedStatus message="Failed to parse" />;
 
   if (uploadJob) {
     if (uploadJob.jobDone) return <SuccessStatus message="Completed" />;
     return <UploadingStatus />;
   }
-  if (parsingJob) {
-    if (parsingJob.jobDone) return <SuccessStatus message="Finished" />;
+  if (jobId) {
+    if (parsingJobStatus === 'Completed')
+      return <SuccessStatus message="Finished" />;
     return <ParsingStatus />;
   }
   return <PendingStatus />;

@@ -1,32 +1,31 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Progress, Col, Row, Collapse } from 'antd';
-import { FileInfo } from '@cognite/sdk';
-import { selectParsingJobForFileId } from 'modules/contextualization/parsingJobs';
-import { useWorkflowDiagrams } from 'modules/workflows/hooks';
 import { getActiveWorkflowId } from 'modules/workflows';
 import LoadingProgress from 'components/LoadingProgress';
+import { useParsingJob } from 'modules/contextualization/pnidParsing/hooks';
 
-export default function LoadResources() {
+const processProgress: { [key: string]: number } = {
+  '': 0,
+  New: 10,
+  Scheduled: 10,
+  Queued: 20,
+  Running: 40,
+  Completed: 100,
+  Failed: 100,
+};
+
+const LoadResources = () => {
   const workflowId = useSelector(getActiveWorkflowId);
-  const getParsingJob = useSelector(selectParsingJobForFileId);
-  const diagrams = useWorkflowDiagrams(workflowId, true) as FileInfo[];
 
-  const diagramsCompleted = diagrams.filter((diagram) => {
-    const jobStatus = getParsingJob(diagram.id);
-    return jobStatus && jobStatus.jobDone;
-  });
+  const { status: parsingJobStatus, jobId } = useParsingJob(workflowId);
 
-  const jobDone = diagramsCompleted.length === diagrams.length;
-
-  const parsingJobPercent: number = Math.floor(
-    (diagramsCompleted.length / diagrams.length) * 100
-  );
+  const parsingJobPercent: number = processProgress[parsingJobStatus];
 
   return (
     <Collapse defaultActiveKey={['1']}>
       <Collapse.Panel
-        header={jobDone ? 'Resources loaded' : 'Getting your data...'}
+        header={jobId ? 'Resources loaded' : 'Getting your data...'}
         key="1"
       >
         <Row align="middle">
@@ -59,4 +58,6 @@ export default function LoadResources() {
       </Collapse.Panel>
     </Collapse>
   );
-}
+};
+
+export default React.memo(LoadResources);
