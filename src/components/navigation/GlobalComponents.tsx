@@ -1,4 +1,3 @@
-import React from 'react';
 import { ToastContainer, CogsWrapper } from '@cognite/cogs.js';
 import useHelpCenter from 'hooks/useHelpCenter';
 import HelpCenter from './HelpCenter/HelpCenter';

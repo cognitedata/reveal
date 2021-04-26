@@ -50,8 +50,15 @@ const LeftSidebar: React.FC = () => {
 
   return (
     <SidebarContainer open={isOpen}>
-      <CollapseButton open={isOpen} onClick={handleHideSidebar}>
-        <Icon type={isOpen ? 'LargeLeft' : 'LargeRight'} />
+      <CollapseButton
+        className="collapse-button"
+        open={isOpen}
+        onClick={handleHideSidebar}
+      >
+        <Icon
+          type={isOpen ? 'LargeLeft' : 'LargeRight'}
+          style={{ width: 12 }}
+        />
       </CollapseButton>
       <TitleContainer>
         <Overline level={2}>Suites</Overline>

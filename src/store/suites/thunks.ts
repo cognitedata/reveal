@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { CdfClient, ApiClient } from 'utils';
 import { SUITES_TABLE_NAME } from 'constants/cdf';
 import { RootDispatcher } from 'store/types';

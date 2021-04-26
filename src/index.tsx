@@ -1,4 +1,3 @@
-import React from 'react';
 import ReactDOM from 'react-dom';
 import * as Sentry from '@sentry/browser';
 
@@ -35,6 +34,7 @@ if (mixpanel) {
   });
 }
 
+// eslint-disable-next-line
 ReactDOM.render(<AppRoot />, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change

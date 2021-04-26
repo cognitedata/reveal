@@ -24,9 +24,9 @@ describe('AppHeader', () => {
   });
 
   it('should render', async () => {
-    const component = render(<AppHeader />, { cdfClient: mockClient });
+    const view = render(<AppHeader />, { cdfClient: mockClient });
     await waitFor(() => {
-      expect(component).toBeTruthy();
+      expect(view).toBeTruthy();
     });
   });
   describe('group preview', () => {

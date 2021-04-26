@@ -52,10 +52,6 @@ type Props = {
   filesUploadQueue: Map<string, File>;
 };
 
-type BoardTouchedFields = {
-  [Property in keyof Board]?: boolean;
-};
-
 export const BoardForm: React.FC<Props> = ({ filesUploadQueue }) => {
   const {
     errors,

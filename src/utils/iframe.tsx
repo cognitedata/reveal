@@ -1,5 +1,3 @@
-import React from 'react';
-
 // manipulate DOM to change iframe width & height
 const adjustIframeTagSize = (
   tag: string = '',

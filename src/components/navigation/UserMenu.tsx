@@ -1,6 +1,5 @@
 import { Menu } from '@cognite/cogs.js';
 import useTranslation from 'hooks/useTranslation';
-import React from 'react';
 import { CdfClient } from 'utils';
 import { logout } from 'utils/logout';
 import { MenuItemWrapper } from './elements';
