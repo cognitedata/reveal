@@ -101,6 +101,34 @@ export const useWorkflowTotalCounts = (workflowId: number) => {
 };
 
 /**
+ * Returns an info of how much of the workflow is already loaded.
+ * @param workflowId
+ * @param all
+ * @returns
+ */
+export const useWorkflowLoadPercentages = (
+  workflowId: number,
+  type: ResourceType | 'diagrams' = 'assets'
+) => {
+  const workflowLoadedCounts = useWorkflowLoadedCounts(Number(workflowId));
+  const workflowTotalCounts = useWorkflowTotalCounts(Number(workflowId));
+  const diagrams = type === 'diagrams';
+
+  const downloadedCount: number = diagrams
+    ? workflowLoadedCounts.diagrams
+    : workflowLoadedCounts.resources?.[type] ?? 0;
+  const totalCount: number = diagrams
+    ? workflowTotalCounts.diagrams
+    : workflowTotalCounts.resources?.[type] ?? 0;
+  const loadedPercent: number = Math.round(
+    (totalCount ? downloadedCount / totalCount : 0) * 100
+  );
+  const loaded = loadedPercent === 100;
+
+  return { downloadedCount, totalCount, loadedPercent, loaded };
+};
+
+/**
  * Returns aggregated statuses for the entire workflow.
  * @param workflowId
  * @param all
