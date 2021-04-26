@@ -14,6 +14,7 @@ import { SectorGeometry, ParsedSector } from './types';
 import { LevelOfDetail } from './LevelOfDetail';
 import { consumeSectorDetailed, consumeSectorSimple } from './sectorUtilities';
 import { toThreeJsBox3 } from '../../../utilities';
+import { AutoDisposeGroup } from '../../../utilities/three';
 
 export class SimpleAndDetailedToSector3D {
   private readonly materialManager: CadMaterialManager;
@@ -22,7 +23,10 @@ export class SimpleAndDetailedToSector3D {
     this.materialManager = materialManager;
   }
 
-  transform(): OperatorFunction<ParsedSector, { sectorMeshes: THREE.Group; instancedMeshes: InstancedMeshFile[] }> {
+  transform(): OperatorFunction<
+    ParsedSector,
+    { sectorMeshes: AutoDisposeGroup; instancedMeshes: InstancedMeshFile[] }
+  > {
     return publish((source: Observable<ParsedSector>) => {
       const detailedObservable: Observable<ParsedSector> = source.pipe(
         filter((parsedSector: ParsedSector) => parsedSector.levelOfDetail === LevelOfDetail.Detailed)
