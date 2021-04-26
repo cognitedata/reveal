@@ -37,7 +37,7 @@
     "react-mapbox-gl": "4.8.6",
     "react-player": "^2.9.0",
     "react-query": "^3.13.6",
-    "react-redux": "^7.2.3",
+    "react-redux": "^7.2.4",
     "react-router-dom": "^5.2.0",
     "react-scripts": "^4.0.3",
     "reselect": "^4.0.0",
