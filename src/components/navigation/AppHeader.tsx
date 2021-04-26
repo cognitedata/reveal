@@ -147,9 +147,6 @@ const AppHeader: React.FC = () => {
       menu: (
         <Menu>
           <Menu.Header>System admin</Menu.Header>
-          <Menu.Item appendIcon="Upload" onClick={() => openUploadLogoModal()}>
-            Upload customer logo
-          </Menu.Item>
           {/* TODO(CM-406) */}
           <Menu.Item onClick={syncSuites}>
             Copy suites data from RAW to db-service
