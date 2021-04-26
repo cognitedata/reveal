@@ -3,6 +3,7 @@
  */
 
 import * as THREE from 'three';
+import { AutoDisposeGroup } from '../../../utilities/three';
 import { LevelOfDetail } from './LevelOfDetail';
 
 export class SectorNode extends THREE.Group {
@@ -10,7 +11,7 @@ export class SectorNode extends THREE.Group {
   public readonly bounds: THREE.Box3;
   public readonly depth: number;
 
-  private _group?: THREE.Group;
+  private _group?: AutoDisposeGroup;
   private _lod = LevelOfDetail.Discarded;
   private _updatedTimestamp: number = Date.now();
 
@@ -34,9 +35,12 @@ export class SectorNode extends THREE.Group {
     return this._updatedTimestamp;
   }
 
-  updateGeometry(geomtryGroup: THREE.Group | undefined, levelOfDetail: LevelOfDetail) {
+  updateGeometry(geomtryGroup: AutoDisposeGroup | undefined, levelOfDetail: LevelOfDetail) {
     this.resetGeometry();
     this._group = geomtryGroup;
+    if (this._group !== undefined) {
+      this._group.reference();
+    }
     this._lod = levelOfDetail;
     this._updatedTimestamp = Date.now();
     this.visible = this._lod !== LevelOfDetail.Discarded;
@@ -44,8 +48,9 @@ export class SectorNode extends THREE.Group {
   }
 
   resetGeometry() {
-    if (this.group !== undefined) {
-      this.remove(this.group);
+    if (this._group !== undefined) {
+      this._group.dereference();
+      this.remove(this._group);
     }
 
     this._group = undefined;
