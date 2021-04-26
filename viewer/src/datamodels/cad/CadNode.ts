@@ -4,31 +4,26 @@
 
 import * as THREE from 'three';
 
-import { SectorMetadata, SectorGeometry, SectorScene } from './sector/types';
-import { SectorQuads } from './rendering/types';
-import { CadRenderHints } from './rendering/CadRenderHints';
-import { LevelOfDetail } from './sector/LevelOfDetail';
-import { NodeAppearanceProvider } from './NodeAppearance';
-import { ConsumedSector } from './sector/types';
+import { SectorGeometry, SectorScene } from './sector/types';
+import { InstancedMeshFile, SectorQuads } from './rendering/types';
+
 import { RootSectorNode } from './sector/RootSectorNode';
 import { RenderMode } from './rendering/RenderMode';
 import { CadLoadingHints } from './CadLoadingHints';
-import { MaterialManager } from './MaterialManager';
+import { CadMaterialManager } from './CadMaterialManager';
 import { CadModelMetadata } from './CadModelMetadata';
 import { suggestCameraConfig } from './cameraconfig';
-import { toThreeVector3, toThreeJsBox3 } from '../../utilities';
+
+import { toThreeVector3 } from '../../utilities';
 import { EventTrigger } from '../../utilities/events';
-import { NodeStyleProvider } from './styling/NodeStyleProvider';
-import { NodeAppearance } from '.';
+import { NodeTransformProvider } from './styling/NodeTransformProvider';
+import { InstancedMeshManager } from './InstancedMeshManager';
+import { NodeAppearanceProvider } from './styling/NodeAppearanceProvider';
+import { NodeAppearance } from './NodeAppearance';
 
 export type ParseCallbackDelegate = (parsed: { lod: string; data: SectorGeometry | SectorQuads }) => void;
 
 export type LoadingHintsChangeListener = (loadingHint: CadLoadingHints) => void;
-export type RenderHintsChangeListener = (renderHint: CadRenderHints) => void;
-
-export interface CadNodeOptions {
-  nodeAppearanceProvider?: NodeAppearanceProvider;
-}
 
 export interface SuggestedCameraConfig {
   position: THREE.Vector3;
@@ -38,28 +33,34 @@ export interface SuggestedCameraConfig {
 }
 
 export class CadNode extends THREE.Object3D {
-  private _renderHints: CadRenderHints;
   private _loadingHints: CadLoadingHints;
 
   private readonly _rootSector: RootSectorNode;
   private readonly _cadModelMetadata: CadModelMetadata;
-  private readonly _materialManager: MaterialManager;
+  private readonly _materialManager: CadMaterialManager;
   private readonly _sectorScene: SectorScene;
   private readonly _previousCameraMatrix = new THREE.Matrix4();
-  private readonly _boundingBoxNode: THREE.Object3D;
 
   private readonly _events = {
-    renderHintsChanged: new EventTrigger<RenderHintsChangeListener>(),
     loadingHintsChanged: new EventTrigger<LoadingHintsChangeListener>()
   };
+  private readonly _instancedMeshManager: InstancedMeshManager;
 
-  constructor(model: CadModelMetadata, materialManager: MaterialManager) {
+  constructor(model: CadModelMetadata, materialManager: CadMaterialManager) {
     super();
     this.type = 'CadNode';
     this.name = 'Sector model';
     this._materialManager = materialManager;
 
+    const instancedMeshGroup = new THREE.Group();
+    instancedMeshGroup.name = 'InstancedMeshes';
+
+    this._instancedMeshManager = new InstancedMeshManager(instancedMeshGroup, materialManager);
+
     const rootSector = new RootSectorNode(model);
+
+    rootSector.add(instancedMeshGroup);
+
     this._cadModelMetadata = model;
     const { scene } = model;
 
@@ -71,11 +72,7 @@ export class CadNode extends THREE.Object3D {
     this._rootSector = rootSector;
     this.add(rootSector);
 
-    this._boundingBoxNode = this.createBoundingBoxNode(scene.getAllSectors());
-    this.add(this._boundingBoxNode);
-
     // Apply default hints
-    this._renderHints = {};
     this._loadingHints = {};
 
     this.matrixAutoUpdate = false;
@@ -83,7 +80,11 @@ export class CadNode extends THREE.Object3D {
     this.setModelTransformation(model.modelMatrix);
   }
 
-  get nodeAppearanceProvider(): NodeStyleProvider {
+  get nodeTransformProvider(): NodeTransformProvider {
+    return this._materialManager.getModelNodeTransformProvider(this._cadModelMetadata.blobUrl);
+  }
+
+  get nodeAppearanceProvider(): NodeAppearanceProvider {
     return this._materialManager.getModelNodeAppearanceProvider(this._cadModelMetadata.blobUrl);
   }
 
@@ -135,16 +136,6 @@ export class CadNode extends THREE.Object3D {
     return this._materialManager.getRenderMode();
   }
 
-  set renderHints(hints: Readonly<CadRenderHints>) {
-    this._renderHints = hints;
-    this._events.renderHintsChanged.fire(hints);
-    // this._boundingBoxNode.visible = this.shouldRenderSectorBoundingBoxes;
-  }
-
-  get renderHints(): Readonly<CadRenderHints> {
-    return this._renderHints;
-  }
-
   set loadingHints(hints: Readonly<CadLoadingHints>) {
     this._loadingHints = hints;
     this._events.loadingHintsChanged.fire(hints);
@@ -161,8 +152,6 @@ export class CadNode extends THREE.Object3D {
   setModelTransformation(matrix: THREE.Matrix4): void {
     this._rootSector.setModelTransformation(matrix);
     this._cadModelMetadata.modelMatrix.copy(matrix);
-    this._boundingBoxNode.matrix.copy(matrix);
-    this._boundingBoxNode.updateMatrixWorld(true);
   }
 
   /**
@@ -190,58 +179,21 @@ export class CadNode extends THREE.Object3D {
     };
   }
 
-  // TODO 2020-05-22 larsmoa: Remove this function and move bounding box tree outside CadNode.
-  updateSectorBoundingBox(sector: ConsumedSector) {
-    const bboxNode = this._boundingBoxNode.children.find(x => x.userData.sectorId === sector.metadata.id)!;
-    bboxNode.visible = sector.levelOfDetail !== LevelOfDetail.Discarded;
-  }
-
-  private createBoundingBoxNode(sectors: SectorMetadata[]): THREE.Object3D {
-    function sectorDepth(s: SectorMetadata) {
-      return s.path.length / 2; // Path are on format 'x/y/z/'
-    }
-    const maxColorDepth = sectors.reduce((max, s) => Math.max(max, sectorDepth(s)), 0.0);
-    const from = new THREE.Color(0xff0000);
-    const to = new THREE.Color(0x00ff00);
-    const colors = [...Array(maxColorDepth).keys()].map(d => {
-      const color = new THREE.Color().copy(from);
-      color.lerpHSL(to, d / (maxColorDepth - 1));
-      return color;
-    });
-
-    const boxesNode = new THREE.Group();
-    boxesNode.name = 'Bounding boxes (for debugging)';
-    sectors.forEach(sector => {
-      const bbox = toThreeJsBox3(new THREE.Box3(), sector.bounds);
-      const color = colors[sectorDepth(sector)];
-      const boxMesh = new THREE.Box3Helper(bbox, color);
-      boxMesh.name = `${sector.id}`;
-      boxMesh.userData.sectorId = sector.id;
-      boxMesh.visible = false;
-      boxesNode.add(boxMesh);
-
-      boxMesh.matrixAutoUpdate = false;
-      boxMesh.updateMatrixWorld(true);
-    });
-    boxesNode.matrixAutoUpdate = false;
-    boxesNode.applyMatrix4(this.getModelTransformation());
-    boxesNode.updateMatrixWorld(true);
-    return boxesNode;
-  }
-
-  public on(event: 'loadingHintsChanged', listener: LoadingHintsChangeListener): void;
-  public on(event: 'renderHintsChanged', listener: RenderHintsChangeListener): void;
-  public on(
-    event: 'loadingHintsChanged' | 'renderHintsChanged',
-    listener: LoadingHintsChangeListener | RenderHintsChangeListener
-  ): void {
+  public on(event: 'loadingHintsChanged', listener: LoadingHintsChangeListener): void {
     switch (event) {
       case 'loadingHintsChanged':
         this._events.loadingHintsChanged.subscribe(listener as LoadingHintsChangeListener);
         break;
 
-      case 'renderHintsChanged':
-        this._events.renderHintsChanged.subscribe(listener as RenderHintsChangeListener);
+      default:
+        throw new Error(`Unsupported event '${event}'`);
+    }
+  }
+
+  public off(event: 'loadingHintsChanged', listener: LoadingHintsChangeListener): void {
+    switch (event) {
+      case 'loadingHintsChanged':
+        this._events.loadingHintsChanged.unsubscribe(listener as LoadingHintsChangeListener);
         break;
 
       default:
@@ -249,23 +201,13 @@ export class CadNode extends THREE.Object3D {
     }
   }
 
-  public off(event: 'loadingHintsChanged', listener: LoadingHintsChangeListener): void;
-  public off(event: 'renderHintsChanged', listener: RenderHintsChangeListener): void;
-  public off(
-    event: 'loadingHintsChanged' | 'renderHintsChanged',
-    listener: LoadingHintsChangeListener | RenderHintsChangeListener
-  ): void {
-    switch (event) {
-      case 'loadingHintsChanged':
-        this._events.loadingHintsChanged.unsubscribe(listener as LoadingHintsChangeListener);
-        break;
-
-      case 'renderHintsChanged':
-        this._events.renderHintsChanged.unsubscribe(listener as RenderHintsChangeListener);
-        break;
-
-      default:
-        throw new Error(`Unsupported event '${event}'`);
+  public updateInstancedMeshes(instanceMeshFiles: InstancedMeshFile[], modelIdentifier: string, sectorId: number) {
+    for (const instanceMeshFile of instanceMeshFiles) {
+      this._instancedMeshManager.addInstanceMeshes(instanceMeshFile, modelIdentifier, sectorId);
     }
+  }
+
+  public discardInstancedMeshes(sectorId: number) {
+    this._instancedMeshManager.removeSectorInstancedMeshes(sectorId);
   }
 }

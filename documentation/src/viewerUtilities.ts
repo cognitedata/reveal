@@ -1,14 +1,8 @@
 import {
-  CameraChangeDelegate,
-  PointerEventDelegate,
+  Cognite3DModel,
   Cognite3DViewer,
+  DefaultNodeAppearance,
 } from '@cognite/reveal';
-
-type InternalEventListeners = {
-  cameraChange: CameraChangeDelegate[];
-  click: PointerEventDelegate[];
-  hover: PointerEventDelegate[];
-};
 
 /**
  * Resets all event handlers on the viewer provided. This uses
@@ -16,9 +10,17 @@ type InternalEventListeners = {
  * this to better approaches than this.
  */
 export function resetViewerEventHandlers(viewer: Cognite3DViewer): void {
-  // @ts-expect-error
-  const eventListeners: InternalEventListeners = viewer.eventListeners;
-  eventListeners.cameraChange.forEach((l) => viewer.off('cameraChange', l));
-  eventListeners.click.forEach((l) => viewer.off('click', l));
-  eventListeners.hover.forEach((l) => viewer.off('hover', l));
+  const eventListeners = viewer._events;
+  eventListeners.cameraChange.unsubscribeAll();
+  eventListeners.click.unsubscribeAll();
+  eventListeners.hover.unsubscribeAll();
+}
+
+/**
+ * Resets state of model to the default state (i.e. apperance and styled sets)
+ * @param model
+ */
+export function resetCognite3DModel(model: Cognite3DModel): void {
+  model.setDefaultNodeAppearance(DefaultNodeAppearance.Default);
+  model.removeAllStyledNodeSets();
 }

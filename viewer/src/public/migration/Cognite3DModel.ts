@@ -9,15 +9,15 @@ import { CameraConfiguration } from './types';
 import { CogniteModelBase } from './CogniteModelBase';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import { NumericRange, Box3, toThreeJsBox3 } from '../../utilities';
-import { CadRenderHints, CadNode } from '../../experimental';
+import { CadNode } from '../../experimental';
 import { trackError } from '../../utilities/metrics';
 
 import { SupportedModelTypes, CadLoadingHints, CadModelMetadata } from '../types';
 import { callActionWithIndicesAsync } from '../../utilities/callActionWithIndicesAsync';
 import { CogniteClientNodeIdAndTreeIndexMapper } from '../../utilities/networking/CogniteClientNodeIdAndTreeIndexMapper';
-import { NodeStyleProvider } from '../../datamodels/cad/styling/NodeStyleProvider';
 import { NodeSet } from '../../datamodels/cad/styling';
 import { NodeAppearance } from '../../datamodels/cad';
+import { NodeTransformProvider } from '../../datamodels/cad/styling/NodeTransformProvider';
 
 /**
  * Represents a single 3D CAD model loaded from CDF.
@@ -27,23 +27,11 @@ import { NodeAppearance } from '../../datamodels/cad';
 export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   public readonly type: SupportedModelTypes = 'cad';
 
-  get nodeApperanceProvider(): NodeStyleProvider {
-    return this.cadNode.nodeAppearanceProvider;
-  }
-
   /**
-   * Get settings used for rendering.
+   * @internal
    */
-  get renderHints(): CadRenderHints {
-    return this.cadNode.renderHints;
-  }
-
-  /**
-   * Specify settings for rendering.
-   */
-  // TODO 2021-01-19 larsmoa: Remove rendering hints per model
-  set renderHints(hints: CadRenderHints) {
-    this.cadNode.renderHints = hints;
+  private get nodeTransformProvider(): NodeTransformProvider {
+    return this.cadNode.nodeTransformProvider;
   }
 
   /**
@@ -102,11 +90,13 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
 
   /**
    * Sets the default appearance for nodes that are not styled using
-   * {@link addStyledNodesSet}. Updating the default style can be an
+   * {@link addStyledNodeSet}. Updating the default style can be an
    * expensive operation, so use with care.
    *
    * @param appearance  Default node appereance. Note that this apperance cannot
    * have a transform ({@link NodeAppearance.worldTransform}).
+   *
+   * @version new in 2.0
    */
   setDefaultNodeAppearance(appearance: NodeAppearance) {
     this.cadNode.defaultNodeAppearance = appearance;
@@ -114,7 +104,9 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
 
   /**
    * Gets the default appearance for nodes that are not styled using
-   * {@link addStyledNodesSet}.
+   * {@link addStyledNodeSetSet}.
+   *
+   * @version new in 2.0
    */
   getDefaultNodeAppearance(): NodeAppearance {
     return this.cadNode.defaultNodeAppearance;
@@ -143,18 +135,53 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * const visibleSet = new FixedNodeSet(someTreeIndices);
    * model.addStyledSet(visibleSet, { rendererGhosted: false });
    * ```
+   * @version new in 2.0
    */
-  addStyledNodesSet(nodes: NodeSet, appearance: NodeAppearance) {
-    this.nodeApperanceProvider.addStyledSet(nodes, appearance);
+  addStyledNodeSet(nodes: NodeSet, appearance: NodeAppearance) {
+    this.cadNode.nodeAppearanceProvider.addStyledSet(nodes, appearance);
   }
 
   /**
    * Removes styling for previously added set, resetting the style to the default.
-   * @param nodes   Node set previously added using {@see addStyledSet}.
+   * @param nodes   Node set previously added using {@see addStyledNodeSet}.
+   * @version new in 2.0
    */
   removeStyledNodeSet(nodes: NodeSet) {
-    this.nodeApperanceProvider.removedStyledSet(nodes);
+    this.cadNode.nodeAppearanceProvider.removeStyledSet(nodes);
   }
+
+  /**
+   * Removes all styled sets, resetting the appearance of all nodes to the
+   * default apperance.
+   * @version new in 2.0
+   */
+  removeAllStyledNodeSets() {
+    this.cadNode.nodeAppearanceProvider.clear();
+  }
+
+  /**
+   * Apply a transformation matrix to the tree indices given, changing
+   * rotation, scale and/or position.
+   *
+   * Note that setting multiple transformations for the same
+   * node isn't supported and might lead to undefined results.
+   * @param treeIndices       Tree indices of nodes to apply the transformation to.
+   * @param transformMatrix   Transformation to apply.
+   * @version new in 2.0
+   */
+  setNodeTransform(treeIndices: NumericRange, transformMatrix: THREE.Matrix4) {
+    this.nodeTransformProvider.setNodeTransform(treeIndices, transformMatrix);
+  }
+
+  /**
+   * Resets the transformation for the nodes given.
+   * @param treeIndices Tree indices of the nodes to reset transforms for.
+   * @version new in 2.0
+   */
+  resetNodeTransform(treeIndices: NumericRange) {
+    this.nodeTransformProvider.resetNodeTransform(treeIndices);
+  }
+
   /**
    * Maps a position retrieved from the CDF API (e.g. 3D node information) to
    * coordinates in "ThreeJS model space". This is necessary because CDF has a right-handed
@@ -176,6 +203,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * Maps from a 3D position in "ThreeJS model space" (e.g. a ray intersection coordinate)
    * to coordinates in "CDF space". This is necessary because CDF has a right-handed
    * Z-up coordinate system while ThreeJS uses a right-hand Y-up coordinate system.
+   * This function also accounts for transformation applied to the model.
    * @param p       The ThreeJS coordinate to transform.
    * @param out     Optional preallocated buffer for storing the result. May be `p`.
    * @returns Transformed position.
@@ -184,6 +212,25 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     out = out !== undefined ? out : new THREE.Vector3();
     if (out !== p) {
       out.copy(p);
+    }
+    out.applyMatrix4(this.cadModel.inverseModelMatrix);
+    return out;
+  }
+
+  /**
+   * Maps from a 3D position in "ThreeJS model space" to coordinates in "CDF space".
+   * This is necessary because CDF has a right-handed Z-up coordinate system while ThreeJS
+   * uses a right-hand Y-up coordinate system. This function also accounts for transformation
+   * applied to the model.
+   * @param box     The box in ThreeJS/model coordinates.
+   * @param out     Optional preallocated bnuffer for storing the result. May be `box`.
+   * @returns       Transformed box.
+   * @version new in 2.0
+   */
+  mapBoxFromModelToCdfCoordinates(box: THREE.Box3, out?: THREE.Box3): THREE.Box3 {
+    out = out !== undefined ? out : new THREE.Box3();
+    if (out !== box) {
+      out.copy(box);
     }
     out.applyMatrix4(this.cadModel.inverseModelMatrix);
     return out;
@@ -286,14 +333,6 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
 
   /**
-   * @param sector
-   * @internal
-   */
-  updateNodeIdMaps(sector: Map<number, number>) {
-    this.nodeIdAndTreeIndexMaps.updateMaps(sector);
-  }
-
-  /**
    * Fetches a bounding box from the CDF by the nodeId.
    * @param nodeId
    * @param box Optional. Used to write result to.
@@ -376,6 +415,14 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    */
   iterateNodesByTreeIndex(action: (treeIndex: number) => void): Promise<void> {
     return callActionWithIndicesAsync(0, this.cadModel.scene.maxTreeIndex, action);
+  }
+
+  /**
+   * Returns the number of nodes in the model.
+   * @version new in 2.0
+   */
+  get nodeCount(): number {
+    return this.cadModel.scene.maxTreeIndex + 1;
   }
 
   /**

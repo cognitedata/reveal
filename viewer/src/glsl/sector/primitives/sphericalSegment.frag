@@ -3,6 +3,7 @@
 #pragma glslify: updateFragmentColor = require('../../base/updateFragmentColor.glsl')
 #pragma glslify: isSliced = require('../../base/isSliced.glsl', NUM_CLIPPING_PLANES=NUM_CLIPPING_PLANES, UNION_CLIPPING_PLANES=UNION_CLIPPING_PLANES)
 #pragma glslify: determineColor = require('../../base/determineColor.glsl');
+#pragma glslify: GeometryType = require('../../base/geometryTypes.glsl');
 
 uniform sampler2D colorDataTexture;
 uniform sampler2D overrideVisibilityPerTreeIndex;
@@ -103,5 +104,5 @@ void main() {
 #endif
 
   float fragDepth = updateFragmentDepth(p, projectionMatrix);
-  updateFragmentColor(renderMode, color, v_treeIndex, normal, fragDepth, matCapTexture);
+  updateFragmentColor(renderMode, color, v_treeIndex, normal, fragDepth, matCapTexture, GeometryType.Primitive);
 }

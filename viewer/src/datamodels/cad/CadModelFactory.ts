@@ -2,13 +2,13 @@
  * Copyright 2021 Cognite AS
  */
 import { CadNode } from './CadNode';
-import { MaterialManager } from './MaterialManager';
 
-import { CadModelMetadata } from '.';
+import { CadMaterialManager } from './CadMaterialManager';
+import { CadModelMetadata } from './CadModelMetadata';
 
 export class CadModelFactory {
-  private readonly _materialManager: MaterialManager;
-  constructor(materialManager: MaterialManager) {
+  private readonly _materialManager: CadMaterialManager;
+  constructor(materialManager: CadMaterialManager) {
     this._materialManager = materialManager;
   }
 

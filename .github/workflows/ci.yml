@@ -81,13 +81,16 @@ jobs:
       run: 'echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p'
 
     - name: Visual regression tests
+      id: visualtests
       working-directory: examples
       run: 'yarn ci:e2e'
 
     - name: Check for failed visual test diffs
       if: failure()
       working-directory: examples
-      run: 'yarn test:ghprcomment'
+      run: |
+        yarn
+        yarn test:ghprcomment
       env:
         ACTIONS_RUNTIME_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

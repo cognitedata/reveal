@@ -4,7 +4,6 @@
 
 import React, { ReactNode } from 'react';
 import { Simple } from './pages/Simple';
-import { SideBySide } from './pages/SideBySide';
 import { Clipping } from './pages/Clipping';
 import { Migration } from './pages/Migration';
 import { SectorWithPointcloud } from './pages/SectorWithPointcloud';
@@ -12,7 +11,6 @@ import { SimplePointcloud } from './pages/SimplePointcloud';
 import { SSAO } from './pages/SSAO';
 import { TwoModels } from './pages/TwoModels';
 import { WalkablePath } from './pages/WalkablePath';
-import { WebGLTwo } from './pages/WebGLTwo';
 
 import {
   cadTestBasePath,
@@ -25,11 +23,10 @@ import { ClippingTestPage } from './pages/e2e/cad/ClippingTestPage';
 import { DefaultCameraTestPage } from './pages/e2e/cad/DefaultCameraTestPage';
 import { HighlightTestPage } from './pages/e2e/cad/HighlightTestPage';
 import { RotationTestPage } from './pages/e2e/cad/RotationTestPage';
-import { NodeTransformTestPage } from './pages/e2e/cad/NodeTransformTestPage';
-import { GhostModeTestPage } from './pages/e2e/cad/GhostModeTestPage';
 import { ScaledModelTestPage } from './pages/e2e/cad/ScaledModelTestPage';
 import { UserRenderTargetTestPage } from './pages/e2e/cad/UserRenderTargetTestPage';
 import { DefaultPointCloudTestPage } from './pages/e2e/pointcloud/DefaultPointCloud';
+import { SsaoTestPage } from './pages/e2e/cad/SsaoTestPage';
 
 // if you want to test your latest changes in workers or rust files
 // copy your worker files to some folder in /public and specify the path below
@@ -94,14 +91,6 @@ export const exampleRoutes: Array<ExampleRoute> = [
     component: <SectorWithPointcloud />,
   },
   {
-    path:
-      `/side-by-side?project=${project}` +
-      `&modelId=${cadId}&revisionId=${cadRevisionId}` +
-      `&modelId2=${cad2Id}&revisionId2=${cad2RevisionId}`,
-    menuTitle: 'Side-by-side debugger for sector models',
-    component: <SideBySide />,
-  },
-  {
     path: `/simple-point-cloud?project=${project}&modelId=${pointCloudId}&revisionId=${pointCloudRevisionId}`,
     menuTitle: 'Simple Point Cloud',
     component: <SimplePointcloud />,
@@ -125,11 +114,6 @@ export const exampleRoutes: Array<ExampleRoute> = [
     menuTitle: 'Walkable Path',
     component: <WalkablePath />,
   },
-  {
-    path: '/webgltwo',
-    menuTitle: 'WebGL 2.0',
-    component: <WebGLTwo />,
-  },
 ].sort(menuTitleAz);
 
 const cadTestPages: Record<TestCaseCad, JSX.Element> = {
@@ -138,10 +122,9 @@ const cadTestPages: Record<TestCaseCad, JSX.Element> = {
   [TestCaseCad.defaultCamera]: <DefaultCameraTestPage />,
   [TestCaseCad.highlight]: <HighlightTestPage />,
   [TestCaseCad.rotateCadModel]: <RotationTestPage />,
-  [TestCaseCad.nodeTransform]: <NodeTransformTestPage />,
-  [TestCaseCad.ghostMode]: <GhostModeTestPage />,
   [TestCaseCad.scaledModel]: <ScaledModelTestPage />,
   [TestCaseCad.userRenderTarget]: <UserRenderTargetTestPage />,
+  [TestCaseCad.ssao]: <SsaoTestPage />,
 };
 
 const pointcloudTestPages: Record<TestCasePointCloud, JSX.Element> = {

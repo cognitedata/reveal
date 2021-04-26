@@ -94,6 +94,22 @@ export const fxaaShaders = {
 };
 
 /**
+ * Screen space ambient occlusion shader
+ */
+export const ssaoShaders = {
+  fragment: glsl(require('../../../glsl/post-processing/pure-depth-ssao.frag').default),
+  vertex: glsl(require('../../../glsl/post-processing/passthrough.vert').default)
+};
+
+/**
+ * Shader to blur ambient occlusion texture and combine with diffuse
+ */
+export const ssaoBlurCombineShaders = {
+  fragment: glsl(require('../../../glsl/post-processing/ssao-blur-combine.frag').default),
+  vertex: glsl(require('../../../glsl/post-processing/passthrough.vert').default)
+};
+
+/**
  * Shaders use to estimate how many pixels a sector covers on screen.
  */
 export const coverageShaders = {

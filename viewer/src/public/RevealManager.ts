@@ -6,21 +6,18 @@ import * as THREE from 'three';
 
 import { CadManager } from '../datamodels/cad/CadManager';
 import { PointCloudManager } from '../datamodels/pointcloud/PointCloudManager';
-import {
-  SectorNodeIdToTreeIndexMapLoadedListener,
-  SectorNodeIdToTreeIndexMapLoadedEvent,
-  LoadingStateChangeListener
-} from './types';
+import { LoadingStateChangeListener, defaultRenderOptions } from './types';
 import { Subscription, combineLatest, asyncScheduler, Subject } from 'rxjs';
-import { map, share, filter, observeOn, subscribeOn, tap, auditTime, distinctUntilChanged } from 'rxjs/operators';
+import { map, observeOn, subscribeOn, tap, auditTime, distinctUntilChanged } from 'rxjs/operators';
 import { trackError, trackLoadModel, trackCameraNavigation } from '../utilities/metrics';
-import { NodeAppearanceProvider, CadNode } from '../datamodels/cad';
+import { CadNode } from '../datamodels/cad';
 import { RenderMode } from '../datamodels/cad/rendering/RenderMode';
 import { EffectRenderManager } from '../datamodels/cad/rendering/EffectRenderManager';
 import { SupportedModelTypes } from '../datamodels/base';
 import { assertNever, LoadingState } from '../utilities';
 import { PointCloudNode } from '../datamodels/pointcloud/PointCloudNode';
 import { CadModelSectorBudget } from '../datamodels/cad/CadModelSectorBudget';
+import { CadModelSectorLoadStatistics } from '../datamodels/cad/CadModelSectorLoadStatistics';
 import { RenderOptions } from '..';
 import { EventTrigger } from '../utilities/events';
 
@@ -40,7 +37,6 @@ export class RevealManager<TModelIdentifier> {
   private _isDisposed = false;
   private readonly _subscriptions = new Subscription();
   private readonly _events = {
-    sectorNodeIdToTreeIndexMapLoaded: new EventTrigger<SectorNodeIdToTreeIndexMapLoadedListener>(),
     loadingStateChanged: new EventTrigger<LoadingStateChangeListener>()
   };
 
@@ -48,12 +44,12 @@ export class RevealManager<TModelIdentifier> {
 
   constructor(
     cadManager: CadManager<TModelIdentifier>,
-    pointCloudManager: PointCloudManager<TModelIdentifier>,
-    renderOptions: RenderOptions
+    renderManager: EffectRenderManager,
+    pointCloudManager: PointCloudManager<TModelIdentifier>
   ) {
+    this._effectRenderManager = renderManager;
     this._cadManager = cadManager;
     this._pointCloudManager = pointCloudManager;
-    this._effectRenderManager = new EffectRenderManager(this._cadManager.materialManager, renderOptions);
     this.initLoadingStateObserver(this._cadManager, this._pointCloudManager);
     this._updateSubject = new Subject();
     this._updateSubject
@@ -85,6 +81,14 @@ export class RevealManager<TModelIdentifier> {
     this._pointCloudManager.resetRedraw();
   }
 
+  public get renderOptions(): RenderOptions {
+    return this._effectRenderManager.renderOptions;
+  }
+
+  public set renderOptions(options: RenderOptions) {
+    this._effectRenderManager.renderOptions = options ?? defaultRenderOptions;
+  }
+
   get needsRedraw(): boolean {
     return this._cadManager.needsRedraw || this._pointCloudManager.needsRedraw;
   }
@@ -113,6 +117,10 @@ export class RevealManager<TModelIdentifier> {
     this._cadManager.budget = budget;
   }
 
+  public get cadLoadedStatistics(): CadModelSectorLoadStatistics {
+    return this._cadManager.loadedStatistics;
+  }
+
   public get renderMode(): RenderMode {
     return this._cadManager.renderMode;
   }
@@ -137,48 +145,30 @@ export class RevealManager<TModelIdentifier> {
     return this._cadManager.clipIntersection;
   }
 
-  public on(event: 'loadingStateChanged', listener: LoadingStateChangeListener): void;
-  public on(event: 'nodeIdToTreeIndexMapLoaded', listener: SectorNodeIdToTreeIndexMapLoadedListener): void;
-  public on(
-    event: 'loadingStateChanged' | 'nodeIdToTreeIndexMapLoaded',
-    listener: LoadingStateChangeListener | SectorNodeIdToTreeIndexMapLoadedListener
-  ): void {
+  public on(event: 'loadingStateChanged', listener: LoadingStateChangeListener): void {
     switch (event) {
       case 'loadingStateChanged':
         this._events.loadingStateChanged.subscribe(listener as LoadingStateChangeListener);
         break;
 
-      case 'nodeIdToTreeIndexMapLoaded':
-        this._events.sectorNodeIdToTreeIndexMapLoaded.subscribe(listener as SectorNodeIdToTreeIndexMapLoadedListener);
-        break;
-
       default:
         throw new Error(`Unsupported event '${event}'`);
     }
   }
 
-  public off(event: 'loadingStateChanged', listener: LoadingStateChangeListener): void;
-  public off(event: 'nodeIdToTreeIndexMapLoaded', listener: SectorNodeIdToTreeIndexMapLoadedListener): void;
-  public off(
-    event: 'loadingStateChanged' | 'nodeIdToTreeIndexMapLoaded',
-    listener: LoadingStateChangeListener | SectorNodeIdToTreeIndexMapLoadedListener
-  ): void {
+  public off(event: 'loadingStateChanged', listener: LoadingStateChangeListener): void {
     switch (event) {
       case 'loadingStateChanged':
         this._events.loadingStateChanged.unsubscribe(listener as LoadingStateChangeListener);
         break;
 
-      case 'nodeIdToTreeIndexMapLoaded':
-        this._events.sectorNodeIdToTreeIndexMapLoaded.unsubscribe(listener as SectorNodeIdToTreeIndexMapLoadedListener);
-        break;
-
       default:
         throw new Error(`Unsupported event '${event}'`);
     }
   }
 
-  public render(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera, scene: THREE.Scene) {
-    this._effectRenderManager.render(renderer, camera, scene);
+  public render(camera: THREE.PerspectiveCamera) {
+    this._effectRenderManager.render(camera);
   }
 
   /**
@@ -187,45 +177,28 @@ export class RevealManager<TModelIdentifier> {
    * @param autoSetTargetSize Auto size target to fit canvas.
    */
   public setRenderTarget(target: THREE.WebGLRenderTarget | null, autoSetTargetSize: boolean = true) {
-    this._effectRenderManager.setRenderTarget(target, autoSetTargetSize);
+    this._effectRenderManager.setRenderTarget(target);
+    this._effectRenderManager.setRenderTargetAutoSize(autoSetTargetSize);
   }
 
-  public addModel(
-    type: 'cad',
-    modelIdentifier: TModelIdentifier,
-    nodeAppearanceProvider?: NodeAppearanceProvider
-  ): Promise<CadNode>;
+  public addModel(type: 'cad', modelIdentifier: TModelIdentifier): Promise<CadNode>;
   public addModel(type: 'pointcloud', modelIdentifier: TModelIdentifier): Promise<PointCloudNode>;
   public async addModel(
     type: SupportedModelTypes,
-    modelIdentifier: TModelIdentifier,
-    nodeAppearanceProvider?: NodeAppearanceProvider
+    modelIdentifier: TModelIdentifier
   ): Promise<PointCloudNode | CadNode> {
     trackLoadModel(
       {
         moduleName: 'RevealManager',
         methodName: 'addModel',
-        type,
-        options: { nodeAppearanceProvider }
+        type
       },
       modelIdentifier
     );
 
     switch (type) {
       case 'cad': {
-        const cadNode = await this._cadManager.addModel(modelIdentifier);
-        this._subscriptions.add(
-          this._cadManager
-            .getParsedData()
-            .pipe(
-              share(),
-              filter(x => x.blobUrl === cadNode.cadModelMetadata.blobUrl)
-            )
-            .subscribe(parseSector => {
-              this.notifySectorNodeIdToTreeIndexMapLoaded(parseSector.blobUrl, parseSector.data.nodeIdToTreeIndexMap);
-            })
-        );
-        return cadNode;
+        return this._cadManager.addModel(modelIdentifier);
       }
 
       case 'pointcloud': {
@@ -254,11 +227,6 @@ export class RevealManager<TModelIdentifier> {
     }
   }
 
-  private notifySectorNodeIdToTreeIndexMapLoaded(blobUrl: string, nodeIdToTreeIndexMap: Map<number, number>): void {
-    const event: SectorNodeIdToTreeIndexMapLoadedEvent = { blobUrl, nodeIdToTreeIndexMap };
-    this._events.sectorNodeIdToTreeIndexMapLoaded.fire(event);
-  }
-
   private notifyLoadingStateChanged(loadingState: LoadingState) {
     this._events.loadingStateChanged.fire(loadingState);
   }
@@ -272,14 +240,15 @@ export class RevealManager<TModelIdentifier> {
         .pipe(
           observeOn(asyncScheduler),
           subscribeOn(asyncScheduler),
-          map(
-            ([cadLoadingState, pointCloudLoadingState]) =>
-              ({
-                isLoading: cadLoadingState.isLoading || pointCloudLoadingState.isLoading,
-                itemsLoaded: cadLoadingState.itemsLoaded + pointCloudLoadingState.itemsLoaded,
-                itemsRequested: cadLoadingState.itemsRequested + pointCloudLoadingState.itemsRequested
-              } as LoadingState)
-          ),
+          map(([cadLoadingState, pointCloudLoadingState]) => {
+            const state: LoadingState = {
+              isLoading: cadLoadingState.isLoading || pointCloudLoadingState.isLoading,
+              itemsLoaded: cadLoadingState.itemsLoaded + pointCloudLoadingState.itemsLoaded,
+              itemsRequested: cadLoadingState.itemsRequested + pointCloudLoadingState.itemsRequested,
+              itemsCulled: cadLoadingState.itemsCulled + pointCloudLoadingState.itemsCulled
+            };
+            return state;
+          }),
           distinctUntilChanged((x, y) => x.itemsLoaded === y.itemsLoaded && x.itemsRequested === y.itemsRequested)
         )
         .subscribe(this.notifyLoadingStateChanged.bind(this), error =>

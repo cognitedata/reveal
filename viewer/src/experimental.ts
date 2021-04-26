@@ -8,12 +8,11 @@ export { RevealManager } from './public/RevealManager';
 export { createLocalRevealManager, createCdfRevealManager } from './public/createRevealManager';
 // TODO 2020-05-15 larsmoa: reveal.CadNode is _internal_ and should not be exported
 export { CadNode } from './datamodels/cad';
-export { NodeAppearance, NodeAppearanceProvider, DefaultNodeAppearance } from './datamodels/cad';
+export { NodeAppearance, DefaultNodeAppearance } from './datamodels/cad';
 // CAD
 
-export { CadModelMetadata, SsaoEffect, SsaoPassType, SuggestedCameraConfig } from './datamodels/cad/';
+export { CadModelMetadata, SuggestedCameraConfig } from './datamodels/cad/';
 export { SectorMetadata } from './datamodels/cad/sector/types';
-export { CadRenderHints } from './datamodels/cad/rendering/CadRenderHints';
 export { CadLoadingHints } from './datamodels/cad/CadLoadingHints';
 export { intersectCadNodes } from './datamodels/cad/picking';
 

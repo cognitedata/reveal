@@ -2,6 +2,9 @@
  * Copyright 2021 Cognite AS
  */
 export { CombinedNodeSet } from './CombinedNodeSet';
-export { FixedNodeSet } from './FixedNodeSet';
+export { ByNodePropertyNodeSet } from './ByNodePropertyNodeSet';
+export { ByTreeIndexNodeSet } from './ByTreeIndexNodeSet';
+export { InvertedNodeSet } from './InvertedNodeSet';
 export { NodeSet } from './NodeSet';
-export { NodeStyleProvider } from './NodeStyleProvider';
+export { NodeAppearanceProvider } from './NodeAppearanceProvider';
+export { ByAssetNodeSet } from './ByAssetNodeSet';

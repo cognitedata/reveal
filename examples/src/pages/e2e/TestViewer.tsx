@@ -6,6 +6,7 @@ import CameraControls from 'camera-controls';
 import { resizeRendererToDisplaySize } from '../../utils/sceneHelpers';
 import { CanvasWrapper } from '../../components/styled';
 import * as reveal from '@cognite/reveal/experimental';
+import { defaultRenderOptions, RenderOptions } from '@cognite/reveal';
 
 type CadModelEnv = {
   modelType: 'cad';
@@ -37,7 +38,6 @@ type PropsCad<T = TestEnvCad> = {
   // Otherwise it complains that arg is any (unless you pass modelType='cad').
   // TS doesn't infer correct type when prop is undefined here :(
   modelType?: 'cad';
-  nodeAppearanceProvider?: reveal.NodeAppearanceProvider;
   modifyTestEnv?: (env: T) => TestEnvModified<T> | void;
 };
 type PropsPointCloud<T = TestEnvPointCloud> = {
@@ -60,6 +60,7 @@ export function TestViewer(props: Props) {
     isLoading: true,
     itemsLoaded: 0,
     itemsRequested: 0,
+    itemsCulled: 0
   });
 
   const setupLoadingStateHandler = (
@@ -116,13 +117,23 @@ export function TestViewer(props: Props) {
 
       let scene = new THREE.Scene();
 
-      const defaultNodeAppearanceProvider: reveal.NodeAppearanceProvider = {
-        styleNode() {
-          return reveal.DefaultNodeAppearance.Default;
-        },
+      const renderOptions: RenderOptions = {
+        ...defaultRenderOptions, 
+        ssaoRenderParameters: {
+          depthCheckBias: 0.0,
+          sampleRadius: 0.0,
+          sampleSize: 1
+        }
       };
 
-      revealManager = reveal.createLocalRevealManager({ logMetrics: false });
+      let renderer = new THREE.WebGLRenderer({
+        canvas: canvas.current,
+      });
+      renderer.setClearColor('#444');
+      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.localClippingEnabled = true;
+
+      revealManager = reveal.createLocalRevealManager(renderer, scene, { logMetrics: false, renderOptions: renderOptions });
       setupLoadingStateHandler(revealManager);
 
       let model: reveal.internal.PointCloudNode | reveal.CadNode;
@@ -133,18 +144,10 @@ export function TestViewer(props: Props) {
         model = await revealManager.addModel(
           'cad',
           modelUrl,
-          props.nodeAppearanceProvider || defaultNodeAppearanceProvider
         );
       }
 
       scene.add(model);
-
-      let renderer = new THREE.WebGLRenderer({
-        canvas: canvas.current,
-      });
-      renderer.setClearColor('#444');
-      renderer.setPixelRatio(window.devicePixelRatio);
-      renderer.localClippingEnabled = true;
 
       let cameraConfig = getCameraConfig(model);
 
@@ -201,7 +204,7 @@ export function TestViewer(props: Props) {
         }
 
         if (controlsNeedUpdate || revealManager.needsRedraw || needsResize) {
-          revealManager.render(renderer, camera, scene);
+          revealManager.render(camera);
 
           if (testEnv.postRender) {
             testEnv.postRender();

@@ -30,7 +30,13 @@ import { Cognite3DModel } from './Cognite3DModel';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
 import { RevealManager } from '../RevealManager';
 import { createCdfRevealManager } from '../createRevealManager';
-import { DisposedDelegate, SceneRenderedDelegate, SectorNodeIdToTreeIndexMapLoadedEvent } from '../types';
+import {
+  defaultRenderOptions,
+  DisposedDelegate,
+  SceneRenderedDelegate,
+  SsaoParameters,
+  SsaoSampleQuality
+} from '../types';
 
 import { CdfModelDataClient } from '../../utilities/networking/CdfModelDataClient';
 import { assertNever, BoundingBoxClipper, File3dFormat, LoadingState } from '../../utilities';
@@ -50,6 +56,7 @@ import {
   RevealOptions
 } from '../..';
 import { PropType } from '../../utilities/reflection';
+import { CadModelSectorLoadStatistics } from '../../datamodels/cad/CadModelSectorLoadStatistics';
 
 type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered' | 'disposed';
 
@@ -116,13 +123,16 @@ export class Cognite3DViewer {
   private readonly models: CogniteModelBase[] = [];
   private readonly extraObjects: THREE.Object3D[] = [];
 
+  private readonly _automaticNearFarPlane: boolean;
+  private readonly _automaticControlsSensitivity: boolean;
+
   private isDisposed = false;
 
   private readonly renderController: RenderController;
   private latestRequestId: number = -1;
   private readonly clock = new THREE.Clock();
   private _slicingNeedsUpdate: boolean = false;
-  private _geometryFilters: GeometryFilter[] = [];
+  private _geometryFilters: [Cognite3DModel, GeometryFilter][] = [];
 
   private readonly spinner: Spinner;
 
@@ -170,6 +180,13 @@ export class Cognite3DViewer {
     this._revealManager.cadBudget = budget;
   }
 
+  /**
+   * @internal
+   */
+  public get cadLoadedStatistics(): CadModelSectorLoadStatistics {
+    return this._revealManager.cadLoadedStatistics;
+  }
+
   constructor(options: Cognite3DViewerOptions) {
     if (options.enableCache) {
       throw new NotSupportedInMigrationWrapperError('Cache is not supported');
@@ -179,6 +196,9 @@ export class Cognite3DViewer {
     }
 
     this._renderer = options.renderer || new THREE.WebGLRenderer();
+    this._automaticNearFarPlane = options.automaticCameraNearFar !== undefined ? options.automaticCameraNearFar : true;
+    this._automaticControlsSensitivity =
+      options.automaticControlsSensitivity !== undefined ? options.automaticControlsSensitivity : true;
 
     this.canvas.style.width = '640px';
     this.canvas.style.height = '480px';
@@ -197,8 +217,11 @@ export class Cognite3DViewer {
     this.camera.lookAt(new THREE.Vector3());
 
     this.scene = new THREE.Scene();
+    this.scene.autoUpdate = false;
     this.controls = new ComboControls(this.camera, this.canvas);
     this.controls.dollyFactor = 0.992;
+    this.controls.minDistance = 1.0;
+    this.controls.maxDistance = 100.0;
     this.controls.addEventListener('cameraChange', event => {
       const { position, target } = event.camera;
       this._events.cameraChange.fire(position.clone(), target.clone());
@@ -209,7 +232,7 @@ export class Cognite3DViewer {
 
     const revealOptions = createRevealManagerOptions(options);
 
-    this._revealManager = createCdfRevealManager(this.sdkClient, revealOptions);
+    this._revealManager = createCdfRevealManager(this.sdkClient, this._renderer, this.scene, revealOptions);
     this.startPointerEventListeners();
 
     this._revealManager.setRenderTarget(
@@ -229,7 +252,7 @@ export class Cognite3DViewer {
             this.spinner.hide();
           }
           if (options.onLoading) {
-            options.onLoading(loadingState.itemsLoaded, loadingState.itemsRequested);
+            options.onLoading(loadingState.itemsLoaded, loadingState.itemsRequested, loadingState.itemsCulled);
           }
         },
         error =>
@@ -450,29 +473,21 @@ export class Cognite3DViewer {
     if (options.onComplete) {
       throw new NotSupportedInMigrationWrapperError('onComplete is not supported');
     }
-    if (options.geometryFilter) {
-      this._geometryFilters.push(options.geometryFilter);
-      this.setSlicingPlanes(this._revealManager.clippingPlanes);
-    }
     const { modelId, revisionId } = options;
     const cadNode = await this._revealManager.addModel('cad', {
       modelId,
       revisionId
     });
+
     const model3d = new Cognite3DModel(modelId, revisionId, cadNode, this.sdkClient);
     this.models.push(model3d);
     this.scene.add(model3d);
-    this._subscription.add(
-      fromEventPattern<SectorNodeIdToTreeIndexMapLoadedEvent>(
-        h => this._revealManager.on('nodeIdToTreeIndexMapLoaded', h),
-        h => this._revealManager.off('nodeIdToTreeIndexMapLoaded', h)
-      ).subscribe(event => {
-        // TODO 2020-07-05 larsmoa: Fix a better way of identifying a model than blobUrl
-        if (event.blobUrl === cadNode.cadModelMetadata.blobUrl) {
-          model3d.updateNodeIdMaps(event.nodeIdToTreeIndexMap);
-        }
-      })
-    );
+
+    if (options.geometryFilter) {
+      const geometryFilter = transformGeometryFilterToModelSpace(options.geometryFilter, model3d);
+      this._geometryFilters.push([model3d, geometryFilter]);
+      this.updateSlicingPlanes();
+    }
 
     return model3d;
   }
@@ -500,10 +515,10 @@ export class Cognite3DViewer {
       throw new NotSupportedInMigrationWrapperError('geometryFilter is not supported for point clouds');
     }
     if (options.orthographicCamera) {
-      throw new NotSupportedInMigrationWrapperError('ortographicsCamera is not supported');
+      throw new NotSupportedInMigrationWrapperError('ortographicsCamera is not supported for point clouds');
     }
     if (options.onComplete) {
-      throw new NotSupportedInMigrationWrapperError('onComplete is not supported');
+      throw new NotSupportedInMigrationWrapperError('onComplete is not supported for point clouds');
     }
 
     const { modelId, revisionId } = options;
@@ -535,6 +550,7 @@ export class Cognite3DViewer {
     switch (model.type) {
       case 'cad':
         const cadModel = model as Cognite3DModel;
+        this.removeGeometryFilterForModel(cadModel);
         this._revealManager.removeModel(model.type, cadModel.cadNode);
         return;
 
@@ -601,6 +617,7 @@ export class Cognite3DViewer {
       return;
     }
     this.scene.add(object);
+    object.updateMatrixWorld(true);
     this.extraObjects.push(object);
     this.renderController.redraw();
     this.triggerUpdateCameraNearAndFar(true);
@@ -673,7 +690,10 @@ export class Cognite3DViewer {
    */
   setSlicingPlanes(slicingPlanes: THREE.Plane[]): void {
     const geometryFilterPlanes = this._geometryFilters
-      .map(x => new BoundingBoxClipper(x.boundingBox).clippingPlanes)
+      .map(x => {
+        const [, filter] = x;
+        return new BoundingBoxClipper(filter.boundingBox).clippingPlanes;
+      })
       .reduce((a, b) => a.concat(b), []);
 
     const combinedSlicingPlanes = slicingPlanes.concat(geometryFilterPlanes);
@@ -759,6 +779,16 @@ export class Cognite3DViewer {
       return;
     }
     this.controls.setState(this.getCameraPosition(), target);
+  }
+
+  /**
+   * Gets the camera controller. See https://www.npmjs.com/package/@cognite/three-combo-controls
+   * for documentation. Note that by default the `minDistance` setting of the controls will
+   * be automatic. This can be disabled using {@link Cognite3DViewerOptions.automaticControlsSensitivity}.
+   * @version new in 1.4.0
+   */
+  get cameraControls(): ComboControls {
+    return this.controls;
   }
 
   /**
@@ -956,12 +986,12 @@ export class Cognite3DViewer {
 
     const { width: originalWidth, height: originalHeight } = this.canvas;
 
-    const screenshotCamera = this.camera.clone();
+    const screenshotCamera = this.camera.clone() as THREE.PerspectiveCamera;
     adjustCamera(screenshotCamera, width, height);
 
     this.renderer.setSize(width, height);
     this.renderer.render(this.scene, screenshotCamera);
-    this._revealManager.render(this.renderer, screenshotCamera, this.scene);
+    this._revealManager.render(screenshotCamera);
     const url = this.renderer.domElement.toDataURL();
 
     this.renderer.setSize(originalWidth, originalHeight);
@@ -1190,7 +1220,7 @@ export class Cognite3DViewer {
         const frameNumber = this.renderer.info.render.frame;
         const start = Date.now();
         this.triggerUpdateCameraNearAndFar();
-        this._revealManager.render(this.renderer, this.camera, this.scene);
+        this._revealManager.render(this.camera);
         renderController.clearNeedsRedraw();
         this._revealManager.resetRedraw();
         this._slicingNeedsUpdate = false;
@@ -1246,6 +1276,10 @@ export class Cognite3DViewer {
     if (this.isDisposed) {
       return;
     }
+    if (!this._automaticControlsSensitivity && !this._automaticNearFarPlane) {
+      return;
+    }
+
     const {
       combinedBbox,
       bbox,
@@ -1259,13 +1293,17 @@ export class Cognite3DViewer {
     combinedBbox.makeEmpty();
     this.models.forEach(model => {
       model.getModelBoundingBox(bbox);
-      combinedBbox.expandByPoint(bbox.min);
-      combinedBbox.expandByPoint(bbox.max);
+      if (!bbox.isEmpty()) {
+        combinedBbox.expandByPoint(bbox.min);
+        combinedBbox.expandByPoint(bbox.max);
+      }
     });
     this.extraObjects.forEach(obj => {
       bbox.setFromObject(obj);
-      combinedBbox.expandByPoint(bbox.min);
-      combinedBbox.expandByPoint(bbox.max);
+      if (!bbox.isEmpty()) {
+        combinedBbox.expandByPoint(bbox.min);
+        combinedBbox.expandByPoint(bbox.max);
+      }
     });
     getBoundingBoxCorners(combinedBbox, corners);
     camera.getWorldPosition(cameraPosition);
@@ -1297,15 +1335,19 @@ export class Cognite3DViewer {
     }
 
     // Apply
-    camera.near = near;
-    camera.far = far;
-    camera.updateProjectionMatrix();
-    // The minDistance of the camera controller determines at which distance
-    // we will push the target in front of us instead of getting closer to it.
-    // This is also used to determine the speed of the camera when flying with ASDW.
-    // We want to either let it be controlled by the near plane if we are far away,
-    // but no more than a fraction of the bounding box of the system if inside
-    this.controls.minDistance = Math.min(Math.max(diagonal * 0.02, 0.1 * near), 10.0);
+    if (this._automaticNearFarPlane) {
+      camera.near = near;
+      camera.far = far;
+      camera.updateProjectionMatrix();
+    }
+    if (this._automaticControlsSensitivity) {
+      // The minDistance of the camera controller determines at which distance
+      // we will push the target in front of us instead of getting closer to it.
+      // This is also used to determine the speed of the camera when flying with ASDW.
+      // We want to either let it be controlled by the near plane if we are far away,
+      // but no more than a fraction of the bounding box of the system if inside
+      this.controls.minDistance = Math.min(Math.max(diagonal * 0.02, 0.1 * near), 10.0);
+    }
   }
 
   /** @private */
@@ -1429,6 +1471,28 @@ export class Cognite3DViewer {
     // on hover callback
     canvas.addEventListener('mousemove', onHoverCallback);
   };
+
+  /**
+   * Removes a geometry filter for the model provided.
+   * @param model
+   */
+  private removeGeometryFilterForModel(model: Cognite3DModel) {
+    const filterIndex = this._geometryFilters.findIndex(x => {
+      const [candidateModel] = x;
+      return candidateModel === model;
+    });
+    if (filterIndex >= 0) {
+      this._geometryFilters.splice(filterIndex, 0);
+      this.updateSlicingPlanes();
+    }
+  }
+
+  /**
+   * Updates slicing planes. Must be called after manipulating geometry filters.
+   */
+  private updateSlicingPlanes() {
+    this.setSlicingPlanes(this._revealManager.clippingPlanes);
+  }
 }
 
 function adjustCamera(camera: THREE.Camera, width: number, height: number) {
@@ -1482,10 +1546,16 @@ function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions): Reve
   const revealOptions: RevealOptions = { internal: {} };
   revealOptions.internal = { sectorCuller: viewerOptions._sectorCuller };
   const { antiAliasing, multiSampleCount } = determineAntiAliasingMode(viewerOptions.antiAliasingHint);
+  const ssaoRenderParameters = determineSsaoRenderParameters(viewerOptions.ssaoQualityHint);
+  const edgeDetectionParameters = {
+    enabled: viewerOptions.enableEdges ?? defaultRenderOptions.edgeDetectionParameters.enabled
+  };
 
   revealOptions.renderOptions = {
     antiAliasing,
-    multiSampleCountHint: multiSampleCount
+    multiSampleCountHint: multiSampleCount,
+    ssaoRenderParameters,
+    edgeDetectionParameters
   };
   return revealOptions;
 }
@@ -1520,4 +1590,41 @@ function determineAntiAliasingMode(
       // Ensures there is a compile error if a case is missing
       assertNever(mode, `Unsupported anti-aliasing mode: ${mode}`);
   }
+}
+
+type SsaoQuality = PropType<Cognite3DViewerOptions, 'ssaoQualityHint'>;
+function determineSsaoRenderParameters(quality: SsaoQuality): SsaoParameters {
+  const ssaoParameters = { ...defaultRenderOptions.ssaoRenderParameters };
+  switch (quality) {
+    case undefined:
+      break;
+    case 'medium':
+      ssaoParameters.sampleSize = SsaoSampleQuality.Medium;
+      break;
+    case 'high':
+      ssaoParameters.sampleSize = SsaoSampleQuality.High;
+      break;
+    case 'veryhigh':
+      ssaoParameters.sampleSize = SsaoSampleQuality.VeryHigh;
+      break;
+    case 'disabled':
+      ssaoParameters.sampleSize = SsaoSampleQuality.None;
+      break;
+
+    default:
+      assertNever(quality, `Unexpected SSAO quality mode: '${quality}'`);
+  }
+
+  return ssaoParameters;
+}
+
+function transformGeometryFilterToModelSpace(filter: GeometryFilter, model: Cognite3DModel): GeometryFilter {
+  if (filter.boundingBox === undefined || filter.isBoundingBoxInModelCoordinates) {
+    return filter;
+  }
+
+  const min = model.mapFromCdfToModelCoordinates(filter.boundingBox.min);
+  const max = model.mapFromCdfToModelCoordinates(filter.boundingBox.max);
+  const modelSpaceBounds = new THREE.Box3().setFromPoints([min, max]);
+  return { ...filter, boundingBox: modelSpaceBounds };
 }

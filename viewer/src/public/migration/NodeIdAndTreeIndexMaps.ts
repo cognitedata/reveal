@@ -213,12 +213,6 @@ export class NodeIdAndTreeIndexMaps {
     return mapped;
   }
 
-  updateMaps(nodeIdToTreeIndexMap: Map<number, number>) {
-    for (const [nodeId, treeIndex] of nodeIdToTreeIndexMap) {
-      this.add(nodeId, treeIndex);
-    }
-  }
-
   add(nodeId: number, treeIndex: number) {
     this.nodeIdToTreeIndexMap.set(nodeId, treeIndex);
     this.treeIndexToNodeIdMap.set(treeIndex, nodeId);

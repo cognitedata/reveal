@@ -7,435 +7,17 @@
 
 ## Index
 
-### Enumerations
+### Modules
 
-* [AntiAliasingMode](#enumsantialiasingmodemd)
-* [PotreePointColorType](#enumspotreepointcolortypemd)
-* [PotreePointShape](#enumspotreepointshapemd)
-* [PotreePointSizeType](#enumspotreepointsizetypemd)
-* [WellKnownAsprsPointClassCodes](#enumswellknownasprspointclasscodesmd)
-
-### Classes
-
-* [BoundingBoxClipper](#classesboundingboxclippermd)
-* [Cognite3DModel](#classescognite3dmodelmd)
-* [Cognite3DViewer](#classescognite3dviewermd)
-* [CognitePointCloudModel](#classescognitepointcloudmodelmd)
-* [NotSupportedInMigrationWrapperError](#classesnotsupportedinmigrationwrappererrormd)
-
-### Interfaces
-
-* [AddModelOptions](#interfacesaddmodeloptionsmd)
-* [CadModelMetadata](#interfacescadmodelmetadatamd)
-* [CadRenderHints](#interfacescadrenderhintsmd)
-* [Cognite3DViewerOptions](#interfacescognite3dvieweroptionsmd)
-* [CogniteModelBase](#interfacescognitemodelbasemd)
-* [GeometryFilter](#interfacesgeometryfiltermd)
-* [IntersectionFromPixelOptions](#interfacesintersectionfrompixeloptionsmd)
-* [NodeAppearanceProvider](#interfacesnodeappearanceprovidermd)
-
-### Type aliases
-
-* [CadIntersection](#cadintersection)
-* [CadLoadingHints](#cadloadinghints)
-* [CadModelBudget](#cadmodelbudget)
-* [CameraChangeDelegate](#camerachangedelegate)
-* [CameraConfiguration](#cameraconfiguration)
-* [Color](#color)
-* [Intersection](#intersection)
-* [LoadingStateChangeListener](#loadingstatechangelistener)
-* [OnLoadingCallback](#onloadingcallback)
-* [PointCloudIntersection](#pointcloudintersection)
-* [PointerEventDelegate](#pointereventdelegate)
-* [RenderOptions](#renderoptions)
-* [RevealOptions](#revealoptions)
-* [SceneRenderedDelegate](#scenerendereddelegate)
-* [SectorNodeIdToTreeIndexMapLoadedEvent](#sectornodeidtotreeindexmaploadedevent)
-* [SectorNodeIdToTreeIndexMapLoadedListener](#sectornodeidtotreeindexmaploadedlistener)
-* [SupportedModelTypes](#supportedmodeltypes)
-
-### Object literals
-
-* [defaultRenderOptions](#const-defaultrenderoptions)
-* [revealEnv](#const-revealenv)
-
-## Type aliases
-
-###  CadIntersection
-
-Ƭ **CadIntersection**: *object*
-
-*Defined in [viewer/src/public/migration/types.ts:121](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/types.ts#L121)*
-
-#### Type declaration:
-
-* **distanceToCamera**: *number*
-
-* **model**: *[Cognite3DModel](#classescognite3dmodelmd)*
-
-* **point**: *Vector3*
-
-* **treeIndex**: *number*
-
-* **type**: *"cad"*
-
-___
-
-###  CadLoadingHints
-
-Ƭ **CadLoadingHints**: *object*
-
-*Defined in [viewer/src/datamodels/cad/CadLoadingHints.ts:9](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/datamodels/cad/CadLoadingHints.ts#L9)*
-
-Hints that are used to modify how CAD sectors are loaded.
-
-**`property`** `suspendLoading` - disables loading of sectors.
-
-#### Type declaration:
-
-* **suspendLoading**? : *undefined | false | true*
-
-___
-
-###  CadModelBudget
-
-Ƭ **CadModelBudget**: *object*
-
-*Defined in [viewer/src/public/migration/types.ts:205](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/types.ts#L205)*
-
-Represents a measurement of how much geometry can be loaded.
-
-#### Type declaration:
-
-* **geometryDownloadSizeBytes**: *number*
-
-* **highDetailProximityThreshold**: *number*
-
-* **maximumNumberOfDrawCalls**: *number*
-
-___
-
-###  CameraChangeDelegate
-
-Ƭ **CameraChangeDelegate**: *function*
-
-*Defined in [viewer/src/public/migration/types.ts:190](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/types.ts#L190)*
-
-Delegate for camera update events.
-
-**`module`** @cognite/reveal
-
-**`see`** [Cognite3DViewer.on](#on).
-
-#### Type declaration:
-
-▸ (`position`: Vector3, `target`: Vector3): *void*
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`position` | Vector3 |
-`target` | Vector3 |
-
-___
-
-###  CameraConfiguration
-
-Ƭ **CameraConfiguration**: *object*
-
-*Defined in [viewer/src/utilities/types.ts:40](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/utilities/types.ts#L40)*
-
-Represents a camera configuration, consisting of a camera position and target.
-
-#### Type declaration:
-
-* **position**: *Vector3*
-
-* **target**: *Vector3*
-
-___
-
-###  Color
-
-Ƭ **Color**: *object*
-
-*Defined in [viewer/src/public/migration/types.ts:14](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/types.ts#L14)*
-
-**`module`** @cognite/reveal
-
-#### Type declaration:
-
-* **b**: *number*
-
-* **g**: *number*
-
-* **r**: *number*
-
-___
-
-###  Intersection
-
-Ƭ **Intersection**: *[CadIntersection](#cadintersection) | [PointCloudIntersection](#pointcloudintersection)*
-
-*Defined in [viewer/src/public/migration/types.ts:171](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/types.ts#L171)*
-
-Represents the result from [Cognite3DViewer.getIntersectionFromPixel](#getintersectionfrompixel).
-
-**`module`** @cognite/reveal
-
-___
-
-###  LoadingStateChangeListener
-
-Ƭ **LoadingStateChangeListener**: *function*
-
-*Defined in [viewer/src/public/types.ts:82](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/types.ts#L82)*
-
-Handler for events about data being loaded.
-
-#### Type declaration:
-
-▸ (`loadingState`: LoadingState): *any*
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`loadingState` | LoadingState |
-
-___
-
-###  OnLoadingCallback
-
-Ƭ **OnLoadingCallback**: *function*
-
-*Defined in [viewer/src/public/migration/types.ts:24](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/types.ts#L24)*
-
-Callback to monitor downloaded requests and progress.
-Use OnLoadingCallback instead of onProgress/onComplete.
-
-**`module`** @cognite/reveal
-
-#### Type declaration:
-
-▸ (`itemsDownloaded`: number, `itemsRequested`: number): *void*
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`itemsDownloaded` | number |
-`itemsRequested` | number |
-
-___
-
-###  PointCloudIntersection
-
-Ƭ **PointCloudIntersection**: *object*
-
-*Defined in [viewer/src/public/migration/types.ts:144](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/types.ts#L144)*
-
-#### Type declaration:
-
-* **distanceToCamera**: *number*
-
-* **model**: *[CognitePointCloudModel](#classescognitepointcloudmodelmd)*
-
-* **point**: *Vector3*
-
-* **pointIndex**: *number*
-
-* **type**: *"pointcloud"*
-
-___
-
-###  PointerEventDelegate
-
-Ƭ **PointerEventDelegate**: *function*
-
-*Defined in [viewer/src/public/migration/types.ts:183](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/types.ts#L183)*
-
-Delegate for pointer events.
-
-**`module`** @cognite/reveal
-
-**`see`** [Cognite3DViewer.on](#on).
-
-#### Type declaration:
-
-▸ (`event`: object): *void*
-
-**Parameters:**
-
-▪ **event**: *object*
-
-Name | Type |
------- | ------ |
-`offsetX` | number |
-`offsetY` | number |
-
-___
-
-###  RenderOptions
-
-Ƭ **RenderOptions**: *object*
-
-*Defined in [viewer/src/public/types.ts:28](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/types.ts#L28)*
-
-Options and hints for how the Reveal viewer applies rendering effects.
-
-#### Type declaration:
-
-* **antiAliasing**? : *[AntiAliasingMode](#enumsantialiasingmodemd)*
-
-* **multiSampleCountHint**? : *undefined | number*
-
-___
-
-###  RevealOptions
-
-Ƭ **RevealOptions**: *object*
-
-*Defined in [viewer/src/public/types.ts:53](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/types.ts#L53)*
-
-**`property`** logMetrics Might be used to disable usage statistics.
-
-**`property`** nodeAppearanceProvider Style node by tree-index.
-
-**`property`** internal Internals are for internal usage only (like unit-testing).
-
-#### Type declaration:
-
-* **internal**? : *undefined | object*
-
-* **logMetrics**? : *undefined | false | true*
-
-* **nodeAppearanceProvider**? : *[NodeAppearanceProvider](#interfacesnodeappearanceprovidermd)*
-
-* **renderOptions**? : *[RenderOptions](#renderoptions)*
-
-___
-
-###  SceneRenderedDelegate
-
-Ƭ **SceneRenderedDelegate**: *function*
-
-*Defined in [viewer/src/public/migration/types.ts:197](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/types.ts#L197)*
-
-Delegate for rendering events.
-
-**`module`** @cognite/reveal
-
-**`see`** {@link @Cognite3DViewer.on}.
-
-#### Type declaration:
-
-▸ (`event`: object): *void*
-
-**Parameters:**
-
-▪ **event**: *object*
-
-Name | Type |
------- | ------ |
-`frameNumber` | number |
-`renderTime` | number |
-
-___
-
-###  SectorNodeIdToTreeIndexMapLoadedEvent
-
-Ƭ **SectorNodeIdToTreeIndexMapLoadedEvent**: *object*
-
-*Defined in [viewer/src/public/types.ts:69](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/types.ts#L69)*
-
-Event notifying about a nodeId -> treeIndex map being loaded
-as a result of parsing a sector.
-
-**`property`** blobUrl Identifies the model the nodeID map was loaded for.
-
-**`property`** nodeIdToTreeIndexMap Map defining a mapping from nodeId to treeIndex.
-
-#### Type declaration:
-
-* **blobUrl**: *string*
-
-* **nodeIdToTreeIndexMap**: *Map‹number, number›*
-
-___
-
-###  SectorNodeIdToTreeIndexMapLoadedListener
-
-Ƭ **SectorNodeIdToTreeIndexMapLoadedListener**: *function*
-
-*Defined in [viewer/src/public/types.ts:77](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/types.ts#L77)*
-
-Handler for SectorNodeIdToTreeIndexMapLoadedEvent.
-
-#### Type declaration:
-
-▸ (`event`: [SectorNodeIdToTreeIndexMapLoadedEvent](#sectornodeidtotreeindexmaploadedevent)): *void*
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`event` | [SectorNodeIdToTreeIndexMapLoadedEvent](#sectornodeidtotreeindexmaploadedevent) |
-
-___
-
-###  SupportedModelTypes
-
-Ƭ **SupportedModelTypes**: *"pointcloud" | "cad"*
-
-*Defined in [viewer/src/datamodels/base/SupportedModelTypes.ts:4](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/datamodels/base/SupportedModelTypes.ts#L4)*
-
-## Object literals
-
-### `Const` defaultRenderOptions
-
-### ▪ **defaultRenderOptions**: *object*
-
-*Defined in [viewer/src/public/types.ts:43](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/types.ts#L43)*
-
-Defaults for {@ref RevealRenderOptions}.
-
-###  antiAliasing
-
-• **antiAliasing**: *[FXAA](#fxaa)* = AntiAliasingMode.FXAA
-
-*Defined in [viewer/src/public/types.ts:44](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/types.ts#L44)*
-
-###  multiSampleCountHint
-
-• **multiSampleCountHint**: *number* = 1
-
-*Defined in [viewer/src/public/types.ts:45](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/types.ts#L45)*
-
-___
-
-### `Const` revealEnv
-
-### ▪ **revealEnv**: *object*
-
-*Defined in [viewer/src/revealEnv.ts:9](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/revealEnv.ts#L9)*
-
-Used to specify custom url for worker/wasm files
-in cases when you need the latest local files or CDN is blocked by CSP.
-
-###  publicPath
-
-• **publicPath**: *string* = ""
-
-*Defined in [viewer/src/revealEnv.ts:10](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/revealEnv.ts#L10)*
+* ["index"](#modules_index_md)
+* ["tools"](#modules_tools_md)
 
 # Classes
 
 
-<a name="classesboundingboxclippermd"></a>
+<a name="classes_index_boundingboxclippermd"></a>
 
-[@cognite/reveal](#readmemd) › [BoundingBoxClipper](#classesboundingboxclippermd)
+[@cognite/reveal](#readmemd) › ["index"](#modules_index_md) › [BoundingBoxClipper](#classes_index_boundingboxclippermd)
 
 ## Class: BoundingBoxClipper
 
@@ -464,9 +46,9 @@ in cases when you need the latest local files or CDN is blocked by CSP.
 
 ####  constructor
 
-\+ **new BoundingBoxClipper**(`box?`: THREE.Box3, `intersection?`: undefined | false | true): *[BoundingBoxClipper](#classesboundingboxclippermd)*
+\+ **new BoundingBoxClipper**(`box?`: THREE.Box3, `intersection?`: undefined | false | true): *[BoundingBoxClipper](#classes_index_boundingboxclippermd)*
 
-*Defined in [viewer/src/utilities/BoundingBoxClipper.ts:17](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/utilities/BoundingBoxClipper.ts#L17)*
+*Defined in [viewer/src/utilities/BoundingBoxClipper.ts:17](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/utilities/BoundingBoxClipper.ts#L17)*
 
 **Parameters:**
 
@@ -475,7 +57,7 @@ Name | Type |
 `box?` | THREE.Box3 |
 `intersection?` | undefined &#124; false &#124; true |
 
-**Returns:** *[BoundingBoxClipper](#classesboundingboxclippermd)*
+**Returns:** *[BoundingBoxClipper](#classes_index_boundingboxclippermd)*
 
 ### Accessors
 
@@ -483,7 +65,7 @@ Name | Type |
 
 • **get clippingPlanes**(): *Plane‹›[]*
 
-*Defined in [viewer/src/utilities/BoundingBoxClipper.ts:115](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/utilities/BoundingBoxClipper.ts#L115)*
+*Defined in [viewer/src/utilities/BoundingBoxClipper.ts:115](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/utilities/BoundingBoxClipper.ts#L115)*
 
 **Returns:** *Plane‹›[]*
 
@@ -493,13 +75,13 @@ ___
 
 • **get intersection**(): *boolean*
 
-*Defined in [viewer/src/utilities/BoundingBoxClipper.ts:84](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/utilities/BoundingBoxClipper.ts#L84)*
+*Defined in [viewer/src/utilities/BoundingBoxClipper.ts:84](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/utilities/BoundingBoxClipper.ts#L84)*
 
 **Returns:** *boolean*
 
 • **set intersection**(`value`: boolean): *void*
 
-*Defined in [viewer/src/utilities/BoundingBoxClipper.ts:79](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/utilities/BoundingBoxClipper.ts#L79)*
+*Defined in [viewer/src/utilities/BoundingBoxClipper.ts:79](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/utilities/BoundingBoxClipper.ts#L79)*
 
 **Parameters:**
 
@@ -515,13 +97,13 @@ ___
 
 • **get maxX**(): *number*
 
-*Defined in [viewer/src/utilities/BoundingBoxClipper.ts:57](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/utilities/BoundingBoxClipper.ts#L57)*
+*Defined in [viewer/src/utilities/BoundingBoxClipper.ts:57](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/utilities/BoundingBoxClipper.ts#L57)*
 
 **Returns:** *number*
 
 • **set maxX**(`x`: number): *void*
 
-*Defined in [viewer/src/utilities/BoundingBoxClipper.ts:52](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/utilities/BoundingBoxClipper.ts#L52)*
+*Defined in [viewer/src/utilities/BoundingBoxClipper.ts:52](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/utilities/BoundingBoxClipper.ts#L52)*
 
 **Parameters:**
 
@@ -537,13 +119,13 @@ ___
 
 • **get maxY**(): *number*
 
-*Defined in [viewer/src/utilities/BoundingBoxClipper.ts:66](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/utilities/BoundingBoxClipper.ts#L66)*
+*Defined in [viewer/src/utilities/BoundingBoxClipper.ts:66](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/utilities/BoundingBoxClipper.ts#L66)*
 
 **Returns:** *number*
 
 • **set maxY**(`y`: number): *void*
 
-*Defined in [viewer/src/utilities/BoundingBoxClipper.ts:61](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/utilities/BoundingBoxClipper.ts#L61)*
+*Defined in [viewer/src/utilities/BoundingBoxClipper.ts:61](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/utilities/BoundingBoxClipper.ts#L61)*
 
 **Parameters:**
 
@@ -559,13 +141,13 @@ ___
 
 • **get maxZ**(): *number*
 
-*Defined in [viewer/src/utilities/BoundingBoxClipper.ts:75](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/utilities/BoundingBoxClipper.ts#L75)*
+*Defined in [viewer/src/utilities/BoundingBoxClipper.ts:75](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/utilities/BoundingBoxClipper.ts#L75)*
 
 **Returns:** *number*
 
 • **set maxZ**(`z`: number): *void*
 
-*Defined in [viewer/src/utilities/BoundingBoxClipper.ts:70](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/utilities/BoundingBoxClipper.ts#L70)*
+*Defined in [viewer/src/utilities/BoundingBoxClipper.ts:70](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/utilities/BoundingBoxClipper.ts#L70)*
 
 **Parameters:**
 
@@ -581,13 +163,13 @@ ___
 
 • **get minX**(): *number*
 
-*Defined in [viewer/src/utilities/BoundingBoxClipper.ts:30](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/utilities/BoundingBoxClipper.ts#L30)*
+*Defined in [viewer/src/utilities/BoundingBoxClipper.ts:30](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/utilities/BoundingBoxClipper.ts#L30)*
 
 **Returns:** *number*
 
 • **set minX**(`x`: number): *void*
 
-*Defined in [viewer/src/utilities/BoundingBoxClipper.ts:25](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/utilities/BoundingBoxClipper.ts#L25)*
+*Defined in [viewer/src/utilities/BoundingBoxClipper.ts:25](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/utilities/BoundingBoxClipper.ts#L25)*
 
 **Parameters:**
 
@@ -603,13 +185,13 @@ ___
 
 • **get minY**(): *number*
 
-*Defined in [viewer/src/utilities/BoundingBoxClipper.ts:39](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/utilities/BoundingBoxClipper.ts#L39)*
+*Defined in [viewer/src/utilities/BoundingBoxClipper.ts:39](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/utilities/BoundingBoxClipper.ts#L39)*
 
 **Returns:** *number*
 
 • **set minY**(`y`: number): *void*
 
-*Defined in [viewer/src/utilities/BoundingBoxClipper.ts:34](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/utilities/BoundingBoxClipper.ts#L34)*
+*Defined in [viewer/src/utilities/BoundingBoxClipper.ts:34](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/utilities/BoundingBoxClipper.ts#L34)*
 
 **Parameters:**
 
@@ -625,13 +207,13 @@ ___
 
 • **get minZ**(): *number*
 
-*Defined in [viewer/src/utilities/BoundingBoxClipper.ts:48](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/utilities/BoundingBoxClipper.ts#L48)*
+*Defined in [viewer/src/utilities/BoundingBoxClipper.ts:48](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/utilities/BoundingBoxClipper.ts#L48)*
 
 **Returns:** *number*
 
 • **set minZ**(`z`: number): *void*
 
-*Defined in [viewer/src/utilities/BoundingBoxClipper.ts:43](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/utilities/BoundingBoxClipper.ts#L43)*
+*Defined in [viewer/src/utilities/BoundingBoxClipper.ts:43](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/utilities/BoundingBoxClipper.ts#L43)*
 
 **Parameters:**
 
@@ -642,9 +224,9 @@ Name | Type |
 **Returns:** *void*
 
 
-<a name="classescognite3dmodelmd"></a>
+<a name="classes_index_cognite3dmodelmd"></a>
 
-[@cognite/reveal](#readmemd) › [Cognite3DModel](#classescognite3dmodelmd)
+[@cognite/reveal](#readmemd) › ["index"](#modules_index_md) › [Cognite3DModel](#classes_index_cognite3dmodelmd)
 
 ## Class: Cognite3DModel
 
@@ -660,7 +242,7 @@ Represents a single 3D CAD model loaded from CDF.
 
 ### Implements
 
-* [CogniteModelBase](#interfacescognitemodelbasemd)
+* [CogniteModelBase](#interfaces_index_cognitemodelbasemd)
 
 ### Index
 
@@ -673,7 +255,6 @@ Represents a single 3D CAD model loaded from CDF.
 #### Accessors
 
 * [loadingHints](#loadinghints)
-* [renderHints](#renderhints)
 
 #### Methods
 
@@ -728,7 +309,7 @@ Represents a single 3D CAD model loaded from CDF.
 
 • **modelId**: *number*
 
-*Defined in [viewer/src/public/migration/Cognite3DModel.ts:59](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DModel.ts#L59)*
+*Defined in [viewer/src/public/migration/Cognite3DModel.ts:46](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DModel.ts#L46)*
 
 The CDF model ID of the model.
 
@@ -738,7 +319,7 @@ ___
 
 • **revisionId**: *number*
 
-*Defined in [viewer/src/public/migration/Cognite3DModel.ts:63](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DModel.ts#L63)*
+*Defined in [viewer/src/public/migration/Cognite3DModel.ts:50](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DModel.ts#L50)*
 
 The CDF revision ID of the model.
 
@@ -748,11 +329,11 @@ ___
 
 • **type**: *[SupportedModelTypes](#supportedmodeltypes)* = "cad"
 
-*Implementation of [CogniteModelBase](#interfacescognitemodelbasemd).[type](#type)*
+*Implementation of [CogniteModelBase](#interfaces_index_cognitemodelbasemd).[type](#type)*
 
 *Overrides void*
 
-*Defined in [viewer/src/public/migration/Cognite3DModel.ts:26](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DModel.ts#L26)*
+*Defined in [viewer/src/public/migration/Cognite3DModel.ts:26](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DModel.ts#L26)*
 
 ### Accessors
 
@@ -760,7 +341,7 @@ ___
 
 • **get loadingHints**(): *[CadLoadingHints](#cadloadinghints)*
 
-*Defined in [viewer/src/public/migration/Cognite3DModel.ts:45](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DModel.ts#L45)*
+*Defined in [viewer/src/public/migration/Cognite3DModel.ts:32](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DModel.ts#L32)*
 
 Get settings used for loading pipeline.
 
@@ -768,7 +349,7 @@ Get settings used for loading pipeline.
 
 • **set loadingHints**(`hints`: [CadLoadingHints](#cadloadinghints)): *void*
 
-*Defined in [viewer/src/public/migration/Cognite3DModel.ts:52](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DModel.ts#L52)*
+*Defined in [viewer/src/public/migration/Cognite3DModel.ts:39](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DModel.ts#L39)*
 
 Specify settings for loading pipeline.
 
@@ -780,39 +361,13 @@ Name | Type |
 
 **Returns:** *void*
 
-___
-
-####  renderHints
-
-• **get renderHints**(): *[CadRenderHints](#interfacescadrenderhintsmd)*
-
-*Defined in [viewer/src/public/migration/Cognite3DModel.ts:31](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DModel.ts#L31)*
-
-Get settings used for rendering.
-
-**Returns:** *[CadRenderHints](#interfacescadrenderhintsmd)*
-
-• **set renderHints**(`hints`: [CadRenderHints](#interfacescadrenderhintsmd)): *void*
-
-*Defined in [viewer/src/public/migration/Cognite3DModel.ts:38](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DModel.ts#L38)*
-
-Specify settings for rendering.
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`hints` | [CadRenderHints](#interfacescadrenderhintsmd) |
-
-**Returns:** *void*
-
 ### Methods
 
 ####  deselectAllNodes
 
 ▸ **deselectAllNodes**(): *void*
 
-*Defined in [viewer/src/public/migration/Cognite3DModel.ts:573](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DModel.ts#L573)*
+*Defined in [viewer/src/public/migration/Cognite3DModel.ts:559](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DModel.ts#L559)*
 
 Removes selection from all nodes.
 
@@ -824,15 +379,17 @@ ___
 
 ▸ **deselectNode**(`nodeId`: number): *Promise‹void›*
 
-*Defined in [viewer/src/public/migration/Cognite3DModel.ts:542](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DModel.ts#L542)*
+*Defined in [viewer/src/public/migration/Cognite3DModel.ts:528](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DModel.ts#L528)*
 
 Removes selection from the node by node ID.
 
+**`deprecated`** Use [Cognite3DModel.deselectNodeByTreeIndex](#deselectnodebytreeindex).
+
 **Parameters:**
 
-Name | Type | Description |
------- | ------ | ------ |
-`nodeId` | number |   |
+Name | Type |
+------ | ------ |
+`nodeId` | number |
 
 **Returns:** *Promise‹void›*
 
@@ -842,7 +399,7 @@ ___
 
 ▸ **deselectNodeByTreeIndex**(`treeIndex`: number, `applyToChildren`: boolean): *Promise‹number›*
 
-*Defined in [viewer/src/public/migration/Cognite3DModel.ts:552](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DModel.ts#L552)*
+*Defined in [viewer/src/public/migration/Cognite3DModel.ts:538](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DModel.ts#L538)*
 
 Removes selection from the node by tree index.
 
@@ -861,9 +418,9 @@ ___
 
 ▸ **dispose**(): *void*
 
-*Implementation of [CogniteModelBase](#interfacescognitemodelbasemd)*
+*Implementation of [CogniteModelBase](#interfaces_index_cognitemodelbasemd)*
 
-*Defined in [viewer/src/public/migration/Cognite3DModel.ts:161](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DModel.ts#L161)*
+*Defined in [viewer/src/public/migration/Cognite3DModel.ts:154](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DModel.ts#L154)*
 
 Cleans up used resources.
 
@@ -875,7 +432,7 @@ ___
 
 ▸ **getBoundingBox**(`_nodeId?`: undefined | number, `_box?`: THREE.Box3): *Box3*
 
-*Defined in [viewer/src/public/migration/Cognite3DModel.ts:190](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DModel.ts#L190)*
+*Defined in [viewer/src/public/migration/Cognite3DModel.ts:183](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DModel.ts#L183)*
 
 **`deprecated`** Use [Cognite3DModel.getModelBoundingBox](#getmodelboundingbox) or [Cognite3DModel.getBoundingBoxByTreeIndex](#getboundingboxbytreeindex).
 
@@ -896,7 +453,7 @@ ___
 
 ▸ **getBoundingBoxByNodeId**(`nodeId`: number, `box?`: THREE.Box3): *Promise‹Box3›*
 
-*Defined in [viewer/src/public/migration/Cognite3DModel.ts:278](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DModel.ts#L278)*
+*Defined in [viewer/src/public/migration/Cognite3DModel.ts:263](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DModel.ts#L263)*
 
 Fetches a bounding box from the CDF by the nodeId.
 
@@ -927,7 +484,7 @@ ___
 
 ▸ **getBoundingBoxByTreeIndex**(`treeIndex`: number, `box?`: THREE.Box3): *Promise‹Box3›*
 
-*Defined in [viewer/src/public/migration/Cognite3DModel.ts:317](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DModel.ts#L317)*
+*Defined in [viewer/src/public/migration/Cognite3DModel.ts:302](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DModel.ts#L302)*
 
 Determine the bounding box of the node identified by the tree index provided. Note that this
 function uses the CDF API to look up the bounding box.
@@ -959,9 +516,9 @@ ___
 
 ▸ **getCameraConfiguration**(): *[CameraConfiguration](#cameraconfiguration) | undefined*
 
-*Implementation of [CogniteModelBase](#interfacescognitemodelbasemd)*
+*Implementation of [CogniteModelBase](#interfaces_index_cognitemodelbasemd)*
 
-*Defined in [viewer/src/public/migration/Cognite3DModel.ts:232](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DModel.ts#L232)*
+*Defined in [viewer/src/public/migration/Cognite3DModel.ts:225](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DModel.ts#L225)*
 
 Retrieves the camera position and target stored for the model. Typically this
 is used to store a good starting position for a model. Returns `undefined` if there
@@ -975,9 +532,9 @@ ___
 
 ▸ **getModelBoundingBox**(`outBbox?`: THREE.Box3, `restrictToMostGeometry?`: undefined | false | true): *Box3*
 
-*Implementation of [CogniteModelBase](#interfacescognitemodelbasemd)*
+*Implementation of [CogniteModelBase](#interfaces_index_cognitemodelbasemd)*
 
-*Defined in [viewer/src/public/migration/Cognite3DModel.ts:216](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DModel.ts#L216)*
+*Defined in [viewer/src/public/migration/Cognite3DModel.ts:209](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DModel.ts#L209)*
 
 Determines the full bounding box of the model.
 
@@ -1011,9 +568,9 @@ ___
 
 ▸ **getModelTransformation**(`out?`: THREE.Matrix4): *Matrix4*
 
-*Implementation of [CogniteModelBase](#interfacescognitemodelbasemd)*
+*Implementation of [CogniteModelBase](#interfaces_index_cognitemodelbasemd)*
 
-*Defined in [viewer/src/public/migration/Cognite3DModel.ts:250](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DModel.ts#L250)*
+*Defined in [viewer/src/public/migration/Cognite3DModel.ts:243](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DModel.ts#L243)*
 
 Gets transformation matrix of the model.
 
@@ -1033,7 +590,7 @@ ___
 
 ▸ **getNodeColor**(`_nodeId`: number): *Promise‹[Color](#color)›*
 
-*Defined in [viewer/src/public/migration/Cognite3DModel.ts:393](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DModel.ts#L393)*
+*Defined in [viewer/src/public/migration/Cognite3DModel.ts:378](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DModel.ts#L378)*
 
 Not supported.
 
@@ -1055,7 +612,7 @@ ___
 
 ▸ **getSubtreeNodeIds**(`_nodeId`: number, `_subtreeSize?`: undefined | number): *Promise‹number[]›*
 
-*Defined in [viewer/src/public/migration/Cognite3DModel.ts:171](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DModel.ts#L171)*
+*Defined in [viewer/src/public/migration/Cognite3DModel.ts:164](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DModel.ts#L164)*
 
 **`deprecated`** 
 
@@ -1076,7 +633,7 @@ ___
 
 ▸ **getSubtreeTreeIndices**(`treeIndex`: number): *Promise‹number[]›*
 
-*Defined in [viewer/src/public/migration/Cognite3DModel.ts:179](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DModel.ts#L179)*
+*Defined in [viewer/src/public/migration/Cognite3DModel.ts:172](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DModel.ts#L172)*
 
 Get array of subtree tree indices.
 
@@ -1094,7 +651,7 @@ ___
 
 ▸ **ghostAllNodes**(): *void*
 
-*Defined in [viewer/src/public/migration/Cognite3DModel.ts:688](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DModel.ts#L688)*
+*Defined in [viewer/src/public/migration/Cognite3DModel.ts:674](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DModel.ts#L674)*
 
 Enable ghost mode for all nodes in the model, making the whole model be rendered transparent
 and in gray.
@@ -1109,7 +666,7 @@ ___
 
 ▸ **ghostNodeByTreeIndex**(`treeIndex`: number, `applyToChildren`: boolean): *Promise‹number›*
 
-*Defined in [viewer/src/public/migration/Cognite3DModel.ts:640](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DModel.ts#L640)*
+*Defined in [viewer/src/public/migration/Cognite3DModel.ts:626](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DModel.ts#L626)*
 
 Enables ghost mode for the tree index given, making the object appear transparent and gray.
 Note that ghosted objects are ignored in ray picking actions.
@@ -1133,7 +690,7 @@ ___
 
 ▸ **hideAllNodes**(`makeGray?`: undefined | false | true): *void*
 
-*Defined in [viewer/src/public/migration/Cognite3DModel.ts:762](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DModel.ts#L762)*
+*Defined in [viewer/src/public/migration/Cognite3DModel.ts:748](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DModel.ts#L748)*
 
 Hides all nodes in the model.
 
@@ -1153,7 +710,7 @@ ___
 
 ▸ **hideNode**(`nodeId`: number, `makeGray?`: undefined | false | true): *Promise‹void›*
 
-*Defined in [viewer/src/public/migration/Cognite3DModel.ts:778](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DModel.ts#L778)*
+*Defined in [viewer/src/public/migration/Cognite3DModel.ts:764](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DModel.ts#L764)*
 
 Hide the node by node ID.
 This method is async because nodeId might be not loaded yet.
@@ -1175,7 +732,7 @@ ___
 
 ▸ **hideNodeByTreeIndex**(`treeIndex`: number, `makeGray?`: undefined | false | true, `applyToChildren`: boolean): *Promise‹number›*
 
-*Defined in [viewer/src/public/migration/Cognite3DModel.ts:791](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DModel.ts#L791)*
+*Defined in [viewer/src/public/migration/Cognite3DModel.ts:777](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DModel.ts#L777)*
 
 Hide the node by tree index.
 
@@ -1199,7 +756,7 @@ ___
 
 ▸ **iterateNodes**(`_action`: function): *void*
 
-*Defined in [viewer/src/public/migration/Cognite3DModel.ts:327](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DModel.ts#L327)*
+*Defined in [viewer/src/public/migration/Cognite3DModel.ts:312](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DModel.ts#L312)*
 
 **`deprecated`** Use [Cognite3DModel.iterateNodesByTreeIndex](#iteratenodesbytreeindex) instead.
 
@@ -1226,7 +783,7 @@ ___
 
 ▸ **iterateNodesByTreeIndex**(`action`: function): *Promise‹void›*
 
-*Defined in [viewer/src/public/migration/Cognite3DModel.ts:343](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DModel.ts#L343)*
+*Defined in [viewer/src/public/migration/Cognite3DModel.ts:328](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DModel.ts#L328)*
 
 Iterates over all nodes in the model and applies the provided action to each node (identified by tree index).
 The passed action is applied incrementally to avoid main thread blocking, meaning that the changes can be partially
@@ -1262,7 +819,7 @@ ___
 
 ▸ **iterateSubtree**(`_nodeId`: number, `_action`: function, `_treeIndex?`: undefined | number, `_subtreeSize?`: undefined | number): *Promise‹boolean›*
 
-*Defined in [viewer/src/public/migration/Cognite3DModel.ts:355](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DModel.ts#L355)*
+*Defined in [viewer/src/public/migration/Cognite3DModel.ts:340](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DModel.ts#L340)*
 
 **`deprecated`** Use [Cognite3DModel.iterateNodesByTreeIndex](#iteratenodesbytreeindex) instead.
 
@@ -1295,7 +852,7 @@ ___
 
 ▸ **iterateSubtreeByTreeIndex**(`treeIndex`: number, `action`: function): *Promise‹void›*
 
-*Defined in [viewer/src/public/migration/Cognite3DModel.ts:382](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DModel.ts#L382)*
+*Defined in [viewer/src/public/migration/Cognite3DModel.ts:367](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DModel.ts#L367)*
 
 Iterates over all nodes in a subtree of the model and applies the provided action to each node
 (identified by tree index). The provided node is included in the visited set.  The passed action
@@ -1338,7 +895,7 @@ ___
 
 ▸ **mapFromCdfToModelCoordinates**(`p`: Vector3, `out?`: THREE.Vector3): *Vector3*
 
-*Defined in [viewer/src/public/migration/Cognite3DModel.ts:137](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DModel.ts#L137)*
+*Defined in [viewer/src/public/migration/Cognite3DModel.ts:125](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DModel.ts#L125)*
 
 Maps a position retrieved from the CDF API (e.g. 3D node information) to
 coordinates in "ThreeJS model space". This is necessary because CDF has a right-handed
@@ -1349,9 +906,11 @@ Z-up coordinate system while ThreeJS uses a right-hand Y-up coordinate system.
 Name | Type | Description |
 ------ | ------ | ------ |
 `p` | Vector3 | The CDF coordinate to transform. |
-`out?` | THREE.Vector3 | Optional preallocated buffer for storing the result.  |
+`out?` | THREE.Vector3 | Optional preallocated buffer for storing the result. May be `p`. |
 
 **Returns:** *Vector3*
+
+Transformed position.
 
 ___
 
@@ -1359,7 +918,7 @@ ___
 
 ▸ **mapNodeIdToTreeIndex**(`nodeId`: CogniteInternalId): *Promise‹number›*
 
-*Defined in [viewer/src/public/migration/Cognite3DModel.ts:824](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DModel.ts#L824)*
+*Defined in [viewer/src/public/migration/Cognite3DModel.ts:810](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DModel.ts#L810)*
 
 Maps a single node ID to tree index. This is useful when you e.g. have a
 node ID from an asset mapping and want to highlight the given asset using
@@ -1384,7 +943,7 @@ ___
 
 ▸ **mapNodeIdsToTreeIndices**(`nodeIds`: CogniteInternalId[]): *Promise‹number[]›*
 
-*Defined in [viewer/src/public/migration/Cognite3DModel.ts:810](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DModel.ts#L810)*
+*Defined in [viewer/src/public/migration/Cognite3DModel.ts:796](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DModel.ts#L796)*
 
 Maps a list of Node IDs to tree indices. This function is useful when you have
 a list of nodes, e.g. from Asset Mappings, that you want to highlight, hide,
@@ -1408,7 +967,7 @@ ___
 
 ▸ **mapPositionFromModelToCdfCoordinates**(`p`: Vector3, `out?`: THREE.Vector3): *Vector3*
 
-*Defined in [viewer/src/public/migration/Cognite3DModel.ts:151](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DModel.ts#L151)*
+*Defined in [viewer/src/public/migration/Cognite3DModel.ts:142](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DModel.ts#L142)*
 
 Maps from a 3D position in "ThreeJS model space" (e.g. a ray intersection coordinate)
 to coordinates in "CDF space". This is necessary because CDF has a right-handed
@@ -1419,9 +978,11 @@ Z-up coordinate system while ThreeJS uses a right-hand Y-up coordinate system.
 Name | Type | Description |
 ------ | ------ | ------ |
 `p` | Vector3 | The ThreeJS coordinate to transform. |
-`out?` | THREE.Vector3 | Optional preallocated buffer for storing the result.  |
+`out?` | THREE.Vector3 | Optional preallocated buffer for storing the result. May be `p`. |
 
 **Returns:** *Vector3*
+
+Transformed position.
 
 ___
 
@@ -1429,7 +990,7 @@ ___
 
 ▸ **mapTreeIndexToNodeId**(`treeIndex`: number): *Promise‹CogniteInternalId›*
 
-*Defined in [viewer/src/public/migration/Cognite3DModel.ts:850](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DModel.ts#L850)*
+*Defined in [viewer/src/public/migration/Cognite3DModel.ts:836](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DModel.ts#L836)*
 
 Maps a single tree index to node ID for use with the API. If you have multiple
 tree indices to map, [mapNodeIdsToTreeIndices](#mapnodeidstotreeindices) is recommended for better
@@ -1453,7 +1014,7 @@ ___
 
 ▸ **mapTreeIndicesToNodeIds**(`treeIndices`: number[]): *Promise‹CogniteInternalId[]›*
 
-*Defined in [viewer/src/public/migration/Cognite3DModel.ts:838](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DModel.ts#L838)*
+*Defined in [viewer/src/public/migration/Cognite3DModel.ts:824](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DModel.ts#L824)*
 
 Maps a list of tree indices to node IDs for use with the Cognite SDK.
 This function is useful if you have a list of tree indices, e.g. from
@@ -1478,7 +1039,7 @@ ___
 
 ▸ **resetAllNodeColors**(): *void*
 
-*Defined in [viewer/src/public/migration/Cognite3DModel.ts:497](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DModel.ts#L497)*
+*Defined in [viewer/src/public/migration/Cognite3DModel.ts:482](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DModel.ts#L482)*
 
 Restore original colors for all nodes.
 
@@ -1490,7 +1051,7 @@ ___
 
 ▸ **resetNodeColor**(`nodeId`: number): *Promise‹void›*
 
-*Defined in [viewer/src/public/migration/Cognite3DModel.ts:451](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DModel.ts#L451)*
+*Defined in [viewer/src/public/migration/Cognite3DModel.ts:436](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DModel.ts#L436)*
 
 Set original node color by node ID.
 This method is async because node ID might be not loaded yet.
@@ -1511,7 +1072,7 @@ ___
 
 ▸ **resetNodeColorByTreeIndex**(`treeIndex`: number, `applyToChildren`: boolean): *Promise‹number›*
 
-*Defined in [viewer/src/public/migration/Cognite3DModel.ts:461](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DModel.ts#L461)*
+*Defined in [viewer/src/public/migration/Cognite3DModel.ts:446](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DModel.ts#L446)*
 
 Set original node color by tree index.
 
@@ -1530,7 +1091,7 @@ ___
 
 ▸ **resetNodeTransformByTreeIndex**(`treeIndex`: number, `applyToChildren`: boolean): *Promise‹number›*
 
-*Defined in [viewer/src/public/migration/Cognite3DModel.ts:614](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DModel.ts#L614)*
+*Defined in [viewer/src/public/migration/Cognite3DModel.ts:600](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DModel.ts#L600)*
 
 Remove override transform of the node by tree index.
 
@@ -1551,7 +1112,7 @@ ___
 
 ▸ **selectNode**(`nodeId`: number): *Promise‹void›*
 
-*Defined in [viewer/src/public/migration/Cognite3DModel.ts:509](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DModel.ts#L509)*
+*Defined in [viewer/src/public/migration/Cognite3DModel.ts:494](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DModel.ts#L494)*
 
 Highlight node by node ID.
 This method is async because node ID might be not loaded yet.
@@ -1572,7 +1133,7 @@ ___
 
 ▸ **selectNodeByTreeIndex**(`treeIndex`: number, `applyToChildren`: boolean): *Promise‹number›*
 
-*Defined in [viewer/src/public/migration/Cognite3DModel.ts:520](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DModel.ts#L520)*
+*Defined in [viewer/src/public/migration/Cognite3DModel.ts:505](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DModel.ts#L505)*
 
 Highlight node by tree index.
 
@@ -1593,7 +1154,7 @@ ___
 
 ▸ **setAllNodeColors**(`r`: number, `g`: number, `b`: number): *void*
 
-*Defined in [viewer/src/public/migration/Cognite3DModel.ts:486](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DModel.ts#L486)*
+*Defined in [viewer/src/public/migration/Cognite3DModel.ts:471](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DModel.ts#L471)*
 
 Overrrides color for all nodes in the scene.
 
@@ -1615,9 +1176,9 @@ ___
 
 ▸ **setModelTransformation**(`matrix`: Matrix4): *void*
 
-*Implementation of [CogniteModelBase](#interfacescognitemodelbasemd)*
+*Implementation of [CogniteModelBase](#interfaces_index_cognitemodelbasemd)*
 
-*Defined in [viewer/src/public/migration/Cognite3DModel.ts:241](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DModel.ts#L241)*
+*Defined in [viewer/src/public/migration/Cognite3DModel.ts:234](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DModel.ts#L234)*
 
 Sets transformation matrix of the model. This overrides the current transformation.
 
@@ -1637,7 +1198,7 @@ ___
 
 ▸ **setNodeColor**(`nodeId`: number, `r`: number, `g`: number, `b`: number): *Promise‹void›*
 
-*Defined in [viewer/src/public/migration/Cognite3DModel.ts:406](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DModel.ts#L406)*
+*Defined in [viewer/src/public/migration/Cognite3DModel.ts:391](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DModel.ts#L391)*
 
 Set node color by node ID.
 This method is async because nodeId might be not loaded yet.
@@ -1661,7 +1222,7 @@ ___
 
 ▸ **setNodeColorByTreeIndex**(`treeIndex`: number, `r`: number, `g`: number, `b`: number, `applyToChildren`: boolean): *Promise‹number›*
 
-*Defined in [viewer/src/public/migration/Cognite3DModel.ts:420](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DModel.ts#L420)*
+*Defined in [viewer/src/public/migration/Cognite3DModel.ts:405](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DModel.ts#L405)*
 
 Update color of a 3D node identified by it's tree index.
 
@@ -1685,7 +1246,7 @@ ___
 
 ▸ **setNodeTransformByTreeIndex**(`treeIndex`: number, `transform`: Matrix4, `applyToChildren`: boolean): *Promise‹number›*
 
-*Defined in [viewer/src/public/migration/Cognite3DModel.ts:586](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DModel.ts#L586)*
+*Defined in [viewer/src/public/migration/Cognite3DModel.ts:572](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DModel.ts#L572)*
 
 Set override transform of the node by tree index.
 
@@ -1707,7 +1268,7 @@ ___
 
 ▸ **showAllNodes**(): *void*
 
-*Defined in [viewer/src/public/migration/Cognite3DModel.ts:751](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DModel.ts#L751)*
+*Defined in [viewer/src/public/migration/Cognite3DModel.ts:737](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DModel.ts#L737)*
 
 Show all the nodes that were hidden by [Cognite3DModel.hideNodeByTreeIndex](#hidenodebytreeindex),
 [Cognite3DModel.hideNode](#hidenode) or [Cognite3DModel.hideAllNodes](#hideallnodes).
@@ -1720,7 +1281,7 @@ ___
 
 ▸ **showNode**(`nodeId`: number): *Promise‹void›*
 
-*Defined in [viewer/src/public/migration/Cognite3DModel.ts:717](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DModel.ts#L717)*
+*Defined in [viewer/src/public/migration/Cognite3DModel.ts:703](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DModel.ts#L703)*
 
 Show the node by node ID, that was hidden by [Cognite3DModel.hideNodeByTreeIndex](#hidenodebytreeindex),
 [Cognite3DModel.hideNode](#hidenode) or [Cognite3DModel.hideAllNodes](#hideallnodes)
@@ -1748,7 +1309,7 @@ ___
 
 ▸ **showNodeByTreeIndex**(`treeIndex`: number, `applyToChildren`: boolean): *Promise‹number›*
 
-*Defined in [viewer/src/public/migration/Cognite3DModel.ts:729](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DModel.ts#L729)*
+*Defined in [viewer/src/public/migration/Cognite3DModel.ts:715](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DModel.ts#L715)*
 
 Show the node by tree index, that was hidden by [Cognite3DModel.hideNodeByTreeIndex](#hidenodebytreeindex),
 [Cognite3DModel.hideNode](#hidenode) or [Cognite3DModel.hideAllNodes](#hideallnodes).
@@ -1770,7 +1331,7 @@ ___
 
 ▸ **unghostAllNodes**(): *void*
 
-*Defined in [viewer/src/public/migration/Cognite3DModel.ts:699](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DModel.ts#L699)*
+*Defined in [viewer/src/public/migration/Cognite3DModel.ts:685](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DModel.ts#L685)*
 
 Disable ghost mode for all nodes in the model.
 
@@ -1784,7 +1345,7 @@ ___
 
 ▸ **unghostNodeByTreeIndex**(`treeIndex`: number, `applyToChildren`: boolean): *Promise‹number›*
 
-*Defined in [viewer/src/public/migration/Cognite3DModel.ts:665](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DModel.ts#L665)*
+*Defined in [viewer/src/public/migration/Cognite3DModel.ts:651](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DModel.ts#L651)*
 
 Disables ghost mode for the tree index given, making the object be rendered normal.
 
@@ -1802,9 +1363,9 @@ Name | Type | Default | Description |
 Promise that resolves to the number of affected nodes.
 
 
-<a name="classescognite3dviewermd"></a>
+<a name="classes_index_cognite3dviewermd"></a>
 
-[@cognite/reveal](#readmemd) › [Cognite3DViewer](#classescognite3dviewermd)
+[@cognite/reveal](#readmemd) › ["index"](#modules_index_md) › [Cognite3DViewer](#classes_index_cognite3dviewermd)
 
 ## Class: Cognite3DViewer
 
@@ -1828,14 +1389,13 @@ const viewer = new Cognite3DViewer({
 
 * [constructor](#constructor)
 
-#### Properties
-
-* [domElement](#domelement)
-
 #### Accessors
 
 * [cadBudget](#cadbudget)
+* [cameraControls](#cameracontrols)
 * [cameraControlsEnabled](#cameracontrolsenabled)
+* [domElement](#domelement)
+* [renderer](#renderer)
 
 #### Methods
 
@@ -1861,6 +1421,7 @@ const viewer = new Cognite3DViewer({
 * [loadCameraFromModel](#loadcamerafrommodel)
 * [off](#off)
 * [on](#on)
+* [removeModel](#removemodel)
 * [removeObject3D](#removeobject3d)
 * [setBackgroundColor](#setbackgroundcolor)
 * [setCameraPosition](#setcameraposition)
@@ -1873,30 +1434,17 @@ const viewer = new Cognite3DViewer({
 
 ####  constructor
 
-\+ **new Cognite3DViewer**(`options`: [Cognite3DViewerOptions](#interfacescognite3dvieweroptionsmd)): *[Cognite3DViewer](#classescognite3dviewermd)*
+\+ **new Cognite3DViewer**(`options`: [Cognite3DViewerOptions](#interfaces_index_cognite3dvieweroptionsmd)): *[Cognite3DViewer](#classes_index_cognite3dviewermd)*
 
-*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:156](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DViewer.ts#L156)*
+*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:188](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DViewer.ts#L188)*
 
 **Parameters:**
 
 Name | Type |
 ------ | ------ |
-`options` | [Cognite3DViewerOptions](#interfacescognite3dvieweroptionsmd) |
+`options` | [Cognite3DViewerOptions](#interfaces_index_cognite3dvieweroptionsmd) |
 
-**Returns:** *[Cognite3DViewer](#classescognite3dviewermd)*
-
-### Properties
-
-####  domElement
-
-• **domElement**: *HTMLElement*
-
-*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:84](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DViewer.ts#L84)*
-
-The DOM element the viewer will insert its rendering canvas into.
-The DOM element can be specified in the options when the viewer is created.
-If not specified, the DOM element will be created automatically.
-The DOM element cannot be changed after the viewer has been created.
+**Returns:** *[Cognite3DViewer](#classes_index_cognite3dviewermd)*
 
 ### Accessors
 
@@ -1904,7 +1452,7 @@ The DOM element cannot be changed after the viewer has been created.
 
 • **get cadBudget**(): *[CadModelBudget](#cadmodelbudget)*
 
-*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:141](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DViewer.ts#L141)*
+*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:166](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DViewer.ts#L166)*
 
 Gets the current budget for downloading geometry for CAD models. Note that this
 budget is shared between all added CAD models and not a per-model budget.
@@ -1915,7 +1463,7 @@ budget is shared between all added CAD models and not a per-model budget.
 
 • **set cadBudget**(`budget`: [CadModelBudget](#cadmodelbudget)): *void*
 
-*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:152](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DViewer.ts#L152)*
+*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:177](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DViewer.ts#L177)*
 
 Sets the current budget for downloading geometry for CAD models. Note that this
 budget is shared between all added CAD models and not a per-model budget.
@@ -1932,11 +1480,27 @@ Name | Type |
 
 ___
 
+####  cameraControls
+
+• **get cameraControls**(): *ComboControls*
+
+*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:790](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DViewer.ts#L790)*
+
+Gets the camera controller. See https://www.npmjs.com/package/@cognite/three-combo-controls
+for documentation. Note that by default the `minDistance` setting of the controls will
+be automatic. This can be disabled using [Cognite3DViewerOptions.automaticControlsSensitivity](#optional-automaticcontrolssensitivity).
+
+**`version`** new in 1.4.0
+
+**Returns:** *ComboControls*
+
+___
+
 ####  cameraControlsEnabled
 
 • **get cameraControlsEnabled**(): *boolean*
 
-*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:706](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DViewer.ts#L706)*
+*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:798](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DViewer.ts#L798)*
 
 Gets wheter camera controls through mouse, touch and keyboard are enabled.
 
@@ -1946,7 +1510,7 @@ Gets wheter camera controls through mouse, touch and keyboard are enabled.
 
 • **set cameraControlsEnabled**(`enabled`: boolean): *void*
 
-*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:716](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DViewer.ts#L716)*
+*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:808](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DViewer.ts#L808)*
 
 Sets wheter camera controls through mouse, touch and keyboard are enabled.
 This can be useful to e.g. temporarily disable navigation when manipulating other
@@ -1962,13 +1526,40 @@ Name | Type |
 
 **Returns:** *void*
 
+___
+
+####  domElement
+
+• **get domElement**(): *HTMLElement*
+
+*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:92](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DViewer.ts#L92)*
+
+The DOM element the viewer will insert its rendering canvas into.
+The DOM element can be specified in the options when the viewer is created.
+If not specified, the DOM element will be created automatically.
+The DOM element cannot be changed after the viewer has been created.
+
+**Returns:** *HTMLElement*
+
+___
+
+####  renderer
+
+• **get renderer**(): *WebGLRenderer*
+
+*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:99](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DViewer.ts#L99)*
+
+Returns the renderer used to produce images from 3D geometry.
+
+**Returns:** *WebGLRenderer*
+
 ### Methods
 
 ####  addCadModel
 
-▸ **addCadModel**(`options`: [AddModelOptions](#interfacesaddmodeloptionsmd)): *Promise‹[Cognite3DModel](#classescognite3dmodelmd)›*
+▸ **addCadModel**(`options`: [AddModelOptions](#interfaces_index_addmodeloptionsmd)): *Promise‹[Cognite3DModel](#classes_index_cognite3dmodelmd)›*
 
-*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:412](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DViewer.ts#L412)*
+*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:466](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DViewer.ts#L466)*
 
 Add a new CAD 3D model to the viewer.
 Call [Cognite3DViewer.fitCameraToModel](#fitcameratomodel) to see the model after the model has loaded.
@@ -1988,17 +1579,17 @@ viewer.fitCameraToModel(model, 0);
 
 Name | Type |
 ------ | ------ |
-`options` | [AddModelOptions](#interfacesaddmodeloptionsmd) |
+`options` | [AddModelOptions](#interfaces_index_addmodeloptionsmd) |
 
-**Returns:** *Promise‹[Cognite3DModel](#classescognite3dmodelmd)›*
+**Returns:** *Promise‹[Cognite3DModel](#classes_index_cognite3dmodelmd)›*
 
 ___
 
 ####  addModel
 
-▸ **addModel**(`options`: [AddModelOptions](#interfacesaddmodeloptionsmd)): *Promise‹[Cognite3DModel](#classescognite3dmodelmd) | [CognitePointCloudModel](#classescognitepointcloudmodelmd)›*
+▸ **addModel**(`options`: [AddModelOptions](#interfaces_index_addmodeloptionsmd)): *Promise‹[Cognite3DModel](#classes_index_cognite3dmodelmd) | [CognitePointCloudModel](#classes_index_cognitepointcloudmodelmd)›*
 
-*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:385](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DViewer.ts#L385)*
+*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:439](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DViewer.ts#L439)*
 
 Add a new model to the viewer.
 Call [Cognite3DViewer.fitCameraToModel](#fitcameratomodel) to see the model after the model has loaded.
@@ -2018,9 +1609,9 @@ viewer.fitCameraToModel(model, 0);
 
 Name | Type |
 ------ | ------ |
-`options` | [AddModelOptions](#interfacesaddmodeloptionsmd) |
+`options` | [AddModelOptions](#interfaces_index_addmodeloptionsmd) |
 
-**Returns:** *Promise‹[Cognite3DModel](#classescognite3dmodelmd) | [CognitePointCloudModel](#classescognitepointcloudmodelmd)›*
+**Returns:** *Promise‹[Cognite3DModel](#classes_index_cognite3dmodelmd) | [CognitePointCloudModel](#classes_index_cognitepointcloudmodelmd)›*
 
 ___
 
@@ -2028,7 +1619,7 @@ ___
 
 ▸ **addObject3D**(`object`: Object3D): *void*
 
-*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:537](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DViewer.ts#L537)*
+*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:615](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DViewer.ts#L615)*
 
 Add a THREE.Object3D to the viewer.
 
@@ -2053,9 +1644,9 @@ ___
 
 ####  addPointCloudModel
 
-▸ **addPointCloudModel**(`options`: [AddModelOptions](#interfacesaddmodeloptionsmd)): *Promise‹[CognitePointCloudModel](#classescognitepointcloudmodelmd)›*
+▸ **addPointCloudModel**(`options`: [AddModelOptions](#interfaces_index_addmodeloptionsmd)): *Promise‹[CognitePointCloudModel](#classes_index_cognitepointcloudmodelmd)›*
 
-*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:464](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DViewer.ts#L464)*
+*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:510](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DViewer.ts#L510)*
 
 Add a new pointcloud 3D model to the viewer.
 Call [Cognite3DViewer.fitCameraToModel](#fitcameratomodel) to see the model after the model has loaded.
@@ -2075,9 +1666,9 @@ viewer.fitCameraToModel(model, 0);
 
 Name | Type |
 ------ | ------ |
-`options` | [AddModelOptions](#interfacesaddmodeloptionsmd) |
+`options` | [AddModelOptions](#interfaces_index_addmodeloptionsmd) |
 
-**Returns:** *Promise‹[CognitePointCloudModel](#classescognitepointcloudmodelmd)›*
+**Returns:** *Promise‹[CognitePointCloudModel](#classes_index_cognitepointcloudmodelmd)›*
 
 ___
 
@@ -2085,11 +1676,11 @@ ___
 
 ▸ **clearCache**(): *void*
 
-*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:1011](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DViewer.ts#L1011)*
+*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:1103](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DViewer.ts#L1103)*
 
 **`deprecated`** There is no cache anymore.
 
-**`throws`** [NotSupportedInMigrationWrapperError](#classesnotsupportedinmigrationwrappererrormd)
+**`throws`** [NotSupportedInMigrationWrapperError](#classes_index_notsupportedinmigrationwrappererrormd)
 
 **Returns:** *void*
 
@@ -2099,7 +1690,7 @@ ___
 
 ▸ **determineModelType**(`modelId`: number, `revisionId`: number): *Promise‹[SupportedModelTypes](#supportedmodeltypes) | ""›*
 
-*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:514](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DViewer.ts#L514)*
+*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:592](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DViewer.ts#L592)*
 
 Use to determine of which type the model is.
 
@@ -2138,7 +1729,7 @@ ___
 
 ▸ **disableKeyboardNavigation**(): *void*
 
-*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:819](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DViewer.ts#L819)*
+*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:911](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DViewer.ts#L911)*
 
 Disables camera movement by pressing WASM or arrows keys.
 
@@ -2150,7 +1741,7 @@ ___
 
 ▸ **dispose**(): *void*
 
-*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:255](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DViewer.ts#L255)*
+*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:291](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DViewer.ts#L291)*
 
 Dispose of WebGL resources. Can be used to free up memory when the viewer is no longer in use.
 
@@ -2168,7 +1759,7 @@ ___
 
 ▸ **enableKeyboardNavigation**(): *void*
 
-*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:812](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DViewer.ts#L812)*
+*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:904](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DViewer.ts#L904)*
 
 Allows to move camera with WASM or arrows keys.
 
@@ -2180,7 +1771,7 @@ ___
 
 ▸ **fitCameraToBoundingBox**(`box`: Box3, `duration?`: undefined | number, `radiusFactor`: number): *void*
 
-*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:782](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DViewer.ts#L782)*
+*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:874](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DViewer.ts#L874)*
 
 Move camera to a place where the content of a bounding box is visible to the camera.
 
@@ -2212,9 +1803,9 @@ ___
 
 ####  fitCameraToModel
 
-▸ **fitCameraToModel**(`model`: [CogniteModelBase](#interfacescognitemodelbasemd), `duration?`: undefined | number): *void*
+▸ **fitCameraToModel**(`model`: [CogniteModelBase](#interfaces_index_cognitemodelbasemd), `duration?`: undefined | number): *void*
 
-*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:758](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DViewer.ts#L758)*
+*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:850](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DViewer.ts#L850)*
 
 Move camera to a place where the 3D model is visible.
 It uses the bounding box of the 3D model and calls [Cognite3DViewer.fitCameraToBoundingBox](#fitcameratoboundingbox).
@@ -2237,7 +1828,7 @@ viewer.fitCameraToModel(model, 0);
 
 Name | Type | Description |
 ------ | ------ | ------ |
-`model` | [CogniteModelBase](#interfacescognitemodelbasemd) | The 3D model. |
+`model` | [CogniteModelBase](#interfaces_index_cognitemodelbasemd) | The 3D model. |
 `duration?` | undefined &#124; number | The duration of the animation moving the camera. Set this to 0 (zero) to disable animation. |
 
 **Returns:** *void*
@@ -2248,7 +1839,7 @@ ___
 
 ▸ **forceRerender**(): *void*
 
-*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:805](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DViewer.ts#L805)*
+*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:897](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DViewer.ts#L897)*
 
 Typically used when you perform some changes and can't see them unless you move camera.
 To fix this forceRerender might be used.
@@ -2259,13 +1850,13 @@ ___
 
 ####  getCamera
 
-▸ **getCamera**(): *Camera*
+▸ **getCamera**(): *PerspectiveCamera*
 
-*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:627](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DViewer.ts#L627)*
+*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:709](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DViewer.ts#L709)*
 
 **`obvious`** 
 
-**Returns:** *Camera*
+**Returns:** *PerspectiveCamera*
 
 The THREE.Camera used for rendering.
 
@@ -2275,7 +1866,7 @@ ___
 
 ▸ **getCameraPosition**(): *Vector3*
 
-*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:643](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DViewer.ts#L643)*
+*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:725](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DViewer.ts#L725)*
 
 **`obvious`** 
 
@@ -2289,7 +1880,7 @@ ___
 
 ▸ **getCameraTarget**(): *Vector3*
 
-*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:654](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DViewer.ts#L654)*
+*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:736](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DViewer.ts#L736)*
 
 **`obvious`** 
 
@@ -2301,9 +1892,9 @@ ___
 
 ####  getIntersectionFromPixel
 
-▸ **getIntersectionFromPixel**(`offsetX`: number, `offsetY`: number, `options?`: [IntersectionFromPixelOptions](#interfacesintersectionfrompixeloptionsmd)): *null | [Intersection](#intersection)*
+▸ **getIntersectionFromPixel**(`offsetX`: number, `offsetY`: number, `options?`: [IntersectionFromPixelOptions](#interfaces_index_intersectionfrompixeloptionsmd)): *null | [Intersection](#intersection)*
 
-*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:946](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DViewer.ts#L946)*
+*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:1038](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DViewer.ts#L1038)*
 
 Raycasting model(s) for finding where the ray intersects with the model.
 
@@ -2343,7 +1934,7 @@ Name | Type | Description |
 ------ | ------ | ------ |
 `offsetX` | number | X coordinate in pixels (relative to the domElement). |
 `offsetY` | number | Y coordinate in pixels (relative to the domElement). |
-`options?` | [IntersectionFromPixelOptions](#interfacesintersectionfrompixeloptionsmd) | Options to control the behaviour of the intersection operation. Optional (new in 1.3.0). |
+`options?` | [IntersectionFromPixelOptions](#interfaces_index_intersectionfrompixeloptionsmd) | Options to control the behaviour of the intersection operation. Optional (new in 1.3.0). |
 
 **Returns:** *null | [Intersection](#intersection)*
 
@@ -2355,7 +1946,7 @@ ___
 
 ▸ **getScene**(): *Scene*
 
-*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:635](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DViewer.ts#L635)*
+*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:717](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DViewer.ts#L717)*
 
 **`obvious`** 
 
@@ -2369,7 +1960,7 @@ ___
 
 ▸ **getScreenshot**(`width`: number, `height`: number): *Promise‹string›*
 
-*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:890](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DViewer.ts#L890)*
+*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:982](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DViewer.ts#L982)*
 
 Take screenshot from the current camera position.
 
@@ -2403,7 +1994,7 @@ ___
 
 ▸ **getVersion**(): *string*
 
-*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:243](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DViewer.ts#L243)*
+*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:279](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DViewer.ts#L279)*
 
 Returns reveal version installed.
 
@@ -2413,9 +2004,9 @@ ___
 
 ####  loadCameraFromModel
 
-▸ **loadCameraFromModel**(`model`: [CogniteModelBase](#interfacescognitemodelbasemd)): *void*
+▸ **loadCameraFromModel**(`model`: [CogniteModelBase](#interfaces_index_cognitemodelbasemd)): *void*
 
-*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:730](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DViewer.ts#L730)*
+*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:822](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DViewer.ts#L822)*
 
 Attempts to load the camera settings from the settings stored for the
 provided model. See [https://docs.cognite.com/api/v1/#operation/get3DRevision](https://docs.cognite.com/api/v1/#operation/get3DRevision)
@@ -2429,7 +2020,7 @@ is used as a fallback.
 
 Name | Type | Description |
 ------ | ------ | ------ |
-`model` | [CogniteModelBase](#interfacescognitemodelbasemd) | The model to load camera settings from.  |
+`model` | [CogniteModelBase](#interfaces_index_cognitemodelbasemd) | The model to load camera settings from.  |
 
 **Returns:** *void*
 
@@ -2439,7 +2030,7 @@ ___
 
 ▸ **off**(`event`: "click" | "hover", `callback`: [PointerEventDelegate](#pointereventdelegate)): *void*
 
-*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:338](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DViewer.ts#L338)*
+*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:386](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DViewer.ts#L386)*
 
 Remove event listener from the viewer.
 Call [Cognite3DViewer.on](#on) to add event listener.
@@ -2460,7 +2051,7 @@ Name | Type | Description |
 
 ▸ **off**(`event`: "cameraChange", `callback`: [CameraChangeDelegate](#camerachangedelegate)): *void*
 
-*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:339](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DViewer.ts#L339)*
+*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:387](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DViewer.ts#L387)*
 
 Remove event listener from the viewer.
 Call [Cognite3DViewer.on](#on) to add event listener.
@@ -2476,7 +2067,7 @@ Name | Type | Description |
 
 ▸ **off**(`event`: "sceneRendered", `callback`: [SceneRenderedDelegate](#scenerendereddelegate)): *void*
 
-*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:340](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DViewer.ts#L340)*
+*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:388](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DViewer.ts#L388)*
 
 Remove event listener from the viewer.
 Call [Cognite3DViewer.on](#on) to add event listener.
@@ -2490,13 +2081,45 @@ Name | Type | Description |
 
 **Returns:** *void*
 
+▸ **off**(`event`: "disposed", `callback`: [DisposedDelegate](#disposeddelegate)): *void*
+
+*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:389](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DViewer.ts#L389)*
+
+Remove event listener from the viewer.
+Call [Cognite3DViewer.on](#on) to add event listener.
+
+**Parameters:**
+
+Name | Type | Description |
+------ | ------ | ------ |
+`event` | "disposed" | - |
+`callback` | [DisposedDelegate](#disposeddelegate) |   |
+
+**Returns:** *void*
+
 ___
 
 ####  on
 
+▸ **on**(`event`: "disposed", `callback`: [DisposedDelegate](#disposeddelegate)): *void*
+
+*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:319](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DViewer.ts#L319)*
+
+Triggered when the viewer is disposed. Listeners should clean up any
+resources held and remove the reference to the viewer.
+
+**Parameters:**
+
+Name | Type | Description |
+------ | ------ | ------ |
+`event` | "disposed" | - |
+`callback` | [DisposedDelegate](#disposeddelegate) |   |
+
+**Returns:** *void*
+
 ▸ **on**(`event`: "click" | "hover", `callback`: [PointerEventDelegate](#pointereventdelegate)): *void*
 
-*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:284](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DViewer.ts#L284)*
+*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:328](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DViewer.ts#L328)*
 
 Add event listener to the viewer.
 Call [Cognite3DViewer.off](#off) to remove an event listener.
@@ -2518,7 +2141,7 @@ Name | Type | Description |
 
 ▸ **on**(`event`: "cameraChange", `callback`: [CameraChangeDelegate](#camerachangedelegate)): *void*
 
-*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:293](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DViewer.ts#L293)*
+*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:337](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DViewer.ts#L337)*
 
 Add event listener to the viewer.
 Call [Cognite3DViewer.off](#off) to remove an event listener.
@@ -2541,7 +2164,7 @@ Name | Type | Description |
 
 ▸ **on**(`event`: "sceneRendered", `callback`: [SceneRenderedDelegate](#scenerendereddelegate)): *void*
 
-*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:299](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DViewer.ts#L299)*
+*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:343](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DViewer.ts#L343)*
 
 Event that is triggered immediatly after the scene has been rendered.
 
@@ -2556,11 +2179,31 @@ Name | Type | Description |
 
 ___
 
+####  removeModel
+
+▸ **removeModel**(`model`: [Cognite3DModel](#classes_index_cognite3dmodelmd) | [CognitePointCloudModel](#classes_index_cognitepointcloudmodelmd)): *void*
+
+*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:541](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DViewer.ts#L541)*
+
+Removes a model that was previously added using [Cognite3DViewer.addModel](#addmodel),
+[Cognite3DViewer.addCadModel](#addcadmodel) or [Cognite3DViewer.addPointCloudModel](#addpointcloudmodel)
+.
+
+**Parameters:**
+
+Name | Type | Description |
+------ | ------ | ------ |
+`model` | [Cognite3DModel](#classes_index_cognite3dmodelmd) &#124; [CognitePointCloudModel](#classes_index_cognitepointcloudmodelmd) |   |
+
+**Returns:** *void*
+
+___
+
 ####  removeObject3D
 
 ▸ **removeObject3D**(`object`: Object3D): *void*
 
-*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:557](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DViewer.ts#L557)*
+*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:636](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DViewer.ts#L636)*
 
 Remove a THREE.Object3D from the viewer.
 
@@ -2585,7 +2228,7 @@ ___
 
 ▸ **setBackgroundColor**(`color`: Color): *void*
 
-*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:574](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DViewer.ts#L574)*
+*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:653](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DViewer.ts#L653)*
 
 Sets the color used as the clear color of the renderer.
 
@@ -2603,7 +2246,7 @@ ___
 
 ▸ **setCameraPosition**(`position`: Vector3): *void*
 
-*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:674](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DViewer.ts#L674)*
+*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:756](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DViewer.ts#L756)*
 
 **`obvious`** 
 
@@ -2631,7 +2274,7 @@ ___
 
 ▸ **setCameraTarget**(`target`: Vector3): *void*
 
-*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:695](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DViewer.ts#L695)*
+*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:777](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DViewer.ts#L777)*
 
 Set camera's target.
 
@@ -2659,7 +2302,7 @@ ___
 
 ▸ **setSlicingPlanes**(`slicingPlanes`: Plane[]): *void*
 
-*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:612](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DViewer.ts#L612)*
+*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:691](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DViewer.ts#L691)*
 
 Sets per-pixel slicing planes. Pixels behind any of the planes will be sliced away.
 
@@ -2704,7 +2347,7 @@ ___
 
 ▸ **worldToScreen**(`point`: Vector3, `normalize?`: undefined | false | true): *Vector2 | null*
 
-*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:857](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DViewer.ts#L857)*
+*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:949](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DViewer.ts#L949)*
 
 Convert a point in world space to its coordinates in the canvas. This can be used to place HTML objects near 3D objects on top of the 3D viewer.
 
@@ -2755,7 +2398,7 @@ ___
 
 ▸ **isBrowserSupported**(): *true*
 
-*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:74](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/Cognite3DViewer.ts#L74)*
+*Defined in [viewer/src/public/migration/Cognite3DViewer.ts:82](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DViewer.ts#L82)*
 
 For now it just always returns true.
 
@@ -2764,9 +2407,9 @@ For now it just always returns true.
 **Returns:** *true*
 
 
-<a name="classescognitepointcloudmodelmd"></a>
+<a name="classes_index_cognitepointcloudmodelmd"></a>
 
-[@cognite/reveal](#readmemd) › [CognitePointCloudModel](#classescognitepointcloudmodelmd)
+[@cognite/reveal](#readmemd) › ["index"](#modules_index_md) › [CognitePointCloudModel](#classes_index_cognitepointcloudmodelmd)
 
 ## Class: CognitePointCloudModel
 
@@ -2782,7 +2425,7 @@ Represents a point clouds model loaded from CDF.
 
 ### Implements
 
-* [CogniteModelBase](#interfacescognitemodelbasemd)
+* [CogniteModelBase](#interfaces_index_cognitemodelbasemd)
 
 ### Index
 
@@ -2817,7 +2460,7 @@ Represents a point clouds model loaded from CDF.
 
 • **modelId**: *number*
 
-*Defined in [viewer/src/public/migration/CognitePointCloudModel.ts:19](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/CognitePointCloudModel.ts#L19)*
+*Defined in [viewer/src/public/migration/CognitePointCloudModel.ts:19](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/CognitePointCloudModel.ts#L19)*
 
 ___
 
@@ -2825,7 +2468,7 @@ ___
 
 • **revisionId**: *number*
 
-*Defined in [viewer/src/public/migration/CognitePointCloudModel.ts:23](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/CognitePointCloudModel.ts#L23)*
+*Defined in [viewer/src/public/migration/CognitePointCloudModel.ts:23](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/CognitePointCloudModel.ts#L23)*
 
 The modelId of the point cloud model in Cognite Data Fusion.
 
@@ -2835,11 +2478,11 @@ ___
 
 • **type**: *[SupportedModelTypes](#supportedmodeltypes)* = "pointcloud"
 
-*Implementation of [CogniteModelBase](#interfacescognitemodelbasemd).[type](#type)*
+*Implementation of [CogniteModelBase](#interfaces_index_cognitemodelbasemd).[type](#type)*
 
 *Overrides void*
 
-*Defined in [viewer/src/public/migration/CognitePointCloudModel.ts:18](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/CognitePointCloudModel.ts#L18)*
+*Defined in [viewer/src/public/migration/CognitePointCloudModel.ts:18](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/CognitePointCloudModel.ts#L18)*
 
 ### Accessors
 
@@ -2847,7 +2490,7 @@ ___
 
 • **get pointBudget**(): *number*
 
-*Defined in [viewer/src/public/migration/CognitePointCloudModel.ts:145](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/CognitePointCloudModel.ts#L145)*
+*Defined in [viewer/src/public/migration/CognitePointCloudModel.ts:145](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/CognitePointCloudModel.ts#L145)*
 
 Returns the current budget measured in number of points.
 
@@ -2855,7 +2498,7 @@ Returns the current budget measured in number of points.
 
 • **set pointBudget**(`count`: number): *void*
 
-*Defined in [viewer/src/public/migration/CognitePointCloudModel.ts:154](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/CognitePointCloudModel.ts#L154)*
+*Defined in [viewer/src/public/migration/CognitePointCloudModel.ts:154](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/CognitePointCloudModel.ts#L154)*
 
 The point budget limits the number of points loaded and rendered at any given time,
 which helps to adapt performance requirements to the capabilities of different hardware.
@@ -2873,17 +2516,17 @@ ___
 
 ####  pointColorType
 
-• **get pointColorType**(): *[PotreePointColorType](#enumspotreepointcolortypemd)*
+• **get pointColorType**(): *[PotreePointColorType](#enums_index_potreepointcolortypemd)*
 
-*Defined in [viewer/src/public/migration/CognitePointCloudModel.ts:161](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/CognitePointCloudModel.ts#L161)*
+*Defined in [viewer/src/public/migration/CognitePointCloudModel.ts:161](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/CognitePointCloudModel.ts#L161)*
 
 Determines how points currently are colored.
 
-**Returns:** *[PotreePointColorType](#enumspotreepointcolortypemd)*
+**Returns:** *[PotreePointColorType](#enums_index_potreepointcolortypemd)*
 
-• **set pointColorType**(`type`: [PotreePointColorType](#enumspotreepointcolortypemd)): *void*
+• **set pointColorType**(`type`: [PotreePointColorType](#enums_index_potreepointcolortypemd)): *void*
 
-*Defined in [viewer/src/public/migration/CognitePointCloudModel.ts:173](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/CognitePointCloudModel.ts#L173)*
+*Defined in [viewer/src/public/migration/CognitePointCloudModel.ts:173](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/CognitePointCloudModel.ts#L173)*
 
 Specifies how points are colored.
 
@@ -2898,7 +2541,7 @@ model.pointColorType = PotreePointColorType.Rgb
 
 Name | Type |
 ------ | ------ |
-`type` | [PotreePointColorType](#enumspotreepointcolortypemd) |
+`type` | [PotreePointColorType](#enums_index_potreepointcolortypemd) |
 
 **Returns:** *void*
 
@@ -2906,27 +2549,27 @@ ___
 
 ####  pointShape
 
-• **get pointShape**(): *[PotreePointShape](#enumspotreepointshapemd)*
+• **get pointShape**(): *[PotreePointShape](#enums_index_potreepointshapemd)*
 
-*Defined in [viewer/src/public/migration/CognitePointCloudModel.ts:200](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/CognitePointCloudModel.ts#L200)*
+*Defined in [viewer/src/public/migration/CognitePointCloudModel.ts:200](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/CognitePointCloudModel.ts#L200)*
 
 Sets the point shape of each rendered point in the point cloud.
 
 **`default`** `PotreePointShape.Circle`
 
-**`see`** [PotreePointShape](#enumspotreepointshapemd).
+**`see`** [PotreePointShape](#enums_index_potreepointshapemd).
 
 **`version`** New in 1.1.0
 
-**Returns:** *[PotreePointShape](#enumspotreepointshapemd)*
+**Returns:** *[PotreePointShape](#enums_index_potreepointshapemd)*
 
-• **set pointShape**(`shape`: [PotreePointShape](#enumspotreepointshapemd)): *void*
+• **set pointShape**(`shape`: [PotreePointShape](#enums_index_potreepointshapemd)): *void*
 
-*Defined in [viewer/src/public/migration/CognitePointCloudModel.ts:209](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/CognitePointCloudModel.ts#L209)*
+*Defined in [viewer/src/public/migration/CognitePointCloudModel.ts:209](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/CognitePointCloudModel.ts#L209)*
 
 Gets the point shape of each rendered point in the point cloud.
 
-**`see`** [PotreePointShape](#enumspotreepointshapemd).
+**`see`** [PotreePointShape](#enums_index_potreepointshapemd).
 
 **`version`** New in 1.1.0
 
@@ -2934,7 +2577,7 @@ Gets the point shape of each rendered point in the point cloud.
 
 Name | Type |
 ------ | ------ |
-`shape` | [PotreePointShape](#enumspotreepointshapemd) |
+`shape` | [PotreePointShape](#enums_index_potreepointshapemd) |
 
 **Returns:** *void*
 
@@ -2944,7 +2587,7 @@ ___
 
 • **get pointSize**(): *number*
 
-*Defined in [viewer/src/public/migration/CognitePointCloudModel.ts:181](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/CognitePointCloudModel.ts#L181)*
+*Defined in [viewer/src/public/migration/CognitePointCloudModel.ts:181](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/CognitePointCloudModel.ts#L181)*
 
 Returns the size of each rendered point in the point cloud.
 
@@ -2954,7 +2597,7 @@ Returns the size of each rendered point in the point cloud.
 
 • **set pointSize**(`size`: number): *void*
 
-*Defined in [viewer/src/public/migration/CognitePointCloudModel.ts:190](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/CognitePointCloudModel.ts#L190)*
+*Defined in [viewer/src/public/migration/CognitePointCloudModel.ts:190](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/CognitePointCloudModel.ts#L190)*
 
 Sets the size of each rendered point in the point cloud.
 
@@ -2976,9 +2619,9 @@ Name | Type |
 
 ▸ **dispose**(): *void*
 
-*Implementation of [CogniteModelBase](#interfacescognitemodelbasemd)*
+*Implementation of [CogniteModelBase](#interfaces_index_cognitemodelbasemd)*
 
-*Defined in [viewer/src/public/migration/CognitePointCloudModel.ts:48](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/CognitePointCloudModel.ts#L48)*
+*Defined in [viewer/src/public/migration/CognitePointCloudModel.ts:48](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/CognitePointCloudModel.ts#L48)*
 
 Used to clean up memory.
 
@@ -2990,9 +2633,9 @@ ___
 
 ▸ **getCameraConfiguration**(): *[CameraConfiguration](#cameraconfiguration) | undefined*
 
-*Implementation of [CogniteModelBase](#interfacescognitemodelbasemd)*
+*Implementation of [CogniteModelBase](#interfaces_index_cognitemodelbasemd)*
 
-*Defined in [viewer/src/public/migration/CognitePointCloudModel.ts:76](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/CognitePointCloudModel.ts#L76)*
+*Defined in [viewer/src/public/migration/CognitePointCloudModel.ts:76](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/CognitePointCloudModel.ts#L76)*
 
 Retrieves the camera position and target stored for the model. Typically this
 is used to store a good starting position for a model. Returns `undefined` if there
@@ -3004,15 +2647,15 @@ ___
 
 ####  getClasses
 
-▸ **getClasses**(): *Array‹number | [WellKnownAsprsPointClassCodes](#enumswellknownasprspointclasscodesmd)›*
+▸ **getClasses**(): *Array‹number | [WellKnownAsprsPointClassCodes](#enums_index_wellknownasprspointclasscodesmd)›*
 
-*Defined in [viewer/src/public/migration/CognitePointCloudModel.ts:138](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/CognitePointCloudModel.ts#L138)*
+*Defined in [viewer/src/public/migration/CognitePointCloudModel.ts:138](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/CognitePointCloudModel.ts#L138)*
 
 Returns a list of sorted classification codes present in the model.
 
 **`version`** New in 1.2.0
 
-**Returns:** *Array‹number | [WellKnownAsprsPointClassCodes](#enumswellknownasprspointclasscodesmd)›*
+**Returns:** *Array‹number | [WellKnownAsprsPointClassCodes](#enums_index_wellknownasprspointclasscodesmd)›*
 
 A sorted list of classification codes from the model.
 
@@ -3022,7 +2665,7 @@ ___
 
 ▸ **getModelBoundingBox**(`outBbox?`: THREE.Box3): *Box3*
 
-*Defined in [viewer/src/public/migration/CognitePointCloudModel.ts:67](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/CognitePointCloudModel.ts#L67)*
+*Defined in [viewer/src/public/migration/CognitePointCloudModel.ts:67](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/CognitePointCloudModel.ts#L67)*
 
 **`example`** 
 ```js
@@ -3051,9 +2694,9 @@ ___
 
 ▸ **getModelTransformation**(`out?`: THREE.Matrix4): *Matrix4*
 
-*Implementation of [CogniteModelBase](#interfacescognitemodelbasemd)*
+*Implementation of [CogniteModelBase](#interfaces_index_cognitemodelbasemd)*
 
-*Defined in [viewer/src/public/migration/CognitePointCloudModel.ts:94](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/CognitePointCloudModel.ts#L94)*
+*Defined in [viewer/src/public/migration/CognitePointCloudModel.ts:94](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/CognitePointCloudModel.ts#L94)*
 
 Gets transformation matrix of the model.
 
@@ -3071,9 +2714,9 @@ ___
 
 ####  hasClass
 
-▸ **hasClass**(`pointClass`: number | [WellKnownAsprsPointClassCodes](#enumswellknownasprspointclasscodesmd)): *boolean*
+▸ **hasClass**(`pointClass`: number | [WellKnownAsprsPointClassCodes](#enums_index_wellknownasprspointclasscodesmd)): *boolean*
 
-*Defined in [viewer/src/public/migration/CognitePointCloudModel.ts:129](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/CognitePointCloudModel.ts#L129)*
+*Defined in [viewer/src/public/migration/CognitePointCloudModel.ts:129](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/CognitePointCloudModel.ts#L129)*
 
 Returns true if the model has values with the given classification class.
 
@@ -3083,7 +2726,7 @@ Returns true if the model has values with the given classification class.
 
 Name | Type | Description |
 ------ | ------ | ------ |
-`pointClass` | number &#124; [WellKnownAsprsPointClassCodes](#enumswellknownasprspointclasscodesmd) | ASPRS classification class code. Either one of the well known classes from [WellKnownAsprsPointClassCodes](#enumswellknownasprspointclasscodesmd) or a number for user defined classes. |
+`pointClass` | number &#124; [WellKnownAsprsPointClassCodes](#enums_index_wellknownasprspointclasscodesmd) | ASPRS classification class code. Either one of the well known classes from [WellKnownAsprsPointClassCodes](#enums_index_wellknownasprspointclasscodesmd) or a number for user defined classes. |
 
 **Returns:** *boolean*
 
@@ -3093,9 +2736,9 @@ ___
 
 ####  isClassVisible
 
-▸ **isClassVisible**(`pointClass`: number | [WellKnownAsprsPointClassCodes](#enumswellknownasprspointclasscodesmd)): *boolean*
+▸ **isClassVisible**(`pointClass`: number | [WellKnownAsprsPointClassCodes](#enums_index_wellknownasprspointclasscodesmd)): *boolean*
 
-*Defined in [viewer/src/public/migration/CognitePointCloudModel.ts:118](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/CognitePointCloudModel.ts#L118)*
+*Defined in [viewer/src/public/migration/CognitePointCloudModel.ts:118](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/CognitePointCloudModel.ts#L118)*
 
 Determines if points from a given class are visible.
 
@@ -3107,7 +2750,7 @@ Determines if points from a given class are visible.
 
 Name | Type | Description |
 ------ | ------ | ------ |
-`pointClass` | number &#124; [WellKnownAsprsPointClassCodes](#enumswellknownasprspointclasscodesmd) | ASPRS classification class code. Either one of the well known classes from [WellKnownAsprsPointClassCodes](#enumswellknownasprspointclasscodesmd) or a number for user defined classes. |
+`pointClass` | number &#124; [WellKnownAsprsPointClassCodes](#enums_index_wellknownasprspointclasscodesmd) | ASPRS classification class code. Either one of the well known classes from [WellKnownAsprsPointClassCodes](#enums_index_wellknownasprspointclasscodesmd) or a number for user defined classes. |
 
 **Returns:** *boolean*
 
@@ -3117,9 +2760,9 @@ ___
 
 ####  setClassVisible
 
-▸ **setClassVisible**(`pointClass`: number | [WellKnownAsprsPointClassCodes](#enumswellknownasprspointclasscodesmd), `visible`: boolean): *void*
+▸ **setClassVisible**(`pointClass`: number | [WellKnownAsprsPointClassCodes](#enums_index_wellknownasprspointclasscodesmd), `visible`: boolean): *void*
 
-*Defined in [viewer/src/public/migration/CognitePointCloudModel.ts:106](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/CognitePointCloudModel.ts#L106)*
+*Defined in [viewer/src/public/migration/CognitePointCloudModel.ts:106](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/CognitePointCloudModel.ts#L106)*
 
 Sets a visible filter on points of a given class.
 
@@ -3131,7 +2774,7 @@ Sets a visible filter on points of a given class.
 
 Name | Type | Description |
 ------ | ------ | ------ |
-`pointClass` | number &#124; [WellKnownAsprsPointClassCodes](#enumswellknownasprspointclasscodesmd) | ASPRS classification class code. Either one of the well known classes from [WellKnownAsprsPointClassCodes](#enumswellknownasprspointclasscodesmd) or a number for user defined classes. |
+`pointClass` | number &#124; [WellKnownAsprsPointClassCodes](#enums_index_wellknownasprspointclasscodesmd) | ASPRS classification class code. Either one of the well known classes from [WellKnownAsprsPointClassCodes](#enums_index_wellknownasprspointclasscodesmd) or a number for user defined classes. |
 `visible` | boolean | Boolean flag that determines if the point class type should be visible or not. |
 
 **Returns:** *void*
@@ -3142,9 +2785,9 @@ ___
 
 ▸ **setModelTransformation**(`transformationMatrix`: Matrix4): *void*
 
-*Implementation of [CogniteModelBase](#interfacescognitemodelbasemd)*
+*Implementation of [CogniteModelBase](#interfaces_index_cognitemodelbasemd)*
 
-*Defined in [viewer/src/public/migration/CognitePointCloudModel.ts:85](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/CognitePointCloudModel.ts#L85)*
+*Defined in [viewer/src/public/migration/CognitePointCloudModel.ts:85](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/CognitePointCloudModel.ts#L85)*
 
 Sets transformation matrix of the model. This overrides the current transformation.
 
@@ -3159,9 +2802,9 @@ Name | Type | Description |
 **Returns:** *void*
 
 
-<a name="classesnotsupportedinmigrationwrappererrormd"></a>
+<a name="classes_index_notsupportedinmigrationwrappererrormd"></a>
 
-[@cognite/reveal](#readmemd) › [NotSupportedInMigrationWrapperError](#classesnotsupportedinmigrationwrappererrormd)
+[@cognite/reveal](#readmemd) › ["index"](#modules_index_md) › [NotSupportedInMigrationWrapperError](#classes_index_notsupportedinmigrationwrappererrormd)
 
 ## Class: NotSupportedInMigrationWrapperError
 
@@ -3193,9 +2836,9 @@ but not in @cognite/reveal.
 
 ####  constructor
 
-\+ **new NotSupportedInMigrationWrapperError**(`message?`: undefined | string): *[NotSupportedInMigrationWrapperError](#classesnotsupportedinmigrationwrappererrormd)*
+\+ **new NotSupportedInMigrationWrapperError**(`message?`: undefined | string): *[NotSupportedInMigrationWrapperError](#classes_index_notsupportedinmigrationwrappererrormd)*
 
-*Defined in [viewer/src/public/migration/NotSupportedInMigrationWrapperError.ts:10](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/NotSupportedInMigrationWrapperError.ts#L10)*
+*Defined in [viewer/src/public/migration/NotSupportedInMigrationWrapperError.ts:10](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/NotSupportedInMigrationWrapperError.ts#L10)*
 
 **Parameters:**
 
@@ -3203,7 +2846,7 @@ Name | Type |
 ------ | ------ |
 `message?` | undefined &#124; string |
 
-**Returns:** *[NotSupportedInMigrationWrapperError](#classesnotsupportedinmigrationwrappererrormd)*
+**Returns:** *[NotSupportedInMigrationWrapperError](#classes_index_notsupportedinmigrationwrappererrormd)*
 
 ### Properties
 
@@ -3211,7 +2854,7 @@ Name | Type |
 
 • **message**: *string*
 
-*Inherited from [NotSupportedInMigrationWrapperError](#classesnotsupportedinmigrationwrappererrormd).[message](#message)*
+*Inherited from [NotSupportedInMigrationWrapperError](#classes_index_notsupportedinmigrationwrappererrormd).[message](#message)*
 
 Defined in documentation/node_modules/typescript/lib/lib.es5.d.ts:974
 
@@ -3221,7 +2864,7 @@ ___
 
 • **name**: *string*
 
-*Inherited from [NotSupportedInMigrationWrapperError](#classesnotsupportedinmigrationwrappererrormd).[name](#name)*
+*Inherited from [NotSupportedInMigrationWrapperError](#classes_index_notsupportedinmigrationwrappererrormd).[name](#name)*
 
 Defined in documentation/node_modules/typescript/lib/lib.es5.d.ts:973
 
@@ -3231,7 +2874,7 @@ ___
 
 • **stack**? : *undefined | string*
 
-*Inherited from [NotSupportedInMigrationWrapperError](#classesnotsupportedinmigrationwrappererrormd).[stack](#optional-stack)*
+*Inherited from [NotSupportedInMigrationWrapperError](#classes_index_notsupportedinmigrationwrappererrormd).[stack](#optional-stack)*
 
 Defined in documentation/node_modules/typescript/lib/lib.es5.d.ts:975
 
@@ -3243,12 +2886,523 @@ ___
 
 Defined in documentation/node_modules/typescript/lib/lib.es5.d.ts:984
 
+
+<a name="classes_tools_debugcameratoolmd"></a>
+
+[@cognite/reveal](#readmemd) › ["tools"](#modules_tools_md) › [DebugCameraTool](#classes_tools_debugcameratoolmd)
+
+## Class: DebugCameraTool
+
+### Hierarchy
+
+* Cognite3DViewerToolBase
+
+  ↳ **DebugCameraTool**
+
+### Index
+
+#### Constructors
+
+* [constructor](#constructor)
+
+#### Methods
+
+* [dispose](#dispose)
+* [hideCameraHelper](#hidecamerahelper)
+* [off](#off)
+* [showCameraHelper](#showcamerahelper)
+
+### Constructors
+
+####  constructor
+
+\+ **new DebugCameraTool**(`viewer`: [Cognite3DViewer](#classes_index_cognite3dviewermd)): *[DebugCameraTool](#classes_tools_debugcameratoolmd)*
+
+*Defined in [viewer/src/tools/DebugCameraTool.ts:18](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/tools/DebugCameraTool.ts#L18)*
+
+**Parameters:**
+
+Name | Type |
+------ | ------ |
+`viewer` | [Cognite3DViewer](#classes_index_cognite3dviewermd) |
+
+**Returns:** *[DebugCameraTool](#classes_tools_debugcameratoolmd)*
+
+### Methods
+
+####  dispose
+
+▸ **dispose**(): *void*
+
+*Overrides [ExplodedViewTool](#classes_tools_explodedviewtoolmd).[dispose](#dispose)*
+
+*Defined in [viewer/src/tools/DebugCameraTool.ts:32](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/tools/DebugCameraTool.ts#L32)*
+
+Removes all elements and detaches from the viewer.
+
+**`override`** 
+
+**Returns:** *void*
+
+___
+
+####  hideCameraHelper
+
+▸ **hideCameraHelper**(): *void*
+
+*Defined in [viewer/src/tools/DebugCameraTool.ts:43](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/tools/DebugCameraTool.ts#L43)*
+
+**Returns:** *void*
+
+___
+
+####  off
+
+▸ **off**(`event`: "disposed", `handler`: function): *void*
+
+*Inherited from [HtmlOverlayTool](#classes_tools_htmloverlaytoolmd).[off](#off)*
+
+*Defined in [viewer/src/tools/Cognite3DViewerToolBase.ts:39](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/tools/Cognite3DViewerToolBase.ts#L39)*
+
+Unregisters an event handler for the 'disposed'-event.
+
+**Parameters:**
+
+▪ **event**: *"disposed"*
+
+▪ **handler**: *function*
+
+▸ (): *void*
+
+**Returns:** *void*
+
+___
+
+####  showCameraHelper
+
+▸ **showCameraHelper**(): *void*
+
+*Defined in [viewer/src/tools/DebugCameraTool.ts:37](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/tools/DebugCameraTool.ts#L37)*
+
+**Returns:** *void*
+
+
+<a name="classes_tools_debugloadedsectorstoolmd"></a>
+
+[@cognite/reveal](#readmemd) › ["tools"](#modules_tools_md) › [DebugLoadedSectorsTool](#classes_tools_debugloadedsectorstoolmd)
+
+## Class: DebugLoadedSectorsTool
+
+### Hierarchy
+
+* Cognite3DViewerToolBase
+
+  ↳ **DebugLoadedSectorsTool**
+
+### Index
+
+#### Constructors
+
+* [constructor](#constructor)
+
+#### Methods
+
+* [dispose](#dispose)
+* [off](#off)
+* [setOptions](#setoptions)
+* [showSectorBoundingBoxes](#showsectorboundingboxes)
+
+### Constructors
+
+####  constructor
+
+\+ **new DebugLoadedSectorsTool**(`viewer`: [Cognite3DViewer](#classes_index_cognite3dviewermd), `options`: [DebugLoadedSectorsToolOptions](#debugloadedsectorstooloptions)): *[DebugLoadedSectorsTool](#classes_tools_debugloadedsectorstoolmd)*
+
+*Defined in [viewer/src/tools/DebugLoadedSectorsTool.ts:27](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/tools/DebugLoadedSectorsTool.ts#L27)*
+
+**Parameters:**
+
+Name | Type | Default |
+------ | ------ | ------ |
+`viewer` | [Cognite3DViewer](#classes_index_cognite3dviewermd) | - |
+`options` | [DebugLoadedSectorsToolOptions](#debugloadedsectorstooloptions) | {} |
+
+**Returns:** *[DebugLoadedSectorsTool](#classes_tools_debugloadedsectorstoolmd)*
+
+### Methods
+
+####  dispose
+
+▸ **dispose**(): *void*
+
+*Overrides [ExplodedViewTool](#classes_tools_explodedviewtoolmd).[dispose](#dispose)*
+
+*Defined in [viewer/src/tools/DebugLoadedSectorsTool.ts:48](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/tools/DebugLoadedSectorsTool.ts#L48)*
+
+**Returns:** *void*
+
+___
+
+####  off
+
+▸ **off**(`event`: "disposed", `handler`: function): *void*
+
+*Inherited from [HtmlOverlayTool](#classes_tools_htmloverlaytoolmd).[off](#off)*
+
+*Defined in [viewer/src/tools/Cognite3DViewerToolBase.ts:39](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/tools/Cognite3DViewerToolBase.ts#L39)*
+
+Unregisters an event handler for the 'disposed'-event.
+
+**Parameters:**
+
+▪ **event**: *"disposed"*
+
+▪ **handler**: *function*
+
+▸ (): *void*
+
+**Returns:** *void*
+
+___
+
+####  setOptions
+
+▸ **setOptions**(`options`: [DebugLoadedSectorsToolOptions](#debugloadedsectorstooloptions)): *void*
+
+*Defined in [viewer/src/tools/DebugLoadedSectorsTool.ts:37](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/tools/DebugLoadedSectorsTool.ts#L37)*
+
+**Parameters:**
+
+Name | Type |
+------ | ------ |
+`options` | [DebugLoadedSectorsToolOptions](#debugloadedsectorstooloptions) |
+
+**Returns:** *void*
+
+___
+
+####  showSectorBoundingBoxes
+
+▸ **showSectorBoundingBoxes**(`model`: [Cognite3DModel](#classes_index_cognite3dmodelmd)): *void*
+
+*Defined in [viewer/src/tools/DebugLoadedSectorsTool.ts:52](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/tools/DebugLoadedSectorsTool.ts#L52)*
+
+**Parameters:**
+
+Name | Type |
+------ | ------ |
+`model` | [Cognite3DModel](#classes_index_cognite3dmodelmd) |
+
+**Returns:** *void*
+
+
+<a name="classes_tools_explodedviewtoolmd"></a>
+
+[@cognite/reveal](#readmemd) › ["tools"](#modules_tools_md) › [ExplodedViewTool](#classes_tools_explodedviewtoolmd)
+
+## Class: ExplodedViewTool
+
+### Hierarchy
+
+* Cognite3DViewerToolBase
+
+  ↳ **ExplodedViewTool**
+
+### Index
+
+#### Constructors
+
+* [constructor](#constructor)
+
+#### Accessors
+
+* [readyPromise](#readypromise)
+
+#### Methods
+
+* [dispose](#dispose)
+* [expand](#expand)
+* [off](#off)
+* [reset](#reset)
+
+### Constructors
+
+####  constructor
+
+\+ **new ExplodedViewTool**(`treeIndex`: number, `cadModel`: [Cognite3DModel](#classes_index_cognite3dmodelmd)): *[ExplodedViewTool](#classes_tools_explodedviewtoolmd)*
+
+*Defined in [viewer/src/tools/ExplodedViewTool.ts:15](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/tools/ExplodedViewTool.ts#L15)*
+
+**Parameters:**
+
+Name | Type |
+------ | ------ |
+`treeIndex` | number |
+`cadModel` | [Cognite3DModel](#classes_index_cognite3dmodelmd) |
+
+**Returns:** *[ExplodedViewTool](#classes_tools_explodedviewtoolmd)*
+
+### Accessors
+
+####  readyPromise
+
+• **get readyPromise**(): *Promise‹void›*
+
+*Defined in [viewer/src/tools/ExplodedViewTool.ts:13](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/tools/ExplodedViewTool.ts#L13)*
+
+**Returns:** *Promise‹void›*
+
+### Methods
+
+####  dispose
+
+▸ **dispose**(): *void*
+
+*Inherited from [ExplodedViewTool](#classes_tools_explodedviewtoolmd).[dispose](#dispose)*
+
+*Defined in [viewer/src/tools/Cognite3DViewerToolBase.ts:54](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/tools/Cognite3DViewerToolBase.ts#L54)*
+
+Disposes the element and triggeres the 'disposed' event before clearing the list
+of dipose-listeners.
+
+**Returns:** *void*
+
+___
+
+####  expand
+
+▸ **expand**(`expandRadius`: number): *Promise‹void›*
+
+*Defined in [viewer/src/tools/ExplodedViewTool.ts:26](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/tools/ExplodedViewTool.ts#L26)*
+
+**Parameters:**
+
+Name | Type |
+------ | ------ |
+`expandRadius` | number |
+
+**Returns:** *Promise‹void›*
+
+___
+
+####  off
+
+▸ **off**(`event`: "disposed", `handler`: function): *void*
+
+*Inherited from [HtmlOverlayTool](#classes_tools_htmloverlaytoolmd).[off](#off)*
+
+*Defined in [viewer/src/tools/Cognite3DViewerToolBase.ts:39](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/tools/Cognite3DViewerToolBase.ts#L39)*
+
+Unregisters an event handler for the 'disposed'-event.
+
+**Parameters:**
+
+▪ **event**: *"disposed"*
+
+▪ **handler**: *function*
+
+▸ (): *void*
+
+**Returns:** *void*
+
+___
+
+####  reset
+
+▸ **reset**(): *void*
+
+*Defined in [viewer/src/tools/ExplodedViewTool.ts:43](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/tools/ExplodedViewTool.ts#L43)*
+
+**Returns:** *void*
+
+
+<a name="classes_tools_htmloverlaytoolmd"></a>
+
+[@cognite/reveal](#readmemd) › ["tools"](#modules_tools_md) › [HtmlOverlayTool](#classes_tools_htmloverlaytoolmd)
+
+## Class: HtmlOverlayTool
+
+Manages HTMLoverlays for {@see Cognite3DViewer}. Attaches HTML elements to a
+3D position and updates it's position/visibility as user moves the camera. This is
+useful to create HTML overlays to highlight information about key positions in the 3D model.
+
+Attached elements *must* have CSS style 'position: absolute'. It's also recommended
+in most cases to have styles 'pointerEvents: none' and 'touchAction: none' to avoid
+interfering with 3D navigation. Consider also applying 'transform: translate(-50%, -50%)'
+to anchor the center of the element rather than the top-left corner. In some cases the
+`zIndex`-attribute is necessary for the element to appear on top of the viewer.
+
+**`example`** 
+```js
+const el = document.createElement('div');
+el.style.position = 'absolute'; // Required!
+// Anchor to center of element
+el.style.transform = 'translate(-50%, -50%)';
+// Avoid being target for events
+el.style.pointerEvents = 'none;
+el.style.touchAction = 'none';
+// Render in front of other elements
+el.style.zIndex = 10;
+
+el.style.color = 'red';
+el.innerHtml = '<h1>Overlay</h1>';
+
+const overlayTool = new HtmlOverlayTool(viewer);
+overlayTool.add(el, new THREE.Vector3(10, 10, 10));
+// ...
+overlayTool.remove(el);
+// or, to remove all attached elements
+overlayTool.clear();
+
+// detach the tool from the viewer
+overlayTool.dispose();
+```
+
+### Hierarchy
+
+* Cognite3DViewerToolBase
+
+  ↳ **HtmlOverlayTool**
+
+### Index
+
+#### Constructors
+
+* [constructor](#constructor)
+
+#### Methods
+
+* [add](#add)
+* [clear](#clear)
+* [dispose](#dispose)
+* [forceUpdate](#forceupdate)
+* [off](#off)
+* [remove](#remove)
+
+### Constructors
+
+####  constructor
+
+\+ **new HtmlOverlayTool**(`viewer`: [Cognite3DViewer](#classes_index_cognite3dviewermd)): *[HtmlOverlayTool](#classes_tools_htmloverlaytoolmd)*
+
+*Defined in [viewer/src/tools/HtmlOverlayTool.ts:91](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/tools/HtmlOverlayTool.ts#L91)*
+
+**Parameters:**
+
+Name | Type |
+------ | ------ |
+`viewer` | [Cognite3DViewer](#classes_index_cognite3dviewermd) |
+
+**Returns:** *[HtmlOverlayTool](#classes_tools_htmloverlaytoolmd)*
+
+### Methods
+
+####  add
+
+▸ **add**(`htmlElement`: HTMLElement, `position3D`: Vector3, `options`: [HtmlOverlayOptions](#htmloverlayoptions)): *void*
+
+*Defined in [viewer/src/tools/HtmlOverlayTool.ts:121](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/tools/HtmlOverlayTool.ts#L121)*
+
+Registers a HTML overlay that will be updated on rendering.
+
+**Parameters:**
+
+Name | Type | Default | Description |
+------ | ------ | ------ | ------ |
+`htmlElement` | HTMLElement | - | - |
+`position3D` | Vector3 | - | - |
+`options` | [HtmlOverlayOptions](#htmloverlayoptions) | {} |   |
+
+**Returns:** *void*
+
+___
+
+####  clear
+
+▸ **clear**(): *void*
+
+*Defined in [viewer/src/tools/HtmlOverlayTool.ts:158](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/tools/HtmlOverlayTool.ts#L158)*
+
+Removes all attached HTML overlay elements.
+
+**Returns:** *void*
+
+___
+
+####  dispose
+
+▸ **dispose**(): *void*
+
+*Overrides [ExplodedViewTool](#classes_tools_explodedviewtoolmd).[dispose](#dispose)*
+
+*Defined in [viewer/src/tools/HtmlOverlayTool.ts:107](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/tools/HtmlOverlayTool.ts#L107)*
+
+Removes all elements and detaches from the viewer.
+
+**`override`** 
+
+**Returns:** *void*
+
+___
+
+####  forceUpdate
+
+▸ **forceUpdate**(): *void*
+
+*Defined in [viewer/src/tools/HtmlOverlayTool.ts:170](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/tools/HtmlOverlayTool.ts#L170)*
+
+Updates positions of all overlays. This is automatically managed and there
+shouldn't be any reason to trigger this unless the attached elements are
+modified externally.
+
+**Returns:** *void*
+
+___
+
+####  off
+
+▸ **off**(`event`: "disposed", `handler`: function): *void*
+
+*Inherited from [HtmlOverlayTool](#classes_tools_htmloverlaytoolmd).[off](#off)*
+
+*Defined in [viewer/src/tools/Cognite3DViewerToolBase.ts:39](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/tools/Cognite3DViewerToolBase.ts#L39)*
+
+Unregisters an event handler for the 'disposed'-event.
+
+**Parameters:**
+
+▪ **event**: *"disposed"*
+
+▪ **handler**: *function*
+
+▸ (): *void*
+
+**Returns:** *void*
+
+___
+
+####  remove
+
+▸ **remove**(`htmlElement`: HTMLElement): *void*
+
+*Defined in [viewer/src/tools/HtmlOverlayTool.ts:146](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/tools/HtmlOverlayTool.ts#L146)*
+
+Removes a overlay and removes it from the DOM.
+
+**Parameters:**
+
+Name | Type | Description |
+------ | ------ | ------ |
+`htmlElement` | HTMLElement |   |
+
+**Returns:** *void*
+
 # Enums
 
 
-<a name="enumsantialiasingmodemd"></a>
+<a name="enums_index_antialiasingmodemd"></a>
 
-[@cognite/reveal](#readmemd) › [AntiAliasingMode](#enumsantialiasingmodemd)
+[@cognite/reveal](#readmemd) › ["index"](#modules_index_md) › [AntiAliasingMode](#enums_index_antialiasingmodemd)
 
 ## Enumeration: AntiAliasingMode
 
@@ -3267,7 +3421,7 @@ Anti-aliasing modes supported by Reveal.
 
 • **FXAA**: = 1
 
-*Defined in [viewer/src/public/types.ts:22](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/types.ts#L22)*
+*Defined in [viewer/src/public/types.ts:22](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/types.ts#L22)*
 
 Fast-approximate anti-aliasing (FXAA) (1).
 
@@ -3277,14 +3431,14 @@ ___
 
 • **NoAA**: = 0
 
-*Defined in [viewer/src/public/types.ts:18](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/types.ts#L18)*
+*Defined in [viewer/src/public/types.ts:18](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/types.ts#L18)*
 
 No anti-aliasing (0).
 
 
-<a name="enumspotreepointcolortypemd"></a>
+<a name="enums_index_potreepointcolortypemd"></a>
 
-[@cognite/reveal](#readmemd) › [PotreePointColorType](#enumspotreepointcolortypemd)
+[@cognite/reveal](#readmemd) › ["index"](#modules_index_md) › [PotreePointColorType](#enums_index_potreepointcolortypemd)
 
 ## Enumeration: PotreePointColorType
 
@@ -3306,7 +3460,7 @@ No anti-aliasing (0).
 
 • **Classification**: = Potree.PointColorType.CLASSIFICATION
 
-*Defined in [viewer/src/datamodels/pointcloud/types.ts:35](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/datamodels/pointcloud/types.ts#L35)*
+*Defined in [viewer/src/datamodels/pointcloud/types.ts:35](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/datamodels/pointcloud/types.ts#L35)*
 
 Indicates whether a point is part of some class of objects.
 Classes are mapped to colors.
@@ -3317,7 +3471,7 @@ ___
 
 • **Depth**: = Potree.PointColorType.DEPTH
 
-*Defined in [viewer/src/datamodels/pointcloud/types.ts:17](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/datamodels/pointcloud/types.ts#L17)*
+*Defined in [viewer/src/datamodels/pointcloud/types.ts:17](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/datamodels/pointcloud/types.ts#L17)*
 
 Shows the distance from current camera with color gradient
 
@@ -3327,7 +3481,7 @@ ___
 
 • **Height**: = Potree.PointColorType.HEIGHT
 
-*Defined in [viewer/src/datamodels/pointcloud/types.ts:20](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/datamodels/pointcloud/types.ts#L20)*
+*Defined in [viewer/src/datamodels/pointcloud/types.ts:20](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/datamodels/pointcloud/types.ts#L20)*
 
 Height, or elevation, mapped to a color with a gradient.
 
@@ -3337,7 +3491,7 @@ ___
 
 • **Intensity**: = Potree.PointColorType.INTENSITY
 
-*Defined in [viewer/src/datamodels/pointcloud/types.ts:38](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/datamodels/pointcloud/types.ts#L38)*
+*Defined in [viewer/src/datamodels/pointcloud/types.ts:38](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/datamodels/pointcloud/types.ts#L38)*
 
 Indicates the strength of the backscattered signal in a laser scan.
 
@@ -3347,7 +3501,7 @@ ___
 
 • **LevelOfDetail**: = Potree.PointColorType.LOD
 
-*Defined in [viewer/src/datamodels/pointcloud/types.ts:29](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/datamodels/pointcloud/types.ts#L29)*
+*Defined in [viewer/src/datamodels/pointcloud/types.ts:29](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/datamodels/pointcloud/types.ts#L29)*
 
 Calculated during rendering.
 It is equal to the level of the most detailed visible node in a region
@@ -3358,7 +3512,7 @@ ___
 
 • **PointIndex**: = Potree.PointColorType.POINT_INDEX
 
-*Defined in [viewer/src/datamodels/pointcloud/types.ts:23](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/datamodels/pointcloud/types.ts#L23)*
+*Defined in [viewer/src/datamodels/pointcloud/types.ts:23](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/datamodels/pointcloud/types.ts#L23)*
 
 Specifies the order in which points were captured from a single beam.
 
@@ -3368,14 +3522,14 @@ ___
 
 • **Rgb**: = Potree.PointColorType.RGB
 
-*Defined in [viewer/src/datamodels/pointcloud/types.ts:14](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/datamodels/pointcloud/types.ts#L14)*
+*Defined in [viewer/src/datamodels/pointcloud/types.ts:14](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/datamodels/pointcloud/types.ts#L14)*
 
 Describes the observed real-world color of a point.
 
 
-<a name="enumspotreepointshapemd"></a>
+<a name="enums_index_potreepointshapemd"></a>
 
-[@cognite/reveal](#readmemd) › [PotreePointShape](#enumspotreepointshapemd)
+[@cognite/reveal](#readmemd) › ["index"](#modules_index_md) › [PotreePointShape](#enums_index_potreepointshapemd)
 
 ## Enumeration: PotreePointShape
 
@@ -3392,7 +3546,7 @@ Describes the observed real-world color of a point.
 
 • **Circle**: = Potree.PointShape.CIRCLE
 
-*Defined in [viewer/src/datamodels/pointcloud/types.ts:8](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/datamodels/pointcloud/types.ts#L8)*
+*Defined in [viewer/src/datamodels/pointcloud/types.ts:8](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/datamodels/pointcloud/types.ts#L8)*
 
 ___
 
@@ -3400,12 +3554,12 @@ ___
 
 • **Square**: = Potree.PointShape.SQUARE
 
-*Defined in [viewer/src/datamodels/pointcloud/types.ts:9](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/datamodels/pointcloud/types.ts#L9)*
+*Defined in [viewer/src/datamodels/pointcloud/types.ts:9](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/datamodels/pointcloud/types.ts#L9)*
 
 
-<a name="enumspotreepointsizetypemd"></a>
+<a name="enums_index_potreepointsizetypemd"></a>
 
-[@cognite/reveal](#readmemd) › [PotreePointSizeType](#enumspotreepointsizetypemd)
+[@cognite/reveal](#readmemd) › ["index"](#modules_index_md) › [PotreePointSizeType](#enums_index_potreepointsizetypemd)
 
 ## Enumeration: PotreePointSizeType
 
@@ -3422,7 +3576,7 @@ ___
 
 • **Adaptive**: = Potree.PointSizeType.ADAPTIVE
 
-*Defined in [viewer/src/datamodels/pointcloud/types.ts:42](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/datamodels/pointcloud/types.ts#L42)*
+*Defined in [viewer/src/datamodels/pointcloud/types.ts:42](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/datamodels/pointcloud/types.ts#L42)*
 
 ___
 
@@ -3430,12 +3584,71 @@ ___
 
 • **Fixed**: = Potree.PointSizeType.FIXED
 
-*Defined in [viewer/src/datamodels/pointcloud/types.ts:43](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/datamodels/pointcloud/types.ts#L43)*
+*Defined in [viewer/src/datamodels/pointcloud/types.ts:43](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/datamodels/pointcloud/types.ts#L43)*
 
 
-<a name="enumswellknownasprspointclasscodesmd"></a>
+<a name="enums_index_ssaosamplequalitymd"></a>
 
-[@cognite/reveal](#readmemd) › [WellKnownAsprsPointClassCodes](#enumswellknownasprspointclasscodesmd)
+[@cognite/reveal](#readmemd) › ["index"](#modules_index_md) › [SsaoSampleQuality](#enums_index_ssaosamplequalitymd)
+
+## Enumeration: SsaoSampleQuality
+
+SSAO rendering quality modes supported by Reveal.
+
+### Index
+
+#### Enumeration members
+
+* [Default](#default)
+* [High](#high)
+* [Medium](#medium)
+* [None](#none)
+* [VeryHigh](#veryhigh)
+
+### Enumeration members
+
+####  Default
+
+• **Default**: = Medium
+
+*Defined in [viewer/src/public/types.ts:33](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/types.ts#L33)*
+
+___
+
+####  High
+
+• **High**: = 64
+
+*Defined in [viewer/src/public/types.ts:30](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/types.ts#L30)*
+
+___
+
+####  Medium
+
+• **Medium**: = 32
+
+*Defined in [viewer/src/public/types.ts:29](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/types.ts#L29)*
+
+___
+
+####  None
+
+• **None**: = 1
+
+*Defined in [viewer/src/public/types.ts:32](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/types.ts#L32)*
+
+___
+
+####  VeryHigh
+
+• **VeryHigh**: = 128
+
+*Defined in [viewer/src/public/types.ts:31](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/types.ts#L31)*
+
+
+<a name="enums_index_wellknownasprspointclasscodesmd"></a>
+
+[@cognite/reveal](#readmemd) › ["index"](#modules_index_md) › [WellKnownAsprsPointClassCodes](#enums_index_wellknownasprspointclasscodesmd)
 
 ## Enumeration: WellKnownAsprsPointClassCodes
 
@@ -3479,7 +3692,7 @@ ASPRS well known point class types.
 
 • **BridgeDeck**: = 17
 
-*Defined in [viewer/src/datamodels/pointcloud/types.ts:100](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/datamodels/pointcloud/types.ts#L100)*
+*Defined in [viewer/src/datamodels/pointcloud/types.ts:100](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/datamodels/pointcloud/types.ts#L100)*
 
 Note that [WellKnownAsprsPointClassCodes.ReservedOrBridgeDeck](#reservedorbridgedeck) has been used
 historically.
@@ -3490,7 +3703,7 @@ ___
 
 • **Building**: = 6
 
-*Defined in [viewer/src/datamodels/pointcloud/types.ts:65](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/datamodels/pointcloud/types.ts#L65)*
+*Defined in [viewer/src/datamodels/pointcloud/types.ts:65](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/datamodels/pointcloud/types.ts#L65)*
 
 ___
 
@@ -3498,7 +3711,7 @@ ___
 
 • **Created**: = 0
 
-*Defined in [viewer/src/datamodels/pointcloud/types.ts:59](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/datamodels/pointcloud/types.ts#L59)*
+*Defined in [viewer/src/datamodels/pointcloud/types.ts:59](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/datamodels/pointcloud/types.ts#L59)*
 
 Created, never classified.
 
@@ -3508,7 +3721,7 @@ ___
 
 • **Default**: = -1
 
-*Defined in [viewer/src/datamodels/pointcloud/types.ts:55](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/datamodels/pointcloud/types.ts#L55)*
+*Defined in [viewer/src/datamodels/pointcloud/types.ts:55](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/datamodels/pointcloud/types.ts#L55)*
 
 Special value for all other classes. Some point in Potree might be in this class
 
@@ -3518,7 +3731,7 @@ ___
 
 • **Ground**: = 2
 
-*Defined in [viewer/src/datamodels/pointcloud/types.ts:61](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/datamodels/pointcloud/types.ts#L61)*
+*Defined in [viewer/src/datamodels/pointcloud/types.ts:61](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/datamodels/pointcloud/types.ts#L61)*
 
 ___
 
@@ -3526,7 +3739,7 @@ ___
 
 • **HighNoise**: = 18
 
-*Defined in [viewer/src/datamodels/pointcloud/types.ts:106](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/datamodels/pointcloud/types.ts#L106)*
+*Defined in [viewer/src/datamodels/pointcloud/types.ts:106](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/datamodels/pointcloud/types.ts#L106)*
 
 High point, or "high noise".
 Note that [WellKnownAsprsPointClassCodes.ReservedOrHighPoint](#reservedorhighpoint) has been used
@@ -3538,7 +3751,7 @@ ___
 
 • **HighVegetation**: = 5
 
-*Defined in [viewer/src/datamodels/pointcloud/types.ts:64](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/datamodels/pointcloud/types.ts#L64)*
+*Defined in [viewer/src/datamodels/pointcloud/types.ts:64](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/datamodels/pointcloud/types.ts#L64)*
 
 ___
 
@@ -3546,7 +3759,7 @@ ___
 
 • **IgnoredGround**: = 20
 
-*Defined in [viewer/src/datamodels/pointcloud/types.ts:114](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/datamodels/pointcloud/types.ts#L114)*
+*Defined in [viewer/src/datamodels/pointcloud/types.ts:114](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/datamodels/pointcloud/types.ts#L114)*
 
 E.g. breakline proximity.
 
@@ -3556,7 +3769,7 @@ ___
 
 • **LowPoint**: = 7
 
-*Defined in [viewer/src/datamodels/pointcloud/types.ts:69](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/datamodels/pointcloud/types.ts#L69)*
+*Defined in [viewer/src/datamodels/pointcloud/types.ts:69](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/datamodels/pointcloud/types.ts#L69)*
 
 Low point, typically "low noise".
 
@@ -3566,7 +3779,7 @@ ___
 
 • **LowVegetation**: = 3
 
-*Defined in [viewer/src/datamodels/pointcloud/types.ts:62](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/datamodels/pointcloud/types.ts#L62)*
+*Defined in [viewer/src/datamodels/pointcloud/types.ts:62](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/datamodels/pointcloud/types.ts#L62)*
 
 ___
 
@@ -3574,7 +3787,7 @@ ___
 
 • **MedVegetation**: = 4
 
-*Defined in [viewer/src/datamodels/pointcloud/types.ts:63](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/datamodels/pointcloud/types.ts#L63)*
+*Defined in [viewer/src/datamodels/pointcloud/types.ts:63](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/datamodels/pointcloud/types.ts#L63)*
 
 ___
 
@@ -3582,7 +3795,7 @@ ___
 
 • **OverheadStructure**: = 19
 
-*Defined in [viewer/src/datamodels/pointcloud/types.ts:110](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/datamodels/pointcloud/types.ts#L110)*
+*Defined in [viewer/src/datamodels/pointcloud/types.ts:110](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/datamodels/pointcloud/types.ts#L110)*
 
 E.g. conveyors, mining equipment, traffic lights.
 
@@ -3592,7 +3805,7 @@ ___
 
 • **Rail**: = 10
 
-*Defined in [viewer/src/datamodels/pointcloud/types.ts:76](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/datamodels/pointcloud/types.ts#L76)*
+*Defined in [viewer/src/datamodels/pointcloud/types.ts:76](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/datamodels/pointcloud/types.ts#L76)*
 
 ___
 
@@ -3600,7 +3813,7 @@ ___
 
 • **ReservedOrBridgeDeck**: = 12
 
-*Defined in [viewer/src/datamodels/pointcloud/types.ts:82](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/datamodels/pointcloud/types.ts#L82)*
+*Defined in [viewer/src/datamodels/pointcloud/types.ts:82](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/datamodels/pointcloud/types.ts#L82)*
 
 In previous revisions of LAS this was "Bridge deck", but in more recent
 revisions this value is reserved.
@@ -3611,7 +3824,7 @@ ___
 
 • **ReservedOrHighPoint**: = 8
 
-*Defined in [viewer/src/datamodels/pointcloud/types.ts:74](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/datamodels/pointcloud/types.ts#L74)*
+*Defined in [viewer/src/datamodels/pointcloud/types.ts:74](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/datamodels/pointcloud/types.ts#L74)*
 
 In previous revisions of LAS this was High point ("high noise"), in more recent
 revisions this value is reserved.
@@ -3622,7 +3835,7 @@ ___
 
 • **RoadSurface**: = 11
 
-*Defined in [viewer/src/datamodels/pointcloud/types.ts:77](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/datamodels/pointcloud/types.ts#L77)*
+*Defined in [viewer/src/datamodels/pointcloud/types.ts:77](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/datamodels/pointcloud/types.ts#L77)*
 
 ___
 
@@ -3630,7 +3843,7 @@ ___
 
 • **Snow**: = 21
 
-*Defined in [viewer/src/datamodels/pointcloud/types.ts:115](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/datamodels/pointcloud/types.ts#L115)*
+*Defined in [viewer/src/datamodels/pointcloud/types.ts:115](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/datamodels/pointcloud/types.ts#L115)*
 
 ___
 
@@ -3638,7 +3851,7 @@ ___
 
 • **TemporalExclusion**: = 22
 
-*Defined in [viewer/src/datamodels/pointcloud/types.ts:120](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/datamodels/pointcloud/types.ts#L120)*
+*Defined in [viewer/src/datamodels/pointcloud/types.ts:120](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/datamodels/pointcloud/types.ts#L120)*
 
 Features excluded due to changes over time between data sources – e.g., water
 levels, landslides, permafrost
@@ -3649,7 +3862,7 @@ ___
 
 • **TransmissionTower**: = 15
 
-*Defined in [viewer/src/datamodels/pointcloud/types.ts:91](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/datamodels/pointcloud/types.ts#L91)*
+*Defined in [viewer/src/datamodels/pointcloud/types.ts:91](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/datamodels/pointcloud/types.ts#L91)*
 
 ___
 
@@ -3657,7 +3870,7 @@ ___
 
 • **Unclassified**: = 1
 
-*Defined in [viewer/src/datamodels/pointcloud/types.ts:60](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/datamodels/pointcloud/types.ts#L60)*
+*Defined in [viewer/src/datamodels/pointcloud/types.ts:60](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/datamodels/pointcloud/types.ts#L60)*
 
 ___
 
@@ -3665,7 +3878,7 @@ ___
 
 • **UserDefinableOffset**: = 64
 
-*Defined in [viewer/src/datamodels/pointcloud/types.ts:126](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/datamodels/pointcloud/types.ts#L126)*
+*Defined in [viewer/src/datamodels/pointcloud/types.ts:126](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/datamodels/pointcloud/types.ts#L126)*
 
 First user definable class identifier (64).
 Values up to and including 63 are reserved
@@ -3676,7 +3889,7 @@ ___
 
 • **Water**: = 9
 
-*Defined in [viewer/src/datamodels/pointcloud/types.ts:75](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/datamodels/pointcloud/types.ts#L75)*
+*Defined in [viewer/src/datamodels/pointcloud/types.ts:75](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/datamodels/pointcloud/types.ts#L75)*
 
 ___
 
@@ -3684,7 +3897,7 @@ ___
 
 • **WireConductor**: = 14
 
-*Defined in [viewer/src/datamodels/pointcloud/types.ts:90](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/datamodels/pointcloud/types.ts#L90)*
+*Defined in [viewer/src/datamodels/pointcloud/types.ts:90](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/datamodels/pointcloud/types.ts#L90)*
 
 Wire conductor (phase).
 
@@ -3694,7 +3907,7 @@ ___
 
 • **WireGuard**: = 13
 
-*Defined in [viewer/src/datamodels/pointcloud/types.ts:86](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/datamodels/pointcloud/types.ts#L86)*
+*Defined in [viewer/src/datamodels/pointcloud/types.ts:86](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/datamodels/pointcloud/types.ts#L86)*
 
 Wire guard shield.
 
@@ -3704,16 +3917,16 @@ ___
 
 • **WireStructureConnector**: = 16
 
-*Defined in [viewer/src/datamodels/pointcloud/types.ts:95](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/datamodels/pointcloud/types.ts#L95)*
+*Defined in [viewer/src/datamodels/pointcloud/types.ts:95](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/datamodels/pointcloud/types.ts#L95)*
 
 Wire-structure connector (e.g. insulator).
 
 # Interfaces
 
 
-<a name="interfacesaddmodeloptionsmd"></a>
+<a name="interfaces_index_addmodeloptionsmd"></a>
 
-[@cognite/reveal](#readmemd) › [AddModelOptions](#interfacesaddmodeloptionsmd)
+[@cognite/reveal](#readmemd) › ["index"](#modules_index_md) › [AddModelOptions](#interfaces_index_addmodeloptionsmd)
 
 ## Interface: AddModelOptions
 
@@ -3738,9 +3951,9 @@ Wire-structure connector (e.g. insulator).
 
 #### `Optional` geometryFilter
 
-• **geometryFilter**? : *[GeometryFilter](#interfacesgeometryfiltermd)*
+• **geometryFilter**? : *[GeometryFilter](#interfaces_index_geometryfiltermd)*
 
-*Defined in [viewer/src/public/migration/types.ts:116](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/types.ts#L116)*
+*Defined in [viewer/src/public/migration/types.ts:178](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/types.ts#L178)*
 
 ___
 
@@ -3748,7 +3961,7 @@ ___
 
 • **localPath**? : *undefined | string*
 
-*Defined in [viewer/src/public/migration/types.ts:115](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/types.ts#L115)*
+*Defined in [viewer/src/public/migration/types.ts:177](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/types.ts#L177)*
 
 ___
 
@@ -3756,7 +3969,7 @@ ___
 
 • **modelId**: *number*
 
-*Defined in [viewer/src/public/migration/types.ts:112](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/types.ts#L112)*
+*Defined in [viewer/src/public/migration/types.ts:174](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/types.ts#L174)*
 
 ___
 
@@ -3764,7 +3977,7 @@ ___
 
 • **onComplete**? : *undefined | function*
 
-*Defined in [viewer/src/public/migration/types.ts:118](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/types.ts#L118)*
+*Defined in [viewer/src/public/migration/types.ts:180](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/types.ts#L180)*
 
 ___
 
@@ -3772,7 +3985,7 @@ ___
 
 • **orthographicCamera**? : *undefined | false | true*
 
-*Defined in [viewer/src/public/migration/types.ts:117](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/types.ts#L117)*
+*Defined in [viewer/src/public/migration/types.ts:179](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/types.ts#L179)*
 
 ___
 
@@ -3780,12 +3993,12 @@ ___
 
 • **revisionId**: *number*
 
-*Defined in [viewer/src/public/migration/types.ts:113](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/types.ts#L113)*
+*Defined in [viewer/src/public/migration/types.ts:175](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/types.ts#L175)*
 
 
-<a name="interfacescadmodelmetadatamd"></a>
+<a name="interfaces_index_cadmodelmetadatamd"></a>
 
-[@cognite/reveal](#readmemd) › [CadModelMetadata](#interfacescadmodelmetadatamd)
+[@cognite/reveal](#readmemd) › ["index"](#modules_index_md) › [CadModelMetadata](#interfaces_index_cadmodelmetadatamd)
 
 ## Interface: CadModelMetadata
 
@@ -3809,7 +4022,7 @@ ___
 
 • **blobUrl**: *string*
 
-*Defined in [viewer/src/datamodels/cad/CadModelMetadata.ts:10](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/datamodels/cad/CadModelMetadata.ts#L10)*
+*Defined in [viewer/src/datamodels/cad/CadModelMetadata.ts:10](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/datamodels/cad/CadModelMetadata.ts#L10)*
 
 ___
 
@@ -3817,7 +4030,7 @@ ___
 
 • **cameraConfiguration**? : *[CameraConfiguration](#cameraconfiguration)*
 
-*Defined in [viewer/src/datamodels/cad/CadModelMetadata.ts:13](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/datamodels/cad/CadModelMetadata.ts#L13)*
+*Defined in [viewer/src/datamodels/cad/CadModelMetadata.ts:13](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/datamodels/cad/CadModelMetadata.ts#L13)*
 
 ___
 
@@ -3825,7 +4038,7 @@ ___
 
 • **inverseModelMatrix**: *Matrix4*
 
-*Defined in [viewer/src/datamodels/cad/CadModelMetadata.ts:12](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/datamodels/cad/CadModelMetadata.ts#L12)*
+*Defined in [viewer/src/datamodels/cad/CadModelMetadata.ts:12](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/datamodels/cad/CadModelMetadata.ts#L12)*
 
 ___
 
@@ -3833,7 +4046,7 @@ ___
 
 • **modelMatrix**: *Matrix4*
 
-*Defined in [viewer/src/datamodels/cad/CadModelMetadata.ts:11](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/datamodels/cad/CadModelMetadata.ts#L11)*
+*Defined in [viewer/src/datamodels/cad/CadModelMetadata.ts:11](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/datamodels/cad/CadModelMetadata.ts#L11)*
 
 ___
 
@@ -3841,42 +4054,12 @@ ___
 
 • **scene**: *SectorScene*
 
-*Defined in [viewer/src/datamodels/cad/CadModelMetadata.ts:14](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/datamodels/cad/CadModelMetadata.ts#L14)*
+*Defined in [viewer/src/datamodels/cad/CadModelMetadata.ts:14](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/datamodels/cad/CadModelMetadata.ts#L14)*
 
 
-<a name="interfacescadrenderhintsmd"></a>
+<a name="interfaces_index_cognite3dvieweroptionsmd"></a>
 
-[@cognite/reveal](#readmemd) › [CadRenderHints](#interfacescadrenderhintsmd)
-
-## Interface: CadRenderHints
-
-Style hints that allows overriding how a CadNode (and its children)
-are rendered.
-
-### Hierarchy
-
-* **CadRenderHints**
-
-### Index
-
-#### Properties
-
-* [showSectorBoundingBoxes](#optional-showsectorboundingboxes)
-
-### Properties
-
-#### `Optional` showSectorBoundingBoxes
-
-• **showSectorBoundingBoxes**? : *undefined | false | true*
-
-*Defined in [viewer/src/datamodels/cad/rendering/CadRenderHints.ts:11](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/datamodels/cad/rendering/CadRenderHints.ts#L11)*
-
-Use to specify if bounding boxes for each sector should be visible
-
-
-<a name="interfacescognite3dvieweroptionsmd"></a>
-
-[@cognite/reveal](#readmemd) › [Cognite3DViewerOptions](#interfacescognite3dvieweroptionsmd)
+[@cognite/reveal](#readmemd) › ["index"](#modules_index_md) › [Cognite3DViewerOptions](#interfaces_index_cognite3dvieweroptionsmd)
 
 ## Interface: Cognite3DViewerOptions
 
@@ -3891,8 +4074,11 @@ Use to specify if bounding boxes for each sector should be visible
 #### Properties
 
 * [antiAliasingHint](#optional-antialiasinghint)
+* [automaticCameraNearFar](#optional-automaticcameranearfar)
+* [automaticControlsSensitivity](#optional-automaticcontrolssensitivity)
 * [domElement](#optional-domelement)
 * [enableCache](#optional-enablecache)
+* [enableEdges](#optional-enableedges)
 * [highlightColor](#optional-highlightcolor)
 * [logMetrics](#optional-logmetrics)
 * [noBackground](#optional-nobackground)
@@ -3900,6 +4086,7 @@ Use to specify if bounding boxes for each sector should be visible
 * [renderTargetOptions](#optional-rendertargetoptions)
 * [renderer](#optional-renderer)
 * [sdk](#sdk)
+* [ssaoQualityHint](#optional-ssaoqualityhint)
 * [viewCube](#optional-viewcube)
 
 ### Properties
@@ -3908,7 +4095,7 @@ Use to specify if bounding boxes for each sector should be visible
 
 • **antiAliasingHint**? : *"disabled" | "fxaa" | "msaa2+fxaa" | "msaa4+fxaa" | "msaa8+fxaa" | "msaa16+fxaa" | "msaa2" | "msaa4" | "msaa8" | "msaa16"*
 
-*Defined in [viewer/src/public/migration/types.ts:78](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/types.ts#L78)*
+*Defined in [viewer/src/public/migration/types.ts:111](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/types.ts#L111)*
 
 Hints Reveal to use a given anti-aliasing technique.
 
@@ -3929,11 +4116,51 @@ Currently the default mode is FXAA, but this is subject to change.
 
 ___
 
+#### `Optional` automaticCameraNearFar
+
+• **automaticCameraNearFar**? : *undefined | false | true*
+
+*Defined in [viewer/src/public/migration/types.ts:66](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/types.ts#L66)*
+
+When false, camera near and far planes will not be updated automatically (defaults to true).
+This can be useful when you have custom content in the 3D view and need to better
+control the view frustum.
+
+When automatic camera near/far planes are disabled, you are responsible for setting
+this on your own.
+
+**`example`** 
+```
+viewer.camera.near = 0.1;
+viewer.camera.far = 1000.0;
+viewer.camera.updateProjectionMatrix();
+```
+
+**`version`** new in 1.4.0
+
+___
+
+#### `Optional` automaticControlsSensitivity
+
+• **automaticControlsSensitivity**? : *undefined | false | true*
+
+*Defined in [viewer/src/public/migration/types.ts:76](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/types.ts#L76)*
+
+When false, the sensitivity of the camera controls will not be updated automatically.
+This can be useful to better control the sensitivity of the 3D navigation.
+
+When not set, control the sensitivity of the camera using `viewer.cameraControls.minDistance`
+and `viewer.cameraControls.maxDistance`.
+
+**`version`** new in 1.4.0
+
+___
+
 #### `Optional` domElement
 
 • **domElement**? : *HTMLElement*
 
-*Defined in [viewer/src/public/migration/types.ts:34](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/types.ts#L34)*
+*Defined in [viewer/src/public/migration/types.ts:39](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/types.ts#L39)*
 
 An existing DOM element that we will render canvas into.
 
@@ -3943,9 +4170,19 @@ ___
 
 • **enableCache**? : *undefined | false | true*
 
-*Defined in [viewer/src/public/migration/types.ts:55](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/types.ts#L55)*
+*Defined in [viewer/src/public/migration/types.ts:88](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/types.ts#L88)*
 
 **`deprecated`** And not supported.
+
+___
+
+#### `Optional` enableEdges
+
+• **enableEdges**? : *undefined | false | true*
+
+*Defined in [viewer/src/public/migration/types.ts:134](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/types.ts#L134)*
+
+Enables / disables visualizing the edges of geometry. Defaults to true.
 
 ___
 
@@ -3953,7 +4190,7 @@ ___
 
 • **highlightColor**? : *THREE.Color*
 
-*Defined in [viewer/src/public/migration/types.ts:46](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/types.ts#L46)*
+*Defined in [viewer/src/public/migration/types.ts:79](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/types.ts#L79)*
 
 **`deprecated`** And ignored.
 
@@ -3963,7 +4200,7 @@ ___
 
 • **logMetrics**? : *undefined | false | true*
 
-*Defined in [viewer/src/public/migration/types.ts:37](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/types.ts#L37)*
+*Defined in [viewer/src/public/migration/types.ts:42](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/types.ts#L42)*
 
 Send anonymous usage statistics.
 
@@ -3973,7 +4210,7 @@ ___
 
 • **noBackground**? : *undefined | false | true*
 
-*Defined in [viewer/src/public/migration/types.ts:49](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/types.ts#L49)*
+*Defined in [viewer/src/public/migration/types.ts:82](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/types.ts#L82)*
 
 **`deprecated`** And ignored.
 
@@ -3983,7 +4220,7 @@ ___
 
 • **onLoading**? : *[OnLoadingCallback](#onloadingcallback)*
 
-*Defined in [viewer/src/public/migration/types.ts:91](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/types.ts#L91)*
+*Defined in [viewer/src/public/migration/types.ts:137](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/types.ts#L137)*
 
 Callback to download stream progress.
 
@@ -3993,7 +4230,7 @@ ___
 
 • **renderTargetOptions**? : *undefined | object*
 
-*Defined in [viewer/src/public/migration/types.ts:43](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/types.ts#L43)*
+*Defined in [viewer/src/public/migration/types.ts:48](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/types.ts#L48)*
 
 Render to offscreen buffer instead of canvas.
 
@@ -4005,7 +4242,7 @@ ___
 
 • **renderer**? : *THREE.WebGLRenderer*
 
-*Defined in [viewer/src/public/migration/types.ts:58](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/types.ts#L58)*
+*Defined in [viewer/src/public/migration/types.ts:91](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/types.ts#L91)*
 
 Renderer used to visualize model (optional).
 
@@ -4015,9 +4252,22 @@ ___
 
 • **sdk**: *CogniteClient*
 
-*Defined in [viewer/src/public/migration/types.ts:31](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/types.ts#L31)*
+*Defined in [viewer/src/public/migration/types.ts:36](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/types.ts#L36)*
 
 Initialized connection to CDF used to load data.
+
+___
+
+#### `Optional` ssaoQualityHint
+
+• **ssaoQualityHint**? : *"medium" | "high" | "veryhigh" | "disabled"*
+
+*Defined in [viewer/src/public/migration/types.ts:129](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/types.ts#L129)*
+
+Hints the renderer of the quality it should aim for for screen space ambient occlusion,
+an effect creating shadows and that gives the rendered image more depth.
+
+**`version`** new in 1.4.0
 
 ___
 
@@ -4025,18 +4275,18 @@ ___
 
 • **viewCube**? : *"topleft" | "topright" | "bottomleft" | "bottomright"*
 
-*Defined in [viewer/src/public/migration/types.ts:52](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/types.ts#L52)*
+*Defined in [viewer/src/public/migration/types.ts:85](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/types.ts#L85)*
 
 **`deprecated`** And not supported.
 
 
-<a name="interfacescognitemodelbasemd"></a>
+<a name="interfaces_index_cognitemodelbasemd"></a>
 
-[@cognite/reveal](#readmemd) › [CogniteModelBase](#interfacescognitemodelbasemd)
+[@cognite/reveal](#readmemd) › ["index"](#modules_index_md) › [CogniteModelBase](#interfaces_index_cognitemodelbasemd)
 
 ## Interface: CogniteModelBase
 
-Base class for 3D models supported by [Cognite3DViewer](#classescognite3dviewermd).
+Base class for 3D models supported by [Cognite3DViewer](#classes_index_cognite3dviewermd).
 
 **`module`** @cognite/reveal
 
@@ -4046,8 +4296,8 @@ Base class for 3D models supported by [Cognite3DViewer](#classescognite3dviewerm
 
 ### Implemented by
 
-* [Cognite3DModel](#classescognite3dmodelmd)
-* [CognitePointCloudModel](#classescognitepointcloudmodelmd)
+* [Cognite3DModel](#classes_index_cognite3dmodelmd)
+* [CognitePointCloudModel](#classes_index_cognitepointcloudmodelmd)
 
 ### Index
 
@@ -4069,7 +4319,7 @@ Base class for 3D models supported by [Cognite3DViewer](#classescognite3dviewerm
 
 • **type**: *[SupportedModelTypes](#supportedmodeltypes)*
 
-*Defined in [viewer/src/public/migration/CogniteModelBase.ts:13](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/CogniteModelBase.ts#L13)*
+*Defined in [viewer/src/public/migration/CogniteModelBase.ts:13](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/CogniteModelBase.ts#L13)*
 
 ### Methods
 
@@ -4077,7 +4327,7 @@ Base class for 3D models supported by [Cognite3DViewer](#classescognite3dviewerm
 
 ▸ **dispose**(): *void*
 
-*Defined in [viewer/src/public/migration/CogniteModelBase.ts:14](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/CogniteModelBase.ts#L14)*
+*Defined in [viewer/src/public/migration/CogniteModelBase.ts:14](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/CogniteModelBase.ts#L14)*
 
 **Returns:** *void*
 
@@ -4087,7 +4337,7 @@ ___
 
 ▸ **getCameraConfiguration**(): *[CameraConfiguration](#cameraconfiguration) | undefined*
 
-*Defined in [viewer/src/public/migration/CogniteModelBase.ts:16](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/CogniteModelBase.ts#L16)*
+*Defined in [viewer/src/public/migration/CogniteModelBase.ts:16](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/CogniteModelBase.ts#L16)*
 
 **Returns:** *[CameraConfiguration](#cameraconfiguration) | undefined*
 
@@ -4097,7 +4347,7 @@ ___
 
 ▸ **getModelBoundingBox**(`outBbox?`: THREE.Box3, `restrictToMostGeometry?`: undefined | false | true): *Box3*
 
-*Defined in [viewer/src/public/migration/CogniteModelBase.ts:15](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/CogniteModelBase.ts#L15)*
+*Defined in [viewer/src/public/migration/CogniteModelBase.ts:15](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/CogniteModelBase.ts#L15)*
 
 **Parameters:**
 
@@ -4114,7 +4364,7 @@ ___
 
 ▸ **getModelTransformation**(`out?`: THREE.Matrix4): *Matrix4*
 
-*Defined in [viewer/src/public/migration/CogniteModelBase.ts:18](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/CogniteModelBase.ts#L18)*
+*Defined in [viewer/src/public/migration/CogniteModelBase.ts:18](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/CogniteModelBase.ts#L18)*
 
 **Parameters:**
 
@@ -4130,7 +4380,7 @@ ___
 
 ▸ **setModelTransformation**(`matrix`: Matrix4): *void*
 
-*Defined in [viewer/src/public/migration/CogniteModelBase.ts:17](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/CogniteModelBase.ts#L17)*
+*Defined in [viewer/src/public/migration/CogniteModelBase.ts:17](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/CogniteModelBase.ts#L17)*
 
 **Parameters:**
 
@@ -4141,9 +4391,9 @@ Name | Type |
 **Returns:** *void*
 
 
-<a name="interfacesgeometryfiltermd"></a>
+<a name="interfaces_index_geometryfiltermd"></a>
 
-[@cognite/reveal](#readmemd) › [GeometryFilter](#interfacesgeometryfiltermd)
+[@cognite/reveal](#readmemd) › ["index"](#modules_index_md) › [GeometryFilter](#interfaces_index_geometryfiltermd)
 
 ## Interface: GeometryFilter
 
@@ -4158,6 +4408,7 @@ Name | Type |
 #### Properties
 
 * [boundingBox](#optional-boundingbox)
+* [isBoundingBoxInModelCoordinates](#optional-isboundingboxinmodelcoordinates)
 
 ### Properties
 
@@ -4165,12 +4416,34 @@ Name | Type |
 
 • **boundingBox**? : *THREE.Box3*
 
-*Defined in [viewer/src/public/migration/types.ts:105](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/types.ts#L105)*
+*Defined in [viewer/src/public/migration/types.ts:158](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/types.ts#L158)*
+
+The bounds to load geometry within. By default this box is in CDF coordinate space which
+will be transformed into coordinates relative to the model using the the model transformation
+which can be specified using [the CDF API](https://docs.cognite.com/api/v1/#operation/update3DRevisions ),
+or set in [Cognite Fusion](https://fusion.cognite.com/ ).
+
+**`see`** [isBoundingBoxInModelCoordinates](#optional-isboundingboxinmodelcoordinates).
+
+___
+
+#### `Optional` isBoundingBoxInModelCoordinates
+
+• **isBoundingBoxInModelCoordinates**? : *undefined | false | true*
+
+*Defined in [viewer/src/public/migration/types.ts:167](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/types.ts#L167)*
+
+When set, the geometry filter [boundingBox](#optional-boundingbox) will be considered to be in "Reveal space".
+Rather than CDF space which is the default. When using Reveal space, the model transformation
+which can be specified using [the CDF API](https://docs.cognite.com/api/v1/#operation/update3DRevisions ),
+or set in [Cognite Fusion](https://fusion.cognite.com/ ).
+
+**`version`** New in 1.5.0
 
 
-<a name="interfacesintersectionfrompixeloptionsmd"></a>
+<a name="interfaces_index_intersectionfrompixeloptionsmd"></a>
 
-[@cognite/reveal](#readmemd) › [IntersectionFromPixelOptions](#interfacesintersectionfrompixeloptionsmd)
+[@cognite/reveal](#readmemd) › ["index"](#modules_index_md) › [IntersectionFromPixelOptions](#interfaces_index_intersectionfrompixeloptionsmd)
 
 ## Interface: IntersectionFromPixelOptions
 
@@ -4194,7 +4467,7 @@ Options to control how [Cognite3DViewer.getIntersectionFromPixel](#getintersecti
 
 • **pointIntersectionThreshold**? : *undefined | number*
 
-*Defined in [viewer/src/public/migration/types.ts:236](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/public/migration/types.ts#L236)*
+*Defined in [viewer/src/public/migration/types.ts:308](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/types.ts#L308)*
 
 Threshold (in meters) for how close a point must be an intersection
 ray for it to be considered an intersection for point clouds. Defaults
@@ -4203,9 +4476,9 @@ to 0.05.
 **`version`** new in 1.3.0
 
 
-<a name="interfacesnodeappearanceprovidermd"></a>
+<a name="interfaces_index_nodeappearanceprovidermd"></a>
 
-[@cognite/reveal](#readmemd) › [NodeAppearanceProvider](#interfacesnodeappearanceprovidermd)
+[@cognite/reveal](#readmemd) › ["index"](#modules_index_md) › [NodeAppearanceProvider](#interfaces_index_nodeappearanceprovidermd)
 
 ## Interface: NodeAppearanceProvider
 
@@ -4225,7 +4498,7 @@ to 0.05.
 
 ▸ **styleNode**(`treeIndex`: number): *NodeAppearance | undefined*
 
-*Defined in [viewer/src/datamodels/cad/NodeAppearance.ts:48](https://github.com/cognitedata/reveal/blob/10d24b7/viewer/src/datamodels/cad/NodeAppearance.ts#L48)*
+*Defined in [viewer/src/datamodels/cad/NodeAppearance.ts:48](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/datamodels/cad/NodeAppearance.ts#L48)*
 
 **Parameters:**
 
@@ -4234,3 +4507,527 @@ Name | Type |
 `treeIndex` | number |
 
 **Returns:** *NodeAppearance | undefined*
+
+# Modules
+
+
+<a name="modules_index_md"></a>
+
+[@cognite/reveal](#readmemd) › ["index"](#modules_index_md)
+
+## Module: "index"
+
+### Index
+
+#### Enumerations
+
+* [AntiAliasingMode](#enums_index_antialiasingmodemd)
+* [PotreePointColorType](#enums_index_potreepointcolortypemd)
+* [PotreePointShape](#enums_index_potreepointshapemd)
+* [PotreePointSizeType](#enums_index_potreepointsizetypemd)
+* [SsaoSampleQuality](#enums_index_ssaosamplequalitymd)
+* [WellKnownAsprsPointClassCodes](#enums_index_wellknownasprspointclasscodesmd)
+
+#### Classes
+
+* [BoundingBoxClipper](#classes_index_boundingboxclippermd)
+* [Cognite3DModel](#classes_index_cognite3dmodelmd)
+* [Cognite3DViewer](#classes_index_cognite3dviewermd)
+* [CognitePointCloudModel](#classes_index_cognitepointcloudmodelmd)
+* [NotSupportedInMigrationWrapperError](#classes_index_notsupportedinmigrationwrappererrormd)
+
+#### Interfaces
+
+* [AddModelOptions](#interfaces_index_addmodeloptionsmd)
+* [CadModelMetadata](#interfaces_index_cadmodelmetadatamd)
+* [Cognite3DViewerOptions](#interfaces_index_cognite3dvieweroptionsmd)
+* [CogniteModelBase](#interfaces_index_cognitemodelbasemd)
+* [GeometryFilter](#interfaces_index_geometryfiltermd)
+* [IntersectionFromPixelOptions](#interfaces_index_intersectionfrompixeloptionsmd)
+* [NodeAppearanceProvider](#interfaces_index_nodeappearanceprovidermd)
+
+#### Type aliases
+
+* [CadIntersection](#cadintersection)
+* [CadLoadingHints](#cadloadinghints)
+* [CadModelBudget](#cadmodelbudget)
+* [CameraChangeDelegate](#camerachangedelegate)
+* [CameraConfiguration](#cameraconfiguration)
+* [Color](#color)
+* [DisposedDelegate](#disposeddelegate)
+* [EdgeDetectionParameters](#edgedetectionparameters)
+* [Intersection](#intersection)
+* [LoadingStateChangeListener](#loadingstatechangelistener)
+* [OnLoadingCallback](#onloadingcallback)
+* [PointCloudIntersection](#pointcloudintersection)
+* [PointerEventDelegate](#pointereventdelegate)
+* [RenderOptions](#renderoptions)
+* [RevealOptions](#revealoptions)
+* [SceneRenderedDelegate](#scenerendereddelegate)
+* [SsaoParameters](#ssaoparameters)
+* [SupportedModelTypes](#supportedmodeltypes)
+
+#### Object literals
+
+* [defaultRenderOptions](#const-defaultrenderoptions)
+* [revealEnv](#const-revealenv)
+
+### Type aliases
+
+####  CadIntersection
+
+Ƭ **CadIntersection**: *object*
+
+*Defined in [viewer/src/public/migration/types.ts:183](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/types.ts#L183)*
+
+##### Type declaration:
+
+* **distanceToCamera**: *number*
+
+* **model**: *[Cognite3DModel](#classes_index_cognite3dmodelmd)*
+
+* **point**: *Vector3*
+
+* **treeIndex**: *number*
+
+* **type**: *"cad"*
+
+___
+
+####  CadLoadingHints
+
+Ƭ **CadLoadingHints**: *object*
+
+*Defined in [viewer/src/datamodels/cad/CadLoadingHints.ts:9](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/datamodels/cad/CadLoadingHints.ts#L9)*
+
+Hints that are used to modify how CAD sectors are loaded.
+
+**`property`** `suspendLoading` - disables loading of sectors.
+
+##### Type declaration:
+
+* **suspendLoading**? : *undefined | false | true*
+
+___
+
+####  CadModelBudget
+
+Ƭ **CadModelBudget**: *object*
+
+*Defined in [viewer/src/public/migration/types.ts:277](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/types.ts#L277)*
+
+Represents a measurement of how much geometry can be loaded.
+
+##### Type declaration:
+
+* **geometryDownloadSizeBytes**: *number*
+
+* **highDetailProximityThreshold**: *number*
+
+* **maximumNumberOfDrawCalls**: *number*
+
+___
+
+####  CameraChangeDelegate
+
+Ƭ **CameraChangeDelegate**: *function*
+
+*Defined in [viewer/src/public/migration/types.ts:252](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/types.ts#L252)*
+
+Delegate for camera update events.
+
+**`module`** @cognite/reveal
+
+**`see`** [Cognite3DViewer.on](#on).
+
+##### Type declaration:
+
+▸ (`position`: Vector3, `target`: Vector3): *void*
+
+**Parameters:**
+
+Name | Type |
+------ | ------ |
+`position` | Vector3 |
+`target` | Vector3 |
+
+___
+
+####  CameraConfiguration
+
+Ƭ **CameraConfiguration**: *object*
+
+*Defined in [viewer/src/utilities/types.ts:55](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/utilities/types.ts#L55)*
+
+Represents a camera configuration, consisting of a camera position and target.
+
+##### Type declaration:
+
+* **position**: *Vector3*
+
+* **target**: *Vector3*
+
+___
+
+####  Color
+
+Ƭ **Color**: *object*
+
+*Defined in [viewer/src/public/migration/types.ts:14](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/types.ts#L14)*
+
+**`module`** @cognite/reveal
+
+##### Type declaration:
+
+* **b**: *number*
+
+* **g**: *number*
+
+* **r**: *number*
+
+___
+
+####  DisposedDelegate
+
+Ƭ **DisposedDelegate**: *function*
+
+*Defined in [viewer/src/public/migration/types.ts:257](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/types.ts#L257)*
+
+Delegate for disposal events.
+
+##### Type declaration:
+
+▸ (): *void*
+
+___
+
+####  EdgeDetectionParameters
+
+Ƭ **EdgeDetectionParameters**: *object*
+
+*Defined in [viewer/src/public/types.ts:39](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/types.ts#L39)*
+
+Edge detection parameters supported by Reveal.
+
+##### Type declaration:
+
+* **enabled**: *boolean*
+
+___
+
+####  Intersection
+
+Ƭ **Intersection**: *[CadIntersection](#cadintersection) | [PointCloudIntersection](#pointcloudintersection)*
+
+*Defined in [viewer/src/public/migration/types.ts:233](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/types.ts#L233)*
+
+Represents the result from [Cognite3DViewer.getIntersectionFromPixel](#getintersectionfrompixel).
+
+**`module`** @cognite/reveal
+
+___
+
+####  LoadingStateChangeListener
+
+Ƭ **LoadingStateChangeListener**: *function*
+
+*Defined in [viewer/src/public/types.ts:112](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/types.ts#L112)*
+
+Handler for events about data being loaded.
+
+##### Type declaration:
+
+▸ (`loadingState`: LoadingState): *any*
+
+**Parameters:**
+
+Name | Type |
+------ | ------ |
+`loadingState` | LoadingState |
+
+___
+
+####  OnLoadingCallback
+
+Ƭ **OnLoadingCallback**: *function*
+
+*Defined in [viewer/src/public/migration/types.ts:29](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/types.ts#L29)*
+
+Callback to monitor loaded requests and progress.
+Use OnLoadingCallback instead of onProgress/onComplete.
+
+**`module`** @cognite/reveal
+
+**`param`** Number of items loaded so far in this batch.
+
+**`param`** Total number of items to load in this batch.
+
+**`param`** Number of items deemed unnecessary to load in this batch.
+
+**`version`** itemsCulled is new in 2.0.0
+
+##### Type declaration:
+
+▸ (`itemsLoaded`: number, `itemsRequested`: number, `itemsCulled`: number): *void*
+
+**Parameters:**
+
+Name | Type |
+------ | ------ |
+`itemsLoaded` | number |
+`itemsRequested` | number |
+`itemsCulled` | number |
+
+___
+
+####  PointCloudIntersection
+
+Ƭ **PointCloudIntersection**: *object*
+
+*Defined in [viewer/src/public/migration/types.ts:206](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/types.ts#L206)*
+
+##### Type declaration:
+
+* **distanceToCamera**: *number*
+
+* **model**: *[CognitePointCloudModel](#classes_index_cognitepointcloudmodelmd)*
+
+* **point**: *Vector3*
+
+* **pointIndex**: *number*
+
+* **type**: *"pointcloud"*
+
+___
+
+####  PointerEventDelegate
+
+Ƭ **PointerEventDelegate**: *function*
+
+*Defined in [viewer/src/public/migration/types.ts:245](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/types.ts#L245)*
+
+Delegate for pointer events.
+
+**`module`** @cognite/reveal
+
+**`see`** [Cognite3DViewer.on](#on).
+
+##### Type declaration:
+
+▸ (`event`: object): *void*
+
+**Parameters:**
+
+▪ **event**: *object*
+
+Name | Type |
+------ | ------ |
+`offsetX` | number |
+`offsetY` | number |
+
+___
+
+####  RenderOptions
+
+Ƭ **RenderOptions**: *object*
+
+*Defined in [viewer/src/public/types.ts:64](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/types.ts#L64)*
+
+Options and hints for how the Reveal viewer applies rendering effects.
+
+##### Type declaration:
+
+* **antiAliasing**? : *[AntiAliasingMode](#enums_index_antialiasingmodemd)*
+
+* **edgeDetectionParameters**? : *[EdgeDetectionParameters](#edgedetectionparameters)*
+
+* **multiSampleCountHint**? : *undefined | number*
+
+* **ssaoRenderParameters**? : *[SsaoParameters](#ssaoparameters)*
+
+___
+
+####  RevealOptions
+
+Ƭ **RevealOptions**: *object*
+
+*Defined in [viewer/src/public/types.ts:99](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/types.ts#L99)*
+
+**`property`** logMetrics Might be used to disable usage statistics.
+
+**`property`** nodeAppearanceProvider Style node by tree-index.
+
+**`property`** internal Internals are for internal usage only (like unit-testing).
+
+##### Type declaration:
+
+* **internal**? : *undefined | object*
+
+* **logMetrics**? : *undefined | false | true*
+
+* **nodeAppearanceProvider**? : *[NodeAppearanceProvider](#interfaces_index_nodeappearanceprovidermd)*
+
+* **renderOptions**? : *[RenderOptions](#renderoptions)*
+
+___
+
+####  SceneRenderedDelegate
+
+Ƭ **SceneRenderedDelegate**: *function*
+
+*Defined in [viewer/src/public/migration/types.ts:264](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/types.ts#L264)*
+
+Delegate for rendering events.
+
+**`module`** @cognite/reveal
+
+**`see`** [Cognite3DViewer.on](#on).
+
+##### Type declaration:
+
+▸ (`event`: object): *void*
+
+**Parameters:**
+
+▪ **event**: *object*
+
+Name | Type |
+------ | ------ |
+`camera` | PerspectiveCamera |
+`frameNumber` | number |
+`renderTime` | number |
+`renderer` | WebGLRenderer |
+
+___
+
+####  SsaoParameters
+
+Ƭ **SsaoParameters**: *object*
+
+*Defined in [viewer/src/public/types.ts:46](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/types.ts#L46)*
+
+Screen-space ambient occlusion parameters supported by Reveal.
+
+##### Type declaration:
+
+* **depthCheckBias**: *number*
+
+* **sampleRadius**: *number*
+
+* **sampleSize**: *[SsaoSampleQuality](#enums_index_ssaosamplequalitymd)*
+
+___
+
+####  SupportedModelTypes
+
+Ƭ **SupportedModelTypes**: *"pointcloud" | "cad"*
+
+*Defined in [viewer/src/datamodels/base/SupportedModelTypes.ts:4](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/datamodels/base/SupportedModelTypes.ts#L4)*
+
+### Object literals
+
+#### `Const` defaultRenderOptions
+
+#### ▪ **defaultRenderOptions**: *object*
+
+*Defined in [viewer/src/public/types.ts:87](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/types.ts#L87)*
+
+Defaults for {@ref RevealRenderOptions}.
+
+####  antiAliasing
+
+• **antiAliasing**: *[FXAA](#fxaa)* = AntiAliasingMode.FXAA
+
+*Defined in [viewer/src/public/types.ts:88](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/types.ts#L88)*
+
+####  multiSampleCountHint
+
+• **multiSampleCountHint**: *number* = 1
+
+*Defined in [viewer/src/public/types.ts:89](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/types.ts#L89)*
+
+▪ **edgeDetectionParameters**: *object*
+
+*Defined in [viewer/src/public/types.ts:91](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/types.ts#L91)*
+
+* **enabled**: *true* = true
+
+▪ **ssaoRenderParameters**: *object*
+
+*Defined in [viewer/src/public/types.ts:90](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/types.ts#L90)*
+
+* **depthCheckBias**: *number* = 0.0125
+
+* **sampleRadius**: *number* = 1
+
+* **sampleSize**: *[Medium](#medium)* = SsaoSampleQuality.Default
+
+___
+
+#### `Const` revealEnv
+
+#### ▪ **revealEnv**: *object*
+
+*Defined in [viewer/src/revealEnv.ts:9](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/revealEnv.ts#L9)*
+
+Used to specify custom url for worker/wasm files
+in cases when you need the latest local files or CDN is blocked by CSP.
+
+####  publicPath
+
+• **publicPath**: *string* = ""
+
+*Defined in [viewer/src/revealEnv.ts:10](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/revealEnv.ts#L10)*
+
+
+<a name="modules_tools_md"></a>
+
+[@cognite/reveal](#readmemd) › ["tools"](#modules_tools_md)
+
+## Module: "tools"
+
+### Index
+
+#### Classes
+
+* [DebugCameraTool](#classes_tools_debugcameratoolmd)
+* [DebugLoadedSectorsTool](#classes_tools_debugloadedsectorstoolmd)
+* [ExplodedViewTool](#classes_tools_explodedviewtoolmd)
+* [HtmlOverlayTool](#classes_tools_htmloverlaytoolmd)
+
+#### Type aliases
+
+* [DebugLoadedSectorsToolOptions](#debugloadedsectorstooloptions)
+* [HtmlOverlayOptions](#htmloverlayoptions)
+
+### Type aliases
+
+####  DebugLoadedSectorsToolOptions
+
+Ƭ **DebugLoadedSectorsToolOptions**: *object*
+
+*Defined in [viewer/src/tools/DebugLoadedSectorsTool.ts:15](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/tools/DebugLoadedSectorsTool.ts#L15)*
+
+##### Type declaration:
+
+* **colorBy**? : *"depth" | "lod" | "loadedTimestamp"*
+
+* **leafsOnly**? : *undefined | false | true*
+
+* **showDetailedSectors**? : *undefined | false | true*
+
+* **showDiscardedSectors**? : *undefined | false | true*
+
+* **showSimpleSectors**? : *undefined | false | true*
+
+___
+
+####  HtmlOverlayOptions
+
+Ƭ **HtmlOverlayOptions**: *object*
+
+*Defined in [viewer/src/tools/HtmlOverlayTool.ts:19](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/tools/HtmlOverlayTool.ts#L19)*
+
+##### Type declaration:
+
+* **positionUpdatedCallback**? : *HtmlOverlayPositionUpdatedDelegate*

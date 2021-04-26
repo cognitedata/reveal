@@ -4,7 +4,8 @@
 
 # Reveal 3D viewer and libraries #
 
-[![Build Status](https://travis-ci.org/cognitedata/reveal.svg?branch=master)](https://travis-ci.org/cognitedata/reveal)
+[![Build Status](https://github.com/cognitedata/reveal/actions/workflows/ci.yml/badge.svg
+)](https://github.com/cognitedata/reveal/actions/workflows/ci.yml)
 
 Documentation with interactive examples for the latest version is available at [https://cognitedata.github.io/reveal/docs/](https://cognitedata.github.io/reveal/docs/)
 
@@ -30,7 +31,7 @@ yarn build
 yarn serve
 ```
 
-If you now navigate to [localhost:3000](https://localhost:3000), you will see a list of examples
+If you now navigate to [localhost:8080](https://localhost:8080), you will see a list of examples
 that can be explored in the browser.
 
 ## Use local build with a project that uses reveal
@@ -99,11 +100,11 @@ To publish a new version of `@cognite/reveal` or `@cognite/reveal-parser-worker`
 
 ### Git setup
 
-Checkout at some stable revision that you want to release (normally, the latest state from master)
-and create a new branch from it. 
+Checkout at some stable revision that you want to release (normally, the latest state from master or
+version-1 if you are releasing fix for a previous version) and create a new branch from it. 
 
 ```bash
-git checkout master
+git checkout master # or version-1 if you are releasing a hotfix to 1.x.x
 git pull
 git checkout -b <your_username>/<package-name>@<version_to_release>
 ```
@@ -138,7 +139,7 @@ npm access ls-packages | grep 'reveal'
 ``` 
 
 If you see `"@cognite/<package-name>": "read-write"` you're good to go. 
-If you don't have access, then you need to create a PR where you add your npm username to access file. See [that PR](https://github.com/cognitedata/terraform-npm/pull/14/files) for example.
+If you don't have access, then you need to create a PR where you add your npm username to access file. See [this pull request](https://github.com/cognitedata/terraform-npm/pull/14/files) for example.
 
 If you are not currently logged into npm on your CLI, do the following:
 * Run `npm login` (must be `npm login`, not `yarn login`).
@@ -168,16 +169,16 @@ Also, you can check what's committed from the previous tag with that command:
     ```
    Use the following template:
    ```md
-       ### 🚀 Features
-       
-       * commit message
-       
-       ### 🐞 Bug fixes and enhancements
-       
-       * commit message
-       
-       ### 📖 Documentation
-       
-       * commit message
+   ### 🚀 Features
+   
+   * commit message
+   
+   ### 🐞 Bug fixes and enhancements
+   
+   * commit message
+   
+   ### 📖 Documentation
+   
+   * commit message
    ```
 1. Hit the green "Publish release" button
