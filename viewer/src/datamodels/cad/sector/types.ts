@@ -2,6 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 import * as THREE from 'three';
+import * as THREEext from '../../../utilities/three';
+
 import { vec3 } from 'gl-matrix';
 
 import { LevelOfDetail } from './LevelOfDetail';
@@ -30,7 +32,7 @@ export interface ConsumedSector {
   blobUrl: string;
   metadata: SectorMetadata;
   levelOfDetail: LevelOfDetail;
-  group: THREE.Group | undefined;
+  group: THREEext.AutoDisposeGroup | undefined;
   instancedMeshes: InstancedMeshFile[] | undefined;
 }
 
