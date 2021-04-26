@@ -19,5 +19,6 @@ export default styled.div`
   }
   #chart-view {
     height: 100%;
+    overflow: hidden;
   }
 `;

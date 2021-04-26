@@ -92,7 +92,8 @@ const SearchBar = styled.div`
 const SearchResultsContainer = styled.div`
   margin-top: 1rem;
   height: calc(100% - 70px);
-  overflow-y: hidden;
+  overflow: hidden;
+  width: 100%;
 `;
 
 export default Search;
