@@ -19,6 +19,9 @@ export const PageWrapper = styled.div`
     'title links'
     'main main';
   grid-template-rows: minmax(1rem, min-content) min-content;
+  .heading {
+    grid-area: title;
+  }
   h1 {
     grid-area: title;
     margin: 1.5rem 0 1.5rem 2rem;

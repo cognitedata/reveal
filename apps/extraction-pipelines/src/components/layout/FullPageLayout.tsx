@@ -6,16 +6,24 @@ import { PageTitle } from 'styles/StyledHeadings';
 
 interface LayoutProps {
   pageHeadingText: string;
+  pageHeading?: ReactNode;
   headingSide?: ReactNode;
   link?: { path: string; text: string };
 }
 
 export const FullPageLayout: FunctionComponent<LayoutProps> = ({
   pageHeadingText,
+  pageHeading,
   headingSide,
   link,
   children,
 }: PropsWithChildren<LayoutProps>) => {
+  const renderHeading = () => {
+    if (pageHeading) {
+      return <>{pageHeading}</>;
+    }
+    return <PageTitle>{pageHeadingText}</PageTitle>;
+  };
   return (
     <PageWrapper>
       {link && (
@@ -23,7 +31,7 @@ export const FullPageLayout: FunctionComponent<LayoutProps> = ({
           {link.text}
         </GridBreadCrumbsWrapper>
       )}
-      <PageTitle>{pageHeadingText}</PageTitle>
+      {renderHeading()}
       {headingSide}
       <MainFullWidthGrid>{children}</MainFullWidthGrid>
     </PageWrapper>

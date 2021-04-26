@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import React from 'react';
-import { Button, Colors } from '@cognite/cogs.js';
+import { Button, Colors, Input } from '@cognite/cogs.js';
 import { PaddedGridForm } from 'styles/grid/StyledGrid';
 import { bottomSpacing } from 'styles/StyledVariables';
 
@@ -47,6 +47,12 @@ export const Hint = styled.span`
   margin-bottom: ${bottomSpacing};
 `;
 
+export const StyledInput = styled(Input)`
+  &.cogs-input,
+  .cogs-input-default {
+    margin: 0.125rem;
+  }
+`;
 export const StyledTextArea = styled.textarea`
   width: 100%;
   height: 10rem;

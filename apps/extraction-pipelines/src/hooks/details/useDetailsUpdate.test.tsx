@@ -4,6 +4,8 @@ import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import {
   createUpdateSpec,
   mapUpdateToPartialIntegration,
+  metaUpdate,
+  rootUpdate,
   useDetailsUpdate,
 } from 'hooks/details/useDetailsUpdate';
 import { renderWithReactQueryCacheProvider } from 'utils/test/render';
@@ -168,6 +170,42 @@ describe('createUpdateSpec', () => {
       });
       expect(res.items[0].update[`${fieldName}`]).toBeDefined();
       expect(res.items[0].update[`${fieldName}`].set).toEqual(fieldValue);
+    });
+  });
+});
+
+describe('rootUpdate', () => {
+  test('Creates update object', () => {
+    const mock = getMockResponse()[0];
+    const update = rootUpdate({
+      integration: mock,
+      name: 'externalId',
+      project: PROJECT_ITERA_INT_GREEN,
+    });
+    const field = {
+      externalId: 'new_external_id_test',
+    };
+    const res = update(field);
+    expect(res.id).toEqual(mock.id);
+    expect(res.items[0].update.externalId.set).toEqual(field.externalId);
+  });
+});
+describe('metaUpdate', () => {
+  test('Create update obj', () => {
+    const mock = getMockResponse()[0];
+    const update = metaUpdate({
+      integration: mock,
+      name: 'sourceSystem',
+      project: PROJECT_ITERA_INT_GREEN,
+    });
+    const field = {
+      sourceSystem: 'SuperSource',
+    };
+    const res = update(field);
+    expect(res.id).toEqual(mock.id);
+    expect(res.items[0].update.metadata.set).toEqual({
+      ...mock.metadata,
+      sourceSystem: field.sourceSystem,
     });
   });
 });

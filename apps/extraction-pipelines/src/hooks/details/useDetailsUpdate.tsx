@@ -6,6 +6,8 @@ import {
 } from 'model/Integration';
 import { IntegrationError } from 'model/SDKErrors';
 import { IntegrationUpdateSpec, saveUpdate } from 'utils/IntegrationsAPI';
+import { MetaData } from 'model/MetaData';
+import { FieldValues } from 'react-hook-form';
 
 export type UpdateSpec = {
   id: number;
@@ -82,5 +84,47 @@ export const createUpdateSpec = ({
         update: { [fieldName]: { set: fieldValue } },
       },
     ],
+  };
+};
+type RootUpdateParams = {
+  integration: Integration;
+  name: IntegrationFieldName;
+  project: string;
+};
+export const rootUpdate = ({
+  integration,
+  name,
+  project,
+}: RootUpdateParams): ((field: FieldValues) => DetailsUpdateContext) => {
+  return (field: FieldValues) => {
+    return createUpdateSpec({
+      id: integration.id,
+      project,
+      fieldValue: field[name],
+      fieldName: name,
+    });
+  };
+};
+
+type MetaUpdateParams = {
+  name: keyof MetaData;
+  integration: Integration;
+  project: string;
+};
+export const metaUpdate = ({
+  name,
+  integration,
+  project,
+}: MetaUpdateParams): ((field: FieldValues) => DetailsUpdateContext) => {
+  return (field: FieldValues): DetailsUpdateContext => {
+    return createUpdateSpec({
+      project,
+      id: integration.id,
+      fieldValue: {
+        ...integration.metadata,
+        [name]: field[name],
+      },
+      fieldName: 'metadata',
+    });
   };
 };

@@ -23,6 +23,7 @@ import { useDataSets } from 'hooks/useDataSets';
 import { RouterParams } from 'routing/RoutingConfig';
 import { RunLogsView } from 'components/integration/RunLogsView';
 import { CONTACTS, DETAILS, INTEGRATION_OVERVIEW, RUNS } from 'utils/constants';
+import { IntegrationHeading } from 'components/integration/IntegrationHeading';
 
 const PageNav = styled.ul`
   margin: 0;
@@ -81,6 +82,7 @@ const IntegrationPage: FunctionComponent<IntegrationPageProps> = () => {
   return (
     <FullPageLayout
       pageHeadingText={integration?.name ?? ''}
+      pageHeading={<IntegrationHeading />}
       headingSide={
         <LinkWrapper>
           <InteractiveCopyWithText
