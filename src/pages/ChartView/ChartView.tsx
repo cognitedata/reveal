@@ -234,37 +234,32 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
               <SourceName>Median</SourceName>
             </SourceItem>
           </th>
-          <th style={{ width: 140, paddingRight: 8 }}>
+          <th style={{ width: 180, paddingRight: 8 }}>
             <SourceItem style={{ justifyContent: 'flex-end' }}>
-              <SourceName>Unit (input)</SourceName>
+              <SourceName>Unit</SourceName>
             </SourceItem>
           </th>
-          <th style={{ width: 140, paddingRight: 8 }}>
-            <SourceItem style={{ justifyContent: 'flex-end' }}>
-              <SourceName>Unit (output)</SourceName>
-            </SourceItem>
-          </th>
-          <th style={{ width: 60, paddingLeft: 0 }}>
+          <th style={{ width: 50, paddingLeft: 0 }}>
             <SourceItem style={{ justifyContent: 'center' }}>
               <SourceName>P&amp;IDs</SourceName>
             </SourceItem>
           </th>
-          <th style={{ width: 60, paddingLeft: 0 }}>
+          <th style={{ width: 50, paddingLeft: 0 }}>
             <SourceItem style={{ justifyContent: 'center' }}>
               <SourceName>Style</SourceName>
             </SourceItem>
           </th>
-          <th style={{ width: 60, paddingLeft: 0 }}>
+          <th style={{ width: 50, paddingLeft: 0 }}>
             <SourceItem style={{ justifyContent: 'center' }}>
               <SourceName>Remove</SourceName>
             </SourceItem>
           </th>
-          <th style={{ width: 60, paddingLeft: 0 }}>
+          <th style={{ width: 50, paddingLeft: 0 }}>
             <SourceItem style={{ justifyContent: 'center' }}>
               <SourceName>Details</SourceName>
             </SourceItem>
           </th>
-          <th style={{ width: 60, paddingLeft: 0 }}>
+          <th style={{ width: 50, paddingLeft: 0 }}>
             <SourceItem style={{ justifyContent: 'center' }}>
               <SourceName>More</SourceName>
             </SourceItem>

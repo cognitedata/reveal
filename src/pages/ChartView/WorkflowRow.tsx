@@ -5,7 +5,14 @@ import {
   FunctionCallStatus,
   ChartTimeSeries,
 } from 'reducers/charts/types';
-import { Button, Dropdown, Icon, Menu, Popconfirm } from '@cognite/cogs.js';
+import {
+  Button,
+  Dropdown,
+  Icon,
+  Menu,
+  Popconfirm,
+  Flex,
+} from '@cognite/cogs.js';
 import FunctionCall from 'components/FunctionCall';
 import { updateWorkflow, removeWorkflow } from 'utils/charts';
 import EditableText from 'components/EditableText';
@@ -16,7 +23,14 @@ import { getStepsFromWorkflow } from 'utils/transforms';
 import { calculateGranularity } from 'utils/timeseries';
 import { isWorkflowRunnable } from 'components/NodeEditor/utils';
 import { AppearanceDropdown } from 'components/AppearanceDropdown';
-import { SourceItem, SourceSquare, SourceName, SourceRow } from './elements';
+import {
+  SourceItem,
+  SourceSquare,
+  SourceName,
+  SourceRow,
+  UnitMenuAside,
+  UnitMenuHeader,
+} from './elements';
 import WorkflowMenu from './WorkflowMenu';
 
 const renderStatusIcon = (status?: FunctionCallStatus) => {
@@ -128,9 +142,17 @@ export default function WorkflowRow({
           unit: unitOption.value,
         })
       }
+      style={
+        unit?.toLowerCase() === unitOption.value
+          ? {
+              color: 'var(--cogs-midblue-3)',
+              backgroundColor: 'var(--cogs-midblue-6)',
+              borderRadius: 3,
+            }
+          : {}
+      }
     >
       {unitOption.label}
-      {unit?.toLowerCase() === unitOption.value && ' (selected)'}
     </Menu.Item>
   ));
 
@@ -142,9 +164,17 @@ export default function WorkflowRow({
           preferredUnit: unitOption?.value,
         })
       }
+      style={
+        preferredUnit?.toLowerCase() === unitOption?.value
+          ? {
+              color: 'var(--cogs-midblue-3)',
+              backgroundColor: 'var(--cogs-midblue-6)',
+              borderRadius: 3,
+            }
+          : {}
+      }
     >
-      {unitOption?.label}{' '}
-      {preferredUnit?.toLowerCase() === unitOption?.value && ' (selected)'}
+      {unitOption?.label}
     </Menu.Item>
   ));
 
@@ -201,49 +231,40 @@ export default function WorkflowRow({
       {isWorkspaceMode && (
         <>
           <td>{name || 'noname'}</td>
-          <td>-</td>
-          <td>-</td>
-          <td>-</td>
-          <td>-</td>
+          <td />
+          <td />
+          <td />
+          <td />
           <td style={{ textAlign: 'right', paddingRight: 8 }}>
-            <div role="none" onClick={(event) => event.stopPropagation()}>
-              <Dropdown
-                content={
-                  <Menu>
-                    <Menu.Header>
-                      <span style={{ wordBreak: 'break-word' }}>
-                        Select input unit (override)
-                      </span>
-                    </Menu.Header>
-                    {unitOverrideMenuItems}
-                  </Menu>
-                }
+            <Dropdown
+              content={
+                <Menu>
+                  <Flex direction="row">
+                    <div>
+                      <Menu.Header>
+                        <UnitMenuHeader>Input</UnitMenuHeader>
+                      </Menu.Header>
+                      {unitOverrideMenuItems}
+                    </div>
+                    <UnitMenuAside>
+                      <Menu.Header>
+                        <UnitMenuHeader>Output</UnitMenuHeader>
+                      </Menu.Header>
+                      {unitConversionMenuItems}
+                    </UnitMenuAside>
+                  </Flex>
+                </Menu>
+              }
+            >
+              <Button
+                icon="Down"
+                variant="outline"
+                iconPlacement="right"
+                style={{ height: 28 }}
               >
-                <Button icon="Down" iconPlacement="right">
-                  {inputUnitOption?.label || '-'}
-                </Button>
-              </Dropdown>
-            </div>
-          </td>
-          <td style={{ textAlign: 'right', paddingRight: 8 }}>
-            <div role="none" onClick={(event) => event.stopPropagation()}>
-              <Dropdown
-                content={
-                  <Menu onClick={(event) => event.stopPropagation()}>
-                    <Menu.Header>
-                      <span style={{ wordBreak: 'break-word' }}>
-                        Select preferred unit
-                      </span>
-                    </Menu.Header>
-                    {unitConversionMenuItems}
-                  </Menu>
-                }
-              >
-                <Button icon="Down" iconPlacement="right">
-                  {preferredUnitOption?.label || '-'}
-                </Button>
-              </Dropdown>
-            </div>
+                {preferredUnitOption?.label || '-'}
+              </Button>
+            </Dropdown>
           </td>
           <td />
           <td style={{ textAlign: 'center', paddingLeft: 0 }}>

@@ -247,3 +247,25 @@ export const ChartWrapper = styled.div`
     width: 100%;
   }
 `;
+
+export const UnitMenuHeader = styled.div`
+  word-break: break-word;
+  text-transform: none;
+  font-weight: 400;
+  color: var(--cogs-greyscale-grey6);
+`;
+
+export const UnitMenuAside = styled.div`
+  margin-left: 40px;
+  position: relative;
+  &:before {
+    display: block;
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -20px;
+    width: 2px;
+    background-color: var(--cogs-greyscale-grey3);
+  }
+`;

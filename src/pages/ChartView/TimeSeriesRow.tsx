@@ -11,6 +11,7 @@ import {
   Menu,
   Tooltip,
   Popconfirm,
+  Flex,
 } from '@cognite/cogs.js';
 import { units } from 'utils/units';
 import { calculateGranularity } from 'utils/timeseries';
@@ -19,7 +20,14 @@ import EditableText from 'components/EditableText';
 import { AppearanceDropdown } from 'components/AppearanceDropdown';
 import { PnidButton } from 'components/SearchResultTable/PnidButton';
 import { functionResponseKey } from 'utils/cogniteFunctions';
-import { SourceItem, SourceCircle, SourceName, SourceRow } from './elements';
+import {
+  SourceItem,
+  SourceCircle,
+  SourceName,
+  SourceRow,
+  UnitMenuAside,
+  UnitMenuHeader,
+} from './elements';
 import TimeSeriesMenu from './TimeSeriesMenu';
 import { StatisticsResult } from '../../components/ContextMenu';
 
@@ -151,9 +159,17 @@ export default function TimeSeriesRow({
           unit: unitOption.value,
         })
       }
+      style={
+        unit?.toLowerCase() === unitOption.value
+          ? {
+              color: 'var(--cogs-midblue-3)',
+              backgroundColor: 'var(--cogs-midblue-6)',
+              borderRadius: 3,
+            }
+          : {}
+      }
     >
       {unitOption.label}
-      {unit?.toLowerCase() === unitOption.value && ' (selected)'}
       {originalUnit?.toLowerCase() === unitOption.value && ' (original)'}
     </Menu.Item>
   ));
@@ -166,9 +182,17 @@ export default function TimeSeriesRow({
           preferredUnit: unitOption?.value,
         })
       }
+      style={
+        preferredUnit?.toLowerCase() === unitOption?.value
+          ? {
+              color: 'var(--cogs-midblue-3)',
+              backgroundColor: 'var(--cogs-midblue-6)',
+              borderRadius: 3,
+            }
+          : {}
+      }
     >
-      {unitOption?.label}{' '}
-      {preferredUnit?.toLowerCase() === unitOption?.value && ' (selected)'}
+      {unitOption?.label}
     </Menu.Item>
   ));
 
@@ -251,46 +275,36 @@ export default function TimeSeriesRow({
           <td>{statisticsForSource?.max}</td>
           <td>{statisticsForSource?.median}</td>
           <td style={{ textAlign: 'right', paddingRight: 8 }}>
-            <div role="none" onClick={(event) => event.stopPropagation()}>
-              <Dropdown
-                content={
-                  <Menu>
-                    <Menu.Header>
-                      <span style={{ wordBreak: 'break-word' }}>
-                        Select input unit (override)
-                      </span>
-                    </Menu.Header>
-                    {unitOverrideMenuItems}
-                  </Menu>
-                }
+            <Dropdown
+              content={
+                <Menu>
+                  <Flex direction="row">
+                    <div>
+                      <Menu.Header>
+                        <UnitMenuHeader>Input</UnitMenuHeader>
+                      </Menu.Header>
+                      {unitOverrideMenuItems}
+                    </div>
+                    <UnitMenuAside>
+                      <Menu.Header>
+                        <UnitMenuHeader>Output</UnitMenuHeader>
+                      </Menu.Header>
+                      {unitConversionMenuItems}
+                    </UnitMenuAside>
+                  </Flex>
+                </Menu>
+              }
+            >
+              <Button
+                icon="Down"
+                variant="outline"
+                iconPlacement="right"
+                style={{ height: 28 }}
               >
-                <Button icon="Down" iconPlacement="right">
-                  {inputUnitOption?.label}
-                  {inputUnitOption?.value !== originalUnit?.toLowerCase() &&
-                    ' *'}
-                </Button>
-              </Dropdown>
-            </div>
-          </td>
-          <td style={{ textAlign: 'right', paddingRight: 8 }}>
-            <div role="none" onClick={(event) => event.stopPropagation()}>
-              <Dropdown
-                content={
-                  <Menu>
-                    <Menu.Header>
-                      <span style={{ wordBreak: 'break-word' }}>
-                        Select preferred unit
-                      </span>
-                    </Menu.Header>
-                    {unitConversionMenuItems}
-                  </Menu>
-                }
-              >
-                <Button icon="Down" iconPlacement="right">
-                  {preferredUnitOption?.label}
-                </Button>
-              </Dropdown>
-            </div>
+                {preferredUnitOption?.label}
+                {inputUnitOption?.value !== originalUnit?.toLowerCase() && ' *'}
+              </Button>
+            </Dropdown>
           </td>
         </>
       )}
