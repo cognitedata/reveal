@@ -1,8 +1,8 @@
+import React from 'react';
 import styled from 'styled-components';
-import { Button, Colors } from '@cognite/cogs.js';
+import { Button, Colors, Icon } from '@cognite/cogs.js';
 import { DivFlexProps } from 'styles/flex/StyledFlex';
 import { bottomSpacing } from 'styles/StyledVariables';
-import React from 'react';
 import { CLOSE, SAVE } from 'utils/constants';
 
 type ButtonPlacedProps = DivFlexProps & { mb?: number };
@@ -72,4 +72,22 @@ export const StyledEdit = styled((props) => (
       }
     }
   }
+`;
+
+export const BluePlus = styled((props) => <Icon {...props} type="Plus" />)`
+  &.cogs-icon-Plus {
+    opacity: 1;
+    margin-left: 0;
+    svg {
+      g {
+        path {
+          fill: ${Colors.primary.hex()};
+        }
+      }
+    }
+  }
+`;
+export const BlueText = styled.span`
+  margin-left: 1rem;
+  color: ${Colors.primary.hex()};
 `;

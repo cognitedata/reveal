@@ -78,6 +78,7 @@ export const EditButton = styled((props) => (
   text-align: left;
   grid-column-gap: 1rem;
   height: fit-content;
+  width: ${(props: { width?: string }) => props.width || 'auto'}; ;
 `;
 
 export const SwitchButton = styled.button`

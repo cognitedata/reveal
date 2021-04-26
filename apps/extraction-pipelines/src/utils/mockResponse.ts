@@ -59,6 +59,7 @@ const mockResponseV2 = {
         {
           email: 'Katinka.Odner@itera.no',
           name: 'Katinka Odner',
+          role: 'Designer',
           sendNotification: true,
         },
       ],

@@ -1,5 +1,6 @@
 import moment from 'moment';
 import { User } from 'model/User';
+import { DetailFieldNames } from 'model/Integration';
 import { FieldValues } from 'react-hook-form';
 import { LastStatuses, Status, StatusObj } from 'model/Status';
 
@@ -45,6 +46,29 @@ export const calculate = ({
     time: 0,
   };
 };
+
+type Partitioned<T> = Readonly<{ pass: Readonly<T[]>; fail: Readonly<T[]> }>;
+export const partition = <T>(
+  list: Array<T>,
+  predicate: (item: T) => boolean
+): Partitioned<T> => {
+  return list.reduce(
+    (acc: { pass: T[]; fail: T[] }, current: T) => {
+      return predicate(current)
+        ? { ...acc, pass: [...acc.pass, current] }
+        : { ...acc, fail: [...acc.fail, current] };
+    },
+    { pass: [], fail: [] }
+  );
+};
+
+export const isOwner = (contact: User): boolean => {
+  return (
+    !!contact.role &&
+    contact.role.toLowerCase() === DetailFieldNames.OWNER.toLowerCase()
+  );
+};
+
 export const updateContactField = (
   contacts: User[],
   fieldName: keyof User,
@@ -57,6 +81,7 @@ export const updateContactField = (
     return c;
   });
 };
+
 export const updateContact = (
   contacts: User[],
   contactField: FieldValues,
@@ -69,6 +94,7 @@ export const updateContact = (
     return c;
   });
 };
+
 export const removeContactByIdx = (contacts: User[], index: number) => {
   return contacts.filter((c: User, i: number) => {
     return i !== index;

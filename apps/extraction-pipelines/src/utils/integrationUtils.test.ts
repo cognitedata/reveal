@@ -1,6 +1,12 @@
 import moment from 'moment';
-import { calculate, calculateStatus } from './integrationUtils';
-import { Status } from '../model/Status';
+import { User } from 'model/User';
+import { Status } from 'model/Status';
+import {
+  calculate,
+  calculateStatus,
+  isOwner,
+  partition,
+} from './integrationUtils';
 
 describe('Integration utils', () => {
   const cases = [
@@ -78,5 +84,18 @@ describe('Integration utils', () => {
       const res = calculateStatus(value);
       expect(res.status).toEqual(expected);
     });
+  });
+});
+describe('partition', () => {
+  test('splits', () => {
+    const contacts = [
+      { name: 'test' },
+      { name: 'foo', role: 'Owner' },
+      { name: 'owner', role: 'developer' },
+    ];
+    const { pass: owner, fail: other } = partition<User>(contacts, isOwner);
+    expect(owner[0]).toEqual(contacts[1]);
+    expect(other[0]).toEqual(contacts[0]);
+    expect(other[1]).toEqual(contacts[2]);
   });
 });
