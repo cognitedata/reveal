@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import dayjs from 'dayjs';
-import { useIsFetching, useQueryClient } from 'react-query';
+import { useSDK } from '@cognite/sdk-provider';
+import { useIsFetching, useQueryClient, useQuery } from 'react-query';
 import { Chart, ChartTimeSeries } from 'reducers/charts/types';
 import {
   AllIconTypes,
@@ -17,8 +18,10 @@ import { removeTimeseries, updateTimeseries } from 'utils/charts';
 import EditableText from 'components/EditableText';
 import { AppearanceDropdown } from 'components/AppearanceDropdown';
 import { PnidButton } from 'components/SearchResultTable/PnidButton';
+import { functionResponseKey } from 'utils/cogniteFunctions';
 import { SourceItem, SourceCircle, SourceName, SourceRow } from './elements';
 import TimeSeriesMenu from './TimeSeriesMenu';
+import { StatisticsResult } from '../../components/ContextMenu';
 
 type LoadingProps = {
   tsId: number;
@@ -100,6 +103,7 @@ export default function TimeSeriesRow({
   isWorkspaceMode = false,
   isFileViewerMode = false,
 }: Props) {
+  const sdk = useSDK();
   const {
     id,
     description,
@@ -173,6 +177,28 @@ export default function TimeSeriesRow({
   const updateAppearance = (diff: Partial<ChartTimeSeries>) =>
     mutate(updateTimeseries(chart, id, diff));
 
+  const statisticsCall = (timeseries?.statisticsCalls || [])[0];
+
+  const { data } = useQuery({
+    queryKey: functionResponseKey(
+      statisticsCall?.functionId,
+      statisticsCall?.callId
+    ),
+    queryFn: (): Promise<string | undefined> =>
+      sdk
+        .get(
+          `/api/playground/projects/${sdk.project}/functions/${statisticsCall.functionId}/calls/${statisticsCall.callId}/response`
+        )
+        .then((r) => r.data.response),
+    retry: 1,
+    retryDelay: 1000,
+    enabled: !!statisticsCall,
+  });
+
+  const { results } = (data as any) || {};
+  const { statistics = [] } = (results as StatisticsResult) || {};
+  const statisticsForSource = statistics[0];
+
   return (
     <SourceRow
       key={id}
@@ -220,11 +246,10 @@ export default function TimeSeriesRow({
               <SourceName>{description}</SourceName>
             </SourceItem>
           </td>
-          <td>-</td>
-          <td>-</td>
-          <td>-</td>
-          <td>-</td>
-          <td>-</td>
+          <td>{statisticsForSource?.tag}</td>
+          <td>{statisticsForSource?.min}</td>
+          <td>{statisticsForSource?.max}</td>
+          <td>{statisticsForSource?.median}</td>
           <td style={{ textAlign: 'right', paddingRight: 8 }}>
             <div role="none" onClick={(event) => event.stopPropagation()}>
               <Dropdown

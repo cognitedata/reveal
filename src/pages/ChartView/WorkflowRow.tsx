@@ -205,7 +205,6 @@ export default function WorkflowRow({
           <td>-</td>
           <td>-</td>
           <td>-</td>
-          <td>-</td>
           <td style={{ textAlign: 'right', paddingRight: 8 }}>
             <div role="none" onClick={(event) => event.stopPropagation()}>
               <Dropdown

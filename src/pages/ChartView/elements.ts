@@ -124,17 +124,18 @@ export const SourceTable = styled.table`
   td,
   th {
     padding-left: 10px;
-    border: 1px solid var(--cogs-greyscale-grey2);
   }
 
   th {
     position: sticky;
     top: -1px;
-    background-color: white;
+    color: var(--cogs-greyscale-grey7);
+    background-color: var(--cogs-greyscale-grey1);
     z-index: ${Layers.TABLE_HEADER};
     margin-bottom: -1px;
-    box-shadow: inset 0 1px 0 var(--cogs-greyscale-grey2),
-      inset 0 -2px 0 var(--cogs-greyscale-grey2);
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
   }
 
   tbody > tr:hover {
@@ -149,10 +150,10 @@ export const SourceRow = styled.tr`
   background: ${(props: { isActive: boolean }) =>
     props.isActive ? 'var(--cogs-greyscale-grey3)' : 'none'};
 
-  &&:nth-child(even) {
+  &&:nth-child(odd) {
     background: #ffffff;
   }
-  &&:nth-child(odd) {
+  &&:nth-child(even) {
     background: var(--cogs-greyscale-grey1);
   }
   &&:hover {
