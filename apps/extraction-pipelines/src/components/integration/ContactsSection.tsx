@@ -15,17 +15,24 @@ import {
   EMAIL_LABEL,
   NAME_LABEL,
   NOTIFICATION_LABEL,
+  OWNER_HINT,
   ROLE_LABEL,
 } from 'utils/constants';
 import { StyledTitle2 } from 'styles/StyledHeadings';
 import { DetailsGrid } from 'components/form/viewEditIntegration/MainDetails';
 import { Hint } from 'styles/StyledForm';
 import { NotificationUpdateSwitch } from 'components/inputs/NotificationUpdateSwitch';
+import { DetailFieldNames } from 'model/Integration';
+import { isOwner, partition } from 'utils/integrationUtils';
+import { User } from 'model/User';
 import { AddContact } from './AddContact';
 
 export const ContactsSectionWrapper = styled(DetailsGrid)`
   align-content: flex-start;
   padding: 1rem;
+`;
+export const OwnerWrapper = styled.div`
+  margin-bottom: 2rem;
 `;
 export const Row = styled.div`
   display: grid;
@@ -46,9 +53,82 @@ interface ContactsSectionProps {}
 export const ContactsSection: FunctionComponent<ContactsSectionProps> = () => {
   const { integration } = useSelectedIntegration();
   const { data: current } = useIntegrationById(integration?.id);
+  const { pass: owner } = partition(current?.contacts ?? [], isOwner);
+
+  const renderOwner = (innerOwner: ReadonlyArray<User>) => {
+    if (innerOwner[0]) {
+      return (
+        <>
+          <HeadingRow>
+            <Heading>{ROLE_LABEL}</Heading>
+            <Heading>{NOTIFICATION_LABEL}</Heading>
+            <Heading>{NAME_LABEL}</Heading>
+            <Heading>{EMAIL_LABEL}</Heading>
+          </HeadingRow>
+          {current?.contacts?.map((contact, index) => {
+            const key = `owner-${index}`;
+            if (!isOwner(contact)) {
+              return null;
+            }
+            return (
+              <Row key={key} className="row-style-even row-height-4">
+                <EditPartContacts
+                  integration={current}
+                  name="contacts"
+                  index={index}
+                  field="role"
+                  label="Role"
+                  schema={contactRoleSchema}
+                  defaultValues={{ role: contact?.role }}
+                />
+                <NotificationUpdateSwitch
+                  integration={current}
+                  name="contacts"
+                  index={index}
+                  field="sendNotification"
+                  defaultValues={{
+                    sendNotification: contact?.sendNotification,
+                  }}
+                />
+                <EditPartContacts
+                  integration={current}
+                  name="contacts"
+                  index={index}
+                  field="name"
+                  label={TableHeadings.NAME}
+                  schema={contactNameSchema}
+                  defaultValues={{ name: contact?.name }}
+                />
+                <EditPartContacts
+                  integration={current}
+                  name="contacts"
+                  index={index}
+                  field="email"
+                  label="Email"
+                  schema={contactEmailSchema}
+                  defaultValues={{ email: contact?.email }}
+                />
+
+                <RemoveContactButton
+                  integration={current}
+                  name="contacts"
+                  index={index}
+                />
+              </Row>
+            );
+          })}
+        </>
+      );
+    }
+    return <AddContact isOwner />;
+  };
 
   return (
     <ContactsSectionWrapper role="grid">
+      <StyledTitle2 id="owner-heading">{DetailFieldNames.OWNER}</StyledTitle2>
+      <Hint>{OWNER_HINT}</Hint>
+      <OwnerWrapper>{renderOwner(owner)}</OwnerWrapper>
+
       <StyledTitle2 id="contacts-heading">
         {TableHeadings.CONTACTS}
       </StyledTitle2>
@@ -60,6 +140,9 @@ export const ContactsSection: FunctionComponent<ContactsSectionProps> = () => {
         <Heading>{EMAIL_LABEL}</Heading>
       </HeadingRow>
       {current?.contacts?.map((contact, index) => {
+        if (isOwner(contact)) {
+          return null;
+        }
         const key = `contacts-${index}`;
         return (
           <Row key={key} className="row-style-even row-height-4">

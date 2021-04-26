@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent, PropsWithoutRef, useState } from 'react';
 import { useSelectedIntegration } from 'hooks/useSelectedIntegration';
 import { useIntegrationById } from 'hooks/useIntegration';
 import { Controller, useForm } from 'react-hook-form';
@@ -15,6 +15,7 @@ import { InputError } from 'components/inputs/InputError';
 import styled from 'styled-components';
 import {
   ADD_CONTACT,
+  ADD_OWNER,
   CLOSE,
   EMAIL_LABEL,
   NAME_LABEL,
@@ -41,9 +42,13 @@ const AddButton = styled(Button)`
   margin-top: 1rem;
   justify-self: start;
 `;
-interface AddContactProps {}
+interface AddContactProps {
+  isOwner?: boolean;
+}
 
-export const AddContact: FunctionComponent<AddContactProps> = () => {
+export const AddContact: FunctionComponent<AddContactProps> = ({
+  isOwner,
+}: PropsWithoutRef<AddContactProps>) => {
   const { integration } = useSelectedIntegration();
   const { project } = useAppEnv();
   const { data: current } = useIntegrationById(integration?.id);
@@ -98,7 +103,7 @@ export const AddContact: FunctionComponent<AddContactProps> = () => {
             name="role"
             control={control}
             errors={errors}
-            defaultValue=""
+            defaultValue={isOwner ? 'Owner' : ''}
             inputId="role"
             labelText={ROLE_LABEL}
           />
@@ -163,7 +168,7 @@ export const AddContact: FunctionComponent<AddContactProps> = () => {
         </StyledForm>
       ) : (
         <AddButton type="tertiary" onClick={onAddContact}>
-          {ADD_CONTACT}
+          {isOwner ? ADD_OWNER : ADD_CONTACT}
         </AddButton>
       )}
     </>

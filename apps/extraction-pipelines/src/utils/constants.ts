@@ -29,8 +29,11 @@ export const OK: Readonly<string> = 'OK';
 export const BACK: Readonly<string> = 'Back';
 export const NEXT: Readonly<string> = 'Next';
 export const ADD_CONTACT: Readonly<string> = 'Add another contact';
+export const ADD_OWNER: Readonly<string> = 'Add owner';
 export const CONTACTS_HINT =
   'Contacts could be someone responsible for a relevant application or persons to contact if there is an issue with the integration. Please mark if the contact should recieve a notification if there is an issue.';
+export const OWNER_HINT =
+  'The owner of an integration is the person responsible for the integration';
 export const REGISTER: Readonly<string> = 'Register';
 export const ADD_ROW: Readonly<string> = 'Add row';
 export const REMOVE_ROW: Readonly<string> = 'Remove row';
