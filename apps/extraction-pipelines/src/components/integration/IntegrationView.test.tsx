@@ -40,8 +40,8 @@ describe('IntegrationView', () => {
       screen.getByText(DOCUMENTATION_HEADING);
     });
     expect(
-      screen.getAllByText(new RegExp(TableHeadings.NAME, 'i')).length
-    ).toEqual(2); // integration name heading, contacts heading name
+      screen.getByText(new RegExp(TableHeadings.NAME, 'i'))
+    ).toBeInTheDocument();
     expect(screen.getByText(mockIntegration.name)).toBeInTheDocument();
 
     expect(

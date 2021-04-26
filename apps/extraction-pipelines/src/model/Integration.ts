@@ -45,7 +45,7 @@ export type IntegrationFieldValue =
 
 export enum DetailFieldNames {
   EXTERNAL_ID = 'External id',
-  ID = 'Internal id',
+  ID = 'Integration id',
   DESCRIPTION = 'Description',
   CREATED_TIME = 'Created time',
   LAST_UPDATED_TIME = 'Last updated time',

@@ -1,7 +1,7 @@
 import React from 'react';
 import { fireEvent, screen } from '@testing-library/react';
 import { QueryClient } from 'react-query';
-import { useLocation, useParams, useRouteMatch } from 'react-router-dom';
+import { useLocation, useRouteMatch, useParams } from 'react-router-dom';
 import { CONTACTS, DETAILS, RUNS } from 'utils/constants';
 import { renderWithReQueryCacheSelectedIntegrationContext } from 'utils/test/render';
 import { ORIGIN_DEV, PROJECT_ITERA_INT_GREEN } from 'utils/baseURL';
@@ -86,10 +86,12 @@ describe('IntegrationPage', () => {
     expect(screen.getByText(DETAILS)).toBeInTheDocument();
     const runsLink = screen.getByText(RUNS);
     expect(runsLink).toBeInTheDocument();
+    const contactsBtn = screen.getByText(CONTACTS);
+    expect(contactsBtn).toBeInTheDocument();
     // check some details are renderd
     expect(screen.getAllByText(mockIntegration.name).length).toEqual(2); // heading and field
     expect(screen.getAllByText(mockIntegration.description).length).toEqual(2); // heading and field
-    expect(screen.getByText(mockIntegration.externalId)).toBeInTheDocument();
+    expect(screen.getAllByText(mockIntegration.externalId).length).toEqual(2);
     // navigate to runs
     fireEvent.click(runsLink);
     expect(

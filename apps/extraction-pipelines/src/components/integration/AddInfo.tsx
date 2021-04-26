@@ -3,6 +3,7 @@ import { Colors, Icon } from '@cognite/cogs.js';
 import React, { PropsWithoutRef } from 'react';
 import { IntegrationFieldName, IntegrationFieldValue } from 'model/Integration';
 import { splitWordsLowerCase } from 'utils/primitivesUtils';
+import DetailsValueView from 'components/table/details/DetailsValueView';
 
 const BluePlus = styled((props) => <Icon {...props} type="Plus" />)`
   &.cogs-icon-Plus {
@@ -39,7 +40,7 @@ export const AddInfo = ({
   }
   return (
     <>
-      <span>{fieldValue}</span>
+      <DetailsValueView fieldName={fieldName} fieldValue={fieldValue} />
       <span />
     </>
   );

@@ -137,13 +137,11 @@ export const StyledForm = styled((props) => (
     height: max-content;
   }
 `;
-export const StyledRadioGroup = styled.fieldset`
+export const ColumnForm = styled.form`
   display: flex;
   flex-direction: column;
-  margin: 1rem 0;
-  legend {
-    font-weight: bold;
-    font-size: initial;
-    margin-bottom: 0;
+  margin-bottom: ${(props: { mb?: boolean }) => (props.mb ? '1rem' : '0')};
+  label {
+    margin-left: 1rem;
   }
 `;

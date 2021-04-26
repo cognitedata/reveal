@@ -18,19 +18,9 @@ import {
 import { DivFlex } from 'styles/flex/StyledFlex';
 import ValidationError from 'components/form/ValidationError';
 import { AnyObjectSchema } from 'yup';
-import { StyledInput, StyledLabel } from 'styles/StyledForm';
-import styled from 'styled-components';
+import { ColumnForm, StyledInput, StyledLabel } from 'styles/StyledForm';
 import { CloseButton, SaveButton, StyledEdit } from 'styles/StyledButton';
 import { AddInfo } from './AddInfo';
-
-const Wrapper = styled.form`
-  display: flex;
-  flex-direction: column;
-  margin-bottom: ${(props: { mb?: boolean }) => (props.mb ? '1rem' : '0')};
-  label {
-    margin-left: 1rem;
-  }
-`;
 
 export interface InlineEditProps<Fields> {
   defaultValues: DefaultValues<Fields>;
@@ -91,7 +81,7 @@ const InlineEdit = <Fields extends FieldValues>({
   }
 
   return (
-    <Wrapper onSubmit={handleSubmit(onSave)} mb={mb}>
+    <ColumnForm onSubmit={handleSubmit(onSave)} mb={mb}>
       {showLabel && (
         <StyledLabel htmlFor={name} className="input-label">
           {label}
@@ -151,7 +141,7 @@ const InlineEdit = <Fields extends FieldValues>({
           )}
         </StyledEdit>
       )}
-    </Wrapper>
+    </ColumnForm>
   );
 };
 
