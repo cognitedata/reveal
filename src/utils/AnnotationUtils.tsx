@@ -42,59 +42,44 @@ export const createPendingAnnotationsFromJob = async (
   existingEntities: CogniteAnnotation[]
 ): Promise<PendingCogniteAnnotation[]> => {
   return entities.reduce((prev, entity) => {
-    const bestMatch = entity.items[0];
-    const resourceId = bestMatch.id;
-    const resourceExternalId = bestMatch?.externalId;
-    const { resourceType } = bestMatch;
-
-    const activeEntities = existingEntities.filter(
-      (el) => el.page === entity.page && el.status !== 'deleted'
-    );
-
     const deletedEntities = existingEntities.filter(
       (el) => el.page === entity.page && el.status === 'deleted'
     );
 
-    if (
-      activeEntities.some(
-        (el) =>
-          // much smaller
-          isSimilarBoundingBox(el.box, el.box, 1, true) ||
-          // bigger or smaller by 20%
-          isSimilarBoundingBox(el.box, el.box, 0.2, false)
-      )
-    ) {
-      return prev;
-    }
+    entity.items.forEach((item) => {
+      const resourceId = item.id;
+      const resourceExternalId = item?.externalId;
+      const { resourceType } = item;
+      // if the same annotation has been "soft" deleted before, do not recreate.
+      if (
+        resourceType &&
+        findSimilarMatches(
+          deletedEntities,
+          entity.boundingBox,
+          resourceType,
+          resourceExternalId,
+          resourceId
+        )
+      ) {
+        return prev;
+      }
+      prev.push({
+        box: entity.boundingBox,
+        ...(!file.externalId ? { fileId: file.id } : {}),
+        ...(file.externalId ? { fileExternalId: file.externalId } : {}),
+        resourceId: item.id,
+        resourceExternalId: item.externalId,
+        resourceType: item.resourceType,
+        type: PNID_ANNOTATION_TYPE,
+        label: entity.text,
+        source: `job:${jobId}`,
+        version: CURRENT_VERSION,
+        owner: `${jobId}`,
+        status: 'unhandled',
+        page: entity.page,
+      } as PendingCogniteAnnotation);
+    });
 
-    if (
-      resourceType &&
-      findSimilarMatches(
-        deletedEntities,
-        entity.boundingBox,
-        resourceType,
-        resourceExternalId,
-        resourceId
-      )
-    ) {
-      return prev;
-    }
-
-    prev.push({
-      box: entity.boundingBox,
-      ...(!file.externalId ? { fileId: file.id } : {}),
-      ...(file.externalId ? { fileExternalId: file.externalId } : {}),
-      resourceId,
-      resourceExternalId,
-      resourceType,
-      type: PNID_ANNOTATION_TYPE,
-      label: entity.text,
-      source: `job:${jobId}`,
-      version: CURRENT_VERSION,
-      owner: `${jobId}`,
-      status: 'unhandled',
-      page: entity.page,
-    } as PendingCogniteAnnotation);
     return prev;
   }, [] as PendingCogniteAnnotation[]);
 };
