@@ -15,6 +15,10 @@ import { rootUpdate } from 'hooks/details/useDetailsUpdate';
 
 const Wrapper = styled.div`
   margin: 1rem;
+  #description,
+  #name {
+    flex: 1;
+  }
 `;
 const StyledTitle = styled(Title)`
   &.cogs-title-1 {

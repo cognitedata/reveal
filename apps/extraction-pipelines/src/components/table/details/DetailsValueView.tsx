@@ -75,14 +75,14 @@ const DetailsValueView = ({ fieldValue, fieldName }: DetailsValueViewProps) => {
     case 'status': {
       return <StatusMarker id={fieldName} status={fieldValue as Status} />;
     }
-    case 'name':
-    case 'description':
-    case 'lastSuccess':
-    case 'lastFailure':
-    case 'metadata':
     case 'createdBy': {
       return <>{fieldValue && <EmailLink email={fieldValue as string} />}</>;
     }
+    case 'name':
+    case 'lastSuccess':
+    case 'lastFailure':
+    case 'metadata':
+    case 'description':
     case 'contacts':
       return <span id={fieldName}>{fieldValue}</span>;
     default:
