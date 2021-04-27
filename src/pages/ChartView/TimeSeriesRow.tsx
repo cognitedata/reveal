@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import dayjs from 'dayjs';
 import { useSDK } from '@cognite/sdk-provider';
 import { useIsFetching, useQueryClient, useQuery } from 'react-query';
@@ -12,6 +12,7 @@ import {
   Tooltip,
   Popconfirm,
   Flex,
+  toast,
 } from '@cognite/cogs.js';
 import { units } from 'utils/units';
 import { calculateGranularity } from 'utils/timeseries';
@@ -20,7 +21,7 @@ import { useLinkedAsset } from 'hooks/api';
 import EditableText from 'components/EditableText';
 import { AppearanceDropdown } from 'components/AppearanceDropdown';
 import { PnidButton } from 'components/SearchResultTable/PnidButton';
-import { functionResponseKey } from 'utils/cogniteFunctions';
+import { functionResponseKey, useCallFunction } from 'utils/cogniteFunctions';
 import {
   SourceItem,
   SourceCircle,
@@ -226,6 +227,72 @@ export default function TimeSeriesRow({
 
   const { data: linkedAsset } = useLinkedAsset(tsId, true);
 
+  const { mutate: callFunction } = useCallFunction('individual_calc-master');
+
+  const updateStatistics = useCallback(
+    (diff: Partial<ChartTimeSeries>) => {
+      if (!timeseries) {
+        return;
+      }
+      mutate({
+        ...chart,
+        timeSeriesCollection: chart.timeSeriesCollection?.map((ts) =>
+          ts.id === timeseries.id
+            ? {
+                ...ts,
+                ...diff,
+              }
+            : ts
+        ),
+      });
+    },
+    [chart, mutate, timeseries]
+  );
+
+  useEffect(() => {
+    if (!statisticsForSource && !statisticsCall) {
+      callFunction(
+        {
+          data: {
+            calculation_input: {
+              timeseries: [
+                {
+                  tag: (timeseries as ChartTimeSeries).tsExternalId,
+                },
+              ],
+              start_time: new Date(chart.dateFrom).getTime(),
+              end_time: new Date(chart.dateTo).getTime(),
+            },
+          },
+        },
+        {
+          onSuccess({ functionId, callId }) {
+            updateStatistics({
+              statisticsCalls: [
+                {
+                  callDate: Date.now(),
+                  functionId,
+                  callId,
+                },
+              ],
+            });
+          },
+          onError() {
+            toast.warn('Could not execute statistics calculation');
+          },
+        }
+      );
+    }
+  }, [
+    callFunction,
+    chart.dateFrom,
+    chart.dateTo,
+    timeseries,
+    updateStatistics,
+    statisticsForSource,
+    statisticsCall,
+  ]);
+
   return (
     <SourceRow
       key={id}
@@ -279,7 +346,13 @@ export default function TimeSeriesRow({
       {isWorkspaceMode && (
         <>
           <td>{statisticsForSource?.min}</td>
-          <td>{statisticsForSource?.max}</td>
+          <td>
+            {statisticsForSource ? (
+              statisticsForSource?.max
+            ) : (
+              <Icon type="Loading" />
+            )}
+          </td>
           <td>{statisticsForSource?.median}</td>
           <td style={{ textAlign: 'right', paddingRight: 8 }}>
             <Dropdown
