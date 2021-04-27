@@ -2,17 +2,11 @@ import React from 'react';
 import { message, Modal, notification, Tooltip } from 'antd';
 import { Button } from '@cognite/cogs.js';
 import { usePermissions, useCdfItem } from '@cognite/sdk-react-query-hooks';
-import { ResourceItem, useAnnotations } from '@cognite/data-exploration';
-import sdk from 'sdk-singleton';
-
+import { ResourceItem } from '@cognite/data-exploration';
 import { FileInfo } from '@cognite/sdk';
-import {
-  CogniteAnnotation,
-  convertEventsToAnnotations,
-  hardDeleteAnnotations,
-} from '@cognite/annotations';
 import { sleep } from 'utils/utils';
-import { useQueryClient, useMutation } from 'react-query';
+import { useQueryClient } from 'react-query';
+import { deleteAnnotationsForFile } from 'utils/AnnotationUtils';
 
 export const ClearTagsButton = ({
   id,
@@ -42,16 +36,6 @@ export const ClearTagsButton = ({
       message: 'Annotation saved!',
     });
   };
-
-  const persistedAnnotations = useAnnotations(id);
-
-  const { mutate: deleteAnnotations } = useMutation(
-    (annotations: CogniteAnnotation[]) =>
-      hardDeleteAnnotations(sdk, annotations),
-    {
-      onSuccess: onDeleteSuccess,
-    }
-  );
 
   const { data: fileInfo } = useCdfItem<FileInfo>('files', {
     id: Number(id!),
@@ -96,9 +80,8 @@ export const ClearTagsButton = ({
         setEditMode(false);
         if (fileInfo) {
           // Make sure annotations are updated
-          deleteAnnotations(
-            convertEventsToAnnotations(persistedAnnotations.data)
-          );
+          await deleteAnnotationsForFile(fileInfo.id, fileInfo.externalId);
+          onDeleteSuccess();
         }
         return message.success(
           `Successfully cleared annotation for ${fileInfo!.name}`

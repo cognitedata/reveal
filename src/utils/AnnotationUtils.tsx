@@ -6,9 +6,11 @@ import {
   AnnotationResourceType,
   CURRENT_VERSION,
   AnnotationBoundingBox,
+  ANNOTATION_EVENT_TYPE,
+  ANNOTATION_METADATA_PREFIX,
 } from '@cognite/annotations';
-
-export const PNID_ANNOTATION_TYPE = 'pnid_annotation';
+import sdk from 'sdk-singleton';
+import handleError from './handleError';
 
 const findSimilarMatches = (
   entities: CogniteAnnotation[],
@@ -82,7 +84,7 @@ export const createPendingAnnotationsFromJob = async (
         resourceId: item.id,
         resourceExternalId: item.externalId,
         resourceType: item.resourceType,
-        type: PNID_ANNOTATION_TYPE,
+        type: ANNOTATION_EVENT_TYPE,
         label: entity.text,
         source: `job:${jobId}`,
         version: CURRENT_VERSION,
@@ -129,4 +131,32 @@ export const isSimilarBoundingBox = (
     }
   }
   return false;
+};
+
+export const deleteAnnotationsForFile = async (
+  fileId: number,
+  fileExtId?: string
+) => {
+  try {
+    const metadataFilter: { [key: string]: string } = {};
+    if (fileExtId) {
+      metadataFilter[
+        `${ANNOTATION_METADATA_PREFIX}file_external_id`
+      ] = fileExtId;
+    } else {
+      metadataFilter[`${ANNOTATION_METADATA_PREFIX}file_id`] = String(fileId);
+    }
+    console.log(metadataFilter);
+    const allAnnotations = await sdk.events
+      .list({
+        filter: {
+          metadata: metadataFilter,
+        },
+      })
+      .autoPagingToArray({ limit: -1 });
+
+    await sdk.events.delete(allAnnotations.map((event) => ({ id: event.id })));
+  } catch (e) {
+    handleError({ ...e });
+  }
 };
