@@ -272,8 +272,6 @@ export default function TimeSeriesRow({
     }
   );
 
-  console.log({ queryResults });
-
   const { data: callStatus, error: callStatusError } = queryResults;
 
   const { results } = (data as any) || {};
