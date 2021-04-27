@@ -2,7 +2,11 @@ import React, { useEffect, useState, useCallback } from 'react';
 import dayjs from 'dayjs';
 import { useSDK } from '@cognite/sdk-provider';
 import { useIsFetching, useQueryClient, useQuery } from 'react-query';
-import { Chart, ChartTimeSeries } from 'reducers/charts/types';
+import {
+  Chart,
+  ChartTimeSeries,
+  FunctionCallStatus,
+} from 'reducers/charts/types';
 import {
   AllIconTypes,
   Button,
@@ -22,6 +26,8 @@ import EditableText from 'components/EditableText';
 import { AppearanceDropdown } from 'components/AppearanceDropdown';
 import { PnidButton } from 'components/SearchResultTable/PnidButton';
 import { functionResponseKey, useCallFunction } from 'utils/cogniteFunctions';
+import FunctionCall from 'components/FunctionCall';
+import { CogniteClient } from '@cognite/sdk';
 import {
   SourceItem,
   SourceCircle,
@@ -32,6 +38,39 @@ import {
 } from './elements';
 // import TimeSeriesMenu from './TimeSeriesMenu';
 import { StatisticsResult } from '../../components/ContextMenu';
+
+const key = ['functions', 'individual_calc'];
+
+const renderStatusIcon = (status?: FunctionCallStatus) => {
+  switch (status) {
+    case 'Running':
+      return <Icon type="Loading" />;
+    case 'Completed':
+      return <Icon type="Check" />;
+    case 'Failed':
+    case 'Timeout':
+      return <Icon type="Close" />;
+    default:
+      return null;
+  }
+};
+
+const getCallStatus = (
+  sdk: CogniteClient,
+  fnId: number,
+  callId: number
+) => async () => {
+  const response = await sdk
+    .get(
+      `/api/playground/projects/${sdk.project}/functions/${fnId}/calls/${callId}`
+    )
+    .then((r) => r?.data);
+
+  if (response?.status) {
+    return response.status as FunctionCallStatus;
+  }
+  return Promise.reject(new Error('could not find call status'));
+};
 
 type LoadingProps = {
   tsId: number;
@@ -221,6 +260,22 @@ export default function TimeSeriesRow({
     enabled: !!statisticsCall,
   });
 
+  const queryResults = useQuery<FunctionCallStatus>(
+    [...key, statisticsCall?.callId, 'call_status'],
+    getCallStatus(
+      sdk,
+      statisticsCall?.functionId as number,
+      statisticsCall?.callId as number
+    ),
+    {
+      enabled: !!statisticsCall?.callId,
+    }
+  );
+
+  console.log({ queryResults });
+
+  const { data: callStatus, error: callStatusError } = queryResults;
+
   const { results } = (data as any) || {};
   const { statistics = [] } = (results as StatisticsResult) || {};
   const statisticsForSource = statistics[0];
@@ -250,39 +305,45 @@ export default function TimeSeriesRow({
   );
 
   useEffect(() => {
-    if (!statisticsForSource && !statisticsCall) {
-      callFunction(
-        {
-          data: {
-            calculation_input: {
-              timeseries: [
-                {
-                  tag: (timeseries as ChartTimeSeries).tsExternalId,
-                },
-              ],
-              start_time: new Date(chart.dateFrom).getTime(),
-              end_time: new Date(chart.dateTo).getTime(),
-            },
+    if (statisticsForSource) {
+      return;
+    }
+
+    if (statisticsCall && !callStatusError) {
+      return;
+    }
+
+    callFunction(
+      {
+        data: {
+          calculation_input: {
+            timeseries: [
+              {
+                tag: (timeseries as ChartTimeSeries).tsExternalId,
+              },
+            ],
+            start_time: new Date(chart.dateFrom).getTime(),
+            end_time: new Date(chart.dateTo).getTime(),
           },
         },
-        {
-          onSuccess({ functionId, callId }) {
-            updateStatistics({
-              statisticsCalls: [
-                {
-                  callDate: Date.now(),
-                  functionId,
-                  callId,
-                },
-              ],
-            });
-          },
-          onError() {
-            toast.warn('Could not execute statistics calculation');
-          },
-        }
-      );
-    }
+      },
+      {
+        onSuccess({ functionId, callId }) {
+          updateStatistics({
+            statisticsCalls: [
+              {
+                callDate: Date.now(),
+                functionId,
+                callId,
+              },
+            ],
+          });
+        },
+        onError() {
+          toast.warn('Could not execute statistics calculation');
+        },
+      }
+    );
   }, [
     callFunction,
     chart.dateFrom,
@@ -291,6 +352,8 @@ export default function TimeSeriesRow({
     updateStatistics,
     statisticsForSource,
     statisticsCall,
+    callStatus,
+    callStatusError,
   ]);
 
   return (
@@ -347,11 +410,16 @@ export default function TimeSeriesRow({
         <>
           <td>{statisticsForSource?.min}</td>
           <td>
-            {statisticsForSource ? (
-              statisticsForSource?.max
-            ) : (
-              <Icon type="Loading" />
-            )}
+            {statisticsForSource
+              ? statisticsForSource?.max
+              : statisticsCall && (
+                  <FunctionCall
+                    id={statisticsCall.functionId}
+                    callId={statisticsCall.callId}
+                    renderLoading={() => renderStatusIcon('Running')}
+                    renderCall={({ status }) => renderStatusIcon(status)}
+                  />
+                )}
           </td>
           <td>{statisticsForSource?.median}</td>
           <td style={{ textAlign: 'right', paddingRight: 8 }}>
