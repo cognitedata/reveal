@@ -40,9 +40,9 @@ const StyledTag = styled.span<{ draft: boolean }>`
   padding: 4px 8px;
   width: 63px;
   height: 28px;
-  background: ${({ draft }) => (draft ? '#F6F7FF' : 'white')};
-  border: 1px solid ${({ draft }) => (draft ? '#DBE1FE' : '#BFBFBF')};
-  color: ${({ draft }) => (draft ? '#4255BB' : '#333333')};
+  background: ${({ draft }) => (draft ? Colors['midblue-8'].hex() : 'white')};
+  border: 1px solid ${({ draft }) => (draft ? Colors['midblue-6'].hex() : Colors['greyscale-grey5'].hex())};
+  color: ${({ draft }) => (draft ? Colors['midblue-2'].hex() : Colors['greyscale-grey9'].hex())};
   box-sizing: border-box;
   border-radius: 4px;
   flex: none;
