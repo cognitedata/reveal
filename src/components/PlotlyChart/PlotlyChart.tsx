@@ -247,17 +247,20 @@ const PlotlyChartComponent = ({
         if (!c) {
           return;
         }
-        const x = getXaxisUpdateFromEventData(seriesData, eventdata);
-        // Should not edit the saved y-axis ranges if in stacked mode or in search
-        const y = !(stackedMode || isInSearch)
-          ? getYaxisUpdatesFromEventData(seriesData, eventdata)
-          : [];
 
-        const newChart = updateSourceAxisForChart(c, { x, y });
-        updateChart(newChart);
+        if (!isPreview) {
+          const x = getXaxisUpdateFromEventData(seriesData, eventdata);
+          // Should not edit the saved y-axis ranges if in stacked mode or in search
+          const y = !(stackedMode || isInSearch)
+            ? getYaxisUpdatesFromEventData(seriesData, eventdata)
+            : [];
 
-        if (eventdata.dragmode) {
-          setDragmode(eventdata.dragmode || dragmode);
+          const newChart = updateSourceAxisForChart(c, { x, y });
+          updateChart(newChart);
+
+          if (eventdata.dragmode) {
+            setDragmode(eventdata.dragmode || dragmode);
+          }
         }
       },
       // Some deps are left out to reduce re-renders
