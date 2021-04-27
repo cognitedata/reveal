@@ -80,7 +80,7 @@ const LeftSidebar: React.FC = () => {
           style={{ width: 12 }}
         />
       </CollapseButton>
-      {applications.length && (
+      {!!applications.length && (
         <>
           <TitleContainer>
             <Overline level={2}>Applications</Overline>

@@ -5,7 +5,6 @@ import { setHttpError } from 'store/notification/thunks';
 import * as Sentry from '@sentry/browser';
 import { setNotification } from 'store/notification/actions';
 import * as actions from './actions';
-import { ApplicationItem } from 'store/config/types';
 
 export const getDataSet = (client: CdfClient) => async (
   dispatch: RootDispatcher
@@ -51,7 +50,7 @@ export const getApplicationsList = (apiClient: ApiClient) => async (
   dispatch: RootDispatcher
 ) => {
   try {
-    const applications = await apiClient.getApplications();
+    const { applications } = await apiClient.getApplications();
     dispatch(actions.addConfigItems({ applications }));
   } catch (e) {
     dispatch(setHttpError(`Failed to fetch applications list`, e));

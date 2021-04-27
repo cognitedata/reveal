@@ -22,7 +22,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RootDispatcher } from 'store/types';
 import { Suite, Board } from 'store/suites/types';
 import { getSuitesTableState } from 'store/suites/selectors';
-import { getLastVisitedItems } from 'store/userSpace/selectors';
+import { getLastVisitedItems, getUserSpace } from 'store/userSpace/selectors';
 import { modalOpen } from 'store/modals/actions';
 import { ModalType } from 'store/modals/types';
 import {
@@ -31,7 +31,6 @@ import {
 } from 'store/groups/selectors';
 import { UserSpaceState } from 'store/userSpace/types';
 import { fetchUserSpace } from 'store/userSpace/thunks';
-import { getUserSpace } from 'store/userSpace/selectors';
 import { ApiClientContext } from 'providers/ApiClientProvider';
 import 'glider-js/glider.min.css';
 import { useMetrics } from 'utils/metrics';

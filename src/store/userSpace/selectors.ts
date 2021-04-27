@@ -1,5 +1,4 @@
 import { StoreState } from 'store/types';
-import { LastVisited, UserSpaceState } from './types';
 import { createSelector } from 'reselect';
 import { getSuites } from 'store/suites/selectors';
 import { getApplications } from 'store/config/selectors';
@@ -7,6 +6,7 @@ import { ApplicationItem } from 'store/config/types';
 import { Suite } from 'store/suites/types';
 import { findLastVisitedTimeByKey } from 'utils/userSpace';
 import { LastVisitedItem } from 'store/userSpace/types';
+import { LastVisited, UserSpaceState } from './types';
 
 export const getUserSpace = (state: StoreState): UserSpaceState =>
   state.userSpace;
