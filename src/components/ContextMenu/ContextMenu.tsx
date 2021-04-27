@@ -20,7 +20,7 @@ type ContextMenuProps = {
   visible?: boolean;
 };
 
-type StatisticsResult = {
+export type StatisticsResult = {
   statistics: StatisticsData[];
 };
 

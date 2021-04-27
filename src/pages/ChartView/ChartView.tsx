@@ -161,44 +161,74 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     <tr>
       <th style={{ width: 350 }}>
         <SourceItem>
-          <SourceName>Name</SourceName>
+          <SourceName>
+            <Icon
+              type="Eye"
+              style={{
+                marginLeft: 7,
+                marginRight: 20,
+                verticalAlign: 'middle',
+              }}
+            />
+            Name
+          </SourceName>
         </SourceItem>
       </th>
       {isWorkspaceMode && (
         <>
-          <th style={{ width: 110 }}>
-            <SourceItem>
-              <SourceName>Unit (input)</SourceName>
-            </SourceItem>
-          </th>
-          <th style={{ width: 110 }}>
-            <SourceItem>
-              <SourceName>Unit (output)</SourceName>
-            </SourceItem>
-          </th>
-          <th style={{ width: 300 }}>
-            <SourceItem>
-              <SourceName>Source</SourceName>
-            </SourceItem>
-          </th>
           <th>
             <SourceItem>
               <SourceName>Description</SourceName>
             </SourceItem>
           </th>
-          <th style={{ width: 100 }}>
+          <th style={{ width: 210 }}>
             <SourceItem>
+              <SourceName>Tag</SourceName>
+            </SourceItem>
+          </th>
+          <th style={{ width: 60 }}>
+            <SourceItem>
+              <SourceName>Min</SourceName>
+            </SourceItem>
+          </th>
+          <th style={{ width: 60 }}>
+            <SourceItem>
+              <SourceName>Max</SourceName>
+            </SourceItem>
+          </th>
+          <th style={{ width: 60 }}>
+            <SourceItem>
+              <SourceName>Median</SourceName>
+            </SourceItem>
+          </th>
+          <th style={{ width: 180, paddingRight: 8 }}>
+            <SourceItem style={{ justifyContent: 'flex-end' }}>
+              <SourceName>Unit</SourceName>
+            </SourceItem>
+          </th>
+          <th style={{ width: 50, paddingLeft: 0 }}>
+            <SourceItem style={{ justifyContent: 'center' }}>
               <SourceName>P&amp;IDs</SourceName>
             </SourceItem>
           </th>
-          <th>
-            <SourceItem>
+          <th style={{ width: 50, paddingLeft: 0 }}>
+            <SourceItem style={{ justifyContent: 'center' }}>
+              <SourceName>Style</SourceName>
+            </SourceItem>
+          </th>
+          <th style={{ width: 50, paddingLeft: 0 }}>
+            <SourceItem style={{ justifyContent: 'center' }}>
+              <SourceName>Remove</SourceName>
+            </SourceItem>
+          </th>
+          <th style={{ width: 50, paddingLeft: 0 }}>
+            <SourceItem style={{ justifyContent: 'center' }}>
               <SourceName>Details</SourceName>
             </SourceItem>
           </th>
-          <th>
-            <SourceItem>
-              <SourceName>Edit</SourceName>
+          <th style={{ width: 50, paddingLeft: 0 }}>
+            <SourceItem style={{ justifyContent: 'center' }}>
+              <SourceName>More</SourceName>
             </SourceItem>
           </th>
         </>

@@ -3,10 +3,18 @@ import {
   Chart,
   ChartWorkflow,
   FunctionCallStatus,
+  ChartTimeSeries,
 } from 'reducers/charts/types';
-import { Button, Dropdown, Icon, Menu } from '@cognite/cogs.js';
+import {
+  Button,
+  Dropdown,
+  Icon,
+  Menu,
+  Popconfirm,
+  Flex,
+} from '@cognite/cogs.js';
 import FunctionCall from 'components/FunctionCall';
-import { updateWorkflow } from 'utils/charts';
+import { updateWorkflow, removeWorkflow } from 'utils/charts';
 import EditableText from 'components/EditableText';
 import { units } from 'utils/units';
 import { Modes } from 'pages/types';
@@ -14,12 +22,14 @@ import { useCallFunction } from 'utils/cogniteFunctions';
 import { getStepsFromWorkflow } from 'utils/transforms';
 import { calculateGranularity } from 'utils/timeseries';
 import { isWorkflowRunnable } from 'components/NodeEditor/utils';
+import { AppearanceDropdown } from 'components/AppearanceDropdown';
 import {
   SourceItem,
   SourceSquare,
-  SourceMenu,
   SourceName,
   SourceRow,
+  UnitMenuAside,
+  UnitMenuHeader,
 } from './elements';
 import WorkflowMenu from './WorkflowMenu';
 
@@ -64,7 +74,6 @@ export default function WorkflowRow({
   const [isEditingName, setIsEditingName] = useState<boolean>(false);
 
   // Increasing this will cause a fresh render where the dropdown is closed
-  const [idHack, setIdHack] = useState(0);
   const { id, enabled, color, name, calls, unit, preferredUnit } = workflow;
   const call = calls?.sort((c) => c.callDate)[0];
   const isWorkspaceMode = mode === 'workspace';
@@ -134,9 +143,17 @@ export default function WorkflowRow({
           unit: unitOption.value,
         })
       }
+      style={
+        unit?.toLowerCase() === unitOption.value
+          ? {
+              color: 'var(--cogs-midblue-3)',
+              backgroundColor: 'var(--cogs-midblue-6)',
+              borderRadius: 3,
+            }
+          : {}
+      }
     >
       {unitOption.label}
-      {unit?.toLowerCase() === unitOption.value && ' (selected)'}
     </Menu.Item>
   ));
 
@@ -148,11 +165,24 @@ export default function WorkflowRow({
           preferredUnit: unitOption?.value,
         })
       }
+      style={
+        preferredUnit?.toLowerCase() === unitOption?.value
+          ? {
+              color: 'var(--cogs-midblue-3)',
+              backgroundColor: 'var(--cogs-midblue-6)',
+              borderRadius: 3,
+            }
+          : {}
+      }
     >
-      {unitOption?.label}{' '}
-      {preferredUnit?.toLowerCase() === unitOption?.value && ' (selected)'}
+      {unitOption?.label}
     </Menu.Item>
   ));
+
+  const remove = () => mutate(removeWorkflow(chart, id));
+
+  const updateAppearance = (diff: Partial<ChartTimeSeries>) =>
+    mutate(updateWorkflow(chart, id, diff));
 
   return (
     <SourceRow onClick={() => onRowClick(id)} isActive={isSelected}>
@@ -197,96 +227,100 @@ export default function WorkflowRow({
               hideButtons
             />
           </SourceName>
-          <SourceMenu onClick={(e) => e.stopPropagation()} key={idHack}>
-            <Dropdown
-              content={
-                <WorkflowMenu
-                  chart={chart}
-                  id={id}
-                  closeMenu={() => setIdHack(idHack + 1)}
-                  startRenaming={() => setIsEditingName(true)}
-                />
-              }
-            >
-              <Icon type="VerticalEllipsis" />
-            </Dropdown>
-          </SourceMenu>
         </SourceItem>
       </td>
       {isWorkspaceMode && (
         <>
-          <td>
-            <div role="none" onClick={(event) => event.stopPropagation()}>
-              <Dropdown
-                content={
-                  <Menu>
-                    <Menu.Header>
-                      <span style={{ wordBreak: 'break-word' }}>
-                        Select input unit (override)
-                      </span>
-                    </Menu.Header>
-                    {unitOverrideMenuItems}
-                  </Menu>
-                }
+          <td>{name || 'noname'}</td>
+          <td colSpan={4} />
+          <td style={{ textAlign: 'right', paddingRight: 8 }}>
+            <Dropdown
+              content={
+                <Menu>
+                  <Flex direction="row">
+                    <div>
+                      <Menu.Header>
+                        <UnitMenuHeader>Input</UnitMenuHeader>
+                      </Menu.Header>
+                      {unitOverrideMenuItems}
+                    </div>
+                    <UnitMenuAside>
+                      <Menu.Header>
+                        <UnitMenuHeader>Output</UnitMenuHeader>
+                      </Menu.Header>
+                      {unitConversionMenuItems}
+                    </UnitMenuAside>
+                  </Flex>
+                </Menu>
+              }
+            >
+              <Button
+                icon="Down"
+                variant="outline"
+                iconPlacement="right"
+                style={{ height: 28 }}
               >
-                <SourceItem>
-                  <SourceName>{inputUnitOption?.label || '-'}</SourceName>
-                </SourceItem>
-              </Dropdown>
-            </div>
+                {preferredUnitOption?.label || '-'}
+              </Button>
+            </Dropdown>
           </td>
-          <td>
-            <div role="none" onClick={(event) => event.stopPropagation()}>
-              <Dropdown
-                content={
-                  <Menu onClick={(event) => event.stopPropagation()}>
-                    <Menu.Header>
-                      <span style={{ wordBreak: 'break-word' }}>
-                        Select preferred unit
-                      </span>
-                    </Menu.Header>
-                    {unitConversionMenuItems}
-                  </Menu>
+          <td />
+          <td style={{ textAlign: 'center', paddingLeft: 0 }}>
+            <Dropdown
+              content={<AppearanceDropdown update={updateAppearance} />}
+            >
+              <Button
+                variant="outline"
+                icon="Timeseries"
+                style={{ height: 28 }}
+              />
+            </Dropdown>
+          </td>
+          <td style={{ textAlign: 'center', paddingLeft: 0 }}>
+            <Popconfirm
+              onConfirm={remove}
+              content={
+                <div style={{ textAlign: 'left' }}>
+                  Are you sure that you want to
+                  <br /> remove this Time Series?
+                </div>
+              }
+            >
+              <Button variant="outline" icon="Delete" style={{ height: 28 }} />
+            </Popconfirm>
+          </td>
+          <td style={{ textAlign: 'center', paddingLeft: 0 }}>
+            <Button
+              variant="outline"
+              icon="Info"
+              onClick={(event) => {
+                if (isSelected) {
+                  event.stopPropagation();
                 }
-              >
-                <SourceItem>
-                  <SourceName>{preferredUnitOption?.label || '-'}</SourceName>
-                </SourceItem>
-              </Dropdown>
-            </div>
+                onInfoClick(id);
+              }}
+              style={{ height: 28 }}
+            />
           </td>
-          <td colSpan={3} />
-          <td>
-            <SourceItem>
-              <SourceName>
-                <Button
-                  variant="ghost"
-                  icon="Info"
-                  onClick={(event) => {
-                    if (isSelected) {
-                      event.stopPropagation();
-                    }
-                    onInfoClick(id);
-                  }}
-                />
-              </SourceName>
-            </SourceItem>
-          </td>
-          <td>
-            <SourceItem>
-              <SourceName>
-                <Button
-                  variant="ghost"
-                  icon="YAxis"
-                  onClick={(event) => {
-                    if (isSelected) {
-                      event.stopPropagation();
-                    }
-                    setMode('editor');
-                  }}
-                />
-              </SourceName>
-            </SourceItem>
+          <td style={{ textAlign: 'center', paddingLeft: 0 }}>
+            <Dropdown
+              content={
+                <WorkflowMenu chart={chart} id={id}>
+                  <Menu.Item
+                    onClick={() => setMode('editor')}
+                    appendIcon="YAxis"
+                  >
+                    <span>Edit calculation</span>
+                  </Menu.Item>
+                </WorkflowMenu>
+              }
+            >
+              <Button
+                variant="outline"
+                icon="MoreOverflowEllipsisHorizontal"
+                style={{ height: 28 }}
+              />
+            </Dropdown>
           </td>
         </>
       )}

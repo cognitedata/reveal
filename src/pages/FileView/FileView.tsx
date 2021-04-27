@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Body, Button, Icon, Title } from '@cognite/cogs.js';
+import React, { useState, useEffect } from 'react';
+import { Body, Button, Icon, Title, toast } from '@cognite/cogs.js';
 import { FileInfo as File } from '@cognite/sdk';
 import { FileViewer } from 'components/FileViewer';
 import { FileList } from 'components/FileList';
@@ -13,7 +13,7 @@ import {
   SourceItem,
   SourceName,
 } from 'pages/ChartView/elements';
-import { useChart } from 'hooks/firebase';
+import { useChart, useUpdateChart } from 'hooks/firebase';
 import TimeSeriesRows from 'pages/ChartView/TimeSeriesRows';
 
 export const FileView = () => {
@@ -27,6 +27,21 @@ export const FileView = () => {
 
   const { data: chart } = useChart(chartId);
   const { data: asset, isFetched } = useAsset(Number(assetId));
+
+  const {
+    mutateAsync: updateChart,
+    isError: updateError,
+    error: updateErrorMsg,
+  } = useUpdateChart();
+
+  useEffect(() => {
+    if (updateError) {
+      toast.error('Chart could not be saved!');
+    }
+    if (updateError && updateErrorMsg) {
+      toast.error(JSON.stringify(updateErrorMsg, null, 2));
+    }
+  }, [updateError, updateErrorMsg]);
 
   if (!isFetched) {
     return <Icon type="Loading" />;
@@ -44,12 +59,17 @@ export const FileView = () => {
     <tr>
       <th style={{ width: 350 }}>
         <SourceItem>
-          <SourceName>Name</SourceName>
-        </SourceItem>
-      </th>
-      <th style={{ width: 300 }}>
-        <SourceItem>
-          <SourceName>Source</SourceName>
+          <SourceName>
+            <Icon
+              type="Eye"
+              style={{
+                marginLeft: 7,
+                marginRight: 20,
+                verticalAlign: 'middle',
+              }}
+            />
+            Name
+          </SourceName>
         </SourceItem>
       </th>
       <th>
@@ -57,9 +77,19 @@ export const FileView = () => {
           <SourceName>Description</SourceName>
         </SourceItem>
       </th>
-      <th style={{ width: 100 }}>
+      <th style={{ width: 210 }}>
         <SourceItem>
+          <SourceName>Tag</SourceName>
+        </SourceItem>
+      </th>
+      <th style={{ width: 50, paddingLeft: 0 }}>
+        <SourceItem style={{ justifyContent: 'center' }}>
           <SourceName>P&amp;IDs</SourceName>
+        </SourceItem>
+      </th>
+      <th style={{ width: 50, paddingLeft: 0 }}>
+        <SourceItem style={{ justifyContent: 'center' }}>
+          <SourceName>Remove</SourceName>
         </SourceItem>
       </th>
     </tr>
@@ -100,7 +130,7 @@ export const FileView = () => {
                 <tbody>
                   <TimeSeriesRows
                     chart={chart}
-                    updateChart={() => {}}
+                    updateChart={updateChart}
                     mode="file"
                   />
                 </tbody>
