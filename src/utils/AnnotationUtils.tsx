@@ -1,46 +1,14 @@
-import { FileInfo, Asset } from '@cognite/sdk';
+import { FileInfo } from '@cognite/sdk';
 import { PnidResponseEntity } from 'modules/contextualization/pnidParsing/types';
-import { stripWhitespace } from 'helpers/Helpers';
 import {
   CogniteAnnotation,
   PendingCogniteAnnotation,
   AnnotationResourceType,
   CURRENT_VERSION,
   AnnotationBoundingBox,
-  getPnIDAnnotationType,
 } from '@cognite/annotations';
 
-import { Colors } from '@cognite/cogs.js';
-
 export const PNID_ANNOTATION_TYPE = 'pnid_annotation';
-
-const assetNameToIdsMap = (assets: Asset[]) => {
-  return assets.reduce((prev, asset) => {
-    const key = stripWhitespace(asset.name);
-    if (!prev[key]) {
-      prev[key] = { id: [], externalId: [] };
-    }
-    prev[key].id.push(asset.id);
-    if (asset.externalId) {
-      prev[key].externalId.push(asset.externalId);
-    }
-    return prev;
-  }, {} as { [key: string]: { id: number[]; externalId: string[] } });
-};
-
-const fileNameToIdsMap = (files: FileInfo[]) => {
-  return files.reduce((prev, item) => {
-    const key = stripWhitespace(removeExtension(item.name));
-    if (!prev[key]) {
-      prev[key] = { id: [], externalId: [] };
-    }
-    prev[key].id.push(item.id);
-    if (item.externalId) {
-      prev[key].externalId.push(item.externalId);
-    }
-    return prev;
-  }, {} as { [key: string]: { id: number[]; externalId: string[] } });
-};
 
 const findSimilarMatches = (
   entities: CogniteAnnotation[],
@@ -70,43 +38,14 @@ const findSimilarMatches = (
 export const createPendingAnnotationsFromJob = async (
   file: FileInfo,
   entities: PnidResponseEntity[],
-  refAssets: Asset[],
-  refFiles: FileInfo[],
   jobId: string,
   existingEntities: CogniteAnnotation[]
 ): Promise<PendingCogniteAnnotation[]> => {
-  const assetsMap = assetNameToIdsMap(refAssets);
-  const filesMap = fileNameToIdsMap(refFiles);
-
   return entities.reduce((prev, entity) => {
-    let resourceId: number | undefined;
-    let resourceExternalId: string | undefined;
-    let resourceType: AnnotationResourceType | undefined;
-    const strippedEntityText = stripWhitespace(entity.text);
-
-    // if found perfect asset match
-    if (
-      assetsMap[strippedEntityText] &&
-      assetsMap[strippedEntityText].id.length === 1
-    ) {
-      resourceType = 'asset';
-      if (assetsMap[strippedEntityText].externalId.length === 1) {
-        [resourceExternalId] = assetsMap[strippedEntityText].externalId;
-      }
-      [resourceId] = assetsMap[strippedEntityText].id;
-    }
-
-    // if found perfect file match
-    if (
-      filesMap[strippedEntityText] &&
-      filesMap[strippedEntityText].id.length === 1
-    ) {
-      resourceType = 'file';
-      if (filesMap[strippedEntityText].externalId.length === 1) {
-        [resourceExternalId] = filesMap[strippedEntityText].externalId;
-      }
-      [resourceId] = filesMap[strippedEntityText].id;
-    }
+    const bestMatch = entity.items[0];
+    const resourceId = bestMatch.id;
+    const resourceExternalId = bestMatch?.externalId;
+    const { resourceType } = bestMatch;
 
     const activeEntities = existingEntities.filter(
       (el) => el.page === entity.page && el.status !== 'deleted'
@@ -160,14 +99,6 @@ export const createPendingAnnotationsFromJob = async (
   }, [] as PendingCogniteAnnotation[]);
 };
 
-export const removeExtension = (name: string) => {
-  const indexOfExtension = name.lastIndexOf('.');
-  if (indexOfExtension !== -1) {
-    return name.substring(0, indexOfExtension);
-  }
-  return name;
-};
-
 export const isSimilarBoundingBox = (
   origBox: AnnotationBoundingBox,
   compBox: AnnotationBoundingBox,
@@ -202,68 +133,3 @@ export const isSimilarBoundingBox = (
   }
   return false;
 };
-
-export const selectAnnotationColor = <T extends PendingCogniteAnnotation>(
-  annotation: T,
-  isSelected = false
-) => {
-  if (isSelected) {
-    return Colors.midblue.hex();
-  }
-  // Assets are purple
-  if (annotation.resourceType === 'asset') {
-    if (getPnIDAnnotationType(annotation).includes('Model')) {
-      return Colors['purple-3'].hex();
-    }
-    return Colors['purple-2'].hex();
-  }
-
-  // Files are orange
-  if (annotation.resourceType === 'file') {
-    if (getPnIDAnnotationType(annotation).includes('Model')) {
-      return Colors['midorange-3'].hex();
-    }
-    return Colors['midorange-2'].hex();
-  }
-  // Undefined are secondary
-  return Colors['text-color-secondary'].hex();
-};
-
-export const getPnIdAnnotationCategories = <T extends PendingCogniteAnnotation>(
-  annotations: T[]
-) =>
-  annotations.reduce(
-    (prev, el) => {
-      const type = getPnIDAnnotationType(el);
-      if (el.resourceType === 'asset') {
-        if (!prev.Asset.items[type]) {
-          prev.Asset.items[type] = [];
-        }
-        prev.Asset.items[type].push(el);
-        prev.Asset.count += 1;
-      } else if (el.resourceType === 'file') {
-        if (!prev.File.items[type]) {
-          prev.File.items[type] = [];
-        }
-        prev.File.items[type].push(el);
-        prev.File.count += 1;
-      } else {
-        if (!prev.Unclassified.items[type]) {
-          prev.Unclassified.items[type] = [];
-        }
-        prev.Unclassified.items[type].push(el);
-        prev.Unclassified.count += 1;
-      }
-      return prev;
-    },
-    {
-      Asset: { items: {}, count: 0 },
-      File: { items: {}, count: 0 },
-      Unclassified: { items: {}, count: 0 },
-    } as {
-      [key: string]: {
-        items: { [key: string]: T[] };
-        count: number;
-      };
-    }
-  );

@@ -1,4 +1,4 @@
-import { FileInfo } from 'cognite-sdk-v3/dist/src';
+import { Asset, FileInfo } from 'cognite-sdk-v3/dist/src';
 
 export type PnidsParsingJobSchema = {
   jobId?: number;
@@ -11,19 +11,18 @@ export interface PnidResponseEntity {
   text: string;
   boundingBox: { xMin: number; xMax: number; yMin: number; yMax: number };
   page?: number;
+  items: { id: number; resourceType: 'asset' | 'file'; externalId?: string }[];
 }
 
 export type StartPnidParsingJobProps = {
   files: FileInfo[];
-  entities: Object[];
+  resources: { assets: Asset[]; diagrams: FileInfo[] };
   options: {
     minTokens: number;
     partialMatch: boolean;
     searchField: string | string[];
   };
   workflowId: number;
-  diagrams: any;
-  resources: any;
 };
 
 export type FileAnnotationsCount = {
@@ -45,7 +44,12 @@ export type RetrieveResultsResponseItem = {
   annotations: Array<{
     text: string;
     confidence: number;
-    entities: Object[];
+    entities: {
+      id: number;
+      resourceType: 'asset' | 'file';
+      externalId?: string;
+      [key: string]: any;
+    }[];
     region: {
       shape: 'rectangle'; // diagram endpoints will always return rectangle
       vertices: Vertices;

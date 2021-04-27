@@ -7,7 +7,7 @@ type CountTagProps = {
   value: number;
   type: 'assets' | 'files';
   draft: boolean;
-  tooltipContent: React.ReactNode;
+  tooltipContent?: React.ReactNode;
 };
 
 const iconForType = {
@@ -15,15 +15,20 @@ const iconForType = {
   files: 'ResourceDocuments',
 };
 const CountTag = ({ value, draft, type, tooltipContent }: CountTagProps) => {
-  return (
-    <Tooltip content={tooltipContent}>
-      <StyledTag draft={draft}>
-        {' '}
-        <Icon type={iconForType[type] as AllIconTypes} />{' '}
-        {abbreviateNumber(value)}
-      </StyledTag>
-    </Tooltip>
+  const Tag = () => (
+    <StyledTag draft={draft}>
+      <Icon type={iconForType[type] as AllIconTypes} />{' '}
+      {abbreviateNumber(value)}
+    </StyledTag>
   );
+
+  if (tooltipContent)
+    return (
+      <Tooltip content={tooltipContent}>
+        <Tag />
+      </Tooltip>
+    );
+  return <Tag />;
 };
 
 export default CountTag;

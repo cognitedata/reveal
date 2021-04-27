@@ -33,7 +33,7 @@ export default function TagsDetected({
           draft={hasNewAssets}
           tooltipContent={
             hasNewAssets ? (
-              <Body>
+              <Body style={{ color: 'white' }}>
                 {fileAnnotations?.newAssetAnnotations} new tags detected.
               </Body>
             ) : undefined
@@ -45,7 +45,7 @@ export default function TagsDetected({
           draft={hasNewFiles}
           tooltipContent={
             hasNewFiles ? (
-              <Body>
+              <Body style={{ color: 'white' }}>
                 {fileAnnotations?.newFilesAnnotations} new tags detected.
               </Body>
             ) : undefined

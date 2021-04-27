@@ -41,17 +41,15 @@ export const startPnidParsingWorkflow = {
       const assets = resources!.assets as Asset[];
 
       await dispatch(
-        startPnidParsingJob.action({
+        startPnidParsingJob({
           files: diagrams,
-          entities: [...assets, ...diagrams],
+          resources: { assets, diagrams },
           options: {
             minTokens,
             partialMatch,
             searchField: 'name',
           },
           workflowId,
-          diagrams,
-          resources,
         })
       );
       timer.stop();

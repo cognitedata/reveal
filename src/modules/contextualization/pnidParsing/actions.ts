@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { FileInfo, Asset } from '@cognite/sdk';
+import { FileInfo } from '@cognite/sdk';
 import { createPendingAnnotationsFromJob } from 'utils/AnnotationUtils';
 import sdk from 'sdk-singleton';
 import { callUntilCompleted } from 'helpers';
@@ -14,8 +14,13 @@ import {
   RetrieveResultsResponseItems,
   StartPnidParsingJobProps,
 } from './types';
-import { verticesToBoundingBox } from './helpers';
+import {
+  verticesToBoundingBox,
+  mapAssetsToEntities,
+  mapDiagramsToEntities,
+} from './helpers';
 import handleError from '../../../utils/handleError';
+import { createJob, finishJob, updateJob } from '.';
 
 const pnidApiRootPath = (project: string) =>
   `/api/playground/projects/${project}/context/diagram`;
@@ -27,9 +32,7 @@ const getPnidDetectJobPath = (project: string, jobId: number) =>
 const createPendingAnnotations = async (
   file: FileInfo,
   jobId: string,
-  annotations: RetrieveResultsResponseItem['annotations'],
-  assets: any,
-  files: FileInfo[]
+  annotations: RetrieveResultsResponseItem['annotations']
 ): Promise<FileAnnotationsCount> => {
   const existingAnnotations = await listAnnotationsForFile(sdk, file, false);
 
@@ -38,6 +41,11 @@ const createPendingAnnotations = async (
       text: annotation.text,
       boundingBox: verticesToBoundingBox(annotation.region.vertices),
       page: annotation.region.page,
+      items: annotation.entities.map((item) => ({
+        id: item.id,
+        resourceType: item.resourceType,
+        externalId: item?.externalId,
+      })),
     })
   );
 
@@ -45,8 +53,6 @@ const createPendingAnnotations = async (
   const pendingAnnotations = await createPendingAnnotationsFromJob(
     file,
     preparedAnnotations,
-    assets,
-    files,
     `${jobId!}`,
     existingAnnotations
   );
@@ -69,116 +75,106 @@ const createPendingAnnotations = async (
   };
 };
 
-export const startPnidParsingJob = {
-  action: createAsyncThunk(
-    'workflow/startPnidParsingJob',
-    async (
-      {
-        files,
-        entities,
-        options,
-        workflowId,
-        diagrams,
-        resources,
-      }: StartPnidParsingJobProps,
-      { getState }: { getState: any }
-    ) => {
-      const state = getState();
+export const startPnidParsingJob = createAsyncThunk(
+  'workflow/startPnidParsingJob',
+  async (
+    { files, resources, options, workflowId }: StartPnidParsingJobProps,
+    { getState, dispatch }: { getState: any; dispatch: any }
+  ) => {
+    const state = getState();
 
-      const parsingJob = state.contextualization.pnidParsing
-        ? state.contextualization.pnidParsing[workflowId]
-        : {};
+    const parsingJob = state.contextualization.pnidParsing
+      ? state.contextualization.pnidParsing[workflowId]
+      : {};
 
-      // Job already ongoing
-      if (parsingJob?.jobId) {
-        return parsingJob?.jobId;
-      }
-
-      try {
-        const response = await sdk.post(createPnidDetectJobPath(sdk.project), {
-          data: {
-            items: files.map((file) => ({ fileId: file.id })),
-            entities,
-            ...options,
-          },
-        });
-
-        const {
-          status: httpStatus,
-          data: { jobId, status },
-        } = response;
-
-        // Mark job as started
-        state.contextualization.pnidParsing[workflowId] = {
-          jobId,
-          status,
-        };
-
-        // poll for results
-        if (httpStatus === 200) {
-          return await new Promise((resolve, reject) => {
-            callUntilCompleted(
-              () => sdk.get(getPnidDetectJobPath(sdk.project, jobId)),
-              (data) => data.status === 'Completed' || data.status === 'Failed',
-              async (data: {
-                status: string;
-                items: RetrieveResultsResponseItems;
-              }) => {
-                if (data.status === 'Failed') {
-                  reject();
-                } else {
-                  // Completed
-                  const { items } = data;
-                  // load all entities to match to
-                  const assets = resources.assets as Asset[];
-                  const files = diagrams as FileInfo[];
-                  const annotationCounts: {
-                    [fileId: number]: FileAnnotationsCount;
-                  } = {};
-                  // Create new annotations & load old ones
-                  await Promise.allSettled(
-                    items.map(async ({ fileId, annotations }) => {
-                      const file = files.find((f) => f.id === fileId);
-                      if (file) {
-                        const fileAnnotationCount = await createPendingAnnotations(
-                          file,
-                          jobId,
-                          annotations,
-                          assets,
-                          files
-                        );
-                        annotationCounts[fileId] = fileAnnotationCount;
-                      }
-                    })
-                  );
-
-                  state.contextualization.pnidParsing[workflowId] = {
-                    jobId,
-                    status: 'Completed',
-                    annotationCounts,
-                  };
-                  resolve(jobId);
-                }
-              },
-              (data: { status: string }) => {
-                state.contextualization.pnidParsing[workflowId] = {
-                  ...state.contextualization.pnidParsing[workflowId],
-                  status: data.status,
-                };
-              },
-              undefined,
-              3000
-            );
-          });
-        }
-      } catch (e) {
-        handleError({ ...e });
-        throw e;
-      }
-      return 19;
+    // Job already ongoing
+    if (parsingJob?.jobId) {
+      return parsingJob?.jobId;
     }
-  ),
-  pending: () => {},
-  rejected: () => {},
-  fulfilled: () => {},
-};
+
+    try {
+      const response = await sdk.post(createPnidDetectJobPath(sdk.project), {
+        data: {
+          items: files.map((file) => ({ fileId: file.id })),
+          entities: [
+            ...mapAssetsToEntities(resources.assets),
+            ...mapDiagramsToEntities(resources.diagrams),
+          ],
+          ...options,
+        },
+      });
+
+      const {
+        status: httpStatus,
+        data: { jobId, status },
+      } = response;
+
+      // Mark job as started
+      dispatch(createJob({ workflowId, initialValue: { jobId, status } }));
+
+      // poll for results
+      if (httpStatus === 200) {
+        return await new Promise((resolve, reject) => {
+          callUntilCompleted(
+            () => sdk.get(getPnidDetectJobPath(sdk.project, jobId)),
+            (data) => data.status === 'Completed' || data.status === 'Failed',
+            async (data: {
+              status: string;
+              items: RetrieveResultsResponseItems;
+            }) => {
+              if (data.status === 'Failed') {
+                reject();
+              } else {
+                // Completed
+                const { items } = data;
+                const annotationCounts: {
+                  [fileId: number]: FileAnnotationsCount;
+                } = {};
+                // Create new annotations & load old ones
+                await Promise.allSettled(
+                  items.map(async ({ fileId, annotations }) => {
+                    const file = files.find((f) => f.id === fileId);
+                    if (file) {
+                      const fileAnnotationCount = await createPendingAnnotations(
+                        file,
+                        jobId,
+                        annotations
+                      );
+                      annotationCounts[fileId] = fileAnnotationCount;
+                    }
+                  })
+                );
+
+                dispatch(
+                  finishJob({
+                    workflowId,
+                    results: { jobId, status: 'Completed', annotationCounts },
+                  })
+                );
+
+                resolve(jobId);
+              }
+            },
+            (data: { status: string }) => {
+              dispatch(
+                updateJob({
+                  workflowId,
+                  status: {
+                    ...state.contextualization.pnidParsing[workflowId],
+                    status: data.status,
+                  },
+                })
+              );
+            },
+            undefined,
+            3000
+          );
+        });
+      }
+      return jobId;
+    } catch (e) {
+      handleError({ ...e });
+      return e;
+    }
+  }
+);
