@@ -61,7 +61,7 @@ export const createPendingAnnotationsFromJob = async (
           resourceId
         )
       ) {
-        return prev;
+        return;
       }
       prev.push({
         box: entity.boundingBox,
