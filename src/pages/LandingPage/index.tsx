@@ -52,10 +52,11 @@ const columns = (
     key: 'assetIds',
     render: (assetIds: number[]) => (
       <div>
-        <Badge text={String(assetIds.length)} /> assets
+        <Badge text={String(assetIds?.length ?? 0)} /> assets
       </div>
     ),
-    sorter: (a: any, b: any) => a?.assetIds.length - b?.assetIds.length,
+    sorter: (a: any, b: any) =>
+      (a?.assetIds?.length ?? 0) - (b?.assetIds?.length ?? 0),
   },
   {
     title: 'Source',
