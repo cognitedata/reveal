@@ -260,7 +260,9 @@ export default function TimeSeriesRow({
     enabled: !!statisticsCall,
   });
 
-  const queryResults = useQuery<FunctionCallStatus>(
+  const { data: callStatus, error: callStatusError } = useQuery<
+    FunctionCallStatus
+  >(
     [...key, statisticsCall?.callId, 'call_status'],
     getCallStatus(
       sdk,
@@ -271,8 +273,6 @@ export default function TimeSeriesRow({
       enabled: !!statisticsCall?.callId,
     }
   );
-
-  const { data: callStatus, error: callStatusError } = queryResults;
 
   const { results } = (data as any) || {};
   const { statistics = [] } = (results as StatisticsResult) || {};
