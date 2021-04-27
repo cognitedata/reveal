@@ -1,6 +1,5 @@
 import React, { FunctionComponent, useEffect } from 'react';
 import styled from 'styled-components';
-import { Colors } from '@cognite/cogs.js';
 import { useParams } from 'react-router';
 import { useSelectedIntegration } from 'hooks/useSelectedIntegration';
 import { RouterParams } from 'routing/RoutingConfig';
@@ -13,10 +12,9 @@ import { IntegrationInformation } from 'components/integration/IntegrationInform
 
 const MiddleSectionGrid = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  padding-bottom: 1rem;
+  grid-template-columns: 2fr 1fr;
+  padding: 1rem;
   margin-bottom: 1rem;
-  border-bottom: 1px solid ${Colors['greyscale-grey7'].hex()};
 `;
 const TopSection = styled.section`
   display: flex;

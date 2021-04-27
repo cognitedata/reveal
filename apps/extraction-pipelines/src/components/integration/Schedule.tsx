@@ -39,6 +39,7 @@ export const CronWrapper = styled(DivFlex)`
   border-top: 0.0625rem solid ${Colors['greyscale-grey3'].hex()};
   border-bottom: 0.0625rem solid ${Colors['greyscale-grey3'].hex()};
 `;
+
 const EditWrapper = styled(DivFlex)`
   .cogs-select {
     flex: 1;
@@ -67,10 +68,12 @@ export const Schedule: FunctionComponent<ScheduleProps> = ({
     reValidateMode: 'onSubmit',
   });
   const { register, handleSubmit, watch, setValue } = methods;
+  const scheduleValue = watch('schedule');
+
   useEffect(() => {
     register('schedule');
   }, [register]);
-  const scheduleValue = watch('schedule');
+
   useEffect(() => {
     if (scheduleValue === SupportedScheduleStrings.SCHEDULED) {
       setShowCron(true);
@@ -110,6 +113,7 @@ export const Schedule: FunctionComponent<ScheduleProps> = ({
   const onCancel = () => {
     setIsEdit(false);
   };
+
   const selectChanged = (selected: OptionTypeBase) => {
     setValue('schedule', selected.value);
   };
