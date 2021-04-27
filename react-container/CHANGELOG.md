@@ -1,3 +1,10 @@
+## 0.12.0 April 27 2021
+
+### Changes
+
+- Breaking: require process.env.REACT_APP_E2E_MODE before using auth from local env vars
+- Feat: add process.env.REACT_APP_ID_TOKEN and process.env.REACT_APP_ACCESS_TOKEN usage
+
 ## 0.11.4 April 21 2021
 
 ### Changes

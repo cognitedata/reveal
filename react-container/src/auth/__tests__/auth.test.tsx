@@ -20,6 +20,10 @@ const authState = {
 };
 
 describe('getAuthHeaders', () => {
+  beforeEach(() => {
+    delete process.env.REACT_APP_E2E_MODE;
+  });
+
   it('should work with ID token', () => {
     const { result } = renderHook(() => getAuthHeaders({ useIdToken: true }), {
       wrapper: ({ children }) => (
@@ -46,6 +50,7 @@ describe('getAuthHeaders', () => {
 
   it('should fallback to api key if token not found', () => {
     const testKey = 'test-api-key-1';
+    process.env.REACT_APP_E2E_MODE = 'true';
     process.env.REACT_APP_API_KEY = testKey;
     const { result } = renderHook(() => getAuthHeaders(), {
       wrapper: ({ children }) => (
@@ -67,22 +72,33 @@ describe('getAuthHeaders', () => {
   });
 
   it('should default to api key if no token is set', () => {
+    process.env.REACT_APP_E2E_MODE = 'true';
     process.env.REACT_APP_API_KEY = '';
     const { result } = renderHook(() => getAuthHeaders());
     expect(result.current).toEqual({ 'api-key': '' });
   });
 
   it('should use default api header', () => {
+    process.env.REACT_APP_E2E_MODE = 'true';
     process.env.REACT_APP_API_KEY = 'test';
     const { result } = renderHook(() => getAuthHeaders());
     expect(result.current).toEqual({ 'api-key': 'test' });
   });
 
   it('should set custom api header', () => {
+    process.env.REACT_APP_E2E_MODE = 'true';
     process.env.REACT_APP_API_KEY = 'test';
     const { result } = renderHook(() =>
       getAuthHeaders({ apiKeyHeader: 'new-header' })
     );
     expect(result.current).toEqual({ 'new-header': 'test' });
+  });
+
+  it('should never get api token when not in e2e mode', () => {
+    process.env.REACT_APP_API_KEY = 'test';
+    const { result } = renderHook(() =>
+      getAuthHeaders({ apiKeyHeader: 'new-header' })
+    );
+    expect(result.current).toEqual({ Authorization: 'Bearer unknown' });
   });
 });

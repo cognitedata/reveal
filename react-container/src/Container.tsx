@@ -49,20 +49,34 @@ const RawContainer: React.FC<Props> = ({ children, store, sidecar }) => {
   });
 
   const {
+    REACT_APP_E2E_MODE: E2ETestingMode,
     REACT_APP_API_KEY: apiKey,
     REACT_APP_API_KEY_PROJECT: project,
+    REACT_APP_ACCESS_TOKEN: testingAccessToken,
   } = process.env;
 
   const initialTenantOrApiKeyTenant = project || initialTenant;
 
   React.useEffect(() => {
-    if (apiKey) {
-      client.loginWithApiKey({
-        apiKey,
-        project: project || '',
-      });
+    if (E2ETestingMode) {
+      if (apiKey) {
+        client.loginWithApiKey({
+          apiKey,
+          project: initialTenantOrApiKeyTenant,
+        });
+      }
+
+      if (testingAccessToken) {
+        client.loginWithOAuth({
+          accessToken: testingAccessToken,
+          project: initialTenantOrApiKeyTenant,
+          onAuthenticate: async (login) => {
+            login.skip();
+          },
+        });
+      }
     }
-  }, []);
+  }, []); // no deps, this only runs once.
 
   // console.log('Gate info:', {
   //   initialTenantOrApiKeyTenant,
@@ -86,7 +100,7 @@ const RawContainer: React.FC<Props> = ({ children, store, sidecar }) => {
 
   let ChosenAuthContainer = AuthContainer;
 
-  if (apiKey) {
+  if (E2ETestingMode) {
     ChosenAuthContainer = AuthContainerForApiKeyMode;
   }
 

@@ -34,8 +34,8 @@
     "jest-css-modules-transform": "^2.1.1"
   },
   "dependencies": {
-    "@microsoft/applicationinsights-react-js": "^3.1.0",
-    "@microsoft/applicationinsights-web": "^2.6.1"
+    "@microsoft/applicationinsights-react-js": "3.1.0",
+    "@microsoft/applicationinsights-web": "2.6.1"
   },
   "peerDependencies": {
     "react": "^16.13.1",
