@@ -42,6 +42,10 @@ export const createPendingAnnotationsFromJob = async (
   existingEntities: CogniteAnnotation[]
 ): Promise<PendingCogniteAnnotation[]> => {
   return entities.reduce((prev, entity) => {
+    const activeEntities = existingEntities.filter(
+      (el) => el.page === entity.page && el.status !== 'deleted'
+    );
+
     const deletedEntities = existingEntities.filter(
       (el) => el.page === entity.page && el.status === 'deleted'
     );
@@ -50,6 +54,7 @@ export const createPendingAnnotationsFromJob = async (
       const resourceId = item.id;
       const resourceExternalId = item?.externalId;
       const { resourceType } = item;
+
       // if the same annotation has been "soft" deleted before, do not recreate.
       if (
         resourceType &&
@@ -63,6 +68,13 @@ export const createPendingAnnotationsFromJob = async (
       ) {
         return;
       }
+      // if the same annotation already exists, do not recreate.
+      if (
+        activeEntities.find((anotation) => anotation.resourceId === resourceId)
+      ) {
+        return;
+      }
+
       prev.push({
         box: entity.boundingBox,
         ...(!file.externalId ? { fileId: file.id } : {}),
