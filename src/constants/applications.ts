@@ -8,12 +8,6 @@ export const allApplications: ApplicationItem[] = [
     url: 'https://infield.cogniteapp.com',
   },
   {
-    key: 'maintain',
-    iconKey: 'Maintain',
-    title: 'Maintenance Planner',
-    url: 'https://mp.cogniteapp.com',
-  },
-  {
     key: 'bestday',
     iconKey: 'Insight',
     title: 'Best Day',
@@ -24,5 +18,11 @@ export const allApplications: ApplicationItem[] = [
     iconKey: 'Discover',
     title: 'Discover',
     url: 'http://discover.cogniteapp.com',
+  },
+  {
+    key: 'maintain',
+    iconKey: 'Maintain',
+    title: 'Maintenance Planner',
+    url: 'https://mp.cogniteapp.com',
   },
 ];
