@@ -2,17 +2,17 @@ import styled from 'styled-components';
 import { Button, ButtonProps as CogsButtonProps } from '@cognite/cogs.js';
 
 interface IconButtonProps extends CogsButtonProps {
-  bigIcon?: boolean;
-  square?: boolean;
+  $bigIcon?: boolean;
+  $square?: boolean;
 }
 
 export const IconButton = styled(Button).attrs((props: IconButtonProps) => {
-  const { bigIcon, square } = props;
+  const { $bigIcon, $square } = props;
   const style: any = {};
-  if (bigIcon) {
+  if ($bigIcon) {
     style.paddingLeft = '5px';
   }
-  if (square) {
+  if ($square) {
     style.justifyContent = 'center';
     style.alignItems = 'center';
     style.width = '36px';
@@ -28,11 +28,11 @@ export const IconButton = styled(Button).attrs((props: IconButtonProps) => {
   align-items: center;
 
   .cogs-icon {
-    margin: ${(props) => (props.square ? 0 : '0 4px')};
+    margin: ${(props) => (props.$square ? 0 : '0 4px')};
 
     svg {
-      width: ${(props) => (props.bigIcon ? '32px' : '16px')};
-      height: ${(props) => (props.bigIcon ? '32px' : '16px')};
+      width: ${(props) => (props.$bigIcon ? '32px' : '16px')};
+      height: ${(props) => (props.$bigIcon ? '32px' : '16px')};
     }
   }
 `;

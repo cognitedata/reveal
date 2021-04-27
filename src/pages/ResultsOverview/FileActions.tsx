@@ -101,7 +101,7 @@ export default function FileActions({
         <IconButton
           disabled={!(file && file.annotations && file.annotations.length > 0)}
           icon="HorizontalEllipsis"
-          square
+          $square
           style={{ marginLeft: '8px' }}
         />
       </Dropdown>

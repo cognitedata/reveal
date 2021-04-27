@@ -83,10 +83,10 @@ const columns = (
     render: () => (
       <Flex row align style={{ justifyContent: 'space-between' }}>
         <Tooltip content="Editing files is currently disabled.">
-          <IconButton square icon="Edit" onClick={onFileEdit} disabled />
+          <IconButton $square icon="Edit" onClick={onFileEdit} disabled />
         </Tooltip>
         <Tooltip content="Viewing files is currently disabled.">
-          <IconButton square icon="Eye" onClick={onFileView} disabled />
+          <IconButton $square icon="Eye" onClick={onFileView} disabled />
         </Tooltip>
       </Flex>
     ),
