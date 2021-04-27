@@ -311,8 +311,9 @@ const ColorCircle = styled.span`
 
 const Sidebar = styled.div<{ visible?: boolean }>`
   border-left: 1px solid var(--cogs-greyscale-grey4);
+  visibility: ${(props) => (props.visible ? 'visible' : 'hidden')};
   width: ${(props) => (props.visible ? '400px' : 0)};
-  transition: visibility 0s linear 200ms, width 200ms ease;
+  transition: 0s linear 200ms, width 200ms ease;
 `;
 
 const Container = styled.div`
