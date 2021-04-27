@@ -19,15 +19,15 @@ import {
   ROLE_LABEL,
 } from 'utils/constants';
 import { StyledTitle2 } from 'styles/StyledHeadings';
-import { DetailsGrid } from 'components/form/viewEditIntegration/MainDetails';
 import { Hint } from 'styles/StyledForm';
 import { NotificationUpdateSwitch } from 'components/inputs/NotificationUpdateSwitch';
 import { DetailFieldNames } from 'model/Integration';
 import { isOwner, partition } from 'utils/integrationUtils';
 import { User } from 'model/User';
+import { Grid } from 'styles/grid/StyledGrid';
 import { AddContact } from './AddContact';
 
-export const ContactsSectionWrapper = styled(DetailsGrid)`
+export const ContactsSectionWrapper = styled(Grid)`
   align-content: flex-start;
   padding: 1rem;
 `;

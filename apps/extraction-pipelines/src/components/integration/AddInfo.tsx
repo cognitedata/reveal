@@ -41,7 +41,6 @@ export const AddInfo = ({
   return (
     <>
       <DetailsValueView fieldName={fieldName} fieldValue={fieldValue} />
-      <span />
     </>
   );
 };

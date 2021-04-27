@@ -10,11 +10,11 @@ interface GlobalSearchProps<D extends object> {
   setGlobalFilter: (filterValue: FilterValue) => void;
 }
 
-function IntegrationTableSearch<D extends object>({
+const IntegrationTableSearch = <D extends object>({
   preGlobalFilteredRows,
   globalFilter,
   setGlobalFilter,
-}: GlobalSearchProps<D>) {
+}: GlobalSearchProps<D>) => {
   const count = preGlobalFilteredRows.length;
   const [value, setValue] = React.useState(globalFilter);
   const onChange = useAsyncDebounce((val) => {
@@ -40,5 +40,5 @@ function IntegrationTableSearch<D extends object>({
       />
     </Tooltip>
   );
-}
+};
 export default IntegrationTableSearch;

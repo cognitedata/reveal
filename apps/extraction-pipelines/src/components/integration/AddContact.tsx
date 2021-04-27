@@ -69,9 +69,10 @@ export const AddContact: FunctionComponent<AddContactProps> = ({
   const onAddContact = () => {
     setAddMode(true);
   };
-  function onCancelClick() {
+
+  const onCancelClick = () => {
     setAddMode(false);
-  }
+  };
 
   const onValid = async (values: User) => {
     if (current && project) {
@@ -91,9 +92,9 @@ export const AddContact: FunctionComponent<AddContactProps> = ({
       });
     }
   };
-  function handleClickError() {
+  const handleClickError = () => {
     setErrorVisible(false);
-  }
+  };
 
   return (
     <>

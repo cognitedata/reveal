@@ -35,14 +35,14 @@ export const RegisterMetaData: FunctionComponent<RegisterMetaDataProps> = () => 
     name: 'metadata',
   });
 
-  function addRow() {
+  const addRow = () => {
     append({ description: '', content: '' });
-  }
-  function removeRow(index: number) {
+  };
+  const removeRow = (index: number) => {
     return function onClickRemove(_: React.MouseEvent<HTMLButtonElement>) {
       remove(index);
     };
-  }
+  };
   return (
     <>
       <MetaTable

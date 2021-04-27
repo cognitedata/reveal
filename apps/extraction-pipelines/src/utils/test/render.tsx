@@ -146,14 +146,14 @@ export const renderWithQueryClient = (client: QueryClient) => {
   return wrapper;
 };
 
-export function renderWithReactHookForm(
+export const renderWithReactHookForm = (
   ui: React.ReactElement,
   { defaultValues = {} } = {}
-) {
+) => {
   const Wrapper: FunctionComponent = ({ children }: PropsWithChildren<{}>) => {
     const methods = useForm({ defaultValues });
     return <FormProvider {...methods}>{children}</FormProvider>;
   };
 
   return { ...render(ui, { wrapper: Wrapper }) };
-}
+};

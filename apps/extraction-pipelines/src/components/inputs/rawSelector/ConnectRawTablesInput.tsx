@@ -24,9 +24,9 @@ const ConnectRawTablesInput: FunctionComponent<ConnectRawTablesPageProps> = () =
     return <Loader />;
   }
 
-  function setChangesSaved() {
+  const setChangesSaved = () => {
     clearErrors('selectedRawTables');
-  }
+  };
 
   const setSelectedTables = (values: IntegrationRawTable[]) => {
     setValue('selectedRawTables', values);

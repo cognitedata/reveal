@@ -69,10 +69,10 @@ const NameView: FunctionComponent<Props> = () => {
     }
   };
 
-  function onCancel() {
+  const onCancel = () => {
     dispatch({ type: 'REMOVE_CHANGE', payload: { name: 'name' } });
     setIsEdit(false);
-  }
+  };
 
   const onEditClick = () => {
     setIsEdit(true);

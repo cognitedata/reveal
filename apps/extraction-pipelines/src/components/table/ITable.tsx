@@ -42,21 +42,21 @@ interface ITableProps<T extends object> {
   data: T[];
   columns: Column<T>[];
 }
-function fuzzyTextFilterFn<T extends { values: any }>(
+const fuzzyTextFilterFn = <T extends { values: any }>(
   rows: ReadonlyArray<T>,
   id: string,
   filterValue: any
-) {
+) => {
   return matchSorter([...rows], filterValue, {
     keys: [(row) => row.values[id]],
   });
-}
+};
 fuzzyTextFilterFn.autoRemove = (val: boolean) => !val;
 
-function ITable<T extends { id: ReactText }>({
+const ITable = <T extends { id: ReactText }>({
   data,
   columns,
-}: ITableProps<T>) {
+}: ITableProps<T>) => {
   const { setIntegration } = useSelectedIntegration();
   const { project } = useAppEnv();
   const history = useHistory();
@@ -191,5 +191,5 @@ function ITable<T extends { id: ReactText }>({
       </div>
     </>
   );
-}
+};
 export default ITable;

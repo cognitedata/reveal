@@ -72,13 +72,13 @@ const InlineEdit = <Fields extends FieldValues>({
     setIsEdit(true);
   };
 
-  function handleClickError() {
+  const handleClickError = () => {
     setErrorVisible(false);
-  }
+  };
 
-  function onCancel() {
+  const onCancel = () => {
     setIsEdit(false);
-  }
+  };
 
   return (
     <ColumnForm onSubmit={handleSubmit(onSave)} mb={mb}>

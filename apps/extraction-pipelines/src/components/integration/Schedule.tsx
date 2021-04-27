@@ -103,13 +103,13 @@ export const Schedule: FunctionComponent<ScheduleProps> = ({
     setIsEdit(true);
   };
 
-  function handleClickError() {
+  const handleClickError = () => {
     setErrorVisible(false);
-  }
+  };
 
-  function onCancel() {
+  const onCancel = () => {
     setIsEdit(false);
-  }
+  };
   const selectChanged = (selected: OptionTypeBase) => {
     setValue('schedule', selected.value);
   };

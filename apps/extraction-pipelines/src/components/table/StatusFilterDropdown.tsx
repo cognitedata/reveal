@@ -29,9 +29,9 @@ interface StatusFilterDropdownProps<D extends object> {
   };
 }
 
-function StatusFilterDropdown<D extends object>({
+const StatusFilterDropdown = <D extends object>({
   column: { filterValue, setFilter, Header },
-}: StatusFilterDropdownProps<D>) {
+}: StatusFilterDropdownProps<D>) => {
   const onClickFail = () => {
     trackUsage(FILTER, { field: 'status', value: Status.FAIL });
     setFilter(Status.FAIL);
@@ -88,5 +88,5 @@ function StatusFilterDropdown<D extends object>({
       </Button>
     </StyledDropdown>
   );
-}
+};
 export default StatusFilterDropdown;

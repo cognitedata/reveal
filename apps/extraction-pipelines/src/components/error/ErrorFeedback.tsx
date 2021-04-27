@@ -84,13 +84,13 @@ const findErrorText = (error: ErrorVariations): ErrorObj | null => {
   return null;
 };
 
-export function ErrorFeedback({
+export const ErrorFeedback = ({
   error,
   onClick = () => null,
   btnText = 'Done',
   fallbackTitle = '',
   contentText = '',
-}: ErrorFeedbackProps) {
+}: ErrorFeedbackProps) => {
   let showBtn = true;
   const errorObj = findErrorText(error);
   const title = errorObj?.code ?? fallbackTitle;
@@ -110,4 +110,4 @@ export function ErrorFeedback({
       )}
     </ErrorCard>
   );
-}
+};

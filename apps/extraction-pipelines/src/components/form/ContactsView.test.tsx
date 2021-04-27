@@ -3,19 +3,19 @@ import { QueryClient } from 'react-query';
 import { screen, waitFor, fireEvent, cleanup } from '@testing-library/react';
 import { act } from 'react-test-renderer';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
-import { getMockResponse, mockError } from '../../utils/mockResponse';
-import { render } from '../../utils/test';
+import { getMockResponse, mockError } from 'utils/mockResponse';
+import { render } from 'utils/test';
 import {
   addNewContact,
   clickById,
   clickByIdAsync,
   existsContactAsync,
   removeContact,
-} from '../../utils/test/utilsFn';
-import { renderQueryCacheIntegration } from '../../utils/test/render';
-import ContactsView, { ContactBtnTestIds } from './ContactsView';
-import { Integration } from '../../model/Integration';
-import { User } from '../../model/User';
+} from 'utils/test/utilsFn';
+import { renderQueryCacheIntegration } from 'utils/test/render';
+import ContactsView, { ContactBtnTestIds } from 'components/form/ContactsView';
+import { Integration } from 'model/Integration';
+import { User } from 'model/User';
 import {
   ADD_CONTACT_TEST_ID,
   CONTACT_EMAIL_TEST_ID,
@@ -28,20 +28,20 @@ import {
   SERVER_ERROR_TITLE,
   NOTIFICATION_DIALOG_TITLE,
   REMOVE_DIALOG_TEXT_PART,
-} from '../../utils/constants';
+} from 'utils/constants';
 import {
   CDF_ENV_GREENFIELD,
   ORIGIN_DEV,
   PROJECT_ITERA_INT_GREEN,
-} from '../../utils/baseURL';
-import { ContactsErrorMsg } from '../../utils/validation/contactsSchema';
+} from 'utils/baseURL';
+import { ContactsErrorMsg } from 'utils/validation/contactsSchema';
 
-function createIntegrationWithContacts(
+const createIntegrationWithContacts = (
   contacts: User[] | undefined | null
-): Integration {
+): Integration => {
   const int = getMockResponse()[0];
   return { ...int, contacts } as Integration;
-}
+};
 const DIALOG_TEXT_REGEX = new RegExp(REMOVE_DIALOG_TEXT_PART, 'i');
 
 describe('<ContactsView />', () => {

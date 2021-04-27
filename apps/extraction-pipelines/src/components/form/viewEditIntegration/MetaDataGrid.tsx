@@ -1,11 +1,10 @@
 import React, { FunctionComponent } from 'react';
 import { Title } from '@cognite/cogs.js';
-import { GridWithTopMargin } from 'styles/grid/StyledGrid';
+import { Grid, GridWithTopMargin } from 'styles/grid/StyledGrid';
 import { MetaField } from 'components/integration/MetaDataField';
 import { useIntegration } from '../../../hooks/details/IntegrationContext';
 import { FieldGrid } from '../FieldView';
 import { DetailFieldNames, Integration } from '../../../model/Integration';
-import { DetailsGrid } from './MainDetails';
 import { NO_META_DATA } from '../../../utils/constants';
 
 interface OwnProps {}
@@ -47,7 +46,7 @@ export const MetaDataGrid: FunctionComponent<Props> = () => {
   return (
     <GridWithTopMargin>
       <Title level={4}>{DetailFieldNames.META_DATA}</Title>
-      <DetailsGrid>{renderMeta(integration)}</DetailsGrid>
+      <Grid>{renderMeta(integration)}</Grid>
     </GridWithTopMargin>
   );
 };

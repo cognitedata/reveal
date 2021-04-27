@@ -39,9 +39,12 @@ describe('DocumentationSection', () => {
     const documentation = screen.getByText(mock.metadata?.documentation);
     expect(documentation).toBeInTheDocument();
     fireEvent.click(documentation);
+    await waitFor(() => {
+      screen.getByLabelText(DOCUMENTATION_HEADING);
+    });
     const newDocumentation = 'new documentation';
 
-    fireEvent.change(documentation, {
+    fireEvent.change(screen.getByLabelText(DOCUMENTATION_HEADING), {
       target: { value: newDocumentation },
     });
     sdkv3.get.mockResolvedValueOnce({

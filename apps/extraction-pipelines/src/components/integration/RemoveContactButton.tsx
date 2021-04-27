@@ -47,9 +47,9 @@ export const RemoveContactButton: FunctionComponent<RemoveButtonProps> = ({
     }
   };
 
-  function handleClickError() {
+  const handleClickError = () => {
     setErrorVisible(false);
-  }
+  };
   return (
     <MessageDialog
       visible={errorVisible}

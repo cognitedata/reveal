@@ -5,9 +5,9 @@ import { AllIconTypes } from '@cognite/cogs.js/dist/Atoms/Icon';
 import { trackUsage } from 'utils/Metrics';
 import { SORT } from 'utils/constants';
 
-function getSortOrder<T extends object>(
+const getSortOrder = <T extends object>(
   column: ColumnInstance<T>
-): { icon: AllIconTypes; ariaSort: AriaAttributes['aria-sort'] } {
+): { icon: AllIconTypes; ariaSort: AriaAttributes['aria-sort'] } => {
   if (column.isSorted) {
     if (column.isSortedDesc) {
       return {
@@ -24,7 +24,7 @@ function getSortOrder<T extends object>(
     icon: 'OrderDesc',
     ariaSort: 'none',
   };
-}
+};
 interface SorterIndicatorProps<T extends object> {
   column: ColumnInstance<T>;
   name: string;

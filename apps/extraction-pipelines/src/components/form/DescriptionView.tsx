@@ -114,10 +114,10 @@ const DescriptionView: FunctionComponent<Props> = () => {
     }
   };
 
-  function onCancel() {
+  const onCancel = () => {
     dispatch({ type: 'REMOVE_CHANGE', payload: { name: 'description' } });
     setIsEdit(false);
-  }
+  };
 
   const onEditClick = () => {
     setIsEdit(true);

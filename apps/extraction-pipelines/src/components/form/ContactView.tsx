@@ -35,11 +35,11 @@ interface OwnProps {
 }
 
 type Props = OwnProps;
-function confirmRemoveContact(contact?: string) {
+const confirmRemoveContact = (contact?: string) => {
   return `${REMOVE_DIALOG_TEXT_PART} ${
     contact ? `${contact} as contact?` : 'contact?'
   }`;
-}
+};
 
 export const ContactView: FunctionComponent<Props> = ({
   field,

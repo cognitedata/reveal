@@ -52,9 +52,9 @@ export const NotificationUpdateSwitch = <Fields extends FieldValues>({
     }
   };
 
-  function handleClickError() {
+  const handleClickError = () => {
     setErrorVisible(false);
-  }
+  };
 
   return (
     <>

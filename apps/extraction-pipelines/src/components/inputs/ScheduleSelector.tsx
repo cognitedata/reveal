@@ -50,9 +50,9 @@ export const ScheduleSelector: FunctionComponent<SelectorProps> = ({
     })[0];
   };
 
-  function handleChange(selected: OptionTypeBase) {
+  const handleChange = (selected: OptionTypeBase) => {
     onSelectChange(selected);
-  }
+  };
 
   return (
     <Select

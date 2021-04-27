@@ -156,11 +156,11 @@ const ContactsPage: FunctionComponent<ContactsPageProps> = () => {
     append({ name: '', email: '', role: '', sendNotification: false });
   };
 
-  function removeContact(index: number) {
+  const removeContact = (index: number) => {
     return function onClickRemove(_: React.MouseEvent<HTMLButtonElement>) {
       remove(index);
     };
-  }
+  };
 
   return (
     <RegisterIntegrationLayout backPath={EXTERNAL_ID_PAGE_PATH}>

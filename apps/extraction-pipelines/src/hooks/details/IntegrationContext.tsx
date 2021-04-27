@@ -1,6 +1,6 @@
 import React, { PropsWithChildren, useContext, useReducer } from 'react';
-import { Integration } from '../../model/Integration';
-import { User } from '../../model/User';
+import { Integration } from 'model/Integration';
+import { User } from 'model/User';
 
 type NameActions = {
   type: 'UPDATE_NAME';
@@ -67,7 +67,7 @@ interface Props {
   initIntegration: Integration;
 }
 
-function changeReducer(state: StateType, action: ChangesActions): StateType {
+const changeReducer = (state: StateType, action: ChangesActions): StateType => {
   switch (action.type) {
     case 'ADD_CHANGE': {
       state.updates.add(`${action.payload.name}-${action.payload.index ?? 0}`);
@@ -86,9 +86,9 @@ function changeReducer(state: StateType, action: ChangesActions): StateType {
       return state;
     }
   }
-}
+};
 
-function nameReducer(state: StateType, action: NameActions): StateType {
+const nameReducer = (state: StateType, action: NameActions): StateType => {
   switch (action.type) {
     case 'UPDATE_NAME': {
       if (!state.integration) {
@@ -103,11 +103,11 @@ function nameReducer(state: StateType, action: NameActions): StateType {
       return state;
     }
   }
-}
-function descriptionReducer(
+};
+const descriptionReducer = (
   state: StateType,
   action: DescriptionActions
-): StateType {
+): StateType => {
   switch (action.type) {
     case 'UPDATE_DESCRIPTION': {
       if (!state.integration) {
@@ -125,7 +125,7 @@ function descriptionReducer(
       return state;
     }
   }
-}
+};
 
 const contactReducer = (state: StateType, action: IntegrationActions) => {
   if (!state.integration) {

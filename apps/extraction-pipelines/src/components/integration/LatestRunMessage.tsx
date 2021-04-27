@@ -36,12 +36,10 @@ export const LatestRunMessage: FunctionComponent<LatestRunMessageProps> = ({
     return <StatusMarker status={status} />;
   }
 
-  function onClick(e: React.MouseEvent<HTMLButtonElement>) {
-    e.preventDefault();
+  const onClick = () => {
     setShowError(false);
-  }
-  const toggleError = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
+  };
+  const toggleError = () => {
     setShowError((prev) => !prev);
   };
   return (
@@ -54,6 +52,7 @@ export const LatestRunMessage: FunctionComponent<LatestRunMessageProps> = ({
         icon={<FailedRunMessageIcon />}
       >
         <StyledButton
+          type="ghost"
           aria-label="Click to view error message"
           onClick={toggleError}
         >

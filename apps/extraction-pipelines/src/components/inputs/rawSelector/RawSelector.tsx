@@ -121,7 +121,7 @@ const RawSelector = ({
     }
   };
 
-  function localeEmpty() {
+  const localeEmpty = () => {
     return {
       emptyText: (
         <DivFlex direction="column" align="center">
@@ -130,7 +130,7 @@ const RawSelector = ({
         </DivFlex>
       ),
     };
-  }
+  };
 
   return (
     <>

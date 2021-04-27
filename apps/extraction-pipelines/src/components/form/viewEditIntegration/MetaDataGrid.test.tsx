@@ -2,23 +2,23 @@ import { QueryClient } from 'react-query';
 import { act } from 'react-test-renderer';
 import { screen } from '@testing-library/react';
 import React from 'react';
-import { renderQueryCacheIntegration } from '../../../utils/test/render';
-import { render } from '../../../utils/test';
-import { getMockResponse } from '../../../utils/mockResponse';
-import { DetailFieldNames, Integration } from '../../../model/Integration';
-import { MetaDataGrid } from './MetaDataGrid';
+import { renderQueryCacheIntegration } from 'utils/test/render';
+import { render } from 'utils/test';
+import { getMockResponse } from 'utils/mockResponse';
+import { DetailFieldNames, Integration } from 'model/Integration';
+import { MetaDataGrid } from 'components/form/viewEditIntegration/MetaDataGrid';
 import {
   CDF_ENV_GREENFIELD,
   ORIGIN_DEV,
   PROJECT_ITERA_INT_GREEN,
-} from '../../../utils/baseURL';
+} from 'utils/baseURL';
 
-function createIntegrationMetadata(
+const createIntegrationMetadata = (
   metadata: object | undefined | null
-): Integration {
+): Integration => {
   const int = getMockResponse()[0];
   return { ...int, metadata } as Integration;
-}
+};
 
 describe('MetaData', () => {
   let client: QueryClient;

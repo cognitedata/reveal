@@ -56,10 +56,12 @@ export const StyledEdit = styled((props) => (
       display: ${(props: StyledEditProps) => (props.$full ? 'grid' : 'flex')};
       grid-template-columns: ${(props: StyledEditProps) =>
         props.$full ? 'auto 1fr 3rem ' : '1fr'};
+      grid-template-rows: auto;
       justify-items: flex-start;
+      height: fit-content;
       .cogs-icon {
         &.cogs-icon-Edit {
-          margin-left: 2rem;
+          grid-column: 3;
           opacity: 0;
         }
       }

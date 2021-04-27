@@ -115,13 +115,13 @@ export const EditPartContacts = <Fields extends FieldValues>({
     setIsEdit(true);
   };
 
-  function handleClickError() {
+  const handleClickError = () => {
     setErrorVisible(false);
-  }
+  };
 
-  function onCancel() {
+  const onCancel = () => {
     setIsEdit(false);
-  }
+  };
 
   return (
     <EditForm onSubmit={handleSubmit(onSave)}>

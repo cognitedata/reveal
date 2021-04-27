@@ -92,7 +92,7 @@ export const ContactEdit: FunctionComponent<ContactEditProps> = ({
   const [errorVisible, setErrorVisible] = useState(false);
   const isDirty = updates.has(`contacts-${index}`);
 
-  async function onSave() {
+  const onSave = async () => {
     const valid = await trigger();
     if (valid && integration && project) {
       const aut = getValues();
@@ -128,9 +128,9 @@ export const ContactEdit: FunctionComponent<ContactEditProps> = ({
         },
       });
     }
-  }
+  };
 
-  function onCancel() {
+  const onCancel = () => {
     dispatch({
       type: 'REMOVE_CHANGE',
       payload: { index, name: 'contacts' },
@@ -140,7 +140,7 @@ export const ContactEdit: FunctionComponent<ContactEditProps> = ({
       integration?.contacts[index]?.sendNotification
     );
     setIsEdit(false);
-  }
+  };
 
   const handleChange = (_: React.ChangeEvent<HTMLInputElement>) => {
     dispatch({

@@ -1,18 +1,9 @@
 import React, { FunctionComponent, useState } from 'react';
-import {
-  EditButton,
-  Hint,
-  StyledLabel,
-  StyledTextArea,
-} from 'styles/StyledForm';
+import { Hint, StyledTextArea } from 'styles/StyledForm';
 import styled from 'styled-components';
-import { Button, Colors, Icon } from '@cognite/cogs.js';
 import { bottomSpacing } from 'styles/StyledVariables';
-import { StyledTitle2 } from 'styles/StyledHeadings';
 import {
-  CLOSE,
   DOCUMENTATION_HEADING,
-  SAVE,
   SERVER_ERROR_CONTENT,
   SERVER_ERROR_TITLE,
 } from 'utils/constants';
@@ -20,8 +11,8 @@ import { useForm } from 'react-hook-form';
 import ValidationError from 'components/form/ValidationError';
 import { useSelectedIntegration } from 'hooks/useSelectedIntegration';
 import {
-  useDetailsUpdate,
   createUpdateSpec,
+  useDetailsUpdate,
 } from 'hooks/details/useDetailsUpdate';
 import { useAppEnv } from 'hooks/useAppEnv';
 import { useIntegrationById } from 'hooks/useIntegration';
@@ -33,10 +24,22 @@ import { CountSpan } from 'components/form/DescriptionView';
 import { ContactBtnTestIds } from 'components/form/ContactsView';
 import MessageDialog from 'components/buttons/MessageDialog';
 import { yupResolver } from '@hookform/resolvers/yup';
+import {
+  BluePlus,
+  BlueText,
+  CloseButton,
+  SaveButton,
+  StyledEdit,
+} from 'styles/StyledButton';
+import { HeadingLabel } from 'components/inputs/HeadingLabel';
 
+const Formatted = styled.p`
+  grid-column: span 2;
+  white-space: pre-wrap;
+  text-align: left;
+`;
 const DocumentationWrapper = styled.section`
   padding: 1rem;
-  border-right: 1px solid ${Colors['greyscale-grey2'].hex()};
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -45,7 +48,7 @@ const DocumentationForm = styled.form`
   display: grid;
   grid-template-areas: 'label . .' 'hint . .' 'error . .' 'text text text' 'count btn1 btn2';
   grid-auto-columns: 1fr 3rem 3rem;
-  grid-column-gap: 0.5rem;
+  grid-column-gap: 0.2rem;
   .hint {
     grid-area: hint;
   }
@@ -64,9 +67,11 @@ const DocumentationForm = styled.form`
   }
   span[aria-expanded] {
     grid-area: btn1;
+    justify-self: end;
   }
   button[aria-label='Close'] {
     grid-area: btn2;
+    justify-self: end;
   }
 `;
 
@@ -142,16 +147,13 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
 
   return (
     <DocumentationWrapper>
-      <StyledTitle2 id="documentation-heading">
+      <HeadingLabel labelFor="documentation-textarea">
         {DOCUMENTATION_HEADING}
-      </StyledTitle2>
+      </HeadingLabel>
       <DocumentationForm onSubmit={handleSubmit(onValid)}>
-        <StyledLabel htmlFor="documentation-textarea">
-          {DOCUMENTATION_LABEL}
-        </StyledLabel>
+        <Hint className="hint">{DOCUMENTATION_HINT}</Hint>
         {isEdit ? (
           <>
-            <Hint className="hint">{DOCUMENTATION_HINT}</Hint>
             <ValidationError errors={errors} name="documentation" />
             <StyledTextArea
               id="documentation-textarea"
@@ -173,30 +175,20 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
               title={SERVER_ERROR_TITLE}
               contentText={SERVER_ERROR_CONTENT}
             >
-              <Button
-                className="edit-form-btn btn-margin-right"
-                type="primary"
+              <SaveButton
                 htmlType="submit"
                 aria-controls="documentation"
-                aria-label={SAVE}
                 data-testid={`${TEST_ID_BTN_SAVE}documentation`}
-              >
-                <Icon type="Checkmark" />
-              </Button>
+              />
             </MessageDialog>
-            <Button
-              variant="default"
-              className="edit-form-btn"
+            <CloseButton
               onClick={onCancel}
               aria-controls="documentation"
-              aria-label={CLOSE}
               data-testid={`${ContactBtnTestIds.CANCEL_BTN}documentation`}
-            >
-              <Icon type="Close" />
-            </Button>
+            />
           </>
         ) : (
-          <EditButton
+          <StyledEdit
             onClick={onEditClick}
             className="edit-button"
             title="Toggle edit documentation"
@@ -204,9 +196,19 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
             aria-label="Edit documentation"
             aria-controls="documentation"
             data-testid={`${ContactBtnTestIds.EDIT_BTN}documentation`}
+            $full
           >
-            {currentIntegration.metadata?.documentation ?? '-'}
-          </EditButton>
+            {currentIntegration.metadata?.documentation ? (
+              <Formatted>
+                {currentIntegration.metadata?.documentation}
+              </Formatted>
+            ) : (
+              <>
+                <BluePlus />
+                <BlueText>add documentation</BlueText>
+              </>
+            )}
+          </StyledEdit>
         )}
       </DocumentationForm>
     </DocumentationWrapper>

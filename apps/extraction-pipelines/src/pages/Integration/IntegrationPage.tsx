@@ -22,7 +22,7 @@ import { IntegrationView } from 'components/integration/IntegrationView';
 import { useDataSets } from 'hooks/useDataSets';
 import { RouterParams } from 'routing/RoutingConfig';
 import { RunLogsView } from 'components/integration/RunLogsView';
-import { CONTACTS, DETAILS, INTEGRATION_OVERVIEW, RUNS } from 'utils/constants';
+import { DETAILS, INTEGRATION_OVERVIEW, RUNS } from 'utils/constants';
 import { IntegrationHeading } from 'components/integration/IntegrationHeading';
 
 const PageNav = styled.ul`
@@ -105,11 +105,6 @@ const IntegrationPage: FunctionComponent<IntegrationPageProps> = () => {
         <li>
           <NavLink to={`${url}/logs${search}`} exact className="tab-link">
             {RUNS}
-          </NavLink>
-        </li>
-        <li>
-          <NavLink to={`${url}/contacts${search}`} exact className="tab-link">
-            {CONTACTS}
           </NavLink>
         </li>
       </PageNav>

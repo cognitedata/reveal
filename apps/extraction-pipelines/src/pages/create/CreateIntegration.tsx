@@ -86,9 +86,9 @@ const pageSchema = yup
   .object()
   .shape({ ...nameRule, ...externalIdRule, ...descriptionRule });
 
-function findDataSetId(search: string) {
+const findDataSetId = (search: string) => {
   return new URLSearchParams(search).get('dataSetId');
-}
+};
 const CreateIntegration: FunctionComponent<CreateIntegrationProps> = (
   _: PropsWithChildren<CreateIntegrationProps>
 ) => {
