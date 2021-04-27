@@ -1,20 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import debounce from 'lodash/debounce';
 import { Button, Icon, toast } from '@cognite/cogs.js';
 import { useParams } from 'react-router-dom';
 import NodeEditor from 'components/NodeEditor';
 import SplitPaneLayout from 'components/Layout/SplitPaneLayout';
 import PlotlyChartComponent from 'components/PlotlyChart/PlotlyChart';
 import DateRangeSelector from 'components/DateRangeSelector';
-import { AxisUpdate } from 'components/PlotlyChart';
 import Search from 'components/Search';
-import { charts, useChart, useUpdateChart } from 'hooks/firebase';
+import { useChart, useUpdateChart } from 'hooks/firebase';
 import { nanoid } from 'nanoid';
-import { Chart, ChartTimeSeries, ChartWorkflow } from 'reducers/charts/types';
+import { ChartTimeSeries, ChartWorkflow } from 'reducers/charts/types';
 import { getEntryColor } from 'utils/colors';
-import { useLoginStatus, useQueryString } from 'hooks';
-import { useQueryClient } from 'react-query';
-import { updateSourceAxisForChart } from 'utils/charts';
+import { useQueryString } from 'hooks';
 import { SEARCH_KEY } from 'utils/constants';
 import { Modes } from 'pages/types';
 import { ContextMenu } from 'components/ContextMenu';
@@ -42,15 +38,12 @@ type ChartViewProps = {
 const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   const { item: query, setItem: setQuery } = useQueryString(SEARCH_KEY);
 
-  const cache = useQueryClient();
-  const { data: login } = useLoginStatus();
-
   const { chartId = chartIdProp } = useParams<{ chartId: string }>();
   const { data: chart, isError, isFetched } = useChart(chartId);
   const [showContextMenu, setShowContextMenu] = useState(false);
 
   const {
-    mutateAsync: updateChart,
+    mutate: updateChart,
     isError: updateError,
     error: updateErrorMsg,
   } = useUpdateChart();
@@ -63,22 +56,6 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
       toast.error(JSON.stringify(updateErrorMsg, null, 2));
     }
   }, [updateError, updateErrorMsg]);
-
-  useEffect(() => {
-    const doc = charts().doc(chartId);
-    return doc.onSnapshot({
-      next(snap) {
-        const key = ['chart', chartId];
-        const newChart = snap.data() as Chart;
-        const cacheChart = cache.getQueryData<Chart>(key);
-        if (cacheChart?.dirty && newChart.user !== login?.user) {
-          toast.warn('Chart have been changed by owner');
-        } else {
-          cache.setQueryData(key, newChart);
-        }
-      },
-    });
-  }, [chartId, login, cache]);
 
   const [selectedSourceId, setSelectedSourceId] = useState<
     string | undefined
@@ -135,16 +112,6 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
       <div>This chart does not seem to exist. You might not have access</div>
     );
   }
-
-  const handleChangeSourceAxis = debounce(
-    ({ x, y }: { x: string[]; y: AxisUpdate[] }) => {
-      if (chart) {
-        const updatedChart = updateSourceAxisForChart(chart, { x, y });
-        updateChart(updatedChart);
-      }
-    },
-    500
-  );
 
   const handleSourceClick = async (sourceId?: string) => {
     setSelectedSourceId(sourceId);
@@ -299,10 +266,9 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
             <TopPaneWrapper className="chart">
               <ChartWrapper>
                 <PlotlyChartComponent
-                  chart={chart}
-                  onAxisChange={(update) => handleChangeSourceAxis(update)}
+                  key={chartId}
+                  chartId={chartId}
                   isInSearch={showSearch}
-                  cacheTimeseries
                 />
               </ChartWrapper>
             </TopPaneWrapper>
@@ -320,6 +286,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                         onRowClick={handleSourceClick}
                         onInfoClick={handleInfoClick}
                       />
+
                       <WorkflowRows
                         chart={chart}
                         updateChart={updateChart}

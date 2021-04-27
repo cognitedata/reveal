@@ -88,6 +88,7 @@ export default function WorkflowRow({
     () => isWorkflowRunnable(nodes) && getStepsFromWorkflow(nodes, connections),
     [nodes, connections]
   );
+
   const computation = useMemo(
     () =>
       steps && {
@@ -115,7 +116,7 @@ export default function WorkflowRow({
       const newCall = { ...data, callDate: Date.now() };
       mutate(
         updateWorkflow(chart, workflow.id, {
-          calls: call ? [newCall, call] : [newCall],
+          calls: [newCall],
         })
       );
       reset();
