@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Badge from 'antd/lib/badge';
+import { Badge } from 'antd';
 
 const mapStatusToBadge = {
   Done: 'success',

@@ -2,12 +2,11 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import Breadcrumbs from 'src/components/Breadcrumbs';
 import theme from 'src/styles/theme';
-import Icon from 'antd/lib/icon';
-import Tooltip from 'antd/lib/tooltip';
+import { Tooltip } from 'antd';
 import { projectName, getContainer } from 'src/utils';
-import Drawer from 'antd/lib/drawer';
 import Iframe from 'react-iframe';
 import { useMetrics } from 'src/hooks/useMetrics';
+import { Drawer, Button } from '@cognite/cogs.js';
 
 const Title = styled.h5`
   color: black;
@@ -55,7 +54,7 @@ const LeftPane = styled.div`
   float: left;
   display: inline;
 `;
-interface NewHeaderProps {
+interface PageHeaderProps {
   title: string | JSX.Element;
   subtitle?: string | JSX.Element;
   breadcrumbs?: { title: string; path?: string }[];
@@ -65,7 +64,7 @@ interface NewHeaderProps {
   help?: string;
 }
 
-const NewHeader = ({
+export const PageHeader = ({
   title,
   subtitle,
   breadcrumbs,
@@ -73,7 +72,7 @@ const NewHeader = ({
   leftItem,
   ornamentColor,
   help,
-}: NewHeaderProps) => {
+}: PageHeaderProps) => {
   const metrics = useMetrics('Help');
 
   const [helpVisible, setHelpVisible] = useState(false);
@@ -81,16 +80,17 @@ const NewHeader = ({
     <div style={{ marginBottom: '22px', width: '100%' }}>
       {help && (
         <Drawer
+          footer={null}
+          width="60%"
           title="Cognite Docs"
           visible={helpVisible}
-          onClose={() => setHelpVisible(false)}
-          width="60%"
+          onCancel={() => setHelpVisible(false)}
           getContainer={getContainer}
         >
           <Iframe
             url={help}
             width="100%"
-            height="900px"
+            height="100%"
             loading="eager"
             className="no-border"
           />
@@ -111,7 +111,8 @@ const NewHeader = ({
                 placement="left"
                 getPopupContainer={getContainer}
               >
-                <Icon
+                <Button
+                  type="ghost"
                   onClick={() => {
                     metrics.track('Clicked help', {
                       url: help,
@@ -119,8 +120,10 @@ const NewHeader = ({
                     });
                     setHelpVisible(true);
                   }}
-                  type="question-circle"
-                  style={{ fontSize: 22, color: theme.breadcrumbsText }}
+                  aria-label="Help"
+                  size="small"
+                  icon="Help"
+                  style={{ color: theme.breadcrumbsText, cursor: 'pointer' }}
                 />
               </Tooltip>
             )}
@@ -143,5 +146,3 @@ const NewHeader = ({
     </div>
   );
 };
-
-export default NewHeader;

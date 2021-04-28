@@ -1,24 +1,28 @@
+import antdTableStyles from 'src/styles/antd/antdTableStyles';
+import antdGlobalStyles from 'src/styles/antd/antdGlobalStyles';
 import React from 'react';
-import { Tooltip as CogsTooltip } from '@cognite/cogs.js';
-import { getContainer, styleScope } from 'src/utils';
-import ConfigProvider from 'antd/lib/config-provider';
 import { useGlobalStyles } from '@cognite/cdf-utilities';
-import antdStyle from '@cognite/cogs.js/dist/antd.css';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
-import localStyle from 'src/styles/global.css';
-import message from 'antd/lib/message';
+import { getContainer } from 'src/utils';
+import { styleScope } from 'src/utils/styleScope';
+import { Tooltip } from '@cognite/cogs.js';
+import { ConfigProvider } from 'antd';
+import appGlobalStyles from './global.css';
 
-// This will override the appendTo prop on all Tooltips used from cogs
 // @ts-ignore
-CogsTooltip.defaultProps = {
+Tooltip.defaultProps = {
   // @ts-ignore
-  ...CogsTooltip.defaultProps,
+  ...Tooltip.defaultProps,
   appendTo: getContainer,
 };
 
-export default function GlobalStyles(props: { children: React.ReactNode }) {
-  useGlobalStyles([antdStyle, cogsStyles, localStyle]);
-  message.config({ getContainer });
+export default function AntStyles(props: React.PropsWithChildren<any>) {
+  useGlobalStyles([
+    appGlobalStyles,
+    cogsStyles,
+    ...antdGlobalStyles,
+    ...antdTableStyles,
+  ]);
 
   return (
     <ConfigProvider getPopupContainer={getContainer}>

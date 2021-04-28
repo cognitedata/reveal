@@ -1,5 +1,5 @@
 import * as Sentry from '@sentry/browser';
-import notification from 'antd/lib/notification';
+import { notification } from 'antd';
 import { getContainer } from 'src/utils';
 import { v3 } from '@cognite/cdf-sdk-singleton';
 

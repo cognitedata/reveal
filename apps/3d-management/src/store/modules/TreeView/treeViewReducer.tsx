@@ -79,7 +79,8 @@ export default function treeDataReducer(
         if (!('meta' in node)) {
           return false;
         }
-        if (nodeIsStrictlyUnchecked(node)) {
+        const dataNode = node as TreeDataNode;
+        if (nodeIsStrictlyUnchecked(dataNode)) {
           traverseTree([node], (uncheckedKey, childNode) => {
             if ('meta' in childNode && childNode.meta.subtreeSize > 1) {
               nodeUnknownChildrenAreHidden[uncheckedKey] = true;
@@ -88,10 +89,10 @@ export default function treeDataReducer(
           });
           return false;
         }
-        if (checkedNodes.includes(node.key)) {
+        if (checkedNodes.includes(dataNode.key)) {
           Object.keys(nodeUnknownChildrenAreHidden).forEach(
             (prevHiddenKeyStr) => {
-              if (subtreeHasTreeIndex(node, +prevHiddenKeyStr)) {
+              if (subtreeHasTreeIndex(dataNode, +prevHiddenKeyStr)) {
                 delete nodeUnknownChildrenAreHidden[prevHiddenKeyStr];
               }
             }

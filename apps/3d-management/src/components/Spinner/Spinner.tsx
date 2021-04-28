@@ -1,5 +1,5 @@
 import React, { CSSProperties } from 'react';
-import Spin from 'antd/lib/spin';
+import { Spin, SpinProps } from 'antd';
 import styled from 'styled-components';
 
 const StyledSpinner = styled(Spin)`
@@ -20,16 +20,31 @@ const SpinWrapper = styled.div`
 `;
 
 type Props = {
+  visibleAfterMs?: number;
   text?: string;
   className?: string;
   style?: CSSProperties;
+  size?: SpinProps['size'];
 };
 
-function Spinner({ text, ...rest }: Props) {
+function Spinner({ text, size, visibleAfterMs = 200, ...rest }: Props) {
+  const [isVisible, setIsVisible] = React.useState(false);
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, visibleAfterMs);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, []);
+  if (!isVisible) {
+    return null;
+  }
+
   return (
     <SpinWrapper {...rest}>
       <div>
-        <StyledSpinner />
+        <StyledSpinner size={size} />
         <p>{text || 'Loading...'}</p>
       </div>
     </SpinWrapper>

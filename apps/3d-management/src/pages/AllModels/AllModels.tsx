@@ -3,24 +3,26 @@ import { AuthenticatedUserWithGroups } from '@cognite/cdf-utilities/dist/types';
 import { useMetrics } from 'src/hooks/useMetrics';
 import React, { ChangeEvent, useState } from 'react';
 import ModelRevisions from 'src/pages/AllModels/components/ModelRevisions/ModelRevisions';
-import { APP_TITLE, getContainer, userHasCapabilities } from 'src/utils';
-import Row from 'antd/lib/row';
-import Col from 'antd/lib/col';
-import Input from 'antd/lib/input';
-import { Button } from '@cognite/cogs.js';
+import {
+  APP_TITLE,
+  DEFAULT_MARGIN_V,
+  getContainer,
+  userHasCapabilities,
+} from 'src/utils';
+import { Modal, Steps, message } from 'antd';
+
+import { Button, Flex, Input } from '@cognite/cogs.js';
 import FileUploader from 'src/pages/AllModels/components/FileUploader';
 import Spinner from 'src/components/Spinner';
-import NewHeader from 'src/components/NewHeader';
+import { PageHeader } from 'src/components/PageHeader';
 import PermissioningHintWrapper from 'src/components/PermissioningHintWrapper';
 import ModelsTable from 'src/pages/AllModels/components/ModelsTable/ModelsTable';
-import Modal from 'antd/lib/modal';
-import Steps from 'antd/lib/steps';
+
 import styled from 'styled-components';
 import { RouteComponentProps } from 'react-router';
 import { useCreateModelMutation } from 'src/hooks/models';
 import { useModels } from 'src/hooks/models/useModels';
 import { useCreateRevisionMutation } from 'src/hooks/revisions';
-import message from 'antd/lib/message';
 
 const { Step } = Steps;
 
@@ -103,21 +105,22 @@ export default function AllModels(props: Props) {
       title: 'Name Your Model',
       content: (
         <div>
-          <Row gutter={8} type="flex" align="middle">
-            <Col span={12}>
-              <div>Input Model Name:</div>
-            </Col>
-            <Col span={12}>
-              <Input
-                placeholder="Model Name"
-                required
-                value={newModelName}
-                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                  setNewModelName(e.target.value)
-                }
-              />
-            </Col>
-          </Row>
+          <Flex
+            alignItems="center"
+            justifyContent="space-between"
+            style={{
+              margin: `${DEFAULT_MARGIN_V}px 0`,
+            }}
+          >
+            <div>Input Model Name:</div>
+            <Input
+              placeholder="Model Name"
+              value={newModelName}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setNewModelName(e.target.value)
+              }
+            />
+          </Flex>
 
           <ButtonRow>
             <Button onClick={closeModal}>Cancel</Button>
@@ -181,12 +184,9 @@ export default function AllModels(props: Props) {
 
   return (
     <div>
-      <NewHeader
+      <PageHeader
         title={APP_TITLE}
-        breadcrumbs={[
-          { title: 'Data catalog', path: '/data-catalog' },
-          { title: APP_TITLE, path: '/3d-models' },
-        ]}
+        breadcrumbs={[{ title: APP_TITLE, path: '/3d-models' }]}
         help="https://docs.cognite.com/cdf/3d/"
         rightItem={
           <TableOperations>

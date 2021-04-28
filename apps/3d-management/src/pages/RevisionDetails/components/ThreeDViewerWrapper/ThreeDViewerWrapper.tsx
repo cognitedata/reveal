@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import Icon from 'antd/lib/icon';
 import zIndex from 'src/utils/zIndex';
 import { v3 } from '@cognite/cdf-sdk-singleton';
 import { LazyWrapper } from 'src/components/LazyWrapper';
@@ -8,6 +7,7 @@ import Thumbnail from 'src/components/Thumbnail';
 
 import { isModelFormatDeprecated } from 'src/pages/RevisionDetails/components/ThreeDViewerWrapper/isModelFormatDeprecated';
 import { DeprecatedModelMessage } from 'src/pages/RevisionDetails/components/ThreeDViewerWrapper/DeprecatedModelMessage';
+import { CloseCircleFilled, PlayCircleFilled } from '@ant-design/icons';
 import { ThreeDViewerProps } from '../ThreeDViewer/ThreeDViewer.d';
 
 const ERROR_TEXT: Record<v3.Revision3DStatus, string> = {
@@ -23,7 +23,7 @@ const ErrorText = styled.p`
   margin: 0 auto;
 `;
 
-const CenteredIcon = styled(Icon)`
+const CenteredIcon = styled(AntdIcon)`
   position: absolute;
   color: rgba(255, 255, 255, 0.75);
   top: 50%;
@@ -38,6 +38,20 @@ const CenteredIcon = styled(Icon)`
     width: 100%;
   }
 `;
+
+function AntdIcon({ name, ...rest }: any) {
+  switch (name) {
+    case 'play': {
+      return <PlayCircleFilled {...rest} />;
+    }
+    case 'close': {
+      return <CloseCircleFilled {...rest} />;
+    }
+    default: {
+      throw new Error(`unknown icon name ${name}`);
+    }
+  }
+}
 
 const MultiLayeredContainer = styled.div<{ errorState?: boolean }>`
   position: relative;
@@ -128,11 +142,7 @@ export default function ThreeDViewerWrapper(props: Props) {
       <div style={{ textAlign: 'center', bottom: '0px', flex: 1 }}>
         <ErrorText>{ERROR_TEXT[props.revision.status]}</ErrorText>
         <MultiLayeredContainer errorState>
-          <CenteredIcon
-            type="close-circle"
-            theme="filled"
-            style={{ cursor: 'not-allowed' }}
-          />
+          <CenteredIcon name="close" style={{ cursor: 'not-allowed' }} />
         </MultiLayeredContainer>
       </div>
     );
@@ -156,7 +166,7 @@ export default function ThreeDViewerWrapper(props: Props) {
         />
       </div>
 
-      <CenteredIcon type="play-circle" theme="filled" />
+      <CenteredIcon name="play" />
     </MultiLayeredContainer>
   );
 }

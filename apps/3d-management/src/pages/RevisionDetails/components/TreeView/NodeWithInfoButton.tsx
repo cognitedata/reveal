@@ -4,22 +4,30 @@ import styled from 'styled-components';
 
 export const INFO_BTN_CLASSNAME = 'tree-view-info-btn';
 
-const Node = styled.div`
-  .${INFO_BTN_CLASSNAME} {
-    color: rgb(223, 226, 229);
-    cursor: pointer;
+const InfoIcon = styled(Icon)`
+  color: rgb(223, 226, 229);
+  cursor: pointer;
+  display: inline-block;
 
-    /* extend click area a bit */
-    padding: 4px;
-    margin: -4px;
+  /* extend click area a bit */
+  position: relative;
+  &:after {
+    content: ' ';
+    position: absolute;
+    top: -25%;
+    left: -25%;
+    height: 150%;
+    width: 150%;
+  }
 
-    svg {
-      margin-bottom: -2px;
-    }
+  svg {
+    width: unset;
+    height: unset;
+    margin-bottom: -2px;
+  }
 
-    &:hover {
-      color: rgba(24, 144, 255, 0.9);
-    }
+  &:hover {
+    color: rgba(24, 144, 255, 0.9);
   }
 `;
 
@@ -28,9 +36,9 @@ type Props = {
 };
 export function NodeWithInfoButton({ name }: Props) {
   return (
-    <Node>
+    <div>
       {name}&nbsp;
-      <Icon className={INFO_BTN_CLASSNAME} type="Info" />
-    </Node>
+      <InfoIcon className={INFO_BTN_CLASSNAME} type="Info" />
+    </div>
   );
 }

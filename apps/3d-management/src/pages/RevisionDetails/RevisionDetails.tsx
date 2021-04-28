@@ -1,31 +1,30 @@
 import styled from 'styled-components';
-import { Card, Icon } from 'antd';
-import { Button } from '@cognite/cogs.js';
+import { Card, Tooltip, message, Modal } from 'antd';
+import { Button, Flex, Icon } from '@cognite/cogs.js';
 import { RouteComponentProps } from 'react-router-dom';
 import {
   isReprocessingRequired,
   APP_TITLE,
   getContainer,
   userHasCapabilities,
+  logToSentry,
+  DEFAULT_MARGIN_V,
 } from 'src/utils';
 import { AuthenticatedUserWithGroups } from '@cognite/cdf-utilities/dist/types';
 import { useMetrics } from 'src/hooks/useMetrics';
 import React, { useEffect, useState } from 'react';
-import message from 'antd/lib/message';
 
 import { createLink, useUserContext } from '@cognite/cdf-utilities';
 import dayjs from 'dayjs';
 import Status from 'src/components/Status';
 import NotFound from 'src/pages/NotFound';
 import Spinner from 'src/components/Spinner';
-import NewHeader from 'src/components/NewHeader';
-import Row from 'antd/lib/row';
-import Col from 'antd/lib/col';
-import Tooltip from 'antd/lib/tooltip';
+import { PageHeader } from 'src/components/PageHeader';
+
 import PermissioningHintWrapper from 'src/components/PermissioningHintWrapper';
 import ErrorBoundary from 'src/components/ErrorBoundary';
 import ThreeDViewerWrapper from 'src/pages/RevisionDetails/components/ThreeDViewerWrapper';
-import Modal from 'antd/lib/modal';
+
 import { ReprocessingModal } from 'src/pages/RevisionDetails/components/ReprocessingModal';
 import { RevisionLogs } from 'src/pages/RevisionDetails/components/RevisionLogs';
 import {
@@ -66,10 +65,19 @@ const ButtonRow = styled.div`
 
 const ViewLogsButton = styled(Button)`
   margin-left: 12px;
-  padding: 6px 8px;
   font-size: 12px;
   && > span {
     margin-left: 6px;
+  }
+`;
+
+const DetailsRowFlex = styled(Flex)`
+  margin: 4px 0;
+  > *:first-child {
+    width: 100%;
+    flex-shrink: 0;
+    min-width: 120px;
+    max-width: 280px;
   }
 `;
 
@@ -127,7 +135,7 @@ export default function RevisionDetails(props: Props) {
             setReprocessingRequired(isRequired);
           }
         })
-        .catch();
+        .catch(logToSentry);
     }
 
     return () => {
@@ -210,10 +218,9 @@ export default function RevisionDetails(props: Props) {
 
   return (
     <PageWithFixedWidth width={900}>
-      <NewHeader
+      <PageHeader
         title={`${APP_TITLE} / ${model.name}`}
         breadcrumbs={[
-          { title: 'Data catalog', path: '/data-catalog' },
           {
             title: APP_TITLE,
             path: '/3d-models',
@@ -232,56 +239,56 @@ export default function RevisionDetails(props: Props) {
 
       <Card>
         <h1>Revision Details</h1>
-        <Row type="flex" justify="start">
-          <Col span={6}>
+        <DetailsRowFlex>
+          <div>
             <b>Model Name: </b>
-          </Col>
-          <Col span={18}>{model.name}</Col>
-        </Row>
-        <Row type="flex" justify="start">
-          <Col span={6}>
+          </div>
+          <div>{model.name}</div>
+        </DetailsRowFlex>
+        <DetailsRowFlex>
+          <div>
             <b>Date Created: </b>
-          </Col>
-          <Col span={18}>
-            {dayjs(revision.createdTime).format('MMM D, YYYY h:mm A')}
-          </Col>
-        </Row>
-        <Row type="flex" justify="start">
-          <Col span={6}>
+          </div>
+          <div>{dayjs(revision.createdTime).format('MMM D, YYYY h:mm A')}</div>
+        </DetailsRowFlex>
+        <DetailsRowFlex>
+          <div>
             <b>Processing Status: </b>
-          </Col>
-          <Col span={18}>
-            <Status status={revision.status} />
-            <ViewLogsButton
-              size="small"
-              type="secondary"
-              icon={showLogs ? 'Up' : 'Down'}
-              onClick={() => setShowLogs((prevState) => !prevState)}
-            >
-              View Logs
-            </ViewLogsButton>
+          </div>
+          <div style={{ minWidth: 0 }}>
+            <Flex>
+              <Status status={revision.status} />
+              <ViewLogsButton
+                size="small"
+                type="secondary"
+                icon={showLogs ? 'Up' : 'Down'}
+                onClick={() => setShowLogs((prevState) => !prevState)}
+              >
+                View Logs
+              </ViewLogsButton>
+            </Flex>
             {showLogs && (
-              <RevisionLogs
-                logs={revisionLogs}
-                isLoading={revisionLogsQuery.isLoading}
-              />
+              <div style={{ overflow: 'hidden', marginTop: DEFAULT_MARGIN_V }}>
+                <RevisionLogs
+                  logs={revisionLogs}
+                  isLoading={revisionLogsQuery.isLoading}
+                />
+              </div>
             )}
-          </Col>
-        </Row>
-        <Row type="flex" justify="start">
-          <Col span={6}>
+          </div>
+        </DetailsRowFlex>
+        <DetailsRowFlex>
+          <div>
             <b>Published Status: </b>
             <Tooltip
               title={PUBLISH_STATUS_HINT}
               getPopupContainer={getContainer}
             >
-              <Icon type="info-circle" />
+              <Icon type="Info" />
             </Tooltip>
-          </Col>
-          <Col span={18}>
-            {revision.published ? 'Published' : 'Unpublished'}
-          </Col>
-        </Row>
+          </div>
+          <div>{revision.published ? 'Published' : 'Unpublished'}</div>
+        </DetailsRowFlex>
 
         <ButtonRow>
           <PermissioningHintWrapper hasPermission={hasUpdateCapabilities}>

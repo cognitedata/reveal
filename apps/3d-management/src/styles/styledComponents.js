@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import Input from 'antd/lib/input';
+import { Input } from 'antd';
 
 export const FieldLabel = styled.p`
   font-weight: bold;

@@ -1,13 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Icons } from '@cognite/cogs.js';
-import NewHeader from 'src/components/NewHeader';
+import { PageHeader } from 'src/components/PageHeader';
 import { APP_TITLE } from 'src/utils';
 
 const NoAccessPage = (): JSX.Element => {
   return (
     <div>
-      <NewHeader
+      <PageHeader
         title={APP_TITLE}
         subtitle="Upload and browse 3D models"
         breadcrumbs={[{ title: APP_TITLE, path: '/3d-models' }]}

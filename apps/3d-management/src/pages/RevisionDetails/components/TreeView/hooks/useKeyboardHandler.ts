@@ -159,7 +159,7 @@ export function useKeyboardHandler(props: Props) {
       );
       const nextSibling = parent.children![currentNodeIndex + 1];
       if (nextSibling && !('cursor' in nextSibling)) {
-        return nextSibling;
+        return nextSibling as TreeDataNode;
       }
       currentBaseNodeKey = parent.key;
     }
@@ -194,7 +194,7 @@ export function useKeyboardHandler(props: Props) {
       if ('cursor' in lastChild) {
         prevNode = children[children.length - 2] as TreeDataNode;
       } else {
-        prevNode = lastChild;
+        prevNode = lastChild as TreeDataNode;
       }
     }
 

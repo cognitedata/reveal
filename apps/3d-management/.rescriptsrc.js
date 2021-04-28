@@ -2,6 +2,8 @@ const { edit, remove, getPaths } = require('@rescripts/utilities');
 const PrefixWrap = require('postcss-prefixwrap');
 const { styleScope } = require('./src/utils/styleScope');
 
+const { antTheme } = require('@cognite/cogs.js/dist/ant-theme');
+
 const addLoaders = (config) => {
   const cssRegex = /\.css$/;
 
@@ -21,6 +23,10 @@ const addLoaders = (config) => {
         // the root app is mounted / unmounted
         esModule: true,
         injectType: 'lazyStyleTag',
+        insert: function insertAtTop(element) {
+          var parent = document.querySelector('head');
+          parent.insertBefore(element, parent.firstChild);
+        },
       },
     },
     {
@@ -56,6 +62,21 @@ const addLoaders = (config) => {
             test: cssRegex,
             use: getStyleLoader(),
             sideEffects: true,
+          },
+          {
+            test: /\.less$/,
+            use: [
+              ...getStyleLoader(),
+              {
+                loader: 'less-loader',
+                options: {
+                  lessOptions: {
+                    modifyVars: antTheme,
+                    javascriptEnabled: true,
+                  },
+                },
+              },
+            ],
           },
           ...match.rules.find((rule) => Array.isArray(rule.oneOf)).oneOf,
         ],

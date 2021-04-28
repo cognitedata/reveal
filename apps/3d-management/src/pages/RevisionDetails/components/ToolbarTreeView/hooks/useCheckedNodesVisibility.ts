@@ -35,7 +35,7 @@ export function useCheckedNodesVisibility({
           const hiddenTreeRanges: Array<[number, number]> = [];
 
           traverseTree(newTreeData, (key, node) => {
-            if (!('meta' in node) || typeof key !== 'number') {
+            if (typeof key !== 'number') {
               return false;
             }
 
@@ -61,12 +61,14 @@ export function useCheckedNodesVisibility({
             ) {
               const allKnownChildrenAreHidden = ![
                 ...checkedKeysSet.values(),
-              ].some((checkedIndex) => subtreeHasTreeIndex(node, checkedIndex));
+              ].some((checkedIndex) =>
+                subtreeHasTreeIndex(node as TreeDataNode, checkedIndex)
+              );
 
               const hadCheckedChildBefore = [
                 ...prevCheckedKeysRef.current!.values(),
               ].some((previouslyCheckedKey) =>
-                subtreeHasTreeIndex(node, previouslyCheckedKey)
+                subtreeHasTreeIndex(node as TreeDataNode, previouslyCheckedKey)
               );
 
               // should be hidden with applyToChildren=true

@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { Button } from '@cognite/cogs.js';
-import Modal from 'antd/lib/modal';
-import message from 'antd/lib/message';
+import { Modal, message } from 'antd';
+
 import { v3Client as sdk, v3 } from '@cognite/cdf-sdk-singleton';
 import { base64ToBlob } from 'src/utils/base64ToBlob';
 import { fireErrorNotification } from 'src/utils/notifications';
-import MessageType from 'src/AntdMessage';
 
 type Props = {
   onUploadDone: () => void;
@@ -54,9 +53,7 @@ export function ThumbnailUploader(props: Props) {
         source: '3d-models',
       })) as v3.FileUploadResponse;
 
-      const progressMessage = message.loading(
-        'Uploading Screenshot...'
-      ) as MessageType;
+      const progressMessage = message.loading('Uploading Screenshot...');
 
       await fetch(response.uploadUrl, {
         method: 'PUT',

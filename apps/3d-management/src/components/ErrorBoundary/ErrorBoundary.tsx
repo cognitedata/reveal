@@ -17,13 +17,12 @@ const DefaultFallback = () => {
         <a href="mailto:support@cognite.com">support@cognite.com</a> if you are
         stuck.
       </p>
-      <p>
-        Please{' '}
-        <Button type="link" onClick={() => window.location.reload()}>
-          reload the page
-        </Button>{' '}
-        to try again.
-      </p>
+      <p>Please reload the page to try again.</p>
+      <div>
+        <Button type="primary" onClick={() => window.location.reload()}>
+          Reload
+        </Button>
+      </div>
     </div>
   );
 };

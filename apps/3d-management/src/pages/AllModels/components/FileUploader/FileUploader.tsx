@@ -1,15 +1,14 @@
 import React from 'react';
-import Upload from 'antd/lib/upload';
-import Icon from 'antd/lib/icon';
+import { Upload, Modal, message } from 'antd';
 import { Button } from '@cognite/cogs.js';
-import Modal from 'antd/lib/modal';
-import message from 'antd/lib/message';
+
 import UploadGCS from 'gcs-browser-upload';
 import mime from 'mime-types';
 import styled from 'styled-components';
 import { v3, v3Client } from '@cognite/cdf-sdk-singleton';
 import { fireErrorNotification, logToSentry } from 'src/utils/notifications';
 import { DEFAULT_MARGIN_V, getContainer, sleep } from 'src/utils';
+import { FileAddOutlined } from '@ant-design/icons';
 
 const { Dragger } = Upload;
 const { confirm } = Modal;
@@ -311,7 +310,7 @@ class FileUploader extends React.Component<Props, State> {
           fileList={this.state.fileList}
         >
           <p className="ant-upload-drag-icon">
-            <Icon type="file-add" />
+            <FileAddOutlined />
           </p>
           <p className="ant-upload-text">
             Click or drag file to this area to upload, will begin upload when

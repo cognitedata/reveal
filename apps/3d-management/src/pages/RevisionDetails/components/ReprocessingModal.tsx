@@ -1,9 +1,8 @@
 import { getContainer, projectName } from 'src/utils';
-import Modal from 'antd/lib/modal';
+import { Modal, message } from 'antd';
 import React from 'react';
 import { ModalProps } from 'antd/lib/modal/Modal';
-import message from 'antd/lib/message';
-import MessageType from 'src/AntdMessage';
+
 import * as Sentry from '@sentry/browser';
 import { requestReprocessing } from 'src/utils/sdk/3dApiUtils';
 import { v3, v3Client } from '@cognite/cdf-sdk-singleton';
@@ -32,9 +31,7 @@ export const ReprocessingModal = ({
   const isReprocessable = revision.createdTime > MAGIC_DATE;
 
   const onOk = async () => {
-    const progressMessage = message.loading(
-      'Requesting reprocessing...'
-    ) as MessageType;
+    const progressMessage = message.loading('Requesting reprocessing...');
 
     onClose();
 
@@ -47,8 +44,6 @@ export const ReprocessingModal = ({
               fileId: revision.fileId,
               metadata: revision.metadata,
               published: false, // api throws 400 if incomplete revision is published
-
-              // @ts-ignore fixme D3M-19 - wrong types in sdk
               rotation: revision.rotation,
             },
           ])

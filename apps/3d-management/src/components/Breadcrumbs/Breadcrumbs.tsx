@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import Breadcrumb from 'antd/lib/breadcrumb';
+import { Breadcrumb } from 'antd';
 import Link from 'src/components/Breadcrumbs/Link';
 import theme from 'src/styles/theme';
 

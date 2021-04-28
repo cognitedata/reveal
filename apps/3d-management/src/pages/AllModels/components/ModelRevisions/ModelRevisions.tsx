@@ -4,22 +4,21 @@ import styled from 'styled-components';
 import { useMetrics } from 'src/hooks/useMetrics';
 import React, { useState } from 'react';
 import { v3 } from '@cognite/cdf-sdk-singleton';
-import { getContainer, userHasCapabilities } from 'src/utils';
-import Spinner from 'src/components/Spinner';
+import { DEFAULT_MARGIN_V, getContainer, userHasCapabilities } from 'src/utils';
 import PermissioningHintWrapper from 'src/components/PermissioningHintWrapper';
-import { Button } from '@cognite/cogs.js';
-import Card from 'antd/lib/card';
+import { message, Card, Modal } from 'antd';
+import { Button, Colors, Flex, Icon, Input } from '@cognite/cogs.js';
 import Thumbnail from 'src/components/Thumbnail/Thumbnail';
 import { createLink } from '@cognite/cdf-utilities';
-import Modal from 'antd/lib/modal';
+
 import FileUploader from 'src/pages/AllModels/components/FileUploader';
-import Input from 'antd/lib/input';
+
 import {
   useDeleteModelMutation,
   useUpdateModelMutation,
 } from 'src/hooks/models';
 import { useCreateRevisionMutation, useRevisions } from 'src/hooks/revisions';
-import message from 'antd/lib/message';
+
 import { RevisionsTable } from './RevisionsTable';
 
 const RevisionWrapper = styled.div`
@@ -66,7 +65,19 @@ export default function ModelRevisions(props: Props) {
   const revisionsQuery = useRevisions(props.model.id);
 
   if (revisionsQuery.isLoading) {
-    return <Spinner />;
+    return (
+      <Flex
+        alignItems="center"
+        justifyContent="center"
+        style={{
+          height: 40,
+          margin: DEFAULT_MARGIN_V,
+          color: Colors.primary.hex(),
+        }}
+      >
+        <Icon type="Loading" />
+      </Flex>
+    );
   }
 
   const showUploadModal = () => setUploadModalVisible(true);
@@ -200,12 +211,12 @@ export default function ModelRevisions(props: Props) {
         visible={renameModalVisible}
         onOk={renameModel}
         onCancel={() => setRenameModalVisible(false)}
-        width="400px"
         title={`Rename ${props.model.name}`}
         getContainer={getContainer}
       >
         <p>Please Type the new name of this model: </p>
         <Input
+          fullWidth
           placeholder="New Name"
           value={newName || props.model.name}
           onChange={updateNewName}

@@ -1,16 +1,16 @@
 import type {
   SorterResult,
   TableCurrentDataSource,
-  PaginationConfig,
-} from 'antd/lib/table';
+  TablePaginationConfig,
+} from 'antd/es/table/interface';
 
 export type ModelsTableFilters = { modelNameFilter: string };
 
 export type AppState = {
   selectedModels: Array<number>;
   modelTableState: {
-    pagination?: PaginationConfig;
     filters: ModelsTableFilters;
+    pagination?: TablePaginationConfig;
     sorter?: SorterResult<any>;
     sortedInfo?: TableCurrentDataSource<any>;
   };

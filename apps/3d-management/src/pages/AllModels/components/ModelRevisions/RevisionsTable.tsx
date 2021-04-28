@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 
-import Table, { ColumnProps } from 'antd/lib/table';
+import { Table, Popover } from 'antd';
+import { ColumnProps } from 'antd/lib/table';
 import { Button } from '@cognite/cogs.js';
-import Popover from 'antd/lib/popover';
+
 import dayjs from 'dayjs';
 
 import EmptyState from 'src/pages/AllModels/components/EmptyState/index';
@@ -36,7 +37,6 @@ export function RevisionsTable(props: Props) {
       width: '50px',
       key: 'thumbnail',
       align: 'center',
-      className: 'lh-0',
       render: (val) =>
         val.thumbnailThreedFileId && (
           <Popover

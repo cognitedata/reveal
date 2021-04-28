@@ -24,10 +24,9 @@ const LogTimeline = styled(Timeline)`
 `;
 
 const LogsContainer = styled.div`
-  margin-top: ${DEFAULT_MARGIN_V};
   display: flex;
   overflow: auto;
-  && > div {
+  & > div {
     flex: 1 220px;
     min-width: 220px;
     margin-right: 12px;

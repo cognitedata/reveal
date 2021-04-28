@@ -1,4 +1,4 @@
-import { DataNode } from 'antd-v4/lib/tree';
+import { DataNode } from 'antd/lib/tree';
 import {
   CustomDataNode,
   TreeDataNode,

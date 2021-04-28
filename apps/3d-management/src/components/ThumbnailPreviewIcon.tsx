@@ -1,22 +1,19 @@
-import React, { forwardRef } from 'react';
+import React from 'react';
 import { Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { IconProps } from '@cognite/cogs.js/dist/Atoms/Icon/Icon';
 import { Optional } from 'src/utils/types';
 
-const EyeIcon = styled(Icon)<IconPropsWithOptionalType>`
+const EyeIcon = styled(Icon)`
   line-height: 0;
   cursor: pointer;
   transform: translateY(3px);
 `;
 
-type IconPropsWithOptionalType = Optional<IconProps, 'type'>;
+// not sure what's wrong with ref type here...
+type IconPropsWithOptionalType = Optional<Omit<IconProps, 'ref'>, 'type'>;
 
-export const ThumbnailPreviewIcon = forwardRef<
-  HTMLDivElement,
-  Omit<IconPropsWithOptionalType, 'ref'>
->((props, forwardedRef) => {
-  // eslint-disable-next-line react/prop-types
+export const ThumbnailPreviewIcon = (props: IconPropsWithOptionalType) => {
   const { type = 'Eye', ...rest } = props;
-  return <EyeIcon ref={forwardedRef} type={type} {...rest} />;
-});
+  return <EyeIcon type={type} {...rest} />;
+};

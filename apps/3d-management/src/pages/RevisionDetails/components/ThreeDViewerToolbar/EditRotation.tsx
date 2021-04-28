@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { v3 } from '@cognite/cdf-sdk-singleton';
-import ButtonAnt from 'antd/lib/button';
-import { Icon, Radio } from 'antd';
+import { Button as ButtonAnt, Radio, message } from 'antd';
+
 import { Button } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import {
@@ -10,13 +10,15 @@ import {
   CognitePointCloudModel,
   THREE,
 } from '@cognite/reveal';
-import message from 'antd/lib/message';
-import MessageType from 'src/AntdMessage';
+
 import * as Sentry from '@sentry/browser';
 import {
   Legacy3DModel,
   Legacy3DViewer,
 } from 'src/pages/RevisionDetails/components/ThreeDViewer/legacyViewerTypes';
+import { RedoOutlined, UndoOutlined } from '@ant-design/icons';
+import antdRadioStyles from 'antd/es/radio/style/index.less';
+import { useGlobalStyles } from '@cognite/cdf-utilities';
 
 const ButtonGroup = ButtonAnt.Group;
 
@@ -44,6 +46,7 @@ type Props = {
 };
 
 export function EditRotation(props: Props) {
+  useGlobalStyles([antdRadioStyles]);
   const [rotationControlsOpened, setRotationControlsOpened] = useState(false);
 
   if (rotationControlsOpened) {
@@ -180,9 +183,7 @@ function EditRotationOpened(props: Props & { onClose: () => void }) {
     props.onClose();
 
     if (rotationX || rotationY || rotationZ) {
-      const progressMessage = message.loading(
-        'Uploading model rotation...'
-      ) as MessageType;
+      const progressMessage = message.loading('Uploading model rotation...');
       const rotationEuler = new THREE.Euler();
       let tmpMatrix: THREE.Matrix4;
       if ('getModelTransformation' in props.model) {
@@ -225,10 +226,10 @@ function EditRotationOpened(props: Props & { onClose: () => void }) {
       <>
         <ButtonGroup>
           <ButtonAnt onClick={() => onRotateClicked(true)}>
-            Rotate <Icon type="undo" />
+            Rotate <UndoOutlined />
           </ButtonAnt>
           <ButtonAnt onClick={() => onRotateClicked(false)}>
-            Rotate <Icon type="redo" />
+            Rotate <RedoOutlined />
           </ButtonAnt>
         </ButtonGroup>
         <Radio.Group

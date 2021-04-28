@@ -104,7 +104,7 @@ export default function ThreeDViewerToolbar(props: Props) {
         position: position.toArray(),
         target: target.toArray(),
       },
-      ...(otherUpdates as any), // fixme: bad types in sdk for rotation - should be Tuple everywhere
+      ...otherUpdates,
     });
   };
 
@@ -160,16 +160,14 @@ export default function ThreeDViewerToolbar(props: Props) {
       {showTreeView && (
         <>
           <MenuSection>
-            <FixSmallCogsSwitch>
-              <Switch
-                name="ghostMode"
-                size="small"
-                onChange={(nextState) => dispatch(toggleGhostMode(nextState))}
-                value={ghostModeEnabled}
-              >
-                Ghost mode
-              </Switch>
-            </FixSmallCogsSwitch>
+            <Switch
+              name="ghostMode"
+              size="small"
+              onChange={(nextState) => dispatch(toggleGhostMode(nextState))}
+              value={ghostModeEnabled}
+            >
+              Ghost mode
+            </Switch>
           </MenuSection>
           <div
             style={{
@@ -191,11 +189,3 @@ export default function ThreeDViewerToolbar(props: Props) {
     </ToolbarStyled>
   );
 }
-
-// todo: migrate to cogs 3.x and remove that
-const FixSmallCogsSwitch = styled.div`
-  label.cogs-switch {
-    display: flex !important;
-    align-items: center !important;
-  }
-`;

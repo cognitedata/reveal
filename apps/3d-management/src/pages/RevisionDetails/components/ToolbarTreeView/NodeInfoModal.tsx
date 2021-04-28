@@ -3,10 +3,11 @@ import { RootState } from 'src/store';
 import { getNodeByTreeIndex } from 'src/pages/RevisionDetails/components/TreeView/utils/treeFunctions';
 import { TreeDataNode } from 'src/pages/RevisionDetails/components/TreeView/types';
 import React, { useCallback, useEffect, useState } from 'react';
-import Modal, { ModalProps } from 'antd/lib/modal';
-import Table, { ColumnProps } from 'antd/lib/table';
+import { ModalProps } from 'antd/lib/modal';
+import { Modal, Table, Tabs } from 'antd';
+import { ColumnProps } from 'antd/lib/table';
 import { Button } from '@cognite/cogs.js';
-import Tabs from 'antd/lib/tabs';
+
 import { getContainer } from 'src/utils';
 import styled from 'styled-components';
 import omit from 'lodash/omit';
@@ -20,6 +21,9 @@ type DataSource = {
 const TableWrapper = styled.div`
   overflow: auto;
   max-height: max(65vh, 400px);
+  .ant-table-column-sorters {
+    padding: 0;
+  }
   & td,
   th {
     padding: 8px;
@@ -129,12 +133,16 @@ export const NodeInfoModal = ({ treeIndex, onClose, ...restProps }: Props) => {
   };
 
   const getColumns = (
-    columns: Array<{ title: ColumnProps<DataSource>['title']; key: string }>
+    columns: Array<
+      {
+        title: ColumnProps<DataSource>['title'];
+        key: string;
+      } & Partial<ColumnProps<DataSource>>
+    >
   ): Array<ColumnProps<DataSource>> => {
     return columns.map((col) => ({
       ...col,
       dataIndex: col.key,
-      defaultSortOrder: 'ascend',
       sortDirections: ['ascend', 'descend', 'ascend'],
       sorter: azSortByKey(col.key),
     }));
@@ -173,6 +181,7 @@ export const NodeInfoModal = ({ treeIndex, onClose, ...restProps }: Props) => {
             {
               title: () => <b>Property</b>,
               key: 'key',
+              defaultSortOrder: 'ascend',
             },
             {
               title: () => <b>Value</b>,

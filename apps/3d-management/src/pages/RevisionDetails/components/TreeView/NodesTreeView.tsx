@@ -1,7 +1,5 @@
 import React, { MutableRefObject } from 'react';
-import { useGlobalStyles } from '@cognite/cdf-utilities';
-import Tree from 'antd-v4/lib/tree';
-import { TreeProps } from 'antd-v4/lib/tree/Tree';
+import { Tree, TreeProps } from 'antd';
 import { SelectedNode, TreeIndex } from 'src/store/modules/TreeView';
 import { INFO_BTN_CLASSNAME } from 'src/pages/RevisionDetails/components/TreeView/NodeWithInfoButton';
 import {
@@ -14,7 +12,6 @@ import {
   TreeDataNode,
   TreeLoadMoreNode,
 } from './types';
-import antd4Styles from './antd4-tree-styles.css';
 import { useKeyboardHandler } from './hooks/useKeyboardHandler';
 
 type ModifiedTreeProps = {
@@ -72,8 +69,6 @@ const NodesTreeView = React.forwardRef<
     }: NodesTreeViewProps,
     forwardedRef
   ) => {
-    useGlobalStyles([antd4Styles]);
-
     const {
       lastSelectedKeyRef,
       cachedSelectedKeysRef,
@@ -165,7 +160,7 @@ const NodesTreeView = React.forwardRef<
         | EventTreeNodeSelected<TreeDataNode>
     ) => {
       if ('cursor' in info.node) {
-        loadSiblings(info.node);
+        loadSiblings(info.node as TreeLoadMoreNode);
       } else if (isInfoIconClicked(info)) {
         onNodeInfoRequest(info.node.meta.treeIndex);
       } else {

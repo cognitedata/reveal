@@ -1,7 +1,7 @@
-import React, { ChangeEvent } from 'react';
-import Table from 'antd/lib/table';
+import React, { ChangeEvent, FC } from 'react';
+import { Table, Popover, TableProps } from 'antd';
 import { Button, Input } from '@cognite/cogs.js';
-import Popover from 'antd/lib/popover';
+
 import styled from 'styled-components';
 import dayjs from 'dayjs';
 
@@ -16,6 +16,7 @@ import { v3 } from '@cognite/cdf-sdk-singleton';
 import { DEFAULT_MARGIN_V } from 'src/utils';
 import { AppState } from 'src/store/modules/App/types';
 import { ThumbnailPreviewIcon } from 'src/components/ThumbnailPreviewIcon';
+import { ColumnType } from 'antd/lib/table/interface';
 
 const NestedTable = styled(Table)`
   && td:last-child {
@@ -30,24 +31,20 @@ const NestedTable = styled(Table)`
     padding-left: 0;
   }
 
-  .ant-table-expanded-row .ant-table-row:last-child td {
-    border: none;
-  }
-
-  .ant-table-expanded-row .ant-table-thead > tr > th {
-    background: none;
-  }
-
   .table-operation a:not(:last-child) {
     margin-right: 24px;
   }
 
-  .ant-table-tbody > .ant-table-row {
-    cursor: pointer;
+  .ant-table-expanded-row .ant-table-row:last-child td {
+    border: none;
   }
 
-  .ant-table-expanded-row:hover > td {
-    background: #fbfbfb;
+  .ant-table-expanded-row thead {
+    background: #fafafa;
+  }
+
+  .ant-table-expanded-row thead th {
+    border: none !important;
   }
 `;
 
@@ -74,49 +71,55 @@ class ModelsTable extends React.Component<Props> {
     return this.props.app.modelTableState.filters.modelNameFilter;
   }
 
-  get columns() {
+  get columns(): Array<ColumnType<v3.Model3D>> {
     const sortObj = this.props.app.modelTableState.sorter;
     return [
       {
         title: '',
         key: 'thumbnails',
         width: 30,
-        className: 'lh-0',
-        render: (val) => (
-          <Popover
-            title={val.name}
-            trigger="click"
-            content={
-              <div
-                style={{
-                  minHeight: '60px',
-                  minWidth: '195px',
-                  display: 'flex',
-                  justifyContent: 'center',
-                }}
-              >
-                <Thumbnail modelId={val.id} width="400px" alt={val.id} />
-              </div>
-            }
-          >
-            <ThumbnailPreviewIcon onClick={(e) => e.stopPropagation()} />
-          </Popover>
-        ),
+        render: (_, record) => {
+          return (
+            <Popover
+              title={record.name}
+              trigger="click"
+              content={
+                <div
+                  style={{
+                    minHeight: '60px',
+                    minWidth: '195px',
+                    display: 'flex',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <Thumbnail
+                    modelId={record.id}
+                    width="400px"
+                    alt="Model thumbnail"
+                  />
+                </div>
+              }
+            >
+              <ThumbnailPreviewIcon onClick={(e) => e.stopPropagation()} />
+            </Popover>
+          );
+        },
       },
       {
         title: 'Name',
         dataIndex: 'name',
         key: 'name',
         sorter: (a, b) => a.name.length - b.name.length,
-        sortOrder: sortObj?.columnKey === 'name' && sortObj?.order,
+        sortOrder: (sortObj?.columnKey === 'name' && sortObj?.order) || null,
       },
       {
         title: 'Date Created',
         dataIndex: 'createdTime',
         key: 'createdTime',
         render: (val) => dayjs(val).format('MMM D, YYYY h:mm A'),
-        sorter: (a, b) => a.createdTime - b.createdTime,
-        sortOrder: sortObj?.columnKey === 'createdTime' && sortObj?.order,
+        sorter: (a, b) => +a.createdTime - +b.createdTime,
+        sortOrder:
+          (sortObj?.columnKey === 'createdTime' && sortObj?.order) || null,
       },
     ];
   }
@@ -162,11 +165,11 @@ class ModelsTable extends React.Component<Props> {
           iconPlacement="right"
           title="Search by model name"
           variant="titleAsPlaceholder"
-          style={{ maxWidth: 300 }}
+          htmlSize={31}
           containerStyle={{ marginBottom: DEFAULT_MARGIN_V }}
         />
-        <NestedTable
-          rowKey={(i) => i.id}
+        <NestedTable<FC<TableProps<v3.Model3D>>>
+          rowKey={(i: any) => i.id}
           columns={this.columns}
           dataSource={this.tableDataSource}
           onChange={this.handleChange}
