@@ -85,21 +85,25 @@ const PlotlyChartComponent = ({
   );
   const yAxisDeltaMinMax = lastYearRaw?.map((_, index) => {
     const lastYearPoints = lastYearRaw?.[index]
-      // @ts-ignore FIXME
+      // @ts-ignore
       .map((datapoint) =>
         'average' in datapoint
           ? datapoint.average
           : (datapoint as DoubleDatapoint).value
       )
       .sort();
+    /* 
+      Filter out the 10% largest and smallest of the values
+      Find the min and max of the remaining 80 %
+    */
     const min = lastYearPoints
       ? lastYearPoints[Math.ceil(lastYearPoints.length / 10)]
-      : undefined;
+      : 0;
     const max = lastYearPoints
       ? lastYearPoints[
           Math.floor(lastYearPoints.length - lastYearPoints.length / 10)
         ]
-      : undefined;
+      : 1;
     const delta = max - min;
     const yAxisDeltaMax = (max + delta * 0.1).toFixed(3);
     const yAxisDeltaMin = (min - delta * 0.1).toFixed(3);
