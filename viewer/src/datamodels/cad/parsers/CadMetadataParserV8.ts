@@ -7,7 +7,6 @@ import { vec3 } from 'gl-matrix';
 import { SectorMetadata, SectorMetadataFacesFileSection, SectorScene } from '../sector/types';
 import { SectorSceneImpl } from '../sector/SectorScene';
 import { Box3 } from '../../../utilities';
-import { traverseUpwards } from '../../../utilities/objectTraversal';
 
 export interface CadSectorMetadataV8 {
   readonly id: number;
@@ -83,20 +82,14 @@ export function parseCadMetadataV8(metadata: CadMetadataV8): SectorScene {
     }
     const parent = sectorsById.get(parentId)!;
     parent.children.push(sector);
-    sector.parent = parent;
-  }
-
-  // Check for missing facesFile-sections and provide coverage factors from parents when necessary
-  for (const sector of sectorsById.values()) {
-    if (hasDummyFacesFileSection(sector)) {
-      populateCoverageFactorsFromAnchestors(sector);
-    }
   }
 
   const rootSector = sectorsById.get(0);
   if (!rootSector) {
     throw new Error('Root sector not found, must have ID 0');
   }
+  // Check for missing facesFile-sections and provide coverage factors from parents when necessary
+  populateCoverageFactorsFromAnchestors(rootSector, rootSector.facesFile);
 
   const unit = metadata.unit !== null ? metadata.unit : 'Meters';
 
@@ -127,8 +120,7 @@ function createSectorMetadata(metadata: CadSectorMetadataV8): SectorMetadata {
     facesFile,
 
     // Populated later
-    children: [],
-    parent: undefined
+    children: []
   };
 }
 
@@ -177,22 +169,19 @@ function hasDummyFacesFileSection(metadata: SectorMetadata): boolean {
   return metadata.facesFile.coverageFactors.xy === -1.0;
 }
 
-function populateCoverageFactorsFromAnchestors(sector: SectorMetadata) {
-  // Find first parent with valud facesFile
-  let firstValidFacesFile: SectorMetadataFacesFileSection | undefined;
-  traverseUpwards(sector, parent => {
-    firstValidFacesFile = hasDummyFacesFileSection(parent) ? undefined : parent.facesFile;
-    return firstValidFacesFile === undefined;
-  });
-  if (!firstValidFacesFile) {
-    // When there are no valid facesFile in the tree
-    firstValidFacesFile = { ...dummyFacesFileSection };
+function populateCoverageFactorsFromAnchestors(
+  sector: SectorMetadata,
+  validFacesFileSection: SectorMetadataFacesFileSection
+) {
+  if (hasDummyFacesFileSection(sector)) {
+    sector.facesFile.coverageFactors.xy = validFacesFileSection.recursiveCoverageFactors.xy;
+    sector.facesFile.coverageFactors.yz = validFacesFileSection.recursiveCoverageFactors.yz;
+    sector.facesFile.coverageFactors.xz = validFacesFileSection.recursiveCoverageFactors.xz;
+    sector.facesFile.recursiveCoverageFactors.xy = validFacesFileSection.recursiveCoverageFactors.xy;
+    sector.facesFile.recursiveCoverageFactors.yz = validFacesFileSection.recursiveCoverageFactors.yz;
+    sector.facesFile.recursiveCoverageFactors.xz = validFacesFileSection.recursiveCoverageFactors.xz;
+    sector.children.forEach(child => populateCoverageFactorsFromAnchestors(child, validFacesFileSection));
+  } else {
+    sector.children.forEach(child => populateCoverageFactorsFromAnchestors(child, sector.facesFile));
   }
-
-  sector.facesFile.coverageFactors.xy = firstValidFacesFile.recursiveCoverageFactors.xy;
-  sector.facesFile.coverageFactors.yz = firstValidFacesFile.recursiveCoverageFactors.yz;
-  sector.facesFile.coverageFactors.xz = firstValidFacesFile.recursiveCoverageFactors.xz;
-  sector.facesFile.recursiveCoverageFactors.xy = firstValidFacesFile.recursiveCoverageFactors.xy;
-  sector.facesFile.recursiveCoverageFactors.yz = firstValidFacesFile.recursiveCoverageFactors.yz;
-  sector.facesFile.recursiveCoverageFactors.xz = firstValidFacesFile.recursiveCoverageFactors.xz;
 }
