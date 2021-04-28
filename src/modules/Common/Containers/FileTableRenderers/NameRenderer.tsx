@@ -40,7 +40,7 @@ export function NameRenderer({ rowData: { name, id } }: CellRenderer) {
     <FileRow>
       <FileNameText>{name}</FileNameText>
       {fileDetails?.geoLocation && (
-        <Tooltip content="EXIF data added">
+        <Tooltip content="Exif data added">
           <ExifIcon>
             <img src={exifIcon} alt="exifIcon" />
           </ExifIcon>
