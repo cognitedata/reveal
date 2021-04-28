@@ -7,6 +7,7 @@ import { FileInfo } from '@cognite/sdk';
 import { sleep } from 'utils/utils';
 import { useQueryClient } from 'react-query';
 import { deleteAnnotationsForFile } from 'utils/AnnotationUtils';
+import { PERMISSIONS_STRINGS, WARNINGS_STRINGS } from 'stringConstants';
 
 export const ClearTagsButton = ({
   id,
@@ -54,10 +55,7 @@ export const ClearTagsButton = ({
         placement="bottom"
         title={
           <>
-            <p>
-              You do not have the necessary permissions to clear tags on this
-              file. You need both events:write and files:write capabilities.
-            </p>
+            <p>{PERMISSIONS_STRINGS.FILES_WRITE_PERMISSIONS}</p>
             <p>Errors: {errors.join(' and ')}.</p>
           </>
         }
@@ -70,12 +68,7 @@ export const ClearTagsButton = ({
   const onDeleteClick = () =>
     Modal.confirm({
       title: 'Are you sure?',
-      content: (
-        <span>
-          All annotations will be deleted . However, you can always
-          re-contextualize the file.
-        </span>
-      ),
+      content: <span>{WARNINGS_STRINGS.CLEAR_ANNOTATIONS_WARNING}</span>,
       onOk: async () => {
         setEditMode(false);
         if (fileInfo) {
