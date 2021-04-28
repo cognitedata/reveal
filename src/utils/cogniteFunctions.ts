@@ -1,4 +1,6 @@
 import { useSDK } from '@cognite/sdk-provider';
+import zipWith from 'lodash/zipWith';
+import { CogniteClient, DoubleDatapoint } from '@cognite/sdk';
 import {
   useMutation,
   useQuery,
@@ -102,3 +104,53 @@ export const useCallFunction = (externalId: string) => {
     };
   });
 };
+
+export const sleep = (ms: number) =>
+  new Promise((resolve) => setTimeout(resolve, ms));
+
+export const transformSimpleCalcResult = ({
+  value,
+  timestamp,
+}: {
+  value?: number[];
+  timestamp?: number[];
+}) =>
+  value?.length && timestamp?.length
+    ? zipWith(value, timestamp, (v, t) => ({
+        value: v,
+        timestamp: new Date(t),
+      }))
+    : ([] as DoubleDatapoint[]);
+
+export async function getFunctionResponseWhenDone(
+  sdk: CogniteClient,
+  fnId: number,
+  callId: number
+) {
+  type FunctionCall = {
+    status: 'Running' | 'Completed' | 'Failed' | 'Timeout';
+  };
+  let status: FunctionCall = await sdk
+    .get(
+      `/api/playground/projects/${sdk.project}/functions/${fnId}/calls/${callId}`
+    )
+    .then((r) => r.data);
+
+  while (!['Failed', 'Completed', 'Timeout'].includes(status?.status)) {
+    // eslint-disable-next-line no-await-in-loop
+    await sleep(1000);
+    // eslint-disable-next-line no-await-in-loop
+    status = await sdk
+      .get(
+        `/api/playground/projects/${sdk.project}/functions/${fnId}/calls/${callId}`
+      )
+      .then((r) => r.data);
+  }
+  const response = await sdk
+    .get(
+      `/api/playground/projects/${sdk.project}/functions/${fnId}/calls/${callId}/response`
+    )
+    .then((r) => r.data.response);
+
+  return response;
+}

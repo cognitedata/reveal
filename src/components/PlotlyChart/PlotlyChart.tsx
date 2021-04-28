@@ -1,29 +1,32 @@
-import React, { useEffect, useState } from 'react';
-import { useQueries } from 'react-query';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useQuery, useQueryClient } from 'react-query';
 import styled from 'styled-components/macro';
-import zipWith from 'lodash/zipWith';
-import { Call, Chart } from 'reducers/charts/types';
+import debounce from 'lodash/debounce';
+import isEqual from 'lodash/isEqual';
+import omit from 'lodash/omit';
+
 import {
   DatapointAggregate,
   Datapoints,
   DatapointsMultiQuery,
   DoubleDatapoint,
 } from '@cognite/sdk';
-import { Button } from '@cognite/cogs.js';
+import { Button, Icon } from '@cognite/cogs.js';
 import { calculateGranularity } from 'utils/timeseries';
 import { convertUnits, units } from 'utils/units';
 import Layers from 'utils/z-index';
 import createPlotlyComponent from 'react-plotly.js/factory';
-import Plotly, {
-  ModeBarButton,
-  ModeBarDefaultButtons,
-} from 'plotly.js-basic-dist';
+import Plotly from 'plotly.js-basic-dist';
 import { convertLineStyle } from 'components/PlotlyChart';
 import { useSDK } from '@cognite/sdk-provider';
-import { functionResponseKey } from 'utils/cogniteFunctions';
-import FunctionCall from 'components/FunctionCall';
 import {
-  AxisUpdate,
+  getFunctionResponseWhenDone,
+  transformSimpleCalcResult,
+} from 'utils/cogniteFunctions';
+import { Chart } from 'reducers/charts/types';
+import { useChart, useUpdateChart } from 'hooks/firebase';
+import { updateSourceAxisForChart } from 'utils/charts';
+import {
   calculateStackedYRange,
   getXaxisUpdateFromEventData,
   getYaxisUpdatesFromEventData,
@@ -33,204 +36,169 @@ import {
 import StackedChartIconPath from './StackedChartIcon';
 
 type ChartProps = {
-  chart: Chart;
-  onAxisChange?: ({ x, y }: { x: string[]; y: AxisUpdate[] }) => void;
+  chartId: string;
   isPreview?: boolean;
   isInSearch?: boolean;
-  defaultStackedMode?: boolean;
-  cacheTimeseries?: boolean;
 };
 
 // Use "basic" version of plotly.js to reduce bundle size
 const Plot = createPlotlyComponent(Plotly);
 
 const PlotlyChartComponent = ({
-  chart,
-  onAxisChange,
-  isPreview,
-  isInSearch,
-  defaultStackedMode = false,
-  cacheTimeseries = false,
+  chartId,
+  isPreview = false,
+  isInSearch = false,
 }: ChartProps) => {
   const sdk = useSDK();
+  const client = useQueryClient();
+  const { data: chart } = useChart(chartId);
+  const { mutate, isLoading } = useUpdateChart();
+
   const pointsPerSeries = isPreview ? 100 : 1000;
   const [dragmode, setDragmode] = useState<'zoom' | 'pan'>('pan');
-  const [stackedMode, setStackedMode] = useState<boolean>(defaultStackedMode);
-  const [cache, setCache] = useState<Record<string, DatapointAggregate[]>>({});
+  const [stackedMode, setStackedMode] = useState<boolean>(false);
   const [yAxisLocked, setYAxisLocked] = useState<boolean>(true);
 
-  const enabledTimeSeries = (chart.timeSeriesCollection || []).filter(
-    ({ enabled }) => enabled
+  const queries =
+    chart?.timeSeriesCollection?.map(({ tsId }) => ({
+      items: [{ id: tsId }],
+      start: new Date(chart.dateFrom),
+      end: new Date(chart.dateTo),
+      granularity: calculateGranularity(
+        [new Date(chart.dateFrom).getTime(), new Date(chart.dateTo).getTime()],
+        pointsPerSeries
+      ),
+      aggregates: ['average'],
+      limit: pointsPerSeries,
+    })) || [];
+
+  const {
+    data: tsRaw,
+    isFetching: timeseriesFetching,
+    isSuccess: tsSuccess,
+  } = useQuery(['chart-data', 'timeseries', queries], () =>
+    Promise.all(
+      queries.map((q) =>
+        sdk.datapoints
+          .retrieve(q as DatapointsMultiQuery)
+          .then((r) => r[0]?.datapoints)
+      )
+    )
   );
+  const calls = isPreview
+    ? []
+    : chart?.workflowCollection?.map((wf) =>
+        omit(wf.calls?.[0], ['callDate'])
+      ) || [];
+  const {
+    data: workflowsRaw,
+    isSuccess: wfSuccess,
+    isFetching: workflowsRunning,
+  } = useQuery(
+    ['chart-data', 'workflows', calls],
+    () =>
+      Promise.all(
+        calls.map(async (call) => {
+          if (call?.functionId && call.callId) {
+            const functionResult = await getFunctionResponseWhenDone(
+              sdk,
+              call?.functionId,
+              call?.callId
+            );
+            return transformSimpleCalcResult(functionResult);
+          }
+          return Promise.resolve([]);
+        })
+      ),
+    { enabled: !isPreview }
+  );
+
+  const [timeseries, setLocalTimeseries] = useState<DatapointAggregate[][]>([]);
+  const [workflows, setLocalWorkflows] = useState<
+    { value: number; timestamp: Date }[][]
+  >([]);
 
   useEffect(() => {
-    if (!cacheTimeseries) {
-      return;
+    if (tsSuccess && tsRaw) {
+      setLocalTimeseries(tsRaw);
     }
-
-    const ids = enabledTimeSeries?.map((t) => t.tsId)?.map((i) => `${i}`) || [];
-    const c = { ...cache };
-    let updateCache = false;
-    Object.keys(cache).forEach((k) => {
-      if (!ids.includes(k)) {
-        updateCache = true;
-        delete c[k];
-      }
-    });
-    if (updateCache) {
-      setCache(c);
-    }
-  }, [cache, enabledTimeSeries, cacheTimeseries]);
-
-  const queries = enabledTimeSeries?.map(({ tsId }) => ({
-    items: [{ id: tsId }],
-    start: new Date(chart.dateFrom),
-    end: new Date(chart.dateTo),
-    granularity: calculateGranularity(
-      [new Date(chart.dateFrom).getTime(), new Date(chart.dateTo).getTime()],
-      pointsPerSeries
-    ),
-    aggregates: ['average'],
-    limit: pointsPerSeries,
-  }));
-
-  const queryResult = useQueries(
-    queries?.map((q) => ({
-      queryKey: ['timeseries', q],
-      queryFn: async (): Promise<DatapointAggregate[]> => {
-        const r = await sdk.datapoints.retrieve(q as DatapointsMultiQuery);
-        return r[0]?.datapoints || ([] as DatapointAggregate[]);
-      },
-    }))
-  );
+  }, [tsSuccess, tsRaw]);
 
   useEffect(() => {
-    if (!cacheTimeseries) {
-      return;
+    if (wfSuccess && workflowsRaw) {
+      setLocalWorkflows(workflowsRaw);
     }
-    let updateCache = false;
-    const c = { ...cache };
-    queryResult.forEach((r, i) => {
-      if (
-        r.isFetched &&
-        r.data &&
-        queries[i].items[0].id &&
-        c[queries[i].items[0].id.toString()] !== r.data
-      ) {
-        updateCache = true;
-        c[queries[i].items[0].id.toString()] = r.data as DatapointAggregate[];
+  }, [wfSuccess, workflowsRaw]);
+
+  const updateChart = useCallback(
+    (c: Chart) => {
+      const oldChart = client.getQueryData<Chart>(['chart', chart?.id]);
+      const irrelevant = ['updatedAt'];
+      if (!isEqual(omit(oldChart, irrelevant), omit(c, irrelevant))) {
+        client.setQueryData(['chart', chart?.id], c);
+        mutate(c);
       }
-    });
-    if (updateCache) {
-      setCache(c);
-    }
-  }, [queryResult, cache, queries, cacheTimeseries]);
-
-  const enabledWorkflows = !isPreview
-    ? chart.workflowCollection?.filter((flow) => flow?.enabled)
-    : [];
-
-  const calls = (enabledWorkflows || []).map((wf) => wf.calls?.[0]) as (
-    | Call
-    | undefined
-  )[];
-  const oldCalls = (enabledWorkflows || []).map((wf) => wf.calls?.[1]) as (
-    | Call
-    | undefined
-  )[];
-
-  const functionResults = useQueries(
-    calls.map((c) => ({
-      queryKey: functionResponseKey(c?.functionId!, c?.callId!),
-      queryFn: (): Promise<string | undefined> =>
-        sdk
-          .get(
-            `/api/playground/projects/${sdk.project}/functions/${c?.functionId}/calls/${c?.callId}/response`
-          )
-          .then((r) => r.data.response),
-      retry: 1,
-      retryDelay: 1000,
-      enabled: !!c?.functionId && !!c?.callId,
-    }))
+    },
+    [chart?.id, client, mutate]
   );
 
-  const oldFunctionResults = useQueries(
-    oldCalls.map((c) => ({
-      queryKey: functionResponseKey(c?.functionId!, c?.callId!),
-      queryFn: (): Promise<string | undefined> =>
-        sdk
-          .get(
-            `/api/playground/projects/${sdk.project}/functions/${c?.functionId}/calls/${c?.callId}/response`
-          )
-          .then((r) => r.data.response),
-      retry: 1,
-      retryDelay: 1000,
-      enabled: !!c?.functionId && !!c?.callId,
-    }))
-  );
-
-  const transformSimpleCalcResult = ({
-    value,
-    timestamp,
-  }: {
-    value?: number[];
-    timestamp?: number[];
-  }) =>
-    value?.length && timestamp?.length
-      ? zipWith(value, timestamp, (v, t) => ({
-          value: v,
-          timestamp: new Date(t),
-        }))
-      : ([] as DoubleDatapoint[]);
-
-  const seriesData: SeriesData[] =
-    [
-      ...(enabledTimeSeries || []).map((t, i) => ({
-        ...t,
-        type: 'timeseries',
-        width: t.lineWeight,
-        range: t.range,
-        name: t.name,
-        outdatedData: !!cache[t.tsId] && !queryResult[i]?.data,
-        datapoints: convertUnits(
-          (queryResult[i]?.data || cache[t.tsId] || []) as DatapointAggregate[],
-          t.unit,
-          t.preferredUnit
-        ),
-        dash: convertLineStyle(t.lineStyle),
-        mode: t.displayMode,
-        unit: units.find(
-          (unitOption) => unitOption.value === t.preferredUnit?.toLowerCase()
-        )?.label,
-      })),
-      ...(enabledWorkflows || [])
-        .filter((workflow) => workflow.enabled)
-        .map((workflow, i) => ({
-          id: workflow?.id,
-          type: 'workflow',
-          outdatedData:
-            !functionResults?.[i]?.data && !!oldFunctionResults?.[i]?.data,
-          range: workflow.range,
-          name: workflow.name,
-          color: workflow.color,
-          mode: workflow.displayMode,
-          width: workflow.lineWeight,
-          dash: convertLineStyle(workflow.lineStyle),
-          unit: units.find(
-            (unitOption) =>
-              unitOption.value === workflow.preferredUnit?.toLowerCase()
-          )?.label,
-          datapoints: convertUnits(
-            transformSimpleCalcResult(
-              (functionResults?.[i]?.data as any) ||
-                (oldFunctionResults?.[i]?.data as any) ||
-                {}
+  const seriesData: SeriesData[] = useMemo(
+    () =>
+      [
+        ...(chart?.timeSeriesCollection || [])
+          .map((t, i) => ({
+            ...t,
+            type: 'timeseries',
+            width: t.lineWeight,
+            range: t.range,
+            name: t.name,
+            outdatedData: timeseriesFetching,
+            datapoints: convertUnits(
+              (timeseries?.[i] || []) as DatapointAggregate[],
+              t.unit,
+              t.preferredUnit
             ),
-            workflow.unit,
-            workflow.preferredUnit
-          ),
-        })),
-    ] || [];
+            dash: convertLineStyle(t.lineStyle),
+            mode: t.displayMode,
+            unit: units.find(
+              (unitOption) =>
+                unitOption.value === t.preferredUnit?.toLowerCase()
+            )?.label,
+          }))
+          .filter((t) => t.enabled),
+        ...(chart?.workflowCollection || [])
+          .map((workflow, i) => ({
+            enabled: workflow.enabled,
+            outdatedData: workflowsRunning,
+            id: workflow?.id,
+            type: 'workflow',
+            range: workflow.range,
+            name: workflow.name,
+            color: workflow.color,
+            mode: workflow.displayMode,
+            width: workflow.lineWeight,
+            dash: convertLineStyle(workflow.lineStyle),
+            unit: units.find(
+              (unitOption) =>
+                unitOption.value === workflow.preferredUnit?.toLowerCase()
+            )?.label,
+            datapoints: convertUnits(
+              workflows?.[i] || [],
+              workflow.unit,
+              workflow.preferredUnit
+            ),
+          }))
+          .filter((t) => t.enabled),
+      ] || [],
+    [
+      chart?.timeSeriesCollection,
+      chart?.workflowCollection,
+      timeseries,
+      workflows,
+      workflowsRunning,
+      timeseriesFetching,
+    ]
+  );
 
   const data = seriesData.map(
     ({ name, color, mode, width, dash, datapoints, outdatedData }, index) => {
@@ -271,19 +239,45 @@ const PlotlyChartComponent = ({
     }
   );
 
-  const handleRelayout = (eventdata: PlotlyEventData) => {
-    const x = getXaxisUpdateFromEventData(seriesData, eventdata);
-    // Should not edit the saved y-axis ranges if in stacked mode or in search
-    const y = !(stackedMode || isInSearch)
-      ? getYaxisUpdatesFromEventData(seriesData, eventdata)
-      : [];
+  const handleRelayout = debounce(
+    useCallback(
+      (eventdata: PlotlyEventData) => {
+        // Using client.getQueryData unstead of creating a closure over `chart`, which changes often
+        const c = client.getQueryData<Chart>(['chart', chartId]);
+        if (!c) {
+          return;
+        }
 
-    if (onAxisChange) {
-      onAxisChange({ x, y });
-    }
+        if (!isPreview) {
+          const x = getXaxisUpdateFromEventData(seriesData, eventdata);
+          // Should not edit the saved y-axis ranges if in stacked mode or in search
+          const y = !(stackedMode || isInSearch)
+            ? getYaxisUpdatesFromEventData(seriesData, eventdata)
+            : [];
 
-    setDragmode(eventdata.dragmode || dragmode);
-  };
+          const newChart = updateSourceAxisForChart(c, { x, y });
+          updateChart(newChart);
+
+          if (eventdata.dragmode) {
+            setDragmode(eventdata.dragmode || dragmode);
+          }
+        }
+      },
+      // Some deps are left out to reduce re-renders
+      // eslint-disable-next-line
+      [
+        dragmode,
+        isInSearch,
+        stackedMode,
+        updateChart,
+        chartId,
+        client,
+        chart?.timeSeriesCollection?.length,
+        chart?.workflowCollection?.length,
+      ]
+    ),
+    1000
+  );
 
   const showYAxis = !isInSearch && !isPreview;
   const marginValue = isPreview ? 0 : 50;
@@ -292,8 +286,9 @@ const PlotlyChartComponent = ({
     margin: { l: marginValue, r: marginValue, b: marginValue, t: marginValue },
     xaxis: {
       type: 'date',
+      autorange: false,
       domain: showYAxis ? [0.06 * (seriesData.length - 1), 1] : [0, 1],
-      range: [chart.dateFrom, chart.dateTo],
+      range: [chart?.dateFrom, chart?.dateTo],
       showspikes: true,
       spikemode: 'across',
       spikethickness: 1,
@@ -311,6 +306,7 @@ const PlotlyChartComponent = ({
   const yAxisDefaults = {
     hoverformat: '.2f',
     zeroline: false,
+    type: 'linear', // IMPORTANT! missing causes more renders
     fixedrange: yAxisLocked,
   };
 
@@ -402,7 +398,8 @@ const PlotlyChartComponent = ({
   });
 
   const config = {
-    staticPlot: isPreview,
+    staticPlot: isPreview || isLoading || data.length === 0,
+    autosize: true,
     responsive: true,
     scrollZoom: true,
     displaylogo: false,
@@ -416,53 +413,78 @@ const PlotlyChartComponent = ({
             height: '16',
             path: StackedChartIconPath,
           },
-          click: () => {
+          click: useCallback(() => {
             setStackedMode(!stackedMode);
-          },
+          }, [setStackedMode, stackedMode]),
         },
       ],
-      ['autoScale2d'],
-    ] as (ModeBarDefaultButtons[] | ModeBarButton[])[],
+    ],
   };
 
   return (
     <ChartingContainer>
-      {!isPreview && !isInSearch && (
-        <AdjustButton
-          type="secondary"
-          variant="outline"
-          icon="YAxis"
-          onClick={() => setYAxisLocked(!yAxisLocked)}
-          left={5 * seriesData.length}
-          className="adjust-button"
-          style={{ background: 'white' }}
-        >
-          {yAxisLocked ? 'Adjust Y axis' : 'Finish'}
-        </AdjustButton>
+      {!isPreview && !isInSearch && seriesData.length > 0 && (
+        <>
+          {(isLoading || timeseriesFetching) && <LoadingIcon />}
+          <AdjustButton
+            type="secondary"
+            variant="outline"
+            icon="YAxis"
+            onClick={() => setYAxisLocked(!yAxisLocked)}
+            left={5 * seriesData.length}
+            className="adjust-button"
+            style={{ background: 'white' }}
+          >
+            {yAxisLocked ? 'Adjust Y axis' : 'Finish'}
+          </AdjustButton>
+        </>
       )}
+
       <PlotWrapper>
-        <Plot
+        <MemoizedPlot
           data={data as Plotly.Data[]}
           layout={(layout as unknown) as Plotly.Layout}
-          config={config as Plotly.Config}
+          config={(config as unknown) as Plotly.Config}
           onRelayout={handleRelayout}
-          useResizeHandler
-          style={{ width: '100%', height: '100%' }}
         />
-        {[...calls, ...oldCalls].map(
-          (call) =>
-            call && (
-              <FunctionCall
-                key={`${call.functionId}/${call.callId}`}
-                id={call.functionId}
-                callId={call.callId}
-              />
-            )
-        )}
       </PlotWrapper>
     </ChartingContainer>
   );
 };
+
+type MemoizedPlotProps = {
+  data: Plotly.Data[];
+  layout: Plotly.Layout;
+  config: Plotly.Config;
+  onRelayout: (e: Plotly.PlotRelayoutEvent) => void;
+};
+const MemoizedPlot = React.memo(
+  ({ data, layout, config, onRelayout }: MemoizedPlotProps) => (
+    <Plot
+      data={data}
+      layout={layout}
+      config={config}
+      onRelayout={onRelayout}
+      useResizeHandler
+      style={{ width: '100%', height: '100%' }}
+    />
+  ),
+  (prev, next) => isEqual(prev, next)
+);
+
+/* eslint-disable @cognite/no-number-z-index */
+const LoadingIcon = () => (
+  <Icon
+    type="Loading"
+    style={{
+      top: 10,
+      left: 10,
+      position: 'relative',
+      zIndex: 2,
+      float: 'left',
+    }}
+  />
+);
 
 const ChartingContainer = styled.div`
   height: 100%;

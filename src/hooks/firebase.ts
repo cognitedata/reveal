@@ -1,5 +1,6 @@
 import { useSDK } from '@cognite/sdk-provider';
 import omit from 'lodash/omit';
+import isEqual from 'lodash/isEqual';
 import config, { CHART_VERSION } from 'config';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { getTenantFromURL } from 'utils/env';
@@ -200,10 +201,15 @@ export const useUpdateChart = () => {
       onMutate(chart) {
         const skipPersist =
           cache.getQueryData<IdInfo>(['login', 'status'])?.user !== chart.user;
-        cache.setQueryData(['chart', chart.id], {
-          ...chart,
-          dirty: skipPersist,
-        });
+        const key = ['chart', chart.id];
+        const cachedChart = cache.getQueryData(key);
+
+        if (!isEqual(cachedChart, chart)) {
+          cache.setQueryData(key, {
+            ...chart,
+            dirty: skipPersist,
+          });
+        }
       },
       onError(_, chart) {
         cache.invalidateQueries(['chart', chart.id]);

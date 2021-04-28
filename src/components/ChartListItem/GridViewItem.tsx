@@ -28,7 +28,7 @@ const GridViewItem = ({
       <Link to={`/${chart.id}`}>
         <ImageWrapper>
           <ImageContent>
-            <PlotlyChart chart={chart} isPreview />
+            <PlotlyChart chartId={chart.id} isPreview />
           </ImageContent>
         </ImageWrapper>
       </Link>
