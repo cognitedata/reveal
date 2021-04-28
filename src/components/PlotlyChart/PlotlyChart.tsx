@@ -4,6 +4,7 @@ import styled from 'styled-components/macro';
 import debounce from 'lodash/debounce';
 import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
+import { subDays } from 'date-fns';
 
 import {
   DatapointAggregate,
@@ -58,6 +59,55 @@ const PlotlyChartComponent = ({
   const [dragmode, setDragmode] = useState<'zoom' | 'pan'>('pan');
   const [stackedMode, setStackedMode] = useState<boolean>(false);
   const [yAxisLocked, setYAxisLocked] = useState<boolean>(true);
+
+  const lastYearQueries = chart?.timeSeriesCollection?.map(({ tsId }) => {
+    const dateFrom = subDays(new Date(chart.dateFrom), 365);
+    const dateTo = new Date(chart.dateFrom);
+    return {
+      items: [{ id: tsId }],
+      start: dateFrom,
+      end: dateTo,
+      aggregates: ['interpolation'],
+      granularity: 'hour',
+      limit: pointsPerSeries,
+    };
+  });
+  const { data: lastYearRaw } = useQuery(
+    ['chart-data', 'timeseries', lastYearQueries],
+    () =>
+      Promise.all(
+        queries.map((q) =>
+          sdk.datapoints
+            .retrieve(q as DatapointsMultiQuery)
+            .then((r) => r[0]?.datapoints)
+        )
+      )
+  );
+  const yAxisDeltaMinMax = lastYearRaw?.map((_, index) => {
+    const lastYearPoints = lastYearRaw?.[index]
+      // @ts-ignore FIXME
+      .map((datapoint) =>
+        'average' in datapoint
+          ? datapoint.average
+          : (datapoint as DoubleDatapoint).value
+      )
+      .sort();
+    const min = lastYearPoints
+      ? lastYearPoints[Math.ceil(lastYearPoints.length / 10)]
+      : undefined;
+    const max = lastYearPoints
+      ? lastYearPoints[
+          Math.floor(lastYearPoints.length - lastYearPoints.length / 10)
+        ]
+      : undefined;
+    const delta = max - min;
+    const yAxisDeltaMax = (max + delta * 0.1).toFixed(3);
+    const yAxisDeltaMin = (min - delta * 0.1).toFixed(3);
+    return {
+      min: yAxisDeltaMin,
+      max: yAxisDeltaMax,
+    };
+  });
 
   const queries =
     chart?.timeSeriesCollection?.map(({ tsId }) => ({
@@ -314,9 +364,14 @@ const PlotlyChartComponent = ({
     /**
      * For some reason plotly doesn't like that you overwrite the range input (doing this the wrong way?)
      */
+
+    const yAxisDelta =
+      yAxisDeltaMinMax && yAxisDeltaMinMax[index]
+        ? [yAxisDeltaMinMax[index].min, yAxisDeltaMinMax[index].max]
+        : undefined;
     const serializedYRange = range
       ? JSON.parse(JSON.stringify(range))
-      : undefined;
+      : yAxisDelta;
 
     (layout as any)[`yaxis${index ? index + 1 : ''}`] = {
       ...yAxisDefaults,
