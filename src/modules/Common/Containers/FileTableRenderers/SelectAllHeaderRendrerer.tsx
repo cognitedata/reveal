@@ -23,7 +23,12 @@ export function SelectAllHeaderRenderer({ column }: CellRenderer) {
       name="select-all-files"
       value={allFilesSelected}
       onChange={handleSelectAllFiles}
-      style={{ color: '#8c8c8c', fontSize: 10 }}
+      style={{
+        color: '#595959',
+        fontSize: 10,
+        fontWeight: 'normal',
+        fontStyle: 'normal',
+      }}
     >
       {column.title}
     </Checkbox>
