@@ -17,8 +17,8 @@ import exifIcon from 'src/assets/exifIcon.svg';
 import { RootState } from 'src/store/rootReducer';
 import { makeAnnotationBadgePropsByFileId } from 'src/modules/Process/processSlice';
 import { selectUpdatedFileDetails } from 'src/modules/FileMetaData/fileMetadataSlice';
+import { TableDataItem } from 'src/modules/Common/Types';
 import { AnnotationsBadge } from '../AnnotationsBadge/AnnotationsBadge';
-import { TableDataItem } from '../FileTable/FileTable';
 import { AnnotationsBadgePopoverContent } from '../AnnotationsBadge/AnnotationsBadgePopoverContent';
 import { AnnotationsBadgeProps } from '../../../Workflow/types';
 

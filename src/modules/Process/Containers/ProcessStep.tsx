@@ -3,12 +3,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import {
-  FileTable,
-  FileActions,
-  TableDataItem,
-} from 'src/modules/Common/Components/FileTable/FileTable';
-
+import { FileTable } from 'src/modules/Common/Components/FileTable/FileTable';
 import { FileToolbar } from 'src/modules/Workflow/components/FileToolbar';
 import { Title } from '@cognite/cogs.js';
 import {
@@ -22,11 +17,15 @@ import {
 } from 'src/modules/Process/processSlice';
 
 import { GridCellProps, GridTable } from '@cognite/data-exploration';
-import { selectAllFiles } from 'src/modules/Upload/uploadedFilesSlice';
 import styled from 'styled-components';
 import { resetEditHistory } from 'src/modules/FileMetaData/fileMetadataSlice';
-import { MapView } from '../../Common/Components/MapView/MapView';
+import { FileActions, TableDataItem } from 'src/modules/Common/Types';
+import {
+  selectAllFiles,
+  setFileSelectState,
+} from 'src/modules/Upload/uploadedFilesSlice';
 import { FileGridPreview } from '../../Common/Components/FileGridPreview/FileGridPreview';
+import { MapView } from '../../Common/Components/MapView/MapView';
 
 const queryClient = new QueryClient();
 
@@ -58,6 +57,7 @@ export default function ProcessStep() {
       name: file.name,
       mimeType: file.mimeType || '',
       menu: menuActions,
+      selected: file.selected,
     };
   });
   /* eslint-disable react/prop-types */
@@ -78,7 +78,12 @@ export default function ProcessStep() {
     if (currentView === 'map') {
       return <MapView data={tableData} />;
     }
-    return <FileTable data={tableData} />;
+
+    const handleRowSelect = (id: number, selected: boolean) => {
+      dispatch(setFileSelectState(id, selected));
+    };
+
+    return <FileTable data={tableData} onRowSelect={handleRowSelect} />;
   };
   console.log('Re-rendering process page');
   return (

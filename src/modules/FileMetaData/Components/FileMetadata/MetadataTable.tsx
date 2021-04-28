@@ -2,10 +2,6 @@ import styled from 'styled-components';
 import { Input, Title } from '@cognite/cogs.js';
 import React, { ReactText, useEffect } from 'react';
 import { TableWrapper } from 'src/modules/Common/Components/FileTable/FileTableWrapper';
-import {
-  ExifIcon,
-  TableDataItem,
-} from 'src/modules/Common/Components/FileTable/FileTable';
 import ReactBaseTable, {
   BaseTableProps,
   Column,
@@ -17,6 +13,8 @@ import {
   VisionFileDetails,
 } from 'src/modules/FileMetaData/Components/FileMetadata/Types';
 import exifIcon from 'src/assets/exifIcon.svg';
+import { TableDataItem } from 'src/modules/Common/Types';
+import { ExifIcon } from 'src/modules/Common/Containers/FileTableRenderers/NameRenderer';
 import { fileMetaDataEdit } from '../../fileMetadataSlice';
 
 const Container = styled.div`
