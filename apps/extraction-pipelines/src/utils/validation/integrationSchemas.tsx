@@ -6,7 +6,6 @@ import { RawTableOptions } from 'pages/create/RawTablePage';
 export const NAME_REQUIRED: Readonly<string> = 'Integration name is required';
 export const MAX_DESC_LENGTH: Readonly<number> = 500;
 export const MAX_DOCUMENTATION_LENGTH: Readonly<number> = 500;
-const SCHEDULE_REQUIRED: Readonly<string> = 'Schedule is required';
 export const nameRule = {
   name: yup.string().required(NAME_REQUIRED),
 };
@@ -47,8 +46,9 @@ export const descriptionSchema = yup.object().shape({
       `Description can only contain ${MAX_DESC_LENGTH} characters`
     ),
 });
-export const scheduleSchema = yup.object().shape({
-  schedule: yup.string().required(SCHEDULE_REQUIRED),
+
+export const scheduleRule = {
+  schedule: yup.string(),
   cron: yup.string().when('schedule', {
     is: (val: SupportedScheduleStrings) =>
       val === SupportedScheduleStrings.SCHEDULED,
@@ -57,7 +57,8 @@ export const scheduleSchema = yup.object().shape({
       .required(CRON_REQUIRED)
       .test('cron-expression', 'Cron not valid', cronValidator),
   }),
-});
+};
+export const scheduleSchema = yup.object().shape(scheduleRule);
 export const documentationSchema = yup.object().shape({
   documentation: yup
     .string()

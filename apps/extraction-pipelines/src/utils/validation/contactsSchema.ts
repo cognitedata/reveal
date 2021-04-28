@@ -15,6 +15,7 @@ export const contactsRule = {
         .required(ContactsErrorMsg.EMAIL_REQUIRED)
         .email(ContactsErrorMsg.EMAIL_INVALID),
       role: yup.string(),
+      sendNotification: yup.boolean(),
     })
   ),
 };

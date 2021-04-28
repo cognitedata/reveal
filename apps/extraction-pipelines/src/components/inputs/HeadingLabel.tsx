@@ -1,7 +1,11 @@
-import React, { FunctionComponent, PropsWithChildren } from 'react';
-import { GridH2Wrapper } from '../../styles/StyledPage';
+import React, {
+  FunctionComponent,
+  HTMLAttributes,
+  PropsWithChildren,
+} from 'react';
+import { GridH2Wrapper } from 'styles/StyledPage';
 
-interface HeadingLabelProps {
+interface HeadingLabelProps extends HTMLAttributes<HTMLLabelElement> {
   labelFor: string;
 }
 

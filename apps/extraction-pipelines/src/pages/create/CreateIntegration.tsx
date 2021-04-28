@@ -5,13 +5,13 @@ import React, {
   useState,
 } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
-import { createLink, useUserContext } from '@cognite/cdf-utilities';
+import { createLink } from '@cognite/cdf-utilities';
 import { CANCEL, SAVE } from 'utils/constants';
 import { RegisterIntegrationLayout } from 'components/layout/RegisterIntegrationLayout';
 import { CreateFormWrapper } from 'styles/StyledForm';
 import { ButtonPlaced } from 'styles/StyledButton';
 import * as yup from 'yup';
-import { useForm } from 'react-hook-form';
+import { useForm, FormProvider } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { INTEGRATION_NAME_HEADING, NAME_HINT } from 'pages/create/NamePage';
 import {
@@ -22,9 +22,6 @@ import {
 import { useDataSet } from 'hooks/useDataSets';
 import { FullInput } from 'components/inputs/FullInput';
 import { FullTextArea } from 'components/inputs/FullTextArea';
-import { INTEGRATIONS } from 'utils/baseURL';
-import { INTEGRATION } from 'routing/RoutingConfig';
-import { translateServerErrorMessage } from 'utils/error/TranslateErrorMessages';
 import { usePostIntegration } from 'hooks/usePostIntegration';
 import {
   DESCRIPTION_HINT,
@@ -34,11 +31,73 @@ import {
 import { GridH2Wrapper, SideInfo } from 'styles/StyledPage';
 import ExtractorDownloadsLink from 'components/links/ExtractorDownloadsLink';
 import styled from 'styled-components';
-import { Colors, Icon } from '@cognite/cogs.js';
+import { Collapse, Colors } from '@cognite/cogs.js';
 import { PriSecBtnWrapper } from 'styles/StyledWrapper';
 import { DataSetModel } from 'model/DataSetModel';
-import { nameRule } from 'utils/validation/integrationSchemas';
+import {
+  scheduleRule,
+  nameRule,
+  selectedRawTablesRule,
+} from 'utils/validation/integrationSchemas';
+import DataSetIdInput, {
+  DATASET_LIST_LIMIT,
+} from 'pages/create/DataSetIdInput';
+import { useDataSetsList } from 'hooks/useDataSetsList';
+import { RegisterMetaData } from 'components/inputs/metadata/RegisterMetaData';
+import { toCamelCase } from 'utils/primitivesUtils';
+import { InputController } from 'components/inputs/InputController';
+import { DivFlex } from 'styles/flex/StyledFlex';
+import { ScheduleSelector } from 'components/inputs/ScheduleSelector';
+import CronInput from 'components/inputs/cron/CronInput';
+import { CronWrapper } from 'components/integration/Schedule';
+import { OptionTypeBase } from 'react-select';
+import { SupportedScheduleStrings } from 'components/integrations/cols/Schedule';
+import { ScheduleFormInput } from 'pages/create/SchedulePage';
+import { mapScheduleInputToScheduleValue } from 'utils/cronUtils';
+import { INTEGRATIONS } from 'utils/baseURL';
+import { INTEGRATION } from 'routing/RoutingConfig';
+import { translateServerErrorMessage } from 'utils/error/TranslateErrorMessages';
+import { TableHeadings } from 'components/table/IntegrationTableCol';
+import { DetailFieldNames } from 'model/Integration';
+import { NotificationConfig } from 'components/inputs/NotificationConfig';
+import { MIN_IN_HOURS } from 'utils/validation/notificationValidation';
+import { contactsRule } from 'utils/validation/contactsSchema';
+import { CreateContacts } from 'components/integration/create/CreateContacts';
+import { User } from 'model/User';
+import { HeadingLabel } from 'components/inputs/HeadingLabel';
+import { InfoIcon } from 'styles/StyledIcon';
+import { InfoBox } from 'components/message/InfoBox';
+import ConnectRawTablesInput from 'components/inputs/rawSelector/ConnectRawTablesInput';
+import { RawTableFormInput } from 'pages/create/RawTablePage';
 
+const StyledCollapse = styled(Collapse)`
+  background-color: red;
+  .rc-collapse-item {
+    .rc-collapse-header {
+      padding-left: 0;
+      padding-right: 0;
+      border-bottom: none;
+    }
+    .rc-collapse-content {
+      padding-left: 12px;
+      padding-right: 0;
+    }
+  }
+  .cogs-table-pagination {
+    margin-bottom: 2rem;
+    .cogs-input,
+    .cogs-btn {
+      margin-bottom: 0;
+    }
+  }
+`;
+
+const Panel = styled(Collapse.Panel)`
+  .rc-collapse-content-box {
+    display: flex;
+    flex-direction: column;
+  }
+`;
 const InfoMessage = styled.span`
   grid-area: description;
   display: flex;
@@ -60,12 +119,12 @@ const InfoMessage = styled.span`
 `;
 const NO_DATA_SET_MSG: Readonly<string> =
   'No data set found. You can link your integration to a data set trough edit later.';
-const ADD_MORE_INFO_HEADING: Readonly<string> =
+export const ADD_MORE_INFO_HEADING: Readonly<string> =
   'Add more integration information';
 const ADD_MORE_INFO_TEXT_1: Readonly<string> =
-  ' You could also register additional information such as scheduling and other documentation. This could give value to users of data set and integration. for example when troubleshooting.';
+  'When managing and using your data it would give value to enter as much information about the data and the integration details as possible, such as scheduling, source and contacts. Please enter this below.';
 const ADD_MORE_INFO_TEXT_2: Readonly<string> =
-  'You will be able to do add this information on your integration page.';
+  'You could also add this information on integration details page.';
 const ADD_MORE_INFO_LINK: Readonly<string> =
   'Read about registering an integration';
 const NOT_LINKED: Readonly<string> =
@@ -76,15 +135,26 @@ const linkDataSetText = (dataSet: DataSetModel): Readonly<string> => {
 };
 interface CreateIntegrationProps {}
 
-interface AddIntegrationFormInput {
+interface AddIntegrationFormInput
+  extends ScheduleFormInput,
+    Pick<RawTableFormInput, 'selectedRawTables'> {
   name: string;
   externalId: string;
   description?: string;
   dataSetId?: string;
+  metadata?: any;
+  sourceSystem: string;
+  skipNotificationInHours?: number;
+  contacts?: User[];
 }
-const pageSchema = yup
-  .object()
-  .shape({ ...nameRule, ...externalIdRule, ...descriptionRule });
+const pageSchema = yup.object().shape({
+  ...nameRule,
+  ...externalIdRule,
+  ...descriptionRule,
+  ...contactsRule,
+  ...scheduleRule,
+  ...selectedRawTablesRule,
+});
 
 const findDataSetId = (search: string) => {
   return new URLSearchParams(search).get('dataSetId');
@@ -93,31 +163,39 @@ const CreateIntegration: FunctionComponent<CreateIntegrationProps> = (
   _: PropsWithChildren<CreateIntegrationProps>
 ) => {
   const [dataSetLoadError, setDataSetLoadError] = useState<string | null>(null);
+  const [showCron, setShowCron] = useState(false);
   const history = useHistory();
   const location = useLocation();
-  const user = useUserContext();
   const { search } = location;
   const dataSetId = findDataSetId(search) ?? '';
+  const { data, isLoading, error } = useDataSet(
+    parseInt(dataSetId, 10),
+    dataSetLoadError ? 0 : 3
+  );
+  const { data: dataSets, status: dataSetsStatus } = useDataSetsList(
+    DATASET_LIST_LIMIT
+  );
   const { mutate } = usePostIntegration();
-  const {
-    control,
-    errors,
-    setError,
-    handleSubmit,
-  } = useForm<AddIntegrationFormInput>({
+  const methods = useForm<AddIntegrationFormInput>({
     resolver: yupResolver(pageSchema),
     defaultValues: {
       name: '',
       externalId: '',
       description: '',
       dataSetId,
+      selectedRawTables: [],
     },
     reValidateMode: 'onSubmit',
   });
-  const { data, isLoading, error } = useDataSet(
-    parseInt(dataSetId, 10),
-    dataSetLoadError ? 0 : 3
-  );
+  const {
+    control,
+    errors,
+    setError,
+    handleSubmit,
+    register,
+    watch,
+    setValue,
+  } = methods;
 
   useEffect(() => {
     if (error) {
@@ -129,18 +207,70 @@ const CreateIntegration: FunctionComponent<CreateIntegrationProps> = (
       setDataSetLoadError(null);
     }
   }, [isLoading, setDataSetLoadError]);
+  useEffect(() => {
+    register('schedule');
+    register('dataSetId');
+    register('selectedRawTables');
+  }, [register]);
+  const scheduleValue = watch('schedule');
+  useEffect(() => {
+    if (scheduleValue === SupportedScheduleStrings.SCHEDULED) {
+      setShowCron(true);
+    } else {
+      setShowCron(false);
+    }
+  }, [scheduleValue]);
 
   const handleNext = (fields: AddIntegrationFormInput) => {
-    const creator = {
-      name: '',
-      email: user.username ?? '',
-      role: 'Creator',
-      sendNotification: true,
-    };
+    function constructMetadata(
+      metadata: {
+        description: string;
+        content: string;
+      }[]
+    ) {
+      if (!metadata) {
+        return null;
+      }
+      return metadata.map((field) => {
+        const key = toCamelCase(field.description);
+        return { [key]: field.content };
+      });
+    }
+
+    const {
+      sourceSystem,
+      schedule,
+      cron,
+      name,
+      externalId,
+      description,
+      skipNotificationInHours,
+      contacts,
+      selectedRawTables,
+    } = fields;
+    const metadata = constructMetadata(fields.metadata);
+    const scheduleToStore = mapScheduleInputToScheduleValue({
+      schedule,
+      cron,
+    });
     const integrationInfo = {
-      ...fields,
+      name,
+      externalId,
+      ...(description && { description }),
       ...(data && { dataSetId }),
-      contacts: [creator],
+      ...(metadata && {
+        metadata: Object.assign(
+          {},
+          ...metadata,
+          ...(sourceSystem ? [{ sourceSystem }] : [])
+        ),
+      }),
+      ...(contacts && { contacts }),
+      ...(!!scheduleToStore && { schedule: scheduleToStore }),
+      ...(skipNotificationInHours && {
+        skipNotificationsInMinutes: skipNotificationInHours * MIN_IN_HOURS,
+      }),
+      ...(selectedRawTables && { rawTables: selectedRawTables }),
     };
     mutate(
       { integrationInfo },
@@ -166,6 +296,10 @@ const CreateIntegration: FunctionComponent<CreateIntegrationProps> = (
     );
   };
 
+  const selectChanged = (selected: OptionTypeBase) => {
+    setValue('schedule', selected.value);
+  };
+
   return (
     <RegisterIntegrationLayout>
       {dataSetLoadError && (
@@ -175,19 +309,19 @@ const CreateIntegration: FunctionComponent<CreateIntegrationProps> = (
           aria-live="polite"
           color={`${Colors.yellow.hex()}`}
         >
-          <Icon type="Info" />
+          <InfoIcon />
           {dataSetLoadError}
         </InfoMessage>
       )}
       {data && (
         <InfoMessage id="dataset-data" role="region" aria-live="polite">
-          <Icon type="Info" />
+          <InfoIcon />
           {linkDataSetText(data[0])}
         </InfoMessage>
       )}
       {!dataSetId && (
         <InfoMessage id="dataset-data" role="region" aria-live="polite">
-          <Icon type="Info" />
+          <InfoIcon />
           {NOT_LINKED}
         </InfoMessage>
       )}
@@ -200,6 +334,9 @@ const CreateIntegration: FunctionComponent<CreateIntegrationProps> = (
           errors={errors}
           labelText={INTEGRATION_NAME_HEADING}
           hintText={NAME_HINT}
+          renderLabel={(labelText, inputId) => (
+            <HeadingLabel labelFor={inputId}>{labelText}</HeadingLabel>
+          )}
         />
         <FullInput
           name="externalId"
@@ -209,6 +346,9 @@ const CreateIntegration: FunctionComponent<CreateIntegrationProps> = (
           errors={errors}
           labelText={INTEGRATION_EXTERNAL_ID_HEADING}
           hintText={EXTERNAL_ID_HINT}
+          renderLabel={(labelText, inputId) => (
+            <HeadingLabel labelFor={inputId}>{labelText}</HeadingLabel>
+          )}
         />
         <FullTextArea
           name="description"
@@ -232,11 +372,80 @@ const CreateIntegration: FunctionComponent<CreateIntegrationProps> = (
             {CANCEL}
           </a>
         </PriSecBtnWrapper>
+        <InfoBox iconType="Info">
+          <GridH2Wrapper>{ADD_MORE_INFO_HEADING}</GridH2Wrapper>
+          <p className="box-content">{ADD_MORE_INFO_TEXT_1}</p>
+          <p className="box-content">{ADD_MORE_INFO_TEXT_2}</p>
+        </InfoBox>
+        <StyledCollapse accordion ghost data-testid="add-more-info-collapse">
+          <Panel
+            header={
+              <DivFlex direction="column" align="flex-start">
+                <GridH2Wrapper>{ADD_MORE_INFO_HEADING}</GridH2Wrapper>
+              </DivFlex>
+            }
+            key={1}
+          >
+            <FormProvider {...methods}>
+              <CreateContacts
+                renderLabel={(labelText, inputId) => (
+                  <HeadingLabel labelFor={inputId}>{labelText}</HeadingLabel>
+                )}
+              />
+              <NotificationConfig
+                renderLabel={(labelText, inputId) => (
+                  <HeadingLabel labelFor={inputId}>{labelText}</HeadingLabel>
+                )}
+              />
+              <HeadingLabel labelFor="schedule-selector">
+                {TableHeadings.SCHEDULE}
+              </HeadingLabel>
+              <ScheduleSelector
+                inputId="schedule-selector"
+                schedule={scheduleValue}
+                onSelectChange={selectChanged}
+              />
+              {showCron && (
+                <CronWrapper
+                  id="cron-expression"
+                  role="region"
+                  direction="column"
+                  align="flex-start"
+                >
+                  <CronInput />
+                </CronWrapper>
+              )}
+              {!dataSetId && (
+                <DataSetIdInput
+                  data={dataSets}
+                  status={dataSetsStatus}
+                  renderLabel={(labelText, inputId) => (
+                    <HeadingLabel labelFor={inputId}>{labelText}</HeadingLabel>
+                  )}
+                />
+              )}
+              <HeadingLabel labelFor="raw-table">
+                {DetailFieldNames.RAW_TABLE}
+              </HeadingLabel>
+              <ConnectRawTablesInput />
+              <HeadingLabel id="source-system-heading" labelFor="source-system">
+                {DetailFieldNames.SOURCE}
+              </HeadingLabel>
+              <InputController
+                defaultValue=""
+                inputId="source-system"
+                control={control}
+                name="sourceSystem"
+              />
+              <RegisterMetaData />
+              <ButtonPlaced type="primary" htmlType="submit" mb={5}>
+                {SAVE}
+              </ButtonPlaced>
+            </FormProvider>
+          </Panel>
+        </StyledCollapse>
       </CreateFormWrapper>
       <SideInfo>
-        <GridH2Wrapper>{ADD_MORE_INFO_HEADING}</GridH2Wrapper>
-        <p>{ADD_MORE_INFO_TEXT_1}</p>
-        <p>{ADD_MORE_INFO_TEXT_2}</p>
         <ExtractorDownloadsLink
           link={{ path: 'to' }}
           linkText={ADD_MORE_INFO_LINK}

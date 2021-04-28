@@ -73,11 +73,11 @@ export const getDataSetPageValues = (
   data?: ListResponse<DataSet[]>
 ): DataSetFormInput => {
   if (!data || !dataSetId) {
-    return { dataset: '', datasetId: '' };
+    return { dataset: '', dataSetId: '' };
   }
   return hasDataSetId(data.items, dataSetId)
-    ? { dataset: DataSetOptions.YES, datasetId: dataSetId }
-    : { dataset: '', datasetId: '' };
+    ? { dataset: DataSetOptions.YES, dataSetId }
+    : { dataset: '', dataSetId: '' };
 };
 
 const hasDataSetId = (data: DataSet[], dataSetId: string): boolean => {

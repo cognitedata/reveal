@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import React from 'react';
 import { DivFlex } from 'styles/flex/StyledFlex';
+import { bottomSpacing } from 'styles/StyledVariables';
 
 export const WrapperMargin = styled.div`
   margin: 1rem;
@@ -25,6 +26,7 @@ export const PriSecBtnWrapper = styled((props) => (
     {props.children}
   </DivFlex>
 ))`
+  margin-bottom: ${bottomSpacing};
   .cogs-btn-primary {
     margin-right: 2rem;
   }

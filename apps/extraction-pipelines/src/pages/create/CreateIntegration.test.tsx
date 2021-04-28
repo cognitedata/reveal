@@ -12,14 +12,31 @@ import {
 } from 'utils/baseURL';
 import { NAME_PATH } from 'routing/CreateRouteConfig';
 import 'utils/test/windowLocation';
-import CreateIntegration from 'pages/create/CreateIntegration';
+import CreateIntegration, {
+  ADD_MORE_INFO_HEADING,
+} from 'pages/create/CreateIntegration';
 import {
   EXTERNAL_ID_REQUIRED,
   INTEGRATION_EXTERNAL_ID_HEADING,
 } from 'pages/create/ExternalIdPage';
 import { DESCRIPTION_LABEL } from 'pages/create/DocumentationPage';
 import { NAME_REQUIRED } from 'utils/validation/integrationSchemas';
+import { TableHeadings } from 'components/table/IntegrationTableCol';
+import { DetailFieldNames } from 'model/Integration';
+import { DEFINE_METADATA_LABEL } from 'components/inputs/metadata/RegisterMetaData';
+import { NOTIFICATION_CONFIG_HEADER } from 'components/inputs/NotificationConfig';
+import {
+  DBS_LABEL,
+  TABLES_LABEL,
+} from 'components/inputs/rawSelector/RawSelector';
+import { useRawDBAndTables } from 'hooks/useRawDBAndTables';
+import { databaseListMock } from 'utils/mockResponse';
 
+jest.mock('hooks/useRawDBAndTables', () => {
+  return {
+    useRawDBAndTables: jest.fn(),
+  };
+});
 describe('CreateIntegration', () => {
   window.location.href =
     'https://dev.fusion.cogniteapp.com/itera-int-green/integrations/create/name?env=greenfield';
@@ -49,6 +66,10 @@ describe('CreateIntegration', () => {
   });
 
   test('Interact with form', async () => {
+    useRawDBAndTables.mockReturnValue({
+      isLoading: false,
+      data: databaseListMock,
+    });
     renderRegisterContext(<CreateIntegration />, { ...props });
     expect(screen.getByLabelText(INTEGRATION_NAME_HEADING)).toBeInTheDocument();
     const nameInput = screen.getByLabelText(INTEGRATION_NAME_HEADING);
@@ -68,5 +89,31 @@ describe('CreateIntegration', () => {
       target: { value: externalId },
     });
     expect(screen.getByDisplayValue(externalId)).toBeInTheDocument();
+
+    expect(screen.getAllByText(ADD_MORE_INFO_HEADING).length).toEqual(2);
+    fireEvent.click(screen.getByRole('tab'));
+    await waitFor(() => {
+      expect(screen.getByRole('tabpanel').classList).toContain(
+        'rc-collapse-content-active'
+      );
+    });
+    expect(screen.getByLabelText(TableHeadings.SCHEDULE)).toBeVisible();
+    expect(screen.getByLabelText(DetailFieldNames.SOURCE)).toBeVisible();
+    expect(screen.getByText(DEFINE_METADATA_LABEL)).toBeVisible();
+    expect(screen.getByText(NOTIFICATION_CONFIG_HEADER)).toBeVisible();
+    expect(screen.getByText(TableHeadings.CONTACTS)).toBeVisible();
+    expect(screen.getByText(DetailFieldNames.RAW_TABLE)).toBeVisible();
+    await waitFor(() => {
+      screen.getByLabelText(DBS_LABEL);
+    });
+    expect(screen.getByLabelText(DBS_LABEL)).toBeInTheDocument();
+    expect(screen.getByLabelText(TABLES_LABEL)).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('tab'));
+    await waitFor(() => {
+      expect(screen.getByRole('tabpanel').classList).toContain(
+        'rc-collapse-content-inactive'
+      );
+    });
   });
 });

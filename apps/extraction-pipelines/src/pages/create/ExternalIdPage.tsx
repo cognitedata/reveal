@@ -14,6 +14,7 @@ import { usePostIntegration } from 'hooks/usePostIntegration';
 import { translateServerErrorMessage } from 'utils/error/TranslateErrorMessages';
 import { TaskList, taskListItems } from 'pages/create/TaskList';
 import { FullInput } from 'components/inputs/FullInput';
+import { HeadingLabel } from 'components/inputs/HeadingLabel';
 
 interface ExternalIdPageProps {}
 
@@ -106,6 +107,9 @@ const ExternalIdPage: FunctionComponent<ExternalIdPageProps> = () => {
           errors={errors}
           labelText={INTEGRATION_EXTERNAL_ID_HEADING}
           hintText={EXTERNAL_ID_HINT}
+          renderLabel={(labelText, inputId) => (
+            <HeadingLabel labelFor={inputId}>{labelText}</HeadingLabel>
+          )}
         />
         <ButtonPlaced type="primary" htmlType="submit">
           {NEXT}

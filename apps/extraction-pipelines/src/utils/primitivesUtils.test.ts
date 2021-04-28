@@ -1,5 +1,6 @@
 import {
   capitalizeWords,
+  toCamelCase,
   splitWordsLowerCase,
   uppercaseFirstWord,
 } from './primitivesUtils';
@@ -18,5 +19,12 @@ describe('Primitives Utils', () => {
   test('Converts "thisIsAField" to "this is a field', () => {
     const res = splitWordsLowerCase('thisIsAField');
     expect(res).toEqual('this is a field');
+  });
+});
+
+describe('toCamelCase', () => {
+  test('Converts to camelcase', () => {
+    const res = toCamelCase('source system');
+    expect(res).toEqual('sourceSystem');
   });
 });

@@ -24,7 +24,7 @@ import {
 } from 'pages/create/RawTablePage';
 import { INTEGRATION_NAME_HEADING } from 'pages/create/NamePage';
 import { INTEGRATION_EXTERNAL_ID_HEADING } from 'pages/create/ExternalIdPage';
-import { INTEGRATION_CONTACTS_HEADING } from 'pages/create/ContactsPage';
+import { TableHeadings } from 'components/table/IntegrationTableCol';
 
 describe('Register', () => {
   window.location.href =
@@ -98,7 +98,7 @@ describe('Register', () => {
 
     // contacts page
     await waitFor(() => {
-      screen.getByText(INTEGRATION_CONTACTS_HEADING);
+      screen.getByText(TableHeadings.CONTACTS);
     });
     const contactName = 'My name';
     const contactNameInput = screen.getByLabelText(NAME_LABEL);

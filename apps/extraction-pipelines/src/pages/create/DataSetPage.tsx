@@ -62,7 +62,7 @@ export const DATA_SET_TIP: Readonly<string> =
 export const DATA_SET_REQUIRED: Readonly<string> = 'Data set is required';
 const datasetSchema = yup.object().shape({
   dataset: yup.string().required(DATA_SET_REQUIRED),
-  datasetId: yup.string().when('dataset', {
+  dataSetId: yup.string().when('dataset', {
     is: (val: DataSetOptions) => val === DataSetOptions.YES,
     then: yup.string().required(DATA_SET_ID_REQUIRED),
   }),
@@ -72,7 +72,7 @@ interface DataSetPageProps {}
 
 export interface DataSetFormInput {
   dataset: string;
-  datasetId: string;
+  dataSetId: string;
 }
 
 const DataSetPage: FunctionComponent<DataSetPageProps> = () => {
@@ -92,7 +92,7 @@ const DataSetPage: FunctionComponent<DataSetPageProps> = () => {
   });
   const { register, handleSubmit, errors, watch, setValue, setError } = methods;
   register('dataset');
-  register('datasetId');
+  register('dataSetId');
   const datasetValue = watch('dataset');
   useEffect(() => {
     setShowDataSetId(datasetValue === DataSetOptions.YES);
@@ -100,7 +100,7 @@ const DataSetPage: FunctionComponent<DataSetPageProps> = () => {
 
   const handleNext = (fields: DataSetFormInput) => {
     const valueToStore =
-      fields.dataset === DataSetOptions.YES ? fields.datasetId : undefined;
+      fields.dataset === DataSetOptions.YES ? fields.dataSetId : undefined;
     setStoredIntegration((prev) => ({ ...prev, dataSetId: valueToStore }));
     switch (fields.dataset) {
       case DataSetOptions.YES:
@@ -117,7 +117,7 @@ const DataSetPage: FunctionComponent<DataSetPageProps> = () => {
               history.push(createLink(RAW_TABLE_PAGE_PATH));
             },
             onError: (serverError) => {
-              setError('datasetId', {
+              setError('dataSetId', {
                 type: 'server',
                 message: serverError.data.message,
                 shouldFocus: true,
@@ -125,7 +125,7 @@ const DataSetPage: FunctionComponent<DataSetPageProps> = () => {
             },
           });
         } else {
-          setError('datasetId', {
+          setError('dataSetId', {
             type: 'No id',
             message: 'No id. Select an integration',
             shouldFocus: true,

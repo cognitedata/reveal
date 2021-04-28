@@ -26,14 +26,23 @@ describe('NotificationConfig', () => {
     initRegisterIntegration: {},
   };
   test('Renders', () => {
-    renderWithReactHookForm(<NotificationConfig />);
+    renderWithReactHookForm(
+      <NotificationConfig
+        renderLabel={(label) => <label htmlFor="">{label}</label>}
+      />
+    );
     expect(screen.getByText(NOTIFICATION_CONFIG_HEADER)).toBeInTheDocument();
     expect(screen.getByText(CONFIG_HINT)).toBeInTheDocument();
     expect(screen.getByText(CONFIG_LABEL)).toBeInTheDocument();
   });
 
   test('Interacts with component', () => {
-    renderWithReactHookForm(<NotificationConfig />, { ...props });
+    renderWithReactHookForm(
+      <NotificationConfig
+        renderLabel={(label) => <label htmlFor="">{label}</label>}
+      />,
+      { ...props }
+    );
     const checkbox = screen.getByLabelText(CONFIG_LABEL);
     fireEvent.click(checkbox);
     expect(checkbox).toBeChecked();

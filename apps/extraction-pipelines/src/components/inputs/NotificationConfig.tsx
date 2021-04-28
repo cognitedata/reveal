@@ -1,5 +1,5 @@
 import { Checkbox } from '@cognite/cogs.js';
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, PropsWithoutRef } from 'react';
 import {
   Controller,
   ControllerRenderProps,
@@ -7,10 +7,10 @@ import {
 } from 'react-hook-form';
 import { DivFlex } from 'styles/flex/StyledFlex';
 import styled from 'styled-components';
-import { GridH2Wrapper } from 'styles/StyledPage';
 import { ErrorMessage } from '@hookform/error-message';
 import { ContactsFormInput } from 'pages/create/ContactsPage';
 import { InputController } from 'components/inputs/InputController';
+import { Hint, StyledLabel } from 'styles/StyledForm';
 
 const HourWrapper = styled(DivFlex)`
   #skipNotificationInHours {
@@ -32,18 +32,22 @@ export const HOURS_LABEL: Readonly<string> =
 export const HOURS_HINT: Readonly<string> =
   'Allowed pause time is between 1 and 24 hours';
 
-interface NotificationConfigProps {}
+interface NotificationConfigProps {
+  renderLabel?: (labelText: string, inputId: string) => React.ReactNode;
+}
 
-export const NotificationConfig: FunctionComponent<NotificationConfigProps> = () => {
+export const NotificationConfig: FunctionComponent<NotificationConfigProps> = ({
+  renderLabel = (labelText, inputId) => (
+    <StyledLabel htmlFor={inputId}>{labelText}</StyledLabel>
+  ),
+}: PropsWithoutRef<NotificationConfigProps>) => {
   const { errors, watch, control } = useFormContext();
   const hasConfig = watch('hasConfig');
 
   return (
     <>
-      <GridH2Wrapper>{NOTIFICATION_CONFIG_HEADER}</GridH2Wrapper>
-      <span id="has-config-hint" className="input-hint">
-        {CONFIG_HINT}
-      </span>
+      {renderLabel(NOTIFICATION_CONFIG_HEADER, 'in')}
+      <Hint id="has-config-hint">{CONFIG_HINT}</Hint>
       <Controller
         name="hasConfig"
         control={control}
@@ -66,12 +70,10 @@ export const NotificationConfig: FunctionComponent<NotificationConfigProps> = ()
 
       {hasConfig && (
         <DivFlex direction="column" align="flex-start" id="data-set-id-wrapper">
-          <label htmlFor="skipNotificationInHours" className="input-label">
+          <StyledLabel htmlFor="skipNotificationInHours">
             {HOURS_LABEL}
-          </label>
-          <span id="skip-notification-in-hours-hint" className="input-hint">
-            {HOURS_HINT}
-          </span>
+          </StyledLabel>
+          <Hint id="skip-notification-in-hours-hint">{HOURS_HINT}</Hint>
           <ErrorMessage
             errors={errors}
             name="skipNotificationInHours"
@@ -93,7 +95,7 @@ export const NotificationConfig: FunctionComponent<NotificationConfigProps> = ()
               aria-invalid={!!errors.skipNotificationInHours}
               aria-describedby="skip-notification-in-hours-hint skipNotificationInHours-error"
             />
-            <span>hours</span>
+            <span className="bottom-spacing">hours</span>
           </HourWrapper>
         </DivFlex>
       )}

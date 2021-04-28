@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import React from 'react';
 import { Button, Colors, Input } from '@cognite/cogs.js';
 import { PaddedGridForm } from 'styles/grid/StyledGrid';
-import { bottomSpacing } from 'styles/StyledVariables';
+import { hintBottomSpacing } from 'styles/StyledVariables';
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   inputWidth?: number;
@@ -11,13 +11,6 @@ export const CreateFormWrapper = styled.form`
   display: flex;
   flex-direction: column;
 
-  .input-label {
-    font-weight: bold;
-  }
-  .input-hint {
-    font-style: italic;
-    margin-bottom: 0.5rem;
-  }
   .error-message {
     color: ${Colors.danger.hex()};
   }
@@ -25,7 +18,6 @@ export const CreateFormWrapper = styled.form`
   .cogs-checkbox {
     width: ${(props: InputProps) =>
       props.inputWidth ? `${props.inputWidth}%` : '100%'};
-    margin-bottom: 1rem;
     &[aria-invalid='true'] {
       border-color: ${Colors.danger.hex()};
     }
@@ -34,17 +26,32 @@ export const CreateFormWrapper = styled.form`
       outline-offset: 0.0625rem;
     }
   }
-  button {
-    grid-area: btn;
+
+  button,
+  a.cogs-btn.cogs-btn-secondary,
+  textarea,
+  .cogs-input,
+  .cogs-select,
+  .cogs-checkbox,
+  .bottom-spacing {
+    margin-bottom: 2rem;
+  }
+  > input.cogs-input,
+  .cogs-select,
+  .rc-collapse-content-box > .cogs-input,
+  #cron-input {
+    width: 50%;
   }
 `;
 
 export const StyledLabel = styled.label`
   font-weight: bold;
 `;
+
 export const Hint = styled.span`
+  font-style: italic;
   color: ${Colors['greyscale-grey6'].hex()};
-  margin-bottom: ${bottomSpacing};
+  margin-bottom: ${hintBottomSpacing};
 `;
 
 export const StyledInput = styled(Input)`

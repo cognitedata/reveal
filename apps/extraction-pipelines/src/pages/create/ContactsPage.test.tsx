@@ -24,16 +24,14 @@ import {
   NAME_LABEL,
   NEXT,
   NOTIFICATION_LABEL,
-  REMOVE_CONTACT,
   ROLE_LABEL,
 } from 'utils/constants';
 import {
   CONTACTS_PAGE_PATH,
   EXTERNAL_ID_PAGE_PATH,
 } from 'routing/CreateRouteConfig';
-import ContactsPage, {
-  INTEGRATION_CONTACTS_HEADING,
-} from 'pages/create/ContactsPage';
+import ContactsPage from 'pages/create/ContactsPage';
+import { TableHeadings } from 'components/table/IntegrationTableCol';
 
 describe('ContactsPage', () => {
   const props = {
@@ -47,64 +45,8 @@ describe('ContactsPage', () => {
 
   test('Renders', () => {
     renderRegisterContext(<ContactsPage />, { ...props });
-    expect(screen.getByText(INTEGRATION_CONTACTS_HEADING)).toBeInTheDocument();
+    expect(screen.getByText(TableHeadings.CONTACTS)).toBeInTheDocument();
     expect(screen.getByText(ADD_CONTACT)).toBeInTheDocument();
-  });
-
-  test('Interact with form', async () => {
-    renderRegisterContext(<ContactsPage />, { ...props });
-    const addContact = screen.getByText(ADD_CONTACT);
-    fireEvent.click(addContact);
-    const nameInput = screen.getByLabelText(NAME_LABEL);
-    const nameString = 'My name is';
-    fireEvent.change(nameInput, { target: { value: nameString } });
-    await waitFor(() => {
-      expect(screen.getByDisplayValue(nameString)).toBeInTheDocument();
-    });
-    const emailInput = screen.getByLabelText(EMAIL_LABEL);
-    const emailString = 'test@test.no';
-    fireEvent.change(emailInput, { target: { value: emailString } });
-    await waitFor(() => {
-      expect(screen.getByDisplayValue(emailString)).toBeInTheDocument();
-    });
-    const roleInput = screen.getByLabelText(ROLE_LABEL);
-    const roleString = 'developer';
-    fireEvent.change(roleInput, { target: { value: roleString } });
-    await waitFor(() => {
-      expect(screen.getByDisplayValue(roleString)).toBeInTheDocument();
-    });
-    const notificationBtn = screen.getByLabelText(NOTIFICATION_LABEL);
-    fireEvent.click(notificationBtn);
-    await waitFor(() => {
-      expect(notificationBtn.getAttribute('aria-checked')).toEqual('true');
-    });
-
-    const remove = screen.getByLabelText(REMOVE_CONTACT);
-    fireEvent.click(remove);
-    expect(screen.queryByLabelText(NOTIFICATION_LABEL)).not.toBeInTheDocument();
-    expect(screen.queryByLabelText(ROLE_LABEL)).not.toBeInTheDocument();
-    expect(screen.queryByLabelText(EMAIL_LABEL)).not.toBeInTheDocument();
-    expect(screen.queryByLabelText(NAME_LABEL)).not.toBeInTheDocument();
-  });
-
-  test('Add and remove', async () => {
-    renderRegisterContext(<ContactsPage />, { ...props });
-    const addContact = screen.getByText(ADD_CONTACT);
-    fireEvent.click(addContact);
-    const nameInput = screen.getAllByLabelText(NAME_LABEL);
-    expect(nameInput.length).toEqual(1);
-
-    const remove = screen.getAllByLabelText(REMOVE_CONTACT);
-    fireEvent.click(remove[0]);
-    expect(screen.queryAllByAltText(NAME_LABEL).length).toEqual(0);
-    fireEvent.click(addContact);
-    expect(screen.getAllByLabelText(NAME_LABEL).length).toEqual(1);
-    fireEvent.click(addContact);
-    fireEvent.click(addContact);
-    expect(screen.queryAllByLabelText(NAME_LABEL).length).toEqual(3);
-
-    fireEvent.click(screen.getAllByLabelText(REMOVE_CONTACT)[1]);
-    expect(screen.getAllByLabelText(NAME_LABEL).length).toEqual(2);
   });
 
   test('Renders stored value', () => {

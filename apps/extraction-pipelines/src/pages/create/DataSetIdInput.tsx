@@ -7,6 +7,7 @@ import { MutationStatus } from 'react-query';
 import { DataSet, ListResponse } from '@cognite/sdk';
 import { DataSetSelectOption } from 'components/inputs/dataset/DataSetSelectOption';
 import { InputController } from 'components/inputs/InputController';
+import { Hint, StyledLabel } from 'styles/StyledForm';
 
 const StyledAutoComplete = styled(AutoComplete)`
   width: 50%;
@@ -31,6 +32,7 @@ export const DATA_SET_ID_REQUIRED: Readonly<string> = 'Data set is required';
 
 interface DataSetIdPageProps {
   data?: ListResponse<DataSet[]>;
+  renderLabel?: (labelText: string, inputId: string) => React.ReactNode;
   status: 'error' | 'success' | 'loading' | 'idle';
 }
 
@@ -39,9 +41,14 @@ type SelectOption = { value: number; label?: string };
 const DataSetIdInput: FunctionComponent<DataSetIdPageProps> = ({
   data,
   status,
+  renderLabel = (labelText, inputId) => (
+    <StyledLabel id="data-set-id-label" htmlFor={inputId}>
+      {labelText}
+    </StyledLabel>
+  ),
 }: PropsWithoutRef<DataSetIdPageProps>) => {
   const { setValue, errors, watch, control } = useFormContext();
-  const storedValue = parseInt(watch('datasetId'), 10);
+  const storedValue = parseInt(watch('dataSetId'), 10);
 
   const getOptions = (): SelectOption[] => {
     return data
@@ -60,7 +67,7 @@ const DataSetIdInput: FunctionComponent<DataSetIdPageProps> = ({
   }
 
   const handleSelectChange = (option: SelectOption) => {
-    setValue('datasetId', option?.value ?? '');
+    setValue('dataSetId', option?.value ?? '');
   };
 
   const renderInput = (
@@ -71,7 +78,7 @@ const DataSetIdInput: FunctionComponent<DataSetIdPageProps> = ({
     if (innerStatus === 'error') {
       return (
         <InputController
-          name="datasetId"
+          name="dataSetId"
           inputId="data-set-id-input"
           control={control}
           defaultValue=""
@@ -83,7 +90,7 @@ const DataSetIdInput: FunctionComponent<DataSetIdPageProps> = ({
 
     return (
       <StyledAutoComplete
-        name="datasetId"
+        name="dataSetId"
         defaultValue={innerValue}
         aria-labelledby="data-set-id-label"
         components={{ Option: DataSetSelectOption }}
@@ -100,19 +107,13 @@ const DataSetIdInput: FunctionComponent<DataSetIdPageProps> = ({
 
   return (
     <>
-      <label
-        id="data-set-id-label"
-        htmlFor="data-set-id-input"
-        className="input-label"
-      >
-        {DATA_SET_ID_LABEL}
-      </label>
-      <span id="data-set-id-hint" className="input-hint">
+      {renderLabel(DATA_SET_ID_LABEL, 'data-set-id-input')}
+      <Hint id="data-set-id-hint" className="input-hint">
         {DATA_SET_ID_TIP}
-      </span>
+      </Hint>
       <ErrorMessage
         errors={errors}
-        name="datasetId"
+        name="dataSetId"
         render={({ message }) => (
           <span id="data-set-id-error" className="error-message">
             {message}

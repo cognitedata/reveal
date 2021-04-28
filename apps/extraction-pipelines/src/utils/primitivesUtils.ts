@@ -12,3 +12,11 @@ export const splitWordsLowerCase = (value: string) => {
     .map((w) => w.toLowerCase())
     .join(' ');
 };
+
+export const toCamelCase = (value: string) => {
+  const temp = value
+    .split(' ')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join('');
+  return temp.charAt(0).toLowerCase() + temp.slice(1);
+};

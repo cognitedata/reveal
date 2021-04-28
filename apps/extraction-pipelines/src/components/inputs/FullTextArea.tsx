@@ -5,6 +5,7 @@ import { Controller, ControllerRenderProps } from 'react-hook-form';
 import { HeadingLabel } from 'components/inputs/HeadingLabel';
 import { FullInputProps } from 'components/inputs/FullInput';
 import { ErrorMessage as Error } from 'components/error/ErrorMessage';
+import { Hint } from 'styles/StyledForm';
 
 export const FullTextArea: FunctionComponent<FullInputProps> = ({
   name,
@@ -18,9 +19,7 @@ export const FullTextArea: FunctionComponent<FullInputProps> = ({
   return (
     <>
       <HeadingLabel labelFor={inputId}>{labelText}</HeadingLabel>
-      <span id={`${name}-hint`} className="input-hint">
-        {hintText}
-      </span>
+      <Hint id={`${name}-hint`}>{hintText}</Hint>
       <ErrorMessage
         errors={errors}
         name={name}

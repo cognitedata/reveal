@@ -64,6 +64,9 @@ export const MainWithAsidesWrapper = styled(MainFullWidthGrid)`
     'left  form .';
   overflow-y: auto;
   height: calc(100vh - 16.375rem);
+  @media screen and (min-width: 1400px) {
+    grid-template-columns: 2fr 4fr 2fr;
+  }
   form {
     grid-area: form;
   }

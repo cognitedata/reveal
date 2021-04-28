@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
-import { Button, Colors, Icon } from '@cognite/cogs.js';
+import { Button, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { ButtonPlaced } from 'styles/StyledButton';
 import {
@@ -10,6 +10,7 @@ import {
   REMOVE_ROW,
 } from 'utils/constants';
 import { InputController } from 'components/inputs/InputController';
+import { HeadingLabel } from 'components/inputs/HeadingLabel';
 
 const StyledTd = styled.td`
   .cogs-input {
@@ -19,13 +20,8 @@ const StyledTd = styled.td`
 const MetaTable = styled.table`
   margin-bottom: 1rem;
 `;
-const StyledCaption = styled.caption`
-  caption-side: top;
-  font-size: 0.875rem;
-  font-weight: bold;
-  color: ${Colors.black.hex()};
-`;
 
+export const DEFINE_METADATA_LABEL: Readonly<string> = 'Define metadata';
 interface RegisterMetaDataProps {}
 export type MetaData = { description: string; content: string };
 export const RegisterMetaData: FunctionComponent<RegisterMetaDataProps> = () => {
@@ -45,12 +41,15 @@ export const RegisterMetaData: FunctionComponent<RegisterMetaDataProps> = () => 
   };
   return (
     <>
+      <HeadingLabel labelFor="register-metadata-table">
+        {DEFINE_METADATA_LABEL}
+      </HeadingLabel>
       <MetaTable
+        id="register-metadata-table"
         className="cogs-table integrations-table"
         role="grid"
         aria-label="List of meta data"
       >
-        <StyledCaption>Define metadata</StyledCaption>
         <thead>
           <tr>
             <th

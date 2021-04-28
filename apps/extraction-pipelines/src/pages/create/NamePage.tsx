@@ -12,6 +12,7 @@ import { useStoredRegisterIntegration } from 'hooks/useStoredRegisterIntegration
 import { TaskList, taskListItems } from 'pages/create/TaskList';
 import { FullInput } from 'components/inputs/FullInput';
 import { nameSchema } from 'utils/validation/integrationSchemas';
+import { HeadingLabel } from 'components/inputs/HeadingLabel';
 
 interface NamePageProps {}
 
@@ -51,6 +52,9 @@ const NamePage: FunctionComponent<NamePageProps> = () => {
           errors={errors}
           labelText={INTEGRATION_NAME_HEADING}
           hintText={NAME_HINT}
+          renderLabel={(labelText, inputId) => (
+            <HeadingLabel labelFor={inputId}>{labelText}</HeadingLabel>
+          )}
         />
         <ButtonPlaced type="primary" htmlType="submit">
           {NEXT}
