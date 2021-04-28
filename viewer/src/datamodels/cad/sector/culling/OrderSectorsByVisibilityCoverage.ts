@@ -10,6 +10,7 @@ import { CadModelMetadata } from '../../CadModelMetadata';
 import { toThreeJsBox3, Box3 } from '../../../../utilities';
 import { WebGLRendererStateHelper } from '../../../../utilities/WebGLRendererStateHelper';
 import { OccludingGeometryProvider } from './OccludingGeometryProvider';
+import { dumpRendererToImage } from '../../../../utilities/three/DebugDumpRendererToImage';
 
 type SectorContainer = {
   model: CadModelMetadata;
@@ -185,10 +186,11 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
   cullOccludedSectors(camera: THREE.PerspectiveCamera, sectors: WantedSector[]): WantedSector[] {
     try {
       // Only render sectors we are interested in
-      this.setAllSectorsVisible(false);
-      this.setSectorsVisibility(sectors, true);
+      // this.setAllSectorsVisible(false);
+      // this.setSectorsVisibility(sectors, true);
 
       const ordered = this.orderSectorsByVisibility(camera);
+      console.log('cullOccludedSectors', sectors, 'by', ordered);
       const filtered = sectors.filter(toBeFiltered => {
         const container = this.containers.get(toBeFiltered.blobUrl);
         if (container === undefined) {
@@ -211,6 +213,7 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
     if (this._debugImageElement) {
       this.renderSectors(null, camera);
       this._debugImageElement.src = this._renderer.domElement.toDataURL();
+      console.log(this._renderer.domElement.toDataURL());
     }
 
     this.ensureBuffersCorrectSize();
@@ -225,6 +228,8 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
       this.renderTarget.height,
       this.buffers.rtBuffer
     );
+
+    dumpRendererToImage(this._renderer, this.renderTarget).then(dataUrl => console.log(dataUrl));
 
     // Unpack GPU result to sector IDs with visibility score
     const sectorVisibility = this.unpackSectorVisibility(
@@ -302,7 +307,7 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
       this._renderer.clear(true, true);
 
       // 2. Render already loaded geometry to offscreen buffer
-      this._alreadyLoadedProvider.renderOccludingGeometry(renderTarget, camera);
+      // this._alreadyLoadedProvider.renderOccludingGeometry(renderTarget, camera);
 
       // 3. Render to offscreen buffer
       this._renderer.render(this.scene, camera);
@@ -347,7 +352,11 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
 
   private addModel(model: CadModelMetadata) {
     const sectors = model.scene.getAllSectors();
-    const [mesh, attributesBuffer, attributesValues] = this.createSectorTreeGeometry(this.sectorIdOffset, sectors);
+    const [mesh, attributesBuffer, attributesValues] = this.createSectorTreeGeometry(
+      this.sectorIdOffset,
+      sectors,
+      model.geometryClipBox
+    );
 
     const group = new THREE.Group();
     group.matrixAutoUpdate = false;
@@ -425,7 +434,8 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
 
   private createSectorTreeGeometry(
     sectorIdOffset: number,
-    sectors: SectorMetadata[]
+    sectors: SectorMetadata[],
+    geometryClipBox: THREE.Box3 | null
   ): [THREE.Mesh, THREE.InstancedInterleavedBuffer, Float32Array] {
     const sectorCount = sectors.length;
 
@@ -436,6 +446,7 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
     const bounds = new THREE.Box3();
     const addSector = (sectorBounds: Box3, sectorId: number, coverage: THREE.Vector3) => {
       toThreeJsBox3(bounds, sectorBounds);
+
       const translation = bounds.getCenter(new THREE.Vector3());
       const scale = bounds.getSize(new THREE.Vector3());
 
