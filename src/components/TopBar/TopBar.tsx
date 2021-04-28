@@ -9,10 +9,12 @@ import styled from 'styled-components/macro';
 import dayjs from 'dayjs';
 import { ChartActions } from 'components/TopBar';
 import EditableText from 'components/EditableText';
+import useChat from 'hooks/useChat';
 
 const TopBarWrapper = () => {
   const { data: user } = useLoginStatus();
   const history = useHistory();
+  const chat = useChat();
 
   const { chartId } = useParams<{ chartId: string }>();
   const { data: chart } = useChart(chartId);
@@ -73,6 +75,12 @@ const TopBarWrapper = () => {
         <ChartActions />
         <TopBar.Actions
           actions={[
+            {
+              key: 'chat',
+              icon: 'SpeechBubble',
+              name: 'Chat',
+              onClick: () => chat.show(),
+            },
             {
               key: 'help',
               icon: 'Help',
