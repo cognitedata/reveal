@@ -15,7 +15,7 @@ import { trackError } from '../../utilities/metrics';
 
 import { CadMaterialManager } from './CadMaterialManager';
 import { RenderMode } from './rendering/RenderMode';
-import { LoadingState, toThreeJsBox3 } from '../../utilities';
+import { fromThreeJsBox3, LoadingState, toThreeJsBox3 } from '../../utilities';
 import { CadModelSectorBudget } from './CadModelSectorBudget';
 import { CadModelSectorLoadStatistics } from './CadModelSectorLoadStatistics';
 import { LevelOfDetail } from './sector/LevelOfDetail';
@@ -210,48 +210,55 @@ function determineGeometryClipBox(
   return bbox;
 }
 
-function createClippedModel(cadModel: CadModelMetadata, geometryClipBox: THREE.Box3 | null) {
+function createClippedModel(cadModel: CadModelMetadata, geometryClipBox: THREE.Box3 | null): CadModelMetadata {
   if (geometryClipBox === null) {
     return cadModel;
   }
 
-  const bounds = new THREE.Box3();
+  // Create a clipped sector tree
   const root = cadModel.scene.root;
-  clipSector(root);
+  const newRoot = clipSector(root, geometryClipBox) || root;
+
+  // Create a new clipped scene
   const sectorMap = new Map<number, SectorMetadata>();
-  traverseDepthFirst(root, x => {
+  traverseDepthFirst(newRoot, x => {
     sectorMap.set(x.id, x);
     return true;
   });
-
   const clippedScene = new SectorSceneImpl(
     cadModel.scene.version,
     cadModel.scene.maxTreeIndex,
     cadModel.scene.unit,
-    root,
+    newRoot,
     sectorMap
   );
 
-  const clippedCadModel = { ...cadModel, scene: clippedScene, geometryClipBox };
+  const clippedCadModel: CadModelMetadata = { ...cadModel, scene: clippedScene, geometryClipBox };
   return clippedCadModel;
+}
 
-  function clipSector(sector: SectorMetadata) {
-    toThreeJsBox3(bounds, sector.bounds);
-    if (bounds.intersectsBox(geometryClipBox!)) {
-      let i = 0;
-      while (i < sector.children.length) {
-        if (!clipSector(sector.children[i])) {
-          // Remove sector
-          sector.children.splice(i, 1);
-        } else {
-          i++;
-        }
+function clipSector(sector: SectorMetadata, geometryClipBox: THREE.Box3): SectorMetadata | undefined {
+  const bounds = toThreeJsBox3(new THREE.Box3(), sector.bounds);
+  bounds.intersect(geometryClipBox);
+
+  if (!bounds.isEmpty()) {
+    debugger;
+    const intersectingChildren: SectorMetadata[] = [];
+    for (let i = 0; i < sector.children.length; i++) {
+      const child = clipSector(sector.children[i], geometryClipBox);
+      if (child !== undefined) {
+        intersectingChildren.push(child);
       }
-      // Keep
-      return true;
-    } else {
-      // Discard
-      return false;
     }
+    // Keep
+    const clippedSector: SectorMetadata = {
+      ...sector,
+      children: intersectingChildren,
+      bounds: fromThreeJsBox3(bounds)
+    };
+    return clippedSector;
+  } else {
+    // Discard
+    return undefined;
   }
 }
