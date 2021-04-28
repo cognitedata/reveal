@@ -1,121 +1,69 @@
-import React, { useState } from 'react';
-import AutoSizer from 'react-virtualized-auto-sizer';
-import ReactBaseTable, { BaseTableProps, Column } from 'react-base-table';
-import styled from 'styled-components';
-import { CellRenderer, TableDataItem } from 'src/modules/Common/Types';
+import React from 'react';
+import { BaseTableProps, Column, ColumnShape } from 'react-base-table';
+import { TableDataItem } from 'src/modules/Common/Types';
 import { StringRenderer } from 'src/modules/Common/Containers/FileTableRenderers/StringRenderer';
-import { TableWrapper } from './FileTableWrapper';
+import { SelectableTable } from 'src/modules/Common/Components/SelectableTable/SelectableTable';
+import { NameRenderer } from 'src/modules/Common/Containers/FileTableRenderers/NameRenderer';
+import { StatusRenderer } from 'src/modules/Common/Containers/FileTableRenderers/StatusRenderer';
+import { AnnotationRenderer } from 'src/modules/Common/Containers/FileTableRenderers/AnnotationRenderer';
+import { ActionRenderer } from 'src/modules/Common/Containers/FileTableRenderers/ActionRenderer';
 
 export type FileTableProps = Omit<BaseTableProps<TableDataItem>, 'width'> & {
-  selectable: boolean;
-  rendererMap: { [key: string]: (props: CellRenderer) => JSX.Element };
-  onRowSelect;
+  onRowSelect: (id: number, selected: boolean) => void;
 };
 
 export function FileTable(props: FileTableProps) {
-  const Cell = (cellProps: any) => {
-    const renderer = props.rendererMap[cellProps.column.key];
-    if (renderer) {
-      return renderer(cellProps);
-    }
-    return StringRenderer(cellProps);
+  const columns: ColumnShape<TableDataItem>[] = [
+    {
+      key: 'name',
+      title: 'Name',
+      dataKey: 'name',
+      width: 0,
+      flexGrow: 1, // since table is fixed, at least one col must grow
+    },
+    {
+      key: 'mimeType',
+      title: 'Mime Type',
+      dataKey: 'mimeType',
+      width: 100,
+    },
+    {
+      key: 'status',
+      title: 'Status',
+      width: 250,
+      align: Column.Alignment.CENTER,
+    },
+    {
+      key: 'annotations',
+      title: 'Annotations',
+      width: 0,
+      flexGrow: 1,
+      align: Column.Alignment.CENTER,
+    },
+    {
+      key: 'action',
+      title: 'File Actions',
+      dataKey: 'menu',
+      align: Column.Alignment.CENTER,
+      width: 200,
+    },
+  ];
+
+  const rendererMap = {
+    name: NameRenderer,
+    mimeType: StringRenderer,
+    status: StatusRenderer,
+    annotations: AnnotationRenderer,
+    action: ActionRenderer,
   };
-
-  const components = {
-    TableCell: Cell,
-  };
-
-  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-
-  const handleSelectChange = ({
-    selected,
-    rowData,
-    rowIndex,
-    rowKey,
-  }: {
-    selected: boolean;
-    rowData: any;
-    rowIndex: number;
-    rowKey: string;
-  }) => {
-    const selectedRKeys: string[] = [...selectedRowKeys];
-    const key: string = rowData[rowKey];
-
-    if (selected) {
-      if (!selectedRKeys.includes(key)) selectedRKeys.push(key);
-    } else {
-      const index = selectedRKeys.indexOf(key);
-      if (index > -1) {
-        selectedRKeys.splice(index, 1);
-      }
-    }
-
-    setSelectedRowKeys(selectedRKeys);
-
-    // this.props.onRowSelect({ selected, rowData, rowIndex });
-  };
-
-  if (props.selectable) {
-    const selectionColumn = {
-      key: '__selection__',
-      title: 'Select All',
-      width: 40,
-      flexShrink: 0,
-      resizable: false,
-      frozen: Column.FrozenDirection.LEFT,
-      selectedRowKeys,
-      onChange: handleSelectChange,
-    };
-    columns = [selectionColumn, ...columns];
-  }
 
   return (
-    <TableWrapper>
-      <AutoSizer
-        style={{
-          width: 'auto',
-        }}
-      >
-        {({ width }) => (
-          <ReactBaseTable<TableDataItem>
-            columns={props.columns}
-            maxHeight={Infinity}
-            width={width}
-            components={components}
-            {...props}
-          />
-        )}
-      </AutoSizer>
-    </TableWrapper>
+    <SelectableTable
+      {...props}
+      columns={columns}
+      rendererMap={rendererMap}
+      selectable
+      onRowSelect={props.onRowSelect}
+    />
   );
 }
-
-export const Action = styled.div`
-  display: flex;
-  align-items: flex-end;
-`;
-
-export const FileRow = styled.div`
-  display: flex;
-  flex: 1 1 auto;
-  height: inherit;
-  width: inherit;
-  align-items: center;
-`;
-
-export const FileNameText = styled.div`
-  display: flex;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-  flex: 0 1 auto;
-  display: inline-block;
-`;
-
-export const ExifIcon = styled.div`
-  display: flex;
-  padding-bottom: 15px;
-  padding-right: 0px;
-  padding-left: 0px;
-  flex: 0 0 auto;
-`;

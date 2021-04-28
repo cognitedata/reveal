@@ -20,6 +20,7 @@ export type FileState = {
   metadata?: Metadata;
   linkedAnnotations: string[];
   assetIds?: number[];
+  selected: boolean;
 };
 
 export type State = {
@@ -88,6 +89,30 @@ const uploadedFilesSlice = createSlice({
     setExtractExif(state, action: PayloadAction<boolean>) {
       state.extractExif = action.payload;
     },
+    setFileSelectState: {
+      prepare: (id: number, selected: boolean) => {
+        return { payload: { fileId: id, selectState: selected } };
+      },
+      reducer: (
+        state,
+        action: PayloadAction<{ fileId: number; selectState: boolean }>
+      ) => {
+        const { fileId } = action.payload;
+        if (fileId) {
+          const file = state.files.byId[fileId];
+          if (file) {
+            file.selected = action.payload.selectState;
+          }
+        }
+      },
+    },
+    setAllFilesSelectState(state, action: PayloadAction<boolean>) {
+      const allFileIds = state.files.allIds;
+      allFileIds.forEach((fileId) => {
+        const file = state.files.byId[fileId];
+        file.selected = action.payload;
+      });
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(deleteFilesById.fulfilled, (state, { payload }) => {
@@ -126,6 +151,8 @@ export const {
   setDataSetIds,
   setExtractExif,
   setAllFilesStatus,
+  setFileSelectState,
+  setAllFilesSelectState,
 } = uploadedFilesSlice.actions;
 
 export default uploadedFilesSlice.reducer;
@@ -135,6 +162,14 @@ export const selectAllFiles = createSelector(
   (state) => state.files.byId,
   (allIds, allFiles) => {
     return allIds.map((id) => createFileInfo(allFiles[id]));
+  }
+);
+
+export const selectAllFilesSelected = createSelector(
+  (state: State) => state.files.allIds,
+  (state) => state.files.byId,
+  (allIds, allFiles) => {
+    return allIds.map((id) => allFiles[id]).every((item) => !!item.selected);
   }
 );
 

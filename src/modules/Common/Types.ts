@@ -10,6 +10,7 @@ export type TableDataItem = {
   mimeType: string;
   name: string;
   menu: FileActions;
+  selected: boolean;
 };
 
 export type CellRenderer = {

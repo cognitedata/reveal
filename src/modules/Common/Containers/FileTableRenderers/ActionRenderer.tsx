@@ -4,8 +4,13 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { Button, Dropdown, Menu } from '@cognite/cogs.js';
 import { AnnotationsBadgeProps } from 'src/modules/Workflow/types';
-import { Action } from 'src/modules/Common/Components/FileTable/FileTable';
 import { CellRenderer } from 'src/modules/Common/Types';
+import styled from 'styled-components';
+
+export const Action = styled.div`
+  display: flex;
+  align-items: flex-end;
+`;
 
 export function ActionRenderer({ rowData: { menu, id } }: CellRenderer) {
   const selectAnnotationBadgeProps = useMemo(

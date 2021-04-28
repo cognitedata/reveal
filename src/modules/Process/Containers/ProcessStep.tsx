@@ -17,16 +17,13 @@ import {
 } from 'src/modules/Process/processSlice';
 
 import { GridCellProps, GridTable } from '@cognite/data-exploration';
-import { selectAllFiles } from 'src/modules/Upload/uploadedFilesSlice';
 import styled from 'styled-components';
 import { resetEditHistory } from 'src/modules/FileMetaData/fileMetadataSlice';
-import { Column, ColumnShape } from 'react-base-table';
-import { NameRenderer } from 'src/modules/Common/Containers/FileTableRenderers/NameRenderer';
-import { StringRenderer } from 'src/modules/Common/Containers/FileTableRenderers/StringRenderer';
-import { StatusRenderer } from 'src/modules/Common/Containers/FileTableRenderers/StatusRenderer';
-import { AnnotationRenderer } from 'src/modules/Common/Containers/FileTableRenderers/AnnotationRenderer';
-import { ActionRenderer } from 'src/modules/Common/Containers/FileTableRenderers/ActionRenderer';
 import { FileActions, TableDataItem } from 'src/modules/Common/Types';
+import {
+  selectAllFiles,
+  setFileSelectState,
+} from 'src/modules/Upload/uploadedFilesSlice';
 import { FileGridPreview } from '../../Common/Components/FileGridPreview/FileGridPreview';
 import { MapView } from '../../Common/Components/MapView/MapView';
 
@@ -60,6 +57,7 @@ export default function ProcessStep() {
       name: file.name,
       mimeType: file.mimeType || '',
       menu: menuActions,
+      selected: file.selected,
     };
   });
   /* eslint-disable react/prop-types */
@@ -80,57 +78,12 @@ export default function ProcessStep() {
     if (currentView === 'map') {
       return <MapView data={tableData} />;
     }
-    const columns: ColumnShape<TableDataItem>[] = [
-      {
-        key: 'name',
-        title: 'Name',
-        dataKey: 'name',
-        width: 0,
-        flexGrow: 1, // since table is fixed, at least one col must grow
-      },
-      {
-        key: 'mimeType',
-        title: 'Mime Type',
-        dataKey: 'mimeType',
-        width: 100,
-      },
-      {
-        key: 'status',
-        title: 'Status',
-        width: 250,
-        align: Column.Alignment.CENTER,
-      },
-      {
-        key: 'annotations',
-        title: 'Annotations',
-        width: 0,
-        flexGrow: 1,
-        align: Column.Alignment.CENTER,
-      },
-      {
-        key: 'action',
-        title: 'File Actions',
-        dataKey: 'menu',
-        align: Column.Alignment.CENTER,
-        width: 200,
-      },
-    ];
 
-    const rendererMap = {
-      name: NameRenderer,
-      mimeType: StringRenderer,
-      status: StatusRenderer,
-      annotations: AnnotationRenderer,
-      action: ActionRenderer,
+    const handleRowSelect = (id: number, selected: boolean) => {
+      dispatch(setFileSelectState(id, selected));
     };
-    return (
-      <FileTable
-        data={tableData}
-        columns={columns}
-        rendererMap={rendererMap}
-        selectable
-      />
-    );
+
+    return <FileTable data={tableData} onRowSelect={handleRowSelect} />;
   };
   console.log('Re-rendering process page');
   return (

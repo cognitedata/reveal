@@ -309,7 +309,7 @@ const addJobToState = (
 
 // selectors
 
-export const selectAllFiles = (
+export const selectAllFilesDict = (
   state: State
 ): { [id: number]: { jobIds: number[] } } => state.files.byId;
 
@@ -328,7 +328,7 @@ export const selectJobsByFileId = createSelector(
 );
 
 export const selectIsPollingComplete = createSelector(
-  selectAllFiles,
+  selectAllFilesDict,
   selectAllJobs,
   (allFiles, allJobs) => {
     return Object.keys(allFiles).every((fileId) => {

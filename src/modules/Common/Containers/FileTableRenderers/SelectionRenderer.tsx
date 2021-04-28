@@ -1,14 +1,21 @@
 import { CellRenderer } from 'src/modules/Common/Types';
 import React from 'react';
+import { Checkbox } from '@cognite/cogs.js';
 
-export function SelectionRenderer({ rowData, column, rowIndex }: CellRenderer) {
-  const { selectedRowKeys, rowKey } = column;
-  const checked = selectedRowKeys.includes(rowData[rowKey]);
-
-  const handleChange = (e) => {
-    const { onChange } = column;
-
-    onChange({ selected: e.target.checked, rowData, rowIndex });
+export function SelectionRenderer(props: CellRenderer) {
+  const { onChange } = props.column;
+  const handleChange = (change: boolean) => {
+    onChange({
+      selected: change,
+      rowData: props.rowData,
+      rowIndex: props.rowIndex,
+    });
   };
-  return <input type="checkbox" checked={checked} onChange={handleChange} />;
+  return (
+    <Checkbox
+      name={`check-${props.rowIndex}`}
+      value={props.rowData.selected}
+      onChange={handleChange}
+    />
+  );
 }
