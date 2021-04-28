@@ -2,7 +2,7 @@ import { FileUploader } from 'src/modules/Common/Components/FileUploader';
 import React from 'react';
 import styled from 'styled-components';
 import { margin } from 'src/cogs-variables';
-import { Detail, Title } from '@cognite/cogs.js';
+import { Body, Detail, Tabs } from '@cognite/cogs.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import {
@@ -36,22 +36,30 @@ export default function UploadStep() {
 
   return (
     <>
-      <Title level={2}>Upload file</Title>
+      <Tabs defaultActiveKey="upload">
+        <Tabs.TabPane key="upload" tab={<Body level={1}>Upload files</Body>}>
+          <FileUploaderWrapper>
+            <FileUploader
+              initialUploadedFiles={uploadedFiles}
+              accept={['.jpeg', '.jpg', '.png', '.tiff', '.mp4'].join(', ')}
+              maxTotalSizeInBytes={1 * 1024 ** 3 /* 1 GB */}
+              maxFileCount={100}
+              onUploadSuccess={onUploadSuccess}
+            >
+              <AcceptMessage>
+                <b>* Supported files: </b>
+                jpeg, png, tiff, mp4. Limit: 100 files with a total size of 1
+                GB.
+              </AcceptMessage>
+            </FileUploader>
+          </FileUploaderWrapper>
+        </Tabs.TabPane>
 
-      <FileUploaderWrapper>
-        <FileUploader
-          initialUploadedFiles={uploadedFiles}
-          accept={['.jpeg', '.jpg', '.png', '.tiff', '.mp4'].join(', ')}
-          maxTotalSizeInBytes={1 * 1024 ** 3 /* 1 GB */}
-          maxFileCount={100}
-          onUploadSuccess={onUploadSuccess}
-        >
-          <AcceptMessage>
-            <b>* Supported files: </b>
-            jpeg, png, tiff, mp4. Limit: 100 files with a total size of 1 GB.
-          </AcceptMessage>
-        </FileUploader>
-      </FileUploaderWrapper>
+        {/* <Tabs.TabPane
+          key="existing"
+          tab={<Body level={1}>Choose existing files</Body>}
+        /> */}
+      </Tabs>
     </>
   );
 }

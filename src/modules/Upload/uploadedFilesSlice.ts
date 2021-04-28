@@ -42,7 +42,7 @@ const initialState: State = {
   extractExif: true,
   allFilesStatus: false,
   // eslint-disable-next-line global-require
-  // files: require('./fakeFiles.json'),
+  // files: require('src/store/fakeFiles.json'),
 
   files: {
     byId: {},
