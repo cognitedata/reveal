@@ -149,22 +149,6 @@ function determineFacesFile(metadata: CadSectorMetadataV8): SectorMetadataFacesF
   return facesFile;
 }
 
-const dummyFacesFileSection: SectorMetadataFacesFileSection = {
-  quadSize: -1.0,
-  coverageFactors: {
-    xy: 0.5,
-    yz: 0.5,
-    xz: 0.5
-  },
-  recursiveCoverageFactors: {
-    xy: 0.5,
-    yz: 0.5,
-    xz: 0.5
-  },
-  fileName: null,
-  downloadSize: 0
-};
-
 function hasDummyFacesFileSection(metadata: SectorMetadata): boolean {
   return metadata.facesFile.coverageFactors.xy === -1.0;
 }
