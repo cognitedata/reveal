@@ -3,12 +3,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import {
-  FileTable,
-  FileActions,
-  TableDataItem,
-} from 'src/modules/Common/Components/FileTable/FileTable';
-
+import { FileTable } from 'src/modules/Common/Components/FileTable/FileTable';
 import { FileToolbar } from 'src/modules/Workflow/components/FileToolbar';
 import { Title } from '@cognite/cogs.js';
 import {
@@ -25,8 +20,15 @@ import { GridCellProps, GridTable } from '@cognite/data-exploration';
 import { selectAllFiles } from 'src/modules/Upload/uploadedFilesSlice';
 import styled from 'styled-components';
 import { resetEditHistory } from 'src/modules/FileMetaData/fileMetadataSlice';
-import { MapView } from '../../Common/Components/MapView/MapView';
+import { Column, ColumnShape } from 'react-base-table';
+import { NameRenderer } from 'src/modules/Common/Containers/FileTableRenderers/NameRenderer';
+import { StringRenderer } from 'src/modules/Common/Containers/FileTableRenderers/StringRenderer';
+import { StatusRenderer } from 'src/modules/Common/Containers/FileTableRenderers/StatusRenderer';
+import { AnnotationRenderer } from 'src/modules/Common/Containers/FileTableRenderers/AnnotationRenderer';
+import { ActionRenderer } from 'src/modules/Common/Containers/FileTableRenderers/ActionRenderer';
+import { FileActions, TableDataItem } from 'src/modules/Common/Types';
 import { FileGridPreview } from '../../Common/Components/FileGridPreview/FileGridPreview';
+import { MapView } from '../../Common/Components/MapView/MapView';
 
 const queryClient = new QueryClient();
 
@@ -78,7 +80,57 @@ export default function ProcessStep() {
     if (currentView === 'map') {
       return <MapView data={tableData} />;
     }
-    return <FileTable data={tableData} />;
+    const columns: ColumnShape<TableDataItem>[] = [
+      {
+        key: 'name',
+        title: 'Name',
+        dataKey: 'name',
+        width: 0,
+        flexGrow: 1, // since table is fixed, at least one col must grow
+      },
+      {
+        key: 'mimeType',
+        title: 'Mime Type',
+        dataKey: 'mimeType',
+        width: 100,
+      },
+      {
+        key: 'status',
+        title: 'Status',
+        width: 250,
+        align: Column.Alignment.CENTER,
+      },
+      {
+        key: 'annotations',
+        title: 'Annotations',
+        width: 0,
+        flexGrow: 1,
+        align: Column.Alignment.CENTER,
+      },
+      {
+        key: 'action',
+        title: 'File Actions',
+        dataKey: 'menu',
+        align: Column.Alignment.CENTER,
+        width: 200,
+      },
+    ];
+
+    const rendererMap = {
+      name: NameRenderer,
+      mimeType: StringRenderer,
+      status: StatusRenderer,
+      annotations: AnnotationRenderer,
+      action: ActionRenderer,
+    };
+    return (
+      <FileTable
+        data={tableData}
+        columns={columns}
+        rendererMap={rendererMap}
+        selectable
+      />
+    );
   };
   console.log('Re-rendering process page');
   return (
