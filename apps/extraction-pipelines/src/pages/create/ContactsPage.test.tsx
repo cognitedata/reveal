@@ -150,7 +150,7 @@ describe('ContactsPage', () => {
     const withSkip = {
       ...props,
       initRegisterIntegration: {
-        skipNotificationInMinutes: NR_HOURS * MIN_IN_HOURS,
+        skipNotificationsInMinutes: NR_HOURS * MIN_IN_HOURS,
       },
     };
     renderRegisterContext(<ContactsPage />, { ...withSkip });

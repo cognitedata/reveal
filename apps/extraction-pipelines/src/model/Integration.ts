@@ -16,7 +16,7 @@ export interface RegisterIntegrationInfo {
   description?: string;
   metadata?: MetaData;
   contacts: User[];
-  skipNotificationInMinutes?: number;
+  skipNotificationsInMinutes?: number;
   rawTables?: IntegrationRawTable[];
 }
 export interface Integration extends Omit<RegisterIntegrationInfo, 'id'> {

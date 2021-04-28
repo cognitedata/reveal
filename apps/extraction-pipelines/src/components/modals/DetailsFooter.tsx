@@ -1,8 +1,8 @@
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, PropsWithoutRef } from 'react';
 import { Colors, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { ToggleableConfirmDialog } from '../buttons/ToggleableConfirmDialog';
-import { useIntegration } from '../../hooks/details/IntegrationContext';
+import { ToggleableConfirmDialog } from 'components/buttons/ToggleableConfirmDialog';
+import { useIntegration } from 'hooks/details/IntegrationContext';
 
 const ErrorMessage = styled.div`
   display: flex;
@@ -42,28 +42,21 @@ const StyledIcon = styled((props) => <Icon {...props} />)`
 `;
 interface OwnProps {
   primaryText: string;
-  errorText: string;
-  // eslint-disable-next-line react/require-default-props
+  errorText?: string;
   popConfirmContent?: string;
-  // eslint-disable-next-line react/require-default-props
   cancelText?: string;
-  // eslint-disable-next-line react/require-default-props
   okText?: string;
-  // eslint-disable-next-line react/require-default-props
-  // eslint-disable-next-line react/require-default-props
   onPrimaryClick?: (update: boolean) => void;
 }
 
-type Props = OwnProps;
-
-const DetailsFooter: FunctionComponent<Props> = ({
+const DetailsFooter: FunctionComponent<OwnProps> = ({
   primaryText,
   errorText,
   popConfirmContent = 'Are you sure?',
   cancelText = 'Cancel',
   okText = 'Confirm',
   onPrimaryClick,
-}: Props) => {
+}: PropsWithoutRef<OwnProps>) => {
   const {
     state: { updates },
   } = useIntegration();

@@ -25,18 +25,19 @@ import { DetailFieldNames } from 'model/Integration';
 import { isOwner, partition } from 'utils/integrationUtils';
 import { User } from 'model/User';
 import { Grid } from 'styles/grid/StyledGrid';
+import { bottomSpacing } from 'styles/StyledVariables';
 import { AddContact } from './AddContact';
 
 export const ContactsSectionWrapper = styled(Grid)`
   align-content: flex-start;
-  padding: 1rem;
+  margin-bottom: ${bottomSpacing};
 `;
 export const OwnerWrapper = styled.div`
   margin-bottom: 2rem;
 `;
 export const Row = styled.div`
   display: grid;
-  grid-template-columns: 1fr 6rem 2fr 2fr 5rem;
+  grid-template-columns: 10rem 6rem 2fr 2fr 5rem;
   grid-column-gap: 0.5rem;
   align-items: center;
   input {

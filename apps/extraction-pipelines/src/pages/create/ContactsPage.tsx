@@ -84,11 +84,11 @@ const ContactsPage: FunctionComponent<ContactsPageProps> = () => {
     resolver: yupResolver(pageSchema),
     defaultValues: {
       contacts: storedIntegration?.contacts ?? [],
-      skipNotificationInHours: storedIntegration?.skipNotificationInMinutes
-        ? storedIntegration?.skipNotificationInMinutes / MIN_IN_HOURS
+      skipNotificationInHours: storedIntegration?.skipNotificationsInMinutes
+        ? storedIntegration?.skipNotificationsInMinutes / MIN_IN_HOURS
         : undefined,
-      hasConfig: storedIntegration?.skipNotificationInMinutes
-        ? storedIntegration?.skipNotificationInMinutes > 0
+      hasConfig: storedIntegration?.skipNotificationsInMinutes
+        ? storedIntegration?.skipNotificationsInMinutes > 0
         : false,
     },
     reValidateMode: 'onSubmit',
@@ -115,7 +115,7 @@ const ContactsPage: FunctionComponent<ContactsPageProps> = () => {
     setStoredIntegration({
       ...storedIntegration,
       contacts: field.contacts,
-      skipNotificationInMinutes: field.skipNotificationInHours * MIN_IN_HOURS,
+      skipNotificationsInMinutes: field.skipNotificationInHours * MIN_IN_HOURS,
     });
     if (storedIntegration?.id && project) {
       const items = createUpdateSpec({
