@@ -1,3 +1,4 @@
+// Based on https://github.com/cognitedata/data-exploration-components/blob/master/src/components/Search/Filters/FileFilters.tsx
 import React from 'react';
 import { useList } from '@cognite/sdk-react-query-hooks';
 import { FileFilterProps, InternalId } from '@cognite/sdk';

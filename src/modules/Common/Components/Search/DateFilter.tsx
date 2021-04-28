@@ -1,4 +1,5 @@
 // TODO: Should be replaced by the component in data explorer!
+// https://github.com/cognitedata/data-exploration-components/blob/master/src/components/Search/Filters/DateFilter/DateFilter.tsx
 
 import React, { useState } from 'react';
 import { Body } from '@cognite/cogs.js';
