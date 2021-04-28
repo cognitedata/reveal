@@ -41,8 +41,6 @@ export function SelectableTable(props: SelectableTableProps) {
         dataKey: 'selected',
         width: 100,
         flexShrink: 0,
-        // resizable: false,
-        // frozen: Column.FrozenDirection.LEFT,
         onChange: handleSelectChange,
         align: Column.Alignment.LEFT,
       };
