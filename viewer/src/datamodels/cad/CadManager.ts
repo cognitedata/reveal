@@ -242,7 +242,6 @@ function clipSector(sector: SectorMetadata, geometryClipBox: THREE.Box3): Sector
   bounds.intersect(geometryClipBox);
 
   if (!bounds.isEmpty()) {
-    debugger;
     const intersectingChildren: SectorMetadata[] = [];
     for (let i = 0; i < sector.children.length; i++) {
       const child = clipSector(sector.children[i], geometryClipBox);
