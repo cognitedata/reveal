@@ -12,6 +12,7 @@ import { Flex, IconButton } from 'components/Common';
 import sdk from 'sdk-singleton';
 import { checkPermission } from 'modules/app';
 import { diagramPreview } from 'routes/paths';
+import { useParsingJob } from 'modules/contextualization/pnidParsing/hooks';
 
 type Props = { file: any; setRenderFeedback: (shouldSet: boolean) => any };
 
@@ -32,7 +33,9 @@ export default function FileActions({
   const canEditFiles = useSelector(getCanEditFiles);
   const { data: annotations } = useAnnotations(file.id);
 
-  const jobFinished = file && file.parsingJob && file.parsingJob.jobDone;
+  const { status: parsingJobStatus } = useParsingJob(Number(workflowId));
+
+  const jobFinished = parsingJobStatus === 'Completed';
 
   const onTooltipShow = () => {
     if (jobFinished) {
@@ -98,7 +101,7 @@ export default function FileActions({
         <IconButton
           disabled={!(file && file.annotations && file.annotations.length > 0)}
           icon="HorizontalEllipsis"
-          square
+          $square
           style={{ marginLeft: '8px' }}
         />
       </Dropdown>

@@ -47,7 +47,7 @@ export function mergeDatasets(
 export function getResourceCount(id: number) {
   return async (dispatch: any) => {
     const filter = { filter: { dataSetIds: [{ id }] } };
-    await Promise.all([
+    await Promise.allSettled([
       dispatch(countAssets({ filter })),
       dispatch(countFiles({ filter })),
     ]);

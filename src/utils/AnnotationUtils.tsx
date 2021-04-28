@@ -1,46 +1,16 @@
-import { FileInfo, Asset } from '@cognite/sdk';
-import { PnidResponseEntity } from 'modules/contextualization/parsingJobs';
-import { stripWhitespace } from 'helpers/Helpers';
+import { FileInfo } from '@cognite/sdk';
+import { PnidResponseEntity } from 'modules/contextualization/pnidParsing/types';
 import {
   CogniteAnnotation,
   PendingCogniteAnnotation,
   AnnotationResourceType,
   CURRENT_VERSION,
   AnnotationBoundingBox,
-  getPnIDAnnotationType,
+  ANNOTATION_EVENT_TYPE,
+  ANNOTATION_METADATA_PREFIX,
 } from '@cognite/annotations';
-
-import { Colors } from '@cognite/cogs.js';
-
-export const PNID_ANNOTATION_TYPE = 'pnid_annotation';
-
-const assetNameToIdsMap = (assets: Asset[]) => {
-  return assets.reduce((prev, asset) => {
-    const key = stripWhitespace(asset.name);
-    if (!prev[key]) {
-      prev[key] = { id: [], externalId: [] };
-    }
-    prev[key].id.push(asset.id);
-    if (asset.externalId) {
-      prev[key].externalId.push(asset.externalId);
-    }
-    return prev;
-  }, {} as { [key: string]: { id: number[]; externalId: string[] } });
-};
-
-const fileNameToIdsMap = (files: FileInfo[]) => {
-  return files.reduce((prev, item) => {
-    const key = stripWhitespace(removeExtension(item.name));
-    if (!prev[key]) {
-      prev[key] = { id: [], externalId: [] };
-    }
-    prev[key].id.push(item.id);
-    if (item.externalId) {
-      prev[key].externalId.push(item.externalId);
-    }
-    return prev;
-  }, {} as { [key: string]: { id: number[]; externalId: string[] } });
-};
+import sdk from 'sdk-singleton';
+import handleError from './handleError';
 
 const findSimilarMatches = (
   entities: CogniteAnnotation[],
@@ -70,44 +40,10 @@ const findSimilarMatches = (
 export const createPendingAnnotationsFromJob = async (
   file: FileInfo,
   entities: PnidResponseEntity[],
-  refAssets: Asset[],
-  refFiles: FileInfo[],
   jobId: string,
   existingEntities: CogniteAnnotation[]
 ): Promise<PendingCogniteAnnotation[]> => {
-  const assetsMap = assetNameToIdsMap(refAssets);
-  const filesMap = fileNameToIdsMap(refFiles);
-
   return entities.reduce((prev, entity) => {
-    let resourceId: number | undefined;
-    let resourceExternalId: string | undefined;
-    let resourceType: AnnotationResourceType | undefined;
-    const strippedEntityText = stripWhitespace(entity.text);
-
-    // if found perfect asset match
-    if (
-      assetsMap[strippedEntityText] &&
-      assetsMap[strippedEntityText].id.length === 1
-    ) {
-      resourceType = 'asset';
-      if (assetsMap[strippedEntityText].externalId.length === 1) {
-        [resourceExternalId] = assetsMap[strippedEntityText].externalId;
-      }
-      [resourceId] = assetsMap[strippedEntityText].id;
-    }
-
-    // if found perfect file match
-    if (
-      filesMap[strippedEntityText] &&
-      filesMap[strippedEntityText].id.length === 1
-    ) {
-      resourceType = 'file';
-      if (filesMap[strippedEntityText].externalId.length === 1) {
-        [resourceExternalId] = filesMap[strippedEntityText].externalId;
-      }
-      [resourceId] = filesMap[strippedEntityText].id;
-    }
-
     const activeEntities = existingEntities.filter(
       (el) => el.page === entity.page && el.status !== 'deleted'
     );
@@ -116,56 +52,50 @@ export const createPendingAnnotationsFromJob = async (
       (el) => el.page === entity.page && el.status === 'deleted'
     );
 
-    if (
-      activeEntities.some(
-        (el) =>
-          // much smaller
-          isSimilarBoundingBox(el.box, el.box, 1, true) ||
-          // bigger or smaller by 20%
-          isSimilarBoundingBox(el.box, el.box, 0.2, false)
-      )
-    ) {
-      return prev;
-    }
+    entity.items.forEach((item) => {
+      const resourceId = item.id;
+      const resourceExternalId = item?.externalId;
+      const { resourceType } = item;
 
-    if (
-      resourceType &&
-      findSimilarMatches(
-        deletedEntities,
-        entity.boundingBox,
-        resourceType,
-        resourceExternalId,
-        resourceId
-      )
-    ) {
-      return prev;
-    }
+      // if the same annotation has been "soft" deleted before, do not recreate.
+      if (
+        resourceType &&
+        findSimilarMatches(
+          deletedEntities,
+          entity.boundingBox,
+          resourceType,
+          resourceExternalId,
+          resourceId
+        )
+      ) {
+        return;
+      }
+      // if the same annotation already exists, do not recreate.
+      if (
+        activeEntities.find((anotation) => anotation.resourceId === resourceId)
+      ) {
+        return;
+      }
 
-    prev.push({
-      box: entity.boundingBox,
-      ...(!file.externalId ? { fileId: file.id } : {}),
-      ...(file.externalId ? { fileExternalId: file.externalId } : {}),
-      resourceId,
-      resourceExternalId,
-      resourceType,
-      type: PNID_ANNOTATION_TYPE,
-      label: entity.text,
-      source: `job:${jobId}`,
-      version: CURRENT_VERSION,
-      owner: `${jobId}`,
-      status: 'unhandled',
-      page: entity.page,
-    } as PendingCogniteAnnotation);
+      prev.push({
+        box: entity.boundingBox,
+        ...(!file.externalId ? { fileId: file.id } : {}),
+        ...(file.externalId ? { fileExternalId: file.externalId } : {}),
+        resourceId: item.id,
+        resourceExternalId: item.externalId,
+        resourceType: item.resourceType,
+        type: ANNOTATION_EVENT_TYPE,
+        label: entity.text,
+        source: `job:${jobId}`,
+        version: CURRENT_VERSION,
+        owner: `${jobId}`,
+        status: 'unhandled',
+        page: entity.page,
+      } as PendingCogniteAnnotation);
+    });
+
     return prev;
   }, [] as PendingCogniteAnnotation[]);
-};
-
-export const removeExtension = (name: string) => {
-  const indexOfExtension = name.lastIndexOf('.');
-  if (indexOfExtension !== -1) {
-    return name.substring(0, indexOfExtension);
-  }
-  return name;
 };
 
 export const isSimilarBoundingBox = (
@@ -203,67 +133,30 @@ export const isSimilarBoundingBox = (
   return false;
 };
 
-export const selectAnnotationColor = <T extends PendingCogniteAnnotation>(
-  annotation: T,
-  isSelected = false
+export const deleteAnnotationsForFile = async (
+  fileId: number,
+  fileExtId?: string
 ) => {
-  if (isSelected) {
-    return Colors.midblue.hex();
-  }
-  // Assets are purple
-  if (annotation.resourceType === 'asset') {
-    if (getPnIDAnnotationType(annotation).includes('Model')) {
-      return Colors['purple-3'].hex();
+  try {
+    const metadataFilter: { [key: string]: string } = {};
+    if (fileExtId) {
+      metadataFilter[
+        `${ANNOTATION_METADATA_PREFIX}file_external_id`
+      ] = fileExtId;
+    } else {
+      metadataFilter[`${ANNOTATION_METADATA_PREFIX}file_id`] = String(fileId);
     }
-    return Colors['purple-2'].hex();
-  }
+    console.log(metadataFilter);
+    const allAnnotations = await sdk.events
+      .list({
+        filter: {
+          metadata: metadataFilter,
+        },
+      })
+      .autoPagingToArray({ limit: -1 });
 
-  // Files are orange
-  if (annotation.resourceType === 'file') {
-    if (getPnIDAnnotationType(annotation).includes('Model')) {
-      return Colors['midorange-3'].hex();
-    }
-    return Colors['midorange-2'].hex();
+    await sdk.events.delete(allAnnotations.map((event) => ({ id: event.id })));
+  } catch (e) {
+    handleError({ ...e });
   }
-  // Undefined are secondary
-  return Colors['text-color-secondary'].hex();
 };
-
-export const getPnIdAnnotationCategories = <T extends PendingCogniteAnnotation>(
-  annotations: T[]
-) =>
-  annotations.reduce(
-    (prev, el) => {
-      const type = getPnIDAnnotationType(el);
-      if (el.resourceType === 'asset') {
-        if (!prev.Asset.items[type]) {
-          prev.Asset.items[type] = [];
-        }
-        prev.Asset.items[type].push(el);
-        prev.Asset.count += 1;
-      } else if (el.resourceType === 'file') {
-        if (!prev.File.items[type]) {
-          prev.File.items[type] = [];
-        }
-        prev.File.items[type].push(el);
-        prev.File.count += 1;
-      } else {
-        if (!prev.Unclassified.items[type]) {
-          prev.Unclassified.items[type] = [];
-        }
-        prev.Unclassified.items[type].push(el);
-        prev.Unclassified.count += 1;
-      }
-      return prev;
-    },
-    {
-      Asset: { items: {}, count: 0 },
-      File: { items: {}, count: 0 },
-      Unclassified: { items: {}, count: 0 },
-    } as {
-      [key: string]: {
-        items: { [key: string]: T[] };
-        count: number;
-      };
-    }
-  );

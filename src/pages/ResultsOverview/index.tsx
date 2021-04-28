@@ -15,7 +15,6 @@ import {
   UploadJobState,
 } from 'modules/contextualization/uploadJobs';
 import { startPnidParsingWorkflow } from 'modules/contextualization/pnidWorkflow';
-import { ParsingJobState } from 'modules/contextualization/parsingJobs';
 import { useAnnotationsForFiles, useActiveWorkflow } from 'hooks';
 import LoadResources from 'containers/LoadResources';
 import MissingPermissionFeedback from 'components/MissingPermissionFeedback';
@@ -56,7 +55,7 @@ export default function ResultsOverview() {
   const { workflow } = useSelector(getWorkflowItems(workflowId));
   const canEditFiles = useSelector(getCanEditFiles);
   const canReadFiles = useSelector(getCanReadFiles);
-  const { parsingJobs, uploadJobs } = useSelector(getContextualizationJobs);
+  const { uploadJobs } = useSelector(getContextualizationJobs);
   const annotationsByFileId = useAnnotationsForFiles(selectedKeys);
 
   const isLoading = Object.values(uploadJobs).some((job: any) => !job.jobDone);
@@ -115,10 +114,8 @@ export default function ResultsOverview() {
     .map((diagram: FileInfo) => {
       return {
         ...diagram,
-        parsingJob: parsingJobs[diagram.id],
         uploadJob: uploadJobs[diagram.id],
       } as FileInfo & {
-        parsingJob?: ParsingJobState;
         uploadJob?: UploadJobState;
       };
     });
