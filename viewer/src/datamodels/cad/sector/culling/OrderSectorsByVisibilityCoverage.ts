@@ -10,7 +10,6 @@ import { CadModelMetadata } from '../../CadModelMetadata';
 import { toThreeJsBox3, Box3 } from '../../../../utilities';
 import { WebGLRendererStateHelper } from '../../../../utilities/WebGLRendererStateHelper';
 import { OccludingGeometryProvider } from './OccludingGeometryProvider';
-import { dumpRendererToImage } from '../../../../utilities/three/DebugDumpRendererToImage';
 
 type SectorContainer = {
   model: CadModelMetadata;
@@ -229,7 +228,7 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
       this.buffers.rtBuffer
     );
 
-    dumpRendererToImage(this._renderer, this.renderTarget).then(dataUrl => console.log(dataUrl));
+    // dumpRendererToImage(this._renderer, this.renderTarget).then(dataUrl => console.log(dataUrl));
 
     // Unpack GPU result to sector IDs with visibility score
     const sectorVisibility = this.unpackSectorVisibility(
@@ -352,10 +351,11 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
 
   private addModel(model: CadModelMetadata) {
     const sectors = model.scene.getAllSectors();
+    const geometryClipBox = determineTransformedGeometryClipBox(model);
     const [mesh, attributesBuffer, attributesValues] = this.createSectorTreeGeometry(
       this.sectorIdOffset,
       sectors,
-      model.geometryClipBox
+      geometryClipBox
     );
 
     const group = new THREE.Group();
@@ -446,6 +446,16 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
     const bounds = new THREE.Box3();
     const addSector = (sectorBounds: Box3, sectorId: number, coverage: THREE.Vector3) => {
       toThreeJsBox3(bounds, sectorBounds);
+      if (geometryClipBox !== null) {
+        console.log(
+          'bounds before',
+          JSON.stringify(bounds.clone()),
+          'after',
+          JSON.stringify(bounds.intersect(geometryClipBox).clone()),
+          'by',
+          JSON.stringify(geometryClipBox)
+        );
+      }
 
       const translation = bounds.getCenter(new THREE.Vector3());
       const scale = bounds.getSize(new THREE.Vector3());
@@ -497,4 +507,14 @@ function resetVisibilityInformation(sectorVisibility: SectorVisibility[]) {
       entry.weight = 0;
     }
   }
+}
+
+function determineTransformedGeometryClipBox(model: CadModelMetadata): THREE.Box3 | null {
+  if (model.geometryClipBox === null) {
+    return null;
+  }
+
+  const geometryClipBox = model.geometryClipBox.clone();
+  // geometryClipBox.applyMatrix4(model.modelMatrix);
+  return geometryClipBox;
 }
