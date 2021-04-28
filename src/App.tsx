@@ -14,6 +14,7 @@ import { SDKProvider } from '@cognite/sdk-provider';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import { Provider as ReduxProvider } from 'react-redux';
 import store from 'src/store';
+import datePickerStyle from 'react-datepicker/dist/react-datepicker.css';
 import rootStyles from './styles/index.css';
 
 setupMixpanel();
@@ -24,10 +25,12 @@ const App = () => {
   useEffect(() => {
     cogsStyles.use();
     rootStyles.use();
+    datePickerStyle.use(); // Needed to render date filer correctly
 
     return () => {
       cogsStyles.unuse();
       rootStyles.unuse();
+      datePickerStyle.unuse();
     };
   }, []);
   return (

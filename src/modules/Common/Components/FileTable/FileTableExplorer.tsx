@@ -4,12 +4,10 @@ import { TableDataItem } from 'src/modules/Common/Types';
 import { StringRenderer } from 'src/modules/Common/Containers/FileTableRenderers/StringRenderer';
 import { SelectableTable } from 'src/modules/Common/Components/SelectableTable/SelectableTable';
 import { NameRenderer } from 'src/modules/Common/Containers/FileTableRenderers/NameRenderer';
-import { StatusRenderer } from 'src/modules/Common/Containers/FileTableRenderers/StatusRenderer';
 import { AnnotationRenderer } from 'src/modules/Common/Containers/FileTableRenderers/AnnotationRenderer';
-import { ActionRenderer } from 'src/modules/Common/Containers/FileTableRenderers/ActionRenderer';
 import { FileTableProps } from './types';
 
-export function FileTable(props: FileTableProps) {
+export function FileTableExplorer(props: FileTableProps) {
   const columns: ColumnShape<TableDataItem>[] = [
     {
       key: 'name',
@@ -25,33 +23,18 @@ export function FileTable(props: FileTableProps) {
       width: 100,
     },
     {
-      key: 'status',
-      title: 'Status',
-      width: 250,
-      align: Column.Alignment.CENTER,
-    },
-    {
       key: 'annotations',
       title: 'Annotations',
       width: 0,
       flexGrow: 1,
       align: Column.Alignment.CENTER,
     },
-    {
-      key: 'action',
-      title: 'File Actions',
-      dataKey: 'menu',
-      align: Column.Alignment.CENTER,
-      width: 200,
-    },
   ];
 
   const rendererMap = {
     name: NameRenderer,
     mimeType: StringRenderer,
-    status: StatusRenderer,
     annotations: AnnotationRenderer,
-    action: ActionRenderer,
   };
 
   return (

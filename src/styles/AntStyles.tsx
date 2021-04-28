@@ -37,7 +37,7 @@ import drawerStyle from 'antd/es/drawer/style/index.less';
 import dropdownStyle from 'antd/es/dropdown/style/index.less';
 // import emptyStyle from 'antd/es/empty/style/index.less';
 // import formStyle from 'antd/es/form/style/index.less';
-// import gridStyle from 'antd/es/grid/style/index.less';
+import gridStyle from 'antd/es/grid/style/index.less';
 // import iconStyle from 'antd/es/icon/style/index.less';
 // import imageStyle from 'antd/es/image/style/index.less';
 // impor inputNumberStyle from 'antd/es/input-number/style/index.less';
@@ -98,7 +98,7 @@ const styles = [
   dropdownStyle,
   // emptyStyle,
   // formStyle,
-  // gridStyle,
+  gridStyle,
   // iconStyle,
   // inputStyle,
   // listStyle,
