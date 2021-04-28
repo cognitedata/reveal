@@ -95,6 +95,20 @@ describe('TakenSectorTree', () => {
 
     wanted.forEach(x => expect(x.geometryClipBox).toBe(box));
   });
+
+  test('toWantedSectors only returns actual sectors when sectorIds are "sparse"', () => {
+    const root = generateSectorTree(3, 2);
+    traverseDepthFirst(root, x => {
+      const mutableSector: Mutable<SectorMetadata> = x;
+      mutableSector.id = mutableSector.id * mutableSector.id;
+      return true;
+    });
+
+    const tree = new TakenSectorTree(root, determineSectorCost);
+    const wanted = tree.toWantedSectors(model.blobUrl, null);
+
+    expect(wanted.length).toBe(7);
+  });
 });
 
 function findId(root: SectorMetadata, path: string): number {

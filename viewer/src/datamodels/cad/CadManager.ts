@@ -15,13 +15,16 @@ import { trackError } from '../../utilities/metrics';
 
 import { CadMaterialManager } from './CadMaterialManager';
 import { RenderMode } from './rendering/RenderMode';
-import { LoadingState } from '../../utilities';
+import { LoadingState, toThreeJsBox3 } from '../../utilities';
 import { CadModelSectorBudget } from './CadModelSectorBudget';
 import { CadModelSectorLoadStatistics } from './CadModelSectorLoadStatistics';
 import { LevelOfDetail } from './sector/LevelOfDetail';
 
 import { Subscription, Observable } from 'rxjs';
 import { GeometryFilter } from '../..';
+import { SectorMetadata } from './sector/types';
+import { traverseDepthFirst } from '../../utilities/objectTraversal';
+import { SectorSceneImpl } from './sector/SectorScene';
 
 export class CadManager<TModelIdentifier> {
   private readonly _materialManager: CadMaterialManager;
@@ -164,7 +167,7 @@ export class CadManager<TModelIdentifier> {
     }
     // Apply clipping box
     const geometryClipBox = determineGeometryClipBox(geometryFilter, metadata);
-    const clippedMetadata: CadModelMetadata = { ...metadata, geometryClipBox };
+    const clippedMetadata = createClippedModel(metadata, geometryClipBox);
 
     const model = this._cadModelFactory.createModel(clippedMetadata, nodeAppearanceProvider);
     model.addEventListener('update', this._markNeedsRedrawBound);
@@ -205,4 +208,50 @@ function determineGeometryClipBox(
   const bbox = geometryFilter.boundingBox.clone();
   bbox.applyMatrix4(cadModel.inverseModelMatrix);
   return bbox;
+}
+
+function createClippedModel(cadModel: CadModelMetadata, geometryClipBox: THREE.Box3 | null) {
+  if (geometryClipBox === null) {
+    return cadModel;
+  }
+
+  const bounds = new THREE.Box3();
+  const root = cadModel.scene.root;
+  clipSector(root);
+  const sectorMap = new Map<number, SectorMetadata>();
+  traverseDepthFirst(root, x => {
+    sectorMap.set(x.id, x);
+    return true;
+  });
+
+  const clippedScene = new SectorSceneImpl(
+    cadModel.scene.version,
+    cadModel.scene.maxTreeIndex,
+    cadModel.scene.unit,
+    root,
+    sectorMap
+  );
+
+  const clippedCadModel = { ...cadModel, scene: clippedScene, geometryClipBox };
+  return clippedCadModel;
+
+  function clipSector(sector: SectorMetadata) {
+    toThreeJsBox3(bounds, sector.bounds);
+    if (bounds.intersectsBox(geometryClipBox!)) {
+      let i = 0;
+      while (i < sector.children.length) {
+        if (!clipSector(sector.children[i])) {
+          // Remove sector
+          sector.children.splice(i, 1);
+        } else {
+          i++;
+        }
+      }
+      // Keep
+      return true;
+    } else {
+      // Discard
+      return false;
+    }
+  }
 }

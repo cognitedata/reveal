@@ -55,6 +55,7 @@ export class TakenSectorTree {
 
   toWantedSectors(modelBlobUrl: string, geometryClipBox: THREE.Box3 | null): PrioritizedWantedSector[] {
     return this.sectors
+      .filter(x => x !== undefined)
       .map(sector => {
         const wanted: PrioritizedWantedSector = {
           levelOfDetail: sector.lod,
