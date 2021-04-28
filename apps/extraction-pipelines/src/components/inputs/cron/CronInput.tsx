@@ -1,15 +1,17 @@
 import React, { FunctionComponent } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { ErrorMessage } from '@hookform/error-message';
 import styled from 'styled-components';
 import { parseCron } from 'utils/cronUtils';
 import { Link } from 'components/buttons/Link';
 import { InputController } from 'components/inputs/InputController';
+import { Hint, StyledLabel } from 'styles/StyledForm';
+import ValidationError from 'components/form/ValidationError';
 
 const ReadBack = styled.i`
   margin-bottom: 1rem;
 `;
-const Hint = styled.span`
+const StyledHint = styled(Hint)`
+  margin-bottom: 0;
   p {
     margin-bottom: 0;
   }
@@ -35,25 +37,15 @@ const CronInput: FunctionComponent<CronPageProps> = () => {
   };
   return (
     <>
-      <label htmlFor="cron-input" className="input-label">
-        {CRON_LABEL}
-      </label>
-      <Hint id="cron-hint" className="input-hint">
+      <StyledLabel htmlFor="cron-input">{CRON_LABEL}</StyledLabel>
+      <StyledHint id="cron-hint">
         <p>{CRON_TIP}</p>
         <Link
           href="https://crontab.guru/"
           linkText="How do I write a cron expression?"
         />
-      </Hint>
-      <ErrorMessage
-        errors={errors}
-        name="cron"
-        render={({ message }) => (
-          <span id="cron-error" className="error-message">
-            {message}
-          </span>
-        )}
-      />
+      </StyledHint>
+      <ValidationError id="cron-error" errors={errors} name="cron" />
       <InputController
         name="cron"
         control={control}

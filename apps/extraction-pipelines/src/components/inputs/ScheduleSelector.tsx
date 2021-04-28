@@ -34,6 +34,7 @@ const options = [
 
 interface SelectorProps extends ScheduleValue {
   inputId?: string;
+  autoFocus?: boolean;
   onSelectChange: (e: OptionTypeBase) => void;
   handleOnBlur?: (e: React.FocusEvent) => void;
 }
@@ -43,6 +44,7 @@ export const ScheduleSelector: FunctionComponent<SelectorProps> = ({
   schedule,
   onSelectChange,
   handleOnBlur,
+  autoFocus = false,
 }: PropsWithChildren<SelectorProps>) => {
   const selectedValue = (scheduleValue?: string) => {
     return options.filter(({ value }) => {
@@ -63,7 +65,7 @@ export const ScheduleSelector: FunctionComponent<SelectorProps> = ({
       onChange={handleChange}
       onBlur={handleOnBlur}
       menuPosition="fixed"
-      autoFocus
+      autoFocus={autoFocus}
     />
   );
 };

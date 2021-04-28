@@ -38,12 +38,25 @@ export const CronWrapper = styled(DivFlex)`
   padding: 1rem 0;
   border-top: 0.0625rem solid ${Colors['greyscale-grey3'].hex()};
   border-bottom: 0.0625rem solid ${Colors['greyscale-grey3'].hex()};
-`;
-
-const EditWrapper = styled(DivFlex)`
-  .cogs-select {
-    flex: 1;
+  label {
+    margin-left: 0;
   }
+`;
+const ScheduleWrapper = styled(DivFlex)`
+  display: grid;
+  grid-template-areas: 'select btns' 'cron cron';
+  grid-template-columns: 1fr auto;
+  .cogs-select {
+    grid-area: select;
+  }
+  #cron-expression {
+    grid-area: cron;
+  }
+`;
+const ButtonWrapper = styled.div`
+  grid-area: btns;
+  display: flex;
+  justify-content: flex-end;
 `;
 
 interface ScheduleProps {
@@ -122,12 +135,11 @@ export const Schedule: FunctionComponent<ScheduleProps> = ({
       <ColumnForm onSubmit={handleSubmit(onSave)}>
         <StyledLabel htmlFor="schedule-selector">{label}</StyledLabel>
         {isEdit ? (
-          <EditWrapper>
+          <ScheduleWrapper>
             <ScheduleSelector
               inputId="schedule-selector"
               schedule={scheduleValue}
               onSelectChange={selectChanged}
-              handleOnBlur={handleSubmit(onSave)}
             />
             {showCron && (
               <CronWrapper
@@ -139,24 +151,26 @@ export const Schedule: FunctionComponent<ScheduleProps> = ({
                 <CronInput />
               </CronWrapper>
             )}
-            <MessageDialog
-              visible={errorVisible}
-              handleClickError={handleClickError}
-              title={SERVER_ERROR_TITLE}
-              contentText={SERVER_ERROR_CONTENT}
-            >
-              <SaveButton
-                htmlType="submit"
+            <ButtonWrapper>
+              <MessageDialog
+                visible={errorVisible}
+                handleClickError={handleClickError}
+                title={SERVER_ERROR_TITLE}
+                contentText={SERVER_ERROR_CONTENT}
+              >
+                <SaveButton
+                  htmlType="submit"
+                  aria-controls={name}
+                  data-testid={`${ContactBtnTestIds.SAVE_BTN}${name}`}
+                />
+              </MessageDialog>
+              <CloseButton
+                onClick={onCancel}
                 aria-controls={name}
-                data-testid={`${ContactBtnTestIds.SAVE_BTN}${name}`}
+                data-testid={`${ContactBtnTestIds.CANCEL_BTN}${name}`}
               />
-            </MessageDialog>
-            <CloseButton
-              onClick={onCancel}
-              aria-controls={name}
-              data-testid={`${ContactBtnTestIds.CANCEL_BTN}${name}`}
-            />
-          </EditWrapper>
+            </ButtonWrapper>
+          </ScheduleWrapper>
         ) : (
           <StyledEdit
             onClick={onEditClick}
@@ -170,7 +184,6 @@ export const Schedule: FunctionComponent<ScheduleProps> = ({
               id="display-schedule"
               schedule={integration.schedule}
             />
-            <span />
           </StyledEdit>
         )}
       </ColumnForm>
