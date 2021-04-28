@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useParams, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import { Tooltip, Graphic, Title, Badge } from '@cognite/cogs.js';
+import { Tooltip, Graphic, Title } from '@cognite/cogs.js';
+import { doSearch } from 'modules/search';
 import { trackUsage, PNID_METRICS } from 'utils/Metrics';
-import { dateSorter, stringCompare } from 'modules/contextualization/utils';
+import { stringCompare, dateSorter } from 'modules/contextualization/utils';
 import { PageTitle, Table, Loader, Flex, IconButton } from 'components/Common';
 import { createNewWorkflow } from 'modules/workflows';
 import { diagramSelection } from 'routes/paths';
@@ -14,7 +15,12 @@ import FilterBar from './FilterBar';
 import { message, Modal } from 'antd';
 import { deleteAnnotationsForFile } from 'utils/AnnotationUtils';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
-import { PERMISSIONS_STRINGS, WARNINGS_STRINGS } from 'stringConstants';
+import {
+  PERMISSIONS_STRINGS,
+  WARNINGS_STRINGS,
+  TOOLTIP_STRINGS,
+} from 'stringConstants';
+import DetectedTags from 'components/DetectedTags';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -31,88 +37,74 @@ const getColumns = (
   onClearAnnoations: (file: FileInfo) => void,
   writeAccess: boolean
 ) => [
-    {
-      title: 'Preview',
-      dataIndex: '',
-      key: 'preview',
-      width: 80,
-      align: 'center' as 'center',
-      render: () => (
-        <Flex row align justify>
-          <Tooltip content="File previews are temporarily unavailable.">
-            <Graphic type="Image" />
-          </Tooltip>
-        </Flex>
-      ),
+  {
+    title: 'Preview',
+    dataIndex: '',
+    key: 'preview',
+    width: 80,
+    align: 'center' as 'center',
+    render: () => (
+      <Flex row align justify>
+        <Tooltip content="File previews are temporarily unavailable.">
+          <Graphic type="Image" />
+        </Tooltip>
+      </Flex>
+    ),
+  },
+  {
+    title: 'Name',
+    dataIndex: 'name',
+    key: 'name',
+    render: (name: string) => <div>{name}</div>,
+    sorter: (a: any, b: any) => stringCompare(a?.name, b?.name),
+  },
+  {
+    title: 'Detected tags',
+    key: 'tags',
+    render: (row: FileInfo) => <DetectedTags fileId={row.id} />,
+  },
+  {
+    title: 'Last modified',
+    dataIndex: 'lastUpdatedTime',
+    key: 'lastUpdatedTime',
+    render: (date: string) => {
+      return <div>{new Date(date).toLocaleDateString()}</div>;
     },
-    {
-      title: 'Name',
-      dataIndex: 'name',
-      key: 'name',
-      render: (name: string) => <div>{name}</div>,
-      sorter: (a: any, b: any) => stringCompare(a?.name, b?.name),
-    },
-    {
-      title: 'Detected tags',
-      dataIndex: 'assetIds',
-      key: 'assetIds',
-      render: (assetIds: number[]) => (
-        <div>
-          <Badge text={String(assetIds?.length ?? 0)} /> assets
-        </div>
-      ),
-      sorter: (a: any, b: any) =>
-        (a?.assetIds?.length ?? 0) - (b?.assetIds?.length ?? 0),
-    },
-    {
-      title: 'Source',
-      dataIndex: 'source',
-      key: 'source',
-      render: (source: string) => <div>{source}</div>,
-      sorter: (a: any, b: any) => stringCompare(a?.source, b?.source),
-    },
-    {
-      title: 'Date of contextualization',
-      dataIndex: 'lastUpdatedTime',
-      key: 'lastUpdatedTime',
-      render: (date: string) => {
-        return <div>{new Date(date).toLocaleDateString()}</div>;
-      },
-      sorter: dateSorter((x: any) => x?.lastUpdatedTime!),
-      defaultSortOrder: 'descend',
-    },
-    {
-      title: 'Settings',
-      dataIndex: '',
-      key: 'settings',
-      width: '100px',
-      align: 'center' as 'center',
-      render: (row: FileInfo) => (
-        <Flex row align style={{ justifyContent: 'space-between' }}>
-          <Tooltip content="Editing files is currently disabled.">
-            <IconButton $square icon="Edit" onClick={onFileEdit} disabled />
-          </Tooltip>
-          <Tooltip content="Viewing files is currently disabled.">
-            <IconButton $square icon="Eye" onClick={onFileView} disabled />
-          </Tooltip>
-          <Tooltip
-            content={
-              writeAccess
-                ? 'Delete all annotations on this file.'
-                : PERMISSIONS_STRINGS.FILES_WRITE_PERMISSIONS
-            }
-          >
-            <IconButton
-              $square
-              icon="Trash"
-              onClick={() => onClearAnnoations(row)}
-              disabled={!writeAccess}
-            />
-          </Tooltip>
-        </Flex>
-      ),
-    },
-  ];
+    sorter: dateSorter((x: any) => x?.lastUpdatedTime!),
+    defaultSortOrder: 'descend',
+  },
+  {
+    title: 'Settings',
+    dataIndex: '',
+    key: 'settings',
+    width: '100px',
+    align: 'center' as 'center',
+    render: (row: FileInfo) => (
+      <Flex row align style={{ justifyContent: 'space-between' }}>
+        <Tooltip content={TOOLTIP_STRINGS.EDIT_FILE_TOOLTIP}>
+          <IconButton $square icon="Edit" onClick={onFileEdit} disabled />
+        </Tooltip>
+        <Tooltip content={TOOLTIP_STRINGS.VIEW_FILE_TOOLTIP}>
+          <IconButton $square icon="Eye" onClick={onFileView} disabled />
+        </Tooltip>
+        <Tooltip
+          content={
+            writeAccess
+              ? TOOLTIP_STRINGS.CLEAR_TAGS_TOOLTIP
+              : PERMISSIONS_STRINGS.FILES_WRITE_PERMISSIONS
+          }
+        >
+          <IconButton
+            $square
+            icon="Trash"
+            onClick={() => onClearAnnoations(row)}
+            disabled={!writeAccess}
+          />
+        </Tooltip>
+      </Flex>
+    ),
+  },
+];
 
 export default function LandingPage() {
   const [query, setQuery] = useState<string>('');

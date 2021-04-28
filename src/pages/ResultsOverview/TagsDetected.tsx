@@ -1,8 +1,7 @@
 import React from 'react';
 import { Spin } from 'antd';
-import { Flex } from 'components/Common';
+import { Flex, CountTag } from 'components/Common';
 import { useParsingJob } from 'modules/contextualization/pnidParsing/hooks';
-import CountTag from 'components/Common/molecules/CountTag';
 import { Body } from '@cognite/cogs.js';
 
 type Props = { workflowId: number; fileId: number };

@@ -14,7 +14,12 @@ const iconForType = {
   assets: 'ResourceAssets',
   files: 'ResourceDocuments',
 };
-const CountTag = ({ value, draft, type, tooltipContent }: CountTagProps) => {
+export const CountTag = ({
+  value,
+  draft,
+  type,
+  tooltipContent,
+}: CountTagProps) => {
   const Tag = () => (
     <StyledTag draft={draft}>
       <Icon type={iconForType[type] as AllIconTypes} />{' '}
@@ -30,8 +35,6 @@ const CountTag = ({ value, draft, type, tooltipContent }: CountTagProps) => {
     );
   return <Tag />;
 };
-
-export default CountTag;
 
 const StyledTag = styled.span<{ draft: boolean }>`
   display: flex;

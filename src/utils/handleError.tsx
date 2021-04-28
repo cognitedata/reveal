@@ -75,7 +75,6 @@ export const handleError = (props: ErrorNotificationProps): void => {
   notification.error({
     message: errorTitle,
     description: errorDescription,
-    getContainer,
   });
 };
 
