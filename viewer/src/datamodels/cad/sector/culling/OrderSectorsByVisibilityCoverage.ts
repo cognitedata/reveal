@@ -352,11 +352,7 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
 
   private addModel(model: CadModelMetadata) {
     const sectors = model.scene.getAllSectors();
-    const [mesh, attributesBuffer, attributesValues] = this.createSectorTreeGeometry(
-      this.sectorIdOffset,
-      sectors,
-      model.geometryClipBox
-    );
+    const [mesh, attributesBuffer, attributesValues] = this.createSectorTreeGeometry(this.sectorIdOffset, sectors);
 
     const group = new THREE.Group();
     group.matrixAutoUpdate = false;
@@ -436,39 +432,22 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
 
   private createSectorTreeGeometry(
     sectorIdOffset: number,
-    sectors: SectorMetadata[],
-    geometryClipBox: THREE.Box3 | null
+    sectors: SectorMetadata[]
   ): [THREE.Mesh, THREE.InstancedInterleavedBuffer, Float32Array] {
     const bounds = new THREE.Box3();
     const translation = new THREE.Vector3();
     const scale = new THREE.Vector3();
 
-    function boxToString(box: THREE.Box3): string {
-      return `<[${box.min.x.toFixed(1)},${box.max.x.toFixed(1)}], [${box.min.y.toFixed(1)},${box.max.y.toFixed(
-        1
-      )}], [${box.min.z.toFixed(1)},${box.max.z.toFixed(1)}]>`;
-    }
-
     const sectorCount = sectors.length;
     const instanceValues = new Float32Array(5 * sectorCount); // sectorId, coverageFactor[3], visibility
     const boxGeometry = new THREE.BoxBufferGeometry();
     const mesh = new THREE.InstancedMesh(boxGeometry, this.coverageMaterial, sectorCount);
-    console.log('Sectors:', sectors.length, sectorCount, geometryClipBox);
 
     const addSector = (sectorBounds: Box3, sectorIndex: number, sectorId: number, coverage: THREE.Vector3) => {
       toThreeJsBox3(bounds, sectorBounds);
-      if (geometryClipBox !== null) {
-        bounds.intersect(geometryClipBox);
-        bounds.getCenter(translation);
-        bounds.getSize(scale);
-        // Shrink a bit to ensure box is not clipped away
-        scale.multiplyScalar(0.95);
-      } else {
-        bounds.getCenter(translation);
-        bounds.getSize(scale);
-      }
+      bounds.getCenter(translation);
+      bounds.getSize(scale);
 
-      // coverage = coverage.max(new THREE.Vector3(0.5, 0.5, 0.5));
       const instanceMatrix = new THREE.Matrix4().compose(translation, identityRotation, scale);
       mesh.setMatrixAt(sectorIndex, instanceMatrix);
       instanceValues[5 * sectorIndex + 0] = sectorIdOffset + sectorId;
