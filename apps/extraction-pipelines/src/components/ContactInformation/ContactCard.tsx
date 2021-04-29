@@ -11,6 +11,7 @@ import { NotificationIcon } from 'components/icons/NotificationIcon';
 const StyledContactCard = styled.section`
   display: flex;
   align-items: center;
+  margin-left: 1rem;
   margin-bottom: 1.9375rem;
   span {
     display: flex;

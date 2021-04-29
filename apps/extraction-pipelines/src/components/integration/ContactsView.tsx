@@ -9,9 +9,11 @@ import styled from 'styled-components';
 import { Button, Colors, Title } from '@cognite/cogs.js';
 import { isOwner, partition } from 'utils/integrationUtils';
 import { User } from 'model/User';
-import { EditButton } from 'styles/StyledForm';
-import { BluePlus, BlueText } from 'styles/StyledButton';
+import { BluePlus, BlueText, StyledEdit } from 'styles/StyledButton';
 
+const ContactStyledEdit = styled(StyledEdit)`
+  font-weight: bold;
+`;
 const StyledDetail = styled(Title)`
   border-bottom: 1px solid ${Colors['greyscale-grey2'].hex()};
   padding-bottom: 0.3rem;
@@ -27,7 +29,7 @@ export const ContactsView: FunctionComponent<ContactsViewProps> = () => {
   const { project } = useAppEnv();
   const { integration: selected } = useSelectedIntegration();
   const { data: integration } = useIntegrationById(selected?.id);
-  const [, setOpenModal] = useState(false);
+  const [, setShowModal] = useState(false);
   if (!integration || !project) {
     return <></>;
   }
@@ -37,15 +39,15 @@ export const ContactsView: FunctionComponent<ContactsViewProps> = () => {
   );
 
   const openEdit = () => {
-    setOpenModal(true);
+    setShowModal(true);
   };
 
   return (
     <>
       <StyledDetail level={4}>
-        <EditButton onClick={openEdit} width="100%">
+        <ContactStyledEdit onClick={openEdit} $full>
           {DetailFieldNames.OWNER}
-        </EditButton>
+        </ContactStyledEdit>
       </StyledDetail>
 
       {owner[0] ? (
@@ -53,14 +55,14 @@ export const ContactsView: FunctionComponent<ContactsViewProps> = () => {
       ) : (
         <StyledButton type="ghost" onClick={openEdit} width="fit-content">
           <BluePlus />
-          <BlueText>add {DetailFieldNames.OWNER}</BlueText>
+          <BlueText>add {DetailFieldNames.OWNER.toLowerCase()}</BlueText>
         </StyledButton>
       )}
 
       <StyledDetail level={4}>
-        <EditButton onClick={openEdit} width="100%">
+        <ContactStyledEdit onClick={openEdit} $full>
           {TableHeadings.CONTACTS}
-        </EditButton>
+        </ContactStyledEdit>
       </StyledDetail>
 
       {other && other.length > 0 ? (
@@ -70,7 +72,7 @@ export const ContactsView: FunctionComponent<ContactsViewProps> = () => {
       ) : (
         <StyledButton type="ghost" onClick={openEdit} width="fit-content">
           <BluePlus />
-          <BlueText>add {TableHeadings.CONTACTS}</BlueText>
+          <BlueText>add {TableHeadings.CONTACTS.toLowerCase()}</BlueText>
         </StyledButton>
       )}
     </>

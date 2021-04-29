@@ -45,8 +45,13 @@ describe('IntegrationView', () => {
     });
     await waitFor(() => {
       screen.getByText(DOCUMENTATION_HEADING);
+      screen.getByText(new RegExp(TableHeadings.CONTACTS, 'i'));
     });
 
+    mockIntegration.contacts.forEach((contact) => {
+      expect(screen.getByText(contact.name)).toBeInTheDocument();
+      expect(screen.getByText(contact.email)).toBeInTheDocument();
+    });
     expect(
       screen.getByText(new RegExp(DetailFieldNames.EXTERNAL_ID, 'i'))
     ).toBeInTheDocument();

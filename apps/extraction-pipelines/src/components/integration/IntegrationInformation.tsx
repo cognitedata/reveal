@@ -11,6 +11,7 @@ import { Colors } from '@cognite/cogs.js';
 import { metaUpdate, rootUpdate } from 'hooks/details/useDetailsUpdate';
 import { useAppEnv } from 'hooks/useAppEnv';
 import { FieldVerticalDisplay } from 'components/integration/fields/FieldVerticalDisplay';
+import { ContactsView } from 'components/integration/ContactsView';
 
 const Wrapper = styled.div`
   padding: 2rem;
@@ -28,6 +29,7 @@ export const IntegrationInformation: FunctionComponent<IntegrationInformationPro
 
   return (
     <Wrapper>
+      <ContactsView />
       <InlineEdit
         name="externalId"
         label={DetailFieldNames.EXTERNAL_ID}
