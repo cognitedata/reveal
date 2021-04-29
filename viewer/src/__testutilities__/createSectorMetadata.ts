@@ -46,9 +46,6 @@ export function createSectorMetadata(tree: SectorTree, depth: number = 0, path: 
     },
     children
   };
-  children.forEach(x => {
-    x.parent = root;
-  });
   return root;
 }
 
