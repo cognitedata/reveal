@@ -1287,12 +1287,11 @@
   dependencies:
     query-string "^6.13.7"
 
-"@cognite/cogs.js@^2.7.2":
-  version "2.20.0"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-2.20.0.tgz#734123e870d4ca1a6bd599bb66bce1c86b21f1bc"
-  integrity sha512-WHIft3J9Mc+0LTO95y3ByvSLJhe0uhaKTITDRKzZeXNziq2UuGknMqHcSdz3dqZ+kYaTqO90IGLHLJBlSaFv8A==
+"@cognite/cogs.js@3.11.3":
+  version "3.11.3"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.11.3.tgz#f49aae907819f66f5c09b83559f96a34dc77e9d3"
+  integrity sha512-omjetBXTwYgINEzO21Twy3szFQFvOAmN5C14eXkTCrL9bOscVpLi0MnV/MHRXNOCB0u+/dFJiJwlPtooSdlNiQ==
   dependencies:
-    "@testing-library/react-hooks" "^5.0.3"
     "@tippyjs/react" "4.2.3"
     "@types/react-date-range" "^1.1.2"
     color "^3.1.2"
@@ -1309,10 +1308,10 @@
     react-toastify "^6.0.9"
     tippy.js "6.2.0"
 
-"@cognite/cogs.js@^3.10.1":
-  version "3.10.1"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.10.1.tgz#d4f3fada2b67a5827528867c9f714560308495c5"
-  integrity sha512-QIPhWemaoDWotKtEivPvBgVpb+ModJ2sPvG9nDHaFmJ9z3lki3qHOZpquQM2qjMFX/hXh0x+W8EtTLyU6NX15Q==
+"@cognite/cogs.js@^2.7.2":
+  version "2.20.0"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-2.20.0.tgz#734123e870d4ca1a6bd599bb66bce1c86b21f1bc"
+  integrity sha512-WHIft3J9Mc+0LTO95y3ByvSLJhe0uhaKTITDRKzZeXNziq2UuGknMqHcSdz3dqZ+kYaTqO90IGLHLJBlSaFv8A==
   dependencies:
     "@testing-library/react-hooks" "^5.0.3"
     "@tippyjs/react" "4.2.3"
