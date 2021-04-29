@@ -93,7 +93,7 @@ describe('OrderSectorsByVisibilityCoverage', () => {
 
   test('two models, rendered result returns value at offset', () => {
     // Arrange
-    const scene2 = createStubScene([0, [], Box3.fromBounds(-1, -1, -1, 1, 1, 1)]);
+    const scene2 = createStubScene([1, [], Box3.fromBounds(-1, -1, -1, 1, 1, 1)]);
     const model1 = createStubModel('model1', singleSectorScene, identityMatrix);
     const model2 = createStubModel('model2', scene2, identityMatrix);
     const util = new GpuOrderSectorsByVisibilityCoverage({ renderer, occludingGeometryProvider });
@@ -117,7 +117,7 @@ describe('OrderSectorsByVisibilityCoverage', () => {
 
     // Assert - ensure output is first sector in second model
     expect(result.length).toBe(1);
-    expect(result[0].sectorId).toBe(0);
+    expect(result[0].sectorId).toBe(1);
     expect(result[0].priority).toBe(1.0);
     expect(result[0].model).toBe(model2);
   });
