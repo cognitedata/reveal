@@ -27,6 +27,8 @@ export function ActionRenderer({ rowData: { menu, id } }: CellRenderer) {
     }
   };
 
+  const showMenu = !!menu.showMetadataPreview;
+
   // todo: bind actions
   const MenuContent = (
     <Menu
@@ -63,13 +65,15 @@ export function ActionRenderer({ rowData: { menu, id } }: CellRenderer) {
       >
         Review
       </Button>
-      <Dropdown content={MenuContent}>
-        <Button
-          type="secondary"
-          icon="MoreOverflowEllipsisHorizontal"
-          aria-label="dropdown button"
-        />
-      </Dropdown>
+      {showMenu && (
+        <Dropdown content={MenuContent}>
+          <Button
+            type="secondary"
+            icon="MoreOverflowEllipsisHorizontal"
+            aria-label="dropdown button"
+          />
+        </Dropdown>
+      )}
     </Action>
   );
 }

@@ -11,7 +11,6 @@ import {
   resetEditState,
   resetPreview,
 } from 'src/modules/Preview/previewSlice';
-import { getLink, workflowRoutes } from 'src/modules/Workflow/workflowRoutes';
 import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
 import { selectFileById } from 'src/modules/Upload/uploadedFilesSlice';
 import ImageReview from 'src/modules/Preview/Containers/ImageReview';
@@ -90,12 +89,12 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
 
   if (!file) {
     // navigate to upload step if file is not available(if the user uses a direct link)
-    history.push(getLink(workflowRoutes.upload));
+    history.goBack();
     return null;
   }
 
   const onBackButtonClick = () => {
-    history.push(getLink(workflowRoutes.process));
+    history.goBack();
   };
 
   const handleFileDelete = () => {

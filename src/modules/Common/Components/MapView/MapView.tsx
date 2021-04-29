@@ -20,7 +20,7 @@ const Mapbox = ReactMapboxGl({
   attributionControl: false,
 });
 
-export const MapView = (props: { data: TableDataItem[] }) => {
+export const MapView = (props: { data?: TableDataItem[] }) => {
   const [selectedFile, setSelectedFile] = useState<FileInfo>();
   const [center, setCenter] = useState<[number, number]>();
   const [zoom] = useState<[number] | undefined>([2]);
@@ -104,7 +104,7 @@ export const MapView = (props: { data: TableDataItem[] }) => {
             }}
           >
             <MapPopup
-              item={props.data.find(
+              item={props?.data?.find(
                 (element) => element.id === selectedFile.id
               )}
             />

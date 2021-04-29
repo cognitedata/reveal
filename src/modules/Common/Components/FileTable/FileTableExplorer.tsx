@@ -4,7 +4,7 @@ import { TableDataItem } from 'src/modules/Common/Types';
 import { StringRenderer } from 'src/modules/Common/Containers/FileTableRenderers/StringRenderer';
 import { SelectableTable } from 'src/modules/Common/Components/SelectableTable/SelectableTable';
 import { NameRenderer } from 'src/modules/Common/Containers/FileTableRenderers/NameRenderer';
-import { AnnotationRenderer } from 'src/modules/Common/Containers/FileTableRenderers/AnnotationRenderer';
+import { ActionRenderer } from 'src/modules/Common/Containers/FileTableRenderers/ActionRenderer';
 import { FileTableProps } from './types';
 
 export function FileTableExplorer(props: FileTableProps) {
@@ -23,18 +23,18 @@ export function FileTableExplorer(props: FileTableProps) {
       width: 100,
     },
     {
-      key: 'annotations',
-      title: 'Annotations',
-      width: 0,
-      flexGrow: 1,
+      key: 'action',
+      title: 'File Actions',
+      dataKey: 'menu',
       align: Column.Alignment.CENTER,
+      width: 200,
     },
   ];
 
   const rendererMap = {
     name: NameRenderer,
     mimeType: StringRenderer,
-    annotations: AnnotationRenderer,
+    action: ActionRenderer,
   };
 
   return (
