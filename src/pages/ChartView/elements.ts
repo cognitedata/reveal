@@ -21,6 +21,7 @@ export const Header = styled.header`
     display: flex;
     justify-self: flex-start;
     padding: 0 24px;
+    align-items: center;
   }
 `;
 
