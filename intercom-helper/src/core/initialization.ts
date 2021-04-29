@@ -1,7 +1,6 @@
 export default (appId: string): Promise<void> => {
   return new Promise((resolve) => {
     const intercom = window.Intercom;
-    console.log('init start');
     if (typeof intercom === 'function') {
       intercom('reattach_activator');
       intercom('update', window.intercomSettings);
@@ -24,7 +23,6 @@ export default (appId: string): Promise<void> => {
         const element = doc.createElement('script');
         element.type = 'text/javascript';
         element.async = true;
-        console.log('reach create element');
         element.onload = () => resolve();
         element.src = `https://widget.intercom.io/widget/${appId}`;
         const scriptEle = doc.getElementsByTagName('script')[0];
