@@ -65,11 +65,11 @@ export default function WorkflowContainer(props: WorkflowContainerProps) {
                   to={getLink(workflowRoutes.upload)}
                   style={{ color: 'inherit' }}
                 >
-                  Upload
+                  Select files
                 </Link>
               }
             />
-            <Step title="Process & Review" />
+            <Step title="Process, detect and review annotations" />
           </Steps>
 
           <StepContent>
@@ -135,7 +135,7 @@ const DrawerContainer = styled.div`
 
 const Steps = styled(AntdSteps)`
   padding-bottom: 16px;
-  max-width: 500px;
+  max-width: 600px;
   flex-shrink: 0;
 `;
 
