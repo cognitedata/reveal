@@ -3,8 +3,7 @@
  */
 import styled, { css } from 'styled-components';
 import { Colors } from '@cognite/cogs.js';
-
-const lightGrey = Colors['greyscale-grey3'].hex();
+import { lightGrey } from 'src/utils/Colors';
 
 const TableWrapperInner = styled.div`
   .BaseTable {

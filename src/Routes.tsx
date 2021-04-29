@@ -48,6 +48,15 @@ const routes = [
         () => import('src/modules/Workflow/WorkflowContainer')
       ),
   },
+  {
+    exact: true,
+    path: '/:tenant/vision/explore',
+    component: (props: RouteComponentProps) =>
+      LazyWrapper(
+        props,
+        () => import('src/modules/Explorer/Containers/Explorer')
+      ),
+  },
 ];
 
 export function Routes() {
