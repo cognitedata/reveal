@@ -12,5 +12,6 @@ export type SidecarConfig = {
   disableTranslations?: boolean;
   disableLegacyLogin?: boolean;
   helpLink?: string;
+  intercom?: string;
   locizeProjectId?: string;
 };
