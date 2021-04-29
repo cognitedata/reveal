@@ -61,13 +61,14 @@ function clipSector(sector: SectorMetadata, geometryClipBox: THREE.Box3): Sector
       }
     }
     // Determine how much of the sector is kept
-    const keptRatio = determineVolume(bounds) / determineVolume(originalBounds);
+    const keptVolumeRatio = determineVolume(bounds) / determineVolume(originalBounds);
+    const keptDrawCallsRatio = Math.min(1.0, 1 - 1.0 / (1 + 10 * keptVolumeRatio));
 
     // Keep
     const clippedSector: SectorMetadata = {
       ...sector,
       children: intersectingChildren,
-      estimatedDrawCallCount: Math.ceil(keptRatio * sector.estimatedDrawCallCount),
+      estimatedDrawCallCount: Math.ceil(keptDrawCallsRatio * sector.estimatedDrawCallCount),
       bounds: fromThreeJsBox3(bounds)
     };
     return clippedSector;
