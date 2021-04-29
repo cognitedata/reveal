@@ -15,7 +15,11 @@ type UseChatResponse = UseChatObject;
 export default () => {
   const chatInitialized = !!window.Intercom;
   const dispatchShowChat = () => {
+    console.log(window.Intercom);
+
     if (window.Intercom) {
+      console.log('show');
+
       window.Intercom('show');
     }
   };
