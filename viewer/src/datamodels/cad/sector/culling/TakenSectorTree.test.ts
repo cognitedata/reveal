@@ -109,6 +109,16 @@ describe('TakenSectorTree', () => {
 
     expect(wanted.length).toBe(7);
   });
+
+  test('construct sparse tree, doesnt throw', () => {
+    const root = generateSectorTree(3, 2);
+    traverseDepthFirst(root, x => {
+      const mutable: Mutable<SectorMetadata> = x;
+      mutable.id = mutable.id * mutable.id;
+      return true;
+    });
+    expect(() => new TakenSectorTree(root, determineSectorCost)).not.toThrow();
+  });
 });
 
 function findId(root: SectorMetadata, path: string): number {

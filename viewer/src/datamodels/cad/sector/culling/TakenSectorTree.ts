@@ -46,9 +46,11 @@ export class TakenSectorTree {
     // Assign parents
     for (let i = 0; i < this.sectors.length; ++i) {
       const sectorContainer = this.sectors[i];
-      const childrenIndexes = sectorContainer.sector.children.map(x => x.id);
-      for (const childIndex of childrenIndexes) {
-        this.sectors[childIndex].parentIndex = i;
+      if (sectorContainer !== undefined) {
+        const childrenIndexes = sectorContainer.sector.children.map(x => x.id);
+        for (const childIndex of childrenIndexes) {
+          this.sectors[childIndex].parentIndex = i;
+        }
       }
     }
 
