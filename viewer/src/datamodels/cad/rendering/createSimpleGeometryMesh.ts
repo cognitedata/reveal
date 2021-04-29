@@ -75,6 +75,7 @@ export function createSimpleGeometryMesh(
   geometry.setAttribute('matrix3', matrix3);
 
   const obj = new THREE.Mesh(geometry, materials.simple);
+  obj.name = 'Low detail geometry';
   obj.onAfterRender = () => {
     disposeAttributeArrayOnUpload.bind(interleavedBuffer32)();
     obj.onAfterRender = () => {};
