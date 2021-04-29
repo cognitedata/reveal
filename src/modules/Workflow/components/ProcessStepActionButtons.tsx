@@ -34,12 +34,13 @@ export const ProcessStepActionButtons = () => {
   };
   const dispatch = useDispatch();
   const onNextClicked = () => {
-    pushMetric('Vision.Session.Finished');
     dispatch(SaveAvailableAnnotations());
+    pushMetric('Vision.Session.Finished');
     history.push(createLink('/explore/search/file')); // data-exploration app
   };
 
   const onUploadMoreClicked = () => {
+    dispatch(SaveAvailableAnnotations());
     pushMetric('Vision.Session.Finished');
     history.push(getLink(workflowRoutes.upload));
   };
