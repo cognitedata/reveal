@@ -11,6 +11,7 @@ import { Colors } from '@cognite/cogs.js';
 import { metaUpdate, rootUpdate } from 'hooks/details/useDetailsUpdate';
 import { useAppEnv } from 'hooks/useAppEnv';
 import { FieldVerticalDisplay } from 'components/integration/fields/FieldVerticalDisplay';
+import EditRawTable from 'components/inputs/rawSelector/EditRawTable';
 import { ContactsView } from 'components/integration/ContactsView';
 
 const Wrapper = styled.div`
@@ -48,6 +49,9 @@ export const IntegrationInformation: FunctionComponent<IntegrationInformationPro
         fieldName="id"
         fieldValue={integration?.id}
       />
+
+      <EditRawTable />
+
       <InlineEdit
         name="sourceSystem"
         label={DetailFieldNames.SOURCE}

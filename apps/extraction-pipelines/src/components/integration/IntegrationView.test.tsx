@@ -16,6 +16,7 @@ import { IntegrationView } from 'components/integration/IntegrationView';
 import { trackUsage } from 'utils/Metrics';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import { render } from 'utils/test';
+import { RAW_DB } from 'components/inputs/rawSelector/EditRawTable';
 
 describe('IntegrationView', () => {
   const mockIntegration = getMockResponse()[0];
@@ -62,6 +63,13 @@ describe('IntegrationView', () => {
     ).toBeInTheDocument();
     expect(screen.getByText(mockIntegration.id)).toBeInTheDocument();
 
+    expect(screen.getByText(new RegExp(RAW_DB, 'i'))).toBeInTheDocument();
+    // eslint-disable-next-line no-unused-expressions
+    mockIntegration.rawTables?.forEach(({ dbName, tableName }) => {
+      expect(screen.getByText(dbName)).toBeInTheDocument();
+      expect(screen.getByText(tableName)).toBeInTheDocument();
+    });
+
     expect(
       screen.getByText(new RegExp(DetailFieldNames.CREATED_BY, 'i'))
     ).toBeInTheDocument();
@@ -99,5 +107,6 @@ describe('IntegrationView', () => {
     expect(screen.getByText(mock.externalId)).toBeInTheDocument();
     expect(screen.getByText(mock.id)).toBeInTheDocument();
     expect(screen.getAllByText(NO_SCHEDULE).length).toEqual(2);
+    expect(screen.getByText(/add raw tables/i)).toBeInTheDocument();
   });
 });
