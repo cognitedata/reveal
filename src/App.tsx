@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { AuthWrapper, SubAppWrapper } from '@cognite/cdf-utilities';
-import { setupMixpanel } from 'src/utils/config';
 import { Routes } from 'src/Routes';
 import { createBrowserHistory } from 'history';
 import { Router } from 'react-router-dom';
@@ -16,8 +15,6 @@ import { Provider as ReduxProvider } from 'react-redux';
 import store from 'src/store';
 import datePickerStyle from 'react-datepicker/dist/react-datepicker.css';
 import rootStyles from './styles/index.css';
-
-setupMixpanel();
 
 const App = () => {
   const subAppName = 'cdf-vision-subapp';

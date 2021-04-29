@@ -108,6 +108,7 @@ module.exports = [
         'react-dom': 'react-dom',
         'single-spa': 'single-spa',
         '@cognite/cdf-sdk-singleton': '@cognite/cdf-sdk-singleton',
+        '@cognite/cdf-route-tracker': '@cognite/cdf-route-tracker',
       };
       return config;
     },

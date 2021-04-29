@@ -1411,14 +1411,6 @@
     es6-promise "^4.2.8"
     spark-md5 "^3.0.0"
 
-"@cognite/metrics@^0.1.7":
-  version "0.1.7"
-  resolved "https://registry.yarnpkg.com/@cognite/metrics/-/metrics-0.1.7.tgz#ba1e79e226d2d2257b87387b9a08f9c945bd53dc"
-  integrity sha512-EpZ4HZNhofYeKPGe43FzNVMUT9qM7OGaDBQORBAa15UgIkpJYq94xzo9FGx1w1OU+NBZl7ijPeXuD5X6l0y/7w==
-  dependencies:
-    mixpanel-browser "^2.35.0"
-    react "^16.13.1"
-
 "@cognite/react-feature-flags@^0.1.0":
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/@cognite/react-feature-flags/-/react-feature-flags-0.1.0.tgz#55c4251bb63964b7fa7c4c92a68e67b769ab1006"
@@ -10805,11 +10797,6 @@ mixin-deep@^1.2.0:
     for-in "^1.0.2"
     is-extendable "^1.0.1"
 
-mixpanel-browser@^2.35.0:
-  version "2.41.0"
-  resolved "https://registry.yarnpkg.com/mixpanel-browser/-/mixpanel-browser-2.41.0.tgz#d49753b4e4a7e6ddd18c126be4a917fff4ce3039"
-  integrity sha512-IEuc9cH44hba9a3KEyulXINLn+gpFqluBDo7xiTk1h3j111dmmsctaE6tUzZYxgGLVqeNhTpsccdliOeX24Wlw==
-
 mixpanel@^0.13.0:
   version "0.13.0"
   resolved "https://registry.yarnpkg.com/mixpanel/-/mixpanel-0.13.0.tgz#699bf510d9ba013c75edcf979ff1e24085fde9d2"
@@ -13699,7 +13686,7 @@ react-window@^1.8.2, react-window@^1.8.6:
     "@babel/runtime" "^7.0.0"
     memoize-one ">=3.1.1 <6"
 
-react@^16.13.1, react@^16.14.0:
+react@^16.14.0:
   version "16.14.0"
   resolved "https://registry.yarnpkg.com/react/-/react-16.14.0.tgz#94d776ddd0aaa37da3eda8fc5b6b18a4c9a3114d"
   integrity sha512-0X2CImDkJGApiAlcf0ODKIneSwBPhqJawOa5wCtKbu7ZECrmS26NvtSILynQ66cgkT/RJ4LidJOc3bUESwmU8g==

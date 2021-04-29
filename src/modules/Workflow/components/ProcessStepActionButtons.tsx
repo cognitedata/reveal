@@ -12,6 +12,7 @@ import { annotationsById } from 'src/modules/Preview/previewSlice';
 import styled from 'styled-components';
 import { Button, Modal } from '@cognite/cogs.js';
 import { getContainer } from 'src/utils';
+import { pushMetric } from 'src/utils/pushMetric';
 import SummaryStep from '../../Process/Containers/SummaryStep';
 
 export const ProcessStepActionButtons = () => {
@@ -33,14 +34,14 @@ export const ProcessStepActionButtons = () => {
   };
   const dispatch = useDispatch();
   const onNextClicked = () => {
+    pushMetric('Vision.Session.Finished');
     dispatch(SaveAvailableAnnotations());
     history.push(createLink('/explore/search/file')); // data-exploration app
   };
 
   const onUploadMoreClicked = () => {
-    dispatch(SaveAvailableAnnotations());
+    pushMetric('Vision.Session.Finished');
     history.push(getLink(workflowRoutes.upload));
-    // Todo: Delete files
   };
 
   const disableComplete =

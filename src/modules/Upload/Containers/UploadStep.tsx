@@ -10,6 +10,9 @@ import {
   selectAllFiles,
 } from 'src/modules/Upload/uploadedFilesSlice';
 import { PopulateAnnotations } from 'src/store/thunks/PopulateAnnotations';
+import { pushMetric } from 'src/utils/pushMetric';
+
+pushMetric('Vision.Upload');
 
 const FileUploaderWrapper = styled.div`
   margin: ${margin.default} 0;

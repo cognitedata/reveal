@@ -1,10 +1,9 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Route, RouteComponentProps, Switch } from 'react-router-dom';
 import { useUserContext } from '@cognite/cdf-utilities';
 import NotFound from 'src/pages/NotFound';
 import { LazyWrapper } from 'src/modules/Common/Components/LazyWrapper';
 import { AuthenticatedUserWithGroups } from '@cognite/cdf-utilities/dist/types';
-import { handleUserIdentification } from 'src/utils/config';
 import { userHasCapabilities } from 'src/utils';
 import NoAccessPage from 'src/pages/NoAccessPage';
 
@@ -61,10 +60,6 @@ const routes = [
 
 export function Routes() {
   const user = useUserContext();
-
-  useEffect(() => {
-    handleUserIdentification(user.username || 'user-without-username');
-  }, [user]);
 
   return (
     <Switch>

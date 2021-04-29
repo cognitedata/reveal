@@ -24,9 +24,11 @@ import {
   selectAllFiles,
   setFileSelectState,
 } from 'src/modules/Upload/uploadedFilesSlice';
+import { pushMetric } from 'src/utils/pushMetric';
 import { FileGridPreview } from '../../Common/Components/FileGridPreview/FileGridPreview';
 import { MapView } from '../../Common/Components/MapView/MapView';
 
+pushMetric('Vision.Process');
 const queryClient = new QueryClient();
 
 export default function ProcessStep() {
