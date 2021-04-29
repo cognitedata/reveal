@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Icon, toast } from '@cognite/cogs.js';
+import styled from 'styled-components/macro';
+import { Button, Icon, toast, Tooltip } from '@cognite/cogs.js';
 import { useParams } from 'react-router-dom';
 import NodeEditor from 'components/NodeEditor';
 import SplitPaneLayout from 'components/Layout/SplitPaneLayout';
@@ -63,6 +64,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
 
   const [showSearch, setShowSearch] = useState(false);
   const [workspaceMode, setWorkspaceMode] = useState<Modes>('workspace');
+  const [stackedMode, setStackedMode] = useState<boolean>(false);
   const isWorkspaceMode = workspaceMode === 'workspace';
 
   /**
@@ -258,6 +260,14 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
             </section>
           )}
           <section className="daterange">
+            <Tooltip content={`${stackedMode ? 'Disable' : 'Enable'} stacking`}>
+              <Button
+                icon="ChartStackedView"
+                variant={stackedMode ? 'default' : 'ghost'}
+                onClick={() => setStackedMode(!stackedMode)}
+              />
+            </Tooltip>
+            <Divider />
             <DateRangeSelector chart={chart} />
           </section>
         </Header>
@@ -269,6 +279,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                   key={chartId}
                   chartId={chartId}
                   isInSearch={showSearch}
+                  stackedMode={stackedMode}
                 />
               </ChartWrapper>
             </TopPaneWrapper>
@@ -321,5 +332,11 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     </ChartViewContainer>
   );
 };
+
+const Divider = styled.div`
+  border-left: 1px solid var(--cogs-greyscale-grey3);
+  height: 24px;
+  margin-left: 10px;
+`;
 
 export default ChartView;
