@@ -96,12 +96,15 @@ const PlotlyChartComponent = ({
       Filter out the 10% largest and smallest of the values
       Find the min and max of the remaining 80 %
     */
+    const thresholdPercentage = 10;
     const min = lastYearPoints
-      ? lastYearPoints[Math.ceil(lastYearPoints.length / 10)]
+      ? lastYearPoints[Math.ceil(lastYearPoints.length / thresholdPercentage)]
       : 0;
     const max = lastYearPoints
       ? lastYearPoints[
-          Math.floor(lastYearPoints.length - lastYearPoints.length / 10)
+          Math.floor(
+            lastYearPoints.length - lastYearPoints.length / thresholdPercentage
+          )
         ]
       : 1;
     const delta = max - min;
