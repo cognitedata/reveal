@@ -11,17 +11,21 @@ export const createFileState = (file: FileInfo): FileState => {
     uploadedTime: file.uploadedTime?.getTime(),
     lastUpdatedTime: file.lastUpdatedTime.getTime(),
     linkedAnnotations: [],
+    selected: false,
   };
 };
 
 // convert from state helper functions
 
-export const createFileInfo = (file: FileState): FileInfo => {
+export const createFileInfo = (
+  file: FileState
+): FileInfo & { selected: boolean } => {
   return {
     ...file,
     id: Number(file.id),
     createdTime: new Date(file.createdTime),
     uploadedTime: file.uploadedTime ? new Date(file.uploadedTime) : undefined,
     lastUpdatedTime: new Date(file.lastUpdatedTime),
+    selected: file.selected,
   };
 };
