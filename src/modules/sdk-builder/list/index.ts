@@ -186,14 +186,13 @@ export default function buildList<T extends InternalId, Q extends Query>(
     state: ResourceState<T>,
     action: PayloadAction<ListPartialAction>
   ) => {
-    const { filter, all, partition, nth, result } = action.payload;
+    const { filter, all, partition, nth, result: ids } = action.payload;
     const key = getKey(filter, all);
     const subkey = getSubkey(nth, partition);
-    const ids = result;
-    state.list[key][subkey].ids = {
-      ...state.list[key][subkey].ids,
+    state.list[key][subkey].ids = [
+      ...(state.list[key][subkey].ids ?? []),
       ...ids,
-    };
+    ];
   };
 
   const listParallelAction = (filter: Q, parallelity: number = 5) => {

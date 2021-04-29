@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { startPnidParsingWorkflow } from './actions';
+import { startPnidParsingWorkflow } from 'modules/contextualization/pnidWorkflow/actions';
 
 export const pnidWorkflowSlice = createSlice({
   name: 'pnidWorkflow',

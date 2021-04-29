@@ -146,7 +146,6 @@ export const deleteAnnotationsForFile = async (
     } else {
       metadataFilter[`${ANNOTATION_METADATA_PREFIX}file_id`] = String(fileId);
     }
-    console.log(metadataFilter);
     const allAnnotations = await sdk.events
       .list({
         filter: {

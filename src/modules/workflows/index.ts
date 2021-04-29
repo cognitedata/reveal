@@ -91,14 +91,7 @@ export const loadWorkflowDiagrams = createAsyncThunk(
     }
     if (endpoint === 'list') {
       dispatch(countAction(filter));
-      if (resourceType === 'files') {
-        await dispatch(listFiles({ filter, all: loadAll }));
-        return;
-      }
-      if (resourceType === 'assets') {
-        if (loadAll) await dispatch(listAssetsParallel(filter));
-        else await dispatch(listAssets(filter));
-      }
+      await dispatch(listFiles({ filter, all: loadAll }));
     }
   }
 );
@@ -116,28 +109,29 @@ export const loadWorkflowResources = createAsyncThunk(
     const resources = getState().workflows.items[workflowId]?.resources;
     if (!resources) throw Error();
 
-    const loadResources = resources.map(async (resource: ResourceSelection) => {
-      const { type: resourceType, endpoint, filter } = resource;
-      const retrieveAction = getRetrieveAction(resourceType);
-      const countAction = getCountAction(resourceType);
+    return Promise.all(
+      resources.map(async (resource: ResourceSelection) => {
+        const { type: resourceType, endpoint, filter } = resource;
+        const retrieveAction = getRetrieveAction(resourceType);
+        const countAction = getCountAction(resourceType);
 
-      if (endpoint === 'retrieve') {
-        await dispatch(retrieveAction({ ids: filter }));
-        return;
-      }
-      if (endpoint === 'list') {
-        dispatch(countAction(filter));
-        if (resourceType === 'files') {
-          await dispatch(listFiles({ filter, all: loadAll }));
+        if (endpoint === 'retrieve') {
+          await dispatch(retrieveAction({ ids: filter }));
           return;
         }
-        if (resourceType === 'assets') {
-          if (loadAll) await dispatch(listAssetsParallel(filter));
-          else await dispatch(listAssets(filter));
+        if (endpoint === 'list') {
+          dispatch(countAction(filter));
+          if (resourceType === 'files') {
+            await dispatch(listFiles({ filter, all: loadAll }));
+            return;
+          }
+          if (resourceType === 'assets') {
+            if (loadAll) await dispatch(listAssetsParallel(filter));
+            else await dispatch(listAssets(filter));
+          }
         }
-      }
-    });
-    Promise.all(loadResources);
+      })
+    );
   }
 );
 

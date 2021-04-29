@@ -494,7 +494,7 @@ const listItemsLength = (
   const key = JSON.stringify({ ...filter, all });
   const request = items[key] || {};
   const allIds = Object.values(request).map(
-    (partition: any) => partition.ids?.length ?? 0
+    (partition: any) => (partition?.ids ?? []).length
   );
   const lengthOfAllIds: number = allIds.reduce(
     (sum: number, idsLength: number) => sum + idsLength,

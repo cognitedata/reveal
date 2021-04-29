@@ -4,11 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Button, Icon, Tooltip, Title } from '@cognite/cogs.js';
 import { message } from 'antd';
 import { FileInfo } from '@cognite/sdk';
-import {
-  useWorkflowItems,
-  loadWorkflow,
-  useWorkflowLoadPercentages,
-} from 'modules/workflows';
+import { useWorkflowItems } from 'modules/workflows';
 import { checkPermission } from 'modules/app';
 import {
   startConvertFileToSvgJob,
@@ -31,8 +27,6 @@ export default function ResultsOverview() {
 
   const [selectedKeys, setSelectedKeys] = useState([] as number[]);
   const [renderFeedback, setRenderFeedback] = useState(false);
-  const [jobRunning, setJobRunning] = useState(false);
-  const [workflowLoading, setWorkflowLoading] = useState(false);
 
   const getCanEditFiles = useMemo(
     () => checkPermission('filesAcl', 'WRITE'),
@@ -43,15 +37,7 @@ export default function ResultsOverview() {
     []
   );
   const { workflowId } = useActiveWorkflow();
-  const { diagrams, resources } = useWorkflowItems(workflowId, true);
-  const { loaded: diagramsLoaded } = useWorkflowLoadPercentages(
-    Number(workflowId),
-    'diagrams'
-  );
-  const { loaded: assetsLoaded } = useWorkflowLoadPercentages(
-    Number(workflowId),
-    'assets'
-  );
+  const { diagrams } = useWorkflowItems(workflowId, true);
   const { workflow } = useSelector(getWorkflowItems(workflowId));
   const canEditFiles = useSelector(getCanEditFiles);
   const canReadFiles = useSelector(getCanReadFiles);
@@ -60,25 +46,12 @@ export default function ResultsOverview() {
 
   const isLoading = Object.values(uploadJobs).some((job: any) => !job.jobDone);
 
-  const startWorkflow = () => {
-    if (!jobRunning) {
-      if (diagramsLoaded && assetsLoaded) {
-        setJobRunning(true);
-        dispatch(
-          startPnidParsingWorkflow.action({ workflowId, diagrams, resources })
-        );
-      } else if (!workflowLoading) {
-        dispatch(loadWorkflow({ workflowId }));
-        setWorkflowLoading(true);
-      }
-    }
-  };
-
   useEffect(() => {
-    if (canEditFiles && canReadFiles) startWorkflow();
+    if (canEditFiles && canReadFiles)
+      dispatch(startPnidParsingWorkflow.action(workflowId));
     else setRenderFeedback(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [canEditFiles, canReadFiles, diagrams, resources]);
+  }, [canEditFiles, canReadFiles, workflowId]);
 
   useEffect(() => {
     if (!workflow) {
