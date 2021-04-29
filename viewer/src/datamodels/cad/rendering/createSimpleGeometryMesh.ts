@@ -8,7 +8,6 @@ import { ParsePrimitiveAttribute } from '@cognite/reveal-parser-worker';
 import { disposeAttributeArrayOnUpload } from '../../../utilities/disposeAttributeArrayOnUpload';
 import { filterPrimitivesOutsideClipBoxByBaseBoundsAndInstanceMatrix } from './filterPrimitives';
 import { Materials } from './materials';
-import { Mesh } from 'three';
 
 const quadVertexData = new Float32Array([
   /* eslint-disable prettier/prettier */
