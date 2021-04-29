@@ -17,8 +17,8 @@ import { RootState } from 'src/store/rootReducer';
 import { selectUpdatedFileDetails } from 'src/modules/FileMetaData/fileMetadataSlice';
 import { makeAnnotationBadgePropsByFileId } from 'src/modules/Process/processSlice';
 import { AnnotationsBadgeProps } from 'src/modules/Workflow/types';
+import { TableDataItem } from 'src/modules/Common/Types';
 import { AnnotationsBadge } from '../AnnotationsBadge/AnnotationsBadge';
-import { TableDataItem } from '../FileTable/FileTable';
 import { AnnotationsBadgePopoverContent } from '../AnnotationsBadge/AnnotationsBadgePopoverContent';
 import { Popover } from '../Popover';
 
