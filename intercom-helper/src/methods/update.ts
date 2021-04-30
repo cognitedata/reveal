@@ -1,22 +1,7 @@
-/* eslint-disable camelcase, @typescript-eslint/no-explicit-any */
+/* eslint-disable camelcase */
+import { IntercomUpdateSettings, ForbiddenUpdateKey } from '../types';
 
-/*
- ** [keys: string] keys are used here to allow for object[key] notation
- */
-type IntercomUpdateSettings = {
-  name?: string;
-  email?: string;
-  hide_default_launcher?: boolean;
-  horizontal_padding?: number;
-  [keys: string]: any;
-};
-
-type ForbiddenKey = {
-  user_id: boolean;
-  [keys: string]: boolean;
-};
-
-const forbiddenKeys: ForbiddenKey = {
+const forbiddenKeys: ForbiddenUpdateKey = {
   user_id: true,
 };
 

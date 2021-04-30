@@ -1,9 +1,5 @@
-import getHmac, { Header } from '../utils/getHmac';
-
-type IdentityVerificationSettings = {
-  appsApiUrl: string;
-  headers: Header;
-};
+import getHmac from '../utils/getHmac';
+import { IdentityVerificationSettings } from '../types';
 
 type Response = {
   success: boolean;

@@ -1,13 +1,6 @@
-/* eslint-disable camelcase */
-type IntercomSettings = {
-  app_id: string;
-  name?: string;
-  email?: string;
-  user_id?: string;
-  hide_default_launcher: boolean;
-};
+import { IntercomBootSettings } from '../types';
 
-export default (settings: IntercomSettings) => {
+export default (settings: IntercomBootSettings) => {
   if (window.Intercom) {
     window.Intercom('boot', settings);
   }

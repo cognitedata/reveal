@@ -1,15 +1,11 @@
 import axios from 'axios';
 
-export type Header = {
-  Authorization: string;
-};
+import { GetHmacHeader, GetHmacSettings } from '../types';
 
-export type GetHmac = {
-  hmac: string;
-  userUid: string;
-};
-
-export default (appsApiUrl: string, headers: Header): Promise<GetHmac> => {
+export default (
+  appsApiUrl: string,
+  headers: GetHmacHeader
+): Promise<GetHmacSettings> => {
   return axios
     .get(`${appsApiUrl}/intercom`, {
       params: {},
