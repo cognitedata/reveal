@@ -18,9 +18,11 @@ import { RootState } from 'src/store/rootReducer';
 import { makeAnnotationBadgePropsByFileId } from 'src/modules/Process/processSlice';
 import { selectUpdatedFileDetails } from 'src/modules/FileMetaData/fileMetadataSlice';
 import { TableDataItem } from 'src/modules/Common/Types';
+import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import { AnnotationsBadge } from '../AnnotationsBadge/AnnotationsBadge';
 import { AnnotationsBadgePopoverContent } from '../AnnotationsBadge/AnnotationsBadgePopoverContent';
 import { AnnotationsBadgeProps } from '../../../Workflow/types';
+import { isFilePreviewable } from '../FileUploader/utils/FileUtils';
 
 export const FileGridPreview = ({
   item,
@@ -36,7 +38,7 @@ export const FileGridPreview = ({
     mimeType: item.mimeType,
   } as File);
 
-  const isPreviewable = true; // TODO: check if file is previewable
+  const isPreviewable = isFilePreviewable({ name: item.name } as FileInfo); // TODO: check if file is previewable
   useEffect(() => {
     if (data) {
       const arrayBufferView = new Uint8Array(data);
@@ -63,10 +65,10 @@ export const FileGridPreview = ({
       }
     }
     return (
-      <>
+      <div className="documentIconContainer">
         <DocumentIcon file={item.name} style={{ height: 36, width: 36 }} />
         {isError && <Body level={3}>Unable to preview file.</Body>}
-      </>
+      </div>
     );
   }, [imageUrl, isPreviewable, item, isError]);
 
@@ -177,11 +179,11 @@ const PreviewCell = styled.div`
       display: grid;
       padding: 12px;
       row-gap: 19px;
-      grid-template-columns: 3fr 1fr 1fr;
+      grid-template-columns: 4fr 1fr 1fr;
       grid-template-rows: auto;
       grid-template-areas:
-        'name name name . action'
-        'badge badge badge . review';
+        'name name name name . action'
+        'badge badge badge . . review';
       .nameAndExif {
         display: flex;
         height: inherit;
@@ -197,7 +199,6 @@ const PreviewCell = styled.div`
         max-width: 150px;
       }
       .exif > img {
-        width: 11px;
         padding-bottom: 15px;
         grid-area: name;
       }
@@ -215,6 +216,14 @@ const PreviewCell = styled.div`
     :hover {
       box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.15);
     }
+  }
+
+  .documentIconContainer {
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    display: inline-flex;
+    justify-content: center;
   }
 
   img {

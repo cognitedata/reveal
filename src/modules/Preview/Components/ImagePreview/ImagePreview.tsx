@@ -12,6 +12,9 @@ import {
   VisionAnnotationState,
 } from 'src/modules/Preview/previewSlice';
 import { AnnotationStyle, AnnotationUtils } from 'src/utils/AnnotationUtils';
+import * as pdfjs from 'pdfjs-dist';
+
+pdfjs.GlobalWorkerOptions.workerSrc = `https://cdf-hub-bundles.cogniteapp.com/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.js`;
 
 const LoaderContainer = styled.div`
   width: 100%;
