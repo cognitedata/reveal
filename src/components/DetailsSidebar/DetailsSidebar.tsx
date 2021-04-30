@@ -1,4 +1,10 @@
-import { Button, Dropdown, Icon, Menu, toast, Tooltip } from '@cognite/cogs.js';
+import {
+  Button,
+  Icon,
+  toast,
+  Tooltip,
+  SegmentedControl,
+} from '@cognite/cogs.js';
 import { useSDK } from '@cognite/sdk-provider';
 import FunctionCall from 'components/FunctionCall';
 import { useUpdateChart } from 'hooks/firebase';
@@ -72,45 +78,35 @@ export default function DetailsSidebar({
   onClose,
 }: Props) {
   const [selectedMenu, setSelectedMenu] = useState<string>('statistics');
-  const [showDropdown, setShowDropdown] = useState<boolean>(false);
 
   const handleMenuClick = (value: string) => {
     setSelectedMenu(value);
-    setShowDropdown(false);
   };
 
   return (
     <Sidebar visible={visible}>
       <TopContainer>
-        <div>
-          <Tooltip content="Hide">
-            <Button icon="Close" variant="ghost" onClick={onClose} />
-          </Tooltip>
-        </div>
-
-        <div>
-          <Dropdown
-            visible={showDropdown}
-            onClickOutside={() => setShowDropdown(false)}
-            content={
-              <Menu>
-                {menuOptions.map(({ value, label }) => (
-                  <Menu.Item key={value} onClick={() => handleMenuClick(value)}>
-                    {label}
-                  </Menu.Item>
-                ))}
-              </Menu>
-            }
+        <TopContainerTitle>Details</TopContainerTitle>
+        <TopContainerAside>
+          <SegmentedControl
+            currentKey={selectedMenu}
+            onButtonClicked={(key) => handleMenuClick(key)}
           >
+            {menuOptions.map(({ value, label }) => (
+              <SegmentedControl.Button key={value}>
+                {label}
+              </SegmentedControl.Button>
+            ))}
+          </SegmentedControl>
+          <Tooltip content="Hide">
             <Button
-              onClick={() => setShowDropdown(!showDropdown)}
-              icon="Down"
-              iconPlacement="right"
-            >
-              {menuOptions.find(({ value }) => value === selectedMenu)?.label}
-            </Button>
-          </Dropdown>
-        </div>
+              icon="Close"
+              type="ghost"
+              onClick={onClose}
+              aria-label="close"
+            />
+          </Tooltip>
+        </TopContainerAside>
       </TopContainer>
       <ContentOverflowWrapper>
         {selectedMenu === 'metadata' && <Metadata sourceItem={sourceItem} />}
@@ -298,6 +294,19 @@ const Statistics = ({
 };
 
 const TopContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--cogs-greyscale-grey4);
+  padding: 9px 0 10px 10px;
+`;
+
+const TopContainerTitle = styled.div`
+  font-size: 18px;
+  font-weight: 600;
+`;
+
+const TopContainerAside = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;

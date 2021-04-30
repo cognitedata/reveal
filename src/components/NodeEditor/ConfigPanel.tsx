@@ -86,6 +86,7 @@ const ConfigPanel = ({
         onClick={() => {
           onClose();
         }}
+        aria-label="close"
       />
       <Input
         value={workingNode.title}
@@ -113,7 +114,7 @@ const ConfigPanel = ({
 
       <footer>
         <Button
-          variant="ghost"
+          type="ghost"
           className="remove-btn"
           style={{ color: 'white' }}
           onClick={() => {

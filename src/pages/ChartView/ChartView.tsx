@@ -252,7 +252,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
               </Button>
               <Button
                 icon="YAxis"
-                variant="ghost"
+                type="ghost"
                 onClick={handleClickNewWorkflow}
               >
                 Add calculation
@@ -263,8 +263,9 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
             <Tooltip content={`${stackedMode ? 'Disable' : 'Enable'} stacking`}>
               <Button
                 icon="ChartStackedView"
-                variant={stackedMode ? 'default' : 'ghost'}
+                type={stackedMode ? 'primary' : 'ghost'}
                 onClick={() => setStackedMode(!stackedMode)}
+                aria-label="view"
               />
             </Tooltip>
             <Divider />
