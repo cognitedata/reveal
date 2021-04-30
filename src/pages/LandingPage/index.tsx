@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useParams, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { Tooltip, Graphic, Title, Badge } from '@cognite/cogs.js';
-import { doSearch } from 'modules/search';
 import { trackUsage, PNID_METRICS } from 'utils/Metrics';
 import { dateSorter, stringCompare } from 'modules/contextualization/utils';
 import { PageTitle, Table, Loader, Flex, IconButton } from 'components/Common';
-import { searchItemSelector } from 'containers/SearchPage/selectors';
 import { createNewWorkflow } from 'modules/workflows';
 import { diagramSelection } from 'routes/paths';
 import FilterBar from './FilterBar';
+import { useAnnotatedFiles } from 'hooks';
+import { FileInfo } from 'cognite-sdk-v3';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -95,15 +95,11 @@ const columns = (
 ];
 
 export default function LandingPage() {
-  const dispatch = useDispatch();
   const [query, setQuery] = useState<string>('');
 
-  const filter = {
-    filter: {
-      mimeType: 'application/pdf',
-      metadata: { __COGNITE_PNID: true },
-    },
-  };
+  const { files, isLoading } = useAnnotatedFiles();
+
+  const noFiles = !isLoading && !files?.length;
 
   const onFileEdit = (event: any) => {
     event.stopPropagation();
@@ -116,15 +112,6 @@ export default function LandingPage() {
     // TODO (CDF-11152)
   };
 
-  const { items, fetching } = useSelector(searchItemSelector)('files', filter);
-  const interactiveFilesList = Object.values(items);
-  const noFiles = !fetching && Object.keys(items).length === 0;
-
-  useEffect(() => {
-    dispatch(doSearch('files', filter));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   const interactiveColumns = columns(onFileEdit, onFileView);
   const showFilesList = noFiles ? (
     <EmptyFilesList />
@@ -133,7 +120,7 @@ export default function LandingPage() {
       <FilterBar query={query} setQuery={setQuery} />
       <Table
         pagination={{ pageSize: 10, hideOnSinglePage: true }}
-        dataSource={interactiveFilesList}
+        dataSource={files as FileInfo[]}
         // @ts-ignore
         columns={interactiveColumns}
         size="middle"
@@ -148,7 +135,7 @@ export default function LandingPage() {
   return (
     <div>
       <PageTitle>Interactive Engineering Diagrams</PageTitle>
-      {fetching ? (
+      {isLoading ? (
         <Flex style={{ height: '50vh' }}>
           <Loader />
         </Flex>
