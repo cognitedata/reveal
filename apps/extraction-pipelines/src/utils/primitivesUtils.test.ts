@@ -3,6 +3,7 @@ import {
   toCamelCase,
   splitWordsLowerCase,
   uppercaseFirstWord,
+  isUrl,
 } from './primitivesUtils';
 
 describe('Primitives Utils', () => {
@@ -26,5 +27,34 @@ describe('toCamelCase', () => {
   test('Converts to camelcase', () => {
     const res = toCamelCase('source system');
     expect(res).toEqual('sourceSystem');
+  });
+});
+describe('isUrl', () => {
+  const cases = [
+    {
+      text: 'this is not a url',
+      expected: false,
+    },
+    {
+      text: 'www.test.no',
+      expected: false,
+    },
+    {
+      text: 'http://test.test.no',
+      expected: true,
+    },
+    {
+      text: 'https://fuction.cognite.com',
+      expected: true,
+    },
+    {
+      text: 'https://docs.cognite.com',
+      expected: true,
+    },
+  ];
+  cases.forEach(({ text, expected }) => {
+    test(`"${text}" is url: ${expected}`, () => {
+      expect(isUrl(text)).toEqual(expected);
+    });
   });
 });

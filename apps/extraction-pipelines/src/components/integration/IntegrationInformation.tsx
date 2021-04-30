@@ -13,6 +13,7 @@ import { useAppEnv } from 'hooks/useAppEnv';
 import { FieldVerticalDisplay } from 'components/integration/fields/FieldVerticalDisplay';
 import EditRawTable from 'components/inputs/rawSelector/EditRawTable';
 import { ContactsView } from 'components/integration/ContactsView';
+import { MetaData } from 'components/integration/MetaData';
 
 const Wrapper = styled.div`
   padding: 2rem;
@@ -43,15 +44,12 @@ export const IntegrationInformation: FunctionComponent<IntegrationInformationPro
         mb
         showLabel
       />
-
       <FieldVerticalDisplay
         label={DetailFieldNames.ID}
         fieldName="id"
         fieldValue={integration?.id}
       />
-
       <EditRawTable />
-
       <InlineEdit
         name="sourceSystem"
         label={DetailFieldNames.SOURCE}
@@ -64,7 +62,6 @@ export const IntegrationInformation: FunctionComponent<IntegrationInformationPro
         showLabel
         mb
       />
-
       <Schedule
         name="schedule"
         integration={integration}
@@ -75,7 +72,6 @@ export const IntegrationInformation: FunctionComponent<IntegrationInformationPro
         fieldName="createdBy"
         fieldValue={integration?.createdBy}
       />
-
       <FieldVerticalDisplay
         label={DetailFieldNames.CREATED_TIME}
         fieldName="createdTime"
@@ -86,6 +82,7 @@ export const IntegrationInformation: FunctionComponent<IntegrationInformationPro
         fieldName="lastUpdatedTime"
         fieldValue={integration?.lastUpdatedTime}
       />
+      <MetaData />
     </Wrapper>
   );
 };

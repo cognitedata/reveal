@@ -20,3 +20,10 @@ export const toCamelCase = (value: string) => {
     .join('');
   return temp.charAt(0).toLowerCase() + temp.slice(1);
 };
+
+export const isUrl = (text: string): boolean => {
+  const urlRegExp = new RegExp(
+    /((https?):\/\/)(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?$/
+  );
+  return urlRegExp.test(text);
+};

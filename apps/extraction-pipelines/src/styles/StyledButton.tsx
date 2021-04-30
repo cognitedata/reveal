@@ -43,7 +43,7 @@ export const CloseButton = styled((props) => (
 ))`
   margin: 0.125rem;
 `;
-type StyledEditProps = { $full: boolean };
+type StyledEditProps = { $full: boolean; $isBottom: boolean };
 export const StyledEdit = styled((props) => (
   <Button {...props} type="ghost" icon="Edit" iconPlacement="right">
     {props.children}
@@ -59,6 +59,8 @@ export const StyledEdit = styled((props) => (
       grid-template-rows: auto;
       justify-items: flex-start;
       height: fit-content;
+      margin-bottom: ${(props: StyledEditProps) =>
+        props.$isBottom ? '1rem' : '0'};
       .cogs-icon {
         &.cogs-icon-Edit {
           grid-column: 3;

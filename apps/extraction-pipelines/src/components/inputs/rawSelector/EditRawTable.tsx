@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useState } from 'react';
 import { DetailFieldNames, Integration } from 'model/Integration';
 import { RawEditModal } from 'components/modals/RawEditModal';
-import { BluePlus, BlueText, StyledEdit } from 'styles/StyledButton';
+import { StyledEdit } from 'styles/StyledButton';
 import { TEST_ID_BTN_SAVE } from 'components/integration/DocumentationSection';
 import { useSelectedIntegration } from 'hooks/useSelectedIntegration';
 import { useIntegrationById } from 'hooks/useIntegration';
@@ -11,6 +11,7 @@ import styled from 'styled-components';
 import { StyledLabel } from 'styles/StyledForm';
 import { bottomSpacing } from 'styles/StyledVariables';
 import { createLink } from '@cognite/cdf-utilities';
+import { AddFieldValueBtn } from 'components/buttons/AddFieldValueBtn';
 
 const RawLabel = styled(StyledLabel)`
   color: ${Colors['text-color'].hex()};
@@ -36,10 +37,9 @@ const EditRawTable: FunctionComponent = () => {
   const renderRaw = (integration?: Integration) => {
     if (!integration?.rawTables?.length) {
       return (
-        <StyledEdit onClick={toggleModal(true)}>
-          <BluePlus />
-          <BlueText>add {DetailFieldNames.RAW_TABLE.toLowerCase()}</BlueText>
-        </StyledEdit>
+        <AddFieldValueBtn onClick={toggleModal(true)}>
+          {DetailFieldNames.RAW_TABLE.toLowerCase()}
+        </AddFieldValueBtn>
       );
     }
     return (

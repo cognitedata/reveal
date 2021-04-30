@@ -5,24 +5,11 @@ import { TableHeadings } from 'components/table/IntegrationTableCol';
 import { useAppEnv } from 'hooks/useAppEnv';
 import { useSelectedIntegration } from 'hooks/useSelectedIntegration';
 import { useIntegrationById } from 'hooks/useIntegration';
-import styled from 'styled-components';
-import { Button, Colors, Title } from '@cognite/cogs.js';
 import { isOwner, partition } from 'utils/integrationUtils';
 import { User } from 'model/User';
-import { BluePlus, BlueText, StyledEdit } from 'styles/StyledButton';
+import { DetailHeadingEditBtn } from 'components/buttons/DetailHeadingEditBtn';
+import { AddFieldValueBtn } from 'components/buttons/AddFieldValueBtn';
 
-const ContactStyledEdit = styled(StyledEdit)`
-  font-weight: bold;
-`;
-const StyledDetail = styled(Title)`
-  border-bottom: 1px solid ${Colors['greyscale-grey2'].hex()};
-  padding-bottom: 0.3rem;
-  margin-bottom: 1rem;
-  font-size: 0.875rem;
-`;
-const StyledButton = styled(Button)`
-  width: ${(props: { width?: string }) => props.width || 'auto'};
-`;
 interface ContactsViewProps {}
 
 export const ContactsView: FunctionComponent<ContactsViewProps> = () => {
@@ -44,36 +31,30 @@ export const ContactsView: FunctionComponent<ContactsViewProps> = () => {
 
   return (
     <>
-      <StyledDetail level={4}>
-        <ContactStyledEdit onClick={openEdit} $full>
-          {DetailFieldNames.OWNER}
-        </ContactStyledEdit>
-      </StyledDetail>
+      <DetailHeadingEditBtn onClick={openEdit}>
+        {DetailFieldNames.OWNER}
+      </DetailHeadingEditBtn>
 
       {owner[0] ? (
         <ContactCard {...owner[0]} />
       ) : (
-        <StyledButton type="ghost" onClick={openEdit} width="fit-content">
-          <BluePlus />
-          <BlueText>add {DetailFieldNames.OWNER.toLowerCase()}</BlueText>
-        </StyledButton>
+        <AddFieldValueBtn onClick={openEdit}>
+          {DetailFieldNames.OWNER.toLowerCase()}
+        </AddFieldValueBtn>
       )}
 
-      <StyledDetail level={4}>
-        <ContactStyledEdit onClick={openEdit} $full>
-          {TableHeadings.CONTACTS}
-        </ContactStyledEdit>
-      </StyledDetail>
+      <DetailHeadingEditBtn onClick={openEdit}>
+        {TableHeadings.CONTACTS}
+      </DetailHeadingEditBtn>
 
       {other && other.length > 0 ? (
         other.map((contact: User) => {
           return <ContactCard key={contact.email} {...contact} />;
         })
       ) : (
-        <StyledButton type="ghost" onClick={openEdit} width="fit-content">
-          <BluePlus />
-          <BlueText>add {TableHeadings.CONTACTS.toLowerCase()}</BlueText>
-        </StyledButton>
+        <AddFieldValueBtn onClick={openEdit}>
+          {TableHeadings.CONTACTS.toLowerCase()}
+        </AddFieldValueBtn>
       )}
     </>
   );

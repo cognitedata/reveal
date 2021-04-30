@@ -45,7 +45,7 @@ describe('IntegrationView', () => {
       id: mockIntegration.id,
     });
     await waitFor(() => {
-      screen.getByText(DOCUMENTATION_HEADING);
+      screen.getAllByText(DOCUMENTATION_HEADING);
       screen.getByText(new RegExp(TableHeadings.CONTACTS, 'i'));
     });
 
