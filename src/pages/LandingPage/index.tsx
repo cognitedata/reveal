@@ -8,9 +8,9 @@ import { dateSorter, stringCompare } from 'modules/contextualization/utils';
 import { PageTitle, Table, Loader, Flex, IconButton } from 'components/Common';
 import { createNewWorkflow } from 'modules/workflows';
 import { diagramSelection } from 'routes/paths';
-import FilterBar from './FilterBar';
 import { useAnnotatedFiles } from 'hooks';
 import { FileInfo } from 'cognite-sdk-v3';
+import FilterBar from './FilterBar';
 
 const Wrapper = styled.div`
   width: 100%;
