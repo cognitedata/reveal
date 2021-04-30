@@ -28,6 +28,7 @@ import { PnidButton } from 'components/SearchResultTable/PnidButton';
 import { functionResponseKey, useCallFunction } from 'utils/cogniteFunctions';
 import FunctionCall from 'components/FunctionCall';
 import { CogniteClient } from '@cognite/sdk';
+import { StatisticsResult } from 'components/DetailsSidebar';
 import {
   SourceItem,
   SourceCircle,
@@ -37,7 +38,6 @@ import {
   UnitMenuHeader,
 } from './elements';
 // import TimeSeriesMenu from './TimeSeriesMenu';
-import { StatisticsResult } from '../../components/ContextMenu';
 
 const key = ['functions', 'individual_calc'];
 
