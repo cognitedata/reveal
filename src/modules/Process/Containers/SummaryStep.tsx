@@ -85,7 +85,7 @@ export default function SummaryStep() {
                   <>
                     {statView === pair[0] && (
                       <FancyButton
-                        key={pair[0]}
+                        key={`${pair[0]}_focused`}
                         style={{
                           background: 'rgba(74, 103, 251, 0.1)',
                         }}
@@ -94,51 +94,58 @@ export default function SummaryStep() {
                         }}
                       >
                         <table>
-                          <tr>
-                            <td>
-                              <b
-                                style={{
-                                  fontSize: '20px',
-                                  paddingRight: '5px',
-                                }}
-                              >
-                                {pair[1].value}
-                              </b>
-                            </td>
-                            <td>{pair[1].text}</td>
-                          </tr>
+                          <tbody>
+                            <tr>
+                              <td key={`${pair[0]}-tabular-data1`}>
+                                <b
+                                  style={{
+                                    fontSize: '20px',
+                                    paddingRight: '5px',
+                                  }}
+                                >
+                                  {pair[1].value}
+                                </b>
+                              </td>
+                              <td key={`${pair[0]}-tabular-data2`}>
+                                {pair[1].text}
+                              </td>
+                            </tr>
+                          </tbody>
                         </table>
                       </FancyButton>
                     )}
                     {statView !== pair[0] && (
                       <FancyButton
-                        key={pair[0]}
+                        key={`${pair[0]}`}
                         onClick={() => {
                           setStatView(pair[0]);
                         }}
                       >
                         <table>
-                          <tr>
-                            <td>
-                              <b
-                                style={{
-                                  fontSize: '20px',
-                                  paddingRight: '5px',
-                                }}
-                              >
-                                {pair[1].value}
-                              </b>
-                            </td>
-                            <td>{pair[1].text}</td>
-                          </tr>
+                          <tbody>
+                            <tr>
+                              <td>
+                                <b
+                                  style={{
+                                    fontSize: '20px',
+                                    paddingRight: '5px',
+                                  }}
+                                >
+                                  {pair[1].value}
+                                </b>
+                              </td>
+                              <td>{pair[1].text}</td>
+                            </tr>
+                          </tbody>
                         </table>
                       </FancyButton>
                     )}
                   </>
                 ))}
               </StatsCarouselLeft>
+
               {statView === 'totalFilesUploaded' && (
-                <StatsCarouselRight>
+                <StatsCarouselRight key={statView}>
                   {Array.from(
                     { length: stats[statView].value },
                     (_, i: number) => (
@@ -149,16 +156,9 @@ export default function SummaryStep() {
                   )}
                 </StatsCarouselRight>
               )}
+
               {statView === 'filesWithExif' && (
-                <StatsCarouselRight>
-                  {Array.from(
-                    { length: stats[statView].value },
-                    (_, i: number) => (
-                      <FileIconContainer key={`${statView}_${i}`}>
-                        <img src={FileWithExifIcon} alt="FileWithExifIcon" />
-                      </FileIconContainer>
-                    )
-                  )}
+                <StatsCarouselRight key={statView}>
                   {stats[statView].value < stats.totalFilesUploaded.value &&
                     Array.from(
                       {
@@ -167,15 +167,25 @@ export default function SummaryStep() {
                           stats[statView].value,
                       },
                       (_, i: number) => (
-                        <FileIconContainer key={`${statView}__${i}`}>
+                        <FileIconContainer key={`filesWithoutExif_${i}`}>
                           <img src={FileBland} alt="FileBland" />
                         </FileIconContainer>
                       )
                     )}
+                  {Array.from(
+                    { length: stats[statView].value },
+                    (_, i: number) => (
+                      <FileIconContainer key={`${statView}_${i}`}>
+                        {console.log(`key: ${statView}_${i}`)}
+                        <img src={FileWithExifIcon} alt="FileWithExifIcon" />
+                      </FileIconContainer>
+                    )
+                  )}
                 </StatsCarouselRight>
               )}
+
               {statView === 'userReviewedFiles' && (
-                <StatsCarouselRight>
+                <StatsCarouselRight key={statView}>
                   {Array.from(
                     { length: stats[statView].value },
                     (_, i: number) => (
@@ -192,15 +202,16 @@ export default function SummaryStep() {
                           stats[statView].value,
                       },
                       (_, i: number) => (
-                        <FileIconContainer key={`${statView}_${i}`}>
+                        <FileIconContainer key={`notUserReviewedFiles_${i}`}>
                           <img src={FileBland} alt="FileBland" />
                         </FileIconContainer>
                       )
                     )}
                 </StatsCarouselRight>
               )}
+
               {statView === 'modelDetections' && (
-                <StatsCarouselRight>
+                <StatsCarouselRight key={statView}>
                   {Array.from(
                     { length: stats[statView].value },
                     (_, i: number) => (
@@ -215,7 +226,7 @@ export default function SummaryStep() {
                 </StatsCarouselRight>
               )}
               {statView === 'personCases' && (
-                <StatsCarouselRight>
+                <StatsCarouselRight key={statView}>
                   {Array.from(
                     { length: stats[statView].value },
                     (_, i: number) => (
@@ -233,7 +244,7 @@ export default function SummaryStep() {
                         length: PersonFiles.length - stats[statView].value,
                       },
                       (_, i: number) => (
-                        <FileIconContainer key={`${statView}__${i}`}>
+                        <FileIconContainer key={`notPersonCases__${i}`}>
                           <img src={FileBland} alt="FileBland" />
                         </FileIconContainer>
                       )
