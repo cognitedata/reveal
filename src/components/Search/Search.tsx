@@ -57,7 +57,12 @@ const Search = ({ visible, onClose }: SearchProps) => {
             />
           </div>
           <Tooltip content="Hide">
-            <Button icon="Close" variant="ghost" onClick={onClose} />
+            <Button
+              icon="Close"
+              type="ghost"
+              onClick={onClose}
+              aria-label="close"
+            />
           </Tooltip>
         </SearchBar>
         <SearchResultsContainer>

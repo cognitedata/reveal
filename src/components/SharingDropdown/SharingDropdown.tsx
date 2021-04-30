@@ -92,7 +92,12 @@ const SharingDropdown = ({ chart, disabled = false }: SharingDropdownProps) => {
         </SharingMenu>
       }
     >
-      <Button icon="Share" variant="ghost" disabled={disabled} />
+      <Button
+        icon="Share"
+        type="ghost"
+        disabled={disabled}
+        aria-label="share"
+      />
     </Dropdown>
   );
 };

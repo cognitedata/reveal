@@ -73,7 +73,7 @@ const DateRangeSelector = ({ chart }: DateRangeSelectorProps) => {
                 dateTo: option.dateTo().toDate(),
               })
             }
-            variant="ghost"
+            type="ghost"
           >
             {option.label}
           </Button>

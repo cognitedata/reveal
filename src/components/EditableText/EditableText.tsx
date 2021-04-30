@@ -87,7 +87,7 @@ const EditableText = ({
         <div className="edit-button" style={{ marginLeft: 4 }}>
           <ClickBoundary>
             <Tooltip content="Rename">
-              <Button variant="ghost" onClick={startEditing}>
+              <Button type="ghost" onClick={startEditing}>
                 <Icon type="Edit" />
               </Button>
             </Tooltip>
