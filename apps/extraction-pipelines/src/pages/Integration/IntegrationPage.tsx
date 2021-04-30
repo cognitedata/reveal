@@ -62,7 +62,7 @@ const IntegrationPage: FunctionComponent<IntegrationPageProps> = () => {
   const { setIntegration } = useSelectedIntegration();
   const { data: integration, isLoading } = useIntegrationById(parseInt(id, 10));
   const dataSetId: IdEither[] = integration?.dataSetId
-    ? [{ id: parseInt(integration.dataSetId, 10) }]
+    ? [{ id: integration.dataSetId }]
     : [];
   const dataset = useDataSets(dataSetId);
 

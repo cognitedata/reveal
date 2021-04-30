@@ -8,7 +8,7 @@ import { DataSetModel } from 'model/DataSetModel';
 
 interface DataSetViewProps {
   dataSet?: DataSetModel;
-  dataSetId?: string;
+  dataSetId?: number;
 }
 export const DATA_SET_ID_LABEL: Readonly<string> = 'Id';
 export const DATA_SET_NAME_LABEL: Readonly<string> = 'Name';
@@ -36,7 +36,10 @@ export const DataSetView: FunctionComponent<DataSetViewProps> = ({
       )}
       <span className="flex">
         {DATA_SET_ID_LABEL}:{' '}
-        <InteractiveCopyWithText textToCopy={dataSetId} copyType="dataSetId">
+        <InteractiveCopyWithText
+          textToCopy={`${dataSetId}`}
+          copyType="dataSetId"
+        >
           {dataSetId}
         </InteractiveCopyWithText>
       </span>

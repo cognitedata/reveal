@@ -1,4 +1,5 @@
 import { DataSet } from '@cognite/sdk';
+import { Integration } from 'model/Integration';
 import {
   getDataSetsLink,
   mapDataSetResponse,
@@ -29,8 +30,11 @@ describe('Data set util', () => {
     consoleGoverned: 'false',
   };
 
-  test('mapUniqueDataSetIds - Retuns uniq ids', () => {
-    const res = mapUniqueDataSetIds(getMockResponse());
+  test('mapUniqueDataSetIds - Returns uniq ids', () => {
+    const res = mapUniqueDataSetIds([
+      ...getMockResponse(),
+      { id: 12, name: 'no dataset' } as Integration,
+    ]);
     expect(res.length).toEqual(3);
   });
 

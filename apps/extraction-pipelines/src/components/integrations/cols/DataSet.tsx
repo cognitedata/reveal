@@ -17,7 +17,7 @@ const DatasetTooltip = styled.div`
 interface OwnProps {
   id: string;
   dataSetName: string;
-  dataSetId: string;
+  dataSetId: number;
 }
 
 type Props = OwnProps;
@@ -42,7 +42,7 @@ export const DataSet: FunctionComponent<Props> = ({
           <LinkWithCopy
             href={getDataSetsLink({ origin, project, cdfEnv, dataSetId })}
             linkText={dataSetName}
-            copyText={dataSetId}
+            copyText={`${dataSetId}`}
             copyType="dataSetId"
             {...rest}
           />

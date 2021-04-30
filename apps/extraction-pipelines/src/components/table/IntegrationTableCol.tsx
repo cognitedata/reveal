@@ -55,7 +55,7 @@ export const createSearchStringForContacts = (contacts?: User[]) => {
   return `${contacts?.length ? contacts.map((aut) => aut.name).join() : ''}`;
 };
 export const createSearchStringForDataSet = (
-  dataSetId: string,
+  dataSetId: number,
   dataSet?: DataSetModel
 ) => {
   return `${dataSetId} ${dataSet ? dataSet.name : ''}`;

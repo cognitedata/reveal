@@ -35,10 +35,14 @@ const DetailsValueView = ({ fieldValue, fieldName }: DetailsValueViewProps) => {
       return <Schedule id={fieldName} schedule={val} />;
     }
     case 'dataSetId': {
-      const val = (fieldValue as string) ?? undefined;
+      const val = (fieldValue as number) ?? undefined;
       return (
         <>
-          <DataSetDisplay id={fieldName} dataSetId={val} dataSetName={val} />
+          <DataSetDisplay
+            id={fieldName}
+            dataSetId={val}
+            dataSetName={`${val}`}
+          />
         </>
       );
     }
@@ -49,7 +53,7 @@ const DetailsValueView = ({ fieldValue, fieldName }: DetailsValueViewProps) => {
           {fieldValue && (
             <DataSetDisplay
               id={fieldName}
-              dataSetId={`${id}`}
+              dataSetId={id}
               dataSetName={name ?? `${id}`}
             />
           )}

@@ -4,21 +4,21 @@ import { StatusRow } from 'model/Runs';
 
 export const mockDataSetResponse = () => [
   {
-    id: parseInt(getMockResponse()[0].dataSetId, 10),
+    id: getMockResponse()[0].dataSetId,
     name: 'My data set 1',
     createdTime: new Date(2020, 10, 10),
     writeProtected: true,
     lastUpdatedTime: new Date(2020, 11, 1),
   },
   {
-    id: parseInt(getMockResponse()[1].dataSetId, 10),
+    id: getMockResponse()[1].dataSetId,
     name: 'This other data set',
     createdTime: new Date(2020, 11, 1),
     writeProtected: true,
     lastUpdatedTime: new Date(2020, 11, 1),
   },
   {
-    id: parseInt(getMockResponse()[2].dataSetId, 10),
+    id: getMockResponse()[2].dataSetId,
     name: 'Third data set',
     createdTime: new Date(2020, 11, 1),
     writeProtected: true,
@@ -35,7 +35,7 @@ const mockResponseV2 = {
       name: 'Azure Integration',
       createdBy: 'test@test.no',
       description: 'Dummy integration to Azure',
-      dataSetId: '1398950266713987',
+      dataSetId: 1398950266713987,
       rawTables: [
         {
           dbName: 'informatica',
@@ -75,7 +75,7 @@ const mockResponseV2 = {
       externalId: 'dataIntegration0002',
       name: 'SAP Integration',
       description: 'Dummy integration to SAP',
-      dataSetId: '1469810437954362',
+      dataSetId: 1469810437954362,
       dataSet: {
         createdTime: new Date(1605349723208),
         description: 'This is a test data set',
@@ -124,7 +124,7 @@ const mockResponseV2 = {
       externalId: 'dataIntegration0003',
       name: 'PI AF integration',
       description: 'Dummy PI AF integration',
-      dataSetId: '1469810437954369',
+      dataSetId: 1469810437954369,
       dataSet: {
         createdTime: new Date(1605349723208),
         description: 'This is a test data set',
@@ -178,7 +178,7 @@ const mockResponseV2 = {
       lastSuccess: 1584064700000,
       lastFailure: 1584065800000,
       lastSeen: 1584066900000,
-      dataSetId: '1469810437954362',
+      dataSetId: 1469810437954362,
       dataSet: {
         createdTime: new Date(1605349723208),
         description: 'This is a test data set',
@@ -230,7 +230,7 @@ const mockResponseV2 = {
       lastSuccess: 0,
       lastFailure: 0,
       lastSeen: 0,
-      dataSetId: '1469810437954362',
+      dataSetId: 1469810437954362,
       dataSet: {
         createdTime: new Date(1605349723208),
         description: 'This is a test data set',

@@ -172,7 +172,7 @@ describe('DatasetPage', () => {
           items: [
             {
               id: '123',
-              update: { dataSetId: { set: `${mock.items[0].id}` } },
+              update: { dataSetId: { set: mock.items[0].id } },
             },
           ],
         },

@@ -1,16 +1,16 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import moment from 'moment';
-import { getMockResponse } from 'utils/mockResponse';
-import DetailsValueView from './DetailsValueView';
-import { render } from '../../../utils/test';
-import { calculateStatus } from '../../../utils/integrationUtils';
-import { NO_DATA_SET_ID_SET } from '../../../utils/constants';
+import { getMockResponse, mockDataSetResponse } from 'utils/mockResponse';
+import DetailsValueView from 'components/table/details/DetailsValueView';
+import { render } from 'utils/test';
+import { calculateStatus } from 'utils/integrationUtils';
+import { NO_DATA_SET_ID_SET } from 'utils/constants';
 
 describe('<DetailsValueView />', () => {
   test('Display name for data set when data set exist', () => {
     const data = createCases(0, 'dataSet');
-    render(<DetailsValueView fieldValue={data.value} fieldName={data.name} />);
+    render(<DetailsValueView fieldValue={data.value} fieldName={data.name} />); //
     const view = screen.getByText(data.value.name);
     expect(view).toBeInTheDocument();
 
@@ -75,7 +75,10 @@ describe('<DetailsValueView />', () => {
 });
 
 const createCases = (mockResNumber: number, fieldName: string) => {
-  const integration = getMockResponse()[mockResNumber];
+  const integration = {
+    ...getMockResponse()[mockResNumber],
+    dataSet: mockDataSetResponse()[mockResNumber],
+  };
   const value = integration[`${fieldName}`];
   if (fieldName === 'latestRun') {
     const latest = {

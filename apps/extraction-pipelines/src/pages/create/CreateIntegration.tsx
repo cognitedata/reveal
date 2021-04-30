@@ -141,7 +141,7 @@ interface AddIntegrationFormInput
   name: string;
   externalId: string;
   description?: string;
-  dataSetId?: string;
+  dataSetId?: number;
   metadata?: any;
   sourceSystem: string;
   skipNotificationInHours?: number;
@@ -182,7 +182,7 @@ const CreateIntegration: FunctionComponent<CreateIntegrationProps> = (
       name: '',
       externalId: '',
       description: '',
-      dataSetId,
+      dataSetId: parseInt(dataSetId, 10),
       selectedRawTables: [],
     },
     reValidateMode: 'onSubmit',
@@ -257,7 +257,7 @@ const CreateIntegration: FunctionComponent<CreateIntegrationProps> = (
       name,
       externalId,
       ...(description && { description }),
-      ...(data && { dataSetId }),
+      ...(data && { dataSetId: fields.dataSetId }),
       ...(metadata && {
         metadata: Object.assign(
           {},

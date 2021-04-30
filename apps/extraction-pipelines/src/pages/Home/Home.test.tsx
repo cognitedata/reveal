@@ -42,7 +42,7 @@ describe('<Home />', () => {
     );
     expect(history.location.pathname).toEqual(route);
     await waitFor(() => {
-      screen.getByRole('heading');
+      screen.getAllByRole('heading');
     });
     const headings = screen.getAllByRole('heading');
     expect(headings[0].textContent).toEqual('Integrations');

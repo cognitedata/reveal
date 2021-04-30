@@ -87,7 +87,10 @@ const DataSetPage: FunctionComponent<DataSetPageProps> = () => {
   const { data, status } = useDataSetsList(DATASET_LIST_LIMIT);
   const methods = useForm<DataSetFormInput>({
     resolver: yupResolver(datasetSchema),
-    defaultValues: getDataSetPageValues(storedIntegration?.dataSetId, data),
+    defaultValues: getDataSetPageValues(
+      `${storedIntegration?.dataSetId}`,
+      data
+    ),
     reValidateMode: 'onSubmit',
   });
   const { register, handleSubmit, errors, watch, setValue, setError } = methods;
@@ -100,7 +103,9 @@ const DataSetPage: FunctionComponent<DataSetPageProps> = () => {
 
   const handleNext = (fields: DataSetFormInput) => {
     const valueToStore =
-      fields.dataset === DataSetOptions.YES ? fields.dataSetId : undefined;
+      fields.dataset === DataSetOptions.YES
+        ? parseInt(fields.dataSetId, 10)
+        : undefined;
     setStoredIntegration((prev) => ({ ...prev, dataSetId: valueToStore }));
     switch (fields.dataset) {
       case DataSetOptions.YES:

@@ -5,12 +5,12 @@ import { DataSetMetadata, DataSetModel } from 'model/DataSetModel';
 
 export const mapUniqueDataSetIds = (integrations?: Integration[]) => {
   return integrations
-    ? integrations
-        .map((integration) => {
-          const id = parseInt(integration.dataSetId, 10);
-          return { id };
-        })
-        .filter((v, i, a) => a.findIndex((t) => t.id === v.id) === i)
+    ? integrations.reduce((acc: { id: number }[], curr) => {
+        if (curr.dataSetId && !acc.find((v) => v.id === curr.dataSetId)) {
+          return [...acc, { id: curr.dataSetId }];
+        }
+        return acc;
+      }, [])
     : [];
 };
 
@@ -21,7 +21,7 @@ export const mapDataSetToIntegration = (
   return integrations
     ? integrations.map((integration) => {
         const dataSetMatch = dataSets?.filter((data: DataSetModel) => {
-          return data.id === parseInt(integration.dataSetId, 10);
+          return data.id === integration.dataSetId;
         });
         return {
           ...integration,
@@ -53,7 +53,7 @@ export const mapDataSetResponse = (response: DataSet[]): DataSetModel[] => {
 interface GetDataSetLinkProps {
   origin: string | undefined;
   project: string | null;
-  dataSetId: string;
+  dataSetId: number;
   cdfEnv: string | undefined;
 }
 

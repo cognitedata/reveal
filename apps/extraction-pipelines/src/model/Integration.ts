@@ -12,7 +12,7 @@ export interface RegisterIntegrationInfo {
   name: string;
   externalId: string;
   schedule?: string;
-  dataSetId: string;
+  dataSetId: number;
   description?: string;
   metadata?: MetaData;
   contacts: User[];
