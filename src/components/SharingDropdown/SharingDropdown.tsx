@@ -16,9 +16,10 @@ import { useUpdateChart } from 'hooks/firebase';
 
 interface SharingDropdownProps {
   chart: Chart;
+  disabled?: boolean;
 }
 
-const SharingDropdown = ({ chart }: SharingDropdownProps) => {
+const SharingDropdown = ({ chart, disabled = false }: SharingDropdownProps) => {
   const [shareIconType, setShareIconType] = useState<
     'Copy' | 'Checkmark' | 'ErrorStroked'
   >('Copy');
@@ -33,10 +34,8 @@ const SharingDropdown = ({ chart }: SharingDropdownProps) => {
 
   const handleToggleChartAccess = async () => {
     updateChart({
-      chart: {
-        ...chart,
-        public: !chart.public,
-      },
+      ...chart,
+      public: !chart.public,
     });
   };
 
@@ -53,6 +52,7 @@ const SharingDropdown = ({ chart }: SharingDropdownProps) => {
 
   return (
     <Dropdown
+      disabled={disabled}
       content={
         <SharingMenu>
           <SharingMenuContent>
@@ -92,9 +92,7 @@ const SharingDropdown = ({ chart }: SharingDropdownProps) => {
         </SharingMenu>
       }
     >
-      <Button icon="Share" variant="ghost">
-        Share
-      </Button>
+      <Button icon="Share" variant="ghost" disabled={disabled} />
     </Dropdown>
   );
 };

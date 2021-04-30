@@ -1,37 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import debounce from 'lodash/debounce';
-import { Button, Dropdown, Icon, Menu, toast } from '@cognite/cogs.js';
-import { useHistory, useParams } from 'react-router-dom';
+import styled from 'styled-components/macro';
+import { Button, Icon, toast, Tooltip } from '@cognite/cogs.js';
+import { useParams } from 'react-router-dom';
 import NodeEditor from 'components/NodeEditor';
 import SplitPaneLayout from 'components/Layout/SplitPaneLayout';
 import PlotlyChartComponent from 'components/PlotlyChart/PlotlyChart';
 import DateRangeSelector from 'components/DateRangeSelector';
-import { AxisUpdate } from 'components/PlotlyChart';
 import Search from 'components/Search';
-import { Toolbar } from 'components/Toolbar';
-import SharingDropdown from 'components/SharingDropdown/SharingDropdown';
-import EditableText from 'components/EditableText';
-import {
-  charts,
-  useChart,
-  useUpdateChart,
-  useDeleteChart,
-} from 'hooks/firebase';
+import { useChart, useUpdateChart } from 'hooks/firebase';
 import { nanoid } from 'nanoid';
-import { Chart } from 'reducers/charts/types';
+import { ChartTimeSeries, ChartWorkflow } from 'reducers/charts/types';
 import { getEntryColor } from 'utils/colors';
-import { useLoginStatus, useQueryString } from 'hooks';
-import { useQueryClient } from 'react-query';
-import { duplicate } from 'utils/charts';
+import { useQueryString } from 'hooks';
 import { SEARCH_KEY } from 'utils/constants';
 import { Modes } from 'pages/types';
+import { ContextMenu } from 'components/ContextMenu';
 import TimeSeriesRows from './TimeSeriesRows';
 import WorkflowRows from './WorkflowRows';
-import RunWorkflows from './RunWorkflowsButton';
+
 import {
   BottomPaneWrapper,
-  BottombarItem,
-  BottombarWrapper,
   ChartContainer,
   ChartViewContainer,
   ChartWrapper,
@@ -41,7 +29,6 @@ import {
   SourceName,
   SourceTable,
   SourceTableWrapper,
-  ToolbarIcon,
   TopPaneWrapper,
 } from './elements';
 
@@ -50,28 +37,17 @@ type ChartViewProps = {
 };
 
 const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
-  const history = useHistory();
   const { item: query, setItem: setQuery } = useQueryString(SEARCH_KEY);
-
-  const cache = useQueryClient();
-  const { data: login } = useLoginStatus();
 
   const { chartId = chartIdProp } = useParams<{ chartId: string }>();
   const { data: chart, isError, isFetched } = useChart(chartId);
+  const [showContextMenu, setShowContextMenu] = useState(false);
 
   const {
-    mutateAsync,
+    mutate: updateChart,
     isError: updateError,
     error: updateErrorMsg,
   } = useUpdateChart();
-
-  const updateChart = (updatedChart: Chart) =>
-    mutateAsync({
-      chart: updatedChart,
-      skipPersist: login?.user !== updatedChart.user,
-    });
-
-  const { mutate: deleteChart } = useDeleteChart();
 
   useEffect(() => {
     if (updateError) {
@@ -82,26 +58,13 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     }
   }, [updateError, updateErrorMsg]);
 
-  useEffect(() => {
-    const doc = charts().doc(chartId);
-    return doc.onSnapshot({
-      next(snap) {
-        const key = ['chart', chartId];
-        const newChart = snap.data() as Chart;
-        const cacheChart = cache.getQueryData<Chart>(key);
-        if (cacheChart?.dirty && newChart.user !== login?.user) {
-          toast.warn('Chart have been changed by owner');
-        } else {
-          cache.setQueryData(key, newChart);
-        }
-      },
-    });
-  }, [chartId, login, cache]);
-
-  const [activeSourceItem, setActiveSourceItem] = useState<string>();
+  const [selectedSourceId, setSelectedSourceId] = useState<
+    string | undefined
+  >();
 
   const [showSearch, setShowSearch] = useState(false);
   const [workspaceMode, setWorkspaceMode] = useState<Modes>('workspace');
+  const [stackedMode, setStackedMode] = useState<boolean>(false);
   const isWorkspaceMode = workspaceMode === 'workspace';
 
   /**
@@ -123,7 +86,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
             id: nanoid(),
             name: 'New Calculation',
             color: getEntryColor(),
-            lineWeight: 2,
+            lineWeight: 1,
             lineStyle: 'solid',
             enabled: true,
             nodes: [],
@@ -152,102 +115,122 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     );
   }
 
-  const handleChangeSourceAxis = debounce(
-    ({ x, y }: { x: number[]; y: AxisUpdate[] }) => {
-      if (chart) {
-        const newChart = {
-          ...chart,
-        };
-
-        if (x.length === 2) {
-          newChart.dateFrom = `${x[0]}`;
-          newChart.dateTo = `${x[1]}`;
-        }
-
-        if (y.length > 0) {
-          y.forEach((update) => {
-            newChart.timeSeriesCollection = newChart.timeSeriesCollection?.map(
-              (t) => (t.id === update.id ? { ...t, range: update.range } : t)
-            );
-            newChart.workflowCollection = newChart.workflowCollection?.map(
-              (wf) =>
-                wf.id === update.id ? { ...wf, range: update.range } : wf
-            );
-          });
-        }
-
-        updateChart(newChart);
-      }
-    },
-    500
-  );
-
-  const onDeleteSuccess = () => {
-    history.push('/');
+  const handleSourceClick = async (sourceId?: string) => {
+    setSelectedSourceId(sourceId);
   };
 
-  const onDeleteError = () => {
-    toast.error('There was a problem deleting the chart. Try again!');
+  const handleInfoClick = async (sourceId?: string) => {
+    const isSameSource = sourceId === selectedSourceId;
+    const showMenu = isSameSource ? !showContextMenu : true;
+    setShowContextMenu(showMenu);
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
   };
 
-  const handleDeleteChart = async () => {
-    deleteChart(chart.id, {
-      onSuccess: onDeleteSuccess,
-      onError: onDeleteError,
-    });
+  const handleCloseContextMenu = async () => {
+    setShowContextMenu(false);
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
   };
 
-  const handleDuplicateChart = async () => {
-    if (login?.user) {
-      const newChart = duplicate(chart, login.user);
-      await updateChart(newChart);
-      history.push(`/${newChart.id}`);
-    }
-  };
-
-  const handleOpenSearch = () => {
+  const handleOpenSearch = async () => {
     setShowSearch(true);
     setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
   };
 
-  const handleCloseSearch = () => {
+  const handleCloseSearch = async () => {
     setShowSearch(false);
     setQuery('');
     setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
   };
 
+  const selectedSourceItem = [
+    ...(chart.timeSeriesCollection || []).map(
+      (ts) =>
+        ({
+          type: 'timeseries',
+          ...ts,
+        } as ChartTimeSeries)
+    ),
+    ...(chart.workflowCollection || []).map(
+      (wf) =>
+        ({
+          type: 'workflow',
+          ...wf,
+        } as ChartWorkflow)
+    ),
+  ].find(({ id }) => id === selectedSourceId);
+
   const sourceTableHeaderRow = (
     <tr>
       <th style={{ width: 350 }}>
         <SourceItem>
-          <SourceName>Name</SourceName>
+          <SourceName>
+            <Icon
+              type="Eye"
+              style={{
+                marginLeft: 7,
+                marginRight: 20,
+                verticalAlign: 'middle',
+              }}
+            />
+            Name
+          </SourceName>
         </SourceItem>
       </th>
       {isWorkspaceMode && (
         <>
-          <th style={{ width: 110 }}>
-            <SourceItem>
-              <SourceName>Unit (input)</SourceName>
-            </SourceItem>
-          </th>
-          <th style={{ width: 110 }}>
-            <SourceItem>
-              <SourceName>Unit (output)</SourceName>
-            </SourceItem>
-          </th>
-          <th style={{ width: 300 }}>
-            <SourceItem>
-              <SourceName>Source</SourceName>
-            </SourceItem>
-          </th>
           <th>
             <SourceItem>
               <SourceName>Description</SourceName>
             </SourceItem>
           </th>
-          <th style={{ width: 100 }}>
+          <th style={{ width: 210 }}>
             <SourceItem>
+              <SourceName>Tag</SourceName>
+            </SourceItem>
+          </th>
+          <th style={{ width: 60 }}>
+            <SourceItem>
+              <SourceName>Min</SourceName>
+            </SourceItem>
+          </th>
+          <th style={{ width: 60 }}>
+            <SourceItem>
+              <SourceName>Max</SourceName>
+            </SourceItem>
+          </th>
+          <th style={{ width: 60 }}>
+            <SourceItem>
+              <SourceName>Median</SourceName>
+            </SourceItem>
+          </th>
+          <th style={{ width: 180, paddingRight: 8 }}>
+            <SourceItem style={{ justifyContent: 'flex-end' }}>
+              <SourceName>Unit</SourceName>
+            </SourceItem>
+          </th>
+          <th style={{ width: 50, paddingLeft: 0 }}>
+            <SourceItem style={{ justifyContent: 'center' }}>
               <SourceName>P&amp;IDs</SourceName>
+            </SourceItem>
+          </th>
+          <th style={{ width: 50, paddingLeft: 0 }}>
+            <SourceItem style={{ justifyContent: 'center' }}>
+              <SourceName>Style</SourceName>
+            </SourceItem>
+          </th>
+          <th style={{ width: 50, paddingLeft: 0 }}>
+            <SourceItem style={{ justifyContent: 'center' }}>
+              <SourceName>Remove</SourceName>
+            </SourceItem>
+          </th>
+          <th style={{ width: 50, paddingLeft: 0 }}>
+            <SourceItem style={{ justifyContent: 'center' }}>
+              <SourceName>Details</SourceName>
+            </SourceItem>
+          </th>
+          <th style={{ width: 50, paddingLeft: 0 }}>
+            <SourceItem style={{ justifyContent: 'center' }}>
+              <SourceName>More</SourceName>
             </SourceItem>
           </th>
         </>
@@ -257,75 +240,46 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
 
   return (
     <ChartViewContainer id="chart-view">
-      {!showSearch && (
-        <Toolbar
-          onSearchClick={handleOpenSearch}
-          onNewWorkflowClick={handleClickNewWorkflow}
-        />
-      )}
       {showSearch && (
         <Search visible={showSearch} onClose={handleCloseSearch} />
       )}
       <ContentWrapper showSearch={showSearch}>
-        <Header>
-          <hgroup>
-            <h1>
-              <EditableText
-                value={chart.name}
-                onChange={(value) => {
-                  if (chart) {
-                    updateChart({ ...chart, name: value });
-                  }
-                }}
-              />
-            </h1>
-            <h4>by {chart?.user}</h4>
-          </hgroup>
-          <section className="daterange">
-            <DateRangeSelector chart={chart} />
-          </section>
+        <Header inSearch={showSearch}>
           {!showSearch && (
             <section className="actions">
-              <RunWorkflows chart={chart} update={updateChart} />
-              <SharingDropdown chart={chart} />
-              <Dropdown
-                content={
-                  <Menu>
-                    <Menu.Item onClick={() => handleDuplicateChart()}>
-                      <Icon type="Duplicate" />
-                      <span>Duplicate</span>
-                    </Menu.Item>
-                    {login?.user === chart.user && (
-                      <Menu.Item onClick={() => handleDeleteChart()}>
-                        <Icon type="Delete" />
-                        <span>Delete</span>
-                      </Menu.Item>
-                    )}
-                    <Menu.Item disabled>
-                      {/* disabled doesn't change the color */}
-                      <span style={{ color: 'var(--cogs-greyscale-grey5)' }}>
-                        <Icon type="Download" />
-                        Export
-                      </span>
-                    </Menu.Item>
-                  </Menu>
-                }
+              <Button icon="Plus" type="primary" onClick={handleOpenSearch}>
+                Add time series
+              </Button>
+              <Button
+                icon="YAxis"
+                variant="ghost"
+                onClick={handleClickNewWorkflow}
               >
-                <Button icon="Down" iconPlacement="right">
-                  Actions
-                </Button>
-              </Dropdown>
+                Add calculation
+              </Button>
             </section>
           )}
+          <section className="daterange">
+            <Tooltip content={`${stackedMode ? 'Disable' : 'Enable'} stacking`}>
+              <Button
+                icon="ChartStackedView"
+                variant={stackedMode ? 'default' : 'ghost'}
+                onClick={() => setStackedMode(!stackedMode)}
+              />
+            </Tooltip>
+            <Divider />
+            <DateRangeSelector chart={chart} />
+          </section>
         </Header>
         <ChartContainer>
           <SplitPaneLayout defaultSize={200}>
             <TopPaneWrapper className="chart">
               <ChartWrapper>
                 <PlotlyChartComponent
-                  chart={chart}
-                  onAxisChange={(update) => handleChangeSourceAxis(update)}
+                  key={chartId}
+                  chartId={chartId}
                   isInSearch={showSearch}
+                  stackedMode={stackedMode}
                 />
               </ChartWrapper>
             </TopPaneWrapper>
@@ -339,21 +293,27 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                         chart={chart}
                         updateChart={updateChart}
                         mode={workspaceMode}
+                        selectedSourceId={selectedSourceId}
+                        onRowClick={handleSourceClick}
+                        onInfoClick={handleInfoClick}
                       />
+
                       <WorkflowRows
                         chart={chart}
-                        setActive={setActiveSourceItem}
-                        setMode={setWorkspaceMode}
                         updateChart={updateChart}
-                        activeWorkflow={activeSourceItem}
+                        mode={workspaceMode}
+                        setMode={setWorkspaceMode}
+                        selectedSourceId={selectedSourceId}
+                        onRowClick={handleSourceClick}
+                        onInfoClick={handleInfoClick}
                       />
                     </tbody>
                   </SourceTable>
                 </SourceTableWrapper>
-                {workspaceMode === 'editor' && !!activeSourceItem && (
+                {workspaceMode === 'editor' && !!selectedSourceId && (
                   <NodeEditor
-                    mutate={mutateAsync}
-                    workflowId={activeSourceItem}
+                    mutate={updateChart}
+                    workflowId={selectedSourceId}
                     setWorkspaceMode={setWorkspaceMode}
                     chart={chart}
                   />
@@ -362,27 +322,21 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
             </BottomPaneWrapper>
           </SplitPaneLayout>
         </ChartContainer>
-        <BottombarWrapper>
-          <BottombarItem
-            isActive={workspaceMode === 'workspace'}
-            onClick={() => setWorkspaceMode('workspace')}
-          >
-            <ToolbarIcon type="Timeseries" />
-            <span style={{ paddingLeft: 10, paddingRight: 10 }}>Workspace</span>
-          </BottombarItem>
-          <BottombarItem
-            isActive={workspaceMode === 'editor'}
-            onClick={() => setWorkspaceMode('editor')}
-          >
-            <ToolbarIcon type="Edit" />
-            <span style={{ paddingLeft: 10, paddingRight: 10 }}>
-              Calculations
-            </span>
-          </BottombarItem>
-        </BottombarWrapper>
       </ContentWrapper>
+      <ContextMenu
+        chart={chart}
+        visible={showContextMenu}
+        onClose={handleCloseContextMenu}
+        sourceItem={selectedSourceItem}
+      />
     </ChartViewContainer>
   );
 };
+
+const Divider = styled.div`
+  border-left: 1px solid var(--cogs-greyscale-grey3);
+  height: 24px;
+  margin-left: 10px;
+`;
 
 export default ChartView;

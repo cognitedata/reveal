@@ -3,25 +3,13 @@ import styled from 'styled-components/macro';
 import Layers from 'utils/z-index';
 
 export const Header = styled.header`
+  height: 60px;
   background: var(--cogs-greyscale-grey1);
   border-bottom: 1px solid var(--cogs-greyscale-grey4);
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  hgroup {
-    display: flex;
-    flex-direction: column;
-    padding: 16px 24px;
-    h1,
-    h4 {
-      padding: 0;
-      margin: 0;
-      text-align: left;
-    }
-    h4 {
-      color: var(--cogs-greyscale-grey5);
-    }
-  }
+  justify-content: ${(props: { inSearch: boolean }) =>
+    props.inSearch ? 'flex-end' : 'space-between'};
   .actions {
     display: flex;
     margin-right: 24px;
@@ -33,6 +21,7 @@ export const Header = styled.header`
     display: flex;
     justify-self: flex-start;
     padding: 0 24px;
+    align-items: center;
   }
 `;
 
@@ -87,7 +76,7 @@ export const ContentWrapper = styled.div`
   flex-direction: column;
   max-height: 100%;
   width: ${(props: { showSearch: boolean }) =>
-    props.showSearch ? '70%' : 'calc(100% - 56px)'};
+    props.showSearch ? '70%' : '100%'};
 `;
 
 export const ToolbarIcon = styled(Icon)`
@@ -136,17 +125,18 @@ export const SourceTable = styled.table`
   td,
   th {
     padding-left: 10px;
-    border: 1px solid var(--cogs-greyscale-grey2);
   }
 
   th {
     position: sticky;
     top: -1px;
-    background-color: white;
+    color: var(--cogs-greyscale-grey7);
+    background-color: var(--cogs-greyscale-grey1);
     z-index: ${Layers.TABLE_HEADER};
     margin-bottom: -1px;
-    box-shadow: inset 0 1px 0 var(--cogs-greyscale-grey2),
-      inset 0 -2px 0 var(--cogs-greyscale-grey2);
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
   }
 
   tbody > tr:hover {
@@ -161,10 +151,10 @@ export const SourceRow = styled.tr`
   background: ${(props: { isActive: boolean }) =>
     props.isActive ? 'var(--cogs-greyscale-grey3)' : 'none'};
 
-  &&:nth-child(even) {
+  &&:nth-child(odd) {
     background: #ffffff;
   }
-  &&:nth-child(odd) {
+  &&:nth-child(even) {
     background: var(--cogs-greyscale-grey1);
   }
   &&:hover {
@@ -256,5 +246,27 @@ export const ChartWrapper = styled.div`
   > div {
     height: 100%;
     width: 100%;
+  }
+`;
+
+export const UnitMenuHeader = styled.div`
+  word-break: break-word;
+  text-transform: none;
+  font-weight: 400;
+  color: var(--cogs-greyscale-grey6);
+`;
+
+export const UnitMenuAside = styled.div`
+  margin-left: 40px;
+  position: relative;
+  &:before {
+    display: block;
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -20px;
+    width: 2px;
+    background-color: var(--cogs-greyscale-grey3);
   }
 `;

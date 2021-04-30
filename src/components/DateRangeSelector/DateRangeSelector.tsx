@@ -54,11 +54,9 @@ const DateRangeSelector = ({ chart }: DateRangeSelectorProps) => {
   }) => {
     if (dateFrom && dateTo) {
       updateChart({
-        chart: {
-          ...chart,
-          dateFrom: (dateFrom || new Date(chart?.dateFrom!)).toJSON(),
-          dateTo: (dateTo || new Date(chart?.dateTo!)).toJSON(),
-        },
+        ...chart,
+        dateFrom: (dateFrom || new Date(chart?.dateFrom!)).toJSON(),
+        dateTo: (dateTo || new Date(chart?.dateTo!)).toJSON(),
       });
     }
   };
@@ -75,6 +73,7 @@ const DateRangeSelector = ({ chart }: DateRangeSelectorProps) => {
                 dateTo: option.dateTo().toDate(),
               })
             }
+            variant="ghost"
           >
             {option.label}
           </Button>

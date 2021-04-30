@@ -25,8 +25,10 @@ export type SeriesData = {
   color: string | undefined;
   width: number | undefined;
   dash: string;
+  mode: string | undefined;
   unit: string | undefined;
   datapoints: Datapoints | DatapointAggregate[];
+  outdatedData?: boolean;
 };
 
 export type AxisUpdate = {
@@ -44,7 +46,13 @@ export function getYaxisUpdatesFromEventData(
       .filter((key) => key.includes('yaxis'))
       .reduce((result: { [key: string]: any }, key) => {
         const axisIndex = (+key.split('.')[0].split('yaxis')[1] || 1) - 1;
-        const { id = '', type = '' } = seriesData[axisIndex] || {};
+        const series = seriesData[axisIndex];
+        const { id = '', type = '' } = series;
+        const isAutoscale = key.includes('autorange');
+
+        const range = isAutoscale
+          ? []
+          : ((result[id] || {}).range || []).concat(eventdata[key]);
 
         return {
           ...result,
@@ -52,7 +60,7 @@ export function getYaxisUpdatesFromEventData(
             ...(result[id] || {}),
             id,
             type,
-            range: ((result[id] || {}).range || []).concat(eventdata[key]),
+            range,
           },
         };
       }, {})
@@ -61,12 +69,46 @@ export function getYaxisUpdatesFromEventData(
   return axisUpdates;
 }
 
+function getAutoScaleRange(seriesData: SeriesData[]) {
+  let min: Date | undefined;
+  let max: Date | undefined;
+
+  seriesData.forEach((series) => {
+    if (Array.isArray(series.datapoints)) {
+      series.datapoints.forEach((datapoint) => {
+        if ('timestamp' in datapoint) {
+          if (min === undefined || datapoint.timestamp < min) {
+            min = datapoint.timestamp;
+          }
+          if (max === undefined || datapoint.timestamp > max) {
+            max = datapoint.timestamp;
+          }
+        }
+      });
+    }
+  });
+
+  min = min || new Date();
+  max = max || new Date();
+
+  return [min.toJSON(), max.toJSON()];
+}
+
 export function getXaxisUpdateFromEventData(
+  seriesData: SeriesData[],
   eventdata: PlotlyEventData
-): number[] {
-  return Object.keys(eventdata)
-    .filter((key) => key.includes('xaxis'))
-    .map((key) => eventdata[key]);
+): string[] {
+  const xaxisKeys = Object.keys(eventdata).filter((key) =>
+    key.includes('xaxis')
+  );
+
+  const isAutoscale = xaxisKeys.some((key) => key.includes('autorange'));
+
+  const range = isAutoscale
+    ? getAutoScaleRange(seriesData)
+    : xaxisKeys.map((key) => new Date(eventdata[key]).toJSON());
+
+  return range;
 }
 
 export function calculateStackedYRange(

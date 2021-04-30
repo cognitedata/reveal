@@ -1,5 +1,6 @@
 import { useSDK } from '@cognite/sdk-provider';
 import omit from 'lodash/omit';
+import isEqual from 'lodash/isEqual';
 import config, { CHART_VERSION } from 'config';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { getTenantFromURL } from 'utils/env';
@@ -8,6 +9,7 @@ import 'firebase/firestore';
 import 'firebase/auth';
 import { useLoginStatus } from 'hooks';
 import { Chart } from 'reducers/charts/types';
+import { IdInfo } from '@cognite/sdk';
 
 type EnvironmentConfig = {
   cognite: {
@@ -153,6 +155,7 @@ export const useChart = (id: string) => {
     ['chart', id],
     async () => (await charts().doc(id).get()).data() as Chart,
     {
+      enabled: !!id,
       staleTime: Infinity,
     }
   );
@@ -177,13 +180,9 @@ export const useDeleteChart = () => {
 export const useUpdateChart = () => {
   const cache = useQueryClient();
   return useMutation(
-    async ({
-      chart,
-      skipPersist = false,
-    }: {
-      chart: Chart;
-      skipPersist?: boolean;
-    }) => {
+    async (chart: Chart) => {
+      const skipPersist =
+        cache.getQueryData<IdInfo>(['login', 'status'])?.user !== chart.user;
       // skipPersist will result in only the local cache being updated.
       if (!skipPersist) {
         // The firestore SDK will retry indefinitely
@@ -199,13 +198,20 @@ export const useUpdateChart = () => {
       return chart.id;
     },
     {
-      onMutate({ chart, skipPersist }) {
-        cache.setQueryData(['chart', chart.id], {
-          ...chart,
-          dirty: skipPersist,
-        });
+      onMutate(chart) {
+        const skipPersist =
+          cache.getQueryData<IdInfo>(['login', 'status'])?.user !== chart.user;
+        const key = ['chart', chart.id];
+        const cachedChart = cache.getQueryData(key);
+
+        if (!isEqual(cachedChart, chart)) {
+          cache.setQueryData(key, {
+            ...chart,
+            dirty: skipPersist,
+          });
+        }
       },
-      onError(_, { chart }) {
+      onError(_, chart) {
         cache.invalidateQueries(['chart', chart.id]);
       },
       onSettled() {

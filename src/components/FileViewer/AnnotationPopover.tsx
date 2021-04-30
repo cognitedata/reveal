@@ -79,13 +79,13 @@ export const TimeseriesList = ({ assetId }: { assetId: number }) => {
         (t) => t.tsId === timeSeries.id
       );
       if (tsToRemove) {
-        updateChart({ chart: removeTimeseries(chart, tsToRemove.id) });
+        updateChart(removeTimeseries(chart, tsToRemove.id));
       } else {
         const ts = covertTSToChartTS(
           timeSeries,
           chart.timeSeriesCollection?.length || 0
         );
-        updateChart({ chart: addTimeseries(chart, ts) });
+        updateChart(addTimeseries(chart, ts));
       }
     }
   };

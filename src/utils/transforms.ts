@@ -1,6 +1,6 @@
 /* eslint camelcase: 0 */
 
-import { ChartWorkflow, StorableNode } from 'reducers/charts/types';
+import { StorableNode } from 'reducers/charts/types';
 
 export type DSPFunction = {
   description: string;
@@ -129,8 +129,11 @@ export function getOperationFromNode(node: StorableNode) {
   }
 }
 
-export function getStepsFromWorkflow(workflow: ChartWorkflow) {
-  const outputNode = workflow.nodes?.find(
+export function getStepsFromWorkflow(
+  nodes: StorableNode[] | undefined,
+  connections: Record<string, any> | undefined
+) {
+  const outputNode = nodes?.find(
     (node) => !node.outputPins || node.outputPins.length === 0
   );
 
@@ -145,9 +148,7 @@ export function getStepsFromWorkflow(workflow: ChartWorkflow) {
    */
   function resolveInputNodes(node: StorableNode) {
     node.inputPins.forEach((inputPin: any) => {
-      const inputNodeConnections = Object.values(
-        workflow.connections || {}
-      ).filter(
+      const inputNodeConnections = Object.values(connections || {}).filter(
         (conn) =>
           conn.inputPin.nodeId === node.id &&
           conn.inputPin.pinId === inputPin.id
@@ -159,7 +160,7 @@ export function getStepsFromWorkflow(workflow: ChartWorkflow) {
 
       const inputNodes = inputNodeConnections
         .map((inputNodeConnection) => {
-          return workflow.nodes?.find(
+          return nodes?.find(
             (nd) => nd.id === inputNodeConnection.outputPin.nodeId
           )!;
         })
@@ -185,9 +186,7 @@ export function getStepsFromWorkflow(workflow: ChartWorkflow) {
     .map((node, i, allNodes) => {
       const inputs = node.inputPins
         .map((inputPin: any) => {
-          const inputNodeConnection = Object.values(
-            workflow.connections || {}
-          ).find(
+          const inputNodeConnection = Object.values(connections || {}).find(
             (conn) =>
               conn.inputPin.nodeId === node.id &&
               conn.inputPin.pinId === inputPin.id
@@ -197,7 +196,7 @@ export function getStepsFromWorkflow(workflow: ChartWorkflow) {
             return undefined;
           }
 
-          const inputNode = workflow.nodes?.find(
+          const inputNode = nodes?.find(
             (nd) => nd.id === inputNodeConnection.outputPin.nodeId
           )!;
 

@@ -9,15 +9,13 @@ import {
   Connection,
   NodeContainer,
 } from '@cognite/connect';
-import { Menu, Input, Button, toast } from '@cognite/cogs.js';
+import { Menu, Input, Button } from '@cognite/cogs.js';
 import { nanoid } from 'nanoid';
 import workflowBackgroundSrc from 'assets/workflowBackground.png';
 import { Chart, ChartWorkflow, StorableNode } from 'reducers/charts/types';
 import { getStepsFromWorkflow } from 'utils/transforms';
-import { calculateGranularity } from 'utils/timeseries';
-import { useCallFunction } from 'utils/cogniteFunctions';
 import { Modes } from 'pages/types';
-import { pinTypes, isWorkflowRunnable } from './utils';
+import { pinTypes } from './utils';
 import defaultNodeOptions from '../../reducers/charts/Nodes';
 import ConfigPanel from './ConfigPanel';
 
@@ -36,7 +34,7 @@ type WorkflowEditorProps = {
   chart: Chart;
   workflowId: string;
   setWorkspaceMode: (m: Modes) => void;
-  mutate: (i: { chart: Chart; skipPersist?: boolean }) => void;
+  mutate: (chart: Chart) => void;
 };
 
 const WorkflowEditor = ({
@@ -49,7 +47,6 @@ const WorkflowEditor = ({
   const workflow = chart?.workflowCollection?.find(
     (flow) => flow.id === workflowId
   );
-  const { mutate: callFunction } = useCallFunction('simple_calc-master');
 
   if (!workflowId || !workflow) {
     return null;
@@ -57,17 +54,15 @@ const WorkflowEditor = ({
 
   const update = (diff: Partial<ChartWorkflow>) => {
     mutate({
-      chart: {
-        ...chart,
-        workflowCollection: chart.workflowCollection?.map((wf) =>
-          wf.id === workflowId
-            ? {
-                ...wf,
-                ...diff,
-              }
-            : wf
-        ),
-      },
+      ...chart,
+      workflowCollection: chart.workflowCollection?.map((wf) =>
+        wf.id === workflowId
+          ? {
+              ...wf,
+              ...diff,
+            }
+          : wf
+      ),
     });
   };
 
@@ -80,11 +75,8 @@ const WorkflowEditor = ({
       node.id === nextNode.id ? nextNode : node
     );
     const deleteCalls = !isEqual(
-      getStepsFromWorkflow(workflow),
-      getStepsFromWorkflow({
-        ...workflow,
-        nodes: nodeUpdate,
-      })
+      getStepsFromWorkflow(workflow.nodes, workflow.connections),
+      getStepsFromWorkflow(nodeUpdate, workflow.connections)
     );
 
     if (deleteCalls) {
@@ -115,48 +107,6 @@ const WorkflowEditor = ({
       connections: newConnections,
       calls: [],
     });
-  };
-
-  const onRun = async () => {
-    if (!workflow) {
-      return;
-    }
-
-    const steps = getStepsFromWorkflow(workflow);
-
-    if (!steps.length) {
-      return;
-    }
-
-    const computation = {
-      steps,
-      start_time: new Date(chart.dateFrom).getTime(),
-      end_time: new Date(chart.dateTo).getTime(),
-      granularity: calculateGranularity(
-        [new Date(chart.dateFrom).getTime(), new Date(chart.dateTo).getTime()],
-        1000
-      ),
-    };
-
-    callFunction(
-      { data: { computation_graph: computation } },
-      {
-        onSuccess({ functionId, callId }) {
-          update({
-            calls: [
-              {
-                callDate: Date.now(),
-                functionId,
-                callId,
-              },
-            ],
-          });
-        },
-        onError() {
-          toast.warn('Could not execute workflow');
-        },
-      }
-    );
   };
 
   return (
@@ -231,14 +181,6 @@ const WorkflowEditor = ({
         />
       )}
 
-      <Button
-        type="primary"
-        style={{ position: 'absolute', top: 16, right: 100 }}
-        disabled={!isWorkflowRunnable(nodes || [])}
-        onClick={onRun}
-      >
-        Run
-      </Button>
       <Button
         style={{ position: 'absolute', top: 16, right: 16 }}
         onClick={() => setWorkspaceMode('workspace')}

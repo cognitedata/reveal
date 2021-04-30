@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import Routes from 'components/Routes';
-import TopBar from 'components/TopBar';
-import PageLayout from 'components/Layout/PageLayout';
-import { DataExplorationProvider } from '@cognite/data-exploration';
 import { SDKProvider } from '@cognite/sdk-provider';
 import { QueryClientProvider, QueryClient } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
@@ -52,12 +49,7 @@ const App = () => {
   return (
     <BrowserRouter basename={`/${project}`}>
       <ToastContainer />
-      <PageLayout>
-        <TopBar />
-        <main>
-          <Routes />
-        </main>
-      </PageLayout>
+      <Routes />
     </BrowserRouter>
   );
 };
@@ -82,10 +74,8 @@ export default function RootApp() {
   return (
     <QueryClientProvider client={queryClient}>
       <SDKProvider sdk={sdk}>
-        <DataExplorationProvider sdk={sdk}>
-          <App />
-          <ReactQueryDevtools />
-        </DataExplorationProvider>
+        <App />
+        <ReactQueryDevtools />
       </SDKProvider>
     </QueryClientProvider>
   );

@@ -75,8 +75,9 @@ export const convertTsToWorkFlow = (ts: ChartTimeSeries): ChartWorkflow => {
       },
     },
     color: getEntryColor(),
-    lineWeight: 2,
+    lineWeight: 1,
     lineStyle: 'solid',
+    displayMode: 'lines',
     enabled: true,
   };
 

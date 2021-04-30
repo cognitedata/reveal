@@ -58,13 +58,13 @@ export default function AssetSearchHit({ asset }: Props) {
         (t) => t.tsId === timeSeries.id
       );
       if (tsToRemove) {
-        updateChart({ chart: removeTimeseries(chart, tsToRemove.id) });
+        updateChart(removeTimeseries(chart, tsToRemove.id));
       } else {
         const newTs = covertTSToChartTS(
           timeSeries,
           chart.timeSeriesCollection?.length || 0
         );
-        updateChart({ chart: addTimeseries(chart, newTs) });
+        updateChart(addTimeseries(chart, newTs));
       }
     }
   };
@@ -72,11 +72,13 @@ export default function AssetSearchHit({ asset }: Props) {
   return (
     <AssetItem>
       <Row>
-        <div style={{ padding: 5 }}>
-          <Icon type="ResourceAssets" />
-        </div>
-        <strong style={{ marginLeft: 10 }}>{asset.name}</strong>
-        <span style={{ marginLeft: 10, flexGrow: 2 }}>{asset.description}</span>
+        <InfoContainer>
+          <ResourceNameWrapper>
+            <Icon type="ResourceAssets" size={14} />
+            <strong style={{ marginLeft: 5 }}>{asset.name}</strong>
+          </ResourceNameWrapper>
+          <Description>{asset.description}</Description>
+        </InfoContainer>
         <DelayedComponent delay={100}>
           <PnidButton asset={asset} />
         </DelayedComponent>
@@ -87,36 +89,42 @@ export default function AssetSearchHit({ asset }: Props) {
           {ts?.map((t, i) => (
             <TSItem key={t.id}>
               <Row>
-                <div style={{ padding: 5 }}>
-                  <Icon type="ResourceTimeseries" />
-                </div>
-                <span>{t.name}</span>
-                <span>{t.description}</span>
-                <DelayedComponent delay={250 + i}>
-                  <TimeseriesChart
-                    height={65}
-                    showSmallerTicks
-                    timeseriesId={t.id}
-                    numberOfPoints={25}
-                    showAxis="horizontal"
-                    timeOptions={[]}
-                    showContextGraph={false}
-                    showPoints={false}
-                    enableTooltip={false}
-                    showGridLine="none"
-                    minRowTicks={2}
-                    dateRange={[sparklineStartDate, sparklineEndDate]}
-                  />
-                </DelayedComponent>
+                <InfoContainer>
+                  <ResourceNameWrapper>
+                    <Icon type="ResourceTimeseries" style={{ minWidth: 14 }} />
+                    <span style={{ marginLeft: 5 }}>{t.name}</span>
+                  </ResourceNameWrapper>
+                  <Description>{t.description}</Description>
+                </InfoContainer>
+                <Right>
+                  <DelayedComponent delay={250 + i}>
+                    <div style={{ width: 190 }}>
+                      <TimeseriesChart
+                        height={65}
+                        showSmallerTicks
+                        timeseriesId={t.id}
+                        numberOfPoints={25}
+                        showAxis="horizontal"
+                        timeOptions={[]}
+                        showContextGraph={false}
+                        showPoints={false}
+                        enableTooltip={false}
+                        showGridLine="none"
+                        minRowTicks={2}
+                        dateRange={[sparklineStartDate, sparklineEndDate]}
+                      />
+                    </div>
+                  </DelayedComponent>
 
-                <Checkbox
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleTimeSeriesClick(t);
-                  }}
-                  name={`${t.id}`}
-                  value={selectedIds?.includes(t.id)}
-                />
+                  <Checkbox
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleTimeSeriesClick(t);
+                    }}
+                    name={`${t.id}`}
+                    value={selectedIds?.includes(t.id)}
+                  />
+                </Right>
               </Row>
             </TSItem>
           ))}
@@ -156,6 +164,7 @@ const TSList = styled.ul`
 
 const TSItem = styled.li`
   border-radius: 5px;
+  padding: 5px;
   :nth-child(odd) {
     background-color: var(--cogs-greyscale-grey2);
   }
@@ -166,4 +175,29 @@ const Row = styled.div`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+`;
+
+const InfoContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  word-break: break-word;
+`;
+
+const ResourceNameWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: top;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+`;
+
+const Description = styled.span`
+  margin-left: 20px;
+  font-size: 10px;
+`;
+
+const Right = styled.div`
+  display: flex;
+  flex-direction: row;
 `;

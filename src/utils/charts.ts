@@ -1,4 +1,5 @@
 import { Timeseries } from '@cognite/sdk';
+import { AxisUpdate } from 'components/PlotlyChart';
 import { nanoid } from 'nanoid';
 import { Chart, ChartTimeSeries, ChartWorkflow } from 'reducers/charts/types';
 import { availableColors } from './colors';
@@ -144,9 +145,37 @@ export function covertTSToChartTS(
     originalUnit: ts.unit || '*',
     preferredUnit: ts.unit || '*',
     color: availableColors[preExistingCount || 0 % availableColors.length],
-    lineWeight: 2,
+    lineWeight: 1,
     lineStyle: 'solid',
+    displayMode: 'lines',
     enabled: true,
     description: ts.description || '-',
   };
+}
+
+export function updateSourceAxisForChart(
+  chart: Chart,
+  { x, y }: { x: string[]; y: AxisUpdate[] }
+) {
+  const updatedChart = {
+    ...chart,
+  };
+
+  if (x.length === 2) {
+    updatedChart.dateFrom = `${x[0]}`;
+    updatedChart.dateTo = `${x[1]}`;
+  }
+
+  if (y.length > 0) {
+    y.forEach((update) => {
+      updatedChart.timeSeriesCollection = updatedChart.timeSeriesCollection?.map(
+        (t) => (t.id === update.id ? { ...t, range: update.range } : t)
+      );
+      updatedChart.workflowCollection = updatedChart.workflowCollection?.map(
+        (wf) => (wf.id === update.id ? { ...wf, range: update.range } : wf)
+      );
+    });
+  }
+
+  return updatedChart;
 }

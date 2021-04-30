@@ -1,67 +1,33 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { Menu } from '@cognite/cogs.js';
-import { useChart, useUpdateChart } from 'hooks/firebase';
-import { ChartWorkflow } from 'reducers/charts/types';
-import {
-  updateWorkflow,
-  removeWorkflow,
-  duplicateWorkflow,
-} from 'utils/charts';
+import { useUpdateChart } from 'hooks/firebase';
+import { Chart } from 'reducers/charts/types';
+import { duplicateWorkflow } from 'utils/charts';
 import { useLoginStatus } from 'hooks';
-import { AppearanceDropdown } from 'components/AppearanceDropdown';
 
 type Props = {
-  chartId: string;
+  chart: Chart;
   id: string;
-  closeMenu?: () => void;
-  startRenaming?: () => void;
+  children?: ReactNode;
 };
 
-export default function WorkflowMenu({
-  id,
-  chartId,
-  closeMenu,
-  startRenaming,
-}: Props) {
+export default function WorkflowMenu({ id, chart, children }: Props) {
   const { data: login } = useLoginStatus();
-  const { data: chart } = useChart(chartId);
   const { mutate } = useUpdateChart();
 
   const wf = chart?.workflowCollection?.find((t) => t.id === id);
 
-  if (!chart || !login?.user || !wf) {
+  if (!login?.user || !wf) {
     return null;
   }
-
-  const update = (diff: Partial<ChartWorkflow>, close: boolean = true) => {
-    mutate({ chart: updateWorkflow(chart, id, diff) });
-    if (closeMenu && close) {
-      closeMenu();
-    }
-  };
-  const remove = () => mutate({ chart: removeWorkflow(chart, id) });
-  const duplicate = () => mutate({ chart: duplicateWorkflow(chart, id) });
+  const duplicate = () => mutate(duplicateWorkflow(chart, id));
 
   return (
     <Menu>
-      <Menu.Submenu content={<AppearanceDropdown update={update} />}>
-        <span>Appearance</span>
-      </Menu.Submenu>
-      <Menu.Item
-        onClick={() => {
-          if (startRenaming) startRenaming();
-          if (closeMenu) closeMenu();
-        }}
-        appendIcon="Edit"
-      >
-        <span>Rename</span>
-      </Menu.Item>
       <Menu.Item onClick={() => duplicate()} appendIcon="Duplicate">
         <span>Duplicate</span>
       </Menu.Item>
-      <Menu.Item onClick={() => remove()} appendIcon="Delete">
-        <span>Remove</span>
-      </Menu.Item>
+      {children}
     </Menu>
   );
 }

@@ -30,7 +30,7 @@ const ListViewItem = ({
     <Wrapper>
       <StyledLink to={`/${chart.id}`}>
         <ImageColumn>
-          <PlotlyChart chart={chart} isPreview />
+          <PlotlyChart chartId={chart.id} isPreview />
         </ImageColumn>
         <NameColumn>
           <EditableText
