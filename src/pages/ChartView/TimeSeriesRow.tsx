@@ -28,6 +28,7 @@ import { PnidButton } from 'components/SearchResultTable/PnidButton';
 import { functionResponseKey, useCallFunction } from 'utils/cogniteFunctions';
 import FunctionCall from 'components/FunctionCall';
 import { CogniteClient } from '@cognite/sdk';
+import { StatisticsResult } from 'components/DetailsSidebar';
 import {
   SourceItem,
   SourceCircle,
@@ -37,7 +38,6 @@ import {
   UnitMenuHeader,
 } from './elements';
 // import TimeSeriesMenu from './TimeSeriesMenu';
-import { StatisticsResult } from '../../components/ContextMenu';
 
 const key = ['functions', 'individual_calc'];
 
@@ -443,7 +443,7 @@ export default function TimeSeriesRow({
             >
               <Button
                 icon="Down"
-                variant="outline"
+                type="tertiary"
                 iconPlacement="right"
                 style={{ height: 28 }}
               >
@@ -467,9 +467,10 @@ export default function TimeSeriesRow({
         <td style={{ textAlign: 'center', paddingLeft: 0 }}>
           <Dropdown content={<AppearanceDropdown update={updateAppearance} />}>
             <Button
-              variant="outline"
+              type="tertiary"
               icon="Timeseries"
               style={{ height: 28 }}
+              aria-label="timeseries"
             />
           </Dropdown>
         </td>
@@ -485,7 +486,12 @@ export default function TimeSeriesRow({
               </div>
             }
           >
-            <Button variant="outline" icon="Delete" style={{ height: 28 }} />
+            <Button
+              type="tertiary"
+              icon="Delete"
+              style={{ height: 28 }}
+              aria-label="delete"
+            />
           </Popconfirm>
         </td>
       )}
@@ -493,7 +499,7 @@ export default function TimeSeriesRow({
         <>
           <td style={{ textAlign: 'center', paddingLeft: 0 }}>
             <Button
-              variant="outline"
+              type="tertiary"
               icon="Info"
               onClick={(event) => {
                 if (isSelected) {
@@ -502,16 +508,18 @@ export default function TimeSeriesRow({
                 onInfoClick(id);
               }}
               style={{ height: 28 }}
+              aria-label="info"
             />
           </td>
           <td style={{ textAlign: 'center', paddingLeft: 0 }}>
             {!isFileViewerMode && (
               // <Dropdown content={<TimeSeriesMenu chartId={chart.id} id={id} />}>
               <Button
-                variant="outline"
+                type="tertiary"
                 icon="MoreOverflowEllipsisHorizontal"
                 style={{ height: 28 }}
                 disabled
+                aria-label="more"
               />
               // </Dropdown>
             )}

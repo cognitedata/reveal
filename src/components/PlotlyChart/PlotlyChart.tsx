@@ -474,8 +474,7 @@ const PlotlyChartComponent = ({
         <>
           {(isLoading || timeseriesFetching) && <LoadingIcon />}
           <AdjustButton
-            type="secondary"
-            variant="outline"
+            type="tertiary"
             icon="YAxis"
             onClick={() => setYAxisLocked(!yAxisLocked)}
             left={5 * seriesData.length}

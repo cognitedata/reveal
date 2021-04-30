@@ -5,7 +5,7 @@ import {
   Icon,
   Input,
   Tabs,
-  ButtonGroup,
+  SegmentedControl,
   Select,
 } from '@cognite/cogs.js';
 import { Chart } from 'reducers/charts/types';
@@ -183,17 +183,17 @@ const ChartList = () => {
             />
           </div>
           <div style={{ marginLeft: 16 }}>
-            <ButtonGroup
+            <SegmentedControl
               currentKey={viewOption}
               onButtonClicked={(key) => setViewOption(key as ViewOption)}
             >
-              <ButtonGroup.Button key="grid">
+              <SegmentedControl.Button key="grid">
                 <Icon type="Grid" />
-              </ButtonGroup.Button>
-              <ButtonGroup.Button key="list">
+              </SegmentedControl.Button>
+              <SegmentedControl.Button key="list">
                 <Icon type="List" />
-              </ButtonGroup.Button>
-            </ButtonGroup>
+              </SegmentedControl.Button>
+            </SegmentedControl>
           </div>
         </div>
       </div>

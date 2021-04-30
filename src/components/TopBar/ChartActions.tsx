@@ -81,23 +81,29 @@ export const ChartActions = () => {
         <SharingDropdown chart={chart} disabled={!isOwner} />
       </Tooltip>
       <Tooltip content="Export">
-        <Button icon="Download" variant="ghost" disabled />
+        <Button icon="Download" type="ghost" disabled aria-label="download" />
       </Tooltip>
       <Tooltip content="Duplicate">
-        <Button icon="Copy" variant="ghost" onClick={handleDuplicateChart} />
+        <Button
+          icon="Copy"
+          type="ghost"
+          onClick={handleDuplicateChart}
+          aria-label="copy"
+        />
       </Tooltip>
       <Divider />
       <Tooltip content="Delete">
         <Button
           icon="Trash"
-          variant="ghost"
+          type="ghost"
           onClick={handleDeleteChart}
           disabled={!isOwner}
+          aria-label="delete"
         />
       </Tooltip>
       <Divider />
       <Tooltip content="Settings">
-        <Button icon="Settings" variant="ghost" disabled />
+        <Button icon="Settings" type="ghost" disabled aria-label="settings" />
       </Tooltip>
     </TopBar.Item>
   );

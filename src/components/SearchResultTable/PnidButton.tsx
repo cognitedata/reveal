@@ -42,7 +42,7 @@ export const PnidButton = ({
   return (
     <WithTooltip content={showTooltip ? 'P&IDs' : undefined}>
       <Button
-        variant="outline"
+        type="tertiary"
         icon="SearchDocuments"
         onClick={() =>
           history.push({
@@ -53,6 +53,7 @@ export const PnidButton = ({
           })
         }
         style={{ height: 28 }}
+        aria-label="search"
       />
     </WithTooltip>
   );
