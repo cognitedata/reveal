@@ -30,6 +30,7 @@ import {
   SourceRow,
   UnitMenuAside,
   UnitMenuHeader,
+  SourceDescription,
 } from './elements';
 import WorkflowMenu from './WorkflowMenu';
 
@@ -231,7 +232,13 @@ export default function WorkflowRow({
       </td>
       {isWorkspaceMode && (
         <>
-          <td>{name || 'noname'}</td>
+          <td>
+            <SourceName>
+              <SourceDescription title={name || 'noname'}>
+                {name || 'noname'}
+              </SourceDescription>
+            </SourceName>
+          </td>
           <td colSpan={4} />
           <td style={{ textAlign: 'right', paddingRight: 8 }}>
             <Dropdown

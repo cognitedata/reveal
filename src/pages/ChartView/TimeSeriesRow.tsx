@@ -36,6 +36,8 @@ import {
   SourceRow,
   UnitMenuAside,
   UnitMenuHeader,
+  SourceDescription,
+  SourceTag,
 } from './elements';
 // import TimeSeriesMenu from './TimeSeriesMenu';
 
@@ -398,10 +400,16 @@ export default function TimeSeriesRow({
         <>
           <td>
             <SourceItem>
-              <SourceName>{description}</SourceName>
+              <SourceDescription title={description}>
+                {description}
+              </SourceDescription>
             </SourceItem>
           </td>
-          <td>{linkedAsset?.name}</td>
+          <td>
+            <SourceItem>
+              <SourceTag>{linkedAsset?.name}</SourceTag>
+            </SourceItem>
+          </td>
         </>
       )}
       {isWorkspaceMode && (
