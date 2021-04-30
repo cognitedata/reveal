@@ -14,7 +14,7 @@ import { getEntryColor } from 'utils/colors';
 import { useQueryString } from 'hooks';
 import { SEARCH_KEY } from 'utils/constants';
 import { Modes } from 'pages/types';
-import { ContextMenu } from 'components/ContextMenu';
+import DetailsSidebar from 'components/DetailsSidebar';
 import TimeSeriesRows from './TimeSeriesRows';
 import WorkflowRows from './WorkflowRows';
 
@@ -323,7 +323,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
           </SplitPaneLayout>
         </ChartContainer>
       </ContentWrapper>
-      <ContextMenu
+      <DetailsSidebar
         chart={chart}
         visible={showContextMenu}
         onClose={handleCloseContextMenu}

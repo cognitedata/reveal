@@ -13,7 +13,7 @@ import {
 import styled from 'styled-components/macro';
 import { functionResponseKey, useCallFunction } from 'utils/cogniteFunctions';
 
-type ContextMenuProps = {
+type Props = {
   chart: Chart;
   sourceItem: ChartWorkflow | ChartTimeSeries | undefined;
   onClose: () => void;
@@ -65,12 +65,12 @@ const renderStatusIcon = (status?: FunctionCallStatus) => {
   }
 };
 
-export const ContextMenu = ({
+export default function DetailsSidebar({
   chart,
   visible,
   sourceItem,
   onClose,
-}: ContextMenuProps) => {
+}: Props) {
   const [selectedMenu, setSelectedMenu] = useState<string>('statistics');
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
 
@@ -112,14 +112,15 @@ export const ContextMenu = ({
           </Dropdown>
         </div>
       </TopContainer>
-
-      {selectedMenu === 'metadata' && <Metadata sourceItem={sourceItem} />}
-      {selectedMenu === 'statistics' && (
-        <Statistics chart={chart} sourceItem={sourceItem} />
-      )}
+      <ContentOverflowWrapper>
+        {selectedMenu === 'metadata' && <Metadata sourceItem={sourceItem} />}
+        {selectedMenu === 'statistics' && (
+          <Statistics chart={chart} sourceItem={sourceItem} />
+        )}
+      </ContentOverflowWrapper>
     </Sidebar>
   );
-};
+}
 
 const Metadata = ({
   sourceItem,
@@ -300,6 +301,11 @@ const TopContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+`;
+
+const ContentOverflowWrapper = styled.div`
+  height: calc(100% - 32px);
+  overflow: auto;
 `;
 
 const ColorCircle = styled.span`
