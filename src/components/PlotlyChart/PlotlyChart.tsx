@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { compact } from 'lodash';
 import { useQuery, useQueryClient } from 'react-query';
 import styled from 'styled-components/macro';
 import debounce from 'lodash/debounce';
@@ -23,6 +24,7 @@ import { useSDK } from '@cognite/sdk-provider';
 import {
   getFunctionResponseWhenDone,
   transformSimpleCalcResult,
+  roundToSignificantDigits,
 } from 'utils/cogniteFunctions';
 import { Chart } from 'reducers/charts/types';
 import { useChart, useUpdateChart } from 'hooks/firebase';
@@ -61,55 +63,58 @@ const PlotlyChartComponent = ({
   const [yAxisLocked, setYAxisLocked] = useState<boolean>(true);
 
   const lastYearQueries = chart?.timeSeriesCollection?.map(({ tsId }) => {
-    const dateFrom = subDays(new Date(chart.dateFrom), 365);
-    const dateTo = new Date(chart.dateFrom);
+    const dateFrom = subDays(new Date(chart.dateTo), 365);
+    const dateTo = new Date(chart.dateTo);
     return {
       items: [{ id: tsId }],
       start: dateFrom,
       end: dateTo,
       aggregates: ['interpolation'],
       granularity: 'hour',
-      limit: pointsPerSeries,
+      limit: 8760, // 365 * 24
     };
   });
   const { data: lastYearRaw } = useQuery(
     ['chart-data', 'timeseries', lastYearQueries],
     () =>
-      Promise.all(
-        queries.map((q) =>
-          sdk.datapoints
-            .retrieve(q as DatapointsMultiQuery)
-            .then((r) => r[0]?.datapoints)
-        )
-      )
+      lastYearQueries
+        ? Promise.all(
+            lastYearQueries.map((q) =>
+              sdk.datapoints
+                .retrieve(q as DatapointsMultiQuery)
+                .then((r) => r[0]?.datapoints)
+            )
+          )
+        : []
   );
   const yAxisDeltaMinMax = lastYearRaw?.map((_, index) => {
-    const lastYearPoints = lastYearRaw?.[index]
-      // @ts-ignore
-      .map((datapoint) =>
-        'average' in datapoint
-          ? datapoint.average
-          : (datapoint as DoubleDatapoint).value
-      )
-      .sort();
+    const lastYearPoints = compact(
+      lastYearRaw?.[index]
+        // @ts-ignore
+        .map((datapoint) =>
+          'interpolation' in datapoint
+            ? (datapoint.interpolation as number)
+            : (datapoint as DoubleDatapoint).value
+        )
+    ).sort();
     /* 
       Filter out the 10% largest and smallest of the values
       Find the min and max of the remaining 80 %
     */
     const thresholdPercentage = 10;
-    const min = lastYearPoints
+    const min = (lastYearPoints
       ? lastYearPoints[Math.ceil(lastYearPoints.length / thresholdPercentage)]
-      : 0;
-    const max = lastYearPoints
+      : 0) as number;
+    const max = (lastYearPoints
       ? lastYearPoints[
           Math.floor(
             lastYearPoints.length - lastYearPoints.length / thresholdPercentage
           )
         ]
-      : 1;
+      : 1) as number;
     const delta = max - min;
-    const yAxisDeltaMax = (max + delta * 0.1).toFixed(3);
-    const yAxisDeltaMin = (min - delta * 0.1).toFixed(3);
+    const yAxisDeltaMax = roundToSignificantDigits(max + delta * 0.1, 3);
+    const yAxisDeltaMin = roundToSignificantDigits(min - delta * 0.1, 3);
     return {
       min: yAxisDeltaMin,
       max: yAxisDeltaMax,

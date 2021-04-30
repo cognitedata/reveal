@@ -154,3 +154,16 @@ export async function getFunctionResponseWhenDone(
 
   return response;
 }
+
+export const roundToSignificantDigits = (value: number, digits: number) => {
+  const [_, fraction] = value.toString().split('.');
+  let zeros = 1000;
+  for (let i = 0; i < fraction.length; i += 1) {
+    if (fraction[i] === '0') {
+      zeros *= 10;
+    } else {
+      break;
+    }
+  }
+  return Math.round(value * zeros) / zeros;
+};
