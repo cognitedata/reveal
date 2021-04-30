@@ -5,9 +5,9 @@ import { StringRenderer } from 'src/modules/Common/Containers/FileTableRenderers
 import { SelectableTable } from 'src/modules/Common/Components/SelectableTable/SelectableTable';
 import { NameRenderer } from 'src/modules/Common/Containers/FileTableRenderers/NameRenderer';
 import { ActionRenderer } from 'src/modules/Common/Containers/FileTableRenderers/ActionRenderer';
-import { FileTableProps } from './types';
+import { FileExplorerTableProps } from './types';
 
-export function FileTableExplorer(props: FileTableProps) {
+export function FileTableExplorer(props: FileExplorerTableProps) {
   const columns: ColumnShape<TableDataItem>[] = [
     {
       key: 'name',
@@ -37,6 +37,22 @@ export function FileTableExplorer(props: FileTableProps) {
     action: ActionRenderer,
   };
 
+  const rowClassNames = ({
+    rowData,
+  }: {
+    columns: ColumnShape<TableDataItem>[];
+    rowData: TableDataItem;
+    rowIndex: number;
+  }) => {
+    return `clickable ${props.selectedFileId === rowData.id && 'active'}`;
+  };
+
+  const rowEventHandlers = {
+    onClick: ({ rowData }: { rowData: TableDataItem }) => {
+      props.onRowClick(rowData.id);
+    },
+  };
+
   return (
     <SelectableTable
       {...props}
@@ -44,6 +60,8 @@ export function FileTableExplorer(props: FileTableProps) {
       rendererMap={rendererMap}
       selectable
       onRowSelect={props.onRowSelect}
+      rowClassNames={rowClassNames}
+      rowEventHandlers={rowEventHandlers}
     />
   );
 }

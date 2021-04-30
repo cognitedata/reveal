@@ -1,6 +1,11 @@
 import { TableWrapper } from 'src/modules/Common/Components/FileTable/FileTableWrapper';
 import AutoSizer from 'react-virtualized-auto-sizer';
-import ReactBaseTable, { BaseTableProps, Column } from 'react-base-table';
+import ReactBaseTable, {
+  BaseTableProps,
+  Column,
+  ColumnShape,
+  RowKey,
+} from 'react-base-table';
 import { CellRenderer, TableDataItem } from 'src/modules/Common/Types';
 import React, { useMemo } from 'react';
 import { StringRenderer } from 'src/modules/Common/Containers/FileTableRenderers/StringRenderer';
@@ -15,6 +20,19 @@ export type SelectableTableProps = Omit<
   selectable: boolean;
   rendererMap: { [key: string]: (props: CellRenderer) => JSX.Element };
   onRowSelect: (id: number, selected: boolean) => void;
+  rowClassNames?: (data: {
+    columns: ColumnShape<TableDataItem>[];
+    rowData: TableDataItem;
+    rowIndex: number;
+  }) => string;
+  rowEventHandlers?: {
+    [key: string]: (args: {
+      rowData: TableDataItem;
+      rowIndex: number;
+      rowKey: RowKey;
+      event: React.SyntheticEvent;
+    }) => void;
+  };
 };
 
 export function SelectableTable(props: SelectableTableProps) {
@@ -84,6 +102,8 @@ export function SelectableTable(props: SelectableTableProps) {
             width={width}
             components={components}
             data={props.data}
+            rowClassName={props.rowClassNames}
+            rowEventHandlers={props.rowEventHandlers}
           />
         )}
       </AutoSizer>
