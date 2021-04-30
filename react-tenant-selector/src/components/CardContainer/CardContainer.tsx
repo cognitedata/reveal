@@ -42,6 +42,7 @@ type Props = {
   applicationName: string;
   authClient?: CogniteAuth;
   authState?: AuthenticatedUser;
+  directory?: string;
   cdfCluster: string;
   enabledLoginModes: EnabledModes;
   errors?: React.ReactNode[];
@@ -61,6 +62,7 @@ const CardContainer = ({
   authClient,
   authState,
   cdfCluster,
+  directory,
   errors,
   handleClusterSubmit,
   handleSubmit,
@@ -167,7 +169,11 @@ const CardContainer = ({
                 <LoginWithADFS authClient={authClient} />
               )}
               {enabledLoginModes.aad && (
-                <LoginWithAzure authClient={authClient} cluster={cdfCluster} />
+                <LoginWithAzure
+                  authClient={authClient}
+                  cluster={cdfCluster}
+                  directory={directory}
+                />
               )}
             </>
           )}

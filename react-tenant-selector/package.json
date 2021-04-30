@@ -1,6 +1,6 @@
 {
   "name": "@cognite/react-tenant-selector",
-  "version": "0.7.1",
+  "version": "0.8.0",
   "source": "src/index.ts",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
@@ -31,6 +31,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.3.3",
+    "@cognite/cogs.js": "^2.17.0",
     "@cognite/eslint-config": "^2.0.1",
     "@cognite/eslint-plugin": "^2.0.0",
     "@rollup/plugin-image": "^2.0.6",
@@ -54,8 +55,7 @@
     "rollup": "^1.2.0",
     "rollup-plugin-json": "^3.1.0",
     "rollup-plugin-typescript2": "^0.19.2",
-    "source-map-explorer": "^2.5.2",
-    "@cognite/cogs.js": "^2.17.0"
+    "source-map-explorer": "^2.5.2"
   },
   "dependencies": {
     "@cognite/auth-utils": "^0.8.2",

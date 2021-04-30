@@ -11,6 +11,7 @@ const cardContainerProps = {
   applicationId: 'test-id',
   applicationName: 'test-name',
   cdfCluster: 'test-cdfCluster',
+  directory: 'test-directory',
   handleSubmit: action('handleSubmit'),
   handleClusterSubmit: action('handleClusterSubmit'),
   validateTenant: () => Promise.resolve(true),

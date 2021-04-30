@@ -74,6 +74,8 @@ export const TenantSelector: React.FC<{
     redirectingToCluster ||
     initialTenant === possibleTenant;
 
+  const { flow, options } = getFlow(initialTenant || '', cdfCluster);
+
   const doSetup = async () => {
     const sdkClient = new CogniteClient({
       appId: applicationId,
@@ -90,8 +92,6 @@ export const TenantSelector: React.FC<{
       },
       disabled: disableTranslations,
     });
-
-    const { flow, options } = getFlow(initialTenant || '', cdfCluster);
 
     const cogniteAuth = new CogniteAuth(sdkClient, {
       aad: aadApplicationId
@@ -174,6 +174,7 @@ export const TenantSelector: React.FC<{
           authClient={authClient}
           authState={authState}
           cdfCluster={cdfCluster}
+          directory={options?.directory}
           enabledLoginModes={enabledLoginModes}
           handleClusterSubmit={onClusterSelected}
           handleSubmit={onTenantSelected}
