@@ -18,9 +18,11 @@ import { selectUpdatedFileDetails } from 'src/modules/FileMetaData/fileMetadataS
 import { makeAnnotationBadgePropsByFileId } from 'src/modules/Process/processSlice';
 import { AnnotationsBadgeProps } from 'src/modules/Workflow/types';
 import { TableDataItem } from 'src/modules/Common/Types';
+import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import { AnnotationsBadge } from '../AnnotationsBadge/AnnotationsBadge';
 import { AnnotationsBadgePopoverContent } from '../AnnotationsBadge/AnnotationsBadgePopoverContent';
 import { Popover } from '../Popover';
+import { isFilePreviewable } from '../FileUploader/utils/FileUtils';
 
 export const MapPopup = ({
   item,
@@ -41,7 +43,7 @@ export const MapPopup = ({
     mimeType: item.mimeType,
   } as File);
 
-  const isPreviewable = true; // TODO: check if file is previewable
+  const isPreviewable = isFilePreviewable({ name: item.name } as FileInfo);
   useEffect(() => {
     if (data) {
       const arrayBufferView = new Uint8Array(data);

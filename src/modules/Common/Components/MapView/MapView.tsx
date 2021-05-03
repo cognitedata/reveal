@@ -27,8 +27,11 @@ export const MapView = (props: { data?: TableDataItem[] }) => {
 
   const fitBounds = undefined; // TODO: calculate this based on the provided data
 
-  const uploadedFiles = useSelector((state: RootState) =>
-    selectAllFiles(state.uploadedFiles)
+  // TODO: Use a more appropriate state than uploadedFiles when created
+  const selectedFiles = useSelector((state: RootState) =>
+    selectAllFiles(state.uploadedFiles).filter((item) =>
+      props.data?.map((f) => f.id).includes(item.id)
+    )
   );
 
   const handleStyleLoad = (map: MapboxGL.Map) => map.resize();
@@ -55,7 +58,7 @@ export const MapView = (props: { data?: TableDataItem[] }) => {
 
   const features = Object.assign(
     {},
-    ...uploadedFiles
+    ...selectedFiles
       .filter((f) => f.geoLocation && f)
       .map((s) => ({
         [s.id]: s.geoLocation?.geometry.coordinates as [number, number],
@@ -86,7 +89,7 @@ export const MapView = (props: { data?: TableDataItem[] }) => {
               coordinates={features[f]}
               onClick={() => {
                 setSelectedFile(
-                  uploadedFiles.find((file) => file.id.toString() === f)
+                  selectedFiles.find((file) => file.id.toString() === f)
                 );
                 setCenter(features[f]);
               }}
