@@ -106,23 +106,40 @@ const plane = new THREE.Plane();
 plane.setFromNormalAndCoplanarPoint(orientation, initialDragPosition);
 viewer.setSlicingPlanes([plane]);
 
+
 // Handle drag events
 const controls = new DragControls([draggerMesh], viewer.getCamera(), viewer.domElement);
 controls.addEventListener('drag', () => {
   // Fix XZ-poistion
   draggerMesh.position.set(initialDragPosition.x, draggerMesh.position.y, initialDragPosition.z);
+  draggerMesh.updateWorldMatrix();
   // Update slicing plane
   plane.setFromNormalAndCoplanarPoint(new THREE.Vector3(0, -1, 0), draggerMesh.position);
   viewer.forceRerender();
 });
-controls.addEventListener('dragstart', () => {
-  draggerMaterial.color = new THREE.Color('gray');
-  viewer.cameraControlsEnabled = false;
+
+// DragControls will stop navigation from working because it stops events
+// Ensure it's only enabled when hovering over the dragger
+const raycaster = new THREE.Raycaster();
+viewer.domElement.addEventListener('mousemove', ev => {
+  const normalizedCoords = new THREE.Vector2(
+    ev.offsetX / viewer.domElement.clientWidth * 2 - 1,
+    ev.offsetY / viewer.domElement.clientHeight * -2 + 1
+  );
+
+  raycaster.setFromCamera(normalizedCoords, viewer.getCamera());
+  const intersections = raycaster.intersectObject(draggerMesh);
+  if (intersections.length > 0) {
+    controls.activate();
+    draggerMaterial.color.set('gray');
+    viewer.forceRerender();
+  } else {
+    controls.deactivate();
+    draggerMaterial.color.set('white');
+    viewer.forceRerender();
+  }
 });
-controls.addEventListener('dragend', () => {
-  draggerMaterial.color = new THREE.Color('white');
-  viewer.cameraControlsEnabled = true;
-});
+controls.deactivate();
 ```
 
 ### CAD geometry filter
