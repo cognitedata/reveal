@@ -12,6 +12,7 @@ import {
   Menu,
   Popconfirm,
   Flex,
+  Tooltip,
 } from '@cognite/cogs.js';
 import FunctionCall from 'components/FunctionCall';
 import { updateWorkflow, removeWorkflow } from 'utils/charts';
@@ -30,6 +31,7 @@ import {
   SourceRow,
   UnitMenuAside,
   UnitMenuHeader,
+  SourceDescription,
 } from './elements';
 import WorkflowMenu from './WorkflowMenu';
 
@@ -231,7 +233,15 @@ export default function WorkflowRow({
       </td>
       {isWorkspaceMode && (
         <>
-          <td>{name || 'noname'}</td>
+          <td>
+            <SourceName>
+              <SourceDescription>
+                <Tooltip content={name || 'noname'}>
+                  <>{name || 'noname'}</>
+                </Tooltip>
+              </SourceDescription>
+            </SourceName>
+          </td>
           <td colSpan={4} />
           <td style={{ textAlign: 'right', paddingRight: 8 }}>
             <Dropdown

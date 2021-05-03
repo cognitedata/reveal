@@ -170,7 +170,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
 
   const sourceTableHeaderRow = (
     <tr>
-      <th style={{ width: 350 }}>
+      <th>
         <SourceItem>
           <SourceName>
             <Icon
@@ -187,7 +187,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
       </th>
       {isWorkspaceMode && (
         <>
-          <th>
+          <th style={{ width: 250 }}>
             <SourceItem>
               <SourceName>Description</SourceName>
             </SourceItem>
