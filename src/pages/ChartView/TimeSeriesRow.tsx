@@ -400,8 +400,10 @@ export default function TimeSeriesRow({
         <>
           <td>
             <SourceItem>
-              <SourceDescription title={description}>
-                {description}
+              <SourceDescription>
+                <Tooltip content={description}>
+                  <>{description}</>
+                </Tooltip>
               </SourceDescription>
             </SourceItem>
           </td>

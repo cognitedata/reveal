@@ -12,6 +12,7 @@ import {
   Menu,
   Popconfirm,
   Flex,
+  Tooltip,
 } from '@cognite/cogs.js';
 import FunctionCall from 'components/FunctionCall';
 import { updateWorkflow, removeWorkflow } from 'utils/charts';
@@ -234,8 +235,10 @@ export default function WorkflowRow({
         <>
           <td>
             <SourceName>
-              <SourceDescription title={name || 'noname'}>
-                {name || 'noname'}
+              <SourceDescription>
+                <Tooltip content={name || 'noname'}>
+                  <>{name || 'noname'}</>
+                </Tooltip>
               </SourceDescription>
             </SourceName>
           </td>
