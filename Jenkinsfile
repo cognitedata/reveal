@@ -70,7 +70,7 @@ pods {
 
     container('node') {
       stageWithNotify('Build Storybook', context_build) {
-        sh('yarn build-storybook');
+        sh('yarn build:storybook');
       }
     }
 
