@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { compact } from 'lodash';
 import { useQuery, useQueryClient } from 'react-query';
 import styled from 'styled-components/macro';
 import debounce from 'lodash/debounce';
@@ -88,15 +87,15 @@ const PlotlyChartComponent = ({
         : []
   );
   const yAxisDeltaMinMax = lastYearRaw?.map((_, index) => {
-    const lastYearPoints = compact(
-      lastYearRaw?.[index]
-        // @ts-ignore
-        .map((datapoint) =>
-          'interpolation' in datapoint
-            ? (datapoint.interpolation as number)
-            : (datapoint as DoubleDatapoint).value
-        )
-    ).sort();
+    const lastYearPoints = lastYearRaw?.[index]
+      // @ts-ignore
+      .map((datapoint) =>
+        'interpolation' in datapoint
+          ? (datapoint.interpolation as number)
+          : (datapoint as DoubleDatapoint).value
+      )
+      .filter((value: number | undefined) => value !== undefined)
+      .sort();
     /* 
       Filter out the 10% largest and smallest of the values
       Find the min and max of the remaining 80 %
