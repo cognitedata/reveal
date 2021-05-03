@@ -7,5 +7,6 @@ describe('cogniteFunctions', () => {
     expect(roundToSignificantDigits(0.123456, 3)).toBe(0.123);
     expect(roundToSignificantDigits(0.123567, 3)).toBe(0.124);
     expect(roundToSignificantDigits(0.000005655, 3)).toBe(0.00000566);
+    expect(roundToSignificantDigits(15, 3)).toBe(15);
   });
 });
