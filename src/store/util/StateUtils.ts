@@ -10,6 +10,7 @@ export const createFileState = (file: FileInfo): FileState => {
     createdTime: file.createdTime.getTime(),
     uploadedTime: file.uploadedTime?.getTime(),
     lastUpdatedTime: file.lastUpdatedTime.getTime(),
+    sourceCreatedTime: file.sourceCreatedTime?.getTime(),
     linkedAnnotations: [],
     selected: false,
   };
@@ -26,6 +27,9 @@ export const createFileInfo = (
     createdTime: new Date(file.createdTime),
     uploadedTime: file.uploadedTime ? new Date(file.uploadedTime) : undefined,
     lastUpdatedTime: new Date(file.lastUpdatedTime),
+    sourceCreatedTime: file.sourceCreatedTime
+      ? new Date(file.sourceCreatedTime)
+      : undefined,
     selected: file.selected,
   };
 };

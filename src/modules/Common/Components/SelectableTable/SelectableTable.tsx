@@ -7,7 +7,7 @@ import ReactBaseTable, {
   RowKey,
 } from 'react-base-table';
 import { CellRenderer, TableDataItem } from 'src/modules/Common/Types';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { StringRenderer } from 'src/modules/Common/Containers/FileTableRenderers/StringRenderer';
 import { SelectionRenderer } from 'src/modules/Common/Containers/FileTableRenderers/SelectionRenderer';
 import { SelectAllHeaderRenderer } from 'src/modules/Common/Containers/FileTableRenderers/SelectAllHeaderRendrerer';
@@ -33,9 +33,15 @@ export type SelectableTableProps = Omit<
       event: React.SyntheticEvent;
     }) => void;
   };
+  sorters?: {
+    [key: string]: (data: TableDataItem[], reverse: boolean) => TableDataItem[];
+  };
 };
 
 export function SelectableTable(props: SelectableTableProps) {
+  const [reverse, setReverse] = useState(false);
+  const [sortKey, setSortKey] = useState('');
+
   const handleSelectChange = ({
     rowData,
     selected,
@@ -101,9 +107,27 @@ export function SelectableTable(props: SelectableTableProps) {
             maxHeight={Infinity}
             width={width}
             components={components}
-            data={props.data}
+            data={
+              props.sorters && sortKey
+                ? props.sorters[sortKey](props.data, reverse)
+                : props.data
+            }
             rowClassName={props.rowClassNames}
             rowEventHandlers={props.rowEventHandlers}
+            onColumnSort={({ key }) => {
+              if ((key as string) !== sortKey) {
+                setSortKey(key as string);
+                if (reverse) {
+                  setReverse(false);
+                }
+              } else {
+                setReverse(!reverse);
+              }
+            }}
+            sortBy={{
+              key: sortKey,
+              order: reverse ? 'asc' : 'desc',
+            }}
           />
         )}
       </AutoSizer>

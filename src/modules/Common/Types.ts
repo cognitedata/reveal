@@ -11,6 +11,7 @@ export type TableDataItem = {
   name: string;
   menu: FileActions;
   selected: boolean;
+  sourceCreatedTime?: Date;
 };
 
 export type CellRenderer = {
