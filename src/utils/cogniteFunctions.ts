@@ -156,7 +156,9 @@ export async function getFunctionResponseWhenDone(
 }
 
 export const roundToSignificantDigits = (value: number, digits: number) => {
+  if (value === undefined) return undefined;
   const [_, fraction] = value.toString().split('.');
+  if (fraction === undefined) return value;
   let zeros = 10;
   for (let i = 0; i < digits - 1; i += 1) {
     zeros *= 10;
