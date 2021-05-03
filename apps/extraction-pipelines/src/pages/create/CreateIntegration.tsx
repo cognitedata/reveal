@@ -246,6 +246,7 @@ const CreateIntegration: FunctionComponent<CreateIntegrationProps> = (
       description,
       skipNotificationInHours,
       contacts,
+      dataSetId: fieldDataSetId,
       selectedRawTables,
     } = fields;
     const metadata = constructMetadata(fields.metadata);
@@ -257,7 +258,7 @@ const CreateIntegration: FunctionComponent<CreateIntegrationProps> = (
       name,
       externalId,
       ...(description && { description }),
-      ...(data && { dataSetId: fields.dataSetId }),
+      ...(data && { dataSetId: fieldDataSetId }),
       ...(metadata && {
         metadata: Object.assign(
           {},

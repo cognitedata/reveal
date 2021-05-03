@@ -12,9 +12,11 @@ import {
   ORIGIN_DEV,
   PROJECT_ITERA_INT_GREEN,
 } from 'utils/baseURL';
-import { useIntegrations } from './useIntegrations';
+import { useIntegrationById } from 'hooks/useIntegration';
 
-describe('useIntegrations', () => {
+describe('useIntegration', () => {
+  const mockIntegration = getMockResponse()[0];
+  const mockDataSet = mockDataSetResponse()[0];
   const rejectValue = mockError;
   let wrapper;
   const client = new QueryClient({
@@ -33,55 +35,54 @@ describe('useIntegrations', () => {
     );
   });
   test('Returns integrations on success', async () => {
-    sdkv3.get.mockResolvedValue({ data: { items: getMockResponse() } });
-    sdkv3.datasets.retrieve.mockResolvedValue(mockDataSetResponse());
+    sdkv3.get.mockResolvedValue({ data: mockIntegration });
+    sdkv3.datasets.retrieve.mockResolvedValue([mockDataSet]);
 
-    const { result, waitFor } = renderHook(() => useIntegrations(), {
-      wrapper,
-    });
+    const { result, waitFor } = renderHook(
+      () => useIntegrationById(mockIntegration.id),
+      {
+        wrapper,
+      }
+    );
     await waitFor(() => {
       return result.current.isSuccess;
     });
-    const integrations = result?.current?.data;
+    const integration = result?.current?.data;
 
-    // eslint-disable-next-line no-unused-expressions
-    integrations?.forEach((integration) => {
-      expect(integration.dataSetId).toEqual(integration?.dataSet?.id);
-    });
+    expect(integration.dataSetId).toEqual(integration?.dataSet?.id);
   });
 
   test('Returns integration without data set if get data set fails', async () => {
     sdkv3.get.mockResolvedValue({
-      data: {
-        items: getMockResponse().map(({ name, id, dataSetId }) => {
-          return { id, name, dataSetId };
-        }),
-      },
+      data: mockIntegration,
     });
     sdkv3.datasets.retrieve.mockRejectedValue(rejectValue);
-    const { result, waitFor } = renderHook(() => useIntegrations(), {
-      wrapper,
-    });
+    const { result, waitFor } = renderHook(
+      () => useIntegrationById(mockIntegration.id),
+      {
+        wrapper,
+      }
+    );
     await act(async () => {
       await waitFor(() => {
         return result.current.isSuccess;
       });
     });
-    const integrations = result?.current?.data;
+    const integration = result?.current?.data;
 
-    // eslint-disable-next-line no-unused-expressions
-    integrations?.forEach((integration) => {
-      expect(integration.dataSetId).toBeDefined();
-      expect(integration.dataSet).toBeUndefined();
-    });
+    expect(integration.dataSetId).toBeDefined();
+    expect(integration.dataSet).toBeUndefined();
   });
 
   test('Returns error on fail', async () => {
     sdkv3.get.mockRejectedValue(rejectValue);
 
-    const { result, waitFor } = renderHook(() => useIntegrations(), {
-      wrapper,
-    });
+    const { result, waitFor } = renderHook(
+      () => useIntegrationById(mockIntegration.id),
+      {
+        wrapper,
+      }
+    );
     await waitFor(() => {
       return result.current.isError;
     });

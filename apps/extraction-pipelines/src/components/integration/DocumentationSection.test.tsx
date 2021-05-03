@@ -1,4 +1,4 @@
-import { getMockResponse } from 'utils/mockResponse';
+import { getMockResponse, mockDataSetResponse } from 'utils/mockResponse';
 import render, {
   renderWithReQueryCacheSelectedIntegrationContext,
 } from 'utils/test/render';
@@ -15,6 +15,7 @@ import { DOCUMENTATION_HEADING } from 'utils/constants';
 
 describe('DocumentationSection', () => {
   const mock = getMockResponse()[0];
+  const mockDataSet = mockDataSetResponse()[0];
   let wrapper;
   beforeEach(() => {
     wrapper = renderWithReQueryCacheSelectedIntegrationContext(
@@ -29,6 +30,7 @@ describe('DocumentationSection', () => {
   test('Interacts with documentation', async () => {
     sdkv3.post.mockResolvedValue({ data: { items: [mock] } });
     sdkv3.get.mockResolvedValueOnce({ data: mock });
+    sdkv3.datasets.retrieve.mockResolvedValue([mockDataSet]);
     render(<DocumentationSection />, {
       wrapper: wrapper.wrapper,
     });

@@ -4,11 +4,6 @@ import { LinkWrapper } from 'styles/StyledButton';
 import { trackUsage } from 'utils/Metrics';
 import { INTEGRATIONS } from 'utils/constants';
 import { useIntegrations } from 'hooks/useIntegrations';
-import {
-  mapDataSetToIntegration,
-  mapUniqueDataSetIds,
-} from 'utils/dataSetUtils';
-import { useDataSets } from 'hooks/useDataSets';
 import NoIntegrations from 'components/error/NoIntegrations';
 import { Loader } from '@cognite/cogs.js';
 import { ErrorFeedback } from 'components/error/ErrorFeedback';
@@ -16,6 +11,7 @@ import IntegrationsTable from 'components/integrations/IntegrationsTable';
 import ExtractorDownloadsLink from 'components/links/ExtractorDownloadsLink';
 import { MainFullWidthGrid } from 'styles/grid/StyledGrid';
 import { useAppEnv } from 'hooks/useAppEnv';
+import { Integration } from 'model/Integration';
 
 export const LEARNING_AND_RESOURCES_URL: Readonly<string> =
   'https://docs.cognite.com/cdf/integration/';
@@ -31,13 +27,10 @@ const Integrations: FunctionComponent<Props> = () => {
   }, [project]);
   const {
     data,
-    isLoading: isLoadingIntegrations,
+    isLoading,
     error: errorIntegrations,
     refetch,
   } = useIntegrations();
-  const dataSetIds = mapUniqueDataSetIds(data);
-  const { isLoading, data: dataSets } = useDataSets(dataSetIds);
-  let tableData = data ?? [];
   if (data && data.length === 0) {
     return (
       <MainFullWidthGrid>
@@ -45,7 +38,7 @@ const Integrations: FunctionComponent<Props> = () => {
       </MainFullWidthGrid>
     );
   }
-  if (isLoading || isLoadingIntegrations) {
+  if (isLoading) {
     return <Loader />;
   }
   const handleErrorDialogClick = async () => {
@@ -66,9 +59,6 @@ const Integrations: FunctionComponent<Props> = () => {
     );
   }
 
-  if (dataSets) {
-    tableData = mapDataSetToIntegration(data, dataSets);
-  }
   return (
     <FullPageLayout
       pageHeadingText="Integrations"
@@ -85,7 +75,7 @@ const Integrations: FunctionComponent<Props> = () => {
         </LinkWrapper>
       }
     >
-      <IntegrationsTable tableData={tableData} />
+      <IntegrationsTable tableData={data as Integration[]} />
     </FullPageLayout>
   );
 };

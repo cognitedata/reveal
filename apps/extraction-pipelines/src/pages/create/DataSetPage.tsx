@@ -106,7 +106,10 @@ const DataSetPage: FunctionComponent<DataSetPageProps> = () => {
       fields.dataset === DataSetOptions.YES
         ? parseInt(fields.dataSetId, 10)
         : undefined;
-    setStoredIntegration((prev) => ({ ...prev, dataSetId: valueToStore }));
+    setStoredIntegration((prev) => ({
+      ...prev,
+      dataSetId: valueToStore,
+    }));
     switch (fields.dataset) {
       case DataSetOptions.YES:
       case DataSetOptions.NO: {

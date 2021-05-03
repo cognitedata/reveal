@@ -3,7 +3,7 @@ import { screen, waitFor } from '@testing-library/react';
 import { QueryClient } from 'react-query';
 import moment from 'moment';
 import { renderWithReQueryCacheSelectedIntegrationContext } from 'utils/test/render';
-import { getMockResponse } from 'utils/mockResponse';
+import { getMockResponse, mockDataSetResponse } from 'utils/mockResponse';
 import { ORIGIN_DEV, PROJECT_ITERA_INT_GREEN } from 'utils/baseURL';
 import { TableHeadings } from 'components/table/IntegrationTableCol';
 import { DetailFieldNames } from 'model/Integration';
@@ -20,6 +20,7 @@ import { RAW_DB } from 'components/inputs/rawSelector/EditRawTable';
 
 describe('IntegrationView', () => {
   const mockIntegration = getMockResponse()[0];
+  const mockDataSet = mockDataSetResponse()[0];
   let wrapper;
   beforeEach(() => {
     wrapper = renderWithReQueryCacheSelectedIntegrationContext(
@@ -36,6 +37,8 @@ describe('IntegrationView', () => {
   });
   test('Displays integration', async () => {
     sdkv3.get.mockResolvedValue({ data: mockIntegration });
+    sdkv3.datasets.retrieve.mockResolvedValue([mockDataSet]);
+
     render(<IntegrationView />, {
       wrapper: wrapper.wrapper,
     });

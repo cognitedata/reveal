@@ -5,14 +5,17 @@ import {
   DOCUMENTATION_LABEL,
 } from 'components/integration/DataSetDocumentationContacts';
 import { QueryClient } from 'react-query';
-import { getMockResponse } from 'utils/mockResponse';
+import { getMockResponse, mockDataSetResponse } from 'utils/mockResponse';
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { TableHeadings } from 'components/table/IntegrationTableCol';
 
 describe('DataSetDocumentationContacts', () => {
   test('Renders information', () => {
-    const mockIntegration = getMockResponse()[0];
+    const mockIntegration = {
+      ...getMockResponse()[0],
+      dataSet: mockDataSetResponse()[0],
+    };
     renderWithSelectedIntegrationContext(<DataSetDocumentationContacts />, {
       initIntegration: mockIntegration,
       client: new QueryClient(),

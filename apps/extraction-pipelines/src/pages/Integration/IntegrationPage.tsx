@@ -9,8 +9,6 @@ import {
   useRouteMatch,
 } from 'react-router-dom';
 import styled from 'styled-components';
-import { Integration } from 'model/Integration';
-import { IdEither } from '@cognite/sdk';
 import { FullPageLayout } from 'components/layout/FullPageLayout';
 import { LinkWrapper } from 'styles/StyledButton';
 import { useIntegrationById } from 'hooks/useIntegration';
@@ -19,7 +17,6 @@ import { INTEGRATIONS } from 'utils/baseURL';
 import { useAppEnv } from 'hooks/useAppEnv';
 import InteractiveCopyWithText from 'components/InteractiveCopyWithText';
 import { IntegrationView } from 'components/integration/IntegrationView';
-import { useDataSets } from 'hooks/useDataSets';
 import { RouterParams } from 'routing/RoutingConfig';
 import { RunLogsView } from 'components/integration/RunLogsView';
 import { DETAILS, INTEGRATION_OVERVIEW, RUNS } from 'utils/constants';
@@ -61,22 +58,13 @@ const IntegrationPage: FunctionComponent<IntegrationPageProps> = () => {
   const { id } = useParams<RouterParams>();
   const { setIntegration } = useSelectedIntegration();
   const { data: integration, isLoading } = useIntegrationById(parseInt(id, 10));
-  const dataSetId: IdEither[] = integration?.dataSetId
-    ? [{ id: integration.dataSetId }]
-    : [];
-  const dataset = useDataSets(dataSetId);
-
   useEffect(() => {
-    if (integration || dataset.data) {
-      const res: Integration = {
-        ...integration,
-        ...(dataset.data && { dataSet: dataset.data[0] }),
-      } as Integration;
-      setIntegration(res);
+    if (integration) {
+      setIntegration(integration);
     }
-  }, [integration, dataset.data, setIntegration]);
+  }, [integration, setIntegration]);
 
-  if (isLoading || dataset.isLoading) {
+  if (isLoading) {
     return <Loader />;
   }
   return (

@@ -1,6 +1,6 @@
 import { AddContact } from 'components/integration/AddContact';
 import { render } from 'utils/test';
-import { getMockResponse } from 'utils/mockResponse';
+import { getMockResponse, mockDataSetResponse } from 'utils/mockResponse';
 import { renderWithReQueryCacheSelectedIntegrationContext } from 'utils/test/render';
 import { QueryClient } from 'react-query';
 import { ORIGIN_DEV, PROJECT_ITERA_INT_GREEN } from 'utils/baseURL';
@@ -21,6 +21,7 @@ import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 
 describe('AddContact', () => {
   const mock = getMockResponse()[0];
+  const dataSetMock = mockDataSetResponse()[0];
   let wrapper;
   beforeEach(() => {
     wrapper = renderWithReQueryCacheSelectedIntegrationContext(
@@ -33,8 +34,9 @@ describe('AddContact', () => {
     );
   });
   test('Interact with component', async () => {
-    sdkv3.post.mockResolvedValue({ data: { items: [getMockResponse()[0]] } });
-    sdkv3.get.mockResolvedValue({ data: getMockResponse()[0] });
+    sdkv3.post.mockResolvedValue({ data: { items: [mock] } });
+    sdkv3.get.mockResolvedValue({ data: mock });
+    sdkv3.datasets.retrieve.mockResolvedValue([dataSetMock]);
     render(<AddContact />, {
       wrapper: wrapper.wrapper,
     });

@@ -6,12 +6,23 @@ import {
 } from 'model/Integration';
 import { IntegrationAPIResponse } from 'model/IntegrationAPIResponse';
 import { get, getBaseUrl } from 'utils/baseURL';
+import { getDataSets } from 'utils/DataSetAPI';
+import {
+  mapDataSetToIntegration,
+  mapUniqueDataSetIds,
+} from 'utils/dataSetUtils';
 
 export const getIntegrations = async (
   project: string
 ): Promise<Integration[]> => {
   const response = await get<IntegrationAPIResponse>('/', project);
-  return response.data.items;
+  const dataSetIds = mapUniqueDataSetIds(response.data.items);
+  try {
+    const dataSetRes = await getDataSets(dataSetIds);
+    return mapDataSetToIntegration(response.data.items, dataSetRes);
+  } catch (e) {
+    return response.data.items;
+  }
 };
 
 export const getIntegrationById = async (
@@ -19,6 +30,17 @@ export const getIntegrationById = async (
   project: string
 ): Promise<Integration> => {
   const response = await get<Integration>(`/${integrationId}`, project);
+  if (response.data.dataSetId) {
+    try {
+      const dataSetRes = await getDataSets([{ id: response.data.dataSetId }]);
+      return {
+        ...response.data,
+        ...(dataSetRes[0] && { dataSet: dataSetRes[0] }),
+      } as Integration;
+    } catch (e) {
+      return response.data;
+    }
+  }
   return response.data;
 };
 

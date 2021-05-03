@@ -1,4 +1,4 @@
-import { getMockResponse } from 'utils/mockResponse';
+import { getMockResponse, mockDataSetResponse } from 'utils/mockResponse';
 import render, {
   renderWithReQueryCacheSelectedIntegrationContext,
 } from 'utils/test/render';
@@ -15,6 +15,7 @@ import { ADD_OWNER, EMAIL_LABEL, NAME_LABEL, SAVE } from 'utils/constants';
 
 describe('ContactSection', () => {
   const mock = getMockResponse()[0];
+  const mockDataSet = mockDataSetResponse()[0];
   let wrapper;
   beforeEach(() => {
     wrapper = renderWithReQueryCacheSelectedIntegrationContext(
@@ -29,6 +30,7 @@ describe('ContactSection', () => {
 
   test('Interact with component', async () => {
     sdkv3.get.mockResolvedValueOnce({ data: mock });
+    sdkv3.datasets.retrieve.mockResolvedValue([mockDataSet]);
     render(<ContactsSection />, {
       wrapper: wrapper.wrapper,
     });
@@ -62,6 +64,8 @@ describe('ContactSection', () => {
 
   test('Interact with owner section', async () => {
     sdkv3.get.mockResolvedValueOnce({ data: mock });
+    sdkv3.datasets.retrieve.mockResolvedValue([mockDataSet]);
+
     render(<ContactsSection />, {
       wrapper: wrapper.wrapper,
     });

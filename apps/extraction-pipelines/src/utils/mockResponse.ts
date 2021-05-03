@@ -1,29 +1,40 @@
 import { Integration } from 'model/Integration';
 import { DataSetModel } from 'model/DataSetModel';
 import { StatusRow } from 'model/Runs';
+import { mapDataSetToIntegration } from 'utils/dataSetUtils';
 
-export const mockDataSetResponse = () => [
+export const mockDataSetResponse = (): DataSetModel[] => [
   {
     id: getMockResponse()[0].dataSetId,
     name: 'My data set 1',
     createdTime: new Date(2020, 10, 10),
     writeProtected: true,
     lastUpdatedTime: new Date(2020, 11, 1),
-  },
+  } as DataSetModel,
   {
     id: getMockResponse()[1].dataSetId,
     name: 'This other data set',
     createdTime: new Date(2020, 11, 1),
     writeProtected: true,
     lastUpdatedTime: new Date(2020, 11, 1),
-  },
+  } as DataSetModel,
   {
     id: getMockResponse()[2].dataSetId,
-    name: 'Third data set',
-    createdTime: new Date(2020, 11, 1),
-    writeProtected: true,
-    lastUpdatedTime: new Date(2020, 11, 1),
-  },
+    createdTime: new Date(1605349723208),
+    description: 'This is a test data set',
+    lastUpdatedTime: new Date(1605349802859),
+    metadata: {
+      consoleAdditionalDocs: [],
+      consoleCreatedBy: { username: 'lisa.halvorsen@cognitedata.com' },
+      consoleLabels: ['Test', 'Lisa', 'Itera'],
+      consoleMetaDataVersion: '3',
+      consoleOwners: [
+        { name: 'Lisa Halvorsen', email: 'lisa.halvorsen@cognite.com' },
+      ],
+    },
+    name: 'AkerBP extractor test',
+    writeProtected: false,
+  } as DataSetModel,
 ];
 
 const mockResponseV2 = {
@@ -42,10 +53,6 @@ const mockResponseV2 = {
           tableName: 'oracle',
         },
       ],
-      dataSet: {
-        name: 'Test data set',
-        id: 1398950266713987,
-      } as DataSetModel,
       lastSuccess: 1584066700000,
       lastFailure: 1584065800000,
       lastSeen: 1604271600000,
@@ -76,23 +83,6 @@ const mockResponseV2 = {
       name: 'SAP Integration',
       description: 'Dummy integration to SAP',
       dataSetId: 1469810437954362,
-      dataSet: {
-        createdTime: new Date(1605349723208),
-        description: 'This is a test data set',
-        id: 6415110216649677,
-        lastUpdatedTime: new Date(1605349802859),
-        metadata: {
-          consoleAdditionalDocs: [],
-          consoleCreatedBy: { username: 'lisa.halvorsen@cognitedata.com' },
-          consoleLabels: ['Test', 'Lisa', 'Itera'],
-          consoleMetaDataVersion: '3',
-          consoleOwners: [
-            { name: 'Lisa Halvorsen', email: 'lisa.halvorsen@cognite.com' },
-          ],
-        },
-        name: 'AkerBP extractor test',
-        writeProtected: false,
-      },
       rawTables: [
         {
           dbName: 'informatica',
@@ -125,23 +115,6 @@ const mockResponseV2 = {
       name: 'PI AF integration',
       description: 'Dummy PI AF integration',
       dataSetId: 1469810437954369,
-      dataSet: {
-        createdTime: new Date(1605349723208),
-        description: 'This is a test data set',
-        id: 6415110216649677,
-        lastUpdatedTime: new Date(1605349802859),
-        metadata: {
-          consoleAdditionalDocs: [],
-          consoleCreatedBy: { username: 'lisa.halvorsen@cognitedata.com' },
-          consoleLabels: ['Test', 'Lisa', 'Itera'],
-          consoleMetaDataVersion: '3',
-          consoleOwners: [
-            { name: 'Lisa Halvorsen', email: 'lisa.halvorsen@cognite.com' },
-          ],
-        },
-        name: 'Lisas test data set',
-        writeProtected: false,
-      } as DataSetModel,
       rawTables: [
         {
           dbName: 'informatica',
@@ -179,23 +152,6 @@ const mockResponseV2 = {
       lastFailure: 1584065800000,
       lastSeen: 1584066900000,
       dataSetId: 1469810437954362,
-      dataSet: {
-        createdTime: new Date(1605349723208),
-        description: 'This is a test data set',
-        id: 6415110216649677,
-        lastUpdatedTime: new Date(1605349802859),
-        metadata: {
-          consoleAdditionalDocs: [],
-          consoleCreatedBy: { username: 'lisa.halvorsen@cognitedata.com' },
-          consoleLabels: ['Test', 'Lisa', 'Itera'],
-          consoleMetaDataVersion: '3',
-          consoleOwners: [
-            { name: 'Lisa Halvorsen', email: 'lisa.halvorsen@cognite.com' },
-          ],
-        },
-        name: 'Lisas test data set',
-        writeProtected: false,
-      },
       rawTables: [
         {
           dbName: 'informatica',
@@ -231,23 +187,6 @@ const mockResponseV2 = {
       lastFailure: 0,
       lastSeen: 0,
       dataSetId: 1469810437954362,
-      dataSet: {
-        createdTime: new Date(1605349723208),
-        description: 'This is a test data set',
-        id: 6415110216649677,
-        lastUpdatedTime: new Date(1605349802859),
-        metadata: {
-          consoleAdditionalDocs: [],
-          consoleCreatedBy: { username: 'lisa.halvorsen@cognitedata.com' },
-          consoleLabels: ['Test', 'Lisa', 'Itera'],
-          consoleMetaDataVersion: '3',
-          consoleOwners: [
-            { name: 'Lisa Halvorsen', email: 'lisa.halvorsen@cognite.com' },
-          ],
-        },
-        name: 'Lisas test data set',
-        writeProtected: false,
-      },
       rawTables: [
         {
           dbName: 'informatica',
@@ -266,6 +205,9 @@ const mockResponseV2 = {
 
 export const getMockResponse = (): Integration[] => {
   return mockResponseV2.items;
+};
+export const getMockIntegrationsWithDataSets = () => {
+  return mapDataSetToIntegration(getMockResponse(), mockDataSetResponse());
 };
 
 export const mockError = {

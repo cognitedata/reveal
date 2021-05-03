@@ -3,7 +3,11 @@ import React from 'react';
 import { QueryClient } from 'react-query';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import { RawEditModal } from 'components/modals/RawEditModal';
-import { databaseListMock, getMockResponse } from 'utils/mockResponse';
+import {
+  databaseListMock,
+  getMockResponse,
+  mockDataSetResponse,
+} from 'utils/mockResponse';
 import { renderWithReQueryCacheSelectedIntegrationContext } from 'utils/test/render';
 import { render } from 'utils/test';
 import {
@@ -21,10 +25,10 @@ jest.mock('hooks/useRawDBAndTables', () => {
 });
 describe('RawEditModal', () => {
   const mockData = databaseListMock;
-
   let wrapper = null;
   let client: QueryClient;
   const integration = getMockResponse()[0];
+  const dataSetMock = mockDataSetResponse()[0];
   const cancelMock = jest.fn();
   beforeEach(() => {
     jest.resetAllMocks();
@@ -46,8 +50,9 @@ describe('RawEditModal', () => {
 
   test('Renders stored raw tables', async () => {
     useRawDBAndTables.mockReturnValue({ isLoading: false, data: mockData });
-    // sdkv3.post.mockResolvedValue({ data: { items: [integrationsResponse] } });
     sdkv3.get.mockResolvedValue({ data: integration });
+    sdkv3.datasets.retrieve.mockResolvedValue([dataSetMock]);
+
     render(<RawEditModal visible onCancel={cancelMock} />, {
       wrapper: wrapper.wrapper,
     });

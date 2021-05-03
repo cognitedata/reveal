@@ -1,4 +1,8 @@
-import { getMockResponse, mockDataRunsResponse } from 'utils/mockResponse';
+import {
+  getMockResponse,
+  mockDataRunsResponse,
+  mockDataSetResponse,
+} from 'utils/mockResponse';
 import { renderWithSelectedIntegrationContext } from 'utils/test/render';
 import { QueryClient } from 'react-query';
 import { screen, waitFor } from '@testing-library/react';
@@ -15,9 +19,11 @@ import moment from 'moment';
 describe('RunScheduleConnection', () => {
   test('Renders information', async () => {
     const mockIntegration = getMockResponse()[0];
+    const mockDataSet = mockDataSetResponse()[0];
     sdkv3.get.mockResolvedValueOnce({
       data: mockIntegration,
     });
+    sdkv3.datasets.retrieve.mockResolvedValue([mockDataSet]);
     sdkv3.get.mockResolvedValueOnce({
       data: { items: mockDataRunsResponse.items },
     });
