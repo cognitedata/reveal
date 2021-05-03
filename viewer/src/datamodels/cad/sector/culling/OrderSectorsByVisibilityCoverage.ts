@@ -85,6 +85,10 @@ export interface OrderSectorsByVisibilityCoverage {
    */
   setClipping(planes: THREE.Plane[] | null, clipIntersection: boolean): void;
 
+  /**
+   * Cull a set of sectors potentially being loaded towards already loaded geometry to determine if
+   * the sector is visible or occluded.
+   */
   cullOccludedSectors(camera: THREE.PerspectiveCamera, sectors: WantedSector[]): WantedSector[];
 
   /**
