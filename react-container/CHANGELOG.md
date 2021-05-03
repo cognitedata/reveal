@@ -1,3 +1,15 @@
+## 0.13.1 May 3 2021
+
+### Changes
+
+- Fix bug using wrong token for E2E mode
+
+## 0.13.0 May 1 2021
+
+### Changes
+
+- Bump TSA to new version that has the 'Choose Azure tenant' option
+
 ## 0.12.0 April 27 2021
 
 ### Changes

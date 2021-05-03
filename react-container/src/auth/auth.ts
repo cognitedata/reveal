@@ -22,7 +22,7 @@ export const getAuthHeaders = ({
   if (process.env.REACT_APP_E2E_MODE) {
     // check local id token (E2E) before state token
     const idToken = process.env.REACT_APP_ID_TOKEN || '';
-    if (idToken) {
+    if (useIdToken && idToken) {
       return getAuthorizationHeader(idToken);
     }
     // check local access token (E2E) before state token
