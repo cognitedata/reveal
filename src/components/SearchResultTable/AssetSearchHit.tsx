@@ -7,16 +7,7 @@ import DelayedComponent from 'components/DelayedComponent';
 import { PnidButton } from 'components/SearchResultTable';
 import { TimeseriesChart } from '@cognite/data-exploration';
 import { useInfiniteList } from '@cognite/sdk-react-query-hooks';
-import {
-  Asset,
-  Timeseries,
-  DatapointsMultiQuery,
-  Aggregate,
-  DoubleDatapoint,
-  DatapointsQuery,
-  DatapointAggregate,
-  DatapointAggregates,
-} from '@cognite/sdk';
+import { Asset, Timeseries, Aggregate, DatapointAggregate } from '@cognite/sdk';
 import { useParams } from 'react-router-dom';
 import { useChart, useUpdateChart } from 'hooks/firebase';
 import {
