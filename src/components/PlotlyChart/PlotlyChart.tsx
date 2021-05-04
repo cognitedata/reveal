@@ -4,7 +4,6 @@ import styled from 'styled-components/macro';
 import debounce from 'lodash/debounce';
 import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
-import { subDays } from 'date-fns';
 
 import {
   DatapointAggregate,
@@ -23,7 +22,6 @@ import { useSDK } from '@cognite/sdk-provider';
 import {
   getFunctionResponseWhenDone,
   transformSimpleCalcResult,
-  roundToSignificantDigits,
 } from 'utils/cogniteFunctions';
 import { Chart } from 'reducers/charts/types';
 import { useChart, useUpdateChart } from 'hooks/firebase';
@@ -46,33 +44,6 @@ type ChartProps = {
 // Use "basic" version of plotly.js to reduce bundle size
 const Plot = createPlotlyComponent(Plotly);
 
-const OUTLIER_THRESHOLD = 1000;
-
-const filterOutliers = (someArray: number[], threshold = 1.5) => {
-  if (someArray.length < 4) {
-    return someArray;
-  }
-  const values = [...someArray].slice().sort((a, b) => a - b);
-  let q1;
-  let q3;
-  if ((values.length / 4) % 1 === 0) {
-    // find quartiles
-    q1 = (1 / 2) * (values[values.length / 4] + values[values.length / 4 + 1]);
-    q3 =
-      (1 / 2) *
-      (values[values.length * (3 / 4)] + values[values.length * (3 / 4) + 1]);
-  } else {
-    q1 = values[Math.floor(values.length / 4 + 1)];
-    q3 = values[Math.ceil(values.length * (3 / 4) + 1)];
-  }
-
-  const iqr = q3 - q1;
-  const maxValue = q3 + iqr * threshold;
-  const minValue = q1 - iqr * threshold;
-
-  return values.filter((x) => x >= minValue && x <= maxValue);
-};
-
 const PlotlyChartComponent = ({
   chartId,
   isPreview = false,
@@ -87,58 +58,6 @@ const PlotlyChartComponent = ({
   const pointsPerSeries = isPreview ? 100 : 1000;
   const [dragmode, setDragmode] = useState<'zoom' | 'pan'>('pan');
   const [yAxisLocked, setYAxisLocked] = useState<boolean>(true);
-
-  const lastYearQueries = chart?.timeSeriesCollection?.map(({ tsId }) => {
-    const dateFrom = subDays(new Date(chart.dateTo), 365);
-    const dateTo = new Date(chart.dateTo);
-    return {
-      items: [{ id: tsId }],
-      start: dateFrom,
-      end: dateTo,
-      aggregates: ['interpolation'],
-      granularity: 'hour',
-      limit: 8760, // 365 * 24
-    };
-  });
-  const { data: lastYearRaw } = useQuery(
-    ['chart-data', 'timeseries', lastYearQueries],
-    () =>
-      lastYearQueries
-        ? Promise.all(
-            lastYearQueries.map((q) =>
-              sdk.datapoints
-                .retrieve(q as DatapointsMultiQuery)
-                .then((r) => r[0]?.datapoints)
-            )
-          )
-        : []
-  );
-  const yAxisDeltaMinMax = lastYearRaw?.map((_, index) => {
-    const lastYearPoints = lastYearRaw?.[index]
-      // @ts-ignore
-      .map((datapoint) =>
-        'interpolation' in datapoint
-          ? (datapoint.interpolation as number)
-          : (datapoint as DoubleDatapoint).value
-      )
-      .filter((value: number | undefined) => value !== undefined)
-      .sort();
-    const filteredSortedMins = filterOutliers(
-      lastYearPoints,
-      OUTLIER_THRESHOLD
-    );
-    const filteredSortedMaxs = filterOutliers(
-      lastYearPoints,
-      OUTLIER_THRESHOLD
-    );
-    return {
-      min: roundToSignificantDigits(filteredSortedMins[0], 3),
-      max: roundToSignificantDigits(
-        filteredSortedMaxs[filteredSortedMaxs.length - 1],
-        3
-      ),
-    };
-  });
 
   const queries =
     chart?.timeSeriesCollection?.map(({ tsId }) => ({
@@ -396,13 +315,9 @@ const PlotlyChartComponent = ({
      * For some reason plotly doesn't like that you overwrite the range input (doing this the wrong way?)
      */
 
-    const yAxisDelta =
-      yAxisDeltaMinMax && yAxisDeltaMinMax[index]
-        ? [yAxisDeltaMinMax[index].min, yAxisDeltaMinMax[index].max]
-        : undefined;
     const serializedYRange = range
       ? JSON.parse(JSON.stringify(range))
-      : yAxisDelta;
+      : undefined;
 
     (layout as any)[`yaxis${index ? index + 1 : ''}`] = {
       ...yAxisDefaults,
