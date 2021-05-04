@@ -22,9 +22,11 @@ Steps:
 
 ## Usage
 
+### 1 Install
+
 Note: make sure you render this inside your Router
 
-```sh
+```
 import { AzureTelemetryProvider } from '@cognite/react-azure-telemetry'
 ```
 
@@ -39,3 +41,19 @@ Then wrap your app with:
   </AzureTelemetryProvider>
 </Router>
 ```
+
+### 2 Add user context
+
+In your app somewhere after user login, add:
+
+```
+import { getAppInsights } from '@cognite/react-azure-telemetry'
+
+const insights = getAppInsights()
+if (insights && email) {
+  insights.setAuthenticatedUserContext(email);
+  insights.context.user.id = email;
+}
+```
+
+More info [here](https://github.com/microsoft/ApplicationInsights-JS/blob/master/API-reference.md#setauthenticatedusercontext)
