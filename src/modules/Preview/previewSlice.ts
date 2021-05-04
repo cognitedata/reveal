@@ -295,18 +295,20 @@ const previewSlice = createSlice({
     builder.addCase(deleteFilesById.fulfilled, (state, { payload }) => {
       payload.forEach((fileId) => {
         const models = state.modelsByFileId[fileId.id];
+        if (models !== undefined) {
+          // In case deleting files before running models
+          models.forEach((modelId) => {
+            const modelState = state.models.byId[modelId];
+            const { annotations } = modelState;
 
-        models.forEach((modelId) => {
-          const modelState = state.models.byId[modelId];
-          const { annotations } = modelState;
+            annotations.forEach((annotationId) => {
+              delete state.annotations.byId[annotationId];
+            });
+            state.annotations.allIds = Object.keys(state.annotations.byId);
 
-          annotations.forEach((annotationId) => {
-            delete state.annotations.byId[annotationId];
+            delete state.models.byId[modelId];
           });
-          state.annotations.allIds = Object.keys(state.annotations.byId);
-
-          delete state.models.byId[modelId];
-        });
+        }
         state.models.allIds = Object.keys(state.models.byId);
 
         delete state.modelsByFileId[fileId.id];
