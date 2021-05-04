@@ -62,7 +62,6 @@ export async function calculateDefaultYAxis({
   chart: Chart;
   timeSeries: Timeseries;
 }) {
-  // Calculate y-axis / range
   const dateFrom = subDays(new Date(chart.dateTo), 365);
   const dateTo = new Date(chart.dateTo);
 
