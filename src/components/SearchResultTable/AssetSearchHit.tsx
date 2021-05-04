@@ -14,6 +14,9 @@ import {
   DatapointsMultiQuery,
   Aggregate,
   DoubleDatapoint,
+  DatapointsQuery,
+  DatapointAggregate,
+  DatapointAggregates,
 } from '@cognite/sdk';
 import { useParams } from 'react-router-dom';
 import { useChart, useUpdateChart } from 'hooks/firebase';
@@ -100,58 +103,55 @@ export default function AssetSearchHit({ asset }: Props) {
         updateChart(removeTimeseries(chart, tsToRemove.id));
       } else {
         // Calculate y-axis / range
-        const datapointsMultiQuery: DatapointsMultiQuery[] = [];
         const dateFrom = subDays(new Date(chart.dateTo), 365);
         const dateTo = new Date(chart.dateTo);
 
-        datapointsMultiQuery.push({
+        const lastYearDatapointsQuery = {
           items: [{ id: timeSeries.id }],
           start: dateFrom,
           end: dateTo,
-          aggregates: ['interpolation'] as Aggregate[],
-          granularity: 'hour',
-          limit: 8760, // 365 * 24
-        });
+          aggregates: ['average'] as Aggregate[],
+          granularity: '1h',
+          limit: 8760, // 365 days * 24 hours = 1 year in hours
+        };
 
-        const lastYearRaw = await Promise.all(
-          datapointsMultiQuery.map((q) =>
-            sdk.datapoints.retrieve(q).then((r) => r[0]?.datapoints)
-          )
+        const lastYearDatapoints = await sdk.datapoints
+          .retrieve(lastYearDatapointsQuery)
+          .then((r) => r[0]?.datapoints);
+
+        const lastYearDatapointsSorted = (lastYearDatapoints as DatapointAggregate[])
+          .map((datapoint: DatapointAggregate) => datapoint.average)
+          .filter((value: number | undefined) => value !== undefined)
+          .sort() as number[];
+
+        const filteredSortedDatapoints = filterOutliers(
+          lastYearDatapointsSorted,
+          OUTLIER_THRESHOLD
         );
 
-        const [range] = lastYearRaw?.map((_, index) => {
-          const lastYearPoints = lastYearRaw?.[index]
-            // @ts-ignore
-            .map((datapoint) =>
-              'interpolation' in datapoint
-                ? (datapoint.interpolation as number)
-                : (datapoint as DoubleDatapoint).value
-            )
-            .filter((value: number | undefined) => value !== undefined)
-            .sort();
-          const filteredSortedMins = filterOutliers(
-            lastYearPoints,
-            OUTLIER_THRESHOLD
-          );
-          const filteredSortedMaxs = filterOutliers(
-            lastYearPoints,
-            OUTLIER_THRESHOLD
-          );
+        const roundedMin = roundToSignificantDigits(
+          filteredSortedDatapoints[0],
+          3
+        );
+        const roundedMax = roundToSignificantDigits(
+          filteredSortedDatapoints[filteredSortedDatapoints.length - 1],
+          3
+        );
 
-          return [
-            roundToSignificantDigits(filteredSortedMins[0], 3),
-            roundToSignificantDigits(
-              filteredSortedMaxs[filteredSortedMaxs.length - 1],
-              3
-            ),
-          ] as number[];
-        });
+        let range: number[];
+
+        if (typeof roundedMin !== 'number' || typeof roundedMax !== 'number') {
+          range = [];
+        } else {
+          range = [roundedMin, roundedMax];
+        }
 
         const newTs = covertTSToChartTS(
           timeSeries,
           chart.timeSeriesCollection?.length || 0,
           range
         );
+
         updateChart(addTimeseries(chart, newTs));
         setTsId(newTs.tsId);
       }
