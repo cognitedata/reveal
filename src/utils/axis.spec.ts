@@ -1,4 +1,4 @@
-import { roundToSignificantDigits } from './cogniteFunctions';
+import { roundToSignificantDigits } from './axis';
 
 describe('cogniteFunctions', () => {
   it('handles roundToSignificantDigits', () => {
