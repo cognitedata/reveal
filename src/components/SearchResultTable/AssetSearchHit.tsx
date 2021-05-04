@@ -99,67 +99,64 @@ export default function AssetSearchHit({ asset }: Props) {
       if (tsToRemove) {
         updateChart(removeTimeseries(chart, tsToRemove.id));
       } else {
+        // Calculate y-axis / range
+        const datapointsMultiQuery: DatapointsMultiQuery[] = [];
+        const dateFrom = subDays(new Date(chart.dateTo), 365);
+        const dateTo = new Date(chart.dateTo);
+
+        datapointsMultiQuery.push({
+          items: [{ id: timeSeries.id }],
+          start: dateFrom,
+          end: dateTo,
+          aggregates: ['interpolation'] as Aggregate[],
+          granularity: 'hour',
+          limit: 8760, // 365 * 24
+        });
+
+        const lastYearRaw = await Promise.all(
+          datapointsMultiQuery.map((q) =>
+            sdk.datapoints.retrieve(q).then((r) => r[0]?.datapoints)
+          )
+        );
+
+        const [range] = lastYearRaw?.map((_, index) => {
+          const lastYearPoints = lastYearRaw?.[index]
+            // @ts-ignore
+            .map((datapoint) =>
+              'interpolation' in datapoint
+                ? (datapoint.interpolation as number)
+                : (datapoint as DoubleDatapoint).value
+            )
+            .filter((value: number | undefined) => value !== undefined)
+            .sort();
+          const filteredSortedMins = filterOutliers(
+            lastYearPoints,
+            OUTLIER_THRESHOLD
+          );
+          const filteredSortedMaxs = filterOutliers(
+            lastYearPoints,
+            OUTLIER_THRESHOLD
+          );
+
+          return [
+            roundToSignificantDigits(filteredSortedMins[0], 3),
+            roundToSignificantDigits(
+              filteredSortedMaxs[filteredSortedMaxs.length - 1],
+              3
+            ),
+          ] as number[];
+        });
+
         const newTs = covertTSToChartTS(
           timeSeries,
-          chart.timeSeriesCollection?.length || 0
+          chart.timeSeriesCollection?.length || 0,
+          range
         );
         updateChart(addTimeseries(chart, newTs));
         setTsId(newTs.tsId);
       }
     }
   };
-
-  const datapointsMultiQuery: DatapointsMultiQuery[] = [];
-  if (chart && tsId) {
-    const dateFrom = subDays(new Date(chart.dateTo), 365);
-    const dateTo = new Date(chart.dateTo);
-    datapointsMultiQuery.push({
-      items: [{ id: tsId }],
-      start: dateFrom,
-      end: dateTo,
-      aggregates: ['interpolation'] as Aggregate[],
-      granularity: 'hour',
-      limit: 8760, // 365 * 24
-    });
-  }
-  const { data: lastYearRaw } = useQuery(
-    ['chart-data', 'timeseries', datapointsMultiQuery],
-    () =>
-      Promise.all(
-        datapointsMultiQuery.map((q) =>
-          sdk.datapoints.retrieve(q).then((r) => r[0]?.datapoints)
-        )
-      )
-  );
-
-  const yAxisDeltaMinMax = lastYearRaw?.map((_, index) => {
-    const lastYearPoints = lastYearRaw?.[index]
-      // @ts-ignore
-      .map((datapoint) =>
-        'interpolation' in datapoint
-          ? (datapoint.interpolation as number)
-          : (datapoint as DoubleDatapoint).value
-      )
-      .filter((value: number | undefined) => value !== undefined)
-      .sort();
-    const filteredSortedMins = filterOutliers(
-      lastYearPoints,
-      OUTLIER_THRESHOLD
-    );
-    const filteredSortedMaxs = filterOutliers(
-      lastYearPoints,
-      OUTLIER_THRESHOLD
-    );
-    return {
-      min: roundToSignificantDigits(filteredSortedMins[0], 3),
-      max: roundToSignificantDigits(
-        filteredSortedMaxs[filteredSortedMaxs.length - 1],
-        3
-      ),
-    };
-  });
-
-  console.log(yAxisDeltaMinMax);
 
   return (
     <AssetItem>
