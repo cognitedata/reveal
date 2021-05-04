@@ -32,6 +32,7 @@ export const SingleSelection = () => (
     style={{ minWidth: '306px', maxHeight: '36px' }}
     multiple={false}
     selectedDataSetIds={[]}
+    allowClear
   />
 );
 

@@ -18,6 +18,7 @@ export type DataSetSelectProps = {
   multiple?: boolean;
   selectedDataSetIds?: number[];
   limit?: number;
+  allowClear?: boolean,
 };
 
 export const DataSetSelect = ({
@@ -27,6 +28,7 @@ export const DataSetSelect = ({
   multiple = false,
   selectedDataSetIds,
   limit = 1000,
+  allowClear = false,
 }: DataSetSelectProps) => {
   const [currentSelection, setCurrentSelection] = useState([] as number[]);
   const [visible, setIsVisible] = useState<boolean>(false);
@@ -115,6 +117,7 @@ export const DataSetSelect = ({
         open={visible}
         loading={!!isLoading}
         notFoundContent={<Body level={2}>No data sets found</Body>}
+        allowClear={allowClear}
       >
         {datasetSearchResults.map((dataset: DataSet) => (
           <Select.Option
