@@ -116,7 +116,7 @@ export default function AssetSearchHit({ asset }: Props) {
             sdk.datapoints.retrieve(q).then((r) => r[0]?.datapoints)
           )
         );
-
+        console.log(lastYearRaw);
         const [range] = lastYearRaw?.map((_, index) => {
           const lastYearPoints = lastYearRaw?.[index]
             // @ts-ignore
@@ -144,7 +144,7 @@ export default function AssetSearchHit({ asset }: Props) {
             ),
           ] as number[];
         });
-
+        console.log(range);
         const newTs = covertTSToChartTS(
           timeSeries,
           chart.timeSeriesCollection?.length || 0,
