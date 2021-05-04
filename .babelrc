@@ -11,10 +11,9 @@
       [
         "@cognite/babel-plugin-styled-components",
         {
-          "namespace": "workflow-orchestration",
+          "namespace": "access-management",
           "fileName": false
         }
       ]
     ]
   }
-  

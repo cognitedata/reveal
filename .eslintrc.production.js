@@ -1,11 +1,8 @@
 module.exports = {
   extends: [
-    '@cognite',
-    'plugin:testing-library/react',
-    'plugin:lodash/recommended',
-    'plugin:testcafe/recommended',
+    '@cognite'
   ],
-  plugins: ['@cognite', 'testing-library', 'lodash', 'testcafe'],
+  plugins: ['@cognite'],
   rules: {
     '@cognite/no-unissued-todos': [
       'error',
@@ -24,15 +21,16 @@ module.exports = {
     'jest/no-test-callback': ['off'],
     'jest/no-export': ['off'],
 
-    'lodash/prefer-lodash-method': ['off'],
-    'lodash/prop-shorthand': ['off'],
-    'lodash/prefer-constant': ['off'],
-    'lodash/prefer-is-nil': ['off'],
-    'lodash/prefer-get': ['off'],
-
-    '@typescript-eslint/no-unused-vars': [
-      'error',
-      { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
+    '@typescript-eslint/no-unused-vars': ['off'],
+    "prettier/prettier": [
+      "error",
+      {
+        "singleQuote": true,
+        "trailingComma": "es5",
+        "arrowParens": "avoid",
+        "endOfLine": "auto"
+      }
     ],
   },
 };
+3
