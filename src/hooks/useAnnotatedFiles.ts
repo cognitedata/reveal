@@ -12,7 +12,7 @@ export const useAnnotatedFiles = (shouldUpdate: boolean) => {
       setFileIds(ids.map((item) => ({ id: Number(item) })));
       setFetchedFileIds(true);
     };
-    if (!fetchedFileIds || shouldUpdate) {
+    if (!fetchedFileIds) {
       fetchFileIds();
     }
   }, [fetchedFileIds]);
