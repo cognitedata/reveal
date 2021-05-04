@@ -1,13 +1,15 @@
 import { Graphic, Title, Tooltip } from '@cognite/cogs.js';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
-import { message, Modal } from 'antd';
+import { message, Modal, notification } from 'antd';
 import { FileInfo } from 'cognite-sdk-v3';
 import { Flex, IconButton, Loader, PageTitle, Table } from 'components/Common';
 import DetectedTags from 'components/DetectedTags';
+import { sleep } from 'utils/utils';
 import { useAnnotatedFiles } from 'hooks';
 import { dateSorter, stringCompare } from 'modules/contextualization/utils';
 import { createNewWorkflow } from 'modules/workflows';
 import React, { useState } from 'react';
+import { useQueryClient } from 'react-query';
 import { useDispatch } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 import { diagramSelection } from 'routes/paths';
@@ -33,7 +35,7 @@ const Wrapper = styled.div`
 const getColumns = (
   onFileEdit: (event: any) => any,
   onFileView: (event: any) => any,
-  onClearAnnoations: (file: FileInfo) => void,
+  onClearAnnotations: (file: FileInfo) => void,
   writeAccess: boolean
 ) => [
   {
@@ -95,7 +97,7 @@ const getColumns = (
           <IconButton
             $square
             icon="Trash"
-            onClick={() => onClearAnnoations(row)}
+            onClick={() => onClearAnnotations(row)}
             disabled={!writeAccess}
           />
         </Tooltip>
@@ -107,11 +109,14 @@ const getColumns = (
 export default function LandingPage() {
   const [query, setQuery] = useState<string>('');
 
-  const { files, isLoading } = useAnnotatedFiles();
+  const [shouldUpdate, setShouldUpdate] = useState(false);
+
+  const { files, isLoading } = useAnnotatedFiles(shouldUpdate);
 
   const noFiles = !isLoading && !files?.length;
   const { data: filesAcl } = usePermissions('filesAcl', 'WRITE');
   const { data: eventsAcl } = usePermissions('eventsAcl', 'WRITE');
+  const client = useQueryClient();
 
   const writeAccess = filesAcl && eventsAcl;
 
@@ -126,7 +131,26 @@ export default function LandingPage() {
     // TODO (CDF-11152)
   };
 
-  const onClearAnnoations = async (file: FileInfo) => {
+  const onDeleteSuccess = () => {
+    const invalidate = () =>
+      client.invalidateQueries(['cdf', 'events', 'list']);
+    invalidate();
+    // The sleep shouldn't be necessary, but await (POST /resource
+    // {data}) && await(POST /resource/byids) might not return the
+    // newly created item.
+    sleep(500).then(invalidate);
+    sleep(1500).then(invalidate);
+    sleep(5000).then(() => {
+      invalidate();
+      // Trigger files list to update
+      setShouldUpdate(true);
+    });
+
+    notification.success({
+      message: 'Annotation saved!',
+    });
+  };
+  const onClearAnnotations = async (file: FileInfo) => {
     Modal.confirm({
       title: 'Are you sure?',
       content: <span>{WARNINGS_STRINGS.CLEAR_ANNOTATIONS_WARNING}</span>,
@@ -134,6 +158,7 @@ export default function LandingPage() {
         if (file) {
           // Make sure annotations are updated
           await deleteAnnotationsForFile(file.id, file.externalId);
+          onDeleteSuccess();
         }
         return message.success(
           `Successfully cleared annotation for ${file!.name}`
@@ -146,7 +171,7 @@ export default function LandingPage() {
   const interactiveColumns = getColumns(
     onFileEdit,
     onFileView,
-    onClearAnnoations,
+    onClearAnnotations,
     writeAccess
   );
 
