@@ -18,7 +18,7 @@ export type DataSetSelectProps = {
   multiple?: boolean;
   selectedDataSetIds?: number[];
   limit?: number;
-  allowClear?: boolean,
+  allowClear?: boolean;
 };
 
 export const DataSetSelect = ({
