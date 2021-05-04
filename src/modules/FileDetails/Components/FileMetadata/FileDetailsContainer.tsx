@@ -5,15 +5,15 @@ import {
   DataSetFieldView,
   FileDetailFieldView,
   LabelContainerView,
-} from 'src/modules/FileMetaData/Components/FileMetadata/FileMetaDataChildren';
+} from 'src/modules/FileDetails/Components/FileMetadata/FileDetailsChildren';
 import {
   VisionFileDetailKey,
   VisionFileDetails,
-} from 'src/modules/FileMetaData/Components/FileMetadata/Types';
+} from 'src/modules/FileDetails/Components/FileMetadata/Types';
 import { Title } from '@cognite/cogs.js';
 import { InlineMapView } from '../../../Common/Components/MapView/InlineMapView';
 
-export const FileMetadataFieldsContainer = (props: {
+export const FileDetailsContainer = (props: {
   info: VisionFileDetails;
   updateInfo: (key: VisionFileDetailKey) => void;
   onFieldChange: (key: VisionFileDetailKey, value: any) => void;
@@ -22,7 +22,7 @@ export const FileMetadataFieldsContainer = (props: {
   return (
     <DetailsFormContainer>
       <TitleContainer>
-        <Title level={6}>Geolocation</Title>
+        <Title level={6}>Location Data</Title>
       </TitleContainer>
       {info.geoLocation && (
         <FileDetailFieldView

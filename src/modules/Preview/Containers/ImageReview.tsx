@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { ImagePreview } from 'src/modules/Preview/Components/ImagePreview/ImagePreview';
 import { DataExplorationProvider, Tabs } from '@cognite/data-exploration';
 import { Contextualization } from 'src/modules/Preview/Containers/Contextualization';
-import { FileDetailEdit } from 'src/modules/FileMetaData/Containers/FileDetails/FileDetailEdit';
+import { FileDetailsReview } from 'src/modules/FileDetails/Containers/FileDetailsReview/FileDetailsReview';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
@@ -162,7 +162,7 @@ const ImageReview = (props: { fileId: string; drawerMode: number | null }) => {
                 {file && (
                   <DataExplorationProvider sdk={sdk}>
                     <QueryClientProvider client={queryClient}>
-                      <FileDetailEdit fileObj={file} />
+                      <FileDetailsReview fileObj={file} />
                     </QueryClientProvider>
                   </DataExplorationProvider>
                 )}

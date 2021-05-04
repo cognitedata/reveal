@@ -16,7 +16,7 @@ import { useSelector } from 'react-redux';
 import exifIcon from 'src/assets/exifIcon.svg';
 import { RootState } from 'src/store/rootReducer';
 import { makeAnnotationBadgePropsByFileId } from 'src/modules/Process/processSlice';
-import { selectUpdatedFileDetails } from 'src/modules/FileMetaData/fileMetadataSlice';
+import { selectUpdatedFileDetails } from 'src/modules/FileDetails/fileDetailsSlice';
 import { TableDataItem } from 'src/modules/Common/Types';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import { AnnotationsBadge } from '../AnnotationsBadge/AnnotationsBadge';
@@ -130,7 +130,11 @@ export const FileGridPreview = ({
 
           <div className="action">
             <Dropdown content={MenuContent}>
-              <Button type="ghost" icon="MoreOverflowEllipsisHorizontal" />
+              <Button
+                type="ghost"
+                icon="MoreOverflowEllipsisHorizontal"
+                aria-label="menu action"
+              />
             </Dropdown>
           </div>
           <div className="badge">
@@ -150,6 +154,7 @@ export const FileGridPreview = ({
               onClick={handleReview}
               size="small"
               disabled={reviewDisabled}
+              aria-label="Review"
             >
               Review
             </Button>

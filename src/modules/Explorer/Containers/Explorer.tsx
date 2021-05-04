@@ -18,7 +18,7 @@ import { setFileSelectState } from 'src/modules/Upload/uploadedFilesSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { FileTableExplorer } from 'src/modules/Common/Components/FileTable/FileTableExplorer';
 import { FileGridPreview } from 'src/modules/Common/Components/FileGridPreview/FileGridPreview';
-import { FileMetadataPreview } from 'src/modules/FileMetaData/Containers/FileMetadataPreview';
+import { FileDetails } from 'src/modules/FileDetails/Containers/FileDetails';
 import {
   setSelectedFileId,
   showFileMetadataPreview,
@@ -139,7 +139,7 @@ const Explorer = () => {
         {showDrawer && (
           <DrawerContainer>
             <QueryClientProvider client={queryClient}>
-              <FileMetadataPreview />
+              <FileDetails />
             </QueryClientProvider>
           </DrawerContainer>
         )}

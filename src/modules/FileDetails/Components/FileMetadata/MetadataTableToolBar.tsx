@@ -1,12 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Button } from '@cognite/cogs.js';
-import { MetadataItem } from 'src/modules/FileMetaData/Components/FileMetadata/Types';
+import { MetadataItem } from 'src/modules/FileDetails/Components/FileMetadata/Types';
 import { useDispatch } from 'react-redux';
 import {
   fileMetaDataAddRow,
   toggleMetaDataTableEditMode,
-} from '../../fileMetadataSlice';
+} from '../../fileDetailsSlice';
 
 const TableToolBar = styled.div`
   width: 100%;
@@ -46,11 +46,11 @@ export const MetadataTableToolBar = ({
 
   return (
     <TableToolBar>
-      <StyledButton type="secondary" icon="Plus" onClick={handleAddMetadataRow}>
+      <StyledButton type="ghost" icon="Plus" onClick={handleAddMetadataRow}>
         Add row
       </StyledButton>
       <StyledButton
-        type="primary"
+        type="ghost"
         disabled={!metadata.length}
         icon={editMode ? 'Checkmark' : 'Edit'}
         onClick={handleEditModeChange}

@@ -11,11 +11,11 @@ import store from 'src/store';
 import {
   MetadataItem,
   VisionFileDetails,
-} from 'src/modules/FileMetaData/Components/FileMetadata/Types';
+} from 'src/modules/FileDetails/Components/FileMetadata/Types';
 import exifIcon from 'src/assets/exifIcon.svg';
 import { TableDataItem } from 'src/modules/Common/Types';
 import { ExifIcon } from 'src/modules/Common/Containers/FileTableRenderers/NameRenderer';
-import { fileMetaDataEdit } from '../../fileMetadataSlice';
+import { fileMetaDataEdit } from '../../fileDetailsSlice';
 
 const Container = styled.div`
   width: 100%;

@@ -1,7 +1,7 @@
 import { CellRenderer } from 'src/modules/Common/Types';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { selectUpdatedFileDetails } from 'src/modules/FileMetaData/fileMetadataSlice';
+import { selectUpdatedFileDetails } from 'src/modules/FileDetails/fileDetailsSlice';
 import { Tooltip } from '@cognite/cogs.js';
 import exifIcon from 'src/assets/exifIcon.svg';
 import React from 'react';

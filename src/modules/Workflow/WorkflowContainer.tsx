@@ -11,7 +11,7 @@ import {
 import { VerticalContainer } from 'src/modules/Common/Components/VerticalContainer';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { FileMetadataPreview } from 'src/modules/FileMetaData/Containers/FileMetadataPreview';
+import { FileDetails } from 'src/modules/FileDetails/Containers/FileDetails';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { toggleFileMetadataPreview } from 'src/modules/Process/processSlice';
 import BottomNavContainer from './components/BottomNavContainer';
@@ -92,7 +92,7 @@ export default function WorkflowContainer(props: WorkflowContainerProps) {
         {showDrawer && (
           <DrawerContainer>
             <QueryClientProvider client={queryClient}>
-              <FileMetadataPreview />
+              <FileDetails />
             </QueryClientProvider>
           </DrawerContainer>
         )}
@@ -106,7 +106,7 @@ export default function WorkflowContainer(props: WorkflowContainerProps) {
 const MainContent = styled.div`
   flex: 1;
   display: flex;
-  overflow: auto;
+  overflow: hidden;
 `;
 
 const StepContainer = styled.div`
@@ -129,8 +129,9 @@ const DrawerContainer = styled.div`
   width: 400px;
   border: 1px solid #d9d9d9;
   box-sizing: content-box;
-  height: max-content;
   flex-shrink: 0;
+  height: 100%;
+  overflow: auto;
 `;
 
 const Steps = styled(AntdSteps)`

@@ -4,7 +4,7 @@ import { RootState } from 'src/store/rootReducer';
 import {
   MetadataItem,
   VisionFileDetails,
-} from 'src/modules/FileMetaData/Components/FileMetadata/Types';
+} from 'src/modules/FileDetails/Components/FileMetadata/Types';
 import { updateFileInfoField } from 'src/store/thunks/updateFileInfoField';
 import { generateKeyValueArray } from 'src/utils/FormatUtils';
 import { SaveAvailableAnnotations } from 'src/store/thunks/SaveAvailableAnnotations';
@@ -26,7 +26,7 @@ const initialState: State = {
   loadingField: null,
 };
 
-const fileMetadataSlice = createSlice({
+const fileDetailsSlice = createSlice({
   name: 'uploadedFiles',
   initialState,
   /* eslint-disable no-param-reassign */
@@ -128,9 +128,9 @@ export const {
   toggleMetaDataTableEditMode,
   fileMetaDataAddRow,
   resetEditHistory,
-} = fileMetadataSlice.actions;
+} = fileDetailsSlice.actions;
 
-export default fileMetadataSlice.reducer;
+export default fileDetailsSlice.reducer;
 
 export const metadataEditMode = (state: State): boolean => state.metadataEdit;
 

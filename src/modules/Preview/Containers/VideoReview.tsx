@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { VideoPreview } from 'src/modules/Preview/Components/VideoPreview/VideoPreview';
 import { DataExplorationProvider, Tabs } from '@cognite/data-exploration';
 import { Contextualization } from 'src/modules/Preview/Containers/Contextualization';
-import { FileDetailEdit } from 'src/modules/FileMetaData/Containers/FileDetails/FileDetailEdit';
+import { FileDetailsReview } from 'src/modules/FileDetails/Containers/FileDetailsReview/FileDetailsReview';
 import { useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
@@ -88,7 +88,7 @@ const AnnotationsEdit = (props: { fileId: string }) => {
                 {file && (
                   <DataExplorationProvider sdk={sdk}>
                     <QueryClientProvider client={queryClient}>
-                      <FileDetailEdit fileObj={file} />
+                      <FileDetailsReview fileObj={file} />
                     </QueryClientProvider>
                   </DataExplorationProvider>
                 )}

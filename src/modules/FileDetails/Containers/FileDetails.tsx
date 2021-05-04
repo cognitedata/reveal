@@ -1,0 +1,187 @@
+import React from 'react';
+import { Button, Title } from '@cognite/cogs.js';
+import { FileDetailsContainer } from 'src/modules/FileDetails/Components/FileMetadata/FileDetailsContainer';
+import { MetadataTableToolBar } from 'src/modules/FileDetails/Components/FileMetadata/MetadataTableToolBar';
+import { MetaDataTable } from 'src/modules/FileDetails/Components/FileMetadata/MetadataTable';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from 'src/store/rootReducer';
+import isEqual from 'lodash-es/isEqual';
+import { VisionFileDetails } from 'src/modules/FileDetails/Components/FileMetadata/Types';
+import styled from 'styled-components';
+import { toggleFileMetadataPreview } from 'src/modules/Process/processSlice';
+import { updateFileInfoField } from 'src/store/thunks/updateFileInfoField';
+import {
+  fileInfoEdit,
+  metadataEditMode,
+  selectUpdatedFileDetails,
+  selectUpdatedFileMeta,
+} from 'src/modules/FileDetails/fileDetailsSlice';
+import { Tabs } from '@cognite/data-exploration';
+import { useHistory } from 'react-router-dom';
+import {
+  getParamLink,
+  workflowRoutes,
+} from 'src/modules/Workflow/workflowRoutes';
+import { FileDetailsAnnotationsPreview } from './FileDetailsAnnotationsPreview/FileDetailsAnnotationsPreview';
+
+export const FileDetails = () => {
+  const dispatch = useDispatch();
+  const history = useHistory();
+
+  const fileId = useSelector(
+    ({ processSlice }: RootState) => processSlice.selectedFileId
+  );
+
+  const fileDetails = useSelector((state: RootState) =>
+    selectUpdatedFileDetails(state, String(fileId))
+  );
+
+  const tableEditMode = useSelector(({ fileMetadataSlice }: RootState) =>
+    metadataEditMode(fileMetadataSlice)
+  );
+
+  const fileMetadata = useSelector((state: RootState) =>
+    selectUpdatedFileMeta(state, String(fileId))
+  );
+
+  if (!fileId) {
+    return null;
+  }
+
+  const onClose = () => {
+    dispatch(toggleFileMetadataPreview());
+  };
+
+  const onFieldChange = (key: string, value: any) => {
+    if (
+      fileDetails &&
+      !isEqual(fileDetails[key as keyof VisionFileDetails], value)
+    ) {
+      dispatch(fileInfoEdit({ key, value }));
+    }
+  };
+
+  const updateFileInfo = (key: string) => {
+    dispatch(updateFileInfoField({ fileId, key }));
+  };
+
+  const onEditModeChange = (mode: boolean) => {
+    if (mode) {
+      updateFileInfo('metadata');
+    }
+  };
+
+  const onReviewClick = () => {
+    history.push(
+      getParamLink(workflowRoutes.review, ':fileId', String(fileId))
+    );
+  };
+
+  return (
+    <Container>
+      <CloseButtonRow>
+        <CloseButton
+          icon="Close"
+          type="ghost"
+          onClick={onClose}
+          aria-label="close button"
+        />
+      </CloseButtonRow>
+      <Content>
+        <TitleRow>
+          <Title level={4} style={{ color: '#4A67FB' }}>
+            {fileDetails?.name}
+          </Title>
+        </TitleRow>
+        <DetailsContainer>
+          <Tabs
+            tab="context"
+            onTabChange={() => {}}
+            style={{
+              fontSize: 14,
+              fontWeight: 600,
+              lineHeight: '20px',
+              paddingBottom: '13px',
+              border: 0,
+            }}
+          >
+            <Tabs.Pane
+              title="Contextualization"
+              key="context"
+              style={{ overflow: 'hidden' }}
+            >
+              {fileDetails?.id && (
+                <FileDetailsAnnotationsPreview
+                  fileId={fileDetails.id.toString()}
+                  onReviewClick={onReviewClick}
+                />
+              )}
+            </Tabs.Pane>
+            <Tabs.Pane
+              title="File Details"
+              key="file-details"
+              style={{ overflow: 'hidden', height: `calc(100% - 45px)` }}
+            >
+              {fileDetails && (
+                <FileDetailsContainer
+                  info={fileDetails}
+                  onFieldChange={onFieldChange}
+                  updateInfo={updateFileInfo}
+                />
+              )}
+              <MetadataTableToolBar
+                editMode={tableEditMode}
+                metadata={fileMetadata}
+                onEditModeChange={onEditModeChange}
+              />
+              <MetaDataTable
+                title="Metadata"
+                rowHeight={35}
+                columnWidth={180}
+                editMode={tableEditMode}
+                data={fileMetadata}
+                details={fileDetails}
+              />
+            </Tabs.Pane>
+          </Tabs>
+        </DetailsContainer>
+      </Content>
+    </Container>
+  );
+};
+
+const Container = styled.div`
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 100%;
+  grid-template-rows: 40px auto;
+`;
+
+const Content = styled.div`
+  padding: 10px 20px;
+  display: grid;
+  grid-template-columns: 100%;
+  grid-template-rows: 32px auto;
+`;
+
+const TitleRow = styled.div`
+  display: flex;
+  text-overflow: ellipsis !important;
+  white-space: nowrap;
+  overflow: hidden;
+`;
+
+const DetailsContainer = styled.div`
+  width: 100%;
+  padding: 15px 0;
+`;
+
+const CloseButtonRow = styled.div`
+  display: flex;
+  justify-content: flex-end;
+`;
+
+const CloseButton = styled(Button)`
+  color: black;
+`;

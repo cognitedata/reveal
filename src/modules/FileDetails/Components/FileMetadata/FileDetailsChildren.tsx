@@ -1,11 +1,11 @@
 import styled from 'styled-components';
 import { Body, Icon, Input } from '@cognite/cogs.js';
 import React, { ReactText } from 'react';
-import { CopyableText } from 'src/modules/FileMetaData/Components/FileMetadata/CopyableText';
+import { CopyableText } from 'src/modules/FileDetails/Components/FileMetadata/CopyableText';
 import { DataSetItem, LabelFilter } from '@cognite/data-exploration';
 import { Label } from '@cognite/cdf-sdk-singleton';
 import useIsFieldSavePending from 'src/store/hooks/useIsFieldSavePending';
-import { VisionFileDetailKey } from 'src/modules/FileMetaData/Components/FileMetadata/Types';
+import { VisionFileDetailKey } from 'src/modules/FileDetails/Components/FileMetadata/Types';
 
 const FieldViewContainer = styled.div`
   margin-bottom: 14px;

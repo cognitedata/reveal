@@ -18,7 +18,7 @@ import {
 
 import { GridCellProps, GridTable } from '@cognite/data-exploration';
 import styled from 'styled-components';
-import { resetEditHistory } from 'src/modules/FileMetaData/fileMetadataSlice';
+import { resetEditHistory } from 'src/modules/FileDetails/fileDetailsSlice';
 import { FileActions, TableDataItem } from 'src/modules/Common/Types';
 import {
   selectAllFiles,

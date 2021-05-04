@@ -21,7 +21,7 @@ import { AnnotationDrawerMode } from 'src/utils/AnnotationUtils';
 import { ImageReviewDrawerContent } from 'src/modules/Preview/Components/AnnotationDrawerContent/ImageReviewAnnotationDrawerContent';
 import { ImagePreviewEditMode } from 'src/constants/enums/ImagePreviewEditMode';
 import { AddAnnotationsFromEditModeAssetIds } from 'src/store/thunks/AddAnnotationsFromEditModeAssetIds';
-import { resetEditHistory } from 'src/modules/FileMetaData/fileMetadataSlice';
+import { resetEditHistory } from 'src/modules/FileDetails/fileDetailsSlice';
 
 const Container = styled.div`
   width: 100%;

@@ -1,21 +1,21 @@
 import React, { useRef } from 'react';
 import { Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { MetaDataTable } from 'src/modules/FileMetaData/Components/FileMetadata/MetadataTable';
+import { MetaDataTable } from 'src/modules/FileDetails/Components/FileMetadata/MetadataTable';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import isEqual from 'lodash-es/isEqual';
-import { FileMetadataFieldsContainer } from 'src/modules/FileMetaData/Components/FileMetadata/FileMetadataFieldsContainer';
-import { MetadataTableToolBar } from 'src/modules/FileMetaData/Components/FileMetadata/MetadataTableToolBar';
+import { FileDetailsContainer } from 'src/modules/FileDetails/Components/FileMetadata/FileDetailsContainer';
+import { MetadataTableToolBar } from 'src/modules/FileDetails/Components/FileMetadata/MetadataTableToolBar';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
-import { VisionFileDetailKey } from 'src/modules/FileMetaData/Components/FileMetadata/Types';
+import { VisionFileDetailKey } from 'src/modules/FileDetails/Components/FileMetadata/Types';
 import { updateFileInfoField } from 'src/store/thunks/updateFileInfoField';
 import {
   fileInfoEdit,
   metadataEditMode,
   selectUpdatedFileDetails,
   selectUpdatedFileMeta,
-} from 'src/modules/FileMetaData/fileMetadataSlice';
+} from 'src/modules/FileDetails/fileDetailsSlice';
 
 const Container = styled.div`
   width: 100%;
@@ -39,7 +39,7 @@ const DetailsContainer = styled.div`
 
 type FileDetailCompProps = { fileObj: FileInfo };
 
-export const FileDetailEdit: React.FC<FileDetailCompProps> = ({
+export const FileDetailsReview: React.FC<FileDetailCompProps> = ({
   fileObj,
 }: FileDetailCompProps) => {
   const detailContainer = useRef<HTMLDivElement | null>(null);
@@ -92,7 +92,7 @@ export const FileDetailEdit: React.FC<FileDetailCompProps> = ({
       </TitleRow>
       <DetailsContainer ref={detailContainer}>
         {fileDetails && (
-          <FileMetadataFieldsContainer
+          <FileDetailsContainer
             info={fileDetails}
             onFieldChange={onFieldChange}
             updateInfo={updateFileInfo}

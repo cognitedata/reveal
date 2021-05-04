@@ -3,13 +3,13 @@ import './commonActions';
 import processSlice from 'src/modules/Process/processSlice';
 import previewSlice from 'src/modules/Preview/previewSlice';
 import uploadedFiles from 'src/modules/Upload/uploadedFilesSlice';
-import fileMetadataSlice from 'src/modules/FileMetaData/fileMetadataSlice';
+import fileDetailsSlice from 'src/modules/FileDetails/fileDetailsSlice';
 
 const rootReducer = combineReducers({
   uploadedFiles,
   processSlice,
   previewSlice,
-  fileMetadataSlice,
+  fileMetadataSlice: fileDetailsSlice,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

@@ -76,6 +76,7 @@ export function ActionRenderer({ rowData: { menu, id } }: CellRenderer) {
         style={{ marginRight: '10px' }}
         onClick={handleReview}
         disabled={reviewDisabled}
+        aria-label="Review"
       >
         Review
       </Button>
