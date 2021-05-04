@@ -11,11 +11,11 @@ const DetectedTags = ({ fileId }: DetectedTagsProps) => {
   const {
     data: assetAnnotationsCount,
     isFetching: isFetchingAssetsCount,
-  } = useAnnotationCount(fileId, 'assets');
+  } = useAnnotationCount(fileId, 'asset');
   const {
     data: filesAnnotationsCount,
     isFetching: isFetchingFilesCount,
-  } = useAnnotationCount(fileId, 'files');
+  } = useAnnotationCount(fileId, 'file');
 
   if (isFetchingAssetsCount || isFetchingFilesCount) return <Spin />;
   return (
