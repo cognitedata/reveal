@@ -70,8 +70,6 @@ export default function AssetSearchHit({ asset }: Props) {
           timeSeries,
         });
 
-        console.log({ range });
-
         const newTs = covertTSToChartTS(
           timeSeries,
           chart.timeSeriesCollection?.length || 0,
