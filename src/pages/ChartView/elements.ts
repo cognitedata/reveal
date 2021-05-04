@@ -207,6 +207,20 @@ export const SourceName = styled.span`
   overflow: hidden;
 `;
 
+export const SourceDescription = styled.div`
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  max-width: 240px;
+`;
+
+export const SourceTag = styled.div`
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  max-width: 210px;
+`;
+
 export const SourceButtonContainer = styled.div`
   display: flex;
   align-items: center;
