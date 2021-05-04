@@ -1369,6 +1369,9 @@ export class Cognite3DViewer {
     // The maxTextureSize is chosen from testing on low-powered hardware,
     // and could be increased in the future.
     // TODO Increase maxTextureSize if SSAO performance is improved
+    // TODO christjt 03-05-2021: This seems ridiculous, and the number seems to be pulled out of thin air.
+    // On low end it might not downscale enough, and on high end it looks bad / blurred.
+    // For the love of God someone move this to the render manager and make it dynamic based on the device.
     const maxTextureSize = 1.4e6;
 
     const rendererSize = this.renderer.getSize(new THREE.Vector2());

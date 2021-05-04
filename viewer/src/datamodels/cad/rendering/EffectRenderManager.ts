@@ -674,19 +674,26 @@ export class EffectRenderManager {
 
     if (target === this._renderTarget) {
       const renderSize = renderer.getSize(new THREE.Vector2());
+      const canvasSize = new THREE.Vector2(renderer.domElement.clientWidth, renderer.domElement.clientHeight);
 
+      const downSampleFactor = (canvasSize.x / renderSize.x + canvasSize.y / renderSize.y) / 2.0;
+
+      const origClear = renderer.getClearColor(new THREE.Color());
       renderer.autoClear = false;
       this._uiObjects.forEach(uiObject => {
         const renderScene = new THREE.Scene();
         renderScene.add(uiObject.objectGroup);
 
-        //renderer.setViewport(renderSize.x - uiObject.screenPos.x, 0, uiObject.screenPos.x, uiObject.screenPos.y);
+        const viewportRenderSize = uiObject.screenPos.clone().divideScalar(downSampleFactor);
+
+        renderer.setViewport(renderSize.x - viewportRenderSize.x, 0, viewportRenderSize.x, viewportRenderSize.y);
         renderer.clearDepth();
         renderer.render(renderScene, this._orthographicCamera);
       });
 
       renderer.setViewport(0, 0, renderSize.x, renderSize.y);
       renderer.autoClear = true;
+      renderer.setClearColor(origClear);
     }
   }
 
