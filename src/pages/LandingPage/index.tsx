@@ -1,26 +1,25 @@
+import { Graphic, Title, Tooltip } from '@cognite/cogs.js';
+import { usePermissions } from '@cognite/sdk-react-query-hooks';
+import { message, Modal } from 'antd';
+import { FileInfo } from 'cognite-sdk-v3';
+import { Flex, IconButton, Loader, PageTitle, Table } from 'components/Common';
+import DetectedTags from 'components/DetectedTags';
+import { useAnnotatedFiles } from 'hooks';
+import { dateSorter, stringCompare } from 'modules/contextualization/utils';
+import { createNewWorkflow } from 'modules/workflows';
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { useParams, useHistory } from 'react-router-dom';
-import styled from 'styled-components';
-import { Tooltip, Graphic, Title } from '@cognite/cogs.js';
-import { doSearch } from 'modules/search';
-import { trackUsage, PNID_METRICS } from 'utils/Metrics';
-import { stringCompare, dateSorter } from 'modules/contextualization/utils';
-import { PageTitle, Table, Loader, Flex, IconButton } from 'components/Common';
-import { createNewWorkflow } from 'modules/workflows';
+import { useHistory, useParams } from 'react-router-dom';
 import { diagramSelection } from 'routes/paths';
-import { useAnnotatedFiles } from 'hooks';
-import { FileInfo } from 'cognite-sdk-v3';
-import FilterBar from './FilterBar';
-import { message, Modal } from 'antd';
-import { deleteAnnotationsForFile } from 'utils/AnnotationUtils';
-import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import {
   PERMISSIONS_STRINGS,
-  WARNINGS_STRINGS,
   TOOLTIP_STRINGS,
+  WARNINGS_STRINGS,
 } from 'stringConstants';
-import DetectedTags from 'components/DetectedTags';
+import styled from 'styled-components';
+import { deleteAnnotationsForFile } from 'utils/AnnotationUtils';
+import { PNID_METRICS, trackUsage } from 'utils/Metrics';
+import FilterBar from './FilterBar';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -39,7 +38,6 @@ const getColumns = (
 ) => [
   {
     title: 'Preview',
-    dataIndex: '',
     key: 'preview',
     width: 80,
     align: 'center' as 'center',
@@ -141,11 +139,16 @@ export default function LandingPage() {
           `Successfully cleared annotation for ${file!.name}`
         );
       },
-      onCancel: () => { },
+      onCancel: () => {},
     });
   };
 
-  const interactiveColumns = getColumns(onFileEdit, onFileView, onClearAnnoations, writeAccess);
+  const interactiveColumns = getColumns(
+    onFileEdit,
+    onFileView,
+    onClearAnnoations,
+    writeAccess
+  );
 
   const showFilesList = noFiles ? (
     <EmptyFilesList />
@@ -159,9 +162,9 @@ export default function LandingPage() {
         columns={interactiveColumns}
         size="middle"
         rowKey="id"
-      // onRow={(record: any) => ({
-      //   onClick: () => alert(record),
-      // })}
+        // onRow={(record: any) => ({
+        //   onClick: () => alert(record),
+        // })}
       />
     </>
   );
