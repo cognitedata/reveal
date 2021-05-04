@@ -1,12 +1,13 @@
 import React, { useMemo } from 'react';
-
+import { subDays } from 'date-fns';
+import { useSDK } from '@cognite/sdk-provider';
 import styled from 'styled-components';
 import { Icon, Checkbox, Button } from '@cognite/cogs.js';
 import DelayedComponent from 'components/DelayedComponent';
 import { PnidButton } from 'components/SearchResultTable';
 import { TimeseriesChart } from '@cognite/data-exploration';
 import { useInfiniteList } from '@cognite/sdk-react-query-hooks';
-import { Asset, Timeseries } from '@cognite/sdk';
+import { Asset, Timeseries, Aggregate, DatapointAggregate } from '@cognite/sdk';
 import { useParams } from 'react-router-dom';
 import { useChart, useUpdateChart } from 'hooks/firebase';
 import {
@@ -14,12 +15,42 @@ import {
   covertTSToChartTS,
   removeTimeseries,
 } from 'utils/charts';
+import { roundToSignificantDigits } from 'utils/cogniteFunctions';
 import dayjs from 'dayjs';
 
 type Props = {
   asset: Asset;
 };
+
+const OUTLIER_THRESHOLD = 1000;
+
+const filterOutliers = (someArray: number[], threshold = 1.5) => {
+  if (someArray.length < 4) {
+    return someArray;
+  }
+  const values = [...someArray].slice().sort((a, b) => a - b);
+  let q1;
+  let q3;
+  if ((values.length / 4) % 1 === 0) {
+    // find quartiles
+    q1 = (1 / 2) * (values[values.length / 4] + values[values.length / 4 + 1]);
+    q3 =
+      (1 / 2) *
+      (values[values.length * (3 / 4)] + values[values.length * (3 / 4) + 1]);
+  } else {
+    q1 = values[Math.floor(values.length / 4 + 1)];
+    q3 = values[Math.ceil(values.length * (3 / 4) + 1)];
+  }
+
+  const iqr = q3 - q1;
+  const maxValue = q3 + iqr * threshold;
+  const minValue = q1 - iqr * threshold;
+
+  return values.filter((x) => x >= minValue && x <= maxValue);
+};
+
 export default function AssetSearchHit({ asset }: Props) {
+  const sdk = useSDK();
   const { chartId } = useParams<{ chartId: string }>();
   const { data: chart } = useChart(chartId);
   const { mutate: updateChart } = useUpdateChart();
@@ -60,10 +91,56 @@ export default function AssetSearchHit({ asset }: Props) {
       if (tsToRemove) {
         updateChart(removeTimeseries(chart, tsToRemove.id));
       } else {
+        // Calculate y-axis / range
+        const dateFrom = subDays(new Date(chart.dateTo), 365);
+        const dateTo = new Date(chart.dateTo);
+
+        const lastYearDatapointsQuery = {
+          items: [{ id: timeSeries.id }],
+          start: dateFrom,
+          end: dateTo,
+          aggregates: ['average'] as Aggregate[],
+          granularity: '1h',
+          limit: 8760, // 365 days * 24 hours = 1 year in hours
+        };
+
+        const lastYearDatapoints = await sdk.datapoints
+          .retrieve(lastYearDatapointsQuery)
+          .then((r) => r[0]?.datapoints);
+
+        const lastYearDatapointsSorted = (lastYearDatapoints as DatapointAggregate[])
+          .map((datapoint: DatapointAggregate) => datapoint.average)
+          .filter((value: number | undefined) => value !== undefined)
+          .sort() as number[];
+
+        const filteredSortedDatapoints = filterOutliers(
+          lastYearDatapointsSorted,
+          OUTLIER_THRESHOLD
+        );
+
+        const roundedMin = roundToSignificantDigits(
+          filteredSortedDatapoints[0],
+          3
+        );
+        const roundedMax = roundToSignificantDigits(
+          filteredSortedDatapoints[filteredSortedDatapoints.length - 1],
+          3
+        );
+
+        let range: number[];
+
+        if (typeof roundedMin !== 'number' || typeof roundedMax !== 'number') {
+          range = [];
+        } else {
+          range = [roundedMin, roundedMax];
+        }
+
         const newTs = covertTSToChartTS(
           timeSeries,
-          chart.timeSeriesCollection?.length || 0
+          chart.timeSeriesCollection?.length || 0,
+          range
         );
+
         updateChart(addTimeseries(chart, newTs));
       }
     }
