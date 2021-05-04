@@ -1,7 +1,7 @@
 import React from 'react';
-import { Switch, Route, useRouteMatch } from 'react-router-dom';
+import { Switch, Route } from 'react-router-dom';
 import { PageTitle } from '@cognite/cdf-utilities';
-import SearchPage from 'pages/SearchPage';
+import SelectionPage from 'pages/SelectionPage';
 import ResultsOverview from 'pages/ResultsOverview';
 import FileOverview from 'pages/FileOverview';
 import Options from 'pages/Options';
@@ -41,8 +41,6 @@ const getBreadcrumbs = () => {
 };
 
 export default function Routes() {
-  const match = useRouteMatch<{ tenant: string; fileId?: string }>();
-
   return (
     <>
       <Breadcrumbs breadcrumbs={getBreadcrumbs()} />
@@ -51,7 +49,7 @@ export default function Routes() {
           <Switch>
             <Route
               exact
-              path={landingPage.staticPath(match.path)}
+              path={landingPage.staticPath}
               render={() => (
                 <>
                   <PageTitle title="P&ID Contextualization" />
@@ -61,65 +59,66 @@ export default function Routes() {
             />
             <Route
               exact
-              path={diagramSelection.staticPath(match.path)}
+              path={diagramSelection.staticPath}
               render={() => (
                 <>
                   <StepsList />
                   <PageTitle title="P&ID Contextualization" />
-                  <SearchPage
-                    type="files"
-                    secondaryType="P&ID"
-                    key="fileSearch"
+                  <SelectionPage
                     defaultFilters={PDF_FILTER}
+                    required
+                    step="diagramSelection"
+                    type="files"
+                    key="diagramSelection"
                   />
                 </>
               )}
             />
             <Route
               exact
-              path={resourceSelection.staticPath(match.path)}
+              path={resourceSelection.staticPath}
               render={() => (
                 <>
                   <StepsList />
                   <PageTitle title="P&ID Contextualization" />
-                  <SearchPage
+                  <SelectionPage
+                    step="resourceSelection"
                     type="assets"
-                    secondaryType="tags"
-                    key="assetSearch"
+                    key="assetselection"
                   />
                 </>
               )}
             />
             <Route
               exact
-              path={configPage.staticPath(match.path)}
+              path={configPage.staticPath}
               render={() => (
                 <>
                   <StepsList />
                   <PageTitle title="P&ID Contextualization" />
-                  <Options />
+                  <Options step="config" />
                 </>
               )}
             />
             <Route
               exact
-              path={reviewPage.staticPath(match.path)}
+              path={reviewPage.staticPath}
               render={() => (
                 <>
                   <StepsList />
                   <PageTitle title="P&ID Contextualization" />
-                  <ResultsOverview />
+                  <ResultsOverview step="review" />
                 </>
               )}
             />
             <Route
               exact
-              path={diagramPreview.staticPath(match.path)}
+              path={diagramPreview.staticPath}
               render={() => (
                 <>
                   <StepsList />
                   <PageTitle title="P&ID Contextualization" />
-                  <FileOverview />
+                  <FileOverview step="diagramPreview" />
                 </>
               )}
             />

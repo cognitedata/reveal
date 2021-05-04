@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { useParams, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Icon, Tooltip, Title } from '@cognite/cogs.js';
 import { message } from 'antd';
 import { FileInfo } from '@cognite/sdk';
-import { useWorkflowItems } from 'modules/workflows';
+import { useWorkflowItems, WorkflowStep } from 'modules/workflows';
 import { checkPermission } from 'modules/app';
 import {
   startConvertFileToSvgJob,
@@ -20,10 +20,13 @@ import { resourceSelection } from 'routes/paths';
 import { getWorkflowItems, getContextualizationJobs } from './selectors';
 import ResultsTable from './ResultsTable';
 
-export default function ResultsOverview() {
+type Props = {
+  step: WorkflowStep;
+};
+export default function ResultsOverview(props: Props) {
+  const { step } = props;
   const history = useHistory();
   const dispatch = useDispatch();
-  const { tenant } = useParams<{ tenant: string }>();
 
   const [selectedKeys, setSelectedKeys] = useState([] as number[]);
   const [renderFeedback, setRenderFeedback] = useState(false);
@@ -36,7 +39,7 @@ export default function ResultsOverview() {
     () => checkPermission('filesAcl', 'READ'),
     []
   );
-  const { workflowId } = useActiveWorkflow();
+  const { tenant, workflowId } = useActiveWorkflow(step);
   const { diagrams } = useWorkflowItems(workflowId, true);
   const { workflow } = useSelector(getWorkflowItems(workflowId));
   const canEditFiles = useSelector(getCanEditFiles);

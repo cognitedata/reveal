@@ -7,7 +7,9 @@ import { RootState } from 'store';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { FileInfo } from '@cognite/sdk';
 import { useActiveWorkflow } from 'hooks';
+
 import { checkPermission } from 'modules/app';
+import { WorkflowStep } from 'modules/workflows';
 import { startConvertFileToSvgJob } from 'modules/contextualization/uploadJobs';
 import { retrieveItemsById as retrieve } from 'modules/files';
 import { reviewPage } from 'routes/paths';
@@ -38,14 +40,18 @@ import { ClearTagsButton } from './ClearTagsButton';
 
 export type FilePreviewTabType = 'preview' | 'details' | 'files' | 'assets';
 
-export default function FileOverview() {
-  const { fileId, tenant } = useParams<{
+type Props = {
+  step: WorkflowStep;
+};
+
+export default function FileOverview(props: Props) {
+  const { step } = props;
+  const { fileId } = useParams<{
     fileId: string;
-    tenant: string;
   }>();
   const dispatch = useDispatch();
   const history = useHistory();
-  const { workflowId } = useActiveWorkflow();
+  const { tenant, workflowId } = useActiveWorkflow(step);
 
   const [activeTab, setActiveTab] = useState<FilePreviewTabType>('preview');
   const [renderFeedback, setRenderFeedback] = useState(false);

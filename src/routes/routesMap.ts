@@ -1,38 +1,21 @@
 import { WorkflowStep } from 'modules/workflows';
+import { paths } from './paths';
 
-export type StepsData = {
-  path: string;
+export type PathData = {
+  path: (
+    tenant: string,
+    workflowId: string | number,
+    fileId?: string | number
+  ) => string;
+  staticPath: string;
   title: string;
-  workflowStepName: WorkflowStep;
+  workflowStepName?: WorkflowStep;
+  isNotStep?: boolean;
 };
 
-export default function routesMap(mountedAt: string) {
-  const map: StepsData[] = [
-    {
-      path: `${mountedAt}/workflow/:workflowId`,
-      title: 'Select files',
-      workflowStepName: 'diagramSelection',
-    },
-    {
-      path: `${mountedAt}/workflow/:workflowId/selection`,
-      title: 'Select resources',
-      workflowStepName: 'resourceSelection',
-    },
-    {
-      path: `${mountedAt}/workflow/:workflowId/config`,
-      title: 'P&ID configuration',
-      workflowStepName: 'config',
-    },
-    {
-      path: `${mountedAt}/workflow/:workflowId/review`,
-      title: 'Review results',
-      workflowStepName: 'review',
-    },
-    {
-      path: `${mountedAt}/workflow/:workflowId/diagram/:fileId`,
-      title: 'Review a file',
-      workflowStepName: 'finished',
-    },
-  ];
+export default function routesMap() {
+  const map: PathData[] = Object.values(paths).filter(
+    (path: PathData) => !path.isNotStep
+  );
   return map;
 }

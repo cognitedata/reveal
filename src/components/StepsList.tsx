@@ -5,8 +5,7 @@ import styled from 'styled-components';
 import 'antd/dist/antd.css';
 import { WorkflowStep } from 'modules/workflows';
 import { Flex as BaseFlex, Steps, StepsType } from 'components/Common';
-import routesMap, { StepsData } from 'routes/routesMap';
-import { staticRoot } from 'routes/paths';
+import routesMap, { PathData } from 'routes/routesMap';
 
 const Flex = styled(BaseFlex)`
   margin-bottom: 40px;
@@ -28,11 +27,11 @@ export default function StepsList() {
     workflowId?: string;
     fileId?: string;
   }>();
-  const routes = routesMap(staticRoot);
+  const routes = routesMap();
 
-  const stepList: StepsType[] = routes.map((route: StepsData) => {
+  const stepList: StepsType[] = routes.map((route: PathData) => {
     const { title } = route;
-    const path = generatePath(route.path, {
+    const path = generatePath(route.staticPath, {
       tenant,
       workflowId,
       fileId,

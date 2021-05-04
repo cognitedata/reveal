@@ -2,7 +2,7 @@ import { createSelector } from '@reduxjs/toolkit';
 import { InternalId } from '@cognite/sdk';
 import { RootState } from 'store';
 import { ResourceType } from 'modules/sdk-builder/types';
-import { ResourceSelection } from './types';
+import { ResourceSelection, Workflow } from './types';
 
 import {
   countSelector as countFileSelector,
@@ -23,16 +23,16 @@ export const getActiveWorkflowId = createSelector(
 export const getActiveWorkflowStep = createSelector(
   (state: RootState) => state.workflows.active,
   (state: RootState) => state.workflows.items,
-  (workflowId: number, items: any) => {
+  (workflowId: number, items: { [id: number]: Workflow }) => {
     const activeWorkflow = items[workflowId];
-    return activeWorkflow.step;
+    return activeWorkflow?.step;
   }
 );
 
 export const getActiveWorkflowDiagrams = createSelector(
   (state: RootState) => state.workflows.active,
   (state: RootState) => state.workflows.items,
-  (workflowId, items) => {
+  (workflowId: number, items: { [id: number]: Workflow }) => {
     if (workflowId) return items[workflowId].diagrams;
     return undefined;
   }
@@ -41,7 +41,7 @@ export const getActiveWorkflowDiagrams = createSelector(
 export const getActiveWorkflowResources = createSelector(
   (state: RootState) => state.workflows.active,
   (state: RootState) => state.workflows.items,
-  (workflowId, items) => {
+  (workflowId: number, items: { [id: number]: Workflow }) => {
     if (workflowId) return items[workflowId].resources;
     return undefined;
   }
@@ -50,7 +50,9 @@ export const getActiveWorkflowResources = createSelector(
 export const getActiveWorkflowResourcesByResourceType = createSelector(
   (state: RootState) => state.workflows.active,
   (state: RootState) => state.workflows.items,
-  (workflowId, items) => (resourceType: ResourceType) => {
+  (workflowId: number, items: { [id: number]: Workflow }) => (
+    resourceType: ResourceType
+  ) => {
     if (workflowId) {
       const { resources } = items[workflowId];
       const resourceOfType = resources?.find(

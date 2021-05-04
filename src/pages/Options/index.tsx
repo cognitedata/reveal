@@ -1,20 +1,24 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { RootState } from 'store';
 import { Button, Checkbox, Input, Title } from '@cognite/cogs.js';
 import { Card } from 'antd';
-import { moveToStep, changeOptions } from 'modules/workflows';
+import { moveToStep, changeOptions, WorkflowStep } from 'modules/workflows';
 import { useActiveWorkflow } from 'hooks';
 import { Flex } from 'components/Common';
 import StickyBottomRow from 'components/StickyBottomRow';
 import { reviewPage } from 'routes/paths';
 
-export default function Options() {
+type Props = {
+  step: WorkflowStep;
+};
+export default function Options(props: Props) {
   const history = useHistory();
   const dispatch = useDispatch();
-  const { tenant } = useParams<{ tenant: string }>();
-  const { workflowId } = useActiveWorkflow();
+  const { step } = props;
+
+  const { tenant, workflowId } = useActiveWorkflow(step);
   const { partialMatch, grayscale, minTokens } = useSelector(
     (state: RootState) => state.workflows.items[workflowId].options
   );

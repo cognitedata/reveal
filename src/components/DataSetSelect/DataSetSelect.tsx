@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Select, Popover } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
+import { Select } from '@cognite/cogs.js';
+import { Popover, Spin } from 'antd';
 import { DataSet } from '@cognite/sdk';
 import {
   list,
@@ -11,60 +12,80 @@ import {
 } from 'modules/datasets';
 import { ResourceType } from 'modules/sdk-builder/types';
 import { checkPermission } from 'modules/app';
-import styled from 'styled-components';
-import { Body, Colors, Tooltip } from '@cognite/cogs.js';
-import {
-  truncateString,
-  stringContains,
-} from 'modules/contextualization/utils';
-import Spin from 'antd/lib/spin';
+import { stringContains } from 'modules/contextualization/utils';
 
+type OptionsType = {
+  label: number | string;
+  value: number | string;
+};
 type Props = {
-  onDataSetSelected: (ids: number[]) => void;
-  style?: React.CSSProperties;
-  disabled?: boolean;
-  multiple?: boolean;
-  selectedDataSetIds?: number[];
+  isMulti?: boolean;
   resourceType: ResourceType;
   noTypeCheck?: boolean;
+  selectedDataSetIds?: number[];
+  onDataSetSelected: (ids: number[]) => void;
 };
 
-const DataSetSelect = ({
-  onDataSetSelected,
-  style = { minWidth: '306px', maxHeight: '36px' },
-  disabled = false,
-  multiple = false,
+export default function DataSetSelect({
   noTypeCheck = false,
-  selectedDataSetIds,
   resourceType,
-}: Props) => {
+  selectedDataSetIds,
+  onDataSetSelected,
+}: Props) {
   const dispatch = useDispatch();
-
-  const [currentSelection, setCurrentSelection] = useState([] as number[]);
+  const [currentSelection, setCurrentSelection] = useState([] as OptionsType[]);
   const [query, setQuery] = useState('');
-  const [visible, setVisible] = useState<boolean>(false);
   const [datasetSearchResults, setDatasetSearchResults] = useState(
     [] as DataSet[]
   );
-
   const datasets = useSelector(selectAllDataSets);
   const dataSetResourceCounts = useSelector(dataSetCounts);
   const isLoading = useSelector(getIsFetchingDatasets);
   const isLoaded = useSelector(datasetsFetched);
+  const getPermission = useMemo(
+    () => checkPermission('datasetsAcl', 'READ'),
+    []
+  );
+  const canReadDataSets = useSelector(getPermission);
 
-  const setSelectedValue = (ids?: number | number[]) => {
-    if (!ids) {
+  const setSelectedValue = (items?: OptionsType[]) => {
+    if (!items?.length) {
       setCurrentSelection([]);
       onDataSetSelected([]);
-    } else if (multiple) {
-      setCurrentSelection(ids as number[]);
-      onDataSetSelected(ids as number[]);
     } else {
-      setCurrentSelection([ids as number]);
-      onDataSetSelected([ids as number]);
+      setCurrentSelection(items);
+      onDataSetSelected(
+        items.map((item: OptionsType) => item.value) as number[]
+      );
     }
     setQuery('');
   };
+
+  const options = datasetSearchResults.map(
+    (dataset: DataSet): OptionsType => ({
+      label: dataset?.name ?? dataset.externalId ?? dataset?.id,
+      value: dataset?.id,
+    })
+  );
+
+  const styles = {
+    container: (original: any) => ({
+      ...original,
+      flex: 1,
+    }),
+  };
+
+  useEffect(() => {
+    if (selectedDataSetIds) {
+      // [to do] this needs to go to the hook, and retrieve the real name of the dataset
+      const fixedDataSets = selectedDataSetIds.map((id: number) => ({
+        label: id,
+        value: id,
+      }));
+      setCurrentSelection(fixedDataSets);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedDataSetIds]);
 
   useEffect(() => {
     const dataSetsFilter = (dataset: DataSet) => {
@@ -77,89 +98,33 @@ const DataSetSelect = ({
   }, [query, datasets, resourceType, dataSetResourceCounts, noTypeCheck]);
 
   useEffect(() => {
-    if (selectedDataSetIds) {
-      setCurrentSelection(selectedDataSetIds);
-    }
-  }, [selectedDataSetIds]);
-
-  useEffect(() => {
     if (!isLoaded) {
       dispatch(list({}));
-      setVisible(false);
     }
-  }, [dispatch, noTypeCheck, isLoaded]);
-
-  const getPermission = useMemo(
-    () => checkPermission('datasetsAcl', 'READ'),
-    []
-  );
-  const canReadDataSets = useSelector(getPermission);
-
-  if (!canReadDataSets) {
-    return (
-      <Popover
-        title="Missing DataSetAcl.READ"
-        content="Go to Access management to enable access to DataSetAcl.READ"
-      >
-        <Select style={style} disabled />
-      </Popover>
-    );
-  }
-
-  const renderTagLabel = (id: number, name?: string, concat?: boolean) => (
-    <Tooltip
-      placement="left"
-      content={
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <div style={{ fontSize: '12px', fontWeight: 'bolder' }}>{name}</div>
-          <div>{id}</div>
-        </div>
-      }
-    >
-      <Body level={2}>{concat && name ? truncateString(name, 14) : name}</Body>
-    </Tooltip>
-  );
+  }, [dispatch, isLoaded]);
 
   return (
-    <Spin spinning={!!isLoading} size="small">
-      <DataSetSelector
-        showSearch
-        style={style}
-        disabled={disabled}
-        mode={multiple ? 'multiple' : undefined}
-        placeholder="Select data sets"
-        value={multiple ? currentSelection : currentSelection[0]}
-        onChange={(id: any) => {
-          setSelectedValue(id);
-          setVisible(false);
-        }}
-        onSearch={setQuery}
-        dropdownMatchSelectWidth
-        filterOption={false}
-        maxTagCount={1}
-        optionLabelProp="label"
-        onDropdownVisibleChange={setVisible}
-        open={visible}
-        loading={!!isLoading}
-      >
-        {datasetSearchResults.map((dataset: DataSet) => (
-          <Select.Option
-            key={dataset.id}
-            value={dataset.id}
-            label={renderTagLabel(dataset.id, dataset?.name, true)}
+    <div style={{ minWidth: '250px' }}>
+      <Spin spinning={!!isLoading} size="small">
+        {canReadDataSets ? (
+          <Select
+            isMulti
+            title="Data sets"
+            placeholder=""
+            options={options}
+            value={currentSelection}
+            onChange={setSelectedValue}
+            styles={styles}
+          />
+        ) : (
+          <Popover
+            title="Missing DataSetAcl.READ"
+            content="Go to Access management to enable access to DataSetAcl.READ"
           >
-            {renderTagLabel(dataset.id, dataset?.name, false)}
-          </Select.Option>
-        ))}
-      </DataSetSelector>
-    </Spin>
+            <Select disabled />
+          </Popover>
+        )}
+      </Spin>
+    </div>
   );
-};
-
-export default DataSetSelect;
-
-const DataSetSelector = styled(Select)`
-  li.ant-select-selection__choice {
-    border: 1px solid ${Colors['greyscale-grey7'].hex()};
-  }
-`;
+}
