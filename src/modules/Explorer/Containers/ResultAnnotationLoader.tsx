@@ -21,6 +21,9 @@ export function ResultAnnotationLoader(props: {
         createdTime: new Date(file.createdTime),
         uploadedTime: new Date(file.uploadedTime),
         lastUpdatedTime: new Date(file.lastUpdatedTime),
+        sourceCreatedTime: file.sourceCreatedTime
+          ? new Date(file.sourceCreatedTime)
+          : undefined,
       };
       dispatch(addUploadedFile(fileInfo));
 

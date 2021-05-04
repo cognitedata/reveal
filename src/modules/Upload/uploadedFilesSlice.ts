@@ -11,6 +11,7 @@ export type FileState = {
   id: ReactText;
   createdTime: number;
   lastUpdatedTime: number;
+  sourceCreatedTime?: number;
   mimeType?: string;
   name: string;
   source?: string;
@@ -34,8 +35,8 @@ export type State = {
 };
 
 export type VisionAsset = Omit<
-  Omit<Asset, 'createdTime'>,
-  'lastUpdatedTime'
+  Omit<Omit<Asset, 'createdTime'>, 'lastUpdatedTime'>,
+  'sourceCreatedType'
 > & { createdTime: number; lastUpdatedTime: number };
 
 const initialState: State = {
