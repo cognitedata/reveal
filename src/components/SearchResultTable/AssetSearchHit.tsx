@@ -1,5 +1,4 @@
-import React, { useMemo, useState } from 'react';
-import { useQuery } from 'react-query';
+import React, { useMemo } from 'react';
 import { subDays } from 'date-fns';
 import { useSDK } from '@cognite/sdk-provider';
 import styled from 'styled-components';
@@ -64,7 +63,6 @@ export default function AssetSearchHit({ asset }: Props) {
   const { chartId } = useParams<{ chartId: string }>();
   const { data: chart } = useChart(chartId);
   const { mutate: updateChart } = useUpdateChart();
-  const [tsId, setTsId] = useState<number>();
 
   const { data, hasNextPage, fetchNextPage } = useInfiniteList<Timeseries>(
     'timeseries',
@@ -153,7 +151,6 @@ export default function AssetSearchHit({ asset }: Props) {
         );
 
         updateChart(addTimeseries(chart, newTs));
-        setTsId(newTs.tsId);
       }
     }
   };
