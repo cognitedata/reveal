@@ -40,9 +40,7 @@ export const startPnidParsingWorkflow = {
 
       if (workflowStatus === 'pending' || workflowStatus === 'success') return;
 
-      console.log(1);
       await dispatch(loadWorkflowAsync(workflowId));
-      console.log(2);
 
       const getDiagrams = workflowDiagramsSelector(workflowId, true);
       const getResources = workflowAllResourcesSelector(workflowId, true);

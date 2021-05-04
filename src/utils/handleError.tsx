@@ -1,6 +1,7 @@
 import React from 'react';
 import notification from 'antd/lib/notification';
 import Paragraph from 'antd/lib/typography/Paragraph';
+import { getContainer } from 'utils/utils';
 
 // To achieve this typing for the props, the error catched should be: handleError({...error})
 interface ErrorNotificationProps {
@@ -39,12 +40,6 @@ const generateErrorTitle = (
   return (
     <Paragraph>{message || generateStatusMessage(0, requestId)}</Paragraph>
   );
-};
-
-export const getContainer = () => {
-  const els = document.getElementsByClassName('data-studio-style-scope');
-  const el = els.item(0)! as HTMLElement;
-  return el;
 };
 
 const getString = (message: any) => {
