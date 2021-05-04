@@ -7,7 +7,8 @@ const useLocalApi = false; // Toggle on if using api locally
 const getBaseURL = () => {
   const cluster = getCdfEnvFromUrl();
   if (useLocalApi) return 'http://localhost:8001';
-  return `https://context-service.${cluster || 'europe-west1-1'}.cognite.ai/`;
+  if (cluster) return `https://context-service.${cluster}.cognite.ai`;
+  return `https://context-service.cognite.ai`;
 };
 
 class ContextServiceApi {

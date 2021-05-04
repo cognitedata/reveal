@@ -19,7 +19,8 @@ export const useAnnotatedFiles = () => {
 
   const { data: files, isFetched: filesFetched } = useCdfItems(
     'files',
-    fileIds
+    fileIds,
+    true
   );
 
   const isLoading = !fetchedFileIds || !filesFetched;
