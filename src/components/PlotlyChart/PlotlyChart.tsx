@@ -314,6 +314,7 @@ const PlotlyChartComponent = ({
     /**
      * For some reason plotly doesn't like that you overwrite the range input (doing this the wrong way?)
      */
+
     const serializedYRange = range
       ? JSON.parse(JSON.stringify(range))
       : undefined;
