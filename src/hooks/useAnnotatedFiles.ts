@@ -1,15 +1,19 @@
 import { useEffect, useState } from 'react';
 import contextServiceApi from 'api/contextService';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
+import { IdEither } from 'cognite-sdk-v3';
+import chunk from 'lodash/chunk';
 
-export const useAnnotatedFiles = (shouldUpdate: boolean) => {
-  const [fileIds, setFileIds] = useState<Array<{ id: number }>>([]);
+export const useAnnotatedFiles = (shouldUpdate: boolean, page: number) => {
+  const [fileIds, setFileIds] = useState<Array<IdEither>>([]);
   const [fetchedFileIds, setFetchedFileIds] = useState<boolean>(false);
+  const [fileIdsChunks, setFileIdsChunks] = useState<Array<IdEither[]>>([]);
 
   useEffect(() => {
     const fetchFileIds = async () => {
       const ids = (await contextServiceApi.getAnnotatedFiles()) ?? [];
-      setFileIds(ids.map((item) => ({ id: Number(item) })));
+      setFileIds(ids);
+      setFileIdsChunks(chunk(ids, 10));
       setFetchedFileIds(true);
     };
     if (!fetchedFileIds) {
@@ -26,11 +30,11 @@ export const useAnnotatedFiles = (shouldUpdate: boolean) => {
 
   const { data: files, isFetched: filesFetched } = useCdfItems(
     'files',
-    fileIds,
+    fileIdsChunks.length && fileIdsChunks[page] ? fileIdsChunks[page] : [],
     true
   );
 
   const isLoading = !fetchedFileIds || !filesFetched;
 
-  return { fileIds, isLoading, files };
+  return { isLoading, files, total: fileIds.length };
 };

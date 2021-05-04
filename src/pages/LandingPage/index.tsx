@@ -23,6 +23,8 @@ import { deleteAnnotationsForFile } from 'utils/AnnotationUtils';
 import { PNID_METRICS, trackUsage } from 'utils/Metrics';
 import FilterBar from './FilterBar';
 
+const PAGE_SIZE = 10;
+
 const Wrapper = styled.div`
   width: 100%;
   height: 50vh;
@@ -110,10 +112,14 @@ export default function LandingPage() {
   const [query, setQuery] = useState<string>('');
 
   const [shouldUpdate, setShouldUpdate] = useState(false);
+  const [currentPage, setCurrentPage] = useState<number>(1);
 
-  const { files, isLoading } = useAnnotatedFiles(shouldUpdate);
+  const { files, isLoading, total } = useAnnotatedFiles(
+    shouldUpdate,
+    Math.floor(currentPage)
+  );
 
-  const noFiles = !isLoading && !files?.length;
+  const noFiles = !isLoading && total === 0;
   const { data: filesAcl } = usePermissions('filesAcl', 'WRITE');
   const { data: eventsAcl } = usePermissions('eventsAcl', 'WRITE');
   const client = useQueryClient();
@@ -181,7 +187,20 @@ export default function LandingPage() {
     <>
       <FilterBar query={query} setQuery={setQuery} />
       <Table
-        pagination={{ pageSize: 10, hideOnSinglePage: true }}
+        pagination={{
+          pageSize: PAGE_SIZE,
+          total,
+          hideOnSinglePage: true,
+          onChange: (pageNumber) => setCurrentPage(pageNumber),
+          current: currentPage,
+          itemRender: (page, _, originalElement) => {
+            if (page > currentPage && (files as FileInfo[])?.length < 9) {
+              return <span />;
+            }
+
+            return originalElement;
+          },
+        }}
         dataSource={files as FileInfo[]}
         // @ts-ignore
         columns={interactiveColumns}
