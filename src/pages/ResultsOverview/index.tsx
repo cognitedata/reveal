@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { Button, Icon, Tooltip, Title } from '@cognite/cogs.js';
+import { Button, Icon, Tooltip } from '@cognite/cogs.js';
 import { message } from 'antd';
 import { FileInfo } from '@cognite/sdk';
 import { useWorkflowItems, WorkflowStep } from 'modules/workflows';
@@ -14,7 +14,7 @@ import { startPnidParsingWorkflow } from 'modules/contextualization/pnidWorkflow
 import { useAnnotationsForFiles, useActiveWorkflow } from 'hooks';
 import LoadResources from 'containers/LoadResources';
 import MissingPermissionFeedback from 'components/MissingPermissionFeedback';
-import { Flex } from 'components/Common';
+import { Flex, PageTitle } from 'components/Common';
 import { canDeploySelectedFiles } from 'utils/FilesUtils';
 import { resourceSelection } from 'routes/paths';
 import { getWorkflowItems, getContextualizationJobs } from './selectors';
@@ -102,9 +102,11 @@ export default function ResultsOverview(props: Props) {
       <MissingPermissionFeedback key="filesAcl" acl="filesAcl" type="WRITE" />
     </>
   ) : (
-    <Flex column>
+    <Flex column style={{ width: '100%' }}>
       <Flex align style={{ width: '100%', justifyContent: 'space-between' }}>
-        <Title level={2}>Review the contextualized P&IDs</Title>
+        <Flex column>
+          <PageTitle>Review the contextualized P&IDs</PageTitle>
+        </Flex>
         <Flex align style={{ justifyContent: 'flex-end' }}>
           <Tooltip
             placement="left"

@@ -9,7 +9,7 @@ import LandingPage from 'pages/LandingPage';
 import GroupsRequired from 'components/GroupsRequired';
 import Breadcrumbs from 'components/Breadcrumbs';
 import StepsList from 'components/StepsList';
-import { PageWrapper } from 'components/Common';
+import { Flex, PageWrapper } from 'components/Common';
 import {
   landingPage,
   diagramSelection,
@@ -62,15 +62,17 @@ export default function Routes() {
               path={diagramSelection.staticPath}
               render={() => (
                 <>
-                  <StepsList />
                   <PageTitle title="P&ID Contextualization" />
-                  <SelectionPage
-                    defaultFilters={PDF_FILTER}
-                    required
-                    step="diagramSelection"
-                    type="files"
-                    key="diagramSelection"
-                  />
+                  <Flex row style={{ width: '100%' }}>
+                    <StepsList />
+                    <SelectionPage
+                      defaultFilters={PDF_FILTER}
+                      required
+                      step="diagramSelection"
+                      type="files"
+                      key="diagramSelection"
+                    />
+                  </Flex>
                 </>
               )}
             />
@@ -79,13 +81,15 @@ export default function Routes() {
               path={resourceSelection.staticPath}
               render={() => (
                 <>
-                  <StepsList />
                   <PageTitle title="P&ID Contextualization" />
-                  <SelectionPage
-                    step="resourceSelection"
-                    type="assets"
-                    key="assetselection"
-                  />
+                  <Flex row style={{ width: '100%' }}>
+                    <StepsList />
+                    <SelectionPage
+                      step="resourceSelection"
+                      type="assets"
+                      key="assetselection"
+                    />
+                  </Flex>
                 </>
               )}
             />
@@ -94,9 +98,11 @@ export default function Routes() {
               path={configPage.staticPath}
               render={() => (
                 <>
-                  <StepsList />
                   <PageTitle title="P&ID Contextualization" />
-                  <Options step="config" />
+                  <Flex row style={{ width: '100%' }}>
+                    <StepsList />
+                    <Options step="config" />
+                  </Flex>
                 </>
               )}
             />
@@ -105,9 +111,11 @@ export default function Routes() {
               path={reviewPage.staticPath}
               render={() => (
                 <>
-                  <StepsList />
                   <PageTitle title="P&ID Contextualization" />
-                  <ResultsOverview step="review" />
+                  <Flex row style={{ width: '100%' }}>
+                    <StepsList />
+                    <ResultsOverview step="review" />
+                  </Flex>
                 </>
               )}
             />
@@ -116,9 +124,11 @@ export default function Routes() {
               path={diagramPreview.staticPath}
               render={() => (
                 <>
-                  <StepsList />
                   <PageTitle title="P&ID Contextualization" />
-                  <FileOverview step="diagramPreview" />
+                  <Flex row style={{ width: '100%' }}>
+                    <StepsList />
+                    <FileOverview step="diagramPreview" />
+                  </Flex>
                 </>
               )}
             />

@@ -93,7 +93,7 @@ export default function SelectionPage(props: Props): JSX.Element {
   }, [delayedFilter]);
 
   return (
-    <Flex column>
+    <Flex column style={{ width: '100%' }}>
       {step === 'diagramSelection' && (
         <DiagramsSelection
           filter={filter}

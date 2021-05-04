@@ -14,7 +14,7 @@ export const paths: { [key: string]: PathData } = {
     path: (tenant: string, workflowId: string | number) =>
       `/${tenant}/${root}/workflow/${workflowId}`,
     staticPath: `${staticRoot}/workflow/:workflowId`,
-    title: 'Select files',
+    title: 'Select engineering diagrams',
     workflowStepName: 'diagramSelection',
   },
   resourceSelection: {

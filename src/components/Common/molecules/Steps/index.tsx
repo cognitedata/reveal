@@ -11,9 +11,13 @@ Steps.Step = Step;
  */
 const StyledSteps = styled.div`
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  min-width: 300px;
   font-family: 'Inter';
   font-weight: 600;
+  padding: 16px 24px 0 0;
   color: ${Colors['greyscale-grey6'].hex()};
 `;
 

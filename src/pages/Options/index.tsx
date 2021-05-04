@@ -2,11 +2,11 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { RootState } from 'store';
-import { Button, Checkbox, Input, Title } from '@cognite/cogs.js';
+import { Button, Checkbox, Input } from '@cognite/cogs.js';
 import { Card } from 'antd';
 import { moveToStep, changeOptions, WorkflowStep } from 'modules/workflows';
 import { useActiveWorkflow } from 'hooks';
-import { Flex } from 'components/Common';
+import { Flex, PageTitle } from 'components/Common';
 import StickyBottomRow from 'components/StickyBottomRow';
 import { reviewPage } from 'routes/paths';
 
@@ -32,9 +32,9 @@ export default function Options(props: Props) {
   }, [dispatch]);
 
   return (
-    <>
-      <Title level={2}>P&ID options</Title>
-      <Flex row grow>
+    <Flex column style={{ width: '100%' }}>
+      <PageTitle>P&ID options</PageTitle>
+      <Flex row grow style={{ marginTop: '24px' }}>
         <Card style={{ marginRight: '8px ' }}>
           <Card.Meta
             title={
@@ -102,6 +102,6 @@ export default function Options(props: Props) {
           Next
         </Button>
       </StickyBottomRow>
-    </>
+    </Flex>
   );
 }
