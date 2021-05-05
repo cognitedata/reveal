@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components/macro';
 import { Button, Icon, toast, Tooltip } from '@cognite/cogs.js';
+import { Alert } from 'antd';
 import { useParams } from 'react-router-dom';
 import NodeEditor from 'components/NodeEditor';
 import SplitPaneLayout from 'components/Layout/SplitPaneLayout';
@@ -11,7 +12,7 @@ import { useChart, useUpdateChart } from 'hooks/firebase';
 import { nanoid } from 'nanoid';
 import { ChartTimeSeries, ChartWorkflow } from 'reducers/charts/types';
 import { getEntryColor } from 'utils/colors';
-import { useQueryString } from 'hooks';
+import { useLoginStatus, useQueryString } from 'hooks';
 import { SEARCH_KEY } from 'utils/constants';
 import { Modes } from 'pages/types';
 import DetailsSidebar from 'components/DetailsSidebar';
@@ -41,6 +42,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
 
   const { chartId = chartIdProp } = useParams<{ chartId: string }>();
   const { data: chart, isError, isFetched } = useChart(chartId);
+  const { data: login } = useLoginStatus();
   const [showContextMenu, setShowContextMenu] = useState(false);
 
   const {
@@ -270,6 +272,16 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
               </Button>
             </section>
           )}
+          {login?.user && login?.user !== chart?.user && (
+            <section>
+              <WarningAlert
+                type="warning"
+                message="View only. Duplicate to edit."
+                icon={<Icon type="Info" />}
+                showIcon
+              />
+            </section>
+          )}
           <section className="daterange">
             <Tooltip content={`${stackedMode ? 'Disable' : 'Enable'} stacking`}>
               <Button
@@ -344,6 +356,12 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     </ChartViewContainer>
   );
 };
+
+const WarningAlert = styled(Alert)`
+  .ant-alert-message {
+    color: var(--cogs-text-warning);
+  }
+`;
 
 const Divider = styled.div`
   border-left: 1px solid var(--cogs-greyscale-grey3);
