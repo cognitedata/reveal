@@ -14,7 +14,7 @@ export const AssetSelector = (props: {
         <AssetSelect
           isMulti
           selectedAssetIds={props.assets}
-          onAssetSelected={(assetIds) => {
+          onAssetSelected={(assetIds: number[] | undefined) => {
             props.onSelectAssets(assetIds);
           }}
         />

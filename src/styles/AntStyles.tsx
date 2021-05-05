@@ -54,7 +54,7 @@ import notificationStyle from 'antd/es/notification/style/index.less';
 // import pageHeaderStyle from 'antd/es/page-header/style/index.less';
 // import paginationStyle from 'antd/es/pagination/style/index.less';
 // import popconfirmStyle from 'antd/es/popconfirm/style/index.less';
-// import popoverStyle from 'antd/es/popover/style/index.less';
+import popoverStyle from 'antd/es/popover/style/index.less';
 // import progressStyle from 'antd/es/progress/style/index.less';
 // import radioStyle from 'antd/es/radio/style/index.less';
 // import rateStyle from 'antd/es/rate/style/index.less';
@@ -107,7 +107,7 @@ const styles = [
   modalStyle,
   notificationStyle,
   // paginationStyle,
-  // popoverStyle,
+  popoverStyle,
   // progressStyle,
   // radioStyle,
   // resultStyle,

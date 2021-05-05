@@ -39,6 +39,7 @@ export function FileUploadOption({ isDisabled }: FileUploadOptionProps) {
               dispatch(setDataSetIds(value));
             }}
             selectedDataSetIds={dataSetIds}
+            allowClear
           />
         </DatasetContainer>
       </QueryClientProvider>

@@ -1308,12 +1308,11 @@
     react-toastify "^6.0.9"
     tippy.js "6.2.0"
 
-"@cognite/cogs.js@^2.7.2":
-  version "2.20.0"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-2.20.0.tgz#734123e870d4ca1a6bd599bb66bce1c86b21f1bc"
-  integrity sha512-WHIft3J9Mc+0LTO95y3ByvSLJhe0uhaKTITDRKzZeXNziq2UuGknMqHcSdz3dqZ+kYaTqO90IGLHLJBlSaFv8A==
+"@cognite/cogs.js@^3.10.0":
+  version "3.12.0"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.12.0.tgz#58dc75f9ee9f3560c36fb85eb86dde33d8e9cf6b"
+  integrity sha512-vf3Pwuo0tYjinWhzQJCY6mrQmu+exAIRqAYJyas1reqQf+spuabQnlfMJjXWm6K7TcAAJwSjJV90YrGW797cwA==
   dependencies:
-    "@testing-library/react-hooks" "^5.0.3"
     "@tippyjs/react" "4.2.3"
     "@types/react-date-range" "^1.1.2"
     color "^3.1.2"
@@ -1330,55 +1329,49 @@
     react-toastify "^6.0.9"
     tippy.js "6.2.0"
 
-"@cognite/data-exploration@0.5.9":
-  version "0.5.9"
-  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-0.5.9.tgz#3500518e363e8488ec3bcbcaeb60638359c2aa9e"
-  integrity sha512-zjh86cOfPxU4t0KdGsvYfTCSKZvz024dVPaLnbvqVvcv5ZH5JPP4MAOxMd/iHbmEPjDs3eGeAlJ+d7StEO20uQ==
+"@cognite/data-exploration@0.6.3":
+  version "0.6.3"
+  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-0.6.3.tgz#954af440f73d29981d93d3267badfecea71c0bc7"
+  integrity sha512-I4tBZtCzqpUj5tJH/6rorQtFL84ds6RiUyHaU6A/7xaLMfI+MpVG35WZsTjjQKNW0vO27sfxM+qm3plPZNWlhw==
   dependencies:
     "@babel/runtime" "^7.12.5"
     "@cognite/annotations" "^1.1.0"
-    "@cognite/cogs.js" "^2.7.2"
+    "@cognite/cogs.js" "^3.10.0"
     "@cognite/gcs-browser-upload" "^1.1.0"
     "@cognite/react-feature-flags" "^0.1.0"
-    "@cognite/react-picture-annotation" "^1.10.4"
+    "@cognite/react-picture-annotation" "^1.13.3"
     "@cognite/sdk" "^3.3.6"
     "@cognite/sdk-provider" "^1.0.0"
-    "@cognite/sdk-react-query-hooks" "^3.0.0"
-    "@types/d3-array" "^2.8.0"
-    "@types/d3-time-format" "^3.0.0"
-    "@types/react-datepicker" "^3.1.7"
-    "@types/react-select" "3.0.26"
-    "@visx/axis" "^1.7.0"
+    "@cognite/sdk-react-query-hooks" "^3.1.0"
+    "@visx/axis" "^1.8.0"
     "@visx/event" "^1.7.0"
-    "@visx/gradient" "^1.0.0"
+    "@visx/gradient" "^1.7.0"
     "@visx/grid" "^1.6.1"
     "@visx/group" "^1.0.0"
     "@visx/scale" "^1.1.0"
     "@visx/shape" "^1.7.0"
-    "@visx/threshold" "^1.6.1"
-    "@visx/tooltip" "^1.7.0"
-    antd "^4.13.1"
-    d3-array "^2.12.0"
+    "@visx/threshold" "^1.8.0"
+    "@visx/tooltip" "^1.7.2"
+    antd "^4.15.2"
+    d3-array "^2.12.1"
     d3-time-format "^3.0.0"
     history "^4.10.1"
     lodash "^4.17.21"
-    mime-types "^2.1.29"
+    mime-types "^2.1.30"
     moment "^2.29.1"
-    query-string "^6.14.1"
-    react "^17.0.1"
+    query-string "^7.0.0"
     react-base-table "^1.12.0"
-    react-datepicker "^3.6.0"
-    react-dom "^16.14.0"
+    react-datepicker "^3.7.0"
     react-highlight-words "^0.17.0"
-    react-query "^3.12.2"
+    react-query "^3.13.10"
     react-router-dom "^5.2.0"
-    react-select "^4.2.1"
+    react-select "^4.3.0"
     react-splitter-layout "^4.0.0"
     react-virtualized-auto-sizer "^1.0.5"
     react-window "^1.8.6"
     react-window-infinite-loader "^1.0.7"
-    styled-components "^5.2.1"
-    use-debounce "^6.0.0"
+    styled-components "^5.2.3"
+    use-debounce "^6.0.1"
     uuid "^8.3.2"
 
 "@cognite/eslint-config@^1.6.1":
@@ -1417,7 +1410,7 @@
   dependencies:
     unleash-proxy-client "^1.0.1"
 
-"@cognite/react-picture-annotation@^1.10.4", "@cognite/react-picture-annotation@^1.12.0":
+"@cognite/react-picture-annotation@^1.12.0":
   version "1.13.1"
   resolved "https://registry.yarnpkg.com/@cognite/react-picture-annotation/-/react-picture-annotation-1.13.1.tgz#78b00183579bb87fd471b363271af0b276075b10"
   integrity sha512-Xk9g9VZebAb8EOUtJkp+NNqEJs3RIhzdqXJsm7f11B8zVhFIL7+JGjjtq0UPQXMILBAF8nprvnakKBZHSoZZ3g==
@@ -1439,6 +1432,22 @@
     typescript "^4.1.2"
     uuid "^8.3.0"
 
+"@cognite/react-picture-annotation@^1.13.3":
+  version "1.13.3"
+  resolved "https://registry.yarnpkg.com/@cognite/react-picture-annotation/-/react-picture-annotation-1.13.3.tgz#d3e6f33f6e5015470ac7f0a276b7bc48d3ddc4ae"
+  integrity sha512-1r+vJ0qxFvOP9hdyN/jdbE5qhOyJZIkvOxYVQQJi5rRdwveXbtDmF5lGg9Uqi5Qkp2YYZdJfZfmnQbk+ko8vCg==
+  dependencies:
+    "@cognite/annotations" "^1.1.0"
+    "@cognite/sdk" "^3.3.0"
+    lodash "^4.17.21"
+    parse-color "^1.0.0"
+    pdf-lib "^1.12.0"
+    pdfjs-dist "2.6.347"
+    react-archer "^3.0.0"
+    react-is "^17.0.1"
+    react-splitter-layout "^4.0.0"
+    styled-components "^5.2.0"
+
 "@cognite/sdk-core@^1.2.2":
   version "1.2.2"
   resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-1.2.2.tgz#be6378ffee45c5da6d0186ce97246eb19a9d9dd4"
@@ -1458,13 +1467,13 @@
   dependencies:
     react "^16.14.0"
 
-"@cognite/sdk-react-query-hooks@^3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk-react-query-hooks/-/sdk-react-query-hooks-3.0.0.tgz#c2e9a1c1da4d7dbd0941440c70283b3326168aa2"
-  integrity sha512-Hwzumab2LAWstr6dmdGYQ87tURgIhOZyKY04Tr3KlvJRN7MmZpNvXOmh5WaSanMVzExfrKnveGntSFUVvZjC9g==
+"@cognite/sdk-react-query-hooks@^3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk-react-query-hooks/-/sdk-react-query-hooks-3.1.0.tgz#90d023e4f91bdc7d9f2da923fa8499e5a791d62f"
+  integrity sha512-vQYs/VEXYbdECzwJX4PYwFC3eeYG8jyyy1yGTGtJn/x5zXMBvgLtR6XjXrSrfMfUzPfJsHWXCk0OXs9ai99Eyw==
   dependencies:
     "@cognite/sdk-provider" "^1.0.0"
-    react-query "^3.5.0"
+    react-query "^3.13.10"
 
 "@cognite/sdk@^3.3.0", "@cognite/sdk@^3.3.6":
   version "3.5.2"
@@ -2565,18 +2574,6 @@
     lodash "^4.17.15"
     redent "^3.0.0"
 
-"@testing-library/react-hooks@^5.0.3":
-  version "5.1.1"
-  resolved "https://registry.yarnpkg.com/@testing-library/react-hooks/-/react-hooks-5.1.1.tgz#1fbaae8a4e8a4a7f97b176c23e1e890c41bbbfa5"
-  integrity sha512-52D2XnpelFDefnWpy/V6z2qGNj8JLIvW5DjYtelMvFXdEyWiykSaI7IXHwFy4ICoqXJDmmwHAiFRiFboub/U5g==
-  dependencies:
-    "@babel/runtime" "^7.12.5"
-    "@types/react" ">=16.9.0"
-    "@types/react-dom" ">=16.9.0"
-    "@types/react-test-renderer" ">=16.9.0"
-    filter-console "^0.1.1"
-    react-error-boundary "^3.1.0"
-
 "@testing-library/react@^11.2.5":
   version "11.2.6"
   resolved "https://registry.yarnpkg.com/@testing-library/react/-/react-11.2.6.tgz#586a23adc63615985d85be0c903f374dab19200b"
@@ -2674,11 +2671,6 @@
   resolved "https://registry.yarnpkg.com/@types/color-name/-/color-name-1.1.1.tgz#1c1261bbeaa10a8055bbc5d8ab84b7b2afc846a0"
   integrity sha512-rr+OQyAjxze7GgWrSaJwydHStIhHq2lvY3BOC2Mj7KnzI7XK0Uw1TOOdI9lDoajEbSWLiYgoo4f1R51erQfhPQ==
 
-"@types/d3-array@^2.8.0":
-  version "2.9.0"
-  resolved "https://registry.yarnpkg.com/@types/d3-array/-/d3-array-2.9.0.tgz#fb6c3d7d7640259e68771cd90cc5db5ac1a1a012"
-  integrity sha512-sdBMGfNvLUkBypPMEhOcKcblTQfgHbqbYrUqRE31jOwdDHBJBxz4co2MDAq93S4Cp++phk4UiwoEg/1hK3xXAQ==
-
 "@types/d3-color@^1":
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/@types/d3-color/-/d3-color-1.4.1.tgz#0d9746c84dfef28807b2989eed4f37b2575e1f33"
@@ -2709,11 +2701,6 @@
   integrity sha512-aPEax03owTAKynoK8ZkmkZEDZvvT4Y5pWgii4Jp4oQt0gH45j6siDl9gNDVC5kl64XHN2goN9jbYoHK88tFAcA==
   dependencies:
     "@types/d3-path" "^1"
-
-"@types/d3-time-format@^3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@types/d3-time-format/-/d3-time-format-3.0.0.tgz#913e984362a59792dc8d8b122dd17625991eade2"
-  integrity sha512-UpLg1mn/8PLyjr+J/JwdQJM/GzysMvv2CS8y+WYAL5K0+wbvXv/pPSLEfdNaprCZsGcXTxPsFMy8QtkYv9ueew==
 
 "@types/d3-time@*":
   version "2.0.0"
@@ -2919,16 +2906,7 @@
     "@types/react" "*"
     date-fns "^2.16.1"
 
-"@types/react-datepicker@^3.1.7":
-  version "3.1.8"
-  resolved "https://registry.yarnpkg.com/@types/react-datepicker/-/react-datepicker-3.1.8.tgz#642b0d5f2c30f53d7940b1771d5fb11b646bb7fb"
-  integrity sha512-RFEg7++xhosMq02i2lsuaUPEbZGn66U3dxtvw9LU/ZRqLkBGr9Ft2LTz6vbeYYVtaBdOr0NcQatOLnlfUaS8kw==
-  dependencies:
-    "@types/react" "*"
-    date-fns "^2.0.1"
-    popper.js "^1.14.1"
-
-"@types/react-dom@*", "@types/react-dom@>=16.9.0":
+"@types/react-dom@*":
   version "17.0.3"
   resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-17.0.3.tgz#7fdf37b8af9d6d40127137865bb3fff8871d7ee1"
   integrity sha512-4NnJbCeWE+8YBzupn/YrJxZ8VnjcJq5iR1laqQ1vkpQgBiA7bwk0Rp24fxsdNinzJY2U+HHS4dJJDPdoMjdJ7w==
@@ -2999,13 +2977,6 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react-test-renderer@>=16.9.0":
-  version "17.0.1"
-  resolved "https://registry.yarnpkg.com/@types/react-test-renderer/-/react-test-renderer-17.0.1.tgz#3120f7d1c157fba9df0118dae20cb0297ee0e06b"
-  integrity sha512-3Fi2O6Zzq/f3QR9dRnlnHso9bMl7weKCviFmfF6B4LS1Uat6Hkm15k0ZAQuDz+UBq6B3+g+NM6IT2nr5QgPzCw==
-  dependencies:
-    "@types/react" "*"
-
 "@types/react-transition-group@*":
   version "4.4.1"
   resolved "https://registry.yarnpkg.com/@types/react-transition-group/-/react-transition-group-4.4.1.tgz#e1a3cb278df7f47f17b5082b1b3da17170bd44b1"
@@ -3020,7 +2991,7 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@>=16.9.0":
+"@types/react@*":
   version "17.0.3"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.3.tgz#ba6e215368501ac3826951eef2904574c262cc79"
   integrity sha512-wYOUxIgs2HZZ0ACNiIayItyluADNbONl7kt8lkLjVK8IitMH5QMyAh75Fwhmo37r1m7L2JaFj03sIfxBVDvRAg==
@@ -3301,10 +3272,10 @@
     "@typescript-eslint/types" "4.22.0"
     eslint-visitor-keys "^2.0.0"
 
-"@visx/axis@^1.7.0":
-  version "1.8.0"
-  resolved "https://registry.yarnpkg.com/@visx/axis/-/axis-1.8.0.tgz#6be994af9188fe889dce6dd7c61889b0ffb7a2dd"
-  integrity sha512-DSjtYiP0Hi5m4f2x8bCQQsdEg0hwa0XdeOjRpExCRdZQfYHMo1pLrRAATgRpy7TU49394V522IVGKMi5BicpmQ==
+"@visx/axis@^1.8.0":
+  version "1.10.0"
+  resolved "https://registry.yarnpkg.com/@visx/axis/-/axis-1.10.0.tgz#5f4d42e33be1b99c19bf8d1b315f3a1f170b439d"
+  integrity sha512-gfkijU17pPlDqva1LCsp71gljnwz7fh9Gz3ZeekQXEmeG2yyXI6LN307OOeDmfoJPCJl9dAfmS0VYOf9RwLnng==
   dependencies:
     "@types/classnames" "^2.2.9"
     "@types/react" "*"
@@ -3312,7 +3283,7 @@
     "@visx/point" "1.7.0"
     "@visx/scale" "1.7.0"
     "@visx/shape" "1.8.0"
-    "@visx/text" "1.7.0"
+    "@visx/text" "1.10.0"
     classnames "^2.2.5"
     prop-types "^15.6.0"
 
@@ -3349,7 +3320,7 @@
     "@types/react" "*"
     "@visx/point" "1.7.0"
 
-"@visx/gradient@^1.0.0":
+"@visx/gradient@^1.7.0":
   version "1.7.0"
   resolved "https://registry.yarnpkg.com/@visx/gradient/-/gradient-1.7.0.tgz#0578d27ef01204f36ce73db208141976d218adc4"
   integrity sha512-KtlzpgY+1tEIxEhFwyGp7nVwDjaPs9bcLO5Wkm3uw5ehQtRMYQBC3O2N+GEKdQM2yNZVApvtSMiXQDxGTFK67g==
@@ -3418,10 +3389,10 @@
     lodash "^4.17.15"
     prop-types "^15.5.10"
 
-"@visx/text@1.7.0":
-  version "1.7.0"
-  resolved "https://registry.yarnpkg.com/@visx/text/-/text-1.7.0.tgz#530dfd85426fa87c3a43ae1d96e3148a14e7c864"
-  integrity sha512-zygMV2xSXfHHt3BLmWakTcQCk971n3vrY6iKyLEry3IyYdJy91ueKIU8OSMaKjrX0HrlT/QVP3B5QVt9knsRzg==
+"@visx/text@1.10.0":
+  version "1.10.0"
+  resolved "https://registry.yarnpkg.com/@visx/text/-/text-1.10.0.tgz#d9b9fb3d195f6843312025dc672b958529d2d4f6"
+  integrity sha512-2y56LxbbSHAlu8XP0cARB9JlhPx0HlQyIC4iKUzj36+iJaBiw9wUwLb9RbT/rY715V+6VzU7WCNCxoa4lDr9Sg==
   dependencies:
     "@types/classnames" "^2.2.9"
     "@types/lodash" "^4.14.160"
@@ -3431,7 +3402,7 @@
     prop-types "^15.7.2"
     reduce-css-calc "^1.3.0"
 
-"@visx/threshold@^1.6.1":
+"@visx/threshold@^1.8.0":
   version "1.8.0"
   resolved "https://registry.yarnpkg.com/@visx/threshold/-/threshold-1.8.0.tgz#88aa878aa883c6d12e7f831956c5edfd587abe9e"
   integrity sha512-TbpjmzHwvcfo52y36xLgkoNgOeUR5xzkNDqOAb5Y7z9Pmd7jnYygKyefx3lNftlQ51LTnm5iLUEliTVb8VioYQ==
@@ -3443,7 +3414,7 @@
     classnames "^2.2.5"
     prop-types "^15.5.10"
 
-"@visx/tooltip@^1.7.0":
+"@visx/tooltip@^1.7.2":
   version "1.7.2"
   resolved "https://registry.yarnpkg.com/@visx/tooltip/-/tooltip-1.7.2.tgz#facbf37d1e92ea8e8f19eaa229a69f278063659e"
   integrity sha512-QCNLaOGpgZ6RnZjCIbEJtfbu8ZkSwDOXRy5SOUvcC5J9RiEwCi0DXF1JzT7ZPv3hkLU1KiSPaUFf5q/5LNHwLg==
@@ -3804,7 +3775,7 @@ ansi-styles@^4.0.0, ansi-styles@^4.1.0:
   dependencies:
     color-convert "^2.0.1"
 
-antd@^4.13.1, antd@^4.15.4:
+antd@^4.15.2, antd@^4.15.4:
   version "4.15.4"
   resolved "https://registry.yarnpkg.com/antd/-/antd-4.15.4.tgz#43d0a2d821412f5765dc5eec765c817effcae79d"
   integrity sha512-1c0ykHGomcd7QhEeRtynxN3i7fb7JBdnEq2/Yqhf7yzMIhGSfZm+h+A2lTqMOMheCVL6q2ie7lxqhtNLq6sWoQ==
@@ -6459,7 +6430,7 @@ cyclist@^1.0.1:
   resolved "https://registry.yarnpkg.com/cyclist/-/cyclist-1.0.1.tgz#596e9698fd0c80e12038c2b82d6eb1b35b6224d9"
   integrity sha1-WW6WmP0MgOEgOMK4LW6xs1tiJNk=
 
-d3-array@2, d3-array@^2.12.0, d3-array@^2.3.0:
+d3-array@2, d3-array@^2.12.1, d3-array@^2.3.0:
   version "2.12.1"
   resolved "https://registry.yarnpkg.com/d3-array/-/d3-array-2.12.1.tgz#e20b41aafcdffdf5d50928004ececf815a465e81"
   integrity sha512-B0ErZK/66mHtEsR1TkPEEkwdy+WDesimkM5gpZr5Dsg54BiTA5RXtYW5qTLIAcekaS9xfZrzBLF/OAkB3Qn1YQ==
@@ -7860,11 +7831,6 @@ fill-range@^7.0.1:
   integrity sha512-qOo9F+dMUmC2Lcb4BbVvnKJxTPjCm+RRpe4gDuGrzkL7mEVl/djYSu2OdQ2Pa302N4oqkSg9ir6jaLWJ2USVpQ==
   dependencies:
     to-regex-range "^5.0.1"
-
-filter-console@^0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/filter-console/-/filter-console-0.1.1.tgz#6242be28982bba7415bcc6db74a79f4a294fa67c"
-  integrity sha512-zrXoV1Uaz52DqPs+qEwNJWJFAWZpYJ47UNmpN9q4j+/EYsz85uV0DC9k8tRND5kYmoVzL0W+Y75q4Rg8sRJCdg==
 
 filter-obj@^1.1.0:
   version "1.1.0"
@@ -10649,7 +10615,7 @@ mime-db@1.47.0, "mime-db@>= 1.43.0 < 2":
   resolved "https://registry.yarnpkg.com/mime-db/-/mime-db-1.47.0.tgz#8cb313e59965d3c05cfbf898915a267af46a335c"
   integrity sha512-QBmA/G2y+IfeS4oktet3qRZ+P5kPhCKRXxXnQEudYqUaEioAU1/Lq2us3D/t1Jfo4hE9REQPrbB7K5sOczJVIw==
 
-mime-types@^2.0.8, mime-types@^2.1.12, mime-types@^2.1.27, mime-types@^2.1.29, mime-types@~2.1.17, mime-types@~2.1.19, mime-types@~2.1.24:
+mime-types@^2.0.8, mime-types@^2.1.12, mime-types@^2.1.27, mime-types@^2.1.30, mime-types@~2.1.17, mime-types@~2.1.19, mime-types@~2.1.24:
   version "2.1.30"
   resolved "https://registry.yarnpkg.com/mime-types/-/mime-types-2.1.30.tgz#6e7be8b4c479825f85ed6326695db73f9305d62d"
   integrity sha512-crmjA4bLtR8m9qLpHvgxSChT+XoSlZi8J4n/aIdn3z92e/U47Z0V/yl+Wh9W046GgFVAmoNR/fmdbZYcSSIUeg==
@@ -11736,7 +11702,7 @@ polished@^4.0.5:
   dependencies:
     "@babel/runtime" "^7.12.5"
 
-popper.js@^1.14.1, popper.js@^1.14.4:
+popper.js@^1.14.4:
   version "1.16.1"
   resolved "https://registry.yarnpkg.com/popper.js/-/popper.js-1.16.1.tgz#2a223cb3dc7b6213d740e40372be40de43e65b1b"
   integrity sha512-Wb4p1J4zyFTbM+u6WuO4XstYx4Ky9Cewe4DWrel7B0w6VVICvPwdOpotjzcf6eD8TsckVnIMNONQyPIUFOUbCQ==
@@ -12725,10 +12691,20 @@ query-string@^5.1.1:
     object-assign "^4.1.0"
     strict-uri-encode "^1.0.0"
 
-query-string@^6.13.7, query-string@^6.13.8, query-string@^6.14.1:
+query-string@^6.13.7, query-string@^6.13.8:
   version "6.14.1"
   resolved "https://registry.yarnpkg.com/query-string/-/query-string-6.14.1.tgz#7ac2dca46da7f309449ba0f86b1fd28255b0c86a"
   integrity sha512-XDxAeVmpfu1/6IjyT/gXHOl+S0vQ9owggJ30hhWKdHAsNPOcasn5o9BW0eejZqL2e4vMjhAxoW3jVHcD6mbcYw==
+  dependencies:
+    decode-uri-component "^0.2.0"
+    filter-obj "^1.1.0"
+    split-on-first "^1.0.0"
+    strict-uri-encode "^2.0.0"
+
+query-string@^7.0.0:
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/query-string/-/query-string-7.0.0.tgz#aaad2c8d5c6a6d0c6afada877fecbd56af79e609"
+  integrity sha512-Iy7moLybliR5ZgrK/1R3vjrXq03S13Vz4Rbm5Jg3EFq1LUmQppto0qtXz4vqZ386MSRjZgnTSZ9QC+NZOSd/XA==
   dependencies:
     decode-uri-component "^0.2.0"
     filter-obj "^1.1.0"
@@ -13242,7 +13218,7 @@ react-date-range@^1.1.3:
     react-list "^0.8.13"
     shallow-equal "^1.2.1"
 
-react-datepicker@^3.6.0, react-datepicker@^3.8.0:
+react-datepicker@^3.7.0, react-datepicker@^3.8.0:
   version "3.8.0"
   resolved "https://registry.yarnpkg.com/react-datepicker/-/react-datepicker-3.8.0.tgz#c3bccd3e3f47aa66864a2fa75651be097414430b"
   integrity sha512-iFVNEp8DJoX5yEvEiciM7sJKmLGrvE70U38KhpG13XrulNSijeHw1RZkhd/0UmuXR71dcZB/kdfjiidifstZjw==
@@ -13330,13 +13306,6 @@ react-draggable@^4.4.3:
   dependencies:
     classnames "^2.2.5"
     prop-types "^15.6.0"
-
-react-error-boundary@^3.1.0:
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/react-error-boundary/-/react-error-boundary-3.1.1.tgz#932c5ca5cbab8ec4fe37fd7b415aa5c3a47597e7"
-  integrity sha512-W3xCd9zXnanqrTUeViceufD3mIW8Ut29BUD+S2f0eO2XCOU8b6UrJfY46RDGe5lxCJzfe4j0yvIfh0RbTZhKJw==
-  dependencies:
-    "@babel/runtime" "^7.12.5"
 
 react-error-overlay@^5.1.4:
   version "5.1.6"
@@ -13463,10 +13432,10 @@ react-popper@^2.2.4:
     react-fast-compare "^3.0.1"
     warning "^4.0.2"
 
-react-query@^3.12.2, react-query@^3.13.12, react-query@^3.5.0:
-  version "3.13.12"
-  resolved "https://registry.yarnpkg.com/react-query/-/react-query-3.13.12.tgz#d8e432099445fed5b03406838291d42286236263"
-  integrity sha512-RZYvepBdDG4Xgz64vUHjIkUqXX6giw3xJsgdRjWx+vLkOB1vbIQE8F82CNlVbYW3JjZobl4YzmOuLx0wMhLX4Q==
+react-query@^3.13.10:
+  version "3.15.2"
+  resolved "https://registry.yarnpkg.com/react-query/-/react-query-3.15.2.tgz#4ff4ffe9ff5e3bf002a7e863cc01b9d58c5fae01"
+  integrity sha512-7pm/WR+zl064W0pfQffayM0Jmgsz2VcoDL0pRFk06ERpMSYLQjX0fFZfvVRIgJVRjgS3A04pSY1iOYdw92dzdA==
   dependencies:
     "@babel/runtime" "^7.5.5"
     broadcast-channel "^3.4.1"
@@ -13598,7 +13567,7 @@ react-select@^3.1.0, react-select@^3.2.0:
     react-input-autosize "^3.0.0"
     react-transition-group "^4.3.0"
 
-react-select@^4.2.1:
+react-select@^4.3.0:
   version "4.3.0"
   resolved "https://registry.yarnpkg.com/react-select/-/react-select-4.3.0.tgz#6bde634ae7a378b49f3833c85c126f533483fa2e"
   integrity sha512-SBPD1a3TJqE9zoI/jfOLCAoLr/neluaeokjOixr3zZ1vHezkom8K0A9J4QG9IWDqIDE9K/Mv+0y1GjidC2PDtQ==
@@ -13693,14 +13662,6 @@ react@^16.14.0:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
     prop-types "^15.6.2"
-
-react@^17.0.1:
-  version "17.0.2"
-  resolved "https://registry.yarnpkg.com/react/-/react-17.0.2.tgz#d0b5cc516d29eb3eee383f75b62864cfb6800037"
-  integrity sha512-gnhPt75i/dq/z3/6q/0asP78D0u592D5L1pd7M8P+dck6Fu/jJeL6iVVK23fptSUZj8Vjf++7wXA8UNclGQcbA==
-  dependencies:
-    loose-envify "^1.1.0"
-    object-assign "^4.1.1"
 
 read-pkg-up@^2.0.0:
   version "2.0.0"
@@ -15188,7 +15149,7 @@ style-loader@^2.0.0:
     loader-utils "^2.0.0"
     schema-utils "^3.0.0"
 
-styled-components@^5.2.0, styled-components@^5.2.1:
+styled-components@^5.2.0, styled-components@^5.2.1, styled-components@^5.2.3:
   version "5.2.3"
   resolved "https://registry.yarnpkg.com/styled-components/-/styled-components-5.2.3.tgz#752669fd694aac10de814d96efc287dde0d11385"
   integrity sha512-BlR+KrLW3NL1yhvEB+9Nu9Dt51CuOnHoxd+Hj+rYPdtyR8X11uIW9rvhpy3Dk4dXXBsiW1u5U78f00Lf/afGoA==
@@ -15944,7 +15905,7 @@ use-composed-ref@^1.0.0:
   dependencies:
     ts-essentials "^2.0.3"
 
-use-debounce@^6.0.0:
+use-debounce@^6.0.1:
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/use-debounce/-/use-debounce-6.0.1.tgz#ed1eb2b30189408fb9792ea2887f4c6c3cb401a3"
   integrity sha512-kpvIxpa0vOLz/2I2sfNJ72mUeaT2CMNCu5BT1f2HkV9qZK27UVSOFf1sSSu+wjJE4TcR2VTXS2SM569+m3TN7Q==
