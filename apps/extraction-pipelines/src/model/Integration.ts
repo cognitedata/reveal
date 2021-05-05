@@ -14,6 +14,7 @@ export interface RegisterIntegrationInfo {
   schedule?: string;
   dataSetId: number;
   description?: string;
+  source?: string;
   metadata?: MetaData;
   contacts: User[];
   skipNotificationsInMinutes?: number;

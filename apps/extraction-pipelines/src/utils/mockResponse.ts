@@ -46,6 +46,7 @@ const mockResponseV2 = {
       name: 'Azure Integration',
       createdBy: 'test@test.no',
       description: 'Dummy integration to Azure',
+      source: 'My source system',
       dataSetId: 1398950266713987,
       rawTables: [
         {

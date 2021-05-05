@@ -8,7 +8,7 @@ import { useIntegrationById } from 'hooks/useIntegration';
 import { TableHeadings } from 'components/table/IntegrationTableCol';
 import { Schedule } from 'components/integration/Schedule';
 import { Colors } from '@cognite/cogs.js';
-import { metaUpdate, rootUpdate } from 'hooks/details/useDetailsUpdate';
+import { rootUpdate } from 'hooks/details/useDetailsUpdate';
 import { useAppEnv } from 'hooks/useAppEnv';
 import { FieldVerticalDisplay } from 'components/integration/fields/FieldVerticalDisplay';
 import EditRawTable from 'components/inputs/rawSelector/EditRawTable';
@@ -51,12 +51,12 @@ export const IntegrationInformation: FunctionComponent<IntegrationInformationPro
       />
       <EditRawTable />
       <InlineEdit
-        name="sourceSystem"
+        name="source"
         label={DetailFieldNames.SOURCE}
         schema={yup.object().shape({})}
-        updateFn={metaUpdate({ name: 'sourceSystem', integration, project })}
+        updateFn={rootUpdate({ integration, name: 'source', project })}
         defaultValues={{
-          sourceSystem: integration?.metadata?.sourceSystem,
+          source: integration?.source,
         }}
         fullWidth
         showLabel

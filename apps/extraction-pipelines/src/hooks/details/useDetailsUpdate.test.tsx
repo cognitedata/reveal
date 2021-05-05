@@ -4,7 +4,6 @@ import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import {
   createUpdateSpec,
   mapUpdateToPartialIntegration,
-  metaUpdate,
   rootUpdate,
   useDetailsUpdate,
 } from 'hooks/details/useDetailsUpdate';
@@ -175,37 +174,37 @@ describe('createUpdateSpec', () => {
 });
 
 describe('rootUpdate', () => {
-  test('Creates update object', () => {
-    const mock = getMockResponse()[0];
-    const update = rootUpdate({
-      integration: mock,
-      name: 'externalId',
-      project: PROJECT_ITERA_INT_GREEN,
-    });
-    const field = {
-      externalId: 'new_external_id_test',
-    };
-    const res = update(field);
-    expect(res.id).toEqual(mock.id);
-    expect(res.items[0].update.externalId.set).toEqual(field.externalId);
-  });
-});
-describe('metaUpdate', () => {
-  test('Create update obj', () => {
-    const mock = getMockResponse()[0];
-    const update = metaUpdate({
-      integration: mock,
-      name: 'sourceSystem',
-      project: PROJECT_ITERA_INT_GREEN,
-    });
-    const field = {
-      sourceSystem: 'SuperSource',
-    };
-    const res = update(field);
-    expect(res.id).toEqual(mock.id);
-    expect(res.items[0].update.metadata.set).toEqual({
-      ...mock.metadata,
-      sourceSystem: field.sourceSystem,
+  const mock = getMockResponse()[0];
+  const cases = [
+    {
+      fieldName: 'externalId',
+      value: {
+        integration: mock,
+        name: 'externalId',
+        project: PROJECT_ITERA_INT_GREEN,
+      },
+      field: {
+        externalId: 'new_external_id_test',
+      },
+    },
+    {
+      fieldName: 'source',
+      value: {
+        integration: mock,
+        name: 'source',
+        project: PROJECT_ITERA_INT_GREEN,
+      },
+      field: {
+        source: 'A new Source',
+      },
+    },
+  ];
+  cases.forEach(({ value, field, fieldName }) => {
+    test('Creates update object', () => {
+      const update = rootUpdate(value);
+      const res = update(field);
+      expect(res.id).toEqual(mock.id);
+      expect(res.items[0].update[fieldName].set).toEqual(field[fieldName]);
     });
   });
 });
