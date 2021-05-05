@@ -43,7 +43,7 @@ class ContextServiceApi {
   public getAnnotatedFiles = async (): Promise<Array<IdEither>> => {
     const res = await this.get('/v1/files');
     const { files: fileIds } = res as any;
-    return fileIds;
+    return fileIds as Array<IdEither>;
   };
 }
 

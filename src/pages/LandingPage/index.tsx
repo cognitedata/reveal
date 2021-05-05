@@ -1,4 +1,4 @@
-import { Graphic, Title, Tooltip } from '@cognite/cogs.js';
+import { Button, Graphic, Title, Tooltip } from '@cognite/cogs.js';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { message, Modal, notification } from 'antd';
 import { FileInfo } from 'cognite-sdk-v3';
@@ -112,11 +112,11 @@ export default function LandingPage() {
   const [query, setQuery] = useState<string>('');
 
   const [shouldUpdate, setShouldUpdate] = useState(false);
-  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [loadChunk, setLoadChunk] = useState<number>(0);
 
   const { files, isLoading, total } = useAnnotatedFiles(
     shouldUpdate,
-    Math.floor(currentPage)
+    loadChunk
   );
 
   const noFiles = !isLoading && total === 0;
@@ -125,6 +125,9 @@ export default function LandingPage() {
   const client = useQueryClient();
 
   const writeAccess = filesAcl && eventsAcl;
+
+  // Is there more ids to load?
+  const isLoadMoreDisabled = () => total <= 1000 * (loadChunk + 1);
 
   const onFileEdit = (event: any) => {
     event.stopPropagation();
@@ -189,23 +192,21 @@ export default function LandingPage() {
       <Table
         pagination={{
           pageSize: PAGE_SIZE,
-          total,
           hideOnSinglePage: true,
-          onChange: (pageNumber) => setCurrentPage(pageNumber),
-          current: currentPage,
-          itemRender: (page, _, originalElement) => {
-            if (page > currentPage && (files as FileInfo[])?.length < 9) {
-              return <span />;
-            }
-
-            return originalElement;
-          },
         }}
         dataSource={files as FileInfo[]}
         // @ts-ignore
         columns={interactiveColumns}
         size="middle"
         rowKey="id"
+        footer={() => (
+          <Button
+            disabled={isLoadMoreDisabled()}
+            onClick={() => setLoadChunk(loadChunk + 1)}
+          >
+            Load more
+          </Button>
+        )}
         // onRow={(record: any) => ({
         //   onClick: () => alert(record),
         // })}
