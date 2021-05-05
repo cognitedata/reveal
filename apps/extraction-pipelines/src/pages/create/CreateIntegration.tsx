@@ -6,12 +6,12 @@ import React, {
 } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
-import { CANCEL, SAVE } from 'utils/constants';
+import { CANCEL, SAVE, SOURCE_HINT } from 'utils/constants';
 import { RegisterIntegrationLayout } from 'components/layout/RegisterIntegrationLayout';
 import { CreateFormWrapper } from 'styles/StyledForm';
 import { ButtonPlaced } from 'styles/StyledButton';
 import * as yup from 'yup';
-import { useForm, FormProvider } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { INTEGRATION_NAME_HEADING, NAME_HINT } from 'pages/create/NamePage';
 import {
@@ -35,9 +35,10 @@ import { Collapse, Colors } from '@cognite/cogs.js';
 import { PriSecBtnWrapper } from 'styles/StyledWrapper';
 import { DataSetModel } from 'model/DataSetModel';
 import {
-  scheduleRule,
   nameRule,
+  scheduleRule,
   selectedRawTablesRule,
+  sourceRule,
 } from 'utils/validation/integrationSchemas';
 import DataSetIdInput, {
   DATASET_LIST_LIMIT,
@@ -45,7 +46,6 @@ import DataSetIdInput, {
 import { useDataSetsList } from 'hooks/useDataSetsList';
 import { RegisterMetaData } from 'components/inputs/metadata/RegisterMetaData';
 import { toCamelCase } from 'utils/primitivesUtils';
-import { InputController } from 'components/inputs/InputController';
 import { DivFlex } from 'styles/flex/StyledFlex';
 import { ScheduleSelector } from 'components/inputs/ScheduleSelector';
 import CronInput from 'components/inputs/cron/CronInput';
@@ -143,7 +143,7 @@ interface AddIntegrationFormInput
   description?: string;
   dataSetId?: number;
   metadata?: any;
-  sourceSystem: string;
+  source: string;
   skipNotificationInHours?: number;
   contacts?: User[];
 }
@@ -153,6 +153,7 @@ const pageSchema = yup.object().shape({
   ...descriptionRule,
   ...contactsRule,
   ...scheduleRule,
+  ...sourceRule,
   ...selectedRawTablesRule,
 });
 
@@ -238,7 +239,7 @@ const CreateIntegration: FunctionComponent<CreateIntegrationProps> = (
     }
 
     const {
-      sourceSystem,
+      source,
       schedule,
       cron,
       name,
@@ -259,12 +260,9 @@ const CreateIntegration: FunctionComponent<CreateIntegrationProps> = (
       externalId,
       ...(description && { description }),
       ...(data && { dataSetId: fieldDataSetId }),
+      ...(source && { source }),
       ...(metadata && {
-        metadata: Object.assign(
-          {},
-          ...metadata,
-          ...(sourceSystem ? [{ sourceSystem }] : [])
-        ),
+        metadata: Object.assign({}, ...metadata),
       }),
       ...(contacts && { contacts }),
       ...(!!scheduleToStore && { schedule: scheduleToStore }),
@@ -429,14 +427,17 @@ const CreateIntegration: FunctionComponent<CreateIntegrationProps> = (
                 {DetailFieldNames.RAW_TABLE}
               </HeadingLabel>
               <ConnectRawTablesInput />
-              <HeadingLabel id="source-system-heading" labelFor="source-system">
-                {DetailFieldNames.SOURCE}
-              </HeadingLabel>
-              <InputController
+              <FullInput
+                name="source"
+                inputId="source-input"
                 defaultValue=""
-                inputId="source-system"
                 control={control}
-                name="sourceSystem"
+                errors={errors}
+                labelText={DetailFieldNames.SOURCE}
+                hintText={SOURCE_HINT}
+                renderLabel={(labelText, inputId) => (
+                  <HeadingLabel labelFor={inputId}>{labelText}</HeadingLabel>
+                )}
               />
               <RegisterMetaData />
               <ButtonPlaced type="primary" htmlType="submit" mb={5}>

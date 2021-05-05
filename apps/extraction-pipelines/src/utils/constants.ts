@@ -76,6 +76,10 @@ export const GENERAL_INFO_HEADING: Readonly<string> = 'General Info';
 // Documentation
 export const DOCUMENTATION_HEADING: Readonly<string> = 'Documentation';
 
+// Source
+export const SOURCE_HINT: Readonly<string> =
+  '**** Source hint placeholder ****';
+
 // Page headings
 export const ADD_INTEGRATION: Readonly<string> = 'Add integration';
 

@@ -93,3 +93,12 @@ export const rawTableRules = {
     }),
 };
 export const rawTableSchema = yup.object().shape(rawTableRules);
+const MAX_INPUT_LENGTH = 255;
+export const sourceRule = {
+  source: yup
+    .string()
+    .max(
+      MAX_INPUT_LENGTH,
+      `Source can only contain ${MAX_INPUT_LENGTH} characters`
+    ),
+};
