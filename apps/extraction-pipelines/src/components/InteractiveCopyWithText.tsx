@@ -7,6 +7,7 @@ import { ACTION_COPY } from 'utils/constants';
 export type CopyType =
   | 'id'
   | 'externalId'
+  | 'source'
   | 'dataSetId'
   | 'cronExpression'
   | 'dbName'

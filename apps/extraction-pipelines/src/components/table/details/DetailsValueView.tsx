@@ -70,6 +70,15 @@ const DetailsValueView = ({ fieldValue, fieldName }: DetailsValueViewProps) => {
           <InteractiveCopy text={`${fieldValue}`} copyType="externalId" />
         </InteractiveCopyWrapper>
       );
+    case 'source':
+      return (
+        <InteractiveCopyWrapper id={fieldName}>
+          {fieldValue}{' '}
+          {fieldValue && (
+            <InteractiveCopy text={`${fieldValue}`} copyType="source" />
+          )}
+        </InteractiveCopyWrapper>
+      );
     case 'id':
       return (
         <InteractiveCopyWrapper id={fieldName}>

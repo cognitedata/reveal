@@ -116,6 +116,7 @@ const mockResponseV2 = {
       externalId: 'dataIntegration0003',
       name: 'PI AF integration',
       description: 'Dummy PI AF integration',
+      source: 'This is the source',
       dataSetId: 1469810437954369,
       rawTables: [
         {

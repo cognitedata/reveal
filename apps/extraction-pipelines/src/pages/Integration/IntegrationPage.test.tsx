@@ -89,6 +89,7 @@ describe('IntegrationPage', () => {
     // check some details are renderd
     expect(screen.getByText(mockIntegration.name)).toBeInTheDocument();
     expect(screen.getByText(mockIntegration.description)).toBeInTheDocument();
+    expect(screen.getAllByText(mockIntegration.source).length).toEqual(2); // heading and side bar
     expect(screen.getByText(mockIntegration.externalId)).toBeInTheDocument();
     // navigate to runs
     fireEvent.click(runsLink);
