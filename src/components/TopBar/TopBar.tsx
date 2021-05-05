@@ -78,7 +78,7 @@ const TopBarWrapper = () => {
             {
               key: 'chat',
               icon: 'SpeechBubble',
-              name: 'Chat',
+              name: 'Feedback',
               onClick: () => chat.show(),
             },
             {
