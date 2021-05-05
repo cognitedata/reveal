@@ -3,7 +3,7 @@ import contextServiceApi from 'api/contextService';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 import { FileInfo, IdEither } from 'cognite-sdk-v3';
 import chunk from 'lodash/chunk';
-import { uniq } from 'lodash';
+import uniq from 'lodash/uniq';
 
 export const useAnnotatedFiles = (shouldUpdate: boolean, loadChunk: number) => {
   const [fileIds, setFileIds] = useState<Array<IdEither>>([]);
