@@ -101,7 +101,6 @@ const PlotlyChartComponent = ({
         calls.map(async (call) => {
           if (call?.functionId && call.callId) {
             const functionResult = await getFunctionResponseWhenDone(
-              sdk,
               call?.functionId,
               call?.callId
             );
