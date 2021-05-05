@@ -22,7 +22,7 @@
   "dependencies": {
     "@cognite/annotations": "^1.1.0",
     "@cognite/cogs.js": "3.10",
-    "@cognite/connect": "^0.0.5",
+    "@cognite/connect": "^0.0.7",
     "@cognite/data-exploration": "^0.5.7",
     "@cognite/metrics": "^0.1.2",
     "@cognite/react-picture-annotation": "^1.12.0",

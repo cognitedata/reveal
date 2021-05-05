@@ -1244,9 +1244,10 @@
     react-toastify "^6.0.9"
     tippy.js "6.2.0"
 
-"@cognite/connect@^0.0.5":
-  version "0.0.5"
-  resolved "https://registry.yarnpkg.com/@cognite/connect/-/connect-0.0.5.tgz#d0a1efb28bfd0e608459127521743fa1aafae747"
+"@cognite/connect@^0.0.7":
+  version "0.0.7"
+  resolved "https://registry.yarnpkg.com/@cognite/connect/-/connect-0.0.7.tgz#f3614ee67285697a554c3070a2cf1228428e8344"
+  integrity sha512-7Xo+li1uIc9BaG2iYZy0IZifxxQ0tmCgpadGrpVYQ0U2CaN+5a8ENPapiw4hbfkFd0RSuIKBaVx93KA8IC2ziA==
   dependencies:
     nanoid "^3.1.16"
 
