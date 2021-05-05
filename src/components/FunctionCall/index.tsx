@@ -3,7 +3,7 @@ import {
   FunctionCall as CogniteFunctionCall,
   useFunctionCall,
   useFunctionReponse,
-} from 'utils/cogniteFunctions';
+} from 'utils/backendService';
 
 type Call = CogniteFunctionCall & {
   response?: string | null;

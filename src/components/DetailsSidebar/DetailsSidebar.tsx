@@ -11,7 +11,7 @@ import {
   FunctionCallStatus,
 } from 'reducers/charts/types';
 import styled from 'styled-components/macro';
-import { functionResponseKey, useCallFunction } from 'utils/cogniteFunctions';
+import { functionResponseKey, useCallFunction } from 'utils/backendService';
 
 type Props = {
   chart: Chart;

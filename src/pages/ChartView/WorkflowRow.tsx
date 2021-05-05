@@ -19,7 +19,7 @@ import { updateWorkflow, removeWorkflow } from 'utils/charts';
 import EditableText from 'components/EditableText';
 import { units } from 'utils/units';
 import { Modes } from 'pages/types';
-import { useCallFunction } from 'utils/cogniteFunctions';
+import { useCallFunction } from 'utils/backendService';
 import { getStepsFromWorkflow } from 'utils/transforms';
 import { calculateGranularity } from 'utils/timeseries';
 import { isWorkflowRunnable } from 'components/NodeEditor/utils';

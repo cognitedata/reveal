@@ -24,7 +24,7 @@ import { useLinkedAsset } from 'hooks/api';
 import EditableText from 'components/EditableText';
 import { AppearanceDropdown } from 'components/AppearanceDropdown';
 import { PnidButton } from 'components/SearchResultTable/PnidButton';
-import { functionResponseKey, useCallFunction } from 'utils/cogniteFunctions';
+import { functionResponseKey, useCallFunction } from 'utils/backendService';
 import FunctionCall from 'components/FunctionCall';
 import { CogniteClient } from '@cognite/sdk';
 import { StatisticsResult } from 'components/DetailsSidebar';
