@@ -54,6 +54,7 @@ const Search = ({ visible, onClose }: SearchProps) => {
                   setSearchInputValue('');
                 },
               }}
+              autoFocus
             />
           </div>
           <Tooltip content="Hide">
