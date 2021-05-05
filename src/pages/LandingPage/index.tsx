@@ -1,15 +1,26 @@
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { useParams, useHistory } from 'react-router-dom';
-import styled from 'styled-components';
-import { Tooltip, Graphic, Title, Badge } from '@cognite/cogs.js';
-import { trackUsage, PNID_METRICS } from 'utils/Metrics';
-import { dateSorter, stringCompare } from 'modules/contextualization/utils';
-import { PageTitle, Table, Loader, Flex, IconButton } from 'components/Common';
-import { createNewWorkflow } from 'modules/workflows';
-import { diagramSelection } from 'routes/paths';
-import { useAnnotatedFiles } from 'hooks';
+import { Graphic, Title, Tooltip } from '@cognite/cogs.js';
+import { usePermissions } from '@cognite/sdk-react-query-hooks';
+import { message, Modal, notification } from 'antd';
 import { FileInfo } from 'cognite-sdk-v3';
+import { Flex, IconButton, Loader, PageTitle, Table } from 'components/Common';
+import DetectedTags from 'components/DetectedTags';
+import { sleep } from 'utils/utils';
+import { useAnnotatedFiles } from 'hooks';
+import { dateSorter, stringCompare } from 'modules/contextualization/utils';
+import { createNewWorkflow } from 'modules/workflows';
+import React, { useState } from 'react';
+import { useQueryClient } from 'react-query';
+import { useDispatch } from 'react-redux';
+import { useHistory, useParams } from 'react-router-dom';
+import { diagramSelection } from 'routes/paths';
+import {
+  PERMISSIONS_STRINGS,
+  TOOLTIP_STRINGS,
+  WARNINGS_STRINGS,
+} from 'stringConstants';
+import styled from 'styled-components';
+import { deleteAnnotationsForFile } from 'utils/AnnotationUtils';
+import { PNID_METRICS, trackUsage } from 'utils/Metrics';
 import FilterBar from './FilterBar';
 
 const Wrapper = styled.div`
@@ -21,13 +32,14 @@ const Wrapper = styled.div`
   flex-direction: column;
 `;
 
-const columns = (
+const getColumns = (
   onFileEdit: (event: any) => any,
-  onFileView: (event: any) => any
+  onFileView: (event: any) => any,
+  onClearAnnotations: (file: FileInfo) => void,
+  writeAccess: boolean
 ) => [
   {
     title: 'Preview',
-    dataIndex: '',
     key: 'preview',
     width: 80,
     align: 'center' as 'center',
@@ -48,25 +60,11 @@ const columns = (
   },
   {
     title: 'Detected tags',
-    dataIndex: 'assetIds',
-    key: 'assetIds',
-    render: (assetIds: number[]) => (
-      <div>
-        <Badge text={String(assetIds?.length ?? 0)} /> assets
-      </div>
-    ),
-    sorter: (a: any, b: any) =>
-      (a?.assetIds?.length ?? 0) - (b?.assetIds?.length ?? 0),
+    key: 'tags',
+    render: (row: FileInfo) => <DetectedTags fileId={row.id} />,
   },
   {
-    title: 'Source',
-    dataIndex: 'source',
-    key: 'source',
-    render: (source: string) => <div>{source}</div>,
-    sorter: (a: any, b: any) => stringCompare(a?.source, b?.source),
-  },
-  {
-    title: 'Date of contextualization',
+    title: 'Last modified',
     dataIndex: 'lastUpdatedTime',
     key: 'lastUpdatedTime',
     render: (date: string) => {
@@ -81,13 +79,27 @@ const columns = (
     key: 'settings',
     width: '100px',
     align: 'center' as 'center',
-    render: () => (
+    render: (row: FileInfo) => (
       <Flex row align style={{ justifyContent: 'space-between' }}>
-        <Tooltip content="Editing files is currently disabled.">
+        <Tooltip content={TOOLTIP_STRINGS.EDIT_FILE_TOOLTIP}>
           <IconButton $square icon="Edit" onClick={onFileEdit} disabled />
         </Tooltip>
-        <Tooltip content="Viewing files is currently disabled.">
+        <Tooltip content={TOOLTIP_STRINGS.VIEW_FILE_TOOLTIP}>
           <IconButton $square icon="Eye" onClick={onFileView} disabled />
+        </Tooltip>
+        <Tooltip
+          content={
+            writeAccess
+              ? TOOLTIP_STRINGS.CLEAR_TAGS_TOOLTIP
+              : PERMISSIONS_STRINGS.FILES_WRITE_PERMISSIONS
+          }
+        >
+          <IconButton
+            $square
+            icon="Trash"
+            onClick={() => onClearAnnotations(row)}
+            disabled={!writeAccess}
+          />
         </Tooltip>
       </Flex>
     ),
@@ -97,9 +109,16 @@ const columns = (
 export default function LandingPage() {
   const [query, setQuery] = useState<string>('');
 
-  const { files, isLoading } = useAnnotatedFiles();
+  const [shouldUpdate, setShouldUpdate] = useState(false);
+
+  const { files, isLoading } = useAnnotatedFiles(shouldUpdate);
 
   const noFiles = !isLoading && !files?.length;
+  const { data: filesAcl } = usePermissions('filesAcl', 'WRITE');
+  const { data: eventsAcl } = usePermissions('eventsAcl', 'WRITE');
+  const client = useQueryClient();
+
+  const writeAccess = filesAcl && eventsAcl;
 
   const onFileEdit = (event: any) => {
     event.stopPropagation();
@@ -112,7 +131,50 @@ export default function LandingPage() {
     // TODO (CDF-11152)
   };
 
-  const interactiveColumns = columns(onFileEdit, onFileView);
+  const onDeleteSuccess = () => {
+    const invalidate = () =>
+      client.invalidateQueries(['cdf', 'events', 'list']);
+    invalidate();
+    // The sleep shouldn't be necessary, but await (POST /resource
+    // {data}) && await(POST /resource/byids) might not return the
+    // newly created item.
+    sleep(500).then(invalidate);
+    sleep(1500).then(invalidate);
+    sleep(5000).then(() => {
+      invalidate();
+      // Trigger files list to update
+      setShouldUpdate(true);
+    });
+
+    notification.success({
+      message: 'Annotation saved!',
+    });
+  };
+  const onClearAnnotations = async (file: FileInfo) => {
+    Modal.confirm({
+      title: 'Are you sure?',
+      content: <span>{WARNINGS_STRINGS.CLEAR_ANNOTATIONS_WARNING}</span>,
+      onOk: async () => {
+        if (file) {
+          // Make sure annotations are updated
+          await deleteAnnotationsForFile(file.id, file.externalId);
+          onDeleteSuccess();
+        }
+        return message.success(
+          `Successfully cleared annotation for ${file!.name}`
+        );
+      },
+      onCancel: () => {},
+    });
+  };
+
+  const interactiveColumns = getColumns(
+    onFileEdit,
+    onFileView,
+    onClearAnnotations,
+    writeAccess
+  );
+
   const showFilesList = noFiles ? (
     <EmptyFilesList />
   ) : (
@@ -162,7 +224,6 @@ function EmptyFilesList() {
     <Wrapper>
       <Graphic type="Documents" />
       <Title level={5} style={{ margin: '24px 0' }}>
-        {' '}
         No files have been contextualized yet!
       </Title>
       <IconButton type="primary" icon="Document" onClick={onContextualizeNew}>

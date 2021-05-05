@@ -5,3 +5,4 @@ export * from './InfoGrid';
 export * from './Table';
 export * from './InfoField';
 export * from './Steps';
+export * from './CountTag';

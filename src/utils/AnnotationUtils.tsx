@@ -10,6 +10,7 @@ import {
   ANNOTATION_METADATA_PREFIX,
 } from '@cognite/annotations';
 import sdk from 'sdk-singleton';
+import chunk from 'lodash/chunk';
 import handleError from './handleError';
 
 const findSimilarMatches = (
@@ -154,7 +155,13 @@ export const deleteAnnotationsForFile = async (
       })
       .autoPagingToArray({ limit: -1 });
 
-    await sdk.events.delete(allAnnotations.map((event) => ({ id: event.id })));
+    const chunkedList = chunk(allAnnotations, 1000);
+
+    const deleteRequests = chunkedList.map((items) =>
+      sdk.events.delete(items.map((event) => ({ id: event.id })))
+    );
+
+    await Promise.allSettled(deleteRequests);
   } catch (e) {
     handleError({ ...e });
   }
