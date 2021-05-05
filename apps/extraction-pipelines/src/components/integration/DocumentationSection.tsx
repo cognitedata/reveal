@@ -98,7 +98,7 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
   } = useForm<Fields>({
     resolver: yupResolver(documentationSchema),
     defaultValues: {
-      documentation: currentIntegration?.metadata?.documentation ?? '',
+      documentation: currentIntegration?.documentation ?? '',
     },
     reValidateMode: 'onSubmit',
     shouldUnregister: false,
@@ -109,11 +109,8 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
       const mutateObj = createUpdateSpec({
         project,
         id: currentIntegration.id,
-        fieldValue: {
-          ...currentIntegration.metadata,
-          documentation: field.documentation,
-        },
-        fieldName: 'metadata',
+        fieldValue: field.documentation,
+        fieldName: 'documentation',
       });
       await mutate(mutateObj, {
         onError: (error) => {
@@ -159,7 +156,7 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
               id="documentation-textarea"
               name="documentation"
               ref={register}
-              defaultValue={currentIntegration.metadata?.documentation}
+              defaultValue={currentIntegration?.documentation}
               className={`cogs-input ${!!errors.documentation && 'has-error'}`}
               rows={10}
               cols={30}
@@ -198,10 +195,8 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
             data-testid={`${ContactBtnTestIds.EDIT_BTN}documentation`}
             $full
           >
-            {currentIntegration.metadata?.documentation ? (
-              <Formatted>
-                {currentIntegration.metadata?.documentation}
-              </Formatted>
+            {currentIntegration.documentation ? (
+              <Formatted>{currentIntegration.documentation}</Formatted>
             ) : (
               <>
                 <BluePlus />

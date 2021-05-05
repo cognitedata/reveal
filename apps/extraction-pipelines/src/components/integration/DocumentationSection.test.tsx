@@ -38,7 +38,7 @@ describe('DocumentationSection', () => {
       screen.getByText(DOCUMENTATION_HEADING);
     });
 
-    const documentation = screen.getByText(mock.metadata?.documentation);
+    const documentation = screen.getByText(mock.documentation);
     expect(documentation).toBeInTheDocument();
     fireEvent.click(documentation);
     await waitFor(() => {
@@ -52,7 +52,7 @@ describe('DocumentationSection', () => {
     sdkv3.get.mockResolvedValueOnce({
       data: {
         ...mock,
-        metadata: { ...mock.metadata, documentation: newDocumentation },
+        documentation: newDocumentation,
       },
     });
     fireEvent.click(screen.getByTestId(`${TEST_ID_BTN_SAVE}documentation`));
@@ -61,5 +61,23 @@ describe('DocumentationSection', () => {
     });
     fireEvent.click(screen.getByText(newDocumentation));
     expect(screen.getByRole('textbox').textContent).toEqual(newDocumentation);
+  });
+
+  test('Render when no documentation is set', async () => {
+    const noDescriptionMock = {
+      name: mock.name,
+      id: mock.id,
+      dataSetId: mock.dataSetId,
+    };
+    sdkv3.post.mockResolvedValue({ data: { items: [mock] } });
+    sdkv3.get.mockResolvedValueOnce({ data: noDescriptionMock });
+    sdkv3.datasets.retrieve.mockResolvedValue([mockDataSet]);
+    render(<DocumentationSection />, {
+      wrapper: wrapper.wrapper,
+    });
+    await waitFor(() => {
+      screen.getByText(DOCUMENTATION_HEADING);
+    });
+    expect(screen.getByText(/add documentation/i)).toBeInTheDocument();
   });
 });

@@ -14,6 +14,7 @@ export interface RegisterIntegrationInfo {
   schedule?: string;
   dataSetId: number;
   description?: string;
+  documentation?: string;
   source?: string;
   metadata?: MetaData;
   contacts: User[];
