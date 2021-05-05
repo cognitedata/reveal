@@ -21,6 +21,7 @@ import { units } from 'utils/units';
 import { calculateGranularity } from 'utils/timeseries';
 import { removeTimeseries, updateTimeseries } from 'utils/charts';
 import { useLinkedAsset } from 'hooks/api';
+import { usePrevious } from 'hooks/usePrevious';
 import EditableText from 'components/EditableText';
 import { AppearanceDropdown } from 'components/AppearanceDropdown';
 import { PnidButton } from 'components/SearchResultTable/PnidButton';
@@ -141,6 +142,8 @@ type Props = {
   onInfoClick?: (id?: string) => void;
   isWorkspaceMode?: boolean;
   isFileViewerMode?: boolean;
+  dateFrom: string;
+  dateTo: string;
 };
 export default function TimeSeriesRow({
   mutate,
@@ -152,6 +155,8 @@ export default function TimeSeriesRow({
   isSelected = false,
   isWorkspaceMode = false,
   isFileViewerMode = false,
+  dateFrom,
+  dateTo,
 }: Props) {
   const sdk = useSDK();
   const {
@@ -166,6 +171,8 @@ export default function TimeSeriesRow({
     tsId,
   } = timeseries;
   const [isEditingName, setIsEditingName] = useState<boolean>(false);
+
+  const prevDateFromTo = usePrevious({ dateFrom, dateTo });
 
   // Increasing this will cause a fresh render where the dropdown is closed
   const update = (_tsId: string, diff: Partial<ChartTimeSeries>) =>
@@ -304,14 +311,19 @@ export default function TimeSeriesRow({
   );
 
   useEffect(() => {
-    if (statisticsForSource) {
+    const newDates =
+      prevDateFromTo &&
+      // @ts-ignore
+      prevDateFromTo.dateFrom !== dateFrom &&
+      // @ts-ignore
+      prevDateFromTo.dateTo !== dateTo;
+    if (!newDates && statisticsForSource) {
       return;
     }
-
-    if (statisticsCall && !callStatusError) {
+    if (!newDates && statisticsCall && !callStatusError) {
       return;
     }
-
+    console.log({ dateFrom, dateTo });
     callFunction(
       {
         data: {
@@ -321,8 +333,8 @@ export default function TimeSeriesRow({
                 tag: (timeseries as ChartTimeSeries).tsExternalId,
               },
             ],
-            start_time: new Date(chart.dateFrom).getTime(),
-            end_time: new Date(chart.dateTo).getTime(),
+            start_time: new Date(dateFrom).getTime(),
+            end_time: new Date(dateTo).getTime(),
           },
         },
       },
@@ -342,14 +354,15 @@ export default function TimeSeriesRow({
     );
   }, [
     callFunction,
-    chart.dateFrom,
-    chart.dateTo,
+    dateFrom,
+    dateTo,
     timeseries,
     updateStatistics,
     statisticsForSource,
     statisticsCall,
     callStatus,
     callStatusError,
+    prevDateFromTo,
   ]);
 
   return (
