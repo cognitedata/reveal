@@ -31,6 +31,8 @@
     "@cognite/sdk-react-query-hooks": "^3.0.0",
     "@cognite/z-index": "^0.1.0",
     "@sentry/browser": "^5.30.0",
+    "antd": "^4.10.3",
+    "axios": "^0.21.1",
     "date-fns": "^2.21.1",
     "dayjs": "^1.10.4",
     "firebase": "^8.3.3",
