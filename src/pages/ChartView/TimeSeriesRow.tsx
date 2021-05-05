@@ -16,7 +16,6 @@ import {
   Tooltip,
   Popconfirm,
   Flex,
-  toast,
 } from '@cognite/cogs.js';
 import { units } from 'utils/units';
 import { calculateGranularity } from 'utils/timeseries';
@@ -338,9 +337,6 @@ export default function TimeSeriesRow({
               },
             ],
           });
-        },
-        onError() {
-          toast.warn('Could not execute statistics calculation');
         },
       }
     );

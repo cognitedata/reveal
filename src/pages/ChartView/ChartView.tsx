@@ -51,10 +51,12 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
 
   useEffect(() => {
     if (updateError) {
-      toast.error('Chart could not be saved!');
+      toast.error('Chart could not be saved!', { toastId: 'chart-update' });
     }
     if (updateError && updateErrorMsg) {
-      toast.error(JSON.stringify(updateErrorMsg, null, 2));
+      toast.error(JSON.stringify(updateErrorMsg, null, 2), {
+        toastId: 'chart-update-body',
+      });
     }
   }, [updateError, updateErrorMsg]);
 

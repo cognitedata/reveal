@@ -36,10 +36,12 @@ export const FileView = () => {
 
   useEffect(() => {
     if (updateError) {
-      toast.error('Chart could not be saved!');
+      toast.error('Chart could not be saved!', { toastId: 'update-chart' });
     }
     if (updateError && updateErrorMsg) {
-      toast.error(JSON.stringify(updateErrorMsg, null, 2));
+      toast.error(JSON.stringify(updateErrorMsg, null, 2), {
+        toastId: 'update-chart',
+      });
     }
   }, [updateError, updateErrorMsg]);
 

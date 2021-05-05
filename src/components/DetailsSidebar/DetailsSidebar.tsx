@@ -1,10 +1,4 @@
-import {
-  Button,
-  Icon,
-  toast,
-  Tooltip,
-  SegmentedControl,
-} from '@cognite/cogs.js';
+import { Button, Icon, Tooltip, SegmentedControl } from '@cognite/cogs.js';
 import { useSDK } from '@cognite/sdk-provider';
 import FunctionCall from 'components/FunctionCall';
 import { useUpdateChart } from 'hooks/firebase';
@@ -210,9 +204,6 @@ const Statistics = ({
               },
             ],
           });
-        },
-        onError() {
-          toast.warn('Could not execute statistics calculation');
         },
       }
     );
