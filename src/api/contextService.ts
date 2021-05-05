@@ -2,7 +2,7 @@ import sdk from 'sdk-singleton';
 import { CogniteClient, IdEither } from 'cognite-sdk-v3';
 import { projectName, getCdfEnvFromUrl } from 'utils/config';
 
-const useLocalApi = true; // Toggle on if using api locally
+const useLocalApi = false; // Toggle on if using api locally
 
 const getBaseURL = () => {
   const cluster = getCdfEnvFromUrl();
