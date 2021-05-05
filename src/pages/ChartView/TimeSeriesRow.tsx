@@ -356,7 +356,7 @@ export default function TimeSeriesRow({
     <SourceRow
       key={id}
       onClick={() => !disabled && onRowClick(id)}
-      isActive={isSelected}
+      className={isSelected ? 'active' : undefined}
     >
       <td>
         <SourceItem isDisabled={disabled} key={id}>
