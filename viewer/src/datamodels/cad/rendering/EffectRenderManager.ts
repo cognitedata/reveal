@@ -93,7 +93,7 @@ export class EffectRenderManager {
   private _renderTarget: THREE.WebGLRenderTarget | null;
   private _autoSetTargetSize: boolean = false;
 
-  private _uiObjects: { objectGroup: THREE.Group; screenPos: THREE.Vector2 }[] = [];
+  private _uiObjects: { objectGroup: THREE.Group; screenPos: THREE.Vector2; width: number; height: number }[] = [];
 
   public set renderOptions(options: RenderOptions) {
     const ssaoParameters = this.ssaoParameters(options);
@@ -102,8 +102,8 @@ export class EffectRenderManager {
     this._renderOptions = { ...options, ssaoRenderParameters: { ...ssaoParameters } };
   }
 
-  public addUiObject(objectGroup: THREE.Group, screenPos: THREE.Vector2) {
-    this._uiObjects.push({ objectGroup, screenPos });
+  public addUiObject(objectGroup: THREE.Group, screenPos: THREE.Vector2, width: number, height: number) {
+    this._uiObjects.push({ objectGroup, screenPos, width, height });
   }
 
   public removeUiObject(object: THREE.Object3D) {
@@ -684,9 +684,11 @@ export class EffectRenderManager {
         const renderScene = new THREE.Scene();
         renderScene.add(uiObject.objectGroup);
 
-        const viewportRenderSize = uiObject.screenPos.clone().divideScalar(downSampleFactor);
+        const viewportRenderPos = uiObject.screenPos.clone().divideScalar(downSampleFactor);
+        const viewportRenderWidth = uiObject.width / downSampleFactor;
+        const viewportRenderHeight = uiObject.height / downSampleFactor;
 
-        renderer.setViewport(renderSize.x - viewportRenderSize.x, 0, viewportRenderSize.x, viewportRenderSize.y);
+        renderer.setViewport(viewportRenderPos.x, viewportRenderPos.y, viewportRenderWidth, viewportRenderHeight);
         renderer.clearDepth();
         renderer.render(renderScene, this._orthographicCamera);
       });

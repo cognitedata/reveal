@@ -275,7 +275,8 @@ export function Migration() {
         debugStatsGui.updateDisplay();
       });
 
-      const asd = new AxisViewTool(viewer);
+      new AxisViewTool(viewer, {faces: {yPositiveFace: {faceColor: new THREE.Color('red')}}, position: {xAbsolute: 128, yAbsolute: 0}});
+      new AxisViewTool(viewer, {faces: {yPositiveFace: {faceColor: new THREE.Color('red')}}});
       
       const debugSectorsGui = debugGui.addFolder('Loaded sectors');
 
