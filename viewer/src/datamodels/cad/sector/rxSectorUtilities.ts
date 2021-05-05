@@ -72,6 +72,15 @@ export function handleDetermineSectorsInput(
               try {
                 const consumedSector = await sectorRepository.loadSector(x);
                 return consumedSector;
+              } catch (error) {
+                // Ignore error but mark sector as discarded since we didn't load any geometry
+                return {
+                  blobUrl: x.blobUrl,
+                  metadata: x.metadata,
+                  levelOfDetail: LevelOfDetail.Discarded,
+                  group: undefined,
+                  instancedMeshes: undefined
+                };
               } finally {
                 reportNewSectorsDone(1, 0);
               }
