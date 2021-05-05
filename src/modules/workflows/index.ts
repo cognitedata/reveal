@@ -8,8 +8,7 @@ import {
   workflowDiagramStatusSelector,
   workflowAllResourcesStatusSelector,
 } from 'modules/workflows';
-import { Status } from 'modules/sdk-builder/types';
-import { ResourceSelection, WorkflowStep, WorkflowOptions } from './types';
+import { Workflow, ResourceSelection, WorkflowStep } from './types';
 import { getCountAction, getRetrieveAction } from './helpers';
 
 interface WorkflowState {
@@ -18,13 +17,6 @@ interface WorkflowState {
     [workflowId: number]: Workflow;
   };
   localStorage: any;
-}
-interface Workflow {
-  diagrams?: ResourceSelection;
-  resources?: ResourceSelection[];
-  options: WorkflowOptions;
-  step: WorkflowStep;
-  status?: Status;
 }
 
 const initialState: WorkflowState = {

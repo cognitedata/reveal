@@ -1,4 +1,4 @@
-import { ResourceType } from 'modules/sdk-builder/types';
+import { ResourceType, Status } from 'modules/sdk-builder/types';
 
 export type PendingResourceSelection = Omit<ResourceSelection, 'id'>;
 
@@ -10,12 +10,20 @@ export type ResourceSelection = {
   filter: any;
 };
 
+export interface Workflow {
+  diagrams?: ResourceSelection;
+  resources?: ResourceSelection[];
+  options: WorkflowOptions;
+  step: WorkflowStep;
+  status?: Status;
+}
+
 export type WorkflowStep =
   | 'diagramSelection'
   | 'resourceSelection'
   | 'config'
   | 'review'
-  | 'finished';
+  | 'diagramPreview';
 
 export type WorkflowOptions = {
   partialMatch: boolean;

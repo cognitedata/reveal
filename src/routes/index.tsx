@@ -1,7 +1,7 @@
 import React from 'react';
-import { Switch, Route, useRouteMatch } from 'react-router-dom';
+import { Switch, Route } from 'react-router-dom';
 import { PageTitle } from '@cognite/cdf-utilities';
-import SearchPage from 'pages/SearchPage';
+import SelectionPage from 'pages/SelectionPage';
 import ResultsOverview from 'pages/ResultsOverview';
 import FileOverview from 'pages/FileOverview';
 import Options from 'pages/Options';
@@ -9,7 +9,7 @@ import LandingPage from 'pages/LandingPage';
 import GroupsRequired from 'components/GroupsRequired';
 import Breadcrumbs from 'components/Breadcrumbs';
 import StepsList from 'components/StepsList';
-import { PageWrapper } from 'components/Common';
+import { Flex, PageWrapper } from 'components/Common';
 import {
   landingPage,
   diagramSelection,
@@ -41,8 +41,6 @@ const getBreadcrumbs = () => {
 };
 
 export default function Routes() {
-  const match = useRouteMatch<{ tenant: string; fileId?: string }>();
-
   return (
     <>
       <Breadcrumbs breadcrumbs={getBreadcrumbs()} />
@@ -51,7 +49,7 @@ export default function Routes() {
           <Switch>
             <Route
               exact
-              path={landingPage.staticPath(match.path)}
+              path={landingPage.staticPath}
               render={() => (
                 <>
                   <PageTitle title="P&ID Contextualization" />
@@ -61,65 +59,76 @@ export default function Routes() {
             />
             <Route
               exact
-              path={diagramSelection.staticPath(match.path)}
+              path={diagramSelection.staticPath}
               render={() => (
                 <>
-                  <StepsList />
                   <PageTitle title="P&ID Contextualization" />
-                  <SearchPage
-                    type="files"
-                    secondaryType="P&ID"
-                    key="fileSearch"
-                    defaultFilters={PDF_FILTER}
-                  />
+                  <Flex row style={{ width: '100%' }}>
+                    <StepsList />
+                    <SelectionPage
+                      defaultFilters={PDF_FILTER}
+                      required
+                      step="diagramSelection"
+                      type="files"
+                      key="diagramSelection"
+                    />
+                  </Flex>
                 </>
               )}
             />
             <Route
               exact
-              path={resourceSelection.staticPath(match.path)}
+              path={resourceSelection.staticPath}
               render={() => (
                 <>
-                  <StepsList />
                   <PageTitle title="P&ID Contextualization" />
-                  <SearchPage
-                    type="assets"
-                    secondaryType="tags"
-                    key="assetSearch"
-                  />
+                  <Flex row style={{ width: '100%' }}>
+                    <StepsList />
+                    <SelectionPage
+                      step="resourceSelection"
+                      type="assets"
+                      key="assetselection"
+                    />
+                  </Flex>
                 </>
               )}
             />
             <Route
               exact
-              path={configPage.staticPath(match.path)}
+              path={configPage.staticPath}
               render={() => (
                 <>
-                  <StepsList />
                   <PageTitle title="P&ID Contextualization" />
-                  <Options />
+                  <Flex row style={{ width: '100%' }}>
+                    <StepsList />
+                    <Options step="config" />
+                  </Flex>
                 </>
               )}
             />
             <Route
               exact
-              path={reviewPage.staticPath(match.path)}
+              path={reviewPage.staticPath}
               render={() => (
                 <>
-                  <StepsList />
                   <PageTitle title="P&ID Contextualization" />
-                  <ResultsOverview />
+                  <Flex row style={{ width: '100%' }}>
+                    <StepsList />
+                    <ResultsOverview step="review" />
+                  </Flex>
                 </>
               )}
             />
             <Route
               exact
-              path={diagramPreview.staticPath(match.path)}
+              path={diagramPreview.staticPath}
               render={() => (
                 <>
-                  <StepsList />
                   <PageTitle title="P&ID Contextualization" />
-                  <FileOverview />
+                  <Flex row style={{ width: '100%' }}>
+                    <StepsList />
+                    <FileOverview step="diagramPreview" />
+                  </Flex>
                 </>
               )}
             />
