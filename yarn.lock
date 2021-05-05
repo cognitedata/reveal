@@ -2051,10 +2051,10 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@cognite/auth-utils@^0.8.1":
-  version "0.8.1"
-  resolved "https://registry.yarnpkg.com/@cognite/auth-utils/-/auth-utils-0.8.1.tgz#aef3dd35c1ec657445777a21c877daef738ea152"
-  integrity sha512-15zEPXIII+rHCiT/cpP0vAIV0ZLCqc/0rxuwsCpOYbjr4NU+CsF9gVTkM8dgReIVhqorKDy/WVXg2KlYdi/xHw==
+"@cognite/auth-utils@^0.8.2":
+  version "0.8.2"
+  resolved "https://registry.yarnpkg.com/@cognite/auth-utils/-/auth-utils-0.8.2.tgz#e6bb08cd950c8623b5d9306684616036c1633bc2"
+  integrity sha512-0PjfhmDrbas8mo80woE9h4PacAypECQB3c1bVFq/2OVdI/a4Qu4nlGlPGiBgzRWo3Qry57tz6quYgwF/SVfz2w==
   dependencies:
     "@azure/msal-browser" "^2.8.0"
     "@cognite/sdk" "^3.3.0"
@@ -2073,27 +2073,6 @@
     rc-drawer "^4.1.0"
     rc-slider "^9.5.4"
     rc-tabs "^11.6.2"
-    react-modal "^3.11.2"
-    react-select "^3.1.0"
-    react-table "^7.6.0"
-    react-toastify "^6.0.9"
-    tippy.js "6.2.0"
-
-"@cognite/cogs.js@^2.17.0":
-  version "2.17.2"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-2.17.2.tgz#c68a7d0f6f5e8775a78f44f792c2ac46429dd83c"
-  integrity sha512-ZztR01qigr3WJHpu7ZgHRtu6gIXRyOmsRhaGIQsONYREVBCr6gZsVoPMvs7Ferf79er1r/kvwTXRGuqxr1Rr5g==
-  dependencies:
-    "@tippyjs/react" "4.0.2"
-    "@types/react-date-range" "^1.1.2"
-    color "^3.1.2"
-    dayjs "^1.9.7"
-    focus-visible "^5.1.0"
-    rc-collapse "^1.11.8"
-    rc-drawer "^4.1.0"
-    rc-slider "^9.5.4"
-    rc-tabs "^11.6.2"
-    react-date-range "^1.1.3"
     react-modal "^3.11.2"
     react-select "^3.1.0"
     react-table "^7.6.0"
@@ -2142,15 +2121,27 @@
     i18next-xhr-backend "^3.2.2"
     react-i18next "^11.8.5"
 
-"@cognite/react-tenant-selector@^0.6.3":
-  version "0.6.3"
-  resolved "https://registry.yarnpkg.com/@cognite/react-tenant-selector/-/react-tenant-selector-0.6.3.tgz#99f4142149ab9c7358d1194fa10a5438fa3b0442"
-  integrity sha512-fOw9gHZc6x6M+h+XUuYh+fV+MFMC3ssqCv5fb5TI9ycz5YX+ECia3GJhYPzZWmmuZ5SB8GkugZxZoIuBPQVH1w==
+"@cognite/react-i18n@^0.3.1":
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/@cognite/react-i18n/-/react-i18n-0.3.2.tgz#86a1b6854a4c6d356fcc931b118cb3311ec56ad3"
+  integrity sha512-kttiy7jZ1URKzsYKlNxnFNMx+N0OpjLpH3Ty7o+S9TJAB3wzVFFjJms7XOfbXOhHj08/APcak/QLkH2aKtYUNA==
   dependencies:
-    "@cognite/auth-utils" "^0.8.1"
-    "@cognite/cogs.js" "^2.17.0"
+    i18next "^19.8.4"
+    i18next-chained-backend "^2.0.1"
+    i18next-localstorage-backend "^3.1.1"
+    i18next-locize-backend "^4.1.1"
+    i18next-pseudo "^2.2.0"
+    i18next-xhr-backend "^3.2.2"
+    react-i18next "^11.8.5"
+
+"@cognite/react-tenant-selector@^0.8.0":
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/@cognite/react-tenant-selector/-/react-tenant-selector-0.8.0.tgz#b03af0c50e192a389935d37f43ccfcfaafb0b3ad"
+  integrity sha512-rkBHBpuJJry4AKde054+23HXYsLBd+NbI0uANa6JZViHvCSPj1hDKO/iHHjR0evx8H27QxBM6HEdtIemAKeN8w==
+  dependencies:
+    "@cognite/auth-utils" "^0.8.2"
     "@cognite/metrics" "^1.0.0"
-    "@cognite/react-i18n" "^0.3.0"
+    "@cognite/react-i18n" "^0.3.1"
     "@cognite/sdk" "^3.3.0"
     axios "^0.21.1"
     react-helmet "^6.1.0"
@@ -3719,14 +3710,6 @@
   dependencies:
     "@types/react" "*"
     "@types/reactcss" "*"
-
-"@types/react-date-range@^1.1.2":
-  version "1.1.3"
-  resolved "https://registry.yarnpkg.com/@types/react-date-range/-/react-date-range-1.1.3.tgz#675fc89d0eb1bf86bc2c075f8054fdef1518fade"
-  integrity sha512-EWLbq/usjDCfLoR9hs79Dpp1Gz2YPVqtqAY9i3ITcGPP0PgYIStsGZCP/dqJAgbl0EQDg2RnLA+UXLvzppJrTQ==
-  dependencies:
-    "@types/react" "*"
-    date-fns "^2.16.1"
 
 "@types/react-dom@^17.0.0":
   version "17.0.0"
@@ -6891,16 +6874,6 @@ date-fns@^2.0.1:
   version "2.14.0"
   resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.14.0.tgz#359a87a265bb34ef2e38f93ecf63ac453f9bc7ba"
   integrity sha512-1zD+68jhFgDIM0rF05rcwYO8cExdNqxjq4xP1QKM60Q45mnO6zaMWB4tOzrIr4M4GSLntsKeE4c9Bdl2jhL/yw==
-
-date-fns@^2.16.1:
-  version "2.16.1"
-  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.16.1.tgz#05775792c3f3331da812af253e1a935851d3834b"
-  integrity sha512-sAJVKx/FqrLYHAQeN7VpJrPhagZc9R4ImZIWYRFZaaohR3KzmuK88touwsSwSVT8Qcbd4zoDsnGfX4GFB4imyQ==
-
-dayjs@^1.9.7:
-  version "1.10.3"
-  resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.10.3.tgz#cf3357c8e7f508432826371672ebf376cb7d619b"
-  integrity sha512-/2fdLN987N8Ki7Id8BUN2nhuiRyxTLumQnSQf9CNncFCyqFsSKb9TNhzRYcC8K8eJSJOKvbvkImo/MKKhNi4iw==
 
 debug@2.6.9, debug@^2.2.0, debug@^2.3.3, debug@^2.6.0, debug@^2.6.9:
   version "2.6.9"
@@ -13402,7 +13375,7 @@ prompts@^2.0.1:
     kleur "^3.0.3"
     sisteransi "^1.0.4"
 
-prop-types@15, prop-types@15.x, prop-types@^15.0.0, prop-types@^15.5.10, prop-types@^15.5.6, prop-types@^15.5.8, prop-types@^15.6.0, prop-types@^15.6.1, prop-types@^15.6.2, prop-types@^15.7.2:
+prop-types@15.x, prop-types@^15.0.0, prop-types@^15.5.10, prop-types@^15.5.6, prop-types@^15.5.8, prop-types@^15.6.0, prop-types@^15.6.1, prop-types@^15.6.2, prop-types@^15.7.2:
   version "15.7.2"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.7.2.tgz#52c41e75b8c87e72b9d9360e0206b99dcbffa6c5"
   integrity sha512-8QQikdH7//R2vurIJSutZ1smHYTcLpRWEOlHnzcWHmBYrOGUysKwSsrC89BCiFj3CbrfJ/nXFdJepOVrY1GCHQ==
@@ -13780,16 +13753,6 @@ react-color@^2.17.0:
     reactcss "^1.2.0"
     tinycolor2 "^1.4.1"
 
-react-date-range@^1.1.3:
-  version "1.1.3"
-  resolved "https://registry.yarnpkg.com/react-date-range/-/react-date-range-1.1.3.tgz#8b3bb18066dcac6609b1e8df655c720ffd273d4f"
-  integrity sha512-Q0+80JaEw3O2J50Lf1dcwWfqkzu3SaCZUTgtVEG9kIHy1h1x8XTNrumX08hKz+M//wg7NOymaTzP1RPBYoLpmw==
-  dependencies:
-    classnames "^2.2.6"
-    prop-types "^15.7.2"
-    react-list "^0.8.13"
-    shallow-equal "^1.2.1"
-
 react-dev-utils@^10.0.0, react-dev-utils@^10.2.1:
   version "10.2.1"
   resolved "https://registry.yarnpkg.com/react-dev-utils/-/react-dev-utils-10.2.1.tgz#f6de325ae25fa4d546d09df4bb1befdc6dd19c19"
@@ -13959,13 +13922,6 @@ react-lifecycles-compat@^3.0.0, react-lifecycles-compat@^3.0.4:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
   integrity sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==
-
-react-list@^0.8.13:
-  version "0.8.16"
-  resolved "https://registry.yarnpkg.com/react-list/-/react-list-0.8.16.tgz#3f19b249998de0086787da3789d35b59553ede3a"
-  integrity sha512-LSxfvdwB9Ip+E+8NBtLPW2pcIngzuV0rSoH9nMt9C2lFjZEbnoBY/ib/Zx121jPgFgg3xYkMlMXSzx5gaiP5ig==
-  dependencies:
-    prop-types "15"
 
 react-modal@^3.11.2:
   version "3.12.1"
@@ -15026,11 +14982,6 @@ shallow-clone@^3.0.0:
   integrity sha512-/6KqX+GVUdqPuPPd2LxDDxzX6CAbjJehAAOKlNpqqUpAqPM6HeL8f+o3a+JsyGjn2lv0WY8UsTgUJjU9Ok55NA==
   dependencies:
     kind-of "^6.0.2"
-
-shallow-equal@^1.2.1:
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/shallow-equal/-/shallow-equal-1.2.1.tgz#4c16abfa56043aa20d050324efa68940b0da79da"
-  integrity sha512-S4vJDjHHMBaiZuT9NPb616CSmLf618jawtv3sufLl6ivK8WocjAo58cXwbRV1cgqxH0Qbv+iUt6m05eqEa2IRA==
 
 shallowequal@^1.0.2, shallowequal@^1.1.0:
   version "1.1.0"
