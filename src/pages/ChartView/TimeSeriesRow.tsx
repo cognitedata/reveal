@@ -172,7 +172,10 @@ export default function TimeSeriesRow({
   } = timeseries;
   const [isEditingName, setIsEditingName] = useState<boolean>(false);
 
-  const prevDateFromTo = usePrevious({ dateFrom, dateTo });
+  const prevDateFromTo = usePrevious<{ dateFrom: string; dateTo: string }>({
+    dateFrom,
+    dateTo,
+  });
 
   // Increasing this will cause a fresh render where the dropdown is closed
   const update = (_tsId: string, diff: Partial<ChartTimeSeries>) =>
@@ -313,9 +316,7 @@ export default function TimeSeriesRow({
   useEffect(() => {
     const newDates =
       prevDateFromTo &&
-      // @ts-ignore
       prevDateFromTo.dateFrom !== dateFrom &&
-      // @ts-ignore
       prevDateFromTo.dateTo !== dateTo;
     if (!newDates && statisticsForSource) {
       return;
