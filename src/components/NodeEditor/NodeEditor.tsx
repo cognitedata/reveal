@@ -9,7 +9,7 @@ import {
   Connection,
   NodeContainer,
 } from '@cognite/connect';
-import { Menu, Input, Button } from '@cognite/cogs.js';
+import { Menu, Input, Dropdown, Button } from '@cognite/cogs.js';
 import { nanoid } from 'nanoid';
 import workflowBackgroundSrc from 'assets/workflowBackground.png';
 import { Chart, ChartWorkflow, StorableNode } from 'reducers/charts/types';
@@ -44,6 +44,8 @@ const WorkflowEditor = ({
   mutate,
 }: WorkflowEditorProps) => {
   const [activeNode, setActiveNode] = useState<StorableNode>();
+  const [isAddNodeMenuOpen, setAddNodeMenuVisibility] = useState(false);
+  const defaultNewNodePosition = { x: 380, y: 16 };
   const workflow = chart?.workflowCollection?.find(
     (flow) => flow.id === workflowId
   );
@@ -109,6 +111,10 @@ const WorkflowEditor = ({
     });
   };
 
+  const toggleAddNodeMenu = (state: boolean) => {
+    setAddNodeMenuVisibility(state);
+  };
+
   return (
     <WorkflowContainer>
       <ControllerProvider
@@ -162,6 +168,48 @@ const WorkflowEditor = ({
           ))}
         </NodeContainer>
       </ControllerProvider>
+
+      <div style={{ position: 'absolute', top: 16, left: 16 }}>
+        <Dropdown
+          visible={isAddNodeMenuOpen}
+          appendTo="parent"
+          placement="right-start"
+          onClickOutside={() => toggleAddNodeMenu(false)}
+          content={
+            <Menu style={{ marginTop: '-10.5px' }}>
+              {Object.values(defaultNodeOptions).map((nodeOption) => (
+                <Menu.Item
+                  key={nodeOption.name}
+                  onClick={() => {
+                    update({
+                      nodes: [
+                        ...nodes,
+                        {
+                          id: nanoid(),
+                          ...nodeOption.node,
+                          ...defaultNewNodePosition,
+                          calls: [],
+                        },
+                      ],
+                    });
+                    toggleAddNodeMenu(false);
+                  }}
+                >
+                  {nodeOption.name}
+                </Menu.Item>
+              ))}
+            </Menu>
+          }
+        >
+          <Button
+            type="primary"
+            icon="Plus"
+            onClick={() => toggleAddNodeMenu(true)}
+          >
+            Add
+          </Button>
+        </Dropdown>
+      </div>
 
       {activeNode && (
         <ConfigPanel
