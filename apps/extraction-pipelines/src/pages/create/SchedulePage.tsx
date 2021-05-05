@@ -25,7 +25,7 @@ import {
   useDetailsUpdate,
   createUpdateSpec,
 } from 'hooks/details/useDetailsUpdate';
-import { CronWrapper } from 'components/integration/Schedule';
+import { CronWrapper } from 'components/integration/edit/Schedule';
 import { scheduleSchema } from 'utils/validation/integrationSchemas';
 import { ScheduleSelector } from 'components/inputs/ScheduleSelector';
 import { OptionTypeBase } from 'react-select';

@@ -6,7 +6,7 @@ import * as yup from 'yup';
 import { useSelectedIntegration } from 'hooks/useSelectedIntegration';
 import { useIntegrationById } from 'hooks/useIntegration';
 import { TableHeadings } from 'components/table/IntegrationTableCol';
-import { Schedule } from 'components/integration/Schedule';
+import { Schedule } from 'components/integration/edit/Schedule';
 import { Colors } from '@cognite/cogs.js';
 import { rootUpdate } from 'hooks/details/useDetailsUpdate';
 import { useAppEnv } from 'hooks/useAppEnv';

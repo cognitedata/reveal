@@ -109,7 +109,8 @@ describe('IntegrationView', () => {
     });
     expect(screen.getByText(mock.externalId)).toBeInTheDocument();
     expect(screen.getByText(mock.id)).toBeInTheDocument();
-    expect(screen.getAllByText(NO_SCHEDULE).length).toEqual(2);
+    expect(screen.getByText(NO_SCHEDULE)).toBeInTheDocument();
     expect(screen.getByText(/add raw tables/i)).toBeInTheDocument();
+    expect(screen.getByText(/add schedule/i)).toBeInTheDocument();
   });
 });

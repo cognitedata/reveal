@@ -49,7 +49,7 @@ import { toCamelCase } from 'utils/primitivesUtils';
 import { DivFlex } from 'styles/flex/StyledFlex';
 import { ScheduleSelector } from 'components/inputs/ScheduleSelector';
 import CronInput from 'components/inputs/cron/CronInput';
-import { CronWrapper } from 'components/integration/Schedule';
+import { CronWrapper } from 'components/integration/edit/Schedule';
 import { OptionTypeBase } from 'react-select';
 import { SupportedScheduleStrings } from 'components/integrations/cols/Schedule';
 import { ScheduleFormInput } from 'pages/create/SchedulePage';

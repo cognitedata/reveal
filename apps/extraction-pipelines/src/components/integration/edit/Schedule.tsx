@@ -31,7 +31,14 @@ import { ColumnForm, StyledLabel } from 'styles/StyledForm';
 import { scheduleSchema } from 'utils/validation/integrationSchemas';
 import { ScheduleSelector } from 'components/inputs/ScheduleSelector';
 import { OptionTypeBase } from 'react-select';
-import { CloseButton, SaveButton, StyledEdit } from 'styles/StyledButton';
+import {
+  BluePlus,
+  BlueText,
+  CloseButton,
+  SaveButton,
+  StyledEdit,
+} from 'styles/StyledButton';
+import { TableHeadings } from 'components/table/IntegrationTableCol';
 
 export const CronWrapper = styled(DivFlex)`
   margin: 1rem 0 1rem 2rem;
@@ -130,6 +137,21 @@ export const Schedule: FunctionComponent<ScheduleProps> = ({
   const selectChanged = (selected: OptionTypeBase) => {
     setValue('schedule', selected.value);
   };
+
+  function renderSchedule(schedule?: string) {
+    if (!schedule) {
+      return (
+        <>
+          <BluePlus />
+          <BlueText>add {TableHeadings.SCHEDULE.toLowerCase()}</BlueText>
+        </>
+      );
+    }
+    return (
+      <DisplaySchedule id="display-schedule" schedule={integration.schedule} />
+    );
+  }
+
   return (
     <FormProvider {...methods}>
       <ColumnForm onSubmit={handleSubmit(onSave)}>
@@ -180,10 +202,7 @@ export const Schedule: FunctionComponent<ScheduleProps> = ({
             data-testid={`${ContactBtnTestIds.EDIT_BTN}schedule`}
             $full
           >
-            <DisplaySchedule
-              id="display-schedule"
-              schedule={integration.schedule}
-            />
+            {renderSchedule(integration.schedule)}
           </StyledEdit>
         )}
       </ColumnForm>
