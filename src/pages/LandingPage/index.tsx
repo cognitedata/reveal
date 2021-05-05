@@ -1,4 +1,4 @@
-import { Graphic, Title, Tooltip } from '@cognite/cogs.js';
+import { Button, Graphic, Title, Tooltip } from '@cognite/cogs.js';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { message, Modal, notification } from 'antd';
 import { FileInfo } from 'cognite-sdk-v3';
@@ -22,6 +22,8 @@ import styled from 'styled-components';
 import { deleteAnnotationsForFile } from 'utils/AnnotationUtils';
 import { PNID_METRICS, trackUsage } from 'utils/Metrics';
 import FilterBar from './FilterBar';
+
+const PAGE_SIZE = 10;
 
 const Wrapper = styled.div`
   width: 100%;
@@ -110,15 +112,22 @@ export default function LandingPage() {
   const [query, setQuery] = useState<string>('');
 
   const [shouldUpdate, setShouldUpdate] = useState(false);
+  const [loadChunk, setLoadChunk] = useState<number>(0);
 
-  const { files, isLoading } = useAnnotatedFiles(shouldUpdate);
+  const { files, isLoading, total } = useAnnotatedFiles(
+    shouldUpdate,
+    loadChunk
+  );
 
-  const noFiles = !isLoading && !files?.length;
+  const noFiles = !isLoading && total === 0;
   const { data: filesAcl } = usePermissions('filesAcl', 'WRITE');
   const { data: eventsAcl } = usePermissions('eventsAcl', 'WRITE');
   const client = useQueryClient();
 
   const writeAccess = filesAcl && eventsAcl;
+
+  // Is there more ids to load?
+  const isLoadMoreDisabled = () => total <= 1000 * (loadChunk + 1);
 
   const onFileEdit = (event: any) => {
     event.stopPropagation();
@@ -181,12 +190,23 @@ export default function LandingPage() {
     <>
       <FilterBar query={query} setQuery={setQuery} />
       <Table
-        pagination={{ pageSize: 10, hideOnSinglePage: true }}
+        pagination={{
+          pageSize: PAGE_SIZE,
+          hideOnSinglePage: true,
+        }}
         dataSource={files as FileInfo[]}
         // @ts-ignore
         columns={interactiveColumns}
         size="middle"
         rowKey="id"
+        footer={() => (
+          <Button
+            disabled={isLoadMoreDisabled()}
+            onClick={() => setLoadChunk(loadChunk + 1)}
+          >
+            Load more
+          </Button>
+        )}
         // onRow={(record: any) => ({
         //   onClick: () => alert(record),
         // })}

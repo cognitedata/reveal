@@ -1,5 +1,5 @@
 import sdk from 'sdk-singleton';
-import { CogniteClient } from 'cognite-sdk-v3';
+import { CogniteClient, IdEither } from 'cognite-sdk-v3';
 import { projectName, getCdfEnvFromUrl } from 'utils/config';
 
 const useLocalApi = false; // Toggle on if using api locally
@@ -40,10 +40,10 @@ class ContextServiceApi {
   //   return data;
   // };
 
-  public getAnnotatedFiles = async (): Promise<Array<string>> => {
+  public getAnnotatedFiles = async (): Promise<Array<IdEither>> => {
     const res = await this.get('/v1/files');
     const { files: fileIds } = res as any;
-    return fileIds;
+    return fileIds as Array<IdEither>;
   };
 }
 
