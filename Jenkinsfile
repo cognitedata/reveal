@@ -77,16 +77,16 @@ pods {
   def projectProduction = "cognitedata-production"
 
   def context_checkout = "continuous-integration/jenkins/checkout"
-    def context_install = "continuous-integration/jenkins/install"
-    def context_setup = "continuous-integration/jenkins/setup"
-    def context_lint = "continuous-integration/jenkins/lint"
-    def context_test = "continuous-integration/jenkins/test"
-    def context_unitTests = "continuous-integration/jenkins/unit-tests"
-    def context_buildPrPreview = "continuous-integration/jenkins/build-pr-preview"
-    def context_build_fas = "continuous-integration/jenkins/build-fas"
-    def context_build = "continuous-integration/jenkins/build"
-    def context_deploy_app = "continuous-integration/jenkins/deploy-app"
-    def context_publishRelease = "continuous-integration/jenkins/publish-release"
+  def context_install = "continuous-integration/jenkins/install"
+  def context_setup = "continuous-integration/jenkins/setup"
+  def context_lint = "continuous-integration/jenkins/lint"
+  def context_test = "continuous-integration/jenkins/test"
+  def context_unitTests = "continuous-integration/jenkins/unit-tests"
+  def context_buildPrPreview = "continuous-integration/jenkins/build-pr-preview"
+  def context_build_fas = "continuous-integration/jenkins/build-fas"
+  def context_build = "continuous-integration/jenkins/build"
+  def context_deploy_app = "continuous-integration/jenkins/deploy-app"
+  def context_publishRelease = "continuous-integration/jenkins/publish-release"
   static final Map<String, Boolean> version = versioning.getEnv(
     versioningStrategy: VERSIONING_STRATEGY
   )
@@ -100,32 +100,33 @@ pods {
     }
 
     githubNotifyWrapper(context_install) {
-        stage('Install dependencies') {
-            yarn.setup()
-        }
+      stage('Install dependencies') {
+        yarn.setup()
+      }
     }
 
-    parallel(
-      'Lint': {
-        container('fas') {
-          stageWithNotify('Lint') {
-            sh("yarn lint")
-          }
-        }
-      },
-      // 'Test': {
-      //   container('fas') {
-      //     stageWithNotify('Unit tests') {
-      //       sh("yarn test")
-      //     }
-      //   }
-      // },
-      'Preview': {
-        if(!isPullRequest) {
-          print "No PR previews for release builds"
-          return;
-        }
-        stageWithNotify('Build and deploy PR') {
+    container('fas') {
+      stageWithNotify('Lint') {
+        sh("yarn lint")
+      }
+    }
+
+    //   container('fas') {
+    //     stageWithNotify('Unit tests') {
+    //       sh("yarn test")
+    //     }
+    //   }
+
+    container('fas') {
+      stageWithNotify('Build') {
+        sh("yarn build")
+      }
+    }
+
+
+    if (isPullRequest) {
+      container('fas') {
+        stageWithNotify('Preview') {
           previewServer(
             buildCommand: 'yarn build:preview',
             prefix: 'pr',
@@ -133,37 +134,23 @@ pods {
             commentPrefix: PR_COMMENT_MARKER
           )
         }
-      },
-      'Build': {
-            if (isPullRequest) {
-                println "Skipping build for pull requests"
-                return
-            }
-            stageWithNotify('Build for FAS') {
-                fas.build(
-                appId: APP_ID,
-                repo: APPLICATION_REPO_ID,
-                buildCommand: 'yarn build',
-                shouldPublishSourceMap: false
-                )
-            }
-        }
-    )
+      }
+    }
 
     if (isRelease) {
-
-      stageWithNotify('Deploy to FAS') {
-        fas.publish(
-          shouldPublishSourceMap: false
-        )
-      }
-
-      container('cloudsdk') {
-        stage('Deploy to cdf-hub') {
-            sh("gcloud auth activate-service-account jenkins-cdf-hub-deployment@cognitedata.iam.gserviceaccount.com --key-file=/jenkins-cdf-hub-deployer/credentials.json --project=${projectProduction}")
-            // Upload the root config js to the bundles bucket
-            sh("gsutil cp -r build/. gs://${bucketBundles}/${APP_NAME}/${gitCommit}/")
-            sh("gsutil cp -r build/. gs://${bucketBundles}/${APP_NAME}/latest/")
+      container('fas') {
+        stageWithNotify('Build for FAS') {
+          fas.build(
+            appId: APP_ID,
+            repo: APPLICATION_REPO_ID,
+            buildCommand: 'yarn build',
+            shouldPublishSourceMap: false
+          )
+        }
+        stageWithNotify('Deploy to FAS') {
+          fas.publish(
+            shouldPublishSourceMap: false
+          )
         }
       }
     }
