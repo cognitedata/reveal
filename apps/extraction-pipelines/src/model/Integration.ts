@@ -54,6 +54,7 @@ export enum DetailFieldNames {
   CREATED_BY = 'Created by',
   SOURCE = 'Source',
   STATE = 'State',
+  DOCUMENTATION = 'Documentation',
   RAW_TABLE = 'Raw tables',
   META_DATA = 'Metadata',
   CONTACT = 'Contact',

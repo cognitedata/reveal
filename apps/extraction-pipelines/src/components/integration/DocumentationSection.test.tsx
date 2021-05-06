@@ -11,7 +11,7 @@ import {
   DocumentationSection,
   TEST_ID_BTN_SAVE,
 } from 'components/integration/DocumentationSection';
-import { DOCUMENTATION_HEADING } from 'utils/constants';
+import { DetailFieldNames } from 'model/Integration';
 
 describe('DocumentationSection', () => {
   const mock = getMockResponse()[0];
@@ -35,18 +35,18 @@ describe('DocumentationSection', () => {
       wrapper: wrapper.wrapper,
     });
     await waitFor(() => {
-      screen.getByText(DOCUMENTATION_HEADING);
+      screen.getByText(DetailFieldNames.DOCUMENTATION);
     });
 
     const documentation = screen.getByText(mock.documentation);
     expect(documentation).toBeInTheDocument();
     fireEvent.click(documentation);
     await waitFor(() => {
-      screen.getByLabelText(DOCUMENTATION_HEADING);
+      screen.getByLabelText(DetailFieldNames.DOCUMENTATION);
     });
     const newDocumentation = 'new documentation';
 
-    fireEvent.change(screen.getByLabelText(DOCUMENTATION_HEADING), {
+    fireEvent.change(screen.getByLabelText(DetailFieldNames.DOCUMENTATION), {
       target: { value: newDocumentation },
     });
     sdkv3.get.mockResolvedValueOnce({
@@ -76,7 +76,7 @@ describe('DocumentationSection', () => {
       wrapper: wrapper.wrapper,
     });
     await waitFor(() => {
-      screen.getByText(DOCUMENTATION_HEADING);
+      screen.getByText(DetailFieldNames.DOCUMENTATION);
     });
     expect(screen.getByText(/add documentation/i)).toBeInTheDocument();
   });

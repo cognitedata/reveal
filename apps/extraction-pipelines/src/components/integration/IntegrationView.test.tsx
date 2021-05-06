@@ -7,11 +7,7 @@ import { getMockResponse, mockDataSetResponse } from 'utils/mockResponse';
 import { ORIGIN_DEV, PROJECT_ITERA_INT_GREEN } from 'utils/baseURL';
 import { TableHeadings } from 'components/table/IntegrationTableCol';
 import { DetailFieldNames } from 'model/Integration';
-import {
-  DOCUMENTATION_HEADING,
-  NO_SCHEDULE,
-  SINGLE_INTEGRATION,
-} from 'utils/constants';
+import { NO_SCHEDULE, SINGLE_INTEGRATION } from 'utils/constants';
 import { IntegrationView } from 'components/integration/IntegrationView';
 import { trackUsage } from 'utils/Metrics';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
@@ -48,7 +44,7 @@ describe('IntegrationView', () => {
       id: mockIntegration.id,
     });
     await waitFor(() => {
-      screen.getAllByText(DOCUMENTATION_HEADING);
+      screen.getAllByText(DetailFieldNames.DOCUMENTATION);
       screen.getByText(new RegExp(TableHeadings.CONTACTS, 'i'));
     });
 

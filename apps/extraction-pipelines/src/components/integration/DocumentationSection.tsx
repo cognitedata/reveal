@@ -3,7 +3,7 @@ import { Hint, StyledTextArea } from 'styles/StyledForm';
 import styled from 'styled-components';
 import { bottomSpacing } from 'styles/StyledVariables';
 import {
-  DOCUMENTATION_HEADING,
+  DOCUMENTATION_HINT,
   SERVER_ERROR_CONTENT,
   SERVER_ERROR_TITLE,
 } from 'utils/constants';
@@ -32,6 +32,7 @@ import {
   StyledEdit,
 } from 'styles/StyledButton';
 import { HeadingLabel } from 'components/inputs/HeadingLabel';
+import { DetailFieldNames } from 'model/Integration';
 
 const Formatted = styled.p`
   grid-column: span 2;
@@ -75,9 +76,6 @@ const DocumentationForm = styled.form`
   }
 `;
 
-export const DOCUMENTATION_LABEL: Readonly<string> = 'Add documentation';
-export const DOCUMENTATION_HINT: Readonly<string> =
-  'Please add any relevant documentation.';
 export const TEST_ID_BTN_SAVE: Readonly<string> = 'btn-save-';
 interface DocumentationSectionProps {}
 
@@ -145,7 +143,7 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
   return (
     <DocumentationWrapper>
       <HeadingLabel labelFor="documentation-textarea">
-        {DOCUMENTATION_HEADING}
+        {DetailFieldNames.DOCUMENTATION}
       </HeadingLabel>
       <DocumentationForm onSubmit={handleSubmit(onValid)}>
         <Hint className="hint">{DOCUMENTATION_HINT}</Hint>

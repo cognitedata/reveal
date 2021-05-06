@@ -36,7 +36,7 @@ export const FullTextArea: FunctionComponent<FullInputProps> = ({
             rows={10}
             value={value}
             onChange={onChange}
-            className="cogs-input"
+            className="cogs-input full-width"
             aria-invalid={!!errors[name]}
             aria-describedby={`${name}-hint ${name}-error`}
           />

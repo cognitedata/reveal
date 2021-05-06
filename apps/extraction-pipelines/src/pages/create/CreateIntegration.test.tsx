@@ -103,6 +103,9 @@ describe('CreateIntegration', () => {
     expect(screen.getByText(NOTIFICATION_CONFIG_HEADER)).toBeVisible();
     expect(screen.getByText(TableHeadings.CONTACTS)).toBeVisible();
     expect(screen.getByText(DetailFieldNames.RAW_TABLE)).toBeVisible();
+    expect(
+      screen.getByLabelText(DetailFieldNames.DOCUMENTATION)
+    ).toBeInTheDocument();
     await waitFor(() => {
       screen.getByLabelText(DBS_LABEL);
     });

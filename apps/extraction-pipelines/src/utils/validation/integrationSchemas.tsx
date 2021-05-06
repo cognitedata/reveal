@@ -79,14 +79,15 @@ export const scheduleRule = {
   }),
 };
 export const scheduleSchema = yup.object().shape(scheduleRule);
-export const documentationSchema = yup.object().shape({
+export const documentationRule = {
   documentation: yup
     .string()
     .max(
       MAX_DOCUMENTATION_LENGTH,
       `Documentation can only contain ${MAX_DESC_LENGTH} characters`
     ),
-});
+};
+export const documentationSchema = yup.object().shape(documentationRule);
 export const TABLE_REQUIRED: Readonly<string> = 'Select a database table';
 export const RAW_TABLE_REQUIRED: Readonly<string> = 'Raw table is required';
 export const selectedRawTablesRule = {

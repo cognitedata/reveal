@@ -6,12 +6,12 @@ import React, {
 } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
-import { CANCEL, SAVE, SOURCE_HINT } from 'utils/constants';
+import { CANCEL, DOCUMENTATION_HINT, SAVE, SOURCE_HINT } from 'utils/constants';
 import { RegisterIntegrationLayout } from 'components/layout/RegisterIntegrationLayout';
 import { CreateFormWrapper } from 'styles/StyledForm';
 import { ButtonPlaced } from 'styles/StyledButton';
 import * as yup from 'yup';
-import { FormProvider, useForm } from 'react-hook-form';
+import { useForm, FormProvider } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { INTEGRATION_NAME_HEADING, NAME_HINT } from 'pages/create/NamePage';
 import {
@@ -35,8 +35,10 @@ import { Collapse, Colors } from '@cognite/cogs.js';
 import { PriSecBtnWrapper } from 'styles/StyledWrapper';
 import { DataSetModel } from 'model/DataSetModel';
 import {
-  nameRule,
   scheduleRule,
+  nameRule,
+  documentationRule,
+  MAX_DOCUMENTATION_LENGTH,
   selectedRawTablesRule,
   sourceRule,
 } from 'utils/validation/integrationSchemas';
@@ -45,7 +47,6 @@ import DataSetIdInput, {
 } from 'pages/create/DataSetIdInput';
 import { useDataSetsList } from 'hooks/useDataSetsList';
 import { RegisterMetaData } from 'components/inputs/metadata/RegisterMetaData';
-import { toCamelCase } from 'utils/primitivesUtils';
 import { DivFlex } from 'styles/flex/StyledFlex';
 import { ScheduleSelector } from 'components/inputs/ScheduleSelector';
 import CronInput from 'components/inputs/cron/CronInput';
@@ -53,14 +54,12 @@ import { CronWrapper } from 'components/integration/edit/Schedule';
 import { OptionTypeBase } from 'react-select';
 import { SupportedScheduleStrings } from 'components/integrations/cols/Schedule';
 import { ScheduleFormInput } from 'pages/create/SchedulePage';
-import { mapScheduleInputToScheduleValue } from 'utils/cronUtils';
 import { INTEGRATIONS } from 'utils/baseURL';
 import { INTEGRATION } from 'routing/RoutingConfig';
 import { translateServerErrorMessage } from 'utils/error/TranslateErrorMessages';
 import { TableHeadings } from 'components/table/IntegrationTableCol';
 import { DetailFieldNames } from 'model/Integration';
 import { NotificationConfig } from 'components/inputs/NotificationConfig';
-import { MIN_IN_HOURS } from 'utils/validation/notificationValidation';
 import { contactsRule } from 'utils/validation/contactsSchema';
 import { CreateContacts } from 'components/integration/create/CreateContacts';
 import { User } from 'model/User';
@@ -69,6 +68,8 @@ import { InfoIcon } from 'styles/StyledIcon';
 import { InfoBox } from 'components/message/InfoBox';
 import ConnectRawTablesInput from 'components/inputs/rawSelector/ConnectRawTablesInput';
 import { RawTableFormInput } from 'pages/create/RawTablePage';
+import { CountSpan } from 'components/form/DescriptionView';
+import { createAddIntegrationInfo } from 'utils/integrationUtils';
 
 const StyledCollapse = styled(Collapse)`
   background-color: red;
@@ -135,7 +136,7 @@ const linkDataSetText = (dataSet: DataSetModel): Readonly<string> => {
 };
 interface CreateIntegrationProps {}
 
-interface AddIntegrationFormInput
+export interface AddIntegrationFormInput
   extends ScheduleFormInput,
     Pick<RawTableFormInput, 'selectedRawTables'> {
   name: string;
@@ -146,6 +147,7 @@ interface AddIntegrationFormInput
   source: string;
   skipNotificationInHours?: number;
   contacts?: User[];
+  documentation: string;
 }
 const pageSchema = yup.object().shape({
   ...nameRule,
@@ -155,6 +157,7 @@ const pageSchema = yup.object().shape({
   ...scheduleRule,
   ...sourceRule,
   ...selectedRawTablesRule,
+  ...documentationRule,
 });
 
 const findDataSetId = (search: string) => {
@@ -185,6 +188,7 @@ const CreateIntegration: FunctionComponent<CreateIntegrationProps> = (
       description: '',
       dataSetId: parseInt(dataSetId, 10),
       selectedRawTables: [],
+      documentation: '',
     },
     reValidateMode: 'onSubmit',
   });
@@ -221,56 +225,10 @@ const CreateIntegration: FunctionComponent<CreateIntegrationProps> = (
       setShowCron(false);
     }
   }, [scheduleValue]);
+  const count = watch('documentation')?.length ?? 0;
 
   const handleNext = (fields: AddIntegrationFormInput) => {
-    function constructMetadata(
-      metadata: {
-        description: string;
-        content: string;
-      }[]
-    ) {
-      if (!metadata) {
-        return null;
-      }
-      return metadata.map((field) => {
-        const key = toCamelCase(field.description);
-        return { [key]: field.content };
-      });
-    }
-
-    const {
-      source,
-      schedule,
-      cron,
-      name,
-      externalId,
-      description,
-      skipNotificationInHours,
-      contacts,
-      dataSetId: fieldDataSetId,
-      selectedRawTables,
-    } = fields;
-    const metadata = constructMetadata(fields.metadata);
-    const scheduleToStore = mapScheduleInputToScheduleValue({
-      schedule,
-      cron,
-    });
-    const integrationInfo = {
-      name,
-      externalId,
-      ...(description && { description }),
-      ...(data && { dataSetId: fieldDataSetId }),
-      ...(source && { source }),
-      ...(metadata && {
-        metadata: Object.assign({}, ...metadata),
-      }),
-      ...(contacts && { contacts }),
-      ...(!!scheduleToStore && { schedule: scheduleToStore }),
-      ...(skipNotificationInHours && {
-        skipNotificationsInMinutes: skipNotificationInHours * MIN_IN_HOURS,
-      }),
-      ...(selectedRawTables && { rawTables: selectedRawTables }),
-    };
+    const integrationInfo = createAddIntegrationInfo(fields, data);
     mutate(
       { integrationInfo },
       {
@@ -439,6 +397,22 @@ const CreateIntegration: FunctionComponent<CreateIntegrationProps> = (
                   <HeadingLabel labelFor={inputId}>{labelText}</HeadingLabel>
                 )}
               />
+
+              <FullTextArea
+                name="documentation"
+                inputId="documentation-input"
+                labelText={DetailFieldNames.DOCUMENTATION}
+                hintText={DOCUMENTATION_HINT}
+                control={control}
+                errors={errors}
+                defaultValue=""
+              />
+              {MAX_DOCUMENTATION_LENGTH && (
+                <CountSpan className="count bottom-spacing">
+                  {count}/{MAX_DOCUMENTATION_LENGTH}
+                </CountSpan>
+              )}
+
               <RegisterMetaData />
               <ButtonPlaced type="primary" htmlType="submit" mb={5}>
                 {SAVE}

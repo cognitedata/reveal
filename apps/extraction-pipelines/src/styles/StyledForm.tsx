@@ -42,6 +42,10 @@ export const CreateFormWrapper = styled.form`
   #cron-input {
     width: 50%;
   }
+  #documentation-input {
+    width: 100%;
+    margin-bottom: 0;
+  }
 `;
 
 export const StyledLabel = styled.label`

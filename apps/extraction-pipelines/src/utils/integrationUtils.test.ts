@@ -1,9 +1,12 @@
 import moment from 'moment';
 import { User } from 'model/User';
 import { Status } from 'model/Status';
+import { MIN_IN_HOURS } from 'utils/validation/notificationValidation';
+import { SupportedScheduleStrings } from 'components/integrations/cols/Schedule';
 import {
   calculate,
   calculateStatus,
+  createAddIntegrationInfo,
   isOwner,
   partition,
 } from './integrationUtils';
@@ -97,5 +100,68 @@ describe('partition', () => {
     expect(owner[0]).toEqual(contacts[1]);
     expect(other[0]).toEqual(contacts[0]);
     expect(other[1]).toEqual(contacts[2]);
+  });
+});
+
+describe('createAddIntegrationInfo', () => {
+  const cases = [
+    {
+      desc: 'Only required valued',
+      values: {
+        name: 'integration name',
+        externalId: 'my_external_id',
+        dataSetId: 123123123,
+      },
+      expected: {
+        name: 'integration name',
+        externalId: 'my_external_id',
+        dataSetId: 123123123,
+      },
+    },
+    {
+      desc: 'All values',
+      values: {
+        name: 'integration name',
+        externalId: 'my_external_id',
+        dataSetId: 123123123,
+        documentation: 'This is the documentation',
+        metadata: [
+          { description: 'Doc Link', content: 'https://docs.cognite.com' },
+        ],
+        description: 'This is the description',
+        schedule: SupportedScheduleStrings.SCHEDULED,
+        cron: '1 1 * * *',
+        selectedRawTables: [{ dbName: 'thisDb', tableName: 'dbtable' }],
+        contacts: [
+          { name: 'Test Testsen', email: 'test@test.no', role: 'Tester' },
+        ],
+        skipNotificationInHours: 1,
+      },
+      expected: {
+        name: 'integration name',
+        externalId: 'my_external_id',
+        dataSetId: 123123123,
+        documentation: 'This is the documentation',
+        metadata: {
+          docLink: 'https://docs.cognite.com',
+        },
+        description: 'This is the description',
+        schedule: '1 1 * * *',
+        rawTables: [{ dbName: 'thisDb', tableName: 'dbtable' }],
+        contacts: [
+          { name: 'Test Testsen', email: 'test@test.no', role: 'Tester' },
+        ],
+        skipNotificationsInMinutes: 1 * MIN_IN_HOURS,
+      },
+    },
+  ];
+  cases.forEach(({ desc, values, expected }) => {
+    test(`Creates integration info with: ${desc}`, () => {
+      const res = createAddIntegrationInfo(values, {
+        name: 'this data set',
+        id: values.dataSetId,
+      });
+      expect(res).toEqual(expected);
+    });
   });
 });

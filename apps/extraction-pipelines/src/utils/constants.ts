@@ -77,7 +77,8 @@ export const DATA_SET_ID_HINT: Readonly<string> =
   'Type in the name or id of your data set';
 
 // Documentation
-export const DOCUMENTATION_HEADING: Readonly<string> = 'Documentation';
+export const DOCUMENTATION_HINT: Readonly<string> =
+  'Please add any relevant documentation.';
 
 // Source
 export const SOURCE_HINT: Readonly<string> =
