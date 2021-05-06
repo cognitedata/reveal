@@ -23,7 +23,7 @@ jobs:
 
     - name: Install NPM dependencies
       working-directory: viewer
-      run: yarn
+      run: yarn cache clean && yarn cache clean --mirror && yarn
 
     - name: Lint
       working-directory: viewer
