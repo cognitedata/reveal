@@ -251,9 +251,10 @@ const SingleCapabilityEditor = (props: SingleCapabilityEditorProps) => {
       visible={visible}
       onClose={() => clearStateAndExit()}
     >
-      <Form>
+      <Form layout="vertical">
         <div>
           <Form.Item
+            required
             label="Capability type"
             validateStatus={capabilityType.validateStatus}
             help={capabilityType.errorMessage}
@@ -266,7 +267,7 @@ const SingleCapabilityEditor = (props: SingleCapabilityEditorProps) => {
         </div>
         <Divider />
         <div style={actionsDisabled ? disabledStyle : {}}>
-          <Form.Item label="Actions">
+          <Form.Item label="Actions" required>
             {actionsDisabled ? (
               <div>
                 <Icon type="Info" /> The possible actions vary according to the
@@ -284,7 +285,7 @@ const SingleCapabilityEditor = (props: SingleCapabilityEditorProps) => {
         <Divider />
         <div style={actionsDisabled ? disabledStyle : {}}>
           {showDataSetsRecommendation()}
-          <Form.Item label="Scope">
+          <Form.Item label="Scope" required>
             {scopeDisabled ? (
               <div>
                 <Icon type="Info" /> The scope options vary according to the
@@ -299,7 +300,17 @@ const SingleCapabilityEditor = (props: SingleCapabilityEditorProps) => {
             )}
           </Form.Item>
         </div>
-        <Button onClick={() => addCapability()}>Save</Button>
+        <Button
+          disabled={
+            !capabilityType.value ||
+            !actions.value ||
+            actions.value.length === 0 ||
+            !scope.value
+          }
+          onClick={() => addCapability()}
+        >
+          Save
+        </Button>
       </Form>
     </Drawer>
   );

@@ -209,7 +209,7 @@ export default function Groups() {
           return g.capabilities.map(c => {
             const acl: string = Object.keys(c)[0]!;
             // @ts-ignore
-            const { actions, scope } = c[acl];
+            const { actions = [], scope } = c[acl];
             // @ts-ignore
             const foo = Object.keys(scope || {})[0]?.replace('Scope', '');
 

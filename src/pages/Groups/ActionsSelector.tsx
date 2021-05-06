@@ -59,14 +59,15 @@ const ActionsSelector = (props: ActionsSelectorProps) => {
         style={{ display: 'block', paddingLeft: 20 }}
       >
         {options.map(option => (
-          <Checkbox
-            key={option.value}
-            value={option.value}
-            checked={actions.includes(option.value)}
-            style={{ display: 'block', margin: '10px 0' }}
-          >
-            {option.label}
-          </Checkbox>
+          <div style={{ margin: '10px 0' }}>
+            <Checkbox
+              key={option.value}
+              value={option.value}
+              checked={actions.includes(option.value)}
+            >
+              {option.label}
+            </Checkbox>
+          </div>
         ))}
       </Checkbox.Group>
     </>
