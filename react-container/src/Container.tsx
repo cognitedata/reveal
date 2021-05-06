@@ -5,8 +5,10 @@ import { Store } from 'redux';
 import { withI18nSuspense } from '@cognite/react-i18n';
 import { ErrorBoundary } from '@cognite/react-errors';
 import { TenantSelector, SidecarConfig } from '@cognite/react-tenant-selector';
+import { IntercomBootSettings } from '@cognite/intercom-helper';
 import { Loader } from '@cognite/cogs.js';
 
+import { IntercomContainer } from 'components/Intercom';
 import {
   AuthContainer,
   AuthContainerForApiKeyMode,
@@ -27,9 +29,15 @@ interface ContainerSidecarConfig extends SidecarConfig {
 interface Props {
   store?: Store;
   children: React.ReactChild;
+  intercomSettings?: IntercomBootSettings;
   sidecar: ContainerSidecarConfig;
 }
-const RawContainer: React.FC<Props> = ({ children, store, sidecar }) => {
+const RawContainer: React.FC<Props> = ({
+  children,
+  store,
+  sidecar,
+  intercomSettings,
+}) => {
   const [possibleTenant, initialTenant] = getTenantInfo(window.location);
 
   const {
@@ -118,11 +126,16 @@ const RawContainer: React.FC<Props> = ({ children, store, sidecar }) => {
             authError={authError}
             tenant={initialTenant}
           >
-            <ConditionalReduxProvider store={store}>
-              <ErrorBoundary instanceId="container-root">
-                <Router history={history}>{children}</Router>
-              </ErrorBoundary>
-            </ConditionalReduxProvider>
+            <IntercomContainer
+              sidecar={sidecar}
+              intercomSettings={intercomSettings}
+            >
+              <ConditionalReduxProvider store={store}>
+                <ErrorBoundary instanceId="container-root">
+                  <Router history={history}>{children}</Router>
+                </ErrorBoundary>
+              </ConditionalReduxProvider>
+            </IntercomContainer>
           </ChosenAuthContainer>
         </TranslationWrapper>
       </ConditionalSentry>
