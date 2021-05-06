@@ -15,7 +15,7 @@ export const updateFileInfoField = createAsyncThunk<
   }
 
   const fileState = getState().uploadedFiles;
-  const fileMetadataState = getState().fileMetadataSlice;
+  const fileMetadataState = getState().fileDetailsSlice;
 
   const fileDetails = fileState.files.byId[fileId];
 

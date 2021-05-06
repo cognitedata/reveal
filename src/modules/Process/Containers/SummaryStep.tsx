@@ -176,7 +176,6 @@ export default function SummaryStep() {
                     { length: stats[statView].value },
                     (_, i: number) => (
                       <FileIconContainer key={`${statView}_${i}`}>
-                        {console.log(`key: ${statView}_${i}`)}
                         <img src={FileWithExifIcon} alt="FileWithExifIcon" />
                       </FileIconContainer>
                     )

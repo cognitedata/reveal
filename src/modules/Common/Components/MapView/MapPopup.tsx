@@ -15,14 +15,17 @@ import { useSelector } from 'react-redux';
 import exifIcon from 'src/assets/exifIcon.svg';
 import { RootState } from 'src/store/rootReducer';
 import { selectUpdatedFileDetails } from 'src/modules/FileDetails/fileDetailsSlice';
-import { makeAnnotationBadgePropsByFileId } from 'src/modules/Process/processSlice';
-import { AnnotationsBadgeProps } from 'src/modules/Workflow/types';
-import { TableDataItem } from 'src/modules/Common/Types';
+import {
+  isProcessingFile,
+  makeGetAnnotationStatuses,
+} from 'src/modules/Process/processSlice';
+import { TableDataItem } from 'src/modules/Common/types';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import { AnnotationsBadge } from '../AnnotationsBadge/AnnotationsBadge';
 import { AnnotationsBadgePopoverContent } from '../AnnotationsBadge/AnnotationsBadgePopoverContent';
 import { Popover } from '../Popover';
 import { isFilePreviewable } from '../FileUploader/utils/FileUtils';
+import { makeGetAnnotationCounts } from '../../annotationSlice';
 
 export const MapPopup = ({
   item,
@@ -100,20 +103,18 @@ export const MapPopup = ({
     </Menu>
   );
 
-  const selectAnnotationBadgeProps = useMemo(
-    makeAnnotationBadgePropsByFileId,
-    []
-  );
-  const annotationsBadgeProps = useSelector((state: RootState) =>
-    selectAnnotationBadgeProps(state, item.id)
+  const getAnnotationCounts = useMemo(makeGetAnnotationCounts, []);
+  const annotationCounts = useSelector(({ annotationReducer }: RootState) =>
+    getAnnotationCounts(annotationReducer, item.id)
   );
 
-  const annotations = Object.keys(annotationsBadgeProps) as Array<
-    keyof AnnotationsBadgeProps
-  >;
-  const reviewDisabled = annotations.some((key) =>
-    ['Queued', 'Running'].includes(annotationsBadgeProps[key]?.status || '')
+  const getAnnotationStatuses = useMemo(makeGetAnnotationStatuses, []);
+  const annotationStatuses = useSelector(({ processSlice }: RootState) =>
+    getAnnotationStatuses(processSlice, item.id)
   );
+
+  const reviewDisabled = isProcessingFile(annotationStatuses);
+
   const fileDetails = useSelector((state: RootState) =>
     selectUpdatedFileDetails(state, String(item.id))
   );
@@ -162,9 +163,12 @@ export const MapPopup = ({
           <Popover
             placement="bottom"
             trigger="mouseenter click"
-            content={AnnotationsBadgePopoverContent(annotationsBadgeProps)}
+            content={AnnotationsBadgePopoverContent(
+              annotationCounts,
+              annotationStatuses
+            )}
           >
-            <>{AnnotationsBadge(annotationsBadgeProps)}</>
+            <>{AnnotationsBadge(annotationCounts, annotationStatuses)}</>
           </Popover>
         </div>
         <div className="review">

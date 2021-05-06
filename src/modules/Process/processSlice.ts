@@ -11,11 +11,9 @@ import { getFakeQueuedJob } from 'src/api/utils';
 import { fileProcessUpdate } from 'src/store/commonActions';
 import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
 import { SaveAvailableAnnotations } from 'src/store/thunks/SaveAvailableAnnotations';
-import { RootState, ThunkConfig } from 'src/store/rootReducer';
+import { ThunkConfig } from 'src/store/rootReducer';
 import isEqual from 'lodash-es/isEqual';
-import { AnnotationsBadgeProps } from 'src/modules/Workflow/types';
-import { selectModelAnnotationCountsByFileId } from 'src/modules/Preview/previewSlice';
-import { createSelectorCreator, defaultMemoize } from 'reselect';
+import { AnnotationsBadgeStatuses } from '../Common/types';
 
 export type JobState = AnnotationJob & {
   fileIds: number[];
@@ -344,10 +342,9 @@ export const selectIsPollingComplete = createSelector(
   }
 );
 
-export const selectJobsStatusesByFileId = createSelector(
-  selectJobsByFileId,
-  (fileJobs) => {
-    const annotationBadgeProps: AnnotationsBadgeProps = {
+export const makeGetAnnotationStatuses = () =>
+  createSelector(selectJobsByFileId, (fileJobs) => {
+    const annotationBadgeProps = {
       tag: {},
       gdpr: {},
       text: {},
@@ -366,41 +363,17 @@ export const selectJobsStatusesByFileId = createSelector(
         annotationBadgeProps.gdpr = statusData;
       }
     });
-    return annotationBadgeProps;
-  }
-);
+    return annotationBadgeProps as AnnotationsBadgeStatuses;
+  });
 
-const createDeepEqualSelector = createSelectorCreator(defaultMemoize, isEqual);
-
-export const makeAnnotationBadgePropsByFileId = () => {
-  return createDeepEqualSelector(
-    (state: RootState, fileId: number) => fileId,
-    (state: RootState, fileId: number) =>
-      selectModelAnnotationCountsByFileId(
-        state.previewSlice,
-        fileId.toString()
-      ),
-    (state: RootState, fileId: number) =>
-      selectJobsStatusesByFileId(state.processSlice, fileId),
-    (fileId, modelAnnotationCounts, modelJobStatuses) => {
-      return {
-        text: {
-          ...modelAnnotationCounts.text,
-          ...modelJobStatuses.text,
-        },
-        tag: {
-          ...modelAnnotationCounts.tag,
-          ...modelJobStatuses.tag,
-        },
-        objects: {
-          ...modelAnnotationCounts.objects,
-          ...modelJobStatuses.objects,
-        },
-        gdpr: {
-          ...modelAnnotationCounts.gdpr,
-          ...modelJobStatuses.gdpr,
-        },
-      };
-    }
+// helpers
+export const isProcessingFile = (
+  annotationStatuses: AnnotationsBadgeStatuses
+) => {
+  const statuses = Object.keys(annotationStatuses) as Array<
+    keyof AnnotationsBadgeStatuses
+  >;
+  return statuses.some((key) =>
+    ['Queued', 'Running'].includes(annotationStatuses[key]?.status || '')
   );
 };

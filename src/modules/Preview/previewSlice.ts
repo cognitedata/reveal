@@ -28,10 +28,7 @@ import { SaveAnnotations } from 'src/store/thunks/SaveAnnotations';
 import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
 import { DeleteAnnotations } from 'src/store/thunks/DeleteAnnotations';
 import { ToastUtils } from 'src/utils/ToastUtils';
-import {
-  AnnotationCounts,
-  AnnotationsBadgeProps,
-} from 'src/modules/Workflow/types';
+
 import { SaveAvailableAnnotations } from 'src/store/thunks/SaveAvailableAnnotations';
 
 export interface VisionAnnotationState extends Omit<VisionAnnotation, 'id'> {
@@ -624,45 +621,6 @@ export const selectVisibleNonRejectAndEditModeAnnotations = createSelector(
   }
 );
 
-export const selectModelAnnotationCountsByFileId = createSelector(
-  annotationsById,
-  selectModelsByFileId,
-  (allAnnotations, modelsByFile) => {
-    const annotationBadgeProps: AnnotationsBadgeProps = {
-      tag: {},
-      gdpr: {},
-      text: {},
-      objects: {},
-    };
-    modelsByFile.forEach((model) => {
-      const annotations: VisionAnnotationState[] = model.annotations.map(
-        (annId) => allAnnotations[annId]
-      );
-
-      if (model.modelType === VisionAPIType.OCR) {
-        annotationBadgeProps.text = generateAnnotationCount(annotations);
-      }
-      if (model.modelType === VisionAPIType.TagDetection) {
-        annotationBadgeProps.tag = generateAnnotationCount(annotations);
-      }
-
-      if (model.modelType === VisionAPIType.ObjectDetection) {
-        const objectNonGDPRAnnotations: VisionAnnotationState[] =
-          annotations.filter((ann) => ann.label !== 'person') || [];
-        const objectGDPRAnnotations: VisionAnnotationState[] =
-          annotations.filter((ann) => ann.label === 'person') || [];
-        annotationBadgeProps.objects = generateAnnotationCount(
-          objectNonGDPRAnnotations
-        );
-        annotationBadgeProps.gdpr = generateAnnotationCount(
-          objectGDPRAnnotations
-        );
-      }
-    });
-    return annotationBadgeProps;
-  }
-);
-
 const createVisionAnnotationState = (
   annotation: VisionAnnotation,
   id: string,
@@ -675,39 +633,4 @@ const createVisionAnnotationState = (
     modelId,
     show,
   };
-};
-
-const generateAnnotationCount = (annotations: VisionAnnotationState[]) => {
-  let [modelGenerated, manuallyGenerated, verified, unhandled, rejected] = [
-    0,
-    0,
-    0,
-    0,
-    0,
-  ];
-
-  annotations.forEach((ann) => {
-    if (ann.source === 'user') {
-      manuallyGenerated++;
-    } else {
-      modelGenerated++;
-    }
-    if (ann.status === AnnotationStatus.Verified) {
-      verified++;
-    }
-    if (ann.status === AnnotationStatus.Unhandled) {
-      unhandled++;
-    }
-    if (ann.status === AnnotationStatus.Rejected) {
-      rejected++;
-    }
-  });
-
-  return {
-    modelGenerated,
-    manuallyGenerated,
-    verified,
-    unhandled,
-    rejected,
-  } as AnnotationCounts;
 };

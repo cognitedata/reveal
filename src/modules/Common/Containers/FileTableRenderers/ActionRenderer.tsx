@@ -1,12 +1,14 @@
 import React, { useMemo } from 'react';
-import { makeAnnotationBadgePropsByFileId } from 'src/modules/Process/processSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { Button, Dropdown, Menu, Popconfirm } from '@cognite/cogs.js';
-import { AnnotationsBadgeProps } from 'src/modules/Workflow/types';
-import { CellRenderer } from 'src/modules/Common/Types';
+import { CellRenderer } from 'src/modules/Common/types';
 import styled from 'styled-components';
 import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
+import {
+  isProcessingFile,
+  makeGetAnnotationStatuses,
+} from 'src/modules/Process/processSlice';
 
 export const Action = styled.div`
   display: flex;
@@ -15,14 +17,6 @@ export const Action = styled.div`
 
 export function ActionRenderer({ rowData: { menu, id } }: CellRenderer) {
   const dispatch = useDispatch();
-
-  const selectAnnotationBadgeProps = useMemo(
-    makeAnnotationBadgePropsByFileId,
-    []
-  );
-  const annotationsBadgeProps = useSelector((state: RootState) =>
-    selectAnnotationBadgeProps(state, id)
-  );
 
   const handleMetadataEdit = () => {
     if (menu?.showMetadataPreview) {
@@ -41,13 +35,13 @@ export function ActionRenderer({ rowData: { menu, id } }: CellRenderer) {
       menu.onReviewClick(id);
     }
   };
-  const annotations = Object.keys(annotationsBadgeProps) as Array<
-    keyof AnnotationsBadgeProps
-  >;
-  const reviewDisabled = annotations.some((key) =>
-    ['Queued', 'Running'].includes(annotationsBadgeProps[key]?.status || '')
+
+  const getAnnotationStatuses = useMemo(makeGetAnnotationStatuses, []);
+  const annotationStatuses = useSelector(({ processSlice }: RootState) =>
+    getAnnotationStatuses(processSlice, id)
   );
 
+  const reviewDisabled = isProcessingFile(annotationStatuses);
   // todo: bind actions
   const MenuContent = (
     <Menu

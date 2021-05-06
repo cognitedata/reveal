@@ -512,9 +512,7 @@ function UploadControlButtons({
             <Icon
               type="Checkmark"
               style={{ marginRight: '8.7px' }}
-              onMouseOver={() => {
-                console.log('Mouse');
-              }}
+              onMouseOver={() => {}}
             />
             Files uploaded
           </Title>

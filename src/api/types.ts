@@ -22,7 +22,7 @@ export type AnnotationType =
   | 'vision/tagdetection'
   | 'vision/objectdetection';
 export type AnnotationSource =
-  | 'vision/ocr'
+  | 'vision/ocr' // TODO: use contextApi instead?
   | 'vision/tagdetection'
   | 'vision/objectdetection'
   | 'user';

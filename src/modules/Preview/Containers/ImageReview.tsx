@@ -84,8 +84,6 @@ const ImageReview = (props: { fileId: string; drawerMode: number | null }) => {
   }
 
   const handleCreateAnnotation = (annotation: ProposedCogniteAnnotation) => {
-    console.log('created annotation: ', annotation);
-
     if (imagePreviewCreatable) {
       if (drawerMode === AnnotationDrawerMode.AddAnnotation) {
         dispatch(
@@ -109,8 +107,6 @@ const ImageReview = (props: { fileId: string; drawerMode: number | null }) => {
   };
 
   const handleModifyAnnotation = (annotation: any) => {
-    console.log('modified annotation: ', annotation);
-
     if (imagePreviewEditable) {
       dispatch(
         updateAnnotationBoundingBox({

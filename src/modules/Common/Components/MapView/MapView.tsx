@@ -8,7 +8,7 @@ import { RootState } from 'src/store/rootReducer';
 import { selectAllFiles } from 'src/modules/Upload/uploadedFilesSlice';
 import { FileInfo } from '@cognite/sdk';
 import * as MapboxGL from 'mapbox-gl';
-import { TableDataItem } from 'src/modules/Common/Types';
+import { TableDataItem } from 'src/modules/Common/types';
 import { MAPBOX_TOKEN, MAPBOX_MAP_ID } from './constants';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { MapPopup } from './MapPopup';

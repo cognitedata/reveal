@@ -1,36 +1,33 @@
-import { CellRenderer } from 'src/modules/Common/Types';
+import {
+  AnnotationsBadgeStatuses,
+  CellRenderer,
+} from 'src/modules/Common/types';
 import React, { useMemo } from 'react';
-import { makeAnnotationBadgePropsByFileId } from 'src/modules/Process/processSlice';
+import { makeGetAnnotationStatuses } from 'src/modules/Process/processSlice';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { AnnotationsBadgeProps } from 'src/modules/Workflow/types';
 import { TimeDisplay } from '@cognite/data-exploration';
 
 export function StatusRenderer({ rowData: { id } }: CellRenderer) {
-  const selectAnnotationBadgeProps = useMemo(
-    makeAnnotationBadgePropsByFileId,
-    []
-  );
-  const annotationsBadgeProps = useSelector((state: RootState) =>
-    selectAnnotationBadgeProps(state, id)
+  const getAnnotationStatuses = useMemo(makeGetAnnotationStatuses, []);
+  const annotationStatuses = useSelector(({ processSlice }: RootState) =>
+    getAnnotationStatuses(processSlice, id)
   );
 
-  const annotations = Object.keys(annotationsBadgeProps) as Array<
-    keyof AnnotationsBadgeProps
+  const statuses = Object.keys(getAnnotationStatuses) as Array<
+    keyof AnnotationsBadgeStatuses
   >;
 
   if (
-    annotations.some(
-      (key) => annotationsBadgeProps[key]?.status === 'Completed'
-    ) &&
-    !annotations.some((key) =>
-      ['Running', 'Queued'].includes(annotationsBadgeProps[key]?.status || '')
+    statuses.some((key) => annotationStatuses[key]?.status === 'Completed') &&
+    !statuses.some((key) =>
+      ['Running', 'Queued'].includes(annotationStatuses[key]?.status || '')
     )
   ) {
     let statusTime = 0;
-    if (annotations.length) {
+    if (statuses.length) {
       statusTime = Math.max(
-        ...annotations.map((key) => annotationsBadgeProps[key]?.statusTime || 0)
+        ...statuses.map((key) => annotationStatuses[key]?.statusTime || 0)
       );
     }
 
@@ -40,15 +37,11 @@ export function StatusRenderer({ rowData: { id } }: CellRenderer) {
       </div>
     );
   }
-  if (
-    annotations.some((key) => annotationsBadgeProps[key]?.status === 'Running')
-  ) {
+  if (statuses.some((key) => annotationStatuses[key]?.status === 'Running')) {
     return <div style={{ textTransform: 'capitalize' }}>Running</div>;
   }
 
-  if (
-    annotations.some((key) => annotationsBadgeProps[key]?.status === 'Queued')
-  ) {
+  if (statuses.some((key) => annotationStatuses[key]?.status === 'Queued')) {
     return <div style={{ textTransform: 'capitalize' }}>Queued</div>;
   }
 

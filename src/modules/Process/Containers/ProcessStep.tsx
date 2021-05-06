@@ -19,7 +19,7 @@ import {
 import { GridCellProps, GridTable } from '@cognite/data-exploration';
 import styled from 'styled-components';
 import { resetEditHistory } from 'src/modules/FileDetails/fileDetailsSlice';
-import { FileActions, TableDataItem } from 'src/modules/Common/Types';
+import { FileActions, TableDataItem } from 'src/modules/Common/types';
 import {
   selectAllFiles,
   setFileSelectState,
@@ -87,7 +87,6 @@ export default function ProcessStep() {
 
     return <FileTable data={tableData} onRowSelect={handleRowSelect} />;
   };
-  console.log('Re-rendering process page');
   return (
     <>
       <QueryClientProvider client={queryClient}>

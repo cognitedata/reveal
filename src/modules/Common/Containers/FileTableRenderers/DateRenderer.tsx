@@ -1,5 +1,5 @@
 import React from 'react';
-import { CellRenderer } from '../../Types';
+import { CellRenderer } from '../../types';
 
 export function DateRenderer({ rowData: { sourceCreatedTime } }: CellRenderer) {
   const date = sourceCreatedTime ? formatDate(sourceCreatedTime) : 'N/A';

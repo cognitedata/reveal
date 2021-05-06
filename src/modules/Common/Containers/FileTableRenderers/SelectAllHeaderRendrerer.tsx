@@ -1,4 +1,4 @@
-import { CellRenderer } from 'src/modules/Common/Types';
+import { CellRenderer } from 'src/modules/Common/types';
 import React from 'react';
 import {
   selectAllFilesSelected,
