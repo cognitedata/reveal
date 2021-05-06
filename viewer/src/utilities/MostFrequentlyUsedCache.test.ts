@@ -62,4 +62,23 @@ describe('MostFrequentlyUsedCache', () => {
       expect(cache.get(`${i}`)).toBeUndefined();
     }
   });
+
+  test('remove() triggers dispose callback', () => {
+    const disposeCb = jest.fn();
+    const cache = new MostFrequentlyUsedCache<string, string>(10, disposeCb);
+    cache.set('key', 'value');
+    cache.remove('key');
+    expect(disposeCb).toBeCalledWith('value');
+  });
+
+  test('clear() triggers dispose callback for all elements', () => {
+    const disposeCb = jest.fn();
+    const cache = new MostFrequentlyUsedCache<string, string>(10, disposeCb);
+    cache.set('key1', 'value1');
+    cache.set('key2', 'value2');
+    cache.clear();
+    expect(disposeCb).toBeCalledTimes(2);
+    expect(disposeCb).toBeCalledWith('value1');
+    expect(disposeCb).toBeCalledWith('value2');
+  });
 });

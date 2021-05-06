@@ -17,19 +17,16 @@ import { trackError } from '../../../utilities/metrics';
 import { BinaryFileProvider } from '../../../utilities/networking/types';
 import { groupMeshesByNumber } from './groupMeshesByNumber';
 import { MostFrequentlyUsedCache } from '../../../utilities/MostFrequentlyUsedCache';
+import { AutoDisposeGroup } from '../../../utilities/three';
 
 type CtmFileRequest = { blobUrl: string; fileName: string };
 type CtmFileResult = { fileName: string; data: ParseCtmResult };
 
 // TODO: j-bjorne 16-04-2020: REFACTOR FINALIZE INTO SOME OTHER FILE PLEZ!
 export class CachedRepository implements Repository {
-  private readonly _consumedSectorCache: MemoryRequestCache<string, Promise<ConsumedSector>> = new MemoryRequestCache({
-    maxElementsInCache: 50
-  });
-  private readonly _ctmFileCache: MostFrequentlyUsedCache<
-    string,
-    Observable<CtmFileResult>
-  > = new MostFrequentlyUsedCache(10);
+  private readonly _consumedSectorCache: MemoryRequestCache<string, Promise<ConsumedSector>>;
+  private readonly _ctmFileCache: MostFrequentlyUsedCache<string, Observable<CtmFileResult>>;
+
   private readonly _modelSectorProvider: BinaryFileProvider;
   private readonly _modelDataParser: CadSectorParser;
   private readonly _modelDataTransformer: SimpleAndDetailedToSector3D;
@@ -45,6 +42,15 @@ export class CachedRepository implements Repository {
     this._modelDataParser = modelDataParser;
     this._modelDataTransformer = modelDataTransformer;
     this._concurrentCtmRequests = concurrentCtmRequest;
+
+    this._consumedSectorCache = new MemoryRequestCache(50, async consumedSector => {
+      const sector = await consumedSector;
+      if (sector.group !== undefined) {
+        // Dereference so GPU resources can be cleaned up if geomety isn't used anymore
+        sector.group.dereference();
+      }
+    });
+    this._ctmFileCache = new MostFrequentlyUsedCache(10);
   }
 
   clear() {
@@ -65,12 +71,16 @@ export class CachedRepository implements Repository {
       case LevelOfDetail.Detailed: {
         const loadOperation = this.loadDetailedSectorFromNetwork(sector).toPromise();
         this._consumedSectorCache.forceInsert(cacheKey, loadOperation);
+        // Increase reference count to avoid geometry from being disposed
+        loadOperation.then(x => x.group?.reference());
         return loadOperation;
       }
 
       case LevelOfDetail.Simple: {
         const loadOperation = this.loadSimpleSectorFromNetwork(sector).toPromise();
         this._consumedSectorCache.forceInsert(cacheKey, loadOperation);
+        // Increase reference count to avoid geometry from being disposed
+        loadOperation.then(x => x.group?.reference());
         return loadOperation;
       }
 
@@ -110,8 +120,8 @@ export class CachedRepository implements Repository {
   private nameGroup(
     wantedSector: WantedSector
   ): OperatorFunction<
-    { sectorMeshes: THREE.Group; instancedMeshes: InstancedMeshFile[] },
-    { sectorMeshes: THREE.Group; instancedMeshes: InstancedMeshFile[] }
+    { sectorMeshes: AutoDisposeGroup; instancedMeshes: InstancedMeshFile[] },
+    { sectorMeshes: AutoDisposeGroup; instancedMeshes: InstancedMeshFile[] }
   > {
     return tap(group => {
       group.sectorMeshes.name = `Quads ${wantedSector.metadata.id}`;
