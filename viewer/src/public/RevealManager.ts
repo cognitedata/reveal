@@ -23,6 +23,11 @@ import { EventTrigger } from '../utilities/events';
 
 /* eslint-disable jsdoc/require-jsdoc */
 
+export type AddCadModelOptions = {
+  nodeAppearanceProvider?: NodeAppearanceProvider;
+  geometryFilter?: GeometryFilter;
+};
+
 export class RevealManager<TModelIdentifier> {
   private readonly _cadManager: CadManager<TModelIdentifier>;
   private readonly _pointCloudManager: PointCloudManager<TModelIdentifier>;
@@ -181,41 +186,29 @@ export class RevealManager<TModelIdentifier> {
     this._effectRenderManager.setRenderTargetAutoSize(autoSetTargetSize);
   }
 
-  public addModel(
-    type: 'cad',
-    modelIdentifier: TModelIdentifier,
-    nodeAppearanceProvider?: NodeAppearanceProvider,
-    geometryFilter?: GeometryFilter
-  ): Promise<CadNode>;
+  public addModel(type: 'cad', modelIdentifier: TModelIdentifier, options?: AddCadModelOptions): Promise<CadNode>;
   public addModel(type: 'pointcloud', modelIdentifier: TModelIdentifier): Promise<PointCloudNode>;
   public async addModel(
     type: SupportedModelTypes,
     modelIdentifier: TModelIdentifier,
-    nodeAppearanceProvider?: NodeAppearanceProvider,
-    geometryFilter?: GeometryFilter
+    options?: AddCadModelOptions
   ): Promise<PointCloudNode | CadNode> {
     trackLoadModel(
       {
         moduleName: 'RevealManager',
         methodName: 'addModel',
         type,
-        options: { nodeAppearanceProvider }
+        options
       },
       modelIdentifier
     );
 
     switch (type) {
       case 'cad': {
-        return this._cadManager.addModel(modelIdentifier, geometryFilter, nodeAppearanceProvider);
+        return this._cadManager.addModel(modelIdentifier, options?.geometryFilter, options?.nodeAppearanceProvider);
       }
 
       case 'pointcloud': {
-        if (geometryFilter !== undefined) {
-          throw new Error('geometryFilter not supported for point clouds');
-        }
-        if (nodeAppearanceProvider !== undefined) {
-          throw new Error('nodeApperanceProvider not supported for point clouds');
-        }
         return this._pointCloudManager.addModel(modelIdentifier);
       }
 

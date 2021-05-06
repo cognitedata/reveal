@@ -480,8 +480,9 @@ export class Cognite3DViewer {
         modelId,
         revisionId
       },
-      undefined,
-      geometryFilter
+      {
+        geometryFilter
+      }
     );
 
     const model3d = new Cognite3DModel(modelId, revisionId, cadNode, this.sdkClient);
