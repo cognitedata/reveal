@@ -160,19 +160,15 @@ describe('parseCadMetadataV8', () => {
 
     expect(sector0).toBeDefined();
     expect(sector0!.children.map(x => x.id).sort()).toEqual([1, 2]);
-    expect(sector0!.parent).toBeUndefined();
 
     expect(sector1).toBeDefined();
     expect(sector1!.children.map(x => x.id)).toEqual([3]);
-    expect(sector1!.parent).toBe(sector0);
 
     expect(sector2).toBeDefined();
     expect(sector2!.children).toBeEmpty();
-    expect(sector2!.parent).toBe(sector0);
 
     expect(sector3).toBeDefined();
     expect(sector3!.children).toBeEmpty();
-    expect(sector3!.parent).toBe(sector1);
   });
 
   test('Single sector without facesFile, creates dummy faces section', () => {
