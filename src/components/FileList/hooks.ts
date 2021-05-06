@@ -7,6 +7,7 @@ import {
   listAnnotationsForFile,
   listFilesAnnotatedWithAssetId,
 } from '@cognite/annotations';
+import unionBy from 'lodash/unionBy';
 
 export const useAssetAnnotations = (file?: File) => {
   const sdk = useSDK();
@@ -27,7 +28,20 @@ export const useFilesAssetAppearsIn = (asset?: Asset, enabled = true) => {
   return useQuery<File[]>(
     ['annotated-files', { assetId: asset?.id }],
     async () => {
-      return listFilesAnnotatedWithAssetId(sdk, asset!);
+      const annotatedFiles = await listFilesAnnotatedWithAssetId(sdk, asset!);
+
+      const linkedSvgs = await sdk.files.list({
+        filter: { assetIds: [asset?.id!], mimeType: 'image/svg+xml' },
+      });
+      const linkedPdfs = await sdk.files.list({
+        filter: { assetIds: [asset?.id!], mimeType: 'application/pdf' },
+      });
+
+      return unionBy(
+        annotatedFiles,
+        [...linkedSvgs.items, ...linkedPdfs.items],
+        'id'
+      );
     },
     { enabled: !!asset && enabled }
   );
