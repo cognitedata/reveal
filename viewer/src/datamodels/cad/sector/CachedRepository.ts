@@ -143,7 +143,6 @@ export class CachedRepository implements Repository {
         shareReplay(1),
         take(1)
       );
-    /*);*/
     return networkObservable;
   }
 
