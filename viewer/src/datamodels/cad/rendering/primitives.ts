@@ -31,7 +31,7 @@ export function* createPrimitives(
   sector: SectorGeometry,
   materials: Materials,
   sectorBounds: THREE.Box3,
-  geometryClipBox: THREE.Box3 | null
+  geometryClipBox: THREE.Box3 | null = null
 ) {
   const primitives = sector.primitives;
   if (hasAny(primitives.boxCollection)) {
