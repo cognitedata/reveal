@@ -38,12 +38,6 @@ export class ModelStateHandler {
   }
 
   updateState(consumedSector: ConsumedSector) {
-    if (consumedSector === undefined) {
-      debugger;
-    }
-    if (this._sceneModelState === undefined || this._sceneModelState[consumedSector.blobUrl] === undefined) {
-      debugger;
-    }
     assert(
       this._sceneModelState[consumedSector.blobUrl] !== undefined,
       `Received sector from model ${consumedSector.blobUrl}, but the model is not added`
