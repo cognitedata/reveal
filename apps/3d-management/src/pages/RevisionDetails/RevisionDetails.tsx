@@ -296,14 +296,14 @@ export default function RevisionDetails(props: Props) {
               disabled={!hasUpdateCapabilities || updateInProgress}
               onClick={switchRevisionPublication}
               className="left-button"
-              type={revision && revision.published ? 'danger' : 'primary'}
+              type={revision && revision.published ? 'secondary' : 'primary'}
             >
-              {revision.published ? 'Unpublish' : 'Publish Now!'}
+              {revision.published ? 'Unpublish' : 'Publish'}
             </Button>
           </PermissioningHintWrapper>
           <PermissioningHintWrapper hasPermission={hasDeleteCapabilities}>
             <Button
-              type="danger"
+              type="ghost-danger"
               disabled={!hasDeleteCapabilities || deletionInProgress}
               className="left-button"
               onClick={showDeletionModal}
