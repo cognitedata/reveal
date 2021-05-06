@@ -313,19 +313,20 @@ export default function TimeSeriesRow({
     [chart, mutate, timeseries]
   );
 
-  const newDates =
-    prevDateFromTo &&
-    prevDateFromTo.dateFrom !== dateFrom &&
-    prevDateFromTo.dateTo !== dateTo;
+  const datesChanged =
+    (prevDateFromTo && prevDateFromTo.dateFrom !== dateFrom) ||
+    (prevDateFromTo && prevDateFromTo.dateTo !== dateTo);
 
   useEffect(() => {
-    if (!newDates && statisticsForSource) {
-      return;
+    if (!datesChanged) {
+      if (statisticsForSource) {
+        return;
+      }
+      if (statisticsCall && !callStatusError) {
+        return;
+      }
     }
-    if (!newDates && statisticsCall && !callStatusError) {
-      return;
-    }
-    console.log({ dateFrom, dateTo });
+
     callFunction(
       {
         data: {
@@ -364,7 +365,7 @@ export default function TimeSeriesRow({
     statisticsCall,
     callStatus,
     callStatusError,
-    newDates,
+    datesChanged,
   ]);
 
   return (
