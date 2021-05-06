@@ -6,12 +6,7 @@ import * as THREE from 'three';
 
 export type AxisBoxConfig = {
   size?: number;
-  position?:
-    | {
-        corner: Corner;
-        padding: THREE.Vector2;
-      }
-    | { xAbsolute: number; yAbsolute: number };
+  position?: Absolute | Relative;
   faces?: {
     xPositiveFace?: AxisBoxFaceConfig;
     xNegativeFace?: AxisBoxFaceConfig;
@@ -21,6 +16,16 @@ export type AxisBoxConfig = {
     zNegativeFace?: AxisBoxFaceConfig;
   };
   compass?: AxisBoxCompassConfig;
+};
+
+export type Absolute = {
+  xAbsolute: number;
+  yAbsolute: number;
+};
+
+export type Relative = {
+  corner: Corner;
+  padding: THREE.Vector2;
 };
 
 export type AxisBoxFaceConfig = {
@@ -50,16 +55,16 @@ export enum Corner {
 export const defaultAxisBoxCompassConfig: AxisBoxCompassConfig = {
   ringLabel: 'N',
   labelDelta: Math.PI,
-  fontSize: 32,
+  fontSize: undefined,
   fontColor: new THREE.Color(0xff0000),
   tickColor: new THREE.Color(0x949494)
 };
 
 export const defaultFaceConfig: AxisBoxFaceConfig = {
   label: '',
-  fontSize: 48,
+  fontSize: undefined,
   fontColor: new THREE.Color(0x333333),
-  outlineSize: 8,
+  outlineSize: undefined,
   outlineColor: new THREE.Color(0x333333),
   faceColor: new THREE.Color(0x949494)
 };

@@ -16,7 +16,6 @@ import { SsaoSampleQuality } from '../../../public/types';
 import { WebGLRendererStateHelper } from '../../../utilities/WebGLRendererStateHelper';
 import { SectorNode } from '../sector/SectorNode';
 import { LevelOfDetail } from '../sector/LevelOfDetail';
-import { BufferAttribute } from 'three';
 
 export class EffectRenderManager {
   private readonly _materialManager: CadMaterialManager;
@@ -676,17 +675,16 @@ export class EffectRenderManager {
       const renderSize = renderer.getSize(new THREE.Vector2());
       const canvasSize = new THREE.Vector2(renderer.domElement.clientWidth, renderer.domElement.clientHeight);
 
-      const downSampleFactor = (canvasSize.x / renderSize.x + canvasSize.y / renderSize.y) / 2.0;
+      const downSampleFactor = new THREE.Vector2(renderSize.x / canvasSize.x, renderSize.y / canvasSize.y);
 
-      const origClear = renderer.getClearColor(new THREE.Color());
       renderer.autoClear = false;
       this._uiObjects.forEach(uiObject => {
         const renderScene = new THREE.Scene();
         renderScene.add(uiObject.objectGroup);
 
-        const viewportRenderPos = uiObject.screenPos.clone().divideScalar(downSampleFactor);
-        const viewportRenderWidth = uiObject.width / downSampleFactor;
-        const viewportRenderHeight = uiObject.height / downSampleFactor;
+        const viewportRenderPos = uiObject.screenPos.clone().multiply(downSampleFactor);
+        const viewportRenderWidth = uiObject.width * downSampleFactor.x;
+        const viewportRenderHeight = uiObject.height * downSampleFactor.y;
 
         renderer.setViewport(viewportRenderPos.x, viewportRenderPos.y, viewportRenderWidth, viewportRenderHeight);
         renderer.clearDepth();
@@ -695,7 +693,6 @@ export class EffectRenderManager {
 
       renderer.setViewport(0, 0, renderSize.x, renderSize.y);
       renderer.autoClear = true;
-      renderer.setClearColor(origClear);
     }
   }
 
@@ -799,8 +796,8 @@ export class EffectRenderManager {
     const vertices = new Float32Array([-1, -1, 0, 3, -1, 0, -1, 3, 0]);
     const uvs = new Float32Array([0, 0, 2, 0, 0, 2]);
 
-    geometry.setAttribute('position', new BufferAttribute(vertices, 3));
-    geometry.setAttribute('uv', new BufferAttribute(uvs, 2));
+    geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+    geometry.setAttribute('uv', new THREE.BufferAttribute(uvs, 2));
 
     return geometry;
   }

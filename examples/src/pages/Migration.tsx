@@ -275,9 +275,6 @@ export function Migration() {
         debugStatsGui.updateDisplay();
       });
 
-      new AxisViewTool(viewer, {faces: {yPositiveFace: {faceColor: new THREE.Color('red')}}, position: {xAbsolute: 128, yAbsolute: 0}});
-      new AxisViewTool(viewer, {faces: {yPositiveFace: {faceColor: new THREE.Color('red')}}});
-      
       const debugSectorsGui = debugGui.addFolder('Loaded sectors');
 
       debugSectorsGui.add(guiState.debug.loadedSectors.options, 'colorBy', ['lod', 'depth', 'loadedTimestamp']).name('Color by');
@@ -475,9 +472,13 @@ export function Migration() {
 
       assetExplode.add(explodeActions, 'reset').name('Reset');
 
+      const axisViewTool = new AxisViewTool(viewer);
       viewer.on('click', async event => {
         const { offsetX, offsetY } = event;
         console.log('2D coordinates', event);
+
+        if(axisViewTool.tryClick(event.offsetX, event.offsetY)) return;
+
         const intersection = viewer.getIntersectionFromPixel(offsetX, offsetY);
         if (intersection !== null) {
           console.log(intersection);
