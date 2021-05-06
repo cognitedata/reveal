@@ -1,13 +1,15 @@
 import React, { FunctionComponent, PropsWithoutRef } from 'react';
 import { AutoComplete, Colors, Loader } from '@cognite/cogs.js';
 import { useFormContext } from 'react-hook-form';
-import { ErrorMessage } from '@hookform/error-message';
 import styled from 'styled-components';
 import { MutationStatus } from 'react-query';
 import { DataSet, ListResponse } from '@cognite/sdk';
 import { DataSetSelectOption } from 'components/inputs/dataset/DataSetSelectOption';
 import { InputController } from 'components/inputs/InputController';
-import { Hint, StyledLabel } from 'styles/StyledForm';
+import { Hint } from 'styles/StyledForm';
+import ValidationError from 'components/form/ValidationError';
+import { TableHeadings } from 'components/table/IntegrationTableCol';
+import { DATA_SET_ID_HINT } from 'utils/constants';
 
 const StyledAutoComplete = styled(AutoComplete)`
   width: 50%;
@@ -25,27 +27,20 @@ const StyledAutoComplete = styled(AutoComplete)`
   }
 `;
 
-export const DATA_SET_ID_LABEL: Readonly<string> = 'Data set';
-export const DATA_SET_ID_TIP: Readonly<string> =
-  'Type in the name or id of your data set';
-export const DATA_SET_ID_REQUIRED: Readonly<string> = 'Data set is required';
-
 interface DataSetIdPageProps {
   data?: ListResponse<DataSet[]>;
   renderLabel?: (labelText: string, inputId: string) => React.ReactNode;
   status: 'error' | 'success' | 'loading' | 'idle';
+  autoFocus?: boolean;
 }
 
 export const DATASET_LIST_LIMIT: Readonly<number> = 500;
-type SelectOption = { value: number; label?: string };
+export type SelectOption = { value: number; label?: string };
 const DataSetIdInput: FunctionComponent<DataSetIdPageProps> = ({
   data,
   status,
-  renderLabel = (labelText, inputId) => (
-    <StyledLabel id="data-set-id-label" htmlFor={inputId}>
-      {labelText}
-    </StyledLabel>
-  ),
+  renderLabel,
+  autoFocus = false,
 }: PropsWithoutRef<DataSetIdPageProps>) => {
   const { setValue, errors, watch, control } = useFormContext();
   const storedValue = parseInt(watch('dataSetId'), 10);
@@ -101,25 +96,18 @@ const DataSetIdInput: FunctionComponent<DataSetIdPageProps> = ({
         }
         onChange={handleSelectChange}
         data-testid="dataset-select"
+        autoFocus={autoFocus}
       />
     );
   };
 
   return (
     <>
-      {renderLabel(DATA_SET_ID_LABEL, 'data-set-id-input')}
+      {renderLabel && renderLabel(TableHeadings.DATA_SET, 'data-set-id-input')}
       <Hint id="data-set-id-hint" className="input-hint">
-        {DATA_SET_ID_TIP}
+        {DATA_SET_ID_HINT}
       </Hint>
-      <ErrorMessage
-        errors={errors}
-        name="dataSetId"
-        render={({ message }) => (
-          <span id="data-set-id-error" className="error-message">
-            {message}
-          </span>
-        )}
-      />
+      <ValidationError errors={errors} name="dataSetId" />
       {renderInput(status, options, selectedValue)}
     </>
   );

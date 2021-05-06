@@ -2,6 +2,7 @@ import * as yup from 'yup';
 import { SupportedScheduleStrings } from 'components/integrations/cols/Schedule';
 import { CRON_REQUIRED, cronValidator } from 'utils/validation/cronValidation';
 import { RawTableOptions } from 'pages/create/RawTablePage';
+import { DataSetOptions } from 'pages/create/DataSetPage';
 
 export const NAME_REQUIRED: Readonly<string> = 'Integration name is required';
 export const MAX_DESC_LENGTH: Readonly<number> = 500;
@@ -121,3 +122,16 @@ export const sourceRule = {
       `Source can only contain ${MAX_INPUT_LENGTH} characters`
     ),
 };
+
+export const DATA_SET_REQUIRED: Readonly<string> = 'Data set is required';
+export const datasetSchema = yup.object().shape({
+  dataset: yup.string().required(DATA_SET_REQUIRED),
+  dataSetId: yup.string().when('dataset', {
+    is: (val: DataSetOptions) => val === DataSetOptions.YES,
+    then: yup.string().required(DATA_SET_REQUIRED),
+  }),
+});
+
+export const dataSetIdSchema = yup.object().shape({
+  dataSetId: yup.number().required(DATA_SET_REQUIRED),
+});

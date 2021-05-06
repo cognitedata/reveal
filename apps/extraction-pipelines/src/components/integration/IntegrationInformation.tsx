@@ -14,6 +14,7 @@ import { FieldVerticalDisplay } from 'components/integration/fields/FieldVertica
 import EditRawTable from 'components/inputs/rawSelector/EditRawTable';
 import { ContactsView } from 'components/integration/ContactsView';
 import { MetaData } from 'components/integration/MetaData';
+import { EditDataSetId } from 'components/integration/edit/EditDataSetId';
 
 const Wrapper = styled.div`
   padding: 2rem;
@@ -49,6 +50,7 @@ export const IntegrationInformation: FunctionComponent<IntegrationInformationPro
         fieldName="id"
         fieldValue={integration?.id}
       />
+      <EditDataSetId />
       <EditRawTable />
       <InlineEdit
         name="source"

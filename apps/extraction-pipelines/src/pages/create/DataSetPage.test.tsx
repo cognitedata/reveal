@@ -14,10 +14,6 @@ import {
 import { useDataSetsList } from 'hooks/useDataSetsList';
 import { datasetMockResponse } from 'utils/mockResponse';
 import { BACK, NEXT } from 'utils/constants';
-import {
-  DATA_SET_ID_LABEL,
-  DATA_SET_ID_REQUIRED,
-} from 'pages/create/DataSetIdInput';
 import DataSetPage, {
   CREATE_DATA_SET_LABEL,
   DATA_SET_TIP,
@@ -26,6 +22,8 @@ import DataSetPage, {
 } from 'pages/create/DataSetPage';
 import { RegisterIntegrationInfo } from 'model/Integration';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
+import { DATA_SET_REQUIRED } from 'utils/validation/integrationSchemas';
+import { TableHeadings } from 'components/table/IntegrationTableCol';
 
 jest.mock('hooks/useDataSetsList', () => {
   return {
@@ -74,9 +72,9 @@ describe('DatasetPage', () => {
     });
     fireEvent.click(yesOption);
     await waitFor(() => {
-      screen.getByLabelText(DATA_SET_ID_LABEL);
+      screen.getByLabelText(TableHeadings.DATA_SET);
     });
-    const dataSetIdInput = screen.getByLabelText(DATA_SET_ID_LABEL);
+    const dataSetIdInput = screen.getByLabelText(TableHeadings.DATA_SET);
     expect(dataSetIdInput).toBeInTheDocument();
     fireEvent.click(dataSetIdInput);
     fireEvent.keyDown(dataSetIdInput, { key: 'Down', code: 'ArrowDown' });
@@ -87,9 +85,9 @@ describe('DatasetPage', () => {
     expect(screen.queryByText(mock.items[0].name)).not.toBeInTheDocument();
     fireEvent.click(screen.getByText(NEXT));
     await waitFor(() => {
-      screen.getByText(DATA_SET_ID_REQUIRED);
+      screen.getByText(DATA_SET_REQUIRED);
     });
-    expect(screen.getByText(DATA_SET_ID_REQUIRED)).toBeInTheDocument();
+    expect(screen.getByText(DATA_SET_REQUIRED)).toBeInTheDocument();
   });
   test('Back btn path', () => {
     const mock = datasetMockResponse();
@@ -140,7 +138,7 @@ describe('DatasetPage', () => {
     expect(screen.getByLabelText(DataSetOptions.NO)).not.toBeChecked();
     expect(screen.getByLabelText(CREATE_DATA_SET_LABEL)).not.toBeChecked();
 
-    const dataSetIdInput = screen.queryByText(DATA_SET_ID_LABEL);
+    const dataSetIdInput = screen.queryByText(TableHeadings.DATA_SET);
     expect(dataSetIdInput).not.toBeInTheDocument();
   });
 

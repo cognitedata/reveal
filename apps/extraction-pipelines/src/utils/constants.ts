@@ -72,8 +72,9 @@ export const DETAILS: Readonly<string> = 'Details';
 export const RUNS: Readonly<string> = 'Runs';
 export const CONTACTS: Readonly<string> = 'Contacts';
 
-// General information
-export const GENERAL_INFO_HEADING: Readonly<string> = 'General Info';
+// Data set
+export const DATA_SET_ID_HINT: Readonly<string> =
+  'Type in the name or id of your data set';
 
 // Documentation
 export const DOCUMENTATION_HEADING: Readonly<string> = 'Documentation';
@@ -98,3 +99,10 @@ export const SEARCH: Readonly<string> = 'Search'; // + query
 export const SINGLE_INTEGRATION: Readonly<string> = 'Integration.Details'; // + id
 export const SINGLE_INTEGRATION_RUNS: Readonly<string> = 'Integration.Runs'; // + id
 export const SORT: Readonly<string> = 'Sort'; // + field
+
+export const BtnTestIds = {
+  EDIT_BTN: 'edit-btn-',
+  REMOVE_BTN: 'remove-btn-',
+  CANCEL_BTN: 'cancel-btn-',
+  SAVE_BTN: 'save-btn-',
+};

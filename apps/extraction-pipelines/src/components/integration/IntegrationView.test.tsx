@@ -65,6 +65,10 @@ describe('IntegrationView', () => {
       screen.getByText(new RegExp(DetailFieldNames.ID, 'i'))
     ).toBeInTheDocument();
     expect(screen.getByText(mockIntegration.id)).toBeInTheDocument();
+    expect(
+      screen.getByText(new RegExp(TableHeadings.DATA_SET, 'i'))
+    ).toBeInTheDocument();
+    expect(screen.getByText(mockDataSet.name)).toBeInTheDocument();
 
     expect(screen.getByText(new RegExp(RAW_DB, 'i'))).toBeInTheDocument();
     // eslint-disable-next-line no-unused-expressions
@@ -112,5 +116,6 @@ describe('IntegrationView', () => {
     expect(screen.getByText(NO_SCHEDULE)).toBeInTheDocument();
     expect(screen.getByText(/add raw tables/i)).toBeInTheDocument();
     expect(screen.getByText(/add schedule/i)).toBeInTheDocument();
+    expect(screen.getByText(/add data set/i)).toBeInTheDocument();
   });
 });

@@ -21,7 +21,12 @@ const LinkWithCopy: FunctionComponent<Props> = ({
 }: OwnProps) => {
   return (
     <>
-      <StyledLink href={href} target="_blank" {...rest}>
+      <StyledLink
+        href={href}
+        target="_blank"
+        onClick={(e: React.MouseEvent) => e.stopPropagation()}
+        {...rest}
+      >
         {linkText}
       </StyledLink>
       <InteractiveCopy text={copyText} copyType={copyType} />

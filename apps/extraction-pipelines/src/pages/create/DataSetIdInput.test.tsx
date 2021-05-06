@@ -1,11 +1,10 @@
 import React from 'react';
 import { fireEvent, screen } from '@testing-library/react';
 import { renderWithReactHookForm } from 'utils/test/render';
-import DataSetIdInput, {
-  DATA_SET_ID_LABEL,
-  DATA_SET_ID_TIP,
-} from 'pages/create/DataSetIdInput';
 import { datasetMockResponse } from 'utils/mockResponse';
+import { TableHeadings } from 'components/table/IntegrationTableCol';
+import { DATA_SET_ID_HINT } from 'utils/constants';
+import DataSetIdInput from 'pages/create/DataSetIdInput';
 
 jest.mock('hooks/useDataSetsList', () => {
   return {
@@ -15,18 +14,30 @@ jest.mock('hooks/useDataSetsList', () => {
 describe('RawTablePage', () => {
   test('Renders', () => {
     renderWithReactHookForm(
-      <DataSetIdInput data={{ items: [] }} status="success" />,
+      <DataSetIdInput
+        data={{ items: [] }}
+        status="success"
+        renderLabel={(labelText, inputId) => (
+          <label htmlFor={inputId}>{labelText}</label>
+        )}
+      />,
       { defaultValues: {} }
     );
-    expect(screen.getByText(DATA_SET_ID_LABEL)).toBeInTheDocument();
-    expect(screen.getByText(DATA_SET_ID_TIP)).toBeInTheDocument();
+    expect(screen.getByText(TableHeadings.DATA_SET)).toBeInTheDocument();
+    expect(screen.getByText(DATA_SET_ID_HINT)).toBeInTheDocument();
   });
   test('Renders - "backup"-input on error', () => {
     renderWithReactHookForm(
-      <DataSetIdInput data={{ items: [] }} status="error" />,
+      <DataSetIdInput
+        data={{ items: [] }}
+        status="error"
+        renderLabel={(labelText, inputId) => (
+          <label htmlFor={inputId}>{labelText}</label>
+        )}
+      />,
       { defaultValues: {} }
     );
-    const datasetInput = screen.getByLabelText(DATA_SET_ID_LABEL);
+    const datasetInput = screen.getByLabelText(TableHeadings.DATA_SET);
     expect(datasetInput).toBeInTheDocument();
     const inputValue = 'my data set';
     fireEvent.change(datasetInput, { target: { value: inputValue } });

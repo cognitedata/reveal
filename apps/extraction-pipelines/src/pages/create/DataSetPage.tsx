@@ -1,8 +1,7 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { Colors, Radio } from '@cognite/cogs.js';
 import { useHistory } from 'react-router-dom';
-import { useForm, FormProvider } from 'react-hook-form';
-import * as yup from 'yup';
+import { FormProvider, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ErrorMessage } from '@hookform/error-message';
 import styled from 'styled-components';
@@ -11,7 +10,7 @@ import { ButtonPlaced } from 'styles/StyledButton';
 import { RegisterIntegrationLayout } from 'components/layout/RegisterIntegrationLayout';
 import { GridH2Wrapper } from 'styles/StyledPage';
 import { NEXT } from 'utils/constants';
-import { CreateFormWrapper } from 'styles/StyledForm';
+import { CreateFormWrapper, StyledLabel } from 'styles/StyledForm';
 import { INTEGRATIONS_OVERVIEW_PAGE_PATH } from 'routing/RoutingConfig';
 import {
   RAW_TABLE_PAGE_PATH,
@@ -19,7 +18,6 @@ import {
 } from 'routing/CreateRouteConfig';
 import { DivFlex } from 'styles/flex/StyledFlex';
 import DataSetIdInput, {
-  DATA_SET_ID_REQUIRED,
   DATASET_LIST_LIMIT,
 } from 'pages/create/DataSetIdInput';
 import { useStoredRegisterIntegration } from 'hooks/useStoredRegisterIntegration';
@@ -30,6 +28,7 @@ import {
   createUpdateSpec,
 } from 'hooks/details/useDetailsUpdate';
 import { useAppEnv } from 'hooks/useAppEnv';
+import { datasetSchema } from 'utils/validation/integrationSchemas';
 
 const DataSetIdWrapper = styled(DivFlex)`
   margin: 1rem 2rem;
@@ -59,14 +58,6 @@ export const INTEGRATION_DATA_SET_HEADING: Readonly<string> =
   'Integration data set';
 export const DATA_SET_TIP: Readonly<string> =
   'The data your integration sends to CDF can be linked to a data set.';
-export const DATA_SET_REQUIRED: Readonly<string> = 'Data set is required';
-const datasetSchema = yup.object().shape({
-  dataset: yup.string().required(DATA_SET_REQUIRED),
-  dataSetId: yup.string().when('dataset', {
-    is: (val: DataSetOptions) => val === DataSetOptions.YES,
-    then: yup.string().required(DATA_SET_ID_REQUIRED),
-  }),
-});
 
 interface DataSetPageProps {}
 
@@ -192,7 +183,15 @@ const DataSetPage: FunctionComponent<DataSetPageProps> = () => {
                 direction="column"
                 align="flex-start"
               >
-                <DataSetIdInput data={data} status={status} />
+                <DataSetIdInput
+                  data={data}
+                  status={status}
+                  renderLabel={(labelText, inputId) => (
+                    <StyledLabel id="data-set-id-label" htmlFor={inputId}>
+                      {labelText}
+                    </StyledLabel>
+                  )}
+                />
               </DataSetIdWrapper>
             )}
             <Radio
