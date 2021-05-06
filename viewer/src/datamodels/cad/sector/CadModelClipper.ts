@@ -26,8 +26,8 @@ export class CadModelClipper {
 
     // Create a new clipped scene
     const sectorMap = new Map<number, SectorMetadata>();
-    traverseDepthFirst(newRoot, x => {
-      sectorMap.set(x.id, x);
+    traverseDepthFirst(newRoot, sector => {
+      sectorMap.set(sector.id, sector);
       return true;
     });
     const clippedScene = new SectorSceneImpl(
