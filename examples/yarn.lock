@@ -1214,7 +1214,7 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@cognite/potree-core@^1.1.3", "@cognite/potree-core@^1.1.6":
+"@cognite/potree-core@^1.1.6":
   version "1.1.6"
   resolved "https://registry.yarnpkg.com/@cognite/potree-core/-/potree-core-1.1.6.tgz#26434a4070d1bb2afcb18912b42471d5b123a477"
   integrity sha512-9mR9r/Xb7q87FSMxvnCDXKlu+jeFS9dhDVjH8lN9vQUBZEwjP7A8jo4uvCtxEUdnWjuOCVhB0Y/iqpp8Vk9vmg==
