@@ -37,6 +37,8 @@ export function consumeSectorSimple(
   materials: Materials
 ): { sectorMeshes: AutoDisposeGroup; instancedMeshes: InstancedMeshFile[] } {
   const group = new AutoDisposeGroup();
+  group.name = 'Quads';
+
   const stride = 3 + 1 + 3 + 16;
   if (sector.buffer.byteLength === 0) {
     // No data, just skip
