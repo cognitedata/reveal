@@ -67,20 +67,23 @@ export class CachedRepository implements Repository {
       return this._consumedSectorCache.get(cacheKey);
     }
 
+    async function waitAndReference(operation: Promise<ConsumedSector>): Promise<ConsumedSector> {
+      const consumed = await operation;
+      consumed.group?.reference();
+      return consumed;
+    }
+
     switch (sector.levelOfDetail) {
       case LevelOfDetail.Detailed: {
         const loadOperation = this.loadDetailedSectorFromNetwork(sector).toPromise();
         this._consumedSectorCache.forceInsert(cacheKey, loadOperation);
-        loadOperation.then(x => x.group?.reference());
-        return loadOperation;
+        return waitAndReference(loadOperation);
       }
 
       case LevelOfDetail.Simple: {
         const loadOperation = this.loadSimpleSectorFromNetwork(sector).toPromise();
         this._consumedSectorCache.forceInsert(cacheKey, loadOperation);
-        // Increase reference count to avoid geometry from being disposed
-        loadOperation.then(x => x.group?.reference());
-        return loadOperation;
+        return waitAndReference(loadOperation);
       }
 
       case LevelOfDetail.Discarded:
@@ -129,20 +132,18 @@ export class CachedRepository implements Repository {
   }
 
   private loadSimpleSectorFromNetwork(wantedSector: WantedSector): Observable<ConsumedSector> {
-    const networkObservable: Observable<ConsumedSector> =
-      /*onErrorResumeNext(*/
-      defer(() =>
-        this._modelSectorProvider.getBinaryFile(wantedSector.blobUrl, wantedSector.metadata.facesFile.fileName!)
-      ).pipe(
-        this.catchWantedSectorError(wantedSector, 'loadSimpleSectorFromNetwork'),
-        mergeMap(buffer => this._modelDataParser.parseF3D(new Uint8Array(buffer))),
-        map(sectorQuads => ({ ...wantedSector, data: sectorQuads })),
-        map(parsedSector => this._modelDataTransformer.transformSector(parsedSector, wantedSector.geometryClipBox)),
-        this.nameGroup(wantedSector),
-        map(group => ({ ...wantedSector, group: group.sectorMeshes, instancedMeshes: group.instancedMeshes })),
-        shareReplay(1),
-        take(1)
-      );
+    const networkObservable: Observable<ConsumedSector> = defer(() =>
+      this._modelSectorProvider.getBinaryFile(wantedSector.blobUrl, wantedSector.metadata.facesFile.fileName!)
+    ).pipe(
+      this.catchWantedSectorError(wantedSector, 'loadSimpleSectorFromNetwork'),
+      mergeMap(buffer => this._modelDataParser.parseF3D(new Uint8Array(buffer))),
+      map(sectorQuads => ({ ...wantedSector, data: sectorQuads })),
+      map(parsedSector => this._modelDataTransformer.transformSector(parsedSector, wantedSector.geometryClipBox)),
+      this.nameGroup(wantedSector),
+      map(group => ({ ...wantedSector, group: group.sectorMeshes, instancedMeshes: group.instancedMeshes })),
+      shareReplay(1),
+      take(1)
+    );
     return networkObservable;
   }
 
