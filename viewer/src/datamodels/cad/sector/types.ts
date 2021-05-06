@@ -139,9 +139,6 @@ export interface SectorMetadata {
   readonly facesFile: SectorMetadataFacesFileSection;
   readonly children: SectorMetadata[];
   readonly estimatedDrawCallCount: number;
-
-  // TODO 2019-12-21 larsmoa: Make readonly
-  parent?: SectorMetadata;
 }
 
 export interface SectorGeometry {

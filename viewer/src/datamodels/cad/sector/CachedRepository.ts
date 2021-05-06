@@ -60,21 +60,26 @@ export class CachedRepository implements Repository {
         return this._consumedSectorCache.get(cacheKey);
       }
 
+      async function waitAndReference(operation: Promise<ConsumedSector>): Promise<ConsumedSector> {
+        const consumed = await operation;
+        if (consumed.group !== undefined) {
+          // Increase reference count to avoid geometry from being disposed
+          consumed.group.reference();
+        }
+        return consumed;
+      }
+
       switch (sector.levelOfDetail) {
         case LevelOfDetail.Detailed: {
-          const consumed = await this.loadDetailedSectorFromNetwork(sector);
-          this._consumedSectorCache.forceInsert(cacheKey, consumed);
-        // Increase reference count to avoid geometry from being disposed
-        consumed.group?.reference();
-          return consumed;
+          const loadOperation = this.loadDetailedSectorFromNetwork(sector).toPromise();
+          this._consumedSectorCache.forceInsert(cacheKey, loadOperation);
+          return waitAndReference(loadOperation);
         }
 
         case LevelOfDetail.Simple: {
-          const consumed = await this.loadSimpleSectorFromNetwork(sector);
-          this._consumedSectorCache.forceInsert(cacheKey, consumed);
-          // Increase reference count to avoid geometry from being disposed
-        consumed.group?.reference();
-          return consumed;
+          const loadOperation = this.loadSimpleSectorFromNetwork(sector).toPromise();
+          this._consumedSectorCache.forceInsert(cacheKey, loadOperation);
+          return waitAndReference(loadOperation);
         }
 
         case LevelOfDetail.Discarded:
