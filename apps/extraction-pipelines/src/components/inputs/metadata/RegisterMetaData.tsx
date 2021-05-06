@@ -5,7 +5,9 @@ import styled from 'styled-components';
 import { ButtonPlaced } from 'styles/StyledButton';
 import {
   ADD_ROW,
+  METADATA_CONTENT_HEADING,
   METADATA_CONTENT_LABEL,
+  METADATA_DESC_HEADING,
   METADATA_DESCRIPTION_LABEL,
   REMOVE_ROW,
 } from 'utils/constants';
@@ -57,10 +59,10 @@ export const RegisterMetaData: FunctionComponent<RegisterMetaDataProps> = () => 
               scope="col"
               className={`description'-col`}
             >
-              Description
+              {METADATA_DESC_HEADING}
             </th>
             <th id="content-heading" scope="col" className="content-col">
-              Content
+              {METADATA_CONTENT_HEADING}
             </th>
             <th scope="col" className="content-col" aria-label={REMOVE_ROW} />
           </tr>

@@ -8,6 +8,10 @@ import { AddFieldValueBtn } from 'components/buttons/AddFieldValueBtn';
 import { DetailHeadingEditBtn } from 'components/buttons/DetailHeadingEditBtn';
 import { MetaData as MetaDataModel } from 'model/MetaData';
 import { MetaField } from 'components/integration/MetaDataField';
+import { EditModal } from 'components/modals/EditModal';
+import { EditMetaData } from 'components/inputs/metadata/EditMetaData';
+import { StyledTitle2 } from 'styles/StyledHeadings';
+import { Hint } from 'styles/StyledForm';
 
 const MetaWrapper = styled.section`
   display: flex;
@@ -21,11 +25,12 @@ const MetaWrapper = styled.section`
 interface MetaProps {
   testId?: string;
 }
+const META_HINT: Readonly<string> = '*** hint about metadata ***';
 
 export const MetaData = ({
   testId = 'meta-',
 }: PropsWithChildren<MetaProps>) => {
-  const [, setShowMetaModal] = useState(false);
+  const [showMetaModal, setShowMetaModal] = useState(false);
   const { integration: selected } = useSelectedIntegration();
   const { data: storedIntegration } = useIntegrationById(selected?.id);
 
@@ -62,10 +67,20 @@ export const MetaData = ({
 
   return (
     <MetaWrapper>
-      <DetailHeadingEditBtn onClick={toggleModal(true)}>
+      <DetailHeadingEditBtn onClick={() => setShowMetaModal(true)}>
         {DetailFieldNames.META_DATA}
       </DetailHeadingEditBtn>
       {renderMeta(storedIntegration?.metadata)}
+      <EditModal
+        visible={showMetaModal}
+        onCancel={() => setShowMetaModal(false)}
+      >
+        <StyledTitle2 id="edit-metadata-heading">
+          {DetailFieldNames.META_DATA}
+        </StyledTitle2>
+        <Hint>{META_HINT}</Hint>
+        <EditMetaData />
+      </EditModal>
     </MetaWrapper>
   );
 };

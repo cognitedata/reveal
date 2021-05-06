@@ -37,6 +37,25 @@ export const contactSchema = yup.object().shape({
   ...sentNotificationRule,
 });
 
+export const META_DESC_REQUIRED: Readonly<string> = 'Description is required';
+export const META_CONTENT_REQUIRED: Readonly<string> = 'Content is required';
+export const metaDescriptionRule = {
+  description: yup.string().required(META_DESC_REQUIRED),
+};
+export const metaContentRule = {
+  content: yup.string().required(META_CONTENT_REQUIRED),
+};
+export const metaDescriptionSchema = yup.object().shape({
+  ...metaDescriptionRule,
+});
+export const metaContentSchema = yup.object().shape({
+  ...metaContentRule,
+});
+export const metaDataSchema = yup.object().shape({
+  ...metaDescriptionRule,
+  ...metaContentRule,
+});
+
 export const descriptionSchema = yup.object().shape({
   description: yup
     .string()

@@ -41,6 +41,8 @@ export const REMOVE_CONTACT: Readonly<string> = 'Remove contact';
 export const METADATA_DESCRIPTION_LABEL: Readonly<string> =
   'Metadata description';
 export const METADATA_CONTENT_LABEL: Readonly<string> = 'Metadata content';
+export const METADATA_DESC_HEADING: Readonly<string> = 'Description';
+export const METADATA_CONTENT_HEADING: Readonly<string> = 'Content';
 
 export const NO_DATA_SET_ID_SET: Readonly<string> = 'No data set';
 export const NO_DATA_SET_ID_SET_TOOLTIP: Readonly<string> =
