@@ -7,8 +7,11 @@ import { renderWithReQueryCacheSelectedIntegrationContext } from 'utils/test/ren
 import { ORIGIN_DEV, PROJECT_ITERA_INT_GREEN } from 'utils/baseURL';
 import { render } from 'utils/test';
 import { useIntegrationById } from 'hooks/useIntegration';
-import { getMockResponse, mockDataRunsResponse } from 'utils/mockResponse';
-import { useDataSets } from 'hooks/useDataSets';
+import {
+  getMockResponse,
+  mockDataRunsResponse,
+  mockDataSetResponse,
+} from 'utils/mockResponse';
 import { TableHeadings } from 'components/table/IntegrationTableCol';
 import { RunTableHeading } from 'components/integration/RunLogsCols';
 import { useRuns } from 'hooks/useRuns';
@@ -29,11 +32,6 @@ jest.mock('hooks/useIntegration', () => {
     useIntegrationById: jest.fn(),
   };
 });
-jest.mock('hooks/useDataSets', () => {
-  return {
-    useDataSets: jest.fn(),
-  };
-});
 jest.mock('hooks/useRuns', () => {
   return {
     useRuns: jest.fn(),
@@ -51,7 +49,6 @@ describe('IntegrationPage', () => {
 
   test('Should not showing page while loading', () => {
     useIntegrationById.mockReturnValue({ data: {}, isLoading: true });
-    useDataSets.mockReturnValue({ data: {}, isLoading: true });
     const { wrapper } = renderWithReQueryCacheSelectedIntegrationContext(
       new QueryClient(),
       PROJECT_ITERA_INT_GREEN,
@@ -65,13 +62,14 @@ describe('IntegrationPage', () => {
     expect(screen.queryByText(CONTACTS)).not.toBeInTheDocument();
   });
 
-  test('Render intgration and navigate on subpages', async () => {
+  test('Render integration and navigate on subpages', async () => {
     const mockIntegration = getMockResponse()[2];
+    const mockDataSet = mockDataSetResponse()[2];
+    const mockData = { ...mockIntegration, dataSet: mockDataSet };
     useIntegrationById.mockReturnValue({
-      data: mockIntegration,
+      data: mockData,
       isLoading: false,
     });
-    useDataSets.mockReturnValue({});
     useRouteMatch.mockReturnValue({ path: '/', url: '/' });
     useRuns.mockReturnValue({ data: mockDataRunsResponse.items });
     const { wrapper } = renderWithReQueryCacheSelectedIntegrationContext(
@@ -87,14 +85,15 @@ describe('IntegrationPage', () => {
     const runsLink = screen.getByText(RUNS);
     expect(runsLink).toBeInTheDocument();
     // check some details are renderd
-    expect(screen.getByText(mockIntegration.name)).toBeInTheDocument();
-    expect(screen.getByText(mockIntegration.description)).toBeInTheDocument();
+    expect(screen.getByText(mockData.name)).toBeInTheDocument();
+    expect(screen.getByText(mockData.description)).toBeInTheDocument();
+    expect(screen.getByText(mockData.externalId)).toBeInTheDocument();
+    expect(screen.getByText(mockData.dataSet.name)).toBeInTheDocument();
     expect(screen.getAllByText(mockIntegration.source).length).toEqual(2); // heading and side bar
-    expect(screen.getByText(mockIntegration.externalId)).toBeInTheDocument();
     // navigate to runs
     fireEvent.click(runsLink);
     expect(
-      screen.queryByText(mockIntegration.contacts[0].name)
+      screen.queryByText(mockData.contacts[0].name)
     ).not.toBeInTheDocument();
     expect(screen.getByText(RunTableHeading.TIMESTAMP)).toBeInTheDocument();
     expect(

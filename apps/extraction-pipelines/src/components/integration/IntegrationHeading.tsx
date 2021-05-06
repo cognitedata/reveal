@@ -58,6 +58,15 @@ export const IntegrationHeading: FunctionComponent<IntegrationHeadingProps> = ()
         viewComp={<StyledTitle level={1}>{integration.name}</StyledTitle>}
       />
       <ImportantWrapper>
+        {integration?.dataSet && (
+          <>
+            <Icon type="Grid" />
+            <DetailsValueView
+              fieldName="dataSet"
+              fieldValue={integration.dataSet}
+            />
+          </>
+        )}
         <Icon type="Dot" />
         <Icon type="datasource" />
         <DetailsValueView fieldValue={integration?.source} fieldName="source" />
