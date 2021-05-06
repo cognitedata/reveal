@@ -64,10 +64,8 @@ export class CachedRepository implements Repository {
         case LevelOfDetail.Detailed: {
           const consumed = await this.loadDetailedSectorFromNetwork(sector);
           this._consumedSectorCache.forceInsert(cacheKey, consumed);
-          if (consumed.group !== undefined) {
-            // Increase reference count to avoid geometry from being disposed
-            consumed.group.reference();
-          }
+        // Increase reference count to avoid geometry from being disposed
+        consumed.group?.reference();
           return consumed;
         }
 
@@ -75,9 +73,7 @@ export class CachedRepository implements Repository {
           const consumed = await this.loadSimpleSectorFromNetwork(sector);
           this._consumedSectorCache.forceInsert(cacheKey, consumed);
           // Increase reference count to avoid geometry from being disposed
-          if (consumed.group !== undefined) {
-            consumed.group.reference();
-          }
+        consumed.group?.reference();
           return consumed;
         }
 
@@ -123,8 +119,7 @@ export class CachedRepository implements Repository {
 
   private async loadI3DFromNetwork(modelBlobUrl: string, filename: string): Promise<ParseSectorResult> {
     const buffer = await this._modelSectorProvider.getBinaryFile(modelBlobUrl, filename);
-    const parsedI3D = await this._modelDataParser.parseI3D(new Uint8Array(buffer));
-    return parsedI3D;
+    return this._modelDataParser.parseI3D(new Uint8Array(buffer));
   }
 
   private async loadCtmsFromNetwork(
