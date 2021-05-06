@@ -5,49 +5,41 @@
 import { Repository } from './Repository';
 import { WantedSector, SectorGeometry, ConsumedSector } from './types';
 import { LevelOfDetail } from './LevelOfDetail';
-import { OperatorFunction, Observable, from, zip, onErrorResumeNext, defer, scheduled, asyncScheduler } from 'rxjs';
-import { mergeMap, map, tap, shareReplay, take, retry, reduce, catchError } from 'rxjs/operators';
+
 import { CadSectorParser } from './CadSectorParser';
 import { SimpleAndDetailedToSector3D } from './SimpleAndDetailedToSector3D';
 import { MemoryRequestCache } from '../../../utilities/cache/MemoryRequestCache';
 import { ParseCtmResult, ParseSectorResult } from '@cognite/reveal-parser-worker';
 import { TriangleMesh, InstancedMeshFile, InstancedMesh } from '../rendering/types';
 import { assertNever, createOffsetsArray } from '../../../utilities';
-import { trackError } from '../../../utilities/metrics';
+
 import { BinaryFileProvider } from '../../../utilities/networking/types';
 import { groupMeshesByNumber } from './groupMeshesByNumber';
 import { MostFrequentlyUsedCache } from '../../../utilities/MostFrequentlyUsedCache';
-import { AutoDisposeGroup } from '../../../utilities/three';
-
-type CtmFileRequest = { blobUrl: string; fileName: string };
-type CtmFileResult = { fileName: string; data: ParseCtmResult };
+import { trackError } from '../../../utilities/metrics';
 
 // TODO: j-bjorne 16-04-2020: REFACTOR FINALIZE INTO SOME OTHER FILE PLEZ!
 export class CachedRepository implements Repository {
-  private readonly _consumedSectorCache: MemoryRequestCache<string, Promise<ConsumedSector>>;
-  private readonly _ctmFileCache: MostFrequentlyUsedCache<string, Observable<CtmFileResult>>;
+  private readonly _consumedSectorCache: MemoryRequestCache<string, ConsumedSector>;
+  private readonly _ctmFileCache: MostFrequentlyUsedCache<string, ParseCtmResult>;
 
   private readonly _modelSectorProvider: BinaryFileProvider;
   private readonly _modelDataParser: CadSectorParser;
   private readonly _modelDataTransformer: SimpleAndDetailedToSector3D;
-  private readonly _concurrentCtmRequests: number;
 
   constructor(
     modelSectorProvider: BinaryFileProvider,
     modelDataParser: CadSectorParser,
-    modelDataTransformer: SimpleAndDetailedToSector3D,
-    concurrentCtmRequest: number = 10
+    modelDataTransformer: SimpleAndDetailedToSector3D
   ) {
     this._modelSectorProvider = modelSectorProvider;
     this._modelDataParser = modelDataParser;
     this._modelDataTransformer = modelDataTransformer;
-    this._concurrentCtmRequests = concurrentCtmRequest;
 
-    this._consumedSectorCache = new MemoryRequestCache(50, async consumedSector => {
-      const sector = await consumedSector;
-      if (sector.group !== undefined) {
+    this._consumedSectorCache = new MemoryRequestCache(50, consumedSector => {
+      if (consumedSector.group !== undefined) {
         // Dereference so GPU resources can be cleaned up if geomety isn't used anymore
-        sector.group.dereference();
+        consumedSector.group.dereference();
       }
     });
     this._ctmFileCache = new MostFrequentlyUsedCache(10);
@@ -63,159 +55,119 @@ export class CachedRepository implements Repository {
 
   async loadSector(sector: WantedSector): Promise<ConsumedSector> {
     const cacheKey = this.wantedSectorCacheKey(sector);
-    if (this._consumedSectorCache.has(cacheKey)) {
-      return this._consumedSectorCache.get(cacheKey);
-    }
-
-    async function waitAndReference(operation: Promise<ConsumedSector>): Promise<ConsumedSector> {
-      const consumed = await operation;
-      if (consumed.group !== undefined) {
-        // Increase reference count to avoid geometry from being disposed
-        consumed.group.reference();
-      }
-      return consumed;
-    }
-
-    switch (sector.levelOfDetail) {
-      case LevelOfDetail.Detailed: {
-        const loadOperation = this.loadDetailedSectorFromNetwork(sector).toPromise();
-        this._consumedSectorCache.forceInsert(cacheKey, loadOperation);
-        return waitAndReference(loadOperation);
+    try {
+      if (this._consumedSectorCache.has(cacheKey)) {
+        return this._consumedSectorCache.get(cacheKey);
       }
 
-      case LevelOfDetail.Simple: {
-        const loadOperation = this.loadSimpleSectorFromNetwork(sector).toPromise();
-        this._consumedSectorCache.forceInsert(cacheKey, loadOperation);
-        return waitAndReference(loadOperation);
+      switch (sector.levelOfDetail) {
+        case LevelOfDetail.Detailed: {
+          const consumed = await this.loadDetailedSectorFromNetwork(sector);
+          this._consumedSectorCache.forceInsert(cacheKey, consumed);
+          // Increase reference count to avoid geometry from being disposed
+          consumed?.group?.reference();
+          return consumed;
+        }
+
+        case LevelOfDetail.Simple: {
+          const consumed = await this.loadSimpleSectorFromNetwork(sector);
+          this._consumedSectorCache.forceInsert(cacheKey, consumed);
+          // Increase reference count to avoid geometry from being disposed
+          consumed?.group?.reference();
+          return consumed;
+        }
+
+        case LevelOfDetail.Discarded:
+          return {
+            blobUrl: sector.blobUrl,
+            metadata: sector.metadata,
+            levelOfDetail: sector.levelOfDetail,
+            instancedMeshes: [],
+            group: undefined
+          };
+
+        default:
+          assertNever(sector.levelOfDetail);
       }
+    } catch (error) {
+      this._consumedSectorCache.remove(cacheKey);
 
-      case LevelOfDetail.Discarded:
-        return {
-          blobUrl: sector.blobUrl,
-          metadata: sector.metadata,
-          levelOfDetail: sector.levelOfDetail,
-          instancedMeshes: [],
-          group: undefined
-        };
-
-      default:
-        assertNever(sector.levelOfDetail);
-    }
-  }
-
-  private catchWantedSectorError<T>(wantedSector: WantedSector, methodName: string) {
-    return catchError<T, Observable<T>>(error => {
-      trackError(error, { moduleName: 'CachedRepository', methodName });
-      this._consumedSectorCache.remove(this.wantedSectorCacheKey(wantedSector));
+      trackError(error, { methodName: 'loadSector', moduleName: 'CachedRepository' });
       throw error;
-    });
+    }
   }
 
-  private catchCtmFileError<T>(ctmRequest: CtmFileRequest, methodName: string) {
-    return catchError<T, Observable<T>>(error => {
-      trackError(error, {
-        moduleName: 'CachedRepository',
-        methodName
-      });
-      this._ctmFileCache.remove(this.ctmFileCacheKey(ctmRequest));
-      throw error;
-    });
-  }
-
-  private nameGroup(
-    wantedSector: WantedSector
-  ): OperatorFunction<
-    { sectorMeshes: AutoDisposeGroup; instancedMeshes: InstancedMeshFile[] },
-    { sectorMeshes: AutoDisposeGroup; instancedMeshes: InstancedMeshFile[] }
-  > {
-    return tap(group => {
-      group.sectorMeshes.name = `Quads ${wantedSector.metadata.id}`;
-    });
-  }
-
-  private loadSimpleSectorFromNetwork(wantedSector: WantedSector): Observable<ConsumedSector> {
-    const networkObservable: Observable<ConsumedSector> = onErrorResumeNext(
-      defer(() =>
-        this._modelSectorProvider.getBinaryFile(wantedSector.blobUrl, wantedSector.metadata.facesFile.fileName!)
-      ).pipe(
-        this.catchWantedSectorError(wantedSector, 'loadSimpleSectorFromNetwork'),
-        mergeMap(buffer => this._modelDataParser.parseF3D(new Uint8Array(buffer))),
-        map(sectorQuads => ({ ...wantedSector, data: sectorQuads })),
-        this._modelDataTransformer.transform(),
-        this.nameGroup(wantedSector),
-        map(group => ({ ...wantedSector, group: group.sectorMeshes, instancedMeshes: group.instancedMeshes })),
-        shareReplay(1),
-        take(1)
-      )
+  private async loadSimpleSectorFromNetwork(wantedSector: WantedSector): Promise<ConsumedSector> {
+    // TODO 2021-05-05 larsmoa: Retry
+    const buffer = await this._modelSectorProvider.getBinaryFile(
+      wantedSector.blobUrl,
+      wantedSector.metadata.facesFile.fileName!
     );
-    return networkObservable;
-  }
-
-  private loadDetailedSectorFromNetwork(wantedSector: WantedSector): Observable<ConsumedSector> {
-    const networkObservable = onErrorResumeNext(
-      scheduled(
-        defer(() => {
-          const indexFile = wantedSector.metadata.indexFile;
-          const i3dFileObservable = from(
-            this._modelSectorProvider.getBinaryFile(wantedSector.blobUrl, indexFile.fileName)
-          ).pipe(
-            retry(3),
-            mergeMap(buffer => this._modelDataParser.parseI3D(new Uint8Array(buffer)))
-          );
-          const ctmFilesObservable = from(indexFile.peripheralFiles).pipe(
-            map(fileName => ({
-              blobUrl: wantedSector.blobUrl,
-              fileName
-            })),
-            this.loadCtmFile(),
-            reduce((accumulator, value) => {
-              accumulator.set(value.fileName, value.data);
-              return accumulator;
-            }, new Map())
-          );
-          return zip(i3dFileObservable, ctmFilesObservable).pipe(
-            this.catchWantedSectorError(wantedSector, 'loadDetailedSectorFromNetwork'),
-            map(([i3dFile, ctmFiles]) => this.finalizeDetailed(i3dFile as ParseSectorResult, ctmFiles)),
-            map(data => {
-              return { ...wantedSector, data };
-            }),
-            this._modelDataTransformer.transform(),
-            map(group => ({ ...wantedSector, group: group.sectorMeshes, instancedMeshes: group.instancedMeshes })),
-            shareReplay(1),
-            take(1)
-          );
-        }),
-        asyncScheduler
-      )
+    const geometry = await this._modelDataParser.parseF3D(new Uint8Array(buffer));
+    const transformed = await this._modelDataTransformer.transformSimpleSector(
+      wantedSector.blobUrl,
+      wantedSector.metadata,
+      geometry
     );
-    return networkObservable;
+    const consumedSector: ConsumedSector = {
+      ...wantedSector,
+      group: transformed.sectorMeshes,
+      instancedMeshes: transformed.instancedMeshes
+    };
+    return consumedSector;
   }
 
-  private loadCtmFile(): OperatorFunction<CtmFileRequest, CtmFileResult> {
-    return mergeMap(ctmRequest => {
-      const key = this.ctmFileCacheKey(ctmRequest);
-      const ctmFile = this._ctmFileCache.get(key);
-      if (ctmFile !== undefined) {
-        return ctmFile;
-      } else {
-        return this.loadCtmFileFromNetwork(ctmRequest);
-      }
-    }, this._concurrentCtmRequests);
+  private async loadI3DFromNetwork(modelBlobUrl: string, filename: string): Promise<ParseSectorResult> {
+    const buffer = await this._modelSectorProvider.getBinaryFile(modelBlobUrl, filename);
+    return this._modelDataParser.parseI3D(new Uint8Array(buffer));
   }
 
-  private loadCtmFileFromNetwork(ctmRequest: CtmFileRequest): Observable<CtmFileResult> {
-    const networkObservable: Observable<{ fileName: string; data: ParseCtmResult }> = onErrorResumeNext(
-      defer(() => this._modelSectorProvider.getBinaryFile(ctmRequest.blobUrl, ctmRequest.fileName)).pipe(
-        this.catchCtmFileError(ctmRequest, 'loadCtmFileFromNetwork'),
-        retry(3),
-        mergeMap(buffer => this._modelDataParser.parseCTM(new Uint8Array(buffer))),
-        map(data => ({ fileName: ctmRequest.fileName, data: data as ParseCtmResult })),
-        shareReplay(1),
-        take(1)
-      )
+  private async loadCtmsFromNetwork(
+    modelBlobUrl: string,
+    ctmFilenames: string[]
+  ): Promise<Map<string, ParseCtmResult>> {
+    const ctms = await Promise.all(ctmFilenames.map(x => this.loadCtmFileFromNetwork(modelBlobUrl, x)));
+    return ctmFilenames.reduce(
+      (map, filename, index) => map.set(filename, ctms[index]),
+      new Map<string, ParseCtmResult>()
     );
-    this._ctmFileCache.set(this.ctmFileCacheKey(ctmRequest), networkObservable);
-    return networkObservable;
+  }
+
+  private async loadDetailedSectorFromNetwork(wantedSector: WantedSector): Promise<ConsumedSector> {
+    const indexFile = wantedSector.metadata.indexFile;
+
+    const i3dPromise = this.loadI3DFromNetwork(wantedSector.blobUrl, indexFile.fileName);
+    const ctmsPromise = this.loadCtmsFromNetwork(wantedSector.blobUrl, indexFile.peripheralFiles);
+
+    const i3d = await i3dPromise;
+    const ctms = await ctmsPromise;
+    const geometry = this.finalizeDetailed(i3d, ctms);
+
+    const transformed = await this._modelDataTransformer.transformDetailedSector(
+      wantedSector.blobUrl,
+      wantedSector.metadata,
+      geometry
+    );
+
+    const consumedSector: ConsumedSector = {
+      ...wantedSector,
+      group: transformed.sectorMeshes,
+      instancedMeshes: transformed.instancedMeshes
+    };
+    return consumedSector;
+  }
+
+  private async loadCtmFileFromNetwork(modelBlobUrl: string, filename: string): Promise<ParseCtmResult> {
+    const cacheKey = this.ctmFileCacheKey(modelBlobUrl, filename);
+    const cached = this._ctmFileCache.get(cacheKey);
+    if (cached !== undefined) {
+      return cached;
+    }
+    // TODO 2021-05-05 larsmoa: Move retry to getBinaryFile()
+    const buffer = await this._modelSectorProvider.getBinaryFile(modelBlobUrl, filename);
+    const parsedCtm = await this._modelDataParser.parseCTM(new Uint8Array(buffer));
+    this._ctmFileCache.set(cacheKey, parsedCtm);
+    return parsedCtm;
   }
 
   private finalizeDetailed(i3dFile: ParseSectorResult, ctmFiles: Map<string, ParseCtmResult>): SectorGeometry {
@@ -334,10 +286,10 @@ export class CachedRepository implements Repository {
   }
 
   private wantedSectorCacheKey(wantedSector: WantedSector) {
-    return '' + wantedSector.blobUrl + '.' + wantedSector.metadata.id + '.' + wantedSector.levelOfDetail;
+    return wantedSector.blobUrl + '.' + wantedSector.metadata.id + '.' + wantedSector.levelOfDetail;
   }
 
-  private ctmFileCacheKey(request: { blobUrl: string; fileName: string }) {
-    return '' + request.blobUrl + '.' + request.fileName;
+  private ctmFileCacheKey(blobUrl: string, fileName: string) {
+    return blobUrl + '.' + fileName;
   }
 }
