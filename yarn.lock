@@ -1222,10 +1222,10 @@
     react-toastify "^6.0.9"
     tippy.js "6.2.0"
 
-"@cognite/cogs.js@^3.12.1":
-  version "3.12.1"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.12.1.tgz#5ad8eba73cacf717290ca2a15d9f9b98937c2fa3"
-  integrity sha512-9VgSrAxLP1qmIzv2Tf2ahzp9zC/51KTl7RXcgyyrFTuTM3UO1sD5Q9aRK6Mtg9kVeG4axN7Be8jWwzB8k95wDA==
+"@cognite/cogs.js@^3.12.3":
+  version "3.12.3"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.12.3.tgz#f565f54febaff1e63dc988021b7b66375405cb64"
+  integrity sha512-1L6QP6GEHrTvj1dGg3rp+WHIb4r38Cb6Re7YvgJjBin7t+peDxI/8V3TvH5XSImG0Ds1SAdwbZ3wRtqtj2RnVQ==
   dependencies:
     "@tippyjs/react" "4.2.3"
     "@types/react-date-range" "^1.1.2"
