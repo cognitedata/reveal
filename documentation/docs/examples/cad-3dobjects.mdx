@@ -40,9 +40,10 @@ The following example reacts to clicks in the scene and adds markers to the posi
 
 ```jsx runnable
 const markerGeometry = new THREE.SphereBufferGeometry(1, 10, 10);
-const markerMaterial = new THREE.MeshStandardMaterial({
-  emissive: 'white',
-  wireframe: true,
+const markerMaterial = new THREE.MeshBasicMaterial({
+  color: 'blue',
+  transparent: true,
+  opacity: 0.7
 });
 viewer.on('click', (event) => {
   const intersection = viewer.getIntersectionFromPixel(
