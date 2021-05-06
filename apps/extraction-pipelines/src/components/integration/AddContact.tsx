@@ -79,7 +79,7 @@ export const AddContact: FunctionComponent<AddContactProps> = ({
       const items = createUpdateSpec({
         project,
         id: current.id,
-        fieldValue: [...current.contacts, values],
+        fieldValue: [...(current.contacts ?? []), values],
         fieldName: 'contacts',
       });
       await mutate(items, {

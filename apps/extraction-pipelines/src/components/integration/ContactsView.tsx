@@ -9,6 +9,8 @@ import { isOwner, partition } from 'utils/integrationUtils';
 import { User } from 'model/User';
 import { DetailHeadingEditBtn } from 'components/buttons/DetailHeadingEditBtn';
 import { AddFieldValueBtn } from 'components/buttons/AddFieldValueBtn';
+import { EditModal } from 'components/modals/EditModal';
+import { ContactsSection } from 'components/integration/ContactsSection';
 
 interface ContactsViewProps {}
 
@@ -16,7 +18,7 @@ export const ContactsView: FunctionComponent<ContactsViewProps> = () => {
   const { project } = useAppEnv();
   const { integration: selected } = useSelectedIntegration();
   const { data: integration } = useIntegrationById(selected?.id);
-  const [, setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   if (!integration || !project) {
     return <></>;
   }
@@ -27,6 +29,10 @@ export const ContactsView: FunctionComponent<ContactsViewProps> = () => {
 
   const openEdit = () => {
     setShowModal(true);
+  };
+
+  const hideModal = () => {
+    setShowModal(false);
   };
 
   return (
@@ -56,6 +62,9 @@ export const ContactsView: FunctionComponent<ContactsViewProps> = () => {
           {TableHeadings.CONTACTS.toLowerCase()}
         </AddFieldValueBtn>
       )}
+      <EditModal visible={showModal} onCancel={hideModal}>
+        <ContactsSection />
+      </EditModal>
     </>
   );
 };
