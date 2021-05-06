@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@cognite/annotations": "^1.1.0",
-    "@cognite/cogs.js": "3.10",
+    "@cognite/cogs.js": "^3.12.1",
     "@cognite/connect": "^0.0.7",
     "@cognite/data-exploration": "^0.5.7",
     "@cognite/metrics": "^0.1.2",
@@ -31,6 +31,7 @@
     "@cognite/sdk-react-query-hooks": "^3.0.0",
     "@cognite/z-index": "^0.1.0",
     "@sentry/browser": "^5.30.0",
+    "antd": "^4.10.3",
     "date-fns": "^2.21.1",
     "dayjs": "^1.10.4",
     "firebase": "^8.4.3",
