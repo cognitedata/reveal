@@ -70,7 +70,7 @@ describe('createPrimitives', () => {
   });
 
   test('no primitives doesnt return any nods', () => {
-    const nodes = Array.from(createPrimitives(emptySector, materials, bounds, null));
+    const nodes = Array.from(createPrimitives(emptySector, materials, bounds));
     expect(nodes).toBeEmpty();
   });
 
@@ -166,7 +166,7 @@ describe('createPrimitives', () => {
     testPrimitiveBase(torusSegmentSector, materials, mockAttributes, 'torussegment', bounds);
     const result = [];
 
-    for (const primitiveRoot of createPrimitives(torusSegmentSector, materials, bounds, null)) {
+    for (const primitiveRoot of createPrimitives(torusSegmentSector, materials, bounds)) {
       result.push(primitiveRoot);
     }
   });
@@ -190,7 +190,7 @@ function testPrimitiveBase(
 ) {
   const result = [];
 
-  for (const primitiveRoot of createPrimitives(sector, materials, bounds, null)) {
+  for (const primitiveRoot of createPrimitives(sector, materials, bounds)) {
     result.push(primitiveRoot);
   }
 
