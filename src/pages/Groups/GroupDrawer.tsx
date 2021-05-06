@@ -1,21 +1,15 @@
 import React, { useState } from 'react';
-import {
-  Button as AntButton,
-  Drawer,
-  Form,
-  Input,
-  Table,
-  notification,
-} from 'antd';
-import { Icon } from '@cognite/cogs.js';
+import { Button as CogsButton } from '@cognite/cogs.js';
+import { Drawer, Form, Input, notification } from 'antd';
 import styled from 'styled-components';
 import { Group, GroupSpec } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 import { useMutation, useQueryClient } from 'react-query';
 import { sleep } from 'utils/utils';
-import CapabilityDrawer from './CapabilityDrawer';
 
-const Button = styled(AntButton)`
+import CapabilitiesSelector from './CapabilitiesSelector';
+
+const Button = styled(CogsButton)`
   margin-right: 8px;
 `;
 
@@ -28,8 +22,7 @@ type Props = {
 export default function GroupDrawer({ group, onClose }: Props) {
   const sdk = useSDK();
   const client = useQueryClient();
-
-  const [showCapability, setShowCapability] = useState(false);
+  const [caps, setCaps] = useState(group?.capabilities || []);
 
   const { mutateAsync: updateGroup, isLoading } = useMutation(
     async (g: Group) => {
@@ -81,21 +74,19 @@ export default function GroupDrawer({ group, onClose }: Props) {
 
   return (
     <Drawer visible onClose={onClose} width={720} title="Create new group">
-      {showCapability && (
-        <CapabilityDrawer onClose={() => setShowCapability(false)} />
-      )}
       <Form
         layout="vertical"
         onFinish={(g: Group) => {
-          updateGroup(g);
+          updateGroup({
+            ...g,
+            capabilities: caps,
+          });
         }}
         initialValues={{
           id: group?.id,
           name: group?.name,
           capabilities: group?.capabilities,
           sourceId: group?.sourceId,
-          // @ts-ignore
-          sourceName: group?.source,
         }}
       >
         <Form.Item
@@ -128,13 +119,7 @@ export default function GroupDrawer({ group, onClose }: Props) {
           }
         >
           <>
-            <Table />
-            <Button
-              icon={<Icon type="Plus" />}
-              onClick={() => setShowCapability(true)}
-            >
-              Add capability
-            </Button>
+            <CapabilitiesSelector value={caps} onChange={c => setCaps(c)} />
           </>
         </Form.Item>
 
@@ -148,18 +133,6 @@ export default function GroupDrawer({ group, onClose }: Props) {
           <Input
             disabled={isLoading}
             placeholder="e.g., Azure AD group global unique identifier"
-          />
-        </Form.Item>
-        <Form.Item
-          hasFeedback={isLoading}
-          validateStatus="validating"
-          name="sourceName"
-          label="Source name"
-          extra="Enter the name of the group in the source IdP system."
-        >
-          <Input
-            disabled={isLoading}
-            placeholder="e.g., Azure AD group descriptor"
           />
         </Form.Item>
         <Form.Item>

@@ -57,7 +57,10 @@ export default function Groups() {
   );
   const { data: groups, isFetched: groupsFetched } = useQuery(
     ['groups', 'all'],
-    () => sdk.groups.list({ all: true })
+    async () => {
+      const list = await sdk.groups.list({ all: true });
+      return list.sort((a, b) => a.name.localeCompare(b.name));
+    }
   );
 
   const { data: serviceAccounts } = useQuery(
@@ -206,15 +209,13 @@ export default function Groups() {
           return g.capabilities.map(c => {
             const acl: string = Object.keys(c)[0]!;
             // @ts-ignore
-            const { actions } = c[acl];
+            const { actions, scope } = c[acl];
             // @ts-ignore
-            const dataset: boolean = Object.keys(c[acl].scope || {}).includes(
-              'datasetScope'
-            );
+            const foo = Object.keys(scope || {})[0]?.replace('Scope', '');
 
             return actions.map((a: string) => (
               <Tag key={`${acl.replace('Acl', '')}:${a.toLowerCase()}`}>
-                {dataset && (
+                {foo !== 'all' && (
                   <span
                     style={{
                       backgroundColor: 'var(--cogs-primary)',
@@ -223,7 +224,7 @@ export default function Groups() {
                       borderRadius: 2,
                     }}
                   >
-                    Scope: Data sets
+                    Scope: {foo}
                   </span>
                 )}
                 {` ${acl.replace('Acl', '')}:${a.toLowerCase()}`}
@@ -235,14 +236,18 @@ export default function Groups() {
         return <>No permissions specified</>;
       },
     },
-    {
-      title: 'Service accounts',
-      dataIndex: 'id',
-      align: 'center',
-      render(id: number) {
-        return serviceAccounts?.filter(a => a.groups?.includes(id)).length || 0;
-      },
-    },
+    legacyFlow
+      ? {
+          title: 'Service accounts',
+          dataIndex: 'id',
+          align: 'center',
+          render(id: number) {
+            return (
+              serviceAccounts?.filter(a => a.groups?.includes(id)).length || 0
+            );
+          },
+        }
+      : false,
 
     {
       title: 'Actions',
@@ -296,7 +301,7 @@ export default function Groups() {
         </Dropdown>
       ),
     },
-  ];
+  ].filter(Boolean) as ColumnType<Group>[];
 
   return (
     <>

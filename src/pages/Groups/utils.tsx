@@ -1,5 +1,9 @@
+import React, { ReactNode } from 'react';
+import { Tag } from 'antd';
 import { cognite } from '@cognite/acl-protos';
-import { CogniteCapability } from '@cognite/sdk';
+import queryString from 'query-string';
+
+import { CogniteCapability, SingleCogniteCapability } from '@cognite/sdk';
 
 const capitalize = (s: string) =>
   s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
@@ -133,13 +137,17 @@ export const capabilityDescriptions = {
   annotations: 'Edit annotations in documents',
 };
 
-export const getActionsFromCapability = (capability: CogniteCapability) => {
+export const getActionsFromCapability = (
+  capability: CogniteCapability | SingleCogniteCapability
+) => {
   const aclType = Object.keys(capability)[0];
   // @ts-ignore
   return capability[aclType].actions;
 };
 
-export const getScopeFromCapability = (capability: CogniteCapability) => {
+export const getScopeFromCapability = (
+  capability: CogniteCapability | SingleCogniteCapability
+) => {
   const aclType = Object.keys(capability)[0];
   // @ts-ignore
   return capability[aclType].scope;
@@ -170,13 +178,17 @@ export const getCapabilityName = (capability: any): string => {
   return capabilityName;
 };
 
-export const getAclType = (capability: CogniteCapability) => {
+export const getAclType = (
+  capability: CogniteCapability | string | SingleCogniteCapability
+) => {
   const capabilityName = getCapabilityName(capability);
   // @ts-ignore
   return nameToAclTypeMap[capabilityName];
 };
 
-const getCapabilityKey = (capability: CogniteCapability) => {
+const getCapabilityKey = (
+  capability: CogniteCapability | string | SingleCogniteCapability
+) => {
   let capabilityKey;
   let capabilityName = getCapabilityName(capability);
   if (capabilityName === '3d') {
@@ -188,7 +200,9 @@ const getCapabilityKey = (capability: CogniteCapability) => {
   return capabilityKey;
 };
 
-export const getCapabilityFormattedName = (capability: CogniteCapability) => {
+export const getCapabilityFormattedName = (
+  capability: CogniteCapability | string | SingleCogniteCapability
+) => {
   const capabilityName = getCapabilityName(capability) || capability;
   // @ts-ignore
   return nameToFormattedName[capabilityName] || capitalize(capabilityName);
@@ -202,7 +216,9 @@ export const getCapabilityTypeGroups = () => {
   return filteredGroups.filter(group => group.items.length > 0);
 };
 
-export const getCapabilityDescription = (capability: CogniteCapability) => {
+export const getCapabilityDescription = (
+  capability: CogniteCapability | string | SingleCogniteCapability
+) => {
   const capabilityName = getCapabilityName(capability);
   // @ts-ignore
   return capabilityDescriptions[capabilityName] || '';
@@ -223,7 +239,10 @@ const SCOPE_LABELS = {
   partition: 'Partition',
 };
 
-export const getScopeLabel = (scope: string, capability: CogniteCapability) => {
+export const getScopeLabel = (
+  scope: string,
+  capability: CogniteCapability | string | SingleCogniteCapability
+) => {
   if (scope === 'idscope') {
     // @ts-ignore
     return SCOPE_LABELS[scope][getCapabilityName(capability)];
@@ -232,32 +251,53 @@ export const getScopeLabel = (scope: string, capability: CogniteCapability) => {
   return SCOPE_LABELS[scope];
 };
 
-// export const getActionLabel = (capability, action) => {
-//   const capabilityName = getCapabilityName(capability);
-//   return `${capabilityName}:${action.toLowerCase()}`;
-// };
+export const getStringCdfEnv = () => {
+  const { env } = queryString.parse(window.location.search);
+  if (env instanceof Array) {
+    return env[0];
+  }
+  if (typeof env === 'string') {
+    return env;
+  }
+  return undefined;
+};
 
-// export const getReadableCapabilities = capabilities =>
-//   capabilities.reduce((p, cap) => {
-//     // There's always just one key per object
-//     const acl = Object.keys(cap)[0];
-//     const actionLabels = cap[acl].actions.map(action =>
-//       getActionLabel(cap, action)
-//     );
-//     return [...p, ...actionLabels];
-//   }, []);
+export const getActionLabel = (
+  capability: SingleCogniteCapability | string,
+  action: string
+) => {
+  const capabilityName = getCapabilityName(capability);
+  return `${capabilityName}:${action.toLowerCase()}`;
+};
 
-// const getScope = capability => {
-//   const acl = Object.keys(capability)[0];
-//   const scope = Object.keys(capability[acl].scope)[0];
+export const getReadableCapabilities = (
+  capabilities: SingleCogniteCapability[]
+) =>
+  // @ts-ignore
+  capabilities.reduce((p, cap) => {
+    // There's always just one key per object
+    const acl = Object.keys(cap)[0];
+    // @ts-ignore
+    const actionLabels = cap[acl].actions.map(action =>
+      getActionLabel(cap, action)
+    );
+    return [...p, ...actionLabels];
+  }, []);
 
-//   if (scope && scope !== 'all') {
-//     return scope;
-//   }
-//   return null;
-// };
+const getScope = (capability: SingleCogniteCapability) => {
+  const acl = Object.keys(capability)[0];
+  // @ts-ignore
+  const scope = Object.keys(capability[acl].scope)[0];
 
-export const getCapabilityActions = (capability: CogniteCapability) => {
+  if (scope && scope !== 'all') {
+    return scope;
+  }
+  return null;
+};
+
+export const getCapabilityActions = (
+  capability: CogniteCapability | string | SingleCogniteCapability
+) => {
   const capabilityKey = getCapabilityKey(capability);
   // @ts-ignore
   const acl = capabilityKey && cognite[capabilityKey];
@@ -303,31 +343,43 @@ export const getCapabilityScopes = (
   }
 };
 
-// const getScopeTag = (scope, capabilities, action) => {
-//   return <ScopeTag scope={scope} capabilities={capabilities} action={action} />;
-// };
+const getScopeTag = (
+  scope: string,
+  capabilities: SingleCogniteCapability,
+  action: string
+) => {
+  const cap = Object.keys(capabilities)[0];
+  return (
+    <Tag>
+      {scope}:{cap}:{action}
+    </Tag>
+  );
+};
 
-// export const getReadableCapabilitiesWithScope = capabilities =>
-//   capabilities
-//     .reduce((p, cap, index) => {
-//       const acl = Object.keys(cap)[0];
-//       const scope = getScope(cap);
-//       const actionLabels = cap[acl].actions.map(action => {
-//         const capabilityText = getActionLabel(cap, action);
-//         const uniqueKey = `${capabilityText}-${index}`;
-//         return {
-//           key: uniqueKey,
-//           label: (
-//             <span>
-//               {scope && getScopeTag(scope, cap, action.toLowerCase())}
-//               {capabilityText}
-//             </span>
-//           ),
-//         };
-//       });
-//       return [...p, ...actionLabels];
-//     }, [])
-//     .sort((a, b) => stringCompare(a.key, b.key));
+export const getReadableCapabilitiesWithScope = (
+  capabilities: SingleCogniteCapability[]
+) =>
+  capabilities
+    .reduce((p, cap, index) => {
+      const acl = Object.keys(cap)[0];
+      const scope = getScope(cap);
+      // @ts-ignore
+      const actionLabels = cap[acl].actions.map(action => {
+        const capabilityText = getActionLabel(cap, action);
+        const uniqueKey = `${capabilityText}-${index}`;
+        return {
+          key: uniqueKey,
+          label: (
+            <span>
+              {scope && getScopeTag(scope, cap, action.toLowerCase())}
+              {capabilityText}
+            </span>
+          ),
+        };
+      });
+      return [...p, ...actionLabels];
+    }, [] as { key: string; label: ReactNode }[])
+    .sort((a, b) => a.key.localeCompare(b.key));
 
 // const userHasCapability = (user, aclType, actions, scope = null) =>
 //   actions.every(action =>

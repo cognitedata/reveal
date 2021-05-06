@@ -1,10 +1,8 @@
 import React from 'react';
-
-import { Button, Checkbox, Form, Input, Select, notification } from 'antd';
-
+import { Checkbox, Form, Input, Select, notification } from 'antd';
 import InputNumber from 'antd/lib/input-number';
 import { useSDK } from '@cognite/sdk-provider';
-import { Icon } from '@cognite/cogs.js';
+import { Icon, Button } from '@cognite/cogs.js';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { getContainer } from 'utils/utils';
 

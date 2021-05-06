@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { isEqual } from 'lodash';
-import { Button, Select, Tag, notification } from 'antd';
-import { Icon } from '@cognite/cogs.js';
+import { Select, Tag, notification } from 'antd';
+import { Icon, Button } from '@cognite/cogs.js';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
 
@@ -81,7 +81,7 @@ export default function EditGroups({ account }: { account: ServiceAccount }) {
       size="small"
       type="primary"
       disabled={isLoading}
-      icon={<Icon type="Check" />}
+      icon="Check"
       onClick={() => {
         if (!isEqual(account.groups, localList)) {
           mutateAsync(localList);
@@ -96,7 +96,7 @@ export default function EditGroups({ account }: { account: ServiceAccount }) {
       size="small"
       type="ghost"
       onClick={() => setEditMode(true)}
-      icon={<Icon type="Edit" />}
+      icon="Edit"
     />
   );
 

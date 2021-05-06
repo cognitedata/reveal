@@ -68,7 +68,7 @@ export default function () {
         }}
       >
         <Menu.Item disabled={!groupsRead} key="groups">
-          Groups (WIP)
+          Groups
         </Menu.Item>
         <Menu.Item
           key="service-accounts"
