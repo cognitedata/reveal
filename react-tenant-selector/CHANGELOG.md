@@ -1,3 +1,12 @@
+## 1.0.0 May 5 2021
+
+### Changes
+
+- Upgrade to SDK v4 (via auth-utils)
+- Fixed `https://apps-api.${cluster}.cognite.ai/tenant` order for cluster selector
+- Tidy up 'advanced options'
+- Make project selection card background wrap whole card
+
 ## 0.6.9 Mar 25 2021
 
 ### Changes

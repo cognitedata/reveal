@@ -15,6 +15,7 @@ const getProps = () => {
   authClient.login = jest.fn();
 
   return {
+    enabled: true,
     authClient,
 
     authState: {
@@ -32,6 +33,7 @@ describe('<ProjectSelector />', () => {
       data: [{ urlName: 'test-1' }],
       isFetched: true,
       isError: false,
+      refetch: jest.fn(),
     });
 
     render(<Base {...getProps()} />);
@@ -45,6 +47,7 @@ describe('<ProjectSelector />', () => {
       data: [],
       isFetched: true,
       isError: true,
+      refetch: jest.fn(),
     });
 
     render(<Base {...getProps()} />);
@@ -59,6 +62,7 @@ describe('<ProjectSelector />', () => {
       data: [{ urlName: 'test-1' }],
       isFetched: true,
       isError: false,
+      refetch: jest.fn(),
     });
 
     const props = getProps();

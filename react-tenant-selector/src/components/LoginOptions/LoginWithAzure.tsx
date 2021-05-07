@@ -1,16 +1,14 @@
 import React, { useState } from 'react';
 import { Button } from '@cognite/cogs.js';
-import { CogniteAuth, saveFlow } from '@cognite/auth-utils';
+import { CogniteAuth } from '@cognite/auth-utils';
 import AzureAdvancedOptions, {
   AzureAdvancedOptions as AzureAdvancedOptionsType,
 } from '../AzureAdvancedOptions';
 
 const LoginWithAzure = ({
-  cluster,
   authClient,
   directory,
 }: {
-  cluster: string;
   authClient?: CogniteAuth;
   directory?: string;
 }) => {
@@ -20,11 +18,14 @@ const LoginWithAzure = ({
   ] = useState<AzureAdvancedOptionsType>({
     azureTenant: directory,
   });
+
   const handleClick = () => {
     if (authClient) {
       // console.log('Starting AZURE_AD login flow');
-      saveFlow('AZURE_AD', { directory: azureAdvancedOptions.azureTenant });
-      authClient.login('AZURE_AD', { cluster });
+      authClient.loginInitial({
+        flow: 'AZURE_AD',
+        directory: azureAdvancedOptions.azureTenant,
+      });
     }
   };
 
@@ -32,7 +33,7 @@ const LoginWithAzure = ({
     <>
       <Button
         style={{ height: 40, width: '100%', marginTop: 10 }}
-        size="large"
+        size="default"
         type="secondary"
         onClick={handleClick}
       >
@@ -42,10 +43,6 @@ const LoginWithAzure = ({
         advancedOptions={azureAdvancedOptions}
         handleOnChange={(next) => {
           setAzureAdvancedOptions(next);
-        }}
-        handleSubmit={() => {
-          saveFlow('AZURE_AD', { directory: azureAdvancedOptions.azureTenant });
-          window.location.reload();
         }}
       />
     </>

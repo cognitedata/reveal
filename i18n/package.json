@@ -34,6 +34,7 @@
     "lodash": "^4.17.19"
   },
   "dependencies": {
+    "tslib": "^2.2.0",
     "i18next": "^19.8.4",
     "i18next-chained-backend": "^2.0.1",
     "i18next-localstorage-backend": "^3.1.1",

@@ -1,40 +1,29 @@
 import * as React from 'react';
 import { useQuery } from 'react-query';
 import { Button, Dropdown, Menu, Loader } from '@cognite/cogs.js';
-import { CogniteAuth, AuthenticatedUser } from '@cognite/auth-utils';
+import { CogniteAuth } from '@cognite/auth-utils';
 
 import { StyledProjectFormContainer } from './elements';
+import { fetchProjects } from './fetchProjects';
 
 interface Props {
+  enabled?: boolean;
   authClient?: CogniteAuth;
-  authState?: AuthenticatedUser;
   onSelected: (project: string, cluster: string) => void;
 }
 const ProjectSelector: React.FC<Props> = ({
+  enabled,
   onSelected,
   authClient,
-  authState,
 }) => {
   const [selectedProject, setSelectedProject] = React.useState<string>();
   const [showMenu, setShowMenu] = React.useState(false);
 
-  const { data = [], isFetched, isError } = useQuery<{ urlName: string }[]>(
-    ['projects'],
-    async () => {
-      const client = authClient?.getClient();
-
-      if (!client) {
-        // eslint-disable-next-line no-console
-        console.error('Missing SDK client.');
-        return [];
-      }
-      // @ts-expect-error http is private
-      client.http.setBearerToken(authState?.token);
-
-      const result = await client.get('/api/v1/projects');
-      return result?.data?.items;
-    }
-  );
+  const { data = [], isFetched, isError, refetch } = useQuery<
+    { urlName: string }[]
+  >(['projects'], async () => fetchProjects({ enabled, authClient }), {
+    enabled,
+  });
 
   const projects = data.map((d) => ({ urlName: d.urlName, label: d.urlName }));
 
@@ -45,6 +34,12 @@ const ProjectSelector: React.FC<Props> = ({
       setSelectedProject(projects[0].urlName);
     }
   }, [projects]);
+
+  React.useEffect(() => {
+    if (enabled) {
+      refetch(); // projects
+    }
+  }, [enabled]);
 
   const ProjectsContent = (
     <Menu>
@@ -68,11 +63,18 @@ const ProjectSelector: React.FC<Props> = ({
     }
   };
 
+  // we need to have the enabled check here render nothing in this case
+  // so that the parent component knows of the existence of this component
+  // and can render the height accordingly
+  if (!enabled) {
+    return null;
+  }
+
   if (!isFetched) {
     return <Loader />;
   }
 
-  const showError = isError || !projects || projects.length === 0;
+  const showError = isError || !projects;
 
   if (showError) {
     return (
@@ -102,7 +104,7 @@ const ProjectSelector: React.FC<Props> = ({
           }}
           onClick={() => setShowMenu(true)}
           disabled={projects.length <= 1}
-          variant="outline"
+          type="tertiary"
           icon="Down"
           iconPlacement="right"
         >
@@ -114,7 +116,7 @@ const ProjectSelector: React.FC<Props> = ({
       <br />
       <Button
         style={{ height: 40, width: '100%' }}
-        size="large"
+        size="default"
         variant="default"
         type="primary"
         onClick={handleContinue}

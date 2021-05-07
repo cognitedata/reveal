@@ -58,7 +58,7 @@ const ClusterSelector = ({
           </div>
           <div className="cluster-selector_buttons-wrapper">
             <Button
-              variant="ghost"
+              type="ghost"
               iconPlacement="left"
               icon="MicroLeft"
               unstyled

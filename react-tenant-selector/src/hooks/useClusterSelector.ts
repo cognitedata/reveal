@@ -4,6 +4,11 @@ import axios from 'axios';
 
 export const getNewDomain = (hostname: string, cluster: string) => {
   const sections = hostname.split('.');
+
+  if (hostname === 'localhost') {
+    return `${hostname}:3000`;
+  }
+
   if (sections.length === 3) {
     // eg: foo.cogniteapp.com
     const [app, domain, tld] = sections;
@@ -43,6 +48,8 @@ const useClusterSelector = (appName: string) => {
 
   const { hostname } = window.location;
 
+  const isStaging = hostname.includes('.staging.');
+
   const initialCluster = localStorage.getItem('initialCluster');
 
   const onClusterSelected = (newTenant: string, cluster: string) => {
@@ -62,14 +69,20 @@ const useClusterSelector = (appName: string) => {
 
   const checkClusterValidity = (tenant: string, cluster: string) => {
     setValidatingCluster(true);
+
     return axios
-      .get(`https://${cluster}.apps-api.cognite.ai/tenant`, {
-        params: {
-          tenant,
-          app: appName,
-          redirectUrl: `https://${getNewDomain(hostname, cluster)}`,
-        },
-      })
+      .get(
+        `https://apps-api.${
+          isStaging ? 'staging.' : ''
+        }${cluster}.cognite.ai/tenant`,
+        {
+          params: {
+            tenant,
+            app: appName,
+            redirectUrl: `https://${getNewDomain(hostname, cluster)}`,
+          },
+        }
+      )
       .then(() => {
         return true;
       })

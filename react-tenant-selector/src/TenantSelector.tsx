@@ -100,6 +100,7 @@ export const TenantSelector: React.FC<{
             directoryTenantId: options?.directory || directoryTenantId,
           }
         : undefined,
+      appName: applicationId,
       cluster: cdfCluster,
       flow,
     });
@@ -114,7 +115,7 @@ export const TenantSelector: React.FC<{
     );
 
     setAuthClient(cogniteAuth);
-
+    cogniteAuth.login(); // try and login if we can
     return unsubscribe;
   };
 
@@ -161,6 +162,7 @@ export const TenantSelector: React.FC<{
   );
 
   if (!authClient) {
+    // console.log('Loading from react-tenant-selector', authClient);
     return <Loader />;
   }
 
@@ -173,7 +175,6 @@ export const TenantSelector: React.FC<{
           applicationName={applicationName}
           authClient={authClient}
           authState={authState}
-          cdfCluster={cdfCluster}
           directory={options?.directory}
           enabledLoginModes={enabledLoginModes}
           handleClusterSubmit={onClusterSelected}

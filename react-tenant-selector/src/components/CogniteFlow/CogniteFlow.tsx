@@ -55,7 +55,7 @@ const CogniteFlow = ({
       {errorList}
       <StyledSpecifyCluster>
         <Button
-          variant="ghost"
+          type="ghost"
           iconPlacement="right"
           icon="MicroRight"
           unstyled

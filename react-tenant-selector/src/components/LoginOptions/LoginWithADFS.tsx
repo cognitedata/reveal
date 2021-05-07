@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from '@cognite/cogs.js';
-import { CogniteAuth, saveFlow } from '@cognite/auth-utils';
+import { CogniteAuth } from '@cognite/auth-utils';
 
 interface Props {
   authClient?: CogniteAuth;
@@ -8,15 +8,16 @@ interface Props {
 const LoginWithADFS: React.FC<Props> = ({ authClient }: Props) => {
   const handleClick = () => {
     if (authClient) {
-      saveFlow('ADFS');
-      authClient.login('ADFS');
+      authClient.loginInitial({
+        flow: 'ADFS',
+      });
     }
   };
 
   return (
     <Button
       style={{ height: 40, width: '100%', marginTop: 10 }}
-      size="large"
+      size="default"
       type="secondary"
       onClick={handleClick}
     >

@@ -10,7 +10,7 @@ const getProps = () => {
   const client = new CogniteClient({ appId: 'test' });
   const authClient = new CogniteAuth(client);
 
-  authClient.login = jest.fn();
+  authClient.loginInitial = jest.fn();
 
   return { authClient };
 };
@@ -26,7 +26,9 @@ describe('<LoginWithADFS />', () => {
     render(<Base {...props} />);
 
     fireEvent.click(screen.getByText('Login with ADFS'));
-    expect(props.authClient.login).toBeCalledTimes(1);
-    expect(props.authClient.login).toHaveBeenCalledWith('ADFS');
+    expect(props.authClient.loginInitial).toBeCalledTimes(1);
+    expect(props.authClient.loginInitial).toHaveBeenCalledWith({
+      flow: 'ADFS',
+    });
   });
 });

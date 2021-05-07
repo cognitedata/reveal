@@ -1,6 +1,6 @@
 {
   "name": "@cognite/react-container",
-  "version": "0.14.0",
+  "version": "1.0.0",
   "source": "src/index.ts",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
@@ -45,21 +45,22 @@
     "react-router-dom": "^5.2.0"
   },
   "dependencies": {
-    "@cognite/auth-utils": "^0.8.2",
+    "@cognite/auth-utils": "^1.0.0",
     "@cognite/intercom-helper": "^0.1.2",
     "@cognite/metrics": "^1.1.0",
+    "@cognite/sdk": "^4.0.3",
     "@cognite/react-errors": "^0.0.4",
     "@cognite/react-i18n": "^0.3.1",
     "@cognite/react-loop-detector": "^0.0.1",
     "@cognite/react-sentry": "^0.1.0",
-    "@cognite/react-tenant-selector": "^0.8.0",
+    "@cognite/react-tenant-selector": "^1.0.0",
+    "tslib": "^2.2.0",
     "jwt-decode": "^3.0.0",
     "react-redux": "^7.2.2"
   },
   "peerDependencies": {
     "@cognite/cogs.js": "^2.4.0",
     "@cognite/metrics": "^1.0.0",
-    "@cognite/sdk": "^3.3.0",
     "lodash": "^4.17.20",
     "react": ">=16",
     "react-redux": "^7.2.2",

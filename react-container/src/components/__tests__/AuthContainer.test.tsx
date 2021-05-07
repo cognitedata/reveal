@@ -1,15 +1,43 @@
+/* eslint-disable no-console */
 import React from 'react';
 import { CogniteClient } from '@cognite/sdk';
 import { render, screen } from '@testing-library/react';
 
 import { generateSidecar } from '__mocks/sidecar';
-import { mock as mockedAuthUtils } from '../../__mocks/auth-utils';
 import { AuthContainer } from '../AuthContainer';
 
-// @ts-expect-error - missing other keys
-global.console = { warn: jest.fn() };
+// this would be a nicer way to mock these tests
+// import '@cognite/auth-utils/jest-mocks';
 
-jest.mock('@cognite/auth-utils', () => mockedAuthUtils);
+// @ts-expect-error - missing other keys
+global.console = { warn: jest.fn(), log: console.log };
+
+jest.mock('@cognite/auth-utils', () => {
+  const original = jest.requireActual('@cognite/auth-utils');
+  type callbackType = (args: unknown) => void;
+  let internalCallback: callbackType;
+  const onAuthChanged = (_applicationId: string, callback: callbackType) => {
+    internalCallback = callback;
+    return () => true;
+  };
+  return {
+    ...original,
+    getFlow: () => {
+      return { flow: 'COGNITE_AUTH' };
+    },
+    CogniteAuth: (client: unknown) => ({
+      state: {},
+      getClient: () => client,
+      onAuthChanged,
+      loginAndAuthIfNeeded: () => {
+        internalCallback({
+          client,
+          authState: { authenticated: true },
+        });
+      },
+    }),
+  };
+});
 
 describe('AuthContainer', () => {
   it('should get token from provider', () => {
@@ -30,11 +58,5 @@ describe('AuthContainer', () => {
     render(<Test />);
 
     expect(screen.getByText('test-content')).toBeInTheDocument();
-
-    // eslint-disable-next-line no-console
-    expect(console.warn).toBeCalledWith(
-      '[AuthContainer] UnAuthenticated state found, going to login page.',
-      undefined
-    );
   });
 });

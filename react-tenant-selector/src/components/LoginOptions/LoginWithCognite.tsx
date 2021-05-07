@@ -16,7 +16,6 @@ interface Props {
   initialTenant?: string;
   initialCluster?: string;
   loading: boolean;
-  cluster: string;
 
   handleSubmit: (tenant: string) => void;
   handleClusterSubmit: (tenant: string, cluster: string) => void;
@@ -26,7 +25,6 @@ interface Props {
   authClient?: CogniteAuth;
 }
 const LoginWithCognite: React.FC<Props> = ({
-  cluster,
   initialTenant,
   initialCluster,
   loading,
@@ -47,7 +45,6 @@ const LoginWithCognite: React.FC<Props> = ({
     },
     cluster: {
       value: initialCluster || '',
-      // Cluster is not required field
       isValid: true,
       error: '',
     },
@@ -79,8 +76,9 @@ const LoginWithCognite: React.FC<Props> = ({
         .then((isValid) => {
           if (isValid) {
             if (authClient) {
-              authClient.login('COGNITE_AUTH', {
-                cluster,
+              authClient.loginInitial({
+                flow: 'COGNITE_AUTH',
+                cluster: initialCluster,
               });
             }
             handleSubmit(formState.tenant.value);
@@ -101,8 +99,9 @@ const LoginWithCognite: React.FC<Props> = ({
       .then((isValid) => {
         if (isValid) {
           if (authClient) {
-            authClient.login('COGNITE_AUTH', {
-              cluster,
+            authClient.loginInitial({
+              flow: 'COGNITE_AUTH',
+              cluster: formState.cluster.value,
             });
           }
           handleClusterSubmit(formState.tenant.value, formState.cluster.value);

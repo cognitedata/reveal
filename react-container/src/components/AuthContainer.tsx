@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { CogniteClient } from '@cognite/sdk';
+import type { CogniteClient } from '@cognite/sdk';
 import { CogniteAuth, AuthenticatedUser, getFlow } from '@cognite/auth-utils';
 import { Loader } from '@cognite/cogs.js';
 import { SidecarConfig } from '@cognite/react-tenant-selector';
@@ -37,7 +37,9 @@ export const AuthContainer: React.FC<AuthContainerProps> = ({
   sidecar,
   children,
 }) => {
-  const [authState, setAuthState] = React.useState<AuthContext | undefined>();
+  const [authResponse, setAuthState] = React.useState<
+    AuthContext | undefined
+  >();
   const [loading, setLoading] = React.useState(true);
   const { flow } = getFlow();
 
@@ -51,6 +53,7 @@ export const AuthContainer: React.FC<AuthContainerProps> = ({
 
     const authClient = new CogniteAuth(sdkClient, {
       aad,
+      appName: applicationId,
       cluster: cdfCluster,
       flow,
     });
@@ -59,15 +62,9 @@ export const AuthContainer: React.FC<AuthContainerProps> = ({
 
     const flowToUse = flow || authClient.state.authResult?.authFlow;
 
-    if (authClient.initializingPromise && flowToUse) {
-      authClient.initializingPromise.then(() => {
-        authClient.loginAndAuthIfNeeded(flowToUse, tenant, cdfCluster);
-      });
-    }
-
     const unsubscribe = authClient.onAuthChanged(
       applicationId,
-      (authResponse: AuthenticatedUser) => {
+      (authenticatedUser: AuthenticatedUser) => {
         if (!authClient.state.initializing) {
           log('[AuthContainer] onAuthChanged authResponse', [authResponse], 1);
           log(
@@ -76,13 +73,15 @@ export const AuthContainer: React.FC<AuthContainerProps> = ({
             1
           );
           setAuthState({
-            initialized: authClient.initializingPromise,
             client: authClient.getClient(),
-            authState: authResponse,
+            authState: authenticatedUser,
           });
+          setLoading(false);
         }
       }
     );
+
+    authClient.loginAndAuthIfNeeded({ flow: flowToUse, project: tenant });
 
     return () => {
       unsubscribe();
@@ -92,7 +91,13 @@ export const AuthContainer: React.FC<AuthContainerProps> = ({
   React.useEffect(() => {
     log(
       '[AuthContainer] State info:',
-      [{ tenant, authState: authState?.authState, sdkClient }],
+      [
+        {
+          tenant,
+          authResponse: authResponse?.authState,
+          flow,
+        },
+      ],
       1
     );
 
@@ -101,39 +106,50 @@ export const AuthContainer: React.FC<AuthContainerProps> = ({
       return;
     }
 
-    if (authState?.authState?.authenticated) {
+    if (authResponse?.authState?.authenticated) {
       setLoading(false);
     } else {
       log(
         '[AuthContainer] UnAuthenticated state found, going to login page.',
-        [authState],
+        [authResponse],
         2
       );
-      if (authState?.initialized && authError) {
-        authState.initialized.then(() => {
+      if (authResponse?.initialized && authError) {
+        authResponse.initialized.then(() => {
           authError();
         });
       }
     }
-  }, [authState]);
+  }, [authResponse]);
 
   log(
     '[AuthContainer] Render gates:',
     [
       {
         loading,
-        authenticated: authState?.authState?.authenticated,
+        authResponse,
+        authenticated: authResponse?.authState?.authenticated,
       },
     ],
     1
   );
 
-  if (loading || !authState) {
+  if (loading) {
+    log('Loading from react-container', [], 1);
+    return <Loader />;
+  }
+
+  if (!authResponse) {
+    // console.log(
+    //   'This should never happen, but its a guard for the below render'
+    // );
     return <Loader />;
   }
 
   return (
-    <AuthProvider.Provider value={authState}>{children}</AuthProvider.Provider>
+    <AuthProvider.Provider value={authResponse}>
+      {children}
+    </AuthProvider.Provider>
   );
 };
 

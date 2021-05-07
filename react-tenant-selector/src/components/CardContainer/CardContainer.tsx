@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Loader } from '@cognite/cogs.js';
 import { CogniteAuth, AuthenticatedUser } from '@cognite/auth-utils';
 
 import {
@@ -43,7 +42,6 @@ type Props = {
   authClient?: CogniteAuth;
   authState?: AuthenticatedUser;
   directory?: string;
-  cdfCluster: string;
   enabledLoginModes: EnabledModes;
   errors?: React.ReactNode[];
   handleClusterSubmit: (tenant: string, cluster: string) => void;
@@ -61,7 +59,6 @@ const CardContainer = ({
   applicationName,
   authClient,
   authState,
-  cdfCluster,
   directory,
   errors,
   handleClusterSubmit,
@@ -85,12 +82,9 @@ const CardContainer = ({
     }
   }, [container, authState?.error, authState?.project]);
 
-  const showLoading =
-    authClient?.state.initialized && (!authState || authState?.initialising);
+  const showProjectSelection = authState?.authenticated;
 
-  const showProjectSelection = !showLoading && authState?.authenticated;
-
-  const showLoginOptions = !showProjectSelection && !showLoading;
+  const showLoginOptions = !showProjectSelection;
 
   const showSpacer =
     !enabledLoginModes.cognite &&
@@ -137,21 +131,16 @@ const CardContainer = ({
 
           <ErrorDisplay />
 
-          {showLoading && <Loader />}
-
-          {showProjectSelection && (
-            <ProjectSelector
-              authState={authState}
-              authClient={authClient}
-              onSelected={handleSubmit}
-            />
-          )}
+          <ProjectSelector
+            enabled={showProjectSelection}
+            authClient={authClient}
+            onSelected={handleSubmit}
+          />
 
           {showLoginOptions && (
             <>
               {enabledLoginModes.cognite && (
                 <LoginWithCognite
-                  cluster={cdfCluster}
                   initialTenant={initialTenant}
                   initialCluster={initialCluster}
                   errors={errors}
@@ -169,19 +158,13 @@ const CardContainer = ({
                 <LoginWithADFS authClient={authClient} />
               )}
               {enabledLoginModes.aad && (
-                <LoginWithAzure
-                  authClient={authClient}
-                  cluster={cdfCluster}
-                  directory={directory}
-                />
+                <LoginWithAzure authClient={authClient} directory={directory} />
               )}
             </>
           )}
         </StyledContentWrapper>
         {/* Can we provide a better default link? */}
-        {!showLoading && (
-          <LoginTip helpLink={helpLink || 'https://docs.cognite.com/'} />
-        )}
+        <LoginTip helpLink={helpLink || 'https://docs.cognite.com/'} />
       </div>
     </StyledCardContainer>
   );

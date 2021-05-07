@@ -19,6 +19,7 @@ export default [
     external: [
       ...Object.keys(pkg.dependencies || {}),
       ...Object.keys(pkg.peerDependencies || {}),
+      'lodash/isString',
     ],
     plugins: [
       typescript({
@@ -34,6 +35,11 @@ export default [
         file: 'dist/mocks.js',
         format: 'cjs',
       },
+    ],
+    external: [
+      ...Object.keys(pkg.dependencies || {}),
+      ...Object.keys(pkg.peerDependencies || {}),
+      'lodash/isString',
     ],
     plugins: [
       typescript({

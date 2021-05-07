@@ -1,6 +1,6 @@
 {
   "name": "@cognite/react-loop-detector",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "source": "src/index.ts",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
@@ -32,7 +32,6 @@
     "@babel/core": "^7.3.3",
     "@babel/preset-env": "^7.3.1",
     "@babel/preset-react": "^7.0.0",
-    "@cognite/cogs.js": "^1.17.0",
     "@storybook/addon-actions": "^5.3.19",
     "@storybook/addon-knobs": "^5.3.19",
     "@storybook/addon-links": "^5.3.19",
@@ -48,7 +47,7 @@
   },
   "dependencies": {},
   "peerDependencies": {
-    "@cognite/cogs.js": "^1.17.0",
+    "@cognite/cogs.js": "^3.10.0",
     "react": "^16.13.1"
   }
 }

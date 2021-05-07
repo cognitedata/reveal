@@ -1,6 +1,6 @@
 {
   "name": "@cognite/react-sentry",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "source": "src/index.ts",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
@@ -41,6 +41,7 @@
     "jest-css-modules-transform": "^2.1.1"
   },
   "dependencies": {
+    "tslib": "^2.2.0",
     "@sentry/browser": "^6.2.1"
   },
   "peerDependencies": {

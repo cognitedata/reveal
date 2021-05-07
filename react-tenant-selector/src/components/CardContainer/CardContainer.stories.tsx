@@ -1,10 +1,26 @@
 import React from 'react';
 import { action } from '@storybook/addon-actions';
-
+import { QueryClientProvider, QueryClient } from 'react-query';
 import CardContainer from './CardContainer';
+
+const cache = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 60000,
+      retry: false,
+    },
+  },
+});
 
 export default {
   title: 'Authentication/CardContainer',
+  decorators: [
+    (Story: () => React.ReactElement) => (
+      <QueryClientProvider client={cache}>
+        <Story />
+      </QueryClientProvider>
+    ),
+  ],
 };
 
 const cardContainerProps = {
@@ -22,6 +38,10 @@ const cardContainerProps = {
     cognite: true,
     aad: true,
     adfs: true,
+  },
+  authState: {
+    authenticated: false,
+    initialising: false,
   },
 };
 
@@ -80,5 +100,19 @@ export const Loading = () => {
 export const WithError = () => {
   return (
     <CardContainer {...cardContainerProps} errors={['This is a login error']} />
+  );
+};
+
+export const ProjectSelection = () => {
+  return (
+    <CardContainer
+      {...cardContainerProps}
+      authState={{
+        authenticated: true,
+        initialising: false,
+        error: false,
+        errorMessage: '',
+      }}
+    />
   );
 };

@@ -1,3 +1,9 @@
+## 1.0.0 May 5 2021
+
+### Changes
+
+- Upgrade to SDK v4 (via auth-utils)
+  
 ## 0.13.1 May 3 2021
 
 ### Changes
