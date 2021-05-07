@@ -2,7 +2,13 @@
 
 import React from 'react';
 import { Icon, Input, Select } from '@cognite/cogs.js';
-import { DSPFunction, getConfigFromDspFunction } from 'utils/transforms';
+import {
+  DSPFunction,
+  DSPFunctionParameter,
+  DSPFunctionParameterType,
+  getConfigFromDspFunction,
+  transformParamInput,
+} from 'utils/transforms';
 import { StorableNode } from 'reducers/charts/types';
 import AvailableOps from 'components/NodeEditor/AvailableOps';
 import { ConfigPanelComponentProps } from '../types';
@@ -95,23 +101,50 @@ export const configPanel = ({
 
       {functionData?.toolFunction?.parameters?.length &&
         (functionData?.toolFunction?.parameters || []).map(
-          ({ param }: { param: string }) => {
+          ({ param, type }: DSPFunctionParameter) => {
             return (
               <div style={{ marginTop: 8 }}>
                 <h4>{param}</h4>
-
-                <Input
-                  id={param}
-                  value={functionData[param] || ''}
-                  onChange={(newValue: React.ChangeEvent<HTMLInputElement>) => {
-                    onUpdateNode({
-                      functionData: {
-                        ...node.functionData,
-                        [param]: Number(newValue.target.value),
+                {type === DSPFunctionParameterType.boolean ? (
+                  <Select
+                    theme="dark"
+                    options={[
+                      {
+                        value: true,
+                        label: 'true',
                       },
-                    });
-                  }}
-                />
+                      {
+                        value: false,
+                        label: 'false',
+                      },
+                    ]}
+                    /* Same hack like ChartList.tsx:170 */
+                    placeholder={String(functionData[param]) || 'Select...'}
+                    onChange={({ value }: { value: string }) => {
+                      onUpdateNode({
+                        functionData: {
+                          ...node.functionData,
+                          [param]: value,
+                        },
+                      });
+                    }}
+                  />
+                ) : (
+                  <Input
+                    id={param}
+                    value={functionData[param] || ''}
+                    onChange={({
+                      target,
+                    }: React.ChangeEvent<HTMLInputElement>) => {
+                      onUpdateNode({
+                        functionData: {
+                          ...node.functionData,
+                          [param]: transformParamInput(type, target.value),
+                        },
+                      });
+                    }}
+                  />
+                )}
               </div>
             );
           }
