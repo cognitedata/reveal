@@ -14,7 +14,7 @@ module.exports = {
     ecmaVersion: 2020, // Allows for the parsing of modern ECMAScript features
     sourceType: 'module' // Allows for the use of imports
   },
-  plugins: ['header', '@typescript-eslint', 'jsdoc', 'unused-imports'],
+  plugins: ['header', '@typescript-eslint', 'jsdoc', 'unused-imports', 'lodash'],
 
   extends: [
     'plugin:@typescript-eslint/recommended',
@@ -47,6 +47,10 @@ module.exports = {
         }
       ]
     ],
+
+    // see relevant discussion https://github.com/cognitedata/cognite-sdk-js/pull/386
+    'lodash/import-scope': ['error', 'method'],
+
     'no-return-await': 'error',
     'no-empty': 'off',
     'object-literal-sort-keys': 'off',
