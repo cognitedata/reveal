@@ -51,7 +51,27 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
     const axisGroup = new THREE.Group();
     this._interactiveObjects = this.createAxisCross(axisGroup);
 
-    this.addAxisBoxToViewer(axisGroup, this._layoutConfig.position);
+    const canvasElement = viewer.domElement.querySelector('canvas');
+    if (canvasElement === null) {
+      throw new Error('Could not find canvas');
+    }
+    const divElement = document.createElement('div');
+    divElement.style.display = 'inline';
+    divElement.style.position = 'absolute';
+    divElement.style.left = `0`;
+    divElement.style.top = `0`;
+    divElement.style.height = `100%`;
+    divElement.style.width = `100%`;
+    divElement.style.zIndex = '1';
+    divElement.addEventListener('click', event => {
+      console.log('click');
+      if (this.tryClick(event.offsetX, event.offsetY, true)) {
+        event.stopPropagation();
+      }
+    });
+    canvasElement.appendChild(divElement);
+
+    this.addAxisBoxToViewer(axisGroup, this._layoutConfig.position!);
   }
 
   private addAxisBoxToViewer(axisGroup: THREE.Group, position: AbsolutePosition | RelativePosition) {
