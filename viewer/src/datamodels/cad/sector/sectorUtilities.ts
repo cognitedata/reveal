@@ -26,7 +26,7 @@ export function consumeSectorSimple(
   geometryClipBox: THREE.Box3 | null
 ): { sectorMeshes: AutoDisposeGroup; instancedMeshes: InstancedMeshFile[] } {
   const group = new AutoDisposeGroup();
-
+  group.name = 'Quads';
   if (sector.buffer.byteLength === 0) {
     // No data, just skip
     return { sectorMeshes: new AutoDisposeGroup(), instancedMeshes: [] };

@@ -7,11 +7,12 @@ import * as THREE from 'three';
 import { CadMaterialManager } from '../CadMaterialManager';
 import { InstancedMeshFile, SectorQuads } from '../rendering/types';
 
-import { SectorGeometry, ParsedSector } from './types';
-import { LevelOfDetail } from './LevelOfDetail';
+import { SectorGeometry, SectorMetadata } from './types';
+
 import { consumeSectorDetailed, consumeSectorSimple } from './sectorUtilities';
-import { assertNever, toThreeJsBox3 } from '../../../utilities';
+import { toThreeJsBox3 } from '../../../utilities';
 import { AutoDisposeGroup } from '../../../utilities/three';
+import assert from 'assert';
 
 export class SimpleAndDetailedToSector3D {
   private readonly materialManager: CadMaterialManager;
@@ -20,32 +21,25 @@ export class SimpleAndDetailedToSector3D {
     this.materialManager = materialManager;
   }
 
-  transformSector(
-    parsedSector: ParsedSector,
+  transformSimpleSector(
+    modelBlobUrl: string,
+    sector: SectorMetadata,
+    geometry: SectorQuads,
     geometryClipBox: THREE.Box3 | null
-  ): { sectorMeshes: AutoDisposeGroup; instancedMeshes: InstancedMeshFile[] } {
-    switch (parsedSector.levelOfDetail) {
-      case LevelOfDetail.Detailed:
-        return consumeSectorDetailed(
-          parsedSector.data as SectorGeometry,
-          parsedSector.metadata,
-          this.materialManager.getModelMaterials(parsedSector.blobUrl)!,
-          geometryClipBox
-        );
+  ): Promise<{ sectorMeshes: AutoDisposeGroup; instancedMeshes: InstancedMeshFile[] }> {
+    const materials = this.materialManager.getModelMaterials(modelBlobUrl);
+    assert(materials !== undefined, `Could not find materials for model '${modelBlobUrl}`);
+    return Promise.resolve(consumeSectorSimple(geometry, toThreeJsBox3(new THREE.Box3(), sector.bounds), materials!, geometryClipBox));
+  }
 
-      case LevelOfDetail.Simple:
-        return consumeSectorSimple(
-          parsedSector.data as SectorQuads,
-          toThreeJsBox3(new THREE.Box3(), parsedSector.metadata.bounds),
-          this.materialManager.getModelMaterials(parsedSector.blobUrl)!,
-          geometryClipBox
-        );
-
-      case LevelOfDetail.Discarded:
-        throw new Error('Cannot transform discarded sector');
-
-      default:
-        assertNever(parsedSector.levelOfDetail);
-    }
+  transformDetailedSector(
+    modelBlobUrl: string,
+    sector: SectorMetadata,
+    geometry: SectorGeometry,
+    geometryClipBox: THREE.Box3 | null
+  ): Promise<{ sectorMeshes: AutoDisposeGroup; instancedMeshes: InstancedMeshFile[] }> {
+    const materials = this.materialManager.getModelMaterials(modelBlobUrl);
+    assert(materials !== undefined, `Could not find materials for model '${modelBlobUrl}`);
+    return Promise.resolve(consumeSectorDetailed(geometry, sector, materials!, geometryClipBox));
   }
 }
