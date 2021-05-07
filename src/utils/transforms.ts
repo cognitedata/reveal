@@ -99,16 +99,12 @@ export function transformParamInput(
   type: DSPFunctionParameterType,
   value: string
 ): string | number {
-  console.log(value);
-
   switch (type) {
     case DSPFunctionParameterType.int:
       return Number(value);
     case DSPFunctionParameterType.float:
       // eslint-disable-next-line
       const match = value.match(FLOAT_NUMBER_PATTERN);
-      console.log(match);
-
       return match && match[0] ? match[0] : parseFloat(value);
     case DSPFunctionParameterType.string:
       return value;
@@ -226,8 +222,6 @@ export function getStepsFromWorkflow(
     .map((node, i, allNodes) => {
       const inputs = node.inputPins
         .map((inputPin: any) => {
-          console.log(inputPin);
-
           const inputNodeConnection = Object.values(connections || {}).find(
             (conn) =>
               conn.inputPin.nodeId === node.id &&
