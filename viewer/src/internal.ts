@@ -8,7 +8,7 @@ export { PotreeNodeWrapper } from './datamodels/pointcloud/PotreeNodeWrapper';
 export { PotreeGroupWrapper } from './datamodels/pointcloud/PotreeGroupWrapper';
 export { PointCloudNode } from './datamodels/pointcloud/PointCloudNode';
 
-export { traverseDepthFirst, traverseUpwards } from './utilities/objectTraversal';
+export { traverseDepthFirst } from './utilities/objectTraversal';
 export { WantedSector } from './datamodels/cad/sector/types';
 export { LevelOfDetail } from './datamodels/cad/sector/LevelOfDetail';
 

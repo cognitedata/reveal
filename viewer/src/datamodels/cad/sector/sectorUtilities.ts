@@ -15,6 +15,7 @@ import { toThreeJsBox3 } from '../../../utilities';
 import { traverseDepthFirst } from '../../../utilities/objectTraversal';
 import { createTriangleMeshes } from '../rendering/triangleMeshes';
 import { createPrimitives } from '../rendering/primitives';
+import { AutoDisposeGroup } from '../../../utilities/three';
 
 const quadVertexData = new Float32Array([
   /* eslint-disable prettier/prettier */
@@ -34,12 +35,14 @@ export function consumeSectorSimple(
   sector: SectorQuads,
   sectorBounds: THREE.Box3,
   materials: Materials
-): { sectorMeshes: THREE.Group; instancedMeshes: InstancedMeshFile[] } {
-  const group = new THREE.Group();
+): { sectorMeshes: AutoDisposeGroup; instancedMeshes: InstancedMeshFile[] } {
+  const group = new AutoDisposeGroup();
+  group.name = 'Quads';
+
   const stride = 3 + 1 + 3 + 16;
   if (sector.buffer.byteLength === 0) {
     // No data, just skip
-    return { sectorMeshes: new THREE.Group(), instancedMeshes: [] };
+    return { sectorMeshes: new AutoDisposeGroup(), instancedMeshes: [] };
   }
   if (sector.buffer.byteLength % stride !== 0) {
     throw new Error(`Expected buffer size to be multiple of ${stride}, but got ${sector.buffer.byteLength}`);
@@ -101,19 +104,19 @@ export function consumeSectorDetailed(
   sector: SectorGeometry,
   metadata: SectorMetadata,
   materials: Materials
-): { sectorMeshes: THREE.Group; instancedMeshes: InstancedMeshFile[] } {
+): { sectorMeshes: AutoDisposeGroup; instancedMeshes: InstancedMeshFile[] } {
   const bounds = toThreeJsBox3(new THREE.Box3(), metadata.bounds);
-  const obj = new THREE.Group();
+  const group = new AutoDisposeGroup();
   for (const primtiveRoot of createPrimitives(sector, materials, bounds)) {
-    obj.add(primtiveRoot);
+    group.add(primtiveRoot);
   }
 
   const triangleMeshes = createTriangleMeshes(sector.triangleMeshes, bounds, materials.triangleMesh);
   for (const triangleMesh of triangleMeshes) {
-    obj.add(triangleMesh);
+    group.add(triangleMesh);
   }
 
-  return { sectorMeshes: obj, instancedMeshes: sector.instanceMeshes };
+  return { sectorMeshes: group, instancedMeshes: sector.instanceMeshes };
 }
 
 export function distinctUntilLevelOfDetailChanged() {

@@ -9,9 +9,11 @@ export class MostFrequentlyUsedCache<TKey, TValue> {
   private readonly _capacity: number;
   private readonly _cache = new Map<TKey, TValue>();
   private readonly _retrieves = new Map<TKey, number>();
+  private readonly _disposeCallback: ((value: TValue) => void) | undefined;
 
-  constructor(capacity: number) {
+  constructor(capacity: number, disposeCallback?: (value: TValue) => void) {
     this._capacity = capacity;
+    this._disposeCallback = disposeCallback;
   }
 
   get(key: TKey): TValue | undefined {
@@ -36,7 +38,11 @@ export class MostFrequentlyUsedCache<TKey, TValue> {
 
   remove(key: TKey): boolean {
     this._retrieves.delete(key);
-    if (this._cache.has(key)) {
+    const value = this._cache.get(key);
+    if (value !== undefined) {
+      if (this._disposeCallback !== undefined) {
+        this._disposeCallback(value);
+      }
       this._cache.delete(key);
       return true;
     }
@@ -44,6 +50,11 @@ export class MostFrequentlyUsedCache<TKey, TValue> {
   }
 
   clear() {
+    if (this._disposeCallback !== undefined) {
+      for (const value of this._cache.values()) {
+        this._disposeCallback(value);
+      }
+    }
     this._retrieves.clear();
     this._cache.clear();
   }
@@ -57,8 +68,9 @@ export class MostFrequentlyUsedCache<TKey, TValue> {
       .sort((a, b) => a.retrivalCount - b.retrivalCount)
       .slice(0, this._cache.size - this._capacity)
       .map(x => x.key);
+
     for (const key of keysForRemoval) {
-      this._cache.delete(key);
+      this.remove(key);
     }
   }
 }

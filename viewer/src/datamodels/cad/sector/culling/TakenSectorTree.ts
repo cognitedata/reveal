@@ -12,7 +12,7 @@ import {
   addSectorCost
 } from './types';
 
-import { traverseUpwards, traverseDepthFirst } from '../../../../utilities/objectTraversal';
+import { traverseDepthFirst } from '../../../../utilities/objectTraversal';
 
 export class TakenSectorTree {
   get totalCost(): SectorCost {
@@ -20,6 +20,7 @@ export class TakenSectorTree {
   }
   private readonly sectors: {
     sector: SectorMetadata;
+    parentIndex: number;
     priority: number;
     cost: SectorCost;
     lod: LevelOfDetail;
@@ -35,12 +36,23 @@ export class TakenSectorTree {
       this.sectors.length = Math.max(this.sectors.length, x.id);
       this.sectors[x.id] = {
         sector: x,
+        parentIndex: -1,
         priority: -1,
         cost: { downloadSize: 0, drawCalls: 0 },
         lod: LevelOfDetail.Discarded
       };
       return true;
     });
+    // Assign parents
+    for (let i = 0; i < this.sectors.length; ++i) {
+      const sectorContainer = this.sectors[i];
+      const childrenIndexes = sectorContainer.sector.children.map(x => x.id);
+      for (const childIndex of childrenIndexes) {
+        this.sectors[childIndex].parentIndex = i;
+      }
+    }
+
+    // Default to load root
     if (sectorRoot.facesFile.fileName) {
       this.setSectorLod(sectorRoot.id, LevelOfDetail.Simple);
     }
@@ -72,19 +84,23 @@ export class TakenSectorTree {
     if (this.sectors[sectorId].lod === LevelOfDetail.Detailed) {
       return;
     }
-    traverseUpwards(this.sectors[sectorId].sector, x => {
-      switch (this.sectors[x.id].lod) {
+    let sectorContainer = this.sectors[sectorId];
+    while (true) {
+      switch (sectorContainer.lod) {
         case LevelOfDetail.Simple:
-          this.replaceSimpleWithDetailed(x.id);
+          this.replaceSimpleWithDetailed(sectorContainer.sector.id);
           break;
         case LevelOfDetail.Discarded:
-          this.setSectorLod(x.id, LevelOfDetail.Detailed);
+          this.setSectorLod(sectorContainer.sector.id, LevelOfDetail.Detailed);
           break;
         default:
         // Already detailed
       }
-      return true;
-    });
+
+      // More parents?
+      if (sectorContainer.parentIndex === -1) break;
+      sectorContainer = this.sectors[sectorContainer.parentIndex];
+    }
 
     this.markAllDiscardedChildrenAsSimple(sectorId);
   }
