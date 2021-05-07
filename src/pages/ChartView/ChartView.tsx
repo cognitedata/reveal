@@ -320,6 +320,8 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                         selectedSourceId={selectedSourceId}
                         onRowClick={handleSourceClick}
                         onInfoClick={handleInfoClick}
+                        dateFrom={chart.dateFrom}
+                        dateTo={chart.dateTo}
                       />
 
                       <WorkflowRows
