@@ -35,7 +35,8 @@ export class CdfModelDataClient
       ...this.client.getDefaultRequestHeaders(),
       Accept: '*/*'
     };
-    const response = await fetch(url, { headers, method: 'GET' });
+
+    const response = await fetchWithRetry(url, { headers, method: 'GET' });
     return response.arrayBuffer();
   }
 
@@ -120,4 +121,19 @@ export class CdfModelDataClient
     const url = `/api/v1/projects/${this.client.project}/3d/files/${blobId}`;
     return url;
   }
+}
+
+async function fetchWithRetry(input: RequestInfo, options: RequestInit | undefined, retries: number = 3) {
+  let error: Error | undefined;
+  for (let i = 0; i < retries; i++) {
+    try {
+      return await fetch(input, options);
+    } catch (err) {
+      // Keep first error only
+      if (error !== undefined) {
+        error = err;
+      }
+    }
+  }
+  throw error;
 }
