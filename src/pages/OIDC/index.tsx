@@ -118,16 +118,19 @@ export default function OIDCConfigContainer() {
           tokenUrl: values.tokenUrl || null,
           issuer: values.issuer || null,
           audience: values.audience || null,
-          scopeClaims: values.scopeClaims.map((claimName: string) => ({
-            claimName,
-          })),
-          logClaims: values.logClaims.map((claimName: string) => ({
-            claimName,
-          })),
-          accessClaims: values.accessClaims.map((claimName: string) => ({
-            claimName,
-          })),
-          skewMs: 3,
+          scopeClaims:
+            values.scopeClaims?.map((claimName: string) => ({
+              claimName,
+            })) || [],
+          logClaims:
+            values.logClaims?.map((claimName: string) => ({
+              claimName,
+            })) || [],
+          accessClaims:
+            values.accessClaims?.map((claimName: string) => ({
+              claimName,
+            })) || [],
+          skewMs: values.skewMs,
         },
       },
     });
@@ -143,13 +146,15 @@ export default function OIDCConfigContainer() {
       onFinish={handleSubmit}
       initialValues={{
         ...data?.oidcConfiguration,
-        accessClaims: data?.oidcConfiguration.accessClaims.map(
+        accessClaims: data?.oidcConfiguration?.accessClaims?.map(
           o => o.claimName
         ),
-        scopeClaims: data?.oidcConfiguration.scopeClaims.map(o => o.claimName),
-        logClaims: data?.oidcConfiguration.logClaims.map(o => o.claimName),
+        scopeClaims: data?.oidcConfiguration?.scopeClaims?.map(
+          o => o.claimName
+        ),
+        logClaims: data?.oidcConfiguration?.logClaims?.map(o => o.claimName),
 
-        isOidcEnabled: data?.authentication.isOidcEnabled,
+        isOidcEnabled: data?.authentication?.isOidcEnabled,
       }}
     >
       <Form.Item name="isOidcEnabled" label="Enabled" valuePropName="checked">
