@@ -26,10 +26,12 @@ export default function GroupDrawer({ group, onClose }: Props) {
 
   const { mutateAsync: updateGroup, isLoading } = useMutation(
     async (g: Group) => {
-      const { name, sourceId, capabilities } = g;
+      // @ts-ignore
+      const { name, sourceId, source, capabilities } = g;
 
       const newGroup = await sdk.groups.create([
-        { name, sourceId, capabilities },
+        // @ts-ignore
+        { name, sourceId, source, capabilities },
       ]);
       if (group?.id) {
         await sdk.groups.delete([group?.id]);
@@ -87,6 +89,8 @@ export default function GroupDrawer({ group, onClose }: Props) {
           name: group?.name,
           capabilities: group?.capabilities,
           sourceId: group?.sourceId,
+          // @ts-ignore
+          source: group?.source,
         }}
       >
         <Form.Item
@@ -133,6 +137,18 @@ export default function GroupDrawer({ group, onClose }: Props) {
           <Input
             disabled={isLoading}
             placeholder="e.g., Azure AD group global unique identifier"
+          />
+        </Form.Item>
+        <Form.Item
+          hasFeedback={isLoading}
+          validateStatus="validating"
+          name="source"
+          label="Source name"
+          extra="Enter the name of the group in the source IdP system."
+        >
+          <Input
+            disabled={isLoading}
+            placeholder="e.g., Azure AD group descriptor"
           />
         </Form.Item>
         <Form.Item>
