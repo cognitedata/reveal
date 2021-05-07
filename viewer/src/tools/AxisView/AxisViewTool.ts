@@ -33,7 +33,8 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
 
   private readonly _screenPosition: THREE.Vector2;
 
-  private dynamicUpdatePosition = () => {};
+  private _dynamicUpdatePosition = () => {};
+  private _updateClickDiv = () => {};
 
   constructor(viewer: Cognite3DViewer, config?: AxisBoxConfig) {
     super();
@@ -51,27 +52,34 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
     const axisGroup = new THREE.Group();
     this._interactiveObjects = this.createAxisCross(axisGroup);
 
+    this._updateClickDiv = this.createClickDiv(viewer);
+    this.addAxisBoxToViewer(axisGroup, this._layoutConfig.position!);
+  }
+
+  private createClickDiv(viewer: Cognite3DViewer) {
     const canvasElement = viewer.domElement.querySelector('canvas');
     if (canvasElement === null) {
       throw new Error('Could not find canvas');
     }
     const divElement = document.createElement('div');
-    divElement.style.display = 'inline';
     divElement.style.position = 'absolute';
-    divElement.style.left = `0`;
-    divElement.style.top = `0`;
-    divElement.style.height = `100%`;
-    divElement.style.width = `100%`;
+    divElement.style.height = `${this._layoutConfig.size}px`;
+    divElement.style.width = `${this._layoutConfig.size}px`;
     divElement.style.zIndex = '1';
     divElement.addEventListener('click', event => {
-      console.log('click');
-      if (this.tryClick(event.offsetX, event.offsetY, true)) {
+      const rect = viewer.domElement.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+      if (this.handleClick(x, y)) {
         event.stopPropagation();
       }
     });
-    canvasElement.appendChild(divElement);
+    viewer.domElement.appendChild(divElement);
 
-    this.addAxisBoxToViewer(axisGroup, this._layoutConfig.position!);
+    return () => {
+      divElement.style.left = `${this._screenPosition.x}px`;
+      divElement.style.bottom = `${this._screenPosition.y}px`;
+    };
   }
 
   private addAxisBoxToViewer(axisGroup: THREE.Group, position: AbsolutePosition | RelativePosition) {
@@ -85,13 +93,13 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
         case Corner.BottomRight:
           this._screenPosition.y = position.padding.y;
 
-          this.dynamicUpdatePosition = () => {
+          this._dynamicUpdatePosition = () => {
             this._screenPosition.x = this._viewer.renderer.domElement.clientWidth - position.padding.x - size;
           };
           break;
 
         case Corner.TopRight:
-          this.dynamicUpdatePosition = () => {
+          this._dynamicUpdatePosition = () => {
             this._screenPosition.x = this._viewer.renderer.domElement.clientWidth - position.padding.x - size;
             this._screenPosition.y = this._viewer.renderer.domElement.clientHeight - position.padding.y - size;
           };
@@ -99,7 +107,7 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
 
         case Corner.TopLeft:
           this._screenPosition.x = position.padding.x;
-          this.dynamicUpdatePosition = () => {
+          this._dynamicUpdatePosition = () => {
             this._screenPosition.y = this._viewer.renderer.domElement.clientHeight - position.padding.y - size;
           };
           break;
@@ -111,7 +119,7 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
         default:
           throw new Error(`Unknown corner position for Axis Cross: Corner = ${position.corner}`);
       }
-      this.dynamicUpdatePosition();
+      this._dynamicUpdatePosition();
     }
 
     this._viewer.addUiObject(axisGroup, this._screenPosition, new Vector2(size, size));
@@ -123,7 +131,7 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
     }
   }
 
-  public tryClick(xScreenPos: number, yScreenPos: number, moveCameraOnSuccess = true): boolean {
+  private handleClick(xScreenPos: number, yScreenPos: number): boolean {
     const canvas = this._viewer.renderer.domElement.getBoundingClientRect();
     const xNdc = (2 * (xScreenPos - this._screenPosition.x)) / this._layoutConfig.size - 1;
     const yNdc = (2 * (canvas.height - yScreenPos - this._screenPosition.y)) / this._layoutConfig.size - 1;
@@ -139,9 +147,7 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
     const targetPosition = intersects[0].object.position.clone().normalize();
     const targetUp = (intersects[0].object.userData.upVector as THREE.Vector3).clone();
 
-    if (moveCameraOnSuccess) {
-      this.moveCameraTo(this._viewer.getCamera(), this._viewer.cameraControls, targetPosition, targetUp);
-    }
+    this.moveCameraTo(this._viewer.getCamera(), this._viewer.cameraControls, targetPosition, targetUp);
 
     return true;
   }
@@ -160,9 +166,10 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
 
   private setupTransformOnRender(axisGroup: THREE.Group) {
     axisGroup.children[0].onBeforeRender = () => {
-      this.dynamicUpdatePosition();
+      this._dynamicUpdatePosition();
       axisGroup.quaternion.copy(this._viewer.getCamera().quaternion).invert();
       axisGroup.updateMatrixWorld();
+      this._updateClickDiv();
     };
   }
 

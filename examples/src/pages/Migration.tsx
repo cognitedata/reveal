@@ -15,7 +15,7 @@ import {
   PotreePointColorType,
   PotreePointShape
 } from '@cognite/reveal';
-import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, AxisViewTool } from '@cognite/reveal/tools';
+import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, AxisViewTool, Corner } from '@cognite/reveal/tools';
 import { CadNode } from '@cognite/reveal/experimental';
 
 window.THREE = THREE;
@@ -472,13 +472,10 @@ export function Migration() {
 
       assetExplode.add(explodeActions, 'reset').name('Reset');
 
-      const axisViewTool = new AxisViewTool(viewer);
+      new AxisViewTool(viewer);
       viewer.on('click', async event => {
         const { offsetX, offsetY } = event;
         console.log('2D coordinates', event);
-
-        if(axisViewTool.tryClick(event.offsetX, event.offsetY)) return;
-
         const intersection = viewer.getIntersectionFromPixel(offsetX, offsetY);
         if (intersection !== null) {
           console.log(intersection);
