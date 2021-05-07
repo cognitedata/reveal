@@ -71,8 +71,6 @@ const WorkflowEditor = ({
 
   // This have to be debouced as it is called continuously when dragging nodes
   const onUpdateNode = debounce((nextNode: Node) => {
-    console.log('onUpdateNode', nextNode);
-
     const nodeUpdate = nodes.map((node) =>
       node.id === nextNode.id ? nextNode : node
     );
