@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Body, Button, Icon, Title, toast } from '@cognite/cogs.js';
-import { FileInfo as File } from '@cognite/sdk';
+import { Asset, FileInfo as File } from '@cognite/sdk';
 import { FileViewer } from 'components/FileViewer';
 import { FileList } from 'components/FileList';
 import { useAsset } from 'hooks/api';
@@ -15,6 +15,9 @@ import {
 } from 'pages/ChartView/elements';
 import { useChart, useUpdateChart } from 'hooks/firebase';
 import TimeSeriesRows from 'pages/ChartView/TimeSeriesRows';
+import { useCdfItems } from '@cognite/sdk-react-query-hooks';
+import Layers from 'utils/z-index';
+import AssetSearchHit from 'components/SearchResultTable/AssetSearchHit';
 
 export const FileView = () => {
   const { chartId, assetId } = useParams<{
@@ -23,10 +26,21 @@ export const FileView = () => {
   }>();
 
   const [selectedFile, setSelectedFile] = useState<File>();
+  const [showLinkedAssets, setShowLinkedAssets] = useState<boolean>(false);
   const history = useHistory();
 
   const { data: chart } = useChart(chartId);
-  const { data: asset, isFetched } = useAsset(Number(assetId));
+  const { data: asset, isFetched: isAssetFetched } = useAsset(Number(assetId));
+  const { data: linkedAssets = [] } = useCdfItems<Asset>(
+    'assets',
+    selectedFile?.assetIds?.map((id) => ({ id })) || [],
+    {
+      enabled:
+        !!selectedFile &&
+        selectedFile?.assetIds &&
+        selectedFile?.assetIds?.length > 0,
+    }
+  );
 
   const {
     mutateAsync: updateChart,
@@ -45,7 +59,7 @@ export const FileView = () => {
     }
   }, [updateError, updateErrorMsg]);
 
-  if (!isFetched) {
+  if (!isAssetFetched) {
     return <Icon type="Loading" />;
   }
 
@@ -124,7 +138,24 @@ export const FileView = () => {
       </FileSidebar>
       <FileViewerContainer>
         <SplitPaneLayout defaultSize={250}>
-          <FileViewer file={selectedFile} />
+          <div style={{ width: '100%', height: '100%' }}>
+            <FileViewer file={selectedFile} />
+            {linkedAssets.length > 0 && (
+              <Button
+                style={{
+                  position: 'absolute',
+                  top: 25,
+                  left: 20,
+                  zIndex: Layers.MAXIMUM,
+                }}
+                onClick={() => setShowLinkedAssets(!showLinkedAssets)}
+              >
+                {`${showLinkedAssets ? 'Hide' : 'Show'} linked assets (${
+                  linkedAssets.length
+                })`}
+              </Button>
+            )}
+          </div>
           <div style={{ width: '100%' }}>
             <SourceTableWrapper>
               <SourceTable>
@@ -143,6 +174,31 @@ export const FileView = () => {
           </div>
         </SplitPaneLayout>
       </FileViewerContainer>
+      {showLinkedAssets && (
+        <FileSidebar style={{ width: '30%' }}>
+          <Header>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <Title level={4}>Linked assets</Title>
+              <Button
+                type="ghost"
+                icon="Close"
+                onClick={() => setShowLinkedAssets(false)}
+              />
+            </div>
+          </Header>
+          <LinkedAssetList>
+            {linkedAssets.map((linkedAsset) => (
+              <AssetSearchHit asset={linkedAsset} />
+            ))}
+          </LinkedAssetList>
+        </FileSidebar>
+      )}
     </FileViewContainer>
   );
 };
@@ -157,9 +213,17 @@ const FileViewContainer = styled.div`
 const FileSidebar = styled.div`
   width: 25%;
   height: 100%;
+  border-left: 1px solid var(--cogs-greyscale-grey3);
   border-right: 1px solid var(--cogs-greyscale-grey3);
   display: flex;
   flex-direction: column;
+`;
+
+const LinkedAssetList = styled.div`
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  padding: 5px;
 `;
 
 const FileViewerContainer = styled.div`

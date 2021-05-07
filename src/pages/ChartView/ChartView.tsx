@@ -264,7 +264,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                 Add time series
               </Button>
               <Button
-                icon="YAxis"
+                icon="Function"
                 type="ghost"
                 onClick={handleClickNewWorkflow}
               >
