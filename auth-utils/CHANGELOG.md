@@ -1,3 +1,9 @@
+## 1.0.0 May 5 2021
+
+### Changes
+
+- Upgrade to SDK v4 
+  
 ## 0.8.2 Mar 16 2021
 
 ### Changes

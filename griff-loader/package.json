@@ -1,6 +1,6 @@
 {
   "name": "@cognite/griff-loader",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "Griff loader towards the Cognite API",
   "source": "src/index.ts",
   "main": "dist/index.js",
@@ -35,7 +35,7 @@
   "author": "Cognite AS",
   "license": "Apache-2.0",
   "dependencies": {
-    "tslib": "^1.10.0",
+    "tslib": "^2.2.0",
     "immutable": "^4.0.0-rc.12"
   },
   "devDependencies": {

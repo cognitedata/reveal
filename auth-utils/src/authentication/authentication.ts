@@ -1,18 +1,34 @@
-import type { CogniteClient } from '@cognite/sdk';
-import isFunction from 'lodash/isFunction';
-import isObject from 'lodash/isObject';
-import { Configuration } from '@azure/msal-browser';
+import { CogniteClient } from '@cognite/sdk';
+import { AuthFlow, AuthResult, getFlow, saveFlow } from '../storage';
 
-import type { AuthFlow, AuthResult } from '../storage/types';
-import { getFlow } from '../storage';
-import AzureAD from '../aad/aad';
-import ADFS, { AdfsConfig } from '../adfsModule';
+export type AuthenticatedUser = {
+  authenticated: boolean;
+  initialising: boolean;
+  project?: string;
+  tenant?: string;
+  token?: string;
+  idToken?: string;
+  error?: boolean;
+  errorMessage?: string;
+  username?: string;
+  email?: string;
+};
 
-class CogniteAuth {
+const debugMode = false;
+const log = (value: string, options?: unknown) => {
+  if (debugMode) {
+    // eslint-disable-next-line no-console
+    if (console.log) {
+      // eslint-disable-next-line no-console
+      console.log(`[Auth-Utils] ${value}`, options || '');
+    }
+  }
+};
+
+export class CogniteAuth {
   state: {
     error: boolean;
     errorMessage?: string;
-    initialized: boolean;
     initializing: boolean;
     authenticated: boolean;
     idToken?: string;
@@ -22,32 +38,8 @@ class CogniteAuth {
     authResult?: AuthResult;
   } = {
     error: false,
-    initialized: false,
     initializing: false,
     authenticated: false,
-  };
-
-  azureAdClient: AzureAD | undefined;
-
-  adfsClient: ADFS | undefined;
-
-  subscribers: {
-    [appName: string]: (authState: AuthenticatedUser) => void;
-  } = {};
-
-  public initializingPromise?: Promise<void>;
-
-  public initializingComplete?: () => void;
-
-  public setupInitializing = (): Promise<void> => {
-    this.initializingPromise = new Promise((resolve) => {
-      this.initializingComplete = () => {
-        this.state.initializing = false;
-        resolve();
-      };
-    });
-
-    return this.initializingPromise;
   };
 
   constructor(
@@ -55,6 +47,7 @@ class CogniteAuth {
     private options: {
       flow?: AuthFlow;
       cluster?: string;
+      appName: string;
       aad?: {
         appId: string;
         directoryTenantId?: string;
@@ -64,152 +57,272 @@ class CogniteAuth {
         directoryTenantId: string;
         scope: string;
       };
-    } = { flow: getFlow().flow }
+    } = { flow: getFlow().flow, appName: 'unknown' }
   ) {
     this.getClient().setBaseUrl(`https://${this.getCluster()}.cognitedata.com`);
-
-    this.state.initializing = true;
-    this.setupInitializing();
-    this.initialize();
+    log('Initialized with options:', this.options);
   }
 
-  private async initialize() {
-    if (this.options.aad) {
-      try {
-        await this.initAADAuth({
-          auth: {
-            authority: `https://login.microsoftonline.com/${
-              this.options.aad.directoryTenantId || 'organizations'
-            }`,
-            clientId: this.options.aad.appId,
-          },
-        });
-      } catch {
-        // eslint-disable-next-line no-console
-        console.error('Error initializing AAD Auth');
-        this.state.error = true;
-        this.state.initializing = false;
-        this.publishAuthState();
-      }
-    }
-    if (this.options.adfs) {
-      try {
-        await this.initADFSAuth({
-          cluster: this.getCluster(),
-          oidc: {
-            authority: `https://login.microsoftonline.com/${this.options.adfs.directoryTenantId}`,
-            clientId: this.options.adfs.appId,
-            scope: this.options.adfs.scope,
-          },
-        });
-      } catch {
-        // eslint-disable-next-line no-console
-        console.error('Error initializing ADFS Auth');
-        this.state.error = true;
-        this.state.initializing = false;
-        this.publishAuthState();
-      }
-    }
+  subscribers: {
+    [appName: string]: (authState: AuthenticatedUser) => void;
+  } = {};
 
-    // the token will be set by one of the above auth systems
-    // which will cause a page reload
-    // and the second time this is rendered it will have the auth token
-    // or it will get it from LS
-    // then we can put it into the cognite sdk client here
-    if (this.isSignedIn()) {
-      this.state.authenticated = true;
+  public async loginAndAuthIfNeeded({
+    flow,
+    project,
+  }: {
+    flow?: AuthFlow;
+    project: string;
+  }): Promise<AuthenticatedUser> {
+    const { flow: savedFlow } = getFlow();
 
-      if (this.state.authResult) {
-        this.state.idToken = this.state.authResult.idToken;
-      }
+    const authFlow = flow || savedFlow || 'COGNITE_AUTH';
 
-      if (this.state.authResult?.accessToken) {
-        // @ts-expect-error http is private - SDK v3
-        if (this.getClient().http) {
-          // @ts-expect-error http is private
-          this.getClient().http.setBearerToken(
-            this.state.authResult?.accessToken
-          );
+    log('Running: loginAndAuthIfNeeded');
+    log(`this.state ${this.state}`);
+    log(`flowToUse ${authFlow}`);
+
+    switch (authFlow) {
+      case 'AZURE_AD': {
+        if (!this.state.initializing && !this.state.authenticated) {
+          this.state.initializing = true;
+          this.publishAuthState();
+
+          if (this.options.aad) {
+            const response = await this.getClient().loginWithOAuth({
+              clientId: this.options.aad?.appId,
+              cluster: this.getCluster(),
+              tenantId: this.options.aad?.directoryTenantId,
+              signInType: {
+                type: 'loginRedirect',
+              },
+            });
+
+            this.getClient().setProject(project);
+            if (!response) {
+              await this.getClient().authenticate();
+            }
+
+            // @ts-expect-error http is private
+            const fullResponse = await this.getClient().azureAdClient.msalApplication.acquireTokenSilent(
+              // @ts-expect-error http is private
+              this.getClient().azureAdClient.silentAccountTokenRequest
+            );
+
+            if (fullResponse.accessToken) {
+              this.state.authResult = {
+                idToken: fullResponse.idToken,
+                accessToken: fullResponse.accessToken,
+                authFlow,
+                expTime: fullResponse.expiresOn,
+              };
+              this.state.project = project;
+            }
+
+            this.state.authenticated = response;
+            this.state.initializing = false;
+            this.publishAuthState();
+          }
+          this.state.initializing = false;
         }
-        // @ts-expect-error httpClient is private - SDK v2
-        if (this.getClient().httpClient) {
-          // @ts-expect-error http is private
-          this.getClient().httpClient.setBearerToken(
-            this.state.authResult?.accessToken
-          );
-        }
+        break;
       }
+      case 'COGNITE_AUTH': {
+        if (!this.state.initializing && !this.state.authenticated) {
+          this.state.initializing = true;
+          this.publishAuthState();
 
-      this.publishAuthState();
-    } else if (
-      this.options.flow === 'ADFS' ||
-      this.options.flow === 'AZURE_AD'
-    ) {
-      if (window.location.pathname !== '/') {
+          this.getClient().setBaseUrl(
+            `https://${this.getCluster()}.cognitedata.com`
+          );
+          await this.getClient().loginWithOAuth({
+            project,
+          });
+          this.state.authenticated = await this.getClient().authenticate();
+          const accessToken = await this.getClient().getCDFToken();
+          if (accessToken) {
+            this.state.authResult = {
+              accessToken,
+              authFlow,
+            };
+            this.state.project = project;
+          }
+          this.state.initializing = false;
+          this.publishAuthState();
+        }
+        break;
+      }
+      default: {
         window.location.href = '/';
       }
     }
 
-    if (this.initializingComplete) {
-      this.state.initializing = false;
-      this.publishAuthState();
-      this.initializingComplete();
-    }
+    return this.getAuthState();
   }
 
-  private async initAADAuth(msalConfig: Configuration) {
-    this.azureAdClient = new AzureAD(msalConfig, this.getCluster());
+  public async loginInitial({
+    flow,
+    cluster,
+    directory,
+  }: {
+    flow: AuthFlow;
+    cluster?: string;
+    directory?: string;
+  }) {
+    this.state.initializing = false;
+    this.state.error = false;
+    this.state.authenticated = false;
 
-    try {
-      const account = await this.azureAdClient.loadAuthModule();
+    log(`Running: loginInitial - ${flow}`);
 
-      if (!account) {
-        this.state.initializing = false;
-        this.publishAuthState();
+    // save flow before we start the login
+    // so on redirect we know which one to come back to
+    saveFlow(flow, {
+      directory,
+    });
+
+    // allow of overrides
+    // eg: legacy cluster selector screen
+    if (cluster) {
+      this.options.cluster = cluster;
+    }
+
+    if (flow === 'AZURE_AD') {
+      if (!this.options.aad?.appId) {
+        this.state.error = true;
+        this.state.errorMessage = 'Missing Azure client ID.';
         return;
       }
 
-      const authResult = await this.azureAdClient.getProfileTokenRedirect();
-
-      if (isObject(account)) {
-        this.state.username = account.name;
-        this.state.email = account.username;
+      if (directory) {
+        this.options.aad.directoryTenantId = directory;
       }
 
-      if (authResult) {
-        this.state.authResult = {
-          authFlow: 'AZURE_AD',
-          idToken: authResult.idToken,
-        };
-      } else {
-        this.state.error = true;
-      }
-      const cdfAccessToken = await this.azureAdClient.getCDFToken();
-
-      if (cdfAccessToken && authResult) {
-        this.state.authResult = {
-          authFlow: 'AZURE_AD',
-          idToken: authResult.idToken,
-          accessToken: cdfAccessToken,
-        };
-      }
-    } catch (e) {
-      this.state.error = true;
-      this.state.errorMessage = e.message;
-      return;
-    } finally {
-      this.publishAuthState();
+      this.client = new CogniteClient({ appId: this.options.appName });
+      this.client
+        .loginWithOAuth({
+          clientId: this.options.aad?.appId,
+          cluster: this.getCluster(),
+          tenantId: directory,
+          signInType: {
+            type: 'loginRedirect',
+            requestParams: {
+              prompt: 'select_account',
+            },
+          },
+        })
+        .finally(() => {
+          log('Saving flow: AZURE_AD');
+          this.client.authenticate();
+        });
     }
   }
 
-  private async initADFSAuth(adfsConfig: AdfsConfig) {
-    this.adfsClient = new ADFS(adfsConfig);
+  public async login(): Promise<void> {
+    const { flow: authFlow, options } = getFlow();
+    log('Running: login');
+    this.state.initializing = true;
 
-    const authResult = this.adfsClient.processSigninResponse();
-
-    if (authResult?.accessToken && authResult.accessToken.length !== 0) {
-      this.state.authResult = authResult;
+    if (options.cluster) {
+      this.options.cluster = options.cluster;
     }
+
+    this.client = new CogniteClient({ appId: this.options.appName });
+    this.client.setBaseUrl(`https://${this.getCluster()}.cognitedata.com`);
+    if (authFlow === 'COGNITE_AUTH') {
+      if (options.project) {
+        await this.client.loginWithOAuth({
+          project: options.project,
+        });
+        const response = await this.client.authenticate();
+        this.state.authenticated = response;
+        const accessToken = await this.getClient().getCDFToken();
+        if (accessToken) {
+          this.state.authResult = {
+            accessToken,
+            authFlow,
+          };
+        }
+      }
+    }
+    if (authFlow === 'ADFS') {
+      // console.log('ADFS NOT READY YET');
+    }
+    if (authFlow === 'AZURE_AD') {
+      if (this.options.aad) {
+        await this.client
+          .loginWithOAuth({
+            clientId: this.options.aad?.appId,
+            cluster: this.getCluster(),
+            tenantId: this.options.aad?.directoryTenantId,
+            signInType: {
+              type: 'loginRedirect',
+              requestParams: {
+                prompt: 'none',
+              },
+            },
+            onHandleRedirectError: (error) => {
+              this.state.error = true;
+              this.state.authenticated = false;
+              this.state.errorMessage = error;
+            },
+          })
+          .then(async (response) => {
+            // if (!response) {
+            //   await this.client.authenticate();
+            // }
+            this.state.error = !response;
+            this.state.authenticated = response;
+
+            // @ts-expect-error http is private
+            const fullResponse = await this.getClient().azureAdClient.msalApplication.acquireTokenSilent(
+              // @ts-expect-error http is private
+              this.getClient().azureAdClient.silentAccountTokenRequest
+            );
+
+            if (fullResponse.accessToken) {
+              this.state.authResult = {
+                idToken: fullResponse.idToken,
+                accessToken: fullResponse.accessToken,
+                authFlow,
+              };
+            }
+          })
+          .catch((error) => {
+            // console.log('Error', error);
+            this.state.authenticated = false;
+            this.state.error = true;
+            this.state.errorMessage = error.message;
+          });
+      } else {
+        this.state.error = true;
+        this.state.errorMessage = 'Not configured properly, missing AADID';
+      }
+    }
+    this.state.initializing = false;
+    this.publishAuthState();
+  }
+
+  public logout() {
+    saveFlow('UNKNOWN');
+    this.options.flow = 'UNKNOWN';
+    // -@TODO: add better logout process
+    // we should delete some localstorage stuff perhaps?
+  }
+
+  public onAuthChanged(
+    key: string,
+    callback: (authenticatedUser: AuthenticatedUser) => void
+  ): () => void {
+    this.subscribers[key] = callback;
+
+    if (this.state.authenticated && !this.state.initializing) {
+      callback(this.getAuthState());
+    }
+
+    return () => {
+      delete this.subscribers[key];
+    };
   }
 
   public getAuthState(): AuthenticatedUser {
@@ -233,18 +346,6 @@ class CogniteAuth {
     );
   }
 
-  private isSignedIn() {
-    if (!this.state.authResult?.idToken) {
-      return false;
-    }
-
-    return this.state.authResult?.idToken.length > 0;
-  }
-
-  public getAccessToken(): string | undefined {
-    return this.state.authResult && this.state.authResult.accessToken;
-  }
-
   public getCluster(): string {
     return this.options.cluster || 'api';
   }
@@ -252,150 +353,6 @@ class CogniteAuth {
   public getClient(): CogniteClient {
     return this.client;
   }
-
-  public onAuthChanged(
-    key: string,
-    callback: (authenticatedUser: AuthenticatedUser) => void
-  ): () => void {
-    this.subscribers[key] = callback;
-
-    if (this.state.authenticated && !this.state.initializing) {
-      callback(this.getAuthState());
-    }
-
-    return () => {
-      delete this.subscribers[key];
-    };
-  }
-
-  public async login(
-    authFlow: AuthFlow,
-    { cluster }: { cluster: string } = {
-      cluster: '',
-    }
-  ): Promise<void> {
-    this.options.flow = authFlow;
-    if (cluster) {
-      this.options.cluster = cluster;
-    }
-    if (authFlow === 'ADFS') {
-      await this.adfsClient?.signInWithADFSRedirect();
-    }
-    if (authFlow === 'AZURE_AD' && this.azureAdClient) {
-      this.azureAdClient.login('loginRedirect');
-    }
-  }
-
-  public logout(): void {
-    if (this.azureAdClient) {
-      this.azureAdClient.logout();
-    }
-  }
-
-  public async loginAndAuthIfNeeded(
-    flow: AuthFlow,
-    newTenant: string,
-    cluster = ''
-  ): Promise<AuthenticatedUser> {
-    if (this.initializingPromise) {
-      await this.initializingPromise;
-    }
-    if (cluster) {
-      this.options.cluster = cluster;
-    }
-    this.options.flow = flow;
-
-    if (!newTenant) {
-      throw new Error('Supply tenant');
-    }
-
-    this.getClient().setBaseUrl(`https://${this.getCluster()}.cognitedata.com`);
-
-    if (this.options.flow === 'COGNITE_AUTH') {
-      this.state.project = newTenant;
-
-      if (!this.state.initialized) {
-        this.getClient().loginWithOAuth({
-          project: newTenant,
-          onTokens: async (tokens) => {
-            this.state.authResult = {
-              authFlow: 'COGNITE_AUTH',
-              ...tokens,
-            };
-          },
-        });
-        this.state.initialized = true;
-      }
-
-      // if status === null means you are not logged in
-      let status = await this.getClient().login.status();
-      if (!status || status.project !== newTenant) {
-        this.state.authenticated = await this.getClient().authenticate();
-        if (this.state.authenticated) {
-          status = await this.getClient().login.status();
-          if (status) {
-            this.state.project = status.project;
-            this.state.email = status.user;
-          }
-          this.publishAuthState();
-        }
-      } else {
-        this.state.project = status && status.project;
-      }
-    } else if (this.options.flow === 'ADFS') {
-      if (!this.state.initialized && this.state.idToken) {
-        this.getClient().loginWithOAuth({
-          project: newTenant,
-          accessToken: this.state.authResult?.accessToken,
-          onAuthenticate: async (login) => {
-            if (isFunction(login)) {
-              await login('ADFS');
-              login.skip();
-            }
-          },
-        });
-        const projectResponse = await this.getClient().projects.retrieve(
-          newTenant
-        );
-        this.state.project = projectResponse.urlName;
-        this.state.initialized = true;
-        this.publishAuthState();
-      }
-    } else if (this.options.flow === 'AZURE_AD') {
-      if (!this.state.initialized && this.state.idToken) {
-        this.getClient().loginWithOAuth({
-          project: newTenant,
-          accessToken: this.state.authResult?.accessToken,
-          onAuthenticate: async (login) => {
-            this.state.project = newTenant;
-            if (isFunction(login)) {
-              await login('AZURE_AD', {
-                cluster: this.getCluster(),
-              });
-              login.skip();
-            }
-          },
-        });
-        this.state.initialized = true;
-        this.publishAuthState();
-      }
-    }
-
-    return this.getAuthState();
-  }
 }
 
 export default CogniteAuth;
-
-export type AuthenticatedUser = {
-  authenticated: boolean;
-  initialising: boolean;
-  project?: string;
-  tenant?: string;
-  token?: string;
-  idToken?: string;
-  error?: boolean;
-  errorMessage?: string;
-  username?: string;
-  email?: string;
-};
