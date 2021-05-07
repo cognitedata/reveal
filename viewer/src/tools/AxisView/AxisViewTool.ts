@@ -140,7 +140,7 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
     const targetUp = (intersects[0].object.userData.upVector as THREE.Vector3).clone();
 
     if (moveCameraOnSuccess) {
-      this.moveCameraTo(this._viewer.getCamera(), this._viewer.cameraControls, targetPosition, targetUp, 400);
+      this.moveCameraTo(this._viewer.getCamera(), this._viewer.cameraControls, targetPosition, targetUp);
     }
 
     return true;
@@ -288,8 +288,7 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
     camera: THREE.PerspectiveCamera,
     cameraControls: ComboControls,
     targetAxis: THREE.Vector3,
-    targetUpAxis: THREE.Vector3,
-    duration: number
+    targetUpAxis: THREE.Vector3
   ) {
     const currentCameraPosition = camera.position.clone();
     const cameraTarget = cameraControls.getState().target;
@@ -323,7 +322,7 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
     const tmpRotation = new THREE.Quaternion();
     let cachedCameraControlsEnabled: boolean;
     const tween = animation
-      .to(to, duration)
+      .to(to, this._layoutConfig.animationSpeed)
       .onUpdate(() => {
         tmpPosition
           .copy(normalizedFrom)

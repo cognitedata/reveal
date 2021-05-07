@@ -7,6 +7,7 @@ import * as THREE from 'three';
 export type AxisBoxConfig = {
   size?: number;
   position?: AbsolutePosition | RelativePosition;
+  animationSpeed?: number;
   faces?: {
     xPositiveFace?: AxisBoxFaceConfig;
     xNegativeFace?: AxisBoxFaceConfig;
@@ -75,6 +76,7 @@ export const defaultAxisBoxConfig: Required<AxisBoxConfig> = {
     corner: Corner.BottomRight,
     padding: new THREE.Vector2()
   },
+  animationSpeed: 200,
   faces: {
     xPositiveFace: {
       ...defaultFaceConfig,
