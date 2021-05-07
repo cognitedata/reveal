@@ -16,7 +16,8 @@ import {
   AbsolutePosition,
   RelativePosition
 } from './types';
-import { cloneDeep, merge } from 'lodash';
+import cloneDeep from 'lodash/cloneDeep';
+import merge from 'lodash/merge';
 
 export class AxisViewTool extends Cognite3DViewerToolBase {
   private readonly _layoutConfig: Required<AxisBoxConfig>;
