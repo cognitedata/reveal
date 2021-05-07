@@ -29,7 +29,7 @@
     "antd": "^4.15.2",
     "connected-react-router": "^6.9.1",
     "dayjs": "^1.10.4",
-    "gcs-browser-upload": "^1.0.2",
+    "@cognite/gcs-browser-upload": "cognitedata/gcs-browser-upload#mn/temporary-azure-fix",
     "history": "^4.7.2",
     "lodash": "^4.17.21",
     "query-string": "^7.0.0",

@@ -2,7 +2,7 @@ import React from 'react';
 import { Upload, Modal, message } from 'antd';
 import { Button } from '@cognite/cogs.js';
 
-import UploadGCS from 'gcs-browser-upload';
+import UploadGCS from '@cognite/gcs-browser-upload';
 import mime from 'mime-types';
 import styled from 'styled-components';
 import { v3, v3Client } from '@cognite/cdf-sdk-singleton';
@@ -146,18 +146,19 @@ class FileUploader extends React.Component<Props, State> {
 
     const chunkMultiple = Math.min(
       Math.max(
-        2, // 0.5MB min chunks
-        Math.ceil((file.size / 20) * 262144) // will divide into 20 segments
+        5, // min chunk is 1.25 MB
+        Math.ceil(file.size / 20 / 262144) // divide into 20 segments and take multiplier
       ),
       200 // 50 MB max
     );
+    const chunkSize = 262144 * chunkMultiple;
 
     this.currentUpload = new UploadGCS({
       id: 'file',
       url: uploadUrl,
       file,
       contentType: mimeType,
-      chunkSize: 262144 * chunkMultiple,
+      chunkSize,
       onChunkUpload: (info) => {
         if (file.status !== 'uploading') {
           file.status = 'uploading';
