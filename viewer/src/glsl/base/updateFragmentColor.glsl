@@ -14,20 +14,15 @@ const int RenderTypeLOD = 8;
 const int RenderTypeDepthBufferOnly = 9;
 const int RenderTypeGeometryType = 10;
 
-vec3 geometryTypeColors[5] = vec3[](
-    vec3(1.0, 0.0, 1.0), // Unused
-    vec3(1.0, 0.0, 0.0), // Quads
-    vec3(0.0, 1.0, 0.0), // Primitives
-    vec3(0.0, 0.0, 1.0), // Triangle meshes
-    vec3(1.0, 1.0, 0.0)  // Instance meshes
-);
-
 #include <packing>
 
 vec3 packNormalToRgb( const in vec3 normal ) {
     return normalize( normal ) * 0.5 + 0.5;
 }
 
+float isGeometryType(int geometryType, int toCheck) {
+    return geometryType == toCheck ? 1.0 : 0.0;
+}
 
 void updateFragmentColor(
     int renderMode, vec4 color, float treeIndex, 
@@ -79,7 +74,12 @@ void updateFragmentColor(
     } else if (renderMode == RenderTypeGeometryType) {
         vec2 cap = normal.xy * 0.5 + 0.5;
         vec3 mc = texture2D(matCapTexture, cap).rgb * 1.5;
-        gl_FragColor = vec4(geometryTypeColors[geometryType] * mc, color.a);
+        vec3 geometryColor = 
+            isGeometryType(geometryType, 1) * vec3(1.0, 0.0, 0.0) + // Quads
+            isGeometryType(geometryType, 2) * vec3(0.0, 1.0, 0.0) + // Primitives
+            isGeometryType(geometryType, 3) * vec3(0.0, 0.0, 1.0) + // Triangle meshes
+            isGeometryType(geometryType, 4) * vec3(1.0, 1.0, 0.0);  // Instance meshes
+        gl_FragColor = vec4(geometryColor * mc, color.a);
     } else {
         // Unknown render mode - should not happen. 
         gl_FragColor = vec4(1.0, 0.0, 1.0, 1.0);
