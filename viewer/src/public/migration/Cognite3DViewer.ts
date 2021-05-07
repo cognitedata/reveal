@@ -650,13 +650,12 @@ export class Cognite3DViewer {
    * Add an object that will be considered a UI object. It will be rendered in the last stage and with orthographic projection.
    * @param object
    * @param screenPos Screen space position of object (in pixels).
-   * @param width Pixel width of the object.
-   * @param height Pixel height of the object.
+   * @param size Pixel width and height of the object.
    */
-  addUiObject(object: THREE.Group, screenPos: THREE.Vector2, width: number, height: number): void {
+  addUiObject(object: THREE.Object3D, screenPos: THREE.Vector2, size: THREE.Vector2): void {
     if (this.isDisposed) return;
 
-    this._revealManager.addUiObject(object, screenPos, width, height);
+    this._revealManager.addUiObject(object, screenPos, size);
   }
 
   /**

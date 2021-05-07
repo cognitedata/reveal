@@ -18,6 +18,7 @@ import {
 } from './types';
 import cloneDeep from 'lodash/cloneDeep';
 import merge from 'lodash/merge';
+import { Vector2 } from 'three';
 
 export class AxisViewTool extends Cognite3DViewerToolBase {
   private readonly _layoutConfig: Required<AxisBoxConfig>;
@@ -55,7 +56,7 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
 
   private addAxisBoxToViewer(axisGroup: THREE.Group, position: AbsolutePosition | RelativePosition) {
     const size = this._layoutConfig.size;
-    this._viewer.addUiObject(axisGroup, this._screenPosition, size, size);
+    this._viewer.addUiObject(axisGroup, this._screenPosition, new Vector2(size, size));
 
     if (isAbsolute(position)) {
       this._screenPosition.x = position.xAbsolute;
@@ -298,6 +299,7 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
 
     const tmpPosition = new THREE.Vector3();
     const tmpRotation = new THREE.Quaternion();
+    let cachedCameraControlsEnabled: boolean;
     const tween = animation
       .to(to, duration)
       .onUpdate(() => {
@@ -316,11 +318,12 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
       })
       .start(TWEEN.now())
       .onStart(() => {
+        cachedCameraControlsEnabled = cameraControls.enabled;
         cameraControls.enabled = false;
       })
       .onComplete(() => {
         cameraControls.setState(camera.position, cameraTarget);
-        cameraControls.enabled = true;
+        cameraControls.enabled = cachedCameraControlsEnabled;
       });
     tween.update(TWEEN.now());
   }

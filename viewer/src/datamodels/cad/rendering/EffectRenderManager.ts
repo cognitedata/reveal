@@ -92,7 +92,7 @@ export class EffectRenderManager {
   private _renderTarget: THREE.WebGLRenderTarget | null;
   private _autoSetTargetSize: boolean = false;
 
-  private _uiObjects: { objectGroup: THREE.Group; screenPos: THREE.Vector2; width: number; height: number }[] = [];
+  private _uiObjects: { object: THREE.Object3D; screenPos: THREE.Vector2; width: number; height: number }[] = [];
 
   public set renderOptions(options: RenderOptions) {
     const ssaoParameters = this.ssaoParameters(options);
@@ -101,13 +101,13 @@ export class EffectRenderManager {
     this._renderOptions = { ...options, ssaoRenderParameters: { ...ssaoParameters } };
   }
 
-  public addUiObject(objectGroup: THREE.Group, screenPos: THREE.Vector2, width: number, height: number) {
-    this._uiObjects.push({ objectGroup, screenPos, width, height });
+  public addUiObject(object: THREE.Object3D, screenPos: THREE.Vector2, size: THREE.Vector2) {
+    this._uiObjects.push({ object: object, screenPos, width: size.x, height: size.y });
   }
 
   public removeUiObject(object: THREE.Object3D) {
     this._uiObjects = this._uiObjects.filter(p => {
-      const filteredObject = p.objectGroup;
+      const filteredObject = p.object;
       return object !== filteredObject;
     });
   }
@@ -680,7 +680,7 @@ export class EffectRenderManager {
       renderer.autoClear = false;
       this._uiObjects.forEach(uiObject => {
         const renderScene = new THREE.Scene();
-        renderScene.add(uiObject.objectGroup);
+        renderScene.add(uiObject.object);
 
         const viewportRenderPos = uiObject.screenPos.clone().multiply(downSampleFactor);
         const viewportRenderWidth = uiObject.width * downSampleFactor.x;
