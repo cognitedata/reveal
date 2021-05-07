@@ -76,7 +76,6 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
 
   private addAxisBoxToViewer(axisGroup: THREE.Group, position: AbsolutePosition | RelativePosition) {
     const size = this._layoutConfig.size;
-    this._viewer.addUiObject(axisGroup, this._screenPosition, new Vector2(size, size));
 
     if (isAbsolute(position)) {
       this._screenPosition.x = position.xAbsolute;
@@ -112,7 +111,10 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
         default:
           throw new Error(`Unknown corner position for Axis Cross: Corner = ${position.corner}`);
       }
+      this.dynamicUpdatePosition();
     }
+
+    this._viewer.addUiObject(axisGroup, this._screenPosition, new Vector2(size, size));
 
     function isAbsolute(position: AbsolutePosition | RelativePosition): position is AbsolutePosition {
       return (
