@@ -83,7 +83,7 @@ export default function () {
         <Menu.Item key="security-categories" disabled={!secCatRead}>
           Security categories
         </Menu.Item>
-        <Menu.Item key="oidc" disabled={!projectsRead} hidden={!nativeTokens}>
+        <Menu.Item key="oidc" disabled={!projectsRead}>
           OpenID connect
         </Menu.Item>
         <Menu.Item key="idp" disabled={!projectsRead} hidden={nativeTokens}>
