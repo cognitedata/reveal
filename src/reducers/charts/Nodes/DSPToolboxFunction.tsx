@@ -1,7 +1,8 @@
 /* eslint camelcase: 0 */
 
 import React from 'react';
-import { Icon, Input, Select } from '@cognite/cogs.js';
+import styled from 'styled-components';
+import { Icon, Input, Select, Checkbox } from '@cognite/cogs.js';
 import {
   DSPFunction,
   DSPFunctionParameter,
@@ -17,6 +18,12 @@ type FunctionData = {
   [key: string]: any;
   toolFunction?: DSPFunction;
 };
+
+const ToolFunctionWrapper = styled.div`
+  .cogs-checkbox .checkbox-ui {
+    margin: 0;
+  }
+`;
 
 export const effect = async (funcData: FunctionData) => {
   if (!funcData.toolFunction) {
@@ -38,7 +45,7 @@ export const configPanel = ({
   const { functionData } = node;
 
   return (
-    <div>
+    <ToolFunctionWrapper>
       <h4>Tool Function</h4>
       <AvailableOps
         renderLoading={() => <Icon style={{ color: 'white' }} type="Loading" />}
@@ -106,28 +113,17 @@ export const configPanel = ({
               <div style={{ marginTop: 8 }}>
                 <h4>{param}</h4>
                 {type === DSPFunctionParameterType.boolean ? (
-                  <Select
-                    theme="dark"
-                    options={[
-                      {
-                        value: true,
-                        label: 'true',
-                      },
-                      {
-                        value: false,
-                        label: 'false',
-                      },
-                    ]}
-                    /* Same hack like ChartList.tsx:170 */
-                    placeholder={String(functionData[param]) || 'Select...'}
-                    onChange={({ value }: { value: string }) => {
+                  <Checkbox
+                    onChange={(nextState: boolean) => {
                       onUpdateNode({
                         functionData: {
                           ...node.functionData,
-                          [param]: value,
+                          [param]: nextState,
                         },
                       });
                     }}
+                    name={param}
+                    value={functionData[param]}
                   />
                 ) : (
                   <Input
@@ -149,7 +145,7 @@ export const configPanel = ({
             );
           }
         )}
-    </div>
+    </ToolFunctionWrapper>
   );
 };
 
