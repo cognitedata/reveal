@@ -5,14 +5,21 @@
 import * as THREE from 'three';
 import ComboControls from '@cognite/three-combo-controls';
 import TWEEN from '@tweenjs/tween.js';
-import _ from 'lodash';
 
 import { Cognite3DViewer } from '../../migration';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
-import { AxisBoxConfig, defaultAxisBoxConfig, AxisBoxFaceConfig, Corner, Absolute, Relative } from './types';
+import {
+  AxisBoxConfig,
+  defaultAxisBoxConfig,
+  AxisBoxFaceConfig,
+  Corner,
+  AbsolutePosition,
+  RelativePosition
+} from './types';
+import { cloneDeep, merge } from 'lodash';
 
 export class AxisViewTool extends Cognite3DViewerToolBase {
-  private readonly _layoutConfig: AxisBoxConfig;
+  private readonly _layoutConfig: Required<AxisBoxConfig>;
 
   private readonly _boxFaceGeometry: THREE.PlaneGeometry;
 
@@ -22,7 +29,7 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
   private readonly _raycastCamera: THREE.OrthographicCamera;
   private readonly _raycaster: THREE.Raycaster;
 
-  private _screenPosition: THREE.Vector2;
+  private readonly _screenPosition: THREE.Vector2;
 
   private dynamicUpdatePosition = () => {};
 
@@ -37,16 +44,16 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
 
     this._viewer = viewer;
 
-    this._layoutConfig = _.merge(_.cloneDeep(defaultAxisBoxConfig), config);
+    this._layoutConfig = merge(cloneDeep(defaultAxisBoxConfig), config);
 
     const axisGroup = new THREE.Group();
     this._interactiveObjects = this.createAxisCross(axisGroup);
 
-    this.addAxisBoxToViewer(axisGroup, this._layoutConfig.position!);
+    this.addAxisBoxToViewer(axisGroup, this._layoutConfig.position);
   }
 
-  private addAxisBoxToViewer(axisGroup: THREE.Group, position: Absolute | Relative) {
-    const size = this._layoutConfig.size!;
+  private addAxisBoxToViewer(axisGroup: THREE.Group, position: AbsolutePosition | RelativePosition) {
+    const size = this._layoutConfig.size;
     this._viewer.addUiObject(axisGroup, this._screenPosition, size, size);
 
     if (isAbsolute(position)) {
@@ -85,15 +92,17 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
       }
     }
 
-    function isAbsolute(position: Absolute | Relative): position is Absolute {
-      return (position as Absolute).xAbsolute !== undefined && (position as Absolute).yAbsolute !== undefined;
+    function isAbsolute(position: AbsolutePosition | RelativePosition): position is AbsolutePosition {
+      return (
+        (position as AbsolutePosition).xAbsolute !== undefined && (position as AbsolutePosition).yAbsolute !== undefined
+      );
     }
   }
 
   public tryClick(xScreenPos: number, yScreenPos: number, moveCameraOnSuccess = true): boolean {
     const canvas = this._viewer.renderer.domElement.getBoundingClientRect();
-    const xNdc = (2 * (xScreenPos - this._screenPosition.x)) / this._layoutConfig.size! - 1;
-    const yNdc = (2 * (canvas.height - yScreenPos - this._screenPosition.y)) / this._layoutConfig.size! - 1;
+    const xNdc = (2 * (xScreenPos - this._screenPosition.x)) / this._layoutConfig.size - 1;
+    const yNdc = (2 * (canvas.height - yScreenPos - this._screenPosition.y)) / this._layoutConfig.size - 1;
     this._raycaster.setFromCamera({ x: xNdc, y: yNdc }, this._raycastCamera);
     const rayOrigin = new THREE.Vector3(xNdc, yNdc, 1);
     const rayDirection = new THREE.Vector3(0, 0, -1).normalize();
@@ -122,10 +131,6 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
 
     this.setupTransformOnRender(axisGroup);
 
-    this._viewer.on('click', (event: { offsetX: number; offsetY: number }) => {
-      this.tryClick(event.offsetX, event.offsetY);
-    });
-
     return interactiveObjects;
   }
 
@@ -138,7 +143,7 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
   }
 
   private createBoxFaces() {
-    const facesConfig = this._layoutConfig.faces!;
+    const facesConfig = this._layoutConfig.faces;
 
     const posXFace = this.createBoxFace(new THREE.Vector3(1, 0, 0), facesConfig.xPositiveFace!);
     const negXFace = this.createBoxFace(new THREE.Vector3(-1, 0, 0), facesConfig.xNegativeFace!);
@@ -171,8 +176,8 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
       })
     );
 
-    const x = Math.sin(this._layoutConfig.compass!.labelDelta!);
-    const z = Math.cos(this._layoutConfig.compass!.labelDelta!);
+    const x = Math.sin(this._layoutConfig.compass.labelDelta!);
+    const z = Math.cos(this._layoutConfig.compass.labelDelta!);
 
     compass.position.y = -0.5;
     compass.up.copy(new THREE.Vector3(x, 0, z));
@@ -182,8 +187,8 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
   }
 
   private createCompassTexture() {
-    const compassLayout = this._layoutConfig.compass!;
-    const textureSize = this._layoutConfig.size!;
+    const compassLayout = this._layoutConfig.compass;
+    const textureSize = this._layoutConfig.size;
 
     const canvas = document.createElement('canvas');
     canvas.width = textureSize;
@@ -208,7 +213,7 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
       context.font = `bold ${fontSize}px Arial`;
       context.textAlign = 'center';
       context.fillStyle = compassLayout.fontColor!.getStyle();
-      context.fillText(compassLayout.ringLabel!, halfSize, halfSize * (1 / 4) + fontSize / 3);
+      context.fillText(compassLayout.ringLabel, halfSize, halfSize * (1 / 4) + fontSize / 3);
     }
 
     return new THREE.CanvasTexture(canvas);
@@ -230,7 +235,7 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
     context.fillRect(outlineSize, outlineSize, textureSize - outlineSize * 2, textureSize - outlineSize * 2);
     context.fill();
 
-    if (faceConfig.label !== null) {
+    if (faceConfig.label !== '') {
       const fontSize = faceConfig.fontSize ?? textureSize / 3;
       context.font = `bold ${fontSize}px Arial`;
       context.textAlign = 'center';
@@ -244,7 +249,7 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
   private createBoxFace(position: THREE.Vector3, faceConfig: AxisBoxFaceConfig, upVector = new THREE.Vector3(0, 1, 0)) {
     const face = new THREE.Mesh(
       this._boxFaceGeometry,
-      new THREE.MeshBasicMaterial({ map: this.getFaceTexture(faceConfig, this._layoutConfig.size!) })
+      new THREE.MeshBasicMaterial({ map: this.getFaceTexture(faceConfig, this._layoutConfig.size) })
     );
 
     face.position.copy(position.multiplyScalar(0.5 * this._boxFaceGeometry.parameters.width));

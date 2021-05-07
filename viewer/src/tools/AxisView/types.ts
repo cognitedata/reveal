@@ -6,7 +6,7 @@ import * as THREE from 'three';
 
 export type AxisBoxConfig = {
   size?: number;
-  position?: Absolute | Relative;
+  position?: AbsolutePosition | RelativePosition;
   faces?: {
     xPositiveFace?: AxisBoxFaceConfig;
     xNegativeFace?: AxisBoxFaceConfig;
@@ -18,12 +18,12 @@ export type AxisBoxConfig = {
   compass?: AxisBoxCompassConfig;
 };
 
-export type Absolute = {
+export type AbsolutePosition = {
   xAbsolute: number;
   yAbsolute: number;
 };
 
-export type Relative = {
+export type RelativePosition = {
   corner: Corner;
   padding: THREE.Vector2;
 };
@@ -69,7 +69,7 @@ export const defaultFaceConfig: AxisBoxFaceConfig = {
   faceColor: new THREE.Color(0x949494)
 };
 
-export const defaultAxisBoxConfig: AxisBoxConfig = {
+export const defaultAxisBoxConfig: Required<AxisBoxConfig> = {
   size: 128,
   position: {
     corner: Corner.BottomRight,

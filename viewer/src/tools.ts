@@ -11,8 +11,8 @@ export {
   AxisBoxCompassConfig,
   AxisBoxFaceConfig,
   Corner,
-  Absolute,
-  Relative
+  AbsolutePosition,
+  RelativePosition
 } from './tools/AxisView/types';
 export { Cognite3DViewerToolBase } from './tools/Cognite3DViewerToolBase';
 export { DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions } from './tools/DebugLoadedSectorsTool';
