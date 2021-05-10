@@ -1,5 +1,3 @@
-import React, { ReactNode } from 'react';
-import { Tag } from 'antd';
 import { cognite } from '@cognite/acl-protos';
 import queryString from 'query-string';
 
@@ -270,31 +268,6 @@ export const getActionLabel = (
   return `${capabilityName}:${action.toLowerCase()}`;
 };
 
-export const getReadableCapabilities = (
-  capabilities: SingleCogniteCapability[]
-) =>
-  // @ts-ignore
-  capabilities.reduce((p, cap) => {
-    // There's always just one key per object
-    const acl = Object.keys(cap)[0];
-    // @ts-ignore
-    const actionLabels = cap[acl].actions.map(action =>
-      getActionLabel(cap, action)
-    );
-    return [...p, ...actionLabels];
-  }, []);
-
-const getScope = (capability: SingleCogniteCapability) => {
-  const acl = Object.keys(capability)[0];
-  // @ts-ignore
-  const scope = Object.keys(capability[acl].scope)[0];
-
-  if (scope && scope !== 'all') {
-    return scope;
-  }
-  return null;
-};
-
 export const getCapabilityActions = (
   capability: CogniteCapability | string | SingleCogniteCapability
 ) => {
@@ -342,99 +315,3 @@ export const getCapabilityScopes = (
       return ['all'];
   }
 };
-
-const getScopeTag = (
-  scope: string,
-  capabilities: SingleCogniteCapability,
-  action: string
-) => {
-  const cap = Object.keys(capabilities)[0];
-  return (
-    <Tag>
-      {scope}:{cap}:{action}
-    </Tag>
-  );
-};
-
-export const getReadableCapabilitiesWithScope = (
-  capabilities: SingleCogniteCapability[]
-) =>
-  capabilities
-    .reduce((p, cap, index) => {
-      const acl = Object.keys(cap)[0];
-      const scope = getScope(cap);
-      // @ts-ignore
-      const actionLabels = cap[acl].actions.map(action => {
-        const capabilityText = getActionLabel(cap, action);
-        const uniqueKey = `${capabilityText}-${index}`;
-        return {
-          key: uniqueKey,
-          label: (
-            <span>
-              {scope && getScopeTag(scope, cap, action.toLowerCase())}
-              {capabilityText}
-            </span>
-          ),
-        };
-      });
-      return [...p, ...actionLabels];
-    }, [] as { key: string; label: ReactNode }[])
-    .sort((a, b) => a.key.localeCompare(b.key));
-
-// const userHasCapability = (user, aclType, actions, scope = null) =>
-//   actions.every(action =>
-//     user.groups.some(group =>
-//       group.capabilities.some(
-//         capability =>
-//           aclType in capability &&
-//           capability[aclType].actions != null &&
-//           capability[aclType].actions.includes(action) &&
-//           (scope == null ||
-//             'all' in capability[aclType].scope ||
-//             scope in capability[aclType].scope)
-//       )
-//     )
-//   );
-
-// export const userHasAdminAcls = user =>
-//   userHasCapability(
-//     user,
-//     'groupsAcl',
-//     ['LIST', 'READ', 'CREATE', 'UPDATE', 'DELETE'],
-//     'all'
-//   );
-
-// export const userHasProjectAdminAcls = user =>
-//   userHasCapability(user, 'projectsAcl', ['READ', 'UPDATE'], 'all');
-
-// export const userHasReadIAM = user =>
-//   userHasCapability(user, 'usersAcl', ['READ', 'LIST'], 'all') &&
-//   userHasCapability(user, 'apikeysAcl', ['READ', 'LIST'], 'all') &&
-//   userHasCapability(user, 'groupsAcl', ['READ', 'LIST'], 'all');
-
-// export const userHasProjectUpdateAcl = user =>
-//   userHasCapability(user, 'projectsAcl', ['UPDATE']);
-
-// export const columnFilterIcon = filtered => (
-//   <FilterWrapper
-//     filtered={filtered}
-//     style={{
-//       position: 'relative',
-//       width: 'auto',
-//       padding: '0',
-//       marginLeft: '16px',
-//     }}
-//   >
-//     <Button
-//       icon="Filter"
-//       iconPlacement="right"
-//       style={{ color: filtered ? theme.actionText : 'black' }}
-//     >
-//       Filter
-//     </Button>
-//   </FilterWrapper>
-// );
-
-// export const columnWithFilterTitle = columnTitle => (
-//   <span style={{ lineHeight: '32px' }}>{columnTitle}</span>
-// );

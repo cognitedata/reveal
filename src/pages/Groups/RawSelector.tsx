@@ -8,6 +8,7 @@ import { Icon } from '@cognite/cogs.js';
 import Tooltip from 'antd/lib/tooltip';
 import { useSDK } from '@cognite/sdk-provider';
 import { CogniteClient } from '@cognite/sdk';
+import { getContainer } from 'utils/utils';
 
 const TreeLabel = styled.span`
   margin: 0 8px;
@@ -167,6 +168,7 @@ const RawSelector = ({ value, onChange }: Props) => {
 
   return (
     <TreeSelect
+      getPopupContainer={getContainer}
       showSearch
       treeDataSimpleMode
       treeData={treeData}

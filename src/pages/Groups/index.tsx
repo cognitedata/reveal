@@ -13,7 +13,6 @@ import {
   Modal,
   Row,
   Table,
-  Tag,
   Tooltip,
   Typography,
 } from 'antd';
@@ -23,6 +22,7 @@ import { useRouteMatch } from 'react-router';
 import { ColumnType } from 'antd/lib/table';
 
 import GroupDrawer from './GroupDrawer';
+import CapabilityTag from './CapabilityTag';
 
 const { Text } = Typography;
 
@@ -206,31 +206,7 @@ export default function Groups() {
       key: 'capability',
       render(g: Group) {
         if (g.capabilities && g.capabilities.length > 0) {
-          return g.capabilities.map(c => {
-            const acl: string = Object.keys(c)[0]!;
-            // @ts-ignore
-            const { actions = [], scope } = c[acl];
-            // @ts-ignore
-            const foo = Object.keys(scope || {})[0]?.replace('Scope', '');
-
-            return actions.map((a: string) => (
-              <Tag key={`${acl.replace('Acl', '')}:${a.toLowerCase()}`}>
-                {foo !== 'all' && (
-                  <span
-                    style={{
-                      backgroundColor: 'var(--cogs-primary)',
-                      color: 'white',
-                      padding: '0 4px',
-                      borderRadius: 2,
-                    }}
-                  >
-                    Scope: {foo}
-                  </span>
-                )}
-                {` ${acl.replace('Acl', '')}:${a.toLowerCase()}`}
-              </Tag>
-            ));
-          });
+          return g.capabilities.map(c => <CapabilityTag capability={c} />);
         }
 
         return <>No permissions specified</>;

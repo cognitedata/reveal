@@ -33,6 +33,8 @@ import selectStyle from 'antd/es/select/style/index.less';
 import tableStyle from 'antd/es/table/style/index.less';
 import tagStyle from 'antd/es/tag/style/index.less';
 import tooltipStyle from 'antd/es/tooltip/style/index.less';
+import treeSelectStyle from 'antd/es/tree-select/style/index.less';
+import treeStyle from 'antd/es/tree/style/index.less';
 import typographyStyle from 'antd/es/typography/style/index.less';
 
 import { Icon, Tooltip as CogsTooltip } from '@cognite/cogs.js';
@@ -53,12 +55,12 @@ const antdStyles = [
   dropdownStyle,
   formStyle,
   gridStyle,
-  notificationStyle,
   inputNumberStyle,
   inputStyle,
   listStyle,
   menuStyle,
   modalStyle,
+  notificationStyle,
   paginationStyle,
   popoverStyle,
   radioStyle,
@@ -66,6 +68,8 @@ const antdStyles = [
   tableStyle,
   tagStyle,
   tooltipStyle,
+  treeSelectStyle,
+  treeStyle,
   typographyStyle,
 ];
 

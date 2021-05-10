@@ -1,19 +1,13 @@
-import React, { ReactNode } from 'react';
-import { Tag } from 'antd';
+import React from 'react';
 import { CogniteCapability, SingleCogniteCapability } from '@cognite/sdk';
 import { Button } from '@cognite/cogs.js';
 import List from 'antd/lib/list';
-import { getReadableCapabilitiesWithScope } from './utils';
+import CapabilityTag from './CapabilityTag';
 
 interface CapabilitiesTableProps {
   capabilities: CogniteCapability;
   onEdit?(index: number): void;
   onRemove?(index: number): void;
-}
-
-interface ReadableCapability {
-  key: string;
-  label: ReactNode;
 }
 
 export const EMPTY_MESSAGE = 'No capability was added yet';
@@ -38,16 +32,10 @@ export default function CapabilitiesList(props: CapabilitiesTableProps) {
     if (onEdit) actions.push(editButton);
     if (onRemove) actions.push(removeButton);
 
-    const capabilityList = getReadableCapabilitiesWithScope([capability]);
-
     return (
       <List.Item actions={actions} data-testid="capabilities-list-item">
         <div style={{ width: '100%' }}>
-          {capabilityList.map((readableCapability: ReadableCapability) => (
-            <Tag key={readableCapability.key.toString()}>
-              {readableCapability.label}
-            </Tag>
-          ))}
+          <CapabilityTag capability={capability} />
         </div>
       </List.Item>
     );
