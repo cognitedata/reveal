@@ -18,7 +18,6 @@ import {
 } from './types';
 import cloneDeep from 'lodash/cloneDeep';
 import merge from 'lodash/merge';
-import { Vector2 } from 'three';
 
 export class AxisViewTool extends Cognite3DViewerToolBase {
   private readonly _layoutConfig: Required<AxisBoxConfig>;
@@ -122,7 +121,7 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
       this._dynamicUpdatePosition();
     }
 
-    this._viewer.addUiObject(axisGroup, this._screenPosition, new Vector2(size, size));
+    this._viewer.addUiObject(axisGroup, this._screenPosition, new THREE.Vector2(size, size));
 
     function isAbsolute(position: AbsolutePosition | RelativePosition): position is AbsolutePosition {
       return (
