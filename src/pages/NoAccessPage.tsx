@@ -60,7 +60,7 @@ export default function NoAccessPage({ capabilities }: Props) {
             <Body level={1}>
               Ask those responsible within your organisation for access
               management to grant them to you.
-              <br />
+              <br /> <br />
               Learn more about access management in{' '}
               <a
                 href={NavLinks.AccessManagementDoc}
@@ -73,7 +73,7 @@ export default function NoAccessPage({ capabilities }: Props) {
           </BodyContainer>
         </div>
         <GraphicContainer>
-          <Graphic type="Search" />
+          <Graphic type="Search" style={{ width: '100%' }} />
         </GraphicContainer>
       </Frame>
     </>
@@ -179,6 +179,4 @@ const GraphicContainer = styled.div`
   order: 1;
   flex-grow: 0;
   margin: 0px 54px;
-
-  border: solid 1px;
 `;
