@@ -53,7 +53,7 @@ describe('sectorUtilities', () => {
       const sector = createEmptySector();
 
       // Act
-      const { sectorMeshes } = consumeSectorDetailed(sector, metadata, materials);
+      const { sectorMeshes } = consumeSectorDetailed(sector, metadata, materials, null);
 
       // Assert
       expect(sectorMeshes.children).toBeEmpty();
@@ -65,7 +65,7 @@ describe('sectorUtilities', () => {
       const sector: SectorGeometry = Object.assign(createEmptySector(), { triangleMeshes } as SectorGeometry);
 
       // Act
-      const { sectorMeshes } = consumeSectorDetailed(sector, metadata, materials);
+      const { sectorMeshes } = consumeSectorDetailed(sector, metadata, materials, null);
 
       // Assert
       expect(sectorMeshes.children.length).toBe(1);
@@ -76,7 +76,7 @@ describe('sectorUtilities', () => {
       const sector = createEmptySector();
 
       // Act
-      const { sectorMeshes } = consumeSectorDetailed(sector, metadata, materials);
+      const { sectorMeshes } = consumeSectorDetailed(sector, metadata, materials, null);
 
       // Assert
       expect(sectorMeshes.children).toBeEmpty();
@@ -95,7 +95,7 @@ describe('sectorUtilities', () => {
       const bounds = new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1, 1, 1));
 
       // Act
-      const { sectorMeshes } = consumeSectorSimple(sector, bounds, materials);
+      const { sectorMeshes } = consumeSectorSimple(sector, bounds, materials, null);
 
       // Assert
       expect(sectorMeshes.children).toBeEmpty();
@@ -122,7 +122,7 @@ describe('sectorUtilities', () => {
       const bounds = new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1, 1, 1));
 
       // Act
-      const { sectorMeshes } = consumeSectorSimple(sector, bounds, materials);
+      const { sectorMeshes } = consumeSectorSimple(sector, bounds, materials, null);
 
       // Assert
       expect(sectorMeshes.children).not.toBeEmpty();
@@ -158,7 +158,7 @@ describe('sectorUtilities', () => {
       const bounds = new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1, 1, 1));
 
       // Act
-      const { sectorMeshes } = consumeSectorSimple(sector, bounds, materials);
+      const { sectorMeshes } = consumeSectorSimple(sector, bounds, materials, null);
 
       // Assert
       expect(sectorMeshes.children.length).toBe(1);
@@ -187,7 +187,7 @@ describe('sectorUtilities', () => {
       const bounds = new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1, 1, 1));
 
       // Act
-      expect(() => consumeSectorSimple(sector, bounds, materials)).toThrowError();
+      expect(() => consumeSectorSimple(sector, bounds, materials, null)).toThrowError();
     });
 
     test('buffer missing bytes, throws', () => {
@@ -205,7 +205,7 @@ describe('sectorUtilities', () => {
       const bounds = new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1, 1, 1));
 
       // Act
-      expect(() => consumeSectorSimple(sector, bounds, materials)).toThrowError();
+      expect(() => consumeSectorSimple(sector, bounds, materials, null)).toThrowError();
     });
   });
 });

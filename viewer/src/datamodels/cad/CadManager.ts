@@ -3,11 +3,13 @@
  */
 
 import * as THREE from 'three';
+
 import { CadNode } from './CadNode';
 import { CadModelFactory } from './CadModelFactory';
 import { CadModelMetadataRepository } from './CadModelMetadataRepository';
 import { CadModelUpdateHandler } from './CadModelUpdateHandler';
-import { Subscription, Observable } from 'rxjs';
+import { CadModelMetadata } from './CadModelMetadata';
+
 import { NodeAppearanceProvider } from './NodeAppearance';
 import { trackError } from '../../utilities/metrics';
 
@@ -17,6 +19,11 @@ import { LoadingState } from '../../utilities';
 import { CadModelSectorBudget } from './CadModelSectorBudget';
 import { CadModelSectorLoadStatistics } from './CadModelSectorLoadStatistics';
 import { LevelOfDetail } from './sector/LevelOfDetail';
+
+import { Subscription, Observable } from 'rxjs';
+import { GeometryFilter } from '../..';
+
+import { CadModelClipper } from './sector/CadModelClipper';
 
 export class CadManager<TModelIdentifier> {
   private readonly _materialManager: CadMaterialManager;
@@ -148,13 +155,20 @@ export class CadManager<TModelIdentifier> {
     this._materialManager.setRenderMode(renderMode);
   }
 
-  async addModel(modelIdentifier: TModelIdentifier, nodeAppearanceProvider?: NodeAppearanceProvider): Promise<CadNode> {
+  async addModel(
+    modelIdentifier: TModelIdentifier,
+    geometryFilter?: GeometryFilter,
+    nodeAppearanceProvider?: NodeAppearanceProvider
+  ): Promise<CadNode> {
     const metadata = await this._cadModelMetadataRepository.loadData(modelIdentifier);
     if (this._cadModelMap.has(metadata.blobUrl)) {
       throw new Error(`Model ${modelIdentifier} has already been added`);
     }
+    // Apply clipping box
+    const geometryClipBox = determineGeometryClipBox(geometryFilter, metadata);
+    const clippedMetadata = createClippedModel(metadata, geometryClipBox);
 
-    const model = this._cadModelFactory.createModel(metadata, nodeAppearanceProvider);
+    const model = this._cadModelFactory.createModel(clippedMetadata, nodeAppearanceProvider);
     model.addEventListener('update', this._markNeedsRedrawBound);
     this._cadModelMap.set(metadata.blobUrl, model);
     this._cadModelUpdateHandler.addModel(model);
@@ -177,4 +191,29 @@ export class CadManager<TModelIdentifier> {
   private markNeedsRedraw(): void {
     this._needsRedraw = true;
   }
+}
+
+function determineGeometryClipBox(
+  geometryFilter: GeometryFilter | undefined,
+  cadModel: CadModelMetadata
+): THREE.Box3 | null {
+  if (geometryFilter === undefined || geometryFilter.boundingBox === undefined) {
+    return null;
+  }
+  if (!geometryFilter.isBoundingBoxInModelCoordinates) {
+    return geometryFilter.boundingBox;
+  }
+
+  const bbox = geometryFilter.boundingBox.clone();
+  bbox.applyMatrix4(cadModel.inverseModelMatrix);
+  return bbox;
+}
+
+function createClippedModel(cadModel: CadModelMetadata, geometryClipBox: THREE.Box3 | null): CadModelMetadata {
+  if (geometryClipBox === null) {
+    return cadModel;
+  }
+
+  const clipper = new CadModelClipper(geometryClipBox);
+  return clipper.createClippedModel(cadModel);
 }
