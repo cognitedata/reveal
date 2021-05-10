@@ -143,7 +143,7 @@ export function TestViewer(props: Props) {
       } else {
         model = await revealManager.addModel(
           'cad',
-          modelUrl,
+          modelUrl
         );
       }
 

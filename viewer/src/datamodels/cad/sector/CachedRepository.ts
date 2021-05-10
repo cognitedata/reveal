@@ -89,9 +89,10 @@ export class CachedRepository implements Repository {
         default:
           assertNever(sector.levelOfDetail);
       }
-    } catch (error) {
-      this._consumedSectorCache.remove(cacheKey);
+    }
 
+    catch (error) {
+      this._consumedSectorCache.remove(cacheKey);
       trackError(error, { methodName: 'loadSector', moduleName: 'CachedRepository' });
       throw error;
     }
@@ -107,7 +108,8 @@ export class CachedRepository implements Repository {
     const transformed = await this._modelDataTransformer.transformSimpleSector(
       wantedSector.blobUrl,
       wantedSector.metadata,
-      geometry
+      geometry,
+      wantedSector.geometryClipBox
     );
     const consumedSector: ConsumedSector = {
       ...wantedSector,
@@ -146,7 +148,8 @@ export class CachedRepository implements Repository {
     const transformed = await this._modelDataTransformer.transformDetailedSector(
       wantedSector.blobUrl,
       wantedSector.metadata,
-      geometry
+      geometry,
+      wantedSector.geometryClipBox
     );
 
     const consumedSector: ConsumedSector = {
@@ -247,10 +250,10 @@ export class CachedRepository implements Repository {
           for (let i = 0; i < fileMeshIndices.length; i++) {
             const meshIdx = meshIndices[fileMeshIndices[i]];
             const treeIndex = treeIndices[meshIdx];
-            const instanceMatrix = instanceMatrices.slice(meshIdx * 16, meshIdx * 16 + 16);
+            const instanceMatrix = instanceMatrices.subarray(meshIdx * 16, meshIdx * 16 + 16);
             instanceMatrixBuffer.set(instanceMatrix, i * 16);
             treeIndicesBuffer[i] = treeIndex;
-            const color = colors.slice(meshIdx * 4, meshIdx * 4 + 4);
+            const color = colors.subarray(meshIdx * 4, meshIdx * 4 + 4);
             colorBuffer.set(color, i * 4);
           }
           instancedMeshes.push({

@@ -46,39 +46,50 @@ function generatePlane3D(
   };
 }
 
-export const boxGeometry = (() => {
+export const { boxGeometry, boxGeometryBoundingBox } = (() => {
   const geometry = new THREE.BoxBufferGeometry(1, 1, 1, 1, 1, 1);
-  const result = {
-    index: geometry.getIndex(),
-    position: geometry.getAttribute('position'),
-    normal: geometry.getAttribute('normal')
-  };
-  geometry.dispose();
-  return result;
+  try {
+    const result = {
+      index: geometry.getIndex(),
+      position: geometry.getAttribute('position'),
+      normal: geometry.getAttribute('normal')
+    };
+    geometry.computeBoundingBox();
+    return { boxGeometry: result, boxGeometryBoundingBox: geometry.boundingBox! };
+  } finally {
+    geometry.dispose();
+  }
 })();
 
-export const quadGeometry = (() => {
+export const { quadGeometry, quadGeometryBoundingBox } = (() => {
   const geometry = new THREE.PlaneBufferGeometry(1, 1, 1, 1);
-  const result = {
-    index: geometry.getIndex(),
-    position: geometry.getAttribute('position'),
-    normal: geometry.getAttribute('normal')
-  };
-  geometry.dispose();
-  return result;
+  try {
+    const result = {
+      index: geometry.getIndex(),
+      position: geometry.getAttribute('position'),
+      normal: geometry.getAttribute('normal')
+    };
+    geometry.computeBoundingBox();
+    return { quadGeometry: result, quadGeometryBoundingBox: geometry.boundingBox! };
+  } finally {
+    geometry.dispose();
+  }
 })();
 
-export const trapeziumGeometry = (() => {
+export const { trapeziumGeometry, trapeziumGeometryBoundingBox } = (() => {
   const index = [0, 1, 3, 0, 3, 2];
   const position = [0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3];
   return {
-    index: new THREE.BufferAttribute(new Uint16Array(index), 1),
-    position: new THREE.BufferAttribute(new Float32Array(position), 3)
+    trapeziumGeometry: {
+      index: new THREE.BufferAttribute(new Uint16Array(index), 1),
+      position: new THREE.BufferAttribute(new Float32Array(position), 3)
+    },
+    trapeziumGeometryBoundingBox: new THREE.Box3().setFromArray(position)
   };
 })();
 
 // cone
-export const coneGeometry = (() => {
+export const { coneGeometry, coneGeometryBoundingBox } = (() => {
   const positions = [];
   positions.push(-1, 1, -1);
   positions.push(-1, -1, -1);
@@ -89,30 +100,33 @@ export const coneGeometry = (() => {
 
   const indices = new Uint16Array([1, 2, 0, 1, 3, 2, 3, 4, 2, 3, 5, 4]);
   return {
-    index: new THREE.BufferAttribute(indices, 1),
-    position: new THREE.BufferAttribute(new Float32Array(positions), 3)
+    coneGeometry: {
+      index: new THREE.BufferAttribute(indices, 1),
+      position: new THREE.BufferAttribute(new Float32Array(positions), 3)
+    },
+    coneGeometryBoundingBox: new THREE.Box3().setFromArray(positions)
   };
 })();
 
-export const torusGeometry = (() => {
+export const { torusGeometry, torusGeometryBoundingBox } = (() => {
   const tubularSegments = 7;
   const radialSegments = 7;
   const transformFunc = (u: number, v: number) => [u, v * 2.0 * Math.PI];
-  return generatePlane3D(radialSegments, tubularSegments, transformFunc);
+  const torusGeometry = generatePlane3D(radialSegments, tubularSegments, transformFunc);
+  return { torusGeometry, torusGeometryBoundingBox: new THREE.Box3().setFromArray(torusGeometry.position.array) };
 })();
 
-export const nutGeometry = (() => {
-  // in order to further optimize 3d-viewer, we can make our own nut mesh
-  // that way, we can reduce 4 more triangles
-  // the problem is with the normals, because to do flat shading, we have to duplicate normals
-  // one way to improve it is to use 'flat' qualifier to stop glsl from interpolating normals
+export const { nutGeometry, nutGeometryBoundingBox } = (() => {
   const geometry = new THREE.CylinderBufferGeometry(0.5, 0.5, 1, 6);
-  geometry.applyMatrix4(new THREE.Matrix4().makeRotationX(-Math.PI / 2));
-  const result = {
-    index: geometry.getIndex(),
-    position: geometry.getAttribute('position'),
-    normal: geometry.getAttribute('normal')
-  };
-  geometry.dispose();
-  return result;
+  try {
+    geometry.applyMatrix4(new THREE.Matrix4().makeRotationX(-Math.PI / 2));
+    const result = {
+      index: geometry.getIndex(),
+      position: geometry.getAttribute('position'),
+      normal: geometry.getAttribute('normal')
+    };
+    return { nutGeometry: result, nutGeometryBoundingBox: new THREE.Box3().setFromArray(result.position.array) };
+  } finally {
+    geometry.dispose();
+  }
 })();

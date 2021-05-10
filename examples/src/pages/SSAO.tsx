@@ -46,7 +46,7 @@ export function SSAO() {
         model = await revealManager.addModel('cad', modelRevision);
       } else if (modelUrl) {
         revealManager = reveal.createLocalRevealManager(renderer, scene, { logMetrics: false });
-        model = await revealManager.addModel('cad', modelUrl);
+        model = await revealManager.addModel('cad', modelRevision);
       } else {
         throw new Error(
           'Need to provide either project & model OR modelUrl as query parameters'

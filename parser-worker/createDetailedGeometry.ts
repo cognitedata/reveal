@@ -91,10 +91,10 @@ export async function createDetailedGeometry(
         for (let i = 0; i < fileMeshIndices.length; i++) {
           const meshIdx = meshIndices[fileMeshIndices[i]];
           const treeIndex = treeIndices[meshIdx];
-          const instanceMatrix = instanceMatrices.slice(meshIdx * 16, meshIdx * 16 + 16);
+          const instanceMatrix = instanceMatrices.subarray(meshIdx * 16, meshIdx * 16 + 16);
           instanceMatrixBuffer.set(instanceMatrix, i * 16);
           treeIndicesBuffer[i] = treeIndex;
-          const color = colors.slice(meshIdx * 4, meshIdx * 4 + 4);
+          const color = colors.subarray(meshIdx * 4, meshIdx * 4 + 4);
           colorBuffer.set(color, i * 4);
         }
         instancedMeshes.push({
