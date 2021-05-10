@@ -1,4 +1,3 @@
-import React from 'react';
 import GlobalStyles from 'global-styles';
 import { Switch, Redirect, Route } from 'react-router-dom';
 import { Container } from '@cognite/react-container';

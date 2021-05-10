@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import * as React from 'react';
 import { Button, A, Body, Graphic } from '@cognite/cogs.js';
 import { useTranslation, Trans } from 'react-i18next';
 
@@ -6,7 +6,7 @@ import { Header } from './elements';
 import { Container } from '../elements';
 
 const Home = () => {
-  const [crashing, setCrashing] = useState(false);
+  const [crashing, setCrashing] = React.useState(false);
 
   const { t } = useTranslation(['Home', 'global']);
 
@@ -19,7 +19,7 @@ const Home = () => {
 
   // Show how the 't' function can be used. Note that it is automatically bound
   // to the 'Home' namespace (unlike the Trans component).
-  const buttonText = useMemo(() => {
+  const buttonText = React.useMemo(() => {
     if (crashing) {
       return t('crashing_button', { defaultValue: 'Crashing &hellip;' });
     }

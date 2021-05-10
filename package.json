@@ -1,12 +1,14 @@
 {
   "name": "@cognite/react-demo-app",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "private": true,
   "scripts": {
+    "analyse": "source-map-explorer 'build/static/js/*.js' --only-mapped --html /tmp/result.html && google-chrome /tmp/result.html",
     "start": "./scripts/start.sh",
     "build": "./scripts/build.sh",
     "test": "./scripts/test.sh",
     "lint": "concurrently \"yarn prettier\" \"yarn eslint\"",
+    "lint-fast": "pretty-quick --staged",
     "eslint": "yarn eslint:changed 'src/**/*.{ts,tsx}' 'public/index.html'",
     "eslint:changed": "eslint --max-warnings 0 --color --config .eslintrc.production.js",
     "prettier": "prettier --config .prettierrc -l 'src/**/*.{js,ts,tsx}' || (echo \nThese files are not formatted correctly && false)",
@@ -17,16 +19,17 @@
     "testcafe:start": "./scripts/testcafe-serve-run.sh",
     "testcafe:start-live": "./scripts/testcafe-start.sh",
     "testcafe:build": "./scripts/testcafe-build.sh",
-    "testcafe:serve": "serve -s build -l 11111"
+    "testcafe:serve": "serve -s build -l 11111",
+    "prepare": "husky install"
   },
   "dependencies": {
-    "@cognite/cogs.js": "2.8.0",
+    "@cognite/cogs.js": "^3.9.0",
     "@cognite/intercom-helper": "^0.1.0",
-    "@cognite/metrics": "^1.0.0",
-    "@cognite/react-container": "^0.9.0",
-    "@cognite/react-errors": "^0.0.4",
-    "@cognite/react-i18n": "^0.3.0",
-    "@cognite/sdk": "^3.4.0",
+    "@cognite/metrics": "^1.1.0",
+    "@cognite/react-container": "^1.0.1",
+    "@cognite/react-errors": "^0.1.0",
+    "@cognite/react-i18n": "^0.3.2",
+    "@cognite/sdk": "^4.0.0",
     "@sentry/browser": "^6.2.5",
     "lodash": "^4.17.21",
     "react": "17.0.2",
@@ -80,6 +83,7 @@
     "pretty-quick": "^3.1.0",
     "serve": "^11.3.2",
     "sinon": "^9.2.4",
+    "source-map-explorer": "^2.5.2",
     "testcafe": "^1.14.0",
     "typescript": "^4.1.5"
   },
@@ -101,10 +105,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "pretty-quick --staged"
-    }
   }
 }

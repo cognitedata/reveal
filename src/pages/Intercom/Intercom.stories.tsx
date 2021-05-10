@@ -1,4 +1,3 @@
-import React from 'react';
 import { IntercomPage } from './Intercom';
 
 export default {

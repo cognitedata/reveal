@@ -19,7 +19,7 @@ type Sidecar = {
 // #
 // #
 const PROD = false;
-const CLUSTER = 'bluefield';
+const CLUSTER = 'ew1';
 // #
 // #
 // #
@@ -36,7 +36,7 @@ const generateBaseUrls = (cluster: string, prod: boolean = false) => {
     }
     default: {
       return {
-        aadApplicationId: '245a8a64-4142-4226-86fa-63d590de14c9', // bluefield
+        aadApplicationId: '245a8a64-4142-4226-86fa-63d590de14c9', // bluefield staging
         appsApiBaseUrl: prod
           ? `https://apps-api.${cluster}.cognite.ai`
           : `https://apps-api.staging.${cluster}.cognite.ai`,

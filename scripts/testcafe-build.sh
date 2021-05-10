@@ -8,5 +8,5 @@ exit 1
 fi
 
 REACT_APP_API_KEY=$COGNITE_API_KEY \
-REACT_APP_E2E_MOCK=true \
+REACT_APP_E2E_MODE=true \
     yarn build testcafe

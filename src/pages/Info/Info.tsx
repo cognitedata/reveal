@@ -1,4 +1,3 @@
-import React from 'react';
 import { A, Body, Title } from '@cognite/cogs.js';
 import { useTranslation, Trans } from 'react-i18next';
 

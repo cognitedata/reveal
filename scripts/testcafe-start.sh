@@ -4,7 +4,7 @@ yarn kill-port --port 11111
 
 SERVE_PID=$!
 
-REACT_APP_E2E_MOCK=true \
+REACT_APP_E2E_MODE=true \
   PORT=11111 \
   HTTPS=false \
   yarn start;
