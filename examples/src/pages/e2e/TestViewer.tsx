@@ -151,7 +151,7 @@ export function TestViewer(props: Props) {
         model = await revealManager.addModel(
           'cad',
           modelUrl,
-          props.nodeAppearanceProvider || defaultNodeAppearanceProvider
+          { nodeAppearanceProvider: props.nodeAppearanceProvider || defaultNodeAppearanceProvider }
         );
       }
 
