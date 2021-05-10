@@ -15,7 +15,7 @@ import {
   PotreePointColorType,
   PotreePointShape
 } from '@cognite/reveal';
-import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, AxisViewTool, Corner } from '@cognite/reveal/tools';
+import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, AxisViewTool } from '@cognite/reveal/tools';
 import { CadNode } from '@cognite/reveal/experimental';
 
 window.THREE = THREE;
