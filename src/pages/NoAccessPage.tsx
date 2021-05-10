@@ -2,7 +2,7 @@ import React from 'react';
 import { Body, Button, Graphic, Title } from '@cognite/cogs.js';
 import { AccessPermission } from 'src/utils/types';
 import styled from 'styled-components';
-import { createLink } from '@cognite/cdf-utilities';
+import * as NavLinks from 'src/constants/NavLinks';
 
 type Props = {
   capabilities: Array<AccessPermission>;
@@ -19,7 +19,6 @@ const getPrerequisiteList = (capabilities: Array<AccessPermission>) =>
   });
 
 export default function NoAccessPage({ capabilities }: Props) {
-  const link = createLink('/') as string;
   return (
     <>
       <HomeButton>
@@ -29,7 +28,7 @@ export default function NoAccessPage({ capabilities }: Props) {
           type="ghost"
           icon="ArrowLeft"
           iconPlacement="left"
-          href={link}
+          href={NavLinks.HomeLink}
         >
           Home
         </Button>
@@ -64,7 +63,7 @@ export default function NoAccessPage({ capabilities }: Props) {
               <br />
               Learn more about access management in{' '}
               <a
-                href="https://docs.cognite.com/dev/guides/iam/authorization.html#capabilities"
+                href={NavLinks.AccessManagementDoc}
                 target="_blank"
                 rel="noreferrer"
               >
