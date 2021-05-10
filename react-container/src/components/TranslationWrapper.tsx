@@ -1,4 +1,5 @@
-import { configureI18n } from '@cognite/react-i18n';
+import React from 'react';
+import { configureI18n, ConfigureI18nOptions } from '@cognite/react-i18n';
 
 /*
  * This is a separate wrapper because we want to limit where we use the i18n setup
@@ -12,17 +13,15 @@ import { configureI18n } from '@cognite/react-i18n';
  *
  *
  */
-export const TranslationWrapper = ({
+export const TranslationWrapper: React.FC<ConfigureI18nOptions> = ({
   children,
-  disabled,
-}: {
-  children: React.ReactElement;
-  disabled?: boolean;
+  ...rest
 }) => {
   configureI18n({
     useSuspense: true,
-    disabled,
+    wait: false,
+    ...rest,
   });
 
-  return children;
+  return <>{children}</>;
 };

@@ -1,3 +1,9 @@
+## 1.0.2 May 10 2021
+
+### Changes
+
+- Bump i18n
+  
 ## 1.0.1 May 5 2021
 
 ### Changes

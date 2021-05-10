@@ -57,9 +57,10 @@ const {
 
 const CACHE_TIME_MILLIS = 1000 * 60 * 60 * 24; // 1 day
 
-type ConfigureI18nOptions = {
+export type ConfigureI18nOptions = {
   debug?: boolean;
   pseudo?: boolean;
+  keySeparator?: false | string;
   lng?: string;
   localStorageCacheTimeMillis?: number;
   env?: string;
@@ -84,6 +85,7 @@ const configureI18n = async ({
   env = REACT_APP_ENV || NODE_ENV,
   localStorageLanguageKey = 'currentLanguage',
   disabled = false,
+  keySeparator,
   saveMissing,
   updateMissing,
   ...rest
@@ -139,6 +141,7 @@ const configureI18n = async ({
     lng: language,
     fallbackLng: 'en',
     load: 'currentOnly',
+    keySeparator,
     fallbackNS: ['global'],
     postProcess: [],
     react: { wait, useSuspense },

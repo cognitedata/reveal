@@ -1,3 +1,13 @@
+## 1.1.0 May 10 2021
+
+### Changes
+
+- Remove i18n configuration 
+  - It is now setup in the TSA that implements this, or in react-container which uses this.
+  - This is because we should only init this once at a high level in the parent application, and since this is just a 'component package' that cannot be run standalone, it should not contain that setup.
+- Introduced new sidecar key: `locizeKeySeparator` to enable simple keys.
+  - This stops the error `Seems the loaded translations were in flat JSON format instead of nested. Either set keySeparator: false on init or make sure your translations are published in nested format.` when it tries to parse the keys from things like 'button-id_title'
+  
 ## 1.0.1 May 5 2021
 
 ### Changes

@@ -1,3 +1,5 @@
+// we need to make a more generic place to move this type into
+
 export type SidecarConfig = {
   __sidecarFormatVersion: number;
   aadApplicationId?: string;
@@ -14,4 +16,5 @@ export type SidecarConfig = {
   helpLink?: string;
   intercom?: string;
   locizeProjectId?: string;
+  locizeKeySeparator?: false | string;
 };

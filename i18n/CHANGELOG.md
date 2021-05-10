@@ -1,3 +1,11 @@
+## 0.3.3 - May 10 2021
+
+### Changes
+
+- Export type ConfigureI18nOptions
+- Introduced new prop: keySeparator to enable simple keys.
+  - This is an option from the main react-i18n package
+  
 ## 0.3.2 - Mar 25 2021
 
 ### Changes

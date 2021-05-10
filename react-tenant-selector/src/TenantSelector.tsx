@@ -1,6 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { CogniteClient } from '@cognite/sdk';
-import { configureI18n } from '@cognite/react-i18n';
 import { CogniteAuth, AuthenticatedUser, getFlow } from '@cognite/auth-utils';
 import { Loader } from '@cognite/cogs.js';
 import { QueryClientProvider, QueryClient } from 'react-query';
@@ -27,10 +26,8 @@ export const TenantSelector: React.FC<{
     backgroundImage,
     cdfCluster,
     directoryTenantId,
-    disableTranslations,
     disableLegacyLogin,
     helpLink,
-    locizeProjectId,
   } = sidecar;
 
   const [authenticating, setAuthenticating] = useState(false);
@@ -79,18 +76,6 @@ export const TenantSelector: React.FC<{
   const doSetup = async () => {
     const sdkClient = new CogniteClient({
       appId: applicationId,
-    });
-
-    await configureI18n({
-      useSuspense: true,
-      // required here so we can override translations from
-      // localhost or the hosted version
-      locize: {
-        projectId:
-          locizeProjectId || process.env.REACT_APP_LOCIZE_PROJECT_ID || '',
-        apiKey: process.env.REACT_APP_LOCIZE_API_KEY || '',
-      },
-      disabled: disableTranslations,
     });
 
     const cogniteAuth = new CogniteAuth(sdkClient, {

@@ -26,12 +26,12 @@ interface ContainerSidecarConfig extends SidecarConfig {
   disableSentry?: boolean;
 }
 
-interface Props {
+type Props = {
   store?: Store;
   children: React.ReactChild;
   intercomSettings?: IntercomBootSettings;
   sidecar: ContainerSidecarConfig;
-}
+};
 const RawContainer: React.FC<Props> = ({
   children,
   store,
@@ -43,7 +43,6 @@ const RawContainer: React.FC<Props> = ({
   const {
     applicationId,
     cdfApiBaseUrl,
-    disableTranslations,
     disableLoopDetector,
     disableSentry,
   } = sidecar;
@@ -119,32 +118,50 @@ const RawContainer: React.FC<Props> = ({
   return (
     <ConditionalLoopDetector disabled={disableLoopDetector}>
       <ConditionalSentry disabled={disableSentry}>
-        <TranslationWrapper disabled={disableTranslations}>
-          <ChosenAuthContainer
+        <ChosenAuthContainer
+          sidecar={sidecar}
+          sdkClient={client}
+          authError={authError}
+          tenant={initialTenant}
+        >
+          <IntercomContainer
             sidecar={sidecar}
-            sdkClient={client}
-            authError={authError}
-            tenant={initialTenant}
+            intercomSettings={intercomSettings}
           >
-            <IntercomContainer
-              sidecar={sidecar}
-              intercomSettings={intercomSettings}
-            >
-              <ConditionalReduxProvider store={store}>
-                <ErrorBoundary instanceId="container-root">
-                  <Router history={history}>{children}</Router>
-                </ErrorBoundary>
-              </ConditionalReduxProvider>
-            </IntercomContainer>
-          </ChosenAuthContainer>
-        </TranslationWrapper>
+            <ConditionalReduxProvider store={store}>
+              <ErrorBoundary instanceId="container-root">
+                <Router history={history}>{children}</Router>
+              </ErrorBoundary>
+            </ConditionalReduxProvider>
+          </IntercomContainer>
+        </ChosenAuthContainer>
       </ConditionalSentry>
     </ConditionalLoopDetector>
   );
 };
 
-// @ts-expect-error what is up? - Type 'undefined' is not assignable to type 'ReactChild'
-export const Container = withI18nSuspense(RawContainer);
+export const Container = (props: Props) => {
+  const {
+    disableTranslations,
+    locizeProjectId,
+    locizeKeySeparator,
+  } = props.sidecar;
+
+  const WrappedConatiner = withI18nSuspense<Props>(RawContainer);
+
+  return (
+    <TranslationWrapper
+      disabled={disableTranslations}
+      locize={{
+        projectId: locizeProjectId || '',
+        apiKey: process.env.REACT_APP_LOCIZE_API_KEY || '', // for local dev
+      }}
+      keySeparator={locizeKeySeparator}
+    >
+      <WrappedConatiner {...props} />
+    </TranslationWrapper>
+  );
+};
 
 export const ContainerWithoutI18N = (props: Props) => (
   <RawContainer
