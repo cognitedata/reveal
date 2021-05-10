@@ -66,17 +66,20 @@ Previous versions of metrics packaged react in this module, and trigger this err
 ## Process for updating the Tenant Selector
 
 1. Make your changes here (in the `frontend` lib(s))
-   1. Update and unit tests/storybooks
-   2. NOTE: it is recommended to use storybook to develop any changes
+   1. This often involves changes to things like `react-container` or externally in `cogs.js`
+   2. Update and unit tests/storybooks
+   3. NOTE: it is recommended to use storybook to develop any changes
 2. Build a local project and test this out
    1. For example to test with the demo app, you can run:
       `yarn build && cp -r dist/* ~/dev/react-demo-app/node_modules/@cognite/react-tenant-selector/dist` (remember to stop the dev server and re-run `yarn start` after doing this)
    2. Or use `yalc`
    3. Or `yarn link`
 3. Bump this projects version
-4. Bump @cognite/react-container to match that version (so people use it during locahost development)
-5. Create a PR and get it deployed
-6. Test these changes again in a local project, this time using the versions published from NPM
-7. Create a PR for the `tenant-selector` application to use this new version
-8. Upgrade your application to use this version of the `tenant-selector` in `release-configs` staging
-9. Confirm on staging and proceed to release `tenant-selector` to prod, and update prod `release-configs` for your app
+4. Bump @cognite/react-container to match that version (because it is used during localhost development)
+5. Create a PR and get it merged into master.
+6. Test these changes again in `react-demo-app`, this time using the versions published from NPM
+7. Create a PR to bump the version in the demo app.
+8. Create a PR for the `tenant-selector` application to use the new version from step 5.
+9. Upgrade `TIER_0_STAGING` to use this version of the `tenant-selector` in `application-services/services/release-configs/src/version-specs/tsa.ts` 
+10. Confirm on staging and proceed to release `tenant-selector` to prod, via the above method.
+11. After testing you can move up the release process and release `TIER_1_STAGING`

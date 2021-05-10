@@ -1,3 +1,9 @@
+## 1.0.1 May 5 2021
+
+### Changes
+
+- Bump auth
+  
 ## 1.0.0 May 5 2021
 
 ### Changes
