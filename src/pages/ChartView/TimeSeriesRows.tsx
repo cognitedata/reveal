@@ -10,6 +10,8 @@ type Props = {
   selectedSourceId?: string;
   onRowClick?: (id?: string) => void;
   onInfoClick?: (id?: string) => void;
+  dateFrom: string;
+  dateTo: string;
 };
 export default function TimeSeriesRows({
   chart,
@@ -18,6 +20,8 @@ export default function TimeSeriesRows({
   onRowClick = () => {},
   onInfoClick = () => {},
   selectedSourceId,
+  dateFrom,
+  dateTo,
 }: Props) {
   const isWorkspaceMode = mode === 'workspace';
   const isEditorMode = mode === 'editor';
@@ -37,6 +41,8 @@ export default function TimeSeriesRows({
           isSelected={selectedSourceId === t.id}
           disabled={isEditorMode}
           isFileViewerMode={isFileViewerMode}
+          dateFrom={dateFrom}
+          dateTo={dateTo}
         />
       ))}
     </>

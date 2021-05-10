@@ -165,6 +165,8 @@ export const FileView = () => {
                     chart={chart}
                     updateChart={updateChart}
                     mode="file"
+                    dateFrom={chart.dateFrom}
+                    dateTo={chart.dateTo}
                   />
                 </tbody>
               </SourceTable>
