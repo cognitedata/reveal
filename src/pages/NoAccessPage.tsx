@@ -7,6 +7,16 @@ type Props = {
   capabilities: Array<AccessPermission>;
 };
 
+const getPrerequisiteList = (capabilities: Array<AccessPermission>) =>
+  capabilities.map(({ acl, actions }) => {
+    const formatedKey = acl.charAt(0).toUpperCase() + acl.slice(1);
+    return actions.map((action) => (
+      <li key={action}>
+        {formatedKey}:{action}
+      </li>
+    ));
+  });
+
 export default function NoAccessPage({ capabilities }: Props) {
   return (
     <Container>
@@ -24,10 +34,7 @@ export default function NoAccessPage({ capabilities }: Props) {
           <ListContainer>
             <Body level={2}>
               It is prerequisite to have:
-              <ul>
-                <li>Files</li>
-                <li>Files</li>
-              </ul>
+              <ul>{getPrerequisiteList(capabilities)}</ul>
             </Body>
           </ListContainer>
         </BodyContainer>
@@ -39,9 +46,6 @@ export default function NoAccessPage({ capabilities }: Props) {
             Learn more about access management in documentation.
           </Body>
         </BodyContainer>
-        <div>
-          <pre>capabilities</pre>
-        </div>
       </div>
       <div />
     </Container>
