@@ -664,6 +664,15 @@ export class Cognite3DViewer {
     this._revealManager.addUiObject(object, screenPos, size);
   }
 
+  /** Removes the UI object from the viewer.
+   * @param object
+   */
+  removeUiObject(object: THREE.Object3D) {
+    if (this.isDisposed) return;
+
+    this._revealManager.removeUiObject(object);
+  }
+
   /**
    * Sets the color used as the clear color of the renderer.
    * @param color

@@ -471,7 +471,7 @@ export function Migration() {
 
       assetExplode.add(explodeActions, 'reset').name('Reset');
 
-      new AxisViewTool(viewer, { size: 512,   });
+      new AxisViewTool(viewer);
       viewer.on('click', async event => {
         const { offsetX, offsetY } = event;
         console.log('2D coordinates', event);

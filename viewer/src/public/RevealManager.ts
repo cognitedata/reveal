@@ -238,7 +238,7 @@ export class RevealManager<TModelIdentifier> {
     this._effectRenderManager.addUiObject(object, screenPos, size);
   }
 
-  public removeUiObject(object: THREE.Group) {
+  public removeUiObject(object: THREE.Object3D) {
     this._effectRenderManager.removeUiObject(object);
   }
 

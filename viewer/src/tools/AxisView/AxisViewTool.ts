@@ -26,11 +26,15 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
 
   private readonly _viewer: Cognite3DViewer;
 
+  private readonly _axisGroup: THREE.Group;
+
   private readonly _interactiveObjects: THREE.Mesh[];
   private readonly _raycastCamera: THREE.OrthographicCamera;
   private readonly _raycaster: THREE.Raycaster;
 
   private readonly _screenPosition: THREE.Vector2;
+
+  private readonly _disposeClickDiv: () => void;
 
   private _dynamicUpdatePosition = () => {};
   private _updateClickDiv = () => {};
@@ -48,11 +52,17 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
 
     this._layoutConfig = merge(cloneDeep(defaultAxisBoxConfig), config);
 
-    const axisGroup = new THREE.Group();
-    this._interactiveObjects = this.createAxisCross(axisGroup);
+    this._axisGroup = new THREE.Group();
+    this._interactiveObjects = this.createAxisCross(this._axisGroup);
 
-    this._updateClickDiv = this.createClickDiv(viewer);
-    this.addAxisBoxToViewer(axisGroup, this._layoutConfig.position!);
+    [this._updateClickDiv, this._disposeClickDiv] = this.createClickDiv(viewer);
+    this.addAxisBoxToViewer(this._axisGroup, this._layoutConfig.position!);
+  }
+
+  public dispose(): void {
+    super.dispose();
+    this._viewer.removeUiObject(this._axisGroup);
+    this._disposeClickDiv();
   }
 
   private createClickDiv(viewer: Cognite3DViewer) {
@@ -75,10 +85,15 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
     });
     viewer.domElement.appendChild(divElement);
 
-    return () => {
-      divElement.style.left = `${this._screenPosition.x}px`;
-      divElement.style.bottom = `${this._screenPosition.y}px`;
-    };
+    return [
+      () => {
+        divElement.style.left = `${this._screenPosition.x}px`;
+        divElement.style.bottom = `${this._screenPosition.y}px`;
+      },
+      () => {
+        viewer.domElement.removeChild(divElement);
+      }
+    ];
   }
 
   private addAxisBoxToViewer(axisGroup: THREE.Group, position: AbsolutePosition | RelativePosition) {
