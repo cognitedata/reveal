@@ -1,3 +1,9 @@
+## 1.0.1 May 10 2021
+
+### Changes
+
+- Fix issue when no auth cookies/ls exists
+
 ## 1.0.0 May 5 2021
 
 ### Changes

@@ -18,10 +18,7 @@ const debugMode = false;
 const log = (value: string, options?: unknown) => {
   if (debugMode) {
     // eslint-disable-next-line no-console
-    if (console.log) {
-      // eslint-disable-next-line no-console
-      console.log(`[Auth-Utils] ${value}`, options || '');
-    }
+    console.log(`[Auth-Utils] ${value}`, options || '');
   }
 };
 
@@ -223,14 +220,14 @@ export class CogniteAuth {
     log('Running: login');
     this.state.initializing = true;
 
-    if (options.cluster) {
+    if (options?.cluster) {
       this.options.cluster = options.cluster;
     }
 
     this.client = new CogniteClient({ appId: this.options.appName });
     this.client.setBaseUrl(`https://${this.getCluster()}.cognitedata.com`);
     if (authFlow === 'COGNITE_AUTH') {
-      if (options.project) {
+      if (options?.project) {
         await this.client.loginWithOAuth({
           project: options.project,
         });
@@ -268,9 +265,6 @@ export class CogniteAuth {
             },
           })
           .then(async (response) => {
-            // if (!response) {
-            //   await this.client.authenticate();
-            // }
             this.state.error = !response;
             this.state.authenticated = response;
 
