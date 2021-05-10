@@ -1,4 +1,4 @@
-import { Body, Title } from '@cognite/cogs.js';
+import { Body, Graphic, Title } from '@cognite/cogs.js';
 import React from 'react';
 import { AccessPermission } from 'src/utils/types';
 import styled from 'styled-components';
@@ -47,7 +47,9 @@ export default function NoAccessPage({ capabilities }: Props) {
           </Body>
         </BodyContainer>
       </div>
-      <div />
+      <GraphicContainer>
+        <Graphic type="Search" />
+      </GraphicContainer>
     </Container>
   );
 }
@@ -90,4 +92,25 @@ const ListContainer = styled.div`
   flex-grow: 0;
   margin: 16px;
   border: dotted 1px;
+`;
+
+const GraphicContainer = styled.div`
+  position: static;
+  width: 180px;
+  height: 180px;
+  left: 719px;
+  top: 60px;
+
+  flex: none;
+  order: 1;
+  flex-grow: 0;
+  margin: 0px 54px;
+
+  height: 180px;
+  width: 180px;
+  left: 719px;
+  top: 60px;
+  border-radius: 0px;
+
+  border: solid 1px;
 `;
