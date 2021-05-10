@@ -18,7 +18,7 @@ function routeWrapper(
         actions: ['READ', 'WRITE'],
       },
     ];
-    if (!userHasCapabilities(user, capabilities)) {
+    if (true) {
       return <NoAccessPage capabilities={capabilities} />;
     }
     return <Component {...routeProps} user={user} />;
