@@ -2,17 +2,17 @@
 # yarn lockfile v1
 
 
-"@azure/msal-browser@^2.8.0":
-  version "2.9.0"
-  resolved "https://registry.yarnpkg.com/@azure/msal-browser/-/msal-browser-2.9.0.tgz#93478793d499ed3d483bda1b13326a21b94e78cb"
-  integrity sha512-Zyus+skNaVWL5fXfSjC17c94XZ95Z3a+bZc7YKkP26KT3Dj26jbfz2oT9KJxAT4XVtH/1WPY/fPFeEFTRvytJQ==
+"@azure/msal-browser@^2.11.0":
+  version "2.14.1"
+  resolved "https://registry.yarnpkg.com/@azure/msal-browser/-/msal-browser-2.14.1.tgz#6c4f283069e7bedb8cea664f728a2069338fc043"
+  integrity sha512-J2YgonII+/ureLk7jZddup15y5QlR1bj9dLSIcIluwn9l1TdqZXfbwvMeLgd2xmMPIuEKVyRwUkw2QMxZ7lehQ==
   dependencies:
-    "@azure/msal-common" "^2.1.0"
+    "@azure/msal-common" "^4.2.1"
 
-"@azure/msal-common@^2.1.0":
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/@azure/msal-common/-/msal-common-2.1.0.tgz#a4bc17e254d6ec524016f13267947dd4ff4a624d"
-  integrity sha512-Y1Id+jG59S3eY2ZQQtUA/lxwbRcgjcWaiib9YX+SwV3zeRauKfEiZT7l3z+lwV+T+Sst20F6l1mJsfQcfE7CEQ==
+"@azure/msal-common@^4.2.1":
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/@azure/msal-common/-/msal-common-4.2.1.tgz#0377c980aeebaaf3c768fef9165159759c9a9176"
+  integrity sha512-f6na0yqY+rUJ54m79TmFbG8BH1nFvlW+ETtYUGdZpJUO+/RgDVnRzkoj5PVQd6y7czKYlrBRetAcZEE+yGh+/g==
   dependencies:
     debug "^4.1.1"
 
@@ -2051,14 +2051,12 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@cognite/auth-utils@^0.8.2":
-  version "0.8.2"
-  resolved "https://registry.yarnpkg.com/@cognite/auth-utils/-/auth-utils-0.8.2.tgz#e6bb08cd950c8623b5d9306684616036c1633bc2"
-  integrity sha512-0PjfhmDrbas8mo80woE9h4PacAypECQB3c1bVFq/2OVdI/a4Qu4nlGlPGiBgzRWo3Qry57tz6quYgwF/SVfz2w==
+"@cognite/auth-utils@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@cognite/auth-utils/-/auth-utils-1.0.0.tgz#63a0af7b578d5f6cab788f43bd0cb90d94d4a1ab"
+  integrity sha512-Jbr0+NAtkEf205u5uGf7k2EUOAdoDeOQmA4sYr0uOKA2m5IQcJ2KCI/S7pk7RUjvS3hgQV2dNmmueOvnyug6UA==
   dependencies:
-    "@azure/msal-browser" "^2.8.0"
-    "@cognite/sdk" "^3.3.0"
-    jwt-decode "^3.1.2"
+    "@cognite/sdk" "^4.0.3"
     lodash "^4.17.20"
 
 "@cognite/cogs.js@^3.9.2":
@@ -2111,20 +2109,15 @@
     mixpanel-browser "^2.35.0"
     react "^17.0.1"
 
-"@cognite/react-i18n@^0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@cognite/react-i18n/-/react-i18n-0.3.0.tgz#7f7fe5e84584723628d421aae88d41a954963227"
-  integrity sha512-ewyaVOvwlPVv7nCPQhn1R1oiMXvCLgaKRlyX+TT32I8dduDlp+GgEe0idgge/2pROQHBOaxOR7S5qmlrZ483uA==
+"@cognite/metrics@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@cognite/metrics/-/metrics-1.1.0.tgz#7c4ecca2d7d083f7f3964797da47e9570c03b7d3"
+  integrity sha512-XXdvTkkuTGkMytXQ/RWQQ0BtV4ZaVzy0RrvtlsSQ+MlpVHkL3FXkyU68STY4RWQv11+NjSDUKNOhGNwQihRM1A==
   dependencies:
-    i18next "^19.8.4"
-    i18next-chained-backend "^2.0.1"
-    i18next-localstorage-backend "^3.1.1"
-    i18next-locize-backend "^4.1.1"
-    i18next-pseudo "^2.2.0"
-    i18next-xhr-backend "^3.2.2"
-    react-i18next "^11.8.5"
+    mixpanel-browser "^2.35.0"
+    react "^17.0.1"
 
-"@cognite/react-i18n@^0.3.1":
+"@cognite/react-i18n@^0.3.1", "@cognite/react-i18n@^0.3.2":
   version "0.3.2"
   resolved "https://registry.yarnpkg.com/@cognite/react-i18n/-/react-i18n-0.3.2.tgz#86a1b6854a4c6d356fcc931b118cb3311ec56ad3"
   integrity sha512-kttiy7jZ1URKzsYKlNxnFNMx+N0OpjLpH3Ty7o+S9TJAB3wzVFFjJms7XOfbXOhHj08/APcak/QLkH2aKtYUNA==
@@ -2137,37 +2130,37 @@
     i18next-xhr-backend "^3.2.2"
     react-i18next "^11.8.5"
 
-"@cognite/react-tenant-selector@^0.8.0":
-  version "0.8.0"
-  resolved "https://registry.yarnpkg.com/@cognite/react-tenant-selector/-/react-tenant-selector-0.8.0.tgz#b03af0c50e192a389935d37f43ccfcfaafb0b3ad"
-  integrity sha512-rkBHBpuJJry4AKde054+23HXYsLBd+NbI0uANa6JZViHvCSPj1hDKO/iHHjR0evx8H27QxBM6HEdtIemAKeN8w==
+"@cognite/react-tenant-selector@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@cognite/react-tenant-selector/-/react-tenant-selector-1.0.0.tgz#eab775fa07f5a21cdeb60746a906286ee23e1ec2"
+  integrity sha512-XJcl/9PZsWwRSCSu+0irgoatHcZxCF0/Q2BwUHSp2h0K9ykPaoYeaJEYxybRwoVQayJuaHXoc+GEQ79PZj0PGA==
   dependencies:
-    "@cognite/auth-utils" "^0.8.2"
+    "@cognite/auth-utils" "^1.0.0"
     "@cognite/metrics" "^1.0.0"
     "@cognite/react-i18n" "^0.3.1"
-    "@cognite/sdk" "^3.3.0"
     axios "^0.21.1"
     react-helmet "^6.1.0"
     react-query "^3.7.1"
     styled-components "^5.1.0"
 
-"@cognite/sdk-core@^1.0.4":
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-1.0.4.tgz#f1a1cb8b677ddffa5d409d91f0ed64acff623426"
-  integrity sha512-WcCauuBr/K4yz/eO66QwXnw/iC8PCHxlmBZMNY95sJUhfZosK80jhBGKZew8vvT0VKNB7TPZ/3eUsqSpE0BmaQ==
+"@cognite/sdk-core@^2.1.2":
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-2.1.2.tgz#fd456988cb6b5921fd2f5b1366c531e5d8d4ef1f"
+  integrity sha512-L+nJzKBoRjkDPVuI33i4Xn5gHttPsGoOYWqAHkH/sy9FuI+d1l2rIg3Vuwr5ZryD3Gb9snXcDCCq9QsT9D3lEw==
   dependencies:
+    "@azure/msal-browser" "^2.11.0"
     cross-fetch "^3.0.4"
     is-buffer "^2.0.5"
     lodash "^4.17.11"
     query-string "^5.1.1"
     url "^0.11.0"
 
-"@cognite/sdk@^3.3.0":
-  version "3.3.2"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-3.3.2.tgz#757421933531ff42202f7ac8dc5af579a8347065"
-  integrity sha512-6jrHQR0PrABfX28TctF8V4Ns7lsJGTfKX0wHvJ9vwTwh1nq7lLcr9GsleSY1xvTEuDi4Oaupjyn7/53m64O2Ew==
+"@cognite/sdk@^4.0.3":
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-4.0.4.tgz#a3ce7ea084fa08b47f53378b386e29b65559dca4"
+  integrity sha512-76ILFdeixZZvwNd6jhdCWwLMZwVT9NOeq54MD7aZh2SqzUAYIkffQzeq6Kj/3YsyvWuhJpz2OnqpXezaq3iQAQ==
   dependencies:
-    "@cognite/sdk-core" "^1.0.4"
+    "@cognite/sdk-core" "^2.1.2"
     lodash "^4.17.11"
 
 "@csstools/convert-colors@^1.4.0":
@@ -10850,11 +10843,6 @@ just-extend@^4.0.2:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/just-extend/-/just-extend-4.1.0.tgz#7278a4027d889601640ee0ce0e5a00b992467da4"
   integrity sha512-ApcjaOdVTJ7y4r08xI5wIqpvwS48Q0PBG4DJROcEkH1f8MdAiNFyFxz3xoL0LWAVwjrwPYZdVHHxhRHcx/uGLA==
-
-jwt-decode@^3.1.2:
-  version "3.1.2"
-  resolved "https://registry.yarnpkg.com/jwt-decode/-/jwt-decode-3.1.2.tgz#3fb319f3675a2df0c2895c8f5e9fa4b67b04ed59"
-  integrity sha512-UfpWE/VZn0iP50d8cz9NrZLM9lSWhcJ+0Gt/nm4by88UL+J1SiKN8/5dkjMmbEzwL2CAe+67GsegCbIKtbp75A==
 
 killable@^1.0.1:
   version "1.0.1"
