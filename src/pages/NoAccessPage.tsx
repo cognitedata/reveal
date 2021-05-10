@@ -2,6 +2,7 @@ import React from 'react';
 import { Body, Button, Graphic, Title } from '@cognite/cogs.js';
 import { AccessPermission } from 'src/utils/types';
 import styled from 'styled-components';
+import { createLink } from '@cognite/cdf-utilities';
 
 type Props = {
   capabilities: Array<AccessPermission>;
@@ -18,6 +19,7 @@ const getPrerequisiteList = (capabilities: Array<AccessPermission>) =>
   });
 
 export default function NoAccessPage({ capabilities }: Props) {
+  const link = createLink('/') as string;
   return (
     <>
       <HomeButton>
@@ -27,7 +29,7 @@ export default function NoAccessPage({ capabilities }: Props) {
           type="ghost"
           icon="ArrowLeft"
           iconPlacement="left"
-          href="https://dev.fusion.cogniteapp.com/computervision-test/?env=greenfield"
+          href={link}
         >
           Home
         </Button>
@@ -60,7 +62,14 @@ export default function NoAccessPage({ capabilities }: Props) {
               Ask those responsible within your organisation for access
               management to grant them to you.
               <br />
-              Learn more about access management in documentation.
+              Learn more about access management in{' '}
+              <a
+                href="https://docs.cognite.com/dev/guides/iam/authorization.html#capabilities"
+                target="_blank"
+                rel="noreferrer"
+              >
+                documentation.
+              </a>
             </Body>
           </BodyContainer>
         </div>
