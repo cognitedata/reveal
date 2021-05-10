@@ -13,8 +13,11 @@ export function* groupMeshesByNumber(id: Float64Array): Generator<{ id: number; 
     const fileId = groupedByFileId[i].fileId;
     // Determine sequence of occurences with same fileId
     const last = lastIndexOf(groupedByFileId, fileId, i, x => x.fileId);
-
-    yield { id: fileId, meshIndices: groupedByFileId.slice(i, last + 1).map(x => x.index) };
+    const meshIndices = new Array<number>(last + 1 - i);
+    for (let j = i; j < last + 1; j++) {
+      meshIndices[j - i] = groupedByFileId[j].index;
+    }
+    yield { id: fileId, meshIndices };
     // Skip to next group
     i = last + 1;
   }

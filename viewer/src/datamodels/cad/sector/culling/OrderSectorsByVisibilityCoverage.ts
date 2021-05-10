@@ -14,7 +14,10 @@ import { OccludingGeometryProvider } from './OccludingGeometryProvider';
 type SectorContainer = {
   model: CadModelMetadata;
   sectors: SectorMetadata[];
+  // Index is sectorId, value is sectorIndex
+  sectorIndexById: number[];
   sectorIdOffset: number;
+  lastSectorIdWithOffset: number;
   renderable: THREE.Object3D;
   attributesBuffer: THREE.InstancedInterleavedBuffer;
   attributesValues: Float32Array;
@@ -82,6 +85,10 @@ export interface OrderSectorsByVisibilityCoverage {
    */
   setClipping(planes: THREE.Plane[] | null, clipIntersection: boolean): void;
 
+  /**
+   * Cull a set of sectors potentially being loaded towards already loaded geometry to determine if
+   * the sector is visible or occluded.
+   */
   cullOccludedSectors(camera: THREE.PerspectiveCamera, sectors: WantedSector[]): WantedSector[];
 
   /**
@@ -101,7 +108,7 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
    * Factor of how big render target we use for determining visibility of sectors
    * compared to the full render size.
    */
-  private static readonly CoverageRenderTargetScalingFactor = 1.0 / 4.0;
+  private static readonly CoverageRenderTargetScalingFactor = 1.0 / 2.0;
 
   private sectorIdOffset = 0;
   private readonly scene = new THREE.Scene();
@@ -316,7 +323,8 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
     this.containers.forEach(container => {
       for (let i = 0; i < container.sectors.length; ++i) {
         const id = container.sectors[i].id;
-        container.attributesValues[5 * (container.sectorIdOffset + id) + 4] = visibilityValue;
+        const index = container.sectorIndexById[id];
+        container.attributesValues[5 * index + 4] = visibilityValue;
       }
       container.attributesBuffer.needsUpdate = true;
     });
@@ -330,7 +338,8 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
       if (container === undefined) {
         throw new Error(`Sector ${s} is from a model not added`);
       }
-      container.attributesValues[5 * (container.sectorIdOffset + id) + 4] = visibilityValue;
+      const index = container.sectorIndexById[id];
+      container.attributesValues[5 * index + 4] = visibilityValue;
       container.attributesBuffer.needsUpdate = true;
     });
   }
@@ -355,16 +364,21 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
     group.updateMatrixWorld();
     group.add(mesh);
 
+    const maxSectorId = sectors.reduce((max, sector) => Math.max(sector.id, max), 0);
+    const sectorIndexById = new Array<number>(maxSectorId);
+    sectors.forEach((x, index) => (sectorIndexById[x.id] = index));
     this.containers.set(model.blobUrl, {
       model,
       sectors,
+      sectorIndexById,
       sectorIdOffset: this.sectorIdOffset,
+      lastSectorIdWithOffset: this.sectorIdOffset + maxSectorId,
       renderable: group,
       mesh,
       attributesBuffer,
       attributesValues
     });
-    this.sectorIdOffset += sectors.length;
+    this.sectorIdOffset += maxSectorId;
     this.scene.add(group);
   }
 
@@ -375,10 +389,7 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
 
   private findSectorContainer(sectorIdWithOffset: number): SectorContainer {
     for (const container of this.containers.values()) {
-      if (
-        sectorIdWithOffset >= container.sectorIdOffset &&
-        sectorIdWithOffset < container.sectorIdOffset + container.sectors.length
-      ) {
+      if (sectorIdWithOffset >= container.sectorIdOffset && sectorIdWithOffset <= container.lastSectorIdWithOffset) {
         return container;
       }
     }
@@ -427,35 +438,37 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
     sectorIdOffset: number,
     sectors: SectorMetadata[]
   ): [THREE.Mesh, THREE.InstancedInterleavedBuffer, Float32Array] {
-    const sectorCount = sectors.length;
+    const bounds = new THREE.Box3();
+    const translation = new THREE.Vector3();
+    const scale = new THREE.Vector3();
 
+    const sectorCount = sectors.length;
     const instanceValues = new Float32Array(5 * sectorCount); // sectorId, coverageFactor[3], visibility
     const boxGeometry = new THREE.BoxBufferGeometry();
     const mesh = new THREE.InstancedMesh(boxGeometry, this.coverageMaterial, sectorCount);
 
-    const bounds = new THREE.Box3();
-    const addSector = (sectorBounds: Box3, sectorId: number, coverage: THREE.Vector3) => {
+    const addSector = (sectorBounds: Box3, sectorIndex: number, sectorId: number, coverage: THREE.Vector3) => {
       toThreeJsBox3(bounds, sectorBounds);
-      const translation = bounds.getCenter(new THREE.Vector3());
-      const scale = bounds.getSize(new THREE.Vector3());
+      bounds.getCenter(translation);
+      bounds.getSize(scale);
 
       const instanceMatrix = new THREE.Matrix4().compose(translation, identityRotation, scale);
-      mesh.setMatrixAt(sectorId, instanceMatrix);
-      instanceValues[5 * sectorId + 0] = sectorIdOffset + sectorId;
-      instanceValues[5 * sectorId + 1] = coverage.x;
-      instanceValues[5 * sectorId + 2] = coverage.y;
-      instanceValues[5 * sectorId + 3] = coverage.z;
-      instanceValues[5 * sectorId + 4] = 1.0; // visible
+      mesh.setMatrixAt(sectorIndex, instanceMatrix);
+      instanceValues[5 * sectorIndex + 0] = sectorIdOffset + sectorId;
+      instanceValues[5 * sectorIndex + 1] = coverage.x;
+      instanceValues[5 * sectorIndex + 2] = coverage.y;
+      instanceValues[5 * sectorIndex + 3] = coverage.z;
+      instanceValues[5 * sectorIndex + 4] = 1.0; // visible
     };
 
     const coverageFactors = new THREE.Vector3(); // Allocate once only
-    sectors.forEach(sector => {
+    sectors.forEach((sector, sectorIndex) => {
       // Note! We always use the 'high detail' coverage factors, not recursiveCoverageFactors because we
       // don't know what detail level a sector will be loaded in. A better approach might be to choose this
       // runtime (either before rendering or in shader), but not sure how to solve this. -lars 2020-04-22
       const { xy, xz, yz } = sector.facesFile.coverageFactors;
       coverageFactors.set(yz, xz, xy);
-      addSector(sector.bounds, sector.id, coverageFactors);
+      addSector(sector.bounds, sectorIndex, sector.id, coverageFactors);
     });
 
     const buffer = new THREE.InstancedInterleavedBuffer(instanceValues, 5);

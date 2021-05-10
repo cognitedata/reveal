@@ -82,10 +82,10 @@ export function Picking() {
       let model: reveal.CadNode;
       if (modelRevision) {
         revealManager = reveal.createCdfRevealManager(client, renderer, scene, revealOptions);
-        model = await revealManager.addModel('cad', modelRevision, nodeAppearanceProvider);
+        model = await revealManager.addModel('cad', modelRevision, { nodeAppearanceProvider });
       } else if (modelUrl) {
         revealManager = reveal.createLocalRevealManager(renderer, scene, revealOptions);
-        model = await revealManager.addModel('cad', modelUrl, nodeAppearanceProvider);
+        model = await revealManager.addModel('cad', modelUrl, { nodeAppearanceProvider });
       } else {
         throw new Error(
           'Need to provide either project & model OR modelUrl as query parameters'

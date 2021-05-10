@@ -18,10 +18,15 @@ import { assertNever, LoadingState } from '../utilities';
 import { PointCloudNode } from '../datamodels/pointcloud/PointCloudNode';
 import { CadModelSectorBudget } from '../datamodels/cad/CadModelSectorBudget';
 import { CadModelSectorLoadStatistics } from '../datamodels/cad/CadModelSectorLoadStatistics';
-import { RenderOptions } from '..';
+import { GeometryFilter, RenderOptions } from '..';
 import { EventTrigger } from '../utilities/events';
 
 /* eslint-disable jsdoc/require-jsdoc */
+
+export type AddCadModelOptions = {
+  nodeAppearanceProvider?: NodeAppearanceProvider;
+  geometryFilter?: GeometryFilter;
+};
 
 export class RevealManager<TModelIdentifier> {
   private readonly _cadManager: CadManager<TModelIdentifier>;
@@ -181,30 +186,26 @@ export class RevealManager<TModelIdentifier> {
     this._effectRenderManager.setRenderTargetAutoSize(autoSetTargetSize);
   }
 
-  public addModel(
-    type: 'cad',
-    modelIdentifier: TModelIdentifier,
-    nodeAppearanceProvider?: NodeAppearanceProvider
-  ): Promise<CadNode>;
+  public addModel(type: 'cad', modelIdentifier: TModelIdentifier, options?: AddCadModelOptions): Promise<CadNode>;
   public addModel(type: 'pointcloud', modelIdentifier: TModelIdentifier): Promise<PointCloudNode>;
   public async addModel(
     type: SupportedModelTypes,
     modelIdentifier: TModelIdentifier,
-    nodeAppearanceProvider?: NodeAppearanceProvider
+    options?: AddCadModelOptions
   ): Promise<PointCloudNode | CadNode> {
     trackLoadModel(
       {
         moduleName: 'RevealManager',
         methodName: 'addModel',
         type,
-        options: { nodeAppearanceProvider }
+        options
       },
       modelIdentifier
     );
 
     switch (type) {
       case 'cad': {
-        return this._cadManager.addModel(modelIdentifier, nodeAppearanceProvider);
+        return this._cadManager.addModel(modelIdentifier, options?.geometryFilter, options?.nodeAppearanceProvider);
       }
 
       case 'pointcloud': {

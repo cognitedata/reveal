@@ -59,15 +59,19 @@ function assert(condition: boolean, message: string = 'assertion hit') {
 }
 
 class TakenSectorMap {
+  private readonly _takenSectorTrees: Map<
+    string,
+    { sectorTree: TakenSectorTree; modelMetadata: CadModelMetadata }
+  > = new Map();
+  private readonly determineSectorCost: DetermineSectorCostDelegate;
+
   get totalCost(): SectorCost {
     const totalCost: SectorCost = { downloadSize: 0, drawCalls: 0 };
-    this.maps.forEach(tree => {
-      addSectorCost(totalCost, tree.totalCost);
+    this._takenSectorTrees.forEach(({ sectorTree }) => {
+      addSectorCost(totalCost, sectorTree.totalCost);
     });
     return totalCost;
   }
-  private readonly maps: Map<string, TakenSectorTree> = new Map();
-  private readonly determineSectorCost: DetermineSectorCostDelegate;
 
   // TODO 2020-04-21 larsmoa: Unit test TakenSectorMap
   constructor(determineSectorCost: DetermineSectorCostDelegate) {
@@ -75,24 +79,30 @@ class TakenSectorMap {
   }
 
   initializeScene(modelMetadata: CadModelMetadata) {
-    this.maps.set(modelMetadata.blobUrl, new TakenSectorTree(modelMetadata.scene.root, this.determineSectorCost));
+    this._takenSectorTrees.set(modelMetadata.blobUrl, {
+      sectorTree: new TakenSectorTree(modelMetadata.scene.root, this.determineSectorCost),
+      modelMetadata
+    });
   }
 
   getWantedSectorCount(): number {
     let count = 0;
-    this.maps.forEach(tree => {
-      count += tree.determineWantedSectorCount();
+    this._takenSectorTrees.forEach(({ sectorTree }) => {
+      count += sectorTree.determineWantedSectorCount();
     });
     return count;
   }
 
   markSectorDetailed(model: CadModelMetadata, sectorId: number, priority: number) {
-    const tree = this.maps.get(model.blobUrl);
+    const entry = this._takenSectorTrees.get(model.blobUrl);
     assert(
-      !!tree,
-      `Could not find sector tree for ${model.blobUrl} (have trees ${Array.from(this.maps.keys()).join(', ')})`
+      !!entry,
+      `Could not find sector tree for ${model.blobUrl} (have trees ${Array.from(this._takenSectorTrees.keys()).join(
+        ', '
+      )})`
     );
-    tree!.markSectorDetailed(sectorId, priority);
+    const { sectorTree } = entry!;
+    sectorTree!.markSectorDetailed(sectorId, priority);
   }
 
   isWithinBudget(budget: CadModelSectorBudget): boolean {
@@ -106,10 +116,8 @@ class TakenSectorMap {
     const allWanted = new Array<PrioritizedWantedSector>();
 
     // Collect sectors
-    for (const entry of this.maps) {
-      const model = entry[0];
-      const tree = entry[1];
-      allWanted.push(...tree.toWantedSectors(model));
+    for (const [modelBlobUrl, { sectorTree, modelMetadata }] of this._takenSectorTrees) {
+      allWanted.push(...sectorTree.toWantedSectors(modelBlobUrl, modelMetadata.geometryClipBox));
     }
 
     // Sort by priority
@@ -118,7 +126,7 @@ class TakenSectorMap {
   }
 
   clear() {
-    this.maps.clear();
+    this._takenSectorTrees.clear();
   }
 }
 
