@@ -4,10 +4,29 @@
 
 import * as THREE from 'three';
 
+/**
+ * Configuration of {@link AxisViewTool}.
+ */
 export type AxisBoxConfig = {
+  /**
+   * Size in pixels of the axis tool.
+   */
   size?: number;
+  /**
+   * Position, either absolute or relative.
+   */
   position?: AbsolutePosition | RelativePosition;
+  /**
+   * How long the camera animation lasts when
+   * clicking a face of the orientation box.
+   */
   animationSpeed?: number;
+  /**
+   * Configuration for each of the faces of the orientation box.
+   * Note that Reveal uses a right-handed Y up coordinate system,
+   * which might differ from the original model space. To account
+   * for this, you might want to reassign labels of the faces.
+   */
   faces?: {
     xPositiveFace?: AxisBoxFaceConfig;
     xNegativeFace?: AxisBoxFaceConfig;
@@ -16,20 +35,36 @@ export type AxisBoxConfig = {
     zPositiveFace?: AxisBoxFaceConfig;
     zNegativeFace?: AxisBoxFaceConfig;
   };
+  /**
+   * Configuration of the compass "base" of the tool.
+   */
   compass?: AxisBoxCompassConfig;
 };
 
+/**
+ * Absolute position in pixels.
+ */
 export type AbsolutePosition = {
   xAbsolute: number;
   yAbsolute: number;
 };
 
+/**
+ * Relative position from a corner of the viewer
+ * and a given padding.
+ */
 export type RelativePosition = {
   corner: Corner;
   padding: THREE.Vector2;
 };
 
+/**
+ * Configuration of each face of the orientation box.
+ */
 export type AxisBoxFaceConfig = {
+  /**
+   * Label of the respective face, e.g. 'X' or 'Right'.
+   */
   label?: string;
   fontSize?: number;
   fontColor?: THREE.Color;
@@ -38,14 +73,27 @@ export type AxisBoxFaceConfig = {
   faceColor?: THREE.Color;
 };
 
+/**
+ * Configuration of the compass.
+ */
 export type AxisBoxCompassConfig = {
+  /**
+   * Label of the orientation indicator. Defaults
+   * to 'N' for north.
+   */
   ringLabel?: string;
+  /**
+   * Offset in radians of the orientation indicator.
+   */
   labelDelta?: number;
   fontSize?: number;
-  tickColor?: THREE.Color;
   fontColor?: THREE.Color;
+  tickColor?: THREE.Color;
 };
 
+/**
+ * A corner of the viewer.
+ */
 export enum Corner {
   TopRight,
   TopLeft,
