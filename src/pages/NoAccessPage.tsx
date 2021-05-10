@@ -19,7 +19,7 @@ const getPrerequisiteList = (capabilities: Array<AccessPermission>) =>
 
 export default function NoAccessPage({ capabilities }: Props) {
   return (
-    <Container>
+    <Frame>
       <div>
         <TitleContainer>
           <Title level={2}>Request access to Contextualize Imagery Data</Title>
@@ -30,14 +30,14 @@ export default function NoAccessPage({ capabilities }: Props) {
             rights needed below:
           </Body>
         </BodyContainer>
-        <BodyContainer>
+        <Infobox>
           <ListContainer>
             <Body level={2}>
               It is prerequisite to have:
               <ul>{getPrerequisiteList(capabilities)}</ul>
             </Body>
           </ListContainer>
-        </BodyContainer>
+        </Infobox>
         <BodyContainer>
           <Body level={1}>
             Ask those responsible within your organisation for access management
@@ -50,11 +50,14 @@ export default function NoAccessPage({ capabilities }: Props) {
       <GraphicContainer>
         <Graphic type="Search" />
       </GraphicContainer>
-    </Container>
+    </Frame>
   );
 }
 
-const Container = styled.div`
+const Frame = styled.div`
+  /* Frame 5569 */
+
+  /* Auto Layout */
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -65,7 +68,6 @@ const Container = styled.div`
   height: 300px;
   left: 208px;
   top: 144px;
-  border: solid 1px;
 `;
 
 const TitleContainer = styled.div`
@@ -74,7 +76,6 @@ const TitleContainer = styled.div`
   flex-grow: 0;
   margin: 24px 0px;
   width: 665px;
-  border: solid 1px;
 `;
 
 const BodyContainer = styled.div`
@@ -83,7 +84,32 @@ const BodyContainer = styled.div`
   flex-grow: 0;
   margin: 16px 0px;
   width: 665px;
-  border: solid 1px;
+`;
+
+const Infobox = styled.div`
+  /* 💎 Infobox */
+
+  /* Auto Layout */
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 0px;
+
+  position: static;
+  width: 665px;
+  height: 92px;
+  left: 0px;
+  top: 40px;
+
+  /* midBlue/100 */
+  background: #edf0ff;
+  border-radius: 8px;
+
+  /* Inside Auto Layout */
+  flex: none;
+  order: 1;
+  flex-grow: 0;
+  margin: 16px 0px;
 `;
 
 const ListContainer = styled.div`
@@ -91,26 +117,22 @@ const ListContainer = styled.div`
   order: 1;
   flex-grow: 0;
   margin: 16px;
-  border: dotted 1px;
 `;
 
 const GraphicContainer = styled.div`
+  /* search */
+
   position: static;
   width: 180px;
   height: 180px;
   left: 719px;
   top: 60px;
 
+  /* Inside Auto Layout */
   flex: none;
   order: 1;
   flex-grow: 0;
   margin: 0px 54px;
-
-  height: 180px;
-  width: 180px;
-  left: 719px;
-  top: 60px;
-  border-radius: 0px;
 
   border: solid 1px;
 `;
