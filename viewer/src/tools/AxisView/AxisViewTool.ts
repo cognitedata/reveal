@@ -69,7 +69,7 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
       const rect = viewer.domElement.getBoundingClientRect();
       const x = event.clientX - rect.left;
       const y = event.clientY - rect.top;
-      if (this.handleClick(x, y)) {
+      if (this.handleClick(x, y, rect)) {
         event.stopPropagation();
       }
     });
@@ -130,10 +130,9 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
     }
   }
 
-  private handleClick(xScreenPos: number, yScreenPos: number): boolean {
-    const canvas = this._viewer.renderer.domElement.getBoundingClientRect();
+  private handleClick(xScreenPos: number, yScreenPos: number, boundingRect: DOMRect): boolean {
     const xNdc = (2 * (xScreenPos - this._screenPosition.x)) / this._layoutConfig.size - 1;
-    const yNdc = (2 * (canvas.height - yScreenPos - this._screenPosition.y)) / this._layoutConfig.size - 1;
+    const yNdc = (2 * (boundingRect.height - yScreenPos - this._screenPosition.y)) / this._layoutConfig.size - 1;
     this._raycaster.setFromCamera({ x: xNdc, y: yNdc }, this._raycastCamera);
     const rayOrigin = new THREE.Vector3(xNdc, yNdc, 1);
     const rayDirection = new THREE.Vector3(0, 0, -1).normalize();
