@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { IndexSet } from './NewIndexSet';
+import { IndexSet } from './IndexSet';
 import { NumericRange } from './NumericRange';
 
 describe('IndexSet', () => {

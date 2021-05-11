@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import { CogniteClient } from '@cognite/sdk';
 
 import { Cognite3DModel } from '../../../public/migration/Cognite3DModel';
-import { IndexSet } from '../../../utilities/NewIndexSet';
+import { IndexSet } from '../../../utilities/IndexSet';
 import { AsyncNodeSetBase } from './AsyncNodeSetBase';
 import { NumericRange } from '../../../utilities/NumericRange';
 

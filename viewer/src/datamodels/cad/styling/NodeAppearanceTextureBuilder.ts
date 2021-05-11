@@ -8,7 +8,7 @@ import { NumericRange } from '../../../utilities';
 import { determinePowerOfTwoDimensions } from '../../../utilities/determinePowerOfTwoDimensions';
 
 import { DefaultNodeAppearance, NodeAppearance } from '../NodeAppearance';
-import { IndexSet } from '../../../utilities/NewIndexSet';
+import { IndexSet } from '../../../utilities/IndexSet';
 import { NodeAppearanceProvider } from './NodeAppearanceProvider';
 
 type AppliedStyle = { revision: number; treeIndices: IndexSet; style: NodeAppearance };

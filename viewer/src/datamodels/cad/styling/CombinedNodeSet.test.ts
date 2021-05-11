@@ -4,7 +4,7 @@
 
 import { CombinedNodeSet } from './CombinedNodeSet';
 import { ByTreeIndexNodeSet } from './ByTreeIndexNodeSet';
-import { IndexSet } from '../../../utilities/NewIndexSet';
+import { IndexSet } from '../../../utilities/IndexSet';
 import { NodeSet } from '.';
 
 describe('CombinedNodeSet', () => {

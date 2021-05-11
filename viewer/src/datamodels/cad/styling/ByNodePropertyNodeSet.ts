@@ -4,11 +4,11 @@
 
 import { CogniteClient } from '@cognite/sdk';
 
-import { IndexSet } from '../../../utilities/NewIndexSet';
+import { IndexSet } from '../../../utilities/IndexSet';
 import { NumericRange } from '../../../utilities/NumericRange';
 import { Cognite3DModel } from '../../../public/migration/Cognite3DModel';
 import { AsyncNodeSetBase } from './AsyncNodeSetBase';
-import { range } from 'lodash';
+import range from 'lodash/range';
 
 export type ByNodePropertyNodeSetOptions = {
   /**

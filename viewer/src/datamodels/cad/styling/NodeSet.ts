@@ -4,7 +4,7 @@
 
 import assert from 'assert';
 import { EventTrigger } from '../../../utilities/events/EventTrigger';
-import { IndexSet } from '../../../utilities/NewIndexSet';
+import { IndexSet } from '../../../utilities/IndexSet';
 
 export abstract class NodeSet {
   private readonly _changedEvent = new EventTrigger<() => void>();
