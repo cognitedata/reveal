@@ -58,6 +58,7 @@ const EditableText = ({
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={finishOnEnter}
+              onBlur={hideButtons ? finishEditing : undefined}
               autoFocus
               fullWidth
             />
@@ -87,7 +88,7 @@ const EditableText = ({
         <div className="edit-button" style={{ marginLeft: 4 }}>
           <ClickBoundary>
             <Tooltip content="Rename">
-              <Button variant="ghost" onClick={startEditing}>
+              <Button type="ghost" onClick={startEditing}>
                 <Icon type="Edit" />
               </Button>
             </Tooltip>

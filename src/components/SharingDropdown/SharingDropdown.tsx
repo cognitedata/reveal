@@ -28,7 +28,9 @@ const SharingDropdown = ({ chart, disabled = false }: SharingDropdownProps) => {
 
   useEffect(() => {
     if (isError) {
-      toast.error('Unable to change chart access - try again!');
+      toast.error('Unable to change chart access - try again!', {
+        toastId: 'share-error',
+      });
     }
   }, [isError]);
 
@@ -92,7 +94,12 @@ const SharingDropdown = ({ chart, disabled = false }: SharingDropdownProps) => {
         </SharingMenu>
       }
     >
-      <Button icon="Share" variant="ghost" disabled={disabled} />
+      <Button
+        icon="Share"
+        type="ghost"
+        disabled={disabled}
+        aria-label="share"
+      />
     </Dropdown>
   );
 };

@@ -33,7 +33,9 @@ const ChartListItem = ({ chart, view }: ChartListItemProps) => {
 
   useEffect(() => {
     if (renameError) {
-      toast.error('Unable to rename chart - Try again!');
+      toast.error('Unable to rename chart - Try again!', {
+        toastId: 'rename-chart',
+      });
     }
   }, [renameError]);
 
@@ -43,7 +45,9 @@ const ChartListItem = ({ chart, view }: ChartListItemProps) => {
 
   useEffect(() => {
     if (deleteError) {
-      toast.error('Unable to delete chart - Try again!');
+      toast.error('Unable to delete chart - Try again!', {
+        toastId: 'delete-chart',
+      });
     }
   }, [deleteError]);
 
@@ -91,9 +95,10 @@ const ChartListItem = ({ chart, view }: ChartListItemProps) => {
       }
     >
       <Button
-        variant="ghost"
+        type="ghost"
         icon="VerticalEllipsis"
         onClick={() => setIsMenuOpen(!isMenuOpen)}
+        aria-label="more"
       />
     </Dropdown>
   );

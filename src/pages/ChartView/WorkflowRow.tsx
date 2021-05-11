@@ -12,6 +12,7 @@ import {
   Menu,
   Popconfirm,
   Flex,
+  Tooltip,
 } from '@cognite/cogs.js';
 import FunctionCall from 'components/FunctionCall';
 import { updateWorkflow, removeWorkflow } from 'utils/charts';
@@ -30,6 +31,7 @@ import {
   SourceRow,
   UnitMenuAside,
   UnitMenuHeader,
+  SourceDescription,
 } from './elements';
 import WorkflowMenu from './WorkflowMenu';
 
@@ -185,7 +187,10 @@ export default function WorkflowRow({
     mutate(updateWorkflow(chart, id, diff));
 
   return (
-    <SourceRow onClick={() => onRowClick(id)} isActive={isSelected}>
+    <SourceRow
+      onClick={() => onRowClick(id)}
+      className={isSelected ? 'active' : undefined}
+    >
       <td>
         <SourceItem key={id}>
           <SourceSquare
@@ -231,7 +236,15 @@ export default function WorkflowRow({
       </td>
       {isWorkspaceMode && (
         <>
-          <td>{name || 'noname'}</td>
+          <td>
+            <SourceName>
+              <SourceDescription>
+                <Tooltip content={name || 'noname'}>
+                  <>{name || 'noname'}</>
+                </Tooltip>
+              </SourceDescription>
+            </SourceName>
+          </td>
           <td colSpan={4} />
           <td style={{ textAlign: 'right', paddingRight: 8 }}>
             <Dropdown
@@ -256,7 +269,7 @@ export default function WorkflowRow({
             >
               <Button
                 icon="Down"
-                variant="outline"
+                type="tertiary"
                 iconPlacement="right"
                 style={{ height: 28 }}
               >
@@ -270,9 +283,10 @@ export default function WorkflowRow({
               content={<AppearanceDropdown update={updateAppearance} />}
             >
               <Button
-                variant="outline"
+                type="tertiary"
                 icon="Timeseries"
                 style={{ height: 28 }}
+                aria-label="timeseries"
               />
             </Dropdown>
           </td>
@@ -286,12 +300,17 @@ export default function WorkflowRow({
                 </div>
               }
             >
-              <Button variant="outline" icon="Delete" style={{ height: 28 }} />
+              <Button
+                type="tertiary"
+                icon="Delete"
+                style={{ height: 28 }}
+                aria-label="delete"
+              />
             </Popconfirm>
           </td>
           <td style={{ textAlign: 'center', paddingLeft: 0 }}>
             <Button
-              variant="outline"
+              type="tertiary"
               icon="Info"
               onClick={(event) => {
                 if (isSelected) {
@@ -300,6 +319,7 @@ export default function WorkflowRow({
                 onInfoClick(id);
               }}
               style={{ height: 28 }}
+              aria-label="info"
             />
           </td>
           <td style={{ textAlign: 'center', paddingLeft: 0 }}>
@@ -316,9 +336,10 @@ export default function WorkflowRow({
               }
             >
               <Button
-                variant="outline"
+                type="tertiary"
                 icon="MoreOverflowEllipsisHorizontal"
                 style={{ height: 28 }}
+                aria-label="more"
               />
             </Dropdown>
           </td>

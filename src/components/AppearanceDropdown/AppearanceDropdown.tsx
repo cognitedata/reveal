@@ -114,6 +114,7 @@ const TypePreview = ({ type }: { type: string }) => (
 const DropdownWrapper = styled.div`
   display: flex;
   flex-direction: row;
+  margin-left: -100px;
 `;
 
 const DropdownMenu = styled(Menu)`

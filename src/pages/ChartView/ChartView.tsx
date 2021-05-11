@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Icon, toast } from '@cognite/cogs.js';
+import styled from 'styled-components/macro';
+import { Button, Icon, toast, Tooltip } from '@cognite/cogs.js';
+import { Alert } from 'antd';
 import { useParams } from 'react-router-dom';
 import NodeEditor from 'components/NodeEditor';
 import SplitPaneLayout from 'components/Layout/SplitPaneLayout';
@@ -10,10 +12,10 @@ import { useChart, useUpdateChart } from 'hooks/firebase';
 import { nanoid } from 'nanoid';
 import { ChartTimeSeries, ChartWorkflow } from 'reducers/charts/types';
 import { getEntryColor } from 'utils/colors';
-import { useQueryString } from 'hooks';
+import { useLoginStatus, useQueryString } from 'hooks';
 import { SEARCH_KEY } from 'utils/constants';
 import { Modes } from 'pages/types';
-import { ContextMenu } from 'components/ContextMenu';
+import DetailsSidebar from 'components/DetailsSidebar';
 import TimeSeriesRows from './TimeSeriesRows';
 import WorkflowRows from './WorkflowRows';
 
@@ -40,6 +42,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
 
   const { chartId = chartIdProp } = useParams<{ chartId: string }>();
   const { data: chart, isError, isFetched } = useChart(chartId);
+  const { data: login } = useLoginStatus();
   const [showContextMenu, setShowContextMenu] = useState(false);
 
   const {
@@ -50,10 +53,12 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
 
   useEffect(() => {
     if (updateError) {
-      toast.error('Chart could not be saved!');
+      toast.error('Chart could not be saved!', { toastId: 'chart-update' });
     }
     if (updateError && updateErrorMsg) {
-      toast.error(JSON.stringify(updateErrorMsg, null, 2));
+      toast.error(JSON.stringify(updateErrorMsg, null, 2), {
+        toastId: 'chart-update-body',
+      });
     }
   }, [updateError, updateErrorMsg]);
 
@@ -63,6 +68,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
 
   const [showSearch, setShowSearch] = useState(false);
   const [workspaceMode, setWorkspaceMode] = useState<Modes>('workspace');
+  const [stackedMode, setStackedMode] = useState<boolean>(false);
   const isWorkspaceMode = workspaceMode === 'workspace';
 
   /**
@@ -76,22 +82,31 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
 
   const handleClickNewWorkflow = () => {
     if (chart) {
-      updateChart({
-        ...chart,
-        workflowCollection: [
-          ...(chart.workflowCollection || []),
-          {
-            id: nanoid(),
-            name: 'New Calculation',
-            color: getEntryColor(),
-            lineWeight: 1,
-            lineStyle: 'solid',
-            enabled: true,
-            nodes: [],
-            connections: [],
+      const newWorkflowId = nanoid();
+      updateChart(
+        {
+          ...chart,
+          workflowCollection: [
+            ...(chart.workflowCollection || []),
+            {
+              id: newWorkflowId,
+              name: 'New Calculation',
+              color: getEntryColor(),
+              lineWeight: 1,
+              lineStyle: 'solid',
+              enabled: true,
+              nodes: [],
+              connections: [],
+            },
+          ],
+        },
+        {
+          onSuccess: () => {
+            setSelectedSourceId(newWorkflowId);
+            setWorkspaceMode('editor');
           },
-        ],
-      });
+        }
+      );
     }
   };
 
@@ -159,7 +174,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
 
   const sourceTableHeaderRow = (
     <tr>
-      <th style={{ width: 350 }}>
+      <th>
         <SourceItem>
           <SourceName>
             <Icon
@@ -176,7 +191,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
       </th>
       {isWorkspaceMode && (
         <>
-          <th>
+          <th style={{ width: 250 }}>
             <SourceItem>
               <SourceName>Description</SourceName>
             </SourceItem>
@@ -249,15 +264,34 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                 Add time series
               </Button>
               <Button
-                icon="YAxis"
-                variant="ghost"
+                icon="Function"
+                type="ghost"
                 onClick={handleClickNewWorkflow}
               >
                 Add calculation
               </Button>
             </section>
           )}
+          {login?.user && login?.user !== chart?.user && (
+            <section>
+              <WarningAlert
+                type="warning"
+                message="View only. Duplicate to edit."
+                icon={<Icon type="Info" />}
+                showIcon
+              />
+            </section>
+          )}
           <section className="daterange">
+            <Tooltip content={`${stackedMode ? 'Disable' : 'Enable'} stacking`}>
+              <Button
+                icon="ChartStackedView"
+                type={stackedMode ? 'primary' : 'ghost'}
+                onClick={() => setStackedMode(!stackedMode)}
+                aria-label="view"
+              />
+            </Tooltip>
+            <Divider />
             <DateRangeSelector chart={chart} />
           </section>
         </Header>
@@ -269,6 +303,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                   key={chartId}
                   chartId={chartId}
                   isInSearch={showSearch}
+                  stackedMode={stackedMode}
                 />
               </ChartWrapper>
             </TopPaneWrapper>
@@ -285,6 +320,8 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                         selectedSourceId={selectedSourceId}
                         onRowClick={handleSourceClick}
                         onInfoClick={handleInfoClick}
+                        dateFrom={chart.dateFrom}
+                        dateTo={chart.dateTo}
                       />
 
                       <WorkflowRows
@@ -312,7 +349,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
           </SplitPaneLayout>
         </ChartContainer>
       </ContentWrapper>
-      <ContextMenu
+      <DetailsSidebar
         chart={chart}
         visible={showContextMenu}
         onClose={handleCloseContextMenu}
@@ -321,5 +358,17 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     </ChartViewContainer>
   );
 };
+
+const WarningAlert = styled(Alert)`
+  .ant-alert-message {
+    color: var(--cogs-text-warning);
+  }
+`;
+
+const Divider = styled.div`
+  border-left: 1px solid var(--cogs-greyscale-grey3);
+  height: 24px;
+  margin-left: 10px;
+`;
 
 export default ChartView;

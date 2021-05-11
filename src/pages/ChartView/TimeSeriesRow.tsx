@@ -16,18 +16,19 @@ import {
   Tooltip,
   Popconfirm,
   Flex,
-  toast,
 } from '@cognite/cogs.js';
 import { units } from 'utils/units';
 import { calculateGranularity } from 'utils/timeseries';
 import { removeTimeseries, updateTimeseries } from 'utils/charts';
 import { useLinkedAsset } from 'hooks/api';
+import { usePrevious } from 'hooks/usePrevious';
 import EditableText from 'components/EditableText';
 import { AppearanceDropdown } from 'components/AppearanceDropdown';
 import { PnidButton } from 'components/SearchResultTable/PnidButton';
 import { functionResponseKey, useCallFunction } from 'utils/cogniteFunctions';
 import FunctionCall from 'components/FunctionCall';
 import { CogniteClient } from '@cognite/sdk';
+import { StatisticsResult } from 'components/DetailsSidebar';
 import {
   SourceItem,
   SourceCircle,
@@ -35,9 +36,10 @@ import {
   SourceRow,
   UnitMenuAside,
   UnitMenuHeader,
+  SourceDescription,
+  SourceTag,
 } from './elements';
 // import TimeSeriesMenu from './TimeSeriesMenu';
-import { StatisticsResult } from '../../components/ContextMenu';
 
 const key = ['functions', 'individual_calc'];
 
@@ -140,6 +142,8 @@ type Props = {
   onInfoClick?: (id?: string) => void;
   isWorkspaceMode?: boolean;
   isFileViewerMode?: boolean;
+  dateFrom: string;
+  dateTo: string;
 };
 export default function TimeSeriesRow({
   mutate,
@@ -151,6 +155,8 @@ export default function TimeSeriesRow({
   isSelected = false,
   isWorkspaceMode = false,
   isFileViewerMode = false,
+  dateFrom,
+  dateTo,
 }: Props) {
   const sdk = useSDK();
   const {
@@ -165,6 +171,11 @@ export default function TimeSeriesRow({
     tsId,
   } = timeseries;
   const [isEditingName, setIsEditingName] = useState<boolean>(false);
+
+  const prevDateFromTo = usePrevious<{ dateFrom: string; dateTo: string }>({
+    dateFrom,
+    dateTo,
+  });
 
   // Increasing this will cause a fresh render where the dropdown is closed
   const update = (_tsId: string, diff: Partial<ChartTimeSeries>) =>
@@ -302,13 +313,18 @@ export default function TimeSeriesRow({
     [chart, mutate, timeseries]
   );
 
-  useEffect(() => {
-    if (statisticsForSource) {
-      return;
-    }
+  const datesChanged =
+    (prevDateFromTo && prevDateFromTo.dateFrom !== dateFrom) ||
+    (prevDateFromTo && prevDateFromTo.dateTo !== dateTo);
 
-    if (statisticsCall && !callStatusError) {
-      return;
+  useEffect(() => {
+    if (!datesChanged) {
+      if (statisticsForSource) {
+        return;
+      }
+      if (statisticsCall && !callStatusError) {
+        return;
+      }
     }
 
     callFunction(
@@ -320,8 +336,8 @@ export default function TimeSeriesRow({
                 tag: (timeseries as ChartTimeSeries).tsExternalId,
               },
             ],
-            start_time: new Date(chart.dateFrom).getTime(),
-            end_time: new Date(chart.dateTo).getTime(),
+            start_time: new Date(dateFrom).getTime(),
+            end_time: new Date(dateTo).getTime(),
           },
         },
       },
@@ -337,28 +353,26 @@ export default function TimeSeriesRow({
             ],
           });
         },
-        onError() {
-          toast.warn('Could not execute statistics calculation');
-        },
       }
     );
   }, [
     callFunction,
-    chart.dateFrom,
-    chart.dateTo,
+    dateFrom,
+    dateTo,
     timeseries,
     updateStatistics,
     statisticsForSource,
     statisticsCall,
     callStatus,
     callStatusError,
+    datesChanged,
   ]);
 
   return (
     <SourceRow
       key={id}
       onClick={() => !disabled && onRowClick(id)}
-      isActive={isSelected}
+      className={isSelected ? 'active' : undefined}
     >
       <td>
         <SourceItem isDisabled={disabled} key={id}>
@@ -398,10 +412,18 @@ export default function TimeSeriesRow({
         <>
           <td>
             <SourceItem>
-              <SourceName>{description}</SourceName>
+              <SourceDescription>
+                <Tooltip content={description}>
+                  <>{description}</>
+                </Tooltip>
+              </SourceDescription>
             </SourceItem>
           </td>
-          <td>{linkedAsset?.name}</td>
+          <td>
+            <SourceItem>
+              <SourceTag>{linkedAsset?.name}</SourceTag>
+            </SourceItem>
+          </td>
         </>
       )}
       {isWorkspaceMode && (
@@ -443,7 +465,7 @@ export default function TimeSeriesRow({
             >
               <Button
                 icon="Down"
-                variant="outline"
+                type="tertiary"
                 iconPlacement="right"
                 style={{ height: 28 }}
               >
@@ -467,9 +489,10 @@ export default function TimeSeriesRow({
         <td style={{ textAlign: 'center', paddingLeft: 0 }}>
           <Dropdown content={<AppearanceDropdown update={updateAppearance} />}>
             <Button
-              variant="outline"
+              type="tertiary"
               icon="Timeseries"
               style={{ height: 28 }}
+              aria-label="timeseries"
             />
           </Dropdown>
         </td>
@@ -485,7 +508,12 @@ export default function TimeSeriesRow({
               </div>
             }
           >
-            <Button variant="outline" icon="Delete" style={{ height: 28 }} />
+            <Button
+              type="tertiary"
+              icon="Delete"
+              style={{ height: 28 }}
+              aria-label="delete"
+            />
           </Popconfirm>
         </td>
       )}
@@ -493,7 +521,7 @@ export default function TimeSeriesRow({
         <>
           <td style={{ textAlign: 'center', paddingLeft: 0 }}>
             <Button
-              variant="outline"
+              type="tertiary"
               icon="Info"
               onClick={(event) => {
                 if (isSelected) {
@@ -502,16 +530,18 @@ export default function TimeSeriesRow({
                 onInfoClick(id);
               }}
               style={{ height: 28 }}
+              aria-label="info"
             />
           </td>
           <td style={{ textAlign: 'center', paddingLeft: 0 }}>
             {!isFileViewerMode && (
               // <Dropdown content={<TimeSeriesMenu chartId={chart.id} id={id} />}>
               <Button
-                variant="outline"
+                type="tertiary"
                 icon="MoreOverflowEllipsisHorizontal"
                 style={{ height: 28 }}
                 disabled
+                aria-label="more"
               />
               // </Dropdown>
             )}

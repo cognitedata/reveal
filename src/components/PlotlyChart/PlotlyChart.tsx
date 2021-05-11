@@ -33,12 +33,12 @@ import {
   PlotlyEventData,
   SeriesData,
 } from './utils';
-import StackedChartIconPath from './StackedChartIcon';
 
 type ChartProps = {
   chartId: string;
   isPreview?: boolean;
   isInSearch?: boolean;
+  stackedMode?: boolean;
 };
 
 // Use "basic" version of plotly.js to reduce bundle size
@@ -48,6 +48,7 @@ const PlotlyChartComponent = ({
   chartId,
   isPreview = false,
   isInSearch = false,
+  stackedMode = false,
 }: ChartProps) => {
   const sdk = useSDK();
   const client = useQueryClient();
@@ -56,7 +57,6 @@ const PlotlyChartComponent = ({
 
   const pointsPerSeries = isPreview ? 100 : 1000;
   const [dragmode, setDragmode] = useState<'zoom' | 'pan'>('pan');
-  const [stackedMode, setStackedMode] = useState<boolean>(false);
   const [yAxisLocked, setYAxisLocked] = useState<boolean>(true);
 
   const queries =
@@ -314,6 +314,7 @@ const PlotlyChartComponent = ({
     /**
      * For some reason plotly doesn't like that you overwrite the range input (doing this the wrong way?)
      */
+
     const serializedYRange = range
       ? JSON.parse(JSON.stringify(range))
       : undefined;
@@ -403,22 +404,7 @@ const PlotlyChartComponent = ({
     responsive: true,
     scrollZoom: true,
     displaylogo: false,
-    displayModeBar: true,
-    modeBarButtons: [
-      [
-        {
-          name: `${stackedMode ? 'Disable' : 'Enable'} stacking`,
-          icon: {
-            width: '16',
-            height: '16',
-            path: StackedChartIconPath,
-          },
-          click: useCallback(() => {
-            setStackedMode(!stackedMode);
-          }, [setStackedMode, stackedMode]),
-        },
-      ],
-    ],
+    displayModeBar: false,
   };
 
   return (
@@ -427,8 +413,7 @@ const PlotlyChartComponent = ({
         <>
           {(isLoading || timeseriesFetching) && <LoadingIcon />}
           <AdjustButton
-            type="secondary"
-            variant="outline"
+            type="tertiary"
             icon="YAxis"
             onClick={() => setYAxisLocked(!yAxisLocked)}
             left={5 * seriesData.length}

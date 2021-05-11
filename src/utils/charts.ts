@@ -134,7 +134,8 @@ export function convertTimeseriesToWorkflow(chart: Chart, id: string): Chart {
 
 export function covertTSToChartTS(
   ts: Timeseries,
-  preExistingCount?: number
+  preExistingCount?: number,
+  range: number[] = []
 ): ChartTimeSeries {
   return {
     id: nanoid(),
@@ -150,6 +151,7 @@ export function covertTSToChartTS(
     displayMode: 'lines',
     enabled: true,
     description: ts.description || '-',
+    range,
   };
 }
 

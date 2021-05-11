@@ -7,6 +7,7 @@ import {
   useFilesAssetAppearsIn,
 } from 'components/FileList';
 import styled from 'styled-components/macro';
+import DelayedComponent from 'components/DelayedComponent';
 
 const FileListItem = ({
   file,
@@ -90,12 +91,13 @@ export const FileList = ({
   return (
     <ListWrapper>
       {data.map((file: File) => (
-        <FileListItem
-          key={file.id}
-          file={file}
-          isActive={selectedFileId === file.id}
-          onFileClick={() => onFileClick(file)}
-        />
+        <DelayedComponent delay={200} key={file.id}>
+          <FileListItem
+            file={file}
+            isActive={selectedFileId === file.id}
+            onFileClick={() => onFileClick(file)}
+          />
+        </DelayedComponent>
       ))}
     </ListWrapper>
   );
@@ -119,7 +121,8 @@ const PreviewContainer = styled.div`
     props.isActive ? 'var(--cogs-midblue-6)' : 'unset'};
 
   &:hover {
-    background-color: var(--cogs-greyscale-grey1);
+    background-color: ${(props: { isActive: boolean }) =>
+      props.isActive ? 'var(--cogs-midblue-6)' : 'var(--cogs-greyscale-grey1)'};
   }
 `;
 
