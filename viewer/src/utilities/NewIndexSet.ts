@@ -136,17 +136,17 @@ class IntermediateIndexNode {
     } else {
       // Add non-empty left- and right ranges
 
-      let nextThis = newThis;
+      let nodeToReturn = newThis;
 
       if (leftRange != undefined) {
-        nextThis = newThis.addRange(leftRange);
+        nodeToReturn = nodeToReturn.addRange(leftRange);
       }
 
       if (rightRange != undefined) {
-        nextThis = newThis.addRange(rightRange);
+        nodeToReturn = nodeToReturn.addRange(rightRange);
       }
 
-      return nextThis;
+      return nodeToReturn;
     }
   }
 
