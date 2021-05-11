@@ -3,6 +3,7 @@ import { Asset, FileInfo } from 'cognite-sdk-v3/dist/src';
 export type PnidsParsingJobSchema = {
   jobId?: number;
   status: 'Completed' | 'Failed' | string;
+  statusCount: ApiStatusCount;
   items?: { fileId: number }[];
   annotationCounts?: { [fileId: number]: FileAnnotationsCount };
 };
@@ -58,3 +59,9 @@ export type RetrieveResultsResponseItem = {
   }>;
 };
 export type RetrieveResultsResponseItems = Array<RetrieveResultsResponseItem>;
+
+export type ApiStatusCount = {
+  completed?: number;
+  running?: number;
+  queued?: number;
+};

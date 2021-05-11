@@ -8,6 +8,7 @@ import {
   listAnnotationsForFile,
 } from '@cognite/annotations';
 import {
+  ApiStatusCount,
   FileAnnotationsCount,
   PnidResponseEntity,
   RetrieveResultsResponseItem,
@@ -157,11 +158,12 @@ export const startPnidParsingJob = {
                   resolve(jobId);
                 }
               },
-              (data: { status: string }) => {
+              (data: { status: string; statusCount: ApiStatusCount }) => {
                 dispatch(
                   updateJob({
                     workflowId,
                     status: data.status,
+                    statusCount: data.statusCount,
                   })
                 );
               },
