@@ -1,3 +1,9 @@
+## 1.0.2 May 11 2021
+
+### Changes
+
+- Fix silent token request type (silentCDFTokenRequest)
+  
 ## 1.0.1 May 10 2021
 
 ### Changes

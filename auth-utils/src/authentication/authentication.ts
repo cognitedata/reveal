@@ -99,19 +99,18 @@ export class CogniteAuth {
             if (!response) {
               await this.getClient().authenticate();
             }
+            const {
+              accessToken,
+              idToken,
+              expiresOn,
+            } = await this.getCDFToken();
 
-            // @ts-expect-error http is private
-            const fullResponse = await this.getClient().azureAdClient.msalApplication.acquireTokenSilent(
-              // @ts-expect-error http is private
-              this.getClient().azureAdClient.silentAccountTokenRequest
-            );
-
-            if (fullResponse.accessToken) {
+            if (accessToken) {
               this.state.authResult = {
-                idToken: fullResponse.idToken,
-                accessToken: fullResponse.accessToken,
+                idToken,
+                accessToken,
                 authFlow,
-                expTime: fullResponse.expiresOn,
+                expTime: expiresOn,
               };
               this.state.project = project;
             }
@@ -268,16 +267,12 @@ export class CogniteAuth {
             this.state.error = !response;
             this.state.authenticated = response;
 
-            // @ts-expect-error http is private
-            const fullResponse = await this.getClient().azureAdClient.msalApplication.acquireTokenSilent(
-              // @ts-expect-error http is private
-              this.getClient().azureAdClient.silentAccountTokenRequest
-            );
+            const { accessToken, idToken } = await this.getCDFToken();
 
-            if (fullResponse.accessToken) {
+            if (accessToken) {
               this.state.authResult = {
-                idToken: fullResponse.idToken,
-                accessToken: fullResponse.accessToken,
+                idToken,
+                accessToken,
                 authFlow,
               };
             }
@@ -295,6 +290,16 @@ export class CogniteAuth {
     }
     this.state.initializing = false;
     this.publishAuthState();
+  }
+
+  // the SDK did not provide a way to get the ID token
+  // so as a temp fix, we need to get this manually
+  private getCDFToken() {
+    // @ts-expect-error http is private
+    return this.getClient().azureAdClient.msalApplication.acquireTokenSilent(
+      // @ts-expect-error http is private
+      this.getClient().azureAdClient.silentCDFTokenRequest
+    );
   }
 
   public logout() {
