@@ -10,7 +10,7 @@ export type CogniteFunction = {
   description?: string;
 };
 
-const useBackendService = !!process.env.REACT_APP_CALCULATION_SERVICE_BASE_URL;
+const useBackendService = !!process.env.REACT_APP_BACKEND_SERVICE_BASE_URL;
 const BACKEND_SERVICE_BASE_URL = process.env.REACT_APP_BACKEND_SERVICE_BASE_URL;
 const CDF_API_BASE_URL = config.cdfApiBaseUrl;
 
