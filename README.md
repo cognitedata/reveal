@@ -10,6 +10,6 @@ Workflows are made up of several nodes. Each node contains its own function.
 
 See [cognitedata/charts-functions-dsp](https://github.com/cognitedata/charts-functions-dsp)
 
-## Using a custom backend
+## Using a custom calculation backend
 
 Set the `REACT_APP_BACKEND_SERVICE_BASE_URL` environment variable to enable using a custom calculation backend (see `.env.example`)
