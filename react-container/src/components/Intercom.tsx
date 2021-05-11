@@ -20,25 +20,26 @@ export const IntercomContainer: React.FC<IntercomContainerProps> = ({
   sidecar,
   children,
 }) => {
-  const { intercom, appsApiBaseUrl } = sidecar;
+  const { appsApiBaseUrl } = sidecar;
+  const authHeaders = getAuthHeaders();
 
-  if (intercom && intercomSettings) {
-    React.useEffect(() => {
-      intercomInitialization(intercom).then(() => {
+  React.useEffect(() => {
+    if (intercomSettings) {
+      intercomInitialization(intercomSettings.app_id).then(() => {
         intercomHelper.boot(intercomSettings);
         intercomHelper.identityVerification({
           appsApiUrl: appsApiBaseUrl,
-          headers: {
-            Authorization: getAuthHeaders(),
-          },
+          headers: authHeaders,
         });
       });
+    }
 
-      return () => {
+    return () => {
+      if (intercomSettings) {
         intercomHelper.shutdown();
-      };
-    }, []);
-  }
+      }
+    };
+  }, []);
 
   return children;
 };
