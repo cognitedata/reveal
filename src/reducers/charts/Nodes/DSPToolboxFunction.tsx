@@ -93,16 +93,16 @@ export const configPanel = ({
         )}
       />
 
-      {functionData?.toolFunction?.parameters?.length &&
+      {functionData?.toolFunction?.parameters?.length > 0 &&
         (functionData?.toolFunction?.parameters || []).map(
-          ({ param }: { param: string }) => {
+          ({ param, default: default_ }: { param: string; default: any }) => {
             return (
               <div style={{ marginTop: 8 }}>
                 <h4>{param}</h4>
 
                 <Input
                   id={param}
-                  value={functionData[param] || ''}
+                  value={functionData[param] || default_ || ''}
                   onChange={(newValue: React.ChangeEvent<HTMLInputElement>) => {
                     onUpdateNode({
                       functionData: {
