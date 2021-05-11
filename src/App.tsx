@@ -1,8 +1,7 @@
 import * as React from 'react';
 import * as Sentry from '@sentry/browser';
 import { TenantSelector } from '@cognite/react-tenant-selector';
-
-import { withI18nSuspense } from '@cognite/react-i18n';
+import { configureI18n, withI18nSuspense } from '@cognite/react-i18n';
 import { Metrics } from '@cognite/metrics';
 
 import { SIDECAR } from './sidecar';
@@ -11,12 +10,24 @@ const {
   REACT_APP_RELEASE_ID,
   REACT_APP_SENTRY_DSN,
   REACT_APP_MIXPANEL_TOKEN,
+  REACT_APP_LOCIZE_PROJECT_ID,
+  REACT_APP_LOCIZE_API_KEY,
   REACT_APP_ENV,
   NODE_ENV,
 } = process.env;
 
 export const App = () => {
   React.useEffect(() => {
+    configureI18n({
+      useSuspense: true,
+      locize: {
+        projectId: REACT_APP_LOCIZE_PROJECT_ID || '',
+        apiKey: REACT_APP_LOCIZE_API_KEY || '',
+      },
+      disabled: SIDECAR.disableTranslations,
+      keySeparator: SIDECAR.locizeKeySeparator,
+    });
+
     if (REACT_APP_SENTRY_DSN) {
       Sentry.init({
         dsn: REACT_APP_SENTRY_DSN,

@@ -2363,10 +2363,10 @@
     mixpanel-browser "^2.35.0"
     react "^17.0.1"
 
-"@cognite/react-i18n@^0.3.1", "@cognite/react-i18n@^0.3.2":
-  version "0.3.2"
-  resolved "https://registry.yarnpkg.com/@cognite/react-i18n/-/react-i18n-0.3.2.tgz#86a1b6854a4c6d356fcc931b118cb3311ec56ad3"
-  integrity sha512-kttiy7jZ1URKzsYKlNxnFNMx+N0OpjLpH3Ty7o+S9TJAB3wzVFFjJms7XOfbXOhHj08/APcak/QLkH2aKtYUNA==
+"@cognite/react-i18n@^0.3.3":
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/@cognite/react-i18n/-/react-i18n-0.3.3.tgz#cb6177019bb4637ac7c5420c758fd7500f0b47f9"
+  integrity sha512-fUz5lgqLAdQnUlFotnlZApfEzwGD9lYFpHhACc94Lyh+N4NmztfNG3lOFwyyPr4WApN1Oq35sjJYpRHjEhGHHQ==
   dependencies:
     i18next "^19.8.4"
     i18next-chained-backend "^2.0.1"
@@ -2375,15 +2375,16 @@
     i18next-pseudo "^2.2.0"
     i18next-xhr-backend "^3.2.2"
     react-i18next "^11.8.5"
+    tslib "^2.2.0"
 
-"@cognite/react-tenant-selector@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@cognite/react-tenant-selector/-/react-tenant-selector-1.0.1.tgz#15c9c4aff6c1f32168902475a5f4c482ecfd2df3"
-  integrity sha512-5oSt5FgkmUZwfqa+vcmvk0U+K8O7Jrzn8aRMnqikZLgWKLWv0jrR5KbOAi7lbYD5FJDAv0eAPFRIt9uUNpXGKw==
+"@cognite/react-tenant-selector@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@cognite/react-tenant-selector/-/react-tenant-selector-1.1.0.tgz#e850fd312cf4802a39a371b130b9bd2f0d9b59f0"
+  integrity sha512-O4X6Kh9d9syu7BfP5Z/iDRADKnpS6cH4+o/+ii7Bi0Av2Z9wvRQu7wupicwEu4D+4nPBeY1ilGtJUWHUjYDDBQ==
   dependencies:
     "@cognite/auth-utils" "^1.0.1"
     "@cognite/metrics" "^1.0.0"
-    "@cognite/react-i18n" "^0.3.1"
+    "@cognite/react-i18n" "^0.3.3"
     axios "^0.21.1"
     react-helmet "^6.1.0"
     react-query "^3.7.1"
@@ -16406,6 +16407,11 @@ tslib@^2.0.0, tslib@^2.0.1:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.1.0.tgz#da60860f1c2ecaa5703ab7d39bc05b6bf988b97a"
   integrity sha512-hcVC3wYEziELGGmEEXue7D75zbwIIVUMWAVbHItGPx0ziyXxrOMQx4rQEVEV45Ut/1IotuEvwqPopzIOkDMf0A==
+
+tslib@^2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.2.0.tgz#fb2c475977e35e241311ede2693cee1ec6698f5c"
+  integrity sha512-gS9GVHRU+RGn5KQM2rllAlR3dU6m7AcpJKdtH8gFvQiC4Otgk98XnmMU+nZenHt/+VhnBPWwgrJsyrdcw6i23w==
 
 tsutils@^3.17.1:
   version "3.17.1"
