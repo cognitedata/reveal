@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 import { assertNever } from '../../../utilities';
-import { IndexSet } from '../../../utilities/IndexSet';
+import { IndexSet } from '../../../utilities/NewIndexSet';
 import { NodeSet } from './NodeSet';
 
 export type CombineNodeSetOperator = 'intersection' | 'union';

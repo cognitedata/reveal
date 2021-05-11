@@ -407,8 +407,14 @@ class LeafIndexNode {
 export class IndexSet {
   rootNode?: IndexNode;
 
-  constructor() {
-    this.rootNode = undefined;
+  constructor(values?: Iterable<number>) {
+    if (values == undefined) {
+      this.rootNode = undefined;
+    } else {
+      for (const index of values) {
+        this.add(index);
+      }
+    }
   }
 
   add(index: number) {
@@ -506,7 +512,7 @@ export class IndexSet {
     return newRanges;
   }
 
-  unionWith(otherSet: IndexSet): void {
+  unionWith(otherSet: IndexSet): IndexSet {
     if (this.rootNode) {
       const rs = otherSet.ranges();
       rs.forEach(range => {
@@ -515,9 +521,11 @@ export class IndexSet {
     } else {
       this.rootNode = otherSet.rootNode;
     }
+
+    return this;
   }
 
-  differenceWith(otherSet: IndexSet): void {
+  differenceWith(otherSet: IndexSet): IndexSet {
     if (this.rootNode) {
       const rs = otherSet.ranges();
       rs.forEach(range => {
@@ -526,17 +534,29 @@ export class IndexSet {
         }
       });
     }
+
+    return this;
   }
 
-  hasIntersectionWith(otherSet: IndexSet): boolean {
-    if (this.rootNode == undefined || otherSet.rootNode == undefined) {
+  hasIntersectionWith(otherSet: IndexSet | Set<number>): boolean {
+    if (otherSet instanceof IndexSet) {
+      if (this.rootNode == undefined || otherSet.rootNode == undefined) {
+        return false;
+      }
+
+      return this.rootNode.hasIntersectionWith(otherSet.rootNode);
+    } else {
+      for (const index of otherSet) {
+        if (this.contains(index)) {
+          return true;
+        }
+      }
+
       return false;
     }
-
-    return this.rootNode.hasIntersectionWith(otherSet.rootNode);
   }
 
-  intersectWith(otherSet: IndexSet): void {
+  intersectWith(otherSet: IndexSet): IndexSet {
     if (this.rootNode && otherSet.rootNode) {
       // Tackle endpoints
       // Remove left bounds outside input node set
@@ -548,7 +568,7 @@ export class IndexSet {
         this.rootNode = this.rootNode.removeRange(leftBoundRange);
 
         if (!this.rootNode) {
-          return;
+          return this;
         }
       }
 
@@ -573,6 +593,11 @@ export class IndexSet {
       // Otherset is empty, set this to empty as well
       this.rootNode = undefined;
     }
+    return this;
+  }
+
+  clear(): void {
+    this.rootNode = undefined;
   }
 
   clone(): IndexSet {

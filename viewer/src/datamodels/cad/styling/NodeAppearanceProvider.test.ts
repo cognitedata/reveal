@@ -4,7 +4,7 @@
 
 import { NodeAppearance } from '../NodeAppearance';
 import { ByTreeIndexNodeSet } from './ByTreeIndexNodeSet';
-import { IndexSet } from '../../../utilities/IndexSet';
+import { IndexSet } from '../../../utilities/NewIndexSet';
 import { NodeAppearanceProvider } from './NodeAppearanceProvider';
 import { NodeSet } from './NodeSet';
 import { NodeOutlineColor } from '../NodeAppearance';

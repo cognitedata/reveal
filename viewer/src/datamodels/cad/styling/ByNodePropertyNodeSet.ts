@@ -4,7 +4,7 @@
 
 import { CogniteClient } from '@cognite/sdk';
 
-import { IndexSet } from '../../../utilities/IndexSet';
+import { IndexSet } from '../../../utilities/NewIndexSet';
 import { NumericRange } from '../../../utilities/NumericRange';
 import { Cognite3DModel } from '../../../public/migration/Cognite3DModel';
 import { AsyncNodeSetBase } from './AsyncNodeSetBase';

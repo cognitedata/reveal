@@ -26,7 +26,7 @@ export {
   InvertedNodeSet,
   NodeAppearanceProvider
 } from './datamodels/cad/styling';
-export { IndexSet } from './utilities/IndexSet';
+export { IndexSet } from './utilities/NewIndexSet';
 export { NumericRange } from './utilities/NumericRange';
 
 // Export ThreeJS to enable easy import for our users

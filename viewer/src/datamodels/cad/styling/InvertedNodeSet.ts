@@ -3,7 +3,7 @@
  */
 import { Cognite3DModel } from '../../../public/migration/Cognite3DModel';
 import { NumericRange } from '../../../utilities';
-import { IndexSet } from '../../../utilities/IndexSet';
+import { IndexSet } from '../../../utilities/NewIndexSet';
 import { NodeSet } from './NodeSet';
 
 export class InvertedNodeSet extends NodeSet {

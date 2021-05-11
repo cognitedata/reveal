@@ -5,7 +5,7 @@
 import { NodeAppearance } from '..';
 import { assertNever } from '../../../utilities';
 import { EventTrigger } from '../../../utilities/events';
-import { IndexSet } from '../../../utilities/IndexSet';
+import { IndexSet } from '../../../utilities/NewIndexSet';
 import { NodeSet } from './NodeSet';
 
 /**

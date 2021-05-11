@@ -6,7 +6,7 @@ import * as THREE from 'three';
 
 import { createMaterials, Materials } from './rendering/materials';
 import { RenderMode } from './rendering/RenderMode';
-import { IndexSet } from '../../utilities/IndexSet';
+import { IndexSet } from '../../utilities/NewIndexSet';
 
 import { NodeAppearanceProvider } from './styling/NodeAppearanceProvider';
 import { NodeAppearanceTextureBuilder } from './styling/NodeAppearanceTextureBuilder';

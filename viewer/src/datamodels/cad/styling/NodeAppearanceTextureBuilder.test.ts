@@ -3,7 +3,7 @@
  */
 
 import * as THREE from 'three';
-import { IndexSet } from '../../../utilities/IndexSet';
+import { IndexSet } from '../../../utilities/NewIndexSet';
 
 import { NodeAppearance, NodeOutlineColor } from '../NodeAppearance';
 import { ByTreeIndexNodeSet } from './ByTreeIndexNodeSet';
