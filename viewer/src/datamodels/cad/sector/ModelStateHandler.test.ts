@@ -51,7 +51,13 @@ describe('ModelStateHandler', () => {
   });
 });
 
-function mockWantedSectors(id: number) {
+function mockWantedSectors(
+  id: number
+): {
+  simple: WantedSector;
+  detailed: WantedSector;
+  discarded: WantedSector;
+} {
   const metadata = {
     id,
     path: '0/',
@@ -83,8 +89,8 @@ function mockWantedSectors(id: number) {
 
   const blobUrl = 'modelIdentifer';
   return {
-    simple: { blobUrl, metadata, levelOfDetail: LevelOfDetail.Simple },
-    detailed: { blobUrl, metadata, levelOfDetail: LevelOfDetail.Detailed },
-    discarded: { blobUrl, metadata, levelOfDetail: LevelOfDetail.Discarded }
+    simple: { blobUrl, metadata, levelOfDetail: LevelOfDetail.Simple, geometryClipBox: null },
+    detailed: { blobUrl, metadata, levelOfDetail: LevelOfDetail.Detailed, geometryClipBox: null },
+    discarded: { blobUrl, metadata, levelOfDetail: LevelOfDetail.Discarded, geometryClipBox: null }
   };
 }

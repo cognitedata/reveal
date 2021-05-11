@@ -45,6 +45,8 @@ export class CadModelMetadataRepository<TModelIdentifier>
 
     return {
       blobUrl,
+      // Clip box is not loaded, it must be set elsewhere
+      geometryClipBox: null,
       modelMatrix,
       inverseModelMatrix,
       cameraConfiguration: transformCameraConfiguration(cameraConfiguration, modelMatrix),
