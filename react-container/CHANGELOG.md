@@ -1,6 +1,12 @@
-## 1.0.2 May 10 2021
+## 1.0.4 May 11 2021
 
-### Changes
+- Bump auth
+  
+## 1.0.3 May 11 2021
+
+- Fix intercom loading issue
+ 
+## 1.0.2 May 10 2021
 
 - Bump i18n
   

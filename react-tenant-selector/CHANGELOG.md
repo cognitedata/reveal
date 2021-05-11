@@ -1,3 +1,9 @@
+## 1.1.1 May 11 2021
+
+### Changes
+
+- Bump auth - the issue did not affect this stage of the flow, but good to keep in sync.
+
 ## 1.1.0 May 10 2021
 
 ### Changes
