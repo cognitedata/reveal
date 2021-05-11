@@ -1,6 +1,7 @@
 /*
  * Copyright 2021 Cognite AS
  */
+import assert from 'assert';
 
 import { NumericRange } from './NumericRange';
 
@@ -29,8 +30,7 @@ class IntermediateIndexNode {
       return new IntermediateIndexNode(r0, r1).balance();
     } else {
       // Help, overlapping nodes! There is an error somewhere!
-      process.exit(-1);
-      // return new IntermediateIndexNode(r0, r1);
+      assert(false, 'Internal error in IndexSet: Overlapping nodes');
     }
   }
 
