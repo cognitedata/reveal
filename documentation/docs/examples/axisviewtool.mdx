@@ -36,6 +36,33 @@ of the viewer, and initialization is very easy:
 new AxisViewTool(viewer);
 ```
 
+## Customize axis cross position
+
+It is possible to specify a custom position for the axis tool.
+Position can be specified using either `RelativePosition` or `AbsolutePosition`.
+Using `AbsolutePosition` will position the axis cross at a specific position within the canvas of the viewer.
+
+
+```jsx runnable
+// import { AxisViewTool } from '@cognite/reveal/tools';
+
+new AxisViewTool(viewer, {position: {xAbsolute: 100, yAbsolute: 100}});
+```
+
+Using `RelativePosition` will position the axis cross relative to a specific corner (will also handle screen resize).
+
+```jsx runnable
+// import { AxisViewTool, Corner } from '@cognite/reveal/tools';
+
+const axisConfig = {
+  position: {
+    corner: Corner.TopRight, 
+    padding: new THREE.Vector2(50, 50)
+  }
+};
+new AxisViewTool(viewer, axisConfig);
+```
+
 ## Customize axis cross size and animation speed
 
 When clicking a face of the orientation box, the camera will move to face the respective direction.
