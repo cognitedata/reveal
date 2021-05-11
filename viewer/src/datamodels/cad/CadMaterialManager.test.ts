@@ -3,7 +3,7 @@
  */
 
 import * as THREE from 'three';
-import { range } from 'lodash';
+import range from 'lodash/range';
 import { IndexSet } from '../../utilities/NewIndexSet';
 import { RenderMode } from './rendering/RenderMode';
 import { ByTreeIndexNodeSet } from './styling';
