@@ -187,7 +187,10 @@ export default function WorkflowRow({
     mutate(updateWorkflow(chart, id, diff));
 
   return (
-    <SourceRow onClick={() => onRowClick(id)} isActive={isSelected}>
+    <SourceRow
+      onClick={() => onRowClick(id)}
+      className={isSelected ? 'active' : undefined}
+    >
       <td>
         <SourceItem key={id}>
           <SourceSquare

@@ -24,7 +24,7 @@ export const effect = async (funcData: FunctionData) => {
 
 export const effectId = 'CONSTANT';
 
-export const ConfigPanel = ({
+export const configPanel = ({
   node,
   onUpdateNode,
 }: ConfigPanelComponentProps) => {

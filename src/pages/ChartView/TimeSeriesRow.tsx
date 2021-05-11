@@ -21,6 +21,7 @@ import { units } from 'utils/units';
 import { calculateGranularity } from 'utils/timeseries';
 import { removeTimeseries, updateTimeseries } from 'utils/charts';
 import { useLinkedAsset } from 'hooks/api';
+import { usePrevious } from 'hooks/usePrevious';
 import EditableText from 'components/EditableText';
 import { AppearanceDropdown } from 'components/AppearanceDropdown';
 import { PnidButton } from 'components/SearchResultTable/PnidButton';
@@ -141,6 +142,8 @@ type Props = {
   onInfoClick?: (id?: string) => void;
   isWorkspaceMode?: boolean;
   isFileViewerMode?: boolean;
+  dateFrom: string;
+  dateTo: string;
 };
 export default function TimeSeriesRow({
   mutate,
@@ -152,6 +155,8 @@ export default function TimeSeriesRow({
   isSelected = false,
   isWorkspaceMode = false,
   isFileViewerMode = false,
+  dateFrom,
+  dateTo,
 }: Props) {
   const sdk = useSDK();
   const {
@@ -166,6 +171,11 @@ export default function TimeSeriesRow({
     tsId,
   } = timeseries;
   const [isEditingName, setIsEditingName] = useState<boolean>(false);
+
+  const prevDateFromTo = usePrevious<{ dateFrom: string; dateTo: string }>({
+    dateFrom,
+    dateTo,
+  });
 
   // Increasing this will cause a fresh render where the dropdown is closed
   const update = (_tsId: string, diff: Partial<ChartTimeSeries>) =>
@@ -303,13 +313,18 @@ export default function TimeSeriesRow({
     [chart, mutate, timeseries]
   );
 
-  useEffect(() => {
-    if (statisticsForSource) {
-      return;
-    }
+  const datesChanged =
+    (prevDateFromTo && prevDateFromTo.dateFrom !== dateFrom) ||
+    (prevDateFromTo && prevDateFromTo.dateTo !== dateTo);
 
-    if (statisticsCall && !callStatusError) {
-      return;
+  useEffect(() => {
+    if (!datesChanged) {
+      if (statisticsForSource) {
+        return;
+      }
+      if (statisticsCall && !callStatusError) {
+        return;
+      }
     }
 
     callFunction(
@@ -321,8 +336,8 @@ export default function TimeSeriesRow({
                 tag: (timeseries as ChartTimeSeries).tsExternalId,
               },
             ],
-            start_time: new Date(chart.dateFrom).getTime(),
-            end_time: new Date(chart.dateTo).getTime(),
+            start_time: new Date(dateFrom).getTime(),
+            end_time: new Date(dateTo).getTime(),
           },
         },
       },
@@ -342,21 +357,22 @@ export default function TimeSeriesRow({
     );
   }, [
     callFunction,
-    chart.dateFrom,
-    chart.dateTo,
+    dateFrom,
+    dateTo,
     timeseries,
     updateStatistics,
     statisticsForSource,
     statisticsCall,
     callStatus,
     callStatusError,
+    datesChanged,
   ]);
 
   return (
     <SourceRow
       key={id}
       onClick={() => !disabled && onRowClick(id)}
-      isActive={isSelected}
+      className={isSelected ? 'active' : undefined}
     >
       <td>
         <SourceItem isDisabled={disabled} key={id}>
