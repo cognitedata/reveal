@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import dayjs from 'dayjs';
-import { useSDK } from '@cognite/sdk-provider';
 import { useIsFetching, useQueryClient, useQuery } from 'react-query';
 import {
   Chart,
@@ -27,8 +26,8 @@ import { AppearanceDropdown } from 'components/AppearanceDropdown';
 import { PnidButton } from 'components/SearchResultTable/PnidButton';
 import { functionResponseKey, useCallFunction } from 'utils/backendService';
 import FunctionCall from 'components/FunctionCall';
-import { CogniteClient } from '@cognite/sdk';
 import { StatisticsResult } from 'components/DetailsSidebar';
+import * as backendApi from 'utils/backendApi';
 import {
   SourceItem,
   SourceCircle,
@@ -57,16 +56,8 @@ const renderStatusIcon = (status?: FunctionCallStatus) => {
   }
 };
 
-const getCallStatus = (
-  sdk: CogniteClient,
-  fnId: number,
-  callId: number
-) => async () => {
-  const response = await sdk
-    .get(
-      `/api/playground/projects/${sdk.project}/functions/${fnId}/calls/${callId}`
-    )
-    .then((r) => r?.data);
+const getCallStatus = (fnId: number, callId: number) => async () => {
+  const response = await backendApi.getCallStatus(fnId, callId);
 
   if (response?.status) {
     return response.status as FunctionCallStatus;
@@ -158,7 +149,6 @@ export default function TimeSeriesRow({
   dateFrom,
   dateTo,
 }: Props) {
-  const sdk = useSDK();
   const {
     id,
     description,
@@ -261,11 +251,10 @@ export default function TimeSeriesRow({
       statisticsCall?.callId
     ),
     queryFn: (): Promise<string | undefined> =>
-      sdk
-        .get(
-          `/api/playground/projects/${sdk.project}/functions/${statisticsCall.functionId}/calls/${statisticsCall.callId}/response`
-        )
-        .then((r) => r.data.response),
+      backendApi.getCallResponse(
+        statisticsCall?.functionId,
+        statisticsCall?.callId
+      ),
     retry: 1,
     retryDelay: 1000,
     enabled: !!statisticsCall,
@@ -276,7 +265,6 @@ export default function TimeSeriesRow({
   >(
     [...key, statisticsCall?.callId, 'call_status'],
     getCallStatus(
-      sdk,
       statisticsCall?.functionId as number,
       statisticsCall?.callId as number
     ),

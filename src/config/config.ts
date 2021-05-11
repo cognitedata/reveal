@@ -1,4 +1,5 @@
 /* eslint no-underscore-dangle: ["error", { "allow": ["__cogniteSidecar"] }] */
+require('dotenv').config();
 
 export const CHART_VERSION = 1;
 
