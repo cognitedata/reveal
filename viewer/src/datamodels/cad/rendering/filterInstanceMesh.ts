@@ -18,15 +18,6 @@ export function filterInstanceMesh(
   instanceMesh: InstancedMesh,
   geometryClipBox: THREE.Box3 | null
 ): InstancedMesh {
-  if (instanceMesh.triangleOffset !== 93966) {
-    return {
-      triangleCount: instanceMesh.triangleCount,
-      triangleOffset: instanceMesh.triangleOffset,
-      colors: new Uint8Array(0),
-      instanceMatrices: new Float32Array(0),
-      treeIndices: new Float32Array(0)
-    };
-  }
   if (geometryClipBox === null) {
     return instanceMesh;
   }
