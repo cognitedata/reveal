@@ -8,7 +8,7 @@ import {
 import { updateFileInfoField } from 'src/store/thunks/updateFileInfoField';
 import { generateKeyValueArray } from 'src/utils/FormatUtils';
 import { SaveAvailableAnnotations } from 'src/store/thunks/SaveAvailableAnnotations';
-import { selectFileById } from 'src/modules/Upload/uploadedFilesSlice';
+import { selectFileById } from 'src/modules/Common/filesSlice';
 
 export type FileInfoValueState = string | Label[] | null;
 
@@ -27,7 +27,7 @@ const initialState: State = {
 };
 
 const fileDetailsSlice = createSlice({
-  name: 'uploadedFiles',
+  name: 'fileDetailsSlice',
   initialState,
   /* eslint-disable no-param-reassign */
   reducers: {
@@ -143,7 +143,7 @@ export const editedFileMeta = (state: State): Record<number, MetadataItem> =>
 
 export const selectUpdatedFileDetails = createSelector(
   (state: RootState) => editedFileDetails(state.fileDetailsSlice),
-  (state: RootState, id: string) => selectFileById(state.uploadedFiles, id),
+  (state: RootState, id: string) => selectFileById(state.filesSlice, id),
   (editedInfo, fileInfo) => {
     if (fileInfo) {
       const mergedInfo: VisionFileDetails = {
@@ -158,7 +158,7 @@ export const selectUpdatedFileDetails = createSelector(
 
 export const selectUpdatedFileMeta = createSelector(
   (state: RootState) => editedFileMeta(state.fileDetailsSlice),
-  (state: RootState, id: string) => selectFileById(state.uploadedFiles, id),
+  (state: RootState, id: string) => selectFileById(state.filesSlice, id),
   (editedMeta, fileInfo) => {
     let metadata: MetadataItem[] = generateKeyValueArray(fileInfo?.metadata);
 

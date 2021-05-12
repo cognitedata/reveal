@@ -23,7 +23,7 @@ import { FileActions, TableDataItem } from 'src/modules/Common/types';
 import {
   selectAllFiles,
   setFileSelectState,
-} from 'src/modules/Upload/uploadedFilesSlice';
+} from 'src/modules/Common/filesSlice';
 import { pushMetric } from 'src/utils/pushMetric';
 import { FileGridPreview } from '../../Common/Components/FileGridPreview/FileGridPreview';
 import { MapView } from '../../Common/Components/MapView/MapView';
@@ -34,7 +34,7 @@ const queryClient = new QueryClient();
 export default function ProcessStep() {
   const history = useHistory();
   const uploadedFiles = useSelector((state: RootState) =>
-    selectAllFiles(state.uploadedFiles)
+    selectAllFiles(state.filesSlice)
   );
 
   const dispatch = useDispatch();

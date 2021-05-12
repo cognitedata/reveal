@@ -14,7 +14,7 @@ import {
 } from '@cognite/data-exploration';
 import { ResultAnnotationLoader } from 'src/modules/Explorer/Containers/ResultAnnotationLoader';
 import { MapView } from 'src/modules/Common/Components/MapView/MapView';
-import { setFileSelectState } from 'src/modules/Upload/uploadedFilesSlice';
+import { setFileSelectState } from 'src/modules/Common/filesSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { FileTableExplorer } from 'src/modules/Common/Components/FileTable/FileTableExplorer';
 import { FileGridPreview } from 'src/modules/Common/Components/FileGridPreview/FileGridPreview';

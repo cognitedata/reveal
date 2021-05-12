@@ -52,8 +52,8 @@ const initialState: State = {
   },
 };
 
-const uploadedFilesSlice = createSlice({
-  name: 'uploadedFiles',
+const filesSlice = createSlice({
+  name: 'filesSlice',
   initialState,
   /* eslint-disable no-param-reassign */
   reducers: {
@@ -154,9 +154,9 @@ export const {
   setAllFilesStatus,
   setFileSelectState,
   setAllFilesSelectState,
-} = uploadedFilesSlice.actions;
+} = filesSlice.actions;
 
-export default uploadedFilesSlice.reducer;
+export default filesSlice.reducer;
 
 export const selectAllFiles = createSelector(
   (state: State) => state.files.allIds,

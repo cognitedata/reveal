@@ -22,7 +22,7 @@ export const ProcessStepActionButtons = () => {
   });
 
   const { allFilesStatus } = useSelector(
-    (state: RootState) => state.uploadedFiles
+    (state: RootState) => state.filesSlice
   );
 
   const annotations = useSelector((state: RootState) => {

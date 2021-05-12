@@ -16,7 +16,7 @@ import {
 import { getLink, workflowRoutes } from 'src/modules/Workflow/workflowRoutes';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { v3Client as sdk } from '@cognite/cdf-sdk-singleton';
-import { selectFileById } from 'src/modules/Upload/uploadedFilesSlice';
+import { selectFileById } from 'src/modules/Common/filesSlice';
 import { ImagePreviewEditMode } from 'src/constants/enums/ImagePreviewEditMode';
 import { ProposedCogniteAnnotation } from '@cognite/react-picture-annotation';
 import { AnnotationDrawerMode } from 'src/utils/AnnotationUtils';
@@ -56,8 +56,8 @@ const ImageReview = (props: { fileId: string; drawerMode: number | null }) => {
   const dispatch = useDispatch();
   const { fileId, drawerMode } = props;
 
-  const file = useSelector(({ uploadedFiles }: RootState) =>
-    selectFileById(uploadedFiles, fileId)
+  const file = useSelector(({ filesSlice }: RootState) =>
+    selectFileById(filesSlice, fileId)
   );
 
   const visibleNonRejectedAnnotationsAndEditModeAnnotation = useSelector(

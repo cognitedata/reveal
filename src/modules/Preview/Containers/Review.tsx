@@ -12,7 +12,7 @@ import {
   resetPreview,
 } from 'src/modules/Preview/previewSlice';
 import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
-import { selectFileById } from 'src/modules/Upload/uploadedFilesSlice';
+import { selectFileById } from 'src/modules/Common/filesSlice';
 import ImageReview from 'src/modules/Preview/Containers/ImageReview';
 import VideoReview from 'src/modules/Preview/Containers/VideoReview';
 import { isVideo } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
@@ -83,8 +83,8 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
       !state.previewSlice.drawer.annotation?.text
   );
 
-  const file = useSelector(({ uploadedFiles }: RootState) =>
-    selectFileById(uploadedFiles, fileId)
+  const file = useSelector(({ filesSlice }: RootState) =>
+    selectFileById(filesSlice, fileId)
   );
 
   if (!file) {

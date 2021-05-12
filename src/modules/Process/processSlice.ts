@@ -106,7 +106,7 @@ export const postAnnotationJob = createAsyncThunk<
     const createdJob = await createAnnotationJob(modelType, fileIds);
 
     const doesFileExist = (fileId: number) =>
-      getState().uploadedFiles.files.byId[fileId];
+      getState().filesSlice.files.byId[fileId];
 
     await fetchUntilComplete<AnnotationJob>(
       () => fetchJobById(createdJob.type, createdJob.jobId),

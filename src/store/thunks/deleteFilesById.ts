@@ -6,7 +6,7 @@ export const deleteFilesById = createAsyncThunk<
   InternalId[],
   InternalId[],
   ThunkConfig
->('uploadedFiles/deleteFileById', async (fileIds) => {
+>('deleteFileById', async (fileIds) => {
   if (!fileIds) {
     throw new Error('Ids not provided!');
   }
