@@ -14,6 +14,7 @@ import { SaveAvailableAnnotations } from 'src/store/thunks/SaveAvailableAnnotati
 import { ThunkConfig } from 'src/store/rootReducer';
 import isEqual from 'lodash-es/isEqual';
 import { AnnotationDetectionJobUpdate } from 'src/store/thunks/AnnotationDetectionJobUpdate';
+import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
 import { AnnotationsBadgeStatuses } from '../Common/types';
 
 export type JobState = AnnotationJob & {
@@ -117,7 +118,16 @@ export const postAnnotationJob = createAsyncThunk<
           latestJobVersion.status === 'Failed' ||
           !fileIds.some(doesFileExist), // we don't want to poll jobs for removed files
 
-        onTick: (latestJobVersion) => {
+        onTick: async (latestJobVersion) => {
+          await dispatch(AnnotationDetectionJobUpdate(latestJobVersion));
+          if (latestJobVersion.status === 'Completed') {
+            await dispatch(
+              RetrieveAnnotations({
+                fileIds,
+                assetIds: undefined,
+              })
+            );
+          }
           dispatch(
             fileProcessUpdate({
               modelType,
@@ -125,7 +135,6 @@ export const postAnnotationJob = createAsyncThunk<
               job: latestJobVersion,
             })
           );
-          dispatch(AnnotationDetectionJobUpdate(latestJobVersion));
         },
 
         onError: (error) => {
@@ -348,7 +357,7 @@ export const selectIsPollingComplete = createSelector(
   }
 );
 
-export const makeGetAnnotationStatuses = () =>
+export const makeSelectAnnotationStatuses = () =>
   createSelector(selectJobsByFileId, (fileJobs) => {
     const annotationBadgeProps = {
       tag: {},

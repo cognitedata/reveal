@@ -1,7 +1,14 @@
 import { ColumnShape } from 'react-base-table';
 
-import { JobStatus } from 'src/api/types';
+import { Annotation, JobStatus, VisionAPIType } from 'src/api/types';
 
+export interface AnnotationPreview
+  extends Pick<
+    Annotation,
+    'id' | 'annotatedResourceId' | 'status' | 'source' | 'text'
+  > {
+  annotationType: VisionAPIType;
+}
 export type AnnotationCounts = {
   modelGenerated?: number;
   manuallyGenerated?: number;

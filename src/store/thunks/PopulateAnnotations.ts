@@ -21,7 +21,7 @@ export const PopulateAnnotations = createAsyncThunk<
 
   const annotationResponse = await dispatch(
     RetrieveAnnotations({
-      fileId: parseInt(fileId, 10),
+      fileIds: [parseInt(fileId, 10)],
       assetIds: undefined,
     })
   );

@@ -1,19 +1,38 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Annotation } from 'src/api/types';
+import { Annotation, VisionAPIType } from 'src/api/types';
 import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
-import { AnnotationStatus } from 'src/utils/AnnotationUtils';
-import { createSelector } from 'reselect';
-import { AnnotationCounts, AnnotationsBadgeCounts } from './types';
+import {
+  AnnotationStatus,
+  AnnotationTypeModelTypeMap,
+} from 'src/utils/AnnotationUtils';
+import {
+  createSelector,
+  createSelectorCreator,
+  defaultMemoize,
+} from 'reselect';
+import isEqual from 'lodash-es/isEqual';
+import {
+  AnnotationCounts,
+  AnnotationPreview,
+  AnnotationsBadgeCounts,
+} from './types';
 
 type State = {
-  byId: Record<
-    number,
-    [Pick<Annotation, 'id' | 'annotationType' | 'source' | 'status' | 'text'>]
-  >;
+  files: {
+    byId: Record<number, number[]>;
+  };
+  annotations: {
+    byId: Record<number, AnnotationPreview>;
+  };
 };
 
 const initialState: State = {
-  byId: {},
+  files: {
+    byId: {},
+  },
+  annotations: {
+    byId: {},
+  },
 };
 const annotationSlice = createSlice({
   name: 'annotation',
@@ -27,15 +46,25 @@ const annotationSlice = createSlice({
         annotations.forEach((item: Annotation) => {
           const recordValue = {
             id: item.id,
-            annotationType: item.annotationType,
+            annotatedResourceId: item.annotatedResourceId,
+            annotationType: AnnotationTypeModelTypeMap[item.annotationType],
             source: item.source,
             status: item.status,
             text: item.text,
           };
-          if (!state.byId[item.annotatedResourceId]) {
-            state.byId[item.annotatedResourceId] = [recordValue];
+          const fileAnnotations = state.files.byId[item.annotatedResourceId];
+          if (fileAnnotations) {
+            if (!fileAnnotations.includes(item.id)) {
+              // new annotation
+              state.files.byId[item.annotatedResourceId].push(item.id);
+            }
+
+            if (!isEqual(state.annotations.byId[item.id], recordValue)) {
+              state.annotations.byId[item.id] = recordValue;
+            }
           } else {
-            state.byId[item.annotatedResourceId].push(recordValue);
+            state.files.byId[item.annotatedResourceId] = [item.id];
+            state.annotations.byId[item.id] = recordValue;
           }
         });
       }
@@ -46,45 +75,70 @@ const annotationSlice = createSlice({
 export default annotationSlice.reducer;
 
 // selectors
-export const makeGetAnnotationCounts = () =>
-  createSelector(
-    (state: State, id: number) => state.byId[id],
-    (annotations) => {
-      const annotationsBadgeProps: AnnotationsBadgeCounts = {
-        tag: {},
-        gdpr: {},
-        text: {},
-        objects: {},
-      };
-
-      if (annotations) {
-        annotations.forEach((item) => {
-          if (item.annotationType === 'vision/ocr') {
-            annotationsBadgeProps.text = getSingleAnnotationCounts(item);
-          }
-          if (item.annotationType === 'vision/tagdetection') {
-            annotationsBadgeProps.tag = getSingleAnnotationCounts(item);
-          }
-          if (item.annotationType === 'vision/objectdetection') {
-            if (item.text === 'person') {
-              annotationsBadgeProps.gdpr = getSingleAnnotationCounts(item);
-            } else {
-              annotationsBadgeProps.objects = getSingleAnnotationCounts(item);
-            }
-          }
-        });
-      }
-      return annotationsBadgeProps;
+export const selectFileAnnotations = createSelector(
+  (state: State, id: number) => state.files.byId[id],
+  (state: State) => state.annotations.byId,
+  (annotationIds, allAnnotations) => {
+    if (annotationIds && annotationIds.length) {
+      return annotationIds.map((id) => allAnnotations[id]);
     }
-  );
+    return [];
+  }
+);
+
+const createDeepEqualSelector = createSelectorCreator(defaultMemoize, isEqual);
+
+export const makeSelectAnnotationCounts = () =>
+  createDeepEqualSelector(selectFileAnnotations, (annotations) => {
+    const annotationsBadgeProps: AnnotationsBadgeCounts = {
+      tag: {},
+      gdpr: {},
+      text: {},
+      objects: {},
+    };
+
+    if (annotations) {
+      annotationsBadgeProps.text = getSingleAnnotationCounts(
+        annotations.filter((item) => item.annotationType === VisionAPIType.OCR)
+      );
+      annotationsBadgeProps.tag = getSingleAnnotationCounts(
+        annotations.filter(
+          (item) => item.annotationType === VisionAPIType.TagDetection
+        )
+      );
+
+      annotationsBadgeProps.gdpr = getSingleAnnotationCounts(
+        annotations.filter(
+          (item) =>
+            item.annotationType === VisionAPIType.ObjectDetection &&
+            item.text === 'person'
+        )
+      );
+
+      annotationsBadgeProps.objects = getSingleAnnotationCounts(
+        annotations.filter(
+          (item) =>
+            item.annotationType === VisionAPIType.ObjectDetection &&
+            item.text !== 'person'
+        )
+      );
+    }
+    return annotationsBadgeProps;
+  });
+
+export const selectFileAnnotationsByType = createSelector(
+  selectFileAnnotations,
+  (state: State, fileId: number, types: VisionAPIType[]) => types,
+  (annotations, types) => {
+    if (annotations) {
+      return annotations.filter((item) => types.includes(item.annotationType));
+    }
+    return [];
+  }
+);
 
 // helper functions
-const getSingleAnnotationCounts = (
-  annotation: Pick<
-    Annotation,
-    'id' | 'annotationType' | 'source' | 'status' | 'text'
-  >
-) => {
+const getSingleAnnotationCounts = (annotations: AnnotationPreview[]) => {
   let [modelGenerated, manuallyGenerated, verified, unhandled, rejected] = [
     0,
     0,
@@ -92,20 +146,22 @@ const getSingleAnnotationCounts = (
     0,
     0,
   ];
-  if (annotation.source === 'user') {
-    manuallyGenerated++;
-  } else {
-    modelGenerated++;
-  }
-  if (annotation.status === AnnotationStatus.Verified) {
-    verified++;
-  }
-  if (annotation.status === AnnotationStatus.Unhandled) {
-    unhandled++;
-  }
-  if (annotation.status === AnnotationStatus.Rejected) {
-    rejected++;
-  }
+  annotations.forEach((annotation) => {
+    if (annotation.source === 'user') {
+      manuallyGenerated++;
+    } else {
+      modelGenerated++;
+    }
+    if (annotation.status === AnnotationStatus.Verified) {
+      verified++;
+    }
+    if (annotation.status === AnnotationStatus.Unhandled) {
+      unhandled++;
+    }
+    if (annotation.status === AnnotationStatus.Rejected) {
+      rejected++;
+    }
+  });
 
   return {
     modelGenerated,

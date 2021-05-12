@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
 import {
   isProcessingFile,
-  makeGetAnnotationStatuses,
+  makeSelectAnnotationStatuses,
 } from 'src/modules/Process/processSlice';
 import { DeleteAnnotationsByFileIds } from 'src/store/thunks/DeleteAnnotationsByFileIds';
 
@@ -38,7 +38,7 @@ export function ActionRenderer({ rowData: { menu, id } }: CellRenderer) {
     }
   };
 
-  const getAnnotationStatuses = useMemo(makeGetAnnotationStatuses, []);
+  const getAnnotationStatuses = useMemo(makeSelectAnnotationStatuses, []);
   const annotationStatuses = useSelector(({ processSlice }: RootState) =>
     getAnnotationStatuses(processSlice, id)
   );

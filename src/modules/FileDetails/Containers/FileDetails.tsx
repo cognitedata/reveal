@@ -113,7 +113,7 @@ export const FileDetails = () => {
             >
               {fileDetails?.id && (
                 <FileDetailsAnnotationsPreview
-                  fileId={fileDetails.id.toString()}
+                  fileId={fileDetails.id}
                   onReviewClick={onReviewClick}
                 />
               )}

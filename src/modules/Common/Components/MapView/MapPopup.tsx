@@ -17,7 +17,7 @@ import { RootState } from 'src/store/rootReducer';
 import { selectUpdatedFileDetails } from 'src/modules/FileDetails/fileDetailsSlice';
 import {
   isProcessingFile,
-  makeGetAnnotationStatuses,
+  makeSelectAnnotationStatuses,
 } from 'src/modules/Process/processSlice';
 import { TableDataItem } from 'src/modules/Common/types';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
@@ -25,7 +25,7 @@ import { AnnotationsBadge } from '../AnnotationsBadge/AnnotationsBadge';
 import { AnnotationsBadgePopoverContent } from '../AnnotationsBadge/AnnotationsBadgePopoverContent';
 import { Popover } from '../Popover';
 import { isFilePreviewable } from '../FileUploader/utils/FileUtils';
-import { makeGetAnnotationCounts } from '../../annotationSlice';
+import { makeSelectAnnotationCounts } from '../../annotationSlice';
 
 export const MapPopup = ({
   item,
@@ -103,12 +103,12 @@ export const MapPopup = ({
     </Menu>
   );
 
-  const getAnnotationCounts = useMemo(makeGetAnnotationCounts, []);
+  const getAnnotationCounts = useMemo(makeSelectAnnotationCounts, []);
   const annotationCounts = useSelector(({ annotationReducer }: RootState) =>
     getAnnotationCounts(annotationReducer, item.id)
   );
 
-  const getAnnotationStatuses = useMemo(makeGetAnnotationStatuses, []);
+  const getAnnotationStatuses = useMemo(makeSelectAnnotationStatuses, []);
   const annotationStatuses = useSelector(({ processSlice }: RootState) =>
     getAnnotationStatuses(processSlice, item.id)
   );

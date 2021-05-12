@@ -92,6 +92,12 @@ export const ModelTypeAnnotationTypeMap: { [key: number]: AnnotationType } = {
   [VisionAPIType.ObjectDetection]: 'vision/objectdetection',
 };
 
+export const AnnotationTypeModelTypeMap = {
+  'vision/ocr': VisionAPIType.OCR,
+  'vision/tagdetection': VisionAPIType.TagDetection,
+  'vision/objectdetection': VisionAPIType.ObjectDetection,
+};
+
 export class AnnotationUtils {
   public static lineWidth = 5;
 

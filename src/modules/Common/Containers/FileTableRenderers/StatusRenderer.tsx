@@ -3,18 +3,18 @@ import {
   CellRenderer,
 } from 'src/modules/Common/types';
 import React, { useMemo } from 'react';
-import { makeGetAnnotationStatuses } from 'src/modules/Process/processSlice';
+import { makeSelectAnnotationStatuses } from 'src/modules/Process/processSlice';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { TimeDisplay } from '@cognite/data-exploration';
 
 export function StatusRenderer({ rowData: { id } }: CellRenderer) {
-  const getAnnotationStatuses = useMemo(makeGetAnnotationStatuses, []);
+  const getAnnotationStatuses = useMemo(makeSelectAnnotationStatuses, []);
   const annotationStatuses = useSelector(({ processSlice }: RootState) =>
     getAnnotationStatuses(processSlice, id)
   );
 
-  const statuses = Object.keys(getAnnotationStatuses) as Array<
+  const statuses = Object.keys(annotationStatuses) as Array<
     keyof AnnotationsBadgeStatuses
   >;
 
