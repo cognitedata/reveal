@@ -8,7 +8,9 @@ import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import {
   addTagAnnotations,
   resetEditState,
-} from '../../modules/Preview/previewSlice';
+} from 'src/modules/Preview/previewSlice';
+import { getRegionFromBox, getUnsavedAnnotation } from 'src/api/utils';
+import { SaveAnnotations } from 'src/store/thunks/SaveAnnotations';
 
 export const AddAnnotationsFromEditModeAssetIds = createAsyncThunk<
   void,
@@ -25,32 +27,36 @@ export const AddAnnotationsFromEditModeAssetIds = createAsyncThunk<
     const assetResponse = await dispatch(fetchAssets(assetInternalIds));
     const assets = unwrapResult(assetResponse);
 
+    const state = getState().previewSlice;
+    const editModeAnnotationData = state.drawer;
+
     if (assets && assets.length) {
       // update annotations
 
-      const boundingBox = editState.annotation?.box;
-
       // add annotations without bounding box as virtual annotations
-      const assetVisionAnnotations = assets.map((asset) =>
-        AnnotationUtils.createVisionAnnotationStub(
-          asset.name,
+      const assetAnnotations = assets.map((asset) =>
+        getUnsavedAnnotation(
+          editModeAnnotationData.text,
+          getRegionFromBox('rectangle', editModeAnnotationData.box),
           VisionAPIType.TagDetection,
           file.id,
-          boundingBox,
-          undefined,
-          'user',
           AnnotationStatus.Verified,
-          undefined,
-          'vision/tagdetection',
-          file.externalId,
+          'user',
           asset.id,
           asset.externalId,
-          undefined,
-          undefined,
-          undefined,
-          false
+          file.externalId
         )
       );
+
+      const savedAnnotationResponse = await dispatch(
+        SaveAnnotations(assetAnnotations)
+      );
+      const savedAnnotations = unwrapResult(savedAnnotationResponse);
+
+      const assetVisionAnnotations = AnnotationUtils.convertToVisionAnnotations(
+        savedAnnotations
+      );
+
       dispatch(addTagAnnotations(assetVisionAnnotations));
 
       dispatch(

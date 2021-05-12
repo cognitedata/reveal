@@ -10,18 +10,18 @@ import { FileState } from 'src/modules/Common/filesSlice';
 
 export const HandleFileAssetLinksByAnnotationId = createAsyncThunk<
   void,
-  string,
+  number,
   ThunkConfig
 >(
   'HandleFileAssetLinksByAnnotationId',
   async (annotationId, { getState, dispatch }) => {
     const updateFileAndAnnotation = async (
       file: FileState,
-      assetExternalId: string,
+      annotationText: string,
       annotation: VisionAnnotationState
     ) => {
       const assetResponse = await dispatch(
-        fetchAssets([{ externalId: assetExternalId }])
+        fetchAssets([{ externalId: annotationText }])
       );
       const assets = unwrapResult(assetResponse);
 

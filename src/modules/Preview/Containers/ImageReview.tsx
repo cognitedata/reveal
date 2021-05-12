@@ -21,6 +21,7 @@ import { ImagePreviewEditMode } from 'src/constants/enums/ImagePreviewEditMode';
 import { ProposedCogniteAnnotation } from '@cognite/react-picture-annotation';
 import { AnnotationDrawerMode } from 'src/utils/AnnotationUtils';
 import { VisionAPIType } from 'src/api/types';
+import { UpdateAnnotationsById } from 'src/store/thunks/UpdateAnnotationsById';
 
 const AnnotationContainer = styled.div`
   width: 100%;
@@ -114,6 +115,7 @@ const ImageReview = (props: { fileId: string; drawerMode: number | null }) => {
           boundingBox: annotation.box,
         })
       );
+      dispatch(UpdateAnnotationsById([annotation.id]));
     }
   };
 

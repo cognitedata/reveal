@@ -70,6 +70,7 @@ export const ImagePreview: React.FC<FilePreviewProps> = ({
   const styledAnnotations: ProposedCogniteAnnotation[] = annotations.map(
     (item) => ({
       ...item,
+      id: item.id.toString(),
       mark: AnnotationUtils.getAnnotationStyle(item.color, item.status),
       version: 1,
     })

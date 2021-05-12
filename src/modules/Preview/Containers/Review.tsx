@@ -7,7 +7,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import {
   closeAnnotationDrawer,
-  createAnnotation,
   resetEditState,
   resetPreview,
 } from 'src/modules/Preview/previewSlice';
@@ -22,6 +21,8 @@ import { ImageReviewDrawerContent } from 'src/modules/Preview/Components/Annotat
 import { ImagePreviewEditMode } from 'src/constants/enums/ImagePreviewEditMode';
 import { AddAnnotationsFromEditModeAssetIds } from 'src/store/thunks/AddAnnotationsFromEditModeAssetIds';
 import { resetEditHistory } from 'src/modules/FileDetails/fileDetailsSlice';
+import { CreateAnnotations } from 'src/store/thunks/CreateAnnotations';
+import { DeleteAnnotationsByFileIds } from 'src/store/thunks/DeleteAnnotationsByFileIds';
 
 const Container = styled.div`
   width: 100%;
@@ -80,7 +81,7 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
   const addAnnotationTextNotAvailable = useSelector(
     (state: RootState) =>
       state.previewSlice.drawer.mode === AnnotationDrawerMode.AddAnnotation &&
-      !state.previewSlice.drawer.annotation?.text
+      !state.previewSlice.drawer.text
   );
 
   const file = useSelector(({ filesSlice }: RootState) =>
@@ -98,6 +99,7 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
   };
 
   const handleFileDelete = () => {
+    dispatch(DeleteAnnotationsByFileIds([file.id]));
     dispatch(deleteFilesById([{ id: file.id }]));
     onBackButtonClick();
   };
@@ -108,7 +110,7 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
 
   const handleOnDrawerCreate = () => {
     if (drawerMode === AnnotationDrawerMode.AddAnnotation) {
-      dispatch(createAnnotation({ fileId, type: drawerMode }));
+      dispatch(CreateAnnotations({ fileId: file.id, type: drawerMode }));
     } else if (drawerMode === AnnotationDrawerMode.LinkAsset) {
       dispatch(AddAnnotationsFromEditModeAssetIds(file));
     }

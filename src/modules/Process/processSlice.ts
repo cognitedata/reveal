@@ -13,6 +13,7 @@ import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
 import { SaveAvailableAnnotations } from 'src/store/thunks/SaveAvailableAnnotations';
 import { ThunkConfig } from 'src/store/rootReducer';
 import isEqual from 'lodash-es/isEqual';
+import { AnnotationDetectionJobUpdate } from 'src/store/thunks/AnnotationDetectionJobUpdate';
 import { AnnotationsBadgeStatuses } from '../Common/types';
 
 export type JobState = AnnotationJob & {
@@ -118,8 +119,13 @@ export const postAnnotationJob = createAsyncThunk<
 
         onTick: (latestJobVersion) => {
           dispatch(
-            fileProcessUpdate({ modelType, fileIds, job: latestJobVersion })
+            fileProcessUpdate({
+              modelType,
+              fileIds,
+              job: latestJobVersion,
+            })
           );
+          dispatch(AnnotationDetectionJobUpdate(latestJobVersion));
         },
 
         onError: (error) => {

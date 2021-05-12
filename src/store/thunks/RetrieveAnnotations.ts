@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ThunkConfig } from 'src/store/rootReducer';
-import { v3Client as sdk } from '@cognite/cdf-sdk-singleton';
 import { Annotation } from 'src/api/types';
+import { AnnotationApi } from 'src/api/annotation/AnnotationApi';
 
 export const RetrieveAnnotations = createAsyncThunk<
   Annotation[],
@@ -19,17 +19,10 @@ export const RetrieveAnnotations = createAsyncThunk<
       linkedResourceIds: payload.assetIds.map((id) => ({ id })),
     };
   }
-  const data = {
-    data: {
-      filter: filterPayload,
-    },
+  const annotationListRequest = {
+    filter: filterPayload,
   };
-  const response = await sdk.post(
-    `${sdk.getBaseUrl()}/api/playground/projects/${
-      sdk.project
-    }/context/annotations/list`,
-    data
-  );
+  const response = await AnnotationApi.list(annotationListRequest);
 
   return response.data.items;
 });

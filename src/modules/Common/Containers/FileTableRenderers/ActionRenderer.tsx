@@ -9,6 +9,7 @@ import {
   isProcessingFile,
   makeGetAnnotationStatuses,
 } from 'src/modules/Process/processSlice';
+import { DeleteAnnotationsByFileIds } from 'src/store/thunks/DeleteAnnotationsByFileIds';
 
 export const Action = styled.div`
   display: flex;
@@ -25,6 +26,7 @@ export function ActionRenderer({ rowData: { menu, id } }: CellRenderer) {
   };
 
   const handleFileDelete = () => {
+    dispatch(DeleteAnnotationsByFileIds([id]));
     dispatch(deleteFilesById([{ id }]));
   };
 

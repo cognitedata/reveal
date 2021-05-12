@@ -12,15 +12,12 @@ import {
   AnnotationDrawerMode,
   AnnotationStatus,
   AnnotationUtils,
-  ModelTypeAnnotationTypeMap,
-  ModelTypeSourceMap,
   VisionAnnotation,
 } from 'src/utils/AnnotationUtils';
-import { AnnotationType, VisionAPIType } from 'src/api/types';
+import { VisionAPIType } from 'src/api/types';
 import {
   addAnnotations,
   deleteAnnotationsFromState,
-  fileProcessUpdate,
 } from 'src/store/commonActions';
 import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
 import { ImagePreviewEditMode } from 'src/constants/enums/ImagePreviewEditMode';
@@ -30,9 +27,13 @@ import { DeleteAnnotations } from 'src/store/thunks/DeleteAnnotations';
 import { ToastUtils } from 'src/utils/ToastUtils';
 
 import { SaveAvailableAnnotations } from 'src/store/thunks/SaveAvailableAnnotations';
+import { AnnotationDetectionJobUpdate } from 'src/store/thunks/AnnotationDetectionJobUpdate';
+import { CreateAnnotations } from 'src/store/thunks/CreateAnnotations';
+import { UpdateAnnotationsById } from 'src/store/thunks/UpdateAnnotationsById';
+import { UpdateAnnotations } from 'src/store/thunks/UpdateAnnotations';
 
 export interface VisionAnnotationState extends Omit<VisionAnnotation, 'id'> {
-  id: string;
+  id: number;
   modelId: string;
   color: string;
   show: boolean;
@@ -47,19 +48,20 @@ export interface VisionModelState {
   modelId: string;
   fileId: string;
   modelType: VisionAPIType;
-  annotations: string[];
+  annotations: number[];
 }
 
 type State = {
   drawer: {
     show: boolean;
     mode: number | null;
-    annotation: Partial<VisionAnnotationState> | null;
+    text: string;
+    box: AnnotationBoundingBox | null;
     selectedAssetIds: number[];
   };
   selectedAnnotations: {
-    asset: string[];
-    other: string[];
+    asset: number[];
+    other: number[];
   };
   imagePreview: {
     editable: number;
@@ -68,7 +70,7 @@ type State = {
   };
   annotations: {
     counter: number;
-    byId: Record<string, VisionAnnotationState>;
+    byId: Record<number, VisionAnnotationState>;
     allIds: string[];
   };
   models: {
@@ -86,7 +88,8 @@ const initialState: State = {
   drawer: {
     show: false,
     mode: null,
-    annotation: null,
+    text: '',
+    box: null,
     selectedAssetIds: [],
   },
   imagePreview: {
@@ -129,7 +132,7 @@ const previewSlice = createSlice({
     toggleAnnotationVisibility(
       state,
       action: PayloadAction<{
-        annotationId: string;
+        annotationId: number;
       }>
     ) {
       const id = action.payload.annotationId;
@@ -138,7 +141,7 @@ const previewSlice = createSlice({
     },
     selectAnnotation(
       state,
-      action: PayloadAction<{ id: string; asset: boolean }>
+      action: PayloadAction<{ id: number; asset: boolean }>
     ) {
       const annId = action.payload.id;
       if (action.payload.asset) {
@@ -151,7 +154,7 @@ const previewSlice = createSlice({
     },
     deselectAnnotation(
       state,
-      action: PayloadAction<{ id: string; asset: boolean }>
+      action: PayloadAction<{ id: number; asset: boolean }>
     ) {
       const annId = action.payload.id;
       if (action.payload.asset) {
@@ -186,19 +189,19 @@ const previewSlice = createSlice({
     },
     updateAnnotationBoundingBox(
       state,
-      action: PayloadAction<{ id: string; boundingBox: AnnotationBoundingBox }>
+      action: PayloadAction<{ id: number; boundingBox: AnnotationBoundingBox }>
     ) {
       const annotation = state.annotations.byId[action.payload.id];
       annotation.box = action.payload.boundingBox;
     },
     annotationApproval: {
-      prepare: (id: string, status: AnnotationStatus) => {
+      prepare: (id: number, status: AnnotationStatus) => {
         return { payload: { annotationId: id, status } };
       },
       reducer: (
         state,
         action: PayloadAction<{
-          annotationId: string;
+          annotationId: number;
           status: AnnotationStatus;
         }>
       ) => {
@@ -207,21 +210,6 @@ const previewSlice = createSlice({
 
         annotation.status = status;
       },
-    },
-    createAnnotation(
-      state,
-      action: PayloadAction<{ fileId: string; type: AnnotationDrawerMode }>
-    ) {
-      if (action.payload.type === AnnotationDrawerMode.AddAnnotation) {
-        const editModeAnnotationData = state.drawer.annotation;
-
-        if (editModeAnnotationData && editModeAnnotationData.text) {
-          addEditAnnotationsToState(state, [
-            editModeAnnotationData as VisionAnnotation,
-          ]);
-          state.drawer.annotation = null;
-        }
-      }
     },
     selectAssetsIds(state, action: PayloadAction<number[]>) {
       state.drawer.selectedAssetIds = action.payload;
@@ -272,7 +260,8 @@ const previewSlice = createSlice({
       }
     },
     resetEditState(state) {
-      state.drawer.annotation = null;
+      state.drawer.text = '';
+      state.drawer.box = null;
       state.drawer.selectedAssetIds = [];
     },
     resetPreview(state) {
@@ -280,10 +269,6 @@ const previewSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(addAnnotations, (state, { payload }) => {
-      addEditAnnotationsToState(state, payload);
-    });
-
     builder.addCase(deleteAnnotationsFromState, (state, { payload }) => {
       deleteAnnotationsByIds(state, payload);
     });
@@ -312,38 +297,6 @@ const previewSlice = createSlice({
       });
     });
 
-    // On Job Update //
-
-    builder.addCase(fileProcessUpdate, (state, { payload }) => {
-      const { job } = payload;
-
-      if (job.status === 'Completed') {
-        job.items.forEach((fileAnn) => {
-          const { annotations } = fileAnn;
-
-          const visionAnnotations = annotations.map((ann) =>
-            AnnotationUtils.createVisionAnnotationStub(
-              ann.text,
-              job.type,
-              fileAnn.fileId,
-              {
-                xMin: ann.region.vertices[0].x,
-                yMin: ann.region.vertices[0].y,
-                xMax: ann.region.vertices[1].x,
-                yMax: ann.region.vertices[1].y,
-              },
-              undefined,
-              ModelTypeSourceMap[job.type],
-              undefined,
-              undefined,
-              ModelTypeAnnotationTypeMap[job.type] as AnnotationType
-            )
-          );
-          addEditAnnotationsToState(state, visionAnnotations);
-        });
-      }
-    });
-
     builder.addCase(SaveAvailableAnnotations.fulfilled, (state) => {
       resetPreviewState(state);
       state.annotations = initialState.annotations;
@@ -360,35 +313,42 @@ const previewSlice = createSlice({
     };
 
     builder.addMatcher(
+      isAnyOf(
+        addAnnotations,
+        CreateAnnotations.fulfilled,
+        AnnotationDetectionJobUpdate.fulfilled,
+        UpdateAnnotationsById.fulfilled
+      ),
+      (state, action) => {
+        addEditAnnotationsToState(state, action.payload);
+      }
+    );
+
+    builder.addMatcher(
       isAnyOf(editLabelAddAnnotation, addPolygon),
       (state, action) => {
-        if (state.drawer.annotation === null) {
-          state.drawer.annotation = AnnotationUtils.createVisionAnnotationStub(
-            '',
-            isLabelEdit(action)
-              ? VisionAPIType.ObjectDetection // TODO: Why is this needed?
-              : action.payload.modelType,
-            parseInt(action.payload.fileId, 10),
-            undefined,
-            'rectangle',
-            'user',
-            AnnotationStatus.Verified
-          );
-        }
         if (isLabelEdit(action)) {
-          state.drawer.annotation.text = action.payload.label;
+          state.drawer.text = action.payload.label;
         } else {
-          state.drawer.annotation.box = action.payload.box;
+          state.drawer.box = action.payload.box;
         }
       }
     );
 
-    builder.addMatcher(isFulfilled(SaveAnnotations, DeleteAnnotations), (_) => {
-      ToastUtils.onSuccess('Annotations Updated!');
-    });
+    builder.addMatcher(
+      isFulfilled(SaveAnnotations, DeleteAnnotations, UpdateAnnotations),
+      (_) => {
+        ToastUtils.onSuccess('Annotations Updated!');
+      }
+    );
 
     builder.addMatcher(
-      isRejected(SaveAnnotations, RetrieveAnnotations, DeleteAnnotations),
+      isRejected(
+        SaveAnnotations,
+        RetrieveAnnotations,
+        DeleteAnnotations,
+        UpdateAnnotations
+      ),
       (_, { error }) => {
         if (error && error.message) {
           ToastUtils.onFailure(
@@ -410,7 +370,6 @@ export const {
   setImagePreviewEditState,
   updateAnnotationBoundingBox,
   annotationApproval,
-  createAnnotation,
   selectAssetsIds,
   addTagAnnotations,
   resetEditState,
@@ -423,7 +382,8 @@ const resetPreviewState = (state: State) => {
   state.drawer = {
     show: false,
     mode: null,
-    annotation: null,
+    text: '',
+    box: null,
     selectedAssetIds: [],
   };
   state.imagePreview = {
@@ -466,13 +426,7 @@ export const addEditAnnotationsToState = (
       }
     }
 
-    // update annotations
-    const generatedId = AnnotationUtils.generateAnnotationId(
-      String(item.annotatedResourceId),
-      item.annotationType,
-      state.annotations.counter++
-    );
-    const id = item.id || generatedId;
+    const { id } = item;
 
     const annotation = state.annotations.byId[id];
     if (annotation) {
@@ -502,7 +456,7 @@ export const addEditAnnotationsToState = (
   state.annotations.allIds = Object.keys(state.annotations.byId);
 };
 
-const deleteAnnotationsByIds = (state: State, annotationIds: string[]) => {
+const deleteAnnotationsByIds = (state: State, annotationIds: number[]) => {
   annotationIds.forEach((annId) => {
     const annotation = state.annotations.byId[annId];
     const model = state.models.byId[annotation.modelId];
@@ -525,7 +479,10 @@ const deleteAnnotationsByIds = (state: State, annotationIds: string[]) => {
 export const selectModelIdsByFileId = (
   state: State,
   fileId: string
-): string[] => state.modelsByFileId[fileId] || [];
+): string[] => {
+  const models = state.modelsByFileId[fileId] || [];
+  return models;
+};
 
 export const modelsById = (state: State): { [id: string]: VisionModelState } =>
   state.models.byId;
@@ -608,8 +565,25 @@ export const selectVisibleNonRejectedAnnotationsByFileId = createSelector(
   }
 );
 
-export const selectEditModeAnnotations = (state: State) =>
-  state.drawer.annotation?.box ? [state.drawer.annotation] : [];
+export const selectEditModeAnnotations = (state: State, fileId: string) =>
+  state.drawer.box
+    ? [
+        AnnotationUtils.createVisionAnnotationStub(
+          0,
+          state.drawer.text,
+          state.drawer.mode === AnnotationDrawerMode.AddAnnotation
+            ? VisionAPIType.ObjectDetection
+            : VisionAPIType.TagDetection,
+          parseInt(fileId, 10),
+          0,
+          0,
+          state.drawer.box,
+          'rectangle',
+          'user',
+          AnnotationStatus.Verified
+        ),
+      ]
+    : [];
 
 export const selectVisibleNonRejectAndEditModeAnnotations = createSelector(
   selectVisibleNonRejectedAnnotationsByFileId,
@@ -623,7 +597,7 @@ export const selectVisibleNonRejectAndEditModeAnnotations = createSelector(
 
 const createVisionAnnotationState = (
   annotation: VisionAnnotation,
-  id: string,
+  id: number,
   modelId: string,
   show = true
 ): VisionAnnotationState => {
