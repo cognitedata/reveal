@@ -108,7 +108,7 @@ export const configPanel = ({
 
       {functionData?.toolFunction?.parameters?.length > 0 &&
         (functionData?.toolFunction?.parameters || []).map(
-          ({ param, type, default }: DSPFunctionParameter) => {
+          ({ param, type, default: _default }: DSPFunctionParameter) => {
             return (
               <div style={{ marginTop: 8 }}>
                 <h4>{param}</h4>
@@ -128,7 +128,7 @@ export const configPanel = ({
                 ) : (
                   <Input
                     id={param}
-                    value={functionData[param] || default || ''}
+                    value={functionData[param] || _default || ''}
                     onChange={({
                       target,
                     }: React.ChangeEvent<HTMLInputElement>) => {
