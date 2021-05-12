@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import { Annotation, VisionAPIType } from 'src/api/types';
 import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
 import {
@@ -42,7 +42,24 @@ const annotationSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(
       RetrieveAnnotations.fulfilled,
-      (state: State, { payload: annotations }: PayloadAction<Annotation[]>) => {
+      (state: State, { payload: annotations, meta }) => {
+        const { fileIds, assetIds } = meta.arg;
+
+        // reset annotation counts
+        if (fileIds && fileIds.length && !(assetIds && assetIds?.length)) {
+          fileIds.forEach((fileId) => {
+            const annotationIds = state.files.byId[fileId];
+
+            if (annotationIds && annotationIds.length) {
+              // eslint-disable-next-line no-param-reassign
+              annotationIds.forEach((id) => delete state.annotations.byId[id]);
+            }
+            // eslint-disable-next-line no-param-reassign
+            delete state.files.byId[fileId];
+          });
+        }
+
+        // update annotations
         annotations.forEach((item: Annotation) => {
           const recordValue = {
             id: item.id,
@@ -54,18 +71,11 @@ const annotationSlice = createSlice({
           };
           const fileAnnotations = state.files.byId[item.annotatedResourceId];
           if (fileAnnotations) {
-            if (!fileAnnotations.includes(item.id)) {
-              // new annotation
-              state.files.byId[item.annotatedResourceId].push(item.id);
-            }
-
-            if (!isEqual(state.annotations.byId[item.id], recordValue)) {
-              state.annotations.byId[item.id] = recordValue;
-            }
+            state.files.byId[item.annotatedResourceId].push(item.id);
           } else {
             state.files.byId[item.annotatedResourceId] = [item.id];
-            state.annotations.byId[item.id] = recordValue;
           }
+          state.annotations.byId[item.id] = recordValue;
         });
       }
     );
