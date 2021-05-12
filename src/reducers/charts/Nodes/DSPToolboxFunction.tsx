@@ -1,8 +1,15 @@
 /* eslint camelcase: 0 */
 
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Icon, Input, Select, Checkbox } from '@cognite/cogs.js';
+import {
+  Icon,
+  Input,
+  Dropdown,
+  Button,
+  Menu,
+  Checkbox,
+} from '@cognite/cogs.js';
 import {
   DSPFunction,
   DSPFunctionParameter,
@@ -44,66 +51,132 @@ export const configPanel = ({
 }: ConfigPanelComponentProps) => {
   const { functionData } = node;
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const [phrase, setPhrase] = useState<string>('');
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const [visible, setVisible] = useState<boolean>(false);
   return (
     <ToolFunctionWrapper>
       <h4>Tool Function</h4>
       <AvailableOps
         renderLoading={() => <Icon style={{ color: 'white' }} type="Loading" />}
         renderError={() => <Icon style={{ color: 'white' }} type="XLarge" />}
-        renderCall={(availableFunctions) => (
-          <Select
-            theme="dark"
-            defaultValue={
-              functionData?.toolFunction
-                ? {
-                    value: functionData?.toolFunction?.op,
-                    label: functionData?.toolFunction?.description,
-                  }
-                : undefined
+        renderCall={(availableFunctions) => {
+          console.log({ availableFunctions });
+          const categories: { [key: string]: DSPFunction[] } = {};
+          availableFunctions.forEach((func) => {
+            if (!categories[func.category]) {
+              categories[func.category] = [];
             }
-            onChange={(nextValue: { value: string }) => {
-              const nextFunc = availableFunctions.find(
-                (x) => x.op === nextValue.value
-              );
+            categories[func.category].push(func);
+          });
+          return (
+            <Dropdown
+              visible={visible}
+              onClickOutside={() => setVisible(false)}
+              content={
+                <>
+                  <Input
+                    value={phrase}
+                    onChange={(newValue: React.ChangeEvent<HTMLInputElement>) =>
+                      setPhrase(newValue.target.value)
+                    }
+                    placeholder="Search tool function..."
+                    fullWidth
+                  />
+                  <Menu>
+                    <Menu.Header>Tool Functions</Menu.Header>
+                    {Object.keys(categories).map((category) => {
+                      const filtered = categories[
+                        category
+                      ].filter(({ description }) =>
+                        description.toLowerCase().includes(phrase.toLowerCase())
+                      );
+                      return (
+                        <>
+                          <Menu.Submenu
+                            disabled={filtered.length === 0}
+                            content={
+                              <Menu>
+                                <Menu.Header>{category}</Menu.Header>
+                                {filtered.map((func) => (
+                                  <Menu.Item
+                                    key={func.description}
+                                    appendIcon={
+                                      func.description ===
+                                      functionData?.toolFunction?.description
+                                        ? 'Checkmark'
+                                        : undefined
+                                    }
+                                    onClick={() => {
+                                      const {
+                                        type_info,
+                                        ...storableNextFunc
+                                      } = func;
 
-              if (nextFunc) {
-                const { type_info, ...storableNextFunc } = nextFunc;
+                                      const inputPins = (
+                                        getConfigFromDspFunction(func).input ||
+                                        []
+                                      )
+                                        .filter((input) => input.pin)
+                                        .map((input) => ({
+                                          id: input.field,
+                                          title: input.name,
+                                          types: input.types,
+                                        }));
 
-                const inputPins = (
-                  getConfigFromDspFunction(nextFunc).input || []
-                )
-                  .filter((input) => input.pin)
-                  .map((input) => ({
-                    id: input.field,
-                    title: input.name,
-                    types: input.types,
-                  }));
+                                      const outputPins = (
+                                        getConfigFromDspFunction(func).output ||
+                                        []
+                                      ).map((output) => ({
+                                        id: `out-${output.field}`,
+                                        title: output.name,
+                                        type: output.type,
+                                      }));
 
-                const outputPins = (
-                  getConfigFromDspFunction(nextFunc).output || []
-                ).map((output) => ({
-                  id: `out-${output.field}`,
-                  title: output.name,
-                  type: output.type,
-                }));
-
-                onUpdateNode({
-                  inputPins,
-                  outputPins,
-                  title: nextFunc.description,
-                  functionData: {
-                    ...functionData,
-                    toolFunction: storableNextFunc,
-                  },
-                });
+                                      onUpdateNode({
+                                        inputPins,
+                                        outputPins,
+                                        title: func.description,
+                                        functionData: {
+                                          ...functionData,
+                                          toolFunction: storableNextFunc,
+                                        },
+                                      });
+                                      setVisible(false);
+                                    }}
+                                  >
+                                    <span style={{ textAlign: 'left' }}>
+                                      {func.description}
+                                    </span>
+                                  </Menu.Item>
+                                ))}
+                              </Menu>
+                            }
+                          >
+                            <>
+                              {category} ({filtered.length})
+                            </>
+                          </Menu.Submenu>
+                        </>
+                      );
+                    })}
+                  </Menu>
+                </>
               }
-            }}
-            options={availableFunctions.map((func) => ({
-              value: func.op,
-              label: func.description,
-            }))}
-          />
-        )}
+            >
+              <Button
+                icon="Down"
+                iconPlacement="right"
+                onClick={() => setVisible(true)}
+                style={{ width: '100%' }}
+              >
+                {functionData?.toolFunction?.description ||
+                  'Select tool function'}
+              </Button>
+            </Dropdown>
+          );
+        }}
       />
 
       {functionData?.toolFunction?.parameters?.length > 0 &&
