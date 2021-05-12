@@ -19,4 +19,16 @@ const get = async <D extends object>(
   });
 };
 
-export { get, getBaseUrl };
+const post = async <Response extends object, D>(
+  route: string,
+  project: string,
+  data: D,
+  params = ''
+) => {
+  return sdkv3.post<Response>(`${getBaseUrl(project)}${route}${params}`, {
+    data,
+    withCredentials: true,
+  });
+};
+
+export { get, getBaseUrl, post };
