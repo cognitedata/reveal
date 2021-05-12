@@ -8,7 +8,7 @@ import {
   Query,
   Status,
   ListState,
-} from '../types';
+} from 'modules/types';
 import { defaultListState } from '.';
 
 type Partition = {

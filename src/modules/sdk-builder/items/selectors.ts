@@ -8,7 +8,7 @@ import {
   ItemsState,
   ItemStatus,
   ItemsAsyncStatus,
-} from '../types';
+} from 'modules/types';
 
 /**
  * Selects item by either ID or External ID.

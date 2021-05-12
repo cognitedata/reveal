@@ -1,5 +1,4 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { Asset } from '@cognite/sdk';
 import { startPnidParsingJob } from 'modules/contextualization/pnidParsing/actions';
 import { RootState } from 'store';
 import {
@@ -50,12 +49,12 @@ export const startPnidParsingWorkflow = {
       const diagrams = getDiagrams(state);
       const resources = getResources(state);
 
-      const assets = resources!.assets as Asset[];
+      const { assets, files } = resources;
 
       await dispatch(
         startPnidParsingJob.action({
-          files: diagrams,
-          resources: { assets, diagrams },
+          diagrams,
+          resources: { assets, files },
           options: {
             minTokens,
             partialMatch,

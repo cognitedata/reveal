@@ -1,4 +1,4 @@
-import { ApiCall, Status } from '../types';
+import { ApiCall, Status } from 'modules/types';
 
 export interface ApiSearchResult extends ApiCall {
   ids: any[];

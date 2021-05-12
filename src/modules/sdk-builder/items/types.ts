@@ -1,5 +1,5 @@
 import { InternalId } from '@cognite/sdk';
-import { ApiCall, Status } from '../types';
+import { ApiCall, Status } from 'modules/types';
 
 export interface ItemStore<T extends InternalId & { externalId?: string }> {
   items: Map<number, T>;

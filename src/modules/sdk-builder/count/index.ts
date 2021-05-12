@@ -1,8 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import sdk from 'sdk-singleton';
 import { RootState } from 'store';
-import { ResourceType, ApiCountResult, Query } from '../types';
-import { CountState } from './types';
+import { ResourceType, ApiCountResult, CountState, Query } from 'modules/types';
 import { createCountSelector } from './selectors';
 
 export const defaultCount: ApiCountResult = {};

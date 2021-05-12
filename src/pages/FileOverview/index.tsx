@@ -7,7 +7,6 @@ import { RootState } from 'store';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { FileInfo } from '@cognite/sdk';
 import { useActiveWorkflow } from 'hooks';
-
 import { checkPermission } from 'modules/app';
 import { WorkflowStep } from 'modules/workflows';
 import { startConvertFileToSvgJob } from 'modules/contextualization/uploadJobs';

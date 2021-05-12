@@ -13,7 +13,8 @@ import { Flex, PageWrapper } from 'components/Common';
 import {
   landingPage,
   diagramSelection,
-  resourceSelection,
+  resourceSelectionAssets,
+  resourceSelectionFiles,
   configPage,
   reviewPage,
   diagramPreview,
@@ -68,8 +69,8 @@ export default function Routes() {
                     <SelectionPage
                       defaultFilters={PDF_FILTER}
                       required
-                      step="diagramSelection"
                       type="files"
+                      step="diagramSelection"
                       key="diagramSelection"
                     />
                   </Flex>
@@ -78,16 +79,34 @@ export default function Routes() {
             />
             <Route
               exact
-              path={resourceSelection.staticPath}
+              path={resourceSelectionAssets.staticPath}
               render={() => (
                 <>
                   <PageTitle title="P&ID Contextualization" />
                   <Flex row style={{ width: '100%' }}>
                     <StepsList />
                     <SelectionPage
-                      step="resourceSelection"
                       type="assets"
-                      key="assetselection"
+                      step="resourceSelectionAssets"
+                      key="assetSelection"
+                    />
+                  </Flex>
+                </>
+              )}
+            />
+            <Route
+              exact
+              path={resourceSelectionFiles.staticPath}
+              render={() => (
+                <>
+                  <PageTitle title="P&ID Contextualization" />
+                  <Flex row style={{ width: '100%' }}>
+                    <StepsList />
+                    <SelectionPage
+                      defaultFilters={PDF_FILTER}
+                      type="files"
+                      step="resourceSelectionFiles"
+                      key="fileSelection"
                     />
                   </Flex>
                 </>

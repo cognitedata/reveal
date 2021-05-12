@@ -7,7 +7,7 @@ import {
   ItemsList,
   ItemsState,
   ItemsAsyncStatus,
-} from '../types';
+} from 'modules/types';
 import {
   createItemSelector,
   createExternalIdMapSelector,

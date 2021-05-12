@@ -1,4 +1,5 @@
-import { ResourceType, Status } from 'modules/sdk-builder/types';
+import { Asset, FileInfo } from '@cognite/sdk';
+import { ResourceType, Status } from 'modules/types';
 
 export type PendingResourceSelection = Omit<ResourceSelection, 'id'>;
 
@@ -10,6 +11,15 @@ export type ResourceSelection = {
   filter: any;
 };
 
+export type ResourceObjectType = {
+  assets?: Asset[];
+  files?: FileInfo[];
+};
+export type ResourceEntriesType = [
+  'assets' | 'files',
+  Asset[] | FileInfo[] | undefined
+];
+
 export interface Workflow {
   diagrams?: ResourceSelection;
   resources?: ResourceSelection[];
@@ -20,7 +30,8 @@ export interface Workflow {
 
 export type WorkflowStep =
   | 'diagramSelection'
-  | 'resourceSelection'
+  | 'resourceSelectionAssets'
+  | 'resourceSelectionFiles'
   | 'config'
   | 'review'
   | 'diagramPreview';
@@ -30,8 +41,3 @@ export type WorkflowOptions = {
   grayscale: boolean;
   minTokens: number;
 };
-
-export interface Item {
-  id: number;
-  assetId?: number;
-}

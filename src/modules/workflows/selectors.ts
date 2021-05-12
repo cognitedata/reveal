@@ -1,8 +1,8 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { InternalId } from '@cognite/sdk';
+import { InternalId, Asset, FileInfo } from '@cognite/sdk';
 import { RootState } from 'store';
 import { ResourceType } from 'modules/sdk-builder/types';
-import { ResourceSelection, Workflow } from './types';
+import { ResourceSelection, ResourceObjectType, Workflow } from 'modules/types';
 
 import {
   countSelector as countFileSelector,
@@ -26,6 +26,17 @@ export const getActiveWorkflowStep = createSelector(
   (workflowId: number, items: { [id: number]: Workflow }) => {
     const activeWorkflow = items[workflowId];
     return activeWorkflow?.step;
+  }
+);
+
+export const getActiveWorkflowItems = createSelector(
+  (state: RootState) => state.workflows.active,
+  (state: RootState) => state.workflows.items,
+  (workflowId: number, items: { [id: number]: Workflow }) => {
+    return {
+      diagrams: items[workflowId]?.diagrams ?? undefined,
+      resources: items[workflowId]?.resources ?? undefined,
+    };
   }
 );
 
@@ -233,7 +244,7 @@ export const workflowDiagramsSelector = (
       diagrams: ResourceSelection | undefined,
       diagramsList: any,
       diagramsItems: any
-    ) => {
+    ): FileInfo[] => {
       if (!diagrams) return [];
       const { endpoint, filter } = diagrams;
       const key = JSON.stringify({ ...filter, all });
@@ -266,7 +277,7 @@ export const workflowResourceSelector = (
       resource: ResourceSelection | undefined,
       resourcesList: any,
       resourcesItems: any
-    ) => {
+    ): Asset[] | FileInfo[] | undefined => {
       if (!resource) return undefined;
       const { endpoint, filter } = resource;
       const key = JSON.stringify({ ...filter, all });
@@ -277,9 +288,6 @@ export const workflowResourceSelector = (
     }
   );
 
-type ResourceObjectType = {
-  [resourceType in ResourceType]?: any[];
-};
 /**
  * Returns all resources for the specific workflow.
  * @param workflowId
@@ -361,7 +369,9 @@ export const workflowDiagramStatusSelector = (
       diagramsRetrieve
     ) => {
       const defaultStatus = { done: false, loading: false, error: false };
-      if (!diagrams) return defaultStatus;
+      if (!diagrams) {
+        return defaultStatus;
+      }
       const { endpoint, filter } = diagrams;
       if (endpoint === 'list')
         return listItemsStatus(diagramsList, filter, all);
@@ -387,7 +397,9 @@ export const workflowResourceStatusSelector = (
     (state: RootState) => state,
     (resources: ResourceSelection[] | undefined, state: RootState) => {
       const defaultStatus = { done: false, loading: false, error: false };
-      if (!resources) return defaultStatus;
+      if (!resources) {
+        return defaultStatus;
+      }
       const resource = resources.find(
         (r: ResourceSelection) => r.type === resourceType
       );

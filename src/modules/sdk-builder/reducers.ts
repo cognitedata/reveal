@@ -1,6 +1,6 @@
 import { InternalId, ExternalId } from '@cognite/sdk';
 import { createAction } from '@reduxjs/toolkit';
-import { ResourceType, Status } from './types';
+import { ResourceType, Status } from 'modules/types';
 
 /**
  * Action that allows us to update specific type of items from any part of the store.

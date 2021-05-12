@@ -1,5 +1,5 @@
 import { Asset, FileInfo } from 'cognite-sdk-v3/dist/src';
-import { Vertices } from './types';
+import { Vertices } from 'modules/types';
 
 export const verticesToBoundingBox = (
   vertices: Vertices
@@ -18,10 +18,10 @@ export const verticesToBoundingBox = (
   return { xMin, yMin, xMax, yMax };
 };
 
-export const mapAssetsToEntities = (assets: Asset[]) => {
+export const mapAssetsToEntities = (assets?: Asset[]) => {
   return (assets ?? []).map((asset) => ({ ...asset, resourceType: 'asset' }));
 };
 
-export const mapDiagramsToEntities = (files: FileInfo[]) => {
+export const mapFilesToEntities = (files?: FileInfo[]) => {
   return (files ?? []).map((file) => ({ ...file, resourceType: 'file' }));
 };

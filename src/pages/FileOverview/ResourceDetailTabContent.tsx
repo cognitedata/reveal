@@ -1,7 +1,6 @@
 import React, { useContext } from 'react';
 import ResourceSelectionContext from 'context/ResourceSelectionContext';
 import isMatch from 'lodash/isMatch';
-
 import { ResourceType, ResourceItem } from '@cognite/data-exploration';
 import { useHistory } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';

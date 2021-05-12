@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import isEqual from 'lodash/isEqual';
 import { Select } from '@cognite/cogs.js';
-import { Popover, Spin } from 'antd';
 import { DataSet } from '@cognite/sdk';
+import { Popover, Spin } from 'antd';
 import {
   list,
   selectAllDataSets,
@@ -76,14 +77,15 @@ export default function DataSetSelect({
   };
 
   useEffect(() => {
-    if (selectedDataSetIds) {
-      // [to do] this needs to go to the hook, and retrieve the real name of the dataset
-      const fixedDataSets = selectedDataSetIds.map((id: number) => ({
-        label: id,
-        value: id,
-      }));
-      setCurrentSelection(fixedDataSets);
-    }
+    if (!selectedDataSetIds) return;
+    const fixedDataSets = selectedDataSetIds.map((id: number) => ({
+      label:
+        options.find((dataSetOption: OptionsType) => dataSetOption.value === id)
+          ?.label ?? id,
+      value: id,
+    }));
+    const shouldSelectionUpdate = !isEqual(fixedDataSets, currentSelection);
+    if (shouldSelectionUpdate) setCurrentSelection(fixedDataSets);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDataSetIds]);
 

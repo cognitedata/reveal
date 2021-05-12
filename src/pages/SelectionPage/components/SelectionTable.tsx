@@ -36,6 +36,7 @@ export default function SelectionTable(props: Props): JSX.Element {
   const [canSelectAll, setCanSelectAll] = useState(true);
 
   const { items, fetching } = useSelector(searchItemSelector)(type, filter);
+
   const count = useSelector(searchCountSelector(type, filter));
   const prevIsSelectAll = usePrevious(isSelectAll);
   const prevFilter = usePrevious(filter);

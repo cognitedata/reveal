@@ -17,12 +17,19 @@ export const paths: { [key: string]: PathData } = {
     title: 'Select engineering diagrams',
     workflowStepName: 'diagramSelection',
   },
-  resourceSelection: {
+  resourceSelectionAssets: {
     path: (tenant: string, workflowId: string | number) =>
-      `/${tenant}/${root}/workflow/${workflowId}/selection`,
-    staticPath: `${staticRoot}/workflow/:workflowId/selection`,
-    title: 'Select resources',
-    workflowStepName: 'resourceSelection',
+      `/${tenant}/${root}/workflow/${workflowId}/selection/assets`,
+    staticPath: `${staticRoot}/workflow/:workflowId/selection/assets`,
+    title: 'Select resources (assets)',
+    workflowStepName: 'resourceSelectionAssets',
+  },
+  resourceSelectionFiles: {
+    path: (tenant: string, workflowId: string | number) =>
+      `/${tenant}/${root}/workflow/${workflowId}/selection/files`,
+    staticPath: `${staticRoot}/workflow/:workflowId/selection/files`,
+    title: 'Select resources (files)',
+    workflowStepName: 'resourceSelectionFiles',
   },
   configPage: {
     path: (tenant: string, workflowId: string | number) =>
@@ -53,7 +60,8 @@ export const paths: { [key: string]: PathData } = {
 export const {
   landingPage,
   diagramSelection,
-  resourceSelection,
+  resourceSelectionAssets,
+  resourceSelectionFiles,
   configPage,
   reviewPage,
   diagramPreview,

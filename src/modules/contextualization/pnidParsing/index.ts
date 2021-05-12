@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { PnidsParsingJobSchema } from 'modules/types';
 import { startPnidParsingJob } from './actions';
-import { PnidsParsingJobSchema } from './types';
 
 const initialState: { [workflowId: number]: PnidsParsingJobSchema } = {};
 

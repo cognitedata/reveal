@@ -16,8 +16,8 @@ export interface PnidResponseEntity {
 }
 
 export type StartPnidParsingJobProps = {
-  files: FileInfo[];
-  resources: { assets: Asset[]; diagrams: FileInfo[] };
+  diagrams: FileInfo[];
+  resources: { assets?: Asset[]; files?: FileInfo[] };
   options: {
     minTokens: number;
     partialMatch: boolean;

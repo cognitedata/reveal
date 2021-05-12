@@ -5,14 +5,20 @@ import { Button, Tooltip, message } from 'antd';
 import { doSearch } from 'modules/search';
 import {
   PendingResourceSelection,
-  createSelection,
   WorkflowStep,
+  updateSelection,
+  removeSelection,
+  getActiveWorkflowItems,
 } from 'modules/workflows';
-import { usePrevAndNextStep, useActiveWorkflow } from 'hooks';
-import { searchCountSelector } from 'pages/SelectionPage/selectors';
-import { ResourceType, Filter } from 'modules/sdk-builder/types';
+import { ResourceType, Filter } from 'modules/types';
+import {
+  usePrevAndNextStep,
+  useActiveWorkflow,
+  usePreviousSelection,
+} from 'hooks';
 import StickyBottomRow from 'components/StickyBottomRow';
 import { Flex, IconButton } from 'components/Common';
+import { searchCountSelector } from 'pages/SelectionPage/selectors';
 import NotFound from 'pages/NotFound';
 import DiagramsSelection from './DiagramsSelection';
 import ResourcesSelection from './ResourcesSelection';
@@ -41,9 +47,28 @@ export default function SelectionPage(props: Props): JSX.Element {
   const [delayedFilter, setDelayedFilter] = useState<Filter>(filter);
   const [debouncedSetFilter] = useDebouncedCallback(setDelayedFilter, 300);
   const count = useSelector(searchCountSelector(type, filter));
-  const { goToNextStep, goToPrevStep } = usePrevAndNextStep(step);
   useActiveWorkflow(step);
+  const { goToNextStep, goToPrevStep } = usePrevAndNextStep(step);
+  const { resources } = useSelector(getActiveWorkflowItems);
+
+  const previousSelectionLoaded = usePreviousSelection(
+    step,
+    type,
+    filter,
+    setFilter,
+    setSelectAll,
+    setSelectedRowKeys
+  );
+
   const selectionSize = isSelectAll ? count ?? 0 : selectedRowKeys.length;
+  const isNoSelectionWhileRequired = required && selectionSize === 0;
+  const isNoSelectionOfAtLeastOneOptional =
+    !required &&
+    step === 'resourceSelectionFiles' &&
+    !Object.keys(resources ?? [])?.length;
+
+  const isStepDiagramSelection = step === 'diagramSelection';
+  const isStepResourceSelection = step.startsWith('resourceSelection');
 
   const updateFilter = useCallback(
     (f: Filter) => {
@@ -52,7 +77,6 @@ export default function SelectionPage(props: Props): JSX.Element {
     },
     [debouncedSetFilter]
   );
-
   const getCurrentFilter = () => {
     if (!isSelectAll) {
       return selectedRowKeys.map((el) => ({ id: el }));
@@ -66,35 +90,53 @@ export default function SelectionPage(props: Props): JSX.Element {
     return filter;
   };
 
-  const onNextStep = () => {
-    if (!type) return;
+  const updateCurrentSelection = () => {
+    if (previousSelectionLoaded) {
+      if (selectionSize === 0) {
+        dispatch(removeSelection(type));
+      }
+      if (selectionSize > 0) {
+        const currentFilter = getCurrentFilter();
+        const selection: PendingResourceSelection = {
+          type,
+          filter: currentFilter,
+          endpoint: isSelectAll ? 'list' : 'retrieve',
+        };
+        dispatch(updateSelection(selection));
+      }
+    }
+  };
 
-    const selection: PendingResourceSelection = {
-      type,
-      endpoint: isSelectAll ? 'list' : 'retrieve',
-      filter: getCurrentFilter(),
-    };
+  const onNextStep = (): void => {
     if (required && selectionSize === 0) {
       message.error('You have to select data to continue');
       return;
     }
-    dispatch(createSelection(selection));
+    if (!type) return;
     goToNextStep();
   };
 
-  const tooltipContent =
-    required &&
-    selectionSize === 0 &&
-    'This step is required. You must select at least one resource before proceeding';
+  useEffect(() => {
+    updateCurrentSelection();
+    // eslint-disable-next-line
+  }, [selectionSize]);
 
   useEffect(() => {
     dispatch(doSearch(type, delayedFilter));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line
   }, [delayedFilter]);
 
-  return (
-    <Flex column style={{ width: '100%' }}>
-      {step === 'diagramSelection' && (
+  const tooltipContent = (): string | undefined => {
+    if (isNoSelectionWhileRequired)
+      return 'This step is required. You must select at least one resource before proceeding';
+    if (isNoSelectionOfAtLeastOneOptional)
+      return 'You must select at least one optional resource before proceeding';
+    return undefined;
+  };
+
+  const getSelectionPage = () => {
+    if (isStepDiagramSelection)
+      return (
         <DiagramsSelection
           filter={filter}
           isSelectAll={isSelectAll}
@@ -103,29 +145,41 @@ export default function SelectionPage(props: Props): JSX.Element {
           setSelectedRowKeys={setSelectedRowKeys}
           updateFilter={updateFilter}
         />
-      )}
-      {step === 'resourceSelection' && (
+      );
+    if (isStepResourceSelection) {
+      const target = (): ResourceType => {
+        if (step === 'resourceSelectionAssets') return 'assets';
+        if (step === 'resourceSelectionFiles') return 'files';
+        return 'assets';
+      };
+      return (
         <ResourcesSelection
-          target="assets"
           filter={filter}
-          selectedRowKeys={selectedRowKeys}
           isSelectAll={isSelectAll}
+          selectedRowKeys={selectedRowKeys}
           setSelectAll={setSelectAll}
           setSelectedRowKeys={setSelectedRowKeys}
           updateFilter={updateFilter}
+          target={target()}
         />
-      )}
-      {step !== 'diagramSelection' && step !== 'resourceSelection' && (
-        <NotFound />
-      )}
+      );
+    }
+    return <NotFound />;
+  };
+
+  return (
+    <Flex column style={{ width: '100%' }}>
+      {getSelectionPage()}
       <StickyBottomRow>
         <IconButton icon="ArrowBack" type="secondary" onClick={goToPrevStep}>
           Back
         </IconButton>
-        <Tooltip title={tooltipContent}>
+        <Tooltip title={tooltipContent()}>
           <Button
             type="primary"
-            disabled={required && selectionSize === 0}
+            disabled={
+              isNoSelectionWhileRequired || isNoSelectionOfAtLeastOneOptional
+            }
             onClick={onNextStep}
           >
             Next step

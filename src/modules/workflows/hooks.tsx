@@ -35,7 +35,10 @@ export const useWorkflowDiagrams = (
   workflowId: number,
   all: boolean = false
 ) => {
-  const getDiagrams = workflowDiagramsSelector(workflowId, all);
+  const getDiagrams = useMemo(() => workflowDiagramsSelector(workflowId, all), [
+    workflowId,
+    all,
+  ]);
   const diagrams: FileInfo[] = useSelector(getDiagrams);
   return diagrams;
 };

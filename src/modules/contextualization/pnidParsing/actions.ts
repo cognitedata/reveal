@@ -14,11 +14,11 @@ import {
   RetrieveResultsResponseItem,
   RetrieveResultsResponseItems,
   StartPnidParsingJobProps,
-} from './types';
+} from 'modules/types';
 import {
   verticesToBoundingBox,
   mapAssetsToEntities,
-  mapDiagramsToEntities,
+  mapFilesToEntities,
 } from './helpers';
 import handleError from '../../../utils/handleError';
 import { createJob, finishJob, rejectJob, updateJob } from '.';
@@ -80,7 +80,7 @@ export const startPnidParsingJob = {
   action: createAsyncThunk(
     'workflow/startPnidParsingJob',
     async (
-      { files, resources, options, workflowId }: StartPnidParsingJobProps,
+      { diagrams, resources, options, workflowId }: StartPnidParsingJobProps,
       { getState, dispatch }: { getState: any; dispatch: any }
     ) => {
       const state = getState();
@@ -94,14 +94,19 @@ export const startPnidParsingJob = {
         return parsingJob?.jobId;
       }
 
+      const mappedDiagrams = diagrams.map((diagram: FileInfo) => ({
+        fileId: diagram.id,
+      }));
+      const mappedResources = [
+        ...mapAssetsToEntities(resources.assets),
+        ...mapFilesToEntities(resources.files),
+      ];
+
       try {
         const response = await sdk.post(createPnidDetectJobPath(sdk.project), {
           data: {
-            items: files.map((file) => ({ fileId: file.id })),
-            entities: [
-              ...mapAssetsToEntities(resources.assets),
-              ...mapDiagramsToEntities(resources.diagrams),
-            ],
+            items: mappedDiagrams,
+            entities: mappedResources,
             ...options,
           },
         });
@@ -136,10 +141,10 @@ export const startPnidParsingJob = {
                   // Create new annotations & load old ones
                   await Promise.allSettled(
                     items.map(async ({ fileId, annotations }) => {
-                      const file = files.find((f) => f.id === fileId);
-                      if (file) {
+                      const diagram = diagrams.find((d) => d.id === fileId);
+                      if (diagram) {
                         const fileAnnotationCount = await createPendingAnnotations(
-                          file,
+                          diagram,
                           jobId,
                           annotations
                         );

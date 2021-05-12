@@ -1,5 +1,5 @@
 import { Limit } from '@cognite/sdk';
-import { ItemsState, CountState, SearchState, ListState } from './types';
+import { ItemsState, CountState, SearchState, ListState } from 'modules/types';
 
 export * from './count/types';
 export * from './search/types';

@@ -8,7 +8,7 @@ import {
   ResourceType,
   ItemsList,
   SearchState,
-} from '../types';
+} from 'modules/types';
 import { createSearchSelector } from './selectors';
 
 export const defaultSearch: ApiSearchResult = { ids: [], status: undefined };

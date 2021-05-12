@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 import { DataSet } from '@cognite/sdk';
 import { RootState } from 'store';
-import { DataSetCount } from './types';
+import { DataSetCount } from 'modules/types';
 
 export const dataSetCounts = createSelector(
   (state: RootState) => state.datasets.items,

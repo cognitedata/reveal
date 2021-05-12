@@ -1,6 +1,6 @@
 import { createSlice, ActionReducerMapBuilder } from '@reduxjs/toolkit';
 import { InternalId } from '@cognite/sdk';
-import { ResourceType, ResourceState, Query } from './types';
+import { ResourceType, ResourceState, Query } from 'modules/types';
 import buildCount from './count';
 import buildSearch from './search';
 import buildList from './list';

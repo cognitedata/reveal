@@ -1,4 +1,4 @@
-import { ApiCall } from '../types';
+import { ApiCall } from 'modules/types';
 
 export type CountState = {
   [key: string]: ApiCountResult;

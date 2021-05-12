@@ -1,4 +1,4 @@
-import { ApiCall } from '../types';
+import { ApiCall } from 'modules/types';
 
 export interface ApiListResult extends ApiCall {
   ids?: number[];

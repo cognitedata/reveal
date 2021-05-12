@@ -12,11 +12,11 @@ import {
 } from 'modules/contextualization/uploadJobs';
 import { startPnidParsingWorkflow } from 'modules/contextualization/pnidWorkflow';
 import { useAnnotationsForFiles, useActiveWorkflow } from 'hooks';
-import LoadResources from 'containers/LoadResources';
 import MissingPermissionFeedback from 'components/MissingPermissionFeedback';
 import { Flex, PageTitle } from 'components/Common';
 import { canDeploySelectedFiles } from 'utils/FilesUtils';
-import { resourceSelection } from 'routes/paths';
+import { diagramSelection } from 'routes/paths';
+import ProgressBarSection from './ProgressBarSection';
 import { getWorkflowItems, getContextualizationJobs } from './selectors';
 import ResultsTable from './ResultsTable';
 
@@ -59,7 +59,7 @@ export default function ResultsOverview(props: Props) {
   useEffect(() => {
     if (!workflow) {
       message.error('Invalid Data Selections...');
-      history.push(resourceSelection.path(tenant, String(workflowId)));
+      history.push(diagramSelection.path(tenant, String(workflowId)));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workflow]);
@@ -144,7 +144,7 @@ export default function ResultsOverview(props: Props) {
           margin: '12px 0',
         }}
       >
-        <LoadResources />
+        <ProgressBarSection />
       </Flex>
       <Flex grow style={{ width: '100%', margin: '12px 0' }}>
         <ResultsTable

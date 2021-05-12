@@ -8,7 +8,7 @@ import {
   workflowDiagramStatusSelector,
   workflowAllResourcesStatusSelector,
 } from 'modules/workflows';
-import { Workflow, ResourceSelection, WorkflowStep } from './types';
+import { Workflow, ResourceSelection, WorkflowStep } from 'modules/types';
 import { getCountAction, getRetrieveAction } from './helpers';
 
 interface WorkflowState {
@@ -140,15 +140,15 @@ export const workflowsSlice = createSlice({
       state.items[workflowId] = initialWorkflow;
       state.active = workflowId;
     },
-    createSelection: (state, action) => {
-      const { type, endpoint, query, filter = 'none' } = action.payload;
+    updateSelection: (state, action) => {
+      const { type, endpoint, query, filter } = action.payload;
       const workflowId = state.active ?? Number(new Date());
       const { step } = state.items[workflowId];
       const selection = { type, endpoint, query, filter };
       if (step === 'diagramSelection') {
         state.items[workflowId].diagrams = selection;
       }
-      if (step === 'resourceSelection') {
+      if (step.startsWith('resourceSelection')) {
         const oldSelection = state.items[workflowId].resources ?? [];
         const resourceAlreadyExists = oldSelection.find(
           (old: any) => old.type === type
@@ -160,6 +160,23 @@ export const workflowsSlice = createSlice({
           });
           state.items[workflowId].resources = mergedSelection;
         } else state.items[workflowId].resources = [...oldSelection, selection];
+      }
+    },
+    removeSelection: (state, action) => {
+      const type = action.payload;
+      const workflowId = state.active ?? Number(new Date());
+      const { step } = state.items[workflowId];
+      if (step === 'diagramSelection') {
+        delete state.items[workflowId].diagrams;
+      }
+      if (step.startsWith('resourceSelection')) {
+        const filteredResourceSelection =
+          state.items[workflowId].resources?.filter(
+            (resource) => resource.type !== type
+          ) ?? [];
+        if (filteredResourceSelection?.length)
+          state.items[workflowId].resources = filteredResourceSelection;
+        else delete state.items[workflowId].resources;
       }
     },
     changeOptions: (state, action) => {
@@ -221,7 +238,8 @@ export const { reducer } = workflowsSlice;
 export const {
   setActiveWorkflowId,
   createNewWorkflow,
-  createSelection,
+  updateSelection,
+  removeSelection,
   changeOptions,
   moveToStep,
   importLocalStorageContent,

@@ -12,7 +12,7 @@ import {
   ApiListResult,
   ApiResult,
   Query,
-} from '../types';
+} from 'modules/types';
 import { createListSelector } from './selectors';
 import { updateAction as update } from '../reducers';
 
