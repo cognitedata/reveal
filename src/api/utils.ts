@@ -41,9 +41,9 @@ export function getFakeQueuedJob(
 
 export function getUnsavedAnnotation(
   text: string,
-  region: AnnotationRegion,
   modelType: VisionAPIType,
   fileId: number,
+  region?: AnnotationRegion,
   status = AnnotationStatus.Unhandled,
   source?: AnnotationSource,
   assetId?: number,
@@ -70,17 +70,20 @@ export function getUnsavedAnnotation(
 export function getRegionFromBox(
   type: RegionType = 'rectangle',
   box: AnnotationBoundingBox | null
-): AnnotationRegion {
+): AnnotationRegion | undefined {
+  if (!box) {
+    return undefined;
+  }
   return {
     shape: type,
     vertices: [
       {
-        x: box ? box.xMin : 0,
-        y: box ? box.yMin : 0,
+        x: box.xMin,
+        y: box.yMin,
       },
       {
-        x: box ? box.xMax : 0,
-        y: box ? box.yMax : 0,
+        x: box.xMax,
+        y: box.yMax,
       },
     ],
   };

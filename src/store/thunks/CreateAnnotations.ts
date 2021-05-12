@@ -26,9 +26,9 @@ export const CreateAnnotations = createAsyncThunk<
     unsavedAnnotations = [
       getUnsavedAnnotation(
         editModeAnnotationData.text,
-        getRegionFromBox('rectangle', editModeAnnotationData.box),
         VisionAPIType.ObjectDetection,
         payload.fileId,
+        getRegionFromBox('rectangle', editModeAnnotationData.box),
         AnnotationStatus.Verified,
         'user'
       ),

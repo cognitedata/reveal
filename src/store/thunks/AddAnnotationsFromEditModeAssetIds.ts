@@ -36,10 +36,10 @@ export const AddAnnotationsFromEditModeAssetIds = createAsyncThunk<
       // add annotations without bounding box as virtual annotations
       const assetAnnotations = assets.map((asset) =>
         getUnsavedAnnotation(
-          editModeAnnotationData.text,
-          getRegionFromBox('rectangle', editModeAnnotationData.box),
+          asset.externalId || asset.name,
           VisionAPIType.TagDetection,
           file.id,
+          getRegionFromBox('rectangle', editModeAnnotationData.box),
           AnnotationStatus.Verified,
           'user',
           asset.id,
