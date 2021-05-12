@@ -8,8 +8,7 @@ import debounce from 'lodash/debounce';
 import omit from 'lodash/omit';
 import ComboControls from '@cognite/three-combo-controls';
 import { CogniteClient } from '@cognite/sdk';
-import { debounceTime, filter, map } from 'rxjs/operators';
-import { merge, Subject, Subscription, fromEventPattern, Observable } from 'rxjs';
+import { Subscription, fromEventPattern } from 'rxjs';
 
 import { from3DPositionToRelativeViewportCoordinates } from '../../utilities/worldToViewport';
 import { intersectCadNodes } from '../../datamodels/cad/picking';
@@ -104,7 +103,6 @@ export class Cognite3DViewer {
   private readonly scene: THREE.Scene;
   private readonly controls: ComboControls;
   private readonly sdkClient: CogniteClient;
-  private readonly _updateCameraNearAndFarSubject: Subject<{ camera: THREE.PerspectiveCamera; force: boolean }>;
   private readonly _subscription = new Subscription();
   private readonly _revealManager: RevealManager<CdfModelIdentifier>;
   private readonly _domElement: HTMLElement;
@@ -263,7 +261,6 @@ export class Cognite3DViewer {
       )
     );
 
-    this._updateCameraNearAndFarSubject = this.setupUpdateCameraNearAndFar();
     this.animate(0);
 
     trackEvent('construct3dViewer', {
@@ -620,7 +617,7 @@ export class Cognite3DViewer {
     object.updateMatrixWorld(true);
     this.extraObjects.push(object);
     this.renderController.redraw();
-    this.triggerUpdateCameraNearAndFar(true);
+    this.updateCameraNearAndFar(this.camera);
   }
 
   /**
@@ -643,7 +640,7 @@ export class Cognite3DViewer {
       this.extraObjects.splice(index, 1);
     }
     this.renderController.redraw();
-    this.triggerUpdateCameraNearAndFar(true);
+    this.updateCameraNearAndFar(this.camera);
   }
 
   /**
@@ -1219,7 +1216,7 @@ export class Cognite3DViewer {
       if (renderController.needsRedraw || this._revealManager.needsRedraw || this._slicingNeedsUpdate) {
         const frameNumber = this.renderer.info.render.frame;
         const start = Date.now();
-        this.triggerUpdateCameraNearAndFar();
+        this.updateCameraNearAndFar(this.camera);
         this._revealManager.render(this.camera);
         renderController.clearNeedsRedraw();
         this._revealManager.resetRedraw();
@@ -1229,45 +1226,6 @@ export class Cognite3DViewer {
         this._events.sceneRendered.fire({ frameNumber, renderTime, renderer: this.renderer, camera: this.camera });
       }
     }
-  }
-
-  /** @private */
-  private setupUpdateCameraNearAndFar(): Subject<{ camera: THREE.PerspectiveCamera; force: boolean }> {
-    const lastUpdatePosition = new THREE.Vector3(Infinity, Infinity, Infinity);
-    const camPosition = new THREE.Vector3();
-
-    const updateNearFarSubject = new Subject<{ camera: THREE.PerspectiveCamera; force: boolean }>();
-    updateNearFarSubject
-      .pipe(
-        map(state => {
-          if (state.force) {
-            // Emulate camera movement to force update
-            return Infinity;
-          }
-          return lastUpdatePosition.distanceToSquared(state.camera.getWorldPosition(camPosition));
-        }),
-        (source: Observable<number>) => {
-          return merge(
-            // When camera is moved more than 10 meters
-            source.pipe(filter(distanceMoved => distanceMoved > 10.0)),
-            // Or it's been a while since we last update near/far and camera has moved slightly
-            source.pipe(
-              debounceTime(100),
-              filter(distanceMoved => distanceMoved > 0.0)
-            )
-          );
-        }
-      )
-      .subscribe(() => {
-        this.camera.getWorldPosition(lastUpdatePosition);
-        this.updateCameraNearAndFar(this.camera);
-      });
-    return updateNearFarSubject;
-  }
-
-  /** @private */
-  private triggerUpdateCameraNearAndFar(force?: boolean) {
-    this._updateCameraNearAndFarSubject.next({ camera: this.camera, force: !!force });
   }
 
   /** @private */
