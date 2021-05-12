@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import styled from 'styled-components/macro';
 import debounce from 'lodash/debounce';
 import isEqual from 'lodash/isEqual';
@@ -46,6 +46,10 @@ const WorkflowEditor = ({
   const [activeNode, setActiveNode] = useState<StorableNode>();
   const [isAddNodeMenuOpen, setAddNodeMenuVisibility] = useState(false);
   const defaultNewNodePosition = { x: 380, y: 16 };
+  const [newNodePosition, setNewNodePosition] = useState<StorableNode>(
+    defaultNewNodePosition
+  );
+  const nodeEditor = useRef<HTMLDivElement>(null);
   const workflow = chart?.workflowCollection?.find(
     (flow) => flow.id === workflowId
   );
@@ -73,6 +77,8 @@ const WorkflowEditor = ({
 
   // This have to be debouced as it is called continuously when dragging nodes
   const onUpdateNode = debounce((nextNode: Node) => {
+    console.log(nextNode);
+
     const nodeUpdate = nodes.map((node) =>
       node.id === nextNode.id ? nextNode : node
     );
@@ -115,9 +121,25 @@ const WorkflowEditor = ({
     setAddNodeMenuVisibility(state);
   };
 
+  const setNodePosition = (event: React.MouseEvent) => {
+    console.log(event);
+    console.log(nodeEditor);
+    if (nodeEditor?.current) {
+      const n: HTMLElement = nodeEditor.current;
+      const { x, y } = n.getBoundingClientRect();
+      console.log(event.clientX - x, event.clientY - y);
+
+      setNewNodePosition({
+        x: event.clientX - x,
+        y: event.clientY - y,
+      });
+    }
+  };
+
   return (
     <WorkflowContainer>
       <ControllerProvider
+        ref={nodeEditor}
         pinTypes={pinTypes}
         connections={connections}
         onConnectionsUpdate={(c: Connection[]) => update({ connections: c })}
@@ -176,18 +198,35 @@ const WorkflowEditor = ({
           placement="right-start"
           onClickOutside={() => toggleAddNodeMenu(false)}
           content={
-            <Menu style={{ marginTop: '-10.5px' }}>
+            <Menu
+              style={{ marginTop: '-10.5px' }}
+              onMouseOver={(e) => setNodePosition(e as any)}
+            >
               {Object.values(defaultNodeOptions).map((nodeOption) => (
                 <Menu.Item
                   key={nodeOption.name}
                   onClick={() => {
+                    document.addEventListener('mousemove', (e) => {
+                      setNodePosition(e as any);
+                      update({
+                        nodes: [
+                          ...nodes,
+                          {
+                            id: nanoid(),
+                            ...nodeOption.node,
+                            ...newNodePosition,
+                            calls: [],
+                          },
+                        ],
+                      });
+                    });
                     update({
                       nodes: [
                         ...nodes,
                         {
                           id: nanoid(),
                           ...nodeOption.node,
-                          ...defaultNewNodePosition,
+                          ...newNodePosition,
                           calls: [],
                         },
                       ],
