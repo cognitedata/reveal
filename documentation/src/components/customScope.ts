@@ -2,7 +2,6 @@ import * as THREE from 'three';
 
 import { Water } from 'three/examples/jsm/objects/Water';
 import { DragControls } from 'three/examples/jsm/controls/DragControls';
-import * as reveal from '@cognite/reveal';
 import * as viewerUtils from '../viewerUtilities';
 import { AxisViewTool, ExplodedViewTool, HtmlOverlayTool, Corner } from '@cognite/reveal/tools';
 
