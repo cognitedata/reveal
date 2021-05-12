@@ -17,7 +17,7 @@ import {
   ByTreeIndexNodeSet,
   IndexSet
 } from '@cognite/reveal';
-import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool } from '@cognite/reveal/tools';
+import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, AxisViewTool } from '@cognite/reveal/tools';
 import { CadNode } from '@cognite/reveal/experimental';
 import * as reveal from '@cognite/reveal';
 
@@ -277,7 +277,7 @@ export function Migration() {
         guiState.debug.stats.renderTime = sceneRenderedEventArgs.renderTime;
         debugStatsGui.updateDisplay();
       });
-      
+
       const debugSectorsGui = debugGui.addFolder('Loaded sectors');
 
       debugSectorsGui.add(guiState.debug.loadedSectors.options, 'colorBy', ['lod', 'depth', 'loadedTimestamp']).name('Color by');
@@ -472,6 +472,7 @@ export function Migration() {
 
       assetExplode.add(explodeActions, 'reset').name('Reset');
 
+      new AxisViewTool(viewer);
       viewer.on('click', async event => {
         const { offsetX, offsetY } = event;
         console.log('2D coordinates', event);

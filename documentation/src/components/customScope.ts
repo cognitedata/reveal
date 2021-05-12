@@ -2,15 +2,18 @@ import * as THREE from 'three';
 
 import { Water } from 'three/examples/jsm/objects/Water';
 import { DragControls } from 'three/examples/jsm/controls/DragControls';
-import { HtmlOverlayTool } from '@cognite/reveal/tools';
-import { ExplodedViewTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
 import * as viewerUtils from '../viewerUtilities';
+import { AxisViewTool, ExplodedViewTool, HtmlOverlayTool, Corner } from '@cognite/reveal/tools';
+
+const reveal = typeof window === 'undefined' ? {} : require('@cognite/reveal');
 
 export const customScope: Record<string, any> = {
   ...viewerUtils,
   HtmlOverlayTool,
   ExplodedViewTool,
+  AxisViewTool,
+  Corner,
   THREE,
   Water,
   DragControls,

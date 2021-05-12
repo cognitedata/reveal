@@ -16,7 +16,6 @@ import { SsaoSampleQuality } from '../../../public/types';
 import { WebGLRendererStateHelper } from '../../../utilities/WebGLRendererStateHelper';
 import { SectorNode } from '../sector/SectorNode';
 import { LevelOfDetail } from '../sector/LevelOfDetail';
-import { BufferAttribute } from 'three';
 
 export class EffectRenderManager {
   private readonly _materialManager: CadMaterialManager;
@@ -93,11 +92,24 @@ export class EffectRenderManager {
   private _renderTarget: THREE.WebGLRenderTarget | null;
   private _autoSetTargetSize: boolean = false;
 
+  private _uiObjects: { object: THREE.Object3D; screenPos: THREE.Vector2; width: number; height: number }[] = [];
+
   public set renderOptions(options: RenderOptions) {
     const ssaoParameters = this.ssaoParameters(options);
     const inputSsaoOptions = { ...ssaoParameters };
     this.setSsaoParameters(inputSsaoOptions);
     this._renderOptions = { ...options, ssaoRenderParameters: { ...ssaoParameters } };
+  }
+
+  public addUiObject(object: THREE.Object3D, screenPos: THREE.Vector2, size: THREE.Vector2) {
+    this._uiObjects.push({ object: object, screenPos, width: size.x, height: size.y });
+  }
+
+  public removeUiObject(object: THREE.Object3D) {
+    this._uiObjects = this._uiObjects.filter(p => {
+      const filteredObject = p.object;
+      return object !== filteredObject;
+    });
   }
 
   private ssaoParameters(renderOptions: RenderOptions): SsaoParameters {
@@ -123,7 +135,7 @@ export class EffectRenderManager {
     this._renderer = renderer;
     this._renderOptions = options;
     this._materialManager = materialManager;
-    this._orthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+    this._orthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, -1, 1);
 
     this._renderTarget = null;
 
@@ -407,10 +419,10 @@ export class EffectRenderManager {
 
           if (supportsSsao) {
             this.renderSsao(renderer, this._ssaoTarget, camera);
-            this.renderBlurredSsao(renderer, this._ssaoBlurTarget);
+            this.renderPostProcessStep(renderer, this._ssaoBlurTarget, this._ssaoBlurScene);
           }
 
-          this.renderAntiAlias(renderer, this._renderTarget);
+          this.renderPostProcessStep(renderer, this._renderTarget, this._fxaaScene);
           break;
 
         case AntiAliasingMode.NoAA:
@@ -419,7 +431,7 @@ export class EffectRenderManager {
           if (supportsSsao) {
             this.renderComposition(renderer, camera, this._compositionTarget);
             this.renderSsao(renderer, this._ssaoTarget, camera);
-            this.renderBlurredSsao(renderer, this._renderTarget);
+            this.renderPostProcessStep(renderer, this._renderTarget, this._fxaaScene);
           } else {
             this.renderComposition(renderer, camera, this._renderTarget);
           }
@@ -623,8 +635,7 @@ export class EffectRenderManager {
     this._combineOutlineDetectionMaterial.uniforms.cameraNear.value = camera.near;
     this._combineOutlineDetectionMaterial.uniforms.cameraFar.value = camera.far;
 
-    renderer.setRenderTarget(target);
-    renderer.render(this._compositionScene, this._orthographicCamera);
+    this.renderPostProcessStep(renderer, target, this._compositionScene);
   }
 
   private setSsaoParameters(params: SsaoParameters) {
@@ -651,22 +662,45 @@ export class EffectRenderManager {
     }
   }
 
+  private renderPostProcessStep(
+    renderer: THREE.WebGLRenderer,
+    target: THREE.WebGLRenderTarget | null,
+    scene: THREE.Scene
+  ) {
+    renderer.setRenderTarget(target);
+
+    renderer.render(scene, this._orthographicCamera);
+
+    if (target === this._renderTarget) {
+      const renderSize = renderer.getSize(new THREE.Vector2());
+      const canvasSize = new THREE.Vector2(renderer.domElement.clientWidth, renderer.domElement.clientHeight);
+
+      const downSampleFactor = new THREE.Vector2(renderSize.x / canvasSize.x, renderSize.y / canvasSize.y);
+
+      renderer.autoClear = false;
+      this._uiObjects.forEach(uiObject => {
+        const renderScene = new THREE.Scene();
+        renderScene.add(uiObject.object);
+
+        const viewportRenderPos = uiObject.screenPos.clone().multiply(downSampleFactor);
+        const viewportRenderWidth = uiObject.width * downSampleFactor.x;
+        const viewportRenderHeight = uiObject.height * downSampleFactor.y;
+
+        renderer.setViewport(viewportRenderPos.x, viewportRenderPos.y, viewportRenderWidth, viewportRenderHeight);
+        renderer.clearDepth();
+        renderer.render(renderScene, this._orthographicCamera);
+      });
+
+      renderer.setViewport(0, 0, renderSize.x, renderSize.y);
+      renderer.autoClear = true;
+    }
+  }
+
   private renderSsao(renderer: THREE.WebGLRenderer, target: THREE.WebGLRenderTarget | null, camera: THREE.Camera) {
     this._ssaoMaterial.uniforms.inverseProjectionMatrix.value = camera.projectionMatrixInverse;
     this._ssaoMaterial.uniforms.projMatrix.value = camera.projectionMatrix;
 
-    renderer.setRenderTarget(target);
-    renderer.render(this._ssaoScene, this._orthographicCamera);
-  }
-
-  private renderBlurredSsao(renderer: THREE.WebGLRenderer, target: THREE.WebGLRenderTarget | null) {
-    renderer.setRenderTarget(target);
-    renderer.render(this._ssaoBlurScene, this._orthographicCamera);
-  }
-
-  private renderAntiAlias(renderer: THREE.WebGLRenderer, target: THREE.WebGLRenderTarget | null) {
-    renderer.setRenderTarget(target);
-    renderer.render(this._fxaaScene, this._orthographicCamera);
+    this.renderPostProcessStep(renderer, target, this._ssaoScene);
   }
 
   private createOutlineColorTexture(): THREE.DataTexture {
@@ -762,8 +796,8 @@ export class EffectRenderManager {
     const vertices = new Float32Array([-1, -1, 0, 3, -1, 0, -1, 3, 0]);
     const uvs = new Float32Array([0, 0, 2, 0, 0, 2]);
 
-    geometry.setAttribute('position', new BufferAttribute(vertices, 3));
-    geometry.setAttribute('uv', new BufferAttribute(uvs, 2));
+    geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+    geometry.setAttribute('uv', new THREE.BufferAttribute(uvs, 2));
 
     return geometry;
   }
