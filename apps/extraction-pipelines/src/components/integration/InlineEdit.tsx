@@ -19,7 +19,7 @@ import { DivFlex } from 'styles/flex/StyledFlex';
 import ValidationError from 'components/form/ValidationError';
 import { AnyObjectSchema } from 'yup';
 import { ColumnForm, StyledInput, StyledLabel } from 'styles/StyledForm';
-import { CloseButton, SaveButton, StyledEdit } from 'styles/StyledButton';
+import { CloseButton, SaveButton, EditButton } from 'styles/StyledButton';
 import { AddInfo } from './AddInfo';
 
 export interface InlineEditProps<Fields> {
@@ -128,7 +128,7 @@ const InlineEdit = <Fields extends FieldValues>({
           </DivFlex>
         </DivFlex>
       ) : (
-        <StyledEdit
+        <EditButton
           onClick={onEditClick}
           title="Toggle edit row"
           aria-expanded={isEdit}
@@ -139,7 +139,7 @@ const InlineEdit = <Fields extends FieldValues>({
           {viewComp ?? (
             <AddInfo fieldValue={defaultValues[name]} fieldName={name} />
           )}
-        </StyledEdit>
+        </EditButton>
       )}
     </ColumnForm>
   );

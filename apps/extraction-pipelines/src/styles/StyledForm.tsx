@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 import React from 'react';
-import { Button, Colors, Input } from '@cognite/cogs.js';
+import { Colors, Input } from '@cognite/cogs.js';
 import { PaddedGridForm } from 'styles/grid/StyledGrid';
-import { hintBottomSpacing } from 'styles/StyledVariables';
+import { hintBottomSpacing, sideBarLabelColor } from 'styles/StyledVariables';
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   inputWidth?: number;
@@ -73,63 +73,6 @@ export const StyledTextArea = styled.textarea`
   }
 `;
 
-export const EditButton = styled((props) => (
-  <Button
-    type="ghost"
-    icon="Edit"
-    iconPlacement="right"
-    className="edit-button"
-    {...props}
-  >
-    {props.children}
-  </Button>
-))`
-  display: grid;
-  grid-template-columns: 1fr 3rem;
-  text-align: left;
-  grid-column-gap: 1rem;
-  height: fit-content;
-  width: ${(props: { width?: string }) => props.width || 'auto'}; ;
-`;
-
-export const SwitchButton = styled.button`
-  width: 6rem;
-  background: white;
-  border: 0.125rem solid ${Colors.primary.hex()};
-  border-radius: 0.2rem;
-  padding: 0.2rem;
-  &:focus {
-    outline: -webkit-focus-ring-color auto 0.0625rem;
-    outline-offset: 0.0625rem;
-  }
-  .on,
-  .off {
-    margin: 1rem 0.3rem;
-    padding: 0.2rem 0.4rem;
-    border-radius: 0.2rem;
-  }
-  &[role='switch'][aria-checked='true'] {
-    .on {
-      background: ${Colors.primary.hex()};
-      color: white;
-    }
-    .off {
-      background: white;
-      color: ${Colors.primary.hex()};
-    }
-  }
-  &[role='switch'][aria-checked='false'] {
-    .on {
-      background: white;
-      color: ${Colors.primary.hex()};
-    }
-    .off {
-      background: ${Colors.primary.hex()};
-      color: white;
-    }
-  }
-`;
-
 export const ErrorSpan = styled.span`
   color: ${Colors.danger.hex()};
 `;
@@ -154,5 +97,22 @@ export const ColumnForm = styled.form`
   margin-bottom: ${(props: { mb?: boolean }) => (props.mb ? '1rem' : '0')};
   label {
     margin-left: 1rem;
+    color: ${sideBarLabelColor};
+  }
+`;
+
+export const AddForm = styled.form`
+  display: grid;
+  grid-column-gap: 0.5rem;
+  align-items: center;
+  grid-template-rows: max-content;
+  input {
+    width: 100%;
+  }
+  button {
+    justify-self: end;
+  }
+  [aria-expanded] {
+    justify-self: end;
   }
 `;

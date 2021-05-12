@@ -2,11 +2,11 @@ import { useRouteMatch } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
 import { Icon, Title } from '@cognite/cogs.js';
 import React from 'react';
-import { RegisterIntegrationInfo } from '../../model/Integration';
-import { withTenant } from '../../routing/CreateRouteConfig';
-import { useStoredRegisterIntegration } from '../../hooks/useStoredRegisterIntegration';
-import { getFieldValue } from '../../utils/fieldUtils';
-import { StyledNavLink } from '../../styles/StyledButtons';
+import { StyledNavLink } from 'styles/StyledLinks';
+import { RegisterIntegrationInfo } from 'model/Integration';
+import { withTenant } from 'routing/CreateRouteConfig';
+import { useStoredRegisterIntegration } from 'hooks/useStoredRegisterIntegration';
+import { getFieldValue } from 'utils/fieldUtils';
 
 export interface TaskItemProps {
   path: string;

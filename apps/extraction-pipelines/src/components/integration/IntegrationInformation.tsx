@@ -15,6 +15,7 @@ import EditRawTable from 'components/inputs/rawSelector/EditRawTable';
 import { ContactsView } from 'components/integration/ContactsView';
 import { MetaData } from 'components/integration/MetaData';
 import { EditDataSetId } from 'components/integration/edit/EditDataSetId';
+import { bottomSpacing, sideBarSectionSpacing } from 'styles/StyledVariables';
 
 const Wrapper = styled.div`
   padding: 2rem;
@@ -49,6 +50,7 @@ export const IntegrationInformation: FunctionComponent<IntegrationInformationPro
         label={DetailFieldNames.ID}
         fieldName="id"
         fieldValue={integration?.id}
+        mb={bottomSpacing}
       />
       <EditDataSetId />
       <EditRawTable />
@@ -73,16 +75,19 @@ export const IntegrationInformation: FunctionComponent<IntegrationInformationPro
         label={DetailFieldNames.CREATED_BY}
         fieldName="createdBy"
         fieldValue={integration?.createdBy}
+        mb={bottomSpacing}
       />
       <FieldVerticalDisplay
         label={DetailFieldNames.CREATED_TIME}
         fieldName="createdTime"
         fieldValue={integration?.createdTime}
+        mb={bottomSpacing}
       />
       <FieldVerticalDisplay
         label={DetailFieldNames.LAST_UPDATED_TIME}
         fieldName="lastUpdatedTime"
         fieldValue={integration?.lastUpdatedTime}
+        mb={sideBarSectionSpacing}
       />
       <MetaData />
     </Wrapper>

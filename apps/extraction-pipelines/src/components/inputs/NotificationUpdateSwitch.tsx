@@ -9,7 +9,7 @@ import {
 } from 'hooks/details/useDetailsUpdate';
 import MessageDialog from 'components/buttons/MessageDialog';
 import { SERVER_ERROR_CONTENT, SERVER_ERROR_TITLE } from 'utils/constants';
-import { SwitchButton } from 'styles/StyledForm';
+import { SwitchButton } from 'styles/StyledButton';
 import { updateContactField } from 'utils/integrationUtils';
 
 interface TestProps<Fields> {

@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useState } from 'react';
 import { DetailFieldNames, Integration } from 'model/Integration';
 import { RawEditModal } from 'components/modals/RawEditModal';
-import { StyledEdit } from 'styles/StyledButton';
+import { EditButton } from 'styles/StyledButton';
 import { TEST_ID_BTN_SAVE } from 'components/integration/DocumentationSection';
 import { useSelectedIntegration } from 'hooks/useSelectedIntegration';
 import { useIntegrationById } from 'hooks/useIntegration';
@@ -78,7 +78,7 @@ const EditRawTable: FunctionComponent = () => {
 
   return (
     <>
-      <StyledEdit
+      <EditButton
         onClick={toggleModal(true)}
         title="Toggle raw table modal"
         data-testid={`${TEST_ID_BTN_SAVE}rawTable`}
@@ -89,7 +89,7 @@ const EditRawTable: FunctionComponent = () => {
           <Icon type="Dot" aria-hidden />
           <span>{RAW_TABLE}</span>
         </RawLabel>
-      </StyledEdit>
+      </EditButton>
       {renderRaw(storedIntegration)}
       <RawEditModal visible={showRawModal} onCancel={toggleModal(false)} />
     </>

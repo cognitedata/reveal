@@ -11,7 +11,12 @@ import { DetailHeadingEditBtn } from 'components/buttons/DetailHeadingEditBtn';
 import { AddFieldValueBtn } from 'components/buttons/AddFieldValueBtn';
 import { EditModal } from 'components/modals/EditModal';
 import { ContactsSection } from 'components/integration/ContactsSection';
+import styled from 'styled-components';
+import { sideBarSectionSpacing } from 'styles/StyledVariables';
 
+const Wrapper = styled.div`
+  margin-bottom: ${sideBarSectionSpacing};
+`;
 interface ContactsViewProps {}
 
 export const ContactsView: FunctionComponent<ContactsViewProps> = () => {
@@ -36,7 +41,7 @@ export const ContactsView: FunctionComponent<ContactsViewProps> = () => {
   };
 
   return (
-    <>
+    <Wrapper>
       <DetailHeadingEditBtn onClick={openEdit}>
         {DetailFieldNames.OWNER}
       </DetailHeadingEditBtn>
@@ -62,9 +67,9 @@ export const ContactsView: FunctionComponent<ContactsViewProps> = () => {
           {TableHeadings.CONTACTS.toLowerCase()}
         </AddFieldValueBtn>
       )}
-      <EditModal visible={showModal} onCancel={hideModal}>
+      <EditModal visible={showModal} onCancel={hideModal} width={1024}>
         <ContactsSection />
       </EditModal>
-    </>
+    </Wrapper>
   );
 };

@@ -12,9 +12,9 @@ import {
 import { ErrorMessage } from '@hookform/error-message';
 import { DivFlex } from 'styles/flex/StyledFlex';
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
-import { Hint, StyledLabel, SwitchButton } from 'styles/StyledForm';
+import { Hint, StyledLabel } from 'styles/StyledForm';
 import { Button, Colors, Icon } from '@cognite/cogs.js';
-import { ButtonPlaced } from 'styles/StyledButton';
+import { ButtonPlaced, SwitchButton } from 'styles/StyledButton';
 import styled from 'styled-components';
 import { TableHeadings } from 'components/table/IntegrationTableCol';
 import { FullInput } from 'components/inputs/FullInput';

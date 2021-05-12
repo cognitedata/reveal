@@ -29,7 +29,7 @@ import {
   BlueText,
   CloseButton,
   SaveButton,
-  StyledEdit,
+  EditButton,
 } from 'styles/StyledButton';
 import { HeadingLabel } from 'components/inputs/HeadingLabel';
 import { DetailFieldNames } from 'model/Integration';
@@ -130,7 +130,7 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
     setEdit(true);
   };
   const handleClickError = () => {
-    clearErrors('documentation');
+    clearErrors('server');
   };
 
   const onCancel = () => {
@@ -183,7 +183,7 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
             />
           </>
         ) : (
-          <StyledEdit
+          <EditButton
             onClick={onEditClick}
             className="edit-button"
             title="Toggle edit documentation"
@@ -201,7 +201,7 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
                 <BlueText>add documentation</BlueText>
               </>
             )}
-          </StyledEdit>
+          </EditButton>
         )}
       </DocumentationForm>
     </DocumentationWrapper>

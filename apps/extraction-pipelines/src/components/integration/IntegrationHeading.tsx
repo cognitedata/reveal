@@ -14,6 +14,7 @@ import { useAppEnv } from 'hooks/useAppEnv';
 import { rootUpdate } from 'hooks/details/useDetailsUpdate';
 import { DivFlex } from 'styles/flex/StyledFlex';
 import DetailsValueView from 'components/table/details/DetailsValueView';
+import { bottomSpacing } from 'styles/StyledVariables';
 
 const Wrapper = styled.div`
   margin: 1rem;
@@ -24,6 +25,7 @@ const Wrapper = styled.div`
 `;
 const ImportantWrapper = styled(DivFlex)`
   margin-left: 1rem;
+  margin-bottom: ${bottomSpacing};
   .cogs-icon {
     margin-right: 1rem;
   }
@@ -35,6 +37,7 @@ const ImportantWrapper = styled(DivFlex)`
 const StyledTitle = styled(Title)`
   &.cogs-title-1 {
     font-size: 1.5rem;
+    line-height: normal;
     margin: 0;
   }
 `;

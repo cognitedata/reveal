@@ -19,7 +19,7 @@ import {
   SERVER_ERROR_CONTENT,
   SERVER_ERROR_TITLE,
 } from 'utils/constants';
-import { CloseButton, SaveButton, StyledEdit } from 'styles/StyledButton';
+import { CloseButton, SaveButton, EditButton } from 'styles/StyledButton';
 import { AddInfo } from 'components/integration/AddInfo';
 import { ColumnForm, StyledLabel } from 'styles/StyledForm';
 import styled from 'styled-components';
@@ -137,7 +137,7 @@ export const EditDataSetId: FunctionComponent = () => {
             </DivFlex>
           </Wrapper>
         ) : (
-          <StyledEdit
+          <EditButton
             onClick={onEditClick}
             title="Toggle edit row"
             aria-expanded={isEdit}
@@ -146,7 +146,7 @@ export const EditDataSetId: FunctionComponent = () => {
             $full
           >
             <AddInfo fieldValue={integration?.dataSet} fieldName="dataSet" />
-          </StyledEdit>
+          </EditButton>
         )}
       </ColumnForm>
     </FormProvider>

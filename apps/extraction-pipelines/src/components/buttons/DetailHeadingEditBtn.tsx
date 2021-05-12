@@ -1,15 +1,17 @@
 import styled from 'styled-components';
-import { StyledEdit } from 'styles/StyledButton';
+import { EditButton } from 'styles/StyledButton';
 import { Colors, Title } from '@cognite/cogs.js';
 import React, { PropsWithChildren } from 'react';
+import { sideBarLabelColor } from 'styles/StyledVariables';
 
-export const HeadingStyledEdit = styled(StyledEdit)`
-  font-weight: bold;
-`;
 export const StyledTitle = styled(Title)`
   border-bottom: 1px solid ${Colors['greyscale-grey2'].hex()};
   margin-bottom: 0.5rem;
   font-size: 0.875rem;
+  button {
+    font-weight: bold;
+    color: ${sideBarLabelColor};
+  }
 `;
 
 interface DetailHeadingEditProps {
@@ -22,9 +24,9 @@ export const DetailHeadingEditBtn = ({
 }: PropsWithChildren<DetailHeadingEditProps>) => {
   return (
     <StyledTitle level={3}>
-      <HeadingStyledEdit onClick={onClick} $full>
+      <EditButton onClick={onClick} $full>
         {children}
-      </HeadingStyledEdit>
+      </EditButton>
     </StyledTitle>
   );
 };

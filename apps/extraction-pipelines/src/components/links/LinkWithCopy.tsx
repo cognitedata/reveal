@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from 'react';
 import { CopyType } from 'components/InteractiveCopyWithText';
-import { StyledLink } from 'styles/StyledButtons';
+import { StyledLink } from 'styles/StyledLinks';
 import InteractiveCopy from 'components/InteractiveCopy';
 
 interface OwnProps {

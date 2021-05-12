@@ -2,12 +2,12 @@ import React, { FunctionComponent, PropsWithoutRef, useState } from 'react';
 import { useSelectedIntegration } from 'hooks/useSelectedIntegration';
 import { useIntegrationById } from 'hooks/useIntegration';
 import { Controller, useForm } from 'react-hook-form';
-import { Button, Icon } from '@cognite/cogs.js';
+import { Button } from '@cognite/cogs.js';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { contactSchema } from 'utils/validation/integrationSchemas';
 import {
-  useDetailsUpdate,
   createUpdateSpec,
+  useDetailsUpdate,
 } from 'hooks/details/useDetailsUpdate';
 import { User } from 'model/User';
 import { useAppEnv } from 'hooks/useAppEnv';
@@ -16,30 +16,24 @@ import styled from 'styled-components';
 import {
   ADD_CONTACT,
   ADD_OWNER,
-  CLOSE,
   EMAIL_LABEL,
   NAME_LABEL,
   ROLE_LABEL,
-  SAVE,
   SERVER_ERROR_CONTENT,
   SERVER_ERROR_TITLE,
 } from 'utils/constants';
-import { SwitchButton } from 'styles/StyledForm';
+import { AddForm } from 'styles/StyledForm';
 import MessageDialog from 'components/buttons/MessageDialog';
+import { CloseButton, SaveButton, SwitchButton } from 'styles/StyledButton';
+import { bottomSpacing, topSpacing } from 'styles/StyledVariables';
 
-const StyledForm = styled.form`
-  display: grid;
-  grid-template-columns: 10rem 6rem 1fr 1fr 3rem 3rem;
-  grid-column-gap: 0.5rem;
-  align-items: center;
-  grid-template-rows: max-content;
-  input {
-    width: 100%;
-  }
+const StyledForm = styled(AddForm)`
+  grid-template-columns: 10rem 6rem 1fr 1fr 3rem 2.5rem;
 `;
 
 const AddButton = styled(Button)`
-  margin-top: 1rem;
+  margin-top: ${topSpacing};
+  margin-bottom: ${bottomSpacing};
   justify-self: start;
 `;
 interface AddContactProps {
@@ -148,24 +142,10 @@ export const AddContact: FunctionComponent<AddContactProps> = ({
             title={SERVER_ERROR_TITLE}
             contentText={SERVER_ERROR_CONTENT}
           >
-            <Button
-              className="edit-form-btn btn-margin-right"
-              type="primary"
-              htmlType="submit"
-              aria-label={SAVE}
-            >
-              <Icon type="Checkmark" />
-            </Button>
+            <SaveButton htmlType="submit" />
           </MessageDialog>
 
-          <Button
-            variant="default"
-            className="edit-form-btn"
-            aria-label={CLOSE}
-            onClick={onCancelClick}
-          >
-            <Icon type="Close" />
-          </Button>
+          <CloseButton className="edit-form-btn" onClick={onCancelClick} />
         </StyledForm>
       ) : (
         <AddButton type="tertiary" onClick={onAddContact}>

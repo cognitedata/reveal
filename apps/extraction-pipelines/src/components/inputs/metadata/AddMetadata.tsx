@@ -21,23 +21,10 @@ import {
 } from 'utils/constants';
 import MessageDialog from 'components/buttons/MessageDialog';
 import { CloseButton, SaveButton } from 'styles/StyledButton';
+import { AddForm } from 'styles/StyledForm';
 
-const StyledForm = styled.form`
-  display: grid;
+const StyledForm = styled(AddForm)`
   grid-template-columns: 1fr 1fr 3rem 2.5rem;
-  grid-column-gap: 0.5rem;
-  align-items: center;
-  grid-template-rows: max-content;
-  input {
-    width: 100%;
-  }
-  button {
-    margin: 0.5rem;
-    justify-self: end;
-  }
-  [aria-expanded] {
-    justify-self: end;
-  }
 `;
 
 const AddButton = styled(Button)`

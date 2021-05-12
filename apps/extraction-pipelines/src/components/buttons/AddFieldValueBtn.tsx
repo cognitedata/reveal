@@ -1,5 +1,5 @@
 import React, { PropsWithChildren } from 'react';
-import { BluePlus, BlueText, StyledEdit } from 'styles/StyledButton';
+import { BluePlus, BlueText, EditButton } from 'styles/StyledButton';
 
 interface AddFieldValueBtnProps {
   onClick: () => void;
@@ -10,9 +10,9 @@ export const AddFieldValueBtn = ({
   children,
 }: PropsWithChildren<AddFieldValueBtnProps>) => {
   return (
-    <StyledEdit onClick={onClick} $full $isBottom>
+    <EditButton onClick={onClick} $full $isBottom>
       <BluePlus />
       <BlueText>add {children}</BlueText>
-    </StyledEdit>
+    </EditButton>
   );
 };

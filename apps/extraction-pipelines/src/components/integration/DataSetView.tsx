@@ -2,7 +2,7 @@ import React, { FunctionComponent, PropsWithChildren } from 'react';
 import InteractiveCopyWithText from 'components/InteractiveCopyWithText';
 import { NO_DATA_SET_ID_SET } from 'utils/constants';
 import { getDataSetsLink } from 'utils/dataSetUtils';
-import { StyledLink } from 'styles/StyledButtons';
+import { StyledLink } from 'styles/StyledLinks';
 import { useAppEnv } from 'hooks/useAppEnv';
 import { DataSetModel } from 'model/DataSetModel';
 

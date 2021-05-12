@@ -10,7 +10,6 @@ import {
 } from 'react-router-dom';
 import styled from 'styled-components';
 import { FullPageLayout } from 'components/layout/FullPageLayout';
-import { LinkWrapper } from 'styles/StyledButton';
 import { useIntegrationById } from 'hooks/useIntegration';
 import { useSelectedIntegration } from 'hooks/useSelectedIntegration';
 import { INTEGRATIONS } from 'utils/baseURL';
@@ -18,14 +17,15 @@ import { useAppEnv } from 'hooks/useAppEnv';
 import InteractiveCopyWithText from 'components/InteractiveCopyWithText';
 import { IntegrationDetails } from 'components/integration/IntegrationDetails';
 import { RouterParams } from 'routing/RoutingConfig';
+import { DETAILS, INTEGRATION_OVERVIEW, HEALTH } from 'utils/constants';
 import { IntegrationHealth } from 'components/integration/IntegrationHealth';
-import { DETAILS, INTEGRATION_OVERVIEW, RUNS } from 'utils/constants';
 import { IntegrationHeading } from 'components/integration/IntegrationHeading';
+import { LinkWrapper } from 'styles/StyledLinks';
 
 export const HEALTH_PATH: Readonly<string> = 'health';
 const PageNav = styled.ul`
   margin: 0;
-  padding: 1rem 0 0.5rem 0;
+  padding: 1rem 0 0.8rem 0;
   list-style: none;
   display: flex;
   border-bottom: 0.0625rem solid ${Colors['greyscale-grey3'].hex()};
@@ -97,7 +97,7 @@ const IntegrationPage: FunctionComponent<IntegrationPageProps> = () => {
             exact
             className="tab-link"
           >
-            {RUNS}
+            {HEALTH}
           </NavLink>
         </li>
       </PageNav>

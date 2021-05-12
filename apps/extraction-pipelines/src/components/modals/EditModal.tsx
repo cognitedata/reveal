@@ -9,17 +9,19 @@ import DetailsFooter from 'components/modals/DetailsFooter';
 interface EditModalProps {
   visible: boolean;
   onCancel: () => void;
+  width?: number;
 }
 
 export const EditModal: FunctionComponent<EditModalProps> = ({
   visible,
   onCancel,
+  width = 872,
   children,
 }: PropsWithChildren<EditModalProps>) => {
   return (
     <Modal
       visible={visible}
-      width={872}
+      width={width}
       appElement={document.getElementsByClassName(ids.styleScope).item(0)!}
     >
       <ModalContent

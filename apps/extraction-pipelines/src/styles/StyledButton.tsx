@@ -12,18 +12,6 @@ export const ButtonPlaced = styled(Button)`
     `${props.mb !== undefined ? `${props.mb}rem` : bottomSpacing}`};
 `;
 
-export const LinkWrapper = styled.div`
-  grid-area: links;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  margin: 1.5rem 0;
-  a,
-  span {
-    align-self: center;
-    margin-right: 2rem;
-  }
-`;
 export const SaveButton = styled((props) => (
   <Button type="tertiary" {...props} aria-label={SAVE} icon="Checkmark">
     {props.children}
@@ -43,23 +31,24 @@ export const CloseButton = styled((props) => (
 ))`
   margin: 0.125rem;
 `;
-type StyledEditProps = { $full: boolean; $isBottom: boolean };
-export const StyledEdit = styled((props) => (
+
+type EditButtonProps = { $full: boolean; $isBottom: boolean };
+export const EditButton = styled((props) => (
   <Button {...props} type="ghost" icon="Edit" iconPlacement="right">
     {props.children}
   </Button>
 ))`
   &.cogs-btn {
     &.cogs-btn-ghost {
-      width: ${(props: StyledEditProps) =>
+      width: ${(props: EditButtonProps) =>
         props.$full ? '100%' : 'max-content'};
-      display: ${(props: StyledEditProps) => (props.$full ? 'grid' : 'flex')};
-      grid-template-columns: ${(props: StyledEditProps) =>
+      display: ${(props: EditButtonProps) => (props.$full ? 'grid' : 'flex')};
+      grid-template-columns: ${(props: EditButtonProps) =>
         props.$full ? 'auto 1fr 3rem ' : '1fr'};
       grid-template-rows: auto;
       justify-items: flex-start;
       height: fit-content;
-      margin-bottom: ${(props: StyledEditProps) =>
+      margin-bottom: ${(props: EditButtonProps) =>
         props.$isBottom ? '1rem' : '0'};
       .cogs-icon {
         &.cogs-icon-Edit {
@@ -94,4 +83,42 @@ export const BluePlus = styled((props) => <Icon {...props} type="Plus" />)`
 export const BlueText = styled.span`
   margin-left: 1rem;
   color: ${Colors.primary.hex()};
+`;
+
+export const SwitchButton = styled.button`
+  width: 6rem;
+  background: white;
+  border: 0.125rem solid ${Colors.primary.hex()};
+  border-radius: 0.2rem;
+  padding: 0.4rem;
+  &:focus {
+    outline: -webkit-focus-ring-color auto 0.0625rem;
+    outline-offset: 0.0625rem;
+  }
+  .on,
+  .off {
+    margin: 1rem 0.3rem;
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.2rem;
+  }
+  &[role='switch'][aria-checked='true'] {
+    .on {
+      background: ${Colors.primary.hex()};
+      color: white;
+    }
+    .off {
+      background: white;
+      color: ${Colors.primary.hex()};
+    }
+  }
+  &[role='switch'][aria-checked='false'] {
+    .on {
+      background: white;
+      color: ${Colors.primary.hex()};
+    }
+    .off {
+      background: ${Colors.primary.hex()};
+      color: white;
+    }
+  }
 `;

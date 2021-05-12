@@ -68,8 +68,8 @@ export const REMOVE_DIALOG_TEXT_PART: Readonly<string> =
   'Are you sure you want to remove';
 
 export const INTEGRATION_OVERVIEW: Readonly<string> = 'Integration overview';
-export const DETAILS: Readonly<string> = 'Details';
-export const RUNS: Readonly<string> = 'Runs';
+export const DETAILS: Readonly<string> = 'Integration details';
+export const HEALTH: Readonly<string> = 'Integration health';
 export const CONTACTS: Readonly<string> = 'Contacts';
 
 // Data set

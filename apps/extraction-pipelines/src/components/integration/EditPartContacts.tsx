@@ -12,21 +12,16 @@ import {
 } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Integration } from 'model/Integration';
-import { EditButton } from 'styles/StyledForm';
-import { Button, Icon, Input } from '@cognite/cogs.js';
+import { Input } from '@cognite/cogs.js';
 import { DivFlex } from 'styles/flex/StyledFlex';
 import ValidationError from 'components/form/ValidationError';
 import MessageDialog from 'components/buttons/MessageDialog';
-import {
-  CLOSE,
-  SAVE,
-  SERVER_ERROR_CONTENT,
-  SERVER_ERROR_TITLE,
-} from 'utils/constants';
+import { SERVER_ERROR_CONTENT, SERVER_ERROR_TITLE } from 'utils/constants';
 import { DefaultValues } from 'react-hook-form/dist/types/form';
 import { AnyObjectSchema } from 'yup';
 import styled from 'styled-components';
 import { updateContact } from 'utils/integrationUtils';
+import { CloseButton, SaveButton, EditButton } from 'styles/StyledButton';
 
 export enum TestIds {
   SAVE_BTN = 'save-btn',
@@ -154,38 +149,29 @@ export const EditPartContacts = <Fields extends FieldValues>({
               title={SERVER_ERROR_TITLE}
               contentText={SERVER_ERROR_CONTENT}
             >
-              <Button
-                className="edit-form-btn btn-margin-right"
-                type="primary"
+              <SaveButton
                 htmlType="submit"
                 aria-controls={`${name}${index}${field}`}
-                aria-label={SAVE}
                 data-testid={`${TestIds.SAVE_BTN}${index}${field}`}
-              >
-                <Icon type="Checkmark" />
-              </Button>
+              />
             </MessageDialog>
-            <Button
-              variant="default"
-              className="edit-form-btn"
+            <CloseButton
               onClick={onCancel}
               aria-controls={`${name}${index}${field}`}
-              aria-label={CLOSE}
               data-testid={`${TestIds.CANCEL_BTN}${index}${name}`}
-            >
-              <Icon type="Close" />
-            </Button>
+            />
           </DivFlex>
         </>
       ) : (
         <EditButton
           onClick={onEditClick}
           title="Toggle edit"
-          className="edit-btn full-width"
+          className="edit-btn"
           aria-expanded={isEdit}
           aria-controls={field}
           aria-label={`Edit ${field}`}
           data-testid={`${TestIds.EDIT_BTN}${index}${name}`}
+          $full
         >
           {defaultValues[field] ?? '-'}
         </EditButton>

@@ -36,7 +36,7 @@ import {
   BlueText,
   CloseButton,
   SaveButton,
-  StyledEdit,
+  EditButton,
 } from 'styles/StyledButton';
 import { TableHeadings } from 'components/table/IntegrationTableCol';
 
@@ -194,7 +194,7 @@ export const Schedule: FunctionComponent<ScheduleProps> = ({
             </ButtonWrapper>
           </ScheduleWrapper>
         ) : (
-          <StyledEdit
+          <EditButton
             onClick={onEditClick}
             title="Toggle edit row"
             aria-expanded={isEdit}
@@ -203,7 +203,7 @@ export const Schedule: FunctionComponent<ScheduleProps> = ({
             $full
           >
             {renderSchedule(integration.schedule)}
-          </StyledEdit>
+          </EditButton>
         )}
       </ColumnForm>
     </FormProvider>

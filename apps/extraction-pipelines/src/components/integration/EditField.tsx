@@ -24,7 +24,7 @@ import {
   BlueText,
   CloseButton,
   SaveButton,
-  StyledEdit,
+  EditButton,
 } from 'styles/StyledButton';
 
 export enum TestIds {
@@ -159,7 +159,7 @@ export const EditField = <Fields extends FieldValues>({
           </DivFlex>
         </>
       ) : (
-        <StyledEdit
+        <EditButton
           onClick={onEditClick}
           title="Toggle edit"
           className="edit-btn"
@@ -174,7 +174,7 @@ export const EditField = <Fields extends FieldValues>({
               <BlueText>add {field}</BlueText>
             </>
           )}
-        </StyledEdit>
+        </EditButton>
       )}
     </EditForm>
   );

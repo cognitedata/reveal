@@ -2,7 +2,7 @@ import React from 'react';
 import { fireEvent, screen } from '@testing-library/react';
 import { QueryClient } from 'react-query';
 import { useLocation, useRouteMatch, useParams } from 'react-router-dom';
-import { CONTACTS, DETAILS, RUNS } from 'utils/constants';
+import { CONTACTS, DETAILS, HEALTH } from 'utils/constants';
 import { renderWithReQueryCacheSelectedIntegrationContext } from 'utils/test/render';
 import { ORIGIN_DEV, PROJECT_ITERA_INT_GREEN } from 'utils/baseURL';
 import { render } from 'utils/test';
@@ -58,7 +58,7 @@ describe('IntegrationPage', () => {
     );
     render(<IntegrationPage />, { wrapper });
     expect(screen.queryByText(DETAILS)).not.toBeInTheDocument();
-    expect(screen.queryByText(RUNS)).not.toBeInTheDocument();
+    expect(screen.queryByText(HEALTH)).not.toBeInTheDocument();
     expect(screen.queryByText(CONTACTS)).not.toBeInTheDocument();
   });
 
@@ -82,7 +82,7 @@ describe('IntegrationPage', () => {
     );
     render(<IntegrationPage />, { wrapper });
     expect(screen.getByText(DETAILS)).toBeInTheDocument();
-    const runsLink = screen.getByText(RUNS);
+    const runsLink = screen.getByText(HEALTH);
     expect(runsLink).toBeInTheDocument();
     // check some details are renderd
     expect(screen.getByText(mockData.name)).toBeInTheDocument();
