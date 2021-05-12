@@ -27,6 +27,7 @@ import { useIntegrationById } from 'hooks/useIntegration';
 import { LatestRunMessage } from 'components/integration/LatestRunMessage';
 import { ErrorFeedback } from 'components/error/ErrorFeedback';
 import { useLocation, useRouteMatch } from 'react-router-dom';
+import { HEALTH_PATH } from 'pages/Integration/IntegrationPage';
 
 export const FAILED_PAST_WEEK_HEADING: Readonly<string> =
   'Failed runs past week';
@@ -62,7 +63,7 @@ export const RunScheduleConnection: FunctionComponent = () => {
 
   return (
     <CardWrapper className={`${lastRun.status.toLowerCase()}`}>
-      <CardNavLink to={`${url}/logs${search}`} exact>
+      <CardNavLink to={`${url}/${HEALTH_PATH}${search}`} exact>
         <CardInWrapper>
           <StyledTitleCard className="card-title">
             <Icon type="Calendar" />
@@ -96,7 +97,7 @@ export const RunScheduleConnection: FunctionComponent = () => {
           {errorsComparedToLastWeek} runs compared to last week
         </CardValue>
       </CardInWrapper>
-      <CardNavLink to={`${url}/logs${search}`} exact>
+      <CardNavLink to={`${url}/${HEALTH_PATH}${search}`} exact>
         <CardInWrapper>
           <StyledTitleCard className="card-title">
             <Icon type="Checkmark" />

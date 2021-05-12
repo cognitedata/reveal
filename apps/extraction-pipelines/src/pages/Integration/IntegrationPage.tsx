@@ -16,12 +16,13 @@ import { useSelectedIntegration } from 'hooks/useSelectedIntegration';
 import { INTEGRATIONS } from 'utils/baseURL';
 import { useAppEnv } from 'hooks/useAppEnv';
 import InteractiveCopyWithText from 'components/InteractiveCopyWithText';
-import { IntegrationView } from 'components/integration/IntegrationView';
+import { IntegrationDetails } from 'components/integration/IntegrationDetails';
 import { RouterParams } from 'routing/RoutingConfig';
-import { RunLogsView } from 'components/integration/RunLogsView';
+import { IntegrationHealth } from 'components/integration/IntegrationHealth';
 import { DETAILS, INTEGRATION_OVERVIEW, RUNS } from 'utils/constants';
 import { IntegrationHeading } from 'components/integration/IntegrationHeading';
 
+export const HEALTH_PATH: Readonly<string> = 'health';
 const PageNav = styled.ul`
   margin: 0;
   padding: 1rem 0 0.5rem 0;
@@ -91,17 +92,21 @@ const IntegrationPage: FunctionComponent<IntegrationPageProps> = () => {
           </NavLink>
         </li>
         <li>
-          <NavLink to={`${url}/logs${search}`} exact className="tab-link">
+          <NavLink
+            to={`${url}/${HEALTH_PATH}${search}`}
+            exact
+            className="tab-link"
+          >
             {RUNS}
           </NavLink>
         </li>
       </PageNav>
       <Switch>
         <Route exact path={path}>
-          <IntegrationView />
+          <IntegrationDetails />
         </Route>
-        <Route path={`${path}/logs`}>
-          <RunLogsView integration={integration ?? null} />
+        <Route path={`${path}/${HEALTH_PATH}`}>
+          <IntegrationHealth integration={integration ?? null} />
         </Route>
       </Switch>
     </FullPageLayout>

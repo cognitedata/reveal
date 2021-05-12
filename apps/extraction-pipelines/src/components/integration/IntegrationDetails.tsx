@@ -26,7 +26,7 @@ export const createNoIntegrationFoundMessage = (id: string): Readonly<string> =>
   `Found no integration with id: ${id}`;
 
 interface IntegrationViewProps {}
-export const IntegrationView: FunctionComponent<IntegrationViewProps> = () => {
+export const IntegrationDetails: FunctionComponent<IntegrationViewProps> = () => {
   const { id } = useParams<RouterParams>();
   const { integration } = useSelectedIntegration();
   const integrationId = integration?.id;

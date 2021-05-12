@@ -18,7 +18,7 @@ interface LogsViewProps {
   integration: Integration | null;
 }
 
-export const RunLogsView: FunctionComponent<LogsViewProps> = ({
+export const IntegrationHealth: FunctionComponent<LogsViewProps> = ({
   integration,
 }: PropsWithChildren<LogsViewProps>) => {
   const { data, error } = useRuns(integration?.externalId);

@@ -8,7 +8,7 @@ import { ORIGIN_DEV, PROJECT_ITERA_INT_GREEN } from 'utils/baseURL';
 import { TableHeadings } from 'components/table/IntegrationTableCol';
 import { DetailFieldNames } from 'model/Integration';
 import { NO_SCHEDULE, SINGLE_INTEGRATION } from 'utils/constants';
-import { IntegrationView } from 'components/integration/IntegrationView';
+import { IntegrationDetails } from 'components/integration/IntegrationDetails';
 import { trackUsage } from 'utils/Metrics';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import { render } from 'utils/test';
@@ -35,7 +35,7 @@ describe('IntegrationView', () => {
     sdkv3.get.mockResolvedValue({ data: mockIntegration });
     sdkv3.datasets.retrieve.mockResolvedValue([mockDataSet]);
 
-    render(<IntegrationView />, {
+    render(<IntegrationDetails />, {
       wrapper: wrapper.wrapper,
     });
     // test tracking
@@ -101,7 +101,7 @@ describe('IntegrationView', () => {
       name: 'My integration',
     };
     sdkv3.get.mockResolvedValue({ data: mock });
-    render(<IntegrationView />, {
+    render(<IntegrationDetails />, {
       wrapper: wrapper.wrapper,
     });
     await waitFor(() => {

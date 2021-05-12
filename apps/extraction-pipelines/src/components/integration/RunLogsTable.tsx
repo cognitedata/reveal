@@ -10,7 +10,7 @@ import {
   useTable,
 } from 'react-table';
 import styled from 'styled-components';
-import { StatusRun } from '../../model/Runs';
+import { StatusRun } from 'model/Runs';
 
 const StyledTable = styled.table`
   thead {
@@ -48,7 +48,6 @@ export const RunLogsTable: FunctionComponent<LogsTableProps> = ({
     {
       columns: headerCols,
       data: dataSource,
-      initialState: { filters: [{ id: 'status', value: 'FAIL' }] },
     },
     useFilters,
     useSortBy,

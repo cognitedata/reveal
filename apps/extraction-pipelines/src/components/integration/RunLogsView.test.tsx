@@ -5,7 +5,7 @@ import { Status } from 'model/Status';
 import { renderWithReQueryCacheSelectedIntegrationContext } from 'utils/test/render';
 import { ORIGIN_DEV, PROJECT_ITERA_INT_GREEN } from 'utils/baseURL';
 import { render } from 'utils/test';
-import { RunLogsView } from 'components/integration/RunLogsView';
+import { IntegrationHealth } from 'components/integration/IntegrationHealth';
 import {
   getMockResponse,
   mockDataRunsResponse,
@@ -38,7 +38,7 @@ describe('RunLogsView', () => {
       undefined,
       '/'
     );
-    render(<RunLogsView integration={mockIntegration} />, { wrapper });
+    render(<IntegrationHealth integration={mockIntegration} />, { wrapper });
     expect(screen.getByText(mockError.error.message)).toBeInTheDocument();
 
     // test tracking
@@ -59,14 +59,14 @@ describe('RunLogsView', () => {
       undefined,
       '/'
     );
-    render(<RunLogsView integration={mockIntegration} />, { wrapper });
+    render(<IntegrationHealth integration={mockIntegration} />, { wrapper });
     expect(screen.getByText(RunTableHeading.TIMESTAMP)).toBeInTheDocument();
     expect(
       screen.getByText(new RegExp(TableHeadings.STATUS, 'i'))
     ).toBeInTheDocument();
     expect(screen.getByText(RunTableHeading.MESSAGE)).toBeInTheDocument();
-    // check only failed are displayed by default
-    expect(screen.getAllByText(Status.FAIL).length > 0).toEqual(true);
-    expect(screen.queryByText(Status.OK)).not.toBeInTheDocument();
+
+    expect(screen.getAllByText(Status.FAIL).length).toEqual(2);
+    expect(screen.getAllByText(Status.OK).length).toEqual(4);
   });
 });
