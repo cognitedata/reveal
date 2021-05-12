@@ -236,10 +236,12 @@ export class RevealManager<TModelIdentifier> {
 
   public addUiObject(object: THREE.Object3D, screenPos: THREE.Vector2, size: THREE.Vector2) {
     this._effectRenderManager.addUiObject(object, screenPos, size);
+    this.requestRedraw();
   }
 
   public removeUiObject(object: THREE.Object3D) {
     this._effectRenderManager.removeUiObject(object);
+    this.requestRedraw();
   }
 
   private notifyLoadingStateChanged(loadingState: LoadingState) {

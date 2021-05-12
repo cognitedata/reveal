@@ -89,4 +89,16 @@ describe('RevealManager', () => {
 
     expect(loadingStateChangedCb).toBeCalledTimes(1);
   });
+
+  test('addUiObject() and removeUiObject() requests redraw', () => {
+    manager = createRevealManager('test', mockClient, renderer, new THREE.Scene(), { internal: { sectorCuller } });
+    expect(manager).not.toBeUndefined();
+    expect(manager.needsRedraw).toBeFalse();
+    const uiObject = new THREE.Object3D();
+    manager.addUiObject(uiObject, new THREE.Vector2(0, 0), new THREE.Vector2(100, 100));
+    expect(manager.needsRedraw).toBeTrue();
+    manager.resetRedraw();
+    manager.removeUiObject(uiObject);
+    expect(manager.needsRedraw).toBeTrue();
+  });
 });
