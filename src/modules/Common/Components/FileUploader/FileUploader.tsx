@@ -241,13 +241,12 @@ export const FileUploader = ({
   const parseExif = async (file: File) => {
     const coordinates = await exifr.gps(file);
     const exifTags = await exifr.parse(file, [
-      'ISO',
       'Orientation',
-      'LensModel',
-      'ExposureTime',
-      'ShutterSpeedValue',
-      'FNumber',
       'FocalLength',
+      'GPSVersionID',
+      'GPSImgDirection',
+      'GPSImgDirectionRef',
+      'GPSDateStamp',
     ]);
 
     const geoLocation =
