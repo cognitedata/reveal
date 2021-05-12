@@ -4,24 +4,33 @@ import { Progress, Col, Row, Collapse } from 'antd';
 import { getActiveWorkflowId } from 'modules/workflows';
 import LoadingProgress from 'components/LoadingProgress';
 import { useParsingJob } from 'modules/contextualization/pnidParsing/hooks';
-
-const processProgress: { [key: string]: number } = {
-  '': 0,
-  New: 10,
-  Scheduled: 10,
-  Queued: 20,
-  Running: 40,
-  Completed: 100,
-  Failed: 100,
-};
+import { Popover } from 'components/Common';
+import { Body, Icon } from '@cognite/cogs.js';
 
 const LoadResources = () => {
   const workflowId = useSelector(getActiveWorkflowId);
 
-  const { status: parsingJobStatus, jobId } = useParsingJob(workflowId);
+  const { jobId, statusCount } = useParsingJob(workflowId);
 
-  const parsingJobPercent: number = processProgress[parsingJobStatus];
+  const { completed = 0, running = 0, queued = 0 } = statusCount ?? {};
 
+  const parsingJobPercent: number = Math.round(
+    (completed / (running + completed + queued)) * 100
+  );
+
+  const FilesStatusCounts = () => (
+    <span>
+      <Body level={2}>
+        <Icon type="Checkmark" /> Completed: {completed}
+      </Body>
+      <Body level={2}>
+        <Icon type="Loading" /> Running: {running}
+      </Body>
+      <Body level={2}>
+        <Icon type="Schedule" /> Queued: {queued}
+      </Body>
+    </span>
+  );
   return (
     <Collapse defaultActiveKey={['1']}>
       <Collapse.Panel
@@ -46,9 +55,14 @@ const LoadResources = () => {
         </Row>
         <Row align="middle">
           <Col span={4}>
-            <p>Matching tags in P&ID to assets</p>
+            <p>Matching tags in diagrams to assets</p>
           </Col>
           <Col span={20}>
+            <Body level={2} strong>
+              <Popover content={<FilesStatusCounts />}>
+                Parsed diagrams: {completed}
+              </Popover>
+            </Body>
             <Progress
               percent={parsingJobPercent}
               status={parsingJobPercent === 100 ? 'success' : 'active'}

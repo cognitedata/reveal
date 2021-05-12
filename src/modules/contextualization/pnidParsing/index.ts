@@ -13,10 +13,11 @@ export const pnidParsingSlice = createSlice({
       state[workflowId] = initialValue;
     },
     updateJob: (state, action) => {
-      const { workflowId, status } = action.payload;
+      const { workflowId, status, statusCount } = action.payload;
       state[workflowId] = {
         ...state[workflowId],
         status,
+        statusCount,
       };
     },
     rejectJob: (state, action) => {
