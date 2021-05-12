@@ -1,8 +1,15 @@
 /* eslint camelcase: 0 */
 
 import React from 'react';
-import { Icon, Input, Select } from '@cognite/cogs.js';
-import { DSPFunction, getConfigFromDspFunction } from 'utils/transforms';
+import styled from 'styled-components';
+import { Icon, Input, Select, Checkbox } from '@cognite/cogs.js';
+import {
+  DSPFunction,
+  DSPFunctionParameter,
+  DSPFunctionParameterType,
+  getConfigFromDspFunction,
+  transformParamInput,
+} from 'utils/transforms';
 import { StorableNode } from 'reducers/charts/types';
 import AvailableOps from 'components/NodeEditor/AvailableOps';
 import { ConfigPanelComponentProps } from '../types';
@@ -11,6 +18,12 @@ type FunctionData = {
   [key: string]: any;
   toolFunction?: DSPFunction;
 };
+
+const ToolFunctionWrapper = styled.div`
+  .cogs-checkbox .checkbox-ui {
+    margin: 0;
+  }
+`;
 
 export const effect = async (funcData: FunctionData) => {
   if (!funcData.toolFunction) {
@@ -32,7 +45,7 @@ export const configPanel = ({
   const { functionData } = node;
 
   return (
-    <div>
+    <ToolFunctionWrapper>
       <h4>Tool Function</h4>
       <AvailableOps
         renderLoading={() => <Icon style={{ color: 'white' }} type="Loading" />}
@@ -95,28 +108,44 @@ export const configPanel = ({
 
       {functionData?.toolFunction?.parameters?.length > 0 &&
         (functionData?.toolFunction?.parameters || []).map(
-          ({ param, default: default_ }: { param: string; default: any }) => {
+          ({ param, type, default: _default }: DSPFunctionParameter) => {
             return (
               <div style={{ marginTop: 8 }}>
                 <h4>{param}</h4>
-
-                <Input
-                  id={param}
-                  value={functionData[param] || default_ || ''}
-                  onChange={(newValue: React.ChangeEvent<HTMLInputElement>) => {
-                    onUpdateNode({
-                      functionData: {
-                        ...node.functionData,
-                        [param]: Number(newValue.target.value),
-                      },
-                    });
-                  }}
-                />
+                {type === DSPFunctionParameterType.boolean ? (
+                  <Checkbox
+                    onChange={(nextState: boolean) => {
+                      onUpdateNode({
+                        functionData: {
+                          ...node.functionData,
+                          [param]: nextState,
+                        },
+                      });
+                    }}
+                    name={param}
+                    value={functionData[param]}
+                  />
+                ) : (
+                  <Input
+                    id={param}
+                    value={functionData[param] || _default || ''}
+                    onChange={({
+                      target,
+                    }: React.ChangeEvent<HTMLInputElement>) => {
+                      onUpdateNode({
+                        functionData: {
+                          ...node.functionData,
+                          [param]: transformParamInput(type, target.value),
+                        },
+                      });
+                    }}
+                  />
+                )}
               </div>
             );
           }
         )}
-    </div>
+    </ToolFunctionWrapper>
   );
 };
 

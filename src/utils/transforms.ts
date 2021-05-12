@@ -1,18 +1,28 @@
 /* eslint camelcase: 0 */
 
 import { StorableNode } from 'reducers/charts/types';
+import { FLOAT_NUMBER_PATTERN } from './constants';
 
 export type DSPFunction = {
   description: string;
   op: string;
   n_inputs: number;
   n_outputs: number;
-  parameters: {
-    param: string;
-    type: string;
-    default?: any;
-  }[];
+  parameters: DSPFunctionParameter[];
   type_info: string[][];
+};
+
+export enum DSPFunctionParameterType {
+  string = 'str',
+  int = 'int',
+  float = 'float',
+  boolean = 'bool',
+}
+
+export type DSPFunctionParameter = {
+  param: string;
+  type: DSPFunctionParameterType;
+  default?: any;
 };
 
 export type DSPFunctionConfig = {
@@ -68,12 +78,38 @@ export function getConfigFromDspFunction(
   };
 }
 
-export function getBlockTypeFromParameterType(parameterType: string): string {
+export function getBlockTypeFromParameterType(
+  parameterType: DSPFunctionParameterType
+): string {
   switch (parameterType) {
-    case 'int':
+    case DSPFunctionParameterType.int:
       return 'CONSTANT';
+    case DSPFunctionParameterType.string:
+      return 'STRING';
+    case DSPFunctionParameterType.float:
+      return 'FLOAT';
+    case DSPFunctionParameterType.boolean:
+      return 'BOOLEAN';
     default:
       return 'UNKNOWN';
+  }
+}
+
+export function transformParamInput(
+  type: DSPFunctionParameterType,
+  value: string
+): string | number {
+  switch (type) {
+    case DSPFunctionParameterType.int:
+      return Number(value);
+    case DSPFunctionParameterType.float:
+      // eslint-disable-next-line
+      const match = value.match(FLOAT_NUMBER_PATTERN);
+      return match && match[0] ? match[0] : parseFloat(value);
+    case DSPFunctionParameterType.string:
+      return value;
+    default:
+      return value;
   }
 }
 
