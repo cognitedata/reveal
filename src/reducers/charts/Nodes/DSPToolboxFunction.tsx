@@ -62,7 +62,6 @@ export const configPanel = ({
         renderLoading={() => <Icon style={{ color: 'white' }} type="Loading" />}
         renderError={() => <Icon style={{ color: 'white' }} type="XLarge" />}
         renderCall={(availableFunctions) => {
-          console.log({ availableFunctions });
           const categories: { [key: string]: DSPFunction[] } = {};
           availableFunctions.forEach((func) => {
             if (!categories[func.category]) {
@@ -77,6 +76,7 @@ export const configPanel = ({
               content={
                 <>
                   <Input
+                    id="phrase"
                     value={phrase}
                     onChange={(newValue: React.ChangeEvent<HTMLInputElement>) =>
                       setPhrase(newValue.target.value)
@@ -168,7 +168,15 @@ export const configPanel = ({
               <Button
                 icon="Down"
                 iconPlacement="right"
-                onClick={() => setVisible(true)}
+                onClick={() => {
+                  setVisible(true);
+                  setTimeout(() => {
+                    const phraseEl = document.getElementById('phrase');
+                    if (phraseEl) {
+                      phraseEl.focus();
+                    }
+                  }, 300);
+                }}
                 style={{ width: '100%' }}
               >
                 {functionData?.toolFunction?.description ||
