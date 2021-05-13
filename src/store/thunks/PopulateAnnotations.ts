@@ -5,7 +5,7 @@ import {
   AnnotationUtils,
   VisionAnnotation,
 } from 'src/utils/AnnotationUtils';
-import { VisionAPIType } from 'src/api/types';
+import { LinkedAnnotation, VisionAPIType } from 'src/api/types';
 import { fetchAssets } from 'src/store/thunks/fetchAssets';
 import { addAnnotations } from 'src/store/commonActions';
 import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
@@ -21,7 +21,7 @@ export const PopulateAnnotations = createAsyncThunk<
 
   const annotationResponse = await dispatch(
     RetrieveAnnotations({
-      fileId: parseInt(fileId, 10),
+      fileIds: [parseInt(fileId, 10)],
       assetIds: undefined,
     })
   );
@@ -63,8 +63,8 @@ export const PopulateAnnotations = createAsyncThunk<
 
       const assetIdsOfTagAnnotations = new Set(
         [...retrievedAnnotations, ...availableTagAnnotations]
-          .filter((ann) => !!ann.linkedResourceId)
-          .map((ann) => ann.linkedResourceId)
+          .filter((ann) => !!(ann as LinkedAnnotation).linkedResourceId)
+          .map((ann) => (ann as LinkedAnnotation).linkedResourceId)
       );
       const assetsWithoutAnnotations = assets.filter(
         (asset) => !assetIdsOfTagAnnotations.has(asset.id)
@@ -72,9 +72,12 @@ export const PopulateAnnotations = createAsyncThunk<
 
       linkedAssetVirtualAnnotations = assetsWithoutAnnotations.map((asset) =>
         AnnotationUtils.createVisionAnnotationStub(
+          asset.id,
           asset.name,
           VisionAPIType.TagDetection,
           parseInt(fileId, 10),
+          0,
+          0,
           undefined,
           undefined,
           'vision/tagdetection',
@@ -84,13 +87,6 @@ export const PopulateAnnotations = createAsyncThunk<
           undefined,
           asset.id,
           asset.externalId,
-          AnnotationUtils.generateAnnotationId(
-            fileId,
-            'vision/tagdetection',
-            asset.id
-          ),
-          undefined,
-          undefined,
           true
         )
       );

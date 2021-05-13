@@ -1,49 +1,45 @@
 import React from 'react';
 import { Body, Button, Icon } from '@cognite/cogs.js';
 import {
-  AnnotationsBadgeProps,
-  ModelStatusAndAnnotationCounts,
-} from 'src/modules/Workflow/types';
+  AnnotationCounts,
+  AnnotationsBadgeCounts,
+  AnnotationsBadgeStatuses,
+  AnnotationStatuses,
+} from '../../types';
+import { showBadge, showGDPRBadge } from './common';
 
-export const showBadge = (
-  badgeCounts: ModelStatusAndAnnotationCounts | undefined
-) => {
-  return badgeCounts?.manuallyGenerated || badgeCounts?.status;
+const setBadge = (counts: AnnotationCounts, statuses?: AnnotationStatuses) => {
+  if (statuses?.status === 'Running') {
+    return <Icon type="Loading" />;
+  }
+  if (statuses?.status === 'Failed') {
+    return <Icon type="ErrorStroked" />;
+  }
+
+  const countList = [counts.modelGenerated, counts.manuallyGenerated].filter(
+    (x) => x !== undefined
+  );
+  if (countList.length && statuses?.status !== 'Queued') {
+    return String(countList.reduce((a, b) => (a || 0) + (b || 0)));
+  }
+  return '–';
 };
+const setOpacity = (status: string | undefined) =>
+  status === 'Completed' || status === 'Running' || status === undefined
+    ? 1.0
+    : 0.5;
 
-export const showGDPRBadge = (
-  badgeCounts: ModelStatusAndAnnotationCounts | undefined
-) => {
-  return !!(badgeCounts?.modelGenerated && badgeCounts?.modelGenerated > 0);
-};
-export function AnnotationsBadge({
-  gdpr,
-  tag,
-  text,
-  objects,
-}: AnnotationsBadgeProps) {
-  const setBadge = ({ status, ...counts }: ModelStatusAndAnnotationCounts) => {
-    if (status === 'Running') {
-      return <Icon type="Loading" />;
-    }
-    if (status === 'Failed') {
-      return <Icon type="ErrorStroked" />;
-    }
-
-    const countList = [counts.modelGenerated, counts.manuallyGenerated].filter(
-      (x) => x !== undefined
-    );
-    if (countList.length && status !== 'Queued') {
-      return String(countList.reduce((a, b) => (a || 0) + (b || 0)));
-    }
-    return '–';
-  };
-  const setOpacity = (status: string | undefined) =>
-    status === 'Completed' || status === 'Running' ? 1.0 : 0.5;
-
+export function AnnotationsBadge(
+  badgeCounts: AnnotationsBadgeCounts,
+  badgeStatuses: AnnotationsBadgeStatuses
+) {
+  const showTag = showBadge(badgeCounts.tag, badgeStatuses.tag);
+  const showText = showBadge(badgeCounts.text, badgeStatuses.text);
+  const showObjects = showBadge(badgeCounts.objects, badgeStatuses.objects);
+  const showGdpr = showGDPRBadge(badgeCounts.gdpr);
   return (
     <>
-      {tag && showBadge(tag) && (
+      {badgeCounts.tag && showTag && (
         <Button
           icon="ResourceAssets"
           size="small"
@@ -51,13 +47,13 @@ export function AnnotationsBadge({
             marginRight: '5px',
             backgroundColor: '#F4DAF8',
             color: '#C945DB',
-            opacity: setOpacity(tag?.status),
+            opacity: setOpacity(badgeStatuses.tag?.status),
           }}
         >
-          {setBadge(tag)}
+          {setBadge(badgeCounts.tag, badgeStatuses.tag)}
         </Button>
       )}
-      {text && showBadge(text) && (
+      {badgeCounts.text && showText && (
         <Button
           icon="TextScan"
           size="small"
@@ -65,13 +61,13 @@ export function AnnotationsBadge({
             marginRight: '5px',
             backgroundColor: '#F0FCF8',
             color: '#404040',
-            opacity: setOpacity(text?.status),
+            opacity: setOpacity(badgeStatuses.text?.status),
           }}
         >
-          {setBadge(text)}
+          {setBadge(badgeCounts.text, badgeStatuses.text)}
         </Button>
       )}
-      {objects && showBadge(objects) && (
+      {badgeCounts.objects && showObjects && (
         <Button
           icon="Scan"
           size="small"
@@ -79,29 +75,28 @@ export function AnnotationsBadge({
             marginRight: '5px',
             backgroundColor: '#FFE1D1',
             color: '#FF8746',
-            opacity: setOpacity(objects?.status),
+            opacity: setOpacity(badgeStatuses.objects?.status),
           }}
         >
-          {setBadge(objects)}
+          {setBadge(badgeCounts.objects, badgeStatuses.objects)}
         </Button>
       )}
-      {gdpr && showGDPRBadge(gdpr) && (
+      {badgeCounts.gdpr && showGdpr && (
         <Button
           icon="Personrounded"
           size="small"
           style={{
             backgroundColor: '#D3F7FB',
             color: '#1AA3C1',
-            opacity: setOpacity(gdpr?.status),
+            opacity: setOpacity(badgeStatuses.gdpr?.status),
           }}
         >
-          {setBadge(gdpr)}
+          {setBadge(badgeCounts.gdpr, badgeStatuses.gdpr)}
         </Button>
       )}
-      {!showBadge(gdpr) &&
-        !showBadge(tag) &&
-        !showBadge(text) &&
-        !showBadge(objects) && <Body level={3}>No annotations</Body>}
+      {!showTag && !showText && !showObjects && !showGdpr && (
+        <Body level={3}>No annotations</Body>
+      )}
     </>
   );
 }

@@ -22,7 +22,7 @@ export type AnnotationType =
   | 'vision/tagdetection'
   | 'vision/objectdetection';
 export type AnnotationSource =
-  | 'vision/ocr'
+  | 'vision/ocr' // TODO: use contextApi instead?
   | 'vision/tagdetection'
   | 'vision/objectdetection'
   | 'user';
@@ -31,16 +31,13 @@ export type AnnotationRegion = {
   shape: RegionType;
   vertices: Array<Vertex>;
 };
-export interface Annotation {
+interface BaseAnnotation {
   text: string;
-  data: any;
+  data?: any;
   region?: AnnotationRegion;
   annotatedResourceId: number;
   annotatedResourceExternalId?: string;
   annotatedResourceType: 'file';
-  linkedResourceId?: number;
-  linkedResourceExternalId?: string;
-  linkedResourceType?: 'asset' | 'file';
   annotationType: AnnotationType;
   source: AnnotationSource;
   status: AnnotationStatus;
@@ -48,6 +45,14 @@ export interface Annotation {
   createdTime: number;
   lastUpdatedTime: number;
 }
+
+export interface LinkedAnnotation extends BaseAnnotation {
+  linkedResourceId?: number;
+  linkedResourceExternalId?: string;
+  linkedResourceType?: 'asset' | 'file';
+}
+
+export type Annotation = LinkedAnnotation;
 
 export interface DetectedAnnotation {
   text: string;

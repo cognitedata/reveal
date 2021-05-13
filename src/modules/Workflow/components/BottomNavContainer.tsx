@@ -11,7 +11,7 @@ import { annotationsById } from 'src/modules/Preview/previewSlice';
 export default function BottomNavContainer() {
   const history = useHistory();
   const { allFilesStatus } = useSelector(
-    (state: RootState) => state.uploadedFiles
+    (state: RootState) => state.filesSlice
   );
 
   const annotations = useSelector((state: RootState) => {

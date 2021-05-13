@@ -10,7 +10,7 @@ import { RootState } from 'src/store/rootReducer';
 import { getLink, workflowRoutes } from 'src/modules/Workflow/workflowRoutes';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { v3Client as sdk } from '@cognite/cdf-sdk-singleton';
-import { selectFileById } from 'src/modules/Upload/uploadedFilesSlice';
+import { selectFileById } from 'src/modules/Common/filesSlice';
 
 const AnnotationContainer = styled.div`
   width: 100%;
@@ -45,8 +45,8 @@ const AnnotationsEdit = (props: { fileId: string }) => {
   const history = useHistory();
   const { fileId } = props;
 
-  const file = useSelector(({ uploadedFiles }: RootState) =>
-    selectFileById(uploadedFiles, fileId)
+  const file = useSelector(({ filesSlice }: RootState) =>
+    selectFileById(filesSlice, fileId)
   );
 
   if (!file) {

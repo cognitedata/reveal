@@ -1,4 +1,4 @@
-import { TableDataItem } from '../../Types';
+import { TableDataItem } from '../../types';
 
 export const NameSorter = (data: TableDataItem[], reverse: boolean) => {
   const sortedData = data.sort((a: TableDataItem, b: TableDataItem) =>

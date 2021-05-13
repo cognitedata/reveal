@@ -8,7 +8,7 @@ import { VisionAnnotationState } from '../../modules/Preview/previewSlice';
 
 export const DeleteAnnotationsAndRemoveLinkedAssets = createAsyncThunk<
   void,
-  string[],
+  number[],
   ThunkConfig
 >(
   'DeleteAnnotationsAndRemoveLinkedAssets',
@@ -54,7 +54,7 @@ export const DeleteAnnotationsAndRemoveLinkedAssets = createAsyncThunk<
 
     const savedAnnotationIds = annotations
       .filter((ann) => !!ann.lastUpdatedTime)
-      .map((ann) => parseInt(ann.id, 10));
+      .map((ann) => ann.id);
 
     if (savedAnnotationIds && savedAnnotationIds.length) {
       dispatch(DeleteAnnotations(savedAnnotationIds));

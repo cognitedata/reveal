@@ -9,7 +9,7 @@ import {
   selectIsPollingComplete,
   setSelectedDetectionModels,
 } from 'src/modules/Process/processSlice';
-import { selectAllFiles } from 'src/modules/Upload/uploadedFilesSlice';
+import { selectAllFiles } from 'src/modules/Common/filesSlice';
 import { message, notification } from 'antd';
 import { isVideo } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
 import { toastProps } from 'src/utils/ToastUtils';
@@ -24,7 +24,7 @@ export const FileToolbar = ({
 }) => {
   const dispatch = useDispatch();
   const uploadedFiles = useSelector((state: RootState) =>
-    selectAllFiles(state.uploadedFiles)
+    selectAllFiles(state.filesSlice)
   );
   const selectedDetectionModels = useSelector(
     (state: RootState) => state.processSlice.selectedDetectionModels

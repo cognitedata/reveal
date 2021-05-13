@@ -1,4 +1,4 @@
-import { CellRenderer } from 'src/modules/Common/Types';
+import { CellRenderer } from 'src/modules/Common/types';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { selectUpdatedFileDetails } from 'src/modules/FileDetails/fileDetailsSlice';

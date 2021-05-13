@@ -1,6 +1,6 @@
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import React, { ReactElement, useMemo } from 'react';
-import { addUploadedFile } from 'src/modules/Upload/uploadedFilesSlice';
+import { addUploadedFile } from 'src/modules/Common/filesSlice';
 import { useDispatch } from 'react-redux';
 import {
   getParamLink,

@@ -3,7 +3,7 @@ import { ThunkConfig } from 'src/store/rootReducer';
 import { Label, Metadata } from '@cognite/cdf-sdk-singleton';
 import isEqual from 'lodash-es/isEqual';
 import { UpdateFiles } from 'src/store/thunks/UpdateFiles';
-import { FileState } from 'src/modules/Upload/uploadedFilesSlice';
+import { FileState } from 'src/modules/Common/filesSlice';
 
 export const updateFileInfoField = createAsyncThunk<
   void,
@@ -14,8 +14,8 @@ export const updateFileInfoField = createAsyncThunk<
     throw new Error('Id not provided!');
   }
 
-  const fileState = getState().uploadedFiles;
-  const fileMetadataState = getState().fileMetadataSlice;
+  const fileState = getState().filesSlice;
+  const fileMetadataState = getState().fileDetailsSlice;
 
   const fileDetails = fileState.files.byId[fileId];
 

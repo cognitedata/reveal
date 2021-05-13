@@ -12,6 +12,6 @@ export const addAnnotations = createAction<VisionAnnotation[]>(
   'addAnnotations'
 );
 
-export const deleteAnnotationsFromState = createAction<string[]>(
+export const deleteAnnotationsFromState = createAction<number[]>(
   'deleteAnnotations'
 );

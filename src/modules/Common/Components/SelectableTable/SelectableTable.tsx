@@ -6,7 +6,7 @@ import ReactBaseTable, {
   ColumnShape,
   RowKey,
 } from 'react-base-table';
-import { CellRenderer, TableDataItem } from 'src/modules/Common/Types';
+import { CellRenderer, TableDataItem } from 'src/modules/Common/types';
 import React, { useMemo, useState } from 'react';
 import { StringRenderer } from 'src/modules/Common/Containers/FileTableRenderers/StringRenderer';
 import { SelectionRenderer } from 'src/modules/Common/Containers/FileTableRenderers/SelectionRenderer';

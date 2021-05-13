@@ -13,7 +13,7 @@ import {
   VisionFileDetails,
 } from 'src/modules/FileDetails/Components/FileMetadata/Types';
 import exifIcon from 'src/assets/exifIcon.svg';
-import { TableDataItem } from 'src/modules/Common/Types';
+import { TableDataItem } from 'src/modules/Common/types';
 import { ExifIcon } from 'src/modules/Common/Containers/FileTableRenderers/NameRenderer';
 import { fileMetaDataEdit } from '../../fileDetailsSlice';
 

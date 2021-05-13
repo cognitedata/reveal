@@ -36,8 +36,9 @@ export const FileDetails = () => {
     selectUpdatedFileDetails(state, String(fileId))
   );
 
-  const tableEditMode = useSelector(({ fileMetadataSlice }: RootState) =>
-    metadataEditMode(fileMetadataSlice)
+  const tableEditMode = useSelector(
+    ({ fileDetailsSlice: fileMetadataSlice }: RootState) =>
+      metadataEditMode(fileMetadataSlice)
   );
 
   const fileMetadata = useSelector((state: RootState) =>
@@ -112,7 +113,7 @@ export const FileDetails = () => {
             >
               {fileDetails?.id && (
                 <FileDetailsAnnotationsPreview
-                  fileId={fileDetails.id.toString()}
+                  fileId={fileDetails.id}
                   onReviewClick={onReviewClick}
                 />
               )}

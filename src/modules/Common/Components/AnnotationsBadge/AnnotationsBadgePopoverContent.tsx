@@ -2,17 +2,15 @@ import React from 'react';
 
 import styled from 'styled-components';
 import { Button, Title, Body, Icon } from '@cognite/cogs.js';
-import { AnnotationsBadgeProps } from 'src/modules/Workflow/types';
 import { Divider } from '@cognite/data-exploration';
 import { JobStatus } from 'src/api/types';
-import { showBadge, showGDPRBadge } from './AnnotationsBadge';
+import { showBadge, showGDPRBadge } from './common';
+import { AnnotationsBadgeCounts, AnnotationsBadgeStatuses } from '../../types';
 
-export function AnnotationsBadgePopoverContent({
-  gdpr,
-  tag,
-  text,
-  objects,
-}: AnnotationsBadgeProps) {
+export function AnnotationsBadgePopoverContent(
+  badgeCounts: AnnotationsBadgeCounts,
+  badgeStatuses: AnnotationsBadgeStatuses
+) {
   const row = (data: any) => {
     const setBadge = (count: number, status: JobStatus) => {
       if (status === 'Running') {
@@ -63,58 +61,63 @@ export function AnnotationsBadgePopoverContent({
       </GridLayout>
     );
   };
+
+  const showTag = showBadge(badgeCounts.tag, badgeStatuses.tag);
+  const showText = showBadge(badgeCounts.text, badgeStatuses.text);
+  const showObjects = showBadge(badgeCounts.objects, badgeStatuses.objects);
+  const showGdpr = showGDPRBadge(badgeCounts.gdpr);
+
   return (
     <>
       <Body level={1}> Detections </Body>
       <Divider.Horizontal />
-      {tag &&
-        showBadge(tag) &&
+      {badgeCounts.tag &&
+        showTag &&
         row({
-          status: tag.status,
+          status: badgeStatuses.tag?.status,
           title: 'Asset',
           icon: 'ResourceAssets',
           backgroundColor: '#F4DAF8',
           color: '#C945DB',
-          modelGenerated: tag.modelGenerated,
-          manuallyGenerated: tag.manuallyGenerated,
+          modelGenerated: badgeCounts.tag.modelGenerated,
+          manuallyGenerated: badgeCounts.tag.manuallyGenerated,
         })}
-      {text &&
-        showBadge(text) &&
+      {badgeCounts.text &&
+        showText &&
         row({
-          status: text.status,
+          status: badgeStatuses.text?.status,
           title: 'Text',
           icon: 'TextScan',
           backgroundColor: '#F0FCF8',
           color: '#404040',
-          modelGenerated: text.modelGenerated,
-          manuallyGenerated: text.manuallyGenerated,
+          modelGenerated: badgeCounts.text.modelGenerated,
+          manuallyGenerated: badgeCounts.text.manuallyGenerated,
         })}
-      {objects &&
-        showBadge(objects) &&
+      {badgeCounts.objects &&
+        showObjects &&
         row({
-          status: objects.status,
+          status: badgeStatuses.objects?.status,
           title: 'Object',
           icon: 'Scan',
           backgroundColor: '#FFE1D1',
           color: '#FF8746',
-          modelGenerated: objects.modelGenerated,
-          manuallyGenerated: objects.manuallyGenerated,
+          modelGenerated: badgeCounts.objects.modelGenerated,
+          manuallyGenerated: badgeCounts.objects.manuallyGenerated,
         })}
-      {gdpr &&
-        showGDPRBadge(gdpr) &&
+      {badgeCounts.gdpr &&
+        showGdpr &&
         row({
-          status: gdpr.status,
+          status: badgeStatuses.gdpr?.status,
           title: 'People',
           icon: 'Personrounded',
           backgroundColor: '#D3F7FB',
           color: '#1AA3C1',
-          modelGenerated: gdpr.modelGenerated,
-          manuallyGenerated: gdpr.manuallyGenerated,
+          modelGenerated: badgeCounts.gdpr.modelGenerated,
+          manuallyGenerated: badgeCounts.gdpr.manuallyGenerated,
         })}
-      {!showBadge(gdpr) &&
-        !showBadge(tag) &&
-        !showBadge(text) &&
-        !showBadge(objects) && <>No annotations</>}
+      {!showTag && !showText && !showObjects && !showGdpr && (
+        <Body level={3}>No annotations</Body>
+      )}
     </>
   );
 }
