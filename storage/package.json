@@ -1,0 +1,37 @@
+{
+  "name": "@cognite/storage",
+  "version": "0.1.0",
+  "description": "LocalStorage and cookie helpers",
+  "source": "src/index.ts",
+  "main": "dist/storage.js",
+  "module": "dist/storage.esm.js",
+  "browser": "dist/storage.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "test": "jest",
+    "build": "microbundle --target=browser",
+    "watch": "yarn build --watch",
+    "lint": "yarn prettier",
+    "lint:fix": "yarn prettier --write",
+    "prettier": "prettier -l 'src/**/*'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cognitedata/frontend"
+  },
+  "author": "Cognite AS",
+  "license": "UNLICENSED",
+  "homepage": "https://github.com/cognitedata/frontend/tree/master/packages/browser/commonjs/storage",
+  "dependencies": {
+    "@cognite/react-errors": "0.2.0",
+    "@cognite/metrics": "^1.1.0"
+  },
+  "devDependencies": {
+    "@babel/parser": "^7.9.4",
+    "microbundle": "^0.12.2",
+    "jest-localstorage-mock": "^2.4.3"
+  }
+}
