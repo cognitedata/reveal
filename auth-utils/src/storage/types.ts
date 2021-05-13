@@ -3,6 +3,7 @@ export type AuthFlow =
   | 'AZURE_AD'
   | 'ADFS'
   | 'OAUTH_GENERIC'
+  | 'FAKE_IDP' // used for E2E testing
   | 'UNKNOWN'; // set to this during logout
 
 export type AuthResult = {

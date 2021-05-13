@@ -1,4 +1,5 @@
 import { CogniteClient } from '@cognite/sdk';
+import { getFromLocalStorage } from '@cognite/storage';
 import { AuthFlow, AuthResult, getFlow, saveFlow } from '../storage';
 
 export type AuthenticatedUser = {
@@ -56,8 +57,15 @@ export class CogniteAuth {
       };
     } = { flow: getFlow().flow, appName: 'unknown' }
   ) {
-    this.getClient().setBaseUrl(`https://${this.getCluster()}.cognitedata.com`);
+    this.setCluster(options.cluster);
     log('Initialized with options:', this.options);
+  }
+
+  private setCluster(cluster?: string) {
+    if (cluster) {
+      this.options.cluster = cluster;
+    }
+    this.getClient().setBaseUrl(`https://${this.getCluster()}.cognitedata.com`);
   }
 
   subscribers: {
@@ -76,8 +84,8 @@ export class CogniteAuth {
     const authFlow = flow || savedFlow || 'COGNITE_AUTH';
 
     log('Running: loginAndAuthIfNeeded');
-    log(`this.state ${this.state}`);
-    log(`flowToUse ${authFlow}`);
+    log('Internal state', this.state);
+    log(`FlowToUse: ${authFlow}`);
 
     switch (authFlow) {
       case 'AZURE_AD': {
@@ -128,9 +136,7 @@ export class CogniteAuth {
           this.state.initializing = true;
           this.publishAuthState();
 
-          this.getClient().setBaseUrl(
-            `https://${this.getCluster()}.cognitedata.com`
-          );
+          this.setCluster();
           await this.getClient().loginWithOAuth({
             project,
           });
@@ -146,6 +152,12 @@ export class CogniteAuth {
           this.state.initializing = false;
           this.publishAuthState();
         }
+        break;
+      }
+      case 'FAKE_IDP': {
+        this.setFakeIdPInfo();
+        this.state.initializing = false;
+        this.publishAuthState();
         break;
       }
       default: {
@@ -182,7 +194,9 @@ export class CogniteAuth {
     if (cluster) {
       this.options.cluster = cluster;
     }
-
+    if (flow === 'FAKE_IDP') {
+      this.setFakeIdPInfo();
+    }
     if (flow === 'AZURE_AD') {
       if (!this.options.aad?.appId) {
         this.state.error = true;
@@ -244,6 +258,9 @@ export class CogniteAuth {
     if (authFlow === 'ADFS') {
       // console.log('ADFS NOT READY YET');
     }
+    if (authFlow === 'FAKE_IDP') {
+      this.setFakeIdPInfo();
+    }
     if (authFlow === 'AZURE_AD') {
       if (this.options.aad) {
         await this.client
@@ -295,11 +312,36 @@ export class CogniteAuth {
   // the SDK did not provide a way to get the ID token
   // so as a temp fix, we need to get this manually
   private getCDFToken() {
-    // @ts-expect-error http is private
+    // @ts-expect-error azureAdClient is private
     return this.getClient().azureAdClient.msalApplication.acquireTokenSilent(
-      // @ts-expect-error http is private
+      // @ts-expect-error azureAdClient is private
       this.getClient().azureAdClient.silentCDFTokenRequest
     );
+  }
+
+  private setFakeIdPInfo() {
+    const fakeAuth = getFromLocalStorage<{
+      idToken: string;
+      accessToken: string;
+      project: string;
+      cluster: string;
+    }>('fakeIdp');
+    if (fakeAuth) {
+      this.setCluster(fakeAuth.cluster);
+      this.getClient().loginWithOAuth({
+        project: fakeAuth.project,
+        accessToken: fakeAuth.accessToken,
+        onAuthenticate: (login) => {
+          login.skip();
+        },
+      });
+
+      this.state.authResult = {
+        idToken: fakeAuth.idToken,
+        accessToken: fakeAuth.accessToken,
+        authFlow: 'FAKE_IDP',
+      };
+    }
   }
 
   public logout() {
