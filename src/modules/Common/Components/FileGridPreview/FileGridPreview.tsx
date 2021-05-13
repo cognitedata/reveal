@@ -15,14 +15,17 @@ import styled from 'styled-components';
 import { useSelector } from 'react-redux';
 import exifIcon from 'src/assets/exifIcon.svg';
 import { RootState } from 'src/store/rootReducer';
-import { makeAnnotationBadgePropsByFileId } from 'src/modules/Process/processSlice';
+import {
+  isProcessingFile,
+  makeSelectAnnotationStatuses,
+} from 'src/modules/Process/processSlice';
 import { selectUpdatedFileDetails } from 'src/modules/FileDetails/fileDetailsSlice';
-import { TableDataItem } from 'src/modules/Common/Types';
+import { TableDataItem } from 'src/modules/Common/types';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import { AnnotationsBadge } from '../AnnotationsBadge/AnnotationsBadge';
 import { AnnotationsBadgePopoverContent } from '../AnnotationsBadge/AnnotationsBadgePopoverContent';
-import { AnnotationsBadgeProps } from '../../../Workflow/types';
 import { isFilePreviewable } from '../FileUploader/utils/FileUtils';
+import { makeSelectAnnotationCounts } from '../../annotationSlice';
 
 export const FileGridPreview = ({
   item,
@@ -95,20 +98,17 @@ export const FileGridPreview = ({
     </Menu>
   );
 
-  const selectAnnotationBadgeProps = useMemo(
-    makeAnnotationBadgePropsByFileId,
-    []
-  );
-  const annotationsBadgeProps = useSelector((state: RootState) =>
-    selectAnnotationBadgeProps(state, item.id)
+  const getAnnotationCounts = useMemo(makeSelectAnnotationCounts, []);
+  const annotationCounts = useSelector(({ annotationReducer }: RootState) =>
+    getAnnotationCounts(annotationReducer, item.id)
   );
 
-  const annotations = Object.keys(annotationsBadgeProps) as Array<
-    keyof AnnotationsBadgeProps
-  >;
-  const reviewDisabled = annotations.some((key) =>
-    ['Queued', 'Running'].includes(annotationsBadgeProps[key]?.status || '')
+  const getAnnotationStatuses = useMemo(makeSelectAnnotationStatuses, []);
+  const annotationStatuses = useSelector(({ processSlice }: RootState) =>
+    getAnnotationStatuses(processSlice, item.id)
   );
+
+  const reviewDisabled = isProcessingFile(annotationStatuses);
   const fileDetails = useSelector((state: RootState) =>
     selectUpdatedFileDetails(state, String(item.id))
   );
@@ -141,9 +141,12 @@ export const FileGridPreview = ({
             <Popover
               placement="bottom"
               trigger="mouseenter click"
-              content={AnnotationsBadgePopoverContent(annotationsBadgeProps)}
+              content={AnnotationsBadgePopoverContent(
+                annotationCounts,
+                annotationStatuses
+              )}
             >
-              <>{AnnotationsBadge(annotationsBadgeProps)}</>
+              <>{AnnotationsBadge(annotationCounts, annotationStatuses)}</>
             </Popover>
           </div>
           <div className="review">

@@ -10,7 +10,8 @@ import { RootState } from 'src/store/rootReducer';
 const useIsFieldSavePending = (id: string) => {
   const [loading, setLoadingState] = useState<boolean>(false);
   const loadingField = useSelector(
-    ({ fileMetadataSlice }: RootState) => fileMetadataSlice.loadingField
+    ({ fileDetailsSlice: fileMetadataSlice }: RootState) =>
+      fileMetadataSlice.loadingField
   );
 
   useEffect(() => {

@@ -49,8 +49,9 @@ export const FileDetailsReview: React.FC<FileDetailCompProps> = ({
     selectUpdatedFileDetails(state, String(fileObj.id))
   );
 
-  const tableEditMode = useSelector(({ fileMetadataSlice }: RootState) =>
-    metadataEditMode(fileMetadataSlice)
+  const tableEditMode = useSelector(
+    ({ fileDetailsSlice: fileMetadataSlice }: RootState) =>
+      metadataEditMode(fileMetadataSlice)
   );
 
   const fileMetadata = useSelector((state: RootState) =>

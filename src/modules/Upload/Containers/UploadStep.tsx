@@ -5,10 +5,7 @@ import { margin } from 'src/cogs-variables';
 import { Body, Detail, Tabs } from '@cognite/cogs.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import {
-  addUploadedFile,
-  selectAllFiles,
-} from 'src/modules/Upload/uploadedFilesSlice';
+import { addUploadedFile, selectAllFiles } from 'src/modules/Common/filesSlice';
 import { PopulateAnnotations } from 'src/store/thunks/PopulateAnnotations';
 import { pushMetric } from 'src/utils/pushMetric';
 
@@ -21,7 +18,7 @@ const FileUploaderWrapper = styled.div`
 export default function UploadStep() {
   const dispatch = useDispatch();
   const uploadedFiles = useSelector((state: RootState) =>
-    selectAllFiles(state.uploadedFiles)
+    selectAllFiles(state.filesSlice)
   );
 
   const onUploadSuccess = React.useCallback(

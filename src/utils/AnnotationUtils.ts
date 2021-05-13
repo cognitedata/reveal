@@ -3,9 +3,11 @@ import {
   AnnotationSource,
   AnnotationType,
   DetectedAnnotation,
-  VisionAPIType,
+  LinkedAnnotation,
   RegionType,
+  VisionAPIType,
 } from 'src/api/types';
+import { UnsavedAnnotation } from 'src/api/annotation/types';
 
 export enum AnnotationStatus {
   Verified = 'verified',
@@ -41,27 +43,23 @@ export type AnnotationBoundingBox = {
   yMin: number;
 };
 
-export type UnsavedAnnotation = Omit<
+export type VisionAnnotation = Omit<
   Annotation,
-  'id' | 'createdTime' | 'lastUpdatedTime'
->;
-
-export interface VisionAnnotation
-  extends Omit<
-    Annotation,
-    'id' | 'region' | 'createdTime' | 'lastUpdatedTime'
-  > {
-  id?: string;
+  | 'region'
+  | 'linkedResourceId'
+  | 'linkedResourceExternalId'
+  | 'linkedResourceType'
+> & {
   label: string;
   type: RegionType;
   color: string;
   box?: AnnotationBoundingBox;
-  status: AnnotationStatus;
-  createdTime?: number;
-  lastUpdatedTime?: number;
   virtual?: boolean;
   modelType: VisionAPIType;
-}
+  linkedResourceId?: number;
+  linkedResourceExternalId?: string;
+  linkedResourceType?: 'asset';
+};
 
 export const ModelTypeStyleMap = {
   [VisionAPIType.OCR]: {
@@ -88,10 +86,16 @@ export const ModelTypeSourceMap: { [key: number]: AnnotationSource } = {
   [VisionAPIType.TagDetection]: 'vision/tagdetection',
   [VisionAPIType.ObjectDetection]: 'vision/objectdetection',
 };
-export const ModelTypeAnnotationTypeMap = {
+export const ModelTypeAnnotationTypeMap: { [key: number]: AnnotationType } = {
   [VisionAPIType.OCR]: 'vision/ocr',
   [VisionAPIType.TagDetection]: 'vision/tagdetection',
   [VisionAPIType.ObjectDetection]: 'vision/objectdetection',
+};
+
+export const AnnotationTypeModelTypeMap = {
+  'vision/ocr': VisionAPIType.OCR,
+  'vision/tagdetection': VisionAPIType.TagDetection,
+  'vision/objectdetection': VisionAPIType.ObjectDetection,
 };
 
 export class AnnotationUtils {
@@ -157,13 +161,16 @@ export class AnnotationUtils {
   }
 
   public static convertToVisionAnnotations(
-    annotations: Annotation[] | UnsavedAnnotation[]
+    annotations: Annotation[]
   ): VisionAnnotation[] {
-    return annotations.map((value: Annotation | UnsavedAnnotation) => {
+    return annotations.map((value) => {
       let ann = AnnotationUtils.createVisionAnnotationStub(
+        value.id,
         value.text,
         AnnotationUtils.getAnnotationsDetectionModelType(value),
         value.annotatedResourceId,
+        value.createdTime,
+        value.lastUpdatedTime,
         value.region && {
           xMin: value.region.vertices[0].x,
           yMin: value.region.vertices[0].y,
@@ -175,17 +182,15 @@ export class AnnotationUtils {
         value.status,
         value.data,
         value.annotationType,
-        value.annotatedResourceExternalId,
-        value.linkedResourceId,
-        value.linkedResourceExternalId
+        value.annotatedResourceExternalId
       );
 
-      if (isAnnotation(value)) {
+      if (isLinkedAnnotation(value)) {
         ann = {
           ...ann,
-          id: value.id.toString(),
-          createdTime: value.createdTime,
-          lastUpdatedTime: value.lastUpdatedTime,
+          linkedResourceId: value.linkedResourceId,
+          linkedResourceExternalId: value.linkedResourceExternalId,
+          linkedResourceType: 'asset',
         };
       }
       return ann;
@@ -193,9 +198,12 @@ export class AnnotationUtils {
   }
 
   public static createVisionAnnotationStub(
+    id: number,
     text: string,
     modelType: VisionAPIType,
     fileId: number,
+    createdTime: number,
+    lastUpdatedTime: number,
     box?: AnnotationBoundingBox,
     type: RegionType = 'rectangle',
     source: AnnotationSource = 'user',
@@ -205,9 +213,6 @@ export class AnnotationUtils {
     fileExternalId?: string,
     assetId?: number,
     assetExternalId?: string,
-    id?: string,
-    createdTime?: number,
-    lastUpdatedTime?: number,
     virtual = false
   ): VisionAnnotation {
     return {
@@ -239,10 +244,11 @@ export class AnnotationUtils {
     };
   }
 
-  public static convertToAnnotation(
-    value: VisionAnnotation
-  ): Annotation | UnsavedAnnotation {
-    const ann: UnsavedAnnotation = {
+  public static convertToAnnotation(value: VisionAnnotation): Annotation {
+    const ann: Annotation = {
+      id: value.id,
+      createdTime: value.createdTime,
+      lastUpdatedTime: value.lastUpdatedTime,
       region: value.box && {
         shape: value.type,
         vertices: [
@@ -268,32 +274,20 @@ export class AnnotationUtils {
       annotationType: value.annotationType,
     };
 
-    if (!!value.id && !!value.lastUpdatedTime && !!value.createdTime) {
-      const savedAnn: Annotation = {
-        ...ann,
-        id: parseInt(value.id, 10),
-        createdTime: value.createdTime,
-        lastUpdatedTime: value.lastUpdatedTime,
-      };
-      return savedAnn;
-    }
     return ann;
   }
 
   public static getAnnotationsDetectionModelType = (
-    ann: Annotation | UnsavedAnnotation
+    ann: Annotation
   ): VisionAPIType => {
-    if (
-      ann.linkedResourceType === 'asset' &&
-      (ann.linkedResourceId || ann.linkedResourceExternalId)
-    ) {
+    if (isLinkedAnnotation(ann)) {
       return VisionAPIType.TagDetection;
     }
 
-    if (ann.source === 'vision/objectdetection') {
-      return VisionAPIType.ObjectDetection;
+    if (ann.source === 'vision/ocr') {
+      return VisionAPIType.OCR;
     }
-    return VisionAPIType.OCR;
+    return VisionAPIType.ObjectDetection;
   };
 }
 
@@ -307,4 +301,8 @@ export const isUnSavedAnnotation = (
   ann: DetectedAnnotation | Annotation | UnsavedAnnotation
 ): ann is UnsavedAnnotation => {
   return !(ann as Annotation).lastUpdatedTime;
+};
+
+export const isLinkedAnnotation = (ann: Annotation): boolean => {
+  return !!(ann as LinkedAnnotation).linkedResourceType;
 };

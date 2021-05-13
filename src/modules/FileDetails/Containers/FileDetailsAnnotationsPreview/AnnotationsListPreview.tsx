@@ -1,13 +1,13 @@
 import { AllIconTypes, Col, Icon, Row } from '@cognite/cogs.js';
 import React from 'react';
 import styled from 'styled-components';
-import { VisionAnnotationState } from 'src/modules/Preview/previewSlice';
 import { ModelTypeIconMap, ModelTypeStyleMap } from 'src/utils/AnnotationUtils';
+import { AnnotationPreview } from 'src/modules/Common/types';
 
 export const AnnotationsListPreview = ({
   annotations,
 }: {
-  annotations: VisionAnnotationState[];
+  annotations: AnnotationPreview[];
 }) => {
   const annotationsAvailable = annotations.length > 0;
 
@@ -22,13 +22,15 @@ export const AnnotationsListPreview = ({
                   type={
                     annotation.text === 'person'
                       ? 'Personrounded'
-                      : (ModelTypeIconMap[annotation.modelType] as AllIconTypes)
+                      : (ModelTypeIconMap[
+                          annotation.annotationType
+                        ] as AllIconTypes)
                   }
                   style={{
                     color:
                       annotation.text === 'person'
                         ? '#1AA3C1'
-                        : ModelTypeStyleMap[annotation.modelType].color,
+                        : ModelTypeStyleMap[annotation.annotationType].color,
                   }}
                 />
               </StyledCol>

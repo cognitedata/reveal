@@ -24,6 +24,7 @@ import {
 import { VisionAPIType } from 'src/api/types';
 import { HandleFileAssetLinksByAnnotationId } from 'src/store/thunks/HandleFileAssetLinksByAnnotationId';
 import { DeleteAnnotationsAndRemoveLinkedAssets } from 'src/store/thunks/DeleteAnnotationsAndRemoveLinkedAssets';
+import { UpdateAnnotationsById } from 'src/store/thunks/UpdateAnnotationsById';
 
 const TableContainer = styled.div`
   width: 100%;
@@ -147,13 +148,13 @@ export const AnnotationsTable = ({
   selectedAnnotationIds,
   mode,
 }: {
-  selectedAnnotationIds: string[];
+  selectedAnnotationIds: number[];
   annotations: VisionAnnotationState[];
   mode: number;
 }) => {
   const dispatch = useDispatch();
 
-  const handleOnAnnotationSelect = (id: string, nextState: boolean) => {
+  const handleOnAnnotationSelect = (id: number, nextState: boolean) => {
     if (nextState) {
       dispatch(
         selectAnnotation({
@@ -186,6 +187,7 @@ export const AnnotationsTable = ({
     status: AnnotationStatus
   ) => {
     dispatch(annotationApproval(annotation.id, status));
+    dispatch(UpdateAnnotationsById([annotation.id]));
     dispatch(HandleFileAssetLinksByAnnotationId(annotation.id));
   };
 
@@ -221,7 +223,7 @@ export const AnnotationsTable = ({
               >
                 <StyledCol span={2}>
                   <Checkbox
-                    name={annotation.id}
+                    name={annotation.id.toString()}
                     value={annotation.checked}
                     onChange={(nextState) =>
                       handleOnAnnotationSelect(annotation.id, nextState)

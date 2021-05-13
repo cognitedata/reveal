@@ -1,31 +1,31 @@
 import React from 'react';
 import { Button, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { selectAnnotationsByFileIdModelTypes } from 'src/modules/Preview/previewSlice';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { VisionAPIType } from 'src/api/types';
+import { selectFileAnnotationsByType } from 'src/modules/Common/annotationSlice';
 import { AnnotationsListPreview } from './AnnotationsListPreview';
 
 export const FileDetailsAnnotationsPreview = ({
   fileId,
   onReviewClick,
 }: {
-  fileId: string;
+  fileId: number;
   onReviewClick: (id: number) => void;
 }) => {
-  const tagAnnotations = useSelector(({ previewSlice }: RootState) =>
-    selectAnnotationsByFileIdModelTypes(previewSlice, fileId, [
-      VisionAPIType.TagDetection,
-    ])
-  );
-
-  const gdprAndTextAndObjectAnnotations = useSelector(
-    ({ previewSlice }: RootState) =>
-      selectAnnotationsByFileIdModelTypes(previewSlice, fileId, [
+  const textAndObjectAnnotations = useSelector(
+    ({ annotationReducer }: RootState) =>
+      selectFileAnnotationsByType(annotationReducer, fileId, [
         VisionAPIType.OCR,
         VisionAPIType.ObjectDetection,
       ])
+  );
+
+  const tagAnnotations = useSelector(({ annotationReducer }: RootState) =>
+    selectFileAnnotationsByType(annotationReducer, fileId, [
+      VisionAPIType.TagDetection,
+    ])
   );
 
   return (
@@ -48,7 +48,7 @@ export const FileDetailsAnnotationsPreview = ({
       <TitleRow>
         <Title level={5}>Text and objects in image</Title>
       </TitleRow>
-      <AnnotationsListPreview annotations={gdprAndTextAndObjectAnnotations} />
+      <AnnotationsListPreview annotations={textAndObjectAnnotations} />
     </Container>
   );
 };

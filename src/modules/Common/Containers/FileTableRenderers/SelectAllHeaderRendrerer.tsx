@@ -1,9 +1,9 @@
-import { CellRenderer } from 'src/modules/Common/Types';
+import { CellRenderer } from 'src/modules/Common/types';
 import React from 'react';
 import {
   selectAllFilesSelected,
   setAllFilesSelectState,
-} from 'src/modules/Upload/uploadedFilesSlice';
+} from 'src/modules/Common/filesSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { Checkbox } from '@cognite/cogs.js';
@@ -11,7 +11,7 @@ import { Checkbox } from '@cognite/cogs.js';
 export function SelectAllHeaderRenderer({ column }: CellRenderer) {
   const dispatch = useDispatch();
   const allFilesSelected = useSelector((state: RootState) =>
-    selectAllFilesSelected(state.uploadedFiles)
+    selectAllFilesSelected(state.filesSlice)
   );
 
   const handleSelectAllFiles = () => {

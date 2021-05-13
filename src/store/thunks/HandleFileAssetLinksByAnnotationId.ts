@@ -6,22 +6,22 @@ import { VisionAPIType } from 'src/api/types';
 import { UpdateFiles } from 'src/store/thunks/UpdateFiles';
 import { VisionAnnotationState } from 'src/modules/Preview/previewSlice';
 import { addAnnotations } from 'src/store/commonActions';
-import { FileState } from 'src/modules/Upload/uploadedFilesSlice';
+import { FileState } from 'src/modules/Common/filesSlice';
 
 export const HandleFileAssetLinksByAnnotationId = createAsyncThunk<
   void,
-  string,
+  number,
   ThunkConfig
 >(
   'HandleFileAssetLinksByAnnotationId',
   async (annotationId, { getState, dispatch }) => {
     const updateFileAndAnnotation = async (
       file: FileState,
-      assetExternalId: string,
+      annotationText: string,
       annotation: VisionAnnotationState
     ) => {
       const assetResponse = await dispatch(
-        fetchAssets([{ externalId: assetExternalId }])
+        fetchAssets([{ externalId: annotationText }])
       );
       const assets = unwrapResult(assetResponse);
 
@@ -101,7 +101,7 @@ export const HandleFileAssetLinksByAnnotationId = createAsyncThunk<
 
     const annotation = getState().previewSlice.annotations.byId[annotationId];
     const model = getState().previewSlice.models.byId[annotation.modelId];
-    const file = getState().uploadedFiles.files.byId[model.fileId];
+    const file = getState().filesSlice.files.byId[model.fileId];
 
     if (model.modelType === VisionAPIType.TagDetection) {
       await updateFileAndAnnotation(file, annotation.text, annotation);

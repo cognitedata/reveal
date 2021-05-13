@@ -6,7 +6,7 @@ import { RootState } from 'src/store/rootReducer';
 
 import { Title } from '@cognite/cogs.js';
 
-import { selectAllFiles } from 'src/modules/Upload/uploadedFilesSlice';
+import { selectAllFiles } from 'src/modules/Common/filesSlice';
 import styled from 'styled-components';
 
 import { annotationsById } from 'src/modules/Preview/previewSlice';
@@ -21,7 +21,7 @@ const queryClient = new QueryClient();
 
 export default function SummaryStep() {
   const uploadedFiles = useSelector((state: RootState) =>
-    selectAllFiles(state.uploadedFiles)
+    selectAllFiles(state.filesSlice)
   );
 
   const [statView, setStatView] = useState('totalFilesUploaded');
@@ -176,7 +176,6 @@ export default function SummaryStep() {
                     { length: stats[statView].value },
                     (_, i: number) => (
                       <FileIconContainer key={`${statView}_${i}`}>
-                        {console.log(`key: ${statView}_${i}`)}
                         <img src={FileWithExifIcon} alt="FileWithExifIcon" />
                       </FileIconContainer>
                     )

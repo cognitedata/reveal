@@ -30,7 +30,7 @@ export const ImageReviewDrawerContent = ({
   );
 
   const drawerAnnotationLabel = useSelector(
-    (state: RootState) => state.previewSlice.drawer.annotation?.text || ''
+    (state: RootState) => state.previewSlice.drawer.text || ''
   );
 
   const drawerSelectedAssetIds = useSelector(

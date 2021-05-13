@@ -13,7 +13,7 @@ import FilePicker from 'src/modules/Common/Components/FileUploader/FilePicker';
 import exifr from 'exifr';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { setAllFilesStatus } from 'src/modules/Upload/uploadedFilesSlice';
+import { setAllFilesStatus } from 'src/modules/Common/filesSlice';
 import { SpacedRow } from './SpacedRow';
 import { getMIMEType } from './utils/FileUtils';
 import { sleep } from './utils';
@@ -152,7 +152,7 @@ export const FileUploader = ({
 }: FileUploaderProps) => {
   const sdk = useSDK();
   const { dataSetIds, extractExif } = useSelector(
-    (state: RootState) => state.uploadedFiles
+    (state: RootState) => state.filesSlice
   );
   const [fileList, setFileList] = useState<Array<CogsFileInfo | CogsFile>>(
     (initialUploadedFiles || []).map((file) => {
@@ -512,9 +512,7 @@ function UploadControlButtons({
             <Icon
               type="Checkmark"
               style={{ marginRight: '8.7px' }}
-              onMouseOver={() => {
-                console.log('Mouse');
-              }}
+              onMouseOver={() => {}}
             />
             Files uploaded
           </Title>

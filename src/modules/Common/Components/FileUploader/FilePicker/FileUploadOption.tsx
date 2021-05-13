@@ -4,10 +4,7 @@ import { Checkbox, Detail, Icon, PrimaryTooltip } from '@cognite/cogs.js';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import {
-  setDataSetIds,
-  setExtractExif,
-} from 'src/modules/Upload/uploadedFilesSlice';
+import { setDataSetIds, setExtractExif } from 'src/modules/Common/filesSlice';
 import { DataSetSelect } from '@cognite/data-exploration';
 import 'antd/dist/antd.css';
 
@@ -19,10 +16,8 @@ export function FileUploadOption({ isDisabled }: FileUploadOptionProps) {
   const queryClient = new QueryClient();
   const dispatch = useDispatch();
 
-  const { dataSetIds } = useSelector((state: RootState) => state.uploadedFiles);
-  const { extractExif } = useSelector(
-    (state: RootState) => state.uploadedFiles
-  );
+  const { dataSetIds } = useSelector((state: RootState) => state.filesSlice);
+  const { extractExif } = useSelector((state: RootState) => state.filesSlice);
 
   return (
     <OptionContainer>

@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import { PrevNextNav } from 'src/modules/Workflow/components/PrevNextNav';
 import { getLink, workflowRoutes } from 'src/modules/Workflow/workflowRoutes';
 import { createLink } from '@cognite/cdf-utilities';
-import { SaveAvailableAnnotations } from 'src/store/thunks/SaveAvailableAnnotations';
 import { RootState } from 'src/store/rootReducer';
 import { selectIsPollingComplete } from 'src/modules/Process/processSlice';
 import { annotationsById } from 'src/modules/Preview/previewSlice';
@@ -22,7 +21,7 @@ export const ProcessStepActionButtons = () => {
   });
 
   const { allFilesStatus } = useSelector(
-    (state: RootState) => state.uploadedFiles
+    (state: RootState) => state.filesSlice
   );
 
   const annotations = useSelector((state: RootState) => {
@@ -32,15 +31,13 @@ export const ProcessStepActionButtons = () => {
   const onCancel = () => {
     setModalOpen(false);
   };
-  const dispatch = useDispatch();
+
   const onNextClicked = () => {
-    dispatch(SaveAvailableAnnotations());
     pushMetric('Vision.Session.Finished');
     history.push(createLink('/explore/search/file')); // data-exploration app
   };
 
   const onUploadMoreClicked = () => {
-    dispatch(SaveAvailableAnnotations());
     pushMetric('Vision.Session.Finished');
     history.push(getLink(workflowRoutes.upload));
   };

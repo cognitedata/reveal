@@ -1,6 +1,6 @@
 import React from 'react';
 import { Column, ColumnShape } from 'react-base-table';
-import { TableDataItem } from 'src/modules/Common/Types';
+import { TableDataItem } from 'src/modules/Common/types';
 import { StringRenderer } from 'src/modules/Common/Containers/FileTableRenderers/StringRenderer';
 import { SelectableTable } from 'src/modules/Common/Components/SelectableTable/SelectableTable';
 import { NameRenderer } from 'src/modules/Common/Containers/FileTableRenderers/NameRenderer';
@@ -9,6 +9,7 @@ import { FileExplorerTableProps } from './types';
 import { DateRenderer } from '../../Containers/FileTableRenderers/DateRenderer';
 import { NameSorter } from '../../Containers/Sorters/NameSorter';
 import { DateSorter } from '../../Containers/Sorters/DateSorter';
+import { AnnotationRenderer } from '../../Containers/FileTableRenderers/AnnotationRenderer';
 
 export function FileTableExplorer(props: FileExplorerTableProps) {
   const columns: ColumnShape<TableDataItem>[] = [
@@ -35,6 +36,13 @@ export function FileTableExplorer(props: FileExplorerTableProps) {
       sortable: true,
     },
     {
+      key: 'annotations',
+      title: 'Annotations',
+      width: 0,
+      flexGrow: 1,
+      align: Column.Alignment.CENTER,
+    },
+    {
       key: 'action',
       title: 'File Actions',
       dataKey: 'menu',
@@ -47,6 +55,7 @@ export function FileTableExplorer(props: FileExplorerTableProps) {
     name: NameRenderer,
     mimeType: StringRenderer,
     sourceCreatedTime: DateRenderer,
+    annotations: AnnotationRenderer,
     action: ActionRenderer,
   };
 
