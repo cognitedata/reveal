@@ -26,6 +26,14 @@ You need to have the following field in your sidecar:
 
 See [Confulence](https://cognitedata.atlassian.net/wiki/spaces/AD/pages/2334818447/Enable+OIDC+Tokens+for+an+Application) for more info on how to setup Azure login.
 
+## Other usage options
+
+Some other keys you can set (via sidecar):
+
+`disableLegacyLogin` - Disable the top legacy part of the login box
+`disableTranslations` - Stop i18n from loading
+`showFakeIdP` - Show the 'Login with Fake IDP' button (requires docker service)
+
 ## How to run this component locally
 
 You can make changes and test them loally with the storybook here (`yarn storybook`)

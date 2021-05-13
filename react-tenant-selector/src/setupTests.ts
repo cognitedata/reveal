@@ -6,18 +6,22 @@ import '@testing-library/jest-dom';
 
 import '@cognite/metrics/jest-mocks';
 
-jest.mock('@cognite/react-i18n', () => ({
-  // this mock makes sure any components using the translate hook can use it without a warning being shown
-  useTranslation: () => {
-    return {
-      t: (str: string, options?: { defaultValue: string }) =>
-        options ? options.defaultValue : str,
-      i18n: {
-        // changeLanguage: () => new Promise(() => {}),
-      },
-    };
-  },
-}));
+jest.mock('@cognite/react-i18n', () => {
+  const actual = jest.requireActual('@cognite/react-i18n');
+  return {
+    ...actual,
+    // this mock makes sure any components using the translate hook can use it without a warning being shown
+    useTranslation: () => {
+      return {
+        t: (str: string, options?: { defaultValue: string }) =>
+          options ? options.defaultValue : str,
+        i18n: {
+          // changeLanguage: () => new Promise(() => {}),
+        },
+      };
+    },
+  };
+});
 
 // browserMocks.js
 const localStorageMock = (() => {

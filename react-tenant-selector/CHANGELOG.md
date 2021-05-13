@@ -1,3 +1,9 @@
+## 1.1.2 May 12 2021
+
+### Changes
+
+- Add fake idp option
+
 ## 1.1.1 May 11 2021
 
 ### Changes
@@ -29,11 +35,17 @@
 - Tidy up 'advanced options'
 - Make project selection card background wrap whole card
 
-## 0.6.9 Mar 25 2021
+## 0.8.0 May 1 2021
 
 ### Changes
 
-- Bump react-i18n from `0.3.0` to `0.3.1`
+- Add advanced azure options (set aad id)
+
+## 0.7.0 April 2021
+
+### Changes
+
+- Remove old domain pattern support
 
 ## 0.6.7 Mar 24 2021
 

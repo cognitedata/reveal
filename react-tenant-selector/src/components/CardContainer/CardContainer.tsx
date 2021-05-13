@@ -14,6 +14,7 @@ import {
   LoginWithAzure,
   LoginWithADFS,
   LoginWithCognite,
+  LoginWithFakeIDP,
 } from '../LoginOptions';
 
 import {
@@ -22,10 +23,13 @@ import {
   LoginSpacer,
 } from './elements';
 
+import { SidecarConfig } from '../../utils';
+
 export type EnabledModes = {
   cognite?: boolean;
   adfs?: boolean;
   aad?: boolean;
+  fakeIdp?: SidecarConfig['fakeIdp'];
 };
 
 export type FormState = {
@@ -160,6 +164,14 @@ const CardContainer = ({
               {enabledLoginModes.aad && (
                 <LoginWithAzure authClient={authClient} directory={directory} />
               )}
+              {enabledLoginModes.fakeIdp?.map((fakeIdp) => (
+                <LoginWithFakeIDP
+                  key={fakeIdp.fakeApplicationId}
+                  handleSubmit={handleSubmit}
+                  authClient={authClient}
+                  {...fakeIdp}
+                />
+              ))}
             </>
           )}
         </StyledContentWrapper>

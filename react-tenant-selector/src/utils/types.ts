@@ -1,5 +1,13 @@
 // we need to make a more generic place to move this type into
 
+export type FakeIdp = {
+  roles: string[];
+  groups: string[];
+  project: string;
+  cluster: string;
+  fakeApplicationId: string;
+};
+
 export type SidecarConfig = {
   __sidecarFormatVersion: number;
   aadApplicationId?: string;
@@ -17,4 +25,5 @@ export type SidecarConfig = {
   intercom?: string;
   locizeProjectId?: string;
   locizeKeySeparator?: false | string;
+  fakeIdp?: FakeIdp[];
 };

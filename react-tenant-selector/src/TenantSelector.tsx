@@ -28,6 +28,7 @@ export const TenantSelector: React.FC<{
     directoryTenantId,
     disableLegacyLogin,
     helpLink,
+    fakeIdp,
   } = sidecar;
 
   const [authenticating, setAuthenticating] = useState(false);
@@ -42,6 +43,7 @@ export const TenantSelector: React.FC<{
   const enabledLoginModes: EnabledModes = {
     cognite: !disableLegacyLogin,
     aad: !!aadApplicationId,
+    fakeIdp,
     // if we want to enable other modes in testing
     // we would use a setting here like this:
     // adfs: true,
