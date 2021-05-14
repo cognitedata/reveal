@@ -16,9 +16,11 @@ import { VisionFileDetails } from '../../Components/FileMetadata/Types';
 export const FileDetailsAnnotationsPreview = ({
   fileInfo,
   onReviewClick,
+  onAnnotationDeleteClick,
 }: {
   fileInfo: VisionFileDetails;
   onReviewClick: (id: number) => void;
+  onAnnotationDeleteClick: (annotationId: number) => void;
 }) => {
   const textAndObjectAnnotations = useSelector(
     ({ annotationReducer }: RootState) =>
@@ -41,6 +43,10 @@ export const FileDetailsAnnotationsPreview = ({
 
   const reviewDisabled = isProcessingFile(annotationStatuses);
 
+  const handleOnReviewClick = () => {
+    onReviewClick(+fileInfo.id);
+  };
+
   return (
     <Container>
       <div className="image">
@@ -53,9 +59,7 @@ export const FileDetailsAnnotationsPreview = ({
         icon="Edit"
         style={{ width: '70%' }}
         disabled={reviewDisabled}
-        onClick={() => {
-          onReviewClick(+fileInfo.id);
-        }}
+        onClick={handleOnReviewClick}
         aria-label="Review annotations"
       >
         Review annotations
@@ -63,11 +67,21 @@ export const FileDetailsAnnotationsPreview = ({
       <TitleRow>
         <Title level={5}>Linked assets</Title>
       </TitleRow>
-      <AnnotationsListPreview annotations={tagAnnotations} />
+      <AnnotationsListPreview
+        annotations={tagAnnotations}
+        reviewDisabled={reviewDisabled}
+        handleReview={handleOnReviewClick}
+        onAnnotationDeleteClick={onAnnotationDeleteClick}
+      />
       <TitleRow>
         <Title level={5}>Text and objects in image</Title>
       </TitleRow>
-      <AnnotationsListPreview annotations={textAndObjectAnnotations} />
+      <AnnotationsListPreview
+        annotations={textAndObjectAnnotations}
+        reviewDisabled={reviewDisabled}
+        handleReview={handleOnReviewClick}
+        onAnnotationDeleteClick={onAnnotationDeleteClick}
+      />
     </Container>
   );
 };

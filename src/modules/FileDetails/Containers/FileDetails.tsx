@@ -22,6 +22,8 @@ import {
   getParamLink,
   workflowRoutes,
 } from 'src/modules/Workflow/workflowRoutes';
+
+import { DeleteAnnotationsAndRemoveLinkedAssets } from 'src/store/thunks/DeleteAnnotationsAndRemoveLinkedAssets';
 import { FileDetailsAnnotationsPreview } from './FileDetailsAnnotationsPreview/FileDetailsAnnotationsPreview';
 
 export const FileDetails = () => {
@@ -78,6 +80,10 @@ export const FileDetails = () => {
     );
   };
 
+  const onAnnotationDeleteClick = (annotationId: number) => {
+    dispatch(DeleteAnnotationsAndRemoveLinkedAssets([annotationId]));
+  };
+
   return (
     <Container>
       <CloseButtonRow>
@@ -115,6 +121,7 @@ export const FileDetails = () => {
                 <FileDetailsAnnotationsPreview
                   fileInfo={fileDetails}
                   onReviewClick={onReviewClick}
+                  onAnnotationDeleteClick={onAnnotationDeleteClick}
                 />
               )}
             </Tabs.Pane>

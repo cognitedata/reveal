@@ -10,7 +10,7 @@ import React from 'react';
 import exifIcon from 'src/assets/exifIcon.svg';
 import { ExifIcon } from '../../Containers/FileTableRenderers/NameRenderer';
 
-interface ReviewButtonProps {
+interface ActionMenuProps {
   showExifIcon?: boolean;
   disabled?: boolean;
   handleReview: () => void;
@@ -24,7 +24,7 @@ export const ActionMenu = ({
   handleReview,
   handleFileDelete,
   handleMetadataEdit,
-}: ReviewButtonProps) => {
+}: ActionMenuProps) => {
   const MenuContent = (
     <Menu
       style={{

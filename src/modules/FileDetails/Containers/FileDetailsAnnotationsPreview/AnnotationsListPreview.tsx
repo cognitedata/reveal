@@ -3,11 +3,18 @@ import React from 'react';
 import styled from 'styled-components';
 import { ModelTypeIconMap, ModelTypeStyleMap } from 'src/utils/AnnotationUtils';
 import { AnnotationPreview } from 'src/modules/Common/types';
+import { AnnotationActionMenu } from 'src/modules/Common/Components/AnnotationActionMenu/AnnotationActionMenu';
 
 export const AnnotationsListPreview = ({
   annotations,
+  reviewDisabled,
+  handleReview,
+  onAnnotationDeleteClick,
 }: {
   annotations: AnnotationPreview[];
+  reviewDisabled: boolean;
+  handleReview: () => void;
+  onAnnotationDeleteClick: (annotationId: number) => void;
 }) => {
   const annotationsAvailable = annotations.length > 0;
 
@@ -36,6 +43,15 @@ export const AnnotationsListPreview = ({
               </StyledCol>
               <StyledCol span={7}>
                 <AnnotationLbl>{annotation.text}</AnnotationLbl>
+              </StyledCol>
+              <StyledCol span={1}>
+                <AnnotationActionMenu
+                  disabled={reviewDisabled}
+                  handleReview={handleReview}
+                  handleAnnotationDelete={() => {
+                    onAnnotationDeleteClick(annotation.id);
+                  }}
+                />
               </StyledCol>
             </Row>
           );
