@@ -64,10 +64,19 @@ export const configPanel = ({
         renderCall={(availableFunctions) => {
           const categories: { [key: string]: DSPFunction[] } = {};
           availableFunctions.forEach((func) => {
-            if (!categories[func.category]) {
-              categories[func.category] = [];
+            if (Array.isArray(func.category)) {
+              func.category.forEach((category) => {
+                if (!categories[category]) {
+                  categories[category] = [];
+                }
+                categories[category].push(func);
+              });
+            } else {
+              if (!categories[func.category]) {
+                categories[func.category] = [];
+              }
+              categories[func.category].push(func);
             }
-            categories[func.category].push(func);
           });
           return (
             <Dropdown
