@@ -89,7 +89,7 @@ export function AnnotationsBadgePopoverContent(
           title: 'Text',
           icon: 'TextScan',
           backgroundColor: '#F0FCF8',
-          color: '#404040',
+          color: '#00665C',
           modelGenerated: badgeCounts.text.modelGenerated,
           manuallyGenerated: badgeCounts.text.manuallyGenerated,
         })}

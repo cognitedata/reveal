@@ -60,7 +60,7 @@ export function AnnotationsBadge(
           style={{
             marginRight: '5px',
             backgroundColor: '#F0FCF8',
-            color: '#404040',
+            color: '#00665C',
             opacity: setOpacity(badgeStatuses.text?.status),
           }}
         >

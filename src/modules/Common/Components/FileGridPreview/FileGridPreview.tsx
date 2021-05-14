@@ -1,8 +1,6 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { FileInfo as File } from '@cognite/sdk';
-import { Loader, useFileIcon } from '@cognite/data-exploration';
+import React, { useMemo } from 'react';
 
-import { Body, DocumentIcon, Tooltip } from '@cognite/cogs.js';
+import { Tooltip } from '@cognite/cogs.js';
 import { Popover } from 'src/modules/Common/Components/Popover';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
@@ -19,10 +17,10 @@ import { DeleteAnnotationsByFileIds } from 'src/store/thunks/DeleteAnnotationsBy
 import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
 import { AnnotationsBadge } from '../AnnotationsBadge/AnnotationsBadge';
 import { AnnotationsBadgePopoverContent } from '../AnnotationsBadge/AnnotationsBadgePopoverContent';
-import { isFilePreviewable } from '../FileUploader/utils/FileUtils';
 import { makeSelectAnnotationCounts } from '../../annotationSlice';
 import { ReviewButton } from '../ReviewButton/ReviewButton';
 import { ActionMenu } from '../ActionMenu/ActionMenu';
+import { Thumbnail } from '../Thumbnail/Thumbnail';
 
 export const FileGridPreview = ({
   item,
@@ -31,48 +29,13 @@ export const FileGridPreview = ({
   item: TableDataItem;
   style?: React.CSSProperties;
 }) => {
-  const [imageUrl, setImage] = useState<string | undefined>(undefined);
   const dispatch = useDispatch();
 
-  const { data, isError } = useFileIcon({
+  const fileInfo = {
     id: item.id,
-    uploaded: true,
+    uploaded: true, // TODO: should not assume this
     mimeType: item.mimeType,
-  } as File);
-
-  const isPreviewable = isFilePreviewable({ name: item.name } as FileInfo); // TODO: check if file is previewable
-  useEffect(() => {
-    if (data) {
-      const arrayBufferView = new Uint8Array(data);
-      const blob = new Blob([arrayBufferView]);
-      setImage(URL.createObjectURL(blob));
-    }
-    return () => {
-      setImage((url) => {
-        if (url) {
-          URL.revokeObjectURL(url);
-        }
-        return undefined;
-      });
-    };
-  }, [data]);
-
-  const image = useMemo(() => {
-    if (isPreviewable) {
-      if (imageUrl) {
-        return <img src={imageUrl} alt="" />;
-      }
-      if (!isError) {
-        return <Loader />;
-      }
-    }
-    return (
-      <div className="documentIconContainer">
-        <DocumentIcon file={item.name} style={{ height: 36, width: 36 }} />
-        {isError && <Body level={3}>Unable to preview file.</Body>}
-      </div>
-    );
-  }, [imageUrl, isPreviewable, item, isError]);
+  } as FileInfo;
 
   const handleReview = () => {
     if (item.menu?.onReviewClick) {
@@ -108,7 +71,7 @@ export const FileGridPreview = ({
   return (
     <PreviewCell style={style}>
       <div className="preview">
-        {image}
+        <Thumbnail fileInfo={fileInfo} />
         <div className="footer">
           <div className="nameAndExif">
             <div className="name">{item.name}</div>
@@ -170,7 +133,7 @@ const PreviewCell = styled.div`
       display: grid;
       padding: 12px;
       row-gap: 19px;
-      grid-template-columns: 100px 1fr 1fr;
+      grid-template-columns: 120px 1fr 1fr;
       grid-template-rows: auto;
       grid-template-areas:
         'name name name name . action'
@@ -187,7 +150,7 @@ const PreviewCell = styled.div`
         overflow: hidden;
         grid-area: name;
         white-space: nowrap;
-        max-width: 150px;
+        max-width: 100px;
       }
       .exif > img {
         padding-bottom: 15px;

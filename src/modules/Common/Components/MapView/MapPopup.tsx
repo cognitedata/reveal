@@ -1,8 +1,6 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { FileInfo as File } from '@cognite/sdk';
-import { Loader, useFileIcon } from '@cognite/data-exploration';
+import React, { useMemo } from 'react';
 
-import { Body, DocumentIcon, Tooltip } from '@cognite/cogs.js';
+import { Tooltip } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import exifIcon from 'src/assets/exifIcon.svg';
@@ -19,10 +17,10 @@ import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
 import { AnnotationsBadge } from '../AnnotationsBadge/AnnotationsBadge';
 import { AnnotationsBadgePopoverContent } from '../AnnotationsBadge/AnnotationsBadgePopoverContent';
 import { Popover } from '../Popover';
-import { isFilePreviewable } from '../FileUploader/utils/FileUtils';
 import { makeSelectAnnotationCounts } from '../../annotationSlice';
 import { ReviewButton } from '../ReviewButton/ReviewButton';
 import { ActionMenu } from '../ActionMenu/ActionMenu';
+import { Thumbnail } from '../Thumbnail/Thumbnail';
 
 export const MapPopup = ({
   item,
@@ -36,47 +34,11 @@ export const MapPopup = ({
   }
   const dispatch = useDispatch();
 
-  // TODO: from FileGridPreview -> refactor
-  const [imageUrl, setImage] = useState<string | undefined>(undefined);
-  const { data, isError } = useFileIcon({
+  const fileInfo = {
     id: item.id,
     uploaded: true,
     mimeType: item.mimeType,
-  } as File);
-
-  const isPreviewable = isFilePreviewable({ name: item.name } as FileInfo);
-  useEffect(() => {
-    if (data) {
-      const arrayBufferView = new Uint8Array(data);
-      const blob = new Blob([arrayBufferView]);
-      setImage(URL.createObjectURL(blob));
-    }
-    return () => {
-      setImage((url) => {
-        if (url) {
-          URL.revokeObjectURL(url);
-        }
-        return undefined;
-      });
-    };
-  }, [data]);
-
-  const image = useMemo(() => {
-    if (isPreviewable) {
-      if (imageUrl) {
-        return <img src={imageUrl} alt="" />;
-      }
-      if (!isError) {
-        return <Loader />;
-      }
-    }
-    return (
-      <>
-        <DocumentIcon file={item.name} style={{ height: 36, width: 36 }} />
-        {isError && <Body level={3}>Unable to preview file.</Body>}
-      </>
-    );
-  }, [imageUrl, isPreviewable, item, isError]);
+  } as FileInfo;
 
   const handleReview = () => {
     if (item.menu?.onReviewClick) {
@@ -114,7 +76,9 @@ export const MapPopup = ({
   return (
     <MapPopupContainer style={style}>
       <div className="preview">
-        <div className="image">{image}</div>
+        <div className="image">
+          <Thumbnail fileInfo={fileInfo} />
+        </div>
         <div className="fileDetails">
           <table>
             <tbody>

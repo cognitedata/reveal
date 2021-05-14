@@ -63,7 +63,7 @@ export type VisionAnnotation = Omit<
 
 export const ModelTypeStyleMap = {
   [VisionAPIType.OCR]: {
-    color: '#404040',
+    color: '#00665C',
     backgroundColor: '#F0FCF8',
   },
   [VisionAPIType.TagDetection]: {

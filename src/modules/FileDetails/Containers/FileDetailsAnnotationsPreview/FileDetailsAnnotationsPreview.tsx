@@ -9,45 +9,52 @@ import {
   isProcessingFile,
   makeSelectAnnotationStatuses,
 } from 'src/modules/Process/processSlice';
+import { Thumbnail } from 'src/modules/Common/Components/Thumbnail/Thumbnail';
 import { AnnotationsListPreview } from './AnnotationsListPreview';
+import { VisionFileDetails } from '../../Components/FileMetadata/Types';
 
 export const FileDetailsAnnotationsPreview = ({
-  fileId,
+  fileInfo,
   onReviewClick,
 }: {
-  fileId: number;
+  fileInfo: VisionFileDetails;
   onReviewClick: (id: number) => void;
 }) => {
   const textAndObjectAnnotations = useSelector(
     ({ annotationReducer }: RootState) =>
-      selectFileAnnotationsByType(annotationReducer, fileId, [
+      selectFileAnnotationsByType(annotationReducer, fileInfo.id, [
         VisionAPIType.OCR,
         VisionAPIType.ObjectDetection,
       ])
   );
 
   const tagAnnotations = useSelector(({ annotationReducer }: RootState) =>
-    selectFileAnnotationsByType(annotationReducer, fileId, [
+    selectFileAnnotationsByType(annotationReducer, fileInfo.id, [
       VisionAPIType.TagDetection,
     ])
   );
 
   const getAnnotationStatuses = useMemo(makeSelectAnnotationStatuses, []);
   const annotationStatuses = useSelector(({ processSlice }: RootState) =>
-    getAnnotationStatuses(processSlice, fileId)
+    getAnnotationStatuses(processSlice, fileInfo.id)
   );
 
   const reviewDisabled = isProcessingFile(annotationStatuses);
 
   return (
     <Container>
-      <Button // TODO: add disable
+      <div className="image">
+        <Thumbnail
+          fileInfo={fileInfo} // TODO: only show in table view
+        />
+      </div>
+      <Button
         type="tertiary"
         icon="Edit"
         style={{ width: '70%' }}
         disabled={reviewDisabled}
         onClick={() => {
-          onReviewClick(+fileId);
+          onReviewClick(+fileInfo.id);
         }}
         aria-label="Review annotations"
       >
@@ -69,6 +76,19 @@ const Container = styled.div`
   height: 100%;
   width: 100%;
   display: grid;
+
+  .image {
+    height: 191px;
+    padding-top: 11px;
+    padding-bottom: 11px;
+    overflow: hidden;
+
+    img {
+      object-fit: cover;
+      width: 100%;
+      height: 100%;
+    }
+  }
 `;
 
 const TitleRow = styled.div`
