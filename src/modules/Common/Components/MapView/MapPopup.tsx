@@ -2,16 +2,9 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { FileInfo as File } from '@cognite/sdk';
 import { Loader, useFileIcon } from '@cognite/data-exploration';
 
-import {
-  Body,
-  DocumentIcon,
-  Button,
-  Dropdown,
-  Menu,
-  Tooltip,
-} from '@cognite/cogs.js';
+import { Body, DocumentIcon, Tooltip } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import exifIcon from 'src/assets/exifIcon.svg';
 import { RootState } from 'src/store/rootReducer';
 import { selectUpdatedFileDetails } from 'src/modules/FileDetails/fileDetailsSlice';
@@ -21,11 +14,15 @@ import {
 } from 'src/modules/Process/processSlice';
 import { TableDataItem } from 'src/modules/Common/types';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
+import { DeleteAnnotationsByFileIds } from 'src/store/thunks/DeleteAnnotationsByFileIds';
+import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
 import { AnnotationsBadge } from '../AnnotationsBadge/AnnotationsBadge';
 import { AnnotationsBadgePopoverContent } from '../AnnotationsBadge/AnnotationsBadgePopoverContent';
 import { Popover } from '../Popover';
 import { isFilePreviewable } from '../FileUploader/utils/FileUtils';
 import { makeSelectAnnotationCounts } from '../../annotationSlice';
+import { ReviewButton } from '../ReviewButton/ReviewButton';
+import { ActionMenu } from '../ActionMenu/ActionMenu';
 
 export const MapPopup = ({
   item,
@@ -37,6 +34,7 @@ export const MapPopup = ({
   if (!item) {
     return <div />;
   }
+  const dispatch = useDispatch();
 
   // TODO: from FileGridPreview -> refactor
   const [imageUrl, setImage] = useState<string | undefined>(undefined);
@@ -92,16 +90,10 @@ export const MapPopup = ({
     }
   };
 
-  const MenuContent = (
-    <Menu
-      style={{
-        color: 'black' /* typpy styles make color to be white here ... */,
-      }}
-    >
-      <Menu.Item onClick={handleMetadataEdit}>File details</Menu.Item>
-      <Menu.Item>Delete</Menu.Item>
-    </Menu>
-  );
+  const handleFileDelete = () => {
+    dispatch(DeleteAnnotationsByFileIds([item.id]));
+    dispatch(deleteFilesById([{ id: item.id }]));
+  };
 
   const getAnnotationCounts = useMemo(makeSelectAnnotationCounts, []);
   const annotationCounts = useSelector(({ annotationReducer }: RootState) =>
@@ -149,13 +141,13 @@ export const MapPopup = ({
           </table>
         </div>
         <div className="action">
-          <Dropdown content={MenuContent}>
-            <Button
-              type="ghost"
-              icon="MoreOverflowEllipsisHorizontal"
-              aria-label="action button"
-            />
-          </Dropdown>
+          <ActionMenu
+            showExifIcon={fileDetails?.geoLocation !== undefined}
+            disabled={reviewDisabled}
+            handleReview={handleReview}
+            handleFileDelete={handleFileDelete}
+            handleMetadataEdit={handleMetadataEdit}
+          />
         </div>
       </div>
       <div className="footer">
@@ -172,17 +164,7 @@ export const MapPopup = ({
           </Popover>
         </div>
         <div className="review">
-          <Button
-            type="secondary"
-            icon="ArrowRight"
-            iconPlacement="right"
-            onClick={handleReview}
-            size="small"
-            disabled={reviewDisabled}
-            aria-label="review button"
-          >
-            Review
-          </Button>
+          <ReviewButton disabled={reviewDisabled} onClick={handleReview} />
         </div>
       </div>
     </MapPopupContainer>
@@ -196,7 +178,7 @@ const MapPopupContainer = styled.div`
   border: 1px solid #c4c4c4;
   overflow: hidden;
   max-width: 500px;
-  grid-template-rows: 86px 50px;
+  grid-template-rows: 86px 55px;
   grid-template-areas:
     'preview'
     'footer';

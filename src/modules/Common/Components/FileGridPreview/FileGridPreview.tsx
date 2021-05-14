@@ -2,17 +2,10 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { FileInfo as File } from '@cognite/sdk';
 import { Loader, useFileIcon } from '@cognite/data-exploration';
 
-import {
-  Body,
-  DocumentIcon,
-  Button,
-  Dropdown,
-  Menu,
-  Tooltip,
-} from '@cognite/cogs.js';
+import { Body, DocumentIcon, Tooltip } from '@cognite/cogs.js';
 import { Popover } from 'src/modules/Common/Components/Popover';
 import styled from 'styled-components';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import exifIcon from 'src/assets/exifIcon.svg';
 import { RootState } from 'src/store/rootReducer';
 import {
@@ -22,10 +15,14 @@ import {
 import { selectUpdatedFileDetails } from 'src/modules/FileDetails/fileDetailsSlice';
 import { TableDataItem } from 'src/modules/Common/types';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
+import { DeleteAnnotationsByFileIds } from 'src/store/thunks/DeleteAnnotationsByFileIds';
+import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
 import { AnnotationsBadge } from '../AnnotationsBadge/AnnotationsBadge';
 import { AnnotationsBadgePopoverContent } from '../AnnotationsBadge/AnnotationsBadgePopoverContent';
 import { isFilePreviewable } from '../FileUploader/utils/FileUtils';
 import { makeSelectAnnotationCounts } from '../../annotationSlice';
+import { ReviewButton } from '../ReviewButton/ReviewButton';
+import { ActionMenu } from '../ActionMenu/ActionMenu';
 
 export const FileGridPreview = ({
   item,
@@ -35,6 +32,8 @@ export const FileGridPreview = ({
   style?: React.CSSProperties;
 }) => {
   const [imageUrl, setImage] = useState<string | undefined>(undefined);
+  const dispatch = useDispatch();
+
   const { data, isError } = useFileIcon({
     id: item.id,
     uploaded: true,
@@ -87,16 +86,10 @@ export const FileGridPreview = ({
     }
   };
 
-  const MenuContent = (
-    <Menu
-      style={{
-        color: 'black' /* typpy styles make color to be white here ... */,
-      }}
-    >
-      <Menu.Item onClick={handleMetadataEdit}>File details</Menu.Item>
-      <Menu.Item>Delete</Menu.Item>
-    </Menu>
-  );
+  const handleFileDelete = () => {
+    dispatch(DeleteAnnotationsByFileIds([item.id]));
+    dispatch(deleteFilesById([{ id: item.id }]));
+  };
 
   const getAnnotationCounts = useMemo(makeSelectAnnotationCounts, []);
   const annotationCounts = useSelector(({ annotationReducer }: RootState) =>
@@ -129,13 +122,13 @@ export const FileGridPreview = ({
           </div>
 
           <div className="action">
-            <Dropdown content={MenuContent}>
-              <Button
-                type="ghost"
-                icon="MoreOverflowEllipsisHorizontal"
-                aria-label="menu action"
-              />
-            </Dropdown>
+            <ActionMenu
+              showExifIcon={fileDetails?.geoLocation !== undefined}
+              disabled={reviewDisabled}
+              handleReview={handleReview}
+              handleFileDelete={handleFileDelete}
+              handleMetadataEdit={handleMetadataEdit}
+            />
           </div>
           <div className="badge">
             <Popover
@@ -150,17 +143,7 @@ export const FileGridPreview = ({
             </Popover>
           </div>
           <div className="review">
-            <Button
-              type="secondary"
-              icon="ArrowRight"
-              iconPlacement="right"
-              onClick={handleReview}
-              size="small"
-              disabled={reviewDisabled}
-              aria-label="Review"
-            >
-              Review
-            </Button>
+            <ReviewButton disabled={reviewDisabled} onClick={handleReview} />
           </div>
         </div>
       </div>
@@ -187,7 +170,7 @@ const PreviewCell = styled.div`
       display: grid;
       padding: 12px;
       row-gap: 19px;
-      grid-template-columns: 4fr 1fr 1fr;
+      grid-template-columns: 100px 1fr 1fr;
       grid-template-rows: auto;
       grid-template-areas:
         'name name name name . action'

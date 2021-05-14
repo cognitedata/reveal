@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { Button, Dropdown, Menu, Popconfirm } from '@cognite/cogs.js';
 import { CellRenderer } from 'src/modules/Common/types';
 import styled from 'styled-components';
 import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
@@ -10,11 +9,9 @@ import {
   makeSelectAnnotationStatuses,
 } from 'src/modules/Process/processSlice';
 import { DeleteAnnotationsByFileIds } from 'src/store/thunks/DeleteAnnotationsByFileIds';
-
-export const Action = styled.div`
-  display: flex;
-  align-items: flex-end;
-`;
+import { selectUpdatedFileDetails } from 'src/modules/FileDetails/fileDetailsSlice';
+import { ReviewButton } from '../../Components/ReviewButton/ReviewButton';
+import { ActionMenu } from '../../Components/ActionMenu/ActionMenu';
 
 export function ActionRenderer({ rowData: { menu, id } }: CellRenderer) {
   const dispatch = useDispatch();
@@ -42,49 +39,33 @@ export function ActionRenderer({ rowData: { menu, id } }: CellRenderer) {
   const annotationStatuses = useSelector(({ processSlice }: RootState) =>
     getAnnotationStatuses(processSlice, id)
   );
+  const fileDetails = useSelector((state: RootState) =>
+    selectUpdatedFileDetails(state, String(id))
+  );
 
   const reviewDisabled = isProcessingFile(annotationStatuses);
-  // todo: bind actions
-  const MenuContent = (
-    <Menu
-      style={{
-        color: 'black' /* typpy styles make color to be white here ... */,
-      }}
-    >
-      <Menu.Item onClick={handleMetadataEdit}>Edit file details</Menu.Item>
-      <Popconfirm
-        icon="WarningFilled"
-        placement="bottom-end"
-        onConfirm={handleFileDelete}
-        content="Are you sure you want to permanently delete this file?"
-      >
-        <Menu.Item disabled={reviewDisabled}>Delete</Menu.Item>
-      </Popconfirm>
-    </Menu>
-  );
 
   return (
     <Action>
-      <Button
-        type="secondary"
-        icon="ArrowRight"
-        iconPlacement="right"
-        style={{ marginRight: '10px' }}
-        onClick={handleReview}
+      <ReviewButton
         disabled={reviewDisabled}
-        aria-label="Review"
-      >
-        Review
-      </Button>
+        onClick={handleReview}
+        style={{ marginRight: '10px' }}
+      />
       {showMenu && (
-        <Dropdown content={MenuContent}>
-          <Button
-            type="secondary"
-            icon="MoreOverflowEllipsisHorizontal"
-            aria-label="dropdown button"
-          />
-        </Dropdown>
+        <ActionMenu
+          showExifIcon={fileDetails?.geoLocation !== undefined}
+          disabled={reviewDisabled}
+          handleReview={handleReview}
+          handleFileDelete={handleFileDelete}
+          handleMetadataEdit={handleMetadataEdit}
+        />
       )}
     </Action>
   );
 }
+
+export const Action = styled.div`
+  display: flex;
+  align-items: flex-end;
+`;
