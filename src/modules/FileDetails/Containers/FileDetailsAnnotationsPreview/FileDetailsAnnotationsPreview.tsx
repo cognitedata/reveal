@@ -1,10 +1,14 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Button, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { VisionAPIType } from 'src/api/types';
 import { selectFileAnnotationsByType } from 'src/modules/Common/annotationSlice';
+import {
+  isProcessingFile,
+  makeSelectAnnotationStatuses,
+} from 'src/modules/Process/processSlice';
 import { AnnotationsListPreview } from './AnnotationsListPreview';
 
 export const FileDetailsAnnotationsPreview = ({
@@ -28,12 +32,20 @@ export const FileDetailsAnnotationsPreview = ({
     ])
   );
 
+  const getAnnotationStatuses = useMemo(makeSelectAnnotationStatuses, []);
+  const annotationStatuses = useSelector(({ processSlice }: RootState) =>
+    getAnnotationStatuses(processSlice, fileId)
+  );
+
+  const reviewDisabled = isProcessingFile(annotationStatuses);
+
   return (
     <Container>
       <Button // TODO: add disable
         type="tertiary"
         icon="Edit"
         style={{ width: '70%' }}
+        disabled={reviewDisabled}
         onClick={() => {
           onReviewClick(+fileId);
         }}
