@@ -243,6 +243,7 @@ export const FileUploader = ({
     const exifTags = await exifr.parse(file, [
       'Orientation',
       'FocalLength',
+      'FocalLengthIn35mmFormat',
       'GPSVersionID',
       'GPSImgDirection',
       'GPSImgDirectionRef',
