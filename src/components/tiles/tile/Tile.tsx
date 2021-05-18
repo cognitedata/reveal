@@ -8,7 +8,7 @@ import {
   TileDescription,
   StyledTitle,
 } from 'components/tiles/elements';
-import { Board, Suite, SuiteRowDelete } from 'store/suites/types';
+import { Board, Suite } from 'store/suites/types';
 import TilePreviewImage from 'components/tiles/tilePreviewImage';
 import { useLastVisited } from 'hooks';
 import { Flex } from 'styles/common';
@@ -19,8 +19,6 @@ interface Props {
   color?: string;
   dataItem: Board | Suite;
   menu?: React.ReactElement;
-  handleDelete?: (key: SuiteRowDelete[]) => void;
-  handleEdit?: (key: SuiteRowDelete[]) => void;
   view?: 'suite' | 'board';
 }
 

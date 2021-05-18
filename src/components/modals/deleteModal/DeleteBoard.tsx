@@ -39,7 +39,7 @@ const DeleteBoard: React.FC<Props> = ({ board, suite }: Props) => {
       dispatch(deleteFiles(client, [board.imageFileId]));
     }
     await dispatch(
-      insertSuite(client, apiClient, {
+      insertSuite(apiClient, {
         ...suite,
         boards: suite.boards.filter((item) => item.key !== board.key),
       })

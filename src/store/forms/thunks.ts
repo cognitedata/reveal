@@ -47,7 +47,7 @@ export function saveForm(
         await dispatch(uploadFiles(client, filesUploadQueue, dataSetId));
       }
     }
-    await dispatch(insertSuite(client, apiClient, suite));
+    await dispatch(insertSuite(apiClient, suite));
     dispatch(actions.formSaved());
   };
 }
