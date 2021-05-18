@@ -4,6 +4,7 @@ import {
   ChartWorkflow,
   FunctionCallStatus,
   ChartTimeSeries,
+  Call,
 } from 'reducers/charts/types';
 import {
   Button,
@@ -23,6 +24,7 @@ import { getStepsFromWorkflow } from 'utils/transforms';
 import { calculateGranularity } from 'utils/timeseries';
 import { isWorkflowRunnable } from 'components/NodeEditor/utils';
 import { AppearanceDropdown } from 'components/AppearanceDropdown';
+import { getHash } from 'utils/hash';
 import {
   SourceItem,
   SourceSquare,
@@ -68,13 +70,12 @@ export default function WorkflowRow({
   isSelected = false,
   mutate,
 }: Props) {
-  const { mutate: callFunction, data, isSuccess, reset } = useCallFunction(
+  const { mutate: callFunction, isSuccess } = useCallFunction(
     'simple_calc-master'
   );
 
   const [isEditingName, setIsEditingName] = useState<boolean>(false);
-
-  // Increasing this will cause a fresh render where the dropdown is closed
+  const [lastSuccessfulCall, setLastSuccessfulCall] = useState<Call>();
   const { id, enabled, color, name, calls, unit, preferredUnit } = workflow;
   const call = calls?.sort((c) => c.callDate)[0];
   const isWorkspaceMode = mode === 'workspace';
@@ -105,24 +106,58 @@ export default function WorkflowRow({
   );
 
   useEffect(() => {
-    if (computation) {
-      callFunction({
-        data: { computation_graph: computation },
-      });
+    if (!computation) {
+      return;
     }
-  }, [computation, callFunction]);
+    if (call?.hash === getHash(computation)) {
+      return;
+    }
+
+    callFunction(
+      {
+        data: { computation_graph: computation },
+      },
+      {
+        onSuccess(res) {
+          setLastSuccessfulCall(res);
+        },
+      }
+    );
+  }, [computation, callFunction, setLastSuccessfulCall, call]);
+
+  console.log({ callId: call?.callId, lastSuccessfulCall });
 
   useEffect(() => {
-    if (isSuccess && data) {
-      const newCall = { ...data, callDate: Date.now() };
-      mutate(
-        updateWorkflow(chart, workflow.id, {
-          calls: [newCall],
-        })
-      );
-      reset();
+    if (!computation) {
+      return;
     }
-  }, [chart, workflow.id, data, isSuccess, mutate, reset, call]);
+    if (!lastSuccessfulCall) {
+      return;
+    }
+    if (call?.callId === lastSuccessfulCall.callId) {
+      return;
+    }
+
+    const newCall = {
+      ...lastSuccessfulCall,
+      callDate: Date.now(),
+      hash: getHash(computation),
+    };
+
+    mutate(
+      updateWorkflow(chart, workflow.id, {
+        calls: [newCall],
+      })
+    );
+  }, [
+    chart,
+    workflow.id,
+    isSuccess,
+    mutate,
+    computation,
+    lastSuccessfulCall,
+    call,
+  ]);
 
   const inputUnitOption = units.find(
     (unitOption) => unitOption.value === unit?.toLowerCase()
