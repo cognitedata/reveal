@@ -125,8 +125,6 @@ export default function WorkflowRow({
     );
   }, [computation, callFunction, setLastSuccessfulCall, call]);
 
-  console.log({ callId: call?.callId, lastSuccessfulCall });
-
   useEffect(() => {
     if (!computation) {
       return;
