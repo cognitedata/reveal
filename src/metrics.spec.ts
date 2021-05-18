@@ -69,7 +69,7 @@ describe('Metrics', () => {
 
   it('should throw on init without mixpanelToken', () => {
     const initMetrics = () => {
-      Metrics.init(({} as unknown) as InitOptions);
+      Metrics.init({} as unknown as InitOptions);
     };
     expect(initMetrics).toThrowError(
       new Error('Missing mixpanelToken parameter')
