@@ -139,7 +139,7 @@ export const Container = (props: Props) => {
   const WrappedConatiner = withI18nSuspense<Props>(RawContainer);
   return (
     <TranslationWrapper {...sidecar}>
-      <WrappedConatiner {...props} sidecar={sidecar} />;
+      <WrappedConatiner {...props} sidecar={sidecar} />
     </TranslationWrapper>
   );
 };

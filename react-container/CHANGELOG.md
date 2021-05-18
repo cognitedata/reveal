@@ -1,3 +1,7 @@
+## 1.1.2 May 18 2021
+
+- Bump tsa
+
 ## 1.1.1 May 18 2021
 
 - Bump auth to get better FAKE_IDP support
