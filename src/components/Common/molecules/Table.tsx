@@ -29,7 +29,6 @@ export const Table = styled(AntdTable)<CustomTableProps>`
   .ant-table-thead > tr > th:hover,
   .ant-table-thead > tr > th.ant-table-column-sort,
   .ant-table-tbody > tr > td {
-    padding: ${(props) => (props.options?.narrow ? '0 16px' : '16px')};
     height: 30px;
   }
   .ant-table-tbody

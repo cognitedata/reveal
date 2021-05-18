@@ -24,7 +24,9 @@ export const stringContains = (value?: string, searchText?: string) => {
     return true;
   }
   try {
-    return value && value.toUpperCase().search(searchText.toUpperCase()) >= 0;
+    return (
+      value && value.trim().toUpperCase().search(searchText.toUpperCase()) >= 0
+    );
   } catch (e) {
     message.error('Invalid search term');
     return 'Invalid search term';

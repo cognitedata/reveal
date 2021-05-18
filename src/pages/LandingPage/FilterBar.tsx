@@ -10,8 +10,13 @@ import { diagramSelection } from 'routes/paths';
 interface FilterBarProps {
   query: string;
   setQuery: (val: string) => void;
+  LoadMorePanel: React.FunctionComponent;
 }
-export default function FilterBar({ query, setQuery }: FilterBarProps) {
+export default function FilterBar({
+  query,
+  setQuery,
+  LoadMorePanel,
+}: FilterBarProps) {
   const { tenant } = useParams<{ tenant: string }>();
   const history = useHistory();
   const dispatch = useDispatch();
@@ -25,11 +30,15 @@ export default function FilterBar({ query, setQuery }: FilterBarProps) {
 
   return (
     <Flex row style={{ margin: '20px 0', justifyContent: 'space-between' }}>
-      <Input
-        placeholder="Filter by name..."
-        onChange={(e) => setQuery(e.currentTarget.value)}
-        value={query}
-      />
+      <Flex row>
+        <Input
+          placeholder="Filter by name..."
+          onChange={(e) => setQuery(e.currentTarget.value)}
+          value={query}
+          style={{ marginRight: '10px' }}
+        />
+        <LoadMorePanel />
+      </Flex>
       <IconButton type="primary" icon="Document" onClick={onContextualizeNew}>
         Contextualize new files
       </IconButton>
