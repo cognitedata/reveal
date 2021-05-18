@@ -1,5 +1,4 @@
 import noop from 'lodash/noop';
-import { reportException } from '@cognite/react-errors';
 import { Metrics } from '@cognite/metrics';
 
 const STORAGE_VERSION = 3;
@@ -101,11 +100,12 @@ export const getRootString = <T, D = undefined>(
   try {
     return JSON.parse(maybeJson);
   } catch (error) {
-    reportException(error, { maybeJson }).then((errorId: unknown) => {
-      // so we can track client issues to lookup ls keys
-      metrics.track('getRootString', {
-        errorId,
-      });
+    // eslint-disable-next-line no-console
+    console.error('Error getting LS key:', { key, rootKey, defaultValue });
+    // so we can track client issues to lookup ls keys
+    metrics.track('missing-key', {
+      key,
+      rootKey,
     });
     return defaultValue;
   }

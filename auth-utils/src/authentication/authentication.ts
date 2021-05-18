@@ -107,11 +107,8 @@ export class CogniteAuth {
             if (!response) {
               await this.getClient().authenticate();
             }
-            const {
-              accessToken,
-              idToken,
-              expiresOn,
-            } = await this.getCDFToken();
+            const CDFToken = await this.getCDFToken();
+            const { accessToken, idToken, expiresOn } = CDFToken;
 
             if (accessToken) {
               this.state.authResult = {
@@ -320,12 +317,13 @@ export class CogniteAuth {
   }
 
   private setFakeIdPInfo() {
-    const fakeAuth = getFromLocalStorage<{
+    type FakeIdP = {
       idToken: string;
       accessToken: string;
       project: string;
       cluster: string;
-    }>('fakeIdp');
+    };
+    const fakeAuth = getFromLocalStorage<FakeIdP>('fakeIdp');
     if (fakeAuth) {
       this.setCluster(fakeAuth.cluster);
       this.getClient().loginWithOAuth({

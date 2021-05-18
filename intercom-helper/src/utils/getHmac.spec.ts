@@ -24,6 +24,7 @@ describe('get Hmac key from server', () => {
       return Promise.reject(new Error('failure'));
     });
     return getHmac('test', { Authorization: 'test' }).catch((error) => {
+      // eslint-disable-next-line jest/no-conditional-expect
       expect(error.message).toBe('failure');
     });
   });

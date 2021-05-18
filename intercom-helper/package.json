@@ -14,7 +14,7 @@
     "test": "jest",
     "build": "microbundle --target=browser",
     "watch": "yarn build --watch",
-    "lint": "yarn prettier",
+    "lint": "yarn concurrently \"yarn prettier\" \"yarn eslint 'src/**/*.{ts,tsx}'\"",
     "lint:fix": "yarn prettier --write",
     "prettier": "prettier -l 'src/**/*'"
   },

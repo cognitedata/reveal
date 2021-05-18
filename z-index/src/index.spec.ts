@@ -11,9 +11,7 @@ describe('createLayers', () => {
   });
 
   it('handles changing the base', () => {
-    expect(
-      createLayers<typeof layers[number]>(layers, { base: 0 })
-    ).toEqual({
+    expect(createLayers<typeof layers[number]>(layers, { base: 0 })).toEqual({
       TOP: 20,
       MIDDLE: 10,
       BOTTOM: 0,
@@ -21,9 +19,7 @@ describe('createLayers', () => {
   });
 
   it('handles changing the delta', () => {
-    expect(
-      createLayers<typeof layers[number]>(layers, { delta: 1 })
-    ).toEqual({
+    expect(createLayers<typeof layers[number]>(layers, { delta: 1 })).toEqual({
       TOP: 102,
       MIDDLE: 101,
       BOTTOM: 100,

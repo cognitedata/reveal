@@ -1,20 +1,22 @@
 {
   "name": "@cognite/storage",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "LocalStorage and cookie helpers",
   "source": "src/index.ts",
-  "main": "dist/storage.js",
-  "module": "dist/storage.esm.js",
-  "browser": "dist/storage.js",
-  "typings": "dist/index.d.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.m.js",
+  "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
+    "clean": "rm -rf dist",
     "test": "jest",
-    "build": "microbundle --target=browser",
+    "esCheck": "es-check es5 './dist/index.js'",
+    "build": "yarn clean && rollup -c && yarn esCheck",
+    "build:watch": "yarn clean && rollup -c --watch && yarn esCheck",
     "watch": "yarn build --watch",
-    "lint": "yarn prettier",
+    "lint": "yarn concurrently \"yarn prettier\" \"yarn eslint 'src/**/*.{ts,tsx}'\"",
     "lint:fix": "yarn prettier --write",
     "prettier": "prettier -l 'src/**/*'"
   },
@@ -26,12 +28,12 @@
   "license": "UNLICENSED",
   "homepage": "https://github.com/cognitedata/frontend/tree/master/packages/browser/commonjs/storage",
   "dependencies": {
-    "@cognite/react-errors": "0.2.0",
+    "lodash": "^4.17.20",
     "@cognite/metrics": "^1.1.0"
   },
   "devDependencies": {
     "@babel/parser": "^7.9.4",
-    "microbundle": "^0.12.2",
+    "@types/lodash": "^4.14.165",
     "jest-localstorage-mock": "^2.4.3"
   }
 }

@@ -27,10 +27,10 @@
   },
   "author": "Cognite AS",
   "license": "UNLICENSED",
-  "homepage": "https://github.com/cognitedata/frontend/tree/master/packages/browser/commonjs/auth-js",
+  "homepage": "https://github.com/cognitedata/frontend/tree/master/packages/browser/commonjs/auth-utils",
   "dependencies": {
     "lodash": "^4.17.20",
-    "@cognite/storage": "0.1.0",
+    "@cognite/storage": "0.1.1",
     "@cognite/sdk": "^4.0.3"
   },
   "peerDependencies": {
