@@ -1,3 +1,7 @@
+## 1.2.1 May 18 2021
+
+- Bump auth to get better FAKE_IDP support
+
 ## 1.2.0 May 15 2021
 
 - Change i18n loading

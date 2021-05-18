@@ -1,32 +1,36 @@
+## 1.1.1 May 18 2021
+
+- Bump auth to get better FAKE_IDP support
+
 ## 1.1.0 May 15 2021
 
 - Change way i18n is loaded, removes all existing errors
   - sidecar props are now different
-  
+
 ## 1.0.4 May 11 2021
 
 - Bump auth
-  
+
 ## 1.0.3 May 11 2021
 
 - Fix intercom loading issue
- 
+
 ## 1.0.2 May 10 2021
 
 - Bump i18n
-  
+
 ## 1.0.1 May 5 2021
 
 ### Changes
 
 - Bump auth
-  
+
 ## 1.0.0 May 5 2021
 
 ### Changes
 
 - Upgrade to SDK v4 (via auth-utils)
-  
+
 ## 0.13.1 May 3 2021
 
 ### Changes
