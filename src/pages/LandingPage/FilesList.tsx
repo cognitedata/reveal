@@ -41,7 +41,7 @@ export default function FilesList(props: FilesListProps) {
   const writeAccess = filesAcl && eventsAcl;
   const noFiles = !isLoading && total === 0;
 
-  const isLoadMoreDisabled = () => total <= 1000 * (loadChunk + 1);
+  const isLoadMoreDisabled = total <= 1000 * (loadChunk + 1);
 
   const onClearAnnotations = async (file: FileInfo): Promise<void> => {
     Modal.confirm({
@@ -95,13 +95,14 @@ export default function FilesList(props: FilesListProps) {
     writeAccess
   );
 
-  const renderLoadMorePanel = () => {
-    if (total > files.length && !hidePanel) {
+  const LoadMorePanel = () => {
+    const canLoadMore = total > files.length && !hidePanel;
+    if (canLoadMore) {
       return (
         <Flex
           row
           style={{
-            background: isLoadMoreDisabled() ? '#F5F5F5' : '#4A67FB',
+            background: isLoadMoreDisabled ? '#F5F5F5' : '#4A67FB',
             padding: '4px 4px 4px 12px',
             borderRadius: '6px',
             justifyContent: 'space-between',
@@ -110,27 +111,28 @@ export default function FilesList(props: FilesListProps) {
           <Body level={2} style={{ marginRight: '5px' }}>
             <b>{files.length}</b> files loaded.
           </Body>
-          {isLoadMoreDisabled() ? (
-            <Body level={2} style={{ marginRight: '5px', color: '#8C8C8C' }}>
-              All files are loaded{' '}
-            </Body>
+          {isLoadMoreDisabled ? (
+            <>
+              <Body level={2} style={{ marginRight: '5px', color: '#8C8C8C' }}>
+                All files are loaded{' '}
+              </Body>
+              <Tooltip content="Hide">
+                <Icon
+                  type="Close"
+                  style={{ verticalAlign: '-0.225em' }}
+                  onClick={() => setHidePanel(true)}
+                />
+              </Tooltip>
+            </>
           ) : (
-            <Button onClick={() => setLoadChunk(loadChunk + 1)}>
-              Load more
-            </Button>
-          )}
-          {isLoadMoreDisabled() ? (
-            <Tooltip content="Hide">
-              <Icon
-                type="Close"
-                style={{ verticalAlign: '-0.225em' }}
-                onClick={() => setHidePanel(true)}
-              />
-            </Tooltip>
-          ) : (
-            <Tooltip content={TOOLTIP_STRINGS.LOAD_MORE_FILES_TOOLTIP}>
-              <Icon type="Info" style={{ verticalAlign: '-0.225em' }} />
-            </Tooltip>
+            <>
+              <Button onClick={() => setLoadChunk(loadChunk + 1)}>
+                Load more
+              </Button>
+              <Tooltip content={TOOLTIP_STRINGS.LOAD_MORE_FILES_TOOLTIP}>
+                <Icon type="Info" style={{ verticalAlign: '-0.225em' }} />
+              </Tooltip>
+            </>
           )}
         </Flex>
       );
@@ -153,7 +155,7 @@ export default function FilesList(props: FilesListProps) {
       <FilterBar
         query={query}
         setQuery={setQuery}
-        renderLoadMorePanel={renderLoadMorePanel}
+        LoadMorePanel={LoadMorePanel}
       />
       <Table
         pagination={{

@@ -10,12 +10,12 @@ import { diagramSelection } from 'routes/paths';
 interface FilterBarProps {
   query: string;
   setQuery: (val: string) => void;
-  renderLoadMorePanel: () => React.ReactNode;
+  LoadMorePanel: React.FunctionComponent;
 }
 export default function FilterBar({
   query,
   setQuery,
-  renderLoadMorePanel,
+  LoadMorePanel,
 }: FilterBarProps) {
   const { tenant } = useParams<{ tenant: string }>();
   const history = useHistory();
@@ -37,7 +37,7 @@ export default function FilterBar({
           value={query}
           style={{ marginRight: '10px' }}
         />
-        {renderLoadMorePanel()}
+        <LoadMorePanel />
       </Flex>
       <IconButton type="primary" icon="Document" onClick={onContextualizeNew}>
         Contextualize new files
