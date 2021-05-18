@@ -18,6 +18,7 @@ import TimeSeriesRows from 'pages/ChartView/TimeSeriesRows';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 import Layers from 'utils/z-index';
 import AssetSearchHit from 'components/SearchResultTable/AssetSearchHit';
+import { trackUsage } from 'utils/metrics';
 
 export const FileView = () => {
   const { chartId, assetId } = useParams<{
@@ -47,6 +48,10 @@ export const FileView = () => {
     isError: updateError,
     error: updateErrorMsg,
   } = useUpdateChart();
+
+  useEffect(() => {
+    trackUsage('PageView.FileView');
+  }, []);
 
   useEffect(() => {
     if (updateError) {

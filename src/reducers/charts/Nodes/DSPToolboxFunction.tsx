@@ -19,6 +19,7 @@ import {
 } from 'utils/transforms';
 import { StorableNode } from 'reducers/charts/types';
 import AvailableOps from 'components/NodeEditor/AvailableOps';
+import { trackUsage } from 'utils/metrics';
 import { ConfigPanelComponentProps } from '../types';
 
 type FunctionData = {
@@ -153,6 +154,9 @@ export const configPanel = ({
                                         },
                                       });
                                       setVisible(false);
+                                      trackUsage('ChartView.SelectFunction', {
+                                        function: func.description,
+                                      });
                                     }}
                                   >
                                     <span style={{ textAlign: 'left' }}>

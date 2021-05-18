@@ -24,7 +24,7 @@
     "@cognite/cogs.js": "^3.12.3",
     "@cognite/connect": "^0.0.7",
     "@cognite/data-exploration": "^0.5.7",
-    "@cognite/metrics": "^0.1.2",
+    "@cognite/metrics": "^1.1.0",
     "@cognite/react-picture-annotation": "^1.12.0",
     "@cognite/sdk": "^3.3.2",
     "@cognite/sdk-provider": "^1.0.0",

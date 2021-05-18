@@ -26,6 +26,7 @@ import {
 import { Chart } from 'reducers/charts/types';
 import { useChart, useUpdateChart } from 'hooks/firebase';
 import { updateSourceAxisForChart } from 'utils/charts';
+import { trackUsage } from 'utils/metrics';
 import {
   calculateStackedYRange,
   getXaxisUpdateFromEventData,
@@ -415,7 +416,12 @@ const PlotlyChartComponent = ({
           <AdjustButton
             type="tertiary"
             icon="YAxis"
-            onClick={() => setYAxisLocked(!yAxisLocked)}
+            onClick={() => {
+              trackUsage('ChartView.ToggleYAxisLock', {
+                state: !yAxisLocked ? 'unlocked' : 'locked',
+              });
+              setYAxisLocked(!yAxisLocked);
+            }}
             left={5 * seriesData.length}
             className="adjust-button"
             style={{ background: 'white' }}

@@ -16,6 +16,7 @@ import {
 } from 'utils/charts';
 import dayjs from 'dayjs';
 import { calculateDefaultYAxis } from 'utils/axis';
+import { trackUsage } from 'utils/metrics';
 
 type Props = {
   asset: Asset;
@@ -77,6 +78,7 @@ export default function AssetSearchHit({ asset }: Props) {
         );
 
         updateChart(addTimeseries(chart, newTs));
+        trackUsage('ChartView.AddTimeSeries', { source: 'search' });
       }
     }
   };

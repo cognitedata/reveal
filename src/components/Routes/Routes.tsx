@@ -1,6 +1,5 @@
-import React, { useEffect } from 'react';
-import { Route, RouteProps, Switch, useHistory } from 'react-router-dom';
-import useMetrics from 'hooks/useMetrics';
+import React from 'react';
+import { Route, RouteProps, Switch } from 'react-router-dom';
 
 import ChartList from 'pages/ChartList';
 import ChartView from 'pages/ChartView';
@@ -28,15 +27,6 @@ const RouteWithTopbar = ({ component, ...rest }: RouteProps) => {
 };
 
 const Routes = () => {
-  const metrics = useMetrics('Routes');
-  const history = useHistory();
-
-  useEffect(() => {
-    return history.listen((location) => {
-      metrics.track('Page view', { pathname: location.pathname });
-    });
-  }, [history, metrics]);
-
   return (
     <Switch>
       <RouteWithTopbar path="/" exact component={ChartList} />

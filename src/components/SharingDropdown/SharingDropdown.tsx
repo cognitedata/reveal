@@ -13,6 +13,7 @@ import {
 import { Chart } from 'reducers/charts/types';
 
 import { useUpdateChart } from 'hooks/firebase';
+import { trackUsage } from 'utils/metrics';
 
 interface SharingDropdownProps {
   chart: Chart;
@@ -39,12 +40,16 @@ const SharingDropdown = ({ chart, disabled = false }: SharingDropdownProps) => {
       ...chart,
       public: !chart.public,
     });
+    trackUsage('ChartView.ChangeChartAccess', {
+      state: chart.public ? 'public' : 'private',
+    });
   };
 
   const handleCopyLinkClick = async () => {
     try {
       await navigator.clipboard.writeText(shareableLink);
       setShareIconType('Checkmark');
+      trackUsage('ChartView.CopyLink');
       setTimeout(() => setShareIconType('Copy'), 3000);
     } catch (e) {
       setShareIconType('ErrorStroked');
