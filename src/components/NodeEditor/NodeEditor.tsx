@@ -14,7 +14,6 @@ import { nanoid } from 'nanoid';
 import workflowBackgroundSrc from 'assets/workflowBackground.png';
 import { Chart, ChartWorkflow, StorableNode } from 'reducers/charts/types';
 import { getStepsFromWorkflow } from 'utils/transforms';
-import { Modes } from 'pages/types';
 import { pinTypes } from './utils';
 import defaultNodeOptions from '../../reducers/charts/Nodes';
 import ConfigPanel from './ConfigPanel';
@@ -33,14 +32,14 @@ const WorkflowContainer = styled.div`
 type WorkflowEditorProps = {
   chart: Chart;
   workflowId: string;
-  setWorkspaceMode: (m: Modes) => void;
+  closeNodeEditor: () => void;
   mutate: (chart: Chart) => void;
 };
 
 const WorkflowEditor = ({
   workflowId,
   chart,
-  setWorkspaceMode,
+  closeNodeEditor,
   mutate,
 }: WorkflowEditorProps) => {
   const [activeNode, setActiveNode] = useState<StorableNode>();
@@ -183,7 +182,7 @@ const WorkflowEditor = ({
 
       <Button
         style={{ position: 'absolute', top: 16, right: 16 }}
-        onClick={() => setWorkspaceMode('workspace')}
+        onClick={closeNodeEditor}
       >
         Close
       </Button>

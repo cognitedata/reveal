@@ -6,6 +6,7 @@ import { useChart, useDeleteChart, useUpdateChart } from 'hooks/firebase';
 import { useHistory, useParams } from 'react-router-dom';
 import { duplicate } from 'utils/charts';
 import SharingDropdown from 'components/SharingDropdown/SharingDropdown';
+import { trackUsage } from 'utils/metrics';
 
 export const ChartActions = () => {
   const history = useHistory();
@@ -54,6 +55,7 @@ export const ChartActions = () => {
     if (chart && login?.user) {
       const newChart = duplicate(chart, login.user);
       await updateChart(newChart);
+      trackUsage('ChartView.DuplicateChart', { isOwner });
       history.push(`/${newChart.id}`);
     }
   };

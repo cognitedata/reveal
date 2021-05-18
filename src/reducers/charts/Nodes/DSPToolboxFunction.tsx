@@ -12,6 +12,7 @@ import {
 } from 'utils/transforms';
 import { StorableNode } from 'reducers/charts/types';
 import AvailableOps from 'components/NodeEditor/AvailableOps';
+import { trackUsage } from 'utils/metrics';
 import { ConfigPanelComponentProps } from '../types';
 
 type FunctionData = {
@@ -95,6 +96,10 @@ export const configPanel = ({
                     ...functionData,
                     toolFunction: storableNextFunc,
                   },
+                });
+
+                trackUsage('ChartView.SelectFunction', {
+                  function: nextFunc.description,
                 });
               }
             }}

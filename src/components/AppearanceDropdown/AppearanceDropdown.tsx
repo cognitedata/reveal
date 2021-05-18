@@ -2,6 +2,7 @@ import { Menu } from '@cognite/cogs.js';
 import React from 'react';
 import styled from 'styled-components/macro';
 import { availableColors } from 'utils/colors';
+import { trackUsage } from 'utils/metrics';
 
 type LineStyle = 'none' | 'solid' | 'dashed' | 'dotted';
 
@@ -13,18 +14,20 @@ export const AppearanceDropdown = ({
   return (
     <DropdownWrapper>
       <ColorDropdown
-        onColorSelected={(newColor) =>
+        onColorSelected={(newColor) => {
           update({
             color: newColor,
-          })
-        }
+          });
+          trackUsage('ChartView.ChangeAppearance', { type: 'color' });
+        }}
       />
       <WeightDropdown
-        onWeightSelected={(newWeight) =>
+        onWeightSelected={(newWeight) => {
           update({
             lineWeight: newWeight,
-          })
-        }
+          });
+          trackUsage('ChartView.ChangeAppearance', { type: 'line-weight' });
+        }}
       />
       <TypeDropdown
         onStyleSelected={(newStyle) => {
@@ -32,6 +35,7 @@ export const AppearanceDropdown = ({
             displayMode: newStyle === 'none' ? 'markers' : 'lines',
             lineStyle: newStyle,
           });
+          trackUsage('ChartView.ChangeAppearance', { type: 'line-style' });
         }}
       />
     </DropdownWrapper>

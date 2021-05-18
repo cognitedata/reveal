@@ -14,6 +14,7 @@ import {
   removeTimeseries,
   covertTSToChartTS,
 } from 'utils/charts';
+import { trackUsage } from 'utils/metrics';
 
 export const AnnotationPopover = ({
   annotations,
@@ -86,6 +87,7 @@ export const TimeseriesList = ({ assetId }: { assetId: number }) => {
           chart.timeSeriesCollection?.length || 0
         );
         updateChart(addTimeseries(chart, ts));
+        trackUsage('ChartView.AddTimeSeries', { source: 'annotation' });
       }
     }
   };

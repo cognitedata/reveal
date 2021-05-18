@@ -18,7 +18,6 @@ import FunctionCall from 'components/FunctionCall';
 import { updateWorkflow, removeWorkflow } from 'utils/charts';
 import EditableText from 'components/EditableText';
 import { units } from 'utils/units';
-import { Modes } from 'pages/types';
 import { useCallFunction } from 'utils/cogniteFunctions';
 import { getStepsFromWorkflow } from 'utils/transforms';
 import { calculateGranularity } from 'utils/timeseries';
@@ -55,7 +54,7 @@ type Props = {
   isSelected?: boolean;
   onRowClick?: (id?: string) => void;
   onInfoClick?: (id?: string) => void;
-  setMode?: (m: Modes) => void;
+  openNodeEditor?: () => void;
   mode: string;
   mutate: (c: Chart) => void;
 };
@@ -65,7 +64,7 @@ export default function WorkflowRow({
   onRowClick = () => {},
   onInfoClick = () => {},
   mode,
-  setMode = () => {},
+  openNodeEditor = () => {},
   isSelected = false,
   mutate,
 }: Props) {
@@ -326,10 +325,7 @@ export default function WorkflowRow({
             <Dropdown
               content={
                 <WorkflowMenu chart={chart} id={id}>
-                  <Menu.Item
-                    onClick={() => setMode('editor')}
-                    appendIcon="YAxis"
-                  >
+                  <Menu.Item onClick={openNodeEditor} appendIcon="YAxis">
                     <span>Edit calculation</span>
                   </Menu.Item>
                 </WorkflowMenu>

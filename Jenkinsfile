@@ -33,7 +33,7 @@ static final String LOCIZE_PROJECT_ID = ''
 // Specify your Mixpanel project token. If you do not have one of these, please
 // stop by #frontend to get a project created under the Cognite umbrella.
 // Remember: if you can't measure it, you can't improve it!
-static final String MIXPANEL_TOKEN = ''
+static final String MIXPANEL_TOKEN = '0837d632cca24291a0a1025d488d1a9a'
 
 // Specify your projects alerting slack channel here. If you do not have one of these, please
 // consider creating one for your projects alerts

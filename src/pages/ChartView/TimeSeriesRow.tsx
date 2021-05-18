@@ -29,6 +29,7 @@ import { functionResponseKey, useCallFunction } from 'utils/cogniteFunctions';
 import FunctionCall from 'components/FunctionCall';
 import { CogniteClient } from '@cognite/sdk';
 import { StatisticsResult } from 'components/DetailsSidebar';
+import { trackUsage } from 'utils/metrics';
 import {
   SourceItem,
   SourceCircle,
@@ -397,6 +398,7 @@ export default function TimeSeriesRow({
                 value={name || 'noname'}
                 onChange={(value) => {
                   update(id, { name: value });
+                  trackUsage('ChartView.RenameTimeSeries');
                   setIsEditingName(false);
                 }}
                 onCancel={() => setIsEditingName(false)}

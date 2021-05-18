@@ -14,6 +14,8 @@ import { ChartTimeSeries, ChartWorkflow } from 'reducers/charts/types';
 import { getEntryColor } from 'utils/colors';
 import { useLoginStatus, useQueryString } from 'hooks';
 import { SEARCH_KEY } from 'utils/constants';
+import { metrics, trackUsage } from 'utils/metrics';
+import { ITimer } from '@cognite/metrics';
 import { Modes } from 'pages/types';
 import DetailsSidebar from 'components/DetailsSidebar';
 import TimeSeriesRows from './TimeSeriesRows';
@@ -45,6 +47,30 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   const { data: login } = useLoginStatus();
   const [showContextMenu, setShowContextMenu] = useState(false);
 
+  const [selectedSourceId, setSelectedSourceId] = useState<
+    string | undefined
+  >();
+
+  const [showSearch, setShowSearch] = useState(false);
+  const [workspaceMode, setWorkspaceMode] = useState<Modes>('workspace');
+  const [stackedMode, setStackedMode] = useState<boolean>(false);
+  const [editorTimer, setEditorTimer] = useState<ITimer | undefined>();
+  const isWorkspaceMode = workspaceMode === 'workspace';
+
+  useEffect(() => {
+    trackUsage('PageView.ChartView');
+    const timer = metrics.start('ChartView.ViewTime');
+
+    return () => {
+      timer.stop();
+      if (editorTimer) {
+        editorTimer.stop();
+      }
+    };
+    // Should not rerun when editorTimer is changed, only on initial load
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const {
     mutate: updateChart,
     isError: updateError,
@@ -62,15 +88,6 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     }
   }, [updateError, updateErrorMsg]);
 
-  const [selectedSourceId, setSelectedSourceId] = useState<
-    string | undefined
-  >();
-
-  const [showSearch, setShowSearch] = useState(false);
-  const [workspaceMode, setWorkspaceMode] = useState<Modes>('workspace');
-  const [stackedMode, setStackedMode] = useState<boolean>(false);
-  const isWorkspaceMode = workspaceMode === 'workspace';
-
   /**
    * Open search drawer if query is present in the url
    */
@@ -79,6 +96,21 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
       setShowSearch(true);
     }
   }, [query, showSearch]);
+
+  const openNodeEditor = () => {
+    setWorkspaceMode('editor');
+    if (!editorTimer) {
+      setEditorTimer(metrics.start('NodeEditor.ViewTime'));
+    }
+  };
+
+  const closeNodeEditor = () => {
+    setWorkspaceMode('workspace');
+    if (editorTimer) {
+      editorTimer.stop();
+      setEditorTimer(undefined);
+    }
+  };
 
   const handleClickNewWorkflow = () => {
     if (chart) {
@@ -103,10 +135,11 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
         {
           onSuccess: () => {
             setSelectedSourceId(newWorkflowId);
-            setWorkspaceMode('editor');
+            openNodeEditor();
           },
         }
       );
+      trackUsage('ChartView.AddCalculation');
     }
   };
 
@@ -146,6 +179,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
 
   const handleOpenSearch = async () => {
     setShowSearch(true);
+    trackUsage('ChartView.OpenSearch');
     setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
   };
 
@@ -328,7 +362,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                         chart={chart}
                         updateChart={updateChart}
                         mode={workspaceMode}
-                        setMode={setWorkspaceMode}
+                        openNodeEditor={openNodeEditor}
                         selectedSourceId={selectedSourceId}
                         onRowClick={handleSourceClick}
                         onInfoClick={handleInfoClick}
@@ -340,7 +374,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                   <NodeEditor
                     mutate={updateChart}
                     workflowId={selectedSourceId}
-                    setWorkspaceMode={setWorkspaceMode}
+                    closeNodeEditor={closeNodeEditor}
                     chart={chart}
                   />
                 )}

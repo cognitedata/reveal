@@ -7,6 +7,7 @@ import PlotlyChart from 'components/PlotlyChart';
 import { Chart } from 'reducers/charts/types';
 import { useIsChartOwner } from 'hooks';
 
+import { trackUsage } from 'utils/metrics';
 import { formatOwner, formatDate } from './utils';
 
 interface ListViewItemProps {
@@ -28,7 +29,14 @@ const ListViewItem = ({
 
   return (
     <Wrapper>
-      <StyledLink to={`/${chart.id}`}>
+      <StyledLink
+        to={`/${chart.id}`}
+        onClick={() => {
+          trackUsage('ChartList.SelectChart', {
+            type: chart.public ? 'public' : 'private',
+          });
+        }}
+      >
         <ImageColumn>
           <PlotlyChart chartId={chart.id} isPreview />
         </ImageColumn>
