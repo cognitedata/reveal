@@ -11,6 +11,7 @@ import { sleep } from 'utils/utils';
 import { useAnnotatedFiles } from 'hooks';
 import { WARNINGS_STRINGS, TOOLTIP_STRINGS } from 'stringConstants';
 import { deleteAnnotationsForFile } from 'utils/AnnotationUtils';
+import { stringContains } from 'modules/contextualization/utils';
 import FilterBar from './FilterBar';
 import FilesListEmpty from './FilesListEmpty';
 import { getColumns } from './columns';
@@ -137,6 +138,15 @@ export default function FilesList(props: FilesListProps) {
     return <span />;
   };
 
+  const handleSearchFiles = () => {
+    if (query.trim().length) {
+      return files.filter((file) =>
+        stringContains(file.name, query)
+      ) as FileInfo[];
+    }
+    return files as FileInfo[];
+  };
+
   if (noFiles) return <FilesListEmpty />;
   return (
     <>
@@ -150,7 +160,7 @@ export default function FilesList(props: FilesListProps) {
           pageSize: PAGE_SIZE,
           hideOnSinglePage: true,
         }}
-        dataSource={files as FileInfo[]}
+        dataSource={handleSearchFiles()}
         // @ts-ignore
         columns={interactiveColumns}
         size="middle"
