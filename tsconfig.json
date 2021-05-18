@@ -12,7 +12,6 @@
     "moduleResolution": "node",
     "outDir": "dist",
     "resolveJsonModule": true,
-    "sourceMap": false,
     "strictPropertyInitialization": true,
     "target": "es5"
   }

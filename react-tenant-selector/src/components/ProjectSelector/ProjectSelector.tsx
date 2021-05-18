@@ -19,11 +19,18 @@ const ProjectSelector: React.FC<Props> = ({
   const [selectedProject, setSelectedProject] = React.useState<string>();
   const [showMenu, setShowMenu] = React.useState(false);
 
-  const { data = [], isFetched, isError, refetch } = useQuery<
-    { urlName: string }[]
-  >(['projects'], async () => fetchProjects({ enabled, authClient }), {
-    enabled,
-  });
+  const {
+    data = [],
+    isFetched,
+    isError,
+    refetch,
+  } = useQuery<{ urlName: string }[]>(
+    ['projects'],
+    async () => fetchProjects({ enabled, authClient }),
+    {
+      enabled,
+    }
+  );
 
   const projects = data.map((d) => ({ urlName: d.urlName, label: d.urlName }));
 

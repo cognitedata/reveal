@@ -37,8 +37,8 @@ describe('<ProjectSelector />', () => {
     });
 
     render(<Base {...getProps()} />);
-    expect(screen.getByText('test-1')).toBeTruthy();
-    expect(screen.getByText('Continue')).toBeTruthy();
+    expect(screen.getByText('test-1')).toBeInTheDocument();
+    expect(screen.getByText('Continue')).toBeInTheDocument();
   });
 
   it('Should handle network errors', () => {
@@ -53,7 +53,7 @@ describe('<ProjectSelector />', () => {
     render(<Base {...getProps()} />);
     expect(
       screen.getByText('There has been an error', { exact: false })
-    ).toBeTruthy();
+    ).toBeInTheDocument();
   });
 
   it('Should select a project', () => {

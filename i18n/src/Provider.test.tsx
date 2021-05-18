@@ -21,6 +21,6 @@ describe('Provider', () => {
     };
 
     render(<Wrapped />);
-    expect(await screen.findByText('TRANS: COMPLETE')).toBeTruthy();
+    expect(await screen.findByText('TRANS: COMPLETE')).toBeInTheDocument();
   });
 });

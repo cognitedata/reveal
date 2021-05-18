@@ -23,7 +23,11 @@ export type SidecarConfig = {
   disableLegacyLogin?: boolean;
   helpLink?: string;
   intercom?: string;
-  locizeProjectId?: string;
-  locizeKeySeparator?: false | string;
+  locize?: {
+    apiKey?: string;
+    projectId: string;
+    version?: string;
+    keySeparator?: false | string;
+  };
   fakeIdp?: FakeIdp[];
 };

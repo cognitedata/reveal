@@ -1,3 +1,12 @@
+## 0.4.0 - May 14 2021
+
+### Changes
+
+- Add dep on @cognite/storage
+- Expose project id more easily <- useful for caching
+- Removed old wait option <- this fixes some warnings
+- Remove metrics, since this is generally loaded before metrics now
+
 ## 0.3.3 - May 10 2021
 
 ### Changes

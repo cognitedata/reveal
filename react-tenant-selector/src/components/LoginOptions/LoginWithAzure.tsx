@@ -12,12 +12,10 @@ const LoginWithAzure = ({
   authClient?: CogniteAuth;
   directory?: string;
 }) => {
-  const [
-    azureAdvancedOptions,
-    setAzureAdvancedOptions,
-  ] = useState<AzureAdvancedOptionsType>({
-    azureTenant: directory,
-  });
+  const [azureAdvancedOptions, setAzureAdvancedOptions] =
+    useState<AzureAdvancedOptionsType>({
+      azureTenant: directory,
+    });
 
   const handleClick = () => {
     if (authClient) {

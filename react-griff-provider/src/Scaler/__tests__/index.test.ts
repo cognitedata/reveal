@@ -144,10 +144,13 @@ describe('Scaler tests', () => {
       const setUpdated = () => {
         updated = true;
       };
-      const stateUpdates = processStateUpdate({}, setUpdated, [1, 1000], {}, [
-        200,
-        800,
-      ])(
+      const stateUpdates = processStateUpdate(
+        {},
+        setUpdated,
+        [1, 1000],
+        {},
+        [200, 800]
+      )(
         { domainsByItemId: {}, subDomainsByItemId: {} },
         {
           id: '1',

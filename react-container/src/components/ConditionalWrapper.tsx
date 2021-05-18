@@ -21,9 +21,6 @@ interface ConditionalWrapperWithPropsProps {
   children: React.ReactElement;
   [otherProps: string]: unknown;
 }
-export const ConditionalWrapperWithProps: React.FC<ConditionalWrapperWithPropsProps> = ({
-  condition,
-  wrap,
-  children,
-  ...rest
-}) => (condition ? wrap({ children, ...rest }) : children);
+export const ConditionalWrapperWithProps: React.FC<ConditionalWrapperWithPropsProps> =
+  ({ condition, wrap, children, ...rest }) =>
+    condition ? wrap({ children, ...rest }) : children;

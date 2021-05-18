@@ -24,7 +24,7 @@ describe('useVariant', () => {
   });
 
   it('Should return an empty string when no variant is found', () => {
-    sandbox.stub(client, 'getVariant').returns(({} as unknown) as IVariant);
+    sandbox.stub(client, 'getVariant').returns({} as unknown as IVariant);
     const { result } = renderHook(() => useVariant('test-flag'), {
       wrapper,
     });
@@ -32,9 +32,9 @@ describe('useVariant', () => {
   });
 
   it('Should return the variant value', () => {
-    sandbox.stub(client, 'getVariant').returns(({
+    sandbox.stub(client, 'getVariant').returns({
       payload: { value: 'variant-value' },
-    } as unknown) as IVariant);
+    } as unknown as IVariant);
     const { result } = renderHook(() => useVariant('test-flag'), {
       wrapper,
     });

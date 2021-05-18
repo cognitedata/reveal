@@ -318,8 +318,7 @@ describe('DataProvider tests', () => {
   describe('calculateDomainFromData test', () => {
     it('should return default domain on no data', () => {
       expect(calculateDomainFromData([], (d) => d.value as number)).toEqual([
-        -0.25,
-        0.25,
+        -0.25, 0.25,
       ]);
     });
 
@@ -496,8 +495,7 @@ describe('DataProvider tests', () => {
   describe('getTimeSubDomain tests', () => {
     it('should return subdomain if subdomain is smaller and limitTimeSubDomain is Function.identity', () => {
       expect(getTimeSubDomain([-1000, 1000], [200, 900], (id) => id)).toEqual([
-        200,
-        900,
+        200, 900,
       ]);
     });
 

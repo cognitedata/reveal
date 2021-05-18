@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import i18next from 'i18next';
+import { storage } from '@cognite/storage';
 import configureI18n, { Trans, useTranslation } from './i18n';
 
 describe('i18n setup', () => {
@@ -39,25 +40,16 @@ describe('i18n setup', () => {
   });
 
   it('setting language from props - ls key', () => {
-    const localStorageMock = (() => {
-      return {
-        getItem: (key: string) => key,
-      };
-    })();
-
-    const temp = window.localStorage;
-    Object.defineProperty(window, 'localStorage', {
-      value: localStorageMock,
+    jest.spyOn(storage, 'getFromLocalStorage').mockImplementation((value) => {
+      return value;
     });
 
     configureI18n({
       localStorageLanguageKey: 'TEST_KEY_FROM_LS',
     });
+
     expect(i18next.options.lng).toEqual('TEST_KEY_FROM_LS');
 
-    // revert LS changes
-    Object.defineProperty(window, 'localStorage', {
-      value: temp,
-    });
+    jest.resetAllMocks();
   });
 });

@@ -1,8 +1,8 @@
 import * as React from 'react';
-import type { CogniteClient } from '@cognite/sdk';
 import { CogniteAuth, AuthenticatedUser, getFlow } from '@cognite/auth-utils';
 import { Loader } from '@cognite/cogs.js';
 import { SidecarConfig } from '@cognite/react-tenant-selector';
+import type { CogniteClient } from '@cognite/sdk';
 
 import { log } from '../utils';
 
@@ -37,9 +37,8 @@ export const AuthContainer: React.FC<AuthContainerProps> = ({
   sidecar,
   children,
 }) => {
-  const [authResponse, setAuthState] = React.useState<
-    AuthContext | undefined
-  >();
+  const [authResponse, setAuthState] =
+    React.useState<AuthContext | undefined>();
   const [loading, setLoading] = React.useState(true);
   const { flow } = getFlow();
 
@@ -59,8 +58,8 @@ export const AuthContainer: React.FC<AuthContainerProps> = ({
     });
 
     log('[AuthContainer] CogniteAuth:', [authClient], 1);
-
     const flowToUse = flow || authClient.state.authResult?.authFlow;
+    log('[AuthContainer] Using flow:', [flowToUse], 1);
 
     const unsubscribe = authClient.onAuthChanged(
       applicationId,
@@ -153,27 +152,27 @@ export const AuthContainer: React.FC<AuthContainerProps> = ({
   );
 };
 
+// this containers job is the same,
+// but without triggering an auth call at the start
+// (so it assumes you are already logged in via some other method)
 type AuthContainerForApiKeyModeProps = Exclude<
   AuthContainerProps,
   'AuthError' | 'sidecar'
 >;
-export const AuthContainerForApiKeyMode: React.FC<AuthContainerForApiKeyModeProps> = ({
-  sdkClient,
-  tenant,
-  children,
-}) => {
-  return (
-    <AuthProvider.Provider
-      value={{
-        client: sdkClient,
-        authState: {
-          tenant,
-          authenticated: true,
-          initialising: false,
-        },
-      }}
-    >
-      {children}
-    </AuthProvider.Provider>
-  );
-};
+export const AuthContainerForApiKeyMode: React.FC<AuthContainerForApiKeyModeProps> =
+  ({ sdkClient, tenant, children }) => {
+    return (
+      <AuthProvider.Provider
+        value={{
+          client: sdkClient,
+          authState: {
+            tenant,
+            authenticated: true,
+            initialising: false,
+          },
+        }}
+      >
+        {children}
+      </AuthProvider.Provider>
+    );
+  };

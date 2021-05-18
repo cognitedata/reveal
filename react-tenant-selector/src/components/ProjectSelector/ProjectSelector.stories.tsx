@@ -32,10 +32,12 @@ export default {
   ],
 };
 
-const promiseAction = (msg: string) => (...args: unknown[]) => {
-  action(msg)(...args);
-  return Promise.resolve();
-};
+const promiseAction =
+  (msg: string) =>
+  (...args: unknown[]) => {
+    action(msg)(...args);
+    return Promise.resolve();
+  };
 
 const getProps = () => {
   const client = new CogniteClient({ appId: 'test' });

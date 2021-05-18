@@ -69,8 +69,7 @@ export const docTypes = {
   TF: 'Work packages',
   TG: 'Spring schedules',
   TR: 'Transmittal',
-  VA:
-    'Manufacturing and verifying document, including material traceability, weld and Non- Destructive Examination (NDE) doc, third party verification and also photos of submerged structures and equipment.',
+  VA: 'Manufacturing and verifying document, including material traceability, weld and Non- Destructive Examination (NDE) doc, third party verification and also photos of submerged structures and equipment.',
   VD: 'Fabrication records (see DN02-DN-Z-KA-0003 ch 5.152) ',
   VB: 'Certificates',
   VM: 'Mechanical completion and commissioning dossiers',
@@ -82,16 +81,14 @@ export const docTypes = {
   XD: 'General arrangements',
   XE: 'Layout drawings',
   XF: 'Location drawings and plot plans',
-  XG:
-    'Structural information, including main structural steel, second/outfitting steel, structural fire protection and acoustic/thermal insulation and fire protection',
+  XG: 'Structural information, including main structural steel, second/outfitting steel, structural fire protection and acoustic/thermal insulation and fire protection',
   XH: 'Free span calculations structural information, secondary steel',
   XI: 'System topology, block diagrams and SCD',
   XJ: 'Single line diagrams',
   XK: 'Circuit diagrams',
   XL: 'Logic diagrams',
   XM: 'Level diagrams',
-  XN:
-    'Isometric drawings, including fabrication, heat tracing. NOTE: This code is replaced by codes starting with "Y". Drawings already issued with code "XN" may not be reissued.',
+  XN: 'Isometric drawings, including fabrication, heat tracing. NOTE: This code is replaced by codes starting with "Y". Drawings already issued with code "XN" may not be reissued.',
   XO: 'Pipe supports',
   XP: 'Termination drawings for external connections ',
   XQ: 'Pneumatic/hydraulic connection drawings',

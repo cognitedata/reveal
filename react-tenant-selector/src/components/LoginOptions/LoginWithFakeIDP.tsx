@@ -42,6 +42,12 @@ const LoginWithFakeIDP: React.FC<Props> = ({
         }
 
         handleSubmit(project);
+      })
+      .catch(() => {
+        // eslint-disable-next-line no-console
+        console.error(
+          'There has been an error, do you have the FakeIdP service running?'
+        );
       });
   };
 
@@ -49,7 +55,7 @@ const LoginWithFakeIDP: React.FC<Props> = ({
     <>
       <Button
         style={{ height: 40, width: '100%', marginTop: 10 }}
-        size="large"
+        size="default"
         type="secondary"
         onClick={handleClick}
       >

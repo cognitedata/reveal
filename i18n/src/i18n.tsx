@@ -16,6 +16,8 @@ import {
   UseTranslationResponse,
 } from 'react-i18next';
 
+import { storage } from '@cognite/storage';
+
 let enabled = true;
 
 export const useTranslation = (
@@ -26,14 +28,14 @@ export const useTranslation = (
     return useOrigTranslations(ns, options);
   }
 
-  return ({
+  return {
     t: (_id: string, { defaultValue } = { defaultValue: '' }) =>
       defaultValue || ns,
     i18n: {
       changeLanguage: () => Promise.resolve(),
     },
     ready: true,
-  } as unknown) as UseTranslationResponse<string>;
+  } as unknown as UseTranslationResponse<string>;
 };
 export const Trans = <
   K extends TFuncKey<N, Resources> extends infer A ? A : never,
@@ -51,8 +53,9 @@ const {
   REACT_APP_I18N_PSEUDO,
   REACT_APP_I18N_DEBUG,
   REACT_APP_LANGUAGE,
-  REACT_APP_LOCIZE_PROJECT_ID,
   REACT_APP_LOCIZE_API_KEY,
+  REACT_APP_LOCIZE_PROJECT_ID,
+  REACT_APP_LOCIZE_VERSION,
 } = process.env;
 
 const CACHE_TIME_MILLIS = 1000 * 60 * 60 * 24; // 1 day
@@ -66,11 +69,9 @@ export type ConfigureI18nOptions = {
   env?: string;
   locize?: {
     projectId: string;
-    apiKey: string;
+    apiKey?: string;
     version?: string;
   };
-  wait?: boolean;
-  useSuspense?: boolean;
   localStorageLanguageKey?: string;
   disabled?: boolean;
   saveMissing?: boolean;
@@ -94,14 +95,14 @@ const configureI18n = async ({
     enabled = false;
     return Promise.resolve();
   }
-  const { wait = env !== 'test', useSuspense = env === 'test' } = rest;
   const {
-    projectId: locizeProjectId,
     apiKey: locizeApiKey,
+    projectId: locizeProjectId,
     version: locizeVersion = 'latest',
   } = locize || {
-    projectId: REACT_APP_LOCIZE_PROJECT_ID,
     apiKey: REACT_APP_LOCIZE_API_KEY,
+    projectId: REACT_APP_LOCIZE_PROJECT_ID,
+    version: REACT_APP_LOCIZE_VERSION,
   };
   const isDevEnv = !(env === 'production' || env === 'test');
   const {
@@ -122,32 +123,27 @@ const configureI18n = async ({
     }
   }
 
-  // -@TODO - refactor this out to 'storage' when we make it into
-  //  a generic frontend package
-  const getItem = (key: string) => {
-    const string = localStorage.getItem(key);
-    try {
-      return JSON.parse(string || '');
-    } catch (err) {
-      return string;
-    }
-  };
-
-  const language = lng || getItem(localStorageLanguageKey) || 'en';
-
   const initOptions: InitOptions = {
     debug,
     interpolation: { escapeValue: false },
-    lng: language,
-    fallbackLng: 'en',
+    lng:
+      lng || storage.getFromLocalStorage<string>(localStorageLanguageKey, 'en'),
     load: 'currentOnly',
     keySeparator,
     fallbackNS: ['global'],
     postProcess: [],
-    react: { wait, useSuspense },
     saveMissing: saveMissing ?? isDevEnv,
+    saveMissingTo: 'current',
     updateMissing: updateMissing ?? isDevEnv,
   };
+
+  // useful for debugging:
+  // console.log('Locize options:', initOptions);
+  // console.log('Other values:', {
+  //   locizeVersion,
+  //   locizeApiKey,
+  //   locizeProjectId,
+  // });
 
   if (pseudo) {
     i18next.use(new Pseudo({ enabled: true }));
@@ -172,14 +168,15 @@ const configureI18n = async ({
     });
   }
 
-  addBackend(LocizeBackend, {
-    projectId: locizeProjectId,
-    debug,
-    version: locizeVersion,
+  const locizeBackendOptions = {
     // in case locizeApiKey is undefined it will fetch the translations but will not generate missing network requests
     apiKey: locizeApiKey,
+    debug,
+    projectId: locizeProjectId,
     referenceLng: 'en',
-  });
+    version: locizeVersion,
+  };
+  addBackend(LocizeBackend, locizeBackendOptions);
 
   i18next.use(ChainedBackend);
   i18next.use(initReactI18next);

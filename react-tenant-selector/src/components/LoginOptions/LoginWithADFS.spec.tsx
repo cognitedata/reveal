@@ -18,7 +18,7 @@ const getProps = () => {
 describe('<LoginWithADFS />', () => {
   it('Should render the button', () => {
     render(<Base {...getProps()} />);
-    expect(screen.getByText('Login with ADFS')).toBeTruthy();
+    expect(screen.getByText('Login with ADFS')).toBeInTheDocument();
   });
 
   it('Should trigger login on click', () => {

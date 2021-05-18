@@ -1,15 +1,7 @@
-import React, { Suspense, useEffect } from 'react';
-import { Metrics, useMetrics } from '@cognite/metrics';
+import React, { Suspense } from 'react';
 
 const SuspenseFallback = () => {
-  const metrics = useMetrics('I18NLoader');
-
-  useEffect(() => {
-    const timer = metrics.start('startLoading');
-    return () => Metrics.stop(timer);
-  }, []);
-
-  return null;
+  return null; // <- might be nice to add cogs loader?
 };
 
 type Props = {

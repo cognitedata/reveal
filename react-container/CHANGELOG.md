@@ -1,3 +1,8 @@
+## 1.1.0 May 15 2021
+
+- Change way i18n is loaded, removes all existing errors
+  - sidecar props are now different
+  
 ## 1.0.4 May 11 2021
 
 - Bump auth

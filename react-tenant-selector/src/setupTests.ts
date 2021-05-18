@@ -22,24 +22,3 @@ jest.mock('@cognite/react-i18n', () => {
     },
   };
 });
-
-// browserMocks.js
-const localStorageMock = (() => {
-  let store: { [s: string]: string } = {};
-
-  return {
-    getItem(key: string) {
-      return store[key] || null;
-    },
-    setItem(key: string, value: string) {
-      store[key] = value.toString();
-    },
-    clear() {
-      store = {};
-    },
-  };
-})();
-
-Object.defineProperty(window, 'localStorage', {
-  value: localStorageMock,
-});

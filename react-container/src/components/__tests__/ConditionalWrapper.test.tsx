@@ -11,7 +11,7 @@ describe('ConditionalWrapper', () => {
   it('should not wrap', () => {
     render(<BaseWithoutWrapper />);
 
-    expect(screen.queryByText('WRAPPER_ADDED')).toBeFalsy();
+    expect(screen.queryByText('WRAPPER_ADDED')).not.toBeInTheDocument();
     expect(screen.getByText('test-content 1')).toBeInTheDocument();
   });
 

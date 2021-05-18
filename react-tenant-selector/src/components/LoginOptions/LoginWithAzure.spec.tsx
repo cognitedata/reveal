@@ -18,7 +18,7 @@ const getProps = () => {
 describe('<LoginWithAzure />', () => {
   it('Should render the button', () => {
     render(<Base {...getProps()} />);
-    expect(screen.getByText('Login with Microsoft Azure')).toBeTruthy();
+    expect(screen.getByText('Login with Microsoft Azure')).toBeInTheDocument();
   });
 
   it('Should trigger login on click', () => {

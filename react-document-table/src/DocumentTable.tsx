@@ -114,34 +114,32 @@ export class DocumentTable extends React.PureComponent<
     scrollX: false,
   };
 
-  public renderDocument = (category: string, description: string) => (
-    document: Document,
-    i: number,
-    all: Document[]
-  ) => {
-    const { documentRenderer } = this.props;
-    if (documentRenderer) {
-      return documentRenderer(document, i, all, category, description);
-    }
+  public renderDocument =
+    (category: string, description: string) =>
+    (document: Document, i: number, all: Document[]) => {
+      const { documentRenderer } = this.props;
+      if (documentRenderer) {
+        return documentRenderer(document, i, all, category, description);
+      }
 
-    const { documentTitleField, handleDocumentClick, scrollX } = this.props;
+      const { documentTitleField, handleDocumentClick, scrollX } = this.props;
 
-    return (
-      <LinkContainer key={document.id}>
-        <LinkStyle
-          key={document.id}
-          data-test-id="file-name"
-          onClick={() => handleDocumentClick(document, category, description)}
-          tabIndex={-1}
-        >
-          {document.fileName}
-        </LinkStyle>
-        <TextContainerTop data-test-id="document-title" scrollX={scrollX}>
-          {getDocumentTitle(document.metadata, documentTitleField)}
-        </TextContainerTop>
-      </LinkContainer>
-    );
-  };
+      return (
+        <LinkContainer key={document.id}>
+          <LinkStyle
+            key={document.id}
+            data-test-id="file-name"
+            onClick={() => handleDocumentClick(document, category, description)}
+            tabIndex={-1}
+          >
+            {document.fileName}
+          </LinkStyle>
+          <TextContainerTop data-test-id="document-title" scrollX={scrollX}>
+            {getDocumentTitle(document.metadata, documentTitleField)}
+          </TextContainerTop>
+        </LinkContainer>
+      );
+    };
 
   public renderPanelHeader = (description: string, docNumber: number) => {
     const { renderPanelHeader } = this.props;

@@ -16,7 +16,7 @@ describe('withI18nSuspense', () => {
     const Wrapped = withI18nSuspense(Test);
 
     render(<Wrapped />);
-    expect(await screen.findByText('TRANS: COMPLETE')).toBeTruthy();
+    expect(await screen.findByText('TRANS: COMPLETE')).toBeInTheDocument();
   });
 
   it('Renders a class-based component', async () => {
@@ -40,6 +40,6 @@ describe('withI18nSuspense', () => {
     const Wrapped = withI18nSuspense(WithT);
 
     render(<Wrapped />);
-    expect(await screen.findByText('TRANS: COMPLETE')).toBeTruthy();
+    expect(await screen.findByText('TRANS: COMPLETE')).toBeInTheDocument();
   });
 });

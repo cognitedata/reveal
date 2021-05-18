@@ -13,6 +13,8 @@ export const generateSidecar = (): SidecarConfig => {
     cdfCluster: '',
     disableTranslations: false,
     helpLink: '',
-    locizeProjectId: '',
+    locize: {
+      projectId: '',
+    },
   };
 };

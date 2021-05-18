@@ -1,6 +1,6 @@
 {
   "name": "@cognite/react-i18n",
-  "version": "0.3.3",
+  "version": "0.4.0",
   "source": "src/index.ts",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
@@ -8,7 +8,8 @@
   "typings": "dist/index.d.ts",
   "license": "Apache-2.0",
   "files": [
-    "dist"
+    "dist",
+    "jest-mocks.js"
   ],
   "scripts": {
     "clean": "rm -rf dist",
@@ -29,23 +30,21 @@
   "devDependencies": {
     "@babel/core": "^7.3.3",
     "@babel/preset-env": "^7.3.1",
-    "@babel/preset-react": "^7.0.0",
-    "@cognite/metrics": "^1.0.0",
-    "lodash": "^4.17.19"
+    "@babel/preset-react": "^7.0.0"
   },
   "dependencies": {
+    "@cognite/storage": "^0.1.0",
     "tslib": "^2.2.0",
     "i18next": "^19.8.4",
     "i18next-chained-backend": "^2.0.1",
-    "i18next-localstorage-backend": "^3.1.1",
-    "i18next-locize-backend": "^4.1.1",
+    "i18next-localstorage-backend": "^3.1.2",
+    "i18next-locize-backend": "^4.2.2",
     "i18next-pseudo": "^2.2.0",
     "i18next-xhr-backend": "^3.2.2",
-    "react-i18next": "^11.8.5"
+    "react-i18next": "^11.8.15"
   },
   "peerDependencies": {
-    "@cognite/metrics": "^1.0.0",
-    "react-i18next": "^11.8.5",
+    "react-i18next": "^11.8.15",
     "react": "^17.0.1"
   }
 }

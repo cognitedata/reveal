@@ -1,7 +1,5 @@
 import React from 'react';
 import { Detail } from '@cognite/cogs.js';
-import { Trans, useTranslation } from 'react-i18next';
-import { withI18nSuspense } from '@cognite/react-i18n';
 
 import { ReportedError } from '../reportException';
 
@@ -17,16 +15,11 @@ const isReportedErrorProps = (props: Props): props is ErrorProps => {
 const ErrorId = (props: Props) => {
   const id = isReportedErrorProps(props) ? props.error.errorId : props.id;
 
-  const { t } = useTranslation('ErrorId');
   return (
     <div>
-      <Detail>
-        <Trans t={t} i18nKey="errorId">
-          Error ID: {{ id }}
-        </Trans>
-      </Detail>
+      <Detail>Error ID: {id}</Detail>
     </div>
   );
 };
 
-export default withI18nSuspense(ErrorId);
+export default ErrorId;

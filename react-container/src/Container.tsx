@@ -20,6 +20,9 @@ import { configureCogniteSDKClient, createBrowserHistory } from './internal';
 import { storage, getTenantInfo } from './utils';
 import { ConditionalReduxProvider } from './providers';
 
+const { REACT_APP_API_KEY: apiKey, REACT_APP_API_KEY_PROJECT: project } =
+  process.env;
+
 interface ContainerSidecarConfig extends SidecarConfig {
   disableTranslations?: boolean;
   disableLoopDetector?: boolean;
@@ -40,12 +43,8 @@ const RawContainer: React.FC<Props> = ({
 }) => {
   const [possibleTenant, initialTenant] = getTenantInfo(window.location);
 
-  const {
-    applicationId,
-    cdfApiBaseUrl,
-    disableLoopDetector,
-    disableSentry,
-  } = sidecar;
+  const { applicationId, cdfApiBaseUrl, disableLoopDetector, disableSentry } =
+    sidecar;
 
   storage.init({ tenant: possibleTenant, appName: applicationId });
 
@@ -55,33 +54,14 @@ const RawContainer: React.FC<Props> = ({
     baseUrl: cdfApiBaseUrl,
   });
 
-  const {
-    REACT_APP_E2E_MODE: E2ETestingMode,
-    REACT_APP_API_KEY: apiKey,
-    REACT_APP_API_KEY_PROJECT: project,
-    REACT_APP_ACCESS_TOKEN: testingAccessToken,
-  } = process.env;
-
   const initialTenantOrApiKeyTenant = project || initialTenant;
 
   React.useEffect(() => {
-    if (E2ETestingMode) {
-      if (apiKey) {
-        client.loginWithApiKey({
-          apiKey,
-          project: initialTenantOrApiKeyTenant,
-        });
-      }
-
-      if (testingAccessToken) {
-        client.loginWithOAuth({
-          accessToken: testingAccessToken,
-          project: initialTenantOrApiKeyTenant,
-          onAuthenticate: async (login) => {
-            login.skip();
-          },
-        });
-      }
+    if (apiKey) {
+      client.loginWithApiKey({
+        apiKey,
+        project: initialTenantOrApiKeyTenant,
+      });
     }
   }, []); // no deps, this only runs once.
 
@@ -107,7 +87,7 @@ const RawContainer: React.FC<Props> = ({
 
   let ChosenAuthContainer = AuthContainer;
 
-  if (E2ETestingMode) {
+  if (apiKey) {
     ChosenAuthContainer = AuthContainerForApiKeyMode;
   }
 
@@ -141,24 +121,25 @@ const RawContainer: React.FC<Props> = ({
 };
 
 export const Container = (props: Props) => {
-  const {
-    disableTranslations,
-    locizeProjectId,
-    locizeKeySeparator,
-  } = props.sidecar;
+  const [_, initialTenant] = getTenantInfo(window.location);
+  const projectIsSelected = project || initialTenant;
+
+  const sidecar = {
+    ...props.sidecar,
+  };
+
+  // do not wrap the container with translations if we are actually going to be on the TSA
+  // because TSA has it's own translation system, so we don't want to mix with our apps.
+  if (!projectIsSelected) {
+    // but we still need to have this wrapper, because there is t() calls in the component
+    // so we need to set this flag to load it all in the mocked mode
+    sidecar.disableTranslations = true;
+  }
 
   const WrappedConatiner = withI18nSuspense<Props>(RawContainer);
-
   return (
-    <TranslationWrapper
-      disabled={disableTranslations}
-      locize={{
-        projectId: locizeProjectId || '',
-        apiKey: process.env.REACT_APP_LOCIZE_API_KEY || '', // for local dev
-      }}
-      keySeparator={locizeKeySeparator}
-    >
-      <WrappedConatiner {...props} />
+    <TranslationWrapper {...sidecar}>
+      <WrappedConatiner {...props} sidecar={sidecar} />;
     </TranslationWrapper>
   );
 };

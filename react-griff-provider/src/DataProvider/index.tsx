@@ -237,11 +237,8 @@ export default class DataProvider extends React.Component<
   }
 
   onUpdateInterval = () => {
-    const {
-      isTimeSubDomainSticky,
-      limitTimeSubDomain,
-      updateInterval,
-    } = this.props;
+    const { isTimeSubDomainSticky, limitTimeSubDomain, updateInterval } =
+      this.props;
     const { seriesById, timeDomain, timeSubDomain } = this.state;
     const newTimeDomain = timeDomain.map(
       (d) => d + (updateInterval || 0)
