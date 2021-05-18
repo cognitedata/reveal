@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { useQueryClient } from 'react-query';
 import { useHistory } from 'react-router-dom';
-import { Button } from '@cognite/cogs.js';
+import { Button, Tooltip, Icon, Body } from '@cognite/cogs.js';
 import { createLink } from '@cognite/cdf-utilities';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { message, Modal, notification } from 'antd';
 import { FileInfo } from 'cognite-sdk-v3';
-import { Table } from 'components/Common';
+import { Flex, Table } from 'components/Common';
 import { sleep } from 'utils/utils';
 import { useAnnotatedFiles } from 'hooks';
-import { WARNINGS_STRINGS } from 'stringConstants';
+import { WARNINGS_STRINGS, TOOLTIP_STRINGS } from 'stringConstants';
 import { deleteAnnotationsForFile } from 'utils/AnnotationUtils';
 import FilterBar from './FilterBar';
 import FilesListEmpty from './FilesListEmpty';
@@ -28,6 +28,7 @@ export default function FilesList(props: FilesListProps) {
   const { shouldUpdate, loadChunk, setShouldUpdate, setLoadChunk } = props;
   const history = useHistory();
   const [query, setQuery] = useState<string>('');
+  const [hidePanel, setHidePanel] = useState<boolean>(false);
   const client = useQueryClient();
   const { data: filesAcl } = usePermissions('filesAcl', 'WRITE');
   const { data: eventsAcl } = usePermissions('eventsAcl', 'WRITE');
@@ -38,6 +39,7 @@ export default function FilesList(props: FilesListProps) {
 
   const writeAccess = filesAcl && eventsAcl;
   const noFiles = !isLoading && total === 0;
+
   const isLoadMoreDisabled = () => total <= 1000 * (loadChunk + 1);
 
   const onClearAnnotations = async (file: FileInfo): Promise<void> => {
@@ -92,10 +94,57 @@ export default function FilesList(props: FilesListProps) {
     writeAccess
   );
 
+  const renderLoadMorePanel = () => {
+    if (total > files.length && !hidePanel) {
+      return (
+        <Flex
+          row
+          style={{
+            background: isLoadMoreDisabled() ? '#F5F5F5' : '#4A67FB',
+            padding: '4px 4px 4px 12px',
+            borderRadius: '6px',
+            justifyContent: 'space-between',
+          }}
+        >
+          <Body level={2} style={{ marginRight: '5px' }}>
+            <b>{files.length}</b> files loaded.
+          </Body>
+          {isLoadMoreDisabled() ? (
+            <Body level={2} style={{ marginRight: '5px', color: '#8C8C8C' }}>
+              All files are loaded{' '}
+            </Body>
+          ) : (
+            <Button onClick={() => setLoadChunk(loadChunk + 1)}>
+              Load more
+            </Button>
+          )}
+          {isLoadMoreDisabled() ? (
+            <Tooltip content="Hide">
+              <Icon
+                type="Close"
+                style={{ verticalAlign: '-0.225em' }}
+                onClick={() => setHidePanel(true)}
+              />
+            </Tooltip>
+          ) : (
+            <Tooltip content={TOOLTIP_STRINGS.LOAD_MORE_FILES_TOOLTIP}>
+              <Icon type="Info" style={{ verticalAlign: '-0.225em' }} />
+            </Tooltip>
+          )}
+        </Flex>
+      );
+    }
+    return <span />;
+  };
+
   if (noFiles) return <FilesListEmpty />;
   return (
     <>
-      <FilterBar query={query} setQuery={setQuery} />
+      <FilterBar
+        query={query}
+        setQuery={setQuery}
+        renderLoadMorePanel={renderLoadMorePanel}
+      />
       <Table
         pagination={{
           pageSize: PAGE_SIZE,
@@ -106,14 +155,6 @@ export default function FilesList(props: FilesListProps) {
         columns={interactiveColumns}
         size="middle"
         rowKey="id"
-        footer={() => (
-          <Button
-            disabled={isLoadMoreDisabled()}
-            onClick={() => setLoadChunk(loadChunk + 1)}
-          >
-            Load more
-          </Button>
-        )}
       />
     </>
   );
