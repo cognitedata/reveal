@@ -1,4 +1,3 @@
-import CogniteAuth, { AuthenticatedUser } from './authentication';
-
-export { AuthFlow, getFlow, saveFlow, saveTenantFlow } from './storage';
-export { CogniteAuth, AuthenticatedUser };
+export { CogniteAuth } from './authentication';
+export { getFlow, saveFlow } from './utils';
+export { AuthFlow, AuthenticatedUser } from './types';

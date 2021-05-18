@@ -1,9 +1,15 @@
+## 1.0.3 May 18 2021
+
+- final fixes for FAKE_IDP flow
+- removed all the old storage stuff (refactor to only use @cognite/storage)
+- flattened folders since there is only 1 file now (+ some minor utils)
+
 ## 1.0.2 May 11 2021
 
 ### Changes
 
 - Fix silent token request type (silentCDFTokenRequest)
-  
+
 ## 1.0.1 May 10 2021
 
 ### Changes
@@ -14,8 +20,8 @@
 
 ### Changes
 
-- Upgrade to SDK v4 
-  
+- Upgrade to SDK v4
+
 ## 0.8.2 Mar 16 2021
 
 ### Changes

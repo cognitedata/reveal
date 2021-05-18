@@ -1,27 +1,8 @@
 import { CogniteClient } from '@cognite/sdk';
 import { getFromLocalStorage } from '@cognite/storage';
-import { AuthFlow, AuthResult, getFlow, saveFlow } from '../storage';
 
-export type AuthenticatedUser = {
-  authenticated: boolean;
-  initialising: boolean;
-  project?: string;
-  tenant?: string;
-  token?: string;
-  idToken?: string;
-  error?: boolean;
-  errorMessage?: string;
-  username?: string;
-  email?: string;
-};
-
-const debugMode = false;
-const log = (value: string, options?: unknown) => {
-  if (debugMode) {
-    // eslint-disable-next-line no-console
-    console.log(`[Auth-Utils] ${value}`, options || '');
-  }
-};
+import { getFlow, saveFlow, log } from './utils';
+import { AuthenticatedUser, AuthFlow, AuthResult, FakeIdP } from './types';
 
 export class CogniteAuth {
   state: {
@@ -153,7 +134,6 @@ export class CogniteAuth {
       }
       case 'FAKE_IDP': {
         this.setFakeIdPInfo();
-        this.state.initializing = false;
         this.publishAuthState();
         break;
       }
@@ -317,12 +297,6 @@ export class CogniteAuth {
   }
 
   private setFakeIdPInfo() {
-    type FakeIdP = {
-      idToken: string;
-      accessToken: string;
-      project: string;
-      cluster: string;
-    };
     const fakeAuth = getFromLocalStorage<FakeIdP>('fakeIdp');
     if (fakeAuth) {
       this.setCluster(fakeAuth.cluster);
@@ -333,6 +307,9 @@ export class CogniteAuth {
           login.skip();
         },
       });
+
+      this.state.authenticated = true;
+      this.state.initializing = false;
 
       this.state.authResult = {
         idToken: fakeAuth.idToken,
