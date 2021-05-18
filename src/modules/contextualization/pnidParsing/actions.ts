@@ -14,14 +14,16 @@ import {
   RetrieveResultsResponseItem,
   RetrieveResultsResponseItems,
   StartPnidParsingJobProps,
+  PollJobResultsProps,
 } from 'modules/types';
+import { setJobId } from 'modules/workflows';
 import {
   verticesToBoundingBox,
   mapAssetsToEntities,
   mapFilesToEntities,
 } from './helpers';
 import handleError from '../../../utils/handleError';
-import { createJob, finishJob, rejectJob, updateJob } from '.';
+import { createJob, finishJob, rejectJob, resetJob, updateJob } from '.';
 
 const pnidApiRootPath = (project: string) =>
   `/api/playground/projects/${project}/context/diagram`;
@@ -81,22 +83,29 @@ export const startPnidParsingJob = {
     'workflow/startPnidParsingJob',
     async (
       { diagrams, resources, options, workflowId }: StartPnidParsingJobProps,
-      { getState, dispatch }: { getState: any; dispatch: any }
+      { getState, dispatch }: { getState: () => any; dispatch: any }
     ) => {
       const state = getState();
+
+      const workflow = state.workflows.items[workflowId];
 
       const parsingJob = state.contextualization.pnidParsing
         ? state.contextualization.pnidParsing[workflowId]
         : {};
 
-      // Job already ongoing
-      if (parsingJob?.jobId) {
-        return parsingJob?.jobId;
+      // Same Job already ongoing
+      if (workflow?.jobId && parsingJob?.jobId === workflow?.jobId) {
+        return workflow?.jobId;
       }
 
+      if (!workflow?.jobId && parsingJob?.jobId) {
+        // Remove old job results from state
+        dispatch(resetJob({ workflowId }));
+      }
       const mappedDiagrams = diagrams.map((diagram: FileInfo) => ({
         fileId: diagram.id,
       }));
+
       const mappedResources = [
         ...mapAssetsToEntities(resources.assets),
         ...mapFilesToEntities(resources.files),
@@ -118,64 +127,12 @@ export const startPnidParsingJob = {
 
         // Mark job as started
         dispatch(createJob({ workflowId, initialValue: { jobId, status } }));
+        // Set jobId in workflow
+        dispatch(setJobId({ workflowId, jobId }));
 
         // poll for results
         if (httpStatus === 200) {
-          return await new Promise((resolve, reject) => {
-            callUntilCompleted(
-              () => sdk.get(getPnidDetectJobPath(sdk.project, jobId)),
-              (data) => data.status === 'Completed' || data.status === 'Failed',
-              async (data: {
-                status: string;
-                items: RetrieveResultsResponseItems;
-              }) => {
-                if (data.status === 'Failed') {
-                  dispatch(rejectJob({ workflowId }));
-                  reject();
-                } else {
-                  // Completed
-                  const { items } = data;
-                  const annotationCounts: {
-                    [fileId: number]: FileAnnotationsCount;
-                  } = {};
-                  // Create new annotations & load old ones
-                  await Promise.allSettled(
-                    items.map(async ({ fileId, annotations }) => {
-                      const diagram = diagrams.find((d) => d.id === fileId);
-                      if (diagram) {
-                        const fileAnnotationCount = await createPendingAnnotations(
-                          diagram,
-                          jobId,
-                          annotations
-                        );
-                        annotationCounts[fileId] = fileAnnotationCount;
-                      }
-                    })
-                  );
-
-                  dispatch(
-                    finishJob({
-                      workflowId,
-                      annotationCounts,
-                    })
-                  );
-
-                  resolve(jobId);
-                }
-              },
-              (data: { status: string; statusCount: ApiStatusCount }) => {
-                dispatch(
-                  updateJob({
-                    workflowId,
-                    status: data.status,
-                    statusCount: data.statusCount,
-                  })
-                );
-              },
-              undefined,
-              3000
-            );
-          });
+          dispatch(pollJobResults.action({ jobId, workflowId, diagrams }));
         }
         return jobId;
       } catch (e) {
@@ -183,6 +140,72 @@ export const startPnidParsingJob = {
         dispatch(rejectJob({ workflowId }));
         return e;
       }
+    }
+  ),
+};
+
+export const pollJobResults = {
+  action: createAsyncThunk(
+    'workflow/pollJobResults',
+    async (
+      { jobId, workflowId, diagrams }: PollJobResultsProps,
+      { dispatch }: { dispatch: any }
+    ) => {
+      await new Promise((resolve, reject) => {
+        callUntilCompleted(
+          () => sdk.get(getPnidDetectJobPath(sdk.project, jobId)),
+          (data) => data.status === 'Completed' || data.status === 'Failed',
+          async (data: {
+            status: string;
+            items: RetrieveResultsResponseItems;
+          }) => {
+            if (data.status === 'Failed') {
+              dispatch(rejectJob({ workflowId }));
+              reject();
+            } else {
+              // Completed
+              const { items } = data;
+              const annotationCounts: {
+                [fileId: number]: FileAnnotationsCount;
+              } = {};
+              // Create new annotations & load old ones
+              await Promise.allSettled(
+                items.map(async ({ fileId, annotations }) => {
+                  const diagram = diagrams.find((d) => d.id === fileId);
+                  if (diagram) {
+                    const fileAnnotationCount = await createPendingAnnotations(
+                      diagram,
+                      String(jobId),
+                      annotations
+                    );
+                    annotationCounts[fileId] = fileAnnotationCount;
+                  }
+                })
+              );
+
+              dispatch(
+                finishJob({
+                  workflowId,
+                  annotationCounts,
+                })
+              );
+
+              resolve(jobId);
+            }
+          },
+          (data: { status: string; statusCount: ApiStatusCount }) => {
+            dispatch(
+              updateJob({
+                workflowId,
+                status: data.status,
+                statusCount: data.statusCount,
+              })
+            );
+          },
+          undefined,
+          3000
+        );
+      });
     }
   ),
 };
