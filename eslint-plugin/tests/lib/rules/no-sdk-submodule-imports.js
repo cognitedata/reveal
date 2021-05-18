@@ -18,8 +18,7 @@ ruleTester.run('no-sdk-submodule-imports', rule, {
   ],
   invalid: [
     {
-      code:
-        "import { TimeSeries } from '@cognite/sdk/dist/src/resources/classes/timeSeries';",
+      code: "import { TimeSeries } from '@cognite/sdk/dist/src/resources/classes/timeSeries';",
       errors: [{ messageId: 'no-sdk-submodule-imports' }],
     },
   ],

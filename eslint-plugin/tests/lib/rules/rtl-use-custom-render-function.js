@@ -35,8 +35,7 @@ ruleTester.run('rtl-use-custom-render-function', rule, {
       ],
     },
     {
-      code:
-        "import { render as originalRender } from '@testing-library/react';",
+      code: "import { render as originalRender } from '@testing-library/react';",
       errors: [
         {
           messageId: 'rtl-use-custom-render-function',
