@@ -1,2 +1,3 @@
 export * from './history';
-export * from './getSDKClient';
+export * from '../hooks/useCogniteSDKClient';
+export * from './sdkClient';

@@ -1,3 +1,8 @@
+## 1.2.0 May 19 2021
+
+- Removed unused hook useLoginToCdf
+- Changed from static variable to useMemo for CogniteClient (to support hot reloading)
+
 ## 1.1.2 May 18 2021
 
 - Bump tsa

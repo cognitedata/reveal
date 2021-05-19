@@ -16,7 +16,7 @@ import {
   ConditionalLoopDetector,
   TranslationWrapper,
 } from './components';
-import { configureCogniteSDKClient, createBrowserHistory } from './internal';
+import { useCogniteSDKClient, createBrowserHistory } from './internal';
 import { storage, getTenantInfo } from './utils';
 import { ConditionalReduxProvider } from './providers';
 
@@ -50,7 +50,7 @@ const RawContainer: React.FC<Props> = ({
 
   const [history] = React.useState(() => createBrowserHistory(possibleTenant));
 
-  const client = configureCogniteSDKClient(applicationId, {
+  const client = useCogniteSDKClient(applicationId, {
     baseUrl: cdfApiBaseUrl,
   });
 
