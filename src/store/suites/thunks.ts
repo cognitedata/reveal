@@ -1,13 +1,12 @@
 /* eslint-disable no-console */
 import { CdfClient, ApiClient } from 'utils';
-import { SUITES_TABLE_NAME } from 'constants/cdf';
 import { RootDispatcher } from 'store/types';
 import { setNotification } from 'store/notification/actions';
 import { setHttpError } from 'store/notification/thunks';
 import * as Sentry from '@sentry/browser';
 import { CogniteExternalId } from '@cognite/sdk';
 import { Metrics } from '@cognite/metrics';
-import { SuiteRow, Suite, SuiteRowInsert, SuiteRowDelete } from './types';
+import { Suite } from './types';
 import * as actions from './actions';
 
 export const fetchSuites = (apiClient: ApiClient, metrics?: Metrics) => async (
@@ -15,25 +14,9 @@ export const fetchSuites = (apiClient: ApiClient, metrics?: Metrics) => async (
 ) => {
   dispatch(actions.loadSuitesTable());
   try {
-    const suites: Suite[] = await getSuites(apiClient);
+    const suites: Suite[] = await apiClient.getSuites();
     dispatch(actions.loadedSuitesTable(suites as Suite[]));
   } catch (e) {
-    if (e?.status === 404) {
-      dispatch(actions.loadedSuitesTable([]));
-      if (e.message.includes('database not found')) {
-        // eslint-disable-next-line no-console
-        console.warn(
-          'In order to use digital-cockpit, a database named `digital-cockpit` needs to be created in RAW'
-        );
-      }
-      if (e.message.includes('table not found')) {
-        // eslint-disable-next-line no-console
-        console.warn(
-          'In order to use digital-cockpit, a table named `suites` needs to be created in the database `digital-cockpit` in RAW'
-        );
-      }
-      return;
-    }
     dispatch(actions.loadSuitesTableFailed());
     if (e?.code === 403 && metrics) {
       metrics.track('NotAuthorizedUser');
@@ -44,36 +27,31 @@ export const fetchSuites = (apiClient: ApiClient, metrics?: Metrics) => async (
   }
 };
 
-export const insertSuite = (
-  client: CdfClient,
-  apiClient: ApiClient,
-  suite: Suite
-) => async (dispatch: RootDispatcher) => {
-  dispatch(actions.insertSuiteTableRow());
+export const insertSuite = (apiClient: ApiClient, suite: Suite) => async (
+  dispatch: RootDispatcher
+) => {
+  dispatch(actions.saveSuite());
   try {
-    const suiteRow = fromSuiteToRow(suite);
-    await client.insertTableRow(SUITES_TABLE_NAME, suiteRow);
+    await apiClient.saveSuite(suite);
     dispatch(fetchSuites(apiClient));
     dispatch(setNotification('Saved'));
   } catch (e) {
-    dispatch(actions.suiteTableRowError());
+    dispatch(actions.suiteError());
     dispatch(setHttpError('Failed to save a suite', e));
     Sentry.captureException(e);
   }
 };
 
-export const deleteSuite = (
-  client: CdfClient,
-  apiClient: ApiClient,
-  key: SuiteRowDelete[]
-) => async (dispatch: RootDispatcher) => {
+export const deleteSuite = (apiClient: ApiClient, key: string) => async (
+  dispatch: RootDispatcher
+) => {
   try {
-    dispatch(actions.deleteSuiteTableRow());
-    await client.deleteTableRow(SUITES_TABLE_NAME, key);
+    dispatch(actions.deleteSuite());
+    await apiClient.deleteSuite(key);
     dispatch(fetchSuites(apiClient));
     dispatch(setNotification('Deleted successfully'));
   } catch (e) {
-    dispatch(actions.suiteTableRowError());
+    dispatch(actions.suiteError());
     dispatch(setHttpError('Failed to delete a suite', e));
     Sentry.captureException(e);
   }
@@ -111,24 +89,3 @@ export const fetchImageUrls = (client: CdfClient, ids: string[]) => async (
     Sentry.captureException(e);
   }
 };
-
-async function getSuites(apiClient: ApiClient) {
-  const { items: rows } = await apiClient.getSuitesRows();
-  return getSuitesFromRows(rows);
-}
-
-function getSuitesFromRows(rows: SuiteRow[] = []): Suite[] {
-  return rows.map(
-    (row) =>
-      ({
-        key: row.key,
-        lastUpdatedTime: row.lastUpdatedTime,
-        ...row.columns,
-      } as Suite)
-  );
-}
-
-function fromSuiteToRow(suite: Suite) {
-  const { key, ...rest } = suite;
-  return [{ key, columns: rest }] as SuiteRowInsert[];
-}

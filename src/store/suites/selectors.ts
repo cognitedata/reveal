@@ -3,12 +3,13 @@ import { StoreState } from 'store/types';
 import { LastVisited } from 'store/userSpace/types';
 import { findLastVisitedTimeByKey } from 'utils/userSpace';
 import { filterSuitesByGroups } from 'utils/filters';
+import maxBy from 'lodash/maxBy';
 import { Board, ImgUrls, Suite, SuitesTableState } from './types';
 
 export const getSuitesTableState = (state: StoreState): SuitesTableState => {
   const { suites: suitesState } = state.suitesTable;
   let suites = (suitesState || []).sort(
-    (x: Suite, y: Suite) => x?.createdTime - y?.createdTime
+    (x: Suite, y: Suite) => x?.order - y?.order
   );
 
   const groupFilter = getCurrentFilter(state);
@@ -58,3 +59,9 @@ export const getLastVisitedBoards = (
 
 export const getImgUrlsState = (state: StoreState): ImgUrls =>
   state.suitesTable.imageUrls;
+
+export const getNextSuiteOrder = (state: StoreState): number => {
+  const { suites } = getSuitesTableState(state);
+  const lastSuite = maxBy(suites, (suite) => suite.order);
+  return lastSuite ? lastSuite.order + 1 : 1;
+};

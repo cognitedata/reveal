@@ -17,3 +17,9 @@ export const Content = styled.div`
   width: 100%;
   overflow: auto;
 `;
+
+export const ContentWrapper = styled.div`
+  width: calc(100% - 298px);
+  display: flex;
+  flex-direction: row;
+`;

@@ -2,17 +2,16 @@ import isEqual from 'lodash/isEqual';
 import cloneDeep from 'lodash/cloneDeep';
 import omit from 'lodash/omit';
 import { Board, Suite } from 'store/suites/types';
-import { now } from 'utils/date';
 import { FileUploadResult } from 'store/forms/types';
 
 export const key = () => `_${Math.random().toString(36).substr(2, 9)}`;
 
-export const getEmptySuite = () => ({
+export const getEmptySuite = (order = -1) => ({
   key: key(),
   title: '',
   description: '',
   color: '',
-  createdTime: now(),
+  order,
   boards: [],
 });
 export const updatedBoardList: Board[] = [];

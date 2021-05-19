@@ -42,7 +42,7 @@ const DeleteSuite: React.FC<Props> = ({ suite }: Props) => {
       dispatch(deleteFiles(client, imageFileIds));
     }
 
-    await dispatch(deleteSuite(client, apiClient, [{ key: suite.key }]));
+    await dispatch(deleteSuite(apiClient, suite.key));
     history.push('/');
   };
 

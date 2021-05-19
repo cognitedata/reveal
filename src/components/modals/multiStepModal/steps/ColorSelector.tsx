@@ -57,7 +57,7 @@ const ColorSelector: React.FC = () => {
     dispatch(
       setSuite({
         ...suite,
-        color: selectedOption.value,
+        color: selectedOption.value || options[0].value,
       })
     );
   };
