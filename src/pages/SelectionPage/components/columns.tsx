@@ -1,8 +1,11 @@
-import { FileInfo } from 'cognite-sdk-v3/dist/src';
+import { FileInfo, Asset } from 'cognite-sdk-v3';
 import { dateSorter, stringCompare } from 'modules/contextualization/utils';
 import { ResourceType } from 'modules/types';
 import DetectedTags from 'components/DetectedTags';
 import React from 'react';
+import { Flex, Popover } from 'components/Common';
+import { AssetSmallPreview, FileSmallPreview } from '@cognite/data-exploration';
+import { Graphic } from '@cognite/cogs.js';
 
 export const getColumns = (resourceType: ResourceType) => {
   const isAsset = resourceType === 'assets';
@@ -23,9 +26,30 @@ export const getColumns = (resourceType: ResourceType) => {
 
   return [
     {
+      title: 'Preview',
+      key: 'preview',
+      width: 80,
+      align: 'center' as 'center',
+      render: (resource: any) => (
+        <Flex row align justify>
+          <Popover
+            content={
+              isAsset ? (
+                <AssetSmallPreview assetId={(resource as Asset).id} />
+              ) : (
+                <FileSmallPreview fileId={(resource as FileInfo).id} />
+              )
+            }
+          >
+            <Graphic type="Image" />
+          </Popover>
+        </Flex>
+      ),
+    },
+    {
       title: 'Name',
-      key: 'name',
       dataIndex: 'name',
+      key: 'name',
       sorter: (a: any, b: any) => stringCompare(a?.name, b?.name),
       render: (name: string) => name ?? '-',
     },
