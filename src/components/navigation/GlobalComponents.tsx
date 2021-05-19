@@ -1,4 +1,4 @@
-import { ToastContainer, CogsWrapper } from '@cognite/cogs.js';
+import { CogsWrapper } from '@cognite/cogs.js';
 import useHelpCenter from 'hooks/useHelpCenter';
 import HelpCenter from './HelpCenter/HelpCenter';
 
@@ -7,7 +7,6 @@ const GlobalComponents = () => {
 
   return (
     <CogsWrapper>
-      <ToastContainer />
       <HelpCenter isVisible={isHelpCenterVisible} onClose={toggleHelpCenter} />
     </CogsWrapper>
   );

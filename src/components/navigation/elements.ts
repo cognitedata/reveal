@@ -57,7 +57,7 @@ export const TitleContainer = styled.div`
   margin-bottom: 16px;
 `;
 
-export const SuiteTitle = styled.span`
+export const NavigationItemTitle = styled.span`
   color: ${(props: { disabled?: boolean }) =>
     props.disabled ? 'var(--cogs-greyscale-grey6)' : 'var(--cogs-black)'};
   margin-left: 8px;
@@ -83,7 +83,7 @@ export const NavigationItemContainer = styled.div<{ selected?: boolean }>`
   }
 `;
 
-export const AvailableSuitesContainer = styled.div`
+export const ItemsContainer = styled.div`
   padding-bottom: 22px;
 `;
 

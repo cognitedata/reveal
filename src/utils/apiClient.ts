@@ -6,6 +6,7 @@ import sidecar from './sidecar';
 type AppDataResponse = {
   suites: Suite[];
   groups: Group[];
+  applications: string[];
 };
 
 type dcClientOptions = {
@@ -59,6 +60,13 @@ export class ApiClient {
   }
   syncLastVisited() {
     return this.makeGETRequest('/lastVisited/sync');
+  }
+
+  getApplications(): Promise<{ applications: string[] }> {
+    return this.makeGETRequest('/applications');
+  }
+  saveApplications(applications: string[]): Promise<void> {
+    return this.makePOSTRequest('/applications', { applications });
   }
 
   /**

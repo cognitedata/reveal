@@ -7,6 +7,7 @@ import { Metrics } from '@cognite/metrics';
 import { checkIsAdmin } from 'utils/groups';
 import * as suiteActions from './suites/actions';
 import * as groupActions from './groups/actions';
+import * as configActions from './config/actions';
 
 export const fetchAppData = (apiClient: ApiClient, metrics: Metrics) => async (
   dispatch: RootDispatcher
@@ -14,9 +15,10 @@ export const fetchAppData = (apiClient: ApiClient, metrics: Metrics) => async (
   dispatch(groupActions.loadGroups());
   dispatch(suiteActions.loadSuitesTable());
   try {
-    const { groups, suites } = await apiClient.getAppData();
+    const { groups, suites, applications } = await apiClient.getAppData();
     dispatch(groupActions.loadedGroups(groups));
     dispatch(suiteActions.loadedSuitesTable(suites));
+    dispatch(configActions.addConfigItems({ applications }));
     const isAdmin = checkIsAdmin(groups);
     Sentry.addBreadcrumb({
       category: 'auth',

@@ -27,7 +27,7 @@ export const InfographicsTile: React.FC<Props> = ({
   dataItem,
   menu,
 }: Props) => {
-  const { setAsLastvisited } = useLastVisited(dataItem);
+  const { setAsLastvisited } = useLastVisited(dataItem.key);
   const renderTile = (item: Board) => {
     if (item.embedTag) {
       return renderIframe(item.embedTag, TilePreviewHeight, TilePreviewWidth);

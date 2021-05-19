@@ -130,7 +130,7 @@ const SuiteOverview: React.FC = () => {
     <>
       <Suitebar
         leftCustomHeader={<Header />}
-        actionButton={
+        actionsPanel={
           canEdit && (
             <Button
               variant="outline"

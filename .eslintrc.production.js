@@ -37,5 +37,6 @@ module.exports = {
     'react/prop-types': ['off'],
     'no-unused-expressions': ['off'],
     'typescript-eslint/no-unused-vars': ['off'],
+    'import/order': ['warn'],
   },
 };
