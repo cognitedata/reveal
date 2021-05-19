@@ -241,7 +241,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     clippingPlanes: THREE.Plane[] | null,
     clipIntersection: boolean
   ) {
-    const shortRangeCamera = camera.clone(true);
+    const shortRangeCamera = camera.clone(true) as THREE.PerspectiveCamera;
     shortRangeCamera.far = budget.highDetailProximityThreshold;
     shortRangeCamera.updateProjectionMatrix();
     const cameraMatrixWorldInverse = shortRangeCamera.matrixWorldInverse;
