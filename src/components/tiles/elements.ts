@@ -15,6 +15,7 @@ export const SmallTileContainer = styled(TileBasic)`
   width: 298px;
   border-radius: 2px;
   border: 1px solid var(--cogs-greyscale-grey4);
+  margin-bottom: 24px;
 `;
 
 export const ApplicationTileContainer = styled(SmallTileContainer)`

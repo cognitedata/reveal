@@ -37,6 +37,7 @@ import { useMetrics } from 'utils/metrics';
 import { ADMIN_GROUP_NAME } from 'constants/cdf';
 import { getApplications } from 'store/config/selectors';
 import { ApplicationItem } from 'store/config/types';
+import { TenantContext } from 'providers/TenantProvider';
 
 const Home = () => {
   const itemsToDisplay = 6;
@@ -56,11 +57,12 @@ const Home = () => {
   }: UserSpaceState = useSelector(getUserSpace);
   const [userSpaceLoadDispatched, setUserSpaceLoadDispatched] = useState(false);
 
-  const lastVisitedItems = useSelector(getLastVisitedItems).slice(
+  const tenant = useContext(TenantContext);
+  const lastVisitedItems = useSelector(getLastVisitedItems(tenant)).slice(
     0,
     itemsToDisplay
   );
-  const applications = useSelector(getApplications);
+  const applications = useSelector(getApplications(tenant));
 
   const metrics = useMetrics('Home');
 
@@ -139,7 +141,6 @@ const Home = () => {
         <OverviewContainer>
           {lastVisitedItems.length > 0 && (
             <TilesContainer>
-              <Title level={6}>Quick Access</Title>
               <Glider
                 hasArrows
                 itemWidth={glideItemWidth}
@@ -170,7 +171,7 @@ const Home = () => {
               </Glider>
             </TilesContainer>
           )}
-          {applications.length && (
+          {applications.length > 0 && (
             <TilesContainer>
               <Title level={6}>Applications deployed for you</Title>
               {applications?.map((item: ApplicationItem) => (

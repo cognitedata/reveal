@@ -15,12 +15,14 @@ import { getApplications } from 'store/config/selectors';
 import { ApplicationItem } from 'store/config/types';
 import { allApplications } from 'constants/applications';
 import { saveApplicationsList } from 'store/config/thunks';
+import { TenantContext } from 'providers/TenantProvider';
 
 const SelectApplications: React.FC = () => {
   const apiClient = useContext(ApiClientContext);
   const dispatch = useDispatch<RootDispatcher>();
   const metrics = useMetrics('EditSuite');
-  const selectedApplications = useSelector(getApplications);
+  const tenant = useContext(TenantContext);
+  const selectedApplications = useSelector(getApplications(tenant));
   const [apps, setApps] = useState<string[]>(
     selectedApplications.map((app) => app.key) || []
   );
@@ -30,9 +32,9 @@ const SelectApplications: React.FC = () => {
   };
 
   const save = async () => {
-    metrics.track('SelectApplications', {});
+    metrics.track('SelectApplications', apps);
     handleClose();
-    dispatch(saveApplicationsList(apiClient, apps));
+    await dispatch(saveApplicationsList(apiClient, apps));
   };
 
   const handleOnChange = (appKey: string) => {

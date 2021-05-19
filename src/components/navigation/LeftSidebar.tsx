@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { A, Icon, Overline } from '@cognite/cogs.js';
 import { useSelector } from 'react-redux';
@@ -7,6 +7,7 @@ import { Suite } from 'store/suites/types';
 import { useMetrics } from 'utils/metrics';
 import { ApplicationItem } from 'store/config/types';
 import { getApplications } from 'store/config/selectors';
+import { TenantContext } from 'providers/TenantProvider';
 import SuiteNavigationItem from './SuiteNavigationItem';
 import ApplicationNavigationItem from './ApplicationNavigationItem';
 import {
@@ -18,7 +19,8 @@ import {
 
 const LeftSidebar: React.FC = () => {
   const { suites } = useSelector(getSuitesTableState);
-  const applications = useSelector(getApplications);
+  const tenant = useContext(TenantContext);
+  const applications = useSelector(getApplications(tenant));
   const metrics = useMetrics('LeftSidebar');
 
   const sideBarState = JSON.parse(

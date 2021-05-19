@@ -11,7 +11,7 @@ export const allApplications: ApplicationItem[] = [
     key: 'bestday',
     iconKey: 'Insight',
     title: 'Best Day',
-    url: 'http://bestday.cogniteapp.com/',
+    url: 'http://bestday.cogniteapp.com',
   },
   {
     key: 'discover',

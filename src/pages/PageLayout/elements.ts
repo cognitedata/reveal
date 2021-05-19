@@ -19,7 +19,8 @@ export const Content = styled.div`
 `;
 
 export const ContentWrapper = styled.div`
-  width: calc(100% - 298px);
   display: flex;
   flex-direction: row;
+  overflow: auto;
+  width: -webkit-fill-available;
 `;

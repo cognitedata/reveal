@@ -65,6 +65,9 @@ export const saveApplicationsList = (
   try {
     await apiClient.saveApplications(applicationKeys);
     dispatch(actions.addConfigItems({ applicationKeys }));
+    dispatch(
+      setNotification('Applications list updated. Please refresh the page')
+    );
   } catch (e) {
     dispatch(setHttpError(`Failed to save applications list`, e));
     Sentry.captureException(e);
