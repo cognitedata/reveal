@@ -1,6 +1,8 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { Filter } from 'modules/sdk-builder/types';
 import { Flex, PageTitle } from 'components/Common';
+import { getActiveWorkflowItems } from 'modules/workflows';
 import SelectionBar from './components/SelectionBar';
 import SelectionTable from './components/SelectionTable';
 
@@ -22,6 +24,15 @@ export default function DiagramsSelection(props: SelectionProps): JSX.Element {
     setSelectAll,
     setSelectedRowKeys,
   } = props;
+  const { diagrams = undefined } = useSelector(getActiveWorkflowItems);
+  const isParticularDiagramEdited =
+    diagrams &&
+    diagrams.type === 'files' &&
+    diagrams.endpoint === 'retrieve' &&
+    diagrams.filter.length === 1;
+  const editedDiagramId = isParticularDiagramEdited
+    ? diagrams?.filter?.[0]?.id
+    : undefined;
 
   return (
     <Flex column style={{ paddingBottom: '50px' }}>
@@ -34,6 +45,7 @@ export default function DiagramsSelection(props: SelectionProps): JSX.Element {
         selectedRowKeys={selectedRowKeys}
         setSelectAll={setSelectAll}
         setSelectedRowKeys={setSelectedRowKeys}
+        editedDiagramId={editedDiagramId}
       />
     </Flex>
   );

@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useQueryClient } from 'react-query';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
+import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { Button, Tooltip, Icon, Body } from '@cognite/cogs.js';
 import { createLink } from '@cognite/cdf-utilities';
-import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { message, Modal, notification } from 'antd';
 import { FileInfo } from 'cognite-sdk-v3';
 import { Flex, Table } from 'components/Common';
@@ -11,6 +12,9 @@ import { sleep } from 'utils/utils';
 import { useAnnotatedFiles } from 'hooks';
 import { WARNINGS_STRINGS, TOOLTIP_STRINGS } from 'stringConstants';
 import { deleteAnnotationsForFile } from 'utils/AnnotationUtils';
+import { createNewWorkflow } from 'modules/workflows';
+import { diagramSelection } from 'routes/paths';
+import { PNID_METRICS, trackUsage } from 'utils/Metrics';
 import { stringContains } from 'modules/contextualization/utils';
 import FilterBar from './FilterBar';
 import FilesListEmpty from './FilesListEmpty';
@@ -27,7 +31,9 @@ type FilesListProps = {
 
 export default function FilesList(props: FilesListProps) {
   const { shouldUpdate, loadChunk, setShouldUpdate, setLoadChunk } = props;
+  const { tenant } = useParams<{ tenant: string }>();
   const history = useHistory();
+  const dispatch = useDispatch();
   const [query, setQuery] = useState<string>('');
   const [hidePanel, setHidePanel] = useState<boolean>(false);
   const client = useQueryClient();
@@ -79,9 +85,21 @@ export default function FilesList(props: FilesListProps) {
       message: 'Annotation saved!',
     });
   };
-  const onFileEdit = (_file: FileInfo): void => {
-    // eslint-disable-next-line
-    // TODO (CDF-11153)
+  const onFileEdit = (file: FileInfo): void => {
+    const newWorkflowId = Number(new Date());
+    const diagramToContextualize = {
+      type: 'files',
+      endpoint: 'retrieve',
+      filter: [{ id: file.id }],
+    };
+    dispatch(
+      createNewWorkflow({
+        workflowId: newWorkflowId,
+        diagrams: diagramToContextualize,
+      })
+    );
+    trackUsage(PNID_METRICS.contextualization.start);
+    history.push(diagramSelection.path(tenant, String(newWorkflowId)));
   };
   const onFileView = (file: FileInfo): void => {
     const fileId = file.id ?? file.externalId;

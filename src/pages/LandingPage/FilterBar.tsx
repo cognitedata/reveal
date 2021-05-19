@@ -24,7 +24,7 @@ export default function FilterBar({
   const onContextualizeNew = () => {
     trackUsage(PNID_METRICS.contextualization.start);
     const newWorkflowId = Number(new Date());
-    dispatch(createNewWorkflow(newWorkflowId));
+    dispatch(createNewWorkflow({ workflowId: newWorkflowId }));
     history.push(diagramSelection.path(tenant, String(newWorkflowId)));
   };
 

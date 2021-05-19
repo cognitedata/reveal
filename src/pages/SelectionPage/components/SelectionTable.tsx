@@ -20,6 +20,7 @@ type Props = {
   selectedRowKeys: number[];
   setSelectAll: (isSelectAll: boolean) => void;
   setSelectedRowKeys: (selectedRowKeys: number[]) => void;
+  editedDiagramId?: number;
 };
 
 export default function SelectionTable(props: Props): JSX.Element {
@@ -30,6 +31,7 @@ export default function SelectionTable(props: Props): JSX.Element {
     selectedRowKeys,
     setSelectAll,
     setSelectedRowKeys,
+    editedDiagramId,
   } = props;
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -91,12 +93,27 @@ export default function SelectionTable(props: Props): JSX.Element {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter, prevFilter]);
 
+  const dataSource = () => {
+    const mappedItems = items.map((item: any) => ({ ...item }));
+    // if we contextualize a particular file, we want it to appear first in table for visibility
+    if (editedDiagramId) {
+      const editedDiagram = mappedItems.find(
+        (item) => item.id === editedDiagramId
+      );
+      const allOtherDiagrams = mappedItems.filter(
+        (item) => item.id !== editedDiagramId
+      );
+      return [editedDiagram, ...allOtherDiagrams];
+    }
+    return mappedItems;
+  };
+
   return (
     <Flex row style={{ width: '100%' }}>
       <Table
         // @ts-ignore
         columns={columns}
-        dataSource={items.map((item: any) => ({ ...item }))}
+        dataSource={dataSource()}
         loading={fetching}
         rowKey="id"
         rowSelection={{

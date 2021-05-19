@@ -59,53 +59,62 @@ export const getColumns = (
     key: 'settings',
     width: '100px',
     align: 'center' as 'center',
-    render: (file: FileInfo) => (
-      <SettingButtons row align>
-        <Tooltip content={TOOLTIP_STRINGS.EDIT_FILE_TOOLTIP}>
-          <IconButton
-            $square
-            icon="Edit"
-            onClick={(
-              event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-            ) => {
-              event.stopPropagation();
-              onFileEdit(file);
-            }}
-            disabled
-          />
-        </Tooltip>
-        <Tooltip content={TOOLTIP_STRINGS.VIEW_FILE_TOOLTIP}>
-          <IconButton
-            $square
-            icon="Eye"
-            onClick={(
-              event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-            ) => {
-              event.stopPropagation();
-              onFileView(file);
-            }}
-          />
-        </Tooltip>
-        <Tooltip
-          content={
-            writeAccess
-              ? TOOLTIP_STRINGS.CLEAR_TAGS_TOOLTIP
-              : PERMISSIONS_STRINGS.FILES_WRITE_PERMISSIONS
-          }
-        >
-          <IconButton
-            $square
-            icon="Trash"
-            onClick={(
-              event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-            ) => {
-              event.stopPropagation();
-              onClearAnnotations(file);
-            }}
-            disabled={!writeAccess}
-          />
-        </Tooltip>
-      </SettingButtons>
-    ),
+    render: (file: FileInfo) => {
+      const isPdf = file.mimeType === 'application/pdf';
+      return (
+        <SettingButtons row align>
+          <Tooltip
+            content={
+              isPdf
+                ? TOOLTIP_STRINGS.EDIT_FILE_TOOLTIP
+                : TOOLTIP_STRINGS.EDIT_NON_PDF_FILE_TOOLTIP
+            }
+          >
+            <IconButton
+              $square
+              icon="Edit"
+              disabled={!isPdf}
+              onClick={(
+                event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+              ) => {
+                event.stopPropagation();
+                onFileEdit(file);
+              }}
+            />
+          </Tooltip>
+          <Tooltip content={TOOLTIP_STRINGS.VIEW_FILE_TOOLTIP}>
+            <IconButton
+              $square
+              icon="Eye"
+              onClick={(
+                event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+              ) => {
+                event.stopPropagation();
+                onFileView(file);
+              }}
+            />
+          </Tooltip>
+          <Tooltip
+            content={
+              writeAccess
+                ? TOOLTIP_STRINGS.CLEAR_TAGS_TOOLTIP
+                : PERMISSIONS_STRINGS.FILES_WRITE_PERMISSIONS
+            }
+          >
+            <IconButton
+              $square
+              icon="Trash"
+              onClick={(
+                event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+              ) => {
+                event.stopPropagation();
+                onClearAnnotations(file);
+              }}
+              disabled={!writeAccess}
+            />
+          </Tooltip>
+        </SettingButtons>
+      );
+    },
   },
 ];

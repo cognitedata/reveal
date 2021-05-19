@@ -26,7 +26,7 @@ export default function FilesListEmpty() {
   const onContextualizeNew = () => {
     trackUsage(PNID_METRICS.contextualization.start);
     const newWorkflowId = Number(new Date());
-    dispatch(createNewWorkflow(newWorkflowId));
+    dispatch(createNewWorkflow({ workflowId: newWorkflowId }));
     history.push(diagramSelection.path(tenant, String(newWorkflowId)));
   };
 
@@ -37,7 +37,7 @@ export default function FilesListEmpty() {
         No files have been contextualized yet!
       </Title>
       <IconButton type="primary" icon="Document" onClick={onContextualizeNew}>
-        Contextualize a new file
+        Contextualize new files
       </IconButton>
     </Wrapper>
   );

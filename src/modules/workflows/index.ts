@@ -143,8 +143,17 @@ export const workflowsSlice = createSlice({
       };
     },
     createNewWorkflow: (state, action) => {
-      const workflowId = action.payload ?? Number(new Date());
-      state.items[workflowId] = initialWorkflow;
+      const {
+        workflowId = Number(new Date()),
+        diagrams = undefined,
+        resources = undefined,
+      } = action.payload;
+      const newWorkflow = {
+        ...initialWorkflow,
+        ...(diagrams ? { diagrams } : {}),
+        ...(resources ? { resources } : {}),
+      };
+      state.items[workflowId] = newWorkflow;
       state.active = workflowId;
     },
     updateSelection: (state, action) => {
