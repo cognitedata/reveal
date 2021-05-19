@@ -36,6 +36,8 @@ export const usePrevAndNextStep = (step?: WorkflowStep) => {
       const stepPrev = routes[prevStepIndex];
       if (args) history.push(stepPrev.path(tenant, workflowId, ...args));
       else history.push(stepPrev.path(tenant, workflowId));
+    } else {
+      history.goBack();
     }
   };
 
