@@ -3,6 +3,9 @@ import styled from 'styled-components/macro';
 export const SuitbarContainer = styled.div`
   display: flex;
   border-radius: 4px;
+  button {
+    margin-left: 15px;
+  }
 `;
 
 export const MainContent = styled.div`

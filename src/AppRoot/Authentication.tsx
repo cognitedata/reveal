@@ -2,8 +2,6 @@ import { useContext, useEffect, useState } from 'react';
 import { TenantContext } from 'providers/TenantProvider';
 import { CdfClientContext } from 'providers/CdfClientProvider';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchSuites } from 'store/suites/thunks';
-import { fetchUserGroups } from 'store/groups/thunks';
 import { RootDispatcher } from 'store/types';
 import { getGroupsState } from 'store/groups/selectors';
 import { Loader } from '@cognite/cogs.js';
@@ -14,6 +12,7 @@ import { getMetrics } from 'utils/metrics';
 import { Metrics as CogniteMetrics } from '@cognite/metrics';
 import { getDataSet } from 'store/config/thunks';
 import { AuthProvider } from '@cognite/react-container';
+import { fetchAppData } from 'store/thunks';
 import Routes from './Routes';
 
 const Authentication = (): JSX.Element => {
@@ -49,9 +48,8 @@ const Authentication = (): JSX.Element => {
   useEffect(() => {
     const fetch = async () => {
       setFetchDispatched(true);
-      await dispatch(fetchUserGroups(apiClient));
       await dispatch(
-        fetchSuites(apiClient, Metrics.create('Auth') as CogniteMetrics)
+        fetchAppData(apiClient, Metrics.create('Auth') as CogniteMetrics)
       );
     };
     if (

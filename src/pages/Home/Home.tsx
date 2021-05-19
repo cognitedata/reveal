@@ -1,9 +1,17 @@
 import { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Loader, Title, Button, Icon, Graphic, Body } from '@cognite/cogs.js';
+import {
+  Loader,
+  Title,
+  Button,
+  Icon,
+  Graphic,
+  Body,
+  A,
+} from '@cognite/cogs.js';
 import Glider from 'react-glider';
 import Suitebar from 'components/suitebar/Suitebar';
-import { SmallTile, Tile } from 'components/tiles';
+import { LastVisitedTile, ApplicationTile, Tile } from 'components/tiles';
 import { SuiteMenu } from 'components/menus';
 import {
   TilesContainer,
@@ -13,10 +21,8 @@ import {
 import { useSelector, useDispatch } from 'react-redux';
 import { RootDispatcher } from 'store/types';
 import { Suite, Board } from 'store/suites/types';
-import {
-  getLastVisitedBoards,
-  getSuitesTableState,
-} from 'store/suites/selectors';
+import { getSuitesTableState } from 'store/suites/selectors';
+import { getLastVisitedItems, getUserSpace } from 'store/userSpace/selectors';
 import { modalOpen } from 'store/modals/actions';
 import { ModalType } from 'store/modals/types';
 import {
@@ -25,11 +31,13 @@ import {
 } from 'store/groups/selectors';
 import { UserSpaceState } from 'store/userSpace/types';
 import { fetchUserSpace } from 'store/userSpace/thunks';
-import { getLastVisited, getUserSpace } from 'store/userSpace/selectors';
 import { ApiClientContext } from 'providers/ApiClientProvider';
 import 'glider-js/glider.min.css';
 import { useMetrics } from 'utils/metrics';
 import { ADMIN_GROUP_NAME } from 'constants/cdf';
+import { getApplications } from 'store/config/selectors';
+import { ApplicationItem } from 'store/config/types';
+import { TenantContext } from 'providers/TenantProvider';
 
 const Home = () => {
   const itemsToDisplay = 6;
@@ -49,10 +57,12 @@ const Home = () => {
   }: UserSpaceState = useSelector(getUserSpace);
   const [userSpaceLoadDispatched, setUserSpaceLoadDispatched] = useState(false);
 
-  const lastVisited = useSelector(getLastVisited) || [];
-  const lastVisitedBoards = useSelector(
-    getLastVisitedBoards(lastVisited, itemsToDisplay)
+  const tenant = useContext(TenantContext);
+  const lastVisitedItems = useSelector(getLastVisitedItems(tenant)).slice(
+    0,
+    itemsToDisplay
   );
+  const applications = useSelector(getApplications(tenant));
 
   const metrics = useMetrics('Home');
 
@@ -81,17 +91,28 @@ const Home = () => {
     <>
       <Suitebar
         headerText="Executive overview"
-        actionButton={
+        actionsPanel={
           canEdit && (
-            <Button
-              variant="outline"
-              type="secondary"
-              icon="Plus"
-              iconPlacement="left"
-              onClick={() => handleOpenModal('CreateSuite')}
-            >
-              New suite
-            </Button>
+            <>
+              <Button
+                variant="outline"
+                type="secondary"
+                icon="Plus"
+                iconPlacement="left"
+                onClick={() => handleOpenModal('SelectApplications')}
+              >
+                Add application
+              </Button>
+              <Button
+                variant="outline"
+                type="secondary"
+                icon="Plus"
+                iconPlacement="left"
+                onClick={() => handleOpenModal('CreateSuite')}
+              >
+                New suite
+              </Button>
+            </>
           )
         }
       />
@@ -118,9 +139,8 @@ const Home = () => {
         </NoItemsContainer>
       ) : (
         <OverviewContainer>
-          {lastVisitedBoards.length > 0 && (
+          {lastVisitedItems.length > 0 && (
             <TilesContainer>
-              <Title level={6}>Quick Access</Title>
               <Glider
                 hasArrows
                 itemWidth={glideItemWidth}
@@ -131,7 +151,7 @@ const Home = () => {
                 skipTrack
               >
                 <div className="glider-track">
-                  {lastVisitedBoards?.map((board: Board) => (
+                  {lastVisitedItems?.map((board: Board) => (
                     <a
                       onClick={() =>
                         metrics.track('QuickAccess_Board_Click', {
@@ -144,11 +164,31 @@ const Home = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      <SmallTile dataItem={board} />
+                      <LastVisitedTile dataItem={board} />
                     </a>
                   ))}
                 </div>
               </Glider>
+            </TilesContainer>
+          )}
+          {applications.length > 0 && (
+            <TilesContainer>
+              <Title level={6}>Applications deployed for you</Title>
+              {applications?.map((item: ApplicationItem) => (
+                <A
+                  key={item.key}
+                  href={item.url}
+                  target="_blank"
+                  onClick={() =>
+                    metrics.track('Application_Click', {
+                      key: item.key,
+                      application: item.title,
+                    })
+                  }
+                >
+                  <ApplicationTile item={item} />
+                </A>
+              ))}
             </TilesContainer>
           )}
           <TilesContainer>

@@ -1,3 +1,4 @@
 export * from './tile/Tile';
-export * from './smallTile/SmallTile';
+export * from './lastVisitedTile';
+export * from './applicationTile';
 export * from './infographicsTile/InfographicsTile';

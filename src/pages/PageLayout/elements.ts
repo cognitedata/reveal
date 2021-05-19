@@ -17,3 +17,10 @@ export const Content = styled.div`
   width: 100%;
   overflow: auto;
 `;
+
+export const ContentWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  overflow: auto;
+  width: -webkit-fill-available;
+`;

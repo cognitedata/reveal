@@ -1,19 +1,16 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Avatar, Icon, TopBar, Menu, Tooltip } from '@cognite/cogs.js';
+import { Avatar, Icon, TopBar, Menu, Tooltip, Graphic } from '@cognite/cogs.js';
 import { useDispatch, useSelector } from 'react-redux';
+import { AuthProvider } from '@cognite/react-container';
 import {
   getGroupsState,
   getUsersGroupNames,
   isAdmin,
 } from 'store/groups/selectors';
-import { getUserId } from 'store/auth/selectors';
 import defaultCustomerLogo from 'images/default_logo.png';
-import cogniteLogo from 'images/cognite_logo.png';
-import { CustomLink, CustomMenuItem } from 'styles/common';
+import { CustomMenuItem, CustomMenuLink } from 'styles/common';
+import { usePossibleTenant } from 'hooks';
 import { CdfClientContext } from 'providers/CdfClientProvider';
-import { logout } from 'utils/logout';
-import sidecar from 'utils/sidecar';
-import { getReleaseVersion } from 'utils/release';
 import { clearGroupsFilter, setGroupsFilter } from 'store/groups/actions';
 import { useHistory } from 'react-router-dom';
 import { useMetrics } from 'utils/metrics';
@@ -23,29 +20,34 @@ import { setHttpError } from 'store/notification/thunks';
 import { modalOpen } from 'store/modals/actions';
 import { getConfigState } from 'store/config/selectors';
 import { addConfigItems } from 'store/config/actions';
+import useHelpCenter from 'hooks/useHelpCenter';
+import { setNotification } from 'store/notification/actions';
+import { ApiClientContext } from 'providers/ApiClientProvider';
 import CustomerLogo from './CustomerLogo';
-import { CogniteLogo, GroupPreview, LogoWrapper } from './elements';
+import {
+  GroupPreview,
+  LogoWrapper,
+  GroupItemWrapper,
+  AppHeaderWrapper,
+} from './elements';
+import UserMenu from './UserMenu';
 
 const AppHeader: React.FC = () => {
   const dispatch = useDispatch();
   const admin = useSelector(isAdmin);
-  const email = useSelector(getUserId);
+  const { authState } = useContext(AuthProvider);
   const { filter: groupsFilter } = useSelector(getGroupsState);
   const history = useHistory();
   const metrics = useMetrics('AppHeader');
   const { customerLogoFetched } = useSelector(getConfigState);
-
-  const { privacyPolicyUrl } = sidecar;
   const allGroupNames = useSelector(getUsersGroupNames);
+  const tenant = usePossibleTenant();
 
   const client = useContext(CdfClientContext);
+  const apiClient = useContext(ApiClientContext);
 
   const [customerLogoUrl, setCustomerLogoUrl] = useState('');
-
-  const performLogout = async () => {
-    metrics.track('Profile_Logout');
-    await logout(client);
-  };
+  const { toggleHelpCenter } = useHelpCenter();
 
   const setFilter = (groupName: string) => {
     const alreadyChecked = groupsFilter.includes(groupName);
@@ -57,6 +59,7 @@ const AppHeader: React.FC = () => {
       metrics.track('GroupMenu_SelectGroup', { groupName });
     }
   };
+
   const clearGroupFilter = () => {
     metrics.track('ClearGroupFilter');
     dispatch(clearGroupsFilter());
@@ -65,6 +68,39 @@ const AppHeader: React.FC = () => {
   const goHome = () => {
     metrics.track('CustomerLogo_Click');
     history.push('/');
+  };
+
+  // TODO(CM-406)
+  const syncSuites = async () => {
+    if (
+      // eslint-disable-next-line no-alert
+      window.confirm(
+        `Do you want to copy suites from RAW database to DB-Service?`
+      )
+    ) {
+      try {
+        await apiClient.syncSuites();
+        dispatch(setNotification(`Suites successfully copied`));
+      } catch (e) {
+        dispatch(setHttpError('Failed to copy suites to DB-Service', e));
+      }
+    }
+  };
+  // TODO(CM-406)
+  const syncLastVisited = async () => {
+    if (
+      // eslint-disable-next-line no-alert
+      window.confirm(
+        `Do you want to copy lastVisited data from RAW database to DB-Service?`
+      )
+    ) {
+      try {
+        await apiClient.syncLastVisited();
+        dispatch(setNotification(`lastVisited data successfully copied`));
+      } catch (e) {
+        dispatch(setHttpError('Failed to copy lastVisited to DB-Service', e));
+      }
+    }
   };
 
   useEffect(() => {
@@ -88,12 +124,6 @@ const AppHeader: React.FC = () => {
     }
   }, [customerLogoFetched, dispatch, client]);
 
-  const releaseVersion = `Version: ${getReleaseVersion()}`;
-
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(releaseVersion);
-  };
-
   const openUploadLogoModal = () => {
     dispatch(modalOpen({ modalType: 'UploadLogo' }));
   };
@@ -102,7 +132,7 @@ const AppHeader: React.FC = () => {
     return null;
   }
 
-  const actions = [
+  const adminActions = [
     {
       key: 'settings',
       component: (
@@ -117,8 +147,13 @@ const AppHeader: React.FC = () => {
       menu: (
         <Menu>
           <Menu.Header>System admin</Menu.Header>
-          <Menu.Item appendIcon="Upload" onClick={() => openUploadLogoModal()}>
-            Upload customer logo
+          {/* TODO(CM-406) */}
+          <Menu.Item onClick={syncSuites}>
+            Copy suites data from RAW to db-service
+          </Menu.Item>
+          {/* TODO(CM-406) */}
+          <Menu.Item onClick={syncLastVisited}>
+            Copy lastVisited data from RAW to db-service
           </Menu.Item>
         </Menu>
       ),
@@ -136,117 +171,70 @@ const AppHeader: React.FC = () => {
       ),
       menu: (
         <Menu>
-          <Menu.Header>Select Group Access to View:</Menu.Header>
-          {allGroupNames.map((groupName) => (
-            <Menu.Item
-              selected={groupsFilter.includes(groupName)}
-              key={groupName}
-            >
-              <CustomMenuItem
-                onClick={() => setFilter(groupName)}
-                onKeyPress={() => setFilter(groupName)}
-                data-testid={`menu-item-${groupName}`}
+          <Menu.Header>Select Group Access to View</Menu.Header>
+          <GroupItemWrapper>
+            {allGroupNames.map((groupName) => (
+              <Menu.Item
+                selected={groupsFilter.includes(groupName)}
+                key={groupName}
               >
-                {groupName}
-              </CustomMenuItem>
-            </Menu.Item>
-          ))}
-        </Menu>
-      ),
-    },
-    {
-      key: 'help',
-      component: (
-        <Tooltip content="Help">
-          <Icon type="Help" onClick={() => metrics.track('HelpMenu_Click')} />
-        </Tooltip>
-      ),
-      menu: (
-        <Menu>
-          <Menu.Header>Cognite documentation</Menu.Header>
-          <Menu.Item>
-            <CustomLink
-              // TODO(DTC-348) replace with stable link as soon as it is available
-              href="https://pr-567.docs.preview.cogniteapp.com/cockpit/guides/getstarted.html"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => metrics.track('HelpMenu_GettingStarted')}
-            >
-              Learn the basics
-            </CustomLink>
-          </Menu.Item>
-          <Menu.Item>
-            <CustomLink
-              // TODO(DTC-348) replace with stable link as soon as it is available
-              href="https://pr-567.docs.preview.cogniteapp.com/cockpit/guides/admins.html"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => metrics.track('HelpMenu_AdminRole')}
-            >
-              System Administrator role
-            </CustomLink>
-          </Menu.Item>
+                <CustomMenuItem
+                  onClick={() => setFilter(groupName)}
+                  onKeyPress={() => setFilter(groupName)}
+                  data-testid={`menu-item-${groupName}`}
+                >
+                  {groupName}
+                </CustomMenuItem>
+                {groupsFilter.includes(groupName) && <Icon type="Check" />}
+              </Menu.Item>
+            ))}
+          </GroupItemWrapper>
           <Menu.Divider />
-          <Menu.Item disabled>
-            <CustomMenuItem role="button">
-              Introduction to Digital Cockpit
-            </CustomMenuItem>
-          </Menu.Item>
-        </Menu>
-      ),
-    },
-    {
-      key: 'user',
-      component: (
-        <Avatar
-          text={email}
-          onClick={() => metrics.track('ProfileMenu_Click')}
-        />
-      ),
-      menu: (
-        <Menu>
-          <Menu.Item>
-            <CustomLink
-              href={privacyPolicyUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => metrics.track('ProfileMenu_PrivacyPolicy')}
-            >
-              Privacy policy
-            </CustomLink>
-          </Menu.Item>
-          <Menu.Divider />
-          <Menu.Item disabled>
-            <Tooltip content="Click to copy to clipboard">
-              <CustomMenuItem onClick={copyToClipboard}>
-                {releaseVersion}
-              </CustomMenuItem>
-            </Tooltip>
-          </Menu.Item>
-          <Menu.Divider />
-          <Menu.Item>
-            <CustomMenuItem
-              role="button"
-              tabIndex={0}
-              onClick={performLogout}
-              onKeyPress={performLogout}
-            >
-              Log out
-            </CustomMenuItem>
+          <Menu.Header>Edit Access Groups</Menu.Header>
+          <Menu.Item
+            key="cogniteDataFusion"
+            style={{ display: 'flex', justifyContent: 'space-between' }}
+          >
+            {/* Update link to the correct one */}
+            <CustomMenuLink href="/" key="cdf-link" target="_blank">
+              Cognite Data Fusion
+            </CustomMenuLink>
+            <Icon type="ExternalLink" />
           </Menu.Item>
         </Menu>
       ),
     },
   ];
 
-  const adminActions = ['view', 'settings'];
+  const actions = [
+    {
+      key: 'help',
+      onClick: toggleHelpCenter,
+      component: <Icon type="Help" />,
+    },
+    {
+      key: 'user',
+      component: (
+        <Avatar
+          text={authState?.email || ''}
+          onClick={() => metrics.track('ProfileMenu_Click')}
+        />
+      ),
+      menu: (
+        <UserMenu
+          email={authState?.email || ''}
+          client={client}
+          openUploadLogoModal={openUploadLogoModal}
+          isAdmin={admin}
+        />
+      ),
+    },
+  ];
 
-  const filteredActions = !admin
-    ? actions.filter((action) => !adminActions.includes(action.key))
-    : actions;
+  const filteredActions = admin ? [...adminActions, ...actions] : actions;
 
   return (
-    <>
+    <AppHeaderWrapper>
       {!!groupsFilter?.length && (
         <GroupPreview data-testid="user-group-preview-bar">
           <TopBar>
@@ -270,31 +258,39 @@ const AppHeader: React.FC = () => {
       )}
       <TopBar>
         <TopBar.Left>
-          <LogoWrapper>
-            <TopBar.Logo
-              onLogoClick={goHome}
-              logo={<CustomerLogo imgUrl={customerLogoUrl} />}
-            />
-          </LogoWrapper>
+          <TopBar.Logo
+            title="Cognite Solutions Portal"
+            logo={
+              <Graphic
+                type="Cognite"
+                style={{
+                  width: 42,
+                  margin: '4px 12px 0 12px',
+                  cursor: 'pointer',
+                }}
+                className="topbar-logo"
+                onClick={goHome}
+              />
+            }
+            subtitle={
+              <span style={{ textTransform: 'capitalize' }}>{tenant}</span>
+            }
+            onLogoClick={goHome}
+          />
         </TopBar.Left>
         <TopBar.Right>
-          <CogniteLogo>
-            <TopBar.Item>
-              <a
-                href="https://www.cognite.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => metrics.track('CogniteLogo_Click')}
-              >
-                <img src={cogniteLogo} alt="Cognite" />
-              </a>
-            </TopBar.Item>
-          </CogniteLogo>
-
+          <TopBar.Item className="topbar-logo-wrapper">
+            <LogoWrapper>
+              <TopBar.Logo
+                onLogoClick={goHome}
+                logo={<CustomerLogo imgUrl={customerLogoUrl} />}
+              />
+            </LogoWrapper>
+          </TopBar.Item>
           <TopBar.Actions actions={filteredActions} />
         </TopBar.Right>
       </TopBar>
-    </>
+    </AppHeaderWrapper>
   );
 };
 

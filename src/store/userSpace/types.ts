@@ -1,3 +1,5 @@
+import { ApplicationItem } from 'store/config/types';
+import { Board } from 'store/suites/types';
 import { ActionType } from 'typesafe-actions';
 import * as actions from './actions';
 
@@ -26,3 +28,8 @@ export interface UserSpaceState {
   loaded: boolean;
   lastVisited?: LastVisited[];
 }
+
+export type LastVisitedItem = (Board | ApplicationItem) & {
+  lastVisitedTime?: number;
+  itemType?: 'board' | 'application' | '';
+};

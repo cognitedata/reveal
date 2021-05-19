@@ -1,11 +1,11 @@
 import { createReducer } from 'typesafe-actions';
 import { Group } from '@cognite/sdk';
+import { checkIsAdmin } from 'utils/groups';
 import {
   GroupsState,
   UserGroupsActionTypes,
   UserGroupsootAction,
 } from './types';
-import { checkIsAdmin } from './thunks';
 
 export const initialState: GroupsState = {
   loading: false,

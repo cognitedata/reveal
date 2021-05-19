@@ -5,7 +5,7 @@ export const getSuiteWithImages = (key: string = 'test-suite-with-images') => ({
   title: 'Test suite with images',
   color: '#FFE1D1',
   description: '',
-  createdTime: 1605817736337,
+  order: 0,
   boards: [
     {
       key: `${key}-grafana-1`,
@@ -31,7 +31,7 @@ export const getSuiteWithEmbedTags = (
   title: 'Test suite with embeded tags',
   color: '#FFE1D1',
   description: '',
-  createdTime: 1605817736337,
+  order: 1,
   boards: [
     {
       key: `${key}-grafana-1`,
@@ -58,7 +58,7 @@ export const getEmptySuite = (key: string = 'test-empty-suite') => ({
   title: 'Test empty syite',
   color: '#FFE1D1',
   description: '',
-  createdTime: 1605817736337,
+  order: 3,
   boards: [],
 });
 
@@ -69,7 +69,7 @@ export const getSuites = () =>
       title: 'Operations',
       color: '#FFE1D1',
       description: '',
-      createdTime: 1605817736337,
+      order: 4,
       boards: [
         {
           key: 'suite-3-grafana-1',
@@ -97,7 +97,7 @@ export const getSuites = () =>
       ],
       color: '#F4DAF8',
       description: '',
-      createdTime: 1605817736000,
+      order: 5,
       boards: [
         {
           key: 'grafana-1',
@@ -135,7 +135,7 @@ export const getSuites = () =>
       title: 'Asset Performance & Integrity',
       color: '#D3F7FB',
       description: '',
-      createdTime: 1605817730000,
+      order: 6,
       boards: [
         {
           key: 'powerbi-1',
