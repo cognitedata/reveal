@@ -17,6 +17,10 @@ be incrementally updated to avoid blocking the viewer.
 # Simple, static node set
 
 ```js runnable
+
+// Note! ES6 classes are not supported in this documentation, but 
+// the example below corresponds to the following:
+/*
 class MyNodeSet extends NodeSet {
   isLoading = false;
 
@@ -35,6 +39,18 @@ class MyNodeSet extends NodeSet {
 };
 
 const mySet = new MyNodeSet(model);
+model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
+model.addStyledNodeSet(mySet, { renderGhosted: false, color: [40, 200, 20] } );
+*/
+
+const mySet = new NodeSet();
+mySet.getIndexSet = () => {
+  const indexSet = new IndexSet();
+  for (let i = 0; i < model.nodeCount; i += 10) {
+    indexSet.add(i);
+  }
+  return indexSet;
+};
 model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
 model.addStyledNodeSet(mySet, { renderGhosted: false, color: [40, 200, 20] } );
 ```
