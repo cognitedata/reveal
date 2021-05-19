@@ -1520,11 +1520,6 @@
   dependencies:
     react "^16.14.0"
 
-"@cognite/sdk-react-query-hooks@5.0.0":
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk-react-query-hooks/-/sdk-react-query-hooks-5.0.0.tgz#290dab6b66179835358a4d0cb5e95013b3a74b3e"
-  integrity sha512-C1jcWiUD5tDhRmUesmirqXMcjJwA4ppHV4bhWBF79xZZzizAZXiL8utoVgT/DJkbTaZT4oPH5EA3aemqWUyMiA==
-
 "@cognite/sdk-react-query-hooks@^3.0.0":
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/@cognite/sdk-react-query-hooks/-/sdk-react-query-hooks-3.0.0.tgz#c2e9a1c1da4d7dbd0941440c70283b3326168aa2"
@@ -1532,6 +1527,11 @@
   dependencies:
     "@cognite/sdk-provider" "^1.0.0"
     react-query "^3.5.0"
+
+"@cognite/sdk-react-query-hooks@^5.0.1":
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk-react-query-hooks/-/sdk-react-query-hooks-5.0.1.tgz#e59aa8b47ead9e9fa2d9c64aa0d83e9e4bd155ea"
+  integrity sha512-TzzDdZHcNqo89sTT4BtsjzkJ8rlD/uSuJp2mZBF69oEzautbQbnsngtA6IzlhSzDkpclGV56Tu2+huh4N02wgg==
 
 "@cognite/sdk@^3.0.0", "@cognite/sdk@^3.3.0", "@cognite/sdk@^3.3.2", "@cognite/sdk@^3.3.6", "cognite-sdk-v3@npm:@cognite/sdk@^3.0.0":
   version "3.4.0"

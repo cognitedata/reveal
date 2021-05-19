@@ -12,3 +12,4 @@ export * from './IconButton';
 export * from './Flex';
 export * from './PageWrapper';
 export * from './TitledSection';
+export * from './Disclosure';

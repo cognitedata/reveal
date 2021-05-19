@@ -1,5 +1,7 @@
+import { useContext } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import { AppStateContext } from 'context';
 import {
   moveToStep,
   WorkflowStep,
@@ -11,7 +13,8 @@ import routesMap from 'routes/routesMap';
 
 export const usePrevAndNextStep = (step?: WorkflowStep) => {
   const history = useHistory();
-  const { tenant, workflowId } = useActiveWorkflow();
+  const { tenant } = useContext(AppStateContext);
+  const { workflowId } = useActiveWorkflow();
 
   const routes = routesMap();
 

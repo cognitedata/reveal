@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import isEqual from 'lodash/isEqual';
+import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { Select } from '@cognite/cogs.js';
 import { DataSet } from '@cognite/sdk';
 import { Popover, Spin } from 'antd';
@@ -12,7 +13,6 @@ import {
   datasetsFetched,
 } from 'modules/datasets';
 import { ResourceType } from 'modules/sdk-builder/types';
-import { checkPermission } from 'modules/app';
 import { stringContains } from 'modules/contextualization/utils';
 
 type OptionsType = {
@@ -43,11 +43,7 @@ export default function DataSetSelect({
   const dataSetResourceCounts = useSelector(dataSetCounts);
   const isLoading = useSelector(getIsFetchingDatasets);
   const isLoaded = useSelector(datasetsFetched);
-  const getPermission = useMemo(
-    () => checkPermission('datasetsAcl', 'READ'),
-    []
-  );
-  const canReadDataSets = useSelector(getPermission);
+  const { data: canReadDataSets } = usePermissions('datasetsAcl', 'READ');
 
   const setSelectedValue = (items?: OptionsType[]) => {
     if (!items?.length) {

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { RootState } from 'store';
@@ -9,6 +9,7 @@ import { useActiveWorkflow } from 'hooks';
 import { Flex, PageTitle } from 'components/Common';
 import StickyBottomRow from 'components/StickyBottomRow';
 import { reviewPage } from 'routes/paths';
+import { AppStateContext } from 'context';
 
 type Props = {
   step: WorkflowStep;
@@ -18,7 +19,8 @@ export default function Options(props: Props) {
   const dispatch = useDispatch();
   const { step } = props;
 
-  const { tenant, workflowId } = useActiveWorkflow(step);
+  const { tenant } = useContext(AppStateContext);
+  const { workflowId } = useActiveWorkflow(step);
   const { partialMatch, grayscale, minTokens } = useSelector(
     (state: RootState) => state.workflows.items[workflowId].options
   );

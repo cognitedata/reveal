@@ -1,4 +1,6 @@
 const CLEAR_TAGS_TOOLTIP = 'Delete all annotations on this file';
+const CANNOT_CLEAR_TAGS_TOOLTIP =
+  'You are missing access to events:write to be able to clear annotations for this file.';
 
 const VIEW_FILE_TOOLTIP = 'Preview this file';
 
@@ -9,6 +11,7 @@ const LOAD_MORE_FILES_TOOLTIP =
 
 export const TOOLTIP_STRINGS = {
   CLEAR_TAGS_TOOLTIP,
+  CANNOT_CLEAR_TAGS_TOOLTIP,
   EDIT_FILE_TOOLTIP,
   VIEW_FILE_TOOLTIP,
   LOAD_MORE_FILES_TOOLTIP,

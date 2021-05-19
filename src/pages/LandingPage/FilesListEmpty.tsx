@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { useDispatch } from 'react-redux';
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { Graphic, Title } from '@cognite/cogs.js';
 import { IconButton } from 'components/Common';
 import { createNewWorkflow } from 'modules/workflows';
 import { diagramSelection } from 'routes/paths';
 import { PNID_METRICS, trackUsage } from 'utils/Metrics';
+import { AppStateContext } from 'context';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -18,7 +19,7 @@ const Wrapper = styled.div`
 `;
 
 export default function FilesListEmpty() {
-  const { tenant } = useParams<{ tenant: string }>();
+  const { tenant } = useContext(AppStateContext);
   const history = useHistory();
   const dispatch = useDispatch();
 

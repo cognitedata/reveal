@@ -1,19 +1,7 @@
 import { History } from 'history';
 import queryString from 'query-string';
-import { RootState } from 'store';
 import { getAuthState } from 'sdk-singleton';
 import { OnResourceSelectedParams } from '.';
-
-export const selectAppState = (state: RootState) => state.app || {};
-
-export const checkPermission = (acl: string, type: string) => (
-  state: RootState
-) => {
-  const { groups } = state.app || {};
-  return (
-    groups && groups.groupsAcl && groups[acl] && groups[acl].includes(type)
-  );
-};
 
 export const isCogniteUser = (): boolean => {
   const { username } = getAuthState();

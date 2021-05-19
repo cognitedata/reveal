@@ -1,12 +1,12 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from 'store';
-import Spinner from './Spinner';
+import { useMissingPermissions } from 'hooks/usePermissions';
+import NoAccess from 'pages/NoAccess';
 
 export default function GroupsRequired(props: { children: JSX.Element }) {
-  const loaded = useSelector((state: RootState) => state.app.loaded);
-  if (loaded) {
+  const missingPermissions = useMissingPermissions();
+
+  if (!missingPermissions?.length) {
     return props.children;
   }
-  return <Spinner />;
+  return <NoAccess missingPermissions={missingPermissions} />;
 }

@@ -1,11 +1,11 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Icon, Tooltip } from '@cognite/cogs.js';
-import { message } from 'antd';
+import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { FileInfo } from '@cognite/sdk';
+import { message } from 'antd';
 import { useWorkflowItems, WorkflowStep } from 'modules/workflows';
-import { checkPermission } from 'modules/app';
 import {
   startConvertFileToSvgJob,
   UploadJobState,
@@ -16,6 +16,7 @@ import MissingPermissionFeedback from 'components/MissingPermissionFeedback';
 import { Flex, PageTitle } from 'components/Common';
 import { canDeploySelectedFiles } from 'utils/FilesUtils';
 import { diagramSelection } from 'routes/paths';
+import { AppStateContext } from 'context';
 import ProgressBarSection from './ProgressBarSection';
 import { getWorkflowItems, getContextualizationJobs } from './selectors';
 import ResultsTable from './ResultsTable';
@@ -27,34 +28,31 @@ export default function ResultsOverview(props: Props) {
   const { step } = props;
   const history = useHistory();
   const dispatch = useDispatch();
+  const { tenant } = useContext(AppStateContext);
 
+  const [jobStarted, setJobStarted] = useState(false);
   const [selectedKeys, setSelectedKeys] = useState([] as number[]);
   const [renderFeedback, setRenderFeedback] = useState(false);
 
-  const getCanEditFiles = useMemo(
-    () => checkPermission('filesAcl', 'WRITE'),
-    []
-  );
-  const getCanReadFiles = useMemo(
-    () => checkPermission('filesAcl', 'READ'),
-    []
-  );
-  const { tenant, workflowId } = useActiveWorkflow(step);
+  const canEditFiles = usePermissions('filesAcl', 'WRITE');
+  const canReadFiles = usePermissions('filesAcl', 'READ');
+
+  const { workflowId } = useActiveWorkflow(step);
   const { diagrams } = useWorkflowItems(workflowId, true);
   const { workflow } = useSelector(getWorkflowItems(workflowId));
-  const canEditFiles = useSelector(getCanEditFiles);
-  const canReadFiles = useSelector(getCanReadFiles);
   const { uploadJobs } = useSelector(getContextualizationJobs);
   const annotationsByFileId = useAnnotationsForFiles(selectedKeys);
 
   const isLoading = Object.values(uploadJobs).some((job: any) => !job.jobDone);
 
   useEffect(() => {
-    if (canEditFiles && canReadFiles)
+    if (jobStarted) return;
+    if (canEditFiles && canReadFiles) {
       dispatch(startPnidParsingWorkflow.action(workflowId));
-    else setRenderFeedback(true);
+      setJobStarted(true);
+    } else setRenderFeedback(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [canEditFiles, canReadFiles, workflowId]);
+  }, [jobStarted, canEditFiles, canReadFiles, workflowId]);
 
   useEffect(() => {
     if (!workflow) {

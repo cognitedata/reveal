@@ -1,16 +1,15 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { useParams, useHistory } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 import { message, Dropdown, Menu } from 'antd';
 import { Button, Tooltip } from '@cognite/cogs.js';
 import { useAnnotations } from '@cognite/data-exploration';
+import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import {
   convertEventsToAnnotations,
   linkFileToAssetIds,
 } from '@cognite/annotations';
 import { Flex, IconButton } from 'components/Common';
 import sdk from 'sdk-singleton';
-import { checkPermission } from 'modules/app';
 import { diagramPreview } from 'routes/paths';
 import { useParsingJob } from 'modules/contextualization/pnidParsing/hooks';
 
@@ -26,11 +25,7 @@ export default function FileActions({
     workflowId: string;
   }>();
 
-  const getCanEditFiles = useMemo(
-    () => checkPermission('filesAcl', 'WRITE'),
-    []
-  );
-  const canEditFiles = useSelector(getCanEditFiles);
+  const canEditFiles = usePermissions('filesAcl', 'WRITE');
   const { data: annotations } = useAnnotations(file.id);
 
   const { status: parsingJobStatus } = useParsingJob(Number(workflowId));

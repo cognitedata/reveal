@@ -7,20 +7,23 @@ import { FileInfo } from '@cognite/sdk';
 import { sleep } from 'utils/utils';
 import { useQueryClient } from 'react-query';
 import { deleteAnnotationsForFile } from 'utils/AnnotationUtils';
-import { PERMISSIONS_STRINGS, WARNINGS_STRINGS } from 'stringConstants';
+import {
+  PERMISSIONS_STRINGS,
+  WARNINGS_STRINGS,
+  TOOLTIP_STRINGS,
+} from 'stringConstants';
 
-export const ClearTagsButton = ({
-  id,
-  setEditMode,
-}: {
+type Props = {
   id: ResourceItem['id'];
   setEditMode: (val: boolean) => void;
-}) => {
-  const { data: filesAcl } = usePermissions('filesAcl', 'WRITE');
-  const { data: eventsAcl } = usePermissions('eventsAcl', 'WRITE');
+};
+export const ClearTagsButton = (props: Props) => {
+  const { id, setEditMode } = props;
   const client = useQueryClient();
+  const { data: filesPermissions } = usePermissions('filesAcl', 'WRITE');
+  const { data: eventsPermissions } = usePermissions('eventsAcl', 'WRITE');
 
-  const writeAccess = filesAcl && eventsAcl;
+  const writeAccess = filesPermissions && eventsPermissions;
 
   const onDeleteSuccess = () => {
     const invalidate = () =>
@@ -44,11 +47,11 @@ export const ClearTagsButton = ({
 
   if (!writeAccess) {
     const errors = [];
-    if (!filesAcl) {
+    if (!filesPermissions) {
       errors.push('files:write is missing');
     }
-    if (!eventsAcl) {
-      errors.push('event:write is missing');
+    if (!eventsPermissions) {
+      errors.push('events:write is missing');
     }
     return (
       <Tooltip
@@ -84,8 +87,19 @@ export const ClearTagsButton = ({
     });
 
   return (
-    <Tooltip title="Clear tags">
-      <Button icon="DeleteAlt" key={id} onClick={onDeleteClick} />
+    <Tooltip
+      title={
+        eventsPermissions
+          ? TOOLTIP_STRINGS.CLEAR_TAGS_TOOLTIP
+          : TOOLTIP_STRINGS.CANNOT_CLEAR_TAGS_TOOLTIP
+      }
+    >
+      <Button
+        icon="DeleteAlt"
+        key={id}
+        onClick={onDeleteClick}
+        disabled={!eventsPermissions}
+      />
     </Tooltip>
   );
 };

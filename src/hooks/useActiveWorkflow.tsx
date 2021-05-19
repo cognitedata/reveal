@@ -18,8 +18,7 @@ import {
  */
 export const useActiveWorkflow = (step?: WorkflowStep) => {
   const dispatch = useDispatch();
-  const { tenant, workflowId: workflowIdString } = useParams<{
-    tenant: string;
+  const { workflowId: workflowIdString } = useParams<{
     workflowId: string;
   }>();
   const activeWorkflowId = useSelector(getActiveWorkflowId);
@@ -31,5 +30,5 @@ export const useActiveWorkflow = (step?: WorkflowStep) => {
 
   useLoadStepOnMount(step);
 
-  return { tenant, workflowId };
+  return { workflowId };
 };

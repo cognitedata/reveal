@@ -1,13 +1,12 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { notification, Divider, Space } from 'antd';
 import { Button, Title, Badge, Colors } from '@cognite/cogs.js';
 import { RootState } from 'store';
-import { useCdfItem } from '@cognite/sdk-react-query-hooks';
+import { useCdfItem, usePermissions } from '@cognite/sdk-react-query-hooks';
 import { FileInfo } from '@cognite/sdk';
 import { useActiveWorkflow } from 'hooks';
-import { checkPermission } from 'modules/app';
 import { WorkflowStep } from 'modules/workflows';
 import { startConvertFileToSvgJob } from 'modules/contextualization/uploadJobs';
 import { retrieveItemsById as retrieve } from 'modules/files';
@@ -15,6 +14,7 @@ import { reviewPage } from 'routes/paths';
 import { ResourceSidebar } from 'containers/ResourceSidebar';
 import { ContextFileViewer as CogniteFileViewer } from 'components/CogniteFileViewer';
 import MissingPermissionFeedback from 'components/MissingPermissionFeedback';
+import { convertEventsToAnnotations } from '@cognite/annotations';
 import {
   ErrorFeedback,
   Loader,
@@ -25,7 +25,7 @@ import {
   ResourceItem,
   useAnnotations,
 } from '@cognite/data-exploration';
-import { convertEventsToAnnotations } from '@cognite/annotations';
+import { AppStateContext } from 'context';
 import {
   Wrapper,
   ContentWrapper,
@@ -50,7 +50,8 @@ export default function FileOverview(props: Props) {
   }>();
   const dispatch = useDispatch();
   const history = useHistory();
-  const { tenant, workflowId } = useActiveWorkflow(step);
+  const { tenant } = useContext(AppStateContext);
+  const { workflowId } = useActiveWorkflow(step);
 
   const [activeTab, setActiveTab] = useState<FilePreviewTabType>('preview');
   const [renderFeedback, setRenderFeedback] = useState(false);
@@ -112,8 +113,7 @@ export default function FileOverview(props: Props) {
       </Space>
     </div>
   );
-  const getPermission = useMemo(() => checkPermission('filesAcl', 'WRITE'), []);
-  const canEditFiles = useSelector(getPermission);
+  const { data: canEditFiles } = usePermissions('filesAcl', 'WRITE');
 
   const resourceDetails: ResourceItem = {
     type: 'file',

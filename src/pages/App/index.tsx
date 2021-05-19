@@ -1,5 +1,4 @@
-import React, { useEffect, useMemo, Suspense } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useEffect, useMemo, useContext, Suspense } from 'react';
 import {
   useRouteMatch,
   useHistory,
@@ -8,55 +7,51 @@ import {
   Redirect,
   useLocation,
 } from 'react-router-dom';
-import { RootState } from 'store';
-import sdk, { getAuthState } from 'sdk-singleton';
-import queryString from 'query-string';
-import { trackUsage } from 'utils/Metrics';
-import { setCdfEnv, setTenant, fetchUserGroups } from 'modules/app';
 import {
   Loader,
   FileContextualizationContextProvider,
   DataExplorationProvider,
 } from '@cognite/data-exploration';
-import { ResourceActionsProvider } from 'context/ResourceActionsContext';
-import { ResourceSelectionProvider } from 'context/ResourceSelectionContext';
+import sdk, { getAuthState } from 'sdk-singleton';
+import queryString from 'query-string';
+import { trackUsage } from 'utils/Metrics';
+import {
+  ResourceActionsProvider,
+  ResourceSelectionProvider,
+  AppStateContext,
+} from 'context';
 import NotFound from 'pages/NotFound';
 import { staticRoot } from 'routes/paths';
 
 const Routes = React.lazy(() => import('routes'));
 
 export default function App() {
-  const dispatch = useDispatch();
+  const { cdfEnv: cdfEnvFromContext, setCdfEnv, setTenant } = useContext(
+    AppStateContext
+  );
   const history = useHistory();
   const { location } = history;
   const { username } = getAuthState();
   const { pathname, search, hash } = useLocation();
   const {
-    params: { tenant },
+    params: { tenant: tenantFromUrl },
   } = useRouteMatch<{ tenant: string }>();
 
-  const cdfEnvInStore = useSelector((state: RootState) => state.app.cdfEnv);
-  const cdfEnvInUrl = queryString.parse(window.location.search).env as string;
-
-  const init = () => {
-    dispatch(setTenant({ tenant }));
-    dispatch(setCdfEnv({ cdfEnvInUrl }));
-    dispatch(fetchUserGroups());
-  };
+  const cdfEnvFromUrl = queryString.parse(window.location.search).env as string;
 
   useEffect(() => {
-    init();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tenant, cdfEnvInUrl]);
+    setTenant(tenantFromUrl);
+    setCdfEnv(cdfEnvFromUrl);
+  }, [tenantFromUrl, cdfEnvFromUrl, setTenant, setCdfEnv]);
 
   useEffect(() => {
-    if (cdfEnvInStore && !cdfEnvInUrl) {
+    if (cdfEnvFromContext && !cdfEnvFromUrl) {
       history.replace({
         pathname: location.pathname,
-        search: `?env=${cdfEnvInStore}`,
+        search: `?env=${cdfEnvFromContext}`,
       });
     }
-  }, [cdfEnvInUrl, cdfEnvInStore, history, location.pathname]);
+  }, [cdfEnvFromUrl, cdfEnvFromContext, history, location.pathname]);
 
   useEffect(() => {
     trackUsage('App.Load');

@@ -26,7 +26,7 @@
     "@cognite/react-picture-annotation": "^1.10.4",
     "@cognite/sdk": "^3.3.6",
     "@cognite/sdk-provider": "^1.0.0",
-    "@cognite/sdk-react-query-hooks": "5.0.0",
+    "@cognite/sdk-react-query-hooks": "^5.0.1",
     "@cognite/z-index": "^0.2.0",
     "@google-cloud/storage": "^5.7.2",
     "@reduxjs/toolkit": "^1.5.0",
