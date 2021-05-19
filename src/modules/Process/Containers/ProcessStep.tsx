@@ -77,9 +77,10 @@ export default function ProcessStep() {
         />
       );
     }
-    if (currentView === 'map') {
-      return <MapView data={tableData} />;
-    }
+    // TODO: Fix map view in process page
+    // if (currentView === 'map') {
+    //   return <MapView data={tableData} />;
+    // }
 
     const handleRowSelect = (item: TableDataItem, selected: boolean) => {
       dispatch(setFileSelectState(item.id, selected));

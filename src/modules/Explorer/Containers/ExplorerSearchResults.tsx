@@ -60,7 +60,15 @@ export const ExplorerSearchResults = ({
                   );
                 }
                 if (currentView === 'map') {
-                  return <MapView />;
+                  return (
+                    <MapView
+                      onRowSelect={onRowSelect}
+                      onRowClick={onClick}
+                      selectedFileId={selectedId}
+                      {...props}
+                      {...extraProps}
+                    />
+                  );
                 }
 
                 return (
