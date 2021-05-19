@@ -11,7 +11,7 @@ import {
   searchCountSelector,
 } from 'pages/SelectionPage/selectors';
 import { Flex } from 'components/Common';
-import { columns } from './columns';
+import { getColumns } from './columns';
 
 type Props = {
   type: ResourceType;
@@ -112,7 +112,7 @@ export default function SelectionTable(props: Props): JSX.Element {
     <Flex row style={{ width: '100%' }}>
       <Table
         // @ts-ignore
-        columns={columns}
+        columns={getColumns(type)}
         dataSource={dataSource()}
         loading={fetching}
         rowKey="id"
