@@ -102,16 +102,35 @@ export const startPnidParsingJob = {
         // Remove old job results from state
         dispatch(resetJob({ workflowId }));
       }
-      const mappedDiagrams = diagrams.map((diagram: FileInfo) => ({
-        fileId: diagram.id,
-      }));
 
-      const mappedResources = [
-        ...mapAssetsToEntities(resources.assets),
-        ...mapFilesToEntities(resources.files),
-      ];
-
+      if (workflow?.jobId && !parsingJob) {
+        // Job has already been created, so don't call detect again but instead update redux + poll results
+        dispatch(
+          createJob({
+            workflowId,
+            initialValue: { jobId: workflow?.jobId, status: 'UNKNOWN' },
+          })
+        );
+        dispatch(
+          pollJobResults.action({
+            jobId: workflow?.jobId,
+            workflowId,
+            diagrams,
+          })
+        );
+        return workflow?.jobId;
+      }
+      // Job not created yet, so need to create it
       try {
+        const mappedDiagrams = diagrams.map((diagram: FileInfo) => ({
+          fileId: diagram.id,
+        }));
+
+        const mappedResources = [
+          ...mapAssetsToEntities(resources.assets),
+          ...mapFilesToEntities(resources.files),
+        ];
+
         const response = await sdk.post(createPnidDetectJobPath(sdk.project), {
           data: {
             items: mappedDiagrams,
