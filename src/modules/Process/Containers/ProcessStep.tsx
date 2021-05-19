@@ -81,8 +81,8 @@ export default function ProcessStep() {
       return <MapView data={tableData} />;
     }
 
-    const handleRowSelect = (id: number, selected: boolean) => {
-      dispatch(setFileSelectState(id, selected));
+    const handleRowSelect = (item: TableDataItem, selected: boolean) => {
+      dispatch(setFileSelectState(item.id, selected));
     };
 
     return <FileTable data={tableData} onRowSelect={handleRowSelect} />;

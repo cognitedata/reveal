@@ -1,17 +1,20 @@
-import React from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Column, ColumnShape } from 'react-base-table';
 import { TableDataItem } from 'src/modules/Common/types';
 import { StringRenderer } from 'src/modules/Common/Containers/FileTableRenderers/StringRenderer';
 import { SelectableTable } from 'src/modules/Common/Components/SelectableTable/SelectableTable';
 import { NameRenderer } from 'src/modules/Common/Containers/FileTableRenderers/NameRenderer';
 import { ActionRenderer } from 'src/modules/Common/Containers/FileTableRenderers/ActionRenderer';
+import { AnnotationRenderer } from 'src/modules/Common/Containers/FileTableRenderers/AnnotationRenderer';
+import { DateSorter } from 'src/modules/Common/Containers/Sorters/DateSorter';
+import { DateRenderer } from 'src/modules/Common/Containers/FileTableRenderers/DateRenderer';
+import { NameSorter } from 'src/modules/Common/Containers/Sorters/NameSorter';
+import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
+import { useDispatch } from 'react-redux';
 import { FileExplorerTableProps } from './types';
-import { DateRenderer } from '../../Containers/FileTableRenderers/DateRenderer';
-import { NameSorter } from '../../Containers/Sorters/NameSorter';
-import { DateSorter } from '../../Containers/Sorters/DateSorter';
-import { AnnotationRenderer } from '../../Containers/FileTableRenderers/AnnotationRenderer';
 
 export function FileTableExplorer(props: FileExplorerTableProps) {
+  const dispatch = useDispatch();
   const columns: ColumnShape<TableDataItem>[] = [
     {
       key: 'name',
@@ -71,7 +74,7 @@ export function FileTableExplorer(props: FileExplorerTableProps) {
 
   const rowEventHandlers = {
     onClick: ({ rowData }: { rowData: TableDataItem }) => {
-      props.onRowClick(rowData.id);
+      props.onRowClick(rowData);
     },
   };
 
@@ -79,6 +82,14 @@ export function FileTableExplorer(props: FileExplorerTableProps) {
     name: NameSorter,
     sourceCreatedTime: DateSorter,
   };
+
+  const fileIds = useMemo(() => {
+    return props.data.map((item: TableDataItem) => item.id);
+  }, [props.data]);
+
+  useEffect(() => {
+    dispatch(RetrieveAnnotations({ fileIds, assetIds: undefined }));
+  }, [fileIds]);
 
   return (
     <SelectableTable

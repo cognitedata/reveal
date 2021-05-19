@@ -1,11 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   SelectableItemsProps,
   TableStateProps,
   TableProps,
-  SearchResultLoader,
   SearchResultLoaderProps,
-  RelatedResourcesLoader,
   RelatedResourcesLoaderProps,
 } from '@cognite/data-exploration';
 import {
@@ -15,31 +13,31 @@ import {
   Timeseries,
   Sequence,
 } from '@cognite/sdk';
+import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 
 type Resource = FileInfo | Asset | CogniteEvent | Sequence | Timeseries;
 
 export const ResultTableLoader = <T extends Resource>({
-  mode = 'search',
   children,
   ...props
 }: {
-  mode?: 'search' | 'relatedResources';
   children: (tableProps: TableProps<T>) => React.ReactNode;
 } & Partial<SearchResultLoaderProps> &
   Partial<RelatedResourcesLoaderProps> &
   Partial<SelectableItemsProps> &
   TableStateProps) => {
-  if (mode === 'search') {
-    return (
-      <SearchResultLoader {...(props as SearchResultLoaderProps)}>
-        {children}
-      </SearchResultLoader>
-    );
-  }
+  const [fileData, setFileData] = useState<FileInfo[]>([]);
 
-  return (
-    <RelatedResourcesLoader {...(props as RelatedResourcesLoaderProps)}>
-      {children}
-    </RelatedResourcesLoader>
-  );
+  useEffect(() => {
+    (async () => {
+      const fileSearchResult = await sdkv3.files.search({
+        filter: props.filter,
+        search: { name: props.query },
+        limit: 100,
+      });
+      setFileData(fileSearchResult);
+    })();
+  }, [props.query, props.filter]);
+
+  return <>{children({ data: fileData })}</>;
 };

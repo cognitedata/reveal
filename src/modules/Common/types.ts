@@ -55,3 +55,5 @@ export type CellRenderer = {
   rowIndex: number;
   cellData: any;
 };
+
+export type ViewMode = 'list' | 'grid' | 'map';

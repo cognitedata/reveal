@@ -19,7 +19,7 @@ export type SelectableTableProps = Omit<
 > & {
   selectable: boolean;
   rendererMap: { [key: string]: (props: CellRenderer) => JSX.Element };
-  onRowSelect: (id: number, selected: boolean) => void;
+  onRowSelect: (item: TableDataItem, selected: boolean) => void;
   rowClassNames?: (data: {
     columns: ColumnShape<TableDataItem>[];
     rowData: TableDataItem;
@@ -50,7 +50,7 @@ export function SelectableTable(props: SelectableTableProps) {
     rowData: TableDataItem;
     rowIndex: number;
   }) => {
-    props.onRowSelect(rowData.id, selected);
+    props.onRowSelect(rowData, selected);
   };
 
   const [rendererMap, columns] = useMemo(() => {
@@ -103,6 +103,7 @@ export function SelectableTable(props: SelectableTableProps) {
       >
         {({ width }) => (
           <ReactBaseTable<TableDataItem>
+            {...props}
             columns={columns}
             maxHeight={Infinity}
             width={width}

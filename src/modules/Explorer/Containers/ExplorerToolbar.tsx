@@ -1,15 +1,16 @@
 import React from 'react';
 import { SegmentedControl, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
-
 import { ExplorationSearchBar } from './ExplorationSearchBar';
 
 export const ExplorerToolbar = ({
   onViewChange,
   currentView = 'list',
+  onSearch,
 }: {
   onViewChange?: (view: string) => void;
   currentView?: string;
+  onSearch: (text: string) => void;
 }) => {
   return (
     <>
@@ -18,7 +19,7 @@ export const ExplorerToolbar = ({
         All files
       </Title>
       <Container>
-        <ExplorationSearchBar />
+        <ExplorationSearchBar onChange={onSearch} />
 
         <SegmentedControl
           onButtonClicked={onViewChange}

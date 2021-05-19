@@ -1,80 +1,65 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import FilterToggleButton from 'src/modules/Explorer/Components/FilterToggleButton';
 import styled from 'styled-components';
 import { Colors, Tooltip, Button, Title } from '@cognite/cogs.js';
 import { Col, Row } from 'antd';
-import { FileFilterProps, FileInfo } from '@cognite/cdf-sdk-singleton';
 import { lightGrey } from 'src/utils/Colors';
 import { FileFilters } from 'src/modules/Common/Components/Search/FileFilters';
-import {
-  EnsureNonEmptyResource,
-  GridTable,
-  TableProps,
-} from '@cognite/data-exploration';
-import { ResultAnnotationLoader } from 'src/modules/Explorer/Containers/ResultAnnotationLoader';
-import { MapView } from 'src/modules/Common/Components/MapView/MapView';
-import { setFileSelectState } from 'src/modules/Common/filesSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import { FileTableExplorer } from 'src/modules/Common/Components/FileTable/FileTableExplorer';
-import { FileGridPreview } from 'src/modules/Common/Components/FileGridPreview/FileGridPreview';
-import { FileDetails } from 'src/modules/FileDetails/Containers/FileDetails';
 import {
   setSelectedFileId,
   showFileMetadataPreview,
 } from 'src/modules/Process/processSlice';
 import { RootState } from 'src/store/rootReducer';
-import { ResultTableLoader } from './ResultTableLoader';
-import { ExplorerToolbar } from './ExplorerToolbar';
+import { setFileSelectState } from 'src/modules/Common/filesSlice';
+import { ExplorerSearchResults } from 'src/modules/Explorer/Containers/ExplorerSearchResults';
+import { FileDetails } from 'src/modules/FileDetails/Containers/FileDetails';
+import { TableDataItem, ViewMode } from 'src/modules/Common/types';
+import { ExplorerToolbar } from 'src/modules/Explorer/Containers/ExplorerToolbar';
+import {
+  setCurrentView,
+  setFilter,
+  setQueryString,
+  toggleFilterView,
+} from '../store/explorerSlice';
 
 const Explorer = () => {
-  const [showFilter, setShowFilter] = useState(false);
-  const queryClient = new QueryClient();
-  const [filter, setFilter] = useState<FileFilterProps>({});
-  const [currentView, setCurrentView] = useState<string>('list');
-  const [showRelatedResources] = useState(false);
+  const showFilter = useSelector(
+    ({ explorerReducer }: RootState) => explorerReducer.showFilter
+  );
+  const filter = useSelector(
+    ({ explorerReducer }: RootState) => explorerReducer.filter
+  );
   const showDrawer = useSelector(
     ({ processSlice }: RootState) => processSlice.showFileMetadataDrawer
   );
   const fileId = useSelector(
     ({ processSlice }: RootState) => processSlice.selectedFileId
   );
+  const currentView = useSelector(
+    ({ explorerReducer }: RootState) => explorerReducer.currentView
+  );
+  const query = useSelector(
+    ({ explorerReducer }: RootState) => explorerReducer.query
+  );
+  const queryClient = new QueryClient();
 
   const dispatch = useDispatch();
 
-  const renderView = (view: string) => {
-    if (view === 'grid') {
-      return (
-        <GridTable
-          onItemClicked={(item: any) => {
-            dispatch(setSelectedFileId(item.id));
-            dispatch(showFileMetadataPreview());
-          }}
-          renderCell={(cellProps: any) => <FileGridPreview {...cellProps} />}
-        />
-      );
-    }
-    if (view === 'map') {
-      return <MapView />;
-    }
-
-    const handleRowSelect = (id: number, selected: boolean) => {
-      dispatch(setFileSelectState(id, selected));
-    };
-
-    const handleRowClick = (id: number) => {
-      dispatch(setSelectedFileId(id));
-      dispatch(showFileMetadataPreview());
-    };
-
-    return (
-      <FileTableExplorer
-        onRowSelect={handleRowSelect}
-        onRowClick={handleRowClick}
-        selectedFileId={fileId}
-      />
-    );
+  const handleSearch = (text: string) => {
+    dispatch(setQueryString(text));
   };
+
+  const handleItemClick = (item: any) => {
+    dispatch(setSelectedFileId(item.id));
+    dispatch(showFileMetadataPreview());
+  };
+
+  const handleRowSelect = (item: TableDataItem, selected: boolean) => {
+    dispatch(setFileSelectState(item.id, selected));
+  };
+
   return (
     <Wrapper>
       <QueryClientProvider client={queryClient}>
@@ -88,13 +73,18 @@ const Explorer = () => {
                 <HideFiltersTooltip content="Hide">
                   <Button
                     icon="PanelLeft"
-                    onClick={() => setShowFilter(false)}
+                    onClick={() => dispatch(toggleFilterView())}
                   />
                 </HideFiltersTooltip>
               </Col>
             </HeaderRow>
             <FiltersContainer>
-              <FileFilters filter={filter} setFilter={setFilter} />
+              <FileFilters
+                filter={filter}
+                setFilter={(newFilter) => {
+                  dispatch(setFilter(newFilter));
+                }}
+              />
             </FiltersContainer>
           </FilterPanel>
         )}
@@ -108,7 +98,7 @@ const Explorer = () => {
               }}
             >
               <FilterToggleButton
-                toggleOpen={() => setShowFilter(!showFilter)}
+                toggleOpen={() => dispatch(toggleFilterView())}
               />
             </div>
           ) : undefined}
@@ -116,24 +106,19 @@ const Explorer = () => {
           <ViewContainer>
             <ExplorerToolbar
               currentView={currentView}
-              onViewChange={(view) => setCurrentView(view)}
+              onViewChange={(view) =>
+                dispatch(setCurrentView(view as ViewMode))
+              }
+              onSearch={handleSearch}
             />
-            <TableContainer>
-              <EnsureNonEmptyResource api="file">
-                <ResultTableLoader<FileInfo>
-                  type="file"
-                  mode={showRelatedResources ? 'relatedResources' : 'search'}
-                  filter={filter}
-                  query=""
-                >
-                  {(props: TableProps<FileInfo>) => (
-                    <ResultAnnotationLoader {...props}>
-                      {renderView(currentView)}
-                    </ResultAnnotationLoader>
-                  )}
-                </ResultTableLoader>
-              </EnsureNonEmptyResource>
-            </TableContainer>
+            <ExplorerSearchResults
+              filter={filter}
+              onClick={handleItemClick}
+              onRowSelect={handleRowSelect}
+              query={query}
+              selectedId={fileId}
+              currentView={currentView}
+            />
           </ViewContainer>
         </TablePanel>
         {showDrawer && (
@@ -177,11 +162,6 @@ const TablePanel = styled.div<tablePanelProps>`
       (props.showDrawer ? 400 : 0) + (props.showFilter ? 318 : 0)
     }px)`};
   border-right: 1px solid ${Colors['greyscale-grey3'].hex()};
-`;
-const TableContainer = styled.div`
-  width: 100%;
-  overflow: auto;
-  height: calc(100% - 104px);
 `;
 
 const FiltersContainer = styled.div`

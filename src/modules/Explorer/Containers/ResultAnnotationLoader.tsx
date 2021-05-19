@@ -35,13 +35,6 @@ export function ResultAnnotationLoader(props: {
         },
       };
       return { ...fileInfo, menu: menuActions };
-
-      // dispatch(
-      //   PopulateAnnotations({
-      //     fileId: fileInfo.id.toString(),
-      //     assetIds: fileInfo.assetIds,
-      //   })
-      // );
     });
   }, [props.data]);
 
