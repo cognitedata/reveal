@@ -32,12 +32,9 @@ const BREADCRUMBS = {
     title: 'Interactive engineering diagrams',
     path: '/pnid_parsing_new',
   },
-  flow: { title: 'Contextualize engineering diagrams' },
 };
 
 const getBreadcrumbs = () => {
-  if (window.location.pathname.includes('pipeline'))
-    return [BREADCRUMBS.default, BREADCRUMBS.flow];
   return [BREADCRUMBS.default];
 };
 

@@ -19,15 +19,12 @@ import { CogniteClient } from '@cognite/sdk';
 const App = () => {
   const tenant = window.location.pathname.split('/')[1];
   const history = createBrowserHistory();
+
   if (!tenant) {
     throw new Error('tenant missing');
   }
 
   const LS_KEY = `PNID_CONTEXTUALIZATION_${tenant}`;
-
-  useEffect(() => {
-    loadLocalStorage(LS_KEY, store);
-  }, [LS_KEY]);
 
   const updateLocalStorage = debounce(() => {
     const localStorageContent = persistedState(store.getState());
@@ -44,6 +41,10 @@ const App = () => {
       },
     },
   });
+
+  useEffect(() => {
+    loadLocalStorage(LS_KEY, store);
+  }, [LS_KEY]);
 
   useEffect(() => {
     cogsStyles.use();

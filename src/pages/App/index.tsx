@@ -31,32 +31,32 @@ export default function App() {
   const { location } = history;
   const { username } = getAuthState();
   const { pathname, search, hash } = useLocation();
-
-  const cdfEnv = queryString.parse(window.location.search).env as string;
   const {
     params: { tenant },
   } = useRouteMatch<{ tenant: string }>();
 
+  const cdfEnvInStore = useSelector((state: RootState) => state.app.cdfEnv);
+  const cdfEnvInUrl = queryString.parse(window.location.search).env as string;
+
+  const init = () => {
+    dispatch(setTenant({ tenant }));
+    dispatch(setCdfEnv({ cdfEnvInUrl }));
+    dispatch(fetchUserGroups());
+  };
+
   useEffect(() => {
-    const init = () => {
-      dispatch(setTenant({ tenant }));
-      dispatch(setCdfEnv({ cdfEnv }));
-      dispatch(fetchUserGroups());
-    };
     init();
-  }, [dispatch, tenant, cdfEnv]);
-
-  const cdfEnvStore = useSelector((state: RootState) => state.app.cdfEnv);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tenant, cdfEnvInUrl]);
 
   useEffect(() => {
-    if (cdfEnvStore && !cdfEnv) {
-      // if env is not visible via URL add it in
+    if (cdfEnvInStore && !cdfEnvInUrl) {
       history.replace({
         pathname: location.pathname,
-        search: `?env=${cdfEnvStore}`,
+        search: `?env=${cdfEnvInStore}`,
       });
     }
-  }, [cdfEnv, cdfEnvStore, history, location.pathname]);
+  }, [cdfEnvInUrl, cdfEnvInStore, history, location.pathname]);
 
   useEffect(() => {
     trackUsage('App.Load');

@@ -2,8 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import Breadcrumb from 'antd/lib/breadcrumb';
 import { Colors } from '@cognite/cogs.js';
-import { Link } from 'react-router-dom';
-import { projectName } from '../utils/config';
+import Link from 'components/Breadcrumbs/Link';
 
 interface BreadcrumbsProps {
   breadcrumbs: { title: string; path?: string }[];
@@ -27,13 +26,13 @@ const Breadcrumbs = ({ breadcrumbs }: BreadcrumbsProps) => (
       }
     >
       <Breadcrumb.Item>
-        <Link to={`/${projectName()}`}>Cognite Data Fusion</Link>
+        <Link to="/">Cognite Data Fusion</Link>
       </Breadcrumb.Item>
       {breadcrumbs &&
         breadcrumbs.map((crumb) => (
           <Breadcrumb.Item key={crumb.title}>
             {crumb.path ? (
-              <Link to={`/${projectName()}${crumb.path}`}>{crumb.title}</Link>
+              <Link to={`/${crumb.path}`}>{crumb.title}</Link>
             ) : (
               crumb.title
             )}
