@@ -14,6 +14,7 @@ import {
   Sequence,
 } from '@cognite/sdk';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
+import { totalFileCount } from 'src/api/file/aggregate';
 
 type Resource = FileInfo | Asset | CogniteEvent | Sequence | Timeseries;
 
@@ -27,6 +28,7 @@ export const ResultTableLoader = <T extends Resource>({
   Partial<SelectableItemsProps> &
   TableStateProps) => {
   const [fileData, setFileData] = useState<FileInfo[]>([]);
+  const [totalCount, setTotalCount] = useState<number>(0);
 
   useEffect(() => {
     (async () => {
@@ -37,7 +39,13 @@ export const ResultTableLoader = <T extends Resource>({
       });
       setFileData(fileSearchResult);
     })();
+
+    (async () => {
+      totalFileCount(props.filter).then((res) => {
+        setTotalCount(res);
+      });
+    })();
   }, [props.query, props.filter]);
 
-  return <>{children({ data: fileData })}</>;
+  return <>{children({ data: fileData, totalCount })}</>;
 };

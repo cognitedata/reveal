@@ -1,3 +1,4 @@
+import React, { useMemo } from 'react';
 import { TableWrapper } from 'src/modules/Common/Components/FileTable/FileTableWrapper';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import ReactBaseTable, {
@@ -7,7 +8,6 @@ import ReactBaseTable, {
   RowKey,
 } from 'react-base-table';
 import { CellRenderer, TableDataItem } from 'src/modules/Common/types';
-import React, { useMemo, useState } from 'react';
 import { StringRenderer } from 'src/modules/Common/Containers/FileTableRenderers/StringRenderer';
 import { SelectionRenderer } from 'src/modules/Common/Containers/FileTableRenderers/SelectionRenderer';
 import { SelectAllHeaderRenderer } from 'src/modules/Common/Containers/FileTableRenderers/SelectAllHeaderRendrerer';
@@ -33,14 +33,21 @@ export type SelectableTableProps = Omit<
       event: React.SyntheticEvent;
     }) => void;
   };
-  sorters?: {
-    [key: string]: (data: TableDataItem[], reverse: boolean) => TableDataItem[];
-  };
 };
 
 export function SelectableTable(props: SelectableTableProps) {
-  const [reverse, setReverse] = useState(false);
-  const [sortKey, setSortKey] = useState('');
+  const {
+    selectable,
+    data,
+    sortKey,
+    reverse,
+    setSortKey,
+    setReverse,
+    rowEventHandlers,
+    tableFooter,
+    onRowSelect,
+    rowClassNames,
+  } = props;
 
   const handleSelectChange = ({
     rowData,
@@ -50,11 +57,11 @@ export function SelectableTable(props: SelectableTableProps) {
     rowData: TableDataItem;
     rowIndex: number;
   }) => {
-    props.onRowSelect(rowData, selected);
+    onRowSelect(rowData, selected);
   };
 
   const [rendererMap, columns] = useMemo(() => {
-    if (props.selectable) {
+    if (selectable) {
       const localRendererMap = {
         ...props.rendererMap,
         selected: SelectionRenderer,
@@ -72,7 +79,7 @@ export function SelectableTable(props: SelectableTableProps) {
       return [localRendererMap, cols];
     }
     return [props.rendererMap, props.columns];
-  }, [props.columns, props.selectable, props.rendererMap]);
+  }, [props.columns, selectable, props.rendererMap]);
 
   const Cell = (cellProps: any) => {
     const renderer = rendererMap[cellProps.column.key];
@@ -108,13 +115,9 @@ export function SelectableTable(props: SelectableTableProps) {
             maxHeight={Infinity}
             width={width}
             components={components}
-            data={
-              props.sorters && sortKey
-                ? props.sorters[sortKey](props.data, reverse)
-                : props.data
-            }
-            rowClassName={props.rowClassNames}
-            rowEventHandlers={props.rowEventHandlers}
+            data={data}
+            rowClassName={rowClassNames}
+            rowEventHandlers={rowEventHandlers}
             onColumnSort={({ key }) => {
               if ((key as string) !== sortKey) {
                 setSortKey(key as string);
@@ -129,6 +132,8 @@ export function SelectableTable(props: SelectableTableProps) {
               key: sortKey,
               order: reverse ? 'asc' : 'desc',
             }}
+            footerHeight={tableFooter ? 50 : 0}
+            footerRenderer={tableFooter}
           />
         )}
       </AutoSizer>

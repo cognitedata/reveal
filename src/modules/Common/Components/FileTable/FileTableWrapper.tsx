@@ -293,7 +293,7 @@ const TableWrapperInner = styled.div`
 export const TableWrapper = styled(TableWrapperInner)(
   (props: { disableScroll?: boolean }) => css`
     width: 100%;
-    height: 100%;
+    height: inherit;
     overflow-x: hidden;
     overflow-y: auto;
     .row {

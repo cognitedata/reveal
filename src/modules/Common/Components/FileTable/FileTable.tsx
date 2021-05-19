@@ -8,6 +8,7 @@ import { StatusRenderer } from 'src/modules/Common/Containers/FileTableRenderers
 import { AnnotationRenderer } from 'src/modules/Common/Containers/FileTableRenderers/AnnotationRenderer';
 import { ActionRenderer } from 'src/modules/Common/Containers/FileTableRenderers/ActionRenderer';
 import { FileTableProps } from './types';
+import { SorterPaginationWrapper } from '../SorterPaginationWrapper/SorterPaginationWrapper';
 
 export function FileTable(props: FileTableProps) {
   const columns: ColumnShape<TableDataItem>[] = [
@@ -55,12 +56,18 @@ export function FileTable(props: FileTableProps) {
   };
 
   return (
-    <SelectableTable
-      {...props}
-      columns={columns}
-      rendererMap={rendererMap}
-      selectable
-      onRowSelect={props.onRowSelect}
-    />
+    <SorterPaginationWrapper
+      data={props.data}
+      totalCount={props.totalCount}
+      pagination
+    >
+      <SelectableTable
+        {...props}
+        columns={columns}
+        rendererMap={rendererMap}
+        selectable
+        onRowSelect={props.onRowSelect}
+      />
+    </SorterPaginationWrapper>
   );
 }

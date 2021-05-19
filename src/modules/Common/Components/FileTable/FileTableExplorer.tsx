@@ -12,6 +12,7 @@ import { NameSorter } from 'src/modules/Common/Containers/Sorters/NameSorter';
 import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
 import { useDispatch } from 'react-redux';
 import { FileExplorerTableProps } from './types';
+import { SorterPaginationWrapper } from '../SorterPaginationWrapper/SorterPaginationWrapper';
 
 export function FileTableExplorer(props: FileExplorerTableProps) {
   const dispatch = useDispatch();
@@ -92,15 +93,21 @@ export function FileTableExplorer(props: FileExplorerTableProps) {
   }, [fileIds]);
 
   return (
-    <SelectableTable
-      {...props}
-      columns={columns}
-      rendererMap={rendererMap}
-      selectable
-      onRowSelect={props.onRowSelect}
-      rowClassNames={rowClassNames}
-      rowEventHandlers={rowEventHandlers}
+    <SorterPaginationWrapper
+      data={props.data}
+      totalCount={props.totalCount}
       sorters={sorters}
-    />
+      pagination
+    >
+      <SelectableTable
+        {...props}
+        columns={columns}
+        rendererMap={rendererMap}
+        selectable
+        onRowSelect={props.onRowSelect}
+        rowClassNames={rowClassNames}
+        rowEventHandlers={rowEventHandlers}
+      />
+    </SorterPaginationWrapper>
   );
 }

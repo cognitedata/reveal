@@ -100,4 +100,5 @@ export default function ProcessStep() {
 
 const Container = styled.div`
   flex: 1;
+  height: calc(100% - 50px);
 `;
