@@ -301,16 +301,6 @@ class IntermediateIndexNode {
 
     return this;
   }
-
-  /*
-   * Debug
-   */
-
-  print() {
-    // console.log("node - leftDepth = " + this.left.maxSubtreeDepth + ", rightDepth = " + this.right.maxSubtreeDepth);
-    this.left.print();
-    this.right.print();
-  }
 }
 
 class LeafIndexNode {
@@ -352,7 +342,7 @@ class LeafIndexNode {
 
     let leftRange: NumericRange | undefined = undefined;
     let rightRange: NumericRange | undefined = undefined;
-    
+
     if (this.range.from < range.from) {
       leftRange = NumericRange.createFromInterval(this.range.from, range.from - 1);
     }
@@ -360,7 +350,6 @@ class LeafIndexNode {
     if (this.range.toInclusive > range.toInclusive) {
       rightRange = NumericRange.createFromInterval(range.toInclusive + 1, this.range.toInclusive);
     }
-
 
     if (leftRange != undefined && rightRange != undefined) {
       return IntermediateIndexNode.fromIndexNodesAndBalance(
@@ -377,11 +366,7 @@ class LeafIndexNode {
   }
 
   hasIntersectionWith(node: IndexNode): boolean {
-    if (node.range.intersects(this.range)) {
-      return true;
-    } else {
-      return false;
-    }
+    return node.range.intersects(this.range);
   }
 
   soak(range: NumericRange): [IndexNode | undefined, NumericRange] {
@@ -398,10 +383,6 @@ class LeafIndexNode {
 
   clone(): LeafIndexNode {
     return new LeafIndexNode(this.range);
-  }
-
-  print() {
-    // console.log(`leaf(${this.range.from}, ${this.range.toInclusive})`);
   }
 }
 
@@ -609,14 +590,5 @@ export class IndexSet {
     }
 
     return st;
-  }
-
-  print() {
-    // console.log("Print all");
-    if (this.rootNode) {
-      this.rootNode.print();
-    } else {
-      // console.log("empty");
-    }
   }
 }
