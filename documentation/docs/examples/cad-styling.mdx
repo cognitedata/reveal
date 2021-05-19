@@ -6,7 +6,7 @@ describe: Reveal supports styling individual nodes by assigning appearance profi
 
 import { DemoWrapper } from '@site/src/components/DemoWrapper';
 
-Reveal supports flexible styling of inidivudal nodes (objects) in the 3D model. Styles can
+Reveal supports flexible styling of individual nodes (objects) in the 3D model. Styles can
 be compromised of several attributes to customize the visualization through the `NodeApperance`-type:
 
 | Field           | Field type                  | Description                                           |
@@ -40,7 +40,7 @@ identify 3D nodes by `treeIndex`. There are several implementations of `NodeSet`
 | `InvertedNodeSet`        | Inverts the result of a `NodeSet` to match the opposite nodes (i.e. a NOT-operator) |
 | `CombinedNodeSet`        | Combines nodes from several `NodeSet` by applying set operations. Supported operations are [union](https://en.wikipedia.org/wiki/Union_(set_theory)") and [intersection](https://en.wikipedia.org/wiki/Intersection_(set_theory)). |
 
-It's also possible implement custom `NodeSet` (see below). This can be useful for specialized queries or to load
+It's also possible [implement custom `NodeSet`](cad-styling-custom). This can be useful for specialized queries or to load
 sets from custom data sources.
 
 :::note

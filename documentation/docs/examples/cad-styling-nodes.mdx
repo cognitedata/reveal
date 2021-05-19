@@ -41,7 +41,7 @@ model.addStyledNodeSet(allPipes, { renderGhosted: false, color: [40, 200, 20] } 
 
 # Partioning requests
 
-For filters that match a lot of nodes, (paritioned requests)[https://docs.cognite.com/api/v1/#section/Parallel-retrieval]
+For filters that match a lot of nodes, [paritioned requests](https://docs.cognite.com/api/v1/#section/Parallel-retrieval)
 might increase the performance radically by fetching result from the server in parallel. 
 To partition requests, provide the number of partitions using the `requestPartitions`-option
 to the `ByNodePropertyNodeSet`-constructor:
