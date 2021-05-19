@@ -301,3 +301,15 @@ export const UploadFileNameContainer = styled(EllipsisText)`
 export const UploadLogoContainer = styled.div`
   margin-bottom: 10px;
 `;
+
+export const ApplicationsSwitchContainer = styled.div`
+  margin-top: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  .cogs-title-5 {
+    margin-bottom: 16px;
+  }
+  .cogs-switch {
+    margin: 8px 16px;
+  }
+`;

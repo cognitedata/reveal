@@ -33,7 +33,6 @@ export type Board = {
   url: string;
   visibleTo?: string[];
   embedTag?: string;
-  lastVisitedTime?: number;
   imageFileId: string;
 };
 
