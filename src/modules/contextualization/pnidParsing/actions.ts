@@ -108,7 +108,7 @@ export const startPnidParsingJob = {
         dispatch(
           createJob({
             workflowId,
-            initialValue: { jobId: workflow?.jobId, status: 'UNKOWN' },
+            initialValue: { jobId: workflow?.jobId, status: 'UNKNOWN' },
           })
         );
         dispatch(
