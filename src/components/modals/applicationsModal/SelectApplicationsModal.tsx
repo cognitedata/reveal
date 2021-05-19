@@ -48,7 +48,7 @@ const SelectApplications: React.FC = () => {
   const footer = (
     <ModalFooter>
       <Button onClick={handleClose}>Cancel</Button>
-      <Button type="primary" icon="Trash" iconPlacement="left" onClick={save}>
+      <Button type="primary" iconPlacement="left" onClick={save}>
         Save
       </Button>
     </ModalFooter>
