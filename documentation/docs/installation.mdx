@@ -4,8 +4,19 @@ title: Installation
 description: Reveal installation guide
 ---
 
+The library depends on [ThreeJS](https://www.threejs.org/) which must be installed as a dependency in the client application. Note that we 
+recommend that the ThreeJS version matches the version used in Reveal as there can be breaking changes between each ThreeJS version.
+
+You will also need to install [@cognite/sdk](https://www.npmjs.com/package/@cognite/sdk) - the Cognite Fusion SDK.
+
 ```bash npm2yarn
-npm install @cognite/reveal
+npm install @cognite/reveal @cognite/sdk three@0.125.0
+```
+
+If you are developing in TypeScript it's also recommended to install types for ThreeJS:
+
+```bash npm2yarn
+npm install @types/three three@0.125.0
 ```
 
 Reveal uses [Web Workers](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API) and [WebAssembly](https://webassembly.org/) to handle 3D geometry. This causes some problems when bundling and loading packages from NPM. Some effort might therefor be needed before Reveal can be used in your project depending on the servers hosting your application are configured.
