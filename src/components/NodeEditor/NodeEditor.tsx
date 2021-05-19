@@ -74,8 +74,8 @@ const WorkflowEditor = ({
       node.id === nextNode.id ? nextNode : node
     );
     const deleteCalls = !isEqual(
-      getStepsFromWorkflow(workflow.nodes, workflow.connections),
-      getStepsFromWorkflow(nodeUpdate, workflow.connections)
+      getStepsFromWorkflow(chart, workflow.nodes, workflow.connections),
+      getStepsFromWorkflow(chart, nodeUpdate, workflow.connections)
     );
 
     if (deleteCalls) {
