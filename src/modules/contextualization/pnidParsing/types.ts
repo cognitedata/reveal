@@ -2,8 +2,8 @@ import { Asset, FileInfo } from 'cognite-sdk-v3/dist/src';
 
 export type PnidsParsingJobSchema = {
   jobId?: number;
-  status: 'Completed' | 'Failed' | string;
-  statusCount: ApiStatusCount;
+  status?: 'Completed' | 'Failed' | string;
+  statusCount?: ApiStatusCount;
   items?: { fileId: number }[];
   annotationCounts?: { [fileId: number]: FileAnnotationsCount };
 };
@@ -24,6 +24,12 @@ export type StartPnidParsingJobProps = {
     searchField: string | string[];
   };
   workflowId: number;
+};
+
+export type PollJobResultsProps = {
+  workflowId: number;
+  jobId: number;
+  diagrams: FileInfo[];
 };
 
 export type FileAnnotationsCount = {

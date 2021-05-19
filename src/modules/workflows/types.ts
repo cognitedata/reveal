@@ -26,6 +26,7 @@ export interface Workflow {
   options: WorkflowOptions;
   step: WorkflowStep;
   status?: Status;
+  jobId?: number;
 }
 
 export type WorkflowStep =

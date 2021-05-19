@@ -135,6 +135,13 @@ export const workflowsSlice = createSlice({
       const workflowId = action.payload;
       state.active = workflowId;
     },
+    setJobId: (state, action) => {
+      const { workflowId, jobId } = action.payload;
+      state.items[workflowId] = {
+        ...state.items[workflowId],
+        jobId,
+      };
+    },
     createNewWorkflow: (state, action) => {
       const workflowId = action.payload ?? Number(new Date());
       state.items[workflowId] = initialWorkflow;
@@ -145,6 +152,10 @@ export const workflowsSlice = createSlice({
       const workflowId = state.active ?? Number(new Date());
       const { step } = state.items[workflowId];
       const selection = { type, endpoint, query, filter };
+
+      // Remove jobId to trigger new run
+      state.items[workflowId].jobId = undefined;
+
       if (step === 'diagramSelection') {
         state.items[workflowId].diagrams = selection;
       }
@@ -165,6 +176,8 @@ export const workflowsSlice = createSlice({
     removeSelection: (state, action) => {
       const type = action.payload;
       const workflowId = state.active ?? Number(new Date());
+      // Remove jobId to trigger new run
+      state.items[workflowId].jobId = undefined;
       const { step } = state.items[workflowId];
       if (step === 'diagramSelection') {
         delete state.items[workflowId].diagrams;
@@ -181,6 +194,8 @@ export const workflowsSlice = createSlice({
     },
     changeOptions: (state, action) => {
       const workflowId = state.active;
+      // Remove jobId to trigger new run
+      state.items[workflowId].jobId = undefined;
       const activeWorkflow = state.items[workflowId];
       const partialMatch =
         action.payload.partialMatch !== undefined
@@ -242,6 +257,7 @@ export const {
   removeSelection,
   changeOptions,
   moveToStep,
+  setJobId,
   importLocalStorageContent,
 } = workflowsSlice.actions;
 

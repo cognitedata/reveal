@@ -8,6 +8,10 @@ export const pnidParsingSlice = createSlice({
   name: 'pnidParsing',
   initialState,
   reducers: {
+    resetJob: (state, action) => {
+      const { workflowId } = action.payload;
+      state[workflowId] = {};
+    },
     createJob: (state, action) => {
       const { workflowId, initialValue } = action.payload;
       state[workflowId] = initialValue;
@@ -44,4 +48,5 @@ export const {
   updateJob,
   rejectJob,
   finishJob,
+  resetJob,
 } = pnidParsingSlice.actions;
