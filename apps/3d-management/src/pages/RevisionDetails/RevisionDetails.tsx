@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import { Card, Tooltip, message, Modal } from 'antd';
-import { Button, Flex, Icon } from '@cognite/cogs.js';
+import { Card, message, Modal } from 'antd';
+import { Tooltip, Button, Flex, Icon } from '@cognite/cogs.js';
 import { RouteComponentProps } from 'react-router-dom';
 import {
   isReprocessingRequired,
@@ -280,10 +280,7 @@ export default function RevisionDetails(props: Props) {
         <DetailsRowFlex>
           <div>
             <b>Published Status: </b>
-            <Tooltip
-              title={PUBLISH_STATUS_HINT}
-              getPopupContainer={getContainer}
-            >
+            <Tooltip content={PUBLISH_STATUS_HINT}>
               <Icon type="Info" />
             </Tooltip>
           </div>
@@ -301,21 +298,10 @@ export default function RevisionDetails(props: Props) {
               {revision.published ? 'Unpublish' : 'Publish'}
             </Button>
           </PermissioningHintWrapper>
-          <PermissioningHintWrapper hasPermission={hasDeleteCapabilities}>
-            <Button
-              type="ghost-danger"
-              disabled={!hasDeleteCapabilities || deletionInProgress}
-              className="left-button"
-              onClick={showDeletionModal}
-            >
-              Delete Revision
-            </Button>
-          </PermissioningHintWrapper>
           {isReprocessingButtonVisible && (
             <PermissioningHintWrapper hasPermission={hasUpdateCapabilities}>
               <Button
-                type="primary"
-                variant="outline"
+                type="tertiary"
                 className="left-button"
                 disabled={!hasUpdateCapabilities}
                 onClick={() => setReprocessingModalVisible(true)}
@@ -325,6 +311,19 @@ export default function RevisionDetails(props: Props) {
               </Button>
             </PermissioningHintWrapper>
           )}
+          <PermissioningHintWrapper hasPermission={hasDeleteCapabilities}>
+            <div className="right-button">
+              <Tooltip content="Delete revision">
+                <Button
+                  aria-label="Delete revision"
+                  type="ghost-danger"
+                  icon="Delete"
+                  disabled={!hasDeleteCapabilities || deletionInProgress}
+                  onClick={showDeletionModal}
+                />
+              </Tooltip>
+            </div>
+          </PermissioningHintWrapper>
         </ButtonRow>
       </Card>
 

@@ -39,14 +39,7 @@ const modelMock = {
 function ToolbarTreeViewWrapper(
   props: Omit<ToolbarTreeViewProps, 'width' | 'model' | 'viewer'>
 ) {
-  return (
-    <ToolbarTreeView
-      {...props}
-      model={modelMock}
-      width={300}
-      viewer={viewerMock}
-    />
-  );
+  return <ToolbarTreeView {...props} model={modelMock} viewer={viewerMock} />;
 }
 
 const server = setupServer(...mswHandlers);

@@ -145,7 +145,6 @@ function TreeViewStateful({
           setExpandedKeys(arg);
           onExpand(arg);
         }}
-        width={300}
         height={300}
         loadChildren={loadChildren}
         loadSiblings={loadSiblings}

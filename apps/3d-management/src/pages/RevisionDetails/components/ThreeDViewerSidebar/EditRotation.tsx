@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { v3 } from '@cognite/cdf-sdk-singleton';
-import { Button as ButtonAnt, Radio, message } from 'antd';
+import { Button as ButtonAnt, message } from 'antd';
 
-import { Button } from '@cognite/cogs.js';
+import { Button, Dropdown, SegmentedControl } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import {
   Cognite3DModel,
@@ -22,21 +22,6 @@ import { useGlobalStyles } from '@cognite/cdf-utilities';
 
 const ButtonGroup = ButtonAnt.Group;
 
-const RotationContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  && .ant-btn-group,
-  && .ant-radio-group {
-    display: flex;
-    margin-bottom: 6px;
-    width: 100%;
-  }
-  && .ant-btn-group > *,
-  && .ant-radio-group > * {
-    flex: 1;
-  }
-`;
-
 type RotationAxis = 'x' | 'y' | 'z';
 
 type Props = {
@@ -49,23 +34,24 @@ export function EditRotation(props: Props) {
   useGlobalStyles([antdRadioStyles]);
   const [rotationControlsOpened, setRotationControlsOpened] = useState(false);
 
-  if (rotationControlsOpened) {
-    return (
-      <EditRotationOpened
-        {...props}
-        onClose={() => setRotationControlsOpened(false)}
-      />
-    );
-  }
-
   return (
-    <Button
-      type="secondary"
-      icon="Edit"
-      onClick={() => setRotationControlsOpened(true)}
+    <Dropdown
+      visible={rotationControlsOpened}
+      content={
+        <EditRotationOpened
+          {...props}
+          onClose={() => setRotationControlsOpened(false)}
+        />
+      }
     >
-      {rotationControlsOpened ? 'Save rotation' : 'Edit rotation'}
-    </Button>
+      <Button
+        type="tertiary"
+        icon="Edit"
+        onClick={() => setRotationControlsOpened((prevState) => !prevState)}
+      >
+        Edit rotation
+      </Button>
+    </Dropdown>
   );
 }
 
@@ -224,7 +210,19 @@ function EditRotationOpened(props: Props & { onClose: () => void }) {
   return (
     <RotationContainer>
       <>
-        <ButtonGroup>
+        <SegmentedControl
+          currentKey={rotationAxis}
+          fullWidth
+          onButtonClicked={(newAxis) =>
+            setRotationAxis(newAxis as RotationAxis)
+          }
+        >
+          <SegmentedControl.Button key="x">X</SegmentedControl.Button>
+          <SegmentedControl.Button key="y">Y</SegmentedControl.Button>
+          <SegmentedControl.Button key="z">Z</SegmentedControl.Button>
+        </SegmentedControl>
+
+        <ButtonGroup style={{ marginTop: 8, marginBottom: 16 }}>
           <ButtonAnt onClick={() => onRotateClicked(true)}>
             Rotate <UndoOutlined />
           </ButtonAnt>
@@ -232,35 +230,42 @@ function EditRotationOpened(props: Props & { onClose: () => void }) {
             Rotate <RedoOutlined />
           </ButtonAnt>
         </ButtonGroup>
-        <Radio.Group
-          value={rotationAxis}
-          buttonStyle="solid"
-          onChange={(e) => setRotationAxis(e.target.value)}
-        >
-          <Radio.Button value="x">X</Radio.Button>
-          <Radio.Button value="y">Y</Radio.Button>
-          <Radio.Button value="z">Z</Radio.Button>
-        </Radio.Group>
       </>
 
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        <Button
-          type="secondary"
-          onClick={onCancelClicked}
-          style={{ marginRight: 8 }}
-        >
-          Cancel
+      <div>
+        <Button type="primary" disabled={!hasChanges} onClick={onSaveClicked}>
+          Save
         </Button>
 
         <Button
-          type="primary"
-          icon="Edit"
-          disabled={!hasChanges}
-          onClick={onSaveClicked}
+          type="ghost"
+          onClick={onCancelClicked}
+          style={{ marginLeft: 8 }}
         >
-          Save rotation
+          Cancel
         </Button>
       </div>
     </RotationContainer>
   );
 }
+
+const RotationContainer = styled.div`
+  min-width: 236px;
+  box-shadow: 0px 8px 16px 4px rgba(0, 0, 0, 0.04),
+    0px 2px 12px rgba(0, 0, 0, 0.08);
+  border: var(--cogs-border-default);
+  padding: 12px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  && .ant-btn-group {
+    display: flex;
+    width: 100%;
+  }
+
+  && .ant-btn-group > * {
+    flex: 1;
+  }
+`;

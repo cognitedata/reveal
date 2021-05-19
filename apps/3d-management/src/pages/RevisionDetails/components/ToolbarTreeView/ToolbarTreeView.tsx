@@ -41,7 +41,6 @@ const Container = styled.div`
 
 type TreeViewWrapperProps = {
   model: Cognite3DModel;
-  width: number;
   height: number;
 
   onNodeInfoRequested: (treeIndex: number) => void;
@@ -137,7 +136,6 @@ function ToolbarTreeViewComponent(props: TreeViewWrapperProps) {
       onSelect={nodeSelected}
       onNodeInfoRequest={nodeInfoRequested}
       height={props.height}
-      width={props.width}
     />
   );
 }
@@ -185,30 +183,28 @@ export function ToolbarTreeView({ style, ...restProps }: ToolbarTreeViewProps) {
         );
       }}
     >
-      <Container>
-        <Container
-          style={style}
-          ref={treeViewContainer}
-          id={treeViewFocusContainerId}
-          tabIndex={
-            -1 /* antd Tree doesn't support keyboard handling, focus, tabindex, that's why it's done here */
-          }
-        >
-          <ToolbarTreeViewComponent
-            {...restProps}
-            height={treeViewHeight}
-            onNodeInfoRequested={(treeIndex) => {
-              setNodeInfoTreeIndex(treeIndex);
-              setInfoModalOpen(true);
-            }}
-          />
-        </Container>
-        <NodeInfoModal
-          treeIndex={nodeInfoTreeIndex}
-          onClose={() => setInfoModalOpen(false)}
-          visible={infoModalOpen}
+      <Container
+        style={style}
+        ref={treeViewContainer}
+        id={treeViewFocusContainerId}
+        tabIndex={
+          -1 /* antd Tree doesn't support keyboard handling, focus, tabindex, that's why it's done here */
+        }
+      >
+        <ToolbarTreeViewComponent
+          {...restProps}
+          height={treeViewHeight}
+          onNodeInfoRequested={(treeIndex) => {
+            setNodeInfoTreeIndex(treeIndex);
+            setInfoModalOpen(true);
+          }}
         />
       </Container>
+      <NodeInfoModal
+        treeIndex={nodeInfoTreeIndex}
+        onClose={() => setInfoModalOpen(false)}
+        visible={infoModalOpen}
+      />
     </ErrorBoundary>
   );
 }

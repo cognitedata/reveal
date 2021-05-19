@@ -20,7 +20,7 @@ import configProviderStyle from 'antd/es/config-provider/style/index.less';
 import coreStyle from 'antd/es/style/core/index.less';
 // import datePickerStyle from 'antd/es/date-picker/style/index.less';
 // import descriptionsStyle from 'antd/es/descriptions/style/index.less';
-// import dividerStyle from 'antd/es/divider/style/index.less';
+import dividerStyle from 'antd/es/divider/style/index.less';
 // import drawerStyle from 'antd/es/drawer/style/index.less';
 // import dropdownStyle from 'antd/es/dropdown/style/index.less';
 // import emptyStyle from 'antd/es/empty/style/index.less';
@@ -107,7 +107,7 @@ export default [
   // collapseStyle,
   configProviderStyle,
   coreStyle,
-  // dividerStyle,
+  dividerStyle,
   // drawerStyle,
   // dropdownStyle,
   // emptyStyle,

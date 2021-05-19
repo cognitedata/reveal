@@ -1,11 +1,15 @@
 import React, { MutableRefObject } from 'react';
 import { Tree, TreeProps } from 'antd';
 import { SelectedNode, TreeIndex } from 'src/store/modules/TreeView';
-import { INFO_BTN_CLASSNAME } from 'src/pages/RevisionDetails/components/TreeView/NodeWithInfoButton';
+import {
+  INFO_BTN_CLASSNAME,
+  TREE_NODE_CLASSNAME,
+} from 'src/pages/RevisionDetails/components/TreeView/NodeWithInfoButton';
 import {
   calcRangeKeys,
   convertKeysToSelectedNodes,
 } from 'src/pages/RevisionDetails/components/TreeView/utils/treeViewMultiselectionUtils';
+import styled from 'styled-components';
 import {
   CustomDataNode,
   EventTreeNodeSelected,
@@ -21,7 +25,6 @@ type ModifiedTreeProps = {
   expandedKeys: Array<TreeIndex>;
   selectedNodes: Array<SelectedNode>;
 
-  width: number;
   height: number;
 
   onNodeInfoRequest: (treeIndex: number) => void;
@@ -47,6 +50,41 @@ export type NodesTreeViewRefType = {
   }) => void;
 };
 
+const TreeStyled = styled(Tree)`
+  user-select: none;
+
+  .${TREE_NODE_CLASSNAME} {
+    word-break: break-all;
+  }
+
+  .${INFO_BTN_CLASSNAME} {
+    color: rgb(223, 226, 229);
+    cursor: pointer;
+    display: inline-block;
+
+    /* extend click area a bit */
+    position: relative;
+    &:after {
+      content: ' ';
+      position: absolute;
+      top: -25%;
+      left: -25%;
+      height: 150%;
+      width: 150%;
+    }
+
+    svg {
+      width: unset;
+      height: unset;
+      margin-bottom: -2px;
+    }
+
+    &:hover {
+      color: rgba(24, 144, 255, 0.9);
+    }
+  }
+`;
+
 const NodesTreeView = React.forwardRef<
   NodesTreeViewRefType,
   NodesTreeViewProps
@@ -64,7 +102,6 @@ const NodesTreeView = React.forwardRef<
       onSelect,
       selectedNodes,
       treeData,
-      width,
       ...restProps
     }: NodesTreeViewProps,
     forwardedRef
@@ -115,7 +152,6 @@ const NodesTreeView = React.forwardRef<
         lastSelectedRangeTailRef.current = key;
         // cachedSelectedKeysRef isn't updated here on purpose
         // to have an ability to shrink what's selected
-        // todo: check if there are any bugs for shift + click the same node
         newSelectedKeys = Array.from(
           new Set([
             ...(cachedSelectedKeysRef.current || []),
@@ -178,13 +214,9 @@ const NodesTreeView = React.forwardRef<
     }
 
     return (
-      <Tree
+      <TreeStyled
         ref={forwardedRef as any}
-        style={{
-          userSelect: 'none',
-          width,
-          maxHeight: height,
-        }}
+        className="TREE"
         treeData={treeData}
         checkedKeys={checkedKeys}
         selectedKeys={selectedNodes.map(({ treeIndex }) => treeIndex)}

@@ -16,37 +16,17 @@ import { ToolbarTreeView } from 'src/pages/RevisionDetails/components/ToolbarTre
 import { DEFAULT_MARGIN_H, DEFAULT_MARGIN_V, isOldViewer } from 'src/utils';
 import { useFlag } from '@cognite/react-feature-flags';
 import { isProduction } from '@cognite/cdf-utilities';
-import { Button, Switch } from '@cognite/cogs.js';
+import { Switch } from '@cognite/cogs.js';
 import { useUpdateRevisionMutation } from 'src/hooks/revisions';
 import { toggleGhostMode } from 'src/store/modules/toolbar';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store';
+import { Resizable } from 're-resizable';
+import { Divider } from 'antd';
 import { EditRotation } from './EditRotation';
 import { ThumbnailUploader } from './ThumbnailUploader';
 import { ColorTypePicker } from './ColorTypePicker';
 import { ClassPicker } from './ClassPicker';
-
-const CONTAINER_PADDING = 8;
-const CONTAINER_WIDTH = 400;
-const SCROLLBAR_WIDTH = 2;
-
-const MenuSection = styled.div`
-  &:not(:first-child) {
-    margin-top: ${DEFAULT_MARGIN_V}px;
-  }
-  width: fit-content;
-`;
-
-const ToolbarStyled = styled.div`
-  height: 100%;
-  width: ${CONTAINER_WIDTH}px;
-  display: flex;
-  flex-direction: column;
-  padding: ${CONTAINER_PADDING}px;
-  background-color: #fff;
-  border: 1px solid var(--cogs-greyscale-grey3);
-  overflow: hidden;
-`;
 
 type RevisionUpdatePayload = {
   modelId: number;
@@ -62,7 +42,9 @@ type Props = {
   model: Cognite3DModel | CognitePointCloudModel | Legacy3DModel;
 };
 
-export default function ThreeDViewerToolbar(props: Props) {
+const SIDEBAR_SECTION_MAX_WIDTH = 313;
+
+export default function ThreeDViewerSidebar(props: Props) {
   const ghostModeEnabled = useSelector(
     (state: RootState) => state.toolbar.ghostModeEnabled
   );
@@ -114,25 +96,18 @@ export default function ThreeDViewerToolbar(props: Props) {
     !isOldViewer(props.viewer);
 
   return (
-    <ToolbarStyled>
+    <SidebarContainer
+      resizable={showTreeView}
+      defaultWidth={showTreeView ? 400 : SIDEBAR_SECTION_MAX_WIDTH}
+    >
       <MenuSection>
         <ThumbnailUploader
+          style={{ marginRight: DEFAULT_MARGIN_H }}
           onUploadDone={updateInitialLocation}
-          getScreenshot={(w, h) => props.viewer.getScreenshot(w, h)}
-          modelId={props.model.modelId}
-          revisionId={props.model.revisionId}
+          viewer={props.viewer}
+          model={props.model}
         />
 
-        <Button
-          style={{ marginLeft: DEFAULT_MARGIN_H }}
-          icon="Scan"
-          onClick={() => props.viewer.fitCameraToModel(props.model as any, 400)}
-        >
-          Camera to model
-        </Button>
-      </MenuSection>
-
-      <MenuSection>
         <EditRotation
           saveModelRotation={(rotation) => updateInitialLocation({ rotation })}
           viewer={props.viewer}
@@ -141,20 +116,22 @@ export default function ThreeDViewerToolbar(props: Props) {
       </MenuSection>
 
       {props.model instanceof CognitePointCloudModel && (
-        <MenuSection style={{ display: 'flex', width: '100%' }}>
-          <ColorTypePicker
-            onChange={(colorType: PotreePointColorType) => {
-              if (props.model instanceof CognitePointCloudModel) {
-                // eslint-disable-next-line no-param-reassign
-                props.model.pointColorType = colorType;
-              }
-            }}
-          />
+        <>
+          <MenuSection>
+            <ColorTypePicker
+              onChange={(colorType: PotreePointColorType) => {
+                if (props.model instanceof CognitePointCloudModel) {
+                  // eslint-disable-next-line no-param-reassign
+                  props.model.pointColorType = colorType;
+                }
+              }}
+            />
+          </MenuSection>
 
-          <div style={{ marginLeft: DEFAULT_MARGIN_H, flexGrow: 1 }}>
+          <MenuSection>
             <ClassPicker model={props.model} />
-          </div>
-        </MenuSection>
+          </MenuSection>
+        </>
       )}
 
       {showTreeView && (
@@ -169,23 +146,72 @@ export default function ThreeDViewerToolbar(props: Props) {
               Ghost mode
             </Switch>
           </MenuSection>
-          <div
-            style={{
-              marginTop: DEFAULT_MARGIN_V,
-            }}
-          >
-            <hr />
-          </div>
+          <Divider style={{ margin: `${DEFAULT_MARGIN_V}px 0` }} />
           <ToolbarTreeView
-            style={{
-              marginTop: DEFAULT_MARGIN_V,
-            }}
-            width={CONTAINER_WIDTH - 2 * CONTAINER_PADDING - SCROLLBAR_WIDTH}
             model={props.model as Cognite3DModel}
             viewer={props.viewer as Cognite3DViewer}
           />
         </>
       )}
-    </ToolbarStyled>
+    </SidebarContainer>
   );
 }
+
+function SidebarContainer({
+  resizable = false,
+  defaultWidth = 400,
+  ...props
+}: any) {
+  // base size is thumbnail and edit rotation btns minimum width
+  // but minWidth have to include paddings and borders
+  const minWidth = SIDEBAR_SECTION_MAX_WIDTH + 16 + 2 + 1;
+
+  const minHeight = '100%';
+  const [width, setWidth] = React.useState(defaultWidth);
+
+  return (
+    <ResizableStyled
+      boundsByDirection
+      enable={{
+        top: false,
+        right: false,
+        bottom: false,
+        left: resizable,
+        topRight: false,
+        bottomRight: false,
+        bottomLeft: false,
+        topLeft: false,
+      }}
+      minWidth={minWidth}
+      maxWidth="80%"
+      minHeight={minHeight}
+      size={{ width, height: minHeight }}
+      onResizeStop={(e, direction, ref, d) => {
+        setWidth(width + d.width);
+      }}
+      {...props}
+    />
+  );
+}
+
+const MenuSection = styled.div`
+  /* select all, but not first of that class. Used because not(:first-child) */
+  /* won't play well with insertion of resizable overlay into parent container */
+  & ~ & {
+    margin-top: ${DEFAULT_MARGIN_V}px;
+  }
+  width: 100%;
+  max-width: ${SIDEBAR_SECTION_MAX_WIDTH}px;
+  text-align: left;
+`;
+
+const ResizableStyled = styled(Resizable)`
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+  background-color: #fff;
+  overflow: hidden;
+  border: 1px solid var(--cogs-border-default);
+  border-left-width: 2px;
+`;

@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
-  revealEnv,
   Cognite3DModel,
   Cognite3DViewer,
   CognitePointCloudModel,
@@ -10,13 +9,10 @@ import {
 import styled from 'styled-components';
 import { v3Client as sdk } from '@cognite/cdf-sdk-singleton';
 import * as THREE from 'three';
-import ThreeDViewerToolbar from '../ThreeDViewerToolbar';
+import { OverlayToolbar } from '../OverlayToolbar/OverlayToolbar';
+import ThreeDViewerSidebar from '../ThreeDViewerSidebar';
 import { ThreeDViewerProps } from './ThreeDViewer.d';
 import { Legacy3DModel, Legacy3DViewer } from './legacyViewerTypes';
-
-// todo: remove once reveal has that link internally as default one
-revealEnv.publicPath =
-  'https://apps-cdn.cogniteapp.com/@cognite/reveal-parser-worker/1.1.0/';
 
 const ThreeDViewerStyled = styled.div`
   position: relative;
@@ -24,10 +20,6 @@ const ThreeDViewerStyled = styled.div`
   height: calc(
     100vh - var(--cdf-ui-navigation-height) - 40px
   ); /* sidebar height and top-bot paddings subtracted */
-`;
-
-const ToolbarContainer = styled.div`
-  align-self: stretch;
 `;
 
 const CanvasContainer = styled.div`
@@ -147,15 +139,18 @@ export default function ThreeDViewer(props: ThreeDViewerProps) {
   if (error) {
     throw error;
   }
-  return (
-    <ThreeDViewerStyled>
-      <CanvasContainer ref={canvasWrapperRef} />
 
-      {viewer && model && (
-        <ToolbarContainer>
-          <ThreeDViewerToolbar viewer={viewer} model={model} />
-        </ToolbarContainer>
-      )}
+  return (
+    <ThreeDViewerStyled className="z-2">
+      <CanvasContainer ref={canvasWrapperRef}>
+        {viewer && model && (
+          <div style={{ position: 'absolute', top: '8px', right: '8px' }}>
+            <OverlayToolbar viewer={viewer} model={model} />
+          </div>
+        )}
+      </CanvasContainer>
+
+      {viewer && model && <ThreeDViewerSidebar viewer={viewer} model={model} />}
     </ThreeDViewerStyled>
   );
 }
