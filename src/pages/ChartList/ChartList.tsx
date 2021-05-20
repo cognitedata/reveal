@@ -12,10 +12,9 @@ import { Chart } from 'reducers/charts/types';
 import { useMyCharts, usePublicCharts, useUpdateChart } from 'hooks/firebase';
 import { nanoid } from 'nanoid';
 import { subDays } from 'date-fns';
-import { useLoginStatus } from 'hooks';
+import { useLoginStatus, useNavigate } from 'hooks';
 import ChartListItem, { ViewOption } from 'components/ChartListItem';
 import { CHART_VERSION } from 'config/';
-import { useHistory } from 'react-router-dom';
 import { trackUsage } from 'utils/metrics';
 
 type ActiveTabOption = 'mine' | 'public';
@@ -44,6 +43,7 @@ const sortOptions: SelectSortOption[] = [
 ];
 
 const ChartList = () => {
+  const move = useNavigate();
   const { data: login } = useLoginStatus();
   const myCharts = useMyCharts();
   const pubCharts = usePublicCharts();
@@ -75,7 +75,6 @@ const ChartList = () => {
 
   const { mutateAsync: updateChart } = useUpdateChart();
 
-  const history = useHistory();
   const handleNewChart = async () => {
     if (!login?.user) {
       return;
@@ -101,7 +100,7 @@ const ChartList = () => {
     await updateChart(newChart);
 
     trackUsage('ChartList.CreateChart');
-    history.push(`/${id}`);
+    move(`/${id}`);
   };
 
   const nameFilter = (chart: Chart) =>

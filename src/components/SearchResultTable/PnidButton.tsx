@@ -1,10 +1,11 @@
 import React from 'react';
 import { Button, Tooltip } from '@cognite/cogs.js';
 import { Asset } from '@cognite/sdk';
-import { useHistory, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useFilesAssetAppearsIn } from 'components/FileList';
 import { useLinkedAsset } from 'hooks/api';
 import { trackUsage } from 'utils/metrics';
+import { useNavigate } from 'hooks';
 
 export const PnidButton = ({
   asset,
@@ -17,8 +18,8 @@ export const PnidButton = ({
   showTooltip?: boolean;
   hideWhenEmpty?: boolean;
 }) => {
+  const move = useNavigate();
   const { chartId } = useParams<{ chartId: string }>();
-  const history = useHistory();
 
   const shouldFetchLinkedAsset = !asset;
 
@@ -46,12 +47,8 @@ export const PnidButton = ({
         type="tertiary"
         icon="SearchDocuments"
         onClick={() => {
-          history.push({
-            pathname: `/${chartId}/files/${
-              asset ? asset?.id : linkedAsset?.id
-            }`,
-            search: history.location.search,
-          });
+          move(`/${chartId}/files/${asset ? asset?.id : linkedAsset?.id}`);
+
           // `asset` prop is passed in only when button is placed in search view for now
           // There is probably a better way to determine whether the source is search or time series row?
           trackUsage('ChartView.ViewFiles', {

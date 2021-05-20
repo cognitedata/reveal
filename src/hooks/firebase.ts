@@ -1,13 +1,12 @@
 import { useSDK } from '@cognite/sdk-provider';
 import omit from 'lodash/omit';
 import isEqual from 'lodash/isEqual';
-import config, { CHART_VERSION } from 'config';
+import config, { CHART_VERSION, useAppsApiBaseUrl } from 'config';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { getTenantFromURL } from 'utils/env';
+import { useProject, useLoginStatus, getProject } from 'hooks';
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import 'firebase/auth';
-import { useLoginStatus } from 'hooks';
 import { Chart } from 'reducers/charts/types';
 import { IdInfo } from '@cognite/sdk';
 
@@ -31,7 +30,6 @@ type GetEnvironmentResponse = {
   config: EnvironmentConfig;
 };
 
-const APPS_API_BASE_URL = config.appsApiBaseURL;
 const APP_NAME = config.appName;
 
 const cacheOption = {
@@ -41,13 +39,14 @@ const cacheOption = {
 
 const useFirebaseToken = (enabled: boolean) => {
   const sdk = useSDK();
-  const project = getTenantFromURL();
+  const project = useProject();
+  const url = useAppsApiBaseUrl();
 
   return useQuery<string>(
     ['firebase', 'token'],
     () =>
       sdk
-        .get<LoginToFirebaseResponse>(`${APPS_API_BASE_URL}/login/firebase`, {
+        .get<LoginToFirebaseResponse>(`${url}/login/firebase`, {
           params: {
             tenant: project,
             app: APP_NAME,
@@ -67,13 +66,14 @@ const useFirebaseToken = (enabled: boolean) => {
 
 const useFirebaseEnv = (enabled: boolean) => {
   const sdk = useSDK();
-  const project = getTenantFromURL();
+  const project = useProject();
+  const url = useAppsApiBaseUrl();
 
   return useQuery<EnvironmentConfig>(
-    ['firebase', 'env'],
+    ['firebase', 'env', url],
     () =>
       sdk
-        .get<GetEnvironmentResponse>(`${APPS_API_BASE_URL}/env`, {
+        .get<GetEnvironmentResponse>(`${url}/env`, {
           params: {
             tenant: project,
             app: APP_NAME,
@@ -114,7 +114,7 @@ export const charts = () => {
   return firebase
     .firestore()
     .collection('tenants')
-    .doc(getTenantFromURL())
+    .doc(getProject())
     .collection('charts');
 };
 

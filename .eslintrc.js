@@ -4,6 +4,7 @@ module.exports = {
   rules: {
     'prettier/prettier': 'warn',
     'no-console': 'off',
+    'no-debugger': 'off',
     '@cognite/no-unissued-todos': 'off',
     '@typescript-eslint/no-unused-vars': 'off',
     '@typescript-eslint/no-unused-vars-experimental': [

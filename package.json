@@ -21,12 +21,14 @@
   },
   "dependencies": {
     "@cognite/annotations": "^1.1.0",
+    "@cognite/auth-utils": "^0.8.2",
+    "@cognite/cdf-hub-tenant-selector": "^0.5.0",
     "@cognite/cogs.js": "^3.12.3",
     "@cognite/connect": "^0.0.7",
     "@cognite/data-exploration": "^0.5.7",
     "@cognite/metrics": "^1.1.0",
     "@cognite/react-picture-annotation": "^1.12.0",
-    "@cognite/sdk": "^3.3.2",
+    "@cognite/sdk": "^4.0.4",
     "@cognite/sdk-provider": "^1.0.0",
     "@cognite/sdk-react-query-hooks": "^3.0.0",
     "@cognite/z-index": "^0.1.0",
@@ -94,7 +96,8 @@
   },
   "resolutions": {
     "react": "^17.0.1",
-    "react-dom": "^17.0.1"
+    "react-dom": "^17.0.1",
+    "@typescript-eslint/parser": "^3.10.1"
   },
   "eslintConfig": {
     "extends": "react-app"

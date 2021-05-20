@@ -12,7 +12,7 @@ import { useChart, useUpdateChart } from 'hooks/firebase';
 import { nanoid } from 'nanoid';
 import { ChartTimeSeries, ChartWorkflow } from 'reducers/charts/types';
 import { getEntryColor } from 'utils/colors';
-import { useLoginStatus, useQueryString } from 'hooks';
+import { useLoginStatus, useSearchParam } from 'hooks';
 import { SEARCH_KEY } from 'utils/constants';
 import { metrics, trackUsage } from 'utils/metrics';
 import { ITimer } from '@cognite/metrics';
@@ -40,7 +40,7 @@ type ChartViewProps = {
 };
 
 const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
-  const { item: query, setItem: setQuery } = useQueryString(SEARCH_KEY);
+  const [query = '', setQuery] = useSearchParam(SEARCH_KEY, false);
 
   const { chartId = chartIdProp } = useParams<{ chartId: string }>();
   const { data: chart, isError, isFetched } = useChart(chartId);

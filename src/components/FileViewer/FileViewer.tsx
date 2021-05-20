@@ -38,6 +38,7 @@ export const FileViewer = ({ file }: { file?: File }) => {
 
   return (
     <CogniteFileViewer
+      // @ts-ignore
       sdk={sdk}
       file={file}
       annotations={assetAnnotations}

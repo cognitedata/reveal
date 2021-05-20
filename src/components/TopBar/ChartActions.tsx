@@ -1,15 +1,15 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components/macro';
 import { Button, toast, Tooltip, TopBar } from '@cognite/cogs.js';
-import { useLoginStatus } from 'hooks';
+import { useLoginStatus, useNavigate } from 'hooks';
 import { useChart, useDeleteChart, useUpdateChart } from 'hooks/firebase';
-import { useHistory, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { duplicate } from 'utils/charts';
 import SharingDropdown from 'components/SharingDropdown/SharingDropdown';
 import { trackUsage } from 'utils/metrics';
 
 export const ChartActions = () => {
-  const history = useHistory();
+  const move = useNavigate();
 
   const { chartId } = useParams<{ chartId: string }>();
   const { data: chart } = useChart(chartId);
@@ -56,7 +56,7 @@ export const ChartActions = () => {
       const newChart = duplicate(chart, login.user);
       await updateChart(newChart);
       trackUsage('ChartView.DuplicateChart', { isOwner });
-      history.push(`/${newChart.id}`);
+      move(`/${newChart.id}`);
     }
   };
 
@@ -70,7 +70,7 @@ export const ChartActions = () => {
   };
 
   const onDeleteSuccess = () => {
-    history.push('/');
+    move('/');
   };
 
   const onDeleteError = () => {

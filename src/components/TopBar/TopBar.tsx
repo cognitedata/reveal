@@ -2,8 +2,8 @@ import React from 'react';
 import { Avatar, Menu, Title, TopBar } from '@cognite/cogs.js';
 import sidecar from 'config/sidecar';
 
-import { useHistory, useParams } from 'react-router-dom';
-import { useLoginStatus } from 'hooks';
+import { useParams } from 'react-router-dom';
+import { useLoginStatus, useNavigate } from 'hooks';
 import { useChart, useUpdateChart } from 'hooks/firebase';
 import styled from 'styled-components/macro';
 import dayjs from 'dayjs';
@@ -13,7 +13,7 @@ import useChat from 'hooks/useChat';
 
 const TopBarWrapper = () => {
   const { data: user } = useLoginStatus();
-  const history = useHistory();
+  const move = useNavigate();
   const chat = useChat();
 
   const { chartId } = useParams<{ chartId: string }>();
@@ -23,12 +23,7 @@ const TopBarWrapper = () => {
   return (
     <TopBar>
       <TopBar.Left>
-        <TopBar.Logo
-          title="Cognite Charts"
-          onLogoClick={() =>
-            history.location.pathname !== '/' && history.push('/')
-          }
-        />
+        <TopBar.Logo title="Cognite Charts" onLogoClick={() => move('')} />
         {!chart && <TopBar.Navigation links={[]} />}
         {!!chart && (
           <>
@@ -41,7 +36,7 @@ const TopBarWrapper = () => {
                       ← All charts
                     </span>
                   ),
-                  onClick: () => history.push('/'),
+                  onClick: () => move(''),
                 },
               ]}
             />

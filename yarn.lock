@@ -43,10 +43,24 @@
   dependencies:
     "@azure/msal-common" "^4.0.3"
 
+"@azure/msal-browser@^2.8.0":
+  version "2.14.2"
+  resolved "https://registry.yarnpkg.com/@azure/msal-browser/-/msal-browser-2.14.2.tgz#4efa031ad16d5a3a527eddb6222e15dd6e2ea3e8"
+  integrity sha512-JKHE9Rer41CI8tweiyE91M8ZbGvQV9P+jOPB4ZtPxyxCi2f7ED3jNfdzyUJ1eGB+hCRnvO56M1Xc61T1R+JfYg==
+  dependencies:
+    "@azure/msal-common" "^4.3.0"
+
 "@azure/msal-common@^4.0.3":
   version "4.0.3"
   resolved "https://registry.yarnpkg.com/@azure/msal-common/-/msal-common-4.0.3.tgz#e3bab249a9f7cfe011d07e3c264f62791d54cc6c"
   integrity sha512-EihnqHh2EE6xcB0Dh2LF30jE1Ga9cgh9PyRkX4fj+KpvYfL4ae57hvQwJGkynUgpf3V1xQxU5yaJVXOElfXiGw==
+  dependencies:
+    debug "^4.1.1"
+
+"@azure/msal-common@^4.3.0":
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/@azure/msal-common/-/msal-common-4.3.0.tgz#b540e92748656724088bf77192e59943a93135bc"
+  integrity sha512-jFqUWe83wVb6O8cNGGBFg2QlKvqM1ezUgJTEV7kIsAPX0RXhGFE4B1DLNt6hCnkTXDbw+KGW0zgxOEr4MJQwLw==
   dependencies:
     debug "^4.1.1"
 
@@ -1200,6 +1214,59 @@
   dependencies:
     lodash "^4.17.20"
 
+"@cognite/auth-utils@^0.8.2":
+  version "0.8.2"
+  resolved "https://registry.yarnpkg.com/@cognite/auth-utils/-/auth-utils-0.8.2.tgz#e6bb08cd950c8623b5d9306684616036c1633bc2"
+  integrity sha512-0PjfhmDrbas8mo80woE9h4PacAypECQB3c1bVFq/2OVdI/a4Qu4nlGlPGiBgzRWo3Qry57tz6quYgwF/SVfz2w==
+  dependencies:
+    "@azure/msal-browser" "^2.8.0"
+    "@cognite/sdk" "^3.3.0"
+    jwt-decode "^3.1.2"
+    lodash "^4.17.20"
+
+"@cognite/cdf-hub-tenant-selector@^0.5.0":
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/@cognite/cdf-hub-tenant-selector/-/cdf-hub-tenant-selector-0.5.0.tgz#9fc8e336bed48939dab40b6f4a160bac71e5a7f3"
+  integrity sha512-5Cnk2d5pI1NwTF4yfXVIOhgFJlaYlTPA+HnfmmkgmW8n2zjm4VdZ5UGLbYjePdn3UQ9gZ2zLojJVoQGfrO51GQ==
+  dependencies:
+    "@cognite/auth-utils" "^0.8.2"
+    "@cognite/cogs.js" "^2.10.0"
+    "@cognite/sdk" "^4.0.0"
+    "@types/lodash" "^4.14.170"
+    "@types/react-select" "^4.0.4"
+    axios "^0.21.1"
+    lodash "^4.17.21"
+    query-string "^6.13.8"
+    react "^17.0.1"
+    react-dom "^17.0.1"
+    react-query "^3.6.0"
+    react-router-dom "^5.2.0"
+    react-select "^4.0.2"
+    single-spa-react "^3.0.1"
+    styled-components "^5.2.1"
+
+"@cognite/cogs.js@^2.10.0":
+  version "2.20.0"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-2.20.0.tgz#734123e870d4ca1a6bd599bb66bce1c86b21f1bc"
+  integrity sha512-WHIft3J9Mc+0LTO95y3ByvSLJhe0uhaKTITDRKzZeXNziq2UuGknMqHcSdz3dqZ+kYaTqO90IGLHLJBlSaFv8A==
+  dependencies:
+    "@testing-library/react-hooks" "^5.0.3"
+    "@tippyjs/react" "4.2.3"
+    "@types/react-date-range" "^1.1.2"
+    color "^3.1.2"
+    dayjs "^1.9.7"
+    focus-visible "^5.1.0"
+    rc-collapse "^1.11.8"
+    rc-drawer "^4.1.0"
+    rc-slider "^9.5.4"
+    rc-tabs "^11.6.2"
+    react-date-range "^1.1.3"
+    react-modal "^3.11.2"
+    react-select "^3.1.0"
+    react-table "^7.6.0"
+    react-toastify "^6.0.9"
+    tippy.js "6.2.0"
+
 "@cognite/cogs.js@^2.4.2", "@cognite/cogs.js@^2.7.2":
   version "2.11.3"
   resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-2.11.3.tgz#ab808c7fc518968cdb1cb6bfe8dccbdde908d60f"
@@ -1423,6 +1490,18 @@
     query-string "^5.1.1"
     url "^0.11.0"
 
+"@cognite/sdk-core@^2.1.2":
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-2.1.2.tgz#fd456988cb6b5921fd2f5b1366c531e5d8d4ef1f"
+  integrity sha512-L+nJzKBoRjkDPVuI33i4Xn5gHttPsGoOYWqAHkH/sy9FuI+d1l2rIg3Vuwr5ZryD3Gb9snXcDCCq9QsT9D3lEw==
+  dependencies:
+    "@azure/msal-browser" "^2.11.0"
+    cross-fetch "^3.0.4"
+    is-buffer "^2.0.5"
+    lodash "^4.17.11"
+    query-string "^5.1.1"
+    url "^0.11.0"
+
 "@cognite/sdk-provider@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@cognite/sdk-provider/-/sdk-provider-1.0.0.tgz#d5b55e6b1013351f24d5e97e86c6a62295d1f4b3"
@@ -1444,6 +1523,22 @@
   integrity sha512-BQfW473UIeqQULruFLMJpHYV+e9qtZp9qUwjBdVEOhh1KsNMlWekxvO3ATUeSylRiH5Sy8DFWMdKPE2XlrYWCw==
   dependencies:
     "@cognite/sdk-core" "^1.2.0"
+    lodash "^4.17.11"
+
+"@cognite/sdk@^4.0.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-4.1.0.tgz#166ee12c8c5c7d52c9519b9eab47307c033e3221"
+  integrity sha512-yUFXC7EYS8fZ0PNdOEqNfNS+Jq90V8FqPc4eT6KE8X7JGv1CT0Ff6ONwIx5hiVC0WrVyrlSsAMqvKVt8NcfgXw==
+  dependencies:
+    "@cognite/sdk-core" "^2.1.2"
+    lodash "^4.17.11"
+
+"@cognite/sdk@^4.0.4":
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-4.0.4.tgz#a3ce7ea084fa08b47f53378b386e29b65559dca4"
+  integrity sha512-76ILFdeixZZvwNd6jhdCWwLMZwVT9NOeq54MD7aZh2SqzUAYIkffQzeq6Kj/3YsyvWuhJpz2OnqpXezaq3iQAQ==
+  dependencies:
+    "@cognite/sdk-core" "^2.1.2"
     lodash "^4.17.11"
 
 "@cognite/z-index@^0.1.0":
@@ -1477,6 +1572,17 @@
   version "11.1.3"
   resolved "https://registry.yarnpkg.com/@emotion/cache/-/cache-11.1.3.tgz#c7683a9484bcd38d5562f2b9947873cf66829afd"
   integrity sha512-n4OWinUPJVaP6fXxWZD9OUeQ0lY7DvtmtSuqtRWT0Ofo/sBLCVSgb4/Oa0Q5eFxcwablRKjUXqXtNZVyEwCAuA==
+  dependencies:
+    "@emotion/memoize" "^0.7.4"
+    "@emotion/sheet" "^1.0.0"
+    "@emotion/utils" "^1.0.0"
+    "@emotion/weak-memoize" "^0.2.5"
+    stylis "^4.0.3"
+
+"@emotion/cache@^11.4.0":
+  version "11.4.0"
+  resolved "https://registry.yarnpkg.com/@emotion/cache/-/cache-11.4.0.tgz#293fc9d9a7a38b9aad8e9337e5014366c3b09ac0"
+  integrity sha512-Zx70bjE7LErRO9OaZrhf22Qye1y4F7iDl+ITjet0J+i+B88PrAOBkKvaAWhxsZf72tDLajwCgfCjJ2dvH77C3g==
   dependencies:
     "@emotion/memoize" "^0.7.4"
     "@emotion/sheet" "^1.0.0"
@@ -3074,6 +3180,18 @@
     lodash "^4.17.15"
     redent "^3.0.0"
 
+"@testing-library/react-hooks@^5.0.3":
+  version "5.1.3"
+  resolved "https://registry.yarnpkg.com/@testing-library/react-hooks/-/react-hooks-5.1.3.tgz#f722cc526025be2c16966a9a081edf47a2528721"
+  integrity sha512-UdEUtlQapQ579NEcXDAUE275u+KUsPtxW7NmFrNt0bE6lW8lqNCyxDK0RSuECmNZ/S0/fgP00W9RWRhVKO/hRg==
+  dependencies:
+    "@babel/runtime" "^7.12.5"
+    "@types/react" ">=16.9.0"
+    "@types/react-dom" ">=16.9.0"
+    "@types/react-test-renderer" ">=16.9.0"
+    filter-console "^0.1.1"
+    react-error-boundary "^3.1.0"
+
 "@testing-library/react@^11.2.2":
   version "11.2.2"
   resolved "https://registry.yarnpkg.com/@testing-library/react/-/react-11.2.2.tgz#099c6c195140ff069211143cb31c0f8337bdb7b7"
@@ -3317,6 +3435,11 @@
   version "4.14.165"
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.165.tgz#74d55d947452e2de0742bad65270433b63a8c30f"
 
+"@types/lodash@^4.14.170":
+  version "4.14.170"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.170.tgz#0d67711d4bf7f4ca5147e9091b847479b87925d6"
+  integrity sha512-bpcvu/MKHHeYX+qeEN8GE7DIravODWdACVA1ctevD8CN24RhPZIKMn9ntfAsrvLfSX3cR5RrBKAbYm9bGs0A+Q==
+
 "@types/long@^4.0.1":
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/@types/long/-/long-4.0.1.tgz#459c65fa1867dafe6a8f322c4c51695663cc55e9"
@@ -3459,6 +3582,13 @@
   dependencies:
     "@types/react" "*"
 
+"@types/react-dom@>=16.9.0":
+  version "17.0.6"
+  resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-17.0.6.tgz#c158325cf91b196270bc0f4af73463f149e7eafe"
+  integrity sha512-MGTI+TudxAnGTj8aco8mogaPSJGK2Whje7OZh1CxNLRyhJpTZg/pGQpIbCT0eCVFQyH7UFpdvCqQEThHIp/gsA==
+  dependencies:
+    "@types/react" "*"
+
 "@types/react-plotly.js@^2.2.4":
   version "2.2.4"
   resolved "https://registry.yarnpkg.com/@types/react-plotly.js/-/react-plotly.js-2.2.4.tgz#360fcfcace64d0ef173cf0c7d67fc2441b39f659"
@@ -3491,6 +3621,16 @@
     "@types/react-dom" "*"
     "@types/react-transition-group" "*"
 
+"@types/react-select@^4.0.4":
+  version "4.0.15"
+  resolved "https://registry.yarnpkg.com/@types/react-select/-/react-select-4.0.15.tgz#2e6a1cff22c4bbae6c95b8dbee5b5097c12eae54"
+  integrity sha512-GPyBFYGMVFCtF4eg9riodEco+s2mflR10Nd5csx69+bcdvX6Uo9H/jgrIqovBU9yxBppB9DS66OwD6xxgVqOYQ==
+  dependencies:
+    "@emotion/serialize" "^1.0.0"
+    "@types/react" "*"
+    "@types/react-dom" "*"
+    "@types/react-transition-group" "*"
+
 "@types/react-splitter-layout@^3.0.0":
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/@types/react-splitter-layout/-/react-splitter-layout-3.0.1.tgz#83fd7683b07f804fb1a7b72651f5eb99cd5258a9"
@@ -3501,6 +3641,13 @@
 "@types/react-syntax-highlighter@11.0.4":
   version "11.0.4"
   resolved "https://registry.yarnpkg.com/@types/react-syntax-highlighter/-/react-syntax-highlighter-11.0.4.tgz#d86d17697db62f98046874f62fdb3e53a0bbc4cd"
+  dependencies:
+    "@types/react" "*"
+
+"@types/react-test-renderer@>=16.9.0":
+  version "17.0.1"
+  resolved "https://registry.yarnpkg.com/@types/react-test-renderer/-/react-test-renderer-17.0.1.tgz#3120f7d1c157fba9df0118dae20cb0297ee0e06b"
+  integrity sha512-3Fi2O6Zzq/f3QR9dRnlnHso9bMl7weKCviFmfF6B4LS1Uat6Hkm15k0ZAQuDz+UBq6B3+g+NM6IT2nr5QgPzCw==
   dependencies:
     "@types/react" "*"
 
@@ -3518,6 +3665,15 @@
     "@types/prop-types" "*"
     csstype "^3.0.2"
 
+"@types/react@>=16.9.0":
+  version "17.0.9"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.9.tgz#1147fb520024a62c9b3841f5cb4db89b73ddb87f"
+  integrity sha512-2Cw7FvevpJxQrCb+k5t6GH1KIvmadj5uBbjPaLlJB/nZWUj56e1ZqcD6zsoMFB47MsJUTFl9RJ132A7hb3QFJA==
+  dependencies:
+    "@types/prop-types" "*"
+    "@types/scheduler" "*"
+    csstype "^3.0.2"
+
 "@types/reactcss@*":
   version "1.2.3"
   resolved "https://registry.yarnpkg.com/@types/reactcss/-/reactcss-1.2.3.tgz#af28ae11bbb277978b99d04d1eedfd068ca71834"
@@ -3529,6 +3685,11 @@
   resolved "https://registry.yarnpkg.com/@types/resolve/-/resolve-0.0.8.tgz#f26074d238e02659e323ce1a13d041eee280e194"
   dependencies:
     "@types/node" "*"
+
+"@types/scheduler@*":
+  version "0.16.1"
+  resolved "https://registry.yarnpkg.com/@types/scheduler/-/scheduler-0.16.1.tgz#18845205e86ff0038517aab7a18a62a6b9f71275"
+  integrity sha512-EaCxbanVeyxDRTQBkdLb3Bvl/HK7PBK6UJjsSixB0iHKoWxE5uu2Q/DgtpOhPIojN0Zl1whvOd7PoHs2P0s5eA==
 
 "@types/sinon@^9.0.9":
   version "9.0.9"
@@ -3644,6 +3805,17 @@
     eslint-scope "^5.0.0"
     eslint-utils "^2.0.0"
 
+"@typescript-eslint/experimental-utils@3.10.1", "@typescript-eslint/experimental-utils@^3.10.1":
+  version "3.10.1"
+  resolved "https://registry.yarnpkg.com/@typescript-eslint/experimental-utils/-/experimental-utils-3.10.1.tgz#e179ffc81a80ebcae2ea04e0332f8b251345a686"
+  integrity sha512-DewqIgscDzmAfd5nOGe4zm6Bl7PKtMG2Ad0KG8CUZAHlXfAKTF9Ol5PXhiMh39yRL2ChRH1cuuUGOcVyyrhQIw==
+  dependencies:
+    "@types/json-schema" "^7.0.3"
+    "@typescript-eslint/types" "3.10.1"
+    "@typescript-eslint/typescript-estree" "3.10.1"
+    eslint-scope "^5.0.0"
+    eslint-utils "^2.0.0"
+
 "@typescript-eslint/experimental-utils@4.8.1", "@typescript-eslint/experimental-utils@^4.0.1":
   version "4.8.1"
   resolved "https://registry.yarnpkg.com/@typescript-eslint/experimental-utils/-/experimental-utils-4.8.1.tgz#27275c20fa4336df99ebcf6195f7d7aa7aa9f22d"
@@ -3655,33 +3827,16 @@
     eslint-scope "^5.0.0"
     eslint-utils "^2.0.0"
 
-"@typescript-eslint/experimental-utils@^3.10.1":
+"@typescript-eslint/parser@^2.29.0", "@typescript-eslint/parser@^2.4", "@typescript-eslint/parser@^3.10.1", "@typescript-eslint/parser@^4.5.0":
   version "3.10.1"
-  resolved "https://registry.yarnpkg.com/@typescript-eslint/experimental-utils/-/experimental-utils-3.10.1.tgz#e179ffc81a80ebcae2ea04e0332f8b251345a686"
-  dependencies:
-    "@types/json-schema" "^7.0.3"
-    "@typescript-eslint/types" "3.10.1"
-    "@typescript-eslint/typescript-estree" "3.10.1"
-    eslint-scope "^5.0.0"
-    eslint-utils "^2.0.0"
-
-"@typescript-eslint/parser@^2.29.0", "@typescript-eslint/parser@^2.4":
-  version "2.34.0"
-  resolved "https://registry.yarnpkg.com/@typescript-eslint/parser/-/parser-2.34.0.tgz#50252630ca319685420e9a39ca05fe185a256bc8"
+  resolved "https://registry.yarnpkg.com/@typescript-eslint/parser/-/parser-3.10.1.tgz#1883858e83e8b442627e1ac6f408925211155467"
+  integrity sha512-Ug1RcWcrJP02hmtaXVS3axPPTTPnZjupqhgj+NnZ6BCkwSImWk/283347+x9wN+lqOdK9Eo3vsyiyDHgsmiEJw==
   dependencies:
     "@types/eslint-visitor-keys" "^1.0.0"
-    "@typescript-eslint/experimental-utils" "2.34.0"
-    "@typescript-eslint/typescript-estree" "2.34.0"
+    "@typescript-eslint/experimental-utils" "3.10.1"
+    "@typescript-eslint/types" "3.10.1"
+    "@typescript-eslint/typescript-estree" "3.10.1"
     eslint-visitor-keys "^1.1.0"
-
-"@typescript-eslint/parser@^4.5.0":
-  version "4.8.1"
-  resolved "https://registry.yarnpkg.com/@typescript-eslint/parser/-/parser-4.8.1.tgz#4fe2fbdbb67485bafc4320b3ae91e34efe1219d1"
-  dependencies:
-    "@typescript-eslint/scope-manager" "4.8.1"
-    "@typescript-eslint/types" "4.8.1"
-    "@typescript-eslint/typescript-estree" "4.8.1"
-    debug "^4.1.1"
 
 "@typescript-eslint/scope-manager@4.8.1":
   version "4.8.1"
@@ -8544,6 +8699,11 @@ fill-range@^7.0.1:
   dependencies:
     to-regex-range "^5.0.1"
 
+filter-console@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/filter-console/-/filter-console-0.1.1.tgz#6242be28982bba7415bcc6db74a79f4a294fa67c"
+  integrity sha512-zrXoV1Uaz52DqPs+qEwNJWJFAWZpYJ47UNmpN9q4j+/EYsz85uV0DC9k8tRND5kYmoVzL0W+Y75q4Rg8sRJCdg==
+
 filter-obj@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/filter-obj/-/filter-obj-1.1.0.tgz#9b311112bc6c6127a16e016c6c5d7f19e0805c5b"
@@ -10863,6 +11023,11 @@ jws@^4.0.0:
   dependencies:
     jwa "^2.0.0"
     safe-buffer "^5.0.1"
+
+jwt-decode@^3.1.2:
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/jwt-decode/-/jwt-decode-3.1.2.tgz#3fb319f3675a2df0c2895c8f5e9fa4b67b04ed59"
+  integrity sha512-UfpWE/VZn0iP50d8cz9NrZLM9lSWhcJ+0Gt/nm4by88UL+J1SiKN8/5dkjMmbEzwL2CAe+67GsegCbIKtbp75A==
 
 kill-port@^1.6.1:
   version "1.6.1"
@@ -13281,7 +13446,7 @@ query-string@^5.1.1:
     object-assign "^4.1.0"
     strict-uri-encode "^1.0.0"
 
-query-string@^6.14.0:
+query-string@^6.13.8, query-string@^6.14.0:
   version "6.14.1"
   resolved "https://registry.yarnpkg.com/query-string/-/query-string-6.14.1.tgz#7ac2dca46da7f309449ba0f86b1fd28255b0c86a"
   integrity sha512-XDxAeVmpfu1/6IjyT/gXHOl+S0vQ9owggJ30hhWKdHAsNPOcasn5o9BW0eejZqL2e4vMjhAxoW3jVHcD6mbcYw==
@@ -13944,6 +14109,13 @@ react-element-to-jsx-string@^14.3.1:
     "@base2/pretty-print-object" "1.0.0"
     is-plain-object "3.0.1"
 
+react-error-boundary@^3.1.0:
+  version "3.1.3"
+  resolved "https://registry.yarnpkg.com/react-error-boundary/-/react-error-boundary-3.1.3.tgz#276bfa05de8ac17b863587c9e0647522c25e2a0b"
+  integrity sha512-A+F9HHy9fvt9t8SNDlonq01prnU8AmkjvGKV4kk8seB9kU3xMEO8J/PQlLVmoOIDODl5U2kufSBs4vrWIqhsAA==
+  dependencies:
+    "@babel/runtime" "^7.12.5"
+
 react-error-overlay@^6.0.7:
   version "6.0.8"
   resolved "https://registry.yarnpkg.com/react-error-overlay/-/react-error-overlay-6.0.8.tgz#474ed11d04fc6bda3af643447d85e9127ed6b5de"
@@ -14077,6 +14249,15 @@ react-query@^3.15.2, react-query@^3.5.0, react-query@^3.8.2:
     broadcast-channel "^3.4.1"
     match-sorter "^6.0.2"
 
+react-query@^3.6.0:
+  version "3.16.1"
+  resolved "https://registry.yarnpkg.com/react-query/-/react-query-3.16.1.tgz#0bb9c5c45a74e14b5e204218fa602fe1a1065976"
+  integrity sha512-dof8XXSZ7HprfzvpbJE+YZrhUXcQYxy1j+NU8ZPYpKKDF79wlZAke+GyYhQ0b6SuOFp8ZpVXSpdD4AL3lxmeXQ==
+  dependencies:
+    "@babel/runtime" "^7.5.5"
+    broadcast-channel "^3.4.1"
+    match-sorter "^6.0.2"
+
 react-refresh@^0.8.3:
   version "0.8.3"
   resolved "https://registry.yarnpkg.com/react-refresh/-/react-refresh-0.8.3.tgz#721d4657672d400c5e3c75d063c4a85fb2d5d68f"
@@ -14183,6 +14364,19 @@ react-select@^3.0.8, react-select@^3.1.0:
     "@emotion/cache" "^10.0.9"
     "@emotion/core" "^10.0.9"
     "@emotion/css" "^10.0.9"
+    memoize-one "^5.0.0"
+    prop-types "^15.6.0"
+    react-input-autosize "^3.0.0"
+    react-transition-group "^4.3.0"
+
+react-select@^4.0.2:
+  version "4.3.1"
+  resolved "https://registry.yarnpkg.com/react-select/-/react-select-4.3.1.tgz#389fc07c9bc7cf7d3c377b7a05ea18cd7399cb81"
+  integrity sha512-HBBd0dYwkF5aZk1zP81Wx5UsLIIT2lSvAY2JiJo199LjoLHoivjn9//KsmvQMEFGNhe58xyuOITjfxKCcGc62Q==
+  dependencies:
+    "@babel/runtime" "^7.12.0"
+    "@emotion/cache" "^11.4.0"
+    "@emotion/react" "^11.1.1"
     memoize-one "^5.0.0"
     prop-types "^15.6.0"
     react-input-autosize "^3.0.0"
@@ -15245,6 +15439,11 @@ simple-swizzle@^0.2.2:
   resolved "https://registry.yarnpkg.com/simple-swizzle/-/simple-swizzle-0.2.2.tgz#a4da6b635ffcccca33f70d17cb92592de95e557a"
   dependencies:
     is-arrayish "^0.3.1"
+
+single-spa-react@^3.0.1:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/single-spa-react/-/single-spa-react-3.2.0.tgz#97bfcb03e418f7daa2b1bd05eab1c62632351d91"
+  integrity sha512-s8K7AuS26WvN9n81z1NBlnZIe/Hin423P8jYLuG/DCNTYo5JbJMS5+Cb/wQd4ikG6YqoedpV4cb7nAcxvlLyhg==
 
 sinon@^9.2.1:
   version "9.2.1"
