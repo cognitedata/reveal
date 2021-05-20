@@ -21,14 +21,14 @@ const ProgressBarSection = (): JSX.Element => {
   const isJobDone =
     parsingJobStatus === 'Completed' || parsingJobStatus === 'Failed';
 
-  useInterval(
-    () => {
-      if (jobId && !isJobDone) {
-        dispatch(pollJobResults.action({ jobId, workflowId }));
-      }
-    },
-    isJobDone ? null : 5000
-  );
+  const pollJobIfRunning = () => {
+    if (jobId && !isJobDone) {
+      dispatch(pollJobResults.action({ jobId, workflowId }));
+    }
+  };
+
+  useInterval(pollJobIfRunning, isJobDone ? null : 5000);
+
   const { completed = 0, running = 0, queued = 0 } = statusCount ?? {};
   const total = running + completed + queued;
 
