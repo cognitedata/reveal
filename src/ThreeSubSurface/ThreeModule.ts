@@ -21,19 +21,21 @@ import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
 import { BaseRenderTargetNode } from "@/Core/Nodes/BaseRenderTargetNode";
 
 import { AxisNode } from "@/Core/Nodes/Decorations/AxisNode";
+import { CompassNode } from "@/Core/Nodes/Decorations/CompassNode";
+
 import { PointsNode } from "@/SubSurface/Basics/PointsNode";
 import { PolylinesNode } from "@/SubSurface/Basics/PolylinesNode";
 import { SurfaceNode } from "@/SubSurface/Basics/SurfaceNode";
 import { PotreeNode } from "@/SubSurface/Basics/PotreeNode";
 
 import { AxisThreeView } from "@/Three/DecorationViews/AxisThreeView";
+import { CompassThreeView } from "@/Three/DecorationViews/CompassThreeView";
 import { PointsThreeView } from "@/ThreeSubSurface/Basics/PointsThreeView";
 import { PolylinesThreeView } from "@/ThreeSubSurface/Basics/PolylinesThreeView";
 import { SurfaceThreeView } from "@/ThreeSubSurface/Basics/SurfaceThreeView";
 import { PotreeThreeView } from "@/ThreeSubSurface/Basics/PotreeThreeView";
 
 // Wells:
-
 import { WellTrajectoryNode } from "@/SubSurface/Wells/Nodes/WellTrajectoryNode";
 import { PointLogNode } from "@/SubSurface/Wells/Nodes/PointLogNode";
 import { FloatLogNode } from "@/SubSurface/Wells/Nodes/FloatLogNode";
@@ -74,7 +76,12 @@ export class ThreeModule extends BaseModule {
   }
 
   public /* override */ registerViews(factory: ViewFactory): void {
+
+    // Decorations
     factory.register(AxisNode.className, AxisThreeView, ThreeRenderTargetNode.className);
+    factory.register(CompassNode.className, CompassThreeView, ThreeRenderTargetNode.className);
+
+    // Simple:
     factory.register(PointsNode.className, PointsThreeView, ThreeRenderTargetNode.className);
     factory.register(PolylinesNode.className, PolylinesThreeView, ThreeRenderTargetNode.className);
     factory.register(SurfaceNode.className, SurfaceThreeView, ThreeRenderTargetNode.className);
@@ -113,9 +120,12 @@ export class ThreeModule extends BaseModule {
 
   public /* override */ setDefaultVisible(root: BaseRootNode): void {
     // Set all axis visible
-    for (const target of root.targets.getChildrenByType(BaseTargetNode))
+    for (const target of root.targets.getChildrenByType(BaseTargetNode)) {
       for (const node of root.getDescendantsByType(AxisNode))
         node.setVisibleInteractive(true, target);
+      for (const node of root.getDescendantsByType(CompassNode))
+        node.setVisibleInteractive(true, target);
+    }
   }
 
   public /* override */ createRenderTargetNode(): BaseRenderTargetNode | null {

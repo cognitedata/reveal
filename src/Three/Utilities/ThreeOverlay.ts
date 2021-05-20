@@ -22,7 +22,8 @@ import { Util } from "@/Core/Primitives/Util";
 import { Appearance } from "@/Core/States/Appearance";
 import { Polyline } from "@/Core/Geometry/Polyline";
 
-export class TreeOverlay {
+export class ThreeOverlay {
+
   //= =================================================
   // INSTANCE FIELDS
   //= =================================================

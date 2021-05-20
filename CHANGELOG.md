@@ -1,3 +1,6 @@
+## 1.2.1 May 20 2021
+
+ - Add compass arrow
 ## 1.2.0 Jan 11 2021
 
  - Seismic loading states

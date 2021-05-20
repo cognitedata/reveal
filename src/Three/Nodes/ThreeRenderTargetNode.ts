@@ -1,4 +1,4 @@
-//= ====================================================================================
+// =====================================================================================
 // This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming
 // in October 2019. It is suited for flexible and customizable visualization of
 // multiple dataset in multiple viewers.
@@ -9,7 +9,7 @@
 // NOTE: Always keep the code according to the code style already applied in the file.
 // Put new code under the correct section, and make more sections if needed.
 // Copyright (c) Cognite AS. All rights reserved.
-//= ====================================================================================
+// =====================================================================================
 
 import * as THREE from "three";
 import CameraControls from "camera-controls";
@@ -18,7 +18,7 @@ import { Colors } from "@/Core/Primitives/Colors";
 import { BaseRenderTargetNode } from "@/Core/Nodes/BaseRenderTargetNode";
 import { AxisNode } from "@/Core/Nodes/Decorations/AxisNode";
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
-import { TreeOverlay } from "@/Three/Utilities/TreeOverlay";
+import { ThreeOverlay } from "@/Three/Utilities/ThreeOverlay";
 import { Ma } from "@/Core/Primitives/Ma";
 import { ViewAllCommand } from "@/Three/Commands/ViewAllCommand";
 import { ToggleAxisVisibleCommand } from "@/Three/Commands/ToggleAxisVisibleCommand";
@@ -44,25 +44,29 @@ import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";
 import { ToolbarGroupIds } from "@/Three/Nodes/ToolbarGroupIds";
 import { BaseCommand } from "@/Core/Commands/BaseCommand";
 import { Toggle3Dand2DCommand } from "@/Three/Commands/Toggle3Dand2DCommand";
+import { ThreeMiniWindow } from "@/Three/Utilities/ThreeMiniWindow";
+import { ToggleCompassVisibleCommand } from "@/Three/Commands/ToggleCompassVisibleCommand";
 
 const directionalLightName = "DirectionalLight";
 
 export class ThreeRenderTargetNode extends BaseRenderTargetNode {
-  //= =================================================
+  // =================================================
   // STATIC FIELDS
-  //= =================================================
+  // =================================================
 
   static className = "ThreeRenderTargetNode";
 
-  //= =================================================
+  // ==================================================
   // INSTANCE FIELDS
-  //= =================================================
+  // ==================================================
 
   private _scene: THREE.Scene | null = null;
 
   private _renderer: THREE.WebGLRenderer | null = null;
 
-  private _overlay = new TreeOverlay();
+  private _overlay = new ThreeOverlay();
+
+  private _miniWindow = new ThreeMiniWindow();
 
   private isEmpty = true;
 
@@ -76,9 +80,9 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
 
   private _transformer = new ThreeTransformer();
 
-  //= =================================================
+  // ==================================================
   // INSTANCE PROPERTIES: Tools
-  //= =================================================
+  // ==================================================
 
   public setPreviousTool() { this._toolController.setPreviousTool(this._cameraControl); }
 
@@ -86,9 +90,9 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
 
   public get activeTool(): BaseTool | null { return this._toolController.activeTool; }
 
-  //= =================================================
+  // ==================================================
   // INSTANCE PROPERTIES
-  //= =================================================
+  // ==================================================
 
   public get is2D(): boolean { return this.cameraControl.is2D; }
 
@@ -120,6 +124,12 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
     return this._scene;
   }
 
+  public get miniWindowScene(): THREE.Scene {
+    if (!this._miniWindow)
+      throw Error("Mini window ccene is not set");
+    return this._miniWindow.scene;
+  }
+  
   public get cameraControl(): CameraControl {
     if (!this._cameraControl)
       throw Error("Camera is not set");
@@ -136,23 +146,23 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
     return this._renderer;
   }
 
-  //= =================================================
+  // ==================================================
   // CONSTRUCTOR
-  //= =================================================
+  // ==================================================
 
   public constructor(fractionRange: Range3 | undefined) { super(fractionRange); }
 
-  //= =================================================
+  // ==================================================
   // OVERRIDES of TargetNode
-  //= =================================================
+  // ==================================================
 
   public /* override */ get className(): string { return ThreeRenderTargetNode.className; }
 
   public /* override */ isA(className: string): boolean { return className === ThreeRenderTargetNode.className || super.isA(className); }
 
-  //= =================================================
+  // ==================================================
   // OVERRIDES of BaseNode
-  //= =================================================
+  // ==================================================
 
   protected /* override */ initializeCore(): void {
     super.initializeCore();
@@ -161,12 +171,13 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
     this._cameraControl = new CameraControl(this, true);
 
     // Create lights
-    const ambientLight = new THREE.AmbientLight(0x404040, 0.25); // soft white light
-    const directionalLight = new THREE.DirectionalLight(ThreeConverter.toThreeColor(Colors.white), 0.95);
-    directionalLight.name = directionalLightName;
-    this._scene.add(ambientLight);
-    this._scene.add(directionalLight);
-
+    {
+      const ambientLight = new THREE.AmbientLight(0x404040, 0.25); // soft white light
+      const directionalLight = new THREE.DirectionalLight(ThreeConverter.toThreeColor(Colors.white), 0.95);
+      directionalLight.name = directionalLightName;
+      this._scene.add(ambientLight);
+      this._scene.add(directionalLight);
+    }
     this.domElement.tabIndex = 1; // Trick to let keydown works!
     this.addOrRemoveUpdateEvent(true);
     this.domElement.addEventListener("click", (event) => this._toolController.onMouseClick(this, event), false);
@@ -177,9 +188,9 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
     this.render();
   }
 
-  //= =================================================
+  // ==================================================
   // OVERRIDES of BaseRenderTargetNode
-  //= =================================================
+  // ==================================================
 
   public /* override */ get domElement(): HTMLCanvasElement { return this.renderer.domElement; }
 
@@ -210,6 +221,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
 
     this.addTool(toolbar, ToolbarGroupIds.Actions, new ViewAllCommand(this));
     this.addTool(toolbar, ToolbarGroupIds.Actions, new ToggleAxisVisibleCommand(this));
+    this.addTool(toolbar, ToolbarGroupIds.Actions, new ToggleCompassVisibleCommand(this));
     this.addTool(toolbar, ToolbarGroupIds.Actions, new CopyImageCommand(this));
     this.addTool(toolbar, ToolbarGroupIds.Actions, new ToggleBgColorCommand(this));
     this.addTool(toolbar, ToolbarGroupIds.Actions, new ToggleFullscreenCommand(this));
@@ -222,9 +234,9 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
     this.addTool(toolbar, ToolbarGroupIds.Settings, new ZScaleCommand(this));
   }
 
-  //= =================================================
+  // ==================================================
   // INSTANCE METHODS: Getters
-  //= =================================================
+  // ==================================================
 
   public getRayFromEvent(event: MouseEvent): THREE.Ray {
     const pixel = this.getMouseRelativePosition(event);
@@ -303,9 +315,9 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
     return [null, null];
   }
 
-  //= =================================================
+  // ==================================================
   // INSTANCE METHODS: Add toolbar
-  //= =================================================
+  // ==================================================
 
   public addTool(toolbar: IToolbar, groupId: string, command: BaseCommand) {
     if (command instanceof BaseTool)
@@ -314,9 +326,9 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
     toolbar.add(groupId, command);
   }
 
-  //= =================================================
+  // ==================================================
   // INSTANCE METHODS: Operations on camera or light
-  //= =================================================
+  // ==================================================
 
   public updateLightPosition(): void {
     const { camera } = this;
@@ -361,9 +373,9 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
     light.position.copy(vectorToCenter);
   }
 
-  //= =================================================
+  // ==================================================
   // INSTANCE METHODS: Perspective mode
-  //= =================================================
+  // ==================================================
 
   public get isPerspectiveMode(): boolean {
     if (this.camera instanceof THREE.PerspectiveCamera)
@@ -400,9 +412,9 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
     this._cameraControl.viewRange(boundingBox);
   }
 
-  //= =================================================
+  // ==================================================
   // INSTANCE METHODS: Others
-  //= =================================================
+  // ==================================================
 
   public viewFrom(index: number): boolean {
     const boundingBox = this.getBoundingBoxFromViews();
@@ -447,9 +459,9 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
     }
   }
 
-  //= =================================================
+  // ==================================================
   // INSTANCE METHODS: Render
-  //= =================================================
+  // ==================================================
 
   private _prevPixelRange: Range3 = new Range3();
 
@@ -477,20 +489,19 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
       this.isEmpty = !this.viewFrom(-1);
 
     const hasAxis = this.hasViewOfNodeType(AxisNode);
-    this.scene.background = ThreeConverter.toThreeColor(this.getBgColor(hasAxis));
+    const background = ThreeConverter.toThreeColor(this.getBgColor(hasAxis));
+    this.scene.background = background;
 
     for (const view of this.viewsShownHere.list)
       view.beforeRender();
 
-    this.renderer.render(this.scene, this.camera);
-
-    const viewInfo = this.fillViewInfo();
-    this._overlay.render(this.renderer, viewInfo, this.pixelRange.delta, this.fgColor, this.bgColor);
+    this.renderFast();
     this.invalidate(false);
   }
 
   public renderFast(): void {
     this.renderer.render(this.scene, this.camera);
+    this._miniWindow.render(this.renderer);
     const viewInfo = this.fillViewInfo();
     this._overlay.render(this.renderer, viewInfo, this.pixelRange.delta, this.fgColor, this.bgColor);
   }

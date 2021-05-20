@@ -25,8 +25,6 @@ export abstract class BaseThreeView extends Base3DView {
   // INSTANCE PROPERTIES
   //= =================================================
 
-  protected get scene(): THREE.Scene { return this.renderTarget.scene; }
-
   protected get camera(): THREE.Camera { return this.renderTarget.camera; }
 
   public get transformer(): ThreeTransformer { return this.renderTarget.transformer; }
@@ -61,6 +59,8 @@ export abstract class BaseThreeView extends Base3DView {
   //= =================================================
   // VIRTUAL METHODS
   //= =================================================
+
+  protected get scene(): THREE.Scene { return this.renderTarget.scene; }
 
   public /* virtual */ shouldPick(): boolean { return true; }
 

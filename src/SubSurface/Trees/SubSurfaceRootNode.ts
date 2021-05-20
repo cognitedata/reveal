@@ -15,6 +15,7 @@ import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
 
 import { WellTreeNode } from "@/SubSurface/Trees/WellTreeNode";
 import { AxisNode } from "@/Core/Nodes/Decorations/AxisNode";
+import { CompassNode } from "@/Core/Nodes/Decorations/CompassNode";
 
 import { OthersTreeNode } from "@/SubSurface/Trees/OthersTreeNode";
 import RootNodeIcon from "@images/Nodes/RootNode.png";
@@ -75,6 +76,8 @@ export class SubSurfaceRootNode extends BaseRootNode {
     //   this.addChild(new OthersTreeNode());
     if (!this.targets.hasChildByType(AxisNode))
       this.targets.addChild(new AxisNode());
+    if (!this.targets.hasChildByType(CompassNode))
+      this.targets.addChild(new CompassNode());
   }
 
   //= =================================================

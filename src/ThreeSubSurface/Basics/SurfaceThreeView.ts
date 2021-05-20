@@ -220,21 +220,3 @@ export class SurfaceThreeView extends BaseGroupThreeView {
       material.shininess = style.solidShininess.use ? 100 * style.solidShininess.value : 0;
   }
 }
-
-//= =================================================
-// INSTANCE METHODS: Shader experiments
-//= =================================================
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function vertexShader(): string {
-  return `
-    varying vec3 vUv;
-
-    void main() {
-      vUv = position;
-
-      vec4 modelViewPosition = modelViewMatrix * vec4(position, 1.0);
-      gl_Position = projectionMatrix * modelViewPosition;
-    }
-  `;
-}

@@ -19,6 +19,7 @@ import { BasePropertyFolder } from "@/Core/Property/Base/BasePropertyFolder";
 import { BaseStyle } from "@/Core/Styles/BaseStyle";
 
 export class AxisRenderStyle extends BaseRenderStyle {
+  
   //= =================================================
   // INSTANCE FIELDS
   //= =================================================
