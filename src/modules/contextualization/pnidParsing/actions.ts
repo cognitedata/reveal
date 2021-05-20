@@ -174,9 +174,7 @@ export const pollJobResults = {
 
       const diagrams = getDiagrams(state);
 
-      // Job done
       if (status === 'Completed' || status === 'Failed') {
-        // Job has succeeded
         if (status === 'Completed') {
           const annotationCounts = await handleNewAnnotations(
             diagrams,
@@ -191,11 +189,9 @@ export const pollJobResults = {
             })
           );
         } else {
-          // Job has failed
           dispatch(rejectJob({ workflowId }));
         }
       } else {
-        // Job not done yet, just update status
         dispatch(
           updateJob({
             workflowId,
