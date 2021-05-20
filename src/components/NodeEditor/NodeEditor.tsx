@@ -66,7 +66,11 @@ const WorkflowEditor = ({
   };
 
   const { nodes = [], connections = [] } = workflow;
-  const context = { chart };
+  const context = { chart, workflow };
+
+  const hasOutputNode = !!nodes?.find(
+    (nd) => !nd.outputPins || nd.outputPins.length === 0
+  );
 
   // This have to be debouced as it is called continuously when dragging nodes
   const onUpdateNode = debounce((nextNode: Node) => {
@@ -124,27 +128,34 @@ const WorkflowEditor = ({
               <Menu.Item>
                 <Input />
               </Menu.Item>
-              {Object.values(defaultNodeOptions).map((nodeOption) => (
-                <Menu.Item
-                  key={nodeOption.name}
-                  onClick={() => {
-                    update({
-                      nodes: [
-                        ...nodes,
-                        {
-                          id: nanoid(),
-                          ...nodeOption.node,
-                          ...nodePosition,
-                          calls: [],
-                        },
-                      ],
-                    });
-                    onClose();
-                  }}
-                >
-                  {nodeOption.name}
-                </Menu.Item>
-              ))}
+              {Object.values(defaultNodeOptions)
+                .filter((nodeOption) => !nodeOption.disabled)
+                .filter((nodeOption) => {
+                  return nodeOption.effectId === 'OUTPUT'
+                    ? !hasOutputNode
+                    : true;
+                })
+                .map((nodeOption) => (
+                  <Menu.Item
+                    key={nodeOption.name}
+                    onClick={() => {
+                      update({
+                        nodes: [
+                          ...nodes,
+                          {
+                            id: nanoid(),
+                            ...nodeOption.node,
+                            ...nodePosition,
+                            calls: [],
+                          },
+                        ],
+                      });
+                      onClose();
+                    }}
+                  >
+                    {nodeOption.name}
+                  </Menu.Item>
+                ))}
             </Menu>
           )}
         >
