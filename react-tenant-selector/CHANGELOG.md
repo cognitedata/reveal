@@ -1,3 +1,7 @@
+## 1.2.3 May 20 2021
+
+- Add 'name' option to fake idp buttons
+
 ## 1.2.1 May 18 2021
 
 - Bump auth to get better FAKE_IDP support

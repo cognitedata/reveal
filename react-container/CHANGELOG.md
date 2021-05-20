@@ -1,3 +1,7 @@
+## 1.2.2 May 20 2021
+
+- Bump tsa to v1.2.3
+
 ## 1.2.0 May 19 2021
 
 - Removed unused hook useLoginToCdf

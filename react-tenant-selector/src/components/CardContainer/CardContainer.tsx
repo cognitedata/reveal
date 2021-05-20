@@ -166,7 +166,7 @@ const CardContainer = ({
               )}
               {enabledLoginModes.fakeIdp?.map((fakeIdp) => (
                 <LoginWithFakeIDP
-                  key={fakeIdp.fakeApplicationId}
+                  key={fakeIdp.name || fakeIdp.fakeApplicationId}
                   handleSubmit={handleSubmit}
                   authClient={authClient}
                   {...fakeIdp}

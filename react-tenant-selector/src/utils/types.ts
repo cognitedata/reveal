@@ -6,6 +6,7 @@ export type FakeIdp = {
   groups: string[];
   project: string;
   cluster: string;
+  name?: string;
   fakeApplicationId: string;
 };
 

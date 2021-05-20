@@ -16,6 +16,7 @@ const LoginWithFakeIDP: React.FC<Props> = ({
   groups,
   project,
   cluster,
+  name,
   fakeApplicationId,
   authClient,
   handleSubmit,
@@ -59,7 +60,7 @@ const LoginWithFakeIDP: React.FC<Props> = ({
         type="secondary"
         onClick={handleClick}
       >
-        Login with Fake IDP ({fakeApplicationId})
+        Login with Fake IDP ({name || fakeApplicationId})
       </Button>
     </>
   );
