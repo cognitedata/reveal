@@ -2,7 +2,6 @@ import React from 'react';
 import { Cell, Column } from 'react-table';
 import StatusMarker from 'components/integrations/cols/StatusMarker';
 import { TimeDisplay } from 'components/TimeDisplay/TimeDisplay';
-import StatusFilterDropdown from 'components/table/StatusFilterDropdown';
 import { StatusRun } from 'model/Runs';
 import { TableHeadings } from 'components/table/IntegrationTableCol';
 
@@ -27,10 +26,7 @@ export const getRunLogTableCol = (): Column<StatusRun>[] => {
       Cell: ({ row }: Cell<StatusRun>) => {
         return <StatusMarker status={row.original.status} />;
       },
-      disableSortBy: true,
-      Filter: StatusFilterDropdown,
-      filter: 'exactText',
-      disableFilters: false,
+      disableFilters: true,
     },
     {
       Header: RunTableHeading.MESSAGE,

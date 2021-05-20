@@ -9,7 +9,7 @@ import Name from 'components/integrations/cols/Name';
 import Schedule from 'components/integrations/cols/Schedule';
 import { DataSet } from 'components/integrations/cols/DataSet';
 import StatusMarker from 'components/integrations/cols/StatusMarker';
-import StatusFilterDropdown from 'components/table/StatusFilterDropdown';
+import StatusFilterTableDropdown from 'components/table/StatusFilterTableDropdown';
 import { User } from 'model/User';
 import RelativeTimeWithTooltip from 'components/integrations/cols/RelativeTimeWithTooltip';
 import SorterIndicator from 'components/table/SorterIndicator';
@@ -30,20 +30,22 @@ export enum TableHeadings {
 const StyledStatusButton = styled((props) => (
   <Button {...props}>{props.children}</Button>
 ))`
-  background-color: transparent;
-  border: none !important;
-  font: inherit;
-  padding: 0;
-  white-space: nowrap;
-  :focus {
+  &.status-btn {
     background-color: transparent;
-  }
-  :hover {
-    background-color: transparent;
-    box-shadow: none;
-  }
-  span {
-    cursor: pointer !important;
+    border: none !important;
+    font: inherit;
+    padding: 0;
+    white-space: nowrap;
+    :focus {
+      background-color: transparent;
+    }
+    :hover {
+      background-color: transparent;
+      box-shadow: none;
+    }
+    span {
+      cursor: pointer !important;
+    }
   }
 `;
 
@@ -100,6 +102,7 @@ export const getIntegrationTableCol = (
       Cell: ({ row }: CellProps<Integration>) => {
         return row.values.status === Status.FAIL ? (
           <StyledStatusButton
+            className="status-btn"
             onClick={() => {
               openFailMessage(row.original);
             }}
@@ -112,7 +115,7 @@ export const getIntegrationTableCol = (
         );
       },
       disableSortBy: true,
-      Filter: StatusFilterDropdown,
+      Filter: StatusFilterTableDropdown,
       filter: 'includes',
       disableFilters: false,
     },

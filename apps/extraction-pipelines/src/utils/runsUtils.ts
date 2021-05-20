@@ -1,6 +1,6 @@
 import moment, { Moment } from 'moment';
-import { RunRow, StatusRow, StatusRun } from '../model/Runs';
-import { Status } from '../model/Status';
+import { RunRow, StatusRow, StatusRun } from 'model/Runs';
+import { Status } from 'model/Status';
 
 export enum RunStatus {
   SUCCESS = 'success',
@@ -8,14 +8,27 @@ export enum RunStatus {
   SEEN = 'seen',
 }
 
-export const mapStatus = (apiStatus: RunStatus | string): Status => {
-  if (apiStatus.toLowerCase() === RunStatus.SUCCESS) {
+const STATUS_RUN_STATUS_MAP: Readonly<Map<Status, RunStatus>> = new Map<
+  Status,
+  RunStatus
+>([
+  [Status.OK, RunStatus.SUCCESS],
+  [Status.FAIL, RunStatus.FAILURE],
+  [Status.SEEN, RunStatus.SEEN],
+]);
+
+export const mapStatusRun = (status?: Status): RunStatus | undefined => {
+  return status ? STATUS_RUN_STATUS_MAP.get(status) : undefined;
+};
+
+export const mapStatus = (apiStatus?: RunStatus | string): Status => {
+  if (apiStatus?.toLowerCase() === RunStatus.SUCCESS) {
     return Status.OK;
   }
-  if (apiStatus.toLowerCase() === RunStatus.FAILURE) {
+  if (apiStatus?.toLowerCase() === RunStatus.FAILURE) {
     return Status.FAIL;
   }
-  if (apiStatus.toLowerCase() === RunStatus.SEEN) {
+  if (apiStatus?.toLowerCase() === RunStatus.SEEN) {
     return Status.SEEN;
   }
   return Status.NOT_ACTIVATED;

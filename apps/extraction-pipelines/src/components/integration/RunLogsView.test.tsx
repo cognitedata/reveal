@@ -11,7 +11,7 @@ import {
   mockDataRunsResponse,
   mockError,
 } from 'utils/mockResponse';
-import { useRuns } from 'hooks/useRuns';
+import { useFilteredRuns } from 'hooks/useRuns';
 import { TableHeadings } from 'components/table/IntegrationTableCol';
 import { RunTableHeading } from 'components/integration/RunLogsCols';
 import { trackUsage } from 'utils/Metrics';
@@ -19,7 +19,7 @@ import { SINGLE_INTEGRATION_RUNS } from 'utils/constants';
 
 jest.mock('hooks/useRuns', () => {
   return {
-    useRuns: jest.fn(),
+    useFilteredRuns: jest.fn(),
   };
 });
 describe('RunLogsView', () => {
@@ -28,7 +28,7 @@ describe('RunLogsView', () => {
   });
 
   it('renders error on request fail', () => {
-    useRuns.mockReturnValue(mockError);
+    useFilteredRuns.mockReturnValue(mockError);
     const mockIntegration = getMockResponse()[0];
     const { wrapper } = renderWithReQueryCacheSelectedIntegrationContext(
       new QueryClient(),
@@ -49,7 +49,7 @@ describe('RunLogsView', () => {
   });
 
   it('renders runs on success', () => {
-    useRuns.mockReturnValue({ data: mockDataRunsResponse });
+    useFilteredRuns.mockReturnValue({ data: mockDataRunsResponse });
     const mockIntegration = getMockResponse()[0];
     const { wrapper } = renderWithReQueryCacheSelectedIntegrationContext(
       new QueryClient(),
@@ -62,8 +62,9 @@ describe('RunLogsView', () => {
     render(<IntegrationHealth integration={mockIntegration} />, { wrapper });
     expect(screen.getByText(RunTableHeading.TIMESTAMP)).toBeInTheDocument();
     expect(
-      screen.getByText(new RegExp(TableHeadings.STATUS, 'i'))
+      screen.getByText(`${TableHeadings.STATUS} - ALL`) // status filter btn
     ).toBeInTheDocument();
+    expect(screen.getByText(TableHeadings.STATUS)).toBeInTheDocument();
     expect(screen.getByText(RunTableHeading.MESSAGE)).toBeInTheDocument();
 
     expect(screen.getAllByText(Status.FAIL).length).toEqual(2);

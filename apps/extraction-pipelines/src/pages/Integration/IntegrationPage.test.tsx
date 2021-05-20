@@ -14,7 +14,7 @@ import {
 } from 'utils/mockResponse';
 import { TableHeadings } from 'components/table/IntegrationTableCol';
 import { RunTableHeading } from 'components/integration/RunLogsCols';
-import { useRuns } from 'hooks/useRuns';
+import { useFilteredRuns, useRuns } from 'hooks/useRuns';
 import IntegrationPage from 'pages/Integration/IntegrationPage';
 
 jest.mock('react-router-dom', () => {
@@ -35,6 +35,7 @@ jest.mock('hooks/useIntegration', () => {
 jest.mock('hooks/useRuns', () => {
   return {
     useRuns: jest.fn(),
+    useFilteredRuns: jest.fn(),
   };
 });
 describe('IntegrationPage', () => {
@@ -72,6 +73,9 @@ describe('IntegrationPage', () => {
     });
     useRouteMatch.mockReturnValue({ path: '/', url: '/' });
     useRuns.mockReturnValue({ data: mockDataRunsResponse.items });
+    useFilteredRuns.mockReturnValue({
+      data: { items: mockDataRunsResponse.items },
+    });
     const { wrapper } = renderWithReQueryCacheSelectedIntegrationContext(
       new QueryClient(),
       PROJECT_ITERA_INT_GREEN,
@@ -97,8 +101,8 @@ describe('IntegrationPage', () => {
     ).not.toBeInTheDocument();
     expect(screen.getByText(RunTableHeading.TIMESTAMP)).toBeInTheDocument();
     expect(
-      screen.getByText(new RegExp(TableHeadings.STATUS, 'i'))
-    ).toBeInTheDocument();
+      screen.getAllByText(new RegExp(TableHeadings.STATUS, 'i')).length
+    ).toEqual(2); // filter and heading
     expect(screen.getByText(RunTableHeading.MESSAGE)).toBeInTheDocument();
   });
 });
