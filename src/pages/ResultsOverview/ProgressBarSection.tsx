@@ -8,7 +8,7 @@ import { ResourceEntriesType } from 'modules/types';
 import LoadingProgress from 'components/LoadingProgress';
 import { useParsingJob } from 'modules/contextualization/pnidParsing/hooks';
 import useInterval from 'hooks/useInterval';
-import { pollJobResults } from '../../modules/contextualization/pnidParsing/actions';
+import { pollJobResults } from 'modules/contextualization/pnidParsing/actions';
 
 const ProgressBarSection = (): JSX.Element => {
   const dispatch = useDispatch();
