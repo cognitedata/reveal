@@ -6,7 +6,7 @@ import {
   useQueryClient,
   UseQueryOptions,
 } from 'react-query';
-import { FunctionCallStatus } from 'reducers/charts/types';
+import { Call, FunctionCallStatus } from 'reducers/charts/types';
 import {
   getCallStatus,
   getCallResponse,
@@ -84,7 +84,7 @@ export const useCallFunction = (externalId: string) => {
     return {
       functionId: fn.id,
       callId: call.id,
-    };
+    } as Call;
   });
 };
 
