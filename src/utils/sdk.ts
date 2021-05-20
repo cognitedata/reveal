@@ -13,7 +13,7 @@ export function getSdk(
     appId: string;
     baseUrl: string;
   } = {
-    appId: 'Cognite Charts',
+    appId: config.appId,
     baseUrl: CDF_API_BASE_URL,
   }
 ) {

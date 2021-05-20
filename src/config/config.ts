@@ -22,6 +22,10 @@ export type BaseSidecar = {
   infieldCacheApiBaseUrl: string;
 };
 
+export const getAppId = (): string => {
+  return 'Cognite Charts';
+};
+
 export const getSidecar = <T extends BaseSidecar>(): T => {
   // eslint-disable-next-line no-underscore-dangle
   return ((window as any).__cogniteSidecar as T) || {};
@@ -67,6 +71,7 @@ export const getEnvironment = (hostname = window.location.hostname): string => {
 };
 
 export default {
+  appId: getAppId(),
   appName: getAppName(),
   appsApiBaseURL: getAppsApiBaseUrl(),
   cdfApiBaseUrl: getCdfApiBaseUrl(),

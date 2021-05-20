@@ -32,7 +32,6 @@
     "@cognite/z-index": "^0.1.0",
     "@sentry/browser": "^5.30.0",
     "antd": "^4.15.6",
-    "axios": "^0.21.1",
     "date-fns": "^2.21.2",
     "dayjs": "^1.10.4",
     "dotenv": "^9.0.2",

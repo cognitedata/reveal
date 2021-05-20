@@ -1,4 +1,4 @@
-import axios from 'axios';
+import { CogniteClient } from '@cognite/sdk';
 import config from 'config';
 import { getSdk } from './sdk';
 
@@ -17,10 +17,19 @@ const CDF_API_BASE_URL = config.cdfApiBaseUrl;
 const sdk = getSdk();
 
 const getServiceClient = () => {
-  return axios.create({
-    baseURL: useBackendService ? BACKEND_SERVICE_BASE_URL : CDF_API_BASE_URL,
-    headers: sdk.getDefaultRequestHeaders(),
+  const client = new CogniteClient({
+    appId: config.appId,
+    baseUrl: useBackendService ? BACKEND_SERVICE_BASE_URL : CDF_API_BASE_URL,
   });
+
+  client.loginWithOAuth({
+    project: sdk.project,
+    accessToken: sdk
+      .getDefaultRequestHeaders()
+      .Authorization.split('Bearer ')[1],
+  });
+
+  return client;
 };
 
 export const getCalls = async (fnId: number) => {
@@ -48,7 +57,7 @@ export async function callFunction(functionId: number, data?: object) {
     .post(
       `/api/playground/projects/${sdk.project}/functions/${functionId}/call`,
       {
-        data,
+        data: { data },
       }
     )
     .then((r) => r.data);
