@@ -49,6 +49,7 @@ export type Call = {
   // Call date is also available from the function api but this allows us to sort chronologically
   // based on firebase data
   callDate: number;
+  hash?: number;
 };
 
 export type ChartWorkflow = {

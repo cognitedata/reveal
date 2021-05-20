@@ -4,6 +4,7 @@ import {
   ChartWorkflow,
   FunctionCallStatus,
   ChartTimeSeries,
+  Call,
 } from 'reducers/charts/types';
 import {
   Button,
@@ -18,12 +19,12 @@ import FunctionCall from 'components/FunctionCall';
 import { updateWorkflow, removeWorkflow } from 'utils/charts';
 import EditableText from 'components/EditableText';
 import { units } from 'utils/units';
-import { Modes } from 'pages/types';
 import { useCallFunction } from 'utils/backendService';
 import { getStepsFromWorkflow } from 'utils/transforms';
 import { calculateGranularity } from 'utils/timeseries';
 import { isWorkflowRunnable } from 'components/NodeEditor/utils';
 import { AppearanceDropdown } from 'components/AppearanceDropdown';
+import { getHash } from 'utils/hash';
 import {
   SourceItem,
   SourceSquare,
@@ -55,7 +56,7 @@ type Props = {
   isSelected?: boolean;
   onRowClick?: (id?: string) => void;
   onInfoClick?: (id?: string) => void;
-  setMode?: (m: Modes) => void;
+  openNodeEditor?: () => void;
   mode: string;
   mutate: (c: Chart) => void;
 };
@@ -65,17 +66,16 @@ export default function WorkflowRow({
   onRowClick = () => {},
   onInfoClick = () => {},
   mode,
-  setMode = () => {},
+  openNodeEditor = () => {},
   isSelected = false,
   mutate,
 }: Props) {
-  const { mutate: callFunction, data, isSuccess, reset } = useCallFunction(
+  const { mutate: callFunction, isSuccess } = useCallFunction(
     'simple_calc-master'
   );
 
   const [isEditingName, setIsEditingName] = useState<boolean>(false);
-
-  // Increasing this will cause a fresh render where the dropdown is closed
+  const [lastSuccessfulCall, setLastSuccessfulCall] = useState<Call>();
   const { id, enabled, color, name, calls, unit, preferredUnit } = workflow;
   const call = calls?.sort((c) => c.callDate)[0];
   const isWorkspaceMode = mode === 'workspace';
@@ -106,24 +106,56 @@ export default function WorkflowRow({
   );
 
   useEffect(() => {
-    if (computation) {
-      callFunction({
-        data: { computation_graph: computation },
-      });
+    if (!computation) {
+      return;
     }
-  }, [computation, callFunction]);
+    if (call?.hash === getHash(computation)) {
+      return;
+    }
+
+    callFunction(
+      {
+        data: { computation_graph: computation },
+      },
+      {
+        onSuccess(res) {
+          setLastSuccessfulCall(res);
+        },
+      }
+    );
+  }, [computation, callFunction, setLastSuccessfulCall, call]);
 
   useEffect(() => {
-    if (isSuccess && data) {
-      const newCall = { ...data, callDate: Date.now() };
-      mutate(
-        updateWorkflow(chart, workflow.id, {
-          calls: [newCall],
-        })
-      );
-      reset();
+    if (!computation) {
+      return;
     }
-  }, [chart, workflow.id, data, isSuccess, mutate, reset, call]);
+    if (!lastSuccessfulCall) {
+      return;
+    }
+    if (call?.callId === lastSuccessfulCall.callId) {
+      return;
+    }
+
+    const newCall = {
+      ...lastSuccessfulCall,
+      callDate: Date.now(),
+      hash: getHash(computation),
+    };
+
+    mutate(
+      updateWorkflow(chart, workflow.id, {
+        calls: [newCall],
+      })
+    );
+  }, [
+    chart,
+    workflow.id,
+    isSuccess,
+    mutate,
+    computation,
+    lastSuccessfulCall,
+    call,
+  ]);
 
   const inputUnitOption = units.find(
     (unitOption) => unitOption.value === unit?.toLowerCase()
@@ -326,10 +358,7 @@ export default function WorkflowRow({
             <Dropdown
               content={
                 <WorkflowMenu chart={chart} id={id}>
-                  <Menu.Item
-                    onClick={() => setMode('editor')}
-                    appendIcon="YAxis"
-                  >
+                  <Menu.Item onClick={openNodeEditor} appendIcon="YAxis">
                     <span>Edit calculation</span>
                   </Menu.Item>
                 </WorkflowMenu>

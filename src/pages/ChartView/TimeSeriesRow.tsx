@@ -28,6 +28,7 @@ import { functionResponseKey, useCallFunction } from 'utils/backendService';
 import FunctionCall from 'components/FunctionCall';
 import { StatisticsResult } from 'components/DetailsSidebar';
 import * as backendApi from 'utils/backendApi';
+import { trackUsage } from 'utils/metrics';
 import {
   SourceItem,
   SourceCircle,
@@ -385,6 +386,7 @@ export default function TimeSeriesRow({
                 value={name || 'noname'}
                 onChange={(value) => {
                   update(id, { name: value });
+                  trackUsage('ChartView.RenameTimeSeries');
                   setIsEditingName(false);
                 }}
                 onCancel={() => setIsEditingName(false)}

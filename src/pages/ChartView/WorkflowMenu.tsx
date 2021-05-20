@@ -4,6 +4,7 @@ import { useUpdateChart } from 'hooks/firebase';
 import { Chart } from 'reducers/charts/types';
 import { duplicateWorkflow } from 'utils/charts';
 import { useLoginStatus } from 'hooks';
+import { trackUsage } from 'utils/metrics';
 
 type Props = {
   chart: Chart;
@@ -20,7 +21,10 @@ export default function WorkflowMenu({ id, chart, children }: Props) {
   if (!login?.user || !wf) {
     return null;
   }
-  const duplicate = () => mutate(duplicateWorkflow(chart, id));
+  const duplicate = () => {
+    mutate(duplicateWorkflow(chart, id));
+    trackUsage('ChartView.DuplicateCalculation');
+  };
 
   return (
     <Menu>
