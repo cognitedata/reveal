@@ -29,7 +29,7 @@ export const getColumns = (resourceType: ResourceType) => {
       title: 'Preview',
       key: 'preview',
       width: 80,
-      align: 'center' as 'center',
+      align: 'left',
       render: (resource: any) => (
         <Flex row align justify>
           <Popover
