@@ -2,25 +2,16 @@
 
 ##
 ## This script:
-## - runs the testcafe server
-## - runs the testcafe test runner
+## - runs the testcafe tests
+##
 ##
 ## Useful for:
-## - e2e from jenkins
+## - running the testcafe tests in jenkins
 ##
 
 SERVE_PORT=11111
 
-echo "Server using port: $SERVE_PORT"
-
-yarn kill-port --port $SERVE_PORT
-
-echo ' '
-echo '-> Starting testcafe server (from build) and running tests'
-echo ' '
-
-# other useful testcafe options:
-# --concurrency 3 \
+echo "Runner using port: $SERVE_PORT"
 
 BASE_URL=http://localhost:$SERVE_PORT \
   testcafe \
@@ -31,4 +22,3 @@ BASE_URL=http://localhost:$SERVE_PORT \
     --screenshots testcafe/screenshots \
     --video testcafe/videos \
     --video-options failedOnly=true \
-    --app "npx serve -s build -l $SERVE_PORT"

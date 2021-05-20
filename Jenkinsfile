@@ -125,12 +125,23 @@ static final Map<String, String> CONTEXTS = [
 // copy the entire node_modules directory tree as well.
 static final String[] DIRS = [
   'lint',
-  'testcafe',
   'unit-tests',
   'storybook',
   'preview',
   'staging',
   'production',
+]
+
+def fakeIdpEnvVars = [
+    envVar(key: 'PORT', value: '8200'),
+    envVar(key: 'IDP_USER_ID', value: 'user'),
+    envVar(key: 'IDP_CLUSTER', value: 'azure-dev'),
+    envVar(key: 'IDP_TOKEN_ID', value: 'demo-app-e2e'),
+    secretEnvVar(
+      key: 'PRIVATE_KEY',
+      secretName: 'react-demo-app-e2e-azure-dev', // <- project name
+      secretKey: 'private-key',
+    ),
 ]
 
 def pods = { body ->
@@ -142,15 +153,10 @@ def pods = { body ->
         sentryDsn: SENTRY_DSN,
         locizeProjectId: LOCIZE_PROJECT_ID,
         mixpanelToken: MIXPANEL_TOKEN,
-          envVars: [
-            envVar(key: 'BRANCH_NAME', value: env.BRANCH_NAME),
-            envVar(key: 'CHANGE_ID', value: env.CHANGE_ID),
-            secretEnvVar(
-              key: 'COGNITE_API_KEY',
-              secretName: 'react-demo-app-testing-publicdata',
-              secretKey: 'key', // key for publicdata tenant
-            )
-          ] 
+        envVars: [
+          envVar(key: 'BRANCH_NAME', value: env.BRANCH_NAME),
+          envVar(key: 'CHANGE_ID', value: env.CHANGE_ID),
+        ]
       ) {
         // This enables codecov for the repo. If this fails to start, then
         // do the following:
@@ -162,7 +168,9 @@ def pods = { body ->
         //
         // If you don't want codecoverage, then you can just remove this.
         codecov.pod {
-          testcafe.pod() {
+          testcafe.pod(
+            fakeIdpEnvVars: fakeIdpEnvVars,
+          ) {
             properties([
               buildDiscarder(logRotator(daysToKeepStr: '30', numToKeepStr: '20'))
             ])
@@ -206,26 +214,30 @@ pods {
     threadPool(
       tasks: [
         'Lint': {
-          stageWithNotify('Check linting', CONTEXTS.lint) {
-            dir('lint') {
-              container('fas') {
-                sh('yarn lint')
+          retryWithBackoff(2) { // <- retry this, since pod failures are not uncommon (and this step is pretty quick)
+            stageWithNotify('Check linting', CONTEXTS.lint) {
+              dir('lint') {
+                container('fas') {
+                  sh('yarn lint')
+                }
               }
             }
           }
         },
 
         'Unit tests': {
-          stageWithNotify('Execute unit tests', CONTEXTS.unitTests) {
-            dir('unit-tests') {
-              container('fas') {
-                sh('yarn test')
-                junit(allowEmptyResults: true, testResults: '**/junit.xml')
-                if (isPullRequest) {
-                  summarizeTestResults()
-                }
-                stage("Upload coverage reports") {
-                  codecov.uploadCoverageReport()
+          retryWithBackoff(2) { // <- retry this, since pod failures are not uncommon (and this step is pretty quick)
+            stageWithNotify('Execute unit tests', CONTEXTS.unitTests) {
+              dir('unit-tests') {
+                container('fas') {
+                  sh('yarn test')
+                  junit(allowEmptyResults: true, testResults: '**/junit.xml')
+                  if (isPullRequest) {
+                    summarizeTestResults()
+                  }
+                  stage("Upload coverage reports") {
+                    codecov.uploadCoverageReport()
+                  }
                 }
               }
             }
@@ -276,35 +288,33 @@ pods {
             }
           }
         },
-
-        'E2e': {
-          testcafe.runE2EStage(
-            //
-            // multi-branch mode:
-            //
-            // We don't need to run end-to-end tests against release because
-            // we're in one of two states:
-            //   1. Cutting a new release
-            //      In this state, staging has e2e already passing.
-            //   2. Cherry-picking in a hotfix
-            //      In this state, the PR couldn't have been merged without
-            //      passing end-to-end tests.
-            // As such, we can skip end-to-end tests on release branches. As
-            // a side-effect, this will make hotfixes hit production faster!
-            // shouldExecute: !isRelease,
-
-            //
-            // single-branch mode:
-            //
-            shouldExecute: true,
-
-            buildCommand: 'yarn testcafe:build',
-            runCommand: 'yarn testcafe:start'
-          )
-        },
       ],
       workers: 3,
     )
+
+    if (isPullRequest) {
+      testcafe.runE2EStage(
+        //
+        // multi-branch mode:
+        //
+        // We don't need to run end-to-end tests against release because
+        // we're in one of two states:
+        //   1. Cutting a new release
+        //      In this state, staging has e2e already passing.
+        //   2. Cherry-picking in a hotfix
+        //      In this state, the PR couldn't have been merged without
+        //      passing end-to-end tests.
+        // As such, we can skip end-to-end tests on release branches. As
+        // a side-effect, this will make hotfixes hit production faster!
+        //
+        // single-branch mode: always run e2e
+        //
+        shouldExecute: VERSIONING_STRATEGY == "single-branch" ? true : !isRelease,
+
+        dir: 'production',
+        runCommand: 'npx react-scripts build && ./scripts/testcafe-serve-run.sh'
+      )
+    }
 
     if (isPullRequest) {
       stageWithNotify('Publish preview build', CONTEXTS.publishPreview) {
@@ -320,7 +330,6 @@ pods {
       stageWithNotify('Publish staging build', CONTEXTS.publishStaging) {
         dir('staging') {
           fas.publish()
-
         }
 
         // in 'single-branch' mode we always publish 'staging' and 'master' builds

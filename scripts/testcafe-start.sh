@@ -1,14 +1,37 @@
 #!/bin/sh
 
+##
+## This script:
+## - starts the fake IDP
+## - runs the testcafe server (from src)
+##
+## Useful for:
+## - developing your tests locally
+##
+
 yarn kill-port --port 11111
+
+echo ' '
+echo '-> Starting FakeIdP service'
+
+IDP_PID=$!
+./scripts/startIdP.sh &
 
 SERVE_PID=$!
 
-REACT_APP_E2E_MODE=true \
-  PORT=11111 \
-  HTTPS=false \
-  yarn start;
+echo ' '
+echo '-> Starting testcafe server (from src)'
+echo ' '
+
+PORT=11111 yarn start
 EXIT_CODE=$?
 
-kill $SERVE_PID
+function cleanup {
+  echo ' '
+  echo '-> Stopping services'
+  echo ' '
+  kill $IDP_PID
+  kill $SERVE_PID
+}
+
 exit $EXIT_CODE

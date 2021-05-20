@@ -19,8 +19,10 @@
 .env.production.local
 
 # testcafe
+*.jwk-key.json
 testcafe/screenshots
 testcafe/videos
+testcafe/logs
 res.xml
 
 npm-debug.log*

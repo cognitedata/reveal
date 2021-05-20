@@ -19,10 +19,6 @@ case "$variant": in
     export REACT_APP_ENV="preview"
     ;;
 
-  test*)
-    export REACT_APP_ENV="staging"
-    ;;
-
   *)
     echo "Unknown build type: ${variant}"
     exit 1

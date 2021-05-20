@@ -35,7 +35,7 @@ End-to-end tests are written and run using the [Testcafe](https://github.com/Dev
 To run testcafe tests locally, first start the app on port 11111
 
 ```sh
-COGNITE_API_KEY=xxxxxx yarn testcafe:start-live
+yarn testcafe:start-live
 ```
 
 In order to run tests in the browser and keep the browser window open to watch and auto re-run on test file changes, run in a separate tab the following command:

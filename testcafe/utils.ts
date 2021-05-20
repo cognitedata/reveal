@@ -32,7 +32,6 @@ export const logErrors = async (
 ) => {
   const logArray = (arr: any[] = [], name: string = '') => {
     if (arr.length > 0) {
-      // eslint-disable-next-line no-console
       log(name, false, arr);
     }
   };

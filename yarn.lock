@@ -1362,20 +1362,13 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@cognite/auth-utils@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@cognite/auth-utils/-/auth-utils-1.0.0.tgz#63a0af7b578d5f6cab788f43bd0cb90d94d4a1ab"
-  integrity sha512-Jbr0+NAtkEf205u5uGf7k2EUOAdoDeOQmA4sYr0uOKA2m5IQcJ2KCI/S7pk7RUjvS3hgQV2dNmmueOvnyug6UA==
+"@cognite/auth-utils@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@cognite/auth-utils/-/auth-utils-1.0.3.tgz#b4179964b14dda8a8e4b6f553115c02133521091"
+  integrity sha512-CeK4YoDc5pBjh0V987cLn/e5oFN7Hgvn9HgxL+0regK2wKbImaq4DZBz1FdxmANygBLQbwiYSr7n/sCM1Kclsg==
   dependencies:
     "@cognite/sdk" "^4.0.3"
-    lodash "^4.17.20"
-
-"@cognite/auth-utils@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@cognite/auth-utils/-/auth-utils-1.0.1.tgz#a58d33c6c9ded9dfc3df957f975b3b204790e877"
-  integrity sha512-8/U1BavDWHVTSTgq7GzbYr42mqJAadU7OcMF+CuYmHTZ97DO7zVlT1K7p6U0E64rCrPJalQTsMqQPz6LalTkNg==
-  dependencies:
-    "@cognite/sdk" "^4.0.3"
+    "@cognite/storage" "0.1.1"
     lodash "^4.17.20"
 
 "@cognite/cogs.js@^3.10.0", "@cognite/cogs.js@^3.9.0":
@@ -1435,28 +1428,28 @@
     mixpanel-browser "^2.35.0"
     react "^17.0.1"
 
-"@cognite/react-container@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@cognite/react-container/-/react-container-1.0.1.tgz#41c62b124360e50c339170831519c754bd7ba109"
-  integrity sha512-7gV6vx14YkfjjKSuYlqcMpkE/8Zle3HzuSjBLm7V0yrs0up5oqq/6E4Aw5jHBHbANyMqPrpE+FMi5Z7UbwA2+A==
+"@cognite/react-container@^1.1.2":
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/@cognite/react-container/-/react-container-1.1.2.tgz#5ebbbddb6888f11cb1532e187da19d8221719ee4"
+  integrity sha512-FdzfDHu65gccImS2mBP3KjQgzBKpN3Y5eFeHDTQprdITaugEsrRCtf0RaOPevk+g9h3xRb6+5GhW0+N4QcsfQg==
   dependencies:
-    "@cognite/auth-utils" "^1.0.1"
+    "@cognite/auth-utils" "^1.0.3"
     "@cognite/intercom-helper" "^0.1.2"
     "@cognite/metrics" "^1.1.0"
-    "@cognite/react-errors" "^0.1.0"
-    "@cognite/react-i18n" "^0.3.2"
+    "@cognite/react-errors" "^0.3.0"
+    "@cognite/react-i18n" "^0.4.0"
     "@cognite/react-loop-detector" "^0.1.0"
     "@cognite/react-sentry" "^0.1.1"
-    "@cognite/react-tenant-selector" "^1.0.0"
+    "@cognite/react-tenant-selector" "^1.2.1"
     "@cognite/sdk" "^4.0.3"
     jwt-decode "^3.0.0"
     react-redux "^7.2.2"
     tslib "^2.2.0"
 
-"@cognite/react-errors@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@cognite/react-errors/-/react-errors-0.1.0.tgz#37a80efced4947ddad0a9d879bcf4a71e49c5378"
-  integrity sha512-1ZvgcGc6eWrUL7Qe2wUJ/GknpYiIvkYyF3Nhr6DcX+ilz3DEXCwwHj6RSprgYNn7XHZAAuMJ8jTSBf0czWk9KA==
+"@cognite/react-errors@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@cognite/react-errors/-/react-errors-0.2.0.tgz#2ee5dc9ac27ff7d3f792125d1c2d04e347bfde4e"
+  integrity sha512-7MeKFslVEyPoH0QS7qgfPzUpjrCutPWnQkl8V6YwlReLSnBCOgDC7w3zr2NOJU32APQq9OsmBMH0IWFKnYz/Fw==
   dependencies:
     "@cognite/cogs.js" "^3.10.0"
     "@cognite/metrics" "^1.0.0"
@@ -1465,12 +1458,27 @@
     i18next "^19.6.0"
     lodash "^4.17.19"
     rc-collapse "^2.0.0"
-    react "^16.13.1"
     react-i18next "^11.7.0"
     styled-components "^5.1.1"
     tslib "^2.2.0"
 
-"@cognite/react-i18n@^0.3.1", "@cognite/react-i18n@^0.3.2":
+"@cognite/react-errors@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@cognite/react-errors/-/react-errors-0.3.0.tgz#7601107ce60fd108ec23e1e06a52a55a99a2efd8"
+  integrity sha512-NOxGPuxceTFGkH7ad+iaosbrwbYZFFhh1nsRJXfh+FI9jXP8pgLVupsNJ9LD76AeTHIc26F+ULp+JhKQgFK4iA==
+  dependencies:
+    "@cognite/cogs.js" "^3.10.0"
+    "@cognite/metrics" "^1.1.0"
+    "@cognite/react-i18n" "^0.4.0"
+    "@sentry/browser" "^5.19.2"
+    i18next "^19.6.0"
+    lodash "^4.17.19"
+    rc-collapse "^2.0.0"
+    react-i18next "^11.8.15"
+    styled-components "^5.1.1"
+    tslib "^2.2.0"
+
+"@cognite/react-i18n@^0.3.2":
   version "0.3.2"
   resolved "https://registry.yarnpkg.com/@cognite/react-i18n/-/react-i18n-0.3.2.tgz#86a1b6854a4c6d356fcc931b118cb3311ec56ad3"
   integrity sha512-kttiy7jZ1URKzsYKlNxnFNMx+N0OpjLpH3Ty7o+S9TJAB3wzVFFjJms7XOfbXOhHj08/APcak/QLkH2aKtYUNA==
@@ -1482,6 +1490,21 @@
     i18next-pseudo "^2.2.0"
     i18next-xhr-backend "^3.2.2"
     react-i18next "^11.8.5"
+
+"@cognite/react-i18n@^0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@cognite/react-i18n/-/react-i18n-0.4.0.tgz#4f53413e9f884249b0227c186a707abbb76588d3"
+  integrity sha512-0jbFd5poLn4KJ6MnM9Fb4hm/u2Loz8erpsNLy7jUNJRSvYdyo9XyWw+HsmlKiL9lgMtsH35GNPqMExEVGx/WwA==
+  dependencies:
+    "@cognite/storage" "^0.1.0"
+    i18next "^19.8.4"
+    i18next-chained-backend "^2.0.1"
+    i18next-localstorage-backend "^3.1.2"
+    i18next-locize-backend "^4.2.2"
+    i18next-pseudo "^2.2.0"
+    i18next-xhr-backend "^3.2.2"
+    react-i18next "^11.8.15"
+    tslib "^2.2.0"
 
 "@cognite/react-loop-detector@^0.1.0":
   version "0.1.0"
@@ -1496,14 +1519,15 @@
     "@sentry/browser" "^6.2.1"
     tslib "^2.2.0"
 
-"@cognite/react-tenant-selector@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@cognite/react-tenant-selector/-/react-tenant-selector-1.0.0.tgz#eab775fa07f5a21cdeb60746a906286ee23e1ec2"
-  integrity sha512-XJcl/9PZsWwRSCSu+0irgoatHcZxCF0/Q2BwUHSp2h0K9ykPaoYeaJEYxybRwoVQayJuaHXoc+GEQ79PZj0PGA==
+"@cognite/react-tenant-selector@^1.2.1":
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/@cognite/react-tenant-selector/-/react-tenant-selector-1.2.1.tgz#b3f4b74c38649baa744332805ce53488bfc1f107"
+  integrity sha512-o3bUGN4gyYax5PxN24rvIeYgfga5GzSAGK7ea+q5U13/1dIi9TY8IxkdadOWwDs2KG84B/h8WihVO7vwCB+4dQ==
   dependencies:
-    "@cognite/auth-utils" "^1.0.0"
+    "@cognite/auth-utils" "^1.0.3"
     "@cognite/metrics" "^1.0.0"
-    "@cognite/react-i18n" "^0.3.1"
+    "@cognite/react-i18n" "^0.4.0"
+    "@cognite/storage" "^0.1.1"
     axios "^0.21.1"
     react-helmet "^6.1.0"
     react-query "^3.7.1"
@@ -1521,13 +1545,21 @@
     query-string "^5.1.1"
     url "^0.11.0"
 
-"@cognite/sdk@^4.0.0", "@cognite/sdk@^4.0.3":
+"@cognite/sdk@^4.0.3", "@cognite/sdk@^4.0.4":
   version "4.0.4"
   resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-4.0.4.tgz#a3ce7ea084fa08b47f53378b386e29b65559dca4"
   integrity sha512-76ILFdeixZZvwNd6jhdCWwLMZwVT9NOeq54MD7aZh2SqzUAYIkffQzeq6Kj/3YsyvWuhJpz2OnqpXezaq3iQAQ==
   dependencies:
     "@cognite/sdk-core" "^2.1.2"
     lodash "^4.17.11"
+
+"@cognite/storage@0.1.1", "@cognite/storage@^0.1.0", "@cognite/storage@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@cognite/storage/-/storage-0.1.1.tgz#4500ad8239b2ac8278f7eb1dd2e3e18e68900cd7"
+  integrity sha512-/4tZsbJ4Q4B1CGA/VgRHuLJBJ+1dG5d/ecbJE5C4VQqjWwsF4lB23w3t4i6m3UC9OsB8gi4g/rVNBLat2s41sg==
+  dependencies:
+    "@cognite/metrics" "^1.1.0"
+    lodash "^4.17.20"
 
 "@csstools/convert-colors@^1.4.0":
   version "1.4.0"
@@ -5938,7 +5970,7 @@ create-react-context@0.3.0:
     gud "^1.0.0"
     warning "^4.0.3"
 
-cross-fetch@^3.0.4:
+cross-fetch@3.1.4, cross-fetch@^3.0.4:
   version "3.1.4"
   resolved "https://registry.yarnpkg.com/cross-fetch/-/cross-fetch-3.1.4.tgz#9723f3a3a247bf8b89039f3a380a9244e8fa2f39"
   integrity sha512-1eAtFWdIubi6T4XPy6ei9iUFoKpUkIF971QLN8lIvvvwueI65+Nw5haMNKUwfJxabqlIIDODJKGrQ66gxC0PbQ==
@@ -8867,7 +8899,7 @@ i18next-chained-backend@^2.0.1:
   dependencies:
     "@babel/runtime" "^7.13.10"
 
-i18next-localstorage-backend@^3.1.1:
+i18next-localstorage-backend@^3.1.1, i18next-localstorage-backend@^3.1.2:
   version "3.1.2"
   resolved "https://registry.yarnpkg.com/i18next-localstorage-backend/-/i18next-localstorage-backend-3.1.2.tgz#415fcac42d6d66ff8bc878d269c5b5719fdedc2c"
   integrity sha512-J81qf9atTAc9iMdHUNKJeAWgUsFvqbxfHIIztmF62tOaINA2AJk0kewJjm8LQDuArkiuW9RhQPbhqbyeZut35g==
@@ -8880,6 +8912,13 @@ i18next-locize-backend@^4.1.1:
   integrity sha512-piEGKY4e79S+zcxbEy7VwN66RZZKRx3qLzLJZNhHN251IxF1HkvhNiz+kNSla7Y/k25T1F2WOU6L9OlSjEwvtw==
   dependencies:
     node-fetch "2.6.1"
+
+i18next-locize-backend@^4.2.2:
+  version "4.2.2"
+  resolved "https://registry.yarnpkg.com/i18next-locize-backend/-/i18next-locize-backend-4.2.2.tgz#fbc5735bfc039b88b0fd4a861964258edda6b29d"
+  integrity sha512-HaAYBZmI0jruOf0NIonT24KJmPAHfuhtWs3CBEMxcEznQXv0zKgHzwJIIuofIwBRYKrpqiJcqJr++cVD/T+Gcw==
+  dependencies:
+    cross-fetch "3.1.4"
 
 i18next-pseudo@^2.2.0:
   version "2.2.1"
@@ -13493,14 +13532,14 @@ react-docgen@^5.0.0:
     node-dir "^0.1.10"
     strip-indent "^3.0.0"
 
-react-dom@17.0.1:
-  version "17.0.1"
-  resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-17.0.1.tgz#1de2560474ec9f0e334285662ede52dbc5426fc6"
-  integrity sha512-6eV150oJZ9U2t9svnsspTMrWNyHc6chX0KzDeAOXftRa8bNeOKTTfCJ7KorIwenkHd2xqVTBTCZd79yk/lx/Ug==
+react-dom@17.0.2:
+  version "17.0.2"
+  resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-17.0.2.tgz#ecffb6845e3ad8dbfcdc498f0d0a939736502c23"
+  integrity sha512-s4h96KtLDUQlsENhMn1ar8t2bEa+q/YAtj8pPPdIjPDGBDIVNsrD9aXNWqspUe6AzKCIG0C1HZZLqLV7qpOBGA==
   dependencies:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
-    scheduler "^0.20.1"
+    scheduler "^0.20.2"
 
 react-draggable@^4.4.3:
   version "4.4.3"
@@ -13549,7 +13588,7 @@ react-helmet@^6.1.0:
     react-fast-compare "^3.1.1"
     react-side-effect "^2.1.0"
 
-react-i18next@^11.7.0, react-i18next@^11.8.10, react-i18next@^11.8.5:
+react-i18next@^11.7.0, react-i18next@^11.8.10, react-i18next@^11.8.15, react-i18next@^11.8.5:
   version "11.8.15"
   resolved "https://registry.yarnpkg.com/react-i18next/-/react-i18next-11.8.15.tgz#89450d585298f18d4a8eb1628b0868863f3a4767"
   integrity sha512-ZbKcbYYKukgDL0MiUWKJTEsEftjSTNVZv67/V+SjPqTRwuF/aL4NbUtuEcb4WjHk0HyZ1M+2wGd07Fp0RUNHKA==
@@ -13823,15 +13862,6 @@ react@17.0.2, react@^17.0.1:
   dependencies:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
-
-react@^16.13.1:
-  version "16.14.0"
-  resolved "https://registry.yarnpkg.com/react/-/react-16.14.0.tgz#94d776ddd0aaa37da3eda8fc5b6b18a4c9a3114d"
-  integrity sha512-0X2CImDkJGApiAlcf0ODKIneSwBPhqJawOa5wCtKbu7ZECrmS26NvtSILynQ66cgkT/RJ4LidJOc3bUESwmU8g==
-  dependencies:
-    loose-envify "^1.1.0"
-    object-assign "^4.1.1"
-    prop-types "^15.6.2"
 
 read-file-relative@^1.2.0:
   version "1.2.0"
@@ -14528,7 +14558,7 @@ saxes@^5.0.1:
   dependencies:
     xmlchars "^2.2.0"
 
-scheduler@^0.20.1:
+scheduler@^0.20.2:
   version "0.20.2"
   resolved "https://registry.yarnpkg.com/scheduler/-/scheduler-0.20.2.tgz#4baee39436e34aa93b4874bddcbf0fe8b8b50e91"
   integrity sha512-2eWfGgAqqWFGqtdMmcL5zCMK1U8KlXv8SQFGglL3CEtd0aDVDWgeF/YoCmvln55m5zSk3J/20hTaSBeSObsQDQ==

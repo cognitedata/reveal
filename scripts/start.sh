@@ -21,8 +21,9 @@ if is_demo_app ; then
   export REACT_APP_LOCIZE_API_KEY="${REACT_APP_LOCIZE_API_KEY:-7a10ae6b-49f3-4600-944d-009140ca6fc9}" # pragma: allowlist secret
 else
   export REACT_APP_LOCIZE_PROJECT_ID="${REACT_APP_LOCIZE_PROJECT_ID:-}"
-  export REACT_APP_LOCIZE_API_KEY="${REACT_APP_LOCIZE_API_KEY:-}" # pragma: allowlist secret
+  export REACT_APP_LOCIZE_API_KEY="${REACT_APP_LOCIZE_API_KEY:-}"
 fi
+export REACT_APP_LOCIZE_VERSION="latest"
 export REACT_APP_MIXPANEL_TOKEN="${REACT_APP_MIXPANEL_TOKEN:-}"
 export REACT_APP_MIXPANEL_DEBUG="${REACT_APP_MIXPANEL_DEBUG:-false}"
 export HTTPS=${HTTPS:-true}
