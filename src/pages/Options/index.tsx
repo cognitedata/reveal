@@ -21,7 +21,7 @@ export default function Options(props: Props) {
 
   const { tenant } = useContext(AppStateContext);
   const { workflowId } = useActiveWorkflow(step);
-  const { partialMatch, grayscale, minTokens } = useSelector(
+  const { partialMatch, minTokens } = useSelector(
     (state: RootState) => state.workflows.items[workflowId].options
   );
 
@@ -36,7 +36,7 @@ export default function Options(props: Props) {
   return (
     <Flex column style={{ width: '100%' }}>
       <PageTitle>P&ID options</PageTitle>
-      <Flex row grow style={{ marginTop: '24px' }}>
+      <Flex column grow style={{ marginTop: '24px' }}>
         <Card style={{ marginRight: '8px ' }}>
           <Card.Meta
             title={
@@ -53,24 +53,6 @@ export default function Options(props: Props) {
             description="Select to include matches where the P&ID tag names do not exactly match the asset list. 
             CDF finds matches by comparing similar characters, such as 0 and O, 8 and B. 
             Clear this option to only allow exact matches."
-          />
-        </Card>
-        <Card style={{ marginRight: '8px ' }}>
-          <Card.Meta
-            title={
-              <Checkbox
-                name="checkbox-grayscale"
-                value={grayscale}
-                onChange={(checked: boolean) => {
-                  dispatch(changeOptions({ grayscale: checked }));
-                }}
-              >
-                Grayscale P&ID
-              </Checkbox>
-            }
-            description="Select Grayscale P&ID to increase the speed of the matching and create SVG 
-            files with smaller file size. Clear this option to generate SVG files with the 
-            original source colors."
           />
         </Card>
         <Card>

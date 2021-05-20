@@ -39,6 +39,5 @@ export type WorkflowStep =
 
 export type WorkflowOptions = {
   partialMatch: boolean;
-  grayscale: boolean;
   minTokens: number;
 };
