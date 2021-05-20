@@ -26,15 +26,17 @@ const BlueText = styled.span`
 export const AddInfo = ({
   fieldValue,
   fieldName,
+  label,
 }: PropsWithoutRef<{
   fieldValue?: IntegrationFieldValue;
   fieldName: IntegrationFieldName;
+  label?: string;
 }>) => {
   if (!fieldValue) {
     return (
       <>
         <BluePlus />
-        <BlueText>add {splitWordsLowerCase(fieldName)}</BlueText>
+        <BlueText>add {label ?? splitWordsLowerCase(fieldName)}</BlueText>
       </>
     );
   }

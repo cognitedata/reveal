@@ -15,6 +15,7 @@ import {
 } from 'model/Integration';
 import RawTable from 'components/integrations/cols/RawTable';
 import EmailLink from 'components/buttons/EmailLink';
+import { minutesToHours } from 'utils/integrationUtils';
 
 interface DetailsValueViewProps {
   fieldValue: IntegrationFieldValue;
@@ -93,6 +94,11 @@ const DetailsValueView = ({ fieldValue, fieldName }: DetailsValueViewProps) => {
     }
     case 'name':
     case 'lastSuccess':
+    case 'skipNotificationsInMinutes': {
+      const min = fieldValue as number;
+      const hours = !!min && min > 0 ? minutesToHours(min) : '';
+      return <>{hours}</>;
+    }
     case 'lastFailure':
     case 'metadata':
     case 'description':

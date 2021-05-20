@@ -7,7 +7,9 @@ import {
   calculate,
   calculateStatus,
   createAddIntegrationInfo,
+  hoursToMinutes,
   isOwner,
+  minutesToHours,
   partition,
 } from './integrationUtils';
 
@@ -163,5 +165,24 @@ describe('createAddIntegrationInfo', () => {
       });
       expect(res).toEqual(expected);
     });
+  });
+});
+
+describe('minutesToHours', () => {
+  test('Converts minutes to hours', () => {
+    const res = minutesToHours(180);
+    expect(res).toEqual(3);
+  });
+
+  test('Handles undefined', () => {
+    const res = minutesToHours();
+    expect(res).toBeUndefined();
+  });
+});
+
+describe('hoursToMinutes', () => {
+  test('Converts hours to minutes', () => {
+    const res = hoursToMinutes(2);
+    expect(res).toEqual(120);
   });
 });

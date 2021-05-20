@@ -7,17 +7,18 @@ import {
 } from 'react-hook-form';
 import { DivFlex } from 'styles/flex/StyledFlex';
 import styled from 'styled-components';
-import { ErrorMessage } from '@hookform/error-message';
 import { ContactsFormInput } from 'pages/create/ContactsPage';
 import { InputController } from 'components/inputs/InputController';
 import { Hint, StyledLabel } from 'styles/StyledForm';
+import ValidationError from 'components/form/ValidationError';
 
-const HourWrapper = styled(DivFlex)`
+export const HourWrapper = styled(DivFlex)`
   #skipNotificationInHours {
     width: 3.5rem;
   }
   span {
     margin-left: 0.5rem;
+    margin-right: 0.5rem;
   }
 `;
 
@@ -28,7 +29,7 @@ export const CONFIG_HINT: Readonly<string> =
 export const CONFIG_LABEL: Readonly<string> =
   'Configure notification pause time period';
 export const HOURS_LABEL: Readonly<string> =
-  'Enter number of hours to pause sending notifications';
+  'Number of hours to pause sending notifications';
 export const HOURS_HINT: Readonly<string> =
   'Allowed pause time is between 1 and 24 hours';
 
@@ -74,17 +75,10 @@ export const NotificationConfig: FunctionComponent<NotificationConfigProps> = ({
             {HOURS_LABEL}
           </StyledLabel>
           <Hint id="skip-notification-in-hours-hint">{HOURS_HINT}</Hint>
-          <ErrorMessage
+          <ValidationError
             errors={errors}
             name="skipNotificationInHours"
-            render={({ message }) => (
-              <span
-                id="skipNotificationInHours-error"
-                className="error-message"
-              >
-                {message}
-              </span>
-            )}
+            id="skipNotificationInHours-error"
           />
           <HourWrapper>
             <InputController

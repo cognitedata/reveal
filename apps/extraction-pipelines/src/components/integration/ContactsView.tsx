@@ -11,6 +11,7 @@ import { DetailHeadingEditBtn } from 'components/buttons/DetailHeadingEditBtn';
 import { AddFieldValueBtn } from 'components/buttons/AddFieldValueBtn';
 import { EditModal } from 'components/modals/EditModal';
 import { ContactsSection } from 'components/integration/ContactsSection';
+import { EditNotification } from 'components/integration/edit/EditNotification';
 import styled from 'styled-components';
 import { sideBarSectionSpacing } from 'styles/StyledVariables';
 
@@ -69,6 +70,7 @@ export const ContactsView: FunctionComponent<ContactsViewProps> = () => {
       )}
       <EditModal visible={showModal} onCancel={hideModal} width={1024}>
         <ContactsSection />
+        <EditNotification />
       </EditModal>
     </Wrapper>
   );

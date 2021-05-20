@@ -86,6 +86,12 @@ export const updateContactField = (
     return c;
   });
 };
+export const minutesToHours = (hours?: number): number | undefined => {
+  return hours ? hours / MIN_IN_HOURS : undefined;
+};
+export const hoursToMinutes = (hours: number) => {
+  return hours * MIN_IN_HOURS;
+};
 
 export const updateContact = (
   contacts: User[],
@@ -155,7 +161,7 @@ export const createAddIntegrationInfo = (
     ...(source && { source }),
     ...(!!scheduleToStore && { schedule: scheduleToStore }),
     ...(skipNotificationInHours && {
-      skipNotificationsInMinutes: skipNotificationInHours * MIN_IN_HOURS,
+      skipNotificationsInMinutes: hoursToMinutes(skipNotificationInHours),
     }),
     ...(selectedRawTables && { rawTables: selectedRawTables }),
     ...(documentation && { documentation }),
