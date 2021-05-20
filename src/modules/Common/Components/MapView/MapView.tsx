@@ -1,14 +1,9 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
-
 import ReactMapboxGl, { Layer, Feature, Popup } from 'react-mapbox-gl';
-
-import { useSelector } from 'react-redux';
-import { RootState } from 'src/store/rootReducer';
-import { selectAllFiles } from 'src/modules/Common/filesSlice';
 import { FileInfo } from '@cognite/sdk';
 import * as MapboxGL from 'mapbox-gl';
-import { TableDataItem } from 'src/modules/Common/types';
+import { ResultData } from 'src/modules/Common/types';
 import { MAPBOX_TOKEN, MAPBOX_MAP_ID } from './constants';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { MapPopup } from './MapPopup';
@@ -20,19 +15,16 @@ const Mapbox = ReactMapboxGl({
   attributionControl: false,
 });
 
-export const MapView = (props: { data?: TableDataItem[] }) => {
+export const MapView = (props: { data?: ResultData[] }) => {
   const [selectedFile, setSelectedFile] = useState<FileInfo>();
   const [center, setCenter] = useState<[number, number]>();
   const [zoom] = useState<[number] | undefined>([2]);
 
   const fitBounds = undefined; // TODO: calculate this based on the provided data
 
-  // TODO: Use a more appropriate state than uploadedFiles when created
-  const selectedFiles = useSelector((state: RootState) =>
-    selectAllFiles(state.filesSlice).filter((item) =>
-      props.data?.map((f) => f.id).includes(item.id)
-    )
-  );
+  const selectedFiles = useMemo(() => {
+    return props.data || [];
+  }, [props.data]);
 
   const handleStyleLoad = (map: MapboxGL.Map) => map.resize();
 

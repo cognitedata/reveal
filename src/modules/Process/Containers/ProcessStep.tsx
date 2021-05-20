@@ -19,7 +19,11 @@ import {
 import { GridCellProps, GridTable } from '@cognite/data-exploration';
 import styled from 'styled-components';
 import { resetEditHistory } from 'src/modules/FileDetails/fileDetailsSlice';
-import { FileActions, TableDataItem } from 'src/modules/Common/types';
+import {
+  FileActions,
+  ResultData,
+  TableDataItem,
+} from 'src/modules/Common/types';
 import {
   selectAllFiles,
   setFileSelectState,
@@ -40,7 +44,7 @@ export default function ProcessStep() {
   const dispatch = useDispatch();
   const [currentView, setCurrentView] = useState<string>('list');
 
-  const tableData: Array<TableDataItem> = uploadedFiles.map((file) => {
+  const tableData: Array<ResultData> = uploadedFiles.map((file) => {
     const menuActions: FileActions = {
       showMetadataPreview: (fileId: number) => {
         dispatch(setSelectedFileId(fileId));
@@ -55,10 +59,9 @@ export default function ProcessStep() {
     };
 
     return {
-      id: file.id,
-      name: file.name,
-      mimeType: file.mimeType || '',
+      ...file,
       menu: menuActions,
+      mimeType: file.mimeType || '',
       selected: file.selected,
     };
   });

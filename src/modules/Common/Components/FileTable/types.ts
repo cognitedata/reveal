@@ -12,5 +12,5 @@ export type FileExplorerTableProps = Omit<
   totalCount: number;
   onRowSelect: (item: TableDataItem, selected: boolean) => void;
   onRowClick: (item: TableDataItem) => void;
-  selectedFileId: number | null;
+  selectedFileId?: number;
 };

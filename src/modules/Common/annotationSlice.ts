@@ -150,11 +150,7 @@ export const selectFileAnnotationsByType = createSelector(
 // helper functions
 const getSingleAnnotationCounts = (annotations: AnnotationPreview[]) => {
   let [modelGenerated, manuallyGenerated, verified, unhandled, rejected] = [
-    0,
-    0,
-    0,
-    0,
-    0,
+    0, 0, 0, 0, 0,
   ];
   annotations.forEach((annotation) => {
     if (annotation.source === 'user') {

@@ -53,9 +53,8 @@ export const AddAnnotationsFromEditModeAssetIds = createAsyncThunk<
       );
       const savedAnnotations = unwrapResult(savedAnnotationResponse);
 
-      const assetVisionAnnotations = AnnotationUtils.convertToVisionAnnotations(
-        savedAnnotations
-      );
+      const assetVisionAnnotations =
+        AnnotationUtils.convertToVisionAnnotations(savedAnnotations);
 
       dispatch(addTagAnnotations(assetVisionAnnotations));
 

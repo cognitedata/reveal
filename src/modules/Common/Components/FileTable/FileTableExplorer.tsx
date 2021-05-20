@@ -104,7 +104,6 @@ export function FileTableExplorer(props: FileExplorerTableProps) {
         columns={columns}
         rendererMap={rendererMap}
         selectable
-        onRowSelect={props.onRowSelect}
         rowClassNames={rowClassNames}
         rowEventHandlers={rowEventHandlers}
       />

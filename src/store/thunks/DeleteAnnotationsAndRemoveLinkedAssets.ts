@@ -44,9 +44,8 @@ export const DeleteAnnotationsAndRemoveLinkedAssets = createAsyncThunk<
     });
 
     if (linkedAnnotations.length) {
-      const model = getState().previewSlice.models.byId[
-        linkedAnnotations[0].modelId
-      ];
+      const model =
+        getState().previewSlice.models.byId[linkedAnnotations[0].modelId];
       const { fileId } = model;
       const assetIds = linkedAnnotations.map((ann) => ann.linkedResourceId!);
       removeAssetIdsFromFile(fileId, assetIds);

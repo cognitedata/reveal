@@ -8,7 +8,8 @@ import {
 // in further, when api will be normalized, all these provides should be removed in favor
 // of using some one generic provider like that one
 export abstract class BaseDetectionModelDataProvider
-  implements DetectionModelDataProvider {
+  implements DetectionModelDataProvider
+{
   protected abstract url: string;
 
   postJob(fileIds: number[]) {

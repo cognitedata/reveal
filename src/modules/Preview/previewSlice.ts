@@ -158,16 +158,14 @@ const previewSlice = createSlice({
     ) {
       const annId = action.payload.id;
       if (action.payload.asset) {
-        const assetAnnotationIdIndex = state.selectedAnnotations.asset.findIndex(
-          (item) => item === annId
-        );
+        const assetAnnotationIdIndex =
+          state.selectedAnnotations.asset.findIndex((item) => item === annId);
         if (assetAnnotationIdIndex >= 0) {
           state.selectedAnnotations.asset.splice(assetAnnotationIdIndex, 1);
         }
       } else {
-        const otherAnnotationIdIndex = state.selectedAnnotations.other.findIndex(
-          (item) => item === annId
-        );
+        const otherAnnotationIdIndex =
+          state.selectedAnnotations.other.findIndex((item) => item === annId);
         if (otherAnnotationIdIndex >= 0) {
           state.selectedAnnotations.other.splice(otherAnnotationIdIndex, 1);
         }
@@ -521,8 +519,9 @@ export const selectAnnotationsByFileIdModelType = createSelector(
   selectModelsByFileId,
   (_, fileId: string, modelType: VisionAPIType) => modelType,
   (allAnnotations, models, modelType) => {
-    const modelId = models.find((item) => item.modelType === modelType)
-      ?.modelId;
+    const modelId = models.find(
+      (item) => item.modelType === modelType
+    )?.modelId;
 
     if (modelId) {
       return allAnnotations.filter((item) => item.modelId === modelId);

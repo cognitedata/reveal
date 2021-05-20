@@ -37,11 +37,7 @@ const explorerSlice = createSlice({
   // extraReducers: (builder) => {},
 });
 
-export const {
-  setQueryString,
-  setFilter,
-  setCurrentView,
-  toggleFilterView,
-} = explorerSlice.actions;
+export const { setQueryString, setFilter, setCurrentView, toggleFilterView } =
+  explorerSlice.actions;
 
 export default explorerSlice.reducer;

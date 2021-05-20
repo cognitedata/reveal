@@ -1,3 +1,4 @@
+import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import { ColumnShape } from 'react-base-table';
 
 import { Annotation, JobStatus, VisionAPIType } from 'src/api/types';
@@ -40,13 +41,17 @@ export type FileActions = {
   onReviewClick?: (fileId: number) => void;
 };
 
-export type TableDataItem = {
-  id: number;
-  mimeType: string;
-  name: string;
+export type ResultData = FileInfo & {
   menu: FileActions;
   selected: boolean;
-  sourceCreatedTime?: Date;
+};
+
+export type TableDataItem = Pick<
+  FileInfo,
+  'id' | 'mimeType' | 'name' | 'sourceCreatedTime'
+> & {
+  menu: FileActions;
+  selected: boolean;
 };
 
 export type CellRenderer = {
