@@ -109,6 +109,11 @@ git pull
 git checkout -b <your_username>/<package-name>@<version_to_release>
 ```
 
+### Update installation documentation
+
+Edit `documentation/docs/installation.mdx` and update the ThreeJS version to match the version used by Reveal. Commit
+this change.
+
 ### Bump version and create a PR
 
 Navigate to the `viewer` (or `parser-worker`) folder and run `yarn bump` script 
@@ -164,11 +169,14 @@ Now, if published successfully, **merge the pull request**.
 1. Specify the same release title as the tag name.
 1. Write the changes that new version brings. Get inspired by done tasks from your spring board. 
 Also, you can check what's committed from the previous tag with that command:
-    ```bash
-    git log --pretty=format:"%s <%an> – %h" @cognite/reveal@1.2.0...HEAD
-    ```
+   ```bash
+   git log --pretty=format:"%s <%an> – %h" @cognite/reveal@1.2.0...HEAD
+   ```
    Use the following template:
    ```md
+   This version of Reveal depends on ThreeJS <version>. Your application should match
+   the version used to ensure compatibility. 
+
    ### 🚀 Features
    
    * commit message
@@ -180,5 +188,8 @@ Also, you can check what's committed from the previous tag with that command:
    ### 📖 Documentation
    
    * commit message
+
+   See [installation documentation](https://cognitedata.github.io/reveal-docs/docs/installation) for 
+   details about installting Reveal.
    ```
 1. Hit the green "Publish release" button
