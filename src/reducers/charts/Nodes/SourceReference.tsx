@@ -33,6 +33,8 @@ export const configPanel = ({
 }: ConfigPanelComponentProps) => {
   const { functionData } = node;
 
+  const { workflow } = context;
+
   const workspaceTimeSeries =
     (context.chart as Chart).timeSeriesCollection || [];
 
@@ -59,12 +61,19 @@ export const configPanel = ({
     callback: (options: { value?: string; label?: string }[]) => void
   ) => {
     callback(
-      sourceList.map((source) => ({
-        value: source.id,
-        label: source.name,
-      }))
+      sourceList
+        .filter((source) => source.id !== workflow.id)
+        .map((source) => ({
+          value: source.id,
+          label: source.name,
+        }))
     );
   };
+
+  const typeDisplayNames = [
+    { id: 'timeseries', label: 'Time Series' },
+    { id: 'workflow', label: 'Calculation' },
+  ];
 
   return (
     <div>
@@ -74,10 +83,17 @@ export const configPanel = ({
         theme="dark"
         loadOptions={loadOptions}
         onChange={(nextValue: { value: string; label: string }) => {
+          const { type } =
+            sourceList.find(({ id }) => id === nextValue.value) || {};
+
+          const subtitle = typeDisplayNames.find(({ id }) => id === type)
+            ?.label;
+
           onUpdateNode({
             title: nextValue.label,
+            subtitle: subtitle || 'Source',
             functionData: {
-              type: sourceList.find(({ id }) => id === nextValue.value)?.type,
+              type,
               sourceId: nextValue.value || '',
             },
           });
@@ -92,7 +108,7 @@ export const configPanel = ({
 };
 
 export const node = {
-  title: 'Source Reference',
+  title: 'Input Source',
   subtitle: 'Source',
   color: '#FC2574',
   icon: 'Function',
