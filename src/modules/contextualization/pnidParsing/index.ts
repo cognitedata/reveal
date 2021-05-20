@@ -32,9 +32,11 @@ export const pnidParsingSlice = createSlice({
       };
     },
     finishJob: (state, action) => {
-      const { workflowId, annotationCounts } = action.payload;
+      const { workflowId, annotationCounts, statusCount } = action.payload;
       state[workflowId] = {
         ...state[workflowId],
+        statusCount,
+        status: 'Completed',
         annotationCounts,
       };
     },

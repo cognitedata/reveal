@@ -29,7 +29,6 @@ export type StartPnidParsingJobProps = {
 export type PollJobResultsProps = {
   workflowId: number;
   jobId: number;
-  diagrams: FileInfo[];
 };
 
 export type FileAnnotationsCount = {
