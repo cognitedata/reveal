@@ -32,7 +32,7 @@ const Breadcrumbs = ({ breadcrumbs }: BreadcrumbsProps) => (
         breadcrumbs.map((crumb) => (
           <Breadcrumb.Item key={crumb.title}>
             {crumb.path ? (
-              <Link to={`/${crumb.path}`}>{crumb.title}</Link>
+              <Link to={`${crumb.path}`}>{crumb.title}</Link>
             ) : (
               crumb.title
             )}

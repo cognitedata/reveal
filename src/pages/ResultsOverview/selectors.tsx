@@ -11,8 +11,8 @@ export const getPnidOptions = createSelector(
   (state: RootState) => state.workflows.active,
   (state: RootState) => state.workflows.items,
   (workflowId: number, items: any) => {
-    const { partialMatch, grayscale } = items[workflowId].options;
-    return { partialMatch, grayscale };
+    const { partialMatch } = items[workflowId].options;
+    return { partialMatch };
   }
 );
 

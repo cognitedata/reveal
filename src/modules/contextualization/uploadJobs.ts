@@ -107,9 +107,7 @@ export const startConvertFileToSvgJob = (
     getState: () => RootState
   ) => {
     const state = getState();
-    const workflowId = state.workflows.active;
     const file = fileSelector(state)(fileId);
-    const { grayscale } = state.workflows.items[workflowId].options;
 
     if (!file) {
       return Promise.resolve(undefined);
@@ -137,7 +135,6 @@ export const startConvertFileToSvgJob = (
               text: el.label,
               boundingBox: el.box,
             })),
-            grayscale,
           },
         })
         .then((response) => {

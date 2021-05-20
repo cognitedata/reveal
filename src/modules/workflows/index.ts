@@ -27,7 +27,6 @@ const initialState: WorkflowState = {
 const initialWorkflow: Workflow = {
   options: {
     partialMatch: false,
-    grayscale: false,
     minTokens: 2,
   },
   step: 'diagramSelection',
@@ -210,16 +209,11 @@ export const workflowsSlice = createSlice({
         action.payload.partialMatch !== undefined
           ? action.payload.partialMatch
           : activeWorkflow.options.partialMatch;
-      const grayscale =
-        action.payload.grayscale !== undefined
-          ? action.payload.grayscale
-          : activeWorkflow.options.grayscale;
       const minTokens = action.payload.minTokens
         ? action.payload.minTokens
         : activeWorkflow.options.minTokens;
       state.items[workflowId].options = {
         partialMatch,
-        grayscale,
         minTokens,
       };
     },

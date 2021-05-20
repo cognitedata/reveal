@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { Button, Icon, Tooltip, Title } from '@cognite/cogs.js';
 import { Card, message } from 'antd';
+import { Button, Tooltip, Title } from '@cognite/cogs.js';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
+import { FileInfo } from '@cognite/sdk';
 import { useWorkflowItems, WorkflowStep } from 'modules/workflows';
 import {
   startConvertFileToSvgJob,
@@ -16,8 +17,8 @@ import { Flex, PageTitle } from 'components/Common';
 import { canDeploySelectedFiles } from 'utils/FilesUtils';
 import { diagramSelection } from 'routes/paths';
 import { AppStateContext } from 'context';
+import { TOOLTIP_STRINGS } from 'stringConstants';
 import { useParsingJob } from 'modules/contextualization/pnidParsing/hooks';
-import { FileInfo } from '@cognite/sdk';
 import ProgressBarSection from './ProgressBarSection';
 import { getWorkflowItems, getContextualizationJobs } from './selectors';
 import ResultsTable from './ResultsTable';
@@ -59,7 +60,7 @@ export default function ResultsOverview(props: Props) {
 
   useEffect(() => {
     if (!workflow) {
-      message.error('Invalid Data Selections...');
+      message.error('Invalid data selections');
       history.push(diagramSelection.path(tenant, String(workflowId)));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -75,9 +76,9 @@ export default function ResultsOverview(props: Props) {
             (diagram: FileInfo) => diagram.id === key
           );
           if (diagramToConvert) {
-            message.error(`${diagramToConvert.name} has no annotations`);
+            message.error(`${diagramToConvert.name} has no annotations!`);
           } else {
-            message.error(`we are still loading file ${key}`);
+            message.error(`We are still loading file ${key}`);
           }
         }
       });
@@ -96,6 +97,13 @@ export default function ResultsOverview(props: Props) {
         uploadJob?: UploadJobState;
       };
     });
+  const canDeploy = canDeploySelectedFiles(rows, selectedKeys);
+  const convertToSvgTooltip = () => {
+    if (selectedKeys.length === 0)
+      return TOOLTIP_STRINGS.CONVERT_TO_SVG_NOT_SELECTED;
+    if (!canDeploy) return TOOLTIP_STRINGS.CONVERT_TO_SVG_DISABLED;
+    return TOOLTIP_STRINGS.CONVERT_TO_SVG_ALLOWED;
+  };
 
   return renderFeedback ? (
     <>
@@ -105,38 +113,17 @@ export default function ResultsOverview(props: Props) {
   ) : (
     <Flex column style={{ width: '100%' }}>
       <Flex align style={{ width: '100%', justifyContent: 'space-between' }}>
-        <Flex column>
-          <PageTitle>Review the contextualized P&IDs</PageTitle>
-        </Flex>
-        <Flex align style={{ justifyContent: 'flex-end' }}>
-          <Tooltip
-            placement="left"
-            content="This will create or update an interactive SVG linked to the assets for the selected files."
-          >
-            <Icon
-              type="Help"
-              style={{
-                marginRight: '24px',
-                fontSize: '18px',
-                display: 'inline-block',
-              }}
-            />
-          </Tooltip>
+        <PageTitle>Review the contextualized P&IDs</PageTitle>
+        <Tooltip content={convertToSvgTooltip()} placement="left">
           <Button
             type="primary"
-            disabled={!canDeploySelectedFiles(rows, selectedKeys)}
-            title={
-              !canDeploySelectedFiles(rows, selectedKeys) &&
-              selectedKeys.length !== 0
-                ? 'Not all selected files can be deployed to CDF. This might be caused by them still being in "Pending" state or the parsing job failed. Please check if all selected files finished parsing with success.'
-                : ''
-            }
+            disabled={!canDeploy}
             onClick={startUploadJob}
             loading={isLoading}
           >
-            {`Deploy ${selectedKeys.length} files to CDF`}
+            Create SVGs from {selectedKeys.length} selected diagrams
           </Button>
-        </Flex>
+        </Tooltip>
       </Flex>
       <Flex
         grow

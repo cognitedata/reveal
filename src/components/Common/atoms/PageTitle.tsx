@@ -1,6 +1,7 @@
 import React from 'react';
 import { Title, Colors } from '@cognite/cogs.js';
 import styled from 'styled-components';
+import { Flex } from './Flex';
 
 interface PageTitleProps {
   children: React.ReactNode;
@@ -17,10 +18,10 @@ const Line = styled.div`
   background: ${Colors['pink-3'].hex()};
 `;
 export const PageTitle = ({ children, style }: PageTitleProps) => (
-  <>
+  <Flex column>
     <StyledTitle level={3} style={style}>
       {children}
     </StyledTitle>
     <Line />
-  </>
+  </Flex>
 );
