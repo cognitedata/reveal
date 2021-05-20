@@ -30,5 +30,4 @@ storybook-static/
 
 .husky/*
 
-**/fakeFiles.json
-**/fakeVideoFiles.json
+**/fake*.json

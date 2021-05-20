@@ -2,7 +2,7 @@ import { combineReducers } from '@reduxjs/toolkit';
 import './commonActions';
 import filesSlice from 'src/modules/Common/filesSlice';
 import processSlice from 'src/modules/Process/processSlice';
-import previewSlice from 'src/modules/Preview/previewSlice';
+import previewSlice from 'src/modules/Review/previewSlice';
 import fileDetailsSlice from 'src/modules/FileDetails/fileDetailsSlice';
 import annotationReducer from 'src/modules/Common/annotationSlice';
 import explorerReducer from 'src/modules/Explorer/store/explorerSlice';

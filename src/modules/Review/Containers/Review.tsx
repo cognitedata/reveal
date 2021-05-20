@@ -9,15 +9,15 @@ import {
   closeAnnotationDrawer,
   resetEditState,
   resetPreview,
-} from 'src/modules/Preview/previewSlice';
+} from 'src/modules/Review/previewSlice';
 import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
 import { selectFileById } from 'src/modules/Common/filesSlice';
-import ImageReview from 'src/modules/Preview/Containers/ImageReview';
-import VideoReview from 'src/modules/Preview/Containers/VideoReview';
+import ImageReview from 'src/modules/Review/Containers/ImageReview';
+import VideoReview from 'src/modules/Review/Containers/VideoReview';
 import { isVideo } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
-import { AnnotationDrawer } from 'src/modules/Preview/Components/AnnotationDrawer/AnnotationDrawer';
+import { AnnotationDrawer } from 'src/modules/Review/Components/AnnotationDrawer/AnnotationDrawer';
 import { AnnotationDrawerMode } from 'src/utils/AnnotationUtils';
-import { ImageReviewDrawerContent } from 'src/modules/Preview/Components/AnnotationDrawerContent/ImageReviewAnnotationDrawerContent';
+import { ImageReviewDrawerContent } from 'src/modules/Review/Components/AnnotationDrawerContent/ImageReviewAnnotationDrawerContent';
 import { ImagePreviewEditMode } from 'src/constants/enums/ImagePreviewEditMode';
 import { AddAnnotationsFromEditModeAssetIds } from 'src/store/thunks/AddAnnotationsFromEditModeAssetIds';
 import { resetEditHistory } from 'src/modules/FileDetails/fileDetailsSlice';
@@ -34,6 +34,7 @@ const Container = styled.div`
   position: relative;
   overflow: hidden;
 `;
+
 const TitleRow = styled.div`
   padding: 12px;
   width: 100%;
@@ -56,7 +57,7 @@ const DeleteButton = (props: { onConfirm: () => void }) => (
     onConfirm={props.onConfirm}
     content="Are you sure you want to permanently delete this file?"
   >
-    <Button type="danger" icon="Delete">
+    <Button type="ghost-danger" icon="Delete">
       Delete file
     </Button>
   </Popconfirm>

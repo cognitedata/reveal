@@ -4,7 +4,7 @@ import { fetchAssets } from 'src/store/thunks/fetchAssets';
 import { AnnotationStatus } from 'src/utils/AnnotationUtils';
 import { VisionAPIType } from 'src/api/types';
 import { UpdateFiles } from 'src/store/thunks/UpdateFiles';
-import { VisionAnnotationState } from 'src/modules/Preview/previewSlice';
+import { VisionAnnotationState } from 'src/modules/Review/previewSlice';
 import { addAnnotations } from 'src/store/commonActions';
 import { FileState } from 'src/modules/Common/filesSlice';
 

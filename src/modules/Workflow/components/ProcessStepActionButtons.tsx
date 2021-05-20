@@ -7,7 +7,7 @@ import { getLink, workflowRoutes } from 'src/modules/Workflow/workflowRoutes';
 import { createLink } from '@cognite/cdf-utilities';
 import { RootState } from 'src/store/rootReducer';
 import { selectIsPollingComplete } from 'src/modules/Process/processSlice';
-import { annotationsById } from 'src/modules/Preview/previewSlice';
+import { annotationsById } from 'src/modules/Review/previewSlice';
 import styled from 'styled-components';
 import { Button, Modal } from '@cognite/cogs.js';
 import { getContainer } from 'src/utils';
@@ -44,6 +44,7 @@ export const ProcessStepActionButtons = () => {
 
   const disableComplete =
     !isPollingFinished || !Object.keys(annotations).length;
+
   const [isModalOpen, setModalOpen] = useState(false);
   return (
     <>

@@ -6,7 +6,7 @@ import { ProcessStepActionButtons } from 'src/modules/Workflow/components/Proces
 import { getLink, workflowRoutes } from 'src/modules/Workflow/workflowRoutes';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { annotationsById } from 'src/modules/Preview/previewSlice';
+import { annotationsById } from 'src/modules/Review/previewSlice';
 
 export default function BottomNavContainer() {
   const history = useHistory();

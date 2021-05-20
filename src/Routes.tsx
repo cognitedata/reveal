@@ -36,7 +36,7 @@ const routes = [
     exact: true,
     path: '/:tenant/vision/workflow/review/:fileId',
     component: (props: RouteComponentProps) =>
-      LazyWrapper(props, () => import('src/modules/Preview/Containers/Review')),
+      LazyWrapper(props, () => import('src/modules/Review/Containers/Review')),
   },
   {
     exact: false,

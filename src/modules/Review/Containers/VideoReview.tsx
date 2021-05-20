@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
-import { VideoPreview } from 'src/modules/Preview/Components/VideoPreview/VideoPreview';
+import { VideoPreview } from 'src/modules/Review/Components/VideoPreview/VideoPreview';
 import { DataExplorationProvider, Tabs } from '@cognite/data-exploration';
-import { Contextualization } from 'src/modules/Preview/Containers/Contextualization';
+import { Contextualization } from 'src/modules/Review/Containers/Contextualization';
 import { FileDetailsReview } from 'src/modules/FileDetails/Containers/FileDetailsReview/FileDetailsReview';
 import { useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';

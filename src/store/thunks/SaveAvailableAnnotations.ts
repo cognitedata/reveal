@@ -16,7 +16,6 @@ export const SaveAvailableAnnotations = createAsyncThunk<
   const allAnnotations = Object.values(
     getState().previewSlice.annotations.byId
   );
-
   const annotationsWithoutVirtualAssetAnnotations = allAnnotations.filter(
     (ann) => !ann.virtual
   );
