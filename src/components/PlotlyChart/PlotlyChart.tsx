@@ -27,6 +27,7 @@ import { Chart } from 'reducers/charts/types';
 import { useChart, useUpdateChart } from 'hooks/firebase';
 import { updateSourceAxisForChart } from 'utils/charts';
 import { trackUsage } from 'utils/metrics';
+import { roundToSignificantDigits } from 'utils/axis';
 import {
   calculateStackedYRange,
   getXaxisUpdateFromEventData,
@@ -319,6 +320,27 @@ const PlotlyChartComponent = ({
       ? JSON.parse(JSON.stringify(range))
       : undefined;
 
+    const rangeY = stackedMode
+      ? calculateStackedYRange(
+          datapoints as (Datapoints | DatapointAggregate)[],
+          index,
+          seriesData.length
+        )
+      : serializedYRange;
+
+    let tickvals;
+    if (rangeY) {
+      const ticksAmount = 6;
+      const rangeDifferenceThreshold = 0.001;
+      tickvals =
+        rangeY[1] - rangeY[0] < rangeDifferenceThreshold
+          ? Array.from(Array(ticksAmount)).map(
+              (_, idx) =>
+                rangeY[0] + (idx * (rangeY[1] - rangeY[0])) / (ticksAmount - 1)
+            )
+          : undefined;
+    }
+
     (layout as any)[`yaxis${index ? index + 1 : ''}`] = {
       ...yAxisDefaults,
       visible: showYAxis,
@@ -327,17 +349,15 @@ const PlotlyChartComponent = ({
 
       tickcolor: color,
       tickwidth: 1,
+      tickvals,
+      ticktext: tickvals
+        ? tickvals.map((value) => roundToSignificantDigits(value, 3))
+        : undefined,
       side: 'right',
       overlaying: index !== 0 ? 'y' : undefined,
       anchor: 'free',
       position: 0.05 * index,
-      range: stackedMode
-        ? calculateStackedYRange(
-            datapoints as (Datapoints | DatapointAggregate)[],
-            index,
-            seriesData.length
-          )
-        : serializedYRange,
+      range: rangeY,
     };
 
     if (showYAxis) {
