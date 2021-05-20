@@ -1,4 +1,5 @@
 import { Button, Icon, Tooltip, SegmentedControl } from '@cognite/cogs.js';
+import { useSDK } from '@cognite/sdk-provider';
 import FunctionCall from 'components/FunctionCall';
 import { useUpdateChart } from 'hooks/firebase';
 import React, { useState } from 'react';
@@ -137,6 +138,7 @@ const Statistics = ({
   chart: Chart;
   sourceItem: ChartWorkflow | ChartTimeSeries | undefined;
 }) => {
+  const sdk = useSDK();
   const { mutate: callFunction } = useCallFunction('individual_calc-master');
   const { mutate } = useUpdateChart();
 
@@ -216,7 +218,7 @@ const Statistics = ({
       statisticsCall?.callId
     ),
     queryFn: (): Promise<string | undefined> =>
-      getCallResponse(statisticsCall?.functionId, statisticsCall.callId),
+      getCallResponse(sdk, statisticsCall?.functionId, statisticsCall.callId),
     retry: 1,
     retryDelay: 1000,
     enabled: !!statisticsCall,

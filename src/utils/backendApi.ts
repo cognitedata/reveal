@@ -1,6 +1,5 @@
 import { CogniteClient } from '@cognite/sdk';
 import config from 'config';
-import { getSdk } from './sdk';
 
 export type CogniteFunction = {
   id: number;
@@ -14,9 +13,7 @@ const useBackendService = !!process.env.REACT_APP_BACKEND_SERVICE_BASE_URL;
 const BACKEND_SERVICE_BASE_URL = process.env.REACT_APP_BACKEND_SERVICE_BASE_URL;
 const CDF_API_BASE_URL = config.cdfApiBaseUrl;
 
-const sdk = getSdk();
-
-const getServiceClient = () => {
+const getServiceClient = (sdk: CogniteClient) => {
   const client = new CogniteClient({
     appId: config.appId,
     baseUrl: useBackendService ? BACKEND_SERVICE_BASE_URL : CDF_API_BASE_URL,
@@ -34,16 +31,16 @@ const getServiceClient = () => {
   return client;
 };
 
-export const getCalls = async (fnId: number) => {
-  const client = getServiceClient();
+export const getCalls = async (sdk: CogniteClient, fnId: number) => {
+  const client = getServiceClient(sdk);
 
   return client
     .get(`/api/playground/projects/${sdk.project}/functions/${fnId}/calls`)
     .then((response) => response?.data?.items || []);
 };
 
-export async function listFunctions() {
-  const client = getServiceClient();
+export async function listFunctions(sdk: CogniteClient) {
+  const client = getServiceClient(sdk);
 
   return client
     .get<{ items: CogniteFunction[] }>(
@@ -52,8 +49,12 @@ export async function listFunctions() {
     .then((r) => r.data?.items);
 }
 
-export async function callFunction(functionId: number, data?: object) {
-  const client = getServiceClient();
+export async function callFunction(
+  sdk: CogniteClient,
+  functionId: number,
+  data?: object
+) {
+  const client = getServiceClient(sdk);
 
   return client
     .post(
@@ -65,8 +66,12 @@ export async function callFunction(functionId: number, data?: object) {
     .then((r) => r.data);
 }
 
-export async function getCallStatus(functionId: number, callId: number) {
-  const client = getServiceClient();
+export async function getCallStatus(
+  sdk: CogniteClient,
+  functionId: number,
+  callId: number
+) {
+  const client = getServiceClient(sdk);
 
   return client
     .get(
@@ -75,8 +80,12 @@ export async function getCallStatus(functionId: number, callId: number) {
     .then((r) => r.data);
 }
 
-export async function getCallResponse(functionId: number, callId: number) {
-  const client = getServiceClient();
+export async function getCallResponse(
+  sdk: CogniteClient,
+  functionId: number,
+  callId: number
+) {
+  const client = getServiceClient(sdk);
 
   return client
     .get(

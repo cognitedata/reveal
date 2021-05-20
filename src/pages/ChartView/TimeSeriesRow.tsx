@@ -29,6 +29,8 @@ import FunctionCall from 'components/FunctionCall';
 import { StatisticsResult } from 'components/DetailsSidebar';
 import * as backendApi from 'utils/backendApi';
 import { trackUsage } from 'utils/metrics';
+import { CogniteClient } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
 import {
   SourceItem,
   SourceCircle,
@@ -57,8 +59,12 @@ const renderStatusIcon = (status?: FunctionCallStatus) => {
   }
 };
 
-const getCallStatus = (fnId: number, callId: number) => async () => {
-  const response = await backendApi.getCallStatus(fnId, callId);
+const getCallStatus = (
+  sdk: CogniteClient,
+  fnId: number,
+  callId: number
+) => async () => {
+  const response = await backendApi.getCallStatus(sdk, fnId, callId);
 
   if (response?.status) {
     return response.status as FunctionCallStatus;
@@ -150,6 +156,8 @@ export default function TimeSeriesRow({
   dateFrom,
   dateTo,
 }: Props) {
+  const sdk = useSDK();
+
   const {
     id,
     description,
@@ -253,6 +261,7 @@ export default function TimeSeriesRow({
     ),
     queryFn: (): Promise<string | undefined> =>
       backendApi.getCallResponse(
+        sdk,
         statisticsCall?.functionId,
         statisticsCall?.callId
       ),
@@ -266,6 +275,7 @@ export default function TimeSeriesRow({
   >(
     [...key, statisticsCall?.callId, 'call_status'],
     getCallStatus(
+      sdk,
       statisticsCall?.functionId as number,
       statisticsCall?.callId as number
     ),

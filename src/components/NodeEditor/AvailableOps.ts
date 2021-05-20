@@ -3,6 +3,8 @@ import { useQuery } from 'react-query';
 import { DSPFunction } from 'utils/transforms';
 import { FunctionCallStatus } from 'reducers/charts/types';
 import * as backendApi from 'utils/backendApi';
+import { CogniteClient } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
 
 type Function = {
   id: number;
@@ -25,8 +27,8 @@ interface Props {
   renderError?: () => JSX.Element | null;
 }
 
-const getFunctionId = (externalId: string) => async () => {
-  const functions: Function[] = await backendApi.listFunctions();
+const getFunctionId = (sdk: CogniteClient, externalId: string) => async () => {
+  const functions: Function[] = await backendApi.listFunctions(sdk);
 
   const { id } = functions.find((f) => f.externalId === externalId) || {};
 
@@ -37,8 +39,9 @@ const getFunctionId = (externalId: string) => async () => {
   return Promise.reject(new Error('Could not find calls'));
 };
 
-const getLatestCalls = (fnId: number) => async () => {
+const getLatestCalls = (sdk: CogniteClient, fnId: number) => async () => {
   const calls: { id: number; endTime: number }[] = await backendApi.getCalls(
+    sdk,
     fnId
   );
 
@@ -46,16 +49,24 @@ const getLatestCalls = (fnId: number) => async () => {
   return id;
 };
 
-const callFunction = (fnId: number, data: any = {}) => async () => {
-  const response = await backendApi.callFunction(fnId, data);
+const callFunction = (
+  sdk: CogniteClient,
+  fnId: number,
+  data: any = {}
+) => async () => {
+  const response = await backendApi.callFunction(sdk, fnId, data);
   if (response?.id) {
     return response?.id as number;
   }
   return Promise.reject(new Error('did not get call id'));
 };
 
-const getCallStatus = (fnId: number, callId: number) => async () => {
-  const response = await backendApi.getCallStatus(fnId, callId);
+const getCallStatus = (
+  sdk: CogniteClient,
+  fnId: number,
+  callId: number
+) => async () => {
+  const response = await backendApi.getCallStatus(sdk, fnId, callId);
 
   if (response?.status) {
     return response.status as FunctionCallStatus;
@@ -63,8 +74,12 @@ const getCallStatus = (fnId: number, callId: number) => async () => {
   return Promise.reject(new Error('could not find call status'));
 };
 
-const getOps = (fnId: number, callId: number) => async () => {
-  const response = await backendApi.getCallResponse(fnId, callId);
+const getOps = (
+  sdk: CogniteClient,
+  fnId: number,
+  callId: number
+) => async () => {
+  const response = await backendApi.getCallResponse(sdk, fnId, callId);
 
   if (response.all_available_ops) {
     return response.all_available_ops as DSPFunction[];
@@ -77,6 +92,8 @@ export default function AvailableOps({
   renderLoading,
   renderError,
 }: Props) {
+  const sdk = useSDK();
+
   const cacheOptions = {
     cacheTime: Infinity,
     staleTime: 60000,
@@ -85,21 +102,21 @@ export default function AvailableOps({
 
   const { data: fnId, isError: fnError } = useQuery(
     [...key, 'find_function'],
-    getFunctionId('get_all_ops-master'),
+    getFunctionId(sdk, 'get_all_ops-master'),
     cacheOptions
   );
 
   // Functions are immutable so any old call will be fine
   const { data: call, isFetched: callsFetched } = useQuery(
     [...key, 'get_calls'],
-    getLatestCalls(fnId as number),
+    getLatestCalls(sdk, fnId as number),
     { enabled: !!fnId, ...cacheOptions }
   );
 
   // Create a call if there isn't any existing
   const { data: newCallId, isError: createCallError } = useQuery(
     [...key, 'create_call'],
-    callFunction(fnId as number),
+    callFunction(sdk, fnId as number),
     {
       enabled: callsFetched && !call && !!fnId,
       ...cacheOptions,
@@ -113,7 +130,7 @@ export default function AvailableOps({
     FunctionCallStatus
   >(
     [...key, callId, 'call_status'],
-    getCallStatus(fnId as number, callId as number),
+    getCallStatus(sdk, fnId as number, callId as number),
     {
       ...cacheOptions,
       enabled: !!callId,
@@ -127,7 +144,7 @@ export default function AvailableOps({
 
   const { data: response, isFetched, isError: responseError } = useQuery(
     [...key, callId, 'response'],
-    getOps(fnId as number, callId as number),
+    getOps(sdk, fnId as number, callId as number),
     {
       ...cacheOptions,
       enabled: callStatus === 'Completed',

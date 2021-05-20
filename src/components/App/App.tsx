@@ -7,7 +7,8 @@ import { ReactQueryDevtools } from 'react-query/devtools';
 import { ToastContainer, Loader } from '@cognite/cogs.js';
 import { getTenantFromURL } from 'utils/env';
 import { useFirebaseInit } from 'hooks/firebase';
-import { getSdk } from 'utils/sdk';
+import { CogniteClient } from '@cognite/sdk';
+import config from 'config';
 
 const App = () => {
   const [authenicating, setAuth] = useState(true);
@@ -66,7 +67,10 @@ const queryClient = new QueryClient({
   },
 });
 
-const sdk = getSdk();
+const sdk = new CogniteClient({
+  appId: config.appId,
+  baseUrl: config.cdfApiBaseUrl,
+});
 
 export default function RootApp() {
   return (
