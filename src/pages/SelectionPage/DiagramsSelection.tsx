@@ -37,7 +37,13 @@ export default function DiagramsSelection(props: SelectionProps): JSX.Element {
   return (
     <Flex column style={{ paddingBottom: '50px' }}>
       <PageTitle>Select diagrams you want to contextualize</PageTitle>
-      <SelectionBar type="files" filter={filter} updateFilter={updateFilter} />
+      <SelectionBar
+        type="files"
+        filter={filter}
+        isSelectAll={isSelectAll}
+        selectedRowKeys={selectedRowKeys}
+        updateFilter={updateFilter}
+      />
       <SelectionTable
         type="files"
         filter={filter}

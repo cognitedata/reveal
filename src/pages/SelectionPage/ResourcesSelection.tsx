@@ -30,7 +30,13 @@ export default function ResourcesSelection(
   return (
     <Flex column style={{ paddingBottom: '50px' }}>
       <PageTitle>Select target: {target} (optional)</PageTitle>
-      <SelectionBar type={target} filter={filter} updateFilter={updateFilter} />
+      <SelectionBar
+        type={target}
+        filter={filter}
+        isSelectAll={isSelectAll}
+        selectedRowKeys={selectedRowKeys}
+        updateFilter={updateFilter}
+      />
       <SelectionTable
         type={target}
         filter={filter}
