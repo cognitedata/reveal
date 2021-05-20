@@ -15,10 +15,12 @@ import { RunLogsTable } from 'components/integration/RunLogsTable';
 import { getRunLogTableCol } from 'components/integration/RunLogsCols';
 import { ErrorFeedback } from 'components/error/ErrorFeedback';
 import { PageWrapperColumn } from 'styles/StyledPage';
+import { DateRangeFilter } from 'components/inputs/dateTime/DateRangeFilter';
 import moment from 'moment';
 import { Colors, Range } from '@cognite/cogs.js';
 import { partition } from 'utils/integrationUtils';
 import { Status } from 'model/Status';
+import { TimeSelector } from 'components/inputs/dateTime/TimeSelector';
 import { QuickDateTimeFilters } from 'components/table/QuickDateTimeFilters';
 import { StatusFilterMenu } from 'components/table/StatusFilterMenu';
 
@@ -86,9 +88,21 @@ export const IntegrationHealth: FunctionComponent<LogsViewProps> = ({
     return <ErrorFeedback error={error} />;
   }
 
+  const dateRangeChanged = (range: Range) => {
+    setDateRange(range);
+  };
+
   return (
     <TableWrapper>
       <FilterWrapper>
+        <DateRangeFilter
+          dateRange={dateRange}
+          dateRangeChanged={dateRangeChanged}
+        />
+        <TimeSelector
+          dateRange={dateRange}
+          dateRangeChanged={dateRangeChanged}
+        />
         <QuickDateTimeFilters setDateRange={setDateRange} />
         <StatusFilterMenu setStatus={setStatus} />
       </FilterWrapper>
