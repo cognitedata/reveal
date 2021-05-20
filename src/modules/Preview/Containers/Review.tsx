@@ -23,6 +23,7 @@ import { AddAnnotationsFromEditModeAssetIds } from 'src/store/thunks/AddAnnotati
 import { resetEditHistory } from 'src/modules/FileDetails/fileDetailsSlice';
 import { CreateAnnotations } from 'src/store/thunks/CreateAnnotations';
 import { DeleteAnnotationsByFileIds } from 'src/store/thunks/DeleteAnnotationsByFileIds';
+import { PopulateAnnotations } from 'src/store/thunks/PopulateAnnotations';
 
 const Container = styled.div`
   width: 100%;
@@ -124,6 +125,9 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
   useEffect(() => {
     dispatch(resetEditHistory());
     dispatch(resetPreview());
+    if (fileId) {
+      dispatch(PopulateAnnotations({ fileId, assetIds: file.assetIds }));
+    }
   }, []);
 
   return (

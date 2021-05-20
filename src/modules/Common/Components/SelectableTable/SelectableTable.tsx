@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { TableWrapper } from 'src/modules/Common/Components/FileTable/FileTableWrapper';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import ReactBaseTable, {
@@ -18,6 +18,7 @@ export type SelectableTableProps = Omit<
   'width'
 > & {
   selectable: boolean;
+  selectedFileId?: number | null;
   rendererMap: { [key: string]: (props: CellRenderer) => JSX.Element };
   onRowSelect: (item: TableDataItem, selected: boolean) => void;
   rowClassNames?: (data: {
@@ -36,6 +37,7 @@ export type SelectableTableProps = Omit<
 };
 
 export function SelectableTable(props: SelectableTableProps) {
+  const tableRef = useRef<any>(null);
   const {
     selectable,
     data,
@@ -101,6 +103,22 @@ export function SelectableTable(props: SelectableTableProps) {
     TableHeaderCell: HeaderCell,
   };
 
+  useEffect(() => {
+    if (
+      props.data &&
+      props.data.length &&
+      props.selectedFileId &&
+      tableRef.current
+    ) {
+      const rowIndex = props.data?.findIndex(
+        (item: TableDataItem) => item.id === props.selectedFileId
+      );
+      if (rowIndex > 0) {
+        tableRef.current.scrollToRow(rowIndex);
+      }
+    }
+  }, [props.selectedFileId, props.data]);
+
   return (
     <TableWrapper>
       <AutoSizer
@@ -108,12 +126,13 @@ export function SelectableTable(props: SelectableTableProps) {
           width: 'auto',
         }}
       >
-        {({ width }) => (
+        {({ width, height }) => (
           <ReactBaseTable<TableDataItem>
+            ref={tableRef}
             {...props}
             columns={columns}
-            maxHeight={Infinity}
             width={width}
+            height={height}
             components={components}
             data={data}
             rowClassName={rowClassNames}

@@ -78,13 +78,8 @@ export const Paginator = (props: {
   setCurrentPage: Dispatch<SetStateAction<number>>;
   setPageSize: Dispatch<SetStateAction<number>>;
 }) => {
-  const {
-    currentPage,
-    totalPages,
-    pageSize,
-    setCurrentPage,
-    setPageSize,
-  } = props;
+  const { currentPage, totalPages, pageSize, setCurrentPage, setPageSize } =
+    props;
   const [tempCurrentPage, setTempCurrentPage] = useState(currentPage);
   const pageOptionButtons = getPageOptionButtons(currentPage, totalPages);
 

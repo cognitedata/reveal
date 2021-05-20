@@ -109,11 +109,12 @@ const TableWrapperInner = styled.div`
     overflow: hidden !important;
   }
 
-  .BaseTable .BaseTable__header,
+  /* .BaseTable .BaseTable__header,  // commented to allow table scroll
   .BaseTable .BaseTable__body {
     outline: none;
     overflow: visible !important;
   }
+  */
 
   .BaseTable__header-row,
   .BaseTable__row {
@@ -294,8 +295,9 @@ export const TableWrapper = styled(TableWrapperInner)(
   (props: { disableScroll?: boolean }) => css`
     width: 100%;
     height: inherit;
-    overflow-x: hidden;
-    overflow-y: auto;
+    /* overflow-x: hidden; // commented to allow table scroll
+    overflow-y: auto; */
+    overflow: hidden;
     .row {
       transition: 0.3s all;
       border-bottom: 1px solid ${lightGrey};

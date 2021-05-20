@@ -19,8 +19,7 @@ export const UpdateAnnotationsById = createAsyncThunk<
     UpdateAnnotations(unsavedAnnotations)
   );
   const updatedAnnotations = unwrapResult(updatedAnnotationsResponse);
-  const updatedVisionAnnotations = AnnotationUtils.convertToVisionAnnotations(
-    updatedAnnotations
-  );
+  const updatedVisionAnnotations =
+    AnnotationUtils.convertToVisionAnnotations(updatedAnnotations);
   return updatedVisionAnnotations;
 });

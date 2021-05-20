@@ -69,14 +69,14 @@ const ImageReview = (props: { fileId: string; drawerMode: number | null }) => {
       ) as VisibleAnnotations[]
   );
 
-  const [
-    imagePreviewEditable,
-    imagePreviewCreatable,
-  ] = useSelector((state: RootState) => [
-    state.previewSlice.imagePreview.editable ===
-      ImagePreviewEditMode.Modifiable,
-    state.previewSlice.imagePreview.editable === ImagePreviewEditMode.Creatable,
-  ]);
+  const [imagePreviewEditable, imagePreviewCreatable] = useSelector(
+    (state: RootState) => [
+      state.previewSlice.imagePreview.editable ===
+        ImagePreviewEditMode.Modifiable,
+      state.previewSlice.imagePreview.editable ===
+        ImagePreviewEditMode.Creatable,
+    ]
+  );
 
   if (!file) {
     // navigate to upload step if file is not available(if the user uses a direct link)

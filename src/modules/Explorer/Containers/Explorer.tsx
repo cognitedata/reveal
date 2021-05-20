@@ -15,7 +15,7 @@ import { RootState } from 'src/store/rootReducer';
 import { setFileSelectState } from 'src/modules/Common/filesSlice';
 import { ExplorerSearchResults } from 'src/modules/Explorer/Containers/ExplorerSearchResults';
 import { FileDetails } from 'src/modules/FileDetails/Containers/FileDetails';
-import { TableDataItem, ViewMode } from 'src/modules/Common/types';
+import { ResultData, TableDataItem, ViewMode } from 'src/modules/Common/types';
 import { ExplorerToolbar } from 'src/modules/Explorer/Containers/ExplorerToolbar';
 import {
   setCurrentView,
@@ -51,8 +51,9 @@ const Explorer = () => {
     dispatch(setQueryString(text));
   };
 
-  const handleItemClick = (item: any) => {
-    dispatch(setSelectedFileId(item.id));
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleItemClick = ({ menu, selected, ...file }: ResultData) => {
+    dispatch(setSelectedFileId(file.id));
     dispatch(showFileMetadataPreview());
   };
 

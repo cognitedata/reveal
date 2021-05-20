@@ -93,9 +93,8 @@ export const PopulateAnnotations = createAsyncThunk<
     }
   }
 
-  const retrievedVisionAnnotations = AnnotationUtils.convertToVisionAnnotations(
-    retrievedAnnotations
-  );
+  const retrievedVisionAnnotations =
+    AnnotationUtils.convertToVisionAnnotations(retrievedAnnotations);
   const all = [...retrievedVisionAnnotations, ...linkedAssetVirtualAnnotations];
 
   dispatch(addAnnotations(all));

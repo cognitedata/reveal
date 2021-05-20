@@ -57,16 +57,26 @@ const filesSlice = createSlice({
   initialState,
   /* eslint-disable no-param-reassign */
   reducers: {
+    setFiles: {
+      prepare: (files: FileInfo[]) => {
+        return { payload: files.map((file) => createFileState(file)) };
+      },
+      reducer: (state, action: PayloadAction<FileState[]>) => {
+        const files = action.payload;
+        clearFileState(state);
+
+        files.forEach((file) => {
+          updateFileState(state, file);
+        });
+      },
+    },
     setUploadedFiles: {
       prepare: (files: FileInfo[]) => {
         return { payload: files.map((file) => createFileState(file)) };
       },
       reducer: (state, action: PayloadAction<FileState[]>) => {
         const files = action.payload;
-
-        // clear file state
-        state.files.byId = {};
-        state.files.allIds = [];
+        clearFileState(state);
 
         files.forEach((file) => {
           updateFileState(state, file);
@@ -147,6 +157,7 @@ const filesSlice = createSlice({
 });
 
 export const {
+  setFiles,
   setUploadedFiles,
   addUploadedFile,
   setDataSetIds,
@@ -194,4 +205,11 @@ const updateFileState = (state: State, file: FileState) => {
   if (!hasInState) {
     state.files.allIds.push(file.id);
   }
+};
+
+// state utility functions
+
+const clearFileState = (state: State) => {
+  state.files.byId = {};
+  state.files.allIds = [];
 };

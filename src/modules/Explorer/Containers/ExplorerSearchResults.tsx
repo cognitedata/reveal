@@ -7,8 +7,7 @@ import {
 import React from 'react';
 import { FileFilterProps, FileInfo } from '@cognite/cdf-sdk-singleton';
 import styled from 'styled-components';
-import { TableDataItem, ViewMode } from 'src/modules/Common/types';
-import { ResultAnnotationLoader } from 'src/modules/Explorer/Containers/ResultAnnotationLoader';
+import { ResultData, TableDataItem, ViewMode } from 'src/modules/Common/types';
 import { ResultTableLoader } from './ResultTableLoader';
 import { FileGridPreview } from '../../Common/Components/FileGridPreview/FileGridPreview';
 import { MapView } from '../../Common/Components/MapView/MapView';
@@ -27,7 +26,7 @@ export const ExplorerSearchResults = ({
   query?: string;
   items?: FileInfo[];
   filter?: FileFilterProps;
-  onClick: (item: FileInfo) => void;
+  onClick: (item: ResultData) => void;
   onRowSelect: (item: TableDataItem, selected: boolean) => void;
   currentView: ViewMode;
 } & TableStateProps &
@@ -52,6 +51,7 @@ export const ExplorerSearchResults = ({
                   return (
                     <GridTable
                       onItemClicked={onClick}
+                      {...props}
                       {...extraProps}
                       renderCell={(cellProps: any) => (
                         <FileGridPreview {...cellProps} />
@@ -60,15 +60,7 @@ export const ExplorerSearchResults = ({
                   );
                 }
                 if (currentView === 'map') {
-                  return (
-                    <MapView
-                      onRowSelect={onRowSelect}
-                      onRowClick={onClick}
-                      selectedFileId={selectedId}
-                      {...props}
-                      {...extraProps}
-                    />
-                  );
+                  return <MapView {...props} />;
                 }
 
                 return (
@@ -81,11 +73,7 @@ export const ExplorerSearchResults = ({
                   />
                 );
               };
-              return (
-                <ResultAnnotationLoader {...props}>
-                  {renderView()}
-                </ResultAnnotationLoader>
-              );
+              return <>{renderView()}</>;
             }}
           </ResultTableLoader>
         </EnsureNonEmptyResource>
@@ -97,4 +85,5 @@ export const ExplorerSearchResults = ({
 const TableContainer = styled.div`
   width: 100%;
   height: calc(100% - 104px);
+  overflow: hidden;
 `;
