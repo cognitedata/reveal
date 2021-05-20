@@ -77,7 +77,7 @@ export const configPanel = ({
 
   return (
     <div>
-      <h4>Source Reference</h4>
+      <h4>Source</h4>
       <AutoComplete
         mode="async"
         theme="dark"
@@ -108,7 +108,7 @@ export const configPanel = ({
 };
 
 export const node = {
-  title: 'Input Source',
+  title: 'Input',
   subtitle: 'Source',
   color: '#FC2574',
   icon: 'Function',

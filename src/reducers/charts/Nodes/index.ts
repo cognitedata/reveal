@@ -12,7 +12,7 @@ export default [
     disabled: true,
   },
   {
-    name: 'Input Source',
+    name: 'Input',
     ...SourceReference,
   },
   {
