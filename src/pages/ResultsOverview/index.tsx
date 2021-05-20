@@ -1,10 +1,9 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { Button, Icon, Tooltip } from '@cognite/cogs.js';
+import { Button, Icon, Tooltip, Title } from '@cognite/cogs.js';
+import { Card, message } from 'antd';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
-import { FileInfo } from '@cognite/sdk';
-import { message } from 'antd';
 import { useWorkflowItems, WorkflowStep } from 'modules/workflows';
 import {
   startConvertFileToSvgJob,
@@ -17,9 +16,12 @@ import { Flex, PageTitle } from 'components/Common';
 import { canDeploySelectedFiles } from 'utils/FilesUtils';
 import { diagramSelection } from 'routes/paths';
 import { AppStateContext } from 'context';
+import { useParsingJob } from 'modules/contextualization/pnidParsing/hooks';
+import { FileInfo } from '@cognite/sdk';
 import ProgressBarSection from './ProgressBarSection';
 import { getWorkflowItems, getContextualizationJobs } from './selectors';
 import ResultsTable from './ResultsTable';
+import EmptyStateFiles from './EmptyStateFiles';
 
 type Props = {
   step: WorkflowStep;
@@ -39,6 +41,7 @@ export default function ResultsOverview(props: Props) {
 
   const { workflowId } = useActiveWorkflow(step);
   const { diagrams } = useWorkflowItems(workflowId, true);
+  const parsingJob = useParsingJob(workflowId);
   const { workflow } = useSelector(getWorkflowItems(workflowId));
   const { uploadJobs } = useSelector(getContextualizationJobs);
   const annotationsByFileId = useAnnotationsForFiles(selectedKeys);
@@ -144,14 +147,29 @@ export default function ResultsOverview(props: Props) {
       >
         <ProgressBarSection />
       </Flex>
-      <Flex grow style={{ width: '100%', margin: '12px 0' }}>
-        <ResultsTable
-          rows={rows}
-          selectedKeys={selectedKeys}
-          setSelectedKeys={setSelectedKeys}
-          setRenderFeedback={setRenderFeedback}
-        />
-      </Flex>
+      <Card
+        title={
+          <Title level={5}>
+            Results preview{' '}
+            <span style={{ fontWeight: 'lighter', color: '#8C8C8C' }}>
+              {diagrams.length}
+            </span>
+          </Title>
+        }
+      >
+        <Flex grow style={{ width: '100%', margin: '12px 0' }}>
+          {parsingJob?.annotationCounts ? (
+            <ResultsTable
+              rows={rows}
+              selectedKeys={selectedKeys}
+              setSelectedKeys={setSelectedKeys}
+              setRenderFeedback={setRenderFeedback}
+            />
+          ) : (
+            <EmptyStateFiles />
+          )}
+        </Flex>
+      </Card>
     </Flex>
   );
 }
