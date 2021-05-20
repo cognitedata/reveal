@@ -4,7 +4,6 @@ import { CdfClient } from 'utils/cdfClient';
 export const createMockCdfClient = (): CdfClient => {
   const cdfClient = createClient({
     appId: 'unit-tests',
-    dbName: '',
     dataSetName: '',
   });
   // Hack our way in without needing to actually do anything.

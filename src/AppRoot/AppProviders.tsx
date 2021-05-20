@@ -9,6 +9,7 @@ import { Provider as ReduxProvider } from 'react-redux';
 import store from 'store';
 import { History } from 'history';
 import { AuthProvider } from '@cognite/react-container';
+import { HelpCenterContextProvider } from 'context/HelpCenterContext';
 
 type Props = {
   children?: React.ReactNode;
@@ -25,7 +26,6 @@ const AppProviders: React.FC<Props> = ({
   const cdfClient = createClient(
     {
       appId: 'digital-cockpit',
-      dbName: 'digital-cockpit',
       dataSetName: 'digital-cockpit',
     },
     client
@@ -36,8 +36,10 @@ const AppProviders: React.FC<Props> = ({
       <CdfClientProvider client={cdfClient}>
         <ApiClientProvider apiClient={apiClient}>
           <TenantProvider tenant={tenant}>
-            <GlobalStyles />
-            <Router history={history}>{children}</Router>
+            <HelpCenterContextProvider>
+              <GlobalStyles />
+              <Router history={history}>{children}</Router>
+            </HelpCenterContextProvider>
           </TenantProvider>
         </ApiClientProvider>
       </CdfClientProvider>

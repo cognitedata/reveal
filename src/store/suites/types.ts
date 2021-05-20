@@ -1,10 +1,4 @@
-import {
-  FileLink,
-  IdEither,
-  RawDBRow,
-  RawDBRowInsert,
-  RawDBRowKey,
-} from '@cognite/sdk';
+import { FileLink, IdEither } from '@cognite/sdk';
 import { ActionType } from 'typesafe-actions';
 import * as actions from './actions';
 
@@ -12,13 +6,13 @@ export enum SuitesTableActionTypes {
   SUITES_TABLE_LOAD = 'suitesTable/LOAD',
   SUITES_TABLE_LOADED = 'suitesTable/LOADED',
   SUITES_TABLE_LOAD_FAILED = 'suitesTable/LOAD_FAILED',
-  SUITES_TABLE_ROW_INSERT = 'suitesTable/INSERT',
-  SUITES_TABLE_ROW_ERROR = 'suitesTable/ERROR',
-  SUITES_TABLE_ROW_DELETE = 'suitesTable/DELETE',
-  FETCH_IMG_URLS = 'FETCH_IMG_URLS',
-  FETCHED_IMG_URLS = 'FETCHED_IMG_URLS',
-  FETCH_IMG_URLS_FAILED = 'FETCH_IMG_URLS_FAILED',
-  CLEAR_IMG_URLS = 'CLEAR_IMG_URLS',
+  SUITE_SAVE = 'suite/SAVE',
+  SUITE_ERROR = 'suite/ERROR',
+  SUITE_DELETE = 'suite/DELETE',
+  FETCH_IMG_URLS = 'suite/FETCH_IMG_URLS',
+  FETCHED_IMG_URLS = 'suite/FETCHED_IMG_URLS',
+  FETCH_IMG_URLS_FAILED = 'suite/FETCH_IMG_URLS_FAILED',
+  CLEAR_IMG_URLS = 'suite/CLEAR_IMG_URLS',
 }
 
 export type SuitesTableRootAction = ActionType<typeof actions>;
@@ -39,7 +33,6 @@ export type Board = {
   url: string;
   visibleTo?: string[];
   embedTag?: string;
-  lastVisitedTime?: number;
   imageFileId: string;
 };
 
@@ -49,8 +42,7 @@ export type Suite = {
   description: string;
   boards: Board[];
   color: string;
-  createdTime: number;
-  lastUpdatedTime?: Date;
+  order: number;
 };
 
 export type ImgUrlLink = FileLink & IdEither;
@@ -61,10 +53,6 @@ export type ImgUrls = {
   failed: boolean;
   urls: ImgUrlLink[];
 };
-
-export interface SuiteRow extends RawDBRow {}
-export interface SuiteRowInsert extends RawDBRowInsert {}
-export interface SuiteRowDelete extends RawDBRowKey {}
 
 export interface SuitesTableState {
   loading: boolean;

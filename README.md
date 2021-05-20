@@ -24,9 +24,8 @@ The api-key is used by [https://github.com/cognitedata/application-services/tree
 
 ### Whitelist the following domains on tenants:
 
-- `staging.digital-cockpit.cogniteapp.com`
 - `digital-cockpit.cogniteapp.com`
-- `*.digital-cockpit-dev.preview.cogniteapp.com`
+- `digital-cockpit.staging.cogniteapp.com`
 - `*.digital-cockpit.preview.cogniteapp.com`
 
 ### Create RAW database

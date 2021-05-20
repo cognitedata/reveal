@@ -1753,11 +1753,13 @@
     jwt-decode "^3.1.2"
     lodash "^4.17.20"
 
-"@cognite/cogs.js@^2.7.2":
-  version "2.9.0"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-2.9.0.tgz#a5f50a0fb9a02e634539b33599ccc8f39425b625"
+"@cognite/cogs.js@3.8.2":
+  version "3.8.2"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.8.2.tgz#22c9b74e687a9720fae0227745c86261ad5db2f2"
+  integrity sha512-6YckccXoCu1m+T4neQiLozixKX33hc7/4zy5kpBffpm2/YfZTxwKzK2r6tMHkNl8eig9dVWeH8bD8h/VwNWYBw==
   dependencies:
-    "@tippyjs/react" "4.0.2"
+    "@testing-library/react-hooks" "^5.0.3"
+    "@tippyjs/react" "4.2.3"
     "@types/react-date-range" "^1.1.2"
     color "^3.1.2"
     dayjs "^1.9.7"
@@ -1850,6 +1852,7 @@
 "@cognite/react-i18n@^0.3.1":
   version "0.3.2"
   resolved "https://registry.yarnpkg.com/@cognite/react-i18n/-/react-i18n-0.3.2.tgz#86a1b6854a4c6d356fcc931b118cb3311ec56ad3"
+  integrity sha512-kttiy7jZ1URKzsYKlNxnFNMx+N0OpjLpH3Ty7o+S9TJAB3wzVFFjJms7XOfbXOhHj08/APcak/QLkH2aKtYUNA==
   dependencies:
     i18next "^19.8.4"
     i18next-chained-backend "^2.0.1"
@@ -2341,9 +2344,14 @@
     schema-utils "^2.6.5"
     source-map "^0.7.3"
 
-"@popperjs/core@^2.3.2", "@popperjs/core@^2.4.4":
+"@popperjs/core@^2.3.2":
   version "2.6.0"
   resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.6.0.tgz#f022195afdfc942e088ee2101285a1d31c7d727f"
+
+"@popperjs/core@^2.8.3":
+  version "2.9.2"
+  resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.9.2.tgz#adea7b6953cbb34651766b0548468e743c6a2353"
+  integrity sha512-VZMYa7+fXHdwIq1TDhSXoVmSPEGM/aa+6Aiq3nVVJ9bXr24zScr+NlKFKC3iPljA7ho/GAZr+d2jOf5GIRC30Q==
 
 "@reach/auto-id@^0.12.1":
   version "0.12.1"
@@ -2623,6 +2631,18 @@
     lodash "^4.17.15"
     redent "^3.0.0"
 
+"@testing-library/react-hooks@^5.0.3":
+  version "5.1.2"
+  resolved "https://registry.yarnpkg.com/@testing-library/react-hooks/-/react-hooks-5.1.2.tgz#36e359d992bb652a9885c6fa9aa394639cbe8dd3"
+  integrity sha512-jwhtDYZ5gQUIX8cmVCVdtwNvuF5EiCOWjokRlTV+o/V0GdtRZDykUllL1OXq5PS4+J33wGLNQeeWzEHcWrH7tg==
+  dependencies:
+    "@babel/runtime" "^7.12.5"
+    "@types/react" ">=16.9.0"
+    "@types/react-dom" ">=16.9.0"
+    "@types/react-test-renderer" ">=16.9.0"
+    filter-console "^0.1.1"
+    react-error-boundary "^3.1.0"
+
 "@testing-library/react@^11.2.6":
   version "11.2.6"
   resolved "https://registry.yarnpkg.com/@testing-library/react/-/react-11.2.6.tgz#586a23adc63615985d85be0c903f374dab19200b"
@@ -2636,12 +2656,11 @@
   dependencies:
     "@testing-library/dom" "^7.27.1"
 
-"@tippyjs/react@4.0.2":
-  version "4.0.2"
-  resolved "https://registry.yarnpkg.com/@tippyjs/react/-/react-4.0.2.tgz#fadd14f1e36dd4f63f5f241cc78f3a1bb8394250"
+"@tippyjs/react@4.2.3":
+  version "4.2.3"
+  resolved "https://registry.yarnpkg.com/@tippyjs/react/-/react-4.2.3.tgz#c2dbe9eb71bd9ffa3974f9ba8e3a4a6fc1538aed"
   dependencies:
-    prop-types "^15.6.2"
-    tippy.js "^6.2.0"
+    tippy.js "^6.3.1"
 
 "@types/anymatch@*":
   version "1.3.1"
@@ -2826,9 +2845,10 @@
     "@types/react" "*"
     date-fns "^2.16.1"
 
-"@types/react-dom@^17.0.3":
+"@types/react-dom@>=16.9.0", "@types/react-dom@^17.0.3":
   version "17.0.3"
   resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-17.0.3.tgz#7fdf37b8af9d6d40127137865bb3fff8871d7ee1"
+  integrity sha512-4NnJbCeWE+8YBzupn/YrJxZ8VnjcJq5iR1laqQ1vkpQgBiA7bwk0Rp24fxsdNinzJY2U+HHS4dJJDPdoMjdJ7w==
   dependencies:
     "@types/react" "*"
 
@@ -2862,7 +2882,14 @@
     "@types/history" "*"
     "@types/react" "*"
 
-"@types/react@*", "@types/react@^17.0.3":
+"@types/react-test-renderer@>=16.9.0":
+  version "17.0.1"
+  resolved "https://registry.yarnpkg.com/@types/react-test-renderer/-/react-test-renderer-17.0.1.tgz#3120f7d1c157fba9df0118dae20cb0297ee0e06b"
+  integrity sha512-3Fi2O6Zzq/f3QR9dRnlnHso9bMl7weKCviFmfF6B4LS1Uat6Hkm15k0ZAQuDz+UBq6B3+g+NM6IT2nr5QgPzCw==
+  dependencies:
+    "@types/react" "*"
+
+"@types/react@*", "@types/react@>=16.9.0", "@types/react@^17.0.3":
   version "17.0.3"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.3.tgz#ba6e215368501ac3826951eef2904574c262cc79"
   dependencies:
@@ -6536,6 +6563,11 @@ fill-range@^7.0.1:
   resolved "https://registry.yarnpkg.com/fill-range/-/fill-range-7.0.1.tgz#1919a6a7c75fe38b2c7c77e5198535da9acdda40"
   dependencies:
     to-regex-range "^5.0.1"
+
+filter-console@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/filter-console/-/filter-console-0.1.1.tgz#6242be28982bba7415bcc6db74a79f4a294fa67c"
+  integrity sha512-zrXoV1Uaz52DqPs+qEwNJWJFAWZpYJ47UNmpN9q4j+/EYsz85uV0DC9k8tRND5kYmoVzL0W+Y75q4Rg8sRJCdg==
 
 finalhandler@~1.1.2:
   version "1.1.2"
@@ -11041,6 +11073,13 @@ react-dom@^17.0.2:
     object-assign "^4.1.1"
     scheduler "^0.20.2"
 
+react-error-boundary@^3.1.0:
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/react-error-boundary/-/react-error-boundary-3.1.1.tgz#932c5ca5cbab8ec4fe37fd7b415aa5c3a47597e7"
+  integrity sha512-W3xCd9zXnanqrTUeViceufD3mIW8Ut29BUD+S2f0eO2XCOU8b6UrJfY46RDGe5lxCJzfe4j0yvIfh0RbTZhKJw==
+  dependencies:
+    "@babel/runtime" "^7.12.5"
+
 react-error-overlay@^6.0.9:
   version "6.0.9"
   resolved "https://registry.yarnpkg.com/react-error-overlay/-/react-error-overlay-6.0.9.tgz#3c743010c9359608c375ecd6bc76f35d93995b0a"
@@ -12983,11 +13022,11 @@ tippy.js@6.2.0:
   dependencies:
     "@popperjs/core" "^2.3.2"
 
-tippy.js@^6.2.0:
-  version "6.2.7"
-  resolved "https://registry.yarnpkg.com/tippy.js/-/tippy.js-6.2.7.tgz#62fb34eda23f7d78151ddca922b62818c1ab9869"
+tippy.js@^6.3.1:
+  version "6.3.1"
+  resolved "https://registry.yarnpkg.com/tippy.js/-/tippy.js-6.3.1.tgz#3788a007be7015eee0fd589a66b98fb3f8f10181"
   dependencies:
-    "@popperjs/core" "^2.4.4"
+    "@popperjs/core" "^2.8.3"
 
 tmp-promise@^1.0.5:
   version "1.1.0"
