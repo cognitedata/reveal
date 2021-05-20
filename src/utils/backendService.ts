@@ -119,6 +119,5 @@ export async function getFunctionResponseWhenDone(
   }
 
   const response = await getCallResponse(fnId, callId);
-  console.log({ callStatus, response });
   return response;
 }
