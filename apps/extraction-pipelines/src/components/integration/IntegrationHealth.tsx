@@ -15,6 +15,7 @@ import { RunLogsTable } from 'components/integration/RunLogsTable';
 import { getRunLogTableCol } from 'components/integration/RunLogsCols';
 import { ErrorFeedback } from 'components/error/ErrorFeedback';
 import { PageWrapperColumn } from 'styles/StyledPage';
+import { DebouncedSearch } from 'components/inputs/DebouncedSearch';
 import { DateRangeFilter } from 'components/inputs/dateTime/DateRangeFilter';
 import moment from 'moment';
 import { Colors, Range } from '@cognite/cogs.js';
@@ -35,6 +36,7 @@ const FilterWrapper = styled.div`
 interface LogsViewProps {
   integration: Integration | null;
 }
+const ERROR_SEARCH_LABEL: Readonly<string> = 'Search error message';
 
 export interface RangeType {
   startDate: Date;
@@ -50,7 +52,7 @@ export const IntegrationHealth: FunctionComponent<LogsViewProps> = ({
     endDate: moment(Date.now()).toDate(),
   });
   const [status, setStatus] = useState<RunStatus | undefined>();
-
+  const [search, setSearch] = useState<string>();
   const { data, error } = useFilteredRuns({
     filter: {
       externalId: integration?.externalId ?? '',
@@ -63,6 +65,9 @@ export const IntegrationHealth: FunctionComponent<LogsViewProps> = ({
           }
         : {}),
       ...(status && { status }),
+      message: {
+        substring: search,
+      },
     },
     limit: 100,
   });
@@ -88,6 +93,10 @@ export const IntegrationHealth: FunctionComponent<LogsViewProps> = ({
     return <ErrorFeedback error={error} />;
   }
 
+  const handleSearchChange = (input: string) => {
+    setSearch(input);
+  };
+
   const dateRangeChanged = (range: Range) => {
     setDateRange(range);
   };
@@ -105,6 +114,10 @@ export const IntegrationHealth: FunctionComponent<LogsViewProps> = ({
         />
         <QuickDateTimeFilters setDateRange={setDateRange} />
         <StatusFilterMenu setStatus={setStatus} />
+        <DebouncedSearch
+          label={ERROR_SEARCH_LABEL}
+          handleChange={handleSearchChange}
+        />
       </FilterWrapper>
       <RunLogsTable data={runs} columns={columns} />
     </TableWrapper>
