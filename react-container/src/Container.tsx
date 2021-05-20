@@ -17,7 +17,7 @@ import {
   TranslationWrapper,
 } from './components';
 import { useCogniteSDKClient, createBrowserHistory } from './internal';
-import { storage, getTenantInfo } from './utils';
+import { storage, getTenantInfo, mergeConfiguration } from './utils';
 import { ConditionalReduxProvider } from './providers';
 
 const { REACT_APP_API_KEY: apiKey, REACT_APP_API_KEY_PROJECT: project } =
@@ -27,6 +27,7 @@ interface ContainerSidecarConfig extends SidecarConfig {
   disableTranslations?: boolean;
   disableLoopDetector?: boolean;
   disableSentry?: boolean;
+  disableIntercom?: boolean;
 }
 
 type Props = {
@@ -43,8 +44,13 @@ const RawContainer: React.FC<Props> = ({
 }) => {
   const [possibleTenant, initialTenant] = getTenantInfo(window.location);
 
-  const { applicationId, cdfApiBaseUrl, disableLoopDetector, disableSentry } =
-    sidecar;
+  const {
+    applicationId,
+    cdfApiBaseUrl,
+    disableLoopDetector,
+    disableSentry,
+    disableIntercom,
+  } = sidecar;
 
   storage.init({ tenant: possibleTenant, appName: applicationId });
 
@@ -105,8 +111,12 @@ const RawContainer: React.FC<Props> = ({
           tenant={initialTenant}
         >
           <IntercomContainer
+            intercomSettings={mergeConfiguration(
+              intercomSettings,
+              sidecar.intercomSettings
+            )}
             sidecar={sidecar}
-            intercomSettings={intercomSettings}
+            disabled={disableIntercom}
           >
             <ConditionalReduxProvider store={store}>
               <ErrorBoundary instanceId="container-root">

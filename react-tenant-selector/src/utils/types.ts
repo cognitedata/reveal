@@ -1,4 +1,5 @@
 // we need to make a more generic place to move this type into
+import { IntercomBootSettings } from '@cognite/intercom-helper';
 
 export type FakeIdp = {
   roles: string[];
@@ -23,6 +24,7 @@ export type SidecarConfig = {
   disableLegacyLogin?: boolean;
   helpLink?: string;
   intercom?: string;
+  intercomSettings?: IntercomBootSettings;
   locize?: {
     apiKey?: string;
     projectId: string;

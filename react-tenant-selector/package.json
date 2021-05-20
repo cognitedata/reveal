@@ -1,6 +1,6 @@
 {
   "name": "@cognite/react-tenant-selector",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "source": "src/index.ts",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
@@ -58,9 +58,10 @@
   },
   "dependencies": {
     "@cognite/auth-utils": "^1.0.3",
+    "@cognite/intercom-helper": "^0.1.2",
+    "@cognite/metrics": "^1.0.0",
     "@cognite/react-i18n": "^0.4.0",
     "@cognite/storage": "^0.1.1",
-    "@cognite/metrics": "^1.0.0",
     "axios": "^0.21.1",
     "react-helmet": "^6.1.0",
     "react-query": "^3.7.1",

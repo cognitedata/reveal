@@ -9,13 +9,14 @@ import {
 import { SidecarConfig } from '@cognite/react-tenant-selector';
 
 import { getAuthHeaders } from 'auth';
+import { ConditionalWrapperWithProps } from './ConditionalWrapper';
 
-interface IntercomContainerProps {
+interface IntercomProps {
   intercomSettings?: IntercomBootSettings;
   sidecar: SidecarConfig;
   children: React.ReactElement;
 }
-export const IntercomContainer: React.FC<IntercomContainerProps> = ({
+export const Intercom: React.FC<IntercomProps> = ({
   intercomSettings,
   sidecar,
   children,
@@ -24,22 +25,42 @@ export const IntercomContainer: React.FC<IntercomContainerProps> = ({
   const authHeaders = getAuthHeaders();
 
   React.useEffect(() => {
-    if (intercomSettings) {
-      intercomInitialization(intercomSettings.app_id).then(() => {
-        intercomHelper.boot(intercomSettings);
-        intercomHelper.identityVerification({
-          appsApiUrl: appsApiBaseUrl,
-          headers: authHeaders,
-        });
+    intercomInitialization(intercomSettings.app_id).then(() => {
+      intercomHelper.boot(intercomSettings);
+      intercomHelper.identityVerification({
+        appsApiUrl: appsApiBaseUrl,
+        headers: authHeaders,
       });
-    }
+    });
 
     return () => {
-      if (intercomSettings) {
-        intercomHelper.shutdown();
-      }
+      intercomHelper.shutdown();
     };
   }, []);
 
   return children;
+};
+
+interface IntercomContainerProps {
+  disabled?: boolean;
+  intercomSettings?: IntercomBootSettings;
+  sidecar: SidecarConfig;
+  children: React.ReactElement;
+}
+export const IntercomContainer: React.FC<IntercomContainerProps> = ({
+  disabled,
+  intercomSettings,
+  children,
+  sidecar,
+}) => {
+  return (
+    <ConditionalWrapperWithProps
+      condition={!disabled && intercomSettings && intercomSettings.app_id}
+      sidecar={sidecar}
+      intercomSettings={intercomSettings}
+      wrap={Intercom}
+    >
+      {children}
+    </ConditionalWrapperWithProps>
+  );
 };
