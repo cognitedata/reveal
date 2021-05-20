@@ -34,6 +34,7 @@
     "antd": "^4.15.6",
     "date-fns": "^2.21.2",
     "dayjs": "^1.10.4",
+    "dotenv": "^9.0.2",
     "firebase": "^8.5.0",
     "lodash": "^4.17.21",
     "mixpanel-browser": "^2.41.0",

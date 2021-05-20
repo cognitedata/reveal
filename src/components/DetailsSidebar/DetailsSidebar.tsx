@@ -11,7 +11,8 @@ import {
   FunctionCallStatus,
 } from 'reducers/charts/types';
 import styled from 'styled-components/macro';
-import { functionResponseKey, useCallFunction } from 'utils/cogniteFunctions';
+import { getCallResponse } from 'utils/backendApi';
+import { functionResponseKey, useCallFunction } from 'utils/backendService';
 
 type Props = {
   chart: Chart;
@@ -217,11 +218,7 @@ const Statistics = ({
       statisticsCall?.callId
     ),
     queryFn: (): Promise<string | undefined> =>
-      sdk
-        .get(
-          `/api/playground/projects/${sdk.project}/functions/${statisticsCall.functionId}/calls/${statisticsCall.callId}/response`
-        )
-        .then((r) => r.data.response),
+      getCallResponse(sdk, statisticsCall?.functionId, statisticsCall.callId),
     retry: 1,
     retryDelay: 1000,
     enabled: !!statisticsCall,

@@ -1,4 +1,5 @@
 /* eslint no-underscore-dangle: ["error", { "allow": ["__cogniteSidecar"] }] */
+require('dotenv').config();
 
 export const CHART_VERSION = 1;
 
@@ -19,6 +20,10 @@ export type BaseSidecar = {
   mixpanel: string;
   intercom: string;
   infieldCacheApiBaseUrl: string;
+};
+
+export const getAppId = (): string => {
+  return 'Cognite Charts';
 };
 
 export const getSidecar = <T extends BaseSidecar>(): T => {
@@ -66,6 +71,7 @@ export const getEnvironment = (hostname = window.location.hostname): string => {
 };
 
 export default {
+  appId: getAppId(),
   appName: getAppName(),
   appsApiBaseURL: getAppsApiBaseUrl(),
   cdfApiBaseUrl: getCdfApiBaseUrl(),

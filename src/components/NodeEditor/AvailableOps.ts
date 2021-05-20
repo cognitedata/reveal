@@ -1,9 +1,10 @@
-import { useSDK } from '@cognite/sdk-provider';
-import { CogniteClient } from '@cognite/sdk';
 import { useState } from 'react';
 import { useQuery } from 'react-query';
 import { DSPFunction } from 'utils/transforms';
 import { FunctionCallStatus } from 'reducers/charts/types';
+import * as backendApi from 'utils/backendApi';
+import { CogniteClient } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
 
 type Function = {
   id: number;
@@ -27,9 +28,7 @@ interface Props {
 }
 
 const getFunctionId = (sdk: CogniteClient, externalId: string) => async () => {
-  const functions: Function[] = await sdk
-    .get(`/api/playground/projects/${sdk.project}/functions`)
-    .then((r) => r.data?.items);
+  const functions: Function[] = await backendApi.listFunctions(sdk);
 
   const { id } = functions.find((f) => f.externalId === externalId) || {};
 
@@ -41,10 +40,10 @@ const getFunctionId = (sdk: CogniteClient, externalId: string) => async () => {
 };
 
 const getLatestCalls = (sdk: CogniteClient, fnId: number) => async () => {
-  const calls: { id: number; endTime: number }[] =
-    (await sdk
-      .get(`/api/playground/projects/${sdk.project}/functions/${fnId}/calls`)
-      .then((response) => response?.data?.items)) || [];
+  const calls: { id: number; endTime: number }[] = await backendApi.getCalls(
+    sdk,
+    fnId
+  );
 
   const { id } = calls.sort((a, b) => b.endTime - a.endTime)[0] || {};
   return id;
@@ -55,11 +54,7 @@ const callFunction = (
   fnId: number,
   data: any = {}
 ) => async () => {
-  const response = await sdk
-    .post(`/api/playground/projects/${sdk.project}/functions/${fnId}/call`, {
-      data: { data },
-    })
-    .then((r) => r?.data);
+  const response = await backendApi.callFunction(sdk, fnId, data);
   if (response?.id) {
     return response?.id as number;
   }
@@ -71,11 +66,7 @@ const getCallStatus = (
   fnId: number,
   callId: number
 ) => async () => {
-  const response = await sdk
-    .get(
-      `/api/playground/projects/${sdk.project}/functions/${fnId}/calls/${callId}`
-    )
-    .then((r) => r?.data);
+  const response = await backendApi.getCallStatus(sdk, fnId, callId);
 
   if (response?.status) {
     return response.status as FunctionCallStatus;
@@ -88,11 +79,7 @@ const getOps = (
   fnId: number,
   callId: number
 ) => async () => {
-  const response = await sdk
-    .get(
-      `/api/playground/projects/${sdk.project}/functions/${fnId}/calls/${callId}/response`
-    )
-    .then((r) => r?.data?.response);
+  const response = await backendApi.getCallResponse(sdk, fnId, callId);
 
   if (response.all_available_ops) {
     return response.all_available_ops as DSPFunction[];
