@@ -9,9 +9,10 @@ export default [
   {
     name: 'Time Series',
     ...TimeSeriesReference,
+    disabled: true,
   },
   {
-    name: 'Source',
+    name: 'Input Source',
     ...SourceReference,
   },
   {

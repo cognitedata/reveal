@@ -81,6 +81,7 @@ export type ConfigPanelComponent = FunctionComponent<ConfigPanelComponentProps>;
 export type NodeOption = {
   name: string; // Outward name when selecting the node
   node: StorableNode; // The STORABLE node (without its function effect)
+  disabled?: boolean;
 
   // Some nodes (e.g. output nodes) won't have an effect or data
   effect?: (funcData: object, ...inputPinValues: any[]) => Record<string, any>; // out = Output pin values
