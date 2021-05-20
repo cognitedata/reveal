@@ -22,11 +22,13 @@ const getServiceClient = () => {
     baseUrl: useBackendService ? BACKEND_SERVICE_BASE_URL : CDF_API_BASE_URL,
   });
 
+  const accessToken = sdk
+    .getDefaultRequestHeaders()
+    .Authorization.split('Bearer ')[1];
+
   client.loginWithOAuth({
     project: sdk.project,
-    accessToken: sdk
-      .getDefaultRequestHeaders()
-      .Authorization.split('Bearer ')[1],
+    accessToken,
   });
 
   return client;
