@@ -69,7 +69,7 @@ const WorkflowEditor = ({
   const context = { chart, workflow };
 
   const hasOutputNode = !!nodes?.find(
-    (nd) => !nd.outputPins || nd.outputPins.length === 0
+    (nd) => nd.functionEffectReference === 'OUTPUT'
   );
 
   // This have to be debouced as it is called continuously when dragging nodes

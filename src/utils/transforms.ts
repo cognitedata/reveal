@@ -173,7 +173,7 @@ export function getStepsFromWorkflow(
   connections: Record<string, any> | undefined
 ) {
   const outputNode = nodes?.find(
-    (node) => !node.outputPins || node.outputPins.length === 0
+    (node) => node.functionEffectReference === 'OUTPUT'
   );
 
   if (!outputNode) {
@@ -220,7 +220,7 @@ export function getStepsFromWorkflow(
             );
 
             const wfOutputNode = referencedWorkflow?.nodes?.find(
-              (nd) => !nd.outputPins || nd.outputPins.length === 0
+              (nd) => nd.functionEffectReference === 'OUTPUT'
             );
 
             if (!wfOutputNode) {
