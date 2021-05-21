@@ -54,11 +54,10 @@ export class ByNodePropertyNodeSet extends NodeSet {
       this._fetchResultHelper.interrupt();
     }
     const fetchResultHelper = new PopulateIndexSetFromPagedResponseHelper<Node3D>(
-      assetMapping => new NumericRange(assetMapping.treeIndex, assetMapping.subtreeSize), 
+      assetMapping => new NumericRange(assetMapping.treeIndex, assetMapping.subtreeSize),
       () => this.notifyChanged()
     );
     this._fetchResultHelper = fetchResultHelper;
-
 
     this._indexSet = indexSet;
 

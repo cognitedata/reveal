@@ -7,7 +7,7 @@ import { AssetMapping3D, CogniteClient } from '@cognite/sdk';
 
 import { Cognite3DModel } from '../../../public/migration/Cognite3DModel';
 import { IndexSet } from '../../../utilities/IndexSet';
-import { PopulateIndexSetFromPagedResponseHelper } from "./PopulateIndexSetFromPagedResponseHelper";
+import { PopulateIndexSetFromPagedResponseHelper } from './PopulateIndexSetFromPagedResponseHelper';
 import { NumericRange } from '../../../utilities/NumericRange';
 import { NodeSet } from './NodeSet';
 
@@ -36,7 +36,7 @@ export class ByAssetNodeSet extends NodeSet {
       this._fetchResultHelper.interrupt();
     }
     const fetchResultHelper = new PopulateIndexSetFromPagedResponseHelper<AssetMapping3D>(
-      assetMapping => new NumericRange(assetMapping.treeIndex, assetMapping.subtreeSize), 
+      assetMapping => new NumericRange(assetMapping.treeIndex, assetMapping.subtreeSize),
       () => this.notifyChanged()
     );
     this._fetchResultHelper = fetchResultHelper;
