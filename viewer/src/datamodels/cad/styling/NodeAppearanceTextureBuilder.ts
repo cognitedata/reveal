@@ -52,28 +52,27 @@ export class NodeAppearanceTextureBuilder {
    * @param appearance New style that is applied to all 'unstyled' elements.
    */
   setDefaultAppearance(appearance: NodeAppearance) {
-    if (!equalNodeAppearances(appearance, this._defaultAppearance)) {
-      this._defaultAppearance = appearance;
-      fillColorTexture(this._overrideColorPerTreeIndexTexture, appearance);
-      this._infrontNodesTreeIndices.clear();
-      this._ghostedNodesTreeIndices.clear();
-      this._regularNodesTreeIndices.clear();
+    if (equalNodeAppearances(appearance, this._defaultAppearance)) return;
+    this._defaultAppearance = appearance;
+    fillColorTexture(this._overrideColorPerTreeIndexTexture, appearance);
+    this._infrontNodesTreeIndices.clear();
+    this._ghostedNodesTreeIndices.clear();
+    this._regularNodesTreeIndices.clear();
 
-      const allIndicesRange = new NumericRange(0, this._treeIndexCount);
-      const infront = !!appearance.renderInFront;
-      const ghosted = !!appearance.renderGhosted;
-      if (infront) {
-        this._infrontNodesTreeIndices.addRange(allIndicesRange);
-      } else if (ghosted) {
-        this._ghostedNodesTreeIndices.addRange(allIndicesRange);
-      } else {
-        this._regularNodesTreeIndices.addRange(allIndicesRange);
-      }
-
-      // Force full update as we might have overwritten previously applied styles
-      this._currentlyAppliedStyles.clear();
-      this._needsUpdate = true;
+    const allIndicesRange = new NumericRange(0, this._treeIndexCount);
+    const infront = !!appearance.renderInFront;
+    const ghosted = !!appearance.renderGhosted;
+    if (infront) {
+      this._infrontNodesTreeIndices.addRange(allIndicesRange);
+    } else if (ghosted) {
+      this._ghostedNodesTreeIndices.addRange(allIndicesRange);
+    } else {
+      this._regularNodesTreeIndices.addRange(allIndicesRange);
     }
+
+    // Force full update as we might have overwritten previously applied styles
+    this._currentlyAppliedStyles.clear();
+    this._needsUpdate = true;
   }
 
   get regularNodeTreeIndices(): IndexSet {

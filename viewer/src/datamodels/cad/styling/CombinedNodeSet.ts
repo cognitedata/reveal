@@ -41,10 +41,9 @@ export class CombinedNodeSet extends NodeSet {
   }
 
   private makeDirty(): void {
-    if (this._cachedCombinedSet !== undefined) {
-      this._cachedCombinedSet = undefined;
-      this.notifyChanged();
-    }
+    if (this._cachedCombinedSet === undefined) return;
+    this._cachedCombinedSet = undefined;
+    this.notifyChanged();
   }
 
   /**
