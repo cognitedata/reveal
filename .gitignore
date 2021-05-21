@@ -34,3 +34,6 @@ junit.xml
 # a better yarn link
 .yalc
 yalc.lock
+
+# dotenv
+.env

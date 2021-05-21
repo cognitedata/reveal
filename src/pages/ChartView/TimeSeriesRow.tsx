@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import dayjs from 'dayjs';
-import { useSDK } from '@cognite/sdk-provider';
 import { useIsFetching, useQueryClient, useQuery } from 'react-query';
 import {
   Chart,
@@ -25,11 +24,13 @@ import { usePrevious } from 'hooks/usePrevious';
 import EditableText from 'components/EditableText';
 import { AppearanceDropdown } from 'components/AppearanceDropdown';
 import { PnidButton } from 'components/SearchResultTable/PnidButton';
-import { functionResponseKey, useCallFunction } from 'utils/cogniteFunctions';
+import { functionResponseKey, useCallFunction } from 'utils/backendService';
 import FunctionCall from 'components/FunctionCall';
-import { CogniteClient } from '@cognite/sdk';
 import { StatisticsResult } from 'components/DetailsSidebar';
+import * as backendApi from 'utils/backendApi';
 import { trackUsage } from 'utils/metrics';
+import { CogniteClient } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
 import {
   SourceItem,
   SourceCircle,
@@ -63,11 +64,7 @@ const getCallStatus = (
   fnId: number,
   callId: number
 ) => async () => {
-  const response = await sdk
-    .get(
-      `/api/playground/projects/${sdk.project}/functions/${fnId}/calls/${callId}`
-    )
-    .then((r) => r?.data);
+  const response = await backendApi.getCallStatus(sdk, fnId, callId);
 
   if (response?.status) {
     return response.status as FunctionCallStatus;
@@ -160,6 +157,7 @@ export default function TimeSeriesRow({
   dateTo,
 }: Props) {
   const sdk = useSDK();
+
   const {
     id,
     description,
@@ -262,11 +260,11 @@ export default function TimeSeriesRow({
       statisticsCall?.callId
     ),
     queryFn: (): Promise<string | undefined> =>
-      sdk
-        .get(
-          `/api/playground/projects/${sdk.project}/functions/${statisticsCall.functionId}/calls/${statisticsCall.callId}/response`
-        )
-        .then((r) => r.data.response),
+      backendApi.getCallResponse(
+        sdk,
+        statisticsCall?.functionId,
+        statisticsCall?.callId
+      ),
     retry: 1,
     retryDelay: 1000,
     enabled: !!statisticsCall,
