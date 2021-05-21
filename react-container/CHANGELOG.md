@@ -1,3 +1,7 @@
+## 1.2.3 May 21 2021
+
+- Bump tsa to v1.2.4
+
 ## 1.2.2 May 20 2021
 
 - Bump tsa to v1.2.3

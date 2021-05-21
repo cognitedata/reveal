@@ -76,7 +76,12 @@ const CardContainer = ({
   enabledLoginModes,
 }: Props) => {
   const [containerHeight, setContainerHeight] = React.useState<string>();
+  const [showProjectSelection, setShowProjectSelection] = React.useState(false);
   const container = React.createRef<HTMLDivElement>();
+
+  React.useEffect(() => {
+    setShowProjectSelection(authState?.authenticated || false);
+  }, [authState?.authenticated]);
 
   React.useEffect(() => {
     if (container?.current) {
@@ -85,8 +90,6 @@ const CardContainer = ({
       }
     }
   }, [container, authState?.error, authState?.project]);
-
-  const showProjectSelection = authState?.authenticated;
 
   const showLoginOptions = !showProjectSelection;
 

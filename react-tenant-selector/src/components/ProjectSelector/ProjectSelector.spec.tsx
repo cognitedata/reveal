@@ -30,7 +30,7 @@ describe('<ProjectSelector />', () => {
   it('Should render the button', () => {
     // @ts-expect-error - missing args
     sandbox.stub(reactQuery, 'useQuery').returns({
-      data: [{ urlName: 'test-1' }],
+      data: [{ projectUrlName: 'test-1' }],
       isFetched: true,
       isError: false,
       refetch: jest.fn(),
@@ -59,7 +59,7 @@ describe('<ProjectSelector />', () => {
   it('Should select a project', () => {
     // @ts-expect-error - missing args
     sandbox.stub(reactQuery, 'useQuery').returns({
-      data: [{ urlName: 'test-1' }],
+      data: [{ projectUrlName: 'test-1' }],
       isFetched: true,
       isError: false,
       refetch: jest.fn(),

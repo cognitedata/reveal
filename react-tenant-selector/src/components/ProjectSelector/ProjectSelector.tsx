@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useQuery } from 'react-query';
 import { Button, Dropdown, Menu, Loader } from '@cognite/cogs.js';
-import { CogniteAuth } from '@cognite/auth-utils';
+import { CogniteAuth, getFlow } from '@cognite/auth-utils';
 
 import { StyledProjectFormContainer } from './elements';
 import { fetchProjects } from './fetchProjects';
@@ -18,13 +18,14 @@ const ProjectSelector: React.FC<Props> = ({
 }) => {
   const [selectedProject, setSelectedProject] = React.useState<string>();
   const [showMenu, setShowMenu] = React.useState(false);
-
+  const [retryCount, setRetryCount] = React.useState(0);
+  const { flow } = getFlow();
   const {
     data = [],
     isFetched,
     isError,
     refetch,
-  } = useQuery<{ urlName: string }[]>(
+  } = useQuery<{ projectUrlName: string }[]>(
     ['projects'],
     async () => fetchProjects({ enabled, authClient }),
     {
@@ -32,7 +33,10 @@ const ProjectSelector: React.FC<Props> = ({
     }
   );
 
-  const projects = data.map((d) => ({ urlName: d.urlName, label: d.urlName }));
+  const projects = data.map((d) => ({
+    urlName: d.projectUrlName,
+    label: d.projectUrlName,
+  }));
 
   // if there is only one
   // then we auto select that for the user
@@ -70,6 +74,27 @@ const ProjectSelector: React.FC<Props> = ({
     }
   };
 
+  const handleLogout = async () => {
+    if (authClient) {
+      authClient.logout();
+      window.location.href = '/';
+    }
+  };
+
+  const retryFetchOnce = () => {
+    if (authClient) {
+      if (flow && retryCount < 1) {
+        setRetryCount(retryCount + 1);
+        authClient.loginInitial({
+          flow,
+        });
+        refetch(); // projects
+      } else {
+        handleLogout();
+      }
+    }
+  };
+
   // we need to have the enabled check here render nothing in this case
   // so that the parent component knows of the existence of this component
   // and can render the height accordingly
@@ -84,6 +109,8 @@ const ProjectSelector: React.FC<Props> = ({
   const showError = isError || !projects;
 
   if (showError) {
+    retryFetchOnce();
+
     return (
       <div style={{ margin: '4rem 0rem' }}>
         <p style={{ color: '#404040', fontWeight: 1000, fontSize: 16 }}>
@@ -122,13 +149,18 @@ const ProjectSelector: React.FC<Props> = ({
       </Dropdown>
       <br />
       <Button
-        style={{ height: 40, width: '100%' }}
-        size="default"
-        variant="default"
+        style={{ height: 40, width: '100%', marginBottom: 10 }}
         type="primary"
         onClick={handleContinue}
       >
         Continue
+      </Button>
+      <Button
+        style={{ height: 40, width: '100%' }}
+        size="small"
+        onClick={handleLogout}
+      >
+        Logout
       </Button>
     </StyledProjectFormContainer>
   );

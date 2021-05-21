@@ -1,4 +1,11 @@
-## 1.2.3 May 20 2021
+## 1.2.4 May 21 2021
+
+- Add nicer fallback when projects fetching fails
+- Logout if there is an error fetching projects
+- Add logout button to projects page, to allow users to back out
+- Use new project fetching from auth-utils
+
+- ## 1.2.3 May 20 2021
 
 - Add 'name' option to fake idp buttons
 

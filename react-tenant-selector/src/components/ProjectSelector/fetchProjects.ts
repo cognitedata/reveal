@@ -11,16 +11,7 @@ export const fetchProjects = async ({
     return Promise.resolve([]);
   }
 
-  const client = authClient?.getClient();
-
-  if (!client) {
-    // eslint-disable-next-line no-console
-    console.error('Missing SDK client.');
-    return Promise.resolve([]);
-  }
-
-  const result = await client.get('/api/v1/projects');
-  return result?.data?.items;
+  return authClient?.getProjects();
 };
 
 export default fetchProjects;
