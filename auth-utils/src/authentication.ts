@@ -49,6 +49,11 @@ export class CogniteAuth {
     this.getClient().setBaseUrl(`https://${this.getCluster()}.cognitedata.com`);
   }
 
+  private makeNewCDFClient() {
+    this.client = new CogniteClient({ appId: this.options.appName });
+    this.setCluster();
+  }
+
   subscribers: {
     [appName: string]: (authState: AuthenticatedUser) => void;
   } = {};
@@ -155,7 +160,7 @@ export class CogniteAuth {
     directory?: string;
   }) {
     this.state.initializing = false;
-    this.state.error = false;
+    this.resetError();
     this.state.authenticated = false;
 
     log(`Running: loginInitial - ${flow}`);
@@ -176,8 +181,7 @@ export class CogniteAuth {
     }
     if (flow === 'AZURE_AD') {
       if (!this.options.aad?.appId) {
-        this.state.error = true;
-        this.state.errorMessage = 'Missing Azure client ID.';
+        this.setError('Missing Azure client ID.');
         return;
       }
 
@@ -185,7 +189,8 @@ export class CogniteAuth {
         this.options.aad.directoryTenantId = directory;
       }
 
-      this.client = new CogniteClient({ appId: this.options.appName });
+      this.makeNewCDFClient();
+
       this.client
         .loginWithOAuth({
           clientId: this.options.aad?.appId,
@@ -201,6 +206,7 @@ export class CogniteAuth {
         .finally(() => {
           log('Saving flow: AZURE_AD');
           this.client.authenticate();
+          this.publishAuthState();
         });
     }
   }
@@ -214,14 +220,14 @@ export class CogniteAuth {
       this.options.cluster = options.cluster;
     }
 
-    this.client = new CogniteClient({ appId: this.options.appName });
-    this.client.setBaseUrl(`https://${this.getCluster()}.cognitedata.com`);
+    this.makeNewCDFClient();
+
     if (authFlow === 'COGNITE_AUTH') {
       if (options?.project) {
-        await this.client.loginWithOAuth({
+        await this.getClient().loginWithOAuth({
           project: options.project,
         });
-        const response = await this.client.authenticate();
+        const response = await this.getClient().authenticate();
         this.state.authenticated = response;
         const accessToken = await this.getClient().getCDFToken();
         if (accessToken) {
@@ -252,9 +258,8 @@ export class CogniteAuth {
               },
             },
             onHandleRedirectError: (error) => {
-              this.state.error = true;
               this.state.authenticated = false;
-              this.state.errorMessage = error;
+              this.setError(error);
             },
           })
           .then(async (response) => {
@@ -274,12 +279,10 @@ export class CogniteAuth {
           .catch((error) => {
             // console.log('Error', error);
             this.state.authenticated = false;
-            this.state.error = true;
-            this.state.errorMessage = error.message;
+            this.setError(error.message);
           });
       } else {
-        this.state.error = true;
-        this.state.errorMessage = 'Not configured properly, missing AADID';
+        this.setError('Not configured properly, missing AADID');
       }
     }
     this.state.initializing = false;
@@ -300,6 +303,9 @@ export class CogniteAuth {
     const fakeAuth = getFromLocalStorage<FakeIdP>('fakeIdp');
     if (fakeAuth) {
       this.setCluster(fakeAuth.cluster);
+      // always make a new client, so we can keep state clean
+      this.makeNewCDFClient();
+
       this.getClient().loginWithOAuth({
         project: fakeAuth.project,
         accessToken: fakeAuth.accessToken,
@@ -321,6 +327,8 @@ export class CogniteAuth {
 
   public logout() {
     saveFlow('UNKNOWN');
+    // reset auth and cdf client too
+    this.makeNewCDFClient();
     this.options.flow = 'UNKNOWN';
     // -@TODO: add better logout process
     // we should delete some localstorage stuff perhaps?
@@ -341,6 +349,21 @@ export class CogniteAuth {
     };
   }
 
+  public async getProjects() {
+    try {
+      this.resetError();
+
+      const response = await this.getClient().get('/api/v1/token/inspect');
+
+      const { projects } = response.data;
+
+      return projects;
+    } catch (err) {
+      this.setError('Error fetching projects');
+      throw err;
+    }
+  }
+
   public getAuthState(): AuthenticatedUser {
     return {
       authenticated: this.state.authenticated,
@@ -354,6 +377,16 @@ export class CogniteAuth {
       email: this.state.email,
       username: this.state.username,
     };
+  }
+
+  private setError(message: string) {
+    this.state.error = true;
+    this.state.errorMessage = message;
+  }
+
+  private resetError() {
+    this.state.error = false;
+    this.state.errorMessage = '';
   }
 
   private publishAuthState() {

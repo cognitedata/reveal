@@ -1,3 +1,10 @@
+## 1.0.4 May 21 2021
+
+- Always create new client for FAKE_IDP flow
+- Update logout to also reset the SDK client
+- Refactor some generic methods
+- Add new project fetching since tokens/inspect returns projects now
+
 ## 1.0.3 May 18 2021
 
 - final fixes for FAKE_IDP flow

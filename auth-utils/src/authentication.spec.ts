@@ -9,6 +9,7 @@ jest.mock('@cognite/sdk', () => {
     CogniteClient: () => {
       return {
         getCDFToken: () => 'test-accessToken',
+        get: () => Promise.resolve({ data: { projects: ['test'] } }),
         loginWithOAuth: () => Promise.resolve(true),
         setBaseUrl: jest.fn(),
         authenticate: () => true,
@@ -165,6 +166,40 @@ describe('CogniteAuth', () => {
         error: false,
         initializing: false,
       });
+    });
+  });
+
+  describe('Misc', () => {
+    test('getProjects', async () => {
+      const result = await auth.getProjects();
+      expect(result).toEqual(['test']);
+    });
+
+    test('getError/setError', () => {
+      // @ts-expect-error private
+      auth.setError('test');
+      expect(auth.state.error).toEqual(true);
+      // @ts-expect-error private
+      auth.resetError();
+      expect(auth.state.error).toEqual(false);
+    });
+
+    test('logout', () => {
+      // @ts-expect-error private options
+      auth.options.cluster = 'test-cluster';
+      expect(auth.getCluster()).toEqual('test-cluster');
+      // @ts-expect-error fake field
+      auth.getClient().test = true;
+      // @ts-expect-error fake field
+      expect(auth.getClient().test).toEqual(true);
+
+      auth.logout();
+
+      // @ts-expect-error fake field
+      expect(auth.getClient().test).toEqual(undefined);
+
+      // cluster is NOT reset after logout
+      expect(auth.getCluster()).toEqual('test-cluster');
     });
   });
 });
