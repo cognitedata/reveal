@@ -21,7 +21,7 @@ export const getColumns = (resourceType: ResourceType) => {
   const detectedTagsColumn = {
     title: 'Detected tags',
     key: 'tags',
-    render: (row: FileInfo) => <DetectedTags fileId={row.id} />,
+    render: (row: FileInfo) => <DetectedTags fileId={row?.id} />,
   };
 
   return [
@@ -35,9 +35,9 @@ export const getColumns = (resourceType: ResourceType) => {
           <Popover
             content={
               isAsset ? (
-                <AssetSmallPreview assetId={(resource as Asset).id} />
+                <AssetSmallPreview assetId={(resource as Asset)?.id} />
               ) : (
-                <FileSmallPreview fileId={(resource as FileInfo).id} />
+                <FileSmallPreview fileId={(resource as FileInfo)?.id} />
               )
             }
           >
