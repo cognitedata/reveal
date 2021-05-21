@@ -6,6 +6,7 @@ export type PnidsParsingJobSchema = {
   statusCount?: ApiStatusCount;
   items?: { fileId: number }[];
   annotationCounts?: { [fileId: number]: FileAnnotationsCount };
+  failedFiles?: Array<{ fileId: number; errorMessage: string }>;
 };
 
 export interface PnidResponseEntity {
@@ -47,7 +48,8 @@ export type Vertices = [Vertix, Vertix, Vertix, Vertix]; // {"x":xMin, "y":"yMin
 
 export type RetrieveResultsResponseItem = {
   fileId: number;
-  annotations: Array<{
+  errorMessage?: string;
+  annotations?: Array<{
     text: string;
     confidence: number;
     entities: {
@@ -69,4 +71,5 @@ export type ApiStatusCount = {
   completed?: number;
   running?: number;
   queued?: number;
+  failed?: number;
 };

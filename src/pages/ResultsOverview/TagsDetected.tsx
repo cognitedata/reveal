@@ -2,7 +2,7 @@ import React from 'react';
 import { Spin } from 'antd';
 import { Flex, CountTag } from 'components/Common';
 import { useParsingJob } from 'modules/contextualization/pnidParsing/hooks';
-import { Body } from '@cognite/cogs.js';
+import { Body, Icon, Tooltip } from '@cognite/cogs.js';
 
 type Props = { workflowId: number; fileId: number };
 
@@ -11,6 +11,13 @@ export default function TagsDetected({
   fileId,
 }: Props): JSX.Element {
   const parsingJob = useParsingJob(workflowId);
+
+  const { failedFiles } = parsingJob;
+
+  const didFileFail = failedFiles?.find(
+    (failedFile) => failedFile.fileId === fileId
+  );
+
   const fileAnnotations =
     parsingJob?.annotationCounts && parsingJob?.annotationCounts[fileId];
 
@@ -51,6 +58,17 @@ export default function TagsDetected({
           }
         />
       </Flex>
+    );
+  }
+
+  if (didFileFail) {
+    return (
+      <Tooltip content={didFileFail.errorMessage} placement="left">
+        <Body level={2}>
+          <Icon type="ErrorStroked" style={{ verticalAlign: '-0.225em' }} />{' '}
+          Failed to parse file
+        </Body>
+      </Tooltip>
     );
   }
 

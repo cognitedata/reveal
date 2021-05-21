@@ -24,17 +24,24 @@ export default function PnidParsingStatus({
 }: Props): JSX.Element {
   const { uploadJob } = file;
 
-  const { status: parsingJobStatus, jobId } = useParsingJob(workflowId);
+  const { status: parsingJobStatus, jobId, failedFiles } = useParsingJob(
+    workflowId
+  );
+
+  const didFileFail = failedFiles?.find(
+    (failedFile) => failedFile.fileId === file?.id
+  );
 
   if (uploadJob?.jobError) return <FailedStatus message="Failed to upload" />;
   if (parsingJobStatus === 'Failed')
-    return <FailedStatus message="Failed to parse" />;
+    return <FailedStatus message="Parsing job failed" />;
 
   if (uploadJob) {
     if (uploadJob.jobDone) return <SuccessStatus message="Completed" />;
     return <UploadingStatus />;
   }
   if (jobId) {
+    if (didFileFail) return <FailedStatus message={didFileFail.errorMessage} />;
     if (parsingJobStatus === 'Completed')
       return <SuccessStatus message="Finished" />;
     return <ParsingStatus />;

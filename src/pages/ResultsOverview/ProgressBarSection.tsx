@@ -29,7 +29,8 @@ const ProgressBarSection = (): JSX.Element => {
 
   useInterval(pollJobIfRunning, isJobDone ? null : 5000);
 
-  const { completed = 0, running = 0, queued = 0 } = statusCount ?? {};
+  const { completed = 0, running = 0, queued = 0, failed = 0 } =
+    statusCount ?? {};
   const total = running + completed + queued;
 
   const parsingJobPercent: number = Math.round((completed / total) * 100);
@@ -44,6 +45,9 @@ const ProgressBarSection = (): JSX.Element => {
       </Body>
       <Body level={2}>
         <Icon type="Schedule" /> Queued: {queued}
+      </Body>
+      <Body level={2}>
+        <Icon type="ErrorFilled" /> Failed: {failed}
       </Body>
     </span>
   );

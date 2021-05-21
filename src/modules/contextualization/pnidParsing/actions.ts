@@ -13,14 +13,15 @@ import {
   RetrieveResultsResponseItems,
   StartPnidParsingJobProps,
   PollJobResultsProps,
+  PnidsParsingJobSchema,
 } from 'modules/types';
 import { setJobId, workflowDiagramsSelector } from 'modules/workflows';
+import handleError from 'utils/handleError';
 import {
   verticesToBoundingBox,
   mapAssetsToEntities,
   mapFilesToEntities,
 } from './helpers';
-import handleError from '../../../utils/handleError';
 import { createJob, finishJob, rejectJob, resetJob, updateJob } from '.';
 
 const pnidApiRootPath = (project: string) =>
@@ -33,7 +34,7 @@ const getPnidDetectJobPath = (project: string, jobId: number) =>
 const createPendingAnnotations = async (
   file: FileInfo,
   jobId: string,
-  annotations: RetrieveResultsResponseItem['annotations']
+  annotations: NonNullable<RetrieveResultsResponseItem['annotations']>
 ): Promise<FileAnnotationsCount> => {
   const existingAnnotations = await listAnnotationsForFile(sdk, file, false);
 
@@ -176,7 +177,7 @@ export const pollJobResults = {
 
       if (status === 'Completed' || status === 'Failed') {
         if (status === 'Completed') {
-          const annotationCounts = await handleNewAnnotations(
+          const { annotationCounts, failedFiles } = await handleNewAnnotations(
             diagrams,
             items,
             jobId
@@ -186,6 +187,7 @@ export const pollJobResults = {
               workflowId,
               statusCount,
               annotationCounts,
+              failedFiles,
             })
           );
         } else {
@@ -212,20 +214,26 @@ const handleNewAnnotations = async (
   const annotationCounts: {
     [fileId: number]: FileAnnotationsCount;
   } = {};
+  const failedFiles: PnidsParsingJobSchema['failedFiles'] = [];
+
   await Promise.allSettled(
     (items as RetrieveResultsResponseItems).map(
-      async ({ fileId, annotations }) => {
-        const diagram = diagrams.find((d) => d.id === fileId);
-        if (diagram) {
-          const fileAnnotationCount = await createPendingAnnotations(
-            diagram,
-            String(jobId),
-            annotations
-          );
-          annotationCounts[fileId] = fileAnnotationCount;
+      async ({ fileId, annotations, errorMessage }) => {
+        if (annotations) {
+          const diagram = diagrams.find((d) => d.id === fileId);
+          if (diagram) {
+            const fileAnnotationCount = await createPendingAnnotations(
+              diagram,
+              String(jobId),
+              annotations
+            );
+            annotationCounts[fileId] = fileAnnotationCount;
+          }
+        } else if (errorMessage) {
+          failedFiles.push({ fileId, errorMessage });
         }
       }
     )
   );
-  return annotationCounts;
+  return { annotationCounts, failedFiles };
 };
