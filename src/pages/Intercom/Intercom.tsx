@@ -1,28 +1,62 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 
 import { Title, Body } from '@cognite/cogs.js';
-import { AuthConsumer } from '@cognite/react-container';
+import { AuthConsumer, AuthContext } from '@cognite/react-container';
+import {
+  intercomHelper,
+  intercomInitialization,
+} from '@cognite/intercom-helper';
 
-import { intercomHelper } from '@cognite/intercom-helper';
-
+import sidecar from 'utils/sidecar';
 import { Content } from './elements';
 import { Container, Code } from '../elements';
 
 const IntercomPageWrapper: React.FC = () => (
-  <AuthConsumer>{() => <IntercomPage />}</AuthConsumer>
+  <AuthConsumer>
+    {({ authState }: AuthContext) =>
+      authState ? <IntercomWrapper authState={authState} /> : null
+    }
+  </AuthConsumer>
 );
+
+interface DataWrapperProps {
+  authState: any;
+}
+const IntercomWrapper: React.FC<DataWrapperProps> = ({
+  authState,
+}: DataWrapperProps) => {
+  if (!authState.authenticated || !authState.token) {
+    return null;
+  }
+
+  const { appsApiBaseUrl, intercom } = sidecar;
+
+  useEffect(() => {
+    intercomInitialization(intercom).then(() => {
+      intercomHelper.boot({
+        app_id: intercom,
+        name: 'user',
+        email: 'user',
+        user_id: 'user',
+        hide_default_launcher: false,
+      });
+      intercomHelper.identityVerification({
+        appsApiUrl: appsApiBaseUrl,
+        headers: { Authorization: `Bearer ${authState.token}` },
+      });
+    });
+
+    return () => {
+      intercomHelper.shutdown();
+    };
+  }, []);
+
+  return <IntercomPage />;
+};
 
 export const IntercomPage: React.FC = () => {
   const { t } = useTranslation('Intercom');
-
-  useEffect(() => {
-    intercomHelper.show(true);
-
-    return () => {
-      intercomHelper.show(false);
-    };
-  }, []);
 
   return (
     <Container>

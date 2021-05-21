@@ -63,10 +63,7 @@ const generateBaseUrls = (cluster: string, prod: boolean = false) => {
     projectId: '1ee63b21-27c7-44ad-891f-4bd9af378b72', // <- move this to release-configs
     version: 'Production', // <- move this to release-configs
   },
-  intercomSettings: {
-    app_id: 'ou1uyk2p',
-    hide_default_launcher: true,
-  },
+  intercom: 'ou1uyk2p',
   ...((window as any).__cogniteSidecar || {}),
 };
 
