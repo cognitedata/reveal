@@ -4,13 +4,11 @@ import Routes from 'components/Routes';
 import { SDKProvider } from '@cognite/sdk-provider';
 import { QueryClientProvider, QueryClient } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
-import { CogniteClient } from '@cognite/sdk';
 import { ToastContainer, Loader } from '@cognite/cogs.js';
 import { getTenantFromURL } from 'utils/env';
 import { useFirebaseInit } from 'hooks/firebase';
+import { CogniteClient } from '@cognite/sdk';
 import config from 'config';
-
-const CDF_API_BASE_URL = config.cdfApiBaseUrl;
 
 const App = () => {
   const [authenicating, setAuth] = useState(true);
@@ -70,8 +68,8 @@ const queryClient = new QueryClient({
 });
 
 const sdk = new CogniteClient({
-  appId: 'Cognite Charts',
-  baseUrl: CDF_API_BASE_URL,
+  appId: config.appId,
+  baseUrl: config.cdfApiBaseUrl,
 });
 
 export default function RootApp() {

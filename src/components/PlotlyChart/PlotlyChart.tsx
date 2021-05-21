@@ -22,7 +22,7 @@ import { useSDK } from '@cognite/sdk-provider';
 import {
   getFunctionResponseWhenDone,
   transformSimpleCalcResult,
-} from 'utils/cogniteFunctions';
+} from 'utils/backendService';
 import { Chart } from 'reducers/charts/types';
 import { useChart, useUpdateChart } from 'hooks/firebase';
 import { updateSourceAxisForChart } from 'utils/charts';
