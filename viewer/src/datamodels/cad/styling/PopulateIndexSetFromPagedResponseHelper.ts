@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { ListResponse } from '@cognite/sdk';
+import { CursorAndAsyncIterator, ListResponse } from '@cognite/sdk';
 import { IndexSet } from '../../../utilities/IndexSet';
 import { NumericRange } from '../../../utilities/NumericRange';
 
@@ -32,15 +32,15 @@ export class PopulateIndexSetFromPagedResponseHelper<T> {
   /**
    * Loops through all the pages of the provided response and populated the IndexSet provided.
    * @param indexSet 
-   * @param response 
+   * @param request 
    * @returns True if the operation was completed, false if it was interrupted using {@link interrupt}.
    */
-  public async pageResults(indexSet: IndexSet, response: ListResponse<T[]>): Promise<boolean> {
+  public async pageResults(indexSet: IndexSet, request: Promise<ListResponse<T[]>>): Promise<boolean> {
     const itemToTreeIndexRangeCallback = this._itemToTreeIndexRangeCallback;
     const notifySetChangedCallback = this._notifySetChangedCallback;
     this._ongoingOperations++;
     try {
-
+      let response: ListResponse<T[]> = await request;
       while (!this._interrupted) {
         const nextRequest = response.next ? response.next() : undefined;
         response.items.forEach(x => {

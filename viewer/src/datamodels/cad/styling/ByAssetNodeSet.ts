@@ -60,7 +60,7 @@ export class ByAssetNodeSet extends NodeSet {
     const indexSet = new IndexSet();
     this._indexSet = indexSet;
 
-    const request = await this._client.assetMappings3D.list(model.modelId, model.revisionId, filterQuery);
+    const request = this._client.assetMappings3D.list(model.modelId, model.revisionId, filterQuery);
     const completed = await fetchResultHelper.pageResults(indexSet, request);
 
     if (completed) {

@@ -10,7 +10,7 @@ import { ByNodePropertyNodeSet } from './styling';
 import nock from 'nock';
 import { NumericRange } from '../../utilities';
 
-describe('ByPropertyNodeSet', () => {
+describe('ByNodePropertyNodeSet', () => {
   let set: ByNodePropertyNodeSet;
   const listNodesEndpointPath: RegExp = /.*\/nodes/;
 

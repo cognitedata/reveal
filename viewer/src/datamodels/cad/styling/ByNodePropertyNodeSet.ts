@@ -20,13 +20,14 @@ export type ByNodePropertyNodeSetOptions = {
    */
   requestPartitions?: number;
 };
+
 export class ByNodePropertyNodeSet extends NodeSet {
   private readonly _client: CogniteClient;
   private _indexSet = new IndexSet();
   private readonly _modelId: number;
   private readonly _revisionId: number;
   private readonly _options: Required<ByNodePropertyNodeSetOptions>;
-  private _fetchResultHelper: PopulateIndexSetFromPagedResponseHelper<AssetMapping3D> | undefined;
+  private _fetchResultHelper: PopulateIndexSetFromPagedResponseHelper<Node3D> | undefined;
 
   constructor(client: CogniteClient, model: Cognite3DModel, options: ByNodePropertyNodeSetOptions = {}) {
     super();
@@ -60,17 +61,18 @@ export class ByNodePropertyNodeSet extends NodeSet {
 
 
     this._indexSet = indexSet;
-    this.notifyChanged();
 
     const requests = range(1, requestPartitions + 1).map(async p => {
-      const response = await this._client.revisions3D.list3DNodes(this._modelId, this._revisionId, {
+      const response = this._client.revisions3D.list3DNodes(this._modelId, this._revisionId, {
         properties: query,
         limit: 1000,
         sortByNodeId: true,
         partition: `${p}/${requestPartitions}`
       });
-      fetchResultHelper.pageResults(indexSet, response);
+      return fetchResultHelper.pageResults(indexSet, response);
     });
+
+    this.notifyChanged();
     await Promise.all(requests);
   }
 
