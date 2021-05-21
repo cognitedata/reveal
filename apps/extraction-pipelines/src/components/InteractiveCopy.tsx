@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Tooltip, Icons, Colors } from '@cognite/cogs.js';
+import { Icons, Colors } from '@cognite/cogs.js';
 import { trackUsage } from 'utils/Metrics';
 import { ACTION_COPY } from 'utils/constants';
 import { CopyType } from 'components/InteractiveCopyWithText';
+import { StyledTooltip } from 'styles/StyledToolTip';
 
 interface InteractiveCopyProps {
   text: string;
@@ -39,7 +40,7 @@ const InteractiveCopy = ({
     if (onCopyCallback) onCopyCallback();
   };
   return (
-    <Tooltip
+    <StyledTooltip
       interactive
       content={
         <div style={{ padding: '0.3125rem 0.5625rem' }}>
@@ -56,7 +57,7 @@ const InteractiveCopy = ({
       >
         {hasCopied ? <Icons.Check /> : <Icons.Copy />}
       </IconWrapper>
-    </Tooltip>
+    </StyledTooltip>
   );
 };
 const IconWrapper = styled.div`

@@ -76,7 +76,6 @@ const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`
 
   .integrations-ui-style-scope [data-tippy-root] {
     .tippy-box {
-      background-color: inherit;
       .tippy-content {
         padding: 0;
       }

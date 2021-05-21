@@ -21,17 +21,27 @@ const StyledMenu = styled((props) => <Menu {...props}>{props.children}</Menu>)`
 export interface StatusMenuProps {
   setSelected: (status?: Status) => void;
   selected?: Status;
+  btnType?: 'ghost' | 'tertiary';
 }
 
-export const StatusMenu = ({ selected, setSelected }: StatusMenuProps) => {
+export const StatusMenu = ({
+  selected,
+  setSelected,
+  btnType = 'ghost',
+}: StatusMenuProps) => {
   return (
     <StyledDropdown
       content={
         <StatusMenuContent setSelected={setSelected} selected={selected} />
       }
     >
-      <Button type="ghost" icon="CaretDown" iconPlacement="right">
-        {TableHeadings.STATUS} {selected ? `- ${selected}` : '- ALL'}
+      <Button type={btnType} icon="CaretDown" iconPlacement="right">
+        {TableHeadings.STATUS}{' '}
+        {selected ? (
+          <StatusMarker status={selected} dataTestId="status-menu-fail" />
+        ) : (
+          '- ALL'
+        )}
       </Button>
     </StyledDropdown>
   );

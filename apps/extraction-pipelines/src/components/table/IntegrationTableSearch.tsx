@@ -1,8 +1,9 @@
 import React from 'react';
 import { FilterValue, Row, useAsyncDebounce } from 'react-table';
-import { Input, Tooltip } from '@cognite/cogs.js';
+import { Input } from '@cognite/cogs.js';
 import { trackUsage } from 'utils/Metrics';
 import { SEARCH } from 'utils/constants';
+import { StyledTooltip } from 'styles/StyledToolTip';
 
 interface GlobalSearchProps<D extends object> {
   preGlobalFilteredRows: Array<Row<D>>;
@@ -22,7 +23,7 @@ const IntegrationTableSearch = <D extends object>({
     setGlobalFilter(val || []);
   }, 200);
   return (
-    <Tooltip
+    <StyledTooltip
       content="Search will filter table based on search criteria. Search eg. integration name, name of users etc."
       placement="top-start"
     >
@@ -38,7 +39,7 @@ const IntegrationTableSearch = <D extends object>({
         data-testid="search-integrations"
         id="search-integrations"
       />
-    </Tooltip>
+    </StyledTooltip>
   );
 };
 export default IntegrationTableSearch;

@@ -1,8 +1,8 @@
-import { Tooltip } from '@cognite/cogs.js';
 import React, { FunctionComponent, PropsWithoutRef } from 'react';
 import styled from 'styled-components';
 import { parseCron } from 'utils/cronUtils';
 import InteractiveCopy from 'components/InteractiveCopy';
+import { StyledTooltip } from 'styles/StyledToolTip';
 
 export const InteractiveCopyWrapper = styled.span`
   display: flex;
@@ -47,18 +47,18 @@ const Schedule: FunctionComponent<Props> = ({
   } catch (e) {
     const errorMessage = `Schedule: "${schedule}" - ${e}`;
     return (
-      <Tooltip content={errorMessage}>
+      <StyledTooltip content={errorMessage}>
         <i>Not valid</i>
-      </Tooltip>
+      </StyledTooltip>
     );
   }
   return (
-    <Tooltip content={schedule}>
+    <StyledTooltip content={schedule}>
       <InteractiveCopyWrapper {...rest}>
         {parsedExpression}{' '}
         <InteractiveCopy text={schedule} copyType="cronExpression" />
       </InteractiveCopyWrapper>
-    </Tooltip>
+    </StyledTooltip>
   );
 };
 

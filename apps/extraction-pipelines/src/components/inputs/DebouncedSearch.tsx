@@ -5,7 +5,6 @@ import React, {
   useState,
 } from 'react';
 import { Input } from '@cognite/cogs.js';
-import { StyledLabel } from 'styles/StyledForm';
 import { useDebounce } from 'hooks/useDebounce';
 import styled from 'styled-components';
 
@@ -16,12 +15,14 @@ export const SearchWrapper = styled.div`
 
 interface ErrorMessageSearchProps {
   label: string;
+  placeholder: string;
   handleChange: (input: string) => void;
   debounceTime?: number;
 }
 
 export const DebouncedSearch: FunctionComponent<ErrorMessageSearchProps> = ({
   label,
+  placeholder,
   handleChange,
   debounceTime = 500,
 }: PropsWithChildren<ErrorMessageSearchProps>) => {
@@ -37,16 +38,16 @@ export const DebouncedSearch: FunctionComponent<ErrorMessageSearchProps> = ({
   };
 
   return (
-    <SearchWrapper>
-      <StyledLabel htmlFor="error-message-search">{label}</StyledLabel>
-      <Input
-        id="error-message-search"
-        name="error-message-search"
-        type="search"
-        icon="Search"
-        iconPlacement="right"
-        onChange={onChange}
-      />
-    </SearchWrapper>
+    <Input
+      id="error-message-search"
+      name="error-message-search"
+      type="search"
+      placeholder={placeholder}
+      icon="Search"
+      iconPlacement="right"
+      onChange={onChange}
+      aria-label={label}
+      fullWidth
+    />
   );
 };

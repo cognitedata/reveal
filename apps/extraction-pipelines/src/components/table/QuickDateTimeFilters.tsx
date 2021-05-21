@@ -16,8 +16,12 @@ const DAYS_7: Readonly<string> = '7D';
 const DAYS_30: Readonly<string> = '30D';
 
 export const SelectableButton = styled(Button)`
+  border: 1px solid transparent;
   &.selected {
     background-color: ${Colors['midblue-7'].hex()};
+  }
+  &:hover {
+    border: 1px solid ${Colors.primary.hex()};
   }
 `;
 

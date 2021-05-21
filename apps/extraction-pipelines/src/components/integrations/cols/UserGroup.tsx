@@ -1,9 +1,10 @@
 import React, { FunctionComponent } from 'react';
-import { Avatar, Tooltip } from '@cognite/cogs.js';
+import { Avatar } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { User } from '../../../model/User';
-import AvatarGroup from '../../Avatar/AvatarGroup';
-import AvatarWithTooltip from '../../Avatar/AvatarWithTooltip';
+import { StyledTooltip } from 'styles/StyledToolTip';
+import { User } from 'model/User';
+import AvatarGroup from 'components/Avatar/AvatarGroup';
+import AvatarWithTooltip from 'components/Avatar/AvatarWithTooltip';
 
 export const StyledBlueAvatarTooltip = styled.div`
   p {
@@ -44,7 +45,7 @@ const UserGroup: FunctionComponent<Props> = ({ users = [] }: Props) => {
           );
         })}
       {showBlueAvatar ? (
-        <Tooltip
+        <StyledTooltip
           placement="top"
           content={blueAvatarTooltip(users, avatarsLimit)}
           key="tooltip-blue-avatar"
@@ -54,7 +55,7 @@ const UserGroup: FunctionComponent<Props> = ({ users = [] }: Props) => {
             key="avatar-blue-avatar"
             className="bg-blue"
           />
-        </Tooltip>
+        </StyledTooltip>
       ) : (
         <></>
       )}

@@ -2,7 +2,7 @@ import React, { FunctionComponent, PropsWithChildren, useState } from 'react';
 import styled from 'styled-components';
 import { DivFlex } from 'styles/flex/StyledFlex';
 import { OptionTypeBase } from 'react-select';
-import { Colors, Input, Range, Select } from '@cognite/cogs.js';
+import { Button, Icon, Input, Range, Select } from '@cognite/cogs.js';
 import {
   createDateFromTimeChange,
   createHalfHourOptions,
@@ -12,12 +12,20 @@ import {
 } from 'components/inputs/dateTime/TimeSelectorUtils';
 
 const TimeWrapper = styled(DivFlex)`
-  .cogs-input {
-    width: 6rem;
-    border: none;
-    &:hover {
-      background-color: ${Colors['greyscale-grey2'].hex()};
-      border: none;
+  .cogs-input-container {
+    height: 100%;
+    .cogs-input {
+      width: 5rem;
+      background-color: transparent;
+      border: 1px solid transparent;
+      &:hover {
+        background-color: transparent;
+      }
+    }
+    .input-postfix-node {
+      .cogs-btn {
+        padding-left: 0;
+      }
     }
   }
   .cogs-select {
@@ -124,15 +132,18 @@ export const TimeSelector: FunctionComponent<TimeSelectorProps> = ({
   };
 
   return (
-    <TimeWrapper className="time-picker">
+    <TimeWrapper className="time-picker" align="stretch">
       <DivFlex direction="column">
         <Input
           name="startTimeInput"
           value={startString}
           onChange={startInputChanged}
           onClick={toggleStartDropDown}
-          icon="ChevronDownMicro"
-          iconPlacement="right"
+          postfix={
+            <Button type="ghost" onClick={toggleStartDropDown}>
+              <Icon type="ChevronDownMicro" />
+            </Button>
+          }
           aria-label={RANGE_START_LABEL}
         />
         <Select
@@ -150,9 +161,12 @@ export const TimeSelector: FunctionComponent<TimeSelectorProps> = ({
           value={endString}
           onChange={endInputChanged}
           onClick={toggleEndDropDown}
-          icon="ChevronDownMicro"
-          iconPlacement="right"
           aria-label={RANGE_END_LABEL}
+          postfix={
+            <Button type="ghost" onClick={toggleEndDropDown}>
+              <Icon type="ChevronDownMicro" />
+            </Button>
+          }
         />
         <Select
           inputId="endTime"

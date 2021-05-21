@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import { Button, Popconfirm, Tooltip } from '@cognite/cogs.js';
+import { Button, Popconfirm } from '@cognite/cogs.js';
 import { ArrayField } from 'react-hook-form';
 import {
   useDetailsUpdate,
@@ -26,6 +26,7 @@ import {
 import { GridRowStyle } from 'styles/grid/StyledGrid';
 import { SwitchWithRef } from 'components/inputs/SwitchRef';
 import MessageDialog from 'components/buttons/MessageDialog';
+import { StyledTooltip } from 'styles/StyledToolTip';
 import { ContactEdit } from './ContactEdit';
 
 interface OwnProps {
@@ -194,7 +195,7 @@ export const ContactView: FunctionComponent<Props> = ({
         >
           {integration?.contacts[index]?.role}
         </AlignedSpan>
-        <Tooltip
+        <StyledTooltip
           content={EMAIL_NOTIFICATION_TOOLTIP}
           className="integration-tooltip"
         >
@@ -210,7 +211,7 @@ export const ContactView: FunctionComponent<Props> = ({
               aria-label={EMAIL_NOTIFICATION_TOOLTIP}
             />
           </span>
-        </Tooltip>
+        </StyledTooltip>
 
         <AlignedSpan
           role="gridcell"

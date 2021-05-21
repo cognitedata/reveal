@@ -30,15 +30,33 @@ const TableWrapper = styled(PageWrapperColumn)`
   padding: 0 2rem;
 `;
 const FilterWrapper = styled.div`
-  display: flex;
-  padding: 1rem 0;
+  display: grid;
+  grid-template-columns: min-content min-content min-content max-content auto;
+  grid-column-gap: 1rem;
+  padding: 1rem 1rem 1rem 0;
   background-color: ${Colors['greyscale-grey2'].hex()};
+  .cogs-btn-tertiary {
+    height: 100%;
+    background-color: ${Colors.white.hex()};
+    &:hover {
+      border: 1px solid ${Colors.primary.hex()};
+    }
+  }
+  .cogs-input-container {
+    .addons-input-wrapper {
+      height: 100%;
+      .cogs-input {
+        height: 100%;
+      }
+    }
+  }
 `;
 interface LogsViewProps {
   integration: Integration | null;
 }
 export const PAGE_SIZE_DEFAULT: Readonly<number> = 5;
 const ERROR_SEARCH_LABEL: Readonly<string> = 'Search error message';
+const MESSAGE_SEARCH_PLACEHOLDER: Readonly<string> = 'Search in messages';
 
 export interface RangeType {
   startDate: Date;
@@ -134,6 +152,7 @@ export const IntegrationHealth: FunctionComponent<LogsViewProps> = ({
         <StatusFilterMenu setStatus={setStatus} />
         <DebouncedSearch
           label={ERROR_SEARCH_LABEL}
+          placeholder={MESSAGE_SEARCH_PLACEHOLDER}
           handleChange={handleSearchChange}
         />
       </FilterWrapper>

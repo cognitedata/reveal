@@ -27,5 +27,11 @@ export const StatusFilterMenu: FunctionComponent<StatusFilterMenuProps> = ({
     setSelected(status);
   };
 
-  return <StatusMenu setSelected={updateStatus} selected={selected} />;
+  return (
+    <StatusMenu
+      setSelected={updateStatus}
+      selected={selected}
+      btnType="tertiary"
+    />
+  );
 };

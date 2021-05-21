@@ -4,10 +4,11 @@ import React, {
   useEffect,
   useState,
 } from 'react';
-import { Button, Icon, Title, Tooltip } from '@cognite/cogs.js';
+import { Button, Icon, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { CANCEL, OK } from 'utils/constants';
 import { ErrorIcon } from 'components/icons/ErrorIcon';
+import { StyledTooltip } from 'styles/StyledToolTip';
 
 export const DialogStyle = styled.div`
   display: grid;
@@ -84,7 +85,7 @@ const MessageDialog: FunctionComponent<Props> = ({
   }, [visible]);
 
   return (
-    <Tooltip
+    <StyledTooltip
       className="cogs-popconfirm z-4 save-btn"
       content={
         <DialogStyle dialogWidth={width}>
@@ -118,7 +119,7 @@ const MessageDialog: FunctionComponent<Props> = ({
       placement="top-end"
     >
       <>{children}</>
-    </Tooltip>
+    </StyledTooltip>
   );
 };
 

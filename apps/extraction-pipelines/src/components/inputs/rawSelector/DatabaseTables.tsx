@@ -1,10 +1,11 @@
 import React, { FunctionComponent, PropsWithChildren } from 'react';
-import { Checkbox, Icon, Menu, Tooltip } from '@cognite/cogs.js';
+import { Checkbox, Icon, Menu } from '@cognite/cogs.js';
 import { RawDBTable } from '@cognite/sdk';
 import { createLink } from '@cognite/cdf-utilities';
 import styled from 'styled-components';
 import { StyledMenu } from 'components/inputs/rawSelector/DatabaseSelector';
 import { IntegrationRawTable } from 'model/Integration';
+import { StyledTooltip } from 'styles/StyledToolTip';
 
 const ExternalLink = styled.a`
   .visually-hidden {
@@ -67,7 +68,7 @@ export const DatabaseTables: FunctionComponent<DatabaseTablesProps> = ({
             >
               {table.name}
             </Checkbox>
-            <Tooltip content="View or ingest data to this RAW table">
+            <StyledTooltip content="View or ingest data to this RAW table">
               <ExternalLink
                 href={createLink(`/raw/${selectedDb}/${table.name || ''}`)}
                 target="_blank"
@@ -77,7 +78,7 @@ export const DatabaseTables: FunctionComponent<DatabaseTablesProps> = ({
                 <span className="visually-hidden">{table.name}</span>
                 <Icon type="ExternalLink" />
               </ExternalLink>
-            </Tooltip>
+            </StyledTooltip>
           </DBTableItem>
         );
       })}
