@@ -173,11 +173,8 @@ export class CadMaterialManager {
   private updateMaterials(modelIdentifier: string) {
     const wrapper = this.getModelMaterialsWrapper(modelIdentifier);
     if (wrapper.nodeApperanceTextureBuilder.needsUpdate) {
-      const start = performance.now();
       const { nodeApperanceTextureBuilder } = wrapper;
       nodeApperanceTextureBuilder.build();
-
-      console.log('Updating materials for ', modelIdentifier, 'took', performance.now() - start, 'ms');
     }
 
     if (wrapper.nodeTransformTextureBuilder.needsUpdate) {
