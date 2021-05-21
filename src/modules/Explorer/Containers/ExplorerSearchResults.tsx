@@ -1,9 +1,4 @@
-import {
-  DateRangeProps,
-  EnsureNonEmptyResource,
-  GridTable,
-  TableStateProps,
-} from '@cognite/data-exploration';
+import { EnsureNonEmptyResource, GridTable } from '@cognite/data-exploration';
 import React from 'react';
 import { FileFilterProps, FileInfo } from '@cognite/cdf-sdk-singleton';
 import styled from 'styled-components';
@@ -20,17 +15,14 @@ export const ExplorerSearchResults = ({
   onClick,
   currentView,
   onRowSelect,
-  ...extraProps
 }: {
-  selectedId?: number | null;
   query?: string;
-  items?: FileInfo[];
+  selectedId?: number;
   filter?: FileFilterProps;
-  onClick: (item: ResultData) => void;
+  onClick: (item: TableDataItem) => void;
   onRowSelect: (item: TableDataItem, selected: boolean) => void;
   currentView: ViewMode;
-} & TableStateProps &
-  DateRangeProps) => {
+}) => {
   return (
     <>
       <TableContainer>
@@ -43,16 +35,14 @@ export const ExplorerSearchResults = ({
             type="file"
             filter={filter}
             query={query}
-            {...extraProps}
           >
-            {(props) => {
+            {(props: { data: ResultData[]; totalCount: number }) => {
               const renderView = () => {
                 if (currentView === 'grid') {
                   return (
                     <GridTable
                       onItemClicked={onClick}
                       {...props}
-                      {...extraProps}
                       renderCell={(cellProps: any) => (
                         <FileGridPreview {...cellProps} />
                       )}
@@ -69,7 +59,6 @@ export const ExplorerSearchResults = ({
                     onRowClick={onClick}
                     selectedFileId={selectedId}
                     {...props}
-                    {...extraProps}
                   />
                 );
               };

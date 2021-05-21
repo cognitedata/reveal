@@ -1324,31 +1324,10 @@
   dependencies:
     query-string "^6.13.7"
 
-"@cognite/cogs.js@3.11.3":
-  version "3.11.3"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.11.3.tgz#f49aae907819f66f5c09b83559f96a34dc77e9d3"
-  integrity sha512-omjetBXTwYgINEzO21Twy3szFQFvOAmN5C14eXkTCrL9bOscVpLi0MnV/MHRXNOCB0u+/dFJiJwlPtooSdlNiQ==
-  dependencies:
-    "@tippyjs/react" "4.2.3"
-    "@types/react-date-range" "^1.1.2"
-    color "^3.1.2"
-    dayjs "^1.9.7"
-    focus-visible "^5.1.0"
-    rc-collapse "^1.11.8"
-    rc-drawer "^4.1.0"
-    rc-slider "^9.5.4"
-    rc-tabs "^11.6.2"
-    react-date-range "^1.1.3"
-    react-modal "^3.11.2"
-    react-select "^3.1.0"
-    react-table "^7.6.0"
-    react-toastify "^6.0.9"
-    tippy.js "6.2.0"
-
-"@cognite/cogs.js@^3.10.0":
-  version "3.17.2"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.17.2.tgz#ce3f6683e658b8aab8675c2050eb56820a9e8f89"
-  integrity sha512-kSB5mAtf/qtLSLl3BLJBI478xaWwIyFLcH9fVopPzA18NGd+crI4nB+PrindQprN2/jViv9dCQ1vxrh6xsDxJA==
+"@cognite/cogs.js@3.18.0", "@cognite/cogs.js@^3.10.0":
+  version "3.18.0"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.18.0.tgz#8d8390220f006029b566c30e70043ece2b0a89eb"
+  integrity sha512-wG16smEEw0hxWr/+bwfKPP5zBkeKDBQhnZQbM73utlJ61wQ1STk0iTfWR1IH8vnBhrjpLxWeHdW1ApBLS5/tFg==
   dependencies:
     "@tippyjs/react" "4.2.3"
     "@types/react-date-range" "^1.1.2"

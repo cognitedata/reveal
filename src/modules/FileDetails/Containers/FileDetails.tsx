@@ -8,7 +8,6 @@ import { RootState } from 'src/store/rootReducer';
 import isEqual from 'lodash-es/isEqual';
 import { VisionFileDetails } from 'src/modules/FileDetails/Components/FileMetadata/Types';
 import styled from 'styled-components';
-import { toggleFileMetadataPreview } from 'src/modules/Process/processSlice';
 import { updateFileInfoField } from 'src/store/thunks/updateFileInfoField';
 import {
   fileInfoEdit,
@@ -26,13 +25,15 @@ import {
 import { DeleteAnnotationsAndRemoveLinkedAssets } from 'src/store/thunks/DeleteAnnotationsAndRemoveLinkedAssets';
 import { FileDetailsAnnotationsPreview } from './FileDetailsAnnotationsPreview/FileDetailsAnnotationsPreview';
 
-export const FileDetails = () => {
+export const FileDetails = ({
+  fileId,
+  onClose,
+}: {
+  fileId: number | null;
+  onClose: () => void;
+}) => {
   const dispatch = useDispatch();
   const history = useHistory();
-
-  const fileId = useSelector(
-    ({ processSlice }: RootState) => processSlice.selectedFileId
-  );
 
   const fileDetails = useSelector((state: RootState) =>
     selectUpdatedFileDetails(state, String(fileId))
@@ -51,8 +52,10 @@ export const FileDetails = () => {
     return null;
   }
 
-  const onClose = () => {
-    dispatch(toggleFileMetadataPreview());
+  const handleClose = () => {
+    if (onClose) {
+      onClose();
+    }
   };
 
   const onFieldChange = (key: string, value: any) => {
@@ -90,7 +93,7 @@ export const FileDetails = () => {
         <CloseButton
           icon="Close"
           type="ghost"
-          onClick={onClose}
+          onClick={handleClose}
           aria-label="close button"
         />
       </CloseButtonRow>

@@ -3,9 +3,10 @@ import { Input } from '@cognite/cogs.js';
 import { useDebounce } from 'use-debounce';
 
 export const ExplorationSearchBar = (props: {
+  searchString?: string;
   onChange: (text: string) => void;
 }) => {
-  const [text, setText] = useState('');
+  const [text, setText] = useState(props.searchString || '');
   const [searchValue] = useDebounce(text, 400);
 
   useEffect(() => {

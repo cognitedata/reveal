@@ -7,20 +7,19 @@ import { Col, Row } from 'antd';
 import { lightGrey } from 'src/utils/Colors';
 import { FileFilters } from 'src/modules/Common/Components/Search/FileFilters';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  setSelectedFileId,
-  showFileMetadataPreview,
-} from 'src/modules/Process/processSlice';
 import { RootState } from 'src/store/rootReducer';
 import { setFileSelectState } from 'src/modules/Common/filesSlice';
 import { ExplorerSearchResults } from 'src/modules/Explorer/Containers/ExplorerSearchResults';
 import { FileDetails } from 'src/modules/FileDetails/Containers/FileDetails';
-import { ResultData, TableDataItem, ViewMode } from 'src/modules/Common/types';
+import { TableDataItem, ViewMode } from 'src/modules/Common/types';
 import { ExplorerToolbar } from 'src/modules/Explorer/Containers/ExplorerToolbar';
 import {
   setCurrentView,
   setFilter,
   setQueryString,
+  setSelectedFileIdExplorer,
+  showExplorerFileMetadata,
+  toggleExplorerFileMetadata,
   toggleFilterView,
 } from '../store/explorerSlice';
 
@@ -31,11 +30,11 @@ const Explorer = () => {
   const filter = useSelector(
     ({ explorerReducer }: RootState) => explorerReducer.filter
   );
-  const showDrawer = useSelector(
-    ({ processSlice }: RootState) => processSlice.showFileMetadataDrawer
+  const showMetadata = useSelector(
+    ({ explorerReducer }: RootState) => explorerReducer.showFileMetadata
   );
   const fileId = useSelector(
-    ({ processSlice }: RootState) => processSlice.selectedFileId
+    ({ explorerReducer }: RootState) => explorerReducer.selectedFileId
   );
   const currentView = useSelector(
     ({ explorerReducer }: RootState) => explorerReducer.currentView
@@ -52,13 +51,17 @@ const Explorer = () => {
   };
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleItemClick = ({ menu, selected, ...file }: ResultData) => {
-    dispatch(setSelectedFileId(file.id));
-    dispatch(showFileMetadataPreview());
+  const handleItemClick = (item: TableDataItem) => {
+    dispatch(setSelectedFileIdExplorer(item.id));
+    dispatch(showExplorerFileMetadata());
   };
 
   const handleRowSelect = (item: TableDataItem, selected: boolean) => {
     dispatch(setFileSelectState(item.id, selected));
+  };
+
+  const handleMetadataClose = () => {
+    dispatch(toggleExplorerFileMetadata());
   };
 
   return (
@@ -90,7 +93,7 @@ const Explorer = () => {
           </FilterPanel>
         )}
 
-        <TablePanel showDrawer={showDrawer} showFilter={showFilter}>
+        <TablePanel showDrawer={showMetadata} showFilter={showFilter}>
           {!showFilter ? (
             <div
               style={{
@@ -106,6 +109,7 @@ const Explorer = () => {
 
           <ViewContainer>
             <ExplorerToolbar
+              query={query}
               currentView={currentView}
               onViewChange={(view) =>
                 dispatch(setCurrentView(view as ViewMode))
@@ -117,15 +121,15 @@ const Explorer = () => {
               onClick={handleItemClick}
               onRowSelect={handleRowSelect}
               query={query}
-              selectedId={fileId}
+              selectedId={fileId || undefined}
               currentView={currentView}
             />
           </ViewContainer>
         </TablePanel>
-        {showDrawer && (
+        {showMetadata && (
           <DrawerContainer>
             <QueryClientProvider client={queryClient}>
-              <FileDetails />
+              <FileDetails fileId={fileId} onClose={handleMetadataClose} />
             </QueryClientProvider>
           </DrawerContainer>
         )}

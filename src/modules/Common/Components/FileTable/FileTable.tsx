@@ -1,6 +1,6 @@
 import React from 'react';
 import { Column, ColumnShape } from 'react-base-table';
-import { TableDataItem } from 'src/modules/Common/types';
+import { ResultData, TableDataItem } from 'src/modules/Common/types';
 import { StringRenderer } from 'src/modules/Common/Containers/FileTableRenderers/StringRenderer';
 import { SelectableTable } from 'src/modules/Common/Components/SelectableTable/SelectableTable';
 import { NameRenderer } from 'src/modules/Common/Containers/FileTableRenderers/NameRenderer';
@@ -55,6 +55,22 @@ export function FileTable(props: FileTableProps) {
     action: ActionRenderer,
   };
 
+  const rowClassNames = ({
+    rowData,
+  }: {
+    columns: ColumnShape<TableDataItem>[];
+    rowData: TableDataItem;
+    rowIndex: number;
+  }) => {
+    return `clickable ${props.selectedFileId === rowData.id && 'active'}`;
+  };
+
+  const rowEventHandlers = {
+    onClick: ({ rowData }: { rowData: TableDataItem }) => {
+      props.onRowClick(rowData as ResultData);
+    },
+  };
+
   return (
     <SorterPaginationWrapper
       data={props.data}
@@ -67,6 +83,8 @@ export function FileTable(props: FileTableProps) {
         rendererMap={rendererMap}
         selectable
         onRowSelect={props.onRowSelect}
+        rowClassNames={rowClassNames}
+        rowEventHandlers={rowEventHandlers}
       />
     </SorterPaginationWrapper>
   );

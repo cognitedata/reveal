@@ -154,8 +154,8 @@ const processSlice = createSlice({
   initialState,
   /* eslint-disable no-param-reassign */
   reducers: {
-    toggleFileMetadataPreview(state) {
-      state.showFileMetadataDrawer = !state.showFileMetadataDrawer;
+    hideFileMetadataPreview(state) {
+      state.showFileMetadataDrawer = false;
     },
     showFileMetadataPreview(state) {
       state.showFileMetadataDrawer = true;
@@ -265,7 +265,7 @@ const processSlice = createSlice({
 export const {
   removeJobById,
   setSelectedDetectionModels,
-  toggleFileMetadataPreview,
+  hideFileMetadataPreview,
   showFileMetadataPreview,
   setSelectedFileId,
 } = processSlice.actions;
