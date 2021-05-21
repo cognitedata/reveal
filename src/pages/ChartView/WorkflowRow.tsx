@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Chart,
   ChartWorkflow,
@@ -19,7 +19,7 @@ import FunctionCall from 'components/FunctionCall';
 import { updateWorkflow, removeWorkflow } from 'utils/charts';
 import EditableText from 'components/EditableText';
 import { units } from 'utils/units';
-import { useCallFunction } from 'utils/backendService';
+import { useCallFunction, useFunctionCall } from 'utils/backendService';
 import { getStepsFromWorkflow } from 'utils/transforms';
 import { calculateGranularity } from 'utils/timeseries';
 import { isWorkflowRunnable } from 'components/NodeEditor/utils';
@@ -105,14 +105,7 @@ export default function WorkflowRow({
     [steps, dateFrom, dateTo]
   );
 
-  useEffect(() => {
-    if (!computation) {
-      return;
-    }
-    if (call?.hash === getHash(computation)) {
-      return;
-    }
-
+  const runComputation = useCallback(() => {
     callFunction(
       {
         data: { computation_graph: computation },
@@ -123,7 +116,38 @@ export default function WorkflowRow({
         },
       }
     );
-  }, [computation, callFunction, setLastSuccessfulCall, call]);
+  }, [computation, callFunction, setLastSuccessfulCall]);
+
+  const currentCallStatus = useFunctionCall(call?.functionId!, call?.callId!);
+
+  useEffect(() => {
+    if (!call) {
+      return;
+    }
+
+    if (!currentCallStatus.isError) {
+      return;
+    }
+
+    if (
+      !['Failed', 'Timeout'].includes(currentCallStatus?.data?.status || '')
+    ) {
+      return;
+    }
+
+    runComputation();
+  }, [call, currentCallStatus, runComputation]);
+
+  useEffect(() => {
+    if (!computation) {
+      return;
+    }
+    if (call?.hash === getHash(computation)) {
+      return;
+    }
+
+    runComputation();
+  }, [computation, runComputation, call]);
 
   useEffect(() => {
     if (!computation) {
