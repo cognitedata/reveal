@@ -3,27 +3,43 @@
  */
 
 import * as THREE from 'three';
-import { CogniteClient } from '@cognite/sdk';
+import { AssetMapping3D, CogniteClient } from '@cognite/sdk';
 
 import { Cognite3DModel } from '../../../public/migration/Cognite3DModel';
 import { IndexSet } from '../../../utilities/IndexSet';
-import { AsyncNodeSetBase } from './AsyncNodeSetBase';
+import { PopulateIndexSetFromPagedResponseHelper } from "./PopulateIndexSetFromPagedResponseHelper";
 import { NumericRange } from '../../../utilities/NumericRange';
+import { NodeSet } from './NodeSet';
 
-export class ByAssetNodeSet extends AsyncNodeSetBase {
+export class ByAssetNodeSet extends NodeSet {
   private readonly _client: CogniteClient;
   private _indexSet = new IndexSet();
   private readonly _model: Cognite3DModel;
+  private _fetchResultHelper: PopulateIndexSetFromPagedResponseHelper<AssetMapping3D> | undefined;
 
   constructor(client: CogniteClient, model: Cognite3DModel) {
     super();
     this._client = client;
     this._model = model;
+    this._fetchResultHelper = undefined;
+  }
+
+  get isLoading(): boolean {
+    return this._fetchResultHelper !== undefined && this._fetchResultHelper.isLoading;
   }
 
   async executeFilter(filter: { assetId?: number; boundingBox?: THREE.Box3 }): Promise<void> {
-    const queryId = this.startQuery();
     const model = this._model;
+
+    if (this._fetchResultHelper !== undefined) {
+      // Interrupt any ongoing operation to avoid fetching results unnecessary
+      this._fetchResultHelper.interrupt();
+    }
+    const fetchResultHelper = new PopulateIndexSetFromPagedResponseHelper<AssetMapping3D>(
+      assetMapping => new NumericRange(assetMapping.treeIndex, assetMapping.subtreeSize), 
+      () => this.notifyChanged()
+    );
+    this._fetchResultHelper = fetchResultHelper;
 
     function mapBoundingBox(box?: THREE.Box3) {
       if (box === undefined) {
@@ -45,13 +61,11 @@ export class ByAssetNodeSet extends AsyncNodeSetBase {
     this._indexSet = indexSet;
 
     const request = await this._client.assetMappings3D.list(model.modelId, model.revisionId, filterQuery);
-    await this.pageResults(queryId, request, assetMapping => {
-      if (!indexSet.contains(assetMapping.treeIndex)) {
-        indexSet.addRange(new NumericRange(assetMapping.treeIndex, assetMapping.subtreeSize));
-      }
-    });
-    if (this.completeQuery(queryId)) {
-      this.notifyChanged();
+    const completed = await fetchResultHelper.pageResults(indexSet, request);
+
+    if (completed) {
+      // Completed without being interrupted
+      this._fetchResultHelper = undefined;
     }
   }
 

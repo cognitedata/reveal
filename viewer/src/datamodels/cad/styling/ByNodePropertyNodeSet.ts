@@ -2,12 +2,14 @@
  * Copyright 2021 Cognite AS
  */
 
-import { CogniteClient } from '@cognite/sdk';
+import { CogniteClient, Node3D } from '@cognite/sdk';
 
 import { IndexSet } from '../../../utilities/IndexSet';
 import { NumericRange } from '../../../utilities/NumericRange';
 import { Cognite3DModel } from '../../../public/migration/Cognite3DModel';
-import { AsyncNodeSetBase } from './AsyncNodeSetBase';
+import { PopulateIndexSetFromPagedResponseHelper } from './PopulateIndexSetFromPagedResponseHelper';
+import { NodeSet } from './NodeSet';
+
 import range from 'lodash/range';
 
 export type ByNodePropertyNodeSetOptions = {
@@ -18,12 +20,13 @@ export type ByNodePropertyNodeSetOptions = {
    */
   requestPartitions?: number;
 };
-export class ByNodePropertyNodeSet extends AsyncNodeSetBase {
+export class ByNodePropertyNodeSet extends NodeSet {
   private readonly _client: CogniteClient;
   private _indexSet = new IndexSet();
   private readonly _modelId: number;
   private readonly _revisionId: number;
   private readonly _options: Required<ByNodePropertyNodeSetOptions>;
+  private _fetchResultHelper: PopulateIndexSetFromPagedResponseHelper<AssetMapping3D> | undefined;
 
   constructor(client: CogniteClient, model: Cognite3DModel, options: ByNodePropertyNodeSetOptions = {}) {
     super();
@@ -33,36 +36,42 @@ export class ByNodePropertyNodeSet extends AsyncNodeSetBase {
     this._options = { requestPartitions: 1, ...options };
   }
 
+  get isLoading(): boolean {
+    return this._fetchResultHelper !== undefined && this._fetchResultHelper.isLoading;
+  }
+
   async executeFilter(query: {
     [category: string]: {
       [key: string]: string;
     };
   }): Promise<void> {
-    const queryId = this.startQuery();
     const indexSet = new IndexSet();
     const { requestPartitions } = this._options;
+
+    if (this._fetchResultHelper !== undefined) {
+      // Interrupt any ongoing operation to avoid fetching results unnecessary
+      this._fetchResultHelper.interrupt();
+    }
+    const fetchResultHelper = new PopulateIndexSetFromPagedResponseHelper<Node3D>(
+      assetMapping => new NumericRange(assetMapping.treeIndex, assetMapping.subtreeSize), 
+      () => this.notifyChanged()
+    );
+    this._fetchResultHelper = fetchResultHelper;
+
 
     this._indexSet = indexSet;
     this.notifyChanged();
 
     const requests = range(1, requestPartitions + 1).map(async p => {
-      const request = await this._client.revisions3D.list3DNodes(this._modelId, this._revisionId, {
+      const response = await this._client.revisions3D.list3DNodes(this._modelId, this._revisionId, {
         properties: query,
         limit: 1000,
         sortByNodeId: true,
         partition: `${p}/${requestPartitions}`
       });
-      await this.pageResults(queryId, request, node => {
-        if (!indexSet.contains(node.treeIndex)) {
-          indexSet.addRange(new NumericRange(node.treeIndex, node.subtreeSize));
-        }
-      });
+      fetchResultHelper.pageResults(indexSet, response);
     });
     await Promise.all(requests);
-
-    if (this.completeQuery(queryId)) {
-      this.notifyChanged();
-    }
   }
 
   getIndexSet(): IndexSet {
