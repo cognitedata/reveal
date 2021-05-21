@@ -87,8 +87,10 @@ export default function WorkflowRow({
   const { dateTo, dateFrom } = chart;
   const { nodes, connections } = workflow;
   const steps = useMemo(
-    () => isWorkflowRunnable(nodes) && getStepsFromWorkflow(nodes, connections),
-    [nodes, connections]
+    () =>
+      isWorkflowRunnable(nodes) &&
+      getStepsFromWorkflow(chart, nodes, connections),
+    [chart, nodes, connections]
   );
 
   const computation = useMemo(
