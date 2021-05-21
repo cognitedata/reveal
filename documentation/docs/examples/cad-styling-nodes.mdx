@@ -19,15 +19,15 @@ in the set.
 
 :::note
 The test model used in the documentation site is lacking and the examples shown is somewhat lacking
-as a result of this. To best utlize the filtering APIs we recommend providing a rich 3D models 
-with a good set of high-quality attributes assosciated with the nodes.
+as a result of this. To best utilize the filtering APIs we recommend providing a rich 3D models 
+with a good set of high-quality attributes associated with the nodes.
 :::
 
 <DemoWrapper name="Cognite3DViewerDemo" />
 
 # Show all pipes
 
-If nodes in the 3D model has an attribute `'PDMS.Type'` `ByNodePropertyNodeSet` can be used to
+If nodes in the 3D model has an attribute `'PDMS.Type'`, `ByNodePropertyNodeSet` can be used to
 retrieve nodes of a certain type. In the following example, only pipes are accepted:
 
 ```js runnable
@@ -56,7 +56,7 @@ To compare speed-up, set `requestPartitions` to `1`.
 
 # Combining filters
 
-Often one would want to match multiple criterias at the same type. Lets say we want to find all
+Often one would want to match multiple criterias of the same type. Lets say we want to find all
 mechanical equipment with purpose 'STU'. We can either execute this as a single query, or as two
 seperate queries. 
 
@@ -70,7 +70,7 @@ model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
 model.addStyledNodeSet(stuMechNodes, { renderGhosted: false, color: [40, 200, 20] } );
 ```
 
-Or, using two separate queries that is combined:
+Or, using two separate queries that are combined:
 
 ```js runnable
 const mechNodes = new ByNodePropertyNodeSet(sdk, model);
@@ -88,13 +88,13 @@ model.addStyledNodeSet(combined, { renderGhosted: false, color: [40, 200, 20] } 
 The two approaches as their pros and cons. Often it will be faster to combine the 
 filters into a single query as this will reduce the result set returned from the
 server. However, if the different combinations will be configured run-time (e.g. 
-so that the user will want to show 'PIPE'-nodes within the 'STU'-purpose it might 
+the user will want to show 'PIPE'-nodes within the 'STU'-purpose, it might 
 be better to use two separate queries and combine the results. Also, the latter 
 approach also allows for more complex types of filters.
 
 # Inverting filters
 
-Often it's interesting to invert results from filters to find elements that doesn't match the query. This 
+Often it is interesting to invert results from filters to find elements that does not match the query. This 
 can be done using `InvertNodeSet`.
 
 ```js runnable
@@ -105,5 +105,4 @@ const notLivingQuarters = new InvertedNodeSet(model, livingQuarters);
 model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
 model.addStyledNodeSet(notLivingQuarters, { renderGhosted: false } );
 ```
-
 

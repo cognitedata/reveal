@@ -29,8 +29,8 @@ provided in the `DefaultNodeApperance`-constant:
 | `InFront`           | Render node(s) in front of all other nodes                                       |
 | `Highlighted`       | Highlight the node(s). Combination of `InFront`, `Outlined` and a custom color   |
 
-These "appearance profiles"/styles are assigned to one or more nodes defined by a `NodeSet`-object. `NodeSet`s 
-identify 3D nodes by `treeIndex`. There are several implementations of `NodeSet`:
+These "appearance profiles"/styles are assigned to one or more nodes defined by a `NodeSet`-object. A `NodeSet` 
+identifies 3D nodes by `treeIndex`. There are several implementations of `NodeSet`:
 
 | Class                    |                                                                                  |
 | ------------------------ | -------------------------------------------------------------------------------- |
@@ -45,15 +45,15 @@ sets from custom data sources.
 
 :::note
 The API for styling nodes has changed substantially since Reveal 1.x and upgrading Reveal 
-in applications will require manual steps to implement styling.
+will require manual steps to implement styling.
 :::
 
 ## Examples
 
 <DemoWrapper name="Cognite3DViewerDemo" />
 
-To play around with the different styling options, we can use `Cognite3DModel.setDefaultNodeAppearance`. Below are
-a few example styles are shown.
+To play around with the different styling options, we can use `Cognite3DModel.setDefaultNodeAppearance`. 
+A few example styles are shown below.
 
 ### Ghosted style
 

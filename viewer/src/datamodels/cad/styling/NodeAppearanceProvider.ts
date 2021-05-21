@@ -126,10 +126,9 @@ export class NodeAppearanceProvider {
   }
 
   private notifyLoadingStateChanged() {
-    if (this._lastFiredLoadingState !== this.isLoading) {
-      this._lastFiredLoadingState = this.isLoading;
-      this._events.loadingStateChanged.fire(this.isLoading);
-    }
+    if (this._lastFiredLoadingState === this.isLoading) return;
+    this._lastFiredLoadingState = this.isLoading;
+    this._events.loadingStateChanged.fire(this.isLoading);
   }
 
   private handleNodeSetChanged(styledSet: StyledSet) {
