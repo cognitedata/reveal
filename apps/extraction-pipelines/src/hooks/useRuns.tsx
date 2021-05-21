@@ -4,15 +4,20 @@ import { useAppEnv } from 'hooks/useAppEnv';
 import { SDKError } from 'model/SDKErrors';
 import { RunsAPIResponse } from 'model/Runs';
 
-export const useRuns = (externalId?: string, nextCursor?: string) => {
+export const useRuns = (
+  externalId?: string,
+  nextCursor?: string | null,
+  limit?: number
+) => {
   const { project } = useAppEnv();
   return useQuery<RunsAPIResponse, SDKError>(
     [project, externalId, nextCursor],
     (ctx) => {
-      return getRuns(ctx.queryKey[0], ctx.queryKey[1], ctx.queryKey[2]);
+      return getRuns(ctx.queryKey[0], ctx.queryKey[1], ctx.queryKey[2], limit);
     },
     {
-      enabled: !!externalId,
+      enabled: !!externalId && nextCursor !== null,
+      keepPreviousData: true,
     }
   );
 };

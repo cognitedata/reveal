@@ -52,7 +52,7 @@ export const calculate = ({
   };
 };
 
-type Partitioned<T> = Readonly<{ pass: T[]; fail: T[] }>;
+type Partitioned<T> = { pass: T[]; fail: T[] };
 export const partition = <T>(
   list: Array<T>,
   predicate: (item: T) => boolean

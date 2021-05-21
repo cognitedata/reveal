@@ -24,6 +24,7 @@ import { Status } from 'model/Status';
 import { TimeSelector } from 'components/inputs/dateTime/TimeSelector';
 import { QuickDateTimeFilters } from 'components/table/QuickDateTimeFilters';
 import { StatusFilterMenu } from 'components/table/StatusFilterMenu';
+import { DEFAULT_LIMIT } from 'utils/RunsAPI';
 
 const TableWrapper = styled(PageWrapperColumn)`
   padding: 0 2rem;
@@ -36,6 +37,7 @@ const FilterWrapper = styled.div`
 interface LogsViewProps {
   integration: Integration | null;
 }
+export const PAGE_SIZE_DEFAULT: Readonly<number> = 5;
 const ERROR_SEARCH_LABEL: Readonly<string> = 'Search error message';
 
 export interface RangeType {
@@ -47,13 +49,16 @@ export const IntegrationHealth: FunctionComponent<LogsViewProps> = ({
   integration,
 }: PropsWithChildren<LogsViewProps>) => {
   const [runs, setRuns] = useState<StatusRun[]>([]);
+  const [nextCursor, setNextCursor] = useState<string | undefined>();
+  const [pageSize] = useState(PAGE_SIZE_DEFAULT);
+  const [pageCount, setPageCount] = React.useState(0);
   const [dateRange, setDateRange] = useState<Range>({
     startDate: moment(Date.now()).subtract(1, 'week').toDate(),
     endDate: moment(Date.now()).toDate(),
   });
   const [status, setStatus] = useState<RunStatus | undefined>();
   const [search, setSearch] = useState<string>();
-  const { data, error } = useFilteredRuns({
+  const { data, error, isPreviousData } = useFilteredRuns({
     filter: {
       externalId: integration?.externalId ?? '',
       ...(dateRange.endDate && dateRange.startDate
@@ -69,9 +74,11 @@ export const IntegrationHealth: FunctionComponent<LogsViewProps> = ({
         substring: search,
       },
     },
-    limit: 100,
+    limit: DEFAULT_LIMIT,
+    cursor: nextCursor,
   });
   const integrationId = integration?.id;
+
   useEffect(() => {
     if (integrationId) {
       trackUsage(SINGLE_INTEGRATION_RUNS, { id: integrationId });
@@ -79,16 +86,27 @@ export const IntegrationHealth: FunctionComponent<LogsViewProps> = ({
   }, [integrationId]);
 
   useEffect(() => {
-    if (data) {
+    if (!isPreviousData && data) {
       const statusRows = mapStatusRow(data?.items);
       const { fail: runsData } = partition(statusRows, (item) => {
         return item.status === Status.SEEN;
       });
       setRuns(runsData);
     }
-  }, [data]);
+  }, [data, isPreviousData]);
 
   const columns = getRunLogTableCol();
+
+  const fetchData = React.useCallback(
+    ({ pageSize: innerPageSize }) => {
+      if (!isPreviousData && data?.nextCursor) {
+        setNextCursor(data.nextCursor);
+      }
+      setPageCount(Math.ceil(runs.length / innerPageSize));
+    },
+    [data, isPreviousData, runs.length]
+  );
+
   if (error) {
     return <ErrorFeedback error={error} />;
   }
@@ -104,6 +122,7 @@ export const IntegrationHealth: FunctionComponent<LogsViewProps> = ({
   return (
     <TableWrapper>
       <FilterWrapper>
+        <QuickDateTimeFilters setDateRange={setDateRange} />
         <DateRangeFilter
           dateRange={dateRange}
           dateRangeChanged={dateRangeChanged}
@@ -112,14 +131,19 @@ export const IntegrationHealth: FunctionComponent<LogsViewProps> = ({
           dateRange={dateRange}
           dateRangeChanged={dateRangeChanged}
         />
-        <QuickDateTimeFilters setDateRange={setDateRange} />
         <StatusFilterMenu setStatus={setStatus} />
         <DebouncedSearch
           label={ERROR_SEARCH_LABEL}
           handleChange={handleSearchChange}
         />
       </FilterWrapper>
-      <RunLogsTable data={runs} columns={columns} />
+      <RunLogsTable
+        data={runs}
+        columns={columns}
+        pageCount={pageCount}
+        fetchData={fetchData}
+        pageSize={pageSize}
+      />
     </TableWrapper>
   );
 };

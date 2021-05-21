@@ -39,6 +39,7 @@ export interface FilteredRunsParams {
     createdTime?: { min: number; max: number };
   };
   limit: number;
+  cursor?: string;
 }
 
 export const getFilteredRuns = async (

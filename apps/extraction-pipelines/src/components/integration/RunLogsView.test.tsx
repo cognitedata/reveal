@@ -5,7 +5,10 @@ import { Status } from 'model/Status';
 import { renderWithReQueryCacheSelectedIntegrationContext } from 'utils/test/render';
 import { ORIGIN_DEV, PROJECT_ITERA_INT_GREEN } from 'utils/baseURL';
 import { render } from 'utils/test';
-import { IntegrationHealth } from 'components/integration/IntegrationHealth';
+import {
+  IntegrationHealth,
+  PAGE_SIZE_DEFAULT,
+} from 'components/integration/IntegrationHealth';
 import {
   getMockResponse,
   mockDataRunsResponse,
@@ -67,7 +70,8 @@ describe('RunLogsView', () => {
     expect(screen.getByText(TableHeadings.STATUS)).toBeInTheDocument();
     expect(screen.getByText(RunTableHeading.MESSAGE)).toBeInTheDocument();
 
-    expect(screen.getAllByText(Status.FAIL).length).toEqual(2);
-    expect(screen.getAllByText(Status.OK).length).toEqual(4);
+    expect(screen.getAllByText(Status.FAIL).length > 0).toEqual(true);
+    expect(screen.getAllByText(Status.OK).length > 0).toEqual(true);
+    expect(screen.getAllByRole('row').length).toEqual(PAGE_SIZE_DEFAULT + 1); // rows + heading
   });
 });
