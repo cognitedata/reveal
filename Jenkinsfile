@@ -1,136 +1,40 @@
 @Library('jenkins-helpers') _
 
-// This is your FAS staging app id. Staging deployments are protected by Cognite
-// IAP, meaning they're only accessible to Cogniters.
-static final String STAGING_APP_ID =
-    // This ternary is only in here to avoid accidentally publishing to the
-    // wrong app once this template is used. You should remove this whole thing
-    // and replace it with a static string.
-    jenkinsHelpersUtil.determineRepoName() == 'react-demo-app'
-      ? "fas-demo"
-      : ""
-
-// This is your FAS production app id.
-// At this time, there is no production build for the demo app.
-static final String PRODUCTION_APP_ID =
-    // This ternary is only in here to avoid accidentally publishing to the
-    // wrong app once this template is used. You should remove this whole thing
-    // and replace it with a static string.
-    jenkinsHelpersUtil.determineRepoName() == 'react-demo-app'
-      ? "fas-demo-prod"
-      : ""
-
-// This is your FAS app identifier (repo) shared across both production and staging apps
-// in order to do a commit lookup (commits are shared between apps).
-static final String APPLICATION_REPO_ID =
-    // This ternary is only in here to avoid accidentally publishing to the
-    // wrong app once this template is used. You should remove this whole thing
-    // and replace it with a static string.
-    jenkinsHelpersUtil.determineRepoName() == 'react-demo-app'
-      ? "fas-demo"
-      : ""
-
-// Replace this with your app's ID on https://sentry.io/ -- if you do not have
-// one (or do not have access to Sentry), stop by #frontend to ask for help. :)
-static final String SENTRY_PROJECT_NAME =
-    // This ternary is only in here to avoid accidentally publishing to the
-    // wrong app once this template is used. You should remove this whole thing
-    // and replace it with a static string.
-    jenkinsHelpersUtil.determineRepoName() == 'react-demo-app'
-      ? "react-demo-app"
-      : ""
-
-// The Sentry DSN is the URL used to report issues into Sentry. This can be
-// found on your Sentry's project page, or by going here:
-// https://docs.sentry.io/error-reporting/quickstart/?platform=browser
-//
-// If you omit this, then client errors WILL NOT BE REPORTED.
-static final String SENTRY_DSN =
-    // This ternary is only in here to avoid accidentally publishing to the
-    // wrong app once this template is used. You should remove this whole thing
-    // and replace it with a static string.
-    jenkinsHelpersUtil.determineRepoName() == 'react-demo-app'
-      ? "https://da67b4b23d3e4baea6c36de155a08491@sentry.io/3541732"
-      : ""
-
-// Specify your locize.io project ID. If you do not have one of these, please
-// stop by #frontend to get a project created under the Cognite umbrella.
-// See https://cog.link/i18n for more information.
-//
-// Note: You'll probably want to set this in scripts/start.sh too
-static final String LOCIZE_PROJECT_ID =
-    // This ternary is only in here to avoid accidentally publishing to the
-    // wrong app once this template is used. You should remove this whole thing
-    // and replace it with a static string.
-    jenkinsHelpersUtil.determineRepoName() == 'react-demo-app'
-      ? "1ee63b21-27c7-44ad-891f-4bd9af378b72"
-      : ""
-
-// Specify your Mixpanel project token. If you do not have one of these, please
-// stop by #frontend to get a project created under the Cognite umbrella.
-// Remember: if you can't measure it, you can't improve it!
-static final String MIXPANEL_TOKEN =
-    // This ternary is only in here to avoid accidentally publishing to the
-    // wrong app once this template is used. You should remove this whole thing
-    // and replace it with a static string.
-    jenkinsHelpersUtil.determineRepoName() == 'react-demo-app'
-      ? "1cc1cdc82fb93ec9a20a690216de41e4"
-      : ""
-
-// Specify your projects alerting slack channel here. If you do not have one of these, please
-// consider creating one for your projects alerts
-static final String SLACK_CHANNEL =
-    // This ternary is only in here to avoid accidentally publishing to the
-    // wrong app once this template is used. You should remove this whole thing
-    // and replace it with a static string.
-    jenkinsHelpersUtil.determineRepoName() == 'react-demo-app'
-      ? "frontend-firehose"
-      : ""
-
-// This determines how this app is versioned. See https://cog.link/releases for
-// more information. The options available here are:
-//
-//  - single-branch
-//    This will push every change on the master branch first to the staging
-//    environment and then to the production environment. The product team can
-//    use FAS to control which version is actually served to end users who visit
-//    the production environment.
-//
-//  - multi-branch
-//    This will push every change on the master branch to the staging
-//    environment. Pushing to the production environment will happen on branches
-//    which are named release-[NNN].
-//
-// No other options are supported at this time.
-static final String VERSIONING_STRATEGY = "single-branch"
-
-// == End of customization. Everything below here is common. == \\
-
 static final String NODE_VERSION = 'node:12'
 
 static final Map<String, String> CONTEXTS = [
   checkout: "continuous-integration/jenkins/checkout",
-  setup: "continuous-integration/jenkins/setup",
-  lint: "continuous-integration/jenkins/lint",
-  unitTests: "continuous-integration/jenkins/unit-tests",
-  buildStaging: "continuous-integration/jenkins/build-staging",
-  publishStaging: "continuous-integration/jenkins/publish-staging",
-  buildProduction: "continuous-integration/jenkins/build-production",
-  publishProduction: "continuous-integration/jenkins/publish-production",
-  buildPreview: "continuous-integration/jenkins/build-preview",
-  publishPreview: "continuous-integration/jenkins/publish-preview",
+  bazelSetup: "continuous-integration/jenkins/bazel-setup",
+  bazelBuild: "continuous-integration/jenkins/bazel-build",
+  bazelTests: "continuous-integration/jenkins/bazel-tests",
+  publishStorybook: "continuous-integration/jenkins/publish-storybook",
+  publishFAS: "continuous-integration/jenkins/publish-fas",
 ]
 
-// Copy these before installing dependencies so that we don't have to
-// copy the entire node_modules directory tree as well.
-static final String[] DIRS = [
-  'lint',
-  'unit-tests',
-  'storybook',
-  'preview',
-  'staging',
-  'production',
-]
+void bazelPod(Map params = new HashMap(), body) {
+  def bazelVersion = params.bazelVersion ?: '3.1.0'
+
+  podTemplate(
+      containers: [
+          containerTemplate(
+              name: 'bazel',
+              // TODO: Define custom docker image to include bazel instead of installing
+              image: "docker.io/timbru31/node-chrome:latest",
+              command: '/bin/cat -',
+              resourceRequestCpu: '3000m',
+              resourceLimitCpu: '16000m',
+              resourceRequestMemory: '6000Mi',
+              resourceLimitMemory: '16000Mi',
+              ttyEnabled: true
+          )
+      ],
+      volumes: [
+          secretVolume(secretName: 'jenkins-bazel-build-cache-member', mountPath: '/jenkins-bazel-build-cache-member'),
+      ],
+  ) {
+        body()
+    }
+}
 
 def fakeIdpEnvVars = [
     envVar(key: 'PORT', value: '8200'),
@@ -145,52 +49,30 @@ def fakeIdpEnvVars = [
 ]
 
 def pods = { body ->
-  yarn.pod(nodeVersion: NODE_VERSION) {
-    previewServer.pod(nodeVersion: NODE_VERSION) {
-      fas.pod(
-        nodeVersion: NODE_VERSION,
-        sentryProjectName: SENTRY_PROJECT_NAME,
-        sentryDsn: SENTRY_DSN,
-        locizeProjectId: LOCIZE_PROJECT_ID,
-        mixpanelToken: MIXPANEL_TOKEN,
-        envVars: [
-          envVar(key: 'BRANCH_NAME', value: env.BRANCH_NAME),
-          envVar(key: 'CHANGE_ID', value: env.CHANGE_ID),
-        ]
-      ) {
-        // This enables codecov for the repo. If this fails to start, then
-        // do the following:
-        //  1. Obtain a token by going to:
-        //     https://codecov.io/gh/cognitedata/YOUR-REPO-HERE
-        //  2. Create a PR similar to:
-        //     https://github.com/cognitedata/terraform/pull/1923
-        //  3. Get that PR approved, applied, and merged
-        //
-        // If you don't want codecoverage, then you can just remove this.
-        codecov.pod {
-          testcafe.pod(
-            fakeIdpEnvVars: fakeIdpEnvVars,
-          ) {
-            properties([
-              buildDiscarder(logRotator(daysToKeepStr: '30', numToKeepStr: '20'))
-            ])
+  bazelPod(bazelVersion: '3.5.0') {
+    yarn.pod(nodeVersion: NODE_VERSION) {
+      previewServer.pod(nodeVersion: NODE_VERSION) {
+        fas.pod(
+          nodeVersion: NODE_VERSION,
+          envVars: [
+            envVar(key: 'BRANCH_NAME', value: env.BRANCH_NAME),
+            envVar(key: 'CHANGE_ID', value: env.CHANGE_ID)
+          ]
+        ) {
+          codecov.pod {
+            testcafe.pod(
+              fakeIdpEnvVars: fakeIdpEnvVars,
+            ) {
+              properties([
+                buildDiscarder(logRotator(daysToKeepStr: '30', numToKeepStr: '100'))
+              ])
 
-            node(POD_LABEL) {
-              dir('main') {
-                stageWithNotify('Checkout code', CONTEXTS.checkout) {
-                  checkout(scm)
-                }
-
-                stageWithNotify('Install dependencies', CONTEXTS.setup) {
-                  yarn.setup()
-                }
-
-                yarn.copy(
-                  dirs: DIRS
-                )
+              node(POD_LABEL) {
+                  stageWithNotify('Checkout code', CONTEXTS.checkout) {
+                    checkout(scm)
+                  }
+                body()
               }
-
-              body()
             }
           }
         }
@@ -199,169 +81,198 @@ def pods = { body ->
   }
 }
 
+def handleError = { err ->
+  container('bazel') {
+    sh("find -L `readlink dist/testlogs` -type f -name '*.zip' | xargs -n1 unzip -uo")
+    archiveArtifacts allowEmptyArchive: true, artifacts: 'test.outputs/**/screenshots/**/*.png,test.outputs/**/video/**/*.mp4'
+  }
+}
+
 pods {
-  static final Map<String, Boolean> version = versioning.getEnv(
-    versioningStrategy: VERSIONING_STRATEGY
-  )
-  final boolean isStaging = version.isStaging
-  final boolean isProduction = version.isProduction
-  final boolean isPullRequest = version.isPullRequest
+  final boolean isPullRequest = versioning.getEnv().isPullRequest
 
   app.safeRun(
-    slackChannel: SLACK_CHANNEL,
-    logErrors: isStaging || isProduction
+    logErrors: !isPullRequest,
+    handleError: handleError,
+    slackChannel: 'frontend-alerts',
   ) {
-    threadPool(
-      tasks: [
-        'Lint': {
-          retryWithBackoff(2) { // <- retry this, since pod failures are not uncommon (and this step is pretty quick)
-            stageWithNotify('Check linting', CONTEXTS.lint) {
-              dir('lint') {
-                container('fas') {
-                  sh('yarn lint')
-                }
-              }
-            }
-          }
-        },
+    stageWithNotify('Bazel setup', CONTEXTS.bazelSetup) {
+      container('bazel') {
+        // TODO: Define custom docker image to include bazel instead of installing
+        // We are using custom docker.io/timbru31/node-chrome:latest
+        // since we need an image which has both bazel and chromium
+        // it seems installing bazel on ubuntu is easier than installing
+        // bazel on alpine (linux for testcafe image)
+        sh('npm install -g @bazel/bazelisk')
+        // zip is needed for Bazel to archive test artifacts
+        sh('apt update && apt --assume-yes install g++ unzip zip')
 
-        'Unit tests': {
-          retryWithBackoff(2) { // <- retry this, since pod failures are not uncommon (and this step is pretty quick)
-            stageWithNotify('Execute unit tests', CONTEXTS.unitTests) {
-              dir('unit-tests') {
-                container('fas') {
-                  sh('yarn test')
-                  junit(allowEmptyResults: true, testResults: '**/junit.xml')
-                  if (isPullRequest) {
-                    summarizeTestResults()
-                  }
-                  stage("Upload coverage reports") {
-                    codecov.uploadCoverageReport()
-                  }
-                }
-              }
-            }
-          }
-        },
-
-        'Storybook': {
-          previewServer.runStorybookStage(
-            shouldExecute: isPullRequest
-          )
-        },
-
-        'Preview': {
-          dir('preview') {
-            stageWithNotify('Build for preview', CONTEXTS.buildPreview) {
-              fas.build(
-                appId: "${STAGING_APP_ID}-pr-${env.CHANGE_ID}",
-                repo: APPLICATION_REPO_ID,
-                buildCommand: 'yarn build preview',
-                shouldExecute: isPullRequest
-              )
-            }
-          }
-        },
-
-        'Staging': {
-          dir('staging') {
-            stageWithNotify('Build for staging', CONTEXTS.buildStaging) {
-              fas.build(
-                appId: STAGING_APP_ID,
-                repo: APPLICATION_REPO_ID,
-                buildCommand: 'yarn build staging',
-                shouldExecute: isStaging
-              )
-            }
-          }
-        },
-
-        'Production': {
-          dir('production') {
-            stageWithNotify('Build for production', CONTEXTS.buildProduction) {
-              fas.build(
-                appId: PRODUCTION_APP_ID,
-                repo: APPLICATION_REPO_ID,
-                buildCommand: 'yarn build production',
-                shouldExecute: isProduction
-              )
-            }
-          }
-        },
-      ],
-      workers: 3,
-    )
-
-    if (isPullRequest) {
-      testcafe.runE2EStage(
-        //
-        // multi-branch mode:
-        //
-        // We don't need to run end-to-end tests against release because
-        // we're in one of two states:
-        //   1. Cutting a new release
-        //      In this state, staging has e2e already passing.
-        //   2. Cherry-picking in a hotfix
-        //      In this state, the PR couldn't have been merged without
-        //      passing end-to-end tests.
-        // As such, we can skip end-to-end tests on release branches. As
-        // a side-effect, this will make hotfixes hit production faster!
-        //
-        // single-branch mode: always run e2e
-        //
-        shouldExecute: VERSIONING_STRATEGY == "single-branch" ? true : !isRelease,
-
-        dir: 'production',
-        runCommand: 'npx react-scripts build && ./scripts/testcafe-serve-run.sh'
-      )
-    }
-
-    if (isPullRequest) {
-      stageWithNotify('Publish preview build', CONTEXTS.publishPreview) {
-        dir('preview') {
-          fas.publish(
-            previewSubdomain: 'react-demo'
-          )
+        sh("cp .ci.bazelrc ~/.bazelrc")
+        sh(label: 'Set up NPM', script: 'cp /npm-credentials/npm-public-credentials.txt ~/.npmrc')
+        // For cloning Blazier and fetching master
+        withCredentials([usernamePassword(credentialsId: scm.userRemoteConfigs[0].credentialsId, passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GH_USER')]) {
+            sh("git config --global credential.helper '!f() { sleep 1; echo \"username=${GH_USER}\"; echo \"password=${GITHUB_TOKEN}\"; }; f'")
+            // Override ssh access with https which is supported by Jenkins
+            sh('git config --global url."https://github.com/".insteadOf git@github.com:')
+            sh("git fetch --no-tags --force --progress -- https://github.com/cognitedata/application-services.git +refs/heads/master:refs/remotes/origin/master")
         }
       }
     }
 
-    if (isStaging && STAGING_APP_ID) {
-      stageWithNotify('Publish staging build', CONTEXTS.publishStaging) {
-        dir('staging') {
-          fas.publish()
-        }
+    stageWithNotify("Bazel build", CONTEXTS.bazelBuild) {
+      container('bazel') {
+        sh(label: 'bazel build //...', script: "bazel --bazelrc=.ci.bazelrc build //...")
+      }
+    }
 
-        // in 'single-branch' mode we always publish 'staging' and 'master' builds
-        // from the main branch, but we only need to notify about one of them.
-        // so it is ok to skip this message in that case
-        //
-        // note: the actual deployment of each is determined by versionSpec in FAS
-        if (VERSIONING_STRATEGY != "single-branch") {
-          dir('main') {
-            slack.send(
-              channel: SLACK_CHANNEL,
-                message: "Deployment of ${env.BRANCH_NAME} complete!"
+    stageWithNotify('Bazel test', CONTEXTS.bazelTests) {
+      container('bazel') {
+        sh(label: 'lint bazel files', script: "bazel --bazelrc=.ci.bazelrc run //:buildifier_check")
+        sh(label: 'bazel test //...', script: "bazel --bazelrc=.ci.bazelrc test //...")
+
+        // Bazel stores test outputs as zip files
+        sh("find -L `readlink dist/testlogs` -type f -name '*.zip' | xargs -n1 unzip -uo")
+        // junit takes into account only reports no older than 3s
+        // for cached by Bazel tests we are updating file timestamp
+        // in order to take them into account as well
+        sh("find test.outputs -type f -name '*.xml' | xargs touch")
+        junit(allowEmptyResults: true, testResults: '**/junit.xml')
+        if (isPullRequest) {
+          summarizeTestResults()
+        }
+        stage("Upload coverage reports") {
+          codecov.uploadCoverageReport()
+        }
+      }
+    }
+
+    if (isPullRequest) {
+      stageWithNotify('Publish storybook', CONTEXTS.publishStorybook) {
+        container('bazel') {
+          def changedStorybooks = sh(
+            label: "Which storybooks were changed?",
+            script: "bazel run //:has-changed -- -ref=HEAD^1 'kind(publish_storybook, //...)'",
+            returnStdout: true
+          )
+          print(changedStorybooks)
+          if (changedStorybooks) {
+            changedStorybooks.split('\n').each {
+              def storybookJsonString = sh(script: "bazel run ${it}", returnStdout: true)
+              def params = readJSON text: storybookJsonString
+              def target = it.split(':')[0].split('//')[1]
+              sh("rm -rf storybook-static && cp -r `readlink dist/bin`/${target}/storybook-static storybook-static")
+              previewServer(
+                buildFolder: 'storybook-static',
+                commentPrefix: '[storybook-server]\n',
+                prefix: 'storybook',
+                repo: params.sub_domain
+              )
+            }
+          }
+        }
+      }
+    }
+
+    def slackMessages = []
+
+    stageWithNotify('Publish FAS', CONTEXTS.publishFAS) {
+      container('bazel') {
+        def changedApps = sh(
+          label: "Which apps were changed?",
+          script: "bazel run //:has-changed -- -ref=HEAD^1 'kind(publish_fas, //...)'",
+          returnStdout: true
+        )
+        print(changedApps)
+        if (changedApps) {
+          changedApps.split('\n').each {
+            def fasJsonString = sh(script: "bazel run ${it}", returnStdout: true)
+            def params = readJSON text: fasJsonString
+            print(params)
+            def target = it.split(':')[0].split('//')[1]
+
+            def publish = { args ->
+              def performBuild = { p ->
+                container('bazel') {
+                  // clean up after the previous run
+                  sh("rm -rf build && cp -r `readlink dist/bin`/${args.src}/build build")
+                  def fasBuildJsonString = sh(
+                    script: "cat .fas-build.json",
+                    returnStdout: true
+                  )
+                  def fasBuildJson = readJSON text: fasBuildJsonString
+                  def fasBuildEnv = fasBuildJson.build.env
+                  // Iterate over generated env vars and replace placeholder values defined in BUILD.bazel
+                  for (key in fasBuildEnv.keySet()) {
+                    def value = fasBuildEnv.get(key)
+                    sh("find build -type f | xargs sed -i 's,${key}_VALUE,${value},g'")
+                  }
+                  // We are setting REACT_APP_ENV based on the build target, similarly to scripts/build.sh
+                  def variant = args.variant ?: 'development'
+                  sh("find build -type f | xargs sed -i 's,REACT_APP_ENV_VALUE,${variant},g'")
+                }
+              }
+              fas.build(
+                appId: args.appId,
+                repo: args.repo,
+                sentryProjectName: args.sentryProjectName,
+                performBuild: performBuild,
+              )
+              fas.publish(
+                previewSubdomain: args.previewSubdomain
+              )
+            }
+
+            static final Map<String, Boolean> version = versioning.getEnv(
+              versioningStrategy: params.versioning_strategy
             )
+
+            if (isPullRequest) {
+              publish(
+                src: target,
+                appId: "${params.staging_app_id}-pr-${env.CHANGE_ID}",
+                repo: params.repo_id,
+                sentryProjectName: params.sentry_project_name,
+                variant: 'preview',
+                previewSubdomain: params.preview_subdomain != "" ? params.preview_subdomain : null
+              )
+              print("FAS preview published")
+            }
+
+            if (version.isStaging) {
+              publish(
+                src: target,
+                appId: params.staging_app_id,
+                repo: params.repo_id,
+                sentryProjectName: params.sentry_project_name,
+                variant: 'staging',
+              )
+              print("FAS staging published")
+              slackMessages.add("- `${params.staging_app_id}`")
+            }
+
+            if (version.isProduction) {
+              publish(
+                src: target,
+                appId: params.production_app_id,
+                repo: params.repo_id,
+                sentryProjectName: params.sentry_project_name,
+                variant: 'production',
+              )
+              print("FAS production published")
+              slackMessages.add("- `${params.production_app_id}`")
+            }
           }
         }
       }
     }
 
-    if (isProduction && PRODUCTION_APP_ID) {
-      stageWithNotify('Publish production build', CONTEXTS.publishProduction) {
-        dir('production') {
-          fas.publish()
-
-        }
-
-        dir('main') {
-          slack.send(
-            channel: SLACK_CHANNEL,
-            message: "Deployment of ${env.BRANCH_NAME} complete!"
-          )
-        }
-      }
+    if (!slackMessages.isEmpty()) {
+      slack.send(
+        channel: '#frontend-firehose',
+        message: """:tada: New application deployments :tada:
+${slackMessages.join('\n')}
+"""
+      )
     }
   }
 }

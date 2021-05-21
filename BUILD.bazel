@@ -1,0 +1,75 @@
+load("@com_github_cognitedata_bazel_tools//bazel/buildifier:buildifier.bzl", "buildifier")
+load("//rules/lint:index.bzl", "eslint_config", "prettier_config")
+load("@build_bazel_rules_nodejs//:index.bzl", "copy_to_bin")
+
+exports_files(
+    [
+        "tsconfig.json",
+        "package.json",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+# Base ESLint config
+eslint_config(
+    name = "eslint_config",
+    src = ":.eslintrc.js",
+    visibility = ["//visibility:public"],
+    deps = [
+        ".eslintrc.production.js",
+        ".prettierrc",
+        "tsconfig.json",
+    ],
+)
+
+# Base Prettier config
+prettier_config(
+    name = "prettier_config",
+    src = ".prettierrc",
+    visibility = ["//visibility:public"],
+)
+
+copy_to_bin(
+    name = "tsconfig",
+    srcs = [
+        ":tsconfig.json",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+# Bazel file linter: lints BUILD files, WORKSPACE and .bzl files, and can
+# automatically apply fixes.
+#
+# Usage:
+#   # check for errors
+#   bazel run //:buildifier_check
+#
+#   # apply fixes
+#   bazel run //:buildifier
+buildifier(
+    name = "buildifier",
+    exclude_patterns = [
+        "**/node_modules/**",
+        "**/.git/**",
+    ],
+)
+
+# Find out which Bazel targets changed since some git ref
+#
+# Examples:
+#
+#   # Which node binaries have changed since last commit?
+#   $ bazel run //:what-changed -- -kind=nodejs_binary
+#
+#   # Which Docker images have changed since master?
+#   $ bazel run //:what-changed -- -kind=_container_push master
+#
+sh_binary(
+    name = "has-changed",
+    srcs = [
+        "@com_github_cognitedata_blazier//cmd/blazier",
+    ],
+    args = [
+        "has-changed",
+    ],
+)

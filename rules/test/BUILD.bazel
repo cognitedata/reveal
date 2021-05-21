@@ -1,0 +1,4 @@
+exports_files([
+    "react_scripts_test.sh",
+    "testcafe_test.sh",
+])

@@ -1,0 +1,12 @@
+load("@build_bazel_rules_nodejs//:index.bzl", "nodejs_binary")
+
+exports_files(["runner.template.bash"])
+
+nodejs_binary(
+    name = "generate",
+    data = [
+        "generate.js",
+    ],
+    entry_point = "generate.js",
+    visibility = ["//visibility:public"],
+)

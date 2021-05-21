@@ -1,0 +1,8 @@
+# Configure remote caching
+build --remote_cache=grpc://bazel-build-cache.bazel-build-cache.svc.cluster.local:9092
+build --remote_download_toplevel
+run --remote_download_toplevel
+
+# Limit the number of parallel jobs in CI to avoid getting OOM-killed
+build --jobs=10
+test --jobs=5

@@ -1,7 +1,45 @@
-# React Demo App
+# Apps
 
-This repository shows how to bootstrap a [React]-based application at Cognite.
-It demonstrates best practices, such as:
+[![codecov](https://codecov.io/gh/cognitedata/react-demo-app/branch/master/graph/badge.svg?token=uzusBZyM8s)](https://codecov.io/gh/cognitedata/react-demo-app)
+
+This monorepository provides centralized management of Cognite's applications and reusable packages.
+
+## Setup for local development
+
+This repo uses [Bazel](https://bazel.build/) as a build tool. To get that set up:
+
+1. Install Bazel through [Bazelisk](https://github.com/bazelbuild/bazelisk). This ensures that you always use the version of Bazel specified in `.bazelversion`.
+2. Install Bazel watcher (ibazel) globally:
+   ```sh
+   yarn global add @bazel/ibazel
+   ```
+
+## How do I run my application locally?
+
+All the api middleware have a set of scripts defined in their `package.json`.
+In order to run a application you need to:
+
+1. `cd` to that application directory
+2. run `yarn start`, which will install all the required dependencies for the application and run it
+
+## How do I add a dependency to my application?
+
+This monorepository has a top-level `node_modules` and a top-level `yarn.lock`.
+That means that if you want to add a dependency to your application you need to install it at the root level, then you can import it in the normal way in your application or package.
+Whenever you've added a dependency and started using it, you need to run `yarn update-helpers` from the directory of your application. This will ensure Bazel appends this dependency to your application dependency tree.
+
+## Creating a new application
+
+To create a new application:
+
+1. Clone this repo
+2. From the root of this repo, run:
+   ```sh
+   yarn install
+   yarn generate
+   ```
+
+This will spit out all of the boilerplate that you need to have a production-capable [React]-based application at Cognite. It demonstrates best practices, such as:
 
 - Lint setup to use
 - Jenkinsfile steps
@@ -15,34 +53,6 @@ It demonstrates best practices, such as:
 
 Please see the [deployment guide] for more information how to actually get this app into production.
 (It should be pretty easy!)
-
-## Template repo
-
-This repo is configured as a template, so it's easy to get started.
-Simply go to the [create repo page] and select "cognitedata/react-demo-app" as a template.
-
-## Some quick things to remember after cloning this
-
-- Update the `.github/CODEOWNERS` files to list your teams email.
-- Modify the tokens and names in the `Jenkinsfile`
-- Customise this `README.md` file!
-- Reset the package.json version back to 0.0.1 and change the name to your apps.
-
-### Run e2e tests with testcafe
-
-End-to-end tests are written and run using the [Testcafe](https://github.com/DevExpress/testcafe) testing framework. They are stored in `/testcafe`.
-
-To run testcafe tests locally, first start the app on port 11111
-
-```sh
-yarn testcafe:start-live
-```
-
-In order to run tests in the browser and keep the browser window open to watch and auto re-run on test file changes, run in a separate tab the following command:
-
-```sh
-yarn testcafe:run-live
-```
 
 ## Help
 

@@ -1,0 +1,20 @@
+{
+  "selectorTimeout": 20000,
+  "assertionTimeout": 20000,
+  "pageLoadTimeout": 10000,
+  "screenshots": {
+    "path": "testcafe/screenshots",
+    "takeOnFails": true
+  },
+  "videoPath": "testcafe/videos",
+  "quarantineMode": true,
+  "videoOptions": {
+    "failedOnly": true
+  },
+  "configPath": "./tsconfig.testcafe.json",
+  "clientScripts": [
+    {
+      "module": "@testing-library/dom/dist/@testing-library/dom.umd.js"
+    }
+  ]
+}

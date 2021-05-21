@@ -9,7 +9,9 @@
 /coverage
 
 # production
+apps/*/build
 /build
+/dist
 
 # misc
 .DS_Store
@@ -18,16 +20,8 @@
 .env.test.local
 .env.production.local
 
-# testcafe
-*.jwk-key.json
-testcafe/screenshots
-testcafe/videos
-testcafe/logs
-res.xml
-
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-storybook-static/
 junit.xml

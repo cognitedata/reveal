@@ -1,0 +1,4 @@
+exports_files([
+    "publish_fas.template.bash",
+    "publish_storybook.template.bash",
+])

@@ -1,0 +1,8 @@
+load("@bazel_skylib//rules:write_file.bzl", "write_file")
+
+write_file(
+    name = "write_chdir_script",
+    out = "chdir.js",
+    content = ["process.chdir(__dirname)"],
+    visibility = ["//visibility:public"],
+)

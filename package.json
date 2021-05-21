@@ -3,23 +3,17 @@
   "version": "0.4.0",
   "private": true,
   "scripts": {
-    "analyse": "source-map-explorer 'build/static/js/*.js' --only-mapped --html /tmp/result.html && google-chrome /tmp/result.html",
-    "start": "./scripts/start.sh",
-    "build": "./scripts/build.sh",
-    "test": "./scripts/test.sh",
-    "lint": "concurrently \"yarn prettier\" \"yarn eslint\"",
+    "build": "bazel build //...",
+    "test": "bazel test //...",
+    "lint": "bazel test :eslint_test :prettier_test",
+    "eslint": "bazel test :eslint_test",
+    "eslint:fix": "bazel run :eslint_test -- --fix",
+    "prettier": "bazel test :prettier_test",
+    "prettier:fix": "bazel run :prettier_test -- --write",
+    "postinstall": "patch-package",
     "lint-fast": "pretty-quick --staged",
-    "eslint": "yarn eslint:changed 'src/**/*.{ts,tsx}' 'public/index.html'",
-    "eslint:changed": "eslint --max-warnings 0 --color --config .eslintrc.production.js",
-    "prettier": "prettier --config .prettierrc -l 'src/**/*.{js,ts,tsx}' || (echo \nThese files are not formatted correctly && false)",
-    "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook",
-    "testcafe:run": "./scripts/testcafe-run.sh",
-    "testcafe:run-live": "./scripts/testcafe-run-live.sh",
-    "testcafe:start": "./scripts/testcafe-serve-run-docker.sh",
-    "testcafe:start-live": "./scripts/testcafe-start.sh",
-    "testcafe:build": "./scripts/testcafe-build.sh",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "update-helpers": "for i in `bazel query 'kind(generate_package_json_helpers, //...)'`; do bazel run $i; done"
   },
   "dependencies": {
     "@cognite/cogs.js": "^3.9.0",
@@ -37,15 +31,13 @@
     "react-i18next": "^11.8.10",
     "react-redux": "^7.2.2",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "4.0.3",
+    "react-scripts": "^4.0.3",
     "redux": "^4.0.5",
     "styled-components": "^5.3.0"
   },
-  "resolutions": {
-    "webpack": "4.44.2"
-  },
   "devDependencies": {
     "@babel/core": "^7.13.16",
+    "@bazel/ibazel": "^0.15.10",
     "@cognite/eslint-config": "^2.0.1",
     "@cognite/eslint-plugin": "^2.0.0",
     "@ffmpeg-installer/ffmpeg": "^1.0.20",
@@ -59,13 +51,14 @@
     "@types/jest": "^26.0.23",
     "@types/lodash": "^4.14.168",
     "@types/node": "^14.14.7",
+    "@types/react-dom": "^17.0.3",
     "@types/react": "^17.0.5",
-    "@types/react-dom": "^17.0.2",
     "@types/react-router-dom": "^5.1.6",
     "@types/sinon": "^9.0.11",
     "@types/styled-components": "^5.1.9",
     "babel-loader": "8.1.0",
     "concurrently": "^6.0.2",
+    "depcheck": "^1.4.1",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-prettier": "^7.2.0",
     "eslint-plugin-import": "^2.22.1",
@@ -78,31 +71,18 @@
     "jest-environment-jsdom-sixteen": "^1.0.3",
     "jest-junit": "^12.0.0",
     "kill-port": "^1.6.1",
+    "patch-package": "^6.2.2",
     "prettier": "^2.2.1",
     "pretty-quick": "^3.1.0",
     "serve": "^11.3.2",
     "sinon": "^9.2.4",
-    "source-map-explorer": "^2.5.2",
-    "testcafe": "^1.14.0",
-    "typescript": "^4.1.5"
+    "testcafe": "^1.13.0",
+    "typescript": "^4.1.5",
+    "webpack": "4.44.2"
   },
-  "jest": {
-    "coveragePathIgnorePatterns": [
-      "node_modules",
-      "__tests__",
-      ".stories."
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
   }
 }
