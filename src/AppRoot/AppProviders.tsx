@@ -30,7 +30,10 @@ const AppProviders: React.FC<Props> = ({
     },
     client
   );
-  const apiClient = createApiClient(undefined, client);
+  const apiClient = createApiClient(
+    { appId: 'digital-cockpit', project: tenant },
+    client
+  );
   return (
     <ReduxProvider store={store}>
       <CdfClientProvider client={cdfClient}>
