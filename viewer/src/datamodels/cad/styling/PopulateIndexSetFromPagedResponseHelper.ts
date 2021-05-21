@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { CursorAndAsyncIterator, ListResponse } from '@cognite/sdk';
+import { ListResponse } from '@cognite/sdk';
 import { IndexSet } from '../../../utilities/IndexSet';
 import { NumericRange } from '../../../utilities/NumericRange';
 
@@ -31,8 +31,8 @@ export class PopulateIndexSetFromPagedResponseHelper<T> {
 
   /**
    * Loops through all the pages of the provided response and populated the IndexSet provided.
-   * @param indexSet 
-   * @param request 
+   * @param indexSet
+   * @param request
    * @returns True if the operation was completed, false if it was interrupted using {@link interrupt}.
    */
   public async pageResults(indexSet: IndexSet, request: Promise<ListResponse<T[]>>): Promise<boolean> {
@@ -57,8 +57,7 @@ export class PopulateIndexSetFromPagedResponseHelper<T> {
       }
 
       return !this._interrupted;
-    }
-    finally {
+    } finally {
       this._ongoingOperations--;
     }
   }
