@@ -8,11 +8,15 @@ import { lightGrey } from 'src/utils/Colors';
 import { FileFilters } from 'src/modules/Common/Components/Search/FileFilters';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { setFileSelectState } from 'src/modules/Common/filesSlice';
+import {
+  addUploadedFile,
+  setFileSelectState,
+} from 'src/modules/Common/filesSlice';
 import { ExplorerSearchResults } from 'src/modules/Explorer/Containers/ExplorerSearchResults';
 import { FileDetails } from 'src/modules/FileDetails/Containers/FileDetails';
 import { TableDataItem, ViewMode } from 'src/modules/Common/types';
 import { ExplorerToolbar } from 'src/modules/Explorer/Containers/ExplorerToolbar';
+import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import {
   setCurrentView,
   setFilter,
@@ -51,8 +55,9 @@ const Explorer = () => {
   };
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleItemClick = (item: TableDataItem) => {
-    dispatch(setSelectedFileIdExplorer(item.id));
+  const handleItemClick = ({ menu, selected, ...file }: TableDataItem) => {
+    dispatch(addUploadedFile(file as FileInfo));
+    dispatch(setSelectedFileIdExplorer(file.id));
     dispatch(showExplorerFileMetadata());
   };
 
