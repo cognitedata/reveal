@@ -101,7 +101,10 @@ const ChartList = () => {
     await updateChart(newChart);
 
     trackUsage('ChartList.CreateChart');
-    history.push(`/${id}`);
+    history.push({
+      pathname: `/${id}`,
+      search: history.location.search,
+    });
   };
 
   const nameFilter = (chart: Chart) =>

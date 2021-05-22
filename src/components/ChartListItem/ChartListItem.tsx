@@ -54,7 +54,12 @@ const ChartListItem = ({ chart, view }: ChartListItemProps) => {
   const handleDuplicateChart = () => {
     if (login?.user) {
       const newChart = duplicate(chart, login.user);
-      updateChart(newChart).then(() => history.push(`/${newChart.id}`));
+      updateChart(newChart).then(() =>
+        history.push({
+          pathname: `/${newChart.id}`,
+          search: history.location.search,
+        })
+      );
     }
   };
 

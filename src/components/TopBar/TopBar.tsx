@@ -26,7 +26,11 @@ const TopBarWrapper = () => {
         <TopBar.Logo
           title="Cognite Charts"
           onLogoClick={() =>
-            history.location.pathname !== '/' && history.push('/')
+            history.location.pathname !== '/' &&
+            history.push({
+              pathname: '/',
+              search: history.location.search,
+            })
           }
         />
         {!chart && <TopBar.Navigation links={[]} />}
