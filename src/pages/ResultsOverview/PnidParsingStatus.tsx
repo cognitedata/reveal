@@ -41,7 +41,12 @@ export default function PnidParsingStatus({
     return <UploadingStatus />;
   }
   if (jobId) {
-    if (didFileFail) return <FailedStatus message={didFileFail.errorMessage} />;
+    if (didFileFail)
+      return (
+        <FailedStatus
+          message={didFileFail?.errorMessage ?? 'Failed to parse file'}
+        />
+      );
     if (parsingJobStatus === 'Completed')
       return <SuccessStatus message="Finished" />;
     return <ParsingStatus />;

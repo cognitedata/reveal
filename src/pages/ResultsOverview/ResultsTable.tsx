@@ -28,6 +28,7 @@ export default function ResultsTable(props: ResultsTableProps): JSX.Element {
     {
       title: 'Status',
       key: 'status',
+      ellipsis: true,
       render: (_: any, file: any) => (
         <PnidParsingStatus file={file} workflowId={workflowId} />
       ),
