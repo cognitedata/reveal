@@ -62,9 +62,14 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
     });
   }, [processFiles]);
 
-  const handleItemClick = (item: TableDataItem) => {
+  const handleItemClick = (
+    item: TableDataItem,
+    showFileDetailsOnClick: boolean = true
+  ) => {
     dispatch(setSelectedFileId(item.id));
-    dispatch(showFileMetadataPreview());
+    if (showFileDetailsOnClick) {
+      dispatch(showFileMetadataPreview());
+    }
   };
 
   const handleRowSelect = (item: TableDataItem, selected: boolean) => {
