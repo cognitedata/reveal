@@ -354,7 +354,7 @@ export default function WorkflowRow({
               content={
                 <div style={{ textAlign: 'left' }}>
                   Are you sure that you want to
-                  <br /> remove this Time Series?
+                  <br /> remove this calculation?
                 </div>
               }
             >
