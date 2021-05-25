@@ -23,5 +23,5 @@ export const GridView = (props: GridTableProps<TableDataItem>) => {
 
 const GridWrapper = styled.div`
   width: 100%;
-  height: 83%;
+  height: inherit;
 `;
