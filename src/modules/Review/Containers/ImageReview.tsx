@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
-import { ImagePreview } from 'src/modules/Preview/Components/ImagePreview/ImagePreview';
+import { ImagePreview } from 'src/modules/Review/Components/ImagePreview/ImagePreview';
 import { DataExplorationProvider, Tabs } from '@cognite/data-exploration';
-import { Contextualization } from 'src/modules/Preview/Containers/Contextualization';
+import { Contextualization } from 'src/modules/Review/Containers/Contextualization';
 import { FileDetailsReview } from 'src/modules/FileDetails/Containers/FileDetailsReview/FileDetailsReview';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -12,7 +12,7 @@ import {
   selectVisibleNonRejectAndEditModeAnnotations,
   updateAnnotationBoundingBox,
   VisibleAnnotations,
-} from 'src/modules/Preview/previewSlice';
+} from 'src/modules/Review/previewSlice';
 import { getLink, workflowRoutes } from 'src/modules/Workflow/workflowRoutes';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { v3Client as sdk } from '@cognite/cdf-sdk-singleton';
@@ -21,7 +21,9 @@ import { ImagePreviewEditMode } from 'src/constants/enums/ImagePreviewEditMode';
 import { ProposedCogniteAnnotation } from '@cognite/react-picture-annotation';
 import { AnnotationDrawerMode } from 'src/utils/AnnotationUtils';
 import { VisionAPIType } from 'src/api/types';
+import { PopulateAnnotations } from 'src/store/thunks/PopulateAnnotations';
 import { UpdateAnnotationsById } from 'src/store/thunks/UpdateAnnotationsById';
+import { VerticalCarousel } from '../Components/VerticalCarousel/VerticalCarousel';
 
 const AnnotationContainer = styled.div`
   width: 100%;
@@ -31,16 +33,25 @@ const AnnotationContainer = styled.div`
   box-sizing: border-box;
 `;
 
+const VerticalCarouselContainer = styled.div`
+  width: 136px;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+`;
+
 const FilePreviewMetadataContainer = styled.div`
   height: 100%;
   width: 100%;
   display: grid;
-  grid-template-columns: 65% auto;
+  grid-template-columns: auto 40%;
   grid-template-rows: 100%;
   grid-column-gap: 30px;
 `;
 
 const FilePreviewContainer = styled.div`
+  display: flex;
   height: 100%;
 `;
 
@@ -60,6 +71,17 @@ const ImageReview = (props: { fileId: string; drawerMode: number | null }) => {
   const file = useSelector(({ filesSlice }: RootState) =>
     selectFileById(filesSlice, fileId)
   );
+
+  useEffect(() => {
+    if (file) {
+      dispatch(
+        PopulateAnnotations({
+          fileId: file.id.toString(),
+          assetIds: file.assetIds,
+        })
+      );
+    }
+  }, []);
 
   const visibleNonRejectedAnnotationsAndEditModeAnnotation = useSelector(
     ({ previewSlice }: RootState) =>
@@ -121,54 +143,61 @@ const ImageReview = (props: { fileId: string; drawerMode: number | null }) => {
 
   return (
     <>
-      <AnnotationContainer>
-        <FilePreviewMetadataContainer>
-          <FilePreviewContainer>
-            {file && (
-              <ImagePreview
-                fileObj={file}
-                annotations={visibleNonRejectedAnnotationsAndEditModeAnnotation}
-                editable={imagePreviewEditable}
-                creatable={imagePreviewCreatable}
-                onCreateAnnotation={handleCreateAnnotation}
-                onUpdateAnnotation={handleModifyAnnotation}
-              />
-            )}
-          </FilePreviewContainer>
-          <TabsContainer className="z-8">
-            <Tabs
-              tab="context"
-              onTabChange={() => {}}
-              style={{
-                fontSize: 14,
-                fontWeight: 600,
-                lineHeight: '20px',
-              }}
-            >
-              <Tabs.Pane
-                title="Contextualization"
-                key="context"
-                style={{ overflow: 'hidden', height: `calc(100% - 45px)` }}
+      <QueryClientProvider client={queryClient}>
+        <AnnotationContainer id="annotationContainer">
+          <FilePreviewMetadataContainer>
+            <FilePreviewContainer>
+              <VerticalCarouselContainer id="verticalCarouselContainer">
+                <VerticalCarousel />
+              </VerticalCarouselContainer>
+              {file && (
+                <ImagePreview
+                  fileObj={file}
+                  annotations={
+                    visibleNonRejectedAnnotationsAndEditModeAnnotation
+                  }
+                  editable={imagePreviewEditable}
+                  creatable={imagePreviewCreatable}
+                  onCreateAnnotation={handleCreateAnnotation}
+                  onUpdateAnnotation={handleModifyAnnotation}
+                />
+              )}
+            </FilePreviewContainer>
+            <TabsContainer className="z-8">
+              <Tabs
+                tab="context"
+                onTabChange={() => {}}
+                style={{
+                  fontSize: 14,
+                  fontWeight: 600,
+                  lineHeight: '20px',
+                }}
               >
-                <Contextualization fileId={fileId} />
-              </Tabs.Pane>
-              <Tabs.Pane
-                title="File Details"
-                key="file-detail"
-                style={{ overflow: 'hidden', height: `calc(100% - 45px)` }}
-              >
-                {file && (
-                  <DataExplorationProvider sdk={sdk}>
-                    <QueryClientProvider client={queryClient}>
-                      <FileDetailsReview fileObj={file} />
-                    </QueryClientProvider>
-                  </DataExplorationProvider>
-                )}
-              </Tabs.Pane>
-            </Tabs>
-          </TabsContainer>
-        </FilePreviewMetadataContainer>
-      </AnnotationContainer>
+                <Tabs.Pane
+                  title="Contextualization"
+                  key="context"
+                  style={{ overflow: 'hidden', height: `calc(100% - 45px)` }}
+                >
+                  <Contextualization fileId={fileId} />
+                </Tabs.Pane>
+                <Tabs.Pane
+                  title="File Details"
+                  key="file-detail"
+                  style={{ overflow: 'hidden', height: `calc(100% - 45px)` }}
+                >
+                  {file && (
+                    <DataExplorationProvider sdk={sdk}>
+                      <QueryClientProvider client={queryClient}>
+                        <FileDetailsReview fileObj={file} />
+                      </QueryClientProvider>
+                    </DataExplorationProvider>
+                  )}
+                </Tabs.Pane>
+              </Tabs>
+            </TabsContainer>
+          </FilePreviewMetadataContainer>
+        </AnnotationContainer>
+      </QueryClientProvider>
     </>
   );
 };

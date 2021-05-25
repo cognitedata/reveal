@@ -1,7 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
 import ReactMapboxGl, { Layer, Feature, Popup } from 'react-mapbox-gl';
-import { FileInfo } from '@cognite/sdk';
 import * as MapboxGL from 'mapbox-gl';
 import { ResultData } from 'src/modules/Common/types';
 import { MAPBOX_TOKEN, MAPBOX_MAP_ID } from './constants';
@@ -19,7 +18,7 @@ const Mapbox = ReactMapboxGl({
 });
 
 export const MapView = (props: { data?: ResultData[] }) => {
-  const [selectedFile, setSelectedFile] = useState<FileInfo>();
+  const [selectedFile, setSelectedFile] = useState<ResultData>();
   const [center, setCenter] = useState<[number, number]>();
   const [zoom] = useState<[number] | undefined>([2]);
 

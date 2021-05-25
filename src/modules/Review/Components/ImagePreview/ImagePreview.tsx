@@ -10,7 +10,7 @@ import styled from 'styled-components';
 import {
   VisibleAnnotations,
   VisionAnnotationState,
-} from 'src/modules/Preview/previewSlice';
+} from 'src/modules/Review/previewSlice';
 import { AnnotationStyle, AnnotationUtils } from 'src/utils/AnnotationUtils';
 import * as pdfjs from 'pdfjs-dist';
 

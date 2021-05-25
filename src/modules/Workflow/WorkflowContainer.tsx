@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { LazyWrapper } from 'src/modules/Common/Components/LazyWrapper';
 import { Route, RouteComponentProps, Switch, Link } from 'react-router-dom';
 import { Steps as AntdSteps } from 'antd';
@@ -9,11 +9,7 @@ import {
   WorkflowStepKey,
 } from 'src/modules/Workflow/workflowRoutes';
 import { VerticalContainer } from 'src/modules/Common/Components/VerticalContainer';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from 'src/store/rootReducer';
-import { FileDetails } from 'src/modules/FileDetails/Containers/FileDetails';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { toggleFileMetadataPreview } from 'src/modules/Process/processSlice';
+import { ProcessFileDetailsContainer } from 'src/modules/Process/Containers/ProcesseFileDetailsContainer/ProcesseFileDetailsContainer';
 import BottomNavContainer from './components/BottomNavContainer';
 
 const { Step } = AntdSteps;
@@ -37,20 +33,6 @@ function getStepNumberByStepName(stepName: WorkflowStepKey) {
 type WorkflowContainerProps = RouteComponentProps<{ step: WorkflowStepKey }>;
 
 export default function WorkflowContainer(props: WorkflowContainerProps) {
-  const dispatch = useDispatch();
-
-  const showDrawer = useSelector(
-    ({ processSlice }: RootState) => processSlice.showFileMetadataDrawer
-  );
-
-  useEffect(() => {
-    if (showDrawer) {
-      dispatch(toggleFileMetadataPreview());
-    }
-  }, [props.match.params.step]);
-
-  const queryClient = new QueryClient();
-
   return (
     <VerticalContainer>
       <MainContent>
@@ -89,13 +71,7 @@ export default function WorkflowContainer(props: WorkflowContainerProps) {
             </Switch>
           </StepContent>
         </StepContainer>
-        {showDrawer && (
-          <DrawerContainer>
-            <QueryClientProvider client={queryClient}>
-              <FileDetails />
-            </QueryClientProvider>
-          </DrawerContainer>
-        )}
+        <ProcessFileDetailsContainer />
       </MainContent>
 
       <BottomNavContainer />
@@ -123,15 +99,6 @@ const StepContainer = styled.div`
   flex-direction: column;
   height: auto;
   box-sizing: content-box;
-`;
-
-const DrawerContainer = styled.div`
-  width: 400px;
-  border: 1px solid #d9d9d9;
-  box-sizing: content-box;
-  flex-shrink: 0;
-  height: 100%;
-  overflow: auto;
 `;
 
 const Steps = styled(AntdSteps)`

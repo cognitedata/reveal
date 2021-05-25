@@ -1,16 +1,18 @@
 import { BaseTableProps } from 'react-base-table';
 import { TableDataItem } from 'src/modules/Common/types';
 
-export type FileTableProps = Omit<BaseTableProps<TableDataItem>, 'width'> & {
-  onRowSelect: (item: TableDataItem, selected: boolean) => void;
+export type PaginatedTableProps<T> = {
+  data: T[];
+  totalCount: number;
+  onRowSelect: (item: T, selected: boolean) => void;
+  onRowClick: (item: T) => void;
+  selectedFileId?: number | null;
 };
+export type FileTableProps = Omit<BaseTableProps<TableDataItem>, 'data'> &
+  PaginatedTableProps<TableDataItem>;
 
 export type FileExplorerTableProps = Omit<
   BaseTableProps<TableDataItem>,
-  'width'
-> & {
-  totalCount: number;
-  onRowSelect: (item: TableDataItem, selected: boolean) => void;
-  onRowClick: (item: TableDataItem) => void;
-  selectedFileId?: number;
-};
+  'data'
+> &
+  PaginatedTableProps<TableDataItem>;

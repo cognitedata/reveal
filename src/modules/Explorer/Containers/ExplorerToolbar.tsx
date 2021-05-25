@@ -4,10 +4,12 @@ import styled from 'styled-components';
 import { ExplorationSearchBar } from './ExplorationSearchBar';
 
 export const ExplorerToolbar = ({
+  query,
   onViewChange,
   currentView = 'list',
   onSearch,
 }: {
+  query?: string;
   onViewChange?: (view: string) => void;
   currentView?: string;
   onSearch: (text: string) => void;
@@ -19,7 +21,7 @@ export const ExplorerToolbar = ({
         All files
       </Title>
       <Container>
-        <ExplorationSearchBar onChange={onSearch} />
+        <ExplorationSearchBar searchString={query} onChange={onSearch} />
 
         <SegmentedControl
           onButtonClicked={onViewChange}

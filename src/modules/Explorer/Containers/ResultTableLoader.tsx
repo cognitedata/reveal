@@ -21,8 +21,6 @@ import {
 } from 'src/modules/Workflow/workflowRoutes';
 import { ResultData } from 'src/modules/Common/types';
 import { explorerFileFetchLimit } from 'src/constants/ExplorerConstants';
-import { useDispatch } from 'react-redux';
-import { setFiles } from 'src/modules/Common/filesSlice';
 import { totalFileCount } from 'src/api/file/aggregate';
 
 type Resource = FileInfo | Asset | CogniteEvent | Sequence | Timeseries;
@@ -37,7 +35,6 @@ export const ResultTableLoader = <T extends Resource>({
   Partial<SelectableItemsProps> &
   TableStateProps) => {
   const history = useHistory();
-  const dispatch = useDispatch();
   const [tableData, setTableData] = useState<ResultData[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
 
@@ -53,8 +50,6 @@ export const ResultTableLoader = <T extends Resource>({
         search: { name: props.query },
         limit: explorerFileFetchLimit,
       });
-
-      dispatch(setFiles(fileSearchResult));
 
       const populatedData = populateTableData(fileSearchResult, onReviewClick);
       setTableData(populatedData);

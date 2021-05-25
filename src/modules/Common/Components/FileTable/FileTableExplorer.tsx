@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
 import { Column, ColumnShape } from 'react-base-table';
-import { TableDataItem } from 'src/modules/Common/types';
+import { ResultData, TableDataItem } from 'src/modules/Common/types';
 import { StringRenderer } from 'src/modules/Common/Containers/FileTableRenderers/StringRenderer';
 import { SelectableTable } from 'src/modules/Common/Components/SelectableTable/SelectableTable';
 import { NameRenderer } from 'src/modules/Common/Containers/FileTableRenderers/NameRenderer';
@@ -75,7 +75,7 @@ export function FileTableExplorer(props: FileExplorerTableProps) {
 
   const rowEventHandlers = {
     onClick: ({ rowData }: { rowData: TableDataItem }) => {
-      props.onRowClick(rowData);
+      props.onRowClick(rowData as ResultData);
     },
   };
 
@@ -89,7 +89,9 @@ export function FileTableExplorer(props: FileExplorerTableProps) {
   }, [props.data]);
 
   useEffect(() => {
-    dispatch(RetrieveAnnotations({ fileIds, assetIds: undefined }));
+    if (fileIds && fileIds.length) {
+      dispatch(RetrieveAnnotations({ fileIds, assetIds: undefined }));
+    }
   }, [fileIds]);
 
   return (

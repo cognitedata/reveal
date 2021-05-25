@@ -7,7 +7,7 @@ import {
   VisionAnnotation,
 } from 'src/utils/AnnotationUtils';
 import { VisionAPIType } from 'src/api/types';
-import { resetEditState } from 'src/modules/Preview/previewSlice';
+import { resetEditState } from 'src/modules/Review/previewSlice';
 import { SaveAnnotations } from 'src/store/thunks/SaveAnnotations';
 import { UnsavedAnnotation } from 'src/api/annotation/types';
 import { getRegionFromBox, getUnsavedAnnotation } from 'src/api/utils';

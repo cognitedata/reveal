@@ -6,12 +6,12 @@ import {
   editLabelAddAnnotation,
   selectAssetsIds,
   setImagePreviewEditState,
-} from 'src/modules/Preview/previewSlice';
+} from 'src/modules/Review/previewSlice';
 import React from 'react';
 import { DataExplorationProvider } from '@cognite/data-exploration';
 import { v3Client as sdk } from '@cognite/cdf-sdk-singleton';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { AssetSelector } from 'src/modules/Preview/Components/AssetSelector/AssetSelector';
+import { AssetSelector } from 'src/modules/Review/Components/AssetSelector/AssetSelector';
 import { AnnotationDrawerMode } from 'src/utils/AnnotationUtils';
 import { ImagePreviewEditMode } from 'src/constants/enums/ImagePreviewEditMode';
 

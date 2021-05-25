@@ -5,6 +5,7 @@ import {
   Col,
   Input,
   Row,
+  Tooltip,
 } from '@cognite/cogs.js';
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
@@ -15,7 +16,7 @@ import {
   selectAnnotation,
   toggleAnnotationVisibility,
   VisionAnnotationState,
-} from 'src/modules/Preview/previewSlice';
+} from 'src/modules/Review/previewSlice';
 import {
   AnnotationStatus,
   ModelTypeIconMap,
@@ -40,11 +41,14 @@ const Header = styled.div`
 
 const Body = styled.div`
   width: 100%;
+  border: 1px solid #e8e8e8;
+  box-sizing: border-box;
+  border-radius: 5px;
 `;
 
 const StyledRow = styled(Row)`
   padding: 8px;
-
+  justify-items: space-around;
   &:hover {
     background-color: var(--cogs-greyscale-grey2);
   }
@@ -199,9 +203,11 @@ export const AnnotationsTable = ({
     <TableContainer>
       <Header>
         <TitleRow>
-          <div>
-            {mode === VisionAPIType.TagDetection ? 'Asset tags' : 'Annotations'}
-          </div>
+          <TitleText>
+            {mode === VisionAPIType.TagDetection
+              ? 'Asset tags in image'
+              : 'Text and objects in image '}
+          </TitleText>
           <DeleteButton
             type="ghost-danger"
             icon="Delete"
@@ -217,11 +223,11 @@ export const AnnotationsTable = ({
           checkableAnnotations.map((annotation) => {
             return (
               <StyledRow
-                cols={21}
+                cols={50}
                 key={annotation.id}
                 className={annotation.checked ? 'active' : ''}
               >
-                <StyledCol span={2}>
+                <StyledCol span={4}>
                   <Checkbox
                     name={annotation.id.toString()}
                     value={annotation.checked}
@@ -230,7 +236,7 @@ export const AnnotationsTable = ({
                     }
                   />
                 </StyledCol>
-                <StyledCol span={6}>
+                <StyledCol span={20}>
                   <ColContainer>
                     <VerticalLine />
                     <AcceptBtn
@@ -244,7 +250,9 @@ export const AnnotationsTable = ({
                           AnnotationStatus.Verified
                         );
                       }}
-                    />
+                    >
+                      True
+                    </AcceptBtn>
                     <RejectBtn
                       type="primary"
                       icon="Close"
@@ -256,37 +264,47 @@ export const AnnotationsTable = ({
                           AnnotationStatus.Rejected
                         );
                       }}
-                    />
+                    >
+                      False
+                    </RejectBtn>
                     <VerticalLine />
                   </ColContainer>
                 </StyledCol>
-                <StyledCol span={10}>
+                <StyledCol span={20}>
                   <AnnotationLbl>
-                    <Input
-                      icon={
-                        annotation.text === 'person'
-                          ? 'Personrounded'
-                          : (ModelTypeIconMap[
-                              annotation.modelType
-                            ] as AllIconTypes)
+                    <Tooltip
+                      content={
+                        <span data-testid="text-content">
+                          {annotation.text}
+                        </span>
                       }
-                      readOnly
-                      fullWidth
-                      style={{
-                        width: `100%`,
-                        backgroundColor:
-                          (annotation.status === AnnotationStatus.Verified &&
-                            '#EDFFF4') ||
-                          (annotation.status === AnnotationStatus.Rejected &&
-                            '#fbe9ed') ||
-                          'white',
-                        color: '#595959',
-                      }}
-                      value={annotation.text}
-                    />
+                    >
+                      <Input
+                        icon={
+                          annotation.text === 'person'
+                            ? 'Personrounded'
+                            : (ModelTypeIconMap[
+                                annotation.modelType
+                              ] as AllIconTypes)
+                        }
+                        readOnly
+                        fullWidth
+                        style={{
+                          width: `100%`,
+                          backgroundColor:
+                            (annotation.status === AnnotationStatus.Verified &&
+                              '#EDFFF4') ||
+                            (annotation.status === AnnotationStatus.Rejected &&
+                              '#fbe9ed') ||
+                            'white',
+                          color: '#595959',
+                        }}
+                        value={annotation.text}
+                      />
+                    </Tooltip>
                   </AnnotationLbl>
                 </StyledCol>
-                <StyledCol span={3}>
+                <StyledCol span={6}>
                   <ColContainer>
                     <VerticalLine />
                     <VisibilityButton
@@ -354,7 +372,6 @@ const TitleRow = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid #e8e8e8;
   color: #8c8c8c;
 `;
 
@@ -375,4 +392,18 @@ const ColContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+`;
+
+const TitleText = styled.div`
+  font-family: Inter;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 20px;
+
+  display: flex;
+  align-items: flex-end;
+  letter-spacing: -0.01em;
+  font-feature-settings: 'ss04';
+  color: #595959;
 `;

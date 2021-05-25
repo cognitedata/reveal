@@ -9,7 +9,7 @@ import { Title } from '@cognite/cogs.js';
 import { selectAllFiles } from 'src/modules/Common/filesSlice';
 import styled from 'styled-components';
 
-import { annotationsById } from 'src/modules/Preview/previewSlice';
+import { annotationsById } from 'src/modules/Review/previewSlice';
 import FileIcon from './assets/FileIcon.svg';
 import FileBland from './assets/FileBland.svg';
 import FileWithExifIcon from './assets/FileWithExifIcon.svg';

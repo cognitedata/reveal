@@ -1,12 +1,12 @@
 import React from 'react';
 import { Button, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { AnnotationsTable } from 'src/modules/Preview/Components/AnnotationsTable/AnnotationsTable';
+import { AnnotationsTable } from 'src/modules/Review/Components/AnnotationsTable/AnnotationsTable';
 import {
   selectAnnotationsByFileIdModelTypes,
   setImagePreviewEditState,
   showAnnotationDrawer,
-} from 'src/modules/Preview/previewSlice';
+} from 'src/modules/Review/previewSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { AnnotationDrawerMode } from 'src/utils/AnnotationUtils';
 import { RootState } from 'src/store/rootReducer';

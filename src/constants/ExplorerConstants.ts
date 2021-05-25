@@ -1,1 +1,1 @@
-export const explorerFileFetchLimit = 1000;
+export const explorerFileFetchLimit = 500;

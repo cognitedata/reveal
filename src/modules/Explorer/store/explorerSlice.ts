@@ -3,6 +3,8 @@ import { ViewMode } from 'src/modules/Common/types';
 import { FileFilterProps } from '@cognite/cdf-sdk-singleton';
 
 export type State = {
+  selectedFileId: number | null;
+  showFileMetadata: boolean;
   query: string;
   currentView: ViewMode;
   filter: FileFilterProps;
@@ -10,6 +12,8 @@ export type State = {
 };
 
 const initialState: State = {
+  selectedFileId: null,
+  showFileMetadata: false,
   query: '',
   currentView: 'list',
   filter: {},
@@ -21,6 +25,15 @@ const explorerSlice = createSlice({
   initialState,
   /* eslint-disable no-param-reassign */
   reducers: {
+    setSelectedFileIdExplorer(state, action: PayloadAction<number>) {
+      state.selectedFileId = action.payload;
+    },
+    toggleExplorerFileMetadata(state) {
+      state.showFileMetadata = !state.showFileMetadata;
+    },
+    showExplorerFileMetadata(state) {
+      state.showFileMetadata = true;
+    },
     setQueryString(state, action: PayloadAction<string>) {
       state.query = action.payload;
     },
@@ -37,7 +50,14 @@ const explorerSlice = createSlice({
   // extraReducers: (builder) => {},
 });
 
-export const { setQueryString, setFilter, setCurrentView, toggleFilterView } =
-  explorerSlice.actions;
+export const {
+  setSelectedFileIdExplorer,
+  toggleExplorerFileMetadata,
+  showExplorerFileMetadata,
+  setQueryString,
+  setFilter,
+  setCurrentView,
+  toggleFilterView,
+} = explorerSlice.actions;
 
 export default explorerSlice.reducer;

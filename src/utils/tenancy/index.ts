@@ -12,6 +12,19 @@ export const getTenant = () => {
   return match[1];
 };
 
+// TODO: add test
+export const getIdfromUrl = () => {
+  const { pathname } = window.location;
+  if (!pathname) {
+    return '';
+  }
+  const match = pathname.match(/\/(\d+)/);
+  if (!match) {
+    return '';
+  }
+  return match[1];
+};
+
 export const pushPath = (path: string) => {
   // I'll keep the environment variables in the url params:
   return `${path}?env=${queryString.parse(window.location.search).env}`;

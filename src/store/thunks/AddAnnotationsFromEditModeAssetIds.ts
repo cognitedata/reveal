@@ -8,7 +8,7 @@ import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import {
   addTagAnnotations,
   resetEditState,
-} from 'src/modules/Preview/previewSlice';
+} from 'src/modules/Review/previewSlice';
 import { getRegionFromBox, getUnsavedAnnotation } from 'src/api/utils';
 import { SaveAnnotations } from 'src/store/thunks/SaveAnnotations';
 
