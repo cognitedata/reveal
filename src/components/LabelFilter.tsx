@@ -26,10 +26,9 @@ export const LabelFilter = ({
     .filter((el) => !!el) as LabelDefinition[];
 
   const setLabel = (ids?: string[]) => {
-    const newFilters =
-      ids && ids.length > 0
-        ? ids.map((externalId) => ({ externalId }))
-        : undefined;
+    const newFilters = ids?.length
+      ? ids.map((externalId) => ({ externalId }))
+      : undefined;
     setValue(newFilters);
   };
 
@@ -39,7 +38,12 @@ export const LabelFilter = ({
       disabled={hasPermission}
       content="You do not have access to labels, please make sure you have labelsAcl:READ"
     >
-      <div style={{ minWidth: '250px' }}>
+      <div
+        style={{
+          minWidth: '250px',
+          cursor: !hasPermission ? 'not-allowed' : 'pointer',
+        }}
+      >
         <Select
           placeholder=""
           title="Labels"
@@ -49,13 +53,7 @@ export const LabelFilter = ({
           }))}
           isDisabled={!hasPermission}
           onChange={(newValue: OptionsType<OptionTypeBase>) => {
-            setLabel(
-              newValue
-                ? (newValue as OptionsType<OptionTypeBase>).map(
-                    (el) => el.value
-                  )
-                : undefined
-            );
+            setLabel(newValue?.map((el) => el.value));
           }}
           value={currentLabels?.map((el) => ({
             label: el.name,
