@@ -1,4 +1,4 @@
-# Apps
+# Applications
 
 [![codecov](https://codecov.io/gh/cognitedata/react-demo-app/branch/master/graph/badge.svg?token=uzusBZyM8s)](https://codecov.io/gh/cognitedata/react-demo-app)
 
@@ -33,11 +33,7 @@ Whenever you've added a dependency and started using it, you need to run `yarn u
 To create a new application:
 
 1. Clone this repo
-2. From the root of this repo, run:
-   ```sh
-   yarn install
-   yarn generate
-   ```
+2. Copy the `react-demo-app` folder
 
 This will spit out all of the boilerplate that you need to have a production-capable [React]-based application at Cognite. It demonstrates best practices, such as:
 
@@ -48,6 +44,8 @@ This will spit out all of the boilerplate that you need to have a production-cap
 - Testcafe
 - Folder / component layout
 - Authentication workflow
+
+3. Find and replace all the occurences of `*demo*` string to appropriate values
 
 ## Deploying the app
 

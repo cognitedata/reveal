@@ -54,6 +54,8 @@ const generateBaseUrls = (cluster: string, prod: boolean = false) => {
 (window as any).__cogniteSidecar = {
   ...generateBaseUrls(CLUSTER, PROD),
   __sidecarFormatVersion: 1,
+  // to be used only locally as a sidecar placeholder
+  // when deployed with FAS the values below are partly overriden
   applicationId: 'fas-demo',
   applicationName: 'React Demo (staging)',
   docsSiteBaseUrl: 'https://docs.cognite.com',
