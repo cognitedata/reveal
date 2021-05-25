@@ -1,4 +1,7 @@
 import moment from 'moment';
+import { Status } from 'model/Status';
+import { mockDataRunsResponse } from 'utils/mockResponse';
+import { StatusRow } from 'model/Runs';
 import mapRuns, {
   filterByTimeBetween,
   filterRuns,
@@ -7,15 +10,12 @@ import mapRuns, {
   mapStatusRow,
   RunStatus,
 } from 'utils/runsUtils';
-import { Status } from 'model/Status';
-import { mockDataRunsResponse } from 'utils/mockResponse';
-import { StatusRow } from 'model/Runs';
 
 describe('runsUtils', () => {
   test('Maps correctly', () => {
     const mock: StatusRow[] = mockDataRunsResponse.items;
     const res = mapRuns(mock);
-    expect(res.length).toEqual(6);
+    expect(res.length).toEqual(11);
     res.forEach(({ subRows, status, statusSeen }) => {
       expect(subRows).toBeDefined();
       expect(status).toBeDefined();

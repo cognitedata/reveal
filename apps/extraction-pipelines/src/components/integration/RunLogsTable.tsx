@@ -11,13 +11,25 @@ import {
   useTable,
 } from 'react-table';
 import styled from 'styled-components';
-import { Pagination } from '@cognite/cogs.js';
+import { OptionType, Pagination, Select } from '@cognite/cogs.js';
 import { StatusRun } from 'model/Runs';
+import { OptionTypeBase } from 'react-select';
 
 const Wrapper = styled.div`
   margin-bottom: 5rem;
+  display: grid;
+  grid-template-areas: 'table table table' 'pagination select text';
+  grid-template-columns: max-content 4rem auto;
+  .cogs-select,
+  .select-post-fix {
+    align-self: center;
+  }
+  .select-post-fix {
+    margin-left: 0.5rem;
+  }
 `;
 const StyledTable = styled.table`
+  grid-area: table;
   thead {
     tr {
       .createdTime-col {
@@ -29,7 +41,20 @@ const StyledTable = styled.table`
     }
   }
 `;
-
+const itemsPrPageOptions: OptionTypeBase[] = [
+  {
+    label: '10',
+    value: 10,
+  },
+  {
+    label: '50',
+    value: 50,
+  },
+  {
+    label: '100',
+    value: 100,
+  },
+];
 interface LogsTableProps {
   data: StatusRun[];
   columns: Column<StatusRun>[];
@@ -59,6 +84,7 @@ export const RunLogsTable: FunctionComponent<LogsTableProps> = ({
     rows,
     prepareRow,
     gotoPage,
+    setPageSize,
     state: { pageIndex, pageSize },
   } = useTable(
     {
@@ -80,6 +106,18 @@ export const RunLogsTable: FunctionComponent<LogsTableProps> = ({
   const paginationChanged = (current: number) => {
     gotoPage(current - 1);
   };
+
+  const handleSelectItemsPrPage = (option: OptionType) => {
+    setPageSize(option?.value);
+  };
+
+  const findOptionValue = (
+    options: OptionTypeBase[],
+    innerPageSize: number
+  ) => {
+    return options.find(({ value }) => value === innerPageSize);
+  };
+
   return (
     <Wrapper>
       <StyledTable {...getTableProps()} className="cogs-table">
@@ -124,6 +162,13 @@ export const RunLogsTable: FunctionComponent<LogsTableProps> = ({
         onChange={paginationChanged}
         locale={{ goTo: 'Go to' }}
       />
+      <Select
+        value={findOptionValue(itemsPrPageOptions, pageSize)}
+        onChange={handleSelectItemsPrPage}
+        options={itemsPrPageOptions}
+        menuPlacement="top"
+      />
+      <span className="select-post-fix">pr page</span>
     </Wrapper>
   );
 };

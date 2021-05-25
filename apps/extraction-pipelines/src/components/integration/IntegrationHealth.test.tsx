@@ -25,7 +25,7 @@ jest.mock('hooks/useRuns', () => {
     useFilteredRuns: jest.fn(),
   };
 });
-describe('RunLogsView', () => {
+describe('IntegrationHealth', () => {
   afterEach(() => {
     jest.resetAllMocks();
   });

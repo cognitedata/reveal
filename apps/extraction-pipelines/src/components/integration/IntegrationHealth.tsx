@@ -53,7 +53,7 @@ const FilterWrapper = styled.div`
 interface LogsViewProps {
   integration: Integration | null;
 }
-export const PAGE_SIZE_DEFAULT: Readonly<number> = 5;
+export const PAGE_SIZE_DEFAULT: Readonly<number> = 10;
 const ERROR_SEARCH_LABEL: Readonly<string> = 'Search error message';
 const MESSAGE_SEARCH_PLACEHOLDER: Readonly<string> = 'Search in messages';
 
