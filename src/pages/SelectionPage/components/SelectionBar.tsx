@@ -7,7 +7,9 @@ import { ResourceType } from 'modules/sdk-builder/types';
 import { Flex } from 'components/Common';
 import DataSetSelect from 'components/DataSetSelect';
 import { searchCountSelector } from 'pages/SelectionPage/selectors';
+import { LabelFilter } from 'components/LabelFilter';
 // import FilterMenu from './FilterMenu';
+import omit from 'lodash/omit';
 
 type Props = {
   type: ResourceType;
@@ -21,6 +23,28 @@ export default function SelectionBar(props: Props): JSX.Element {
   const { type, filter, isSelectAll, selectedRowKeys, updateFilter } = props;
   const count = useSelector(searchCountSelector(type, filter));
 
+  const labels = filter?.filter?.labels?.containsAny ?? [];
+
+  const onLabelsChange = (newLabels?: { externalId: string }[]) => {
+    if (newLabels?.length) {
+      updateFilter({
+        ...filter,
+        filter: {
+          ...filter.filter,
+          labels: {
+            containsAny: newLabels,
+          },
+        },
+      });
+    } else {
+      updateFilter({
+        ...filter,
+        filter: {
+          ...omit(filter.filter, 'labels'),
+        },
+      });
+    }
+  };
   const onDataSetSelected = (ids: number[]) => {
     const newDataSetIds =
       ids.length === 0 ? undefined : ids.map((id) => ({ id }));
@@ -69,6 +93,7 @@ export default function SelectionBar(props: Props): JSX.Element {
             selectedDataSetIds={dataSetIds}
             onDataSetSelected={onDataSetSelected}
           />
+          <LabelFilter value={labels} setValue={onLabelsChange} />
         </InputRow>
         <Selected>
           {selected} {type} selected
