@@ -31,7 +31,7 @@ export const getRuns = async (
 
 export interface FilteredRunsParams {
   filter: {
-    externalId: string;
+    externalId?: string;
     status?: RunStatus;
     message?: {
       substring?: string;

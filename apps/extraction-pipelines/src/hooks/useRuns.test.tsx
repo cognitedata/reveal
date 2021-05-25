@@ -1,9 +1,11 @@
 import { renderHook } from '@testing-library/react-hooks';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import { QueryClient } from 'react-query';
-import { useRuns } from './useRuns';
-import { mockError, mockDataRunsResponse } from '../utils/mockResponse';
-import { renderWithQueryClient } from '../utils/test/render';
+import { RunStatus } from 'utils/runsUtils';
+import { DEFAULT_LIMIT } from 'utils/RunsAPI';
+import { createRunsFilter, useRuns } from 'hooks/useRuns';
+import { mockError, mockDataRunsResponse } from 'utils/mockResponse';
+import { renderWithQueryClient } from 'utils/test/render';
 
 describe('useRuns', () => {
   const externalId = 'dataIntegration000-1';
@@ -40,5 +42,35 @@ describe('useRuns', () => {
     await waitFor(() => {
       expect(result.current.error).toEqual(rejectValue);
     });
+  });
+});
+
+describe('createRunsFilter', () => {
+  test('Creates filter', () => {
+    const status = RunStatus.SUCCESS;
+    const search = 'message';
+    const externalId = 'testid';
+    const dateRange = {
+      startDate: new Date(2021, 5, 1),
+      endDate: new Date(2021, 5, 21),
+    };
+    const res = createRunsFilter({ externalId, dateRange, status, search });
+    expect(res.filter.externalId).toEqual(externalId);
+    expect(res.filter.createdTime.max).toBeDefined();
+    expect(res.filter.createdTime.min).toBeDefined();
+    expect(res.filter.message.substring).toEqual(search);
+    expect(res.filter.status).toEqual(status);
+    expect(res.limit).toEqual(DEFAULT_LIMIT);
+    expect(res.cursor).toBeUndefined();
+  });
+  test('Creates empty filter', () => {
+    const res = createRunsFilter({});
+    expect(res.filter).toBeDefined();
+    expect(res.filter.externalId).toBeUndefined();
+    expect(res.filter.createdTime).toBeUndefined();
+    expect(res.filter.message).toBeUndefined();
+    expect(res.filter.status).toBeUndefined();
+    expect(res.limit).toEqual(DEFAULT_LIMIT);
+    expect(res.cursor).toBeUndefined();
   });
 });

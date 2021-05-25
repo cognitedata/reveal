@@ -1,8 +1,10 @@
 import { useQuery } from 'react-query';
-import { getFilteredRuns, getRuns, FilteredRunsParams } from 'utils/RunsAPI';
+import { getFilteredRuns, getRuns, DEFAULT_LIMIT } from 'utils/RunsAPI';
 import { useAppEnv } from 'hooks/useAppEnv';
 import { SDKError } from 'model/SDKErrors';
 import { RunsAPIResponse } from 'model/Runs';
+import { Range } from '@cognite/cogs.js';
+import { RunStatus } from 'utils/runsUtils';
 
 export const useRuns = (
   externalId?: string,
@@ -22,8 +24,9 @@ export const useRuns = (
   );
 };
 
-export const useFilteredRuns = (data: FilteredRunsParams) => {
+export const useFilteredRuns = (params: CreateRunFilterParam) => {
   const { project } = useAppEnv();
+  const data = createRunsFilter(params);
   return useQuery<RunsAPIResponse, SDKError>(
     [
       project,
@@ -36,6 +39,48 @@ export const useFilteredRuns = (data: FilteredRunsParams) => {
     ],
     (ctx) => {
       return getFilteredRuns(ctx.queryKey[0], ctx.queryKey[1]);
+    },
+    {
+      enabled: !!data.filter.externalId,
     }
   );
+};
+
+type CreateRunFilterParam = {
+  externalId?: string;
+  nextCursor?: string;
+  search?: string;
+  dateRange?: Range;
+  status?: RunStatus;
+  limit?: number;
+};
+export const createRunsFilter = ({
+  externalId,
+  dateRange,
+  status,
+  search,
+  limit = DEFAULT_LIMIT,
+  nextCursor,
+}: CreateRunFilterParam) => {
+  return {
+    filter: {
+      ...(externalId && { externalId }),
+      ...(dateRange?.endDate && dateRange?.startDate
+        ? {
+            createdTime: {
+              max: dateRange.endDate.getTime(),
+              min: dateRange.startDate.getTime(),
+            },
+          }
+        : {}),
+      ...(status && { status }),
+      ...(search && {
+        message: {
+          substring: search,
+        },
+      }),
+    },
+    limit,
+    cursor: nextCursor,
+  };
 };

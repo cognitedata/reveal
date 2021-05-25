@@ -4,11 +4,12 @@ import mapRuns, {
   filterRuns,
   isWithinDaysInThePast,
   mapStatus,
+  mapStatusRow,
   RunStatus,
-} from './runsUtils';
-import { Status } from '../model/Status';
-import { mockDataRunsResponse } from './mockResponse';
-import { StatusRow } from '../model/Runs';
+} from 'utils/runsUtils';
+import { Status } from 'model/Status';
+import { mockDataRunsResponse } from 'utils/mockResponse';
+import { StatusRow } from 'model/Runs';
 
 describe('runsUtils', () => {
   test('Maps correctly', () => {
@@ -71,5 +72,25 @@ describe('runsUtils', () => {
       createdTime: moment().subtract(2, 'days').valueOf(),
     });
     expect(res).toEqual(true);
+  });
+});
+
+describe('mapStatusRow', () => {
+  const statuses = [
+    { id: 1, status: RunStatus.SUCCESS },
+    { id: 2, status: RunStatus.SUCCESS, message: 'this is the message' },
+    { id: 3, status: RunStatus.FAILURE },
+    { id: 4, status: RunStatus.FAILURE, message: 'error' },
+    { id: 5, status: RunStatus.SEEN, message: 'seen message' },
+    { id: 6, status: RunStatus.SEEN },
+  ];
+
+  test(`maps runs`, () => {
+    const res = mapStatusRow(statuses);
+    expect(res.length).toEqual(6);
+    expect(res[0].status).toEqual(Status.OK);
+    expect(res[1].status).toEqual(Status.OK);
+    expect(res[2].status).toEqual(Status.FAIL);
+    expect(res[3].status).toEqual(Status.FAIL);
   });
 });

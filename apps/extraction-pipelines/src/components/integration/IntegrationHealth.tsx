@@ -24,7 +24,6 @@ import { Status } from 'model/Status';
 import { TimeSelector } from 'components/inputs/dateTime/TimeSelector';
 import { QuickDateTimeFilters } from 'components/table/QuickDateTimeFilters';
 import { StatusFilterMenu } from 'components/table/StatusFilterMenu';
-import { DEFAULT_LIMIT } from 'utils/RunsAPI';
 
 const TableWrapper = styled(PageWrapperColumn)`
   padding: 0 2rem;
@@ -76,24 +75,13 @@ export const IntegrationHealth: FunctionComponent<LogsViewProps> = ({
   });
   const [status, setStatus] = useState<RunStatus | undefined>();
   const [search, setSearch] = useState<string>();
+
   const { data, error, isPreviousData } = useFilteredRuns({
-    filter: {
-      externalId: integration?.externalId ?? '',
-      ...(dateRange.endDate && dateRange.startDate
-        ? {
-            createdTime: {
-              max: dateRange.endDate.getTime(),
-              min: dateRange.startDate.getTime(),
-            },
-          }
-        : {}),
-      ...(status && { status }),
-      message: {
-        substring: search,
-      },
-    },
-    limit: DEFAULT_LIMIT,
-    cursor: nextCursor,
+    externalId: integration?.externalId,
+    status,
+    search,
+    dateRange,
+    nextCursor,
   });
   const integrationId = integration?.id;
 
@@ -106,8 +94,8 @@ export const IntegrationHealth: FunctionComponent<LogsViewProps> = ({
   useEffect(() => {
     if (!isPreviousData && data) {
       const statusRows = mapStatusRow(data?.items);
-      const { fail: runsData } = partition(statusRows, (item) => {
-        return item.status === Status.SEEN;
+      const { pass: runsData } = partition(statusRows, (item) => {
+        return item.status !== Status.SEEN;
       });
       setRuns(runsData);
     }
