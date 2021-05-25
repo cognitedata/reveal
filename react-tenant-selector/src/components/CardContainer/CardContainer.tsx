@@ -172,6 +172,7 @@ const CardContainer = ({
                   key={fakeIdp.name || fakeIdp.fakeApplicationId}
                   handleSubmit={handleSubmit}
                   authClient={authClient}
+                  disabled={fakeIdp.cluster !== authClient?.getCluster()}
                   {...fakeIdp}
                 />
               ))}

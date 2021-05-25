@@ -10,6 +10,7 @@ import { FakeIdp } from 'utils';
 type Props = {
   authClient?: CogniteAuth;
   handleSubmit: (tenant: string) => void;
+  disabled?: boolean;
 } & FakeIdp;
 const LoginWithFakeIDP: React.FC<Props> = ({
   roles,
@@ -20,6 +21,7 @@ const LoginWithFakeIDP: React.FC<Props> = ({
   fakeApplicationId,
   authClient,
   handleSubmit,
+  disabled,
 }) => {
   const handleClick = () => {
     return axios
@@ -58,6 +60,7 @@ const LoginWithFakeIDP: React.FC<Props> = ({
         style={{ height: 40, width: '100%', marginTop: 10 }}
         size="default"
         type="secondary"
+        disabled={disabled}
         onClick={handleClick}
       >
         Login with Fake IDP ({name || fakeApplicationId})

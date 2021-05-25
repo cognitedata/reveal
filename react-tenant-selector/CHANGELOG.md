@@ -1,3 +1,7 @@
+## 1.2.5 May 25 2021
+
+- Disable fake idp login if not on current cluster
+
 ## 1.2.4 May 21 2021
 
 - Add nicer fallback when projects fetching fails
