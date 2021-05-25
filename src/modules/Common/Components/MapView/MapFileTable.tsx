@@ -3,17 +3,21 @@ import styled from 'styled-components';
 import { ColumnShape } from 'react-base-table';
 import { NameAndAnnotationRenderer } from 'src/modules/Common/Containers/FileTableRenderers/NameAndAnnotation';
 import { Tabs } from '@cognite/data-exploration';
-import { useDispatch, useSelector } from 'react-redux';
-import { selectUpdatedFileDetails } from 'src/modules/FileDetails/fileDetailsSlice';
-import { RootState } from 'src/store/rootReducer';
+import { useDispatch } from 'react-redux';
 import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
 import { SelectableTable } from '../SelectableTable/SelectableTable';
-import { TableDataItem } from '../../types';
+import { ResultData, TableDataItem } from '../../types';
 import { NameSorter } from '../../Containers/Sorters/NameSorter';
 import { SorterPaginationWrapper } from '../SorterPaginationWrapper/SorterPaginationWrapper';
 import { FileExplorerTableProps } from '../FileTable/types';
 
-export const MapFileTable = (props: FileExplorerTableProps) => {
+type MapTableProps = FileExplorerTableProps & {
+  setMapActive: (active: boolean) => void;
+  mapCallback: (fileId: number) => void;
+  setSelectedFileOnMap: (data: ResultData | undefined) => void;
+};
+
+export const MapFileTable = (props: MapTableProps) => {
   const dispatch = useDispatch();
 
   const columns: ColumnShape<TableDataItem>[] = [
@@ -35,19 +39,12 @@ export const MapFileTable = (props: FileExplorerTableProps) => {
     name: NameSorter,
   };
 
-  const withGeoData = useSelector((state: RootState) =>
-    props.data?.filter(
-      (item: TableDataItem) =>
-        selectUpdatedFileDetails(state, String(item.id))?.geoLocation
-    )
+  const withGeoData = props.data.filter(
+    (item: ResultData) => item.geoLocation !== undefined
   );
 
-  const withOutGeoData = useSelector((state: RootState) =>
-    props.data?.filter(
-      (item: TableDataItem) =>
-        selectUpdatedFileDetails(state, String(item.id))?.geoLocation ===
-        undefined
-    )
+  const withOutGeoData = props.data.filter(
+    (item: ResultData) => item.geoLocation === undefined
   );
 
   const rowClassNames = ({
@@ -60,12 +57,19 @@ export const MapFileTable = (props: FileExplorerTableProps) => {
     return `clickable ${props.selectedFileId === rowData.id && 'active'}`;
   };
 
-  const rowEventHandlers = {
+  const rowEventHandlersWithGeoData = {
     onClick: ({ rowData }: { rowData: TableDataItem }) => {
-      props.onRowClick(rowData);
+      props.onRowClick(rowData as ResultData);
+      props.mapCallback(rowData.id);
     },
   };
 
+  const rowEventHandlersWithoutGeoData = {
+    onClick: ({ rowData }: { rowData: TableDataItem }) => {
+      props.onRowClick(rowData as ResultData);
+      props.setSelectedFileOnMap(undefined); // hide map popup when selecting from files without geo-info
+    },
+  };
   const fileIds = useMemo(() => {
     return props.data.map((item: TableDataItem) => item.id);
   }, [props.data]);
@@ -77,8 +81,13 @@ export const MapFileTable = (props: FileExplorerTableProps) => {
   return (
     <Container>
       <Tabs
-        tab="fileInMap"
-        onTabChange={() => {}}
+        onTabChange={(key) => {
+          if (key === 'fileInMap') {
+            props.setMapActive(true);
+          } else {
+            props.setMapActive(false);
+          }
+        }}
         style={{
           fontSize: 14,
           fontWeight: 600,
@@ -109,7 +118,7 @@ export const MapFileTable = (props: FileExplorerTableProps) => {
               onRowSelect={props.onRowSelect}
               rowHeight={70}
               rowClassNames={rowClassNames}
-              // rowEventHandlers={rowEventHandlers}
+              rowEventHandlers={rowEventHandlersWithGeoData}
             />
           </SorterPaginationWrapper>
         </Tabs.Pane>
@@ -126,7 +135,6 @@ export const MapFileTable = (props: FileExplorerTableProps) => {
             pagination
           >
             <SelectableTable
-              data={withOutGeoData}
               {...props}
               columns={columns}
               rendererMap={rendererMap}
@@ -134,7 +142,7 @@ export const MapFileTable = (props: FileExplorerTableProps) => {
               onRowSelect={props.onRowSelect}
               rowHeight={70}
               rowClassNames={rowClassNames}
-              // rowEventHandlers={rowEventHandlers}
+              rowEventHandlers={rowEventHandlersWithoutGeoData}
             />
           </SorterPaginationWrapper>
         </Tabs.Pane>

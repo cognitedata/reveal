@@ -1,7 +1,6 @@
 import { CellRenderer } from 'src/modules/Common/types';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { selectUpdatedFileDetails } from 'src/modules/FileDetails/fileDetailsSlice';
 import { Tooltip } from '@cognite/cogs.js';
 import exifIcon from 'src/assets/exifIcon.svg';
 import React, { useEffect, useMemo } from 'react';
@@ -14,12 +13,9 @@ import { AnnotationsBadgePopoverContent } from '../../Components/AnnotationsBadg
 import { Popover } from '../../Components/Popover';
 
 export function NameAndAnnotationRenderer({
-  rowData: { name, id },
+  rowData: { name, id, geoLocation },
 }: CellRenderer) {
   const dispatch = useDispatch();
-  const fileDetails = useSelector((state: RootState) =>
-    selectUpdatedFileDetails(state, String(id))
-  );
   const selectAnnotationCounts = useMemo(makeSelectAnnotationCounts, []);
   const annotationCounts = useSelector(({ annotationReducer }: RootState) =>
     selectAnnotationCounts(annotationReducer, id)
@@ -38,7 +34,7 @@ export function NameAndAnnotationRenderer({
     <Container>
       <FileRow>
         <Filename>{name}</Filename>
-        {fileDetails?.geoLocation && (
+        {geoLocation && (
           <Tooltip content="Exif data added">
             <ExifIcon>
               <img src={exifIcon} alt="exifIcon" />

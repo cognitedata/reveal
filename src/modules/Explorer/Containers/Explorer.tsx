@@ -54,11 +54,16 @@ const Explorer = () => {
     dispatch(setQueryString(text));
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleItemClick = ({ menu, selected, ...file }: TableDataItem) => {
+  const handleItemClick = (
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    { menu, selected, ...file }: TableDataItem,
+    showFileDetailsOnClick: boolean = true
+  ) => {
     dispatch(addUploadedFile(file as FileInfo));
     dispatch(setSelectedFileIdExplorer(file.id));
-    dispatch(showExplorerFileMetadata());
+    if (showFileDetailsOnClick) {
+      dispatch(showExplorerFileMetadata());
+    }
   };
 
   const handleRowSelect = (item: TableDataItem, selected: boolean) => {

@@ -40,6 +40,7 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
   const data: ResultData[] = useMemo(() => {
     return processFiles.map((file) => {
       const menuActions: FileActions = {
+        // TODO: should onDelete be added here as well?
         showMetadataPreview: (fileId: number) => {
           dispatch(setSelectedFileId(fileId));
           dispatch(resetEditHistory());
@@ -82,7 +83,15 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
       );
     }
     if (currentView === 'map') {
-      return <MapView data={data} />;
+      return (
+        <MapView
+          data={data}
+          onRowSelect={handleRowSelect}
+          onRowClick={handleItemClick}
+          selectedFileId={selectedId}
+          totalCount={data.length}
+        />
+      );
     }
 
     return (

@@ -41,19 +41,15 @@ export type FileActions = {
   onReviewClick?: (fileId: number) => void;
 };
 
-export type ResultData = Pick<
-  FileInfo,
-  'id' | 'mimeType' | 'name' | 'sourceCreatedTime' | 'geoLocation'
-> &
-  TableDataItem;
-
 export type TableDataItem = Pick<
   FileInfo,
-  'id' | 'mimeType' | 'name' | 'sourceCreatedTime'
+  'id' | 'mimeType' | 'name' | 'sourceCreatedTime' | 'geoLocation'
 > & {
   menu: FileActions;
   selected: boolean;
 };
+
+export type ResultData = TableDataItem;
 
 export type CellRenderer = {
   rowData: TableDataItem;

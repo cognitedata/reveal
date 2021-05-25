@@ -51,7 +51,14 @@ export const ExplorerSearchResults = ({
                   );
                 }
                 if (currentView === 'map') {
-                  return <MapView {...props} />;
+                  return (
+                    <MapView
+                      onRowSelect={onRowSelect}
+                      onRowClick={onClick}
+                      selectedFileId={selectedId}
+                      {...props}
+                    />
+                  );
                 }
 
                 return (

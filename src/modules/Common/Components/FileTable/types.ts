@@ -5,7 +5,7 @@ export type PaginatedTableProps<T> = {
   data: T[];
   totalCount: number;
   onRowSelect: (item: T, selected: boolean) => void;
-  onRowClick: (item: T) => void;
+  onRowClick: (item: T, showFileDetailsOnClick?: boolean) => void;
   selectedFileId?: number | null;
 };
 export type FileTableProps = Omit<BaseTableProps<TableDataItem>, 'data'> &

@@ -7,8 +7,8 @@ import { MAPBOX_TOKEN, MAPBOX_MAP_ID } from './constants';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { MapPopup } from './MapPopup';
 import { MapFileTable } from './MapFileTable';
-import { FileExplorerTableProps } from '../FileTable/types';
 import { TableDataItem } from '../../types';
+import { FileExplorerTableProps } from '../FileTable/types';
 
 const Mapbox = ReactMapboxGl({
   minZoom: 1,
@@ -17,8 +17,9 @@ const Mapbox = ReactMapboxGl({
   attributionControl: false,
 });
 
-export const MapView = (props: { data?: ResultData[] }) => {
-  const [selectedFile, setSelectedFile] = useState<ResultData>();
+export const MapView = (props: FileExplorerTableProps) => {
+  const [selectedFileOnMap, setSelectedFileOnMap] = useState<ResultData>();
+  const [mapActive, setMapActive] = useState<boolean>(true);
   const [center, setCenter] = useState<[number, number]>();
   const [zoom] = useState<[number] | undefined>([2]);
 
@@ -43,35 +44,45 @@ export const MapView = (props: { data?: ResultData[] }) => {
 
   const circleLayout: MapboxGL.CircleLayout = { visibility: 'visible' };
   const circlePaint: MapboxGL.CirclePaint = {
-    'circle-color': '#C844DB',
+    'circle-color': mapActive ? '#C844DB' : 'grey',
     'circle-radius': 7.5,
     'circle-stroke-color': 'white',
     'circle-stroke-width': 1,
     'circle-color-transition': { duration: 0 },
   };
-
   const features = Object.assign(
     {},
     ...selectedFiles
-      .filter((f) => f.geoLocation && f)
-      .map((s) => ({
+      .filter((f: ResultData) => f.geoLocation && f)
+      .map((s: ResultData) => ({
         [s.id]: s.geoLocation?.geometry.coordinates as [number, number],
       }))
   );
 
+  const showMapPopup = (fileId: number) => {
+    setSelectedFileOnMap(selectedFiles.find((file) => file.id === fileId));
+    setCenter(features[fileId.toString()]);
+  };
+
   const handleOnDrag = () => {
-    if (selectedFile) setSelectedFile(undefined);
+    if (selectedFileOnMap) setSelectedFileOnMap(undefined);
   };
 
   const handleOnClick = (fileId: number) => {
-    setSelectedFile(selectedFiles.find((file) => file.id === fileId));
-    setCenter(features[fileId.toString()]);
+    showMapPopup(fileId);
+    const item = selectedFiles.find((file) => file.id === fileId);
+    if (item) props.onRowClick(item, false);
   };
 
   return (
     <Container>
       <div style={{ width: '400px', paddingRight: '20px' }}>
-        <MapFileTable {...props} />
+        <MapFileTable
+          {...props}
+          mapCallback={showMapPopup}
+          setMapActive={setMapActive}
+          setSelectedFileOnMap={setSelectedFileOnMap}
+        />
       </div>
       <div style={{ width: `calc(100% - 400px)`, paddingRight: '20px' }}>
         <Mapbox
@@ -94,10 +105,10 @@ export const MapView = (props: { data?: ResultData[] }) => {
               />
             ))}
           </Layer>
-          {selectedFile ? (
+          {selectedFileOnMap ? (
             <Popup
-              key={selectedFile.id}
-              coordinates={features[selectedFile.id.toString()]}
+              key={selectedFileOnMap.id}
+              coordinates={features[selectedFileOnMap.id.toString()]}
               anchor="bottom"
               offset={[0, -10]}
               style={{
@@ -105,8 +116,9 @@ export const MapView = (props: { data?: ResultData[] }) => {
               }}
             >
               <MapPopup
-                item={props.data?.find(
-                  (element: TableDataItem) => element.id === selectedFile.id
+                item={selectedFiles.find(
+                  (element: TableDataItem) =>
+                    element.id === selectedFileOnMap.id
                 )}
               />
             </Popup>
