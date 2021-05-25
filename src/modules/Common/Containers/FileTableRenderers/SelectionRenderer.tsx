@@ -11,8 +11,13 @@ export function SelectionRenderer(props: CellRenderer) {
       rowIndex: props.rowIndex,
     });
   };
+  const handleClick = (evt: any) => {
+    // dummy handler to stop event propagation
+    evt.stopPropagation();
+  };
   return (
     <Checkbox
+      onClick={handleClick}
       name={`check-${props.rowIndex}`}
       value={props.rowData.selected}
       onChange={handleChange}

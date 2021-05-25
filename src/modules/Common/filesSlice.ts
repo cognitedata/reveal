@@ -181,7 +181,16 @@ export const selectAllFilesSelected = createSelector(
   (state: State) => state.files.allIds,
   (state) => state.files.byId,
   (allIds, allFiles) => {
-    return allIds.map((id) => allFiles[id]).every((item) => !!item.selected);
+    return allIds.length
+      ? allIds.map((id) => allFiles[id]).every((item) => !!item.selected)
+      : false;
+  }
+);
+
+export const selectAllSelectedFiles = createSelector(
+  selectAllFiles,
+  (files) => {
+    return files.filter((file) => file.selected);
   }
 );
 

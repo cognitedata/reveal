@@ -197,6 +197,11 @@ const processSlice = createSlice({
     builder.addCase(deleteFilesById.fulfilled, (state, { payload }) => {
       payload.forEach((intId) => {
         delete state.files.byId[intId.id];
+        if (state.selectedFileId === intId.id) {
+          // hide drawer and reset selected file if it's deleted
+          state.selectedFileId = null;
+          state.showFileMetadataDrawer = false;
+        }
       });
       state.files.allIds = Object.keys(state.files.byId).map((id) =>
         parseInt(id, 10)
