@@ -82,10 +82,7 @@ export const TimeseriesList = ({ assetId }: { assetId: number }) => {
       if (tsToRemove) {
         updateChart(removeTimeseries(chart, tsToRemove.id));
       } else {
-        const ts = covertTSToChartTS(
-          timeSeries,
-          chart.timeSeriesCollection?.length || 0
-        );
+        const ts = covertTSToChartTS(timeSeries);
         updateChart(addTimeseries(chart, ts));
         trackUsage('ChartView.AddTimeSeries', { source: 'annotation' });
       }

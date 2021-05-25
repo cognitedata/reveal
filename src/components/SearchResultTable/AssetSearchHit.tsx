@@ -71,11 +71,7 @@ export default function AssetSearchHit({ asset }: Props) {
           timeSeries,
         });
 
-        const newTs = covertTSToChartTS(
-          timeSeries,
-          chart.timeSeriesCollection?.length || 0,
-          range
-        );
+        const newTs = covertTSToChartTS(timeSeries, range);
 
         updateChart(addTimeseries(chart, newTs));
         trackUsage('ChartView.AddTimeSeries', { source: 'search' });
