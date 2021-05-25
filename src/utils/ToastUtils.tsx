@@ -19,7 +19,7 @@ export class ToastUtils {
 
 export const toastProps = {
   key: 'inProgressToast',
-  top: 70,
+  top: 170,
   closeIcon: <div />,
   icon: <Icon type="Info" style={{ color: '#4A67FB' }} />,
   message: '',

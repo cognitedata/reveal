@@ -44,7 +44,7 @@ const routes = [
     component: (props: RouteComponentProps) =>
       LazyWrapper(
         props,
-        () => import('src/modules/Workflow/WorkflowContainer')
+        () => import('src/modules/Workflow/NewWorkflowContainer')
       ),
   },
   {
