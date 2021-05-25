@@ -31,9 +31,11 @@ const ProgressBarSection = (): JSX.Element => {
 
   const { completed = 0, running = 0, queued = 0, failed = 0 } =
     statusCount ?? {};
-  const total = running + completed + queued;
+  const total = running + completed + queued + failed;
 
-  const parsingJobPercent: number = Math.round((completed / total) * 100);
+  const parsingJobPercent: number = Math.round(
+    ((completed + failed) / total) * 100
+  );
 
   const FilesStatusCounts = () => (
     <span>
@@ -59,7 +61,7 @@ const ProgressBarSection = (): JSX.Element => {
       <Flex column style={{ width: '100%', margin: '4px 0' }}>
         <Body level={2} strong>
           <Popover content={<FilesStatusCounts />}>
-            Matching tags in diagrams to targets ({completed}/{total})
+            Matching tags in diagrams to targets ({completed + failed}/{total})
           </Popover>
         </Body>
         <Progress
