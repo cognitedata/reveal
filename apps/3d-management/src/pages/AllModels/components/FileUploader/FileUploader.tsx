@@ -159,12 +159,19 @@ class FileUploader extends React.Component<Props, State> {
       file,
       contentType: mimeType,
       chunkSize,
+
       onChunkUpload: (info) => {
         if (file.status !== 'uploading') {
           file.status = 'uploading';
         }
         file.response = info;
         file.percent = (info.uploadedBytes / info.totalBytes) * 100;
+
+        // we need to trigger state update to see file.percent updates
+        this.setState((prev) => ({
+          ...prev,
+          fileList: [...(prev.fileList || [])],
+        }));
       },
     });
 
