@@ -14,7 +14,6 @@ import {
 } from 'src/modules/Common/filesSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { GridCellProps, GridTable } from '@cognite/data-exploration';
 import { MapView } from 'src/modules/Common/Components/MapView/MapView';
 import React, { useMemo } from 'react';
 import { resetEditHistory } from 'src/modules/FileDetails/fileDetailsSlice';
@@ -25,6 +24,7 @@ import {
 import { FileTable } from 'src/modules/Common/Components/FileTable/FileTable';
 import { FileGridPreview } from 'src/modules/Common/Components/FileGridPreview/FileGridPreview';
 import { useHistory } from 'react-router-dom';
+import { PageBasedGrideView } from 'src/modules/Common/Components/GridView/PageBasedGrideView';
 
 export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
   const dispatch = useDispatch();
@@ -73,11 +73,11 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
   const renderView = () => {
     if (currentView === 'grid') {
       return (
-        <GridTable
-          data={data}
-          renderCell={renderGridCell}
-          minCellWidth={350}
+        <PageBasedGrideView
           onItemClicked={handleItemClick}
+          data={data}
+          renderCell={(cellProps: any) => <FileGridPreview {...cellProps} />}
+          totalCount={data.length}
         />
       );
     }
@@ -96,8 +96,4 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
     );
   };
   return <>{renderView()}</>;
-};
-
-const renderGridCell = (props: GridCellProps<TableDataItem>) => {
-  return <FileGridPreview item={props.item} style={props.style} />;
 };
