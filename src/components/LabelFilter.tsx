@@ -41,6 +41,7 @@ export const LabelFilter = ({
     >
       <div style={{ minWidth: '250px' }}>
         <Select
+          placeholder=""
           title="Labels"
           options={labels.map((el) => ({
             label: el.name,
