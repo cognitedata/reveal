@@ -1,19 +1,14 @@
+import { PnidsParsingJobSchema } from 'modules/types';
+
 export const canDeploySelectedFiles = (
-  allFiles: any,
+  parsingJob: PnidsParsingJobSchema,
   selectedKeys: number[]
 ) => {
-  const selectedPassedJobs = allFiles.filter(
-    (job: any) =>
-      selectedKeys.includes(job.id) &&
-      job.parsingJob &&
-      job.parsingJob.jobDone &&
-      !job.parsingJob.jobError
-  );
-  if (
-    selectedKeys.length === 0 ||
-    selectedPassedJobs.length < selectedKeys.length
-  ) {
-    return false;
-  }
+  const failedSelectFiles =
+    parsingJob.failedFiles?.filter((failedFile) =>
+      selectedKeys.find((id) => id === failedFile.fileId)
+    ) ?? [];
+
+  if (!selectedKeys.length || failedSelectFiles.length) return false;
   return true;
 };

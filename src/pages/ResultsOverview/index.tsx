@@ -97,7 +97,7 @@ export default function ResultsOverview(props: Props) {
         uploadJob?: UploadJobState;
       };
     });
-  const canDeploy = canDeploySelectedFiles(rows, selectedKeys);
+  const canDeploy = canDeploySelectedFiles(parsingJob, selectedKeys);
   const convertToSvgTooltip = () => {
     if (selectedKeys.length === 0)
       return TOOLTIP_STRINGS.CONVERT_TO_SVG_NOT_SELECTED;
