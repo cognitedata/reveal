@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { Subject, Observable, lastValueFrom } from 'rxjs';
+import { Subject, Observable } from 'rxjs';
 import { bufferTime, mergeMap, filter, mergeAll, map, share, tap, first } from 'rxjs/operators';
 import { CogniteClient, CogniteInternalId, InternalId } from '@cognite/sdk';
 import { CogniteClientNodeIdAndTreeIndexMapper } from '../../utilities/networking/CogniteClientNodeIdAndTreeIndexMapper';
@@ -117,13 +117,15 @@ export class NodeIdAndTreeIndexMaps {
       return treeIndex;
     }
 
-    const result = this.nodeIdResponse.pipe(
-      first(node => node.nodeId === nodeId),
-      map(node => node.treeIndex)
-    );
+    const result = this.nodeIdResponse
+      .pipe(
+        first(node => node.nodeId === nodeId),
+        map(node => node.treeIndex)
+      )
+      .toPromise();
 
     this.nodeIdRequestObservable.next(nodeId);
-    return lastValueFrom(result);
+    return (await result)!;
   }
 
   async getNodeId(treeIndex: number): Promise<number> {
@@ -132,13 +134,15 @@ export class NodeIdAndTreeIndexMaps {
       return nodeId;
     }
 
-    const result = this.treeIndexResponse.pipe(
-      first(node => node.treeIndex === treeIndex),
-      map(node => node.nodeId)
-    );
+    const result = this.treeIndexResponse
+      .pipe(
+        first(node => node.treeIndex === treeIndex),
+        map(node => node.nodeId)
+      )
+      .toPromise();
 
     this.treeIndexRequestObservable.next(treeIndex);
-    return lastValueFrom(result);
+    return (await result)!;
   }
 
   async getSubtreeSize(treeIndex: number): Promise<number> {
@@ -148,13 +152,15 @@ export class NodeIdAndTreeIndexMaps {
     }
 
     const nodeId = await this.getNodeId(treeIndex);
-    const result = this.subtreeSizeResponse.pipe(
-      first(node => node.treeIndex === treeIndex),
-      map(node => node.subtreeSize)
-    );
+    const result = this.subtreeSizeResponse
+      .pipe(
+        first(node => node.treeIndex === treeIndex),
+        map(node => node.subtreeSize)
+      )
+      .toPromise();
     this.subtreeSizeObservable.next({ id: nodeId });
 
-    return lastValueFrom(result);
+    return (await result)!;
   }
 
   async getTreeIndices(nodeIds: number[]): Promise<number[]> {
