@@ -1421,13 +1421,44 @@
     "@cognite/storage" "0.1.1"
     lodash "^4.17.20"
 
-"@cognite/cogs.js@^3.10.0", "@cognite/cogs.js@^3.9.0":
+"@cognite/auth-utils@^1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@cognite/auth-utils/-/auth-utils-1.0.4.tgz#cf383b4eaaebcb4e504caff7741701ad14fe584a"
+  integrity sha512-Qv2r7OoS+MTJxoeGOCtypRDxH1k/0qUh07UZQ+axabBnAbP9KhpawrZc6TNmzCPfIbJcbjxWstRbUC+HDvMXVg==
+  dependencies:
+    "@cognite/sdk" "^4.0.3"
+    "@cognite/storage" "0.1.1"
+    lodash "^4.17.20"
+
+"@cognite/cogs.js@^3.10.0":
   version "3.12.3"
   resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.12.3.tgz#f565f54febaff1e63dc988021b7b66375405cb64"
   integrity sha512-1L6QP6GEHrTvj1dGg3rp+WHIb4r38Cb6Re7YvgJjBin7t+peDxI/8V3TvH5XSImG0Ds1SAdwbZ3wRtqtj2RnVQ==
   dependencies:
     "@tippyjs/react" "4.2.3"
     "@types/react-date-range" "^1.1.2"
+    color "^3.1.2"
+    dayjs "^1.9.7"
+    focus-visible "^5.1.0"
+    rc-collapse "^1.11.8"
+    rc-drawer "^4.1.0"
+    rc-slider "^9.5.4"
+    rc-tabs "^11.6.2"
+    react-date-range "^1.1.3"
+    react-modal "^3.11.2"
+    react-select "^3.1.0"
+    react-table "^7.6.0"
+    react-toastify "^6.0.9"
+    tippy.js "6.2.0"
+
+"@cognite/cogs.js@^3.9.2":
+  version "3.19.0"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.19.0.tgz#7a230d06f4e35eef1578ccd402dcdfafd11755d1"
+  integrity sha512-itRWeTA1NerHtEtBKYSrZ/632Zg/cLLoF8UYMBwjYEqpoGxZJnboPq/THmZuSpFucVTV/53TqnbWtGuI6PlgXA==
+  dependencies:
+    "@tippyjs/react" "4.2.3"
+    "@types/react-date-range" "^1.1.2"
+    classnames "^2.3.1"
     color "^3.1.2"
     dayjs "^1.9.7"
     focus-visible "^5.1.0"
@@ -1575,6 +1606,21 @@
   integrity sha512-o3bUGN4gyYax5PxN24rvIeYgfga5GzSAGK7ea+q5U13/1dIi9TY8IxkdadOWwDs2KG84B/h8WihVO7vwCB+4dQ==
   dependencies:
     "@cognite/auth-utils" "^1.0.3"
+    "@cognite/metrics" "^1.0.0"
+    "@cognite/react-i18n" "^0.4.0"
+    "@cognite/storage" "^0.1.1"
+    axios "^0.21.1"
+    react-helmet "^6.1.0"
+    react-query "^3.7.1"
+    styled-components "^5.1.0"
+
+"@cognite/react-tenant-selector@^1.2.5":
+  version "1.2.5"
+  resolved "https://registry.yarnpkg.com/@cognite/react-tenant-selector/-/react-tenant-selector-1.2.5.tgz#5eb73915b520291b88ee17d7e6cabb733ee25237"
+  integrity sha512-cNgGYuG6Qav+EBk9/Jh1XEKZSAKUWjuFzQdnQZNwUp2FVtZTmssSSX9OkIJRSkt8BudzMShrg+hxhUZ7VCmZ7g==
+  dependencies:
+    "@cognite/auth-utils" "^1.0.4"
+    "@cognite/intercom-helper" "^0.1.2"
     "@cognite/metrics" "^1.0.0"
     "@cognite/react-i18n" "^0.4.0"
     "@cognite/storage" "^0.1.1"
@@ -3447,6 +3493,13 @@
   dependencies:
     "@types/react" "*"
 
+"@types/react-helmet@^5.0.15":
+  version "5.0.16"
+  resolved "https://registry.yarnpkg.com/@types/react-helmet/-/react-helmet-5.0.16.tgz#dafac5f043665b880559285a27c71a69abd1f29e"
+  integrity sha512-++KMqwodVBg75hT2ZT4jobvDPi6iPUl/Lhrn0nP1XTcmFLtccaDb4FTAxzrj3egL7WQYTDnpHuPj52FSFkJqzA==
+  dependencies:
+    "@types/react" "*"
+
 "@types/react-redux@^7.1.16":
   version "7.1.16"
   resolved "https://registry.yarnpkg.com/@types/react-redux/-/react-redux-7.1.16.tgz#0fbd04c2500c12105494c83d4a3e45c084e3cb21"
@@ -3481,10 +3534,19 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@^17.0.5":
+"@types/react@*":
   version "17.0.5"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.5.tgz#3d887570c4489011f75a3fc8f965bf87d09a1bea"
   integrity sha512-bj4biDB9ZJmGAYTWSKJly6bMr4BLUiBrx9ujiJEoP9XIDY9CTaPGxE5QWN/1WjpPLzYF7/jRNnV2nNxNe970sw==
+  dependencies:
+    "@types/prop-types" "*"
+    "@types/scheduler" "*"
+    csstype "^3.0.2"
+
+"@types/react@^17.0.6":
+  version "17.0.8"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.8.tgz#fe76e3ba0fbb5602704110fd1e3035cf394778e3"
+  integrity sha512-3sx4c0PbXujrYAKwXxNONXUtRp9C+hE2di0IuxFyf5BELD+B+AXL8G7QrmSKhVwKZDbv0igiAjQAMhXj8Yg3aw==
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
@@ -5531,7 +5593,7 @@ class-utils@^0.3.5:
     isobject "^3.0.0"
     static-extend "^0.1.1"
 
-classnames@2.x, classnames@^2.2.1, classnames@^2.2.5, classnames@^2.2.6:
+classnames@2.x, classnames@^2.2.1, classnames@^2.2.5, classnames@^2.2.6, classnames@^2.3.1:
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.3.1.tgz#dfcfa3891e306ec1dad105d0e88f4417b8535e8e"
   integrity sha512-OlQdbZ7gLfGarSqxesMesDa5uz7KFbID8Kpq/SxIoNGDqY8lSYs0D+hhtBXhcdB3rcbXArFr7vlHheLk1voeNA==
