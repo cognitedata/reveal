@@ -45,7 +45,11 @@ const TopBarWrapper = () => {
                       ← All charts
                     </span>
                   ),
-                  onClick: () => history.push('/'),
+                  onClick: () =>
+                    history.push({
+                      pathname: '/',
+                      search: history.location.search,
+                    }),
                 },
               ]}
             />
