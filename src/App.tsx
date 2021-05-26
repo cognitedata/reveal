@@ -17,16 +17,25 @@ const {
 } = process.env;
 
 export const App = () => {
-  React.useEffect(() => {
-    configureI18n({
-      useSuspense: true,
+  const [finishedLoading, setFinishedLoading] = React.useState(false);
+
+  const loadTranslations = async () => {
+    await configureI18n({
       locize: {
+        version: NODE_ENV === 'development' ? 'latest' : 'Production',
+        // note: these env vars are set from ./scripts/start.sh
         projectId: REACT_APP_LOCIZE_PROJECT_ID || '',
-        apiKey: REACT_APP_LOCIZE_API_KEY || '',
+        apiKey: REACT_APP_LOCIZE_API_KEY,
       },
       disabled: SIDECAR.disableTranslations,
-      keySeparator: SIDECAR.locizeKeySeparator,
+      keySeparator: false,
     });
+
+    setFinishedLoading(true);
+  };
+
+  React.useEffect(() => {
+    loadTranslations();
 
     if (REACT_APP_SENTRY_DSN) {
       Sentry.init({
@@ -46,7 +55,7 @@ export const App = () => {
     });
   }, []);
 
-  return <TenantSelector sidecar={SIDECAR} />;
+  return finishedLoading ? <TenantSelector sidecar={SIDECAR} /> : null;
 };
 
 export default SIDECAR.disableTranslations ? App : withI18nSuspense(App);

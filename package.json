@@ -17,8 +17,8 @@
   "dependencies": {
     "@cognite/cogs.js": "^3.9.2",
     "@cognite/metrics": "^1.1.0",
-    "@cognite/react-i18n": "^0.3.3",
-    "@cognite/react-tenant-selector": "^1.1.0",
+    "@cognite/react-i18n": "^0.4.0",
+    "@cognite/react-tenant-selector": "^1.2.5",
     "@sentry/browser": "^5.15.4",
     "react": "17.0.1",
     "react-dom": "17.0.1",
