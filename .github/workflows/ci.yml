@@ -130,8 +130,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: technote-space/get-diff-action@v3
-        with:
-          PREFIX_FILTER: parser-worker
+        # with:
+        #   PREFIX_FILTER: parser-worker
 
       - name: Setup Rust
         if: env.GIT_DIFF
