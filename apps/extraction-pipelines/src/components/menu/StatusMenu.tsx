@@ -20,7 +20,7 @@ const StyledMenu = styled((props) => <Menu {...props}>{props.children}</Menu>)`
 
 export interface StatusMenuProps {
   setSelected: (status?: Status) => void;
-  selected?: Status;
+  selected: Status;
   btnType?: 'ghost' | 'tertiary';
 }
 
@@ -37,10 +37,10 @@ export const StatusMenu = ({
     >
       <Button type={btnType} icon="CaretDown" iconPlacement="right">
         {TableHeadings.STATUS}{' '}
-        {selected ? (
-          <StatusMarker status={selected} dataTestId="status-menu-fail" />
-        ) : (
+        {selected === Status.NOT_ACTIVATED ? (
           '- ALL'
+        ) : (
+          <StatusMarker status={selected} dataTestId="status-menu-fail" />
         )}
       </Button>
     </StyledDropdown>
@@ -75,9 +75,9 @@ const StatusMenuContent = ({
       </Menu.Item>
       <Menu.Item
         onClick={onClick()}
-        selected={!selected}
-        appendIcon={!selected ? 'Checkmark' : undefined}
-        aria-selected={!selected}
+        selected={selected === Status.NOT_ACTIVATED}
+        appendIcon={selected === Status.NOT_ACTIVATED ? 'Checkmark' : undefined}
+        aria-selected={selected === Status.NOT_ACTIVATED}
         data-testid="status-menu-all"
       >
         <Badge

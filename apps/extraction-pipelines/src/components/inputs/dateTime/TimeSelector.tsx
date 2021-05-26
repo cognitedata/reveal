@@ -1,4 +1,4 @@
-import React, { FunctionComponent, PropsWithChildren, useState } from 'react';
+import React, { FunctionComponent, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { DivFlex } from 'styles/flex/StyledFlex';
 import { OptionTypeBase } from 'react-select';
@@ -10,6 +10,10 @@ import {
   parseTimeString,
   rangeToTwoDigitString,
 } from 'components/inputs/dateTime/TimeSelectorUtils';
+import {
+  updateDateRangeAction,
+  useRunFilterContext,
+} from 'hooks/runs/RunsFilterContext';
 
 const TimeWrapper = styled(DivFlex)`
   .cogs-input-container {
@@ -55,16 +59,14 @@ const TimeWrapper = styled(DivFlex)`
 export const RANGE_END_LABEL: Readonly<string> = 'Date range end time';
 export const RANGE_START_LABEL: Readonly<string> = 'Date range start time';
 
-interface TimeSelectorProps {
-  dateRange: Range;
-  dateRangeChanged: (range: Range) => void;
-}
+interface TimeSelectorProps {}
 
 export type Time = { hours: number; min: number };
-export const TimeSelector: FunctionComponent<TimeSelectorProps> = ({
-  dateRange,
-  dateRangeChanged,
-}: PropsWithChildren<TimeSelectorProps>) => {
+export const TimeSelector: FunctionComponent<TimeSelectorProps> = () => {
+  const {
+    state: { dateRange },
+    dispatch,
+  } = useRunFilterContext();
   const [showStartDropDown, setShowStartDropDown] = useState(false);
   const [showEndDropDown, setShowEndDropDown] = useState(false);
   const [startString, setStartString] = useState<string>(
@@ -79,7 +81,22 @@ export const TimeSelector: FunctionComponent<TimeSelectorProps> = ({
       min: dateRange.endDate?.getMinutes(),
     })
   );
-
+  useEffect(() => {
+    setStartString(
+      rangeToTwoDigitString({
+        hours: dateRange.startDate?.getHours(),
+        min: dateRange.startDate?.getMinutes(),
+      })
+    );
+  }, [dateRange.startDate, setStartString]);
+  useEffect(() => {
+    setEndString(
+      rangeToTwoDigitString({
+        hours: dateRange.endDate?.getHours(),
+        min: dateRange.endDate?.getMinutes(),
+      })
+    );
+  }, [dateRange.endDate, setEndString]);
   const options = createHalfHourOptions();
 
   const handleSelectStart = ({ value }: OptionTypeBase) => {
@@ -87,7 +104,7 @@ export const TimeSelector: FunctionComponent<TimeSelectorProps> = ({
     setStartString(rangeToTwoDigitString({ hours, min }));
 
     const start = createDateFromTimeChange(dateRange, 'startDate', value);
-    dateRangeChanged({ ...dateRange, startDate: start });
+    dispatch(updateDateRangeAction({ ...dateRange, startDate: start }));
     setShowStartDropDown(false);
   };
 
@@ -96,7 +113,7 @@ export const TimeSelector: FunctionComponent<TimeSelectorProps> = ({
     setEndString(rangeToTwoDigitString({ hours, min }));
 
     const end = createDateFromTimeChange(dateRange, 'endDate', value);
-    dateRangeChanged({ ...dateRange, endDate: end });
+    dispatch(updateDateRangeAction({ ...dateRange, endDate: end }));
 
     setShowEndDropDown(false);
   };
@@ -107,7 +124,7 @@ export const TimeSelector: FunctionComponent<TimeSelectorProps> = ({
     const time = parseTimeString(e.target.value);
     if (time) {
       const start = createDateFromTimeChange(dateRange, 'startDate', time);
-      dateRangeChanged({ ...dateRange, startDate: start });
+      dispatch(updateDateRangeAction({ ...dateRange, startDate: start }));
     }
   };
 
@@ -117,7 +134,7 @@ export const TimeSelector: FunctionComponent<TimeSelectorProps> = ({
     const time = parseTimeString(e.target.value);
     if (time) {
       const end = createDateFromTimeChange(dateRange, 'endDate', time);
-      dateRangeChanged({ ...dateRange, endDate: end });
+      dispatch(updateDateRangeAction({ ...dateRange, endDate: end }));
     }
   };
 

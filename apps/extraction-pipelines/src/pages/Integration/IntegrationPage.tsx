@@ -21,6 +21,7 @@ import { DETAILS, INTEGRATION_OVERVIEW, HEALTH } from 'utils/constants';
 import { IntegrationHealth } from 'components/integration/IntegrationHealth';
 import { IntegrationHeading } from 'components/integration/IntegrationHeading';
 import { LinkWrapper } from 'styles/StyledLinks';
+import { RunFilterProvider } from 'hooks/runs/RunsFilterContext';
 
 export const HEALTH_PATH: Readonly<string> = 'health';
 const PageNav = styled.ul`
@@ -101,14 +102,16 @@ const IntegrationPage: FunctionComponent<IntegrationPageProps> = () => {
           </NavLink>
         </li>
       </PageNav>
-      <Switch>
-        <Route exact path={path}>
-          <IntegrationDetails />
-        </Route>
-        <Route path={`${path}/${HEALTH_PATH}`}>
-          <IntegrationHealth integration={integration ?? null} />
-        </Route>
-      </Switch>
+      <RunFilterProvider>
+        <Switch>
+          <Route exact path={path}>
+            <IntegrationDetails />
+          </Route>
+          <Route path={`${path}/${HEALTH_PATH}`}>
+            <IntegrationHealth integration={integration ?? null} />
+          </Route>
+        </Switch>
+      </RunFilterProvider>
     </FullPageLayout>
   );
 };

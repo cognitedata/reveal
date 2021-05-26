@@ -10,20 +10,20 @@ import { SINGLE_INTEGRATION_RUNS } from 'utils/constants';
 import { useFilteredRuns } from 'hooks/useRuns';
 import { StatusRun } from 'model/Runs';
 import { Integration } from 'model/Integration';
-import { mapStatusRow, RunStatus } from 'utils/runsUtils';
+import { mapStatusRow } from 'utils/runsUtils';
 import { RunLogsTable } from 'components/integration/RunLogsTable';
 import { getRunLogTableCol } from 'components/integration/RunLogsCols';
 import { ErrorFeedback } from 'components/error/ErrorFeedback';
 import { PageWrapperColumn } from 'styles/StyledPage';
 import { DebouncedSearch } from 'components/inputs/DebouncedSearch';
 import { DateRangeFilter } from 'components/inputs/dateTime/DateRangeFilter';
-import moment from 'moment';
-import { Colors, Range } from '@cognite/cogs.js';
+import { Colors } from '@cognite/cogs.js';
 import { partition } from 'utils/integrationUtils';
 import { Status } from 'model/Status';
 import { TimeSelector } from 'components/inputs/dateTime/TimeSelector';
 import { QuickDateTimeFilters } from 'components/table/QuickDateTimeFilters';
 import { StatusFilterMenu } from 'components/table/StatusFilterMenu';
+import { useRunFilterContext } from 'hooks/runs/RunsFilterContext';
 
 const TableWrapper = styled(PageWrapperColumn)`
   padding: 0 2rem;
@@ -75,15 +75,12 @@ export const IntegrationHealth: FunctionComponent<LogsViewProps> = ({
   integration,
 }: PropsWithChildren<LogsViewProps>) => {
   const [runs, setRuns] = useState<StatusRun[]>([]);
+  const {
+    state: { dateRange, status, search },
+  } = useRunFilterContext();
   const [nextCursor, setNextCursor] = useState<string | undefined>();
   const [pageSize] = useState(PAGE_SIZE_DEFAULT);
   const [pageCount, setPageCount] = React.useState(0);
-  const [dateRange, setDateRange] = useState<Range>({
-    startDate: moment(Date.now()).subtract(1, 'week').toDate(),
-    endDate: moment(Date.now()).toDate(),
-  });
-  const [status, setStatus] = useState<RunStatus | undefined>();
-  const [search, setSearch] = useState<string>();
 
   const { data, error, isPreviousData } = useFilteredRuns({
     externalId: integration?.externalId,
@@ -126,31 +123,16 @@ export const IntegrationHealth: FunctionComponent<LogsViewProps> = ({
     return <ErrorFeedback error={error} />;
   }
 
-  const handleSearchChange = (input: string) => {
-    setSearch(input);
-  };
-
-  const dateRangeChanged = (range: Range) => {
-    setDateRange(range);
-  };
-
   return (
     <TableWrapper>
       <FilterWrapper>
-        <QuickDateTimeFilters setDateRange={setDateRange} />
-        <DateRangeFilter
-          dateRange={dateRange}
-          dateRangeChanged={dateRangeChanged}
-        />
-        <TimeSelector
-          dateRange={dateRange}
-          dateRangeChanged={dateRangeChanged}
-        />
-        <StatusFilterMenu setStatus={setStatus} />
+        <QuickDateTimeFilters />
+        <DateRangeFilter />
+        <TimeSelector />
+        <StatusFilterMenu />
         <DebouncedSearch
           label={ERROR_SEARCH_LABEL}
           placeholder={MESSAGE_SEARCH_PLACEHOLDER}
-          handleChange={handleSearchChange}
         />
       </FilterWrapper>
       <RunLogsTable

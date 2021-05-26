@@ -1,14 +1,12 @@
-import React, {
-  Dispatch,
-  FunctionComponent,
-  PropsWithChildren,
-  SetStateAction,
-  useState,
-} from 'react';
+import React, { FunctionComponent, useState } from 'react';
 import { Button, Colors, Range } from '@cognite/cogs.js';
 import moment from 'moment';
 import { DivFlex } from 'styles/flex/StyledFlex';
 import styled from 'styled-components';
+import {
+  updateDateRangeAction,
+  useRunFilterContext,
+} from 'hooks/runs/RunsFilterContext';
 
 const HOURS_1: Readonly<string> = '1H';
 const HOURS_24: Readonly<string> = '24H';
@@ -27,16 +25,13 @@ export const SelectableButton = styled(Button)`
   }
 `;
 
-interface QuickDateTimeFiltersProps {
-  setDateRange: Dispatch<SetStateAction<Range>>;
-}
+interface QuickDateTimeFiltersProps {}
 
 export interface QuickFilterType extends Range {
   label: string;
 }
-export const QuickDateTimeFilters: FunctionComponent<QuickDateTimeFiltersProps> = ({
-  setDateRange,
-}: PropsWithChildren<QuickDateTimeFiltersProps>) => {
+export const QuickDateTimeFilters: FunctionComponent<QuickDateTimeFiltersProps> = () => {
+  const { dispatch } = useRunFilterContext();
   const [selected, setSelected] = useState<string>();
   const quickFilterOptions: ReadonlyArray<QuickFilterType> = [
     {
@@ -62,7 +57,7 @@ export const QuickDateTimeFilters: FunctionComponent<QuickDateTimeFiltersProps> 
   ];
   const handleClick = ({ startDate, endDate, label }: QuickFilterType) => {
     return () => {
-      setDateRange({ startDate, endDate });
+      dispatch(updateDateRangeAction({ startDate, endDate }));
       setSelected(label);
     };
   };

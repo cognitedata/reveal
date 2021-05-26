@@ -1,8 +1,12 @@
-import React, { FunctionComponent, PropsWithChildren } from 'react';
+import React, { FunctionComponent } from 'react';
 import { DivFlex } from 'styles/flex/StyledFlex';
 import styled from 'styled-components';
 import { Colors, DateRange, Range } from '@cognite/cogs.js';
 import { createDateWithTime } from 'components/inputs/dateTime/TimeSelectorUtils';
+import {
+  updateDateRangeAction,
+  useRunFilterContext,
+} from 'hooks/runs/RunsFilterContext';
 
 const Wrapper = styled(DivFlex)`
   .integrations-ui-style-scope {
@@ -14,19 +18,19 @@ const Wrapper = styled(DivFlex)`
     border: 1px solid ${Colors['greyscale-grey5'].hex()};
   }
 `;
-interface DateRangeFilterProps {
-  dateRange: Range;
-  dateRangeChanged: (range: Range) => void;
-}
+interface DateRangeFilterProps {}
 
-export const DateRangeFilter: FunctionComponent<DateRangeFilterProps> = ({
-  dateRangeChanged,
-  dateRange,
-}: PropsWithChildren<DateRangeFilterProps>) => {
+export const DateRangeFilter: FunctionComponent<DateRangeFilterProps> = () => {
+  const {
+    state: { dateRange },
+    dispatch,
+  } = useRunFilterContext();
   const dateChanged = (newRange: Range) => {
     const end = createDateWithTime(newRange, dateRange, 'endDate');
     const start = createDateWithTime(newRange, dateRange, 'startDate');
-    dateRangeChanged({ ...newRange, startDate: start, endDate: end });
+    dispatch(
+      updateDateRangeAction({ ...newRange, startDate: start, endDate: end })
+    );
   };
   return (
     <Wrapper align="flex-start">

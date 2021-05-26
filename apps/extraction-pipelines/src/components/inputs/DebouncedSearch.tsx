@@ -7,6 +7,10 @@ import React, {
 import { Input } from '@cognite/cogs.js';
 import { useDebounce } from 'hooks/useDebounce';
 import styled from 'styled-components';
+import {
+  updateSearchAction,
+  useRunFilterContext,
+} from 'hooks/runs/RunsFilterContext';
 
 export const SearchWrapper = styled.div`
   display: flex;
@@ -16,25 +20,27 @@ export const SearchWrapper = styled.div`
 interface ErrorMessageSearchProps {
   label: string;
   placeholder: string;
-  handleChange: (input: string) => void;
   debounceTime?: number;
 }
 
 export const DebouncedSearch: FunctionComponent<ErrorMessageSearchProps> = ({
   label,
   placeholder,
-  handleChange,
   debounceTime = 500,
 }: PropsWithChildren<ErrorMessageSearchProps>) => {
-  const [search, setSearch] = useState('');
-  const debouncedValue = useDebounce(search, debounceTime);
+  const {
+    state: { search },
+    dispatch,
+  } = useRunFilterContext();
+  const [searchString, setSearchString] = useState(search);
+  const debouncedValue = useDebounce(searchString, debounceTime);
 
   useEffect(() => {
-    handleChange(debouncedValue);
-  }, [debouncedValue, handleChange]);
+    dispatch(updateSearchAction(debouncedValue));
+  }, [debouncedValue, dispatch]);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearch(e.target.value);
+    setSearchString(e.target.value);
   };
 
   return (
@@ -45,6 +51,7 @@ export const DebouncedSearch: FunctionComponent<ErrorMessageSearchProps> = ({
       placeholder={placeholder}
       icon="Search"
       iconPlacement="right"
+      value={searchString}
       onChange={onChange}
       aria-label={label}
       fullWidth

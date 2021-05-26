@@ -1,19 +1,39 @@
 import React from 'react';
-import { fireEvent, screen, waitFor } from '@testing-library/react';
+import { fireEvent, screen } from '@testing-library/react';
 import { render } from 'utils/test';
 import { DebouncedSearch } from 'components/inputs/DebouncedSearch';
+import { renderWithRunFilterContext } from 'utils/test/render';
 
 describe('DebouncedSearch', () => {
+  test('Render default', async () => {
+    render(<DebouncedSearch label="Search" placeholder="Search" />);
+    const searchField = screen.getByLabelText('Search');
+    expect(searchField).toBeInTheDocument();
+    expect(searchField.textContent).toEqual('');
+  });
+  test('Render stored value', async () => {
+    const search = 'the search';
+    renderWithRunFilterContext(
+      <DebouncedSearch label="Search" placeholder="Search" />,
+      { providerProps: { search } }
+    );
+    const searchField = screen.getByLabelText('Search');
+    expect(searchField).toBeInTheDocument();
+    expect(screen.getByDisplayValue(search)).toBeInTheDocument();
+  });
+
   test('Interact with search', async () => {
-    const handleChange = jest.fn();
-    render(<DebouncedSearch handleChange={handleChange} label="Search" />);
-    expect(screen.getByLabelText('Search')).toBeInTheDocument();
+    renderWithRunFilterContext(
+      <DebouncedSearch label="Search" placeholder="Search" />,
+      {}
+    );
+    const searchField = screen.getByLabelText('Search');
+    expect(searchField).toBeInTheDocument();
+    expect(searchField.textContent).toEqual('');
+    const newSearchValue = 'test';
     fireEvent.change(screen.getByLabelText('Search'), {
-      target: { value: 'test' },
+      target: { value: newSearchValue },
     });
-    expect(handleChange).toHaveBeenCalledTimes(1);
-    await waitFor(() => {
-      expect(handleChange).toHaveBeenCalledWith('test');
-    });
+    expect(screen.getByDisplayValue(newSearchValue)).toBeInTheDocument();
   });
 });

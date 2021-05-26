@@ -4,23 +4,28 @@ import { render } from 'utils/test';
 import { DateRangeFilter } from 'components/inputs/dateTime/DateRangeFilter';
 import moment from 'moment';
 import { DATE_FORMAT } from 'components/TimeDisplay/TimeDisplay';
+import { renderWithRunFilterContext } from 'utils/test/render';
 
 describe('DateRangeFilter', () => {
-  test('interacts with component', () => {
-    const start = moment().subtract(1, 'week');
-    const end = moment();
-    const dateRange = {
-      startDate: start.toDate(),
-      endDate: end.toDate(),
-    };
-    const dateRangeChanged = jest.fn();
+  const start = moment().subtract(1, 'week');
+  const end = moment();
+  const dateRange = {
+    startDate: start.toDate(),
+    endDate: end.toDate(),
+  };
 
-    render(
-      <DateRangeFilter
-        dateRangeChanged={dateRangeChanged}
-        dateRange={dateRange}
-      />
-    );
+  test('Default render', () => {
+    const { container } = render(<DateRangeFilter />);
+    const calendar = container.getElementsByClassName(
+      'cogs-date-range--input'
+    )[0];
+    expect(calendar).toBeInTheDocument();
+  });
+
+  test('Displays stored date range and interacts with component', () => {
+    renderWithRunFilterContext(<DateRangeFilter />, {
+      providerProps: { dateRange },
+    });
     expect(
       screen.getByDisplayValue(start.format(DATE_FORMAT))
     ).toBeInTheDocument();
@@ -36,7 +41,6 @@ describe('DateRangeFilter', () => {
       target: { value: newEnd },
     });
     fireEvent.blur(screen.getByDisplayValue(newStart));
-    expect(dateRangeChanged).toHaveBeenCalledTimes(1);
     fireEvent.focus(screen.getByDisplayValue(newStart));
   });
 });

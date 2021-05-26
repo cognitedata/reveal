@@ -8,7 +8,7 @@ import { StatusMenu } from 'components/menu/StatusMenu';
 interface StatusFilterTableDropdownProps<D extends object> {
   column: {
     id: string;
-    filterValue?: Status;
+    filterValue: Status;
     setFilter: (filter: Status | undefined) => void;
     preFilteredRows: Array<Row<D>>;
     Header: string;

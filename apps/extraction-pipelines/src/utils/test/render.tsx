@@ -11,6 +11,10 @@ import { IntegrationProvider } from 'hooks/details/IntegrationContext';
 import { Integration, RegisterIntegrationInfo } from 'model/Integration';
 import { RegisterIntegrationProvider } from 'hooks/useStoredRegisterIntegration';
 import { INTEGRATIONS } from 'utils/baseURL';
+import {
+  RunFilterProvider,
+  RunFilterProviderProps,
+} from 'hooks/runs/RunsFilterContext';
 
 export default (
   ui: React.ReactElement,
@@ -156,4 +160,14 @@ export const renderWithReactHookForm = (
   };
 
   return { ...render(ui, { wrapper: Wrapper }) };
+};
+
+export const renderWithRunFilterContext = (
+  ui: React.ReactNode,
+  { providerProps, ...renderOptions }: { providerProps: RunFilterProviderProps }
+) => {
+  return render(
+    <RunFilterProvider {...providerProps}>{ui}</RunFilterProvider>,
+    renderOptions
+  );
 };
