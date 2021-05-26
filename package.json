@@ -1,6 +1,6 @@
 {
   "name": "@cognite/cognite-charts",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "scripts": {
     "start": "./scripts/start.sh",
@@ -31,8 +31,8 @@
     "@cognite/sdk-react-query-hooks": "^3.0.0",
     "@cognite/z-index": "^0.1.0",
     "@sentry/browser": "^5.30.0",
-    "antd": "^4.15.6",
-    "date-fns": "^2.21.2",
+    "antd": "^4.16.0",
+    "date-fns": "^2.21.3",
     "dayjs": "^1.10.4",
     "dotenv": "^9.0.2",
     "firebase": "^8.5.0",

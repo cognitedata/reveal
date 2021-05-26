@@ -504,7 +504,7 @@ export default function TimeSeriesRow({
             content={
               <div style={{ textAlign: 'left' }}>
                 Are you sure that you want to
-                <br /> remove this Time Series?
+                <br /> remove this time series?
               </div>
             }
           >
