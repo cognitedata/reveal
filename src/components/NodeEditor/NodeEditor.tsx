@@ -8,6 +8,7 @@ import {
   Node,
   Connection,
   NodeContainer,
+  CtxPosition,
 } from '@cognite/connect';
 import { Menu, Input, Dropdown, Button } from '@cognite/cogs.js';
 import { nanoid } from 'nanoid';
@@ -45,9 +46,14 @@ const WorkflowEditor = ({
 }: WorkflowEditorProps) => {
   const [activeNode, setActiveNode] = useState<StorableNode>();
   const [isAddNodeMenuOpen, setAddNodeMenuVisibility] = useState(false);
-  const defaultNewNodePosition = { x: 380, y: 16 };
-  const [newNodePosition, setNewNodePosition] = useState<StorableNode>(
+  const defaultNewNodePosition = { x: 0, y: 0 };
+  const defaultCanvasPosition = { x: 0, y: 0 };
+  const [newNodePosition, setNewNodePosition] = useState<CtxPosition>(
     defaultNewNodePosition
+  );
+  const [newNode, setNewNode] = useState<StorableNode>();
+  const [canvasPosition, setCanvasPosition] = useState<CtxPosition>(
+    defaultCanvasPosition
   );
   const nodeEditor = useRef<HTMLDivElement>(null);
   const workflow = chart?.workflowCollection?.find(
@@ -122,29 +128,43 @@ const WorkflowEditor = ({
   };
 
   const setNodePosition = (event: React.MouseEvent) => {
-    console.log(event);
-    console.log(nodeEditor);
     if (nodeEditor?.current) {
       const n: HTMLElement = nodeEditor.current;
       const { x, y } = n.getBoundingClientRect();
-      console.log(event.clientX - x, event.clientY - y);
 
-      setNewNodePosition({
-        x: event.clientX - x,
-        y: event.clientY - y,
-      });
+      const result = {
+        x: event.clientX - x - canvasPosition.x,
+        y: event.clientY - y - canvasPosition.y,
+      };
+
+      setNewNodePosition(result);
     }
   };
 
+  const moveNewNode = (e: React.MouseEvent) => {
+    if (newNode) {
+      setNodePosition(e);
+      const { x, y } = newNodePosition;
+      setNewNode({ ...newNode, x: x - 25, y: y - 20 });
+    }
+  };
+
+  const placeNewNode = () => {
+    update({
+      nodes: [...nodes, newNode as StorableNode],
+    });
+    setNewNode(undefined);
+  };
+
   return (
-    <WorkflowContainer>
+    <WorkflowContainer ref={nodeEditor} onMouseMove={moveNewNode}>
       <ControllerProvider
-        ref={nodeEditor}
         pinTypes={pinTypes}
         connections={connections}
         onConnectionsUpdate={(c: Connection[]) => update({ connections: c })}
       >
         <NodeContainer
+          onCanvasDrag={setCanvasPosition}
           contextMenu={(
             onClose: Function,
             nodePosition: { x: number; y: number }
@@ -177,6 +197,16 @@ const WorkflowEditor = ({
             </Menu>
           )}
         >
+          {newNode ? (
+            <SourceNode
+              key={newNode.id}
+              node={newNode}
+              status="LOADING"
+              onClick={placeNewNode}
+            />
+          ) : (
+            ''
+          )}
           {nodes.map((node) => (
             <SourceNode
               key={node.id}
@@ -206,31 +236,13 @@ const WorkflowEditor = ({
                 <Menu.Item
                   key={nodeOption.name}
                   onClick={() => {
-                    document.addEventListener('mousemove', (e) => {
-                      setNodePosition(e as any);
-                      update({
-                        nodes: [
-                          ...nodes,
-                          {
-                            id: nanoid(),
-                            ...nodeOption.node,
-                            ...newNodePosition,
-                            calls: [],
-                          },
-                        ],
-                      });
+                    setNewNode({
+                      id: nanoid(),
+                      ...nodeOption.node,
+                      ...newNodePosition,
+                      calls: [],
                     });
-                    update({
-                      nodes: [
-                        ...nodes,
-                        {
-                          id: nanoid(),
-                          ...nodeOption.node,
-                          ...newNodePosition,
-                          calls: [],
-                        },
-                      ],
-                    });
+
                     toggleAddNodeMenu(false);
                   }}
                 >
