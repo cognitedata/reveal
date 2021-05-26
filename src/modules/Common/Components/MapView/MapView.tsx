@@ -79,8 +79,10 @@ export const MapView = (props: FileExplorerTableProps) => {
       <div
         style={{
           width: '400px',
-          paddingRight: '20px', // eslint-disable-next-line
-            zIndex: 1 }}>
+          paddingRight: '20px', // eslint-disable-next-line  @cognite/no-number-z-index
+          zIndex: 1,
+        }}
+      >
         <MapFileTable
           {...props}
           mapCallback={showMapPopup}
@@ -92,8 +94,8 @@ export const MapView = (props: FileExplorerTableProps) => {
         style={{
           width: `calc(100% - 400px)`,
           paddingRight: '20px',
-          // eslint-disable-next-line
-            zIndex: 0, // HACK: popup overflows the map
+          // eslint-disable-next-line  @cognite/no-number-z-index
+          zIndex: 0, // HACK: popup overflows the map
         }}
       >
         <Mapbox

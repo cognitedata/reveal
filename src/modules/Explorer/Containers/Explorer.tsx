@@ -137,10 +137,8 @@ const Explorer = () => {
           </ViewContainer>
         </TablePanel>
         {showMetadata && (
-          <DrawerContainer
-            style={{
-              // eslint-disable-next-line
-            zIndex: 1}}>
+          // eslint-disable-next-line  @cognite/no-number-z-index
+          <DrawerContainer style={{ zIndex: 1 }}>
             <QueryClientProvider client={queryClient}>
               <FileDetails fileId={fileId} onClose={handleMetadataClose} />
             </QueryClientProvider>
