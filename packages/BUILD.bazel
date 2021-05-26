@@ -1,0 +1,29 @@
+load("@build_bazel_rules_nodejs//:index.bzl", "copy_to_bin")
+load("//rules/lint:index.bzl", "eslint_config")
+
+exports_files(
+    [
+        "tsconfig.json",
+        "jest.config.js",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+copy_to_bin(
+    name = "tsconfig",
+    srcs = [
+        "tsconfig.json",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+# Base ESLint config
+eslint_config(
+    name = "eslint_config",
+    src = ":.eslintrc.js",
+    visibility = ["//visibility:public"],
+    deps = [
+        "tsconfig.json",
+        "//:.prettierrc",
+    ],
+)

@@ -9,6 +9,7 @@ static final Map<String, String> CONTEXTS = [
   bazelTests: "continuous-integration/jenkins/bazel-tests",
   publishStorybook: "continuous-integration/jenkins/publish-storybook",
   publishFAS: "continuous-integration/jenkins/publish-fas",
+  publishPackages: "continuous-integration/jenkins/publish-packages",
 ]
 
 void bazelPod(Map params = new HashMap(), body) {
@@ -49,29 +50,42 @@ def fakeIdpEnvVars = [
 ]
 
 def pods = { body ->
-  bazelPod(bazelVersion: '3.5.0') {
-    yarn.pod(nodeVersion: NODE_VERSION) {
-      previewServer.pod(nodeVersion: NODE_VERSION) {
-        fas.pod(
-          nodeVersion: NODE_VERSION,
-          envVars: [
-            envVar(key: 'BRANCH_NAME', value: env.BRANCH_NAME),
-            envVar(key: 'CHANGE_ID', value: env.CHANGE_ID)
-          ]
-        ) {
-          codecov.pod {
-            testcafe.pod(
-              fakeIdpEnvVars: fakeIdpEnvVars,
-            ) {
-              properties([
-                buildDiscarder(logRotator(daysToKeepStr: '30', numToKeepStr: '100'))
-              ])
+  podTemplate(
+    annotations: [
+      podAnnotation(key: "jenkins/build-url", value: env.BUILD_URL ?: ""),
+      podAnnotation(key: "jenkins/github-pr-url", value: env.CHANGE_URL ?: ""),
+    ],
+    volumes: [
+      secretVolume(
+        secretName: 'npm-credentials',
+        mountPath: '/npm-credentials',
+      ),
+    ]
+  ) {
+    bazelPod(bazelVersion: '3.5.0') {
+      yarn.pod(nodeVersion: NODE_VERSION) {
+        previewServer.pod(nodeVersion: NODE_VERSION) {
+          fas.pod(
+            nodeVersion: NODE_VERSION,
+            envVars: [
+              envVar(key: 'BRANCH_NAME', value: env.BRANCH_NAME),
+              envVar(key: 'CHANGE_ID', value: env.CHANGE_ID)
+            ]
+          ) {
+            codecov.pod {
+              testcafe.pod(
+                fakeIdpEnvVars: fakeIdpEnvVars,
+              ) {
+                properties([
+                  buildDiscarder(logRotator(daysToKeepStr: '30', numToKeepStr: '100'))
+                ])
 
-              node(POD_LABEL) {
-                  stageWithNotify('Checkout code', CONTEXTS.checkout) {
-                    checkout(scm)
-                  }
-                body()
+                node(POD_LABEL) {
+                    stageWithNotify('Checkout code', CONTEXTS.checkout) {
+                      checkout(scm)
+                    }
+                  body()
+                }
               }
             }
           }
@@ -114,7 +128,7 @@ pods {
             sh("git config --global credential.helper '!f() { sleep 1; echo \"username=${GH_USER}\"; echo \"password=${GITHUB_TOKEN}\"; }; f'")
             // Override ssh access with https which is supported by Jenkins
             sh('git config --global url."https://github.com/".insteadOf git@github.com:')
-            sh("git fetch --no-tags --force --progress -- https://github.com/cognitedata/application-services.git +refs/heads/master:refs/remotes/origin/master")
+            sh("git fetch --no-tags --force --progress -- https://github.com/cognitedata/applications.git +refs/heads/master:refs/remotes/origin/master")
         }
       }
     }
@@ -260,6 +274,50 @@ pods {
               )
               print("FAS production published")
               slackMessages.add("- `${params.production_app_id}`")
+            }
+          }
+        }
+      }
+    }
+
+    stageWithNotify("Publish to NPM", CONTEXTS.publishPackages) {
+      container('bazel') {
+        def publishPackages = sh(label: "Which packages were changed?", script: "bazel run //:has-changed -- -ref=HEAD^1 'kind(package_info, //...)'", returnStdout: true)
+        print(publishPackages)
+
+        catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+          if (publishPackages) {
+            publishPackages.split('\n').each {
+              container("bazel") {
+                def jsonString = sh(
+                  label: "Executes ${it} to retrieve package info",
+                  script: "bazel run ${it}",
+                  returnStdout: true
+                )
+                def packageInfo = readJSON text: jsonString
+                int statusCode = sh(
+                  label: "Check if ${packageInfo.target} is already pushed",
+                  script: "bazel run ${packageInfo.target}:is_published",
+                  returnStatus: true
+                )
+                if (statusCode != 0) {
+                  if (isPullRequest) {
+                    packageNameTag = sh(
+                      label: "Publish ${packageInfo.name} package",
+                      script: "bazel run ${packageInfo.target}:npm-package.pack",
+                      returnStdout: true
+                    ).trim()
+                    print("Dry run package $packageNameTag")
+                  } else {
+                    packageNameTag = sh(
+                      label: "Publish ${packageInfo.name} package",
+                      script: "bazel run ${packageInfo.target}:npm-package.publish",
+                      returnStdout: true
+                    ).trim()
+                    print("Pushed package $packageNameTag")
+                  }
+                }
+              }
             }
           }
         }

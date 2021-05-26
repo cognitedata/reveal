@@ -1,0 +1,138 @@
+load("@npm//@bazel/typescript:index.bzl", "ts_config", "ts_project")
+load("@build_bazel_rules_nodejs//:index.bzl", "js_library", "pkg_npm")
+load("//rules/test:jest.bzl", "jest_test")
+load("//rules/lint:index.bzl", "eslint_test", "prettier_test")
+load("//rules/package_json_helpers:generate.bzl", "generate_package_json_helpers")
+load("//rules/package_json_helpers:module_mappings.bzl", "module_mappings")
+load("//rules/npm:is_published.bzl", "is_published")
+load("//rules/npm:package_info.bzl", "package_info")
+load("//rules/npm:append_deps.bzl", "append_deps")
+
+SOURCES = glob(
+    ["src/**/*.ts"],
+    exclude = ["src/**/*.spec.ts"],
+)
+
+TESTS = glob(["src/**/*.spec.ts"])
+
+# Generates the below helpers.
+#
+# Usage:
+#   bazel run :generate_package_json_helpers
+generate_package_json_helpers(
+    name = "generate_package_json_helpers",
+    out_dir = "dist",
+    package_json = "//:package.json",
+    src_dir = "src",
+    workspace = "@npm",
+)
+
+### start of auto-generated helpers ###
+
+# Dependencies from package.json
+DEPENDENCIES = []
+
+# Type dependencies from package.json
+TYPE_DEPENDENCIES = []
+
+# Dev dependencies from package.json
+DEV_DEPENDENCIES = []
+
+# Mappings for absolute imports from baseUrl @unused
+mappings_dict = {
+    "index.spec": "dist/index.spec",
+    "index": "dist/index",
+}
+
+### end of auto-generated helpers ###
+
+eslint_test(
+    name = "eslint_test",
+    data = SOURCES + TESTS + [
+        ":tsconfig.json",
+    ],
+    eslint_config = "//packages:eslint_config",
+)
+
+prettier_test(
+    name = "prettier_test",
+    data = SOURCES + TESTS,
+    prettier_config = "//:prettier_config",
+)
+
+jest_test(
+    name = "jest_test",
+    srcs = SOURCES + TESTS + [
+        "//packages:jest.config.js",
+        ":tsconfig.build.json",
+        ":tsconfig.json",
+        "//packages:tsconfig.json",
+    ],
+    jest_args = [],
+    jest_config = "jest.config.js",
+    service_name = "{{ name }}",
+    deps = DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES,
+)
+
+ts_config(
+    name = "ts_config_build",
+    src = ":tsconfig.build.json",
+    deps = [
+        ":tsconfig.json",
+        "//packages:tsconfig.json",
+    ],
+)
+
+ts_project(
+    name = "compile_ts",
+    srcs = SOURCES,
+    declaration = True,
+    out_dir = "dist",
+    root_dir = "src",
+    tsconfig = ":ts_config_build",
+    deps = DEPENDENCIES + TYPE_DEPENDENCIES + [
+        "@npm//@types/jest",
+        "@npm//@types/node",
+    ],
+)
+
+_mappings = module_mappings(
+    name = "mappings",
+    mappings = mappings_dict,
+)
+
+js_library(
+    name = "{{ name }}",
+    package_name = "@cognite/{{ name }}",
+    srcs = ["package-json"],
+    visibility = ["//visibility:public"],
+    deps = [":compile_ts"],
+)
+
+append_deps(
+    name = "package-json",
+    dependencies = DEPENDENCIES,
+    dev_dependencies = DEV_DEPENDENCIES + TYPE_DEPENDENCIES,
+    package = "package.json",
+)
+
+pkg_npm(
+    name = "npm-package",
+    package_name = "@cognite/{{ name }}",
+    visibility = ["//visibility:public"],
+    deps = [
+        ":compile_ts",
+        "package-json",
+    ] + _mappings,
+)
+
+is_published(
+    name = "is_published",
+    package = ":npm-package",
+)
+
+package_info(
+    name = "package_info",
+    display_name = "{{ name }}",
+    package = ":npm-package",
+)

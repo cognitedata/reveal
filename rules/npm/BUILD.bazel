@@ -1,0 +1,15 @@
+load("@build_bazel_rules_nodejs//:index.bzl", "nodejs_binary")
+
+exports_files([
+    "is_published.template.bash",
+    "package_info.template.bash",
+])
+
+nodejs_binary(
+    name = "append_deps",
+    data = [
+        "append_deps.js",
+    ],
+    entry_point = "append_deps.js",
+    visibility = ["//visibility:public"],
+)

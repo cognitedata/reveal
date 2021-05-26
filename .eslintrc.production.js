@@ -30,10 +30,11 @@ module.exports = {
     'lodash/prefer-constant': ['off'],
     'lodash/prefer-is-nil': ['off'],
     'lodash/prefer-get': ['off'],
+    'lodash/prefer-includes': ['off'],
   },
-  parser: "@typescript-eslint/parser",
+  parser: '@typescript-eslint/parser',
   parserOptions: {
     tsconfigRootDir: __dirname,
-    project: './tsconfig.json'
+    project: ['./tsconfig.json'],
   },
 };
