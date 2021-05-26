@@ -356,6 +356,7 @@ export const FileUploader = ({
         // eslint-disable-next-line no-restricted-globals
         location.reload();
       } else {
+        // eslint-disable-next-line no-console
         console.error(e);
         message.error(`Unable to upload ${file.name} on server.`);
       }

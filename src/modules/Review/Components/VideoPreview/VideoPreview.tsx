@@ -42,6 +42,7 @@ export const retrieveDownloadUrl = async (
     const { downloadUrl } = result.data.items[0];
     return downloadUrl;
   } catch {
+    // eslint-disable-next-line no-console
     console.log('Could not fetch file');
     return undefined;
   }
@@ -67,6 +68,7 @@ export const VideoPreview: React.FC<FilePreviewProps> = ({
       height="100%"
       muted
       onReady={() => {
+        // eslint-disable-next-line no-console
         console.log('Playing');
       }}
     />
