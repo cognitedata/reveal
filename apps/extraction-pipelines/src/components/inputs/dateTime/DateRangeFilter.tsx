@@ -1,14 +1,17 @@
 import React, { FunctionComponent, PropsWithChildren } from 'react';
 import { DivFlex } from 'styles/flex/StyledFlex';
 import styled from 'styled-components';
-import { DateRange, Range } from '@cognite/cogs.js';
+import { Colors, DateRange, Range } from '@cognite/cogs.js';
 import { createDateWithTime } from 'components/inputs/dateTime/TimeSelectorUtils';
 
 const Wrapper = styled(DivFlex)`
   .integrations-ui-style-scope {
     .tippy-box {
-      background-color: green;
+      background-color: transparent;
     }
+  }
+  .cogs-date-range--input {
+    border: 1px solid ${Colors['greyscale-grey5'].hex()};
   }
 `;
 interface DateRangeFilterProps {

@@ -2,7 +2,7 @@ import React, { FunctionComponent, PropsWithChildren, useState } from 'react';
 import styled from 'styled-components';
 import { DivFlex } from 'styles/flex/StyledFlex';
 import { OptionTypeBase } from 'react-select';
-import { Button, Icon, Input, Range, Select } from '@cognite/cogs.js';
+import { Button, Colors, Icon, Input, Range, Select } from '@cognite/cogs.js';
 import {
   createDateFromTimeChange,
   createHalfHourOptions,
@@ -16,15 +16,21 @@ const TimeWrapper = styled(DivFlex)`
     height: 100%;
     .cogs-input {
       width: 5rem;
-      background-color: transparent;
-      border: 1px solid transparent;
       &:hover {
         background-color: transparent;
       }
     }
     .input-postfix-node {
       .cogs-btn {
-        padding-left: 0;
+        padding: 0.5rem;
+        height: 100%;
+        background-color: ${Colors.white.hex()};
+        border-top: 1px solid ${Colors['greyscale-grey5'].hex()};
+        border-right: 1px solid ${Colors['greyscale-grey5'].hex()};
+        border-bottom: 1px solid ${Colors['greyscale-grey5'].hex()};
+        &:hover {
+          background-color: transparent;
+        }
       }
     }
   }

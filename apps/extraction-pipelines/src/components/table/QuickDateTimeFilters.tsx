@@ -15,13 +15,15 @@ const HOURS_24: Readonly<string> = '24H';
 const DAYS_7: Readonly<string> = '7D';
 const DAYS_30: Readonly<string> = '30D';
 
+const Wrapper = styled(DivFlex)`
+  background-color: ${Colors.white.hex()};
+  border-radius: 4px;
+  border: 1px solid ${Colors['greyscale-grey5'].hex()};
+`;
 export const SelectableButton = styled(Button)`
   border: 1px solid transparent;
   &.selected {
     background-color: ${Colors['midblue-7'].hex()};
-  }
-  &:hover {
-    border: 1px solid ${Colors.primary.hex()};
   }
 `;
 
@@ -66,7 +68,7 @@ export const QuickDateTimeFilters: FunctionComponent<QuickDateTimeFiltersProps> 
   };
 
   return (
-    <DivFlex>
+    <Wrapper>
       {quickFilterOptions.map(({ label, startDate, endDate }) => {
         return (
           <SelectableButton
@@ -79,6 +81,6 @@ export const QuickDateTimeFilters: FunctionComponent<QuickDateTimeFiltersProps> 
           </SelectableButton>
         );
       })}
-    </DivFlex>
+    </Wrapper>
   );
 };

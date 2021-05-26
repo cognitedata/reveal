@@ -29,11 +29,19 @@ const TableWrapper = styled(PageWrapperColumn)`
   padding: 0 2rem;
 `;
 const FilterWrapper = styled.div`
-  display: grid;
-  grid-template-columns: min-content min-content min-content max-content auto;
-  grid-column-gap: 1rem;
-  padding: 1rem 1rem 1rem 0;
+  display: flex;
+  padding: 1rem;
   background-color: ${Colors['greyscale-grey2'].hex()};
+  > :first-child,
+  > :nth-child(2) {
+    margin-right: 1rem;
+  }
+  > :nth-child(3),
+  > :nth-child(4) {
+    padding-right: 1rem;
+    margin-right: 1rem;
+    border-right: 1px solid ${Colors['greyscale-grey5'].hex()};
+  }
   .cogs-btn-tertiary {
     height: 100%;
     background-color: ${Colors.white.hex()};
@@ -42,6 +50,7 @@ const FilterWrapper = styled.div`
     }
   }
   .cogs-input-container {
+    flex: 1;
     .addons-input-wrapper {
       height: 100%;
       .cogs-input {
