@@ -1,7 +1,7 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import * as Comlink from 'comlink';
+import { wrap } from 'comlink';
 import { RevealParserWorker } from '@cognite/reveal-parser-worker';
 import { revealEnv } from '../../revealEnv';
 import { isTheSameDomain } from '../networking/isTheSameDomain';
@@ -35,10 +35,11 @@ export class WorkerPool {
       const newWorker = {
         // NOTE: As of Comlink 4.2.0 we need to go through unknown before RevealParserWorker
         // Please feel free to remove `as unknown` if possible.
-        worker: (Comlink.wrap(this.createWorker()) as unknown) as RevealParserWorker,
+        worker: (wrap(this.createWorker()) as unknown) as RevealParserWorker,
         activeJobCount: 0,
         messageIdCounter: 0
       };
+      // newWorker.worker.getVersion().then(x => console.log(`Worker ${i} version:`, x));
       this.workerList.push(newWorker);
     }
 
@@ -55,7 +56,7 @@ export class WorkerPool {
   // If publicPath is set and points on the same domain, we use it normally.
   private createWorker() {
     const workerUrl = (revealEnv.publicPath || __webpack_public_path__) + 'reveal.parser.worker.js';
-    const options = { name: 'reveal.parser' };
+    const options = { name: `reveal.parser #${this.workerList.length}` };
 
     if (isTheSameDomain(workerUrl)) {
       return new Worker(workerUrl, options);
@@ -72,15 +73,22 @@ export class WorkerPool {
   }
 
   async postWorkToAvailable<T>(work: WorkDelegate<T>): Promise<T> {
-    let targetWorker = this.workerList[0];
-    for (const worker of this.workerList) {
-      if (worker.activeJobCount < targetWorker.activeJobCount) {
-        targetWorker = worker;
+    const targetWorker = this.workerList.reduce((bestWorker, candidate) => {
+      if (bestWorker === undefined || bestWorker.activeJobCount > candidate.activeJobCount) {
+        return candidate;
       }
-    }
+      return bestWorker;
+    }, this.workerList[0]);
+
     targetWorker.activeJobCount += 1;
-    const result = await work(targetWorker.worker);
-    targetWorker.activeJobCount -= 1;
+    const result = await (async () => {
+      try {
+        return await work(targetWorker.worker);
+      } finally {
+        targetWorker.activeJobCount -= 1;
+      }
+    })();
+
     return result;
   }
 
