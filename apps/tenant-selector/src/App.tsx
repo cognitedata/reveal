@@ -23,7 +23,6 @@ export const App = () => {
     await configureI18n({
       locize: {
         version: NODE_ENV === 'development' ? 'latest' : 'Production',
-        // note: these env vars are set from ./scripts/start.sh
         projectId: REACT_APP_LOCIZE_PROJECT_ID || '',
         apiKey: REACT_APP_LOCIZE_API_KEY,
       },
