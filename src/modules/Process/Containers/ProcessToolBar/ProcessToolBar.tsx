@@ -8,12 +8,14 @@ import {
 } from 'src/modules/Process/processSlice';
 import { message, notification } from 'antd';
 import { toastProps } from 'src/utils/ToastUtils';
-import React from 'react';
-import { Button, Title } from '@cognite/cogs.js';
+import React, { useState } from 'react';
+import { Button, Title, Modal } from '@cognite/cogs.js';
 import { DetectionModelSelect } from 'src/modules/Process/Components/DetectionModelSelect';
 import { isVideo } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
 import { selectAllFiles } from 'src/modules/Common/filesSlice';
 import { VisionAPIType } from 'src/api/types';
+import { getContainer } from 'src/utils';
+import { ModelConfiguration } from '../ModelConfiguration';
 
 export const ProcessToolBar = () => {
   const dispatch = useDispatch();
@@ -59,8 +61,23 @@ export const ProcessToolBar = () => {
     dispatch(setSelectedDetectionModels(models));
   };
 
+  const [isModalOpen, setModalOpen] = useState(true);
+
   return (
     <Container>
+      <Modal
+        getContainer={getContainer}
+        footer={null}
+        visible={isModalOpen}
+        width={900}
+        closable={false}
+        onCancel={() => {
+          setModalOpen(false);
+        }}
+        style={{ background: '#fafafa', borderRadius: '10px' }}
+      >
+        <ModelConfiguration />
+      </Modal>
       <FilesToolContainer>
         <ElementTitle>
           <Title level={6}>Add files</Title>
@@ -82,7 +99,13 @@ export const ProcessToolBar = () => {
       <MLModelSelectContainer>
         <ElementTitle>
           <Title level={6}>Select ML model(s)</Title>
-          <ModelSettingsButton icon="Settings" aria-label="model settings" />
+          <ModelSettingsButton
+            icon="Settings"
+            aria-label="model settings"
+            onClick={() => {
+              setModalOpen(true);
+            }}
+          />
         </ElementTitle>
         <ElementContent>
           <ModelOptions>
@@ -93,12 +116,9 @@ export const ProcessToolBar = () => {
               />
             </ModelSelector>
             <Button
+              type="primary"
               disabled={!isPollingFinished}
               onClick={onDetectClick}
-              style={{
-                background: 'var(--cogs-gradient-midnightblue)',
-                color: '#fff',
-              }}
             >
               Detect
             </Button>

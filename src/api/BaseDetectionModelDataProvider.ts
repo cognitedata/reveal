@@ -2,6 +2,7 @@ import { v3Client as sdk } from '@cognite/cdf-sdk-singleton';
 import {
   AnnotationJobResponse,
   DetectionModelDataProvider,
+  DetectionModelParams,
 } from 'src/api/types';
 
 // tag and ocr api quite similar that's why this base class exists
@@ -12,7 +13,7 @@ export abstract class BaseDetectionModelDataProvider
 {
   protected abstract url: string;
 
-  postJob(fileIds: number[]) {
+  postJob(fileIds: number[], parameters?: DetectionModelParams) {
     return sdk
       .post<AnnotationJobResponse>(this.url, {
         data: {
@@ -21,6 +22,7 @@ export abstract class BaseDetectionModelDataProvider
               fileId: id,
             };
           }),
+          ...parameters,
         },
       })
       .then((response) => {

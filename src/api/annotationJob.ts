@@ -1,6 +1,7 @@
 import {
   AnnotationJob,
   DetectionModelDataProvider,
+  DetectionModelParams,
   VisionAPIType,
 } from 'src/api/types';
 import { OCRDetectionDataProvider } from 'src/api/ocr/OCRDetectionDataProvider';
@@ -30,10 +31,11 @@ function getDetectionModelDataProvider(
 
 export async function createAnnotationJob(
   detectionModel: VisionAPIType,
-  fileIds: number[]
+  fileIds: number[],
+  parameters?: DetectionModelParams
 ): Promise<AnnotationJob> {
   const dataProvider = getDetectionModelDataProvider(detectionModel);
-  const job = await dataProvider.postJob(fileIds);
+  const job = await dataProvider.postJob(fileIds, parameters);
   return {
     type: detectionModel,
     ...job,

@@ -6,10 +6,13 @@ import React from 'react';
 export const AssetSelector = (props: {
   assets: number[] | undefined;
   onSelectAssets: (assets: number[] | undefined) => void;
+  hideTitle?: boolean;
 }) => {
   return (
     <AssetSelectContainer>
-      <AssetSelectTitle level={2}>Search for asset</AssetSelectTitle>
+      {!props.hideTitle && (
+        <AssetSelectTitle level={2}>Search for asset</AssetSelectTitle>
+      )}
       <AssetSelectWrapper>
         <AssetSelect
           isMulti
