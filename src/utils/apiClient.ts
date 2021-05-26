@@ -10,7 +10,8 @@ type AppDataResponse = {
 };
 
 type dcClientOptions = {
-  baseUrl: string;
+  baseUrl?: string;
+  project: string;
 };
 
 type ApiClientOptions = ClientOptions & dcClientOptions;
@@ -20,9 +21,12 @@ export class ApiClient {
   private readonly baseUrl: string;
   private client: CogniteClient | undefined;
 
-  constructor(options: ApiClientOptions, client?: CogniteClient) {
-    this.appId = options.appId;
-    this.baseUrl = `${options.baseUrl}/v2`;
+  constructor(
+    { appId, baseUrl, project }: ApiClientOptions,
+    client?: CogniteClient
+  ) {
+    this.appId = appId;
+    this.baseUrl = `${baseUrl}/${project}/v2`;
     this.client = client;
   }
 
@@ -126,16 +130,14 @@ export class ApiClient {
   }
 }
 
-const DEFAULT_CONFIG: ApiClientOptions = {
+const DEFAULT_CONFIG: Partial<ApiClientOptions> = {
   appId: 'digital-cockpit',
   baseUrl: sidecar.digitalCockpitApiBaseUrl,
 };
 
 export function createApiClient(
-  options: ApiClientOptions = DEFAULT_CONFIG,
+  options: ApiClientOptions,
   client?: CogniteClient
 ) {
-  return new ApiClient(options, client);
+  return new ApiClient({ ...DEFAULT_CONFIG, ...options }, client);
 }
-
-export const apiClient = createApiClient();

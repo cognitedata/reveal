@@ -15,6 +15,10 @@ export const createMockCdfClient = (): CdfClient => {
 };
 
 export const createMockApiClient = (): ApiClient => {
-  const apiClient = createApiClient({ appId: 'unit-tests', baseUrl: '' });
+  const apiClient = createApiClient({
+    appId: 'unit-tests',
+    baseUrl: '',
+    project: '',
+  });
   return apiClient;
 };
