@@ -7,7 +7,7 @@ describe: Applying styles to nodes based on node properties/attributes
 import { DemoWrapper } from '@site/src/components/DemoWrapper';
 
 3D nodes may have assosciated attribute/property data. Reveal allows for filtering based on
-these properties, allowinng queries such as "all pipes", "nodes within module P600" or "nodes 
+these properties, allowing queries such as "all pipes", "nodes within module P600" or "nodes 
 with status S5". Combinations are also possible by using `CombinedNodeSet`.
 
 `ByNodePropertyNodeSet` is used to query nodes based on node properties. It's possible to specify 
@@ -105,4 +105,3 @@ const notLivingQuarters = new InvertedNodeSet(model, livingQuarters);
 model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
 model.addStyledNodeSet(notLivingQuarters, { renderGhosted: false } );
 ```
-
