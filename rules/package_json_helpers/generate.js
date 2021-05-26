@@ -69,6 +69,21 @@ function formatDependencies(name, prefix, deps) {
   return `${name} = [${list.join(', \n')}]`;
 }
 
+function readBaseURL(dirPath) {
+  return fs.readdirSync(dirPath);
+}
+
+function formatMappings(modules, out) {
+  const mappings = {};
+  modules
+    .map((m) => path.basename(m, path.extname(m)))
+    .forEach((m) => {
+      mappings[m] = `${out}/${m}`;
+    });
+
+  return `mappings_dict=${JSON.stringify(mappings, null, 2)}`.trim();
+}
+
 /**
  * Find all files recursively in specific folder with specific extension, e.g:
  * findFilesInDir('./project/src', '.html') ==> ['./project/src/a.html','./project/src/build/index.html']
@@ -77,18 +92,18 @@ function formatDependencies(name, prefix, deps) {
  * @return {Array}               Result files with path string in an array
  */
 function findFilesInDir(startPath, filter) {
-  var results = [];
+  let results = [];
 
   if (!fs.existsSync(startPath)) {
     return results;
   }
 
-  var files = fs.readdirSync(startPath);
-  for (var i = 0; i < files.length; i++) {
-    var filename = path.join(startPath, files[i]);
-    var stat = fs.lstatSync(filename);
+  const files = fs.readdirSync(startPath);
+  for (let i = 0; i < files.length; i++) {
+    const filename = path.join(startPath, files[i]);
+    const stat = fs.lstatSync(filename);
     if (stat.isDirectory()) {
-      results = results.concat(findFilesInDir(filename, filter)); //recurse
+      results = results.concat(findFilesInDir(filename, filter)); // recurse
     } else if (filename.indexOf(filter) >= 0) {
       results.push(filename);
     }
@@ -104,7 +119,7 @@ function excludeNonPresent(deps, missing) {
     if (cleanName.indexOf('__') > -1) {
       // Edge case for scoped packages
       // https://github.com/DefinitelyTyped/DefinitelyTyped/tree/987a09b4979415a83491328a57cf4def5b7e1bc7#what-about-scoped-packages
-      cleanName = '@' + cleanName.replace('__', '/');
+      cleanName = `@${cleanName.replace('__', '/')}`;
     }
     if (missing[cleanName]) {
       out[name] = deps[name];
@@ -132,12 +147,11 @@ function appendInternalDependencies(deps, missing, internal) {
 const buildFileContents = fs.readFileSync(buildFilePath).toString();
 const package = readPackage(packagePath);
 
-const ruleRegex = /^generate_package_json_helpers\([^\)]+\)/gm;
+const ruleRegex = /^generate_package_json_helpers\([^)]+\)/gm;
 
 const ruleImpl = buildFileContents.match(ruleRegex);
-const buildFileParts = cleanBuildFileContents(buildFileContents).split(
-  ruleRegex
-);
+const buildFileParts =
+  cleanBuildFileContents(buildFileContents).split(ruleRegex);
 
 if (ruleImpl.length === 1 && buildFileParts.length !== 2) {
   process.stderr.write(
@@ -146,7 +160,7 @@ if (ruleImpl.length === 1 && buildFileParts.length !== 2) {
   process.exit(1);
 }
 
-depcheck(process.cwd() + '/' + path.dirname(srcPath), {
+depcheck(`${process.cwd()}/${path.dirname(srcPath)}`, {
   detectors: [depcheck.detector.importDeclaration],
   ignorePatterns: [
     // do not parse files starting with dot (.), e.g. .eslintrc.js
@@ -159,27 +173,34 @@ depcheck(process.cwd() + '/' + path.dirname(srcPath), {
   ).reduce((acc, file) => {
     const { name } = readPackage(file);
     if (name) {
-      acc[name] = '//packages/' + name.replace('@cognite/', '');
-      return acc;
-    } else {
-      process.stderr.write(`Error during read file, skipping: ${name}\n`);
+      acc[name] = `//packages/${name.replace('@cognite/', '')}`;
       return acc;
     }
+    process.stderr.write(`Error during read file, skipping: ${name}\n`);
+    return acc;
   }, {});
 
   const dependencies = appendInternalDependencies(
     excludeNonPresent(
       excludeNameStartsWith(
-        excludeNameStartsWith(
-          excludeInternal(package.dependencies),
-          '@bazel/'
-        ),
+        excludeNameStartsWith(excludeInternal(package.dependencies), '@bazel/'),
         'react-scripts'
       ),
       missing
     ),
     missing,
     internalPackagesNames
+  );
+
+  const typeDependencies = excludeNonPresent(
+    filterNameStartsWith(
+      excludeNameStartsWith(
+        excludeInternal(package.devDependencies),
+        '@bazel/'
+      ),
+      '@types/'
+    ),
+    missing
   );
 
   const devDependencies = excludeNonPresent(
@@ -204,8 +225,14 @@ ${buildFileParts[0]}${ruleImpl[0]}
 # Dependencies from package.json
 ${formatDependencies('DEPENDENCIES', workspace, dependencies)}
 
+# Type dependencies from package.json
+${formatDependencies('TYPE_DEPENDENCIES', workspace, typeDependencies)}
+
 # Dev dependencies from package.json
 ${formatDependencies('DEV_DEPENDENCIES', workspace, devDependencies)}
+
+# Mappings for absolute imports from baseUrl @unused
+${formatMappings(readBaseURL(srcPath), outDir)}
 
 ### end of auto-generated helpers ###
 

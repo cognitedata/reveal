@@ -1,0 +1,12 @@
+{
+  "exclude": ["node_modules", "dist", "build"],
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "esnext",
+    "strict": true,
+    "esModuleInterop": true,
+    "allowJs": false,
+    "types": ["node", "jest"],
+    "noFallthroughCasesInSwitch": true
+  }
+}

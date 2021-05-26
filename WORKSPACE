@@ -2,7 +2,7 @@
 # See https://docs.bazel.build/versions/master/build-ref.html#workspace
 workspace(
     # How this workspace would be referenced with absolute labels from another workspace
-    name = "react_demo_app",
+    name = "applications",
     # Map the npm bazel workspaces to the node_modules directories.
     # This lets Bazel use the sane node_modules as other local tooling.
     managed_directories = {

@@ -1,0 +1,2 @@
+# Ignore generators formatting
+**/.template/*.hbs

@@ -72,6 +72,7 @@ generate_package_json_helpers(
 # Dependencies from package.json
 DEPENDENCIES = [
     "@npm//@cognite/cogs.js",
+    "@npm//@cognite/intercom-helper",
     "@npm//@cognite/metrics",
     "@npm//@cognite/react-container",
     "@npm//@cognite/react-i18n",
@@ -84,6 +85,15 @@ DEPENDENCIES = [
     "@npm//styled-components",
 ]
 
+# Type dependencies from package.json
+TYPE_DEPENDENCIES = [
+    "@npm//@types/react",
+    "@npm//@types/react-dom",
+    "@npm//@types/react-router-dom",
+    "@npm//@types/sinon",
+    "@npm//@types/styled-components",
+]
+
 # Dev dependencies from package.json
 DEV_DEPENDENCIES = [
     "@npm//@testing-library/jest-dom",
@@ -92,6 +102,19 @@ DEV_DEPENDENCIES = [
     "@npm//eslint-plugin-import",
     "@npm//sinon",
 ]
+
+# Mappings for absolute imports from baseUrl @unused
+mappings_dict = {
+    "App": "build/App",
+    "global-styles": "build/global-styles",
+    "index": "build/index",
+    "pages": "build/pages",
+    "react-app-env.d": "build/react-app-env.d",
+    "serviceWorker": "build/serviceWorker",
+    "setupTests": "build/setupTests",
+    "typings": "build/typings",
+    "utils": "build/utils",
+}
 
 ### end of auto-generated helpers ###
 
@@ -140,9 +163,7 @@ react_scripts(
         "--node_options=--require=./$(execpath chdir.js)",
         "build",
     ],
-    data = _RUNTIME_DEPS + [
-        "@npm//@types",
-    ],
+    data = _RUNTIME_DEPS + TYPE_DEPENDENCIES,
     env = {
         # Specify your Sentry DSN is the URL used to report runtime issues
         "REACT_APP_SENTRY_DSN": "https://da67b4b23d3e4baea6c36de155a08491@sentry.io/3541732",
@@ -234,8 +255,7 @@ testcafe_test(
         "--stop-on-first-fail",
         "--app './scripts/testcafe-bazel-serve.sh'",
     ],
-    data = _RUNTIME_DEPS + DEV_DEPENDENCIES + SCRIPTS + [
-        "@npm//@types",
+    data = _RUNTIME_DEPS + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + SCRIPTS + [
         ":build_sed",
         "copy_testcafe_files",
     ],
@@ -254,9 +274,8 @@ build_storybook(
     # https://storybook.js.org/docs/react/api/cli-options
     name = "storybook-static",
     chdir = "$(RULEDIR)",
-    data = _RUNTIME_DEPS + DEV_DEPENDENCIES + [
+    data = _RUNTIME_DEPS + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + [
         "copy_storybook_files",
-        "@npm//@types",
         "@npm//@storybook/addon-essentials",
         "@npm//@storybook/addon-links",
         "@npm//@storybook/preset-create-react-app",
