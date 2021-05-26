@@ -128,27 +128,27 @@ export const defaultAxisBoxConfig: Required<AxisBoxConfig> = {
   faces: {
     xPositiveFace: {
       ...defaultFaceConfig,
-      label: 'X'
+      label: 'Right'
     },
     xNegativeFace: {
       ...defaultFaceConfig,
-      label: '-X'
+      label: 'Left'
     },
     yPositiveFace: {
       ...defaultFaceConfig,
-      label: 'Y'
+      label: 'Up'
     },
     yNegativeFace: {
       ...defaultFaceConfig,
-      label: '-Y'
+      label: 'Down'
     },
     zPositiveFace: {
       ...defaultFaceConfig,
-      label: 'Z'
+      label: 'Front'
     },
     zNegativeFace: {
       ...defaultFaceConfig,
-      label: '-Z'
+      label: 'Back'
     }
   },
   compass: defaultAxisBoxCompassConfig
