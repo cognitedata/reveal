@@ -47,6 +47,28 @@ This will spit out all of the boilerplate that you need to have a production-cap
 
 3. Find and replace all the occurences of `*demo*` string to appropriate values
 
+## Importing existing application
+
+1. In this repository set remote to be pointed to the repository you want to import
+
+```sh
+git remote add repo-to-import ~/repo-to-import
+```
+
+2. Pull changes from the newly established remote
+
+```sh
+git pull repo-to-import master --allow-unrelated-histories
+```
+
+3. Remove remote
+
+```sh
+git remote rm repo-to-import
+```
+
+[Here](https://medium.com/@ayushya/move-directory-from-one-repository-to-another-preserving-git-history-d210fa049d4b) is a good article.
+
 ## Deploying the app
 
 Please see the [deployment guide] for more information how to actually get this app into production.
