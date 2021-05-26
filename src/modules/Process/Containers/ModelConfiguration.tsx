@@ -12,8 +12,7 @@ import * as ocrModelDetails from './ModelDetails/OcrModelDetails';
 const queryClient = new QueryClient();
 
 export const ModelConfiguration = () => {
-  const [currentModelSettings, setCurrentModelSettings] =
-    useState('tagDetection');
+  const [currentModelSettings, setCurrentModelSettings] = useState('ocr');
 
   const modelData = {
     ocr: {
