@@ -228,7 +228,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * @version new in 2.0
    */
   mapBoxFromModelToCdfCoordinates(box: THREE.Box3, out?: THREE.Box3): THREE.Box3 {
-    out = out !== undefined ? out : new THREE.Box3();
+    out = out ?? new THREE.Box3();
     if (out !== box) {
       out.copy(box);
     }
