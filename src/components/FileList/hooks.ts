@@ -1,6 +1,6 @@
 import { Asset, FileInfo as File } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
-import { isFilePreviewable } from 'components/FileList';
+import { isFilePreviewable, isPreviewableImage } from 'components/FileList';
 import { useQuery } from 'react-query';
 import {
   CogniteAnnotation,
@@ -57,16 +57,27 @@ export const useFileIcon = (file: File) => {
         return undefined;
       }
 
+      if (isPreviewableImage(file)) {
+        const urls = await sdk.files.getDownloadUrls([{ id: file.id }]);
+        return urls[0].downloadUrl;
+      }
+
       const icon = await sdk
-        .get(`/api/v1/projects/${sdk.project}/files/icon`, {
-          params: { id: file.id },
-          headers: {
-            Accept: 'image/avif,image/webp,image/apng,image/*,*/*;q=0.8',
-          },
-          responseType: 'arraybuffer',
-        })
+        .get(
+          `/api/playground/projects/${sdk.project}/files/unstructured/preview`,
+          {
+            params: { documentId: file.id },
+            headers: {
+              Accept: 'image/png',
+            },
+            responseType: 'arraybuffer',
+          }
+        )
         .then((response) => response.data);
-      return icon;
+
+      const arrayBufferView = new Uint8Array(icon);
+      const blob = new Blob([arrayBufferView]);
+      return URL.createObjectURL(blob);
     },
     {
       retry: false,
