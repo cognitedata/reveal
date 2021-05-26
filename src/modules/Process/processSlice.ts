@@ -362,6 +362,19 @@ export const selectIsPollingComplete = createSelector(
   }
 );
 
+export const selectIsProcessingStarted = createSelector(
+  (state: State) => state.files.byId,
+  (allFiles) => {
+    if (Object.keys(allFiles).length) {
+      return Object.keys(allFiles).every((fileId) => {
+        const fileJobs = allFiles[parseInt(fileId, 10)].jobIds;
+        return fileJobs && fileJobs.length;
+      });
+    }
+    return false;
+  }
+);
+
 export const makeSelectAnnotationStatuses = () =>
   createSelector(selectJobsByFileId, (fileJobs) => {
     const annotationBadgeProps = {
