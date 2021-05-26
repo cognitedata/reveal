@@ -61,7 +61,7 @@ export const ProcessToolBar = () => {
     dispatch(setSelectedDetectionModels(models));
   };
 
-  const [isModalOpen, setModalOpen] = useState(true);
+  const [isModalOpen, setModalOpen] = useState(false);
 
   return (
     <Container>
