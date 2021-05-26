@@ -76,7 +76,11 @@ export const MapView = (props: FileExplorerTableProps) => {
 
   return (
     <Container>
-      <div style={{ width: '400px', paddingRight: '20px' }}>
+      <div
+        style={{
+          width: '400px',
+          paddingRight: '20px', // eslint-disable-next-line
+            zIndex: 1 }}>
         <MapFileTable
           {...props}
           mapCallback={showMapPopup}
@@ -84,7 +88,14 @@ export const MapView = (props: FileExplorerTableProps) => {
           setSelectedFileOnMap={setSelectedFileOnMap}
         />
       </div>
-      <div style={{ width: `calc(100% - 400px)`, paddingRight: '20px' }}>
+      <div
+        style={{
+          width: `calc(100% - 400px)`,
+          paddingRight: '20px',
+          // eslint-disable-next-line
+            zIndex: 0, // HACK: popup overflows the map
+        }}
+      >
         <Mapbox
           style={MAPBOX_MAP_ID}
           onStyleLoad={handleStyleLoad}

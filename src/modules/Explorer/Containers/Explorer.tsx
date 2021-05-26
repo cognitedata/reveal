@@ -137,7 +137,10 @@ const Explorer = () => {
           </ViewContainer>
         </TablePanel>
         {showMetadata && (
-          <DrawerContainer>
+          <DrawerContainer
+            style={{
+              // eslint-disable-next-line
+            zIndex: 1}}>
             <QueryClientProvider client={queryClient}>
               <FileDetails fileId={fileId} onClose={handleMetadataClose} />
             </QueryClientProvider>
@@ -214,6 +217,7 @@ const DrawerContainer = styled.div`
   height: 100%;
   flex-shrink: 0;
   overflow: auto;
+  background: white;
 `;
 
 export default Explorer;
