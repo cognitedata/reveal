@@ -1122,14 +1122,6 @@ export class Cognite3DViewer {
     return intersections.length > 0 ? intersections[0] : null;
   }
 
-  /**
-   * @deprecated There is no cache anymore.
-   * @throws {@link NotSupportedInMigrationWrapperError}
-   */
-  clearCache(): void {
-    throw new NotSupportedInMigrationWrapperError('Cache is not supported');
-  }
-
   private getModels(type: 'cad'): Cognite3DModel[];
   private getModels(type: 'pointcloud'): CognitePointCloudModel[];
   /** @private */
