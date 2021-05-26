@@ -284,12 +284,12 @@
   resolved "https://registry.yarnpkg.com/@cognite/potree-core/-/potree-core-1.1.6.tgz#26434a4070d1bb2afcb18912b42471d5b123a477"
   integrity sha512-9mR9r/Xb7q87FSMxvnCDXKlu+jeFS9dhDVjH8lN9vQUBZEwjP7A8jo4uvCtxEUdnWjuOCVhB0Y/iqpp8Vk9vmg==
 
-"@cognite/reveal-parser-worker@1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@cognite/reveal-parser-worker/-/reveal-parser-worker-1.1.0.tgz#3297284a7c9a0087411a3e10eb03f2a24a0cfc30"
-  integrity sha512-N1PyFvAxESeU4nWOkZXuaLnusP/GFLC2fmEzcuKdmaRp13NzimmWeOelYOr3Dv0qVKTVcQQOnsAi3Nd35VIXwA==
+"@cognite/reveal-parser-worker@1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@cognite/reveal-parser-worker/-/reveal-parser-worker-1.1.1.tgz#49eabb2cafc8ebe53ac757b4be338e1745b1cb2d"
+  integrity sha512-AQvFY0EDNvEKxnEnrYWUldwzWhpbln9fTVH/gFGl8Mn4vJVmJCBlOwqRxLB0CZ8BJY8v99rROA9M67+6p2N99w==
   dependencies:
-    comlink "^4.3.0"
+    comlink "4.3.1"
 
 "@cognite/sdk-core@^1.0.0":
   version "1.0.0"
@@ -2797,10 +2797,10 @@ combined-stream@^1.0.6, combined-stream@~1.0.6:
   dependencies:
     delayed-stream "~1.0.0"
 
-comlink@^4.3.0:
-  version "4.3.0"
-  resolved "https://registry.yarnpkg.com/comlink/-/comlink-4.3.0.tgz#80b3366baccd87897dab3638ebfcfae28b2f87c7"
-  integrity sha512-mu4KKKNuW8TvkfpW/H88HBPeILubBS6T94BdD1VWBXNXfiyqVtwUCVNO1GeNOBTsIswzsMjWlycYr+77F5b84g==
+comlink@4.3.1:
+  version "4.3.1"
+  resolved "https://registry.yarnpkg.com/comlink/-/comlink-4.3.1.tgz#0c6b9d69bcd293715c907c33fe8fc45aecad13c5"
+  integrity sha512-+YbhUdNrpBZggBAHWcgQMLPLH1KDF3wJpeqrCKieWQ8RL7atmgsgTQko1XEBK6PsecfopWNntopJ+ByYG1lRaA==
 
 commander@^2.15.1, commander@^2.20.0:
   version "2.20.3"
