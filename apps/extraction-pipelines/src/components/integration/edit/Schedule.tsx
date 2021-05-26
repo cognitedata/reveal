@@ -18,9 +18,12 @@ import {
   mapModelToInput,
   mapScheduleInputToScheduleValue,
 } from 'utils/cronUtils';
-import { ContactBtnTestIds } from 'components/form/ContactsView';
 import MessageDialog from 'components/buttons/MessageDialog';
-import { SERVER_ERROR_CONTENT, SERVER_ERROR_TITLE } from 'utils/constants';
+import {
+  ContactBtnTestIds,
+  SERVER_ERROR_CONTENT,
+  SERVER_ERROR_TITLE,
+} from 'utils/constants';
 import { Integration, IntegrationFieldName } from 'model/Integration';
 import { useAppEnv } from 'hooks/useAppEnv';
 import {

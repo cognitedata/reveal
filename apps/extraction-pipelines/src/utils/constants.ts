@@ -107,3 +107,9 @@ export const BtnTestIds = {
   CANCEL_BTN: 'cancel-btn-',
   SAVE_BTN: 'save-btn-',
 };
+export const ContactBtnTestIds = {
+  EDIT_BTN: 'edit-contact-btn-',
+  REMOVE_BTN: 'remove-contact-btn-',
+  CANCEL_BTN: 'cancel-contact-btn-',
+  SAVE_BTN: 'save-contact-btn-',
+};

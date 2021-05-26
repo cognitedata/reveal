@@ -31,3 +31,9 @@ export const PriSecBtnWrapper = styled((props) => (
     margin-right: 2rem;
   }
 `;
+
+export const CountSpan = styled((props) => (
+  <span {...props}>{props.children}</span>
+))`
+  align-self: flex-start;
+`;

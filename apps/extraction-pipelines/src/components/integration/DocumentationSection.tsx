@@ -3,6 +3,7 @@ import { Hint, StyledTextArea } from 'styles/StyledForm';
 import styled from 'styled-components';
 import { bottomSpacing } from 'styles/StyledVariables';
 import {
+  ContactBtnTestIds,
   DOCUMENTATION_HINT,
   SERVER_ERROR_CONTENT,
   SERVER_ERROR_TITLE,
@@ -20,8 +21,7 @@ import {
   documentationSchema,
   MAX_DESC_LENGTH,
 } from 'utils/validation/integrationSchemas';
-import { CountSpan } from 'components/form/DescriptionView';
-import { ContactBtnTestIds } from 'components/form/ContactsView';
+import { CountSpan } from 'styles/StyledWrapper';
 import MessageDialog from 'components/buttons/MessageDialog';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {

@@ -1,9 +1,9 @@
 import { fireEvent, screen, waitFor } from '@testing-library/react';
-import { ContactBtnTestIds } from '../../components/form/ContactsView';
 import {
   ADD_CONTACT_TEST_ID,
   CONTACT_EMAIL_TEST_ID,
   CONTACT_NAME_TEST_ID,
+  ContactBtnTestIds,
 } from '../constants';
 
 export const DETAILS_ELEMENTS = {

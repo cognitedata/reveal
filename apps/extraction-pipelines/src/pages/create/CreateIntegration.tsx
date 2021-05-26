@@ -32,7 +32,7 @@ import { GridH2Wrapper, SideInfo } from 'styles/StyledPage';
 import ExtractorDownloadsLink from 'components/links/ExtractorDownloadsLink';
 import styled from 'styled-components';
 import { Collapse, Colors } from '@cognite/cogs.js';
-import { PriSecBtnWrapper } from 'styles/StyledWrapper';
+import { CountSpan, PriSecBtnWrapper } from 'styles/StyledWrapper';
 import { DataSetModel } from 'model/DataSetModel';
 import {
   scheduleRule,
@@ -68,7 +68,6 @@ import { InfoIcon } from 'styles/StyledIcon';
 import { InfoBox } from 'components/message/InfoBox';
 import ConnectRawTablesInput from 'components/inputs/rawSelector/ConnectRawTablesInput';
 import { RawTableFormInput } from 'pages/create/RawTablePage';
-import { CountSpan } from 'components/form/DescriptionView';
 import { createAddIntegrationInfo } from 'utils/integrationUtils';
 
 const StyledCollapse = styled(Collapse)`
