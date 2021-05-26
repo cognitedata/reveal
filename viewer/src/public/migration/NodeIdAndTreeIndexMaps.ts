@@ -125,7 +125,7 @@ export class NodeIdAndTreeIndexMaps {
       .toPromise();
 
     this.nodeIdRequestObservable.next(nodeId);
-    return result;
+    return (await result)!;
   }
 
   async getNodeId(treeIndex: number): Promise<number> {
@@ -142,7 +142,7 @@ export class NodeIdAndTreeIndexMaps {
       .toPromise();
 
     this.treeIndexRequestObservable.next(treeIndex);
-    return result;
+    return (await result)!;
   }
 
   async getSubtreeSize(treeIndex: number): Promise<number> {
@@ -160,7 +160,7 @@ export class NodeIdAndTreeIndexMaps {
       .toPromise();
     this.subtreeSizeObservable.next({ id: nodeId });
 
-    return result;
+    return (await result)!;
   }
 
   async getTreeIndices(nodeIds: number[]): Promise<number[]> {

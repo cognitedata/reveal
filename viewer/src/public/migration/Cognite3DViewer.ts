@@ -1021,6 +1021,8 @@ export class Cognite3DViewer {
     this.renderer.setSize(originalWidth, originalHeight);
     this.renderer.render(this.scene, this.camera);
 
+    this.forceRerender();
+
     return url;
   }
 
