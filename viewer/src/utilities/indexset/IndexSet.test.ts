@@ -3,7 +3,7 @@
  */
 
 import { IndexSet } from './IndexSet';
-import { NumericRange } from './NumericRange';
+import { NumericRange } from '../NumericRange';
 
 describe('IndexSet', () => {
   test('contains all elements after adding range', () => {
