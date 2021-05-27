@@ -114,8 +114,6 @@ export class NodeAppearanceTextureBuilder {
 
   build() {
     const orphanStyleIds = new Set<number>(this._currentlyAppliedStyles.keys());
-    // TODO 2021-02-04 larsmoa: Currently transform overrides are never removed
-
     // 1. Reset nodes that has been removed from nodesets to default style
     this._styleProvider.applyStyles((styleId, revision, treeIndices) => {
       orphanStyleIds.delete(styleId);
