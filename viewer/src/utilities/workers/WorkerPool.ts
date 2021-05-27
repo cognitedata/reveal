@@ -39,7 +39,6 @@ export class WorkerPool {
         activeJobCount: 0,
         messageIdCounter: 0
       };
-      // newWorker.worker.getVersion().then(x => console.log(`Worker ${i} version:`, x));
       this.workerList.push(newWorker);
     }
 
