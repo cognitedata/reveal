@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Cognite AS
+ * Copyright 2021 Cognite AS
  */
 
 import React, { useEffect, useRef } from 'react';
@@ -31,13 +31,13 @@ function mouseEventOffset(ev: MouseEvent | TouchEvent, target: HTMLElement) {
     return {
       offsetX: ev.clientX - rect.left,
       offsetY: ev.clientY - rect.top
-    };  
+    };
   } else if (ev.changedTouches.length > 0) {
     const touch = ev.changedTouches[0];
     return {
       offsetX: touch.clientX - rect.left,
       offsetY: touch.clientY - rect.top
-    };  
+    };
   }
 
   // Invalid event
