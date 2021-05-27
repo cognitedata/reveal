@@ -1,0 +1,44 @@
+{
+  "name": "@cognite/tenant-selector-app",
+  "version": "0.6.0",
+  "private": true,
+  "scripts": {
+    "start": "./scripts/start.sh",
+    "build": "./scripts/build.sh",
+    "test": "./scripts/test.sh",
+    "lint": "bazel test :eslint_test :prettier_test",
+    "eslint": "bazel test :eslint_test",
+    "eslint:fix": "bazel run :eslint_test -- --fix",
+    "prettier": "bazel test :prettier_test",
+    "prettier:fix": "bazel run :prettier_test -- --write",
+    "storybook": "../../node_modules/.bin/start-storybook -p 6006",
+    "build-storybook": "../../node_modules/.bin/build-storybook",
+    "testcafe:run": "./scripts/testcafe-run.sh",
+    "testcafe:run-live": "./scripts/testcafe-run-live.sh",
+    "testcafe:start": "./scripts/testcafe-serve-run-docker.sh",
+    "testcafe:start-live": "./scripts/testcafe-start.sh",
+    "update-helpers": "bazel run :generate_package_json_helpers"
+  },
+  "jest": {
+    "coveragePathIgnorePatterns": [
+      "node_modules",
+      "__tests__",
+      ".stories."
+    ]
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
