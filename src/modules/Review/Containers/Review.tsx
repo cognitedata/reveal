@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { PageTitle } from '@cognite/cdf-utilities';
 import styled from 'styled-components';
-import { Button, Popconfirm, Title } from '@cognite/cogs.js';
+import { Button, Icon, Popconfirm, Title } from '@cognite/cogs.js';
 import { RouteComponentProps, useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
@@ -23,32 +23,8 @@ import { AddAnnotationsFromEditModeAssetIds } from 'src/store/thunks/AddAnnotati
 import { resetEditHistory } from 'src/modules/FileDetails/fileDetailsSlice';
 import { CreateAnnotations } from 'src/store/thunks/CreateAnnotations';
 import { DeleteAnnotationsByFileIds } from 'src/store/thunks/DeleteAnnotationsByFileIds';
+import { workflowRoutes } from 'src/modules/Workflow/workflowRoutes';
 import { PopulateAnnotations } from 'src/store/thunks/PopulateAnnotations';
-
-const Container = styled.div`
-  width: 100%;
-  padding: 20px 50px;
-  height: 100%;
-  display: grid;
-  grid-template-rows: 60px 60px calc(100% - 120px);
-  position: relative;
-  overflow: hidden;
-`;
-
-const TitleRow = styled.div`
-  padding: 12px;
-  width: 100%;
-`;
-
-const ToolBar = styled.div`
-  padding: 12px;
-  border-radius: 8px;
-  width: 100%;
-  box-sizing: border-box;
-  display: grid;
-  grid-template-columns: 70px auto 130px;
-  grid-column-gap: 16px;
-`;
 
 const DeleteButton = (props: { onConfirm: () => void }) => (
   <Popconfirm
@@ -135,20 +111,32 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
     <>
       <PageTitle title="Edit Annotations" />
       <Container>
-        <TitleRow>
-          <Title level={3}>Edit Annotations and Enrich File</Title>
-        </TitleRow>
         <ToolBar className="z-4">
-          <Button type="secondary" shape="round" onClick={onBackButtonClick}>
+          <Button
+            type="secondary"
+            style={{ background: 'white' }}
+            shape="round"
+            onClick={onBackButtonClick}
+          >
+            <Icon type="Left" />
             Back
           </Button>
-          <Title level={3}>{file?.name}</Title>
+          {/* Todo: A way to quickly go back to the process page for now */}
+          <Title
+            onClick={() => history.push(workflowRoutes.process)}
+            style={{ fontSize: '14px' }}
+            level={3}
+          >
+            CDF / Contextualize Imagry Data /{' '}
+            <strong>Review annotations</strong>
+          </Title>
+          {/* Todo: CDFStatus should go here  */}
           <DeleteButton onConfirm={handleFileDelete} />
         </ToolBar>
         {isVideo(file) ? (
           <VideoReview fileId={fileId} />
         ) : (
-          <ImageReview fileId={fileId} drawerMode={drawerMode} />
+          <ImageReview file={file} fileId={fileId} drawerMode={drawerMode} />
         )}
         <AnnotationDrawer
           visible={showDrawer}
@@ -174,3 +162,23 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
 };
 
 export default Review;
+
+const Container = styled.div`
+  width: 100%;
+  padding: 20px 50px;
+  height: 100%;
+  display: grid;
+  grid-template-rows: 60px calc(100% - 120px);
+  position: relative;
+  overflow: hidden;
+`;
+
+const ToolBar = styled.div`
+  padding: 12px;
+  border-radius: 8px;
+  width: 100%;
+  display: grid;
+  align-items: center;
+  grid-template-columns: 130px auto 130px;
+  grid-column-gap: 16px;
+`;

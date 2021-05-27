@@ -241,7 +241,7 @@ export const AnnotationsTable = ({
                     <VerticalLine />
                     <AcceptBtn
                       type="primary"
-                      icon="Check"
+                      icon="ThumbsUp"
                       status={annotation.status}
                       aria-label="verify annotation"
                       onClick={() => {
@@ -255,7 +255,7 @@ export const AnnotationsTable = ({
                     </AcceptBtn>
                     <RejectBtn
                       type="primary"
-                      icon="Close"
+                      icon="ThumbsDown"
                       status={annotation.status}
                       aria-label="reject annotation"
                       onClick={() => {
