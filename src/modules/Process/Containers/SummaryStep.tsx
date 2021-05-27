@@ -10,12 +10,12 @@ import { selectAllFiles } from 'src/modules/Common/filesSlice';
 import styled from 'styled-components';
 
 import { annotationsById } from 'src/modules/Review/previewSlice';
-import FileIcon from './assets/FileIcon.svg';
-import FileBland from './assets/FileBland.svg';
-import FileWithExifIcon from './assets/FileWithExifIcon.svg';
-import FileWithAnnotations from './assets/FileWithAnnotations.svg';
-import FileUnresolvedPerson from './assets/FileUnresolvedPerson.svg';
-import FileWasReviewed from './assets/FileWasReviewed.svg';
+import FileUploadedIcon from 'src/assets/FileUploadedIcon.svg';
+import FileBland from 'src/assets/FileBland.svg';
+import FileWithExifIcon from 'src/assets/FileWithExifIcon.svg';
+import FileWithAnnotations from 'src/assets/FileWithAnnotations.svg';
+import FileUnresolvedPerson from 'src/assets/FileUnresolvedPerson.svg';
+import FileWasReviewed from 'src/assets/FileWasReviewed.svg';
 
 const queryClient = new QueryClient();
 
@@ -150,7 +150,7 @@ export default function SummaryStep() {
                     { length: stats[statView].value },
                     (_, i: number) => (
                       <FileIconContainer key={`${statView}_${i}`}>
-                        <img src={FileIcon} alt="FileIcon" />
+                        <img src={FileUploadedIcon} alt="FileIcon" />
                       </FileIconContainer>
                     )
                   )}
