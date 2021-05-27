@@ -94,7 +94,7 @@ export class CogniteAuth {
               await this.getClient().authenticate();
             }
             const CDFToken = await this.getCDFToken();
-            const { accessToken, idToken, expiresOn } = CDFToken;
+            const { accessToken, idToken, expiresOn, account } = CDFToken;
 
             if (accessToken) {
               this.state.authResult = {
@@ -103,6 +103,11 @@ export class CogniteAuth {
                 authFlow,
                 expTime: expiresOn,
               };
+
+              const email = account?.username.includes('@')
+                ? account.username
+                : undefined;
+              this.state.email = email;
               this.state.project = project;
             }
 
@@ -125,6 +130,12 @@ export class CogniteAuth {
           });
           this.state.authenticated = await this.getClient().authenticate();
           const accessToken = await this.getClient().getCDFToken();
+          const status = await this.getClient().login.status();
+
+          if (status) {
+            this.state.email = status.user;
+          }
+
           if (accessToken) {
             this.state.authResult = {
               accessToken,

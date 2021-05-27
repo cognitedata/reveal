@@ -17,6 +17,7 @@ jest.mock('@cognite/sdk', () => {
           status: () => {
             return {
               project: 'test',
+              user: 'test@email.com',
             };
           },
         },
@@ -94,6 +95,28 @@ describe('CogniteAuth', () => {
     });
   });
 
+  describe('AZURE_AD', () => {
+    beforeEach(() => {
+      client = new CogniteClient({ appId: 'ad-test' });
+      auth = new CogniteAuth(client, {
+        appName: 'test-ad-app',
+        flow: 'AZURE_AD',
+      });
+    });
+
+    test('AZURE_AD flow - initial state - loginAndAuthIfNeeded', async () => {
+      await auth.loginAndAuthIfNeeded({
+        flow: 'AZURE_AD',
+        project: 'test-project',
+      });
+      expect(auth.state).toMatchObject({
+        authenticated: false,
+        error: false,
+        initializing: false,
+      });
+    });
+  });
+
   describe('COGNITE_AUTH', () => {
     beforeEach(() => {
       client = new CogniteClient({ appId: 'test' });
@@ -122,6 +145,7 @@ describe('CogniteAuth', () => {
         error: false,
         initializing: false,
         project: 'test-project',
+        email: 'test@email.com',
         authResult: {
           authFlow: 'COGNITE_AUTH',
           accessToken: 'test-accessToken',

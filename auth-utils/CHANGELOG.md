@@ -1,3 +1,7 @@
+## 1.0.5 May 27 2021
+
+- Set user email when logging in
+
 ## 1.0.4 May 21 2021
 
 - Always create new client for FAKE_IDP flow
