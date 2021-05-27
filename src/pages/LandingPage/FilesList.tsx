@@ -103,7 +103,7 @@ export default function FilesList(props: FilesListProps) {
   };
   const onFileView = (file: FileInfo): void => {
     const fileId = file.id ?? file.externalId;
-    history.push(createLink(`/explore/file/${fileId}`));
+    window.open(createLink(`/explore/file/${fileId}`), '_blank');
   };
 
   const interactiveColumns = getColumns(
