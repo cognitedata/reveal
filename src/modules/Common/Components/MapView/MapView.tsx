@@ -1,3 +1,4 @@
+/* eslint-disable @cognite/no-number-z-index */
 import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
 import ReactMapboxGl, { Layer, Feature, Popup } from 'react-mapbox-gl';
@@ -10,15 +11,18 @@ import { MapFileTable } from './MapFileTable';
 import { TableDataItem } from '../../types';
 import { FileExplorerTableProps } from '../FileTable/types';
 
+// should be defined outside MapView to avoid re-rendering
 const Mapbox = ReactMapboxGl({
   minZoom: 1,
   maxZoom: 30,
   accessToken: MAPBOX_TOKEN,
   attributionControl: false,
+  trackResize: true,
 });
 
 export const MapView = (props: FileExplorerTableProps) => {
   const [selectedFileOnMap, setSelectedFileOnMap] = useState<ResultData>();
+  const [popupVisible, setPopupVisible] = useState<boolean>(true);
   const [mapActive, setMapActive] = useState<boolean>(true);
   const [center, setCenter] = useState<[number, number]>();
   const [zoom] = useState<[number] | undefined>([2]);
@@ -43,13 +47,22 @@ export const MapView = (props: FileExplorerTableProps) => {
   };
 
   const circleLayout: MapboxGL.CircleLayout = { visibility: 'visible' };
-  const circlePaint: MapboxGL.CirclePaint = {
-    'circle-color': mapActive ? '#C844DB' : 'grey',
+  const pinStyle = {
     'circle-radius': 7.5,
     'circle-stroke-color': 'white',
     'circle-stroke-width': 1,
     'circle-color-transition': { duration: 0 },
   };
+  const circlePaint: MapboxGL.CirclePaint = {
+    'circle-color': mapActive ? '#C844DB' : 'grey',
+    ...pinStyle,
+  };
+
+  const circlePaintSelected: MapboxGL.CirclePaint = {
+    'circle-color': '#4A67FB',
+    ...pinStyle,
+  };
+
   const features = Object.assign(
     {},
     ...selectedFiles
@@ -74,13 +87,26 @@ export const MapView = (props: FileExplorerTableProps) => {
     if (item) props.onRowClick(item, false);
   };
 
+  // set popup visibility based on whether the selected file is within map bounds or not
+  const handleZoomAndDrag = (map: MapboxGL.Map, _: MapboxGL.EventData) => {
+    if (selectedFileOnMap) {
+      const coords = features[selectedFileOnMap.id.toString()];
+      const bounds = map.getBounds();
+      const isWhithin = bounds.contains(coords);
+      if (isWhithin && !popupVisible) {
+        setPopupVisible(true);
+      } else if (!isWhithin && popupVisible) {
+        setPopupVisible(false);
+      }
+    }
+  };
+
   return (
     <Container>
       <div
         style={{
           width: '400px',
-          paddingRight: '20px', // eslint-disable-next-line  @cognite/no-number-z-index
-          zIndex: 1,
+          paddingRight: '20px',
         }}
       >
         <MapFileTable
@@ -106,37 +132,51 @@ export const MapView = (props: FileExplorerTableProps) => {
           zoom={zoom}
           containerStyle={mapStyle}
           flyToOptions={flyToOptions}
+          movingMethod="easeTo"
           onDrag={handleOnDrag}
           onClick={handleOnDrag}
+          onZoom={handleZoomAndDrag}
         >
           <Layer type="circle" layout={circleLayout} paint={circlePaint}>
-            {Object.keys(features).map((f, _) => (
-              <Feature
-                key={f}
-                coordinates={features[f]}
-                onClick={() => handleOnClick(+f)}
-              />
-            ))}
+            {Object.keys(features)
+              .filter((f, _) => f !== selectedFileOnMap?.id.toString())
+              .map((f, _) => (
+                <Feature
+                  key={f}
+                  coordinates={features[f]}
+                  onClick={() => handleOnClick(+f)}
+                />
+              ))}
           </Layer>
-          {selectedFileOnMap ? (
-            <Popup
-              key={selectedFileOnMap.id}
-              coordinates={features[selectedFileOnMap.id.toString()]}
-              anchor="bottom"
-              offset={[0, -10]}
-              style={{
-                position: 'fixed',
-              }}
-            >
-              <MapPopup
-                item={selectedFiles.find(
-                  (element: TableDataItem) =>
-                    element.id === selectedFileOnMap.id
-                )}
-              />
-            </Popup>
-          ) : (
-            <div />
+          {selectedFileOnMap && (
+            <>
+              <Layer
+                type="circle"
+                layout={circleLayout}
+                paint={circlePaintSelected}
+              >
+                <Feature
+                  key={selectedFileOnMap.id}
+                  coordinates={features[selectedFileOnMap.id.toString()]}
+                  onClick={() => handleOnClick(+selectedFileOnMap.id)}
+                />
+              </Layer>
+              {popupVisible && (
+                <Popup
+                  key={selectedFileOnMap.id}
+                  coordinates={features[selectedFileOnMap.id.toString()]}
+                  anchor="bottom"
+                  offset={[0, -10]}
+                >
+                  <MapPopup
+                    item={selectedFiles.find(
+                      (element: TableDataItem) =>
+                        element.id === selectedFileOnMap.id
+                    )}
+                  />
+                </Popup>
+              )}
+            </>
           )}
         </Mapbox>
       </div>
@@ -146,6 +186,10 @@ export const MapView = (props: FileExplorerTableProps) => {
 
 const Container = styled.div`
   width: 100%;
-  height: 100%;
+  height: 99%;
   display: flex;
+
+  .mapboxgl-popup {
+    position: absolute;
+  }
 `;

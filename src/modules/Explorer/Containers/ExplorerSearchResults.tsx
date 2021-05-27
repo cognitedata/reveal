@@ -82,5 +82,4 @@ export const ExplorerSearchResults = ({
 const TableContainer = styled.div`
   width: 100%;
   height: calc(100% - 104px);
-  overflow: hidden;
 `;
