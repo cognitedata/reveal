@@ -50,9 +50,7 @@ export class CombinedNodeSet extends NodeSet {
    * @override
    */
   getIndexSet(): IndexSet {
-    if (this._cachedCombinedSet === undefined) {
-      this._cachedCombinedSet = this.createCachedCombinedSet();
-    }
+      this._cachedCombinedSet = this._cachedCombinedSet ?? this.createCachedCombinedSet();
     return this._cachedCombinedSet;
   }
 
