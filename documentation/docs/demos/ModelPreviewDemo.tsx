@@ -1,5 +1,5 @@
 /*!
- * Copyright 2020 Cognite AS
+ * Copyright 2021 Cognite AS
  */
 import React, { useEffect } from 'react';
 import { DemoProps } from '@site/src/components/DemoProps';
