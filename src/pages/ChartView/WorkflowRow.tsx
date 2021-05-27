@@ -70,12 +70,10 @@ export default function WorkflowRow({
   isSelected = false,
   mutate,
 }: Props) {
-  const { mutate: callFunction, isSuccess } = useCallFunction(
-    'simple_calc-master'
-  );
-
+  const { mutate: callFunction } = useCallFunction('simple_calc-master');
   const [isEditingName, setIsEditingName] = useState<boolean>(false);
   const [lastSuccessfulCall, setLastSuccessfulCall] = useState<Call>();
+  const [isCallInFlight, setIsCallInFlight] = useState<boolean>(false);
   const { id, enabled, color, name, calls, unit, preferredUnit } = workflow;
   const call = calls?.sort((c) => c.callDate)[0];
   const isWorkspaceMode = mode === 'workspace';
@@ -108,6 +106,7 @@ export default function WorkflowRow({
   );
 
   const runComputation = useCallback(() => {
+    setIsCallInFlight(true);
     callFunction(
       {
         data: { computation_graph: computation },
@@ -116,13 +115,20 @@ export default function WorkflowRow({
         onSuccess(res) {
           setLastSuccessfulCall(res);
         },
+        onSettled() {
+          setIsCallInFlight(false);
+        },
       }
     );
   }, [computation, callFunction, setLastSuccessfulCall]);
 
   const currentCallStatus = useFunctionCall(call?.functionId!, call?.callId!);
 
-  useEffect(() => {
+  const handleRetries = useCallback(() => {
+    if (isCallInFlight) {
+      return;
+    }
+
     if (!call) {
       return;
     }
@@ -132,15 +138,16 @@ export default function WorkflowRow({
     }
 
     if (
-      !['Failed', 'Timeout'].includes(currentCallStatus?.data?.status || '')
+      currentCallStatus.data?.status &&
+      !['Failed', 'Timeout'].includes(currentCallStatus.data.status)
     ) {
       return;
     }
 
     runComputation();
-  }, [call, currentCallStatus, runComputation]);
+  }, [call, currentCallStatus, runComputation, isCallInFlight]);
 
-  useEffect(() => {
+  const handleChanges = useCallback(() => {
     if (!computation) {
       return;
     }
@@ -151,7 +158,7 @@ export default function WorkflowRow({
     runComputation();
   }, [computation, runComputation, call]);
 
-  useEffect(() => {
+  const handleCallUpdates = useCallback(() => {
     if (!computation) {
       return;
     }
@@ -173,15 +180,11 @@ export default function WorkflowRow({
         calls: [newCall],
       })
     );
-  }, [
-    chart,
-    workflow.id,
-    isSuccess,
-    mutate,
-    computation,
-    lastSuccessfulCall,
-    call,
-  ]);
+  }, [chart, workflow.id, mutate, computation, lastSuccessfulCall, call]);
+
+  useEffect(handleRetries, [handleRetries]);
+  useEffect(handleChanges, [handleChanges]);
+  useEffect(handleCallUpdates, [handleCallUpdates]);
 
   const inputUnitOption = units.find(
     (unitOption) => unitOption.value === unit?.toLowerCase()
