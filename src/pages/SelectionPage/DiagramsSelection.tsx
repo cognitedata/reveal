@@ -1,8 +1,12 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { Filter } from 'modules/sdk-builder/types';
+import {
+  loadWorkflowDiagrams,
+  getActiveWorkflowItems,
+} from 'modules/workflows';
 import { Flex, PageTitle } from 'components/Common';
-import { getActiveWorkflowItems } from 'modules/workflows';
+import { useActiveWorkflow } from 'hooks';
 import SelectionBar from './components/SelectionBar';
 import SelectionTable from './components/SelectionTable';
 
@@ -16,6 +20,8 @@ type SelectionProps = {
 };
 
 export default function DiagramsSelection(props: SelectionProps): JSX.Element {
+  const dispatch = useDispatch();
+  const { workflowId } = useActiveWorkflow();
   const {
     filter,
     isSelectAll,
@@ -24,15 +30,47 @@ export default function DiagramsSelection(props: SelectionProps): JSX.Element {
     setSelectAll,
     setSelectedRowKeys,
   } = props;
+  const [diagramToContextualizeId, setDiagramToContextualizeId] = useState();
+  const [
+    diagramToContextualizeLoaded,
+    setDiagramToContextualizeLoaded,
+  ] = useState(false);
   const { diagrams = undefined } = useSelector(getActiveWorkflowItems);
-  const isParticularDiagramEdited =
-    diagrams &&
-    diagrams.type === 'files' &&
-    diagrams.endpoint === 'retrieve' &&
-    diagrams.filter.length === 1;
-  const editedDiagramId = isParticularDiagramEdited
-    ? diagrams?.filter?.[0]?.id
-    : undefined;
+
+  const fetchUserSelectedDiagram = () => {
+    const isParticularDiagramEdited =
+      diagrams &&
+      diagrams.type === 'files' &&
+      diagrams.endpoint === 'retrieve' &&
+      diagrams.filter.length === 1;
+    if (isParticularDiagramEdited && !diagramToContextualizeLoaded) {
+      setDiagramToContextualizeId(diagrams?.filter?.[0]?.id);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserSelectedDiagram();
+    // we want this to happen only on mount
+    // otherwise the first selected file will be treated as "edited" one
+    // and be shifted to beginning of the page for no reason
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (
+      workflowId &&
+      diagramToContextualizeId &&
+      !diagramToContextualizeLoaded
+    ) {
+      dispatch(loadWorkflowDiagrams({ workflowId, loadAll: true }));
+      setDiagramToContextualizeLoaded(true);
+    }
+  }, [
+    dispatch,
+    workflowId,
+    diagramToContextualizeId,
+    diagramToContextualizeLoaded,
+  ]);
 
   return (
     <Flex column style={{ paddingBottom: '50px' }}>
@@ -51,7 +89,7 @@ export default function DiagramsSelection(props: SelectionProps): JSX.Element {
         selectedRowKeys={selectedRowKeys}
         setSelectAll={setSelectAll}
         setSelectedRowKeys={setSelectedRowKeys}
-        editedDiagramId={editedDiagramId}
+        diagramToContextualizeId={diagramToContextualizeId}
       />
     </Flex>
   );

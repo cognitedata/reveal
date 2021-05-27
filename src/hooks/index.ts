@@ -4,3 +4,4 @@ export * from './useActiveWorkflow';
 export * from './useAnnotationsForFiles';
 export * from './useAnnotatedFiles';
 export * from './usePreviousSelection';
+export * from './useItems';

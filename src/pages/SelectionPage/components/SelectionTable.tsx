@@ -5,11 +5,8 @@ import { Asset, FileInfo } from '@cognite/sdk';
 import { Tooltip } from '@cognite/cogs.js';
 import isEqual from 'lodash/isEqual';
 import { ResourceType, Filter } from 'modules/sdk-builder/types';
-import { usePrevious } from 'hooks';
-import {
-  searchItemSelector,
-  searchCountSelector,
-} from 'pages/SelectionPage/selectors';
+import { usePrevious, useItemsAndFetching, Item } from 'hooks';
+import { searchCountSelector } from 'pages/SelectionPage/selectors';
 import { Flex } from 'components/Common';
 import { getColumns } from './columns';
 
@@ -20,7 +17,7 @@ type Props = {
   selectedRowKeys: number[];
   setSelectAll: (isSelectAll: boolean) => void;
   setSelectedRowKeys: (selectedRowKeys: number[]) => void;
-  editedDiagramId?: number;
+  diagramToContextualizeId?: number;
 };
 
 export default function SelectionTable(props: Props): JSX.Element {
@@ -31,18 +28,23 @@ export default function SelectionTable(props: Props): JSX.Element {
     selectedRowKeys,
     setSelectAll,
     setSelectedRowKeys,
-    editedDiagramId,
+    diagramToContextualizeId,
   } = props;
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [canSelectAll, setCanSelectAll] = useState(true);
-
-  const { items, fetching } = useSelector(searchItemSelector)(type, filter);
-
   const count = useSelector(searchCountSelector(type, filter));
   const prevIsSelectAll = usePrevious(isSelectAll);
   const prevFilter = usePrevious(filter);
   const isDataEmpty = !count;
+
+  const shouldFilterUpdate = !!prevFilter && !isEqual(prevFilter, filter);
+
+  const { items, fetching } = useItemsAndFetching(
+    type,
+    filter,
+    diagramToContextualizeId
+  );
 
   const onPaginationChange = (newPage: number, newPageSize?: number) => {
     setPage(newPage);
@@ -79,41 +81,25 @@ export default function SelectionTable(props: Props): JSX.Element {
 
   useEffect(() => {
     if (isSelectAll) {
-      setSelectedRowKeys(items.map((item) => item.id));
+      setSelectedRowKeys(items.map((item: Item) => item.id));
     } else if (prevIsSelectAll && !!prevIsSelectAll) setSelectedRowKeys([]);
   }, [items, prevIsSelectAll, isSelectAll, setSelectedRowKeys]);
 
   useEffect(() => {
-    const shouldFilterUpdate = !!prevFilter && !isEqual(prevFilter, filter);
-    if (shouldFilterUpdate) {
-      setSelectAll(false);
-      setSelectedRowKeys([]);
-      setCanSelectAll(!filter.search);
-    }
+    if (!shouldFilterUpdate) return;
+    setSelectAll(false);
+    setSelectedRowKeys([]);
+    setCanSelectAll(!filter.search);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filter, prevFilter]);
-
-  const dataSource = () => {
-    const mappedItems = items.map((item: any) => ({ ...item }));
-    // if we contextualize a particular file, we want it to appear first in table for visibility
-    if (editedDiagramId) {
-      const editedDiagram = mappedItems.find(
-        (item) => item.id === editedDiagramId
-      );
-      const allOtherDiagrams = mappedItems.filter(
-        (item) => item.id !== editedDiagramId
-      );
-      return [editedDiagram, ...allOtherDiagrams];
-    }
-    return mappedItems;
-  };
+  }, [shouldFilterUpdate]);
 
   return (
     <Flex row style={{ width: '100%' }}>
       <Table
         // @ts-ignore
         columns={getColumns(type)}
-        dataSource={dataSource()}
+        // @ts-ignore
+        dataSource={items}
         loading={fetching}
         rowKey="id"
         rowSelection={{

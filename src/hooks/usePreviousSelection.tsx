@@ -59,6 +59,7 @@ export const usePreviousSelection = (
   };
 
   useEffect(() => {
+    if (previousSelectionLoaded) return;
     if (isNewWorkflow()) setPreviousSelectionLoaded(true);
     else startLoadingPreviousSelection();
     // eslint-disable-next-line react-hooks/exhaustive-deps

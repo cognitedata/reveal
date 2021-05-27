@@ -26,21 +26,7 @@ export const searchItemSelector = createSelector(
     type: ResourceType,
     filter: Filter
   ) => {
-    if (filter.search) {
-      return getItemsSearch(type)(filter) as {
-        fetching: boolean;
-        items: {
-          id: number;
-          name: string;
-        }[];
-      };
-    }
-    return getItemsList(type)(filter, false) as {
-      fetching: boolean;
-      items: {
-        id: number;
-        name: string;
-      }[];
-    };
+    if (filter.search) return getItemsSearch(type)(filter);
+    return getItemsList(type)(filter, false);
   }
 );
