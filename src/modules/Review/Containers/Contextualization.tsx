@@ -1,71 +1,32 @@
+/* eslint-disable @cognite/no-number-z-index */
 import React from 'react';
-import { Button, Title } from '@cognite/cogs.js';
+import { Button, Icon, PrimaryTooltip } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { AnnotationsTable } from 'src/modules/Review/Components/AnnotationsTable/AnnotationsTable';
 import {
-  selectAnnotationsByFileIdModelTypes,
   setImagePreviewEditState,
   showAnnotationDrawer,
+  VisionAnnotationState,
 } from 'src/modules/Review/previewSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { AnnotationDrawerMode } from 'src/utils/AnnotationUtils';
 import { RootState } from 'src/store/rootReducer';
 import { VisionAPIType } from 'src/api/types';
 import { ImagePreviewEditMode } from 'src/constants/enums/ImagePreviewEditMode';
+import { FileInfo } from '@cognite/cdf-sdk-singleton';
 
-const Container = styled.div`
-  height: 100%;
-  width: 100%;
-  display: grid;
-  grid-row-gap: 15px;
-  grid-template-rows: auto auto calc(100% - 113px);
-  padding-top: 15px;
-  box-sizing: border-box;
-`;
+type editContextType = {
+  editMode: boolean;
+  tagAnnotations: VisionAnnotationState[];
+  gdprAndTextAndObjectAnnotations: VisionAnnotationState[];
+};
 
-const TitleRow = styled.div``;
-
-// const ModelSelectContainer = styled.div`
-//   grid-template-columns: auto 200px;
-//   column-gap: 10px;
-// `;
-//
-// const ModelTitle = styled.p`
-//   margin-bottom: 5px;
-//   margin-left: 5px;
-// `;
-//
-// const SelectContainer = styled.div`
-//   padding-left: 5px;
-// `;
-
-export const Contextualization = ({ fileId }: { fileId: string }) => {
+export const EditContextualization = ({
+  editMode,
+  tagAnnotations,
+  gdprAndTextAndObjectAnnotations,
+}: editContextType) => {
   const dispatch = useDispatch();
-
-  const selectedAnnotationIds = useSelector(
-    (state: RootState) => state.previewSlice.selectedAnnotations
-  );
-
-  const tagAnnotations = useSelector(({ previewSlice }: RootState) =>
-    selectAnnotationsByFileIdModelTypes(previewSlice, fileId, [
-      VisionAPIType.TagDetection,
-    ])
-  );
-
-  const gdprAndTextAndObjectAnnotations = useSelector(
-    ({ previewSlice }: RootState) =>
-      selectAnnotationsByFileIdModelTypes(previewSlice, fileId, [
-        VisionAPIType.OCR,
-        VisionAPIType.ObjectDetection,
-      ])
-  );
-
-  const editMode = useSelector(
-    (state: RootState) =>
-      state.previewSlice.imagePreview.editable ===
-      ImagePreviewEditMode.Modifiable
-  );
-
   const handleAddAnnotation = () => {
     dispatch(showAnnotationDrawer(AnnotationDrawerMode.AddAnnotation));
   };
@@ -83,74 +44,122 @@ export const Contextualization = ({ fileId }: { fileId: string }) => {
   };
 
   return (
+    <EditContainer>
+      <StyledButton type="primary" icon="Edit" onClick={handleAddAnnotation}>
+        Add Annotations
+      </StyledButton>
+      {editMode ? (
+        <StyledButton
+          type="secondary"
+          icon="Upload"
+          onClick={handleEditPolygon}
+        >
+          Finish Editing
+        </StyledButton>
+      ) : (
+        <StyledButton
+          type="secondary"
+          icon="Polygon"
+          disabled={
+            gdprAndTextAndObjectAnnotations.length + tagAnnotations.length === 0
+          }
+          onClick={handleEditPolygon}
+        >
+          Edit polygon
+        </StyledButton>
+      )}
+      <StyledButton
+        type="secondary"
+        icon="ResourceAssets"
+        onClick={handleLinkAsset}
+      >
+        Link to asset
+      </StyledButton>
+    </EditContainer>
+  );
+};
+
+export const Contextualization = (props: {
+  tagAnnotations?: VisionAnnotationState[];
+  gdprAndTextAndObjectAnnotations?: VisionAnnotationState[];
+  file: FileInfo;
+}) => {
+  const { file, tagAnnotations, gdprAndTextAndObjectAnnotations } = props;
+  const selectedAnnotationIds = useSelector(
+    (state: RootState) => state.previewSlice.selectedAnnotations
+  );
+
+  return (
     <Container>
       <TitleRow>
-        <Title level={3}>Detected Annotations</Title>
+        <NewTitle>{file?.name}</NewTitle>
       </TitleRow>
-      {/* <ModelTitle>ML training model</ModelTitle> */}
-      {/* <ModelSelectContainer> */}
-      {/*  <SelectContainer> */}
-      {/*    <Select */}
-      {/*      value="v1" */}
-      {/*      placeholder */}
-      {/*      options={[ */}
-      {/*        { value: 'v1', label: 'ML Corrosion v1' }, */}
-      {/*        { value: 'v2', label: 'ML Corrosion v2' }, */}
-      {/*      ]} */}
-      {/*    /> */}
-      {/*  </SelectContainer> */}
-      {/*  <Button type="tertiary" type="secondary" icon="Scan"> */}
-      {/*    Detect Annotations */}
-      {/*  </Button> */}
-      {/* </ModelSelectContainer> */}
-      <EditContainer>
-        <StyledButton type="primary" icon="Edit" onClick={handleAddAnnotation}>
-          Add Annotations
-        </StyledButton>
-        {editMode ? (
-          <StyledButton
-            type="secondary"
-            icon="Upload"
-            onClick={handleEditPolygon}
-          >
-            Finish Editing
-          </StyledButton>
-        ) : (
-          <StyledButton
-            type="secondary"
-            icon="Polygon"
-            disabled={
-              gdprAndTextAndObjectAnnotations.length + tagAnnotations.length ===
-              0
-            }
-            onClick={handleEditPolygon}
-          >
-            Edit polygon
-          </StyledButton>
-        )}
-        <StyledButton type="secondary" icon="Plus" onClick={handleLinkAsset}>
-          Link to asset
-        </StyledButton>
-      </EditContainer>
+      <div style={{ fontStyle: 'italic' }}>
+        {'Labeling detected annotations '}
+        <PrimaryTooltip
+          tooltipTitle="Labeling annotations"
+          tooltipText={`
+              Pressing True or False will label the predictions in order to improve the 
+              future quality of the annotation detection. Pressing False will not delete the annotation.
+              `}
+        >
+          <Icon type="Help" />
+        </PrimaryTooltip>
+      </div>
+
       <TableContainer>
-        <AnnotationsTable
-          annotations={tagAnnotations}
-          selectedAnnotationIds={selectedAnnotationIds.asset}
-          mode={VisionAPIType.TagDetection}
-        />
-        <AnnotationsTable
-          annotations={gdprAndTextAndObjectAnnotations}
-          selectedAnnotationIds={selectedAnnotationIds.other}
-          mode={VisionAPIType.ObjectDetection} // TODO: only used to check if it is a tagdetection (?), refactor
-        />
+        {tagAnnotations && (
+          <AnnotationsTable
+            annotations={tagAnnotations}
+            selectedAnnotationIds={selectedAnnotationIds.asset}
+            mode={VisionAPIType.TagDetection}
+          />
+        )}
+        {gdprAndTextAndObjectAnnotations && (
+          <AnnotationsTable
+            annotations={gdprAndTextAndObjectAnnotations}
+            selectedAnnotationIds={selectedAnnotationIds.other}
+            mode={VisionAPIType.ObjectDetection} // TODO: only used to check if it is a tagdetection (?), refactor
+          />
+        )}
       </TableContainer>
     </Container>
   );
 };
 
-const EditContainer = styled.div`
+const Container = styled.div`
+  height: 100%;
+  width: 100%;
+  display: grid;
+  grid-row-gap: 15px;
+  grid-template-rows: auto auto calc(100% - 113px);
+  padding-top: 15px;
+  box-sizing: border-box;
+`;
+
+// Todo: 290px hardcoded
+const NewTitle = styled.div`
+  font-family: Inter;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 20px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 290px;
+`;
+
+const TitleRow = styled.div`
   display: flex;
-  justify-content: flex-end;
+  flex: 0 5 auto;
+`;
+
+const EditContainer = styled.div`
+  position: absolute;
+  isolation: isolate;
+  z-index: 1;
+  transform: translate(120px, 8px);
 `;
 
 const StyledButton = styled(Button)`
