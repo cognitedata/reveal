@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
 import styled from 'styled-components/macro';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 
 import { Chart } from 'reducers/charts/types';
 import EditableText from 'components/EditableText';
@@ -24,9 +24,16 @@ const GridViewItem = ({
   isEditingName,
   cancelEdition,
 }: GridViewItemProps) => {
+  const history = useHistory();
+
   return (
     <Wrapper>
-      <Link to={`/${chart.id}`}>
+      <Link
+        to={{
+          pathname: `/${chart.id}`,
+          search: history.location.search,
+        }}
+      >
         <ImageWrapper>
           <ImageContent>
             <PlotlyChart chartId={chart.id} isPreview />
