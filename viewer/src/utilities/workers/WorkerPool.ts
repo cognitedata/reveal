@@ -42,7 +42,9 @@ export class WorkerPool {
       this.workerList.push(newWorker);
     }
 
-    checkWorkerVersion(this.workerList[0].worker).catch(console.error);
+    if (process.env.NODE_ENV !== 'test') {
+      checkWorkerVersion(this.workerList[0].worker).catch(console.error);
+    }
 
     if (this.workerObjUrl) {
       URL.revokeObjectURL(this.workerObjUrl);
@@ -93,11 +95,14 @@ export class WorkerPool {
 
 export async function checkWorkerVersion(worker: RevealParserWorker) {
   let actualWorkerVersion: string;
-  if ('getVersion' in worker) {
-    // @ts-ignore TS knows when there is no getVersion and forbids to check it (if 1.1.0 is installed)
+  try {
     actualWorkerVersion = await worker.getVersion();
-  } else {
-    actualWorkerVersion = '1.1.0'; // versions below 1.1.1 do not have getVersion method
+  } catch (e) {
+    // versions below 1.1.1 do not have getVersion method
+    // notice also you cannot use 'in' operator on worker object
+    // because it's merely a proxy-wrapper over postmessage('methodname')
+    // so `'getVersion' in worker` - will be always false
+    actualWorkerVersion = '1.1.0';
   }
   const minWorkerVersion = process.env.WORKER_VERSION;
 

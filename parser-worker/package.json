@@ -1,6 +1,6 @@
 {
   "name": "@cognite/reveal-parser-worker",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Parser worker for reveal viewer",
   "main": "./dist/local/reveal.parser.worker.js",
   "types": "./dist/local/index.d.ts",
@@ -34,7 +34,7 @@
     "bump:commit": "cross-var git commit -am \"chore(parser-worker): bump version $npm_package_version\"",
     "bump:tag": "cross-var git tag $npm_package_name@$npm_package_version",
     "bump:push": "git push -u origin head && git push --tags",
-    "release": "yarn build:prod && npm publish --non-interactive"
+    "release": "yarn build:prod && yarn publish --non-interactive"
   },
   "author": "Lars Moastuen <lars.moastuen@cognite.com>",
   "contributors": [
@@ -44,7 +44,7 @@
   ],
   "license": "Apache-2.0",
   "dependencies": {
-    "comlink": "^4.3.0"
+    "comlink": "4.3.1"
   },
   "devDependencies": {
     "@google-cloud/storage": "^5.7.3",
