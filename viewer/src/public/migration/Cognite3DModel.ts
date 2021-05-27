@@ -7,7 +7,7 @@ import { CogniteClient, CogniteInternalId } from '@cognite/sdk';
 import { NodeIdAndTreeIndexMaps } from './NodeIdAndTreeIndexMaps';
 import { CameraConfiguration } from './types';
 import { CogniteModelBase } from './CogniteModelBase';
-import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
+
 import { NumericRange, Box3, toThreeJsBox3 } from '../../utilities';
 import { CadNode } from '../../experimental';
 import { trackError } from '../../utilities/metrics';
@@ -242,34 +242,12 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
 
   /**
-   * @param _nodeId
-   * @param _subtreeSize
-   * @deprecated
-   * @throws NotSupportedInMigrationWrapperError.
-   */
-  getSubtreeNodeIds(_nodeId: number, _subtreeSize?: number): Promise<number[]> {
-    throw new NotSupportedInMigrationWrapperError('Use getSubtreeTreeIndices(treeIndex: number)');
-  }
-
-  /**
    * Get array of subtree tree indices.
    * @param treeIndex
    */
   async getSubtreeTreeIndices(treeIndex: number): Promise<number[]> {
     const treeIndices = await this.determineTreeIndices(treeIndex, true);
     return treeIndices.toArray();
-  }
-
-  /**
-   * @param _nodeId
-   * @param _box
-   * @deprecated Use {@link Cognite3DModel.getModelBoundingBox} or {@link Cognite3DModel.getBoundingBoxByTreeIndex}.
-   * @throws NotSupportedInMigrationWrapperError.
-   */
-  getBoundingBox(_nodeId?: number, _box?: THREE.Box3): THREE.Box3 {
-    throw new NotSupportedInMigrationWrapperError(
-      'Use getBoundingboxByTreeIndex(treeIndex: number), getBoundingBoxByNodeId(nodeId: number) or getModelBoundingBox()'
-    );
   }
 
   /**
@@ -391,15 +369,6 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
 
   /**
-   * @param _action
-   * @deprecated Use {@link Cognite3DModel.iterateNodesByTreeIndex} instead.
-   * @throws NotSupportedInMigrationWrapperError.
-   */
-  iterateNodes(_action: (nodeId: number, treeIndex?: number) => void): void {
-    throw new NotSupportedInMigrationWrapperError('Use iterateNodesByTreeIndex(action: (treeIndex: number) => void)');
-  }
-
-  /**
    * Iterates over all nodes in the model and applies the provided action to each node (identified by tree index).
    * The passed action is applied incrementally to avoid main thread blocking, meaning that the changes can be partially
    * applied until promise is resolved (iteration is done).
@@ -421,25 +390,6 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    */
   get nodeCount(): number {
     return this.cadModel.scene.maxTreeIndex + 1;
-  }
-
-  /**
-   * @param _nodeId
-   * @param _action
-   * @param _treeIndex
-   * @param _subtreeSize
-   * @deprecated Use {@link Cognite3DModel.iterateNodesByTreeIndex} instead.
-   * @throws NotSupportedInMigrationWrapperError.
-   */
-  iterateSubtree(
-    _nodeId: number,
-    _action: (nodeId: number, treeIndex?: number) => void,
-    _treeIndex?: number,
-    _subtreeSize?: number
-  ): Promise<boolean> {
-    throw new NotSupportedInMigrationWrapperError(
-      'Use iterateSubtreeByTreeIndex(treeIndex: number, action: (treeIndex: number) => void)'
-    );
   }
 
   /**
@@ -475,28 +425,9 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     transform: THREE.Matrix4,
     applyToChildren = true
   ): Promise<number> {
-    // Note! There's a lot of code duplication in this function. This is done because
-    // all our efforts into trying to share code here has reduced it's performance.
-    // Since performance is key for this function we've decided to duplicate code.
-    if (applyToChildren) {
-      const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
-      for (let idx = treeIndices.from; idx <= treeIndices.toInclusive; ++idx) {
-        this.nodeTransforms.set(idx, transform);
-      }
-      this.updateNodeStyle(treeIndices);
-      return treeIndices.count;
-    } else {
-      this.nodeTransforms.set(treeIndex, transform);
-      this.updateNodeStyle(treeIndex);
-      return 1;
-    }
-  }
-
-  /**
-   * @private
-   */
-  private updateNodeStyle(_treeIndices: NumericRange | number | number[]) {
-    throw new Error('Method not implemented.');
+    const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
+    this.nodeTransformProvider.setNodeTransform(treeIndices, transform);
+    return treeIndices.count;
   }
 
   /**
@@ -506,21 +437,9 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * @param applyToChildren
    */
   async resetNodeTransformByTreeIndex(treeIndex: number, applyToChildren = true): Promise<number> {
-    // Note! There's a lot of code duplication in this function. This is done because
-    // all our efforts into trying to share code here has reduced it's performance.
-    // Since performance is key for this function we've decided to duplicate code.
-    if (applyToChildren) {
-      const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
-      for (let idx = treeIndices.from; idx <= treeIndices.toInclusive; ++idx) {
-        this.nodeTransforms.delete(idx);
-      }
-      this.updateNodeStyle(treeIndices);
-      return treeIndices.count;
-    } else {
-      this.nodeTransforms.delete(treeIndex);
-      this.updateNodeStyle(treeIndex);
-      return 1;
-    }
+    const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
+    this.nodeTransformProvider.resetNodeTransform(treeIndices);
+    return treeIndices.count;
   }
 
   /**
@@ -539,7 +458,8 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   /**
    * Maps a single node ID to tree index. This is useful when you e.g. have a
    * node ID from an asset mapping and want to highlight the given asset using
-   * {@link mapNodeIdsToTreeIndices} is recommended for better performance when mapping multiple IDs.
+   * {@link mapNodeIdsToTreeIndices} is recommended for better performance when
+   * mapping multiple IDs.
    *
    * @param nodeId A Node ID to map to a tree index.
    * @returns TreeIndex of the provided node.

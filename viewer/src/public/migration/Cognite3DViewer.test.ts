@@ -58,11 +58,6 @@ describe('Cognite3DViewer', () => {
     jest.useRealTimers();
   });
 
-  test('constructor throws error when unsupported options are set', () => {
-    expect(() => new Cognite3DViewer({ sdk, renderer, _sectorCuller, enableCache: true })).toThrowError();
-    expect(() => new Cognite3DViewer({ sdk, renderer, _sectorCuller, viewCube: 'topleft' })).toThrowError();
-  });
-
   test('dispose disposes WebGL resources', () => {
     const disposeSpy = jest.spyOn(renderer, 'dispose');
     const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller });
