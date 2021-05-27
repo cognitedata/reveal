@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Body, DocumentIcon, Icon, Overline } from '@cognite/cogs.js';
 import { Asset, FileInfo as File } from '@cognite/sdk';
 import {
@@ -18,24 +18,7 @@ const FileListItem = ({
   isActive: boolean;
   onFileClick: () => void;
 }) => {
-  const [imageUrl, setImage] = useState<string | undefined>();
-  const { data, isLoading, isError } = useFileIcon(file);
-
-  useEffect(() => {
-    if (data) {
-      const arrayBufferView = new Uint8Array(data);
-      const blob = new Blob([arrayBufferView]);
-      setImage(URL.createObjectURL(blob));
-    }
-    return () => {
-      setImage((url) => {
-        if (url) {
-          URL.revokeObjectURL(url);
-        }
-        return undefined;
-      });
-    };
-  }, [data]);
+  const { data: imageUrl, isLoading, isError } = useFileIcon(file);
 
   const image = useMemo(() => {
     if (isFilePreviewable(file)) {
@@ -139,5 +122,6 @@ const ImagePreview = styled.div`
     object-fit: contain;
     width: 100%;
     height: 100%;
+    max-height: 300px;
   }
 `;
