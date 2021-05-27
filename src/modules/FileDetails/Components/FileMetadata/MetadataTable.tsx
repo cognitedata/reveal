@@ -130,6 +130,7 @@ export const MetaDataTable = (props: MetadataTableProps) => {
       </TitleHeader>
       <TableWrapper>
         <ReactBaseTable<MetadataItem>
+          key="ReactBaseTable"
           ref={setRef}
           columns={columns}
           maxHeight={Infinity}
