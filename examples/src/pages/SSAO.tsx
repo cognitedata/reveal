@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Cognite AS
+ * Copyright 2021 Cognite AS
  */
 
 import React, { useEffect, useRef } from 'react';
@@ -81,7 +81,7 @@ export function SSAO() {
       revealManager.update(camera);
 
       const renderOptions = defaultRenderOptions;
-      
+
       const updateEffect = () => {
         revealManager.renderOptions = renderOptions;
       };

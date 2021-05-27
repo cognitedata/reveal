@@ -1,5 +1,5 @@
 /*!
- * Copyright 2020 Cognite AS
+ * Copyright 2021 Cognite AS
  */
 
 import { InstancedMesh, InstancedMeshFile, ParseCtmResult, ParseSectorResult, SectorGeometry, TriangleMesh } from "./types";
