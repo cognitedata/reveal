@@ -1,5 +1,5 @@
 /*!
- * Copyright 2020 Cognite AS
+ * Copyright 2021 Cognite AS
  */
 
 import * as THREE from 'three';
@@ -11,7 +11,7 @@ export function SsaoTestPage() {
   return (
     <TestViewer
       modifyTestEnv={({revealManager }: TestEnvCad) => {
-        
+
         revealManager.renderOptions = defaultRenderOptions;
 
         return {
