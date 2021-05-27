@@ -75,18 +75,6 @@ export interface Cognite3DViewerOptions {
    */
   automaticControlsSensitivity?: boolean;
 
-  /** @deprecated And ignored. */
-  highlightColor?: THREE.Color;
-
-  /** @deprecated And ignored. */
-  noBackground?: boolean;
-
-  /** @deprecated And not supported. */
-  viewCube?: 'topleft' | 'topright' | 'bottomleft' | 'bottomright';
-
-  /** @deprecated And not supported. */
-  enableCache?: boolean;
-
   /** Renderer used to visualize model (optional). */
   renderer?: THREE.WebGLRenderer;
 

@@ -186,13 +186,6 @@ export class Cognite3DViewer {
   }
 
   constructor(options: Cognite3DViewerOptions) {
-    if (options.enableCache) {
-      throw new NotSupportedInMigrationWrapperError('Cache is not supported');
-    }
-    if (options.viewCube) {
-      throw new NotSupportedInMigrationWrapperError('ViewCube is not supported');
-    }
-
     this._renderer = options.renderer || new THREE.WebGLRenderer();
     this._automaticNearFarPlane = options.automaticCameraNearFar !== undefined ? options.automaticCameraNearFar : true;
     this._automaticControlsSensitivity =
@@ -1120,14 +1113,6 @@ export class Cognite3DViewer {
 
     intersections.sort((a, b) => a.distanceToCamera - b.distanceToCamera);
     return intersections.length > 0 ? intersections[0] : null;
-  }
-
-  /**
-   * @deprecated There is no cache anymore.
-   * @throws {@link NotSupportedInMigrationWrapperError}
-   */
-  clearCache(): void {
-    throw new NotSupportedInMigrationWrapperError('Cache is not supported');
   }
 
   private getModels(type: 'cad'): Cognite3DModel[];
