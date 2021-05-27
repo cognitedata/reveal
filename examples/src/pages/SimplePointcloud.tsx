@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Cognite AS
+ * Copyright 2021 Cognite AS
  */
 
 import React, { useEffect, useRef, useState } from 'react'
@@ -100,7 +100,7 @@ export function SimplePointcloud() {
         throw new Error(
           'Need to provide either project & model OR modelUrl as query parameters'
         );
-      }      
+      }
       scene.add(pointCloudNode);
       revealManager.on('loadingStateChanged', setLoadingState);
 
