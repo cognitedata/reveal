@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Cognite AS
+ * Copyright 2021 Cognite AS
  */
 
 import React, { useEffect, useRef } from 'react';
@@ -86,7 +86,7 @@ export function Migration() {
       const progress = (itemsLoaded: number, itemsRequested: number, itemsCulled: number) => {
         guiState.debug.loadedSectors.statistics.culledCount = itemsCulled;
         console.log(`loaded ${itemsLoaded}/${itemsRequested} (culled: ${itemsCulled})`);
-        
+
       };
       // Prepare viewer
       viewer = new Cognite3DViewer({
@@ -131,9 +131,9 @@ export function Migration() {
       const guiState = {
         modelId: 0,
         revisionId: 0,
-        geometryFilter: 
-          geometryFilter !== undefined 
-          ? geometryFilter 
+        geometryFilter:
+          geometryFilter !== undefined
+          ? geometryFilter
           : { center: new THREE.Vector3(), size: new THREE.Vector3() },
         antiAliasing: urlParams.get('antialias'),
         ssaoQuality: urlParams.get('ssao'),
@@ -268,7 +268,7 @@ export function Migration() {
       debugStatsGui.add(guiState.debug.stats, 'geometries').name('Geometries');
       debugStatsGui.add(guiState.debug.stats, 'textures').name('Textures');
       debugStatsGui.add(guiState.debug.stats, 'renderTime').name('Ms/frame');
-      
+
       viewer.on('sceneRendered', sceneRenderedEventArgs => {
         guiState.debug.stats.drawCalls = sceneRenderedEventArgs.renderer.info.render.calls;
         guiState.debug.stats.points = sceneRenderedEventArgs.renderer.info.render.points;
@@ -294,7 +294,7 @@ export function Migration() {
       debugSectorsGui.add(guiState.debug.loadedSectors.statistics, 'forceDetailedSectorCount').name('# force detailed sectors');
       debugSectorsGui.add(guiState.debug.loadedSectors.statistics, 'culledCount').name('# culled sectors');
       debugSectorsGui.add(guiState.debug.loadedSectors.statistics, 'downloadSizeMb').name('Download size (Mb)');
-      
+
       setInterval(() => {
         let insideSectors = 0;
         let maxInsideDepth = -1;
@@ -353,7 +353,7 @@ export function Migration() {
       });
 
       const slicing = gui.addFolder('Slicing');
-      // X 
+      // X
       slicing
         .add(slicingParams, 'enabledX')
         .name('X')
@@ -539,15 +539,15 @@ export function Migration() {
           planes.push(new THREE.Plane().setFromNormalAndCoplanarPoint(normal, point));
         }
         viewer.setSlicingPlanes(planes);
-      }     
+      }
     }
-    
+
 
     function showBoundsForAllGeometries(model: Cognite3DModel) {
       const boxes = new THREE.Group();
       model.getModelTransformation(boxes.matrix);
       boxes.matrixWorldNeedsUpdate = true;
-      
+
       model.traverse(x => {
         if (x instanceof THREE.Mesh) {
           const mesh = x;
