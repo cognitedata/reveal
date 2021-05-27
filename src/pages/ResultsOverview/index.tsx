@@ -113,7 +113,7 @@ export default function ResultsOverview(props: Props) {
   ) : (
     <Flex column style={{ width: '100%' }}>
       <Flex align style={{ width: '100%', justifyContent: 'space-between' }}>
-        <PageTitle>Review the contextualized P&IDs</PageTitle>
+        <PageTitle>Review the created interactive diagrams</PageTitle>
         <Tooltip content={convertToSvgTooltip()} placement="left">
           <Button
             type="primary"

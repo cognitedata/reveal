@@ -82,7 +82,7 @@ const ParsingStatus = (): JSX.Element => (
       text=""
       className="cogs-badge"
     />
-    <span>Parsing P&ID...</span>
+    <span>Parsing diagrams...</span>
   </Flex>
 );
 

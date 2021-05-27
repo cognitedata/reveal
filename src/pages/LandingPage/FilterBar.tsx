@@ -40,7 +40,7 @@ export default function FilterBar({
         <LoadMorePanel />
       </Flex>
       <IconButton type="primary" icon="Document" onClick={onContextualizeNew}>
-        Contextualize new files
+        Create new interactive diagrams
       </IconButton>
     </Flex>
   );

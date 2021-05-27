@@ -8,7 +8,7 @@ export const paths: { [key: string]: PathData } = {
     isNotStep: true,
     path: (tenant: string) => `/${tenant}/${root}`,
     staticPath: staticRoot,
-    title: 'Engineering Diagrams Contextualization',
+    title: 'Interactive Engineering Diagrams',
   },
   diagramSelection: {
     path: (tenant: string, workflowId: string | number) =>
@@ -35,7 +35,7 @@ export const paths: { [key: string]: PathData } = {
     path: (tenant: string, workflowId: string | number) =>
       `/${tenant}/${root}/workflow/${workflowId}/config`,
     staticPath: `${staticRoot}/workflow/:workflowId/config`,
-    title: 'P&ID configuration',
+    title: 'Settings',
     workflowStepName: 'config',
   },
   reviewPage: {

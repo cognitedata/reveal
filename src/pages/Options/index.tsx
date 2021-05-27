@@ -35,7 +35,7 @@ export default function Options(props: Props) {
 
   return (
     <Flex column style={{ width: '100%' }}>
-      <PageTitle>P&ID options</PageTitle>
+      <PageTitle>Settings</PageTitle>
       <Flex column grow style={{ marginTop: '24px' }}>
         <Card style={{ marginRight: '8px ' }}>
           <Card.Meta
@@ -50,7 +50,7 @@ export default function Options(props: Props) {
                 Allow partial matches
               </Checkbox>
             }
-            description="Select to include matches where the P&ID tag names do not exactly match the asset list. 
+            description="Select to include matches where the tag names do not exactly match the asset list. 
             CDF finds matches by comparing similar characters, such as 0 and O, 8 and B. 
             Clear this option to only allow exact matches."
           />

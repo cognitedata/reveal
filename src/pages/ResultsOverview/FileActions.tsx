@@ -28,7 +28,13 @@ export default function FileActions({
   const canEditFiles = usePermissions('filesAcl', 'WRITE');
   const { data: annotations } = useAnnotations(file.id);
 
-  const { status: parsingJobStatus } = useParsingJob(Number(workflowId));
+  const { status: parsingJobStatus, failedFiles } = useParsingJob(
+    Number(workflowId)
+  );
+
+  const didFileFail = failedFiles?.find(
+    (failedFile) => failedFile.fileId === file?.id
+  );
 
   const jobFinished = parsingJobStatus === 'Completed';
 
@@ -57,21 +63,27 @@ export default function FileActions({
     if (file) {
       history.push(diagramPreview.path(tenant, workflowId, file.id));
     } else {
-      message.info('Please wait for the process to finish for this file.');
+      message.info('Please wait for the process to finish for this diagram.');
     }
+  };
+
+  const viewButtonLabel = () => {
+    if (!jobFinished) return 'Please wait for the diagram to finish parsing.';
+    if (didFileFail) return 'You cannot preview this diagram';
+    return undefined;
   };
 
   return (
     <Flex row>
       <Tooltip
         placement="bottom-end"
-        content="Please wait for the file to finish parsing."
+        content={viewButtonLabel()}
         onShow={onTooltipShow}
       >
         <Button
           icon="ArrowRight"
           onClick={onFileViewClick}
-          disabled={!jobFinished}
+          disabled={!jobFinished || Boolean(didFileFail)}
         >
           View
         </Button>
@@ -81,13 +93,13 @@ export default function FileActions({
           <Tooltip
             content={
               annotations.length > 0
-                ? 'Link all the matched assets to this file.'
-                : 'There is no annotations to be linked to this file.'
+                ? 'Link all the matched assets to this diagram.'
+                : 'There is no annotations to be linked to this diagram.'
             }
           >
             <Menu onClick={onLinkAssetsClick}>
               <Menu.Item key="link" disabled={!annotations?.length}>
-                Link assets to P&ID file
+                Link assets to diagrams
               </Menu.Item>
             </Menu>
           </Tooltip>

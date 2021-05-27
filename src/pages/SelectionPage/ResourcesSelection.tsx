@@ -1,6 +1,7 @@
 import React from 'react';
 import { Filter } from 'modules/sdk-builder/types';
 import { Flex, PageTitle } from 'components/Common';
+import { Colors } from '@cognite/cogs.js';
 import SelectionBar from './components/SelectionBar';
 import SelectionTable from './components/SelectionTable';
 
@@ -27,9 +28,17 @@ export default function ResourcesSelection(
     setSelectedRowKeys,
   } = props;
 
+  const targetLabel =
+    target === 'files' ? 'other engineering diagrams' : target;
+
   return (
     <Flex column style={{ paddingBottom: '50px' }}>
-      <PageTitle>Select target: {target} (optional)</PageTitle>
+      <PageTitle>
+        Link to {targetLabel}{' '}
+        <span style={{ color: Colors['greyscale-grey5'].hex() }}>
+          (optional)
+        </span>
+      </PageTitle>
       <SelectionBar
         type={target}
         filter={filter}

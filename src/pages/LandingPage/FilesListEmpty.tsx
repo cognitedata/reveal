@@ -34,10 +34,10 @@ export default function FilesListEmpty() {
     <Wrapper>
       <Graphic type="Documents" />
       <Title level={5} style={{ margin: '24px 0' }}>
-        No files have been contextualized yet!
+        No interactive diagrams have been created yet!
       </Title>
       <IconButton type="primary" icon="Document" onClick={onContextualizeNew}>
-        Contextualize new files
+        Create new interactive diagrams
       </IconButton>
     </Wrapper>
   );

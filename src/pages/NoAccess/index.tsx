@@ -19,7 +19,8 @@ export default function NoAccessPage(props: Props): JSX.Element {
       <Warning>
         <Icons.Warning />
         <div>
-          You have insufficient access rights to access P&ID Contextualization
+          You have insufficient access rights to access Interactive Engineering
+          Diagrams
         </div>
       </Warning>
       <Instructions>

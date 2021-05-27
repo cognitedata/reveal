@@ -223,7 +223,7 @@ export default function FileOverview(props: Props) {
           key="files"
           title={
             <>
-              <TabTitle>P&IDs</TabTitle>
+              <TabTitle>Diagrams</TabTitle>
               <Badge
                 text={counts.file}
                 background={Colors['greyscale-grey3'].hex()}

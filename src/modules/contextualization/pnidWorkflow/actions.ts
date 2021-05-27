@@ -20,7 +20,7 @@ export interface PnidParsingWorkflowStore {
 }
 
 /**
- * Starts the P&ID parsong workflow.
+ * Starts the diagram parsing workflow.
  * @param workflowId
  */
 export const startPnidParsingWorkflow = {

@@ -232,7 +232,7 @@ export const AssetDetailsAbstract = ({
             title={
               <div style={{ display: 'flex' }}>
                 <Icon type="Document" style={{ marginRight: '4px' }} />
-                <span>P&IDs</span>
+                <span>Diagrams</span>
               </div>
             }
             bordered={false}

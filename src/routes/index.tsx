@@ -50,7 +50,7 @@ export default function Routes() {
               path={landingPage.staticPath}
               render={() => (
                 <>
-                  <PageTitle title="P&ID Contextualization" />
+                  <PageTitle title="Interactive Engineering Diagrams" />
                   <LandingPage />
                 </>
               )}
@@ -60,7 +60,7 @@ export default function Routes() {
               path={diagramSelection.staticPath}
               render={() => (
                 <>
-                  <PageTitle title="P&ID Contextualization" />
+                  <PageTitle title="Interactive Engineering Diagrams" />
                   <Flex row style={{ width: '100%' }}>
                     <StepsList />
                     <SelectionPage
@@ -79,7 +79,7 @@ export default function Routes() {
               path={resourceSelectionAssets.staticPath}
               render={() => (
                 <>
-                  <PageTitle title="P&ID Contextualization" />
+                  <PageTitle title="Interactive Engineering Diagrams" />
                   <Flex row style={{ width: '100%' }}>
                     <StepsList />
                     <SelectionPage
@@ -96,7 +96,7 @@ export default function Routes() {
               path={resourceSelectionFiles.staticPath}
               render={() => (
                 <>
-                  <PageTitle title="P&ID Contextualization" />
+                  <PageTitle title="Interactive Engineering Diagrams" />
                   <Flex row style={{ width: '100%' }}>
                     <StepsList />
                     <SelectionPage
@@ -114,7 +114,7 @@ export default function Routes() {
               path={configPage.staticPath}
               render={() => (
                 <>
-                  <PageTitle title="P&ID Contextualization" />
+                  <PageTitle title="Interactive Engineering Diagrams" />
                   <Flex row style={{ width: '100%' }}>
                     <StepsList />
                     <Options step="config" />
@@ -127,7 +127,7 @@ export default function Routes() {
               path={reviewPage.staticPath}
               render={() => (
                 <>
-                  <PageTitle title="P&ID Contextualization" />
+                  <PageTitle title="Interactive Engineering Diagrams" />
                   <Flex row style={{ width: '100%' }}>
                     <StepsList />
                     <ResultsOverview step="review" />
@@ -140,7 +140,7 @@ export default function Routes() {
               path={diagramPreview.staticPath}
               render={() => (
                 <>
-                  <PageTitle title="P&ID Contextualization" />
+                  <PageTitle title="Interactive Engineering Diagrams" />
                   <Flex row style={{ width: '100%' }}>
                     <StepsList />
                     <FileOverview step="diagramPreview" />

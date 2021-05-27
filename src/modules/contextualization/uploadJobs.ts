@@ -119,7 +119,7 @@ export const startConvertFileToSvgJob = (
       return Promise.resolve(state.contextualization.uploadJobs[fileId].jobId);
     }
 
-    const timer = trackTimedUsage('Contextualization.PnidParsing.UploadJob', {
+    const timer = trackTimedUsage('ContextUiPnid.PnidParsing.UploadJob', {
       fileId,
     });
 
