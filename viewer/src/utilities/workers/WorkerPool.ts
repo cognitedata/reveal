@@ -43,7 +43,9 @@ export class WorkerPool {
       this.workerList.push(newWorker);
     }
 
-    checkWorkerVersion(this.workerList[0].worker).catch(console.error);
+    if (process.env.NODE_ENV !== 'test') {
+      checkWorkerVersion(this.workerList[0].worker).catch(console.error);
+    }
 
     if (this.workerObjUrl) {
       URL.revokeObjectURL(this.workerObjUrl);
