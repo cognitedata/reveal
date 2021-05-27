@@ -29,11 +29,17 @@ module.exports = env => {
 
   return {
     mode: development ? 'development' : 'production',
-    entry: {
-      index: './src/index.ts',
-      experimental: './src/experimental.ts',
-      tools: './src/tools.ts'
-    },
+    // Internals is not part of prod builds
+    entry: development
+      ? {
+          index: './src/index.ts',
+          tools: './src/tools.ts',
+          internals: './src/internals.ts'
+        }
+      : {
+          index: './src/index.ts',
+          tools: './src/tools.ts'
+        },
     target: 'web',
     resolve: {
       extensions: ['.tsx', '.ts', '.js'],

@@ -6,7 +6,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { CanvasWrapper, Loader } from '../components/styled'
 
 import * as THREE from 'three';
-import * as reveal from '@cognite/reveal/experimental';
+import * as reveal from '@cognite/reveal/internals';
 import { CogniteClient } from '@cognite/sdk';
 
 import CameraControls from 'camera-controls';
@@ -18,7 +18,7 @@ CameraControls.install({ THREE });
 
 function initializeGui(
   gui: GUI,
-  node: reveal.internal.PointCloudNode,
+  node: reveal.PointCloudNode,
   handleSettingsChangedCb: () => void
 ) {
   gui.add(node, 'pointBudget', 0, 20_000_000);
@@ -26,15 +26,15 @@ function initializeGui(
   gui.add(node, 'pointSize', 0, 10).onChange(handleSettingsChangedCb);
   gui
     .add(node, 'pointColorType', {
-      Rgb: reveal.internal.PotreePointColorType.Rgb,
-      Depth: reveal.internal.PotreePointColorType.Depth,
-      Height: reveal.internal.PotreePointColorType.Height,
-      PointIndex: reveal.internal.PotreePointColorType.PointIndex,
-      LevelOfDetail: reveal.internal.PotreePointColorType.LevelOfDetail,
-      Classification: reveal.internal.PotreePointColorType.Classification,
+      Rgb: reveal.PotreePointColorType.Rgb,
+      Depth: reveal.PotreePointColorType.Depth,
+      Height: reveal.PotreePointColorType.Height,
+      PointIndex: reveal.PotreePointColorType.PointIndex,
+      LevelOfDetail: reveal.PotreePointColorType.LevelOfDetail,
+      Classification: reveal.PotreePointColorType.Classification,
     })
     .onChange((valueAsString: string) => {
-      const value: reveal.internal.PotreePointColorType = parseInt(
+      const value: reveal.PotreePointColorType = parseInt(
         valueAsString,
         10
       );
@@ -43,11 +43,11 @@ function initializeGui(
     });
   gui
     .add(node, 'pointShape', {
-      Circle: reveal.internal.PotreePointShape.Circle,
-      Square: reveal.internal.PotreePointShape.Square,
+      Circle: reveal.PotreePointShape.Circle,
+      Square: reveal.PotreePointShape.Square,
     })
     .onChange((valueAsString: string) => {
-      const value: reveal.internal.PotreePointShape = parseInt(
+      const value: reveal.PotreePointShape = parseInt(
         valueAsString,
         10
       );
@@ -55,8 +55,8 @@ function initializeGui(
       handleSettingsChangedCb();
     });
   gui.add(node, 'pointSizeType', {
-    Adaptive: reveal.internal.PotreePointSizeType.Adaptive,
-    Fixed: reveal.internal.PotreePointSizeType.Fixed
+    Adaptive: reveal.PotreePointSizeType.Adaptive,
+    Fixed: reveal.PotreePointSizeType.Fixed
   })
 }
 
@@ -88,7 +88,7 @@ export function SimplePointcloud() {
       renderer.setClearColor('#000000');
       renderer.setSize(window.innerWidth, window.innerHeight);
 
-      let pointCloudNode: reveal.internal.PointCloudNode;
+      let pointCloudNode: reveal.PointCloudNode;
       if(modelRevision) {
         await client.authenticate();
         revealManager = reveal.createCdfRevealManager(client, renderer, scene, { logMetrics: false });

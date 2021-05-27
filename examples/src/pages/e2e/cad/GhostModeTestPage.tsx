@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-import * as reveal from '@cognite/reveal/experimental';
+import * as reveal from '@cognite/reveal/internals';
 import React from 'react';
 import { TestEnvCad, TestViewer } from '../TestViewer';
 import * as THREE from 'three';

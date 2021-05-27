@@ -3,7 +3,7 @@
  */
 
 import * as THREE from 'three';
-import * as reveal from '@cognite/reveal/experimental';
+import * as reveal from '@cognite/reveal/internals';
 import React from 'react';
 import { TestViewer } from '../TestViewer';
 

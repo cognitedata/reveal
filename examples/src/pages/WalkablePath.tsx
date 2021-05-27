@@ -7,7 +7,7 @@ import { CanvasWrapper } from '../components/styled';
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
 import { CogniteClient, HttpError } from '@cognite/sdk';
-import * as reveal from '@cognite/reveal/experimental';
+import * as reveal from '@cognite/reveal/internals';
 import { vec3 } from 'gl-matrix';
 import { GUI, GUIController } from 'dat.gui';
 import { getParamsFromURL } from '../utils/example-helpers';

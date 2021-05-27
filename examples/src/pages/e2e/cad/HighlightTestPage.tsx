@@ -7,7 +7,7 @@ import React from 'react';
 import { TestViewer } from '../TestViewer';
 import * as THREE from 'three';
 
-import * as reveal from '@cognite/reveal/experimental';
+import * as reveal from '@cognite/reveal/internals';
 
 export function HighlightTestPage() {
   const getNodeAppearanceProvider = () => {

@@ -3,7 +3,7 @@
  */
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
-import * as reveal from '@cognite/reveal/experimental';
+import * as reveal from '@cognite/reveal/internals';
 import CameraControls from 'camera-controls';
 import dat from 'dat.gui';
 import { getParamsFromURL } from '../utils/example-helpers';
