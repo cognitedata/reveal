@@ -6,6 +6,7 @@ import { Tooltip } from '@cognite/cogs.js';
 import exifIcon from 'src/assets/exifIcon.svg';
 import React from 'react';
 import styled from 'styled-components';
+import FileIcon from 'src/assets/FileIcon.svg';
 
 export const FileNameText = styled.div`
   display: flex;
@@ -14,6 +15,7 @@ export const FileNameText = styled.div`
   overflow: hidden;
   flex: 0 1 auto;
   display: inline-block;
+  margin-left: 10px;
 `;
 
 export const FileRow = styled.div`
@@ -38,6 +40,7 @@ export function NameRenderer({ rowData: { name, id } }: CellRenderer) {
   );
   return (
     <FileRow>
+      <img src={FileIcon} alt="FileIcon" />
       <FileNameText>{name}</FileNameText>
       {fileDetails?.geoLocation && (
         <Tooltip content="Exif data added">
