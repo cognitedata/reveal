@@ -61,8 +61,6 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   readonly cadNode: CadNode;
 
   private readonly cadModel: CadModelMetadata;
-  private readonly nodeTransforms: Map<number, THREE.Matrix4>;
-
   private readonly client: CogniteClient;
   private readonly nodeIdAndTreeIndexMaps: NodeIdAndTreeIndexMaps;
 
@@ -79,7 +77,6 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     this.revisionId = revisionId;
     this.cadModel = cadNode.cadModelMetadata;
     this.client = client;
-    this.nodeTransforms = new Map();
     const indexMapper = new CogniteClientNodeIdAndTreeIndexMapper(client);
     this.nodeIdAndTreeIndexMaps = new NodeIdAndTreeIndexMaps(modelId, revisionId, client, indexMapper);
 
