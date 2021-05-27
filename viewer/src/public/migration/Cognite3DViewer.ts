@@ -186,13 +186,6 @@ export class Cognite3DViewer {
   }
 
   constructor(options: Cognite3DViewerOptions) {
-    if (options.enableCache) {
-      throw new NotSupportedInMigrationWrapperError('Cache is not supported');
-    }
-    if (options.viewCube) {
-      throw new NotSupportedInMigrationWrapperError('ViewCube is not supported');
-    }
-
     this._renderer = options.renderer || new THREE.WebGLRenderer();
     this._automaticNearFarPlane = options.automaticCameraNearFar !== undefined ? options.automaticCameraNearFar : true;
     this._automaticControlsSensitivity =
