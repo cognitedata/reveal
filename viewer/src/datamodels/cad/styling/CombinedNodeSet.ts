@@ -50,7 +50,7 @@ export class CombinedNodeSet extends NodeSet {
    * @override
    */
   getIndexSet(): IndexSet {
-      this._cachedCombinedSet = this._cachedCombinedSet ?? this.createCachedCombinedSet();
+    this._cachedCombinedSet = this._cachedCombinedSet ?? this.createCachedCombinedSet();
     return this._cachedCombinedSet;
   }
 
@@ -79,7 +79,9 @@ export class CombinedNodeSet extends NodeSet {
       return new IndexSet();
     }
     const set = this._nodeSets[0].getIndexSet().clone();
-    this._nodeSets.slice(1).forEach(x => set.intersectWith(x.getIndexSet()));
+    for (let i = 1; i < this._nodeSets.length; ++i) {
+      set.intersectWith(this._nodeSets[i].getIndexSet());
+    }
     return set;
   }
 
@@ -88,7 +90,9 @@ export class CombinedNodeSet extends NodeSet {
       return new IndexSet();
     }
     const set = this._nodeSets[0].getIndexSet().clone();
-    this._nodeSets.slice(1).forEach(x => set.unionWith(x.getIndexSet()));
+    for (let i = 1; i < this._nodeSets.length; ++i) {
+      set.unionWith(this._nodeSets[i].getIndexSet());
+    }
     return set;
   }
 }
