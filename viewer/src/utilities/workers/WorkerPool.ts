@@ -75,7 +75,7 @@ export class WorkerPool {
 
   async postWorkToAvailable<T>(work: WorkDelegate<T>): Promise<T> {
     const targetWorker = this.workerList.reduce((bestWorker, candidate) => {
-      if (bestWorker === undefined || bestWorker.activeJobCount > candidate.activeJobCount) {
+      if (bestWorker.activeJobCount > candidate.activeJobCount) {
         return candidate;
       }
       return bestWorker;
