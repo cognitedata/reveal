@@ -9,14 +9,15 @@ worker files and .wasm file.
 
 ## Getting started
 
-Note that if you want to simply run the viewer you don't need to build 
-parser-worker. It's already used as a dependency from the NPM. 
+Note that if you want to simply run the viewer you don't need to build parser-worker. 
+It's already used as a dependency from the NPM to have proper types 
+and built version is coming from [Cognite CDN](https://apps-cdn.cogniteapp.com/@cognite/reveal-parser-worker/1.1.1/reveal.parser.worker.js). 
 Build it only if you're about to change parser-worker and want to test local changes.
 
 Also, you might want to build it if you need to create a build with [custom PUBLIC_PATH](https://cognitedata.github.io/reveal/docs/installation#option-2-host-web-worker-and-webassmbly-files-externally)
 and host it on your own static server.
 
-Don't forget that if you're committing your changes, you will need to publish a new NPM release. 
+Don't forget that if you're committing your changes, you will need to publish a new NPM release and upload worker build to CDN.
 
 ### Prerequisites
  
