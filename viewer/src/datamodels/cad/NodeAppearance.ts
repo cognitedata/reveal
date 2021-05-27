@@ -65,6 +65,9 @@ const GhostedApperance: NodeAppearance = {
   renderGhosted: true
 };
 
+/**
+ * A set of default node apperances used in Reveal.
+ */
 export const DefaultNodeAppearance = {
   Default: { visible: true, renderGhosted: false, renderInFront: false, outlineColor: NodeOutlineColor.NoOutline },
   Outlined: OutlinedAppearance,

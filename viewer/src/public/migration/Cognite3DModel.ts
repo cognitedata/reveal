@@ -93,9 +93,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * {@link addStyledNodeSet}. Updating the default style can be an
    * expensive operation, so use with care.
    *
-   * @param appearance  Default node appereance. Note that this apperance cannot
-   * have a transform ({@link NodeAppearance.worldTransform}).
-   *
+   * @param appearance  Default node appereance.
    * @version new in 2.0
    */
   setDefaultNodeAppearance(appearance: NodeAppearance) {
@@ -104,7 +102,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
 
   /**
    * Gets the default appearance for nodes that are not styled using
-   * {@link addStyledNodeSetSet}.
+   * {@link addStyledNodeSet}.
    *
    * @version new in 2.0
    */
@@ -541,8 +539,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   /**
    * Maps a single node ID to tree index. This is useful when you e.g. have a
    * node ID from an asset mapping and want to highlight the given asset using
-   * {@link selectNodeByTreeIndex}. If you have multiple node IDs to map,
-   * {@link mapNodeIdsToTreeIndices} is recommended for better performance.
+   * {@link mapNodeIdsToTreeIndices} is recommended for better performance when mapping multiple IDs.
    *
    * @param nodeId A Node ID to map to a tree index.
    * @returns TreeIndex of the provided node.
