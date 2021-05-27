@@ -147,15 +147,15 @@ export class IntermediateIndexNode {
   }
 
   balance(): IntermediateIndexNode {
-    const d0 = this.left.maxSubtreeDepth;
-    const d1 = this.right.maxSubtreeDepth;
+    const leftSubTreeSize = this.left.maxSubtreeDepth;
+    const rightSubTreeSize = this.right.maxSubtreeDepth;
 
-    if (d1 + 2 <= d0) {
+    if (rightSubTreeSize + 2 <= leftSubTreeSize) {
       // Left side too deep
       const newLeft = (this.left as IntermediateIndexNode).rotateSmallerRight();
       const newNode = new IntermediateIndexNode(newLeft, this.right).rotateRight().balance();
       return newNode;
-    } else if (d0 + 2 <= d1) {
+    } else if (leftSubTreeSize + 2 <= rightSubTreeSize) {
       // Right side too deep
       const newRight = (this.right as IntermediateIndexNode).rotateSmallerLeft();
       const newNode = new IntermediateIndexNode(this.left, newRight).rotateLeft().balance();
