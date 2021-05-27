@@ -70,10 +70,11 @@ export default function WorkflowRow({
   isSelected = false,
   mutate,
 }: Props) {
-  const { mutate: callFunction } = useCallFunction('simple_calc-master');
+  const { mutate: callFunction, isLoading: isCallLoading } = useCallFunction(
+    'simple_calc-master'
+  );
   const [isEditingName, setIsEditingName] = useState<boolean>(false);
   const [lastSuccessfulCall, setLastSuccessfulCall] = useState<Call>();
-  const [isCallInFlight, setIsCallInFlight] = useState<boolean>(false);
   const { id, enabled, color, name, calls, unit, preferredUnit } = workflow;
   const call = calls?.sort((c) => c.callDate)[0];
   const isWorkspaceMode = mode === 'workspace';
@@ -106,7 +107,6 @@ export default function WorkflowRow({
   );
 
   const runComputation = useCallback(() => {
-    setIsCallInFlight(true);
     callFunction(
       {
         data: { computation_graph: computation },
@@ -115,9 +115,6 @@ export default function WorkflowRow({
         onSuccess(res) {
           setLastSuccessfulCall(res);
         },
-        onSettled() {
-          setIsCallInFlight(false);
-        },
       }
     );
   }, [computation, callFunction, setLastSuccessfulCall]);
@@ -125,7 +122,7 @@ export default function WorkflowRow({
   const currentCallStatus = useFunctionCall(call?.functionId!, call?.callId!);
 
   const handleRetries = useCallback(() => {
-    if (isCallInFlight) {
+    if (isCallLoading) {
       return;
     }
 
@@ -145,7 +142,7 @@ export default function WorkflowRow({
     }
 
     runComputation();
-  }, [call, currentCallStatus, runComputation, isCallInFlight]);
+  }, [call, currentCallStatus, runComputation, isCallLoading]);
 
   const handleChanges = useCallback(() => {
     if (!computation) {
