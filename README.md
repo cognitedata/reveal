@@ -130,6 +130,18 @@ Create a PR with the changes.
 
 **Don't merge it yet**, but wait for the CI checks to complete.
 
+**Tip**: if something went wrong with the build, and you want to apply some fix, 
+don't forget to remove git tags that were created after running `yarn bump`. 
+
+<details>
+  <summary>Git tags removing example</summary>
+
+  ```bash
+  git push --delete origin @cognite/reveal-parser-worker@1.1.1
+  git tag -d @cognite/reveal-parser-worker@1.1.1
+  ```
+</details>
+
 ### Publish to NPM
 
 Once CI checks are completed – go ahead and publish the package to npm.
@@ -162,6 +174,10 @@ It creates a build, copies package.json into /dist with modifications and runs n
 
 Now, if published successfully, **merge the pull request**.
 
+In case if you're releasing reveal-parser-worker, you must upload it to CDN after successful release. 
+To do that, go to GitHub Actions and run [Upload worker workflow](https://github.com/cognitedata/reveal/actions/workflows/upload-worker.yml)
+targeting the master branch.
+
 ### Create a release on GitHub
 
 1. Go to [https://github.com/cognitedata/reveal/releases/new](https://github.com/cognitedata/reveal/releases/new)
@@ -193,3 +209,4 @@ Also, you can check what's committed from the previous tag with that command:
    details about installting Reveal.
    ```
 1. Hit the green "Publish release" button
+
