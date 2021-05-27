@@ -136,7 +136,6 @@ jobs:
       - name: Setup Rust
         if: env.GIT_DIFF
         run: |
-          rustup default 1.52.1
           rustup component add clippy
           rustup component add rustfmt
 
