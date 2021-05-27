@@ -431,7 +431,7 @@ export class EffectRenderManager {
           if (supportsSsao) {
             this.renderComposition(renderer, camera, this._compositionTarget);
             this.renderSsao(renderer, this._ssaoTarget, camera);
-            this.renderPostProcessStep(renderer, this._renderTarget, this._fxaaScene);
+            this.renderPostProcessStep(renderer, this._renderTarget, this._ssaoBlurScene);
           } else {
             this.renderComposition(renderer, camera, this._renderTarget);
           }
