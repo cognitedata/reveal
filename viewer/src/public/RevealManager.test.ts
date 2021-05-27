@@ -4,7 +4,7 @@
 import * as THREE from 'three';
 
 import { ModelDataClient } from '../utilities/networking/types';
-import { SectorCuller } from '../internal';
+import { SectorCuller } from '../internals';
 import { createRevealManager } from './createRevealManager';
 import { RevealManager } from './RevealManager';
 import { LoadingStateChangeListener } from '..';
