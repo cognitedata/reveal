@@ -65,18 +65,18 @@ export class IntermediateIndexNode {
 
       const unioned = leftRange.union(rightRange);
 
-      if (newLeft == undefined && newRight == undefined) {
+      if (newLeft === undefined && newRight === undefined) {
         return new LeafIndexNode(unioned);
-      } else if (newLeft == undefined && newRight != undefined) {
+      } else if (newLeft === undefined && newRight !== undefined) {
         // Last term is added to please compiler
         return newRight.addRange(unioned);
-      } else if (newRight == undefined && newLeft != undefined) {
+      } else if (newRight === undefined && newLeft !== undefined) {
         // ---"---
         return newLeft.addRange(unioned);
       }
 
-      // "as" terms to avoid compiler complaints
-      const newNode = IntermediateIndexNode.fromIndexNodesAndBalance(newLeft as IndexNode, newRight as IndexNode);
+      // We have guaranteed that newLeft and newRight is defined
+      const newNode = IntermediateIndexNode.fromIndexNodesAndBalance(newLeft!, newRight!);
 
       return newNode.addRange(unioned);
     } else if (canUnionLeft) {
@@ -115,10 +115,10 @@ export class IntermediateIndexNode {
       rightRange = NumericRange.createFromInterval(range.toInclusive + 1, soakedRange.toInclusive);
     }
 
-    if (newThis == undefined) {
+    if (newThis === undefined) {
       // If all ranges in this was soaked up, create new node with
       // non-empty left and right ranges
-      if (leftRange != undefined && rightRange != undefined) {
+      if (leftRange !== undefined && rightRange !== undefined) {
         return IntermediateIndexNode.fromIndexNodesAndBalance(
           new LeafIndexNode(leftRange),
           new LeafIndexNode(rightRange)
@@ -134,11 +134,11 @@ export class IntermediateIndexNode {
       // Add non-empty left- and right ranges
       let nodeToReturn = newThis;
 
-      if (leftRange != undefined) {
+      if (leftRange !== undefined) {
         nodeToReturn = nodeToReturn.addRange(leftRange);
       }
 
-      if (rightRange != undefined) {
+      if (rightRange !== undefined) {
         nodeToReturn = nodeToReturn.addRange(rightRange);
       }
 
@@ -154,13 +154,11 @@ export class IntermediateIndexNode {
       // Left side too deep
       const newLeft = (this.left as IntermediateIndexNode).rotateSmallerRight();
       const newNode = new IntermediateIndexNode(newLeft, this.right).rotateRight().balance();
-
       return newNode;
     } else if (d0 + 2 <= d1) {
       // Right side too deep
       const newRight = (this.right as IntermediateIndexNode).rotateSmallerLeft();
       const newNode = new IntermediateIndexNode(this.left, newRight).rotateLeft().balance();
-
       return newNode;
     }
 
@@ -186,16 +184,12 @@ export class IntermediateIndexNode {
     }
 
     // Here, we know this range is not contained within node range
-    if (this.left.range.intersects(node.range)) {
-      if (this.left.hasIntersectionWith(node)) {
-        return true;
-      }
+    if (this.left.range.intersects(node.range) && this.left.hasIntersectionWith(node)) {
+      return true;
     }
 
-    if (this.right.range.intersects(node.range)) {
-      if (this.right.hasIntersectionWith(node)) {
-        return true;
-      }
+    if (this.right.range.intersects(node.range) && this.right.hasIntersectionWith(node)) {
+      return true;
     }
 
     return false;
