@@ -1,3 +1,7 @@
+## 1.2.6 May 27 2021
+
+- Bump auth-utils to v1.0.5
+
 ## 1.2.5 May 25 2021
 
 - Disable fake idp login if not on current cluster
