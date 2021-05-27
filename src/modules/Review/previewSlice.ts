@@ -336,7 +336,7 @@ const previewSlice = createSlice({
     builder.addMatcher(
       isFulfilled(SaveAnnotations, DeleteAnnotations, UpdateAnnotations),
       (_) => {
-        ToastUtils.onSuccess('Annotations Updated!');
+        // ToastUtils.onSuccess('Annotations Updated!'); //Todo: Commented out because of spam
       }
     );
 
