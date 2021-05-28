@@ -6,6 +6,7 @@ import React, {
   useCallback,
   useMemo,
 } from 'react';
+import { compact } from 'lodash';
 import { useHistory } from 'react-router-dom';
 import { nanoid } from 'nanoid';
 import { Chart } from 'reducers/charts/types';
@@ -23,6 +24,7 @@ import { calculateDefaultYAxis } from 'utils/axis';
 import { addTimeseries, covertTSToChartTS } from 'utils/charts';
 import {
   TIMESERIE_IDS_KEY,
+  TIMESERIE_EXTERNAL_IDS_KEY,
   START_TIME_KEY,
   END_TIME_KEY,
   CHART_NAME_KEY,
@@ -62,6 +64,9 @@ export const OpenInCharts: FC = () => {
     });
   }, [myCharts.data]);
   const { item: timeserieIds } = useQueryString(TIMESERIE_IDS_KEY);
+  const { item: timeserieExternalId } = useQueryString(
+    TIMESERIE_EXTERNAL_IDS_KEY
+  );
   const { item: startTime } = useQueryString(START_TIME_KEY);
   const { item: endTime } = useQueryString(END_TIME_KEY);
   const sparklineStartDate = dayjs()
@@ -70,25 +75,39 @@ export const OpenInCharts: FC = () => {
     .toDate();
   const sparklineEndDate = dayjs().endOf('day').toDate();
   const loadTimeseries = useCallback(async () => {
-    const timeseriesIds = timeserieIds.split(',').map((id) => +id);
-    const timeseries = await sdk.timeseries.retrieve(
-      timeseriesIds.map((id) => ({ id }))
-    );
+    const timeseriesIds = compact(timeserieIds.split(',').map((id) => +id));
+    const timeseriesExternalIds = compact(timeserieExternalId.split(','));
+    const timeseries = await sdk.timeseries.retrieve([
+      ...timeseriesIds.map((id) => ({ id })),
+      ...timeseriesExternalIds.map((id) => ({ externalId: id })),
+    ]);
     setTs(timeseries);
     setSelectedIds(timeseries.map(({ id }) => id));
-  }, [sdk.timeseries, timeserieIds]);
+  }, [sdk.timeseries, timeserieIds, timeserieExternalId]);
   useEffect(() => {
     if (allCharts.length > 0) {
       setChart({ label: allCharts[0].name, value: allCharts[0].id });
     }
   }, [allCharts]);
   useEffect(() => {
-    if (!initiated && timeserieIds && startTime && endTime) {
+    if (
+      !initiated &&
+      (timeserieIds || timeserieExternalId) &&
+      startTime &&
+      endTime
+    ) {
       setVisible(true);
       setInitiated(true);
       loadTimeseries();
     }
-  }, [timeserieIds, startTime, endTime, initiated, loadTimeseries]);
+  }, [
+    timeserieIds,
+    timeserieExternalId,
+    startTime,
+    endTime,
+    initiated,
+    loadTimeseries,
+  ]);
   const handleOnChange: ChangeEventHandler<HTMLInputElement> = (nextState) =>
     setCurrentValue(nextState.target.value);
   const handleTimeSeriesClick = async (timeSeries: Timeseries) => {
@@ -186,7 +205,7 @@ export const OpenInCharts: FC = () => {
       onCancel={() => setVisible(false)}
       width={500}
     >
-      {timeserieIds && (
+      {(timeserieIds || timeserieExternalId) && (
         <>
           <div>
             <strong>Timeseries ({ts.length})</strong>
