@@ -55,6 +55,7 @@
     "@types/react-dom": "^16.9.0",
     "@types/react-router-dom": "^5.1.6",
     "@types/styled-components": "^5.1.4",
+    "@types/three": "link:../viewer/node_modules/@types/three",
     "copy-webpack-plugin": "^6.2.1",
     "cross-env": "^7.0.2",
     "jest-environment-puppeteer": "^4.4.0",
