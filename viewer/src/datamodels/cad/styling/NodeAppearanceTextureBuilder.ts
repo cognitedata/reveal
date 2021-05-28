@@ -114,7 +114,15 @@ export class NodeAppearanceTextureBuilder {
 
   build() {
     const orphanStyleIds = new Set<number>(this._currentlyAppliedStyles.keys());
-    // 1. Reset nodes that has been removed from nodesets to default style
+
+    this.resetStyleOfRemovedNodes(orphanStyleIds);
+    this.cleanupOrphanStyles(orphanStyleIds);
+    this.applyStyleToAddedNodes();
+
+    this._needsUpdate = false;
+  }
+
+  private resetStyleOfRemovedNodes(orphanStyleIds: Set<number>) {
     this._styleProvider.applyStyles((styleId, revision, treeIndices) => {
       orphanStyleIds.delete(styleId);
 
@@ -127,8 +135,9 @@ export class NodeAppearanceTextureBuilder {
       const removedTreeIndices = currentlyApplied.treeIndices.clone().differenceWith(treeIndices);
       this.resetToDefaultStyle(removedTreeIndices, currentlyApplied.style);
     });
+  }
 
-    // 2. Clean up orphan styles
+  private cleanupOrphanStyles(orphanStyleIds: Set<number>) {
     for (const styleId of orphanStyleIds) {
       const currentlyApplied = this._currentlyAppliedStyles.get(styleId);
       if (currentlyApplied !== undefined) {
@@ -136,9 +145,9 @@ export class NodeAppearanceTextureBuilder {
       }
       this._currentlyAppliedStyles.delete(styleId);
     }
+  }
 
-    // 2. Apply new style to all nodes that has been added to node sets
-    // Note! This is done in separate stages to support nodes moving from one set to another
+  private applyStyleToAddedNodes() {
     this._styleProvider.applyStyles((styleId, revision, treeIndices, appearance) => {
       const currentlyApplied = this._currentlyAppliedStyles.get(styleId);
       if (currentlyApplied !== undefined && currentlyApplied.revision === revision) {
@@ -154,8 +163,6 @@ export class NodeAppearanceTextureBuilder {
 
       this.applyStyleToNodes(addedTreeIndices, fullStyle);
     });
-
-    this._needsUpdate = false;
   }
 
   private resetToDefaultStyle(treeIndices: IndexSet, currentStyle: NodeAppearance) {
