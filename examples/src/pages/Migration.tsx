@@ -12,13 +12,17 @@ import {
   Cognite3DViewer,
   Cognite3DModel,
   CognitePointCloudModel,
-  PotreePointColorType,
-  PotreePointShape
+  PotreePointColorType, 
+  PotreePointShape,
+  ByTreeIndexNodeSet,
+  IndexSet
 } from '@cognite/reveal';
 import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, AxisViewTool } from '@cognite/reveal/tools';
+import * as reveal from '@cognite/reveal';
 import { CadNode } from '@cognite/reveal/internals';
 
 window.THREE = THREE;
+(window as any).reveal = reveal;
 
 export function Migration() {
   const canvasWrapperRef = useRef<HTMLDivElement>(null);
@@ -338,18 +342,10 @@ export function Migration() {
         }
       });
       debugGui.add(guiState.debug, 'ghostAllNodes').name('Ghost all nodes').onFinishChange(ghost => {
-        if (ghost) {
-          cadModels.forEach(m => m.ghostAllNodes());
-        } else {
-          cadModels.forEach(m => m.unghostAllNodes());
-        }
+        cadModels.forEach(m => m.setDefaultNodeAppearance({ renderGhosted: ghost }));
       });
       debugGui.add(guiState.debug, 'hideAllNodes').name('Hide all nodes').onFinishChange(hide => {
-        if (hide) {
-          cadModels.forEach(m => m.hideAllNodes());
-        } else {
-          cadModels.forEach(m => m.showAllNodes());
-        }
+        cadModels.forEach(m => m.setDefaultNodeAppearance({ visible: !hide }));
       });
 
       const slicing = gui.addFolder('Slicing');
@@ -429,6 +425,8 @@ export function Migration() {
         await addModel({ modelId, revisionId, geometryFilter: createGeometryFilterFromState(guiState.geometryFilter) });
       }
 
+      const selectedSet = new ByTreeIndexNodeSet([]);
+
       let expandTool: ExplodedViewTool | null;
       let explodeSlider: dat.GUIController | null;
 
@@ -442,8 +440,10 @@ export function Migration() {
           }
 
           const rootTreeIndex = exlopdeParams.rootTreeIndex;
-          cadModels[0].hideAllNodes();
-          cadModels[0].showNodeByTreeIndex(rootTreeIndex, true);
+          const treeIndices = await cadModels[0].getSubtreeTreeIndices(rootTreeIndex);
+          cadModels[0].setDefaultNodeAppearance({ visible: false });
+          const explodeSet = new ByTreeIndexNodeSet(treeIndices);
+          cadModels[0].addStyledNodeSet(explodeSet, { visible: true });
 
           const rootBoundingBox = await cadModels[0].getBoundingBoxByTreeIndex(rootTreeIndex);
           viewer.fitCameraToBoundingBox(rootBoundingBox, 0);
@@ -462,7 +462,8 @@ export function Migration() {
         },
         reset: () => {
           expandTool?.reset();
-          cadModels[0].showAllNodes();
+          cadModels[0].setDefaultNodeAppearance({ visible: true });
+          cadModels[0].removeAllStyledNodeSets();
           exlopdeParams.explodeFactor = 0;
           expandTool = null;
           if (explodeSlider) {
@@ -485,18 +486,15 @@ export function Migration() {
           console.log(intersection);
           switch (intersection.type) {
             case 'cad':
-              {
-                const { treeIndex, point, model } = intersection;
-                console.log(`Clicked node with treeIndex ${treeIndex} at`, point);
-                // highlight the object
-                model.deselectAllNodes();
-                model.selectNodeByTreeIndex(treeIndex);
-                model.mapTreeIndexToNodeId(treeIndex).then(p => {
-                  console.log(`NodeId: ${p}`);
-                }); const boundingBox = await model.getBoundingBoxByTreeIndex(treeIndex);
-                viewer.fitCameraToBoundingBox(boundingBox, 1000);
-              }
-              break;
+            {
+              const { treeIndex, point, model } = intersection;
+              console.log(`Clicked node with treeIndex ${treeIndex} at`, point);
+              // highlight the object
+              selectedSet.updateSet(new IndexSet([treeIndex]));
+              const boundingBox = await model.getBoundingBoxByTreeIndex(treeIndex);
+              viewer.fitCameraToBoundingBox(boundingBox, 1000);
+            }
+            break;
 
             case 'pointcloud':
               {

@@ -89,9 +89,7 @@ export class CachedRepository implements Repository {
         default:
           assertNever(sector.levelOfDetail);
       }
-    }
-
-    catch (error) {
+    } catch (error) {
       this._consumedSectorCache.remove(cacheKey);
       trackError(error, { methodName: 'loadSector', moduleName: 'CachedRepository' });
       throw error;

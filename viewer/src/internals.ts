@@ -14,7 +14,8 @@ export { SectorCuller } from './datamodels/cad/sector/culling/SectorCuller';
 export { ByVisibilityGpuSectorCuller } from './datamodels/cad/sector/culling/ByVisibilityGpuSectorCuller';
 export { GpuOrderSectorsByVisibilityCoverage } from './datamodels/cad/sector/culling/OrderSectorsByVisibilityCoverage';
 export { CadModelSectorLoadStatistics } from './datamodels/cad/CadModelSectorLoadStatistics';
-export { NodeAppearance, NodeAppearanceProvider, DefaultNodeAppearance } from './datamodels/cad/NodeAppearance';
+export { NodeAppearance, DefaultNodeAppearance } from './datamodels/cad/NodeAppearance';
+export { NodeAppearanceProvider } from './datamodels/cad/styling/NodeAppearanceProvider';
 
 export { CadModelMetadata } from './datamodels/cad/CadModelMetadata';
 export { CadNode, SuggestedCameraConfig } from './datamodels/cad/CadNode';

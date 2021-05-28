@@ -4,36 +4,24 @@
 
 import React from 'react';
 
-import { TestViewer } from '../TestViewer';
+import { TestEnvCad, TestViewer } from '../TestViewer';
 import * as THREE from 'three';
-
-import * as reveal from '@cognite/reveal/internals';
+import { DefaultNodeAppearance, ByTreeIndexNodeSet } from '@cognite/reveal';
 
 export function HighlightTestPage() {
-  const getNodeAppearanceProvider = () => {
-    const pickedNodes = new Set([...Array(15).keys()]);
-    return {
-      styleNode(treeIndex: number) {
-        let style = reveal.DefaultNodeAppearance.NoOverrides;
-        if (pickedNodes.has(treeIndex)) {
-          style = { ...style, ...reveal.DefaultNodeAppearance.Highlighted };
-        }
-        return style;
-      },
-    };
-  };
-
   return (
     <TestViewer
-      nodeAppearanceProvider={getNodeAppearanceProvider()}
-      modifyTestEnv={() => {
-        return {
-          camera: new THREE.PerspectiveCamera(),
-          cameraConfig: {
-            position: new THREE.Vector3(12, -4, -45),
-          },
-        };
-      }}
+    modifyTestEnv={({ model }: TestEnvCad) => {
+      const nodeApperanceProvider = model.nodeAppearanceProvider;
+      const nodes = new ByTreeIndexNodeSet([...Array(15).keys()]);
+      nodeApperanceProvider.addStyledSet(nodes, DefaultNodeAppearance.Highlighted);
+
+      return {
+        camera: new THREE.PerspectiveCamera(),
+        cameraConfig: {
+          position: new THREE.Vector3(12, -4, -45),
+        },
+      }}}
     />
   );
 }

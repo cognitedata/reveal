@@ -17,6 +17,10 @@ export class NumericRange {
     this.toInclusive = from + count - 1;
   }
 
+  static createFromInterval(from: number, toInclusive: number): NumericRange {
+    return new NumericRange(from, toInclusive - from + 1);
+  }
+
   *values(): Generator<number> {
     for (let i = this.from; i <= this.toInclusive; ++i) {
       yield i;
@@ -27,13 +31,51 @@ export class NumericRange {
     return Array.from(this.values());
   }
 
+  equal(other: NumericRange): boolean {
+    return this.from === other.from && this.count === other.count;
+  }
+
   contains(value: number): boolean {
     return value >= this.from && value <= this.toInclusive;
+  }
+
+  intersects(range: NumericRange): boolean {
+    return this.from <= range.toInclusive && this.toInclusive >= range.from;
+  }
+
+  intersectsOrCoinciding(range: NumericRange): boolean {
+    return this.from <= range.toInclusive + 1 && this.toInclusive + 1 >= range.from;
+  }
+
+  intersectionWith(range: NumericRange): NumericRange | undefined {
+    if (!this.intersects(range)) {
+      return undefined;
+    } else {
+      return NumericRange.createFromInterval(
+        Math.max(this.from, range.from),
+        Math.min(this.toInclusive, range.toInclusive)
+      );
+    }
+  }
+
+  isInside(range: NumericRange): boolean {
+    return this.from >= range.from && this.toInclusive <= range.toInclusive;
+  }
+
+  union(range: NumericRange): NumericRange {
+    return NumericRange.createFromInterval(
+      Math.min(this.from, range.from),
+      Math.max(this.toInclusive, range.toInclusive)
+    );
   }
 
   forEach(action: (value: number) => void): void {
     for (let i = this.from; i <= this.toInclusive; ++i) {
       action(i);
     }
+  }
+
+  str() {
+    return '(' + this.from + ', ' + this.toInclusive + ')';
   }
 }

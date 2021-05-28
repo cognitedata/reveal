@@ -1,0 +1,90 @@
+---
+id: cad-styling-migrating-from-version-1
+title: Migrating from Reveal 1.x
+describe: Details on how to migrate filtering and styling functionality from Reveal 1.x to 2.x
+---
+
+import { DemoWrapper } from '@site/src/components/DemoWrapper';
+
+In the 2.0 of release of Reveal, the filtering and styling API changed drastically - breaking existing
+functionality. Migrating to version 2 will most likely require code changes, but these should often 
+be quite limited and lead to a simplification of the code base along with an increase in filtering- and
+styling performance.
+
+In previous versions of Reveal, styling nodes was done by a set of functions for explicitly applying 
+styling to a node identified by a tree index (and optionally all its children).
+- Visibility - `hideNodeByTreeIndex()`, `showNodeByTreeIndex()`, `hideAllNodes()` and `showAllNodes()`
+- Color override - `setNodeColorByTreeIndex()`, `setAllNodeColors()`, `resetNodeColorByTreeIndex()` and `resetAllNodeColors()`
+- Ghost nodes - `ghostNodeByTreeIndex()`, `unghostNodeByTreeIndex()`, `ghostAllNodes()` and `unghostAllNodes()`
+- Highlighting - `selectNodeByTreeIndex()`, `deselectNodeByTreeIndex()` and `deselectAllNodes()`
+
+This allowed flexible styling of nodes, but required many individual calls to update each node, causing degraded
+performance. The new API instead requires a set of styles which nodes are assigned to. It's preferable not to have
+too many styles - both in terms of performance and to avoid a cluttered view for the end user.
+
+The previous styling options maps quite directly to the new API. Visibility is controlled by `NodeApperance.visible`,
+color override by `NodeApperance.color` and ghost mode by `NodeApperance.renderGhosted`. However, there is no 
+direct mapping between what was previously called 'selection' or 'highlighting', this is now a combination of
+`NodeApperance.color`, `NodeApperance.renderInFront` and `NodeApperance.outlineColor`. This means that the new API
+introduced additional flexibility - e.g. can a object have an outline, but not be rendered in front of other objects. For 
+convinience, the new API comes with a sef of default styles available through [`DefaultNodeAppearance`](cad-styling).
+
+# Using ByTreeIndexNodeSet to migrate existing filtering logic
+
+<DemoWrapper name="Cognite3DViewerDemo" />
+
+In general, it is recommended to use the [specialized `NodeSet`-implementations](cad-styling) for best performance. However,
+it is possible to use `ByTreeIndexNodeSet` as a migration step. This allows the use of previously implemented logic for 
+populating the set based on some application specific logic. 
+
+Lets say an application has some logic for only showing objects that are part of the 'EA'-function. In previous versions
+this could be achieved by doing:
+
+```js
+model.hideAllNodes();
+sdk.revisions3D.list3DNodes(model.modelId, model.revisionId,
+  {
+    limit: 1000,
+    properties: { PDMS: { Function: 'EA' } }
+  })
+  .autoPagingEach(node => {
+    for (let i = 0; i < node.subtreeSize; i++) {
+      model.showNodeByTreeIndex(node.treeIndex + i);
+    }
+  });
+```
+
+Now, the same can be implemented using:
+
+```js runnable
+const visibleSet = new IndexSet();
+const visibleNodeSet = new ByTreeIndexNodeSet(visibleSet);
+model.setDefaultNodeAppearance(DefaultNodeAppearance.Hidden);
+model.addStyledNodeSet(visibleNodeSet, DefaultNodeAppearance.Default);
+
+// Populate set
+sdk.revisions3D.list3DNodes(model.modelId, model.revisionId,
+  {
+    limit: 1000,
+    properties: { PDMS: { Function: 'EA' } }
+  })
+  .autoPagingEach(node => {
+    visibleSet.addRange(new NumericRange(node.treeIndex, node.subtreeSize));
+  })
+  .then(() => {
+    // Note! We only trigger update to have effect on the rendered viewer after 
+    // _all_ nodes have been retrieved. A better approach might be to trigger 
+    // an update after each batch of nodes have been fetch from the SDK.
+    // However, avoid calling updateSet() too often as it can take some time
+    // to complete.
+    visibleNodeSet.updateSet(visibleSet);
+  });
+```
+
+Note that the styling is set up before any nodes actually are fetched and that the 
+set is populated asynchronously.
+
+:::note
+This example could easily have been migrated using `ByNodePropertyNodeSet`, but in
+other cases this might not be as straight forward as here.
+:::
