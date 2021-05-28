@@ -7,6 +7,7 @@ export const AssetSelector = (props: {
   assets: number[] | undefined;
   onSelectAssets: (assets: number[] | undefined) => void;
   hideTitle?: boolean;
+  maxMenuHeight?: number;
 }) => {
   return (
     <AssetSelectContainer>
@@ -20,6 +21,7 @@ export const AssetSelector = (props: {
           onAssetSelected={(assetIds: number[] | undefined) => {
             props.onSelectAssets(assetIds);
           }}
+          maxMenuHeight={props.maxMenuHeight}
         />
       </AssetSelectWrapper>
     </AssetSelectContainer>

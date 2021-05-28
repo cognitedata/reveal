@@ -6,12 +6,9 @@ import {
   SegmentedControl,
   Tabs,
 } from '@cognite/cogs.js';
-import { DataExplorationProvider } from '@cognite/data-exploration';
 import React from 'react';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import { AssetSelector } from 'src/modules/Review/Components/AssetSelector/AssetSelector';
 import styled from 'styled-components';
-import { v3Client as sdk } from '@cognite/cdf-sdk-singleton';
 import { useDispatch, useSelector } from 'react-redux';
 import { ParamsTagDetection } from 'src/api/types';
 import { RootState } from 'src/store/rootReducer';
@@ -39,7 +36,6 @@ export const badge = () => {
 };
 
 export const content = () => {
-  const queryClient = new QueryClient();
   const dispatch = useDispatch();
 
   const params: ParamsTagDetection = useSelector(
@@ -76,7 +72,13 @@ export const content = () => {
 
   return (
     <Container>
-      <Tabs defaultActiveKey="config">
+      <Tabs
+        defaultActiveKey="config"
+        style={{
+          overflowY: 'auto',
+          height: '100%',
+        }}
+      >
         <Tabs.TabPane key="config" tab="Model configuration">
           <table>
             <tbody>
@@ -142,15 +144,12 @@ export const content = () => {
                   </PrimaryTooltip>
                 </td>
                 <th>
-                  <DataExplorationProvider sdk={sdk}>
-                    <QueryClientProvider client={queryClient}>
-                      <AssetSelector
-                        assets={params.assetSubtreeIds}
-                        onSelectAssets={onAssetSubtreeIdsChange}
-                        hideTitle
-                      />
-                    </QueryClientProvider>
-                  </DataExplorationProvider>
+                  <AssetSelector
+                    assets={params.assetSubtreeIds}
+                    onSelectAssets={onAssetSubtreeIdsChange}
+                    hideTitle
+                    maxMenuHeight={85}
+                  />
                 </th>
               </tr>
             </tbody>
@@ -165,7 +164,7 @@ export const content = () => {
 };
 
 const Container = styled.div`
-  display: inline-table;
+  display: grid;
 
   table {
     width: 100%;
