@@ -556,7 +556,7 @@ export default class ComboControls extends EventDispatcher {
     this.panUp((2 * deltaY * targetDistance) / domElement.clientHeight);
   };
 
-  private dollyOrthographicCamera = (x: number, y: number, deltaDistance: number) => {
+  private dollyOrthographicCamera = (_x: number, _y: number, deltaDistance: number) => {
     const camera = this.camera as OrthographicCamera;
     camera.zoom *= 1 - deltaDistance;
     camera.zoom = MathUtils.clamp(camera.zoom, this.minZoom, this.maxZoom);
