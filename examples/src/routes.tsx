@@ -34,7 +34,7 @@ import { SsaoTestPage } from './pages/e2e/cad/SsaoTestPage';
 // notice that experimental is separate entry point so it required to override env for it too
 
 // import { revealEnv } from '@cognite/reveal';
-// import { revealEnv as revealEnv2 } from '@cognite/reveal/experimental'
+// import { revealEnv as revealEnv2 } from '@cognite/reveal/internals'
 
 // revealEnv.publicPath = `${process.env.PUBLIC_URL}/local-cdn/`;
 // revealEnv2.publicPath = `${process.env.PUBLIC_URL}/local-cdn/`;

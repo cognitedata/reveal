@@ -4,7 +4,7 @@
 
 import { SectorGeometry } from '../datamodels/cad/sector/types';
 import { SectorQuads } from '../datamodels/cad/rendering/types';
-import { SectorCuller } from '../internal';
+import { SectorCuller } from '../internals';
 import { LoadingState } from '../utilities';
 
 /**

@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import CameraControls from 'camera-controls';
 import { getParamsFromURL } from '../utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
-import * as reveal from '@cognite/reveal/experimental';
+import * as reveal from '@cognite/reveal/internals';
 import React, { useEffect, useRef, useState } from 'react';
 import { CanvasWrapper, Loader } from '../components/styled';
 import { resizeRendererToDisplaySize } from '../utils/sceneHelpers';

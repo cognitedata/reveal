@@ -9,7 +9,7 @@ import { CameraConfiguration } from './types';
 import { CogniteModelBase } from './CogniteModelBase';
 
 import { NumericRange, Box3, toThreeJsBox3 } from '../../utilities';
-import { CadNode } from '../../experimental';
+import { CadNode } from '../../internals';
 import { trackError } from '../../utilities/metrics';
 
 import { SupportedModelTypes, CadLoadingHints, CadModelMetadata } from '../types';

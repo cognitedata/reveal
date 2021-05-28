@@ -18,8 +18,8 @@ import {
   IndexSet
 } from '@cognite/reveal';
 import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, AxisViewTool } from '@cognite/reveal/tools';
-import { CadNode } from '@cognite/reveal/experimental';
 import * as reveal from '@cognite/reveal';
+import { CadNode } from '@cognite/reveal/internals';
 
 window.THREE = THREE;
 (window as any).reveal = reveal;
