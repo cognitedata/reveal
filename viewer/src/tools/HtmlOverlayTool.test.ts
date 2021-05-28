@@ -7,7 +7,7 @@ import * as THREE from 'three';
 import { HtmlOverlayOptions, HtmlOverlayTool } from './HtmlOverlayTool';
 import { Cognite3DViewer } from '../public/migration/Cognite3DViewer';
 import { CogniteClient } from '@cognite/sdk';
-import { SectorCuller } from '../internal';
+import { SectorCuller } from '../internals';
 
 describe('HtmlOverlayTool', () => {
   let canvasContainer: HTMLElement;

@@ -7,10 +7,10 @@ import { expectContainsSectorsWithLevelOfDetail } from '../../../../__testutilit
 import { generateSectorTree } from '../../../../__testutilities__/createSectorMetadata';
 import { DetermineSectorCostDelegate, PrioritizedWantedSector } from './types';
 import { TakenSectorTree } from './TakenSectorTree';
-import { LevelOfDetail, traverseDepthFirst } from '../../../../internal';
-import { SectorMetadata, CadModelMetadata } from '../../../../experimental';
+import { LevelOfDetail, SectorMetadata, CadModelMetadata } from '../../../../internals';
 import { Mutable } from '../../../../utilities/reflection';
 import { SectorMetadataFacesFileSection } from '../types';
+import { traverseDepthFirst } from '../../../../utilities/objectTraversal';
 
 describe('TakenSectorTree', () => {
   const model: CadModelMetadata = {} as any;
