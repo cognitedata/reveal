@@ -69,18 +69,7 @@ export default function ResultsOverview(props: Props) {
   const startUploadJob = () => {
     if (canEditFiles) {
       selectedKeys.forEach((key) => {
-        if (annotationsByFileId[key]) {
-          dispatch(startConvertFileToSvgJob(key, annotationsByFileId[key]));
-        } else {
-          const diagramToConvert = diagrams.find(
-            (diagram: FileInfo) => diagram.id === key
-          );
-          if (diagramToConvert) {
-            message.error(`${diagramToConvert.name} has no annotations!`);
-          } else {
-            message.error(`We are still loading file ${key}`);
-          }
-        }
+        dispatch(startConvertFileToSvgJob(key, annotationsByFileId[key] ?? []));
       });
     } else {
       setRenderFeedback(true);

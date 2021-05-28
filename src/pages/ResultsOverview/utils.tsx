@@ -1,12 +1,43 @@
-import {
-  CURRENT_VERSION,
-  PendingCogniteAnnotation,
-} from '@cognite/annotations';
+import React from 'react';
+import { notification, Typography } from 'antd';
+import { getContainer } from 'utils/utils';
+import { createLink } from '@cognite/cdf-utilities';
 
-export const stubAnnotation = {
-  label: 'sample',
-  source: 'job:0',
-  version: CURRENT_VERSION,
-  status: 'unhandled',
-  box: { xMin: 0, xMax: 0, yMin: 0, yMax: 0 },
-} as PendingCogniteAnnotation;
+const { Paragraph } = Typography;
+
+export const convertSuccessNotification = (
+  svgName: string,
+  fileName: string,
+  newFileId: number | string
+) => {
+  return notification.success({
+    message: `SVG ${svgName} has been created successfully!`,
+    getContainer,
+    duration: null, // Keep notification till user closes it
+    description: (
+      <Paragraph>
+        File {fileName} has been converted to an SVG successfully.
+        <a
+          href={createLink(`/explore/file/${newFileId}`)}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {' '}
+          Click here to view file.
+        </a>
+      </Paragraph>
+    ),
+  });
+};
+
+export const convertErrorNotification = (
+  fileName: string,
+  errorMessage: string
+) => {
+  return notification.error({
+    message: `Failed to create svg for file ${fileName}`,
+    getContainer,
+    duration: null, // Keep notification till user closes it
+    description: <Paragraph>{errorMessage}</Paragraph>,
+  });
+};
