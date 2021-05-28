@@ -5,9 +5,7 @@
 import React, { ReactNode } from 'react';
 import { Simple } from './pages/Simple';
 import { Clipping } from './pages/Clipping';
-import { Filtering } from './pages/Filtering';
 import { Migration } from './pages/Migration';
-import { Picking } from './pages/Picking';
 import { SectorWithPointcloud } from './pages/SectorWithPointcloud';
 import { SimplePointcloud } from './pages/SimplePointcloud';
 import { SSAO } from './pages/SSAO';
@@ -25,8 +23,6 @@ import { ClippingTestPage } from './pages/e2e/cad/ClippingTestPage';
 import { DefaultCameraTestPage } from './pages/e2e/cad/DefaultCameraTestPage';
 import { HighlightTestPage } from './pages/e2e/cad/HighlightTestPage';
 import { RotationTestPage } from './pages/e2e/cad/RotationTestPage';
-import { NodeTransformTestPage } from './pages/e2e/cad/NodeTransformTestPage';
-import { GhostModeTestPage } from './pages/e2e/cad/GhostModeTestPage';
 import { ScaledModelTestPage } from './pages/e2e/cad/ScaledModelTestPage';
 import { UserRenderTargetTestPage } from './pages/e2e/cad/UserRenderTargetTestPage';
 import { DefaultPointCloudTestPage } from './pages/e2e/pointcloud/DefaultPointCloud';
@@ -77,22 +73,12 @@ export const exampleRoutes: Array<ExampleRoute> = [
     component: <Clipping />,
   },
   {
-    path: '/filtering',
-    menuTitle: 'Filtering',
-    component: <Filtering />,
-  },
-  {
     path:
       `/migration?project=${project}` +
       `&modelId=${cadId}` +
       `&revisionId=${cadRevisionId}`,
     menuTitle: 'Migration',
     component: <Migration />,
-  },
-  {
-    path: '/picking',
-    menuTitle: 'Picking',
-    component: <Picking />,
   },
   {
     path:
@@ -136,8 +122,6 @@ const cadTestPages: Record<TestCaseCad, JSX.Element> = {
   [TestCaseCad.defaultCamera]: <DefaultCameraTestPage />,
   [TestCaseCad.highlight]: <HighlightTestPage />,
   [TestCaseCad.rotateCadModel]: <RotationTestPage />,
-  [TestCaseCad.nodeTransform]: <NodeTransformTestPage />,
-  [TestCaseCad.ghostMode]: <GhostModeTestPage />,
   [TestCaseCad.scaledModel]: <ScaledModelTestPage />,
   [TestCaseCad.userRenderTarget]: <UserRenderTargetTestPage />,
   [TestCaseCad.ssao]: <SsaoTestPage />,

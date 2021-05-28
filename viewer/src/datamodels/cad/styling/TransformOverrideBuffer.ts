@@ -48,6 +48,10 @@ export class TransformOverrideBuffer {
     this._treeIndexToOverrideIndex = new Map();
   }
 
+  dispose() {
+    this._dataTexture.dispose();
+  }
+
   public addOverrideTransform(treeIndex: number, transform: THREE.Matrix4): number {
     const transformBuffer = transform.toArray();
 
@@ -59,7 +63,7 @@ export class TransformOverrideBuffer {
       matrixIndex = this._unusedIndices.pop();
 
       if (matrixIndex === undefined) {
-        this.reComputeDataTexture();
+        this.recomputeDataTexture();
         matrixIndex = this._unusedIndices.pop()!;
       }
 
@@ -90,7 +94,7 @@ export class TransformOverrideBuffer {
     this._treeIndexToOverrideIndex.delete(treeIndex);
   }
 
-  private reComputeDataTexture() {
+  private recomputeDataTexture() {
     const currentTextureBufferLength = this._textureBuffer.length;
 
     const newTextureBuffer = new Uint8Array(currentTextureBufferLength * 2);
