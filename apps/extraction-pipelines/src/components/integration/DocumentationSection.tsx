@@ -33,11 +33,27 @@ import {
 } from 'styles/StyledButton';
 import { HeadingLabel } from 'components/inputs/HeadingLabel';
 import { DetailFieldNames } from 'model/Integration';
+import ReactMarkdown from 'react-markdown';
 
-const Formatted = styled.p`
-  grid-column: span 2;
-  white-space: pre-wrap;
-  text-align: left;
+const EditDocumentationButton = styled(EditButton)`
+  &.cogs-btn.cogs-btn-ghost.has-content {
+    display: flex;
+    .documentation {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      text-align: left;
+      h1 {
+        margin: 1rem 0;
+        align-self: flex-start;
+      }
+    }
+  }
+  .cogs-documentation--header {
+    margin: 1rem 0;
+    text-align: left;
+  }
 `;
 const DocumentationWrapper = styled.section`
   padding: 1rem;
@@ -146,9 +162,9 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
         {DetailFieldNames.DOCUMENTATION}
       </HeadingLabel>
       <DocumentationForm onSubmit={handleSubmit(onValid)}>
-        <Hint className="hint">{DOCUMENTATION_HINT}</Hint>
         {isEdit ? (
           <>
+            <Hint className="hint">{DOCUMENTATION_HINT}</Hint>
             <ValidationError errors={errors} name="documentation" />
             <StyledTextArea
               id="documentation-textarea"
@@ -183,9 +199,11 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
             />
           </>
         ) : (
-          <EditButton
+          <EditDocumentationButton
             onClick={onEditClick}
-            className="edit-button"
+            className={`edit-button ${
+              currentIntegration?.documentation && 'has-content'
+            }`}
             title="Toggle edit documentation"
             aria-expanded={isEdit}
             aria-label="Edit documentation"
@@ -194,14 +212,16 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
             $full
           >
             {currentIntegration.documentation ? (
-              <Formatted>{currentIntegration.documentation}</Formatted>
+              <ReactMarkdown className="documentation">
+                {currentIntegration?.documentation ?? ''}
+              </ReactMarkdown>
             ) : (
               <>
                 <BluePlus />
                 <BlueText>add documentation</BlueText>
               </>
             )}
-          </EditButton>
+          </EditDocumentationButton>
         )}
       </DocumentationForm>
     </DocumentationWrapper>
