@@ -6,7 +6,6 @@ import * as THREE from 'three';
 import TWEEN from '@tweenjs/tween.js';
 import debounce from 'lodash/debounce';
 import omit from 'lodash/omit';
-import ComboControls from '@cognite/three-combo-controls';
 import { CogniteClient } from '@cognite/sdk';
 import { Subscription, fromEventPattern } from 'rxjs';
 
@@ -56,6 +55,7 @@ import {
 } from '../..';
 import { PropType } from '../../utilities/reflection';
 import { CadModelSectorLoadStatistics } from '../../datamodels/cad/CadModelSectorLoadStatistics';
+import ComboControls from '../../combo-camera-controls';
 
 type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered' | 'disposed';
 
