@@ -9,6 +9,7 @@ export type State = {
   currentView: ViewMode;
   filter: FileFilterProps;
   showFilter: boolean;
+  showFileUploadModal: boolean;
 };
 
 const initialState: State = {
@@ -18,6 +19,7 @@ const initialState: State = {
   currentView: 'list',
   filter: {},
   showFilter: true,
+  showFileUploadModal: false,
 };
 
 const explorerSlice = createSlice({
@@ -46,6 +48,9 @@ const explorerSlice = createSlice({
     toggleFilterView(state) {
       state.showFilter = !state.showFilter;
     },
+    setFileUploadModalVisibility(state, action: PayloadAction<boolean>) {
+      state.showFileUploadModal = action.payload;
+    },
   },
   // extraReducers: (builder) => {},
 });
@@ -58,6 +63,7 @@ export const {
   setFilter,
   setCurrentView,
   toggleFilterView,
+  setFileUploadModalVisibility,
 } = explorerSlice.actions;
 
 export default explorerSlice.reducer;
