@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-export enum OutlineColor {
+export enum NodeOutlineColor {
   NoOutline = 0,
   White,
   Black,
@@ -13,6 +13,10 @@ export enum OutlineColor {
   Orange
 }
 
+/**
+ * Type for defining node appearance profiles to style a 3D CAD model.
+ * @see {@link DefaultNodeAppearance}
+ */
 export type NodeAppearance = {
   /**
    * Overrides the default color of the node.
@@ -25,31 +29,24 @@ export type NodeAppearance = {
   /**
    * When set to true, the node is rendered in front
    * of all other nodes even if it's occluded.
+   * Note that this take precedence over {@link renderGhosted}.
    */
   readonly renderInFront?: boolean;
   /**
    * When set to true, the node is rendered ghosted, i.e.
-   * transparent with a fixed color.
+   * transparent with a fixed color. This has no effect if {@link renderInFront}
+   * is `true`.
    */
   readonly renderGhosted?: boolean;
   /**
    * When set, an outline is drawn around the
    * node to make it stand out.
    */
-  readonly outlineColor?: OutlineColor;
-  /**
-   * When set, a matrix4 transformation is applied
-   * to the node in world space.
-   */
-  readonly worldTransform?: THREE.Matrix4;
+  readonly outlineColor?: NodeOutlineColor;
 };
 
-export interface NodeAppearanceProvider {
-  styleNode(treeIndex: number): NodeAppearance | undefined;
-}
-
 const OutlinedAppearance: NodeAppearance = {
-  outlineColor: OutlineColor.White
+  outlineColor: NodeOutlineColor.White
 };
 
 const HiddenAppearance: NodeAppearance = {
@@ -68,8 +65,11 @@ const GhostedApperance: NodeAppearance = {
   renderGhosted: true
 };
 
+/**
+ * A set of default node apperances used in Reveal.
+ */
 export const DefaultNodeAppearance = {
-  NoOverrides: undefined as NodeAppearance | undefined,
+  Default: { visible: true, renderGhosted: false, renderInFront: false, outlineColor: NodeOutlineColor.NoOutline },
   Outlined: OutlinedAppearance,
   Hidden: HiddenAppearance,
   InFront: InFrontAppearance,

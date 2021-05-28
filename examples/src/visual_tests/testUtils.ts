@@ -7,8 +7,6 @@ export enum TestCaseCad {
   defaultCamera = 'defaultCamera',
   highlight = 'highlight',
   rotateCadModel = 'rotateCadModel',
-  nodeTransform = 'nodeTransform',
-  ghostMode = 'ghostMode',
   scaledModel = 'scaledModel',
   userRenderTarget = 'userRenderTarget',
   ssao = 'ssao'

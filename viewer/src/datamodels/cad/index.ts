@@ -5,12 +5,12 @@
 import { CadNode, SuggestedCameraConfig } from './CadNode';
 import { CadModelMetadata } from './CadModelMetadata';
 import { SectorMetadata } from './sector/types';
-import { NodeAppearance, NodeAppearanceProvider, DefaultNodeAppearance } from './NodeAppearance';
+import { NodeAppearance, NodeOutlineColor, DefaultNodeAppearance } from './NodeAppearance';
 
 export {
   CadNode,
   NodeAppearance,
-  NodeAppearanceProvider,
+  NodeOutlineColor,
   DefaultNodeAppearance,
   CadModelMetadata,
   SectorMetadata,

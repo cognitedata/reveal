@@ -7,25 +7,23 @@ import * as THREE from 'three';
 import { SectorGeometry, SectorScene } from './sector/types';
 import { InstancedMeshFile, SectorQuads } from './rendering/types';
 
-import { NodeAppearanceProvider } from './NodeAppearance';
-
 import { RootSectorNode } from './sector/RootSectorNode';
 import { RenderMode } from './rendering/RenderMode';
 import { CadLoadingHints } from './CadLoadingHints';
 import { CadMaterialManager } from './CadMaterialManager';
 import { CadModelMetadata } from './CadModelMetadata';
 import { suggestCameraConfig } from './cameraconfig';
-import { toThreeVector3, NumericRange } from '../../utilities';
+
+import { toThreeVector3 } from '../../utilities';
 import { EventTrigger } from '../../utilities/events';
+import { NodeTransformProvider } from './styling/NodeTransformProvider';
 import { InstancedMeshManager } from './InstancedMeshManager';
+import { NodeAppearanceProvider } from './styling/NodeAppearanceProvider';
+import { NodeAppearance } from './NodeAppearance';
 
 export type ParseCallbackDelegate = (parsed: { lod: string; data: SectorGeometry | SectorQuads }) => void;
 
 export type LoadingHintsChangeListener = (loadingHint: CadLoadingHints) => void;
-
-export interface CadNodeOptions {
-  nodeAppearanceProvider?: NodeAppearanceProvider;
-}
 
 export interface SuggestedCameraConfig {
   position: THREE.Vector3;
@@ -82,6 +80,22 @@ export class CadNode extends THREE.Object3D {
     this.setModelTransformation(model.modelMatrix);
   }
 
+  get nodeTransformProvider(): NodeTransformProvider {
+    return this._materialManager.getModelNodeTransformProvider(this._cadModelMetadata.blobUrl);
+  }
+
+  get nodeAppearanceProvider(): NodeAppearanceProvider {
+    return this._materialManager.getModelNodeAppearanceProvider(this._cadModelMetadata.blobUrl);
+  }
+
+  get defaultNodeAppearance(): NodeAppearance {
+    return this._materialManager.getModelDefaultNodeAppearance(this._cadModelMetadata.blobUrl);
+  }
+
+  set defaultNodeAppearance(appearance: NodeAppearance) {
+    this._materialManager.setModelDefaultNodeAppearance(this._cadModelMetadata.blobUrl, appearance);
+  }
+
   get clippingPlanes(): THREE.Plane[] {
     return this._materialManager.clippingPlanes;
   }
@@ -96,21 +110,6 @@ export class CadNode extends THREE.Object3D {
 
   set clipIntersection(intersection: boolean) {
     this._materialManager.clipIntersection = intersection;
-  }
-
-  requestNodeUpdate(treeIndices: number[]): void;
-  // @internal
-  requestNodeUpdate(treeIndices: NumericRange): void;
-  requestNodeUpdate(treeIndices: number[] | NumericRange) {
-    if (treeIndices instanceof NumericRange) {
-      // TODO 2020-08-10 larsmoa: Avoid expanding the array to avoid uncessary allocations (this
-      // will allocate ~16 Mb for a medium sized model)
-      const asArray = treeIndices.toArray();
-      this._materialManager.updateModelNodes(this._cadModelMetadata.blobUrl, asArray);
-    } else {
-      this._materialManager.updateModelNodes(this._cadModelMetadata.blobUrl, treeIndices);
-    }
-    this.dispatchEvent({ type: 'update' });
   }
 
   get cadModelMetadata() {

@@ -1,6 +1,7 @@
 /*!
  * Copyright 2021 Cognite AS
  */
+import * as THREE from 'three';
 
 import { SectorMetadata, SectorGeometry } from './types';
 import { Box3 } from '../../../utilities/Box3';
@@ -10,12 +11,17 @@ import { createMaterials } from '../rendering/materials';
 import { RenderMode } from '../rendering/RenderMode';
 import { consumeSectorDetailed, consumeSectorSimple } from './sectorUtilities';
 import { TriangleMesh, SectorQuads } from '../rendering/types';
-import * as THREE from 'three';
 
 import 'jest-extended';
 
 describe('sectorUtilities', () => {
-  const materials = createMaterials(10, RenderMode.Color, []);
+  const materials = createMaterials(
+    RenderMode.Color,
+    [],
+    new THREE.DataTexture(new Uint8Array(64), 4, 4),
+    new THREE.DataTexture(new Uint8Array(64), 4, 4),
+    new THREE.DataTexture(new Uint8Array(64), 4, 4)
+  );
 
   describe('consumeSectorDetailed', () => {
     const metadata: SectorMetadata = {

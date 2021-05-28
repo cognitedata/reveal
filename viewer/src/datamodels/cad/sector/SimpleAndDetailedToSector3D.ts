@@ -29,7 +29,9 @@ export class SimpleAndDetailedToSector3D {
   ): Promise<{ sectorMeshes: AutoDisposeGroup; instancedMeshes: InstancedMeshFile[] }> {
     const materials = this.materialManager.getModelMaterials(modelBlobUrl);
     assert(materials !== undefined, `Could not find materials for model '${modelBlobUrl}`);
-    return Promise.resolve(consumeSectorSimple(geometry, toThreeJsBox3(new THREE.Box3(), sector.bounds), materials!, geometryClipBox));
+    return Promise.resolve(
+      consumeSectorSimple(geometry, toThreeJsBox3(new THREE.Box3(), sector.bounds), materials!, geometryClipBox)
+    );
   }
 
   transformDetailedSector(

@@ -10,7 +10,7 @@ import { LoadingStateChangeListener, defaultRenderOptions } from './types';
 import { Subscription, combineLatest, asyncScheduler, Subject } from 'rxjs';
 import { map, observeOn, subscribeOn, tap, auditTime, distinctUntilChanged } from 'rxjs/operators';
 import { trackError, trackLoadModel, trackCameraNavigation } from '../utilities/metrics';
-import { NodeAppearanceProvider, CadNode } from '../datamodels/cad';
+import { CadNode } from '../datamodels/cad';
 import { RenderMode } from '../datamodels/cad/rendering/RenderMode';
 import { EffectRenderManager } from '../datamodels/cad/rendering/EffectRenderManager';
 import { SupportedModelTypes } from '../datamodels/base';
@@ -18,7 +18,7 @@ import { assertNever, LoadingState } from '../utilities';
 import { PointCloudNode } from '../datamodels/pointcloud/PointCloudNode';
 import { CadModelSectorBudget } from '../datamodels/cad/CadModelSectorBudget';
 import { CadModelSectorLoadStatistics } from '../datamodels/cad/CadModelSectorLoadStatistics';
-import { GeometryFilter, RenderOptions } from '..';
+import { GeometryFilter, NodeAppearanceProvider, RenderOptions } from '..';
 import { EventTrigger } from '../utilities/events';
 
 /* eslint-disable jsdoc/require-jsdoc */
@@ -205,7 +205,7 @@ export class RevealManager<TModelIdentifier> {
 
     switch (type) {
       case 'cad': {
-        return this._cadManager.addModel(modelIdentifier, options?.geometryFilter, options?.nodeAppearanceProvider);
+        return this._cadManager.addModel(modelIdentifier, options?.geometryFilter);
       }
 
       case 'pointcloud': {
