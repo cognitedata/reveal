@@ -12,7 +12,7 @@ import { Chart } from 'reducers/charts/types';
 import styled from 'styled-components';
 import dayjs from 'dayjs';
 import { useSDK } from '@cognite/sdk-provider';
-import { Modal, Select, Icon, Checkbox } from '@cognite/cogs.js';
+import { Modal, Select, Icon, Checkbox, Input } from '@cognite/cogs.js';
 import { CHART_VERSION } from 'config/';
 import DelayedComponent from 'components/DelayedComponent';
 import { TimeseriesChart } from '@cognite/data-exploration';
@@ -25,6 +25,7 @@ import {
   TIMESERIE_IDS_KEY,
   START_TIME_KEY,
   END_TIME_KEY,
+  CHART_NAME_KEY,
 } from 'utils/constants';
 
 const options = ['New chart', 'Add to chart'];
@@ -37,6 +38,7 @@ export const OpenInCharts: FC = () => {
   const history = useHistory();
   const { data: login } = useLoginStatus();
   const { mutate: updateChart } = useUpdateChart();
+  const { item: chartNameProp } = useQueryString(CHART_NAME_KEY);
   const [initiated, setInitiated] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
   const [currentValue, setCurrentValue] = useState(options[0]);
@@ -44,6 +46,9 @@ export const OpenInCharts: FC = () => {
     label: '',
     value: '',
   });
+  const [chartName, setChartName] = useState<string>(
+    chartNameProp || 'New chart'
+  );
   const { data: existingChart } = useChart(chart?.value);
   const [ts, setTs] = useState<Timeseries[]>([]);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
@@ -101,7 +106,7 @@ export const OpenInCharts: FC = () => {
       const newChart: Chart = {
         id: chartId,
         user: login?.user,
-        name: 'New chart',
+        name: chartName,
         updatedAt: Date.now(),
         createdAt: Date.now(),
         timeSeriesCollection: [],
@@ -170,6 +175,7 @@ export const OpenInCharts: FC = () => {
     updateChart,
     startTime,
     endTime,
+    chartName,
   ]);
   return (
     <Modal
@@ -233,7 +239,7 @@ export const OpenInCharts: FC = () => {
           </div>
           <div style={{ marginTop: 16 }}>
             <strong>Chart</strong>
-            <div style={{ marginTop: 8, marginBottom: 8 }}>
+            <div style={{ marginTop: 8, marginBottom: 4 }}>
               <label className="cogs-radio" htmlFor={options[0]}>
                 <input
                   type="radio"
@@ -248,7 +254,12 @@ export const OpenInCharts: FC = () => {
                 {options[0]}
               </label>
             </div>
-            <div style={{ marginBottom: 8 }}>
+            <Input
+              value={chartName}
+              onChange={(val) => setChartName(val.target.value)}
+              fullWidth
+            />
+            <div style={{ marginTop: 16, marginBottom: 4 }}>
               <label className="cogs-radio" htmlFor={options[1]}>
                 <input
                   type="radio"
