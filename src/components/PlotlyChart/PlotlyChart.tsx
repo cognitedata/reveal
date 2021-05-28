@@ -309,6 +309,7 @@ const PlotlyChartComponent = ({
   );
 
   const showYAxis = !isInSearch && !isPreview && isYAxisShown;
+  const showAdjustButton = showYAxis && seriesData.length > 0;
   const horizontalMargin = isPreview ? 0 : 20;
   const verticallMargin = isPreview ? 0 : 30;
 
@@ -465,7 +466,7 @@ const PlotlyChartComponent = ({
 
   return (
     <ChartingContainer ref={containerRef}>
-      {!isPreview && !isInSearch && seriesData.length > 0 && (
+      {showAdjustButton && (
         <>
           {(isLoading || timeseriesFetching) && <LoadingIcon />}
           <AdjustButton

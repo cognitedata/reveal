@@ -340,7 +340,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                         value={showYAxis}
                         onChange={() => setShowYAxis(!showYAxis)}
                       >
-                        {showYAxis ? 'Show Y-axes' : 'Hide Y-axes'}
+                        Show Y-axes
                       </Switch>
                     </Flex>
                   </YaxisDropdownWrapper>
