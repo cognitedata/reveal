@@ -56,7 +56,10 @@ export const ChartActions = () => {
       const newChart = duplicate(chart, login.user);
       await updateChart(newChart);
       trackUsage('ChartView.DuplicateChart', { isOwner });
-      history.push(`/${newChart.id}`);
+      history.push({
+        pathname: `/${newChart.id}`,
+        search: history.location.search,
+      });
     }
   };
 
@@ -70,7 +73,10 @@ export const ChartActions = () => {
   };
 
   const onDeleteSuccess = () => {
-    history.push('/');
+    history.push({
+      pathname: '/',
+      search: history.location.search,
+    });
   };
 
   const onDeleteError = () => {

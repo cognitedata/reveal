@@ -1,3 +1,4 @@
+import queryString from 'query-string';
 import { CogniteClient } from '@cognite/sdk';
 import config from 'config';
 
@@ -9,8 +10,14 @@ export type CogniteFunction = {
   description?: string;
 };
 
-const useBackendService = !!process.env.REACT_APP_BACKEND_SERVICE_BASE_URL;
-const BACKEND_SERVICE_BASE_URL = process.env.REACT_APP_BACKEND_SERVICE_BASE_URL;
+const backendServiceBaseUrlFromQuery = queryString.parse(window.location.search)
+  .backendServiceBaseUrl as string;
+
+const BACKEND_SERVICE_BASE_URL =
+  backendServiceBaseUrlFromQuery ||
+  process.env.REACT_APP_BACKEND_SERVICE_BASE_URL;
+
+const useBackendService = !!BACKEND_SERVICE_BASE_URL;
 const CDF_API_BASE_URL = config.cdfApiBaseUrl;
 
 const getServiceClient = (sdk: CogniteClient) => {

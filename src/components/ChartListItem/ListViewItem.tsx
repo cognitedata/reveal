@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 
 import EditableText from 'components/EditableText';
 import PlotlyChart from 'components/PlotlyChart';
@@ -26,11 +26,15 @@ const ListViewItem = ({
   cancelEdition,
 }: ListViewItemProps) => {
   const isChartOwner = useIsChartOwner(chart);
+  const history = useHistory();
 
   return (
     <Wrapper>
       <StyledLink
-        to={`/${chart.id}`}
+        to={{
+          pathname: `/${chart.id}`,
+          search: history.location.search,
+        }}
         onClick={() => {
           trackUsage('ChartList.SelectChart', {
             type: chart.public ? 'public' : 'private',

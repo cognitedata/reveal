@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 import styled from 'styled-components/macro';
 import debounce from 'lodash/debounce';
@@ -36,6 +42,9 @@ import {
   SeriesData,
 } from './utils';
 
+const Y_AXIS_WIDTH = 60;
+const Y_AXIS_MARGIN = 40;
+
 type ChartProps = {
   chartId: string;
   isPreview?: boolean;
@@ -54,6 +63,7 @@ const PlotlyChartComponent = ({
 }: ChartProps) => {
   const sdk = useSDK();
   const client = useQueryClient();
+  const containerRef = useRef<HTMLDivElement>(null);
   const { data: chart } = useChart(chartId);
   const { mutate, isLoading } = useUpdateChart();
 
@@ -143,6 +153,21 @@ const PlotlyChartComponent = ({
     },
     [chart?.id, client, mutate]
   );
+
+  const [yAxisValues, setYAxisValues] = useState<{
+    width: number;
+    margin: number;
+  }>({ width: 0.05, margin: 0.01 });
+
+  useEffect(() => {
+    if (containerRef && containerRef.current) {
+      const containerWidth = containerRef?.current?.clientWidth;
+      setYAxisValues({
+        width: Y_AXIS_WIDTH / containerWidth,
+        margin: Y_AXIS_MARGIN / containerWidth,
+      });
+    }
+  }, [containerRef]);
 
   const seriesData: SeriesData[] = useMemo(
     () =>
@@ -282,14 +307,22 @@ const PlotlyChartComponent = ({
   );
 
   const showYAxis = !isInSearch && !isPreview;
-  const marginValue = isPreview ? 0 : 50;
+  const horizontalMargin = isPreview ? 0 : 20;
+  const verticallMargin = isPreview ? 0 : 30;
 
   const layout = {
-    margin: { l: marginValue, r: marginValue, b: marginValue, t: marginValue },
+    margin: {
+      l: horizontalMargin,
+      r: horizontalMargin,
+      b: verticallMargin,
+      t: verticallMargin,
+    },
     xaxis: {
       type: 'date',
       autorange: false,
-      domain: showYAxis ? [0.06 * (seriesData.length - 1), 1] : [0, 1],
+      domain: showYAxis
+        ? [yAxisValues.width * (seriesData.length - 1) + yAxisValues.margin, 1]
+        : [0, 1],
       range: [chart?.dateFrom, chart?.dateTo],
       showspikes: true,
       spikemode: 'across',
@@ -357,7 +390,7 @@ const PlotlyChartComponent = ({
       side: 'right',
       overlaying: index !== 0 ? 'y' : undefined,
       anchor: 'free',
-      position: 0.05 * index,
+      position: yAxisValues.width * index,
       range: rangeY,
     };
 
@@ -370,7 +403,7 @@ const PlotlyChartComponent = ({
         (layout.annotations as any[]).push({
           xref: 'paper',
           yref: 'paper',
-          x: 0.05 * index,
+          x: yAxisValues.width * index,
           xanchor: 'left',
           y: 1,
           yanchor: 'bottom',
@@ -391,9 +424,9 @@ const PlotlyChartComponent = ({
             type: 'line',
             xref: 'paper',
             yref: 'paper',
-            x0: 0.05 * index,
+            x0: yAxisValues.width * index,
             y0: 1,
-            x1: 0.05 * index + 0.005,
+            x1: yAxisValues.width * index + 0.005,
             y1: 1,
             line: {
               color,
@@ -405,9 +438,9 @@ const PlotlyChartComponent = ({
             type: 'line',
             xref: 'paper',
             yref: 'paper',
-            x0: 0.05 * index,
+            x0: yAxisValues.width * index,
             y0: 0,
-            x1: 0.05 * index + 0.005,
+            x1: yAxisValues.width * index + 0.005,
             y1: 0,
             line: {
               color,
@@ -429,7 +462,7 @@ const PlotlyChartComponent = ({
   };
 
   return (
-    <ChartingContainer>
+    <ChartingContainer ref={containerRef}>
       {!isPreview && !isInSearch && seriesData.length > 0 && (
         <>
           {(isLoading || timeseriesFetching) && <LoadingIcon />}
@@ -442,7 +475,7 @@ const PlotlyChartComponent = ({
               });
               setYAxisLocked(!yAxisLocked);
             }}
-            left={5 * seriesData.length}
+            left={yAxisValues.width * 100 * seriesData.length}
             className="adjust-button"
             style={{ background: 'white' }}
           >
@@ -515,14 +548,15 @@ const PlotWrapper = styled.div`
   width: 100%;
   // Expanding the y-axis hitbox
   .nsdrag {
-    width: 40px;
+    width: 60px;
+    transform: translateX(-17px);
   }
 `;
 
 const AdjustButton = styled(Button)`
   position: absolute;
   background-color: white;
-  top: 50px;
+  top: 30px;
   left: ${(props: { left: number }) => props.left}%;
   margin-left: 40px;
   z-index: ${Layers.MAXIMUM};

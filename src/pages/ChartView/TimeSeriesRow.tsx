@@ -446,14 +446,17 @@ export default function TimeSeriesRow({
             <Dropdown
               content={
                 <Menu>
-                  <Flex direction="row">
-                    <div>
+                  <Flex
+                    direction="row"
+                    style={{ height: 150, overflow: 'hidden' }}
+                  >
+                    <div style={{ overflowY: 'scroll' }}>
                       <Menu.Header>
                         <UnitMenuHeader>Input</UnitMenuHeader>
                       </Menu.Header>
                       {unitOverrideMenuItems}
                     </div>
-                    <UnitMenuAside>
+                    <UnitMenuAside style={{ overflowY: 'scroll' }}>
                       <Menu.Header>
                         <UnitMenuHeader>Output</UnitMenuHeader>
                       </Menu.Header>

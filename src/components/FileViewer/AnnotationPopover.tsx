@@ -23,11 +23,11 @@ export const AnnotationPopover = ({
 }) => {
   const annotation = annotations[0];
   const selectedAssetId =
-    annotation.resourceType === 'asset' ? annotation.resourceId : undefined;
+    annotation?.resourceType === 'asset' ? annotation.resourceId : undefined;
 
   const { data: asset, isLoading } = useAsset(selectedAssetId);
 
-  if (annotation.resourceType !== 'asset' || !selectedAssetId) {
+  if (annotation?.resourceType !== 'asset' || !selectedAssetId) {
     return <></>;
   }
 

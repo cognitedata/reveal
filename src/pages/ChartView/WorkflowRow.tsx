@@ -70,10 +70,9 @@ export default function WorkflowRow({
   isSelected = false,
   mutate,
 }: Props) {
-  const { mutate: callFunction, isSuccess } = useCallFunction(
+  const { mutate: callFunction, isLoading: isCallLoading } = useCallFunction(
     'simple_calc-master'
   );
-
   const [isEditingName, setIsEditingName] = useState<boolean>(false);
   const [lastSuccessfulCall, setLastSuccessfulCall] = useState<Call>();
   const { id, enabled, color, name, calls, unit, preferredUnit } = workflow;
@@ -122,7 +121,11 @@ export default function WorkflowRow({
 
   const currentCallStatus = useFunctionCall(call?.functionId!, call?.callId!);
 
-  useEffect(() => {
+  const handleRetries = useCallback(() => {
+    if (isCallLoading) {
+      return;
+    }
+
     if (!call) {
       return;
     }
@@ -132,15 +135,16 @@ export default function WorkflowRow({
     }
 
     if (
-      !['Failed', 'Timeout'].includes(currentCallStatus?.data?.status || '')
+      currentCallStatus.data?.status &&
+      !['Failed', 'Timeout'].includes(currentCallStatus.data.status)
     ) {
       return;
     }
 
     runComputation();
-  }, [call, currentCallStatus, runComputation]);
+  }, [call, currentCallStatus, runComputation, isCallLoading]);
 
-  useEffect(() => {
+  const handleChanges = useCallback(() => {
     if (!computation) {
       return;
     }
@@ -151,7 +155,7 @@ export default function WorkflowRow({
     runComputation();
   }, [computation, runComputation, call]);
 
-  useEffect(() => {
+  const handleCallUpdates = useCallback(() => {
     if (!computation) {
       return;
     }
@@ -173,15 +177,11 @@ export default function WorkflowRow({
         calls: [newCall],
       })
     );
-  }, [
-    chart,
-    workflow.id,
-    isSuccess,
-    mutate,
-    computation,
-    lastSuccessfulCall,
-    call,
-  ]);
+  }, [chart, workflow.id, mutate, computation, lastSuccessfulCall, call]);
+
+  useEffect(handleRetries, [handleRetries]);
+  useEffect(handleChanges, [handleChanges]);
+  useEffect(handleCallUpdates, [handleCallUpdates]);
 
   const inputUnitOption = units.find(
     (unitOption) => unitOption.value === unit?.toLowerCase()
@@ -308,14 +308,17 @@ export default function WorkflowRow({
             <Dropdown
               content={
                 <Menu>
-                  <Flex direction="row">
-                    <div>
+                  <Flex
+                    direction="row"
+                    style={{ height: 150, overflow: 'hidden' }}
+                  >
+                    <div style={{ overflowY: 'scroll' }}>
                       <Menu.Header>
                         <UnitMenuHeader>Input</UnitMenuHeader>
                       </Menu.Header>
                       {unitOverrideMenuItems}
                     </div>
-                    <UnitMenuAside>
+                    <UnitMenuAside style={{ overflowY: 'scroll' }}>
                       <Menu.Header>
                         <UnitMenuHeader>Output</UnitMenuHeader>
                       </Menu.Header>
