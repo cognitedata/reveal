@@ -1422,19 +1422,10 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@cognite/auth-utils@^1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@cognite/auth-utils/-/auth-utils-1.0.3.tgz#b4179964b14dda8a8e4b6f553115c02133521091"
-  integrity sha512-CeK4YoDc5pBjh0V987cLn/e5oFN7Hgvn9HgxL+0regK2wKbImaq4DZBz1FdxmANygBLQbwiYSr7n/sCM1Kclsg==
-  dependencies:
-    "@cognite/sdk" "^4.0.3"
-    "@cognite/storage" "0.1.1"
-    lodash "^4.17.20"
-
-"@cognite/auth-utils@^1.0.4":
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/@cognite/auth-utils/-/auth-utils-1.0.4.tgz#cf383b4eaaebcb4e504caff7741701ad14fe584a"
-  integrity sha512-Qv2r7OoS+MTJxoeGOCtypRDxH1k/0qUh07UZQ+axabBnAbP9KhpawrZc6TNmzCPfIbJcbjxWstRbUC+HDvMXVg==
+"@cognite/auth-utils@^1.0.5":
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@cognite/auth-utils/-/auth-utils-1.0.5.tgz#96066fc18212cb589dcb9eb895b9115069211643"
+  integrity sha512-ZgboZEAcLsLYrdeqS1jr6cut07xcsbGHvxBped24jVbD3EMRm55Ozh6gZjyf+o180oCIKwlU2zOO0nOQJ6+nsA==
   dependencies:
     "@cognite/sdk" "^4.0.3"
     "@cognite/storage" "0.1.1"
@@ -1519,38 +1510,22 @@
     mixpanel-browser "^2.35.0"
     react "^17.0.1"
 
-"@cognite/react-container@^1.1.2":
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/@cognite/react-container/-/react-container-1.1.2.tgz#5ebbbddb6888f11cb1532e187da19d8221719ee4"
-  integrity sha512-FdzfDHu65gccImS2mBP3KjQgzBKpN3Y5eFeHDTQprdITaugEsrRCtf0RaOPevk+g9h3xRb6+5GhW0+N4QcsfQg==
+"@cognite/react-container@^1.2.5":
+  version "1.2.5"
+  resolved "https://registry.yarnpkg.com/@cognite/react-container/-/react-container-1.2.5.tgz#c8593416ff5c5648e51dd3059409d249c0b6ee48"
+  integrity sha512-amv+8uNyHrWGxGkPgask3PQFDeKlxnXnY9jUNXBUntYznFUlI3Umh9nZALV4hzh+j6uB9TgQ89fraxjUcoX87w==
   dependencies:
-    "@cognite/auth-utils" "^1.0.3"
+    "@cognite/auth-utils" "^1.0.5"
     "@cognite/intercom-helper" "^0.1.2"
     "@cognite/metrics" "^1.1.0"
     "@cognite/react-errors" "^0.3.0"
     "@cognite/react-i18n" "^0.4.0"
     "@cognite/react-loop-detector" "^0.1.0"
     "@cognite/react-sentry" "^0.1.1"
-    "@cognite/react-tenant-selector" "^1.2.1"
+    "@cognite/react-tenant-selector" "^1.2.6"
     "@cognite/sdk" "^4.0.3"
     jwt-decode "^3.0.0"
     react-redux "^7.2.2"
-    tslib "^2.2.0"
-
-"@cognite/react-errors@^0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@cognite/react-errors/-/react-errors-0.2.0.tgz#2ee5dc9ac27ff7d3f792125d1c2d04e347bfde4e"
-  integrity sha512-7MeKFslVEyPoH0QS7qgfPzUpjrCutPWnQkl8V6YwlReLSnBCOgDC7w3zr2NOJU32APQq9OsmBMH0IWFKnYz/Fw==
-  dependencies:
-    "@cognite/cogs.js" "^3.10.0"
-    "@cognite/metrics" "^1.0.0"
-    "@cognite/react-i18n" "^0.3.2"
-    "@sentry/browser" "^5.19.2"
-    i18next "^19.6.0"
-    lodash "^4.17.19"
-    rc-collapse "^2.0.0"
-    react-i18next "^11.7.0"
-    styled-components "^5.1.1"
     tslib "^2.2.0"
 
 "@cognite/react-errors@^0.3.0":
@@ -1568,19 +1543,6 @@
     react-i18next "^11.8.15"
     styled-components "^5.1.1"
     tslib "^2.2.0"
-
-"@cognite/react-i18n@^0.3.2":
-  version "0.3.2"
-  resolved "https://registry.yarnpkg.com/@cognite/react-i18n/-/react-i18n-0.3.2.tgz#86a1b6854a4c6d356fcc931b118cb3311ec56ad3"
-  integrity sha512-kttiy7jZ1URKzsYKlNxnFNMx+N0OpjLpH3Ty7o+S9TJAB3wzVFFjJms7XOfbXOhHj08/APcak/QLkH2aKtYUNA==
-  dependencies:
-    i18next "^19.8.4"
-    i18next-chained-backend "^2.0.1"
-    i18next-localstorage-backend "^3.1.1"
-    i18next-locize-backend "^4.1.1"
-    i18next-pseudo "^2.2.0"
-    i18next-xhr-backend "^3.2.2"
-    react-i18next "^11.8.5"
 
 "@cognite/react-i18n@^0.4.0":
   version "0.4.0"
@@ -1610,26 +1572,12 @@
     "@sentry/browser" "^6.2.1"
     tslib "^2.2.0"
 
-"@cognite/react-tenant-selector@^1.2.1":
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/@cognite/react-tenant-selector/-/react-tenant-selector-1.2.1.tgz#b3f4b74c38649baa744332805ce53488bfc1f107"
-  integrity sha512-o3bUGN4gyYax5PxN24rvIeYgfga5GzSAGK7ea+q5U13/1dIi9TY8IxkdadOWwDs2KG84B/h8WihVO7vwCB+4dQ==
+"@cognite/react-tenant-selector@^1.2.6":
+  version "1.2.6"
+  resolved "https://registry.yarnpkg.com/@cognite/react-tenant-selector/-/react-tenant-selector-1.2.6.tgz#2e2e9358ce077caa49b63dc10f9020c5aefeaa9b"
+  integrity sha512-mKGcuGXWNfn5ncwA+CCkqUFGK2vgAOriOUPlVZ4rXVu29iDCV6UswqmcIAN3l3ct627q2eSvPz2LOJAivvtcag==
   dependencies:
-    "@cognite/auth-utils" "^1.0.3"
-    "@cognite/metrics" "^1.0.0"
-    "@cognite/react-i18n" "^0.4.0"
-    "@cognite/storage" "^0.1.1"
-    axios "^0.21.1"
-    react-helmet "^6.1.0"
-    react-query "^3.7.1"
-    styled-components "^5.1.0"
-
-"@cognite/react-tenant-selector@^1.2.5":
-  version "1.2.5"
-  resolved "https://registry.yarnpkg.com/@cognite/react-tenant-selector/-/react-tenant-selector-1.2.5.tgz#5eb73915b520291b88ee17d7e6cabb733ee25237"
-  integrity sha512-cNgGYuG6Qav+EBk9/Jh1XEKZSAKUWjuFzQdnQZNwUp2FVtZTmssSSX9OkIJRSkt8BudzMShrg+hxhUZ7VCmZ7g==
-  dependencies:
-    "@cognite/auth-utils" "^1.0.4"
+    "@cognite/auth-utils" "^1.0.5"
     "@cognite/intercom-helper" "^0.1.2"
     "@cognite/metrics" "^1.0.0"
     "@cognite/react-i18n" "^0.4.0"
@@ -9458,19 +9406,12 @@ i18next-chained-backend@^2.0.1:
   dependencies:
     "@babel/runtime" "^7.13.10"
 
-i18next-localstorage-backend@^3.1.1, i18next-localstorage-backend@^3.1.2:
+i18next-localstorage-backend@^3.1.2:
   version "3.1.2"
   resolved "https://registry.yarnpkg.com/i18next-localstorage-backend/-/i18next-localstorage-backend-3.1.2.tgz#415fcac42d6d66ff8bc878d269c5b5719fdedc2c"
   integrity sha512-J81qf9atTAc9iMdHUNKJeAWgUsFvqbxfHIIztmF62tOaINA2AJk0kewJjm8LQDuArkiuW9RhQPbhqbyeZut35g==
   dependencies:
     "@babel/runtime" "^7.4.5"
-
-i18next-locize-backend@^4.1.1:
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/i18next-locize-backend/-/i18next-locize-backend-4.2.0.tgz#fa71a010459079be69922678604a6a952d4162d1"
-  integrity sha512-piEGKY4e79S+zcxbEy7VwN66RZZKRx3qLzLJZNhHN251IxF1HkvhNiz+kNSla7Y/k25T1F2WOU6L9OlSjEwvtw==
-  dependencies:
-    node-fetch "2.6.1"
 
 i18next-locize-backend@^4.2.2:
   version "4.2.2"
@@ -14537,7 +14478,7 @@ react-helmet@^6.1.0:
     react-fast-compare "^3.1.1"
     react-side-effect "^2.1.0"
 
-react-i18next@^11.7.0, react-i18next@^11.8.10, react-i18next@^11.8.15, react-i18next@^11.8.5:
+react-i18next@^11.8.10, react-i18next@^11.8.15:
   version "11.8.15"
   resolved "https://registry.yarnpkg.com/react-i18next/-/react-i18next-11.8.15.tgz#89450d585298f18d4a8eb1628b0868863f3a4767"
   integrity sha512-ZbKcbYYKukgDL0MiUWKJTEsEftjSTNVZv67/V+SjPqTRwuF/aL4NbUtuEcb4WjHk0HyZ1M+2wGd07Fp0RUNHKA==
