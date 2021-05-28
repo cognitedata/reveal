@@ -138,15 +138,16 @@ export const MapView = (props: FileExplorerTableProps) => {
           onZoom={handleZoomAndDrag}
         >
           <Layer type="circle" layout={circleLayout} paint={circlePaint}>
-            {Object.keys(features)
-              .filter((f, _) => f !== selectedFileOnMap?.id.toString())
-              .map((f, _) => (
-                <Feature
-                  key={f}
-                  coordinates={features[f]}
-                  onClick={() => handleOnClick(+f)}
-                />
-              ))}
+            {selectedFiles.length &&
+              Object.keys(features)
+                .filter((f, _) => f !== selectedFileOnMap?.id.toString())
+                .map((f, _) => (
+                  <Feature
+                    key={f}
+                    coordinates={features[f]}
+                    onClick={() => handleOnClick(+f)}
+                  />
+                ))}
           </Layer>
           {selectedFileOnMap && (
             <>
@@ -155,13 +156,15 @@ export const MapView = (props: FileExplorerTableProps) => {
                 layout={circleLayout}
                 paint={circlePaintSelected}
               >
-                <Feature
-                  key={selectedFileOnMap.id}
-                  coordinates={features[selectedFileOnMap.id.toString()]}
-                  onClick={() => handleOnClick(+selectedFileOnMap.id)}
-                />
+                {selectedFiles.length && (
+                  <Feature
+                    key={selectedFileOnMap.id}
+                    coordinates={features[selectedFileOnMap.id.toString()]}
+                    onClick={() => handleOnClick(+selectedFileOnMap.id)}
+                  />
+                )}
               </Layer>
-              {popupVisible && (
+              {popupVisible && selectedFiles.length && (
                 <Popup
                   key={selectedFileOnMap.id}
                   coordinates={features[selectedFileOnMap.id.toString()]}
