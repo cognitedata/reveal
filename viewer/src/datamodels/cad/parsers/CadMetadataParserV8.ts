@@ -99,14 +99,13 @@ export function parseCadMetadataV8(metadata: CadMetadataV8): SectorScene {
 function createSectorMetadata(metadata: CadSectorMetadataV8): SectorMetadata {
   const facesFile = determineFacesFile(metadata);
 
-  // TODO This is a workaround for broken scene.json files with NaN bounding boxes
   const bb = metadata.boundingBox;
-  const min_x = isNaN(bb.min.x) ? 0 : bb.min.x;
-  const min_y = isNaN(bb.min.y) ? 0 : bb.min.y;
-  const min_z = isNaN(bb.min.z) ? 0 : bb.min.z;
-  const max_x = isNaN(bb.max.x) ? 0 : bb.max.x;
-  const max_y = isNaN(bb.max.y) ? 0 : bb.max.y;
-  const max_z = isNaN(bb.max.z) ? 0 : bb.max.z;
+  const min_x = bb.min.x;
+  const min_y = bb.min.y;
+  const min_z = bb.min.z;
+  const max_x = bb.max.x;
+  const max_y = bb.max.y;
+  const max_z = bb.max.z;
   return {
     id: metadata.id,
     path: metadata.path,
