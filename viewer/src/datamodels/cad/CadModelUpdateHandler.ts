@@ -91,7 +91,7 @@ export class CadModelUpdateHandler {
     };
     this._updateObservable = combinator.pipe(
       observeOn(asyncScheduler), // Schedule tasks on macro task queue (setInterval)
-      auditTime(250), // Take the last value every 250ms // TODO 07-08-2020 j-bjorne: look into throttle
+      auditTime(250), // Take the last value every 250ms
       map(createDetermineSectorsInput), // Map from array to interface (enables destructuring)
       filter(loadingEnabled), // should we load?
       handleDetermineSectorsInput(
