@@ -95,19 +95,21 @@ export const useCallFunction = (externalId: string) => {
 export const sleep = (ms: number) =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
-export const transformSimpleCalcResult = ({
-  value,
-  timestamp,
-}: {
-  value?: number[];
-  timestamp?: number[];
-}) =>
-  value?.length && timestamp?.length
+export const transformSimpleCalcResult = (
+  result: {
+    value?: number[];
+    timestamp?: number[];
+  } = {}
+) => {
+  const { value, timestamp } = result || undefined;
+
+  return value?.length && timestamp?.length
     ? zipWith(value, timestamp, (v, t) => ({
         value: v,
         timestamp: new Date(t),
       }))
     : ([] as DoubleDatapoint[]);
+};
 
 export async function getFunctionResponseWhenDone(
   sdk: CogniteClient,
