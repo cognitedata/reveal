@@ -8,9 +8,9 @@ import { CadNode } from './CadNode';
 import { CadModelFactory } from './CadModelFactory';
 import { CadModelMetadataRepository } from './CadModelMetadataRepository';
 import { CadModelUpdateHandler } from './CadModelUpdateHandler';
+
 import { CadModelMetadata } from './CadModelMetadata';
 
-import { NodeAppearanceProvider } from './NodeAppearance';
 import { trackError } from '../../utilities/metrics';
 
 import { CadMaterialManager } from './CadMaterialManager';
@@ -35,7 +35,9 @@ export class CadManager<TModelIdentifier> {
   private readonly _subscription: Subscription = new Subscription();
 
   private _needsRedraw: boolean = false;
+
   private readonly _markNeedsRedrawBound = this.markNeedsRedraw.bind(this);
+  private readonly _materialsChangedListener = this.handleMaterialsChanged.bind(this);
 
   get materialManager() {
     return this._materialManager;
@@ -66,6 +68,8 @@ export class CadManager<TModelIdentifier> {
     this._cadModelMetadataRepository = cadModelMetadataRepository;
     this._cadModelFactory = cadModelFactory;
     this._cadModelUpdateHandler = cadModelUpdateHandler;
+    this._materialManager.on('materialsChanged', this._materialsChangedListener);
+
     this._subscription.add(
       this._cadModelUpdateHandler.consumedSectorObservable().subscribe(
         sector => {
@@ -108,6 +112,7 @@ export class CadManager<TModelIdentifier> {
   dispose() {
     this._cadModelUpdateHandler.dispose();
     this._subscription.unsubscribe();
+    this._materialManager.off('materialsChanged', this._materialsChangedListener);
   }
 
   requestRedraw(): void {
@@ -155,11 +160,7 @@ export class CadManager<TModelIdentifier> {
     this._materialManager.setRenderMode(renderMode);
   }
 
-  async addModel(
-    modelIdentifier: TModelIdentifier,
-    geometryFilter?: GeometryFilter,
-    nodeAppearanceProvider?: NodeAppearanceProvider
-  ): Promise<CadNode> {
+  async addModel(modelIdentifier: TModelIdentifier, geometryFilter?: GeometryFilter): Promise<CadNode> {
     const metadata = await this._cadModelMetadataRepository.loadData(modelIdentifier);
     if (this._cadModelMap.has(metadata.blobUrl)) {
       throw new Error(`Model ${modelIdentifier} has already been added`);
@@ -168,7 +169,7 @@ export class CadManager<TModelIdentifier> {
     const geometryClipBox = determineGeometryClipBox(geometryFilter, metadata);
     const clippedMetadata = createClippedModel(metadata, geometryClipBox);
 
-    const model = this._cadModelFactory.createModel(clippedMetadata, nodeAppearanceProvider);
+    const model = this._cadModelFactory.createModel(clippedMetadata);
     model.addEventListener('update', this._markNeedsRedrawBound);
     this._cadModelMap.set(metadata.blobUrl, model);
     this._cadModelUpdateHandler.addModel(model);
@@ -190,6 +191,10 @@ export class CadManager<TModelIdentifier> {
 
   private markNeedsRedraw(): void {
     this._needsRedraw = true;
+  }
+
+  private handleMaterialsChanged() {
+    this.requestRedraw();
   }
 }
 

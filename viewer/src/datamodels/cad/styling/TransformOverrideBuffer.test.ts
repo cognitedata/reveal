@@ -11,6 +11,17 @@ describe('TransformOverrideBuffer', () => {
     jest.resetAllMocks();
   });
 
+  test('dispose() disposes texture', () => {
+    const buffer = new TransformOverrideBuffer(onGenerateNewTextureCb);
+    const texture = buffer.dataTexture;
+    const listener = jest.fn();
+    texture.addEventListener('dispose', listener);
+
+    buffer.dispose();
+
+    expect(listener).toBeCalledTimes(1);
+  });
+
   test('addOverrideTransform called many times, triggers reallocation', () => {
     const buffer = new TransformOverrideBuffer(onGenerateNewTextureCb);
     for (let i = 0; i < 1000; i++) {

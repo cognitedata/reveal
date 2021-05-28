@@ -57,7 +57,13 @@ function createMockAttributeBufferFromAttributes(attributes: Map<string, ParsePr
 }
 
 describe('createPrimitives', () => {
-  const materials = createMaterials(64, RenderMode.Color, []);
+  const materials = createMaterials(
+    RenderMode.Color,
+    [],
+    new THREE.DataTexture(new Uint8Array(64), 4, 4),
+    new THREE.DataTexture(new Uint8Array(64), 4, 4),
+    new THREE.DataTexture(new Uint8Array(64), 4, 4)
+  );
   const bounds = new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1, 1, 1));
   let emptySector: SectorGeometry;
   let mockAttributes: Map<string, ParsePrimitiveAttribute>;

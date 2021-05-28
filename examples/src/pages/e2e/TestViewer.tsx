@@ -38,7 +38,6 @@ type PropsCad<T = TestEnvCad> = {
   // Otherwise it complains that arg is any (unless you pass modelType='cad').
   // TS doesn't infer correct type when prop is undefined here :(
   modelType?: 'cad';
-  nodeAppearanceProvider?: reveal.NodeAppearanceProvider;
   modifyTestEnv?: (env: T) => TestEnvModified<T> | void;
 };
 type PropsPointCloud<T = TestEnvPointCloud> = {
@@ -118,12 +117,6 @@ export function TestViewer(props: Props) {
 
       let scene = new THREE.Scene();
 
-      const defaultNodeAppearanceProvider: reveal.NodeAppearanceProvider = {
-        styleNode() {
-          return reveal.DefaultNodeAppearance.NoOverrides;
-        },
-      };
-
       const renderOptions: RenderOptions = {
         ...defaultRenderOptions, 
         ssaoRenderParameters: {
@@ -150,8 +143,7 @@ export function TestViewer(props: Props) {
       } else {
         model = await revealManager.addModel(
           'cad',
-          modelUrl,
-          { nodeAppearanceProvider: props.nodeAppearanceProvider || defaultNodeAppearanceProvider }
+          modelUrl
         );
       }
 
