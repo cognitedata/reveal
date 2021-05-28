@@ -5,6 +5,7 @@ import {
   ViewMode,
 } from 'src/modules/Common/types';
 import {
+  selectIsPollingComplete,
   setSelectedFileId,
   showFileMetadataPreview,
 } from 'src/modules/Process/processSlice';
@@ -23,7 +24,7 @@ import {
 } from 'src/modules/Workflow/workflowRoutes';
 import { FileTable } from 'src/modules/Common/Components/FileTable/FileTable';
 import { FileGridPreview } from 'src/modules/Common/Components/FileGridPreview/FileGridPreview';
-import { useHistory } from 'react-router-dom';
+import { Prompt, useHistory } from 'react-router-dom';
 import { PageBasedGrideView } from 'src/modules/Common/Components/GridView/PageBasedGrideView';
 
 export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
@@ -32,6 +33,10 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
   const selectedId = useSelector(
     ({ processSlice }: RootState) => processSlice.selectedFileId
   );
+
+  const isPollingFinished = useSelector((state: RootState) => {
+    return selectIsPollingComplete(state.processSlice);
+  });
 
   const processFiles = useSelector((state: RootState) =>
     selectAllFiles(state.filesSlice)
@@ -76,6 +81,22 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
     dispatch(setFileSelectState(item.id, selected));
   };
 
+  const promptMessage =
+    'Processing files. Are you sure you want to leave or refresh this page? The session state and all unsaved processing data will be lost. Already saved processing data can be accessed from the Image explorer on the front page.';
+  window.onbeforeunload = (event: any) => {
+    // prompt on reload, if in a session and there are files
+    if (
+      !window.location.pathname.includes('/vision/workflow') ||
+      !processFiles.length
+    ) {
+      return;
+    }
+    const e = event || window.event;
+    e.returnValue = promptMessage; // NOTE: only some browsers show this message
+    // eslint-disable-next-line consistent-return
+    return promptMessage;
+  };
+
   const renderView = () => {
     if (currentView === 'grid') {
       return (
@@ -109,5 +130,17 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
       />
     );
   };
-  return <>{renderView()}</>;
+  return (
+    <>
+      <Prompt
+        when={!isPollingFinished}
+        message={(location, _) => {
+          return location.pathname.includes('vision/workflow/review/') // exclude review page
+            ? true
+            : promptMessage;
+        }}
+      />
+      {renderView()}
+    </>
+  );
 };
