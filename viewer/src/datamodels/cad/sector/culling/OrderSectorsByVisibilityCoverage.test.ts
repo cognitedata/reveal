@@ -12,9 +12,10 @@ import { CadModelMetadata } from '../..';
 import { SectorScene, SectorMetadata } from '../types';
 import { OccludingGeometryProvider } from './OccludingGeometryProvider';
 import { traverseDepthFirst } from '../../../../utilities/objectTraversal';
+import { createGlContext } from '../../../../__testutilities__/createGlContext';
 
 describe('OrderSectorsByVisibilityCoverage', () => {
-  const glContext: WebGLRenderingContext = require('gl')(64, 64);
+  const context = createGlContext(64, 64);
   let renderer: THREE.WebGLRenderer;
   const identityMatrix = new THREE.Matrix4().identity();
   const singleSectorScene = createStubScene([0, [], Box3.fromBounds(-1, -1, -1, 1, 1, 1)]);

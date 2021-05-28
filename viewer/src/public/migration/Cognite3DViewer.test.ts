@@ -11,12 +11,14 @@ import { Cognite3DViewer } from './Cognite3DViewer';
 import nock from 'nock';
 import { SectorCuller } from '../../datamodels/cad/sector/culling/SectorCuller';
 import { DisposedDelegate, SceneRenderedDelegate } from '../types';
+import { createGlContext } from '../../__testutilities__/createGlContext';
 
 const sceneJson = require('./Cognite3DViewer.test-scene.json');
 
 describe('Cognite3DViewer', () => {
   const sdk = new CogniteClient({ appId: 'cognite.reveal.unittest' });
-  const context: WebGLRenderingContext = require('gl')(64, 64, { preserveDrawingBuffer: true });
+  const context = createGlContext(64, 64, { preserveDrawingBuffer: true });
+
   const renderer = new THREE.WebGLRenderer({ context });
   const _sectorCuller: SectorCuller = {
     determineSectors: jest.fn(),
