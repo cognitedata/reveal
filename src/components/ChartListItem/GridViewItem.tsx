@@ -1,11 +1,12 @@
 import React, { ReactNode } from 'react';
 import styled from 'styled-components/macro';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 
 import { Chart } from 'reducers/charts/types';
 import EditableText from 'components/EditableText';
 import PlotlyChart from 'components/PlotlyChart';
 
+import { trackUsage } from 'utils/metrics';
 import { formatOwner, formatDate } from './utils';
 
 interface GridViewItemProps {
@@ -23,9 +24,16 @@ const GridViewItem = ({
   isEditingName,
   cancelEdition,
 }: GridViewItemProps) => {
+  const history = useHistory();
+
   return (
     <Wrapper>
-      <Link to={`/${chart.id}`}>
+      <Link
+        to={{
+          pathname: `/${chart.id}`,
+          search: history.location.search,
+        }}
+      >
         <ImageWrapper>
           <ImageContent>
             <PlotlyChart chartId={chart.id} isPreview />
@@ -33,7 +41,14 @@ const GridViewItem = ({
         </ImageWrapper>
       </Link>
       <Footer>
-        <StyledLink to={`/${chart.id}`}>
+        <StyledLink
+          to={`/${chart.id}`}
+          onClick={() => {
+            trackUsage('ChartList.SelectChart', {
+              type: chart.public ? 'public' : 'private',
+            });
+          }}
+        >
           <DateAndOwnerInfo>
             {formatDate(chart.updatedAt)} &middot; {formatOwner(chart.user)}
           </DateAndOwnerInfo>

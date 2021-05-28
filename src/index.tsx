@@ -9,7 +9,10 @@ import App from 'components/App';
 import * as serviceWorker from './serviceWorker';
 
 import '@cognite/cogs.js/dist/cogs.css';
+import 'antd/dist/antd.css';
 import 'react-datepicker/dist/react-datepicker.css';
+
+require('dotenv').config();
 
 if (process.env.REACT_APP_SENTRY_DSN) {
   Sentry.init({

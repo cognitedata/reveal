@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-
+import { useSDK } from '@cognite/sdk-provider';
 import styled from 'styled-components';
 import { Icon, Checkbox, Button } from '@cognite/cogs.js';
 import DelayedComponent from 'components/DelayedComponent';
@@ -15,11 +15,15 @@ import {
   removeTimeseries,
 } from 'utils/charts';
 import dayjs from 'dayjs';
+import { calculateDefaultYAxis } from 'utils/axis';
+import { trackUsage } from 'utils/metrics';
 
 type Props = {
   asset: Asset;
 };
+
 export default function AssetSearchHit({ asset }: Props) {
+  const sdk = useSDK();
   const { chartId } = useParams<{ chartId: string }>();
   const { data: chart } = useChart(chartId);
   const { mutate: updateChart } = useUpdateChart();
@@ -60,11 +64,21 @@ export default function AssetSearchHit({ asset }: Props) {
       if (tsToRemove) {
         updateChart(removeTimeseries(chart, tsToRemove.id));
       } else {
+        // Calculate y-axis / range
+        const range = await calculateDefaultYAxis({
+          chart,
+          sdk,
+          timeSeries,
+        });
+
         const newTs = covertTSToChartTS(
           timeSeries,
-          chart.timeSeriesCollection?.length || 0
+          chart.timeSeriesCollection?.length || 0,
+          range
         );
+
         updateChart(addTimeseries(chart, newTs));
+        trackUsage('ChartView.AddTimeSeries', { source: 'search' });
       }
     }
   };

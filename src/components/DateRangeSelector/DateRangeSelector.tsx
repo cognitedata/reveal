@@ -5,6 +5,7 @@ import { Button, DateRange } from '@cognite/cogs.js';
 import { Chart } from 'reducers/charts/types';
 import TimeSelector from 'components/TimeSelector';
 import { useUpdateChart } from 'hooks/firebase';
+import { trackUsage } from 'utils/metrics';
 
 interface DateRangeSelectorProps {
   chart: Chart;
@@ -48,16 +49,19 @@ const DateRangeSelector = ({ chart }: DateRangeSelectorProps) => {
   const handleDateChange = ({
     dateFrom,
     dateTo,
+    source = 'daterange',
   }: {
     dateFrom?: Date;
     dateTo?: Date;
+    source?: 'button' | 'daterange';
   }) => {
-    if (dateFrom && dateTo) {
+    if (dateFrom || dateTo) {
       updateChart({
         ...chart,
         dateFrom: (dateFrom || new Date(chart?.dateFrom!)).toJSON(),
         dateTo: (dateTo || new Date(chart?.dateTo!)).toJSON(),
       });
+      trackUsage('ChartView.DateChange', { source });
     }
   };
 
@@ -71,9 +75,10 @@ const DateRangeSelector = ({ chart }: DateRangeSelectorProps) => {
               handleDateChange({
                 dateFrom: option.dateFrom().toDate(),
                 dateTo: option.dateTo().toDate(),
+                source: 'button',
               })
             }
-            variant="ghost"
+            type="ghost"
           >
             {option.label}
           </Button>

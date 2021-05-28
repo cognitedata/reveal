@@ -1,13 +1,12 @@
 import React from 'react';
 import { Chart } from 'reducers/charts/types';
-import { Modes } from 'pages/types';
 import WorkflowRow from './WorkflowRow';
 
 type Props = {
   chart: Chart;
   updateChart: (c: Chart) => void;
   mode: string;
-  setMode: (m: Modes) => void;
+  openNodeEditor: () => void;
   selectedSourceId?: string;
   onRowClick: (id?: string) => void;
   onInfoClick: (id?: string) => void;
@@ -17,7 +16,7 @@ export default function WorkflowRows({
   chart,
   updateChart,
   mode,
-  setMode,
+  openNodeEditor,
   selectedSourceId,
   onRowClick,
   onInfoClick,
@@ -33,7 +32,7 @@ export default function WorkflowRows({
           onRowClick={onRowClick}
           onInfoClick={onInfoClick}
           mode={mode}
-          setMode={setMode}
+          openNodeEditor={openNodeEditor}
           mutate={updateChart}
         />
       ))}

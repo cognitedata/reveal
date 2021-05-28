@@ -1,12 +1,13 @@
 import { Asset, FileInfo as File } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
-import { isFilePreviewable } from 'components/FileList';
+import { isFilePreviewable, isPreviewableImage } from 'components/FileList';
 import { useQuery } from 'react-query';
 import {
   CogniteAnnotation,
   listAnnotationsForFile,
   listFilesAnnotatedWithAssetId,
 } from '@cognite/annotations';
+import unionBy from 'lodash/unionBy';
 
 export const useAssetAnnotations = (file?: File) => {
   const sdk = useSDK();
@@ -27,7 +28,20 @@ export const useFilesAssetAppearsIn = (asset?: Asset, enabled = true) => {
   return useQuery<File[]>(
     ['annotated-files', { assetId: asset?.id }],
     async () => {
-      return listFilesAnnotatedWithAssetId(sdk, asset!);
+      const annotatedFiles = await listFilesAnnotatedWithAssetId(sdk, asset!);
+
+      const linkedSvgs = await sdk.files.list({
+        filter: { assetIds: [asset?.id!], mimeType: 'image/svg+xml' },
+      });
+      const linkedPdfs = await sdk.files.list({
+        filter: { assetIds: [asset?.id!], mimeType: 'application/pdf' },
+      });
+
+      return unionBy(
+        annotatedFiles,
+        [...linkedSvgs.items, ...linkedPdfs.items],
+        'id'
+      );
     },
     { enabled: !!asset && enabled }
   );
@@ -43,16 +57,27 @@ export const useFileIcon = (file: File) => {
         return undefined;
       }
 
+      if (isPreviewableImage(file)) {
+        const urls = await sdk.files.getDownloadUrls([{ id: file.id }]);
+        return urls[0].downloadUrl;
+      }
+
       const icon = await sdk
-        .get(`/api/v1/projects/${sdk.project}/files/icon`, {
-          params: { id: file.id },
-          headers: {
-            Accept: 'image/avif,image/webp,image/apng,image/*,*/*;q=0.8',
-          },
-          responseType: 'arraybuffer',
-        })
+        .get(
+          `/api/playground/projects/${sdk.project}/files/unstructured/preview`,
+          {
+            params: { documentId: file.id },
+            headers: {
+              Accept: 'image/png',
+            },
+            responseType: 'arraybuffer',
+          }
+        )
         .then((response) => response.data);
-      return icon;
+
+      const arrayBufferView = new Uint8Array(icon);
+      const blob = new Blob([arrayBufferView]);
+      return URL.createObjectURL(blob);
     },
     {
       retry: false,

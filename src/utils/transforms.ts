@@ -1,18 +1,31 @@
 /* eslint camelcase: 0 */
 
-import { StorableNode } from 'reducers/charts/types';
+import { omit } from 'lodash';
+import { nanoid } from 'nanoid';
+import { Chart, StorableNode } from 'reducers/charts/types';
+import { FLOAT_NUMBER_PATTERN } from './constants';
 
 export type DSPFunction = {
+  category: string;
   description: string;
   op: string;
   n_inputs: number;
   n_outputs: number;
-  parameters: {
-    param: string;
-    type: string;
-    default?: any;
-  }[];
+  parameters: DSPFunctionParameter[];
   type_info: string[][];
+};
+
+export enum DSPFunctionParameterType {
+  string = 'str',
+  int = 'int',
+  float = 'float',
+  boolean = 'bool',
+}
+
+export type DSPFunctionParameter = {
+  param: string;
+  type: DSPFunctionParameterType;
+  default?: any;
 };
 
 export type DSPFunctionConfig = {
@@ -68,12 +81,38 @@ export function getConfigFromDspFunction(
   };
 }
 
-export function getBlockTypeFromParameterType(parameterType: string): string {
+export function getBlockTypeFromParameterType(
+  parameterType: DSPFunctionParameterType
+): string {
   switch (parameterType) {
-    case 'int':
+    case DSPFunctionParameterType.int:
       return 'CONSTANT';
+    case DSPFunctionParameterType.string:
+      return 'STRING';
+    case DSPFunctionParameterType.float:
+      return 'FLOAT';
+    case DSPFunctionParameterType.boolean:
+      return 'BOOLEAN';
     default:
       return 'UNKNOWN';
+  }
+}
+
+export function transformParamInput(
+  type: DSPFunctionParameterType,
+  value: string
+): string | number {
+  switch (type) {
+    case DSPFunctionParameterType.int:
+      return Number(value);
+    case DSPFunctionParameterType.float:
+      // eslint-disable-next-line
+      const match = value.match(FLOAT_NUMBER_PATTERN);
+      return match && match[0] ? match[0] : parseFloat(value);
+    case DSPFunctionParameterType.string:
+      return value;
+    default:
+      return value;
   }
 }
 
@@ -88,22 +127,14 @@ export function getBlockTypeFromFunctionType(functionType: string): string {
   }
 }
 
-export function getFunctionTypeFromBlockType(blockType: string): string {
-  switch (blockType) {
-    case 'TOOLBOX_FUNCTION':
-      return 'result';
-    case 'TIME_SERIES_REFERENCE':
-      return 'ts';
-    case 'CONSTANT':
-      return 'const';
-    default:
-      return 'UNKNOWN';
-  }
-}
-
 export function getInputFromNode(node: StorableNode, allNodes: StorableNode[]) {
   switch (node.functionEffectReference) {
     case 'TOOLBOX_FUNCTION':
+      return {
+        type: 'result',
+        value: allNodes.findIndex((n) => n.id === node.id),
+      };
+    case 'OUTPUT':
       return {
         type: 'result',
         value: allNodes.findIndex((n) => n.id === node.id),
@@ -112,6 +143,11 @@ export function getInputFromNode(node: StorableNode, allNodes: StorableNode[]) {
       return {
         type: 'ts',
         value: node.functionData.timeSeriesExternalId,
+      };
+    case 'SOURCE_REFERENCE':
+      return {
+        type: 'ts',
+        value: node.functionData.sourceId,
       };
     case 'CONSTANT':
       return { type: 'const', value: node.functionData.value };
@@ -124,23 +160,28 @@ export function getOperationFromNode(node: StorableNode) {
   switch (node.functionEffectReference) {
     case 'TOOLBOX_FUNCTION':
       return node.functionData.toolFunction.op;
+    case 'OUTPUT':
+      return 'PASSTHROUGH';
     default:
       return 'PASSTHROUGH';
   }
 }
 
 export function getStepsFromWorkflow(
+  chart: Chart,
   nodes: StorableNode[] | undefined,
   connections: Record<string, any> | undefined
 ) {
   const outputNode = nodes?.find(
-    (node) => !node.outputPins || node.outputPins.length === 0
+    (node) => node.functionEffectReference === 'OUTPUT'
   );
 
   if (!outputNode) {
     return [];
   }
 
+  let totalNodes = [...(nodes || [])];
+  let totalConnections = { ...connections } as typeof connections;
   const validNodes: StorableNode[] = [outputNode];
 
   /**
@@ -148,11 +189,14 @@ export function getStepsFromWorkflow(
    */
   function resolveInputNodes(node: StorableNode) {
     node.inputPins.forEach((inputPin: any) => {
-      const inputNodeConnections = Object.values(connections || {}).filter(
-        (conn) =>
-          conn.inputPin.nodeId === node.id &&
-          conn.inputPin.pinId === inputPin.id
-      );
+      const inputNodeConnections = Object.values(totalConnections || {})
+        .filter(Boolean)
+        .filter((conn) => {
+          return (
+            conn.inputPin.nodeId === node.id &&
+            conn.inputPin.pinId === inputPin.id
+          );
+        });
 
       if (!inputNodeConnections.length) {
         return;
@@ -160,11 +204,84 @@ export function getStepsFromWorkflow(
 
       const inputNodes = inputNodeConnections
         .map((inputNodeConnection) => {
-          return nodes?.find(
+          const nodeCandidate = totalNodes?.find(
             (nd) => nd.id === inputNodeConnection.outputPin.nodeId
           )!;
+
+          let selectedNode: StorableNode = nodeCandidate;
+
+          const isCalculationReference =
+            nodeCandidate.functionEffectReference === 'SOURCE_REFERENCE' &&
+            nodeCandidate.functionData.type === 'workflow';
+
+          if (isCalculationReference) {
+            const referencedWorkflow = chart.workflowCollection?.find(
+              ({ id }) => id === nodeCandidate.functionData.sourceId
+            );
+
+            const wfOutputNode = referencedWorkflow?.nodes?.find(
+              (nd) => nd.functionEffectReference === 'OUTPUT'
+            );
+
+            if (!wfOutputNode) {
+              return undefined;
+            }
+
+            totalConnections = {
+              ...totalConnections,
+              ...(referencedWorkflow?.connections || {}),
+            };
+
+            totalNodes = [
+              ...(nodes || []),
+              ...(referencedWorkflow?.nodes || []),
+            ];
+
+            const outputPinId = 'out-result';
+
+            selectedNode = {
+              ...wfOutputNode,
+              outputPins: [
+                {
+                  id: outputPinId,
+                  type: 'TIMESERIES',
+                },
+              ],
+            };
+
+            const nodeCandidateConnection = Object.values(
+              totalConnections || {}
+            ).find(
+              (conn) =>
+                conn.outputPin.nodeId === nodeCandidate.id &&
+                conn.outputPin.pinId === nodeCandidate.outputPins[0]?.id
+            );
+
+            const referenceConnectionId = nanoid();
+
+            const referenceConnection = {
+              [referenceConnectionId]: {
+                outputPin: {
+                  nodeId: selectedNode.id,
+                  pinId: outputPinId,
+                },
+                inputPin: nodeCandidateConnection.inputPin,
+                id: referenceConnectionId,
+              },
+            };
+
+            totalConnections = omit(
+              {
+                ...totalConnections,
+                ...referenceConnection,
+              },
+              [inputNodeConnection.id]
+            );
+          }
+
+          return selectedNode;
         })
-        .filter(Boolean);
+        .filter(Boolean) as StorableNode[];
 
       if (!inputNodes.length) {
         return;
@@ -186,7 +303,9 @@ export function getStepsFromWorkflow(
     .map((node, i, allNodes) => {
       const inputs = node.inputPins
         .map((inputPin: any) => {
-          const inputNodeConnection = Object.values(connections || {}).find(
+          const inputNodeConnection = Object.values(
+            totalConnections || {}
+          ).find(
             (conn) =>
               conn.inputPin.nodeId === node.id &&
               conn.inputPin.pinId === inputPin.id
@@ -196,7 +315,7 @@ export function getStepsFromWorkflow(
             return undefined;
           }
 
-          const inputNode = nodes?.find(
+          const inputNode = totalNodes?.find(
             (nd) => nd.id === inputNodeConnection.outputPin.nodeId
           )!;
 

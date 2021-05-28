@@ -1,3 +1,4 @@
+import { Chart } from 'reducers/charts/types';
 import { Workflow } from 'reducers/workflows';
 import {
   getStepsFromWorkflow,
@@ -103,6 +104,17 @@ describe('getConfigFromDspFunction', () => {
 
 describe('getStepsFromWorkflow', () => {
   it('generates correct steps (empty workflow)', () => {
+    const chart: Chart = {
+      id: 'chart-1',
+      name: 'Chart 1',
+      version: 1,
+      user: 'abc@cognite.com',
+      createdAt: new Date().getTime(),
+      updatedAt: new Date().getTime(),
+      dateFrom: new Date().toJSON(),
+      dateTo: new Date().toJSON(),
+    };
+
     const workflow: Workflow = {
       id: 'abc123',
       name: 'Empty workflow',
@@ -110,12 +122,27 @@ describe('getStepsFromWorkflow', () => {
       connections: {},
     };
 
-    const steps = getStepsFromWorkflow(workflow.nodes, workflow.connections);
+    const steps = getStepsFromWorkflow(
+      chart,
+      workflow.nodes,
+      workflow.connections
+    );
 
     expect(steps).toEqual([]);
   });
 
   it('generates correct steps (missing output node)', () => {
+    const chart: Chart = {
+      id: 'chart-1',
+      name: 'Chart 1',
+      version: 1,
+      user: 'abc@cognite.com',
+      createdAt: new Date().getTime(),
+      updatedAt: new Date().getTime(),
+      dateFrom: new Date().toJSON(),
+      dateTo: new Date().toJSON(),
+    };
+
     const workflow: Workflow = {
       name: 'New Calculation',
       nodes: [
@@ -324,12 +351,27 @@ describe('getStepsFromWorkflow', () => {
       },
     };
 
-    const steps = getStepsFromWorkflow(workflow.nodes, workflow.connections);
+    const steps = getStepsFromWorkflow(
+      chart,
+      workflow.nodes,
+      workflow.connections
+    );
 
     expect(steps).toEqual([]);
   });
 
   it('generates correct steps (multistep computation)', () => {
+    const chart: Chart = {
+      id: 'chart-1',
+      name: 'Chart 1',
+      version: 1,
+      user: 'abc@cognite.com',
+      createdAt: new Date().getTime(),
+      updatedAt: new Date().getTime(),
+      dateFrom: new Date().toJSON(),
+      dateTo: new Date().toJSON(),
+    };
+
     const workflow: Workflow = {
       nodes: [
         {
@@ -653,7 +695,11 @@ describe('getStepsFromWorkflow', () => {
       name: 'New Calculation',
     };
 
-    const steps = getStepsFromWorkflow(workflow.nodes, workflow.connections);
+    const steps = getStepsFromWorkflow(
+      chart,
+      workflow.nodes,
+      workflow.connections
+    );
 
     expect(steps).toEqual([
       {
@@ -718,6 +764,17 @@ describe('getStepsFromWorkflow', () => {
   });
 
   it('generates correct steps (noop computation)', () => {
+    const chart: Chart = {
+      id: 'chart-1',
+      name: 'Chart 1',
+      version: 1,
+      user: 'abc@cognite.com',
+      createdAt: new Date().getTime(),
+      updatedAt: new Date().getTime(),
+      dateFrom: new Date().toJSON(),
+      dateTo: new Date().toJSON(),
+    };
+
     const workflow: Workflow = {
       nodes: [
         {
@@ -785,7 +842,11 @@ describe('getStepsFromWorkflow', () => {
       name: 'New Calculation',
     };
 
-    const steps = getStepsFromWorkflow(workflow.nodes, workflow.connections);
+    const steps = getStepsFromWorkflow(
+      chart,
+      workflow.nodes,
+      workflow.connections
+    );
 
     expect(steps).toEqual([
       {
@@ -802,6 +863,17 @@ describe('getStepsFromWorkflow', () => {
   });
 
   it('generates correct steps (dangling/unconnected nodes)', () => {
+    const chart: Chart = {
+      id: 'chart-1',
+      name: 'Chart 1',
+      version: 1,
+      user: 'abc@cognite.com',
+      createdAt: new Date().getTime(),
+      updatedAt: new Date().getTime(),
+      dateFrom: new Date().toJSON(),
+      dateTo: new Date().toJSON(),
+    };
+
     const workflow: Workflow = {
       name: 'New Calculation',
       nodes: [
@@ -1190,7 +1262,11 @@ describe('getStepsFromWorkflow', () => {
       },
     };
 
-    const steps = getStepsFromWorkflow(workflow.nodes, workflow.connections);
+    const steps = getStepsFromWorkflow(
+      chart,
+      workflow.nodes,
+      workflow.connections
+    );
 
     expect(steps).toEqual([
       {
@@ -1248,6 +1324,256 @@ describe('getStepsFromWorkflow', () => {
           {
             type: 'result',
             value: 3,
+          },
+        ],
+      },
+    ]);
+  });
+
+  it('generates the correct steps when using referencing an existing calculation as input', () => {
+    const chart: Chart = {
+      timeSeriesCollection: [
+        {
+          statisticsCalls: [
+            {
+              callDate: 1621454563567,
+              functionId: 2461249888036755,
+              callId: 8389322454513388,
+            },
+          ],
+          name: 'LOR_ARENDAL_WELL_21_Well_HYDROCARBON_BEST_DAY_PREDICTION',
+          lineWeight: 1,
+          id: 'GvO4-rxxb2IpOHuNkvDFa',
+          unit: 'psi',
+          enabled: false,
+          tsId: 1199025179480785,
+          tsExternalId:
+            'LOR_ARENDAL_WELL_21_Well_HYDROCARBON_BEST_DAY_PREDICTION',
+          preferredUnit: 'bar',
+          lineStyle: 'solid',
+          color: '#fa4d56',
+          description: '-',
+          originalUnit: 'BOE',
+          displayMode: 'lines',
+        },
+        {
+          originalUnit: 'M3',
+          lineWeight: 1,
+          enabled: false,
+          color: '#009d9a',
+          unit: 'M3',
+          statisticsCalls: [
+            {
+              callDate: 1621454281932,
+              callId: 3095317154202764,
+              functionId: 2461249888036755,
+            },
+          ],
+          tsExternalId: 'LOR_ARENDAL_WELL_21_Well_GROSS_PRODUCTION',
+          displayMode: 'lines',
+          name: 'LOR_ARENDAL_WELL_21_Well_GROSS_PRODUCTION',
+          id: 'Ci-XF99sKEQXIyUo3lvOg',
+          range: [433.82, 499.611],
+          lineStyle: 'solid',
+          preferredUnit: 'M3',
+          tsId: 1822622045765216,
+          description: '-',
+        },
+      ],
+      user: 'eirik.vullum@cognite.com',
+      updatedAt: 1621454300330,
+      dateFrom: '2020-05-30T15:15:21.572Z',
+      public: false,
+      version: 1,
+      dateTo: '2021-07-15T12:38:07.847Z',
+      name: 'New chart',
+      createdAt: 1619778109118,
+      workflowCollection: [
+        {
+          connections: {
+            AT6AsmkNvU9Ar78xSRsri: {
+              inputPin: {
+                pinId: 'datapoints',
+                nodeId: 'V6aBOfCjZdD5XqUJ7S_Y3',
+              },
+              id: 'AT6AsmkNvU9Ar78xSRsri',
+              outputPin: {
+                pinId: 'result',
+                nodeId: 'IPqAxFHiFqnJ3--lB-M8_',
+              },
+            },
+          },
+          preferredUnit: 'psi',
+          name: 'Calculation 1',
+          enabled: true,
+          calls: [
+            {
+              functionId: 5350460198875767,
+              callId: 1546401397992188,
+              callDate: 1621454563745,
+              hash: -1992684405,
+            },
+          ],
+          id: 'dQybxvtQFpLzu4REvWsbA',
+          lineWeight: 1,
+          nodes: [
+            {
+              functionEffectReference: 'OUTPUT',
+              inputPins: [
+                {
+                  title: 'Time Series',
+                  types: ['TIMESERIES'],
+                  id: 'datapoints',
+                },
+              ],
+              calls: [],
+              x: 834.75,
+              y: 173,
+              title: 'Output',
+              outputPins: [],
+              icon: 'Icon',
+              id: 'V6aBOfCjZdD5XqUJ7S_Y3',
+              subtitle: 'TIMESERIES',
+              color: '#4A67FB',
+            },
+            {
+              id: 'IPqAxFHiFqnJ3--lB-M8_',
+              calls: [],
+              y: 170,
+              inputPins: [],
+              outputPins: [
+                {
+                  id: 'result',
+                  y: 190,
+                  x: 674.59375,
+                  title: 'Time Series',
+                  type: 'TIMESERIES',
+                },
+              ],
+              selected: false,
+              color: '#FC2574',
+              x: 140.75,
+              functionEffectReference: 'SOURCE_REFERENCE',
+              subtitle: 'Source',
+              functionData: {
+                sourceId: 'LOR_ARENDAL_WELL_21_Well_GROSS_PRODUCTION',
+                type: 'timeseries',
+              },
+              title: 'LOR_ARENDAL_WELL_21_Well_GROSS_PRODUCTION',
+              icon: 'Function',
+              width: 533.84375,
+            },
+          ],
+          unit: 'mm',
+          color: '#6929c4',
+          lineStyle: 'solid',
+        },
+        {
+          lineStyle: 'solid',
+          id: 'j9xhfVh8kvNU3pgq8PYPM',
+          connections: {
+            'QIfEea93SE7ZlXPhqS-J3': {
+              id: 'QIfEea93SE7ZlXPhqS-J3',
+              inputPin: {
+                nodeId: 'MeCBQUq5iuPaRIWev-2F4',
+                pinId: 'datapoints',
+              },
+              outputPin: {
+                nodeId: 'Ink93Q8Zjal-XikqBN1LK',
+                pinId: 'result',
+              },
+            },
+          },
+          enabled: true,
+          lineWeight: 1,
+          color: '#1192e8',
+          calls: [
+            {
+              functionId: 5350460198875767,
+              callId: 8725109662036577,
+              callDate: 1621454563651,
+              hash: -1770418272,
+            },
+          ],
+          nodes: [
+            {
+              outputPins: [
+                {
+                  id: 'result',
+                  title: 'Time Series',
+                  x: 312.09375,
+                  y: 130,
+                  type: 'TIMESERIES',
+                },
+              ],
+              subtitle: 'Source',
+              id: 'Ink93Q8Zjal-XikqBN1LK',
+              x: 146.03125,
+              width: 166.0625,
+              y: 110,
+              icon: 'Function',
+              inputPins: [],
+              selected: false,
+              functionEffectReference: 'SOURCE_REFERENCE',
+              title: 'Calculation 1',
+              functionData: {
+                sourceId: 'dQybxvtQFpLzu4REvWsbA',
+                type: 'workflow',
+              },
+              calls: [],
+              color: '#FC2574',
+            },
+            {
+              x: 631.03125,
+              color: '#4A67FB',
+              icon: 'Icon',
+              inputPins: [
+                {
+                  id: 'datapoints',
+                  title: 'Time Series',
+                  types: ['TIMESERIES'],
+                },
+              ],
+              title: 'Output',
+              outputPins: [],
+              id: 'MeCBQUq5iuPaRIWev-2F4',
+              subtitle: 'TIMESERIES',
+              calls: [],
+              y: 85,
+              functionEffectReference: 'OUTPUT',
+            },
+          ],
+          name: 'New Calculation',
+        },
+      ],
+      id: 'b1oGPx-NJNVpn34tksB2w',
+      dirty: false,
+    };
+
+    const steps = getStepsFromWorkflow(
+      chart,
+      chart.workflowCollection?.[1].nodes,
+      chart.workflowCollection?.[1].connections
+    );
+
+    expect(steps).toEqual([
+      {
+        step: 0,
+        op: 'PASSTHROUGH',
+        inputs: [
+          {
+            type: 'ts',
+            value: 'LOR_ARENDAL_WELL_21_Well_GROSS_PRODUCTION',
+          },
+        ],
+      },
+      {
+        step: 1,
+        op: 'PASSTHROUGH',
+        inputs: [
+          {
+            type: 'result',
+            value: 0,
           },
         ],
       },

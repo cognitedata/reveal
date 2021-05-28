@@ -13,6 +13,7 @@ import {
 import { Chart } from 'reducers/charts/types';
 
 import { useUpdateChart } from 'hooks/firebase';
+import { trackUsage } from 'utils/metrics';
 
 interface SharingDropdownProps {
   chart: Chart;
@@ -28,7 +29,9 @@ const SharingDropdown = ({ chart, disabled = false }: SharingDropdownProps) => {
 
   useEffect(() => {
     if (isError) {
-      toast.error('Unable to change chart access - try again!');
+      toast.error('Unable to change chart access - try again!', {
+        toastId: 'share-error',
+      });
     }
   }, [isError]);
 
@@ -37,12 +40,16 @@ const SharingDropdown = ({ chart, disabled = false }: SharingDropdownProps) => {
       ...chart,
       public: !chart.public,
     });
+    trackUsage('ChartView.ChangeChartAccess', {
+      state: chart.public ? 'public' : 'private',
+    });
   };
 
   const handleCopyLinkClick = async () => {
     try {
       await navigator.clipboard.writeText(shareableLink);
       setShareIconType('Checkmark');
+      trackUsage('ChartView.CopyLink');
       setTimeout(() => setShareIconType('Copy'), 3000);
     } catch (e) {
       setShareIconType('ErrorStroked');
@@ -92,7 +99,12 @@ const SharingDropdown = ({ chart, disabled = false }: SharingDropdownProps) => {
         </SharingMenu>
       }
     >
-      <Button icon="Share" variant="ghost" disabled={disabled} />
+      <Button
+        icon="Share"
+        type="ghost"
+        disabled={disabled}
+        aria-label="share"
+      />
     </Dropdown>
   );
 };

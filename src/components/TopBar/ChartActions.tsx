@@ -6,6 +6,7 @@ import { useChart, useDeleteChart, useUpdateChart } from 'hooks/firebase';
 import { useHistory, useParams } from 'react-router-dom';
 import { duplicate } from 'utils/charts';
 import SharingDropdown from 'components/SharingDropdown/SharingDropdown';
+import { trackUsage } from 'utils/metrics';
 
 export const ChartActions = () => {
   const history = useHistory();
@@ -30,19 +31,23 @@ export const ChartActions = () => {
 
   useEffect(() => {
     if (deleteError) {
-      toast.error('Chart could not be deleted!');
+      toast.error('Chart could not be deleted!', { toastId: 'delete-error' });
     }
     if (deleteError && deleteErrorMsg) {
-      toast.error(JSON.stringify(deleteErrorMsg, null, 2));
+      toast.error(JSON.stringify(deleteErrorMsg, null, 2), {
+        toastId: 'delete-error-body',
+      });
     }
   }, [deleteError, deleteErrorMsg]);
 
   useEffect(() => {
     if (updateError) {
-      toast.error('Chart could not be saved!');
+      toast.error('Chart could not be saved!', { toastId: 'chart-update' });
     }
     if (updateError && updateErrorMsg) {
-      toast.error(JSON.stringify(updateErrorMsg, null, 2));
+      toast.error(JSON.stringify(updateErrorMsg, null, 2), {
+        toastId: 'chart-update-body',
+      });
     }
   }, [updateError, updateErrorMsg]);
 
@@ -50,7 +55,11 @@ export const ChartActions = () => {
     if (chart && login?.user) {
       const newChart = duplicate(chart, login.user);
       await updateChart(newChart);
-      history.push(`/${newChart.id}`);
+      trackUsage('ChartView.DuplicateChart', { isOwner });
+      history.push({
+        pathname: `/${newChart.id}`,
+        search: history.location.search,
+      });
     }
   };
 
@@ -64,11 +73,16 @@ export const ChartActions = () => {
   };
 
   const onDeleteSuccess = () => {
-    history.push('/');
+    history.push({
+      pathname: '/',
+      search: history.location.search,
+    });
   };
 
   const onDeleteError = () => {
-    toast.error('There was a problem deleting the chart. Try again!');
+    toast.error('There was a problem deleting the chart. Try again!', {
+      toastId: 'chart-delete',
+    });
   };
 
   if (!chart) {
@@ -81,23 +95,29 @@ export const ChartActions = () => {
         <SharingDropdown chart={chart} disabled={!isOwner} />
       </Tooltip>
       <Tooltip content="Export">
-        <Button icon="Download" variant="ghost" disabled />
+        <Button icon="Download" type="ghost" disabled aria-label="download" />
       </Tooltip>
       <Tooltip content="Duplicate">
-        <Button icon="Copy" variant="ghost" onClick={handleDuplicateChart} />
+        <Button
+          icon="Copy"
+          type="ghost"
+          onClick={handleDuplicateChart}
+          aria-label="copy"
+        />
       </Tooltip>
       <Divider />
       <Tooltip content="Delete">
         <Button
           icon="Trash"
-          variant="ghost"
+          type="ghost"
           onClick={handleDeleteChart}
           disabled={!isOwner}
+          aria-label="delete"
         />
       </Tooltip>
       <Divider />
       <Tooltip content="Settings">
-        <Button icon="Settings" variant="ghost" disabled />
+        <Button icon="Settings" type="ghost" disabled aria-label="settings" />
       </Tooltip>
     </TopBar.Item>
   );

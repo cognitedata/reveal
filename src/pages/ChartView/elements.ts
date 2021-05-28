@@ -148,9 +148,6 @@ export const TypeLabel = styled.td`
   color: var(--cogs-greyscale-grey7);
 `;
 export const SourceRow = styled.tr`
-  background: ${(props: { isActive: boolean }) =>
-    props.isActive ? 'var(--cogs-greyscale-grey3)' : 'none'};
-
   &&:nth-child(odd) {
     background: #ffffff;
   }
@@ -159,6 +156,9 @@ export const SourceRow = styled.tr`
   }
   &&:hover {
     background: var(--cogs-greyscale-grey3);
+  }
+  &&.active {
+    background: var(--cogs-midblue-7);
   }
 `;
 
@@ -205,6 +205,20 @@ export const SourceItem = styled.div`
 export const SourceName = styled.span`
   text-overflow: ellipsis;
   overflow: hidden;
+`;
+
+export const SourceDescription = styled.div`
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  max-width: 240px;
+`;
+
+export const SourceTag = styled.div`
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  max-width: 210px;
 `;
 
 export const SourceButtonContainer = styled.div`

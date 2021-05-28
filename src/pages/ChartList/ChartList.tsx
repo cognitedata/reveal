@@ -1,11 +1,11 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import {
   Button,
   Icon,
   Input,
   Tabs,
-  ButtonGroup,
+  SegmentedControl,
   Select,
 } from '@cognite/cogs.js';
 import { Chart } from 'reducers/charts/types';
@@ -16,6 +16,7 @@ import { useLoginStatus } from 'hooks';
 import ChartListItem, { ViewOption } from 'components/ChartListItem';
 import { CHART_VERSION } from 'config/';
 import { useHistory } from 'react-router-dom';
+import { trackUsage } from 'utils/metrics';
 
 type ActiveTabOption = 'mine' | 'public';
 type SortOption = 'name' | 'owner' | 'updatedAt';
@@ -64,6 +65,14 @@ const ChartList = () => {
   const [sortOption, setSortOption] = useState<SortOption>('updatedAt');
   const [viewOption, setViewOption] = useState<ViewOption>('list');
 
+  useEffect(() => {
+    trackUsage('PageView.ChartList');
+  }, []);
+
+  useEffect(() => {
+    trackUsage('ChartList.TabChange', { tab: activeTab });
+  }, [activeTab]);
+
   const { mutateAsync: updateChart } = useUpdateChart();
 
   const history = useHistory();
@@ -90,7 +99,12 @@ const ChartList = () => {
       version: CHART_VERSION,
     };
     await updateChart(newChart);
-    history.push(`/${id}`);
+
+    trackUsage('ChartList.CreateChart');
+    history.push({
+      pathname: `/${id}`,
+      search: history.location.search,
+    });
   };
 
   const nameFilter = (chart: Chart) =>
@@ -183,17 +197,17 @@ const ChartList = () => {
             />
           </div>
           <div style={{ marginLeft: 16 }}>
-            <ButtonGroup
+            <SegmentedControl
               currentKey={viewOption}
               onButtonClicked={(key) => setViewOption(key as ViewOption)}
             >
-              <ButtonGroup.Button key="grid">
+              <SegmentedControl.Button key="grid">
                 <Icon type="Grid" />
-              </ButtonGroup.Button>
-              <ButtonGroup.Button key="list">
+              </SegmentedControl.Button>
+              <SegmentedControl.Button key="list">
                 <Icon type="List" />
-              </ButtonGroup.Button>
-            </ButtonGroup>
+              </SegmentedControl.Button>
+            </SegmentedControl>
           </div>
         </div>
       </div>

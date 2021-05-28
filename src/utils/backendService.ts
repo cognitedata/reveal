@@ -1,4 +1,3 @@
-import { useSDK } from '@cognite/sdk-provider';
 import zipWith from 'lodash/zipWith';
 import { CogniteClient, DoubleDatapoint } from '@cognite/sdk';
 import {
@@ -8,8 +7,15 @@ import {
   UseQueryOptions,
 } from 'react-query';
 import { Call, FunctionCallStatus } from 'reducers/charts/types';
+import { useSDK } from '@cognite/sdk-provider';
+import {
+  getCallStatus,
+  getCallResponse,
+  callFunction,
+  listFunctions,
+} from './backendApi';
 
-type CogniteFunction = {
+export type CogniteFunction = {
   id: number;
   externalId?: string;
   name: string;
@@ -33,12 +39,7 @@ export const useFunctionCall = (
   const sdk = useSDK();
   return useQuery<FunctionCall>(
     ['functions', functionId, 'call', callId],
-    () =>
-      sdk
-        .get(
-          `/api/playground/projects/${sdk.project}/functions/${functionId}/calls/${callId}`
-        )
-        .then((r) => r.data),
+    () => getCallStatus(sdk, functionId, callId),
     { ...queryOpts, retry: 1, retryDelay: 1000 }
   );
 };
@@ -58,26 +59,18 @@ export const useFunctionReponse = (
   const sdk = useSDK();
   return useQuery<string | null | undefined>(
     functionResponseKey(functionId, callId),
-    () =>
-      sdk
-        .get(
-          `/api/playground/projects/${sdk.project}/functions/${functionId}/calls/${callId}/response`
-        )
-        .then((r) => r.data.response),
+    () => getCallResponse(sdk, functionId, callId),
     { ...opts, retry: 1, retryDelay: 1000 }
   );
 };
 
 export const useCallFunction = (externalId: string) => {
-  const sdk = useSDK();
   const cache = useQueryClient();
+  const sdk = useSDK();
   return useMutation(async ({ data }: { data: any }) => {
     const functions = await cache.fetchQuery<CogniteFunction[]>(
       ['functions'],
-      () =>
-        sdk
-          .get(`/api/playground/projects/${sdk.project}/functions`)
-          .then((r) => r.data?.items)
+      () => listFunctions(sdk)
     );
 
     const fn = functions.find((f) => f.externalId === externalId);
@@ -89,13 +82,7 @@ export const useCallFunction = (externalId: string) => {
 
     const call = await cache.fetchQuery<{ id: number }>(
       ['functions', 'calls', fn.id, data],
-      () =>
-        sdk
-          .post(
-            `/api/playground/projects/${sdk.project}/functions/${fn.id}/call`,
-            { data: { data } }
-          )
-          .then((r) => r.data)
+      () => callFunction(sdk, fn.id, data)
     );
 
     return {
@@ -127,30 +114,15 @@ export async function getFunctionResponseWhenDone(
   fnId: number,
   callId: number
 ) {
-  type FunctionCall = {
-    status: 'Running' | 'Completed' | 'Failed' | 'Timeout';
-  };
-  let status: FunctionCall = await sdk
-    .get(
-      `/api/playground/projects/${sdk.project}/functions/${fnId}/calls/${callId}`
-    )
-    .then((r) => r.data);
+  let callStatus: FunctionCall = await getCallStatus(sdk, fnId, callId);
 
-  while (!['Failed', 'Completed', 'Timeout'].includes(status?.status)) {
+  while (!['Failed', 'Completed', 'Timeout'].includes(callStatus?.status)) {
     // eslint-disable-next-line no-await-in-loop
     await sleep(1000);
     // eslint-disable-next-line no-await-in-loop
-    status = await sdk
-      .get(
-        `/api/playground/projects/${sdk.project}/functions/${fnId}/calls/${callId}`
-      )
-      .then((r) => r.data);
+    callStatus = await getCallStatus(sdk, fnId, callId);
   }
-  const response = await sdk
-    .get(
-      `/api/playground/projects/${sdk.project}/functions/${fnId}/calls/${callId}/response`
-    )
-    .then((r) => r.data.response);
 
+  const response = await getCallResponse(sdk, fnId, callId);
   return response;
 }

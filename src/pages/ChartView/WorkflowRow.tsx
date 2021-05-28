@@ -1,9 +1,10 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Chart,
   ChartWorkflow,
   FunctionCallStatus,
   ChartTimeSeries,
+  Call,
 } from 'reducers/charts/types';
 import {
   Button,
@@ -12,17 +13,18 @@ import {
   Menu,
   Popconfirm,
   Flex,
+  Tooltip,
 } from '@cognite/cogs.js';
 import FunctionCall from 'components/FunctionCall';
 import { updateWorkflow, removeWorkflow } from 'utils/charts';
 import EditableText from 'components/EditableText';
 import { units } from 'utils/units';
-import { Modes } from 'pages/types';
-import { useCallFunction } from 'utils/cogniteFunctions';
+import { useCallFunction, useFunctionCall } from 'utils/backendService';
 import { getStepsFromWorkflow } from 'utils/transforms';
 import { calculateGranularity } from 'utils/timeseries';
 import { isWorkflowRunnable } from 'components/NodeEditor/utils';
 import { AppearanceDropdown } from 'components/AppearanceDropdown';
+import { getHash } from 'utils/hash';
 import {
   SourceItem,
   SourceSquare,
@@ -30,6 +32,7 @@ import {
   SourceRow,
   UnitMenuAside,
   UnitMenuHeader,
+  SourceDescription,
 } from './elements';
 import WorkflowMenu from './WorkflowMenu';
 
@@ -53,7 +56,7 @@ type Props = {
   isSelected?: boolean;
   onRowClick?: (id?: string) => void;
   onInfoClick?: (id?: string) => void;
-  setMode?: (m: Modes) => void;
+  openNodeEditor?: () => void;
   mode: string;
   mutate: (c: Chart) => void;
 };
@@ -63,17 +66,16 @@ export default function WorkflowRow({
   onRowClick = () => {},
   onInfoClick = () => {},
   mode,
-  setMode = () => {},
+  openNodeEditor = () => {},
   isSelected = false,
   mutate,
 }: Props) {
-  const { mutate: callFunction, data, isSuccess, reset } = useCallFunction(
+  const { mutate: callFunction, isSuccess } = useCallFunction(
     'simple_calc-master'
   );
 
   const [isEditingName, setIsEditingName] = useState<boolean>(false);
-
-  // Increasing this will cause a fresh render where the dropdown is closed
+  const [lastSuccessfulCall, setLastSuccessfulCall] = useState<Call>();
   const { id, enabled, color, name, calls, unit, preferredUnit } = workflow;
   const call = calls?.sort((c) => c.callDate)[0];
   const isWorkspaceMode = mode === 'workspace';
@@ -85,8 +87,10 @@ export default function WorkflowRow({
   const { dateTo, dateFrom } = chart;
   const { nodes, connections } = workflow;
   const steps = useMemo(
-    () => isWorkflowRunnable(nodes) && getStepsFromWorkflow(nodes, connections),
-    [nodes, connections]
+    () =>
+      isWorkflowRunnable(nodes) &&
+      getStepsFromWorkflow(chart, nodes, connections),
+    [chart, nodes, connections]
   );
 
   const computation = useMemo(
@@ -103,25 +107,81 @@ export default function WorkflowRow({
     [steps, dateFrom, dateTo]
   );
 
-  useEffect(() => {
-    if (computation) {
-      callFunction({
+  const runComputation = useCallback(() => {
+    callFunction(
+      {
         data: { computation_graph: computation },
-      });
-    }
-  }, [computation, callFunction]);
+      },
+      {
+        onSuccess(res) {
+          setLastSuccessfulCall(res);
+        },
+      }
+    );
+  }, [computation, callFunction, setLastSuccessfulCall]);
+
+  const currentCallStatus = useFunctionCall(call?.functionId!, call?.callId!);
 
   useEffect(() => {
-    if (isSuccess && data) {
-      const newCall = { ...data, callDate: Date.now() };
-      mutate(
-        updateWorkflow(chart, workflow.id, {
-          calls: [newCall],
-        })
-      );
-      reset();
+    if (!call) {
+      return;
     }
-  }, [chart, workflow.id, data, isSuccess, mutate, reset, call]);
+
+    if (!currentCallStatus.isError) {
+      return;
+    }
+
+    if (
+      !['Failed', 'Timeout'].includes(currentCallStatus?.data?.status || '')
+    ) {
+      return;
+    }
+
+    runComputation();
+  }, [call, currentCallStatus, runComputation]);
+
+  useEffect(() => {
+    if (!computation) {
+      return;
+    }
+    if (call?.hash === getHash(computation)) {
+      return;
+    }
+
+    runComputation();
+  }, [computation, runComputation, call]);
+
+  useEffect(() => {
+    if (!computation) {
+      return;
+    }
+    if (!lastSuccessfulCall) {
+      return;
+    }
+    if (call?.callId === lastSuccessfulCall.callId) {
+      return;
+    }
+
+    const newCall = {
+      ...lastSuccessfulCall,
+      callDate: Date.now(),
+      hash: getHash(computation),
+    };
+
+    mutate(
+      updateWorkflow(chart, workflow.id, {
+        calls: [newCall],
+      })
+    );
+  }, [
+    chart,
+    workflow.id,
+    isSuccess,
+    mutate,
+    computation,
+    lastSuccessfulCall,
+    call,
+  ]);
 
   const inputUnitOption = units.find(
     (unitOption) => unitOption.value === unit?.toLowerCase()
@@ -185,7 +245,10 @@ export default function WorkflowRow({
     mutate(updateWorkflow(chart, id, diff));
 
   return (
-    <SourceRow onClick={() => onRowClick(id)} isActive={isSelected}>
+    <SourceRow
+      onClick={() => onRowClick(id)}
+      className={isSelected ? 'active' : undefined}
+    >
       <td>
         <SourceItem key={id}>
           <SourceSquare
@@ -231,20 +294,31 @@ export default function WorkflowRow({
       </td>
       {isWorkspaceMode && (
         <>
-          <td>{name || 'noname'}</td>
+          <td>
+            <SourceName>
+              <SourceDescription>
+                <Tooltip content={name || 'noname'}>
+                  <>{name || 'noname'}</>
+                </Tooltip>
+              </SourceDescription>
+            </SourceName>
+          </td>
           <td colSpan={4} />
           <td style={{ textAlign: 'right', paddingRight: 8 }}>
             <Dropdown
               content={
                 <Menu>
-                  <Flex direction="row">
-                    <div>
+                  <Flex
+                    direction="row"
+                    style={{ height: 150, overflow: 'hidden' }}
+                  >
+                    <div style={{ overflowY: 'scroll' }}>
                       <Menu.Header>
                         <UnitMenuHeader>Input</UnitMenuHeader>
                       </Menu.Header>
                       {unitOverrideMenuItems}
                     </div>
-                    <UnitMenuAside>
+                    <UnitMenuAside style={{ overflowY: 'scroll' }}>
                       <Menu.Header>
                         <UnitMenuHeader>Output</UnitMenuHeader>
                       </Menu.Header>
@@ -256,7 +330,7 @@ export default function WorkflowRow({
             >
               <Button
                 icon="Down"
-                variant="outline"
+                type="tertiary"
                 iconPlacement="right"
                 style={{ height: 28 }}
               >
@@ -270,9 +344,10 @@ export default function WorkflowRow({
               content={<AppearanceDropdown update={updateAppearance} />}
             >
               <Button
-                variant="outline"
+                type="tertiary"
                 icon="Timeseries"
                 style={{ height: 28 }}
+                aria-label="timeseries"
               />
             </Dropdown>
           </td>
@@ -282,16 +357,21 @@ export default function WorkflowRow({
               content={
                 <div style={{ textAlign: 'left' }}>
                   Are you sure that you want to
-                  <br /> remove this Time Series?
+                  <br /> remove this calculation?
                 </div>
               }
             >
-              <Button variant="outline" icon="Delete" style={{ height: 28 }} />
+              <Button
+                type="tertiary"
+                icon="Delete"
+                style={{ height: 28 }}
+                aria-label="delete"
+              />
             </Popconfirm>
           </td>
           <td style={{ textAlign: 'center', paddingLeft: 0 }}>
             <Button
-              variant="outline"
+              type="tertiary"
               icon="Info"
               onClick={(event) => {
                 if (isSelected) {
@@ -300,25 +380,24 @@ export default function WorkflowRow({
                 onInfoClick(id);
               }}
               style={{ height: 28 }}
+              aria-label="info"
             />
           </td>
           <td style={{ textAlign: 'center', paddingLeft: 0 }}>
             <Dropdown
               content={
                 <WorkflowMenu chart={chart} id={id}>
-                  <Menu.Item
-                    onClick={() => setMode('editor')}
-                    appendIcon="YAxis"
-                  >
+                  <Menu.Item onClick={openNodeEditor} appendIcon="YAxis">
                     <span>Edit calculation</span>
                   </Menu.Item>
                 </WorkflowMenu>
               }
             >
               <Button
-                variant="outline"
+                type="tertiary"
                 icon="MoreOverflowEllipsisHorizontal"
                 style={{ height: 28 }}
+                aria-label="more"
               />
             </Dropdown>
           </td>

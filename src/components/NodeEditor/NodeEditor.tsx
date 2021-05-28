@@ -15,7 +15,6 @@ import { nanoid } from 'nanoid';
 import workflowBackgroundSrc from 'assets/workflowBackground.png';
 import { Chart, ChartWorkflow, StorableNode } from 'reducers/charts/types';
 import { getStepsFromWorkflow } from 'utils/transforms';
-import { Modes } from 'pages/types';
 import { pinTypes } from './utils';
 import defaultNodeOptions from '../../reducers/charts/Nodes';
 import ConfigPanel from './ConfigPanel';
@@ -34,14 +33,14 @@ const WorkflowContainer = styled.div`
 type WorkflowEditorProps = {
   chart: Chart;
   workflowId: string;
-  setWorkspaceMode: (m: Modes) => void;
+  closeNodeEditor: () => void;
   mutate: (chart: Chart) => void;
 };
 
 const WorkflowEditor = ({
   workflowId,
   chart,
-  setWorkspaceMode,
+  closeNodeEditor,
   mutate,
 }: WorkflowEditorProps) => {
   const [activeNode, setActiveNode] = useState<StorableNode>();
@@ -79,7 +78,11 @@ const WorkflowEditor = ({
   };
 
   const { nodes = [], connections = [] } = workflow;
-  const context = { chart };
+  const context = { chart, workflow };
+
+  const hasOutputNode = !!nodes?.find(
+    (nd) => nd.functionEffectReference === 'OUTPUT'
+  );
 
   // This have to be debouced as it is called continuously when dragging nodes
   const onUpdateNode = debounce((nextNode: Node) => {
@@ -87,8 +90,8 @@ const WorkflowEditor = ({
       node.id === nextNode.id ? nextNode : node
     );
     const deleteCalls = !isEqual(
-      getStepsFromWorkflow(workflow.nodes, workflow.connections),
-      getStepsFromWorkflow(nodeUpdate, workflow.connections)
+      getStepsFromWorkflow(chart, workflow.nodes, workflow.connections),
+      getStepsFromWorkflow(chart, nodeUpdate, workflow.connections)
     );
 
     if (deleteCalls) {
@@ -171,27 +174,34 @@ const WorkflowEditor = ({
               <Menu.Item>
                 <Input />
               </Menu.Item>
-              {Object.values(defaultNodeOptions).map((nodeOption) => (
-                <Menu.Item
-                  key={nodeOption.name}
-                  onClick={() => {
-                    update({
-                      nodes: [
-                        ...nodes,
-                        {
-                          id: nanoid(),
-                          ...nodeOption.node,
-                          ...nodePosition,
-                          calls: [],
-                        },
-                      ],
-                    });
-                    onClose();
-                  }}
-                >
-                  {nodeOption.name}
-                </Menu.Item>
-              ))}
+              {Object.values(defaultNodeOptions)
+                .filter((nodeOption) => !nodeOption.disabled)
+                .filter((nodeOption) => {
+                  return nodeOption.effectId === 'OUTPUT'
+                    ? !hasOutputNode
+                    : true;
+                })
+                .map((nodeOption) => (
+                  <Menu.Item
+                    key={nodeOption.name}
+                    onClick={() => {
+                      update({
+                        nodes: [
+                          ...nodes,
+                          {
+                            id: nanoid(),
+                            ...nodeOption.node,
+                            ...nodePosition,
+                            calls: [],
+                          },
+                        ],
+                      });
+                      onClose();
+                    }}
+                  >
+                    {nodeOption.name}
+                  </Menu.Item>
+                ))}
             </Menu>
           )}
         >
@@ -280,7 +290,7 @@ const WorkflowEditor = ({
 
       <Button
         style={{ position: 'absolute', top: 16, right: 16 }}
-        onClick={() => setWorkspaceMode('workspace')}
+        onClick={closeNodeEditor}
       >
         Close
       </Button>
