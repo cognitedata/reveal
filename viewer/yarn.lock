@@ -367,13 +367,6 @@
     "@cognite/sdk-core" "^1.2.2"
     lodash "^4.17.11"
 
-"@cognite/three-combo-controls@^1.4.3":
-  version "1.4.3"
-  resolved "https://registry.yarnpkg.com/@cognite/three-combo-controls/-/three-combo-controls-1.4.3.tgz#0850ec57035b3cf3f65ab5b619fcf9eee87646c8"
-  integrity sha512-wkUqf/TyRlHFbMqELzVjJM7M1HWDGSp1V1Bgo+WH3yefOQgcgYsb8kOyJhMPuL4i1BqtxAc9E48n9TDCDD3mYQ==
-  dependencies:
-    lodash "^4.17.15"
-
 "@eslint/eslintrc@^0.4.0":
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/@eslint/eslintrc/-/eslintrc-0.4.0.tgz#99cc0a0584d72f1df38b900fb062ba995f395547"
