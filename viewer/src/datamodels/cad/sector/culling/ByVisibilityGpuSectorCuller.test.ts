@@ -6,8 +6,8 @@ import * as THREE from 'three';
 import { DetermineSectorsInput, SectorCost } from './types';
 import { CadMaterialManager } from '../../CadMaterialManager';
 import { OrderSectorsByVisibilityCoverage } from './OrderSectorsByVisibilityCoverage';
-import { ByVisibilityGpuSectorCuller, LevelOfDetail } from '../../../../internal';
-import { SectorMetadata, CadNode, CadModelMetadata } from '../../../../experimental';
+import { ByVisibilityGpuSectorCuller, LevelOfDetail } from '../../../../internals';
+import { SectorMetadata, CadNode, CadModelMetadata } from '../../../../internals';
 
 import { generateSectorTree } from '../../../../__testutilities__/createSectorMetadata';
 import { createCadModelMetadata } from '../../../../__testutilities__/createCadModelMetadata';

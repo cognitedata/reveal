@@ -7,7 +7,7 @@ import { CanvasWrapper } from '../components/styled';
 
 import * as THREE from 'three';
 import * as Potree from '@cognite/potree-core';
-import * as reveal from '@cognite/reveal/experimental';
+import * as reveal from '@cognite/reveal/internals';
 
 import CameraControls from 'camera-controls';
 import dat, { GUI } from 'dat.gui';
@@ -40,8 +40,8 @@ function getPointCloudParams() {
 function initializeGui(
   gui: GUI,
   cadNode: reveal.CadNode,
-  pcGroup: reveal.internal.PotreeGroupWrapper,
-  pcNode: reveal.internal.PotreeNodeWrapper,
+  pcGroup: reveal.PotreeGroupWrapper,
+  pcNode: reveal.PotreeNodeWrapper,
   handleSettingsChangedCb: () => void
 ): RenderOptions {
   gui
@@ -78,15 +78,15 @@ function initializeGui(
   pcGui.add(pcNode, 'pointSize', 0, 10).onChange(handleSettingsChangedCb);
   pcGui
     .add(pcNode, 'pointColorType', {
-      Rgb: reveal.internal.PotreePointColorType.Rgb,
-      Depth: reveal.internal.PotreePointColorType.Depth,
-      Height: reveal.internal.PotreePointColorType.Height,
-      PointIndex: reveal.internal.PotreePointColorType.PointIndex,
-      LevelOfDetail: reveal.internal.PotreePointColorType.LevelOfDetail,
-      Classification: reveal.internal.PotreePointColorType.Classification,
+      Rgb: reveal.PotreePointColorType.Rgb,
+      Depth: reveal.PotreePointColorType.Depth,
+      Height: reveal.PotreePointColorType.Height,
+      PointIndex: reveal.PotreePointColorType.PointIndex,
+      LevelOfDetail: reveal.PotreePointColorType.LevelOfDetail,
+      Classification: reveal.PotreePointColorType.Classification,
     })
     .onChange((valueAsString: string) => {
-      const value: reveal.internal.PotreePointColorType = parseInt(
+      const value: reveal.PotreePointColorType = parseInt(
         valueAsString,
         10
       );
@@ -95,11 +95,11 @@ function initializeGui(
     });
   pcGui
     .add(pcNode, 'pointShape', {
-      Circle: reveal.internal.PotreePointShape.Circle,
-      Square: reveal.internal.PotreePointShape.Square,
+      Circle: reveal.PotreePointShape.Circle,
+      Square: reveal.PotreePointShape.Square,
     })
     .onChange((valueAsString: string) => {
-      const value: reveal.internal.PotreePointShape = parseInt(
+      const value: reveal.PotreePointShape = parseInt(
         valueAsString,
         10
       );
@@ -182,8 +182,8 @@ export function SectorWithPointcloud() {
       //    Why THREE.Group can be destructured like that?
       //    example is broken here. It fails at runtime.
       const [pointCloudGroup, pointCloudNode] = pointCloud as unknown as [
-        reveal.internal.PotreeGroupWrapper,
-        reveal.internal.PotreeNodeWrapper
+        reveal.PotreeGroupWrapper,
+        reveal.PotreeNodeWrapper
       ];
       scene.add(pointCloudGroup);
 

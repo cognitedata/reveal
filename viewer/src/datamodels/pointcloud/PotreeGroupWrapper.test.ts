@@ -8,7 +8,7 @@ import { map } from 'rxjs/operators';
 
 import * as THREE from 'three';
 
-import { PotreeGroupWrapper, PotreeNodeWrapper } from '../../internal';
+import { PotreeGroupWrapper, PotreeNodeWrapper } from '../../internals';
 import { yieldProcessing } from '../../__testutilities__/wait';
 
 describe('PotreeGroupWrapper', () => {

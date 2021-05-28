@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { SectorCuller } from '../../internal';
+import { SectorCuller } from '../../internals';
 import { BinaryFileProvider } from '../../utilities/networking/types';
 import { CadModelUpdateHandler } from './CadModelUpdateHandler';
 import { CadMaterialManager } from './CadMaterialManager';
