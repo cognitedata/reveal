@@ -10,15 +10,18 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import {
   addUploadedFile,
+  selectAllFiles,
   setFileSelectState,
 } from 'src/modules/Common/filesSlice';
 import { ExplorerSearchResults } from 'src/modules/Explorer/Containers/ExplorerSearchResults';
 import { FileDetails } from 'src/modules/FileDetails/Containers/FileDetails';
 import { TableDataItem, ViewMode } from 'src/modules/Common/types';
 import { ExplorerToolbar } from 'src/modules/Explorer/Containers/ExplorerToolbar';
+import { FileUploadModal } from 'src/modules/Common/Components/FileUploaderModal/FileUploaderModal';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import {
   setCurrentView,
+  setFileUploadModalVisibility,
   setFilter,
   setQueryString,
   setSelectedFileIdExplorer,
@@ -46,6 +49,11 @@ const Explorer = () => {
   const query = useSelector(
     ({ explorerReducer }: RootState) => explorerReducer.query
   );
+
+  const showFileUploadModal = useSelector(
+    ({ explorerReducer }: RootState) => explorerReducer.showFileUploadModal
+  );
+
   const queryClient = new QueryClient();
 
   const dispatch = useDispatch();
@@ -65,81 +73,100 @@ const Explorer = () => {
     dispatch(setFileSelectState(item.id, selected));
   };
 
+  const uploadedFiles = useSelector((state: RootState) =>
+    selectAllFiles(state.filesSlice)
+  );
+
+  const onUploadSuccess = React.useCallback(
+    (file) => {
+      dispatch(addUploadedFile(file));
+    },
+    [dispatch]
+  );
   const handleMetadataClose = () => {
     dispatch(toggleExplorerFileMetadata());
   };
 
   return (
-    <Wrapper>
-      <QueryClientProvider client={queryClient}>
-        {showFilter && (
-          <FilterPanel>
-            <HeaderRow align="middle" justify="center">
-              <Col flex="auto">
-                <Title level={4}> Filters</Title>
-              </Col>
-              <Col flex="none">
-                <HideFiltersTooltip content="Hide">
-                  <Button
-                    icon="PanelLeft"
-                    onClick={() => dispatch(toggleFilterView())}
-                  />
-                </HideFiltersTooltip>
-              </Col>
-            </HeaderRow>
-            <FiltersContainer>
-              <FileFilters
-                filter={filter}
-                setFilter={(newFilter) => {
-                  dispatch(setFilter(newFilter));
+    <>
+      <FileUploadModal
+        initialUploadedFiles={uploadedFiles}
+        enableProcessAfter
+        onUploadSuccess={onUploadSuccess}
+        showModal={showFileUploadModal}
+        onCancel={() => dispatch(setFileUploadModalVisibility(false))}
+      />
+      <Wrapper>
+        <QueryClientProvider client={queryClient}>
+          {showFilter && (
+            <FilterPanel>
+              <HeaderRow align="middle" justify="center">
+                <Col flex="auto">
+                  <Title level={4}> Filters</Title>
+                </Col>
+                <Col flex="none">
+                  <HideFiltersTooltip content="Hide">
+                    <Button
+                      icon="PanelLeft"
+                      onClick={() => dispatch(toggleFilterView())}
+                    />
+                  </HideFiltersTooltip>
+                </Col>
+              </HeaderRow>
+              <FiltersContainer>
+                <FileFilters
+                  filter={filter}
+                  setFilter={(newFilter) => {
+                    dispatch(setFilter(newFilter));
+                  }}
+                />
+              </FiltersContainer>
+            </FilterPanel>
+          )}
+
+          <TablePanel showDrawer={showMetadata} showFilter={showFilter}>
+            {!showFilter ? (
+              <div
+                style={{
+                  borderRight: `1px solid ${Colors['greyscale-grey3'].hex()}`,
+                  padding: '10px',
                 }}
-              />
-            </FiltersContainer>
-          </FilterPanel>
-        )}
+              >
+                <FilterToggleButton
+                  toggleOpen={() => dispatch(toggleFilterView())}
+                />
+              </div>
+            ) : undefined}
 
-        <TablePanel showDrawer={showMetadata} showFilter={showFilter}>
-          {!showFilter ? (
-            <div
-              style={{
-                borderRight: `1px solid ${Colors['greyscale-grey3'].hex()}`,
-                padding: '10px',
-              }}
-            >
-              <FilterToggleButton
-                toggleOpen={() => dispatch(toggleFilterView())}
+            <ViewContainer>
+              <ExplorerToolbar
+                query={query}
+                currentView={currentView}
+                onViewChange={(view) =>
+                  dispatch(setCurrentView(view as ViewMode))
+                }
+                onSearch={handleSearch}
               />
-            </div>
-          ) : undefined}
-
-          <ViewContainer>
-            <ExplorerToolbar
-              query={query}
-              currentView={currentView}
-              onViewChange={(view) =>
-                dispatch(setCurrentView(view as ViewMode))
-              }
-              onSearch={handleSearch}
-            />
-            <ExplorerSearchResults
-              filter={filter}
-              onClick={handleItemClick}
-              onRowSelect={handleRowSelect}
-              query={query}
-              selectedId={fileId || undefined}
-              currentView={currentView}
-            />
-          </ViewContainer>
-        </TablePanel>
-        {showMetadata && (
-          <DrawerContainer>
-            <QueryClientProvider client={queryClient}>
-              <FileDetails fileId={fileId} onClose={handleMetadataClose} />
-            </QueryClientProvider>
-          </DrawerContainer>
-        )}
-      </QueryClientProvider>
-    </Wrapper>
+              <ExplorerSearchResults
+                filter={filter}
+                onClick={handleItemClick}
+                onRowSelect={handleRowSelect}
+                query={query}
+                selectedId={fileId || undefined}
+                currentView={currentView}
+              />
+            </ViewContainer>
+          </TablePanel>
+          {showMetadata && (
+            <DrawerContainer>
+              <QueryClientProvider client={queryClient}>
+                <FileDetails fileId={fileId} onClose={handleMetadataClose} />
+              </QueryClientProvider>
+            </DrawerContainer>
+          )}
+        </QueryClientProvider>
+      </Wrapper>
+    </>
   );
 };
 
