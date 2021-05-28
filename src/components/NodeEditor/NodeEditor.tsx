@@ -167,6 +167,12 @@ const WorkflowEditor = ({
     setNewNode(undefined);
   };
 
+  const availableNodeOptions = Object.values(defaultNodeOptions)
+    .filter((nodeOption) => !nodeOption.disabled)
+    .filter((nodeOption) => {
+      return nodeOption.effectId === 'OUTPUT' ? !hasOutputNode : true;
+    });
+
   return (
     <WorkflowContainer
       ref={nodeEditor}
@@ -188,34 +194,27 @@ const WorkflowEditor = ({
               <Menu.Item>
                 <Input />
               </Menu.Item>
-              {Object.values(defaultNodeOptions)
-                .filter((nodeOption) => !nodeOption.disabled)
-                .filter((nodeOption) => {
-                  return nodeOption.effectId === 'OUTPUT'
-                    ? !hasOutputNode
-                    : true;
-                })
-                .map((nodeOption) => (
-                  <Menu.Item
-                    key={nodeOption.name}
-                    onClick={() => {
-                      update({
-                        nodes: [
-                          ...nodes,
-                          {
-                            id: nanoid(),
-                            ...nodeOption.node,
-                            ...nodePosition,
-                            calls: [],
-                          },
-                        ],
-                      });
-                      onClose();
-                    }}
-                  >
-                    {nodeOption.name}
-                  </Menu.Item>
-                ))}
+              {availableNodeOptions.map((nodeOption) => (
+                <Menu.Item
+                  key={nodeOption.name}
+                  onClick={() => {
+                    update({
+                      nodes: [
+                        ...nodes,
+                        {
+                          id: nanoid(),
+                          ...nodeOption.node,
+                          ...nodePosition,
+                          calls: [],
+                        },
+                      ],
+                    });
+                    onClose();
+                  }}
+                >
+                  {nodeOption.name}
+                </Menu.Item>
+              ))}
             </Menu>
           )}
         >
@@ -249,7 +248,7 @@ const WorkflowEditor = ({
               style={{ marginTop: '-10.5px' }}
               onMouseOver={(e) => setNodePosition(e)}
             >
-              {Object.values(defaultNodeOptions).map((nodeOption) => (
+              {availableNodeOptions.map((nodeOption) => (
                 <Menu.Item
                   key={nodeOption.name}
                   onClick={() => {
