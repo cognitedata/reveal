@@ -47,6 +47,7 @@ const Y_AXIS_MARGIN = 40;
 
 type ChartProps = {
   chartId: string;
+  isYAxisShown?: boolean;
   isPreview?: boolean;
   isInSearch?: boolean;
   stackedMode?: boolean;
@@ -57,6 +58,7 @@ const Plot = createPlotlyComponent(Plotly);
 
 const PlotlyChartComponent = ({
   chartId,
+  isYAxisShown = true,
   isPreview = false,
   isInSearch = false,
   stackedMode = false,
@@ -306,7 +308,7 @@ const PlotlyChartComponent = ({
     1000
   );
 
-  const showYAxis = !isInSearch && !isPreview;
+  const showYAxis = !isInSearch && !isPreview && isYAxisShown;
   const horizontalMargin = isPreview ? 0 : 20;
   const verticallMargin = isPreview ? 0 : 30;
 
