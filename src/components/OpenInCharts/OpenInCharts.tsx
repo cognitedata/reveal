@@ -8,7 +8,6 @@ import React, {
 } from 'react';
 import { useHistory } from 'react-router-dom';
 import { nanoid } from 'nanoid';
-import { subDays } from 'date-fns';
 import { Chart } from 'reducers/charts/types';
 import styled from 'styled-components';
 import dayjs from 'dayjs';
@@ -163,8 +162,6 @@ export const OpenInCharts: FC = () => {
   }, [
     selectedIds,
     currentValue,
-    chart,
-    allCharts,
     existingChart,
     history,
     login?.user,
