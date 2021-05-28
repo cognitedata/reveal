@@ -5,7 +5,7 @@ import * as THREE from 'three';
 import CameraControls from 'camera-controls';
 import { resizeRendererToDisplaySize } from '../../utils/sceneHelpers';
 import { CanvasWrapper } from '../../components/styled';
-import * as reveal from '@cognite/reveal/experimental';
+import * as reveal from '@cognite/reveal/internals';
 import { defaultRenderOptions, RenderOptions } from '@cognite/reveal';
 
 type CadModelEnv = {
@@ -14,7 +14,7 @@ type CadModelEnv = {
 };
 type PointCloudModelEnv = {
   modelType: 'pointcloud';
-  model: reveal.internal.PointCloudNode;
+  model: reveal.PointCloudNode;
 };
 
 export type TestEnv = {
@@ -82,7 +82,7 @@ export function TestViewer(props: Props) {
   };
 
   const getCameraConfig = (
-    model: reveal.CadNode | reveal.internal.PointCloudNode
+    model: reveal.CadNode | reveal.PointCloudNode
   ): reveal.SuggestedCameraConfig => {
     if ('suggestCameraConfig' in model) {
       return model.suggestCameraConfig();
@@ -143,7 +143,7 @@ export function TestViewer(props: Props) {
       revealManager = reveal.createLocalRevealManager(renderer, scene, { logMetrics: false, renderOptions: renderOptions });
       setupLoadingStateHandler(revealManager);
 
-      let model: reveal.internal.PointCloudNode | reveal.CadNode;
+      let model: reveal.PointCloudNode | reveal.CadNode;
 
       if (props.modelType === 'pointcloud') {
         model = await revealManager.addModel('pointcloud', modelUrl);

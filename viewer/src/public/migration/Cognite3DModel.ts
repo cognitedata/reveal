@@ -9,7 +9,7 @@ import { CameraConfiguration } from './types';
 import { CogniteModelBase } from './CogniteModelBase';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import { NumericRange, Box3, toThreeJsBox3 } from '../../utilities';
-import { CadNode } from '../../experimental';
+import { CadNode } from '../../internals';
 import { trackError } from '../../utilities/metrics';
 import { DefaultNodeAppearance } from '../../datamodels/cad/NodeAppearance';
 import { SupportedModelTypes, CadLoadingHints, CadModelMetadata, NodeAppearanceProvider } from '../types';

@@ -3,7 +3,7 @@
  */
 
 import * as THREE from 'three';
-import * as reveal from '@cognite/reveal/experimental';
+import * as reveal from '@cognite/reveal/internals';
 import dat from 'dat.gui';
 
 export type RenderFilter = {
@@ -29,7 +29,7 @@ export type RenderOptions = {
   loadingEnabled: boolean;
   renderMode: RenderMode;
   renderFilter: RenderFilter;
-  overrideWantedSectors?: reveal.internal.WantedSector[];
+  overrideWantedSectors?: reveal.WantedSector[];
 };
 
 export function createDefaultRenderOptions(): RenderOptions {
@@ -375,7 +375,7 @@ function filterSectorNodes(
     if (!pathRegex.endsWith('$')) {
       pathRegex = pathRegex + '$';
     }
-    reveal.internal.traverseDepthFirst(root, (node) => {
+    reveal.utilities.traverseDepthFirst(root, node => {
       if (node.path.match(pathRegex)) {
         acceptedNodes.push(node);
       }
@@ -394,8 +394,8 @@ function updateWantedSectorOverride(
 ) {
   function createWantedSector(
     node: reveal.SectorMetadata,
-    levelOfDetail: reveal.internal.LevelOfDetail
-  ): reveal.internal.WantedSector {
+    levelOfDetail: reveal.LevelOfDetail
+  ): reveal.WantedSector {
     return {
       blobUrl: cadNode.cadModelMetadata.blobUrl,
       levelOfDetail,
@@ -409,17 +409,17 @@ function updateWantedSectorOverride(
   } else {
     const acceptedSimple = filterSectorNodes(quadsFilter, root);
     const acceptedDetailed = filterSectorNodes(detailedFilter, root);
-    const wanted: reveal.internal.WantedSector[] = [
+    const wanted: reveal.WantedSector[] = [
       ...cadNode.sectorScene
         .getAllSectors()
         .map((x) =>
-          createWantedSector(x, reveal.internal.LevelOfDetail.Discarded)
+          createWantedSector(x, reveal.LevelOfDetail.Discarded)
         ),
       ...acceptedSimple.map((x) =>
-        createWantedSector(x, reveal.internal.LevelOfDetail.Simple)
+        createWantedSector(x, reveal.LevelOfDetail.Simple)
       ),
       ...acceptedDetailed.map((x) =>
-        createWantedSector(x, reveal.internal.LevelOfDetail.Detailed)
+        createWantedSector(x, reveal.LevelOfDetail.Detailed)
       ),
     ];
     renderOptions.overrideWantedSectors = wanted;
