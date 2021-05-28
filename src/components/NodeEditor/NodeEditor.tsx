@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components/macro';
 import debounce from 'lodash/debounce';
 import isEqual from 'lodash/isEqual';
+import pick from 'lodash/pick';
 import {
   SourceNode,
   ControllerProvider,
@@ -52,13 +53,15 @@ const WorkflowEditor = ({
   }
 
   const update = (diff: Partial<ChartWorkflow>) => {
+    const applicableDiff = pick(diff, ['nodes', 'connections']);
+
     mutate({
       ...chart,
       workflowCollection: chart.workflowCollection?.map((wf) =>
         wf.id === workflowId
           ? {
               ...wf,
-              ...diff,
+              ...applicableDiff,
             }
           : wf
       ),
