@@ -86,7 +86,11 @@ export const rangeToTwoDigitString = (time: {
   return `${toTwoDigitString(time.hours)}:${toTwoDigitString(time.min)}`;
 };
 
+const TIME_FORMAT_LENGTH: Readonly<number> = 5;
 export const parseTimeString = (input: string): Time | undefined => {
+  if (input.length < TIME_FORMAT_LENGTH) {
+    return undefined;
+  }
   const date = moment(input, 'HH:mm');
   return date.isValid()
     ? {

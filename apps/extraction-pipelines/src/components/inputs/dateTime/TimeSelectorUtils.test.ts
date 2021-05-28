@@ -83,6 +83,7 @@ describe('TimeSelectorUtils', () => {
       { input: '23:09', expected: { min: 9, hours: 23 } },
       { input: '10:00', expected: { min: 0, hours: 10 } },
       { input: '08:54', expected: { min: 54, hours: 8 } },
+      { input: '08:5', expected: undefined },
       { input: '67:99', expected: undefined },
       { input: 'absd', expected: undefined },
     ];
