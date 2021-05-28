@@ -3,7 +3,6 @@
  */
 
 import * as THREE from 'three';
-import ComboControls from '@cognite/three-combo-controls';
 import TWEEN from '@tweenjs/tween.js';
 
 import { Cognite3DViewer } from '../../migration';
@@ -16,6 +15,7 @@ import {
   AbsolutePosition,
   RelativePosition
 } from './types';
+import ComboControls from '../../combo-camera-controls';
 import cloneDeep from 'lodash/cloneDeep';
 import merge from 'lodash/merge';
 
