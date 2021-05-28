@@ -1,7 +1,6 @@
 import React from 'react';
 import { Tooltip, Select } from '@cognite/cogs.js';
 import { LabelDefinition } from '@cognite/sdk';
-import { OptionsType, OptionTypeBase } from 'react-select';
 import { useList, usePermissions } from '@cognite/sdk-react-query-hooks';
 
 export const LabelFilter = ({
@@ -52,8 +51,8 @@ export const LabelFilter = ({
             value: el.externalId,
           }))}
           isDisabled={!hasPermission}
-          onChange={(newValue: OptionsType<OptionTypeBase>) => {
-            setLabel(newValue?.map((el) => el.value));
+          onChange={(newValue: { value: string }[]) => {
+            setLabel(newValue?.map((el: { value: string }) => el.value));
           }}
           value={currentLabels?.map((el) => ({
             label: el.name,
