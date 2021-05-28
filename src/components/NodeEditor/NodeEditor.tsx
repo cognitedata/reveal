@@ -153,7 +153,14 @@ const WorkflowEditor = ({
     }
   };
 
-  const placeNewNode = () => {
+  const placeNewNode = (e: React.MouseEvent) => {
+    if (!newNode) {
+      return;
+    }
+
+    e.preventDefault();
+    e.stopPropagation();
+
     update({
       nodes: [...nodes, newNode as StorableNode],
     });
@@ -161,7 +168,11 @@ const WorkflowEditor = ({
   };
 
   return (
-    <WorkflowContainer ref={nodeEditor} onMouseMove={moveNewNode}>
+    <WorkflowContainer
+      ref={nodeEditor}
+      onMouseMove={moveNewNode}
+      onClick={placeNewNode}
+    >
       <ControllerProvider
         pinTypes={pinTypes}
         connections={connections}
@@ -209,12 +220,7 @@ const WorkflowEditor = ({
           )}
         >
           {newNode ? (
-            <SourceNode
-              key={newNode.id}
-              node={newNode}
-              status="LOADING"
-              onClick={placeNewNode}
-            />
+            <SourceNode key={newNode.id} node={newNode} status="LOADING" />
           ) : (
             ''
           )}
