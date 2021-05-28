@@ -55,7 +55,7 @@ export const ProcessFooter = () => {
       content:
         'By skipping processing you will be taken back to the home page. Your files are uploaded to Cognite Data Fusion and can be processed later.',
       onOk: () => {
-        history.push(createLink('/explore/search/file'));
+        history.push(createLink('/vision/explore'));
       },
     });
   };
