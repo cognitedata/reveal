@@ -889,7 +889,13 @@ export class Cognite3DViewer {
    * ```
    */
   fitCameraToBoundingBox(box: THREE.Box3, duration?: number, radiusFactor: number = 2): void {
-    const boundingSphere = box.getBoundingSphere(new THREE.Sphere());
+    const center = new THREE.Vector3().lerpVectors(box.min, box.max, 0.5);
+    const radius = 0.5 * new THREE.Vector3().subVectors(box.max, box.min).length();
+    const boundingSphere = new THREE.Sphere(center, radius);
+
+    // TODO 2020-03-15 larsmoa: Doesn't currently work :S
+    // const boundingSphere = box.getBoundingSphere(new THREE.Sphere());
+
     const target = boundingSphere.center;
     const distance = boundingSphere.radius * radiusFactor;
     const direction = new THREE.Vector3(0, 0, -1);
