@@ -817,7 +817,7 @@
   resolved "https://registry.yarnpkg.com/@types/prettier/-/prettier-2.2.3.tgz#ef65165aea2924c9359205bf748865b8881753c0"
   integrity sha512-PijRCG/K3s3w1We6ynUKdxEc5AcuuH3NBmMDP8uvKVp6X43UY7NQlTzczakXP3DJR0F4dfNQIGjU2cUeRYs2AA==
 
-"@types/skmeans@^0.11.0":
+"@types/skmeans@^0.11.1":
   version "0.11.1"
   resolved "https://registry.yarnpkg.com/@types/skmeans/-/skmeans-0.11.1.tgz#77d4eab94b380111fc998057feea358fe1826fb6"
   integrity sha512-N7Z03qVNPBHpXjNTzRS5fYX9jxKaW8ES++/2P4LElmQbMqGOBSwoQmzWtWHlX8Vq2OR81vvWR4qjvc9BUiX8wA==
