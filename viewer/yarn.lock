@@ -323,10 +323,10 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@cognite/potree-core@^1.1.6":
-  version "1.1.6"
-  resolved "https://registry.yarnpkg.com/@cognite/potree-core/-/potree-core-1.1.6.tgz#26434a4070d1bb2afcb18912b42471d5b123a477"
-  integrity sha512-9mR9r/Xb7q87FSMxvnCDXKlu+jeFS9dhDVjH8lN9vQUBZEwjP7A8jo4uvCtxEUdnWjuOCVhB0Y/iqpp8Vk9vmg==
+"@cognite/potree-core@1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@cognite/potree-core/-/potree-core-1.2.0.tgz#29d42606e2dd4b4ef0ad82c97c0a23ca94f0ff65"
+  integrity sha512-DoRe/U/12LjW09iR1VVK1WFTi/ZIeQw7k9yGHzMC4jhVgKuGiz0n8YkcQGZo4+KLULzvEW8zXz6Wqfo7BakVHA==
 
 "@cognite/reveal-parser-worker@1.1.1":
   version "1.1.1"
