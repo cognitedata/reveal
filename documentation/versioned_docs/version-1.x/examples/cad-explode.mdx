@@ -4,7 +4,7 @@ title: Exploded view tool
 description: Demo use the exploded view tool to explode and inspect a given node subtree.
 ---
 
-import { DemoWrapper } from '@site/src/components/DemoWrapper';
+import { DemoWrapper } from '@site/versioned_docs/version-1.x/components/DemoWrapper';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
 This section describes the exploded view tool, which contains helper functions and logic for inspecting and exploding a given asset.
@@ -26,7 +26,7 @@ This indicates if the tool has cached necessary data from the Cognite Fusion API
 :::
 
 Below is an example that expands a given pipe asset (that has a tree index of `570730`) which is animated by a sine function.
-Another good usecase would be to bind the `expand` function to a slider which the user can manipulate to expand the asset.  
+Another good usecase would be to bind the `expand` function to a slider which the user can manipulate to expand the asset.
 
 
 ```jsx runnable
@@ -52,7 +52,7 @@ const rootBoundingBox = model.getBoundingBoxByTreeIndex(rootTreeIndex)
 
     setInterval(() =>{
       const elapsedTime = clock.getElapsedTime();
-      const expandRadius = Math.sin(elapsedTime) * 0.5 + 0.5; 
+      const expandRadius = Math.sin(elapsedTime) * 0.5 + 0.5;
       explodeTool.expand(expandRadius);
     }, 20);
   });

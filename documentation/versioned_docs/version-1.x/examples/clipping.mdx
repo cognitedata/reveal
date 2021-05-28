@@ -4,10 +4,10 @@ title: Clipping/slicing planes
 describe: Reveal support adding a number of slicing planes to "cut through" the models.
 ---
 
-import { DemoWrapper } from '@site/src/components/DemoWrapper';
+import { DemoWrapper } from '@site/versioned_docs/version-1.x/components/DemoWrapper';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
-Slicing planes, also called clipping planes, can be used to "cut through" the model to reveal the interior. This is 
+Slicing planes, also called clipping planes, can be used to "cut through" the model to reveal the interior. This is
 useful to isolate interesting parts of the model and hide obscuring geometry. Reveal supports having multiple slicing planes
 in arbitrary position and orientation. When slicing planes are active,
 the amount of geometry loaded might be reduced since culled geometry doesn't need
@@ -27,7 +27,7 @@ Slicing planes are currently not supported by point cloud models.
 
 ### Single, fixed slicing plane
 
-Slicing planes are defined by providing zero or more [`THREE.Plane`](https://threejs.org/docs/#api/en/math/Plane) 
+Slicing planes are defined by providing zero or more [`THREE.Plane`](https://threejs.org/docs/#api/en/math/Plane)
 to `Cognite3DViewer.setSlicingPlanes`. The slicing planes are activated for all models and
 replaces any active slicing planes.
 
@@ -45,8 +45,8 @@ viewer.setSlicingPlanes([plane]);
 
 ### Animated slicing plane
 
-Planes can be manipulated runtime and effects will have an effect in the viewer. Note however that rendering must be 
-triggered after updating the plane before the change will have a visual effect. This can be done using 
+Planes can be manipulated runtime and effects will have an effect in the viewer. Note however that rendering must be
+triggered after updating the plane before the change will have a visual effect. This can be done using
 `Cognite3DViewer.forceRerender()`.
 
 Below is an example animates a slicing plane by ping-ponging the plane in the vertical direction.
@@ -73,16 +73,16 @@ setInterval(() => {
 ```
 
 :::note
-Updating `THREE.Plane`-instances will not trigger data loading. To manually trigger data loading after doing 
+Updating `THREE.Plane`-instances will not trigger data loading. To manually trigger data loading after doing
 substantial changes to the slicing planes, use `Cognite3DViewer.setSlicingPlanes`. Note that the example
-above performs substantial changes to the planes without loading data. In a real application it's recommended 
+above performs substantial changes to the planes without loading data. In a real application it's recommended
 to not load data during animation, but initiate data after an animation is completed.
 :::
 
 ### Interactable slicing planes
 
-Often it's required to have interactive slicing planes that the user can modify. The following example 
-show how [ThreeJS DragControls](https://threejs.org/docs/#examples/en/controls/DragControls) can be used 
+Often it's required to have interactive slicing planes that the user can modify. The following example
+show how [ThreeJS DragControls](https://threejs.org/docs/#examples/en/controls/DragControls) can be used
 to manipulate the slicing planes.
 
 After running this snippet the slicing plane can be manipulated by dragging the white manipulator.
@@ -127,16 +127,16 @@ controls.addEventListener('dragend', () => {
 
 ### CAD geometry filter
 
-A special type of slicing is to provide a "geometry filter" when loading the model. A geometry filter restricts the 
+A special type of slicing is to provide a "geometry filter" when loading the model. A geometry filter restricts the
 area to load geometry for and is specified when the model is created.
 
-```js 
+```js
 const min = new THREE.Vector3(10, 20, 30);
 const max = new THREE.Vector3(20, 30, 40);
 viewer.addModel({
-  modelId, 
-  revisionId, 
-  geometryFilter: { 
+  modelId,
+  revisionId,
+  geometryFilter: {
     boundingBox: new THREE.Box3(min, max)
   }
 });

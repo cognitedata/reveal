@@ -8,7 +8,7 @@ description: Demo shows how to load 3d models from CDF with Cognite3DViewer.
 It has mostly the same API and could be used when you don't need to control the scene or render loop,
 i.e., just want to view some 3d models from CDF.
 
-import { DemoWrapper } from '@site/src/components/DemoWrapper';
+import { DemoWrapper } from '@site/docs/components/DemoWrapper';
 
 <DemoWrapper name="Cognite3DViewerDemo" />
 
@@ -55,9 +55,9 @@ view. This can be done using a `geometryFilter`:
   const model = await viewer.addModel({
     modelId: 4715379429968321,
     revisionId: 5688854005909501,
-    geometryFilter: { 
+    geometryFilter: {
       // Only load geometry inside a box around origin with 20x20 horizontal extent and 5 vertical extent.
-      boundingBox: new THREE.Box3(new THREE.Vector3(-10, -10, 0), new THREE.Vector3(10, 10, 5)) 
+      boundingBox: new THREE.Box3(new THREE.Vector3(-10, -10, 0), new THREE.Vector3(10, 10, 5))
     }
   });
   viewer.loadCameraFromModel(model);
@@ -65,15 +65,15 @@ view. This can be done using a `geometryFilter`:
 
 By default, the bounds provided must be in "CDF coordinates". This is e.g. suitable if you are retrieving coordinates
 directly from the [Nodes API](https://docs.cognite.com/api/v1/#operation/get3DNodes) to for instance show the area
-around a given node. If the coordinates are in "Reveal coordinates" (i.e. in 
-[the WebGL coordinate system](https://www.tutorialspoint.com/webgl/webgl_basics.htm)) the `geometryFilter` can be 
+around a given node. If the coordinates are in "Reveal coordinates" (i.e. in
+[the WebGL coordinate system](https://www.tutorialspoint.com/webgl/webgl_basics.htm)) the `geometryFilter` can be
 set up using `isBoundingBoxInModelCoordinates`:
 
 ```js
   const model = await viewer.addModel({
     modelId: 4715379429968321,
     revisionId: 5688854005909501,
-    geometryFilter: { 
+    geometryFilter: {
       // Only load geometry inside a box around origin with 20x20 horizontal extent and 5 vertical extent.
       boundingBox: new THREE.Box3(new THREE.Vector3(-10, 0, -10), new THREE.Vector3(10, 5, 10)),
       // Instruct Reveal that the coordinates already are relative to the coordinates of the model

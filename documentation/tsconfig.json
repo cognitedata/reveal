@@ -14,7 +14,8 @@
       // it's aligned with docusaurus @site alias
       // https://v2.docusaurus.io/docs/versioning/#use-absolute-import-within-the-docs
       "@site/*": ["*"]
-    }
+    },
   },
+
   "include": ["src", "docs", "versioned_docs"]
 }

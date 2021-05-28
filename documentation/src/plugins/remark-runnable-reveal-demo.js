@@ -19,7 +19,7 @@ const matchNode = (node) => node.type === 'code' && node.meta === 'runnable';
 const nodeForImport = {
   type: 'import',
   value:
-    "import { LiveCodeSnippet } from '@site/src/components/LiveCodeSnippet';",
+    "import { LiveCodeSnippet } from '@site/docs/components/LiveCodeSnippet';",
 };
 
 module.exports = () => {
