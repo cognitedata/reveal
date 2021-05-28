@@ -5,6 +5,7 @@ import { INTEGRATION_NAME_HEADING } from 'pages/create/NamePage';
 import {
   descriptionSchema,
   nameSchema,
+  sourceSchema,
 } from 'utils/validation/integrationSchemas';
 import InlineEdit from 'components/integration/InlineEdit';
 import { Icon, Title } from '@cognite/cogs.js';
@@ -15,6 +16,7 @@ import { rootUpdate } from 'hooks/details/useDetailsUpdate';
 import { DivFlex } from 'styles/flex/StyledFlex';
 import DetailsValueView from 'components/table/details/DetailsValueView';
 import { bottomSpacing } from 'styles/StyledVariables';
+import { SOURCE_LABEL } from 'utils/constants';
 
 const Wrapper = styled.div`
   margin: 1rem;
@@ -28,6 +30,9 @@ const ImportantWrapper = styled(DivFlex)`
   margin-bottom: ${bottomSpacing};
   .cogs-icon {
     margin-right: 1rem;
+    &.icon-no-margin {
+      margin: 0;
+    }
   }
   .cogs-icon-Dot {
     margin-left: 0.5rem;
@@ -72,7 +77,13 @@ export const IntegrationHeading: FunctionComponent<IntegrationHeadingProps> = ()
         )}
         <Icon type="Dot" />
         <Icon type="datasource" />
-        <DetailsValueView fieldValue={integration?.source} fieldName="source" />
+        <InlineEdit
+          name="source"
+          updateFn={rootUpdate({ integration, name: 'source', project })}
+          defaultValues={{ source: integration?.source }}
+          schema={sourceSchema}
+          label={SOURCE_LABEL}
+        />
       </ImportantWrapper>
       <InlineEdit
         name="description"

@@ -123,6 +123,7 @@ export const sourceRule = {
       `Source can only contain ${MAX_INPUT_LENGTH} characters`
     ),
 };
+export const sourceSchema = yup.object().shape(sourceRule);
 
 export const DATA_SET_REQUIRED: Readonly<string> = 'Data set is required';
 export const datasetSchema = yup.object().shape({

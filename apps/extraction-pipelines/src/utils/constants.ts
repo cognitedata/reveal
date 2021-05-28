@@ -83,6 +83,7 @@ export const DOCUMENTATION_HINT: Readonly<string> =
 // Source
 export const SOURCE_HINT: Readonly<string> =
   '**** Source hint placeholder ****';
+export const SOURCE_LABEL: Readonly<string> = 'Source';
 
 // Page headings
 export const ADD_INTEGRATION: Readonly<string> = 'Add integration';
