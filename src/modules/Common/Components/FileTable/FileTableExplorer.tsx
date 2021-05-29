@@ -32,6 +32,7 @@ export function FileTableExplorer(props: FileExplorerTableProps) {
       dataKey: 'mimeType',
       width: 150,
       align: Column.Alignment.LEFT,
+      sortable: true,
     },
     {
       key: 'sourceCreatedTime',
