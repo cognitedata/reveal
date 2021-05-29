@@ -13,6 +13,7 @@ import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
 import { useDispatch } from 'react-redux';
 import { FileExplorerTableProps } from './types';
 import { SorterPaginationWrapper } from '../SorterPaginationWrapper/SorterPaginationWrapper';
+import { MimeTypeSorter } from '../../Containers/Sorters/MimeTypeSorter';
 
 export function FileTableExplorer(props: FileExplorerTableProps) {
   const dispatch = useDispatch();
@@ -29,13 +30,14 @@ export function FileTableExplorer(props: FileExplorerTableProps) {
       key: 'mimeType',
       title: 'Mime Type',
       dataKey: 'mimeType',
-      width: 100,
+      width: 150,
+      align: Column.Alignment.LEFT,
     },
     {
       key: 'sourceCreatedTime',
       title: 'Source Created Time',
       dataKey: 'sourceCreatedTime',
-      align: Column.Alignment.CENTER,
+      align: Column.Alignment.LEFT,
       width: 250,
       sortable: true,
     },
@@ -44,13 +46,13 @@ export function FileTableExplorer(props: FileExplorerTableProps) {
       title: 'Annotations',
       width: 0,
       flexGrow: 1,
-      align: Column.Alignment.CENTER,
+      align: Column.Alignment.LEFT,
     },
     {
       key: 'action',
-      title: 'File Actions',
+      title: '',
       dataKey: 'menu',
-      align: Column.Alignment.CENTER,
+      align: Column.Alignment.RIGHT,
       width: 200,
     },
   ];
@@ -81,6 +83,7 @@ export function FileTableExplorer(props: FileExplorerTableProps) {
 
   const sorters = {
     name: NameSorter,
+    mimeType: MimeTypeSorter,
     sourceCreatedTime: DateSorter,
   };
 
