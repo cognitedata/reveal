@@ -74,7 +74,7 @@ const ConfigPanel = ({
 
   const NodeSpecificConfigPanel = defaultNodeOptions.find(
     (opt) => opt.effectId === node?.functionEffectReference
-  )?.configPanel;
+  )?.ConfigPanel;
 
   return (
     <ConfigPanelWrapper>
