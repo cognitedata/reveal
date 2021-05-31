@@ -77,6 +77,9 @@ export const ProcessToolBar = () => {
 
   const disableAddFiles = !isPollingFinished;
   const disableModelSelection = !files.length || !isPollingFinished;
+  const fileUploadActive = !files.length;
+  const modelSelectorActive =
+    !!files.length && !selectedDetectionModels.length && isPollingFinished;
 
   return (
     <>
@@ -103,62 +106,72 @@ export const ProcessToolBar = () => {
         >
           <ModelConfiguration />
         </Modal>
-        <FilesToolContainer disabled={disableAddFiles}>
-          <ElementTitle>
-            <Title level={6}>Add files</Title>
-          </ElementTitle>
-          <ElementContent>
-            <Button
-              type="tertiary"
-              icon="Upload"
-              disabled={disableAddFiles}
-              onClick={() =>
-                dispatch(setProcessViewFileUploadModalVisibility(true))
-              }
-            >
-              Upload
-            </Button>
-            <Button
-              type="tertiary"
-              icon="AddToList"
-              disabled
-              style={{ marginLeft: 8 }}
-            >
-              Select from files
-            </Button>
-          </ElementContent>
-        </FilesToolContainer>
-        <MLModelSelectContainer disabled={disableModelSelection}>
-          <ElementTitle>
-            <Title level={6}>Select ML model(s)</Title>
-            <ModelSettingsButton
-              icon="Settings"
-              aria-label="model settings"
-              disabled={disableModelSelection}
-              onClick={() => {
-                setModalOpen(true);
-              }}
-            />
-          </ElementTitle>
-          <ElementContent>
-            <ModelOptions>
-              <ModelSelector>
-                <DetectionModelSelect
-                  value={selectedDetectionModels}
-                  onChange={onChange}
-                  disabled={disableModelSelection}
-                />
-              </ModelSelector>
+        <ToolContainer>
+          <ProcessToolBarElement
+            disabled={disableAddFiles}
+            active={fileUploadActive}
+          >
+            <ElementTitle>
+              <Title level={6}>Add files</Title>
+            </ElementTitle>
+            <ElementContent>
               <Button
-                type="primary"
-                disabled={!isPollingFinished}
-                onClick={onDetectClick}
+                type="tertiary"
+                icon="Upload"
+                disabled={disableAddFiles}
+                onClick={() =>
+                  dispatch(setProcessViewFileUploadModalVisibility(true))
+                }
               >
-                Detect
+                Upload
               </Button>
-            </ModelOptions>
-          </ElementContent>
-        </MLModelSelectContainer>
+              <Button
+                type="tertiary"
+                icon="AddToList"
+                disabled
+                style={{ marginLeft: 8 }}
+              >
+                Select from files
+              </Button>
+            </ElementContent>
+          </ProcessToolBarElement>
+        </ToolContainer>
+        <ToolContainer>
+          <ProcessToolBarElement
+            disabled={disableModelSelection}
+            active={modelSelectorActive}
+          >
+            <ElementTitle>
+              <Title level={6}>Select ML model(s)</Title>
+              <ModelSettingsButton
+                icon="Settings"
+                aria-label="model settings"
+                disabled={disableModelSelection}
+                onClick={() => {
+                  setModalOpen(true);
+                }}
+              />
+            </ElementTitle>
+            <ElementContent>
+              <ModelOptions>
+                <ModelSelector>
+                  <DetectionModelSelect
+                    value={selectedDetectionModels}
+                    onChange={onChange}
+                    isDisabled={disableModelSelection}
+                  />
+                </ModelSelector>
+                <Button
+                  type="primary"
+                  disabled={!isPollingFinished}
+                  onClick={onDetectClick}
+                >
+                  Detect
+                </Button>
+              </ModelOptions>
+            </ElementContent>
+          </ProcessToolBarElement>
+        </ToolContainer>
         {isPollingFinished || showDrawer
           ? notification.info({
               ...toastProps,
@@ -174,31 +187,29 @@ export const ProcessToolBar = () => {
   );
 };
 const Container = styled.div`
-  display: flex;
+  display: grid;
   width: 100%;
   padding-top: 20px;
   padding-bottom: 15px;
+  grid-gap: 25px;
+  grid-template-columns: max-content auto;
 `;
 
 type ToolBarElemProps = {
   disabled: boolean;
+  active: boolean;
 };
 const ProcessToolBarElement = styled.div<ToolBarElemProps>`
   padding: 10px;
+  box-sizing: border-box;
+  border-radius: 10px;
   opacity: ${(props) => (props.disabled ? 0.5 : 1)};
+  background: ${(props) =>
+    props.active ? 'rgba(74, 103, 251, 0.1)' : '#fafafa'};
+  border: 0.5px solid ${(props) => (props.active ? '#4a67fb' : '#dcdcdc')};
 `;
-const FilesToolContainer = styled(ProcessToolBarElement)`
-  background: #fafafa;
-  border: 0.5px solid #dcdcdc;
-  box-sizing: border-box;
-  border-radius: 10px;
-`;
-const MLModelSelectContainer = styled(ProcessToolBarElement)`
-  background: rgba(74, 103, 251, 0.1);
-  border: 0.5px solid #4a67fb;
-  box-sizing: border-box;
-  border-radius: 10px;
-  margin-left: 25px;
+const ToolContainer = styled.div`
+  display: flex;
 `;
 const ElementTitle = styled.div`
   display: flex;

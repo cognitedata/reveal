@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, SegmentedControl, Popconfirm, Input } from '@cognite/cogs.js';
+import { Button, SegmentedControl, Popconfirm } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
@@ -37,7 +37,6 @@ export const FileToolbar = ({
   return (
     <>
       <Container>
-        <Input placeholder="Filter by name" />
         <ButtonContainer>
           <ConfirmDeleteButton
             onConfirm={onDelete}
@@ -106,7 +105,7 @@ const ConfirmDeleteButton = (props: {
 
 const Container = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: bottom;
   padding: 15px 0;
   align-items: flex-end;

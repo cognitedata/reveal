@@ -18,10 +18,9 @@ const Container = styled.div`
   align-items: center;
   height: 40px;
   border: 1px solid #dcdcdc;
-  padding: 0 12px;
+  padding: 0 25px;
 `;
 
 const Text = styled(Body)`
   color: #8c8c8c;
-  margin-left: 8px;
 `;
