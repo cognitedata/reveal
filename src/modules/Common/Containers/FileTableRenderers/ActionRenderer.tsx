@@ -13,9 +13,7 @@ import { selectUpdatedFileDetails } from 'src/modules/FileDetails/fileDetailsSli
 import { ReviewButton } from '../../Components/ReviewButton/ReviewButton';
 import { ActionMenu } from '../../Components/ActionMenu/ActionMenu';
 
-export function ActionRenderer({
-  rowData: { menu, id, selected },
-}: CellRenderer) {
+export function ActionRenderer({ rowData: { menu, id } }: CellRenderer) {
   const dispatch = useDispatch();
 
   const handleMetadataEdit = () => {
@@ -47,13 +45,11 @@ export function ActionRenderer({
 
   return (
     <Action>
-      {selected && (
-        <ReviewButton
-          disabled={reviewDisabled}
-          onClick={handleReview}
-          style={{ marginRight: '10px' }}
-        />
-      )}
+      <ReviewButton
+        disabled={reviewDisabled}
+        onClick={handleReview}
+        style={{ marginRight: '10px' }}
+      />
       <ActionMenu
         showExifIcon={fileDetails?.geoLocation !== undefined}
         disabled={reviewDisabled}
