@@ -145,11 +145,7 @@ export const OpenInCharts: FC = () => {
             sdk,
             timeSeries,
           });
-          const newTs = covertTSToChartTS(
-            timeSeries,
-            newChart.timeSeriesCollection?.length || 0,
-            range
-          );
+          const newTs = covertTSToChartTS(timeSeries, range);
           updateChart(addTimeseries(newChart, newTs));
           newChart.timeSeriesCollection?.push(newTs);
         })
@@ -172,11 +168,7 @@ export const OpenInCharts: FC = () => {
             sdk,
             timeSeries,
           });
-          const newTs = covertTSToChartTS(
-            timeSeries,
-            existingChart.timeSeriesCollection?.length || 0,
-            range
-          );
+          const newTs = covertTSToChartTS(timeSeries, range);
           updateChart(addTimeseries(existingChart, newTs));
           existingChart.timeSeriesCollection?.push(newTs);
         })
