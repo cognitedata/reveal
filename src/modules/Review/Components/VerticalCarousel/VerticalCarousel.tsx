@@ -7,7 +7,7 @@ import 'swiper/swiper.min.css';
 import 'swiper/components/pagination/pagination.min.css';
 
 // import Swiper core and required modules
-import SwiperCore, { Pagination, Mousewheel } from 'swiper/core';
+import SwiperCore, { Pagination, Mousewheel, Virtual } from 'swiper/core';
 import styled from 'styled-components';
 import { getIdfromUrl } from 'src/utils/tenancy';
 import {
@@ -21,7 +21,7 @@ import { selectAllFiles } from 'src/modules/Common/filesSlice';
 import { Thumbnail } from 'src/modules/Common/Components/Thumbnail/Thumbnail';
 import { Button } from '@cognite/cogs.js';
 
-SwiperCore.use([Mousewheel, Pagination]);
+SwiperCore.use([Mousewheel, Pagination, Virtual]);
 
 export const VerticalCarousel = () => {
   const filesSlice = useSelector((state: RootState) =>
@@ -29,68 +29,88 @@ export const VerticalCarousel = () => {
   );
 
   const history = useHistory();
+  const initialSlide = Number(getIdfromUrl());
+  const [currentSlide, setCurrentSlide] = useState<number>(initialSlide);
+  const [currentSlideIndex, setCurrentSlideIndex] = useState<number>(
+    filesSlice.findIndex((item: any) => item.id === initialSlide)
+  );
 
-  const initId = getIdfromUrl();
-  const [imgInFocus, setImgInFocus] = useState(initId);
-  const [currentSlide, setCurrentSlide] = useState<number>();
-  const onImgClick = (k: any) => {
+  const thumbnailHeight = 66;
+
+  const handleOnClick = (fileId: number) => {
     // For background color / focus
-    setImgInFocus(k.id);
-    setCurrentSlide(1); // Todo: fix mapping
+    setCurrentSlide(fileId);
+    setCurrentSlideIndex(
+      filesSlice.findIndex((item: any) => item.id === fileId)
+    );
+
     // Go to this file
     history.replace(
-      getParamLink(workflowRoutes.review, ':fileId', String(k.id))
+      getParamLink(workflowRoutes.review, ':fileId', String(fileId))
     );
   };
 
+  const slides = filesSlice.map((data, index) => {
+    return (
+      /* eslint-disable react/no-array-index-key */
+      <SwiperSlide key={`${index}-swiperslide`} virtualIndex={+index}>
+        <ThumbnailContainer
+          key={`${index}-navButton`}
+          focusedid={`${currentSlide}`}
+          currentid={`${data.id}`}
+          thumbnailheight={thumbnailHeight}
+          onClick={() => handleOnClick(data.id)}
+          aria-label={`${index} icon`}
+        >
+          <Thumbnail key={`${index}-thumbnail`} fileInfo={data} />
+        </ThumbnailContainer>
+      </SwiperSlide>
+    );
+  });
   return (
     <>
       <Swiper
-        slidesPerView="auto"
-        initialSlide={currentSlide}
+        className="carouselView"
+        slidesPerView={Math.min(filesSlice.length, 10)} // "auto" does not work with virtual
+        initialSlide={currentSlideIndex}
         freeMode
         direction="vertical"
-        mousewheel={{ sensitivity: 2 }}
+        mousewheel={{
+          sensitivity: 2,
+          releaseOnEdges: true,
+        }}
         grabCursor
-        className="mySwiper"
-        style={{ height: '200px' }}
-        pagination={{
-          clickable: true,
+        centeredSlides
+        centeredSlidesBounds
+        // TODO: Fix virtual loading
+        // virtual
+        // virtual={{
+        //   addSlidesAfter: 5,
+        //   addSlidesBefore: 5,
+        // }}
+        style={{
+          height: `${thumbnailHeight * Math.min(filesSlice.length, 10)}px`, // HACK: to avoid scroll out of view
         }}
       >
-        <>
-          {Object.entries(filesSlice).map(([k, v]) => {
-            return (
-              <SwiperSlide key={`${k}-swiperslide`}>
-                <ImgNavButton
-                  key={`${k}-navbutton`}
-                  focusedid={imgInFocus}
-                  currentid={String(v.id)}
-                  onClick={() => onImgClick(v)}
-                  aria-label={`${k} icon`}
-                >
-                  <Thumbnail key={`${k}-thumbnail`} fileInfo={v} />
-                </ImgNavButton>
-              </SwiperSlide>
-            );
-          })}
-        </>
+        <>{slides}</>
       </Swiper>
     </>
   );
 };
 
 interface OnFocusProp {
+  // NOTE: need to be lowercase, otherwise warnings
   focusedid: string;
   currentid: string;
+  thumbnailheight: number;
   color?: string;
   background?: string;
   disablestyle?: string;
 }
 
-const ImgNavButton = styled(Button)<OnFocusProp>`
+const ThumbnailContainer = styled(Button)<OnFocusProp>`
   flex: '1 0 auto';
-  height: 66px;
+  height: ${(props) => `${props.thumbnailheight}px`};
   width: 110px;
   padding-left: 5px !important;
   padding-right: 5px !important;
