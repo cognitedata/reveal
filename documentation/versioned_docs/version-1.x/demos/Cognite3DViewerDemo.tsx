@@ -7,10 +7,10 @@ import {
   AddModelOptions,
   Cognite3DViewer,
   SupportedModelTypes
-} from '@cognite/reveal';
+} from '@cognite/reveal-1.x';
 
-import { CanvasWrapper } from '@site/src/components/styled';
-import { DemoProps } from '@site/src/components/DemoProps';
+import { CanvasWrapper } from '@site/versioned_docs/version-1.x/components/styled';
+import { DemoProps } from '@site/versioned_docs/version-1.x/components/DemoProps';
 
 type OwnProps = {
   modelType?: SupportedModelTypes;
@@ -38,11 +38,13 @@ export default function Cognite3DViewerDemo({
     async function addModel(options: AddModelOptions) {
       const model = await viewer.addModel(options);
       viewer.loadCameraFromModel(model);
+      // @ts-ignore
       window.model = model;
     }
 
     addModel({ modelId, revisionId });
 
+    // @ts-ignore
     window.viewer = viewer;
     return () => {
       viewer && viewer.dispose();

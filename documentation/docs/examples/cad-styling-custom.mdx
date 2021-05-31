@@ -4,11 +4,11 @@ title: Create custom node sets
 describe: Create custom node sets to filter based on custom data sources and mechanisms
 ---
 
-import { DemoWrapper } from '@site/src/components/DemoWrapper';
+import { DemoWrapper } from '@site/docs/components/DemoWrapper';
 
 In many cases applications will need to filter 3D nodes by some custom data source or mechanism. This
 is done by extending the `NodeSet`-class. This class generates an `IndexSet` and
-provides notification when the set has changed. Implementations should 
+provides notification when the set has changed. Implementations should
 be non-blocking - slow operations should be executed async and the set should
 be incrementally updated to avoid blocking the viewer.
 
@@ -18,7 +18,7 @@ be incrementally updated to avoid blocking the viewer.
 
 ```js runnable
 
-// Note! ES6 classes are not supported in this documentation, but 
+// Note! ES6 classes are not supported in this documentation, but
 // the example below corresponds to the following:
 /*
 class MyNodeSet extends NodeSet {
@@ -58,10 +58,10 @@ model.addStyledNodeSet(mySet, { renderGhosted: false, color: [40, 200, 20] } );
 # Details about IndexSet
 
 `IndexSet` is a specialized implementation of [`Set<number>`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set)
-that is optimized for storing ranges of numbers. This is a common case for nodes as typically a 
+that is optimized for storing ranges of numbers. This is a common case for nodes as typically a
 subtree will have the same styling applied.
 
-Although `IndexSet` supports adding and removing individual elements using `add()` and `remove()`, the best 
+Although `IndexSet` supports adding and removing individual elements using `add()` and `remove()`, the best
 performance is achieved by using `addRange()` and `removeRange()` whenever possible.
 
 Also note that changes to the underlying `IndexSet` held by a `NodeSet` isn't automatically propagated

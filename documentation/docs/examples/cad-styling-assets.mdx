@@ -4,10 +4,10 @@ title: Filtering nodes by assets
 describe: Applying styles to assets and assosciated asset mappings from Cognite Fusion
 ---
 
-import { DemoWrapper } from '@site/src/components/DemoWrapper';
+import { DemoWrapper } from '@site/docs/components/DemoWrapper';
 
-3D nodes can be ["asset mapped"](https://docs.cognite.com/api/v1/#tag/3D-Asset-Mapping) to 
-[assets](https://docs.cognite.com/dev/concepts/resource_types/assets.html) in Cognite Fusion. 
+3D nodes can be ["asset mapped"](https://docs.cognite.com/api/v1/#tag/3D-Asset-Mapping) to
+[assets](https://docs.cognite.com/dev/concepts/resource_types/assets.html) in Cognite Fusion.
 Reveal supports styling nodes mapped to an asset by using `ByAssetNodeSet`.
 
 <DemoWrapper name="Cognite3DViewerDemo" />
@@ -46,15 +46,15 @@ To support proximity lookups, Reveal supports styling assets within a certain ar
 sufficient for an asset to intersect the provided bounds, it doesn't need to be fully inside.
 
 :::note
-The bounding box is defined in "Reveal coordinates" - 
-[a right handed, Y up coordinate system](https://www.youtube.com/watch?v=TGbMzoJqV7c) - which might differ 
-from the "native model coordinates" store in Cognite Fusion. `ByAssetNodeSet` will automatically map from 
+The bounding box is defined in "Reveal coordinates" -
+[a right handed, Y up coordinate system](https://www.youtube.com/watch?v=TGbMzoJqV7c) - which might differ
+from the "native model coordinates" store in Cognite Fusion. `ByAssetNodeSet` will automatically map from
 "Reveal coordinates" to "native model coordinates" using `Cognite3DModel.mapBoxFromModelToCdfCoordinates`.
 :::
 
 ```js runnable
 const areaOfInterest = new THREE.Box3().setFromCenterAndSize(
-  new THREE.Vector3(140, 67, -110), 
+  new THREE.Vector3(140, 67, -110),
   new THREE.Vector3(10, 5, 10)
 );
 const assetsWithinAreaNodes = new ByAssetNodeSet(sdk, model);

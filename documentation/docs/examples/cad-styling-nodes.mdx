@@ -4,22 +4,22 @@ title: Filtering nodes by node properties
 describe: Applying styles to nodes based on node properties/attributes
 ---
 
-import { DemoWrapper } from '@site/src/components/DemoWrapper';
+import { DemoWrapper } from '@site/docs/components/DemoWrapper';
 
 3D nodes may have assosciated attribute/property data. Reveal allows for filtering based on
-these properties, allowing queries such as "all pipes", "nodes within module P600" or "nodes 
+these properties, allowing queries such as "all pipes", "nodes within module P600" or "nodes
 with status S5". Combinations are also possible by using `CombinedNodeSet`.
 
-`ByNodePropertyNodeSet` is used to query nodes based on node properties. It's possible to specify 
+`ByNodePropertyNodeSet` is used to query nodes based on node properties. It's possible to specify
 multiple criterias which will be combined using `AND` - i.e. all criterias must be met for a node
 to match. To emulate `OR`, use `CombinedNodeSet` with a `union`-operator.
 
 Note that if a node is in a `ByNodePropertyNodeSet` all of its children will also be
-in the set. 
+in the set.
 
 :::note
 The test model used in the documentation site is lacking and the examples shown is somewhat lacking
-as a result of this. To best utilize the filtering APIs we recommend providing a rich 3D models 
+as a result of this. To best utilize the filtering APIs we recommend providing a rich 3D models
 with a good set of high-quality attributes associated with the nodes.
 :::
 
@@ -40,14 +40,14 @@ model.addStyledNodeSet(allPipes, { renderGhosted: false, color: [40, 200, 20] } 
 # Partioning requests
 
 For filters that match a lot of nodes, [paritioned requests](https://docs.cognite.com/api/v1/#section/Parallel-retrieval)
-might increase the performance radically by fetching result from the server in parallel. 
+might increase the performance radically by fetching result from the server in parallel.
 To partition requests, provide the number of partitions using the `requestPartitions`-option
 to the `ByNodePropertyNodeSet`-constructor:
 
 ```js runnable
 const nodesFromFile = new ByNodePropertyNodeSet(sdk, model, { requestPartitions: 10 });
 // All nodes originating from a given file
-nodesFromFile.executeFilter({'Item': {'Source File': 'PRO-S_CD-MUM.rvm'}}); 
+nodesFromFile.executeFilter({'Item': {'Source File': 'PRO-S_CD-MUM.rvm'}});
 model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
 model.addStyledNodeSet(nodesFromFile, { renderGhosted: false, outlineColor: NodeOutlineColor.Orange } );
 ```
@@ -58,7 +58,7 @@ To compare speed-up, set `requestPartitions` to `1`.
 
 Often one would want to match multiple criterias of the same type. Lets say we want to find all
 mechanical equipment with purpose 'STU'. We can either execute this as a single query, or as two
-seperate queries. 
+seperate queries.
 
 When doing this as a single query, no `CombinedNodeSet` is necessary and the code is quite compact:
 
@@ -85,16 +85,16 @@ model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
 model.addStyledNodeSet(combined, { renderGhosted: false, color: [40, 200, 20] } );
 ```
 
-The two approaches as their pros and cons. Often it will be faster to combine the 
+The two approaches as their pros and cons. Often it will be faster to combine the
 filters into a single query as this will reduce the result set returned from the
-server. However, if the different combinations will be configured run-time (e.g. 
-the user will want to show 'ARCH'-nodes within the 'STU'-purpose) it might 
-be better to use two separate queries and combine the results. Also, the latter 
+server. However, if the different combinations will be configured run-time (e.g.
+the user will want to show 'ARCH'-nodes within the 'STU'-purpose) it might
+be better to use two separate queries and combine the results. Also, the latter
 approach also allows for more complex types of filters.
 
 # Inverting filters
 
-Often it is interesting to invert results from filters to find elements that does not match the query. This 
+Often it is interesting to invert results from filters to find elements that does not match the query. This
 can be done using `InvertNodeSet`.
 
 ```js runnable

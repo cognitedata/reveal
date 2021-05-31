@@ -4,7 +4,7 @@ title: Coloring CAD models
 describe: Reveal supports updating the color of individual objects by providing tree indices to identify 3D nodes.
 ---
 
-import { DemoWrapper } from '@site/src/components/DemoWrapper';
+import { DemoWrapper } from '@site/docs/components/DemoWrapper';
 
 Reveal supports updating the color of individual objects by providing [tree indices to identify 3D nodes](../concepts.md).
 
@@ -24,7 +24,7 @@ model.iterateNodesByTreeIndex(treeIndex => {
 
 > ** New in 1.1.0 **
 
-Notice how colors are applied in batches using this approach. A more performant choice when a single color is 
+Notice how colors are applied in batches using this approach. A more performant choice when a single color is
 to be applied to all nodes is to use `Cognite3DModel.setAllNodeColors`:
 
 ```jsx runnable

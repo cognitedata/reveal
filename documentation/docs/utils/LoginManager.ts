@@ -3,7 +3,7 @@
  */
 
 import { CogniteClient, REDIRECT } from '@cognite/sdk';
-import { env } from '../env';
+import { env } from './env';
 
 const tokenCacheKey = 'cachedAT';
 const accessToken = sessionStorage.getItem(tokenCacheKey);
