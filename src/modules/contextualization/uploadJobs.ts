@@ -20,6 +20,7 @@ import {
 } from 'pages/ResultsOverview/utils';
 import { tryToStringify } from 'utils/handleError';
 import * as UploadJobs from './uploadJobs';
+import { PNID_METRICS } from '../../utils/Metrics';
 
 const UPLOAD_JOB_CREATE_STARTED = 'pnid/UPLOAD_JOB_CREATE_STARTED';
 const UPLOAD_JOB_CREATED = 'pnid/UPLOAD_JOB_CREATED';
@@ -124,7 +125,7 @@ export const startConvertFileToSvgJob = (
       return Promise.resolve(state.contextualization.uploadJobs[fileId].jobId);
     }
 
-    const timer = trackTimedUsage('ContextUiPnid.PnidParsing.UploadJob', {
+    const timer = trackTimedUsage(PNID_METRICS.convertingJob, {
       fileId,
     });
 

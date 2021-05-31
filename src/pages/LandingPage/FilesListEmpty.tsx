@@ -24,7 +24,7 @@ export default function FilesListEmpty() {
   const dispatch = useDispatch();
 
   const onContextualizeNew = () => {
-    trackUsage(PNID_METRICS.contextualization.start);
+    trackUsage(PNID_METRICS.landingPage.startNew);
     const newWorkflowId = Number(new Date());
     dispatch(createNewWorkflow({ workflowId: newWorkflowId }));
     history.push(diagramSelection.path(tenant, String(newWorkflowId)));

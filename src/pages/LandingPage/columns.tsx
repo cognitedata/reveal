@@ -7,6 +7,7 @@ import DetectedTags from 'components/DetectedTags';
 import { dateSorter, stringCompare } from 'modules/contextualization/utils';
 import { PERMISSIONS_STRINGS, TOOLTIP_STRINGS } from 'stringConstants';
 import { FileSmallPreview } from 'components/FileSmallPreview';
+import { trackUsage, PNID_METRICS } from '../../utils/Metrics';
 
 const SettingButtons = styled(Flex)`
   & > * {
@@ -27,7 +28,12 @@ export const getColumns = (
     align: 'center' as 'center',
     render: (file: FileInfo) => (
       <Flex row align justify>
-        <Popover content={<FileSmallPreview fileId={file.id} />}>
+        <Popover
+          content={<FileSmallPreview fileId={file.id} />}
+          onVisibleChange={(visible) =>
+            visible && trackUsage(PNID_METRICS.landingPage.previewFile)
+          }
+        >
           <Graphic type="Image" />
         </Popover>
       </Flex>

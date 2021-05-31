@@ -1,12 +1,6 @@
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import sdk, { getAuthState } from 'sdk-singleton';
 
-export const PNID_METRICS = {
-  contextualization: {
-    start: 'PNID.contextualization.start',
-  },
-};
-
 export type Props = { [key: string]: string | number | boolean | Props | null };
 
 export const trackUsage = (
@@ -48,7 +42,7 @@ export class Timer {
     this.startProps = startProps;
 
     try {
-      trackEvent(`ContextUIPnid.time_event`, event);
+      trackEvent(`EngineeringDiagrams.time_event`, event);
       // eslint-disable-next-line no-empty
     } catch (e) {}
   }
@@ -69,3 +63,45 @@ export class Timer {
 export function trackTimedUsage(event: string, props?: Props): Timer {
   return new Timer(event, props);
 }
+
+export const PNID_METRICS = {
+  landingPage: {
+    startNew: 'EngineeringDiagrams.landingPage.startNew',
+    editFile: 'EngineeringDiagrams.landingPage.editFile',
+    viewFile: 'EngineeringDiagrams.landingPage.viewFile',
+    deleteAnnotations: 'EngineeringDiagrams.landingPage.deleteAnnotations',
+    previewFile: 'EngineeringDiagrams.landingPage.previewFile',
+    useSearch: 'EngineeringDiagrams.landingPage.useSearch',
+    loadMore: 'EngineeringDiagrams.landingPage.loadMore',
+  },
+  selection: 'EngineeringDiagrams.selection',
+  filters: {
+    byDataSet: 'EngineeringDiagrams.filters.byDataSet',
+    byLabels: 'EngineeringDiagrams.filters.byLabels',
+    bySearch: 'EngineeringDiagrams.filters.bySearch',
+  },
+  configuration: 'EngineeringDiagrams.configuration',
+  parsingJob: {
+    start: 'EngineeringDiagrams.pasringJob.start',
+    end: 'EngineeringDiagrams.pasringJob.end',
+    results: 'EngineeringDiagrams.pasringJob.results',
+  },
+  convertingJob: 'EngineeringDiagrams.convertingJob.time',
+  results: {
+    convertToSvg: 'EngineeringDiagrams.results.convertToSvg',
+    linkToAssets: 'EngineeringDiagrams.results.linkToAssets',
+  },
+  navigation: {
+    stepsWizard: 'EngineeringDiagrams.navigation.stepsWizard',
+    nextButton: 'EngineeringDiagrams.navigation.nextButton',
+    backButton: 'EngineeringDiagrams.navigation.backButton',
+    breadcrumbs: 'EngineeringDiagrams.navigation.breadcrumbs',
+  },
+  fileViewer: {
+    convertToSvg: 'EngineeringDiagrams.fileViewer.convertToSvg',
+    linkToAssets: 'EngineeringDiagrams.fileViewer.linkToAssets',
+    manualTags: 'EngineeringDiagrams.fileViewer.manualTags',
+    viewTab: 'EngineeringDiagrams.fileViewer.viewTab',
+    deleteAnnotations: 'EngineeringDiagrams.fileViewer.deleteAnnotations',
+  },
+};

@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import Breadcrumb from 'antd/lib/breadcrumb';
 import { Colors } from '@cognite/cogs.js';
 import Link from 'components/Breadcrumbs/Link';
+import { trackUsage, PNID_METRICS } from 'utils/Metrics';
 
 interface BreadcrumbsProps {
   breadcrumbs: { title: string; path?: string }[];
@@ -25,12 +26,25 @@ const Breadcrumbs = ({ breadcrumbs }: BreadcrumbsProps) => (
         <span style={{ fontSize: '16px', fontWeight: 'bold' }}>/</span>
       }
     >
-      <Breadcrumb.Item>
+      <Breadcrumb.Item
+        onClick={() =>
+          trackUsage(PNID_METRICS.navigation.breadcrumbs, {
+            to: 'Cognite data fusion',
+          })
+        }
+      >
         <Link to="/">Cognite Data Fusion</Link>
       </Breadcrumb.Item>
       {breadcrumbs &&
         breadcrumbs.map((crumb) => (
-          <Breadcrumb.Item key={crumb.title}>
+          <Breadcrumb.Item
+            key={crumb.title}
+            onClick={() =>
+              trackUsage(PNID_METRICS.navigation.breadcrumbs, {
+                to: crumb.title,
+              })
+            }
+          >
             {crumb.path ? (
               <Link to={`${crumb.path}`}>{crumb.title}</Link>
             ) : (

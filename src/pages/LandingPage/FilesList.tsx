@@ -50,6 +50,10 @@ export default function FilesList(props: FilesListProps) {
   const isLoadMoreDisabled = total <= 1000 * (loadChunk + 1);
 
   const onClearAnnotations = async (file: FileInfo): Promise<void> => {
+    trackUsage(PNID_METRICS.landingPage.deleteAnnotations, {
+      fileId: file.id,
+    });
+
     Modal.confirm({
       title: 'Are you sure?',
       content: <span>{WARNINGS_STRINGS.CLEAR_ANNOTATIONS_WARNING}</span>,
@@ -98,11 +102,16 @@ export default function FilesList(props: FilesListProps) {
         diagrams: diagramToContextualize,
       })
     );
-    trackUsage(PNID_METRICS.contextualization.start);
+    trackUsage(PNID_METRICS.landingPage.editFile, {
+      fileId: file.id,
+    });
     history.push(diagramSelection.path(tenant, String(newWorkflowId)));
   };
   const onFileView = (file: FileInfo): void => {
     const fileId = file.id ?? file.externalId;
+    trackUsage(PNID_METRICS.landingPage.viewFile, {
+      fileId,
+    });
     window.open(createLink(`/explore/file/${fileId}`), '_blank');
   };
 
@@ -114,6 +123,12 @@ export default function FilesList(props: FilesListProps) {
   );
 
   const LoadMorePanel = () => {
+    const onClickLoadMore = () => {
+      trackUsage(PNID_METRICS.landingPage.loadMore, {
+        chunk: loadChunk + 1,
+      });
+      setLoadChunk(loadChunk + 1);
+    };
     const canLoadMore = total > files.length && !hidePanel;
     if (canLoadMore) {
       return (
@@ -144,9 +159,7 @@ export default function FilesList(props: FilesListProps) {
             </>
           ) : (
             <>
-              <Button onClick={() => setLoadChunk(loadChunk + 1)}>
-                Load more
-              </Button>
+              <Button onClick={onClickLoadMore}>Load more</Button>
               <Tooltip content={TOOLTIP_STRINGS.LOAD_MORE_FILES_TOOLTIP}>
                 <Icon type="Info" style={{ verticalAlign: '-0.225em' }} />
               </Tooltip>
@@ -160,6 +173,7 @@ export default function FilesList(props: FilesListProps) {
 
   const handleSearchFiles = () => {
     if (query.trim().length) {
+      trackUsage(PNID_METRICS.landingPage.useSearch);
       return files.filter((file) =>
         stringContains(file.name, query)
       ) as FileInfo[];

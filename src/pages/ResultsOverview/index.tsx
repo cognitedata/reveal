@@ -19,6 +19,7 @@ import { diagramSelection } from 'routes/paths';
 import { AppStateContext } from 'context';
 import { TOOLTIP_STRINGS } from 'stringConstants';
 import { useParsingJob } from 'modules/contextualization/pnidParsing/hooks';
+import { trackUsage, PNID_METRICS } from 'utils/Metrics';
 import ProgressBarSection from './ProgressBarSection';
 import { getWorkflowItems, getContextualizationJobs } from './selectors';
 import ResultsTable from './ResultsTable';
@@ -70,6 +71,9 @@ export default function ResultsOverview(props: Props) {
     if (canEditFiles) {
       selectedKeys.forEach((key) => {
         dispatch(startConvertFileToSvgJob(key, annotationsByFileId[key] ?? []));
+      });
+      trackUsage(PNID_METRICS.results.convertToSvg, {
+        count: selectedKeys.length,
       });
     } else {
       setRenderFeedback(true);
