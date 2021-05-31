@@ -203,6 +203,8 @@ export const selectFileById = createSelector(
   }
 );
 
+// state utility functions
+
 const deleteFileById = (state: State, id: ReactText) => {
   delete state.files.byId[id];
   state.files.allIds = Object.keys(state.files.byId);
@@ -215,8 +217,6 @@ const updateFileState = (state: State, file: FileState) => {
     state.files.allIds.push(file.id);
   }
 };
-
-// state utility functions
 
 const clearFileState = (state: State) => {
   state.files.byId = {};

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   SelectableItemsProps,
   TableStateProps,
@@ -22,6 +22,12 @@ import {
 import { ResultData } from 'src/modules/Common/types';
 import { explorerFileFetchLimit } from 'src/constants/ExplorerConstants';
 import { totalFileCount } from 'src/api/file/aggregate';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from 'src/store/rootReducer';
+import {
+  selectExplorerAllFiles,
+  setExplorerFiles,
+} from '../store/explorerSlice';
 
 type Resource = FileInfo | Asset | CogniteEvent | Sequence | Timeseries;
 
@@ -35,14 +41,22 @@ export const ResultTableLoader = <T extends Resource>({
   Partial<SelectableItemsProps> &
   TableStateProps) => {
   const history = useHistory();
-  const [tableData, setTableData] = useState<ResultData[]>([]);
+  const dispatch = useDispatch();
   const [totalCount, setTotalCount] = useState<number>(0);
 
-  const onReviewClick = (file: FileInfo) => {
-    history.push(
-      getParamLink(workflowRoutes.review, ':fileId', String(file.id))
-    );
-  };
+  const explorerFiles = useSelector(({ explorerReducer }: RootState) =>
+    selectExplorerAllFiles(explorerReducer)
+  );
+
+  const tableData = useMemo(() => {
+    const onReviewClick = (file: FileInfo) => {
+      history.push(
+        getParamLink(workflowRoutes.review, ':fileId', String(file.id))
+      );
+    };
+    return populateTableData(explorerFiles, onReviewClick);
+  }, [explorerFiles]);
+
   useEffect(() => {
     (async () => {
       const fileSearchResult = await sdkv3.files.search({
@@ -50,9 +64,7 @@ export const ResultTableLoader = <T extends Resource>({
         search: { name: props.query },
         limit: explorerFileFetchLimit,
       });
-
-      const populatedData = populateTableData(fileSearchResult, onReviewClick);
-      setTableData(populatedData);
+      dispatch(setExplorerFiles(fileSearchResult));
     })();
 
     (async () => {
@@ -79,7 +91,6 @@ const populateTableData = (
       ...file,
       menu: menuActions,
       mimeType: file.mimeType || '',
-      selected: false,
     };
   });
 };
