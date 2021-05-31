@@ -1,4 +1,10 @@
-import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import {
+  createSelector,
+  createSlice,
+  PayloadAction,
+  isFulfilled,
+  isRejected,
+} from '@reduxjs/toolkit';
 import { Asset, FileInfo, Label, Metadata } from '@cognite/cdf-sdk-singleton';
 import { ToastUtils } from 'src/utils/ToastUtils';
 import { ReactText } from 'react';
@@ -6,6 +12,12 @@ import { createFileInfo, createFileState } from 'src/store/util/StateUtils';
 import { UpdateFiles } from 'src/store/thunks/UpdateFiles';
 import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
 import { SaveAvailableAnnotations } from 'src/store/thunks/SaveAvailableAnnotations';
+import { SaveAnnotations } from 'src/store/thunks/SaveAnnotations';
+import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
+import { DeleteAnnotations } from 'src/store/thunks/DeleteAnnotations';
+import { UpdateAnnotations } from 'src/store/thunks/UpdateAnnotations';
+
+import { CDFStatusModes } from '../Common/Components/CDFStatus/CDFStatus';
 
 export type FileState = {
   id: ReactText;
@@ -32,6 +44,10 @@ export type State = {
     byId: Record<ReactText, FileState>;
     allIds: ReactText[];
   };
+  saveState: {
+    mode: CDFStatusModes;
+    time?: number | undefined;
+  };
 };
 
 export type VisionAsset = Omit<
@@ -50,6 +66,20 @@ const initialState: State = {
     byId: {},
     allIds: [],
   },
+  saveState: {
+    mode: 'saved' as CDFStatusModes,
+    time: new Date().getTime(),
+  },
+};
+
+export const selectCDFState = (
+  state: State
+): {
+  mode: CDFStatusModes;
+  time?: number | undefined;
+} => {
+  const cdfSaveStatus = state.saveState;
+  return cdfSaveStatus;
 };
 
 const filesSlice = createSlice({
@@ -153,6 +183,37 @@ const filesSlice = createSlice({
       state.extractExif = initialState.extractExif;
       state.files = initialState.files;
     });
+    builder.addMatcher(
+      isFulfilled(
+        SaveAnnotations,
+        DeleteAnnotations,
+        UpdateAnnotations,
+        UpdateFiles
+      ),
+      (state) => {
+        state.saveState.mode = 'timestamp';
+        state.saveState.time = new Date().getTime();
+      }
+    );
+
+    builder.addMatcher(
+      isRejected(
+        SaveAnnotations,
+        RetrieveAnnotations,
+        DeleteAnnotations,
+        UpdateAnnotations,
+        UpdateFiles
+      ),
+      (state, { error }) => {
+        if (error && error.message) {
+          state.saveState.mode = 'error';
+          state.saveState.time = new Date().getTime();
+          ToastUtils.onFailure(
+            `Failed to update Annotations! ${error?.message}`
+          );
+        }
+      }
+    );
   },
 });
 
