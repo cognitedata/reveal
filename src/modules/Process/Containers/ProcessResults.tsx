@@ -11,6 +11,8 @@ import {
 } from 'src/modules/Process/processSlice';
 import {
   selectAllFiles,
+  selectAllFilesSelected,
+  setAllFilesSelectState,
   setFileSelectState,
 } from 'src/modules/Common/filesSlice';
 import { useDispatch, useSelector } from 'react-redux';
@@ -40,6 +42,10 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
 
   const processFiles = useSelector((state: RootState) =>
     selectAllFiles(state.filesSlice)
+  );
+
+  const allFilesSelected = useSelector((state: RootState) =>
+    selectAllFilesSelected(state.filesSlice)
   );
 
   const data: ResultData[] = useMemo(() => {
@@ -91,6 +97,10 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
     return promptMessage;
   };
 
+  const handleSelectAllFiles = (value: boolean) => {
+    dispatch(setAllFilesSelectState(value));
+  };
+
   const renderView = () => {
     if (currentView === 'grid') {
       return (
@@ -113,6 +123,8 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
         onRowClick={handleItemClick}
         selectedFileId={selectedId}
         totalCount={data.length}
+        allRowsSelected={allFilesSelected}
+        onSelectAllRows={handleSelectAllFiles}
       />
     );
   };

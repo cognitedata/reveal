@@ -7,7 +7,11 @@ import ReactBaseTable, {
   ColumnShape,
   RowKey,
 } from 'react-base-table';
-import { CellRenderer, TableDataItem } from 'src/modules/Common/types';
+import {
+  CellRenderer,
+  SelectableTableColumnShape,
+  TableDataItem,
+} from 'src/modules/Common/types';
 import { StringRenderer } from 'src/modules/Common/Containers/FileTableRenderers/StringRenderer';
 import { SelectionRenderer } from 'src/modules/Common/Containers/FileTableRenderers/SelectionRenderer';
 import { SelectAllHeaderRenderer } from 'src/modules/Common/Containers/FileTableRenderers/SelectAllHeaderRendrerer';
@@ -17,10 +21,12 @@ export type SelectableTableProps = Omit<
   BaseTableProps<TableDataItem>,
   'width'
 > & {
+  allRowsSelected: boolean;
   selectable: boolean;
   selectedFileId?: number | null;
   rendererMap: { [key: string]: (props: CellRenderer) => JSX.Element };
   onRowSelect: (item: TableDataItem, selected: boolean) => void;
+  onSelectAllRows: (val: boolean) => void;
   rowClassNames?: (data: {
     columns: ColumnShape<TableDataItem>[];
     rowData: TableDataItem;
@@ -39,6 +45,7 @@ export type SelectableTableProps = Omit<
 export function SelectableTable(props: SelectableTableProps) {
   const tableRef = useRef<any>(null);
   const {
+    allRowsSelected,
     selectable,
     data,
     sortKey,
@@ -48,6 +55,7 @@ export function SelectableTable(props: SelectableTableProps) {
     rowEventHandlers,
     tableFooter,
     onRowSelect,
+    onSelectAllRows,
     rowClassNames,
   } = props;
 
@@ -62,7 +70,10 @@ export function SelectableTable(props: SelectableTableProps) {
     onRowSelect(rowData, selected);
   };
 
-  const [rendererMap, columns] = useMemo(() => {
+  const [rendererMap, columns]: [
+    { [key: string]: (props: CellRenderer) => JSX.Element },
+    SelectableTableColumnShape<TableDataItem>[]
+  ] = useMemo(() => {
     if (selectable) {
       const localRendererMap = {
         ...props.rendererMap,
@@ -76,12 +87,14 @@ export function SelectableTable(props: SelectableTableProps) {
         flexShrink: 0,
         onChange: handleSelectChange,
         align: Column.Alignment.LEFT,
+        allSelected: allRowsSelected,
+        onSelectAll: onSelectAllRows,
       };
       const cols = [selectionColumn, ...props.columns];
       return [localRendererMap, cols];
     }
     return [props.rendererMap, props.columns];
-  }, [props.columns, selectable, props.rendererMap]);
+  }, [props.columns, selectable, props.rendererMap, props.data]);
 
   const Cell = (cellProps: any) => {
     const renderer = rendererMap[cellProps.column.key];
