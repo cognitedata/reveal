@@ -1,5 +1,9 @@
 import { DatapointAggregate, DoubleDatapoint } from '@cognite/sdk';
 
+type Conversions = {
+  [key: string]: { [key: string]: (_: number) => number };
+};
+
 export const units = [
   // Pressure
   {
@@ -119,7 +123,7 @@ export const units = [
   },
 ];
 
-export const conversions: any = {
+export const conversions: Conversions = {
   // Pressure: ['psi', 'bar', 'pa', 'atm', 'mpa]
   psi: {
     psi: (val: number): number => val,
@@ -337,4 +341,16 @@ export const convertUnits = (
       : {}),
     ...('value' in x ? { value: convert(x.value) } : {}),
   }));
+};
+
+export const convertValue = (
+  value: number,
+  inputUnit: string = '',
+  outputUnit: string = ''
+) => {
+  const conversionFormula = (conversions[inputUnit] || {})[outputUnit];
+
+  return conversionFormula
+    ? Number(conversionFormula(value)?.toFixed(2))
+    : value;
 };
