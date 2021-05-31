@@ -2,6 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 import * as THREE from 'three';
+import { createGlContext } from '../../../__testutilities__/createGlContext';
 import { CadMaterialManager } from '../CadMaterialManager';
 
 import { EffectRenderManager } from './EffectRenderManager';
@@ -11,7 +12,7 @@ describe('RenderAlreadyLoadedGeometryProvider', () => {
   let renderManager: EffectRenderManager;
   let materialManager: CadMaterialManager;
   let scene: THREE.Scene;
-  const context: WebGLRenderingContext = require('gl')(64, 64, { preserveDrawingBuffer: true });
+  const context = createGlContext(64, 64, { preserveDrawingBuffer: true });
   const renderer = new THREE.WebGLRenderer({ context });
   let target: THREE.WebGLRenderTarget;
 

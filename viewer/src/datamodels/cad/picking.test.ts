@@ -7,11 +7,12 @@ import * as THREE from 'three';
 import { intersectCadNodes } from './picking';
 import { CadNode } from './CadNode';
 import { IntersectInput } from '../base/types';
+import { createGlContext } from '../../__testutilities__/createGlContext';
 
 describe('intersectCadNodes', () => {
   const camera = new THREE.PerspectiveCamera();
 
-  const context: WebGLRenderingContext = require('gl')(64, 64, { preserveDrawingBuffer: true });
+  const context = createGlContext(64, 64, { preserveDrawingBuffer: true });
   const renderer = new THREE.WebGLRenderer({ context });
 
   const input: IntersectInput = {

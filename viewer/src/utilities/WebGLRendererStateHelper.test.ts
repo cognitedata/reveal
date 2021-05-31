@@ -2,11 +2,12 @@
  * Copyright 2021 Cognite AS
  */
 import * as THREE from 'three';
+import { createGlContext } from '../__testutilities__/createGlContext';
 import { WebGLRendererStateHelper } from './WebGLRendererStateHelper';
 
 describe('WebGLRendererStateHelper', () => {
   let renderer: THREE.WebGLRenderer;
-  const glContext: WebGLRenderingContext = require('gl')(64, 64);
+  const glContext = createGlContext(64, 64, { preserveDrawingBuffer: true });
 
   beforeEach(() => {
     renderer = new THREE.WebGLRenderer({ context: glContext });
