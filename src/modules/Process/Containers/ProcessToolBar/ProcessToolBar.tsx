@@ -59,14 +59,17 @@ export const ProcessToolBar = () => {
     dispatch(setSelectedDetectionModels(models));
   };
 
+  const disableAddFiles = !isPollingFinished;
+  const disableModelSelection = !files.length || !isPollingFinished;
+
   return (
     <Container>
-      <FilesToolContainer>
+      <FilesToolContainer disabled={disableAddFiles}>
         <ElementTitle>
           <Title level={6}>Add files</Title>
         </ElementTitle>
         <ElementContent>
-          <Button type="tertiary" icon="Upload">
+          <Button type="tertiary" icon="Upload" disabled={disableAddFiles}>
             Upload
           </Button>
           <Button
@@ -79,10 +82,14 @@ export const ProcessToolBar = () => {
           </Button>
         </ElementContent>
       </FilesToolContainer>
-      <MLModelSelectContainer>
+      <MLModelSelectContainer disabled={disableModelSelection}>
         <ElementTitle>
           <Title level={6}>Select ML model(s)</Title>
-          <ModelSettingsButton icon="Settings" aria-label="model settings" />
+          <ModelSettingsButton
+            icon="Settings"
+            aria-label="model settings"
+            disabled={disableModelSelection}
+          />
         </ElementTitle>
         <ElementContent>
           <ModelOptions>
@@ -90,6 +97,7 @@ export const ProcessToolBar = () => {
               <DetectionModelSelect
                 value={selectedDetectionModels}
                 onChange={onChange}
+                disabled={disableModelSelection}
               />
             </ModelSelector>
             <Button
@@ -125,8 +133,12 @@ const Container = styled.div`
   padding-bottom: 15px;
 `;
 
-const ProcessToolBarElement = styled.div`
+type ToolBarElemProps = {
+  disabled: boolean;
+};
+const ProcessToolBarElement = styled.div<ToolBarElemProps>`
   padding: 10px;
+  opacity: ${(props) => (props.disabled ? 0.5 : 1)};
 `;
 const FilesToolContainer = styled(ProcessToolBarElement)`
   background: #fafafa;
