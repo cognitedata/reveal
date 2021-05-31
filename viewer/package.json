@@ -13,7 +13,7 @@
   "types": "index.d.ts",
   "scripts": {
     "build": "rimraf -rf dist/ && yarn run mkdist && webpack --env.development",
-    "build:prod": "yarn run mkdist && webpack && node script/copyPackage.js",
+    "build:prod": "yarn run clean && yarn run mkdist && webpack && node script/copyPackage.js",
     "build:watch": "yarn run build -- --watch",
     "serve": "cd ../parser-worker && yarn && yarn build && cd ../examples && yarn && yarn start",
     "mkdist": "npx run-script-os",
