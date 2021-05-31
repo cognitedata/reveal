@@ -17,6 +17,10 @@ function routeWrapper(
         acl: 'filesAcl',
         actions: ['READ', 'WRITE'],
       },
+      {
+        acl: 'groupsAcl',
+        actions: ['LIST'],
+      },
     ];
     if (!userHasCapabilities(user, capabilities)) {
       return <NoAccessPage capabilities={capabilities} />;
