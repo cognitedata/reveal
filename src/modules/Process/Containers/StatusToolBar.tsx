@@ -8,7 +8,7 @@ export const StatusToolBar = () => {
       <Text level={3}>CDF Contextualize Imagery Data</Text>
       <Status>
         <Icon type="Checkmark" />
-        // <Text level={3}>Saved 8.45 to CDF</Text>
+        {/* <Text level={3}>Saved 8.45 to CDF</Text> */}
       </Status>
     </Container>
   );

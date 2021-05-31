@@ -41,7 +41,7 @@ export const ProcessFooter = () => {
 
   const onNextClicked = () => {
     pushMetric('Vision.Session.Finished');
-    history.push(createLink('/vision/explore')); 
+    history.push(createLink('/vision/explore'));
   };
 
   const onUploadMoreClicked = () => {
