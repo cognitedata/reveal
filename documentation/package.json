@@ -33,7 +33,7 @@
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
     "styled-components": "^5.1.1",
-    "three": "link:../viewer/node_modules/three"
+    "three": "0.125.2"
   },
   "devDependencies": {
     "@types/react": "^16.9.41",
