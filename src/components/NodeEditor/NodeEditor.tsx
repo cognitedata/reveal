@@ -1,15 +1,17 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import styled from 'styled-components/macro';
 import debounce from 'lodash/debounce';
 import isEqual from 'lodash/isEqual';
+import pick from 'lodash/pick';
 import {
   SourceNode,
   ControllerProvider,
   Node,
   Connection,
   NodeContainer,
+  CtxPosition,
 } from '@cognite/connect';
-import { Menu, Input, Button } from '@cognite/cogs.js';
+import { Menu, Dropdown, Button } from '@cognite/cogs.js';
 import { nanoid } from 'nanoid';
 import workflowBackgroundSrc from 'assets/workflowBackground.png';
 import { Chart, ChartWorkflow, StorableNode } from 'reducers/charts/types';
@@ -43,6 +45,17 @@ const WorkflowEditor = ({
   mutate,
 }: WorkflowEditorProps) => {
   const [activeNode, setActiveNode] = useState<StorableNode>();
+  const [isAddNodeMenuOpen, setAddNodeMenuVisibility] = useState(false);
+  const defaultNewNodePosition = { x: 0, y: 0 };
+  const defaultCanvasPosition = { x: 0, y: 0 };
+  const [newNodePosition, setNewNodePosition] = useState<CtxPosition>(
+    defaultNewNodePosition
+  );
+  const [newNode, setNewNode] = useState<StorableNode>();
+  const [canvasPosition, setCanvasPosition] = useState<CtxPosition>(
+    defaultCanvasPosition
+  );
+  const nodeEditor = useRef<HTMLDivElement>(null);
   const workflow = chart?.workflowCollection?.find(
     (flow) => flow.id === workflowId
   );
@@ -52,13 +65,15 @@ const WorkflowEditor = ({
   }
 
   const update = (diff: Partial<ChartWorkflow>) => {
+    const applicableDiff = pick(diff, ['nodes', 'connections']);
+
     mutate({
       ...chart,
       workflowCollection: chart.workflowCollection?.map((wf) =>
         wf.id === workflowId
           ? {
               ...wf,
-              ...diff,
+              ...applicableDiff,
             }
           : wf
       ),
@@ -112,53 +127,103 @@ const WorkflowEditor = ({
     });
   };
 
+  const toggleAddNodeMenu = (state: boolean) => {
+    setAddNodeMenuVisibility(state);
+  };
+
+  const setNodePosition = (event: React.MouseEvent) => {
+    if (!nodeEditor?.current) {
+      return;
+    }
+
+    const n: HTMLElement = nodeEditor.current;
+    const { x, y } = n.getBoundingClientRect();
+
+    const result = {
+      x: event.clientX - x - canvasPosition.x,
+      y: event.clientY - y - canvasPosition.y,
+    };
+
+    setNewNodePosition(result);
+  };
+
+  const moveNewNode = (e: React.MouseEvent) => {
+    if (!newNode) {
+      return;
+    }
+
+    setNodePosition(e);
+    const { x, y } = newNodePosition;
+    setNewNode({ ...newNode, x: x - 25, y: y - 20 });
+  };
+
+  const placeNewNode = (e: React.MouseEvent) => {
+    if (!newNode) {
+      return;
+    }
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    update({
+      nodes: [...nodes, newNode as StorableNode],
+    });
+    setNewNode(undefined);
+  };
+
+  const availableNodeOptions = Object.values(defaultNodeOptions)
+    .filter((nodeOption) => !nodeOption.disabled)
+    .filter((nodeOption) => {
+      return nodeOption.effectId === 'OUTPUT' ? !hasOutputNode : true;
+    });
+
   return (
-    <WorkflowContainer>
+    <WorkflowContainer
+      ref={nodeEditor}
+      onMouseMove={moveNewNode}
+      onClick={placeNewNode}
+    >
       <ControllerProvider
         pinTypes={pinTypes}
         connections={connections}
         onConnectionsUpdate={(c: Connection[]) => update({ connections: c })}
       >
         <NodeContainer
+          onCanvasDrag={setCanvasPosition}
           contextMenu={(
             onClose: Function,
             nodePosition: { x: number; y: number }
           ) => (
             <Menu>
-              <Menu.Item>
-                <Input />
-              </Menu.Item>
-              {Object.values(defaultNodeOptions)
-                .filter((nodeOption) => !nodeOption.disabled)
-                .filter((nodeOption) => {
-                  return nodeOption.effectId === 'OUTPUT'
-                    ? !hasOutputNode
-                    : true;
-                })
-                .map((nodeOption) => (
-                  <Menu.Item
-                    key={nodeOption.name}
-                    onClick={() => {
-                      update({
-                        nodes: [
-                          ...nodes,
-                          {
-                            id: nanoid(),
-                            ...nodeOption.node,
-                            ...nodePosition,
-                            calls: [],
-                          },
-                        ],
-                      });
-                      onClose();
-                    }}
-                  >
-                    {nodeOption.name}
-                  </Menu.Item>
-                ))}
+              {availableNodeOptions.map((nodeOption) => (
+                <Menu.Item
+                  key={nodeOption.name}
+                  onClick={() => {
+                    update({
+                      nodes: [
+                        ...nodes,
+                        {
+                          id: nanoid(),
+                          ...nodeOption.node,
+                          ...nodePosition,
+                          calls: [],
+                        },
+                      ],
+                    });
+                    onClose();
+                  }}
+                >
+                  {nodeOption.name}
+                </Menu.Item>
+              ))}
             </Menu>
           )}
         >
+          {newNode ? (
+            <SourceNode key={newNode.id} node={newNode} status="LOADING" />
+          ) : (
+            ''
+          )}
           {nodes.map((node) => (
             <SourceNode
               key={node.id}
@@ -172,6 +237,47 @@ const WorkflowEditor = ({
           ))}
         </NodeContainer>
       </ControllerProvider>
+
+      <div style={{ position: 'absolute', top: 16, left: 16 }}>
+        <Dropdown
+          visible={isAddNodeMenuOpen}
+          appendTo="parent"
+          placement="right-start"
+          onClickOutside={() => toggleAddNodeMenu(false)}
+          content={
+            <Menu
+              style={{ marginTop: '-10.5px' }}
+              onMouseOver={(e) => setNodePosition(e)}
+            >
+              {availableNodeOptions.map((nodeOption) => (
+                <Menu.Item
+                  key={nodeOption.name}
+                  onClick={() => {
+                    setNewNode({
+                      id: nanoid(),
+                      ...nodeOption.node,
+                      ...newNodePosition,
+                      calls: [],
+                    });
+
+                    toggleAddNodeMenu(false);
+                  }}
+                >
+                  {nodeOption.name}
+                </Menu.Item>
+              ))}
+            </Menu>
+          }
+        >
+          <Button
+            type="primary"
+            icon="Plus"
+            onClick={() => toggleAddNodeMenu(true)}
+          >
+            Add
+          </Button>
+        </Dropdown>
+      </div>
 
       {activeNode && (
         <ConfigPanel
