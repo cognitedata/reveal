@@ -5,6 +5,7 @@ import { FunctionCallStatus } from 'reducers/charts/types';
 import * as backendApi from 'utils/backendApi';
 import { CogniteClient } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
+import { FunctionCall } from 'utils/backendService';
 
 type Function = {
   id: number;
@@ -61,11 +62,7 @@ const getCallStatus = (
   callId: number
 ) => async () => {
   const response = await backendApi.getCallStatus(sdk, fnId, callId);
-
-  if (response?.status) {
-    return response.status as FunctionCallStatus;
-  }
-  return Promise.reject(new Error('could not find call status'));
+  return response;
 };
 
 const getOps = (
@@ -117,9 +114,7 @@ export function useAvailableOps(): [boolean, Error?, DSPFunction[]?] {
 
   const [refetchInterval, setRefetchInterval] = useState<number | false>(1000);
 
-  const { data: callStatus, isError: callStatusError } = useQuery<
-    FunctionCallStatus
-  >(
+  const { data: callStatus, isError: callStatusError } = useQuery<FunctionCall>(
     [...key, callId, 'call_status'],
     getCallStatus(sdk, fnId as number, callId as number),
     {
@@ -129,7 +124,12 @@ export function useAvailableOps(): [boolean, Error?, DSPFunction[]?] {
     }
   );
 
-  if (callStatus && callStatus !== 'Running' && refetchInterval) {
+  const hasValidResult =
+    callStatus?.status &&
+    callStatus.status === 'Completed' &&
+    !callStatus.error;
+
+  if (hasValidResult && refetchInterval) {
     setRefetchInterval(false);
   }
 
@@ -138,7 +138,7 @@ export function useAvailableOps(): [boolean, Error?, DSPFunction[]?] {
     getOps(sdk, fnId as number, callId as number),
     {
       ...cacheOptions,
-      enabled: callStatus === 'Completed',
+      enabled: hasValidResult,
     }
   );
 
@@ -147,8 +147,9 @@ export function useAvailableOps(): [boolean, Error?, DSPFunction[]?] {
     callStatusError ||
     createCallError ||
     responseError ||
-    callStatus === 'Failed' ||
-    callStatus === 'Timeout'
+    callStatus?.status === 'Failed' ||
+    callStatus?.status === 'Timeout' ||
+    callStatus?.error
   ) {
     return [false, new Error('Could not get available operations'), undefined];
   }
