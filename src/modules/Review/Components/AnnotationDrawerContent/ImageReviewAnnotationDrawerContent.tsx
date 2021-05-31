@@ -15,13 +15,7 @@ import { AssetSelector } from 'src/modules/Review/Components/AssetSelector/Asset
 import { AnnotationDrawerMode } from 'src/utils/AnnotationUtils';
 import { ImagePreviewEditMode } from 'src/constants/enums/ImagePreviewEditMode';
 
-export const ImageReviewDrawerContent = ({
-  mode,
-  fileId,
-}: {
-  mode: number;
-  fileId: string;
-}) => {
+export const ImageReviewDrawerContent = ({ mode }: { mode: number }) => {
   const dispatch = useDispatch();
   const editMode = useSelector(
     (state: RootState) =>
@@ -46,7 +40,7 @@ export const ImageReviewDrawerContent = ({
   };
 
   const handleLabelChange = (label: string) => {
-    dispatch(editLabelAddAnnotation({ fileId, label }));
+    dispatch(editLabelAddAnnotation({ label }));
   };
 
   const handleAssetIdSelect = (ids: number[]) => {

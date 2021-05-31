@@ -9,7 +9,6 @@ import {
 import { createFileInfo, createFileState } from 'src/store/util/StateUtils';
 import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
 import { UpdateFiles } from 'src/store/thunks/UpdateFiles';
-import { ToastUtils } from 'src/utils/ToastUtils';
 import { FileState } from 'src/modules/Common/filesSlice';
 
 export type ExplorerFileState = {
@@ -142,16 +141,6 @@ const explorerSlice = createSlice({
       payload.forEach((fileState) => {
         updateFileState(state, fileState);
       });
-
-      if (payload.length) {
-        ToastUtils.onSuccess('File updated successfully!');
-      }
-    });
-
-    builder.addCase(UpdateFiles.rejected, (_, { error }) => {
-      if (error && error.message) {
-        ToastUtils.onFailure(error?.message);
-      }
     });
   },
 });

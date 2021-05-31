@@ -23,6 +23,7 @@ import { SaveAvailableAnnotations } from 'src/store/thunks/SaveAvailableAnnotati
 import { AnnotationDetectionJobUpdate } from 'src/store/thunks/AnnotationDetectionJobUpdate';
 import { CreateAnnotations } from 'src/store/thunks/CreateAnnotations';
 import { UpdateAnnotationsById } from 'src/store/thunks/UpdateAnnotationsById';
+import { AddAnnotationsFromEditModeAssetIds } from 'src/store/thunks/AddAnnotationsFromEditModeAssetIds';
 
 export interface VisionAnnotationState extends Omit<VisionAnnotation, 'id'> {
   id: number;
@@ -57,8 +58,6 @@ type State = {
   };
   imagePreview: {
     editable: number;
-    createdBoundingBoxes: {};
-    modifiedBoundingBoxes: {};
   };
   annotations: {
     counter: number;
@@ -86,8 +85,6 @@ const initialState: State = {
   },
   imagePreview: {
     editable: ImagePreviewEditMode.NotEditable,
-    createdBoundingBoxes: {},
-    modifiedBoundingBoxes: {},
   },
   annotations: {
     counter: 0,
@@ -103,11 +100,9 @@ const initialState: State = {
 
 // Actions
 type LabelEdit = {
-  fileId: string;
   label: string;
 };
 type PolygonEdit = {
-  fileId: string;
   box: AnnotationBoundingBox;
   modelType: VisionAPIType;
 };
@@ -324,6 +319,16 @@ const previewSlice = createSlice({
         }
       }
     );
+
+    builder.addMatcher(
+      isAnyOf(
+        CreateAnnotations.fulfilled,
+        AddAnnotationsFromEditModeAssetIds.fulfilled
+      ),
+      (state) => {
+        resetDrawerEditState(state);
+      }
+    );
   },
 });
 
@@ -346,6 +351,11 @@ export const {
 // state helper functions
 
 const resetPreviewState = (state: State) => {
+  resetDrawerEditState(state);
+  state.selectedAnnotations = { asset: [], other: [] };
+};
+
+const resetDrawerEditState = (state: State) => {
   state.drawer = {
     show: false,
     mode: null,
@@ -355,10 +365,7 @@ const resetPreviewState = (state: State) => {
   };
   state.imagePreview = {
     editable: 0,
-    createdBoundingBoxes: {},
-    modifiedBoundingBoxes: {},
   };
-  state.selectedAnnotations = { asset: [], other: [] };
 };
 
 export const addEditAnnotationsToState = (

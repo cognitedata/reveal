@@ -166,16 +166,6 @@ const filesSlice = createSlice({
       payload.forEach((fileState) => {
         updateFileState(state, fileState);
       });
-
-      if (payload.length) {
-        ToastUtils.onSuccess('File updated successfully!');
-      }
-    });
-
-    builder.addCase(UpdateFiles.rejected, (_, { error }) => {
-      if (error && error.message) {
-        ToastUtils.onFailure(error?.message);
-      }
     });
 
     builder.addCase(SaveAvailableAnnotations.fulfilled, (state) => {

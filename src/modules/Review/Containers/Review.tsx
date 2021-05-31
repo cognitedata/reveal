@@ -93,7 +93,6 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
     } else if (drawerMode === AnnotationDrawerMode.LinkAsset) {
       dispatch(AddAnnotationsFromEditModeAssetIds(file));
     }
-    dispatch(closeAnnotationDrawer());
   };
 
   const handleOnDrawerDelete = () => {
@@ -155,7 +154,7 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
           onDelete={handleOnDrawerDelete}
         >
           {!isVideo(file) && drawerMode !== null && (
-            <ImageReviewDrawerContent mode={drawerMode} fileId={fileId} />
+            <ImageReviewDrawerContent mode={drawerMode} />
           )}
         </AnnotationDrawer>
       </Container>
