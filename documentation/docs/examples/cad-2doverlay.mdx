@@ -4,7 +4,7 @@ title: HTML overlays
 description: Demo shows how to add an HTML overlay over 3D objects.
 ---
 
-import { DemoWrapper } from '@site/src/components/DemoWrapper';
+import { DemoWrapper } from '@site/docs/components/DemoWrapper';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
 A common requirement for a 3D application is to add information overlays hovering over 3D objects
@@ -21,7 +21,7 @@ There should be a limited number of HTML overlay elements as it can impact perfo
 
 Attaching HTML elements to 3D objects/positions requires the following operations:
 
-1. Create an HTML element and apply style `position: absolute` to the element. There also some other recommended 
+1. Create an HTML element and apply style `position: absolute` to the element. There also some other recommended
    styles that should be applied (see below).
 2. Determine 3D world coordinate of the pivot point (e.g. using intersection when user clicks an object)
 3. Attach overlay using `HtmlOverlayTool.add`.
@@ -40,7 +40,7 @@ function createOverlay() {
   element.innerText = `Overlay!`;
   element.style.cssText = `
     position: absolute;
-    
+
     /* Anchor to the center of the element and ignore events */
     transform: translate(-50%, -50%);
     pointer-events: none;
@@ -71,9 +71,9 @@ viewer.on('click', event => {
 });
 ```
 
-It's also possible to apply styling based on the position of the 
-overlay, e.g. to vary the opacity of the overlay based on distance 
-from the camera. To do this, provide an `options`-argument with a 
+It's also possible to apply styling based on the position of the
+overlay, e.g. to vary the opacity of the overlay based on distance
+from the camera. To do this, provide an `options`-argument with a
 `positionUpdatedCallback` to `HtmlOverlayTool.add`. This
 callback is triggered every time the HTML overlay is updated.
 
@@ -87,7 +87,7 @@ function createOverlay() {
   element.innerText = `${pressure} PSI`;
   element.style.cssText = `
     position: absolute;
-    
+
     /* Anchor to the center of the element and ignore events */
     transform: translate(-50%, -50%);
     pointer-events: none;
@@ -121,6 +121,6 @@ viewer.on('click', event => {
 });
 ```
 
-As shown above, overlays can be removed using `remove()`. It is also possible to remove all 
+As shown above, overlays can be removed using `remove()`. It is also possible to remove all
 overlays by calling `clear()` or by disposing the tool using `dispose()`. The tool cannot
 be used after calling `dispose()`.

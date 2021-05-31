@@ -4,12 +4,12 @@ title: Axis cross tool
 description: Axis cross tool to show orientation of the model.
 ---
 
-import { DemoWrapper } from '@site/src/components/DemoWrapper';
+import { DemoWrapper } from '@site/docs/components/DemoWrapper';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
 To effectivly navigate a 3D model it is often useful to have an helper to show the orientation of the model. The `AxisViewTool` is
 a configurable overlay that shows the current orientation of the model. It also reacts to clicks, orienting the camera to face
-clicked. 
+clicked.
 
 <img src={useBaseUrl('/img/axisviewtool.png')} alt="AxisViewTool" />
 
@@ -56,7 +56,7 @@ Using `RelativePosition` will position the axis cross relative to a specific cor
 
 const axisConfig = {
   position: {
-    corner: Corner.TopRight, 
+    corner: Corner.TopRight,
     padding: new THREE.Vector2(50, 50)
   }
 };
@@ -89,22 +89,22 @@ Each of the faces of the orientation box can be styled.
 
 const axisConfig = {
   faces: {
-    xNegativeFace: { 
+    xNegativeFace: {
       label: 'Left',
-      fontColor: new THREE.Color('white'), 
-      faceColor: new THREE.Color(0x660000) 
+      fontColor: new THREE.Color('white'),
+      faceColor: new THREE.Color(0x660000)
     },
-    xPositiveFace: { 
-      label: 'Right', 
-      fontColor: new THREE.Color('white'), 
-      faceColor: new THREE.Color(0x660000) 
+    xPositiveFace: {
+      label: 'Right',
+      fontColor: new THREE.Color('white'),
+      faceColor: new THREE.Color(0x660000)
     },
-    yNegativeFace: { 
+    yNegativeFace: {
       label: 'Down',
       fontColor: new THREE.Color('white'),
       faceColor: new THREE.Color(0x006600)
     },
-    yPositiveFace: { 
+    yPositiveFace: {
       label: 'Top',
       fontColor: new THREE.Color('white'),
       faceColor: new THREE.Color(0x006600)

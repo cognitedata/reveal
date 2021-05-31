@@ -9,8 +9,8 @@ import {
   SupportedModelTypes
 } from '@cognite/reveal';
 
-import { CanvasWrapper } from '@site/src/components/styled';
-import { DemoProps } from '@site/src/components/DemoProps';
+import { CanvasWrapper } from '@site/docs/components/styled';
+import { DemoProps } from '@site/docs/components/DemoProps';
 
 type OwnProps = {
   modelType?: SupportedModelTypes;

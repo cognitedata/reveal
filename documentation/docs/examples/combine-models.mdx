@@ -8,13 +8,13 @@ description: Load multiple models in the same viewer and apply transformation to
 users interact with them as if they were one model. This is done by simply adding multiple models
 using `Cognite3DViewer.addModel`, `Cognite3DViewer.addCadModel` or `Cognite3DViewer.addPointCloudModel`.
 
-import { DemoWrapper } from '@site/src/components/DemoWrapper';
+import { DemoWrapper } from '@site/docs/components/DemoWrapper';
 
 <DemoWrapper name="Cognite3DViewerDemo" />
 
 # Modify coordinate systems
 
-In many cases, it will be necessary to apply some transformation to the models to make them be in the same 
+In many cases, it will be necessary to apply some transformation to the models to make them be in the same
 coordinate system. This can be done using `setModelTransformation` with a [`THREE.Matrix4`](https://threejs.org/docs/#api/en/math/Matrix4)
 representing the transformation. Note that each 3D model stored in Cognite Data Fusion will have an associated
 model transformation that is loaded when the model is added. When updating `setModelTransformation` this model transformation
