@@ -57,7 +57,7 @@ export const OpenInCharts: FC = () => {
   const myCharts = useMyCharts();
   const allCharts = useMemo(() => {
     const mine = myCharts.data || [];
-    return mine.sort((a, b) => {
+    return mine.slice().sort((a, b) => {
       if (a.name.toLocaleLowerCase() < b.name.toLocaleLowerCase()) return -1;
       if (a.name.toLocaleLowerCase() < b.name.toLocaleLowerCase()) return 1;
       return 0;
@@ -119,7 +119,9 @@ export const OpenInCharts: FC = () => {
     }
   };
   const handleSubmit = useCallback(async () => {
-    if (!login?.user) return;
+    if (!login?.user) {
+      return;
+    }
     if (currentValue === options[0]) {
       const chartId = nanoid();
       const newChart: Chart = {
@@ -139,7 +141,9 @@ export const OpenInCharts: FC = () => {
       await Promise.all(
         selectedIds.map(async (id) => {
           const timeSeries = ts.find((timeSerie) => timeSerie.id === id);
-          if (!timeSeries) return;
+          if (!timeSeries) {
+            return;
+          }
           const range = await calculateDefaultYAxis({
             chart: newChart,
             sdk,
@@ -152,17 +156,23 @@ export const OpenInCharts: FC = () => {
       );
       history.replace(newChart.id);
     } else {
-      if (!existingChart) return;
+      if (!existingChart) {
+        return;
+      }
       existingChart.dateFrom = new Date(+startTime).toJSON();
       existingChart.dateTo = new Date(+endTime).toJSON();
       await Promise.all(
         selectedIds.map(async (id) => {
           const timeSeries = ts.find((timeSerie) => timeSerie.id === id);
-          if (!timeSeries) return;
+          if (!timeSeries) {
+            return;
+          }
           const existingTimeSeries = existingChart.timeSeriesCollection?.find(
             (timeSerie) => timeSerie.tsId === id
           );
-          if (existingTimeSeries) return;
+          if (existingTimeSeries) {
+            return;
+          }
           const range = await calculateDefaultYAxis({
             chart: existingChart,
             sdk,
