@@ -7,6 +7,7 @@ import { FileInfo } from '@cognite/sdk';
 import { sleep } from 'utils/utils';
 import { useQueryClient } from 'react-query';
 import { deleteAnnotationsForFile } from 'utils/AnnotationUtils';
+import { PNID_METRICS, trackUsage } from 'utils/Metrics';
 import {
   PERMISSIONS_STRINGS,
   WARNINGS_STRINGS,
@@ -26,6 +27,9 @@ export const ClearTagsButton = (props: Props) => {
   const writeAccess = filesPermissions && eventsPermissions;
 
   const onDeleteSuccess = () => {
+    trackUsage(PNID_METRICS.fileViewer.deleteAnnotations, {
+      fileId: id,
+    });
     const invalidate = () =>
       client.invalidateQueries(['cdf', 'events', 'list']);
     invalidate();

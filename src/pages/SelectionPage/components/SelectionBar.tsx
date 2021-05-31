@@ -10,6 +10,7 @@ import { searchCountSelector } from 'pages/SelectionPage/selectors';
 import { LabelFilter } from 'components/LabelFilter';
 // import FilterMenu from './FilterMenu';
 import omit from 'lodash/omit';
+import { PNID_METRICS, trackUsage } from 'utils/Metrics';
 
 type Props = {
   type: ResourceType;
@@ -27,6 +28,9 @@ export default function SelectionBar(props: Props): JSX.Element {
 
   const onLabelsChange = (newLabels?: { externalId: string }[]) => {
     if (newLabels?.length) {
+      trackUsage(PNID_METRICS.filters.byLabels, {
+        count: newLabels.length,
+      });
       updateFilter({
         ...filter,
         filter: {
@@ -55,6 +59,11 @@ export default function SelectionBar(props: Props): JSX.Element {
         dataSetIds: newDataSetIds,
       },
     };
+    if (newDataSetIds) {
+      trackUsage(PNID_METRICS.filters.byDataSet, {
+        count: newDataSetIds.length,
+      });
+    }
     updateFilter(newFilter);
   };
   const onNameSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -69,6 +78,12 @@ export default function SelectionBar(props: Props): JSX.Element {
             }
           : undefined,
     };
+
+    if (value) {
+      trackUsage(PNID_METRICS.filters.byDataSet, {
+        query: value,
+      });
+    }
     updateFilter(newFilter);
   };
 

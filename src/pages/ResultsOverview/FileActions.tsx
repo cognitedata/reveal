@@ -12,6 +12,7 @@ import { Flex, IconButton } from 'components/Common';
 import sdk from 'sdk-singleton';
 import { diagramPreview } from 'routes/paths';
 import { useParsingJob } from 'modules/contextualization/pnidParsing/hooks';
+import { PNID_METRICS, trackUsage } from 'utils/Metrics';
 
 type Props = { file: any; setRenderFeedback: (shouldSet: boolean) => any };
 
@@ -49,6 +50,9 @@ export default function FileActions({
     switch (e.key) {
       case 'link':
         if (canEditFiles) {
+          trackUsage(PNID_METRICS.results.linkToAssets, {
+            fileId: file?.id,
+          });
           await linkFileToAssetIds(
             sdk,
             convertEventsToAnnotations(annotations)

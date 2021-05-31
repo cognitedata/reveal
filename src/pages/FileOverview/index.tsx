@@ -26,6 +26,7 @@ import {
   useAnnotations,
 } from '@cognite/data-exploration';
 import { AppStateContext } from 'context';
+import { PNID_METRICS, trackUsage } from 'utils/Metrics';
 import {
   Wrapper,
   ContentWrapper,
@@ -149,6 +150,10 @@ export default function FileOverview(props: Props) {
                   loading={jobStarted}
                   onClick={() => {
                     if (canEditFiles) {
+                      trackUsage(PNID_METRICS.fileViewer.convertToSvg, {
+                        fileId: fileIdNumber,
+                        annotationsCount: annotations.length,
+                      });
                       if (annotations) {
                         dispatch(
                           startConvertFileToSvgJob(
@@ -172,6 +177,7 @@ export default function FileOverview(props: Props) {
       <Tabs
         tab={activeTab}
         onTabChange={(newTab) => {
+          trackUsage(PNID_METRICS.fileViewer.viewTab, { tab: newTab });
           setActiveTab(newTab as FilePreviewTabType);
         }}
       >

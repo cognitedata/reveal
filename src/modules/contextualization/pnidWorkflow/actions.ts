@@ -1,6 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { startPnidParsingJob } from 'modules/contextualization/pnidParsing/actions';
 import { RootState } from 'store';
+import { PNID_METRICS, trackUsage } from 'utils/Metrics';
 import {
   loadWorkflowDiagrams,
   loadWorkflowResources,
@@ -50,6 +51,17 @@ export const startPnidParsingWorkflow = {
       const resources = getResources(state);
 
       const { assets, files } = resources;
+
+      trackUsage(PNID_METRICS.selection, {
+        diagrams: diagrams.length,
+        assets: assets?.length,
+        files: files?.length,
+      });
+
+      trackUsage(PNID_METRICS.configuration, {
+        minTokens,
+        partialMatch,
+      });
 
       await dispatch(
         startPnidParsingJob.action({

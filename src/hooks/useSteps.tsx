@@ -10,6 +10,7 @@ import {
 
 import { useActiveWorkflow } from 'hooks';
 import routesMap from 'routes/routesMap';
+import { PNID_METRICS, trackUsage } from 'utils/Metrics';
 
 export const usePrevAndNextStep = (step?: WorkflowStep) => {
   const history = useHistory();
@@ -19,6 +20,9 @@ export const usePrevAndNextStep = (step?: WorkflowStep) => {
   const routes = routesMap();
 
   const goToNextStep = (...args: any) => {
+    trackUsage(PNID_METRICS.navigation.nextButton, {
+      step,
+    });
     const currentStepIndex = routes.findIndex(
       (route) => route.workflowStepName === step
     );
@@ -31,6 +35,9 @@ export const usePrevAndNextStep = (step?: WorkflowStep) => {
   };
 
   const goToPrevStep = (...args: any) => {
+    trackUsage(PNID_METRICS.navigation.backButton, {
+      step,
+    });
     const currentStepIndex = routes.findIndex(
       (route) => route.workflowStepName === step
     );

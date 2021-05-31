@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { Colors, Icon, Body } from '@cognite/cogs.js';
 import { moveToStep, WorkflowStep } from 'modules/workflows';
 import { Link, Flex } from 'components/Common';
+import { PNID_METRICS, trackUsage } from 'utils/Metrics';
 
 type StyledStepProps = {
   small: boolean;
@@ -101,6 +102,9 @@ export default function Step(props: StepProps) {
 
   const onLinkClick = () => {
     if (workflowStep) {
+      trackUsage(PNID_METRICS.navigation.stepsWizard, {
+        step: workflowStep,
+      });
       dispatch(moveToStep(workflowStep));
     }
   };
