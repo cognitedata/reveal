@@ -4,13 +4,13 @@ title: Override CAD nodes transforms
 description: Reveal supports overriding transforms of individual objects by providing tree indices to identify 3D nodes
 ---
 
-import { DemoWrapper } from '@site/src/components/DemoWrapper';
+import { DemoWrapper } from '@site/docs/components/DemoWrapper';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
 Reveal supports overriding transforms of individual objects by providing [tree indices to identify 3D nodes.](../concepts.md)
 
 Note that any transformation override is applied with respect to the THREE.js world coordinate space. Also note that the node transform is not accounted for when determining geometry to load. Due to this node transforms shouldn't apply too drastic changes to the position and extend of the nodes. For model wide changes `Cognite3DModel.setModelTransformation` should be used instead.
-Also note that non-uniform scaling of nodes are not currently supported and may give unexpected results. 
+Also note that non-uniform scaling of nodes are not currently supported and may give unexpected results.
 
 ## Examples
 
@@ -50,7 +50,7 @@ of the crane rotating. First we get the center of the bounding box for node with
 Then we set up an interval which triggers a function that transforms the entire crane (`532261`): first to the base of the crane, then rotates the model,
 then transforms it back, thus giving us the wanted rotation. Keep in mind that [THREE.js uses column matrix notation](https://threejs.org/docs/#api/en/math/Matrix4), such that
 
-the following statement: 
+the following statement:
 
 ```js
   const matrixOverride = modelToWorld.multiply(rotationMatrix.multiply(worldToModel));
