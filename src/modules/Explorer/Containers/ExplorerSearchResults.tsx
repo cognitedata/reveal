@@ -4,6 +4,12 @@ import { FileFilterProps, FileInfo } from '@cognite/cdf-sdk-singleton';
 import styled from 'styled-components';
 import { ResultData, TableDataItem, ViewMode } from 'src/modules/Common/types';
 import { PageBasedGrideView } from 'src/modules/Common/Components/GridView/PageBasedGrideView';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from 'src/store/rootReducer';
+import {
+  selectExplorerAllFilesSelected,
+  setExplorerAllFilesSelectState,
+} from 'src/modules/Explorer/store/explorerSlice';
 import { ResultTableLoader } from './ResultTableLoader';
 import { FileGridPreview } from '../../Common/Components/FileGridPreview/FileGridPreview';
 import { MapView } from '../../Common/Components/MapView/MapView';
@@ -24,6 +30,15 @@ export const ExplorerSearchResults = ({
   onRowSelect: (item: TableDataItem, selected: boolean) => void;
   currentView: ViewMode;
 }) => {
+  const dispatch = useDispatch();
+  const allFilesSelected = useSelector((state: RootState) =>
+    selectExplorerAllFilesSelected(state.explorerReducer)
+  );
+
+  const handleSelectAllFiles = (value: boolean) => {
+    dispatch(setExplorerAllFilesSelectState(value));
+  };
+
   return (
     <>
       <TableContainer>
@@ -66,6 +81,8 @@ export const ExplorerSearchResults = ({
                     onRowSelect={onRowSelect}
                     onRowClick={onClick}
                     selectedFileId={selectedId}
+                    allRowsSelected={allFilesSelected}
+                    onSelectAllRows={handleSelectAllFiles}
                     {...props}
                   />
                 );

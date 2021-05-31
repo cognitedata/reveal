@@ -50,10 +50,21 @@ export type TableDataItem = Pick<
 };
 
 export type ResultData = TableDataItem;
+export interface SelectableTableColumnShape<T> extends ColumnShape<T> {
+  allSelected?: boolean;
+  onSelectAll?: (value: boolean) => void;
+}
 
 export type CellRenderer = {
   rowData: TableDataItem;
   column: ColumnShape<TableDataItem>;
+  rowIndex: number;
+  cellData: any;
+};
+
+export type SelectableTableCellRenderer = {
+  rowData: TableDataItem;
+  column: SelectableTableColumnShape<TableDataItem>;
   rowIndex: number;
   cellData: any;
 };

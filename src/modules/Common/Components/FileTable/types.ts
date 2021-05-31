@@ -8,11 +8,20 @@ export type PaginatedTableProps<T> = {
   onRowClick: (item: T, showFileDetailsOnClick?: boolean) => void;
   selectedFileId?: number | null;
 };
-export type FileTableProps = Omit<BaseTableProps<TableDataItem>, 'data'> &
-  PaginatedTableProps<TableDataItem>;
+export type FileTableProps = Omit<
+  BaseTableProps<TableDataItem>,
+  'data' | 'width'
+> &
+  PaginatedTableProps<TableDataItem> & {
+    allRowsSelected: boolean;
+    onSelectAllRows: (value: boolean) => void;
+  };
 
 export type FileExplorerTableProps = Omit<
   BaseTableProps<TableDataItem>,
-  'data'
+  'data' | 'width'
 > &
-  PaginatedTableProps<TableDataItem>;
+  PaginatedTableProps<TableDataItem> & {
+    allRowsSelected: boolean;
+    onSelectAllRows: (value: boolean) => void;
+  };
