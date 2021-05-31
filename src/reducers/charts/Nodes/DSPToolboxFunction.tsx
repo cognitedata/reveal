@@ -102,7 +102,7 @@ export const ConfigPanel = ({
                   description.toLowerCase().includes(phrase.toLowerCase())
                 );
                 return (
-                  <>
+                  <React.Fragment key={category}>
                     <Menu.Submenu
                       disabled={filtered.length === 0}
                       content={
@@ -165,7 +165,7 @@ export const ConfigPanel = ({
                         {category} ({filtered.length})
                       </>
                     </Menu.Submenu>
-                  </>
+                  </React.Fragment>
                 );
               })}
             </Menu>
