@@ -13,6 +13,7 @@ import { generateSectorTree } from '../../../../__testutilities__/createSectorMe
 import { createCadModelMetadata } from '../../../../__testutilities__/createCadModelMetadata';
 import { CadModelSectorBudget } from '../../CadModelSectorBudget';
 import { PropType } from '../../../../utilities/reflection';
+import { createGlContext } from '../../../../__testutilities__/createGlContext';
 
 describe('ByVisibilityGpuSectorCuller', () => {
   const materialManager = new CadMaterialManager();
@@ -22,7 +23,7 @@ describe('ByVisibilityGpuSectorCuller', () => {
     OrderSectorsByVisibilityCoverage,
     'orderSectorsByVisibility'
   > = jest.fn();
-  const context: WebGLRenderingContext = require('gl')(64, 64, { preserveDrawingBuffer: true });
+  const context = createGlContext(64, 64, { preserveDrawingBuffer: true });
   const renderer = new THREE.WebGLRenderer({ context });
 
   const coverageUtil: OrderSectorsByVisibilityCoverage = {

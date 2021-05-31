@@ -385,7 +385,7 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
         tmpPosition.multiplyScalar(radius);
         tmpPosition.add(cameraTarget);
 
-        THREE.Quaternion.slerp(fromRotation, toRotation, tmpRotation, from.t);
+        tmpRotation.slerpQuaternions(fromRotation, toRotation, from.t);
 
         camera.position.copy(tmpPosition);
         camera.setRotationFromQuaternion(tmpRotation);

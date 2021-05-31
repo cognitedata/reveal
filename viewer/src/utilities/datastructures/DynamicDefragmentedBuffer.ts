@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { TypedArray } from 'three';
+import { TypedArray } from '../types';
 
 type Batch = {
   from: number;

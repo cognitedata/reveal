@@ -4,6 +4,7 @@
 
 import * as THREE from 'three';
 import { RenderOptions } from '../../..';
+import { createGlContext } from '../../../__testutilities__/createGlContext';
 
 import { CadMaterialManager } from '../CadMaterialManager';
 import { EffectRenderManager } from './EffectRenderManager';
@@ -13,7 +14,7 @@ type Mutable<T> = { -readonly [P in keyof T]: T[P] };
 
 describe('EffectRenderManager', () => {
   const materialManager = new CadMaterialManager();
-  const context: WebGLRenderingContext = require('gl')(64, 64, { preserveDrawingBuffer: true });
+  const context = createGlContext(64, 64, { preserveDrawingBuffer: true });
   // Emulate WebGL2
   (context as WebGL2RenderingContext).createVertexArray = jest.fn();
   (context as WebGL2RenderingContext).bindVertexArray = jest.fn();

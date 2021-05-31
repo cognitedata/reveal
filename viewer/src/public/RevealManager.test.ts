@@ -8,6 +8,7 @@ import { SectorCuller } from '../internals';
 import { createRevealManager } from './createRevealManager';
 import { RevealManager } from './RevealManager';
 import { LoadingStateChangeListener } from '..';
+import { createGlContext } from '../__testutilities__/createGlContext';
 
 describe('RevealManager', () => {
   const mockClient: ModelDataClient<{ id: number }> = {
@@ -29,7 +30,7 @@ describe('RevealManager', () => {
   });
 
   beforeAll(() => {
-    const context: WebGLRenderingContext = require('gl')(64, 64, { preserveDrawingBuffer: true });
+    const context = createGlContext(64, 64, { preserveDrawingBuffer: true });
     renderer = new THREE.WebGLRenderer({ context });
     jest.useFakeTimers();
   });

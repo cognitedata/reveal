@@ -5,6 +5,7 @@
 import { CogniteClient } from '@cognite/sdk';
 import * as THREE from 'three';
 import { Cognite3DViewer } from '../../public/migration/Cognite3DViewer';
+import { createGlContext } from '../../__testutilities__/createGlContext';
 import { AxisViewTool } from './AxisViewTool';
 import { defaultAxisBoxConfig } from './types';
 
@@ -13,7 +14,7 @@ describe('AxisViewTool', () => {
   let viewer: Cognite3DViewer;
 
   const sdk = new CogniteClient({ appId: 'cognite.reveal.unittest' });
-  const context: WebGLRenderingContext = require('gl')(64, 64, { preserveDrawingBuffer: true });
+  const context = createGlContext(64, 64, { preserveDrawingBuffer: true });
   const renderer = new THREE.WebGLRenderer({ context });
   const domSize = { height: 480, width: 640 };
 

@@ -8,6 +8,7 @@ import { HtmlOverlayOptions, HtmlOverlayTool } from './HtmlOverlayTool';
 import { Cognite3DViewer } from '../public/migration/Cognite3DViewer';
 import { CogniteClient } from '@cognite/sdk';
 import { SectorCuller } from '../internals';
+import { createGlContext } from '../__testutilities__/createGlContext';
 
 describe('HtmlOverlayTool', () => {
   let canvasContainer: HTMLElement;
@@ -15,7 +16,7 @@ describe('HtmlOverlayTool', () => {
   let camera: THREE.PerspectiveCamera;
 
   const sdk = new CogniteClient({ appId: 'cognite.reveal.unittest' });
-  const context: WebGLRenderingContext = require('gl')(64, 64, { preserveDrawingBuffer: true });
+  const context = createGlContext(64, 64, { preserveDrawingBuffer: true });
   const renderer = new THREE.WebGLRenderer({ context });
   const _sectorCuller: SectorCuller = {
     determineSectors: jest.fn(),
