@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import { getLink, workflowRoutes } from 'src/modules/Workflow/workflowRoutes';
 import { useHistory } from 'react-router-dom';
 import { ExplorationSearchBar } from './ExplorationSearchBar';
-import { setFileUploadModalVisibility } from '../store/explorerSlice';
+import { setExplorerFileUploadModalVisibility } from '../store/explorerSlice';
 
 export const ExplorerToolbar = ({
   query,
@@ -35,7 +35,7 @@ export const ExplorerToolbar = ({
             style={{ marginLeft: 14 }}
             icon="Upload"
             type="tertiary"
-            onClick={() => dispatch(setFileUploadModalVisibility(true))}
+            onClick={() => dispatch(setExplorerFileUploadModalVisibility(true))}
           >
             Upload files
           </Button>

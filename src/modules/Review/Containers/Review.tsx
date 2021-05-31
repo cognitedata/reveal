@@ -67,10 +67,6 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
     selectFileById(filesSlice, fileId)
   );
 
-  const cdfStatus = useSelector(
-    ({ filesSlice }: RootState) => filesSlice.saveState
-  );
-
   if (!file) {
     // navigate to upload step if file is not available(if the user uses a direct link)
     history.goBack();
@@ -133,10 +129,10 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
             level={3}
           >
             {/* Todo: BreadCrumbs */}
-            CDF / Contextualize Imagry Data /{' '}
+            CDF / Contextualize Imagery Data /{' '}
             <strong>Review annotations</strong>
           </Title>
-          <CDFStatus mode={cdfStatus.mode} time={cdfStatus.time} />
+          <CDFStatus />
           <DeleteButton onConfirm={handleFileDelete} />
         </ToolBar>
         {isVideo(file) ? (
@@ -185,6 +181,6 @@ const ToolBar = styled.div`
   width: 100%;
   display: grid;
   align-items: center;
-  grid-template-columns: 130px auto 20px 170px 130px;
+  grid-template-columns: 130px auto 200px 130px;
   grid-column-gap: 16px;
 `;

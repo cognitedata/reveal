@@ -46,7 +46,7 @@ export type State = {
   };
   saveState: {
     mode: CDFStatusModes;
-    time?: number | undefined;
+    time?: number;
   };
 };
 

@@ -1,61 +1,63 @@
-import { Icon } from '@cognite/cogs.js';
+import { Body, Icon } from '@cognite/cogs.js';
 import React from 'react';
+import styled from 'styled-components';
+import { useSelector } from 'react-redux';
+import { RootState } from 'src/store/rootReducer';
+import { format } from 'date-fns';
 
 export type CDFStatusModes = 'saving' | 'saved' | 'error' | 'timestamp';
 
 interface CDFStatusType {
   mode: CDFStatusModes;
-  time: number | undefined;
+  time?: number;
 }
 
-export const CDFStatus = (cdfStatus: CDFStatusType) => {
-  const { time } = cdfStatus;
+export const CDFStatus = () => {
+  const cdfStatus: CDFStatusType = useSelector(
+    ({ filesSlice }: RootState) => filesSlice.saveState
+  );
+  const { time, mode } = cdfStatus;
   const dateTime = time ? new Date(time) : new Date();
 
   return (
     <>
-      {cdfStatus.mode === 'saved' && (
-        <>
-          <div>
-            <Icon style={{ marginTop: '6px' }} type="Check" />
-          </div>
-          <div>Saved to CDF</div>
-        </>
+      {mode === 'saved' && (
+        <Status>
+          <Icon type="Check" />
+          <Text level={3}>Saved to CDF</Text>
+        </Status>
       )}
-      {cdfStatus.mode === 'saving' && (
-        <>
-          <div>
-            <Icon style={{ marginTop: '6px' }} type="Loading" />
-          </div>
-          <div>Saving to CDF</div>
-        </>
+      {mode === 'saving' && (
+        <Status>
+          <Icon type="Loading" />
+          <Text level={3}>Saving to CDF</Text>
+        </Status>
       )}
-      {cdfStatus.mode === 'error' && (
-        <>
-          <div>
-            <Icon style={{ marginTop: '6px' }} type="ErrorFilled" />
-          </div>
-          <div>Disconnected from CDF</div>
-        </>
+      {mode === 'error' && (
+        <Status>
+          <Icon type="ErrorFilled" />
+          <Text level={3}>Disconnected from CDF</Text>
+        </Status>
       )}
-      {cdfStatus.mode === 'timestamp' && cdfStatus.time && (
-        <>
-          <div>
-            <Icon style={{ marginTop: '6px' }} type="Upload" />
-          </div>
-          <div>
-            Last Saved{' '}
-            {String(dateTime.getHours()).length < 2
-              ? `0${String(dateTime.getHours())}`
-              : String(dateTime.getHours())}
-            :
-            {String(dateTime.getMinutes()).length < 2
-              ? `0${String(dateTime.getMinutes())}`
-              : String(dateTime.getMinutes())}{' '}
-            to CDF
-          </div>
-        </>
+      {mode === 'timestamp' && time && (
+        <Status>
+          <Icon style={{ marginTop: '6px' }} type="Upload" />
+          <Text level={3}>
+            {`Last Saved  ${format(dateTime, 'HH:mm')} to CDF`}
+          </Text>
+        </Status>
       )}
     </>
   );
 };
+
+const Status = styled.div`
+  display: flex;
+  color: #8c8c8c;
+  align-items: center;
+`;
+
+const Text = styled(Body)`
+  color: #8c8c8c;
+  margin-left: 8px;
+`;

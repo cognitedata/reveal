@@ -23,6 +23,7 @@ export type JobState = AnnotationJob & {
 type State = {
   selectedFileId: number | null;
   showFileMetadataDrawer: boolean;
+  showFileUploadModal: boolean;
   selectedDetectionModels: Array<VisionAPIType>;
   error?: string;
   files: {
@@ -38,6 +39,7 @@ type State = {
 const initialState: State = {
   selectedFileId: null,
   showFileMetadataDrawer: false,
+  showFileUploadModal: false,
   selectedDetectionModels: [VisionAPIType.OCR],
   files: {
     byId: {},
@@ -187,6 +189,12 @@ const processSlice = createSlice({
         parseInt(id, 10)
       );
     },
+    setProcessViewFileUploadModalVisibility(
+      state,
+      action: PayloadAction<boolean>
+    ) {
+      state.showFileUploadModal = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fileProcessUpdate, (state, { payload }) => {
@@ -273,6 +281,7 @@ export const {
   hideFileMetadataPreview,
   showFileMetadataPreview,
   setSelectedFileId,
+  setProcessViewFileUploadModalVisibility,
 } = processSlice.actions;
 
 export default processSlice.reducer;
@@ -359,6 +368,19 @@ export const selectIsPollingComplete = createSelector(
         return job.status === 'Completed' || job.status === 'Failed';
       });
     });
+  }
+);
+
+export const selectIsProcessingStarted = createSelector(
+  (state: State) => state.files.byId,
+  (allFiles) => {
+    if (Object.keys(allFiles).length) {
+      return Object.keys(allFiles).every((fileId) => {
+        const fileJobs = allFiles[parseInt(fileId, 10)].jobIds;
+        return fileJobs && fileJobs.length;
+      });
+    }
+    return false;
   }
 );
 
