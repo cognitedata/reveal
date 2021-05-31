@@ -24,7 +24,7 @@ import {
   showExplorerFileMetadata,
   toggleExplorerFileMetadata,
   toggleExplorerFilterView,
-  setFileUploadModalVisibility,
+  setExplorerFileUploadModalVisibility,
 } from '../store/explorerSlice';
 
 const Explorer = () => {
@@ -91,7 +91,7 @@ const Explorer = () => {
         enableProcessAfter
         onUploadSuccess={onUploadSuccess}
         showModal={showFileUploadModal}
-        onCancel={() => dispatch(setFileUploadModalVisibility(false))}
+        onCancel={() => dispatch(setExplorerFileUploadModalVisibility(false))}
       />
       <Wrapper>
         <QueryClientProvider client={queryClient}>

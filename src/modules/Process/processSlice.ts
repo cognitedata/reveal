@@ -30,6 +30,7 @@ export type JobState = AnnotationJob & {
 type State = {
   selectedFileId: number | null;
   showFileMetadataDrawer: boolean;
+  showFileUploadModal: boolean;
   selectedDetectionModels: Array<VisionAPIType>;
   error?: string;
   files: {
@@ -50,6 +51,7 @@ type State = {
 const initialState: State = {
   selectedFileId: null,
   showFileMetadataDrawer: false,
+  showFileUploadModal: false,
   selectedDetectionModels: [VisionAPIType.OCR],
   files: {
     byId: {},
@@ -228,6 +230,12 @@ const processSlice = createSlice({
         parseInt(id, 10)
       );
     },
+    setProcessViewFileUploadModalVisibility(
+      state,
+      action: PayloadAction<boolean>
+    ) {
+      state.showFileUploadModal = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fileProcessUpdate, (state, { payload }) => {
@@ -317,6 +325,7 @@ export const {
   setParamsOCR,
   setParamsTagDetection,
   setParamsObjectDetection,
+  setProcessViewFileUploadModalVisibility,
 } = processSlice.actions;
 
 export default processSlice.reducer;
