@@ -14,6 +14,10 @@ import {
 } from '@cognite/data-exploration';
 import { convertEventsToAnnotations } from '@cognite/annotations';
 import { createLink } from '@cognite/cdf-utilities';
+import {
+  isFilePreviewable,
+  readablePreviewableFileTypes,
+} from 'utils/mimeTypeUtils';
 
 export const FileSmallPreview = ({ fileId }: { fileId: number }) => {
   const sdk = useSDK();
@@ -25,6 +29,8 @@ export const FileSmallPreview = ({ fileId }: { fileId: number }) => {
   const { data: eventAnnotations } = useAnnotations(fileId);
   const annotations = convertEventsToAnnotations(eventAnnotations);
 
+  const canPreview = isFilePreviewable(file);
+
   if (!isFetched) {
     return <Loader />;
   }
@@ -34,6 +40,16 @@ export const FileSmallPreview = ({ fileId }: { fileId: number }) => {
   }
   if (!file) {
     return <>File {fileId} not found!</>;
+  }
+  if (!canPreview) {
+    return (
+      <CenteredPlaceholder>
+        <h1>No preview for this type of file</h1>
+        <p>
+          File types that can be previewed are: {readablePreviewableFileTypes()}
+        </p>
+      </CenteredPlaceholder>
+    );
   }
 
   return (
@@ -80,4 +96,13 @@ export const FileSmallPreview = ({ fileId }: { fileId: number }) => {
 
 const Preview = styled.div`
   height: 300px;
+`;
+
+const CenteredPlaceholder = styled.div`
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  margin: 0 auto;
+  text-align: center;
 `;
