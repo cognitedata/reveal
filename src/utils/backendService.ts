@@ -29,6 +29,7 @@ export interface FunctionCall {
   startTime?: number;
   endTime?: number;
   status: FunctionCallStatus;
+  error?: string;
 }
 
 export const useFunctionCall = (
