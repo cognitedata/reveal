@@ -59,12 +59,18 @@ export const ActionMenu = ({
       </Popconfirm>
     </Menu>
   );
+
+  const handleClick = (evt: any) => {
+    // dummy handler to stop event propagation
+    evt.stopPropagation();
+  };
   return (
     <Dropdown content={MenuContent}>
       <Button
         type="ghost"
         icon="MoreOverflowEllipsisHorizontal"
         aria-label="dropdown button"
+        onClick={handleClick}
       />
     </Dropdown>
   );
