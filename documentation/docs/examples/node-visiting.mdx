@@ -16,14 +16,14 @@ interactive page while the action is being applied.
 ## Iterate over all nodes
 
 This example only demonstrates how iteration over model nodes performed gradually.
-For more efficient coloring consult our [coloring examples](./cad-colors.mdx).
 
 ```jsx runnable
+let sum = 0;
 model
   .iterateNodesByTreeIndex(
-    treeIndex => model.setNodeColorByTreeIndex(treeIndex, 127, 127, 127)
+    treeIndex => sum = sum + treeIndex
   )
-  .then(() => alert('Iteration is done!'));
+  .then(() => alert('Iteration is done! Sum of all tree indexes is ' + sum));
 ```
 
 ## Iterate over subtree nodes
@@ -34,7 +34,11 @@ a node. This mimics the functionality of `Cognite3DModel.setNodesColorsByTreeInd
 set to `true`.
 
 ```jsx runnable
-model.iterateSubtreeByTreeIndex(917985, treeIndex => {
-  model.setNodeColorByTreeIndex(treeIndex, 127, 255, 127);
-});
+let sum = 0;
+model
+  .iterateSubtreeByTreeIndex(917985, treeIndex => {
+    sum = sum + treeIndex;
+  })
+  .then(() => alert('Iteration is done! Sum of all tree indexes in subtree is ' + sum));
+;
 ```
