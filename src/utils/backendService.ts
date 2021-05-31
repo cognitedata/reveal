@@ -101,7 +101,7 @@ export const transformSimpleCalcResult = (
     timestamp?: number[];
   } = {}
 ) => {
-  const { value, timestamp } = result || undefined;
+  const { value = [], timestamp = [] } = result || {};
 
   return value?.length && timestamp?.length
     ? zipWith(value, timestamp, (v, t) => ({
