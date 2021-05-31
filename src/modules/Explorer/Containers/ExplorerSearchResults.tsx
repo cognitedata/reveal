@@ -66,7 +66,16 @@ export const ExplorerSearchResults = ({
                   );
                 }
                 if (currentView === 'map') {
-                  return <MapView {...props} />;
+                  return (
+                    <MapView
+                      onRowSelect={onRowSelect}
+                      onRowClick={onClick}
+                      selectedFileId={selectedId}
+                      allRowsSelected={allFilesSelected}
+                      onSelectAllRows={handleSelectAllFiles}
+                      {...props}
+                    />
+                  );
                 }
 
                 return (
@@ -92,5 +101,4 @@ export const ExplorerSearchResults = ({
 const TableContainer = styled.div`
   width: 100%;
   height: calc(100% - 104px);
-  overflow: hidden;
 `;
