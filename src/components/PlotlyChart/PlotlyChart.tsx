@@ -144,6 +144,10 @@ const PlotlyChartComponent = ({
     }
   }, [wfSuccess, workflowsRaw]);
 
+  useEffect(() => {
+    if (!isYAxisShown && !yAxisLocked) onAdjustButtonClick();
+  }, [isYAxisShown]);
+
   const updateChart = useCallback(
     (c: Chart) => {
       const oldChart = client.getQueryData<Chart>(['chart', chart?.id]);
@@ -464,6 +468,13 @@ const PlotlyChartComponent = ({
     displayModeBar: false,
   };
 
+  const onAdjustButtonClick = () => {
+    trackUsage('ChartView.ToggleYAxisLock', {
+      state: !yAxisLocked ? 'unlocked' : 'locked',
+    });
+    setYAxisLocked(!yAxisLocked);
+  };
+
   return (
     <ChartingContainer ref={containerRef}>
       {showAdjustButton && (
@@ -472,12 +483,7 @@ const PlotlyChartComponent = ({
           <AdjustButton
             type="tertiary"
             icon="YAxis"
-            onClick={() => {
-              trackUsage('ChartView.ToggleYAxisLock', {
-                state: !yAxisLocked ? 'unlocked' : 'locked',
-              });
-              setYAxisLocked(!yAxisLocked);
-            }}
+            onClick={onAdjustButtonClick}
             left={yAxisValues.width * 100 * seriesData.length}
             className="adjust-button"
             style={{ background: 'white' }}
