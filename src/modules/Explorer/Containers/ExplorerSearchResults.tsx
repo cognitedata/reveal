@@ -71,6 +71,8 @@ export const ExplorerSearchResults = ({
                       onRowSelect={onRowSelect}
                       onRowClick={onClick}
                       selectedFileId={selectedId}
+                      allRowsSelected={allFilesSelected}
+                      onSelectAllRows={handleSelectAllFiles}
                       {...props}
                     />
                   );

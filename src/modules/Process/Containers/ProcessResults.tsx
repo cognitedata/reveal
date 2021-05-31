@@ -126,6 +126,8 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
           onRowClick={handleItemClick}
           selectedFileId={selectedId}
           totalCount={data.length}
+          allRowsSelected={allFilesSelected}
+          onSelectAllRows={handleSelectAllFiles}
         />
       );
     }
