@@ -17,6 +17,7 @@ import {
 } from 'modules/types';
 import { setJobId, workflowDiagramsSelector } from 'modules/workflows';
 import handleError from 'utils/handleError';
+import { PNID_METRICS, trackUsage } from 'utils/Metrics';
 import {
   verticesToBoundingBox,
   mapAssetsToEntities,
@@ -142,6 +143,10 @@ export const startPnidParsingJob = {
           data: { jobId, status },
         } = response;
 
+        trackUsage(PNID_METRICS.parsingJob.start, {
+          jobId,
+        });
+
         // Mark job as started
         dispatch(createJob({ workflowId, initialValue: { jobId, status } }));
         // Set jobId in workflow
@@ -176,7 +181,16 @@ export const pollJobResults = {
       const diagrams = getDiagrams(state);
 
       if (status === 'Completed' || status === 'Failed') {
+        trackUsage(PNID_METRICS.parsingJob.end, {
+          jobId,
+          status,
+        });
+
         if (status === 'Completed') {
+          trackUsage(PNID_METRICS.parsingJob.results, {
+            failed: statusCount?.failed ?? 0,
+            completed: statusCount?.completed ?? 0,
+          });
           const { annotationCounts, failedFiles } = await handleNewAnnotations(
             diagrams,
             items,

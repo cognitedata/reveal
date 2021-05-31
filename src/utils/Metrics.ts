@@ -66,6 +66,7 @@ export function trackTimedUsage(event: string, props?: Props): Timer {
 
 export const PNID_METRICS = {
   landingPage: {
+    startNew: 'EngineeringDiagrams.landingPage.startNew',
     editFile: 'EngineeringDiagrams.landingPage.editFile',
     viewFile: 'EngineeringDiagrams.landingPage.viewFile',
     deleteAnnotations: 'EngineeringDiagrams.landingPage.deleteAnnotations',
@@ -80,6 +81,12 @@ export const PNID_METRICS = {
     bySearch: 'EngineeringDiagrams.filters.bySearch',
   },
   configuration: 'EngineeringDiagrams.configuration',
+  parsingJob: {
+    start: 'EngineeringDiagrams.pasringJob.start',
+    end: 'EngineeringDiagrams.pasringJob.end',
+    results: 'EngineeringDiagrams.pasringJob.results',
+  },
+  convertingJob: 'EngineeringDiagrams.convertingJob.time',
   results: {
     convertToSvg: 'EngineeringDiagrams.results.convertToSvg',
     linkToAssets: 'EngineeringDiagrams.results.linkToAssets',

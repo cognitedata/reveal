@@ -28,7 +28,7 @@ const Breadcrumbs = ({ breadcrumbs }: BreadcrumbsProps) => (
     >
       <Breadcrumb.Item
         onClick={() =>
-          trackUsage(PNID_METRICS.navigation.stepsWizard, {
+          trackUsage(PNID_METRICS.navigation.breadcrumbs, {
             to: 'Cognite data fusion',
           })
         }
@@ -40,7 +40,7 @@ const Breadcrumbs = ({ breadcrumbs }: BreadcrumbsProps) => (
           <Breadcrumb.Item
             key={crumb.title}
             onClick={() =>
-              trackUsage(PNID_METRICS.navigation.stepsWizard, {
+              trackUsage(PNID_METRICS.navigation.breadcrumbs, {
                 to: crumb.title,
               })
             }

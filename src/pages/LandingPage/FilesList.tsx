@@ -124,7 +124,9 @@ export default function FilesList(props: FilesListProps) {
 
   const LoadMorePanel = () => {
     const onClickLoadMore = () => {
-      trackUsage(PNID_METRICS.landingPage.loadMore);
+      trackUsage(PNID_METRICS.landingPage.loadMore, {
+        chunk: loadChunk + 1,
+      });
       setLoadChunk(loadChunk + 1);
     };
     const canLoadMore = total > files.length && !hidePanel;

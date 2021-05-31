@@ -54,8 +54,8 @@ export const startPnidParsingWorkflow = {
 
       trackUsage(PNID_METRICS.selection, {
         diagrams: diagrams.length,
-        assets: assets?.length,
-        files: files?.length,
+        assets: assets?.length ?? 0,
+        files: files?.length ?? 0,
       });
 
       trackUsage(PNID_METRICS.configuration, {
