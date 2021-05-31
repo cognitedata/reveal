@@ -42,12 +42,23 @@ It is possible to specify a custom position for the axis tool.
 Position can be specified using either `RelativePosition` or `AbsolutePosition`.
 Using `AbsolutePosition` will position the axis cross at a specific position within the canvas of the viewer.
 
+:::note
+The Y axis is positive upwards, meaning that 0 is at the bottom of the viewer.
+:::
 
 ```jsx runnable
 // import { AxisViewTool } from '@cognite/reveal/tools';
 
-new AxisViewTool(viewer, {position: {xAbsolute: 100, yAbsolute: 100}});
+new AxisViewTool(viewer, {
+  position: { 
+    xAbsolute: viewer.domElement.clientWidth / 2 - 64, 
+    yAbsolute: 10
+  },
+  size: 128
+});
 ```
+
+
 
 Using `RelativePosition` will position the axis cross relative to a specific corner (will also handle screen resize).
 
