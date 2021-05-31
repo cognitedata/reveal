@@ -60,7 +60,9 @@ type Props = Omit<
 };
 
 export function DetectionModelSelect({ value, onChange, ...props }: Props) {
-  const [selectedOptionsCount, setSelectedOptionsCount] = useState<number>(1);
+  const [selectedOptionsCount, setSelectedOptionsCount] = useState<number>(
+    value.length
+  );
   const maxFill = 90;
   const colorStyles = {
     base: (styles: any) => ({ ...styles }),
