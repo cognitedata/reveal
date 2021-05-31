@@ -14,13 +14,14 @@ const shouldUpdate = (itemsToGetUpdated: Item[], newItems: Item[]) =>
 
 /**
  * This hook decides what items need to be fetched. In case of diagrams,
- * it also takes diagramToContextualizeId if we want to contextualize
- * one specific diagram (usually chosen on landing page)
+ * it also takes diagramsToContextualizeIds if we want to contextualize
+ * one or more specific diagrams (usually chosen on landing page,
+ * or going back to previous selection)
  */
 export const useItemsAndFetching = (
   type: ResourceType,
   filter: Filter,
-  diagramToContextualizeId?: number
+  diagramsToContextualizeIds?: number[]
 ) => {
   const [fixedItems, setFixedItems] = useState<Item[]>([]);
   const [fixedFetching, setFixedFetching] = useState(false);
@@ -32,7 +33,7 @@ export const useItemsAndFetching = (
   } = useIncludeSelectedDiagramInDiagramList(
     type,
     filter,
-    diagramToContextualizeId
+    diagramsToContextualizeIds
   );
   const { items: defaultItems, fetching: fetchingDefaultItems } = useSelector(
     searchItemSelector
@@ -56,11 +57,11 @@ export const useItemsAndFetching = (
   };
 
   useEffect(() => {
-    if (diagramToContextualizeId) getAndUpdateDiagrams();
+    if (diagramsToContextualizeIds) getAndUpdateDiagrams();
     else getAndUpdateOtherItems();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    diagramToContextualizeId,
+    diagramsToContextualizeIds,
     prevItems,
     diagramsWithInsertedFile,
     fetchingDiagramsWithInsertedFile,
@@ -81,36 +82,38 @@ export const useItemsAndFetching = (
  * we don't refetch it, but we still move it to front.
  * @param type : ResourceType;
  * @param filter : Filter;
- * @param diagramToContextualizeId? : number;
+ * @param diagramsToContextualizeIds? : number;
  * @returns
  */
 export const useIncludeSelectedDiagramInDiagramList = (
   type: ResourceType,
   filter: Filter,
-  diagramToContextualizeId?: number
+  diagramsToContextualizeIds?: number[]
 ) => {
   const [fixedDiagrams, setFixedDiagrams] = useState<FileInfo[]>([]);
   const { items, fetching } = useSelector(searchItemSelector)(type, filter);
   const prevDiagrams = usePrevious(fixedDiagrams);
-  const diagramToContextualizeFromStore = useSelector(
+  const diagramsToContextualizeFromStore = useSelector(
     (state: RootState) =>
-      diagramToContextualizeId &&
-      state.files?.items?.list?.[diagramToContextualizeId]
+      diagramsToContextualizeIds &&
+      Object.values(state.files?.items?.list).filter((diagram) =>
+        diagramsToContextualizeIds.includes(diagram?.id)
+      )
   );
 
   const allRelevantDiagrams = (): FileInfo[] => {
     const mappedItems = items?.map((item: FileInfo) => ({ ...item })) ?? [];
-    if (diagramToContextualizeId) {
-      const diagramToContextualizeFromList = mappedItems.find(
-        (item: FileInfo) => item.id === diagramToContextualizeId
+    if (diagramsToContextualizeIds) {
+      const diagramsToContextualizeFromList = mappedItems.filter(
+        (item: FileInfo) => diagramsToContextualizeIds.includes(item.id)
       );
       const allOtherDiagrams = mappedItems.filter(
-        (item: FileInfo) => item.id !== diagramToContextualizeId
+        (item: FileInfo) => !diagramsToContextualizeIds.includes(item.id)
       );
-      if (diagramToContextualizeFromList)
-        return [diagramToContextualizeFromList, ...allOtherDiagrams];
-      if (diagramToContextualizeFromStore)
-        return [diagramToContextualizeFromStore, ...allOtherDiagrams];
+      if (diagramsToContextualizeFromList?.length)
+        return [...diagramsToContextualizeFromList, ...allOtherDiagrams];
+      if (diagramsToContextualizeFromStore?.length)
+        return [...diagramsToContextualizeFromStore, ...allOtherDiagrams];
       return [...allOtherDiagrams];
     }
     return mappedItems;
@@ -121,7 +124,7 @@ export const useIncludeSelectedDiagramInDiagramList = (
     if (shouldUpdate(prevDiagrams, relevantDiagrams))
       setFixedDiagrams(relevantDiagrams);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [items, fetching, diagramToContextualizeFromStore]);
+  }, [items, fetching, diagramsToContextualizeFromStore]);
 
   return { items: fixedDiagrams, fetching };
 };

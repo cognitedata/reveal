@@ -79,6 +79,8 @@ export const PNID_METRICS = {
     byDataSet: 'filters.byDataSet',
     byLabels: 'filters.byLabels',
     bySearch: 'filters.bySearch',
+    byRootAsset: 'filters.byRootAsset',
+    byMimeType: 'filters.byMimeType',
   },
   configuration: 'configuration',
   parsingJob: {

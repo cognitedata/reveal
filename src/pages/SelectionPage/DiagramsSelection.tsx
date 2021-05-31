@@ -30,26 +30,28 @@ export default function DiagramsSelection(props: SelectionProps): JSX.Element {
     setSelectAll,
     setSelectedRowKeys,
   } = props;
-  const [diagramToContextualizeId, setDiagramToContextualizeId] = useState();
+  const [diagramsToContextualizeIds, setDiagramsToContextualizeIds] = useState<
+    number[]
+  >([]);
   const [
-    diagramToContextualizeLoaded,
-    setDiagramToContextualizeLoaded,
+    diagramsToContextualizeLoaded,
+    setDiagramsToContextualizeLoaded,
   ] = useState(false);
   const { diagrams = undefined } = useSelector(getActiveWorkflowItems);
 
-  const fetchUserSelectedDiagram = () => {
+  const fetchUserSelectedDiagrams = () => {
     const isParticularDiagramEdited =
-      diagrams &&
-      diagrams.type === 'files' &&
-      diagrams.endpoint === 'retrieve' &&
-      diagrams.filter.length === 1;
-    if (isParticularDiagramEdited && !diagramToContextualizeLoaded) {
-      setDiagramToContextualizeId(diagrams?.filter?.[0]?.id);
+      diagrams && diagrams.type === 'files' && diagrams.endpoint === 'retrieve';
+    if (isParticularDiagramEdited && !diagramsToContextualizeLoaded) {
+      const diagramsIds = diagrams?.filter?.map(
+        (diagram: { id: number }) => diagram.id
+      );
+      setDiagramsToContextualizeIds(diagramsIds);
     }
   };
 
   useEffect(() => {
-    fetchUserSelectedDiagram();
+    fetchUserSelectedDiagrams();
     // we want this to happen only on mount
     // otherwise the first selected file will be treated as "edited" one
     // and be shifted to beginning of the page for no reason
@@ -59,17 +61,17 @@ export default function DiagramsSelection(props: SelectionProps): JSX.Element {
   useEffect(() => {
     if (
       workflowId &&
-      diagramToContextualizeId &&
-      !diagramToContextualizeLoaded
+      diagramsToContextualizeIds?.length &&
+      !diagramsToContextualizeLoaded
     ) {
       dispatch(loadWorkflowDiagrams({ workflowId, loadAll: true }));
-      setDiagramToContextualizeLoaded(true);
+      setDiagramsToContextualizeLoaded(true);
     }
   }, [
     dispatch,
     workflowId,
-    diagramToContextualizeId,
-    diagramToContextualizeLoaded,
+    diagramsToContextualizeIds,
+    diagramsToContextualizeLoaded,
   ]);
 
   return (
@@ -89,7 +91,7 @@ export default function DiagramsSelection(props: SelectionProps): JSX.Element {
         selectedRowKeys={selectedRowKeys}
         setSelectAll={setSelectAll}
         setSelectedRowKeys={setSelectedRowKeys}
-        diagramToContextualizeId={diagramToContextualizeId}
+        diagramsToContextualizeIds={diagramsToContextualizeIds}
       />
     </Flex>
   );

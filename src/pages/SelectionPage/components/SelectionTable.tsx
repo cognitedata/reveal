@@ -17,7 +17,7 @@ type Props = {
   selectedRowKeys: number[];
   setSelectAll: (isSelectAll: boolean) => void;
   setSelectedRowKeys: (selectedRowKeys: number[]) => void;
-  diagramToContextualizeId?: number;
+  diagramsToContextualizeIds?: number[];
 };
 
 export default function SelectionTable(props: Props): JSX.Element {
@@ -28,7 +28,7 @@ export default function SelectionTable(props: Props): JSX.Element {
     selectedRowKeys,
     setSelectAll,
     setSelectedRowKeys,
-    diagramToContextualizeId,
+    diagramsToContextualizeIds,
   } = props;
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -43,7 +43,7 @@ export default function SelectionTable(props: Props): JSX.Element {
   const { items, fetching } = useItemsAndFetching(
     type,
     filter,
-    diagramToContextualizeId
+    diagramsToContextualizeIds
   );
 
   const onPaginationChange = (newPage: number, newPageSize?: number) => {

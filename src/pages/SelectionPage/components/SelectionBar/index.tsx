@@ -8,9 +8,11 @@ import { Flex } from 'components/Common';
 import DataSetSelect from 'components/DataSetSelect';
 import { searchCountSelector } from 'pages/SelectionPage/selectors';
 import { LabelFilter } from 'components/LabelFilter';
-// import FilterMenu from './FilterMenu';
 import omit from 'lodash/omit';
 import { PNID_METRICS, trackUsage } from 'utils/Metrics';
+import { OptionsType } from './types';
+import RootAssetsSelect from './RootAssetSelect';
+import MimeTypeSelect from './MimeTypeSelect';
 
 type Props = {
   type: ResourceType;
@@ -86,8 +88,45 @@ export default function SelectionBar(props: Props): JSX.Element {
     }
     updateFilter(newFilter);
   };
+  const onRootAssetSelected = (rootAsset: OptionsType) => {
+    const id = rootAsset?.value;
+    const newFilter = {
+      ...filter,
+      filter: {
+        ...filter.filter,
+        rootIds: id ? [{ id }] : undefined,
+      },
+    };
+    if (id) {
+      trackUsage(PNID_METRICS.filters.byRootAsset, {
+        rootAssetId: id,
+      });
+    }
+    updateFilter(newFilter);
+  };
+  const onMimeTypeSelected = (mimeType: OptionsType) => {
+    const newMimeType = mimeType?.value;
+    const newFilter = {
+      ...filter,
+      filter: {
+        ...filter.filter,
+        mimeType: newMimeType,
+      },
+    };
+    if (newMimeType) {
+      trackUsage(PNID_METRICS.filters.byMimeType, {
+        mimeType: newMimeType,
+      });
+    }
+    updateFilter(newFilter);
+  };
 
-  const dataSetIds = (filter.filter?.dataSetIds || []).map((el: any) => el.id);
+  const dataSetIds = (filter.filter?.dataSetIds || []).map(
+    (el: { id: number }) => el.id
+  );
+  const rootAsset = (filter.filter?.rootIds || []).map(
+    (el: { id: number }) => el.id
+  );
   const selected = isSelectAll ? count || 0 : selectedRowKeys.length;
   const results = count ?? <Spin size="small" />;
 
@@ -109,6 +148,18 @@ export default function SelectionBar(props: Props): JSX.Element {
             onDataSetSelected={onDataSetSelected}
           />
           <LabelFilter value={labels} setValue={onLabelsChange} />
+          {type === 'assets' && (
+            <RootAssetsSelect
+              selectedRootAsset={rootAsset}
+              onRootAssetSelected={onRootAssetSelected}
+            />
+          )}
+          {type === 'files' && (
+            <MimeTypeSelect
+              selectedMimeType={filter.filter?.mimeType}
+              onMimeTypeSelected={onMimeTypeSelected}
+            />
+          )}
         </InputRow>
         <Selected>
           {selected} {type} selected

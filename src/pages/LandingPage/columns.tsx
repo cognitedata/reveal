@@ -67,20 +67,12 @@ export const getColumns = (
     width: '100px',
     align: 'center' as 'center',
     render: (file: FileInfo) => {
-      const isPdf = file.mimeType === 'application/pdf';
       return (
         <SettingButtons row align>
-          <Tooltip
-            content={
-              isPdf
-                ? TOOLTIP_STRINGS.EDIT_FILE_TOOLTIP
-                : TOOLTIP_STRINGS.EDIT_NON_PDF_FILE_TOOLTIP
-            }
-          >
+          <Tooltip content={TOOLTIP_STRINGS.EDIT_FILE_TOOLTIP}>
             <IconButton
               $square
               icon="Edit"
-              disabled={!isPdf}
               onClick={(
                 event: React.MouseEvent<HTMLButtonElement, MouseEvent>
               ) => {
