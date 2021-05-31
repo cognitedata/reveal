@@ -1,5 +1,7 @@
 import { modulo } from './numbers';
 
+const availableColorsKey = 'availableColorsKey';
+
 export const availableColors = [
   '#6929c4',
   '#1192e8',
@@ -22,9 +24,16 @@ export function getColor(value: number) {
 }
 
 export function createColorGetter() {
+  const availableColorsKeyValue = window.localStorage.getItem(
+    availableColorsKey
+  );
   let count = -1;
+  if (availableColorsKeyValue) {
+    count = +availableColorsKeyValue;
+  }
   return () => {
     count += 1;
+    window.localStorage.setItem(availableColorsKey, count.toString());
     return getColor(count);
   };
 }
