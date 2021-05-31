@@ -73,7 +73,7 @@ const App = () => {
                     <Router history={history}>
                       <Switch>
                         <Route
-                          path="/:tenant/pnid_parsing_beta"
+                          path="/:tenant/pnid_parsing_new"
                           component={RootApp}
                         />
                       </Switch>
