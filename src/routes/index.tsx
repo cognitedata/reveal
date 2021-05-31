@@ -30,7 +30,7 @@ const PDF_FILTER = {
 const BREADCRUMBS = {
   default: {
     title: 'Interactive engineering diagrams',
-    path: '/pnid_parsing_new',
+    path: '/pnid_parsing_beta',
   },
 };
 
