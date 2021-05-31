@@ -19,7 +19,7 @@ interface UpdateSearch {
 }
 interface UpdateStatus {
   type: RUN_ACTION_TYPE.UPDATE_STATUS;
-  payload: RunStatus | undefined;
+  payload: RunStatus[];
 }
 
 type UpdateActions = UpdateDateRange | UpdateSearch | UpdateStatus;
@@ -44,7 +44,7 @@ export const updateDateRangeAction = (
 
 interface StateType {
   dateRange: Range;
-  status?: RunStatus;
+  statuses: RunStatus[];
   search: string;
 }
 
@@ -60,7 +60,7 @@ const initialState = {
     startDate: moment(Date.now()).subtract(1, 'week').toDate(),
     endDate: moment(Date.now()).toDate(),
   },
-  status: undefined,
+  statuses: [],
   search: '',
 };
 
@@ -72,7 +72,7 @@ const RunFilterContext = React.createContext<IntegrationContextType>({
 export interface RunFilterProviderProps {
   search?: string;
   dateRange?: Range;
-  status?: RunStatus;
+  statuses?: RunStatus[];
 }
 
 export const runFilterReducer = (
@@ -90,7 +90,7 @@ export const runFilterReducer = (
       };
     }
     case RUN_ACTION_TYPE.UPDATE_STATUS: {
-      return { ...state, status: action.payload };
+      return { ...state, statuses: action.payload };
     }
     case RUN_ACTION_TYPE.UPDATE_SEARCH: {
       return { ...state, search: action.payload };
@@ -102,12 +102,12 @@ export const runFilterReducer = (
 
 export const RunFilterProvider = ({
   children,
-  status = initialState.status,
+  statuses = initialState.statuses,
   search = initialState.search,
   dateRange = initialState.dateRange,
 }: PropsWithChildren<RunFilterProviderProps>) => {
   const [state, dispatch] = useReducer(runFilterReducer, {
-    status,
+    statuses,
     search,
     dateRange,
   });

@@ -76,7 +76,7 @@ export const IntegrationHealth: FunctionComponent<LogsViewProps> = ({
 }: PropsWithChildren<LogsViewProps>) => {
   const [runs, setRuns] = useState<StatusRun[]>([]);
   const {
-    state: { dateRange, status, search },
+    state: { dateRange, statuses, search },
   } = useRunFilterContext();
   const [nextCursor, setNextCursor] = useState<string | undefined>();
   const [pageSize] = useState(PAGE_SIZE_DEFAULT);
@@ -84,7 +84,7 @@ export const IntegrationHealth: FunctionComponent<LogsViewProps> = ({
 
   const { data, error, isPreviousData } = useFilteredRuns({
     externalId: integration?.externalId,
-    status,
+    statuses,
     search,
     dateRange,
     nextCursor,

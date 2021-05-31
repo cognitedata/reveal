@@ -47,19 +47,19 @@ describe('useRuns', () => {
 
 describe('createRunsFilter', () => {
   test('Creates filter', () => {
-    const status = RunStatus.SUCCESS;
+    const statuses = [RunStatus.SUCCESS];
     const search = 'message';
     const externalId = 'testid';
     const dateRange = {
       startDate: new Date(2021, 5, 1),
       endDate: new Date(2021, 5, 21),
     };
-    const res = createRunsFilter({ externalId, dateRange, status, search });
+    const res = createRunsFilter({ externalId, dateRange, statuses, search });
     expect(res.filter.externalId).toEqual(externalId);
     expect(res.filter.createdTime.max).toBeDefined();
     expect(res.filter.createdTime.min).toBeDefined();
     expect(res.filter.message.substring).toEqual(search);
-    expect(res.filter.status).toEqual(status);
+    expect(res.filter.statuses).toEqual(statuses);
     expect(res.limit).toEqual(DEFAULT_LIMIT);
     expect(res.cursor).toBeUndefined();
   });
@@ -69,7 +69,7 @@ describe('createRunsFilter', () => {
     expect(res.filter.externalId).toBeUndefined();
     expect(res.filter.createdTime).toBeUndefined();
     expect(res.filter.message).toBeUndefined();
-    expect(res.filter.status).toBeUndefined();
+    expect(res.filter.statuses).toBeUndefined();
     expect(res.limit).toEqual(DEFAULT_LIMIT);
     expect(res.cursor).toBeUndefined();
   });

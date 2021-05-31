@@ -13,21 +13,21 @@ describe('RunsFilterContext', () => {
   };
   const cases = [
     {
-      field: 'status',
-      action: updateStatusAction(RunStatus.SUCCESS),
+      field: 'statuses',
+      action: updateStatusAction([RunStatus.SUCCESS]),
       otherFields: ['search', 'dateRange'],
-      expected: RunStatus.SUCCESS,
+      expected: [RunStatus.SUCCESS],
     },
     {
       field: 'search',
       action: updateSearchAction('test search'),
-      otherFields: ['status', 'dateRange'],
+      otherFields: ['statuses', 'dateRange'],
       expected: 'test search',
     },
     {
       field: 'dateRange',
       action: updateDateRangeAction(dateRange),
-      otherFields: ['status', 'search'],
+      otherFields: ['statuses', 'search'],
       expected: dateRange,
     },
   ];

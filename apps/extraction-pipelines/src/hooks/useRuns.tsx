@@ -32,7 +32,7 @@ export const useFilteredRuns = (params: CreateRunFilterParam) => {
       project,
       data,
       data.filter.externalId,
-      data.filter?.status,
+      data.filter?.statuses,
       data.filter.message?.substring,
       data.filter.createdTime?.min,
       data.filter.createdTime?.max,
@@ -51,13 +51,13 @@ type CreateRunFilterParam = {
   nextCursor?: string;
   search?: string;
   dateRange?: Range;
-  status?: RunStatus;
+  statuses?: RunStatus[];
   limit?: number;
 };
 export const createRunsFilter = ({
   externalId,
   dateRange,
-  status,
+  statuses,
   search,
   limit = DEFAULT_LIMIT,
   nextCursor,
@@ -73,7 +73,7 @@ export const createRunsFilter = ({
             },
           }
         : {}),
-      ...(status && { status }),
+      ...(statuses && { statuses }),
       ...(search && {
         message: {
           substring: search,

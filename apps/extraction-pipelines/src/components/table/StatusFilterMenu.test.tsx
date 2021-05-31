@@ -13,13 +13,13 @@ describe('StatusFilterMenu', () => {
   });
 
   test('Shows value from provider', () => {
-    const status = RunStatus.SUCCESS;
+    const statuses = [RunStatus.SUCCESS];
     renderWithRunFilterContext(<StatusFilterMenu />, {
-      providerProps: { status },
+      providerProps: { statuses },
     });
-    const statusFilterBtn = screen.getByText(Status.OK);
-    expect(statusFilterBtn).toBeInTheDocument();
-    fireEvent.click(statusFilterBtn);
+    const statusesFilterBtn = screen.getByText(Status.OK);
+    expect(statusesFilterBtn).toBeInTheDocument();
+    fireEvent.click(statusesFilterBtn);
     // menu
     expect(screen.getByText(Status.FAIL)).toBeInTheDocument();
     expect(screen.getAllByText(Status.OK).length).toEqual(2); // menu item + text on menu button
@@ -27,13 +27,13 @@ describe('StatusFilterMenu', () => {
   });
 
   test('Interact with input', () => {
-    const status = RunStatus.SUCCESS;
+    const statuses = [RunStatus.SUCCESS];
     renderWithRunFilterContext(<StatusFilterMenu />, {
-      providerProps: { status },
+      providerProps: { statuses },
     });
-    const statusFilterBtn = screen.getByText(Status.OK);
-    expect(statusFilterBtn).toBeInTheDocument();
-    fireEvent.click(statusFilterBtn);
+    const statusesFilterBtn = screen.getByText(Status.OK);
+    expect(statusesFilterBtn).toBeInTheDocument();
+    fireEvent.click(statusesFilterBtn);
     // menu
     const failFilterItem = screen.getByText(Status.FAIL);
     fireEvent.click(failFilterItem);

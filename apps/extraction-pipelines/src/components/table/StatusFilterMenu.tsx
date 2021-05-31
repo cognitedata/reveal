@@ -13,20 +13,20 @@ interface StatusFilterMenuProps {}
 
 export const StatusFilterMenu: FunctionComponent<StatusFilterMenuProps> = () => {
   const {
-    state: { status },
+    state: { statuses },
     dispatch,
   } = useRunFilterContext();
 
   const updateStatus = (newStatus?: Status) => {
     const run = mapStatusRun(newStatus);
     trackUsage(FILTER, { field: 'status', value: run ?? 'All' });
-    dispatch(updateStatusAction(run));
+    dispatch(updateStatusAction(run ? [run] : []));
   };
 
   return (
     <StatusMenu
       setSelected={updateStatus}
-      selected={mapStatus(status)}
+      selected={mapStatus(statuses[0])}
       btnType="tertiary"
     />
   );
