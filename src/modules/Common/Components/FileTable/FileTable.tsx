@@ -7,8 +7,10 @@ import { NameRenderer } from 'src/modules/Common/Containers/FileTableRenderers/N
 import { StatusRenderer } from 'src/modules/Common/Containers/FileTableRenderers/StatusRenderer';
 import { AnnotationRenderer } from 'src/modules/Common/Containers/FileTableRenderers/AnnotationRenderer';
 import { ActionRenderer } from 'src/modules/Common/Containers/FileTableRenderers/ActionRenderer';
+import { NameSorter } from 'src/modules/Common/Containers/Sorters/NameSorter';
 import { FileTableProps } from './types';
 import { SorterPaginationWrapper } from '../SorterPaginationWrapper/SorterPaginationWrapper';
+import { MimeTypeSorter } from '../../Containers/Sorters/MimeTypeSorter';
 
 export function FileTable(props: FileTableProps) {
   const columns: ColumnShape<TableDataItem>[] = [
@@ -18,31 +20,34 @@ export function FileTable(props: FileTableProps) {
       dataKey: 'name',
       width: 0,
       flexGrow: 1, // since table is fixed, at least one col must grow
+      sortable: true,
     },
     {
       key: 'mimeType',
       title: 'Mime Type',
       dataKey: 'mimeType',
-      width: 100,
+      width: 150,
+      sortable: true,
+      align: Column.Alignment.LEFT,
     },
     {
       key: 'status',
       title: 'Status',
       width: 250,
-      align: Column.Alignment.CENTER,
+      align: Column.Alignment.LEFT,
     },
     {
       key: 'annotations',
       title: 'Annotations',
       width: 0,
       flexGrow: 1,
-      align: Column.Alignment.CENTER,
+      align: Column.Alignment.LEFT,
     },
     {
       key: 'action',
-      title: 'File Actions',
+      title: '',
       dataKey: 'menu',
-      align: Column.Alignment.CENTER,
+      align: Column.Alignment.RIGHT,
       width: 200,
     },
   ];
@@ -53,6 +58,11 @@ export function FileTable(props: FileTableProps) {
     status: StatusRenderer,
     annotations: AnnotationRenderer,
     action: ActionRenderer,
+  };
+
+  const sorters = {
+    name: NameSorter,
+    mimeType: MimeTypeSorter,
   };
 
   const rowClassNames = ({
@@ -76,6 +86,7 @@ export function FileTable(props: FileTableProps) {
       data={props.data}
       totalCount={props.totalCount}
       pagination
+      sorters={sorters}
     >
       <SelectableTable
         {...props}
@@ -85,6 +96,8 @@ export function FileTable(props: FileTableProps) {
         onRowSelect={props.onRowSelect}
         rowClassNames={rowClassNames}
         rowEventHandlers={rowEventHandlers}
+        allRowsSelected={props.allRowsSelected}
+        onSelectAllRows={props.onSelectAllRows}
       />
     </SorterPaginationWrapper>
   );

@@ -25,6 +25,7 @@ import { CreateAnnotations } from 'src/store/thunks/CreateAnnotations';
 import { DeleteAnnotationsByFileIds } from 'src/store/thunks/DeleteAnnotationsByFileIds';
 import { workflowRoutes } from 'src/modules/Workflow/workflowRoutes';
 import { PopulateAnnotations } from 'src/store/thunks/PopulateAnnotations';
+import { CDFStatus } from 'src/modules/Common/Components/CDFStatus/CDFStatus';
 
 const DeleteButton = (props: { onConfirm: () => void }) => (
   <Popconfirm
@@ -64,6 +65,10 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
 
   const file = useSelector(({ filesSlice }: RootState) =>
     selectFileById(filesSlice, fileId)
+  );
+
+  const cdfStatus = useSelector(
+    ({ filesSlice }: RootState) => filesSlice.saveState
   );
 
   if (!file) {
@@ -127,10 +132,11 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
             style={{ fontSize: '14px' }}
             level={3}
           >
+            {/* Todo: BreadCrumbs */}
             CDF / Contextualize Imagry Data /{' '}
             <strong>Review annotations</strong>
           </Title>
-          {/* Todo: CDFStatus should go here  */}
+          <CDFStatus mode={cdfStatus.mode} time={cdfStatus.time} />
           <DeleteButton onConfirm={handleFileDelete} />
         </ToolBar>
         {isVideo(file) ? (
@@ -179,6 +185,6 @@ const ToolBar = styled.div`
   width: 100%;
   display: grid;
   align-items: center;
-  grid-template-columns: 130px auto 130px;
+  grid-template-columns: 130px auto 20px 170px 130px;
   grid-column-gap: 16px;
 `;

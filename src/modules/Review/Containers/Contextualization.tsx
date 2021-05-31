@@ -65,7 +65,7 @@ export const EditContextualization = ({
           }
           onClick={handleEditPolygon}
         >
-          Edit polygon
+          Edit polygons
         </StyledButton>
       )}
       <StyledButton
