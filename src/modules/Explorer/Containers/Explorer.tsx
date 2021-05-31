@@ -59,11 +59,16 @@ const Explorer = () => {
     dispatch(setExplorerQueryString(text));
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleItemClick = ({ menu, selected, ...file }: TableDataItem) => {
+  const handleItemClick = (
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    { menu, selected, ...file }: TableDataItem,
+    showFileDetailsOnClick: boolean = true
+  ) => {
     dispatch(addUploadedFile(file as FileInfo));
     dispatch(setExplorerSelectedFileId(file.id));
-    dispatch(showExplorerFileMetadata());
+    if (showFileDetailsOnClick) {
+      dispatch(showExplorerFileMetadata());
+    }
   };
 
   const handleRowSelect = (item: TableDataItem, selected: boolean) => {
@@ -155,7 +160,8 @@ const Explorer = () => {
             </ViewContainer>
           </TablePanel>
           {showMetadata && (
-            <DrawerContainer>
+            // eslint-disable-next-line  @cognite/no-number-z-index
+            <DrawerContainer style={{ zIndex: 1 }}>
               <QueryClientProvider client={queryClient}>
                 <FileDetails fileId={fileId} onClose={handleMetadataClose} />
               </QueryClientProvider>
@@ -233,6 +239,7 @@ const DrawerContainer = styled.div`
   height: 100%;
   flex-shrink: 0;
   overflow: auto;
+  background: white;
 `;
 
 export default Explorer;

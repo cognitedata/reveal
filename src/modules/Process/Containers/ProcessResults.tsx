@@ -51,6 +51,7 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
   const data: ResultData[] = useMemo(() => {
     return processFiles.map((file) => {
       const menuActions: FileActions = {
+        // TODO: should onDelete be added here as well?
         showMetadataPreview: (fileId: number) => {
           dispatch(setSelectedFileId(fileId));
           dispatch(resetEditHistory());
@@ -72,9 +73,14 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
     });
   }, [processFiles]);
 
-  const handleItemClick = (item: TableDataItem) => {
+  const handleItemClick = (
+    item: TableDataItem,
+    showFileDetailsOnClick: boolean = true
+  ) => {
     dispatch(setSelectedFileId(item.id));
-    dispatch(showFileMetadataPreview());
+    if (showFileDetailsOnClick) {
+      dispatch(showFileMetadataPreview());
+    }
   };
 
   const handleRowSelect = (item: TableDataItem, selected: boolean) => {
@@ -113,7 +119,17 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
       );
     }
     if (currentView === 'map') {
-      return <MapView data={data} />;
+      return (
+        <MapView
+          data={data}
+          onRowSelect={handleRowSelect}
+          onRowClick={handleItemClick}
+          selectedFileId={selectedId}
+          totalCount={data.length}
+          allRowsSelected={allFilesSelected}
+          onSelectAllRows={handleSelectAllFiles}
+        />
+      );
     }
 
     return (

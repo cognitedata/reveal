@@ -404,6 +404,7 @@ export const addEditAnnotationsToState = (
     } else {
       if (state.models.byId[modelId].annotations.includes(id)) {
         // todo: remove this check after development complete
+        // eslint-disable-next-line no-console
         console.error(
           'possible Error! annotation not available but available in model ids'
         );
