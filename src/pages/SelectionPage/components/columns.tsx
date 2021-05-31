@@ -38,7 +38,7 @@ export const getColumns = (resourceType: ResourceType) => {
               isAsset ? (
                 <AssetSmallPreview assetId={(resource as Asset)?.id} />
               ) : (
-                <FileSmallPreview fileId={(resource as FileInfo)?.id ?? 0} />
+                <FileSmallPreview fileId={(resource as FileInfo)?.id} />
               )
             }
           >
