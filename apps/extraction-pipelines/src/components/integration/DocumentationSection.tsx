@@ -28,27 +28,16 @@ import {
   BluePlus,
   BlueText,
   CloseButton,
-  SaveButton,
   EditButton,
+  SaveButton,
 } from 'styles/StyledButton';
 import { HeadingLabel } from 'components/inputs/HeadingLabel';
 import { DetailFieldNames } from 'model/Integration';
-import ReactMarkdown from 'react-markdown';
+import { MarkdownView } from 'components/markDown/MarkdownView';
 
 const EditDocumentationButton = styled(EditButton)`
   &.cogs-btn.cogs-btn-ghost.has-content {
     display: flex;
-    .documentation {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      text-align: left;
-      h1 {
-        margin: 1rem 0;
-        align-self: flex-start;
-      }
-    }
   }
   .cogs-documentation--header {
     margin: 1rem 0;
@@ -96,6 +85,7 @@ export const TEST_ID_BTN_SAVE: Readonly<string> = 'btn-save-';
 interface DocumentationSectionProps {}
 
 type Fields = { documentation: string; server: string };
+
 export const DocumentationSection: FunctionComponent<DocumentationSectionProps> = () => {
   const { project } = useAppEnv();
   const [isEdit, setEdit] = useState(false);
@@ -212,9 +202,9 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
             $full
           >
             {currentIntegration.documentation ? (
-              <ReactMarkdown className="documentation">
-                {currentIntegration?.documentation ?? ''}
-              </ReactMarkdown>
+              <MarkdownView>
+                {currentIntegration.documentation ?? ''}
+              </MarkdownView>
             ) : (
               <>
                 <BluePlus />
