@@ -124,7 +124,10 @@ const explorerSlice = createSlice({
     toggleExplorerFilterView(state) {
       state.showFilter = !state.showFilter;
     },
-    setFileUploadModalVisibility(state, action: PayloadAction<boolean>) {
+    setExplorerFileUploadModalVisibility(
+      state,
+      action: PayloadAction<boolean>
+    ) {
       state.showFileUploadModal = action.payload;
     },
   },
@@ -164,7 +167,7 @@ export const {
   setExplorerFilter,
   setExplorerCurrentView,
   toggleExplorerFilterView,
-  setFileUploadModalVisibility,
+  setExplorerFileUploadModalVisibility,
 } = explorerSlice.actions;
 
 export default explorerSlice.reducer;

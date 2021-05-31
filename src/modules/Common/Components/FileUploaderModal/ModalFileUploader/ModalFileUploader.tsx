@@ -10,10 +10,9 @@ import {
   CogsFileInfo,
 } from 'src/modules/Common/Components/FileUploader/FilePicker/types';
 import exifr from 'exifr';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import styled from 'styled-components';
-import { setFileUploadModalVisibility } from 'src/modules/Explorer/store/explorerSlice';
 import { useHistory } from 'react-router-dom';
 import { getLink, workflowRoutes } from 'src/modules/Workflow/workflowRoutes';
 import * as UPLODER_CONST from 'src/constants/UploderConstants';
@@ -192,8 +191,6 @@ export const ModalFileUploader = ({
       })
     );
   }, [initialUploadedFiles]);
-
-  const dispatch = useDispatch();
 
   useEffect(() => {
     onFileListChange(fileList);
@@ -432,7 +429,7 @@ export const ModalFileUploader = ({
 
   const onCloseModal = () => {
     removeFiles();
-    dispatch(setFileUploadModalVisibility(false));
+    onCancel();
   };
 
   const onFinish = () => {

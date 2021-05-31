@@ -4,6 +4,7 @@ import { RootState } from 'src/store/rootReducer';
 import {
   detectAnnotations,
   selectIsPollingComplete,
+  setProcessViewFileUploadModalVisibility,
   setSelectedDetectionModels,
 } from 'src/modules/Process/processSlice';
 import { message, notification } from 'antd';
@@ -12,8 +13,9 @@ import React from 'react';
 import { Button, Title } from '@cognite/cogs.js';
 import { DetectionModelSelect } from 'src/modules/Process/Components/DetectionModelSelect';
 import { isVideo } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
-import { selectAllFiles } from 'src/modules/Common/filesSlice';
+import { addUploadedFile, selectAllFiles } from 'src/modules/Common/filesSlice';
 import { VisionAPIType } from 'src/api/types';
+import { FileUploadModal } from 'src/modules/Common/Components/FileUploaderModal/FileUploaderModal';
 
 export const ProcessToolBar = () => {
   const dispatch = useDispatch();
@@ -32,6 +34,10 @@ export const ProcessToolBar = () => {
 
   const selectedDetectionModels = useSelector(
     (state: RootState) => state.processSlice.selectedDetectionModels
+  );
+
+  const showFileUploadModal = useSelector(
+    ({ processSlice }: RootState) => processSlice.showFileUploadModal
   );
 
   const onDetectClick = () => {
@@ -59,71 +65,96 @@ export const ProcessToolBar = () => {
     dispatch(setSelectedDetectionModels(models));
   };
 
+  const onUploadSuccess = React.useCallback(
+    (file) => {
+      dispatch(addUploadedFile(file));
+    },
+    [dispatch]
+  );
+
   const disableAddFiles = !isPollingFinished;
   const disableModelSelection = !files.length || !isPollingFinished;
 
   return (
-    <Container>
-      <FilesToolContainer disabled={disableAddFiles}>
-        <ElementTitle>
-          <Title level={6}>Add files</Title>
-        </ElementTitle>
-        <ElementContent>
-          <Button type="tertiary" icon="Upload" disabled={disableAddFiles}>
-            Upload
-          </Button>
-          <Button
-            type="tertiary"
-            icon="AddToList"
-            disabled
-            style={{ marginLeft: 8 }}
-          >
-            Select from files
-          </Button>
-        </ElementContent>
-      </FilesToolContainer>
-      <MLModelSelectContainer disabled={disableModelSelection}>
-        <ElementTitle>
-          <Title level={6}>Select ML model(s)</Title>
-          <ModelSettingsButton
-            icon="Settings"
-            aria-label="model settings"
-            disabled={disableModelSelection}
-          />
-        </ElementTitle>
-        <ElementContent>
-          <ModelOptions>
-            <ModelSelector>
-              <DetectionModelSelect
-                value={selectedDetectionModels}
-                onChange={onChange}
-                disabled={disableModelSelection}
-              />
-            </ModelSelector>
+    <>
+      <FileUploadModal
+        initialUploadedFiles={files}
+        onUploadSuccess={onUploadSuccess}
+        showModal={showFileUploadModal}
+        onCancel={() =>
+          dispatch(setProcessViewFileUploadModalVisibility(false))
+        }
+      />
+
+      <Container>
+        <FilesToolContainer disabled={disableAddFiles}>
+          <ElementTitle>
+            <Title level={6}>Add files</Title>
+          </ElementTitle>
+          <ElementContent>
             <Button
-              disabled={!isPollingFinished}
-              onClick={onDetectClick}
-              style={{
-                background: 'var(--cogs-gradient-midnightblue)',
-                color: '#fff',
-              }}
+              type="tertiary"
+              icon="Upload"
+              disabled={disableAddFiles}
+              onClick={() =>
+                dispatch(setProcessViewFileUploadModalVisibility(true))
+              }
             >
-              Detect
+              Upload
             </Button>
-          </ModelOptions>
-        </ElementContent>
-      </MLModelSelectContainer>
-      {isPollingFinished || showDrawer
-        ? notification.info({
-            ...toastProps,
-            duration: 0.01,
-            style: { ...toastProps.style, visibility: 'collapse' },
-          })
-        : notification.info({
-            ...toastProps,
-            duration: 0,
-          })}
-    </Container>
+            <Button
+              type="tertiary"
+              icon="AddToList"
+              disabled
+              style={{ marginLeft: 8 }}
+            >
+              Select from files
+            </Button>
+          </ElementContent>
+        </FilesToolContainer>
+        <MLModelSelectContainer disabled={disableModelSelection}>
+          <ElementTitle>
+            <Title level={6}>Select ML model(s)</Title>
+            <ModelSettingsButton
+              icon="Settings"
+              aria-label="model settings"
+              disabled={disableModelSelection}
+            />
+          </ElementTitle>
+          <ElementContent>
+            <ModelOptions>
+              <ModelSelector>
+                <DetectionModelSelect
+                  value={selectedDetectionModels}
+                  onChange={onChange}
+                  disabled={disableModelSelection}
+                />
+              </ModelSelector>
+              <Button
+                disabled={!isPollingFinished}
+                onClick={onDetectClick}
+                style={{
+                  background: 'var(--cogs-gradient-midnightblue)',
+                  color: '#fff',
+                }}
+              >
+                Detect
+              </Button>
+            </ModelOptions>
+          </ElementContent>
+        </MLModelSelectContainer>
+        {isPollingFinished || showDrawer
+          ? notification.info({
+              ...toastProps,
+              duration: 0.01,
+              style: { ...toastProps.style, visibility: 'collapse' },
+            })
+          : notification.info({
+              ...toastProps,
+              duration: 0,
+            })}
+      </Container>
+    </>
   );
 };
 const Container = styled.div`
