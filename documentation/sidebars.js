@@ -18,7 +18,6 @@ module.exports = {
       collapsed: false,
       items: [
         'examples/cad-basic',
-        'examples/cad-colors',
         { 
           "Styling CAD models": [
             'examples/cad-styling',
@@ -28,13 +27,10 @@ module.exports = {
             'examples/cad-styling-migrating-from-version-1',
           ] 
         },
-        'examples/cad-highlighting',
         'examples/cad-transform-override',
-        'examples/cad-ghostmode',
         'examples/cad-2doverlay',
         'examples/cad-3dobjects',
         'examples/node-visiting',
-        'examples/cad-nodefiltering',
         'examples/cad-preview',
         'examples/clipping',
         'examples/pointcloud',
