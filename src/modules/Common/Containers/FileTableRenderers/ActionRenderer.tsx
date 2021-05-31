@@ -13,7 +13,9 @@ import { selectUpdatedFileDetails } from 'src/modules/FileDetails/fileDetailsSli
 import { ReviewButton } from '../../Components/ReviewButton/ReviewButton';
 import { ActionMenu } from '../../Components/ActionMenu/ActionMenu';
 
-export function ActionRenderer({ rowData: { menu, id } }: CellRenderer) {
+export function ActionRenderer({
+  rowData: { menu, id, selected },
+}: CellRenderer) {
   const dispatch = useDispatch();
 
   const handleMetadataEdit = () => {
@@ -26,8 +28,6 @@ export function ActionRenderer({ rowData: { menu, id } }: CellRenderer) {
     dispatch(DeleteAnnotationsByFileIds([id]));
     dispatch(deleteFilesById([{ id }]));
   };
-
-  const showMenu = !!menu.showMetadataPreview;
 
   const handleReview = () => {
     if (menu?.onReviewClick) {
@@ -47,20 +47,20 @@ export function ActionRenderer({ rowData: { menu, id } }: CellRenderer) {
 
   return (
     <Action>
-      <ReviewButton
-        disabled={reviewDisabled}
-        onClick={handleReview}
-        style={{ marginRight: '10px' }}
-      />
-      {showMenu && (
-        <ActionMenu
-          showExifIcon={fileDetails?.geoLocation !== undefined}
+      {selected && (
+        <ReviewButton
           disabled={reviewDisabled}
-          handleReview={handleReview}
-          handleFileDelete={handleFileDelete}
-          handleMetadataEdit={handleMetadataEdit}
+          onClick={handleReview}
+          style={{ marginRight: '10px' }}
         />
       )}
+      <ActionMenu
+        showExifIcon={fileDetails?.geoLocation !== undefined}
+        disabled={reviewDisabled}
+        handleReview={handleReview}
+        handleFileDelete={handleFileDelete}
+        handleMetadataEdit={handleMetadataEdit}
+      />
     </Action>
   );
 }
