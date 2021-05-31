@@ -18,7 +18,7 @@ export const trackUsage = (
   const { username } = getAuthState();
 
   if (host.indexOf('localhost') === -1) {
-    trackEvent(`ContextUIPnid.${event}`, {
+    trackEvent(`EngineeringDiagrams.${event}`, {
       ...metadata,
       project: sdk.project,
       version: 1,
@@ -42,7 +42,7 @@ export class Timer {
     this.startProps = startProps;
 
     try {
-      trackEvent(`EngineeringDiagrams.time_event`, event);
+      trackEvent(`time_event`, event);
       // eslint-disable-next-line no-empty
     } catch (e) {}
   }
@@ -66,42 +66,42 @@ export function trackTimedUsage(event: string, props?: Props): Timer {
 
 export const PNID_METRICS = {
   landingPage: {
-    startNew: 'EngineeringDiagrams.landingPage.startNew',
-    editFile: 'EngineeringDiagrams.landingPage.editFile',
-    viewFile: 'EngineeringDiagrams.landingPage.viewFile',
-    deleteAnnotations: 'EngineeringDiagrams.landingPage.deleteAnnotations',
-    previewFile: 'EngineeringDiagrams.landingPage.previewFile',
-    useSearch: 'EngineeringDiagrams.landingPage.useSearch',
-    loadMore: 'EngineeringDiagrams.landingPage.loadMore',
+    startNew: 'landingPage.startNew',
+    editFile: 'landingPage.editFile',
+    viewFile: 'landingPage.viewFile',
+    deleteAnnotations: 'landingPage.deleteAnnotations',
+    previewFile: 'landingPage.previewFile',
+    useSearch: 'landingPage.useSearch',
+    loadMore: 'landingPage.loadMore',
   },
-  selection: 'EngineeringDiagrams.selection',
+  selection: 'selection',
   filters: {
-    byDataSet: 'EngineeringDiagrams.filters.byDataSet',
-    byLabels: 'EngineeringDiagrams.filters.byLabels',
-    bySearch: 'EngineeringDiagrams.filters.bySearch',
+    byDataSet: 'filters.byDataSet',
+    byLabels: 'filters.byLabels',
+    bySearch: 'filters.bySearch',
   },
-  configuration: 'EngineeringDiagrams.configuration',
+  configuration: 'configuration',
   parsingJob: {
-    start: 'EngineeringDiagrams.pasringJob.start',
-    end: 'EngineeringDiagrams.pasringJob.end',
-    results: 'EngineeringDiagrams.pasringJob.results',
+    start: 'pasringJob.start',
+    end: 'pasringJob.end',
+    results: 'pasringJob.results',
   },
-  convertingJob: 'EngineeringDiagrams.convertingJob.time',
+  convertingJob: 'convertingJob.time',
   results: {
-    convertToSvg: 'EngineeringDiagrams.results.convertToSvg',
-    linkToAssets: 'EngineeringDiagrams.results.linkToAssets',
+    convertToSvg: 'results.convertToSvg',
+    linkToAssets: 'results.linkToAssets',
   },
   navigation: {
-    stepsWizard: 'EngineeringDiagrams.navigation.stepsWizard',
-    nextButton: 'EngineeringDiagrams.navigation.nextButton',
-    backButton: 'EngineeringDiagrams.navigation.backButton',
-    breadcrumbs: 'EngineeringDiagrams.navigation.breadcrumbs',
+    stepsWizard: 'navigation.stepsWizard',
+    nextButton: 'navigation.nextButton',
+    backButton: 'navigation.backButton',
+    breadcrumbs: 'navigation.breadcrumbs',
   },
   fileViewer: {
-    convertToSvg: 'EngineeringDiagrams.fileViewer.convertToSvg',
-    linkToAssets: 'EngineeringDiagrams.fileViewer.linkToAssets',
-    manualTags: 'EngineeringDiagrams.fileViewer.manualTags',
-    viewTab: 'EngineeringDiagrams.fileViewer.viewTab',
-    deleteAnnotations: 'EngineeringDiagrams.fileViewer.deleteAnnotations',
+    convertToSvg: 'fileViewer.convertToSvg',
+    linkToAssets: 'fileViewer.linkToAssets',
+    manualTags: 'fileViewer.manualTags',
+    viewTab: 'fileViewer.viewTab',
+    deleteAnnotations: 'fileViewer.deleteAnnotations',
   },
 };
