@@ -7,7 +7,10 @@ export enum VisionAPIType {
 }
 
 export interface DetectionModelDataProvider {
-  postJob(requestBody: any): Promise<AnnotationJobResponse>;
+  postJob(
+    requestBody: any,
+    parameters?: DetectionModelParams
+  ): Promise<AnnotationJobResponse>;
   fetchJobById(jobId: number): Promise<AnnotationJobResponse>;
 }
 
@@ -104,3 +107,21 @@ export type AnnotationJobResponse =
 export type AnnotationJob = AnnotationJobResponse & {
   type: VisionAPIType;
 };
+
+export interface ParamsOCR {
+  useCache: boolean;
+}
+export interface ParamsTagDetection {
+  useCache: boolean;
+  partialMatch: boolean;
+  assetSubtreeIds: Array<number>;
+}
+
+export interface ParamsObjectDetection {
+  threshold: number;
+}
+
+export type DetectionModelParams =
+  | ParamsOCR
+  | ParamsTagDetection
+  | ParamsObjectDetection;

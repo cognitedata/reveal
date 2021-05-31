@@ -9,13 +9,15 @@ import {
 } from 'src/modules/Process/processSlice';
 import { message, notification } from 'antd';
 import { toastProps } from 'src/utils/ToastUtils';
-import React from 'react';
-import { Button, Title } from '@cognite/cogs.js';
+import React, { useState } from 'react';
+import { Button, Title, Modal } from '@cognite/cogs.js';
 import { DetectionModelSelect } from 'src/modules/Process/Components/DetectionModelSelect';
 import { isVideo } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
 import { addUploadedFile, selectAllFiles } from 'src/modules/Common/filesSlice';
 import { VisionAPIType } from 'src/api/types';
+import { getContainer } from 'src/utils';
 import { FileUploadModal } from 'src/modules/Common/Components/FileUploaderModal/FileUploaderModal';
+import { ModelConfiguration } from '../ModelConfiguration';
 
 export const ProcessToolBar = () => {
   const dispatch = useDispatch();
@@ -65,6 +67,8 @@ export const ProcessToolBar = () => {
     dispatch(setSelectedDetectionModels(models));
   };
 
+  const [isModalOpen, setModalOpen] = useState(false);
+
   const onUploadSuccess = React.useCallback(
     (file) => {
       dispatch(addUploadedFile(file));
@@ -87,6 +91,19 @@ export const ProcessToolBar = () => {
       />
 
       <Container>
+        <Modal
+          getContainer={getContainer}
+          footer={null}
+          visible={isModalOpen}
+          width={900}
+          closable={false}
+          onCancel={() => {
+            setModalOpen(false);
+          }}
+          style={{ background: '#fafafa', borderRadius: '10px' }}
+        >
+          <ModelConfiguration />
+        </Modal>
         <FilesToolContainer disabled={disableAddFiles}>
           <ElementTitle>
             <Title level={6}>Add files</Title>
@@ -119,6 +136,9 @@ export const ProcessToolBar = () => {
               icon="Settings"
               aria-label="model settings"
               disabled={disableModelSelection}
+              onClick={() => {
+                setModalOpen(true);
+              }}
             />
           </ElementTitle>
           <ElementContent>

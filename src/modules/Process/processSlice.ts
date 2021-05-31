@@ -6,7 +6,14 @@ import {
 } from '@reduxjs/toolkit';
 import { fetchJobById, createAnnotationJob } from 'src/api/annotationJob';
 import { fetchUntilComplete } from 'src/utils';
-import { AnnotationJob, VisionAPIType } from 'src/api/types';
+import {
+  AnnotationJob,
+  DetectionModelParams,
+  ParamsObjectDetection,
+  ParamsOCR,
+  ParamsTagDetection,
+  VisionAPIType,
+} from 'src/api/types';
 import { getFakeQueuedJob } from 'src/api/utils';
 import { fileProcessUpdate } from 'src/store/commonActions';
 import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
@@ -34,6 +41,11 @@ type State = {
     byId: Record<number, JobState>;
     allIds: number[];
   };
+  detectionModelParameters: {
+    ocr: ParamsOCR;
+    tagDetection: ParamsTagDetection;
+    objectDetection: ParamsObjectDetection;
+  };
 };
 
 const initialState: State = {
@@ -52,6 +64,19 @@ const initialState: State = {
   // eslint-disable-next-line global-require
   // jobsByFileId: require('./fakeJobs.json'),
   error: undefined,
+  detectionModelParameters: {
+    ocr: {
+      useCache: true,
+    },
+    tagDetection: {
+      useCache: true,
+      partialMatch: true,
+      assetSubtreeIds: [],
+    },
+    objectDetection: {
+      threshold: 0.8,
+    },
+  },
 };
 
 // for requested files, create annotation jobs with requested detectionModels and setup polling on these jobs
@@ -107,7 +132,11 @@ export const postAnnotationJob = createAsyncThunk<
 >(
   'process/postAnnotationJobs',
   async ({ modelType, fileIds }, { dispatch, getState }) => {
-    const createdJob = await createAnnotationJob(modelType, fileIds);
+    const params = getDetectionModelParameters(
+      getState().processSlice,
+      modelType
+    );
+    const createdJob = await createAnnotationJob(modelType, fileIds, params);
 
     const doesFileExist = (fileId: number) =>
       getState().filesSlice.files.byId[fileId];
@@ -170,6 +199,18 @@ const processSlice = createSlice({
       action: PayloadAction<Array<VisionAPIType>>
     ) {
       state.selectedDetectionModels = action.payload;
+    },
+    setParamsOCR(state, action: PayloadAction<ParamsOCR>) {
+      state.detectionModelParameters.ocr = action.payload;
+    },
+    setParamsTagDetection(state, action: PayloadAction<ParamsTagDetection>) {
+      state.detectionModelParameters.tagDetection = action.payload;
+    },
+    setParamsObjectDetection(
+      state,
+      action: PayloadAction<ParamsObjectDetection>
+    ) {
+      state.detectionModelParameters.objectDetection = action.payload;
     },
     removeJobById(state, action: PayloadAction<number>) {
       const existingJob = state.jobs.byId[action.payload];
@@ -281,6 +322,9 @@ export const {
   hideFileMetadataPreview,
   showFileMetadataPreview,
   setSelectedFileId,
+  setParamsOCR,
+  setParamsTagDetection,
+  setParamsObjectDetection,
   setProcessViewFileUploadModalVisibility,
 } = processSlice.actions;
 
@@ -418,4 +462,24 @@ export const isProcessingFile = (
   return statuses.some((key) =>
     ['Queued', 'Running'].includes(annotationStatuses[key]?.status || '')
   );
+};
+
+const getDetectionModelParameters = (
+  state: State,
+  modelType: VisionAPIType
+): DetectionModelParams | undefined => {
+  switch (modelType) {
+    case VisionAPIType.OCR: {
+      return state.detectionModelParameters.ocr;
+    }
+    case VisionAPIType.TagDetection: {
+      return state.detectionModelParameters.tagDetection;
+    }
+    case VisionAPIType.ObjectDetection: {
+      return state.detectionModelParameters.objectDetection;
+    }
+    default: {
+      return undefined;
+    }
+  }
 };
