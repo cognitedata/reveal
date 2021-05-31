@@ -66,7 +66,7 @@ export const StyledInput = styled(Input)`
 `;
 export const StyledTextArea = styled.textarea`
   width: 100%;
-  height: 10rem;
+  height: inherit;
   padding-top: 0.5rem;
   &.has-error {
     border-color: ${Colors.danger.hex()};

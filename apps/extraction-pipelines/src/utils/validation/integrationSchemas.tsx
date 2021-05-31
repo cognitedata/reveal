@@ -6,7 +6,7 @@ import { DataSetOptions } from 'pages/create/DataSetPage';
 
 export const NAME_REQUIRED: Readonly<string> = 'Integration name is required';
 export const MAX_DESC_LENGTH: Readonly<number> = 500;
-export const MAX_DOCUMENTATION_LENGTH: Readonly<number> = 500;
+export const MAX_DOCUMENTATION_LENGTH: Readonly<number> = 10000;
 export const nameRule = {
   name: yup.string().required(NAME_REQUIRED),
 };
@@ -84,7 +84,7 @@ export const documentationRule = {
     .string()
     .max(
       MAX_DOCUMENTATION_LENGTH,
-      `Documentation can only contain ${MAX_DESC_LENGTH} characters`
+      `Documentation can only contain ${MAX_DOCUMENTATION_LENGTH} characters`
     ),
 };
 export const documentationSchema = yup.object().shape(documentationRule);

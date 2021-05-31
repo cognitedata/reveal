@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent, useState, KeyboardEvent } from 'react';
 import { Hint, StyledTextArea } from 'styles/StyledForm';
 import styled from 'styled-components';
 import { bottomSpacing } from 'styles/StyledVariables';
@@ -19,7 +19,7 @@ import { useAppEnv } from 'hooks/useAppEnv';
 import { useIntegrationById } from 'hooks/useIntegration';
 import {
   documentationSchema,
-  MAX_DESC_LENGTH,
+  MAX_DOCUMENTATION_LENGTH,
 } from 'utils/validation/integrationSchemas';
 import { CountSpan } from 'styles/StyledWrapper';
 import MessageDialog from 'components/buttons/MessageDialog';
@@ -146,6 +146,12 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
     return null;
   }
 
+  const handleKeyDown = (e: KeyboardEvent) => {
+    const target = e.target as HTMLTextAreaElement;
+    target.style.height = 'inherit';
+    target.style.height = `${target.scrollHeight}px`;
+  };
+
   return (
     <DocumentationWrapper>
       <HeadingLabel labelFor="documentation-textarea">
@@ -162,12 +168,13 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
               ref={register}
               defaultValue={currentIntegration?.documentation}
               className={`cogs-input ${!!errors.documentation && 'has-error'}`}
-              rows={10}
+              onKeyDown={handleKeyDown}
+              rows={30}
               cols={30}
             />
-            {MAX_DESC_LENGTH && (
+            {MAX_DOCUMENTATION_LENGTH && (
               <CountSpan className="count">
-                {count}/{MAX_DESC_LENGTH}
+                {count}/{MAX_DOCUMENTATION_LENGTH}
               </CountSpan>
             )}
             <MessageDialog
