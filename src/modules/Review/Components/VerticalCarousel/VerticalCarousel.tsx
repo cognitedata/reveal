@@ -28,74 +28,77 @@ export const VerticalCarousel = () => {
     selectAllFiles(state.filesSlice)
   );
 
-  const history = useHistory();
-  const initialSlide = Number(getIdfromUrl());
-  const [currentSlide, setCurrentSlide] = useState<number>(initialSlide);
-  const [currentSlideIndex, setCurrentSlideIndex] = useState<number>(
-    filesSlice.findIndex((item: any) => item.id === initialSlide)
-  );
-
-  const thumbnailHeight = 66;
-
-  const handleOnClick = (fileId: number) => {
-    // For background color / focus
-    setCurrentSlide(fileId);
-    setCurrentSlideIndex(
-      filesSlice.findIndex((item: any) => item.id === fileId)
+  if (filesSlice.length > 1) {
+    const history = useHistory();
+    const initialSlide = Number(getIdfromUrl());
+    const [currentSlide, setCurrentSlide] = useState<number>(initialSlide);
+    const [currentSlideIndex, setCurrentSlideIndex] = useState<number>(
+      filesSlice.findIndex((item: any) => item.id === initialSlide)
     );
 
-    // Go to this file
-    history.replace(
-      getParamLink(workflowRoutes.review, ':fileId', String(fileId))
-    );
-  };
+    const thumbnailHeight = 66;
 
-  const slides = filesSlice.map((data, index) => {
+    const handleOnClick = (fileId: number) => {
+      // For background color / focus
+      setCurrentSlide(fileId);
+      setCurrentSlideIndex(
+        filesSlice.findIndex((item: any) => item.id === fileId)
+      );
+
+      // Go to this file
+      history.replace(
+        getParamLink(workflowRoutes.review, ':fileId', String(fileId))
+      );
+    };
+
+    const slides = filesSlice.map((data, index) => {
+      return (
+        /* eslint-disable react/no-array-index-key */
+        <SwiperSlide key={`${index}-swiperslide`} virtualIndex={+index}>
+          <ThumbnailContainer
+            key={`${index}-navButton`}
+            focusedid={`${currentSlide}`}
+            currentid={`${data.id}`}
+            thumbnailheight={thumbnailHeight}
+            onClick={() => handleOnClick(data.id)}
+            aria-label={`${index} icon`}
+          >
+            <Thumbnail key={`${index}-thumbnail`} fileInfo={data} />
+          </ThumbnailContainer>
+        </SwiperSlide>
+      );
+    });
     return (
-      /* eslint-disable react/no-array-index-key */
-      <SwiperSlide key={`${index}-swiperslide`} virtualIndex={+index}>
-        <ThumbnailContainer
-          key={`${index}-navButton`}
-          focusedid={`${currentSlide}`}
-          currentid={`${data.id}`}
-          thumbnailheight={thumbnailHeight}
-          onClick={() => handleOnClick(data.id)}
-          aria-label={`${index} icon`}
+      <>
+        <Swiper
+          className="carouselView"
+          slidesPerView={Math.min(filesSlice.length, 10)} // "auto" does not work with virtual
+          initialSlide={currentSlideIndex}
+          freeMode
+          direction="vertical"
+          mousewheel={{
+            sensitivity: 2,
+            releaseOnEdges: true,
+          }}
+          grabCursor
+          centeredSlides
+          centeredSlidesBounds
+          // TODO: Fix virtual loading
+          // virtual
+          // virtual={{
+          //   addSlidesAfter: 5,
+          //   addSlidesBefore: 5,
+          // }}
+          style={{
+            height: `${thumbnailHeight * Math.min(filesSlice.length, 10)}px`, // HACK: to avoid scroll out of view
+          }}
         >
-          <Thumbnail key={`${index}-thumbnail`} fileInfo={data} />
-        </ThumbnailContainer>
-      </SwiperSlide>
+          <>{slides}</>
+        </Swiper>
+      </>
     );
-  });
-  return (
-    <>
-      <Swiper
-        className="carouselView"
-        slidesPerView={Math.min(filesSlice.length, 10)} // "auto" does not work with virtual
-        initialSlide={currentSlideIndex}
-        freeMode
-        direction="vertical"
-        mousewheel={{
-          sensitivity: 2,
-          releaseOnEdges: true,
-        }}
-        grabCursor
-        centeredSlides
-        centeredSlidesBounds
-        // TODO: Fix virtual loading
-        // virtual
-        // virtual={{
-        //   addSlidesAfter: 5,
-        //   addSlidesBefore: 5,
-        // }}
-        style={{
-          height: `${thumbnailHeight * Math.min(filesSlice.length, 10)}px`, // HACK: to avoid scroll out of view
-        }}
-      >
-        <>{slides}</>
-      </Swiper>
-    </>
-  );
+  }
+  return <div />;
 };
 
 interface OnFocusProp {

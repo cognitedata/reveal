@@ -211,7 +211,8 @@ const AnnotationContainer = styled.div`
 `;
 
 const VerticalCarouselContainer = styled.div`
-  width: 136px;
+  max-width: 136px;
+  padding: 10px;
   height: 100%;
   overflow: hidden;
   display: flex;
