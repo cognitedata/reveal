@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { notification, Divider, Space } from 'antd';
+import { Divider, Space } from 'antd';
 import { Button, Title, Badge, Colors } from '@cognite/cogs.js';
 import { RootState } from 'store';
 import { useCdfItem, usePermissions } from '@cognite/sdk-react-query-hooks';
@@ -68,32 +68,13 @@ export default function FileOverview(props: Props) {
     }
   );
 
-  const { jobDone, jobError, jobStarted } = useSelector(
+  const { jobStarted } = useSelector(
     (state: RootState) => state.contextualization.uploadJobs[fileIdNumber] || {}
   );
 
   useEffect(() => {
     dispatch(retrieve({ ids: [{ id: fileIdNumber }] }));
   }, [dispatch, fileIdNumber]);
-
-  useEffect(() => {
-    if (jobDone && !jobError) {
-      notification.info({
-        key: 'file-deploy-status',
-        message: 'SVG created successfully',
-        description:
-          'A SVG file was successfully generated and published to CDF. You will be able to now view this file on InField.',
-      });
-    }
-    if (jobDone && jobError) {
-      notification.error({
-        key: 'file-deploy-status',
-        message: 'Unable to create SVG',
-        description:
-          'The SVG was unable to be created, do you have Files:Write access on this tenant?',
-      });
-    }
-  }, [jobDone, jobError]);
 
   const BackButton = () => (
     <div
@@ -164,8 +145,6 @@ export default function FileOverview(props: Props) {
                 <ClearTagsButton id={fileIdNumber} setEditMode={setEditMode} />
                 <Button
                   shape="round"
-                  type="primary"
-                  icon="Upload"
                   style={{ marginRight: '0px' }}
                   loading={jobStarted}
                   onClick={() => {
@@ -183,7 +162,7 @@ export default function FileOverview(props: Props) {
                     }
                   }}
                 >
-                  Save to CDF
+                  Create SVG
                 </Button>
               </>
             }

@@ -14,6 +14,11 @@ import {
 import { itemSelector as fileSelector } from 'modules/files';
 import { itemSelector as assetSelector } from 'modules/assets';
 import { ModelStatus } from 'modules/types';
+import {
+  convertErrorNotification,
+  convertSuccessNotification,
+} from 'pages/ResultsOverview/utils';
+import { tryToStringify } from 'utils/handleError';
 import * as UploadJobs from './uploadJobs';
 
 const UPLOAD_JOB_CREATE_STARTED = 'pnid/UPLOAD_JOB_CREATE_STARTED';
@@ -140,7 +145,7 @@ export const startConvertFileToSvgJob = (
         .then((response) => {
           const {
             status: httpStatus,
-            data: { jobId, status: queueStatus },
+            data: { jobId, status: queueStatus, errorMessage },
           } = response;
           dispatch({ type: UPLOAD_JOB_CREATED, jobId, fileId });
           dispatch({
@@ -155,7 +160,12 @@ export const startConvertFileToSvgJob = (
               () => sdk.get(createConvertStatusPath(sdk.project, jobId)),
               (data) => data.status === 'Completed' || data.status === 'Failed',
               async (data) => {
-                if (data.status === 'Failed') {
+                const { errorMessage: scopedErrorMessage, status } = data;
+                if (status === 'Failed') {
+                  convertErrorNotification(
+                    file?.name ?? file?.externalId ?? file?.id,
+                    scopedErrorMessage
+                  );
                   dispatch({
                     type: UPLOAD_JOB_ERROR,
                     fileId,
@@ -201,10 +211,15 @@ export const startConvertFileToSvgJob = (
                       fileId,
                       svgUrl: data.svgUrl,
                     });
+                    convertSuccessNotification(newName, file.name, newFile.id);
                     resolve(jobId);
 
                     timer.stop({ success: true, jobId });
-                  } catch {
+                  } catch (e) {
+                    convertErrorNotification(
+                      file?.name ?? file?.externalId ?? file?.id,
+                      tryToStringify({ ...e })
+                    );
                     dispatch({ type: UPLOAD_JOB_ERROR, fileId });
                     reject();
                     timer.stop({ success: false, jobId });
@@ -223,12 +238,20 @@ export const startConvertFileToSvgJob = (
               3000
             );
           } else {
+            convertErrorNotification(
+              file?.name ?? file?.externalId ?? file?.id,
+              errorMessage ?? 'Something went wrong. Please try again'
+            );
             dispatch({ type: UPLOAD_JOB_ERROR, fileId });
             reject();
             timer.stop({ success: false, jobId });
           }
         })
-        .catch(() => {
+        .catch((e) => {
+          convertErrorNotification(
+            file?.name ?? file?.externalId ?? file?.id,
+            tryToStringify({ ...e })
+          );
           dispatch({ type: UPLOAD_JOB_ERROR, fileId });
           reject();
           timer.stop({ success: false });

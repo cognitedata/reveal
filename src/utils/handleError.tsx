@@ -42,7 +42,7 @@ const generateErrorTitle = (
   );
 };
 
-const getString = (message: any) => {
+export const tryToStringify = (message: any) => {
   if (message) {
     try {
       const string = JSON.stringify(message);
@@ -59,7 +59,7 @@ const generateErrorDescription = (
   if (errorMessage) {
     return (
       <Paragraph ellipsis={{ rows: 3, expandable: true }}>
-        {getString(errorMessage)}
+        {tryToStringify(errorMessage)}
       </Paragraph>
     );
   }

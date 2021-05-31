@@ -2,10 +2,11 @@ import React from 'react';
 import styled from 'styled-components';
 import { Graphic, Tooltip } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
-import { Flex, IconButton } from 'components/Common';
+import { Flex, IconButton, Popover } from 'components/Common';
 import DetectedTags from 'components/DetectedTags';
 import { dateSorter, stringCompare } from 'modules/contextualization/utils';
 import { PERMISSIONS_STRINGS, TOOLTIP_STRINGS } from 'stringConstants';
+import { FileSmallPreview } from 'components/FileSmallPreview';
 
 const SettingButtons = styled(Flex)`
   & > * {
@@ -24,11 +25,11 @@ export const getColumns = (
     key: 'preview',
     width: 80,
     align: 'center' as 'center',
-    render: () => (
+    render: (file: FileInfo) => (
       <Flex row align justify>
-        <Tooltip content="File previews are temporarily unavailable.">
+        <Popover content={<FileSmallPreview fileId={file.id} />}>
           <Graphic type="Image" />
-        </Tooltip>
+        </Popover>
       </Flex>
     ),
   },

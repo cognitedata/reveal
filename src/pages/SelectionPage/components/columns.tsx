@@ -4,8 +4,9 @@ import { ResourceType } from 'modules/types';
 import DetectedTags from 'components/DetectedTags';
 import React from 'react';
 import { Flex, Popover } from 'components/Common';
-import { AssetSmallPreview, FileSmallPreview } from '@cognite/data-exploration';
+import { AssetSmallPreview } from '@cognite/data-exploration';
 import { Graphic } from '@cognite/cogs.js';
+import { FileSmallPreview } from 'components/FileSmallPreview';
 
 export const getColumns = (resourceType: ResourceType) => {
   const isAsset = resourceType === 'assets';

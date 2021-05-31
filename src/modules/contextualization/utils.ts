@@ -1,5 +1,4 @@
 import moment from 'moment';
-import message from 'antd/lib/message';
 
 export const stringCompare = (a = '', b = '') => {
   const al = a.replace(/\s+/g, '');
@@ -28,7 +27,6 @@ export const stringContains = (value?: string, searchText?: string) => {
       value && value.trim().toUpperCase().search(searchText.toUpperCase()) >= 0
     );
   } catch (e) {
-    message.error('Invalid search term');
     return 'Invalid search term';
   }
 };
