@@ -12,23 +12,28 @@ import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { ParamsObjectDetection } from 'src/api/types';
 import { RootState } from 'src/store/rootReducer';
+import { ColorsObjectDetection } from 'src/constants/Colors';
 import { setParamsObjectDetection } from '../../processSlice';
+import { ModelDescription } from './ModelDescription';
+
+const modelName = 'Object & person detection';
 
 export const description = () => {
   return (
     <Detail>Detects people, recognizable shapes and labels accordingly.</Detail>
   );
 };
-export const badge = () => {
+export const badge = (hideText: boolean = false) => {
   return (
     <Button
       icon="Scan"
+      size="small"
       style={{
-        backgroundColor: '#FFE1D1',
-        color: '#FF8746',
+        backgroundColor: ColorsObjectDetection.backgroundColor,
+        color: ColorsObjectDetection.color,
       }}
     >
-      Object & person detection
+      {!hideText && modelName}
     </Button>
   );
 };
@@ -56,7 +61,14 @@ export const content = () => {
 
   return (
     <Container>
-      <Tabs defaultActiveKey="config">
+      <Tabs defaultActiveKey="description">
+        <Tabs.TabPane key="description" tab="Description">
+          {ModelDescription({
+            name: modelName,
+            description: description(),
+            icon: badge(true),
+          })}
+        </Tabs.TabPane>
         <Tabs.TabPane key="config" tab="Model configuration">
           <table>
             <tbody>
@@ -98,9 +110,6 @@ export const content = () => {
             </tbody>
           </table>
         </Tabs.TabPane>
-        {/* <Tabs.TabPane key="style" tab="Look and feel">
-          View is here
-        </Tabs.TabPane> */}
       </Tabs>
     </Container>
   );

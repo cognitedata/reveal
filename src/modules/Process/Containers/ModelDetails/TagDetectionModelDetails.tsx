@@ -12,7 +12,11 @@ import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { ParamsTagDetection } from 'src/api/types';
 import { RootState } from 'src/store/rootReducer';
+import { ColorsTagDetection } from 'src/constants/Colors';
 import { setParamsTagDetection } from '../../processSlice';
+import { ModelDescription } from './ModelDescription';
+
+const modelName = 'Asset tag detection';
 
 export const description = () => {
   return (
@@ -21,16 +25,17 @@ export const description = () => {
     </Detail>
   );
 };
-export const badge = () => {
+export const badge = (hideText: boolean = false) => {
   return (
     <Button
       icon="ResourceAssets"
+      size="small"
       style={{
-        backgroundColor: '#F4DAF8',
-        color: '#C945DB',
+        backgroundColor: ColorsTagDetection.backgroundColor,
+        color: ColorsTagDetection.color,
       }}
     >
-      Asset tag detection
+      {!hideText && modelName}
     </Button>
   );
 };
@@ -73,12 +78,19 @@ export const content = () => {
   return (
     <Container>
       <Tabs
-        defaultActiveKey="config"
+        defaultActiveKey="description"
         style={{
           overflowY: 'auto',
           height: '100%',
         }}
       >
+        <Tabs.TabPane key="description" tab="Description">
+          {ModelDescription({
+            name: modelName,
+            description: description(),
+            icon: badge(true),
+          })}
+        </Tabs.TabPane>
         <Tabs.TabPane key="config" tab="Model configuration">
           <table>
             <tbody>
@@ -143,7 +155,7 @@ export const content = () => {
                     <Icon type="HelpFilled" style={{ marginLeft: '11px' }} />
                   </PrimaryTooltip>
                 </td>
-                <th>
+                <th style={{ maxWidth: '200px' }}>
                   <AssetSelector
                     assets={params.assetSubtreeIds}
                     onSelectAssets={onAssetSubtreeIdsChange}
@@ -155,9 +167,6 @@ export const content = () => {
             </tbody>
           </table>
         </Tabs.TabPane>
-        {/* <Tabs.TabPane key="style" tab="Look and feel">
-          View is here
-        </Tabs.TabPane> */}
       </Tabs>
     </Container>
   );

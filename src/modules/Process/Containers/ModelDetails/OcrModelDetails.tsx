@@ -11,21 +11,27 @@ import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { ParamsOCR } from 'src/api/types';
 import { RootState } from 'src/store/rootReducer';
+import { ColorsOCR } from 'src/constants/Colors';
 import { setParamsOCR } from '../../processSlice';
+import { ModelDescription } from './ModelDescription';
+
+const modelName = 'Text detection';
 
 export const description = () => {
   return <Detail>Looks for strings of text and numbers.</Detail>;
 };
-export const badge = () => {
+
+export const badge = (hideText: boolean = false) => {
   return (
     <Button
       icon="TextScan"
+      size="small"
       style={{
-        backgroundColor: '#F0FCF8',
-        color: '#00665C',
+        backgroundColor: ColorsOCR.backgroundColor,
+        color: ColorsOCR.color,
       }}
     >
-      Text detection
+      {!hideText && modelName}
     </Button>
   );
 };
@@ -46,7 +52,14 @@ export const content = () => {
 
   return (
     <Container>
-      <Tabs defaultActiveKey="config">
+      <Tabs defaultActiveKey="description">
+        <Tabs.TabPane key="description" tab="Description">
+          {ModelDescription({
+            name: modelName,
+            description: description(),
+            icon: badge(true),
+          })}
+        </Tabs.TabPane>
         <Tabs.TabPane key="config" tab="Model configuration">
           <table>
             <tbody>
@@ -78,9 +91,6 @@ export const content = () => {
             </tbody>
           </table>
         </Tabs.TabPane>
-        {/* <Tabs.TabPane key="style" tab="Look and feel">
-          View is here
-        </Tabs.TabPane> */}
       </Tabs>
     </Container>
   );
