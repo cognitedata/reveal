@@ -1,5 +1,12 @@
 import { DatapointAggregate, DoubleDatapoint } from '@cognite/sdk';
 
+enum UnitTypes {
+  TEMPERATURE = 'Temperature',
+  PRESSURE = 'Pressure',
+  VOLUMETRIC_FLOW = 'Volumetric flow',
+  LENGTH = 'Length',
+}
+
 type Conversions = {
   [key: string]: { [key: string]: (_: number) => number };
 };
@@ -10,22 +17,31 @@ export const units = [
     label: 'psi',
     value: 'psi',
     conversions: ['psi', 'bar', 'pa', 'atm', 'mpa'],
+    type: UnitTypes.PRESSURE,
   },
   {
     label: 'bar',
     value: 'bar',
     conversions: ['psi', 'bar', 'pa', 'atm', 'mpa'],
+    type: UnitTypes.PRESSURE,
   },
-  { label: 'Pa', value: 'pa', conversions: ['psi', 'bar', 'pa', 'atm', 'mpa'] },
+  {
+    label: 'Pa',
+    value: 'pa',
+    conversions: ['psi', 'bar', 'pa', 'atm', 'mpa'],
+    type: UnitTypes.PRESSURE,
+  },
   {
     label: 'atm',
     value: 'atm',
     conversions: ['psi', 'bar', 'pa', 'atm', 'mpa'],
+    type: UnitTypes.PRESSURE,
   },
   {
     label: 'MPa',
     value: 'mpa',
     conversions: ['psi', 'bar', 'pa', 'atm', 'mpa'],
+    type: UnitTypes.PRESSURE,
   },
 
   // Length
@@ -33,46 +49,69 @@ export const units = [
     label: 'm',
     value: 'm',
     conversions: ['m', 'cm', 'mm', 'yd', 'ft', 'in', 'km', 'mi'],
+    type: UnitTypes.LENGTH,
   },
   {
     label: 'cm',
     value: 'cm',
     conversions: ['m', 'cm', 'mm', 'yd', 'ft', 'in', 'km', 'mi'],
+    type: UnitTypes.LENGTH,
   },
   {
     label: 'mm',
     value: 'mm',
     conversions: ['m', 'cm', 'mm', 'yd', 'ft', 'in', 'km', 'mi'],
+    type: UnitTypes.LENGTH,
   },
   {
     label: 'yd',
     value: 'yd',
     conversions: ['m', 'cm', 'mm', 'yd', 'ft', 'in', 'km', 'mi'],
+    type: UnitTypes.LENGTH,
   },
   {
     label: 'ft',
     value: 'ft',
     conversions: ['m', 'cm', 'mm', 'yd', 'ft', 'in', 'km', 'mi'],
+    type: UnitTypes.LENGTH,
   },
   {
     label: 'in',
     value: 'in',
     conversions: ['m', 'cm', 'mm', 'yd', 'ft', 'in', 'km', 'mi'],
+    type: UnitTypes.LENGTH,
   },
   {
     label: 'km',
     value: 'km',
     conversions: ['m', 'cm', 'mm', 'yd', 'ft', 'in', 'km', 'mi'],
+    type: UnitTypes.LENGTH,
   },
   {
     label: 'mi',
     value: 'mi',
     conversions: ['m', 'cm', 'mm', 'yd', 'ft', 'in', 'km', 'mi'],
+    type: UnitTypes.LENGTH,
   },
   // Temperature
-  { label: 'F', value: 'F', conversions: ['F', 'C', 'K'] },
-  { label: 'C', value: 'C', conversions: ['F', 'C', 'K'] },
-  { label: 'K', value: 'K', conversions: ['F', 'C', 'K'] },
+  {
+    label: 'F',
+    value: 'F',
+    conversions: ['F', 'C', 'K'],
+    type: UnitTypes.TEMPERATURE,
+  },
+  {
+    label: 'C',
+    value: 'C',
+    conversions: ['F', 'C', 'K'],
+    type: UnitTypes.TEMPERATURE,
+  },
+  {
+    label: 'K',
+    value: 'K',
+    conversions: ['F', 'C', 'K'],
+    type: UnitTypes.TEMPERATURE,
+  },
   // Volumetric flow rate
   // Sources:
   //  https://petroleumoffice.com/unitconverter/volume%20flow%20rate
@@ -81,31 +120,37 @@ export const units = [
     label: 'm^3/s',
     value: 'm3s',
     conversions: ['m3s', 'm3min', 'm3hr', 'm3d', 'bbld', 'mbbld', 'mmscfd'],
+    type: UnitTypes.VOLUMETRIC_FLOW,
   },
   {
     label: 'm^3/min',
     value: 'm3min',
     conversions: ['m3s', 'm3min', 'm3hr', 'm3d', 'bbld', 'mbbld', 'mmscfd'],
+    type: UnitTypes.VOLUMETRIC_FLOW,
   },
   {
     label: 'm^3/hr',
     value: 'm3hr',
     conversions: ['m3s', 'm3min', 'm3hr', 'm3d', 'bbld', 'mbbld', 'mmscfd'],
+    type: UnitTypes.VOLUMETRIC_FLOW,
   },
   {
     label: 'm^3/d',
     value: 'm3d',
     conversions: ['m3s', 'm3min', 'm3hr', 'm3d', 'bbld', 'mbbld', 'mmscfd'],
+    type: UnitTypes.VOLUMETRIC_FLOW,
   },
   {
     label: 'bbl/d',
     value: 'bbld',
     conversions: ['m3s', 'm3min', 'm3hr', 'm3d', 'bbld', 'mbbld', 'mmscfd'],
+    type: UnitTypes.VOLUMETRIC_FLOW,
   },
   {
     label: 'mbbl/d',
     value: 'mbbld',
     conversions: ['m3s', 'm3min', 'm3hr', 'm3d', 'bbld', 'mbbld', 'mmscfd'],
+    type: UnitTypes.VOLUMETRIC_FLOW,
   },
   {
     label: 'mmscfd',
@@ -120,6 +165,7 @@ export const units = [
       'mbbld',
       'mmscfd',
     ],
+    type: UnitTypes.VOLUMETRIC_FLOW,
   },
 ];
 
