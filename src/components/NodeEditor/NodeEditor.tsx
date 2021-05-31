@@ -11,7 +11,7 @@ import {
   NodeContainer,
   CtxPosition,
 } from '@cognite/connect';
-import { Menu, Input, Dropdown, Button } from '@cognite/cogs.js';
+import { Menu, Dropdown, Button } from '@cognite/cogs.js';
 import { nanoid } from 'nanoid';
 import workflowBackgroundSrc from 'assets/workflowBackground.png';
 import { Chart, ChartWorkflow, StorableNode } from 'reducers/charts/types';
@@ -132,25 +132,29 @@ const WorkflowEditor = ({
   };
 
   const setNodePosition = (event: React.MouseEvent) => {
-    if (nodeEditor?.current) {
-      const n: HTMLElement = nodeEditor.current;
-      const { x, y } = n.getBoundingClientRect();
-
-      const result = {
-        x: event.clientX - x - canvasPosition.x,
-        y: event.clientY - y - canvasPosition.y,
-      };
-
-      setNewNodePosition(result);
+    if (!nodeEditor?.current) {
+      return;
     }
+
+    const n: HTMLElement = nodeEditor.current;
+    const { x, y } = n.getBoundingClientRect();
+
+    const result = {
+      x: event.clientX - x - canvasPosition.x,
+      y: event.clientY - y - canvasPosition.y,
+    };
+
+    setNewNodePosition(result);
   };
 
   const moveNewNode = (e: React.MouseEvent) => {
-    if (newNode) {
-      setNodePosition(e);
-      const { x, y } = newNodePosition;
-      setNewNode({ ...newNode, x: x - 25, y: y - 20 });
+    if (!newNode) {
+      return;
     }
+
+    setNodePosition(e);
+    const { x, y } = newNodePosition;
+    setNewNode({ ...newNode, x: x - 25, y: y - 20 });
   };
 
   const placeNewNode = (e: React.MouseEvent) => {
@@ -191,9 +195,6 @@ const WorkflowEditor = ({
             nodePosition: { x: number; y: number }
           ) => (
             <Menu>
-              <Menu.Item>
-                <Input />
-              </Menu.Item>
               {availableNodeOptions.map((nodeOption) => (
                 <Menu.Item
                   key={nodeOption.name}
