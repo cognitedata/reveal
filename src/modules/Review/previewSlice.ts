@@ -3,8 +3,6 @@ import {
   createSelector,
   createSlice,
   isAnyOf,
-  isFulfilled,
-  isRejected,
   PayloadAction,
 } from '@reduxjs/toolkit';
 import {
@@ -21,16 +19,10 @@ import {
 } from 'src/store/commonActions';
 import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
 import { ImagePreviewEditMode } from 'src/constants/enums/ImagePreviewEditMode';
-import { SaveAnnotations } from 'src/store/thunks/SaveAnnotations';
-import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
-import { DeleteAnnotations } from 'src/store/thunks/DeleteAnnotations';
-import { ToastUtils } from 'src/utils/ToastUtils';
-
 import { SaveAvailableAnnotations } from 'src/store/thunks/SaveAvailableAnnotations';
 import { AnnotationDetectionJobUpdate } from 'src/store/thunks/AnnotationDetectionJobUpdate';
 import { CreateAnnotations } from 'src/store/thunks/CreateAnnotations';
 import { UpdateAnnotationsById } from 'src/store/thunks/UpdateAnnotationsById';
-import { UpdateAnnotations } from 'src/store/thunks/UpdateAnnotations';
 
 export interface VisionAnnotationState extends Omit<VisionAnnotation, 'id'> {
   id: number;
@@ -329,29 +321,6 @@ const previewSlice = createSlice({
           state.drawer.text = action.payload.label;
         } else {
           state.drawer.box = action.payload.box;
-        }
-      }
-    );
-
-    builder.addMatcher(
-      isFulfilled(SaveAnnotations, DeleteAnnotations, UpdateAnnotations),
-      (_) => {
-        // ToastUtils.onSuccess('Annotations Updated!'); //Todo: Commented out because of spam
-      }
-    );
-
-    builder.addMatcher(
-      isRejected(
-        SaveAnnotations,
-        RetrieveAnnotations,
-        DeleteAnnotations,
-        UpdateAnnotations
-      ),
-      (_, { error }) => {
-        if (error && error.message) {
-          ToastUtils.onFailure(
-            `Failed to update Annotations! ${error?.message}`
-          );
         }
       }
     );
