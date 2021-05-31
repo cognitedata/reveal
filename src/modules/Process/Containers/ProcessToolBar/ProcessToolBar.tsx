@@ -150,12 +150,9 @@ export const ProcessToolBar = () => {
                 />
               </ModelSelector>
               <Button
+                type="primary"
                 disabled={!isPollingFinished}
                 onClick={onDetectClick}
-                style={{
-                  background: 'var(--cogs-gradient-midnightblue)',
-                  color: '#fff',
-                }}
               >
                 Detect
               </Button>
