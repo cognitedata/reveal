@@ -38,7 +38,9 @@ export const VerticalCarousel = () => {
     setImgInFocus(k.id);
     setCurrentSlide(1); // Todo: fix mapping
     // Go to this file
-    history.push(getParamLink(workflowRoutes.review, ':fileId', String(k.id)));
+    history.replace(
+      getParamLink(workflowRoutes.review, ':fileId', String(k.id))
+    );
   };
 
   return (
