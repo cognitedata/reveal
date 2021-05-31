@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@cognite/reveal": "link:../viewer/dist",
+    "@cognite/reveal-1.x": "npm:@cognite/reveal@^1.5.5",
     "@cognite/sdk": "link:../viewer/node_modules/@cognite/sdk",
     "@docusaurus/core": "2.0.0-alpha.64",
     "@docusaurus/module-type-aliases": "2.0.0-alpha.64",
