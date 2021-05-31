@@ -8,26 +8,23 @@ import { lightGrey } from 'src/utils/Colors';
 import { FileFilters } from 'src/modules/Common/Components/Search/FileFilters';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import {
-  addUploadedFile,
-  selectAllFiles,
-  setFileSelectState,
-} from 'src/modules/Common/filesSlice';
 import { ExplorerSearchResults } from 'src/modules/Explorer/Containers/ExplorerSearchResults';
 import { FileDetails } from 'src/modules/FileDetails/Containers/FileDetails';
 import { TableDataItem, ViewMode } from 'src/modules/Common/types';
 import { ExplorerToolbar } from 'src/modules/Explorer/Containers/ExplorerToolbar';
+import { addUploadedFile, selectAllFiles } from 'src/modules/Common/filesSlice';
 import { FileUploadModal } from 'src/modules/Common/Components/FileUploaderModal/FileUploaderModal';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import {
-  setCurrentView,
-  setFileUploadModalVisibility,
-  setFilter,
-  setQueryString,
-  setSelectedFileIdExplorer,
+  setExplorerCurrentView,
+  setExplorerFileSelectState,
+  setExplorerFilter,
+  setExplorerQueryString,
+  setExplorerSelectedFileId,
   showExplorerFileMetadata,
   toggleExplorerFileMetadata,
-  toggleFilterView,
+  toggleExplorerFilterView,
+  setFileUploadModalVisibility,
 } from '../store/explorerSlice';
 
 const Explorer = () => {
@@ -59,18 +56,18 @@ const Explorer = () => {
   const dispatch = useDispatch();
 
   const handleSearch = (text: string) => {
-    dispatch(setQueryString(text));
+    dispatch(setExplorerQueryString(text));
   };
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleItemClick = ({ menu, selected, ...file }: TableDataItem) => {
     dispatch(addUploadedFile(file as FileInfo));
-    dispatch(setSelectedFileIdExplorer(file.id));
+    dispatch(setExplorerSelectedFileId(file.id));
     dispatch(showExplorerFileMetadata());
   };
 
   const handleRowSelect = (item: TableDataItem, selected: boolean) => {
-    dispatch(setFileSelectState(item.id, selected));
+    dispatch(setExplorerFileSelectState(item.id, selected));
   };
 
   const uploadedFiles = useSelector((state: RootState) =>
@@ -108,7 +105,7 @@ const Explorer = () => {
                   <HideFiltersTooltip content="Hide">
                     <Button
                       icon="PanelLeft"
-                      onClick={() => dispatch(toggleFilterView())}
+                      onClick={() => dispatch(toggleExplorerFilterView())}
                     />
                   </HideFiltersTooltip>
                 </Col>
@@ -117,7 +114,7 @@ const Explorer = () => {
                 <FileFilters
                   filter={filter}
                   setFilter={(newFilter) => {
-                    dispatch(setFilter(newFilter));
+                    dispatch(setExplorerFilter(newFilter));
                   }}
                 />
               </FiltersContainer>
@@ -133,7 +130,7 @@ const Explorer = () => {
                 }}
               >
                 <FilterToggleButton
-                  toggleOpen={() => dispatch(toggleFilterView())}
+                  toggleOpen={() => dispatch(toggleExplorerFilterView())}
                 />
               </div>
             ) : undefined}
@@ -143,7 +140,7 @@ const Explorer = () => {
                 query={query}
                 currentView={currentView}
                 onViewChange={(view) =>
-                  dispatch(setCurrentView(view as ViewMode))
+                  dispatch(setExplorerCurrentView(view as ViewMode))
                 }
                 onSearch={handleSearch}
               />

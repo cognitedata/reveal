@@ -96,6 +96,8 @@ export function FileTable(props: FileTableProps) {
         onRowSelect={props.onRowSelect}
         rowClassNames={rowClassNames}
         rowEventHandlers={rowEventHandlers}
+        allRowsSelected={props.allRowsSelected}
+        onSelectAllRows={props.onSelectAllRows}
       />
     </SorterPaginationWrapper>
   );
