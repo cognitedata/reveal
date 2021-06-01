@@ -28,6 +28,8 @@ import { FileTable } from 'src/modules/Common/Components/FileTable/FileTable';
 import { FileGridPreview } from 'src/modules/Common/Components/FileGridPreview/FileGridPreview';
 import { Prompt, useHistory } from 'react-router-dom';
 import { PageBasedGrideView } from 'src/modules/Common/Components/GridView/PageBasedGrideView';
+import styled from 'styled-components';
+import { Detail } from '@cognite/cogs.js';
 
 export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
   const dispatch = useDispatch();
@@ -108,6 +110,18 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
   };
 
   const renderView = () => {
+    if (!data.length) {
+      return (
+        <EmptyContainer>
+          <div className="header" />
+          <div className="main">
+            <Detail strong>
+              First select from existing files or upload new
+            </Detail>
+          </div>
+        </EmptyContainer>
+      );
+    }
     if (currentView === 'grid') {
       return (
         <PageBasedGrideView
@@ -158,3 +172,28 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
     </>
   );
 };
+
+const EmptyContainer = styled.div`
+  .main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 12px 20px;
+    height: 500px;
+    border: 1px solid #cccccc;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+  }
+
+  .header {
+    width: 100%;
+    height: 53px;
+    background: #fafafa;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-top: 1px solid #cccccc;
+    border-left: 1px solid #cccccc;
+    border-right: 1px solid #cccccc;
+  }
+`;

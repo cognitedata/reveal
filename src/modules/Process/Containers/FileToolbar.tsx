@@ -3,7 +3,10 @@ import { Button, SegmentedControl, Popconfirm } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { selectAllSelectedFiles } from 'src/modules/Common/filesSlice';
+import {
+  selectAllFiles,
+  selectAllSelectedFiles,
+} from 'src/modules/Common/filesSlice';
 import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
 import { selectIsPollingComplete } from 'src/modules/Process/processSlice';
 
@@ -18,6 +21,10 @@ export const FileToolbar = ({
 
   const selectedFiles = useSelector((state: RootState) =>
     selectAllSelectedFiles(state.filesSlice)
+  );
+
+  const processFilesLength = useSelector(
+    (state: RootState) => selectAllFiles(state.filesSlice).length
   );
 
   const isPollingFinished = useSelector((state: RootState) => {
@@ -37,43 +44,45 @@ export const FileToolbar = ({
   return (
     <>
       <Container>
-        <ButtonContainer>
-          <ConfirmDeleteButton
-            onConfirm={onDelete}
-            selectedNumber={selectedFiles.length}
-            disabled={!selectedFiles.length || !isPollingFinished}
-          />
-          <SegmentedControl
-            onButtonClicked={onViewChange}
-            currentKey={currentView}
-          >
-            <SegmentedControl.Button
-              key="list"
-              icon="List"
-              title="List"
-              size="small"
+        {!!processFilesLength && ( // Only show buttons if there are files available
+          <ButtonContainer>
+            <ConfirmDeleteButton
+              onConfirm={onDelete}
+              selectedNumber={selectedFiles.length}
+              disabled={!selectedFiles.length || !isPollingFinished}
+            />
+            <SegmentedControl
+              onButtonClicked={onViewChange}
+              currentKey={currentView}
             >
-              List
-            </SegmentedControl.Button>
-            <SegmentedControl.Button
-              key="grid"
-              icon="Grid"
-              title="Grid"
-              size="small"
-            >
-              Grid
-            </SegmentedControl.Button>
+              <SegmentedControl.Button
+                key="list"
+                icon="List"
+                title="List"
+                size="small"
+              >
+                List
+              </SegmentedControl.Button>
+              <SegmentedControl.Button
+                key="grid"
+                icon="Grid"
+                title="Grid"
+                size="small"
+              >
+                Grid
+              </SegmentedControl.Button>
 
-            <SegmentedControl.Button
-              key="map"
-              icon="Map"
-              title="Map"
-              size="small"
-            >
-              Map
-            </SegmentedControl.Button>
-          </SegmentedControl>
-        </ButtonContainer>
+              <SegmentedControl.Button
+                key="map"
+                icon="Map"
+                title="Map"
+                size="small"
+              >
+                Map
+              </SegmentedControl.Button>
+            </SegmentedControl>
+          </ButtonContainer>
+        )}
       </Container>
     </>
   );
