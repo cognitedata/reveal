@@ -30,7 +30,7 @@ export const calculateGranularity = (domain: number[], pps: number) => {
       return `${i === 1 ? '' : i}d`;
     }
   }
-  return 'day';
+  return 'd';
 };
 
 export const convertTsToWorkFlow = (ts: ChartTimeSeries): ChartWorkflow => {
