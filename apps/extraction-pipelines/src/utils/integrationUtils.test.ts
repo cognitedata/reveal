@@ -7,6 +7,7 @@ import {
   calculate,
   calculateStatus,
   createAddIntegrationInfo,
+  createSearchParams,
   hoursToMinutes,
   isOwner,
   minutesToHours,
@@ -184,5 +185,27 @@ describe('hoursToMinutes', () => {
   test('Converts hours to minutes', () => {
     const res = hoursToMinutes(2);
     expect(res).toEqual(120);
+  });
+});
+
+describe('createSearchParams', () => {
+  test('Creates params', () => {
+    const options = {
+      search: 'foo',
+      statuses: ['success'],
+      dateRange: {
+        startDate: new Date(2021, 5, 1, 0, 0),
+        endDate: new Date(2021, 5, 3, 20, 33),
+      },
+    };
+    const res = createSearchParams(options);
+    expect(res.includes('search')).toEqual(true);
+    expect(res.includes(options.search)).toEqual(true);
+    expect(res.includes('statuses')).toEqual(true);
+    expect(res.includes(options.statuses)).toEqual(true);
+    expect(res.includes('min')).toEqual(true);
+    expect(res.includes(options.dateRange.startDate.getTime())).toEqual(true);
+    expect(res.includes('max')).toEqual(true);
+    expect(res.includes(options.dateRange.endDate.getTime())).toEqual(true);
   });
 });

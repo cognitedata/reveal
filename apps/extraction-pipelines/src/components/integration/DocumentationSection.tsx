@@ -36,6 +36,13 @@ import { DetailFieldNames } from 'model/Integration';
 import { MarkdownView } from 'components/markDown/MarkdownView';
 
 const EditDocumentationButton = styled(EditButton)`
+  &.cogs-btn {
+    .cogs-icon {
+      &.cogs-icon-Edit {
+        align-self: flex-start;
+      }
+    }
+  }
   &.cogs-btn.cogs-btn-ghost.has-content {
     display: flex;
   }

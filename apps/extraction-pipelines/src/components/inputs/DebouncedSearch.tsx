@@ -33,6 +33,9 @@ export const DebouncedSearch: FunctionComponent<ErrorMessageSearchProps> = ({
     dispatch,
   } = useRunFilterContext();
   const [searchString, setSearchString] = useState(search);
+  useEffect(() => {
+    setSearchString(search);
+  }, [search, setSearchString]);
   const debouncedValue = useDebounce(searchString, debounceTime);
 
   useEffect(() => {

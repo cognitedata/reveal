@@ -145,7 +145,7 @@ describe('<ITable/>', () => {
       'status-marker-status-menu-fail'
     );
     const statusOKMenuItem = screen.getByTestId('status-marker-status-menu-ok');
-    const statusAllMenuItem = screen.getByTestId('status-menu-all');
+    const statusAllMenuItem = screen.getByTestId('status-menu-item-all');
     expect(statusAllMenuItem).toBeInTheDocument();
     expect(statusOKMenuItem).toBeInTheDocument();
     expect(statusFailMenuItem).toBeInTheDocument();

@@ -8,6 +8,8 @@ import { mapScheduleInputToScheduleValue } from 'utils/cronUtils';
 import { MIN_IN_HOURS } from 'utils/validation/notificationValidation';
 import { AddIntegrationFormInput } from 'pages/create/CreateIntegration';
 import { DataSetModel } from 'model/DataSetModel';
+import { RunStatus } from 'utils/runsUtils';
+import { Range } from '@cognite/cogs.js';
 
 export const calculateStatus = (status: LastStatuses): StatusObj => {
   return calculate(status);
@@ -166,4 +168,40 @@ export const createAddIntegrationInfo = (
     ...(selectedRawTables && { rawTables: selectedRawTables }),
     ...(documentation && { documentation }),
   };
+};
+
+type QueryParams = {
+  search?: string;
+  statuses?: string;
+  env?: string;
+  min?: string;
+  max?: string;
+};
+export const getQueryParams = (search: string): QueryParams => {
+  const params = new URLSearchParams(search);
+  return Array.from(params.entries()).reduce((acc, [key, value]) => {
+    return { ...acc, [key]: value };
+  }, {});
+};
+
+interface CreateSearchParams {
+  search: string;
+  statuses: RunStatus[];
+  dateRange: Range;
+  env?: string;
+}
+export const createSearchParams = ({
+  env,
+  search,
+  statuses,
+  dateRange,
+}: CreateSearchParams) => {
+  const params = {
+    ...(env && { env }),
+    ...(search && { search }),
+    ...(statuses.length && { statuses: statuses.join(',') }),
+    ...(dateRange?.endDate && { max: `${dateRange?.endDate?.getTime()}` }),
+    ...(dateRange?.startDate && { min: `${dateRange?.startDate?.getTime()}` }),
+  };
+  return new URLSearchParams(params).toString();
 };

@@ -88,18 +88,21 @@ export const renderWithReQueryCacheSelectedIntegrationContext = (
   cdfEnv: string,
   origin: string,
   initIntegration?: Integration,
-  route: string = INTEGRATIONS
+  route: string = INTEGRATIONS,
+  runFilter?: RunFilterProviderProps
 ) => {
   const history = createMemoryHistory();
   history.push(route);
   const wrapper = ({ children }: { children: React.ReactNode }) => (
     <QueryClientProvider client={client}>
       <AppEnvProvider cdfEnv={cdfEnv} project={project} origin={origin}>
-        <Router history={history}>
-          <SelectedIntegrationProvider initIntegration={initIntegration}>
-            {children}
-          </SelectedIntegrationProvider>
-        </Router>
+        <RunFilterProvider {...runFilter}>
+          <Router history={history}>
+            <SelectedIntegrationProvider initIntegration={initIntegration}>
+              {children}
+            </SelectedIntegrationProvider>
+          </Router>
+        </RunFilterProvider>
       </AppEnvProvider>
     </QueryClientProvider>
   );

@@ -35,12 +35,20 @@ export const StatusMenu = ({
         <StatusMenuContent setSelected={setSelected} selected={selected} />
       }
     >
-      <Button type={btnType} icon="CaretDown" iconPlacement="right">
+      <Button
+        type={btnType}
+        icon="CaretDown"
+        iconPlacement="right"
+        data-testid="status-menu-button"
+      >
         {TableHeadings.STATUS}{' '}
         {selected === Status.NOT_ACTIVATED ? (
           '- ALL'
         ) : (
-          <StatusMarker status={selected} dataTestId="status-menu-fail" />
+          <StatusMarker
+            status={selected}
+            dataTestId="status-menu-button-marker"
+          />
         )}
       </Button>
     </StyledDropdown>
@@ -60,7 +68,7 @@ const StatusMenuContent = ({
         selected={selected === Status.FAIL}
         appendIcon={selected === Status.FAIL ? 'Checkmark' : undefined}
         aria-selected={selected === Status.FAIL}
-        data-testid="status-menu-fail"
+        data-testid="status-menu-item-fail"
       >
         <StatusMarker status={Status.FAIL} dataTestId="status-menu-fail" />
       </Menu.Item>
@@ -69,7 +77,7 @@ const StatusMenuContent = ({
         selected={selected === Status.OK}
         appendIcon={selected === Status.OK ? 'Checkmark' : undefined}
         aria-selected={selected === Status.OK}
-        data-testid="status-menu-ok"
+        data-testid="status-menu-item-ok"
       >
         <StatusMarker status={Status.OK} dataTestId="status-menu-ok" />
       </Menu.Item>
@@ -78,13 +86,13 @@ const StatusMenuContent = ({
         selected={selected === Status.NOT_ACTIVATED}
         appendIcon={selected === Status.NOT_ACTIVATED ? 'Checkmark' : undefined}
         aria-selected={selected === Status.NOT_ACTIVATED}
-        data-testid="status-menu-all"
+        data-testid="status-menu-item-all"
       >
         <Badge
           text="ALL"
           background="white"
           aria-label="All"
-          data-testid="status-menu-all"
+          data-testid="status-menu-item-all"
         />
       </Menu.Item>
     </StyledMenu>

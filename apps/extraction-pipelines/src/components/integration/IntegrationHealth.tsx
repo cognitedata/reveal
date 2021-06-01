@@ -10,7 +10,7 @@ import { SINGLE_INTEGRATION_RUNS } from 'utils/constants';
 import { useFilteredRuns } from 'hooks/useRuns';
 import { StatusRun } from 'model/Runs';
 import { Integration } from 'model/Integration';
-import { mapStatusRow } from 'utils/runsUtils';
+import { mapStatusRow, RunStatus } from 'utils/runsUtils';
 import { RunLogsTable } from 'components/integration/RunLogsTable';
 import { getRunLogTableCol } from 'components/integration/RunLogsCols';
 import { ErrorFeedback } from 'components/error/ErrorFeedback';
@@ -18,12 +18,23 @@ import { PageWrapperColumn } from 'styles/StyledPage';
 import { DebouncedSearch } from 'components/inputs/DebouncedSearch';
 import { DateRangeFilter } from 'components/inputs/dateTime/DateRangeFilter';
 import { Colors } from '@cognite/cogs.js';
-import { partition } from 'utils/integrationUtils';
+import {
+  createSearchParams,
+  getQueryParams,
+  partition,
+} from 'utils/integrationUtils';
 import { Status } from 'model/Status';
 import { TimeSelector } from 'components/inputs/dateTime/TimeSelector';
 import { QuickDateTimeFilters } from 'components/table/QuickDateTimeFilters';
 import { StatusFilterMenu } from 'components/table/StatusFilterMenu';
-import { useRunFilterContext } from 'hooks/runs/RunsFilterContext';
+import { useHistory, useLocation } from 'react-router-dom';
+import {
+  updateDateRangeAction,
+  updateSearchAction,
+  updateStatusAction,
+  useRunFilterContext,
+} from 'hooks/runs/RunsFilterContext';
+import moment from 'moment';
 
 const TableWrapper = styled(PageWrapperColumn)`
   padding: 0 2rem;
@@ -75,13 +86,45 @@ export const IntegrationHealth: FunctionComponent<LogsViewProps> = ({
   integration,
 }: PropsWithChildren<LogsViewProps>) => {
   const [runs, setRuns] = useState<StatusRun[]>([]);
+  const history = useHistory();
+
+  const { search: urlSearch, pathname } = useLocation();
   const {
-    state: { dateRange, statuses, search },
-  } = useRunFilterContext();
+    search: paramSearch,
+    statuses: paramStatuses,
+    min,
+    max,
+    env,
+  } = getQueryParams(urlSearch);
   const [nextCursor, setNextCursor] = useState<string | undefined>();
   const [pageSize] = useState(PAGE_SIZE_DEFAULT);
   const [pageCount, setPageCount] = React.useState(0);
 
+  useEffect(() => {
+    if (min && max) {
+      const range = {
+        startDate: moment(parseInt(min, 10)),
+        endDate: moment(parseInt(max, 10)),
+      };
+      dispatch(
+        updateDateRangeAction({
+          startDate: range.startDate.toDate(),
+          endDate: range.endDate.toDate(),
+        })
+      );
+    }
+    if (paramStatuses) {
+      dispatch(updateStatusAction(paramStatuses.split(',') as RunStatus[]));
+    }
+    if (paramSearch) {
+      dispatch(updateSearchAction(paramSearch));
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const {
+    state: { dateRange, statuses, search },
+    dispatch,
+  } = useRunFilterContext();
   const { data, error, isPreviousData } = useFilteredRuns({
     externalId: integration?.externalId,
     statuses,
@@ -89,13 +132,23 @@ export const IntegrationHealth: FunctionComponent<LogsViewProps> = ({
     dateRange,
     nextCursor,
   });
-  const integrationId = integration?.id;
+  const { id: integrationId } = integration ?? {};
 
   useEffect(() => {
     if (integrationId) {
       trackUsage(SINGLE_INTEGRATION_RUNS, { id: integrationId });
     }
   }, [integrationId]);
+  useEffect(() => {
+    const url = `${pathname}?${createSearchParams({
+      env,
+      search,
+      statuses,
+      dateRange,
+    })}`;
+
+    history.push(url);
+  }, [pathname, env, search, statuses, dateRange, history]);
 
   useEffect(() => {
     if (!isPreviousData && data) {
