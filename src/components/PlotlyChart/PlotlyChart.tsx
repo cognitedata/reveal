@@ -152,7 +152,9 @@ const PlotlyChartComponent = ({
   }, [yAxisLocked]);
 
   useEffect(() => {
-    if (!isYAxisShown && !yAxisLocked) onAdjustButtonClick();
+    if (!isYAxisShown && !yAxisLocked) {
+        setYAxisLocked(true);
+    }
   }, [isYAxisShown, yAxisLocked, onAdjustButtonClick]);
 
   const updateChart = useCallback(
