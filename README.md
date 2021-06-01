@@ -192,7 +192,7 @@ targeting the master branch.
 1. Write the changes that new version brings. Get inspired by done tasks from your spring board. 
 Also, you can check what's committed from the previous tag with that command:
    ```bash
-   git log --pretty=format:"%s <%an>" @cognite/reveal@2.0.0...HEAD
+   git log --pretty=format:"* %s <%an>" @cognite/reveal@2.0.0...HEAD
    ```
    Use the following template:
    ```md
