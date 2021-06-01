@@ -91,10 +91,11 @@ void main() {
 
   customDepth = customDepth > 0.0 ? customDepth : infinity; 
   backDepth = backDepth > 0.0 ? backDepth : infinity; 
-  ghostDepth = ghostDepth > 0.0 ? ghostDepth : infinity; 
+  ghostDepth = ghostDepth > 0.0 ? ghostDepth : infinity;
+  frontDepth = frontDepth > 0.0 ? frontDepth : infinity; 
 
   // texture has drawn fragment
-  if(texture2D(tFrontDepth, vUv).r < 1.0){
+  if(frontDepth < 1.0){
     float customDepthTest = step(customDepth, backDepth); // zero if back is in front
 
     float a = customDepthTest > 0.0 ? ceil(customAlbedo.a) * 0.5 : ceil(backAlbedo.a) * 0.5;
