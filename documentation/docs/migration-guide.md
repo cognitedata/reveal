@@ -7,7 +7,7 @@ description: This page describes the differences between Reveal 1 and 2. It also
 
 import { DemoWrapper } from '@site/docs/components/DemoWrapper';
 
-## Index
+This article describes how to migrate between different major versions of Reveal and from the old `@cognite/3d-viewer` package.
 
 1. [Migrating from Reveal 1.x](#migrating-from-reveal-1x)
 1. [Migrating from @cognite/3d-viewer](#migrating-from-cognite3dviewer)
@@ -112,6 +112,12 @@ other cases this might not be as straight forward as shown.
 :::
 
 ## Migrating from [@cognite/3d‑viewer](https://www.npmjs.com/package/@cognite/3d-viewer)
+
+:::warn
+This section describes how to migrate from `@cognite/3d-viewer` to Reveal version 1. It doesn't take into account changes
+between Reveal versions 1 and 2.
+:::
+
 
 `@cognite/3d-viewer` is an older version of Reveal that has similar functionality to this package. However, some important differences caused us to switch the package name to `@cognite/reveal`.
 
