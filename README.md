@@ -125,8 +125,8 @@ cd viewer
 yarn bump
 ```
 
-The version you specified will be committed and pushed to the remote repository among with the version tag.
-Create a PR with the changes.
+The version you specified will be committed and pushed to the remote repository among with the version tag. For production releases use the regular `x.y.z`-notation. For pre-releases use
+`x.y.z-beta.w`. Create a PR with the changes.
 
 **Don't merge it yet**, but wait for the CI checks to complete.
 
@@ -167,7 +167,13 @@ If you are not currently logged into npm on your CLI, do the following:
 Once logged in, run:
 
 ```bash
-yarn release
+yarn release:prod
+```
+
+or if you are releasing a beta version:
+
+```bash
+yarn release:beta
 ```
 
 It creates a build, copies package.json into /dist with modifications and runs npm publish from viewer/dist.
@@ -181,17 +187,16 @@ targeting the master branch.
 ### Create a release on GitHub
 
 1. Go to [https://github.com/cognitedata/reveal/releases/new](https://github.com/cognitedata/reveal/releases/new)
-1. Under the "Tag version" field, look for the newly-created tag, e.g. `@cognite/reveal@1.0.1`
+1. Under the "Tag version" field, look for the newly-created tag, e.g. `@cognite/reveal@2.1.0`
 1. Specify the same release title as the tag name.
 1. Write the changes that new version brings. Get inspired by done tasks from your spring board. 
 Also, you can check what's committed from the previous tag with that command:
    ```bash
-   git log --pretty=format:"%s <%an> – %h" @cognite/reveal@1.2.0...HEAD
+   git log --pretty=format:"%s <%an>" @cognite/reveal@2.0.0...HEAD
    ```
    Use the following template:
    ```md
-   This version of Reveal depends on ThreeJS <version>. Your application should match
-   the version used to ensure compatibility. 
+   This is a beta release of the next major version of Reveal. Reveal 2.0 comes with ThreeJS embedded so you do not to have this as a dependency in your project. If you still want to have it as a direct dependency, it must match the version used by Reveal (r<version>).
 
    ### 🚀 Features
    
@@ -206,7 +211,6 @@ Also, you can check what's committed from the previous tag with that command:
    * commit message
 
    See [installation documentation](https://cognitedata.github.io/reveal-docs/docs/installation) for 
-   details about installting Reveal.
+   details about installing Reveal.
    ```
 1. Hit the green "Publish release" button
-
