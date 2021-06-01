@@ -20,7 +20,13 @@ const BACKEND_SERVICE_BASE_URL =
 const useBackendService = !!BACKEND_SERVICE_BASE_URL;
 const CDF_API_BASE_URL = config.cdfApiBaseUrl;
 
-const getServiceClient = (sdk: CogniteClient) => {
+const getServiceClient = async (sdk: CogniteClient) => {
+  const loginStatus = await sdk.login.status();
+
+  if (!loginStatus) {
+    return sdk;
+  }
+
   const client = new CogniteClient({
     appId: config.appId,
     baseUrl: useBackendService ? BACKEND_SERVICE_BASE_URL : CDF_API_BASE_URL,
@@ -39,8 +45,7 @@ const getServiceClient = (sdk: CogniteClient) => {
 };
 
 export const getCalls = async (sdk: CogniteClient, fnId: number) => {
-  const loginStatus = await sdk.login.status();
-  const client = loginStatus ? getServiceClient(sdk) : sdk;
+  const client = await getServiceClient(sdk);
 
   return client
     .get(`/api/playground/projects/${sdk.project}/functions/${fnId}/calls`)
@@ -48,8 +53,7 @@ export const getCalls = async (sdk: CogniteClient, fnId: number) => {
 };
 
 export async function listFunctions(sdk: CogniteClient) {
-  const loginStatus = await sdk.login.status();
-  const client = loginStatus ? getServiceClient(sdk) : sdk;
+  const client = await getServiceClient(sdk);
 
   return client
     .get<{ items: CogniteFunction[] }>(
@@ -63,8 +67,7 @@ export async function callFunction(
   functionId: number,
   data?: object
 ) {
-  const loginStatus = await sdk.login.status();
-  const client = loginStatus ? getServiceClient(sdk) : sdk;
+  const client = await getServiceClient(sdk);
 
   return client
     .post(
@@ -81,8 +84,7 @@ export async function getCallStatus(
   functionId: number,
   callId: number
 ) {
-  const loginStatus = await sdk.login.status();
-  const client = loginStatus ? getServiceClient(sdk) : sdk;
+  const client = await getServiceClient(sdk);
 
   return client
     .get(
@@ -96,8 +98,7 @@ export async function getCallResponse(
   functionId: number,
   callId: number
 ) {
-  const loginStatus = await sdk.login.status();
-  const client = loginStatus ? getServiceClient(sdk) : sdk;
+  const client = await getServiceClient(sdk);
 
   return client
     .get(
