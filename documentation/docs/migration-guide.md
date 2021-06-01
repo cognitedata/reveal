@@ -59,7 +59,7 @@ In general, it is recommended to use the [specialized `NodeSet`-implementations]
 it is possible to use `ByTreeIndexNodeSet` as a migration step. This allows the use of previously implemented logic for
 populating the set based on some application specific logic.
 
-Lets say an application has some logic for only showing objects that are part of the 'EA'-function. In previous versions
+As an example, consider an application that has some logic for only showing objects that are part of the 'EA'-function. In previous versions
 this could be achieved by doing:
 
 ```js
