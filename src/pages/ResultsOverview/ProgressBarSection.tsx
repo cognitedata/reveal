@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Progress } from 'antd';
+import { Progress, Spin } from 'antd';
 import { Body, Icon } from '@cognite/cogs.js';
 import { Popover, Flex, TitledSection } from 'components/Common';
 import { getActiveWorkflowId, useWorkflowResources } from 'modules/workflows';
@@ -64,10 +64,13 @@ const ProgressBarSection = (): JSX.Element => {
             Matching tags in diagrams to targets ({completed + failed}/{total})
           </Popover>
         </Body>
-        <Progress
-          percent={parsingJobPercent}
-          status={parsingJobPercent === 100 ? 'success' : 'active'}
-        />
+
+        <Spin spinning={!total}>
+          <Progress
+            percent={parsingJobPercent}
+            status={parsingJobPercent === 100 ? 'success' : 'active'}
+          />
+        </Spin>
       </Flex>
     </TitledSection>
   );
