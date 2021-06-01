@@ -173,7 +173,7 @@ yarn release:prod
 or if you are releasing a beta version:
 
 ```bash
-yarn release:beta
+yarn release --tag=beta
 ```
 
 It creates a build, copies package.json into /dist with modifications and runs npm publish from viewer/dist.
@@ -196,7 +196,7 @@ Also, you can check what's committed from the previous tag with that command:
    ```
    Use the following template:
    ```md
-   This is a beta release of the next major version of Reveal. Reveal 2.0 comes with ThreeJS embedded so you do not to have this as a dependency in your project. If you still want to have it as a direct dependency, it must match the version used by Reveal (r<version>).
+   This is a beta release of the next major version of Reveal. Reveal 2.0 comes with ThreeJS embedded so you do not have this as a dependency in your project. If you still want to have it as a direct dependency, it must match the version used by Reveal (r<version>). You can also use three.js version exported by Reveal as `import { THREE } from '@cognite/reveal`.
 
    ### 🚀 Features
    
