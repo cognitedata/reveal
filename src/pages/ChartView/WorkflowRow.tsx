@@ -87,22 +87,22 @@ export default function WorkflowRow({
   const { nodes, connections } = workflow;
   const steps = useMemo(
     () =>
-      isWorkflowRunnable(nodes) &&
-      getStepsFromWorkflow(chart, nodes, connections),
+      isWorkflowRunnable(nodes)
+        ? getStepsFromWorkflow(chart, nodes, connections)
+        : [],
     [chart, nodes, connections]
   );
 
   const computation = useMemo(
-    () =>
-      steps && {
-        steps,
-        start_time: new Date(dateFrom).getTime(),
-        end_time: new Date(dateTo).getTime(),
-        granularity: calculateGranularity(
-          [new Date(dateFrom).getTime(), new Date(dateTo).getTime()],
-          1000
-        ),
-      },
+    () => ({
+      steps,
+      start_time: new Date(dateFrom).getTime(),
+      end_time: new Date(dateTo).getTime(),
+      granularity: calculateGranularity(
+        [new Date(dateFrom).getTime(), new Date(dateTo).getTime()],
+        1000
+      ),
+    }),
     [steps, dateFrom, dateTo]
   );
 
@@ -145,9 +145,10 @@ export default function WorkflowRow({
   }, [call, currentCallStatus, runComputation, isCallLoading]);
 
   const handleChanges = useCallback(() => {
-    if (!computation) {
+    if (!computation.steps.length) {
       return;
     }
+
     if (call?.hash === getHash(computation)) {
       return;
     }

@@ -26,7 +26,7 @@ export const effect = async (funcData: FunctionData) => {
 
 export const effectId = 'SOURCE_REFERENCE';
 
-export const configPanel = ({
+export const ConfigPanel = ({
   node,
   onUpdateNode,
   context,

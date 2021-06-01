@@ -5,6 +5,7 @@ import { FunctionCallStatus } from 'reducers/charts/types';
 import * as backendApi from 'utils/backendApi';
 import { CogniteClient } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
+import { FunctionCall } from 'utils/backendService';
 
 type Function = {
   id: number;
@@ -21,12 +22,6 @@ export interface CallResponse {
 
 const key = ['functions', 'get_all_ops'];
 
-interface Props {
-  renderCall?: (functions: DSPFunction[]) => JSX.Element | null;
-  renderLoading?: () => JSX.Element | null;
-  renderError?: () => JSX.Element | null;
-}
-
 const getFunctionId = (sdk: CogniteClient, externalId: string) => async () => {
   const functions: Function[] = await backendApi.listFunctions(sdk);
 
@@ -36,10 +31,10 @@ const getFunctionId = (sdk: CogniteClient, externalId: string) => async () => {
     return id;
   }
 
-  return Promise.reject(new Error('Could not find calls'));
+  return Promise.reject(new Error(`Could not find function ${externalId}`));
 };
 
-const getLatestCalls = (sdk: CogniteClient, fnId: number) => async () => {
+const getLatestCall = (sdk: CogniteClient, fnId: number) => async () => {
   const calls: { id: number; endTime: number }[] = await backendApi.getCalls(
     sdk,
     fnId
@@ -67,11 +62,7 @@ const getCallStatus = (
   callId: number
 ) => async () => {
   const response = await backendApi.getCallStatus(sdk, fnId, callId);
-
-  if (response?.status) {
-    return response.status as FunctionCallStatus;
-  }
-  return Promise.reject(new Error('could not find call status'));
+  return response;
 };
 
 const getOps = (
@@ -87,11 +78,7 @@ const getOps = (
   return Promise.reject(new Error('did not get DSPFunction list'));
 };
 
-export default function AvailableOps({
-  renderCall,
-  renderLoading,
-  renderError,
-}: Props) {
+export function useAvailableOps(): [boolean, Error?, DSPFunction[]?] {
   const sdk = useSDK();
 
   const cacheOptions = {
@@ -107,9 +94,9 @@ export default function AvailableOps({
   );
 
   // Functions are immutable so any old call will be fine
-  const { data: call, isFetched: callsFetched } = useQuery(
+  const { data: call, isFetched: callFetched } = useQuery(
     [...key, 'get_calls'],
-    getLatestCalls(sdk, fnId as number),
+    getLatestCall(sdk, fnId as number),
     { enabled: !!fnId, ...cacheOptions }
   );
 
@@ -118,7 +105,7 @@ export default function AvailableOps({
     [...key, 'create_call'],
     callFunction(sdk, fnId as number),
     {
-      enabled: callsFetched && !call && !!fnId,
+      enabled: callFetched && !call && !!fnId,
       ...cacheOptions,
     }
   );
@@ -126,9 +113,8 @@ export default function AvailableOps({
   const callId = call || newCallId;
 
   const [refetchInterval, setRefetchInterval] = useState<number | false>(1000);
-  const { data: callStatus, isError: callStatusError } = useQuery<
-    FunctionCallStatus
-  >(
+
+  const { data: callStatus, isError: callStatusError } = useQuery<FunctionCall>(
     [...key, callId, 'call_status'],
     getCallStatus(sdk, fnId as number, callId as number),
     {
@@ -138,7 +124,12 @@ export default function AvailableOps({
     }
   );
 
-  if (callStatus && callStatus !== 'Running' && refetchInterval) {
+  const hasValidResult =
+    !!callStatus?.status &&
+    callStatus.status === 'Completed' &&
+    !callStatus.error;
+
+  if (hasValidResult && refetchInterval) {
     setRefetchInterval(false);
   }
 
@@ -147,7 +138,7 @@ export default function AvailableOps({
     getOps(sdk, fnId as number, callId as number),
     {
       ...cacheOptions,
-      enabled: callStatus === 'Completed',
+      enabled: hasValidResult,
     }
   );
 
@@ -156,16 +147,18 @@ export default function AvailableOps({
     callStatusError ||
     createCallError ||
     responseError ||
-    callStatus === 'Failed'
+    callStatus?.status === 'Failed' ||
+    callStatus?.status === 'Timeout' ||
+    callStatus?.error
   ) {
-    return renderError ? renderError() : null;
+    return [false, new Error('Could not get available operations'), undefined];
   }
 
   if (!isFetched) {
-    return renderLoading ? renderLoading() : null;
+    return [true, undefined, undefined];
   }
-  if (isFetched && response && renderCall) {
-    return renderCall(response);
+  if (isFetched && response) {
+    return [false, undefined, response];
   }
-  return null;
+  return [false, new Error('Something went wrong'), undefined];
 }
