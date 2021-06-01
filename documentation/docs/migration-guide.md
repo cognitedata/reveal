@@ -113,7 +113,7 @@ other cases this might not be as straight forward as shown.
 
 ## Migrating from [@cognite/3d‑viewer](https://www.npmjs.com/package/@cognite/3d-viewer)
 
-:::warn
+:::warning
 This section describes how to migrate from `@cognite/3d-viewer` to Reveal version 1. It doesn't take into account changes
 between Reveal versions 1 and 2.
 :::
