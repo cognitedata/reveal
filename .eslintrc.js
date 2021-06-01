@@ -12,5 +12,7 @@ module.exports = {
         ignoredNamesRegex: '^_',
       },
     ],
+    "no-shadow": "off",
+    "@typescript-eslint/no-shadow": "error"
   },
 };
