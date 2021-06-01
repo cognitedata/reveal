@@ -17,7 +17,7 @@ const BetaBanner = () => {
             publicly. We encourage all customers to try out the new features and
             <a
               onClick={() => trackUsage(PNID_METRICS.betaBanner.feedback)}
-              href="https://hub.cognite.com/contextualization-160/beta-interactive-engineering-diagram-feedback-channel-486?postid=582#post582"
+              href="https://hub.cognite.com/contextualizition-beta-features-162/beta-interactive-engineering-diagram-flow-feedback-channel-490"
               target="_blank"
               rel="noopener noreferrer"
             >
