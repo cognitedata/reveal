@@ -118,8 +118,8 @@ export class Cognite3DViewer {
     disposed: new EventTrigger<DisposedDelegate>()
   };
 
-  private readonly models: CogniteModelBase[] = [];
-  private readonly extraObjects: THREE.Object3D[] = [];
+  private readonly _models: CogniteModelBase[] = [];
+  private readonly _extraObjects: THREE.Object3D[] = [];
 
   private readonly _automaticNearFarPlane: boolean;
   private readonly _automaticControlsSensitivity: boolean;
@@ -176,6 +176,14 @@ export class Cognite3DViewer {
     // Note! Type here differes from the one in RevealManager to expose a documentated
     // type. This should map 1:1 with type in RevealManager
     this._revealManager.cadBudget = budget;
+  }
+
+  /**
+   * Gets a list of models currently added to the viewer.
+   * @version New in 2.0.0
+   */
+  public get models(): CogniteModelBase[] {
+    return this._models.slice();
   }
 
   /**
@@ -293,10 +301,10 @@ export class Cognite3DViewer {
     this._revealManager.dispose();
     this.domElement.removeChild(this.canvas);
     this.renderer.dispose();
-    for (const model of this.models.values()) {
+    for (const model of this._models.values()) {
       model.dispose();
     }
-    this.models.splice(0);
+    this._models.splice(0);
     this.spinner.dispose();
 
     this._events.disposed.fire();
@@ -476,7 +484,7 @@ export class Cognite3DViewer {
     );
 
     const model3d = new Cognite3DModel(modelId, revisionId, cadNode, this.sdkClient);
-    this.models.push(model3d);
+    this._models.push(model3d);
     this.scene.add(model3d);
 
     if (options.geometryFilter) {
@@ -523,7 +531,7 @@ export class Cognite3DViewer {
       revisionId
     });
     const model = new CognitePointCloudModel(modelId, revisionId, pointCloudNode);
-    this.models.push(model);
+    this._models.push(model);
     this.scene.add(model);
     return model;
   }
@@ -535,11 +543,11 @@ export class Cognite3DViewer {
    * @param model
    */
   removeModel(model: Cognite3DModel | CognitePointCloudModel) {
-    const modelIdx = this.models.indexOf(model);
+    const modelIdx = this._models.indexOf(model);
     if (modelIdx === -1) {
       throw new Error('Model is not added to viewer');
     }
-    this.models.splice(modelIdx, 1);
+    this._models.splice(modelIdx, 1);
     this.scene.remove(model);
     this.renderController.redraw();
 
@@ -614,7 +622,7 @@ export class Cognite3DViewer {
     }
     this.scene.add(object);
     object.updateMatrixWorld(true);
-    this.extraObjects.push(object);
+    this._extraObjects.push(object);
     this.renderController.redraw();
     this.updateCameraNearAndFar(this.camera);
   }
@@ -634,9 +642,9 @@ export class Cognite3DViewer {
       return;
     }
     this.scene.remove(object);
-    const index = this.extraObjects.indexOf(object);
+    const index = this._extraObjects.indexOf(object);
     if (index >= 0) {
-      this.extraObjects.splice(index, 1);
+      this._extraObjects.splice(index, 1);
     }
     this.renderController.redraw();
     this.updateCameraNearAndFar(this.camera);
@@ -1119,7 +1127,7 @@ export class Cognite3DViewer {
   private getModels(type: 'pointcloud'): CognitePointCloudModel[];
   /** @private */
   private getModels(type: SupportedModelTypes): CogniteModelBase[] {
-    return this.models.filter(x => x.type === type);
+    return this._models.filter(x => x.type === type);
   }
 
   /** @private */
@@ -1263,14 +1271,14 @@ export class Cognite3DViewer {
     } = this._updateNearAndFarPlaneBuffers;
     // 1. Compute the bounds of all geometry
     combinedBbox.makeEmpty();
-    this.models.forEach(model => {
+    this._models.forEach(model => {
       model.getModelBoundingBox(bbox);
       if (!bbox.isEmpty()) {
         combinedBbox.expandByPoint(bbox.min);
         combinedBbox.expandByPoint(bbox.max);
       }
     });
-    this.extraObjects.forEach(obj => {
+    this._extraObjects.forEach(obj => {
       bbox.setFromObject(obj);
       if (!bbox.isEmpty()) {
         combinedBbox.expandByPoint(bbox.min);
