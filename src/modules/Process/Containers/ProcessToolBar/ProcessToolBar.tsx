@@ -9,7 +9,7 @@ import {
 } from 'src/modules/Process/processSlice';
 import { message, notification } from 'antd';
 import { toastProps } from 'src/utils/ToastUtils';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Title, Modal } from '@cognite/cogs.js';
 import { DetectionModelSelect } from 'src/modules/Process/Components/DetectionModelSelect';
 import { isVideo } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
@@ -80,6 +80,17 @@ export const ProcessToolBar = () => {
   const fileUploadActive = !files.length;
   const modelSelectorActive =
     !!files.length && !selectedDetectionModels.length && isPollingFinished;
+
+  useEffect(() => {
+    if (isPollingFinished || showDrawer) {
+      notification.close('inProgressToast');
+    } else {
+      notification.info({
+        ...toastProps,
+        duration: 0,
+      });
+    }
+  }, [isPollingFinished, showDrawer]);
 
   return (
     <>
@@ -172,16 +183,6 @@ export const ProcessToolBar = () => {
             </ElementContent>
           </ProcessToolBarElement>
         </ToolContainer>
-        {isPollingFinished || showDrawer
-          ? notification.info({
-              ...toastProps,
-              duration: 0.01,
-              style: { ...toastProps.style, visibility: 'collapse' },
-            })
-          : notification.info({
-              ...toastProps,
-              duration: 0,
-            })}
       </Container>
     </>
   );

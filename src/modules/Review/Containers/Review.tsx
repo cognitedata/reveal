@@ -23,7 +23,7 @@ import { AddAnnotationsFromEditModeAssetIds } from 'src/store/thunks/AddAnnotati
 import { resetEditHistory } from 'src/modules/FileDetails/fileDetailsSlice';
 import { CreateAnnotations } from 'src/store/thunks/CreateAnnotations';
 import { DeleteAnnotationsByFileIds } from 'src/store/thunks/DeleteAnnotationsByFileIds';
-import { workflowRoutes } from 'src/modules/Workflow/workflowRoutes';
+import { getLink, workflowRoutes } from 'src/modules/Workflow/workflowRoutes';
 import { PopulateAnnotations } from 'src/store/thunks/PopulateAnnotations';
 import { CDFStatus } from 'src/modules/Common/Components/CDFStatus/CDFStatus';
 
@@ -123,7 +123,7 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
           </Button>
           {/* Todo: A way to quickly go back to the process page for now */}
           <Title
-            onClick={() => history.push(workflowRoutes.process)}
+            onClick={() => history.push(getLink(workflowRoutes.process))}
             style={{ fontSize: '14px' }}
             level={3}
           >
