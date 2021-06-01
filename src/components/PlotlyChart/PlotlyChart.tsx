@@ -144,9 +144,16 @@ const PlotlyChartComponent = ({
     }
   }, [wfSuccess, workflowsRaw]);
 
+  const onAdjustButtonClick = useCallback(() => {
+    trackUsage('ChartView.ToggleYAxisLock', {
+      state: !yAxisLocked ? 'unlocked' : 'locked',
+    });
+    setYAxisLocked(!yAxisLocked);
+  }, [yAxisLocked]);
+
   useEffect(() => {
     if (!isYAxisShown && !yAxisLocked) onAdjustButtonClick();
-  }, [isYAxisShown]);
+  }, [isYAxisShown, yAxisLocked, onAdjustButtonClick]);
 
   const updateChart = useCallback(
     (c: Chart) => {
@@ -466,13 +473,6 @@ const PlotlyChartComponent = ({
     scrollZoom: true,
     displaylogo: false,
     displayModeBar: false,
-  };
-
-  const onAdjustButtonClick = () => {
-    trackUsage('ChartView.ToggleYAxisLock', {
-      state: !yAxisLocked ? 'unlocked' : 'locked',
-    });
-    setYAxisLocked(!yAxisLocked);
   };
 
   return (
