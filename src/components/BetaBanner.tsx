@@ -30,7 +30,7 @@ const BetaBanner = () => {
         type="info"
         closable
         onClose={() => {
-          trackUsage(PNID_METRICS.betaBanner.feedback);
+          trackUsage(PNID_METRICS.betaBanner.close);
           setHideBanner(true);
         }}
       />
