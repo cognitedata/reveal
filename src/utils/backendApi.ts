@@ -38,8 +38,13 @@ const getServiceClient = (sdk: CogniteClient) => {
   return client;
 };
 
+const verifySession = async (sdk: CogniteClient) => {
+  await sdk.get(`/login/status`);
+};
+
 export const getCalls = async (sdk: CogniteClient, fnId: number) => {
   const client = getServiceClient(sdk);
+  await verifySession(sdk);
 
   return client
     .get(`/api/playground/projects/${sdk.project}/functions/${fnId}/calls`)
@@ -48,6 +53,7 @@ export const getCalls = async (sdk: CogniteClient, fnId: number) => {
 
 export async function listFunctions(sdk: CogniteClient) {
   const client = getServiceClient(sdk);
+  await verifySession(sdk);
 
   return client
     .get<{ items: CogniteFunction[] }>(
@@ -62,6 +68,7 @@ export async function callFunction(
   data?: object
 ) {
   const client = getServiceClient(sdk);
+  await verifySession(sdk);
 
   return client
     .post(
@@ -79,6 +86,7 @@ export async function getCallStatus(
   callId: number
 ) {
   const client = getServiceClient(sdk);
+  await verifySession(sdk);
 
   return client
     .get(
@@ -93,6 +101,7 @@ export async function getCallResponse(
   callId: number
 ) {
   const client = getServiceClient(sdk);
+  await verifySession(sdk);
 
   return client
     .get(
