@@ -1,9 +1,116 @@
 ---
 id: migration-guide
-title: Migrating from @cognite/3d-viewer
+title: Migrating from previous versions
 hide_title: true
-description: This page describes the differences between Reveal viewer and @cognite/3d-viewer, which is an older version of Reveal with similar functionality.
+description: This page describes the differences between Reveal 1 and 2. It also walks through how to migrate from the previous Cognite 3D viewer (@cognite/3d-viewer).
 ---
+
+import { DemoWrapper } from '@site/docs/components/DemoWrapper';
+
+# Index
+
+1. [Migrating from Reveal 1.x](#migrating-from-reveal-1x)
+1. [Migrating from @cognite/3d-viewer](#migrating-from-cognite3dviewer)
+
+# Migrating from Reveal 1.x
+
+There are some important differences between version 1 and version 2 of `@cognite/reveal` which might require changes in the build configuration and code. The most important changes are:
+
+- The node styling/filtering API has been reworked and will require changes. See below for more information.
+- [ThreeJS](https://www.npmjs.com/package/three) and [@types/three](https://www.npmjs.com/package/@types/three) is included in the package, so it's no longer necessary to include this in the application you are using Reveal from if you are not using ThreeJS directly.
+
+## Migrating to the new node styling API
+
+Before reading this chapter it's recommended to read through [the introduction to the new styling and filtering API](examples/cad-styling).
+
+In the 2.0 of release of Reveal, the filtering and styling API changed drastically - breaking existing
+functionality. Migrating to version 2 will most likely require code changes, but these should often
+be quite limited and lead to a simplification of the code base along with an increase in filtering- and
+styling performance.
+
+In previous versions of Reveal, styling nodes was done by a set of functions for explicitly applying
+styling to a node identified by a tree index (and optionally all its children).
+- Visibility - `hideNodeByTreeIndex()`, `showNodeByTreeIndex()`, `hideAllNodes()` and `showAllNodes()`
+- Color override - `setNodeColorByTreeIndex()`, `setAllNodeColors()`, `resetNodeColorByTreeIndex()` and `resetAllNodeColors()`
+- Ghost nodes - `ghostNodeByTreeIndex()`, `unghostNodeByTreeIndex()`, `ghostAllNodes()` and `unghostAllNodes()`
+- Highlighting - `selectNodeByTreeIndex()`, `deselectNodeByTreeIndex()` and `deselectAllNodes()`
+
+This allowed flexible styling of nodes, but required many individual calls to update each node, causing degraded
+performance. The new API instead requires a set of styles which nodes are assigned to. It's preferable not to have
+too many styles - both in terms of performance and to avoid a cluttered view for the end user.
+
+The previous styling options maps quite directly to the new API. Visibility is controlled by `NodeApperance.visible`,
+color override by `NodeApperance.color` and ghost mode by `NodeApperance.renderGhosted`. However, there is no
+direct mapping between what was previously called 'selection' or 'highlighting', this is now a combination of
+`NodeApperance.color`, `NodeApperance.renderInFront` and `NodeApperance.outlineColor`. This means that the new API
+introduces additional flexibility - e.g. can a object have an outline, but not be rendered in front of other objects. For
+convinience, the new API comes with a sef of default styles available through [`DefaultNodeAppearance`](cad-styling).
+
+A commonly used functionality is to apply a default style to all nodes and to style a few selected nodes with a different
+style to make them stand out. Before, this could be achieved using a `ghostAllNodes`, `hideAllNodes` and `setAllNodeColors` to
+apply the default styling, and a combination of the different per-node styling functions mentioned above to style the 
+nodes that are to stand out. In Reveal 2, this is replaced by [`Cognite3DModel.setDefaultNodeAppearance`](API%20Reference#setdefaultnodeappearance) which is a style that will be applied 
+to any node that is not styled by another styled set.
+
+## Using ByTreeIndexNodeSet to migrate existing filtering logic
+
+<DemoWrapper name="Cognite3DViewerDemo" />
+
+In general, it is recommended to use the [specialized `NodeSet`-implementations](cad-styling) for best performance. However,
+it is possible to use `ByTreeIndexNodeSet` as a migration step. This allows the use of previously implemented logic for
+populating the set based on some application specific logic.
+
+Lets say an application has some logic for only showing objects that are part of the 'EA'-function. In previous versions
+this could be achieved by doing:
+
+```js
+model.hideAllNodes();
+sdk.revisions3D.list3DNodes(model.modelId, model.revisionId,
+  {
+    limit: 1000,
+    properties: { PDMS: { Function: 'EA' } }
+  })
+  .autoPagingEach(node => {
+    for (let i = 0; i < node.subtreeSize; i++) {
+      model.showNodeByTreeIndex(node.treeIndex + i);
+    }
+  });
+```
+
+Now, the same can be implemented using:
+
+```js runnable
+const visibleSet = new IndexSet();
+const visibleNodeSet = new ByTreeIndexNodeSet(visibleSet);
+model.setDefaultNodeAppearance(DefaultNodeAppearance.Hidden);
+model.addStyledNodeSet(visibleNodeSet, DefaultNodeAppearance.Default);
+
+// Populate set
+sdk.revisions3D.list3DNodes(model.modelId, model.revisionId,
+  {
+    limit: 1000,
+    properties: { PDMS: { Function: 'EA' } }
+  })
+  .autoPagingEach(node => {
+    visibleSet.addRange(new NumericRange(node.treeIndex, node.subtreeSize));
+  })
+  .then(() => {
+    // Note! We only trigger update to have effect on the rendered viewer after
+    // _all_ nodes have been retrieved. A better approach might be to trigger
+    // an update after each batch of nodes have been fetch from the SDK.
+    // However, avoid calling updateSet() too often as it can take some time
+    // to complete.
+    visibleNodeSet.updateSet(visibleSet);
+  });
+```
+
+Note that the styling is set up before any nodes actually are fetched and that the
+set is populated asynchronously.
+
+:::note
+This example could easily have been migrated using `ByNodePropertyNodeSet`, but in
+other cases this might not be as straight forward as here.
+:::
 
 # Migrating from [@cognite/3d‑viewer](https://www.npmjs.com/package/@cognite/3d-viewer)
 
