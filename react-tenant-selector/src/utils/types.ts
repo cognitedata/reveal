@@ -23,6 +23,7 @@ export type SidecarConfig = {
   directoryTenantId?: string;
   disableTranslations?: boolean;
   disableLegacyLogin?: boolean;
+  disableAzureLogin?: boolean;
   helpLink?: string;
   intercom?: string;
   intercomSettings?: IntercomBootSettings;

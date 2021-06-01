@@ -27,6 +27,7 @@ export const TenantSelector: React.FC<{
     cdfCluster,
     directoryTenantId,
     disableLegacyLogin,
+    disableAzureLogin,
     helpLink,
     fakeIdp,
   } = sidecar;
@@ -42,7 +43,7 @@ export const TenantSelector: React.FC<{
 
   const enabledLoginModes: EnabledModes = {
     cognite: !disableLegacyLogin,
-    aad: !!aadApplicationId,
+    aad: !!aadApplicationId && !disableAzureLogin,
     fakeIdp,
     // if we want to enable other modes in testing
     // we would use a setting here like this:

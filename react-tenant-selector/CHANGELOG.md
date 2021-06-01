@@ -1,3 +1,7 @@
+## 1.2.7 June 1 2021
+
+- Add `disableAzureLogin` option to sidecar disable the azure login button
+
 ## 1.2.6 May 27 2021
 
 - Bump auth-utils to v1.0.5
