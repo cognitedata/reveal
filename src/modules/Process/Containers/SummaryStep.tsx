@@ -301,7 +301,7 @@ const FileIconContainer = styled.div`
 `;
 
 const FancyButton = styled.button`
-  background: white;
+  background: var(--cogs-greyscale-grey2);
   border: none;
   border-radius: 10px;
   padding: 1rem;

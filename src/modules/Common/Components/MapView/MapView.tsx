@@ -101,6 +101,10 @@ export const MapView = (props: FileExplorerTableProps) => {
     }
   };
 
+  const selectedFileIsOnMap = selectedFiles.find(
+    (element: TableDataItem) => element.id === selectedFileOnMap?.id
+  );
+
   return (
     <Container>
       <div
@@ -149,7 +153,7 @@ export const MapView = (props: FileExplorerTableProps) => {
                   />
                 ))}
           </Layer>
-          {selectedFileOnMap && (
+          {selectedFileOnMap && selectedFileIsOnMap && (
             <>
               <Layer
                 type="circle"
@@ -164,7 +168,7 @@ export const MapView = (props: FileExplorerTableProps) => {
                   />
                 )}
               </Layer>
-              {popupVisible && selectedFiles.length && (
+              {popupVisible && selectedFileIsOnMap && (
                 <Popup
                   key={selectedFileOnMap.id}
                   coordinates={features[selectedFileOnMap.id.toString()]}
