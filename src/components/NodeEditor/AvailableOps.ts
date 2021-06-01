@@ -125,7 +125,7 @@ export function useAvailableOps(): [boolean, Error?, DSPFunction[]?] {
   );
 
   const hasValidResult =
-    callStatus?.status &&
+    !!callStatus?.status &&
     callStatus.status === 'Completed' &&
     !callStatus.error;
 
