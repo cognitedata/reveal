@@ -32,7 +32,7 @@
     "@cognite/z-index": "^0.1.0",
     "@sentry/browser": "^5.30.0",
     "antd": "^4.16.0",
-    "date-fns": "^2.21.3",
+    "date-fns": "^2.22.1",
     "dayjs": "^1.10.4",
     "dotenv": "^9.0.2",
     "firebase": "^8.6.3",
