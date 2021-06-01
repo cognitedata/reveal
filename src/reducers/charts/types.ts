@@ -87,5 +87,5 @@ export type NodeOption = {
   effect?: (funcData: object, ...inputPinValues: any[]) => Record<string, any>; // out = Output pin values
   effectId?: string;
 
-  configPanel?: ConfigPanelComponent;
+  ConfigPanel?: ConfigPanelComponent;
 };

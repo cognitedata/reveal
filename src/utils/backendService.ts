@@ -29,6 +29,7 @@ export interface FunctionCall {
   startTime?: number;
   endTime?: number;
   status: FunctionCallStatus;
+  error?: string;
 }
 
 export const useFunctionCall = (
@@ -40,7 +41,12 @@ export const useFunctionCall = (
   return useQuery<FunctionCall>(
     ['functions', functionId, 'call', callId],
     () => getCallStatus(sdk, functionId, callId),
-    { ...queryOpts, retry: 1, retryDelay: 1000 }
+    {
+      ...queryOpts,
+      retry: 1,
+      retryDelay: 1000,
+      enabled: !!functionId && !!callId,
+    }
   );
 };
 
@@ -60,7 +66,12 @@ export const useFunctionReponse = (
   return useQuery<string | null | undefined>(
     functionResponseKey(functionId, callId),
     () => getCallResponse(sdk, functionId, callId),
-    { ...opts, retry: 1, retryDelay: 1000 }
+    {
+      ...opts,
+      retry: 1,
+      retryDelay: 1000,
+      enabled: !!functionId && !!callId,
+    }
   );
 };
 
@@ -101,7 +112,7 @@ export const transformSimpleCalcResult = (
     timestamp?: number[];
   } = {}
 ) => {
-  const { value, timestamp } = result || undefined;
+  const { value = [], timestamp = [] } = result || {};
 
   return value?.length && timestamp?.length
     ? zipWith(value, timestamp, (v, t) => ({

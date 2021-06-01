@@ -41,6 +41,8 @@ module.exports = {
         "endOfLine": "auto"
       }
     ],
+    "no-shadow": "off",
+    "@typescript-eslint/no-shadow": "error"
   },
   parser: '@typescript-eslint/parser',
   parserOptions: {

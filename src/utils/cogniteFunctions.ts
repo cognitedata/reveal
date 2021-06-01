@@ -127,9 +127,6 @@ export async function getFunctionResponseWhenDone(
   fnId: number,
   callId: number
 ) {
-  type FunctionCall = {
-    status: 'Running' | 'Completed' | 'Failed' | 'Timeout';
-  };
   let status: FunctionCall = await sdk
     .get(
       `/api/playground/projects/${sdk.project}/functions/${fnId}/calls/${callId}`
