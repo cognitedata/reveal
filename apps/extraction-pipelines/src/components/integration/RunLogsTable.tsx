@@ -19,7 +19,7 @@ const Wrapper = styled.div`
   margin-bottom: 5rem;
   display: grid;
   grid-template-areas: 'table table table' 'pagination select text';
-  grid-template-columns: max-content 5rem auto;
+  grid-template-columns: max-content 5rem 1fr;
   .cogs-select,
   .select-post-fix {
     align-self: center;
