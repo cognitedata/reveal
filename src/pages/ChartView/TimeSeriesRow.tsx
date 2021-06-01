@@ -11,12 +11,9 @@ import {
   Button,
   Dropdown,
   Icon,
-  Menu,
   Tooltip,
   Popconfirm,
-  Flex,
 } from '@cognite/cogs.js';
-import { units } from 'utils/units';
 import { calculateGranularity } from 'utils/timeseries';
 import { removeTimeseries, updateTimeseries } from 'utils/charts';
 import { useLinkedAsset } from 'hooks/api';
@@ -27,6 +24,7 @@ import { PnidButton } from 'components/SearchResultTable/PnidButton';
 import { functionResponseKey, useCallFunction } from 'utils/backendService';
 import FunctionCall from 'components/FunctionCall';
 import { StatisticsResult } from 'components/DetailsSidebar';
+import { UnitDropdown } from 'components/UnitDropdown';
 import * as backendApi from 'utils/backendApi';
 import { trackUsage } from 'utils/metrics';
 import { CogniteClient } from '@cognite/sdk';
@@ -36,8 +34,6 @@ import {
   SourceCircle,
   SourceName,
   SourceRow,
-  UnitMenuAside,
-  UnitMenuHeader,
   SourceDescription,
   SourceTag,
 } from './elements';
@@ -190,67 +186,22 @@ export default function TimeSeriesRow({
       ),
     });
 
-  const inputUnitOption = units.find(
-    (unitOption) => unitOption.value === unit?.toLowerCase()
-  );
-
-  const preferredUnitOption = units.find(
-    (unitOption) => unitOption.value === preferredUnit?.toLowerCase()
-  );
-
-  const unitConversionOptions = inputUnitOption?.conversions?.map(
-    (conversion) => units.find((unitOption) => unitOption.value === conversion)
-  );
-
-  const unitOverrideMenuItems = units.map((unitOption) => (
-    <Menu.Item
-      key={unitOption.value}
-      onClick={() =>
-        update(id, {
-          unit: unitOption.value,
-        })
-      }
-      style={
-        unit?.toLowerCase() === unitOption.value
-          ? {
-              color: 'var(--cogs-midblue-3)',
-              backgroundColor: 'var(--cogs-midblue-6)',
-              borderRadius: 3,
-            }
-          : {}
-      }
-    >
-      {unitOption.label}
-      {originalUnit?.toLowerCase() === unitOption.value && ' (original)'}
-    </Menu.Item>
-  ));
-
-  const unitConversionMenuItems = unitConversionOptions?.map((unitOption) => (
-    <Menu.Item
-      key={unitOption?.value}
-      onClick={() =>
-        update(id, {
-          preferredUnit: unitOption?.value,
-        })
-      }
-      style={
-        preferredUnit?.toLowerCase() === unitOption?.value
-          ? {
-              color: 'var(--cogs-midblue-3)',
-              backgroundColor: 'var(--cogs-midblue-6)',
-              borderRadius: 3,
-            }
-          : {}
-      }
-    >
-      {unitOption?.label}
-    </Menu.Item>
-  ));
-
   const remove = () => mutate(removeTimeseries(chart, id));
 
   const updateAppearance = (diff: Partial<ChartTimeSeries>) =>
     mutate(updateTimeseries(chart, id, diff));
+
+  const updateUnit = (unitOption: any) => {
+    update(id, {
+      unit: unitOption.value,
+    });
+  };
+
+  const updatePrefferedUnit = (unitOption: any) => {
+    update(id, {
+      preferredUnit: unitOption?.value,
+    });
+  };
 
   const statisticsCall = (timeseries?.statisticsCalls || [])[0];
 
@@ -443,39 +394,13 @@ export default function TimeSeriesRow({
           </td>
           <td>{statisticsForSource?.median}</td>
           <td style={{ textAlign: 'right', paddingRight: 8 }}>
-            <Dropdown
-              content={
-                <Menu>
-                  <Flex
-                    direction="row"
-                    style={{ height: 150, overflow: 'hidden' }}
-                  >
-                    <div style={{ overflowY: 'scroll' }}>
-                      <Menu.Header>
-                        <UnitMenuHeader>Input</UnitMenuHeader>
-                      </Menu.Header>
-                      {unitOverrideMenuItems}
-                    </div>
-                    <UnitMenuAside style={{ overflowY: 'scroll' }}>
-                      <Menu.Header>
-                        <UnitMenuHeader>Output</UnitMenuHeader>
-                      </Menu.Header>
-                      {unitConversionMenuItems}
-                    </UnitMenuAside>
-                  </Flex>
-                </Menu>
-              }
-            >
-              <Button
-                icon="Down"
-                type="tertiary"
-                iconPlacement="right"
-                style={{ height: 28 }}
-              >
-                {preferredUnitOption?.label}
-                {inputUnitOption?.value !== originalUnit?.toLowerCase() && ' *'}
-              </Button>
-            </Dropdown>
+            <UnitDropdown
+              unit={unit}
+              originalUnit={originalUnit}
+              preferredUnit={preferredUnit}
+              onOverrideUnitClick={updateUnit}
+              onConversionUnitClick={updatePrefferedUnit}
+            />
           </td>
         </>
       )}
