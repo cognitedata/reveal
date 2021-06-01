@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Menu, Flex, Button, Dropdown } from '@cognite/cogs.js';
 import { UnitMenuHeader, UnitMenuAside } from 'pages/ChartView/elements';
-import { units } from 'utils/units';
+import { units, UnitTypes } from 'utils/units';
 
 type UnitDropdownProps = {
   unit?: string;
@@ -22,6 +22,10 @@ export const UnitDropdown = ({
     (unitOption) => unitOption.value === unit?.toLowerCase()
   );
 
+  const [selectedUnitType, setSelectedUnitType] = useState<UnitTypes>(
+    inputUnitOption?.type || UnitTypes.TEMPERATURE
+  );
+
   const preferredUnitOption = units.find(
     (unitOption) => unitOption.value === preferredUnit?.toLowerCase()
   );
@@ -30,12 +34,12 @@ export const UnitDropdown = ({
     (conversion) => units.find((unitOption) => unitOption.value === conversion)
   );
 
-  const unitOverrideMenuItems = units.map((unitOption) => (
+  const unitTypeMenuItems = Object.values(UnitTypes).map((unitType) => (
     <Menu.Item
-      key={unitOption.value}
-      onClick={() => onOverrideUnitClick(unitOption)}
+      key={unitType}
+      onClick={() => setSelectedUnitType(unitType)}
       style={
-        unit?.toLowerCase() === unitOption.value
+        selectedUnitType === unitType
           ? {
               color: 'var(--cogs-midblue-3)',
               backgroundColor: 'var(--cogs-midblue-6)',
@@ -44,10 +48,30 @@ export const UnitDropdown = ({
           : {}
       }
     >
-      {unitOption.label}
-      {originalUnit?.toLowerCase() === unitOption.value && ' (original)'}
+      {unitType}
     </Menu.Item>
   ));
+
+  const unitOverrideMenuItems = units
+    .filter((unitOption) => unitOption.type === selectedUnitType)
+    .map((unitOption) => (
+      <Menu.Item
+        key={unitOption.value}
+        onClick={() => onOverrideUnitClick(unitOption)}
+        style={
+          unit?.toLowerCase() === unitOption.value
+            ? {
+                color: 'var(--cogs-midblue-3)',
+                backgroundColor: 'var(--cogs-midblue-6)',
+                borderRadius: 3,
+              }
+            : {}
+        }
+      >
+        {unitOption.label}
+        {originalUnit?.toLowerCase() === unitOption.value && ' (original)'}
+      </Menu.Item>
+    ));
 
   const unitConversionMenuItems = unitConversionOptions?.map((unitOption) => (
     <Menu.Item
@@ -74,10 +98,16 @@ export const UnitDropdown = ({
           <Flex direction="row" style={{ height: 150, overflow: 'hidden' }}>
             <div style={{ overflowY: 'scroll' }}>
               <Menu.Header>
+                <UnitMenuHeader>Type</UnitMenuHeader>
+              </Menu.Header>
+              {unitTypeMenuItems}
+            </div>
+            <UnitMenuAside style={{ overflowY: 'scroll' }}>
+              <Menu.Header>
                 <UnitMenuHeader>Input</UnitMenuHeader>
               </Menu.Header>
               {unitOverrideMenuItems}
-            </div>
+            </UnitMenuAside>
             <UnitMenuAside style={{ overflowY: 'scroll' }}>
               <Menu.Header>
                 <UnitMenuHeader>Output</UnitMenuHeader>

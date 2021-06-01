@@ -1,6 +1,6 @@
 import { DatapointAggregate, DoubleDatapoint } from '@cognite/sdk';
 
-enum UnitTypes {
+export enum UnitTypes {
   TEMPERATURE = 'Temperature',
   PRESSURE = 'Pressure',
   VOLUMETRIC_FLOW = 'Volumetric flow',
