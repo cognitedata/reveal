@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Menu, Flex, Button, Dropdown } from '@cognite/cogs.js';
-import { UnitMenuHeader, UnitMenuAside } from 'pages/ChartView/elements';
+import styled from 'styled-components/macro';
+import { Menu, Button, Dropdown } from '@cognite/cogs.js';
 import { units, UnitTypes } from 'utils/units';
 
 type UnitDropdownProps = {
@@ -95,26 +95,26 @@ export const UnitDropdown = ({
     <Dropdown
       content={
         <Menu>
-          <Flex direction="row" style={{ height: 150, overflow: 'hidden' }}>
-            <div style={{ overflowY: 'scroll' }}>
+          <MenuContainer>
+            <UnitTypeContainer>
               <Menu.Header>
                 <UnitMenuHeader>Type</UnitMenuHeader>
               </Menu.Header>
               {unitTypeMenuItems}
-            </div>
-            <UnitMenuAside style={{ overflowY: 'scroll' }}>
+            </UnitTypeContainer>
+            <UnitContainer>
               <Menu.Header>
                 <UnitMenuHeader>Input</UnitMenuHeader>
               </Menu.Header>
               {unitOverrideMenuItems}
-            </UnitMenuAside>
-            <UnitMenuAside style={{ overflowY: 'scroll' }}>
+            </UnitContainer>
+            <UnitContainer>
               <Menu.Header>
                 <UnitMenuHeader>Output</UnitMenuHeader>
               </Menu.Header>
               {unitConversionMenuItems}
-            </UnitMenuAside>
-          </Flex>
+            </UnitContainer>
+          </MenuContainer>
         </Menu>
       }
     >
@@ -130,3 +130,31 @@ export const UnitDropdown = ({
     </Dropdown>
   );
 };
+
+const MenuContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  height: 185px;
+  overflow: hidden;
+`;
+
+const UnitMenuHeader = styled.span`
+  word-break: break-word;
+  text-transform: none;
+  font-weight: 400;
+  color: var(--cogs-greyscale-grey6);
+`;
+
+const UnitTypeContainer = styled.div`
+  width: 130px;
+  padding-right: 10px;
+  overflow-y: scroll;
+`;
+
+const UnitContainer = styled.div`
+  position: relative;
+  width: 90px;
+  padding: 0 10px;
+  border-left: 1px solid var(--cogs-greyscale-grey3);
+  overflow-y: scroll;
+`;
