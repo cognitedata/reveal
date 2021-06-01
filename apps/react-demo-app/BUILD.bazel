@@ -294,6 +294,7 @@ publish_storybook(
 publish_fas(
     name = "publish_fas",
     build = ":build",
+    package_json = ":package.json",
     # Subdomain name used for the pull requests preview.
     preview_subdomain = "react-demo",
     # FAS production app id

@@ -1,6 +1,5 @@
 """
 Simple rule which is responsible for tracking :build dependencies.s
-
 """
 
 def _publish_fas(ctx):
@@ -13,6 +12,7 @@ def _publish_fas(ctx):
         "@@SENTRY_PROJECT_NAME@@": ctx.attr.sentry_project_name,
         "@@PREVIEW_SUBDOMAIN@@": ctx.attr.preview_subdomain,
         "@@VERSIONING_STRATEGY@@": ctx.attr.versioning_strategy,
+        "@@PACKAGE_JSON_PATH@@": ctx.file.package_json.path,
     }
     ctx.actions.expand_template(
         template = ctx.file._runner,
@@ -21,7 +21,7 @@ def _publish_fas(ctx):
         is_executable = True,
     )
     runfiles = ctx.runfiles(
-        files = [],
+        files = [ctx.file.package_json],
     )
     return [DefaultInfo(
         files = depset([out_file]),
@@ -56,6 +56,11 @@ publish_fas = rule(
             doc = "This determines how this app is versioned. See https://cog.link/releases for more information",
             # single-branch | multi-branch
             default = "single-branch",
+        ),
+        "package_json": attr.label(
+            doc = "The package.json to take version from",
+            allow_single_file = True,
+            mandatory = True,
         ),
         "build": attr.label(
             allow_files = True,
