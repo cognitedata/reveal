@@ -44,19 +44,18 @@ color override by `NodeApperance.color` and ghost mode by `NodeApperance.renderG
 direct mapping between what was previously called 'selection' or 'highlighting', this is now a combination of
 `NodeApperance.color`, `NodeApperance.renderInFront` and `NodeApperance.outlineColor`. This means that the new API
 introduces additional flexibility - e.g. can a object have an outline, but not be rendered in front of other objects. For
-convinience, the new API comes with a sef of default styles available through [`DefaultNodeAppearance`](cad-styling).
+convinience, the new API comes with a sef of default styles available through [`DefaultNodeAppearance`](examples/cad-styling).
 
 A commonly used functionality is to apply a default style to all nodes and to style a few selected nodes with a different
 style to make them stand out. Before, this could be achieved using a `ghostAllNodes`, `hideAllNodes` and `setAllNodeColors` to
 apply the default styling, and a combination of the different per-node styling functions mentioned above to style the 
-nodes that are to stand out. In Reveal 2, this is replaced by [`Cognite3DModel.setDefaultNodeAppearance`](API%20Reference#setdefaultnodeappearance) which is a style that will be applied 
-to any node that is not styled by another styled set.
+nodes that are to stand out. In Reveal 2, this is replaced by `Cognite3DModel.setDefaultNodeAppearance` which is a style that will be applied to any node that is not styled by another styled set.
 
 ## Using ByTreeIndexNodeSet to migrate existing filtering logic
 
 <DemoWrapper name="Cognite3DViewerDemo" />
 
-In general, it is recommended to use the [specialized `NodeSet`-implementations](cad-styling) for best performance. However,
+In general, it is recommended to use the [specialized `NodeSet`-implementations](examples/cad-styling) for best performance. However,
 it is possible to use `ByTreeIndexNodeSet` as a migration step. This allows the use of previously implemented logic for
 populating the set based on some application specific logic.
 
