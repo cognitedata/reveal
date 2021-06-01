@@ -1587,6 +1587,21 @@
     react-query "^3.7.1"
     styled-components "^5.1.0"
 
+"@cognite/react-tenant-selector@^1.2.7":
+  version "1.2.7"
+  resolved "https://registry.yarnpkg.com/@cognite/react-tenant-selector/-/react-tenant-selector-1.2.7.tgz#0618a1b32b968131694943f7a6937296155c3364"
+  integrity sha512-b8H8SrzpsF49/58OPspNsWIJ1PIJUomDw7vXmTj3UHkL7/MjLqa4iZ9X1Jnq+4VLzzfUeCl6DmDCy8MEXY/ivw==
+  dependencies:
+    "@cognite/auth-utils" "^1.0.5"
+    "@cognite/intercom-helper" "^0.1.2"
+    "@cognite/metrics" "^1.0.0"
+    "@cognite/react-i18n" "^0.4.0"
+    "@cognite/storage" "^0.1.1"
+    axios "^0.21.1"
+    react-helmet "^6.1.0"
+    react-query "^3.7.1"
+    styled-components "^5.1.0"
+
 "@cognite/sdk-core@^2.1.2":
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-2.1.2.tgz#fd456988cb6b5921fd2f5b1366c531e5d8d4ef1f"
