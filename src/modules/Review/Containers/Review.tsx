@@ -26,6 +26,7 @@ import { DeleteAnnotationsByFileIds } from 'src/store/thunks/DeleteAnnotationsBy
 import { getLink, workflowRoutes } from 'src/modules/Workflow/workflowRoutes';
 import { PopulateAnnotations } from 'src/store/thunks/PopulateAnnotations';
 import { CDFStatus } from 'src/modules/Common/Components/CDFStatus/CDFStatus';
+import { fetchFilesById } from 'src/store/thunks/fetchFilesById';
 
 const DeleteButton = (props: { onConfirm: () => void }) => (
   <Popconfirm
@@ -67,19 +68,16 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
     selectFileById(filesSlice, fileId)
   );
 
-  if (!file) {
-    // navigate to upload step if file is not available(if the user uses a direct link)
-    history.goBack();
-    return null;
-  }
+  const showBackButton =
+    !!(props.location.state as { from?: string })?.from || false;
 
   const onBackButtonClick = () => {
     history.goBack();
   };
 
   const handleFileDelete = () => {
-    dispatch(DeleteAnnotationsByFileIds([file.id]));
-    dispatch(deleteFilesById([{ id: file.id }]));
+    dispatch(DeleteAnnotationsByFileIds([file!.id]));
+    dispatch(deleteFilesById([{ id: file!.id }]));
     onBackButtonClick();
   };
 
@@ -89,9 +87,9 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
 
   const handleOnDrawerCreate = () => {
     if (drawerMode === AnnotationDrawerMode.AddAnnotation) {
-      dispatch(CreateAnnotations({ fileId: file.id, type: drawerMode }));
+      dispatch(CreateAnnotations({ fileId: file!.id, type: drawerMode }));
     } else if (drawerMode === AnnotationDrawerMode.LinkAsset) {
-      dispatch(AddAnnotationsFromEditModeAssetIds(file));
+      dispatch(AddAnnotationsFromEditModeAssetIds(file!));
     }
   };
 
@@ -103,25 +101,36 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
     dispatch(resetEditHistory());
     dispatch(resetPreview());
     if (fileId) {
-      dispatch(PopulateAnnotations({ fileId, assetIds: file.assetIds }));
+      if (file) {
+        dispatch(PopulateAnnotations({ fileId, assetIds: file.assetIds }));
+      } else {
+        dispatch(fetchFilesById([{ id: +fileId }]));
+      }
     }
-  }, []);
+  }, [file]);
+
+  if (!file) {
+    return null;
+  }
 
   return (
     <>
-      <PageTitle title="Edit Annotations" />
+      <PageTitle title="Review Annotations" />
       <Container>
         <ToolBar className="z-4">
-          <Button
-            type="secondary"
-            style={{ background: 'white' }}
-            shape="round"
-            onClick={onBackButtonClick}
-          >
-            <Icon type="Left" />
-            Back
-          </Button>
-          {/* Todo: A way to quickly go back to the process page for now */}
+          <div>
+            {showBackButton && (
+              <Button
+                type="secondary"
+                style={{ background: 'white' }}
+                shape="round"
+                onClick={onBackButtonClick}
+              >
+                <Icon type="Left" />
+                Back
+              </Button>
+            )}
+          </div>
           <Title
             onClick={() => history.push(getLink(workflowRoutes.process))}
             style={{ fontSize: '14px' }}
@@ -135,9 +144,9 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
           <DeleteButton onConfirm={handleFileDelete} />
         </ToolBar>
         {isVideo(file) ? (
-          <VideoReview fileId={fileId} />
+          <VideoReview file={file} />
         ) : (
-          <ImageReview file={file} fileId={fileId} drawerMode={drawerMode} />
+          <ImageReview file={file} drawerMode={drawerMode} />
         )}
         <AnnotationDrawer
           visible={showDrawer}
@@ -180,6 +189,6 @@ const ToolBar = styled.div`
   width: 100%;
   display: grid;
   align-items: center;
-  grid-template-columns: 130px auto 200px 130px;
+  grid-template-columns: min-content auto 200px 130px;
   grid-column-gap: 16px;
 `;

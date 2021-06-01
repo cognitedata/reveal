@@ -61,7 +61,8 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
         },
         onReviewClick: (fileId: number) => {
           history.push(
-            getParamLink(workflowRoutes.review, ':fileId', String(fileId))
+            getParamLink(workflowRoutes.review, ':fileId', String(fileId)),
+            { from: 'process' }
           );
         },
       };

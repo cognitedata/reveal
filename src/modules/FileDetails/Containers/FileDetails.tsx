@@ -79,7 +79,8 @@ export const FileDetails = ({
 
   const onReviewClick = () => {
     history.push(
-      getParamLink(workflowRoutes.review, ':fileId', String(fileId))
+      getParamLink(workflowRoutes.review, ':fileId', String(fileId)),
+      { from: 'file-details' }
     );
   };
 

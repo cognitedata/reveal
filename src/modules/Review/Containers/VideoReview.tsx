@@ -4,31 +4,14 @@ import { VideoPreview } from 'src/modules/Review/Components/VideoPreview/VideoPr
 import { DataExplorationProvider, Tabs } from '@cognite/data-exploration';
 import { Contextualization } from 'src/modules/Review/Containers/Contextualization';
 import { FileDetailsReview } from 'src/modules/FileDetails/Containers/FileDetailsReview/FileDetailsReview';
-import { useHistory } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { RootState } from 'src/store/rootReducer';
-import { getLink, workflowRoutes } from 'src/modules/Workflow/workflowRoutes';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { v3Client as sdk } from '@cognite/cdf-sdk-singleton';
-import { selectFileById } from 'src/modules/Common/filesSlice';
+import { FileInfo, v3Client as sdk } from '@cognite/cdf-sdk-singleton';
 import { VerticalCarousel } from '../Components/VerticalCarousel/VerticalCarousel';
 
 const queryClient = new QueryClient();
 
-const AnnotationsEdit = (props: { fileId: string }) => {
-  const history = useHistory();
-  const { fileId } = props;
-
-  const file = useSelector(({ filesSlice }: RootState) =>
-    selectFileById(filesSlice, fileId)
-  );
-
-  if (!file) {
-    // navigate to upload step if file is not available(if the user uses a direct link)
-    history.push(getLink(workflowRoutes.upload));
-    return null;
-  }
-
+const AnnotationsEdit = (props: { file: FileInfo }) => {
+  const { file } = props;
   return (
     <>
       <QueryClientProvider client={queryClient}>

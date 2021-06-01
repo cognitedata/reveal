@@ -51,7 +51,8 @@ export const ResultTableLoader = <T extends Resource>({
   const tableData = useMemo(() => {
     const onReviewClick = (file: FileInfo) => {
       history.push(
-        getParamLink(workflowRoutes.review, ':fileId', String(file.id))
+        getParamLink(workflowRoutes.review, ':fileId', String(file.id)),
+        { from: 'explorer' }
       );
     };
     return populateTableData(explorerFiles, onReviewClick);

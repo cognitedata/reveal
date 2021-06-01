@@ -26,78 +26,62 @@ export const PopulateAnnotations = createAsyncThunk<
     })
   );
   const retrievedAnnotations = unwrapResult(annotationResponse);
+  const retrievedVisionAnnotations =
+    AnnotationUtils.convertToVisionAnnotations(retrievedAnnotations);
+  dispatch(addAnnotations(retrievedVisionAnnotations));
+
   let linkedAssetVirtualAnnotations: VisionAnnotation[] = [];
 
   if (payload.assetIds && payload.assetIds.length) {
     const assetInternalIds = payload.assetIds.map((id) => ({ id }));
 
-    const assetResponse = await dispatch(fetchAssets(assetInternalIds));
-    const assets = unwrapResult(assetResponse);
+    dispatch(fetchAssets(assetInternalIds)).then((response) => {
+      const assets = unwrapResult(response);
+      if (assets && assets.length) {
+        // add new virtual annotations
 
-    if (assets && assets.length) {
-      // // delete asset linked virtual annotations
-      //
-      // const assetLinkedVirtualAnnotations = getAvailableAnnotationsForModelType(
-      //   annotationState,
-      //   String(fileId),
-      //   DetectionModelType.Tag
-      // ).filter((item) => item.virtual);
-      // if (
-      //   assetLinkedVirtualAnnotations &&
-      //   assetLinkedVirtualAnnotations.length
-      // ) {
-      //   dispatch(
-      //     deleteAnnotationsFromState(
-      //       assetLinkedVirtualAnnotations.map((ann) => ann.id)
-      //     )
-      //   );
-      // }
+        const availableTagAnnotations = getAvailableAnnotationsForModelType(
+          annotationState,
+          String(fileId),
+          VisionAPIType.TagDetection
+        );
 
-      // add new virtual annotations
+        const assetIdsOfTagAnnotations = new Set(
+          [...retrievedAnnotations, ...availableTagAnnotations]
+            .filter((ann) => !!(ann as LinkedAnnotation).linkedResourceId)
+            .map((ann) => (ann as LinkedAnnotation).linkedResourceId)
+        );
+        const assetsWithoutAnnotations = assets.filter(
+          (asset) => !assetIdsOfTagAnnotations.has(asset.id)
+        );
 
-      const availableTagAnnotations = getAvailableAnnotationsForModelType(
-        annotationState,
-        String(fileId),
-        VisionAPIType.TagDetection
-      );
-
-      const assetIdsOfTagAnnotations = new Set(
-        [...retrievedAnnotations, ...availableTagAnnotations]
-          .filter((ann) => !!(ann as LinkedAnnotation).linkedResourceId)
-          .map((ann) => (ann as LinkedAnnotation).linkedResourceId)
-      );
-      const assetsWithoutAnnotations = assets.filter(
-        (asset) => !assetIdsOfTagAnnotations.has(asset.id)
-      );
-
-      linkedAssetVirtualAnnotations = assetsWithoutAnnotations.map((asset) =>
-        AnnotationUtils.createVisionAnnotationStub(
-          asset.id,
-          asset.name,
-          VisionAPIType.TagDetection,
-          parseInt(fileId, 10),
-          0,
-          0,
-          undefined,
-          undefined,
-          'vision/tagdetection',
-          AnnotationStatus.Verified,
-          undefined,
-          'vision/tagdetection',
-          undefined,
-          asset.id,
-          asset.externalId,
-          true
-        )
-      );
-    }
+        linkedAssetVirtualAnnotations = assetsWithoutAnnotations.map((asset) =>
+          AnnotationUtils.createVisionAnnotationStub(
+            asset.id,
+            asset.name,
+            VisionAPIType.TagDetection,
+            parseInt(fileId, 10),
+            0,
+            0,
+            undefined,
+            undefined,
+            'vision/tagdetection',
+            AnnotationStatus.Verified,
+            undefined,
+            'vision/tagdetection',
+            undefined,
+            asset.id,
+            asset.externalId,
+            true
+          )
+        );
+      }
+    });
   }
 
-  const retrievedVisionAnnotations =
-    AnnotationUtils.convertToVisionAnnotations(retrievedAnnotations);
-  const all = [...retrievedVisionAnnotations, ...linkedAssetVirtualAnnotations];
-
-  dispatch(addAnnotations(all));
+  if (linkedAssetVirtualAnnotations.length) {
+    dispatch(addAnnotations(linkedAssetVirtualAnnotations));
+  }
 });
 
 const getAvailableAnnotationsForModelType = (

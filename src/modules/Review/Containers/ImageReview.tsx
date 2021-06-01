@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { DataExplorationProvider, Tabs } from '@cognite/data-exploration';
 import {
@@ -6,56 +6,30 @@ import {
   EditContextualization,
 } from 'src/modules/Review/Containers/Contextualization';
 import { FileDetailsReview } from 'src/modules/FileDetails/Containers/FileDetailsReview/FileDetailsReview';
-import { useHistory } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { selectAnnotationsByFileIdModelTypes } from 'src/modules/Review/previewSlice';
-import { getLink, workflowRoutes } from 'src/modules/Workflow/workflowRoutes';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { FileInfo, v3Client as sdk } from '@cognite/cdf-sdk-singleton';
 import { ImagePreviewEditMode } from 'src/constants/enums/ImagePreviewEditMode';
 import { VisionAPIType } from 'src/api/types';
-import { PopulateAnnotations } from 'src/store/thunks/PopulateAnnotations';
 import { ImagePreviewContainer } from 'src/modules/Review/Containers/ImagePreviewContainer';
 import { VerticalCarousel } from '../Components/VerticalCarousel/VerticalCarousel';
 
 const queryClient = new QueryClient();
 
-const ImageReview = (props: {
-  fileId: string;
-  drawerMode: number | null;
-  file: FileInfo;
-}) => {
-  const history = useHistory();
-  const dispatch = useDispatch();
-  const { fileId, drawerMode, file } = props;
-
-  useEffect(() => {
-    if (file) {
-      dispatch(
-        PopulateAnnotations({
-          fileId: file.id.toString(),
-          assetIds: file.assetIds,
-        })
-      );
-    }
-  }, []);
-
-  if (!file) {
-    // navigate to upload step if file is not available(if the user uses a direct link)
-    history.push(getLink(workflowRoutes.upload));
-    return null;
-  }
+const ImageReview = (props: { drawerMode: number | null; file: FileInfo }) => {
+  const { drawerMode, file } = props;
 
   const tagAnnotations = useSelector(({ previewSlice }: RootState) =>
-    selectAnnotationsByFileIdModelTypes(previewSlice, fileId, [
+    selectAnnotationsByFileIdModelTypes(previewSlice, String(file.id), [
       VisionAPIType.TagDetection,
     ])
   );
 
   const gdprAndTextAndObjectAnnotations = useSelector(
     ({ previewSlice }: RootState) =>
-      selectAnnotationsByFileIdModelTypes(previewSlice, fileId, [
+      selectAnnotationsByFileIdModelTypes(previewSlice, String(file.id), [
         VisionAPIType.OCR,
         VisionAPIType.ObjectDetection,
       ])

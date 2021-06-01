@@ -47,7 +47,8 @@ export const VerticalCarousel = () => {
 
       // Go to this file
       history.replace(
-        getParamLink(workflowRoutes.review, ':fileId', String(fileId))
+        getParamLink(workflowRoutes.review, ':fileId', String(fileId)),
+        { from: 'review' }
       );
     };
 
