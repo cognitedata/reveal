@@ -44,7 +44,7 @@ color override by `NodeApperance.color` and ghost mode by `NodeApperance.renderG
 direct mapping between what was previously called 'selection' or 'highlighting', this is now a combination of
 `NodeApperance.color`, `NodeApperance.renderInFront` and `NodeApperance.outlineColor`. This means that the new API
 introduces additional flexibility - e.g. an object can have an outline, but not be rendered in front of other objects. For
-convinience, the new API comes with a sef of default styles available through [`DefaultNodeAppearance`](examples/cad-styling).
+convenience, the new API comes with a set of default styles available through [`DefaultNodeAppearance`](examples/cad-styling).
 
 A commonly used functionality is to apply a default style to all nodes and to style a few selected nodes with a different
 style to make them stand out. Before, this could be achieved using a `ghostAllNodes`, `hideAllNodes` and `setAllNodeColors` to
@@ -108,7 +108,7 @@ set is populated asynchronously.
 
 :::note
 This example could easily have been migrated using `ByNodePropertyNodeSet`, but in
-other cases this might not be as straight forward as here.
+other cases this might not be as straight forward as shown.
 :::
 
 # Migrating from [@cognite/3d‑viewer](https://www.npmjs.com/package/@cognite/3d-viewer)
