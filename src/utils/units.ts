@@ -96,20 +96,20 @@ export const units = [
   // Temperature
   {
     label: 'F',
-    value: 'F',
-    conversions: ['F', 'C', 'K'],
+    value: 'f',
+    conversions: ['f', 'c', 'k'],
     type: UnitTypes.TEMPERATURE,
   },
   {
     label: 'C',
-    value: 'C',
-    conversions: ['F', 'C', 'K'],
+    value: 'c',
+    conversions: ['f', 'c', 'k'],
     type: UnitTypes.TEMPERATURE,
   },
   {
     label: 'K',
-    value: 'K',
-    conversions: ['F', 'C', 'K'],
+    value: 'k',
+    conversions: ['f', 'c', 'k'],
     type: UnitTypes.TEMPERATURE,
   },
   // Volumetric flow rate
