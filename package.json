@@ -39,7 +39,7 @@
   "devDependencies": {
     "@babel/core": "^7.13.16",
     "@bazel/ibazel": "^0.15.10",
-    "@bazel/typescript": "^3.5.0",
+    "@bazel/typescript": "^3.5.1",
     "@cognite/eslint-config": "^2.0.1",
     "@cognite/eslint-plugin": "^2.0.0",
     "@ffmpeg-installer/ffmpeg": "^1.0.20",
