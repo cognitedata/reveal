@@ -210,7 +210,6 @@ Also, you can check what's committed from the previous tag with that command:
    
    * commit message
 
-   See [installation documentation](https://cognitedata.github.io/reveal-docs/docs/installation) for 
-   details about installing Reveal.
+   See [installation documentation](https://cognitedata.github.io/reveal-docs/docs/installation) for details about installing Reveal.
    ```
 1. Hit the green "Publish release" button
