@@ -1,0 +1,155 @@
+/* eslint-disable @cognite/no-number-z-index */
+import React from 'react';
+import { NavLink } from 'react-router-dom';
+import styled from 'styled-components';
+import { Avatar, Tooltip } from '@cognite/cogs.js';
+
+import { AuthConsumer } from '@cognite/react-container';
+import Logo from 'components/Atoms/Logo';
+import AppSwitcher from '../Atoms/AppSwitcher';
+
+const Header = styled.header`
+  display: flex;
+  justify-content: space-between;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 56px;
+  z-index: 2;
+
+  background-color: var(--cogs-white);
+  border-bottom: 1px solid var(--cogs-greyscale-grey3);
+`;
+
+const HeaderItem = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const TitleContainer = styled(HeaderItem)`
+  border-right: 1px solid var(--cogs-greyscale-grey3);
+  & > div:first-child {
+    padding: 0 16px;
+  }
+  & > div:last-child {
+    padding-right: 56px;
+    h1 {
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 600;
+      margin: 0;
+    }
+    h2 {
+      font-size: 12px;
+      font-style: normal;
+      font-weight: 500;
+      margin: 0;
+    }
+  }
+`;
+
+const MenuContainer = styled(HeaderItem)`
+  flex-grow: 2;
+
+  padding-left: 24px;
+
+  border-right: 1px solid var(--cogs-greyscale-grey3);
+  & nav {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    & ul {
+      display: flex;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+  }
+`;
+
+const MenuLink = styled(NavLink)`
+  display: block;
+  margin-right: 20px;
+  padding: 0 16px 12px 12px;
+
+  border-bottom: 3px solid transparent;
+  color: var(--cogs-greyscale-grey10);
+  text-align: center;
+
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+
+  &:hover,
+  &:active {
+    color: var(--cogs-greyscale-grey7);
+  }
+
+  &.active {
+    &:hover,
+    &:active {
+      border-bottom: 3px solid var(--cogs-greyscale-grey7);
+    }
+    border-bottom: 3px solid var(--cogs-greyscale-grey10);
+  }
+`;
+
+const AvatarContainer = styled(HeaderItem)`
+  padding: 0 12px;
+
+  border-right: 1px solid var(--cogs-greyscale-grey3);
+`;
+
+const ActionsContainer = styled(HeaderItem)`
+  padding: 0 12px;
+`;
+
+const MainHeader = () => (
+  <Header>
+    <TitleContainer>
+      <div>
+        <NavLink to="">
+          <Logo />
+        </NavLink>
+      </div>
+      <div>
+        <h1>Discover</h1>
+        <h2>Cognuit</h2>
+      </div>
+    </TitleContainer>
+    <MenuContainer>
+      <nav>
+        <ul>
+          <li>
+            <MenuLink to="/configurations">Configurations</MenuLink>
+          </li>
+          <li>
+            <MenuLink to="/data-transfers">Data Transfers</MenuLink>
+          </li>
+          <li>
+            <MenuLink to="/status">Status</MenuLink>
+          </li>
+        </ul>
+      </nav>
+    </MenuContainer>
+    <AvatarContainer>
+      <AuthConsumer>
+        {({ authState }) => {
+          const user = authState?.email || '';
+          return (
+            <Tooltip content={`Logged in: ${String(user)}`}>
+              <Avatar text={String(user)} />
+            </Tooltip>
+          );
+        }}
+      </AuthConsumer>
+    </AvatarContainer>
+    <ActionsContainer>
+      <AppSwitcher />
+    </ActionsContainer>
+  </Header>
+);
+
+export default MainHeader;
