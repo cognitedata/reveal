@@ -28,7 +28,7 @@ functionality. Migrating to version 2 will most likely require code changes, but
 be quite limited and lead to a simplification of the code base along with an increase in filtering- and
 styling performance.
 
-In previous versions of Reveal, styling nodes was done by a set of functions for explicitly applying
+In previous versions of Reveal, styling was done by a set of functions for explicitly applying
 styling to a node identified by a tree index (and optionally all its children).
 - Visibility - `hideNodeByTreeIndex()`, `showNodeByTreeIndex()`, `hideAllNodes()` and `showAllNodes()`
 - Color override - `setNodeColorByTreeIndex()`, `setAllNodeColors()`, `resetNodeColorByTreeIndex()` and `resetAllNodeColors()`
@@ -36,20 +36,20 @@ styling to a node identified by a tree index (and optionally all its children).
 - Highlighting - `selectNodeByTreeIndex()`, `deselectNodeByTreeIndex()` and `deselectAllNodes()`
 
 This allowed flexible styling of nodes, but required many individual calls to update each node, causing degraded
-performance. The new API instead requires a set of styles which nodes are assigned to. It's preferable not to have
+performance. The new API instead requires a set of styles which nodes are assigned to. It is preferable not to have
 too many styles - both in terms of performance and to avoid a cluttered view for the end user.
 
 The previous styling options maps quite directly to the new API. Visibility is controlled by `NodeApperance.visible`,
 color override by `NodeApperance.color` and ghost mode by `NodeApperance.renderGhosted`. However, there is no
 direct mapping between what was previously called 'selection' or 'highlighting', this is now a combination of
 `NodeApperance.color`, `NodeApperance.renderInFront` and `NodeApperance.outlineColor`. This means that the new API
-introduces additional flexibility - e.g. can a object have an outline, but not be rendered in front of other objects. For
+introduces additional flexibility - e.g. an object can have an outline, but not be rendered in front of other objects. For
 convinience, the new API comes with a sef of default styles available through [`DefaultNodeAppearance`](examples/cad-styling).
 
 A commonly used functionality is to apply a default style to all nodes and to style a few selected nodes with a different
 style to make them stand out. Before, this could be achieved using a `ghostAllNodes`, `hideAllNodes` and `setAllNodeColors` to
 apply the default styling, and a combination of the different per-node styling functions mentioned above to style the 
-nodes that are to stand out. In Reveal 2, this is replaced by `Cognite3DModel.setDefaultNodeAppearance` which is a style that will be applied to any node that is not styled by another styled set.
+nodes that should stand out. In Reveal 2, this is replaced by `Cognite3DModel.setDefaultNodeAppearance` which is a style that will be applied to any node that is not styled by another styled set.
 
 ## Using ByTreeIndexNodeSet to migrate existing filtering logic
 
