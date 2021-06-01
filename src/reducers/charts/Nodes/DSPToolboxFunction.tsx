@@ -222,7 +222,8 @@ export const configPanel = ({
                 ) : (
                   <Input
                     id={param}
-                    value={functionData[param] || _default || ''}
+                    defaultValue={_default || ''}
+                    value={functionData[param] || ''}
                     onChange={({
                       target,
                     }: React.ChangeEvent<HTMLInputElement>) => {
