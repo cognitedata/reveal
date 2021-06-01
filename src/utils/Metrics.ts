@@ -106,4 +106,8 @@ export const PNID_METRICS = {
     viewTab: 'fileViewer.viewTab',
     deleteAnnotations: 'fileViewer.deleteAnnotations',
   },
+  betaBanner: {
+    close: 'betaBanner.close',
+    feedback: 'betaBanner.feedback',
+  },
 };
