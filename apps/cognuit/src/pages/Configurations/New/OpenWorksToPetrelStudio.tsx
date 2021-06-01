@@ -80,10 +80,8 @@ const OpenWorksToPetrelStudio = ({ name }: Props) => {
       folder: null,
     },
   });
-  const [
-    configurationIsComplete,
-    setConfigurationIsComplete,
-  ] = useState<boolean>(false);
+  const [configurationIsComplete, setConfigurationIsComplete] =
+    useState<boolean>(false);
   const [sourceUIState, setSourceUIState] = useState<ConfigUIState>(
     ConfigUIState.INITIAL
   );
@@ -105,10 +103,8 @@ const OpenWorksToPetrelStudio = ({ name }: Props) => {
   const [availableWPS] = useState<DataTransferObject[]>([]);
   const [dataTypesLoading, setDataTypesLoading] = useState<boolean>(false);
   const [foldersLoading, setFoldersLoading] = useState<boolean>(false);
-  const [
-    availableDestinationFolders,
-    setAvailableDestinationFolders,
-  ] = useState<DataTransferObject[]>([]);
+  const [availableDestinationFolders, setAvailableDestinationFolders] =
+    useState<DataTransferObject[]>([]);
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [creationError, setCreationError] = useState<string | null>(null);
   const { api } = useContext(ApiContext);
@@ -149,7 +145,7 @@ const OpenWorksToPetrelStudio = ({ name }: Props) => {
     if (type === ChangeType.PROJECT) {
       setDataTypesLoading(true);
       updateSourceProject(value);
-      fetchTargetObjects(value.toString()).then((response) => {
+      fetchTargetObjects((value || '').toString()).then((response) => {
         if (response && Array.isArray(response)) {
           if (response.length > 0 && response[0].error) {
             setSourceUIState(ConfigUIState.ERROR);
@@ -224,7 +220,7 @@ const OpenWorksToPetrelStudio = ({ name }: Props) => {
   function updateSourceProject(value: SelectValue) {
     setConfiguration((prevState) => ({
       ...prevState,
-      source: { ...prevState.source, external_id: value.toString() },
+      source: { ...prevState.source, external_id: (value || '').toString() },
       well_plan: [],
       targets: [],
     }));
@@ -233,7 +229,7 @@ const OpenWorksToPetrelStudio = ({ name }: Props) => {
   function updateTargetRepository(value: SelectValue) {
     setConfiguration((prevState) => ({
       ...prevState,
-      target: { ...prevState.target, external_id: value.toString() },
+      target: { ...prevState.target, external_id: (value || '').toString() },
     }));
   }
 

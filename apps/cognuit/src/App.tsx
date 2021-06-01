@@ -1,10 +1,11 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
-import { AuthConsumer, ContainerWithoutI18N } from '@cognite/react-container';
+import { AuthConsumer, Container } from '@cognite/react-container';
 import { Loader } from '@cognite/cogs.js';
 
 import GlobalStyles from 'global-styles';
 
+import sidecar from 'utils/sidecar';
 import Home from 'pages/Home';
 import Configurations from './pages/Configurations';
 import DataTransfers from './pages/DataTransfers';
@@ -16,9 +17,9 @@ import { ApiProvider } from './contexts/ApiContext';
 import { APIErrorProvider } from './contexts/APIErrorContext';
 
 const App = () => (
-  <>
-    <GlobalStyles />
-    <ContainerWithoutI18N disableTranslations>
+  <Container sidecar={sidecar}>
+    <>
+      <GlobalStyles />
       <ApiProvider>
         <APIErrorProvider>
           <Layout>
@@ -57,8 +58,8 @@ const App = () => (
           </Layout>
         </APIErrorProvider>
       </ApiProvider>
-    </ContainerWithoutI18N>
-  </>
+    </>
+  </Container>
 );
 
 export default App;

@@ -9,8 +9,11 @@ module.exports = {
   rules: {
     '@cognite/no-unissued-todos': [
       'error',
-      { issuePattern: '\\(((DEMO)-[0-9]+)\\)' },
+      { issuePattern: '\\(((CG|DEMO)-[0-9]+)\\)' },
     ],
+    // hacks to get this working:
+    'no-shadow': 0,
+    'react/require-default-props': 0,
 
     'max-classes-per-file': ['off'],
     'lines-between-class-members': ['off'],

@@ -3,73 +3,27 @@
   "version": "0.4.1",
   "private": true,
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "lint": "concurrently \"yarn prettier\" \"yarn eslint\"",
-    "lint:fix": "yarn eslint --fix",
-    "eslint": "yarn eslint:changed 'src/**/*.{ts,tsx}'",
-    "eslint:changed": "eslint --max-warnings 0 --color --config .eslintrc.production.js",
-    "prettier": "prettier --config .prettierrc -l 'src/**/*.{js,ts,tsx}' || (echo \nThese files are not formatted correctly && false)",
-    "storybook": "start-storybook -p 6006"
+    "start": "ibazel run :start",
+    "build": "bazel build :build_sed",
+    "test": "ibazel test :test",
+    "lint": "bazel test :eslint_test :prettier_test",
+    "eslint": "bazel test :eslint_test",
+    "eslint:fix": "bazel run :eslint_test -- --fix",
+    "prettier": "bazel test :prettier_test",
+    "prettier:fix": "bazel run :prettier_test -- --write",
+    "storybook": "ibazel run :start-storybook",
+    "build-storybook": "bazel build :storybook-static",
+    "update-helpers": "bazel run :generate_package_json_helpers"
   },
-  "dependencies": {
-    "@cognite/cogs.js": "^2.13.1",
-    "@cognite/metrics": "^1.0.0",
-    "@cognite/react-container": "^0.7.3",
-    "@cognite/sdk": "^3.5.2",
-    "@sentry/browser": "^6.2.3",
-    "@types/lodash": "^4.14.165",
-    "antd": "^4.14.1",
-    "chart.js": "^2.9.4",
-    "date-fns": "^2.19.0",
-    "i18next": "^19.9.2",
-    "i18next-chained-backend": "^2.0.1",
-    "i18next-http-backend": "^1.2.0",
-    "i18next-localstorage-backend": "^3.1.2",
-    "i18next-locize-backend": "^4.2.0",
-    "i18next-pseudo": "^2.2.1",
-    "lodash": "^4.17.21",
-    "react": "^17.0.2",
-    "react-chartjs-2": "^2.10.0",
-    "react-dom": "^17.0.2",
-    "react-i18next": "^11.8.11",
-    "react-redux": "^7.2.3",
-    "react-router-dom": "^5.2.0",
-    "react-scripts": "^4.0.3",
-    "react-transition-group": "^4.4.1",
-    "redux": "^4.0.5",
-    "styled-components": "^5.2.1"
+  "jest": {
+    "coveragePathIgnorePatterns": [
+      "node_modules",
+      "__tests__",
+      ".stories."
+    ]
   },
-  "devDependencies": {
-    "@babel/core": "^7.13.10",
-    "@cognite/eslint-config": "^2.0.1",
-    "@cognite/eslint-plugin": "^2.0.0",
-    "@storybook/preset-create-react-app": "^3.1.7",
-    "@storybook/react": "^6.1.21",
-    "@testing-library/jest-dom": "^5.11.6",
-    "@testing-library/react": "^11.2.5",
-    "@types/jest": "^26.0.21",
-    "@types/node": "^14.14.35",
-    "@types/react": "^17.0.3",
-    "@types/react-dom": "^17.0.3",
-    "@types/react-router-dom": "^5.1.6",
-    "@types/sinon": "^9.0.11",
-    "@types/styled-components": "^5.1.9",
-    "concurrently": "^5.3.0",
-    "eslint-config-airbnb": "^18.0.1",
-    "eslint-config-prettier": "^7.1.0",
-    "eslint-plugin-import": "^2.21.2",
-    "eslint-plugin-jest": "^24.3.2",
-    "eslint-plugin-lodash": "^7.2.0",
-    "eslint-plugin-prettier": "^3.1.4",
-    "eslint-plugin-testcafe": "^0.2.1",
-    "eslint-plugin-testing-library": "3.10.1",
-    "husky": "^4.3.5",
-    "prettier": "^2.1.2",
-    "pretty-quick": "^3.1.0",
-    "sinon": "^9.2.4",
-    "typescript": "^4.1.5"
+  "eslintConfig": {
+    "extends": "react-app"
   },
   "browserslist": {
     "production": [
@@ -82,10 +36,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "pretty-quick --staged"
-    }
   }
 }

@@ -66,10 +66,8 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
     author: String(user),
     datatypes: [],
   });
-  const [
-    configurationIsComplete,
-    setConfigurationIsComplete,
-  ] = useState<boolean>(false);
+  const [configurationIsComplete, setConfigurationIsComplete] =
+    useState<boolean>(false);
   const [sourceUIState, setSourceUIState] = useState<ConfigUIState>(
     ConfigUIState.INITIAL
   );
@@ -138,7 +136,7 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
     if (type === ChangeType.REPO) {
       updateSourceRepository(value);
       fetchDataTypes(
-        getRepositoryIdInArrayFromExternalId(value.toString())!.id
+        getRepositoryIdInArrayFromExternalId((value || '').toString())!.id
       ).then((response) => {
         const results: any = [];
         response.map((item) => results.push({ label: item, value: item }));
@@ -180,11 +178,11 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
   function updateSourceRepository(value: SelectValue) {
     setConfiguration((prevState) => ({
       ...prevState,
-      source: { ...prevState.source, external_id: value.toString() },
+      source: { ...prevState.source, external_id: (value || '').toString() },
       business_tags: [],
       datatypes: [],
     }));
-    fetchBusinessTags(value.toString()).then((response) =>
+    fetchBusinessTags((value || '').toString()).then((response) =>
       setAvailableTags(response)
     );
   }
@@ -192,7 +190,7 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
   function updateTargetProject(value: SelectValue) {
     setConfiguration((prevState) => ({
       ...prevState,
-      target: { ...prevState.target, external_id: value.toString() },
+      target: { ...prevState.target, external_id: (value || '').toString() },
     }));
   }
 
@@ -448,7 +446,7 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
                     placeholder="Available projects"
                     style={{ width: '100%', marginBottom: '16px' }}
                     onChange={(value) =>
-                      handleChange(ChangeType.PROJECT, value)
+                      handleChange(ChangeType.PROJECT, value || '')
                     }
                     suffixIcon={<Icon type="Down" />}
                   >

@@ -4,13 +4,11 @@ export const staticText = {
     '<p>Cognuit is a data work flow orchestration tool developed to assist with the transfer and validation of data associated with Collaborative Well Planning (CWP). Cognuit will be the go-to tool used by data managers to assist in the configuration (data transfer) of data associated with multiple CWP sessions and provides an interface to review any transfer or validation issues through a single interface.</p>',
   latestRelease: {
     heading: 'What’s New in release X.X',
-    text:
-      '<p>Cognuit currently supports the following data flow, and associated data types. We have also added support for a number of data types, <br /><br />Petrel Studio to OpenWorks <br /><br />Pointsets <br /><br />Targets</p>',
+    text: '<p>Cognuit currently supports the following data flow, and associated data types. We have also added support for a number of data types, <br /><br />Petrel Studio to OpenWorks <br /><br />Pointsets <br /><br />Targets</p>',
   },
   upcoming: {
     heading: 'What’s Coming',
-    text:
-      '<p>Cognuit will support the following data flow, and associated data types while we continue to enhance and develop Cognuit further. </p>',
+    text: '<p>Cognuit will support the following data flow, and associated data types while we continue to enhance and develop Cognuit further. </p>',
   },
   gettingStarted: {
     heading: 'Getting Started',
