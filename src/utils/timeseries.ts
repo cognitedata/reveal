@@ -27,7 +27,7 @@ export const calculateGranularity = (domain: number[], pps: number) => {
   for (let i = 1; i < 100; i += 1) {
     const points = diff / (1000 * 60 * 60 * 24 * i);
     if (points < pps) {
-      return `${i === 1 ? '' : i}day`;
+      return `${i === 1 ? '' : i}d`;
     }
   }
   return 'day';
