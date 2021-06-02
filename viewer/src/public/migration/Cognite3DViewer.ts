@@ -38,7 +38,7 @@ import {
 
 import { CdfModelDataClient } from '../../utilities/networking/CdfModelDataClient';
 import { assertNever, BoundingBoxClipper, File3dFormat, LoadingState } from '../../utilities';
-import { Spinner } from '../../utilities/Spinner';
+
 import { trackError, trackEvent } from '../../utilities/metrics';
 import { CdfModelIdentifier } from '../../utilities/networking/types';
 import { clickOrTouchEventOffset, EventTrigger } from '../../utilities/events';
@@ -56,6 +56,8 @@ import {
 import { PropType } from '../../utilities/reflection';
 import { CadModelSectorLoadStatistics } from '../../datamodels/cad/CadModelSectorLoadStatistics';
 import ComboControls from '../../combo-camera-controls';
+import { Spinner } from '../../utilities/Spinner';
+import { CogniteLogoOverlay } from '../../utilities/CogniteLogoOverlay';
 
 type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered' | 'disposed';
 
@@ -132,7 +134,8 @@ export class Cognite3DViewer {
   private _slicingNeedsUpdate: boolean = false;
   private _geometryFilters: [Cognite3DModel, GeometryFilter][] = [];
 
-  private readonly spinner: Spinner;
+  private readonly _loadingSpinner: Spinner;
+  private readonly _cogniteLogoOverlay: CogniteLogoOverlay;
 
   /**
    * Reusable buffers used by functions in Cognite3dViewer to avoid allocations.
@@ -207,7 +210,8 @@ export class Cognite3DViewer {
     this.canvas.style.maxHeight = '100%';
     this._domElement = options.domElement || createCanvasWrapper();
     this._domElement.appendChild(this.canvas);
-    this.spinner = new Spinner(this.domElement);
+    this._loadingSpinner = new Spinner(this.domElement);
+    this._cogniteLogoOverlay = new CogniteLogoOverlay(this.domElement);
 
     this.camera = new THREE.PerspectiveCamera(60, undefined, 0.1, 10000);
     this.camera.position.x = 30;
@@ -246,9 +250,9 @@ export class Cognite3DViewer {
       ).subscribe(
         loadingState => {
           if (loadingState.itemsLoaded != loadingState.itemsRequested) {
-            this.spinner.show();
+            this._loadingSpinner.show();
           } else {
-            this.spinner.hide();
+            this._loadingSpinner.hide();
           }
           if (options.onLoading) {
             options.onLoading(loadingState.itemsLoaded, loadingState.itemsRequested, loadingState.itemsCulled);
@@ -305,7 +309,7 @@ export class Cognite3DViewer {
       model.dispose();
     }
     this._models.splice(0);
-    this.spinner.dispose();
+    this._loadingSpinner.dispose();
 
     this._events.disposed.fire();
   }
