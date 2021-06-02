@@ -60,12 +60,6 @@ export const ContactsSection: FunctionComponent<ContactsSectionProps> = () => {
     if (innerOwner[0]) {
       return (
         <>
-          <HeadingRow>
-            <Heading>{ROLE_LABEL}</Heading>
-            <Heading>{NOTIFICATION_LABEL}</Heading>
-            <Heading>{NAME_LABEL}</Heading>
-            <Heading>{EMAIL_LABEL}</Heading>
-          </HeadingRow>
           {current?.contacts?.map((contact, index) => {
             const key = `owner-${index}`;
             if (!isOwner(contact)) {
@@ -128,7 +122,15 @@ export const ContactsSection: FunctionComponent<ContactsSectionProps> = () => {
     <ContactsSectionWrapper role="grid">
       <StyledTitle2 id="owner-heading">{DetailFieldNames.OWNER}</StyledTitle2>
       <Hint>{OWNER_HINT}</Hint>
-      <OwnerWrapper>{renderOwner(owner)}</OwnerWrapper>
+      <OwnerWrapper>
+        <HeadingRow>
+          <Heading>{ROLE_LABEL}</Heading>
+          <Heading>{NOTIFICATION_LABEL}</Heading>
+          <Heading>{NAME_LABEL}</Heading>
+          <Heading>{EMAIL_LABEL}</Heading>
+        </HeadingRow>
+        {renderOwner(owner)}
+      </OwnerWrapper>
 
       <StyledTitle2 id="contacts-heading">
         {TableHeadings.CONTACTS}

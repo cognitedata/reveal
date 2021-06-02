@@ -11,7 +11,14 @@ import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { TableHeadings } from 'components/table/IntegrationTableCol';
 import { TestIds } from 'components/integration/EditPartContacts';
 import { DetailFieldNames } from 'model/Integration';
-import { ADD_OWNER, EMAIL_LABEL, NAME_LABEL, SAVE } from 'utils/constants';
+import {
+  ADD_OWNER,
+  EMAIL_LABEL,
+  NAME_LABEL,
+  NOTIFICATION_LABEL,
+  ROLE_LABEL,
+  SAVE,
+} from 'utils/constants';
 
 describe('ContactSection', () => {
   const mock = getMockResponse()[0];
@@ -37,6 +44,10 @@ describe('ContactSection', () => {
     await waitFor(() => {
       screen.getByText(mock.contacts[0].name);
     });
+    expect(screen.getAllByText(ROLE_LABEL).length).toEqual(2); // heading for owner and contacts
+    expect(screen.getAllByText(NOTIFICATION_LABEL).length).toEqual(2); // heading for owner and contacts
+    expect(screen.getAllByText(NAME_LABEL).length).toEqual(2); // heading for owner and contacts
+    expect(screen.getAllByText(EMAIL_LABEL).length).toEqual(2); // heading for owner and contacts
     expect(screen.getByText(TableHeadings.CONTACTS)).toBeInTheDocument();
     mock.contacts.forEach((c) => {
       expect(screen.getByText(c.name)).toBeInTheDocument();

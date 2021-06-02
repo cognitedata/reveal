@@ -5,7 +5,6 @@ import EmailLink from 'components/buttons/EmailLink';
 import { DivFlex } from 'styles/flex/StyledFlex';
 import { User } from 'model/User';
 import AvatarWithTooltip from 'components/Avatar/AvatarWithTooltip';
-import { capitalizeWords } from 'utils/primitivesUtils';
 import { NotificationIcon } from 'components/icons/NotificationIcon';
 
 const StyledContactCard = styled.section`
@@ -49,7 +48,7 @@ export const ContactCard = (user: User) => {
       <InfoList>
         <DivFlex>
           <Name>{name}</Name>
-          <Role>{role && capitalizeWords(role)}</Role>
+          <Role>{role}</Role>
         </DivFlex>
         <EmailLink email={email} />
       </InfoList>
