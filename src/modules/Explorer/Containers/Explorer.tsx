@@ -256,6 +256,7 @@ const TablePanel = styled.div<tablePanelProps>`
       (props.showDrawer ? 400 : 0) + (props.showFilter ? 318 : 0)
     }px)`};
   border-right: 1px solid ${Colors['greyscale-grey3'].hex()};
+  height: 100%;
 `;
 
 const FiltersContainer = styled.div`
@@ -267,12 +268,13 @@ const FiltersContainer = styled.div`
 `;
 
 const ViewContainer = styled.div`
-  flex: 1 1 auto;
-  flex-direction: column;
-  overflow: auto;
   height: 100%;
-  padding-left: 16px;
-  padding-right: 16px;
+  width: 100%;
+  padding: 20px 16px;
+  display: grid;
+  grid-template-rows: 32px 40px auto;
+  grid-template-columns: 100%;
+  grid-row-gap: 15px;
 `;
 
 const HeaderRow = styled(Row)`

@@ -3,7 +3,7 @@ import React from 'react';
 import { FileFilterProps, FileInfo } from '@cognite/cdf-sdk-singleton';
 import styled from 'styled-components';
 import { ResultData, TableDataItem, ViewMode } from 'src/modules/Common/types';
-import { PageBasedGrideView } from 'src/modules/Common/Components/GridView/PageBasedGrideView';
+import { PageBasedGridView } from 'src/modules/Common/Components/GridView/PageBasedGridView';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import {
@@ -40,46 +40,33 @@ export const ExplorerSearchResults = ({
   };
 
   return (
-    <>
-      <TableContainer>
-        <EnsureNonEmptyResource
-          api="file"
+    <ResultContainer>
+      <EnsureNonEmptyResource
+        api="file"
+        css={{ height: '100%', width: '100%' }}
+      >
+        <ResultTableLoader<FileInfo>
           css={{ height: '100%', width: '100%' }}
+          type="file"
+          filter={filter}
+          query={query}
         >
-          <ResultTableLoader<FileInfo>
-            css={{ height: '100%', width: '100%' }}
-            type="file"
-            filter={filter}
-            query={query}
-          >
-            {(props: { data: ResultData[]; totalCount: number }) => {
-              const renderView = () => {
-                if (currentView === 'grid') {
-                  return (
-                    <PageBasedGrideView
-                      onItemClicked={onClick}
-                      {...props}
-                      renderCell={(cellProps: any) => (
-                        <FileGridPreview {...cellProps} />
-                      )}
-                    />
-                  );
-                }
-                if (currentView === 'map') {
-                  return (
-                    <MapView
-                      onRowSelect={onRowSelect}
-                      onRowClick={onClick}
-                      selectedFileId={selectedId}
-                      allRowsSelected={allFilesSelected}
-                      onSelectAllRows={handleSelectAllFiles}
-                      {...props}
-                    />
-                  );
-                }
-
+          {(props: { data: ResultData[]; totalCount: number }) => {
+            const renderView = () => {
+              if (currentView === 'grid') {
                 return (
-                  <FileTableExplorer
+                  <PageBasedGridView
+                    onItemClicked={onClick}
+                    {...props}
+                    renderCell={(cellProps: any) => (
+                      <FileGridPreview {...cellProps} />
+                    )}
+                  />
+                );
+              }
+              if (currentView === 'map') {
+                return (
+                  <MapView
                     onRowSelect={onRowSelect}
                     onRowClick={onClick}
                     selectedFileId={selectedId}
@@ -88,17 +75,28 @@ export const ExplorerSearchResults = ({
                     {...props}
                   />
                 );
-              };
-              return <>{renderView()}</>;
-            }}
-          </ResultTableLoader>
-        </EnsureNonEmptyResource>
-      </TableContainer>
-    </>
+              }
+
+              return (
+                <FileTableExplorer
+                  onRowSelect={onRowSelect}
+                  onRowClick={onClick}
+                  selectedFileId={selectedId}
+                  allRowsSelected={allFilesSelected}
+                  onSelectAllRows={handleSelectAllFiles}
+                  {...props}
+                />
+              );
+            };
+            return <>{renderView()}</>;
+          }}
+        </ResultTableLoader>
+      </EnsureNonEmptyResource>
+    </ResultContainer>
   );
 };
 
-const TableContainer = styled.div`
+const ResultContainer = styled.div`
   width: 100%;
-  height: calc(100% - 104px);
+  height: 100%;
 `;

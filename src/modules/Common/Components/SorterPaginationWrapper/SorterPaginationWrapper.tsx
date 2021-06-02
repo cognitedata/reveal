@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import * as CONST from 'src/constants/PaginationConsts';
+import styled from 'styled-components';
 import { TableDataItem } from '../../types';
 import { Footer } from './Footer';
 import { Header } from './Header';
@@ -63,34 +64,56 @@ export const SorterPaginationWrapper = (
     ) : null;
 
   return (
-    <>
-      {header}
-      {React.cloneElement(children, {
-        sortKey,
-        reverse,
-        setSortKey,
-        setReverse,
-        selectable: true,
-        data: getData(
-          data,
+    <Container>
+      <HeaderContainer>{header}</HeaderContainer>
+      <TableContainer>
+        {React.cloneElement(children, {
           sortKey,
-          sorters,
           reverse,
-          pagination,
-          currentPage,
-          pageSize
-        ),
-        tableFooter,
-      })}
-      {pagination ? (
-        <Paginator
-          currentPage={currentPage}
-          totalPages={totalPages}
-          pageSize={pageSize}
-          setCurrentPage={setCurrentPage}
-          setPageSize={setPageSize}
-        />
-      ) : null}
-    </>
+          setSortKey,
+          setReverse,
+          selectable: true,
+          data: getData(
+            data,
+            sortKey,
+            sorters,
+            reverse,
+            pagination,
+            currentPage,
+            pageSize
+          ),
+          tableFooter,
+        })}
+      </TableContainer>
+      <PaginationContainer>
+        {pagination ? (
+          <Paginator
+            currentPage={currentPage}
+            totalPages={totalPages}
+            pageSize={pageSize}
+            setCurrentPage={setCurrentPage}
+            setPageSize={setPageSize}
+          />
+        ) : null}
+      </PaginationContainer>
+    </Container>
   );
 };
+
+const Container = styled.div`
+  display: grid;
+  grid-template-rows: max-content auto max-content;
+  grid-template-columns: 100%;
+  height: 100%;
+  width: 100%;
+`;
+
+const TableContainer = styled.div`
+  height: inherit;
+`;
+const HeaderContainer = styled.div`
+  height: inherit;
+`;
+const PaginationContainer = styled.div`
+  height: inherit;
+`;

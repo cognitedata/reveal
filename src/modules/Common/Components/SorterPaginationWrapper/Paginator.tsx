@@ -148,7 +148,8 @@ export const Paginator = (props: {
 const Container = styled.div`
   display: flex;
   flex-direction: row;
-  align-items: left;
+  justify-content: flex-start;
+  align-items: center;
   gap: 8px;
-  margin: 16px 0px 0px 0px;
+  padding: 10px 16px;
 `;

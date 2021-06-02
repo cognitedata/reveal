@@ -27,9 +27,9 @@ import {
 import { FileTable } from 'src/modules/Common/Components/FileTable/FileTable';
 import { FileGridPreview } from 'src/modules/Common/Components/FileGridPreview/FileGridPreview';
 import { Prompt, useHistory } from 'react-router-dom';
-import { PageBasedGrideView } from 'src/modules/Common/Components/GridView/PageBasedGrideView';
 import styled from 'styled-components';
 import { Detail } from '@cognite/cogs.js';
+import { PageBasedGridView } from 'src/modules/Common/Components/GridView/PageBasedGridView';
 
 export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
   const dispatch = useDispatch();
@@ -125,7 +125,7 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
     }
     if (currentView === 'grid') {
       return (
-        <PageBasedGrideView
+        <PageBasedGridView
           onItemClicked={handleItemClick}
           data={data}
           renderCell={(cellProps: any) => <FileGridPreview {...cellProps} />}

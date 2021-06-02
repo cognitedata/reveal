@@ -115,7 +115,6 @@ export const ExplorerToolbar = ({
 const TitleBar = styled.div`
   display: grid;
   grid-template-columns: auto auto;
-  margin: 20px 0px 0px 0px;
 `;
 const Left = styled.div`
   align-self: center;
@@ -131,6 +130,5 @@ const Container = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: bottom;
-  padding: 15px 0;
   align-items: flex-end;
 `;

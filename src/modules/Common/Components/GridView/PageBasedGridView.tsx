@@ -3,7 +3,7 @@ import { TableDataItem } from '../../types';
 import { SorterPaginationWrapper } from '../SorterPaginationWrapper/SorterPaginationWrapper';
 import { GridTableProps, GridView } from './GridView';
 
-export const PageBasedGrideView = (
+export const PageBasedGridView = (
   props: {
     totalCount: number;
     pagination?: boolean;
