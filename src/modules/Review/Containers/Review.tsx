@@ -100,7 +100,7 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
   useEffect(() => {
     dispatch(resetEditHistory());
     dispatch(resetPreview());
-    if (fileId && !(props.location.state as { from?: string })?.from) {
+    if (fileId && !file && !(props.location.state as { from?: string })?.from) {
       dispatch(fetchFilesById([{ id: +fileId }]));
     }
     if (file) {
