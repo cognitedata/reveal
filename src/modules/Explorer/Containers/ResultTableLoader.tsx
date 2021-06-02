@@ -24,6 +24,7 @@ import { explorerFileFetchLimit } from 'src/constants/ExplorerConstants';
 import { totalFileCount } from 'src/api/file/aggregate';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
+import { fetchFilesById } from 'src/store/thunks/fetchFilesById';
 import {
   selectExplorerAllFiles,
   setExplorerFiles,
@@ -50,6 +51,7 @@ export const ResultTableLoader = <T extends Resource>({
 
   const tableData = useMemo(() => {
     const onReviewClick = (file: FileInfo) => {
+      dispatch(fetchFilesById([{ id: file.id }]));
       history.push(
         getParamLink(workflowRoutes.review, ':fileId', String(file.id)),
         { from: 'explorer' }

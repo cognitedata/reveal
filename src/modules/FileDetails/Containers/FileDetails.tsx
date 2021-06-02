@@ -23,6 +23,7 @@ import {
 } from 'src/modules/Workflow/workflowRoutes';
 
 import { DeleteAnnotationsAndRemoveLinkedAssets } from 'src/store/thunks/DeleteAnnotationsAndRemoveLinkedAssets';
+import { fetchFilesById } from 'src/store/thunks/fetchFilesById';
 import { FileDetailsAnnotationsPreview } from './FileDetailsAnnotationsPreview/FileDetailsAnnotationsPreview';
 
 export const FileDetails = ({
@@ -78,6 +79,7 @@ export const FileDetails = ({
   };
 
   const onReviewClick = () => {
+    dispatch(fetchFilesById([{ id: fileId }]));
     history.push(
       getParamLink(workflowRoutes.review, ':fileId', String(fileId)),
       { from: 'file-details' }
