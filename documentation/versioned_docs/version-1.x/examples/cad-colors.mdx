@@ -15,7 +15,7 @@ Reveal supports updating the color of individual objects by providing [tree indi
 To update the colors of all nodes, loop over all tree indices in the model and update the colors
 accordingly:
 
-```jsx runnable
+```jsx runnable-1x
 model.iterateNodesByTreeIndex(treeIndex => {
   const value = treeIndex % 200;
   model.setNodeColorByTreeIndex(treeIndex, 200, value, 200);
@@ -27,7 +27,7 @@ model.iterateNodesByTreeIndex(treeIndex => {
 Notice how colors are applied in batches using this approach. A more performant choice when a single color is
 to be applied to all nodes is to use `Cognite3DModel.setAllNodeColors`:
 
-```jsx runnable
+```jsx runnable-1x
 model.setAllNodeColors(127, 127, 127);
 ```
 
@@ -35,7 +35,7 @@ model.setAllNodeColors(127, 127, 127);
 
 Color overrides can be reset using `Cognite3DModel.resetNodeColorByTreeIndex`, e.g.
 
-```jsx runnable
+```jsx runnable-1x
 model.iterateNodesByTreeIndex(treeIndex => {
   model.resetNodeColorByTreeIndex(treeIndex);
 });
@@ -44,7 +44,7 @@ model.iterateNodesByTreeIndex(treeIndex => {
 It's also possible (and more performant) to use `Cognite3DModel.resetAllNodeColors()` when
 you want to reset the colors of all nodes:
 
-```jsx runnable
+```jsx runnable-1x
 model.resetAllNodeColors();
 ```
 
@@ -55,6 +55,6 @@ order to update the colors of equipment it's typically necessary to apply the sa
 subtree. Reveal supports this through the use of `Cognite3DModel.setNodesColorsByTreeIndex` with `applyToChildren`
 set to `true`:
 
-```jsx runnable
+```jsx runnable-1x
 model.setNodeColorByTreeIndex(778306, 240, 100, 60, applyToChildren=true);
 ```

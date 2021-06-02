@@ -37,7 +37,7 @@ To query for nodes matching a given attribute value, we use [list3DNodes](https:
 from the [Cognite SDK](https://www.npmjs.com/package/@cognite/sdk) which maps to the [List 3D Nodes API endpoint](https://docs.cognite.com/api/v1/#operation/get3DNodes).
 For this example we query for nodes that are within the 'EP' function and hide all other nodes.
 
-```jsx runnable
+```jsx runnable-1x
 model.hideAllNodes();
 sdk.revisions3D.list3DNodes(model.modelId, model.revisionId,
   {
@@ -54,7 +54,7 @@ For the example model, which is quite small, this performs well. For larger asse
 by avoiding use of `applyToChildren = true` in `Cognite3DModel.showNodeByTreeIndex` which leads to a network request.
 This can be done by using `node.subtreeSize` – a field in the response from `list3DNodes`:
 
-```jsx runnable
+```jsx runnable-1x
 model.hideAllNodes();
 sdk.revisions3D.list3DNodes(model.modelId, model.revisionId,
   {
