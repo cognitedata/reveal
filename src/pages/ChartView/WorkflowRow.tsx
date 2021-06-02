@@ -388,7 +388,7 @@ export default function WorkflowRow({
             <Dropdown
               content={
                 <WorkflowMenu chart={chart} id={id}>
-                  <Menu.Item onClick={openNodeEditor} appendIcon="YAxis">
+                  <Menu.Item onClick={openNodeEditor} appendIcon="Function">
                     <span>Edit calculation</span>
                   </Menu.Item>
                 </WorkflowMenu>
