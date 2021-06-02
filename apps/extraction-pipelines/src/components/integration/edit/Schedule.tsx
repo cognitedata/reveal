@@ -34,14 +34,9 @@ import { ColumnForm, StyledLabel } from 'styles/StyledForm';
 import { scheduleSchema } from 'utils/validation/integrationSchemas';
 import { ScheduleSelector } from 'components/inputs/ScheduleSelector';
 import { OptionTypeBase } from 'react-select';
-import {
-  BluePlus,
-  BlueText,
-  CloseButton,
-  SaveButton,
-  EditButton,
-} from 'styles/StyledButton';
+import { CloseButton, SaveButton, EditButton } from 'styles/StyledButton';
 import { TableHeadings } from 'components/table/IntegrationTableCol';
+import { AddFieldInfoText } from 'components/message/AddFieldInfoText';
 
 export const CronWrapper = styled(DivFlex)`
   margin: 1rem 0 1rem 2rem;
@@ -144,10 +139,9 @@ export const Schedule: FunctionComponent<ScheduleProps> = ({
   function renderSchedule(schedule?: string) {
     if (!schedule) {
       return (
-        <>
-          <BluePlus />
-          <BlueText>add {TableHeadings.SCHEDULE.toLowerCase()}</BlueText>
-        </>
+        <AddFieldInfoText>
+          {TableHeadings.SCHEDULE.toLowerCase()}
+        </AddFieldInfoText>
       );
     }
     return (

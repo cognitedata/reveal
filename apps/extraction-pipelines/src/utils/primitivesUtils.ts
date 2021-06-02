@@ -22,8 +22,10 @@ export const toCamelCase = (value: string) => {
 };
 
 export const isUrl = (text: string): boolean => {
-  const urlRegExp = new RegExp(
-    /((https?):\/\/)(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?$/
-  );
-  return urlRegExp.test(text);
+  try {
+    const url = new URL(text);
+    return url.protocol === 'https:' || url.protocol === 'http:';
+  } catch (_) {
+    return false;
+  }
 };

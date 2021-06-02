@@ -24,16 +24,11 @@ import {
 import { CountSpan } from 'styles/StyledWrapper';
 import MessageDialog from 'components/buttons/MessageDialog';
 import { yupResolver } from '@hookform/resolvers/yup';
-import {
-  BluePlus,
-  BlueText,
-  CloseButton,
-  EditButton,
-  SaveButton,
-} from 'styles/StyledButton';
+import { CloseButton, EditButton, SaveButton } from 'styles/StyledButton';
 import { HeadingLabel } from 'components/inputs/HeadingLabel';
 import { DetailFieldNames } from 'model/Integration';
 import { MarkdownView } from 'components/markDown/MarkdownView';
+import { AddFieldInfoText } from 'components/message/AddFieldInfoText';
 
 const EditDocumentationButton = styled(EditButton)`
   &.cogs-btn {
@@ -215,10 +210,9 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
                 {currentIntegration.documentation ?? ''}
               </MarkdownView>
             ) : (
-              <>
-                <BluePlus />
-                <BlueText>add documentation</BlueText>
-              </>
+              <AddFieldInfoText>
+                {DetailFieldNames.DOCUMENTATION.toLowerCase()}
+              </AddFieldInfoText>
             )}
           </EditDocumentationButton>
         )}

@@ -19,13 +19,8 @@ import { SERVER_ERROR_CONTENT, SERVER_ERROR_TITLE } from 'utils/constants';
 import { DefaultValues } from 'react-hook-form/dist/types/form';
 import { AnyObjectSchema } from 'yup';
 import styled from 'styled-components';
-import {
-  BluePlus,
-  BlueText,
-  CloseButton,
-  SaveButton,
-  EditButton,
-} from 'styles/StyledButton';
+import { CloseButton, SaveButton, EditButton } from 'styles/StyledButton';
+import { AddFieldInfoText } from 'components/message/AddFieldInfoText';
 
 export enum TestIds {
   SAVE_BTN = 'save-btn',
@@ -168,12 +163,7 @@ export const EditField = <Fields extends FieldValues>({
           data-testid={`${TestIds.EDIT_BTN}${index}${name}`}
           $full
         >
-          {defaultValues[field] ?? (
-            <>
-              <BluePlus />
-              <BlueText>add {field}</BlueText>
-            </>
-          )}
+          {defaultValues[field] ?? <AddFieldInfoText>{field}</AddFieldInfoText>}
         </EditButton>
       )}
     </EditForm>

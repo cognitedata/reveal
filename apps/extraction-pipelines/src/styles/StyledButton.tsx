@@ -44,12 +44,14 @@ export const EditButton = styled((props) => (
         props.$full ? '100%' : 'max-content'};
       display: ${(props: EditButtonProps) => (props.$full ? 'grid' : 'flex')};
       grid-template-columns: ${(props: EditButtonProps) =>
-        props.$full ? 'auto 1fr 3rem ' : '1fr'};
+        props.$full ? '1fr 3rem ' : '1fr'};
       grid-template-rows: auto;
       justify-items: flex-start;
       height: fit-content;
       margin-bottom: ${(props: EditButtonProps) =>
         props.$isBottom ? '1rem' : '0'};
+      text-align: left;
+      word-break: break-word;
       .cogs-icon {
         &.cogs-icon-Edit {
           grid-column: 3;
@@ -81,8 +83,12 @@ export const BluePlus = styled((props) => <Icon {...props} type="Plus" />)`
   }
 `;
 export const BlueText = styled.span`
-  margin-left: 1rem;
+  display: flex;
+  align-items: center;
   color: ${Colors.primary.hex()};
+  .cogs-icon.cogs-icon-Plus {
+    margin-right: 1rem;
+  }
 `;
 
 export const SwitchButton = styled.button`
