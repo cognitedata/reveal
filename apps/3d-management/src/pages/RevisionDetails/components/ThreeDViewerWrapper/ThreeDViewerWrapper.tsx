@@ -152,6 +152,13 @@ export default function ThreeDViewerWrapper(props: Props) {
     <MultiLayeredContainer
       style={{ cursor: 'pointer' }}
       onClick={() => setIsViewerOpened(true)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          setIsViewerOpened(true);
+        }
+      }}
+      aria-label="Open 3d-viewer"
+      tabIndex={0}
     >
       <div style={{ display: 'flex' }}>
         <Thumbnail

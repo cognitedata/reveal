@@ -36,7 +36,7 @@ function Spinner({ text, size, visibleAfterMs = 200, ...rest }: Props) {
     return () => {
       clearTimeout(timer);
     };
-  }, []);
+  }, [visibleAfterMs]);
   if (!isVisible) {
     return null;
   }

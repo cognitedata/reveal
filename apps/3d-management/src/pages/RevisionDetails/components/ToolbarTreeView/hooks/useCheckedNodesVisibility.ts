@@ -22,6 +22,7 @@ export function useCheckedNodesVisibility({
   // that's to avoid race state D3M-32
   const lastOperation = React.useRef<Promise<any>>(Promise.resolve());
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const nodesVisibilityChanged = useCallback(
     debounce(
       async (newTreeData: typeof treeData, checkedKeysSet: Set<number>) => {

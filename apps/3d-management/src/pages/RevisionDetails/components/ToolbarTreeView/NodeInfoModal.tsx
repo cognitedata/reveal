@@ -89,13 +89,20 @@ export const NodeInfoModal = ({ treeIndex, onClose, ...restProps }: Props) => {
     ) {
       return;
     }
-    const setDefaultActiveTab = (key: string) => {
-      if (nodeKeys.includes(key)) {
+    const setDefaultActiveTabPriority = (...keys: string[]) => {
+      const key = keys.find((k) => nodeKeys.includes(k));
+      if (key) {
         setActiveTabKey(key);
       }
     };
-    setDefaultActiveTab('Item');
-    setDefaultActiveTab('PDMS');
+    setDefaultActiveTabPriority('PDMS', 'Item');
+
+    // that's a bit tricky, but what's going on here is the following:
+    // NodeInfoModal is the same for different nodes. And different nodes might have different nodeKeys
+    // when you open modal and select tab X it remains active for the other nodes, but it can be missing for some node
+    // the whole hook is needed to avoid an exception when some key was active for one node,
+    // but doesn't exist for a newly opened node
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(nodeKeys.slice().sort())]);
 
   if (!node) {

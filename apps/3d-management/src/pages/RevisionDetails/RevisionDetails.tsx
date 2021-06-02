@@ -81,6 +81,8 @@ const DetailsRowFlex = styled(Flex)`
   }
 `;
 
+type ViewerType = 'Legacy' | 'Reveal' | 'Unknown';
+
 type Props = RouteComponentProps<{
   modelId: string;
   revisionId: string;
@@ -99,6 +101,7 @@ export default function RevisionDetails(props: Props) {
   const [reprocessingModalVisible, setReprocessingModalVisible] = useState(
     false
   );
+  const [viewerType, setViewerType] = useState<ViewerType>('Unknown');
 
   const modelsQuery = useModels();
   const revisionsQuery = useRevisions(modelId);
@@ -128,20 +131,19 @@ export default function RevisionDetails(props: Props) {
   useEffect(() => {
     let mounted = true;
 
-    if (revision) {
-      isReprocessingRequired(revisionId)
-        .then((isRequired) => {
-          if (mounted) {
-            setReprocessingRequired(isRequired);
-          }
-        })
-        .catch(logToSentry);
-    }
+    isReprocessingRequired(revisionId)
+      .then((isRequired) => {
+        if (mounted) {
+          setViewerType(isRequired ? 'Legacy' : 'Reveal');
+          setReprocessingRequired(isRequired);
+        }
+      })
+      .catch(logToSentry);
 
     return () => {
       mounted = false;
     };
-  });
+  }, [revisionId]);
 
   if (
     revisionsQuery.isLoading ||
@@ -331,12 +333,16 @@ export default function RevisionDetails(props: Props) {
         <div
           style={{ textAlign: 'center', bottom: '0px', flex: 1, marginTop: 24 }}
         >
-          <ThreeDViewerWrapper
-            modelId={modelId}
-            revision={revision}
-            useOldViewer={reprocessingRequired}
-            canBeViewed={canBeViewed}
-          />
+          {viewerType === 'Unknown' ? (
+            <Spinner />
+          ) : (
+            <ThreeDViewerWrapper
+              modelId={modelId}
+              revision={revision}
+              useOldViewer={viewerType === 'Legacy'}
+              canBeViewed={canBeViewed}
+            />
+          )}
         </div>
       </ErrorBoundary>
 

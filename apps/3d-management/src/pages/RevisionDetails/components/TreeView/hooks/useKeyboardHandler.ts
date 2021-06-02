@@ -411,6 +411,7 @@ export function useKeyboardHandler(props: Props) {
     document.addEventListener('keydown', keyPressed);
 
     return () => document.removeEventListener('keydown', keyPressed);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props]);
 
   return {

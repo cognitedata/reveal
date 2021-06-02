@@ -7,17 +7,23 @@ export interface RevisionLog3D {
   info: string;
 }
 
+type OutputFormats = 'ept-pointcloud' | 'reveal-directory';
+export type RevisionOutputsRequestBody = {
+  models: [{ id: number }];
+  formats: Array<OutputFormats>;
+};
 export async function isReprocessingRequired(modelId: number) {
   const url = `${v3Client.getBaseUrl()}/api/playground/projects/${
     v3Client.project
   }/3d/v2/outputs`;
 
   // fixme: create SDK methods
+  const requestBody: RevisionOutputsRequestBody = {
+    models: [{ id: modelId }],
+    formats: ['ept-pointcloud', 'reveal-directory'],
+  };
   const response = await v3Client.post(url, {
-    data: {
-      models: [{ id: modelId }],
-      formats: ['ept-pointcloud', 'reveal-directory'],
-    },
+    data: requestBody,
   });
   if (response.status !== 200) {
     throw new v3.HttpError(response.status, response.data, response.headers);

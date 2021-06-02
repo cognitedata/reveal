@@ -6,6 +6,7 @@ module.exports = {
     'plugin:testing-library/recommended',
     'plugin:testing-library/react',
     'plugin:jest-dom/recommended',
+    'plugin:react-hooks/recommended',
   ],
   parser: '@typescript-eslint/parser',
   plugins: [

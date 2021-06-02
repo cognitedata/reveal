@@ -11,7 +11,7 @@ import { Cognite3DViewer, Cognite3DModel } from '@cognite/reveal';
 import { Provider } from 'react-redux';
 import configureStore from 'src/store';
 import { createBrowserHistory } from 'history';
-import { mswHandlers } from 'src/pages/RevisionDetails/components/ToolbarTreeView/__testUtils__/mswHandlers';
+import { toolbarTreeViewMswHandlers } from 'src/pages/RevisionDetails/components/ToolbarTreeView/__testUtils__/toolbarTreeViewMswHandlers';
 import {
   fixtureCubeNodeFirstChildId,
   fixtureModelId,
@@ -45,7 +45,7 @@ function ToolbarTreeViewWrapper(
   return <ToolbarTreeView {...props} model={modelMock} viewer={viewerMock} />;
 }
 
-const server = setupServer(...mswHandlers);
+const server = setupServer(...toolbarTreeViewMswHandlers);
 
 /*
  * Temporarily moved one "bad test" here from ToolbarTreeView.spec.

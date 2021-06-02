@@ -1,6 +1,6 @@
 import React from 'react';
-import { setupServer } from 'msw/node';
-import { render, screen } from '@testing-library/react';
+
+import { screen } from '@testing-library/react';
 
 import {
   ToolbarTreeView,
@@ -8,27 +8,21 @@ import {
 } from 'src/pages/RevisionDetails/components/ToolbarTreeView/ToolbarTreeView';
 
 import { Cognite3DViewer, Cognite3DModel } from '@cognite/reveal';
-import { Provider } from 'react-redux';
-import configureStore from 'src/store';
-import { createBrowserHistory } from 'history';
-import { mswHandlers } from 'src/pages/RevisionDetails/components/ToolbarTreeView/__testUtils__/mswHandlers';
+
+import { toolbarTreeViewMswHandlers } from 'src/pages/RevisionDetails/components/ToolbarTreeView/__testUtils__/toolbarTreeViewMswHandlers';
 import {
   fixtureModelId,
   fixtureRevisionId,
 } from 'src/pages/RevisionDetails/components/ToolbarTreeView/__testUtils__/fixtures/fixtureConsts';
 import userEvent from '@testing-library/user-event';
+import { setupServer } from 'msw/node';
+import { renderWithProviders } from 'src/utils/test';
 
 jest.mock('antd/lib/notification');
 
 // to mock less 3d-viewer stuff disable some hooks
 jest.mock('./hooks/useSelectedNodesHighlights');
 jest.mock('./hooks/useCheckedNodesVisibility');
-
-function renderWithProviders(component: any) {
-  const history = createBrowserHistory();
-  const store = configureStore(history);
-  return render(<Provider store={store}>{component}</Provider>);
-}
 
 const viewerMock = {} as Cognite3DViewer;
 const modelMock = {
@@ -42,11 +36,11 @@ function ToolbarTreeViewWrapper(
   return <ToolbarTreeView {...props} model={modelMock} viewer={viewerMock} />;
 }
 
-const server = setupServer(...mswHandlers);
+const server = setupServer(...toolbarTreeViewMswHandlers);
 
 describe('ToolbarTreeView test cases', () => {
   // Enable API mocking before tests.
-  beforeAll(() => server.listen());
+  beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
 
   // Reset any runtime request handlers we may add during the tests.
   afterEach(() => server.resetHandlers());
@@ -73,6 +67,8 @@ describe('ToolbarTreeView test cases', () => {
       .find((el) => el.getAttribute('aria-label') === 'plus-square');
     userEvent.click(expandBtn!);
 
+    // fixme: flacky test, most of the time its ok,
+    //    but from time to time it fails because it happens too fast
     // must show loading icon
     expect(
       await screen.findByRole('img', { name: /loading/i })

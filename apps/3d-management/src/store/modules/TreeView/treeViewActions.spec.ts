@@ -1,6 +1,6 @@
 import { fetchInitialNodes } from 'src/store/modules/TreeView/treeViewActions';
 import { setupServer } from 'msw/node';
-import { mswHandlers } from 'src/pages/RevisionDetails/components/ToolbarTreeView/__testUtils__/mswHandlers';
+import { toolbarTreeViewMswHandlers } from 'src/pages/RevisionDetails/components/ToolbarTreeView/__testUtils__/toolbarTreeViewMswHandlers';
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {
@@ -19,7 +19,7 @@ import { CustomDataNode } from 'src/pages/RevisionDetails/components/TreeView/ty
 const middlewares = [thunk];
 const mockStore = configureMockStore(middlewares);
 
-const server = setupServer(...mswHandlers);
+const server = setupServer(...toolbarTreeViewMswHandlers);
 
 const getState = (
   treeViewParts: Partial<TreeViewState> = {}

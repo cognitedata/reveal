@@ -5,6 +5,7 @@ import { rootNodeChildrenRes } from 'src/pages/RevisionDetails/components/Toolba
 import { cubeNodeChildrenRes } from 'src/pages/RevisionDetails/components/ToolbarTreeView/__testUtils__/fixtures/cubeNodeChildreRes';
 import { fakeFirstLevelSiblingsRes } from 'src/pages/RevisionDetails/components/ToolbarTreeView/__testUtils__/fixtures/fakeFirstLevelSiblingsRes';
 import { cubeNodeFirstChildAncestorsRes } from 'src/pages/RevisionDetails/components/ToolbarTreeView/__testUtils__/fixtures/cubeNodeFirstChildAncestorsRes';
+import { onUnhandledRequest } from 'src/utils/test/mswUtils';
 import rootNodeIdRes from './fixtures/rootNodeIdRes';
 import {
   fixtureCubeNodeFirstChildId,
@@ -14,18 +15,7 @@ import {
   fixtureRootNodeId,
 } from './fixtures/fixtureConsts';
 
-const onUnhandledRequest = (req, res, ctx) => {
-  // eslint-disable-next-line no-console
-  console.error(
-    `Not mocked API request: ${req.method} ${req.url}${
-      req.method === 'POST' ? `\n${JSON.stringify(req.body, null, 2)}` : ''
-    }`
-  );
-  return res(ctx.status(500));
-};
-
-// the same handlers can be used both for setupWorker (browser) or setupServer (test env)
-export const mswHandlers = [
+export const toolbarTreeViewMswHandlers = [
   rest.post(
     `*/3d/models/${fixtureModelId}/revisions/${fixtureRevisionId}/nodes/internalids/bytreeindices`,
     (req, res, ctx) => {
@@ -57,7 +47,7 @@ export const mswHandlers = [
         } else if (nodeId === fixtureCubeNodeId) {
           fixture = cubeNodeChildrenRes;
         } else {
-          return onUnhandledRequest(res, req, ctx);
+          return onUnhandledRequest(req);
         }
         if (limit === 1) {
           return res(
@@ -70,7 +60,7 @@ export const mswHandlers = [
         return res(ctx.json(fixture));
       }
 
-      return onUnhandledRequest(req, res, ctx);
+      return onUnhandledRequest(req);
     }
   ),
 
@@ -80,7 +70,4 @@ export const mswHandlers = [
       return res(ctx.json(cubeNodeFirstChildAncestorsRes));
     }
   ),
-
-  rest.get('*', onUnhandledRequest),
-  rest.post('*', onUnhandledRequest),
 ];
