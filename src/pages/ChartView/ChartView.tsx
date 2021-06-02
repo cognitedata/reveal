@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components/macro';
-import { Button, Icon, toast, Tooltip } from '@cognite/cogs.js';
+import {
+  Button,
+  Icon,
+  toast,
+  Tooltip,
+  Dropdown,
+  Menu,
+  Switch,
+  Flex,
+} from '@cognite/cogs.js';
 import { Alert } from 'antd';
 import { useParams } from 'react-router-dom';
 import NodeEditor from 'components/NodeEditor';
@@ -52,6 +61,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   >();
 
   const [showSearch, setShowSearch] = useState(false);
+  const [showYAxis, setShowYAxis] = useState(true);
   const [workspaceMode, setWorkspaceMode] = useState<Modes>('workspace');
   const [stackedMode, setStackedMode] = useState<boolean>(false);
   const [editorTimer, setEditorTimer] = useState<ITimer | undefined>();
@@ -317,6 +327,29 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
             </section>
           )}
           <section className="daterange">
+            <Dropdown
+              content={
+                <Menu>
+                  <YaxisDropdownWrapper>
+                    <Flex>
+                      <YaxisDropdownTitle>Y axis</YaxisDropdownTitle>
+                    </Flex>
+                    <Flex direction="row">
+                      <Switch
+                        name="toggleYAxis"
+                        value={showYAxis}
+                        onChange={() => setShowYAxis(!showYAxis)}
+                      >
+                        Show Y-axes
+                      </Switch>
+                    </Flex>
+                  </YaxisDropdownWrapper>
+                </Menu>
+              }
+            >
+              <Button icon="YAxis" type="ghost" aria-label="view" />
+            </Dropdown>
+
             <Tooltip content={`${stackedMode ? 'Disable' : 'Enable'} stacking`}>
               <Button
                 icon="ChartStackedView"
@@ -337,6 +370,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                   key={chartId}
                   chartId={chartId}
                   isInSearch={showSearch}
+                  isYAxisShown={showYAxis}
                   stackedMode={stackedMode}
                 />
               </ChartWrapper>
@@ -403,6 +437,16 @@ const Divider = styled.div`
   border-left: 1px solid var(--cogs-greyscale-grey3);
   height: 24px;
   margin-left: 10px;
+`;
+
+const YaxisDropdownTitle = styled.div`
+  color: var(--cogs-greyscale-grey6);
+  font-size: 12px;
+  margin: 0 0 8px 8px;
+`;
+
+const YaxisDropdownWrapper = styled.div`
+  padding: 8px;
 `;
 
 export default ChartView;
