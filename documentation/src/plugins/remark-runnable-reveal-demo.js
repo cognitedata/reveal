@@ -15,18 +15,26 @@ const transformNode = (node) => {
   ];
 };
 
-const matchNode = (node) => node.type === 'code' && node.meta === 'runnable';
-const nodeForImport = {
-  type: 'import',
-  value:
-    "import { LiveCodeSnippet } from '@site/docs/components/LiveCodeSnippet';",
+const versionedImportNode = {
+  runnable: {
+    type: 'import',
+    value:
+      "import { LiveCodeSnippet } from '@site/docs/components/LiveCodeSnippet';",
+  },
+  'runnable-1x': {
+    type: 'import',
+    value:
+      "import { LiveCodeSnippet } from '@site/versioned_docs/version-1.x/components/LiveCodeSnippet';",
+  },
 };
 
 module.exports = () => {
   let transformed = false;
+  let importNode;
   const transformer = (node) => {
-    if (matchNode(node)) {
+    if (node.type === 'code' && versionedImportNode[node.meta]) {
       transformed = true;
+      importNode = versionedImportNode[node.meta];
       return transformNode(node);
     }
     if (Array.isArray(node.children)) {
@@ -42,7 +50,7 @@ module.exports = () => {
       }
     }
     if (node.type === 'root' && transformed) {
-      node.children.unshift(nodeForImport);
+      node.children.unshift(importNode);
     }
     return null;
   };
