@@ -249,8 +249,8 @@ export const ConfigPanel = ({
 };
 
 export const node = {
-  title: 'Toolbox Function',
-  subtitle: 'Toolbox Function',
+  title: 'Function',
+  subtitle: 'Function',
   color: '#9118af',
   icon: 'Function',
   inputPins: [],
