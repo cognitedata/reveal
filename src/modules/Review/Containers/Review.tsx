@@ -100,12 +100,11 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
   useEffect(() => {
     dispatch(resetEditHistory());
     dispatch(resetPreview());
-    if (fileId) {
-      if (file) {
-        dispatch(PopulateAnnotations({ fileId, assetIds: file.assetIds }));
-      } else {
-        dispatch(fetchFilesById([{ id: +fileId }]));
-      }
+    if (fileId && !(props.location.state as { from?: string })?.from) {
+      dispatch(fetchFilesById([{ id: +fileId }]));
+    }
+    if (file) {
+      dispatch(PopulateAnnotations({ fileId, assetIds: file.assetIds }));
     }
   }, [file]);
 

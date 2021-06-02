@@ -48,7 +48,7 @@ const Explorer = () => {
   const showMetadata = useSelector(
     ({ explorerReducer }: RootState) => explorerReducer.showFileMetadata
   );
-  const fileId = useSelector(
+  const clickedRowFileId = useSelector(
     ({ explorerReducer }: RootState) => explorerReducer.selectedFileId
   );
   const currentView = useSelector(
@@ -112,8 +112,27 @@ const Explorer = () => {
     dispatch(fetchFilesById(selectedFileIds.map((i) => ({ id: i }))));
     history.push(
       // selecting first item in review
-      getParamLink(workflowRoutes.review, ':fileId', String(selectedFileIds[0]))
+      getParamLink(
+        workflowRoutes.review,
+        ':fileId',
+        String(selectedFileIds[0])
+      ),
+      { from: 'explorer' }
     );
+  };
+
+  const onFileDetailReview = () => {
+    if (clickedRowFileId) {
+      dispatch(fetchFilesById([{ id: clickedRowFileId }]));
+      history.push(
+        getParamLink(
+          workflowRoutes.review,
+          ':fileId',
+          String(clickedRowFileId)
+        ),
+        { from: 'explorer' }
+      );
+    }
   };
 
   return (
@@ -185,7 +204,7 @@ const Explorer = () => {
                 onClick={handleItemClick}
                 onRowSelect={handleRowSelect}
                 query={query}
-                selectedId={fileId || undefined}
+                selectedId={clickedRowFileId || undefined}
                 currentView={currentView}
               />
             </ViewContainer>
@@ -194,7 +213,11 @@ const Explorer = () => {
             // eslint-disable-next-line  @cognite/no-number-z-index
             <DrawerContainer style={{ zIndex: 1 }}>
               <QueryClientProvider client={queryClient}>
-                <FileDetails fileId={fileId} onClose={handleMetadataClose} />
+                <FileDetails
+                  fileId={clickedRowFileId}
+                  onClose={handleMetadataClose}
+                  onReview={onFileDetailReview}
+                />
               </QueryClientProvider>
             </DrawerContainer>
           )}

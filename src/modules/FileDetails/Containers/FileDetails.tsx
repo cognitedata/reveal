@@ -16,25 +16,19 @@ import {
   selectUpdatedFileMeta,
 } from 'src/modules/FileDetails/fileDetailsSlice';
 import { Tabs } from '@cognite/data-exploration';
-import { useHistory } from 'react-router-dom';
-import {
-  getParamLink,
-  workflowRoutes,
-} from 'src/modules/Workflow/workflowRoutes';
-
 import { DeleteAnnotationsAndRemoveLinkedAssets } from 'src/store/thunks/DeleteAnnotationsAndRemoveLinkedAssets';
-import { fetchFilesById } from 'src/store/thunks/fetchFilesById';
 import { FileDetailsAnnotationsPreview } from './FileDetailsAnnotationsPreview/FileDetailsAnnotationsPreview';
 
 export const FileDetails = ({
   fileId,
   onClose,
+  onReview,
 }: {
   fileId: number | null;
   onClose: () => void;
+  onReview: () => void;
 }) => {
   const dispatch = useDispatch();
-  const history = useHistory();
 
   const fileDetails = useSelector((state: RootState) =>
     selectUpdatedFileDetails(state, String(fileId))
@@ -79,11 +73,7 @@ export const FileDetails = ({
   };
 
   const onReviewClick = () => {
-    dispatch(fetchFilesById([{ id: fileId }]));
-    history.push(
-      getParamLink(workflowRoutes.review, ':fileId', String(fileId)),
-      { from: 'file-details' }
-    );
+    onReview();
   };
 
   const onAnnotationDeleteClick = (annotationId: number) => {

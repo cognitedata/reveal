@@ -5,6 +5,12 @@ import { hideFileMetadataPreview } from 'src/modules/Process/processSlice';
 import { FileDetails } from 'src/modules/FileDetails/Containers/FileDetails';
 import React from 'react';
 import styled from 'styled-components';
+import { fetchFilesById } from 'src/store/thunks/fetchFilesById';
+import {
+  getParamLink,
+  workflowRoutes,
+} from 'src/modules/Workflow/workflowRoutes';
+import { useHistory } from 'react-router-dom';
 
 const Container = styled.div`
   width: 400px;
@@ -18,6 +24,7 @@ const Container = styled.div`
 export const ProcessFileDetailsContainer = () => {
   const queryClient = new QueryClient();
   const dispatch = useDispatch();
+  const history = useHistory();
   const fileId = useSelector(
     ({ processSlice }: RootState) => processSlice.selectedFileId
   );
@@ -27,11 +34,24 @@ export const ProcessFileDetailsContainer = () => {
   const onClose = () => {
     dispatch(hideFileMetadataPreview());
   };
+  const onFileDetailReview = () => {
+    if (fileId) {
+      dispatch(fetchFilesById([{ id: fileId }]));
+      history.push(
+        getParamLink(workflowRoutes.review, ':fileId', String(fileId)),
+        { from: 'process' }
+      );
+    }
+  };
   if (showFileDetails) {
     return (
       <Container>
         <QueryClientProvider client={queryClient}>
-          <FileDetails fileId={fileId} onClose={onClose} />
+          <FileDetails
+            fileId={fileId}
+            onClose={onClose}
+            onReview={onFileDetailReview}
+          />
         </QueryClientProvider>
       </Container>
     );
