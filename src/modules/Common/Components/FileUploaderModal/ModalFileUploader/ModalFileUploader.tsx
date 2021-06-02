@@ -152,7 +152,6 @@ const updateUploadStatus = (fileList: CogsFileInfo[]) => {
 };
 
 export const ModalFileUploader = ({
-  initialUploadedFiles,
   assetIds,
   enableProcessAfter = false,
   onUploadSuccess = () => {},
@@ -171,26 +170,6 @@ export const ModalFileUploader = ({
   const [processAfter, setProcessAfter] = useState<boolean>(false);
 
   const history = useHistory();
-
-  useEffect(() => {
-    setFileList(
-      (initialUploadedFiles || []).map((file) => {
-        const f: CogsFileInfo = {
-          name: file.name,
-          percent: 100,
-          type: file.mimeType || '',
-          status: 'done',
-          lastModified: Number(file.lastUpdatedTime),
-          uid: String(file.id),
-          relativePath: '',
-          // we don't know the size after file is uploaded ¯\_(ツ)_/¯
-          // that also means duplicates check won't work without size
-          size: 0,
-        };
-        return f;
-      })
-    );
-  }, [initialUploadedFiles]);
 
   useEffect(() => {
     onFileListChange(fileList);

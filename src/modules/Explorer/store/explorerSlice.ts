@@ -188,6 +188,11 @@ export const selectExplorerAllSelectedFiles = createSelector(
   }
 );
 
+export const selectExplorerSelectedFileIds = createSelector(
+  selectExplorerAllSelectedFiles,
+  (files) => files.map((file) => file.id)
+);
+
 // state utility functions
 
 const deleteFileById = (state: State, id: number) => {

@@ -1,61 +1,75 @@
 import React from 'react';
-import { Button, SegmentedControl, Title } from '@cognite/cogs.js';
+import { Button, SegmentedControl, Title, Tooltip } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { useDispatch } from 'react-redux';
-import { getLink, workflowRoutes } from 'src/modules/Workflow/workflowRoutes';
-import { useHistory } from 'react-router-dom';
 import { ExplorationSearchBar } from './ExplorationSearchBar';
-import { setExplorerFileUploadModalVisibility } from '../store/explorerSlice';
 
 export const ExplorerToolbar = ({
   query,
+  selectedCount,
+  maxSelectCount,
   onViewChange,
   currentView = 'list',
   onSearch,
+  onUpload,
+  onContextualise,
+  onReview,
 }: {
   query?: string;
+  selectedCount?: number;
+  maxSelectCount?: number;
   onViewChange?: (view: string) => void;
   currentView?: string;
   onSearch: (text: string) => void;
+  onUpload: () => void;
+  onContextualise: () => void;
+  onReview: () => void;
 }) => {
-  const dispatch = useDispatch();
-  const history = useHistory();
+  const count = selectedCount ? `[${selectedCount}]` : null;
+  const inLimit =
+    selectedCount && maxSelectCount ? selectedCount <= maxSelectCount : true;
+  const exceededLimitMessage = `Total number of files that can be processed simultaneously is ${maxSelectCount}`;
 
   return (
     <>
       <TitleBar>
         <Left>
-          <Title level={2}>
-            {/* TODO: add counter */}
-            Vision Explore
-          </Title>
+          <Title level={2}>Vision Explore</Title>
         </Left>
         <Right>
           <Button
             style={{ marginLeft: 14 }}
             icon="Upload"
             type="tertiary"
-            onClick={() => dispatch(setExplorerFileUploadModalVisibility(true))}
+            onClick={onUpload}
           >
-            Upload files
+            Upload
           </Button>
-          {/* ToDo(VIS-188)   */}
-          <Button
-            style={{ marginLeft: 14 }}
-            icon="ExpandMax"
-            type="tertiary"
-            onClick={() => history.push(getLink(workflowRoutes.process))}
+
+          <Tooltip
+            content={
+              <span data-testid="text-content">{exceededLimitMessage}</span>
+            }
+            disabled={!!inLimit}
           >
-            Contextualise selected
-          </Button>
+            <Button
+              style={{ marginLeft: 14 }}
+              icon="ExpandMax"
+              type="primary"
+              onClick={onContextualise}
+              disabled={!count || !inLimit}
+            >
+              Contextualise {count}
+            </Button>
+          </Tooltip>
+
           <Button
             style={{ marginLeft: 14 }}
             icon="Edit"
-            type="tertiary"
-            onClick={() => {}}
-            disabled
+            type="primary"
+            onClick={onReview}
+            disabled={!count}
           >
-            Review selected
+            Review {count}
           </Button>
         </Right>
       </TitleBar>

@@ -12,9 +12,17 @@ import { ExplorerSearchResults } from 'src/modules/Explorer/Containers/ExplorerS
 import { FileDetails } from 'src/modules/FileDetails/Containers/FileDetails';
 import { TableDataItem, ViewMode } from 'src/modules/Common/types';
 import { ExplorerToolbar } from 'src/modules/Explorer/Containers/ExplorerToolbar';
-import { addUploadedFile, selectAllFiles } from 'src/modules/Common/filesSlice';
+import { addUploadedFile } from 'src/modules/Common/filesSlice';
 import { FileUploadModal } from 'src/modules/Common/Components/FileUploaderModal/FileUploaderModal';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
+import { fetchFilesById } from 'src/store/thunks/fetchFilesById';
+import { useHistory } from 'react-router-dom';
+import {
+  getLink,
+  getParamLink,
+  workflowRoutes,
+} from 'src/modules/Workflow/workflowRoutes';
+import { MAX_SELECT_COUNT } from 'src/constants/ExplorerConstants';
 import {
   setExplorerCurrentView,
   setExplorerFileSelectState,
@@ -24,10 +32,13 @@ import {
   showExplorerFileMetadata,
   toggleExplorerFileMetadata,
   toggleExplorerFilterView,
+  selectExplorerSelectedFileIds,
   setExplorerFileUploadModalVisibility,
 } from '../store/explorerSlice';
 
 const Explorer = () => {
+  const history = useHistory();
+
   const showFilter = useSelector(
     ({ explorerReducer }: RootState) => explorerReducer.showFilter
   );
@@ -49,6 +60,9 @@ const Explorer = () => {
 
   const showFileUploadModal = useSelector(
     ({ explorerReducer }: RootState) => explorerReducer.showFileUploadModal
+  );
+  const selectedFileIds = useSelector((state: RootState) =>
+    selectExplorerSelectedFileIds(state.explorerReducer)
   );
 
   const queryClient = new QueryClient();
@@ -75,10 +89,6 @@ const Explorer = () => {
     dispatch(setExplorerFileSelectState(item.id, selected));
   };
 
-  const uploadedFiles = useSelector((state: RootState) =>
-    selectAllFiles(state.filesSlice)
-  );
-
   const onUploadSuccess = React.useCallback(
     (file) => {
       dispatch(addUploadedFile(file));
@@ -89,10 +99,26 @@ const Explorer = () => {
     dispatch(toggleExplorerFileMetadata());
   };
 
+  const onUpload = () => {
+    dispatch(setExplorerFileUploadModalVisibility(true));
+  };
+  const onContextualise = () => {
+    // fetch latest
+    dispatch(fetchFilesById(selectedFileIds.map((i) => ({ id: i }))));
+    history.push(getLink(workflowRoutes.process));
+  };
+  const onReview = () => {
+    // fetch latest
+    dispatch(fetchFilesById(selectedFileIds.map((i) => ({ id: i }))));
+    history.push(
+      // selecting first item in review
+      getParamLink(workflowRoutes.review, ':fileId', String(selectedFileIds[0]))
+    );
+  };
+
   return (
     <>
       <FileUploadModal
-        initialUploadedFiles={uploadedFiles}
         enableProcessAfter
         onUploadSuccess={onUploadSuccess}
         showModal={showFileUploadModal}
@@ -144,10 +170,15 @@ const Explorer = () => {
               <ExplorerToolbar
                 query={query}
                 currentView={currentView}
+                selectedCount={selectedFileIds.length}
+                maxSelectCount={MAX_SELECT_COUNT}
                 onViewChange={(view) =>
                   dispatch(setExplorerCurrentView(view as ViewMode))
                 }
                 onSearch={handleSearch}
+                onUpload={onUpload}
+                onContextualise={onContextualise}
+                onReview={onReview}
               />
               <ExplorerSearchResults
                 filter={filter}
