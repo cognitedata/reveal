@@ -28,6 +28,7 @@ const LoginWithFakeIDP: React.FC<Props> = ({
       .post(`http://localhost:8200/login/token`, {
         fakeApplicationId,
         groups,
+        project,
         roles,
       })
       .then((result) => {

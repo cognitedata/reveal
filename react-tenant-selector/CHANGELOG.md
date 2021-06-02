@@ -1,3 +1,7 @@
+## 1.2.8 June 2 2021
+
+- Pass `project` into fake idp `/login/token` as a body param
+
 ## 1.2.7 June 1 2021
 
 - Add `disableAzureLogin` option to sidecar disable the azure login button
