@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState, KeyboardEvent } from 'react';
+import React, { FunctionComponent, useState } from 'react';
 import { Hint, StyledTextArea } from 'styles/StyledForm';
 import styled from 'styled-components';
 import { bottomSpacing } from 'styles/StyledVariables';
@@ -52,6 +52,7 @@ const EditDocumentationButton = styled(EditButton)`
   }
 `;
 const DocumentationWrapper = styled.section`
+  margin-bottom: 5rem;
   padding: 1rem;
   display: flex;
   flex-direction: column;
@@ -115,6 +116,8 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
     shouldUnregister: false,
   });
 
+  const count = watch('documentation')?.length ?? 0;
+
   const onValid = async (field: Fields) => {
     if (currentIntegration && project) {
       const mutateObj = createUpdateSpec({
@@ -138,7 +141,6 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
     }
   };
 
-  const count = watch('documentation')?.length ?? 0;
   const onEditClick = () => {
     setEdit(true);
   };
@@ -152,12 +154,6 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
   if (!currentIntegration) {
     return null;
   }
-
-  const handleKeyDown = (e: KeyboardEvent) => {
-    const target = e.target as HTMLTextAreaElement;
-    target.style.height = 'inherit';
-    target.style.height = `${target.scrollHeight}px`;
-  };
 
   return (
     <DocumentationWrapper>
@@ -175,7 +171,6 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
               ref={register}
               defaultValue={currentIntegration?.documentation}
               className={`cogs-input ${!!errors.documentation && 'has-error'}`}
-              onKeyDown={handleKeyDown}
               rows={30}
               cols={30}
             />

@@ -15,12 +15,28 @@ const StyledReactMarkdown = styled(ReactMarkdown)`
       margin: 1rem 0;
       align-self: flex-start;
     }
-    code {
-      display: flex;
-      margin: 1rem 0;
-      padding: 1rem;
-      background-color: ${Colors['greyscale-grey2'].hex()};
-      border-left: 4px solid ${Colors['greyscale-grey3'].hex()};
+    h1,
+    h2,
+    h3,
+    h4 {
+      margin-top: 0.5rem;
+    }
+    pre {
+      code {
+        display: flex;
+        margin: 1rem 0;
+        padding: 1rem;
+        background-color: ${Colors['greyscale-grey2'].hex()};
+        border-left: 4px solid ${Colors['greyscale-grey3'].hex()};
+      }
+    }
+    p {
+      line-height: 1.3;
+      code {
+        padding: 0.1rem 0.2rem;
+        background-color: ${Colors['greyscale-grey2'].hex()};
+        border: 1px solid ${Colors['greyscale-grey3'].hex()};
+      }
     }
     blockquote {
       margin: 1rem 0;
@@ -30,9 +46,23 @@ const StyledReactMarkdown = styled(ReactMarkdown)`
     }
     .cogs-table {
       width: inherit;
+      margin-bottom: 1rem;
+      tbody {
+        tr {
+          td {
+            line-height: 1.3;
+          }
+        }
+      }
     }
     .docs-image {
       max-width: 100%;
+    }
+    ul {
+      margin-top: 0.5rem;
+      li {
+        margin-bottom: 0.5rem;
+      }
     }
   }
 `;
