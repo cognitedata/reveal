@@ -7,8 +7,6 @@ import * as THREE from 'three';
 
 import { PotreePointSizeType, PotreePointColorType, PotreePointShape } from './types';
 import { fromThreeJsBox3 } from '../../utilities';
-import { Box3 } from '../../utilities/Box3';
-import { vec3 } from 'gl-matrix';
 
 export type PotreeClassification = { [pointClass: number]: { x: number; y: number; z: number; w: number } };
 
@@ -60,14 +58,14 @@ export class PotreeNodeWrapper {
     return this.octtree.numVisiblePoints || 0;
   }
 
-  get boundingBox(): Box3 {
+  get boundingBox(): THREE.Box3 {
     const transformedBbox: THREE.Box3 =
       this.octtree.pcoGeometry.tightBoundingBox || this.octtree.pcoGeometry.boundingBox || this.octtree.boundingBox;
     const box = fromThreeJsBox3(transformedBbox);
     // Apply transformation to switch axes
-    const min = vec3.fromValues(box.min[0], box.min[2], -box.min[1]);
-    const max = vec3.fromValues(box.max[0], box.max[2], -box.max[1]);
-    return new Box3([min, max]);
+    const min = new THREE.Vector3(box.min[0], box.min[2], -box.min[1]);
+    const max = new THREE.Vector3(box.max[0], box.max[2], -box.max[1]);
+    return new THREE.Box3(min, max);
   }
 
   get pointColorType(): PotreePointColorType {

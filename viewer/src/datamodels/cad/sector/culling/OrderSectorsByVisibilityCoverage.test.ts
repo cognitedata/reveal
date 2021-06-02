@@ -5,7 +5,6 @@
 import * as THREE from 'three';
 
 import { createSectorMetadata, SectorTree } from '../../../../__testutilities__/createSectorMetadata';
-import { Box3 } from '../../../../utilities/Box3';
 import { GpuOrderSectorsByVisibilityCoverage } from '../../../../internals';
 import { SectorSceneImpl } from '../SectorScene';
 import { CadModelMetadata } from '../..';
@@ -18,7 +17,11 @@ describe('OrderSectorsByVisibilityCoverage', () => {
   const glContext = createGlContext(64, 64);
   let renderer: THREE.WebGLRenderer;
   const identityMatrix = new THREE.Matrix4().identity();
-  const singleSectorScene = createStubScene([0, [], Box3.fromBounds(-1, -1, -1, 1, 1, 1)]);
+  const singleSectorScene = createStubScene([
+    0,
+    [],
+    new THREE.Box3(new THREE.Vector3(-1, -1, -1), new THREE.Vector3(1, 1, 1))
+  ]);
   const cadModel = createStubModel('model', singleSectorScene, identityMatrix);
   const occludingGeometryProvider: OccludingGeometryProvider = {
     renderOccludingGeometry: jest.fn()
@@ -95,7 +98,7 @@ describe('OrderSectorsByVisibilityCoverage', () => {
 
   test('two models, rendered result returns value at offset', () => {
     // Arrange
-    const scene2 = createStubScene([1, [], Box3.fromBounds(-1, -1, -1, 1, 1, 1)]);
+    const scene2 = createStubScene([1, [], new THREE.Box3(new THREE.Box3(-1, -1, -1), new THREE.Vector3(1, 1, 1))]);
     const model1 = createStubModel('model1', singleSectorScene, identityMatrix);
     const model2 = createStubModel('model2', scene2, identityMatrix);
     const util = new GpuOrderSectorsByVisibilityCoverage({ renderer, occludingGeometryProvider });
