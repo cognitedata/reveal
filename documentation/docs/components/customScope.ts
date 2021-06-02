@@ -22,5 +22,3 @@ export const customScope: Record<string, any> = {
   },
   ...reveal,
 };
-
-(window as any).reveal = reveal;
