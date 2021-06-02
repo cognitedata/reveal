@@ -36,7 +36,7 @@ is used to create slicing planes. This function accepts a direction that defines
 the plane and a point on the plane. For example, the following
 code will create a slicing plane that only accepts geometry below `Y = 55`:
 
-```jsx runnable
+```jsx runnable-1x
 const orientation = new THREE.Vector3(0, -1, 0);
 const point = new THREE.Vector3(0, 55, 0);
 const plane = new THREE.Plane().setFromNormalAndCoplanarPoint(orientation, point);
@@ -51,7 +51,7 @@ triggered after updating the plane before the change will have a visual effect. 
 
 Below is an example animates a slicing plane by ping-ponging the plane in the vertical direction.
 
-```js runnable
+```jsx runnable-1x
 const bbox = model.getModelBoundingBox();
 
 const orientation = new THREE.Vector3(0, -1, 0);
@@ -87,7 +87,7 @@ to manipulate the slicing planes.
 
 After running this snippet the slicing plane can be manipulated by dragging the white manipulator.
 
-```js runnable
+```jsx runnable-1x
 // import { DragControls } from 'three/examples/jsm/controls/DragControls';
 
 const bounds = model.getModelBoundingBox();
