@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Select, Spin } from 'antd';
-
 import {
   SdkResourceType,
   useList,
@@ -14,47 +13,65 @@ type Props = {
   value?: number[];
   body?: any;
   onChange: (r: number[]) => void;
+  useSearchApi?: boolean;
+  prefetchItems?: number;
 };
 export default function ResourcesSelector({
   type,
   value,
   onChange,
   body,
+  useSearchApi = true,
+  prefetchItems = 10,
 }: Props) {
   const [search, setSearch] = useState('');
   type R = { name: string; id: number };
 
+  const searchEnabled = useSearchApi && !!search;
+
   const { data: initialOptions, isFetching: listing } = useList<R>(type, {
     ...body,
-    limit: 10,
+    limit: prefetchItems,
   });
   const { data: searchOptions, isFetching: searching } = useSearch<R>(
     type,
     search,
-    { ...body, limit: 10 },
-    { enabled: !!search }
+    { ...body, limit: prefetchItems },
+    { enabled: searchEnabled }
   );
 
-  const result = (search ? searchOptions : initialOptions) || [];
-  const fetching = search ? searching : listing;
+  const result = (searchEnabled ? searchOptions : initialOptions) || [];
+  const fetching = searchEnabled ? searching : listing;
 
   const handleSearch = (searchText: string) => {
     setSearch(searchText);
   };
+
   return (
     <Select
       mode="multiple"
       value={value}
       placeholder="Search and select resources"
       notFoundContent={fetching ? <Spin /> : 'Not found'}
-      filterOption={false}
       onSearch={handleSearch}
+      defaultValue={[]}
       onChange={v => onChange(v)}
       style={{ border: 0 }}
+      optionLabelProp="title"
+      filterOption={
+        useSearchApi
+          ? false
+          : (input, option) =>
+              option?.title?.toLowerCase().includes(input?.toLowerCase() || '')
+      }
     >
       {result.map(resource => (
-        <Option key={resource.id} value={resource.id} label={resource.name}>
-          {resource.name}
+        <Option
+          key={resource.id}
+          value={resource.id}
+          title={`${resource.name} (${resource.id})`}
+        >
+          {`${resource.name} (${resource.id})`}
         </Option>
       ))}
     </Select>

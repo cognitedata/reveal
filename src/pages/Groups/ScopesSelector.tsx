@@ -51,6 +51,10 @@ const ScopesSelector = ({ capabilityKey, value, onChange }: Props) => {
       break;
   }
 
+  selectedResources = selectedResources?.map(r =>
+    typeof r === 'string' ? parseInt(r, 10) : r
+  );
+
   const onSelectScope = (e: RadioChangeEvent) => {
     const newSelectedScope = e.target.value;
     let scope;
@@ -146,6 +150,8 @@ const ScopesSelector = ({ capabilityKey, value, onChange }: Props) => {
               type="datasets"
               value={selectedResources}
               onChange={onChangeResource}
+              useSearchApi={false}
+              prefetchItems={1000}
             />
           </SelectorContainer>
         )}
@@ -155,6 +161,8 @@ const ScopesSelector = ({ capabilityKey, value, onChange }: Props) => {
               type="datasets"
               value={selectedResources}
               onChange={onChangeResource}
+              useSearchApi={false}
+              prefetchItems={1000}
             />
           </SelectorContainer>
         )}
