@@ -34,16 +34,6 @@ const getFunctionId = (sdk: CogniteClient, externalId: string) => async () => {
   return Promise.reject(new Error(`Could not find function ${externalId}`));
 };
 
-const getLatestCall = (sdk: CogniteClient, fnId: number) => async () => {
-  const calls: { id: number; endTime: number }[] = await backendApi.getCalls(
-    sdk,
-    fnId
-  );
-
-  const { id } = calls.sort((a, b) => b.endTime - a.endTime)[0] || {};
-  return id;
-};
-
 const callFunction = (
   sdk: CogniteClient,
   fnId: number,
@@ -83,7 +73,7 @@ export function useAvailableOps(): [boolean, Error?, DSPFunction[]?] {
 
   const cacheOptions = {
     cacheTime: Infinity,
-    staleTime: 60000,
+    staleTime: Infinity,
     retry: false,
   };
 
@@ -93,24 +83,14 @@ export function useAvailableOps(): [boolean, Error?, DSPFunction[]?] {
     cacheOptions
   );
 
-  // Functions are immutable so any old call will be fine
-  const { data: call, isFetched: callFetched } = useQuery(
-    [...key, 'get_calls'],
-    getLatestCall(sdk, fnId as number),
-    { enabled: !!fnId, ...cacheOptions }
-  );
-
-  // Create a call if there isn't any existing
-  const { data: newCallId, isError: createCallError } = useQuery(
+  const { data: callId, isError: createCallError } = useQuery(
     [...key, 'create_call'],
     callFunction(sdk, fnId as number),
     {
-      enabled: callFetched && !call && !!fnId,
+      enabled: !!fnId,
       ...cacheOptions,
     }
   );
-
-  const callId = call || newCallId;
 
   const [refetchInterval, setRefetchInterval] = useState<number | false>(1000);
 
