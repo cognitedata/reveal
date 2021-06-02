@@ -25,7 +25,7 @@ const ButtonGroup = ButtonAnt.Group;
 type RotationAxis = 'x' | 'y' | 'z';
 
 type Props = {
-  saveModelRotation: (rotation: v3.Tuple3<number>) => void;
+  saveModelRotation: (rotation: v3.Tuple3<number>) => Promise<void>;
   viewer: Cognite3DViewer | Legacy3DViewer;
   model: Cognite3DModel | CognitePointCloudModel | Legacy3DModel;
 };
@@ -62,13 +62,25 @@ function EditRotationOpened(props: Props & { onClose: () => void }) {
     v3.Tuple3<number>
   >([0, 0, 0]);
 
-  useEffect(() => {
-    setInitialRotation(
-      'getModelTransformation' in props.model
-        ? props.model.getModelTransformation()
-        : props.model.matrix.clone()
-    );
+  const getModelTransformation = React.useCallback(() => {
+    return 'getModelTransformation' in props.model
+      ? props.model.getModelTransformation()
+      : props.model.matrix.clone();
   }, [props.model]);
+
+  const setModelTransformation = (matrix: THREE.Matrix4) => {
+    if ('setModelTransformation' in props.model) {
+      props.model.setModelTransformation(matrix);
+    } else {
+      // @ts-ignore old three
+      props.model.matrix.copy(matrix);
+      props.model.updateMatrixWorld(false);
+    }
+  };
+
+  useEffect(() => {
+    setInitialRotation(getModelTransformation());
+  }, [getModelTransformation]);
 
   const hasChanges = rotationAnglePiMultiplier.some((r) => r);
 
@@ -149,13 +161,7 @@ function EditRotationOpened(props: Props & { onClose: () => void }) {
   };
 
   const onCancelClicked = () => {
-    if ('setModelTransformation' in props.model) {
-      props.model.setModelTransformation(initialRotation!);
-    } else {
-      // @ts-ignore old three
-      props.model.matrix.copy(initialRotation);
-      props.model.updateMatrixWorld(false);
-    }
+    setModelTransformation(initialRotation!);
 
     forceRerender();
 
@@ -171,15 +177,10 @@ function EditRotationOpened(props: Props & { onClose: () => void }) {
     if (rotationX || rotationY || rotationZ) {
       const progressMessage = message.loading('Uploading model rotation...');
       const rotationEuler = new THREE.Euler();
-      let tmpMatrix: THREE.Matrix4;
-      if ('getModelTransformation' in props.model) {
-        tmpMatrix = props.model.getModelTransformation();
-      } else {
-        tmpMatrix = props.model.matrix.clone();
-      }
+      const tmpMatrix = getModelTransformation();
 
       // for pointcloud it just works without that
-      if (props.model instanceof Cognite3DModel) {
+      if (!(props.model instanceof CognitePointCloudModel)) {
         // Undo the default 90 degrees on X axis shift
         tmpMatrix.premultiply(
           new THREE.Matrix4().makeRotationFromEuler(
@@ -193,7 +194,12 @@ function EditRotationOpened(props: Props & { onClose: () => void }) {
 
       try {
         // Update revision with correct starting location and correct rotation
-        await props.saveModelRotation(rotationEuler.toArray().slice(0, 3));
+        await props.saveModelRotation(
+          rotationEuler
+            .toArray()
+            .slice(0, 3)
+            .map((n) => (n === 0 ? 1e-20 : n)) // backend bug, 0 is ignored instead of being set
+        );
 
         progressMessage.then(() =>
           message.success('Model rotation is updated.')
@@ -203,6 +209,9 @@ function EditRotationOpened(props: Props & { onClose: () => void }) {
           message.error("Couldn't update model initial location");
         });
         Sentry.captureException(e);
+      } finally {
+        setInitialRotation(getModelTransformation());
+        setRotationAnglePiMultiplier([0, 0, 0]);
       }
     }
   };

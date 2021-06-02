@@ -74,7 +74,7 @@ export default function ThreeDViewerSidebar(props: Props) {
       props.model.mapPositionFromModelToCdfCoordinates(target, target);
     } else {
       // Get inverse transformation matrix to compute camera position and target in model space
-      inverseModelMatrix.getInverse(props.model.matrix);
+      inverseModelMatrix.copy(props.model.matrix).invert();
       position.applyMatrix4(inverseModelMatrix);
       target.applyMatrix4(inverseModelMatrix);
     }
