@@ -18,7 +18,7 @@ export class ByAssetNodeSet extends NodeSet {
   private _fetchResultHelper: PopulateIndexSetFromPagedResponseHelper<AssetMapping3D> | undefined;
 
   constructor(client: CogniteClient, model: Cognite3DModel) {
-    super();
+    super(ByAssetNodeSet.name);
     this._client = client;
     this._model = model;
     this._fetchResultHelper = undefined;

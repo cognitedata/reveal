@@ -8,6 +8,15 @@ import { IndexSet } from '../../../utilities/IndexSet';
 
 export abstract class NodeSet {
   private readonly _changedEvent = new EventTrigger<() => void>();
+  private readonly _classToken: string;
+
+  protected constructor(classToken: string) {
+    this._classToken = classToken;
+  }
+
+  public get classToken(): string {
+    return this._classToken;
+  }
 
   on(_event: 'changed', listener: () => void): void {
     assert(_event === 'changed');

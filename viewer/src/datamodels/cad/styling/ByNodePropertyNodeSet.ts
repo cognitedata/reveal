@@ -11,6 +11,7 @@ import { PopulateIndexSetFromPagedResponseHelper } from './PopulateIndexSetFromP
 import { NodeSet } from './NodeSet';
 
 import range from 'lodash/range';
+import { ExecutesFilter } from './ExecutesFilter';
 
 export type ByNodePropertyNodeSetOptions = {
   /**
@@ -21,16 +22,23 @@ export type ByNodePropertyNodeSetOptions = {
   requestPartitions?: number;
 };
 
-export class ByNodePropertyNodeSet extends NodeSet {
+export type ByNodePropertyNodeSetFilter = {
+  [category: string]: {
+    [key: string]: string;
+  };
+};
+
+export class ByNodePropertyNodeSet extends NodeSet implements ExecutesFilter<ByNodePropertyNodeSetFilter> {
   private readonly _client: CogniteClient;
   private _indexSet = new IndexSet();
   private readonly _modelId: number;
   private readonly _revisionId: number;
   private readonly _options: Required<ByNodePropertyNodeSetOptions>;
   private _fetchResultHelper: PopulateIndexSetFromPagedResponseHelper<Node3D> | undefined;
+  private _filter: ByNodePropertyNodeSetFilter | undefined;
 
   constructor(client: CogniteClient, model: Cognite3DModel, options: ByNodePropertyNodeSetOptions = {}) {
-    super();
+    super(ByNodePropertyNodeSet.name);
     this._client = client;
     this._modelId = model.modelId;
     this._revisionId = model.revisionId;
@@ -41,11 +49,7 @@ export class ByNodePropertyNodeSet extends NodeSet {
     return this._fetchResultHelper !== undefined && this._fetchResultHelper.isLoading;
   }
 
-  async executeFilter(query: {
-    [category: string]: {
-      [key: string]: string;
-    };
-  }): Promise<void> {
+  async executeFilter(filter: ByNodePropertyNodeSetFilter): Promise<void> {
     const indexSet = new IndexSet();
     const { requestPartitions } = this._options;
 
@@ -63,7 +67,7 @@ export class ByNodePropertyNodeSet extends NodeSet {
 
     const requests = range(1, requestPartitions + 1).map(async p => {
       const response = this._client.revisions3D.list3DNodes(this._modelId, this._revisionId, {
-        properties: query,
+        properties: filter,
         limit: 1000,
         sortByNodeId: true,
         partition: `${p}/${requestPartitions}`
@@ -71,8 +75,14 @@ export class ByNodePropertyNodeSet extends NodeSet {
       return fetchResultHelper.pageResults(indexSet, response);
     });
 
+    this._filter = filter;
+
     this.notifyChanged();
     await Promise.all(requests);
+  }
+
+  getFilter(): ByNodePropertyNodeSetFilter | undefined {
+    return this._filter;
   }
 
   getIndexSet(): IndexSet {

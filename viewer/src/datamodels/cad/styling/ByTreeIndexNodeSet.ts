@@ -10,7 +10,7 @@ export class ByTreeIndexNodeSet extends NodeSet {
   constructor(treeIndexSet: IndexSet);
   constructor(treeIndices: Iterable<number>);
   constructor(values: IndexSet | Iterable<number>) {
-    super();
+    super(ByTreeIndexNodeSet.name);
     if (values instanceof IndexSet) {
       this._set = values;
     } else {

@@ -2,7 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
-import ComboControls from '@cognite/three-combo-controls';
+import ComboControls from '../combo-camera-controls';
+import { NodeAppearance } from '../datamodels/cad/NodeAppearance';
 import { Cognite3DViewer } from '../public/migration/Cognite3DViewer';
 
 export type ViewerState = {
@@ -10,10 +11,16 @@ export type ViewerState = {
   cameraPosition: THREE.Vector3;
 };
 
+export type ModelState = {
+  defaultNodeAppearance: NodeAppearance;
+};
+
 export class ViewStateHelper {
   private readonly _cameraControls: ComboControls;
+  //private readonly _viewer: Cognite3DViewer;
 
   constructor(viewer: Cognite3DViewer) {
+    //this._viewer = viewer;
     this._cameraControls = viewer.cameraControls;
   }
 
