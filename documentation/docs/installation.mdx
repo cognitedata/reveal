@@ -11,6 +11,18 @@ which must be installed as a dependency in the client application that uses Reve
 npm install @cognite/reveal @cognite/sdk
 ```
 
+If you will be using ThreeJS directly from the application, you will also need to install the correct version of ThreeJS and
+types information if you are using TypeScript:
+
+```bash npm2yarn
+npm install three@<version>
+npm install --save-dev @types/three@<version>
+```
+
+Please find the correct version of ThreeJS in [the release documentation on Github](https://github.com/cognitedata/reveal/releases/).
+
+## Regarding WebWorkers
+
 Reveal uses [Web Workers](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API) and [WebAssembly](https://webassembly.org/)
 to handle 3D geometry. This causes some problems when bundling and loading packages from NPM.
 Some effort might therefore be needed before Reveal can be used in your project depending on how the servers hosting your application are configured.
