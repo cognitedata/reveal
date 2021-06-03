@@ -63,7 +63,7 @@ export class PotreeNodeWrapper {
     // Apply transformation to switch axes
     const min = new THREE.Vector3(box.min.x, box.min.z, -box.min.y);
     const max = new THREE.Vector3(box.max.x, box.max.z, -box.max.y);
-    return new THREE.Box3(min, max);
+    return new THREE.Box3().setFromPoints([min, max]);
   }
 
   get pointColorType(): PotreePointColorType {

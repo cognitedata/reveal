@@ -149,7 +149,8 @@ export class PointCloudNode extends THREE.Group {
   }
 
   getBoundingBox(outBbox?: THREE.Box3): THREE.Box3 {
-    outBbox = this._potreeNode.boundingBox.clone();
+    outBbox = outBbox || new THREE.Box3();
+    outBbox.copy(this._potreeNode.boundingBox);
     outBbox.applyMatrix4(this.matrixWorld);
     return outBbox;
   }
