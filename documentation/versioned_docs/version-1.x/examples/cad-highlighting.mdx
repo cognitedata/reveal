@@ -25,7 +25,7 @@ order to highlight equipment it's typically necessary to highlight the entire
 subtree. Reveal supports this through the use of `Cognite3DModel.selectNodeByTreeIndex` with `applyToChildren`
 set to `true`:
 
-```jsx runnable
+```jsx runnable-1x
 model.selectNodeByTreeIndex(778306, applyToChildren=true);
 ```
 
@@ -33,7 +33,7 @@ model.selectNodeByTreeIndex(778306, applyToChildren=true);
 
 Nodes can be deselected using `Cognite3DModel.deselectNodeByTreeIndex`, e.g.
 
-```jsx runnable
+```jsx runnable-1x
 model.iterateNodesByTreeIndex(treeIndex => {
   model.deselectNodeByTreeIndex(treeIndex);
 });
@@ -42,7 +42,7 @@ model.iterateNodesByTreeIndex(treeIndex => {
 It's also possible (and more performant) to use `Cognite3DModel.deselectAllNodes()` when
 you want to deselect all nodes:
 
-```jsx runnable
+```jsx runnable-1x
 model.deselectAllNodes();
 ```
 
@@ -50,7 +50,7 @@ model.deselectAllNodes();
 
 `Cognite3DViewer.on('click', ...)` can be used to handle mouse click events. This example shows how to highlight objects that are clicked.
 
-```jsx runnable
+```jsx runnable-1x
 viewer.on('click', event => {
   const intersection = viewer.getIntersectionFromPixel(
     event.offsetX, event.offsetY
@@ -72,7 +72,7 @@ When the user clicks an object in the 3D model, she or he will click one of the 
 The following example shows how to use node data retrieved from the Cognite SDK to determine to "tagged equipment"
 (i.e. named equipment) and highlighting the full equipment, rather than a single individual part.
 
-```jsx runnable
+```jsx runnable-1x
 viewer.on('click', event => {
   const intersection = viewer.getIntersectionFromPixel(
     event.offsetX, event.offsetY
