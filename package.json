@@ -21,7 +21,7 @@
     "@cognite/react-container": "^1.2.5",
     "@cognite/react-errors": "^0.3.0",
     "@cognite/react-i18n": "^0.4.0",
-    "@cognite/react-tenant-selector": "^1.2.6",
+    "@cognite/react-tenant-selector": "^1.2.7",
     "@cognite/sdk": "^4.0.4",
     "@sentry/browser": "^6.2.5",
     "lodash": "^4.17.21",
