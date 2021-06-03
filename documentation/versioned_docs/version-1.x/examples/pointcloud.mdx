@@ -48,7 +48,7 @@ main();
 
 You can use `pointSize` property to set the size of each rendered point in a point cloud model.
 
-```js runnable
+```jsx runnable-1x
 model.pointSize = 10;
 ```
 
@@ -58,7 +58,7 @@ The point budget limits the number of points loaded and rendered at any given ti
 which helps to adapt performance requirements to the capabilities of different hardware.
 Recommended values are between 500.000 and 10.000.000.
 
-```js runnable
+```jsx runnable-1x
 model.pointBudget = 500000;
 ```
 
@@ -66,7 +66,7 @@ model.pointBudget = 500000;
 
 You can set the point shape of each rendered point in the point cloud. Values are defined by `PotreePointShape` enum.
 
-```js runnable
+```jsx runnable-1x
 // import { PotreePointShape } from '@cognite/reveal';
 model.pointShape = PotreePointShape.Square;
 ```
@@ -75,7 +75,7 @@ model.pointShape = PotreePointShape.Square;
 
 You can specify in which way points should be colored. Values are defined by `PotreePointColorType` enum.
 
-```js runnable
+```jsx runnable-1x
 // import { PotreePointColorType } from '@cognite/reveal'
 model.pointColorType = PotreePointColorType.Depth;
 ```
@@ -122,6 +122,6 @@ const visible = model.isClassVisible(WellKnownAsprsPointClassCodes.Ground);
 
 Point clouds (and CAD models) can be unloaded using `Cognite3DViewer.removeModel()`:
 
-```js runnable
+```jsx runnable-1x
 viewer.removeModel(model)
 ```

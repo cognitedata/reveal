@@ -18,7 +18,7 @@ interactive page while the action is being applied.
 This example only demonstrates how iteration over model nodes performed gradually.
 For more efficient coloring consult our [coloring examples](./cad-colors.mdx).
 
-```jsx runnable
+```jsx runnable-1x
 model
   .iterateNodesByTreeIndex(
     treeIndex => model.setNodeColorByTreeIndex(treeIndex, 127, 127, 127)
@@ -33,7 +33,7 @@ tree index is included in the set of visited nodes. The following example sets t
 a node. This mimics the functionality of `Cognite3DModel.setNodesColorsByTreeIndex` with `applyToChildren`
 set to `true`.
 
-```jsx runnable
+```jsx runnable-1x
 model.iterateSubtreeByTreeIndex(917985, treeIndex => {
   model.setNodeColorByTreeIndex(treeIndex, 127, 255, 127);
 });
