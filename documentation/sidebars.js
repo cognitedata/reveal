@@ -24,7 +24,6 @@ module.exports = {
             'examples/cad-styling-assets',
             'examples/cad-styling-nodes',
             'examples/cad-styling-custom',
-            'examples/cad-styling-migrating-from-version-1',
           ] 
         },
         'examples/cad-transform-override',
