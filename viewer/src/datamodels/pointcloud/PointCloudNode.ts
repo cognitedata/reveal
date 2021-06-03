@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import { PotreeGroupWrapper } from './PotreeGroupWrapper';
 import { PotreeNodeWrapper } from './PotreeNodeWrapper';
-import { CameraConfiguration, toThreeJsBox3 } from '../../utilities';
+import { CameraConfiguration } from '../../utilities';
 import { PotreePointSizeType, PotreePointColorType, PotreePointShape, WellKnownAsprsPointClassCodes } from './types';
 
 const PotreeDefaultPointClass = 'DEFAULT';
@@ -149,7 +149,7 @@ export class PointCloudNode extends THREE.Group {
   }
 
   getBoundingBox(outBbox?: THREE.Box3): THREE.Box3 {
-    outBbox = toThreeJsBox3(outBbox || new THREE.Box3(), this._potreeNode.boundingBox);
+    outBbox = this._potreeNode.boundingBox.clone();
     outBbox.applyMatrix4(this.matrixWorld);
     return outBbox;
   }

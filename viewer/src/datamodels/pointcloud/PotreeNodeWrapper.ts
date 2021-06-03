@@ -6,7 +6,6 @@ import * as Potree from '@cognite/potree-core';
 import * as THREE from 'three';
 
 import { PotreePointSizeType, PotreePointColorType, PotreePointShape } from './types';
-import { fromThreeJsBox3 } from '../../utilities';
 
 export type PotreeClassification = { [pointClass: number]: { x: number; y: number; z: number; w: number } };
 
@@ -59,12 +58,11 @@ export class PotreeNodeWrapper {
   }
 
   get boundingBox(): THREE.Box3 {
-    const transformedBbox: THREE.Box3 =
+    const box: THREE.Box3 =
       this.octtree.pcoGeometry.tightBoundingBox || this.octtree.pcoGeometry.boundingBox || this.octtree.boundingBox;
-    const box = fromThreeJsBox3(transformedBbox);
     // Apply transformation to switch axes
-    const min = new THREE.Vector3(box.min[0], box.min[2], -box.min[1]);
-    const max = new THREE.Vector3(box.max[0], box.max[2], -box.max[1]);
+    const min = new THREE.Vector3(box.min.x, box.min.z, -box.min.y);
+    const max = new THREE.Vector3(box.max.x, box.max.z, -box.max.y);
     return new THREE.Box3(min, max);
   }
 

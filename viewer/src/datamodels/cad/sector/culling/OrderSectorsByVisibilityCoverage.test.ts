@@ -98,7 +98,7 @@ describe('OrderSectorsByVisibilityCoverage', () => {
 
   test('two models, rendered result returns value at offset', () => {
     // Arrange
-    const scene2 = createStubScene([1, [], new THREE.Box3(new THREE.Box3(-1, -1, -1), new THREE.Vector3(1, 1, 1))]);
+    const scene2 = createStubScene([1, [], new THREE.Box3(new THREE.Vector3(-1, -1, -1), new THREE.Vector3(1, 1, 1))]);
     const model1 = createStubModel('model1', singleSectorScene, identityMatrix);
     const model2 = createStubModel('model2', scene2, identityMatrix);
     const util = new GpuOrderSectorsByVisibilityCoverage({ renderer, occludingGeometryProvider });

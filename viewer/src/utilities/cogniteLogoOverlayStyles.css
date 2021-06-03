@@ -1,0 +1,15 @@
+
+.reveal-viewer-overlay,
+.reveal-viewer-overlay:after {
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    box-sizing: border-box;
+}
+.reveal-viewer-overlay {
+    margin: 10px;
+    position: relative;
+    border: 5px solid rgba(255, 255, 255, 0.22);
+    border-left: 5px solid #ffffff;
+    background-color: aqua;
+}

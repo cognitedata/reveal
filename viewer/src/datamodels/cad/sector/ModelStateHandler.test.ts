@@ -2,10 +2,11 @@
  * Copyright 2021 Cognite AS
  */
 
+import * as THREE from 'three';
+
 import { ModelStateHandler } from './ModelStateHandler';
 import { WantedSector, ConsumedSector } from './types';
 import { LevelOfDetail } from './LevelOfDetail';
-import { Box3 } from '../../../utilities';
 
 describe('ModelStateHandler', () => {
   // TODO: 10-08-2020 j-bjorne: Consider changing WantedSector and ConsumedSector metadata field. Annoying to mock.
@@ -62,7 +63,7 @@ function mockWantedSectors(
     id,
     path: '0/',
     depth: 0,
-    bounds: new Box3([]),
+    bounds: new THREE.Box3(),
     estimatedDrawCallCount: 0,
     indexFile: {
       fileName: `sector_${id}.i3d`,

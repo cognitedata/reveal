@@ -8,7 +8,7 @@ import { NodeIdAndTreeIndexMaps } from './NodeIdAndTreeIndexMaps';
 import { CameraConfiguration } from './types';
 import { CogniteModelBase } from './CogniteModelBase';
 
-import { NumericRange, Box3, toThreeJsBox3 } from '../../utilities';
+import { NumericRange } from '../../utilities';
 import { CadNode } from '../../internals';
 import { trackError } from '../../utilities/metrics';
 
@@ -268,12 +268,12 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * ```
    */
   getModelBoundingBox(outBbox?: THREE.Box3, restrictToMostGeometry?: boolean): THREE.Box3 {
-    const bounds: Box3 = restrictToMostGeometry
+    const bounds = restrictToMostGeometry
       ? this.cadModel.scene.getBoundsOfMostGeometry()
       : this.cadModel.scene.root.bounds;
 
     outBbox = outBbox || new THREE.Box3();
-    toThreeJsBox3(outBbox, bounds);
+    outBbox.copy(bounds);
     outBbox.applyMatrix4(this.cadModel.modelMatrix);
     return outBbox;
   }

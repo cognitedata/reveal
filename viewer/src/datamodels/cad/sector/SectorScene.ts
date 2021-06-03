@@ -4,7 +4,6 @@
 
 import * as THREE from 'three';
 import { traverseDepthFirst } from '../../../utilities/objectTraversal';
-import { toThreeJsBox3 } from '../../../utilities/threeConverters';
 import { SectorMetadata, SectorScene } from './types';
 import skmeans from 'skmeans';
 
@@ -137,10 +136,9 @@ export class SectorSceneImpl implements SectorScene {
   ): SectorMetadata[] {
     const frustumMatrix = new THREE.Matrix4().multiplyMatrices(projectionMatrix, inverseCameraModelMatrix);
     const frustum = new THREE.Frustum().setFromProjectionMatrix(frustumMatrix);
-    const bbox = new THREE.Box3();
     const accepted: SectorMetadata[] = [];
     traverseDepthFirst(this.root, x => {
-      if (frustum.intersectsBox(toThreeJsBox3(bbox, x.bounds))) {
+      if (frustum.intersectsBox(x.bounds)) {
         accepted.push(x);
         return true;
       }

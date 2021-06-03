@@ -7,7 +7,6 @@ import * as THREE from 'three';
 import { SectorMetadata, WantedSector } from '../types';
 import { coverageShaders } from '../../rendering/shaders';
 import { CadModelMetadata } from '../../CadModelMetadata';
-import { toThreeJsBox3, Box3 } from '../../../../utilities';
 import { WebGLRendererStateHelper } from '../../../../utilities/WebGLRendererStateHelper';
 import { OccludingGeometryProvider } from './OccludingGeometryProvider';
 
@@ -447,10 +446,9 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
     const boxGeometry = new THREE.BoxBufferGeometry();
     const mesh = new THREE.InstancedMesh(boxGeometry, this.coverageMaterial, sectorCount);
 
-    const addSector = (sectorBounds: Box3, sectorIndex: number, sectorId: number, coverage: THREE.Vector3) => {
-      toThreeJsBox3(bounds, sectorBounds);
-      bounds.getCenter(translation);
-      bounds.getSize(scale);
+    const addSector = (sectorBounds: THREE.Box3, sectorIndex: number, sectorId: number, coverage: THREE.Vector3) => {
+      sectorBounds.getCenter(translation);
+      sectorBounds.getSize(scale);
 
       const instanceMatrix = new THREE.Matrix4().compose(translation, identityRotation, scale);
       mesh.setMatrixAt(sectorIndex, instanceMatrix);
@@ -486,7 +484,7 @@ const isCameraInsideSectorVars = {
 
 function isWithinSectorBounds(model: CadModelMetadata, metadata: SectorMetadata, point: THREE.Vector3) {
   const { sectorBounds } = isCameraInsideSectorVars;
-  toThreeJsBox3(sectorBounds, metadata.bounds);
+  sectorBounds.copy(metadata.bounds);
   sectorBounds.applyMatrix4(model.modelMatrix);
   return sectorBounds.containsPoint(point);
 }
