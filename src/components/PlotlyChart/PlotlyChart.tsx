@@ -10,6 +10,7 @@ import styled from 'styled-components/macro';
 import debounce from 'lodash/debounce';
 import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
+import dayjs from 'dayjs';
 
 import {
   DatapointAggregate,
@@ -337,7 +338,10 @@ const PlotlyChartComponent = ({
       domain: showYAxis
         ? [yAxisValues.width * (seriesData.length - 1) + yAxisValues.margin, 1]
         : [0, 1],
-      range: [chart?.dateFrom, chart?.dateTo],
+      range: [
+        dayjs(chart?.dateFrom!).format('YYYY-MM-DD HH:mm:ss'),
+        dayjs(chart?.dateTo!).format('YYYY-MM-DD HH:mm:ss'),
+      ],
       showspikes: true,
       spikemode: 'across',
       spikethickness: 1,
