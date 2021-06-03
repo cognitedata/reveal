@@ -27,7 +27,7 @@ import { useIntegrationById } from 'hooks/useIntegration';
 import { LatestRunMessage } from 'components/integration/LatestRunMessage';
 import { ErrorFeedback } from 'components/error/ErrorFeedback';
 import { useLocation, useRouteMatch } from 'react-router-dom';
-import { HEALTH_PATH } from 'pages/Integration/IntegrationPage';
+import { HEALTH_PATH } from 'routing/RoutingConfig';
 
 export const FAILED_PAST_WEEK_HEADING: Readonly<string> =
   'Failed runs past week';

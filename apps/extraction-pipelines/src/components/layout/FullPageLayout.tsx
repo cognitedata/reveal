@@ -1,6 +1,5 @@
 import React, { FunctionComponent, PropsWithChildren, ReactNode } from 'react';
-import { createLink } from '@cognite/cdf-utilities';
-import { PageWrapper, GridBreadCrumbsWrapper } from 'styles/StyledPage';
+import { PageWrapper } from 'styles/StyledPage';
 import { MainFullWidthGrid } from 'styles/grid/StyledGrid';
 import { PageTitle } from 'styles/StyledHeadings';
 
@@ -8,14 +7,14 @@ interface LayoutProps {
   pageHeadingText: string;
   pageHeading?: ReactNode;
   headingSide?: ReactNode;
-  link?: { path: string; text: string };
+  breadcrumbs?: ReactNode;
 }
 
 export const FullPageLayout: FunctionComponent<LayoutProps> = ({
   pageHeadingText,
   pageHeading,
   headingSide,
-  link,
+  breadcrumbs,
   children,
 }: PropsWithChildren<LayoutProps>) => {
   const renderHeading = () => {
@@ -26,11 +25,7 @@ export const FullPageLayout: FunctionComponent<LayoutProps> = ({
   };
   return (
     <PageWrapper>
-      {link && (
-        <GridBreadCrumbsWrapper to={createLink(link.path)}>
-          {link.text}
-        </GridBreadCrumbsWrapper>
-      )}
+      {breadcrumbs}
       {renderHeading()}
       {headingSide}
       <MainFullWidthGrid>{children}</MainFullWidthGrid>

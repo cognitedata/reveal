@@ -19,7 +19,7 @@ import { bottomSpacing } from 'styles/StyledVariables';
 import { SOURCE_LABEL } from 'utils/constants';
 
 const Wrapper = styled.div`
-  margin: 1rem;
+  margin: 0.5rem 1rem 1rem 1rem;
   #description,
   #name {
     flex: 1;

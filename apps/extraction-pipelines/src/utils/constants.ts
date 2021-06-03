@@ -1,3 +1,4 @@
+export const CDF_LABEL: Readonly<string> = 'CDF';
 export const EMAIL_NOTIFICATION_TOOLTIP: Readonly<string> =
   'If checked, the person will receive e-mail notification when an integration run fails. To edit, please click Edit button.';
 
@@ -75,7 +76,7 @@ export const CONTACTS: Readonly<string> = 'Contacts';
 // Data set
 export const DATA_SET_ID_HINT: Readonly<string> =
   'Type in the name or id of your data set';
-
+export const DATA_SETS_LABEL: Readonly<string> = 'Data sets';
 // Documentation
 export const DOCUMENTATION_HINT: Readonly<string> =
   'Please add any relevant documentation.';

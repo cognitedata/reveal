@@ -1,6 +1,6 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
-import { INTEGRATIONS } from '../utils/baseURL';
+import { INTEGRATIONS } from 'utils/baseURL';
 
 const LazyIntegrations = React.lazy(
   () =>
@@ -32,6 +32,7 @@ interface IntegrationsRoute {
 }
 export type RouterParams = { id: string };
 export const INTEGRATION = `integration`;
+export const HEALTH_PATH: Readonly<string> = 'health';
 
 export const CREATE_INTEGRATION_PAGE_PATH = `/${INTEGRATIONS}/create`;
 export const INTEGRATIONS_OVERVIEW_PAGE_PATH = `/${INTEGRATIONS}`;
@@ -55,12 +56,6 @@ export const routingConfig: IntegrationsRoute[] = [
     component: LazyIntegration,
   },
 ];
-
-export const routesForBreadCrums = () => {
-  return routingConfig.map(({ path, name }) => {
-    return { path, name };
-  });
-};
 
 export const Routes = () => {
   return (

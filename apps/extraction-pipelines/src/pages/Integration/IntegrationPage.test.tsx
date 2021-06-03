@@ -16,6 +16,7 @@ import { TableHeadings } from 'components/table/IntegrationTableCol';
 import { RunTableHeading } from 'components/integration/RunLogsCols';
 import { useFilteredRuns, useRuns } from 'hooks/useRuns';
 import IntegrationPage from 'pages/Integration/IntegrationPage';
+import { useDataSetsList } from 'hooks/useDataSetsList';
 
 jest.mock('react-router-dom', () => {
   const r = jest.requireActual('react-router-dom');
@@ -38,11 +39,17 @@ jest.mock('hooks/useRuns', () => {
     useFilteredRuns: jest.fn(),
   };
 });
+jest.mock('hooks/useDataSetsList', () => {
+  return {
+    useDataSetsList: jest.fn(),
+  };
+});
 describe('IntegrationPage', () => {
   beforeEach(() => {
     useLocation.mockReturnValue({ pathname: '', search: '' });
     useRouteMatch.mockReturnValue({ path: 'path', url: '/' });
     useParams.mockReturnValue({ id: 1 });
+    useDataSetsList.mockReturnValue({ data: mockDataSetResponse() });
   });
   afterEach(() => {
     jest.resetAllMocks();
@@ -89,10 +96,10 @@ describe('IntegrationPage', () => {
     const runsLink = screen.getByText(HEALTH);
     expect(runsLink).toBeInTheDocument();
     // check some details are renderd
-    expect(screen.getByText(mockData.name)).toBeInTheDocument();
+    expect(screen.getAllByText(mockData.name).length).toEqual(2); // heading + breadcrumb
     expect(screen.getByText(mockData.description)).toBeInTheDocument();
     expect(screen.getByText(mockData.externalId)).toBeInTheDocument();
-    expect(screen.getAllByText(mockData.dataSet.name).length).toEqual(2); // heading and side bar
+    expect(screen.getAllByText(mockData.dataSet.name).length).toEqual(3); // breadcrumb, heading and side bar
     expect(screen.getAllByText(mockIntegration.source).length).toEqual(2); // heading and side bar
     // navigate to runs
     fireEvent.click(runsLink);

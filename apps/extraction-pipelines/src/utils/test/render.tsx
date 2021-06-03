@@ -27,6 +27,15 @@ export default (
   return render(component, options);
 };
 
+export const renderWithRouter = (
+  ui: React.ReactNode,
+  { route = INTEGRATIONS, ...renderOptions }
+) => {
+  const history = createMemoryHistory();
+  history.push(route);
+  return render(<Router history={history}>{ui}</Router>, renderOptions);
+};
+
 export const renderWithSelectedIntegrationContext = (
   ui: React.ReactNode,
   // @ts-ignore

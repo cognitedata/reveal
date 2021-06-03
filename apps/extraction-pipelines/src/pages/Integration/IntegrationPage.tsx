@@ -12,18 +12,17 @@ import styled from 'styled-components';
 import { FullPageLayout } from 'components/layout/FullPageLayout';
 import { useIntegrationById } from 'hooks/useIntegration';
 import { useSelectedIntegration } from 'hooks/useSelectedIntegration';
-import { INTEGRATIONS } from 'utils/baseURL';
 import { useAppEnv } from 'hooks/useAppEnv';
 import InteractiveCopyWithText from 'components/InteractiveCopyWithText';
 import { IntegrationDetails } from 'components/integration/IntegrationDetails';
-import { RouterParams } from 'routing/RoutingConfig';
-import { DETAILS, INTEGRATION_OVERVIEW, HEALTH } from 'utils/constants';
+import { HEALTH_PATH, RouterParams } from 'routing/RoutingConfig';
+import { DETAILS, HEALTH } from 'utils/constants';
 import { IntegrationHealth } from 'components/integration/IntegrationHealth';
 import { IntegrationHeading } from 'components/integration/IntegrationHeading';
 import { LinkWrapper } from 'styles/StyledLinks';
 import { RunFilterProvider } from 'hooks/runs/RunsFilterContext';
+import { IntegrationBreadcrumbs } from 'components/navigation/breadcrumbs/IntegrationBreadcrumbs';
 
-export const HEALTH_PATH: Readonly<string> = 'health';
 const PageNav = styled.ul`
   margin: 0;
   padding: 1rem 0 0.8rem 0;
@@ -70,39 +69,39 @@ const IntegrationPage: FunctionComponent<IntegrationPageProps> = () => {
     return <Loader />;
   }
   return (
-    <FullPageLayout
-      pageHeadingText={integration?.name ?? ''}
-      pageHeading={<IntegrationHeading />}
-      headingSide={
-        <LinkWrapper>
-          <InteractiveCopyWithText
-            id="copy-link-this-page"
-            textToCopy={`${origin}${pathname}${search}`}
-            copyType="pageLink"
-          >
-            <>Copy link to this page</>
-          </InteractiveCopyWithText>
-        </LinkWrapper>
-      }
-      link={{ path: `/${INTEGRATIONS}`, text: INTEGRATION_OVERVIEW }}
-    >
-      <PageNav>
-        <li>
-          <NavLink to={`${url}${search}`} exact className="tab-link">
-            {DETAILS}
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to={`${url}/${HEALTH_PATH}${search}`}
-            exact
-            className="tab-link"
-          >
-            {HEALTH}
-          </NavLink>
-        </li>
-      </PageNav>
-      <RunFilterProvider>
+    <RunFilterProvider>
+      <FullPageLayout
+        pageHeadingText={integration?.name ?? ''}
+        pageHeading={<IntegrationHeading />}
+        headingSide={
+          <LinkWrapper>
+            <InteractiveCopyWithText
+              id="copy-link-this-page"
+              textToCopy={`${origin}${pathname}${search}`}
+              copyType="pageLink"
+            >
+              <>Copy link to this page</>
+            </InteractiveCopyWithText>
+          </LinkWrapper>
+        }
+        breadcrumbs={<IntegrationBreadcrumbs integration={integration} />}
+      >
+        <PageNav>
+          <li>
+            <NavLink to={{ pathname: url, search }} exact className="tab-link">
+              {DETAILS}
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to={{ pathname: `${url}/${HEALTH_PATH}`, search }}
+              exact
+              className="tab-link"
+            >
+              {HEALTH}
+            </NavLink>
+          </li>
+        </PageNav>
         <Switch>
           <Route exact path={path}>
             <IntegrationDetails />
@@ -111,8 +110,8 @@ const IntegrationPage: FunctionComponent<IntegrationPageProps> = () => {
             <IntegrationHealth integration={integration ?? null} />
           </Route>
         </Switch>
-      </RunFilterProvider>
-    </FullPageLayout>
+      </FullPageLayout>
+    </RunFilterProvider>
   );
 };
 export default IntegrationPage;

@@ -18,7 +18,7 @@ export const PageWrapper = styled.div`
     'breadcrumbs breadcrumbs'
     'title links'
     'main main';
-  grid-template-rows: minmax(1rem, min-content) min-content;
+  grid-template-rows: min-content min-content;
   .heading {
     grid-area: title;
   }
