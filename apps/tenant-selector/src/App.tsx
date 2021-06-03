@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as Sentry from '@sentry/browser';
 import { TenantSelector } from '@cognite/react-tenant-selector';
 import { configureI18n, withI18nSuspense } from '@cognite/react-i18n';
+// @ts-ignore Temporary fix for importing local packages
 import { Metrics } from '@cognite/metrics';
 
 import { SIDECAR } from './sidecar';
@@ -50,7 +51,7 @@ export const App = () => {
     }
 
     Metrics.init({
-      mixpanelToken: REACT_APP_MIXPANEL_TOKEN,
+      mixpanelToken: REACT_APP_MIXPANEL_TOKEN || '',
       environment: REACT_APP_ENV || NODE_ENV || 'development',
     });
   }, []);

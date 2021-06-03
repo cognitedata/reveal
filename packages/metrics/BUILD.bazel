@@ -1,6 +1,6 @@
 load("@npm//rollup:index.bzl", "rollup")
-load("@bazel_skylib//rules:write_file.bzl", "write_file")
 load("@build_bazel_rules_nodejs//:index.bzl", "copy_to_bin", "js_library", "pkg_npm")
+load("@bazel_skylib//rules:write_file.bzl", "write_file")
 load("//rules/test:jest.bzl", "jest_test")
 load("//rules/lint:index.bzl", "eslint_test", "prettier_test")
 load("//rules/package_json_helpers:generate.bzl", "generate_package_json_helpers")
@@ -31,18 +31,34 @@ generate_package_json_helpers(
 ### start of auto-generated helpers ###
 
 # Dependencies from package.json
-DEPENDENCIES = []
+DEPENDENCIES = [
+    "@npm//mixpanel-browser",
+    "@npm//react",
+]
 
 # Type dependencies from package.json
-TYPE_DEPENDENCIES = []
+TYPE_DEPENDENCIES = [
+    "@npm//@types/mixpanel-browser",
+    "@npm//@types/react",
+    "@npm//@types/sinon",
+]
 
 # Dev dependencies from package.json
-DEV_DEPENDENCIES = []
+DEV_DEPENDENCIES = [
+    "@npm//rollup-plugin-json",
+    "@npm//rollup-plugin-typescript2",
+    "@npm//sinon",
+]
 
 # Mappings for absolute imports from baseUrl @unused
 mappings_dict = {
-    "index.spec": "dist/index.spec",
+    "debuggers": "dist/debuggers",
     "index": "dist/index",
+    "metrics.spec": "dist/metrics.spec",
+    "metrics": "dist/metrics",
+    "mocks": "dist/mocks",
+    "types": "dist/types",
+    "useMetrics": "dist/useMetrics",
 }
 
 ### end of auto-generated helpers ###
@@ -70,7 +86,7 @@ jest_test(
     ],
     jest_args = [],
     jest_config = "jest.config.js",
-    service_name = "{{ name }}",
+    service_name = "metrics",
     deps = DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES,
 )
 
@@ -122,26 +138,19 @@ _mappings = module_mappings(
 )
 
 js_library(
-    name = "{{ name }}",
-    package_name = "@cognite/{{ name }}",
+    name = "metrics",
+    package_name = "@cognite/metrics",
     srcs = ["package-json"],
     visibility = ["//visibility:public"],
-    deps = ["dist"],
-)
-
-append_deps(
-    name = "package-json",
-    dependencies = DEPENDENCIES,
-    dev_dependencies = DEV_DEPENDENCIES + TYPE_DEPENDENCIES,
-    package = "package.json",
+    deps = [":dist"],
 )
 
 pkg_npm(
     name = "npm-package",
-    package_name = "@cognite/{{ name }}",
+    package_name = "@cognite/metrics",
     visibility = ["//visibility:public"],
     deps = [
-        "dist",
+        ":dist",
         "package-json",
     ] + _mappings,
 )
@@ -153,6 +162,6 @@ is_published(
 
 package_info(
     name = "package_info",
-    display_name = "{{ name }}",
+    display_name = "metrics",
     package = ":npm-package",
 )

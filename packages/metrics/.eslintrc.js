@@ -1,12 +1,9 @@
+const baseConfig = require('../.eslintrc.js');
+
 module.exports = {
-  extends: ['@cognite'],
-  plugins: ['@cognite'],
-  parserOptions: {
-    sourceType: 'module',
-    tsconfigRootDir: __dirname,
-    project: './tsconfig.json',
-  },
+  ...baseConfig,
   rules: {
+    ...baseConfig.rules,
     '@cognite/no-sdk-submodule-imports': 'error',
 
     'jest/expect-expect': ['off'],

@@ -1,5 +1,6 @@
 import ReactDOM from 'react-dom';
 import * as Sentry from '@sentry/browser';
+// @ts-ignore Temporary fix for importing local packages
 import { Metrics } from '@cognite/metrics';
 import '@cognite/cogs.js/dist/cogs.css';
 
@@ -22,7 +23,7 @@ if (process.env.REACT_APP_SENTRY_DSN) {
 
 if (process.env.REACT_APP_MIXPANEL_TOKEN) {
   Metrics.init({
-    mixpanelToken: process.env.REACT_APP_MIXPANEL_TOKEN,
+    mixpanelToken: process.env.REACT_APP_MIXPANEL_TOKEN || '',
     debug: process.env.REACT_APP_MIXPANEL_DEBUG === 'true',
     environment: config.env,
   });

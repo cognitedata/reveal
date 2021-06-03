@@ -2,9 +2,9 @@
   "extends": "../tsconfig.json",
   "include": ["src/*.ts"],
   "compilerOptions": {
-    "sourceMap": false,
-    "resolveJsonModule": true,
+    "jsx": "react-jsx",
     "lib": ["es2015", "dom"],
-    "jsx": "react"
+    "resolveJsonModule": true,
+    "sourceMap": false
   }
 }

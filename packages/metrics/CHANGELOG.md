@@ -1,3 +1,7 @@
+## 1.1.1 Jun 5 2021
+
+- Migrate to Bazel setup
+
 ## 1.1.0 Feb 17 2021
 
 - Support creating Metric without name

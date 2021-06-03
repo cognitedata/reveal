@@ -17,7 +17,7 @@
     "jsx": "react-jsx",
     "sourceMap": true,
     "paths": {
-      "@cognite/*": ["../../../dist/bin/packages/*"]
+      "@cognite/*": ["*", "../../../dist/bin/packages/*"]
     }
   },
   "exclude": ["node_modules", "dist"]
