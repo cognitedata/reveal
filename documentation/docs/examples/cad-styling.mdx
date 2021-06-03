@@ -76,8 +76,9 @@ model.setDefaultNodeAppearance({ outlineColor: NodeOutlineColor.Orange });
 
 Note that `outlineColor` restricts the choice of color to a predefined set. This is
 a restriction imposed to reduce storage space for outlines to only 3 bits. The choice
-of colors are:
-```js
+of colors is:
+
+```ts
 enum NodeOutlineColor {
   NoOutline = 0,
   White = 1,
