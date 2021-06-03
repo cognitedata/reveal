@@ -122,7 +122,7 @@ export default function ServiceAccounts() {
               a.id.toString().includes(searchValue.toLowerCase())
             : true
         )}
-        pagination={{ pageSize: 100, hideOnSinglePage: true }}
+        pagination={{ pageSize: 25, hideOnSinglePage: true }}
       />
     </>
   );

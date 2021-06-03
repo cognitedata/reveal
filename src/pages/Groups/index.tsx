@@ -21,6 +21,7 @@ import { Group } from '@cognite/sdk';
 import { useRouteMatch } from 'react-router';
 import { ColumnType } from 'antd/lib/table';
 
+import { useGroups } from 'hooks';
 import GroupDrawer from './GroupDrawer';
 import CapabilityTag from './CapabilityTag';
 
@@ -55,13 +56,7 @@ export default function Groups() {
       refetchInterval: localDefaultGroup ? 1000 : false,
     }
   );
-  const { data: groups, isFetched: groupsFetched } = useQuery(
-    ['groups', 'all'],
-    async () => {
-      const list = await sdk.groups.list({ all: true });
-      return list.sort((a, b) => a.name.localeCompare(b.name));
-    }
-  );
+  const { data: groups, isFetched: groupsFetched } = useGroups(true);
 
   const { data: serviceAccounts } = useQuery(
     ['service-accounts'],

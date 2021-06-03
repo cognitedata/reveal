@@ -7,6 +7,7 @@ import { useSDK } from '@cognite/sdk-provider';
 
 import { ServiceAccount } from '@cognite/sdk';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
+import { useGroups } from 'hooks';
 
 function GroupTag({ id }: { id: number }) {
   const sdk = useSDK();
@@ -22,9 +23,7 @@ export default function EditGroups({ account }: { account: ServiceAccount }) {
   const sdk = useSDK();
   const [localList, setLocalList] = useState<number[]>(account.groups || []);
   const [editMode, setEditMode] = useState(false);
-  const { data: allGroups = [] } = useQuery(['groups'], () =>
-    sdk.groups.list({ all: true })
-  );
+  const { data: allGroups = [] } = useGroups(true);
   const { data: canUpdate } = usePermissions('groupsAcl', 'UPDATE');
   const { mutateAsync, isLoading } = useMutation(
     async (groups: number[]) => {
@@ -108,6 +107,10 @@ export default function EditGroups({ account }: { account: ServiceAccount }) {
           style={{ width: '90%' }}
           placeholder="Select groups"
           defaultValue={account.groups}
+          filterOption={(input, option) =>
+            option?.title?.toLowerCase().includes(input?.toLowerCase() || '')
+          }
+          optionLabelProp="title"
           onChange={e => {
             setLocalList(e);
           }}
@@ -115,7 +118,7 @@ export default function EditGroups({ account }: { account: ServiceAccount }) {
           {allGroups
             .sort((a, b) => a.name.localeCompare(b.name))
             .map(g => (
-              <Select.Option key={g.id} value={g.id}>
+              <Select.Option key={g.id} value={g.id} title={g.name}>
                 {g.name}
               </Select.Option>
             ))}
