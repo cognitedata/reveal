@@ -437,7 +437,6 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
     sectorIdOffset: number,
     sectors: SectorMetadata[]
   ): [THREE.Mesh, THREE.InstancedInterleavedBuffer, Float32Array] {
-    const bounds = new THREE.Box3();
     const translation = new THREE.Vector3();
     const scale = new THREE.Vector3();
 
