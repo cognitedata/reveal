@@ -4,4 +4,4 @@
 
 export { AutoDisposeGroup } from './AutoDisposeGroup';
 export { getBox3CornerPoints } from './getBox3CornerPoints';
-export { dumpRendererToImage } from './dumpRendererToImage2';
+export { dumpRendererToImage } from './dumpRendererToImage';
