@@ -7,7 +7,7 @@ describe: Reveal supports styling individual nodes by assigning appearance profi
 import { DemoWrapper } from '@site/docs/components/DemoWrapper';
 
 Reveal supports flexible styling of individual nodes (objects) in the 3D model. Styles can
-be compromised of several attributes to customize the visualization through the `NodeApperance`-type:
+be compromised of several attributes to customize the visualization through the `NodeAppearance`-type:
 
 | Field           | Field type                  | Description                                           |
 | --------------- | --------------------------- | ----------------------------------------------------- |
@@ -17,10 +17,10 @@ be compromised of several attributes to customize the visualization through the 
 | `renderGhosted` | `boolean?`                  | When true, the node(s) are rendered in transparent gray |
 | `outlineColor`  | `NodeOutlineColor?`         | Adds an outline to the objects from a set of predefined colors |
 
-These attributes can be combined to customize the look of nodes. For convinience, a set of default apperances are
-provided in the `DefaultNodeApperance`-constant:
+These attributes can be combined to customize the look of nodes. For convinience, a set of default appearances are
+provided in the `DefaultNodeAppearance`-constant:
 
-| Apperance           | Description                                                                      |
+| Appearance           | Description                                                                      |
 | ------------------- | -------------------------------------------------------------------------------- |
 | `Default`           | No overrides, use colors from the CAD model                                      |
 | `Ghosted`           | Render node(s) 'ghosted', i.e. make them translucent gray                        |

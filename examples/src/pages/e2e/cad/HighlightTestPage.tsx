@@ -12,9 +12,9 @@ export function HighlightTestPage() {
   return (
     <TestViewer
     modifyTestEnv={({ model }: TestEnvCad) => {
-      const nodeApperanceProvider = model.nodeAppearanceProvider;
+      const nodeAppearanceProvider = model.nodeAppearanceProvider;
       const nodes = new ByTreeIndexNodeSet([...Array(15).keys()]);
-      nodeApperanceProvider.addStyledSet(nodes, DefaultNodeAppearance.Highlighted);
+      nodeAppearanceProvider.addStyledSet(nodes, DefaultNodeAppearance.Highlighted);
 
       return {
         camera: new THREE.PerspectiveCamera(),
