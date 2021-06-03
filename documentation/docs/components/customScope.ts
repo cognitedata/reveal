@@ -19,6 +19,3 @@ export const customScope: Record<string, any> = {
     skyUrl: '/img/sky007.jpg',
   },
 };
-
-(window as any).reveal = reveal;
-(window as any).THREE = THREE;
