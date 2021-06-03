@@ -23,7 +23,7 @@ for all nodes can be toggled using `Cognite3DModel.ghostAllNodes` and `Cognite3D
 A typical use case for ghosting is to show the location of a piece of equipment. To do this,
 first ghost all nodes and un-ghost the relevant nodes.
 
-```jsx runnable
+```jsx runnable-1x
 model.ghostAllNodes();
 model.unghostNodeByTreeIndex(409228, applyToChildren=true);
 ```
@@ -36,7 +36,7 @@ would be occluded by the ghosted nodes.
 In this example, equipment is made visible through a ghosted model. When the user clicks the equipment
 the other nodes are hidden and the camera is zoomed in to the equipment.
 
-```jsx runnable
+```jsx runnable-1x
 const treeIndex = 409228;
 
 model.showAllNodes();

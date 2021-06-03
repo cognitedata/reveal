@@ -22,10 +22,10 @@ This allowed flexible styling of nodes, but required many individual calls to up
 performance. The new API instead requires a set of styles which nodes are assigned to. It's preferable not to have
 too many styles - both in terms of performance and to avoid a cluttered view for the end user.
 
-The previous styling options maps quite directly to the new API. Visibility is controlled by `NodeApperance.visible`,
-color override by `NodeApperance.color` and ghost mode by `NodeApperance.renderGhosted`. However, there is no
+The previous styling options maps quite directly to the new API. Visibility is controlled by `NodeAppearance.visible`,
+color override by `NodeAppearance.color` and ghost mode by `NodeAppearance.renderGhosted`. However, there is no
 direct mapping between what was previously called 'selection' or 'highlighting', this is now a combination of
-`NodeApperance.color`, `NodeApperance.renderInFront` and `NodeApperance.outlineColor`. This means that the new API
+`NodeAppearance.color`, `NodeAppearance.renderInFront` and `NodeAppearance.outlineColor`. This means that the new API
 introduced additional flexibility - e.g. can a object have an outline, but not be rendered in front of other objects. For
 convinience, the new API comes with a sef of default styles available through [`DefaultNodeAppearance`](cad-styling).
 
