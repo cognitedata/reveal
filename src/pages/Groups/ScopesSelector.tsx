@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 import { Radio, RadioChangeEvent } from 'antd';
 
+import { DataSet } from '@cognite/sdk';
 import { getScopeLabel, getCapabilityScopes } from './utils';
 
 import SecurityCategoriesSelector from './SecurityCategoriesSelector';
@@ -152,6 +153,7 @@ const ScopesSelector = ({ capabilityKey, value, onChange }: Props) => {
               onChange={onChangeResource}
               useSearchApi={false}
               prefetchItems={1000}
+              itemFilter={(ds: DataSet) => ds.metadata?.archived !== 'true'}
             />
           </SelectorContainer>
         )}
@@ -163,6 +165,7 @@ const ScopesSelector = ({ capabilityKey, value, onChange }: Props) => {
               onChange={onChangeResource}
               useSearchApi={false}
               prefetchItems={1000}
+              itemFilter={(ds: DataSet) => ds.metadata?.archived !== 'true'}
             />
           </SelectorContainer>
         )}

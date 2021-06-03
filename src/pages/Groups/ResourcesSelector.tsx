@@ -15,6 +15,7 @@ type Props = {
   onChange: (r: number[]) => void;
   useSearchApi?: boolean;
   prefetchItems?: number;
+  itemFilter?: (item: any) => boolean;
 };
 export default function ResourcesSelector({
   type,
@@ -23,6 +24,7 @@ export default function ResourcesSelector({
   body,
   useSearchApi = true,
   prefetchItems = 10,
+  itemFilter = () => true,
 }: Props) {
   const [search, setSearch] = useState('');
   type R = { name: string; id: number };
@@ -40,7 +42,9 @@ export default function ResourcesSelector({
     { enabled: searchEnabled }
   );
 
-  const result = (searchEnabled ? searchOptions : initialOptions) || [];
+  const result = (
+    (searchEnabled ? searchOptions : initialOptions) || []
+  ).filter(itemFilter);
   const fetching = searchEnabled ? searching : listing;
 
   const handleSearch = (searchText: string) => {
