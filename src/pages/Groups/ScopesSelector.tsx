@@ -51,9 +51,9 @@ const ScopesSelector = ({ capabilityKey, value, onChange }: Props) => {
       break;
   }
 
-  selectedResources = selectedResources?.map(r =>
-    typeof r === 'string' ? parseInt(r, 10) : r
-  );
+  selectedResources = Array.isArray(selectedResources)
+    ? selectedResources.map(r => (typeof r === 'string' ? parseInt(r, 10) : r))
+    : selectedResources;
 
   const onSelectScope = (e: RadioChangeEvent) => {
     const newSelectedScope = e.target.value;
