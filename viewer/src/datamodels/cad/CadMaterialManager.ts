@@ -20,7 +20,7 @@ interface MaterialsWrapper {
   materials: Materials;
   nodeAppearanceProvider: NodeAppearanceProvider;
   nodeTransformProvider: NodeTransformProvider;
-  nodeApperanceTextureBuilder: NodeAppearanceTextureBuilder;
+  nodeAppearanceTextureBuilder: NodeAppearanceTextureBuilder;
   nodeTransformTextureBuilder: NodeTransformTextureBuilder;
 }
 
@@ -83,8 +83,8 @@ export class CadMaterialManager {
 
   addModelMaterials(modelIdentifier: string, maxTreeIndex: number) {
     const nodeAppearanceProvider = new NodeAppearanceProvider();
-    const nodeApperanceTextureBuilder = new NodeAppearanceTextureBuilder(maxTreeIndex + 1, nodeAppearanceProvider);
-    nodeApperanceTextureBuilder.build();
+    const nodeAppearanceTextureBuilder = new NodeAppearanceTextureBuilder(maxTreeIndex + 1, nodeAppearanceProvider);
+    nodeAppearanceTextureBuilder.build();
 
     const nodeTransformProvider = new NodeTransformProvider();
     const nodeTransformTextureBuilder = new NodeTransformTextureBuilder(maxTreeIndex + 1, nodeTransformProvider);
@@ -100,7 +100,7 @@ export class CadMaterialManager {
     const materials = createMaterials(
       this._renderMode,
       this._clippingPlanes,
-      nodeApperanceTextureBuilder.overrideColorPerTreeIndexTexture,
+      nodeAppearanceTextureBuilder.overrideColorPerTreeIndexTexture,
       nodeTransformTextureBuilder.overrideTransformIndexTexture,
       nodeTransformTextureBuilder.transformLookupTexture
     );
@@ -108,7 +108,7 @@ export class CadMaterialManager {
       materials,
       nodeAppearanceProvider,
       nodeTransformProvider,
-      nodeApperanceTextureBuilder,
+      nodeAppearanceTextureBuilder: nodeAppearanceTextureBuilder,
       nodeTransformTextureBuilder
     });
   }
@@ -130,28 +130,28 @@ export class CadMaterialManager {
 
   getModelDefaultNodeAppearance(modelIdentifier: string): NodeAppearance {
     const wrapper = this.getModelMaterialsWrapper(modelIdentifier);
-    return wrapper.nodeApperanceTextureBuilder.getDefaultAppearance();
+    return wrapper.nodeAppearanceTextureBuilder.getDefaultAppearance();
   }
 
   setModelDefaultNodeAppearance(modelIdentifier: string, defaultAppearance: NodeAppearance) {
     const wrapper = this.getModelMaterialsWrapper(modelIdentifier);
-    wrapper.nodeApperanceTextureBuilder.setDefaultAppearance(defaultAppearance);
+    wrapper.nodeAppearanceTextureBuilder.setDefaultAppearance(defaultAppearance);
     this.updateMaterials(modelIdentifier);
   }
 
   getModelBackTreeIndices(modelIdentifier: string): IndexSet {
     const wrapper = this.getModelMaterialsWrapper(modelIdentifier);
-    return wrapper.nodeApperanceTextureBuilder.regularNodeTreeIndices;
+    return wrapper.nodeAppearanceTextureBuilder.regularNodeTreeIndices;
   }
 
   getModelInFrontTreeIndices(modelIdentifier: string): IndexSet {
     const wrapper = this.getModelMaterialsWrapper(modelIdentifier);
-    return wrapper.nodeApperanceTextureBuilder.infrontNodeTreeIndices;
+    return wrapper.nodeAppearanceTextureBuilder.infrontNodeTreeIndices;
   }
 
   getModelGhostedTreeIndices(modelIdentifier: string): IndexSet {
     const wrapper = this.getModelMaterialsWrapper(modelIdentifier);
-    return wrapper.nodeApperanceTextureBuilder.ghostedNodeTreeIndices;
+    return wrapper.nodeAppearanceTextureBuilder.ghostedNodeTreeIndices;
   }
 
   setRenderMode(mode: RenderMode) {
@@ -172,9 +172,9 @@ export class CadMaterialManager {
 
   private updateMaterials(modelIdentifier: string) {
     const wrapper = this.getModelMaterialsWrapper(modelIdentifier);
-    if (wrapper.nodeApperanceTextureBuilder.needsUpdate) {
-      const { nodeApperanceTextureBuilder } = wrapper;
-      nodeApperanceTextureBuilder.build();
+    if (wrapper.nodeAppearanceTextureBuilder.needsUpdate) {
+      const { nodeAppearanceTextureBuilder } = wrapper;
+      nodeAppearanceTextureBuilder.build();
     }
 
     if (wrapper.nodeTransformTextureBuilder.needsUpdate) {
