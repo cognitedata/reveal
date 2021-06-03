@@ -2,7 +2,11 @@ import styled from 'styled-components';
 import { Body, Icon, Input } from '@cognite/cogs.js';
 import React, { ReactText } from 'react';
 import { CopyableText } from 'src/modules/FileDetails/Components/FileMetadata/CopyableText';
-import { DataSetItem, LabelFilter } from '@cognite/data-exploration';
+import {
+  DataSetItem,
+  LabelFilter,
+  ByAssetFilter,
+} from '@cognite/data-exploration';
 import { Label } from '@cognite/cdf-sdk-singleton';
 import useIsFieldSavePending from 'src/store/hooks/useIsFieldSavePending';
 import { VisionFileDetailKey } from 'src/modules/FileDetails/Components/FileMetadata/Types';
@@ -110,16 +114,35 @@ export const LabelContainerView = (props: {
     props.setValue(val);
   };
   return (
-    <LabelFieldContainer>
-      <LabelContainer>
+    <DropDownContainer>
+      <FieldContainer>
         <LabelFilter
           resourceType="file"
           value={props.value}
           setValue={handleSetValue}
         />
-      </LabelContainer>
+      </FieldContainer>
       <Loader loading={loading} />
-    </LabelFieldContainer>
+    </DropDownContainer>
+  );
+};
+
+export const AssetContainerView = (props: {
+  value: number[] | undefined;
+  setValue: (assets?: number[]) => void;
+}) => {
+  const loading = useIsFieldSavePending('assetIds');
+
+  const handleSetValue = (val?: number[]) => {
+    props.setValue(val);
+  };
+  return (
+    <DropDownContainer>
+      <FieldContainer>
+        <ByAssetFilter value={props.value} setValue={handleSetValue} />
+      </FieldContainer>
+      <Loader loading={loading} />
+    </DropDownContainer>
   );
 };
 
@@ -131,7 +154,7 @@ export const DataSetFieldView = (props: { fileId: number }) => {
   );
 };
 
-const LabelFieldContainer = styled.div`
+const DropDownContainer = styled.div`
   display: flex;
   align-items: center;
   margin-bottom: 14px;
@@ -141,7 +164,7 @@ const LabelFieldContainer = styled.div`
   }
 `;
 
-const LabelContainer = styled.div`
+const FieldContainer = styled.div`
   width: 450px;
 
   & div.title:first-child {

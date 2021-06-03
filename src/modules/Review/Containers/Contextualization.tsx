@@ -30,9 +30,9 @@ export const EditContextualization = ({
     dispatch(showAnnotationDrawer(AnnotationDrawerMode.AddAnnotation));
   };
 
-  const handleLinkAsset = () => {
-    dispatch(showAnnotationDrawer(AnnotationDrawerMode.LinkAsset));
-  };
+  // const handleLinkAsset = () => {
+  //   dispatch(showAnnotationDrawer(AnnotationDrawerMode.LinkAsset));
+  // };
 
   const handleEditPolygon = () => {
     if (editMode) {
@@ -52,14 +52,14 @@ export const EditContextualization = ({
       >
         Add new annotations
       </StyledButton>
-      <StyledButton
+      {/* <StyledButton
         type="secondary"
         icon="ResourceAssets"
         onClick={handleLinkAsset}
         variant="inverted"
       >
         Create link to asset
-      </StyledButton>
+      </StyledButton> */}
       {editMode ? (
         <StyledButton
           type="secondary"
@@ -144,7 +144,7 @@ const EditContainer = styled.div`
   isolation: isolate;
   z-index: 1;
   transform: translate(120px, 8px);
-  left: calc(100% - 680px);
+  left: calc(100% - 490px);
 `;
 
 const StyledButton = styled(Button)`

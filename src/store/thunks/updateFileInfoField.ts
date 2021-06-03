@@ -58,6 +58,36 @@ export const updateFileInfoField = createAsyncThunk<
         };
         break;
       }
+      case 'assetIds': {
+        if (!Object.keys(editedFileDetails).includes(key)) {
+          return;
+        }
+        const newAssetIds = (editedFileDetails[key] as number[]) || [];
+        const existingAssetIds: number[] =
+          (fileDetails && fileDetails.assetIds) || [];
+        const addedAssetIds: number[] = [];
+        const removedAssetIds: number[] = [];
+        existingAssetIds.forEach((existingAssetId) => {
+          const found = newAssetIds.find(
+            (newAssetId) => existingAssetId === newAssetId
+          );
+          if (!found) {
+            removedAssetIds.push(existingAssetId);
+          }
+        });
+        newAssetIds.forEach((newAssetId) => {
+          const found = existingAssetIds.find(
+            (existingAssetId) => existingAssetId === newAssetId
+          );
+          if (!found) {
+            addedAssetIds.push(newAssetId);
+          }
+        });
+        updateInfoSet = {
+          [key]: { add: addedAssetIds, remove: removedAssetIds },
+        };
+        break;
+      }
       case 'metadata': {
         const metadata: Metadata = {};
 

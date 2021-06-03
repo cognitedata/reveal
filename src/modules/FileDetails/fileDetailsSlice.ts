@@ -10,7 +10,7 @@ import { generateKeyValueArray } from 'src/utils/FormatUtils';
 import { SaveAvailableAnnotations } from 'src/store/thunks/SaveAvailableAnnotations';
 import { selectFileById } from 'src/modules/Common/filesSlice';
 
-export type FileInfoValueState = string | Label[] | null;
+export type FileInfoValueState = string | Label[] | number[] | null;
 
 export type State = {
   metadataEdit: boolean;

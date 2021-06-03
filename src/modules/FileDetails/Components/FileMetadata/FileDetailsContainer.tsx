@@ -2,6 +2,7 @@ import { dateformat } from 'src/utils/DateUtils';
 import React from 'react';
 import styled from 'styled-components';
 import {
+  AssetContainerView,
   DataSetFieldView,
   FileDetailFieldView,
   LabelContainerView,
@@ -60,6 +61,13 @@ export const FileDetailsContainer = (props: {
         editable
         onBlur={updateInfo}
         onInput={onFieldChange}
+      />
+      <AssetContainerView
+        value={info.assetIds}
+        setValue={(value) => {
+          onFieldChange('assetIds', value);
+          updateInfo('assetIds');
+        }}
       />
       <LabelContainerView
         value={info.labels}
