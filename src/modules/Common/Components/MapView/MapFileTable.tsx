@@ -1,10 +1,9 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { ColumnShape } from 'react-base-table';
 import { NameAndAnnotationRenderer } from 'src/modules/Common/Containers/FileTableRenderers/NameAndAnnotation';
 import { Tabs } from '@cognite/data-exploration';
-import { useDispatch } from 'react-redux';
-import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
+import { AnnotationLoader } from 'src/modules/Common/Components/AnnotationLoader/AnnotationLoader';
 import { SelectableTable } from '../SelectableTable/SelectableTable';
 import { ResultData, TableDataItem } from '../../types';
 import { NameSorter } from '../../Containers/Sorters/NameSorter';
@@ -17,9 +16,15 @@ type MapTableProps = FileExplorerTableProps & {
   setSelectedFileOnMap: (data: ResultData | undefined) => void;
 };
 
-export const MapFileTable = (props: MapTableProps) => {
-  const dispatch = useDispatch();
+const rendererMap = {
+  name: NameAndAnnotationRenderer,
+};
 
+const sorters = {
+  name: NameSorter,
+};
+
+export const MapFileTable = (props: MapTableProps) => {
   const columns: ColumnShape<TableDataItem>[] = [
     {
       key: 'name',
@@ -31,21 +36,17 @@ export const MapFileTable = (props: MapTableProps) => {
     },
   ];
 
-  const rendererMap = {
-    name: NameAndAnnotationRenderer,
-  };
+  const withGeoData = useMemo(() => {
+    return props.data.filter(
+      (item: ResultData) => item.geoLocation !== undefined
+    );
+  }, [props.data]);
 
-  const sorters = {
-    name: NameSorter,
-  };
-
-  const withGeoData = props.data.filter(
-    (item: ResultData) => item.geoLocation !== undefined
-  );
-
-  const withOutGeoData = props.data.filter(
-    (item: ResultData) => item.geoLocation === undefined
-  );
+  const withOutGeoData = useMemo(() => {
+    return props.data.filter(
+      (item: ResultData) => item.geoLocation === undefined
+    );
+  }, [props.data]);
 
   const rowClassNames = ({
     rowData,
@@ -70,13 +71,6 @@ export const MapFileTable = (props: MapTableProps) => {
       props.setSelectedFileOnMap(undefined); // hide map popup when selecting from files without geo-info
     },
   };
-  const fileIds = useMemo(() => {
-    return props.data.map((item: TableDataItem) => item.id);
-  }, [props.data]);
-
-  useEffect(() => {
-    dispatch(RetrieveAnnotations({ fileIds, assetIds: undefined }));
-  }, [fileIds]);
 
   return (
     <Container>
@@ -109,17 +103,22 @@ export const MapFileTable = (props: MapTableProps) => {
             sorters={sorters}
             pagination
           >
-            <SelectableTable
-              {...props}
-              data={withGeoData}
-              columns={columns}
-              rendererMap={rendererMap}
-              selectable
-              onRowSelect={props.onRowSelect}
-              rowHeight={70}
-              rowClassNames={rowClassNames}
-              rowEventHandlers={rowEventHandlersWithGeoData}
-            />
+            {(paginationProps) => (
+              <AnnotationLoader data={paginationProps.data}>
+                <SelectableTable
+                  {...props}
+                  {...paginationProps}
+                  data={withGeoData}
+                  columns={columns}
+                  rendererMap={rendererMap}
+                  selectable
+                  onRowSelect={props.onRowSelect}
+                  rowHeight={70}
+                  rowClassNames={rowClassNames}
+                  rowEventHandlers={rowEventHandlersWithGeoData}
+                />
+              </AnnotationLoader>
+            )}
           </SorterPaginationWrapper>
         </Tabs.Pane>
 
@@ -134,16 +133,21 @@ export const MapFileTable = (props: MapTableProps) => {
             sorters={sorters}
             pagination
           >
-            <SelectableTable
-              {...props}
-              columns={columns}
-              rendererMap={rendererMap}
-              selectable
-              onRowSelect={props.onRowSelect}
-              rowHeight={70}
-              rowClassNames={rowClassNames}
-              rowEventHandlers={rowEventHandlersWithoutGeoData}
-            />
+            {(paginationProps) => (
+              <AnnotationLoader data={paginationProps.data}>
+                <SelectableTable
+                  {...props}
+                  {...paginationProps}
+                  columns={columns}
+                  rendererMap={rendererMap}
+                  selectable
+                  onRowSelect={props.onRowSelect}
+                  rowHeight={70}
+                  rowClassNames={rowClassNames}
+                  rowEventHandlers={rowEventHandlersWithoutGeoData}
+                />
+              </AnnotationLoader>
+            )}
           </SorterPaginationWrapper>
         </Tabs.Pane>
       </Tabs>

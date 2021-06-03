@@ -1,13 +1,15 @@
 import React from 'react';
 import { GridTable } from '@cognite/data-exploration';
 import styled from 'styled-components';
+import { PaginationProps } from 'src/modules/Common/Components/FileTable/types';
 import { TableDataItem } from '../../types';
 
-export type GridTableProps<T> = {
+export type GridTableProps<T> = Pick<
+  PaginationProps<TableDataItem>,
+  'data' | 'tableFooter'
+> & {
   onItemClicked: (item: T) => void;
-  data: T[];
   renderCell: (cellProps: any) => JSX.Element;
-  tableFooter?: JSX.Element;
 };
 
 export const GridView = (props: GridTableProps<TableDataItem>) => {

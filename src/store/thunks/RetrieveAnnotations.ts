@@ -5,22 +5,16 @@ import { AnnotationApi } from 'src/api/annotation/AnnotationApi';
 
 export const RetrieveAnnotations = createAsyncThunk<
   Annotation[],
-  { fileIds: number[]; assetIds: number[] | undefined },
+  { fileIds: number[] },
   ThunkConfig
 >('RetrieveAnnotations', async (payload) => {
-  let filterPayload: any = {
+  const filterPayload: any = {
     annotatedResourceType: 'file',
     annotatedResourceIds: payload.fileIds.map((id) => ({
       id,
     })),
   };
-  if (payload.assetIds && payload.assetIds.length) {
-    filterPayload = {
-      ...filterPayload,
-      linkedResourceType: 'asset',
-      linkedResourceIds: payload.assetIds.map((id) => ({ id })),
-    };
-  }
+
   const annotationListRequest = {
     filter: filterPayload,
   };

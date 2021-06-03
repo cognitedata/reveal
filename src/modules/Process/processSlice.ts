@@ -155,7 +155,6 @@ export const postAnnotationJob = createAsyncThunk<
             await dispatch(
               RetrieveAnnotations({
                 fileIds,
-                assetIds: undefined,
               })
             );
           }

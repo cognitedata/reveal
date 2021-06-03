@@ -16,11 +16,14 @@ export const PageBasedGridView = (
       totalCount={props.totalCount}
       pagination={props.pagination ?? true}
     >
-      <GridView
-        {...props}
-        onItemClicked={(item: any) => onItemClicked(item)}
-        renderCell={(cellProps: any) => renderCell(cellProps)}
-      />
+      {(paginationProps) => (
+        <GridView
+          {...props}
+          {...paginationProps}
+          onItemClicked={(item: any) => onItemClicked(item)}
+          renderCell={(cellProps: any) => renderCell(cellProps)}
+        />
+      )}
     </SorterPaginationWrapper>
   );
 };

@@ -11,6 +11,7 @@ import {
   defaultMemoize,
 } from 'reselect';
 import isEqual from 'lodash-es/isEqual';
+import difference from 'lodash-es/difference';
 import {
   AnnotationCounts,
   AnnotationPreview,
@@ -42,22 +43,8 @@ const annotationSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(
       RetrieveAnnotations.fulfilled,
-      (state: State, { payload: annotations, meta }) => {
-        const { fileIds, assetIds } = meta.arg;
-
-        // reset annotation counts
-        if (fileIds && fileIds.length && !(assetIds && assetIds?.length)) {
-          fileIds.forEach((fileId) => {
-            const annotationIds = state.files.byId[fileId];
-
-            if (annotationIds && annotationIds.length) {
-              // eslint-disable-next-line no-param-reassign
-              annotationIds.forEach((id) => delete state.annotations.byId[id]);
-            }
-            // eslint-disable-next-line no-param-reassign
-            delete state.files.byId[fileId];
-          });
-        }
+      (state: State, { payload: annotations }) => {
+        const fileAnnotations: { [id: number]: number[] } = {};
 
         // update annotations
         annotations.forEach((item: Annotation) => {
@@ -69,13 +56,30 @@ const annotationSlice = createSlice({
             status: item.status,
             text: item.text,
           };
-          const fileAnnotations = state.files.byId[item.annotatedResourceId];
-          if (fileAnnotations) {
-            state.files.byId[item.annotatedResourceId].push(item.id);
+          if (fileAnnotations[item.annotatedResourceId]) {
+            fileAnnotations[item.annotatedResourceId].push(item.id);
           } else {
-            state.files.byId[item.annotatedResourceId] = [item.id];
+            fileAnnotations[item.annotatedResourceId] = [item.id];
           }
           state.annotations.byId[item.id] = recordValue;
+        });
+
+        Object.keys(fileAnnotations).forEach((id) => {
+          const existingAnnotations = state.files.byId[+id];
+          const newAnnotations = fileAnnotations[+id];
+
+          if (!isEqual(existingAnnotations, newAnnotations)) {
+            const deletedAnnotations = difference(
+              existingAnnotations,
+              newAnnotations
+            );
+            if (deletedAnnotations.length) {
+              deletedAnnotations.forEach((annotationId) => {
+                delete state.annotations.byId[annotationId];
+              });
+            }
+            state.files.byId[+id] = fileAnnotations[+id];
+          }
         });
       }
     );

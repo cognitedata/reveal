@@ -16,31 +16,33 @@ import { StringRenderer } from 'src/modules/Common/Containers/FileTableRenderers
 import { SelectionRenderer } from 'src/modules/Common/Containers/FileTableRenderers/SelectionRenderer';
 import { SelectAllHeaderRenderer } from 'src/modules/Common/Containers/FileTableRenderers/SelectAllHeaderRendrerer';
 import { StringHeaderRenderer } from 'src/modules/Common/Containers/FileTableRenderers/StringHeaderRenderer';
+import { PaginationProps } from 'src/modules/Common/Components/FileTable/types';
 
 export type SelectableTableProps = Omit<
   BaseTableProps<TableDataItem>,
   'width'
-> & {
-  allRowsSelected: boolean;
-  selectable: boolean;
-  selectedFileId?: number | null;
-  rendererMap: { [key: string]: (props: CellRenderer) => JSX.Element };
-  onRowSelect: (item: TableDataItem, selected: boolean) => void;
-  onSelectAllRows: (val: boolean) => void;
-  rowClassNames?: (data: {
-    columns: ColumnShape<TableDataItem>[];
-    rowData: TableDataItem;
-    rowIndex: number;
-  }) => string;
-  rowEventHandlers?: {
-    [key: string]: (args: {
+> &
+  PaginationProps<TableDataItem> & {
+    allRowsSelected: boolean;
+    selectable: boolean;
+    selectedFileId?: number | null;
+    rendererMap: { [key: string]: (props: CellRenderer) => JSX.Element };
+    onRowSelect: (item: TableDataItem, selected: boolean) => void;
+    onSelectAllRows: (val: boolean) => void;
+    rowClassNames?: (data: {
+      columns: ColumnShape<TableDataItem>[];
       rowData: TableDataItem;
       rowIndex: number;
-      rowKey: RowKey;
-      event: React.SyntheticEvent;
-    }) => void;
+    }) => string;
+    rowEventHandlers?: {
+      [key: string]: (args: {
+        rowData: TableDataItem;
+        rowIndex: number;
+        rowKey: RowKey;
+        event: React.SyntheticEvent;
+      }) => void;
+    };
   };
-};
 
 export function SelectableTable(props: SelectableTableProps) {
   const tableRef = useRef<any>(null);

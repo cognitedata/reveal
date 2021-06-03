@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React from 'react';
 import { Column, ColumnShape } from 'react-base-table';
 import { ResultData, TableDataItem } from 'src/modules/Common/types';
 import { StringRenderer } from 'src/modules/Common/Containers/FileTableRenderers/StringRenderer';
@@ -9,14 +9,26 @@ import { AnnotationRenderer } from 'src/modules/Common/Containers/FileTableRende
 import { DateSorter } from 'src/modules/Common/Containers/Sorters/DateSorter';
 import { DateRenderer } from 'src/modules/Common/Containers/FileTableRenderers/DateRenderer';
 import { NameSorter } from 'src/modules/Common/Containers/Sorters/NameSorter';
-import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
-import { useDispatch } from 'react-redux';
-import { FileExplorerTableProps } from './types';
+import { AnnotationLoader } from 'src/modules/Common/Components/AnnotationLoader/AnnotationLoader';
+import { FileExplorerTableProps, PaginationProps } from './types';
 import { SorterPaginationWrapper } from '../SorterPaginationWrapper/SorterPaginationWrapper';
 import { MimeTypeSorter } from '../../Containers/Sorters/MimeTypeSorter';
 
+const rendererMap = {
+  name: NameRenderer,
+  mimeType: StringRenderer,
+  sourceCreatedTime: DateRenderer,
+  annotations: AnnotationRenderer,
+  action: ActionRenderer,
+};
+
+const sorters = {
+  name: NameSorter,
+  mimeType: MimeTypeSorter,
+  sourceCreatedTime: DateSorter,
+};
+
 export function FileTableExplorer(props: FileExplorerTableProps) {
-  const dispatch = useDispatch();
   const columns: ColumnShape<TableDataItem>[] = [
     {
       key: 'name',
@@ -58,14 +70,6 @@ export function FileTableExplorer(props: FileExplorerTableProps) {
     },
   ];
 
-  const rendererMap = {
-    name: NameRenderer,
-    mimeType: StringRenderer,
-    sourceCreatedTime: DateRenderer,
-    annotations: AnnotationRenderer,
-    action: ActionRenderer,
-  };
-
   const rowClassNames = ({
     rowData,
   }: {
@@ -82,22 +86,6 @@ export function FileTableExplorer(props: FileExplorerTableProps) {
     },
   };
 
-  const sorters = {
-    name: NameSorter,
-    mimeType: MimeTypeSorter,
-    sourceCreatedTime: DateSorter,
-  };
-
-  const fileIds = useMemo(() => {
-    return props.data.map((item: TableDataItem) => item.id);
-  }, [props.data]);
-
-  useEffect(() => {
-    if (fileIds && fileIds.length) {
-      dispatch(RetrieveAnnotations({ fileIds, assetIds: undefined }));
-    }
-  }, [fileIds]);
-
   return (
     <SorterPaginationWrapper
       data={props.data}
@@ -105,14 +93,19 @@ export function FileTableExplorer(props: FileExplorerTableProps) {
       sorters={sorters}
       pagination
     >
-      <SelectableTable
-        {...props}
-        columns={columns}
-        rendererMap={rendererMap}
-        selectable
-        rowClassNames={rowClassNames}
-        rowEventHandlers={rowEventHandlers}
-      />
+      {(paginationProps: PaginationProps<TableDataItem>) => (
+        <AnnotationLoader data={paginationProps.data}>
+          <SelectableTable
+            {...props}
+            {...paginationProps}
+            columns={columns}
+            rendererMap={rendererMap}
+            selectable
+            rowClassNames={rowClassNames}
+            rowEventHandlers={rowEventHandlers}
+          />
+        </AnnotationLoader>
+      )}
     </SorterPaginationWrapper>
   );
 }

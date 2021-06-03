@@ -8,9 +8,23 @@ import { StatusRenderer } from 'src/modules/Common/Containers/FileTableRenderers
 import { AnnotationRenderer } from 'src/modules/Common/Containers/FileTableRenderers/AnnotationRenderer';
 import { ActionRenderer } from 'src/modules/Common/Containers/FileTableRenderers/ActionRenderer';
 import { NameSorter } from 'src/modules/Common/Containers/Sorters/NameSorter';
+import { AnnotationLoader } from 'src/modules/Common/Components/AnnotationLoader/AnnotationLoader';
 import { FileTableProps } from './types';
 import { SorterPaginationWrapper } from '../SorterPaginationWrapper/SorterPaginationWrapper';
 import { MimeTypeSorter } from '../../Containers/Sorters/MimeTypeSorter';
+
+const rendererMap = {
+  name: NameRenderer,
+  mimeType: StringRenderer,
+  status: StatusRenderer,
+  annotations: AnnotationRenderer,
+  action: ActionRenderer,
+};
+
+const sorters = {
+  name: NameSorter,
+  mimeType: MimeTypeSorter,
+};
 
 export function FileTable(props: FileTableProps) {
   const columns: ColumnShape<TableDataItem>[] = [
@@ -52,19 +66,6 @@ export function FileTable(props: FileTableProps) {
     },
   ];
 
-  const rendererMap = {
-    name: NameRenderer,
-    mimeType: StringRenderer,
-    status: StatusRenderer,
-    annotations: AnnotationRenderer,
-    action: ActionRenderer,
-  };
-
-  const sorters = {
-    name: NameSorter,
-    mimeType: MimeTypeSorter,
-  };
-
   const rowClassNames = ({
     rowData,
   }: {
@@ -88,17 +89,22 @@ export function FileTable(props: FileTableProps) {
       pagination
       sorters={sorters}
     >
-      <SelectableTable
-        {...props}
-        columns={columns}
-        rendererMap={rendererMap}
-        selectable
-        onRowSelect={props.onRowSelect}
-        rowClassNames={rowClassNames}
-        rowEventHandlers={rowEventHandlers}
-        allRowsSelected={props.allRowsSelected}
-        onSelectAllRows={props.onSelectAllRows}
-      />
+      {(paginationProps) => (
+        <AnnotationLoader data={paginationProps.data}>
+          <SelectableTable
+            {...props}
+            {...paginationProps}
+            columns={columns}
+            rendererMap={rendererMap}
+            selectable
+            onRowSelect={props.onRowSelect}
+            rowClassNames={rowClassNames}
+            rowEventHandlers={rowEventHandlers}
+            allRowsSelected={props.allRowsSelected}
+            onSelectAllRows={props.onSelectAllRows}
+          />
+        </AnnotationLoader>
+      )}
     </SorterPaginationWrapper>
   );
 }

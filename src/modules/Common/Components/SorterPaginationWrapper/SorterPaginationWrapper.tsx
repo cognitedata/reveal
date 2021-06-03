@@ -1,20 +1,22 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import * as CONST from 'src/constants/PaginationConsts';
 import styled from 'styled-components';
+import { PaginationProps } from 'src/modules/Common/Components/FileTable/types';
 import { TableDataItem } from '../../types';
 import { Footer } from './Footer';
 import { Header } from './Header';
 import { Paginator } from './Paginator';
 
-interface ISorterPaginationWrapperProps {
+type ISorterPaginationWrapperProps = {
+  children: (tableProps: PaginationProps<TableDataItem>) => React.ReactNode;
+} & {
   data: TableDataItem[];
   totalCount: number;
-  children: any;
   sorters?: {
     [key: string]: (data: TableDataItem[], reverse: boolean) => TableDataItem[];
   };
   pagination?: boolean;
-}
+};
 
 const getData = (
   data: TableDataItem[],
@@ -63,25 +65,28 @@ export const SorterPaginationWrapper = (
       <Footer fetchedCount={fetchedCount} totalCount={totalCount} />
     ) : null;
 
+  const pagedData = useMemo(() => {
+    return getData(
+      data,
+      sortKey,
+      sorters,
+      reverse,
+      pagination,
+      currentPage,
+      pageSize
+    );
+  }, [data, sortKey, sorters, reverse, pagination, currentPage, pageSize]);
+
   return (
     <Container>
       <HeaderContainer>{header}</HeaderContainer>
       <TableContainer>
-        {React.cloneElement(children, {
+        {children({
           sortKey,
           reverse,
           setSortKey,
           setReverse,
-          selectable: true,
-          data: getData(
-            data,
-            sortKey,
-            sorters,
-            reverse,
-            pagination,
-            currentPage,
-            pageSize
-          ),
+          data: pagedData,
           tableFooter,
         })}
       </TableContainer>

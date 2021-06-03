@@ -1,6 +1,15 @@
 import { BaseTableProps } from 'react-base-table';
 import { TableDataItem } from 'src/modules/Common/types';
 
+export type PaginationProps<T> = {
+  sortKey: string;
+  reverse: boolean;
+  setSortKey: (key: string) => void;
+  setReverse: (rev: boolean) => void;
+  data: T[];
+  tableFooter?: JSX.Element | null;
+};
+
 export type PaginatedTableProps<T> = {
   data: T[];
   totalCount: number;

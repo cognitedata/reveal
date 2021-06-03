@@ -1,12 +1,11 @@
 import { CellRenderer } from 'src/modules/Common/types';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { Tooltip } from '@cognite/cogs.js';
 import exifIcon from 'src/assets/exifIcon.svg';
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { makeSelectAnnotationStatuses } from 'src/modules/Process/processSlice';
-import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
 import { makeSelectAnnotationCounts } from '../../annotationSlice';
 import { AnnotationsBadge } from '../../Components/AnnotationsBadge/AnnotationsBadge';
 import { AnnotationsBadgePopoverContent } from '../../Components/AnnotationsBadge/AnnotationsBadgePopoverContent';
@@ -15,7 +14,6 @@ import { Popover } from '../../Components/Popover';
 export function NameAndAnnotationRenderer({
   rowData: { name, id, geoLocation },
 }: CellRenderer) {
-  const dispatch = useDispatch();
   const selectAnnotationCounts = useMemo(makeSelectAnnotationCounts, []);
   const annotationCounts = useSelector(({ annotationReducer }: RootState) =>
     selectAnnotationCounts(annotationReducer, id)
@@ -25,10 +23,6 @@ export function NameAndAnnotationRenderer({
   const annotationStatus = useSelector(({ processSlice }: RootState) =>
     selectAnnotationStatuses(processSlice, id)
   );
-
-  useEffect(() => {
-    dispatch(RetrieveAnnotations({ fileIds: [id], assetIds: undefined }));
-  }, []);
 
   return (
     <Container>
