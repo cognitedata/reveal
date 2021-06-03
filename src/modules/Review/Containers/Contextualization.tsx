@@ -1,6 +1,6 @@
 /* eslint-disable @cognite/no-number-z-index */
 import React from 'react';
-import { Button, Icon, PrimaryTooltip } from '@cognite/cogs.js';
+import { Button, Detail, Icon, PrimaryTooltip } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { AnnotationsTable } from 'src/modules/Review/Components/AnnotationsTable/AnnotationsTable';
 import {
@@ -13,7 +13,6 @@ import { AnnotationDrawerMode } from 'src/utils/AnnotationUtils';
 import { RootState } from 'src/store/rootReducer';
 import { VisionAPIType } from 'src/api/types';
 import { ImagePreviewEditMode } from 'src/constants/enums/ImagePreviewEditMode';
-import { FileInfo } from '@cognite/cdf-sdk-singleton';
 
 type editContextType = {
   editMode: boolean;
@@ -45,14 +44,28 @@ export const EditContextualization = ({
 
   return (
     <EditContainer>
-      <StyledButton type="primary" icon="Edit" onClick={handleAddAnnotation}>
-        Add Annotations
+      <StyledButton
+        type="secondary"
+        icon="Scan"
+        variant="inverted"
+        onClick={handleAddAnnotation}
+      >
+        Add new annotations
+      </StyledButton>
+      <StyledButton
+        type="secondary"
+        icon="ResourceAssets"
+        onClick={handleLinkAsset}
+        variant="inverted"
+      >
+        Create link to asset
       </StyledButton>
       {editMode ? (
         <StyledButton
           type="secondary"
           icon="Upload"
           onClick={handleEditPolygon}
+          variant="inverted"
         >
           Finish Editing
         </StyledButton>
@@ -64,17 +77,11 @@ export const EditContextualization = ({
             gdprAndTextAndObjectAnnotations.length + tagAnnotations.length === 0
           }
           onClick={handleEditPolygon}
+          variant="inverted"
         >
           Edit polygons
         </StyledButton>
       )}
-      <StyledButton
-        type="secondary"
-        icon="ResourceAssets"
-        onClick={handleLinkAsset}
-      >
-        Link to asset
-      </StyledButton>
     </EditContainer>
   );
 };
@@ -82,20 +89,16 @@ export const EditContextualization = ({
 export const Contextualization = (props: {
   tagAnnotations?: VisionAnnotationState[];
   gdprAndTextAndObjectAnnotations?: VisionAnnotationState[];
-  file: FileInfo;
 }) => {
-  const { file, tagAnnotations, gdprAndTextAndObjectAnnotations } = props;
+  const { tagAnnotations, gdprAndTextAndObjectAnnotations } = props;
   const selectedAnnotationIds = useSelector(
     (state: RootState) => state.previewSlice.selectedAnnotations
   );
 
   return (
     <Container>
-      <TitleRow>
-        <NewTitle>{file?.name}</NewTitle>
-      </TitleRow>
-      <div style={{ fontStyle: 'italic' }}>
-        {'Labeling detected annotations '}
+      <Detail style={{ color: '#595959' }}>
+        {'Approve and reject detected annotations '}
         <PrimaryTooltip
           tooltipTitle="Labeling annotations"
           tooltipText={`
@@ -103,9 +106,9 @@ export const Contextualization = (props: {
               future quality of the annotation detection. Pressing False will not delete the annotation.
               `}
         >
-          <Icon type="Help" />
+          <Icon style={{ color: '#BFBFBF' }} type="HelpFilled" />
         </PrimaryTooltip>
-      </div>
+      </Detail>
 
       <TableContainer>
         {tagAnnotations && (
@@ -131,28 +134,9 @@ const Container = styled.div`
   height: 100%;
   width: 100%;
   display: grid;
-  grid-row-gap: 15px;
-  grid-template-rows: auto auto calc(100% - 113px);
+  grid-template-rows: auto calc(100% - 50px) auto;
   padding-top: 15px;
   box-sizing: border-box;
-`;
-
-// Todo: 290px hardcoded
-const NewTitle = styled.div`
-  font-family: Inter;
-  font-style: normal;
-  font-weight: 600;
-  font-size: 16px;
-  line-height: 20px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-  max-width: 290px;
-`;
-
-const TitleRow = styled.div`
-  display: flex;
-  flex: 0 5 auto;
 `;
 
 const EditContainer = styled.div`
@@ -160,6 +144,7 @@ const EditContainer = styled.div`
   isolation: isolate;
   z-index: 1;
   transform: translate(120px, 8px);
+  left: calc(100% - 680px);
 `;
 
 const StyledButton = styled(Button)`
@@ -167,6 +152,5 @@ const StyledButton = styled(Button)`
 `;
 
 const TableContainer = styled.div`
-  padding-top: 25px;
   overflow-y: auto;
 `;

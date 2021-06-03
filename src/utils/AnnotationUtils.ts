@@ -11,7 +11,7 @@ import { UnsavedAnnotation } from 'src/api/annotation/types';
 
 export enum AnnotationStatus {
   Verified = 'verified',
-  Rejected = 'deleted',
+  Rejected = 'deleted', // TODO: this should be rejected. What are consequences of changing it?
   Unhandled = 'unhandled',
 }
 

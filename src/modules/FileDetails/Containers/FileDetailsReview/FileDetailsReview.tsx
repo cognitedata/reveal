@@ -1,5 +1,4 @@
 import React, { useRef } from 'react';
-import { Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { MetaDataTable } from 'src/modules/FileDetails/Components/FileMetadata/MetadataTable';
 import { useDispatch, useSelector } from 'react-redux';
@@ -21,13 +20,7 @@ const Container = styled.div`
   width: 100%;
   height: 100%;
   padding-top: 15px;
-  display: grid;
-  grid-row-gap: 14px;
-  grid-template-columns: 100%;
-  grid-template-rows: auto calc(100% - 46px);
 `;
-
-const TitleRow = styled.div``;
 
 const DetailsContainer = styled.div`
   width: 100%;
@@ -88,9 +81,6 @@ export const FileDetailsReview: React.FC<FileDetailCompProps> = ({
 
   return (
     <Container>
-      <TitleRow>
-        <Title level={3}>File Details</Title>
-      </TitleRow>
       <DetailsContainer ref={detailContainer}>
         {fileDetails && (
           <FileDetailsContainer

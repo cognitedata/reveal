@@ -74,13 +74,15 @@ export const ImagePreviewContainer = ({
   };
 
   return (
-    <ImagePreview
-      fileObj={file}
-      annotations={visibleNonRejectedAnnotationsAndEditModeAnnotation}
-      editable={imagePreviewEditable}
-      creatable={imagePreviewCreatable}
-      onCreateAnnotation={handleCreateAnnotation}
-      onUpdateAnnotation={handleModifyAnnotation}
-    />
+    <div style={{ width: '100%', background: 'grey' }}>
+      <ImagePreview
+        fileObj={file}
+        annotations={visibleNonRejectedAnnotationsAndEditModeAnnotation}
+        editable={imagePreviewEditable}
+        creatable={imagePreviewCreatable}
+        onCreateAnnotation={handleCreateAnnotation}
+        onUpdateAnnotation={handleModifyAnnotation}
+      />
+    </div>
   );
 };

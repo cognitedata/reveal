@@ -6,6 +6,7 @@ import { Contextualization } from 'src/modules/Review/Containers/Contextualizati
 import { FileDetailsReview } from 'src/modules/FileDetails/Containers/FileDetailsReview/FileDetailsReview';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { FileInfo, v3Client as sdk } from '@cognite/cdf-sdk-singleton';
+import { Title } from '@cognite/cogs.js';
 import { VerticalCarousel } from '../Components/VerticalCarousel/VerticalCarousel';
 
 const queryClient = new QueryClient();
@@ -23,39 +24,40 @@ const AnnotationsEdit = (props: { file: FileInfo }) => {
               </VerticalCarouselContainer>
               {file && <VideoPreview fileObj={file} />}
             </FilePreviewContainer>
-            <TabsContainer className="z-8">
-              <Tabs
-                tab="file-detail"
-                onTabChange={() => {}}
-                style={{
-                  fontSize: 14,
-                  fontWeight: 600,
-                  lineHeight: '20px',
-                }}
-              >
-                <Tabs.Pane
-                  title="Contextualization"
-                  key="context"
-                  style={{ overflow: 'hidden', height: `calc(100% - 45px)` }}
-                  disabled
+            <RightPanelContainer>
+              <StyledTitle level={4}>{file?.name}</StyledTitle>
+              <TabsContainer>
+                <Tabs
+                  tab="file-detail"
+                  onTabChange={() => {}}
+                  style={{
+                    border: 0,
+                  }}
                 >
-                  <Contextualization file={file} />
-                </Tabs.Pane>
-                <Tabs.Pane
-                  title="File Details"
-                  key="file-detail"
-                  style={{ overflow: 'hidden', height: `calc(100% - 45px)` }}
-                >
-                  {file && (
-                    <DataExplorationProvider sdk={sdk}>
-                      <QueryClientProvider client={queryClient}>
-                        <FileDetailsReview fileObj={file} />
-                      </QueryClientProvider>
-                    </DataExplorationProvider>
-                  )}
-                </Tabs.Pane>
-              </Tabs>
-            </TabsContainer>
+                  <Tabs.Pane
+                    title="Contextualization"
+                    key="context"
+                    style={{ overflow: 'hidden', height: `calc(100% - 45px)` }}
+                    disabled
+                  >
+                    <Contextualization />
+                  </Tabs.Pane>
+                  <Tabs.Pane
+                    title="File details"
+                    key="file-detail"
+                    style={{ overflow: 'hidden', height: `calc(100% - 45px)` }}
+                  >
+                    {file && (
+                      <DataExplorationProvider sdk={sdk}>
+                        <QueryClientProvider client={queryClient}>
+                          <FileDetailsReview fileObj={file} />
+                        </QueryClientProvider>
+                      </DataExplorationProvider>
+                    )}
+                  </Tabs.Pane>
+                </Tabs>
+              </TabsContainer>
+            </RightPanelContainer>
           </FilePreviewMetadataContainer>
         </AnnotationContainer>
       </QueryClientProvider>
@@ -66,7 +68,6 @@ export default AnnotationsEdit;
 
 const AnnotationContainer = styled.div`
   width: 100%;
-  padding: 20px 0 0;
   display: flex;
   height: 100%;
   box-sizing: border-box;
@@ -88,9 +89,23 @@ const FilePreviewContainer = styled.div`
   grid-column-gap: 5px;
 `;
 
+const RightPanelContainer = styled.div`
+  width: 100%;
+  height: 100%;
+`;
+
+const StyledTitle = styled(Title)`
+  color: #4a67fb;
+  padding-top: 17px;
+  padding-bottom: 17px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 290px;
+`;
 const TabsContainer = styled.div`
   height: 100%;
-  padding: 30px 45px 0;
+  padding-right: 10px;
   border-radius: 8px;
 `;
 

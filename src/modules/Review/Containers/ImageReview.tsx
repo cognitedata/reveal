@@ -14,6 +14,7 @@ import { FileInfo, v3Client as sdk } from '@cognite/cdf-sdk-singleton';
 import { ImagePreviewEditMode } from 'src/constants/enums/ImagePreviewEditMode';
 import { VisionAPIType } from 'src/api/types';
 import { ImagePreviewContainer } from 'src/modules/Review/Containers/ImagePreviewContainer';
+import { Title } from '@cognite/cogs.js';
 import { VerticalCarousel } from '../Components/VerticalCarousel/VerticalCarousel';
 
 const queryClient = new QueryClient();
@@ -60,44 +61,44 @@ const ImageReview = (props: { drawerMode: number | null; file: FileInfo }) => {
                 <ImagePreviewContainer file={file} drawerMode={drawerMode} />
               )}
             </FilePreviewContainer>
-            <TabsContainer className="z-8">
-              <Tabs
-                tab="context"
-                onTabChange={() => {}}
-                style={{
-                  fontSize: 14,
-                  fontWeight: 600,
-                  lineHeight: '20px',
-                }}
-              >
-                <Tabs.Pane
-                  title="Contextualization"
-                  key="context"
-                  style={{ overflow: 'hidden', height: `calc(100% - 45px)` }}
+            <RightPanelContainer>
+              <StyledTitle level={4}>{file?.name}</StyledTitle>
+              <TabsContainer>
+                <Tabs
+                  tab="context"
+                  onTabChange={() => {}}
+                  style={{
+                    border: 0,
+                  }}
                 >
-                  <Contextualization
-                    file={file}
-                    tagAnnotations={tagAnnotations}
-                    gdprAndTextAndObjectAnnotations={
-                      gdprAndTextAndObjectAnnotations
-                    }
-                  />
-                </Tabs.Pane>
-                <Tabs.Pane
-                  title="File Details"
-                  key="file-detail"
-                  style={{ overflow: 'hidden', height: `calc(100% - 45px)` }}
-                >
-                  {file && (
-                    <DataExplorationProvider sdk={sdk}>
-                      <QueryClientProvider client={queryClient}>
-                        <FileDetailsReview fileObj={file} />
-                      </QueryClientProvider>
-                    </DataExplorationProvider>
-                  )}
-                </Tabs.Pane>
-              </Tabs>
-            </TabsContainer>
+                  <Tabs.Pane
+                    title="Contextualization"
+                    key="context"
+                    style={{ overflow: 'hidden', height: `calc(100% - 45px)` }}
+                  >
+                    <Contextualization
+                      tagAnnotations={tagAnnotations}
+                      gdprAndTextAndObjectAnnotations={
+                        gdprAndTextAndObjectAnnotations
+                      }
+                    />
+                  </Tabs.Pane>
+                  <Tabs.Pane
+                    title="File details"
+                    key="file-detail"
+                    style={{ overflow: 'hidden', height: `calc(100% - 45px)` }}
+                  >
+                    {file && (
+                      <DataExplorationProvider sdk={sdk}>
+                        <QueryClientProvider client={queryClient}>
+                          <FileDetailsReview fileObj={file} />
+                        </QueryClientProvider>
+                      </DataExplorationProvider>
+                    )}
+                  </Tabs.Pane>
+                </Tabs>
+              </TabsContainer>
+            </RightPanelContainer>
           </FilePreviewMetadataContainer>
         </AnnotationContainer>
       </QueryClientProvider>
@@ -108,7 +109,6 @@ export default ImageReview;
 
 const AnnotationContainer = styled.div`
   width: 100%;
-  padding: 20px 0 0;
   display: flex;
   height: 100%;
   box-sizing: border-box;
@@ -127,18 +127,34 @@ const FilePreviewMetadataContainer = styled.div`
   height: 100%;
   width: 100%;
   display: grid;
-  grid-template-columns: auto 40%;
+  grid-template-columns: auto 32%;
   grid-template-rows: 100%;
-  grid-column-gap: 30px;
+  grid-column-gap: 17px;
 `;
 
 const FilePreviewContainer = styled.div`
   display: flex;
   height: 100%;
+  position: relative;
+`;
+
+const RightPanelContainer = styled.div`
+  width: 100%;
+  height: 100%;
+`;
+
+const StyledTitle = styled(Title)`
+  color: #4a67fb;
+  padding-top: 17px;
+  padding-bottom: 17px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 290px;
 `;
 
 const TabsContainer = styled.div`
   height: 100%;
-  padding: 30px 45px 0;
+  padding-right: 10px;
   border-radius: 8px;
 `;

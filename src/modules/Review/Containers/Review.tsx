@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { PageTitle } from '@cognite/cdf-utilities';
 import styled from 'styled-components';
-import { Button, Icon, Popconfirm, Title } from '@cognite/cogs.js';
+import { Button, Detail, Icon, Popconfirm } from '@cognite/cogs.js';
 import { RouteComponentProps, useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
@@ -116,7 +116,7 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
     <>
       <PageTitle title="Review Annotations" />
       <Container>
-        <ToolBar className="z-4">
+        <ToolBar>
           <div>
             {showBackButton && (
               <Button
@@ -130,18 +130,18 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
               </Button>
             )}
           </div>
-          <Title
+          <Detail
             onClick={() => history.push(getLink(workflowRoutes.process))}
             style={{ fontSize: '14px' }}
-            level={3}
           >
             {/* Todo: BreadCrumbs */}
             CDF / Contextualize Imagery Data /{' '}
             <strong>Review annotations</strong>
-          </Title>
+          </Detail>
           <CDFStatus />
           <DeleteButton onConfirm={handleFileDelete} />
         </ToolBar>
+        <HorizontalLine />
         {isVideo(file) ? (
           <VideoReview file={file} />
         ) : (
@@ -174,20 +174,25 @@ export default Review;
 
 const Container = styled.div`
   width: 100%;
-  padding: 20px 50px;
   height: 100%;
   display: grid;
-  grid-template-rows: 60px calc(100% - 120px);
+  grid-template-rows: 50px 0px calc(100% - 120px);
   position: relative;
   overflow: hidden;
 `;
 
 const ToolBar = styled.div`
-  padding: 12px;
+  padding: 5px;
   border-radius: 8px;
   width: 100%;
   display: grid;
   align-items: center;
-  grid-template-columns: min-content auto 200px 130px;
+  grid-template-columns: min-content auto 180px 130px;
   grid-column-gap: 16px;
+`;
+
+const HorizontalLine = styled.div`
+  width: 100%;
+  height: 0;
+  border: 1px solid #e8e8e8;
 `;
