@@ -21,6 +21,7 @@ import { StorableNode } from 'reducers/charts/types';
 import { useAvailableOps } from 'components/NodeEditor/AvailableOps';
 import { trackUsage } from 'utils/metrics';
 import { ConfigPanelComponentProps } from '../types';
+import { DSPToolboxFunctionInput } from './DSPToolboxFunctionInput';
 
 type FunctionData = {
   [key: string]: any;
@@ -212,14 +213,15 @@ export const ConfigPanel = ({
                 value={functionData[param]}
               />
             ) : (
-              <Input
+              <DSPToolboxFunctionInput
+                key={param}
                 id={param}
-                value={functionData[param] || _default || ''}
-                onChange={({ target }: React.ChangeEvent<HTMLInputElement>) => {
+                defaultValue={functionData[param] || _default || ''}
+                onChange={(value) => {
                   onUpdateNode({
                     functionData: {
                       ...node.functionData,
-                      [param]: transformParamInput(type, target.value),
+                      [param]: transformParamInput(type, value),
                     },
                   });
                 }}
