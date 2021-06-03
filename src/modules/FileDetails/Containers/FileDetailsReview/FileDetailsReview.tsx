@@ -100,7 +100,7 @@ export const FileDetailsReview: React.FC<FileDetailCompProps> = ({
           rowHeight={35}
           editMode={tableEditMode}
           data={fileMetadata}
-          columnWidth={250}
+          columnWidth={220}
           details={fileDetails}
         />
       </DetailsContainer>

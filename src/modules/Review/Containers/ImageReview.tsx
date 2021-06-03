@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { DataExplorationProvider, Tabs } from '@cognite/data-exploration';
 import {
@@ -6,7 +6,7 @@ import {
   EditContextualization,
 } from 'src/modules/Review/Containers/Contextualization';
 import { FileDetailsReview } from 'src/modules/FileDetails/Containers/FileDetailsReview/FileDetailsReview';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { selectAnnotationsByFileIdModelTypes } from 'src/modules/Review/previewSlice';
 import { QueryClient, QueryClientProvider } from 'react-query';
@@ -15,13 +15,16 @@ import { ImagePreviewEditMode } from 'src/constants/enums/ImagePreviewEditMode';
 import { VisionAPIType } from 'src/api/types';
 import { ImagePreviewContainer } from 'src/modules/Review/Containers/ImagePreviewContainer';
 import { Title } from '@cognite/cogs.js';
+import { CreateAnnotations } from 'src/store/thunks/CreateAnnotations';
+import { AnnotationDrawerMode } from 'src/utils/AnnotationUtils';
 import { VerticalCarousel } from '../Components/VerticalCarousel/VerticalCarousel';
 
 const queryClient = new QueryClient();
 
 const ImageReview = (props: { drawerMode: number | null; file: FileInfo }) => {
+  const [previewInFocus, setPreviewInFocus] = useState<boolean>(false);
   const { drawerMode, file } = props;
-
+  const dispatch = useDispatch();
   const tagAnnotations = useSelector(({ previewSlice }: RootState) =>
     selectAnnotationsByFileIdModelTypes(previewSlice, String(file.id), [
       VisionAPIType.TagDetection,
@@ -41,6 +44,12 @@ const ImageReview = (props: { drawerMode: number | null; file: FileInfo }) => {
       ImagePreviewEditMode.Modifiable
   );
 
+  const handleAddToFile = () => {
+    if (drawerMode === AnnotationDrawerMode.AddAnnotation) {
+      dispatch(CreateAnnotations({ fileId: file!.id, type: drawerMode }));
+    }
+  };
+
   return (
     <>
       <QueryClientProvider client={queryClient}>
@@ -56,9 +65,15 @@ const ImageReview = (props: { drawerMode: number | null; file: FileInfo }) => {
                 gdprAndTextAndObjectAnnotations={
                   gdprAndTextAndObjectAnnotations
                 }
+                handleAddToFile={handleAddToFile}
+                handleInEditMode={setPreviewInFocus}
               />
               {file && (
-                <ImagePreviewContainer file={file} drawerMode={drawerMode} />
+                <ImagePreviewContainer
+                  file={file}
+                  drawerMode={drawerMode}
+                  inFocus={previewInFocus}
+                />
               )}
             </FilePreviewContainer>
             <RightPanelContainer>
@@ -140,7 +155,7 @@ const FilePreviewContainer = styled.div`
 
 const RightPanelContainer = styled.div`
   width: 100%;
-  height: 100%;
+  height: 90%;
 `;
 
 const StyledTitle = styled(Title)`

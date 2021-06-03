@@ -35,6 +35,7 @@ export interface VisionAnnotationState extends Omit<VisionAnnotation, 'id'> {
 export interface VisibleAnnotations extends VisionAnnotationState {
   box: AnnotationBoundingBox;
   show: true;
+  selected?: false;
 }
 
 export interface VisionModelState {
@@ -159,7 +160,7 @@ const previewSlice = createSlice({
       }
     },
     showAnnotationDrawer(state, action: PayloadAction<AnnotationDrawerMode>) {
-      state.drawer.show = true;
+      state.drawer.show = false;
       state.drawer.mode = action.payload;
       state.imagePreview.editable = ImagePreviewEditMode.NotEditable; // disable any existing edit mode
     },
@@ -358,13 +359,13 @@ const resetPreviewState = (state: State) => {
 const resetDrawerEditState = (state: State) => {
   state.drawer = {
     show: false,
-    mode: null,
-    text: '',
+    mode: state.drawer.mode,
+    text: state.drawer.text, // Keep the state for sequencial labeling
     box: null,
     selectedAssetIds: [],
   };
   state.imagePreview = {
-    editable: 0,
+    editable: state.imagePreview.editable,
   };
 };
 

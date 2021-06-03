@@ -119,7 +119,8 @@ export class AnnotationUtils {
 
   public static getAnnotationStyle(
     color: string,
-    status?: AnnotationStatus
+    status?: AnnotationStatus,
+    selected?: boolean
   ): AnnotationStyle {
     const lineColor = color;
     const { lineWidth } = AnnotationUtils;
@@ -129,6 +130,7 @@ export class AnnotationUtils {
         strokeColor: lineColor,
         strokeWidth: lineWidth,
         highlight: false,
+        backgroundColor: selected ? `${lineColor}20` : undefined,
       };
     }
 

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   CogniteFileViewer,
   ProposedCogniteAnnotation,
@@ -67,14 +67,25 @@ export const ImagePreview: React.FC<FilePreviewProps> = ({
     [onCreateAnnotation, onUpdateAnnotation]
   );
 
+  const [selectedAnnotation, setSelectedAnnotation] =
+    useState<ProposedCogniteAnnotation>();
+
   const styledAnnotations: ProposedCogniteAnnotation[] = annotations.map(
     (item) => ({
       ...item,
       id: item.id.toString(),
-      mark: AnnotationUtils.getAnnotationStyle(item.color, item.status),
+      mark: AnnotationUtils.getAnnotationStyle(
+        item.color,
+        item.status,
+        item.id === Number(selectedAnnotation?.id)
+      ),
       version: 1,
     })
   );
+
+  const handleAnnotationSelected = (annotation: ProposedCogniteAnnotation) => {
+    setSelectedAnnotation(annotation);
+  };
 
   return (
     <CogniteFileViewer
@@ -89,6 +100,9 @@ export const ImagePreview: React.FC<FilePreviewProps> = ({
       annotations={styledAnnotations}
       allowCustomAnnotations
       loader={<LoaderView />}
+      onAnnotationSelected={(annotation) => {
+        handleAnnotationSelected(annotation[0] as ProposedCogniteAnnotation); // TODO: not sure why a list is returned here?
+      }}
     />
   );
 };

@@ -176,7 +176,7 @@ const Container = styled.div`
   width: 100%;
   height: 100%;
   display: grid;
-  grid-template-rows: 50px 0px calc(100% - 120px);
+  grid-template-rows: 50px 0px calc(100% - 55px);
   position: relative;
   overflow: hidden;
 `;

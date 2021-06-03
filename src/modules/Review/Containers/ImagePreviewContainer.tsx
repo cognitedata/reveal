@@ -18,9 +18,11 @@ import { FileInfo } from '@cognite/cdf-sdk-singleton';
 export const ImagePreviewContainer = ({
   drawerMode,
   file,
+  inFocus,
 }: {
   file: FileInfo;
   drawerMode: number | null;
+  inFocus: boolean;
 }) => {
   const dispatch = useDispatch();
   const visibleNonRejectedAnnotationsAndEditModeAnnotation = useSelector(
@@ -74,7 +76,14 @@ export const ImagePreviewContainer = ({
   };
 
   return (
-    <div style={{ width: '100%', background: 'grey' }}>
+    <div
+      style={{
+        width: '100%',
+        height: '100%',
+        background: 'grey',
+        outline: inFocus ? ' 3px solid #4A67FB' : undefined,
+      }}
+    >
       <ImagePreview
         fileObj={file}
         annotations={visibleNonRejectedAnnotationsAndEditModeAnnotation}

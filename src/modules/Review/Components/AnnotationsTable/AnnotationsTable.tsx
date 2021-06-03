@@ -176,6 +176,22 @@ export const AnnotationsTable = ({
                             }}
                           />
                         }
+                        subComponentPlacement="right"
+                        customSubComponent={
+                          !annotation.show
+                            ? () => {
+                                return (
+                                  <Icon
+                                    type="EyeHide"
+                                    style={{ color: '#595959' }}
+                                    onClick={() => {
+                                      handleVisibility(annotation.id);
+                                    }}
+                                  />
+                                );
+                              }
+                            : undefined
+                        }
                       />
                     </Tooltip>
                   </AnnotationLbl>
