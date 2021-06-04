@@ -42,11 +42,6 @@ def fakeIdpEnvVars = [
     envVar(key: 'IDP_USER_ID', value: 'user'),
     envVar(key: 'IDP_CLUSTER', value: 'azure-dev'),
     envVar(key: 'IDP_TOKEN_ID', value: 'demo-app-e2e'),
-    secretEnvVar(
-      key: 'PRIVATE_KEY',
-      secretName: 'react-demo-app-e2e-azure-dev', // <- project name
-      secretKey: 'private-key',
-    ),
 ]
 
 def pods = { body ->

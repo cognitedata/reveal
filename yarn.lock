@@ -1510,10 +1510,10 @@
     mixpanel-browser "^2.35.0"
     react "^17.0.1"
 
-"@cognite/react-container@^1.2.5":
-  version "1.2.5"
-  resolved "https://registry.yarnpkg.com/@cognite/react-container/-/react-container-1.2.5.tgz#c8593416ff5c5648e51dd3059409d249c0b6ee48"
-  integrity sha512-amv+8uNyHrWGxGkPgask3PQFDeKlxnXnY9jUNXBUntYznFUlI3Umh9nZALV4hzh+j6uB9TgQ89fraxjUcoX87w==
+"@cognite/react-container@^1.2.6":
+  version "1.2.6"
+  resolved "https://registry.yarnpkg.com/@cognite/react-container/-/react-container-1.2.6.tgz#0f6174df64ebb63391d4d95522074b86960d6389"
+  integrity sha512-EW7f98cKGk9Rf/cNpQ0zDAqCBfYuEPNcd3oa20vkbgvnpy+75Fwe4AJAG3jhzjLmUMEvQ8MYL3ybAfuJW8l4oQ==
   dependencies:
     "@cognite/auth-utils" "^1.0.5"
     "@cognite/intercom-helper" "^0.1.2"
@@ -1522,7 +1522,7 @@
     "@cognite/react-i18n" "^0.4.0"
     "@cognite/react-loop-detector" "^0.1.0"
     "@cognite/react-sentry" "^0.1.1"
-    "@cognite/react-tenant-selector" "^1.2.6"
+    "@cognite/react-tenant-selector" "^1.2.7"
     "@cognite/sdk" "^4.0.3"
     jwt-decode "^3.0.0"
     react-redux "^7.2.2"
@@ -1572,25 +1572,10 @@
     "@sentry/browser" "^6.2.1"
     tslib "^2.2.0"
 
-"@cognite/react-tenant-selector@^1.2.6":
-  version "1.2.6"
-  resolved "https://registry.yarnpkg.com/@cognite/react-tenant-selector/-/react-tenant-selector-1.2.6.tgz#2e2e9358ce077caa49b63dc10f9020c5aefeaa9b"
-  integrity sha512-mKGcuGXWNfn5ncwA+CCkqUFGK2vgAOriOUPlVZ4rXVu29iDCV6UswqmcIAN3l3ct627q2eSvPz2LOJAivvtcag==
-  dependencies:
-    "@cognite/auth-utils" "^1.0.5"
-    "@cognite/intercom-helper" "^0.1.2"
-    "@cognite/metrics" "^1.0.0"
-    "@cognite/react-i18n" "^0.4.0"
-    "@cognite/storage" "^0.1.1"
-    axios "^0.21.1"
-    react-helmet "^6.1.0"
-    react-query "^3.7.1"
-    styled-components "^5.1.0"
-
 "@cognite/react-tenant-selector@^1.2.7":
-  version "1.2.7"
-  resolved "https://registry.yarnpkg.com/@cognite/react-tenant-selector/-/react-tenant-selector-1.2.7.tgz#0618a1b32b968131694943f7a6937296155c3364"
-  integrity sha512-b8H8SrzpsF49/58OPspNsWIJ1PIJUomDw7vXmTj3UHkL7/MjLqa4iZ9X1Jnq+4VLzzfUeCl6DmDCy8MEXY/ivw==
+  version "1.2.8"
+  resolved "https://registry.yarnpkg.com/@cognite/react-tenant-selector/-/react-tenant-selector-1.2.8.tgz#2008eacb1a68eac68704af3de14cb9cc2d698826"
+  integrity sha512-eAYp/cjWtEFCdfNJsrDlrOoin8sVZZSUuf7h90w3YtWhsQNu1ha8GpXAVxOvW2+oOlbEdpolEU+WnVCYHNW0jw==
   dependencies:
     "@cognite/auth-utils" "^1.0.5"
     "@cognite/intercom-helper" "^0.1.2"

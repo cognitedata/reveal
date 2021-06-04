@@ -69,6 +69,18 @@ git remote rm repo-to-import
 
 [Here](https://medium.com/@ayushya/move-directory-from-one-repository-to-another-preserving-git-history-d210fa049d4b) is a good article.
 
+## Running e2e tests on Jenkins
+
+E2e tests setup on Jenkins is powered by [Fake IdP](https://github.com/cognitedata/application-services/tree/master/services/fake-idp).
+Fake Idp is a docker container running on the side of the Jenkins pipeline responsible for issuing tokens.
+In order to be able to run e2e tests your CDF project should support OIDC and be configured against `internal-jwks-host`.
+See similar setup explained [here](https://github.com/cognitedata/application-services/tree/27a505c1a9ecdbc156fdd59a6533943e765e1702/services/db-service#how-to-setup-db-service-for-a-new-cluster).
+When you have your project available you need to:
+
+1. Ask in #infrastructure to populate `apps-e2e-fake-idp-private-keys` secret with the new key being the name of your project.
+2. In `public/sidecar.js` inside `fakeIdp` array object define `name: <projectName>` and `project: <projectName>` parameters which will render a button `Login with Fake IDP (<projectName>)`.
+3. Inside your app's testcafe role find and click the button above in order to obtain a token.
+
 ## Deploying the app
 
 Please see the [deployment guide] for more information how to actually get this app into production.
