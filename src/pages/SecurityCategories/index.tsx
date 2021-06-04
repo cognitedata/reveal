@@ -98,8 +98,8 @@ export default function SecurityCategories() {
         pagination={{ pageSize: 100, hideOnSinglePage: true }}
         dataSource={data?.filter(
           s =>
-            s.name.toLowerCase().includes(searchValue) ||
-            s.id.toString().includes(searchValue)
+            s.name.toLowerCase().includes(searchValue.toLowerCase()) ||
+            s.id.toString().includes(searchValue.toLowerCase())
         )}
         style={{ marginTop: '20px' }}
         getPopupContainer={getContainer}

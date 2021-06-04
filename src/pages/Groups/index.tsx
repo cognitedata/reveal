@@ -305,9 +305,13 @@ export default function Groups() {
         columns={columns}
         dataSource={groups?.filter(
           s =>
-            s.name.toLowerCase().includes(searchValue) ||
+            s.name.toLowerCase().includes(searchValue.toLowerCase()) ||
             s.id.toString().includes(searchValue) ||
-            s.capabilities?.find(c => Object.keys(c)[0]!.includes(searchValue))
+            s.capabilities?.find(c =>
+              Object.keys(c)[0]!
+                .toLowerCase()
+                .includes(searchValue.toLowerCase())
+            )
         )}
         style={{ marginTop: '20px' }}
         getPopupContainer={getContainer}

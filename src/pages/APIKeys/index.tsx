@@ -57,10 +57,13 @@ export default function APIKeys() {
               ? a.serviceAccountId
                   .toString()
                   .includes(searchValue.toLowerCase()) ||
-                a.id.toString().includes(searchValue.toLowerCase())
+                a.id.toString().includes(searchValue.toLowerCase()) ||
+                a.serviceAccountName
+                  ?.toString()
+                  .includes(searchValue.toLowerCase())
               : true
           )}
-        pagination={{ pageSize: 100, hideOnSinglePage: true }}
+        pagination={{ pageSize: 25, hideOnSinglePage: true }}
       />
     </>
   );

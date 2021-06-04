@@ -122,12 +122,12 @@ export default function ServiceAccounts() {
       <Row justify="space-between">
         <Col>
           <Input.Search
-            placeholder="Filter by name or ID"
+            placeholder="Filter by name, ID, group name or capability"
             onChange={e => setSearchValue(e.target.value)}
             value={searchValue}
             allowClear
             style={{
-              width: '326px',
+              width: '400px',
               height: '40px',
             }}
           />
@@ -149,7 +149,16 @@ export default function ServiceAccounts() {
         dataSource={accounts?.filter(a =>
           searchValue
             ? a.name.toLowerCase().includes(searchValue.toLowerCase()) ||
-              a.id.toString().includes(searchValue.toLowerCase())
+              a.id.toString().includes(searchValue.toLowerCase()) ||
+              allGroups
+                .filter(g => a.groups?.includes(g.id))
+                .find(
+                  g =>
+                    g.name.toLowerCase().includes(searchValue.toLowerCase()) ||
+                    !!g.capabilities?.find(c =>
+                      Object.keys(c)[0]!.toLowerCase().includes(searchValue)
+                    )
+                )
             : true
         )}
         pagination={{ pageSize: 25, hideOnSinglePage: true }}
