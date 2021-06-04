@@ -12,26 +12,23 @@ import {
   Icon,
   Menu,
   Popconfirm,
-  Flex,
   Tooltip,
 } from '@cognite/cogs.js';
 import FunctionCall from 'components/FunctionCall';
 import { updateWorkflow, removeWorkflow } from 'utils/charts';
 import EditableText from 'components/EditableText';
-import { units } from 'utils/units';
 import { useCallFunction, useFunctionCall } from 'utils/backendService';
 import { getStepsFromWorkflow } from 'utils/transforms';
 import { calculateGranularity } from 'utils/timeseries';
 import { isWorkflowRunnable } from 'components/NodeEditor/utils';
 import { AppearanceDropdown } from 'components/AppearanceDropdown';
+import { UnitDropdown } from 'components/UnitDropdown';
 import { getHash } from 'utils/hash';
 import {
   SourceItem,
   SourceSquare,
   SourceName,
   SourceRow,
-  UnitMenuAside,
-  UnitMenuHeader,
   SourceDescription,
 } from './elements';
 import WorkflowMenu from './WorkflowMenu';
@@ -184,63 +181,19 @@ export default function WorkflowRow({
   useEffect(handleChanges, [handleChanges]);
   useEffect(handleCallUpdates, [handleCallUpdates]);
 
-  const inputUnitOption = units.find(
-    (unitOption) => unitOption.value === unit?.toLowerCase()
-  );
-
-  const preferredUnitOption = units.find(
-    (unitOption) => unitOption.value === preferredUnit?.toLowerCase()
-  );
-
-  const unitConversionOptions = inputUnitOption?.conversions?.map(
-    (conversion) => units.find((unitOption) => unitOption.value === conversion)
-  );
-
-  const unitOverrideMenuItems = units.map((unitOption) => (
-    <Menu.Item
-      key={unitOption.value}
-      onClick={() =>
-        update(id, {
-          unit: unitOption.value,
-        })
-      }
-      style={
-        unit?.toLowerCase() === unitOption.value
-          ? {
-              color: 'var(--cogs-midblue-3)',
-              backgroundColor: 'var(--cogs-midblue-6)',
-              borderRadius: 3,
-            }
-          : {}
-      }
-    >
-      {unitOption.label}
-    </Menu.Item>
-  ));
-
-  const unitConversionMenuItems = unitConversionOptions?.map((unitOption) => (
-    <Menu.Item
-      key={unitOption?.value}
-      onClick={() =>
-        update(id, {
-          preferredUnit: unitOption?.value,
-        })
-      }
-      style={
-        preferredUnit?.toLowerCase() === unitOption?.value
-          ? {
-              color: 'var(--cogs-midblue-3)',
-              backgroundColor: 'var(--cogs-midblue-6)',
-              borderRadius: 3,
-            }
-          : {}
-      }
-    >
-      {unitOption?.label}
-    </Menu.Item>
-  ));
-
   const remove = () => mutate(removeWorkflow(chart, id));
+
+  const updateUnit = (unitOption: any) => {
+    update(id, {
+      unit: unitOption.value,
+    });
+  };
+
+  const updatePrefferedUnit = (unitOption: any) => {
+    update(id, {
+      preferredUnit: unitOption?.value,
+    });
+  };
 
   const updateAppearance = (diff: Partial<ChartTimeSeries>) =>
     mutate(updateWorkflow(chart, id, diff));
@@ -307,38 +260,12 @@ export default function WorkflowRow({
           </td>
           <td colSpan={4} />
           <td style={{ textAlign: 'right', paddingRight: 8 }}>
-            <Dropdown
-              content={
-                <Menu>
-                  <Flex
-                    direction="row"
-                    style={{ height: 150, overflow: 'hidden' }}
-                  >
-                    <div style={{ overflowY: 'scroll' }}>
-                      <Menu.Header>
-                        <UnitMenuHeader>Input</UnitMenuHeader>
-                      </Menu.Header>
-                      {unitOverrideMenuItems}
-                    </div>
-                    <UnitMenuAside style={{ overflowY: 'scroll' }}>
-                      <Menu.Header>
-                        <UnitMenuHeader>Output</UnitMenuHeader>
-                      </Menu.Header>
-                      {unitConversionMenuItems}
-                    </UnitMenuAside>
-                  </Flex>
-                </Menu>
-              }
-            >
-              <Button
-                icon="Down"
-                type="tertiary"
-                iconPlacement="right"
-                style={{ height: 28 }}
-              >
-                {preferredUnitOption?.label || '-'}
-              </Button>
-            </Dropdown>
+            <UnitDropdown
+              unit={unit}
+              preferredUnit={preferredUnit}
+              onOverrideUnitClick={updateUnit}
+              onConversionUnitClick={updatePrefferedUnit}
+            />
           </td>
           <td />
           <td style={{ textAlign: 'center', paddingLeft: 0 }}>
