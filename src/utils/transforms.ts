@@ -104,11 +104,13 @@ export function transformParamInput(
 ): string | number {
   switch (type) {
     case DSPFunctionParameterType.int:
-      return Number(value);
+      return value === '' ? '' : Number(value);
     case DSPFunctionParameterType.float:
       // eslint-disable-next-line
       const match = value.match(FLOAT_NUMBER_PATTERN);
-      return match && match[0] ? match[0] : parseFloat(value);
+      // eslint-disable-next-line
+      const parsedValue = match && match[0] ? match[0] : parseFloat(value);
+      return value === '' ? value : parsedValue;
     case DSPFunctionParameterType.string:
       return value;
     default:
