@@ -10,6 +10,7 @@ import styled from 'styled-components/macro';
 import debounce from 'lodash/debounce';
 import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
+import dayjs from 'dayjs';
 
 import {
   DatapointAggregate,
@@ -47,6 +48,7 @@ const Y_AXIS_MARGIN = 40;
 
 type ChartProps = {
   chartId: string;
+  isYAxisShown?: boolean;
   isPreview?: boolean;
   isInSearch?: boolean;
   stackedMode?: boolean;
@@ -57,6 +59,7 @@ const Plot = createPlotlyComponent(Plotly);
 
 const PlotlyChartComponent = ({
   chartId,
+  isYAxisShown = true,
   isPreview = false,
   isInSearch = false,
   stackedMode = false,
@@ -141,6 +144,17 @@ const PlotlyChartComponent = ({
       setLocalWorkflows(workflowsRaw);
     }
   }, [wfSuccess, workflowsRaw]);
+
+  const onAdjustButtonClick = useCallback(() => {
+    trackUsage('ChartView.ToggleYAxisLock', {
+      state: !yAxisLocked ? 'unlocked' : 'locked',
+    });
+    setYAxisLocked(!yAxisLocked);
+  }, [yAxisLocked]);
+
+  useEffect(() => {
+    if (!isYAxisShown && !yAxisLocked) setYAxisLocked(true);
+  }, [isYAxisShown, yAxisLocked, onAdjustButtonClick]);
 
   const updateChart = useCallback(
     (c: Chart) => {
@@ -306,7 +320,8 @@ const PlotlyChartComponent = ({
     1000
   );
 
-  const showYAxis = !isInSearch && !isPreview;
+  const showYAxis = !isInSearch && !isPreview && isYAxisShown;
+  const showAdjustButton = showYAxis && seriesData.length > 0;
   const horizontalMargin = isPreview ? 0 : 20;
   const verticallMargin = isPreview ? 0 : 30;
 
@@ -323,7 +338,10 @@ const PlotlyChartComponent = ({
       domain: showYAxis
         ? [yAxisValues.width * (seriesData.length - 1) + yAxisValues.margin, 1]
         : [0, 1],
-      range: [chart?.dateFrom, chart?.dateTo],
+      range: [
+        dayjs(chart?.dateFrom!).format('YYYY-MM-DD HH:mm:ss'),
+        dayjs(chart?.dateTo!).format('YYYY-MM-DD HH:mm:ss'),
+      ],
       showspikes: true,
       spikemode: 'across',
       spikethickness: 1,
@@ -463,18 +481,13 @@ const PlotlyChartComponent = ({
 
   return (
     <ChartingContainer ref={containerRef}>
-      {!isPreview && !isInSearch && seriesData.length > 0 && (
+      {showAdjustButton && (
         <>
           {(isLoading || timeseriesFetching) && <LoadingIcon />}
           <AdjustButton
             type="tertiary"
             icon="YAxis"
-            onClick={() => {
-              trackUsage('ChartView.ToggleYAxisLock', {
-                state: !yAxisLocked ? 'unlocked' : 'locked',
-              });
-              setYAxisLocked(!yAxisLocked);
-            }}
+            onClick={onAdjustButtonClick}
             left={yAxisValues.width * 100 * seriesData.length}
             className="adjust-button"
             style={{ background: 'white' }}
