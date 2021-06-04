@@ -107,7 +107,7 @@ export const ConfigPanel = ({
                     <Menu.Submenu
                       disabled={filtered.length === 0}
                       content={
-                        <Menu>
+                        <Menu style={{ maxHeight: 615, overflowY: 'auto' }}>
                           <Menu.Header>{category}</Menu.Header>
                           {filtered.map((func) => (
                             <Menu.Item
