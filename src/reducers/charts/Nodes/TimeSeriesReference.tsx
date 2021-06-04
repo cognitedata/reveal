@@ -53,7 +53,7 @@ export const ConfigPanel = ({
 
   return (
     <div>
-      <h4>Time Series Reference</h4>
+      <h4>Time Series</h4>
       <AutoComplete
         mode="async"
         theme="dark"
@@ -76,7 +76,7 @@ export const ConfigPanel = ({
 };
 
 export const node = {
-  title: 'Time Series Reference',
+  title: 'Time Series',
   subtitle: 'TIME SERIES',
   color: '#FC2574',
   icon: 'Function',

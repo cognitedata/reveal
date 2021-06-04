@@ -20,11 +20,11 @@ export default [
     ...Constant,
   },
   {
-    name: 'Toolbox Function',
+    name: 'Function',
     ...DSPToolboxFunction,
   },
   {
-    name: 'Output Timeseries',
+    name: 'Output',
     ...OutputSeries,
   },
 ] as NodeOption[];
