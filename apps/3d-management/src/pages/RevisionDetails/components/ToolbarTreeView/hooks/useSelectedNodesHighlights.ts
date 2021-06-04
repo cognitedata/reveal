@@ -1,6 +1,10 @@
 import {
+  ByTreeIndexNodeSet,
   Cognite3DModel,
   Cognite3DViewer,
+  DefaultNodeAppearance,
+  IndexSet,
+  NumericRange,
   PointerEventDelegate,
 } from '@cognite/reveal';
 import React, { useCallback, useEffect } from 'react';
@@ -74,32 +78,44 @@ export function useSelectedNodesHighlights({
     [viewer, model, dispatch, treeViewRef]
   );
 
-  useEffect(() => {
-    let stylingFn: typeof model.selectNodeByTreeIndex;
+  const prevSelectedNodesSetRef = React.useRef<ByTreeIndexNodeSet>();
 
-    if (ghostModeEnabled) {
-      stylingFn = model.unghostNodeByTreeIndex.bind(model);
-      model.deselectAllNodes();
-      model.ghostAllNodes();
-    } else {
-      stylingFn = model.selectNodeByTreeIndex.bind(model);
-      model.unghostAllNodes();
-      model.deselectAllNodes();
+  useEffect(() => {
+    model.setDefaultNodeAppearance(
+      ghostModeEnabled
+        ? DefaultNodeAppearance.Ghosted
+        : DefaultNodeAppearance.Default
+    );
+
+    if (prevSelectedNodesSetRef.current) {
+      model.removeStyledNodeSet(prevSelectedNodesSetRef.current);
+      model.addStyledNodeSet(
+        prevSelectedNodesSetRef.current,
+        ghostModeEnabled
+          ? DefaultNodeAppearance.Default
+          : DefaultNodeAppearance.Highlighted
+      );
     }
+  }, [model, ghostModeEnabled]);
+
+  useEffect(() => {
+    const highlightedSet = new IndexSet();
 
     selectedNodes.forEach(({ treeIndex, subtreeSize }) => {
-      // for big subtrees there is performance hit instead of performance gain
-      // likely because stylingFn always creates promise
-      if (typeof subtreeSize === 'undefined' || subtreeSize > 100000) {
-        stylingFn(treeIndex, true);
-      } else if (subtreeSize <= 1) {
-        stylingFn(treeIndex, false);
-      } else {
-        for (let i = treeIndex; i < treeIndex + subtreeSize; i++) {
-          stylingFn(i, false);
-        }
-      }
+      highlightedSet.addRange(new NumericRange(treeIndex, subtreeSize));
     });
+    const selectedNodesStyledSet = new ByTreeIndexNodeSet(highlightedSet);
+
+    if (prevSelectedNodesSetRef.current) {
+      model.removeStyledNodeSet(prevSelectedNodesSetRef.current);
+    }
+    prevSelectedNodesSetRef.current = selectedNodesStyledSet;
+    model.addStyledNodeSet(
+      selectedNodesStyledSet,
+      ghostModeEnabled
+        ? DefaultNodeAppearance.Default
+        : DefaultNodeAppearance.Highlighted
+    );
   }, [model, ghostModeEnabled, selectedNodes]);
 
   useEffect(() => {
