@@ -249,6 +249,7 @@ export default function WorkflowRow({
     <SourceRow
       onClick={() => onRowClick(id)}
       className={isSelected ? 'active' : undefined}
+      onDoubleClick={openNodeEditor}
     >
       <td>
         <SourceItem key={id}>
