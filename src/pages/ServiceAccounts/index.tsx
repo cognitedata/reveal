@@ -6,6 +6,7 @@ import {
   Col,
   Modal,
   Input,
+  Select,
   Row,
   Table,
   notification,
@@ -16,21 +17,26 @@ import { useSDK } from '@cognite/sdk-provider';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { sleep } from 'utils/utils';
 
+import { useGroups } from 'hooks';
 import columns from './columns';
+
+const { Option } = Select;
 
 export default function ServiceAccounts() {
   const sdk = useSDK();
   const client = useQueryClient();
   const [searchValue, setSearchValue] = useState('');
   const [newName, setNewName] = useState('');
+  const [newGroups, setNewGroups] = useState([]);
   const [showNewModal, setShowModal] = useState(false);
   const { data: createPermission } = usePermissions('usersAcl', 'CREATE');
   const { data: accounts, isFetched } = useQuery(['service-accounts'], () =>
     sdk.serviceAccounts.list()
   );
+  const { data: allGroups = [] } = useGroups(true);
   const { mutateAsync: create } = useMutation(
-    (name: string) =>
-      sdk.serviceAccounts.create([{ name }]).then(() => sleep(500)),
+    ({ name, groups }: { name: string; groups: number[] }) =>
+      sdk.serviceAccounts.create([{ name, groups }]).then(() => sleep(500)),
     {
       onMutate() {
         notification.info({
@@ -70,21 +76,45 @@ export default function ServiceAccounts() {
           okText="Create"
           okButtonProps={{ disabled: !newName }}
           onOk={async () => {
-            await create(newName);
+            await create({ name: newName, groups: newGroups });
             setNewName('');
+            setNewGroups([]);
             setShowModal(false);
           }}
           onCancel={() => {
             setNewName('');
+            setNewGroups([]);
             setShowModal(false);
           }}
         >
-          <Form layout="horizontal">
+          <Form
+            layout="horizontal"
+            labelCol={{ span: 4 }}
+            wrapperCol={{ span: 20 }}
+          >
             <Form.Item name="name" label="Name">
               <Input
                 onChange={e => setNewName(e.target.value)}
                 value={newName}
               />
+            </Form.Item>
+            <Form.Item name="groups" label="Groups">
+              <Select
+                mode="multiple"
+                defaultValue={[]}
+                onChange={ids => setNewGroups(ids)}
+                filterOption={(input, option) =>
+                  option?.title
+                    ?.toLowerCase()
+                    .includes(input?.toLowerCase() || '')
+                }
+              >
+                {allGroups.map(g => (
+                  <Option key={g.id} value={g.id}>
+                    {g.name}
+                  </Option>
+                ))}
+              </Select>
             </Form.Item>
           </Form>
         </Modal>
