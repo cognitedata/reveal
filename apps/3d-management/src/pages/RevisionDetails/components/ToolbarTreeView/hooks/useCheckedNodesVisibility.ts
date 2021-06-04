@@ -1,7 +1,12 @@
 import React, { useCallback, useEffect } from 'react';
 
-import debounce from 'lodash/debounce';
-import { Cognite3DModel } from '@cognite/reveal';
+import {
+  ByTreeIndexNodeSet,
+  Cognite3DModel,
+  DefaultNodeAppearance,
+  IndexSet,
+  NumericRange,
+} from '@cognite/reveal';
 import { TreeDataNode } from 'src/pages/RevisionDetails/components/TreeView/types';
 import { traverseTree } from 'src/pages/RevisionDetails/components/TreeView/utils/treeFunctions';
 import { subtreeHasTreeIndex } from 'src/store/modules/TreeView/treeViewUtils';
@@ -19,112 +24,87 @@ export function useCheckedNodesVisibility({
 }: Args) {
   const prevCheckedKeysRef = React.useRef<Set<number> | null>(null);
 
-  // that's to avoid race state D3M-32
-  const lastOperation = React.useRef<Promise<any>>(Promise.resolve());
+  const hiddenNodesSet = React.useRef(new IndexSet());
+  const hiddenNodesStyledSet = React.useRef(
+    new ByTreeIndexNodeSet(hiddenNodesSet.current)
+  );
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const nodesVisibilityChanged = useCallback(
-    debounce(
-      async (newTreeData: typeof treeData, checkedKeysSet: Set<number>) => {
-        await lastOperation.current;
+    (newTreeData: typeof treeData, checkedKeysSet: Set<number>) => {
+      // use to avoid calling hide/show node multiple times
+      const hiddenTreeRanges: Array<[number, number]> = [];
 
-        const updateNodesVisibility = async () => {
-          const nodesShowingArgs: [number, boolean][] = [];
-          const nodesHidingArgs: [number, boolean][] = [];
+      traverseTree(newTreeData, (key, node) => {
+        if (typeof key !== 'number') {
+          return false;
+        }
 
-          // use to avoid calling hide/show node multiple times
-          const hiddenTreeRanges: Array<[number, number]> = [];
+        if (checkedKeysSet.has(key)) {
+          // we need to reapply styling only if node is about to be hidden
+          if (
+            !prevCheckedKeysRef.current!.has(key) ||
+            hiddenTreeRanges.find(([start, end]) => key >= start && key < end)
+          ) {
+            hiddenNodesSet.current.removeRange(
+              new NumericRange(key, node.meta.subtreeSize)
+            );
+          }
 
-          traverseTree(newTreeData, (key, node) => {
-            if (typeof key !== 'number') {
-              return false;
-            }
+          // when node is checked, all its children checked too, so stop traversing
+          return false;
+        }
 
-            if (checkedKeysSet.has(key)) {
-              // we need to reapply styling only if node is about to be hidden
-              if (
-                !prevCheckedKeysRef.current!.has(key) ||
-                hiddenTreeRanges.find(
-                  ([start, end]) => key >= start && key < end
-                )
-              ) {
-                nodesShowingArgs.push([key, node.meta.subtreeSize > 1]);
-              }
-
-              // when node is checked, all its children checked too, so stop traversing
-              return false;
-            }
-
-            if (
-              !hiddenTreeRanges.find(
-                ([start, end]) => key >= start && key < end
-              )
-            ) {
-              const allKnownChildrenAreHidden = ![
-                ...checkedKeysSet.values(),
-              ].some((checkedIndex) =>
-                subtreeHasTreeIndex(node as TreeDataNode, checkedIndex)
-              );
-
-              const hadCheckedChildBefore = [
-                ...prevCheckedKeysRef.current!.values(),
-              ].some((previouslyCheckedKey) =>
-                subtreeHasTreeIndex(node as TreeDataNode, previouslyCheckedKey)
-              );
-
-              // should be hidden with applyToChildren=true
-              if (
-                node.meta.subtreeSize > 1 &&
-                (!node.children || allKnownChildrenAreHidden)
-              ) {
-                if (hadCheckedChildBefore) {
-                  nodesHidingArgs.push([key, true]);
-                }
-                hiddenTreeRanges.push([key, key + node.meta.subtreeSize]);
-                return false;
-              }
-
-              if (prevCheckedKeysRef.current!.has(key)) {
-                nodesHidingArgs.push([key, false]);
-              }
-              hiddenTreeRanges.push([key, key + 1]);
-            }
-
-            // must keep looking for every visible children
-            return true;
-          });
-
-          await Promise.all<any>(
-            nodesHidingArgs.map(([treeIndex, applyToChildren]) => {
-              if (treeIndex === 0 && applyToChildren) {
-                return model.hideAllNodes();
-              }
-              return model.hideNodeByTreeIndex(
-                treeIndex,
-                undefined,
-                applyToChildren
-              );
-            })
+        if (
+          !hiddenTreeRanges.find(([start, end]) => key >= start && key < end)
+        ) {
+          const allKnownChildrenAreHidden = ![
+            ...checkedKeysSet.values(),
+          ].some((checkedIndex) =>
+            subtreeHasTreeIndex(node as TreeDataNode, checkedIndex)
           );
-          await Promise.all<any>(
-            nodesShowingArgs.map(([treeIndex, applyToChildren]) => {
-              if (treeIndex === 0 && applyToChildren) {
-                return model.showAllNodes();
-              }
-              return model.showNodeByTreeIndex(treeIndex, applyToChildren);
-            })
+          const hadCheckedChildBefore = [
+            ...prevCheckedKeysRef.current!.values(),
+          ].some((previouslyCheckedKey) =>
+            subtreeHasTreeIndex(node as TreeDataNode, previouslyCheckedKey)
           );
-        };
 
-        lastOperation.current = lastOperation.current.then(async () => {
-          await updateNodesVisibility();
-          prevCheckedKeysRef.current = checkedKeysSet;
-        });
-      },
-      250
-    ), // delayed to give a chance to treeView to finish checkbox redraw
-    [model]
+          // should be hidden with applyToChildren=true
+          if (
+            node.meta.subtreeSize > 1 &&
+            (!node.children || allKnownChildrenAreHidden)
+          ) {
+            if (hadCheckedChildBefore) {
+              hiddenNodesSet.current.addRange(
+                new NumericRange(key, node.meta.subtreeSize)
+              );
+            }
+            hiddenTreeRanges.push([key, key + node.meta.subtreeSize]);
+            return false;
+          }
+
+          if (prevCheckedKeysRef.current!.has(key)) {
+            hiddenNodesSet.current.add(key);
+          }
+          hiddenTreeRanges.push([key, key + 1]);
+        }
+
+        // must keep looking for every visible children
+        return true;
+      });
+
+      hiddenNodesStyledSet.current.updateSet(hiddenNodesSet.current);
+      prevCheckedKeysRef.current = checkedKeysSet;
+    },
+    []
   );
+
+  useEffect(() => {
+    model.addStyledNodeSet(
+      hiddenNodesStyledSet.current,
+      DefaultNodeAppearance.Hidden
+    );
+  }, [model]);
 
   // show only checked nodes
   useEffect(() => {
