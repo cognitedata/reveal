@@ -8,14 +8,14 @@
     "declarationDir": "dist/types",
     "sourceMap": true,
     "outDir": "dist",
-    "importHelpers": true,                 /* Import emit helpers from 'tslib' when using only ts-loader. */
-    "downlevelIteration": true,            /* Provide full support for iterables in 'for-of', spread, and destructuring when targeting 'ES5' or 'ES3'. */
+    "importHelpers": true /* Import emit helpers from 'tslib' when using only ts-loader. */,
+    "downlevelIteration": true /* Provide full support for iterables in 'for-of', spread, and destructuring when targeting 'ES5' or 'ES3'. */,
     "strict": true,
     "noImplicitAny": false,
     "strictNullChecks": true,
     "resolveJsonModule": true,
     "noImplicitThis": true,
-    "noImplicitReturns": true,             /* Report error when not all code paths in function return a value. */
+    "noImplicitReturns": true /* Report error when not all code paths in function return a value. */,
     "moduleResolution": "node",
     "baseUrl": "./",
     "paths": {
@@ -23,12 +23,12 @@
       "@images/*": ["images/*"]
     },
     "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,                  /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */
+    "esModuleInterop": true /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */,
     "inlineSources": true,
-    "skipLibCheck": true,                     /* Skip type checking of declaration files. */
-    "forceConsistentCasingInFileNames": true,  /* Disallow inconsistently-cased references to the same file. */
+    "skipLibCheck": true /* Skip type checking of declaration files. */,
+    "forceConsistentCasingInFileNames": true /* Disallow inconsistently-cased references to the same file. */,
     "lib": ["dom", "es2015", "es2017", "es2020", "dom.iterable"]
   },
   "include": ["src", "typings.d.ts"],
-  "exclude": ["src/App"]
+  "exclude": ["src/App", "src/__tests__"]
 }

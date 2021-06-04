@@ -239,7 +239,7 @@ export class PointLogView extends BaseGroupThreeView {
     if (!style)
       return null;
 
-    const color = node.getColorByColorType(style.colorType.value);
+    const color = node.getColorByColorType(style.colorType.value, this.renderTarget.fgColor);
     const { log } = node;
     if (!log)
       throw Error("Well trajectory is missing");

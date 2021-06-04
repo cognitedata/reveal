@@ -484,12 +484,13 @@ export abstract class BaseNode extends Identifiable {
   // INSTANCE METHODS: Getters
   //= =================================================
 
-  public getColorByColorType(colorType: ColorType): Color {
+  public getColorByColorType(colorType: ColorType, fgColor?: Color|undefined): Color {
     switch (colorType) {
       case ColorType.Specified: return this.getColor();
       case ColorType.Parent: return this.parent ? this.parent.getColor() : Colors.grey;
       case ColorType.Black: return Colors.black;
       case ColorType.White: return Colors.white;
+      case ColorType.ForeGround: return !fgColor ? Colors.white : fgColor;
       default: return Colors.white; // Must be white because texture colors are multiplicative
     }
   }

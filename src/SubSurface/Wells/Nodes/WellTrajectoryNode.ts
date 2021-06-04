@@ -76,8 +76,11 @@ export class WellTrajectoryNode extends DataNode {
     if (!(style instanceof WellTrajectoryStyle))
       return;
 
-    if (!this.supportsColorType(style.colorType.value, false))
-      style.colorType.value = ColorType.Specified;
+    if (!this.supportsColorType(style.nameColorType.value, false))
+      style.nameColorType.value = ColorType.ForeGround;
+      
+    if (!this.supportsColorType(style.trajectoryColorType.value, false))
+      style.trajectoryColorType.value = ColorType.Specified;
   }
 
   public /* override */ supportsColorType(colorType: ColorType, _: boolean): boolean {
@@ -86,6 +89,7 @@ export class WellTrajectoryNode extends DataNode {
       case ColorType.Parent:
       case ColorType.Black:
       case ColorType.White:
+      case ColorType.ForeGround:
         return true;
 
       default:

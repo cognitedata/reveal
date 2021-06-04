@@ -153,9 +153,11 @@ export class WellTrajectoryView extends BaseGroupThreeView {
       this.setBandTextures(parent);
     }
     if (!parent.getObjectByName(trajectoryLabelName))
-      this.addTrajectoryLabel(parent);
+      this.updateTrajectoryLabel(parent);
     if (!parent.getObjectByName(wellLabelName))
-      this.addWellLabel(parent);
+      this.updateWellLabel(parent);
+    if (!parent.getObjectByName(trajectoryName))
+      this.updateTrajectory(parent);
   }
 
   //= =================================================
@@ -163,45 +165,46 @@ export class WellTrajectoryView extends BaseGroupThreeView {
   //= =================================================
 
   public /* override */ calculateBoundingBoxCore(): Range3 | undefined {
-    const boundingBox = super.calculateBoundingBoxCore();
-    if (!boundingBox)
-      return boundingBox;
+    // const boundingBox = super.calculateBoundingBoxCore();
+    // if (!boundingBox)
+    //   return boundingBox;
 
     // Add extra for the lables, these will for some reasom not be part of the bounding box
-    const { style } = this;
-    if (!style)
-      return boundingBox;
-
-    const margin = new Vector3(style.bandWidth.value, style.bandWidth.value, style.nameFontSize.value * 1.25);
-    boundingBox.expandByMargin3(margin);
-    return boundingBox;
-
-    // const trajectory = this.node.data;
-    // if (!trajectory)
-    //   return undefined;
-
-    // const wellNode = this.node.wellNode;
-    // if (!wellNode)
-    //   return undefined;
-
-    // const style = this.style;
+    // const { style } = this;
     // if (!style)
-    //   return undefined;
+    //   return boundingBox;
 
-    // const boundingBox = trajectory.range.clone();
-    // if (!boundingBox)
-    //   return undefined;
-
-    // const radius = this.style.radius;
-    // const margin = new Vector3(radius, radius, radius);
-
-    // margin.x = Math.max(margin.x, style.bandWidth);
-    // margin.y = Math.max(margin.y, style.bandWidth);
-    // margin.z = Math.max(margin.z, style.nameFontHeight / this.transformer.zScale);
-
+    // const margin = new Vector3(style.bandWidth.value, style.bandWidth.value, style.nameFontSize.value * 1.25);
     // boundingBox.expandByMargin3(margin);
-    // boundingBox.translate(wellNode.origin);
-    // return boundingBox;
+     // return boundingBox;
+
+    const { node } = this;
+    const { trajectory } = node;
+    if (!trajectory)
+       return undefined;
+
+    const {wellNode} = node;
+    if (!wellNode)
+      return undefined;
+
+    const {style} = this;
+    if (!style)
+      return undefined;
+
+    const boundingBox = trajectory.boundingBox.clone();
+    if (!boundingBox)
+      return undefined;
+
+    const radius = style.radius.value;
+    const margin = new Vector3(radius, radius, radius);
+
+    margin.x = Math.max(margin.x, style.bandWidth.value);
+    margin.y = Math.max(margin.y, style.bandWidth.value);
+    margin.z = Math.max(margin.z, style.nameFontSize.value * 1.25 / this.transformer.zScale);
+
+    boundingBox.expandByMargin3(margin);
+    boundingBox.translate(wellNode.origin);
+    return boundingBox;
   }
 
   public /* override */ onShowInfo(viewInfo: ViewInfo, intersection: THREE.Intersection): void {
@@ -242,9 +245,9 @@ export class WellTrajectoryView extends BaseGroupThreeView {
       return null;
 
     const parent = new THREE.Group();
-    this.addTrajectory(parent);
-    this.addTrajectoryLabel(parent);
-    this.addWellLabel(parent);
+    this.updateTrajectory(parent);
+    this.updateTrajectoryLabel(parent);
+    this.updateWellLabel(parent);
 
     parent.position.copy(this.transformer.to3D(wellNode.origin));
     return parent;
@@ -298,7 +301,7 @@ export class WellTrajectoryView extends BaseGroupThreeView {
     // This will be called when the camera has rotated
     const parent = this._object3D;
     if (parent)
-      this.clearBands(parent);
+      this.clearContent(parent);
     else
       super.touchPart();
   }
@@ -346,7 +349,7 @@ export class WellTrajectoryView extends BaseGroupThreeView {
   // INSTANCE METHODS: Add 3D objects
   //= =================================================
 
-  private addTrajectoryLabel(parent: THREE.Object3D) {
+  private updateTrajectoryLabel(parent: THREE.Object3D) {
     const { node } = this;
     const { trajectory } = node;
     if (!trajectory)
@@ -356,19 +359,25 @@ export class WellTrajectoryView extends BaseGroupThreeView {
     if (!style)
       return;
 
-    const color = node.getColorByColorType(style.colorType.value);
-    const position = trajectory.getBasePosition().clone();
+    if (style.showTrajectoryName.value) {
+      const color = node.getColorByColorType(style.nameColorType.value, this.fgColor);
+      const position = trajectory.getBasePosition().clone();
 
-    this.transformer.transformRelativeTo3D(position);
-    const label = SpriteCreator.createByPositionAndAlignment(node.name, position, 7, style.nameFontSize.value, color);
-    if (!label)
-      return;
+      this.transformer.transformRelativeTo3D(position);
+      const label = SpriteCreator.createByPositionAndAlignment(node.name, position, 7, style.nameFontSize.value, color);
+      if (!label)
+        return;
 
-    label.name = trajectoryLabelName;
-    parent.add(label);
+      label.name = trajectoryLabelName;
+      parent.add(label);
+    } else {
+      const label = parent.getObjectByName(trajectoryLabelName);
+      if (label)
+        parent.remove(label);
   }
+}
 
-  private addWellLabel(parent: THREE.Object3D) {
+  private updateWellLabel(parent: THREE.Object3D) {
     const { node } = this;
     const { wellNode } = node;
     if (!wellNode)
@@ -382,18 +391,24 @@ export class WellTrajectoryView extends BaseGroupThreeView {
     if (!style)
       return;
 
-    const color = wellNode.getColorByColorType(style.colorType.value);
-    const position = trajectory.getTopPosition().clone();
-    this.transformer.transformRelativeTo3D(position);
-    const label = SpriteCreator.createByPositionAndAlignment(wellNode.name, position, 1, style.nameFontSize.value, color);
-    if (!label)
-      return;
+    if (style.showWellName.value) {
+      const color = wellNode.getColorByColorType(style.nameColorType.value, this.fgColor);
+      const position = trajectory.getTopPosition().clone();
+      this.transformer.transformRelativeTo3D(position);
+      const label = SpriteCreator.createByPositionAndAlignment(wellNode.name, position, 1, style.nameFontSize.value, color);
+      if (!label)
+        return;
 
-    label.name = wellLabelName;
-    parent.add(label);
+      label.name = wellLabelName;
+      parent.add(label);
+    } else {
+      const label = parent.getObjectByName(wellLabelName);
+      if (label)
+        parent.remove(label);
+    }
   }
 
-  private addTrajectory(parent: THREE.Object3D): void {
+  private updateTrajectory(parent: THREE.Object3D): void {
     const { node } = this;
     const { wellNode } = node;
     if (!wellNode)
@@ -404,7 +419,10 @@ export class WellTrajectoryView extends BaseGroupThreeView {
     if (!trajectory)
       return;
 
-    const color = node.getColorByColorType(style.colorType.value);
+    const group = new THREE.Group();
+    group.name = trajectoryName;
+
+    const color = node.getColorByColorType(style.trajectoryColorType.value, this.fgColor);
 
     const samples = trajectory.createRenderSamples(color, style.radius.value);
     const { transformer } = this;
@@ -423,8 +441,7 @@ export class WellTrajectoryView extends BaseGroupThreeView {
         material.emissiveIntensity = 0.25;
       }
       const mesh = new THREE.Mesh(geometry, material);
-      mesh.name = trajectoryName;
-      parent.add(mesh);
+      group.add(mesh);
     }
     {
       const geometry = new THREE.Geometry();
@@ -432,8 +449,10 @@ export class WellTrajectoryView extends BaseGroupThreeView {
         geometry.vertices.push(ThreeConverter.toThreeVector3(sample.point));
       const material = new THREE.LineBasicMaterial({ color: ThreeConverter.toThreeColor(color), linewidth: 2 });
       const line = new THREE.Line(geometry, material);
-      parent.add(line);
+      group.add(line);
     }
+    this.touchBoundingBox();
+    parent.add(group);
   }
 
   private addBands(parent: THREE.Object3D): void {
@@ -474,7 +493,7 @@ export class WellTrajectoryView extends BaseGroupThreeView {
       this.setBandTextures(parent);
   }
 
-  private clearBands(parent: THREE.Object3D): void {
+  private clearContent(parent: THREE.Object3D): void {
     for (const bandPosition of [BandPosition.Left, BandPosition.Right]) {
       const band = parent.getObjectByName(this.getBandName(bandPosition));
       if (band)
@@ -487,7 +506,11 @@ export class WellTrajectoryView extends BaseGroupThreeView {
       const wellLabel = parent.getObjectByName(wellLabelName);
       if (wellLabel)
         parent.remove(wellLabel);
-    }
+
+      const trajectory = parent.getObjectByName(trajectoryName);
+      if (trajectory)
+         parent.remove(trajectory);
+      }
   }
 
   private setBandTextures(parent: THREE.Object3D): void {
@@ -598,13 +621,13 @@ export class WellTrajectoryView extends BaseGroupThreeView {
 
         const logStyle = logNode.getRenderStyle(this.targetId) as FloatLogStyle;
         if (pass === 0 && logStyle.fillColorType.use) {
-          const color = logNode.getColorByColorType(logStyle.fillColorType.value);
+          const color = logNode.getColorByColorType(logStyle.fillColorType.value, this.fgColor);
           const colorMap = logStyle.fillColorType.value === ColorType.ColorMap ? ColorMaps.get(logNode.colorMap) : null;
           const canvas = getOrCreateCanvasAt(bandPosition);
           logRender.addFloatLog(canvas, logNode.log, logStyle, color, colorMap);
         }
         if (pass === 1 && logStyle.strokeColorType.use) {
-          let color = logNode.getColorByColorType(logStyle.strokeColorType.value);
+          let color = logNode.getColorByColorType(logStyle.strokeColorType.value, this.fgColor);
           color = color.darken(0.5);
           const canvas = getOrCreateCanvasAt(bandPosition);
           logRender.addFloatLog(canvas, logNode.log, logStyle, color, null, false, logStyle.lineWidth.value);

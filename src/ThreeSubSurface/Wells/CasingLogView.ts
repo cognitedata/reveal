@@ -146,7 +146,7 @@ export class CasingLogView extends BaseGroupThreeView {
     if (!style)
       return null;
 
-    const color = node.getColorByColorType(style.colorType.value);
+    const color = node.getColorByColorType(style.colorType.value, this.renderTarget.fgColor);
     const { trajectory } = node;
     if (!trajectory)
       return null;

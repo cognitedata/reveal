@@ -18,4 +18,5 @@ export enum ColorType {
   Black,
   White,
   Different, // Use different colors (normally use for debugging)
+  ForeGround,
 };

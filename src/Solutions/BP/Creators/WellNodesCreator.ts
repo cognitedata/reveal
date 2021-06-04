@@ -88,7 +88,7 @@ export class WellNodesCreator {
         const events = wellBoreToNPTEventsMap.get(wellBoreId);
         const logNode = WellLogCreator.createRiskLogNode(events);
         if (logNode) {
-          logNode.name = "NPT Risk Events";
+          logNode.name = "NPT Events";
           trajectoryNode.addChild(logNode);
         }
       }

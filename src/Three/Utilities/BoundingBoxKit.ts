@@ -16,12 +16,24 @@ import { Range3 } from "@/Core/Geometry/Range3";
 import { Colors } from "@/Core/Primitives/Colors";
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 import { ThreeTransformer } from "@/Three/Utilities/ThreeTransformer";
+import { Group } from "three";
 
 export class BoundingBoxKit {
   static getBoundingBox(object: THREE.Object3D | null, transformer: ThreeTransformer ): Range3 | undefined {
+
     if (!object)
       return undefined;
 
+    if (object instanceof Group) {
+      const boundingBox = new Range3();
+      for (const child of object.children) {
+        const childBoundingBox = BoundingBoxKit.getBoundingBox(child, transformer);
+        if (childBoundingBox) {
+          boundingBox.addRange(childBoundingBox);
+        } 
+      }
+      return boundingBox;
+    } 
     const helper = new THREE.BoxHelper(object, ThreeConverter.toThreeColor(Colors.white));
     helper.geometry.computeBoundingBox();
     return transformer.rangeToWorld(helper.geometry.boundingBox, false);

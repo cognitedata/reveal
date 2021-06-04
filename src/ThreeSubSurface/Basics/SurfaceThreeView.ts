@@ -143,7 +143,7 @@ export class SurfaceThreeView extends BaseGroupThreeView {
     if (!grid)
       return null;
 
-    const color = node.getColorByColorType(style.solidColorType.value);
+    const color = node.getColorByColorType(style.solidColorType.value, this.renderTarget.fgColor);
     const buffers = new RegularGrid2Buffers(grid, true);
     const geometry = buffers.getBufferGeometry();
 
@@ -188,7 +188,7 @@ export class SurfaceThreeView extends BaseGroupThreeView {
     if (!grid)
       return null;
 
-    const color = node.getColorByColorType(style.contourColorType.value);
+    const color = node.getColorByColorType(style.contourColorType.value, this.renderTarget.fgColor);
     const service = new ContouringService(style.increment.value);
 
     const contoursBuffer = service.createContoursAsXyzArray(grid);
