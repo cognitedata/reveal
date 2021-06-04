@@ -46,15 +46,14 @@ export class ByNodePropertyMultiValueNodeSet extends NodeSet {
       this._fetchResultHelper.interrupt();
     }
     const fetchResultHelper = new PopulateIndexSetFromPagedResponseHelper<Node3D>(
-      assetMapping => new NumericRange(assetMapping.treeIndex, assetMapping.subtreeSize),
+      node => new NumericRange(node.treeIndex, node.subtreeSize),
       () => this.notifyChanged()
     );
     this._fetchResultHelper = fetchResultHelper;
     this._indexSet = indexSet;
-
     const outputsUrl = this.buildUrl();
-    const batches = splitQueryToBatches(propertyValues);
-    const requests = Array.from(batches).flatMap(batch => {
+    const batches = Array.from(splitQueryToBatches(propertyValues));
+    const requests = batches.flatMap(batch => {
       const filter = { [`${propertyCategory}`]: { [`${propertyKey}`]: batch } };
       const batchRequests = range(1, requestPartitions + 1).map(async p => {
         const response = postAsListResponse<Node3D[]>(this._client, outputsUrl, {
@@ -81,7 +80,7 @@ export class ByNodePropertyMultiValueNodeSet extends NodeSet {
   }
 
   private buildUrl(): string {
-    return `${this._client.getBaseUrl()}/api/playground/projects/${this._client.project}/3d/models/${
+    return `${this._client.getBaseUrl()}/api/playground/projects/${this._client.project}/3d/v2/models/${
       this._modelId
     }/revisions/${this._revisionId}/nodes/list`;
   }
