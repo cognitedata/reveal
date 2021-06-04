@@ -23,7 +23,7 @@
     "@cognite/cogs.js": "^3.17.2",
     "@cognite/gcs-browser-upload": "cognitedata/gcs-browser-upload#mn/temporary-azure-fix",
     "@cognite/react-feature-flags": "^0.0.2",
-    "@cognite/reveal": "^1.5.3",
+    "@cognite/reveal": "^2.0.0-beta.0",
     "@cognite/z-index": "^0.1.0",
     "@google-cloud/storage": "^5.7.2",
     "@sentry/browser": "^5.30.0",
