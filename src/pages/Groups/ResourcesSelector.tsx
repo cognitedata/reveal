@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Select, Spin } from 'antd';
 import {
   SdkResourceType,
-  useList,
+  useInfiniteList,
   useSearch,
 } from '@cognite/sdk-react-query-hooks';
 
@@ -11,39 +11,56 @@ const { Option } = Select;
 type Props = {
   type: SdkResourceType;
   value?: number[];
-  body?: any;
+  filter?: any;
   onChange: (r: number[]) => void;
   useSearchApi?: boolean;
-  prefetchItems?: number;
+  limit?: number;
   itemFilter?: (item: any) => boolean;
+  downloadAll?: boolean;
 };
 export default function ResourcesSelector({
   type,
   value,
   onChange,
-  body,
+  filter,
   useSearchApi = true,
-  prefetchItems = 10,
+  limit = 10,
   itemFilter = () => true,
+  downloadAll = false,
 }: Props) {
   const [search, setSearch] = useState('');
   type R = { name: string; id: number };
 
   const searchEnabled = useSearchApi && !!search;
 
-  const { data: initialOptions, isFetching: listing } = useList<R>(type, {
-    ...body,
-    limit: prefetchItems,
-  });
+  const {
+    data: initialOptions,
+    isFetching: listing,
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage,
+  } = useInfiniteList<R>(type, limit, filter);
+
+  useEffect(() => {
+    if (downloadAll && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [downloadAll, fetchNextPage, hasNextPage, isFetchingNextPage]);
+
   const { data: searchOptions, isFetching: searching } = useSearch<R>(
     type,
     search,
-    { ...body, limit: prefetchItems },
+    { filter, limit },
     { enabled: searchEnabled }
   );
 
   const result = (
-    (searchEnabled ? searchOptions : initialOptions) || []
+    (searchEnabled
+      ? searchOptions
+      : initialOptions?.pages.reduce(
+          (accl: R[], page) => accl.concat(page.items),
+          []
+        )) || []
   ).filter(itemFilter);
   const fetching = searchEnabled ? searching : listing;
 
@@ -53,13 +70,15 @@ export default function ResourcesSelector({
 
   return (
     <Select
-      mode="multiple"
-      value={value}
+      mode="tags"
+      value={value?.map(i => `${i}`)}
       placeholder="Search and select resources"
       notFoundContent={fetching ? <Spin /> : 'Not found'}
       onSearch={handleSearch}
       defaultValue={[]}
-      onChange={v => onChange(v)}
+      onChange={v => {
+        onChange(v.map(i => parseInt(i, 10)));
+      }}
       style={{ border: 0 }}
       optionLabelProp="title"
       filterOption={
@@ -72,7 +91,7 @@ export default function ResourcesSelector({
       {result.map(resource => (
         <Option
           key={resource.id}
-          value={resource.id}
+          value={`${resource.id}`}
           title={`${resource.name} (${resource.id})`}
         >
           {`${resource.name} (${resource.id})`}

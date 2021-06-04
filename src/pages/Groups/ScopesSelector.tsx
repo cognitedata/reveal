@@ -152,8 +152,9 @@ const ScopesSelector = ({ capabilityKey, value, onChange }: Props) => {
               value={selectedResources}
               onChange={onChangeResource}
               useSearchApi={false}
-              prefetchItems={1000}
+              limit={1000}
               itemFilter={(ds: DataSet) => ds.metadata?.archived !== 'true'}
+              downloadAll
             />
           </SelectorContainer>
         )}
@@ -164,8 +165,9 @@ const ScopesSelector = ({ capabilityKey, value, onChange }: Props) => {
               value={selectedResources}
               onChange={onChangeResource}
               useSearchApi={false}
-              prefetchItems={1000}
+              limit={1000}
               itemFilter={(ds: DataSet) => ds.metadata?.archived !== 'true'}
+              downloadAll
             />
           </SelectorContainer>
         )}
@@ -182,7 +184,7 @@ const ScopesSelector = ({ capabilityKey, value, onChange }: Props) => {
           <SelectorContainer>
             <ResourcesSelector
               type="assets"
-              body={{ filter: { root: true } }}
+              filter={{ root: true }}
               value={selectedResources}
               onChange={onChangeResource}
             />
