@@ -22,6 +22,7 @@ export {
   ByAssetNodeSet,
   ByTreeIndexNodeSet,
   ByNodePropertyNodeSet,
+  ByNodePropertyMultiValueNodeSet,
   CombinedNodeSet,
   InvertedNodeSet,
   NodeAppearanceProvider

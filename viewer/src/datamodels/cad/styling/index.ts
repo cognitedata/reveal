@@ -8,3 +8,4 @@ export { InvertedNodeSet } from './InvertedNodeSet';
 export { NodeSet } from './NodeSet';
 export { NodeAppearanceProvider } from './NodeAppearanceProvider';
 export { ByAssetNodeSet } from './ByAssetNodeSet';
+export { ByNodePropertyMultiValueNodeSet } from './ByNodePropertyMultiValueNodeSet';

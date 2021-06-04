@@ -13,6 +13,10 @@ import { NodeSet } from './NodeSet';
 import range from 'lodash/range';
 import { ByNodePropertyNodeSetOptions } from './ByNodePropertyNodeSet';
 
+/**
+ * @experimental This is an experimental feature that might be changed frequently and
+ * cause breaking changes.
+ */
 export class ByNodePropertyMultiValueNodeSet extends NodeSet {
   private readonly _client: CogniteClient;
   private _indexSet = new IndexSet();
