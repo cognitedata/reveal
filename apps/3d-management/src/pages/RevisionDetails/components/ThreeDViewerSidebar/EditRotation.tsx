@@ -65,7 +65,7 @@ function EditRotationOpened(props: Props & { onClose: () => void }) {
   const getModelTransformation = React.useCallback(() => {
     return 'getModelTransformation' in props.model
       ? props.model.getModelTransformation()
-      : props.model.matrix.clone();
+      : ((props.model.matrix.clone() as unknown) as THREE.Matrix4);
   }, [props.model]);
 
   const setModelTransformation = (matrix: THREE.Matrix4) => {

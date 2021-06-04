@@ -3,9 +3,9 @@ import {
   Cognite3DViewer,
   CognitePointCloudModel,
   PotreePointColorType,
+  THREE,
 } from '@cognite/reveal';
 import React from 'react';
-import * as THREE from 'three';
 import { v3 } from '@cognite/cdf-sdk-singleton';
 import styled from 'styled-components';
 import {
@@ -70,13 +70,19 @@ export default function ThreeDViewerSidebar(props: Props) {
     // Convert camera position and target to model space
     const inverseModelMatrix = new THREE.Matrix4();
     if (props.model instanceof Cognite3DModel) {
-      props.model.mapPositionFromModelToCdfCoordinates(position, position);
-      props.model.mapPositionFromModelToCdfCoordinates(target, target);
+      props.model.mapPositionFromModelToCdfCoordinates(
+        position as THREE.Vector3,
+        position as THREE.Vector3
+      );
+      props.model.mapPositionFromModelToCdfCoordinates(
+        target as THREE.Vector3,
+        target as THREE.Vector3
+      );
     } else {
       // Get inverse transformation matrix to compute camera position and target in model space
-      inverseModelMatrix.copy(props.model.matrix).invert();
-      position.applyMatrix4(inverseModelMatrix);
-      target.applyMatrix4(inverseModelMatrix);
+      inverseModelMatrix.copy(props.model.matrix as any).invert();
+      position.applyMatrix4(inverseModelMatrix as any);
+      target.applyMatrix4(inverseModelMatrix as any);
     }
 
     await updateRevisionMutation({
