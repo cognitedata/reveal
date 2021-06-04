@@ -83,14 +83,15 @@ export function useAvailableOps(): [boolean, Error?, DSPFunction[]?] {
     cacheOptions
   );
 
-  const { data: callId, isError: createCallError } = useQuery(
-    [...key, 'create_call'],
-    callFunction(sdk, fnId as number),
-    {
-      enabled: !!fnId,
-      ...cacheOptions,
-    }
-  );
+  const {
+    data: callId,
+    isError: createCallError,
+    refetch: refetchCall,
+    isFetching: isCreatingCall,
+  } = useQuery([...key, 'create_call'], callFunction(sdk, fnId as number), {
+    enabled: !!fnId,
+    ...cacheOptions,
+  });
 
   const [refetchInterval, setRefetchInterval] = useState<number | false>(1000);
 
@@ -103,6 +104,13 @@ export function useAvailableOps(): [boolean, Error?, DSPFunction[]?] {
       refetchInterval,
     }
   );
+
+  const hasFailed =
+    callStatus?.status === 'Timeout' || callStatus?.status === 'Failed';
+
+  if (hasFailed && !isCreatingCall) {
+    refetchCall();
+  }
 
   const hasValidResult =
     !!callStatus?.status &&
