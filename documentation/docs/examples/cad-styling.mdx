@@ -39,6 +39,7 @@ identifies 3D nodes by `treeIndex`. There are several implementations of `NodeSe
 | `ByAssetNodeSet`         | A set of nodes defined by [asset mappings](https://docs.cognite.com/api/v1/#tag/3D-Asset-Mapping) linking 3D nodes to [assets](https://docs.cognite.com/dev/concepts/resource_types/assets.html) |
 | `InvertedNodeSet`        | Inverts the result of a `NodeSet` to match the opposite nodes (i.e. a NOT-operator) |
 | `CombinedNodeSet`        | Combines nodes from several `NodeSet` by applying set operations. Supported operations are [union](https://en.wikipedia.org/wiki/Union_(set_theory)") and [intersection](https://en.wikipedia.org/wiki/Intersection_(set_theory)). |
+| `ByNodePropertyMultiValueNodeSet` | Similar to `ByNodePropertyNodeSet`, but only matches one node property to many values (e.g. for looking up nodes with a list of IDs).<br/>**Experimental! Might be changed or removed in future releases** |
 
 It's also possible [implement custom `NodeSet`](cad-styling-custom). This can be useful for specialized queries or to load
 sets from custom data sources.

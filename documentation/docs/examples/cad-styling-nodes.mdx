@@ -12,9 +12,11 @@ with status S5". Combinations are also possible by using `CombinedNodeSet`.
 
 `ByNodePropertyNodeSet` is used to query nodes based on node properties. It's possible to specify
 multiple criterias which will be combined using `AND` - i.e. all criterias must be met for a node
-to match. To emulate `OR`, use `CombinedNodeSet` with a `union`-operator.
+to match. To emulate `OR`, `CombinedNodeSet` can be used with a `union`-operator. When matching a node 
+property to many values, e.g. when looking up a set of nodes from a set of IDs, 
+`ByNodePropertyMultiValueNodeSet` might be a better option.
 
-Note that if a node is in a `ByNodePropertyNodeSet` all of its children will also be
+Note that if a node is in a `ByNodePropertyNodeSet` or `ByNodePropertyMultiValueNodeSet`, all of its children will also be
 in the set.
 
 :::note
@@ -101,6 +103,30 @@ server. However, if the different combinations will be configured run-time (e.g.
 the user will want to show 'ARCH'-nodes within the 'STU'-purpose) it might
 be better to use two separate queries and combine the results. Also, the latter
 approach also allows for more complex types of filters.
+
+# Matching nodes with a list of values
+
+There might be situations where an application has a long list of identifiers of nodes to show
+or style. In this case, `ByNodePropertyMultiValueSet` might be useful. This class will match
+one node property towards many values - e.g. a node identifier towards a list of IDs. This node set
+supports thoushands of IDs - `ByNodePropertySet` only supports one matching value.
+
+```js runnable
+// import { ByNodePropertyMultiValueNodeSet, DefaultNodeAppearance } from '@cognite/reveal';
+
+const nodeSet = new ByNodePropertyMultiValueNodeSet(sdk, model, { requestPartitions: 10 });
+const names = [];
+for (let q = 200; q < 300; q++) {
+  for (let e = 1; e <= 9; e++) {
+    const name = `/60-EL-9016-Q${q}-E0${e}`;
+    names.push(name);
+  }
+}
+nodeSet.executeFilter('Item', 'Name', names);
+
+model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
+model.addStyledNodeSet(nodeSet, { renderGhosted: false, outlineColor: NodeOutlineColor.Orange } );
+```
 
 # Inverting filters
 
