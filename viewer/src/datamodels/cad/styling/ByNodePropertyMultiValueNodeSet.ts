@@ -71,7 +71,7 @@ export class ByNodePropertyMultiValueNodeSet extends NodeSet {
       const batchRequests = range(1, partitionsPerBatch + 1).map(async p => {
         const response = postAsListResponse<Node3D[]>(this._client, outputsUrl, {
           params: {
-            partition: `${p}/${requestPartitions}`,
+            partition: `${p}/${partitionsPerBatch}`,
             limit: 1000
           },
           data: {
