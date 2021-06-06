@@ -24,7 +24,7 @@ export class CogniteLogoOverlay {
   constructor(parent: HTMLElement, viewerBackgroundColor: THREE.Color) {
     CogniteLogoOverlay.loadStyles();
     this.el = document.createElement('div');
-    this.el.title = 'Cognite Reveal';
+    this.el.title = `Cognite Reveal ${process.env.VERSION}`;
     this.el.style.position = 'absolute';
     this.el.style.bottom = '0';
     this.el.style.left = '0';
