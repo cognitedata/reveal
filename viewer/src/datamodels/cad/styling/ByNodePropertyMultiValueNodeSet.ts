@@ -112,6 +112,9 @@ type RawListResponse<T> = {
   nextCursor?: string;
 };
 
+/**
+ * Helper class for implementing paging support for {@link CogniteClient.post}.
+ */
 class EmulatedListResponse<T> {
   constructor(client: CogniteClient, url: string, options: HttpRequestOptions, rawResponse: RawListResponse<T>) {
     this.items = rawResponse.items;
@@ -130,6 +133,13 @@ class EmulatedListResponse<T> {
   readonly next?: () => Promise<ListResponse<T>>;
 }
 
+/**
+ * Fetch query using {@see CogniteClient.post} and add paging support.
+ * @param client
+ * @param url
+ * @param options
+ * @returns
+ */
 async function postAsListResponse<T>(
   client: CogniteClient,
   url: string,
