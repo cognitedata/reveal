@@ -5,15 +5,15 @@
 import css from './spinnerStyles.css';
 
 export class Spinner {
-  private static readonly stylesId = 'reveal-viewer-spinner-styles';
+  private static readonly stylesElementId = 'reveal-viewer-spinner-styles';
   private static readonly cssClass = 'reveal-viewer-spinner';
 
   private static loadStyles() {
-    if (document.getElementById(Spinner.stylesId)) {
+    if (document.getElementById(Spinner.stylesElementId)) {
       return;
     }
     const style = document.createElement('style');
-    style.id = Spinner.stylesId;
+    style.id = Spinner.stylesElementId;
     style.appendChild(document.createTextNode(css));
     document.head.appendChild(style);
   }
@@ -46,7 +46,7 @@ export class Spinner {
   }
 
   dispose() {
-    const styleTag = document.getElementById(Spinner.stylesId);
+    const styleTag = document.getElementById(Spinner.stylesElementId);
     if (styleTag) {
       styleTag.remove();
     }

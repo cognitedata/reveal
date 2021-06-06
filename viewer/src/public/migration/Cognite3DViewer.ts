@@ -211,7 +211,7 @@ export class Cognite3DViewer {
     this._domElement = options.domElement || createCanvasWrapper();
     this._domElement.appendChild(this.canvas);
     this._loadingSpinner = new Spinner(this.domElement);
-    this._cogniteLogoOverlay = new CogniteLogoOverlay(this.domElement);
+    this._cogniteLogoOverlay = new CogniteLogoOverlay(this.domElement, this.getBackgroundColor());
 
     this.camera = new THREE.PerspectiveCamera(60, undefined, 0.1, 10000);
     this.camera.position.x = 30;
@@ -685,6 +685,14 @@ export class Cognite3DViewer {
     }
 
     this.renderer.setClearColor(color);
+    this._cogniteLogoOverlay.updateStyle(color);
+  }
+
+  /**
+   * Returns the color used as clear of the renderer.
+   */
+  getBackgroundColor(): THREE.Color {
+    return this.renderer.getClearColor(new THREE.Color());
   }
 
   /**
