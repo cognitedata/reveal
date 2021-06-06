@@ -14,8 +14,12 @@ import range from 'lodash/range';
 import { ByNodePropertyNodeSetOptions } from './ByNodePropertyNodeSet';
 
 /**
- * @experimental This is an experimental feature that might be changed frequently and
- * cause breaking changes.
+ * Node set that filters nodes based on a node property from a set of values, similarly to how
+ * `SELECT ... IN (...)` works. This is useful when looking up nodes based on a list of identifiers,
+ * nodes within a set of areas or systems. The node set is optimized for matching with properties with
+ * a large number of values (i.e. thousands).
+ *
+ * @experimental This is an experimental feature that might be changed and cause breaking changes.
  */
 export class ByNodePropertyMultiValueNodeSet extends NodeSet {
   private readonly _client: CogniteClient;
@@ -37,6 +41,13 @@ export class ByNodePropertyMultiValueNodeSet extends NodeSet {
     return this._fetchResultHelper !== undefined && this._fetchResultHelper.isLoading;
   }
 
+  /**
+   * Execute filter asynchronously, replacing any existing filter active.
+   *
+   * @param propertyCategory Node property category, e.g. `'PDMS'`.
+   * @param propertyKey Node property key, e.g. `':FU'`.
+   * @param propertyValues Lookup values, e.g. `["AR100APG539","AP500INF534","AP400INF553", ...]`
+   */
   async executeFilter(propertyCategory: string, propertyKey: string, propertyValues: string[]): Promise<void> {
     const indexSet = new IndexSet();
     const { requestPartitions } = this._options;
@@ -53,9 +64,10 @@ export class ByNodePropertyMultiValueNodeSet extends NodeSet {
     this._indexSet = indexSet;
     const outputsUrl = this.buildUrl();
     const batches = Array.from(splitQueryToBatches(propertyValues));
+    const partitionsPerBatch = Math.min(1, Math.round(requestPartitions / batches.length));
     const requests = batches.flatMap(batch => {
       const filter = { [`${propertyCategory}`]: { [`${propertyKey}`]: batch } };
-      const batchRequests = range(1, requestPartitions + 1).map(async p => {
+      const batchRequests = range(1, partitionsPerBatch + 1).map(async p => {
         const response = postAsListResponse<Node3D[]>(this._client, outputsUrl, {
           params: {
             partition: `${p}/${requestPartitions}`,
