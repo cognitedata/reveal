@@ -19,7 +19,8 @@ import { ByNodePropertyNodeSetOptions } from './ByNodePropertyNodeSet';
  * nodes within a set of areas or systems. The node set is optimized for matching with properties with
  * a large number of values (i.e. thousands).
  *
- * @experimental This is an experimental feature that might be changed and cause breaking changes.
+ * @experimental This is an experimental feature that might be changed or removed, and changes
+ * in minor releases might cause breaking changes.
  */
 export class ByNodePropertyMultiValueNodeSet extends NodeSet {
   private readonly _client: CogniteClient;
