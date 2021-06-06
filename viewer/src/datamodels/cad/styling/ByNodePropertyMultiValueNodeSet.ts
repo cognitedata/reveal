@@ -30,6 +30,12 @@ export class ByNodePropertyMultiValueNodeSet extends NodeSet {
   private readonly _options: Required<ByNodePropertyNodeSetOptions>;
   private _fetchResultHelper: PopulateIndexSetFromPagedResponseHelper<Node3D> | undefined;
 
+  /**
+   * Construct a new node set.
+   * @param client   {@link CogniteClient} authenticated to the project the model is loaded from.
+   * @param model    CAD model.
+   * @param options
+   */
   constructor(client: CogniteClient, model: Cognite3DModel, options: ByNodePropertyNodeSetOptions = {}) {
     super();
     this._client = client;
@@ -43,7 +49,10 @@ export class ByNodePropertyMultiValueNodeSet extends NodeSet {
   }
 
   /**
-   * Execute filter asynchronously, replacing any existing filter active.
+   * Execute filter asynchronously, replacing any existing filter active. When {@link propertyValues}
+   * contains more than 1000 elements, the operation will be split into multiple batches that
+   * are executed in parallel. Note that when providing a {@link ByNodePropertyNodeSetOptions.requestPartitions}
+   * during construction of the node set, the total number of batches will be requestPartitions*numberOfBatches.
    *
    * @param propertyCategory Node property category, e.g. `'PDMS'`.
    * @param propertyKey Node property key, e.g. `':FU'`.
@@ -65,13 +74,12 @@ export class ByNodePropertyMultiValueNodeSet extends NodeSet {
     this._indexSet = indexSet;
     const outputsUrl = this.buildUrl();
     const batches = Array.from(splitQueryToBatches(propertyValues));
-    const partitionsPerBatch = Math.min(1, Math.round(requestPartitions / batches.length));
     const requests = batches.flatMap(batch => {
       const filter = { [`${propertyCategory}`]: { [`${propertyKey}`]: batch } };
-      const batchRequests = range(1, partitionsPerBatch + 1).map(async p => {
+      const batchRequests = range(1, requestPartitions + 1).map(async p => {
         const response = postAsListResponse<Node3D[]>(this._client, outputsUrl, {
           params: {
-            partition: `${p}/${partitionsPerBatch}`,
+            partition: `${p}/${requestPartitions}`,
             limit: 1000
           },
           data: {
