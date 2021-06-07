@@ -15,7 +15,10 @@
     "noFallthroughCasesInSwitch": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "sourceMap": true
+    "sourceMap": true,
+    "paths": {
+      "@cognite/*": ["*", "../../../dist/bin/packages/*"]
+    }
   },
   "exclude": ["node_modules", "dist"]
 }
