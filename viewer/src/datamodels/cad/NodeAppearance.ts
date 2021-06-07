@@ -57,22 +57,22 @@ const InFrontAppearance: NodeAppearance = {
   renderInFront: true
 };
 
-const HighlightedColorApperance: NodeAppearance = {
+const HighlightedColorAppearance: NodeAppearance = {
   color: [100, 100, 255]
 };
 
-const GhostedApperance: NodeAppearance = {
+const GhostedAppearance: NodeAppearance = {
   renderGhosted: true
 };
 
 /**
- * A set of default node apperances used in Reveal.
+ * A set of default node appearances used in Reveal.
  */
 export const DefaultNodeAppearance = {
   Default: { visible: true, renderGhosted: false, renderInFront: false, outlineColor: NodeOutlineColor.NoOutline },
   Outlined: OutlinedAppearance,
   Hidden: HiddenAppearance,
   InFront: InFrontAppearance,
-  Ghosted: GhostedApperance,
-  Highlighted: { ...InFrontAppearance, ...HighlightedColorApperance, ...OutlinedAppearance }
+  Ghosted: GhostedAppearance,
+  Highlighted: { ...InFrontAppearance, ...HighlightedColorAppearance, ...OutlinedAppearance }
 };
