@@ -6,13 +6,21 @@ This app is served as an example [React]-based application served using frontend
 
 End-to-end tests are written and run using the [Testcafe](https://github.com/DevExpress/testcafe) testing framework. They are stored in `/testcafe`.
 
-To run testcafe tests locally, first start the app on port 11111
+To run testcafe tests locally:
+
+1. Start the app
 
 ```sh
-yarn testcafe:start-live
+yarn start
 ```
 
-In order to run tests in the browser and keep the browser window open to watch and auto re-run on test file changes, run in a separate tab the following command:
+2. Start Fake IdP
+
+```sh
+yarn testcafe:start-idp
+```
+
+3. Run Testcafe tests
 
 ```sh
 yarn testcafe:run-live

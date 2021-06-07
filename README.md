@@ -69,10 +69,36 @@ git remote rm repo-to-import
 
 [Here](https://medium.com/@ayushya/move-directory-from-one-repository-to-another-preserving-git-history-d210fa049d4b) is a good article.
 
-## Deploying the app
+## Running e2e tests on Jenkins
 
-Please see the [deployment guide] for more information how to actually get this app into production.
-(It should be pretty easy!)
+E2e tests setup on Jenkins is powered by [Fake IdP](https://github.com/cognitedata/application-services/tree/master/services/fake-idp).
+Fake Idp is a docker container running on the side of the Jenkins pipeline responsible for issuing tokens.
+In order to be able to run e2e tests your CDF project should support OIDC and be configured against `internal-jwks-host`.
+See similar setup explained [here](https://github.com/cognitedata/application-services/tree/27a505c1a9ecdbc156fdd59a6533943e765e1702/services/db-service#how-to-setup-db-service-for-a-new-cluster).
+When you have your project available you need to:
+
+1. Ask in #infrastructure to populate `apps-e2e-fake-idp-private-keys` secret with the new key being the name of your project.
+2. In `public/sidecar.js` inside `fakeIdp` array object define `name: <projectName>` and `project: <projectName>` parameters which will render a button `Login with Fake IDP (<projectName>)`.
+3. Inside your app's testcafe role find and click the button above in order to obtain a token.
+
+## Release procedure
+
+Please visit https://cog.link/release-strategies for a release process introduction.
+
+In order to release a new version please follow the steps below:
+
+- Start on a branch you want to release from (most cases is master), make sure it is checked out and up-to-date locally.
+- Run the following helper command which will create and push branches.
+
+  `npx @cognite/fas-utils cut-release --release-branch-prefix release-<your-app>- --package-path apps/<your-app> --cut-version x.y.z`
+
+- Add `--no-dry-run` to the above command if you want to actually make the changes. By default, it will just output what would have been changed without performing any of the actual changes.
+- This command creates a commit with the updated version in `package.json` on two branches, `bump-version/*` and `release-prefix-*`, pushes them to GitHub, and creates pull requests from the branches into master if you have GitHub CLI set up.
+- `bump-version/*` branch - this PR contains only a package.json version bump which we need to check in into the main branch for history purposes, no actual deployment is happening from here.
+- `release-prefix-*` branch - that is a PR from where actual deployment will happen but no users will see that until the FAS PR below is merged. The contents of the `release-prefix-*` branch should be automatically published to preview server.
+- Create a PR against [FAS](https://github.com/cognitedata/frontend-app-server/blob/master/services/release-configs/src/version-specs/infield.ts) by updating the `versionSpec` to the latest version which can be found on Jenkins.
+- When every check is passed squash and merge both `bump-version/*` branch PR and the FAS PR.
+- Close (_DO NOT MERGE_) the PR for `release-prefix-*` branch - we will potentially need it later in order to fix bugs for the same release
 
 ## Help
 
