@@ -178,6 +178,7 @@ export class CogniteAuth {
 
     // save flow before we start the login
     // so on redirect we know which one to come back to
+    log('Saving flow: AZURE_AD');
     saveFlow(flow, {
       directory,
     });
@@ -214,9 +215,30 @@ export class CogniteAuth {
             },
           },
         })
+        .then(() => {
+          this.resetError();
+          return this.client.authenticate();
+        })
+        .then((response) => {
+          this.state.authenticated = response;
+          return this.getCDFToken();
+        })
+        .then((token) => {
+          const { accessToken, idToken } = token;
+
+          if (accessToken) {
+            this.state.authResult = {
+              idToken,
+              accessToken,
+              authFlow: 'AZURE_AD',
+            };
+          }
+        })
+        .catch((error) => {
+          this.setError(error);
+        })
         .finally(() => {
-          log('Saving flow: AZURE_AD');
-          this.client.authenticate();
+          log('Finished flow: AZURE_AD');
           this.publishAuthState();
         });
     }

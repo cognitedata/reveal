@@ -1,3 +1,7 @@
+## 1.0.6 Jun 7 2021
+
+- Fix bug in initial login if token already exists
+
 ## 1.0.5 May 27 2021
 
 - Set user email when logging in
