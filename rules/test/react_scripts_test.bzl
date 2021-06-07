@@ -24,7 +24,7 @@ def react_scripts_test(name, app_name, data, args = []):
     )
 
     _react_scripts(
-        name = "react_scripts_test",
+        name = "%s_base" % name,
         data = [
             "@npm//jest-environment-jsdom-sixteen",
             "@npm//jest-junit",
@@ -34,7 +34,7 @@ def react_scripts_test(name, app_name, data, args = []):
     native.sh_test(
         name = name,
         srcs = ["//rules/test:react_scripts_test.sh"],
-        args = [app_name] + ["$(rootpath :react_scripts_test)"] + [
+        args = [app_name] + ["$(rootpath :%s_base)" % name] + [
             "--node_options=--require=./$(rootpath %s)" % file_name,
             "test",
             # ibazel is the watch mode for Bazel when running tests
@@ -54,7 +54,7 @@ def react_scripts_test(name, app_name, data, args = []):
         ] + args,
         data = [
             file_name,
-            "react_scripts_test",
+            ":%s_base" % name,
         ],
         # Need to set the pwd to avoid jest needing a runfiles helper
         # Windows users with permissions can use --enable_runfiles
