@@ -4,6 +4,10 @@
 import { IndexSet } from '../../../utilities/IndexSet';
 import { NodeSet } from './NodeSet';
 
+/**
+ * Node set that holds a set of nodes defined by a set of tree indices.
+ * @version New in 2.0.0
+ */
 export class ByTreeIndexNodeSet extends NodeSet {
   private _set: IndexSet;
 
@@ -20,6 +24,14 @@ export class ByTreeIndexNodeSet extends NodeSet {
 
   updateSet(nodeSet: IndexSet) {
     this._set = nodeSet;
+    this.notifyChanged();
+  }
+
+  /**
+   * Sets this set to hold an empty set.
+   */
+  clear() {
+    this._set = new IndexSet();
     this.notifyChanged();
   }
 
