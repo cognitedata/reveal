@@ -60,18 +60,28 @@ generate_package_json_helpers(
 
 # Dependencies from package.json
 DEPENDENCIES = [
-    "@npm//@cognite/react-i18n",
-    "@npm//@cognite/react-tenant-selector",
+    "@npm//@cognite/cogs.js",
+    "@npm//@cognite/react-container",
+    "@npm//@cognite/sdk",
     "@npm//@sentry/browser",
+    "@npm//antd",
+    "@npm//date-fns",
+    "@npm//lodash",
     "@npm//react",
+    "@npm//react-chartjs-2",
     "@npm//react-dom",
-    "//packages/metrics",
+    "@npm//react-router-dom",
+    "@npm//styled-components",
 ]
 
 # Type dependencies from package.json
 TYPE_DEPENDENCIES = [
-    "@npm//@types/react",
+    "@npm//@types/lodash",
     "@npm//@types/react-dom",
+    "@npm//@types/react",
+    "@npm//@types/react-router-dom",
+    "@npm//@types/sinon",
+    "@npm//@types/styled-components",
 ]
 
 # Dev dependencies from package.json
@@ -79,16 +89,24 @@ DEV_DEPENDENCIES = [
     "@npm//@testing-library/jest-dom",
     "@npm//@testing-library/react",
     "@npm//eslint-plugin-import",
+    "@npm//sinon",
 ]
 
 # Mappings for absolute imports from baseUrl @unused
 mappings_dict = {
-    "App.spec": "build/App.spec",
     "App": "build/App",
+    "components": "build/components",
+    "contexts": "build/contexts",
+    "elements": "build/elements",
+    "global-styles": "build/global-styles",
     "index": "build/index",
+    "pages": "build/pages",
     "react-app-env.d": "build/react-app-env.d",
+    "serviceWorker": "build/serviceWorker",
+    "services": "build/services",
     "setupTests": "build/setupTests",
-    "sidecar": "build/sidecar",
+    "typings": "build/typings",
+    "utils": "build/utils",
 }
 
 ### end of auto-generated helpers ###
@@ -147,16 +165,14 @@ react_scripts(
         "--node_options=--require=./$(execpath chdir.js)",
         "build",
     ],
-    data = _RUNTIME_DEPS + TYPE_DEPENDENCIES + [
-        "@npm//@types",
-    ],
+    data = _RUNTIME_DEPS + TYPE_DEPENDENCIES,
     env = {
         # Specify your Sentry DSN is the URL used to report runtime issues
-        "REACT_APP_SENTRY_DSN": "https://4558e4f6faaf4948ab9327457827a301@o124058.ingest.sentry.io/5193370",
+        "REACT_APP_SENTRY_DSN": "https://19bbb6bf3192415b98a42ed236cf4321@o124058.ingest.sentry.io/5599787",
         # Specify your Mixpanel project token used in users analytics
-        "REACT_APP_MIXPANEL_TOKEN": "0ef20fa9df0965e1ad952d1d9b804147",
+        # "REACT_APP_MIXPANEL_TOKEN": "",
         # Specify your locize.io project ID used for localization
-        "REACT_APP_LOCIZE_PROJECT_ID": "dfcacf1f-a7aa-4cc2-94d7-de6ea4e66f1d",
+        "REACT_APP_LOCIZE_PROJECT_ID": "7533b714-9df3-48c3-9a04-1d9ee1a0fa3a",
 
         ### DO NOT CHANGE: FAS placeholders
         # In order to build only once we set placeholders into dynamic variables
@@ -200,7 +216,7 @@ copy_to_bin(
 react_scripts_test(
     name = "test",
     # folder name to store jest coverage in during CI run
-    app_name = "tenant-selector",
+    app_name = "cognuit",
     data = _RUNTIME_DEPS + DEV_DEPENDENCIES + [
         "@npm//@storybook/addon-essentials",
         "@npm//@storybook/addon-links",
@@ -227,13 +243,13 @@ react_scripts(
         "REACT_APP_I18N_PSEUDO": "false",
         "REACT_APP_LANGUAGE": "en",
         # Specify your locize.io api key used for localization
-        "REACT_APP_LOCIZE_API_KEY": "679d5a83-bc71-4d5e-9e32-f8560603166b",
+        # "REACT_APP_LOCIZE_API_KEY": "",
         # Specify your locize.io project ID used for localization
-        "REACT_APP_LOCIZE_PROJECT_ID": "dfcacf1f-a7aa-4cc2-94d7-de6ea4e66f1d",
+        "REACT_APP_LOCIZE_PROJECT_ID": "7533b714-9df3-48c3-9a04-1d9ee1a0fa3a",
         "REACT_APP_LOCIZE_VERSION": "latest",
         "REACT_APP_MIXPANEL_DEBUG": "false",
         # Specify your Mixpanel project token used in users analytics
-        "REACT_APP_MIXPANEL_TOKEN": "0ef20fa9df0965e1ad952d1d9b804147",
+        # "REACT_APP_MIXPANEL_TOKEN": "",
     },
     tags = [
         # This tag instructs ibazel to pipe into stdin a event describing actions.
@@ -261,12 +277,10 @@ build_storybook(
     chdir = "$(RULEDIR)",
     data = _RUNTIME_DEPS + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + [
         "copy_storybook_files",
-        "@npm//@types",
         "@npm//@storybook/addon-essentials",
         "@npm//@storybook/addon-links",
         "@npm//@storybook/preset-create-react-app",
         "@npm//@storybook/react",
-        "@npm//react-i18next",
     ],
     output_dir = True,
 )
@@ -278,10 +292,9 @@ start_storybook(
         "-p",
         "6006",
     ],
-    data = _RUNTIME_DEPS + DEV_DEPENDENCIES + [
+    data = _RUNTIME_DEPS + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + [
         "chdir-workspace.js",
         "copy_storybook_files",
-        "@npm//@types",
         "@npm//@storybook/addon-essentials",
         "@npm//@storybook/addon-links",
         "@npm//@storybook/preset-create-react-app",
@@ -298,7 +311,7 @@ publish_storybook(
     name = "publish_storybook",
     build = ":storybook-static",
     # Storybook sub domain to be used
-    sub_domain = "tenant-selector",
+    sub_domain = "cognuit",
 )
 
 ### FAS ###
@@ -308,14 +321,14 @@ publish_fas(
     build = ":build",
     package_json = ":package.json",
     # Subdomain name used for the pull requests preview.
-    preview_subdomain = "tenant-selector",
+    preview_subdomain = "cognuit",
     # FAS production app id
-    production_app_id = "tenant-selector",
+    production_app_id = "cognuit",
     # FAS app identifier (repo) shared across both production and staging apps
-    repo_id = "tenant-selector",
+    repo_id = "cognuit",
     # Sentry project name
-    sentry_project_name = "tenant-selector",
+    sentry_project_name = "cognuit",
     # FAS staging app id
-    staging_app_id = "tenant-selector-staging",
+    staging_app_id = "cognuit-dev",
     versioning_strategy = "multi-branch",
 )
