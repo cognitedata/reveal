@@ -223,6 +223,10 @@ build_storybook(
     # Note: If you want to change the name make sure you pass that value with -o into args
     # https://storybook.js.org/docs/react/api/cli-options
     name = "storybook-static",
+    args = [
+        # Suppress verbose build output
+        "--quiet",
+    ],
     chdir = "$(RULEDIR)",
     data = _RUNTIME_DEPS + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + [
         "copy_storybook_files",

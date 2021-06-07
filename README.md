@@ -81,10 +81,24 @@ When you have your project available you need to:
 2. In `public/sidecar.js` inside `fakeIdp` array object define `name: <projectName>` and `project: <projectName>` parameters which will render a button `Login with Fake IDP (<projectName>)`.
 3. Inside your app's testcafe role find and click the button above in order to obtain a token.
 
-## Deploying the app
+## Release procedure
 
-Please see the [deployment guide] for more information how to actually get this app into production.
-(It should be pretty easy!)
+Please visit https://cog.link/release-strategies for a release process introduction.
+
+In order to release a new version please follow the steps below:
+
+- Start on a branch you want to release from (most cases is master), make sure it is checked out and up-to-date locally.
+- Run the following helper command which will create and push branches.
+
+  `npx @cognite/fas-utils cut-release --release-branch-prefix release-<your-app>- --package-path apps/<your-app> --cut-version x.y.z`
+
+- Add `--no-dry-run` to the above command if you want to actually make the changes. By default, it will just output what would have been changed without performing any of the actual changes.
+- This command creates a commit with the updated version in `package.json` on two branches, `bump-version/*` and `release-prefix-*`, pushes them to GitHub, and creates pull requests from the branches into master if you have GitHub CLI set up.
+- `bump-version/*` branch - this PR contains only a package.json version bump which we need to check in into the main branch for history purposes, no actual deployment is happening from here.
+- `release-prefix-*` branch - that is a PR from where actual deployment will happen but no users will see that until the FAS PR below is merged. The contents of the `release-prefix-*` branch should be automatically published to preview server.
+- Create a PR against [FAS](https://github.com/cognitedata/frontend-app-server/blob/master/services/release-configs/src/version-specs/infield.ts) by updating the `versionSpec` to the latest version which can be found on Jenkins.
+- When every check is passed squash and merge both `bump-version/*` branch PR and the FAS PR.
+- Close (_DO NOT MERGE_) the PR for `release-prefix-*` branch - we will potentially need it later in order to fix bugs for the same release
 
 ## Help
 
