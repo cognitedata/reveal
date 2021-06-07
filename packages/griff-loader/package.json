@@ -1,0 +1,48 @@
+{
+  "name": "@cognite/griff-loader",
+  "version": "1.2.0",
+  "description": "Griff loader towards the Cognite API",
+  "source": "src/index.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.m.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "clean": "rm -rf dist",
+    "test": "jest",
+    "esCheck": "es-check es5 './dist/index.js'",
+    "build": "yarn clean && rollup -c && yarn esCheck",
+    "build:watch": "yarn clean && rollup -c --watch && yarn esCheck",
+    "test-watch": "jest --watch",
+    "lint": "yarn concurrently \"yarn prettier\" \"yarn eslint 'src/**/*.{ts,tsx}'\"",
+    "lint:fix": "yarn prettier --write",
+    "prettier": "prettier -l 'src/**/*'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "github.com/cognitedata/frontend/packages/browser/griff-loader"
+  },
+  "keywords": [
+    "griff",
+    "react",
+    "griff-loader",
+    "cognite",
+    "cognite-loader",
+    "griff-react"
+  ],
+  "author": "Cognite AS",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "tslib": "^2.2.0",
+    "immutable": "^4.0.0-rc.12"
+  },
+  "devDependencies": {
+    "@cognite/sdk": "^2.2.2",
+    "@types/node": "^14.0.13"
+  },
+  "peerDependencies": {
+    "@cognite/sdk": "^2.2.2"
+  }
+}
