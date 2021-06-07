@@ -68,7 +68,7 @@ export default function AssetSearchHit({ asset }: Props) {
         const range = await calculateDefaultYAxis({
           chart,
           sdk,
-          timeSeries,
+          timeSerieId: timeSeries.id,
         });
 
         const newTs = covertTSToChartTS(timeSeries, range);

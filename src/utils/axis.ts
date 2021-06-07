@@ -1,12 +1,8 @@
-import {
-  Aggregate,
-  CogniteClient,
-  DatapointAggregate,
-  Timeseries,
-} from '@cognite/sdk';
+import { Aggregate, CogniteClient, DatapointAggregate } from '@cognite/sdk';
 
 import { subDays } from 'date-fns';
 import { Chart } from 'reducers/charts/types';
+import { convertUnits } from 'utils/units';
 
 const OUTLIER_THRESHOLD = 1000;
 
@@ -56,17 +52,21 @@ export const roundToSignificantDigits = (value: number, digits: number) => {
 export async function calculateDefaultYAxis({
   sdk,
   chart,
-  timeSeries,
+  timeSerieId,
+  inputUnit,
+  outputUnit,
 }: {
   sdk: CogniteClient;
   chart: Chart;
-  timeSeries: Timeseries;
+  timeSerieId: number;
+  inputUnit?: string;
+  outputUnit?: string;
 }) {
   const dateFrom = subDays(new Date(chart.dateTo), 365);
   const dateTo = new Date(chart.dateTo);
 
   const lastYearDatapointsQuery = {
-    items: [{ id: timeSeries.id }],
+    items: [{ id: timeSerieId }],
     start: dateFrom,
     end: dateTo,
     aggregates: ['average'] as Aggregate[],
@@ -78,7 +78,11 @@ export async function calculateDefaultYAxis({
     .retrieve(lastYearDatapointsQuery)
     .then((r) => r[0]?.datapoints);
 
-  const lastYearDatapointsSorted = (lastYearDatapoints as DatapointAggregate[])
+  const lastYearDatapointsSorted = convertUnits(
+    lastYearDatapoints as DatapointAggregate[],
+    inputUnit,
+    outputUnit
+  )
     .map((datapoint: DatapointAggregate) => datapoint.average)
     .filter((value: number | undefined) => value !== undefined)
     .sort() as number[];
