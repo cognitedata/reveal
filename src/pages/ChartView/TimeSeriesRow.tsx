@@ -196,7 +196,7 @@ export default function TimeSeriesRow({
     const range = await calculateDefaultYAxis({
       chart,
       sdk,
-      timeSerieId: timeseries.tsId,
+      timeSeriesId: timeseries.tsId,
       inputUnit: unitOption?.value,
       outputUnit: preferredUnit,
     });
@@ -210,7 +210,7 @@ export default function TimeSeriesRow({
     const range = await calculateDefaultYAxis({
       chart,
       sdk,
-      timeSerieId: timeseries.tsId,
+      timeSeriesId: timeseries.tsId,
       inputUnit: unit,
       outputUnit: unitOption?.value,
     });
