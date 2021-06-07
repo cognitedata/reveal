@@ -66,9 +66,10 @@ def _jest_test(name, service_name, srcs, deps, jest_config, jest_args = [], **kw
 
     data = [jest_config] + srcs + deps + [
         "//rules/test:jest-reporter.js",
-        "@npm//ts-jest",
-        "@npm//jest-junit",
         "@npm//@types/jest",
+        "@npm//@types/node",
+        "@npm//jest-junit",
+        "@npm//ts-jest",
         file_name,
     ]
 
