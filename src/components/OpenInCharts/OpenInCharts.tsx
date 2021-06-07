@@ -147,7 +147,7 @@ export const OpenInCharts: FC = () => {
           const range = await calculateDefaultYAxis({
             chart: newChart,
             sdk,
-            timeSeries,
+            timeSeriesId: timeSeries.id,
           });
           const newTs = covertTSToChartTS(timeSeries, range);
           updateChart(addTimeseries(newChart, newTs));
@@ -176,7 +176,7 @@ export const OpenInCharts: FC = () => {
           const range = await calculateDefaultYAxis({
             chart: existingChart,
             sdk,
-            timeSeries,
+            timeSeriesId: timeSeries.id,
           });
           const newTs = covertTSToChartTS(timeSeries, range);
           updateChart(addTimeseries(existingChart, newTs));

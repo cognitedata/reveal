@@ -29,6 +29,7 @@ import * as backendApi from 'utils/backendApi';
 import { trackUsage } from 'utils/metrics';
 import { CogniteClient } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
+import { calculateDefaultYAxis } from 'utils/axis';
 import {
   SourceItem,
   SourceCircle,
@@ -191,15 +192,31 @@ export default function TimeSeriesRow({
   const updateAppearance = (diff: Partial<ChartTimeSeries>) =>
     mutate(updateTimeseries(chart, id, diff));
 
-  const updateUnit = (unitOption: any) => {
+  const updateUnit = async (unitOption: any) => {
+    const range = await calculateDefaultYAxis({
+      chart,
+      sdk,
+      timeSeriesId: timeseries.tsId,
+      inputUnit: unitOption?.value,
+      outputUnit: preferredUnit,
+    });
     update(id, {
       unit: unitOption.value,
+      range,
     });
   };
 
-  const updatePrefferedUnit = (unitOption: any) => {
+  const updatePrefferedUnit = async (unitOption: any) => {
+    const range = await calculateDefaultYAxis({
+      chart,
+      sdk,
+      timeSeriesId: timeseries.tsId,
+      inputUnit: unit,
+      outputUnit: unitOption?.value,
+    });
     update(id, {
       preferredUnit: unitOption?.value,
+      range,
     });
   };
 
