@@ -1,4 +1,5 @@
 import axios from 'axios';
+
 import getHmac from './getHmac';
 
 jest.mock('axios', () => ({

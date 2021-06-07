@@ -1,7 +1,7 @@
 import { Map } from 'immutable';
-import { CogniteClient, DatapointsMultiQueryBase } from '@cognite/sdk';
-// eslint-disable-next-line @cognite/no-sdk-submodule-imports
-import { TimeSeries } from '@cognite/sdk/dist/src/resources/classes/timeSeries';
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+import { CogniteClient, DatapointsMultiQueryBase } from '@cognite/sdk-v2';
+import { TimeSeries } from '@cognite/sdk-v2/dist/src/resources/classes/timeSeries';
 
 import {
   Datapoint,

@@ -3,33 +3,25 @@
   "version": "0.1.2",
   "description": "A collection of intercom methods",
   "source": "src/index.ts",
-  "main": "dist/intercom-helper.js",
-  "module": "dist/intercom-helper.esm.js",
-  "browser": "dist/intercom-helper.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "module": "dist/index.esm.js",
+  "browser": "dist/index.js",
   "typings": "dist/index.d.ts",
+  "repository": "https://github.com/cognitedata/applications/packages/intercom-helper",
+  "license": "UNLICENSED",
+  "author": "Cognite AS",
   "files": [
     "dist"
   ],
   "scripts": {
-    "test": "jest",
-    "build": "microbundle --target=browser",
-    "watch": "yarn build --watch",
-    "lint": "yarn concurrently \"yarn prettier\" \"yarn eslint 'src/**/*.{ts,tsx}'\"",
-    "lint:fix": "yarn prettier --write",
-    "prettier": "prettier -l 'src/**/*'"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/cognitedata/frontend"
-  },
-  "author": "Cognite AS",
-  "license": "UNLICENSED",
-  "homepage": "https://github.com/cognitedata/frontend/tree/master/packages/browser/commonjs/intercom-helper",
-  "dependencies": {
-    "axios": "^0.21.1"
-  },
-  "devDependencies": {
-    "@babel/parser": "^7.9.4",
-    "microbundle": "^0.12.2"
+    "build": "bazel build :intercom-helper",
+    "test": "bazel test :jest_test",
+    "lint": "bazel test :eslint_test :prettier_test",
+    "eslint": "bazel test :eslint_test",
+    "eslint:fix": "bazel run :eslint_test -- --fix",
+    "prettier": "bazel test :prettier_test",
+    "prettier:fix": "bazel run :prettier_test -- --write",
+    "update-helpers": "bazel run :generate_package_json_helpers"
   }
 }

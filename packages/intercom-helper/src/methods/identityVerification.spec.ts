@@ -1,5 +1,6 @@
-import identityVerification from './identityVerification';
 import getHmac from '../utils/getHmac';
+
+import identityVerification from './identityVerification';
 
 jest.mock('../utils/getHmac');
 

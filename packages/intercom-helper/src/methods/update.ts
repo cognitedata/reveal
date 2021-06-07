@@ -5,7 +5,7 @@ const forbiddenKeys: ForbiddenUpdateKey = {
   user_id: true,
 };
 
-export default (settings: IntercomUpdateSettings) => {
+export default (settings: IntercomUpdateSettings): void => {
   if (window.Intercom && Object.keys(settings).length > 0) {
     const parsedSettings: IntercomUpdateSettings = {};
 

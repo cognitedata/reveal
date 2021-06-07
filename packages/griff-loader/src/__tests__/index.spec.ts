@@ -1,5 +1,4 @@
 import { mergeInsert, AccessorFunc } from '../index';
-
 import { Datapoint, StringDatapoint } from '../types';
 
 const toPoints = (arr: number[], from: string): StringDatapoint[] =>

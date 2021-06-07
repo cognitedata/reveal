@@ -6,7 +6,7 @@ import {
   DatapointsGetAggregateDatapoint,
   DatapointsGetDatapoint,
   TimeSeriesList,
-} from '@cognite/sdk';
+} from '@cognite/sdk-v2';
 
 export type AggregateDatapoint = Omit<GetAggregateDatapoint, 'timestamp'> & {
   timestamp: number;

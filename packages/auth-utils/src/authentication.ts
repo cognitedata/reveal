@@ -169,7 +169,7 @@ export class CogniteAuth {
     flow: AuthFlow;
     cluster?: string;
     directory?: string;
-  }) {
+  }): Promise<void> {
     this.state.initializing = false;
     this.resetError();
     this.state.authenticated = false;
@@ -358,7 +358,7 @@ export class CogniteAuth {
     }
   }
 
-  public logout() {
+  public logout(): void {
     saveFlow('UNKNOWN');
     // reset auth and cdf client too
     this.makeNewCDFClient();
@@ -382,7 +382,7 @@ export class CogniteAuth {
     };
   }
 
-  public async getProjects() {
+  public async getProjects(): Promise<unknown> {
     try {
       this.resetError();
 

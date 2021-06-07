@@ -77,8 +77,8 @@ DEPENDENCIES = [
 # Type dependencies from package.json
 TYPE_DEPENDENCIES = [
     "@npm//@types/lodash",
-    "@npm//@types/react-dom",
     "@npm//@types/react",
+    "@npm//@types/react-dom",
     "@npm//@types/react-router-dom",
     "@npm//@types/sinon",
     "@npm//@types/styled-components",

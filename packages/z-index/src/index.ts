@@ -1,7 +1,9 @@
 export function createLayers<Layer extends string>(
   layers: readonly string[],
   options: { base?: number; delta?: number } = {}
-) {
+): {
+  [key in Layer]: number;
+} {
   const { base = 100, delta = 10 } = options;
 
   type LayerLookup = {

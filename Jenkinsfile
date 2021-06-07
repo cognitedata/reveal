@@ -314,6 +314,8 @@ pods {
                       returnStdout: true
                     ).trim()
                     print("Pushed package $packageNameTag")
+
+                    slackMessages.add("- `${packageNameTag}`")
                   }
                 }
               }

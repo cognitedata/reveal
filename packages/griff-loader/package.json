@@ -1,28 +1,26 @@
 {
   "name": "@cognite/griff-loader",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Griff loader towards the Cognite API",
   "source": "src/index.ts",
   "main": "dist/index.js",
   "module": "dist/index.m.js",
   "types": "dist/index.d.ts",
+  "repository": "https://github.com/cognitedata/applications/packages/griff-loader",
+  "license": "UNLICENSED",
+  "author": "Cognite AS",
   "files": [
     "dist"
   ],
   "scripts": {
-    "clean": "rm -rf dist",
-    "test": "jest",
-    "esCheck": "es-check es5 './dist/index.js'",
-    "build": "yarn clean && rollup -c && yarn esCheck",
-    "build:watch": "yarn clean && rollup -c --watch && yarn esCheck",
-    "test-watch": "jest --watch",
-    "lint": "yarn concurrently \"yarn prettier\" \"yarn eslint 'src/**/*.{ts,tsx}'\"",
-    "lint:fix": "yarn prettier --write",
-    "prettier": "prettier -l 'src/**/*'"
-  },
-  "repository": {
-    "type": "git",
-    "url": "github.com/cognitedata/frontend/packages/browser/griff-loader"
+    "build": "bazel build :griff-loader",
+    "test": "bazel test :jest_test",
+    "lint": "bazel test :eslint_test :prettier_test",
+    "eslint": "bazel test :eslint_test",
+    "eslint:fix": "bazel run :eslint_test -- --fix",
+    "prettier": "bazel test :prettier_test",
+    "prettier:fix": "bazel run :prettier_test -- --write",
+    "update-helpers": "bazel run :generate_package_json_helpers"
   },
   "keywords": [
     "griff",
@@ -32,16 +30,6 @@
     "cognite-loader",
     "griff-react"
   ],
-  "author": "Cognite AS",
-  "license": "Apache-2.0",
-  "dependencies": {
-    "tslib": "^2.2.0",
-    "immutable": "^4.0.0-rc.12"
-  },
-  "devDependencies": {
-    "@cognite/sdk": "^2.2.2",
-    "@types/node": "^14.0.13"
-  },
   "peerDependencies": {
     "@cognite/sdk": "^2.2.2"
   }

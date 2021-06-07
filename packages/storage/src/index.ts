@@ -30,7 +30,7 @@ interface InitOptions {
   project?: string;
   appName?: string;
 }
-export const init = ({ project, appName }: InitOptions) => {
+export const init = ({ project, appName }: InitOptions): void => {
   currentProject = project || currentProject;
   currentAppName = appName;
 };
@@ -66,12 +66,12 @@ const getRootItem = <T>(key: string, defaultValue?: T): T | undefined => {
   }
 };
 
-const getAppItem = <T>(key: string, defaultValue?: T) => {
+const getAppItem = <T>(key: string, defaultValue?: T): T | undefined => {
   const appKey = createAppKey(key);
   return getRootItem<T>(appKey, defaultValue);
 };
 
-const setRootItem = <T>(key: string, data: T) => {
+const setRootItem = <T>(key: string, data: T): void => {
   try {
     const item = SAFE_LOCAL_STORAGE.setItem(
       createRootKey(key),
@@ -111,12 +111,15 @@ export const getRootString = <T, D = undefined>(
   }
 };
 
-export const getFromLocalStorage = <T>(key: string, defaultValue?: T) => {
+export const getFromLocalStorage = <T>(
+  key: string,
+  defaultValue?: T
+): T | undefined => {
   const tenantKey = createProjectKey(key);
   return getAppItem<T>(tenantKey, defaultValue);
 };
 
-export const saveToLocalStorage = <T>(key: string, data: T) => {
+export const saveToLocalStorage = <T>(key: string, data: T): void => {
   const tenantKey = createProjectKey(key);
   setAppItem(tenantKey, data);
 };

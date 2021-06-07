@@ -15,6 +15,7 @@ def _jest_deps_impl(ctx):
             declarations.append(dep[DeclarationInfo].transitive_declarations)
         if dep[JSModuleInfo]:
             files.append(dep[JSModuleInfo].sources)
+        files.append(dep[DefaultInfo].files)
 
     return [
         DefaultInfo(files = depset(transitive = files + declarations)),
@@ -69,6 +70,7 @@ def _jest_test(name, service_name, srcs, deps, jest_config, jest_args = [], **kw
         "@npm//@types/jest",
         "@npm//@types/node",
         "@npm//jest-junit",
+        "@npm//jest-localstorage-mock",
         "@npm//ts-jest",
         file_name,
     ]

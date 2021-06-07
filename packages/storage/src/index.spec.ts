@@ -45,10 +45,12 @@ describe('localStorage', () => {
 
   it('should get a default value with types', () => {
     type Result = { fake: boolean };
-    let result: Result | undefined;
-    result = localStorageCache.getFromLocalStorage<Result>('unknownThing', {
-      fake: true,
-    });
+    const result = localStorageCache.getFromLocalStorage<Result>(
+      'unknownThing',
+      {
+        fake: true,
+      }
+    );
     expect(result).toEqual({ fake: true });
   });
 

@@ -1,31 +1,26 @@
 {
   "name": "@cognite/z-index",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "",
   "source": "src/index.ts",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
   "browser": "dist/index.js",
   "types": "dist/index.d.ts",
+  "repository": "https://github.com/cognitedata/applications/packages/z-index",
+  "license": "UNLICENSED",
+  "author": "Cognite AS",
   "files": [
     "dist"
   ],
   "scripts": {
-    "clean": "rm -rf dist",
-    "test": "jest",
-    "esCheck": "es-check es5 './dist/index.js'",
-    "build": "yarn clean && rollup -c && yarn esCheck",
-    "build:watch": "yarn clean && rollup -c --watch && yarn esCheck",
-    "test-watch": "jest --watch",
-    "lint": "yarn concurrently \"yarn prettier\" \"yarn eslint 'src/**/*.{ts,tsx}'\"",
-    "lint:fix": "yarn prettier --write",
-    "prettier": "prettier -l 'src/**/*'"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/cognitedata/frontend"
-  },
-  "author": "",
-  "license": "UNLICENSED",
-  "homepage": "https://github.com/cognitedata/frontend/tree/master/packages/browser/z-index"
+    "build": "bazel build :z-index",
+    "test": "bazel test :jest_test",
+    "lint": "bazel test :eslint_test :prettier_test",
+    "eslint": "bazel test :eslint_test",
+    "eslint:fix": "bazel run :eslint_test -- --fix",
+    "prettier": "bazel test :prettier_test",
+    "prettier:fix": "bazel run :prettier_test -- --write",
+    "update-helpers": "bazel run :generate_package_json_helpers"
+  }
 }

@@ -2,7 +2,7 @@ load("@npm//rollup:index.bzl", "rollup")
 load("@bazel_skylib//rules:write_file.bzl", "write_file")
 load("@build_bazel_rules_nodejs//:index.bzl", "copy_to_bin", "js_library", "pkg_npm")
 load("//rules/test:jest.bzl", "jest_test")
-load("//rules/lint:index.bzl", "eslint_test", "prettier_test")
+load("//rules/lint:index.bzl", "eslint_config", "eslint_test", "prettier_test")
 load("//rules/package_json_helpers:generate.bzl", "generate_package_json_helpers")
 load("//rules/package_json_helpers:module_mappings.bzl", "module_mappings")
 load("//rules/npm:is_published.bzl", "is_published")
@@ -47,12 +47,19 @@ mappings_dict = {
 
 ### end of auto-generated helpers ###
 
+eslint_config(
+    name = "eslint_config",
+    src = ":.eslintrc.js",
+    deps = [
+        ".prettierrc",
+        "//packages:eslint_config",
+    ],
+)
+
 eslint_test(
     name = "eslint_test",
-    data = SOURCES + TESTS + [
-        ":tsconfig.json",
-    ],
-    eslint_config = "//packages:eslint_config",
+    data = SOURCES + TESTS,
+    eslint_config = ":eslint_config",
 )
 
 prettier_test(
@@ -126,7 +133,7 @@ js_library(
     package_name = "@cognite/{{ name }}",
     srcs = ["package-json"],
     visibility = ["//visibility:public"],
-    deps = ["dist"],
+    deps = DEPENDENCIES + ["dist"],
 )
 
 append_deps(

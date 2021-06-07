@@ -1,3 +1,7 @@
+## 1.0.7 Jun 9 2021
+
+- Migrate to Bazel setup
+
 ## 1.0.6 Jun 7 2021
 
 - Fix bug in initial login if token already exists

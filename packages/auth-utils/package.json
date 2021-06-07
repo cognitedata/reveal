@@ -1,44 +1,26 @@
 {
   "name": "@cognite/auth-utils",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "The auth layer of all cognite react apps",
   "source": "src/index.ts",
   "main": "dist/index.js",
   "module": "dist/index.m.js",
   "types": "dist/index.d.ts",
+  "repository": "https://github.com/cognitedata/applications/packages/auth-utils",
+  "license": "UNLICENSED",
+  "author": "Cognite AS",
   "files": [
     "dist",
     "jest-mocks.js"
   ],
   "scripts": {
-    "clean": "rm -rf dist",
-    "test": "jest",
-    "esCheck": "es-check es5 './dist/index.js'",
-    "build": "yarn clean && rollup -c && yarn esCheck",
-    "build:watch": "yarn clean && rollup -c --watch && yarn esCheck",
-    "watch": "yarn build --watch",
-    "lint": "yarn concurrently \"yarn prettier\" \"yarn eslint 'src/**/*.{ts,tsx}'\"",
-    "lint:fix": "yarn prettier --write",
-    "prettier": "prettier -l 'src/**/*'"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/cognitedata/frontend"
-  },
-  "author": "Cognite AS",
-  "license": "UNLICENSED",
-  "homepage": "https://github.com/cognitedata/frontend/tree/master/packages/browser/commonjs/auth-utils",
-  "dependencies": {
-    "lodash": "^4.17.20",
-    "@cognite/storage": "0.1.1",
-    "@cognite/sdk": "^4.0.3"
-  },
-  "peerDependencies": {
-    "@cognite/sdk": "^4.0.3"
-  },
-  "devDependencies": {
-    "@babel/parser": "^7.9.4",
-    "@types/lodash": "^4.14.165",
-    "jest-localstorage-mock": "^2.4.3"
+    "build": "bazel build :auth-utils",
+    "test": "bazel test :jest_test",
+    "lint": "bazel test :eslint_test :prettier_test",
+    "eslint": "bazel test :eslint_test",
+    "eslint:fix": "bazel run :eslint_test -- --fix",
+    "prettier": "bazel test :prettier_test",
+    "prettier:fix": "bazel run :prettier_test -- --write",
+    "update-helpers": "bazel run :generate_package_json_helpers"
   }
 }

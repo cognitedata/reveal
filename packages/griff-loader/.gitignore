@@ -1,8 +1,5 @@
-.rpt2_cache/
-.rts2_cache_cjs/
-.rts2_cache_es/
-.rts2_cache_umd/
+.rpt2*
+node_modules
 build/
-**/node_modules
 yarn-error.log
 dist
