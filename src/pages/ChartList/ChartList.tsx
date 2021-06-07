@@ -14,6 +14,7 @@ import { nanoid } from 'nanoid';
 import { subDays } from 'date-fns';
 import { useLoginStatus, useNavigate } from 'hooks';
 import ChartListItem, { ViewOption } from 'components/ChartListItem';
+import { OpenInCharts } from 'components/OpenInCharts';
 import { CHART_VERSION } from 'config/';
 import { trackUsage } from 'utils/metrics';
 
@@ -221,6 +222,7 @@ const ChartList = () => {
       <div style={{ display: 'flex', flexWrap: 'wrap' }}>
         {error ? renderError() : renderList()}
       </div>
+      <OpenInCharts />
     </div>
   );
 };

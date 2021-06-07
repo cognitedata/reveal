@@ -55,7 +55,7 @@ const DateRangeSelector = ({ chart }: DateRangeSelectorProps) => {
     dateTo?: Date;
     source?: 'button' | 'daterange';
   }) => {
-    if (dateFrom && dateTo) {
+    if (dateFrom || dateTo) {
       updateChart({
         ...chart,
         dateFrom: (dateFrom || new Date(chart?.dateFrom!)).toJSON(),

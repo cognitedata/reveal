@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Chart,
   ChartWorkflow,
@@ -12,26 +12,23 @@ import {
   Icon,
   Menu,
   Popconfirm,
-  Flex,
   Tooltip,
 } from '@cognite/cogs.js';
 import FunctionCall from 'components/FunctionCall';
 import { updateWorkflow, removeWorkflow } from 'utils/charts';
 import EditableText from 'components/EditableText';
-import { units } from 'utils/units';
-import { useCallFunction } from 'utils/cogniteFunctions';
+import { useCallFunction, useFunctionCall } from 'utils/backendService';
 import { getStepsFromWorkflow } from 'utils/transforms';
 import { calculateGranularity } from 'utils/timeseries';
 import { isWorkflowRunnable } from 'components/NodeEditor/utils';
 import { AppearanceDropdown } from 'components/AppearanceDropdown';
+import { UnitDropdown } from 'components/UnitDropdown';
 import { getHash } from 'utils/hash';
 import {
   SourceItem,
   SourceSquare,
   SourceName,
   SourceRow,
-  UnitMenuAside,
-  UnitMenuHeader,
   SourceDescription,
 } from './elements';
 import WorkflowMenu from './WorkflowMenu';
@@ -70,10 +67,9 @@ export default function WorkflowRow({
   isSelected = false,
   mutate,
 }: Props) {
-  const { mutate: callFunction, isSuccess } = useCallFunction(
+  const { mutate: callFunction, isLoading: isCallLoading } = useCallFunction(
     'simple_calc-master'
   );
-
   const [isEditingName, setIsEditingName] = useState<boolean>(false);
   const [lastSuccessfulCall, setLastSuccessfulCall] = useState<Call>();
   const { id, enabled, color, name, calls, unit, preferredUnit } = workflow;
@@ -87,32 +83,27 @@ export default function WorkflowRow({
   const { dateTo, dateFrom } = chart;
   const { nodes, connections } = workflow;
   const steps = useMemo(
-    () => isWorkflowRunnable(nodes) && getStepsFromWorkflow(nodes, connections),
-    [nodes, connections]
+    () =>
+      isWorkflowRunnable(nodes)
+        ? getStepsFromWorkflow(chart, nodes, connections)
+        : [],
+    [chart, nodes, connections]
   );
 
   const computation = useMemo(
-    () =>
-      steps && {
-        steps,
-        start_time: new Date(dateFrom).getTime(),
-        end_time: new Date(dateTo).getTime(),
-        granularity: calculateGranularity(
-          [new Date(dateFrom).getTime(), new Date(dateTo).getTime()],
-          1000
-        ),
-      },
+    () => ({
+      steps,
+      start_time: new Date(dateFrom).getTime(),
+      end_time: new Date(dateTo).getTime(),
+      granularity: calculateGranularity(
+        [new Date(dateFrom).getTime(), new Date(dateTo).getTime()],
+        1000
+      ),
+    }),
     [steps, dateFrom, dateTo]
   );
 
-  useEffect(() => {
-    if (!computation) {
-      return;
-    }
-    if (call?.hash === getHash(computation)) {
-      return;
-    }
-
+  const runComputation = useCallback(() => {
     callFunction(
       {
         data: { computation_graph: computation },
@@ -123,9 +114,46 @@ export default function WorkflowRow({
         },
       }
     );
-  }, [computation, callFunction, setLastSuccessfulCall, call]);
+  }, [computation, callFunction, setLastSuccessfulCall]);
 
-  useEffect(() => {
+  const currentCallStatus = useFunctionCall(call?.functionId!, call?.callId!);
+
+  const handleRetries = useCallback(() => {
+    if (isCallLoading) {
+      return;
+    }
+
+    if (!call) {
+      return;
+    }
+
+    if (!currentCallStatus.isError) {
+      return;
+    }
+
+    if (
+      currentCallStatus.data?.status &&
+      !['Failed', 'Timeout'].includes(currentCallStatus.data.status)
+    ) {
+      return;
+    }
+
+    runComputation();
+  }, [call, currentCallStatus, runComputation, isCallLoading]);
+
+  const handleChanges = useCallback(() => {
+    if (!computation.steps.length) {
+      return;
+    }
+
+    if (call?.hash === getHash(computation)) {
+      return;
+    }
+
+    runComputation();
+  }, [computation, runComputation, call]);
+
+  const handleCallUpdates = useCallback(() => {
     if (!computation) {
       return;
     }
@@ -147,73 +175,25 @@ export default function WorkflowRow({
         calls: [newCall],
       })
     );
-  }, [
-    chart,
-    workflow.id,
-    isSuccess,
-    mutate,
-    computation,
-    lastSuccessfulCall,
-    call,
-  ]);
+  }, [chart, workflow.id, mutate, computation, lastSuccessfulCall, call]);
 
-  const inputUnitOption = units.find(
-    (unitOption) => unitOption.value === unit?.toLowerCase()
-  );
-
-  const preferredUnitOption = units.find(
-    (unitOption) => unitOption.value === preferredUnit?.toLowerCase()
-  );
-
-  const unitConversionOptions = inputUnitOption?.conversions?.map(
-    (conversion) => units.find((unitOption) => unitOption.value === conversion)
-  );
-
-  const unitOverrideMenuItems = units.map((unitOption) => (
-    <Menu.Item
-      key={unitOption.value}
-      onClick={() =>
-        update(id, {
-          unit: unitOption.value,
-        })
-      }
-      style={
-        unit?.toLowerCase() === unitOption.value
-          ? {
-              color: 'var(--cogs-midblue-3)',
-              backgroundColor: 'var(--cogs-midblue-6)',
-              borderRadius: 3,
-            }
-          : {}
-      }
-    >
-      {unitOption.label}
-    </Menu.Item>
-  ));
-
-  const unitConversionMenuItems = unitConversionOptions?.map((unitOption) => (
-    <Menu.Item
-      key={unitOption?.value}
-      onClick={() =>
-        update(id, {
-          preferredUnit: unitOption?.value,
-        })
-      }
-      style={
-        preferredUnit?.toLowerCase() === unitOption?.value
-          ? {
-              color: 'var(--cogs-midblue-3)',
-              backgroundColor: 'var(--cogs-midblue-6)',
-              borderRadius: 3,
-            }
-          : {}
-      }
-    >
-      {unitOption?.label}
-    </Menu.Item>
-  ));
+  useEffect(handleRetries, [handleRetries]);
+  useEffect(handleChanges, [handleChanges]);
+  useEffect(handleCallUpdates, [handleCallUpdates]);
 
   const remove = () => mutate(removeWorkflow(chart, id));
+
+  const updateUnit = (unitOption: any) => {
+    update(id, {
+      unit: unitOption.value,
+    });
+  };
+
+  const updatePrefferedUnit = (unitOption: any) => {
+    update(id, {
+      preferredUnit: unitOption?.value,
+    });
+  };
 
   const updateAppearance = (diff: Partial<ChartTimeSeries>) =>
     mutate(updateWorkflow(chart, id, diff));
@@ -222,6 +202,7 @@ export default function WorkflowRow({
     <SourceRow
       onClick={() => onRowClick(id)}
       className={isSelected ? 'active' : undefined}
+      onDoubleClick={openNodeEditor}
     >
       <td>
         <SourceItem key={id}>
@@ -279,35 +260,12 @@ export default function WorkflowRow({
           </td>
           <td colSpan={4} />
           <td style={{ textAlign: 'right', paddingRight: 8 }}>
-            <Dropdown
-              content={
-                <Menu>
-                  <Flex direction="row">
-                    <div>
-                      <Menu.Header>
-                        <UnitMenuHeader>Input</UnitMenuHeader>
-                      </Menu.Header>
-                      {unitOverrideMenuItems}
-                    </div>
-                    <UnitMenuAside>
-                      <Menu.Header>
-                        <UnitMenuHeader>Output</UnitMenuHeader>
-                      </Menu.Header>
-                      {unitConversionMenuItems}
-                    </UnitMenuAside>
-                  </Flex>
-                </Menu>
-              }
-            >
-              <Button
-                icon="Down"
-                type="tertiary"
-                iconPlacement="right"
-                style={{ height: 28 }}
-              >
-                {preferredUnitOption?.label || '-'}
-              </Button>
-            </Dropdown>
+            <UnitDropdown
+              unit={unit}
+              preferredUnit={preferredUnit}
+              onOverrideUnitClick={updateUnit}
+              onConversionUnitClick={updatePrefferedUnit}
+            />
           </td>
           <td />
           <td style={{ textAlign: 'center', paddingLeft: 0 }}>
@@ -328,7 +286,7 @@ export default function WorkflowRow({
               content={
                 <div style={{ textAlign: 'left' }}>
                   Are you sure that you want to
-                  <br /> remove this Time Series?
+                  <br /> remove this calculation?
                 </div>
               }
             >
@@ -358,7 +316,7 @@ export default function WorkflowRow({
             <Dropdown
               content={
                 <WorkflowMenu chart={chart} id={id}>
-                  <Menu.Item onClick={openNodeEditor} appendIcon="YAxis">
+                  <Menu.Item onClick={openNodeEditor} appendIcon="Function">
                     <span>Edit calculation</span>
                   </Menu.Item>
                 </WorkflowMenu>

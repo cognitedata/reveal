@@ -23,11 +23,11 @@ export const AnnotationPopover = ({
 }) => {
   const annotation = annotations[0];
   const selectedAssetId =
-    annotation.resourceType === 'asset' ? annotation.resourceId : undefined;
+    annotation?.resourceType === 'asset' ? annotation.resourceId : undefined;
 
   const { data: asset, isLoading } = useAsset(selectedAssetId);
 
-  if (annotation.resourceType !== 'asset' || !selectedAssetId) {
+  if (annotation?.resourceType !== 'asset' || !selectedAssetId) {
     return <></>;
   }
 
@@ -82,10 +82,7 @@ export const TimeseriesList = ({ assetId }: { assetId: number }) => {
       if (tsToRemove) {
         updateChart(removeTimeseries(chart, tsToRemove.id));
       } else {
-        const ts = covertTSToChartTS(
-          timeSeries,
-          chart.timeSeriesCollection?.length || 0
-        );
+        const ts = covertTSToChartTS(timeSeries);
         updateChart(addTimeseries(chart, ts));
         trackUsage('ChartView.AddTimeSeries', { source: 'annotation' });
       }

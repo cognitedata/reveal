@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import dayjs from 'dayjs';
-import { useSDK } from '@cognite/sdk-provider';
 import { useIsFetching, useQueryClient, useQuery } from 'react-query';
 import {
   Chart,
@@ -12,12 +11,9 @@ import {
   Button,
   Dropdown,
   Icon,
-  Menu,
   Tooltip,
   Popconfirm,
-  Flex,
 } from '@cognite/cogs.js';
-import { units } from 'utils/units';
 import { calculateGranularity } from 'utils/timeseries';
 import { removeTimeseries, updateTimeseries } from 'utils/charts';
 import { useLinkedAsset } from 'hooks/api';
@@ -25,18 +21,20 @@ import { usePrevious } from 'hooks/usePrevious';
 import EditableText from 'components/EditableText';
 import { AppearanceDropdown } from 'components/AppearanceDropdown';
 import { PnidButton } from 'components/SearchResultTable/PnidButton';
-import { functionResponseKey, useCallFunction } from 'utils/cogniteFunctions';
+import { functionResponseKey, useCallFunction } from 'utils/backendService';
 import FunctionCall from 'components/FunctionCall';
-import { CogniteClient } from '@cognite/sdk';
 import { StatisticsResult } from 'components/DetailsSidebar';
+import { UnitDropdown } from 'components/UnitDropdown';
+import * as backendApi from 'utils/backendApi';
 import { trackUsage } from 'utils/metrics';
+import { CogniteClient } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
+import { calculateDefaultYAxis } from 'utils/axis';
 import {
   SourceItem,
   SourceCircle,
   SourceName,
   SourceRow,
-  UnitMenuAside,
-  UnitMenuHeader,
   SourceDescription,
   SourceTag,
 } from './elements';
@@ -63,11 +61,7 @@ const getCallStatus = (
   fnId: number,
   callId: number
 ) => async () => {
-  const response = await sdk
-    .get(
-      `/api/playground/projects/${sdk.project}/functions/${fnId}/calls/${callId}`
-    )
-    .then((r) => r?.data);
+  const response = await backendApi.getCallStatus(sdk, fnId, callId);
 
   if (response?.status) {
     return response.status as FunctionCallStatus;
@@ -160,6 +154,7 @@ export default function TimeSeriesRow({
   dateTo,
 }: Props) {
   const sdk = useSDK();
+
   const {
     id,
     description,
@@ -192,67 +187,38 @@ export default function TimeSeriesRow({
       ),
     });
 
-  const inputUnitOption = units.find(
-    (unitOption) => unitOption.value === unit?.toLowerCase()
-  );
-
-  const preferredUnitOption = units.find(
-    (unitOption) => unitOption.value === preferredUnit?.toLowerCase()
-  );
-
-  const unitConversionOptions = inputUnitOption?.conversions?.map(
-    (conversion) => units.find((unitOption) => unitOption.value === conversion)
-  );
-
-  const unitOverrideMenuItems = units.map((unitOption) => (
-    <Menu.Item
-      key={unitOption.value}
-      onClick={() =>
-        update(id, {
-          unit: unitOption.value,
-        })
-      }
-      style={
-        unit?.toLowerCase() === unitOption.value
-          ? {
-              color: 'var(--cogs-midblue-3)',
-              backgroundColor: 'var(--cogs-midblue-6)',
-              borderRadius: 3,
-            }
-          : {}
-      }
-    >
-      {unitOption.label}
-      {originalUnit?.toLowerCase() === unitOption.value && ' (original)'}
-    </Menu.Item>
-  ));
-
-  const unitConversionMenuItems = unitConversionOptions?.map((unitOption) => (
-    <Menu.Item
-      key={unitOption?.value}
-      onClick={() =>
-        update(id, {
-          preferredUnit: unitOption?.value,
-        })
-      }
-      style={
-        preferredUnit?.toLowerCase() === unitOption?.value
-          ? {
-              color: 'var(--cogs-midblue-3)',
-              backgroundColor: 'var(--cogs-midblue-6)',
-              borderRadius: 3,
-            }
-          : {}
-      }
-    >
-      {unitOption?.label}
-    </Menu.Item>
-  ));
-
   const remove = () => mutate(removeTimeseries(chart, id));
 
   const updateAppearance = (diff: Partial<ChartTimeSeries>) =>
     mutate(updateTimeseries(chart, id, diff));
+
+  const updateUnit = async (unitOption: any) => {
+    const range = await calculateDefaultYAxis({
+      chart,
+      sdk,
+      timeSeriesId: timeseries.tsId,
+      inputUnit: unitOption?.value,
+      outputUnit: preferredUnit,
+    });
+    update(id, {
+      unit: unitOption.value,
+      range,
+    });
+  };
+
+  const updatePrefferedUnit = async (unitOption: any) => {
+    const range = await calculateDefaultYAxis({
+      chart,
+      sdk,
+      timeSeriesId: timeseries.tsId,
+      inputUnit: unit,
+      outputUnit: unitOption?.value,
+    });
+    update(id, {
+      preferredUnit: unitOption?.value,
+      range,
+    });
+  };
 
   const statisticsCall = (timeseries?.statisticsCalls || [])[0];
 
@@ -262,11 +228,11 @@ export default function TimeSeriesRow({
       statisticsCall?.callId
     ),
     queryFn: (): Promise<string | undefined> =>
-      sdk
-        .get(
-          `/api/playground/projects/${sdk.project}/functions/${statisticsCall.functionId}/calls/${statisticsCall.callId}/response`
-        )
-        .then((r) => r.data.response),
+      backendApi.getCallResponse(
+        sdk,
+        statisticsCall?.functionId,
+        statisticsCall?.callId
+      ),
     retry: 1,
     retryDelay: 1000,
     enabled: !!statisticsCall,
@@ -445,36 +411,13 @@ export default function TimeSeriesRow({
           </td>
           <td>{statisticsForSource?.median}</td>
           <td style={{ textAlign: 'right', paddingRight: 8 }}>
-            <Dropdown
-              content={
-                <Menu>
-                  <Flex direction="row">
-                    <div>
-                      <Menu.Header>
-                        <UnitMenuHeader>Input</UnitMenuHeader>
-                      </Menu.Header>
-                      {unitOverrideMenuItems}
-                    </div>
-                    <UnitMenuAside>
-                      <Menu.Header>
-                        <UnitMenuHeader>Output</UnitMenuHeader>
-                      </Menu.Header>
-                      {unitConversionMenuItems}
-                    </UnitMenuAside>
-                  </Flex>
-                </Menu>
-              }
-            >
-              <Button
-                icon="Down"
-                type="tertiary"
-                iconPlacement="right"
-                style={{ height: 28 }}
-              >
-                {preferredUnitOption?.label}
-                {inputUnitOption?.value !== originalUnit?.toLowerCase() && ' *'}
-              </Button>
-            </Dropdown>
+            <UnitDropdown
+              unit={unit}
+              originalUnit={originalUnit}
+              preferredUnit={preferredUnit}
+              onOverrideUnitClick={updateUnit}
+              onConversionUnitClick={updatePrefferedUnit}
+            />
           </td>
         </>
       )}
@@ -506,7 +449,7 @@ export default function TimeSeriesRow({
             content={
               <div style={{ textAlign: 'left' }}>
                 Are you sure that you want to
-                <br /> remove this Time Series?
+                <br /> remove this time series?
               </div>
             }
           >

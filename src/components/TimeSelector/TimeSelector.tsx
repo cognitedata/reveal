@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components/macro';
 import arrow from './arrow.svg';
 
@@ -41,22 +41,17 @@ const TimeSelector = ({ onChange, value }: TimeSelectorProps) => {
   const valueString = `${pad(value.getHours())}:${pad(value.getMinutes())}`;
   const [inputValue, setInputValue] = useState<string>(valueString);
 
-  const onSelectTime = (
+  useEffect(() => {
+    if (valueString !== inputValue) {
+      setInputValue(valueString);
+    }
+    // Only needs to update when valueString chages
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [valueString]);
+
+  const handleTimeChange = (
     e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
   ) => {
-    const newValueString = e.target.value;
-    const [hours, minutes] = getTime(newValueString);
-    if (hours === undefined || minutes === undefined) {
-      return;
-    }
-    const newValue = new Date(value);
-    newValue.setHours(hours);
-    newValue.setMinutes(minutes);
-    setInputValue(newValueString);
-    onChange(newValue);
-  };
-
-  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValueString = e.target.value;
     setInputValue(newValueString);
     const [hours, minutes] = getTime(newValueString);
@@ -73,13 +68,13 @@ const TimeSelector = ({ onChange, value }: TimeSelectorProps) => {
 
   return (
     <div style={{ position: 'relative' }}>
-      <Select onChange={onSelectTime} value={selectValue}>
+      <Select onChange={handleTimeChange} value={selectValue}>
         <Option hidden />
         {timeOptions.map((time) => (
           <Option key={time}>{time}</Option>
         ))}
       </Select>
-      <Input onChange={onInputChange} value={inputValue} />
+      <Input onChange={handleTimeChange} value={inputValue} />
     </div>
   );
 };

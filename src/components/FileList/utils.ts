@@ -1,6 +1,7 @@
 import { FileInfo as File } from '@cognite/sdk';
 
-export const PREVIEWABLE_FILE_TYPES = ['png', 'jpeg', 'jpg', 'svg', 'pdf'];
+export const PREVIEWABLE_IMAGE_TYPES = ['png', 'jpeg', 'jpg', 'svg'];
+export const PREVIEWABLE_FILE_TYPES = [...PREVIEWABLE_IMAGE_TYPES, 'pdf'];
 
 export const isFileOfType = (file?: File, type?: string[]) => {
   const { mimeType = '', name = '' } = file || {};
@@ -10,6 +11,9 @@ export const isFileOfType = (file?: File, type?: string[]) => {
 
 export const isFilePreviewable = (file?: File) =>
   isFileOfType(file, PREVIEWABLE_FILE_TYPES);
+
+export const isPreviewableImage = (file: File) =>
+  isFileOfType(file, PREVIEWABLE_IMAGE_TYPES);
 
 export const readablePreviewableFileTypes = () =>
   PREVIEWABLE_FILE_TYPES.reduce((acc, current, i) => {

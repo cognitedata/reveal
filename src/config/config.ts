@@ -22,17 +22,21 @@ export type BaseSidecar = {
   infieldCacheApiBaseUrl: string;
 };
 
-export const useCluster = (): [string, (s: string) => void] => {
-  const [searchParam, setSearchParam] = useSearchParam('cluster');
-  const { cdfCluster } = getSidecar();
-
-  return [searchParam || cdfCluster, setSearchParam];
+export const getAppId = (): string => {
+  return 'Cognite Charts';
 };
 
 export const getSidecar = () => sidecar;
 
 export const getAppName = (): string => {
   return getSidecar().applicationId;
+};
+
+export const useCluster = (): [string, (s: string) => void] => {
+  const [searchParam, setSearchParam] = useSearchParam('cluster');
+  const { cdfCluster } = getSidecar();
+
+  return [searchParam || cdfCluster, setSearchParam];
 };
 
 export const useAppsApiBaseUrl = (): string => {
@@ -64,6 +68,7 @@ export const getEnvironment = (
 };
 
 export default {
+  appId: getAppId(),
   appName: getAppName(),
   apiKey,
   environment: getEnvironment(),

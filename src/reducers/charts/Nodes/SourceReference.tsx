@@ -4,25 +4,27 @@ import { Chart, StorableNode } from 'reducers/charts/types';
 import { ConfigPanelComponentProps } from '../types';
 
 type FunctionData = {
-  timeSeriesExternalId: string;
+  type: string;
+  sourceId: string;
   context: {
     chart: Chart;
   };
 };
 
 export const effect = async (funcData: FunctionData) => {
-  if (!funcData.timeSeriesExternalId) {
-    throw new Error('No external id given in config');
+  if (!funcData.sourceId) {
+    throw new Error('No id given in config');
   }
 
   return {
     result: {
-      externalId: funcData.timeSeriesExternalId,
+      type: funcData.type,
+      sourceId: funcData.type,
     },
   };
 };
 
-export const effectId = 'TIME_SERIES_REFERENCE';
+export const effectId = 'SOURCE_REFERENCE';
 
 export const ConfigPanel = ({
   node,
@@ -31,43 +33,73 @@ export const ConfigPanel = ({
 }: ConfigPanelComponentProps) => {
   const { functionData } = node;
 
+  const { workflow } = context;
+
   const workspaceTimeSeries =
     (context.chart as Chart).timeSeriesCollection || [];
 
+  const workspaceWorkflows = (context.chart as Chart).workflowCollection || [];
+
+  const sourceList = [
+    ...workspaceTimeSeries.map((ts) => ({
+      type: 'timeseries',
+      id: ts.tsExternalId,
+      name: ts.name,
+    })),
+    ...workspaceWorkflows.map((wf) => ({
+      type: 'workflow',
+      id: wf.id,
+      name: wf.name,
+    })),
+  ];
+
   const selectedWorkspaceTimeSeriesLabel =
-    workspaceTimeSeries.find(
-      ({ tsExternalId }) => tsExternalId === functionData.timeSeriesExternalId
-    )?.name || '';
+    sourceList.find(({ id }) => id === functionData.sourceId)?.name || '';
 
   const loadOptions = (
     _: string,
     callback: (options: { value?: string; label?: string }[]) => void
   ) => {
     callback(
-      workspaceTimeSeries.map((result) => ({
-        value: result.tsExternalId,
-        label: result.name,
-      }))
+      sourceList
+        .filter((source) => source.id !== workflow.id)
+        .map((source) => ({
+          value: source.id,
+          label: source.name,
+        }))
     );
   };
 
+  const typeDisplayNames = [
+    { id: 'timeseries', label: 'Time Series' },
+    { id: 'workflow', label: 'Calculation' },
+  ];
+
   return (
     <div>
-      <h4>Time Series</h4>
+      <h4>Source</h4>
       <AutoComplete
         mode="async"
         theme="dark"
         loadOptions={loadOptions}
         onChange={(nextValue: { value: string; label: string }) => {
+          const { type } =
+            sourceList.find(({ id }) => id === nextValue.value) || {};
+
+          const subtitle = typeDisplayNames.find(({ id }) => id === type)
+            ?.label;
+
           onUpdateNode({
             title: nextValue.label,
+            subtitle: subtitle || 'Source',
             functionData: {
-              timeSeriesExternalId: nextValue.value || '',
+              type,
+              sourceId: nextValue.value || '',
             },
           });
         }}
         value={{
-          value: functionData.timeSeriesExternalId,
+          value: functionData.sourceId,
           label: selectedWorkspaceTimeSeriesLabel,
         }}
       />
@@ -76,8 +108,8 @@ export const ConfigPanel = ({
 };
 
 export const node = {
-  title: 'Time Series',
-  subtitle: 'TIME SERIES',
+  title: 'Input',
+  subtitle: 'Source',
   color: '#FC2574',
   icon: 'Function',
   inputPins: [],
@@ -90,6 +122,7 @@ export const node = {
   ],
   functionEffectReference: effectId,
   functionData: {
-    timeSeriesExternalId: '',
+    type: '',
+    sourceId: '',
   },
 } as StorableNode;

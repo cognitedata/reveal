@@ -68,14 +68,10 @@ export default function AssetSearchHit({ asset }: Props) {
         const range = await calculateDefaultYAxis({
           chart,
           sdk,
-          timeSeries,
+          timeSeriesId: timeSeries.id,
         });
 
-        const newTs = covertTSToChartTS(
-          timeSeries,
-          chart.timeSeriesCollection?.length || 0,
-          range
-        );
+        const newTs = covertTSToChartTS(timeSeries, range);
 
         updateChart(addTimeseries(chart, newTs));
         trackUsage('ChartView.AddTimeSeries', { source: 'search' });

@@ -2,7 +2,7 @@ import { Timeseries } from '@cognite/sdk';
 import { AxisUpdate } from 'components/PlotlyChart';
 import { nanoid } from 'nanoid';
 import { Chart, ChartTimeSeries, ChartWorkflow } from 'reducers/charts/types';
-import { availableColors } from './colors';
+import { getEntryColor } from './colors';
 import { convertTsToWorkFlow } from './timeseries';
 
 export function duplicate(chart: Chart, user: string): Chart {
@@ -99,13 +99,12 @@ export function removeWorkflow(chart: Chart, wfId: string): Chart {
 }
 export function duplicateWorkflow(chart: Chart, wfId: string): Chart {
   const wf = chart.workflowCollection?.find((w) => w.id === wfId);
-  const n = (chart.workflowCollection?.length || 0) + 1;
   if (wf) {
     const newWf = {
       ...wf,
       id: nanoid(),
       name: `${wf.name} Copy`,
-      color: availableColors[n % availableColors.length],
+      color: getEntryColor(),
     };
     return addWorkflow(chart, newWf);
   }
@@ -134,7 +133,6 @@ export function convertTimeseriesToWorkflow(chart: Chart, id: string): Chart {
 
 export function covertTSToChartTS(
   ts: Timeseries,
-  preExistingCount?: number,
   range: number[] = []
 ): ChartTimeSeries {
   return {
@@ -145,7 +143,7 @@ export function covertTSToChartTS(
     unit: ts.unit || '*',
     originalUnit: ts.unit || '*',
     preferredUnit: ts.unit || '*',
-    color: availableColors[preExistingCount || 0 % availableColors.length],
+    color: getEntryColor(),
     lineWeight: 1,
     lineStyle: 'solid',
     displayMode: 'lines',
