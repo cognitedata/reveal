@@ -1,3 +1,7 @@
+## 1.2.9 June 2021
+
+- Bump auth-utils to v1.0.6
+
 ## 1.2.8 June 2 2021
 
 - Pass `project` into fake idp `/login/token` as a body param

@@ -1,3 +1,7 @@
+## 1.2.7 Jun 4 2021
+
+- Bump tsa to v1.2.9 and auth-utils to 1.0.6
+
 ## 1.2.6 Jun 2 2021
 
 - Bump tsa to v1.2.7
