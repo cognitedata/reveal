@@ -29,20 +29,38 @@ export default function SummaryStep() {
   const annotations = useSelector((state: RootState) => {
     return annotationsById(state.previewSlice);
   });
-  const PersonFiles: number[] = [];
+  console.log('Here annotations', Object.values(annotations));
+
+  const personFiles: number[] = [];
   const reviewStats: number[] = [];
+  const textNumber: number[] = [];
+  const objectNumber: number[] = [];
+  const tagNumber: number[] = [];
+
   // eslint-disable-next-line array-callback-return
   Object.entries(annotations).map((arr) => {
     const aID = arr[1].annotatedResourceId;
     if (arr[1].status !== 'unhandled' && !reviewStats.includes(aID)) {
       reviewStats.push(aID);
     }
-    if (arr[1].label === 'person' && !PersonFiles.includes(aID)) {
-      PersonFiles.push(aID);
+    if (arr[1].label === 'person' && !personFiles.includes(aID)) {
+      personFiles.push(aID);
+    }
+    if (arr[1].source === 'vision/ocr' && !textNumber.includes(aID)) {
+      textNumber.push(aID);
+    }
+    if (
+      arr[1].source === 'vision/objectdetection' &&
+      !objectNumber.includes(aID)
+    ) {
+      objectNumber.push(aID);
+    }
+    if (arr[1].source === 'vision/tagdetection' && !tagNumber.includes(aID)) {
+      tagNumber.push(aID);
     }
   });
 
-  const NotReviewedPersonFiles = PersonFiles.filter(
+  const NotReviewedPersonFiles = personFiles.filter(
     (file) => !reviewStats.includes(file)
   );
   let filesWithExif = 0;
@@ -52,10 +70,15 @@ export default function SummaryStep() {
       filesWithExif += 1;
     }
   });
+  const totalAnnotations =
+    tagNumber.length + textNumber.length + objectNumber.length;
+  const tagPercent = Math.round((tagNumber.length / totalAnnotations) * 100);
+  const textPercent = Math.round((textNumber.length / totalAnnotations) * 100);
+  const objectPercent = 100 - textPercent - tagPercent;
 
   const stats = {
     totalFilesUploaded: {
-      text: 'total files uploaded',
+      text: 'total files processed',
       value: uploadedFiles?.length,
     },
     filesWithExif: { text: 'files with exif', value: filesWithExif },
@@ -64,8 +87,8 @@ export default function SummaryStep() {
       value: reviewStats.length,
     },
     modelDetections: {
-      text: 'detected tags, texts and objects ',
-      value: Object.keys(annotations).length,
+      text: 'files with tags, texts or objects ',
+      value: totalAnnotations,
     },
     personCases: {
       text: 'unresolved person detections',
@@ -210,19 +233,33 @@ export default function SummaryStep() {
               )}
 
               {statView === 'modelDetections' && (
-                <StatsCarouselRight key={statView}>
-                  {Array.from(
-                    { length: stats[statView].value },
-                    (_, i: number) => (
-                      <FileIconContainer key={`${statView}_${i}`}>
-                        <img
-                          src={FileWithAnnotations}
-                          alt="FileWithAnnotations"
-                        />
-                      </FileIconContainer>
-                    )
+                <StatsCarouselRightDivider>
+                  <StatsCarouselRight key={statView}>
+                    {Array.from(
+                      { length: stats[statView].value },
+                      (_, i: number) => (
+                        <FileIconContainer key={`${statView}_${i}`}>
+                          <img
+                            src={FileWithAnnotations}
+                            alt="FileWithAnnotations"
+                          />
+                        </FileIconContainer>
+                      )
+                    )}
+                  </StatsCarouselRight>
+                  {totalAnnotations > 0 && (
+                    <DetectionStats>
+                      <PercentBar
+                        percentage1={tagPercent}
+                        percentage2={textPercent}
+                        percentage3={objectPercent}
+                        count1={tagNumber.length}
+                        count2={textNumber.length}
+                        count3={objectNumber.length}
+                      />
+                    </DetectionStats>
                   )}
-                </StatsCarouselRight>
+                </StatsCarouselRightDivider>
               )}
               {statView === 'personCases' && (
                 <StatsCarouselRight key={statView}>
@@ -237,10 +274,10 @@ export default function SummaryStep() {
                       </FileIconContainer>
                     )
                   )}
-                  {stats[statView].value < PersonFiles.length &&
+                  {stats[statView].value < personFiles.length &&
                     Array.from(
                       {
-                        length: PersonFiles.length - stats[statView].value,
+                        length: personFiles.length - stats[statView].value,
                       },
                       (_, i: number) => (
                         <FileIconContainer key={`notPersonCases__${i}`}>
@@ -258,6 +295,112 @@ export default function SummaryStep() {
   );
 }
 
+export const PercentBar = (props: {
+  percentage1: number;
+  percentage2: number;
+  percentage3: number;
+  count1?: number;
+  count2?: number;
+  count3?: number;
+}) => {
+  return (
+    <DetectionDetailsContainer>
+      <PercentBarStyle>
+        <Filler
+          percentage1={props.percentage1}
+          percentage2={props.percentage2}
+          percentage3={props.percentage3}
+        />
+      </PercentBarStyle>
+      <PercentBarStyle>
+        <Title
+          level={6}
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            color: '#fc4a72',
+            justifyContent: 'center',
+            alignItems: 'center',
+            width: `${props.percentage1}%`,
+          }}
+        >
+          {props.percentage1}%<br />
+          <div
+            style={{
+              fontSize: '8px',
+              display: 'flex',
+              justifyContent: 'center',
+              minWidth: 'max-content',
+            }}
+          >
+            {props.count1} file{!!props.count1 && props.count1 !== 1 && 's'}
+          </div>
+        </Title>
+        <Title
+          level={6}
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            color: '#ff8746',
+            justifyContent: 'center',
+            alignItems: 'center',
+            width: `${props.percentage2}%`,
+          }}
+        >
+          {props.percentage2}%<br />
+          <div
+            style={{
+              fontSize: '8px',
+              display: 'flex',
+              justifyContent: 'center',
+              minWidth: 'max-content',
+            }}
+          >
+            {props.count2} file{!!props.count2 && props.count2 !== 1 && 's'}
+          </div>
+        </Title>
+        <Title
+          level={6}
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            color: '#f28fff',
+            justifyContent: 'center',
+            alignItems: 'center',
+            width: `${props.percentage3}%`,
+          }}
+        >
+          {props.percentage3}%<br />
+          <div
+            style={{
+              fontSize: '8px',
+              display: 'flex',
+              justifyContent: 'center',
+              minWidth: 'max-content',
+            }}
+          >
+            {props.count3} file{!!props.count3 && props.count3 !== 1 && 's'}
+          </div>
+        </Title>
+      </PercentBarStyle>
+    </DetectionDetailsContainer>
+  );
+};
+
+const Filler = (props: {
+  percentage1: number;
+  percentage2: number;
+  percentage3: number;
+}) => {
+  return (
+    <>
+      <FillerStyleLeft style={{ width: `${props.percentage1}%` }} />
+      <FillerStyleMid style={{ width: `${props.percentage2}%` }} />
+      <FillerStyleRight style={{ width: `${props.percentage3}%` }} />
+    </>
+  );
+};
+
 const Container = styled.div`
   flex: 1;
 `;
@@ -272,6 +415,29 @@ const StatsCarouselContainer = styled.div`
   border-radius: 1em;
   border-width: 1em;
   flex: 1 1 auto;
+`;
+
+const DetectionStats = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  justify-content: center;
+`;
+
+const DetectionDetailsContainer = styled.div`
+  display: grid;
+  grid-template-rows: 50% auto;
+  align-items: center;
+  justify-content: center;
+`;
+
+const StatsCarouselRightDivider = styled.div`
+  display: grid;
+  flex: 1 2 auto;
+  grid-template-rows: auto 15%;
+  border-radius: inherit;
+  padding: 1em;
+  overflow-y: auto;
 `;
 
 const StatsCarouselRight = styled.div`
@@ -305,4 +471,30 @@ const FancyButton = styled.button`
   border: none;
   border-radius: 10px;
   padding: 1rem;
+`;
+
+const PercentBarStyle = styled.div`
+  display: flex;
+  height: 15px;
+  width: 300px;
+  margin: 10px;
+  border-radius: 2px 0px 0px 2px;
+`;
+
+const FillerStyleLeft = styled.div`
+  background: #fc4a72;
+  height: 100%;
+  transition: width 0.2s ease-in;
+`;
+
+const FillerStyleRight = styled.div`
+  background: #f28fff;
+  height: 100%;
+  transition: width 0.2s ease-in;
+`;
+
+const FillerStyleMid = styled.div`
+  background: #ff8746;
+  height: 100%;
+  transition: width 0.2s ease-in;
 `;
