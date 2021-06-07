@@ -21,7 +21,7 @@ export const getRunLogTableCol = (): Column<StatusRun>[] => {
       disableFilters: true,
     },
     {
-      Header: TableHeadings.STATUS,
+      Header: TableHeadings.LAST_RUN_STATUS,
       accessor: 'status',
       Cell: ({ row }: Cell<StatusRun>) => {
         return <StatusMarker status={row.original.status} />;

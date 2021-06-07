@@ -1,7 +1,7 @@
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { QueryClient } from 'react-query';
 import React from 'react';
-import { Status } from 'model/Status';
+import { RunStatusAPI, RunStatusUI } from 'model/Status';
 import { renderWithReQueryCacheSelectedIntegrationContext } from 'utils/test/render';
 import { ORIGIN_DEV, PROJECT_ITERA_INT_GREEN } from 'utils/baseURL';
 import { render } from 'utils/test';
@@ -20,7 +20,6 @@ import { RunTableHeading } from 'components/integration/RunLogsCols';
 import { trackUsage } from 'utils/Metrics';
 import { SINGLE_INTEGRATION_RUNS } from 'utils/constants';
 import moment from 'moment';
-import { RunStatus } from 'utils/runsUtils';
 import { rangeToTwoDigitString } from 'components/inputs/dateTime/TimeSelectorUtils';
 import { DAYS_7 } from 'components/table/QuickDateTimeFilters';
 
@@ -69,13 +68,13 @@ describe('IntegrationHealth', () => {
     render(<IntegrationHealth integration={mockIntegration} />, { wrapper });
     expect(screen.getByText(RunTableHeading.TIMESTAMP)).toBeInTheDocument();
     expect(
-      screen.getByText(`${TableHeadings.STATUS} - ALL`) // status filter btn
+      screen.getByText(`${TableHeadings.LAST_RUN_STATUS} - ALL`) // status filter btn
     ).toBeInTheDocument();
-    expect(screen.getByText(TableHeadings.STATUS)).toBeInTheDocument();
+    expect(screen.getByText(TableHeadings.LAST_RUN_STATUS)).toBeInTheDocument();
     expect(screen.getByText(RunTableHeading.MESSAGE)).toBeInTheDocument();
 
-    expect(screen.getAllByText(Status.FAIL).length > 0).toEqual(true);
-    expect(screen.getAllByText(Status.OK).length > 0).toEqual(true);
+    expect(screen.getAllByText(RunStatusUI.FAILURE).length > 0).toEqual(true);
+    expect(screen.getAllByText(RunStatusUI.SUCCESS).length > 0).toEqual(true);
     expect(screen.getAllByRole('row').length).toEqual(PAGE_SIZE_DEFAULT + 1); // rows + heading
   });
 
@@ -101,7 +100,7 @@ describe('IntegrationHealth', () => {
       {
         dateRange,
         search: searchString,
-        statuses: [RunStatus.FAILURE],
+        statuses: [RunStatusAPI.FAILURE],
       }
     );
     render(<IntegrationHealth integration={mockIntegration} />, { wrapper });
@@ -113,7 +112,7 @@ describe('IntegrationHealth', () => {
     const endTime = new Date(parseInt(params.get('max'), 10));
     expect(endTime).toEqual(dateRange.endDate);
     expect(params.get('search')).toEqual(searchString);
-    expect(params.get('statuses')).toEqual(RunStatus.FAILURE);
+    expect(params.get('statuses')).toEqual(RunStatusAPI.FAILURE);
 
     // display set time range
     const statTimeString = rangeToTwoDigitString({
@@ -138,11 +137,13 @@ describe('IntegrationHealth', () => {
     const statusFilterMarker = screen.getByTestId(
       'status-marker-status-menu-button-marker'
     );
-    expect(statusFilterMarker.textContent).toEqual('FAIL');
+    expect(statusFilterMarker.textContent).toEqual(RunStatusUI.FAILURE);
     fireEvent.click(statusFilterBtn);
     fireEvent.click(screen.getByTestId('status-marker-status-menu-ok'));
     await waitFor(() => {
-      expect(history.location.search.includes(RunStatus.SUCCESS)).toEqual(true);
+      expect(history.location.search.includes(RunStatusAPI.SUCCESS)).toEqual(
+        true
+      );
     });
 
     // change search

@@ -1,14 +1,14 @@
 import React from 'react';
-import { Status } from '../../model/Status';
-import { FailedRunMessageIcon } from '../icons/FailedRunMessageIcon';
+import { RunStatusUI } from 'model/Status';
+import { FailedRunMessageIcon } from 'components/icons/FailedRunMessageIcon';
 
 interface OwnProps {
-  status: Status;
+  status: RunStatusUI;
 }
 
 const MessageIcon = ({ status }: OwnProps) => {
   switch (status) {
-    case Status.FAIL:
+    case RunStatusUI.FAILURE:
       return <FailedRunMessageIcon />;
     default:
       return <></>;

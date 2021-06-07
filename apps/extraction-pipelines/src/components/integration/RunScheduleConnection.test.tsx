@@ -32,7 +32,7 @@ describe('RunScheduleConnection', () => {
       client: new QueryClient(),
     });
     await waitFor(() => {
-      screen.getByText(TableHeadings.LATEST_RUN);
+      screen.getByText(TableHeadings.LATEST_RUN_TIME);
     });
     expect(
       screen.getByText(parseCron(mockIntegration.schedule))
@@ -47,7 +47,7 @@ describe('RunScheduleConnection', () => {
       initIntegration: null,
       client: new QueryClient(),
     });
-    expect(screen.getByText(TableHeadings.LATEST_RUN)).toBeInTheDocument();
+    expect(screen.getByText(TableHeadings.LATEST_RUN_TIME)).toBeInTheDocument();
     expect(screen.getByText(TableHeadings.SCHEDULE)).toBeInTheDocument();
     expect(screen.getByText(FAILED_PAST_WEEK_HEADING)).toBeInTheDocument();
     expect(screen.getByText(TableHeadings.LAST_SEEN)).toBeInTheDocument();

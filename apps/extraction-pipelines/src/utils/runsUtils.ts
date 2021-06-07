@@ -1,83 +1,46 @@
 import moment, { Moment } from 'moment';
-import { RunRow, StatusRow, StatusRun } from 'model/Runs';
-import { Status } from 'model/Status';
+import { StatusRow, StatusRun } from 'model/Runs';
+import { RunStatusAPI, RunStatusUI } from 'model/Status';
 
-export enum RunStatus {
-  SUCCESS = 'success',
-  FAILURE = 'failure',
-  SEEN = 'seen',
-}
-
-const STATUS_RUN_STATUS_MAP: Readonly<Map<Status, RunStatus>> = new Map<
-  Status,
-  RunStatus
+const STATUS_RUN_STATUS_MAP: Readonly<Map<RunStatusUI, RunStatusAPI>> = new Map<
+  RunStatusUI,
+  RunStatusAPI
 >([
-  [Status.OK, RunStatus.SUCCESS],
-  [Status.FAIL, RunStatus.FAILURE],
-  [Status.SEEN, RunStatus.SEEN],
+  [RunStatusUI.SUCCESS, RunStatusAPI.SUCCESS],
+  [RunStatusUI.FAILURE, RunStatusAPI.FAILURE],
+  [RunStatusUI.SEEN, RunStatusAPI.SEEN],
 ]);
 
-export const mapStatusRun = (status?: Status): RunStatus | undefined => {
+export const mapStatusRun = (
+  status?: RunStatusUI
+): RunStatusAPI | undefined => {
   return status ? STATUS_RUN_STATUS_MAP.get(status) : undefined;
 };
 
-export const mapStatus = (apiStatus?: RunStatus | string): Status => {
-  if (apiStatus?.toLowerCase() === RunStatus.SUCCESS) {
-    return Status.OK;
+export const mapStatus = (apiStatus?: RunStatusAPI | string): RunStatusUI => {
+  if (apiStatus?.toLowerCase() === RunStatusAPI.SUCCESS) {
+    return RunStatusUI.SUCCESS;
   }
-  if (apiStatus?.toLowerCase() === RunStatus.FAILURE) {
-    return Status.FAIL;
+  if (apiStatus?.toLowerCase() === RunStatusAPI.FAILURE) {
+    return RunStatusUI.FAILURE;
   }
-  if (apiStatus?.toLowerCase() === RunStatus.SEEN) {
-    return Status.SEEN;
+  if (apiStatus?.toLowerCase() === RunStatusAPI.SEEN) {
+    return RunStatusUI.SEEN;
   }
-  return Status.NOT_ACTIVATED;
+  return RunStatusUI.NOT_ACTIVATED;
 };
 
 export const filterRuns = (data?: StatusRow[]): StatusRun[] => {
   return data
     ? mapStatusRow(
         data.filter(({ status }) => {
-          return status !== RunStatus.SEEN;
+          return status !== RunStatusAPI.SEEN;
         })
       )
     : [];
 };
 
-const mapRuns = (response: StatusRow[] = []) => {
-  const result: RunRow[] = [];
-  response.forEach((item: StatusRow) => {
-    const run: RunRow = {
-      timestamp: item.createdTime,
-      status: undefined,
-      statusSeen: Status.OK,
-      message: undefined,
-      subRows: [],
-    };
-    const index = result.length;
-    switch (item.status) {
-      case RunStatus.SUCCESS:
-        run.status = Status.OK;
-        result.push(run);
-        break;
-      case RunStatus.FAILURE:
-        run.status = Status.FAIL;
-        run.message = item.message;
-        result.push(run);
-        break;
-      case RunStatus.SEEN:
-        if (index === 0 || !result[index - 1].status) {
-          result.push(run);
-        } else {
-          result[index - 1].subRows.push(run);
-        }
-        break;
-    }
-  });
-  return result;
-};
-
-export const filterByStatus = (runStatus: Status) => {
+export const filterByStatus = (runStatus: RunStatusUI) => {
   return ({ status }: StatusRun) => {
     return status === runStatus;
   };
@@ -104,7 +67,7 @@ export const mapStatusRow = (statusRow: StatusRow[]): StatusRun[] => {
 };
 export const filterRunsByStatus = (
   statusRow: StatusRun[],
-  runStatus: Status
+  runStatus: RunStatusUI
 ): StatusRun[] => {
   return statusRow.filter(filterByStatus(runStatus));
 };
@@ -115,5 +78,3 @@ export const filterRunsByTime = (
 ): StatusRun[] => {
   return statusRow.filter(filterByTimeBetween(startTime, endTime));
 };
-
-export default mapRuns;

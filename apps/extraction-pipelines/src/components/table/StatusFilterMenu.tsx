@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from 'react';
 import { mapStatus, mapStatusRun } from 'utils/runsUtils';
-import { Status } from 'model/Status';
+import { RunStatusUI } from 'model/Status';
 import { StatusMenu } from 'components/menu/StatusMenu';
 import { trackUsage } from 'utils/Metrics';
 import { FILTER } from 'utils/constants';
@@ -17,7 +17,7 @@ export const StatusFilterMenu: FunctionComponent<StatusFilterMenuProps> = () => 
     dispatch,
   } = useRunFilterContext();
 
-  const updateStatus = (newStatus?: Status) => {
+  const updateStatus = (newStatus?: RunStatusUI) => {
     const run = mapStatusRun(newStatus);
     trackUsage(FILTER, { field: 'status', value: run ?? 'All' });
     dispatch(updateStatusAction(run ? [run] : []));

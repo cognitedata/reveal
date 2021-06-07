@@ -2,13 +2,17 @@ import moment from 'moment';
 import { User } from 'model/User';
 import { DetailFieldNames } from 'model/Integration';
 import { FieldValues } from 'react-hook-form';
-import { LastStatuses, Status, StatusObj } from 'model/Status';
+import {
+  LastStatuses,
+  RunStatusAPI,
+  RunStatusUI,
+  StatusObj,
+} from 'model/Status';
 import { toCamelCase } from 'utils/primitivesUtils';
 import { mapScheduleInputToScheduleValue } from 'utils/cronUtils';
 import { MIN_IN_HOURS } from 'utils/validation/notificationValidation';
 import { AddIntegrationFormInput } from 'pages/create/CreateIntegration';
 import { DataSetModel } from 'model/DataSetModel';
-import { RunStatus } from 'utils/runsUtils';
 import { Range } from '@cognite/cogs.js';
 
 export const calculateStatus = (status: LastStatuses): StatusObj => {
@@ -23,7 +27,7 @@ export const calculate = ({
     (lastSuccess && moment(lastSuccess).isAfter(moment(lastFailure)))
   ) {
     return {
-      status: Status.OK,
+      status: RunStatusUI.SUCCESS,
       time: lastSuccess,
     };
   }
@@ -34,7 +38,7 @@ export const calculate = ({
       moment(lastFailure).isAfter(moment(lastSuccess)))
   ) {
     return {
-      status: Status.FAIL,
+      status: RunStatusUI.FAILURE,
       time: lastFailure,
     };
   }
@@ -44,12 +48,12 @@ export const calculate = ({
     moment(lastFailure).isSame(moment(lastSuccess))
   ) {
     return {
-      status: Status.FAIL,
+      status: RunStatusUI.FAILURE,
       time: lastFailure,
     };
   }
   return {
-    status: Status.NOT_ACTIVATED,
+    status: RunStatusUI.NOT_ACTIVATED,
     time: 0,
   };
 };
@@ -186,7 +190,7 @@ export const getQueryParams = (search: string): QueryParams => {
 
 interface CreateSearchParams {
   search: string;
-  statuses: RunStatus[];
+  statuses: RunStatusAPI[];
   dateRange: Range;
   env?: string;
 }

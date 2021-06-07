@@ -1,45 +1,27 @@
 import moment from 'moment';
-import { Status } from 'model/Status';
+import { RunStatusAPI, RunStatusUI } from 'model/Status';
 import { mockDataRunsResponse } from 'utils/mockResponse';
-import { StatusRow } from 'model/Runs';
-import mapRuns, {
+import {
   filterByTimeBetween,
   filterRuns,
   isWithinDaysInThePast,
   mapStatus,
   mapStatusRow,
-  RunStatus,
 } from 'utils/runsUtils';
 
 describe('runsUtils', () => {
-  test('Maps correctly', () => {
-    const mock: StatusRow[] = mockDataRunsResponse.items;
-    const res = mapRuns(mock);
-    expect(res.length).toEqual(11);
-    res.forEach(({ subRows, status, statusSeen }) => {
-      expect(subRows).toBeDefined();
-      expect(status).toBeDefined();
-      expect(statusSeen).toBeDefined();
-    });
-  });
-  test('mapRuns - handles undefined', () => {
-    const mock = undefined;
-    const res = mapRuns(mock);
-    expect(res.length).toEqual(0);
-  });
-
   test('mapStatus - maps api status to view status', () => {
     const apiStatus = [
-      { value: 'success', expected: Status.OK },
-      { value: 'Success', expected: Status.OK },
-      { value: RunStatus.SUCCESS, expected: Status.OK },
-      { value: 'failure', expected: Status.FAIL },
-      { value: 'Failure', expected: Status.FAIL },
-      { value: RunStatus.FAILURE, expected: Status.FAIL },
-      { value: 'seen', expected: Status.SEEN },
-      { value: 'Seen', expected: Status.SEEN },
-      { value: RunStatus.SEEN, expected: Status.SEEN },
-      { value: 'RunStatus.SEEN', expected: Status.NOT_ACTIVATED },
+      { value: 'success', expected: RunStatusUI.SUCCESS },
+      { value: 'Success', expected: RunStatusUI.SUCCESS },
+      { value: RunStatusAPI.SUCCESS, expected: RunStatusUI.SUCCESS },
+      { value: 'failure', expected: RunStatusUI.FAILURE },
+      { value: 'Failure', expected: RunStatusUI.FAILURE },
+      { value: RunStatusAPI.FAILURE, expected: RunStatusUI.FAILURE },
+      { value: 'seen', expected: RunStatusUI.SEEN },
+      { value: 'Seen', expected: RunStatusUI.SEEN },
+      { value: RunStatusAPI.SEEN, expected: RunStatusUI.SEEN },
+      { value: 'RunStatus.SEEN', expected: RunStatusUI.NOT_ACTIVATED },
     ];
     apiStatus.forEach(({ value, expected }) => {
       const res = mapStatus(value);
@@ -50,8 +32,10 @@ describe('runsUtils', () => {
   test('filterRuns - filters success and failure', () => {
     const res = filterRuns(mockDataRunsResponse.items);
     res.forEach(({ status }) => {
-      expect(status === Status.OK || status === Status.FAIL).toEqual(true);
-      expect(status !== Status.SEEN).toEqual(true);
+      expect(
+        status === RunStatusUI.SUCCESS || status === RunStatusUI.FAILURE
+      ).toEqual(true);
+      expect(status !== RunStatusUI.SEEN).toEqual(true);
     });
   });
 
@@ -77,20 +61,20 @@ describe('runsUtils', () => {
 
 describe('mapStatusRow', () => {
   const statuses = [
-    { id: 1, status: RunStatus.SUCCESS },
-    { id: 2, status: RunStatus.SUCCESS, message: 'this is the message' },
-    { id: 3, status: RunStatus.FAILURE },
-    { id: 4, status: RunStatus.FAILURE, message: 'error' },
-    { id: 5, status: RunStatus.SEEN, message: 'seen message' },
-    { id: 6, status: RunStatus.SEEN },
+    { id: 1, status: RunStatusAPI.SUCCESS },
+    { id: 2, status: RunStatusAPI.SUCCESS, message: 'this is the message' },
+    { id: 3, status: RunStatusAPI.FAILURE },
+    { id: 4, status: RunStatusAPI.FAILURE, message: 'error' },
+    { id: 5, status: RunStatusAPI.SEEN, message: 'seen message' },
+    { id: 6, status: RunStatusAPI.SEEN },
   ];
 
   test(`maps runs`, () => {
     const res = mapStatusRow(statuses);
     expect(res.length).toEqual(6);
-    expect(res[0].status).toEqual(Status.OK);
-    expect(res[1].status).toEqual(Status.OK);
-    expect(res[2].status).toEqual(Status.FAIL);
-    expect(res[3].status).toEqual(Status.FAIL);
+    expect(res[0].status).toEqual(RunStatusUI.SUCCESS);
+    expect(res[1].status).toEqual(RunStatusUI.SUCCESS);
+    expect(res[2].status).toEqual(RunStatusUI.FAILURE);
+    expect(res[3].status).toEqual(RunStatusUI.FAILURE);
   });
 });

@@ -1,11 +1,11 @@
 import React, { FunctionComponent, PropsWithoutRef } from 'react';
 import { Badge } from '@cognite/cogs.js';
 import { StyledTooltip } from 'styles/StyledToolTip';
-import { Status } from 'model/Status';
+import { RunStatusUI } from 'model/Status';
 
 interface OwnProps {
   id?: string;
-  status: Status | null;
+  status: RunStatusUI | null;
   dataTestId?: string;
 }
 
@@ -17,7 +17,7 @@ const StatusMarker: FunctionComponent<Props> = ({
   ...rest
 }: PropsWithoutRef<Props>) => {
   switch (status) {
-    case Status.OK:
+    case RunStatusUI.SUCCESS:
       return (
         <StyledTooltip content={`Status for latest run: ${status}`}>
           <Badge
@@ -30,7 +30,7 @@ const StatusMarker: FunctionComponent<Props> = ({
           />
         </StyledTooltip>
       );
-    case Status.FAIL:
+    case RunStatusUI.FAILURE:
       return (
         <StyledTooltip content={`Status for latest run: ${status}`}>
           <Badge
@@ -43,7 +43,7 @@ const StatusMarker: FunctionComponent<Props> = ({
           />
         </StyledTooltip>
       );
-    case Status.SEEN:
+    case RunStatusUI.SEEN:
       return (
         <StyledTooltip content={`Status for latest run: ${status}`}>
           <Badge
@@ -55,7 +55,7 @@ const StatusMarker: FunctionComponent<Props> = ({
           />
         </StyledTooltip>
       );
-    case Status.NOT_ACTIVATED:
+    case RunStatusUI.NOT_ACTIVATED:
       return (
         <StyledTooltip content="No runs yet">
           <i

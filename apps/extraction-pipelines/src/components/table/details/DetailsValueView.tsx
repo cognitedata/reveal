@@ -4,7 +4,7 @@ import Schedule, {
 import React from 'react';
 import { DataSet } from '@cognite/sdk';
 import StatusMarker from 'components/integrations/cols/StatusMarker';
-import { Status } from 'model/Status';
+import { RunStatusUI } from 'model/Status';
 import InteractiveCopy from 'components/InteractiveCopy';
 import { DataSet as DataSetDisplay } from 'components/integrations/cols/DataSet';
 import RelativeTimeWithTooltip from 'components/integrations/cols/RelativeTimeWithTooltip';
@@ -87,7 +87,7 @@ const DetailsValueView = ({ fieldValue, fieldName }: DetailsValueViewProps) => {
         </InteractiveCopyWrapper>
       );
     case 'status': {
-      return <StatusMarker id={fieldName} status={fieldValue as Status} />;
+      return <StatusMarker id={fieldName} status={fieldValue as RunStatusUI} />;
     }
     case 'createdBy': {
       return <>{fieldValue && <EmailLink email={fieldValue as string} />}</>;

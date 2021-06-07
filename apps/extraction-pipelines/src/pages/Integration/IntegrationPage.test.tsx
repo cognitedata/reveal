@@ -108,7 +108,7 @@ describe('IntegrationPage', () => {
     ).not.toBeInTheDocument();
     expect(screen.getByText(RunTableHeading.TIMESTAMP)).toBeInTheDocument();
     expect(
-      screen.getAllByText(new RegExp(TableHeadings.STATUS, 'i')).length
+      screen.getAllByText(new RegExp(TableHeadings.LAST_RUN_STATUS, 'i')).length
     ).toEqual(2); // filter and heading
     expect(screen.getByText(RunTableHeading.MESSAGE)).toBeInTheDocument();
   });

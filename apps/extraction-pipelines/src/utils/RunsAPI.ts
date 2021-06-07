@@ -1,7 +1,7 @@
-import { RunStatus } from 'utils/runsUtils';
 import { get, post } from 'utils/baseURL';
 import { RunsAPIResponse } from 'model/Runs';
 import { Nullable } from 'utils/helperTypes';
+import { RunStatusAPI } from 'model/Status';
 
 export const DEFAULT_LIMIT: Readonly<number> = 100;
 
@@ -32,7 +32,7 @@ export const getRuns = async (
 export interface FilteredRunsParams {
   filter: {
     externalId?: string;
-    status?: RunStatus;
+    status?: RunStatusAPI;
     message?: {
       substring?: string;
     };

@@ -2,7 +2,7 @@ import { StyledDropdown } from 'styles/StyledDropdown';
 import { Badge, Button, Colors, Menu } from '@cognite/cogs.js';
 import { TableHeadings } from 'components/table/IntegrationTableCol';
 import React, { PropsWithoutRef } from 'react';
-import { Status } from 'model/Status';
+import { RunStatusUI } from 'model/Status';
 import StatusMarker from 'components/integrations/cols/StatusMarker';
 import styled from 'styled-components';
 
@@ -19,8 +19,8 @@ const StyledMenu = styled((props) => <Menu {...props}>{props.children}</Menu>)`
 `;
 
 export interface StatusMenuProps {
-  setSelected: (status?: Status) => void;
-  selected: Status;
+  setSelected: (status?: RunStatusUI) => void;
+  selected: RunStatusUI;
   btnType?: 'ghost' | 'tertiary';
 }
 
@@ -41,8 +41,8 @@ export const StatusMenu = ({
         iconPlacement="right"
         data-testid="status-menu-button"
       >
-        {TableHeadings.STATUS}{' '}
-        {selected === Status.NOT_ACTIVATED ? (
+        {TableHeadings.LAST_RUN_STATUS}{' '}
+        {selected === RunStatusUI.NOT_ACTIVATED ? (
           '- ALL'
         ) : (
           <StatusMarker
@@ -58,34 +58,42 @@ const StatusMenuContent = ({
   selected,
   setSelected,
 }: PropsWithoutRef<StatusMenuProps>) => {
-  const onClick = (status?: Status) => {
+  const onClick = (status?: RunStatusUI) => {
     return () => setSelected(status);
   };
   return (
     <StyledMenu>
       <Menu.Item
-        onClick={onClick(Status.FAIL)}
-        selected={selected === Status.FAIL}
-        appendIcon={selected === Status.FAIL ? 'Checkmark' : undefined}
-        aria-selected={selected === Status.FAIL}
+        onClick={onClick(RunStatusUI.FAILURE)}
+        selected={selected === RunStatusUI.FAILURE}
+        appendIcon={selected === RunStatusUI.FAILURE ? 'Checkmark' : undefined}
+        aria-selected={selected === RunStatusUI.FAILURE}
         data-testid="status-menu-item-fail"
       >
-        <StatusMarker status={Status.FAIL} dataTestId="status-menu-fail" />
+        <StatusMarker
+          status={RunStatusUI.FAILURE}
+          dataTestId="status-menu-fail"
+        />
       </Menu.Item>
       <Menu.Item
-        onClick={onClick(Status.OK)}
-        selected={selected === Status.OK}
-        appendIcon={selected === Status.OK ? 'Checkmark' : undefined}
-        aria-selected={selected === Status.OK}
+        onClick={onClick(RunStatusUI.SUCCESS)}
+        selected={selected === RunStatusUI.SUCCESS}
+        appendIcon={selected === RunStatusUI.SUCCESS ? 'Checkmark' : undefined}
+        aria-selected={selected === RunStatusUI.SUCCESS}
         data-testid="status-menu-item-ok"
       >
-        <StatusMarker status={Status.OK} dataTestId="status-menu-ok" />
+        <StatusMarker
+          status={RunStatusUI.SUCCESS}
+          dataTestId="status-menu-ok"
+        />
       </Menu.Item>
       <Menu.Item
         onClick={onClick()}
-        selected={selected === Status.NOT_ACTIVATED}
-        appendIcon={selected === Status.NOT_ACTIVATED ? 'Checkmark' : undefined}
-        aria-selected={selected === Status.NOT_ACTIVATED}
+        selected={selected === RunStatusUI.NOT_ACTIVATED}
+        appendIcon={
+          selected === RunStatusUI.NOT_ACTIVATED ? 'Checkmark' : undefined
+        }
+        aria-selected={selected === RunStatusUI.NOT_ACTIVATED}
         data-testid="status-menu-item-all"
       >
         <Badge

@@ -1,11 +1,11 @@
 import { renderHook } from '@testing-library/react-hooks';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import { QueryClient } from 'react-query';
-import { RunStatus } from 'utils/runsUtils';
 import { DEFAULT_LIMIT } from 'utils/RunsAPI';
 import { createRunsFilter, useRuns } from 'hooks/useRuns';
 import { mockError, mockDataRunsResponse } from 'utils/mockResponse';
 import { renderWithQueryClient } from 'utils/test/render';
+import { RunStatusAPI } from 'model/Status';
 
 describe('useRuns', () => {
   const externalId = 'dataIntegration000-1';
@@ -47,7 +47,7 @@ describe('useRuns', () => {
 
 describe('createRunsFilter', () => {
   test('Creates filter', () => {
-    const statuses = [RunStatus.SUCCESS];
+    const statuses = [RunStatusAPI.SUCCESS];
     const search = 'message';
     const externalId = 'testid';
     const dateRange = {

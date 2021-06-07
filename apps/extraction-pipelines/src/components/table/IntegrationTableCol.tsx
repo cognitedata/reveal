@@ -14,13 +14,13 @@ import { User } from 'model/User';
 import RelativeTimeWithTooltip from 'components/integrations/cols/RelativeTimeWithTooltip';
 import SorterIndicator from 'components/table/SorterIndicator';
 import MessageIcon from 'components/message/MessageIcon';
-import { Status } from 'model/Status';
+import { RunStatusUI } from 'model/Status';
 import { DataSetModel } from 'model/DataSetModel';
 
 export enum TableHeadings {
   NAME = 'Name',
-  STATUS = 'Status',
-  LATEST_RUN = 'Latest run',
+  LAST_RUN_STATUS = 'Last run status',
+  LATEST_RUN_TIME = 'Last run time',
   DATA_SET = 'Destination data set',
   SCHEDULE = 'Schedule',
   LAST_SEEN = 'Last connected',
@@ -94,13 +94,13 @@ export const getIntegrationTableCol = (
     },
     {
       id: 'status',
-      Header: TableHeadings.STATUS,
+      Header: TableHeadings.LAST_RUN_STATUS,
       accessor: ({ lastSuccess, lastFailure }: Integration) => {
         const status = calculateStatus({ lastSuccess, lastFailure });
         return status.status;
       },
       Cell: ({ row }: CellProps<Integration>) => {
-        return row.values.status === Status.FAIL ? (
+        return row.values.status === RunStatusUI.FAILURE ? (
           <StyledStatusButton
             className="status-btn"
             onClick={() => {
@@ -121,7 +121,7 @@ export const getIntegrationTableCol = (
     },
     {
       id: 'latestRun',
-      Header: TableHeadings.LATEST_RUN,
+      Header: TableHeadings.LATEST_RUN_TIME,
       accessor: ({ lastSuccess, lastFailure }: Integration) => {
         const status = calculateStatus({ lastSuccess, lastFailure });
         return status.time;
@@ -138,16 +138,6 @@ export const getIntegrationTableCol = (
       disableFilters: true,
     },
     {
-      id: 'schedule',
-      Header: TableHeadings.SCHEDULE,
-      accessor: 'schedule',
-      Cell: ({ row }: Cell<Integration>) => {
-        return <Schedule id="schedule" schedule={row.values.schedule} />;
-      },
-      disableSortBy: true,
-      disableFilters: true,
-    },
-    {
       id: 'lastSeen',
       Header: TableHeadings.LAST_SEEN,
       accessor: 'lastSeen',
@@ -158,6 +148,16 @@ export const getIntegrationTableCol = (
             time={row.values.lastSeen as number}
           />
         );
+      },
+      disableSortBy: true,
+      disableFilters: true,
+    },
+    {
+      id: 'schedule',
+      Header: TableHeadings.SCHEDULE,
+      accessor: 'schedule',
+      Cell: ({ row }: Cell<Integration>) => {
+        return <Schedule id="schedule" schedule={row.values.schedule} />;
       },
       disableSortBy: true,
       disableFilters: true,

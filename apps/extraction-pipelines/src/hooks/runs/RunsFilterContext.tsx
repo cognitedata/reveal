@@ -1,7 +1,7 @@
 import React, { PropsWithChildren, useContext, useReducer } from 'react';
-import { RunStatus } from 'utils/runsUtils';
 import { Range } from '@cognite/cogs.js';
 import moment from 'moment';
+import { RunStatusAPI } from 'model/Status';
 
 enum RUN_ACTION_TYPE {
   'UPDATE_DATE_RANGE',
@@ -19,7 +19,7 @@ interface UpdateSearch {
 }
 interface UpdateStatus {
   type: RUN_ACTION_TYPE.UPDATE_STATUS;
-  payload: RunStatus[];
+  payload: RunStatusAPI[];
 }
 
 type UpdateActions = UpdateDateRange | UpdateSearch | UpdateStatus;
@@ -44,7 +44,7 @@ export const updateDateRangeAction = (
 
 interface StateType {
   dateRange: Range;
-  statuses: RunStatus[];
+  statuses: RunStatusAPI[];
   search: string;
 }
 
@@ -72,7 +72,7 @@ const RunFilterContext = React.createContext<IntegrationContextType>({
 export interface RunFilterProviderProps {
   search?: string;
   dateRange?: Range;
-  statuses?: RunStatus[];
+  statuses?: RunStatusAPI[];
 }
 
 export const runFilterReducer = (

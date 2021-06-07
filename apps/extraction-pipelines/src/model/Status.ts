@@ -1,13 +1,20 @@
 import { Integration } from './Integration';
 
-export enum Status {
-  OK = 'OK',
-  FAIL = 'FAIL',
+export enum RunStatusUI {
+  SUCCESS = 'SUCCESS',
+  FAILURE = 'FAILURE',
   SEEN = 'SEEN',
   NOT_ACTIVATED = 'Not activated',
 }
+
+export enum RunStatusAPI {
+  SUCCESS = 'success',
+  FAILURE = 'failure',
+  SEEN = 'seen',
+}
+
 export interface StatusObj {
-  status: Status;
+  status: RunStatusUI;
   time: number;
 }
 export type LastStatuses = Pick<Integration, 'lastSuccess' | 'lastFailure'>;

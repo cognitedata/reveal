@@ -11,7 +11,7 @@ import {
 } from 'styles/StyledCard';
 import { TableHeadings } from 'components/table/IntegrationTableCol';
 import { calculateStatus } from 'utils/integrationUtils';
-import { Status } from 'model/Status';
+import { RunStatusUI } from 'model/Status';
 import { useRuns } from 'hooks/useRuns';
 import {
   and,
@@ -42,11 +42,14 @@ export const RunScheduleConnection: FunctionComponent = () => {
   }
   const runs = filterRuns(data?.items);
   const errorsInThePastWeek = runs.filter(
-    and<StatusRun>(filterByStatus(Status.FAIL), isWithinDaysInThePast(7))
+    and<StatusRun>(
+      filterByStatus(RunStatusUI.FAILURE),
+      isWithinDaysInThePast(7)
+    )
   );
   const errorLastWeek = runs.filter(
     and(
-      filterByStatus(Status.FAIL),
+      filterByStatus(RunStatusUI.FAILURE),
       filterByTimeBetween(
         moment().subtract(14, 'days'),
         moment().subtract(7, 'days')
@@ -67,7 +70,7 @@ export const RunScheduleConnection: FunctionComponent = () => {
         <CardInWrapper>
           <StyledTitleCard className="card-title">
             <Icon type="Calendar" />
-            {TableHeadings.LATEST_RUN}
+            {TableHeadings.LATEST_RUN_TIME}
             <LatestRunMessage
               status={lastRun.status}
               message={integration?.lastMessage}

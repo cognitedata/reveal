@@ -4,7 +4,7 @@ import { useAppEnv } from 'hooks/useAppEnv';
 import { SDKError } from 'model/SDKErrors';
 import { RunsAPIResponse } from 'model/Runs';
 import { Range } from '@cognite/cogs.js';
-import { RunStatus } from 'utils/runsUtils';
+import { RunStatusAPI } from 'model/Status';
 
 export const useRuns = (
   externalId?: string,
@@ -51,7 +51,7 @@ type CreateRunFilterParam = {
   nextCursor?: string;
   search?: string;
   dateRange?: Range;
-  statuses?: RunStatus[];
+  statuses?: RunStatusAPI[];
   limit?: number;
 };
 export const createRunsFilter = ({

@@ -10,7 +10,7 @@ import { SINGLE_INTEGRATION_RUNS } from 'utils/constants';
 import { useFilteredRuns } from 'hooks/useRuns';
 import { StatusRun } from 'model/Runs';
 import { Integration } from 'model/Integration';
-import { mapStatusRow, RunStatus } from 'utils/runsUtils';
+import { mapStatusRow } from 'utils/runsUtils';
 import { RunLogsTable } from 'components/integration/RunLogsTable';
 import { getRunLogTableCol } from 'components/integration/RunLogsCols';
 import { ErrorFeedback } from 'components/error/ErrorFeedback';
@@ -23,7 +23,7 @@ import {
   getQueryParams,
   partition,
 } from 'utils/integrationUtils';
-import { Status } from 'model/Status';
+import { RunStatusAPI, RunStatusUI } from 'model/Status';
 import { TimeSelector } from 'components/inputs/dateTime/TimeSelector';
 import { QuickDateTimeFilters } from 'components/table/QuickDateTimeFilters';
 import { StatusFilterMenu } from 'components/table/StatusFilterMenu';
@@ -114,7 +114,7 @@ export const IntegrationHealth: FunctionComponent<LogsViewProps> = ({
       );
     }
     if (paramStatuses) {
-      dispatch(updateStatusAction(paramStatuses.split(',') as RunStatus[]));
+      dispatch(updateStatusAction(paramStatuses.split(',') as RunStatusAPI[]));
     }
     if (paramSearch) {
       dispatch(updateSearchAction(paramSearch));
@@ -154,7 +154,7 @@ export const IntegrationHealth: FunctionComponent<LogsViewProps> = ({
     if (!isPreviousData && data) {
       const statusRows = mapStatusRow(data?.items);
       const { pass: runsData } = partition(statusRows, (item) => {
-        return item.status !== Status.SEEN;
+        return item.status !== RunStatusUI.SEEN;
       });
       setRuns(runsData);
     }

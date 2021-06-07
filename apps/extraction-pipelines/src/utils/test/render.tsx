@@ -7,7 +7,6 @@ import { createMemoryHistory } from 'history';
 import { useForm, FormProvider } from 'react-hook-form';
 import { SelectedIntegrationProvider } from 'hooks/useSelectedIntegration';
 import { AppEnvProvider } from 'hooks/useAppEnv';
-import { IntegrationProvider } from 'hooks/details/IntegrationContext';
 import { Integration, RegisterIntegrationInfo } from 'model/Integration';
 import { RegisterIntegrationProvider } from 'hooks/useStoredRegisterIntegration';
 import { INTEGRATIONS } from 'utils/baseURL';
@@ -76,15 +75,12 @@ export const renderQueryCacheIntegration = (
   client: QueryClient,
   project: string,
   cdfEnv: string,
-  origin: string,
-  integration: Integration
+  origin: string
 ) => {
   const wrapper = ({ children }: { children: React.ReactNode }) => (
     <QueryClientProvider client={client}>
       <AppEnvProvider cdfEnv={cdfEnv} project={project} origin={origin}>
-        <IntegrationProvider initIntegration={integration}>
-          {children}
-        </IntegrationProvider>
+        {children}
       </AppEnvProvider>
     </QueryClientProvider>
   );

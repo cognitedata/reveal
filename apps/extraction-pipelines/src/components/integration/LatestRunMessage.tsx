@@ -1,5 +1,5 @@
 import React, { FunctionComponent, PropsWithChildren, useState } from 'react';
-import { Status } from 'model/Status';
+import { RunStatusUI } from 'model/Status';
 import { FailedRunMessageIcon } from 'components/icons/FailedRunMessageIcon';
 import { Button, Colors } from '@cognite/cogs.js';
 import { NO_ERROR_MESSAGE } from 'components/form/viewEditIntegration/FailMessageModal';
@@ -23,7 +23,7 @@ const StyledButton = styled(Button)`
   }
 `;
 interface LatestRunMessageProps {
-  status: Status;
+  status: RunStatusUI;
   message?: string;
 }
 
@@ -32,7 +32,7 @@ export const LatestRunMessage: FunctionComponent<LatestRunMessageProps> = ({
   message,
 }: PropsWithChildren<LatestRunMessageProps>) => {
   const [showError, setShowError] = useState(false);
-  if (status !== Status.FAIL) {
+  if (status !== RunStatusUI.FAILURE) {
     return <StatusMarker status={status} />;
   }
 

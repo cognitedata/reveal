@@ -1,5 +1,5 @@
 import React, { FunctionComponent, PropsWithChildren } from 'react';
-import { Status } from 'model/Status';
+import { RunStatusUI } from 'model/Status';
 import { Integration } from 'model/Integration';
 import { calculateStatus } from 'utils/integrationUtils';
 import StatusMarker from 'components/integrations/cols/StatusMarker';
@@ -55,8 +55,8 @@ export const LatestRun: FunctionComponent<LatestRunProps> = ({
     lastSuccess: integration.lastSuccess,
     lastFailure: integration.lastFailure,
   });
-  const renderErrorMessage = (status: Status, message?: string) => {
-    if (status !== Status.FAIL) {
+  const renderErrorMessage = (status: RunStatusUI, message?: string) => {
+    if (status !== RunStatusUI.FAILURE) {
       return <></>;
     }
     return (
@@ -90,13 +90,13 @@ export const LatestRun: FunctionComponent<LatestRunProps> = ({
       >
         <Heading>
           <span />
-          <span>{TableHeadings.STATUS}</span>
+          <span>{TableHeadings.LAST_RUN_STATUS}</span>
           <span>{TIME_OF_RUN}</span>
           <span>{TIME_SINCE_RUN}</span>
           <span>{LATEST_ERROR}</span>
         </Heading>
         <Row>
-          <span>{TableHeadings.LATEST_RUN}</span>
+          <span>{TableHeadings.LATEST_RUN_TIME}</span>
           <span>
             <StatusMarker status={lastRun.status} />
           </span>

@@ -1,4 +1,4 @@
-import { Status } from './Status';
+import { RunStatusUI } from './Status';
 
 export interface RunsAPIResponse {
   items: StatusRow[];
@@ -16,16 +16,5 @@ export interface StatusRun {
   id: number;
   message?: string;
   createdTime: number;
-  status: Status | null;
-}
-
-export interface RunRow extends Run {
-  subRows: Run[];
-}
-
-export interface Run {
-  timestamp: number;
-  status: Status | undefined;
-  statusSeen: Status;
-  message?: string;
+  status: RunStatusUI | null;
 }

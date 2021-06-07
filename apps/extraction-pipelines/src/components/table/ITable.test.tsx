@@ -10,6 +10,7 @@ import {
 } from 'components/table/IntegrationTableCol';
 import { renderWithSelectedIntegrationContext } from 'utils/test/render';
 import ITable from 'components/table/ITable';
+import { RunStatusUI } from 'model/Status';
 
 describe('<ITable/>', () => {
   const cols = getIntegrationTableCol();
@@ -155,14 +156,20 @@ describe('<ITable/>', () => {
     const bodyOK = screen.getAllByRole('row');
     expect(bodyOK.length).toEqual(2);
     const firsRowContent = bodyOK[1].textContent;
-    expect(firsRowContent.toLowerCase().includes('ok')).toEqual(true);
+    expect(
+      firsRowContent
+        .toLowerCase()
+        .includes(`${RunStatusUI.SUCCESS.toLowerCase()}`)
+    ).toEqual(true);
 
     // click fail
     fireEvent.click(statusFailMenuItem);
     const bodyFail = screen.getAllByRole('row');
     expect(bodyFail.length).toEqual(4); // 3 fail + header
     const firsRowFail = bodyFail[1].textContent;
-    expect(firsRowFail.toLowerCase().includes('fail')).toEqual(true);
+    expect(
+      firsRowFail.toLowerCase().includes(RunStatusUI.FAILURE.toLowerCase())
+    ).toEqual(true);
 
     // click all
     fireEvent.click(statusAllMenuItem);
