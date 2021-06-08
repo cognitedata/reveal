@@ -129,7 +129,10 @@ export default function ThreeDViewerSidebar(props: Props) {
           </MenuSection>
 
           <MenuSection>
-            <ClassPicker model={props.model} />
+            <ClassPicker
+              model={props.model}
+              viewer={props.viewer as Cognite3DViewer}
+            />
           </MenuSection>
         </>
       )}
