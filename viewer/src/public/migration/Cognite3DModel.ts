@@ -118,15 +118,15 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * updated automatically as the styling changes. The appearance of the style nodes
    * cannot be changed.
    *
-   * Nodes are expected to only be in one style set, and the behaviour is undefined
+   * Nodes are expected to only be in one style set, and the behavior is undefined
    * when a node is part of two different sets.
    *
    * @param nodes Dynamic set of nodes to apply the provided appearance to.
-   * @param appearance Apperance to style the provided set with.
+   * @param appearance Appearance to style the provided set with.
    *
    * @example
    * ```js
-   * model.setDefaultNodeApperance({ rendererGhosted: true });
+   * model.setDefaultNodeAppearance({ rendererGhosted: true });
    * const visibleSet = new FixedNodeSet(someTreeIndices);
    * model.addStyledSet(visibleSet, { rendererGhosted: false });
    * ```
@@ -147,7 +147,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
 
   /**
    * Removes all styled sets, resetting the appearance of all nodes to the
-   * default apperance.
+   * default appearance.
    * @version new in 2.0
    */
   removeAllStyledNodeSets() {

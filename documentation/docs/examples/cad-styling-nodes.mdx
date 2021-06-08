@@ -31,6 +31,8 @@ If nodes in the 3D model has an attribute `'PDMS.Type'`, `ByNodePropertyNodeSet`
 retrieve nodes of a certain type. In the following example, only pipes are accepted:
 
 ```js runnable
+// import { ByNodePropertyNodeSet, DefaultNodeAppearance } from '@cognite/reveal';
+
 const allPipes = new ByNodePropertyNodeSet(sdk, model);
 allPipes.executeFilter({'PDMS': {'Type': 'PIPE'}});
 model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
@@ -45,6 +47,8 @@ To partition requests, provide the number of partitions using the `requestPartit
 to the `ByNodePropertyNodeSet`-constructor:
 
 ```js runnable
+// import { ByNodePropertyNodeSet, DefaultNodeAppearance, NodeOutlineColor } from '@cognite/reveal';
+
 const nodesFromFile = new ByNodePropertyNodeSet(sdk, model, { requestPartitions: 10 });
 // All nodes originating from a given file
 nodesFromFile.executeFilter({'Item': {'Source File': 'PRO-S_CD-MUM.rvm'}});
@@ -63,6 +67,8 @@ seperate queries.
 When doing this as a single query, no `CombinedNodeSet` is necessary and the code is quite compact:
 
 ```js runnable
+// import { ByNodePropertyNodeSet, DefaultNodeAppearance } from '@cognite/reveal';
+
 const stuMechNodes = new ByNodePropertyNodeSet(sdk, model);
 stuMechNodes.executeFilter({'PDMS': {':capDisc': 'MECH', 'Purpose': 'STU' }});
 
@@ -73,10 +79,14 @@ model.addStyledNodeSet(stuMechNodes, { renderGhosted: false, color: [40, 200, 20
 Combining two separate queries requires the use of `CombinedNodeSet`:
 
 ```js runnable
+// import { ByNodePropertyNodeSet, CombinedNodeSet, DefaultNodeAppearance } from '@cognite/reveal';
+
 const mechNodes = new ByNodePropertyNodeSet(sdk, model);
 mechNodes.executeFilter({'PDMS': {':capDisc': 'MECH'}});
+
 const stuNodes = new ByNodePropertyNodeSet(sdk, model);
 stuNodes.executeFilter({'PDMS': {'Purpose': 'STU'}});
+
 const combined = new CombinedNodeSet('intersection');
 combined.addSet(mechNodes);
 combined.addSet(stuNodes);
@@ -85,7 +95,7 @@ model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
 model.addStyledNodeSet(combined, { renderGhosted: false, color: [40, 200, 20] } );
 ```
 
-The two approaches has their pros and cons. Often it will be faster to combine the 
+The two approaches has their pros and cons. Often it will be faster to combine the
 filters into a single query as this will reduce the result set returned from the
 server. However, if the different combinations will be configured run-time (e.g.
 the user will want to show 'ARCH'-nodes within the 'STU'-purpose) it might
@@ -98,6 +108,8 @@ Often it is interesting to invert results from filters to find elements that doe
 can be done using `InvertNodeSet`.
 
 ```js runnable
+// import { ByNodePropertyNodeSet, InvertedNodeSet, DefaultNodeAppearance } from '@cognite/reveal';
+
 const livingQuarters = new ByNodePropertyNodeSet(sdk, model);
 livingQuarters.executeFilter({'Item': {'Name': '/SLP/S/LQ'}});
 const notLivingQuarters = new InvertedNodeSet(model, livingQuarters);
