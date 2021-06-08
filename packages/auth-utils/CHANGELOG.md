@@ -1,3 +1,7 @@
+## 1.0.9 Jun 9 2021
+
+- Add return type to `getProjects`
+
 ## 1.0.8 Jun 9 2021
 
 - Set `project` after FakeIdp login

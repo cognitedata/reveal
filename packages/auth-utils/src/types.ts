@@ -41,3 +41,8 @@ export type AuthenticatedUser = {
   username?: string;
   email?: string;
 };
+
+export type TokenInspect = {
+  subject: string;
+  projects: { projectUrlName: string; groups: number[] }[];
+};
