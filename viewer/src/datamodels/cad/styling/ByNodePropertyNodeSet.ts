@@ -12,6 +12,9 @@ import { NodeSet } from './NodeSet';
 
 import range from 'lodash/range';
 
+/**
+ * Options for {@link ByNodePropertyNodeSet}.
+ */
 export type ByNodePropertyNodeSetOptions = {
   /**
    * How many partitions to split the request into. More partitions can yield better performance
@@ -21,6 +24,11 @@ export type ByNodePropertyNodeSetOptions = {
   requestPartitions?: number;
 };
 
+/**
+ * Represents a set of nodes that has matching node properties to a provided filter. Note that
+ * a node is considered to match if it or any of its ancestors match the filter.
+ * @version New in 2.0.0
+ */
 export class ByNodePropertyNodeSet extends NodeSet {
   private readonly _client: CogniteClient;
   private _indexSet = new IndexSet();
@@ -41,7 +49,16 @@ export class ByNodePropertyNodeSet extends NodeSet {
     return this._fetchResultHelper !== undefined && this._fetchResultHelper.isLoading;
   }
 
-  async executeFilter(query: {
+  /**
+   * Populates the node set with nodes matching the provided filter. This will replace
+   * the current nodes held by the filter.
+   * @param filter A filter for matching node properties.
+   * @example
+   * ```
+   * set.executeFilter({ 'PDMS': { 'Module': 'AQ550' }});
+   * ```
+   */
+  async executeFilter(filter: {
     [category: string]: {
       [key: string]: string;
     };
@@ -63,7 +80,7 @@ export class ByNodePropertyNodeSet extends NodeSet {
 
     const requests = range(1, requestPartitions + 1).map(async p => {
       const response = this._client.revisions3D.list3DNodes(this._modelId, this._revisionId, {
-        properties: query,
+        properties: filter,
         limit: 1000,
         sortByNodeId: true,
         partition: `${p}/${requestPartitions}`
@@ -73,6 +90,17 @@ export class ByNodePropertyNodeSet extends NodeSet {
 
     this.notifyChanged();
     await Promise.all(requests);
+  }
+
+  /**
+   * Clears the node set and interrupts any ongoing operations.
+   */
+  clear(): void {
+    if (this._fetchResultHelper !== undefined) {
+      this._fetchResultHelper.interrupt();
+    }
+    this._indexSet.clear();
+    this.notifyChanged();
   }
 
   getIndexSet(): IndexSet {

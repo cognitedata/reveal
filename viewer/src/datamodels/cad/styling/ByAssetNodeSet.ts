@@ -11,6 +11,13 @@ import { PopulateIndexSetFromPagedResponseHelper } from './PopulateIndexSetFromP
 import { NumericRange } from '../../../utilities/NumericRange';
 import { NodeSet } from './NodeSet';
 
+/**
+ * Represents a set of nodes associated with an [asset in Cognite Fusion]{@link https://docs.cognite.com/api/v1/#tag/Assets}
+ * linked to the 3D model using [asset mappings]{@link https://docs.cognite.com/api/v1/#tag/3D-Asset-Mapping}. A node
+ * is considered to be part of an asset if it has a direct asset mapping or if one of its ancestors has an asset mapping
+ * to the asset.
+ * @version New in 2.0.0
+ */
 export class ByAssetNodeSet extends NodeSet {
   private readonly _client: CogniteClient;
   private _indexSet = new IndexSet();
@@ -28,6 +35,11 @@ export class ByAssetNodeSet extends NodeSet {
     return this._fetchResultHelper !== undefined && this._fetchResultHelper.isLoading;
   }
 
+  /**
+   * Updates the node set to hold nodes associated with the asset given, or
+   * assets within the bounding box or all assets associated with the 3D model.
+   * @param filter
+   */
   async executeFilter(filter: { assetId?: number; boundingBox?: THREE.Box3 }): Promise<void> {
     const model = this._model;
 
@@ -67,6 +79,13 @@ export class ByAssetNodeSet extends NodeSet {
       // Completed without being interrupted
       this._fetchResultHelper = undefined;
     }
+  }
+
+  clear() {
+    if (this._fetchResultHelper !== undefined) {
+      this._fetchResultHelper.interrupt();
+    }
+    this._indexSet.clear();
   }
 
   getIndexSet(): IndexSet {
