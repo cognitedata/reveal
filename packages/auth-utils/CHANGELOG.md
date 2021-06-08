@@ -1,3 +1,7 @@
+## 1.0.8 Jun 9 2021
+
+- Set `project` after FakeIdp login
+
 ## 1.0.7 Jun 9 2021
 
 - Migrate to Bazel setup

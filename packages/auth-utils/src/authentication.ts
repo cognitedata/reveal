@@ -347,6 +347,7 @@ export class CogniteAuth {
         },
       });
 
+      this.state.project = fakeAuth.project;
       this.state.authenticated = true;
       this.state.initializing = false;
 
