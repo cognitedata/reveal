@@ -72,4 +72,7 @@ class StubNodeSet extends NodeSet {
   setIndexSet(set: IndexSet) {
     this._indexSet = set;
   }
+  clear() {
+    this._indexSet = new IndexSet();
+  }
 }
