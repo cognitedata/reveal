@@ -76,6 +76,19 @@ export const ExplorerSearchResults = ({
                   />
                 );
               }
+              if (currentView === 'modal') {
+                return (
+                  <FileTableExplorer
+                    modalView
+                    onRowSelect={onRowSelect}
+                    onRowClick={onClick}
+                    selectedFileId={selectedId}
+                    allRowsSelected={allFilesSelected}
+                    onSelectAllRows={handleSelectAllFiles}
+                    {...props}
+                  />
+                );
+              }
 
               return (
                 <FileTableExplorer

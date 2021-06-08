@@ -69,4 +69,4 @@ export type SelectableTableCellRenderer = {
   cellData: any;
 };
 
-export type ViewMode = 'list' | 'grid' | 'map';
+export type ViewMode = 'list' | 'grid' | 'map' | 'modal';

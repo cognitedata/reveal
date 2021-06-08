@@ -46,14 +46,19 @@ export function FileTableExplorer(props: FileExplorerTableProps) {
       align: Column.Alignment.LEFT,
       sortable: true,
     },
-    {
-      key: 'sourceCreatedTime',
-      title: 'Source Created Time',
-      dataKey: 'sourceCreatedTime',
-      align: Column.Alignment.LEFT,
-      width: 250,
-      sortable: true,
-    },
+    ...(!props.modalView
+      ? [
+          {
+            key: 'sourceCreatedTime',
+            title: 'Source Created Time',
+            dataKey: 'sourceCreatedTime',
+            align: Column.Alignment.LEFT,
+            width: 250,
+            sortable: true,
+          },
+        ]
+      : []),
+
     {
       key: 'annotations',
       title: 'Annotations',
@@ -61,13 +66,17 @@ export function FileTableExplorer(props: FileExplorerTableProps) {
       flexGrow: 1,
       align: Column.Alignment.LEFT,
     },
-    {
-      key: 'action',
-      title: '',
-      dataKey: 'menu',
-      align: Column.Alignment.RIGHT,
-      width: 200,
-    },
+    ...(!props.modalView
+      ? [
+          {
+            key: 'action',
+            title: '',
+            dataKey: 'menu',
+            align: Column.Alignment.RIGHT,
+            width: 200,
+          },
+        ]
+      : []),
   ];
 
   const rowClassNames = ({

@@ -20,7 +20,7 @@ import {
   workflowRoutes,
 } from 'src/modules/Workflow/workflowRoutes';
 import { ResultData } from 'src/modules/Common/types';
-import { explorerFileFetchLimit } from 'src/constants/ExplorerConstants';
+import { EXPLORER_FILE_FETCH_LIMIT } from 'src/constants/ExplorerConstants';
 import { totalFileCount } from 'src/api/file/aggregate';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
@@ -65,7 +65,7 @@ export const ResultTableLoader = <T extends Resource>({
       const fileSearchResult = await sdkv3.files.search({
         filter: props.filter,
         search: { name: props.query },
-        limit: explorerFileFetchLimit,
+        limit: EXPLORER_FILE_FETCH_LIMIT,
       });
       dispatch(setExplorerFiles(fileSearchResult));
     })();

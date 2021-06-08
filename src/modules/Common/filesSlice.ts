@@ -100,6 +100,18 @@ const filesSlice = createSlice({
         });
       },
     },
+    addFiles: {
+      prepare: (files: FileInfo[]) => {
+        return { payload: files.map((file) => createFileState(file)) };
+      },
+      reducer: (state, action: PayloadAction<FileState[]>) => {
+        const files = action.payload;
+
+        files.forEach((file) => {
+          updateFileState(state, file);
+        });
+      },
+    },
     setUploadedFiles: {
       prepare: (files: FileInfo[]) => {
         return { payload: files.map((file) => createFileState(file)) };
@@ -209,6 +221,7 @@ const filesSlice = createSlice({
 
 export const {
   setFiles,
+  addFiles,
   setUploadedFiles,
   addUploadedFile,
   setDataSetIds,

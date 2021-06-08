@@ -31,6 +31,7 @@ export type FileExplorerTableProps = Omit<
   'data' | 'width'
 > &
   PaginatedTableProps<TableDataItem> & {
+    modalView?: boolean;
     allRowsSelected: boolean;
     onSelectAllRows: (value: boolean) => void;
   };

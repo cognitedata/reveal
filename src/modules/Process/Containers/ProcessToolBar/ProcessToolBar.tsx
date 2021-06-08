@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
@@ -6,6 +7,7 @@ import {
   selectIsPollingComplete,
   setProcessViewFileUploadModalVisibility,
   setSelectedDetectionModels,
+  setSelectFromExploreModalVisibility,
 } from 'src/modules/Process/processSlice';
 import { message, notification } from 'antd';
 import { toastProps } from 'src/utils/ToastUtils';
@@ -13,10 +15,25 @@ import React, { useEffect, useState } from 'react';
 import { Button, Title, Modal } from '@cognite/cogs.js';
 import { DetectionModelSelect } from 'src/modules/Process/Components/DetectionModelSelect';
 import { isVideo } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
-import { addUploadedFile, selectAllFiles } from 'src/modules/Common/filesSlice';
+import {
+  addFiles,
+  addUploadedFile,
+  selectAllFiles,
+} from 'src/modules/Common/filesSlice';
 import { VisionAPIType } from 'src/api/types';
 import { getContainer } from 'src/utils';
 import { FileUploadModal } from 'src/modules/Common/Components/FileUploaderModal/FileUploaderModal';
+import { ExploreModal } from 'src/modules/Common/Components/ExploreModal/ExploreModal';
+import { TableDataItem } from 'src/modules/Common/types';
+import { FileFilterProps, FileInfo } from '@cognite/cdf-sdk-singleton';
+import {
+  selectExplorerAllSelectedFiles,
+  selectExplorerSelectedFileIds,
+  setExplorerFileSelectState,
+  setExplorerFilter,
+  setExplorerQueryString,
+  setExplorerSelectedFileId,
+} from 'src/modules/Explorer/store/explorerSlice';
 import { ModelConfiguration } from '../ModelConfiguration';
 
 export const ProcessToolBar = () => {
@@ -81,6 +98,51 @@ export const ProcessToolBar = () => {
   const modelSelectorActive =
     !!files.length && !selectedDetectionModels.length && isPollingFinished;
 
+  // ExploreModal
+  const showSelectFromExploreModal = useSelector(
+    ({ processSlice }: RootState) => processSlice.showExploreModal
+  );
+  const exploreModalClickedFileId = useSelector(
+    (state: RootState) => state.explorerReducer.selectedFileId
+  );
+  const exploreModalSearchQuery = useSelector(
+    (state: RootState) => state.explorerReducer.query
+  );
+  const filter = useSelector(
+    ({ explorerReducer }: RootState) => explorerReducer.filter
+  );
+  const selectedExploreModalFiles: FileInfo[] = useSelector(
+    (state: RootState) => {
+      return selectExplorerAllSelectedFiles(state.explorerReducer);
+    }
+  );
+  const selectedFileIds = useSelector((state: RootState) =>
+    selectExplorerSelectedFileIds(state.explorerReducer)
+  );
+  const handleExploreSearchChange = (text: string) => {
+    dispatch(setExplorerQueryString(text));
+  };
+  const handleExplorerModalItemClick = ({
+    menu,
+    selected,
+    ...file
+  }: TableDataItem) => {
+    dispatch(setExplorerSelectedFileId(file.id));
+  };
+  const handleExploreModalRowSelect = (
+    item: TableDataItem,
+    selected: boolean
+  ) => {
+    dispatch(setExplorerFileSelectState(item.id, selected));
+  };
+  const setFilter = (newFilter: FileFilterProps) => {
+    dispatch(setExplorerFilter(newFilter));
+  };
+  const handleUseFiles = () => {
+    dispatch(addFiles(selectedExploreModalFiles));
+    dispatch(setSelectFromExploreModalVisibility(false));
+  };
+
   useEffect(() => {
     if (isPollingFinished || showDrawer) {
       notification.close('inProgressToast');
@@ -95,12 +157,26 @@ export const ProcessToolBar = () => {
   return (
     <>
       <FileUploadModal
-        initialUploadedFiles={files}
         onUploadSuccess={onUploadSuccess}
         showModal={showFileUploadModal}
         onCancel={() =>
           dispatch(setProcessViewFileUploadModalVisibility(false))
         }
+      />
+      <ExploreModal
+        showModal={showSelectFromExploreModal}
+        selectedId={exploreModalClickedFileId}
+        query={exploreModalSearchQuery}
+        filter={filter}
+        selectedCount={selectedFileIds.length}
+        setFilter={setFilter}
+        onSearch={handleExploreSearchChange}
+        onItemClick={handleExplorerModalItemClick}
+        onRowSelect={handleExploreModalRowSelect}
+        onCloseModal={() =>
+          dispatch(setSelectFromExploreModalVisibility(false))
+        }
+        onUseFiles={handleUseFiles}
       />
 
       <Container>
@@ -139,8 +215,11 @@ export const ProcessToolBar = () => {
               <Button
                 type="tertiary"
                 icon="AddToList"
-                disabled
+                disabled={disableAddFiles}
                 style={{ marginLeft: 8 }}
+                onClick={() =>
+                  dispatch(setSelectFromExploreModalVisibility(true))
+                }
               >
                 Select from files
               </Button>

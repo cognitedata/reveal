@@ -46,6 +46,7 @@ type State = {
     tagDetection: ParamsTagDetection;
     objectDetection: ParamsObjectDetection;
   };
+  showExploreModal: boolean;
 };
 
 const initialState: State = {
@@ -77,6 +78,7 @@ const initialState: State = {
       threshold: 0.8,
     },
   },
+  showExploreModal: false,
 };
 
 // for requested files, create annotation jobs with requested detectionModels and setup polling on these jobs
@@ -235,6 +237,9 @@ const processSlice = createSlice({
     ) {
       state.showFileUploadModal = action.payload;
     },
+    setSelectFromExploreModalVisibility(state, action: PayloadAction<boolean>) {
+      state.showExploreModal = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fileProcessUpdate, (state, { payload }) => {
@@ -325,6 +330,7 @@ export const {
   setParamsTagDetection,
   setParamsObjectDetection,
   setProcessViewFileUploadModalVisibility,
+  setSelectFromExploreModalVisibility,
 } = processSlice.actions;
 
 export default processSlice.reducer;
