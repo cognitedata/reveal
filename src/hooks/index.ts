@@ -46,7 +46,7 @@ export const useSearchParam = (
       state: location.state,
     });
   };
-  return [val ?? undefined, setSearchParam];
+  return [val ? decodeURIComponent(val) : undefined, setSearchParam];
 };
 
 const sanitizeTenant = (tenant: string = '') =>
