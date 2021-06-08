@@ -144,4 +144,6 @@ class StubNodeSet extends NodeSet {
   triggerChanged() {
     this.notifyChanged();
   }
+
+  clear() {}
 }

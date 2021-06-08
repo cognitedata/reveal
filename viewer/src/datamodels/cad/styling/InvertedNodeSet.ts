@@ -6,6 +6,10 @@ import { NumericRange } from '../../../utilities';
 import { IndexSet } from '../../../utilities/IndexSet';
 import { NodeSet } from './NodeSet';
 
+/**
+ * Node sets that inverts the result from another node set.
+ * @version New in 2.0.0
+ */
 export class InvertedNodeSet extends NodeSet {
   private readonly _allTreeIndicesRange: NumericRange;
   private readonly _innerSet: NodeSet;
@@ -35,5 +39,15 @@ export class InvertedNodeSet extends NodeSet {
       this._cachedIndexSet = invertedIndices;
     }
     return this._cachedIndexSet;
+  }
+
+  /**
+   * Not supported.
+   * @throws Always throws an error.
+   */
+  clear() {
+    // clearing the underlying set would result in all nodes being added to this set
+    // which would feel counter-intuitive.
+    throw new Error('clear() is not supported');
   }
 }
