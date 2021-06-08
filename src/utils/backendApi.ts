@@ -1,6 +1,6 @@
 import queryString from 'query-string';
 import { CogniteClient } from '@cognite/sdk';
-import config from 'config';
+import config, { getSidecar } from 'config';
 
 export type CogniteFunction = {
   id: number;
@@ -18,7 +18,6 @@ const BACKEND_SERVICE_BASE_URL =
   process.env.REACT_APP_BACKEND_SERVICE_BASE_URL;
 
 const useBackendService = !!BACKEND_SERVICE_BASE_URL;
-const CDF_API_BASE_URL = config.cdfApiBaseUrl;
 
 const getServiceClient = async (sdk: CogniteClient) => {
   const loginStatus = await sdk.login.status();
@@ -27,9 +26,14 @@ const getServiceClient = async (sdk: CogniteClient) => {
     return sdk;
   }
 
+  const { cdfCluster } = getSidecar();
+  const urlCluster = queryString.parse(window.location.search).cluster;
+
   const client = new CogniteClient({
     appId: config.appId,
-    baseUrl: useBackendService ? BACKEND_SERVICE_BASE_URL : CDF_API_BASE_URL,
+    baseUrl: useBackendService
+      ? BACKEND_SERVICE_BASE_URL
+      : `https://${urlCluster || cdfCluster}.cognitedata.com`,
   });
 
   const accessToken = sdk

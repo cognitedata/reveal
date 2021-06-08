@@ -17,7 +17,7 @@ import { Modal, Select, Icon, Checkbox, Input } from '@cognite/cogs.js';
 import { CHART_VERSION } from 'config/';
 import DelayedComponent from 'components/DelayedComponent';
 import { TimeseriesChart } from '@cognite/data-exploration';
-import { useQueryString, useLoginStatus } from 'hooks';
+import { useSearchParam, useLoginStatus } from 'hooks';
 import { useMyCharts, useUpdateChart, useChart } from 'hooks/firebase';
 import { Timeseries } from '@cognite/sdk';
 import { calculateDefaultYAxis } from 'utils/axis';
@@ -40,7 +40,7 @@ export const OpenInCharts: FC = () => {
   const history = useHistory();
   const { data: login } = useLoginStatus();
   const { mutate: updateChart } = useUpdateChart();
-  const { item: chartNameProp } = useQueryString(CHART_NAME_KEY);
+  const [chartNameProp = ''] = useSearchParam(CHART_NAME_KEY);
   const [initiated, setInitiated] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
   const [currentValue, setCurrentValue] = useState(options[0]);
@@ -63,12 +63,10 @@ export const OpenInCharts: FC = () => {
       return 0;
     });
   }, [myCharts.data]);
-  const { item: timeserieIds } = useQueryString(TIMESERIE_IDS_KEY);
-  const { item: timeserieExternalId } = useQueryString(
-    TIMESERIE_EXTERNAL_IDS_KEY
-  );
-  const { item: startTime } = useQueryString(START_TIME_KEY);
-  const { item: endTime } = useQueryString(END_TIME_KEY);
+  const [timeserieIds = ''] = useSearchParam(TIMESERIE_IDS_KEY);
+  const [timeserieExternalId = ''] = useSearchParam(TIMESERIE_EXTERNAL_IDS_KEY);
+  const [startTime = ''] = useSearchParam(START_TIME_KEY);
+  const [endTime = ''] = useSearchParam(END_TIME_KEY);
   const sparklineStartDate = dayjs()
     .subtract(1, 'years')
     .startOf('day')
