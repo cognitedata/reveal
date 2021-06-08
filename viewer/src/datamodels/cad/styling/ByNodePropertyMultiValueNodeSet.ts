@@ -96,6 +96,17 @@ export class ByNodePropertyMultiValueNodeSet extends NodeSet {
     await Promise.all(requests);
   }
 
+  /**
+   * Clears the node set and interrupts any ongoing operations.
+   */
+  clear(): void {
+    if (this._fetchResultHelper !== undefined) {
+      this._fetchResultHelper.interrupt();
+    }
+    this._indexSet.clear();
+    this.notifyChanged();
+  }
+
   getIndexSet(): IndexSet {
     return this._indexSet;
   }

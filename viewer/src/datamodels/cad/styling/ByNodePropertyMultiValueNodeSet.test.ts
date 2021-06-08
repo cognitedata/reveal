@@ -194,6 +194,24 @@ describe('ByNodePropertyMultiValueNodeSet', () => {
     expect(set.getIndexSet().toArray()).toEqual(expectedSet.toArray());
     expect(set.isLoading).toBeFalse();
   });
+
+  test('clear() interrupts ongoing operation and resets set', async () => {
+    // Arrange
+    nock(/.*/)
+      .get(filterNodesEndpointPath)
+      .reply(200, () => {
+        return { items: [createNodeJson(10, 100)] };
+      });
+
+    // Act
+    const executeFilterOperation = set.executeFilter('PDMS', ':FU', ['A', 'B', 'C']);
+    set.clear();
+    await executeFilterOperation;
+
+    // Assert
+    expect(set.isLoading).toBeFalse();
+    expect(set.getIndexSet()).toEqual(new IndexSet());
+  });
 });
 
 function createNodeJson(treeIndex: number, subtreeSize: number) {
