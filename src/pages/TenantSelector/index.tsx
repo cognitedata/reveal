@@ -11,18 +11,16 @@ const clusters = [
         label: 'Europe 1 (Google)',
         legacyAuth: true,
       },
-      { value: 'westeurope-1', label: 'Europe 2 (Microsoft)' },
     ],
   },
   {
     label: 'Single customer clusters',
     options: [
-      {
-        value: 'omv',
-        label: 'OMV',
-        oidc: true,
-        legacyAuth: true,
-      },
+      { value: 'bp', label: 'BP', legacyAuth: true },
+      { value: 'omv', label: 'OMV', legacyAuth: true },
+      { value: 'pgs', label: 'PGS', legacyAuth: true },
+      { value: 'power-no', label: 'Power NO', legacyAuth: true },
+      { value: 'statnett', label: 'Statnett', legacyAuth: true },
     ],
   },
   {
@@ -31,12 +29,7 @@ const clusters = [
       {
         value: 'greenfield',
         label: 'Greenfield',
-
         legacyAuth: true,
-      },
-      {
-        value: 'bluefield',
-        label: 'Bluefield',
       },
     ],
   },
