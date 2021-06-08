@@ -14,8 +14,8 @@ export interface SuggestedCameraConfig {
 }
 
 export function suggestCameraConfig(rootSector: SectorMetadata): SuggestedCameraConfig {
-  const averageMin = new THREE.Vector3(0, 0, 0);
-  const averageMax = new THREE.Vector3(0, 0, 0);
+  const averageMin = new THREE.Vector3();
+  const averageMax = new THREE.Vector3();
   let count = 0;
 
   traverseDepthFirst(rootSector, node => {
