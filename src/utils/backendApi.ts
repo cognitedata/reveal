@@ -33,7 +33,7 @@ const getServiceClient = async (sdk: CogniteClient) => {
     appId: config.appId,
     baseUrl: useBackendService
       ? BACKEND_SERVICE_BASE_URL
-      : `https://${urlCluster || cdfCluster}.cognitedata.com`,
+      : `https://${urlCluster || cdfCluster || 'api'}.cognitedata.com`,
   });
 
   const accessToken = sdk
