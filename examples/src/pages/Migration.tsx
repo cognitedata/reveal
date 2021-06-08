@@ -15,7 +15,9 @@ import {
   PotreePointColorType, 
   PotreePointShape,
   ByTreeIndexNodeSet,
-  IndexSet
+  IndexSet,
+  ByNodePropertyNodeSet,
+  DefaultNodeAppearance
 } from '@cognite/reveal';
 import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, AxisViewTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
@@ -84,7 +86,7 @@ export function Migration() {
 
       const progress = (itemsLoaded: number, itemsRequested: number, itemsCulled: number) => {
         guiState.debug.loadedSectors.statistics.culledCount = itemsCulled;
-        console.log(`loaded ${itemsLoaded}/${itemsRequested} (culled: ${itemsCulled})`);
+        //console.log(`loaded ${itemsLoaded}/${itemsRequested} (culled: ${itemsCulled})`);
 
       };
       // Prepare viewer
@@ -110,6 +112,13 @@ export function Migration() {
           viewer.loadCameraFromModel(model);
           if (model instanceof Cognite3DModel) {
             cadModels.push(model);
+            const allPipes = new ByNodePropertyNodeSet(client, model);
+            allPipes.executeFilter({'PDMS': {'Function': 'EP'}});
+            model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
+            model.addStyledNodeSet(allPipes, { renderGhosted: false, color: [40, 200, 20] } );
+
+            const highlight = new ByTreeIndexNodeSet([399745]);
+            model.addStyledNodeSet(highlight, {outlineColor: reveal.NodeOutlineColor.Orange, renderInFront: true, renderGhosted: false});
           } else if (model instanceof CognitePointCloudModel) {
             pointCloudModels.push(model);
             pointCloudParams.apply();
@@ -418,6 +427,9 @@ export function Migration() {
         const modelId = Number.parseInt(modelIdStr, 10);
         const revisionId = Number.parseInt(revisionIdStr, 10);
         await addModel({ modelId, revisionId, geometryFilter: createGeometryFilterFromState(guiState.geometryFilter) });
+
+        const viewState = viewer.getViewState();
+        console.log(JSON.stringify(viewState, undefined, 2));
       }
 
       const selectedSet = new ByTreeIndexNodeSet([]);

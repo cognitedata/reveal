@@ -34,6 +34,11 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     return this.cadNode.nodeTransformProvider;
   }
 
+  /* @internal */
+  get styleNodeSets(): { nodes: NodeSet; appearance: NodeAppearance }[] {
+    return this._styledNodeSets;
+  }
+
   /**
    * Get settings used for loading pipeline.
    */
@@ -63,6 +68,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   private readonly cadModel: CadModelMetadata;
   private readonly client: CogniteClient;
   private readonly nodeIdAndTreeIndexMaps: NodeIdAndTreeIndexMaps;
+  private readonly _styledNodeSets: { nodes: NodeSet; appearance: NodeAppearance }[] = [];
 
   /**
    * @param modelId
@@ -133,6 +139,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * @version new in 2.0
    */
   addStyledNodeSet(nodes: NodeSet, appearance: NodeAppearance) {
+    this._styledNodeSets.push({ nodes, appearance });
     this.cadNode.nodeAppearanceProvider.addStyledSet(nodes, appearance);
   }
 
