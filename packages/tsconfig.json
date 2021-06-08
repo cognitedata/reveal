@@ -12,6 +12,13 @@
     "outDir": "dist",
     "strict": true,
     "target": "es5",
-    "types": ["node", "jest"]
+    "types": ["node", "jest"],
+    "alwaysStrict": true,
+    "downlevelIteration": true,
+    "forceConsistentCasingInFileNames": true,
+    "jsx": "react-jsx",
+    "lib": ["es2015", "dom"],
+    "resolveJsonModule": true,
+    "strictPropertyInitialization": true
   }
 }

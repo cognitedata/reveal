@@ -1,0 +1,70 @@
+{
+  "name": "@cognite/react-container",
+  "version": "1.2.7",
+  "source": "src/index.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "browser": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "license": "Apache-2.0",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "clean": "rm -rf dist",
+    "test": "jest",
+    "esCheck": "es-check es5 './dist/index.js'",
+    "build": "yarn clean && rollup -c && yarn esCheck",
+    "build:watch": "yarn clean && rollup -c --watch && yarn esCheck",
+    "watch": "yarn build --watch",
+    "lint": "yarn concurrently \"yarn prettier\" \"yarn eslint 'src/**/*.{ts,tsx}' 'src/*.{ts,tsx}'\"",
+    "lint:fix": "yarn prettier --write && yarn eslint 'src/**/*.{ts,tsx}' --fix",
+    "prettier": "prettier -l 'src/**/*' ",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cognitedata/frontend"
+  },
+  "homepage": "https://github.com/cognitedata/frontend/tree/master/packages/browser/react/react-container",
+  "devDependencies": {
+    "@babel/core": "^7.3.3",
+    "@cognite/eslint-config": "^2.0.1",
+    "@cognite/eslint-plugin": "^2.0.0",
+    "@storybook/addon-actions": "^5.3.19",
+    "@storybook/addon-links": "^5.3.19",
+    "@storybook/addons": "^5.3.19",
+    "@storybook/preset-typescript": "^3.0.0",
+    "@storybook/react": "^5.3.19",
+    "@types/jwt-decode": "^2.2.1",
+    "@types/react-redux": "^7.1.9",
+    "@types/react-router-dom": "^5.1.6",
+    "babel-loader": "^8.1.0",
+    "jest-css-modules-transform": "^2.1.1",
+    "react-router-dom": "^5.2.0"
+  },
+  "dependencies": {
+    "@cognite/auth-utils": "^1.0.6",
+    "@cognite/intercom-helper": "^0.1.2",
+    "@cognite/metrics": "^1.1.0",
+    "@cognite/sdk": "^4.0.3",
+    "@cognite/react-errors": "^0.3.0",
+    "@cognite/react-i18n": "^0.4.0",
+    "@cognite/react-loop-detector": "^0.1.0",
+    "@cognite/react-sentry": "^0.1.1",
+    "@cognite/react-tenant-selector": "^1.2.9",
+    "tslib": "^2.2.0",
+    "jwt-decode": "^3.0.0",
+    "react-redux": "^7.2.2"
+  },
+  "peerDependencies": {
+    "@cognite/cogs.js": "^2.4.0",
+    "@cognite/metrics": "^1.0.0",
+    "lodash": "^4.17.20",
+    "react": ">=16",
+    "react-redux": "^7.2.2",
+    "react-router-dom": "^5.2.0",
+    "redux": "^4.0.5"
+  }
+}
