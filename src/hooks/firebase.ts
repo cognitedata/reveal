@@ -1,7 +1,7 @@
 import { useSDK } from '@cognite/sdk-provider';
 import omit from 'lodash/omit';
 import isEqual from 'lodash/isEqual';
-import config, { CHART_VERSION, useAppsApiBaseUrl } from 'config';
+import config, { CHART_VERSION, useAppsApiBaseUrl, useCluster } from 'config';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useProject, useLoginStatus, getProject } from 'hooks';
 import firebase from 'firebase/app';
@@ -9,6 +9,7 @@ import 'firebase/firestore';
 import 'firebase/auth';
 import { Chart } from 'reducers/charts/types';
 import { IdInfo } from '@cognite/sdk';
+import { getFlow } from '@cognite/auth-utils';
 
 type EnvironmentConfig = {
   cognite: {
@@ -39,21 +40,27 @@ const cacheOption = {
 
 const useFirebaseToken = (enabled: boolean) => {
   const sdk = useSDK();
+  const [cluster] = useCluster();
   const project = useProject();
   const url = useAppsApiBaseUrl();
+
+  const { flow } = getFlow(project, cluster);
 
   return useQuery<string>(
     ['firebase', 'token'],
     () =>
       sdk
-        .get<LoginToFirebaseResponse>(`${url}/login/firebase`, {
-          params: {
-            tenant: project,
-            app: APP_NAME,
-            json: true,
-          },
-          withCredentials: true,
-        })
+        .get<LoginToFirebaseResponse>(
+          `${url}${flow === 'AZURE_AD' ? `/${project}` : ''}/login/firebase`,
+          {
+            params: {
+              tenant: project,
+              app: APP_NAME,
+              json: true,
+            },
+            withCredentials: true,
+          }
+        )
         .then((result) => {
           const {
             data: { firebaseToken: nextFirebaseToken },
