@@ -1,5 +1,4 @@
 import { useState } from 'react';
-
 import axios from 'axios';
 
 export const getNewDomain = (hostname: string, cluster: string) => {
@@ -83,9 +82,7 @@ const useClusterSelector = (appName: string) => {
           },
         }
       )
-      .then(() => {
-        return true;
-      })
+      .then(() => true)
       .catch((e) => {
         throw e;
       })

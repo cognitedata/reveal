@@ -20,9 +20,9 @@ describe('get Hmac key from server', () => {
 
   it('identityVerification resolves', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (getHmac as any).mockImplementation(() => {
-      return Promise.resolve({ hmac: 'hmacHash1234', userUid: 'Unique ID' });
-    });
+    (getHmac as any).mockImplementation(() =>
+      Promise.resolve({ hmac: 'hmacHash1234', userUid: 'Unique ID' })
+    );
     return identityVerification({
       appsApiUrl: 'test',
       headers: { Authorization: 'test' },
@@ -38,9 +38,7 @@ describe('get Hmac key from server', () => {
   it('identityVerification rejects', () => {
     const error = new Error('failure');
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (getHmac as any).mockImplementation(() => {
-      return Promise.reject(error);
-    });
+    (getHmac as any).mockImplementation(() => Promise.reject(error));
     return identityVerification({
       appsApiUrl: 'test',
       headers: { Authorization: 'test' },

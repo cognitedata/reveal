@@ -96,7 +96,9 @@ This package exports jest-mocks.
 In your **setupTests** file do this:
 
 ```js
-import '@cognite/react-feature-flags/jest-mocks';
+import mocks from '@cognite/react-feature-flags/dist/mocks';
+
+jest.mock('@cognite/react-feature-flags', () => mocks);
 ```
 
 This will cause unleash-proxy-client module to be mocked in jest.
@@ -104,7 +106,7 @@ This will cause unleash-proxy-client module to be mocked in jest.
 ### Stubbing client methods
 
 ```js
-import { clientMock } from '@cognite/react-feature-flags/jest-mocks';
+import { clientMock } from '@cognite/react-feature-flags/dist/mocks';
 ```
 
 use them in a test like this:
@@ -116,7 +118,7 @@ import {
   useFlag,
   useVariant,
 } from '@cognite/react-feature-flags';
-import { clientMock } from '@cognite/react-feature-flags/jest-mocks';
+import { clientMock } from '@cognite/react-feature-flags/dist/mocks';
 
 describe('FeatureToggle', () => {
   afterEach(() => {

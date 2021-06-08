@@ -1,13 +1,12 @@
-import React from 'react';
 import { screen, render } from '@testing-library/react';
-import { FlagProvider } from '.';
-import { useFlag } from './useFlag';
+
 import { clientMock } from '../mocks';
 
+import { FlagProvider } from '.';
+import { useFlag } from './useFlag';
+
 jest.mock('unleash-proxy-client', () => ({
-  UnleashClient: jest.fn().mockImplementation(() => {
-    return clientMock;
-  }),
+  UnleashClient: jest.fn().mockImplementation(() => clientMock),
 }));
 
 describe('FeatureToggle', () => {

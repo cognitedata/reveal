@@ -10,7 +10,7 @@ buildifier_short_path="$RUNFILES_DIR/@@WORKSPACE_NAME@@/$BUILDIFIER_SHORT_PATH"
 
 cd "$BUILD_WORKSPACE_DIRECTORY"
 
-contents=$("$generator_short_path" @@BUILD_FILE@@ @@OUT_PATH@@ @@PACKAGE_PATH@@ @@SRC_PATH@@ @@WORKSPACE@@)
+contents=$("$generator_short_path" @@BUILD_FILE@@ @@OUT_PATH@@ @@PACKAGE_PATH@@ @@SRC_PATH@@ @@WORKSPACE@@ @@LOCAL_PACKAGE_PATH@@)
 if [[ $? -ne 0 ]] ; then
     echo "Generator exited with error"
     exit 1

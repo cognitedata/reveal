@@ -77,13 +77,11 @@ export const getCategoryByPriority = (
 export const getKeyList = (
   document: Document,
   documentTypeField?: string[]
-) => {
-  return [
-    getDocumentType(document.metadata, documentTypeField),
-    // if not found try to find category in file name
-    ...document.fileName.split('-'),
-  ];
-};
+) => [
+  getDocumentType(document.metadata, documentTypeField),
+  // if not found try to find category in file name
+  ...document.fileName.split('-'),
+];
 
 export const getKeyAndDescription = (
   document: Document,
@@ -151,8 +149,7 @@ export const getDocumentTitle = (
   return getValueFromObject(metadata, names);
 };
 
-export const getShortDescription = (description: string) => {
-  return description.length > maxDocumentTitleLength
+export const getShortDescription = (description: string) =>
+  description.length > maxDocumentTitleLength
     ? `${description.substring(0, maxDocumentTitleLength)}...`
     : description;
-};

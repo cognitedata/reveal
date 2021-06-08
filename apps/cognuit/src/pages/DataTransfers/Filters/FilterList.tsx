@@ -1,5 +1,3 @@
-import React from 'react';
-
 import Label from 'components/Atoms/Label';
 import { Dropdown } from '@cognite/cogs.js';
 import { FilterListProps } from './types';

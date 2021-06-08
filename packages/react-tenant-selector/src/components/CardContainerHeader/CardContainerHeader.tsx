@@ -1,7 +1,7 @@
-import React from 'react';
 import { useTranslation } from '@cognite/react-i18n';
 
 import { StyledHeading, CogniteMark } from '../../styles/elements';
+
 import { StyledCardContainerHeader } from './elements';
 
 const CardContainerHeader = ({

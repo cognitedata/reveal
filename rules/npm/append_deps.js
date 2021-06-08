@@ -16,6 +16,10 @@ if (dependenciesPackagePath) {
     .split(',')
     .reduce((dependencies, depPath) => {
       const { name, version } = readPackage(depPath);
+      // do not append dependency if corresponding peerDependency exists
+      if ((package.peerDependencies || {})[name]) {
+        return dependencies;
+      }
       return {
         ...dependencies,
         [name]: version,

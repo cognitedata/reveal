@@ -1,13 +1,9 @@
-import React from 'react';
 import { screen } from '@testing-library/react';
-import '@cognite/auth-utils/jest-mocks';
 
 import { render } from '../utils/test';
 import { TenantSelector } from '../TenantSelector';
 
-jest.mock('../components/CardContainer', () => {
-  return () => <div>test-container</div>;
-});
+jest.mock('../components/CardContainer', () => () => <div>test-container</div>);
 
 const props = {
   sidecar: {

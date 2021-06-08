@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { AxisDomainsByItemId, Collection, Series } from '../types';
 import { OnDomainsUpdated } from '../Scaler';
 

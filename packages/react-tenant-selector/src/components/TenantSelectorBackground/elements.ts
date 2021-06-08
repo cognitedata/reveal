@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+
 import CLetterImage from '../../assets/CLetter.svg';
 import NLetterImage from '../../assets/NLetter.svg';
 

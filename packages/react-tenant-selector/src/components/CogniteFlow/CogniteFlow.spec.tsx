@@ -1,21 +1,22 @@
-import React from 'react';
+import { screen } from '@testing-library/react';
+
 import { render } from '../../utils/test';
 
 import { Base, Loading } from './CogniteFlow.stories';
 
 describe('<CogniteFlow />', () => {
   it('Should show tenant selector by default', () => {
-    const { getByText } = render(<Base />);
-    expect(getByText('Specify Cluster')).toBeInTheDocument();
+    render(<Base />);
+    expect(screen.getByText('Specify Cluster')).toBeInTheDocument();
   });
 
   it('Should auto-focus on page render', async () => {
-    const { queryByPlaceholderText } = render(<Base />);
-    expect(queryByPlaceholderText('Enter Company ID')).toHaveFocus();
+    render(<Base />);
+    expect(screen.queryByPlaceholderText('Enter Company ID')).toHaveFocus();
   });
 
   it('Should be disabled while loading', async () => {
-    const { queryByPlaceholderText } = render(<Loading />);
-    expect(queryByPlaceholderText('Enter Company ID')).toBeDisabled();
+    render(<Loading />);
+    expect(screen.queryByPlaceholderText('Enter Company ID')).toBeDisabled();
   });
 });

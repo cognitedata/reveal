@@ -1,4 +1,5 @@
-import React, { ReactChild, Component } from 'react';
+import { ReactChild, Component } from 'react';
+
 import { Data } from '../context/Data';
 import { ScalerContext, DataContext, ScalerType } from '../context';
 import Axes from '../utils/Axes';

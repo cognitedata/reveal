@@ -1,17 +1,9 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-const baseConfig = require('../../../../jest.config.js');
-
-const pack = require('./package');
+const baseConfig = require('../jest.react.config.js');
 
 module.exports = {
   testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.(tsx|ts)?$',
-  moduleNameMapper: {
-    '.+\\.(css|styl|less|sass|scss)$':
-      '<rootDir>/node_modules/jest-css-modules-transform',
-  },
   ...baseConfig,
   testEnvironment: 'jsdom',
-  displayName: pack.name,
-  name: pack.name,
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
 };

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { Button, Colors, Tooltip } from '@cognite/cogs.js';
 import { apiStatuses } from 'utils/statuses';
 import { DataTransferObject, RevisionObject } from '../../typings/interfaces';

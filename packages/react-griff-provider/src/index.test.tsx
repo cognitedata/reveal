@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { render, screen } from '@testing-library/react';
+
 import { DataProvider, useDataContext, useScalerContext } from '.';
 
 describe('DataProvider tests', () => {

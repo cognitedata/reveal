@@ -1,4 +1,3 @@
-import React from 'react';
 import { Col, Input, Row } from '@cognite/cogs.js';
 import { format } from 'date-fns';
 import { Section } from './elements';

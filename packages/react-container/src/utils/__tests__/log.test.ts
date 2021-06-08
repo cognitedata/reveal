@@ -1,4 +1,5 @@
 import { sandbox } from '@cognite/testing';
+
 import { log } from '../log';
 
 jest.mock('../env', () => ({

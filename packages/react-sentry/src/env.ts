@@ -18,6 +18,5 @@ export const isStaging = (hostname?: string) =>
 export const isLocalhost = (hostname?: string) =>
   safeHostname(hostname).includes('localhost');
 
-export const isStagingOrLocalhost = (hostname?: string) => {
-  return isLocalhost(hostname) || isStaging(hostname);
-};
+export const isStagingOrLocalhost = (hostname?: string) =>
+  isLocalhost(hostname) || isStaging(hostname);

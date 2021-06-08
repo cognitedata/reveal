@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { action } from '@storybook/addon-actions';
 import { number, text } from '@storybook/addon-knobs';
 import { Button } from '@cognite/cogs.js';

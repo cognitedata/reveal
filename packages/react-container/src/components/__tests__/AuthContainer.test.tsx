@@ -1,13 +1,12 @@
 /* eslint-disable no-console */
-import React from 'react';
 import { CogniteClient } from '@cognite/sdk';
 import { render, screen } from '@testing-library/react';
-
 import { generateSidecar } from '__mocks/sidecar';
+
 import { AuthContainer } from '../AuthContainer';
 
 // this would be a nicer way to mock these tests
-// import '@cognite/auth-utils/jest-mocks';
+// import '@cognite/auth-utils/dist/mocks';
 
 // @ts-expect-error - missing other keys
 global.console = { warn: jest.fn(), log: console.log };
@@ -22,9 +21,7 @@ jest.mock('@cognite/auth-utils', () => {
   };
   return {
     ...original,
-    getFlow: () => {
-      return { flow: 'COGNITE_AUTH' };
-    },
+    getFlow: () => ({ flow: 'COGNITE_AUTH' }),
     CogniteAuth: (client: unknown) => ({
       state: {},
       getClient: () => client,

@@ -25,7 +25,7 @@ const ProjectSelector: React.FC<Props> = ({
     isFetched,
     isError,
     refetch,
-  } = useQuery<{ projectUrlName: string }[]>(
+  } = useQuery<{ projectUrlName: string }[] | undefined>(
     ['projects'],
     async () => fetchProjects({ enabled, authClient }),
     {

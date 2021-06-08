@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 
 import { I18nContainer } from './Provider';
@@ -12,13 +11,11 @@ describe('Provider', () => {
       return <div>TRANS: {t('test_string', { defaultValue: 'COMPLETE' })}</div>;
     };
 
-    const Wrapped = () => {
-      return (
-        <I18nContainer>
-          <Test />
-        </I18nContainer>
-      );
-    };
+    const Wrapped = () => (
+      <I18nContainer>
+        <Test />
+      </I18nContainer>
+    );
 
     render(<Wrapped />);
     expect(await screen.findByText('TRANS: COMPLETE')).toBeInTheDocument();

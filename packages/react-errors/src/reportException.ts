@@ -16,8 +16,8 @@ export type SentryPayload = { [key: string]: unknown };
 export const reportException = (
   error: Error | string,
   payload?: SentryPayload
-): Promise<ReportedError> => {
-  return new Promise<ReportedError>((resolve) => {
+): Promise<ReportedError> =>
+  new Promise<ReportedError>((resolve) => {
     Sentry.withScope((scope) => {
       const exception = isString(error) ? new Error(error) : error;
       const extras = payload || {};
@@ -30,7 +30,6 @@ export const reportException = (
       resolve({ error: exception, errorId });
     });
   });
-};
 
 export type ReportedError = {
   error: Error;

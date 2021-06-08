@@ -2,6 +2,8 @@ import React from 'react';
 
 import LogoWithText from '../../icons/LogoWithText';
 import { Centered } from '../../styles/elements';
+import { useIsDesktop } from '../../hooks/useIsDesktop';
+
 import {
   Background,
   CogniteLogo,
@@ -10,7 +12,6 @@ import {
   NLetter,
   DimmingOverlay,
 } from './elements';
-import { useIsDesktop } from '../../hooks/useIsDesktop';
 
 interface Props {
   children: React.ReactNode | null;

@@ -23,6 +23,7 @@ module.exports = {
     'react/static-property-placement': ['off'],
     'react/state-in-constructor': ['off'],
     'react/react-in-jsx-scope': ['off'],
+    'react-hooks/exhaustive-deps': ['off'],
 
     'jest/expect-expect': ['off'],
     'jest/no-test-callback': ['off'],

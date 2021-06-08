@@ -1,4 +1,5 @@
 import { BrowserOptions, init, setUser } from '@sentry/browser';
+
 import { log } from './log';
 import { isLocalhost } from './env';
 

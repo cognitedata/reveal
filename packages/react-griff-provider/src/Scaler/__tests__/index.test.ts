@@ -1,4 +1,5 @@
 import sinon from 'sinon';
+
 import {
   isEqual,
   firstResolvedDomain,

@@ -5,55 +5,45 @@ import {
   ConditionalWrapperWithProps,
 } from '../ConditionalWrapper';
 
-const Wrapper: React.FC = (children) => {
-  return (
-    <div>
-      WRAPPER_ADDED
-      {children}
-    </div>
-  );
-};
+const Wrapper: React.FC = (children) => (
+  <div>
+    WRAPPER_ADDED
+    {children}
+  </div>
+);
 
-export const BaseWithoutWrapper = () => {
-  return (
-    <ConditionalWrapper wrap={Wrapper} condition={false}>
-      <div>test-content 1</div>
-    </ConditionalWrapper>
-  );
-};
+export const BaseWithoutWrapper = () => (
+  <ConditionalWrapper wrap={Wrapper} condition={false}>
+    <div>test-content 1</div>
+  </ConditionalWrapper>
+);
 
-export const BaseWithWrapper = () => {
-  return (
-    <ConditionalWrapper wrap={Wrapper} condition>
-      <div>test-content 2</div>
-    </ConditionalWrapper>
-  );
-};
+export const BaseWithWrapper = () => (
+  <ConditionalWrapper wrap={Wrapper} condition>
+    <div>test-content 2</div>
+  </ConditionalWrapper>
+);
 
 const TestWrapper: React.FC<{ otherProps: string }> = ({
   children,
   otherProps,
-}) => {
-  return (
-    <>
-      <div>This is the test wrapper</div>
-      <div>{otherProps}</div>
-      <div>{children}</div>
-    </>
-  );
-};
+}) => (
+  <>
+    <div>This is the test wrapper</div>
+    <div>{otherProps}</div>
+    <div>{children}</div>
+  </>
+);
 
-export const WithPropsWithWrapper = () => {
-  return (
-    <ConditionalWrapperWithProps
-      wrap={TestWrapper}
-      condition
-      otherProps="This string is from wrapper props"
-    >
-      <div>test-content 3</div>
-    </ConditionalWrapperWithProps>
-  );
-};
+export const WithPropsWithWrapper = () => (
+  <ConditionalWrapperWithProps
+    wrap={TestWrapper}
+    condition
+    otherProps="This string is from wrapper props"
+  >
+    <div>test-content 3</div>
+  </ConditionalWrapperWithProps>
+);
 
 export default {
   title: 'Components/ConditionalWrapper',

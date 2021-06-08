@@ -36,19 +36,15 @@ export const init = ({ project, appName }: InitOptions): void => {
 };
 
 /** Create a key useful to store things at the root level. */
-const createRootKey = (key: string) => {
-  return `${BASE_KEY}/${key}`;
-};
+const createRootKey = (key: string) => `${BASE_KEY}/${key}`;
 
 /** Create a key useful to store things on the app (opin, opin-dev) level. */
-const createAppKey = (key: string) => {
-  return currentAppName ? `${currentAppName}/${key}` : key;
-};
+const createAppKey = (key: string) =>
+  currentAppName ? `${currentAppName}/${key}` : key;
 
 /** Create a key useful for storing things on the tenant level. */
-const createProjectKey = (key: string) => {
-  return currentProject ? `${currentProject}/${key}` : key;
-};
+const createProjectKey = (key: string) =>
+  currentProject ? `${currentProject}/${key}` : key;
 
 const getRootItem = <T>(key: string, defaultValue?: T): T | undefined => {
   const rootKey = createRootKey(key);

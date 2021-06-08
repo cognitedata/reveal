@@ -1,7 +1,8 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { Router } from 'react-router';
+import { Router } from 'react-router-dom';
 import { createBrowserHistory } from 'history';
+
 import { AzureTelemetryProvider } from './AzureTelemetry';
 
 describe('AzureTelemetry', () => {

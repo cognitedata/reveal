@@ -207,7 +207,9 @@ The mocks can be automatically installed through the [jest] helpers.
 These should be added to the calling app's `setupTests.ts` file, like so:
 
 ```ts
-import '@cognite/react-errors/jest-mocks';
+import mocks from '@cognite/react-errors/dist/mocks';
+
+jest.mock('@cognite/errors', () => mocks);
 ```
 
 [jest]: https://jestjs.io

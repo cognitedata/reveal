@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Button } from '@cognite/cogs.js';
 import { CogniteAuth } from '@cognite/auth-utils';
+
 import AzureAdvancedOptions, {
   AzureAdvancedOptions as AzureAdvancedOptionsType,
 } from '../AzureAdvancedOptions';

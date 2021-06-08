@@ -28,13 +28,11 @@ export const getTenancy = (
 export const sanitizeTenant = (tenant: string): string =>
   (tenant || '').toLowerCase().replace(/[^a-z0-9-]/g, '');
 
-export const getLastTenant = (): string => {
-  return storage.getRootString<string, string>(KEY_LAST_TENANT, '') || '';
-};
+export const getLastTenant = (): string =>
+  storage.getRootString<string, string>(KEY_LAST_TENANT, '') || '';
 
-export const setLastTenant = (tenant: string) => {
-  return storage.setRootItem(KEY_LAST_TENANT, tenant);
-};
+export const setLastTenant = (tenant: string) =>
+  storage.setRootItem(KEY_LAST_TENANT, tenant);
 
 export const getTenantInfo = (location?: Location) => {
   const possibleTenant = getTenancy(location);

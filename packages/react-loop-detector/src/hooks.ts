@@ -1,4 +1,5 @@
 import { useContext } from 'react';
+
 import { Context } from './LoopDetector';
 
 export const useLoopDetector = () => {

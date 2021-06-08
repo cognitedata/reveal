@@ -32,6 +32,7 @@ class MyComponent extends React.Component {
   // ...
 }
 ```
+
 or
 
 ```js
@@ -142,7 +143,9 @@ The library provides some boilerplate stubbed-out implementations for [jest].
 In order to use this, import `@cognite/metrics/jest-mocks` somewhere in your tests -- probably in `src/setupTests.ts`.
 
 ```ts
-import '@cognite/metrics/jest-mocks';
+import * as mocks from '@cognite/metrics/dist/mocks';
+
+jest.mock('@cognite/metrics', () => mocks);
 ```
 
 ### Storybook

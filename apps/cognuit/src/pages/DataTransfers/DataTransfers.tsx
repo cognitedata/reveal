@@ -209,24 +209,18 @@ const DataTransfers: React.FC = () => {
   const [configurations, setConfigurations] = useState<GenericResponseObject[]>(
     []
   );
-  const [
-    selectedConfiguration,
-    setSelectedConfiguration,
-  ] = useState<GenericResponseObject | null>(null);
+  const [selectedConfiguration, setSelectedConfiguration] =
+    useState<GenericResponseObject | null>(null);
   const [sourceProjects, setSourceProjects] = useState<DataTransferObject[]>(
     []
   );
-  const [
-    selectedSourceProject,
-    setSelectedSourceProject,
-  ] = useState<DataTransferObject | null>(null);
+  const [selectedSourceProject, setSelectedSourceProject] =
+    useState<DataTransferObject | null>(null);
   const [targetProjects, setTargetProjects] = useState<DataTransferObject[]>(
     []
   );
-  const [
-    selectedTargetProject,
-    setSelectedTargetProject,
-  ] = useState<DataTransferObject | null>(null);
+  const [selectedTargetProject, setSelectedTargetProject] =
+    useState<DataTransferObject | null>(null);
   const [selectedDateRange, setSelectedDateRange] = useState<Range>({});
   const [datatypes, setDatatypes] = useState<string[]>([]);
   const [selectedDatatype, setSelectedDatatype] = useState<string | null>(null);
@@ -238,10 +232,8 @@ const DataTransfers: React.FC = () => {
   const { url } = useRouteMatch();
   const history = useHistory();
 
-  const [
-    selectedTransfer,
-    setSelectedTransfer,
-  ] = useState<DetailDataProps | null>(null);
+  const [selectedTransfer, setSelectedTransfer] =
+    useState<DetailDataProps | null>(null);
 
   function getColumnNames(dataTransferObjects: DataTransferObject[]): string[] {
     const results: string[] = [];

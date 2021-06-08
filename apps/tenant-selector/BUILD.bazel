@@ -60,11 +60,11 @@ generate_package_json_helpers(
 
 # Dependencies from package.json
 DEPENDENCIES = [
-    "@npm//@cognite/react-i18n",
-    "@npm//@cognite/react-tenant-selector",
     "@npm//@sentry/browser",
     "@npm//react",
     "@npm//react-dom",
+    "//packages/react-tenant-selector",
+    "//packages/react-i18n",
     "//packages/metrics",
 ]
 
@@ -136,19 +136,23 @@ _RUNTIME_DEPS = [
     "chdir.js",
     "copy_static_files",
     "//:tsconfig",
-] + DEPENDENCIES
+]
 
 ### react-scripts build ###
 
 react_scripts(
-    # Note: this must be named "build" since react-scripts hard-codes that as the output dir
+    # Note: If you want to change the name make sure you update BUILD_PATH below accordingly
+    # https://create-react-app.dev/docs/advanced-configuration/
     name = "build",
     args = [
         "--node_options=--require=./$(execpath chdir.js)",
         "build",
     ],
-    data = _RUNTIME_DEPS + TYPE_DEPENDENCIES + [
-        "@npm//@types",
+    data = _RUNTIME_DEPS + DEPENDENCIES + TYPE_DEPENDENCIES + [
+        # see patches/react-scripts+4.0.3.patch
+        # we have added this plugin into webpack so Bazel should know about it
+        # TODO: move build script into a custom rules with defined plugin once and for all
+        "@npm//tsconfig-paths-webpack-plugin",
     ],
     env = {
         # Specify your Sentry DSN is the URL used to report runtime issues
@@ -185,8 +189,8 @@ genrule(
         "cp -r $(SRCS) $(OUTS)",
         # TODO: find platform independant sed implementation
         # Use the line below for OS X
-        # "LC_CTYPE=C LANG=C find -L $(OUTS) -type f | xargs sed -i '' 's,PUBLIC_URL_VALUE,,g'",
-        "find -L $(OUTS) -type f | xargs sed -i 's,PUBLIC_URL_VALUE,,g'",
+        "LC_CTYPE=C LANG=C find -L $(OUTS) -type f | xargs sed -i '' 's,PUBLIC_URL_VALUE,,g'",
+        # "find -L $(OUTS) s-type f | xargs sed -i 's,PUBLIC_URL_VALUE,,g'",
     ]),
 )
 
@@ -201,7 +205,7 @@ react_scripts_test(
     name = "test",
     # folder name to store jest coverage in during CI run
     app_name = "tenant-selector",
-    data = _RUNTIME_DEPS + DEV_DEPENDENCIES + [
+    data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + [
         "@npm//@storybook/addon-essentials",
         "@npm//@storybook/addon-links",
         "@npm//@storybook/preset-create-react-app",
@@ -259,7 +263,7 @@ build_storybook(
         "--quiet",
     ],
     chdir = "$(RULEDIR)",
-    data = _RUNTIME_DEPS + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + [
+    data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + [
         "copy_storybook_files",
         "@npm//@types",
         "@npm//@storybook/addon-essentials",
@@ -278,7 +282,7 @@ start_storybook(
         "-p",
         "6006",
     ],
-    data = _RUNTIME_DEPS + DEV_DEPENDENCIES + [
+    data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + [
         "chdir-workspace.js",
         "copy_storybook_files",
         "@npm//@types",

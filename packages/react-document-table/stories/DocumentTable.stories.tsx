@@ -1,5 +1,4 @@
 import 'antd/dist/antd.css';
-import React from 'react';
 
 import { DocumentTable } from '../src';
 

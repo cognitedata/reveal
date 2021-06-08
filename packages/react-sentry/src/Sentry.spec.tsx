@@ -1,7 +1,6 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { Example } from './Sentry.stories';
 
+import { Example } from './Sentry.stories';
 import * as utils from './utils';
 
 describe('Sentry', () => {

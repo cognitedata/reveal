@@ -1,4 +1,3 @@
-import React from 'react';
 import styled from 'styled-components';
 
 import background from '../../assets/background.jpg';
@@ -18,10 +17,8 @@ const props = {
   backgroundImage: background,
 };
 
-export const Base = () => {
-  return (
-    <TenantSelectorBackground {...props}>
-      <Content>Content goes here</Content>
-    </TenantSelectorBackground>
-  );
-};
+export const Base = () => (
+  <TenantSelectorBackground {...props}>
+    <Content>Content goes here</Content>
+  </TenantSelectorBackground>
+);

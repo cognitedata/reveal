@@ -382,7 +382,7 @@ export class CogniteAuth {
     };
   }
 
-  public async getProjects(): Promise<unknown> {
+  public async getProjects(): Promise<{ projectUrlName: string }[]> {
     try {
       this.resetError();
 

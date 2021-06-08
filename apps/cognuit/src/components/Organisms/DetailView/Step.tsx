@@ -1,4 +1,3 @@
-import React from 'react';
 import { Colors, Icon } from '@cognite/cogs.js';
 import { format } from 'date-fns';
 import { UNIX_TIMESTAMP_FACTOR } from 'typings/interfaces';

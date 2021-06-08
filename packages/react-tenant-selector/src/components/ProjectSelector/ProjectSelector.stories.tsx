@@ -58,10 +58,6 @@ const getProps = () => {
 };
 
 // need to fix sandbox stub
-export const Base = () => {
-  return <ProjectSelector {...getProps()} />;
-};
+export const Base = () => <ProjectSelector {...getProps()} />;
 
-export const Error = () => {
-  return <ProjectSelector {...getProps()} />;
-};
+export const Error = () => <ProjectSelector {...getProps()} />;

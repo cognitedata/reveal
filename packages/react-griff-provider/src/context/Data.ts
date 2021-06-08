@@ -1,4 +1,5 @@
 import { createContext } from 'react';
+
 import { Collection, Domain, Domains, Series } from '../types';
 
 export type Data = {

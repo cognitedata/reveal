@@ -1,0 +1,195 @@
+load("@npm//rollup:index.bzl", "rollup")
+load("@build_bazel_rules_nodejs//:index.bzl", "copy_to_bin", "js_library", "pkg_npm")
+load("@bazel_skylib//rules:write_file.bzl", "write_file")
+load("//rules/test:jest.bzl", "jest_test")
+load("//rules/lint:index.bzl", "eslint_config", "eslint_test", "prettier_test")
+load("//rules/package_json_helpers:generate.bzl", "generate_package_json_helpers")
+load("//rules/package_json_helpers:module_mappings.bzl", "module_mappings")
+load("//rules/npm:is_published.bzl", "is_published")
+load("//rules/npm:package_info.bzl", "package_info")
+load("//rules/npm:append_deps.bzl", "append_deps")
+
+_TESTS = [
+    "src/**/*.test.js*",
+    "src/**/*.test.ts*",
+    "src/**/*.spec.js*",
+    "src/**/*.spec.ts*",
+    "src/**/__tests__/**/*.js*",
+    "src/**/__tests__/**/*.ts*",
+    "src/__mocks__/*",
+    "src/**/__mocks__/*",
+    "src/utils/test/*",
+]
+
+_STORYBOOK = [
+    ".storybook/*",
+    "src/**/*.stories.ts*",
+    "stories/**/*.stories.ts*",
+]
+
+SOURCES = glob(
+    ["src/**/*.ts*"],
+    exclude = _TESTS + _STORYBOOK,
+)
+
+TESTS = glob(_TESTS + _STORYBOOK)
+
+# Generates the below helpers.
+#
+# Usage:
+#   bazel run :generate_package_json_helpers
+generate_package_json_helpers(
+    name = "generate_package_json_helpers",
+    local_package_json = ":package.json",
+    out_dir = "dist",
+    package_json = "//:package.json",
+    src_dir = "src",
+    workspace = "@npm",
+)
+
+### start of auto-generated helpers ###
+
+# Dependencies from package.json
+DEPENDENCIES = [
+    "@npm//@microsoft/applicationinsights-react-js",
+    "@npm//@microsoft/applicationinsights-web",
+    "@npm//react",
+    "@npm//react-router-dom",
+]
+
+# Type dependencies from package.json
+TYPE_DEPENDENCIES = [
+    "@npm//@types/react",
+    "@npm//@types/react-router-dom",
+]
+
+# Dev dependencies from package.json
+DEV_DEPENDENCIES = [
+    "@npm//@testing-library/jest-dom",
+    "@npm//@testing-library/react",
+    "@npm//rollup-plugin-json",
+    "@npm//rollup-plugin-typescript2",
+]
+
+# Mappings for absolute imports from baseUrl @unused
+mappings_dict = {
+    "AzureTelemetry.spec": "dist/AzureTelemetry.spec",
+    "AzureTelemetry": "dist/AzureTelemetry",
+    "TelemetryService": "dist/TelemetryService",
+    "index": "dist/index",
+    "setupTests": "dist/setupTests",
+}
+
+### end of auto-generated helpers ###
+
+eslint_config(
+    name = "eslint_config",
+    src = ":.eslintrc.js",
+    deps = [
+        ".prettierrc",
+        "//packages:eslint_config",
+    ],
+)
+
+eslint_test(
+    name = "eslint_test",
+    data = SOURCES + TESTS + [
+        ":tsconfig.json",
+        "//packages:tsconfig.json",
+    ],
+    eslint_config = ":eslint_config",
+)
+
+prettier_test(
+    name = "prettier_test",
+    data = SOURCES + TESTS,
+    prettier_config = "//:prettier_config",
+)
+
+jest_test(
+    name = "jest_test",
+    srcs = SOURCES + TESTS + [
+        "//packages:jest.config.js",
+        "//packages:jest.react.config.js",
+        ":tsconfig.json",
+        "//packages:tsconfig.json",
+    ],
+    jest_args = [],
+    jest_config = "jest.config.js",
+    service_name = "react-azure-telemetry",
+    deps = DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES,
+)
+
+write_file(
+    name = "write_chdir_script",
+    out = "chdir.js",
+    content = ["process.chdir(__dirname)"],
+)
+
+copy_to_bin(
+    name = "copy_static_files",
+    srcs = SOURCES + [
+        ":rollup.config.js",
+        ":tsconfig.json",
+    ],
+)
+
+append_deps(
+    name = "package-json",
+    dependencies = DEPENDENCIES,
+    dev_dependencies = DEV_DEPENDENCIES + TYPE_DEPENDENCIES,
+    package = "package.json",
+)
+
+rollup(
+    name = "dist",
+    args = [
+        "--node_options=--require=./$(execpath chdir.js)",
+        "-c",
+        "rollup.config.js",
+    ],
+    data = DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + [
+        ":chdir.js",
+        ":copy_static_files",
+        ":package-json",
+        "//packages:tsconfig",
+        "@npm//@types/jest",
+        "@npm//@types/node",
+        "@npm//tslib",
+    ],
+    output_dir = True,
+)
+
+_mappings = module_mappings(
+    name = "mappings",
+    mappings = mappings_dict,
+)
+
+js_library(
+    name = "react-azure-telemetry",
+    package_name = "@cognite/react-azure-telemetry",
+    srcs = ["package-json"],
+    visibility = ["//visibility:public"],
+    deps = DEPENDENCIES + [":dist"],
+)
+
+pkg_npm(
+    name = "npm-package",
+    package_name = "@cognite/react-azure-telemetry",
+    visibility = ["//visibility:public"],
+    deps = [
+        ":dist",
+        "package-json",
+    ] + _mappings,
+)
+
+is_published(
+    name = "is_published",
+    package = ":npm-package",
+)
+
+package_info(
+    name = "package_info",
+    display_name = "react-azure-telemetry",
+    package = ":npm-package",
+)

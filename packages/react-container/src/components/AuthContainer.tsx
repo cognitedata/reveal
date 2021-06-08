@@ -37,8 +37,9 @@ export const AuthContainer: React.FC<AuthContainerProps> = ({
   sidecar,
   children,
 }) => {
-  const [authResponse, setAuthState] =
-    React.useState<AuthContext | undefined>();
+  const [authResponse, setAuthState] = React.useState<
+    AuthContext | undefined
+  >();
   const [loading, setLoading] = React.useState(true);
   const { flow } = getFlow();
 
@@ -160,19 +161,17 @@ type AuthContainerForApiKeyModeProps = Exclude<
   'AuthError' | 'sidecar'
 >;
 export const AuthContainerForApiKeyMode: React.FC<AuthContainerForApiKeyModeProps> =
-  ({ sdkClient, tenant, children }) => {
-    return (
-      <AuthProvider.Provider
-        value={{
-          client: sdkClient,
-          authState: {
-            tenant,
-            authenticated: true,
-            initialising: false,
-          },
-        }}
-      >
-        {children}
-      </AuthProvider.Provider>
-    );
-  };
+  ({ sdkClient, tenant, children }) => (
+    <AuthProvider.Provider
+      value={{
+        client: sdkClient,
+        authState: {
+          tenant,
+          authenticated: true,
+          initialising: false,
+        },
+      }}
+    >
+      {children}
+    </AuthProvider.Provider>
+  );

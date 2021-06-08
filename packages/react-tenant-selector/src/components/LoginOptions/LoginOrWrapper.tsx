@@ -13,23 +13,21 @@ const OrWrapper = styled.div`
   margin: 18px 0;
 `;
 
-const LoginOrWrapper: React.FC = () => {
-  return (
-    <OrWrapper>
-      <Line />{' '}
-      <p
-        style={{
-          margin: '0 20px',
-          color: 'black',
-          fontSize: 13,
-          fontWeight: 'bold',
-        }}
-      >
-        OR
-      </p>{' '}
-      <Line />
-    </OrWrapper>
-  );
-};
+const LoginOrWrapper: React.FC = () => (
+  <OrWrapper>
+    <Line />{' '}
+    <p
+      style={{
+        margin: '0 20px',
+        color: 'black',
+        fontSize: 13,
+        fontWeight: 'bold',
+      }}
+    >
+      OR
+    </p>{' '}
+    <Line />
+  </OrWrapper>
+);
 
 export default LoginOrWrapper;

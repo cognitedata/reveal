@@ -3,13 +3,11 @@ import { Sentry as SentryComponent, SentryProps } from '@cognite/react-sentry';
 
 import { ConditionalWrapperWithProps } from './ConditionalWrapper';
 
-export const Sentry: React.FC<SentryProps> = ({ children }) => {
-  return (
-    <SentryComponent>
-      <>{children}</>
-    </SentryComponent>
-  );
-};
+export const Sentry: React.FC<SentryProps> = ({ children }) => (
+  <SentryComponent>
+    <>{children}</>
+  </SentryComponent>
+);
 
 export const ConditionalSentry: React.FC<{
   children: React.ReactElement;

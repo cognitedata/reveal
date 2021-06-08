@@ -1,7 +1,6 @@
 import { Component } from 'react';
 import { withAITracking } from '@microsoft/applicationinsights-react-js';
-import { withRouter } from 'react-router-dom';
-import { RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 
 import { telemetryService } from './TelemetryService';
 
@@ -45,6 +44,7 @@ class TelemetryProvider extends Component<PropsType, State> {
   }
 }
 
-export const AzureTelemetryProvider = withRouter(
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const AzureTelemetryProvider: any = withRouter(
   withAITracking(telemetryService.reactPlugin, TelemetryProvider)
 );

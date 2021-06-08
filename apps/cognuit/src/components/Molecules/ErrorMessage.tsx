@@ -1,4 +1,3 @@
-import React from 'react';
 import { Graphic } from '@cognite/cogs.js';
 import styled from 'styled-components';
 

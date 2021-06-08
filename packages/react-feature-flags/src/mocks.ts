@@ -9,7 +9,5 @@ export const clientMock = {
 };
 
 jest.mock('unleash-proxy-client', () => ({
-  UnleashClient: jest.fn().mockImplementation(() => {
-    return clientMock;
-  }),
+  UnleashClient: jest.fn().mockImplementation(() => clientMock),
 }));

@@ -133,13 +133,11 @@ const LoginWithCognite: React.FC<Props> = ({
     if (!errors) {
       return null;
     }
-    return errors.map((error) => {
-      return (
-        <Error key={`error-${error}`} style={{ marginTop: '16px' }}>
-          {error}
-        </Error>
-      );
-    });
+    return errors.map((error) => (
+      <Error key={`error-${error}`} style={{ marginTop: '16px' }}>
+        {error}
+      </Error>
+    ));
   }, [errors]);
 
   const setUnknownConfigurationError = (name: string) => {

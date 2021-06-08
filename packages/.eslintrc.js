@@ -47,6 +47,8 @@ module.exports = {
     'react/state-in-constructor': ['off'],
     'react/prop-type': ['off'],
     'react/require-default-props': ['off'],
+    'react/jsx-uses-react': 'off',
+    'react/react-in-jsx-scope': 'off',
 
     'jest/expect-expect': ['off'],
     'jest/no-test-callback': ['off'],

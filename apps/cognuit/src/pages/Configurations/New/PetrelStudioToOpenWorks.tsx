@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Badge, Button, Icon, Modal } from '@cognite/cogs.js';
 import { Checkbox, notification, Select } from 'antd';
 import {

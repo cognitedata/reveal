@@ -1,8 +1,8 @@
 import React from 'react';
-
 import { renderHook } from '@testing-library/react-hooks';
 import { IVariant, UnleashClient } from 'unleash-proxy-client';
 import { sandbox } from '@cognite/testing';
+
 import { FlagContext } from './FlagContext';
 import { useVariant } from './useVariant';
 

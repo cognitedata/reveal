@@ -1,6 +1,6 @@
 /* eslint-disable func-names */
 /* eslint-disable no-console */
-import React, { useRef, useEffect, useCallback, useState } from 'react';
+import { useRef, useEffect, useCallback, useState } from 'react';
 import styled from 'styled-components';
 
 const ErrorOverlay = styled.div<{ zIndex: number }>`

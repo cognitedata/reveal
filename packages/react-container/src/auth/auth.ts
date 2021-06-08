@@ -1,7 +1,9 @@
 // import { retrieveAuthResult } from '@cognite/auth-utils';
 import * as React from 'react';
+
 import { AuthProvider } from '../components/AuthContainer';
 import { log } from '../utils/log';
+
 import { AuthHeaders } from './types';
 
 const getAuthorizationHeader = (token: string) => ({

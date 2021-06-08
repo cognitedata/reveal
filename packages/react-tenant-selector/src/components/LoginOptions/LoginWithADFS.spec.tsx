@@ -1,7 +1,7 @@
-import React from 'react';
 import { fireEvent, screen } from '@testing-library/react';
 import { CogniteAuth } from '@cognite/auth-utils';
 import { CogniteClient } from '@cognite/sdk';
+
 import { render } from '../../utils/test';
 
 import Base from './LoginWithADFS';

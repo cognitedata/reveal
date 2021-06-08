@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Row, Col, Menu, Dropdown, Button } from '@cognite/cogs.js';
 
 import Card from 'components/Atoms/Card';
@@ -17,10 +17,8 @@ import TranslationStatistics from './TranslationStatistics';
 
 const Status = () => {
   const [dateRangeOpen, setDateRangeOpen] = useState<boolean>(false);
-  const [
-    selectedDateRange,
-    setSelectedDateRange,
-  ] = useState<DateRangeValueType>(DATE_RANGE_VALUES.lastMonth);
+  const [selectedDateRange, setSelectedDateRange] =
+    useState<DateRangeValueType>(DATE_RANGE_VALUES.lastMonth);
   const [afterTimestamp, setAfterTimestamp] = useState<number>(
     getTimestampParamForDateRange(DATE_RANGE_VALUES.lastMonth)
   );

@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { Router } from 'react-router-dom';
 import { Store } from 'redux';
-
 import { withI18nSuspense } from '@cognite/react-i18n';
 import { ErrorBoundary } from '@cognite/react-errors';
 import { TenantSelector, SidecarConfig } from '@cognite/react-tenant-selector';
 import { IntercomBootSettings } from '@cognite/intercom-helper';
 import { Loader } from '@cognite/cogs.js';
-
 import { IntercomContainer } from 'components/Intercom';
+import merge from 'lodash/merge';
+
 import {
   AuthContainer,
   AuthContainerForApiKeyMode,
@@ -17,7 +17,7 @@ import {
   TranslationWrapper,
 } from './components';
 import { useCogniteSDKClient, createBrowserHistory } from './internal';
-import { storage, getTenantInfo, mergeConfiguration } from './utils';
+import { storage, getTenantInfo } from './utils';
 import { ConditionalReduxProvider } from './providers';
 
 const { REACT_APP_API_KEY: apiKey, REACT_APP_API_KEY_PROJECT: project } =
@@ -111,7 +111,8 @@ const RawContainer: React.FC<Props> = ({
           tenant={initialTenant}
         >
           <IntercomContainer
-            intercomSettings={mergeConfiguration(
+            intercomSettings={merge(
+              {},
               intercomSettings,
               sidecar.intercomSettings
             )}

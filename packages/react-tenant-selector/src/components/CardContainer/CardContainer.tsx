@@ -8,7 +8,6 @@ import {
   CardContainerHeader,
   ProjectSelector,
 } from '../../components';
-
 import {
   LoginOrWrapper,
   LoginWithAzure,
@@ -16,14 +15,13 @@ import {
   LoginWithCognite,
   LoginWithFakeIDP,
 } from '../LoginOptions';
+import { SidecarConfig } from '../../utils';
 
 import {
   StyledCardContainer,
   StyledContentWrapper,
   LoginSpacer,
 } from './elements';
-
-import { SidecarConfig } from '../../utils';
 
 export type EnabledModes = {
   cognite?: boolean;

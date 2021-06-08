@@ -1,10 +1,8 @@
 import * as React from 'react';
 import axios from 'axios';
-
 import { Button } from '@cognite/cogs.js';
 import { saveToLocalStorage } from '@cognite/storage';
 import { CogniteAuth } from '@cognite/auth-utils';
-
 import { FakeIdp } from 'utils';
 
 type Props = {
@@ -23,8 +21,8 @@ const LoginWithFakeIDP: React.FC<Props> = ({
   handleSubmit,
   disabled,
 }) => {
-  const handleClick = () => {
-    return axios
+  const handleClick = () =>
+    axios
       .post(`http://localhost:8200/login/token`, {
         fakeApplicationId,
         groups,
@@ -53,7 +51,6 @@ const LoginWithFakeIDP: React.FC<Props> = ({
           'There has been an error, do you have the FakeIdP service running?'
         );
       });
-  };
 
   return (
     <>

@@ -1,2 +1,2 @@
-declare module '@cognite/auth-utils/jest-mocks';
+declare module '@cognite/auth-utils/dist/mocks';
 declare module 'color';

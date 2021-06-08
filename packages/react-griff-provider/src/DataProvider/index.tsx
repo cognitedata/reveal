@@ -2,6 +2,7 @@ import React from 'react';
 import BluebirdPromise from 'bluebird';
 import * as d3 from 'd3';
 import isEqual from 'lodash.isequal';
+
 import { DataContext, DataType } from '../context';
 import Scaler from '../Scaler';
 import {
@@ -722,8 +723,8 @@ export const getCollectedSeries = (
   seriesObjects: Series[],
   collectionsById: { [k: string]: Collection },
   domainsByCollectionId: CollectionsWithDomains | { [p: string]: Domains }
-) => {
-  return seriesObjects.map((s) => {
+) =>
+  seriesObjects.map((s) => {
     const { collectionId } = s;
     if (collectionId === undefined) {
       return s;
@@ -763,13 +764,12 @@ export const getCollectedSeries = (
     }
     return copy;
   });
-};
 
 export const getCollectionsWithDomains = (
   collectionsById: { [k: string]: Collection },
   domainsByCollectionId: CollectionsWithDomains | { [p: string]: Domains }
-) => {
-  return Object.keys(collectionsById).reduce((acc, id) => {
+) =>
+  Object.keys(collectionsById).reduce((acc, id) => {
     if (!domainsByCollectionId[id]) {
       return acc;
     }
@@ -781,10 +781,9 @@ export const getCollectionsWithDomains = (
       },
     ];
   }, [] as Array<Collection & Domains>);
-};
 
-export const getDomainsByCollectionId = (seriesObjects: Series[]) => {
-  return seriesObjects.reduce((acc: CollectionsWithDomains, series) => {
+export const getDomainsByCollectionId = (seriesObjects: Series[]) =>
+  seriesObjects.reduce((acc: CollectionsWithDomains, series) => {
     const { collectionId } = series;
     if (!collectionId) {
       return acc;
@@ -847,7 +846,6 @@ export const getDomainsByCollectionId = (seriesObjects: Series[]) => {
       },
     };
   }, {});
-};
 
 export const getSeriesObjects = (
   props: DataproviderProps,

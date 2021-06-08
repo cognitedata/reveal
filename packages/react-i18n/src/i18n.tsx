@@ -15,7 +15,6 @@ import {
   UseTranslationOptions,
   UseTranslationResponse,
 } from 'react-i18next';
-
 import { storage } from '@cognite/storage';
 
 let enabled = true;

@@ -43,19 +43,13 @@ export const ASSET_ID_STORAGE_KEY = 'selected-asset-id';
 export const KEY_LAST_TENANT = 'last_CDF_project';
 
 /** Create a key useful to store things at the root level. */
-const createRootKey = (key: string) => {
-  return `${BASE_KEY}/${key}`;
-};
+const createRootKey = (key: string) => `${BASE_KEY}/${key}`;
 
 /** Create a key useful to store things on the app (opin, opin-dev) level. */
-const createAppKey = (key: string) => {
-  return `${currentAppName}/${key}`;
-};
+const createAppKey = (key: string) => `${currentAppName}/${key}`;
 
 /** Create a key useful for storing things on the tenant level. */
-const createTenantKey = (key: string) => {
-  return `${currentTenant}/${key}`;
-};
+const createTenantKey = (key: string) => `${currentTenant}/${key}`;
 
 const getRootItem = <T>(key: string, defaultValue?: T): T | undefined => {
   const rootKey = createRootKey(key);

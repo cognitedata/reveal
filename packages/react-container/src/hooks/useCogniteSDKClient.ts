@@ -7,8 +7,8 @@ export const useCogniteSDKClient = (
   options?: {
     baseUrl?: string;
   }
-): CogniteClient => {
-  return useMemo<CogniteClient>(() => {
+): CogniteClient =>
+  useMemo<CogniteClient>(() => {
     const newClient = new CogniteClient({ appId: appId || '' });
 
     if (options && options.baseUrl) {
@@ -19,4 +19,3 @@ export const useCogniteSDKClient = (
 
     return newClient;
   }, []);
-};

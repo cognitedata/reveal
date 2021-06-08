@@ -67,10 +67,14 @@ def _jest_test(name, service_name, srcs, deps, jest_config, jest_args = [], **kw
 
     data = [jest_config] + srcs + deps + [
         "//rules/test:jest-reporter.js",
+        "@npm//@testing-library/jest-dom",
         "@npm//@types/jest",
         "@npm//@types/node",
         "@npm//jest-junit",
         "@npm//jest-localstorage-mock",
+        "@npm//jest-css-modules-transform",
+        "@npm//jest-environment-jsdom-sixteen",
+        "@npm//jest-transform-stub",
         "@npm//ts-jest",
         file_name,
     ]

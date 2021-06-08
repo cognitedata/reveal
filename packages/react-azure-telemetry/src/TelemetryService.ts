@@ -48,6 +48,4 @@ const createTelemetryService = () => {
 };
 
 export const telemetryService = createTelemetryService();
-export const getAppInsights = () => {
-  return appInsights;
-};
+export const getAppInsights = () => appInsights;

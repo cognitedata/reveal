@@ -1,12 +1,11 @@
-import React from 'react';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 
 import { Base } from './Error.stories';
 
 describe('Error', () => {
   it('Renders children', () => {
-    const { getByText } = render(<Base />);
-    getByText(
+    render(<Base />);
+    screen.getByText(
       'Something is taking longer than usual. Please refresh the page.'
     );
   });

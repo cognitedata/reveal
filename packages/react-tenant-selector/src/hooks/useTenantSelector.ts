@@ -1,5 +1,4 @@
 import { useState } from 'react';
-
 import axios from 'axios';
 
 const useTenantSelector = (appName: string, appsApiBaseUrl: string) => {
@@ -23,9 +22,7 @@ const useTenantSelector = (appName: string, appsApiBaseUrl: string) => {
       .get(`${appsApiBaseUrl}/tenant`, {
         params: { tenant, app: appName, redirectUrl: window.location.origin },
       })
-      .then(() => {
-        return true;
-      })
+      .then(() => true)
       .catch((e) => {
         throw e;
       })

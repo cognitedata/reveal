@@ -1,7 +1,7 @@
-import React from 'react';
 import { action } from '@storybook/addon-actions';
 
 import { StyledContentWrapper } from '../CardContainer/elements';
+
 import ClusterSelector from './ClusterSelector';
 
 export default {
@@ -27,10 +27,8 @@ const clusterSelectorProps = {
   onSubmit: action('onSubmit'),
 };
 
-export const Base = () => {
-  return (
-    <StyledContentWrapper>
-      <ClusterSelector {...clusterSelectorProps} />
-    </StyledContentWrapper>
-  );
-};
+export const Base = () => (
+  <StyledContentWrapper>
+    <ClusterSelector {...clusterSelectorProps} />
+  </StyledContentWrapper>
+);

@@ -3,6 +3,7 @@ import { Input, Button } from '@cognite/cogs.js';
 import { useTranslation } from '@cognite/react-i18n';
 
 import { FormState } from '../CardContainer/CardContainer';
+
 import { StyledClusterSelector } from './elements';
 
 type Props = {

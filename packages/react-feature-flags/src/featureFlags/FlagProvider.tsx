@@ -1,6 +1,7 @@
 /* eslint-disable react/require-default-props */
-import React, { ReactNode, useEffect, useRef } from 'react';
+import { ReactNode, useEffect, useRef } from 'react';
 import { UnleashClient } from 'unleash-proxy-client';
+
 import { FlagContext } from './FlagContext';
 
 const DEFAULT_UNLEASH_PROXY_URL =

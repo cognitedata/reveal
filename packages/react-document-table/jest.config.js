@@ -1,10 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-const baseConfig = require('../jest.config.js');
-
-const pack = require('./package');
+const baseConfig = require('../jest.react.config.js');
 
 module.exports = {
   ...baseConfig,
-  displayName: pack.name,
-  name: pack.name,
 };

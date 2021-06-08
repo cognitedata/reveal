@@ -1,5 +1,5 @@
-import React from 'react';
-import { fireEvent, act } from '@testing-library/react';
+import { fireEvent, act, screen } from '@testing-library/react';
+
 import { render } from '../../utils/test';
 
 import Base from './LoginWithCognite';
@@ -18,9 +18,9 @@ const props = {
 
 describe('<LoginWithCognite />', () => {
   it('Should sanitize tenant on input change', () => {
-    const { getByPlaceholderText } = render(<Base {...props} />);
+    render(<Base {...props} />);
 
-    const tenantInput = getByPlaceholderText(
+    const tenantInput = screen.getByPlaceholderText(
       'Enter Company ID'
     ) as HTMLInputElement;
     act(() => {
@@ -30,15 +30,17 @@ describe('<LoginWithCognite />', () => {
   });
 
   it('Should switch between cluster and tenant selectors on [Specify Cluster] and [Back] buttons click', () => {
-    const { getByText } = render(<Base {...props} />);
-    const toClusterButton = getByText('Specify Cluster') as HTMLButtonElement;
+    render(<Base {...props} />);
+    const toClusterButton = screen.getByText(
+      'Specify Cluster'
+    ) as HTMLButtonElement;
     act(() => {
       fireEvent.click(toClusterButton);
     });
-    const backToTenantButton = getByText('Back') as HTMLButtonElement;
+    const backToTenantButton = screen.getByText('Back') as HTMLButtonElement;
     act(() => {
       fireEvent.click(backToTenantButton);
     });
-    expect(getByText('Specify Cluster')).toBeInTheDocument();
+    expect(screen.getByText('Specify Cluster')).toBeInTheDocument();
   });
 });

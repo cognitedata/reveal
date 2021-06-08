@@ -1,4 +1,3 @@
-import React from 'react';
 import { Colors } from '@cognite/cogs.js';
 import { StyledFigure } from './elements';
 

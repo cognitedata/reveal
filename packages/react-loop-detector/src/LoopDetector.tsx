@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import noop from 'lodash/noop';
+
 import { LoopContext, MountRecord } from './types';
 
 export type Props = {

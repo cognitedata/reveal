@@ -315,143 +315,133 @@ export const createLoader =
     }
 
     return getTimeSeries(id, onFetchTimeseries)
-      .then(({ isStep: step }: TimeSeries) => {
-        return (
-          getDataPoints({
-            id,
-            granularity,
-            start: fetchDomain[0],
-            end: fetchDomain[1],
-            limit: pointsPerSeries,
-            fetchDatapoints: onFetchDatapoints,
-          })
-            .then(async (points) => {
-              const RAW_DATA_POINTS_THRESHOLD = pointsPerSeries / 2;
-              const aggregatedCount = points.reduce(
-                (point, c) =>
-                  point + (isAggregateDatapoint(c) ? c.count || 0 : 0),
-                0
-              );
+      .then(({ isStep: step }: TimeSeries) =>
+        getDataPoints({
+          id,
+          granularity,
+          start: fetchDomain[0],
+          end: fetchDomain[1],
+          limit: pointsPerSeries,
+          fetchDatapoints: onFetchDatapoints,
+        })
+          .then(async (points) => {
+            const RAW_DATA_POINTS_THRESHOLD = pointsPerSeries / 2;
+            const aggregatedCount = points.reduce(
+              (point, c) =>
+                point + (isAggregateDatapoint(c) ? c.count || 0 : 0),
+              0
+            );
 
-              if (aggregatedCount < RAW_DATA_POINTS_THRESHOLD) {
-                // If there are less than x points, show raw values
-                const result = await getDataPoints({
-                  id,
-                  step,
-                  start: fetchDomain[0],
-                  end: fetchDomain[1],
-                  limit: pointsPerSeries,
-                  fetchDatapoints: onFetchDatapoints,
-                });
+            if (aggregatedCount < RAW_DATA_POINTS_THRESHOLD) {
+              // If there are less than x points, show raw values
+              const result = await getDataPoints({
+                id,
+                step,
+                start: fetchDomain[0],
+                end: fetchDomain[1],
+                limit: pointsPerSeries,
+                fetchDatapoints: onFetchDatapoints,
+              });
 
-                let data = result;
-                if (step && points.length) {
-                  // Use the last-known value from step-interpolation to create a fake point at the left-boundary
-                  if (data.length && points[0].timestamp < data[0].timestamp) {
-                    data = [points[0], ...data];
-                  } else if (!data.length) {
-                    data = [points[0]];
-                  }
+              let data = result;
+              if (step && points.length) {
+                // Use the last-known value from step-interpolation to create a fake point at the left-boundary
+                if (data.length && points[0].timestamp < data[0].timestamp) {
+                  data = [points[0], ...data];
+                } else if (!data.length) {
+                  data = [points[0]];
                 }
-                return {
-                  data,
-                  drawPoints: true,
-                  step: !!step,
-                };
               }
-              return { data: points, drawPoints: false, step: !!step };
-            })
-            .then((newSeries) => {
-              const { firstSeries } = seriesInfo;
-              const { xAccessor } = oldSeries;
-              if (reason === 'UPDATE_SUBDOMAIN') {
-                SERIES_GETTERS = SERIES_GETTERS.update(id, (val) => ({
-                  ...val,
-                  subDomain,
-                  granularity,
-                }));
-                const data = mergeInsert(
-                  firstSeries,
-                  newSeries.data,
-                  subDomain,
-                  xAccessor
-                );
-                if (options.scaleYAxis) {
-                  // if multiple datapoints
-                  if (newSeries.data.length > 1) {
-                    const newSeriesYSubDomain = newSeries.data.reduce(
-                      (acc, dp) => {
-                        const value = yAccessor(dp);
-                        return [
-                          Math.min(acc[0], value),
-                          Math.max(acc[1], value),
-                        ];
-                      },
-                      [Number.MAX_VALUE, Number.MIN_SAFE_INTEGER]
-                    );
-                    const ySubDomain = getYSubDomain(newSeriesYSubDomain);
-                    // if all datapoints have the same y value
-                    if (ySubDomain[0] === ySubDomain[1]) {
-                      return {
-                        ...newSeries,
-                        data,
-                        ySubDomain: [
-                          ySubDomain[0] - 0.25,
-                          ySubDomain[1] + 0.25,
-                        ],
-                      };
-                    }
-                    // the datapoints have different y values
+              return {
+                data,
+                drawPoints: true,
+                step: !!step,
+              };
+            }
+            return { data: points, drawPoints: false, step: !!step };
+          })
+          .then((newSeries) => {
+            const { firstSeries } = seriesInfo;
+            const { xAccessor } = oldSeries;
+            if (reason === 'UPDATE_SUBDOMAIN') {
+              SERIES_GETTERS = SERIES_GETTERS.update(id, (val) => ({
+                ...val,
+                subDomain,
+                granularity,
+              }));
+              const data = mergeInsert(
+                firstSeries,
+                newSeries.data,
+                subDomain,
+                xAccessor
+              );
+              if (options.scaleYAxis) {
+                // if multiple datapoints
+                if (newSeries.data.length > 1) {
+                  const newSeriesYSubDomain = newSeries.data.reduce(
+                    (acc, dp) => {
+                      const value = yAccessor(dp);
+                      return [Math.min(acc[0], value), Math.max(acc[1], value)];
+                    },
+                    [Number.MAX_VALUE, Number.MIN_SAFE_INTEGER]
+                  );
+                  const ySubDomain = getYSubDomain(newSeriesYSubDomain);
+                  // if all datapoints have the same y value
+                  if (ySubDomain[0] === ySubDomain[1]) {
                     return {
                       ...newSeries,
                       data,
-                      ySubDomain,
+                      ySubDomain: [ySubDomain[0] - 0.25, ySubDomain[1] + 0.25],
                     };
-                    // if only one datapoint
                   }
-                  if (newSeries.data.length === 1) {
-                    const datapoint = yAccessor(newSeries.data[0]);
-                    return {
-                      ...newSeries,
-                      data,
-                      ySubDomain: [datapoint - 0.25, datapoint + 0.25],
-                    };
-                    // if no datapoints, leave the ySubDomain the same as before
-                  }
+                  // the datapoints have different y values
                   return {
                     ...newSeries,
                     data,
-                    ySubDomain: oldSeries.ySubDomain,
+                    ySubDomain,
                   };
+                  // if only one datapoint
+                }
+                if (newSeries.data.length === 1) {
+                  const datapoint = yAccessor(newSeries.data[0]);
+                  return {
+                    ...newSeries,
+                    data,
+                    ySubDomain: [datapoint - 0.25, datapoint + 0.25],
+                  };
+                  // if no datapoints, leave the ySubDomain the same as before
                 }
                 return {
                   ...newSeries,
                   data,
+                  ySubDomain: oldSeries.ySubDomain,
                 };
               }
-              return newSeries;
-            })
-            .then((newSeries) => {
-              if (reason === 'MOUNTED') {
-                SERIES_GETTERS = SERIES_GETTERS.update(id, (val) => ({
-                  ...val,
-                  firstSeries: newSeries.data,
-                  subDomain,
-                  granularity,
-                }));
-              }
-              return { ...newSeries, yAccessor };
-            })
-            // Do not crash the app in case of error, just return no data
-            .catch(() => {
-              return { data: [], step };
-            })
-        );
-      })
-      .catch(() => {
+              return {
+                ...newSeries,
+                data,
+              };
+            }
+            return newSeries;
+          })
+          .then((newSeries) => {
+            if (reason === 'MOUNTED') {
+              SERIES_GETTERS = SERIES_GETTERS.update(id, (val) => ({
+                ...val,
+                firstSeries: newSeries.data,
+                subDomain,
+                granularity,
+              }));
+            }
+            return { ...newSeries, yAccessor };
+          })
+          // Do not crash the app in case of error, just return no data
+          .catch(() => ({ data: [], step }))
+      )
+      .catch(() =>
         // If the time series can't be loaded, just return no data.
-        return { data: [], ...oldSeries };
-      });
+        ({ data: [], ...oldSeries })
+      );
   };
 
 export const cogniteloader = createLoader();

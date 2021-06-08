@@ -17,31 +17,24 @@ export const validateTenant: TenantValidator = async (
   tenant,
   applicationId,
   appsApiBaseUrl
-): Promise<ValidationResult> => {
-  return axios
+): Promise<ValidationResult> =>
+  axios
     .get(`${appsApiBaseUrl}/tenant`, {
       params: {
         app: process.env.REACT_APP_APPLICATION_ID || applicationId,
         tenant,
       },
     })
-    .then((response) => {
-      return {
-        status: response.status,
-      };
-    })
-    .catch(({ response }) => {
-      return {
-        status: response.status,
-      };
-    });
-};
+    .then((response) => ({
+      status: response.status,
+    }))
+    .catch(({ response }) => ({
+      status: response.status,
+    }));
 
 const KEY_LAST_TENANT = '__tenant-selector_last-tenant';
 
-export const getLastTenant = (): string | undefined => {
-  return KEY_LAST_TENANT;
-};
+export const getLastTenant = (): string | undefined => KEY_LAST_TENANT;
 
 type ErrorSchema = {
   [name: string]: {

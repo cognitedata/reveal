@@ -23,7 +23,7 @@ def eslint_test(name, data, eslint_config, **kwargs):
         "0",
         "--ext",
         ".ts",
-        "**/*",
+        "**/*.ts*",
         "--config",
         "$(rootpath %s)" % eslint_config,
     ]
@@ -43,6 +43,7 @@ def eslint_test(name, data, eslint_config, **kwargs):
         "@npm//eslint-config-prettier",
         "@npm//eslint-plugin-import",
         "@npm//eslint-plugin-jest",
+        "@npm//eslint-plugin-jest-dom",
         "@npm//eslint-plugin-lodash",
         "@npm//eslint-plugin-prettier",
         "@npm//eslint-plugin-testcafe",

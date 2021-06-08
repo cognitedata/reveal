@@ -19,6 +19,9 @@
     "jsx": "react-jsx",
     "lib": ["es2015", "dom"],
     "resolveJsonModule": true,
-    "strictPropertyInitialization": true
+    "strictPropertyInitialization": true,
+    "paths": {
+      "@cognite/*": ["*", "../../../packages/*/src"]
+    }
   }
 }

@@ -1,18 +1,17 @@
 /* eslint-disable camelcase */
 import * as React from 'react';
-
 import {
   intercomHelper,
   intercomInitialization,
   IntercomBootSettings,
 } from '@cognite/intercom-helper';
 import { SidecarConfig } from '@cognite/react-tenant-selector';
-
 import { getAuthHeaders } from 'auth';
+
 import { ConditionalWrapperWithProps } from './ConditionalWrapper';
 
 interface IntercomProps {
-  intercomSettings?: IntercomBootSettings;
+  intercomSettings: IntercomBootSettings;
   sidecar: SidecarConfig;
   children: React.ReactElement;
 }
@@ -52,15 +51,13 @@ export const IntercomContainer: React.FC<IntercomContainerProps> = ({
   intercomSettings,
   children,
   sidecar,
-}) => {
-  return (
-    <ConditionalWrapperWithProps
-      condition={!disabled && intercomSettings && intercomSettings.app_id}
-      sidecar={sidecar}
-      intercomSettings={intercomSettings}
-      wrap={Intercom}
-    >
-      {children}
-    </ConditionalWrapperWithProps>
-  );
-};
+}) => (
+  <ConditionalWrapperWithProps
+    condition={!disabled && intercomSettings && !!intercomSettings.app_id}
+    sidecar={sidecar}
+    intercomSettings={intercomSettings}
+    wrap={Intercom}
+  >
+    {children}
+  </ConditionalWrapperWithProps>
+);

@@ -1,7 +1,7 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 import i18next from 'i18next';
 import { storage } from '@cognite/storage';
+
 import configureI18n, { Trans, useTranslation } from './i18n';
 
 describe('i18n setup', () => {
@@ -40,9 +40,9 @@ describe('i18n setup', () => {
   });
 
   it('setting language from props - ls key', () => {
-    jest.spyOn(storage, 'getFromLocalStorage').mockImplementation((value) => {
-      return value;
-    });
+    jest
+      .spyOn(storage, 'getFromLocalStorage')
+      .mockImplementation((value) => value);
 
     configureI18n({
       localStorageLanguageKey: 'TEST_KEY_FROM_LS',

@@ -1,7 +1,7 @@
-import React from 'react';
 import { action } from '@storybook/addon-actions';
 
 import { StyledContentWrapper } from '../CardContainer/elements';
+
 import AzureAdvancedOptions from './AzureAdvancedOptions';
 
 export default {
@@ -16,10 +16,8 @@ const AzureAdvancedOptionsProps = {
   handleSubmit: action('onSubmit'),
 };
 
-export const Base = () => {
-  return (
-    <StyledContentWrapper>
-      <AzureAdvancedOptions {...AzureAdvancedOptionsProps} />
-    </StyledContentWrapper>
-  );
-};
+export const Base = () => (
+  <StyledContentWrapper>
+    <AzureAdvancedOptions {...AzureAdvancedOptionsProps} />
+  </StyledContentWrapper>
+);

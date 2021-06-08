@@ -1,12 +1,9 @@
-import * as React from 'react';
 import { renderHook } from '@testing-library/react-hooks';
 
 import { getAuthHeaders } from '../auth';
 import { AuthProvider } from '../../components/AuthContainer';
 
-const mock = jest.fn().mockImplementation(() => {
-  return { log: jest.fn() };
-});
+const mock = jest.fn().mockImplementation(() => ({ log: jest.fn() }));
 
 jest.mock('utils/log', mock);
 

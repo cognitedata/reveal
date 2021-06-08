@@ -1,4 +1,5 @@
 import { useEffect, useContext, useState, useCallback } from 'react';
+
 import { FlagContext } from './FlagContext';
 
 type Options = {

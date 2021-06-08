@@ -1,6 +1,5 @@
 import ReactDOM from 'react-dom';
 import * as Sentry from '@sentry/browser';
-// @ts-ignore Temporary fix for importing local packages
 import { Metrics } from '@cognite/metrics';
 import '@cognite/cogs.js/dist/cogs.css';
 

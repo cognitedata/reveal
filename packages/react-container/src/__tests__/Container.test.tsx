@@ -1,7 +1,5 @@
 /* eslint-disable no-console */
-import React from 'react';
 import { render, screen } from '@testing-library/react';
-
 import { generateSidecar } from '__mocks/sidecar';
 
 import { AuthConsumer } from '../components/AuthContainer';
@@ -11,9 +9,7 @@ jest.mock('../utils', () => {
   const utils = jest.requireActual('../utils');
   return {
     ...utils,
-    getTenantInfo: () => {
-      return ['one', 'one'];
-    },
+    getTenantInfo: () => ['one', 'one'],
   };
 });
 
@@ -27,9 +23,7 @@ jest.mock('@cognite/auth-utils', () => {
   };
   return {
     ...original,
-    getFlow: () => {
-      return { flow: 'COGNITE_AUTH' };
-    },
+    getFlow: () => ({ flow: 'COGNITE_AUTH' }),
     CogniteAuth: (client: unknown) => ({
       state: {},
       getClient: () => client,
@@ -63,14 +57,12 @@ describe('ContainerWithoutI18N', () => {
       return (
         <ContainerWithoutI18N sidecar={sidecar}>
           <AuthConsumer>
-            {(authState) => {
-              return (
-                <>
-                  <div>TEST-CONTENT</div>
-                  <div>{authState.client?.getBaseUrl()}</div>
-                </>
-              );
-            }}
+            {(authState) => (
+              <>
+                <div>TEST-CONTENT</div>
+                <div>{authState.client?.getBaseUrl()}</div>
+              </>
+            )}
           </AuthConsumer>
         </ContainerWithoutI18N>
       );
