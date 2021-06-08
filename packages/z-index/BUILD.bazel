@@ -31,34 +31,21 @@ generate_package_json_helpers(
 ### start of auto-generated helpers ###
 
 # Dependencies from package.json
-DEPENDENCIES = [
-    "@npm//mixpanel-browser",
-    "@npm//react",
-]
+DEPENDENCIES = []
 
 # Type dependencies from package.json
-TYPE_DEPENDENCIES = [
-    "@npm//@types/mixpanel-browser",
-    "@npm//@types/react",
-    "@npm//@types/sinon",
-]
+TYPE_DEPENDENCIES = []
 
 # Dev dependencies from package.json
 DEV_DEPENDENCIES = [
     "@npm//rollup-plugin-json",
     "@npm//rollup-plugin-typescript2",
-    "@npm//sinon",
 ]
 
 # Mappings for absolute imports from baseUrl @unused
 mappings_dict = {
-    "debuggers": "dist/debuggers",
+    "index.spec": "dist/index.spec",
     "index": "dist/index",
-    "metrics.spec": "dist/metrics.spec",
-    "metrics": "dist/metrics",
-    "mocks": "dist/mocks",
-    "types": "dist/types",
-    "useMetrics": "dist/useMetrics",
 }
 
 ### end of auto-generated helpers ###
@@ -93,7 +80,7 @@ jest_test(
     ],
     jest_args = [],
     jest_config = "jest.config.js",
-    service_name = "metrics",
+    service_name = "z-index",
     deps = DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES,
 )
 
@@ -145,8 +132,8 @@ _mappings = module_mappings(
 )
 
 js_library(
-    name = "metrics",
-    package_name = "@cognite/metrics",
+    name = "z-index",
+    package_name = "@cognite/z-index",
     srcs = ["package-json"],
     visibility = ["//visibility:public"],
     deps = DEPENDENCIES + [":dist"],
@@ -154,7 +141,7 @@ js_library(
 
 pkg_npm(
     name = "npm-package",
-    package_name = "@cognite/metrics",
+    package_name = "@cognite/z-index",
     visibility = ["//visibility:public"],
     deps = [
         ":dist",
@@ -169,6 +156,6 @@ is_published(
 
 package_info(
     name = "package_info",
-    display_name = "metrics",
+    display_name = "z-index",
     package = ":npm-package",
 )

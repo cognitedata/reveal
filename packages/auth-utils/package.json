@@ -1,0 +1,26 @@
+{
+  "name": "@cognite/auth-utils",
+  "version": "1.0.7",
+  "description": "The auth layer of all cognite react apps",
+  "source": "src/index.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.m.js",
+  "types": "dist/index.d.ts",
+  "repository": "https://github.com/cognitedata/applications/packages/auth-utils",
+  "license": "UNLICENSED",
+  "author": "Cognite AS",
+  "files": [
+    "dist",
+    "jest-mocks.js"
+  ],
+  "scripts": {
+    "build": "bazel build :auth-utils",
+    "test": "bazel test :jest_test",
+    "lint": "bazel test :eslint_test :prettier_test",
+    "eslint": "bazel test :eslint_test",
+    "eslint:fix": "bazel run :eslint_test -- --fix",
+    "prettier": "bazel test :prettier_test",
+    "prettier:fix": "bazel run :prettier_test -- --write",
+    "update-helpers": "bazel run :generate_package_json_helpers"
+  }
+}

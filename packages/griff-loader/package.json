@@ -1,0 +1,36 @@
+{
+  "name": "@cognite/griff-loader",
+  "version": "1.2.1",
+  "description": "Griff loader towards the Cognite API",
+  "source": "src/index.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.m.js",
+  "types": "dist/index.d.ts",
+  "repository": "https://github.com/cognitedata/applications/packages/griff-loader",
+  "license": "UNLICENSED",
+  "author": "Cognite AS",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "bazel build :griff-loader",
+    "test": "bazel test :jest_test",
+    "lint": "bazel test :eslint_test :prettier_test",
+    "eslint": "bazel test :eslint_test",
+    "eslint:fix": "bazel run :eslint_test -- --fix",
+    "prettier": "bazel test :prettier_test",
+    "prettier:fix": "bazel run :prettier_test -- --write",
+    "update-helpers": "bazel run :generate_package_json_helpers"
+  },
+  "keywords": [
+    "griff",
+    "react",
+    "griff-loader",
+    "cognite",
+    "cognite-loader",
+    "griff-react"
+  ],
+  "peerDependencies": {
+    "@cognite/sdk": "^2.2.2"
+  }
+}

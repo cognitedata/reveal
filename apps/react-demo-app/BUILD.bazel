@@ -73,7 +73,6 @@ generate_package_json_helpers(
 # Dependencies from package.json
 DEPENDENCIES = [
     "@npm//@cognite/cogs.js",
-    "@npm//@cognite/intercom-helper",
     "@npm//@cognite/react-container",
     "@npm//@cognite/react-i18n",
     "@npm//@cognite/sdk",
@@ -84,6 +83,7 @@ DEPENDENCIES = [
     "@npm//react-router-dom",
     "@npm//styled-components",
     "//packages/metrics",
+    "//packages/intercom-helper",
 ]
 
 # Type dependencies from package.json
