@@ -10,6 +10,7 @@ export type GridTableProps<T> = Pick<
 > & {
   onItemClicked: (item: T) => void;
   renderCell: (cellProps: any) => JSX.Element;
+  onSelect?: (item: TableDataItem, selected: boolean) => void;
 };
 
 export const GridView = (props: GridTableProps<TableDataItem>) => {

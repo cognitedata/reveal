@@ -15,6 +15,7 @@ import { TableDataItem } from 'src/modules/Common/types';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import { DeleteAnnotationsByFileIds } from 'src/store/thunks/DeleteAnnotationsByFileIds';
 import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
+import { useSelectionCheckbox } from '@cognite/data-exploration';
 import { AnnotationsBadge } from '../AnnotationsBadge/AnnotationsBadge';
 import { AnnotationsBadgePopoverContent } from '../AnnotationsBadge/AnnotationsBadgePopoverContent';
 import { makeSelectAnnotationCounts } from '../../annotationSlice';
@@ -25,9 +26,11 @@ import { Thumbnail } from '../Thumbnail/Thumbnail';
 export const FileGridPreview = ({
   item,
   style,
+  onSelect,
 }: {
   item: TableDataItem;
   style?: React.CSSProperties;
+  onSelect?: (item: TableDataItem, selected: boolean) => void;
 }) => {
   const dispatch = useDispatch();
 
@@ -54,6 +57,10 @@ export const FileGridPreview = ({
     dispatch(deleteFilesById([{ id: item.id }]));
   };
 
+  const handleItemSelect = (dataItem: TableDataItem) => {
+    if (onSelect) onSelect(dataItem, !dataItem.selected);
+  };
+
   const getAnnotationCounts = useMemo(makeSelectAnnotationCounts, []);
   const annotationCounts = useSelector(({ annotationReducer }: RootState) =>
     getAnnotationCounts(annotationReducer, item.id)
@@ -68,10 +75,16 @@ export const FileGridPreview = ({
   const fileDetails = useSelector((state: RootState) =>
     selectUpdatedFileDetails(state, String(item.id))
   );
+
   return (
     <PreviewCell style={style}>
       <div className="preview">
         <Thumbnail fileInfo={fileInfo} />
+        <div className="selection">
+          {useSelectionCheckbox('multiple', item.id, item.selected, () =>
+            handleItemSelect(item)
+          )}
+        </div>
         <div className="footer">
           <div className="nameAndExif">
             <div className="name">{item.name}</div>
@@ -198,7 +211,7 @@ const PreviewCell = styled.div`
   .selection {
     position: absolute;
     top: 12px;
-    left: 12px;
+    left: 24px;
     .cogs-checkbox {
       .checkbox-ui {
         border: 2px solid #fff;

@@ -57,6 +57,7 @@ export const ExplorerSearchResults = ({
                 return (
                   <PageBasedGridView
                     onItemClicked={onClick}
+                    onSelect={onRowSelect}
                     {...props}
                     renderCell={(cellProps: any) => (
                       <FileGridPreview {...cellProps} />

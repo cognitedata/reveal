@@ -127,6 +127,7 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
       return (
         <PageBasedGridView
           onItemClicked={handleItemClick}
+          onSelect={handleRowSelect}
           data={data}
           renderCell={(cellProps: any) => <FileGridPreview {...cellProps} />}
           totalCount={data.length}
