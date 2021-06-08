@@ -36,6 +36,11 @@ class MyNodeSet extends NodeSet {
   getIndexSet() {
     return this._indexSet;
   }
+
+  clear() {
+    this._indexSet.clear();
+    this.notifyChanged();
+  }
 };
 
 const mySet = new MyNodeSet(model);
@@ -51,6 +56,8 @@ mySet.getIndexSet = () => {
   }
   return indexSet;
 };
+mySet.clear = () => throw new Error('Not supported');
+
 model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
 model.addStyledNodeSet(mySet, { renderGhosted: false, color: [40, 200, 20] } );
 ```
