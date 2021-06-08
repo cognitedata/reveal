@@ -24,7 +24,6 @@ export type Color = {
  * @param itemsLoaded Number of items loaded so far in this batch.
  * @param itemsRequested Total number of items to load in this batch.
  * @param itemsCulled Number of items deemed unnecessary to load in this batch.
- * @version itemsCulled is new in 2.0.0
  */
 export type OnLoadingCallback = (itemsLoaded: number, itemsRequested: number, itemsCulled: number) => void;
 

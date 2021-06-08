@@ -180,7 +180,6 @@ export class Cognite3DViewer {
 
   /**
    * Gets a list of models currently added to the viewer.
-   * @version New in 2.0.0
    */
   public get models(): CogniteModelBase[] {
     return this._models.slice();

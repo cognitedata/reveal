@@ -27,7 +27,6 @@ export type ByNodePropertyNodeSetOptions = {
 /**
  * Represents a set of nodes that has matching node properties to a provided filter. Note that
  * a node is considered to match if it or any of its ancestors match the filter.
- * @version New in 2.0.0
  */
 export class ByNodePropertyNodeSet extends NodeSet {
   private readonly _client: CogniteClient;
