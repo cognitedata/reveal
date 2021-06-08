@@ -21,7 +21,7 @@ export const useIsChartOwner = (chart: Chart) => {
 export const useSearchParam = (
   name: string,
   pushState = true
-): [string | undefined, (s: string) => void] => {
+): [string | undefined, (s?: string) => void] => {
   const history = useHistory();
   const { location } = history;
   const search = qs.parse(location.search);
@@ -74,6 +74,24 @@ export const useNavigate = () => {
     ]({
       ...history.location,
       pathname: newPath,
+    });
+  };
+};
+
+export const useClearSearchParams = (
+  keys: string[],
+  pushState: boolean = true
+) => {
+  const history = useHistory();
+  const { location } = history;
+  const search = qs.parse(location.search);
+
+  return () => {
+    history[pushState ? 'push' : 'replace']({
+      pathname: location.pathname,
+      search: qs.stringify(omit(search, keys)),
+      hash: location.hash,
+      state: location.state,
     });
   };
 };
