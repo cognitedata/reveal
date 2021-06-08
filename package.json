@@ -30,7 +30,7 @@
     "@cognite/react-picture-annotation": "^1.12.0",
     "@cognite/sdk": "^4.0.4",
     "@cognite/sdk-provider": "^1.0.0",
-    "@cognite/sdk-react-query-hooks": "^3.0.0",
+    "@cognite/sdk-react-query-hooks": "^4.0.0",
     "@cognite/z-index": "^0.1.0",
     "@sentry/browser": "^5.30.0",
     "antd": "^4.16.1",

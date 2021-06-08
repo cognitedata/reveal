@@ -1,9 +1,9 @@
 import React from 'react';
 import { Avatar, Menu, Title, TopBar } from '@cognite/cogs.js';
 import sidecar from 'config/sidecar';
-
+import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import { useParams } from 'react-router-dom';
-import { useLoginStatus, useNavigate } from 'hooks';
+import { useNavigate } from 'hooks';
 import { useChart, useUpdateChart } from 'hooks/firebase';
 import styled from 'styled-components/macro';
 import dayjs from 'dayjs';
@@ -12,7 +12,7 @@ import EditableText from 'components/EditableText';
 import useChat from 'hooks/useChat';
 
 const TopBarWrapper = () => {
-  const { data: user } = useLoginStatus();
+  const { data: user } = useUserInfo();
   const move = useNavigate();
   const chat = useChat();
 
@@ -95,7 +95,9 @@ const TopBarWrapper = () => {
             },
             {
               key: 'avatar',
-              component: <Avatar text={user?.user || 'Unknown'} />,
+              component: (
+                <Avatar text={user?.displayName || user?.email || 'Unknown'} />
+              ),
             },
           ]}
         />
