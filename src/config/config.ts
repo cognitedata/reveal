@@ -1,4 +1,5 @@
 import { useSearchParam } from 'hooks';
+import { CLUSTER_KEY } from 'utils/constants';
 
 import sidecar from './sidecar';
 
@@ -33,7 +34,7 @@ export const getAppName = (): string => {
 };
 
 export const useCluster = (): [string, (s: string) => void] => {
-  const [searchParam, setSearchParam] = useSearchParam('cluster');
+  const [searchParam, setSearchParam] = useSearchParam(CLUSTER_KEY);
   const { cdfCluster } = getSidecar();
 
   return [searchParam || cdfCluster, setSearchParam];

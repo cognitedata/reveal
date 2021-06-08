@@ -1,6 +1,7 @@
 import queryString from 'query-string';
 import { CogniteClient } from '@cognite/sdk';
 import config, { getSidecar } from 'config';
+import { BACKEND_SERVICE_URL_KEY, CLUSTER_KEY } from 'utils/constants';
 
 export type CogniteFunction = {
   id: number;
@@ -10,8 +11,9 @@ export type CogniteFunction = {
   description?: string;
 };
 
-const backendServiceBaseUrlFromQuery = queryString.parse(window.location.search)
-  .backendServiceBaseUrl as string;
+const backendServiceBaseUrlFromQuery = queryString.parse(
+  window.location.search
+)[BACKEND_SERVICE_URL_KEY] as string;
 
 const BACKEND_SERVICE_BASE_URL =
   backendServiceBaseUrlFromQuery ||
@@ -27,7 +29,7 @@ const getServiceClient = async (sdk: CogniteClient) => {
   }
 
   const { cdfCluster } = getSidecar();
-  const urlCluster = queryString.parse(window.location.search).cluster;
+  const urlCluster = queryString.parse(window.location.search)[CLUSTER_KEY];
 
   const client = new CogniteClient({
     appId: config.appId,
