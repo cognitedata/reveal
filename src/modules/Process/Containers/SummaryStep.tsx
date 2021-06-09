@@ -29,7 +29,6 @@ export default function SummaryStep() {
   const annotations = useSelector((state: RootState) => {
     return annotationsById(state.previewSlice);
   });
-  console.log('Here annotations', Object.values(annotations));
 
   const personFiles: number[] = [];
   const reviewStats: number[] = [];
