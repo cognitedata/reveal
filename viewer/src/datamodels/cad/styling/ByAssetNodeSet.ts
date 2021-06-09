@@ -16,7 +16,6 @@ import { NodeSet } from './NodeSet';
  * linked to the 3D model using [asset mappings]{@link https://docs.cognite.com/api/v1/#tag/3D-Asset-Mapping}. A node
  * is considered to be part of an asset if it has a direct asset mapping or if one of its ancestors has an asset mapping
  * to the asset.
- * @version New in 2.0.0
  */
 export class ByAssetNodeSet extends NodeSet {
   private readonly _client: CogniteClient;

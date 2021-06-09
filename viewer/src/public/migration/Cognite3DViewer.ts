@@ -159,7 +159,6 @@ export class Cognite3DViewer {
   /**
    * Gets the current budget for downloading geometry for CAD models. Note that this
    * budget is shared between all added CAD models and not a per-model budget.
-   * @version New in 1.2.0
    */
   public get cadBudget(): CadModelBudget {
     // Note! Type here differes from the one in RevealManager to expose a documentated
@@ -170,7 +169,6 @@ export class Cognite3DViewer {
   /**
    * Sets the current budget for downloading geometry for CAD models. Note that this
    * budget is shared between all added CAD models and not a per-model budget.
-   * @version New in 1.2.0
    */
   public set cadBudget(budget: CadModelBudget) {
     // Note! Type here differes from the one in RevealManager to expose a documentated
@@ -180,7 +178,6 @@ export class Cognite3DViewer {
 
   /**
    * Gets a list of models currently added to the viewer.
-   * @version New in 2.0.0
    */
   public get models(): CogniteModelBase[] {
     return this._models.slice();
@@ -810,25 +807,22 @@ export class Cognite3DViewer {
    * Gets the camera controller. See https://www.npmjs.com/package/@cognite/three-combo-controls
    * for documentation. Note that by default the `minDistance` setting of the controls will
    * be automatic. This can be disabled using {@link Cognite3DViewerOptions.automaticControlsSensitivity}.
-   * @version new in 1.4.0
    */
   get cameraControls(): ComboControls {
     return this.controls;
   }
 
   /**
-   * Gets wheter camera controls through mouse, touch and keyboard are enabled.
-   * @version new in 1.2.0
+   * Gets whether camera controls through mouse, touch and keyboard are enabled.
    */
   get cameraControlsEnabled(): boolean {
     return this.controls.enabled;
   }
 
   /**
-   * Sets wheter camera controls through mouse, touch and keyboard are enabled.
+   * Sets whether camera controls through mouse, touch and keyboard are enabled.
    * This can be useful to e.g. temporarily disable navigation when manipulating other
    * objects in the scene or when implementing a "cinematic" viewer.
-   * @version new in 1.2.0
    */
   set cameraControlsEnabled(enabled: boolean) {
     this.controls.enabled = enabled;
@@ -1060,7 +1054,6 @@ export class Cognite3DViewer {
    *   ' at this exact point ', intersection.point
    *   );
    * ```
-   * @version The options parameter was added in version 1.3.0
    */
   getIntersectionFromPixel(
     offsetX: number,
