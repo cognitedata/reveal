@@ -198,7 +198,7 @@ describe('ByNodePropertyMultiValueNodeSet', () => {
   test('clear() interrupts ongoing operation and resets set', async () => {
     // Arrange
     nock(/.*/)
-      .get(filterNodesEndpointPath)
+      .post(filterNodesEndpointPath)
       .reply(200, () => {
         return { items: [createNodeJson(10, 100)] };
       });
