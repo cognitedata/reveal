@@ -13,6 +13,7 @@ import {
 import styled from 'styled-components/macro';
 import { getCallResponse } from 'utils/backendApi';
 import { functionResponseKey, useCallFunction } from 'utils/backendService';
+import { convertValue } from 'utils/units';
 
 type Props = {
   chart: Chart;
@@ -227,6 +228,8 @@ const Statistics = ({
   const { results } = (data as any) || {};
   const { statistics = [] } = (results as StatisticsResult) || {};
   const statisticsForSource = statistics[0];
+  const unit = sourceItem?.unit;
+  const preferredUnit = sourceItem?.preferredUnit;
 
   return (
     <Container>
@@ -240,23 +243,55 @@ const Statistics = ({
       {sourceItem?.type === 'timeseries' ? (
         <>
           <h3>Min:</h3>
-          <p>{statisticsForSource ? statisticsForSource.min : '-'}</p>
+          <p>
+            {statisticsForSource
+              ? convertValue(statisticsForSource.min, unit, preferredUnit)
+              : '-'}
+          </p>
           <h3>Max:</h3>
-          <p>{statisticsForSource ? statisticsForSource.max : '-'}</p>
+          <p>
+            {statisticsForSource
+              ? convertValue(statisticsForSource.max, unit, preferredUnit)
+              : '-'}
+          </p>
           <h3>Mean:</h3>
-          <p>{statisticsForSource ? statisticsForSource.mean : '-'}</p>
+          <p>
+            {statisticsForSource
+              ? convertValue(statisticsForSource.mean, unit, preferredUnit)
+              : '-'}
+          </p>
           <h3>Median:</h3>
-          <p>{statisticsForSource ? statisticsForSource.median : '-'}</p>
+          <p>
+            {statisticsForSource
+              ? convertValue(statisticsForSource.median, unit, preferredUnit)
+              : '-'}
+          </p>
           <h3>Standard Deviation:</h3>
-          <p>{statisticsForSource ? statisticsForSource.std : '-'}</p>
+          <p>
+            {statisticsForSource
+              ? convertValue(statisticsForSource.std, unit, preferredUnit)
+              : '-'}
+          </p>
           <h3>25th Percentile:</h3>
-          <p>{statisticsForSource ? statisticsForSource.q25 : '-'}</p>
+          <p>
+            {statisticsForSource
+              ? convertValue(statisticsForSource.q25, unit, preferredUnit)
+              : '-'}
+          </p>
           <h3>50th Percentile:</h3>
-          <p>{statisticsForSource ? statisticsForSource.q50 : '-'}</p>
+          <p>
+            {statisticsForSource
+              ? convertValue(statisticsForSource.q50, unit, preferredUnit)
+              : '-'}
+          </p>
           <h3>75th Percentile:</h3>
-          <p>{statisticsForSource ? statisticsForSource.q75 : '-'}</p>
+          <p>
+            {statisticsForSource
+              ? convertValue(statisticsForSource.q75, unit, preferredUnit)
+              : '-'}
+          </p>
           <h3>Skewness:</h3>
-          <p>{statisticsForSource ? statisticsForSource.q25 : '-'}</p>
+          <p>{statisticsForSource ? statisticsForSource.skewness : '-'}</p>
           <h3>Kurtosis:</h3>
           <p>{statisticsForSource ? statisticsForSource.kurtosis : '-'}</p>
           {statisticsCall && (

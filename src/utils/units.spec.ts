@@ -197,19 +197,19 @@ describe('convertUnits', () => {
     // Temperatures
 
     // C to ...
-    expect(convertValue(25, 'C', 'C')).toEqual(25.0);
-    expect(convertValue(25, 'C', 'K')).toEqual(298.15);
-    expect(convertValue(25, 'C', 'F')).toEqual(77);
+    expect(convertValue(25, 'c', 'c')).toEqual(25.0);
+    expect(convertValue(25, 'c', 'k')).toEqual(298.15);
+    expect(convertValue(25, 'c', 'f')).toEqual(77);
 
     // F to ...
-    expect(convertValue(100, 'F', 'C')).toEqual(37.78);
-    expect(convertValue(100, 'F', 'K')).toEqual(310.93);
-    expect(convertValue(100, 'F', 'F')).toEqual(100.0);
+    expect(convertValue(100, 'f', 'c')).toEqual(37.78);
+    expect(convertValue(100, 'f', 'k')).toEqual(310.93);
+    expect(convertValue(100, 'f', 'f')).toEqual(100.0);
 
     // K to ...
-    expect(convertValue(300, 'K', 'C')).toEqual(26.85);
-    expect(convertValue(300, 'K', 'K')).toEqual(300.0);
-    expect(convertValue(300, 'K', 'F')).toEqual(80.33);
+    expect(convertValue(300, 'k', 'c')).toEqual(26.85);
+    expect(convertValue(300, 'k', 'k')).toEqual(300.0);
+    expect(convertValue(300, 'k', 'f')).toEqual(80.33);
 
     // Volumetric Flowrates
 
