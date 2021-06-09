@@ -3,7 +3,7 @@ import { Button, Input, Tooltip } from '@cognite/cogs.js';
 import SearchResultList from 'components/SearchResultTable/SearchResultList';
 import styled from 'styled-components/macro';
 import { SEARCH_KEY } from 'utils/constants';
-import { useQueryString } from 'hooks';
+import { useSearchParam } from 'hooks';
 import debounce from 'lodash/debounce';
 
 type SearchProps = {
@@ -13,7 +13,7 @@ type SearchProps = {
 
 const Search = ({ visible, onClose }: SearchProps) => {
   const [searchInputValue, setSearchInputValue] = useState('');
-  const { item: urlQuery, setItem: setUrlQuery } = useQueryString(SEARCH_KEY);
+  const [urlQuery = '', setUrlQuery] = useSearchParam(SEARCH_KEY, false);
   const debouncedSetUrlQuery = debounce(setUrlQuery, 200);
 
   useEffect(() => {

@@ -1,11 +1,11 @@
 import React, { ReactNode } from 'react';
 import styled from 'styled-components';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 import EditableText from 'components/EditableText';
 import PlotlyChart from 'components/PlotlyChart';
 import { Chart } from 'reducers/charts/types';
-import { useIsChartOwner } from 'hooks';
+import { useIsChartOwner, useProject } from 'hooks';
 
 import { trackUsage } from 'utils/metrics';
 import { formatOwner, formatDate } from './utils';
@@ -26,14 +26,15 @@ const ListViewItem = ({
   cancelEdition,
 }: ListViewItemProps) => {
   const isChartOwner = useIsChartOwner(chart);
-  const history = useHistory();
+  const project = useProject();
+  const location = useLocation();
 
   return (
     <Wrapper>
       <StyledLink
         to={{
-          pathname: `/${chart.id}`,
-          search: history.location.search,
+          ...location,
+          pathname: `/${project}/${chart.id}`,
         }}
         onClick={() => {
           trackUsage('ChartList.SelectChart', {

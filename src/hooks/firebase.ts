@@ -1,15 +1,16 @@
 import { useSDK } from '@cognite/sdk-provider';
 import omit from 'lodash/omit';
 import isEqual from 'lodash/isEqual';
-import config, { CHART_VERSION } from 'config';
+import config, { CHART_VERSION, useAppsApiBaseUrl, useCluster } from 'config';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { getTenantFromURL } from 'utils/env';
+import { useProject, getProject } from 'hooks';
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import 'firebase/auth';
-import { useLoginStatus } from 'hooks';
 import { Chart } from 'reducers/charts/types';
 import { IdInfo } from '@cognite/sdk';
+import { getFlow } from '@cognite/auth-utils';
+import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 
 type EnvironmentConfig = {
   cognite: {
@@ -31,7 +32,6 @@ type GetEnvironmentResponse = {
   config: EnvironmentConfig;
 };
 
-const APPS_API_BASE_URL = config.appsApiBaseURL;
 const APP_NAME = config.appName;
 
 const cacheOption = {
@@ -41,20 +41,27 @@ const cacheOption = {
 
 const useFirebaseToken = (enabled: boolean) => {
   const sdk = useSDK();
-  const project = getTenantFromURL();
+  const [cluster] = useCluster();
+  const project = useProject();
+  const url = useAppsApiBaseUrl();
+
+  const { flow } = getFlow(project, cluster);
 
   return useQuery<string>(
     ['firebase', 'token'],
     () =>
       sdk
-        .get<LoginToFirebaseResponse>(`${APPS_API_BASE_URL}/login/firebase`, {
-          params: {
-            tenant: project,
-            app: APP_NAME,
-            json: true,
-          },
-          withCredentials: true,
-        })
+        .get<LoginToFirebaseResponse>(
+          `${url}${flow === 'AZURE_AD' ? `/${project}` : ''}/login/firebase`,
+          {
+            params: {
+              tenant: project,
+              app: APP_NAME,
+              json: true,
+            },
+            withCredentials: true,
+          }
+        )
         .then((result) => {
           const {
             data: { firebaseToken: nextFirebaseToken },
@@ -67,13 +74,14 @@ const useFirebaseToken = (enabled: boolean) => {
 
 const useFirebaseEnv = (enabled: boolean) => {
   const sdk = useSDK();
-  const project = getTenantFromURL();
+  const project = useProject();
+  const url = useAppsApiBaseUrl();
 
   return useQuery<EnvironmentConfig>(
-    ['firebase', 'env'],
+    ['firebase', 'env', url],
     () =>
       sdk
-        .get<GetEnvironmentResponse>(`${APPS_API_BASE_URL}/env`, {
+        .get<GetEnvironmentResponse>(`${url}/env`, {
           params: {
             tenant: project,
             app: APP_NAME,
@@ -114,28 +122,28 @@ export const charts = () => {
   return firebase
     .firestore()
     .collection('tenants')
-    .doc(getTenantFromURL())
+    .doc(getProject())
     .collection('charts');
 };
 
 export const useMyCharts = () => {
-  const { data } = useLoginStatus();
+  const { data } = useUserInfo();
 
   return useQuery(
     ['charts', 'mine'],
     async () => {
       const snapshot = await charts()
         .where('version', '==', CHART_VERSION)
-        .where('user', '==', data?.user)
+        .where('user', '==', data?.id)
         .get();
       return snapshot.docs.map((doc) => doc.data()) as Chart[];
     },
-    { enabled: !!data?.user }
+    { enabled: !!data?.id }
   );
 };
 
 export const usePublicCharts = () => {
-  const { data } = useLoginStatus();
+  const { data } = useUserInfo();
 
   return useQuery(
     ['charts', 'public'],
@@ -146,7 +154,7 @@ export const usePublicCharts = () => {
         .get();
       return snapshot.docs.map((doc) => doc.data()) as Chart[];
     },
-    { enabled: !!data?.user }
+    { enabled: !!data?.id }
   );
 };
 
@@ -179,10 +187,10 @@ export const useDeleteChart = () => {
 
 export const useUpdateChart = () => {
   const cache = useQueryClient();
+  const { data } = useUserInfo();
   return useMutation(
     async (chart: Chart) => {
-      const skipPersist =
-        cache.getQueryData<IdInfo>(['login', 'status'])?.user !== chart.user;
+      const skipPersist = data?.id !== chart.user;
       // skipPersist will result in only the local cache being updated.
       if (!skipPersist) {
         // The firestore SDK will retry indefinitely

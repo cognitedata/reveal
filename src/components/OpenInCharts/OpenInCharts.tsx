@@ -7,7 +7,6 @@ import React, {
   useMemo,
 } from 'react';
 import { compact } from 'lodash';
-import { useHistory } from 'react-router-dom';
 import { nanoid } from 'nanoid';
 import { Chart } from 'reducers/charts/types';
 import styled from 'styled-components';
@@ -17,7 +16,7 @@ import { Modal, Select, Icon, Checkbox, Input } from '@cognite/cogs.js';
 import { CHART_VERSION } from 'config/';
 import DelayedComponent from 'components/DelayedComponent';
 import { TimeseriesChart } from '@cognite/data-exploration';
-import { useQueryString, useLoginStatus } from 'hooks';
+import { useSearchParam, useNavigate, useClearSearchParams } from 'hooks';
 import { useMyCharts, useUpdateChart, useChart } from 'hooks/firebase';
 import { Timeseries } from '@cognite/sdk';
 import { calculateDefaultYAxis } from 'utils/axis';
@@ -29,6 +28,7 @@ import {
   END_TIME_KEY,
   CHART_NAME_KEY,
 } from 'utils/constants';
+import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 
 const options = ['New chart', 'Add to chart'];
 
@@ -37,10 +37,10 @@ export const sleep = (ms: number) =>
 
 export const OpenInCharts: FC = () => {
   const sdk = useSDK();
-  const history = useHistory();
-  const { data: login } = useLoginStatus();
+  const move = useNavigate();
+  const { data: login } = useUserInfo();
   const { mutate: updateChart } = useUpdateChart();
-  const { item: chartNameProp } = useQueryString(CHART_NAME_KEY);
+
   const [initiated, setInitiated] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
   const [currentValue, setCurrentValue] = useState(options[0]);
@@ -48,12 +48,12 @@ export const OpenInCharts: FC = () => {
     label: '',
     value: '',
   });
-  const [chartName, setChartName] = useState<string>(
-    chartNameProp || 'New chart'
-  );
+
   const { data: existingChart } = useChart(chart?.value);
+
   const [ts, setTs] = useState<Timeseries[]>([]);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
+
   const myCharts = useMyCharts();
   const allCharts = useMemo(() => {
     const mine = myCharts.data || [];
@@ -63,17 +63,31 @@ export const OpenInCharts: FC = () => {
       return 0;
     });
   }, [myCharts.data]);
-  const { item: timeserieIds } = useQueryString(TIMESERIE_IDS_KEY);
-  const { item: timeserieExternalId } = useQueryString(
-    TIMESERIE_EXTERNAL_IDS_KEY
+
+  const [chartNameProp = ''] = useSearchParam(CHART_NAME_KEY);
+  const [chartName, setChartName] = useState<string>(
+    chartNameProp || 'New chart'
   );
-  const { item: startTime } = useQueryString(START_TIME_KEY);
-  const { item: endTime } = useQueryString(END_TIME_KEY);
+
+  const [timeserieIds = ''] = useSearchParam(TIMESERIE_IDS_KEY);
+  const [timeserieExternalId = ''] = useSearchParam(TIMESERIE_EXTERNAL_IDS_KEY);
+  const [startTime = ''] = useSearchParam(START_TIME_KEY);
+  const [endTime = ''] = useSearchParam(END_TIME_KEY);
+
   const sparklineStartDate = dayjs()
     .subtract(1, 'years')
     .startOf('day')
     .toDate();
   const sparklineEndDate = dayjs().endOf('day').toDate();
+
+  const clearSearchParams = useClearSearchParams([
+    CHART_NAME_KEY,
+    TIMESERIE_IDS_KEY,
+    TIMESERIE_EXTERNAL_IDS_KEY,
+    START_TIME_KEY,
+    END_TIME_KEY,
+  ]);
+
   const loadTimeseries = useCallback(async () => {
     const timeseriesIds = compact(timeserieIds.split(',').map((id) => +id));
     const timeseriesExternalIds = compact(timeserieExternalId.split(','));
@@ -84,11 +98,13 @@ export const OpenInCharts: FC = () => {
     setTs(timeseries);
     setSelectedIds(timeseries.map(({ id }) => id));
   }, [sdk.timeseries, timeserieIds, timeserieExternalId]);
+
   useEffect(() => {
     if (allCharts.length > 0) {
       setChart({ label: allCharts[0].name, value: allCharts[0].id });
     }
   }, [allCharts]);
+
   useEffect(() => {
     if (
       !initiated &&
@@ -108,8 +124,10 @@ export const OpenInCharts: FC = () => {
     initiated,
     loadTimeseries,
   ]);
+
   const handleOnChange: ChangeEventHandler<HTMLInputElement> = (nextState) =>
     setCurrentValue(nextState.target.value);
+
   const handleTimeSeriesClick = async (timeSeries: Timeseries) => {
     const tsToRemove = selectedIds.find((id) => id === timeSeries.id);
     if (tsToRemove) {
@@ -118,15 +136,17 @@ export const OpenInCharts: FC = () => {
       setSelectedIds([...selectedIds, timeSeries.id]);
     }
   };
+
   const handleSubmit = useCallback(async () => {
-    if (!login?.user) {
+    if (!login?.id) {
       return;
     }
+
     if (currentValue === options[0]) {
       const chartId = nanoid();
       const newChart: Chart = {
         id: chartId,
-        user: login?.user,
+        user: login?.id,
         name: chartName,
         updatedAt: Date.now(),
         createdAt: Date.now(),
@@ -137,7 +157,9 @@ export const OpenInCharts: FC = () => {
         public: false,
         version: CHART_VERSION,
       };
+
       await updateChart(newChart);
+
       await Promise.all(
         selectedIds.map(async (id) => {
           const timeSeries = ts.find((timeSerie) => timeSerie.id === id);
@@ -154,13 +176,17 @@ export const OpenInCharts: FC = () => {
           newChart.timeSeriesCollection?.push(newTs);
         })
       );
-      history.replace(newChart.id);
+
+      clearSearchParams();
+      move(`/${newChart.id}`, false);
     } else {
       if (!existingChart) {
         return;
       }
+
       existingChart.dateFrom = new Date(+startTime).toJSON();
       existingChart.dateTo = new Date(+endTime).toJSON();
+
       await Promise.all(
         selectedIds.map(async (id) => {
           const timeSeries = ts.find((timeSerie) => timeSerie.id === id);
@@ -183,20 +209,23 @@ export const OpenInCharts: FC = () => {
           existingChart.timeSeriesCollection?.push(newTs);
         })
       );
-      history.replace(existingChart.id);
+
+      clearSearchParams();
+      move(`/${existingChart.id}`, false);
     }
   }, [
     selectedIds,
     currentValue,
     existingChart,
-    history,
-    login?.user,
+    move,
+    login?.id,
     sdk,
     ts,
     updateChart,
     startTime,
     endTime,
     chartName,
+    clearSearchParams,
   ]);
   return (
     <Modal
@@ -204,7 +233,10 @@ export const OpenInCharts: FC = () => {
       okText="Confirm"
       visible={visible}
       onOk={handleSubmit}
-      onCancel={() => setVisible(false)}
+      onCancel={() => {
+        clearSearchParams();
+        setVisible(false);
+      }}
       width={500}
     >
       {(timeserieIds || timeserieExternalId) && (

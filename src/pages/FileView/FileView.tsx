@@ -3,8 +3,9 @@ import { Body, Button, Icon, Title, toast } from '@cognite/cogs.js';
 import { Asset, FileInfo as File } from '@cognite/sdk';
 import { FileViewer } from 'components/FileViewer';
 import { FileList } from 'components/FileList';
+import { useNavigate } from 'hooks';
 import { useAsset } from 'hooks/api';
-import { useHistory, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import styled from 'styled-components/macro';
 import SplitPaneLayout from 'components/Layout/SplitPaneLayout';
 import {
@@ -28,7 +29,7 @@ export const FileView = () => {
 
   const [selectedFile, setSelectedFile] = useState<File>();
   const [showLinkedAssets, setShowLinkedAssets] = useState<boolean>(false);
-  const history = useHistory();
+  const move = useNavigate();
 
   const { data: chart } = useChart(chartId);
   const { data: asset, isFetched: isAssetFetched } = useAsset(Number(assetId));
@@ -123,12 +124,7 @@ export const FileView = () => {
           <Button
             icon="ArrowBack"
             style={{ marginBottom: 20 }}
-            onClick={() =>
-              history.push({
-                pathname: `/${chartId}`,
-                search: history.location.search,
-              })
-            }
+            onClick={() => move(`/${chartId}`)}
           >
             Back to chart
           </Button>

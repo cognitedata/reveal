@@ -1,6 +1,8 @@
 import queryString from 'query-string';
 import { CogniteClient } from '@cognite/sdk';
-import config from 'config';
+import config, { getSidecar } from 'config';
+import { BACKEND_SERVICE_URL_KEY, CLUSTER_KEY } from 'utils/constants';
+import { getLoginStatus } from './login';
 
 export type CogniteFunction = {
   id: number;
@@ -10,26 +12,31 @@ export type CogniteFunction = {
   description?: string;
 };
 
-const backendServiceBaseUrlFromQuery = queryString.parse(window.location.search)
-  .backendServiceBaseUrl as string;
+const backendServiceBaseUrlFromQuery = queryString.parse(
+  window.location.search
+)[BACKEND_SERVICE_URL_KEY] as string;
 
 const BACKEND_SERVICE_BASE_URL =
   backendServiceBaseUrlFromQuery ||
   process.env.REACT_APP_BACKEND_SERVICE_BASE_URL;
 
 const useBackendService = !!BACKEND_SERVICE_BASE_URL;
-const CDF_API_BASE_URL = config.cdfApiBaseUrl;
 
 const getServiceClient = async (sdk: CogniteClient) => {
-  const loginStatus = await sdk.login.status();
+  const login = await getLoginStatus(sdk);
 
-  if (!loginStatus) {
+  if (!login?.id) {
     return sdk;
   }
 
+  const { cdfCluster } = getSidecar();
+  const urlCluster = queryString.parse(window.location.search)[CLUSTER_KEY];
+
   const client = new CogniteClient({
     appId: config.appId,
-    baseUrl: useBackendService ? BACKEND_SERVICE_BASE_URL : CDF_API_BASE_URL,
+    baseUrl: useBackendService
+      ? BACKEND_SERVICE_BASE_URL
+      : `https://${urlCluster || cdfCluster || 'api'}.cognitedata.com`,
   });
 
   const accessToken = sdk

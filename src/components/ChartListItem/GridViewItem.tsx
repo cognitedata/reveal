@@ -1,10 +1,11 @@
 import React, { ReactNode } from 'react';
 import styled from 'styled-components/macro';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 import { Chart } from 'reducers/charts/types';
 import EditableText from 'components/EditableText';
 import PlotlyChart from 'components/PlotlyChart';
+import { useProject } from 'hooks';
 
 import { trackUsage } from 'utils/metrics';
 import { formatOwner, formatDate } from './utils';
@@ -24,14 +25,14 @@ const GridViewItem = ({
   isEditingName,
   cancelEdition,
 }: GridViewItemProps) => {
-  const history = useHistory();
-
+  const project = useProject();
+  const location = useLocation();
   return (
     <Wrapper>
       <Link
         to={{
-          pathname: `/${chart.id}`,
-          search: history.location.search,
+          ...location,
+          pathname: `/${project}/${chart.id}`,
         }}
       >
         <ImageWrapper>
@@ -42,7 +43,10 @@ const GridViewItem = ({
       </Link>
       <Footer>
         <StyledLink
-          to={`/${chart.id}`}
+          to={{
+            ...location,
+            pathname: `/${project}/${chart.id}`,
+          }}
           onClick={() => {
             trackUsage('ChartList.SelectChart', {
               type: chart.public ? 'public' : 'private',

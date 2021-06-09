@@ -1,3 +1,5 @@
+export const BACKEND_SERVICE_URL_KEY = 'backendServiceBaseUrl';
+export const CLUSTER_KEY = 'cluster';
 export const SEARCH_KEY = 'q';
 export const FLOAT_NUMBER_PATTERN = /\d*\.?\d*$/;
 export const TIMESERIE_IDS_KEY = 'timeserieIds';
