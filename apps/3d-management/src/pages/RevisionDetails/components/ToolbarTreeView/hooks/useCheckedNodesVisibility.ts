@@ -100,10 +100,11 @@ export function useCheckedNodesVisibility({
   );
 
   useEffect(() => {
-    model.addStyledNodeSet(
-      hiddenNodesStyledSet.current,
-      DefaultNodeAppearance.Hidden
-    );
+    const styledSet = hiddenNodesStyledSet.current;
+    model.addStyledNodeSet(styledSet, DefaultNodeAppearance.Hidden);
+    return () => {
+      model.removeStyledNodeSet(styledSet);
+    };
   }, [model]);
 
   // show only checked nodes
