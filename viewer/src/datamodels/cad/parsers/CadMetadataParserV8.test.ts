@@ -1,13 +1,12 @@
 /*!
  * Copyright 2021 Cognite AS
  */
+import * as THREE from 'three';
 
 import { CadMetadataV8, parseCadMetadataV8, CadSectorMetadataV8 } from './CadMetadataParserV8';
 import { SectorMetadata } from '..';
-import { Box3 } from '../../../utilities';
 import { traverseDepthFirst } from '../../../utilities/objectTraversal';
 
-import { vec3 } from 'gl-matrix';
 import { Mutable } from '../../../utilities/reflection';
 
 describe('parseCadMetadataV8', () => {
@@ -43,10 +42,10 @@ describe('parseCadMetadataV8', () => {
     const expectedRoot: SectorMetadata = {
       id: sectorRoot.id,
       path: sectorRoot.path,
-      bounds: new Box3([
-        vec3.fromValues(sectorRoot.boundingBox.min.x, sectorRoot.boundingBox.min.y, sectorRoot.boundingBox.min.z),
-        vec3.fromValues(sectorRoot.boundingBox.max.x, sectorRoot.boundingBox.max.y, sectorRoot.boundingBox.max.z)
-      ]),
+      bounds: new THREE.Box3(
+        new THREE.Vector3(sectorRoot.boundingBox.min.x, sectorRoot.boundingBox.min.y, sectorRoot.boundingBox.min.z),
+        new THREE.Vector3(sectorRoot.boundingBox.max.x, sectorRoot.boundingBox.max.y, sectorRoot.boundingBox.max.z)
+      ),
       depth: sectorRoot.depth,
       indexFile: sectorRoot.indexFile,
       facesFile: {
@@ -79,10 +78,10 @@ describe('parseCadMetadataV8', () => {
     const expectedRoot: SectorMetadata = {
       id: sectorRoot.id,
       path: sectorRoot.path,
-      bounds: new Box3([
-        vec3.fromValues(sectorRoot.boundingBox.min.x, sectorRoot.boundingBox.min.y, sectorRoot.boundingBox.min.z),
-        vec3.fromValues(sectorRoot.boundingBox.max.x, sectorRoot.boundingBox.max.y, sectorRoot.boundingBox.max.z)
-      ]),
+      bounds: new THREE.Box3(
+        new THREE.Vector3(sectorRoot.boundingBox.min.x, sectorRoot.boundingBox.min.y, sectorRoot.boundingBox.min.z),
+        new THREE.Vector3(sectorRoot.boundingBox.max.x, sectorRoot.boundingBox.max.y, sectorRoot.boundingBox.max.z)
+      ),
       depth: sectorRoot.depth,
       indexFile: sectorRoot.indexFile,
       facesFile: { ...sectorRoot.facesFile!, recursiveCoverageFactors: sectorRoot.facesFile!.coverageFactors },

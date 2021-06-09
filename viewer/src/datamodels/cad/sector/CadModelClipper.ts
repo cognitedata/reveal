@@ -6,7 +6,6 @@ import * as THREE from 'three';
 
 import { CadModelMetadata, SectorMetadata } from '..';
 import { traverseDepthFirst } from '../../../utilities/objectTraversal';
-import { fromThreeJsBox3, toThreeJsBox3 } from '../../../utilities/threeConverters';
 import { SectorSceneImpl } from './SectorScene';
 
 export class CadModelClipper {
@@ -48,8 +47,8 @@ export class CadModelClipper {
 }
 
 function clipSector(sector: SectorMetadata, geometryClipBox: THREE.Box3): SectorMetadata | undefined {
-  const originalBounds = toThreeJsBox3(new THREE.Box3(), sector.bounds);
-  const bounds = originalBounds.clone();
+  const originalBounds = sector.bounds;
+  const bounds = sector.bounds.clone();
   bounds.intersect(geometryClipBox);
 
   if (!bounds.isEmpty()) {
@@ -69,7 +68,7 @@ function clipSector(sector: SectorMetadata, geometryClipBox: THREE.Box3): Sector
       ...sector,
       children: intersectingChildren,
       estimatedDrawCallCount: Math.ceil(keptDrawCallsRatio * sector.estimatedDrawCallCount),
-      bounds: fromThreeJsBox3(bounds)
+      bounds
     };
     return clippedSector;
   } else {

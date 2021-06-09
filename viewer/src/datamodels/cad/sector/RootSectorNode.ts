@@ -7,13 +7,12 @@ import * as THREE from 'three';
 import { SectorNode } from './SectorNode';
 import { CadModelMetadata } from '../CadModelMetadata';
 import { SectorMetadata } from './types';
-import { toThreeJsBox3 } from '../../../utilities';
 
 export class RootSectorNode extends SectorNode {
   public readonly sectorNodeMap: Map<number, SectorNode>;
 
   constructor(modelMetadata: CadModelMetadata) {
-    const modelBounds = toThreeJsBox3(new THREE.Box3(), modelMetadata.scene.root.bounds);
+    const modelBounds = modelMetadata.scene.root.bounds.clone();
     modelBounds.applyMatrix4(modelMetadata.modelMatrix);
     super(0, '/', modelBounds);
 
@@ -44,7 +43,7 @@ function buildScene(
   sectorNodeMap: Map<number, SectorNode>,
   modelMatrix: THREE.Matrix4
 ) {
-  const bounds = toThreeJsBox3(new THREE.Box3(), sector.bounds);
+  const bounds = sector.bounds.clone();
   bounds.applyMatrix4(modelMatrix);
   const sectorGroup = new SectorNode(sector.id, sector.path, bounds);
   sectorGroup.name = `Sector ${sector.id}`;

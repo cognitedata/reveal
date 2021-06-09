@@ -8,7 +8,6 @@ import * as THREE from 'three';
 import CameraControls from 'camera-controls';
 import { CogniteClient, HttpError } from '@cognite/sdk';
 import * as reveal from '@cognite/reveal/internals';
-import { vec3 } from 'gl-matrix';
 import { GUI, GUIController } from 'dat.gui';
 import { getParamsFromURL } from '../utils/example-helpers';
 import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
@@ -219,15 +218,14 @@ function convertToVector3Array(
   modelMatrix: THREE.Matrix4
 ): THREE.Vector3[][] {
   const paths: THREE.Vector3[][] = [];
-  const vector: vec3 = vec3.create();
+  const vector = new THREE.Vector3();
   for (const item of pointData.items) {
     const pathVectors: THREE.Vector3[] = [];
     for (const segment of item.segments) {
       for (const path of segment.path) {
-        vec3.set(vector, path.x, path.y, path.z);
-        const point = reveal.utilities.toThreeVector3(new THREE.Vector3(), vector);
-        point.applyMatrix4(modelMatrix);
-        pathVectors.push(point);
+        vector.set(path.x, path.y, path.z);
+        vector.applyMatrix4(modelMatrix);
+        pathVectors.push(vector.clone());
       }
     }
     paths.push(pathVectors);
