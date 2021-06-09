@@ -288,21 +288,21 @@ export const conversions: Conversions = {
     km: (val: number): number => val * 1.6093391462184960528,
     mi: (val: number): number => val,
   },
-  // Temperature: ['F', 'C', 'K']
-  F: {
-    F: (val: number): number => val,
-    C: (val: number): number => ((val - 32) * 5) / 9,
-    K: (val: number): number => ((val - 32) * 5) / 9 + 273.15,
+  // Temperature: ['f', 'c', 'k']
+  f: {
+    f: (val: number): number => val,
+    c: (val: number): number => ((val - 32) * 5) / 9,
+    k: (val: number): number => ((val - 32) * 5) / 9 + 273.15,
   },
-  C: {
-    F: (val: number): number => (val * 9) / 5 + 32,
-    C: (val: number): number => val,
-    K: (val: number): number => val + 273.15,
+  c: {
+    f: (val: number): number => (val * 9) / 5 + 32,
+    c: (val: number): number => val,
+    k: (val: number): number => val + 273.15,
   },
-  K: {
-    F: (val: number): number => ((val - 273.15) * 9) / 5 + 32,
-    C: (val: number): number => val - 273.15,
-    K: (val: number): number => val,
+  k: {
+    f: (val: number): number => ((val - 273.15) * 9) / 5 + 32,
+    c: (val: number): number => val - 273.15,
+    k: (val: number): number => val,
   },
   // Volumetric flow rate ['m3s', 'm3min', 'm3hr', 'm3d', 'bbld', 'mbbld', 'mmscfd']
   m3s: {

@@ -30,6 +30,7 @@ import { trackUsage } from 'utils/metrics';
 import { CogniteClient } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 import { calculateDefaultYAxis } from 'utils/axis';
+import { convertValue } from 'utils/units';
 import {
   SourceItem,
   SourceCircle,
@@ -396,10 +397,14 @@ export default function TimeSeriesRow({
       )}
       {isWorkspaceMode && (
         <>
-          <td>{statisticsForSource?.min}</td>
+          <td>
+            {statisticsForSource?.min
+              ? convertValue(statisticsForSource?.min, unit, preferredUnit)
+              : ''}
+          </td>
           <td>
             {statisticsForSource
-              ? statisticsForSource?.max
+              ? convertValue(statisticsForSource?.max, unit, preferredUnit)
               : statisticsCall && (
                   <FunctionCall
                     id={statisticsCall.functionId}
@@ -409,7 +414,11 @@ export default function TimeSeriesRow({
                   />
                 )}
           </td>
-          <td>{statisticsForSource?.median}</td>
+          <td>
+            {statisticsForSource?.median
+              ? convertValue(statisticsForSource?.median, unit, preferredUnit)
+              : ''}
+          </td>
           <td style={{ textAlign: 'right', paddingRight: 8 }}>
             <UnitDropdown
               unit={unit}
