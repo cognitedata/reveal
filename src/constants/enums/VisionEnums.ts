@@ -3,3 +3,8 @@ export enum ImagePreviewEditMode {
   Modifiable,
   Creatable,
 }
+
+export enum VisionMode {
+  Contextualize,
+  Explore,
+}

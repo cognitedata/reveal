@@ -5,7 +5,6 @@ import { hideFileMetadataPreview } from 'src/modules/Process/processSlice';
 import { FileDetails } from 'src/modules/FileDetails/Containers/FileDetails';
 import React from 'react';
 import styled from 'styled-components';
-import { fetchFilesById } from 'src/store/thunks/fetchFilesById';
 import {
   getParamLink,
   workflowRoutes,
@@ -31,12 +30,13 @@ export const ProcessFileDetailsContainer = () => {
   const showFileDetails = useSelector(
     ({ processSlice }: RootState) => processSlice.showFileMetadataDrawer
   );
+
   const onClose = () => {
     dispatch(hideFileMetadataPreview());
   };
+
   const onFileDetailReview = () => {
     if (fileId) {
-      dispatch(fetchFilesById([{ id: fileId }]));
       history.push(
         getParamLink(workflowRoutes.review, ':fileId', String(fileId)),
         { from: 'process' }

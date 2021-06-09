@@ -8,7 +8,7 @@ import {
   updateAnnotationBoundingBox,
   VisibleAnnotations,
 } from 'src/modules/Review/previewSlice';
-import { ImagePreviewEditMode } from 'src/constants/enums/ImagePreviewEditMode';
+import { ImagePreviewEditMode } from 'src/constants/enums/VisionEnums';
 import { ProposedCogniteAnnotation } from '@cognite/react-picture-annotation';
 import { AnnotationDrawerMode } from 'src/utils/AnnotationUtils';
 import { VisionAPIType } from 'src/api/types';

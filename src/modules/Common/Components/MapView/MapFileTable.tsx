@@ -13,7 +13,6 @@ import { FileExplorerTableProps } from '../FileTable/types';
 type MapTableProps = FileExplorerTableProps & {
   setMapActive: (active: boolean) => void;
   mapCallback: (fileId: number) => void;
-  setSelectedFileOnMap: (data: ResultData | undefined) => void;
 };
 
 const rendererMap = {
@@ -58,17 +57,10 @@ export const MapFileTable = (props: MapTableProps) => {
     return `clickable ${props.selectedFileId === rowData.id && 'active'}`;
   };
 
-  const rowEventHandlersWithGeoData = {
+  const rowEventHandlers = {
     onClick: ({ rowData }: { rowData: TableDataItem }) => {
       props.onRowClick(rowData as ResultData);
       props.mapCallback(rowData.id);
-    },
-  };
-
-  const rowEventHandlersWithoutGeoData = {
-    onClick: ({ rowData }: { rowData: TableDataItem }) => {
-      props.onRowClick(rowData as ResultData);
-      props.setSelectedFileOnMap(undefined); // hide map popup when selecting from files without geo-info
     },
   };
 
@@ -115,7 +107,7 @@ export const MapFileTable = (props: MapTableProps) => {
                   onRowSelect={props.onRowSelect}
                   rowHeight={70}
                   rowClassNames={rowClassNames}
-                  rowEventHandlers={rowEventHandlersWithGeoData}
+                  rowEventHandlers={rowEventHandlers}
                 />
               </AnnotationLoader>
             )}
@@ -144,7 +136,7 @@ export const MapFileTable = (props: MapTableProps) => {
                   onRowSelect={props.onRowSelect}
                   rowHeight={70}
                   rowClassNames={rowClassNames}
-                  rowEventHandlers={rowEventHandlersWithoutGeoData}
+                  rowEventHandlers={rowEventHandlers}
                 />
               </AnnotationLoader>
             )}

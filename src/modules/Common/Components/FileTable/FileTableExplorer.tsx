@@ -4,7 +4,7 @@ import { ResultData, TableDataItem } from 'src/modules/Common/types';
 import { StringRenderer } from 'src/modules/Common/Containers/FileTableRenderers/StringRenderer';
 import { SelectableTable } from 'src/modules/Common/Components/SelectableTable/SelectableTable';
 import { NameRenderer } from 'src/modules/Common/Containers/FileTableRenderers/NameRenderer';
-import { ActionRenderer } from 'src/modules/Common/Containers/FileTableRenderers/ActionRenderer';
+import { ActionRendererExplorer } from 'src/modules/Common/Containers/FileTableRenderers/ActionRenderer';
 import { AnnotationRenderer } from 'src/modules/Common/Containers/FileTableRenderers/AnnotationRenderer';
 import { DateSorter } from 'src/modules/Common/Containers/Sorters/DateSorter';
 import { DateRenderer } from 'src/modules/Common/Containers/FileTableRenderers/DateRenderer';
@@ -19,7 +19,7 @@ const rendererMap = {
   mimeType: StringRenderer,
   sourceCreatedTime: DateRenderer,
   annotations: AnnotationRenderer,
-  action: ActionRenderer,
+  action: ActionRendererExplorer,
 };
 
 const sorters = {

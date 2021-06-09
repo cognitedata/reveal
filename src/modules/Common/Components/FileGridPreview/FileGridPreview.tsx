@@ -16,6 +16,7 @@ import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import { DeleteAnnotationsByFileIds } from 'src/store/thunks/DeleteAnnotationsByFileIds';
 import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
 import { useSelectionCheckbox } from '@cognite/data-exploration';
+import { VisionMode } from 'src/constants/enums/VisionEnums';
 import { AnnotationsBadge } from '../AnnotationsBadge/AnnotationsBadge';
 import { AnnotationsBadgePopoverContent } from '../AnnotationsBadge/AnnotationsBadgePopoverContent';
 import { makeSelectAnnotationCounts } from '../../annotationSlice';
@@ -26,12 +27,14 @@ import { Thumbnail } from '../Thumbnail/Thumbnail';
 export const FileGridPreview = ({
   item,
   style,
+  mode,
   onSelect,
   selected,
 }: {
   selected: boolean;
   item: TableDataItem;
   style?: React.CSSProperties;
+  mode: VisionMode;
   onSelect?: (item: TableDataItem, selected: boolean) => void;
 }) => {
   const dispatch = useDispatch();
@@ -78,6 +81,8 @@ export const FileGridPreview = ({
     selectUpdatedFileDetails(state, item.id)
   );
 
+  const showReviewButton = mode === VisionMode.Contextualize;
+
   return (
     <PreviewCell style={style}>
       <div className="preview">
@@ -103,7 +108,7 @@ export const FileGridPreview = ({
             <ActionMenu
               showExifIcon={fileDetails?.geoLocation !== undefined}
               disabled={reviewDisabled}
-              handleReview={handleReview}
+              handleReview={showReviewButton ? undefined : handleReview} // skip menu item if button is shown
               handleFileDelete={handleFileDelete}
               handleMetadataEdit={handleMetadataEdit}
             />
@@ -120,9 +125,11 @@ export const FileGridPreview = ({
               <>{AnnotationsBadge(annotationCounts, annotationStatuses)}</>
             </Popover>
           </div>
-          <div className="review">
-            <ReviewButton disabled={reviewDisabled} onClick={handleReview} />
-          </div>
+          {showReviewButton && (
+            <div className="review">
+              <ReviewButton disabled={reviewDisabled} onClick={handleReview} />
+            </div>
+          )}
         </div>
       </div>
     </PreviewCell>

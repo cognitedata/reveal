@@ -13,7 +13,7 @@ import { ExifIcon } from '../../Containers/FileTableRenderers/NameRenderer';
 interface ActionMenuProps {
   showExifIcon?: boolean;
   disabled?: boolean;
-  handleReview: () => void;
+  handleReview?: () => void;
   handleFileDelete: () => void;
   handleMetadataEdit: () => void;
 }
@@ -42,10 +42,12 @@ export const ActionMenu = ({
           </Tooltip>
         )}
       </Menu.Item>
-      <Menu.Item onClick={handleReview} disabled={disabled}>
-        <Icon type="Edit" style={{ marginRight: '17px' }} />
-        Review Annotations
-      </Menu.Item>
+      {handleReview && (
+        <Menu.Item onClick={handleReview} disabled={disabled}>
+          <Icon type="Edit" style={{ marginRight: '17px' }} />
+          Review file
+        </Menu.Item>
+      )}
       <Popconfirm
         icon="WarningFilled"
         placement="bottom-end"

@@ -21,15 +21,16 @@ const Mapbox = ReactMapboxGl({
 });
 
 export const MapView = (props: FileExplorerTableProps) => {
-  const [selectedFileOnMap, setSelectedFileOnMap] = useState<ResultData>();
-  const [popupVisible, setPopupVisible] = useState<boolean>(true);
+  const [selectedFile, setSelectedFile] = useState<ResultData | undefined>();
+  const [popupState, setPopupState] =
+    useState<'open' | 'hidden' | 'close'>('close');
   const [mapActive, setMapActive] = useState<boolean>(true);
   const [center, setCenter] = useState<[number, number]>();
   const [zoom] = useState<[number] | undefined>([2]);
 
   const fitBounds = undefined; // TODO: calculate this based on the provided data
 
-  const selectedFiles = useMemo(() => {
+  const files = useMemo(() => {
     return props.data || [];
   }, [props.data]);
 
@@ -65,7 +66,7 @@ export const MapView = (props: FileExplorerTableProps) => {
 
   const features = Object.assign(
     {},
-    ...selectedFiles
+    ...files
       .filter((f: ResultData) => f.geoLocation && f)
       .map((s: ResultData) => ({
         [s.id]: s.geoLocation?.geometry.coordinates as [number, number],
@@ -73,37 +74,36 @@ export const MapView = (props: FileExplorerTableProps) => {
   );
 
   const showMapPopup = (fileId: number) => {
-    setSelectedFileOnMap(selectedFiles.find((file) => file.id === fileId));
-    setCenter(features[fileId.toString()]);
+    if (fileId in features && mapActive) {
+      setPopupState('open');
+      setSelectedFile(files.find((file) => file.id === fileId));
+      setCenter(features[fileId.toString()]);
+    } else {
+      setSelectedFile(undefined);
+    }
   };
 
-  const handleOnDrag = () => {
-    if (selectedFileOnMap) setSelectedFileOnMap(undefined);
-  };
+  const selectedFileIsInTable = !!(selectedFile && selectedFile.id in features);
 
   const handleOnClick = (fileId: number) => {
     showMapPopup(fileId);
-    const item = selectedFiles.find((file) => file.id === fileId);
+    const item = files.find((file) => file.id === fileId);
     if (item) props.onRowClick(item, false);
   };
 
   // set popup visibility based on whether the selected file is within map bounds or not
   const handleZoomAndDrag = (map: MapboxGL.Map, _: MapboxGL.EventData) => {
-    if (selectedFileOnMap) {
-      const coords = features[selectedFileOnMap.id.toString()];
+    if (selectedFileIsInTable) {
+      const coords = features[selectedFile!.id.toString()];
       const bounds = map.getBounds();
       const isWhithin = bounds.contains(coords);
-      if (isWhithin && !popupVisible) {
-        setPopupVisible(true);
-      } else if (!isWhithin && popupVisible) {
-        setPopupVisible(false);
+      if (isWhithin && !['open', 'close'].includes(popupState)) {
+        setPopupState('open');
+      } else if (!isWhithin && popupState === 'open') {
+        setPopupState('hidden');
       }
     }
   };
-
-  const selectedFileIsOnMap = selectedFiles.find(
-    (element: TableDataItem) => element.id === selectedFileOnMap?.id
-  );
 
   return (
     <Container>
@@ -117,7 +117,6 @@ export const MapView = (props: FileExplorerTableProps) => {
           {...props}
           mapCallback={showMapPopup}
           setMapActive={setMapActive}
-          setSelectedFileOnMap={setSelectedFileOnMap}
         />
       </div>
       <div
@@ -137,14 +136,13 @@ export const MapView = (props: FileExplorerTableProps) => {
           containerStyle={mapStyle}
           flyToOptions={flyToOptions}
           movingMethod="easeTo"
-          onDrag={handleOnDrag}
-          onClick={handleOnDrag}
+          onDrag={handleZoomAndDrag}
           onZoom={handleZoomAndDrag}
         >
           <Layer type="circle" layout={circleLayout} paint={circlePaint}>
-            {selectedFiles.length &&
+            {files.length &&
               Object.keys(features)
-                .filter((f, _) => f !== selectedFileOnMap?.id.toString())
+                .filter((f, _) => f !== selectedFile?.id.toString())
                 .map((f, _) => (
                   <Feature
                     key={f}
@@ -153,38 +151,34 @@ export const MapView = (props: FileExplorerTableProps) => {
                   />
                 ))}
           </Layer>
-          {selectedFileOnMap && selectedFileIsOnMap && (
-            <>
-              <Layer
-                type="circle"
-                layout={circleLayout}
-                paint={circlePaintSelected}
-              >
-                {selectedFiles.length && (
-                  <Feature
-                    key={selectedFileOnMap.id}
-                    coordinates={features[selectedFileOnMap.id.toString()]}
-                    onClick={() => handleOnClick(+selectedFileOnMap.id)}
-                  />
+          {selectedFileIsInTable ? (
+            <Layer
+              type="circle"
+              layout={circleLayout}
+              paint={circlePaintSelected}
+            >
+              <Feature
+                key={selectedFile!.id}
+                coordinates={features[selectedFile!.id.toString()]}
+                onClick={() => handleOnClick(+selectedFile!.id)}
+              />
+            </Layer>
+          ) : undefined}
+          {selectedFileIsInTable && popupState === 'open' ? (
+            <Popup
+              key={selectedFile!.id}
+              coordinates={features[selectedFile!.id.toString()]}
+              anchor="bottom"
+              offset={[0, -10]}
+            >
+              <MapPopup
+                item={files.find(
+                  (element: TableDataItem) => element.id === selectedFile!.id
                 )}
-              </Layer>
-              {popupVisible && selectedFileIsOnMap && (
-                <Popup
-                  key={selectedFileOnMap.id}
-                  coordinates={features[selectedFileOnMap.id.toString()]}
-                  anchor="bottom"
-                  offset={[0, -10]}
-                >
-                  <MapPopup
-                    item={selectedFiles.find(
-                      (element: TableDataItem) =>
-                        element.id === selectedFileOnMap.id
-                    )}
-                  />
-                </Popup>
-              )}
-            </>
-          )}
+                onClose={() => setPopupState('close')}
+              />
+            </Popup>
+          ) : undefined}
         </Mapbox>
       </div>
     </Container>

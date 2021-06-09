@@ -23,7 +23,7 @@ import { RootState } from 'src/store/rootReducer';
 import { VisionAPIType } from 'src/api/types';
 import { useDispatch, useSelector } from 'react-redux';
 import { AnnotationDrawerMode } from 'src/utils/AnnotationUtils';
-import { ImagePreviewEditMode } from '../../../constants/enums/ImagePreviewEditMode';
+import { ImagePreviewEditMode } from '../../../constants/enums/VisionEnums';
 
 type editContextType = {
   editMode: boolean;

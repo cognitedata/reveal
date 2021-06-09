@@ -18,7 +18,7 @@ import { isVideo } from 'src/modules/Common/Components/FileUploader/utils/FileUt
 import { AnnotationDrawer } from 'src/modules/Review/Components/AnnotationDrawer/AnnotationDrawer';
 import { AnnotationDrawerMode } from 'src/utils/AnnotationUtils';
 import { ImageReviewDrawerContent } from 'src/modules/Review/Components/AnnotationDrawerContent/ImageReviewAnnotationDrawerContent';
-import { ImagePreviewEditMode } from 'src/constants/enums/ImagePreviewEditMode';
+import { ImagePreviewEditMode } from 'src/constants/enums/VisionEnums';
 import { AddAnnotationsFromEditModeAssetIds } from 'src/store/thunks/AddAnnotationsFromEditModeAssetIds';
 import { resetEditHistory } from 'src/modules/FileDetails/fileDetailsSlice';
 import { CreateAnnotations } from 'src/store/thunks/CreateAnnotations';

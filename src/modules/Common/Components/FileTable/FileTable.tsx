@@ -6,7 +6,7 @@ import { SelectableTable } from 'src/modules/Common/Components/SelectableTable/S
 import { NameRenderer } from 'src/modules/Common/Containers/FileTableRenderers/NameRenderer';
 import { StatusRenderer } from 'src/modules/Common/Containers/FileTableRenderers/StatusRenderer';
 import { AnnotationRenderer } from 'src/modules/Common/Containers/FileTableRenderers/AnnotationRenderer';
-import { ActionRenderer } from 'src/modules/Common/Containers/FileTableRenderers/ActionRenderer';
+import { ActionRendererProcess } from 'src/modules/Common/Containers/FileTableRenderers/ActionRenderer';
 import { NameSorter } from 'src/modules/Common/Containers/Sorters/NameSorter';
 import { AnnotationLoader } from 'src/modules/Common/Components/AnnotationLoader/AnnotationLoader';
 import { FileTableProps } from './types';
@@ -18,7 +18,7 @@ const rendererMap = {
   mimeType: StringRenderer,
   status: StatusRenderer,
   annotations: AnnotationRenderer,
-  action: ActionRenderer,
+  action: ActionRendererProcess,
 };
 
 const sorters = {

@@ -31,6 +31,7 @@ import { Prompt, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { Detail } from '@cognite/cogs.js';
 import { PageBasedGridView } from 'src/modules/Common/Components/GridView/PageBasedGridView';
+import { VisionMode } from 'src/constants/enums/VisionEnums';
 
 export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
   const dispatch = useDispatch();
@@ -133,7 +134,9 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
           onItemClicked={handleItemClick}
           onSelect={handleRowSelect}
           data={data}
-          renderCell={(cellProps: any) => <FileGridPreview {...cellProps} />}
+          renderCell={(cellProps: any) => (
+            <FileGridPreview mode={VisionMode.Contextualize} {...cellProps} />
+          )}
           totalCount={data.length}
           selectedIds={selectedFileIds}
         />

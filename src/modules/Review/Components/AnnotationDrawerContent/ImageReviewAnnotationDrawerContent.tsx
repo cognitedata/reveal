@@ -13,7 +13,7 @@ import { v3Client as sdk } from '@cognite/cdf-sdk-singleton';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { AssetSelector } from 'src/modules/Review/Components/AssetSelector/AssetSelector';
 import { AnnotationDrawerMode } from 'src/utils/AnnotationUtils';
-import { ImagePreviewEditMode } from 'src/constants/enums/ImagePreviewEditMode';
+import { ImagePreviewEditMode } from 'src/constants/enums/VisionEnums';
 
 export const ImageReviewDrawerContent = ({ mode }: { mode: number }) => {
   const dispatch = useDispatch();

@@ -18,7 +18,7 @@ import {
   deleteAnnotationsFromState,
 } from 'src/store/commonActions';
 import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
-import { ImagePreviewEditMode } from 'src/constants/enums/ImagePreviewEditMode';
+import { ImagePreviewEditMode } from 'src/constants/enums/VisionEnums';
 import { SaveAvailableAnnotations } from 'src/store/thunks/SaveAvailableAnnotations';
 import { AnnotationDetectionJobUpdate } from 'src/store/thunks/AnnotationDetectionJobUpdate';
 import { CreateAnnotations } from 'src/store/thunks/CreateAnnotations';

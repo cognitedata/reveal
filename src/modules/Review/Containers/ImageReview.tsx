@@ -11,7 +11,7 @@ import { RootState } from 'src/store/rootReducer';
 import { selectAnnotationsByFileIdModelTypes } from 'src/modules/Review/previewSlice';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { FileInfo, v3Client as sdk } from '@cognite/cdf-sdk-singleton';
-import { ImagePreviewEditMode } from 'src/constants/enums/ImagePreviewEditMode';
+import { ImagePreviewEditMode } from 'src/constants/enums/VisionEnums';
 import { VisionAPIType } from 'src/api/types';
 import { ImagePreviewContainer } from 'src/modules/Review/Containers/ImagePreviewContainer';
 import { Title } from '@cognite/cogs.js';

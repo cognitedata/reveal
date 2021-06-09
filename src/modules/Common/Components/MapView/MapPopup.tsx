@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 
-import { Tooltip } from '@cognite/cogs.js';
+import { Button, Tooltip } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import exifIcon from 'src/assets/exifIcon.svg';
@@ -18,16 +18,17 @@ import { AnnotationsBadge } from '../AnnotationsBadge/AnnotationsBadge';
 import { AnnotationsBadgePopoverContent } from '../AnnotationsBadge/AnnotationsBadgePopoverContent';
 import { Popover } from '../Popover';
 import { makeSelectAnnotationCounts } from '../../annotationSlice';
-import { ReviewButton } from '../ReviewButton/ReviewButton';
 import { ActionMenu } from '../ActionMenu/ActionMenu';
 import { Thumbnail } from '../Thumbnail/Thumbnail';
 
 export const MapPopup = ({
   item,
   style,
+  onClose,
 }: {
   item: TableDataItem | undefined;
   style?: React.CSSProperties;
+  onClose: () => void;
 }) => {
   if (!item) {
     return <div />;
@@ -104,14 +105,8 @@ export const MapPopup = ({
             </tbody>
           </table>
         </div>
-        <div className="action">
-          <ActionMenu
-            showExifIcon={fileDetails?.geoLocation !== undefined}
-            disabled={reviewDisabled}
-            handleReview={handleReview}
-            handleFileDelete={handleFileDelete}
-            handleMetadataEdit={handleMetadataEdit}
-          />
+        <div className="close">
+          <Button type="ghost" icon="Close" size="small" onClick={onClose} />
         </div>
       </div>
       <div className="footer">
@@ -127,8 +122,14 @@ export const MapPopup = ({
             <>{AnnotationsBadge(annotationCounts, annotationStatuses)}</>
           </Popover>
         </div>
-        <div className="review">
-          <ReviewButton disabled={reviewDisabled} onClick={handleReview} />
+        <div className="action">
+          <ActionMenu
+            showExifIcon={fileDetails?.geoLocation !== undefined}
+            disabled={reviewDisabled}
+            handleReview={handleReview}
+            handleFileDelete={handleFileDelete}
+            handleMetadataEdit={handleMetadataEdit}
+          />{' '}
         </div>
       </div>
     </MapPopupContainer>
@@ -152,7 +153,7 @@ const MapPopupContainer = styled.div`
     display: grid;
     padding-left: 12px;
     grid-template-columns: 100px 150px 70px;
-    grid-template-areas: 'image fileDetails action';
+    grid-template-areas: 'image fileDetails close';
 
     .image {
       grid-area: image;
@@ -196,10 +197,11 @@ const MapPopupContainer = styled.div`
       }
     }
 
-    .action {
-      grid-area: action;
+    .close {
+      grid-area: close;
       justify-self: end;
       padding-right: 12px;
+      padding-top: 2px;
     }
   }
 
@@ -212,13 +214,13 @@ const MapPopupContainer = styled.div`
     padding: 12px;
     row-gap: 19px;
     grid-template-columns: 3fr 1fr 1fr;
-    grid-template-areas: 'badge badge badge . review';
+    grid-template-areas: 'badge badge badge . action';
 
     .badge {
       grid-area: badge;
     }
-    .review {
-      grid-area: review;
+    .action {
+      grid-area: action;
     }
   }
 

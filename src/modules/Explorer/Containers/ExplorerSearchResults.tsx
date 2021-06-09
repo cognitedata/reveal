@@ -11,6 +11,7 @@ import {
   selectExplorerSelectedIds,
   setExplorerAllFilesSelectState,
 } from 'src/modules/Explorer/store/explorerSlice';
+import { VisionMode } from 'src/constants/enums/VisionEnums';
 import { ResultTableLoader } from './ResultTableLoader';
 import { FileGridPreview } from '../../Common/Components/FileGridPreview/FileGridPreview';
 import { MapView } from '../../Common/Components/MapView/MapView';
@@ -65,7 +66,10 @@ export const ExplorerSearchResults = ({
                     onSelect={onRowSelect}
                     {...props}
                     renderCell={(cellProps: any) => (
-                      <FileGridPreview {...cellProps} />
+                      <FileGridPreview
+                        mode={VisionMode.Explore}
+                        {...cellProps}
+                      />
                     )}
                   />
                 );
