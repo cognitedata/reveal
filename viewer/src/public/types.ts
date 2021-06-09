@@ -119,7 +119,6 @@ export interface GeometryFilter {
    * Rather than CDF space which is the default. When using Reveal space, the model transformation
    * which can be specified using {@link https://docs.cognite.com/api/v1/#operation/update3DRevisions |the CDF API},
    * or set in {@link https://fusion.cognite.com/ |Cognite Fusion}.
-   * @version New in 1.5.0
    */
   isBoundingBoxInModelCoordinates?: boolean;
 }
