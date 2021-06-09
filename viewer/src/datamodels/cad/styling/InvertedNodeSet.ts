@@ -8,7 +8,6 @@ import { NodeSet } from './NodeSet';
 
 /**
  * Node sets that inverts the result from another node set.
- * @version New in 2.0.0
  */
 export class InvertedNodeSet extends NodeSet {
   private readonly _allTreeIndicesRange: NumericRange;

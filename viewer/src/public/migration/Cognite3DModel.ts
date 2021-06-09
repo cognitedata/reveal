@@ -90,8 +90,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * {@link addStyledNodeSet}. Updating the default style can be an
    * expensive operation, so use with care.
    *
-   * @param appearance  Default node appereance.
-   * @version new in 2.0
+   * @param appearance  Default node appearance.
    */
   setDefaultNodeAppearance(appearance: NodeAppearance) {
     this.cadNode.defaultNodeAppearance = appearance;
@@ -100,8 +99,6 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   /**
    * Gets the default appearance for nodes that are not styled using
    * {@link addStyledNodeSet}.
-   *
-   * @version new in 2.0
    */
   getDefaultNodeAppearance(): NodeAppearance {
     return this.cadNode.defaultNodeAppearance;
@@ -130,7 +127,6 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * const visibleSet = new FixedNodeSet(someTreeIndices);
    * model.addStyledSet(visibleSet, { rendererGhosted: false });
    * ```
-   * @version new in 2.0
    */
   addStyledNodeSet(nodes: NodeSet, appearance: NodeAppearance) {
     this.cadNode.nodeAppearanceProvider.addStyledSet(nodes, appearance);
@@ -139,7 +135,6 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   /**
    * Removes styling for previously added set, resetting the style to the default.
    * @param nodes   Node set previously added using {@see addStyledNodeSet}.
-   * @version new in 2.0
    */
   removeStyledNodeSet(nodes: NodeSet) {
     this.cadNode.nodeAppearanceProvider.removeStyledSet(nodes);
@@ -148,7 +143,6 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   /**
    * Removes all styled sets, resetting the appearance of all nodes to the
    * default appearance.
-   * @version new in 2.0
    */
   removeAllStyledNodeSets() {
     this.cadNode.nodeAppearanceProvider.clear();
@@ -162,7 +156,6 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * node isn't supported and might lead to undefined results.
    * @param treeIndices       Tree indices of nodes to apply the transformation to.
    * @param transformMatrix   Transformation to apply.
-   * @version new in 2.0
    */
   setNodeTransform(treeIndices: NumericRange, transformMatrix: THREE.Matrix4) {
     this.nodeTransformProvider.setNodeTransform(treeIndices, transformMatrix);
@@ -171,7 +164,6 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   /**
    * Resets the transformation for the nodes given.
    * @param treeIndices Tree indices of the nodes to reset transforms for.
-   * @version new in 2.0
    */
   resetNodeTransform(treeIndices: NumericRange) {
     this.nodeTransformProvider.resetNodeTransform(treeIndices);
@@ -218,9 +210,8 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * uses a right-hand Y-up coordinate system. This function also accounts for transformation
    * applied to the model.
    * @param box     The box in ThreeJS/model coordinates.
-   * @param out     Optional preallocated bnuffer for storing the result. May be `box`.
+   * @param out     Optional preallocated buffer for storing the result. May be `box`.
    * @returns       Transformed box.
-   * @version new in 2.0
    */
   mapBoxFromModelToCdfCoordinates(box: THREE.Box3, out?: THREE.Box3): THREE.Box3 {
     out = out ?? new THREE.Box3();
@@ -254,7 +245,6 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * where most of the geometry is located. This is useful for models that have junk geometry
    * located far from the "main" model. Added in version 1.3.0.
    * @returns Model bounding box.
-   * @version `restrictToMostGeometry` added in 1.3.0
    *
    * @example
    * ```js
@@ -289,7 +279,6 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
 
   /**
    * Sets transformation matrix of the model. This overrides the current transformation.
-   * @version new in 1.1.0
    * @param matrix Transformation matrix.
    */
   setModelTransformation(matrix: THREE.Matrix4): void {
@@ -298,7 +287,6 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
 
   /**
    * Gets transformation matrix of the model.
-   * @version new in 1.1.0
    * @param out Preallocated `THREE.Matrix4` (optional).
    */
   getModelTransformation(out?: THREE.Matrix4): THREE.Matrix4 {
@@ -383,7 +371,6 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
 
   /**
    * Returns the number of nodes in the model.
-   * @version new in 2.0
    */
   get nodeCount(): number {
     return this.cadModel.scene.maxTreeIndex + 1;
@@ -412,7 +399,6 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
 
   /**
    * Set override transform of the node by tree index.
-   * @version new in 1.1.0
    * @param treeIndex
    * @param transform
    * @param applyToChildren
@@ -429,7 +415,6 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
 
   /**
    * Remove override transform of the node by tree index.
-   * @version new in 1.1.0
    * @param treeIndex
    * @param applyToChildren
    */
