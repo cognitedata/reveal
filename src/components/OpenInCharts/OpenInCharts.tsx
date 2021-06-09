@@ -70,7 +70,9 @@ export const OpenInCharts: FC = () => {
   );
 
   const [timeserieIds = ''] = useSearchParam(TIMESERIE_IDS_KEY);
-  const [timeserieExternalId = ''] = useSearchParam(TIMESERIE_EXTERNAL_IDS_KEY);
+  const [timeserieExternalIds = ''] = useSearchParam(
+    TIMESERIE_EXTERNAL_IDS_KEY
+  );
   const [startTime = ''] = useSearchParam(START_TIME_KEY);
   const [endTime = ''] = useSearchParam(END_TIME_KEY);
 
@@ -90,14 +92,14 @@ export const OpenInCharts: FC = () => {
 
   const loadTimeseries = useCallback(async () => {
     const timeseriesIds = compact(timeserieIds.split(',').map((id) => +id));
-    const timeseriesExternalIds = compact(timeserieExternalId.split(','));
+    const timeseriesExternalIds = compact(timeserieExternalIds.split(','));
     const timeseries = await sdk.timeseries.retrieve([
       ...timeseriesIds.map((id) => ({ id })),
       ...timeseriesExternalIds.map((id) => ({ externalId: id })),
     ]);
     setTs(timeseries);
     setSelectedIds(timeseries.map(({ id }) => id));
-  }, [sdk.timeseries, timeserieIds, timeserieExternalId]);
+  }, [sdk.timeseries, timeserieIds, timeserieExternalIds]);
 
   useEffect(() => {
     if (allCharts.length > 0) {
@@ -108,7 +110,7 @@ export const OpenInCharts: FC = () => {
   useEffect(() => {
     if (
       !initiated &&
-      (timeserieIds || timeserieExternalId) &&
+      (timeserieIds || timeserieExternalIds) &&
       startTime &&
       endTime
     ) {
@@ -118,7 +120,7 @@ export const OpenInCharts: FC = () => {
     }
   }, [
     timeserieIds,
-    timeserieExternalId,
+    timeserieExternalIds,
     startTime,
     endTime,
     initiated,
@@ -239,10 +241,49 @@ export const OpenInCharts: FC = () => {
       }}
       width={900}
     >
-      {(timeserieIds || timeserieExternalId) && (
+      {(timeserieIds || timeserieExternalIds) && (
         <>
           <div>
-            <strong>Timeseries ({ts.length})</strong>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                marginRight: 5,
+              }}
+            >
+              <strong>Timeseries ({ts.length})</strong>
+              <div style={{ display: 'flex' }}>
+                Select all/none
+                <Checkbox
+                  onClick={(
+                    e: React.MouseEvent<HTMLLabelElement, MouseEvent>
+                  ) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (
+                      selectedIds.length ===
+                      compact(timeserieIds.split(',')).length +
+                        compact(timeserieExternalIds.split(',')).length
+                    ) {
+                      setSelectedIds([]);
+                    } else {
+                      setSelectedIds([
+                        ...compact(timeserieIds.split(',')).map((id) => +id),
+                        ...compact(timeserieExternalIds.split(',')).map(
+                          (id) => +id
+                        ),
+                      ]);
+                    }
+                  }}
+                  name="selectAllNone"
+                  value={
+                    selectedIds.length ===
+                    compact(timeserieIds.split(',')).length +
+                      compact(timeserieExternalIds.split(',')).length
+                  }
+                />
+              </div>
+            </div>
             <TSList>
               {ts?.map((t, i) => (
                 <TSItem key={t.id}>
