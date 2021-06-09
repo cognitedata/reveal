@@ -1,5 +1,7 @@
-/* eslint no-underscore-dangle: ["error", { "allow": ["__cogniteSidecar"] }] */
-require('dotenv').config();
+import { useSearchParam } from 'hooks';
+import { CLUSTER_KEY } from 'utils/constants';
+
+import sidecar from './sidecar';
 
 export const CHART_VERSION = 1;
 
@@ -13,7 +15,6 @@ const {
 export type BaseSidecar = {
   applicationId: string;
   appsApiBaseUrl: string;
-  cdfApiBaseUrl: string;
   docsSiteBaseUrl: string;
   freshchatChannel: string;
   freshchatToken: string;
@@ -26,55 +27,50 @@ export const getAppId = (): string => {
   return 'Cognite Charts';
 };
 
-export const getSidecar = <T extends BaseSidecar>(): T => {
-  // eslint-disable-next-line no-underscore-dangle
-  return ((window as any).__cogniteSidecar as T) || {};
-};
+export const getSidecar = () => sidecar;
 
 export const getAppName = (): string => {
   return getSidecar().applicationId;
 };
 
-export const getAppsApiBaseUrl = (): string => {
-  return getSidecar().appsApiBaseUrl;
+export const useCluster = (): [string, (s: string) => void] => {
+  const [searchParam, setSearchParam] = useSearchParam(CLUSTER_KEY);
+  const { cdfCluster } = getSidecar();
+
+  return [searchParam || cdfCluster, setSearchParam];
 };
 
-export const getCdfApiBaseUrl = (): string => {
-  return getSidecar().cdfApiBaseUrl;
+export const useAppsApiBaseUrl = (): string => {
+  const [cluster] = useCluster();
+  const prod = getEnvironment() === 'PRODUCTION';
+  return `https://apps-api.${prod ? '' : 'staging'}${
+    cluster ? '.' : ''
+  }${cluster}.cognite.ai`;
 };
 
-export const getEnvironment = (hostname = window.location.hostname): string => {
-  // If the environment variable is set, then it takes precedence over
-  // everything else.
-  // Note: if we resolve this with the block above then we can't unit-test it.
-  if (process.env.REACT_APP_APPS_API_BASE_URL) {
-    return process.env.REACT_APP_APPS_API_BASE_URL;
-  }
+export const getAzureAppId = () => {
+  return getEnvironment() === 'PRODUCTION'
+    ? '05aa256f-ba87-4e4c-902a-8e80ae5fb32e'
+    : 'd59a3ab2-7d10-4804-a51f-8c2ac969e605';
+};
 
+export const getEnvironment = (
+  hostname = window.location.hostname
+): 'PRODUCTION' | 'DEVELOPMENT' => {
   if (
-    hostname === 'charts.cogniteapp.com' ||
-    hostname === 'preview.charts.cogniteapp.com'
+    hostname.includes('charts.cogniteapp.com') &&
+    !hostname.includes('pr-') &&
+    !hostname.includes('staging')
   ) {
     return 'PRODUCTION';
   }
 
-  if (
-    hostname === 'staging.charts.cogniteapp.com' ||
-    hostname.includes('.preview.cogniteapp.com') ||
-    hostname.includes('.pr.charts.cogniteapp.com')
-  ) {
-    return 'DEVELOPMENT';
-  }
-
-  // No idea what this is, but let's assume it's production.
-  return 'LOCAL';
+  return 'DEVELOPMENT';
 };
 
 export default {
   appId: getAppId(),
   appName: getAppName(),
-  appsApiBaseURL: getAppsApiBaseUrl(),
-  cdfApiBaseUrl: getCdfApiBaseUrl(),
   apiKey,
   environment: getEnvironment(),
   version: {

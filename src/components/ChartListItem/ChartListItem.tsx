@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
 import { Button, Dropdown, Menu, toast } from '@cognite/cogs.js';
 
 import { Chart } from 'reducers/charts/types';
 import { useDeleteChart, useUpdateChart } from 'hooks/firebase';
-import { useLoginStatus, useIsChartOwner } from 'hooks';
+import { useIsChartOwner, useNavigate } from 'hooks';
 import { duplicate } from 'utils/charts';
 
+import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import { ListViewItem } from './ListViewItem';
 import { GridViewItem } from './GridViewItem';
 
@@ -18,8 +18,9 @@ interface ChartListItemProps {
 }
 
 const ChartListItem = ({ chart, view }: ChartListItemProps) => {
-  const history = useHistory();
-  const { data: login } = useLoginStatus();
+  const move = useNavigate();
+
+  const { data: login } = useUserInfo();
   const { mutateAsync: updateChart, isError: renameError } = useUpdateChart();
   const { mutate: deleteChart, isError: deleteError } = useDeleteChart();
   const [isEditingName, setIsEditingName] = useState<boolean>(false);
@@ -52,14 +53,9 @@ const ChartListItem = ({ chart, view }: ChartListItemProps) => {
   }, [deleteError]);
 
   const handleDuplicateChart = () => {
-    if (login?.user) {
-      const newChart = duplicate(chart, login.user);
-      updateChart(newChart).then(() =>
-        history.push({
-          pathname: `/${newChart.id}`,
-          search: history.location.search,
-        })
-      );
+    if (login?.id) {
+      const newChart = duplicate(chart, login.id);
+      updateChart(newChart).then(() => move(`/${newChart.id}`));
     }
   };
 

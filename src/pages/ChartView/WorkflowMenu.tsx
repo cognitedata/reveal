@@ -3,8 +3,8 @@ import { Menu } from '@cognite/cogs.js';
 import { useUpdateChart } from 'hooks/firebase';
 import { Chart } from 'reducers/charts/types';
 import { duplicateWorkflow } from 'utils/charts';
-import { useLoginStatus } from 'hooks';
 import { trackUsage } from 'utils/metrics';
+import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 
 type Props = {
   chart: Chart;
@@ -13,12 +13,12 @@ type Props = {
 };
 
 export default function WorkflowMenu({ id, chart, children }: Props) {
-  const { data: login } = useLoginStatus();
+  const { data: login } = useUserInfo();
   const { mutate } = useUpdateChart();
 
   const wf = chart?.workflowCollection?.find((t) => t.id === id);
 
-  if (!login?.user || !wf) {
+  if (!login?.id || !wf) {
     return null;
   }
   const duplicate = () => {

@@ -21,12 +21,13 @@ import { useChart, useUpdateChart } from 'hooks/firebase';
 import { nanoid } from 'nanoid';
 import { ChartTimeSeries, ChartWorkflow } from 'reducers/charts/types';
 import { getEntryColor } from 'utils/colors';
-import { useLoginStatus, useQueryString } from 'hooks';
+import { useSearchParam } from 'hooks';
 import { SEARCH_KEY } from 'utils/constants';
 import { metrics, trackUsage } from 'utils/metrics';
 import { ITimer } from '@cognite/metrics';
 import { Modes } from 'pages/types';
 import DetailsSidebar from 'components/DetailsSidebar';
+import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import TimeSeriesRows from './TimeSeriesRows';
 import WorkflowRows from './WorkflowRows';
 
@@ -49,11 +50,11 @@ type ChartViewProps = {
 };
 
 const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
-  const { item: query, setItem: setQuery } = useQueryString(SEARCH_KEY);
+  const [query = '', setQuery] = useSearchParam(SEARCH_KEY, false);
 
   const { chartId = chartIdProp } = useParams<{ chartId: string }>();
   const { data: chart, isError, isFetched } = useChart(chartId);
-  const { data: login } = useLoginStatus();
+  const { data: login } = useUserInfo();
   const [showContextMenu, setShowContextMenu] = useState(false);
 
   const [selectedSourceId, setSelectedSourceId] = useState<
@@ -316,7 +317,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
               </Button>
             </section>
           )}
-          {login?.user && login?.user !== chart?.user && (
+          {login?.id && login?.id !== chart?.user && (
             <section>
               <WarningAlert
                 type="warning"
