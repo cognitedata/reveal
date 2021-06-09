@@ -244,65 +244,64 @@ export const OpenInCharts: FC = () => {
       {(timeserieIds || timeserieExternalIds) && (
         <>
           <div>
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                marginRight: 5,
+            <Checkbox
+              onClick={(e: React.MouseEvent<HTMLLabelElement, MouseEvent>) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (
+                  selectedIds.length ===
+                  compact(timeserieIds.split(',')).length +
+                    compact(timeserieExternalIds.split(',')).length
+                ) {
+                  setSelectedIds([]);
+                } else {
+                  setSelectedIds([
+                    ...compact(timeserieIds.split(',')).map((id) => +id),
+                    ...compact(timeserieExternalIds.split(',')).map(
+                      (id) => +id
+                    ),
+                  ]);
+                }
               }}
+              name="selectAllNone"
+              value={
+                selectedIds.length ===
+                compact(timeserieIds.split(',')).length +
+                  compact(timeserieExternalIds.split(',')).length
+              }
             >
-              <strong>Timeseries ({ts.length})</strong>
-              <div style={{ display: 'flex' }}>
-                Select all/none
-                <Checkbox
-                  onClick={(
-                    e: React.MouseEvent<HTMLLabelElement, MouseEvent>
-                  ) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    if (
-                      selectedIds.length ===
-                      compact(timeserieIds.split(',')).length +
-                        compact(timeserieExternalIds.split(',')).length
-                    ) {
-                      setSelectedIds([]);
-                    } else {
-                      setSelectedIds([
-                        ...compact(timeserieIds.split(',')).map((id) => +id),
-                        ...compact(timeserieExternalIds.split(',')).map(
-                          (id) => +id
-                        ),
-                      ]);
-                    }
-                  }}
-                  name="selectAllNone"
-                  value={
-                    selectedIds.length ===
-                    compact(timeserieIds.split(',')).length +
-                      compact(timeserieExternalIds.split(',')).length
-                  }
-                />
-              </div>
-            </div>
+              Select all/none
+            </Checkbox>
+
             <TSList>
               {ts?.map((t, i) => (
                 <TSItem key={t.id}>
                   <Row>
-                    <InfoContainer>
-                      <ResourceNameWrapper>
-                        <Icon
-                          type="ResourceTimeseries"
-                          style={{ minWidth: 14 }}
-                        />
-                        <span style={{ marginLeft: 5 }}>{t.name}</span>
-                      </ResourceNameWrapper>
-                      <Description>{t.description}</Description>
-                    </InfoContainer>
+                    <Left>
+                      <Checkbox
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleTimeSeriesClick(t);
+                        }}
+                        name={`${t.id}`}
+                        value={selectedIds.includes(t.id)}
+                      />
+                      <InfoContainer>
+                        <ResourceNameWrapper>
+                          <Icon
+                            type="ResourceTimeseries"
+                            style={{ minWidth: 14 }}
+                          />
+                          <span style={{ marginLeft: 5 }}>{t.name}</span>
+                        </ResourceNameWrapper>
+                        <Description>{t.description}</Description>
+                      </InfoContainer>
+                    </Left>
                     <Right>
                       <DelayedComponent delay={250 + i}>
                         <div style={{ width: 190 }}>
                           <TimeseriesChart
-                            height={65}
+                            height={55}
                             showSmallerTicks
                             timeseriesId={t.id}
                             numberOfPoints={25}
@@ -317,14 +316,6 @@ export const OpenInCharts: FC = () => {
                           />
                         </div>
                       </DelayedComponent>
-                      <Checkbox
-                        onClick={(e) => {
-                          e.preventDefault();
-                          handleTimeSeriesClick(t);
-                        }}
-                        name={`${t.id}`}
-                        value={selectedIds.includes(t.id)}
-                      />
                     </Right>
                   </Row>
                 </TSItem>
@@ -398,7 +389,6 @@ const TSList = styled.ul`
 
 const TSItem = styled.li`
   border-radius: 5px;
-  padding: 5px;
   :nth-child(odd) {
     background-color: var(--cogs-greyscale-grey2);
   }
@@ -429,6 +419,11 @@ const ResourceNameWrapper = styled.div`
 const Description = styled.span`
   margin-left: 20px;
   font-size: 10px;
+`;
+
+const Left = styled.div`
+  display: flex;
+  flex-direction: row;
 `;
 
 const Right = styled.div`
