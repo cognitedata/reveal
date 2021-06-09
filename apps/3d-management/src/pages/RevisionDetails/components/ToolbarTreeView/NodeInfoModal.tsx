@@ -1,4 +1,4 @@
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store';
 import { getNodeByTreeIndex } from 'src/pages/RevisionDetails/components/TreeView/utils/treeFunctions';
 import { TreeDataNode } from 'src/pages/RevisionDetails/components/TreeView/types';
@@ -11,10 +11,12 @@ import { Button } from '@cognite/cogs.js';
 import { getContainer } from 'src/utils';
 import styled from 'styled-components';
 import omit from 'lodash/omit';
+import { setNodePropertyFilter } from 'src/store/modules/TreeView';
 
 type DataSource = {
   key: string;
   value: any;
+  action?: React.ReactNode;
 };
 
 // for some reason if Table is used as styled component, styles are not applied
@@ -48,6 +50,7 @@ export const NodeInfoModal = ({ treeIndex, onClose, ...restProps }: Props) => {
   const defaultCdfMetaTabKey = 'cdfMetaTabKey';
   const [activeTabKey, setActiveTabKey] = useState<null | string>(null);
   const [nodeKeys, setNodeKeys] = useState<Array<string>>([]);
+  const dispatch = useDispatch();
 
   const node = useSelector(
     useCallback(
@@ -135,6 +138,21 @@ export const NodeInfoModal = ({ treeIndex, onClose, ...restProps }: Props) => {
           ) : (
             value
           ),
+        ...(tabKey !== defaultCdfMetaTabKey && {
+          action: (
+            <button
+              type="button"
+              onClick={() => {
+                dispatch(
+                  setNodePropertyFilter({ [tabKey]: { [key]: `${value}` } })
+                );
+                onClose();
+              }}
+            >
+              →
+            </button>
+          ),
+        }),
       };
     });
   };
@@ -143,15 +161,15 @@ export const NodeInfoModal = ({ treeIndex, onClose, ...restProps }: Props) => {
     columns: Array<
       {
         title: ColumnProps<DataSource>['title'];
-        key: string;
+        key: keyof DataSource;
       } & Partial<ColumnProps<DataSource>>
     >
   ): Array<ColumnProps<DataSource>> => {
     return columns.map((col) => ({
-      ...col,
       dataIndex: col.key,
       sortDirections: ['ascend', 'descend', 'ascend'],
       sorter: azSortByKey(col.key),
+      ...col,
     }));
   };
 
@@ -193,6 +211,11 @@ export const NodeInfoModal = ({ treeIndex, onClose, ...restProps }: Props) => {
             {
               title: () => <b>Value</b>,
               key: 'value',
+            },
+            {
+              title: null,
+              sorter: undefined,
+              key: 'action',
             },
           ])}
           pagination={false}

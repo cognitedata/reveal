@@ -25,6 +25,7 @@ export function getInitialState(): TreeViewState {
     expandedNodes: [0],
     selectedNodes: [],
     loadingCursors: [],
+    nodePropertyFilter: null,
   };
 }
 
@@ -227,6 +228,14 @@ export default function treeDataReducer(
         error: action.payload.error,
       };
     }
+
+    case 'treeView/setNodePropertyFilter': {
+      return {
+        ...prevState,
+        nodePropertyFilter: action.payload,
+      };
+    }
+
     case 'treeView/resetState': {
       return {
         ...getInitialState(),

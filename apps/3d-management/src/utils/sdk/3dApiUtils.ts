@@ -7,6 +7,12 @@ export interface RevisionLog3D {
   info: string;
 }
 
+export type NodePropertyFilterType = {
+  [category: string]: {
+    [key: string]: string;
+  };
+};
+
 type OutputFormats = 'ept-pointcloud' | 'reveal-directory';
 export type RevisionOutputsRequestBody = {
   models: [{ id: number }];
