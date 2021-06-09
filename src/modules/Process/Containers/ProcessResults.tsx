@@ -12,6 +12,7 @@ import {
 import {
   selectAllFiles,
   selectAllFilesSelected,
+  selectAllSelectedIds,
   setAllFilesSelectState,
   setFileSelectState,
 } from 'src/modules/Common/filesSlice';
@@ -50,6 +51,10 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
     selectAllFilesSelected(state.filesSlice)
   );
 
+  const selectedFileIds = useSelector((state: RootState) =>
+    selectAllSelectedIds(state.filesSlice)
+  );
+
   const data: ResultData[] = useMemo(() => {
     return processFiles.map((file) => {
       const menuActions: FileActions = {
@@ -71,7 +76,6 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
         ...file,
         menu: menuActions,
         mimeType: file.mimeType || '',
-        selected: file.selected,
       };
     });
   }, [processFiles]);
@@ -131,6 +135,7 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
           data={data}
           renderCell={(cellProps: any) => <FileGridPreview {...cellProps} />}
           totalCount={data.length}
+          selectedIds={selectedFileIds}
         />
       );
     }
@@ -144,6 +149,7 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
           totalCount={data.length}
           allRowsSelected={allFilesSelected}
           onSelectAllRows={handleSelectAllFiles}
+          selectedRowIds={selectedFileIds}
         />
       );
     }
@@ -157,6 +163,7 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
         totalCount={data.length}
         allRowsSelected={allFilesSelected}
         onSelectAllRows={handleSelectAllFiles}
+        selectedRowIds={selectedFileIds}
       />
     );
   };

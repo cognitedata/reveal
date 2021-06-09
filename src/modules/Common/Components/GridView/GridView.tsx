@@ -8,6 +8,7 @@ export type GridTableProps<T> = Pick<
   PaginationProps<TableDataItem>,
   'data' | 'tableFooter'
 > & {
+  selectedIds: number[];
   onItemClicked: (item: T) => void;
   renderCell: (cellProps: any) => JSX.Element;
   onSelect?: (item: TableDataItem, selected: boolean) => void;

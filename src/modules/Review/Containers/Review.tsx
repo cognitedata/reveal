@@ -65,7 +65,7 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
   );
 
   const file = useSelector(({ filesSlice }: RootState) =>
-    selectFileById(filesSlice, fileId)
+    selectFileById(filesSlice, +fileId)
   );
 
   const showBackButton =

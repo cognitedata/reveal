@@ -39,7 +39,7 @@ export const FileDetailsReview: React.FC<FileDetailCompProps> = ({
   const dispatch = useDispatch();
 
   const fileDetails = useSelector((state: RootState) =>
-    selectUpdatedFileDetails(state, String(fileObj.id))
+    selectUpdatedFileDetails(state, fileObj.id)
   );
 
   const tableEditMode = useSelector(
@@ -48,7 +48,7 @@ export const FileDetailsReview: React.FC<FileDetailCompProps> = ({
   );
 
   const fileMetadata = useSelector((state: RootState) =>
-    selectUpdatedFileMeta(state, String(fileObj.id))
+    selectUpdatedFileMeta(state, fileObj.id)
   );
 
   const onFieldChange = (key: VisionFileDetailKey, value: any) => {

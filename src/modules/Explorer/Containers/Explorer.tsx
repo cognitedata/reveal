@@ -75,7 +75,7 @@ const Explorer = () => {
 
   const handleItemClick = (
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    { menu, selected, ...file }: TableDataItem,
+    { menu, ...file }: TableDataItem,
     showFileDetailsOnClick: boolean = true
   ) => {
     dispatch(addUploadedFile(file as FileInfo));
@@ -209,7 +209,7 @@ const Explorer = () => {
               />
             </ViewContainer>
           </TablePanel>
-          {showMetadata && (
+          {showMetadata && clickedRowFileId && (
             // eslint-disable-next-line  @cognite/no-number-z-index
             <DrawerContainer style={{ zIndex: 1 }}>
               <QueryClientProvider client={queryClient}>

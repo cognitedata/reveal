@@ -9,7 +9,7 @@ export const PageBasedGridView = (
     pagination?: boolean;
   } & GridTableProps<TableDataItem>
 ) => {
-  const { onItemClicked, renderCell } = props;
+  const { onItemClicked, renderCell, selectedIds } = props;
   return (
     <SorterPaginationWrapper
       data={props.data}
@@ -21,7 +21,10 @@ export const PageBasedGridView = (
           {...props}
           {...paginationProps}
           onItemClicked={(item: any) => onItemClicked(item)}
-          renderCell={(cellProps: any) => renderCell(cellProps)}
+          renderCell={({ item, ...cellProps }: any) => {
+            const selected = selectedIds.includes(item.id);
+            return renderCell({ item, ...cellProps, selected });
+          }}
         />
       )}
     </SorterPaginationWrapper>

@@ -143,7 +143,7 @@ export const editedFileMeta = (state: State): Record<number, MetadataItem> =>
 
 export const selectUpdatedFileDetails = createSelector(
   (state: RootState) => editedFileDetails(state.fileDetailsSlice),
-  (state: RootState, id: string) => selectFileById(state.filesSlice, id),
+  (state: RootState, id: number) => selectFileById(state.filesSlice, id),
   (editedInfo, fileInfo) => {
     if (fileInfo) {
       const mergedInfo: VisionFileDetails = {
@@ -158,7 +158,7 @@ export const selectUpdatedFileDetails = createSelector(
 
 export const selectUpdatedFileMeta = createSelector(
   (state: RootState) => editedFileMeta(state.fileDetailsSlice),
-  (state: RootState, id: string) => selectFileById(state.filesSlice, id),
+  (state: RootState, id: number) => selectFileById(state.filesSlice, id),
   (editedMeta, fileInfo) => {
     let metadata: MetadataItem[] = generateKeyValueArray(fileInfo?.metadata);
 

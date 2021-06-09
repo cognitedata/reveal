@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import {
   selectExplorerAllFilesSelected,
+  selectExplorerSelectedIds,
   setExplorerAllFilesSelectState,
 } from 'src/modules/Explorer/store/explorerSlice';
 import { ResultTableLoader } from './ResultTableLoader';
@@ -35,6 +36,9 @@ export const ExplorerSearchResults = ({
     selectExplorerAllFilesSelected(state.explorerReducer)
   );
 
+  const selectedFileIds = useSelector((state: RootState) =>
+    selectExplorerSelectedIds(state.explorerReducer)
+  );
   const handleSelectAllFiles = (value: boolean) => {
     dispatch(setExplorerAllFilesSelectState(value));
   };
@@ -56,6 +60,7 @@ export const ExplorerSearchResults = ({
               if (currentView === 'grid') {
                 return (
                   <PageBasedGridView
+                    selectedIds={selectedFileIds}
                     onItemClicked={onClick}
                     onSelect={onRowSelect}
                     {...props}
@@ -73,6 +78,7 @@ export const ExplorerSearchResults = ({
                     selectedFileId={selectedId}
                     allRowsSelected={allFilesSelected}
                     onSelectAllRows={handleSelectAllFiles}
+                    selectedRowIds={selectedFileIds}
                     {...props}
                   />
                 );
@@ -86,6 +92,7 @@ export const ExplorerSearchResults = ({
                     selectedFileId={selectedId}
                     allRowsSelected={allFilesSelected}
                     onSelectAllRows={handleSelectAllFiles}
+                    selectedRowIds={selectedFileIds}
                     {...props}
                   />
                 );
@@ -98,6 +105,7 @@ export const ExplorerSearchResults = ({
                   selectedFileId={selectedId}
                   allRowsSelected={allFilesSelected}
                   onSelectAllRows={handleSelectAllFiles}
+                  selectedRowIds={selectedFileIds}
                   {...props}
                 />
               );

@@ -25,7 +25,6 @@ export type ExplorerFileState = {
   metadata?: Metadata;
   linkedAnnotations: string[];
   assetIds?: number[];
-  selected: boolean;
 };
 
 export type State = {
@@ -36,6 +35,7 @@ export type State = {
   filter: FileFilterProps;
   showFilter: boolean;
   showFileUploadModal: boolean;
+  selectedIds: number[];
   files: {
     byId: Record<number, ExplorerFileState>;
     allIds: number[];
@@ -54,6 +54,7 @@ const initialState: State = {
     byId: {},
     allIds: [],
   },
+  selectedIds: [],
 };
 
 const explorerSlice = createSlice({
@@ -88,19 +89,23 @@ const explorerSlice = createSlice({
       ) => {
         const { fileId } = action.payload;
         if (fileId) {
-          const file = state.files.byId[fileId];
-          if (file) {
-            file.selected = action.payload.selectState;
+          const alreadySelected = state.selectedIds.includes(fileId);
+          if (alreadySelected) {
+            const index = state.selectedIds.findIndex((id) => id === fileId);
+            state.selectedIds.splice(index, 1);
+          } else {
+            state.selectedIds.push(fileId);
           }
         }
       },
     },
     setExplorerAllFilesSelectState(state, action: PayloadAction<boolean>) {
-      const allFileIds = state.files.allIds;
-      allFileIds.forEach((fileId) => {
-        const file = state.files.byId[fileId];
-        file.selected = action.payload;
-      });
+      if (action.payload) {
+        const allFileIds = state.files.allIds;
+        state.selectedIds = allFileIds;
+      } else {
+        state.selectedIds = [];
+      }
     },
     setExplorerSelectedFileId(state, action: PayloadAction<number>) {
       state.selectedFileId = action.payload;
@@ -162,6 +167,8 @@ export const {
 export default explorerSlice.reducer;
 
 // selectors
+export const selectExplorerSelectedIds = (state: State): number[] =>
+  state.selectedIds;
 
 export const selectExplorerAllFiles = createSelector(
   (state: State) => state.files.allIds,
@@ -173,18 +180,19 @@ export const selectExplorerAllFiles = createSelector(
 
 export const selectExplorerAllFilesSelected = createSelector(
   (state: State) => state.files.allIds,
-  (state) => state.files.byId,
-  (allIds, allFiles) => {
-    return allIds.length
-      ? allIds.map((id) => allFiles[id]).every((item) => item.selected)
-      : false;
+  selectExplorerSelectedIds,
+  (allIds, selectedFileIds) => {
+    return (
+      !!allIds.length && allIds.every((id) => selectedFileIds.includes(id))
+    );
   }
 );
 
 export const selectExplorerAllSelectedFiles = createSelector(
-  selectExplorerAllFiles,
-  (files) => {
-    return files.filter((file) => file.selected);
+  selectExplorerSelectedIds,
+  (state) => state.files.byId,
+  (selectedIds, allFiles) => {
+    return selectedIds.map((fileId) => allFiles[fileId]);
   }
 );
 
@@ -211,10 +219,11 @@ const updateFileState = (state: State, file: FileState) => {
 const clearFileState = (state: State) => {
   state.files.byId = {};
   state.files.allIds = [];
+  state.selectedIds = [];
 };
 
 const convertToExplorerFileState = (
   fileState: FileState
 ): ExplorerFileState => {
-  return { ...fileState, id: +fileState.id };
+  return { ...fileState };
 };

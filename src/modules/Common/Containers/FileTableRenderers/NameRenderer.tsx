@@ -36,7 +36,7 @@ export const ExifIcon = styled.div`
 
 export function NameRenderer({ rowData: { name, id } }: CellRenderer) {
   const fileDetails = useSelector((state: RootState) =>
-    selectUpdatedFileDetails(state, String(id))
+    selectUpdatedFileDetails(state, id)
   );
   return (
     <FileRow>

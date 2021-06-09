@@ -27,7 +27,9 @@ export const FileGridPreview = ({
   item,
   style,
   onSelect,
+  selected,
 }: {
+  selected: boolean;
   item: TableDataItem;
   style?: React.CSSProperties;
   onSelect?: (item: TableDataItem, selected: boolean) => void;
@@ -36,7 +38,7 @@ export const FileGridPreview = ({
 
   const fileInfo = {
     id: item.id,
-    uploaded: true, // TODO: should not assume this
+    uploaded: item.uploaded,
     mimeType: item.mimeType,
   } as FileInfo;
 
@@ -58,7 +60,7 @@ export const FileGridPreview = ({
   };
 
   const handleItemSelect = (dataItem: TableDataItem) => {
-    if (onSelect) onSelect(dataItem, !dataItem.selected);
+    if (onSelect) onSelect(dataItem, !selected);
   };
 
   const getAnnotationCounts = useMemo(makeSelectAnnotationCounts, []);
@@ -73,7 +75,7 @@ export const FileGridPreview = ({
 
   const reviewDisabled = isProcessingFile(annotationStatuses);
   const fileDetails = useSelector((state: RootState) =>
-    selectUpdatedFileDetails(state, String(item.id))
+    selectUpdatedFileDetails(state, item.id)
   );
 
   return (
@@ -81,7 +83,7 @@ export const FileGridPreview = ({
       <div className="preview">
         <Thumbnail fileInfo={fileInfo} />
         <div className="selection">
-          {useSelectionCheckbox('multiple', item.id, item.selected, () =>
+          {useSelectionCheckbox('multiple', item.id, selected, () =>
             handleItemSelect(item)
           )}
         </div>

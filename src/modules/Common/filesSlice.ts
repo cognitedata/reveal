@@ -7,7 +7,6 @@ import {
 } from '@reduxjs/toolkit';
 import { Asset, FileInfo, Label, Metadata } from '@cognite/cdf-sdk-singleton';
 import { ToastUtils } from 'src/utils/ToastUtils';
-import { ReactText } from 'react';
 import { createFileInfo, createFileState } from 'src/store/util/StateUtils';
 import { UpdateFiles } from 'src/store/thunks/UpdateFiles';
 import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
@@ -16,11 +15,10 @@ import { SaveAnnotations } from 'src/store/thunks/SaveAnnotations';
 import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
 import { DeleteAnnotations } from 'src/store/thunks/DeleteAnnotations';
 import { UpdateAnnotations } from 'src/store/thunks/UpdateAnnotations';
-
 import { CDFStatusModes } from '../Common/Components/CDFStatus/CDFStatus';
 
 export type FileState = {
-  id: ReactText;
+  id: number;
   createdTime: number;
   lastUpdatedTime: number;
   sourceCreatedTime?: number;
@@ -33,7 +31,6 @@ export type FileState = {
   metadata?: Metadata;
   linkedAnnotations: string[];
   assetIds?: number[];
-  selected: boolean;
 };
 
 export type State = {
@@ -41,9 +38,10 @@ export type State = {
   extractExif?: boolean;
   allFilesStatus?: boolean;
   files: {
-    byId: Record<ReactText, FileState>;
-    allIds: ReactText[];
+    byId: Record<number, FileState>;
+    allIds: number[];
   };
+  selectedIds: number[];
   saveState: {
     mode: CDFStatusModes;
     time?: number;
@@ -66,6 +64,7 @@ const initialState: State = {
     byId: {},
     allIds: [],
   },
+  selectedIds: [],
   saveState: {
     mode: 'saved' as CDFStatusModes,
     time: new Date().getTime(),
@@ -101,8 +100,8 @@ const filesSlice = createSlice({
       },
     },
     addFiles: {
-      prepare: (files: FileInfo[]) => {
-        return { payload: files.map((file) => createFileState(file)) };
+      prepare: (files: FileState[]) => {
+        return { payload: files };
       },
       reducer: (state, action: PayloadAction<FileState[]>) => {
         const files = action.payload;
@@ -152,19 +151,23 @@ const filesSlice = createSlice({
       ) => {
         const { fileId } = action.payload;
         if (fileId) {
-          const file = state.files.byId[fileId];
-          if (file) {
-            file.selected = action.payload.selectState;
+          const alreadySelected = state.selectedIds.includes(fileId);
+          if (alreadySelected) {
+            const index = state.selectedIds.findIndex((id) => id === fileId);
+            state.selectedIds.splice(index, 1);
+          } else {
+            state.selectedIds.push(fileId);
           }
         }
       },
     },
     setAllFilesSelectState(state, action: PayloadAction<boolean>) {
-      const allFileIds = state.files.allIds;
-      allFileIds.forEach((fileId) => {
-        const file = state.files.byId[fileId];
-        file.selected = action.payload;
-      });
+      if (action.payload) {
+        const allFileIds = state.files.allIds;
+        state.selectedIds = allFileIds.map((id) => +id);
+      } else {
+        state.selectedIds = [];
+      }
     },
   },
   extraReducers: (builder) => {
@@ -233,6 +236,9 @@ export const {
 
 export default filesSlice.reducer;
 
+export const selectAllSelectedIds = (state: State): number[] =>
+  state.selectedIds;
+
 export const selectAllFiles = createSelector(
   (state: State) => state.files.allIds,
   (state) => state.files.byId,
@@ -243,23 +249,24 @@ export const selectAllFiles = createSelector(
 
 export const selectAllFilesSelected = createSelector(
   (state: State) => state.files.allIds,
-  (state) => state.files.byId,
-  (allIds, allFiles) => {
-    return allIds.length
-      ? allIds.map((id) => allFiles[id]).every((item) => !!item.selected)
-      : false;
+  selectAllSelectedIds,
+  (allIds, selectedFileIds) => {
+    return (
+      !!allIds.length && allIds.every((id) => selectedFileIds.includes(id))
+    );
   }
 );
 
 export const selectAllSelectedFiles = createSelector(
-  selectAllFiles,
-  (files) => {
-    return files.filter((file) => file.selected);
+  selectAllSelectedIds,
+  (state) => state.files.byId,
+  (selectedIds, allFiles) => {
+    return selectedIds.map((fileId) => allFiles[fileId]);
   }
 );
 
 export const selectFileById = createSelector(
-  (_: State, fileId: string) => fileId,
+  (_: State, fileId: number) => fileId,
   (state) => state.files.byId,
   (fileId, files) => {
     const file = files[fileId];
@@ -269,9 +276,9 @@ export const selectFileById = createSelector(
 
 // state utility functions
 
-const deleteFileById = (state: State, id: ReactText) => {
+const deleteFileById = (state: State, id: number) => {
   delete state.files.byId[id];
-  state.files.allIds = Object.keys(state.files.byId);
+  state.files.allIds = Object.keys(state.files.byId).map((key) => +key);
 };
 
 const updateFileState = (state: State, file: FileState) => {
@@ -285,4 +292,5 @@ const updateFileState = (state: State, file: FileState) => {
 const clearFileState = (state: State) => {
   state.files.byId = {};
   state.files.allIds = [];
+  state.selectedIds = [];
 };

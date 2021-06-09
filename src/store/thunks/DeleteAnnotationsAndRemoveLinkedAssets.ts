@@ -4,7 +4,7 @@ import { AnnotationStatus } from 'src/utils/AnnotationUtils';
 import { UpdateFiles } from 'src/store/thunks/UpdateFiles';
 import { DeleteAnnotations } from 'src/store/thunks/DeleteAnnotations';
 import { deleteAnnotationsFromState } from 'src/store/commonActions';
-import { VisionAnnotationState } from '../../modules/Review/previewSlice';
+import { VisionAnnotationState } from 'src/modules/Review/previewSlice';
 
 export const DeleteAnnotationsAndRemoveLinkedAssets = createAsyncThunk<
   void,
@@ -13,11 +13,11 @@ export const DeleteAnnotationsAndRemoveLinkedAssets = createAsyncThunk<
 >(
   'DeleteAnnotationsAndRemoveLinkedAssets',
   async (annotationIds, { getState, dispatch }) => {
-    const removeAssetIdsFromFile = (fileId: string, assetIds: number[]) => {
+    const removeAssetIdsFromFile = (fileId: number, assetIds: number[]) => {
       dispatch(
         UpdateFiles([
           {
-            id: Number(fileId),
+            id: fileId,
             update: {
               assetIds: {
                 remove: assetIds,

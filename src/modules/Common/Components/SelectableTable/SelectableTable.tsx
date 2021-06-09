@@ -23,6 +23,7 @@ export type SelectableTableProps = Omit<
   'width'
 > &
   PaginationProps<TableDataItem> & {
+    selectedRowIds: number[];
     allRowsSelected: boolean;
     selectable: boolean;
     selectedFileId?: number | null;
@@ -44,9 +45,18 @@ export type SelectableTableProps = Omit<
     };
   };
 
+const defaultCellRenderers = {
+  header: StringHeaderRenderer,
+  selected: SelectionRenderer,
+  selectedHeader: SelectAllHeaderRenderer,
+};
+
+let rendererMap: { [key: string]: (props: CellRenderer) => JSX.Element } = {};
+
 export function SelectableTable(props: SelectableTableProps) {
   const tableRef = useRef<any>(null);
   const {
+    selectedRowIds,
     allRowsSelected,
     selectable,
     data,
@@ -72,15 +82,9 @@ export function SelectableTable(props: SelectableTableProps) {
     onRowSelect(rowData, selected);
   };
 
-  const [rendererMap, columns]: [
-    { [key: string]: (props: CellRenderer) => JSX.Element },
-    SelectableTableColumnShape<TableDataItem>[]
-  ] = useMemo(() => {
+  const columns: SelectableTableColumnShape<TableDataItem>[] = useMemo(() => {
+    rendererMap = { ...defaultCellRenderers, ...props.rendererMap };
     if (selectable) {
-      const localRendererMap = {
-        ...props.rendererMap,
-        selected: SelectionRenderer,
-      };
       const selectionColumn = {
         key: 'selected',
         title: 'All',
@@ -91,11 +95,11 @@ export function SelectableTable(props: SelectableTableProps) {
         align: Column.Alignment.LEFT,
         allSelected: allRowsSelected,
         onSelectAll: onSelectAllRows,
+        selectedIds: selectedRowIds,
       };
-      const cols = [selectionColumn, ...props.columns];
-      return [localRendererMap, cols];
+      return [selectionColumn, ...props.columns];
     }
-    return [props.rendererMap, props.columns];
+    return props.columns;
   }, [props.columns, selectable, props.rendererMap, props.data]);
 
   const Cell = (cellProps: any) => {

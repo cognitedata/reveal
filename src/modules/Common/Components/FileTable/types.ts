@@ -22,6 +22,7 @@ export type FileTableProps = Omit<
   'data' | 'width'
 > &
   PaginatedTableProps<TableDataItem> & {
+    selectedRowIds: number[];
     allRowsSelected: boolean;
     onSelectAllRows: (value: boolean) => void;
   };
@@ -32,6 +33,7 @@ export type FileExplorerTableProps = Omit<
 > &
   PaginatedTableProps<TableDataItem> & {
     modalView?: boolean;
+    selectedRowIds: number[];
     allRowsSelected: boolean;
     onSelectAllRows: (value: boolean) => void;
   };

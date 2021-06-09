@@ -38,7 +38,7 @@ export function ActionRenderer({ rowData: { menu, id } }: CellRenderer) {
     getAnnotationStatuses(processSlice, id)
   );
   const fileDetails = useSelector((state: RootState) =>
-    selectUpdatedFileDetails(state, String(id))
+    selectUpdatedFileDetails(state, id)
   );
 
   const reviewDisabled = isProcessingFile(annotationStatuses);

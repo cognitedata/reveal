@@ -36,7 +36,7 @@ export const MapPopup = ({
 
   const fileInfo = {
     id: item.id,
-    uploaded: true,
+    uploaded: item.uploaded,
     mimeType: item.mimeType,
   } as FileInfo;
 
@@ -70,7 +70,7 @@ export const MapPopup = ({
   const reviewDisabled = isProcessingFile(annotationStatuses);
 
   const fileDetails = useSelector((state: RootState) =>
-    selectUpdatedFileDetails(state, String(item.id))
+    selectUpdatedFileDetails(state, item.id)
   );
 
   return (

@@ -18,6 +18,7 @@ import { isVideo } from 'src/modules/Common/Components/FileUploader/utils/FileUt
 import {
   addFiles,
   addUploadedFile,
+  FileState,
   selectAllFiles,
 } from 'src/modules/Common/filesSlice';
 import { VisionAPIType } from 'src/api/types';
@@ -25,7 +26,7 @@ import { getContainer } from 'src/utils';
 import { FileUploadModal } from 'src/modules/Common/Components/FileUploaderModal/FileUploaderModal';
 import { ExploreModal } from 'src/modules/Common/Components/ExploreModal/ExploreModal';
 import { TableDataItem } from 'src/modules/Common/types';
-import { FileFilterProps, FileInfo } from '@cognite/cdf-sdk-singleton';
+import { FileFilterProps } from '@cognite/cdf-sdk-singleton';
 import {
   selectExplorerAllSelectedFiles,
   selectExplorerSelectedFileIds,
@@ -111,7 +112,7 @@ export const ProcessToolBar = () => {
   const filter = useSelector(
     ({ explorerReducer }: RootState) => explorerReducer.filter
   );
-  const selectedExploreModalFiles: FileInfo[] = useSelector(
+  const selectedExploreModalFiles: FileState[] = useSelector(
     (state: RootState) => {
       return selectExplorerAllSelectedFiles(state.explorerReducer);
     }
@@ -122,11 +123,7 @@ export const ProcessToolBar = () => {
   const handleExploreSearchChange = (text: string) => {
     dispatch(setExplorerQueryString(text));
   };
-  const handleExplorerModalItemClick = ({
-    menu,
-    selected,
-    ...file
-  }: TableDataItem) => {
+  const handleExplorerModalItemClick = ({ menu, ...file }: TableDataItem) => {
     dispatch(setExplorerSelectedFileId(file.id));
   };
   const handleExploreModalRowSelect = (

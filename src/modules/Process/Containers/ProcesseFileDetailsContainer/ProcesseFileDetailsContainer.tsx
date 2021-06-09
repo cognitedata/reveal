@@ -43,7 +43,7 @@ export const ProcessFileDetailsContainer = () => {
       );
     }
   };
-  if (showFileDetails) {
+  if (showFileDetails && fileId) {
     return (
       <Container>
         <QueryClientProvider client={queryClient}>

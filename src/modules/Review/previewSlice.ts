@@ -40,7 +40,7 @@ export interface VisibleAnnotations extends VisionAnnotationState {
 
 export interface VisionModelState {
   modelId: string;
-  fileId: string;
+  fileId: number;
   modelType: VisionAPIType;
   annotations: number[];
 }
@@ -380,7 +380,7 @@ export const addEditAnnotationsToState = (
       String(item.annotatedResourceId),
       modelType
     );
-    const fileId = String(item.annotatedResourceId);
+    const fileId = item.annotatedResourceId;
 
     if (!state.models.byId[modelId]) {
       state.models.byId[modelId] = {

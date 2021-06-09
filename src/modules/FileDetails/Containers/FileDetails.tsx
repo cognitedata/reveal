@@ -24,14 +24,14 @@ export const FileDetails = ({
   onClose,
   onReview,
 }: {
-  fileId: number | null;
+  fileId: number;
   onClose: () => void;
   onReview: () => void;
 }) => {
   const dispatch = useDispatch();
 
   const fileDetails = useSelector((state: RootState) =>
-    selectUpdatedFileDetails(state, String(fileId))
+    selectUpdatedFileDetails(state, fileId)
   );
 
   const tableEditMode = useSelector(
@@ -40,7 +40,7 @@ export const FileDetails = ({
   );
 
   const fileMetadata = useSelector((state: RootState) =>
-    selectUpdatedFileMeta(state, String(fileId))
+    selectUpdatedFileMeta(state, fileId)
   );
 
   if (!fileId) {

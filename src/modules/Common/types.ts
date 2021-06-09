@@ -43,14 +43,14 @@ export type FileActions = {
 
 export type TableDataItem = Pick<
   FileInfo,
-  'id' | 'mimeType' | 'name' | 'sourceCreatedTime' | 'geoLocation'
+  'id' | 'mimeType' | 'name' | 'sourceCreatedTime' | 'geoLocation' | 'uploaded'
 > & {
   menu: FileActions;
-  selected: boolean;
 };
 
 export type ResultData = TableDataItem;
 export interface SelectableTableColumnShape<T> extends ColumnShape<T> {
+  selectedIds?: number[];
   allSelected?: boolean;
   onSelectAll?: (value: boolean) => void;
 }
