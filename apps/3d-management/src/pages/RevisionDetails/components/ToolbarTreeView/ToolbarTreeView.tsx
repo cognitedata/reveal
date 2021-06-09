@@ -32,6 +32,7 @@ import { treeViewFocusContainerId } from 'src/pages/RevisionDetails/components/T
 import ErrorBoundary from 'src/components/ErrorBoundary';
 import { Button, Title } from '@cognite/cogs.js';
 import { v3Client } from '@cognite/cdf-sdk-singleton';
+import { useViewerNodeClickListener } from 'src/pages/RevisionDetails/components/ToolbarTreeView/hooks/useViewerNodeClickListener';
 import { NodeInfoModal } from './NodeInfoModal';
 
 import { useResizeHandler } from './hooks/useResizeHander';
@@ -106,10 +107,14 @@ function ToolbarTreeViewComponent(props: TreeViewWrapperProps) {
     };
   }, [modelId, revisionId, dispatch]);
 
-  useSelectedNodesHighlights({
+  useViewerNodeClickListener({
     viewer: props.viewer,
     model: props.model,
     treeViewRef,
+  });
+
+  useSelectedNodesHighlights({
+    model: props.model,
   });
 
   useCheckedNodesVisibility({
