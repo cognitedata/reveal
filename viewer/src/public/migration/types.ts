@@ -24,7 +24,6 @@ export type Color = {
  * @param itemsLoaded Number of items loaded so far in this batch.
  * @param itemsRequested Total number of items to load in this batch.
  * @param itemsCulled Number of items deemed unnecessary to load in this batch.
- * @version itemsCulled is new in 2.0.0
  */
 export type OnLoadingCallback = (itemsLoaded: number, itemsRequested: number, itemsCulled: number) => void;
 
@@ -43,7 +42,6 @@ export interface Cognite3DViewerOptions {
 
   /**
    * Render to offscreen buffer instead of canvas.
-   * @version new in 1.3.0
    */
   renderTargetOptions?: { target: THREE.WebGLRenderTarget; autoSetSize?: boolean };
 
@@ -60,8 +58,6 @@ export interface Cognite3DViewerOptions {
    * viewer.camera.far = 1000.0;
    * viewer.camera.updateProjectionMatrix();
    * ```
-   *
-   * @version new in 1.4.0
    */
   automaticCameraNearFar?: boolean;
 
@@ -71,7 +67,6 @@ export interface Cognite3DViewerOptions {
    *
    * When not set, control the sensitivity of the camera using `viewer.cameraControls.minDistance`
    * and `viewer.cameraControls.maxDistance`.
-   * @version new in 1.4.0
    */
   automaticControlsSensitivity?: boolean;
 
@@ -93,8 +88,6 @@ export interface Cognite3DViewerOptions {
    * "plain" MSAA modes on WebGL 1.
    *
    * Currently the default mode is FXAA, but this is subject to change.
-   *
-   * @version new in 1.3.0
    */
   antiAliasingHint?:
     | 'disabled'
@@ -111,8 +104,6 @@ export interface Cognite3DViewerOptions {
   /**
    * Hints the renderer of the quality it should aim for for screen space ambient occlusion,
    * an effect creating shadows and that gives the rendered image more depth.
-   *
-   * @version new in 1.4.0
    */
   ssaoQualityHint?: 'medium' | 'high' | 'veryhigh' | 'disabled';
 
@@ -264,14 +255,12 @@ export type CadModelBudget = {
 
 /**
  * Options to control how {@link Cognite3DViewer.getIntersectionFromPixel} behaves.
- * @version new in 1.3.0
  */
 export interface IntersectionFromPixelOptions {
   /**
    * Threshold (in meters) for how close a point must be an intersection
    * ray for it to be considered an intersection for point clouds. Defaults
    * to 0.05.
-   * @version new in 1.3.0
    */
   pointIntersectionThreshold?: number;
 }
