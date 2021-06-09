@@ -10,9 +10,13 @@ export type IndexNode = IntermediateIndexNode | LeafIndexNode;
 export class IndexSet {
   rootNode?: IndexNode;
 
-  constructor(values?: Iterable<number>) {
+  constructor(values?: Iterable<number>);
+  constructor(values?: NumericRange);
+  constructor(values?: Iterable<number> | NumericRange) {
     if (values == undefined) {
       this.rootNode = undefined;
+    } else if (values instanceof NumericRange) {
+      this.addRange(values);
     } else {
       for (const index of values) {
         this.add(index);
