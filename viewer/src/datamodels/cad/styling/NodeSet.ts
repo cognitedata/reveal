@@ -8,7 +8,6 @@ import { IndexSet } from '../../../utilities/IndexSet';
 
 /**
  * Abstract class for implementing a set of nodes to be styled.
- * @version New in 2.0.0
  */
 export abstract class NodeSet {
   private readonly _changedEvent = new EventTrigger<() => void>();
