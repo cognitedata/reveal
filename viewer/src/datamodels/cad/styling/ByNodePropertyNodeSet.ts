@@ -22,20 +22,14 @@ export type ByNodePropertyNodeSetOptions = {
   requestPartitions?: number;
 };
 
-export type ByNodePropertyNodeSetFilter = {
-  [category: string]: {
-    [key: string]: string;
-  };
-};
-
-export class ByNodePropertyNodeSet extends NodeSet implements ExecutesFilter<ByNodePropertyNodeSetFilter> {
+export class ByNodePropertyNodeSet extends NodeSet implements ExecutesFilter {
   private readonly _client: CogniteClient;
   private _indexSet = new IndexSet();
   private readonly _modelId: number;
   private readonly _revisionId: number;
   private readonly _options: Required<ByNodePropertyNodeSetOptions>;
   private _fetchResultHelper: PopulateIndexSetFromPagedResponseHelper<Node3D> | undefined;
-  private _filter: ByNodePropertyNodeSetFilter | undefined;
+  private _filter = {};
 
   constructor(client: CogniteClient, model: Cognite3DModel, options: ByNodePropertyNodeSetOptions = {}) {
     super(ByNodePropertyNodeSet.name);
@@ -49,7 +43,11 @@ export class ByNodePropertyNodeSet extends NodeSet implements ExecutesFilter<ByN
     return this._fetchResultHelper !== undefined && this._fetchResultHelper.isLoading;
   }
 
-  async executeFilter(filter: ByNodePropertyNodeSetFilter): Promise<void> {
+  async executeFilter(filter: {
+    [category: string]: {
+      [key: string]: string;
+    };
+  }): Promise<void> {
     const indexSet = new IndexSet();
     const { requestPartitions } = this._options;
 
@@ -81,7 +79,7 @@ export class ByNodePropertyNodeSet extends NodeSet implements ExecutesFilter<ByN
     await Promise.all(requests);
   }
 
-  getFilter(): ByNodePropertyNodeSetFilter | undefined {
+  getFilter() {
     return this._filter;
   }
 

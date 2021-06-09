@@ -17,11 +17,14 @@ import {
   ByTreeIndexNodeSet,
   IndexSet,
   ByNodePropertyNodeSet,
-  DefaultNodeAppearance
+  DefaultNodeAppearance,
+  ByAssetNodeSet,
+  NodeOutlineColor
 } from '@cognite/reveal';
 import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, AxisViewTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
 import { CadNode } from '@cognite/reveal/internals';
+import { ViewerState } from '@cognite/reveal/utilities/ViewStateHelper';
 
 window.THREE = THREE;
 (window as any).reveal = reveal;
@@ -100,6 +103,70 @@ export function Migration() {
       });
       (window as any).viewer = viewer;
 
+      const myState = {
+        "cameraPosition": {
+          "x": 165.60324096679688,
+          "y": 41.64951705932617,
+          "z": -10.940159797668443
+        },
+        "cameraTarget": {
+          "x": 130.53717041015625,
+          "y": 49.13856887817383,
+          "z": -119.09518432617188
+        },
+        "models": [
+          {
+            "defaultNodeAppearance": {
+              "renderGhosted": true
+            },
+            "modelId": 3356984403684032,
+            "revisionId": 6664823881595566,
+            "styledFilters": [
+              {
+                "typeToken": "ByNodePropertyNodeSet",
+                "filter": {
+                  "PDMS": {
+                    "Function": "EP"
+                  }
+                },
+                "appearance": {
+                  "renderGhosted": false,
+                  "color": [
+                    40,
+                    200,
+                    20
+                  ]
+                }
+              },
+              {
+                "typeToken": "ByAssetNodeSet",
+                "filter": {},
+                "appearance": {
+                  "renderGhosted": false,
+                  "outlineColor": 3
+                }
+              }
+            ],
+            "styledIndices": [
+              {
+                "indexRanges": [
+                  {
+                    "from": 399745,
+                    "count": 1,
+                    "toInclusive": 399745
+                  }
+                ],
+                "appearance": {
+                  "outlineColor": 7,
+                  "renderInFront": true,
+                  "renderGhosted": false
+                }
+              }
+            ]
+          }
+        ]
+      } as ViewerState;
+
       async function addModel(options: AddModelOptions) {
         try {
           const model = await viewer.addModel(options);
@@ -112,13 +179,20 @@ export function Migration() {
           viewer.loadCameraFromModel(model);
           if (model instanceof Cognite3DModel) {
             cadModels.push(model);
-            const allPipes = new ByNodePropertyNodeSet(client, model);
-            allPipes.executeFilter({'PDMS': {'Function': 'EP'}});
-            model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
-            model.addStyledNodeSet(allPipes, { renderGhosted: false, color: [40, 200, 20] } );
+            // const allPipes = new ByNodePropertyNodeSet(client, model);
+            // allPipes.executeFilter({'PDMS': {'Function': 'EP'}});
+            // model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
+            // model.addStyledNodeSet(allPipes, { renderGhosted: false, color: [40, 200, 20] } );
 
-            const highlight = new ByTreeIndexNodeSet([399745]);
-            model.addStyledNodeSet(highlight, {outlineColor: reveal.NodeOutlineColor.Orange, renderInFront: true, renderGhosted: false});
+            // const allAssetMappedNodes = new ByAssetNodeSet(client, model);
+            // allAssetMappedNodes.executeFilter({});
+            // model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
+            // model.addStyledNodeSet(allAssetMappedNodes, {renderGhosted: false, outlineColor: NodeOutlineColor.Cyan } );
+
+            // const highlight = new ByTreeIndexNodeSet([399745]);
+            // model.addStyledNodeSet(highlight, {outlineColor: reveal.NodeOutlineColor.Orange, renderInFront: true, renderGhosted: false});
+            // console.log(JSON.stringify(viewer.getViewState(), null, 2));
+            viewer.setViewState(myState);
           } else if (model instanceof CognitePointCloudModel) {
             pointCloudModels.push(model);
             pointCloudParams.apply();
@@ -427,9 +501,6 @@ export function Migration() {
         const modelId = Number.parseInt(modelIdStr, 10);
         const revisionId = Number.parseInt(revisionIdStr, 10);
         await addModel({ modelId, revisionId, geometryFilter: createGeometryFilterFromState(guiState.geometryFilter) });
-
-        const viewState = viewer.getViewState();
-        console.log(JSON.stringify(viewState, undefined, 2));
       }
 
       const selectedSet = new ByTreeIndexNodeSet([]);

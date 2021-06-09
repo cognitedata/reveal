@@ -5,9 +5,14 @@
 import { NumericRange } from '.';
 import ComboControls from '../combo-camera-controls';
 import { NodeAppearance } from '../datamodels/cad/NodeAppearance';
+import { ByAssetNodeSet, ByNodePropertyNodeSet, ByTreeIndexNodeSet, NodeSet } from '../datamodels/cad/styling';
 import { ExecutesFilter } from '../datamodels/cad/styling/ExecutesFilter';
 import { Cognite3DModel } from '../public/migration/Cognite3DModel';
 import { Cognite3DViewer } from '../public/migration/Cognite3DViewer';
+import { CogniteClient } from '@cognite/sdk';
+import { ByNodePropertyNodeSetOptions } from '../datamodels/cad/styling/ByNodePropertyNodeSet';
+import * as THREE from 'three';
+import { IndexSet } from './indexset/IndexSet';
 
 export type ViewerState = {
   cameraTarget: THREE.Vector3;
@@ -26,10 +31,30 @@ export type ModelState = {
 export class ViewStateHelper {
   private readonly _cameraControls: ComboControls;
   private readonly _viewer: Cognite3DViewer;
+  private _client: CogniteClient;
+  private _map = new Map<
+    string,
+    (client: CogniteClient, model: Cognite3DModel, options?: any) => NodeSet & ExecutesFilter
+  >();
 
-  constructor(viewer: Cognite3DViewer) {
+  constructor(viewer: Cognite3DViewer, client: CogniteClient) {
     this._viewer = viewer;
+    this._client = client;
     this._cameraControls = viewer.cameraControls;
+    this.registerNodeSets();
+  }
+
+  private registerNodeSets() {
+    this._map.set(
+      ByNodePropertyNodeSet.name,
+      (client: CogniteClient, model: Cognite3DModel, options?: ByNodePropertyNodeSetOptions) =>
+        new ByNodePropertyNodeSet(client, model, options)
+    );
+
+    this._map.set(
+      ByAssetNodeSet.name,
+      (client: CogniteClient, model: Cognite3DModel) => new ByAssetNodeSet(client, model)
+    );
   }
 
   public getCurrentState(): ViewerState {
@@ -71,16 +96,27 @@ export class ViewStateHelper {
       cameraTarget: cameraState.target,
       models: modelStates
     };
-    function isExecutesFilter(nodeSet: any): nodeSet is ExecutesFilter<any> {
+
+    function isExecutesFilter(nodeSet: any): nodeSet is ExecutesFilter {
       return (
-        (nodeSet as ExecutesFilter<any>).executeFilter !== undefined &&
-        (nodeSet as ExecutesFilter<any>).getFilter !== undefined
+        (nodeSet as ExecutesFilter).executeFilter !== undefined && (nodeSet as ExecutesFilter).getFilter !== undefined
       );
     }
   }
 
   public setState(viewerState: ViewerState): void {
-    this._cameraControls.setState(viewerState.cameraPosition, viewerState.cameraTarget);
+    const cameraPosition = new THREE.Vector3(
+      viewerState.cameraPosition.x,
+      viewerState.cameraPosition.y,
+      viewerState.cameraPosition.z
+    );
+
+    const cameraTarget = new THREE.Vector3(
+      viewerState.cameraTarget.x,
+      viewerState.cameraTarget.y,
+      viewerState.cameraTarget.z
+    );
+    this._cameraControls.setState(cameraPosition, cameraTarget);
 
     const cadModels = this._viewer.models
       .filter(model => model instanceof Cognite3DModel)
@@ -88,18 +124,32 @@ export class ViewStateHelper {
 
     viewerState.models
       .map(state => {
-        const test = cadModels.find(model => model.modelId == state.modelId && model.revisionId == state.revisionId);
-        if (test === undefined) {
+        const model = cadModels.find(model => model.modelId == state.modelId && model.revisionId == state.revisionId);
+        if (model === undefined) {
           throw new Error(
             `Cannot apply model state. Model (modelId: ${state.modelId}, revisionId: ${state.revisionId}) has not been added to viewer.`
           );
         }
 
-        return { model: test, state: state };
+        return { model: model, state: state };
       })
-      .forEach(p => {
-        const { model, state } = p;
+      .forEach(modelState => {
+        const { model, state } = modelState;
         model.setDefaultNodeAppearance(state.defaultNodeAppearance);
+
+        state.styledFilters.forEach(styleFilter => {
+          const nodeSetTypeConstructor = this._map.get(styleFilter.typeToken)!;
+          const nodeSetInstance = nodeSetTypeConstructor(this._client, model);
+          nodeSetInstance.executeFilter(styleFilter.filter);
+          model.addStyledNodeSet(nodeSetInstance, styleFilter.appearance);
+        });
+
+        state.styledIndices.forEach(styledIndices => {
+          const indexSet = new IndexSet();
+          styledIndices.indexRanges.forEach(range => indexSet.addRange(new NumericRange(range.from, range.count)));
+          const treeIndexStyleSet = new ByTreeIndexNodeSet(indexSet);
+          model.addStyledNodeSet(treeIndexStyleSet, styledIndices.appearance);
+        });
       });
   }
 }

@@ -56,7 +56,7 @@ import {
 import { PropType } from '../../utilities/reflection';
 import { CadModelSectorLoadStatistics } from '../../datamodels/cad/CadModelSectorLoadStatistics';
 import ComboControls from '../../combo-camera-controls';
-import { ViewStateHelper } from '../../utilities/ViewStateHelper';
+import { ViewerState, ViewStateHelper } from '../../utilities/ViewStateHelper';
 
 type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered' | 'disposed';
 
@@ -231,7 +231,7 @@ export class Cognite3DViewer {
     this.sdkClient = options.sdk;
     this.renderController = new RenderController(this.camera);
 
-    this._viewStateHelper = new ViewStateHelper(this);
+    this._viewStateHelper = new ViewStateHelper(this, this.sdkClient);
 
     const revealOptions = createRevealManagerOptions(options);
 
@@ -428,6 +428,14 @@ export class Cognite3DViewer {
    */
   getViewState() {
     return this._viewStateHelper.getCurrentState();
+  }
+
+  /**
+   * Asdasdadsd.
+   * @param state
+   */
+  setViewState(state: ViewerState) {
+    this._viewStateHelper.setState(state);
   }
 
   /**

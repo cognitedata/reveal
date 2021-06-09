@@ -10,12 +10,14 @@ import { IndexSet } from '../../../utilities/IndexSet';
 import { PopulateIndexSetFromPagedResponseHelper } from './PopulateIndexSetFromPagedResponseHelper';
 import { NumericRange } from '../../../utilities/NumericRange';
 import { NodeSet } from './NodeSet';
+import { ExecutesFilter } from './ExecutesFilter';
 
-export class ByAssetNodeSet extends NodeSet {
+export class ByAssetNodeSet extends NodeSet implements ExecutesFilter {
   private readonly _client: CogniteClient;
   private _indexSet = new IndexSet();
   private readonly _model: Cognite3DModel;
   private _fetchResultHelper: PopulateIndexSetFromPagedResponseHelper<AssetMapping3D> | undefined;
+  private _filter: any;
 
   constructor(client: CogniteClient, model: Cognite3DModel) {
     super(ByAssetNodeSet.name);
@@ -60,6 +62,8 @@ export class ByAssetNodeSet extends NodeSet {
     const indexSet = new IndexSet();
     this._indexSet = indexSet;
 
+    this._filter = filter;
+
     const request = this._client.assetMappings3D.list(model.modelId, model.revisionId, filterQuery);
     const completed = await fetchResultHelper.pageResults(indexSet, request);
 
@@ -67,6 +71,10 @@ export class ByAssetNodeSet extends NodeSet {
       // Completed without being interrupted
       this._fetchResultHelper = undefined;
     }
+  }
+
+  getFilter() {
+    return this._filter;
   }
 
   getIndexSet(): IndexSet {
