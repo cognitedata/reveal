@@ -39,6 +39,8 @@ export class ByAssetNodeSet extends NodeSet {
    * Updates the node set to hold nodes associated with the asset given, or
    * assets within the bounding box or all assets associated with the 3D model.
    * @param filter
+   * @param filter.assetId      ID of a single [asset]{@link https://docs.cognite.com/dev/concepts/resource_types/assets.html} (optional)
+   * @param filter.boundingBox  When provided, only assets within the provided bounds will be included in the filter.
    */
   async executeFilter(filter: { assetId?: number; boundingBox?: THREE.Box3 }): Promise<void> {
     const model = this._model;
