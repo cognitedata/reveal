@@ -10,9 +10,9 @@ import { NodeSet } from './NodeSet';
 export class ByTreeIndexNodeSet extends NodeSet {
   private _set: IndexSet;
 
-  constructor(treeIndexSet: IndexSet);
-  constructor(treeIndices: Iterable<number>);
-  constructor(values: IndexSet | Iterable<number>) {
+  constructor(treeIndexSet?: IndexSet);
+  constructor(treeIndices?: Iterable<number>);
+  constructor(values?: IndexSet | Iterable<number>) {
     super();
     if (values instanceof IndexSet) {
       this._set = values;
