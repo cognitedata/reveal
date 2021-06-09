@@ -70,7 +70,7 @@ export class ByNodePropertyNodeSet extends NodeSet {
       this._fetchResultHelper.interrupt();
     }
     const fetchResultHelper = new PopulateIndexSetFromPagedResponseHelper<Node3D>(
-      assetMapping => new NumericRange(assetMapping.treeIndex, assetMapping.subtreeSize),
+      node => new NumericRange(node.treeIndex, node.subtreeSize),
       () => this.notifyChanged()
     );
     this._fetchResultHelper = fetchResultHelper;
