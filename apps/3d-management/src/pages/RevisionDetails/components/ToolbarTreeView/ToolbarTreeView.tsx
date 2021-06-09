@@ -6,8 +6,13 @@ import {
   TreeDataNode,
   TreeLoadMoreNode,
 } from 'src/pages/RevisionDetails/components/TreeView/types';
-import { Cognite3DModel, Cognite3DViewer } from '@cognite/reveal';
-import { useSelector, useDispatch } from 'react-redux';
+import {
+  ByNodePropertyNodeSet,
+  Cognite3DModel,
+  Cognite3DViewer,
+  NodeOutlineColor,
+} from '@cognite/reveal';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store';
 import {
   checkNodes,
@@ -26,6 +31,7 @@ import styled from 'styled-components';
 import { treeViewFocusContainerId } from 'src/pages/RevisionDetails/components/ToolbarTreeView/treeViewFocusContainerId';
 import ErrorBoundary from 'src/components/ErrorBoundary';
 import { Button, Title } from '@cognite/cogs.js';
+import { v3Client } from '@cognite/cdf-sdk-singleton';
 import { NodeInfoModal } from './NodeInfoModal';
 
 import { useResizeHandler } from './hooks/useResizeHander';
@@ -47,6 +53,42 @@ type TreeViewWrapperProps = {
 
   viewer: Cognite3DViewer;
 };
+
+function useFilteredNodes({ model }: { model: Cognite3DModel }) {
+  const filter = useSelector(
+    ({ treeView }: RootState) => treeView.nodePropertyFilter
+  );
+  const filteredNodes = React.useRef<ByNodePropertyNodeSet>(
+    new ByNodePropertyNodeSet(v3Client as any, model, { requestPartitions: 5 })
+  );
+  useEffect(() => {
+    console.log('addStyledNodeSet');
+    const filteredNodesSet = filteredNodes.current;
+    model.addStyledNodeSet(filteredNodesSet, {
+      outlineColor: NodeOutlineColor.Orange,
+      renderInFront: true,
+      visible: true,
+      renderGhosted: false,
+    });
+    return () => {
+      console.log('removeStyledNodeSet');
+      model.removeStyledNodeSet(filteredNodesSet);
+      if (filteredNodesSet) {
+        filteredNodesSet.clear();
+      }
+    };
+  }, [model]);
+
+  useEffect(() => {
+    if (!filter) {
+      console.log('clear filter');
+      filteredNodes.current.clear();
+    } else {
+      console.log('execute filter', filter);
+      filteredNodes.current.executeFilter(filter);
+    }
+  }, [filter]);
+}
 
 function ToolbarTreeViewComponent(props: TreeViewWrapperProps) {
   const treeViewRef = useRef<NodesTreeViewRefType>(null);
@@ -74,6 +116,10 @@ function ToolbarTreeViewComponent(props: TreeViewWrapperProps) {
     model: props.model,
     treeData: state.treeData,
     checkedKeys: state.checkedNodes,
+  });
+
+  useFilteredNodes({
+    model: props.model,
   });
 
   const loadChildren = async (treeNode: TreeDataNode): Promise<void> => {
