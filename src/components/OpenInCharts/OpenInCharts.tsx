@@ -205,7 +205,7 @@ export const OpenInCharts: FC = () => {
       visible={visible}
       onOk={handleSubmit}
       onCancel={() => setVisible(false)}
-      width={500}
+      width={900}
     >
       {(timeserieIds || timeserieExternalId) && (
         <>
@@ -319,6 +319,8 @@ const TSList = styled.ul`
   padding: 0;
   margin: 10px 0 10px 0;
   list-style: none;
+  max-height: calc(100vh - 500px);
+  overflow-y: auto;
 `;
 
 const TSItem = styled.li`
