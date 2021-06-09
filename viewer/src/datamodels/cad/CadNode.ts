@@ -14,7 +14,6 @@ import { CadMaterialManager } from './CadMaterialManager';
 import { CadModelMetadata } from './CadModelMetadata';
 import { suggestCameraConfig } from './cameraconfig';
 
-import { toThreeVector3 } from '../../utilities';
 import { EventTrigger } from '../../utilities/events';
 import { NodeTransformProvider } from './styling/NodeTransformProvider';
 import { InstancedMeshManager } from './InstancedMeshManager';
@@ -166,8 +165,8 @@ export class CadNode extends THREE.Object3D {
     const { position, target, near, far } = suggestCameraConfig(this._sectorScene.root);
 
     const modelMatrix = this.getModelTransformation();
-    const threePos = toThreeVector3(new THREE.Vector3(), position);
-    const threeTarget = toThreeVector3(new THREE.Vector3(), target);
+    const threePos = position.clone();
+    const threeTarget = target.clone();
     threePos.applyMatrix4(modelMatrix);
     threeTarget.applyMatrix4(modelMatrix);
 

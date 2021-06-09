@@ -2,13 +2,12 @@
  * Copyright 2021 Cognite AS
  */
 
+import * as THREE from 'three';
 import { SectorMetadata } from '../datamodels/cad';
-import { Box3 } from '../utilities';
-import { vec3 } from 'gl-matrix';
 
-export type SectorTree = [number, SectorTree[], Box3?];
+export type SectorTree = [number, SectorTree[], THREE.Box3?];
 
-const unitBox = new Box3([vec3.zero(vec3.create()), vec3.fromValues(1, 1, 1)]);
+const unitBox = new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1, 1, 1));
 
 export function createSectorMetadata(tree: SectorTree, depth: number = 0, path: string = '0/'): SectorMetadata {
   const id = tree[0];
@@ -50,7 +49,7 @@ export function createSectorMetadata(tree: SectorTree, depth: number = 0, path: 
 }
 
 export function generateSectorTree(depth: number, childrenPerLevel: number = 4): SectorMetadata {
-  const bounds = Box3.fromBounds(0, 0, 0, 1, 1, 1); // Bounds doesnt matter for this test
+  const bounds = unitBox.clone(); // Bounds doesnt matter for this test
 
   const firstChildren = generateSectorTreeChildren(depth - 1, bounds, childrenPerLevel, 1);
   const root: SectorTree = [0, firstChildren.children, bounds];
@@ -60,7 +59,7 @@ export function generateSectorTree(depth: number, childrenPerLevel: number = 4):
 
 function generateSectorTreeChildren(
   depth: number,
-  bounds: Box3,
+  bounds: THREE.Box3,
   childCount: number,
   firstId: number
 ): { children: SectorTree[]; nextId: number } {
