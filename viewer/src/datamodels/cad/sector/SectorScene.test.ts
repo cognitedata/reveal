@@ -3,12 +3,10 @@
  */
 
 import * as THREE from 'three';
-import { vec3 } from 'gl-matrix';
 
 import { SectorMetadata } from '..';
 import { SectorSceneImpl } from './SectorScene';
 import { traverseDepthFirst } from '../../../utilities/objectTraversal';
-import { Box3 } from '../../../utilities';
 
 import { createSectorMetadata } from '../../../__testutilities__/createSectorMetadata';
 
@@ -16,10 +14,10 @@ describe('SectorSceneImpl', () => {
   const root = createSectorMetadata([
     0,
     [
-      [1, [], new Box3([vec3.fromValues(0, 0, 0), vec3.fromValues(0.5, 1, 1)])],
-      [2, [], new Box3([vec3.fromValues(0.5, 0, 0), vec3.fromValues(1, 1, 1)])]
+      [1, [], new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0.5, 1, 1))],
+      [2, [], new THREE.Box3(new THREE.Vector3(0.5, 0, 0), new THREE.Vector3(1, 1, 1))]
     ],
-    new Box3([vec3.fromValues(0, 0, 0), vec3.fromValues(1, 1, 1)])
+    new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1, 1, 1))
   ]);
   const sectorsById = new Map<number, SectorMetadata>();
   traverseDepthFirst(root, x => {
@@ -30,17 +28,22 @@ describe('SectorSceneImpl', () => {
   test('getSectorsContainingPoint', () => {
     const scene = new SectorSceneImpl(8, 3, 'Meters', root, sectorsById);
 
-    expect(sectorIds(scene.getSectorsContainingPoint(vec3.fromValues(0.2, 0.5, 0.5)))).toEqual([0, 1]);
-    expect(sectorIds(scene.getSectorsContainingPoint(vec3.fromValues(0.75, 0.5, 0.5)))).toEqual([0, 2]);
-    expect(sectorIds(scene.getSectorsContainingPoint(vec3.fromValues(2, 0.5, 0.5)))).toEqual([]);
+    expect(sectorIds(scene.getSectorsContainingPoint(new THREE.Vector3(0.2, 0.5, 0.5)))).toEqual([0, 1]);
+    expect(sectorIds(scene.getSectorsContainingPoint(new THREE.Vector3(0.75, 0.5, 0.5)))).toEqual([0, 2]);
+    expect(sectorIds(scene.getSectorsContainingPoint(new THREE.Vector3(2, 0.5, 0.5)))).toEqual([]);
   });
 
   test('getSectorsIntersectingBox', () => {
     const scene = new SectorSceneImpl(8, 3, 'Meters', root, sectorsById);
-
-    expect(sectorIds(scene.getSectorsIntersectingBox(Box3.fromBounds(-10, -10, -10, 10, 10, 10)))).toEqual([0, 1, 2]);
-    expect(sectorIds(scene.getSectorsIntersectingBox(Box3.fromBounds(0, 0, 0, 0.2, 0.2, 0.2)))).toEqual([0, 1]);
-    expect(sectorIds(scene.getSectorsIntersectingBox(Box3.fromBounds(0.6, 0.6, 0.6, 1, 1, 1)))).toEqual([0, 2]);
+    expect(
+      sectorIds(scene.getSectorsIntersectingBox(new THREE.Box3().setFromArray([-10, -10, -10, 10, 10, 10])))
+    ).toEqual([0, 1, 2]);
+    expect(
+      sectorIds(scene.getSectorsIntersectingBox(new THREE.Box3().setFromArray([0, 0, 0, 0.2, 0.2, 0.2])))
+    ).toEqual([0, 1]);
+    expect(
+      sectorIds(scene.getSectorsIntersectingBox(new THREE.Box3().setFromArray([0.6, 0.6, 0.6, 1, 1, 1])))
+    ).toEqual([0, 2]);
   });
 
   test('getSectorsIntersectingFrustum, some sectors inside', () => {
@@ -90,11 +93,11 @@ describe('SectorSceneImpl', () => {
     const root = createSectorMetadata([
       0,
       [
-        [1, [], new Box3([vec3.fromValues(0, 0, 0), vec3.fromValues(0.5, 1, 1)])],
-        [2, [], new Box3([vec3.fromValues(0.5, 0, 0), vec3.fromValues(1, 1, 1)])],
-        [3, [], new Box3([vec3.fromValues(1000.5, 1000, 1000), vec3.fromValues(1001, 1001, 1001)])]
+        [1, [], new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0.5, 1, 1))],
+        [2, [], new THREE.Box3(new THREE.Vector3(0.5, 0, 0), new THREE.Vector3(1, 1, 1))],
+        [3, [], new THREE.Box3(new THREE.Vector3(1000.5, 1000, 1000), new THREE.Vector3(1001, 1001, 1001))]
       ],
-      new Box3([vec3.fromValues(0, 0, 0), vec3.fromValues(1001, 1001, 1001)])
+      new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1001, 1001, 1001))
     ]);
     const sectorsById = new Map<number, SectorMetadata>();
     traverseDepthFirst(root, x => {

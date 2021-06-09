@@ -1,47 +1,46 @@
 /*!
  * Copyright 2021 Cognite AS
  */
+import * as THREE from 'three';
 
-import { vec3 } from 'gl-matrix';
 import { SectorMetadata } from './sector/types';
-import { Box3 } from '../../utilities';
 import { traverseDepthFirst } from '../../utilities/objectTraversal';
 
 export interface SuggestedCameraConfig {
-  position: vec3;
-  target: vec3;
+  position: THREE.Vector3;
+  target: THREE.Vector3;
   near: number;
   far: number;
 }
 
 export function suggestCameraConfig(rootSector: SectorMetadata): SuggestedCameraConfig {
-  const averageMin = vec3.create();
-  const averageMax = vec3.create();
+  const averageMin = new THREE.Vector3();
+  const averageMax = new THREE.Vector3();
   let count = 0;
 
   traverseDepthFirst(rootSector, node => {
-    vec3.add(averageMin, averageMin, node.bounds.min);
-    vec3.add(averageMax, averageMax, node.bounds.max);
+    averageMin.add(node.bounds.min);
+    averageMax.add(node.bounds.max);
     count += 1;
     return true;
   });
 
-  vec3.scale(averageMin, averageMin, 1.0 / count);
-  vec3.scale(averageMax, averageMax, 1.0 / count);
+  averageMin.divideScalar(count);
+  averageMax.divideScalar(count);
 
-  const bounds = new Box3([averageMin, averageMax]);
-  const target = bounds.center;
-  const extent = vec3.subtract(vec3.create(), bounds.max, bounds.min);
+  const bounds = new THREE.Box3(averageMin, averageMax);
+  const target = bounds.getCenter(new THREE.Vector3());
+  const extent = bounds.getSize(new THREE.Vector3());
+  extent.x *= -2.0;
+  extent.y *= -2.0;
+  extent.z *= 2.0;
 
-  const position = vec3.add(
-    vec3.create(),
-    target,
-    vec3.fromValues(-2.0 * extent[0], -2.0 * extent[1], 2.0 * extent[2])
-  );
+  const position = new THREE.Vector3().addVectors(target, extent);
+
   return {
     position,
     target,
     near: 0.1,
-    far: vec3.distance(position, target) * 12
+    far: position.distanceTo(target) * 12
   };
 }
