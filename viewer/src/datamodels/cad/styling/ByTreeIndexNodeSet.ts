@@ -6,7 +6,6 @@ import { NodeSet } from './NodeSet';
 
 /**
  * Node set that holds a set of nodes defined by a set of tree indices.
- * @version New in 2.0.0
  */
 export class ByTreeIndexNodeSet extends NodeSet {
   private _set: IndexSet;

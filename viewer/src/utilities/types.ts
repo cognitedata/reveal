@@ -42,9 +42,8 @@ export type LoadingState = {
    */
   itemsRequested: number;
   /**
-   * Number of items that has been 'culled' (i.e. deemed not necesary
+   * Number of items that has been 'culled' (i.e. deemed not necessary
    * to load) so far in this batch.
-   * @version new in 2.0.0
    */
   itemsCulled: number;
 };
