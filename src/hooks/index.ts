@@ -1,21 +1,13 @@
-import { useSDK } from '@cognite/sdk-provider';
-import { useQuery } from 'react-query';
 import { useHistory, useLocation } from 'react-router-dom';
 import qs from 'query-string';
 
 import { Chart } from 'reducers/charts/types';
 import { omit } from 'lodash';
-
-export const useLoginStatus = () => {
-  const sdk = useSDK();
-  return useQuery(['login', 'status'], () => sdk.login.status(), {
-    cacheTime: Infinity,
-  });
-};
+import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 
 export const useIsChartOwner = (chart: Chart) => {
-  const { data: login } = useLoginStatus();
-  return login?.user === chart.user;
+  const { data: login } = useUserInfo();
+  return login?.id === chart.user;
 };
 
 export const useSearchParam = (

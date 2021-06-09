@@ -12,11 +12,12 @@ import { Chart } from 'reducers/charts/types';
 import { useMyCharts, usePublicCharts, useUpdateChart } from 'hooks/firebase';
 import { nanoid } from 'nanoid';
 import { subDays } from 'date-fns';
-import { useLoginStatus, useNavigate } from 'hooks';
+import { useNavigate } from 'hooks';
 import ChartListItem, { ViewOption } from 'components/ChartListItem';
 import { OpenInCharts } from 'components/OpenInCharts';
 import { CHART_VERSION } from 'config/';
 import { trackUsage } from 'utils/metrics';
+import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 
 type ActiveTabOption = 'mine' | 'public';
 type SortOption = 'name' | 'owner' | 'updatedAt';
@@ -45,7 +46,7 @@ const sortOptions: SelectSortOption[] = [
 
 const ChartList = () => {
   const move = useNavigate();
-  const { data: login } = useLoginStatus();
+  const { data: login } = useUserInfo();
   const myCharts = useMyCharts();
   const pubCharts = usePublicCharts();
 
@@ -77,7 +78,7 @@ const ChartList = () => {
   const { mutateAsync: updateChart } = useUpdateChart();
 
   const handleNewChart = async () => {
-    if (!login?.user) {
+    if (!login?.id) {
       return;
     }
     const dateFrom = subDays(new Date(), 30);
@@ -87,7 +88,7 @@ const ChartList = () => {
     const id = nanoid();
     const newChart: Chart = {
       id,
-      user: login?.user,
+      user: login?.id,
       name: 'New chart',
       updatedAt: Date.now(),
       createdAt: Date.now(),

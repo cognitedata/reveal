@@ -1,19 +1,20 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components/macro';
 import { Button, toast, Tooltip, TopBar } from '@cognite/cogs.js';
-import { useLoginStatus, useNavigate } from 'hooks';
+import { useNavigate } from 'hooks';
 import { useChart, useDeleteChart, useUpdateChart } from 'hooks/firebase';
 import { useParams } from 'react-router-dom';
 import { duplicate } from 'utils/charts';
 import SharingDropdown from 'components/SharingDropdown/SharingDropdown';
 import { trackUsage } from 'utils/metrics';
+import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 
 export const ChartActions = () => {
   const move = useNavigate();
 
   const { chartId } = useParams<{ chartId: string }>();
   const { data: chart } = useChart(chartId);
-  const { data: login } = useLoginStatus();
+  const { data: login } = useUserInfo();
 
   const {
     mutateAsync: updateChart,
@@ -27,7 +28,7 @@ export const ChartActions = () => {
     error: deleteErrorMsg,
   } = useDeleteChart();
 
-  const isOwner = login?.user === chart?.user;
+  const isOwner = login?.id === chart?.user;
 
   useEffect(() => {
     if (deleteError) {
@@ -52,8 +53,8 @@ export const ChartActions = () => {
   }, [updateError, updateErrorMsg]);
 
   const handleDuplicateChart = async () => {
-    if (chart && login?.user) {
-      const newChart = duplicate(chart, login.user);
+    if (chart && login?.id) {
+      const newChart = duplicate(chart, login.id);
       await updateChart(newChart);
       trackUsage('ChartView.DuplicateChart', { isOwner });
       move(`/${newChart.id}`);

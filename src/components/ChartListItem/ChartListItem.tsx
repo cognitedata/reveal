@@ -3,9 +3,10 @@ import { Button, Dropdown, Menu, toast } from '@cognite/cogs.js';
 
 import { Chart } from 'reducers/charts/types';
 import { useDeleteChart, useUpdateChart } from 'hooks/firebase';
-import { useLoginStatus, useIsChartOwner, useNavigate } from 'hooks';
+import { useIsChartOwner, useNavigate } from 'hooks';
 import { duplicate } from 'utils/charts';
 
+import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import { ListViewItem } from './ListViewItem';
 import { GridViewItem } from './GridViewItem';
 
@@ -19,7 +20,7 @@ interface ChartListItemProps {
 const ChartListItem = ({ chart, view }: ChartListItemProps) => {
   const move = useNavigate();
 
-  const { data: login } = useLoginStatus();
+  const { data: login } = useUserInfo();
   const { mutateAsync: updateChart, isError: renameError } = useUpdateChart();
   const { mutate: deleteChart, isError: deleteError } = useDeleteChart();
   const [isEditingName, setIsEditingName] = useState<boolean>(false);
@@ -52,8 +53,8 @@ const ChartListItem = ({ chart, view }: ChartListItemProps) => {
   }, [deleteError]);
 
   const handleDuplicateChart = () => {
-    if (login?.user) {
-      const newChart = duplicate(chart, login.user);
+    if (login?.id) {
+      const newChart = duplicate(chart, login.id);
       updateChart(newChart).then(() => move(`/${newChart.id}`));
     }
   };

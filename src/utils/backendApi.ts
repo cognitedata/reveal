@@ -2,6 +2,7 @@ import queryString from 'query-string';
 import { CogniteClient } from '@cognite/sdk';
 import config, { getSidecar } from 'config';
 import { BACKEND_SERVICE_URL_KEY, CLUSTER_KEY } from 'utils/constants';
+import { getLoginStatus } from './login';
 
 export type CogniteFunction = {
   id: number;
@@ -22,9 +23,9 @@ const BACKEND_SERVICE_BASE_URL =
 const useBackendService = !!BACKEND_SERVICE_BASE_URL;
 
 const getServiceClient = async (sdk: CogniteClient) => {
-  const loginStatus = await sdk.login.status();
+  const login = await getLoginStatus(sdk);
 
-  if (!loginStatus) {
+  if (!login?.id) {
     return sdk;
   }
 

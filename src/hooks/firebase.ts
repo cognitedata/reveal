@@ -3,13 +3,14 @@ import omit from 'lodash/omit';
 import isEqual from 'lodash/isEqual';
 import config, { CHART_VERSION, useAppsApiBaseUrl, useCluster } from 'config';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { useProject, useLoginStatus, getProject } from 'hooks';
+import { useProject, getProject } from 'hooks';
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import 'firebase/auth';
 import { Chart } from 'reducers/charts/types';
 import { IdInfo } from '@cognite/sdk';
 import { getFlow } from '@cognite/auth-utils';
+import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 
 type EnvironmentConfig = {
   cognite: {
@@ -126,23 +127,23 @@ export const charts = () => {
 };
 
 export const useMyCharts = () => {
-  const { data } = useLoginStatus();
+  const { data } = useUserInfo();
 
   return useQuery(
     ['charts', 'mine'],
     async () => {
       const snapshot = await charts()
         .where('version', '==', CHART_VERSION)
-        .where('user', '==', data?.user)
+        .where('user', '==', data?.id)
         .get();
       return snapshot.docs.map((doc) => doc.data()) as Chart[];
     },
-    { enabled: !!data?.user }
+    { enabled: !!data?.id }
   );
 };
 
 export const usePublicCharts = () => {
-  const { data } = useLoginStatus();
+  const { data } = useUserInfo();
 
   return useQuery(
     ['charts', 'public'],
@@ -153,7 +154,7 @@ export const usePublicCharts = () => {
         .get();
       return snapshot.docs.map((doc) => doc.data()) as Chart[];
     },
-    { enabled: !!data?.user }
+    { enabled: !!data?.id }
   );
 };
 
@@ -186,10 +187,10 @@ export const useDeleteChart = () => {
 
 export const useUpdateChart = () => {
   const cache = useQueryClient();
+  const { data } = useUserInfo();
   return useMutation(
     async (chart: Chart) => {
-      const skipPersist =
-        cache.getQueryData<IdInfo>(['login', 'status'])?.user !== chart.user;
+      const skipPersist = data?.id !== chart.user;
       // skipPersist will result in only the local cache being updated.
       if (!skipPersist) {
         // The firestore SDK will retry indefinitely

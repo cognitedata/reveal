@@ -16,12 +16,7 @@ import { Modal, Select, Icon, Checkbox, Input } from '@cognite/cogs.js';
 import { CHART_VERSION } from 'config/';
 import DelayedComponent from 'components/DelayedComponent';
 import { TimeseriesChart } from '@cognite/data-exploration';
-import {
-  useSearchParam,
-  useLoginStatus,
-  useNavigate,
-  useClearSearchParams,
-} from 'hooks';
+import { useSearchParam, useNavigate, useClearSearchParams } from 'hooks';
 import { useMyCharts, useUpdateChart, useChart } from 'hooks/firebase';
 import { Timeseries } from '@cognite/sdk';
 import { calculateDefaultYAxis } from 'utils/axis';
@@ -33,6 +28,7 @@ import {
   END_TIME_KEY,
   CHART_NAME_KEY,
 } from 'utils/constants';
+import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 
 const options = ['New chart', 'Add to chart'];
 
@@ -42,7 +38,7 @@ export const sleep = (ms: number) =>
 export const OpenInCharts: FC = () => {
   const sdk = useSDK();
   const move = useNavigate();
-  const { data: login } = useLoginStatus();
+  const { data: login } = useUserInfo();
   const { mutate: updateChart } = useUpdateChart();
 
   const [initiated, setInitiated] = useState<boolean>(false);
@@ -142,7 +138,7 @@ export const OpenInCharts: FC = () => {
   };
 
   const handleSubmit = useCallback(async () => {
-    if (!login?.user) {
+    if (!login?.id) {
       return;
     }
 
@@ -150,7 +146,7 @@ export const OpenInCharts: FC = () => {
       const chartId = nanoid();
       const newChart: Chart = {
         id: chartId,
-        user: login?.user,
+        user: login?.id,
         name: chartName,
         updatedAt: Date.now(),
         createdAt: Date.now(),
@@ -222,7 +218,7 @@ export const OpenInCharts: FC = () => {
     currentValue,
     existingChart,
     move,
-    login?.user,
+    login?.id,
     sdk,
     ts,
     updateChart,
