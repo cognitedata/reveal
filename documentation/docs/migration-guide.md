@@ -123,13 +123,13 @@ indices.
 // In Reveal 1.x:
 // model.hideNodeByTreeIndex(subtreeRootTreeIndex, true);
 
-// Wrong - will only affect a single tree index, not all descendants
+// ❌ Wrong - will only affect a single tree index, not all descendants
 const indexSet = new IndexSet();
 indexSet.add(subtreeRootIndex);
 const nodeSet = new ByTreeIndexNodeSet(indexSet);
 model.addStyledSet(nodeSet, { visible: false });
 
-// Correct - all descendants are affected
+// ✅ Correct - all descendants are affected
 const indexSet = new IndexSet();
 indexSet.addRange(await model.getSubtreeIndices(subtreeRootIndex));
 const nodeSet = new ByTreeIndexNodeSet(indexSet);
