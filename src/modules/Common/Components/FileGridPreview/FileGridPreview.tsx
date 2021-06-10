@@ -15,7 +15,6 @@ import { TableDataItem } from 'src/modules/Common/types';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import { DeleteAnnotationsByFileIds } from 'src/store/thunks/DeleteAnnotationsByFileIds';
 import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
-import { useSelectionCheckbox } from '@cognite/data-exploration';
 import { VisionMode } from 'src/constants/enums/VisionEnums';
 import { AnnotationsBadge } from '../AnnotationsBadge/AnnotationsBadge';
 import { AnnotationsBadgePopoverContent } from '../AnnotationsBadge/AnnotationsBadgePopoverContent';
@@ -23,6 +22,7 @@ import { makeSelectAnnotationCounts } from '../../annotationSlice';
 import { ReviewButton } from '../ReviewButton/ReviewButton';
 import { ActionMenu } from '../ActionMenu/ActionMenu';
 import { Thumbnail } from '../Thumbnail/Thumbnail';
+import { SelectionCheckbox } from '../SelectionCheckbox/SelectionCheckbox';
 
 export const FileGridPreview = ({
   item,
@@ -62,10 +62,6 @@ export const FileGridPreview = ({
     dispatch(deleteFilesById([{ id: item.id }]));
   };
 
-  const handleItemSelect = (dataItem: TableDataItem) => {
-    if (onSelect) onSelect(dataItem, !selected);
-  };
-
   const getAnnotationCounts = useMemo(makeSelectAnnotationCounts, []);
   const annotationCounts = useSelector(({ annotationReducer }: RootState) =>
     getAnnotationCounts(annotationReducer, item.id)
@@ -87,11 +83,13 @@ export const FileGridPreview = ({
     <PreviewCell style={style}>
       <div className="preview">
         <Thumbnail fileInfo={fileInfo} />
-        <div className="selection">
-          {useSelectionCheckbox('multiple', item.id, selected, () =>
-            handleItemSelect(item)
-          )}
-        </div>
+        {onSelect && (
+          <SelectionCheckbox
+            dataItem={item}
+            selected={selected}
+            handleItemSelect={onSelect}
+          />
+        )}
         <div className="footer">
           <div className="nameAndExif">
             <div className="name">{item.name}</div>
@@ -216,15 +214,5 @@ const PreviewCell = styled.div`
     text-overflow: ellipsis;
     word-break: break-all;
     white-space: nowrap;
-  }
-  .selection {
-    position: absolute;
-    top: 12px;
-    left: 24px;
-    .cogs-checkbox {
-      .checkbox-ui {
-        border: 2px solid #fff;
-      }
-    }
   }
 `;
