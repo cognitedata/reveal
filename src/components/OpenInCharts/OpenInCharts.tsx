@@ -229,6 +229,10 @@ export const OpenInCharts: FC = () => {
     chartName,
     clearSearchParams,
   ]);
+  const isAllSelected =
+    selectedIds.length ===
+    compact(timeserieIds.split(',')).length +
+      compact(timeserieExternalIds.split(',')).length;
   return (
     <Modal
       title="Add Timeseries to Chart"
@@ -248,11 +252,7 @@ export const OpenInCharts: FC = () => {
               onClick={(e: React.MouseEvent<HTMLLabelElement, MouseEvent>) => {
                 e.preventDefault();
                 e.stopPropagation();
-                if (
-                  selectedIds.length ===
-                  compact(timeserieIds.split(',')).length +
-                    compact(timeserieExternalIds.split(',')).length
-                ) {
+                if (isAllSelected) {
                   setSelectedIds([]);
                 } else {
                   setSelectedIds([
@@ -264,11 +264,7 @@ export const OpenInCharts: FC = () => {
                 }
               }}
               name="selectAllNone"
-              value={
-                selectedIds.length ===
-                compact(timeserieIds.split(',')).length +
-                  compact(timeserieExternalIds.split(',')).length
-              }
+              value={isAllSelected}
             >
               Select all/none
             </Checkbox>
