@@ -24,6 +24,12 @@ export class IndexSet {
     }
   }
 
+  forEachRange(visitor: (range: NumericRange) => void) {
+    if (this.rootNode) {
+      this.rootNode.traverse(visitor);
+    }
+  }
+
   add(index: number) {
     const range = new NumericRange(index, 1);
 
@@ -67,20 +73,19 @@ export class IndexSet {
     return 0;
   }
 
-  ranges(): NumericRange[] {
-    if (this.rootNode) {
-      return this.rootNode.ranges();
-    }
-    return [];
+  toRangeArray(): NumericRange[] {
+    const ranges: NumericRange[] = [];
+    this.forEachRange(range => {
+      ranges.push(range);
+    });
+    return ranges;
   }
 
-  toArray(): number[] {
+  toIndexArray(): number[] {
     const result: number[] = [];
 
     if (this.rootNode) {
-      const rs: NumericRange[] = this.ranges();
-
-      rs.forEach(range => {
+      this.forEachRange(range => {
         range.forEach(num => {
           result.push(num);
         });
@@ -90,21 +95,18 @@ export class IndexSet {
     return result;
   }
 
-  values(): Iterable<number> {
-    return this.toArray()[Symbol.iterator]();
-  }
-
   toPlainSet(): Set<number> {
-    const arr: number[] = this.toArray();
-
+    const arr: number[] = this.toIndexArray();
     const st = new Set(arr);
-
     return st;
   }
 
   // NB: Assumes that this.ranges() are in order from left to right
   invertedRanges(): NumericRange[] {
-    const originalRanges = this.ranges();
+    const originalRanges: NumericRange[] = [];
+    this.forEachRange(range => {
+      originalRanges.push(range);
+    });
 
     const newRanges: NumericRange[] = [];
 
@@ -121,9 +123,8 @@ export class IndexSet {
 
   unionWith(otherSet: IndexSet): IndexSet {
     if (this.rootNode) {
-      const rs = otherSet.ranges();
-      rs.forEach(range => {
-        this.rootNode = (this.rootNode as IndexNode).addRange(range);
+      otherSet.forEachRange(range => {
+        this.rootNode = this.rootNode!.addRange(range);
       });
     } else {
       this.rootNode = otherSet.rootNode;
@@ -134,11 +135,8 @@ export class IndexSet {
 
   differenceWith(otherSet: IndexSet): IndexSet {
     if (this.rootNode) {
-      const rs = otherSet.ranges();
-      rs.forEach(range => {
-        if (this.rootNode) {
-          this.rootNode = (this.rootNode as IndexNode).removeRange(range);
-        }
+      otherSet.forEachRange(range => {
+        this.rootNode = this.rootNode?.removeRange(range);
       });
     }
 
@@ -147,7 +145,7 @@ export class IndexSet {
 
   hasIntersectionWith(otherSet: IndexSet | Set<number>): boolean {
     if (otherSet instanceof IndexSet) {
-      if (this.rootNode == undefined || otherSet.rootNode == undefined) {
+      if (this.rootNode === undefined || otherSet.rootNode === undefined) {
         return false;
       }
 

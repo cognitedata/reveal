@@ -20,6 +20,10 @@ export class LeafIndexNode {
     this.count = range.count;
   }
 
+  traverse(visitor: (range: NumericRange) => void) {
+    visitor(this.range);
+  }
+
   contains(index: number): boolean {
     return this.range.contains(index);
   }
@@ -77,10 +81,6 @@ export class LeafIndexNode {
     } else {
       return [this, range];
     }
-  }
-
-  ranges(): NumericRange[] {
-    return [this.range];
   }
 
   clone(): LeafIndexNode {
