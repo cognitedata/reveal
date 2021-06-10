@@ -6,6 +6,7 @@ import config from 'config/config';
 import { Metrics } from '@cognite/metrics';
 
 import App from 'components/App';
+import { isDoNotTrackDomain } from 'utils/tracking';
 import * as serviceWorker from './serviceWorker';
 
 import '@cognite/cogs.js/dist/cogs.css';
@@ -26,7 +27,7 @@ if (process.env.REACT_APP_SENTRY_DSN) {
   });
 }
 
-if (process.env.REACT_APP_MIXPANEL_TOKEN) {
+if (process.env.REACT_APP_MIXPANEL_TOKEN && !isDoNotTrackDomain()) {
   Metrics.init({
     mixpanelToken: process.env.REACT_APP_MIXPANEL_TOKEN,
     debug: process.env.REACT_APP_MIXPANEL_DEBUG === 'true',
