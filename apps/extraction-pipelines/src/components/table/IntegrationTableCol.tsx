@@ -21,7 +21,7 @@ export enum TableHeadings {
   NAME = 'Name',
   LAST_RUN_STATUS = 'Last run status',
   LATEST_RUN_TIME = 'Last run time',
-  DATA_SET = 'Destination data set',
+  DATA_SET = 'Data set',
   SCHEDULE = 'Schedule',
   LAST_SEEN = 'Last connected',
   CONTACTS = 'Contacts',

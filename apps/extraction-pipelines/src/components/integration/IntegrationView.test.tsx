@@ -62,7 +62,7 @@ describe('IntegrationView', () => {
     ).toBeInTheDocument();
     expect(screen.getByText(mockIntegration.id)).toBeInTheDocument();
     expect(
-      screen.getByText(new RegExp(TableHeadings.DATA_SET, 'i'))
+      screen.getByText(new RegExp(TableHeadings.DATA_SET))
     ).toBeInTheDocument();
     expect(screen.getByText(mockDataSet.name)).toBeInTheDocument();
 
