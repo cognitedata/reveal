@@ -4,11 +4,8 @@
 import * as THREE from 'three';
 import * as THREEext from '../../../utilities/three';
 
-import { vec3 } from 'gl-matrix';
-
 import { LevelOfDetail } from './LevelOfDetail';
 import { InstancedMeshFile, TriangleMesh, SectorQuads } from '../rendering/types';
-import { Box3 } from '../../../utilities';
 import { ParsedPrimitives, ParseSectorResult, ParseCtmResult } from '@cognite/reveal-parser-worker';
 
 /**
@@ -58,15 +55,15 @@ export interface SectorScene {
 
   readonly sectorCount: number;
   getSectorById(sectorId: number): SectorMetadata | undefined;
-  getSectorsContainingPoint(p: vec3): SectorMetadata[];
-  getSectorsIntersectingBox(b: Box3): SectorMetadata[];
+  getSectorsContainingPoint(p: THREE.Vector3): SectorMetadata[];
+  getSectorsIntersectingBox(b: THREE.Box3): SectorMetadata[];
 
   /**
    * Returns bounds that contains "most geometry". This bounds is an
    * attempt to remove junk geometry from the bounds to allow e.g. setting
    * a good camera position.
    */
-  getBoundsOfMostGeometry(): Box3;
+  getBoundsOfMostGeometry(): THREE.Box3;
 
   /**
    * Gets the sectors intersecting the frustum provided from the projection and inverse
@@ -135,7 +132,7 @@ export interface SectorMetadata {
   readonly id: number;
   readonly path: string;
   readonly depth: number;
-  readonly bounds: Box3;
+  readonly bounds: THREE.Box3;
   readonly indexFile: SectorMetadataIndexFileSection;
   readonly facesFile: SectorMetadataFacesFileSection;
   readonly children: SectorMetadata[];

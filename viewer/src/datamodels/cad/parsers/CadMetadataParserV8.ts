@@ -2,11 +2,10 @@
  * Copyright 2021 Cognite AS
  */
 
-import { vec3 } from 'gl-matrix';
+import * as THREE from 'three';
 
 import { SectorMetadata, SectorMetadataFacesFileSection, SectorScene } from '../sector/types';
 import { SectorSceneImpl } from '../sector/SectorScene';
-import { Box3 } from '../../../utilities';
 
 export interface CadSectorMetadataV8 {
   readonly id: number;
@@ -110,7 +109,7 @@ function createSectorMetadata(metadata: CadSectorMetadataV8): SectorMetadata {
     id: metadata.id,
     path: metadata.path,
     depth: metadata.depth,
-    bounds: new Box3([vec3.fromValues(min_x, min_y, min_z), vec3.fromValues(max_x, max_y, max_z)]),
+    bounds: new THREE.Box3(new THREE.Vector3(min_x, min_y, min_z), new THREE.Vector3(max_x, max_y, max_z)),
     estimatedDrawCallCount: metadata.estimatedDrawCallCount,
 
     // I3D

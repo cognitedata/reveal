@@ -8,7 +8,6 @@ import { createCadModelMetadata } from '../../../__testutilities__/createCadMode
 import { CadModelClipper } from './CadModelClipper';
 import { CadModelMetadata, SectorMetadata } from '..';
 import { Mutable } from '../../../utilities/reflection';
-import { fromThreeJsBox3, toThreeJsBox3 } from '../../../utilities';
 
 describe('CadModelClipper', () => {
   // Model with depth 2 where root has 8 children. Bounds is <[0,0,0], [2,2,2]>
@@ -45,7 +44,7 @@ describe('CadModelClipper', () => {
 
     expect(result.scene.sectorCount).toBe(2);
     sectors.forEach(s => {
-      expect(box.intersectsBox(toThreeJsBox3(new THREE.Box3(), s.bounds))).toBeTrue();
+      expect(box.intersectsBox(s.bounds)).toBeTrue();
     });
   });
 
@@ -65,5 +64,5 @@ describe('CadModelClipper', () => {
 
 function setBounds(sector: SectorMetadata, min: [number, number, number], max: [number, number, number]) {
   const mutable: Mutable<SectorMetadata> = sector;
-  mutable.bounds = fromThreeJsBox3(new THREE.Box3().setFromArray([...min, ...max]));
+  mutable.bounds = new THREE.Box3().setFromArray([...min, ...max]);
 }
