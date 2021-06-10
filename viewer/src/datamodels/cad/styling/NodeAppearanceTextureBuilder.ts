@@ -263,12 +263,12 @@ function applyRGBA(texture: THREE.DataTexture, treeIndices: IndexSet, rgba: [num
   const buffer = texture.image.data;
   const [r, g, b, a] = rgba;
   treeIndices.forEachRange(range => {
-    range.forEach(treeIndex => {
+    for (let treeIndex = range.from; treeIndex <= range.toInclusive; ++treeIndex) {
       buffer[4 * treeIndex + 0] = r;
       buffer[4 * treeIndex + 1] = g;
       buffer[4 * treeIndex + 2] = b;
       buffer[4 * treeIndex + 3] = a;
-    });
+    }
   });
   texture.needsUpdate = true;
 }
