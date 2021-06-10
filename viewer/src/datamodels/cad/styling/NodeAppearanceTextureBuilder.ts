@@ -3,13 +3,13 @@
  */
 
 import * as THREE from 'three';
-import { NumericRange } from '../../../utilities';
 
 import { determinePowerOfTwoDimensions } from '../../../utilities/determinePowerOfTwoDimensions';
 
 import { DefaultNodeAppearance, NodeAppearance } from '../NodeAppearance';
 import { IndexSet } from '../../../utilities/IndexSet';
 import { NodeAppearanceProvider } from './NodeAppearanceProvider';
+import { NumericRange } from '../../../utilities';
 
 type AppliedStyle = { revision: number; treeIndices: IndexSet; style: NodeAppearance };
 
@@ -19,15 +19,17 @@ export class NodeAppearanceTextureBuilder {
   private readonly _handleStylesChangedListener = this.handleStylesChanged.bind(this);
 
   private _needsUpdate = true;
-  private readonly _treeIndexCount: number;
+  // private readonly _treeIndexCount: number;
+  private readonly _allTreeIndices: IndexSet;
   private readonly _overrideColorPerTreeIndexTexture: THREE.DataTexture;
   private readonly _regularNodesTreeIndices: IndexSet;
   private readonly _ghostedNodesTreeIndices: IndexSet;
   private readonly _infrontNodesTreeIndices: IndexSet;
-  private readonly _currentlyAppliedStyles = new Map<number, AppliedStyle>();
 
   constructor(treeIndexCount: number, styleProvider: NodeAppearanceProvider) {
-    this._treeIndexCount = treeIndexCount;
+    // this._treeIndexCount = treeIndexCount;
+    this._allTreeIndices = new IndexSet();
+    this._allTreeIndices.addRange(new NumericRange(0, treeIndexCount));
     this._styleProvider = styleProvider;
     this._styleProvider.on('changed', this._handleStylesChangedListener);
 
@@ -52,26 +54,26 @@ export class NodeAppearanceTextureBuilder {
    * @param appearance New style that is applied to all 'unstyled' elements.
    */
   setDefaultAppearance(appearance: NodeAppearance) {
-    if (equalNodeAppearances(appearance, this._defaultAppearance)) return;
+    // if (equalNodeAppearances(appearance, this._defaultAppearance)) return;
     this._defaultAppearance = appearance;
-    fillColorTexture(this._overrideColorPerTreeIndexTexture, appearance);
-    this._infrontNodesTreeIndices.clear();
-    this._ghostedNodesTreeIndices.clear();
-    this._regularNodesTreeIndices.clear();
+    // fillColorTexture(this._overrideColorPerTreeIndexTexture, appearance);
+    // this._infrontNodesTreeIndices.clear();
+    // this._ghostedNodesTreeIndices.clear();
+    // this._regularNodesTreeIndices.clear();
 
-    const allIndicesRange = new NumericRange(0, this._treeIndexCount);
-    const infront = !!appearance.renderInFront;
-    const ghosted = !!appearance.renderGhosted;
-    if (infront) {
-      this._infrontNodesTreeIndices.addRange(allIndicesRange);
-    } else if (ghosted) {
-      this._ghostedNodesTreeIndices.addRange(allIndicesRange);
-    } else {
-      this._regularNodesTreeIndices.addRange(allIndicesRange);
-    }
+    // const allIndicesRange = new NumericRange(0, this._treeIndexCount);
+    // const infront = !!appearance.renderInFront;
+    // const ghosted = !!appearance.renderGhosted;
+    // if (infront) {
+    //   this._infrontNodesTreeIndices.addRange(allIndicesRange);
+    // } else if (ghosted) {
+    //   this._ghostedNodesTreeIndices.addRange(allIndicesRange);
+    // } else {
+    //   this._regularNodesTreeIndices.addRange(allIndicesRange);
+    // }
 
-    // Force full update as we might have overwritten previously applied styles
-    this._currentlyAppliedStyles.clear();
+    // // Force full update as we might have overwritten previously applied styles
+    // this._currentlyAppliedStyles.clear();
     this._needsUpdate = true;
   }
 
@@ -113,79 +115,93 @@ export class NodeAppearanceTextureBuilder {
   }
 
   build() {
-    const orphanStyleIds = new Set<number>(this._currentlyAppliedStyles.keys());
+    const start = performance.now();
+    this._infrontNodesTreeIndices.clear();
+    this._ghostedNodesTreeIndices.clear();
+    this._regularNodesTreeIndices.clear();
+    this.applyStyleToNodes(this._allTreeIndices, this._defaultAppearance);
 
-    this.resetStyleOfRemovedNodes(orphanStyleIds);
-    this.cleanupOrphanStyles(orphanStyleIds);
-    this.applyStyleToAddedNodes();
-
-    this._needsUpdate = false;
-  }
-
-  private resetStyleOfRemovedNodes(orphanStyleIds: Set<number>) {
-    this._styleProvider.applyStyles((styleId, revision, treeIndices) => {
-      orphanStyleIds.delete(styleId);
-
-      const currentlyApplied = this._currentlyAppliedStyles.get(styleId);
-      if (currentlyApplied === undefined || currentlyApplied.revision === revision) {
-        // Unchanged - nothing to do
-        return;
-      }
-
-      const removedTreeIndices = currentlyApplied.treeIndices.clone().differenceWith(treeIndices);
-      this.resetToDefaultStyle(removedTreeIndices, currentlyApplied.style);
-    });
-  }
-
-  private cleanupOrphanStyles(orphanStyleIds: Set<number>) {
-    for (const styleId of orphanStyleIds) {
-      const currentlyApplied = this._currentlyAppliedStyles.get(styleId);
-      if (currentlyApplied !== undefined) {
-        this.resetToDefaultStyle(currentlyApplied.treeIndices, currentlyApplied.style);
-      }
-      this._currentlyAppliedStyles.delete(styleId);
-    }
-  }
-
-  private applyStyleToAddedNodes() {
-    this._styleProvider.applyStyles((styleId, revision, treeIndices, appearance) => {
-      const currentlyApplied = this._currentlyAppliedStyles.get(styleId);
-      if (currentlyApplied !== undefined && currentlyApplied.revision === revision) {
-        // Unchanged - nothing to do
-        return;
-      }
-
+    this._styleProvider.applyStyles((_styleId, _revision, treeIndices, appearance) => {
       // Translate from style to magic values in textures
       const fullStyle = { ...this._defaultAppearance, ...appearance };
-      const addedTreeIndices =
-        currentlyApplied === undefined ? treeIndices : treeIndices.clone().differenceWith(currentlyApplied.treeIndices);
-      this._currentlyAppliedStyles.set(styleId, { revision, treeIndices: treeIndices.clone(), style: fullStyle });
-
-      this.applyStyleToNodes(addedTreeIndices, fullStyle);
+      this.applyStyleToNodes(treeIndices, fullStyle);
     });
+    this._needsUpdate = false;
+    console.log(`build() took ${performance.now() - start} ms`);
+
+    // const orphanStyleIds = new Set<number>(this._currentlyAppliedStyles.keys());
+
+    // this.resetStyleOfRemovedNodes(orphanStyleIds);
+    // this.cleanupOrphanStyles(orphanStyleIds);
+    // this.applyStyleToAddedNodes();
+
+    // this._needsUpdate = false;
   }
 
-  private resetToDefaultStyle(treeIndices: IndexSet, currentStyle: NodeAppearance) {
-    if (treeIndices.count === 0) {
-      return;
-    }
+  // private resetStyleOfRemovedNodes(orphanStyleIds: Set<number>) {
+  //   this._styleProvider.applyStyles((styleId, revision, treeIndices) => {
+  //     orphanStyleIds.delete(styleId);
 
-    const defaultColorRgba = appearanceToColorOverride(this._defaultAppearance);
+  //     const currentlyApplied = this._currentlyAppliedStyles.get(styleId);
+  //     if (currentlyApplied === undefined || currentlyApplied.revision === revision) {
+  //       // Unchanged - nothing to do
+  //       return;
+  //     }
 
-    const infront = !!currentStyle.renderInFront;
-    const ghosted = !infront && !!currentStyle.renderGhosted;
+  //     const removedTreeIndices = currentlyApplied.treeIndices.clone().differenceWith(treeIndices);
+  //     this.resetToDefaultStyle(removedTreeIndices, currentlyApplied.style);
+  //   });
+  // }
 
-    applyRGBA(this._overrideColorPerTreeIndexTexture, treeIndices, defaultColorRgba);
+  // private cleanupOrphanStyles(orphanStyleIds: Set<number>) {
+  //   for (const styleId of orphanStyleIds) {
+  //     const currentlyApplied = this._currentlyAppliedStyles.get(styleId);
+  //     if (currentlyApplied !== undefined) {
+  //       this.resetToDefaultStyle(currentlyApplied.treeIndices, currentlyApplied.style);
+  //     }
+  //     this._currentlyAppliedStyles.delete(styleId);
+  //   }
+  // }
 
-    if (infront) {
-      updateLookupSet(this._infrontNodesTreeIndices, treeIndices, false);
-    } else if (ghosted) {
-      updateLookupSet(this._ghostedNodesTreeIndices, treeIndices, false);
-    }
-    if (infront || ghosted) {
-      updateLookupSet(this._regularNodesTreeIndices, treeIndices, true);
-    }
-  }
+  // private applyStyleToAddedNodes() {
+  //   this._styleProvider.applyStyles((styleId, revision, treeIndices, appearance) => {
+  //     const currentlyApplied = this._currentlyAppliedStyles.get(styleId);
+  //     if (currentlyApplied !== undefined && currentlyApplied.revision === revision) {
+  //       // Unchanged - nothing to do
+  //       return;
+  //     }
+
+  //     // Translate from style to magic values in textures
+  //     const fullStyle = { ...this._defaultAppearance, ...appearance };
+  //     const addedTreeIndices =
+  //       currentlyApplied === undefined ? treeIndices : treeIndices.clone().differenceWith(currentlyApplied.treeIndices);
+  //     this._currentlyAppliedStyles.set(styleId, { revision, treeIndices: treeIndices.clone(), style: fullStyle });
+
+  //     this.applyStyleToNodes(addedTreeIndices, fullStyle);
+  //   });
+  // }
+
+  // private resetToDefaultStyle(treeIndices: IndexSet, currentStyle: NodeAppearance) {
+  //   if (treeIndices.count === 0) {
+  //     return;
+  //   }
+
+  //   const defaultColorRgba = appearanceToColorOverride(this._defaultAppearance);
+
+  //   const infront = !!currentStyle.renderInFront;
+  //   const ghosted = !infront && !!currentStyle.renderGhosted;
+
+  //   applyRGBA(this._overrideColorPerTreeIndexTexture, treeIndices, defaultColorRgba);
+
+  //   if (infront) {
+  //     updateLookupSet(this._infrontNodesTreeIndices, treeIndices, false);
+  //   } else if (ghosted) {
+  //     updateLookupSet(this._ghostedNodesTreeIndices, treeIndices, false);
+  //   }
+  //   if (infront || ghosted) {
+  //     updateLookupSet(this._regularNodesTreeIndices, treeIndices, true);
+  //   }
+  // }
 
   private applyStyleToNodes(treeIndices: IndexSet, style: NodeAppearance) {
     if (treeIndices.count === 0) {
@@ -233,18 +249,18 @@ function allocateTextures(
   return { overrideColorPerTreeIndexTexture, transformOverrideIndexTexture };
 }
 
-function fillColorTexture(colorTexture: THREE.DataTexture, appearance: NodeAppearance) {
-  const colorRgba = appearanceToColorOverride(appearance);
-  const colors = colorTexture.image.data;
-  const textureElementCount = colorTexture.image.width * colorTexture.image.height;
-  for (let i = 0; i < textureElementCount; ++i) {
-    colors[4 * i + 0] = colorRgba[0];
-    colors[4 * i + 1] = colorRgba[1];
-    colors[4 * i + 2] = colorRgba[2];
-    colors[4 * i + 3] = colorRgba[3];
-  }
-  colorTexture.needsUpdate = true;
-}
+// function fillColorTexture(colorTexture: THREE.DataTexture, appearance: NodeAppearance) {
+//   const colorRgba = appearanceToColorOverride(appearance);
+//   const colors = colorTexture.image.data;
+//   const textureElementCount = colorTexture.image.width * colorTexture.image.height;
+//   for (let i = 0; i < textureElementCount; ++i) {
+//     colors[4 * i + 0] = colorRgba[0];
+//     colors[4 * i + 1] = colorRgba[1];
+//     colors[4 * i + 2] = colorRgba[2];
+//     colors[4 * i + 3] = colorRgba[3];
+//   }
+//   colorTexture.needsUpdate = true;
+// }
 
 function appearanceToColorOverride(appearance: NodeAppearance): [number, number, number, number] {
   const [r, g, b] = appearance.color || [0, 0, 0];
@@ -263,12 +279,12 @@ function applyRGBA(texture: THREE.DataTexture, treeIndices: IndexSet, rgba: [num
   const buffer = texture.image.data;
   const [r, g, b, a] = rgba;
   treeIndices.forEachRange(range => {
-    for (let treeIndex = range.from; treeIndex <= range.toInclusive; ++treeIndex) {
+    range.forEach(treeIndex => {
       buffer[4 * treeIndex + 0] = r;
       buffer[4 * treeIndex + 1] = g;
       buffer[4 * treeIndex + 2] = b;
       buffer[4 * treeIndex + 3] = a;
-    }
+    });
   });
   texture.needsUpdate = true;
 }
@@ -281,7 +297,7 @@ function updateLookupSet(set: IndexSet, treeIndices: IndexSet, addToSet: boolean
   }
 }
 
-function equalNodeAppearances(left: NodeAppearance, right: NodeAppearance) {
-  // https://stackoverflow.com/a/1144249/167251
-  return JSON.stringify(left) === JSON.stringify(right);
-}
+// function equalNodeAppearances(left: NodeAppearance, right: NodeAppearance) {
+//   // https://stackoverflow.com/a/1144249/167251
+//   return JSON.stringify(left) === JSON.stringify(right);
+// }
