@@ -4,6 +4,7 @@ import { QueryClient } from 'react-query';
 import { renderRegisterContext } from 'utils/test/render';
 import {
   CDF_ENV_GREENFIELD,
+  getBaseUrl,
   ORIGIN_DEV,
   PROJECT_ITERA_INT_GREEN,
 } from 'utils/baseURL';
@@ -164,7 +165,7 @@ describe('DatasetPage', () => {
       expect(sdkv3.post).toHaveBeenCalledTimes(1);
     });
     expect(sdkv3.post).toHaveBeenCalledWith(
-      '/api/playground/projects/itera-int-green/integrations/update',
+      `${getBaseUrl(PROJECT_ITERA_INT_GREEN)}/update`,
       {
         data: {
           items: [
@@ -202,7 +203,7 @@ describe('DatasetPage', () => {
       expect(sdkv3.post).toHaveBeenCalledTimes(1);
     });
     expect(sdkv3.post).toHaveBeenCalledWith(
-      '/api/playground/projects/itera-int-green/integrations/update',
+      `${getBaseUrl(PROJECT_ITERA_INT_GREEN)}/update`,
       {
         data: {
           items: [{ id: '123', update: { dataSetId: { set: undefined } } }],
