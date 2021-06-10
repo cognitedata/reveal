@@ -33,6 +33,12 @@ export class IntermediateIndexNode {
     }
   }
 
+  traverse(visitor: (range: NumericRange) => void) {
+    // Note! The actual ranges are kept in leafs, so we do not visit "this"
+    this.left.traverse(visitor);
+    this.right.traverse(visitor);
+  }
+
   contains(index: number): boolean {
     if (!this.range.contains(index)) {
       return false;

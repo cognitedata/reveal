@@ -34,7 +34,7 @@ describe('PopulateIndexSetFromPagedResponseHelper', () => {
 
     const completed = await helper.pageResults(indexSet, Promise.resolve(response));
     expect(completed).toBeTrue();
-    expect(indexSet.toArray()).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+    expect(indexSet.toIndexArray()).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
     expect(helper.isLoading).toBeFalse();
   });
 
@@ -49,7 +49,7 @@ describe('PopulateIndexSetFromPagedResponseHelper', () => {
 
     const completed = await helper.pageResults(indexSet, Promise.resolve(response));
     expect(completed).toBeFalse();
-    expect(indexSet.toArray()).toEqual([1, 2, 3, 4, 5]);
+    expect(indexSet.toIndexArray()).toEqual([1, 2, 3, 4, 5]);
     expect(helper.isLoading).toBeFalse();
     expect(notifyChangedCallback).toBeCalledTimes(1);
   });
@@ -74,10 +74,10 @@ describe('PopulateIndexSetFromPagedResponseHelper', () => {
     const operation2 = helper.pageResults(indexSet, Promise.resolve(response2));
     expect(helper.isLoading).toBeTrue();
     expect(await operation1).toBeTrue();
-    expect(indexSet.toArray()).toEqual([1, 2, 3, 4, 5, 6]);
+    expect(indexSet.toIndexArray()).toEqual([1, 2, 3, 4, 5, 6]);
     expect(helper.isLoading).toBeTrue();
     expect(await operation2).toBeTrue();
-    expect(indexSet.toArray()).toEqual([1, 2, 3, 4, 5, 6, 7, 8]);
+    expect(indexSet.toIndexArray()).toEqual([1, 2, 3, 4, 5, 6, 7, 8]);
     expect(helper.isLoading).toBeFalse();
 
     expect(notifyChangedCallback).toBeCalledTimes(4);

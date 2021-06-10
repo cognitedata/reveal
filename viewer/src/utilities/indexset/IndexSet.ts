@@ -20,6 +20,12 @@ export class IndexSet {
     }
   }
 
+  forEachRange(visitor: (range: NumericRange) => void) {
+    if (this.rootNode) {
+      this.rootNode.traverse(visitor);
+    }
+  }
+
   add(index: number) {
     const range = new NumericRange(index, 1);
 
@@ -63,18 +69,18 @@ export class IndexSet {
     return 0;
   }
 
-  ranges(): NumericRange[] {
+  toRangesArray(): NumericRange[] {
     if (this.rootNode) {
       return this.rootNode.ranges();
     }
     return [];
   }
 
-  toArray(): number[] {
+  toIndexArray(): number[] {
     const result: number[] = [];
 
     if (this.rootNode) {
-      const rs: NumericRange[] = this.ranges();
+      const rs: NumericRange[] = this.toRangesArray();
 
       rs.forEach(range => {
         range.forEach(num => {
@@ -86,12 +92,8 @@ export class IndexSet {
     return result;
   }
 
-  values(): Iterable<number> {
-    return this.toArray()[Symbol.iterator]();
-  }
-
   toPlainSet(): Set<number> {
-    const arr: number[] = this.toArray();
+    const arr: number[] = this.toIndexArray();
 
     const st = new Set(arr);
 
@@ -100,7 +102,7 @@ export class IndexSet {
 
   // NB: Assumes that this.ranges() are in order from left to right
   invertedRanges(): NumericRange[] {
-    const originalRanges = this.ranges();
+    const originalRanges = this.toRangesArray();
 
     const newRanges: NumericRange[] = [];
 
@@ -117,8 +119,7 @@ export class IndexSet {
 
   unionWith(otherSet: IndexSet): IndexSet {
     if (this.rootNode) {
-      const rs = otherSet.ranges();
-      rs.forEach(range => {
+      otherSet.forEachRange(range => {
         this.rootNode = (this.rootNode as IndexNode).addRange(range);
       });
     } else {
@@ -130,8 +131,7 @@ export class IndexSet {
 
   differenceWith(otherSet: IndexSet): IndexSet {
     if (this.rootNode) {
-      const rs = otherSet.ranges();
-      rs.forEach(range => {
+      otherSet.forEachRange(range => {
         if (this.rootNode) {
           this.rootNode = (this.rootNode as IndexNode).removeRange(range);
         }
