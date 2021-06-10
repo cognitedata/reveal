@@ -215,12 +215,11 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
 
   /**
-   * Get array of subtree tree indices.
-   * @param treeIndex
+   * Determines the range of tree indices for a given subtree.
+   * @param treeIndex Index of the root of the subtree to get the index range for.
    */
-  async getSubtreeTreeIndices(treeIndex: number): Promise<number[]> {
-    const treeIndices = await this.determineTreeIndices(treeIndex, true);
-    return treeIndices.toArray();
+  async getSubtreeTreeIndices(treeIndex: number): Promise<NumericRange> {
+    return this.determineTreeIndices(treeIndex, true);
   }
 
   /**

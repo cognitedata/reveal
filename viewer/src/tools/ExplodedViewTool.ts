@@ -52,15 +52,18 @@ export class ExplodedViewTool extends Cognite3DViewerToolBase {
     const subTreeBoundingBoxes = cadModel
       .getSubtreeTreeIndices(treeIndex)
       .then(subTreeIndices => {
-        if (subTreeIndices.length > 1000) {
-          throw new Error(`Subtree size of ${subTreeIndices.length} is too large (max size = 1000)`);
+        if (subTreeIndices.count > 1000) {
+          throw new Error(`Subtree size of ${subTreeIndices.count} is too large (max size = 1000)`);
         }
 
         return subTreeIndices;
       })
       .then(subTreeIndices => {
         return Promise.all(
-          subTreeIndices.map(async subTreeIndex => {
+          subTreeIndices.toArray().map(async subTreeIndex => {
+            // TODO 2021-06-09 larsmoa: We could make this a lot more efficient by
+            // batching bounding box lookups together to one/a few API calls rather than
+            // one per node
             const subTreeBox = await cadModel.getBoundingBoxByTreeIndex(subTreeIndex);
             return {
               subTreeIndex: subTreeIndex,
