@@ -78,7 +78,7 @@
     "git-cz": "^4.7.6",
     "husky": "^6.0.0",
     "jest-environment-jsdom-sixteen": "^2.0.0",
-    "jest-junit": "^12.1.0",
+    "jest-junit": "^12.2.0",
     "prettier": "^2.2.1",
     "pretty-quick": "^3.1.0",
     "redux-mock-store": "^1.5.4",
