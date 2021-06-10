@@ -3,7 +3,3 @@
  * will be replaced by FAS sidecar based on the deployment environment
  */
 /* eslint-disable */
-
-(function () {
-  window.__cogniteSidecar = {};
-})();

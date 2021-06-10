@@ -9,7 +9,7 @@ import {
 } from 'store/groups/selectors';
 import defaultCustomerLogo from 'images/default_logo.png';
 import { CustomMenuItem, CustomMenuLink } from 'styles/common';
-import { usePossibleTenant } from 'hooks';
+import { useLink, usePossibleTenant } from 'hooks';
 import { CdfClientContext } from 'providers/CdfClientProvider';
 import { clearGroupsFilter, setGroupsFilter } from 'store/groups/actions';
 import { useHistory } from 'react-router-dom';
@@ -48,6 +48,8 @@ const AppHeader: React.FC = () => {
 
   const [customerLogoUrl, setCustomerLogoUrl] = useState('');
   const { toggleHelpCenter } = useHelpCenter();
+
+  const { documentTitle } = useLink();
 
   const setFilter = (groupName: string) => {
     const alreadyChecked = groupsFilter.includes(groupName);
@@ -259,7 +261,7 @@ const AppHeader: React.FC = () => {
       <TopBar>
         <TopBar.Left>
           <TopBar.Logo
-            title="Cognite Solutions Portal"
+            title={`Cognite ${documentTitle}`}
             logo={
               <Graphic
                 type="Cognite"
