@@ -89,6 +89,7 @@ const ChartList = () => {
     const newChart: Chart = {
       id,
       user: login?.id,
+      userInfo: login,
       name: 'New chart',
       updatedAt: Date.now(),
       createdAt: Date.now(),

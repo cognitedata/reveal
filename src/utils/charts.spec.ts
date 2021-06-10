@@ -25,25 +25,35 @@ describe('charts util', () => {
   };
   describe('duplicate', () => {
     it('should update the appropriate fields', () => {
-      expect(duplicate(chart, 'user_2@example.org').public).toBe(false);
-      expect(duplicate(chart, 'user_2@example.org').user).toEqual(
-        'user_2@example.org'
-      );
-      expect(duplicate(chart, 'user_2@example.org').name).toEqual(
-        'test chart Copy'
-      );
-      expect(duplicate(chart, 'user_2@example.org').id).not.toEqual(id);
-      expect(duplicate(chart, 'user_2@example.org').createdAt).not.toEqual(
-        chart.createdAt
-      );
-      expect(duplicate(chart, 'user_2@example.org').updatedAt).not.toEqual(
-        chart.updatedAt
-      );
+      expect(
+        duplicate(chart, { email: 'user_2@example.org', id: '12345' }).public
+      ).toBe(false);
+      expect(
+        duplicate(chart, { email: 'user_2@example.org', id: '12345' }).user
+      ).toEqual('12345');
+      expect(
+        duplicate(chart, { email: 'user_2@example.org', id: '12345' }).name
+      ).toEqual('test chart Copy');
+      expect(
+        duplicate(chart, { email: 'user_2@example.org', id: '12345' }).id
+      ).not.toEqual(id);
+      expect(
+        duplicate(chart, { email: 'user_2@example.org', id: '12345' }).createdAt
+      ).not.toEqual(chart.createdAt);
+      expect(
+        duplicate(chart, { email: 'user_2@example.org', id: '12345' }).updatedAt
+      ).not.toEqual(chart.updatedAt);
     });
     it('should not update the other fields', () => {
-      expect(duplicate(chart, 'user_2@example.org').dateFrom).toEqual('then');
-      expect(duplicate(chart, 'user_2@example.org').dateTo).toEqual('now');
-      expect(duplicate(chart, 'user_2@example.org').version).toEqual(1);
+      expect(
+        duplicate(chart, { email: 'user_2@example.org', id: '12345' }).dateFrom
+      ).toEqual('then');
+      expect(
+        duplicate(chart, { email: 'user_2@example.org', id: '12345' }).dateTo
+      ).toEqual('now');
+      expect(
+        duplicate(chart, { email: 'user_2@example.org', id: '12345' }).version
+      ).toEqual(1);
     });
   });
   describe('ChartTimerseries functions', () => {

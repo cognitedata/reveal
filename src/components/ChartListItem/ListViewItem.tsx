@@ -54,7 +54,11 @@ const ListViewItem = ({
             hideEdit={!isChartOwner}
           />
         </NameColumn>
-        <OwnerColumn>{formatOwner(chart.user)}</OwnerColumn>
+        <OwnerColumn>
+          {formatOwner(
+            chart.userInfo?.displayName || chart.userInfo?.email || chart.user
+          )}
+        </OwnerColumn>
         <UpdatedColumn>{formatDate(chart.updatedAt)}</UpdatedColumn>
       </StyledLink>
       <Menu>{dropdownMenu}</Menu>

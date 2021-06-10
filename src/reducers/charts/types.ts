@@ -6,6 +6,7 @@ export type Chart = {
   id: string;
   name: string;
   user: string;
+  userInfo?: UserInfo;
   // could be undefined for old charts
   createdAt: number;
   updatedAt: number;

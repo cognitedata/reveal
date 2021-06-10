@@ -1,11 +1,16 @@
 import { Timeseries } from '@cognite/sdk';
 import { AxisUpdate } from 'components/PlotlyChart';
 import { nanoid } from 'nanoid';
-import { Chart, ChartTimeSeries, ChartWorkflow } from 'reducers/charts/types';
+import {
+  Chart,
+  ChartTimeSeries,
+  ChartWorkflow,
+  UserInfo,
+} from 'reducers/charts/types';
 import { getEntryColor } from './colors';
 import { convertTsToWorkFlow } from './timeseries';
 
-export function duplicate(chart: Chart, user: string): Chart {
+export function duplicate(chart: Chart, login: UserInfo): Chart {
   const id = nanoid();
   return {
     ...chart,
@@ -14,7 +19,8 @@ export function duplicate(chart: Chart, user: string): Chart {
     createdAt: Date.now(),
     name: `${chart.name} Copy`,
     public: false,
-    user,
+    user: login.id,
+    userInfo: login,
   };
 }
 

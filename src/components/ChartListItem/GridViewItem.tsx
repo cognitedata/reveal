@@ -54,7 +54,10 @@ const GridViewItem = ({
           }}
         >
           <DateAndOwnerInfo>
-            {formatDate(chart.updatedAt)} &middot; {formatOwner(chart.user)}
+            {formatDate(chart.updatedAt)} &middot;{' '}
+            {formatOwner(
+              chart.userInfo?.displayName || chart.userInfo?.email || chart.user
+            )}
           </DateAndOwnerInfo>
           <NameInfo>
             <EditableText

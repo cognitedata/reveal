@@ -149,6 +149,7 @@ export const OpenInCharts: FC = () => {
       const newChart: Chart = {
         id: chartId,
         user: login?.id,
+        userInfo: login,
         name: chartName,
         updatedAt: Date.now(),
         createdAt: Date.now(),
@@ -220,7 +221,7 @@ export const OpenInCharts: FC = () => {
     currentValue,
     existingChart,
     move,
-    login?.id,
+    login,
     sdk,
     ts,
     updateChart,

@@ -54,7 +54,7 @@ export const ChartActions = () => {
 
   const handleDuplicateChart = async () => {
     if (chart && login?.id) {
-      const newChart = duplicate(chart, login.id);
+      const newChart = duplicate(chart, login);
       await updateChart(newChart);
       trackUsage('ChartView.DuplicateChart', { isOwner });
       move(`/${newChart.id}`);
