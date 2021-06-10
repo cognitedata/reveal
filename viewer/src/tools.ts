@@ -2,6 +2,10 @@
  * Copyright 2021 Cognite AS
  */
 
+/**
+ * @module @cognite/reveal/tools
+ */
+
 export { HtmlOverlayTool, HtmlOverlayOptions } from './tools/HtmlOverlayTool';
 export { ExplodedViewTool } from './tools/ExplodedViewTool';
 export { DebugCameraTool } from './tools/DebugCameraTool';
