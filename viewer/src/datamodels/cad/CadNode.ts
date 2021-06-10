@@ -6,23 +6,18 @@ import * as THREE from 'three';
 
 import { SectorGeometry, SectorScene } from './sector/types';
 import { InstancedMeshFile, SectorQuads } from './rendering/types';
-
 import { RootSectorNode } from './sector/RootSectorNode';
 import { RenderMode } from './rendering/RenderMode';
-import { CadLoadingHints } from './CadLoadingHints';
 import { CadMaterialManager } from './CadMaterialManager';
 import { CadModelMetadata } from './CadModelMetadata';
 import { suggestCameraConfig } from './cameraconfig';
 
-import { EventTrigger } from '../../utilities/events';
 import { NodeTransformProvider } from './styling/NodeTransformProvider';
 import { InstancedMeshManager } from './InstancedMeshManager';
 import { NodeAppearanceProvider } from './styling/NodeAppearanceProvider';
 import { NodeAppearance } from './NodeAppearance';
 
 export type ParseCallbackDelegate = (parsed: { lod: string; data: SectorGeometry | SectorQuads }) => void;
-
-export type LoadingHintsChangeListener = (loadingHint: CadLoadingHints) => void;
 
 export interface SuggestedCameraConfig {
   position: THREE.Vector3;
@@ -32,17 +27,11 @@ export interface SuggestedCameraConfig {
 }
 
 export class CadNode extends THREE.Object3D {
-  private _loadingHints: CadLoadingHints;
-
   private readonly _rootSector: RootSectorNode;
   private readonly _cadModelMetadata: CadModelMetadata;
   private readonly _materialManager: CadMaterialManager;
   private readonly _sectorScene: SectorScene;
   private readonly _previousCameraMatrix = new THREE.Matrix4();
-
-  private readonly _events = {
-    loadingHintsChanged: new EventTrigger<LoadingHintsChangeListener>()
-  };
   private readonly _instancedMeshManager: InstancedMeshManager;
 
   constructor(model: CadModelMetadata, materialManager: CadMaterialManager) {
@@ -70,9 +59,6 @@ export class CadNode extends THREE.Object3D {
     // Prepare renderables
     this._rootSector = rootSector;
     this.add(rootSector);
-
-    // Apply default hints
-    this._loadingHints = {};
 
     this.matrixAutoUpdate = false;
     this.updateMatrixWorld();
@@ -135,15 +121,6 @@ export class CadNode extends THREE.Object3D {
     return this._materialManager.getRenderMode();
   }
 
-  set loadingHints(hints: Readonly<CadLoadingHints>) {
-    this._loadingHints = hints;
-    this._events.loadingHintsChanged.fire(hints);
-  }
-
-  get loadingHints(): Readonly<CadLoadingHints> {
-    return this._loadingHints;
-  }
-
   /**
    * Sets transformation matrix of the model. This overrides the current transformation.
    * @param matrix Transformation matrix.
@@ -176,28 +153,6 @@ export class CadNode extends THREE.Object3D {
       near,
       far
     };
-  }
-
-  public on(event: 'loadingHintsChanged', listener: LoadingHintsChangeListener): void {
-    switch (event) {
-      case 'loadingHintsChanged':
-        this._events.loadingHintsChanged.subscribe(listener as LoadingHintsChangeListener);
-        break;
-
-      default:
-        throw new Error(`Unsupported event '${event}'`);
-    }
-  }
-
-  public off(event: 'loadingHintsChanged', listener: LoadingHintsChangeListener): void {
-    switch (event) {
-      case 'loadingHintsChanged':
-        this._events.loadingHintsChanged.unsubscribe(listener as LoadingHintsChangeListener);
-        break;
-
-      default:
-        throw new Error(`Unsupported event '${event}'`);
-    }
   }
 
   public updateInstancedMeshes(instanceMeshFiles: InstancedMeshFile[], modelIdentifier: string, sectorId: number) {

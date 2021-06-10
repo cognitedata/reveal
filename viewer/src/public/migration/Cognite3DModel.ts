@@ -12,7 +12,7 @@ import { NumericRange } from '../../utilities';
 import { CadNode } from '../../internals';
 import { trackError } from '../../utilities/metrics';
 
-import { SupportedModelTypes, CadLoadingHints, CadModelMetadata } from '../types';
+import { SupportedModelTypes, CadModelMetadata } from '../types';
 import { callActionWithIndicesAsync } from '../../utilities/callActionWithIndicesAsync';
 import { CogniteClientNodeIdAndTreeIndexMapper } from '../../utilities/networking/CogniteClientNodeIdAndTreeIndexMapper';
 import { NodeSet } from '../../datamodels/cad/styling';
@@ -32,21 +32,6 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    */
   private get nodeTransformProvider(): NodeTransformProvider {
     return this.cadNode.nodeTransformProvider;
-  }
-
-  /**
-   * Get settings used for loading pipeline.
-   */
-  // TODO 2021-01-19 larsmoa: Remove loading hints per model
-  get loadingHints(): CadLoadingHints {
-    return this.cadNode.loadingHints;
-  }
-
-  /**
-   * Specify settings for loading pipeline.
-   */
-  set loadingHints(hints: CadLoadingHints) {
-    this.cadNode.loadingHints = hints;
   }
 
   /**
