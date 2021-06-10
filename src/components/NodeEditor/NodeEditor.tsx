@@ -25,9 +25,10 @@ const WorkflowContainer = styled.div`
   height: 100%;
   position: relative;
   flex-grow: 9;
-
+  overflow-y: auto;
+  background: url(${workflowBackgroundSrc}) #404040;
   .node-container {
-    background: url(${workflowBackgroundSrc}) #404040;
+    box-shadow: none;
   }
 `;
 
