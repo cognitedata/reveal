@@ -2,9 +2,13 @@
  * Copyright 2021 Cognite AS
  */
 
-// entry point for everything that is available as non-experimental (@cognite/reveal)
+// entry point for everything that is available (@cognite/reveal)
 // all types that we use in our public API must be reexported here
 // if you see a type in api-reference docs, then it's properly exported
+
+/**
+ * @module @cognite/reveal
+ */
 
 export * from './public/migration/Cognite3DViewer';
 export * from './revealEnv';
