@@ -4,9 +4,10 @@ import { Drawer, Form, Input, notification } from 'antd';
 import styled from 'styled-components';
 import { Group, GroupSpec } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { sleep } from 'utils/utils';
 
+import { useRouteMatch } from 'react-router';
 import CapabilitiesSelector from './CapabilitiesSelector';
 
 const Button = styled(CogsButton)`
@@ -24,28 +25,44 @@ export default function GroupDrawer({ group, onClose }: Props) {
   const legacyAuth = sdk.getOAuthFlowType() === 'CDF_OAUTH';
   const client = useQueryClient();
   const [caps, setCaps] = useState(group?.capabilities || []);
+  const tenant = useRouteMatch<{ tenant: string }>('/:tenant')?.params.tenant;
+  const { data: project } = useQuery(
+    ['project', tenant],
+    () => sdk.projects.retrieve(tenant!),
+    {
+      enabled: !!tenant,
+    }
+  );
 
   const { mutateAsync: updateGroup, isLoading } = useMutation(
     async (g: Group) => {
       // @ts-ignore
-      const { name, sourceId, source, capabilities } = g;
-      const serviceAccounts = legacyAuth
-        ? await sdk.serviceAccounts.list()
-        : [];
-      const groupAccountIds = serviceAccounts
-        .filter(a => !!group?.id && a.groups?.includes(group?.id))
-        .map(account => account.id);
-      const newGroup = await sdk.groups.create([
+      const { name, sourceId, source, capabilities, id } = g;
+      const defaultGroup = project?.defaultGroupId === id;
+      const groupAccountIds = (legacyAuth && !!id
+        ? await sdk.groups.listServiceAccounts(id)
+        : []
+      ).map(account => account.id);
+
+      const [newGroup] = await sdk.groups.create([
         // @ts-ignore
         { name, sourceId, source, capabilities },
       ]);
 
       if (groupAccountIds.length > 0) {
-        await sdk.groups.addServiceAccounts(newGroup[0].id, groupAccountIds);
+        await sdk.groups.addServiceAccounts(newGroup.id, groupAccountIds);
       }
 
-      if (group?.id) {
-        await sdk.groups.delete([group?.id]);
+      if (defaultGroup && project) {
+        await sdk.put(`api/playground/projects/${project.name}/defaultGroup`, {
+          data: {
+            items: [newGroup.id],
+          },
+        });
+      }
+
+      if (id) {
+        await sdk.groups.delete([id]);
       }
       // eslint-disable-next-line
       // todo: service acconts
@@ -113,6 +130,10 @@ export default function GroupDrawer({ group, onClose }: Props) {
           extra="Enter a unique name for the group."
         >
           <Input disabled={isLoading} />
+        </Form.Item>
+
+        <Form.Item name="id" hidden>
+          <Input disabled />
         </Form.Item>
         <Form.Item
           hasFeedback={isLoading}
