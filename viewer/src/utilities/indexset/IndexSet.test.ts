@@ -160,7 +160,7 @@ describe('IndexSet', () => {
     const toAdd = NumericRange.createFromInterval(add[0], add[1]);
     set.addRange(toAdd);
 
-    const received = Array.from(set.toRangesArray()).map(x => [x.from, x.toInclusive]);
+    const received = set.toRangeArray().map(x => [x.from, x.toInclusive]);
     expect(received.map(x => `[${x[0]}..${x[1]}]`)).toEqual(expected.map(x => `[${x[0]}..${x[1]}]`));
   }
 
@@ -176,24 +176,21 @@ describe('IndexSet', () => {
     const toRemove = NumericRange.createFromInterval(remove[0], remove[1]);
     set.removeRange(toRemove);
 
-    const received = Array.from(set.toRangesArray()).map(x => [x.from, x.toInclusive]);
+    const received = set.toRangeArray().map(x => [x.from, x.toInclusive]);
     expect(received).toEqual(expected);
   }
 
   test('addRange first time adds a single range', () => {
     const set = new IndexSet();
     set.addRange(NumericRange.createFromInterval(1, 11));
-    expect(Array.from(set.toRangesArray())).toEqual([NumericRange.createFromInterval(1, 11)]);
+    expect(set.toRangeArray()).toEqual([NumericRange.createFromInterval(1, 11)]);
   });
 
   test('add two non-overlapping ranges', () => {
     const set = new IndexSet();
     set.addRange(NumericRange.createFromInterval(1, 3));
     set.addRange(NumericRange.createFromInterval(5, 7));
-    expect(Array.from(set.toRangesArray())).toEqual([
-      NumericRange.createFromInterval(1, 3),
-      NumericRange.createFromInterval(5, 7)
-    ]);
+    expect(set.toRangeArray()).toEqual([NumericRange.createFromInterval(1, 3), NumericRange.createFromInterval(5, 7)]);
   });
 
   test('insert non-overlapping range before already added range', () => {
@@ -201,10 +198,7 @@ describe('IndexSet', () => {
     set.addRange(NumericRange.createFromInterval(5, 7));
     set.addRange(NumericRange.createFromInterval(1, 3));
 
-    expect(Array.from(set.toRangesArray())).toEqual([
-      NumericRange.createFromInterval(1, 3),
-      NumericRange.createFromInterval(5, 7)
-    ]);
+    expect(set.toRangeArray()).toEqual([NumericRange.createFromInterval(1, 3), NumericRange.createFromInterval(5, 7)]);
   });
 
   test('add single range interval which overlaps single element ', () => {
@@ -213,7 +207,7 @@ describe('IndexSet', () => {
 
     set.addRange(NumericRange.createFromInterval(3, 3));
 
-    expect(Array.from(set.toRangesArray())).toEqual([NumericRange.createFromInterval(1, 3)]);
+    expect(set.toRangeArray()).toEqual([NumericRange.createFromInterval(1, 3)]);
   });
 
   test('add single range interval which overlaps the end', () => {
@@ -222,7 +216,7 @@ describe('IndexSet', () => {
 
     set.addRange(NumericRange.createFromInterval(3, 3));
 
-    expect(Array.from(set.toRangesArray())).toEqual([NumericRange.createFromInterval(1, 3)]);
+    expect(set.toRangeArray()).toEqual([NumericRange.createFromInterval(1, 3)]);
   });
 
   test('add same range twice', () => {
@@ -230,7 +224,7 @@ describe('IndexSet', () => {
     set.addRange(NumericRange.createFromInterval(4, 8));
     set.addRange(NumericRange.createFromInterval(4, 8));
 
-    expect(Array.from(set.toRangesArray())).toEqual([NumericRange.createFromInterval(4, 8)]);
+    expect(set.toRangeArray()).toEqual([NumericRange.createFromInterval(4, 8)]);
   });
 
   test('add [5..7] to [4..8] -> [4..8]', () => {

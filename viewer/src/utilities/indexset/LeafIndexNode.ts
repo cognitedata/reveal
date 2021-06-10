@@ -83,10 +83,6 @@ export class LeafIndexNode {
     }
   }
 
-  ranges(): NumericRange[] {
-    return [this.range];
-  }
-
   clone(): LeafIndexNode {
     return new LeafIndexNode(this.range);
   }

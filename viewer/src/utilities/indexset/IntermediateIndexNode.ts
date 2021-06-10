@@ -171,10 +171,6 @@ export class IntermediateIndexNode {
     return this;
   }
 
-  ranges(): NumericRange[] {
-    return this.left.ranges().concat(this.right.ranges());
-  }
-
   clone(): IntermediateIndexNode {
     return IntermediateIndexNode.fromIndexNodesAndBalance(this.left.clone(), this.right.clone());
   }
