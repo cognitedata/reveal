@@ -116,8 +116,9 @@ other cases this might not be as straight forward as shown.
 In previous versions, all styling functions accepted an optional `applyToAllChildren`-argument.
 When this was `true`, Reveal would apply the styling to all descendants. When migrating
 to the new version, adding the root tree index of the subtree to `ByTreeIndexNodeSet` will not have
-the same result. Instead, use `Cognite3DModel.getSubtreeIndices()` to get the full range of tree
-indices.
+the same result. When you also have a `subtreeSize` available, use `ByTreeIndexNodeSet.addRange` with
+`new NumericRange(treeIndex, subtreeSize)` to add the full subtree. If you don't know the 
+`subtreeSize`, `Cognite3DModel.getSubtreeIndices()` can be used to get the full range of tree indices.
 
 ```js
 // In Reveal 1.x:
