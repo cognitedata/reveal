@@ -9,6 +9,7 @@ import React, { useEffect } from 'react';
 import { SelectedNode } from 'src/store/modules/TreeView';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store';
+import debounce from 'lodash/debounce';
 
 export function useSelectedNodesHighlights({
   model,
@@ -48,14 +49,22 @@ export function useSelectedNodesHighlights({
     );
   }, [model, ghostModeEnabled]);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const updateHighlightedSet = React.useCallback(
+    debounce((selectedNodesArg) => {
+      const highlightedSet = new IndexSet();
+
+      selectedNodesArg.forEach(({ treeIndex, subtreeSize }) => {
+        highlightedSet.addRange(new NumericRange(treeIndex, subtreeSize));
+      });
+
+      selectedTreeIndicesNodeSetRef.current.updateSet(highlightedSet);
+    }, 200),
+    []
+  );
+
   // selected nodes highlighter
   useEffect(() => {
-    const highlightedSet = new IndexSet();
-
-    selectedNodes.forEach(({ treeIndex, subtreeSize }) => {
-      highlightedSet.addRange(new NumericRange(treeIndex, subtreeSize));
-    });
-
-    selectedTreeIndicesNodeSetRef.current.updateSet(highlightedSet);
-  }, [model, selectedNodes]);
+    updateHighlightedSet(selectedNodes);
+  }, [updateHighlightedSet, selectedNodes]);
 }
