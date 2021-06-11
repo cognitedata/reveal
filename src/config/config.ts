@@ -68,6 +68,16 @@ export const getEnvironment = (
   return 'DEVELOPMENT';
 };
 
+export const getBackendServiceBaseUrl = () => {
+  if (window.location.hostname.includes('localhost')) {
+    return 'https://as.staging.cognite.ai';
+  }
+
+  return `https://as.${
+    origin.split('charts.')[1].split('cogniteapp.com')[0]
+  }cognite.ai`;
+};
+
 export default {
   appId: getAppId(),
   appName: getAppName(),
