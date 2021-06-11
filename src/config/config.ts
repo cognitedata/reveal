@@ -69,7 +69,10 @@ export const getEnvironment = (
 };
 
 export const getBackendServiceBaseUrl = () => {
-  if (window.location.hostname.includes('localhost')) {
+  if (
+    window.location.hostname.includes('localhost') ||
+    window.location.hostname.includes('.pr.')
+  ) {
     return 'https://as.staging.cognite.ai';
   }
 
