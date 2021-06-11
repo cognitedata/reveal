@@ -69,7 +69,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   const isWorkspaceMode = workspaceMode === 'workspace';
 
   useEffect(() => {
-    trackUsage('PageView.ChartView');
+    trackUsage('PageView.ChartView', { isOwner: chart?.user === login?.id });
     const timer = metrics.start('ChartView.ViewTime');
 
     return () => {
@@ -197,6 +197,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   const handleCloseSearch = async () => {
     setShowSearch(false);
     setQuery('');
+    trackUsage('ChartView.CloseSearch');
     setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
   };
 
