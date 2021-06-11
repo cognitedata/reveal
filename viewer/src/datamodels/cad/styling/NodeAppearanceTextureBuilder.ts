@@ -190,37 +190,28 @@ function allocateTextures(
   return { overrideColorPerTreeIndexTexture, transformOverrideIndexTexture };
 }
 
-function appearanceToColorOverride(appearance: NodeAppearance): [number, number, number] {
+function appearanceToColorOverride(appearance: NodeAppearance): [number, number, number, number] {
   const [r, g, b] = appearance.color || [0, 0, 0];
-  return [r, g, b];
-}
-
-function mixAlpha(current: number, updateStyle: NodeAppearance): number {
-  /*
-   * - 0  : visible bit   - when set the node is visible
-   * - 1  : in front bit  - when set the node is rendered in front of other objects
-   * - 2  : ghosted bit   - when set the node is rendered 'ghosted'
-   * - 3-5: outline color - outline toggle and color ({@see OutlineColor}).
-   * - 6-7: unused
-   */
-  let updated = current;
-  if (updateStyle.visible !== undefined) {
-    updated = (updated & 0x11111110) | (updateStyle.visible ? 1 : 0);
-  }
-  if (updateStyle.renderInFront !== undefined) {
-    updated = (updated & 0x11111101) | (updateStyle.renderInFront ? 2 : 0);
-  }
-  if (updateStyle.renderGhosted !== undefined) {
-    updated = (updated & 0x11111011) | (updateStyle.renderGhosted ? 4 : 0);
-  }
-  if (updateStyle.outlineColor !== undefined) {
-    updated = (updated & 0x11000111) | (updateStyle.outlineColor << 3);
-  }
-  return updated;
+  const isVisible = appearance.visible !== undefined ? !!appearance.visible : true;
+  const inFront = !!appearance.renderInFront;
+  const ghosted = !!appearance.renderGhosted;
+  const outlineColor = appearance.outlineColor ? Number(appearance.outlineColor) : 0;
+  // Byte layout:
+  // [isVisible, renderInFront, renderGhosted, outlineColor0, outlineColor1, outlineColor2, unused, unused]
+  const bytePattern = (isVisible ? 1 << 0 : 0) + (inFront ? 1 << 1 : 0) + (ghosted ? 1 << 2 : 0) + (outlineColor << 3);
+  return [r, g, b, bytePattern];
 }
 
 function applyRGBA(rgbaBuffer: Uint8ClampedArray, treeIndices: IndexSet, style: NodeAppearance) {
-  const [r, g, b] = appearanceToColorOverride(style);
+  const [r, g, b, a] = appearanceToColorOverride(style);
+  const updateAlphaBitmask =
+    (style.visible !== undefined ? 0b00000001 : 0) |
+    (style.renderInFront !== undefined ? 0b00000010 : 0) |
+    (style.renderGhosted !== undefined ? 0b00000100 : 0) |
+    (style.outlineColor !== undefined ? 0b00111000 : 0);
+  const keepAlphaBitmask = ~updateAlphaBitmask;
+
+  const updateAlpha = updateAlphaBitmask & a;
   treeIndices.forEachRange(range => {
     for (let i = range.from; i <= range.toInclusive; ++i) {
       if (style.color !== undefined) {
@@ -228,7 +219,7 @@ function applyRGBA(rgbaBuffer: Uint8ClampedArray, treeIndices: IndexSet, style: 
         rgbaBuffer[4 * i + 1] = g;
         rgbaBuffer[4 * i + 2] = b;
       }
-      rgbaBuffer[4 * i + 3] = mixAlpha(rgbaBuffer[4 * i + 3], style);
+      rgbaBuffer[4 * i + 3] = (keepAlphaBitmask & rgbaBuffer[4 * i + 3]) | updateAlpha;
     }
   });
 }
