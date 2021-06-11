@@ -6,7 +6,7 @@ describe: Applying styles to nodes based on node properties/attributes
 
 import { DemoWrapper } from '@site/docs/components/DemoWrapper';
 
-3D nodes may have assosciated attribute/property data. Reveal allows for filtering based on
+3D nodes may have associated attribute/property data. Reveal allows for filtering based on
 these properties, allowing queries such as "all pipes", "nodes within module P600" or "nodes
 with status S5". Combinations are also possible by using `CombinedNodeSet`.
 
@@ -26,7 +26,7 @@ the nodes.
 
 <DemoWrapper name="Cognite3DViewerDemo" />
 
-# Show all pipes
+## Show all pipes
 
 If nodes in the 3D model has an attribute `'PDMS.Type'`, `ByNodePropertyNodeSet` can be used to
 retrieve nodes of a certain type. In the following example, only pipes are accepted:
@@ -40,7 +40,7 @@ model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
 model.addStyledNodeSet(allPipes, { renderGhosted: false, color: [40, 200, 20] } );
 ```
 
-# Partioning requests
+## Partitioning requests
 
 For filters that match a lot of nodes, [paritioned requests](https://docs.cognite.com/api/v1/#section/Parallel-retrieval)
 might increase the performance radically by fetching result from the server in parallel.
@@ -59,7 +59,7 @@ model.addStyledNodeSet(nodesFromFile, { renderGhosted: false, outlineColor: Node
 
 To compare speed-up, set `requestPartitions` to `1`.
 
-# Combining filters
+## Combining filters
 
 Often one would want to match multiple criterias of the same type. Lets say we want to find all
 mechanical equipment with purpose 'STU'. We can either execute this as a single query, or as two
@@ -103,7 +103,7 @@ the user will want to show 'ARCH'-nodes within the 'STU'-purpose) it might
 be better to use two separate queries and combine the results. Also, the latter
 approach also allows for more complex types of filters.
 
-# Inverting filters
+## Inverting filters
 
 Often it is interesting to invert results from filters to find elements that does not match the query. This
 can be done using `InvertNodeSet`.
