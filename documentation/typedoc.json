@@ -1,15 +1,13 @@
 {
   "excludeExternals": true,
-  "externalPattern": ["../viewer/src/__tests__/**"],
+  "externalPattern": ["../viewer/src/__tests__/**", "../viewer/node_modules/**"],
   "exclude": ["**/*+(.spec|.test).ts"],
   "excludePrivate": true,
   "excludeProtected": true,
-  "stripInternal": true,
+  "excludeInternal": true,
 
-  "ignoreCompilerErrors": true,
-  "readme": "none",
+  "readme": "docs/API_Reference_header.md",
   "tsconfig": "../viewer/tsconfig.json",
 
-  "out" : "./generated",
-  "mode": "library"
+  "out" : "./generated"
 }

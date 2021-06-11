@@ -89,6 +89,16 @@ export class NodeAppearanceProvider {
     this.notifyChanged();
   }
 
+  changeStyledSetAppearance(nodeSet: NodeSet, appearance: NodeAppearance) {
+    const styledSet = this._styledSet.find(x => x.nodeSet === nodeSet);
+    if (!styledSet) {
+      throw new Error('Node set not added');
+    }
+    styledSet.appearance = appearance;
+
+    this.handleNodeSetChanged(styledSet);
+  }
+
   removeStyledSet(nodeSet: NodeSet) {
     const index = this._styledSet.findIndex(x => x.nodeSet === nodeSet);
     if (index === -1) {

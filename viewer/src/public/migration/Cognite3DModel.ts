@@ -12,7 +12,7 @@ import { NumericRange } from '../../utilities';
 import { CadNode } from '../../internals';
 import { trackError } from '../../utilities/metrics';
 
-import { SupportedModelTypes, CadLoadingHints, CadModelMetadata } from '../types';
+import { SupportedModelTypes, CadModelMetadata } from '../types';
 import { callActionWithIndicesAsync } from '../../utilities/callActionWithIndicesAsync';
 import { CogniteClientNodeIdAndTreeIndexMapper } from '../../utilities/networking/CogniteClientNodeIdAndTreeIndexMapper';
 import { NodeSet } from '../../datamodels/cad/styling';
@@ -32,21 +32,6 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    */
   private get nodeTransformProvider(): NodeTransformProvider {
     return this.cadNode.nodeTransformProvider;
-  }
-
-  /**
-   * Get settings used for loading pipeline.
-   */
-  // TODO 2021-01-19 larsmoa: Remove loading hints per model
-  get loadingHints(): CadLoadingHints {
-    return this.cadNode.loadingHints;
-  }
-
-  /**
-   * Specify settings for loading pipeline.
-   */
-  set loadingHints(hints: CadLoadingHints) {
-    this.cadNode.loadingHints = hints;
   }
 
   /**
@@ -118,7 +103,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * Nodes are expected to only be in one style set, and the behavior is undefined
    * when a node is part of two different sets.
    *
-   * @param nodes Dynamic set of nodes to apply the provided appearance to.
+   * @param nodeSet Dynamic set of nodes to apply the provided appearance to.
    * @param appearance Appearance to style the provided set with.
    *
    * @example
@@ -128,16 +113,25 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * model.addStyledSet(visibleSet, { rendererGhosted: false });
    * ```
    */
-  addStyledNodeSet(nodes: NodeSet, appearance: NodeAppearance) {
-    this.cadNode.nodeAppearanceProvider.addStyledSet(nodes, appearance);
+  addStyledNodeSet(nodeSet: NodeSet, appearance: NodeAppearance) {
+    this.cadNode.nodeAppearanceProvider.addStyledSet(nodeSet, appearance);
+  }
+
+  /**
+   * Changes appearance for the existing styled node set.
+   * @param nodeSet Node set previously added using {@see addStyledNodeSet}.
+   * @param appearance Appearance that should replace previous one for the provided set.
+   */
+  changeStyledNodeSetAppearance(nodeSet: NodeSet, appearance: NodeAppearance) {
+    this.cadNode.nodeAppearanceProvider.changeStyledSetAppearance(nodeSet, appearance);
   }
 
   /**
    * Removes styling for previously added set, resetting the style to the default.
-   * @param nodes   Node set previously added using {@see addStyledNodeSet}.
+   * @param nodeSet   Node set previously added using {@see addStyledNodeSet}.
    */
-  removeStyledNodeSet(nodes: NodeSet) {
-    this.cadNode.nodeAppearanceProvider.removeStyledSet(nodes);
+  removeStyledNodeSet(nodeSet: NodeSet) {
+    this.cadNode.nodeAppearanceProvider.removeStyledSet(nodeSet);
   }
 
   /**
@@ -230,12 +224,11 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
 
   /**
-   * Get array of subtree tree indices.
-   * @param treeIndex
+   * Determines the range of tree indices for a given subtree.
+   * @param treeIndex Index of the root of the subtree to get the index range for.
    */
-  async getSubtreeTreeIndices(treeIndex: number): Promise<number[]> {
-    const treeIndices = await this.determineTreeIndices(treeIndex, true);
-    return treeIndices.toArray();
+  async getSubtreeTreeIndices(treeIndex: number): Promise<NumericRange> {
+    return this.determineTreeIndices(treeIndex, true);
   }
 
   /**
