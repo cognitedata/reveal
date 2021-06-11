@@ -14,14 +14,6 @@ export type OAuthAuthResult = BaseAuthResult & {
 
 export type AuthResult = ApiKeyAuthResult | OAuthAuthResult;
 
-export function isOAuthAuthResult(
-  authResult: AuthResult
-): authResult is OAuthAuthResult {
-  return (
-    authResult.idToken !== undefined && authResult.accessToken !== undefined
-  );
-}
-
 export interface DecodedIdToken {
   exp: number;
   sub: string;

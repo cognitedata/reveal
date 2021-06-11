@@ -1,6 +1,6 @@
 import { Metrics } from '@cognite/metrics';
 import jwtDecode from 'jwt-decode';
-import { AuthResult, DecodedIdToken, isOAuthAuthResult } from 'auth/types';
+import type { AuthResult, DecodedIdToken, OAuthAuthResult } from 'auth';
 
 import { storage } from './localStorage';
 
@@ -15,6 +15,14 @@ export const persistAuthResult = (authResult: AuthResult | undefined) => {
 function getTokenTtlSeconds(decodedIdToken: DecodedIdToken): number {
   const currentTimestampSeconds = Math.floor(Date.now() / 1000);
   return decodedIdToken.exp - currentTimestampSeconds;
+}
+
+export function isOAuthAuthResult(
+  authResult: AuthResult
+): authResult is OAuthAuthResult {
+  return (
+    authResult.idToken !== undefined && authResult.accessToken !== undefined
+  );
 }
 
 export const retrieveAuthResult = (): AuthResult | undefined => {

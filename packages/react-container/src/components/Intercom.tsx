@@ -6,7 +6,8 @@ import {
   IntercomBootSettings,
 } from '@cognite/intercom-helper';
 import { SidecarConfig } from '@cognite/react-tenant-selector';
-import { getAuthHeaders } from 'auth';
+
+import { getAuthHeaders } from '../auth';
 
 import { ConditionalWrapperWithProps } from './ConditionalWrapper';
 

@@ -340,6 +340,7 @@ build_storybook(
     chdir = "$(RULEDIR)",
     data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + [
         "copy_storybook_files",
+        "@npm//tsconfig-paths-webpack-plugin",
         "@npm//@storybook/addon-essentials",
         "@npm//@storybook/addon-links",
         "@npm//@storybook/preset-create-react-app",

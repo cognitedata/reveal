@@ -1,7 +1,3 @@
-## 1.2.8 Jun 14 2021
-
-- Introduce monorepo
-
 ## 1.2.7 Jun 4 2021
 
 - Bump tsa to v1.2.9 and auth-utils to 1.0.6

@@ -1,5 +1,5 @@
 diff --git a/node_modules/react-scripts/config/webpack.config.js b/node_modules/react-scripts/config/webpack.config.js
-index 26c2a65..d357863 100644
+index 26c2a65..2fb71df 100644
 --- a/node_modules/react-scripts/config/webpack.config.js
 +++ b/node_modules/react-scripts/config/webpack.config.js
 @@ -34,6 +34,7 @@ const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin');
@@ -42,13 +42,13 @@ index 26c2a65..d357863 100644
                test: /\.(js|mjs|jsx|ts|tsx)$/,
 -              include: paths.appSrc,
 +              // Let Babel compile outside of src/.
-+              include: undefined,
++              include: path.resolve(fs.realpathSync(process.cwd()), '../../'),
 +              exclude: /node_modules/,
                loader: require.resolve('babel-loader'),
                options: {
                  customize: require.resolve(
 diff --git a/node_modules/react-scripts/scripts/utils/verifyTypeScriptSetup.js b/node_modules/react-scripts/scripts/utils/verifyTypeScriptSetup.js
-index 949f34a..56639f7 100644
+index 949f34a..4c67426 100644
 --- a/node_modules/react-scripts/scripts/utils/verifyTypeScriptSetup.js
 +++ b/node_modules/react-scripts/scripts/utils/verifyTypeScriptSetup.js
 @@ -156,7 +156,8 @@ function verifyTypeScriptSetup() {

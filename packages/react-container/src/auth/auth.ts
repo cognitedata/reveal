@@ -4,7 +4,7 @@ import * as React from 'react';
 import { AuthProvider } from '../components/AuthContainer';
 import { log } from '../utils/log';
 
-import { AuthHeaders } from './types';
+import type { AuthHeaders } from './types';
 
 const getAuthorizationHeader = (token: string) => ({
   Authorization: `Bearer ${token}`,

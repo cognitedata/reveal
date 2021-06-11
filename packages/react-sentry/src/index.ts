@@ -1,2 +1,2 @@
 export * from './Sentry';
-export { SentryProps } from './utils';
+export type { SentryProps } from './utils';

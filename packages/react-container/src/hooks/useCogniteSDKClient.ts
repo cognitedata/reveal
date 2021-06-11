@@ -1,6 +1,7 @@
 import { CogniteClient } from '@cognite/sdk';
-import { setCogniteSDKClient } from 'internal';
 import { useMemo } from 'react';
+
+import { setCogniteSDKClient } from '../internal';
 
 export const useCogniteSDKClient = (
   appId?: string,

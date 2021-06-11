@@ -2,7 +2,13 @@ import { CogniteClient } from '@cognite/sdk';
 import { getFromLocalStorage } from '@cognite/storage';
 
 import { getFlow, saveFlow, log } from './utils';
-import { AuthenticatedUser, AuthFlow, AuthResult, FakeIdP } from './types';
+import {
+  AuthenticatedUser,
+  AuthFlow,
+  AuthResult,
+  FakeIdP,
+  TokenInspect,
+} from './types';
 
 export class CogniteAuth {
   state: {
@@ -347,6 +353,7 @@ export class CogniteAuth {
         },
       });
 
+      this.state.project = fakeAuth.project;
       this.state.authenticated = true;
       this.state.initializing = false;
 
@@ -382,13 +389,13 @@ export class CogniteAuth {
     };
   }
 
-  public async getProjects(): Promise<{ projectUrlName: string }[]> {
+  public async getProjects(): Promise<TokenInspect['projects']> {
     try {
       this.resetError();
 
       const response = await this.getClient().get('/api/v1/token/inspect');
 
-      const { projects } = response.data;
+      const { projects } = response.data as TokenInspect;
 
       return projects;
     } catch (err) {

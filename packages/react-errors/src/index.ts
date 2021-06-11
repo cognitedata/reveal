@@ -3,4 +3,5 @@ export { default as ErrorId } from './ErrorId';
 export { default as ErrorWatcher } from './ErrorWatcher';
 export { ImpossibleStateError, UnreachableCaseError } from './errors';
 export { isHttpError } from './isHttpError';
-export { reportException, ReportedError } from './reportException';
+export { reportException } from './reportException';
+export type { ReportedError } from './reportException';

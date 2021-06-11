@@ -6,9 +6,9 @@ import { ErrorBoundary } from '@cognite/react-errors';
 import { TenantSelector, SidecarConfig } from '@cognite/react-tenant-selector';
 import { IntercomBootSettings } from '@cognite/intercom-helper';
 import { Loader } from '@cognite/cogs.js';
-import { IntercomContainer } from 'components/Intercom';
 import merge from 'lodash/merge';
 
+import { IntercomContainer } from './components/Intercom';
 import {
   AuthContainer,
   AuthContainerForApiKeyMode,
