@@ -6,16 +6,18 @@ import RawSelector from 'components/inputs/rawSelector/RawSelector';
 import { useRawDBAndTables } from 'hooks/useRawDBAndTables';
 import { IntegrationRawTable } from 'model/Integration';
 import { ErrorSpan, Hint } from 'styles/StyledForm';
+import {
+  EXTRACTION_PIPELINE,
+  EXTRACTION_PIPELINE_LOWER,
+} from 'utils/constants';
 
 interface ConnectRawTablesPageProps {
   onSelect?: (rawTables: IntegrationRawTable[]) => void;
 }
 
-export const INTEGRATION_CONNECT_RAW_TABLES_HEADING: Readonly<string> =
-  'Integration Connect Raw Tables';
+export const INTEGRATION_CONNECT_RAW_TABLES_HEADING: Readonly<string> = `${EXTRACTION_PIPELINE} Connect Raw Tables`;
 
-export const CONNECT_RAW_TABLES_HINT: Readonly<string> =
-  'Select the name of the database and tables that your integration writes data to';
+export const CONNECT_RAW_TABLES_HINT: Readonly<string> = `Select the name of the database and tables that your ${EXTRACTION_PIPELINE_LOWER} writes data to`;
 
 const ConnectRawTablesInput: FunctionComponent<ConnectRawTablesPageProps> = ({
   onSelect,

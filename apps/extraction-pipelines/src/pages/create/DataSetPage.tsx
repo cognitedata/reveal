@@ -9,7 +9,12 @@ import { createLink } from '@cognite/cdf-utilities';
 import { ButtonPlaced } from 'styles/StyledButton';
 import { RegisterIntegrationLayout } from 'components/layout/RegisterIntegrationLayout';
 import { GridH2Wrapper } from 'styles/StyledPage';
-import { NEXT } from 'utils/constants';
+import {
+  ERROR_NO_ID,
+  EXTRACTION_PIPELINE,
+  EXTRACTION_PIPELINE_LOWER,
+  NEXT,
+} from 'utils/constants';
 import { CreateFormWrapper, StyledLabel } from 'styles/StyledForm';
 import { INTEGRATIONS_OVERVIEW_PAGE_PATH } from 'routing/RoutingConfig';
 import {
@@ -54,10 +59,8 @@ export enum DataSetOptions {
 }
 export const CREATE_DATA_SET_LABEL: Readonly<string> =
   'No, I want to creat a data set now';
-export const INTEGRATION_DATA_SET_HEADING: Readonly<string> =
-  'Integration data set';
-export const DATA_SET_TIP: Readonly<string> =
-  'The data your integration sends to CDF can be linked to a data set.';
+export const INTEGRATION_DATA_SET_HEADING: Readonly<string> = `${EXTRACTION_PIPELINE} data set`;
+export const DATA_SET_TIP: Readonly<string> = `The data your ${EXTRACTION_PIPELINE_LOWER} sends to CDF can be linked to a data set.`;
 
 interface DataSetPageProps {}
 
@@ -126,7 +129,7 @@ const DataSetPage: FunctionComponent<DataSetPageProps> = () => {
         } else {
           setError('dataSetId', {
             type: 'No id',
-            message: 'No id. Select an integration',
+            message: ERROR_NO_ID,
             shouldFocus: true,
           });
         }
@@ -151,7 +154,7 @@ const DataSetPage: FunctionComponent<DataSetPageProps> = () => {
       <FormProvider {...methods}>
         <CreateFormWrapper onSubmit={handleSubmit(handleNext)}>
           <StyledRadioGroup>
-            <legend>Does the integration write to a data set?</legend>
+            <legend>Does the {EXTRACTION_PIPELINE} write to a data set?</legend>
             <span id="data-set-hint" className="input-hint">
               {DATA_SET_TIP}
             </span>

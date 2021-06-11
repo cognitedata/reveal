@@ -13,7 +13,7 @@ import {
 } from 'utils/validation/notificationValidation';
 import { GridH2Wrapper } from 'styles/StyledPage';
 import { RegisterIntegrationLayout } from 'components/layout/RegisterIntegrationLayout';
-import { NEXT } from 'utils/constants';
+import { ERROR_NO_ID, NEXT } from 'utils/constants';
 import { CreateFormWrapper } from 'styles/StyledForm';
 import { contactsRule } from 'utils/validation/contactsSchema';
 import { useStoredRegisterIntegration } from 'hooks/useStoredRegisterIntegration';
@@ -98,7 +98,7 @@ const ContactsPage: FunctionComponent<ContactsPageProps> = () => {
     } else {
       setError('contacts', {
         type: 'No id',
-        message: 'No id. Select an integration',
+        message: ERROR_NO_ID,
         shouldFocus: true,
       });
     }

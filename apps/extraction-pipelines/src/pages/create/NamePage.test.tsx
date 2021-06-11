@@ -3,8 +3,8 @@ import { fireEvent, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import { QueryClient } from 'react-query';
 import { renderRegisterContext } from 'utils/test/render';
-import NamePage, { INTEGRATION_NAME_HEADING } from 'pages/create/NamePage';
-import { BACK, NEXT } from 'utils/constants';
+import NamePage from 'pages/create/NamePage';
+import { BACK, EXT_PIPE_NAME_HEADING, NEXT } from 'utils/constants';
 import {
   CDF_ENV_GREENFIELD,
   ORIGIN_DEV,
@@ -31,7 +31,7 @@ describe('NamePage', () => {
     const withName = { ...props, initRegisterIntegration: { name } };
     renderRegisterContext(<NamePage />, { ...withName });
     const nameInput = screen.getByLabelText(
-      INTEGRATION_NAME_HEADING
+      EXT_PIPE_NAME_HEADING
     ) as HTMLInputElement;
     expect(nameInput).toBeInTheDocument();
     expect(nameInput.value).toEqual(name);
@@ -39,8 +39,8 @@ describe('NamePage', () => {
 
   test('Interact with form', async () => {
     renderRegisterContext(<NamePage />, { ...props });
-    expect(screen.getByLabelText(INTEGRATION_NAME_HEADING)).toBeInTheDocument();
-    const nameInput = screen.getByLabelText(INTEGRATION_NAME_HEADING);
+    const nameInput = screen.getByLabelText(EXT_PIPE_NAME_HEADING);
+    expect(nameInput).toBeInTheDocument();
     const nextBtn = screen.getByText(NEXT);
     fireEvent.click(nextBtn);
     await waitFor(() => {

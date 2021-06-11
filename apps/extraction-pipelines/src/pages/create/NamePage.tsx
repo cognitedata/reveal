@@ -5,7 +5,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { createLink } from '@cognite/cdf-utilities';
 import { RegisterIntegrationLayout } from 'components/layout/RegisterIntegrationLayout';
 import { ButtonPlaced } from 'styles/StyledButton';
-import { NEXT } from 'utils/constants';
+import { EXT_PIPE_NAME_HEADING, NAME_HINT, NEXT } from 'utils/constants';
 import { CreateFormWrapper } from 'styles/StyledForm';
 import { EXTERNAL_ID_PAGE_PATH } from 'routing/CreateRouteConfig';
 import { useStoredRegisterIntegration } from 'hooks/useStoredRegisterIntegration';
@@ -19,10 +19,6 @@ interface NamePageProps {}
 interface NameFormInput {
   name: string;
 }
-export const NAME_HINT =
-  'Enter a name for your integration to be able to view and monitor this.';
-
-export const INTEGRATION_NAME_HEADING: Readonly<string> = 'Integration name';
 const NamePage: FunctionComponent<NamePageProps> = () => {
   const history = useHistory();
   const {
@@ -50,7 +46,7 @@ const NamePage: FunctionComponent<NamePageProps> = () => {
           defaultValue=""
           control={control}
           errors={errors}
-          labelText={INTEGRATION_NAME_HEADING}
+          labelText={EXT_PIPE_NAME_HEADING}
           hintText={NAME_HINT}
           renderLabel={(labelText, inputId) => (
             <HeadingLabel labelFor={inputId}>{labelText}</HeadingLabel>

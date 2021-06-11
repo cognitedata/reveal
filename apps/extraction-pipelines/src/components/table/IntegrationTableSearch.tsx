@@ -2,7 +2,11 @@ import React from 'react';
 import { FilterValue, Row, useAsyncDebounce } from 'react-table';
 import { Input } from '@cognite/cogs.js';
 import { trackUsage } from 'utils/Metrics';
-import { SEARCH } from 'utils/constants';
+import {
+  EXTRACTION_PIPELINE,
+  EXTRACTION_PIPELINES,
+  SEARCH,
+} from 'utils/constants';
 import { StyledTooltip } from 'styles/StyledToolTip';
 
 interface GlobalSearchProps<D extends object> {
@@ -24,11 +28,11 @@ const IntegrationTableSearch = <D extends object>({
   }, 200);
   return (
     <StyledTooltip
-      content="Search will filter table based on search criteria. Search eg. integration name, name of users etc."
+      content={`Search will filter table based on search criteria. Search eg. ${EXTRACTION_PIPELINE} name, name of users etc.`}
       placement="top-start"
     >
       <Input
-        title="Search all integrations"
+        title={`Search all ${EXTRACTION_PIPELINES}`}
         aria-describedby="tippy-1"
         value={value || ''}
         onChange={(e) => {

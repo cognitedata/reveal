@@ -13,7 +13,7 @@ import { GridH2Wrapper } from 'styles/StyledPage';
 import { CreateFormWrapper } from 'styles/StyledForm';
 import { RAW_TABLE_PAGE_PATH } from 'routing/CreateRouteConfig';
 import { INTEGRATIONS_OVERVIEW_PAGE_PATH } from 'routing/RoutingConfig';
-import { REGISTER } from 'utils/constants';
+import { ERROR_NO_ID, EXTRACTION_PIPELINE, REGISTER } from 'utils/constants';
 import {
   useDetailsUpdate,
   createUpdateSpec,
@@ -60,8 +60,7 @@ interface DocumentationFormInput {
   metadata: MetaData[];
 }
 
-export const INTEGRATION_DOCUMENTATION_HEADING: Readonly<string> =
-  'Integration documentation';
+export const INTEGRATION_DOCUMENTATION_HEADING: Readonly<string> = `${EXTRACTION_PIPELINE} documentation`;
 export const DESCRIPTION_HINT: Readonly<string> =
   'For users of data a good description of data content and other relevant metrics connected to data will give value for them to know the data better. Please enter a description.';
 export const DESCRIPTION_LABEL: Readonly<string> = 'Description (optional)';
@@ -113,7 +112,7 @@ const DocumentationPage: FunctionComponent<DescriptionPageProps> = () => {
     } else {
       setError('description', {
         type: 'No id',
-        message: 'No id. Select an integration',
+        message: ERROR_NO_ID,
         shouldFocus: true,
       });
     }

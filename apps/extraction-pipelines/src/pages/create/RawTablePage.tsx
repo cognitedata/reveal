@@ -14,7 +14,12 @@ import {
 } from 'routing/CreateRouteConfig';
 import { GridH2Wrapper } from 'styles/StyledPage';
 import { CreateFormWrapper } from 'styles/StyledForm';
-import { NEXT } from 'utils/constants';
+import {
+  ERROR_NO_ID,
+  EXTRACTION_PIPELINE,
+  EXTRACTION_PIPELINE_LOWER,
+  NEXT,
+} from 'utils/constants';
 import { RegisterIntegrationLayout } from 'components/layout/RegisterIntegrationLayout';
 import { ButtonPlaced } from 'styles/StyledButton';
 import { IntegrationRawTable } from 'model/Integration';
@@ -48,10 +53,8 @@ export enum RawTableOptions {
   YES = 'Yes',
   NO = 'No',
 }
-export const RAW_TABLE_LABEL: Readonly<string> =
-  'Does your integration write to one or more Raw Tables?';
-export const INTEGRATION_RAW_TABLE_HEADING: Readonly<string> =
-  'Integration Raw Tables';
+export const RAW_TABLE_LABEL: Readonly<string> = `Does your ${EXTRACTION_PIPELINE_LOWER} write to one or more Raw Tables?`;
+export const INTEGRATION_RAW_TABLE_HEADING: Readonly<string> = `${EXTRACTION_PIPELINE} Raw Tables`;
 export const RAW_TABLE_TIP: Readonly<string> = '***Put some hint here***';
 
 interface RawTablePageProps {}
@@ -114,7 +117,7 @@ const RawTablePage: FunctionComponent<RawTablePageProps> = () => {
     } else {
       setError('datasetId', {
         type: 'No id',
-        message: 'No id. Select an integration',
+        message: ERROR_NO_ID,
         shouldFocus: true,
       });
     }

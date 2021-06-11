@@ -9,7 +9,12 @@ import {
   ORIGIN_DEV,
   PROJECT_ITERA_INT_GREEN,
 } from 'utils/baseURL';
-import { EMAIL_LABEL, NAME_LABEL, NEXT } from 'utils/constants';
+import {
+  EMAIL_LABEL,
+  EXT_PIPE_NAME_HEADING,
+  NAME_LABEL,
+  NEXT,
+} from 'utils/constants';
 import { NAME_PAGE_PATH, withTenant } from 'routing/CreateRouteConfig';
 import 'utils/test/windowLocation';
 import { INTEGRATION_DOCUMENTATION_HEADING } from 'pages/create/DocumentationPage';
@@ -22,7 +27,6 @@ import {
   INTEGRATION_RAW_TABLE_HEADING,
   RawTableOptions,
 } from 'pages/create/RawTablePage';
-import { INTEGRATION_NAME_HEADING } from 'pages/create/NamePage';
 import { INTEGRATION_EXTERNAL_ID_HEADING } from 'pages/create/ExternalIdPage';
 import { TableHeadings } from 'components/table/IntegrationTableCol';
 
@@ -56,9 +60,9 @@ describe('Register', () => {
 
     // // name page
     await waitFor(() => {
-      screen.getByLabelText(INTEGRATION_NAME_HEADING);
+      screen.getByLabelText(EXT_PIPE_NAME_HEADING);
     });
-    const nameInput = await screen.findByLabelText(INTEGRATION_NAME_HEADING);
+    const nameInput = await screen.findByLabelText(EXT_PIPE_NAME_HEADING);
     const name = 'My integration';
     fireEvent.change(nameInput, { target: { value: name } });
     await waitFor(() => {

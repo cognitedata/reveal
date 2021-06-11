@@ -28,7 +28,7 @@ import { CloseButton, SaveButton, EditButton } from 'styles/StyledButton';
 import { ContactsFormInput } from 'pages/create/ContactsPage';
 import { Checkbox } from '@cognite/cogs.js';
 import { DivFlex } from 'styles/flex/StyledFlex';
-import { BtnTestIds, SERVER_ERROR_TITLE } from 'utils/constants';
+import { BtnTestIds, ERROR_NO_ID, SERVER_ERROR_TITLE } from 'utils/constants';
 import { HeadingLabel } from 'components/inputs/HeadingLabel';
 import MessageDialog from 'components/buttons/MessageDialog';
 import { AddInfo } from 'components/integration/AddInfo';
@@ -99,7 +99,7 @@ export const EditNotification: FunctionComponent = () => {
     } else {
       setError('server', {
         type: 'No id',
-        message: 'No id. Select an integration',
+        message: ERROR_NO_ID,
         shouldFocus: true,
       });
     }

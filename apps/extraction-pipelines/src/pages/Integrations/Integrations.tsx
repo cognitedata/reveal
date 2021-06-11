@@ -1,7 +1,11 @@
 import React, { FunctionComponent, useEffect } from 'react';
 import { FullPageLayout } from 'components/layout/FullPageLayout';
 import { trackUsage } from 'utils/Metrics';
-import { INTEGRATIONS } from 'utils/constants';
+import {
+  ERROR_NOT_GET_EXT_PIPE,
+  EXTRACTION_PIPELINES,
+  OVERVIEW,
+} from 'utils/constants';
 import { useIntegrations } from 'hooks/useIntegrations';
 import NoIntegrations from 'components/error/NoIntegrations';
 import { Loader } from '@cognite/cogs.js';
@@ -23,7 +27,7 @@ type Props = OwnProps;
 const Integrations: FunctionComponent<Props> = () => {
   const { project } = useAppEnv();
   useEffect(() => {
-    trackUsage(INTEGRATIONS, { tenant: project });
+    trackUsage(OVERVIEW, { tenant: project });
   }, [project]);
   const {
     data,
@@ -51,7 +55,7 @@ const Integrations: FunctionComponent<Props> = () => {
         <ErrorFeedback
           btnText="Retry"
           onClick={handleErrorDialogClick}
-          fallbackTitle="Could not get integrations"
+          fallbackTitle={ERROR_NOT_GET_EXT_PIPE}
           contentText="Please try again later."
           error={errorIntegrations}
         />
@@ -61,7 +65,7 @@ const Integrations: FunctionComponent<Props> = () => {
 
   return (
     <FullPageLayout
-      pageHeadingText="Integrations"
+      pageHeadingText={EXTRACTION_PIPELINES}
       headingSide={
         <LinkWrapper>
           <ExtractorDownloadsLink

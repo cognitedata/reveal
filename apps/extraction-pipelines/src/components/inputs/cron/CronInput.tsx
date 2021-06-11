@@ -6,6 +6,7 @@ import { Link } from 'components/buttons/Link';
 import { InputController } from 'components/inputs/InputController';
 import { Hint, StyledLabel } from 'styles/StyledForm';
 import ValidationError from 'components/form/ValidationError';
+import { EXTRACTION_PIPELINE_LOWER } from 'utils/constants';
 
 const ReadBack = styled.i`
   margin-bottom: 1rem;
@@ -17,10 +18,7 @@ const StyledHint = styled(Hint)`
   }
 `;
 export const CRON_LABEL: Readonly<string> = 'Cron expression';
-export const INTEGRATION_CRON_HEADING: Readonly<string> =
-  'Integration schedule - Cron Expression';
-export const CRON_TIP: Readonly<string> =
-  'Enter a cron expression for when the integration is scheduled to run.';
+export const CRON_TIP: Readonly<string> = `Enter a cron expression for when the ${EXTRACTION_PIPELINE_LOWER} is scheduled to run.`;
 
 interface CronPageProps {}
 

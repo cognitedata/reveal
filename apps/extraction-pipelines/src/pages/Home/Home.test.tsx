@@ -17,6 +17,7 @@ import {
   ORIGIN_DEV,
   PROJECT_ITERA_INT_GREEN,
 } from 'utils/baseURL';
+import { EXTRACTION_PIPELINES } from 'utils/constants';
 
 describe('<Home />', () => {
   test('Renders Home page', async () => {
@@ -45,7 +46,7 @@ describe('<Home />', () => {
       screen.getAllByRole('heading');
     });
     const headings = screen.getAllByRole('heading');
-    expect(headings[0].textContent).toEqual('Integrations');
+    expect(headings[0].textContent).toEqual(EXTRACTION_PIPELINES);
     expect(headings.length).toEqual(1);
   });
   test('Redirects none existing route to integrations home page', async () => {

@@ -14,6 +14,7 @@ import { useAppEnv } from 'hooks/useAppEnv';
 import styled from 'styled-components';
 import { RemoveFromArrayButton } from 'components/integration/RemoveFromArrayButton';
 import {
+  EXTRACTION_PIPELINE_LOWER,
   METADATA_CONTENT_HEADING,
   METADATA_CONTENT_LABEL,
   METADATA_DESC_HEADING,
@@ -60,7 +61,7 @@ export const EditMetaData: FunctionComponent = () => {
   }, [current, setMetadata]);
 
   if (!current || !project) {
-    return <p>No integration information</p>;
+    return <p>No {EXTRACTION_PIPELINE_LOWER} information</p>;
   }
   return (
     <>

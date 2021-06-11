@@ -3,8 +3,9 @@ import { SupportedScheduleStrings } from 'components/integrations/cols/Schedule'
 import { CRON_REQUIRED, cronValidator } from 'utils/validation/cronValidation';
 import { RawTableOptions } from 'pages/create/RawTablePage';
 import { DataSetOptions } from 'pages/create/DataSetPage';
+import { EXTRACTION_PIPELINE } from 'utils/constants';
 
-export const NAME_REQUIRED: Readonly<string> = 'Integration name is required';
+export const NAME_REQUIRED: Readonly<string> = `${EXTRACTION_PIPELINE} name is required`;
 export const MAX_DESC_LENGTH: Readonly<number> = 500;
 export const MAX_DOCUMENTATION_LENGTH: Readonly<number> = 10000;
 export const nameRule = {

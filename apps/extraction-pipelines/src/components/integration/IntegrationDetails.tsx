@@ -4,7 +4,7 @@ import { useParams } from 'react-router';
 import { useSelectedIntegration } from 'hooks/useSelectedIntegration';
 import { RouterParams } from 'routing/RoutingConfig';
 import { trackUsage } from 'utils/Metrics';
-import { SINGLE_INTEGRATION } from 'utils/constants';
+import { EXTRACTION_PIPELINE_LOWER, SINGLE_EXT_PIPE } from 'utils/constants';
 import { PageWrapperColumn } from 'styles/StyledPage';
 import { DocumentationSection } from 'components/integration/DocumentationSection';
 import { RunScheduleConnection } from 'components/integration/RunScheduleConnection';
@@ -23,7 +23,7 @@ const TopSection = styled.section`
 `;
 
 export const createNoIntegrationFoundMessage = (id: string): Readonly<string> =>
-  `Found no integration with id: ${id}`;
+  `Found no ${EXTRACTION_PIPELINE_LOWER} with id: ${id}`;
 
 interface IntegrationViewProps {}
 export const IntegrationDetails: FunctionComponent<IntegrationViewProps> = () => {
@@ -33,7 +33,7 @@ export const IntegrationDetails: FunctionComponent<IntegrationViewProps> = () =>
 
   useEffect(() => {
     if (integrationId) {
-      trackUsage(SINGLE_INTEGRATION, { id: integrationId });
+      trackUsage(SINGLE_EXT_PIPE, { id: integrationId });
     }
   }, [integrationId]);
 

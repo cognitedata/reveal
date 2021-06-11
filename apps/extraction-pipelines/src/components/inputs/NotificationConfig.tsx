@@ -11,6 +11,7 @@ import { ContactsFormInput } from 'pages/create/ContactsPage';
 import { InputController } from 'components/inputs/InputController';
 import { Hint, StyledLabel } from 'styles/StyledForm';
 import ValidationError from 'components/form/ValidationError';
+import { EXTRACTION_PIPELINE_LOWER } from 'utils/constants';
 
 export const HourWrapper = styled(DivFlex)`
   #skipNotificationInHours {
@@ -24,8 +25,7 @@ export const HourWrapper = styled(DivFlex)`
 
 export const NOTIFICATION_CONFIG_HEADER: Readonly<string> =
   'Notification configuration';
-export const CONFIG_HINT: Readonly<string> =
-  'The integration will send a notification to all subscribed contacts on every failure if not configured';
+export const CONFIG_HINT: Readonly<string> = `The ${EXTRACTION_PIPELINE_LOWER} will send a notification to all subscribed contacts on every failure if not configured`;
 export const CONFIG_LABEL: Readonly<string> =
   'Configure notification pause time period';
 export const HOURS_LABEL: Readonly<string> =

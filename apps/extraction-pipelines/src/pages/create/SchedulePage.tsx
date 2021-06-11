@@ -8,7 +8,7 @@ import { SupportedScheduleStrings } from 'components/integrations/cols/Schedule'
 import { RegisterIntegrationLayout } from 'components/layout/RegisterIntegrationLayout';
 import { ButtonPlaced } from 'styles/StyledButton';
 import { GridH2Wrapper } from 'styles/StyledPage';
-import { NEXT } from 'utils/constants';
+import { ERROR_NO_ID, EXTRACTION_PIPELINE, NEXT } from 'utils/constants';
 import { CreateFormWrapper, Hint } from 'styles/StyledForm';
 import {
   CONTACTS_PAGE_PATH,
@@ -37,8 +37,7 @@ export interface ScheduleFormInput {
   cron: string;
 }
 
-export const INTEGRATION_SCHEDULE_HEADING: Readonly<string> =
-  'Integration schedule';
+export const INTEGRATION_SCHEDULE_HEADING: Readonly<string> = `${EXTRACTION_PIPELINE} schedule`;
 
 const SchedulePage: FunctionComponent<SchedulePageProps> = () => {
   const history = useHistory();
@@ -94,7 +93,7 @@ const SchedulePage: FunctionComponent<SchedulePageProps> = () => {
     } else {
       setError('schedule', {
         type: 'No id',
-        message: 'No id. Select an integration',
+        message: ERROR_NO_ID,
         shouldFocus: true,
       });
     }
@@ -112,10 +111,10 @@ const SchedulePage: FunctionComponent<SchedulePageProps> = () => {
             Schedule
           </label>
           <Hint id="schedule-hint" className="input-hint">
-            Select whether your integration runs according to a defined
-            schedule, is triggered by some irregular automatic or manual event,
-            or pushes data continuously, such as streaming or continuous polling
-            for new data.
+            Select whether your {EXTRACTION_PIPELINE} runs according to a
+            defined schedule, is triggered by some irregular automatic or manual
+            event, or pushes data continuously, such as streaming or continuous
+            polling for new data.
           </Hint>
           <ErrorMessage
             errors={errors}

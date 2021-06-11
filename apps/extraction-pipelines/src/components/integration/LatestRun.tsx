@@ -10,6 +10,7 @@ import { Collapse, Colors } from '@cognite/cogs.js';
 import { StyledTitle2 } from 'styles/StyledHeadings';
 import { Hint } from 'styles/StyledForm';
 import { TableHeadings } from 'components/table/IntegrationTableCol';
+import { EXTRACTION_PIPELINE_LOWER } from 'utils/constants';
 
 const Grid = styled.div`
   display: flex;
@@ -38,8 +39,7 @@ const ErrorWrapper = styled.div`
   }
 `;
 
-export const LATEST_RUN_HINT: Readonly<string> =
-  'Status information from the lasts time the integration executed';
+export const LATEST_RUN_HINT: Readonly<string> = `Status information from the lasts time the ${EXTRACTION_PIPELINE_LOWER} executed`;
 
 export const TIME_OF_RUN: Readonly<string> = 'Time of latest run';
 export const LATEST_ERROR: Readonly<string> = 'Latest error message';

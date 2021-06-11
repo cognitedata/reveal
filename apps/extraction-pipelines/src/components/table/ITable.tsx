@@ -1,17 +1,17 @@
 import React, { ReactText, useMemo } from 'react';
 import {
-  useTable,
-  useSortBy,
-  useRowSelect,
-  Cell,
-  TableOptions,
-  TableState,
   ActionType,
+  Cell,
+  Column,
   HeaderGroup,
   Row,
-  useGlobalFilter,
-  Column,
+  TableOptions,
+  TableState,
   useFilters,
+  useGlobalFilter,
+  useRowSelect,
+  useSortBy,
+  useTable,
 } from 'react-table';
 import { matchSorter } from 'match-sorter';
 import { useHistory } from 'react-router-dom';
@@ -21,6 +21,7 @@ import { INTEGRATION } from 'routing/RoutingConfig';
 import { useSelectedIntegration } from 'hooks/useSelectedIntegration';
 import { useAppEnv } from 'hooks/useAppEnv';
 import IntegrationTableSearch from 'components/table/IntegrationTableSearch';
+import { EXTRACTION_PIPELINE_LOWER } from 'utils/constants';
 
 const selectReducer = (
   newState: TableState,
@@ -123,7 +124,7 @@ const ITable = <T extends { id: ReactText }>({
           {...getTableProps()}
           className="cogs-table integrations-table"
           role="grid"
-          aria-label={`List of integration for the ${project} project`}
+          aria-label={`List of ${EXTRACTION_PIPELINE_LOWER} for the ${project} project`}
         >
           <thead>
             {headerGroups.map((headerGroup: HeaderGroup<T>) => (

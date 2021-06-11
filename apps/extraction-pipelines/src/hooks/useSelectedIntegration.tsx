@@ -5,6 +5,7 @@ import React, {
   useContext,
   useState,
 } from 'react';
+import { EXTRACTION_PIPELINE_LOWER } from 'utils/constants';
 
 interface ContextProps {
   integration: Integration | null;
@@ -39,7 +40,7 @@ const useSelectedIntegration = () => {
   const context = useContext(SelectedIntegrationContext);
   if (context === undefined) {
     throw new Error(
-      'You can not use selected integration context with out SelectedIntegrationProvider'
+      `You can not use selected ${EXTRACTION_PIPELINE_LOWER} context with out SelectedIntegrationProvider`
     );
   }
   return context;

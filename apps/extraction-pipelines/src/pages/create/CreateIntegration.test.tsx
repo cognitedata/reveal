@@ -3,8 +3,7 @@ import { fireEvent, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import { QueryClient } from 'react-query';
 import { renderRegisterContext } from 'utils/test/render';
-import { INTEGRATION_NAME_HEADING } from 'pages/create/NamePage';
-import { SAVE } from 'utils/constants';
+import { EXT_PIPE_NAME_HEADING, SAVE } from 'utils/constants';
 import {
   CDF_ENV_GREENFIELD,
   ORIGIN_DEV,
@@ -54,7 +53,7 @@ describe('CreateIntegration', () => {
     const withName = { ...props, initRegisterIntegration: { name } };
     renderRegisterContext(<CreateIntegration />, { ...withName });
     const nameInput = screen.getByLabelText(
-      INTEGRATION_NAME_HEADING
+      EXT_PIPE_NAME_HEADING
     ) as HTMLInputElement;
     expect(nameInput).toBeInTheDocument();
     const externalIdInput = screen.getByLabelText(
@@ -71,8 +70,8 @@ describe('CreateIntegration', () => {
       data: databaseListMock,
     });
     renderRegisterContext(<CreateIntegration />, { ...props });
-    expect(screen.getByLabelText(INTEGRATION_NAME_HEADING)).toBeInTheDocument();
-    const nameInput = screen.getByLabelText(INTEGRATION_NAME_HEADING);
+    const nameInput = screen.getByLabelText(EXT_PIPE_NAME_HEADING);
+    expect(nameInput).toBeInTheDocument();
     const saveBtn = screen.getByText(SAVE);
     fireEvent.click(saveBtn);
     await waitFor(() => {

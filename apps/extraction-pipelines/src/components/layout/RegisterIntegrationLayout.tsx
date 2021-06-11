@@ -6,7 +6,10 @@ import {
   MainWithAsidesWrapper,
 } from 'styles/StyledPage';
 import { INTEGRATIONS_OVERVIEW_PAGE_PATH } from 'routing/RoutingConfig';
-import { INTEGRATION_OVERVIEW, ADD_INTEGRATION } from 'utils/constants';
+import {
+  EXTRACTION_PIPELINE_OVERVIEW,
+  ADD_EXTRACTION_PIPELINE,
+} from 'utils/constants';
 import { BackBtn } from 'components/buttons/BackBtn';
 import { PageTitle } from 'styles/StyledHeadings';
 
@@ -21,9 +24,9 @@ export const RegisterIntegrationLayout: FunctionComponent<RegisterIntegrationLay
   return (
     <PageWrapper>
       <GridBreadCrumbsWrapper to={createLink(INTEGRATIONS_OVERVIEW_PAGE_PATH)}>
-        {INTEGRATION_OVERVIEW}
+        {EXTRACTION_PIPELINE_OVERVIEW}
       </GridBreadCrumbsWrapper>
-      <PageTitle>{ADD_INTEGRATION}</PageTitle>
+      <PageTitle>{ADD_EXTRACTION_PIPELINE}</PageTitle>
       <MainWithAsidesWrapper>
         {backPath && <BackBtn path={backPath} />}
         {children}

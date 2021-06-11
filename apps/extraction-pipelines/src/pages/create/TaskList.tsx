@@ -3,10 +3,14 @@ import styled from 'styled-components';
 import { Colors } from '@cognite/cogs.js';
 import Layers from 'utils/zindex';
 import {
+  EXTRACTION_PIPELINE,
+  EXTRACTION_PIPELINE_LOWER,
+} from 'utils/constants';
+import {
   EXTERNAL_ID_PAGE_PATH,
   NAME_PAGE_PATH,
-} from '../../routing/CreateRouteConfig';
-import { TaskItem, TaskItemProps } from './TaskItem';
+} from 'routing/CreateRouteConfig';
+import { TaskItem, TaskItemProps } from 'pages/create/TaskItem';
 
 const Wrapper = styled.aside`
   grid-area: left;
@@ -112,8 +116,8 @@ const List = styled.div`
 export const taskListItems: Omit<TaskItemProps, 'pointNumber'>[] = [
   {
     path: NAME_PAGE_PATH,
-    title: 'Integration name',
-    description: 'Define an integration name',
+    title: `${EXTRACTION_PIPELINE} name`,
+    description: `Define an ${EXTRACTION_PIPELINE_LOWER} name`,
     fieldName: 'name',
   },
   {

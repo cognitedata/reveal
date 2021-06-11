@@ -2,7 +2,11 @@ import { RegisterIntegrationLayout } from 'components/layout/RegisterIntegration
 import React from 'react';
 import { NAME_PAGE_PATH, NAME_PATH } from 'routing/CreateRouteConfig';
 import { screen } from '@testing-library/react';
-import { BACK, INTEGRATION_OVERVIEW, ADD_INTEGRATION } from 'utils/constants';
+import {
+  BACK,
+  EXTRACTION_PIPELINE_OVERVIEW,
+  ADD_EXTRACTION_PIPELINE,
+} from 'utils/constants';
 import { renderRegisterContext } from 'utils/test/render';
 import { QueryClient } from 'react-query';
 import {
@@ -29,8 +33,8 @@ describe('RegisterIntegrationLayout', () => {
       { ...props }
     );
     expect(screen.queryByText(BACK)).not.toBeInTheDocument();
-    expect(screen.getByText(ADD_INTEGRATION)).toBeInTheDocument();
-    expect(screen.getByText(INTEGRATION_OVERVIEW)).toBeInTheDocument();
+    expect(screen.getByText(ADD_EXTRACTION_PIPELINE)).toBeInTheDocument();
+    expect(screen.getByText(EXTRACTION_PIPELINE_OVERVIEW)).toBeInTheDocument();
   });
   test('Renders back btn if path provided', () => {
     renderRegisterContext(
@@ -40,7 +44,7 @@ describe('RegisterIntegrationLayout', () => {
       { ...props }
     );
     expect(screen.getByText(BACK)).toBeInTheDocument();
-    expect(screen.getByText(ADD_INTEGRATION)).toBeInTheDocument();
-    expect(screen.getByText(INTEGRATION_OVERVIEW)).toBeInTheDocument();
+    expect(screen.getByText(ADD_EXTRACTION_PIPELINE)).toBeInTheDocument();
+    expect(screen.getByText(EXTRACTION_PIPELINE_OVERVIEW)).toBeInTheDocument();
   });
 });

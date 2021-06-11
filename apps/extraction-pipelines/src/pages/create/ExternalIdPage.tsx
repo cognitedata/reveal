@@ -6,7 +6,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { createLink, useUserContext } from '@cognite/cdf-utilities';
 import { RegisterIntegrationLayout } from 'components/layout/RegisterIntegrationLayout';
 import { ButtonPlaced } from 'styles/StyledButton';
-import { NEXT } from 'utils/constants';
+import { EXTRACTION_PIPELINE_LOWER, NEXT } from 'utils/constants';
 import { CreateFormWrapper } from 'styles/StyledForm';
 import { CONTACTS_PAGE_PATH, NAME_PAGE_PATH } from 'routing/CreateRouteConfig';
 import { useStoredRegisterIntegration } from 'hooks/useStoredRegisterIntegration';
@@ -21,8 +21,7 @@ interface ExternalIdPageProps {}
 interface ExternalIdFormInput {
   externalId: string;
 }
-export const EXTERNAL_ID_HINT: Readonly<string> =
-  'The external id is the id used to refer to this integration externally. It must be unique. Follow company conventions.';
+export const EXTERNAL_ID_HINT: Readonly<string> = `The external id is the id used to refer to this ${EXTRACTION_PIPELINE_LOWER} externally. It must be unique. Follow company conventions.`;
 export const INTEGRATION_EXTERNAL_ID_HEADING: Readonly<string> = 'External id';
 export const EXTERNAL_ID_REQUIRED: Readonly<string> = 'External id is required';
 export const externalIdRule = {

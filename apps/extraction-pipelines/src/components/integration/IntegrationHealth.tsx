@@ -6,7 +6,7 @@ import React, {
 } from 'react';
 import styled from 'styled-components';
 import { trackUsage } from 'utils/Metrics';
-import { SINGLE_INTEGRATION_RUNS } from 'utils/constants';
+import { SINGLE_EXT_PIPE_RUNS } from 'utils/constants';
 import { useFilteredRuns } from 'hooks/useRuns';
 import { StatusRun } from 'model/Runs';
 import { Integration } from 'model/Integration';
@@ -136,7 +136,7 @@ export const IntegrationHealth: FunctionComponent<LogsViewProps> = ({
 
   useEffect(() => {
     if (integrationId) {
-      trackUsage(SINGLE_INTEGRATION_RUNS, { id: integrationId });
+      trackUsage(SINGLE_EXT_PIPE_RUNS, { id: integrationId });
     }
   }, [integrationId]);
   useEffect(() => {

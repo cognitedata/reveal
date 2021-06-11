@@ -1,7 +1,6 @@
 import React, { FunctionComponent } from 'react';
 import { useIntegrationById } from 'hooks/useIntegration';
 import { useSelectedIntegration } from 'hooks/useSelectedIntegration';
-import { INTEGRATION_NAME_HEADING } from 'pages/create/NamePage';
 import {
   descriptionSchema,
   nameSchema,
@@ -16,7 +15,7 @@ import { rootUpdate } from 'hooks/details/useDetailsUpdate';
 import { DivFlex } from 'styles/flex/StyledFlex';
 import DetailsValueView from 'components/table/details/DetailsValueView';
 import { bottomSpacing } from 'styles/StyledVariables';
-import { SOURCE_LABEL } from 'utils/constants';
+import { EXT_PIPE_NAME_HEADING, SOURCE_LABEL } from 'utils/constants';
 
 const Wrapper = styled.div`
   margin: 0.5rem 1rem 1rem 1rem;
@@ -62,7 +61,7 @@ export const IntegrationHeading: FunctionComponent<IntegrationHeadingProps> = ()
         defaultValues={{ name: integration?.name }}
         schema={nameSchema}
         updateFn={rootUpdate({ integration, name: 'name', project })}
-        label={INTEGRATION_NAME_HEADING}
+        label={EXT_PIPE_NAME_HEADING}
         viewComp={<StyledTitle level={1}>{integration.name}</StyledTitle>}
       />
       <ImportantWrapper>

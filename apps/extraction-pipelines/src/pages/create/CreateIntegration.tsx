@@ -6,14 +6,22 @@ import React, {
 } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
-import { CANCEL, DOCUMENTATION_HINT, SAVE, SOURCE_HINT } from 'utils/constants';
+import {
+  CANCEL,
+  DOCUMENTATION_HINT,
+  EXT_PIPE_NAME_HEADING,
+  EXTRACTION_PIPELINE,
+  EXTRACTION_PIPELINE_LOWER,
+  NAME_HINT,
+  SAVE,
+  SOURCE_HINT,
+} from 'utils/constants';
 import { RegisterIntegrationLayout } from 'components/layout/RegisterIntegrationLayout';
 import { CreateFormWrapper } from 'styles/StyledForm';
 import { ButtonPlaced } from 'styles/StyledButton';
 import * as yup from 'yup';
 import { useForm, FormProvider } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { INTEGRATION_NAME_HEADING, NAME_HINT } from 'pages/create/NamePage';
 import {
   EXTERNAL_ID_HINT,
   externalIdRule,
@@ -117,21 +125,15 @@ const InfoMessage = styled.span`
     }
   }
 `;
-const NO_DATA_SET_MSG: Readonly<string> =
-  'No data set found. You can link your integration to a data set trough edit later.';
-export const ADD_MORE_INFO_HEADING: Readonly<string> =
-  'Add more integration information';
-const ADD_MORE_INFO_TEXT_1: Readonly<string> =
-  'When managing and using your data it would give value to enter as much information about the data and the integration details as possible, such as scheduling, source and contacts. Please enter this below.';
-const ADD_MORE_INFO_TEXT_2: Readonly<string> =
-  'You could also add this information on integration details page.';
-const ADD_MORE_INFO_LINK: Readonly<string> =
-  'Read about registering an integration';
-const NOT_LINKED: Readonly<string> =
-  'Integration will not be linked to data set. You can link your integration to a data set using edit later.';
+const NO_DATA_SET_MSG: Readonly<string> = `No data set found. You can link your ${EXTRACTION_PIPELINE_LOWER} to a data set trough edit later.`;
+export const ADD_MORE_INFO_HEADING: Readonly<string> = `Add more ${EXTRACTION_PIPELINE_LOWER} information`;
+const ADD_MORE_INFO_TEXT_1: Readonly<string> = `When managing and using your data it would give value to enter as much information about the data and the ${EXTRACTION_PIPELINE_LOWER} details as possible, such as scheduling, source and contacts. Please enter this below.`;
+const ADD_MORE_INFO_TEXT_2: Readonly<string> = `You could also add this information on ${EXTRACTION_PIPELINE_LOWER} details page.`;
+const ADD_MORE_INFO_LINK: Readonly<string> = `Read about registering an ${EXTRACTION_PIPELINE_LOWER}`;
+const NOT_LINKED: Readonly<string> = `${EXTRACTION_PIPELINE} will not be linked to data set. You can link your ${EXTRACTION_PIPELINE_LOWER} to a data set using edit later.`;
 
 const linkDataSetText = (dataSet: DataSetModel): Readonly<string> => {
-  return `Integration will be linked to data set: ${dataSet.name} (${dataSet.id})`;
+  return `${EXTRACTION_PIPELINE} will be linked to data set: ${dataSet.name} (${dataSet.id})`;
 };
 interface CreateIntegrationProps {}
 
@@ -288,7 +290,7 @@ const CreateIntegration: FunctionComponent<CreateIntegrationProps> = (
           defaultValue=""
           control={control}
           errors={errors}
-          labelText={INTEGRATION_NAME_HEADING}
+          labelText={EXT_PIPE_NAME_HEADING}
           hintText={NAME_HINT}
           renderLabel={(labelText, inputId) => (
             <HeadingLabel labelFor={inputId}>{labelText}</HeadingLabel>

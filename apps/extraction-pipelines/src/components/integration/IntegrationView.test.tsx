@@ -7,7 +7,7 @@ import { getMockResponse, mockDataSetResponse } from 'utils/mockResponse';
 import { ORIGIN_DEV, PROJECT_ITERA_INT_GREEN } from 'utils/baseURL';
 import { TableHeadings } from 'components/table/IntegrationTableCol';
 import { DetailFieldNames } from 'model/Integration';
-import { NO_SCHEDULE, SINGLE_INTEGRATION } from 'utils/constants';
+import { NO_SCHEDULE, SINGLE_EXT_PIPE } from 'utils/constants';
 import { IntegrationDetails } from 'components/integration/IntegrationDetails';
 import { trackUsage } from 'utils/Metrics';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
@@ -40,7 +40,7 @@ describe('IntegrationView', () => {
     });
     // test tracking
     expect(trackUsage).toHaveBeenCalledTimes(1);
-    expect(trackUsage).toHaveBeenCalledWith(SINGLE_INTEGRATION, {
+    expect(trackUsage).toHaveBeenCalledWith(SINGLE_EXT_PIPE, {
       id: mockIntegration.id,
     });
     await waitFor(() => {

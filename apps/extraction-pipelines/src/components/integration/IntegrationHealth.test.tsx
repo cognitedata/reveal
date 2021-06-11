@@ -18,7 +18,7 @@ import { useFilteredRuns } from 'hooks/useRuns';
 import { TableHeadings } from 'components/table/IntegrationTableCol';
 import { RunTableHeading } from 'components/integration/RunLogsCols';
 import { trackUsage } from 'utils/Metrics';
-import { SINGLE_INTEGRATION_RUNS } from 'utils/constants';
+import { SINGLE_EXT_PIPE_RUNS } from 'utils/constants';
 import moment from 'moment';
 import { rangeToTwoDigitString } from 'components/inputs/dateTime/TimeSelectorUtils';
 import { DAYS_7 } from 'components/table/QuickDateTimeFilters';
@@ -49,7 +49,7 @@ describe('IntegrationHealth', () => {
 
     // test tracking
     expect(trackUsage).toHaveBeenCalledTimes(1);
-    expect(trackUsage).toHaveBeenCalledWith(SINGLE_INTEGRATION_RUNS, {
+    expect(trackUsage).toHaveBeenCalledWith(SINGLE_EXT_PIPE_RUNS, {
       id: mockIntegration.id,
     });
   });
