@@ -5,7 +5,7 @@ import { Icon, Checkbox, Button } from '@cognite/cogs.js';
 import DelayedComponent from 'components/DelayedComponent';
 import { PnidButton } from 'components/SearchResultTable';
 import { TimeseriesChart } from '@cognite/data-exploration';
-import { useInfiniteList } from '@cognite/sdk-react-query-hooks';
+import { useInfiniteList, useAggregate } from '@cognite/sdk-react-query-hooks';
 import { Asset, Timeseries } from '@cognite/sdk';
 import { useParams } from 'react-router-dom';
 import { useChart, useUpdateChart } from 'hooks/firebase';
@@ -35,7 +35,9 @@ export default function AssetSearchHit({ asset }: Props) {
       assetIds: [asset.id],
     }
   );
-
+  const { data: dataAmount } = useAggregate('timeseries', {
+    assetIds: [asset.id],
+  });
   const ts = useMemo(
     () =>
       data?.pages?.reduce(
@@ -92,7 +94,7 @@ export default function AssetSearchHit({ asset }: Props) {
         <DelayedComponent delay={100}>
           <PnidButton asset={asset} />
         </DelayedComponent>
-        <AssetCount>{ts?.length || 0} </AssetCount>
+        <AssetCount>{dataAmount?.count} </AssetCount>
       </Row>
       <Row>
         <TSList>
@@ -141,7 +143,8 @@ export default function AssetSearchHit({ asset }: Props) {
           {hasNextPage && (
             <TSItem>
               <Button type="link" onClick={() => fetchNextPage()}>
-                Load more
+                Additional time series (
+                {(dataAmount?.count || 0) - (ts?.length || 0)})
               </Button>
             </TSItem>
           )}
