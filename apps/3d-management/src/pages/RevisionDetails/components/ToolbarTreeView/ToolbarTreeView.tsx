@@ -65,9 +65,8 @@ function useFilteredNodes({ model }: { model: Cognite3DModel }) {
   useEffect(() => {
     const filteredNodesSet = filteredNodes.current;
     model.addStyledNodeSet(filteredNodesSet, {
-      outlineColor: NodeOutlineColor.Orange,
+      outlineColor: NodeOutlineColor.Cyan,
       renderInFront: true,
-      visible: true,
       renderGhosted: false,
     });
     return () => {
@@ -109,10 +108,6 @@ function ToolbarTreeViewComponent(props: TreeViewWrapperProps) {
     treeViewRef,
   });
 
-  useSelectedNodesHighlights({
-    model: props.model,
-  });
-
   useCheckedNodesVisibility({
     model: props.model,
     treeData: state.treeData,
@@ -120,6 +115,10 @@ function ToolbarTreeViewComponent(props: TreeViewWrapperProps) {
   });
 
   useFilteredNodes({
+    model: props.model,
+  });
+
+  useSelectedNodesHighlights({
     model: props.model,
   });
 
