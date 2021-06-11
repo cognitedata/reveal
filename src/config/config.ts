@@ -68,12 +68,15 @@ export const getEnvironment = (
   return 'DEVELOPMENT';
 };
 
-export const getBackendServiceBaseUrl = () => {
-  if (
-    window.location.hostname.includes('localhost') ||
-    window.location.hostname.includes('.pr.')
-  ) {
+export const getBackendServiceBaseUrl = (url = window.location.origin) => {
+  let origin = url;
+
+  if (origin.includes('localhost')) {
     return 'https://as.staging.cognite.ai';
+  }
+
+  if (origin.includes('.pr.')) {
+    origin = origin.replace('.pr.', '.staging.');
   }
 
   return `https://as.${
