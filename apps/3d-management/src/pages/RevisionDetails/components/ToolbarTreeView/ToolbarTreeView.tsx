@@ -60,7 +60,7 @@ function useFilteredNodes({ model }: { model: Cognite3DModel }) {
     ({ treeView }: RootState) => treeView.nodePropertyFilter
   );
   const filteredNodes = React.useRef<ByNodePropertyNodeSet>(
-    new ByNodePropertyNodeSet(v3Client as any, model, { requestPartitions: 5 })
+    new ByNodePropertyNodeSet(v3Client as any, model, { requestPartitions: 10 })
   );
   useEffect(() => {
     const filteredNodesSet = filteredNodes.current;
