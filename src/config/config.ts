@@ -44,7 +44,7 @@ export const useCluster = (): [string, (s: string) => void] => {
 export const useAppsApiBaseUrl = (): string => {
   const [cluster] = useCluster();
   const prod = getEnvironment() === 'PRODUCTION';
-  return `https://apps-api.${prod ? '' : 'staging'}${
+  return `https://apps-api${prod ? '' : '.staging'}${
     cluster ? '.' : ''
   }${cluster}.cognite.ai`;
 };
