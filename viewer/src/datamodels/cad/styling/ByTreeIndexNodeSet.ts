@@ -1,6 +1,7 @@
 /*!
  * Copyright 2021 Cognite AS
  */
+import { NumericRange } from '../../../utilities';
 import { IndexSet } from '../../../utilities/IndexSet';
 import { NodeSet } from './NodeSet';
 
@@ -12,10 +13,13 @@ export class ByTreeIndexNodeSet extends NodeSet {
 
   constructor(treeIndexSet?: IndexSet);
   constructor(treeIndices?: Iterable<number>);
-  constructor(values?: IndexSet | Iterable<number>) {
+  constructor(treeIndexRange?: NumericRange);
+  constructor(values?: IndexSet | Iterable<number> | NumericRange) {
     super();
     if (values instanceof IndexSet) {
       this._set = values;
+    } else if (values instanceof NumericRange) {
+      this._set = new IndexSet(values);
     } else {
       this._set = new IndexSet(values);
     }

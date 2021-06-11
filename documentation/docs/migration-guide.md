@@ -111,6 +111,32 @@ This example could easily have been migrated using `ByNodePropertyNodeSet`, but 
 other cases this might not be as straight forward as shown.
 :::
 
+#### A note on `applyToAllChildren` to style all descendants of a node
+
+In previous versions, all styling functions accepted an optional `applyToAllChildren`-argument.
+When this was `true`, Reveal would apply the styling to all descendants. When migrating
+to the new version, adding the root tree index of the subtree to `ByTreeIndexNodeSet` will not have
+the same result. When you also have a `subtreeSize` available, use `ByTreeIndexNodeSet.addRange` with
+`new NumericRange(treeIndex, subtreeSize)` to add the full subtree. If you don't know the 
+`subtreeSize`, `Cognite3DModel.getSubtreeIndices()` can be used to get the full range of tree indices.
+
+```js
+// In Reveal 1.x:
+// model.hideNodeByTreeIndex(subtreeRootTreeIndex, true);
+
+// ❌ Wrong - will only affect a single tree index, not all descendants
+const indexSet = new IndexSet();
+indexSet.add(subtreeRootIndex);
+const nodeSet = new ByTreeIndexNodeSet(indexSet);
+model.addStyledSet(nodeSet, { visible: false });
+
+// ✅ Correct - all descendants are affected
+const indexSet = new IndexSet();
+indexSet.addRange(await model.getSubtreeIndices(subtreeRootIndex));
+const nodeSet = new ByTreeIndexNodeSet(indexSet);
+model.addStyledSet(nodeSet, { visible: false });
+```
+
 ## Migrating from [@cognite/3d‑viewer](https://www.npmjs.com/package/@cognite/3d-viewer)
 
 :::warning
