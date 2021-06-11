@@ -1,3 +1,4 @@
+import queryString from 'query-string';
 import { useSearchParam } from 'hooks';
 import { CLUSTER_KEY } from 'utils/constants';
 
@@ -66,6 +67,25 @@ export const getEnvironment = (
   }
 
   return 'DEVELOPMENT';
+};
+
+export const getBackendServiceBaseUrl = () => {
+  let { origin } = window.location;
+
+  const urlCluster = queryString.parse(window.location.search)[CLUSTER_KEY];
+
+  if (origin.includes('localhost')) {
+    return `https://as.staging.${urlCluster ? `${urlCluster}.` : ''}cognite.ai`;
+  }
+
+  if (origin.includes('.pr.')) {
+    origin = origin.replace('.pr.', '.staging.');
+  }
+
+  const parsedCluster = origin.split('charts.')[1].split('cogniteapp.com')[0];
+  const cluster = urlCluster ? `${urlCluster}.` : parsedCluster;
+
+  return `https://as.${cluster}cognite.ai`;
 };
 
 export default {
