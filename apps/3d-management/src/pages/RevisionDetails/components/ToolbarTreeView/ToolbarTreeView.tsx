@@ -63,7 +63,6 @@ function useFilteredNodes({ model }: { model: Cognite3DModel }) {
     new ByNodePropertyNodeSet(v3Client as any, model, { requestPartitions: 5 })
   );
   useEffect(() => {
-    console.log('addStyledNodeSet');
     const filteredNodesSet = filteredNodes.current;
     model.addStyledNodeSet(filteredNodesSet, {
       outlineColor: NodeOutlineColor.Orange,
@@ -72,7 +71,6 @@ function useFilteredNodes({ model }: { model: Cognite3DModel }) {
       renderGhosted: false,
     });
     return () => {
-      console.log('removeStyledNodeSet');
       model.removeStyledNodeSet(filteredNodesSet);
       if (filteredNodesSet) {
         filteredNodesSet.clear();
@@ -82,10 +80,8 @@ function useFilteredNodes({ model }: { model: Cognite3DModel }) {
 
   useEffect(() => {
     if (!filter) {
-      console.log('clear filter');
       filteredNodes.current.clear();
     } else {
-      console.log('execute filter', filter);
       filteredNodes.current.executeFilter(filter);
     }
   }, [filter]);
