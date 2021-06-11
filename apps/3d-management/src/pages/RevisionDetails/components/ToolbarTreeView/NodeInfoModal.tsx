@@ -6,7 +6,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { ModalProps } from 'antd/lib/modal';
 import { Modal, Table, Tabs } from 'antd';
 import { ColumnProps } from 'antd/lib/table';
-import { Button } from '@cognite/cogs.js';
+import { Button, Tooltip } from '@cognite/cogs.js';
 
 import { getContainer } from 'src/utils';
 import styled from 'styled-components';
@@ -140,17 +140,19 @@ export const NodeInfoModal = ({ treeIndex, onClose, ...restProps }: Props) => {
           ),
         ...(tabKey !== defaultCdfMetaTabKey && {
           action: (
-            <button
-              type="button"
-              onClick={() => {
-                dispatch(
-                  setNodePropertyFilter({ [tabKey]: { [key]: `${value}` } })
-                );
-                onClose();
-              }}
-            >
-              →
-            </button>
+            <Tooltip content="Show 3D-nodes with the same value">
+              <Button
+                type="ghost"
+                icon="ArrowRight"
+                aria-label="Show 3D-nodes with the same value"
+                onClick={() => {
+                  dispatch(
+                    setNodePropertyFilter({ [tabKey]: { [key]: `${value}` } })
+                  );
+                  onClose();
+                }}
+              />
+            </Tooltip>
           ),
         }),
       };
