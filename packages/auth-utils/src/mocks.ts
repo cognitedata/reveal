@@ -1,11 +1,9 @@
 export default {
   getFlow: (): {
     [s: string]: string;
-  } => {
-    return {
-      flow: 'COGNITE_AUTH',
-    };
-  },
+  } => ({
+    flow: 'COGNITE_AUTH',
+  }),
   CogniteAuth: (client: unknown): unknown => {
     type callbackType = (args: unknown) => void;
     let internalCallback: callbackType = jest.fn();
@@ -21,6 +19,7 @@ export default {
       },
       getClient: () => client,
       login: () => ({}),
+      loginInitial: () => ({}),
       loginAndAuthIfNeeded: () => {
         internalCallback({
           client,

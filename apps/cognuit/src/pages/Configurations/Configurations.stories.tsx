@@ -1,4 +1,3 @@
-import React from 'react';
 import Configurations from './Configurations';
 
 export default {

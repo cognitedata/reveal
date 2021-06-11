@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import { Button, Dropdown, Icon, Input, Menu } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { useHistory, useRouteMatch } from 'react-router-dom';

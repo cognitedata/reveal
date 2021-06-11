@@ -1,0 +1,29 @@
+{
+  "name": "@cognite/react-feature-flags",
+  "version": "0.2.2-rc.0",
+  "source": "src/index.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "browser": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "repository": "https://github.com/cognitedata/applications/packages/react-feature-flags",
+  "license": "UNLICENSED",
+  "author": "Cognite AS",
+  "files": [
+    "dist",
+    "jest-mocks.js"
+  ],
+  "scripts": {
+    "build": "bazel build :react-feature-flags",
+    "test": "bazel test :jest_test",
+    "lint": "bazel test :eslint_test :prettier_test",
+    "eslint": "bazel test :eslint_test",
+    "eslint:fix": "bazel run :eslint_test -- --fix",
+    "prettier": "bazel test :prettier_test",
+    "prettier:fix": "bazel run :prettier_test -- --write",
+    "update-helpers": "bazel run :generate_package_json_helpers"
+  },
+  "peerDependencies": {
+    "react": "^16.13.1"
+  }
+}

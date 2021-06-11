@@ -1,5 +1,5 @@
-export default (appId: string): Promise<void> => {
-  return new Promise((resolve) => {
+export default (appId: string): Promise<void> =>
+  new Promise((resolve) => {
     const intercom = window.Intercom;
     if (typeof intercom === 'function') {
       intercom('reattach_activator');
@@ -40,4 +40,3 @@ export default (appId: string): Promise<void> => {
       }
     }
   });
-};

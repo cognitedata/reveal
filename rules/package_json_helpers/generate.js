@@ -8,6 +8,7 @@ const outDir = process.argv[3];
 const packagePath = process.argv[4];
 const srcPath = process.argv[5];
 const workspace = process.argv[6];
+const localPackagePath = process.argv[7];
 
 const START_FLAG = `### start of auto-generated helpers ###`;
 const END_FLAG = `### end of auto-generated helpers ###`;
@@ -146,6 +147,9 @@ function appendInternalDependencies(deps, missing, internal) {
 
 const buildFileContents = fs.readFileSync(buildFilePath).toString();
 const package = readPackage(packagePath);
+const localPackage = localPackagePath
+  ? readPackage(localPackagePath)
+  : { peerDependencies: {} };
 
 const ruleRegex = /^generate_package_json_helpers\([^)]+\)/gm;
 
@@ -180,15 +184,22 @@ depcheck(`${process.cwd()}/${path.dirname(srcPath)}`, {
     return acc;
   }, {});
 
+  // depcheck does not recognize peerDependencies as missing
+  // but we still want then to appear as Bazel dependencies
+  const missingWithPeerDeps = {
+    ...localPackage.peerDependencies,
+    ...missing,
+  };
+
   const dependencies = appendInternalDependencies(
     excludeNonPresent(
       excludeNameStartsWith(
         excludeNameStartsWith(excludeInternal(package.dependencies), '@bazel/'),
         'react-scripts'
       ),
-      missing
+      missingWithPeerDeps
     ),
-    missing,
+    missingWithPeerDeps,
     internalPackagesNames
   );
 
@@ -200,7 +211,7 @@ depcheck(`${process.cwd()}/${path.dirname(srcPath)}`, {
       ),
       '@types/'
     ),
-    missing
+    missingWithPeerDeps
   );
 
   const devDependencies = excludeNonPresent(
@@ -214,7 +225,7 @@ depcheck(`${process.cwd()}/${path.dirname(srcPath)}`, {
       ),
       'testcafe'
     ),
-    missing
+    missingWithPeerDeps
   );
 
   const output = `

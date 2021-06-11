@@ -4,27 +4,21 @@ import { saveToLocalStorage } from '@cognite/storage';
 import CogniteAuth from './authentication';
 import { FakeIdP } from './types';
 
-jest.mock('@cognite/sdk', () => {
-  return {
-    CogniteClient: () => {
-      return {
-        getCDFToken: () => 'test-accessToken',
-        get: () => Promise.resolve({ data: { projects: ['test'] } }),
-        loginWithOAuth: () => Promise.resolve(true),
-        setBaseUrl: jest.fn(),
-        authenticate: () => true,
-        login: {
-          status: () => {
-            return {
-              project: 'test',
-              user: 'test@email.com',
-            };
-          },
-        },
-      };
+jest.mock('@cognite/sdk', () => ({
+  CogniteClient: () => ({
+    getCDFToken: () => 'test-accessToken',
+    get: () => Promise.resolve({ data: { projects: ['test'] } }),
+    loginWithOAuth: () => Promise.resolve(true),
+    setBaseUrl: jest.fn(),
+    authenticate: () => true,
+    login: {
+      status: () => ({
+        project: 'test',
+        user: 'test@email.com',
+      }),
     },
-  };
-});
+  }),
+}));
 
 describe('CogniteAuth', () => {
   let client: CogniteClient;
@@ -176,13 +170,11 @@ describe('CogniteAuth', () => {
 
     // -@todo this test is not finished
     test('COGNITE_AUTH flow - login - good local state', async () => {
-      jest.mock('./utils', () => {
-        return {
-          getFlow: () => ({
-            flow: 'COGNITE_AUTH',
-          }),
-        };
-      });
+      jest.mock('./utils', () => ({
+        getFlow: () => ({
+          flow: 'COGNITE_AUTH',
+        }),
+      }));
 
       await auth.login();
       expect(auth.state).toMatchObject({

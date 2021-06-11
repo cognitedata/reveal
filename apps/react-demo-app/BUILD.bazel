@@ -73,8 +73,6 @@ generate_package_json_helpers(
 # Dependencies from package.json
 DEPENDENCIES = [
     "@npm//@cognite/cogs.js",
-    "@npm//@cognite/react-container",
-    "@npm//@cognite/react-i18n",
     "@npm//@cognite/sdk",
     "@npm//@sentry/browser",
     "@npm//react",
@@ -82,7 +80,9 @@ DEPENDENCIES = [
     "@npm//react-i18next",
     "@npm//react-router-dom",
     "@npm//styled-components",
+    "//packages/react-container",
     "//packages/metrics",
+    "//packages/react-i18n",
     "//packages/intercom-helper",
 ]
 
@@ -90,6 +90,7 @@ DEPENDENCIES = [
 TYPE_DEPENDENCIES = [
     "@npm//@types/react",
     "@npm//@types/react-dom",
+    "@npm//@types/react-i18next",
     "@npm//@types/react-router-dom",
     "@npm//@types/sinon",
     "@npm//@types/styled-components",
@@ -97,6 +98,7 @@ TYPE_DEPENDENCIES = [
 
 # Dev dependencies from package.json
 DEV_DEPENDENCIES = [
+    "@npm//@storybook/addons",
     "@npm//@testing-library/jest-dom",
     "@npm//@testing-library/react",
     "@npm//@testing-library/testcafe",
@@ -162,18 +164,24 @@ _RUNTIME_DEPS = [
     "chdir.js",
     "copy_static_files",
     "//:tsconfig",
-] + DEPENDENCIES
+]
 
 ### react-scripts build ###
 
 react_scripts(
-    # Note: this must be named "build" since react-scripts hard-codes that as the output dir
+    # Note: If you want to change the name make sure you update BUILD_PATH below accordingly
+    # https://create-react-app.dev/docs/advanced-configuration/
     name = "build",
     args = [
         "--node_options=--require=./$(execpath chdir.js)",
         "build",
     ],
-    data = _RUNTIME_DEPS + TYPE_DEPENDENCIES,
+    data = _RUNTIME_DEPS + DEPENDENCIES + TYPE_DEPENDENCIES + [
+        # see patches/react-scripts+4.0.3.patch
+        # we have added this plugin into webpack so Bazel should know about it
+        # TODO: move build script into a custom rules with defined plugin once and for all
+        "@npm//tsconfig-paths-webpack-plugin",
+    ],
     env = {
         # Specify your Sentry DSN is the URL used to report runtime issues
         "REACT_APP_SENTRY_DSN": "https://da67b4b23d3e4baea6c36de155a08491@sentry.io/3541732",
@@ -225,7 +233,7 @@ react_scripts_test(
     name = "test",
     # folder name to store jest coverage in during CI run
     app_name = "react-demo-app",
-    data = _RUNTIME_DEPS + DEV_DEPENDENCIES + [
+    data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + [
         "@npm//@storybook/addon-essentials",
         "@npm//@storybook/addon-links",
         "@npm//@storybook/preset-create-react-app",
@@ -287,7 +295,7 @@ testcafe_test(
         "--stop-on-first-fail",
         "--app './scripts/testcafe-bazel-serve.sh'",
     ],
-    data = _RUNTIME_DEPS + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + SCRIPTS + [
+    data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + SCRIPTS + [
         ":build_sed",
         "copy_testcafe_files",
     ],
@@ -304,7 +312,7 @@ testcafe(
         "'testcafe/desktop'",
         "--stop-on-first-fail",
     ],
-    data = _RUNTIME_DEPS + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + SCRIPTS + [
+    data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + SCRIPTS + [
         ":start",
         "chdir-workspace.js",
         "copy_testcafe_files",
@@ -330,8 +338,9 @@ build_storybook(
         "--quiet",
     ],
     chdir = "$(RULEDIR)",
-    data = _RUNTIME_DEPS + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + [
+    data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + [
         "copy_storybook_files",
+        "@npm//tsconfig-paths-webpack-plugin",
         "@npm//@storybook/addon-essentials",
         "@npm//@storybook/addon-links",
         "@npm//@storybook/preset-create-react-app",
@@ -347,7 +356,7 @@ start_storybook(
         "-p",
         "6006",
     ],
-    data = _RUNTIME_DEPS + DEV_DEPENDENCIES + [
+    data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + [
         "chdir-workspace.js",
         "copy_storybook_files",
         "@npm//@types",

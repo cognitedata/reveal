@@ -11,6 +11,7 @@ def _generate_helpers_impl(ctx):
         "@@GENERATOR_SHORT_PATH@@": shell.quote(ctx.executable._generator.short_path),
         "@@WORKSPACE_NAME@@": ctx.workspace_name,
         "@@PACKAGE_PATH@@": ctx.file.package_json.path,
+        "@@LOCAL_PACKAGE_PATH@@": ctx.file.local_package_json.path if ctx.file.local_package_json else "",
         "@@SRC_PATH@@": "%s/%s" % (ctx.label.package, ctx.attr.src_dir),
         "@@OUT_PATH@@": ctx.attr.out_dir,
         "@@WORKSPACE@@": ctx.attr.workspace,
@@ -42,6 +43,10 @@ generate_package_json_helpers = rule(
             doc = "The package.json to generate for",
             allow_single_file = True,
             mandatory = True,
+        ),
+        "local_package_json": attr.label(
+            doc = "The local package.json to grab peer dependencies from",
+            allow_single_file = True,
         ),
         "out_dir": attr.string(
             doc = "Path to out folder",

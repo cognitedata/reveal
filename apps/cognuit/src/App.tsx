@@ -1,4 +1,3 @@
-import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 import { AuthConsumer, Container } from '@cognite/react-container';
 import { Loader } from '@cognite/cogs.js';

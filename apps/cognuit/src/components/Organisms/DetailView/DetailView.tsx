@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { Colors, Modal } from '@cognite/cogs.js';
 import { Tabs } from 'antd';
 import { CloseIcon, Content } from './elements';

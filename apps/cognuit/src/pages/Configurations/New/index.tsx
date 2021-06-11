@@ -1,4 +1,3 @@
-import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from 'utils/functions';
 import { SessionType } from '../../../typings/interfaces';

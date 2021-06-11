@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import intercomInitialization from './core/initialization';
 import intercomHelper from './methods';
-import { IntercomBootSettings } from './types';
+import type { IntercomBootSettings } from './types';
 
 declare global {
   interface Window {
@@ -11,4 +11,5 @@ declare global {
   }
 }
 
-export { intercomHelper, intercomInitialization, IntercomBootSettings };
+export { intercomHelper, intercomInitialization };
+export type { IntercomBootSettings };

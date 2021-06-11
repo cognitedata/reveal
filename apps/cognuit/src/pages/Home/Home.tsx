@@ -1,4 +1,3 @@
-import React from 'react';
 import { Body, Row, Col, Title } from '@cognite/cogs.js';
 import { staticText } from './staticText';
 import { Container } from './elements';
@@ -8,13 +7,8 @@ import { Container } from './elements';
   /* eslint-disable react/no-danger */
 }
 const Home = () => {
-  const {
-    heading,
-    intro,
-    latestRelease,
-    upcoming,
-    gettingStarted,
-  } = staticText;
+  const { heading, intro, latestRelease, upcoming, gettingStarted } =
+    staticText;
   return (
     <Container>
       <div>

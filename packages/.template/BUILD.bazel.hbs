@@ -58,7 +58,10 @@ eslint_config(
 
 eslint_test(
     name = "eslint_test",
-    data = SOURCES + TESTS,
+    data = SOURCES + TESTS + [
+        ":tsconfig.json",
+        "//packages:tsconfig.json",
+    ],
     eslint_config = ":eslint_config",
 )
 

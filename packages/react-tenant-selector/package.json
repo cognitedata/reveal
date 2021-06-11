@@ -1,0 +1,36 @@
+{
+  "name": "@cognite/react-tenant-selector",
+  "version": "1.2.9-rc.0",
+  "source": "src/index.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "browser": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "repository": "https://github.com/cognitedata/applications/packages/react-tenant-selector",
+  "license": "UNLICENSED",
+  "author": "Cognite AS",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "bazel build :react-tenant-selector",
+    "test": "bazel test :jest_test",
+    "lint": "bazel test :eslint_test :prettier_test",
+    "eslint": "bazel test :eslint_test",
+    "eslint:fix": "bazel run :eslint_test -- --fix",
+    "prettier": "bazel test :prettier_test",
+    "prettier:fix": "bazel run :prettier_test -- --write",
+    "update-helpers": "bazel run :generate_package_json_helpers",
+    "storybook": "ibazel run :start-storybook"
+  },
+  "peerDependencies": {
+    "@cognite/cogs.js": "^3.10.0",
+    "@cognite/metrics": "^1.0.0",
+    "@cognite/sdk": "^4.0.3",
+    "react": "^16.8.0 || ^17.0.0",
+    "react-dom": "^16.8.0 || ^17.0.0",
+    "react-redux": "^7.2.2",
+    "react-router-dom": "^5.2.0",
+    "redux": "^4.0.5"
+  }
+}

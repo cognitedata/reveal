@@ -1,4 +1,3 @@
-import React from 'react';
 import { Menu } from '@cognite/cogs.js';
 import uniqueId from 'lodash/uniqueId';
 import isObject from 'lodash/isObject';

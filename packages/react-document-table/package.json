@@ -1,0 +1,38 @@
+{
+  "name": "@cognite/react-document-table",
+  "version": "1.24.0-rc.0",
+  "description": "",
+  "contributors": [
+    ""
+  ],
+  "main": "dist/index.js",
+  "module": "dist/index.es.js",
+  "typings": "dist/src/index.d.ts",
+  "repository": "https://github.com/cognitedata/applications/packages/react-document-table",
+  "license": "UNLICENSED",
+  "author": "Cognite AS",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "bazel build :react-document-table",
+    "test": "bazel test :jest_test",
+    "lint": "bazel test :eslint_test :prettier_test",
+    "eslint": "bazel test :eslint_test",
+    "eslint:fix": "bazel run :eslint_test -- --fix",
+    "prettier": "bazel test :prettier_test",
+    "prettier:fix": "bazel run :prettier_test -- --write",
+    "update-helpers": "bazel run :generate_package_json_helpers",
+    "storybook": "ibazel run :start-storybook"
+  },
+  "peerDependencies": {
+    "antd": "3",
+    "react": "16",
+    "react-dom": "16",
+    "styled-components": "4"
+  },
+  "engines": {
+    "npm": ">=4",
+    "node": ">=6"
+  }
+}

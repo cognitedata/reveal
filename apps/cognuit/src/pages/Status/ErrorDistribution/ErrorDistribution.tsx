@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { Pie } from 'react-chartjs-2';
 import { APIContextValue } from 'contexts/ApiContext';
 import ApiContext from '../../../contexts/ApiContext';

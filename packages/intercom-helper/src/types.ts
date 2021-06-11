@@ -10,7 +10,7 @@ export type IntercomBootSettings = {
 
 export type IdentityVerificationSettings = {
   appsApiUrl: string;
-  headers: GetHmacHeader;
+  headers: AuthHeaders;
 };
 
 /*
@@ -30,9 +30,10 @@ export type ForbiddenUpdateKey = {
   [keys: string]: boolean;
 };
 
-export type GetHmacHeader = {
-  Authorization: string;
-};
+// need to type this API_KEY part properly
+export type AuthHeaders =
+  | { Authorization: string }
+  | { [API_KEY: string]: string };
 
 export type GetHmacSettings = {
   hmac: string;

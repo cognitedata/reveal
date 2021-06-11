@@ -1,4 +1,3 @@
-import React from 'react';
 import { Input, Range, DateRange } from '@cognite/cogs.js';
 import Label from 'components/Atoms/Label';
 import {

@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+import { Suspense } from 'react';
 import '@cognite/cogs.js/dist/cogs.css';
 import Metrics from '@cognite/metrics';
 import './i18n';

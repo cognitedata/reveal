@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useCallback } from 'react';
+import { useState, useEffect, useContext, useCallback } from 'react';
 import { Tabs } from 'antd';
 import { Line } from 'react-chartjs-2';
 import ApiContext from 'contexts/ApiContext';
