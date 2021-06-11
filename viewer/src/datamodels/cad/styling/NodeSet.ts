@@ -6,6 +6,12 @@ import assert from 'assert';
 import { EventTrigger } from '../../../utilities/events/EventTrigger';
 import { IndexSet } from '../../../utilities/IndexSet';
 
+export type SerializedNodeSet = {
+  token: string;
+  state: any;
+  options?: any;
+};
+
 export abstract class NodeSet {
   private readonly _changedEvent = new EventTrigger<() => void>();
   private readonly _classToken: string;
@@ -34,4 +40,7 @@ export abstract class NodeSet {
   protected notifyChanged() {
     this._changedEvent.fire();
   }
+
+  /* @internal */
+  abstract Serialize(): SerializedNodeSet;
 }

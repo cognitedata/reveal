@@ -9,10 +9,10 @@ import { Cognite3DModel } from '../../../public/migration/Cognite3DModel';
 import { IndexSet } from '../../../utilities/IndexSet';
 import { PopulateIndexSetFromPagedResponseHelper } from './PopulateIndexSetFromPagedResponseHelper';
 import { NumericRange } from '../../../utilities/NumericRange';
-import { NodeSet } from './NodeSet';
-import { ExecutesFilter } from './ExecutesFilter';
+import { NodeSet, SerializedNodeSet } from './NodeSet';
+import cloneDeep from 'lodash/cloneDeep';
 
-export class ByAssetNodeSet extends NodeSet implements ExecutesFilter {
+export class ByAssetNodeSet extends NodeSet {
   private readonly _client: CogniteClient;
   private _indexSet = new IndexSet();
   private readonly _model: Cognite3DModel;
@@ -79,5 +79,13 @@ export class ByAssetNodeSet extends NodeSet implements ExecutesFilter {
 
   getIndexSet(): IndexSet {
     return this._indexSet;
+  }
+
+  /* @internal */
+  Serialize(): SerializedNodeSet {
+    return {
+      token: this.classToken,
+      state: cloneDeep(this._filter)
+    };
   }
 }

@@ -16,7 +16,9 @@ import {
   PotreePointShape,
   ByTreeIndexNodeSet,
   IndexSet,
+  CombinedNodeSet,
   ByNodePropertyNodeSet,
+  InvertedNodeSet,
   DefaultNodeAppearance,
   ByAssetNodeSet,
   NodeOutlineColor
@@ -104,30 +106,114 @@ export function Migration() {
       (window as any).viewer = viewer;
 
       const myState = {
-        "cameraPosition": {
-          "x": 165.60324096679688,
-          "y": 41.64951705932617,
-          "z": -10.940159797668443
-        },
-        "cameraTarget": {
-          "x": 130.53717041015625,
-          "y": 49.13856887817383,
-          "z": -119.09518432617188
+        "camera": {
+          "position": {
+            "x": 165.60324096679688,
+            "y": 41.64951705932617,
+            "z": -10.940159797668443
+          },
+          "target": {
+            "x": 130.53717041015625,
+            "y": 49.13856887817383,
+            "z": -119.09518432617188
+          }
         },
         "models": [
           {
             "defaultNodeAppearance": {
-              "renderGhosted": true
+              "visible": true,
+              "renderGhosted": false,
+              "renderInFront": false,
+              "outlineColor": 0
             },
             "modelId": 3356984403684032,
             "revisionId": 6664823881595566,
-            "styledFilters": [
+            "styledSets": [
               {
-                "typeToken": "ByNodePropertyNodeSet",
-                "filter": {
+                "token": "InvertedNodeSet",
+                "state": {
+                  "innerSet": {
+                    "token": "CombinedNodeSet",
+                    "state": {
+                      "operator": "union",
+                      "subSets": [
+                        {
+                          "token": "CombinedNodeSet",
+                          "state": {
+                            "operator": "union",
+                            "subSets": [
+                              {
+                                "token": "ByAssetNodeSet",
+                                "state": {}
+                              },
+                              {
+                                "token": "ByTreeIndexNodeSet",
+                                "state": [
+                                  {
+                                    "from": 399745,
+                                    "count": 1,
+                                    "toInclusive": 399745
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        },
+                        {
+                          "token": "ByNodePropertyNodeSet",
+                          "state": {
+                            "PDMS": {
+                              "Function": "EP"
+                            }
+                          },
+                          "options": {
+                            "requestPartitions": 1
+                          }
+                        }
+                      ]
+                    }
+                  }
+                },
+                "appearance": {
+                  "renderGhosted": true
+                }
+              },
+              {
+                "token": "CombinedNodeSet",
+                "state": {
+                  "operator": "union",
+                  "subSets": [
+                    {
+                      "token": "ByAssetNodeSet",
+                      "state": {}
+                    },
+                    {
+                      "token": "ByTreeIndexNodeSet",
+                      "state": [
+                        {
+                          "from": 399745,
+                          "count": 1,
+                          "toInclusive": 399745
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "appearance": {
+                  "outlineColor": 6,
+                  "renderInFront": true,
+                  "renderGhosted": false
+                }
+              },
+              {
+                "token": "ByNodePropertyNodeSet",
+                "state": {
                   "PDMS": {
                     "Function": "EP"
                   }
+                },
+                "options": {
+                  "requestPartitions": 1
                 },
                 "appearance": {
                   "renderGhosted": false,
@@ -136,30 +222,6 @@ export function Migration() {
                     200,
                     20
                   ]
-                }
-              },
-              {
-                "typeToken": "ByAssetNodeSet",
-                "filter": {},
-                "appearance": {
-                  "renderGhosted": false,
-                  "outlineColor": 3
-                }
-              }
-            ],
-            "styledIndices": [
-              {
-                "indexRanges": [
-                  {
-                    "from": 399745,
-                    "count": 1,
-                    "toInclusive": 399745
-                  }
-                ],
-                "appearance": {
-                  "outlineColor": 7,
-                  "renderInFront": true,
-                  "renderGhosted": false
                 }
               }
             ]
@@ -179,18 +241,26 @@ export function Migration() {
           viewer.loadCameraFromModel(model);
           if (model instanceof Cognite3DModel) {
             cadModels.push(model);
+            //model.setDefaultNodeAppearance(DefaultNodeAppearance.Default);
+
             // const allPipes = new ByNodePropertyNodeSet(client, model);
             // allPipes.executeFilter({'PDMS': {'Function': 'EP'}});
-            // model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
-            // model.addStyledNodeSet(allPipes, { renderGhosted: false, color: [40, 200, 20] } );
-
+            
             // const allAssetMappedNodes = new ByAssetNodeSet(client, model);
             // allAssetMappedNodes.executeFilter({});
-            // model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
-            // model.addStyledNodeSet(allAssetMappedNodes, {renderGhosted: false, outlineColor: NodeOutlineColor.Cyan } );
-
+            
             // const highlight = new ByTreeIndexNodeSet([399745]);
-            // model.addStyledNodeSet(highlight, {outlineColor: reveal.NodeOutlineColor.Orange, renderInFront: true, renderGhosted: false});
+            
+            // const combined = new CombinedNodeSet('union', [allAssetMappedNodes, highlight]);
+            
+            
+            // const combinedAll = new CombinedNodeSet('union', [combined, allPipes]);
+            // const invertedAll = new InvertedNodeSet(model, combinedAll);
+            
+            // model.addStyledNodeSet(invertedAll, {renderGhosted: true});
+            // model.addStyledNodeSet(combined, {outlineColor: reveal.NodeOutlineColor.Pink, renderInFront: true, renderGhosted: false});
+            // model.addStyledNodeSet(allPipes, { renderGhosted: false, color: [40, 200, 20] } );
+            
             // console.log(JSON.stringify(viewer.getViewState(), null, 2));
             viewer.setViewState(myState);
           } else if (model instanceof CognitePointCloudModel) {

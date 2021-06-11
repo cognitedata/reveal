@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 import { IndexSet } from '../../../utilities/IndexSet';
-import { NodeSet } from './NodeSet';
+import { NodeSet, SerializedNodeSet } from './NodeSet';
 
 export class ByTreeIndexNodeSet extends NodeSet {
   private _set: IndexSet;
@@ -29,5 +29,13 @@ export class ByTreeIndexNodeSet extends NodeSet {
 
   get isLoading(): boolean {
     return false;
+  }
+
+  /* @internal */
+  Serialize(): SerializedNodeSet {
+    return {
+      token: this.classToken,
+      state: this._set.ranges()
+    };
   }
 }

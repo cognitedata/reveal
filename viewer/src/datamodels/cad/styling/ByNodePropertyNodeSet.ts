@@ -11,7 +11,8 @@ import { PopulateIndexSetFromPagedResponseHelper } from './PopulateIndexSetFromP
 import { NodeSet } from './NodeSet';
 
 import range from 'lodash/range';
-import { ExecutesFilter } from './ExecutesFilter';
+
+import cloneDeep from 'lodash/cloneDeep';
 
 export type ByNodePropertyNodeSetOptions = {
   /**
@@ -22,7 +23,7 @@ export type ByNodePropertyNodeSetOptions = {
   requestPartitions?: number;
 };
 
-export class ByNodePropertyNodeSet extends NodeSet implements ExecutesFilter {
+export class ByNodePropertyNodeSet extends NodeSet {
   private readonly _client: CogniteClient;
   private _indexSet = new IndexSet();
   private readonly _modelId: number;
@@ -85,5 +86,14 @@ export class ByNodePropertyNodeSet extends NodeSet implements ExecutesFilter {
 
   getIndexSet(): IndexSet {
     return this._indexSet;
+  }
+
+  /* @internal */
+  Serialize() {
+    return {
+      token: this.classToken,
+      state: cloneDeep(this._filter),
+      options: { ...this._options }
+    };
   }
 }

@@ -4,7 +4,7 @@
 import { Cognite3DModel } from '../../../public/migration/Cognite3DModel';
 import { NumericRange } from '../../../utilities';
 import { IndexSet } from '../../../utilities/IndexSet';
-import { NodeSet } from './NodeSet';
+import { NodeSet, SerializedNodeSet } from './NodeSet';
 
 export class InvertedNodeSet extends NodeSet {
   private readonly _allTreeIndicesRange: NumericRange;
@@ -35,5 +35,10 @@ export class InvertedNodeSet extends NodeSet {
       this._cachedIndexSet = invertedIndices;
     }
     return this._cachedIndexSet;
+  }
+
+  /* @internal */
+  Serialize(): SerializedNodeSet {
+    return { token: this.classToken, state: { innerSet: this._innerSet.Serialize() } };
   }
 }

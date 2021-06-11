@@ -3,7 +3,7 @@
  */
 import { assertNever } from '../../../utilities';
 import { IndexSet } from '../../../utilities/IndexSet';
-import { NodeSet } from './NodeSet';
+import { NodeSet, SerializedNodeSet } from './NodeSet';
 
 export type CombineNodeSetOperator = 'intersection' | 'union';
 
@@ -94,5 +94,16 @@ export class CombinedNodeSet extends NodeSet {
       set.unionWith(this._nodeSets[i].getIndexSet());
     }
     return set;
+  }
+
+  /* @internal */
+  Serialize(): SerializedNodeSet {
+    return {
+      token: this.classToken,
+      state: {
+        operator: this._operator,
+        subSets: this._nodeSets.map(set => set.Serialize())
+      }
+    };
   }
 }
