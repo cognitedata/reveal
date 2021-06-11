@@ -3,22 +3,28 @@
  */
 
 import { CogniteClient } from '@cognite/sdk';
-import { Cognite3DModel } from '../../public/migration/Cognite3DModel';
-import { IndexSet } from '../../utilities/IndexSet';
-import { ByNodePropertyNodeSet } from './styling';
+import { Cognite3DModel } from '../../../public/migration/Cognite3DModel';
+import { IndexSet } from '../../../utilities/IndexSet';
+import { ByNodePropertyNodeSet } from '.';
 
 import nock from 'nock';
-import { NumericRange } from '../../utilities';
+import { NumericRange } from '../../../utilities';
 
 describe('ByNodePropertyNodeSet', () => {
+  let client: CogniteClient;
+  let model: Cognite3DModel;
   let set: ByNodePropertyNodeSet;
   const listNodesEndpointPath: RegExp = /.*\/nodes/;
 
   beforeEach(() => {
-    const client = new CogniteClient({ appId: 'test', baseUrl: 'http://localhost' });
+    client = new CogniteClient({ appId: 'test', baseUrl: 'http://localhost' });
     client.loginWithApiKey({ apiKey: 'dummy', project: 'unittest' });
-    const model: Cognite3DModel = { modelId: 112, revisionId: 113 } as Cognite3DModel;
+    model = { modelId: 112, revisionId: 113 } as Cognite3DModel;
     set = new ByNodePropertyNodeSet(client, model);
+  });
+
+  afterEach(() => {
+    nock.cleanAll();
   });
 
   test('isLoading is initially false', () => {
@@ -128,6 +134,55 @@ describe('ByNodePropertyNodeSet', () => {
     expectedSet.addRange(new NumericRange(50, 10));
     expect(set.getIndexSet()).toEqual(expectedSet);
     expect(set.isLoading).toBeFalse();
+  });
+
+  test('executeFilter() with two partitions, finishes and merges both', async () => {
+    // Arrange
+    set = new ByNodePropertyNodeSet(client, model, { requestPartitions: 2 });
+
+    nock(/.*/)
+      .get(listNodesEndpointPath)
+      .twice()
+      .reply(200, uri => {
+        const searchParams = new URLSearchParams(uri);
+        const partition = searchParams.get('partition');
+        switch (partition) {
+          case '1/2':
+            return { items: [createNodeJson(1, 10)] };
+          case '2/2':
+            return { items: [createNodeJson(30, 10)] };
+          default:
+            fail(`Unexpected partition '${partition}'`);
+        }
+      });
+
+    // Act
+    await set.executeFilter({ Foo: { Bar: 'value' } });
+
+    // Assert
+    const expectedSet = new IndexSet();
+    expectedSet.addRange(new NumericRange(1, 10));
+    expectedSet.addRange(new NumericRange(30, 10));
+    expect(set.getIndexSet()).toEqual(expectedSet);
+    expect(set.isLoading).toBeFalse();
+  });
+
+  test('clear() interrupts ongoing operation and resets set', async () => {
+    // Arrange
+    nock(/.*/)
+      .get(listNodesEndpointPath)
+      .reply(200, () => {
+        return { items: [createNodeJson(10, 100)] };
+      });
+
+    // Act
+    const executeFilterOperation = set.executeFilter({ PDMS: { ':capStatus': 'S9' } });
+    set.clear();
+    await executeFilterOperation;
+
+    // Assert
+    expect(set.isLoading).toBeFalse();
+    expect(set.getIndexSet()).toEqual(new IndexSet());
   });
 });
 

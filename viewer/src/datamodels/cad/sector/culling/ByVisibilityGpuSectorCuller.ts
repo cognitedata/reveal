@@ -24,9 +24,9 @@ import {
 import { LevelOfDetail } from '../LevelOfDetail';
 import { CadModelMetadata } from '../../CadModelMetadata';
 import { SectorMetadata, WantedSector } from '../types';
-import { toThreeVector3 } from '../../../../utilities';
 import { CadModelSectorBudget } from '../../CadModelSectorBudget';
 import { OccludingGeometryProvider } from './OccludingGeometryProvider';
+import { getBox3CornerPoints } from '../../../../utilities/three';
 
 /**
  * Options for creating GpuBasedSectorCuller.
@@ -287,12 +287,9 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     const passingSectors = [];
 
     for (let i = 0; i < intersectingSectors.length; i++) {
-      const boundPoints = intersectingSectors[i].bounds.getCornerPoints().map(p => {
-        const outvec = new THREE.Vector3();
-
-        toThreeVector3(outvec, p);
+      const boundPoints = getBox3CornerPoints(intersectingSectors[i].bounds).map(p => {
+        const outvec = p.clone();
         outvec.applyMatrix4(modelMatrix);
-
         return outvec;
       });
 

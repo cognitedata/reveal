@@ -7,6 +7,10 @@ import { NodeSet, SerializedNodeSet } from './NodeSet';
 
 export type CombineNodeSetOperator = 'intersection' | 'union';
 
+/**
+ * Node sets that combines the result from multiple underlying node sets
+ * by taking the set union or intersection between the sets.
+ */
 export class CombinedNodeSet extends NodeSet {
   private _nodeSets: NodeSet[] = [];
   private _operator: CombineNodeSetOperator;
@@ -38,6 +42,13 @@ export class CombinedNodeSet extends NodeSet {
     nodeSet.off('changed', this._changedUnderlyingNodeSetHandler);
     this._nodeSets.splice(index, 1);
     this.makeDirty();
+  }
+
+  /**
+   * Clears all underlying node sets.
+   */
+  clear() {
+    this._nodeSets.forEach(nodeSet => nodeSet.clear());
   }
 
   private makeDirty(): void {

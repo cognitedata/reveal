@@ -14,6 +14,9 @@ import range from 'lodash/range';
 
 import cloneDeep from 'lodash/cloneDeep';
 
+/**
+ * Options for {@link ByNodePropertyNodeSet}.
+ */
 export type ByNodePropertyNodeSetOptions = {
   /**
    * How many partitions to split the request into. More partitions can yield better performance
@@ -23,6 +26,10 @@ export type ByNodePropertyNodeSetOptions = {
   requestPartitions?: number;
 };
 
+/**
+ * Represents a set of nodes that has matching node properties to a provided filter. Note that
+ * a node is considered to match if it or any of its ancestors match the filter.
+ */
 export class ByNodePropertyNodeSet extends NodeSet {
   private readonly _client: CogniteClient;
   private _indexSet = new IndexSet();
@@ -44,6 +51,15 @@ export class ByNodePropertyNodeSet extends NodeSet {
     return this._fetchResultHelper !== undefined && this._fetchResultHelper.isLoading;
   }
 
+  /**
+   * Populates the node set with nodes matching the provided filter. This will replace
+   * the current nodes held by the filter.
+   * @param filter A filter for matching node properties.
+   * @example
+   * ```
+   * set.executeFilter({ 'PDMS': { 'Module': 'AQ550' }});
+   * ```
+   */
   async executeFilter(filter: {
     [category: string]: {
       [key: string]: string;
@@ -57,7 +73,7 @@ export class ByNodePropertyNodeSet extends NodeSet {
       this._fetchResultHelper.interrupt();
     }
     const fetchResultHelper = new PopulateIndexSetFromPagedResponseHelper<Node3D>(
-      assetMapping => new NumericRange(assetMapping.treeIndex, assetMapping.subtreeSize),
+      node => new NumericRange(node.treeIndex, node.subtreeSize),
       () => this.notifyChanged()
     );
     this._fetchResultHelper = fetchResultHelper;
@@ -82,6 +98,16 @@ export class ByNodePropertyNodeSet extends NodeSet {
 
   getFilter() {
     return this._filter;
+  }
+  /**
+   * Clears the node set and interrupts any ongoing operations.
+   */
+  clear(): void {
+    if (this._fetchResultHelper !== undefined) {
+      this._fetchResultHelper.interrupt();
+    }
+    this._indexSet.clear();
+    this.notifyChanged();
   }
 
   getIndexSet(): IndexSet {

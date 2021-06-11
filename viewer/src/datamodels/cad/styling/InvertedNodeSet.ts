@@ -6,6 +6,9 @@ import { NumericRange } from '../../../utilities';
 import { IndexSet } from '../../../utilities/IndexSet';
 import { NodeSet, SerializedNodeSet } from './NodeSet';
 
+/**
+ * Node sets that inverts the result from another node set.
+ */
 export class InvertedNodeSet extends NodeSet {
   private readonly _allTreeIndicesRange: NumericRange;
   private readonly _innerSet: NodeSet;
@@ -40,5 +43,14 @@ export class InvertedNodeSet extends NodeSet {
   /* @internal */
   Serialize(): SerializedNodeSet {
     return { token: this.classToken, state: { innerSet: this._innerSet.Serialize() } };
+  }
+  /**
+   * Not supported.
+   * @throws Always throws an error.
+   */
+  clear() {
+    // clearing the underlying set would result in all nodes being added to this set
+    // which would feel counter-intuitive.
+    throw new Error('clear() is not supported');
   }
 }

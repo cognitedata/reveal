@@ -580,14 +580,14 @@ export function Migration() {
 
       const assetExplode = gui.addFolder('Asset Inspect');
 
-      const exlopdeParams = { explodeFactor: 0.0, rootTreeIndex: 0 };
+      const explodeParams = { explodeFactor: 0.0, rootTreeIndex: 0 };
       const explodeActions = {
         selectAssetTreeIndex: async () => {
           if (expandTool) {
             explodeActions.reset();
           }
 
-          const rootTreeIndex = exlopdeParams.rootTreeIndex;
+          const rootTreeIndex = explodeParams.rootTreeIndex;
           const treeIndices = await cadModels[0].getSubtreeTreeIndices(rootTreeIndex);
           cadModels[0].setDefaultNodeAppearance({ visible: false });
           const explodeSet = new ByTreeIndexNodeSet(treeIndices);
@@ -601,7 +601,7 @@ export function Migration() {
           await expandTool.readyPromise;
 
           explodeSlider = assetExplode
-            .add(exlopdeParams, 'explodeFactor', 0, 1)
+            .add(explodeParams, 'explodeFactor', 0, 1)
             .name('Explode Factor')
             .step(0.01)
             .onChange(p => {
@@ -612,7 +612,7 @@ export function Migration() {
           expandTool?.reset();
           cadModels[0].setDefaultNodeAppearance({ visible: true });
           cadModels[0].removeAllStyledNodeSets();
-          exlopdeParams.explodeFactor = 0;
+          explodeParams.explodeFactor = 0;
           expandTool = null;
           if (explodeSlider) {
             assetExplode.remove(explodeSlider);
@@ -620,7 +620,7 @@ export function Migration() {
           }
         }
       };
-      assetExplode.add(exlopdeParams, 'rootTreeIndex').name('Tree index');
+      assetExplode.add(explodeParams, 'rootTreeIndex').name('Tree index');
       assetExplode.add(explodeActions, 'selectAssetTreeIndex').name('Inspect tree index');
 
       assetExplode.add(explodeActions, 'reset').name('Reset');

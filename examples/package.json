@@ -30,7 +30,6 @@
     "@cognite/sdk": "link:../viewer/node_modules/@cognite/sdk",
     "camera-controls": "^1.25.1",
     "dat.gui": "^0.7.7",
-    "gl-matrix": "^3.3.0",
     "hold-event": "^0.0.1",
     "install": "^0.13.0",
     "react": "^17.0.1",
@@ -64,11 +63,11 @@
     "jest-retries": "^1.0.1",
     "prettier": "^2.1.2",
     "puppeteer": "^5.5.0",
-    "react-app-rewired": "^2.1.6",
-    "react-scripts": "4.0.0",
-    "start-server-and-test": "^1.11.5",
+    "react-app-rewired": "^2.1.8",
+    "react-scripts": "^4.0.3",
+    "start-server-and-test": "^1.12.3",
     "ts-jest": "^26.4.3",
-    "typescript": "4.0.5"
+    "typescript": "^4.3.2"
   },
   "eslintConfig": {
     "extends": "react-app"

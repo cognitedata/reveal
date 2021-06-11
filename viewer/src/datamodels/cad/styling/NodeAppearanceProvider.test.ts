@@ -61,7 +61,7 @@ describe('NodeAppearanceProvider', () => {
     expect(applyCb).toBeCalledWith(expect.anything(), expect.anything(), set1.getIndexSet(), style1);
   });
 
-  test('add and remove style triggers changed', () => {
+  test('add/change/remove style triggers changed-listener', () => {
     const listener = jest.fn();
     const set = new ByTreeIndexNodeSet(new IndexSet([1, 2, 3]));
     provider.on('changed', listener);
@@ -69,8 +69,11 @@ describe('NodeAppearanceProvider', () => {
     provider.addStyledSet(set, {});
     expect(listener).toBeCalledTimes(1);
 
-    provider.removeStyledSet(set);
+    provider.changeStyledSetAppearance(set, { visible: false });
     expect(listener).toBeCalledTimes(2);
+
+    provider.removeStyledSet(set);
+    expect(listener).toBeCalledTimes(3);
   });
 
   test('triggers changed when underlying set is changed', () => {
@@ -151,4 +154,5 @@ class StubNodeSet extends NodeSet {
   Serialize(): SerializedNodeSet {
     return { token: 'stub', state: {}, options: {} };
   }
+  clear() {}
 }

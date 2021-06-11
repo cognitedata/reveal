@@ -7,7 +7,7 @@ describe: Reveal supports styling individual nodes by assigning appearance profi
 import { DemoWrapper } from '@site/docs/components/DemoWrapper';
 
 Reveal supports flexible styling of individual nodes (objects) in the 3D model. Styles can
-be compromised of several attributes to customize the visualization through the `NodeApperance`-type:
+be compromised of several attributes to customize the visualization through the `NodeAppearance`-type:
 
 | Field           | Field type                  | Description                                           |
 | --------------- | --------------------------- | ----------------------------------------------------- |
@@ -17,10 +17,10 @@ be compromised of several attributes to customize the visualization through the 
 | `renderGhosted` | `boolean?`                  | When true, the node(s) are rendered in transparent gray |
 | `outlineColor`  | `NodeOutlineColor?`         | Adds an outline to the objects from a set of predefined colors |
 
-These attributes can be combined to customize the look of nodes. For convinience, a set of default apperances are
-provided in the `DefaultNodeApperance`-constant:
+These attributes can be combined to customize the look of nodes. For convinience, a set of default appearances are
+provided in the `DefaultNodeAppearance`-constant:
 
-| Apperance           | Description                                                                      |
+| Appearance           | Description                                                                      |
 | ------------------- | -------------------------------------------------------------------------------- |
 | `Default`           | No overrides, use colors from the CAD model                                      |
 | `Ghosted`           | Render node(s) 'ghosted', i.e. make them translucent gray                        |
@@ -42,6 +42,28 @@ identifies 3D nodes by `treeIndex`. There are several implementations of `NodeSe
 
 It's also possible [implement custom `NodeSet`](cad-styling-custom). This can be useful for specialized queries or to load
 sets from custom data sources.
+
+`Cognite3DModel.addStyledNodeSet`, `changeStyledNodeSetAppearance` and `removeStyledNodeSet` is used to manage styled set associated with a model:
+
+```js
+// import { ByTreeIndexNodeSet, DefaultNodeAppearance, NumericRange } from '@cognite/reveal'
+
+// you can start from binding styles to an empty set and populate it later
+const myNodeSet = new ByTreeIndexNodeSet();
+model.addStyledNodeSet(myNodeSet, DefaultNodeAppearance.Highlighted);
+
+// later you might want to update the set as user does something, for example, selects an asset
+// note that other styling sets might have different API for updates, for example `executeFilter`
+const nodeTreeIndex = 0;
+const nodeSubtreeSize = 100000;
+myNodeSet.updateSet(new IndexSet(new NumericRange(nodeTreeIndex, nodeSubtreeSize)));
+
+// if you want to change appearance of your existing set you can do it like this
+model.changeStyledNodeSetAppearance(myNodeSet, DefaultNodeAppearance.Ghosted);
+
+// and when you don't need to style this set anymore, just remove it completely
+model.removeStyledNodeSet(myNodeSet);
+```
 
 :::note
 The API for styling nodes has changed substantially since Reveal 1.x and upgrading Reveal
@@ -66,18 +88,20 @@ model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
 ```js runnable
 model.setDefaultNodeAppearance(DefaultNodeAppearance.Highlighted);
 ```
+
 ### Outline and custom color
 
 By creating custom styles you have a powerful tool to customize how the model looks.
 
 ```js runnable
-model.setDefaultNodeAppearance({ outlineColor: NodeOutlineColor.Orange });
+model.setDefaultNodeAppearance({ color: [0, 200, 0], outlineColor: NodeOutlineColor.Orange });
 ```
 
 Note that `outlineColor` restricts the choice of color to a predefined set. This is
 a restriction imposed to reduce storage space for outlines to only 3 bits. The choice
-of colors are:
-```js
+of colors is:
+
+```ts
 enum NodeOutlineColor {
   NoOutline = 0,
   White = 1,

@@ -11,7 +11,6 @@ import { Materials } from '../rendering/materials';
 
 import { InstancedMeshFile, SectorQuads } from '../rendering/types';
 
-import { toThreeJsBox3 } from '../../../utilities';
 import { traverseDepthFirst } from '../../../utilities/objectTraversal';
 import { createTriangleMeshes } from '../rendering/triangleMeshes';
 import { createPrimitives } from '../rendering/primitives';
@@ -45,7 +44,7 @@ export function consumeSectorDetailed(
   materials: Materials,
   geometryClipBox: THREE.Box3 | null
 ): { sectorMeshes: AutoDisposeGroup; instancedMeshes: InstancedMeshFile[] } {
-  const bounds = toThreeJsBox3(new THREE.Box3(), metadata.bounds);
+  const bounds = metadata.bounds;
 
   if (geometryClipBox !== null && geometryClipBox.containsBox(bounds)) {
     // If sector bounds is fully inside clip Box, nothing will be clipped so don't go the extra mile

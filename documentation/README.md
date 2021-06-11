@@ -53,7 +53,12 @@ For API reference use `@version` tag in jsdoc. For example:
 ```js
 /**
   * Sets transformation matrix of the model.
-  * @version new in 1.1.0
   * @param transformationMatrix
+  * @version Added in 2.1.0
   */
 ```
+
+The `@version` tag is used to indicate changed functionality between minor versions within the same
+major release, e.g. if a function `clear()` is added in 2.1.0 it's marked with `@version New in 2.1.0`.
+When releasing the next major version (e.g. version 3.0.0), the `@version` tags are removed since
+the functionality will be available for all version 3 releases.
