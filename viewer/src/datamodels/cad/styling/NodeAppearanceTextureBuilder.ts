@@ -22,6 +22,12 @@ export class NodeAppearanceTextureBuilder {
   // private readonly _treeIndexCount: number;
   private readonly _allTreeIndices: IndexSet;
   private readonly _overrideColorPerTreeIndexTexture: THREE.DataTexture;
+  private readonly _overrideColorPerTreeIndexBuffers: {
+    R: Uint8Array;
+    G: Uint8Array;
+    B: Uint8Array;
+    A: Uint8Array;
+  };
   private readonly _regularNodesTreeIndices: IndexSet;
   private readonly _ghostedNodesTreeIndices: IndexSet;
   private readonly _infrontNodesTreeIndices: IndexSet;
@@ -35,7 +41,12 @@ export class NodeAppearanceTextureBuilder {
 
     const textures = allocateTextures(treeIndexCount);
     this._overrideColorPerTreeIndexTexture = textures.overrideColorPerTreeIndexTexture;
-
+    this._overrideColorPerTreeIndexBuffers = {
+      R: new Uint8Array(treeIndexCount),
+      G: new Uint8Array(treeIndexCount),
+      B: new Uint8Array(treeIndexCount),
+      A: new Uint8Array(treeIndexCount)
+    };
     this._regularNodesTreeIndices = new IndexSet();
     this._ghostedNodesTreeIndices = new IndexSet();
     this._infrontNodesTreeIndices = new IndexSet();
@@ -126,8 +137,18 @@ export class NodeAppearanceTextureBuilder {
       const fullStyle = { ...this._defaultAppearance, ...appearance };
       this.applyStyleToNodes(treeIndices, fullStyle);
     });
+    const { R, G, B, A } = this._overrideColorPerTreeIndexBuffers;
+    const rgba = this._overrideColorPerTreeIndexTexture.image.data;
+    for (let i = 0; i < this._allTreeIndices.count; ++i) {
+      rgba[4 * i + 0] = R[i];
+      rgba[4 * i + 1] = G[i];
+      rgba[4 * i + 2] = B[i];
+      rgba[4 * i + 3] = A[i];
+    }
+    this._overrideColorPerTreeIndexTexture.needsUpdate = true;
     this._needsUpdate = false;
     console.log(`build() took ${performance.now() - start} ms`);
+    (window as any).timings = [...((window as any).timings || []), performance.now() - start];
 
     // const orphanStyleIds = new Set<number>(this._currentlyAppliedStyles.keys());
 
@@ -209,7 +230,9 @@ export class NodeAppearanceTextureBuilder {
     }
 
     const colorRgba = appearanceToColorOverride(style);
-    applyRGBA(this._overrideColorPerTreeIndexTexture, treeIndices, colorRgba);
+    const { R, G, B, A } = this._overrideColorPerTreeIndexBuffers;
+    const ranges = treeIndices.toRangeArray();
+    applyRGBA(R, G, B, A, treeIndices, colorRgba);
 
     const infront = !!style.renderInFront;
     const ghosted = !infront && !!style.renderGhosted;
@@ -275,18 +298,21 @@ function appearanceToColorOverride(appearance: NodeAppearance): [number, number,
   return [r, g, b, bytePattern];
 }
 
-function applyRGBA(texture: THREE.DataTexture, treeIndices: IndexSet, rgba: [number, number, number, number]) {
-  const buffer = texture.image.data;
+function applyRGBA(
+  R: Uint8Array,
+  G: Uint8Array,
+  B: Uint8Array,
+  A: Uint8Array,
+  treeIndices: IndexSet,
+  rgba: [number, number, number, number]
+) {
   const [r, g, b, a] = rgba;
   treeIndices.forEachRange(range => {
-    range.forEach(treeIndex => {
-      buffer[4 * treeIndex + 0] = r;
-      buffer[4 * treeIndex + 1] = g;
-      buffer[4 * treeIndex + 2] = b;
-      buffer[4 * treeIndex + 3] = a;
-    });
+    R.subarray(range.from, range.toInclusive + 1).fill(r);
+    G.subarray(range.from, range.toInclusive + 1).fill(g);
+    B.subarray(range.from, range.toInclusive + 1).fill(b);
+    A.subarray(range.from, range.toInclusive + 1).fill(a);
   });
-  texture.needsUpdate = true;
 }
 
 function updateLookupSet(set: IndexSet, treeIndices: IndexSet, addToSet: boolean) {
