@@ -5,6 +5,7 @@ import { MIN_IN_HOURS } from 'utils/validation/notificationValidation';
 import { SupportedScheduleStrings } from 'components/integrations/cols/Schedule';
 import {
   calculate,
+  calculateLatest,
   calculateStatus,
   createAddIntegrationInfo,
   createSearchParams,
@@ -207,5 +208,27 @@ describe('createSearchParams', () => {
     expect(res.includes(options.dateRange.startDate.getTime())).toEqual(true);
     expect(res.includes('max')).toEqual(true);
     expect(res.includes(options.dateRange.endDate.getTime())).toEqual(true);
+  });
+});
+describe('calculateLastConnected', () => {
+  const lastSeen = new Date(2021, 4, 1, 10, 1).getTime();
+  const lastSuccess = new Date(2021, 4, 1, 10, 0).getTime();
+  const lastFailure = new Date(2021, 4, 1, 9, 1).getTime();
+  const lastSuccess2 = new Date(2021, 4, 1, 10, 10).getTime();
+  const cases = [
+    {
+      values: [lastSeen, lastSuccess, lastFailure],
+      expected: lastSeen,
+    },
+    {
+      values: [lastSeen, lastSuccess2, lastFailure],
+      expected: lastSuccess2,
+    },
+  ];
+  cases.forEach(({ values, expected }) => {
+    test(`Get the latest`, () => {
+      const res = calculateLatest(values);
+      expect(res).toEqual(expected);
+    });
   });
 });

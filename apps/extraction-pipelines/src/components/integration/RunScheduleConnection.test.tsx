@@ -17,7 +17,7 @@ import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import moment from 'moment';
 
 describe('RunScheduleConnection', () => {
-  test('Renders information', async () => {
+  test('Renders information when last connected is more recent than latest run', async () => {
     const mockIntegration = getMockResponse()[0];
     const mockDataSet = mockDataSetResponse()[0];
     sdkv3.get.mockResolvedValueOnce({
@@ -37,9 +37,39 @@ describe('RunScheduleConnection', () => {
     expect(
       screen.getByText(parseCron(mockIntegration.schedule))
     ).toBeInTheDocument();
+    // last run
+    expect(
+      screen.getByText(moment(mockIntegration.lastSuccess).fromNow())
+    ).toBeInTheDocument();
+    // last connected
     expect(
       screen.getByText(moment(mockIntegration.lastSeen).fromNow())
     ).toBeInTheDocument();
+  });
+
+  test('Renders information when last failure is also last connected', async () => {
+    const mockIntegration = getMockResponse()[1];
+    const mockDataSet = mockDataSetResponse()[0];
+    sdkv3.get.mockResolvedValueOnce({
+      data: mockIntegration,
+    });
+    sdkv3.datasets.retrieve.mockResolvedValue([mockDataSet]);
+    sdkv3.get.mockResolvedValueOnce({
+      data: { items: mockDataRunsResponse.items },
+    });
+    renderWithSelectedIntegrationContext(<RunScheduleConnection />, {
+      initIntegration: mockIntegration,
+      client: new QueryClient(),
+    });
+    await waitFor(() => {
+      screen.getByText(TableHeadings.LATEST_RUN_TIME);
+    });
+    expect(
+      screen.getByText(parseCron(mockIntegration.schedule))
+    ).toBeInTheDocument();
+    expect(
+      screen.getAllByText(moment(mockIntegration.lastFailure).fromNow()).length
+    ).toEqual(2); // last failure run + connected
   });
 
   test('Renders without integration', () => {

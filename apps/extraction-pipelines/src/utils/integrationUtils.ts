@@ -58,6 +58,20 @@ export const calculate = ({
   };
 };
 
+export const calculateLatest = (timesStampsInMs: number[]): number => {
+  if (timesStampsInMs.length === 0) {
+    return 0;
+  }
+  return moment
+    .max(timesStampsInMs.map((time) => moment(time)))
+    .toDate()
+    .getTime();
+};
+
+export const addIfExist = <T>(value?: T): T[] => {
+  return value ? [value] : [];
+};
+
 type Partitioned<T> = { pass: T[]; fail: T[] };
 export const partition = <T>(
   list: Array<T>,

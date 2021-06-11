@@ -2,6 +2,7 @@ import { Integration } from 'model/Integration';
 import { DataSetModel } from 'model/DataSetModel';
 import { StatusRow } from 'model/Runs';
 import { mapDataSetToIntegration } from 'utils/dataSetUtils';
+import moment from 'moment';
 
 export const mockDataSetResponse = (): DataSetModel[] => [
   {
@@ -55,9 +56,9 @@ const mockResponseV2 = {
           tableName: 'oracle',
         },
       ],
-      lastSuccess: 1584066700000,
-      lastFailure: 1584065800000,
-      lastSeen: 1604271600000,
+      lastSuccess: moment().subtract(1, 'hour').toDate().getTime(),
+      lastFailure: moment().subtract(1, 'day').toDate().getTime(),
+      lastSeen: moment().toDate().getTime(),
       lastMessage: 'This is a mock failed run error message',
       schedule: '0 0 9 1/1 * ? *',
       contacts: [
@@ -91,9 +92,9 @@ const mockResponseV2 = {
           tableName: 'oracle',
         },
       ],
-      lastSuccess: 1584064700001,
-      lastFailure: 1584065700002,
-      lastSeen: 1584066700003,
+      lastSuccess: moment().subtract(1, 'day').toDate().getTime(),
+      lastFailure: moment().toDate().getTime(),
+      lastSeen: moment().subtract(1, 'hour').toDate().getTime(),
       schedule: '0 0 12 1/1 * ? *',
       contacts: [
         {

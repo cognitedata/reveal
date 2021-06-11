@@ -10,7 +10,11 @@ import {
   StyledTitleCard,
 } from 'styles/StyledCard';
 import { TableHeadings } from 'components/table/IntegrationTableCol';
-import { calculateStatus } from 'utils/integrationUtils';
+import {
+  addIfExist,
+  calculateLatest,
+  calculateStatus,
+} from 'utils/integrationUtils';
 import { RunStatusUI } from 'model/Status';
 import { useRuns } from 'hooks/useRuns';
 import {
@@ -63,7 +67,11 @@ export const RunScheduleConnection: FunctionComponent = () => {
     lastSuccess: integration?.lastSuccess,
     lastFailure: integration?.lastFailure,
   });
-
+  const lastConnected = calculateLatest([
+    ...addIfExist(integration?.lastSeen),
+    ...addIfExist(integration?.lastSuccess),
+    ...addIfExist(integration?.lastFailure),
+  ]);
   return (
     <CardWrapper className={`${lastRun.status.toLowerCase()}`}>
       <CardNavLink to={`${url}/${HEALTH_PATH}${search}`} exact>
@@ -107,9 +115,7 @@ export const RunScheduleConnection: FunctionComponent = () => {
             {TableHeadings.LAST_SEEN}
           </StyledTitleCard>
           <CardValue className="card-value">
-            {integration?.lastSeen && (
-              <TimeDisplay value={integration.lastSeen} relative />
-            )}
+            {lastConnected && <TimeDisplay value={lastConnected} relative />}
           </CardValue>
           <Icon type="ArrowForward" />
         </CardInWrapper>

@@ -1,6 +1,10 @@
 import React from 'react';
 import { Cell, CellProps, Column, HeaderProps } from 'react-table';
-import { calculateStatus } from 'utils/integrationUtils';
+import {
+  addIfExist,
+  calculateLatest,
+  calculateStatus,
+} from 'utils/integrationUtils';
 import styled from 'styled-components';
 import { Button } from '@cognite/cogs.js';
 import { Integration } from 'model/Integration';
@@ -138,14 +142,20 @@ export const getIntegrationTableCol = (
       disableFilters: true,
     },
     {
-      id: 'lastSeen',
+      id: 'lastConnected',
       Header: TableHeadings.LAST_SEEN,
-      accessor: 'lastSeen',
+      accessor: ({ lastSuccess, lastFailure, lastSeen }: Integration) => {
+        return calculateLatest([
+          ...addIfExist(lastSuccess),
+          ...addIfExist(lastFailure),
+          ...addIfExist(lastSeen),
+        ]);
+      },
       Cell: ({ row }: Cell<Integration>) => {
         return (
           <RelativeTimeWithTooltip
             id="last-seen"
-            time={row.values.lastSeen as number}
+            time={row.values.lastConnected as number}
           />
         );
       },
