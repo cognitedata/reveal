@@ -7,7 +7,7 @@ import { ResultData } from 'src/modules/Common/types';
 import { MAPBOX_TOKEN, MAPBOX_MAP_ID } from './constants';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { MapPopup } from './MapPopup';
-import { MapFileTable } from './MapFileTable';
+import { MapFileTable } from '../MapFileTable/MapFileTable';
 import { TableDataItem } from '../../types';
 import { FileExplorerTableProps } from '../FileTable/types';
 

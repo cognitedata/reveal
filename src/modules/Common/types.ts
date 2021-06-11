@@ -70,3 +70,4 @@ export type SelectableTableCellRenderer = {
 };
 
 export type ViewMode = 'list' | 'grid' | 'map' | 'modal';
+export type SelectFilter = { geoLocation?: boolean };

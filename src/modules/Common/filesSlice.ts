@@ -5,7 +5,13 @@ import {
   isFulfilled,
   isRejected,
 } from '@reduxjs/toolkit';
-import { Asset, FileInfo, Label, Metadata } from '@cognite/cdf-sdk-singleton';
+import {
+  Asset,
+  FileGeoLocation,
+  FileInfo,
+  Label,
+  Metadata,
+} from '@cognite/cdf-sdk-singleton';
 import { ToastUtils } from 'src/utils/ToastUtils';
 import { createFileInfo, createFileState } from 'src/store/util/StateUtils';
 import { UpdateFiles } from 'src/store/thunks/UpdateFiles';
@@ -15,6 +21,8 @@ import { SaveAnnotations } from 'src/store/thunks/SaveAnnotations';
 import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
 import { DeleteAnnotations } from 'src/store/thunks/DeleteAnnotations';
 import { UpdateAnnotations } from 'src/store/thunks/UpdateAnnotations';
+import { setSelectedAllFiles } from 'src/store/commonActions';
+import { makeReducerSelectAllFilesWithFilter } from 'src/store/commonReducers';
 import { CDFStatusModes } from '../Common/Components/CDFStatus/CDFStatus';
 
 export type FileState = {
@@ -31,6 +39,7 @@ export type FileState = {
   metadata?: Metadata;
   linkedAnnotations: string[];
   assetIds?: number[];
+  geoLocation?: FileGeoLocation;
 };
 
 export type State = {
@@ -161,14 +170,6 @@ const filesSlice = createSlice({
         }
       },
     },
-    setAllFilesSelectState(state, action: PayloadAction<boolean>) {
-      if (action.payload) {
-        const allFileIds = state.files.allIds;
-        state.selectedIds = allFileIds.map((id) => +id);
-      } else {
-        state.selectedIds = [];
-      }
-    },
   },
   extraReducers: (builder) => {
     builder.addCase(deleteFilesById.fulfilled, (state, { payload }) => {
@@ -188,6 +189,9 @@ const filesSlice = createSlice({
       state.extractExif = initialState.extractExif;
       state.files = initialState.files;
     });
+
+    builder.addCase(setSelectedAllFiles, makeReducerSelectAllFilesWithFilter());
+
     builder.addMatcher(
       isFulfilled(
         SaveAnnotations,
@@ -231,7 +235,6 @@ export const {
   setExtractExif,
   setAllFilesStatus,
   setFileSelectState,
-  setAllFilesSelectState,
 } = filesSlice.actions;
 
 export default filesSlice.reducer;

@@ -2,16 +2,21 @@ import { EnsureNonEmptyResource } from '@cognite/data-exploration';
 import React from 'react';
 import { FileFilterProps, FileInfo } from '@cognite/cdf-sdk-singleton';
 import styled from 'styled-components';
-import { ResultData, TableDataItem, ViewMode } from 'src/modules/Common/types';
+import {
+  ResultData,
+  SelectFilter,
+  TableDataItem,
+  ViewMode,
+} from 'src/modules/Common/types';
 import { PageBasedGridView } from 'src/modules/Common/Components/GridView/PageBasedGridView';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import {
   selectExplorerAllFilesSelected,
   selectExplorerSelectedIds,
-  setExplorerAllFilesSelectState,
 } from 'src/modules/Explorer/store/explorerSlice';
 import { VisionMode } from 'src/constants/enums/VisionEnums';
+import { setSelectedAllFiles } from 'src/store/commonActions';
 import { ResultTableLoader } from './ResultTableLoader';
 import { FileGridPreview } from '../../Common/Components/FileGridPreview/FileGridPreview';
 import { MapView } from '../../Common/Components/MapView/MapView';
@@ -40,8 +45,13 @@ export const ExplorerSearchResults = ({
   const selectedFileIds = useSelector((state: RootState) =>
     selectExplorerSelectedIds(state.explorerReducer)
   );
-  const handleSelectAllFiles = (value: boolean) => {
-    dispatch(setExplorerAllFilesSelectState(value));
+  const handleSelectAllFiles = (
+    value: boolean,
+    selectFilter?: SelectFilter
+  ) => {
+    dispatch(
+      setSelectedAllFiles({ selectStatus: value, filter: selectFilter })
+    );
   };
 
   return (

@@ -1,6 +1,7 @@
 import {
   FileActions,
   ResultData,
+  SelectFilter,
   TableDataItem,
   ViewMode,
 } from 'src/modules/Common/types';
@@ -13,7 +14,6 @@ import {
   selectAllFiles,
   selectAllFilesSelected,
   selectAllSelectedIds,
-  setAllFilesSelectState,
   setFileSelectState,
 } from 'src/modules/Common/filesSlice';
 import { useDispatch, useSelector } from 'react-redux';
@@ -32,6 +32,7 @@ import styled from 'styled-components';
 import { Detail } from '@cognite/cogs.js';
 import { PageBasedGridView } from 'src/modules/Common/Components/GridView/PageBasedGridView';
 import { VisionMode } from 'src/constants/enums/VisionEnums';
+import { setSelectedAllFiles } from 'src/store/commonActions';
 
 export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
   const dispatch = useDispatch();
@@ -111,8 +112,13 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
     return promptMessage;
   };
 
-  const handleSelectAllFiles = (value: boolean) => {
-    dispatch(setAllFilesSelectState(value));
+  const handleSelectAllFiles = (
+    value: boolean,
+    selectFilter?: SelectFilter
+  ) => {
+    dispatch(
+      setSelectedAllFiles({ selectStatus: value, filter: selectFilter })
+    );
   };
 
   const renderView = () => {

@@ -41,11 +41,28 @@ export const MapFileTable = (props: MapTableProps) => {
     );
   }, [props.data]);
 
+  const findSelectedItems = (items: ResultData[]): [boolean, number[]] => {
+    const ids = items.map((file) => file.id);
+    const allSelected = ids.every((id) => props.selectedRowIds.includes(id));
+    const selectedIds = allSelected
+      ? ids
+      : ids.filter((id) => props.selectedRowIds.includes(id));
+    return [allSelected, selectedIds];
+  };
+
+  const [allWithGeoDataSelected, selectedIdsWithGeoData] = useMemo(() => {
+    return findSelectedItems(withGeoData);
+  }, [props.selectedRowIds, withGeoData]);
+
   const withOutGeoData = useMemo(() => {
     return props.data.filter(
       (item: ResultData) => item.geoLocation === undefined
     );
   }, [props.data]);
+
+  const [allWithoutGeoDataSelected, selectedIdsWithoutGeoData] = useMemo(() => {
+    return findSelectedItems(withOutGeoData);
+  }, [props.selectedRowIds, withOutGeoData]);
 
   const rowClassNames = ({
     rowData,
@@ -100,6 +117,11 @@ export const MapFileTable = (props: MapTableProps) => {
                 <SelectableTable
                   {...props}
                   {...paginationProps}
+                  onSelectAllRows={(status) =>
+                    props.onSelectAllRows(status, { geoLocation: true })
+                  }
+                  allRowsSelected={allWithGeoDataSelected}
+                  selectedRowIds={selectedIdsWithGeoData}
                   data={withGeoData}
                   columns={columns}
                   rendererMap={rendererMap}
@@ -130,6 +152,11 @@ export const MapFileTable = (props: MapTableProps) => {
                 <SelectableTable
                   {...props}
                   {...paginationProps}
+                  onSelectAllRows={(status) =>
+                    props.onSelectAllRows(status, { geoLocation: false })
+                  }
+                  allRowsSelected={allWithoutGeoDataSelected}
+                  selectedRowIds={selectedIdsWithoutGeoData}
                   columns={columns}
                   rendererMap={rendererMap}
                   selectable

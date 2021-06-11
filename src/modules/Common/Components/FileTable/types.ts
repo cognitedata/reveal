@@ -1,5 +1,5 @@
 import { BaseTableProps } from 'react-base-table';
-import { TableDataItem } from 'src/modules/Common/types';
+import { SelectFilter, TableDataItem } from 'src/modules/Common/types';
 
 export type PaginationProps<T> = {
   sortKey: string;
@@ -24,7 +24,7 @@ export type FileTableProps = Omit<
   PaginatedTableProps<TableDataItem> & {
     selectedRowIds: number[];
     allRowsSelected: boolean;
-    onSelectAllRows: (value: boolean) => void;
+    onSelectAllRows: (value: boolean, filter?: SelectFilter) => void;
   };
 
 export type FileExplorerTableProps = Omit<
@@ -35,5 +35,5 @@ export type FileExplorerTableProps = Omit<
     modalView?: boolean;
     selectedRowIds: number[];
     allRowsSelected: boolean;
-    onSelectAllRows: (value: boolean) => void;
+    onSelectAllRows: (value: boolean, filter?: SelectFilter) => void;
   };

@@ -2,6 +2,7 @@ import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { ViewMode } from 'src/modules/Common/types';
 import {
   FileFilterProps,
+  FileGeoLocation,
   FileInfo,
   Label,
   Metadata,
@@ -10,6 +11,8 @@ import { createFileInfo, createFileState } from 'src/store/util/StateUtils';
 import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
 import { UpdateFiles } from 'src/store/thunks/UpdateFiles';
 import { FileState } from 'src/modules/Common/filesSlice';
+import { setSelectedAllFiles } from 'src/store/commonActions';
+import { makeReducerSelectAllFilesWithFilter } from 'src/store/commonReducers';
 
 export type ExplorerFileState = {
   id: number;
@@ -25,6 +28,7 @@ export type ExplorerFileState = {
   metadata?: Metadata;
   linkedAnnotations: string[];
   assetIds?: number[];
+  geoLocation?: FileGeoLocation;
 };
 
 export type State = {
@@ -99,14 +103,6 @@ const explorerSlice = createSlice({
         }
       },
     },
-    setExplorerAllFilesSelectState(state, action: PayloadAction<boolean>) {
-      if (action.payload) {
-        const allFileIds = state.files.allIds;
-        state.selectedIds = allFileIds;
-      } else {
-        state.selectedIds = [];
-      }
-    },
     setExplorerSelectedFileId(state, action: PayloadAction<number>) {
       state.selectedFileId = action.payload;
     },
@@ -147,13 +143,14 @@ const explorerSlice = createSlice({
         updateFileState(state, fileState);
       });
     });
+
+    builder.addCase(setSelectedAllFiles, makeReducerSelectAllFilesWithFilter());
   },
 });
 
 export const {
   setExplorerFiles,
   setExplorerFileSelectState,
-  setExplorerAllFilesSelectState,
   setExplorerSelectedFileId,
   toggleExplorerFileMetadata,
   showExplorerFileMetadata,
