@@ -43,7 +43,7 @@ identifies 3D nodes by `treeIndex`. There are several implementations of `NodeSe
 It's also possible [implement custom `NodeSet`](cad-styling-custom). This can be useful for specialized queries or to load
 sets from custom data sources.
 
-This is how you can bind a specific appearance to your node set and update it:
+`Cognite3DModel.addStyledNodeSet`, `changeStyledNodeSetAppearance` and `removeStyledNodeSet` is used to manage styled set associated with a model:
 
 ```js
 // import { ByTreeIndexNodeSet, DefaultNodeAppearance, NumericRange } from '@cognite/reveal'
