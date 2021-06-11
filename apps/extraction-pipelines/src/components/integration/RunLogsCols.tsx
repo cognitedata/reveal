@@ -2,20 +2,20 @@ import React from 'react';
 import { Cell, Column } from 'react-table';
 import StatusMarker from 'components/integrations/cols/StatusMarker';
 import { TimeDisplay } from 'components/TimeDisplay/TimeDisplay';
-import { StatusRun } from 'model/Runs';
+import { RunUI } from 'model/Runs';
 import { TableHeadings } from 'components/table/IntegrationTableCol';
 
 export enum RunTableHeading {
   TIMESTAMP = 'Timestamp',
   MESSAGE = 'Message',
 }
-export const getRunLogTableCol = (): Column<StatusRun>[] => {
+export const getRunLogTableCol = (): Column<RunUI>[] => {
   return [
     {
       Header: RunTableHeading.TIMESTAMP,
       accessor: 'createdTime',
       sortType: 'basic',
-      Cell: ({ row }: Cell<StatusRun>) => {
+      Cell: ({ row }: Cell<RunUI>) => {
         return <TimeDisplay value={row.original.createdTime} withTooltip />;
       },
       disableFilters: true,
@@ -23,7 +23,7 @@ export const getRunLogTableCol = (): Column<StatusRun>[] => {
     {
       Header: TableHeadings.LAST_RUN_STATUS,
       accessor: 'status',
-      Cell: ({ row }: Cell<StatusRun>) => {
+      Cell: ({ row }: Cell<RunUI>) => {
         return <StatusMarker status={row.original.status} />;
       },
       disableFilters: true,
@@ -31,7 +31,7 @@ export const getRunLogTableCol = (): Column<StatusRun>[] => {
     {
       Header: RunTableHeading.MESSAGE,
       accessor: 'message',
-      Cell: ({ row }: Cell<StatusRun>) => {
+      Cell: ({ row }: Cell<RunUI>) => {
         return <p>{row.original.message}</p>;
       },
       disableFilters: true,

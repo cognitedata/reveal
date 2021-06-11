@@ -1,6 +1,6 @@
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import { PROJECT_ITERA_INT_GREEN } from './baseURL';
-import { createParams, DEFAULT_LIMIT, getRuns } from './RunsAPI';
+import { createParams, DEFAULT_RUN_LIMIT, getRuns } from './RunsAPI';
 
 describe('RunsAPI', () => {
   describe('CreateParams', () => {
@@ -19,7 +19,7 @@ describe('RunsAPI', () => {
       expect(res.includes(externalId)).toEqual(true);
       expect(res.includes('cursor')).toEqual(false);
       expect(res.includes('null')).toEqual(false);
-      expect(res.includes(DEFAULT_LIMIT)).toEqual(true);
+      expect(res.includes(DEFAULT_RUN_LIMIT)).toEqual(true);
     });
   });
   describe('getRuns', () => {
@@ -37,17 +37,3 @@ describe('RunsAPI', () => {
     });
   });
 });
-
-// export const getRuns = async (
-//   project: string,
-//   externalId: string,
-//   nextCursor: Nullable<Pick<RunsAPIResponse, 'nextCursor'>>,
-//   limit: number = defaultLimit
-// ): Promise<RunsAPIResponse> => {
-//   const response = await get<RunsAPIResponse>(
-//     `/runs`,
-//     project,
-//     createParams(externalId, nextCursor, limit)
-//   );
-//   return response.data;
-// };

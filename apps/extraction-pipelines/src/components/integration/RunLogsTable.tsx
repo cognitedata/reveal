@@ -12,7 +12,7 @@ import {
 } from 'react-table';
 import styled from 'styled-components';
 import { OptionType, Pagination, Select } from '@cognite/cogs.js';
-import { StatusRun } from 'model/Runs';
+import { RunUI } from 'model/Runs';
 import { OptionTypeBase } from 'react-select';
 
 const Wrapper = styled.div`
@@ -56,8 +56,8 @@ const itemsPrPageOptions: OptionTypeBase[] = [
   },
 ];
 interface LogsTableProps {
-  data: StatusRun[];
-  columns: Column<StatusRun>[];
+  data: RunUI[];
+  columns: Column<RunUI>[];
   fetchData: (params: { pageSize: number }) => void;
   pageCount: number;
   pageSize: number;
@@ -122,9 +122,9 @@ export const RunLogsTable: FunctionComponent<LogsTableProps> = ({
     <Wrapper>
       <StyledTable {...getTableProps()} className="cogs-table">
         <thead>
-          {headerGroups.map((headerGroup: HeaderGroup<StatusRun>) => (
+          {headerGroups.map((headerGroup: HeaderGroup<RunUI>) => (
             <tr {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map((col: HeaderGroup<StatusRun>) => {
+              {headerGroup.headers.map((col: HeaderGroup<RunUI>) => {
                 return (
                   <th
                     scope="col"
@@ -140,11 +140,11 @@ export const RunLogsTable: FunctionComponent<LogsTableProps> = ({
           ))}
         </thead>
         <tbody {...getTableBodyProps()}>
-          {page.map((row: Row<StatusRun>) => {
+          {page.map((row: Row<RunUI>) => {
             prepareRow(row);
             return (
               <tr {...row.getRowProps()}>
-                {row.cells.map((cell: Cell<StatusRun>) => {
+                {row.cells.map((cell: Cell<RunUI>) => {
                   return (
                     <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
                   );

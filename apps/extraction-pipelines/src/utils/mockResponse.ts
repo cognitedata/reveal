@@ -1,6 +1,6 @@
 import { Integration } from 'model/Integration';
 import { DataSetModel } from 'model/DataSetModel';
-import { StatusRow } from 'model/Runs';
+import { RunApi } from 'model/Runs';
 import { mapDataSetToIntegration } from 'utils/dataSetUtils';
 import moment from 'moment';
 
@@ -226,7 +226,7 @@ export const unauthorizedError = {
   },
 };
 
-export const mockDataRunsResponse: { items: StatusRow[] } = {
+export const mockDataRunsResponse: { items: RunApi[] } = {
   items: [
     {
       id: 1,
@@ -237,7 +237,7 @@ export const mockDataRunsResponse: { items: StatusRow[] } = {
     {
       id: 2,
       createdTime: 1605555298134,
-      status: 'seen',
+      status: 'success',
     },
     {
       id: 3,
@@ -247,7 +247,7 @@ export const mockDataRunsResponse: { items: StatusRow[] } = {
     {
       id: 4,
       createdTime: 1605418198134,
-      status: 'success',
+      status: 'seen',
     },
     {
       id: 5,
@@ -293,6 +293,103 @@ export const mockDataRunsResponse: { items: StatusRow[] } = {
     {
       id: 12,
       createdTime: 1600923198134,
+      status: 'success',
+    },
+  ],
+};
+
+export const mockDataRuns: { items: RunApi[] } = {
+  items: [
+    {
+      id: 1,
+      createdTime: new Date(2021, 5, 1, 8, 0).getTime(),
+      status: 'failure',
+      message: 'This is an error message',
+    },
+    {
+      id: 2,
+      createdTime: new Date(2021, 5, 1, 8, 10).getTime(),
+      status: 'seen',
+    },
+    {
+      id: 3,
+      createdTime: new Date(2021, 5, 1, 8, 20).getTime(),
+      status: 'seen',
+    },
+    {
+      id: 4,
+      createdTime: new Date(2021, 5, 2, 8, 0).getTime(),
+      status: 'success',
+    },
+    {
+      id: 5,
+      createdTime: new Date(2021, 5, 2, 9, 0).getTime(),
+      status: 'seen',
+    },
+    {
+      id: 6,
+      createdTime: new Date(2021, 5, 2, 10, 0).getTime(),
+      status: 'success',
+    },
+    {
+      id: 7,
+      createdTime: new Date(2021, 5, 5, 8, 0).getTime(),
+      status: 'failure',
+      message: 'This is an error message foo bar',
+    },
+    {
+      id: 8,
+      createdTime: new Date(2021, 5, 5, 9, 0).getTime(),
+      status: 'success',
+    },
+    {
+      id: 9,
+      createdTime: new Date(2021, 5, 5, 9, 50).getTime(),
+      status: 'seen',
+    },
+    {
+      id: 10,
+      createdTime: new Date(2021, 5, 5, 10, 0).getTime(),
+      status: 'success',
+    },
+    {
+      id: 11,
+      createdTime: new Date(2021, 5, 11, 7, 50).getTime(),
+      status: 'seen',
+    },
+    {
+      id: 12,
+      createdTime: new Date(2021, 5, 11, 8, 0).getTime(),
+      status: 'success',
+    },
+    {
+      id: 13,
+      createdTime: new Date(2021, 5, 11, 8, 50).getTime(),
+      status: 'seen',
+    },
+    {
+      id: 14,
+      createdTime: new Date(2021, 5, 11, 9, 0).getTime(),
+      status: 'success',
+    },
+    {
+      id: 15,
+      createdTime: new Date(2021, 5, 11, 9, 50).getTime(),
+      status: 'seen',
+    },
+    {
+      id: 16,
+      createdTime: new Date(2021, 5, 11, 10, 0).getTime(),
+      status: 'success',
+    },
+    {
+      id: 17,
+      createdTime: new Date(2021, 5, 11, 10, 50).getTime(),
+      status: 'seen',
+    },
+    {
+      id: 18,
+      createdTime: new Date(2021, 5, 11, 11, 0).getTime(),
       status: 'success',
     },
   ],

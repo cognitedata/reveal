@@ -1,10 +1,12 @@
 import { useQuery } from 'react-query';
-import { getFilteredRuns, getRuns, DEFAULT_LIMIT } from 'utils/RunsAPI';
+import { DEFAULT_RUN_LIMIT, getFilteredRuns, getRuns } from 'utils/RunsAPI';
 import { useAppEnv } from 'hooks/useAppEnv';
 import { SDKError } from 'model/SDKErrors';
-import { RunsAPIResponse } from 'model/Runs';
+import { RunsAPIResponse, RunUI } from 'model/Runs';
 import { Range } from '@cognite/cogs.js';
 import { RunStatusAPI } from 'model/Status';
+import { mapStatusRow } from 'utils/runsUtils';
+import { useCallback } from 'react';
 
 export const useRuns = (
   externalId?: string,
@@ -27,10 +29,14 @@ export const useRuns = (
 export const useFilteredRuns = (params: CreateRunFilterParam) => {
   const { project } = useAppEnv();
   const data = createRunsFilter(params);
-  return useQuery<RunsAPIResponse, SDKError>(
+  return useQuery<
+    RunsAPIResponse,
+    SDKError,
+    { runs: RunUI[]; nextCursor?: string }
+  >(
     [
       project,
-      data,
+      data.cursor,
       data.filter.externalId,
       data.filter?.statuses,
       data.filter.message?.substring,
@@ -38,12 +44,17 @@ export const useFilteredRuns = (params: CreateRunFilterParam) => {
       data.filter.createdTime?.max,
     ],
     (ctx) => {
-      return getFilteredRuns(ctx.queryKey[0], ctx.queryKey[1]);
+      return getFilteredRuns(ctx.queryKey[0], data);
     },
     {
       enabled: !!data.filter.externalId,
+      select: useCallback(selectMappedRuns, []),
     }
   );
+};
+
+const selectMappedRuns = (data: RunsAPIResponse) => {
+  return { runs: mapStatusRow(data.items), nextCursor: data.nextCursor };
 };
 
 type CreateRunFilterParam = {
@@ -59,7 +70,7 @@ export const createRunsFilter = ({
   dateRange,
   statuses,
   search,
-  limit = DEFAULT_LIMIT,
+  limit = DEFAULT_RUN_LIMIT,
   nextCursor,
 }: CreateRunFilterParam) => {
   return {
@@ -73,7 +84,7 @@ export const createRunsFilter = ({
             },
           }
         : {}),
-      ...(statuses && { statuses }),
+      ...(statuses && statuses?.length > 0 && { statuses }),
       ...(search && {
         message: {
           substring: search,

@@ -44,6 +44,13 @@ jest.mock('hooks/useDataSetsList', () => {
     useDataSetsList: jest.fn(),
   };
 });
+jest.mock('components/chart/RunChart', () => {
+  return {
+    RunChart: () => {
+      return <div />;
+    },
+  };
+});
 describe('IntegrationPage', () => {
   beforeEach(() => {
     useLocation.mockReturnValue({ pathname: '', search: '' });
@@ -81,7 +88,7 @@ describe('IntegrationPage', () => {
     useRouteMatch.mockReturnValue({ path: '/', url: '/' });
     useRuns.mockReturnValue({ data: mockDataRunsResponse.items });
     useFilteredRuns.mockReturnValue({
-      data: { items: mockDataRunsResponse.items },
+      data: { runs: mockDataRunsResponse.items },
     });
     const { wrapper } = renderWithReQueryCacheSelectedIntegrationContext(
       new QueryClient(),

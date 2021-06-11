@@ -1,6 +1,6 @@
 import moment, { Moment } from 'moment';
-import { StatusRow, StatusRun } from 'model/Runs';
 import { RunStatusAPI, RunStatusUI } from 'model/Status';
+import { RunApi, RunUI } from 'model/Runs';
 
 const STATUS_RUN_STATUS_MAP: Readonly<Map<RunStatusUI, RunStatusAPI>> = new Map<
   RunStatusUI,
@@ -30,7 +30,7 @@ export const mapStatus = (apiStatus?: RunStatusAPI | string): RunStatusUI => {
   return RunStatusUI.NOT_ACTIVATED;
 };
 
-export const filterRuns = (data?: StatusRow[]): StatusRun[] => {
+export const filterRuns = (data?: RunApi[]): RunUI[] => {
   return data
     ? mapStatusRow(
         data.filter(({ status }) => {
@@ -41,7 +41,7 @@ export const filterRuns = (data?: StatusRow[]): StatusRun[] => {
 };
 
 export const filterByStatus = (runStatus: RunStatusUI) => {
-  return ({ status }: StatusRun) => {
+  return ({ status }: RunUI) => {
     return status === runStatus;
   };
 };
@@ -55,26 +55,26 @@ export const and = <T>(
 };
 
 export const filterByTimeBetween = (startTime: Moment, endTime: Moment) => {
-  return ({ createdTime }: Pick<StatusRun, 'createdTime'>) => {
+  return ({ createdTime }: Pick<RunUI, 'createdTime'>) => {
     return moment(createdTime).isBetween(startTime, endTime);
   };
 };
 export const isWithinDaysInThePast = (days: number) =>
   filterByTimeBetween(moment().subtract(days, 'days'), moment());
 
-export const mapStatusRow = (statusRow: StatusRow[]): StatusRun[] => {
+export const mapStatusRow = (statusRow: RunApi[]): RunUI[] => {
   return statusRow.map((row) => ({ ...row, status: mapStatus(row.status) }));
 };
 export const filterRunsByStatus = (
-  statusRow: StatusRun[],
+  statusRow: RunUI[],
   runStatus: RunStatusUI
-): StatusRun[] => {
+): RunUI[] => {
   return statusRow.filter(filterByStatus(runStatus));
 };
 export const filterRunsByTime = (
-  statusRow: StatusRun[],
+  statusRow: RunUI[],
   startTime: Moment,
   endTime: Moment
-): StatusRun[] => {
+): RunUI[] => {
   return statusRow.filter(filterByTimeBetween(startTime, endTime));
 };

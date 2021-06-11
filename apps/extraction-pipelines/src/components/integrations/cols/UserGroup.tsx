@@ -13,23 +13,37 @@ export const StyledBlueAvatarTooltip = styled.div`
 `;
 
 interface OwnProps {
+  integrationId: number;
   users: User[];
 }
 
 type Props = OwnProps;
 
-const blueAvatarTooltip = (users: User[], avatarsLimit: number) => {
+const blueAvatarTooltip = (
+  users: User[],
+  integrationId: number,
+  avatarsLimit: number
+) => {
   const hiddenAvatars = users.slice(avatarsLimit);
   return (
     <StyledBlueAvatarTooltip>
       {hiddenAvatars.map((value) => {
-        return <p key={value.email}>{value.email}</p>;
+        return (
+          <p
+            key={`blue-avatar-${integrationId}-${value.email}-${value.name}-${value.role}`}
+          >
+            {value.email}
+          </p>
+        );
       })}
     </StyledBlueAvatarTooltip>
   );
 };
 
-const UserGroup: FunctionComponent<Props> = ({ users = [] }: Props) => {
+const UserGroup: FunctionComponent<Props> = ({
+  users = [],
+  integrationId,
+}: Props) => {
   const avatarsLimit = 2;
   const showBlueAvatar = users.length > avatarsLimit;
   return (
@@ -39,7 +53,7 @@ const UserGroup: FunctionComponent<Props> = ({ users = [] }: Props) => {
         .map((user) => {
           return (
             <AvatarWithTooltip
-              key={`avatar-${user.email}-${user.name}`}
+              key={`avatar-${integrationId}-${user.email}-${user.name}-${user.role}`}
               user={user}
             />
           );
@@ -47,8 +61,8 @@ const UserGroup: FunctionComponent<Props> = ({ users = [] }: Props) => {
       {showBlueAvatar ? (
         <StyledTooltip
           placement="top"
-          content={blueAvatarTooltip(users, avatarsLimit)}
-          key="tooltip-blue-avatar"
+          content={blueAvatarTooltip(users, integrationId, avatarsLimit)}
+          key={`tooltip-avatar-${integrationId}`}
         >
           <Avatar
             text={`+ ${users.length - avatarsLimit}`}

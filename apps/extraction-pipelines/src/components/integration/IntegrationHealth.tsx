@@ -8,33 +8,28 @@ import styled from 'styled-components';
 import { trackUsage } from 'utils/Metrics';
 import { SINGLE_EXT_PIPE_RUNS } from 'utils/constants';
 import { useFilteredRuns } from 'hooks/useRuns';
-import { StatusRun } from 'model/Runs';
+import { RunUI } from 'model/Runs';
 import { Integration } from 'model/Integration';
-import { mapStatusRow } from 'utils/runsUtils';
 import { RunLogsTable } from 'components/integration/RunLogsTable';
 import { getRunLogTableCol } from 'components/integration/RunLogsCols';
 import { ErrorFeedback } from 'components/error/ErrorFeedback';
 import { PageWrapperColumn } from 'styles/StyledPage';
 import { DebouncedSearch } from 'components/inputs/DebouncedSearch';
 import { DateRangeFilter } from 'components/inputs/dateTime/DateRangeFilter';
-import { Colors } from '@cognite/cogs.js';
+import { Colors, Loader } from '@cognite/cogs.js';
 import {
   createSearchParams,
   getQueryParams,
   partition,
 } from 'utils/integrationUtils';
-import { RunStatusAPI, RunStatusUI } from 'model/Status';
+import { RunStatusUI } from 'model/Status';
 import { TimeSelector } from 'components/inputs/dateTime/TimeSelector';
 import { QuickDateTimeFilters } from 'components/table/QuickDateTimeFilters';
 import { StatusFilterMenu } from 'components/table/StatusFilterMenu';
 import { useHistory, useLocation } from 'react-router-dom';
-import {
-  updateDateRangeAction,
-  updateSearchAction,
-  updateStatusAction,
-  useRunFilterContext,
-} from 'hooks/runs/RunsFilterContext';
-import moment from 'moment';
+import { useRunFilterContext } from 'hooks/runs/RunsFilterContext';
+import { RunChart } from 'components/chart/RunChart';
+import { GroupByTimeFormat } from 'components/chart/runChartUtils';
 
 const TableWrapper = styled(PageWrapperColumn)`
   padding: 0 2rem;
@@ -85,60 +80,40 @@ export interface RangeType {
 export const IntegrationHealth: FunctionComponent<LogsViewProps> = ({
   integration,
 }: PropsWithChildren<LogsViewProps>) => {
-  const [runs, setRuns] = useState<StatusRun[]>([]);
-  const history = useHistory();
-
-  const { search: urlSearch, pathname } = useLocation();
-  const {
-    search: paramSearch,
-    statuses: paramStatuses,
-    min,
-    max,
-    env,
-  } = getQueryParams(urlSearch);
+  const [all, setAll] = useState<RunUI[]>([]);
+  const [runsList, setRunsList] = useState<RunUI[]>([]);
+  const [timeFormat] = useState<GroupByTimeFormat>('YYYY-MM-DD HH');
   const [nextCursor, setNextCursor] = useState<string | undefined>();
   const [pageSize] = useState(PAGE_SIZE_DEFAULT);
   const [pageCount, setPageCount] = React.useState(0);
-
+  const history = useHistory();
+  const { id: integrationId } = integration ?? {};
   useEffect(() => {
-    if (min && max) {
-      const range = {
-        startDate: moment(parseInt(min, 10)),
-        endDate: moment(parseInt(max, 10)),
-      };
-      dispatch(
-        updateDateRangeAction({
-          startDate: range.startDate.toDate(),
-          endDate: range.endDate.toDate(),
-        })
-      );
+    if (integrationId) {
+      trackUsage(SINGLE_EXT_PIPE_RUNS, { id: integrationId });
     }
-    if (paramStatuses) {
-      dispatch(updateStatusAction(paramStatuses.split(',') as RunStatusAPI[]));
-    }
-    if (paramSearch) {
-      dispatch(updateSearchAction(paramSearch));
-    }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [integrationId]);
+  const { search: urlSearch, pathname } = useLocation();
+  const { env } = getQueryParams(urlSearch);
 
   const {
     state: { dateRange, statuses, search },
-    dispatch,
   } = useRunFilterContext();
-  const { data, error, isPreviousData } = useFilteredRuns({
+
+  const { data, error, isPreviousData, isFetching } = useFilteredRuns({
     externalId: integration?.externalId,
     statuses,
     search,
     dateRange,
     nextCursor,
   });
-  const { id: integrationId } = integration ?? {};
 
   useEffect(() => {
     if (integrationId) {
       trackUsage(SINGLE_EXT_PIPE_RUNS, { id: integrationId });
     }
   }, [integrationId]);
+
   useEffect(() => {
     const url = `${pathname}?${createSearchParams({
       env,
@@ -146,34 +121,62 @@ export const IntegrationHealth: FunctionComponent<LogsViewProps> = ({
       statuses,
       dateRange,
     })}`;
-
     history.push(url);
+    setAll([]);
+    setRunsList([]);
+    setNextCursor(undefined);
   }, [pathname, env, search, statuses, dateRange, history]);
 
   useEffect(() => {
     if (!isPreviousData && data) {
-      const statusRows = mapStatusRow(data?.items);
-      const { pass: runsData } = partition(statusRows, (item) => {
+      const { pass: runsData } = partition(data.runs, (item) => {
         return item.status !== RunStatusUI.SEEN;
       });
-      setRuns(runsData);
+      setAll((prev) => {
+        return [...prev, ...data.runs];
+      });
+      setRunsList((prev) => {
+        return [...prev, ...runsData];
+      });
     }
   }, [data, isPreviousData]);
-
-  const columns = getRunLogTableCol();
 
   const fetchData = React.useCallback(
     ({ pageSize: innerPageSize }) => {
       if (!isPreviousData && data?.nextCursor) {
         setNextCursor(data.nextCursor);
       }
-      setPageCount(Math.ceil(runs.length / innerPageSize));
+      setPageCount(Math.ceil(runsList.length / innerPageSize));
     },
-    [data, isPreviousData, runs.length]
+    [data, isPreviousData, runsList.length]
   );
 
   if (error) {
     return <ErrorFeedback error={error} />;
+  }
+
+  const columns = getRunLogTableCol();
+
+  function renderContent(fetching: boolean) {
+    if (fetching) {
+      return <Loader />;
+    }
+    return (
+      <>
+        <RunChart
+          allRuns={all}
+          byTimeFormat={timeFormat}
+          timeFormat={timeFormat}
+        />
+        <RunLogsTable
+          data={runsList}
+          columns={columns}
+          pageCount={pageCount}
+          fetchData={fetchData}
+          pageSize={pageSize}
+        />
+      </>
+    );
   }
 
   return (
@@ -188,13 +191,7 @@ export const IntegrationHealth: FunctionComponent<LogsViewProps> = ({
           placeholder={MESSAGE_SEARCH_PLACEHOLDER}
         />
       </FilterWrapper>
-      <RunLogsTable
-        data={runs}
-        columns={columns}
-        pageCount={pageCount}
-        fetchData={fetchData}
-        pageSize={pageSize}
-      />
+      {renderContent(isFetching)}
     </TableWrapper>
   );
 };

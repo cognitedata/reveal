@@ -20,12 +20,20 @@ import { RunTableHeading } from 'components/integration/RunLogsCols';
 import { trackUsage } from 'utils/Metrics';
 import { SINGLE_EXT_PIPE_RUNS } from 'utils/constants';
 import moment from 'moment';
+import { mapStatusRow } from 'utils/runsUtils';
 import { rangeToTwoDigitString } from 'components/inputs/dateTime/TimeSelectorUtils';
 import { DAYS_7 } from 'components/table/QuickDateTimeFilters';
 
 jest.mock('hooks/useRuns', () => {
   return {
     useFilteredRuns: jest.fn(),
+  };
+});
+jest.mock('components/chart/RunChart', () => {
+  return {
+    RunChart: () => {
+      return <div />;
+    },
   };
 });
 describe('IntegrationHealth', () => {
@@ -48,14 +56,17 @@ describe('IntegrationHealth', () => {
     expect(screen.getByText(mockError.error.message)).toBeInTheDocument();
 
     // test tracking
-    expect(trackUsage).toHaveBeenCalledTimes(1);
     expect(trackUsage).toHaveBeenCalledWith(SINGLE_EXT_PIPE_RUNS, {
       id: mockIntegration.id,
     });
   });
 
-  it('renders runs on success', () => {
-    useFilteredRuns.mockReturnValue({ data: mockDataRunsResponse });
+  it('renders runs on success', async () => {
+    useFilteredRuns.mockReturnValue({
+      data: {
+        runs: mapStatusRow(mockDataRunsResponse.items),
+      },
+    });
     const mockIntegration = getMockResponse()[0];
     const { wrapper } = renderWithReQueryCacheSelectedIntegrationContext(
       new QueryClient(),
@@ -70,6 +81,7 @@ describe('IntegrationHealth', () => {
     expect(
       screen.getByText(`${TableHeadings.LAST_RUN_STATUS} - ALL`) // status filter btn
     ).toBeInTheDocument();
+    expect(screen.getByText(RunTableHeading.TIMESTAMP)).toBeInTheDocument();
     expect(screen.getByText(TableHeadings.LAST_RUN_STATUS)).toBeInTheDocument();
     expect(screen.getByText(RunTableHeading.MESSAGE)).toBeInTheDocument();
 
@@ -79,7 +91,11 @@ describe('IntegrationHealth', () => {
   });
 
   it('interact with filter', async () => {
-    useFilteredRuns.mockReturnValue({ data: mockDataRunsResponse });
+    useFilteredRuns.mockReturnValue({
+      data: {
+        runs: mapStatusRow(mockDataRunsResponse.items),
+      },
+    });
     const mockIntegration = getMockResponse()[0];
     const route = '/health';
     const dateRange = {

@@ -24,7 +24,7 @@ import {
   filterRuns,
   isWithinDaysInThePast,
 } from 'utils/runsUtils';
-import { StatusRun } from 'model/Runs';
+import { RunUI } from 'model/Runs';
 import moment from 'moment';
 import { useSelectedIntegration } from 'hooks/useSelectedIntegration';
 import { useIntegrationById } from 'hooks/useIntegration';
@@ -46,10 +46,7 @@ export const RunScheduleConnection: FunctionComponent = () => {
   }
   const runs = filterRuns(data?.items);
   const errorsInThePastWeek = runs.filter(
-    and<StatusRun>(
-      filterByStatus(RunStatusUI.FAILURE),
-      isWithinDaysInThePast(7)
-    )
+    and<RunUI>(filterByStatus(RunStatusUI.FAILURE), isWithinDaysInThePast(7))
   );
   const errorLastWeek = runs.filter(
     and(

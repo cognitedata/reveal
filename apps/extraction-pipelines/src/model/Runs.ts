@@ -1,18 +1,18 @@
 import { RunStatusUI } from './Status';
 
 export interface RunsAPIResponse {
-  items: StatusRow[];
+  items: RunApi[];
   nextCursor: string;
 }
 
-export interface StatusRow {
+export interface RunApi {
   id: number;
   message?: string;
   createdTime: number;
   status: string;
 }
 
-export interface StatusRun {
+export interface RunUI {
   id: number;
   message?: string;
   createdTime: number;

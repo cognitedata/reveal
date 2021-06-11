@@ -198,8 +198,8 @@ export const getIntegrationTableCol = (
         return createSearchStringForContacts(row.contacts);
       },
       Cell: ({ row }: Cell<Integration>) => {
-        const { contacts } = row.original;
-        return <UserGroup users={contacts} />;
+        const { contacts, id } = row.original;
+        return <UserGroup users={contacts} integrationId={id} />;
       },
       disableSortBy: true,
       disableFilters: true,
