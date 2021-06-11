@@ -11,10 +11,10 @@ import { NodeSet } from './NodeSet';
 export class ByTreeIndexNodeSet extends NodeSet {
   private _set: IndexSet;
 
-  constructor(treeIndexSet: IndexSet);
-  constructor(treeIndices: Iterable<number>);
-  constructor(treeIndexRange: NumericRange);
-  constructor(values: IndexSet | Iterable<number> | NumericRange) {
+  constructor(treeIndexSet?: IndexSet);
+  constructor(treeIndices?: Iterable<number>);
+  constructor(treeIndexRange?: NumericRange);
+  constructor(values?: IndexSet | Iterable<number> | NumericRange) {
     super();
     if (values instanceof IndexSet) {
       this._set = values;
