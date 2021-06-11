@@ -59,9 +59,9 @@ export const getEnvironment = (
   hostname = window.location.hostname
 ): 'PRODUCTION' | 'DEVELOPMENT' => {
   if (
-    hostname.includes('charts.cogniteapp.com') &&
-    !hostname.includes('pr-') &&
-    !hostname.includes('staging')
+    !hostname.includes('.pr.') &&
+    !hostname.includes('.staging.') &&
+    !hostname.includes('localhost')
   ) {
     return 'PRODUCTION';
   }
