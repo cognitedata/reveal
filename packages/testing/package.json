@@ -1,0 +1,23 @@
+{
+  "name": "@cognite/testing",
+  "version": "0.1.0",
+  "source": "src/index.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "typings": "./dist/index.d.ts",
+  "repository": "https://github.com/cognitedata/frontend",
+  "license": "UNLICENSED",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "lint": "concurrently \"yarn prettier\" \"yarn eslint\"",
+    "eslint": "eslint --max-warnings 0 --ext .ts 'src/**/*'",
+    "prettier": "prettier -l 'src/**/*'"
+  },
+  "peerDependencies": {
+    "@storybook/addons": "^6.1.14",
+    "sinon": "^9.0.0"
+  }
+}
