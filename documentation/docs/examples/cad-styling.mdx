@@ -56,7 +56,7 @@ model.addStyledNodeSet(myNodeSet, DefaultNodeAppearance.Highlighted);
 // note that other styling sets might have different API for updates, for example `executeFilter`
 const nodeTreeIndex = 0;
 const nodeSubtreeSize = 100000;
-myNodeSet.updateSet(new NumericRange(nodeTreeIndex, nodeSubtreeSize));
+myNodeSet.updateSet(new IndexSet(new NumericRange(nodeTreeIndex, nodeSubtreeSize)));
 
 // if you want to change appearance of your existing set you can do it like this
 model.changeStyledNodeSetAppearance(myNodeSet, DefaultNodeAppearance.Ghosted);
