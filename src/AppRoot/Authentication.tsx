@@ -34,9 +34,8 @@ const Authentication = (): JSX.Element => {
   } = useSelector(getGroupsState);
 
   const [fetchDispatched, setFetchDispatched] = useState(false);
-  const [retrieveDataSetDispatched, setRetrieveDataSetDispatched] = useState(
-    false
-  );
+  const [retrieveDataSetDispatched, setRetrieveDataSetDispatched] =
+    useState(false);
 
   const loading = suitesLoading || groupsLoading;
   const dataLoaded = suitesLoaded && groupsLoaded;

@@ -53,8 +53,8 @@ export const getLastVisitedItems = (tenantName: string) =>
         )
         .sort(
           (a: LastVisitedItem, b: LastVisitedItem) =>
-            ((b.lastVisitedTime as any) as number) -
-            ((a.lastVisitedTime as any) as number)
+            (b.lastVisitedTime as any as number) -
+            (a.lastVisitedTime as any as number)
         );
       return lastVisitedItems;
     }

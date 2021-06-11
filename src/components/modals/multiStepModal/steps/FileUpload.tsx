@@ -34,9 +34,11 @@ export const FileUpload: React.FC<Props> = ({
   setErrors,
 }) => {
   const dispatch = useDispatch();
-  const { key: boardKey, title: boardTitle, imageFileId } = useSelector(
-    boardState
-  ) as Board;
+  const {
+    key: boardKey,
+    title: boardTitle,
+    imageFileId,
+  } = useSelector(boardState) as Board;
   const { loading, fileInfo: currentFileInfo } = useSelector(imageFileState);
   const { deleteQueue } = useSelector(filesUploadState);
   const metrics = useMetrics('EditSuite');

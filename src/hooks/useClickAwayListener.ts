@@ -1,9 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 
 export const useClickAwayListener = (initialIsVisible: boolean) => {
-  const [isComponentVisible, setIsComponentVisible] = useState(
-    initialIsVisible
-  );
+  const [isComponentVisible, setIsComponentVisible] =
+    useState(initialIsVisible);
   const ref = useRef(null);
 
   const listener = (event: MouseEvent) => {

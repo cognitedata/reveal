@@ -66,10 +66,8 @@ export const BoardForm: React.FC<Props> = ({ filesUploadQueue }) => {
   const dispatch = useDispatch<RootDispatcher>();
   const client = useContext(CdfClientContext);
   const metrics = useMetrics('EditSuite');
-  const [
-    initialValidationDispatched,
-    setInitialValidationDispatched,
-  ] = useState(false);
+  const [initialValidationDispatched, setInitialValidationDispatched] =
+    useState(false);
 
   useEffect(() => {
     if (!initialValidationDispatched) {

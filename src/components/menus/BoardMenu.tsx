@@ -18,11 +18,8 @@ interface Props {
 }
 export const BoardMenu: React.FC<Props> = ({ board, suite }) => {
   const dispatch = useDispatch<RootDispatcher>();
-  const {
-    ref,
-    isComponentVisible,
-    setIsComponentVisible,
-  } = useClickAwayListener(false);
+  const { ref, isComponentVisible, setIsComponentVisible } =
+    useClickAwayListener(false);
   const metrics = useMetrics('BoardMenu');
 
   const admin = useSelector(isAdmin);

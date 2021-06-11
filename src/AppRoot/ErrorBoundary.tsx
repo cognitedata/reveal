@@ -21,9 +21,11 @@ const openToast = (type: string, child: React.ReactNode) => {
 };
 
 const ErrorBoundary: React.FC<Props> = ({ children }: Props): JSX.Element => {
-  const { type = 'error', title, message = '' } = useSelector(
-    (state: StoreState) => state.notification
-  );
+  const {
+    type = 'error',
+    title,
+    message = '',
+  } = useSelector((state: StoreState) => state.notification);
   const dispatch = useDispatch();
   useEffect(() => {
     if (title) {

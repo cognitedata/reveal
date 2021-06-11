@@ -15,19 +15,16 @@ import { RootDispatcher } from 'store/types';
 import ColorSelector from './ColorSelector';
 
 export const SuiteForm: React.FC = () => {
-  const { errors, validateField, touched, validateSuite } = useForm(
-    suiteValidator
-  );
+  const { errors, validateField, touched, validateSuite } =
+    useForm(suiteValidator);
   const suite = useSelector(suiteState);
   const dispatch = useDispatch<RootDispatcher>();
   const maxDescriptionLength = 250;
   const warningLength = 200;
   const exceedMaxLength = suite.description.length >= maxDescriptionLength;
   const exceedWarningLength = suite.description.length >= warningLength;
-  const [
-    initialValidationDispatched,
-    setInitialValidationDispatched,
-  ] = useState(false);
+  const [initialValidationDispatched, setInitialValidationDispatched] =
+    useState(false);
 
   useEffect(() => {
     if (!initialValidationDispatched) {

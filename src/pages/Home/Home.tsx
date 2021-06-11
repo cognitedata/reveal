@@ -43,18 +43,18 @@ const Home = () => {
   const itemsToDisplay = 6;
   const glideItemWidth = 348;
   const dispatch = useDispatch<RootDispatcher>();
-  const { loading: suitesLoading, loaded: suitesLoaded, suites } = useSelector(
-    getSuitesTableState
-  );
+  const {
+    loading: suitesLoading,
+    loaded: suitesLoaded,
+    suites,
+  } = useSelector(getSuitesTableState);
   const isAdmin = useSelector(isAdminSelector);
   const { filter: groupsFilter } = useSelector(getGroupsState);
   const canEdit = isAdmin && !groupsFilter?.length;
 
   const apiClient = useContext(ApiClientContext);
-  const {
-    loaded: userSpaceLoaded,
-    loading: userSpaceLoading,
-  }: UserSpaceState = useSelector(getUserSpace);
+  const { loaded: userSpaceLoaded, loading: userSpaceLoading }: UserSpaceState =
+    useSelector(getUserSpace);
   const [userSpaceLoadDispatched, setUserSpaceLoadDispatched] = useState(false);
 
   const tenant = useContext(TenantContext);

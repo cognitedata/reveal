@@ -13,11 +13,8 @@ type UserMenuProps = {
 
 const UserMenu = (props: UserMenuProps) => {
   const { email, client, openUploadLogoModal, isAdmin } = props;
-  const {
-    changeLanguage,
-    availableLanguages,
-    currentLanguage,
-  } = useTranslation('UserMenu');
+  const { changeLanguage, availableLanguages, currentLanguage } =
+    useTranslation('UserMenu');
 
   return (
     <MenuItemWrapper>

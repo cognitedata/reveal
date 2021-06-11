@@ -1,6 +1,6 @@
 import { Group } from '@cognite/sdk';
 
-export const devUserGroups: Group[] = ([
+export const devUserGroups: Group[] = [
   {
     id: 123456789,
     name: 'dc-team-developers',
@@ -18,9 +18,9 @@ export const devUserGroups: Group[] = ([
     name: 'not-linked-to-external-group',
     capabilities: [],
   },
-] as unknown) as Group[];
+] as unknown as Group[];
 
-export const managerUserGroups: Group[] = ([
+export const managerUserGroups: Group[] = [
   {
     id: 111111111,
     name: 'dc-team-management',
@@ -33,9 +33,9 @@ export const managerUserGroups: Group[] = ([
     sourceId: 'any-other-user-group-abcdf',
     capabilities: [],
   },
-] as unknown) as Group[];
+] as unknown as Group[];
 
-export const adminUserGroups: Group[] = ([
+export const adminUserGroups: Group[] = [
   {
     id: 77777777,
     name: 'dc-system-admin',
@@ -48,9 +48,9 @@ export const adminUserGroups: Group[] = ([
     sourceId: 'dc-team-management-abcdf',
     capabilities: [],
   },
-] as unknown) as Group[];
+] as unknown as Group[];
 
-export const allUserGroups: Group[] = ([
+export const allUserGroups: Group[] = [
   {
     id: 77777777,
     name: 'dc-system-admin',
@@ -80,6 +80,6 @@ export const allUserGroups: Group[] = ([
     name: 'not-linked-to-external-group',
     capabilities: [],
   },
-] as unknown) as Group[];
+] as unknown as Group[];
 
 export const emptyUserGroups: Group[] = [] as Group[];

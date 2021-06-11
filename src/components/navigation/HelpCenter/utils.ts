@@ -1,7 +1,6 @@
 export const docList = [
   {
-    url:
-      'https://pr-567.docs.preview.cogniteapp.com/cockpit/guides/getstarted.html',
+    url: 'https://pr-567.docs.preview.cogniteapp.com/cockpit/guides/getstarted.html',
     titleKey: 'documentation-basics',
     title: 'Learn the basics',
   },
@@ -11,8 +10,7 @@ export const docList = [
     title: 'Changelog',
   },
   {
-    url:
-      'https://pr-567.docs.preview.cogniteapp.com/cockpit/guides/admins.html',
+    url: 'https://pr-567.docs.preview.cogniteapp.com/cockpit/guides/admins.html',
     titleKey: 'documentation-sys-admin',
     title: 'System Administrator role',
   },

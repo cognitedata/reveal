@@ -8,11 +8,10 @@ interface MixedHttpError extends HttpError {
   type: string;
 }
 
-export const setHttpError = (
-  title: string,
-  httpError: MixedHttpError
-) => async (dispatch: RootDispatcher) => {
-  const { code, status } = httpError;
-  const statusCode = status || code;
-  dispatch(setError([title, statusCode ? `Status code ${statusCode}` : '']));
-};
+export const setHttpError =
+  (title: string, httpError: MixedHttpError) =>
+  async (dispatch: RootDispatcher) => {
+    const { code, status } = httpError;
+    const statusCode = status || code;
+    dispatch(setError([title, statusCode ? `Status code ${statusCode}` : '']));
+  };

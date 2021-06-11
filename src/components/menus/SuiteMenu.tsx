@@ -16,11 +16,8 @@ interface Props {
 }
 export const SuiteMenu: React.FC<Props> = ({ dataItem }) => {
   const dispatch = useDispatch<RootDispatcher>();
-  const {
-    ref,
-    isComponentVisible,
-    setIsComponentVisible,
-  } = useClickAwayListener(false);
+  const { ref, isComponentVisible, setIsComponentVisible } =
+    useClickAwayListener(false);
 
   const metrics = useMetrics('SuiteMenu');
 

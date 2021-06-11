@@ -21,10 +21,10 @@ export const getSuitesTableState = (state: StoreState): SuitesTableState => {
 export const getSuites = (state: StoreState): Suite[] | null =>
   getSuitesTableState(state).suites;
 
-export const getBoardsBySuite = (key: string) => (
-  state: StoreState
-): Suite | undefined =>
-  getSuitesTableState(state).suites?.find((suite) => suite.key === key);
+export const getBoardsBySuite =
+  (key: string) =>
+  (state: StoreState): Suite | undefined =>
+    getSuitesTableState(state).suites?.find((suite) => suite.key === key);
 
 export const getImgUrlsState = (state: StoreState): ImgUrls =>
   state.suitesTable.imageUrls;

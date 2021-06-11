@@ -45,9 +45,8 @@ const SuiteOverview: React.FC = () => {
       failed: imgUrlsFailed,
     },
   } = useSelector(getSuitesTableState);
-  const { loading: userSpaceLoading }: UserSpaceState = useSelector(
-    getUserSpace
-  );
+  const { loading: userSpaceLoading }: UserSpaceState =
+    useSelector(getUserSpace);
 
   const suite: Suite = useSelector(getBoardsBySuite(id)) as Suite;
 
