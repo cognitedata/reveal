@@ -53,7 +53,7 @@ const myNodeSet = new ByTreeIndexNodeSet();
 model.addStyledNodeSet(myNodeSet, DefaultNodeAppearance.Highlighted);
 
 // later you might want to update the set as user does something, for example, selects an asset
-// notice that other styling sets might have different API for updates, for example `executeFilter`
+// note that other styling sets might have different API for updates, for example `executeFilter`
 const nodeTreeIndex = 0;
 const nodeSubtreeSize = 100000;
 myNodeSet.updateSet(new NumericRange(nodeTreeIndex, nodeSubtreeSize));
