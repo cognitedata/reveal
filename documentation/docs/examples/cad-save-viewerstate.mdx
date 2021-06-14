@@ -9,14 +9,15 @@ Reveal supports saving the camera state and styled filters that have been applie
 This functionality can help support sharing links and local storage of a given view.
 Internally the input to a given filter is stored and is replayed when restoring the view.
 This usually means that substantially less data needs to be serialized in order to share the given state of the viewer.
+The serialzed JSON blob also keeps the nesting of different `NodeSet` instances intact such that inverted sets and combined sets are properly generated.
 
 <DemoWrapper name="Cognite3DViewerDemo" />
 
 # Getting the viewer state
-
-In the example below we apply some filter to our loaded model using the Node Sets from REFSTYLEAPI.
+In the example below we apply some filter to our loaded model using the `NodeSet` type from [Styling Cad models](./cad-styling.mdx).
 Then we can call the ```viewer.getViewState()``` function which return a serialized JSON blob containing the view state.
 Depending on the application, the view state can be additionally transformed into f.ex. a URL parameter and we transferred through a link.
+In the example below, we keep simply print it to the developer console. 
 
 
 ```js runnable
@@ -29,21 +30,27 @@ console.log(JSON.stringify(viewer.getViewState(), null, 2));
 ```
 
 # Setting the viewer state
-Models can be unloaded using `Cognite3DViewer.removeModel()`:
+Restoring the viewer state is simply a matter of feeding back the JSON blob retrieved from ```const myState = viewer.getViewState()``` into ```viewer.setViewState(myState)```.
+In the example below, a previously stored state is applied which applies a red color to nodes that have an attribute `'PDMS.Type'`.
+
+:::note
+Setting the viewer state assumes that model has already been loaded. 
+An error will be thrown if a given state is loaded for a model which does not exist.  
+:::
 
 ```js runnable
 
 const myState = {
   "camera": {
     "position": {
-      "x": 165.60324096679688,
-      "y": 41.64951705932617,
-      "z": -10.940159797668443
+      "x": 165.603,
+      "y": 41.649,
+      "z": -10.940
     },
     "target": {
-      "x": 130.53717041015625,
-      "y": 49.13856887817383,
-      "z": -119.09518432617188
+      "x": 130.537,
+      "y": 49.138,
+      "z": -119.095
     }
   },
   "models": [
@@ -76,42 +83,7 @@ const myState = {
       ]
     }
   ]
-}
+};
 
 viewer.setViewState(myState);
-```
-
-In some cases, it might be useful to restrict the area for which geometry is loaded to only show a partial
-view. This can be done using a `geometryFilter`:
-
-```js
-  const model = await viewer.addModel({
-    modelId: 4715379429968321,
-    revisionId: 5688854005909501,
-    geometryFilter: {
-      // Only load geometry inside a box around origin with 20x20 horizontal extent and 5 vertical extent.
-      boundingBox: new THREE.Box3(new THREE.Vector3(-10, -10, 0), new THREE.Vector3(10, 10, 5))
-    }
-  });
-  viewer.loadCameraFromModel(model);
-```
-
-By default, the bounds provided must be in "CDF coordinates". This is e.g. suitable if you are retrieving coordinates
-directly from the [Nodes API](https://docs.cognite.com/api/v1/#operation/get3DNodes) to for instance show the area
-around a given node. If the coordinates are in "Reveal coordinates" (i.e. in
-[the WebGL coordinate system](https://www.tutorialspoint.com/webgl/webgl_basics.htm)) the `geometryFilter` can be
-set up using `isBoundingBoxInModelCoordinates`:
-
-```js
-  const model = await viewer.addModel({
-    modelId: 4715379429968321,
-    revisionId: 5688854005909501,
-    geometryFilter: {
-      // Only load geometry inside a box around origin with 20x20 horizontal extent and 5 vertical extent.
-      boundingBox: new THREE.Box3(new THREE.Vector3(-10, 0, -10), new THREE.Vector3(10, 5, 10)),
-      // Instruct Reveal that the coordinates already are relative to the coordinates of the model
-      isBoundingBoxInModelCoordinates: true
-    }
-  });
-  viewer.loadCameraFromModel(model);
 ```
