@@ -72,6 +72,7 @@ export interface CreateSchedule {
   name: string;
   description?: string;
   functionExternalId: string;
+  functionId: number;
   cronExpression: string;
   data?: {};
 }
