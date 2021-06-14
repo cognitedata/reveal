@@ -58,7 +58,7 @@ export const AzureTelemetryProvider = withRouter(
   withAITracking(telemetryService.reactPlugin, TelemetryProvider)
 );
 
-export const useAzureTrackEvent = (eventName: string, eventData?: any) => {
+export const useAzureTrackEvent = (eventName: string, eventData?: unknown) => {
   const appInsights = useAppInsightsContext();
 
   const customTracker = useTrackEvent(appInsights, eventName, eventData);
