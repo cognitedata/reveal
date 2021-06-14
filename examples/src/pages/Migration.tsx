@@ -15,18 +15,11 @@ import {
   PotreePointColorType, 
   PotreePointShape,
   ByTreeIndexNodeSet,
-  IndexSet,
-  CombinedNodeSet,
-  ByNodePropertyNodeSet,
-  InvertedNodeSet,
-  DefaultNodeAppearance,
-  ByAssetNodeSet,
-  NodeOutlineColor
+  IndexSet
 } from '@cognite/reveal';
 import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, AxisViewTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
 import { CadNode } from '@cognite/reveal/internals';
-import { ViewerState } from '@cognite/reveal/utilities/ViewStateHelper';
 
 window.THREE = THREE;
 (window as any).reveal = reveal;
@@ -91,7 +84,7 @@ export function Migration() {
 
       const progress = (itemsLoaded: number, itemsRequested: number, itemsCulled: number) => {
         guiState.debug.loadedSectors.statistics.culledCount = itemsCulled;
-        //console.log(`loaded ${itemsLoaded}/${itemsRequested} (culled: ${itemsCulled})`);
+        console.log(`loaded ${itemsLoaded}/${itemsRequested} (culled: ${itemsCulled})`);
 
       };
       // Prepare viewer
@@ -105,130 +98,6 @@ export function Migration() {
       });
       (window as any).viewer = viewer;
 
-      const myState = {
-        "camera": {
-          "position": {
-            "x": 165.60324096679688,
-            "y": 41.64951705932617,
-            "z": -10.940159797668443
-          },
-          "target": {
-            "x": 130.53717041015625,
-            "y": 49.13856887817383,
-            "z": -119.09518432617188
-          }
-        },
-        "models": [
-          {
-            "defaultNodeAppearance": {
-              "visible": true,
-              "renderGhosted": false,
-              "renderInFront": false,
-              "outlineColor": 0
-            },
-            "modelId": 3356984403684032,
-            "revisionId": 6664823881595566,
-            "styledSets": [
-              {
-                "token": "InvertedNodeSet",
-                "state": {
-                  "innerSet": {
-                    "token": "CombinedNodeSet",
-                    "state": {
-                      "operator": "union",
-                      "subSets": [
-                        {
-                          "token": "CombinedNodeSet",
-                          "state": {
-                            "operator": "union",
-                            "subSets": [
-                              {
-                                "token": "ByAssetNodeSet",
-                                "state": {}
-                              },
-                              {
-                                "token": "ByTreeIndexNodeSet",
-                                "state": [
-                                  {
-                                    "from": 399745,
-                                    "count": 1,
-                                    "toInclusive": 399745
-                                  }
-                                ]
-                              }
-                            ]
-                          }
-                        },
-                        {
-                          "token": "ByNodePropertyNodeSet",
-                          "state": {
-                            "PDMS": {
-                              "Function": "EP"
-                            }
-                          },
-                          "options": {
-                            "requestPartitions": 1
-                          }
-                        }
-                      ]
-                    }
-                  }
-                },
-                "appearance": {
-                  "renderGhosted": true
-                }
-              },
-              {
-                "token": "CombinedNodeSet",
-                "state": {
-                  "operator": "union",
-                  "subSets": [
-                    {
-                      "token": "ByAssetNodeSet",
-                      "state": {}
-                    },
-                    {
-                      "token": "ByTreeIndexNodeSet",
-                      "state": [
-                        {
-                          "from": 399745,
-                          "count": 1,
-                          "toInclusive": 399745
-                        }
-                      ]
-                    }
-                  ]
-                },
-                "appearance": {
-                  "outlineColor": 6,
-                  "renderInFront": true,
-                  "renderGhosted": false
-                }
-              },
-              {
-                "token": "ByNodePropertyNodeSet",
-                "state": {
-                  "PDMS": {
-                    "Function": "EP"
-                  }
-                },
-                "options": {
-                  "requestPartitions": 1
-                },
-                "appearance": {
-                  "renderGhosted": false,
-                  "color": [
-                    40,
-                    200,
-                    20
-                  ]
-                }
-              }
-            ]
-          }
-        ]
-      } as ViewerState;
-
       async function addModel(options: AddModelOptions) {
         try {
           const model = await viewer.addModel(options);
@@ -241,28 +110,6 @@ export function Migration() {
           viewer.loadCameraFromModel(model);
           if (model instanceof Cognite3DModel) {
             cadModels.push(model);
-            //model.setDefaultNodeAppearance(DefaultNodeAppearance.Default);
-
-            // const allPipes = new ByNodePropertyNodeSet(client, model);
-            // allPipes.executeFilter({'PDMS': {'Function': 'EP'}});
-            
-            // const allAssetMappedNodes = new ByAssetNodeSet(client, model);
-            // allAssetMappedNodes.executeFilter({});
-            
-            // const highlight = new ByTreeIndexNodeSet([399745]);
-            
-            // const combined = new CombinedNodeSet('union', [allAssetMappedNodes, highlight]);
-            
-            
-            // const combinedAll = new CombinedNodeSet('union', [combined, allPipes]);
-            // const invertedAll = new InvertedNodeSet(model, combinedAll);
-            
-            // model.addStyledNodeSet(invertedAll, {renderGhosted: true});
-            // model.addStyledNodeSet(combined, {outlineColor: reveal.NodeOutlineColor.Pink, renderInFront: true, renderGhosted: false});
-            // model.addStyledNodeSet(allPipes, { renderGhosted: false, color: [40, 200, 20] } );
-            
-            // console.log(JSON.stringify(viewer.getViewState(), null, 2));
-            viewer.setViewState(myState);
           } else if (model instanceof CognitePointCloudModel) {
             pointCloudModels.push(model);
             pointCloudParams.apply();
