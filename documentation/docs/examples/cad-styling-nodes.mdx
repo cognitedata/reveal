@@ -6,7 +6,7 @@ describe: Applying styles to nodes based on node properties/attributes
 
 import { DemoWrapper } from '@site/docs/components/DemoWrapper';
 
-3D nodes may have assosciated attribute/property data. Reveal allows for filtering based on
+3D nodes may have associated attribute/property data. Reveal allows for filtering based on
 these properties, allowing queries such as "all pipes", "nodes within module P600" or "nodes
 with status S5". Combinations are also possible by using `CombinedNodeSet`.
 
@@ -20,9 +20,10 @@ Note that if a node is in a `ByNodePropertyNodeSet` or `ByNodePropertyMultiValue
 in the set.
 
 :::note
-The test model used in the documentation site is lacking and the examples shown is somewhat lacking
-as a result of this. To best utilize the filtering APIs we recommend providing a rich 3D models
-with a good set of high-quality attributes associated with the nodes.
+The test model used in the documentation site is lacking good node properties and the quality of 
+the examples shown is therefor restricted as a result of this. To best utilize the filtering APIs 
+we recommend providing a rich 3D models with a good set of high-quality attributes associated with 
+the nodes.
 :::
 
 <DemoWrapper name="Cognite3DViewerDemo" />
@@ -41,7 +42,7 @@ model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
 model.addStyledNodeSet(allPipes, { renderGhosted: false, color: [40, 200, 20] } );
 ```
 
-## Partioning requests
+## Partitioning requests
 
 For filters that match a lot of nodes, [paritioned requests](https://docs.cognite.com/api/v1/#section/Parallel-retrieval)
 might increase the performance radically by fetching result from the server in parallel.

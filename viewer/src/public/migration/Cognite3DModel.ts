@@ -103,7 +103,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * Nodes are expected to only be in one style set, and the behavior is undefined
    * when a node is part of two different sets.
    *
-   * @param nodes Dynamic set of nodes to apply the provided appearance to.
+   * @param nodeSet Dynamic set of nodes to apply the provided appearance to.
    * @param appearance Appearance to style the provided set with.
    *
    * @example
@@ -113,16 +113,25 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * model.addStyledSet(visibleSet, { rendererGhosted: false });
    * ```
    */
-  addStyledNodeSet(nodes: NodeSet, appearance: NodeAppearance) {
-    this.cadNode.nodeAppearanceProvider.addStyledSet(nodes, appearance);
+  addStyledNodeSet(nodeSet: NodeSet, appearance: NodeAppearance) {
+    this.cadNode.nodeAppearanceProvider.addStyledSet(nodeSet, appearance);
+  }
+
+  /**
+   * Changes appearance for the existing styled node set.
+   * @param nodeSet Node set previously added using {@see addStyledNodeSet}.
+   * @param appearance Appearance that should replace previous one for the provided set.
+   */
+  changeStyledNodeSetAppearance(nodeSet: NodeSet, appearance: NodeAppearance) {
+    this.cadNode.nodeAppearanceProvider.changeStyledSetAppearance(nodeSet, appearance);
   }
 
   /**
    * Removes styling for previously added set, resetting the style to the default.
-   * @param nodes   Node set previously added using {@see addStyledNodeSet}.
+   * @param nodeSet   Node set previously added using {@see addStyledNodeSet}.
    */
-  removeStyledNodeSet(nodes: NodeSet) {
-    this.cadNode.nodeAppearanceProvider.removeStyledSet(nodes);
+  removeStyledNodeSet(nodeSet: NodeSet) {
+    this.cadNode.nodeAppearanceProvider.removeStyledSet(nodeSet);
   }
 
   /**

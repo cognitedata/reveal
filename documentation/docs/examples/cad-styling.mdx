@@ -44,6 +44,28 @@ identifies 3D nodes by `treeIndex`. There are several implementations of `NodeSe
 It's also possible [implement custom `NodeSet`](cad-styling-custom). This can be useful for specialized queries or to load
 sets from custom data sources.
 
+`Cognite3DModel.addStyledNodeSet`, `changeStyledNodeSetAppearance` and `removeStyledNodeSet` is used to manage styled set associated with a model:
+
+```js
+// import { ByTreeIndexNodeSet, DefaultNodeAppearance, NumericRange } from '@cognite/reveal'
+
+// you can start from binding styles to an empty set and populate it later
+const myNodeSet = new ByTreeIndexNodeSet();
+model.addStyledNodeSet(myNodeSet, DefaultNodeAppearance.Highlighted);
+
+// later you might want to update the set as user does something, for example, selects an asset
+// note that other styling sets might have different API for updates, for example `executeFilter`
+const nodeTreeIndex = 0;
+const nodeSubtreeSize = 100000;
+myNodeSet.updateSet(new IndexSet(new NumericRange(nodeTreeIndex, nodeSubtreeSize)));
+
+// if you want to change appearance of your existing set you can do it like this
+model.changeStyledNodeSetAppearance(myNodeSet, DefaultNodeAppearance.Ghosted);
+
+// and when you don't need to style this set anymore, just remove it completely
+model.removeStyledNodeSet(myNodeSet);
+```
+
 :::note
 The API for styling nodes has changed substantially since Reveal 1.x and upgrading Reveal
 will require manual steps to implement styling.
