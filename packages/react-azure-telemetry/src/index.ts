@@ -1,2 +1,2 @@
 export * from './AzureTelemetry';
-export { getAppInsights } from './TelemetryService';
+export { getAppInsights, AzureTelemetryOptions } from './TelemetryService';

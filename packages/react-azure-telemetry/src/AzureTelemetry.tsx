@@ -1,13 +1,19 @@
 import { Component } from 'react';
-import { withAITracking } from '@microsoft/applicationinsights-react-js';
-import { withRouter, RouteComponentProps } from 'react-router-dom';
+import {
+  withAITracking,
+  useAppInsightsContext,
+  useTrackEvent,
+} from '@microsoft/applicationinsights-react-js';
+import { withRouter } from 'react-router-dom';
+import { RouteComponentProps } from 'react-router';
 
-import { telemetryService } from './TelemetryService';
+import { AzureTelemetryOptions, telemetryService } from './TelemetryService';
 
 type PropsType = RouteComponentProps & {
   instrumentationKey?: string;
   children: React.ReactNode;
   history: History;
+  options?: AzureTelemetryOptions;
 };
 
 type State = {
@@ -34,7 +40,11 @@ class TelemetryProvider extends Component<PropsType, State> {
 
     const appInsightsInstrumentationKey = this.props.instrumentationKey;
     if (!initialized && appInsightsInstrumentationKey && history) {
-      telemetryService.initialize(history, appInsightsInstrumentationKey);
+      telemetryService.initialize(
+        history,
+        appInsightsInstrumentationKey,
+        this.props.options || {}
+      );
       this.setState({ initialized: true });
     }
   }
@@ -44,7 +54,14 @@ class TelemetryProvider extends Component<PropsType, State> {
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const AzureTelemetryProvider: any = withRouter(
+export const AzureTelemetryProvider = withRouter(
   withAITracking(telemetryService.reactPlugin, TelemetryProvider)
 );
+
+export const useAzureTrackEvent = (eventName: string, eventData?: any) => {
+  const appInsights = useAppInsightsContext();
+
+  const customTracker = useTrackEvent(appInsights, eventName, eventData);
+
+  return customTracker;
+};
