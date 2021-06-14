@@ -23,7 +23,7 @@ export default function NewWorkflowContainer({
 }: NewWorkflowContainerProps) {
   return (
     <VerticalContainer>
-      <StatusToolBar />
+      <StatusToolBar current="Contextualize Imagery Data" previous="explorer" />
       <MainContent>
         <MainContainer>
           <Switch>

@@ -15,6 +15,7 @@ import { ExplorerToolbar } from 'src/modules/Explorer/Containers/ExplorerToolbar
 import { addUploadedFile } from 'src/modules/Common/filesSlice';
 import { FileUploadModal } from 'src/modules/Common/Components/FileUploaderModal/FileUploaderModal';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
+import { StatusToolBar } from 'src/modules/Process/Containers/StatusToolBar';
 import { fetchFilesById } from 'src/store/thunks/fetchFilesById';
 import { useHistory } from 'react-router-dom';
 import {
@@ -143,6 +144,7 @@ const Explorer = () => {
         showModal={showFileUploadModal}
         onCancel={() => dispatch(setExplorerFileUploadModalVisibility(false))}
       />
+      <StatusToolBar current="Vision Explore" />
       <Wrapper>
         <QueryClientProvider client={queryClient}>
           {showFilter && (

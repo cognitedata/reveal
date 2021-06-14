@@ -97,7 +97,8 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
   };
 
   const promptMessage =
-    'Processing files. Are you sure you want to leave or refresh this page? The session state and all unsaved processing data will be lost. Already saved processing data can be accessed from the Image explorer on the front page.';
+    'Are you sure you want to leave or refresh this page? The session state and all unsaved processing data will be lost. Already saved processing data can be accessed from the Image explorer on the front page.';
+
   window.onbeforeunload = (event: any) => {
     // prompt on reload, if in a session and there are files
     if (
@@ -182,6 +183,14 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
         when={!isPollingFinished}
         message={(location, _) => {
           return location.pathname.includes('vision/workflow/review/') // exclude review page
+            ? true
+            : promptMessage;
+        }}
+      />
+      <Prompt
+        message={(location, _) => {
+          return location.pathname.includes('vision/workflow/') ||
+            processFiles.length === 0 // can freely navigate in workflow or if no files.
             ? true
             : promptMessage;
         }}

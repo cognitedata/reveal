@@ -23,7 +23,8 @@ import { Button } from '@cognite/cogs.js';
 
 SwiperCore.use([Mousewheel, Pagination, Virtual]);
 
-export const VerticalCarousel = () => {
+export const VerticalCarousel = (props?: any) => {
+  const { prev } = props;
   const filesSlice = useSelector((state: RootState) =>
     selectAllFiles(state.filesSlice)
   );
@@ -47,7 +48,7 @@ export const VerticalCarousel = () => {
     // Go to this file
     history.replace(
       getParamLink(workflowRoutes.review, ':fileId', String(fileId)),
-      { from: 'review' }
+      { from: prev }
     );
   };
 

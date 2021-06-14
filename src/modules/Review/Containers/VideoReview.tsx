@@ -11,8 +11,11 @@ import { VerticalCarousel } from '../Components/VerticalCarousel/VerticalCarouse
 
 const queryClient = new QueryClient();
 
-const AnnotationsEdit = (props: { file: FileInfo }) => {
-  const { file } = props;
+const AnnotationsEdit = (props: {
+  file: FileInfo;
+  prev: string | undefined;
+}) => {
+  const { file, prev } = props;
   return (
     <>
       <QueryClientProvider client={queryClient}>
@@ -20,7 +23,7 @@ const AnnotationsEdit = (props: { file: FileInfo }) => {
           <FilePreviewMetadataContainer>
             <FilePreviewContainer>
               <VerticalCarouselContainer id="verticalCarouselContainerVideo">
-                <VerticalCarousel />
+                <VerticalCarousel prev={prev} />
               </VerticalCarouselContainer>
               {file && <VideoPreview fileObj={file} />}
             </FilePreviewContainer>

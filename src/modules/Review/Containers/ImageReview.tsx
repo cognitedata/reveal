@@ -21,9 +21,13 @@ import { VerticalCarousel } from '../Components/VerticalCarousel/VerticalCarouse
 
 const queryClient = new QueryClient();
 
-const ImageReview = (props: { drawerMode: number | null; file: FileInfo }) => {
+const ImageReview = (props: {
+  drawerMode: number | null;
+  file: FileInfo;
+  prev: string | undefined;
+}) => {
   const [previewInFocus, setPreviewInFocus] = useState<boolean>(false);
-  const { drawerMode, file } = props;
+  const { drawerMode, file, prev } = props;
   const dispatch = useDispatch();
   const tagAnnotations = useSelector(({ previewSlice }: RootState) =>
     selectAnnotationsByFileIdModelTypes(previewSlice, String(file.id), [
@@ -57,7 +61,7 @@ const ImageReview = (props: { drawerMode: number | null; file: FileInfo }) => {
           <FilePreviewMetadataContainer>
             <FilePreviewContainer>
               <VerticalCarouselContainer id="verticalCarouselContainer">
-                <VerticalCarousel />
+                <VerticalCarousel prev={prev} />
               </VerticalCarouselContainer>
               <EditContextualization
                 editMode={editMode}

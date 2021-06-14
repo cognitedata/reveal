@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { PageTitle } from '@cognite/cdf-utilities';
 import styled from 'styled-components';
-import { Button, Detail, Icon, Popconfirm } from '@cognite/cogs.js';
-import { RouteComponentProps, useHistory } from 'react-router-dom';
+import { Button, Icon, Popconfirm } from '@cognite/cogs.js';
+import { Prompt, RouteComponentProps, useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import {
@@ -23,9 +23,8 @@ import { AddAnnotationsFromEditModeAssetIds } from 'src/store/thunks/AddAnnotati
 import { resetEditHistory } from 'src/modules/FileDetails/fileDetailsSlice';
 import { CreateAnnotations } from 'src/store/thunks/CreateAnnotations';
 import { DeleteAnnotationsByFileIds } from 'src/store/thunks/DeleteAnnotationsByFileIds';
-import { getLink, workflowRoutes } from 'src/modules/Workflow/workflowRoutes';
 import { PopulateAnnotations } from 'src/store/thunks/PopulateAnnotations';
-import { CDFStatus } from 'src/modules/Common/Components/CDFStatus/CDFStatus';
+import { StatusToolBar } from 'src/modules/Process/Containers/StatusToolBar';
 import { fetchFilesById } from 'src/store/thunks/fetchFilesById';
 
 const DeleteButton = (props: { onConfirm: () => void }) => (
@@ -68,8 +67,8 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
     selectFileById(filesSlice, +fileId)
   );
 
-  const showBackButton =
-    !!(props.location.state as { from?: string })?.from || false;
+  const previousPage = (props.location.state as { from?: string })?.from;
+  const showBackButton = !!previousPage || false;
 
   const onBackButtonClick = () => {
     history.goBack();
@@ -111,61 +110,77 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
   if (!file) {
     return null;
   }
-
+  const promptMessage =
+    'Are you sure you want to leave or refresh this page? The session state may be lost.';
+  const renderView = () => {
+    return (
+      <>
+        <PageTitle title="Review Annotations" />
+        <Container>
+          <ToolBar className="z-4">
+            <div>
+              {showBackButton && (
+                <Button
+                  type="secondary"
+                  style={{ background: 'white' }}
+                  shape="round"
+                  onClick={onBackButtonClick}
+                >
+                  <Icon type="Left" />
+                  Back
+                </Button>
+              )}
+            </div>
+            <StatusToolBar current="Review" previous={previousPage} />
+            <DeleteButton onConfirm={handleFileDelete} />
+          </ToolBar>
+          <HorizontalLine />
+          {isVideo(file) ? (
+            <VideoReview file={file} prev={previousPage} />
+          ) : (
+            <ImageReview
+              file={file}
+              drawerMode={drawerMode}
+              prev={previousPage}
+            />
+          )}
+          <AnnotationDrawer
+            visible={showDrawer}
+            title={
+              drawerMode !== null &&
+              drawerMode === AnnotationDrawerMode.LinkAsset
+                ? 'Link to Asset'
+                : 'Add annotations'
+            }
+            disableFooterButtons={
+              imagePreviewEditable || addAnnotationTextNotAvailable
+            }
+            onClose={handleOnCloseDrawer}
+            onCreate={handleOnDrawerCreate}
+            onDelete={handleOnDrawerDelete}
+          >
+            {!isVideo(file) && drawerMode !== null && (
+              <ImageReviewDrawerContent mode={drawerMode} />
+            )}
+          </AnnotationDrawer>
+        </Container>
+      </>
+    );
+  };
   return (
     <>
-      <PageTitle title="Review Annotations" />
-      <Container>
-        <ToolBar>
-          <div>
-            {showBackButton && (
-              <Button
-                type="secondary"
-                style={{ background: 'white' }}
-                shape="round"
-                onClick={onBackButtonClick}
-              >
-                <Icon type="Left" />
-                Back
-              </Button>
-            )}
-          </div>
-          <Detail
-            onClick={() => history.push(getLink(workflowRoutes.process))}
-            style={{ fontSize: '14px' }}
-          >
-            {/* Todo: BreadCrumbs */}
-            CDF / Contextualize Imagery Data /{' '}
-            <strong>Review annotations</strong>
-          </Detail>
-          <CDFStatus />
-          <DeleteButton onConfirm={handleFileDelete} />
-        </ToolBar>
-        <HorizontalLine />
-        {isVideo(file) ? (
-          <VideoReview file={file} />
-        ) : (
-          <ImageReview file={file} drawerMode={drawerMode} />
-        )}
-        <AnnotationDrawer
-          visible={showDrawer}
-          title={
-            drawerMode !== null && drawerMode === AnnotationDrawerMode.LinkAsset
-              ? 'Link to Asset'
-              : 'Add annotations'
-          }
-          disableFooterButtons={
-            imagePreviewEditable || addAnnotationTextNotAvailable
-          }
-          onClose={handleOnCloseDrawer}
-          onCreate={handleOnDrawerCreate}
-          onDelete={handleOnDrawerDelete}
-        >
-          {!isVideo(file) && drawerMode !== null && (
-            <ImageReviewDrawerContent mode={drawerMode} />
-          )}
-        </AnnotationDrawer>
-      </Container>
+      {previousPage === 'process' && (
+        <Prompt
+          message={(location, _) => {
+            return location.pathname.includes(`vision/workflow/process`) ||
+              location.pathname.includes(`vision/workflow/review`)
+              ? true
+              : promptMessage;
+          }}
+        />
+      )}
+
+      {renderView()}
     </>
   );
 };
@@ -187,7 +202,7 @@ const ToolBar = styled.div`
   width: 100%;
   display: grid;
   align-items: center;
-  grid-template-columns: min-content auto 180px 130px;
+  grid-template-columns: min-content auto 130px;
   grid-column-gap: 16px;
 `;
 
