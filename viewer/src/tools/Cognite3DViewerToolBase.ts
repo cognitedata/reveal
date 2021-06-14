@@ -7,7 +7,6 @@ import { EventTrigger } from '../utilities/events';
 
 /**
  * Base class for tools attaching to a {@see Cognite3DViewer}.
- * @internal
  */
 export abstract class Cognite3DViewerToolBase {
   private readonly _disposedEvent = new EventTrigger<() => void>();
