@@ -6,6 +6,7 @@ import { CombinedNodeSet } from './CombinedNodeSet';
 import { ByTreeIndexNodeSet } from './ByTreeIndexNodeSet';
 import { IndexSet } from '../../../utilities/IndexSet';
 import { NodeSet } from '.';
+import { SerializedNodeSet } from './NodeSet';
 
 describe('CombinedNodeSet', () => {
   test('empty set, returns empty index', () => {
@@ -60,6 +61,10 @@ class StubNodeSet extends NodeSet {
   private _indexSet = new IndexSet();
   private _isLoading = false;
 
+  constructor() {
+    super('stub');
+  }
+
   get isLoading(): boolean {
     return this._isLoading;
   }
@@ -74,5 +79,8 @@ class StubNodeSet extends NodeSet {
   }
   clear() {
     this._indexSet = new IndexSet();
+  }
+  Serialize(): SerializedNodeSet {
+    return { token: 'stub', state: {} };
   }
 }

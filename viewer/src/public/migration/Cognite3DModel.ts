@@ -109,7 +109,6 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * Nodes are expected to only be in one style set, and the behavior is undefined
    * when a node is part of two different sets.
    * @param nodeSet Dynamic set of nodes to apply the provided appearance to.
-   * @param nodes
    * @param appearance Appearance to style the provided set with.
    * @example
    * ```js
@@ -118,9 +117,9 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * model.addStyledSet(visibleSet, { rendererGhosted: false });
    * ```
    */
-  addStyledNodeSet(nodes: NodeSet, appearance: NodeAppearance) {
-    this._styledNodeSets.push({ nodes, appearance });
-    this.cadNode.nodeAppearanceProvider.addStyledSet(nodes, appearance);
+  addStyledNodeSet(nodeSet: NodeSet, appearance: NodeAppearance) {
+    this._styledNodeSets.push({ nodes: nodeSet, appearance });
+    this.cadNode.nodeAppearanceProvider.addStyledSet(nodeSet, appearance);
   }
 
   /**
