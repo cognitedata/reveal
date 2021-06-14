@@ -398,7 +398,7 @@ export default function TimeSeriesRow({
       {isWorkspaceMode && (
         <>
           <td>
-            {statisticsForSource?.min
+            {statisticsForSource
               ? convertValue(statisticsForSource?.min, unit, preferredUnit)
               : ''}
           </td>
@@ -415,7 +415,7 @@ export default function TimeSeriesRow({
                 )}
           </td>
           <td>
-            {statisticsForSource?.median
+            {statisticsForSource
               ? convertValue(statisticsForSource?.median, unit, preferredUnit)
               : ''}
           </td>
