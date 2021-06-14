@@ -3,6 +3,7 @@ import { MetadataItem } from 'components/DetailsSidebar';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { Timeseries } from '@cognite/sdk';
 import { Icon } from '@cognite/cogs.js';
+import dayjs from 'dayjs';
 
 type MetadataListProps = {
   timeseriesId: number;
@@ -25,7 +26,10 @@ export const MetadataList = ({ timeseriesId }: MetadataListProps) => {
         label="Is Step"
         value={timeseries?.isStep ? 'True' : 'False'}
       />
-      <MetadataItem label="Created At" value={timeseries?.createdTime} />
+      <MetadataItem
+        label="Created At"
+        value={dayjs(timeseries?.createdTime).format('YYYY-MM-DD HH:mm:ss')}
+      />
       <MetadataItem label="Description" value={timeseries?.description} />
       <MetadataItem
         label="External ID"
@@ -33,7 +37,10 @@ export const MetadataList = ({ timeseriesId }: MetadataListProps) => {
         copyable
       />
       <MetadataItem label="Dataset" value={undefined} />
-      <MetadataItem label="Updated At" value={timeseries?.lastUpdatedTime} />
+      <MetadataItem
+        label="Updated At"
+        value={dayjs(timeseries?.lastUpdatedTime).format('YYYY-MM-DD HH:mm:ss')}
+      />
       <MetadataItem label="Unit" value={timeseries?.unit} />
       <MetadataItem
         label="Is String"
