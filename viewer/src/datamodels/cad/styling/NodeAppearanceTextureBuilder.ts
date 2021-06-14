@@ -98,15 +98,11 @@ export class NodeAppearanceTextureBuilder {
   }
 
   build() {
-    const start = performance.now();
-
     const rgba = this._overrideColorPerTreeIndexTexture.image.data;
     this.populateTexture(rgba);
     this.populateNodeSets(rgba);
 
     this._needsUpdate = false;
-    console.log(`build() took ${performance.now() - start} ms`);
-    (window as any).timings = [...((window as any).timings || []), performance.now() - start];
   }
 
   private populateTexture(rgbaBuffer: Uint8ClampedArray) {
