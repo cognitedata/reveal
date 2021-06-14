@@ -1,4 +1,12 @@
-import { Button, Icon, Tooltip, SegmentedControl } from '@cognite/cogs.js';
+import {
+  Button,
+  Icon,
+  Tooltip,
+  SegmentedControl,
+  Dropdown,
+  Body,
+  Menu,
+} from '@cognite/cogs.js';
 import { useSDK } from '@cognite/sdk-provider';
 import { MetadataList } from 'components/DetailsSidebar';
 import FunctionCall from 'components/FunctionCall';
@@ -106,7 +114,9 @@ export default function DetailsSidebar({
         </TopContainerAside>
       </TopContainer>
       <ContentOverflowWrapper>
-        {selectedMenu === 'metadata' && <Metadata sourceItem={sourceItem} />}
+        {selectedMenu === 'metadata' && (
+          <Metadata sourceItem={sourceItem} chart={chart} />
+        )}
         {selectedMenu === 'statistics' && (
           <Statistics chart={chart} sourceItem={sourceItem} />
         )}
@@ -117,14 +127,32 @@ export default function DetailsSidebar({
 
 const Metadata = ({
   sourceItem,
+  chart,
 }: {
   sourceItem: ChartWorkflow | ChartTimeSeries | undefined;
+  chart: Chart;
 }) => {
+  if (sourceItem?.type === 'workflow') {
+    return <p>Not available for calculations</p>;
+  }
+
   return (
     <Container>
-      {sourceItem?.type === 'timeseries' && (
-        <MetadataList timeseriesId={(sourceItem as ChartTimeSeries)?.tsId} />
-      )}
+      <Body style={{ fontSize: 14 }}>Time series</Body>
+      <Dropdown
+        content={
+          <Menu>
+            {chart.timeSeriesCollection?.map((ts) => (
+              <Menu.Item>{ts.name}</Menu.Item>
+            ))}
+          </Menu>
+        }
+      >
+        <Button icon="Down" iconPlacement="right">
+          {sourceItem?.name}
+        </Button>
+      </Dropdown>
+      <MetadataList timeseriesId={(sourceItem as ChartTimeSeries)?.tsId} />
     </Container>
   );
 };
