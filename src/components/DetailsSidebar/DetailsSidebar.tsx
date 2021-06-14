@@ -132,27 +132,42 @@ const Metadata = ({
   sourceItem: ChartWorkflow | ChartTimeSeries | undefined;
   chart: Chart;
 }) => {
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+  const [selectedItem, setSelectedItem] = useState<
+    ChartWorkflow | ChartTimeSeries | undefined
+  >(sourceItem);
+
   if (sourceItem?.type === 'workflow') {
     return <p>Not available for calculations</p>;
   }
+
+  const closeMenu = () => setIsMenuOpen(false);
 
   return (
     <Container>
       <Body style={{ fontSize: 14 }}>Time series</Body>
       <Dropdown
+        visible={isMenuOpen}
+        onClickOutside={closeMenu}
         content={
-          <Menu>
+          <Menu onClick={closeMenu}>
             {chart.timeSeriesCollection?.map((ts) => (
-              <Menu.Item>{ts.name}</Menu.Item>
+              <Menu.Item onClick={() => setSelectedItem(ts)}>
+                {ts.name}
+              </Menu.Item>
             ))}
           </Menu>
         }
       >
-        <Button icon="Down" iconPlacement="right">
-          {sourceItem?.name}
+        <Button
+          icon="Down"
+          iconPlacement="right"
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+        >
+          {selectedItem?.name}
         </Button>
       </Dropdown>
-      <MetadataList timeseriesId={(sourceItem as ChartTimeSeries)?.tsId} />
+      <MetadataList timeseriesId={(selectedItem as ChartTimeSeries)?.tsId} />
     </Container>
   );
 };
