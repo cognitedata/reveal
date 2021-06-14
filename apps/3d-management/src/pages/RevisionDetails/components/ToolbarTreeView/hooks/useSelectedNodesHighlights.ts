@@ -49,22 +49,31 @@ export function useSelectedNodesHighlights({
     );
   }, [model, ghostModeEnabled]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const updateHighlightedSet = React.useCallback(
-    debounce((selectedNodesArg) => {
-      const highlightedSet = new IndexSet();
+  const updateHighlightedSet = React.useCallback((highlightedSet: IndexSet) => {
+    selectedTreeIndicesNodeSetRef.current.updateSet(highlightedSet);
+  }, []);
 
-      selectedNodesArg.forEach(({ treeIndex, subtreeSize }) => {
-        highlightedSet.addRange(new NumericRange(treeIndex, subtreeSize));
-      });
-
-      selectedTreeIndicesNodeSetRef.current.updateSet(highlightedSet);
-    }, 200),
-    []
+  const updateHighlightedSetDebounced = React.useMemo(
+    () => debounce(updateHighlightedSet, 200),
+    [updateHighlightedSet]
   );
 
   // selected nodes highlighter
   useEffect(() => {
-    updateHighlightedSet(selectedNodes);
-  }, [updateHighlightedSet, selectedNodes]);
+    const highlightedSet = new IndexSet();
+
+    selectedNodes.forEach(({ treeIndex, subtreeSize }) => {
+      highlightedSet.addRange(new NumericRange(treeIndex, subtreeSize));
+    });
+
+    // for small subtree it's faster to highlight it instantly,
+    // but bigger one takes some time to update and it blocks UI a bit, so in that case it's better to have it debounced
+    // to give the chance for UI updates to pause and update only after that
+    if (highlightedSet.count < 100000) {
+      updateHighlightedSetDebounced.cancel();
+      updateHighlightedSet(highlightedSet);
+    } else {
+      updateHighlightedSetDebounced(highlightedSet);
+    }
+  }, [selectedNodes, updateHighlightedSet, updateHighlightedSetDebounced]);
 }
