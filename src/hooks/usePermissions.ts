@@ -12,6 +12,7 @@ export const useAllNeededPermissions = () => {
   const { data: eventsReadPermission } = usePermissions('eventsAcl', 'READ');
   const { data: assetsReadPermission } = usePermissions('assetsAcl', 'READ');
   const { data: dsReadPermission } = usePermissions('datasetsAcl', 'READ');
+  const { data: groupsListPermission } = usePermissions('groupsAcl', 'LIST');
   const { data: groupsReadPermission } = usePermissions('groupsAcl', 'READ');
 
   const allPermissions: Permission[] = [
@@ -21,7 +22,10 @@ export const useAllNeededPermissions = () => {
     { label: 'events:read', hasPermission: eventsReadPermission },
     { label: 'assets:read', hasPermission: assetsReadPermission },
     { label: 'datasets:read', hasPermission: dsReadPermission },
-    { label: 'groups:read', hasPermission: groupsReadPermission },
+    {
+      label: !groupsReadPermission ? 'groups:read' : 'groups:list',
+      hasPermission: groupsReadPermission || groupsListPermission,
+    },
   ];
   return allPermissions;
 };
