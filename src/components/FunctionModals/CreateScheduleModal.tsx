@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { Modal, Form, Input, Alert, notification } from 'antd';
-import { Button, Tooltip } from '@cognite/cogs.js';
-import { isValidCron } from 'cron-validator';
-import { useMutation, useQueryCache } from 'react-query';
-import { createSchedule as createScheduleApi } from 'utils/api';
+import React, { useState, useEffect } from "react";
+import { Modal, Form, Input, Alert, notification } from "antd";
+import { Button, Tooltip } from "@cognite/cogs.js";
+import { isValidCron } from "cron-validator";
+import { useMutation, useQueryCache } from "react-query";
+import { createSchedule as createScheduleApi } from "utils/api";
 
 const isValidData = (data: string) => {
-  if (data === '') {
+  if (data === "") {
     return true;
   }
   try {
     JSON.parse(data);
     return (
-      typeof JSON.parse(data) === 'object' && !Array.isArray(JSON.parse(data))
+      typeof JSON.parse(data) === "object" && !Array.isArray(JSON.parse(data))
     );
   } catch {
     return false;
@@ -27,7 +27,7 @@ const isValidDescription = (description: string) => description.length <= 500;
 const isValidCronExpression = (cronExpression: string) =>
   !!cronExpression &&
   isValidCron(cronExpression, { alias: true }) &&
-  !cronExpression.endsWith(' ') &&
+  !cronExpression.endsWith(" ") &&
   cronExpression.length <= 1024;
 
 type Props = {
@@ -36,18 +36,22 @@ type Props = {
   id?: number;
 };
 
-export default function CreateScheduleModal({ id, externalId, onCancel }: Props) {
+export default function CreateScheduleModal({
+  id,
+  externalId,
+  onCancel,
+}: Props) {
   const queryCache = useQueryCache();
   const [scheduleName, setScheduleName] = useState({
-    value: '',
+    value: "",
     touched: false,
   });
   const [cronExpression, setCronExpression] = useState({
-    value: '',
+    value: "",
     touched: false,
   });
-  const [description, setDescription] = useState('');
-  const [data, setData] = useState('');
+  const [description, setDescription] = useState("");
+  const [data, setData] = useState("");
 
   const handleScheduleNameChange = (evt: { target: { value: string } }) => {
     setScheduleName({ value: evt.target.value, touched: true });
@@ -69,7 +73,7 @@ export default function CreateScheduleModal({ id, externalId, onCancel }: Props)
     { isLoading, isSuccess, isError, error },
   ] = useMutation(createScheduleApi, {
     onSuccess() {
-      queryCache.invalidateQueries('/functions/schedules');
+      queryCache.invalidateQueries("/functions/schedules");
       onCancel();
     },
   });
@@ -77,9 +81,9 @@ export default function CreateScheduleModal({ id, externalId, onCancel }: Props)
   useEffect(() => {
     if (isSuccess) {
       notification.success({
-        message: 'Schedule created',
+        message: "Schedule created",
         description: `Schedule '${scheduleName.value}' for function ${externalId} created successfully`,
-        key: 'schedules',
+        key: "schedules",
       });
     }
   }, [isSuccess, externalId, scheduleName.value]);
@@ -87,9 +91,9 @@ export default function CreateScheduleModal({ id, externalId, onCancel }: Props)
   const getCronExpressionHelpMessage = () => {
     if (cronExpression.touched) {
       if (!isValidCronExpression(cronExpression.value)) {
-        return 'A valid cron expression is required';
+        return "A valid cron expression is required";
       }
-      return <span style={{ color: 'green' }}>Cron expression is valid</span>;
+      return <span style={{ color: "green" }}>Cron expression is valid</span>;
     }
     return undefined;
   };
@@ -115,23 +119,23 @@ export default function CreateScheduleModal({ id, externalId, onCancel }: Props)
           type="error"
           closable
           showIcon
-          style={{ marginBottom: '8px' }}
+          style={{ marginBottom: "8px" }}
         />
       ) : null}
-      <div style={{ display: 'flow-root' }}>
+      <div style={{ display: "flow-root" }}>
         <Form layout="vertical">
           <Form.Item
             label="Schedule Name"
             required
-            style={{ fontWeight: 'bold' }}
+            style={{ fontWeight: "bold" }}
             validateStatus={
               scheduleName.touched && !isValidScheduleName(scheduleName.value)
-                ? 'error'
-                : 'success'
+                ? "error"
+                : "success"
             }
             help={
               scheduleName.touched && !isValidScheduleName(scheduleName.value)
-                ? 'A name less than 140 chracters is required'
+                ? "A name less than 140 chracters is required"
                 : undefined
             }
           >
@@ -145,12 +149,12 @@ export default function CreateScheduleModal({ id, externalId, onCancel }: Props)
           <Form.Item
             label="Cron Expression"
             required
-            style={{ fontWeight: 'bold' }}
+            style={{ fontWeight: "bold" }}
             validateStatus={
               cronExpression.touched &&
               !isValidCronExpression(cronExpression.value)
-                ? 'error'
-                : 'success'
+                ? "error"
+                : "success"
             }
             help={getCronExpressionHelpMessage()}
           >
@@ -164,14 +168,14 @@ export default function CreateScheduleModal({ id, externalId, onCancel }: Props)
           <Form.Item
             label="Description"
             validateStatus={
-              isValidDescription(description) ? 'success' : 'error'
+              isValidDescription(description) ? "success" : "error"
             }
             help={
               !isValidDescription(description)
-                ? 'Description must be less than 500 characters'
+                ? "Description must be less than 500 characters"
                 : undefined
             }
-            style={{ fontWeight: 'bold' }}
+            style={{ fontWeight: "bold" }}
           >
             <Input.TextArea
               name="description"
@@ -182,13 +186,13 @@ export default function CreateScheduleModal({ id, externalId, onCancel }: Props)
           </Form.Item>
           <Form.Item
             label="Data"
-            validateStatus={isValidData(data) ? 'success' : 'error'}
+            validateStatus={isValidData(data) ? "success" : "error"}
             help={
               !isValidData(data)
-                ? 'Data must be a valid JSON object'
+                ? "Data must be a valid JSON object"
                 : undefined
             }
-            style={{ fontWeight: 'bold' }}
+            style={{ fontWeight: "bold" }}
           >
             <Input.TextArea
               name="data"
@@ -199,9 +203,9 @@ export default function CreateScheduleModal({ id, externalId, onCancel }: Props)
           </Form.Item>
         </Form>
 
-        <div style={{ float: 'right', display: 'inline-flex' }}>
+        <div style={{ float: "right", display: "inline-flex" }}>
           <Button
-            style={{ marginRight: '8px', float: 'left' }}
+            style={{ marginRight: "8px", float: "left" }}
             onClick={onCancel}
           >
             Cancel
@@ -209,7 +213,7 @@ export default function CreateScheduleModal({ id, externalId, onCancel }: Props)
           <Tooltip placement="top" content="Fill out the required fields">
             <Button
               type="primary"
-              icon={isLoading ? 'Loading' : 'Upload'}
+              icon={isLoading ? "Loading" : "Upload"}
               disabled={!canBeSubmitted && !isLoading}
               onClick={() => {
                 triggerCreateSchedule({
@@ -218,12 +222,12 @@ export default function CreateScheduleModal({ id, externalId, onCancel }: Props)
                   functionId: id,
                   description,
                   cronExpression: cronExpression.value,
-                  data: data === '' ? {} : JSON.parse(data),
+                  data: data === "" ? {} : JSON.parse(data),
                 });
               }}
               htmlType="submit"
             >
-              {isLoading ? 'Creating' : 'Create'}
+              {isLoading ? "Creating" : "Create"}
             </Button>
           </Tooltip>
         </div>

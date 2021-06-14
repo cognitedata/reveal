@@ -1,19 +1,19 @@
 export interface RelationshipResource {
   resource:
-    | 'timeSeries'
-    | 'threeD'
-    | 'threeDRevision'
-    | 'asset'
-    | 'event'
-    | 'file';
+    | "timeSeries"
+    | "threeD"
+    | "threeDRevision"
+    | "asset"
+    | "event"
+    | "file";
   resourceId: string;
 }
 
 export type RelationshipType =
-  | 'flowsTo'
-  | 'belongsTo'
-  | 'isParentOf'
-  | 'implements';
+  | "flowsTo"
+  | "belongsTo"
+  | "isParentOf"
+  | "implements";
 export interface Relationship {
   source: RelationshipResource;
   target: RelationshipResource;
@@ -37,7 +37,7 @@ export interface CogFunctionUpload {
 export interface CogFunction extends CogFunctionUpload {
   id: number;
   createdTime: number;
-  status: 'Queued' | 'Deploying' | 'Ready' | 'Failed';
+  status: "Queued" | "Deploying" | "Ready" | "Failed";
   error?: Error;
 }
 
@@ -46,7 +46,7 @@ export interface Error {
   trace: string;
 }
 
-type CallStatus = 'Running' | 'Completed' | 'Failed' | 'Timeout';
+type CallStatus = "Running" | "Completed" | "Failed" | "Timeout";
 
 export interface CallResponse {
   id: number;
