@@ -1,7 +1,7 @@
 import React from 'react';
 import dayjs from 'dayjs';
 import styled from 'styled-components/macro';
-import { Button, DateRange } from '@cognite/cogs.js';
+import { DateRange, SegmentedControl } from '@cognite/cogs.js';
 import { Chart } from 'reducers/charts/types';
 import TimeSelector from 'components/TimeSelector';
 import { useUpdateChart } from 'hooks/firebase';
@@ -46,6 +46,7 @@ const relativeTimeOptions = [
 
 const DateRangeSelector = ({ chart }: DateRangeSelectorProps) => {
   const { mutate: updateChart } = useUpdateChart();
+
   const handleDateChange = ({
     dateFrom,
     dateTo,
@@ -65,24 +66,32 @@ const DateRangeSelector = ({ chart }: DateRangeSelectorProps) => {
     }
   };
 
+  const handleTimeOptionSelected = (selectedOption: string) => {
+    const selectedTimeOption = relativeTimeOptions.find(
+      (option) => option.label === selectedOption
+    );
+
+    handleDateChange({
+      dateFrom: selectedTimeOption?.dateFrom().toDate(),
+      dateTo: selectedTimeOption?.dateTo().toDate(),
+      source: 'button',
+    });
+  };
+
   return (
     <Wrapper>
       <Column>
-        {relativeTimeOptions.map((option) => (
-          <Button
-            key={option.label}
-            onClick={() =>
-              handleDateChange({
-                dateFrom: option.dateFrom().toDate(),
-                dateTo: option.dateTo().toDate(),
-                source: 'button',
-              })
-            }
-            type="ghost"
-          >
-            {option.label}
-          </Button>
-        ))}
+        <SegmentedControl
+          currentKey="1M"
+          variant="ghost"
+          onButtonClicked={handleTimeOptionSelected}
+        >
+          {relativeTimeOptions.map((option) => (
+            <SegmentedControl.Button key={option.label}>
+              {option.label}
+            </SegmentedControl.Button>
+          ))}
+        </SegmentedControl>
       </Column>
       <Column>
         <DateRange
