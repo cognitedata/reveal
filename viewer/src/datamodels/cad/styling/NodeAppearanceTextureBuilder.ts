@@ -98,6 +98,10 @@ export class NodeAppearanceTextureBuilder {
   }
 
   build() {
+    if (!this._needsUpdate) {
+      return;
+    }
+
     const rgba = this._overrideColorPerTreeIndexTexture.image.data;
     this.populateTexture(rgba);
     this.populateNodeSets(rgba);
