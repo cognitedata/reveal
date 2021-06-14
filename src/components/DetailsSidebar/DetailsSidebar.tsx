@@ -1,5 +1,6 @@
 import { Button, Icon, Tooltip, SegmentedControl } from '@cognite/cogs.js';
 import { useSDK } from '@cognite/sdk-provider';
+import { MetadataList } from 'components/DetailsSidebar';
 import FunctionCall from 'components/FunctionCall';
 import { useUpdateChart } from 'hooks/firebase';
 import React, { useState } from 'react';
@@ -44,12 +45,12 @@ type StatisticsData = {
 
 const menuOptions = [
   {
-    value: 'metadata',
-    label: 'Metadata',
-  },
-  {
     value: 'statistics',
     label: 'Statistics',
+  },
+  {
+    value: 'metadata',
+    label: 'Metadata',
   },
 ];
 
@@ -121,13 +122,9 @@ const Metadata = ({
 }) => {
   return (
     <Container>
-      <h3>Selected:</h3>
-      <p style={{ display: 'flex' }}>
-        <span style={{ paddingRight: 10 }}>
-          <ColorCircle color={sourceItem?.color} />
-        </span>
-        {sourceItem?.name}
-      </p>
+      {sourceItem?.type === 'timeseries' && (
+        <MetadataList timeseriesId={(sourceItem as ChartTimeSeries)?.tsId} />
+      )}
     </Container>
   );
 };
