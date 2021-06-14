@@ -1,5 +1,9 @@
 import React from 'react';
-import { MetadataItem } from 'components/DetailsSidebar';
+import {
+  DataSetItem,
+  LinkedAssetItem,
+  MetadataItem,
+} from 'components/DetailsSidebar';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { Timeseries } from '@cognite/sdk';
 import { Icon } from '@cognite/cogs.js';
@@ -36,7 +40,7 @@ export const MetadataList = ({ timeseriesId }: MetadataListProps) => {
         value={timeseries?.externalId}
         copyable
       />
-      <MetadataItem label="Dataset" value={undefined} />
+      <DataSetItem timeseries={timeseries} />
       <MetadataItem
         label="Updated At"
         value={dayjs(timeseries?.lastUpdatedTime).format('YYYY-MM-DD HH:mm:ss')}
@@ -46,7 +50,7 @@ export const MetadataList = ({ timeseriesId }: MetadataListProps) => {
         label="Is String"
         value={timeseries?.isString ? 'True' : 'False'}
       />
-      <MetadataItem label="Linked assets" value={undefined} />
+      <LinkedAssetItem timeseries={timeseries} />
     </>
   );
 };

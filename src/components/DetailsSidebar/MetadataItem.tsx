@@ -1,17 +1,21 @@
 import React, { useState } from 'react';
 import styled from 'styled-components/macro';
 import { Body, Icon } from '@cognite/cogs.js';
+import { useCdfItem } from '@cognite/sdk-react-query-hooks';
+import { Asset, DataSet, Timeseries } from '@cognite/sdk';
 
 type MetadataItemProps = {
   label: string;
   value?: any;
   copyable?: boolean;
+  link?: string;
 };
 
 export const MetadataItem = ({
   label,
   value,
   copyable = false,
+  link,
 }: MetadataItemProps) => {
   const [iconType, setIconType] = useState<'Copy' | 'Checkmark'>('Copy');
 
@@ -26,7 +30,13 @@ export const MetadataItem = ({
       <Label>{label}</Label>
       {value ? (
         <Value>
-          {value}
+          {link ? (
+            <a href={link} target="_blank" rel="noreferrer">
+              {value}
+            </a>
+          ) : (
+            value
+          )}
           {!!value && copyable && (
             <CopyIcon type={iconType} onClick={copyValue} />
           )}
@@ -36,6 +46,34 @@ export const MetadataItem = ({
       )}
     </MetadataItemContainer>
   );
+};
+
+export const DataSetItem = ({ timeseries }: { timeseries?: Timeseries }) => {
+  const { data: dataSet } = useCdfItem<DataSet>(
+    'datasets',
+    { id: timeseries?.dataSetId! },
+    {
+      enabled: Number.isFinite(timeseries?.dataSetId),
+    }
+  );
+
+  return <MetadataItem label="Data set" value={dataSet?.name} link="/" />;
+};
+
+export const LinkedAssetItem = ({
+  timeseries,
+}: {
+  timeseries?: Timeseries;
+}) => {
+  const { data: asset } = useCdfItem<Asset>(
+    'assets',
+    { id: timeseries?.assetId! },
+    {
+      enabled: Number.isFinite(timeseries?.assetId),
+    }
+  );
+
+  return <MetadataItem label="Linked asset" value={asset?.name} link="/" />;
 };
 
 const MetadataItemContainer = styled.div`
