@@ -114,7 +114,7 @@ export class NodeAppearanceTextureBuilder {
     rgbaBuffer.set(this._overrideColorDefaultAppearanceRgba); // Note! This is basically memcpy(), i.e. fast
 
     // Apply individual styles
-    this._styleProvider.applyStyles((_styleId, _revision, treeIndices, appearance) => {
+    this._styleProvider.applyStyles((treeIndices, appearance) => {
       // Translate from style to magic values in textures
       const fullStyle = { ...this._defaultAppearance, ...appearance };
       this.applyStyleToNodes(treeIndices, fullStyle);
