@@ -166,7 +166,7 @@ describe('ByNodePropertyMultiValueNodeSet', () => {
     const expectedSet = new IndexSet();
     expectedSet.addRange(new NumericRange(1, 10));
     expectedSet.addRange(new NumericRange(30, 10));
-    expect(set.getIndexSet().toArray()).toEqual(expectedSet.toArray());
+    expect(set.getIndexSet().toIndexArray()).toEqual(expectedSet.toIndexArray());
     expect(set.isLoading).toBeFalse();
   });
 
@@ -191,7 +191,7 @@ describe('ByNodePropertyMultiValueNodeSet', () => {
     const expectedSet = new IndexSet();
     expectedSet.addRange(new NumericRange(1, 10));
     expectedSet.addRange(new NumericRange(30, 10));
-    expect(set.getIndexSet().toArray()).toEqual(expectedSet.toArray());
+    expect(set.getIndexSet().toIndexArray()).toEqual(expectedSet.toIndexArray());
     expect(set.isLoading).toBeFalse();
   });
 
