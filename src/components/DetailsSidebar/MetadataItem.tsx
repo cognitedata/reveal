@@ -94,6 +94,7 @@ const Value = styled(Body)`
   font-size: 16px;
   color: var(--cogs-text-secondary);
   font-weight: 300;
+  word-wrap: break-word;
 `;
 
 const CopyIcon = styled(Icon)`

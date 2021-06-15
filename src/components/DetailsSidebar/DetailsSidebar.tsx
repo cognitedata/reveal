@@ -159,9 +159,9 @@ const Metadata = ({
         content={
           <Menu onClick={closeMenu}>
             {chart.timeSeriesCollection?.map((ts) => (
-              <Menu.Item onClick={() => setSelectedItem(ts)}>
+              <TimeseriesMenuItem onClick={() => setSelectedItem(ts)}>
                 {ts.name}
-              </Menu.Item>
+              </TimeseriesMenuItem>
             ))}
           </Menu>
         }
@@ -171,7 +171,7 @@ const Metadata = ({
           iconPlacement="right"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
-          {selectedItem?.name}
+          <NameWrapper>{selectedItem?.name}</NameWrapper>
         </Button>
       </Dropdown>
       <MetadataList timeseriesId={(selectedItem as ChartTimeSeries)?.tsId} />
@@ -403,4 +403,18 @@ const Sidebar = styled.div<{ visible?: boolean }>`
 
 const Container = styled.div`
   padding: 20px;
+`;
+
+const TimeseriesMenuItem = styled(Menu.Item)`
+  max-width: 300px;
+  text-align: left;
+  word-break: break-word;
+`;
+
+const NameWrapper = styled.span`
+  max-width: 300px;
+  padding: 10px 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
