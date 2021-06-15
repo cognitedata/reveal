@@ -103,10 +103,7 @@ export class IndexSet {
 
   // NB: Assumes that this.ranges() are in order from left to right
   invertedRanges(): NumericRange[] {
-    const originalRanges: NumericRange[] = [];
-    this.forEachRange(range => {
-      originalRanges.push(range);
-    });
+    const originalRanges = this.toRangeArray();
 
     const newRanges: NumericRange[] = [];
 

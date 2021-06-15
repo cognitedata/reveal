@@ -62,6 +62,7 @@ const HighlightedColorAppearance: NodeAppearance = {
 };
 
 const GhostedAppearance: NodeAppearance = {
+  visible: true,
   renderGhosted: true
 };
 
