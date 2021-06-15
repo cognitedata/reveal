@@ -94,7 +94,7 @@ export class CadMaterialManager {
     const nodeTransformTextureBuilder = new NodeTransformTextureBuilder(maxTreeIndex + 1, nodeTransformProvider);
     nodeTransformTextureBuilder.build();
 
-    const materialUpdateFrequency = 150;
+    const materialUpdateFrequency = 50;
     const updateMaterialsCallback: () => void = debounce(
       () => this.updateMaterials(modelIdentifier),
       materialUpdateFrequency,
