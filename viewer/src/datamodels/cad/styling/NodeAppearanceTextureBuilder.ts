@@ -53,7 +53,6 @@ export class NodeAppearanceTextureBuilder {
    * @param appearance New style that is applied to all 'unstyled' elements.
    */
   setDefaultAppearance(appearance: NodeAppearance) {
-    // if (equalNodeAppearances(appearance, this._defaultAppearance)) return;
     this._defaultAppearance = appearance;
     // Create a pre-cached buffer of texture content for fast initialization in build()
     fillRGBA(this._overrideColorDefaultAppearanceRgba, appearance);
