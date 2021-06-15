@@ -38,6 +38,8 @@ export class ByAssetNodeSet extends NodeSet {
    * Updates the node set to hold nodes associated with the asset given, or
    * assets within the bounding box or all assets associated with the 3D model.
    * @param filter
+   * @param filter.assetId
+   * @param filter.boundingBox
    */
   async executeFilter(filter: { assetId?: number; boundingBox?: THREE.Box3 }): Promise<void> {
     const model = this._model;
