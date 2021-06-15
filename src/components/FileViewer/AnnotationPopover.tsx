@@ -102,7 +102,9 @@ export const TimeseriesList = ({ assetId }: { assetId: number }) => {
       {timeseries.map((ts) => (
         <TimeseriesItem key={ts.id}>
           <TimeseriesInfo>
-            <Title level={6}>{ts.name}</Title>
+            <Title level={6} style={{ width: 290, wordBreak: 'break-all' }}>
+              {ts.name}
+            </Title>
             <Body level={2}>{ts.description}</Body>
             <TimeseriesChart
               height={55}
