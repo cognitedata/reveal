@@ -1,4 +1,3 @@
-import React from 'react';
 import { sandbox, render } from 'utils/test';
 import { screen, waitFor } from '@testing-library/react';
 import { GroupsState } from 'store/groups/types';

@@ -1,11 +1,9 @@
 load("@bazel_skylib//rules:write_file.bzl", "write_file")
 load("@build_bazel_rules_nodejs//:index.bzl", "copy_to_bin")
-load("@npm//@storybook/react:index.bzl", "build_storybook", "start_storybook")
 load("@npm//react-scripts:index.bzl", "react_scripts")
 load("//rules/lint:index.bzl", "eslint_config", "eslint_test", "prettier_test")
 load("//rules/package_json_helpers:generate.bzl", "generate_package_json_helpers")
 load("//rules/publish:publish_fas.bzl", "publish_fas")
-load("//rules/publish:publish_storybook.bzl", "publish_storybook")
 load("//rules/test:react_scripts_test.bzl", "react_scripts_test")
 
 # Filename conventions described at
@@ -22,22 +20,17 @@ _TESTS = [
     "src/utils/test/*",
 ]
 
-_STORYBOOK = [
-    ".storybook/*",
-    "src/**/*.stories.ts*",
-]
-
 _SOURCES = [
     "src/**/*.ts*",
+    "src/**/*.png",
+    "src/**/*.jpg",
 ]
 
-TESTS = glob(_TESTS + _STORYBOOK)
-
-STORYBOOK = glob(_STORYBOOK)
+TESTS = glob(_TESTS)
 
 SOURCES = glob(
     _SOURCES,
-    exclude = _TESTS + _STORYBOOK,
+    exclude = _TESTS,
 )
 
 PUBLIC = glob([
@@ -60,18 +53,42 @@ generate_package_json_helpers(
 
 # Dependencies from package.json
 DEPENDENCIES = [
+    "@npm//@cognite/cogs.js",
+    "@npm//@cognite/gcs-browser-upload",
+    "@npm//@cognite/sdk",
     "@npm//@sentry/browser",
+    "@npm//i18next",
+    "@npm//lodash",
+    "@npm//moment",
     "@npm//react",
     "@npm//react-dom",
-    "//packages/react-tenant-selector",
-    "//packages/react-i18n",
+    "@npm//react-glider",
+    "@npm//react-modal",
+    "@npm//react-redux",
+    "@npm//react-router-dom",
+    "@npm//redux",
+    "@npm//redux-devtools-extension",
+    "@npm//redux-thunk",
+    "@npm//reselect",
+    "@npm//styled-components",
+    "@npm//typesafe-actions",
     "//packages/metrics",
+    "//packages/z-index",
+    "//packages/react-i18n",
+    "//packages/react-container",
 ]
 
 # Type dependencies from package.json
 TYPE_DEPENDENCIES = [
+    "@npm//@types/lodash",
     "@npm//@types/react",
     "@npm//@types/react-dom",
+    "@npm//@types/react-modal",
+    "@npm//@types/react-redux",
+    "@npm//@types/react-router-dom",
+    "@npm//@types/redux-mock-store",
+    "@npm//@types/sinon",
+    "@npm//@types/styled-components",
 ]
 
 # Dev dependencies from package.json
@@ -79,16 +96,32 @@ DEV_DEPENDENCIES = [
     "@npm//@testing-library/jest-dom",
     "@npm//@testing-library/react",
     "@npm//eslint-plugin-import",
+    "@npm//redux-mock-store",
+    "@npm//sinon",
 ]
 
 # Mappings for absolute imports from baseUrl @unused
 mappings_dict = {
-    "App.spec": "build/App.spec",
-    "App": "build/App",
+    "AppRoot": "build/AppRoot",
+    "__mocks": "build/__mocks",
+    "components": "build/components",
+    "constants": "build/constants",
+    "context": "build/context",
+    "global-styles": "build/global-styles",
+    "hooks": "build/hooks",
+    "images": "build/images",
     "index": "build/index",
+    "pages": "build/pages",
+    "providers": "build/providers",
     "react-app-env.d": "build/react-app-env.d",
+    "serviceWorker": "build/serviceWorker",
     "setupTests": "build/setupTests",
-    "sidecar": "build/sidecar",
+    "store": "build/store",
+    "styles": "build/styles",
+    "types": "build/types",
+    "typings": "build/typings",
+    "utils": "build/utils",
+    "validators": "build/validators",
 }
 
 ### end of auto-generated helpers ###
@@ -167,11 +200,11 @@ react_scripts(
     ],
     env = {
         # Specify your Sentry DSN is the URL used to report runtime issues
-        "REACT_APP_SENTRY_DSN": "https://4558e4f6faaf4948ab9327457827a301@o124058.ingest.sentry.io/5193370",
+        "REACT_APP_SENTRY_DSN": "https://327fcc3805594b24aa95d16ecf383c07@o124058.ingest.sentry.io/5557692",
         # Specify your Mixpanel project token used in users analytics
-        "REACT_APP_MIXPANEL_TOKEN": "0ef20fa9df0965e1ad952d1d9b804147",
+        # "REACT_APP_MIXPANEL_TOKEN": "",
         # Specify your locize.io project ID used for localization
-        "REACT_APP_LOCIZE_PROJECT_ID": "dfcacf1f-a7aa-4cc2-94d7-de6ea4e66f1d",
+        # "REACT_APP_LOCIZE_PROJECT_ID": "",
 
         ### DO NOT CHANGE: FAS placeholders
         # In order to build only once we set placeholders into dynamic variables
@@ -215,7 +248,7 @@ copy_to_bin(
 react_scripts_test(
     name = "test",
     # folder name to store jest coverage in during CI run
-    app_name = "tenant-selector",
+    app_name = "digital-cockpit",
     data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + [
         "@npm//@storybook/addon-essentials",
         "@npm//@storybook/addon-links",
@@ -242,13 +275,13 @@ react_scripts(
         "REACT_APP_I18N_PSEUDO": "false",
         "REACT_APP_LANGUAGE": "en",
         # Specify your locize.io api key used for localization
-        "REACT_APP_LOCIZE_API_KEY": "679d5a83-bc71-4d5e-9e32-f8560603166b",
+        # "REACT_APP_LOCIZE_API_KEY": "",
         # Specify your locize.io project ID used for localization
-        "REACT_APP_LOCIZE_PROJECT_ID": "dfcacf1f-a7aa-4cc2-94d7-de6ea4e66f1d",
+        # "REACT_APP_LOCIZE_PROJECT_ID": "",
         "REACT_APP_LOCIZE_VERSION": "latest",
         "REACT_APP_MIXPANEL_DEBUG": "false",
         # Specify your Mixpanel project token used in users analytics
-        "REACT_APP_MIXPANEL_TOKEN": "0ef20fa9df0965e1ad952d1d9b804147",
+        # "REACT_APP_MIXPANEL_TOKEN": "",
     },
     tags = [
         # This tag instructs ibazel to pipe into stdin a event describing actions.
@@ -258,65 +291,6 @@ react_scripts(
     ],
 )
 
-### Storybook ###
-
-copy_to_bin(
-    name = "copy_storybook_files",
-    srcs = STORYBOOK,
-)
-
-build_storybook(
-    # Note: If you want to change the name make sure you pass that value with -o into args
-    # https://storybook.js.org/docs/react/api/cli-options
-    name = "storybook-static",
-    args = [
-        # Suppress verbose build output
-        "--quiet",
-    ],
-    chdir = "$(RULEDIR)",
-    data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + [
-        "copy_storybook_files",
-        "@npm//tsconfig-paths-webpack-plugin",
-        "@npm//@types",
-        "@npm//@storybook/addon-essentials",
-        "@npm//@storybook/addon-links",
-        "@npm//@storybook/preset-create-react-app",
-        "@npm//@storybook/react",
-        "@npm//react-i18next",
-    ],
-    output_dir = True,
-)
-
-start_storybook(
-    name = "start-storybook",
-    args = [
-        "--node_options=--require=./$(rootpath chdir-workspace.js)",
-        "-p",
-        "6006",
-    ],
-    data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + [
-        "chdir-workspace.js",
-        "copy_storybook_files",
-        "@npm//@types",
-        "@npm//@storybook/addon-essentials",
-        "@npm//@storybook/addon-links",
-        "@npm//@storybook/preset-create-react-app",
-    ],
-    tags = [
-        # This tag instructs ibazel to pipe into stdin a event describing actions.
-        # ibazel send EOF to stdin by default and target will stop when getting EOF in stdin.
-        # So use this to prevent EOF.
-        "ibazel_notify_changes",
-    ],
-)
-
-publish_storybook(
-    name = "publish_storybook",
-    build = ":storybook-static",
-    # Storybook sub domain to be used
-    sub_domain = "tenant-selector",
-)
-
 ### FAS ###
 
 publish_fas(
@@ -324,14 +298,14 @@ publish_fas(
     build = ":build",
     package_json = ":package.json",
     # Subdomain name used for the pull requests preview.
-    preview_subdomain = "tenant-selector",
+    preview_subdomain = "digital-cockpit",
     # FAS production app id
-    production_app_id = "tenant-selector",
+    production_app_id = "digital-cockpit",
     # FAS app identifier (repo) shared across both production and staging apps
-    repo_id = "tenant-selector",
+    repo_id = "digital-cockpit",
     # Sentry project name
-    sentry_project_name = "tenant-selector",
+    sentry_project_name = "digital-cockpit",
     # FAS staging app id
-    staging_app_id = "tenant-selector-staging",
-    versioning_strategy = "multi-branch",
+    staging_app_id = "digital-cockpit-staging",
+    versioning_strategy = "single-branch",
 )

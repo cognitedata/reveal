@@ -2,9 +2,7 @@
 
 set -e
 
-cd "$(dirname "$0")"
-
-yarn react-scripts test "$@" \
+../../node_modules/.bin/react-scripts test "$@" \
   --collectCoverageFrom='!*/**/*.stories.tsx' \
   --ci \
   --coverage \

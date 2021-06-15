@@ -1,4 +1,3 @@
-import React from 'react';
 import { sandbox, render } from 'utils/test';
 import { getEmptySuite, getSuiteWithImages } from '__mocks/suites';
 import { createMockCdfClient } from 'utils/test/client';

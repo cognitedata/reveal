@@ -30,4 +30,4 @@ case "$variant": in
     exit 1
 esac
 
-react-scripts build
+../../node_modules/.bin/react-scripts build

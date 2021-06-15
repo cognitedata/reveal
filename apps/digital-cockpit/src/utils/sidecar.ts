@@ -5,7 +5,9 @@ type Sidecar = {
   applicationId: string;
   applicationName: string;
   aadApplicationId: string;
+  appsApiBaseUrl: string;
   cdfApiBaseUrl: string;
+  cdfCluster: string;
   digitalCockpitApiBaseUrl: string;
   docsSiteBaseUrl: string;
   intercom: string;
@@ -38,7 +40,11 @@ const generateBaseUrls = (cluster: string, prod = false) => {
   }
 };
 
-const sidecar: Sidecar = {
+// we are overwriting the window.__cogniteSidecar object because the tenant-selector
+// reads from this variable, so when you test on localhost, it (TSA) will not access via this file
+// but via the window.__cogniteSidecar global
+// now that this var is updated, all should work as expected.
+(window as any).__cogniteSidecar = {
   ...generateBaseUrls(CLUSTER, PROD),
   __sidecarFormatVersion: 1,
   applicationId: 'digital-cockpit-dev',
@@ -50,11 +56,7 @@ const sidecar: Sidecar = {
     'https://digital-cockpit-api.staging.cognite.ai',
   docsSiteBaseUrl: 'https://docs.cognite.com',
   privacyPolicyUrl: 'https://www.cognite.com/en/policy',
-  /* eslint-disable @typescript-eslint/no-explicit-any */
-  // eslint-disable-next-line no-underscore-dangle
-  ...(window as any).__cogniteSidecar,
-} as const;
+  ...((window as any).__cogniteSidecar || {}),
+};
 
-(window as any).__cogniteSidecar = sidecar;
-
-export default sidecar;
+export default (window as any).__cogniteSidecar as Sidecar;
