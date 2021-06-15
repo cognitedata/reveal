@@ -16,7 +16,7 @@ import { assertNever } from '../../utilities';
 import { NodeTransformTextureBuilder } from './styling/NodeTransformTextureBuilder';
 import { NodeTransformProvider } from './styling/NodeTransformProvider';
 
-import debounce from 'lodash/debounce';
+import throttle from 'lodash/throttle';
 
 interface MaterialsWrapper {
   materials: Materials;
@@ -94,10 +94,10 @@ export class CadMaterialManager {
     const nodeTransformTextureBuilder = new NodeTransformTextureBuilder(maxTreeIndex + 1, nodeTransformProvider);
     nodeTransformTextureBuilder.build();
 
-    const materialUpdateFrequency = 50;
-    const updateMaterialsCallback: () => void = debounce(
+    const materialUpdateThrottleDelay = 75;
+    const updateMaterialsCallback: () => void = throttle(
       () => this.updateMaterials(modelIdentifier),
-      materialUpdateFrequency,
+      materialUpdateThrottleDelay,
       {
         leading: true,
         trailing: true
