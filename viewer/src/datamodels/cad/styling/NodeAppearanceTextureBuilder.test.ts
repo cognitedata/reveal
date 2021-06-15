@@ -112,6 +112,7 @@ describe('NodeAppearanceTextureBuilder', () => {
 
   test('build() resets styles of removed nodes', () => {
     // Arrange
+    builder.build();
     const originalTexels = texelsOf(builder.overrideColorPerTreeIndexTexture);
     styleProvider.addStyledSet(nodeSet, { renderGhosted: true });
     builder.build();

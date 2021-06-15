@@ -41,8 +41,8 @@ describe('NodeAppearanceProvider', () => {
     provider.applyStyles(applyCb);
 
     expect(applyCb).toBeCalledTimes(2);
-    expect(applyCb.mock.calls[0]).toEqual([expect.anything(), expect.anything(), set1.getIndexSet(), style1]);
-    expect(applyCb.mock.calls[1]).toEqual([expect.anything(), expect.anything(), set2.getIndexSet(), style2]);
+    expect(applyCb.mock.calls[0]).toEqual([set1.getIndexSet(), style1]);
+    expect(applyCb.mock.calls[1]).toEqual([set2.getIndexSet(), style2]);
   });
 
   test('applyStyles() is not invoced for removed style set', () => {
@@ -58,7 +58,7 @@ describe('NodeAppearanceProvider', () => {
     provider.applyStyles(applyCb);
 
     expect(applyCb).toBeCalledTimes(1);
-    expect(applyCb).toBeCalledWith(expect.anything(), expect.anything(), set1.getIndexSet(), style1);
+    expect(applyCb).toBeCalledWith(set1.getIndexSet(), style1);
   });
 
   test('add/change/remove style triggers changed-listener', () => {
@@ -101,22 +101,6 @@ describe('NodeAppearanceProvider', () => {
     jest.runAllTimers();
 
     expect(listener).not.toBeCalled();
-  });
-
-  test('applyStyles() triggers with incremented revision after changing set', () => {
-    const applyCb = jest.fn();
-    const set = new ByTreeIndexNodeSet(new IndexSet([1, 2, 3]));
-    const style: NodeAppearance = { visible: false };
-
-    provider.addStyledSet(set, style);
-    provider.applyStyles(applyCb);
-    expect(applyCb).toBeCalledWith(expect.anything(), 0, expect.anything(), expect.anything());
-    applyCb.mockClear();
-
-    set.updateSet(new IndexSet([2, 3, 4]));
-    jest.runAllTimers();
-    provider.applyStyles(applyCb);
-    expect(applyCb).toBeCalledWith(expect.anything(), 1, expect.anything(), expect.anything());
   });
 
   test('loadingStateChanged is triggered while NodeSet is loading', () => {
