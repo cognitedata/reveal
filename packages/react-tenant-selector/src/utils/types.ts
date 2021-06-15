@@ -8,6 +8,8 @@ export type FakeIdp = {
   cluster: string;
   name?: string;
   fakeApplicationId: string;
+  otherIdTokenFields: Record<string, string>;
+  otherAccessTokenFields: Record<string, string>;
 };
 
 export type SidecarConfig = {
