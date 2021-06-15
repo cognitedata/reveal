@@ -100,8 +100,9 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * updated automatically as the styling changes. The appearance of the style nodes
    * cannot be changed.
    *
-   * Nodes are expected to only be in one style set, and the behavior is undefined
-   * when a node is part of two different sets.
+   * When nodes are in several styled sets, the style is combined in the order
+   * the sets were added, i.e. styled sets added late can overwrite styled sets added
+   * early.
    *
    * @param nodeSet Dynamic set of nodes to apply the provided appearance to.
    * @param appearance Appearance to style the provided set with.
