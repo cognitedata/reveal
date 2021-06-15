@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import styled from 'styled-components/macro';
 import {
   Button,
@@ -12,6 +12,7 @@ import {
 } from '@cognite/cogs.js';
 import { Alert } from 'antd';
 import { useParams } from 'react-router-dom';
+import { useScreenshot } from 'use-screenshot-hook';
 import NodeEditor from 'components/NodeEditor';
 import SplitPaneLayout from 'components/Layout/SplitPaneLayout';
 import PlotlyChartComponent from 'components/PlotlyChart/PlotlyChart';
@@ -68,11 +69,33 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   const [editorTimer, setEditorTimer] = useState<ITimer | undefined>();
   const isWorkspaceMode = workspaceMode === 'workspace';
 
+  const screenshotRef = useRef(null);
+  const { takeScreenshot } = useScreenshot({ ref: screenshotRef });
+  const downloadScreenshot = (
+    image: string | undefined,
+    chartName: string | undefined
+  ) => {
+    if (!image) {
+      return;
+    }
+    const a = document.createElement('a');
+    a.href = image;
+    a.download = `${chartName}.png`;
+    a.click();
+  };
+  const downloadChart = (e: any) => {
+    takeScreenshot('png').then((image) => {
+      // @ts-ignore
+      downloadScreenshot(image, e.detail.chartName);
+    });
+  };
   useEffect(() => {
+    window.addEventListener('DownloadChart', downloadChart);
     trackUsage('PageView.ChartView', { isOwner: chart?.user === login?.id });
     const timer = metrics.start('ChartView.ViewTime');
 
     return () => {
+      window.removeEventListener('DownloadChart', downloadChart);
       timer.stop();
       if (editorTimer) {
         editorTimer.stop();
@@ -368,13 +391,15 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
           <SplitPaneLayout defaultSize={200}>
             <TopPaneWrapper className="chart">
               <ChartWrapper>
-                <PlotlyChartComponent
-                  key={chartId}
-                  chartId={chartId}
-                  isInSearch={showSearch}
-                  isYAxisShown={showYAxis}
-                  stackedMode={stackedMode}
-                />
+                <div ref={screenshotRef}>
+                  <PlotlyChartComponent
+                    key={chartId}
+                    chartId={chartId}
+                    isInSearch={showSearch}
+                    isYAxisShown={showYAxis}
+                    stackedMode={stackedMode}
+                  />
+                </div>
               </ChartWrapper>
             </TopPaneWrapper>
             <BottomPaneWrapper className="table">

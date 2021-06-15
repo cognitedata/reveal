@@ -89,8 +89,19 @@ export const ChartActions = () => {
       <Tooltip content="Share">
         <SharingDropdown chart={chart} disabled={!isOwner} />
       </Tooltip>
-      <Tooltip content="Export">
-        <Button icon="Download" type="ghost" disabled aria-label="download" />
+      <Tooltip content="Download chart">
+        <Button
+          icon="Download"
+          type="ghost"
+          aria-label="download"
+          onClick={() => {
+            window.dispatchEvent(
+              new CustomEvent('DownloadChart', {
+                detail: { chartName: chart.name },
+              })
+            );
+          }}
+        />
       </Tooltip>
       <Tooltip content="Duplicate">
         <Button
