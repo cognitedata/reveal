@@ -49,6 +49,32 @@ const countStatusesByDate = (
     }, 0);
   });
 };
+export const getStatusCountAndTotalByDate = (
+  params: GroupByParams
+): number[][] => {
+  const grouped = groupRunsByDate(params);
+  return Object.keys(grouped)
+    .map((key) => {
+      return grouped[key].reduce(
+        (
+          acc: { success: number; failure: number; total: number },
+          curr: RunUI
+        ) => {
+          if (curr.status === RunStatusUI.SUCCESS) {
+            return { ...acc, success: acc.success + 1, total: acc.total + 1 };
+          }
+          if (curr.status === RunStatusUI.FAILURE) {
+            return { ...acc, failure: acc.failure + 1, total: acc.total + 1 };
+          }
+          return acc;
+        },
+        { success: 0, failure: 0, total: 0 }
+      );
+    })
+    .map(({ success, failure, total }) => {
+      return [success, failure, total];
+    });
+};
 
 export const getStatusCountGroupedByDate = (params: GroupByParams) => {
   const grouped = groupRunsByDate(params);
@@ -73,10 +99,15 @@ export const mapDataForChart = (params: GroupByParams) => {
     status: RunStatusUI.FAILURE,
     by,
   });
+  const statusCountAndTotal = getStatusCountAndTotalByDate({
+    data,
+    by,
+  });
   return {
     allDates,
     seenByDate,
     successByDate,
     failureByDate,
+    statusCountAndTotal,
   };
 };

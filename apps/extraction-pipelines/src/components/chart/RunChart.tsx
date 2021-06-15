@@ -40,6 +40,9 @@ const layout = (text: string): Partial<Plotly.Layout> => {
         color: 'rgb(107, 107, 107)',
       },
     },
+    hoverlabel: {
+      bgcolor: 'white',
+    },
     legend: {
       x: 0,
       y: 1,
@@ -48,6 +51,7 @@ const layout = (text: string): Partial<Plotly.Layout> => {
     },
     barmode: 'stack',
     showlegend: false,
+    hovermode: 'x',
   };
 };
 
@@ -59,6 +63,7 @@ export const RunChart: FunctionComponent<ChartProps> = ({
   const [seen, setSeen] = useState<number[]>([]);
   const [success, setSuccess] = useState<number[]>([]);
   const [failure, setFailure] = useState<number[]>([]);
+  const [customData, setCustomData] = useState<number[][]>([]);
   const [dates, setDates] = useState<string[]>([]);
 
   useEffect(() => {
@@ -67,10 +72,12 @@ export const RunChart: FunctionComponent<ChartProps> = ({
       failureByDate,
       seenByDate,
       allDates,
+      statusCountAndTotal,
     } = mapDataForChart({ data: allRuns, by: byTimeFormat });
     setSeen(seenByDate);
     setSuccess(successByDate);
     setFailure(failureByDate);
+    setCustomData(statusCountAndTotal);
     setDates(allDates);
   }, [allRuns, byTimeFormat]);
 
@@ -80,18 +87,26 @@ export const RunChart: FunctionComponent<ChartProps> = ({
       y: success, // number of occuences per date
       name: `${uppercaseFirstWord(RunStatusUI.SUCCESS)}`,
       type: 'bar',
+      mode: 'lines',
+      customdata: customData,
+      hovertemplate:
+        '<span style="padding: 20px">Total: <b>%{customdata[2]}</b> Failure: <span style="color: red">%{customdata[1]}</span> Success: %{customdata[0]}</span><extra></extra>',
       marker: {
         color: `${Colors.success.hex()}`,
       },
+      showlegend: false,
     },
     {
       x: dates,
       y: failure,
       name: `${uppercaseFirstWord(RunStatusUI.FAILURE)}`,
       type: 'bar',
+      mode: 'markers',
+      hoverinfo: 'x',
       marker: {
         color: `${Colors.danger.hex()}`,
       },
+      showlegend: false,
     },
     {
       x: dates,
