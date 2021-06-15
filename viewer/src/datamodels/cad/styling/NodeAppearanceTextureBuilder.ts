@@ -53,6 +53,10 @@ export class NodeAppearanceTextureBuilder {
    * @param appearance New style that is applied to all 'unstyled' elements.
    */
   setDefaultAppearance(appearance: NodeAppearance) {
+    if (equalNodeAppearances(appearance, this._defaultAppearance)) {
+      return;
+    }
+
     this._defaultAppearance = appearance;
     // Create a pre-cached buffer of texture content for fast initialization in build()
     fillRGBA(this._overrideColorDefaultAppearanceRgba, appearance);
@@ -252,4 +256,9 @@ function combineRGBA(rgbaBuffer: Uint8ClampedArray, treeIndices: IndexSet, style
       rgbaBuffer[4 * i + 3] = (rgbaBuffer[4 * i + 3] & keepAlphaBitmask) | updateAlpha;
     }
   });
+}
+
+function equalNodeAppearances(left: NodeAppearance, right: NodeAppearance) {
+  // https://stackoverflow.com/a/1144249/167251
+  return JSON.stringify(left) === JSON.stringify(right);
 }
