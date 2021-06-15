@@ -34,7 +34,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     return this.cadNode.nodeTransformProvider;
   }
 
-  /* @internal */
+  /** @internal */
   get styleNodeSets(): { nodes: NodeSet; appearance: NodeAppearance }[] {
     return this._styledNodeSets;
   }

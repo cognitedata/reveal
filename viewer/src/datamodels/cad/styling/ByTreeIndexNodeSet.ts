@@ -46,8 +46,8 @@ export class ByTreeIndexNodeSet extends NodeSet {
     return false;
   }
 
-  /* @internal */
-  Serialize(): SerializedNodeSet {
+  /** @internal */
+  serialize(): SerializedNodeSet {
     return {
       token: this.classToken,
       state: this._set.toRangeArray()

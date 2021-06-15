@@ -80,7 +80,7 @@ class StubNodeSet extends NodeSet {
   clear() {
     this._indexSet = new IndexSet();
   }
-  Serialize(): SerializedNodeSet {
+  serialize(): SerializedNodeSet {
     return { token: 'stub', state: {} };
   }
 }

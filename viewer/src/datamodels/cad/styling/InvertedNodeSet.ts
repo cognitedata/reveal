@@ -40,9 +40,9 @@ export class InvertedNodeSet extends NodeSet {
     return this._cachedIndexSet;
   }
 
-  /* @internal */
-  Serialize(): SerializedNodeSet {
-    return { token: this.classToken, state: { innerSet: this._innerSet.Serialize() } };
+  /** @internal */
+  serialize(): SerializedNodeSet {
+    return { token: this.classToken, state: { innerSet: this._innerSet.serialize() } };
   }
   /**
    * Not supported.

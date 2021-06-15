@@ -151,7 +151,7 @@ class StubNodeSet extends NodeSet {
   triggerChanged() {
     this.notifyChanged();
   }
-  Serialize(): SerializedNodeSet {
+  serialize(): SerializedNodeSet {
     return { token: 'stub', state: {}, options: {} };
   }
   clear() {}

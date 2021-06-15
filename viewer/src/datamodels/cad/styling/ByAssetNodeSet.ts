@@ -101,8 +101,8 @@ export class ByAssetNodeSet extends NodeSet {
     return this._indexSet;
   }
 
-  /* @internal */
-  Serialize(): SerializedNodeSet {
+  /** @internal */
+  serialize(): SerializedNodeSet {
     return {
       token: this.classToken,
       state: cloneDeep(this._filter)

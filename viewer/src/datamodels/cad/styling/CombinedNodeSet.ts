@@ -107,13 +107,13 @@ export class CombinedNodeSet extends NodeSet {
     return set;
   }
 
-  /* @internal */
-  Serialize(): SerializedNodeSet {
+  /** @internal */
+  serialize(): SerializedNodeSet {
     return {
       token: this.classToken,
       state: {
         operator: this._operator,
-        subSets: this._nodeSets.map(set => set.Serialize())
+        subSets: this._nodeSets.map(set => set.serialize())
       }
     };
   }

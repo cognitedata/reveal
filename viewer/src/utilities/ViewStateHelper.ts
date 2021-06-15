@@ -51,7 +51,7 @@ export class ViewStateHelper {
 
         const styledNodeSets = model.styleNodeSets.map(styledNodeSet => {
           const { nodes, appearance } = styledNodeSet;
-          return { ...nodes.Serialize(), appearance: appearance };
+          return { ...nodes.serialize(), appearance: appearance };
         });
 
         return {

@@ -114,8 +114,8 @@ export class ByNodePropertyNodeSet extends NodeSet {
     return this._indexSet;
   }
 
-  /* @internal */
-  Serialize() {
+  /** @internal */
+  serialize() {
     return {
       token: this.classToken,
       state: cloneDeep(this._filter),
