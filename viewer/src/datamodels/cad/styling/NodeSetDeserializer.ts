@@ -55,26 +55,26 @@ export class NodeSetDeserializer {
     return entry!.deserializer;
   }
   private registerWellKnownNodeSetTypes() {
-    this.registerNodeSetType<ByAssetNodeSet>(ByAssetNodeSet.name, async (descriptor, context) => {
+    this.registerNodeSetType<ByAssetNodeSet>('ByAssetNodeSet', async (descriptor, context) => {
       const nodeSet = new ByAssetNodeSet(context.client, context.model);
       await nodeSet.executeFilter(descriptor.state);
       return nodeSet;
     });
 
-    this.registerNodeSetType<ByNodePropertyNodeSet>(ByNodePropertyNodeSet.name, async (descriptor, context) => {
+    this.registerNodeSetType<ByNodePropertyNodeSet>('ByNodePropertyNodeSet', async (descriptor, context) => {
       const nodeSet = new ByNodePropertyNodeSet(context.client, context.model, descriptor.options);
       await nodeSet.executeFilter(descriptor.state);
       return nodeSet;
     });
 
-    this.registerNodeSetType<ByTreeIndexNodeSet>(ByTreeIndexNodeSet.name, descriptor => {
+    this.registerNodeSetType<ByTreeIndexNodeSet>('ByTreeIndexNodeSet', descriptor => {
       const indexSet = new IndexSet();
       descriptor.state.forEach((range: NumericRange) => indexSet.addRange(new NumericRange(range.from, range.count)));
       const nodeSet = new ByTreeIndexNodeSet(indexSet);
       return Promise.resolve(nodeSet);
     });
 
-    this.registerNodeSetType<CombinedNodeSet>(CombinedNodeSet.name, async (descriptor, context) => {
+    this.registerNodeSetType<CombinedNodeSet>('CombinedNodeSet', async (descriptor, context) => {
       const subSets: NodeSet[] = await Promise.all(
         descriptor.state.subSets.map((subSet: any) => {
           return this.deserialize(context.client, context.model, subSet);
@@ -83,7 +83,7 @@ export class NodeSetDeserializer {
       return new CombinedNodeSet(descriptor.state.operator, subSets);
     });
 
-    this.registerNodeSetType<InvertedNodeSet>(InvertedNodeSet.name, async (descriptor, context) => {
+    this.registerNodeSetType<InvertedNodeSet>('InvertedNodeSet', async (descriptor, context) => {
       const innerSet = await this.deserialize(context.client, context.model, descriptor.state.innerSet);
       return new InvertedNodeSet(context.model, innerSet);
     });
