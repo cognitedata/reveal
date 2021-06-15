@@ -56,7 +56,7 @@ export const RunChart: FunctionComponent<ChartProps> = ({
   byTimeFormat,
   timeFormat,
 }: PropsWithChildren<ChartProps>) => {
-  const [, setSeen] = useState<number[]>([]);
+  const [seen, setSeen] = useState<number[]>([]);
   const [success, setSuccess] = useState<number[]>([]);
   const [failure, setFailure] = useState<number[]>([]);
   const [dates, setDates] = useState<string[]>([]);
@@ -91,6 +91,15 @@ export const RunChart: FunctionComponent<ChartProps> = ({
       type: 'bar',
       marker: {
         color: `${Colors.danger.hex()}`,
+      },
+    },
+    {
+      x: dates,
+      y: seen,
+      name: `${uppercaseFirstWord(RunStatusUI.SEEN)}`,
+      type: 'scatter',
+      marker: {
+        color: `${Colors.primary.hex()}`,
       },
     },
   ];

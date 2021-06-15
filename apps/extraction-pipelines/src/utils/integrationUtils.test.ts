@@ -18,7 +18,7 @@ import {
 describe('Integration utils', () => {
   const cases = [
     {
-      desc: 'Should return OK when last succsess is the most recent - ',
+      desc: 'Should return SUCCESS when last succsess is the most recent - ',
       statuses: {
         lastSuccess: moment().valueOf(),
         lastFailure: moment().subtract(2, 'minutes').valueOf(),
@@ -26,7 +26,8 @@ describe('Integration utils', () => {
       expected: RunStatusUI.SUCCESS,
     },
     {
-      desc: 'Should return OK when last succsess is the most recent - days',
+      desc:
+        'Should return SUCCESS when last succsess is the most recent - days',
       statuses: {
         lastSuccess: moment().valueOf(),
         lastFailure: moment().subtract(2, 'days').valueOf(),
@@ -35,7 +36,7 @@ describe('Integration utils', () => {
     },
     {
       desc:
-        'Should return OK when last succsess is the most recent - milliseconds',
+        'Should return SUCCESS when last succsess is the most recent - milliseconds',
       statuses: {
         lastSuccess: moment().valueOf(),
         lastFailure: moment().subtract(2, 'milliseconds').valueOf(),
@@ -44,7 +45,7 @@ describe('Integration utils', () => {
     },
     {
       desc:
-        'Should return FAIL when the timestamp for success and fail is the same ',
+        'Should return FAILURE when the timestamp for success and fail is the same ',
       statuses: {
         lastSuccess: moment('2020-11-16 12:00:00').valueOf(),
         lastFailure: moment('2020-11-16 12:00:00').valueOf(),
@@ -71,17 +72,17 @@ describe('Integration utils', () => {
 
   const suites = [
     {
-      desc: 'NOT_STARTED for lastSuccess and lastFailure is 0',
+      desc: 'NOT_ACTIVATED for lastSuccess and lastFailure is 0',
       value: { lastFailure: 0, lastSuccess: 0 },
       expected: RunStatusUI.NOT_ACTIVATED,
     },
     {
-      desc: 'OK for lastSuccess is defined and lastFailure is 0',
+      desc: 'SUCCESS for lastSuccess is defined and lastFailure is 0',
       value: { lastFailure: 0, lastSuccess: 1584066900000 },
       expected: RunStatusUI.SUCCESS,
     },
     {
-      desc: 'FAIL for lastFailure is defined and lastSuccess is 0',
+      desc: 'FAILURE for lastFailure is defined and lastSuccess is 0',
       value: { lastFailure: 1584066900000, lastSuccess: 0 },
       expected: RunStatusUI.FAILURE,
     },
