@@ -16,12 +16,16 @@ import { assertNever } from '../../utilities';
 import { NodeTransformTextureBuilder } from './styling/NodeTransformTextureBuilder';
 import { NodeTransformProvider } from './styling/NodeTransformProvider';
 
+import throttle from 'lodash/throttle';
+
 interface MaterialsWrapper {
   materials: Materials;
   nodeAppearanceProvider: NodeAppearanceProvider;
   nodeTransformProvider: NodeTransformProvider;
   nodeAppearanceTextureBuilder: NodeAppearanceTextureBuilder;
   nodeTransformTextureBuilder: NodeTransformTextureBuilder;
+  updateMaterialsCallback: () => void;
+  updateTransformsCallback: () => void;
 }
 
 export class CadMaterialManager {
@@ -90,12 +94,19 @@ export class CadMaterialManager {
     const nodeTransformTextureBuilder = new NodeTransformTextureBuilder(maxTreeIndex + 1, nodeTransformProvider);
     nodeTransformTextureBuilder.build();
 
-    nodeAppearanceProvider.on('changed', () => {
-      this.updateMaterials(modelIdentifier);
-    });
-    nodeTransformProvider.on('changed', () => {
-      this.updateMaterials(modelIdentifier);
-    });
+    const materialUpdateThrottleDelay = 75;
+    const updateMaterialsCallback: () => void = throttle(
+      () => this.updateMaterials(modelIdentifier),
+      materialUpdateThrottleDelay,
+      {
+        leading: true,
+        trailing: true
+      }
+    );
+    const updateTransformsCallback = () => this.updateTransforms(modelIdentifier);
+
+    nodeAppearanceProvider.on('changed', updateMaterialsCallback);
+    nodeTransformProvider.on('changed', updateTransformsCallback);
 
     const materials = createMaterials(
       this._renderMode,
@@ -108,8 +119,10 @@ export class CadMaterialManager {
       materials,
       nodeAppearanceProvider,
       nodeTransformProvider,
-      nodeAppearanceTextureBuilder: nodeAppearanceTextureBuilder,
-      nodeTransformTextureBuilder
+      nodeAppearanceTextureBuilder,
+      nodeTransformTextureBuilder,
+      updateMaterialsCallback,
+      updateTransformsCallback
     });
   }
 
@@ -176,7 +189,11 @@ export class CadMaterialManager {
       const { nodeAppearanceTextureBuilder } = wrapper;
       nodeAppearanceTextureBuilder.build();
     }
+    this.triggerMaterialsChanged();
+  }
 
+  private updateTransforms(modelIdentifier: string) {
+    const wrapper = this.getModelMaterialsWrapper(modelIdentifier);
     if (wrapper.nodeTransformTextureBuilder.needsUpdate) {
       const { nodeTransformTextureBuilder, materials } = wrapper;
       nodeTransformTextureBuilder.build();

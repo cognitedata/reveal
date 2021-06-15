@@ -10,23 +10,12 @@ import { NodeSet } from './NodeSet';
 
 /**
  * Delegate for applying styles in {@see NodeStyleProvider}.
- * @param styleId     Unique identifier of style being applied to distinguish/identify sets
- * between multiple calls.
- * @param revision    Running number that is incremented whenever the styled set changes.
- * Can be used to identify if a set has been changed.
  * @param treeIndices Set of tree indices that the style is applied to.
  * @param appearance  Style to be applied to the nodes.
  */
-export type ApplyStyleDelegate = (
-  styleId: number,
-  revision: number,
-  treeIndices: IndexSet,
-  appearance: NodeAppearance
-) => void;
+export type ApplyStyleDelegate = (treeIndices: IndexSet, appearance: NodeAppearance) => void;
 
 type StyledSet = {
-  styleId: number;
-  revision: number;
   nodeSet: NodeSet;
   appearance: NodeAppearance;
   handleNodeSetChangedListener: () => void;
@@ -75,8 +64,6 @@ export class NodeAppearanceProvider {
 
   addStyledSet(nodeSet: NodeSet, appearance: NodeAppearance) {
     const styledSet: StyledSet = {
-      styleId: this._styledSet.length + 1,
-      revision: 0,
       nodeSet,
       appearance,
       handleNodeSetChangedListener: () => {
@@ -114,7 +101,7 @@ export class NodeAppearanceProvider {
   applyStyles(applyCb: ApplyStyleDelegate) {
     this._styledSet.forEach(styledSet => {
       const set = styledSet.nodeSet.getIndexSet();
-      applyCb(styledSet.styleId, styledSet.revision, set, styledSet.appearance);
+      applyCb(set, styledSet.appearance);
     });
   }
 
@@ -141,8 +128,7 @@ export class NodeAppearanceProvider {
     this._events.loadingStateChanged.fire(this.isLoading);
   }
 
-  private handleNodeSetChanged(styledSet: StyledSet) {
-    styledSet.revision++;
+  private handleNodeSetChanged(_styledSet: StyledSet) {
     this.notifyChanged();
     this.notifyLoadingStateChanged();
   }
