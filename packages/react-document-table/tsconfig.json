@@ -1,6 +1,7 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
-    "rootDirs": ["src", "stories"]
+    "rootDirs": ["src", "stories"],
+    "baseUrl": "src"
   }
 }

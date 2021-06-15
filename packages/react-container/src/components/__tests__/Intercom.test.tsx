@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import intercomPackage from '@cognite/intercom-helper';
+import * as intercomPackage from '@cognite/intercom-helper';
 import { act } from 'react-dom/test-utils';
 import { generateSidecar } from '__mocks/sidecar';
 

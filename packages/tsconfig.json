@@ -21,7 +21,12 @@
     "resolveJsonModule": true,
     "strictPropertyInitialization": true,
     "paths": {
-      "@cognite/*": ["*", "../../../packages/*/src"]
+      "@cognite/*": [
+        "../../../packages/*/src",
+        "../../../packages/*/dist",
+        "<rootDir>/../../packages/*/src",
+        "<rootDir>/../../packages/*/dist"
+      ]
     }
   }
 }

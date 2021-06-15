@@ -2,9 +2,7 @@
   "extends": "../tsconfig.json",
   "include": ["src/*.ts"],
   "compilerOptions": {
-    "jsx": "react-jsx",
-    "lib": ["es2015", "dom"],
-    "resolveJsonModule": true,
-    "sourceMap": false
+    "rootDirs": ["src"],
+    "baseUrl": "src"
   }
 }

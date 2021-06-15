@@ -17,7 +17,12 @@
     "jsx": "react-jsx",
     "sourceMap": true,
     "paths": {
-      "@cognite/*": ["*", "../../../packages/*/src"]
+      "@cognite/*": [
+        "../../../packages/*/src",
+        "<rootDir>/../../packages/*/src",
+        "../../../node_modules/@cognite/*",
+        "<rootDir>/../../node_modules/@cognite/*"
+      ]
     }
   },
   "exclude": ["node_modules", "dist"]

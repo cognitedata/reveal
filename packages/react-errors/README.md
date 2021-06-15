@@ -199,7 +199,7 @@ const App = () => {
 
 In order to make testing easier in calling applications, things like `reportException` should be stubbed out.
 This can be made easier by using the exposed mocks.
-These are exported through `@cognite/react-errors/dist/mocks`.
+These are exported through `@cognite/react-errors/src/mocks`.
 
 ### jest
 
@@ -207,7 +207,7 @@ The mocks can be automatically installed through the [jest] helpers.
 These should be added to the calling app's `setupTests.ts` file, like so:
 
 ```ts
-import mocks from '@cognite/react-errors/dist/mocks';
+import mocks from '@cognite/react-errors/mocks';
 
 jest.mock('@cognite/errors', () => mocks);
 ```

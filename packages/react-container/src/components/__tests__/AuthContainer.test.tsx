@@ -6,7 +6,7 @@ import { generateSidecar } from '__mocks/sidecar';
 import { AuthContainer } from '../AuthContainer';
 
 // this would be a nicer way to mock these tests
-// import '@cognite/auth-utils/dist/mocks';
+// import '@cognite/auth-utils/mocks';
 
 // @ts-expect-error - missing other keys
 global.console = { warn: jest.fn(), log: console.log };

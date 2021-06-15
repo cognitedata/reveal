@@ -1,4 +1,5 @@
 load("@npm//rollup:index.bzl", "rollup")
+load("@npm//jest:index.bzl", "jest")
 load("@npm//@storybook/react:index.bzl", "start_storybook")
 load("@build_bazel_rules_nodejs//:index.bzl", "copy_to_bin", "js_library", "pkg_npm")
 load("@bazel_skylib//rules:write_file.bzl", "write_file")
@@ -129,6 +130,30 @@ jest_test(
     jest_config = "jest.config.js",
     service_name = "react-griff-provider",
     deps = DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES,
+)
+
+jest(
+    name = "jest",
+    args = [
+        "--node_options=--require=./$(rootpath chdir-workspace.js)",
+        "--config",
+        "jest.config.js",
+        "--runInBand",
+        "--watchAll",
+    ],
+    data = [
+        "chdir-workspace.js",
+        "jest.config.js",
+        "tsconfig.json",
+        "//packages:jest.config.js",
+        "//packages:tsconfig.json",
+    ],
+    tags = [
+        # This tag instructs ibazel to pipe into stdin a event describing actions.
+        # ibazel send EOF to stdin by default and `react-scripts start` will stop when getting EOF in stdin.
+        # So use this to prevent EOF.
+        "ibazel_notify_changes",
+    ],
 )
 
 write_file(

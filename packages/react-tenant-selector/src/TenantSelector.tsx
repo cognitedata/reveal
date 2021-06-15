@@ -13,8 +13,6 @@ import useClusterSelector from './hooks/useClusterSelector';
 import GlobalStyles from './global-styles';
 import background from './assets/background.jpg';
 
-import '@cognite/cogs.js/dist/cogs.css';
-
 export const TenantSelector: React.FC<{
   sidecar: SidecarConfig;
 }> = ({ sidecar }) => {

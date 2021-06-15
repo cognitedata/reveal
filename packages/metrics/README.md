@@ -143,7 +143,7 @@ The library provides some boilerplate stubbed-out implementations for [jest].
 In order to use this, import `@cognite/metrics/jest-mocks` somewhere in your tests -- probably in `src/setupTests.ts`.
 
 ```ts
-import * as mocks from '@cognite/metrics/dist/mocks';
+import * as mocks from '@cognite/metrics/mocks';
 
 jest.mock('@cognite/metrics', () => mocks);
 ```
@@ -155,14 +155,14 @@ However, it's a pretty small change.
 In `.storybook/webpack.config.js`, add this to the `config.resolve.alias` object:
 
 ```js
-config.resolve.alias['@cognite/metrics'] = '@cognite/metrics/dist/mocks';
+config.resolve.alias['@cognite/metrics'] = '@cognite/metrics/mocks';
 ```
 
 A complete sample looks like this:
 
 ```js
 module.exports = ({ config }) => {
-  config.resolve.alias['@cognite/metrics'] = '@cognite/metrics/dist/mocks';
+  config.resolve.alias['@cognite/metrics'] = '@cognite/metrics/mocks';
   return config;
 };
 ```

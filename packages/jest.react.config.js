@@ -5,10 +5,18 @@ module.exports = {
   ...baseConfig,
   testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.(tsx|ts)?$',
   moduleNameMapper: {
-    '.+\\.(css|styl|less|sass|scss)$':
-      // We have to traverse all the way up to the root node_modules in order
-      // to fetch this dependency correctly.
+    ...baseConfig.moduleNameMapper,
+    '.+\\.(svg|png|jpg|ttf|woff|woff2)$': [
+      '<rootDir>/../../node_modules/jest-transform-stub',
+      '<rootDir>/../../../npm/node_modules/jest-transform-stub',
+    ],
+    '.+\\.(css|styl|less|sass|scss)$': [
+      // resolve paths for
+      // 1. when running plain jest
+      // 2. when running through bazel
+      '<rootDir>/../../node_modules/jest-css-modules-transform',
       '<rootDir>/../../../npm/node_modules/jest-css-modules-transform',
+    ],
   },
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
   testEnvironment: 'jest-environment-jsdom-sixteen',
