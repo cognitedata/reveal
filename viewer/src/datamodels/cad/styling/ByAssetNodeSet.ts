@@ -26,7 +26,7 @@ export class ByAssetNodeSet extends NodeSet {
   private _filter: any;
 
   constructor(client: CogniteClient, model: Cognite3DModel) {
-    super(ByAssetNodeSet.name);
+    super('ByAssetNodeSet');
     this._client = client;
     this._model = model;
     this._fetchResultHelper = undefined;

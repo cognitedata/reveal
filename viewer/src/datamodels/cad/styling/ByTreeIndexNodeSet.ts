@@ -15,7 +15,7 @@ export class ByTreeIndexNodeSet extends NodeSet {
   constructor(treeIndices?: Iterable<number>);
   constructor(treeIndexRange?: NumericRange);
   constructor(values?: IndexSet | Iterable<number> | NumericRange) {
-    super(ByTreeIndexNodeSet.name);
+    super('ByTreeIndexNodeSet');
     if (values instanceof IndexSet) {
       this._set = values;
     } else if (values instanceof NumericRange) {

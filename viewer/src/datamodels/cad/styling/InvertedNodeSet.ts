@@ -15,7 +15,7 @@ export class InvertedNodeSet extends NodeSet {
   private _cachedIndexSet?: IndexSet;
 
   constructor(model: Cognite3DModel, innerSet: NodeSet) {
-    super(InvertedNodeSet.name);
+    super('InvertedNodeSet');
     this._innerSet = innerSet;
     this._innerSet.on('changed', () => {
       this._cachedIndexSet = undefined;

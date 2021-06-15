@@ -18,7 +18,7 @@ export class CombinedNodeSet extends NodeSet {
   private _cachedCombinedSet: IndexSet | undefined = undefined;
 
   constructor(combinationOperator: CombineNodeSetOperator, nodeSets?: NodeSet[]) {
-    super(CombinedNodeSet.name);
+    super('CombinedNodeSet');
 
     this._changedUnderlyingNodeSetHandler = this.makeDirty.bind(this);
     this._operator = combinationOperator;

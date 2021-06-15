@@ -40,7 +40,7 @@ export class ByNodePropertyNodeSet extends NodeSet {
   private _filter = {};
 
   constructor(client: CogniteClient, model: Cognite3DModel, options: ByNodePropertyNodeSetOptions = {}) {
-    super(ByNodePropertyNodeSet.name);
+    super('ByNodePropertyNodeSet');
     this._client = client;
     this._modelId = model.modelId;
     this._revisionId = model.revisionId;
