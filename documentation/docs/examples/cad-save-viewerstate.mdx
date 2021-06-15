@@ -13,7 +13,7 @@ The serialized JSON blob also keeps information about styling/filtering of the m
 
 <DemoWrapper name="Cognite3DViewerDemo" />
 
-# Getting the viewer state
+## Getting the viewer state
 In the example below we apply some filter to our loaded model using the `NodeSet` type from [Styling Cad models](./cad-styling.mdx).
 Then we can call the ```viewer.getViewState()``` function which return a serialized JSON blob containing the view state.
 Depending on the application, the view state can be additionally transformed into e.g. a URL parameter and transferred through a link.
@@ -29,7 +29,7 @@ model.addStyledNodeSet(allPipes, { renderGhosted: false, color: [40, 200, 20] } 
 console.log(JSON.stringify(viewer.getViewState(), null, 2));
 ```
 
-# Setting the viewer state
+## Setting the viewer state
 Restoring the viewer state is simply a matter of feeding back the JSON blob retrieved from ```const myState = viewer.getViewState()``` into ```viewer.setViewState(myState)```.
 In the example below, a previously stored state is applied which applies a red color to nodes that have an attribute `'PDMS.Type'`.
 
