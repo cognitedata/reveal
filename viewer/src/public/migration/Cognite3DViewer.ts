@@ -421,17 +421,26 @@ export class Cognite3DViewer {
   }
 
   /**
-   * Asdasd.
+   * Gets the current viewer state which includes the camera pose as well as applied styling.
+   * @returns JSON object containing viewer state.
    */
   getViewState() {
     return this._viewStateHelper.getCurrentState();
   }
 
   /**
-   * Asdasdadsd.
-   * @param state
+   * Clears all current styled node sets and applies the `state` object.
+   * @param state Viewer state retrieved from {@link Cognite3DViewer.getViewState}.
    */
   setViewState(state: ViewerState) {
+    this.models
+      .filter(model => model instanceof Cognite3DModel)
+      .map(model => model as Cognite3DModel)
+      .forEach(model => {
+        model.styleNodeSets.forEach(nodeSet => nodeSet.nodes.clear());
+        model.styleNodeSets.splice(0);
+      });
+
     this._viewStateHelper.setState(state);
   }
 
