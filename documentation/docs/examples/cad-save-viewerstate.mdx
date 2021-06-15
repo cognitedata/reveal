@@ -9,7 +9,7 @@ Reveal supports saving the camera state and styled filters that have been applie
 This functionality can help support sharing links and local storage of a given view.
 Internally the input to a given filter is stored and is replayed when restoring the view.
 This usually means that substantially less data needs to be serialized in order to share the given state of the viewer.
-The serialzed JSON blob also keeps the nesting of different `NodeSet` instances intact such that inverted sets and combined sets are properly generated.
+The serialized JSON blob also keeps information about styling/filtering of the model by storing all [styled sets](./cad-styling.mdx). 
 
 <DemoWrapper name="Cognite3DViewerDemo" />
 
