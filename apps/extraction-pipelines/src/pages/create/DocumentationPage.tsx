@@ -5,14 +5,12 @@ import { FormProvider, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import styled from 'styled-components';
-import { createLink } from '@cognite/cdf-utilities';
 import { ButtonPlaced } from 'styles/StyledButton';
 import { RegisterIntegrationLayout } from 'components/layout/RegisterIntegrationLayout';
 import { useStoredRegisterIntegration } from 'hooks/useStoredRegisterIntegration';
 import { GridH2Wrapper } from 'styles/StyledPage';
 import { CreateFormWrapper } from 'styles/StyledForm';
 import { RAW_TABLE_PAGE_PATH } from 'routing/CreateRouteConfig';
-import { INTEGRATIONS_OVERVIEW_PAGE_PATH } from 'routing/RoutingConfig';
 import { ERROR_NO_ID, EXTRACTION_PIPELINE, REGISTER } from 'utils/constants';
 import {
   useDetailsUpdate,
@@ -25,6 +23,7 @@ import {
   RegisterMetaData,
 } from 'components/inputs/metadata/RegisterMetaData';
 import { FullTextArea } from 'components/inputs/FullTextArea';
+import { createExtPipePath } from 'utils/baseURL';
 
 const DividerLine = styled.hr`
   height: 0.125rem;
@@ -99,7 +98,7 @@ const DocumentationPage: FunctionComponent<DescriptionPageProps> = () => {
       });
       mutate(items, {
         onSuccess: () => {
-          history.push(createLink(INTEGRATIONS_OVERVIEW_PAGE_PATH));
+          history.push(createExtPipePath());
         },
         onError: (serverError) => {
           setError('description', {

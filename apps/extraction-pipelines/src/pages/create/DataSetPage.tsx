@@ -16,7 +16,6 @@ import {
   NEXT,
 } from 'utils/constants';
 import { CreateFormWrapper, StyledLabel } from 'styles/StyledForm';
-import { INTEGRATIONS_OVERVIEW_PAGE_PATH } from 'routing/RoutingConfig';
 import {
   RAW_TABLE_PAGE_PATH,
   SCHEDULE_PAGE_PATH,
@@ -34,6 +33,7 @@ import {
 } from 'hooks/details/useDetailsUpdate';
 import { useAppEnv } from 'hooks/useAppEnv';
 import { datasetSchema } from 'utils/validation/integrationSchemas';
+import { createExtPipePath } from 'utils/baseURL';
 
 const DataSetIdWrapper = styled(DivFlex)`
   margin: 1rem 2rem;
@@ -139,7 +139,7 @@ const DataSetPage: FunctionComponent<DataSetPageProps> = () => {
         break;
       }
       default: {
-        history.push(createLink(INTEGRATIONS_OVERVIEW_PAGE_PATH));
+        history.push(createExtPipePath());
         break;
       }
     }

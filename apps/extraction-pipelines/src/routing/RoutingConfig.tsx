@@ -1,6 +1,6 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
-import { INTEGRATIONS } from 'utils/baseURL';
+import { EXTRACTION_PIPELINE_PATH } from 'utils/baseURL';
 
 const LazyIntegrations = React.lazy(
   () =>
@@ -31,27 +31,27 @@ interface IntegrationsRoute {
   component: React.LazyExoticComponent<React.FunctionComponent>;
 }
 export type RouterParams = { id: string };
-export const INTEGRATION = `integration`;
+export const EXT_PIPE_PATH = `extpipe`;
 export const HEALTH_PATH: Readonly<string> = 'health';
 
-export const CREATE_INTEGRATION_PAGE_PATH = `/${INTEGRATIONS}/create`;
-export const INTEGRATIONS_OVERVIEW_PAGE_PATH = `/${INTEGRATIONS}`;
+export const CREATE_EXT_PIPE_PAGE_PATH = `/${EXTRACTION_PIPELINE_PATH}/create`;
+export const EXT_PIPES_OVERVIEW_PAGE_PATH = `/${EXTRACTION_PIPELINE_PATH}`;
 
 export const routingConfig: IntegrationsRoute[] = [
   {
     name: 'Integrations',
-    path: `/:tenant${INTEGRATIONS_OVERVIEW_PAGE_PATH}`,
+    path: `/:tenant${EXT_PIPES_OVERVIEW_PAGE_PATH}`,
     exact: true,
     component: LazyIntegrations,
   },
   {
     name: 'Create integration - create',
-    path: `/:tenant${CREATE_INTEGRATION_PAGE_PATH}`,
+    path: `/:tenant${CREATE_EXT_PIPE_PAGE_PATH}`,
     component: LazyCreateIntegrationCreateRoot,
   },
   {
     name: 'Integration',
-    path: `/:tenant/${INTEGRATIONS}/${INTEGRATION}/:id`,
+    path: `/:tenant/${EXTRACTION_PIPELINE_PATH}/${EXT_PIPE_PATH}/:id`,
     exact: false,
     component: LazyIntegration,
   },

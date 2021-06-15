@@ -13,7 +13,7 @@ import {
 } from 'utils/test/render';
 import {
   CDF_ENV_GREENFIELD,
-  INTEGRATIONS,
+  EXTRACTION_PIPELINE_PATH,
   ORIGIN_DEV,
   PROJECT_ITERA_INT_GREEN,
 } from 'utils/baseURL';
@@ -25,7 +25,7 @@ describe('<Home />', () => {
     sdkv3.get.mockResolvedValueOnce({ data: getMockResponse()[0] });
     sdkv3.datasets.retrieve.mockResolvedValue([]);
     const history = createMemoryHistory();
-    const route = `/${PROJECT_ITERA_INT_GREEN}/${INTEGRATIONS}`;
+    const route = `/${PROJECT_ITERA_INT_GREEN}/${EXTRACTION_PIPELINE_PATH}`;
     history.push(route);
     const client = new QueryClient();
     const { wrapper } = renderWithReQueryCacheSelectedIntegrationContext(
@@ -52,7 +52,7 @@ describe('<Home />', () => {
   test('Redirects none existing route to integrations home page', async () => {
     const history = createMemoryHistory();
     const nonExistingRoute = `nonexisting-route`;
-    const route = `/${PROJECT_ITERA_INT_GREEN}/${INTEGRATIONS}/${nonExistingRoute}`;
+    const route = `/${PROJECT_ITERA_INT_GREEN}/${EXTRACTION_PIPELINE_PATH}/${nonExistingRoute}`;
     history.push(route);
 
     renderWithSelectedIntegrationContext(<Home />, {

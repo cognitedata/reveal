@@ -6,8 +6,8 @@ import { createLink } from '@cognite/cdf-utilities';
 import { useRunFilterContext } from 'hooks/runs/RunsFilterContext';
 import { createSearchParams } from 'utils/integrationUtils';
 import { Colors } from '@cognite/cogs.js';
-import { INTEGRATIONS } from 'utils/baseURL';
-import { INTEGRATION } from 'routing/RoutingConfig';
+import { createExtPipePath } from 'utils/baseURL';
+import { EXT_PIPE_PATH } from 'routing/RoutingConfig';
 import { CDF_LABEL, DATA_SETS_LABEL } from 'utils/constants';
 
 const BreadcrumbsWrapper = styled.nav`
@@ -65,9 +65,7 @@ export const IntegrationBreadcrumbs: FunctionComponent<IntegrationBreadcrumbsPro
     ...(integration?.dataSetId
       ? [
           {
-            href: createLink(
-              `/${INTEGRATIONS}/${INTEGRATION}/${integration?.id}`
-            ),
+            href: createExtPipePath(`/${EXT_PIPE_PATH}/${integration?.id}`),
             params: createSearchParams({ search, statuses, dateRange }),
             label: integration?.name,
           },

@@ -15,9 +15,8 @@ import {
 } from 'react-table';
 import { matchSorter } from 'match-sorter';
 import { useHistory } from 'react-router-dom';
-import { createLink } from '@cognite/cdf-utilities';
-import { INTEGRATIONS } from 'utils/baseURL';
-import { INTEGRATION } from 'routing/RoutingConfig';
+import { createExtPipePath } from 'utils/baseURL';
+import { EXT_PIPE_PATH } from 'routing/RoutingConfig';
 import { useSelectedIntegration } from 'hooks/useSelectedIntegration';
 import { useAppEnv } from 'hooks/useAppEnv';
 import IntegrationTableSearch from 'components/table/IntegrationTableSearch';
@@ -166,8 +165,8 @@ const ITable = <T extends { id: ReactText }>({
                     ) => {
                       if (e.currentTarget === e.target) {
                         history.push(
-                          createLink(
-                            `/${INTEGRATIONS}/${INTEGRATION}/${row.original.id}`
+                          createExtPipePath(
+                            `/${EXT_PIPE_PATH}/${row.original.id}`
                           )
                         );
                       }

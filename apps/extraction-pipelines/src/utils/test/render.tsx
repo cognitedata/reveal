@@ -9,7 +9,7 @@ import { SelectedIntegrationProvider } from 'hooks/useSelectedIntegration';
 import { AppEnvProvider } from 'hooks/useAppEnv';
 import { Integration, RegisterIntegrationInfo } from 'model/Integration';
 import { RegisterIntegrationProvider } from 'hooks/useStoredRegisterIntegration';
-import { INTEGRATIONS } from 'utils/baseURL';
+import { EXTRACTION_PIPELINE_PATH } from 'utils/baseURL';
 import {
   RunFilterProvider,
   RunFilterProviderProps,
@@ -28,7 +28,7 @@ export default (
 
 export const renderWithRouter = (
   ui: React.ReactNode,
-  { route = INTEGRATIONS, ...renderOptions }
+  { route = EXTRACTION_PIPELINE_PATH, ...renderOptions }
 ) => {
   const history = createMemoryHistory();
   history.push(route);
@@ -37,8 +37,12 @@ export const renderWithRouter = (
 
 export const renderWithSelectedIntegrationContext = (
   ui: React.ReactNode,
-  // @ts-ignore
-  { initIntegration, client, route = INTEGRATIONS, ...renderOptions }
+  {
+    initIntegration,
+    client,
+    route = EXTRACTION_PIPELINE_PATH,
+    ...renderOptions
+  }: { initIntegration: Integration; client: QueryClient; route: string }
 ) => {
   const history = createMemoryHistory();
   history.push(route);
@@ -93,7 +97,7 @@ export const renderWithReQueryCacheSelectedIntegrationContext = (
   cdfEnv: string,
   origin: string,
   initIntegration?: Integration,
-  route: string = INTEGRATIONS,
+  route: string = EXTRACTION_PIPELINE_PATH,
   runFilter?: RunFilterProviderProps
 ) => {
   const history = createMemoryHistory();
@@ -120,7 +124,7 @@ export const renderRegisterContext = (
     project,
     cdfEnv,
     origin,
-    route = INTEGRATIONS,
+    route = EXTRACTION_PIPELINE_PATH,
     initRegisterIntegration = {},
     ...renderOptions
   }: {

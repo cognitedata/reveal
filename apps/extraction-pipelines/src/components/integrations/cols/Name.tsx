@@ -2,9 +2,9 @@ import React, { FunctionComponent } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { Colors } from '@cognite/cogs.js';
-import { INTEGRATION } from 'routing/RoutingConfig';
-import { useAppEnv } from '../../../hooks/useAppEnv';
-import { INTEGRATIONS } from '../../../utils/baseURL';
+import { EXT_PIPE_PATH } from 'routing/RoutingConfig';
+import { useAppEnv } from 'hooks/useAppEnv';
+import { EXTRACTION_PIPELINE_PATH } from 'utils/baseURL';
 
 export const StyledRouterLink = styled((props) => (
   <Link {...props}>{props.children}</Link>
@@ -33,7 +33,7 @@ const Name: FunctionComponent<Props> = ({
     <StyledRouterLink
       id={`integration-${name}`}
       to={{
-        pathname: `/${project}/${INTEGRATIONS}/${INTEGRATION}/${integrationId}`,
+        pathname: `/${project}/${EXTRACTION_PIPELINE_PATH}/${EXT_PIPE_PATH}/${integrationId}`,
         search: cdfEnv ? `?env=${cdfEnv}` : '',
       }}
       aria-selected={selected}

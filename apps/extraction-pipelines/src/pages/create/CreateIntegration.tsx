@@ -62,8 +62,8 @@ import { CronWrapper } from 'components/integration/edit/Schedule';
 import { OptionTypeBase } from 'react-select';
 import { SupportedScheduleStrings } from 'components/integrations/cols/Schedule';
 import { ScheduleFormInput } from 'pages/create/SchedulePage';
-import { INTEGRATIONS } from 'utils/baseURL';
-import { INTEGRATION } from 'routing/RoutingConfig';
+import { createExtPipePath } from 'utils/baseURL';
+import { EXT_PIPE_PATH } from 'routing/RoutingConfig';
 import { translateServerErrorMessage } from 'utils/error/TranslateErrorMessages';
 import { TableHeadings } from 'components/table/IntegrationTableCol';
 import { DetailFieldNames } from 'model/Integration';
@@ -236,7 +236,7 @@ const CreateIntegration: FunctionComponent<CreateIntegrationProps> = (
         onSuccess: (response) => {
           const newIntegrationId = response.id;
           history.push(
-            createLink(`/${INTEGRATIONS}/${INTEGRATION}/${newIntegrationId}`)
+            createExtPipePath(`/${EXT_PIPE_PATH}/${newIntegrationId}`)
           );
         },
         onError: (errorRes, variables) => {
