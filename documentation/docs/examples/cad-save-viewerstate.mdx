@@ -16,9 +16,9 @@ The serialzed JSON blob also keeps the nesting of different `NodeSet` instances 
 # Getting the viewer state
 In the example below we apply some filter to our loaded model using the `NodeSet` type from [Styling Cad models](./cad-styling.mdx).
 Then we can call the ```viewer.getViewState()``` function which return a serialized JSON blob containing the view state.
-Depending on the application, the view state can be additionally transformed into f.ex. a URL parameter and we transferred through a link.
-In the example below, we keep simply print it to the developer console. 
+Depending on the application, the view state can be additionally transformed into e.g. a URL parameter and transferred through a link.
 
+In the example below, we keep simply print it to the developer console. 
 
 ```js runnable
 const allPipes = new ByNodePropertyNodeSet(sdk, model);
