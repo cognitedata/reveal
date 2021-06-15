@@ -66,6 +66,24 @@ model.changeStyledNodeSetAppearance(myNodeSet, DefaultNodeAppearance.Ghosted);
 model.removeStyledNodeSet(myNodeSet);
 ```
 
+Styling is "additive", meaning that styles from multiple styled sets are accumulated per node, much 
+like how multiple classes are combined when working with CSS. Styled sets are applied first-in first-out (FIFO)
+in the order the are added.
+
+```js
+// import { ByTreeIndexNodeSet, DefaultNodeAppearance, NumericRange } from '@cognite/reveal'
+
+// you can start from binding styles to an empty set and populate it later
+const set1 = new ByTreeIndexNodeSet(NumericRange.createFromInterval(0, 100));
+model.addStyledNodeSet(set1, { color: [ 255, 0, 0 ] });
+const set2 = new ByTreeIndexNodeSet(NumericRange.createFromInterval(50, 150));
+model.addStyledNodeSet(set2, { outlineColor: NodeOutlineColor.White });
+
+// [0..49] will be colored red
+// [50..100] will be colored red and have a white outline
+// [101..150] will have the default color and a white outline
+```
+
 :::note
 The API for styling nodes has changed substantially since Reveal 1.x and upgrading Reveal
 will require manual steps to implement styling.
