@@ -250,9 +250,13 @@ function combineRGBA(rgbaBuffer: Uint8ClampedArray, treeIndices: IndexSet, style
 
   treeIndices.forEachRange(range => {
     for (let i = range.from; i <= range.toInclusive; ++i) {
+      // Combine color - this will replace color if the style provided sets color or keep
+      // the old color if not
       rgbaBuffer[4 * i + 0] = (r & keepRgbBitmask) | updateR;
       rgbaBuffer[4 * i + 1] = (g & keepRgbBitmask) | updateG;
       rgbaBuffer[4 * i + 2] = (b & keepRgbBitmask) | updateB;
+      // Update "settings" - this will override any settings provided by the style,
+      // but keep any existing setting that is not provided by the style
       rgbaBuffer[4 * i + 3] = (rgbaBuffer[4 * i + 3] & keepAlphaBitmask) | updateAlpha;
     }
   });
