@@ -93,7 +93,8 @@ When working with custom node sets, the Reveal viewer needs to know how to seria
 Serialization is handled through the abstract method `serialize` which needs to be implemented when extending `NodeSet`.
 The output of `serialize` is of type `SerializedNodeSet` and contains a `token` which is used to recreate the `NodeSet` during deserialization, and a `state` object which contains the data needed to restore the `NodeSet`.
 It is up to the application developer to fill this state object with any nessesary data needed to recreate the state of the `NodeSet`.
-And optional `options` object can also be supplied containing any metadata for loading data (e.g. the number of API calls to fetch the needed data in parallel).
+An optional `options` object can also be supplied containing any metadata for loading data (e.g. the number of API calls to fetch the needed data in parallel).
+
 If contents returned from `serialize` is contained in the result of `getViewState`.
 
 In addition to serialization, Reveal also needs to know how to recreate the custom `NodeSet` during deserialization.
