@@ -164,6 +164,8 @@ export class CachedRepository implements Repository {
       const i3d = await i3dPromise;
       const gltfs = await gltfPromise;
 
+      console.log("Calling finalizeDetailed");
+
       geometry = this.finalizeDetailedGltf(i3d, gltfs);
     } else {
       const ctmsPromise = this.loadCtmsFromNetwork(wantedSector.blobUrl, indexFile.peripheralFiles);
@@ -230,6 +232,8 @@ export class CachedRepository implements Repository {
     }
 
     const parsedGltf = await this._modelDataParser.parseGltf(modelBlobUrl + '/' + filename);
+
+    console.log("Successfully parsed GLTF");
     this._gltfFileCache.set(cacheKey, parsedGltf);
     return parsedGltf;
   }
@@ -251,13 +255,13 @@ export class CachedRepository implements Repository {
         const newVertices: number[] = [];
         const newIndices: number[] = [];
 
-        const { indices, vertices, normals, gltf } = gltfFiles.get(fileName)!; // TODO: j-bjorne 16-04-2020: try catch error???
+        const { indices, vertices, normals, gltf, meshNameToOffsetCountMap } = gltfFiles.get(fileName)!; // TODO: j-bjorne 16-04-2020: try catch error???
 
         // Should these be 3 * vertices.length, vertices.length instead?
-        // const sharedColors = new Uint8Array(3 * indices.length);
-        // const sharedTreeIndices = new Float32Array(indices.length);
-        const sharedColors: number[] = [];
-        const sharedTreeIndices: number[] = [];
+        const sharedColors = new Uint8Array(3 * indices.length);
+        const sharedTreeIndices = new Float32Array(indices.length);
+        // const sharedColors: number[] = [];
+        // const sharedTreeIndices: number[] = [];
 
         for (let i = 0; i < meshIndices.length; i++) {
           const meshIdx = meshIndices[i];
@@ -266,7 +270,18 @@ export class CachedRepository implements Repository {
           const originalTriCount = fileTriangleCounts[i];
         
           const meshName = `mesh_${originalTriOffset}_${originalTriCount}`;
-          const mesh: THREE.Mesh<any, any> = (gltf.scene.getObjectByName(meshName) as THREE.Mesh<any, any>);
+          const offsetCountTuple = meshNameToOffsetCountMap.get(meshName);
+
+          if (!offsetCountTuple) {
+            console.log("Colud not find triangle offset / count for mesh name " + meshName);
+          }
+
+          const triOffset = offsetCountTuple!.triangleOffset;
+          const triCount = offsetCountTuple!.triangleCount;
+
+          console.log("Successfully found instance mesh " + meshName + " with offset = " + triOffset + " and count " + triCount);
+          
+          /* const mesh: THREE.Mesh<any, any> = (gltf.scene.getObjectByName(meshName) as THREE.Mesh<any, any>);
 
           const isolatedVertices = mesh.geometry.attributes['position'].array;
           const isolatedIndices = mesh.geometry.index.array;
@@ -292,7 +307,7 @@ export class CachedRepository implements Repository {
             sharedTreeIndices.push(0);
           }
 
-          const triCount = newIndices.length / 3 - triOffset;
+          const triCount = newIndices.length / 3 - triOffset; */
           
           const [r, g, b] = [colors[4 * meshIdx + 0], colors[4 * meshIdx + 1], colors[4 * meshIdx + 2]];
           for (let triIdx = triOffset; triIdx < triOffset + triCount; triIdx++) {
@@ -309,7 +324,7 @@ export class CachedRepository implements Repository {
           }
         }
 
-        const reformattedVertices = new Float32Array(newVertices.length);
+        /* const reformattedVertices = new Float32Array(newVertices.length);
         const reformattedIndices = new Uint32Array(newIndices.length);
         const reformattedSharedColors = new Uint8Array(sharedColors.length);
         const reformattedSharedTreeIndices = new Float32Array(sharedTreeIndices.length);
@@ -341,17 +356,18 @@ export class CachedRepository implements Repository {
         }
 
         console.log("Max i = " + maxi);
-        console.log("Min i = " + mini);
+        console.log("Min i = " + mini); */
 
         const mesh: TriangleMesh = {
-          // colors: sharedColors,
-          colors: reformattedSharedColors,
+          // colors: reformattedSharedColors,
+          // treeIndices: reformattedSharedTreeIndices,
+          // vertices: reformattedVertices,
+          // indices: reformattedIndices,
+          colors: sharedColors,
+          treeIndices: sharedTreeIndices,
           fileId,
-          // treeIndices: sharedTreeIndices,
-          treeIndices: reformattedSharedTreeIndices,
-          indices: reformattedIndices,
-          // vertices,
-          vertices: reformattedVertices,
+          indices,
+          vertices,
           normals
         };
         finalMeshes.push(mesh);
@@ -379,8 +395,8 @@ export class CachedRepository implements Repository {
         const fileTriangleOffsets = new Float64Array(meshIndices.map(i => triangleOffsets[i]));
         const fileTriangleCounts = new Float64Array(meshIndices.map(i => triangleCounts[i]));
 
-        const newIndices: number[] = [];
-        const newVertices: number[] = [];
+        // const newIndices: number[] = [];
+        // const newVertices: number[] = [];
         
         const indices = gltf.indices;
 
@@ -453,6 +469,8 @@ export class CachedRepository implements Repository {
           
           const offset = offsetCountTuple!.triangleOffset;
           const count = offsetCountTuple!.triangleCount;
+
+          console.log("Successfully found instance mesh " + meshName + " with offset = " + offset  + " and count " + count);
           
           instancedMeshes.push({
             // triangleCount,
@@ -504,8 +522,6 @@ export class CachedRepository implements Repository {
       return finalMeshes;
     })();
 
-    console.log("Number of instances in total = " + finalInstanceMeshes.length);
-
     const sector: SectorGeometry = {
       treeIndexToNodeIdMap: i3dFile.treeIndexToNodeIdMap,
       nodeIdToTreeIndexMap: i3dFile.nodeIdToTreeIndexMap,
@@ -515,6 +531,8 @@ export class CachedRepository implements Repository {
     };
 
     // debugger;
+
+    console.log("Returning sector");
 
     return sector;
   }

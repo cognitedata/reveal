@@ -21,8 +21,14 @@ export interface ParseGltfResult {
 
 export class CadSectorParser {
   private readonly workerPool: WorkerPool;
+  private readonly dracoLoader: DRACOLoader;
+  
   constructor(workerPool: WorkerPool = WorkerPool.defaultPool) {
     this.workerPool = workerPool;
+
+    this.dracoLoader = new DRACOLoader();
+    this.dracoLoader.setDecoderPath('/draco_decoder/');
+    this.dracoLoader.preload();
   }
 
   parseI3D(data: Uint8Array): Promise<ParseSectorResult> {
@@ -56,22 +62,19 @@ export class CadSectorParser {
   private async parseCtm(ctmArrayBuffer: Uint8Array): Promise<ParseCtmResult> {
     return this.workerPool.postWorkToAvailable(async (worker: RevealParserWorker) => worker.parseCtm(ctmArrayBuffer));
   }
-
-  private async parseGltfInner(fileName: string): Promise<ParseGltfResult> {
+  
+  private parseGltfInner(fileName: string): Promise<ParseGltfResult> {
     return new Promise<ParseGltfResult>((resolve, reject) => {
-
+      
       const loader = new GLTFLoader();
 
-      const dracoLoader = new DRACOLoader();
+      loader.setDRACOLoader(this.dracoLoader);
       
-      dracoLoader.setDecoderPath('/draco_decoder/');
-      dracoLoader.preload();
-      
-      loader.setDRACOLoader(dracoLoader);
-      console.log("Trying file " + fileName);
+      console.log("Trying to load GLTF file " + fileName);
       loader.load(
         fileName,
         (gltf: GLTF) => {
+      
           console.dir("Received result for file " + fileName + "!");
           let foundGeometry = false;
 
@@ -98,7 +101,7 @@ export class CadSectorParser {
             reject('Could not find any geometry');
           }
 
-          // meshes.sort((mesh0, mesh1) => mesh0.name < mesh1.name ? -1 : 1);
+          meshes.sort((mesh0, mesh1) => mesh0.name < mesh1.name ? -1 : 1);
 
           for (const mesh of meshes) {
 
@@ -110,9 +113,10 @@ export class CadSectorParser {
             allIndices = this.addIndices(allIndices, mesh.geometry.index.array, startIndex);
 
             const triangleCount = allIndices.length / 3 - triangleStart;
-            
 
-            console.log("Number of vertices in mesh = " + mesh.geometry.attributes['position'].array.length);
+            console.log("Mesh " + mesh.name + " had count = " + triangleCount + " and offset = " + triangleStart);
+
+            // console.log("Number of vertices in mesh = " + mesh.geometry.attributes['position'].array.length);
             
             if ('normals' in mesh.geometry.attributes) {
               allNormals = this.addSpatialAttributes(allNormals, mesh.geometry.attributes['normals'].array);
