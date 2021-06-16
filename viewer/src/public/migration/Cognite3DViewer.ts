@@ -56,6 +56,7 @@ import {
 import { PropType } from '../../utilities/reflection';
 import { CadModelSectorLoadStatistics } from '../../datamodels/cad/CadModelSectorLoadStatistics';
 import ComboControls from '../../combo-camera-controls';
+import { ViewerState, ViewStateHelper } from '../../utilities/ViewStateHelper';
 
 type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered' | 'disposed';
 
@@ -70,6 +71,7 @@ type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered
  * @module @cognite/reveal
  */
 export class Cognite3DViewer {
+  private readonly _viewStateHelper: ViewStateHelper;
   private get canvas(): HTMLCanvasElement {
     return this.renderer.domElement;
   }
@@ -225,6 +227,8 @@ export class Cognite3DViewer {
 
     this.sdkClient = options.sdk;
     this.renderController = new RenderController(this.camera);
+
+    this._viewStateHelper = new ViewStateHelper(this, this.sdkClient);
 
     const revealOptions = createRevealManagerOptions(options);
 
@@ -414,6 +418,30 @@ export class Cognite3DViewer {
       default:
         assertNever(event);
     }
+  }
+
+  /**
+   * Gets the current viewer state which includes the camera pose as well as applied styling.
+   * @returns JSON object containing viewer state.
+   */
+  getViewState() {
+    return this._viewStateHelper.getCurrentState();
+  }
+
+  /**
+   * Clears all current styled node sets and applies the `state` object.
+   * @param state Viewer state retrieved from {@link Cognite3DViewer.getViewState}.
+   */
+  setViewState(state: ViewerState) {
+    this.models
+      .filter(model => model instanceof Cognite3DModel)
+      .map(model => model as Cognite3DModel)
+      .forEach(model => {
+        model.styleNodeSets.forEach(nodeSet => nodeSet.nodes.clear());
+        model.styleNodeSets.splice(0);
+      });
+
+    this._viewStateHelper.setState(state);
   }
 
   /**

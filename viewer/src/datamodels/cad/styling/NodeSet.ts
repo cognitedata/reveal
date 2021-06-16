@@ -6,11 +6,26 @@ import assert from 'assert';
 import { EventTrigger } from '../../../utilities/events/EventTrigger';
 import { IndexSet } from '../../../utilities/IndexSet';
 
+export type SerializedNodeSet = {
+  token: string;
+  state: any;
+  options?: any;
+};
+
 /**
  * Abstract class for implementing a set of nodes to be styled.
  */
 export abstract class NodeSet {
   private readonly _changedEvent = new EventTrigger<() => void>();
+  private readonly _classToken: string;
+
+  protected constructor(classToken: string) {
+    this._classToken = classToken;
+  }
+
+  public get classToken(): string {
+    return this._classToken;
+  }
 
   /**
    * Subscribe a listener to events about the set changing, i.e.
@@ -52,4 +67,6 @@ export abstract class NodeSet {
   protected notifyChanged() {
     this._changedEvent.fire();
   }
+
+  abstract serialize(): SerializedNodeSet;
 }

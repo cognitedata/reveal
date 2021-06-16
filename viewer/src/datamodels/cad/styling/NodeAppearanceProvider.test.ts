@@ -6,7 +6,7 @@ import { NodeAppearance } from '../NodeAppearance';
 import { ByTreeIndexNodeSet } from './ByTreeIndexNodeSet';
 import { IndexSet } from '../../../utilities/IndexSet';
 import { NodeAppearanceProvider } from './NodeAppearanceProvider';
-import { NodeSet } from './NodeSet';
+import { NodeSet, SerializedNodeSet } from './NodeSet';
 import { NodeOutlineColor } from '../NodeAppearance';
 
 describe('NodeAppearanceProvider', () => {
@@ -125,12 +125,18 @@ describe('NodeAppearanceProvider', () => {
 class StubNodeSet extends NodeSet {
   public isLoading = false;
 
+  constructor() {
+    super('stub');
+  }
+
   getIndexSet(): IndexSet {
     return new IndexSet();
   }
   triggerChanged() {
     this.notifyChanged();
   }
-
+  serialize(): SerializedNodeSet {
+    return { token: 'stub', state: {}, options: {} };
+  }
   clear() {}
 }
