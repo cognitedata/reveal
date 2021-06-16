@@ -95,7 +95,7 @@ The output of `serialize` is of type `SerializedNodeSet` and contains a `token` 
 It is up to the application developer to fill this state object with any nessesary data needed to recreate the state of the `NodeSet`.
 An optional `options` object can also be supplied containing any metadata for loading data (e.g. the number of API calls to fetch the needed data in parallel).
 
-If contents returned from `serialize` is contained in the result of `getViewState`.
+The contents returned from `serialize` is contained in the result of `getViewState`.
 
 In addition to serialization, Reveal also needs to know how to recreate the custom `NodeSet` during deserialization.
 This is done by calling the free-function `registerCustomNodeSetType` with the same `token` defined by the custom `NodeSet` and a lambda function which instantiates and restore the state of the `NodeSet`.
