@@ -17,7 +17,6 @@ eslint_config(
     src = ":.eslintrc.js",
     visibility = ["//visibility:public"],
     deps = [
-        ".eslintrc.production.js",
         ".prettierrc",
         "tsconfig.json",
     ],

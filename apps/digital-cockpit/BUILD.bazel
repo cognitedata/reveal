@@ -1,0 +1,311 @@
+load("@bazel_skylib//rules:write_file.bzl", "write_file")
+load("@build_bazel_rules_nodejs//:index.bzl", "copy_to_bin")
+load("@npm//react-scripts:index.bzl", "react_scripts")
+load("//rules/lint:index.bzl", "eslint_config", "eslint_test", "prettier_test")
+load("//rules/package_json_helpers:generate.bzl", "generate_package_json_helpers")
+load("//rules/publish:publish_fas.bzl", "publish_fas")
+load("//rules/test:react_scripts_test.bzl", "react_scripts_test")
+
+# Filename conventions described at
+# https://create-react-app.dev/docs/running-tests#filename-conventions
+_TESTS = [
+    "src/**/*.test.js*",
+    "src/**/*.test.ts*",
+    "src/**/*.spec.js*",
+    "src/**/*.spec.ts*",
+    "src/**/__tests__/**/*.js*",
+    "src/**/__tests__/**/*.ts*",
+    "src/__mocks__/*",
+    "src/**/__mocks__/*",
+    "src/utils/test/*",
+]
+
+_SOURCES = [
+    "src/**/*.ts*",
+    "src/**/*.png",
+    "src/**/*.jpg",
+]
+
+TESTS = glob(_TESTS)
+
+SOURCES = glob(
+    _SOURCES,
+    exclude = _TESTS,
+)
+
+PUBLIC = glob([
+    "public/*",
+])
+
+# Generates the below helpers.
+#
+# Usage:
+#   bazel run :generate_package_json_helpers
+generate_package_json_helpers(
+    name = "generate_package_json_helpers",
+    out_dir = "build",
+    package_json = "//:package.json",
+    src_dir = "src",
+    workspace = "@npm",
+)
+
+### start of auto-generated helpers ###
+
+# Dependencies from package.json
+DEPENDENCIES = [
+    "@npm//@cognite/cogs.js",
+    "@npm//@cognite/gcs-browser-upload",
+    "@npm//@cognite/sdk",
+    "@npm//@sentry/browser",
+    "@npm//i18next",
+    "@npm//lodash",
+    "@npm//moment",
+    "@npm//react",
+    "@npm//react-dom",
+    "@npm//react-glider",
+    "@npm//react-modal",
+    "@npm//react-redux",
+    "@npm//react-router-dom",
+    "@npm//redux",
+    "@npm//redux-devtools-extension",
+    "@npm//redux-thunk",
+    "@npm//reselect",
+    "@npm//styled-components",
+    "@npm//typesafe-actions",
+    "//packages/metrics",
+    "//packages/z-index",
+    "//packages/react-i18n",
+    "//packages/react-container",
+]
+
+# Type dependencies from package.json
+TYPE_DEPENDENCIES = [
+    "@npm//@types/lodash",
+    "@npm//@types/react",
+    "@npm//@types/react-dom",
+    "@npm//@types/react-modal",
+    "@npm//@types/react-redux",
+    "@npm//@types/react-router-dom",
+    "@npm//@types/redux-mock-store",
+    "@npm//@types/sinon",
+    "@npm//@types/styled-components",
+]
+
+# Dev dependencies from package.json
+DEV_DEPENDENCIES = [
+    "@npm//@testing-library/jest-dom",
+    "@npm//@testing-library/react",
+    "@npm//eslint-plugin-import",
+    "@npm//redux-mock-store",
+    "@npm//sinon",
+]
+
+# Mappings for absolute imports from baseUrl @unused
+mappings_dict = {
+    "AppRoot": "build/AppRoot",
+    "__mocks": "build/__mocks",
+    "components": "build/components",
+    "constants": "build/constants",
+    "context": "build/context",
+    "global-styles": "build/global-styles",
+    "hooks": "build/hooks",
+    "images": "build/images",
+    "index": "build/index",
+    "pages": "build/pages",
+    "providers": "build/providers",
+    "react-app-env.d": "build/react-app-env.d",
+    "serviceWorker": "build/serviceWorker",
+    "setupTests": "build/setupTests",
+    "store": "build/store",
+    "styles": "build/styles",
+    "types": "build/types",
+    "typings": "build/typings",
+    "utils": "build/utils",
+    "validators": "build/validators",
+}
+
+### end of auto-generated helpers ###
+
+eslint_config(
+    name = "eslint_config",
+    src = ":.eslintrc.js",
+    deps = [
+        ".eslintrc.production.js",
+        ".prettierrc",
+        "//:eslint_config",
+    ],
+)
+
+eslint_test(
+    name = "eslint_test",
+    data = SOURCES + TESTS + [
+        ":tsconfig.json",
+        "//:tsconfig.json",
+    ],
+    eslint_config = ":eslint_config",
+)
+
+prettier_test(
+    name = "prettier_test",
+    data = SOURCES + TESTS,
+    prettier_config = "//:prettier_config",
+)
+
+# We don't want to teach react-scripts to include from multiple directories
+# So we copy everything it wants to read to the output "bin" directory
+copy_to_bin(
+    name = "copy_static_files",
+    srcs = SOURCES + PUBLIC + [
+        ":package.json",
+        ":tsconfig.json",
+    ],
+)
+
+# react-scripts can only work if the working directory is the root of the application.
+# So we'll need to chdir before it runs.
+write_file(
+    name = "write_chdir_script",
+    out = "chdir.js",
+    content = ["process.chdir(__dirname)"],
+)
+
+# For ibazel run to properly pick the changes we need to run from the Workspace directory
+write_file(
+    name = "write_chdir_worspace_script",
+    out = "chdir-workspace.js",
+    content = ["process.chdir(require('path').join(process.env.BUILD_WORKSPACE_DIRECTORY, '" + package_name() + "'));"],
+)
+
+_RUNTIME_DEPS = [
+    "chdir.js",
+    "copy_static_files",
+    "//:tsconfig",
+]
+
+### react-scripts build ###
+
+react_scripts(
+    # Note: If you want to change the name make sure you update BUILD_PATH below accordingly
+    # https://create-react-app.dev/docs/advanced-configuration/
+    name = "build",
+    args = [
+        "--node_options=--require=./$(execpath chdir.js)",
+        "build",
+    ],
+    data = _RUNTIME_DEPS + DEPENDENCIES + TYPE_DEPENDENCIES + [
+        # see patches/react-scripts+4.0.3.patch
+        # we have added this plugin into webpack so Bazel should know about it
+        # TODO: move build script into a custom rules with defined plugin once and for all
+        "@npm//tsconfig-paths-webpack-plugin",
+    ],
+    env = {
+        # Specify your Sentry DSN is the URL used to report runtime issues
+        "REACT_APP_SENTRY_DSN": "https://327fcc3805594b24aa95d16ecf383c07@o124058.ingest.sentry.io/5557692",
+        # Specify your Mixpanel project token used in users analytics
+        # "REACT_APP_MIXPANEL_TOKEN": "",
+        # Specify your locize.io project ID used for localization
+        # "REACT_APP_LOCIZE_PROJECT_ID": "",
+
+        ### DO NOT CHANGE: FAS placeholders
+        # In order to build only once we set placeholders into dynamic variables
+        # Which will be on FAS publish step in Jenkins replaced to actual values
+        # see https://cognitedata.atlassian.net/browse/FAS-159?focusedCommentId=124832
+        "PUBLIC_URL": "PUBLIC_URL_VALUE",
+        "REACT_APP_APP_ID": "REACT_APP_APP_ID_VALUE",
+        "REACT_APP_ENV": "REACT_APP_ENV_VALUE",
+        "REACT_APP_RELEASE_ID": "REACT_APP_RELEASE_ID_VALUE",
+        "REACT_APP_VERSION_NAME": "REACT_APP_VERSION_NAME_VALUE",
+        "REACT_APP_VERSION_SHA": "REACT_APP_VERSION_SHA_VALUE",
+        "INLINE_RUNTIME_CHUNK": "false",
+        ### END
+    },
+    output_dir = True,
+)
+
+# Replace PUBLIC_URL_VALUE placeholder with '' in order to run testcafe
+# If you need additional env vars being set during testcafe run add them into
+# :build target above and override here
+genrule(
+    name = "build_sed",
+    srcs = [":build"],
+    outs = ["build_bazel"],
+    cmd = " && ".join([
+        "cp -r $(SRCS) $(OUTS)",
+        # TODO: find platform independant sed implementation
+        # Use the line below for OS X
+        # "LC_CTYPE=C LANG=C find -L $(OUTS) -type f | xargs sed -i '' 's,PUBLIC_URL_VALUE,,g'",
+        "find -L $(OUTS) -type f | xargs sed -i 's,PUBLIC_URL_VALUE,,g'",
+    ]),
+)
+
+### react-scripts test ###
+
+copy_to_bin(
+    name = "copy_test_files",
+    srcs = TESTS,
+)
+
+react_scripts_test(
+    name = "test",
+    # folder name to store jest coverage in during CI run
+    app_name = "digital-cockpit",
+    data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + [
+        "@npm//@storybook/addon-essentials",
+        "@npm//@storybook/addon-links",
+        "@npm//@storybook/preset-create-react-app",
+        "@npm//@storybook/react",
+        "copy_test_files",
+    ],
+)
+
+### react-scripts start ###
+
+react_scripts(
+    name = "start",
+    args = [
+        "--node_options=--require=./$(rootpath chdir-workspace.js)",
+        "start",
+    ],
+    data = _RUNTIME_DEPS + [
+        "chdir-workspace.js",
+    ],
+    env = {
+        "HTTPS": "true",
+        "REACT_APP_I18N_DEBUG": "true",
+        "REACT_APP_I18N_PSEUDO": "false",
+        "REACT_APP_LANGUAGE": "en",
+        # Specify your locize.io api key used for localization
+        # "REACT_APP_LOCIZE_API_KEY": "",
+        # Specify your locize.io project ID used for localization
+        # "REACT_APP_LOCIZE_PROJECT_ID": "",
+        "REACT_APP_LOCIZE_VERSION": "latest",
+        "REACT_APP_MIXPANEL_DEBUG": "false",
+        # Specify your Mixpanel project token used in users analytics
+        # "REACT_APP_MIXPANEL_TOKEN": "",
+    },
+    tags = [
+        # This tag instructs ibazel to pipe into stdin a event describing actions.
+        # ibazel send EOF to stdin by default and `react-scripts start` will stop when getting EOF in stdin.
+        # So use this to prevent EOF.
+        "ibazel_notify_changes",
+    ],
+)
+
+### FAS ###
+
+publish_fas(
+    name = "publish_fas",
+    build = ":build",
+    package_json = ":package.json",
+    # Subdomain name used for the pull requests preview.
+    preview_subdomain = "digital-cockpit",
+    # FAS production app id
+    production_app_id = "digital-cockpit",
+    # FAS app identifier (repo) shared across both production and staging apps
+    repo_id = "digital-cockpit",
+    # Sentry project name
+    sentry_project_name = "digital-cockpit",
+    # FAS staging app id
+    staging_app_id = "digital-cockpit-staging",
+    versioning_strategy = "multi-branch",
+)
