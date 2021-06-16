@@ -1,21 +1,21 @@
-import React from "react";
-import moment from "moment";
-import cronstrue from "cronstrue";
-import { Table, Alert, List, Popover } from "antd";
-import { Button } from "@cognite/cogs.js";
+import React from 'react';
+import moment from 'moment';
+import cronstrue from 'cronstrue';
+import { Table, Alert, List, Popover } from 'antd';
+import { Button } from '@cognite/cogs.js';
 
-import { Schedule } from "types";
+import { Schedule } from 'types';
 
-import DeleteScheduleButton from "components/buttons/DeleteScheduleButton";
-import CreateScheduleButton from "components/buttons/CreateScheduleButton";
-import LoadingIcon from "components/LoadingIcon";
-import { useSchedules } from "utils/hooks";
-import FunctionCalls from "./FunctionCalls";
+import DeleteScheduleButton from 'components/buttons/DeleteScheduleButton';
+import CreateScheduleButton from 'components/buttons/CreateScheduleButton';
+import LoadingIcon from 'components/LoadingIcon';
+import { useSchedules } from 'utils/hooks';
+import FunctionCalls from './FunctionCalls';
 
 const scheduleTableColumns = [
   {
-    title: "Schedule Info",
-    key: "scheduleInfo",
+    title: 'Schedule Info',
+    key: 'scheduleInfo',
     render: (s: Schedule) => {
       return (
         <List.Item>
@@ -25,29 +25,29 @@ const scheduleTableColumns = [
     },
   },
   {
-    title: "Cron Expression",
-    key: "cronExpression",
+    title: 'Cron Expression',
+    key: 'cronExpression',
     render: (s: Schedule) => {
       return s.cronExpression;
     },
   },
   {
-    title: "Occurs",
-    key: "cronExpressionDescription",
+    title: 'Occurs',
+    key: 'cronExpressionDescription',
     render: (s: Schedule) => {
       return cronstrue.toString(s.cronExpression);
     },
   },
   {
-    title: "Created Time",
-    key: "createdTime",
+    title: 'Created Time',
+    key: 'createdTime',
     render: (s: Schedule) => {
-      return moment(s.createdTime).format("MM-DD-YYYY HH:mm");
+      return moment(s.createdTime).format('MM-DD-YYYY HH:mm');
     },
   },
   {
-    title: "Input Data",
-    key: "inputData",
+    title: 'Input Data',
+    key: 'inputData',
     render: (s: Schedule) => {
       if (Object.keys(s.data || {}).length !== 0) {
         const dataDisplay = <pre>{JSON.stringify(s.data, null, 2)}</pre>;
@@ -61,8 +61,8 @@ const scheduleTableColumns = [
     },
   },
   {
-    title: "Delete",
-    key: "deleteSchedule",
+    title: 'Delete',
+    key: 'deleteSchedule',
     render: (s: Schedule) => {
       return <DeleteScheduleButton id={s.id} />;
     },
@@ -78,7 +78,7 @@ export default function FunctionSchedules({ externalId, id }: Props) {
   const { data, isFetched, error } = useSchedules();
   const schedules =
     data
-      ?.filter((s) => {
+      ?.filter(s => {
         return (
           (s.functionExternalId && s.functionExternalId === externalId) ||
           (s.functionId && s.functionId === id)
@@ -110,7 +110,7 @@ export default function FunctionSchedules({ externalId, id }: Props) {
     <>
       {externalId ? <CreateScheduleButton externalId={externalId} /> : null}
       <Table
-        rowKey={(s) => s.id.toString()}
+        rowKey={s => s.id.toString()}
         pagination={{ pageSize: 25 }}
         dataSource={schedules}
         columns={scheduleTableColumns}
