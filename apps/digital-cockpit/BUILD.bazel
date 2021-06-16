@@ -307,5 +307,5 @@ publish_fas(
     sentry_project_name = "digital-cockpit",
     # FAS staging app id
     staging_app_id = "digital-cockpit-staging",
-    versioning_strategy = "single-branch",
+    versioning_strategy = "multi-branch",
 )
