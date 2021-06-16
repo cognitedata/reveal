@@ -107,7 +107,11 @@ An example of a simple custom `NodeSet` can be seen below.
 For more information on creating a custom `NodeSet`, see [Create custom node sets](cad-styling-custom).
 ```jsx
 // MyNodeSet.ts
+
+import { NodeSet, registerCustomNodeSetType } from '@cognite/reveal';
+
 class MyNodeSet extends NodeSet {
+
   
   isLoading = false;
   private _indexSet: IndexSet;
