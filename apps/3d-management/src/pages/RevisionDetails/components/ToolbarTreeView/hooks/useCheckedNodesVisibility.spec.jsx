@@ -1,13 +1,12 @@
 import { useCheckedNodesVisibility } from 'src/pages/RevisionDetails/components/ToolbarTreeView/hooks/useCheckedNodesVisibility';
-import { getNodeByTreeIndex } from 'src/pages/RevisionDetails/components/TreeView/utils/treeFunctions';
 import { render } from '@testing-library/react';
 import React from 'react';
-import { sleep } from 'src/utils';
 
 function TestComponent({ model, treeData, checkedKeys }) {
   useCheckedNodesVisibility({ model, treeData, checkedKeys });
   return null;
 }
+
 describe('useCheckedNodesVisibility tests', () => {
   it('correctly updates nodes visibility in reveal', async () => {
     const allTreeIndexes = [
@@ -171,36 +170,18 @@ describe('useCheckedNodesVisibility tests', () => {
       },
     ];
 
+    // that's a very implementation-specific, but the point is to test that we feed models with right data
     const modelMock = {
-      allTreeIndexes,
-      ownCheckedNodes: new Set(allTreeIndexes),
-
-      async showNodeByTreeIndex(treeIndex, applyToChildren) {
-        if (applyToChildren) {
-          const { subtreeSize } = getNodeByTreeIndex(treeData, treeIndex).meta;
-          for (let i = treeIndex; i < treeIndex + subtreeSize; i++) {
-            modelMock.ownCheckedNodes.add(i);
-          }
-        } else {
-          modelMock.ownCheckedNodes.add(treeIndex);
-        }
+      ownCheckedNodes: null,
+      addStyledNodeSet(set) {
+        set.on('changed', (...args) => {
+          const indexSet = set.getIndexSet();
+          this.ownCheckedNodes = allTreeIndexes
+            .filter((treeIndex) => !indexSet.contains(treeIndex))
+            .sort();
+        });
       },
-      async hideNodeByTreeIndex(treeIndex, _, applyToChildren) {
-        if (applyToChildren) {
-          const { subtreeSize } = getNodeByTreeIndex(treeData, treeIndex).meta;
-          for (let i = treeIndex; i < treeIndex + subtreeSize; i++) {
-            modelMock.ownCheckedNodes.delete(i);
-          }
-        } else {
-          modelMock.ownCheckedNodes.delete(treeIndex);
-        }
-      },
-      async hideAllNodes() {
-        modelMock.ownCheckedNodes.clear();
-      },
-      async showAllNodes() {
-        modelMock.ownCheckedNodes = new Set(allTreeIndexes);
-      },
+      removeStyledNodeSet: jest.fn(),
     };
 
     // start with all checked
@@ -212,12 +193,9 @@ describe('useCheckedNodesVisibility tests', () => {
       />
     );
 
-    await sleep(300);
-
-    expect([...modelMock.ownCheckedNodes].sort()).toEqual(allTreeIndexes);
+    expect(modelMock.ownCheckedNodes).toEqual(allTreeIndexes);
 
     // uncheck one leaf [2]
-    debugger;
     rerender(
       <TestComponent
         model={modelMock}
@@ -229,9 +207,7 @@ describe('useCheckedNodesVisibility tests', () => {
       />
     );
 
-    await sleep(300);
-
-    expect([...modelMock.ownCheckedNodes].sort()).toEqual(
+    expect(modelMock.ownCheckedNodes).toEqual(
       // eslint-disable-next-line prettier/prettier
       [1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13].sort()
     );
@@ -241,14 +217,10 @@ describe('useCheckedNodesVisibility tests', () => {
       <TestComponent model={modelMock} treeData={treeData} checkedKeys={[]} />
     );
 
-    await sleep(300);
-
-    expect([...modelMock.ownCheckedNodes].sort()).toEqual([]);
+    expect(modelMock.ownCheckedNodes).toEqual([]);
 
     // check a child with children [3]
 
-    const hideNodeByTreeIndexSpy = jest.spyOn(modelMock, 'hideNodeByTreeIndex');
-    const hideAllNodesSpy = jest.spyOn(modelMock, 'hideAllNodes');
     rerender(
       <TestComponent
         model={modelMock}
@@ -257,11 +229,7 @@ describe('useCheckedNodesVisibility tests', () => {
       />
     );
 
-    await sleep(300);
-
-    expect(hideNodeByTreeIndexSpy).not.toHaveBeenCalled();
-    expect(hideAllNodesSpy).not.toHaveBeenCalled();
-    expect([...modelMock.ownCheckedNodes].sort()).toEqual([3, 4, 5, 6, 7]);
+    expect(modelMock.ownCheckedNodes).toEqual([3, 4, 5, 6, 7]);
 
     // check all [0]
     rerender(
@@ -272,9 +240,7 @@ describe('useCheckedNodesVisibility tests', () => {
       />
     );
 
-    await sleep(300);
-
-    expect([...modelMock.ownCheckedNodes].sort()).toEqual(allTreeIndexes);
+    expect(modelMock.ownCheckedNodes).toEqual(allTreeIndexes);
 
     // uncheck one of the loaded nodes [11] - other children [12,13] must be visible
 
@@ -289,9 +255,7 @@ describe('useCheckedNodesVisibility tests', () => {
       />
     );
 
-    await sleep(300);
-
-    expect([...modelMock.ownCheckedNodes].sort()).toEqual(
+    expect(modelMock.ownCheckedNodes).toEqual(
       // eslint-disable-next-line prettier/prettier
       [/* 0, */ 1, 2, 3, 4, 5, 6, 7, 8, 9, /* 10, 11, */ 12, 13].sort()
     );
@@ -309,9 +273,7 @@ describe('useCheckedNodesVisibility tests', () => {
       />
     );
 
-    await sleep(300);
-
-    expect([...modelMock.ownCheckedNodes].sort()).toEqual(
+    expect(modelMock.ownCheckedNodes).toEqual(
       // eslint-disable-next-line prettier/prettier
       [1, 2, 3, 4, 5, 6, 7, 8, 9]
     );
@@ -329,9 +291,7 @@ describe('useCheckedNodesVisibility tests', () => {
       />
     );
 
-    await sleep(300);
-
-    expect([...modelMock.ownCheckedNodes].sort()).toEqual(
+    expect(modelMock.ownCheckedNodes).toEqual(
       // eslint-disable-next-line prettier/prettier
       [/* 0, */ 1, 2, 3, 4, 5, 6, 7, 8, 9, /* 10, 11, */ 12 /* 13 */].sort()
     );
@@ -349,11 +309,9 @@ describe('useCheckedNodesVisibility tests', () => {
       />
     );
 
-    await sleep(300);
-
-    expect([...modelMock.ownCheckedNodes].sort()).toEqual(
+    expect(modelMock.ownCheckedNodes).toEqual(
       // eslint-disable-next-line prettier/prettier
       [/* 0, */ 1, 2, /* 3, 4, 5, 6, 7, */ 8, 9, 10, 11, 12, 13].sort()
     );
-  }, 19212983218937128973);
+  });
 });
