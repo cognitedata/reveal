@@ -3,7 +3,7 @@
  */
 import { NumericRange } from '../../../utilities';
 import { IndexSet } from '../../../utilities/IndexSet';
-import { NodeSet } from './NodeSet';
+import { NodeSet, SerializedNodeSet } from './NodeSet';
 
 /**
  * Node set that holds a set of nodes defined by a set of tree indices.
@@ -15,7 +15,7 @@ export class ByTreeIndexNodeSet extends NodeSet {
   constructor(treeIndices?: Iterable<number>);
   constructor(treeIndexRange?: NumericRange);
   constructor(values?: IndexSet | Iterable<number> | NumericRange) {
-    super();
+    super('ByTreeIndexNodeSet');
     if (values instanceof IndexSet) {
       this._set = values;
     } else if (values instanceof NumericRange) {
@@ -44,5 +44,13 @@ export class ByTreeIndexNodeSet extends NodeSet {
 
   get isLoading(): boolean {
     return false;
+  }
+
+  /** @internal */
+  serialize(): SerializedNodeSet {
+    return {
+      token: this.classToken,
+      state: this._set.toRangeArray()
+    };
   }
 }
