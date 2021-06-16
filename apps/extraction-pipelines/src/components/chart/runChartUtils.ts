@@ -1,20 +1,49 @@
 import { RunUI } from 'model/Runs';
 import moment from 'moment';
-import {
-  DATE_FORMAT_TYPE,
-  DATE_HOUR_FORMAT_TYPE,
-} from 'components/TimeDisplay/TimeDisplay';
 import { RunStatusUI } from 'model/Status';
+import { DATE_FORMAT } from 'components/TimeDisplay/TimeDisplay';
+import { Range } from '@cognite/cogs.js';
 
-export type GroupByTimeFormat = DATE_FORMAT_TYPE | DATE_HOUR_FORMAT_TYPE;
+export const DATE_HOUR_FORMAT: Readonly<string> = 'YYYY-MM-DD HH';
+export const DATE_HOUR_MIN_FORMAT: Readonly<string> = 'YYYY-MM-DD HH:mm';
+export type AllDateFormats =
+  | typeof DATE_FORMAT
+  | typeof DATE_HOUR_FORMAT
+  | typeof DATE_HOUR_MIN_FORMAT;
+export type DateFormatRecordType = { label: string; format: AllDateFormats };
+export const DateFormatsRecord: Record<AllDateFormats, DateFormatRecordType> = {
+  DATE_FORMAT: { label: 'days', format: DATE_FORMAT },
+  DATE_HOUR_FORMAT: { label: 'hours', format: DATE_HOUR_FORMAT },
+  DATE_HOUR_MIN_FORMAT: { label: 'minutes', format: DATE_HOUR_MIN_FORMAT },
+};
+
+export const mapRangeToGraphTimeFormat = (range: Range) => {
+  if (
+    moment(range.startDate).isBetween(
+      moment(range.endDate).subtract(24, 'hours'),
+      moment(range.endDate)
+    )
+  ) {
+    return DateFormatsRecord.DATE_HOUR_MIN_FORMAT;
+  }
+  if (
+    moment(range.startDate).isBetween(
+      moment(range.endDate).subtract(7, 'day'),
+      moment(range.endDate)
+    )
+  ) {
+    return DateFormatsRecord.DATE_HOUR_FORMAT;
+  }
+  return DateFormatsRecord.DATE_FORMAT;
+};
 
 interface GroupByParams {
   data: RunUI[];
   status?: RunStatusUI;
-  by: GroupByTimeFormat;
+  by: AllDateFormats;
 }
 
-export const creatTimeFormatterBy = (format: GroupByTimeFormat) => (
+export const creatTimeFormatterBy = (format: AllDateFormats) => (
   milliseconds: number
 ) => moment(milliseconds).format(format);
 

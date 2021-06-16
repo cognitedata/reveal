@@ -29,7 +29,11 @@ import { StatusFilterMenu } from 'components/table/StatusFilterMenu';
 import { useHistory, useLocation } from 'react-router-dom';
 import { useRunFilterContext } from 'hooks/runs/RunsFilterContext';
 import { RunChart } from 'components/chart/RunChart';
-import { GroupByTimeFormat } from 'components/chart/runChartUtils';
+import {
+  DateFormatsRecord,
+  DateFormatRecordType,
+  mapRangeToGraphTimeFormat,
+} from 'components/chart/runChartUtils';
 
 const TableWrapper = styled(PageWrapperColumn)`
   padding: 0 2rem;
@@ -82,7 +86,9 @@ export const IntegrationHealth: FunctionComponent<LogsViewProps> = ({
 }: PropsWithChildren<LogsViewProps>) => {
   const [all, setAll] = useState<RunUI[]>([]);
   const [runsList, setRunsList] = useState<RunUI[]>([]);
-  const [timeFormat] = useState<GroupByTimeFormat>('YYYY-MM-DD HH');
+  const [timeFormat, setTimeFormat] = useState<DateFormatRecordType>(
+    DateFormatsRecord.DATE_FORMAT
+  );
   const [nextCursor, setNextCursor] = useState<string | undefined>();
   const [pageSize] = useState(PAGE_SIZE_DEFAULT);
   const [pageCount, setPageCount] = React.useState(0);
@@ -109,10 +115,8 @@ export const IntegrationHealth: FunctionComponent<LogsViewProps> = ({
   });
 
   useEffect(() => {
-    if (integrationId) {
-      trackUsage(SINGLE_EXT_PIPE_RUNS, { id: integrationId });
-    }
-  }, [integrationId]);
+    setTimeFormat(mapRangeToGraphTimeFormat(dateRange));
+  }, [dateRange, setTimeFormat]);
 
   useEffect(() => {
     const url = `${pathname}?${createSearchParams({
@@ -163,11 +167,7 @@ export const IntegrationHealth: FunctionComponent<LogsViewProps> = ({
     }
     return (
       <>
-        <RunChart
-          allRuns={all}
-          byTimeFormat={timeFormat}
-          timeFormat={timeFormat}
-        />
+        <RunChart allRuns={all} timeFormat={timeFormat} />
         <RunLogsTable
           data={runsList}
           columns={columns}

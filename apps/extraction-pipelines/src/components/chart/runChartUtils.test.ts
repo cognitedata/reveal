@@ -5,9 +5,13 @@ import {
   getStatusCountGroupedByDate,
   mapDataForChart,
   creatTimeFormatterBy,
+  DATE_HOUR_MIN_FORMAT,
+  DATE_HOUR_FORMAT,
+  mapRangeToGraphTimeFormat,
 } from 'components/chart/runChartUtils';
 import { DATE_FORMAT } from 'components/TimeDisplay/TimeDisplay';
 import { mapStatusRow } from 'utils/runsUtils';
+import moment from 'moment';
 
 describe('Chart utils', () => {
   const numberOfDates = 4;
@@ -56,5 +60,86 @@ describe('Chart utils', () => {
     expect(res.failureByDate.length).toEqual(numberOfDates);
     const fail = [1, 0, 1, 0];
     expect(res.failureByDate).toEqual(fail);
+  });
+});
+
+describe('mapRangeToGraphTimeFormat', () => {
+  const cases = [
+    {
+      range: {
+        startDate: moment().subtract(10, 'seconds').toDate(),
+        endDate: moment().toDate(),
+      },
+      expected: DATE_HOUR_MIN_FORMAT,
+    },
+    {
+      range: {
+        startDate: moment().subtract(10, 'minute').toDate(),
+        endDate: moment().toDate(),
+      },
+      expected: DATE_HOUR_MIN_FORMAT,
+    },
+    {
+      range: {
+        startDate: moment().subtract(1, 'hour').toDate(),
+        endDate: moment().toDate(),
+      },
+      expected: DATE_HOUR_MIN_FORMAT,
+    },
+    {
+      range: {
+        startDate: moment().subtract(23, 'hour').toDate(),
+        endDate: moment().toDate(),
+      },
+      expected: DATE_HOUR_MIN_FORMAT,
+    },
+    {
+      range: {
+        startDate: moment().subtract(25, 'hour').toDate(),
+        endDate: moment().toDate(),
+      },
+      expected: DATE_HOUR_FORMAT,
+    },
+    {
+      range: {
+        startDate: moment().subtract(1, 'day').toDate(),
+        endDate: moment().toDate(),
+      },
+      expected: DATE_HOUR_FORMAT,
+    },
+    {
+      range: {
+        startDate: moment().subtract(6, 'day').toDate(),
+        endDate: moment().toDate(),
+      },
+      expected: DATE_HOUR_FORMAT,
+    },
+    {
+      range: {
+        startDate: moment().subtract(7, 'days').toDate(),
+        endDate: moment().toDate(),
+      },
+      expected: DATE_FORMAT,
+    },
+    {
+      range: {
+        startDate: moment().subtract(30, 'days').toDate(),
+        endDate: moment().toDate(),
+      },
+      expected: DATE_FORMAT,
+    },
+    {
+      range: {
+        startDate: moment().subtract(1, 'year').toDate(),
+        endDate: moment().toDate(),
+      },
+      expected: DATE_FORMAT,
+    },
+  ];
+  cases.forEach(({ range, expected }, i) => {
+    test(`${i}: ${range.startDate.toISOString()} and ${range.endDate.toISOString()} should return ${expected}`, () => {
+      const res = mapRangeToGraphTimeFormat(range);
+      expect(res.format).toEqual(expected);
+    });
   });
 });

@@ -2,9 +2,7 @@ import React from 'react';
 import moment from 'moment';
 import { StyledTooltip } from 'styles/StyledToolTip';
 
-export type DATE_FORMAT_TYPE = 'YYYY-MM-DD';
 export const DATE_FORMAT: Readonly<string> = 'YYYY-MM-DD';
-export type DATE_HOUR_FORMAT_TYPE = 'YYYY-MM-DD HH';
 export const DATE_TIME_FORMAT: Readonly<string> = 'YYYY-MM-DD HH:mm:ss';
 export interface TimeDisplayProps {
   value: number | Date;

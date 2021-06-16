@@ -6,7 +6,7 @@ import React, {
 } from 'react';
 import Plot from 'react-plotly.js';
 import {
-  GroupByTimeFormat,
+  DateFormatRecordType,
   mapDataForChart,
 } from 'components/chart/runChartUtils';
 import { Colors } from '@cognite/cogs.js';
@@ -17,8 +17,7 @@ import { RunUI } from 'model/Runs';
 
 interface ChartProps {
   allRuns: RunUI[];
-  byTimeFormat: GroupByTimeFormat;
-  timeFormat: string;
+  timeFormat: DateFormatRecordType;
 }
 
 const layout = (text: string): Partial<Plotly.Layout> => {
@@ -57,7 +56,6 @@ const layout = (text: string): Partial<Plotly.Layout> => {
 
 export const RunChart: FunctionComponent<ChartProps> = ({
   allRuns,
-  byTimeFormat,
   timeFormat,
 }: PropsWithChildren<ChartProps>) => {
   const [seen, setSeen] = useState<number[]>([]);
@@ -73,13 +71,13 @@ export const RunChart: FunctionComponent<ChartProps> = ({
       seenByDate,
       allDates,
       statusCountAndTotal,
-    } = mapDataForChart({ data: allRuns, by: byTimeFormat });
+    } = mapDataForChart({ data: allRuns, by: timeFormat.format });
     setSeen(seenByDate);
     setSuccess(successByDate);
     setFailure(failureByDate);
     setCustomData(statusCountAndTotal);
     setDates(allDates);
-  }, [allRuns, byTimeFormat]);
+  }, [allRuns, timeFormat.format]);
 
   const chartData: Partial<Plotly.PlotData>[] = [
     {
@@ -121,7 +119,7 @@ export const RunChart: FunctionComponent<ChartProps> = ({
   return (
     <Plot
       data={chartData}
-      layout={layout(timeFormat)}
+      layout={layout(timeFormat.label)}
       config={{ responsive: true }}
     />
   );
