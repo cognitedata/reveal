@@ -22,30 +22,22 @@ export function useCheckedNodesVisibility({
   treeData,
   checkedKeys,
 }: Args) {
-  const prevCheckedKeysRef = React.useRef<Set<number> | null>(null);
-
   const hiddenNodesSet = React.useRef(new IndexSet());
   const hiddenNodesStyledSet = React.useRef(
     new ByTreeIndexNodeSet(hiddenNodesSet.current)
   );
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const nodesVisibilityChanged = useCallback(
     (newTreeData: typeof treeData, checkedKeysSet: Set<number>) => {
-      // use to avoid calling hide/show node multiple times
-      const hiddenTreeRanges: Array<[number, number]> = [];
-
       traverseTree(newTreeData, (key, node) => {
         if (typeof key !== 'number') {
           return false;
         }
 
+        // make sure the whole subtree is visible and stop traversing
         if (checkedKeysSet.has(key)) {
           // we need to reapply styling only if node is about to be hidden
-          if (
-            !prevCheckedKeysRef.current!.has(key) ||
-            hiddenTreeRanges.find(([start, end]) => key >= start && key < end)
-          ) {
+          if (hiddenNodesSet.current.contains(key)) {
             hiddenNodesSet.current.removeRange(
               new NumericRange(key, node.meta.subtreeSize)
             );
@@ -55,46 +47,33 @@ export function useCheckedNodesVisibility({
           return false;
         }
 
-        if (
-          !hiddenTreeRanges.find(([start, end]) => key >= start && key < end)
-        ) {
-          const allKnownChildrenAreHidden = ![
-            ...checkedKeysSet.values(),
-          ].some((checkedIndex) =>
+        // if `key` which is not checked isn't in the hidden set – we need to add it there,
+        // but `key` can be removed from checkedSet if one of its children removed,
+        // so we need to figure out whether to hide the whole subtree, or only that key
+
+        const allKnownChildrenAreHidden = () =>
+          ![...checkedKeysSet.values()].some((checkedIndex) =>
             subtreeHasTreeIndex(node as TreeDataNode, checkedIndex)
           );
-          const hadCheckedChildBefore = [
-            ...prevCheckedKeysRef.current!.values(),
-          ].some((previouslyCheckedKey) =>
-            subtreeHasTreeIndex(node as TreeDataNode, previouslyCheckedKey)
+
+        // no point to traverse when there is no visible ancestors, just hide them all
+        if (
+          node.meta.subtreeSize > 1 &&
+          (!node.children || allKnownChildrenAreHidden())
+        ) {
+          hiddenNodesSet.current.addRange(
+            new NumericRange(key, node.meta.subtreeSize)
           );
-
-          // should be hidden with applyToChildren=true
-          if (
-            node.meta.subtreeSize > 1 &&
-            (!node.children || allKnownChildrenAreHidden)
-          ) {
-            if (hadCheckedChildBefore) {
-              hiddenNodesSet.current.addRange(
-                new NumericRange(key, node.meta.subtreeSize)
-              );
-            }
-            hiddenTreeRanges.push([key, key + node.meta.subtreeSize]);
-            return false;
-          }
-
-          if (prevCheckedKeysRef.current!.has(key)) {
-            hiddenNodesSet.current.add(key);
-          }
-          hiddenTreeRanges.push([key, key + 1]);
+          return false;
         }
 
-        // must keep looking for every visible children
+        hiddenNodesSet.current.add(key);
+
+        // must keep looking for every visible child
         return true;
       });
 
       hiddenNodesStyledSet.current.updateSet(hiddenNodesSet.current);
-      prevCheckedKeysRef.current = checkedKeysSet;
     },
     []
   );
@@ -111,17 +90,6 @@ export function useCheckedNodesVisibility({
   useEffect(() => {
     if (!treeData.length) {
       return;
-    }
-
-    // while this hook is the only source of visibility updates,
-    // we can assume we know that before everything was visible
-    if (!prevCheckedKeysRef.current) {
-      prevCheckedKeysRef.current = new Set<number>();
-      traverseTree(treeData, (key) => {
-        if (typeof key === 'number') {
-          prevCheckedKeysRef.current!.add(key);
-        }
-      });
     }
 
     nodesVisibilityChanged(treeData, new Set(checkedKeys));
