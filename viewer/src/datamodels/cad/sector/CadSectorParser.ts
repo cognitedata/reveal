@@ -12,14 +12,11 @@ import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
 import * as THREE from 'three';
 
 export interface ParseGltfResult {
-  // indices: Uint32Array;
-  // vertices: Float32Array;
-  // normals: Float32Array | undefined;
   indices: Uint32Array;
   vertices: Float32Array;
   normals: Float32Array | undefined;
   gltf: GLTF;
-  gltfJson?: any;
+  meshNameToOffsetCountMap: Map<string, { triangleOffset: number, triangleCount: number }>;
 }
 
 export class CadSectorParser {
@@ -63,11 +60,6 @@ export class CadSectorParser {
   private async parseGltfInner(fileName: string): Promise<ParseGltfResult> {
     return new Promise<ParseGltfResult>((resolve, reject) => {
 
-      // const gltfName = 'out_' + fileName + '.gltf';
-      // ConvertGLBtoGltf(fileName, gltfName);
-      // const gltfJsonString = fs.readFileSync(gltfName, 'utf8');
-      // const gltfJson = JSON.parse(gltfJsonString);
-      
       const loader = new GLTFLoader();
 
       const dracoLoader = new DRACOLoader();
@@ -86,6 +78,8 @@ export class CadSectorParser {
           let allVertices = new Float32Array();
           let allIndices = new Uint32Array();
           let allNormals = new Float32Array();
+
+          const meshNameToOffsetCount = new Map<string, { triangleOffset: number, triangleCount: number }>();
 
           let meshes: THREE.Mesh<any, any>[] = [];
           
@@ -107,16 +101,24 @@ export class CadSectorParser {
           // meshes.sort((mesh0, mesh1) => mesh0.name < mesh1.name ? -1 : 1);
 
           for (const mesh of meshes) {
+
+            const triangleStart = allIndices.length / 3;
+            
             // Starting index for this mesh inside the whole vertex list
             const startIndex = allVertices.length / 3;
             allVertices = this.addSpatialAttributes(allVertices, mesh.geometry.attributes['position'].array);
             allIndices = this.addIndices(allIndices, mesh.geometry.index.array, startIndex);
+
+            const triangleCount = allIndices.length / 3 - triangleStart;
+            
 
             console.log("Number of vertices in mesh = " + mesh.geometry.attributes['position'].array.length);
             
             if ('normals' in mesh.geometry.attributes) {
               allNormals = this.addSpatialAttributes(allNormals, mesh.geometry.attributes['normals'].array);
             }
+
+            meshNameToOffsetCount.set(mesh.name, { triangleOffset: triangleStart, triangleCount: triangleCount });
           }
 
           // If attributes differ in length, set normals to null
@@ -129,8 +131,8 @@ export class CadSectorParser {
             vertices: allVertices,
             indices: allIndices,
             normals: finalNormals,
+            meshNameToOffsetCountMap: meshNameToOffsetCount,
             gltf: gltf,
-            // gltfJson: gltfJson
           });
         },
         () => { /* console.dir("Progress"); console.dir(progress); */ },
@@ -156,8 +158,6 @@ export class CadSectorParser {
       newVerts[original.length + 3 * i + 2] = inputVerts[3 * i + 1];
     }
 
-    console.log("Adding spatial attributes");
-    
     return newVerts;
   }
 

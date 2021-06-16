@@ -373,7 +373,7 @@ export class CachedRepository implements Repository {
         const fileName = `mesh_${fileId}.glb`;
         const gltf = gltfFiles.get(fileName)!;
 
-        // const vertices = gltf.vertices;
+        const vertices = gltf.vertices;
         const instancedMeshes: InstancedMesh[] = [];
 
         const fileTriangleOffsets = new Float64Array(meshIndices.map(i => triangleOffsets[i]));
@@ -383,10 +383,7 @@ export class CachedRepository implements Repository {
         const newVertices: number[] = [];
         
         const indices = gltf.indices;
-        console.log("10 first original indices = ");
-        for (let i = 0; i < 10; i++) {
-          console.log(indices[i]);
-        }
+
         /* const reformattedIndices = new Uint32Array(indices.length);
         for (let i = 0; i < indices.length; i++) {
           reformattedIndices[i] = indices[i];
@@ -399,7 +396,7 @@ export class CachedRepository implements Repository {
           const triangleCount = fileTriangleCounts[fileMeshIndices[0]];
 
           const meshName = `mesh_${triangleOffset}_${triangleCount}`;
-          const mesh: THREE.Mesh<any, any> = (gltf.gltf.scene.getObjectByName(meshName) as THREE.Mesh<any, any>);
+          /* const mesh: THREE.Mesh<any, any> = (gltf.gltf.scene.getObjectByName(meshName) as THREE.Mesh<any, any>);
 
           if (!mesh) {
             console.log("Could not find object with name " + meshName);
@@ -413,6 +410,7 @@ export class CachedRepository implements Repository {
             offset = indexTuple.triangleOffset;
             count = indexTuple.triangleCount;
           } else {
+            console.log("Did not find triangle offset " + triangleOffset + " in map");
             offset = Math.floor(newIndices.length / 3);
             count = mesh.geometry.index.array.length / 3; // Math.floor(mesh.geometry.index.array.length / 3);
 
@@ -432,7 +430,7 @@ export class CachedRepository implements Repository {
           }
 
           console.log("For mesh name " + meshName + ", using offset = " + offset + ", count = " + count);
-          console.log("Had originally offset = " + triangleOffset + ", count = " + triangleCount);
+          console.log("Had originally offset = " + triangleOffset + ", count = " + triangleCount); */
           
           const instanceMatrixBuffer = new Float32Array(16 * fileMeshIndices.length);
           const treeIndicesBuffer = new Float32Array(fileMeshIndices.length);
@@ -446,6 +444,15 @@ export class CachedRepository implements Repository {
             const color = colors.subarray(meshIdx * 4, meshIdx * 4 + 4);
             colorBuffer.set(color, i * 4);
           }
+
+          const offsetCountTuple = gltf.meshNameToOffsetCountMap.get(meshName);
+          
+          if (!offsetCountTuple) {
+            console.log("Could not find offset count tuple for mesh name " + meshName);
+          }
+          
+          const offset = offsetCountTuple!.triangleOffset;
+          const count = offsetCountTuple!.triangleCount;
           
           instancedMeshes.push({
             // triangleCount,
@@ -458,6 +465,19 @@ export class CachedRepository implements Repository {
           });
         }
 
+        /* console.log("Num vertices = " + newVertices.length);
+        console.log("Num indices = " + newIndices.length);
+
+        let maxi = 0;
+        let mini = 1e9;
+        for (let i = 0; i < newIndices.length; i++) {
+          maxi = Math.max(newIndices[i], maxi);
+          mini = Math.min(newIndices[i], mini);
+        }
+
+        console.log("Max i = " + maxi);
+        console.log("Min i = " + mini);
+
         const reformattedIndices = new Uint32Array(newIndices.length);
         const reformattedVertices = new Float32Array(newVertices.length);
 
@@ -467,27 +487,24 @@ export class CachedRepository implements Repository {
 
         for (let i = 0; i < newVertices.length; i++) {
           reformattedVertices[i] = newVertices[i];
-        }
-
-        console.log("10 first new indices = ");
-        for (let i = 0; i < 10; i++) {
-          console.log(reformattedIndices[i]);
-        }
+        } */
 
         const mesh: InstancedMeshFile = {
           fileId,
-          indices: reformattedIndices,
-          // vertices,
-          vertices: reformattedVertices,
-          instances: instancedMeshes
+          // indices: reformattedIndices,
+          // vertices: reformattedVertices,
+          indices,
+          vertices,
+          instances: instancedMeshes // .slice(0, -1)
         };
         finalMeshes.push(mesh);
       }
-      
       // debugger;
 
       return finalMeshes;
     })();
+
+    console.log("Number of instances in total = " + finalInstanceMeshes.length);
 
     const sector: SectorGeometry = {
       treeIndexToNodeIdMap: i3dFile.treeIndexToNodeIdMap,
