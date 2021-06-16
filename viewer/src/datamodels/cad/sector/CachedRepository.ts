@@ -313,7 +313,7 @@ export class CachedRepository implements Repository {
           for (let triIdx = triOffset; triIdx < triOffset + triCount; triIdx++) {
             
             for (let j = 0; j < 3; j++) {
-              const vIdx = newIndices[3 * triIdx + j];
+              const vIdx = indices[3 * triIdx + j];
 
               sharedTreeIndices[vIdx] = treeIndex;
 
