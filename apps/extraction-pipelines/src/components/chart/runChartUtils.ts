@@ -78,6 +78,7 @@ const countStatusesByDate = (
     }, 0);
   });
 };
+
 export const getStatusCountAndTotalByDate = (
   params: GroupByParams
 ): number[][] => {

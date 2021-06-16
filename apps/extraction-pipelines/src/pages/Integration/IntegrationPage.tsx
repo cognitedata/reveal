@@ -16,7 +16,10 @@ import { useAppEnv } from 'hooks/useAppEnv';
 import InteractiveCopyWithText from 'components/InteractiveCopyWithText';
 import { IntegrationDetails } from 'components/integration/IntegrationDetails';
 import { HEALTH_PATH, RouterParams } from 'routing/RoutingConfig';
-import { DETAILS, HEALTH } from 'utils/constants';
+import {
+  EXT_PIPE_TAB_OVERVIEW,
+  EXT_PIPE_TAB_RUN_HISTORY,
+} from 'utils/constants';
 import { IntegrationHealth } from 'components/integration/IntegrationHealth';
 import { IntegrationHeading } from 'components/integration/IntegrationHeading';
 import { LinkWrapper } from 'styles/StyledLinks';
@@ -89,7 +92,7 @@ const IntegrationPage: FunctionComponent<IntegrationPageProps> = () => {
         <PageNav>
           <li>
             <NavLink to={{ pathname: url, search }} exact className="tab-link">
-              {DETAILS}
+              {EXT_PIPE_TAB_OVERVIEW}
             </NavLink>
           </li>
           <li>
@@ -98,7 +101,7 @@ const IntegrationPage: FunctionComponent<IntegrationPageProps> = () => {
               exact
               className="tab-link"
             >
-              {HEALTH}
+              {EXT_PIPE_TAB_RUN_HISTORY}
             </NavLink>
           </li>
         </PageNav>

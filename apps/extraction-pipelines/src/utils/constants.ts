@@ -67,8 +67,8 @@ export const REMOVE_DIALOG_TEXT_PART: Readonly<string> =
   'Are you sure you want to remove';
 
 export const EXTRACTION_PIPELINE_OVERVIEW: Readonly<string> = `${EXTRACTION_PIPELINE} overview`;
-export const DETAILS: Readonly<string> = `${EXTRACTION_PIPELINE} details`;
-export const HEALTH: Readonly<string> = `${EXTRACTION_PIPELINE} health`;
+export const EXT_PIPE_TAB_OVERVIEW: Readonly<string> = `${EXTRACTION_PIPELINE} overview`;
+export const EXT_PIPE_TAB_RUN_HISTORY: Readonly<string> = `${EXTRACTION_PIPELINE} run history`;
 export const CONTACTS: Readonly<string> = 'Contacts';
 
 // name
