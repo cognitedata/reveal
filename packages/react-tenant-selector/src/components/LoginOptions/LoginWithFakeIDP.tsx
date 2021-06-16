@@ -17,6 +17,8 @@ const LoginWithFakeIDP: React.FC<Props> = ({
   cluster,
   name,
   fakeApplicationId,
+  otherIdTokenFields,
+  otherAccessTokenFields,
   authClient,
   handleSubmit,
   disabled,
@@ -27,6 +29,8 @@ const LoginWithFakeIDP: React.FC<Props> = ({
         fakeApplicationId,
         groups,
         project,
+        otherIdTokenFields,
+        otherAccessTokenFields,
         roles,
       })
       .then((result) => {

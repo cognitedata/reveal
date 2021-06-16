@@ -1,3 +1,7 @@
+## 1.2.10 June 2021
+
+- Add given_name and family_name to fake-idp
+
 ## 1.2.9 June 2021
 
 - Bump auth-utils to v1.0.6
