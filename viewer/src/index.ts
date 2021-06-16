@@ -28,7 +28,8 @@ export {
   ByNodePropertyNodeSet,
   CombinedNodeSet,
   InvertedNodeSet,
-  NodeAppearanceProvider
+  NodeAppearanceProvider,
+  SerializedNodeSet
 } from './datamodels/cad/styling';
 export { IndexSet } from './utilities/IndexSet';
 export { NumericRange } from './utilities/NumericRange';

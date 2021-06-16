@@ -68,6 +68,5 @@ export abstract class NodeSet {
     this._changedEvent.fire();
   }
 
-  /** @internal */
   abstract serialize(): SerializedNodeSet;
 }

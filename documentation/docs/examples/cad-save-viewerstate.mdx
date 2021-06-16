@@ -87,3 +87,54 @@ const myState = {
 
 viewer.setViewState(myState);
 ```
+
+## Serializing and deserializing custom node sets
+When working with custom node sets, the Reveal viewer needs to know how to serialize and deserialize the set.
+Serialization is handled through the abstract method `serialize` which needs to be implemented when extending `NodeSet`.
+The output of `serialize` is of type `SerializedNodeSet` and contains a `token` which is used to recreate the `NodeSet` during deserialization, and a `state` object which contains the data needed to restore the `NodeSet`.
+It is up to the application developer to fill this state object with any nessesary data needed to recreate the state of the `NodeSet`.
+And optional `options` object can also be supplied containing any metadata for loading data (e.g. the number of API calls to fetch the needed data in parallel).
+If contents returned from `serialize` is contained in the result of `getViewState`.
+
+In addition to serialization, Reveal also needs to know how to recreate the custom `NodeSet` during deserialization.
+This is done by calling the free-function `registerCustomNodeSetType` with the same `token` defined by the custom `NodeSet` and a lambda function which instantiates and restore the state of the `NodeSet`.
+The lambda function has two parameters: the `descriptor` containing the state and options which should be applied to the `NodeSet` and the context containing an instance of the [CogniteSDK](https://docs.cognite.com/dev/guides/sdk/js/) and the `Cognite3DModel` which the `NodeSet` was originally applied to.
+It is up to the application developer how and if they want to use the context and/or descriptor, but it is provided as a convinience. 
+
+And example of a simple custom `NodeSet` can be seen below.
+For more information on creating a custom `NodeSet`, see [Create custom node sets](cad-styling-custom).
+```jsx
+// MyNodeSet.ts
+class MyNodeSet extends NodeSet {
+  
+  isLoading = false;
+  private _indexSet: IndexSet;
+  
+  constructor(model: Cognite3DModel) {
+    // token used for serialization / deserialization
+    super('MyNodeSet');
+
+    this._indexSet = new IndexSet();
+    for (let i = 0; i < model.nodeCount / 2; i++) {
+      this._indexSet.add(i);
+    }
+  }
+
+  getIndexSet() {
+    return this._indexSet;
+  }
+
+  serialize(): SerializedNodeSet {
+    return { token: this.classToken, state: this._indexSet.toRangeArray()}
+  }
+
+  clear() {
+    this._indexSet.clear();
+    this.notifyChanged();
+  }
+};
+
+registerCustomNodeSetType<MyNodeSet>('MyNodeSet', (descriptor, context) => {
+  return Promise.resolve(new MyNodeSet(context.model));
+});
+```
