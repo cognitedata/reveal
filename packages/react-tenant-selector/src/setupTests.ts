@@ -4,7 +4,7 @@
 // learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom';
 
-import mocks from '@cognite/auth-utils/mocks';
+import mocks from '@cognite/auth-utils/dist/mocks';
 
 jest.mock('@cognite/auth-utils', () => {
   const original = jest.requireActual('@cognite/auth-utils');

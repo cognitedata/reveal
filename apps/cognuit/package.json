@@ -33,7 +33,7 @@
       ".stories."
     ],
     "moduleNameMapper": {
-      "^@cognite/(.*)/mocks$": [
+      "^@cognite/(.*)/dist/mocks$": [
         "<rootDir>/../../packages/$1/src/mocks",
         "<rootDir>/../../packages/$1/dist/mocks"
       ],

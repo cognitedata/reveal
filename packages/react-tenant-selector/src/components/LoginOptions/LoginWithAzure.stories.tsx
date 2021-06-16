@@ -1,5 +1,5 @@
 import React from 'react';
-import mockAuth from '@cognite/auth-utils/mocks';
+import mockAuth from '@cognite/auth-utils/dist/mocks';
 
 import { StyledContentWrapper } from '../CardContainer/elements';
 

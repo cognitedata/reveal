@@ -8,10 +8,10 @@ module.exports = {
   testEnvironment: 'node',
   coveragePathIgnorePatterns: ['/node_modules/', '/test/'],
   moduleNameMapper: {
-    // resolve @cognite/<package>/mocks to
-    // 1. @cognite/<package>/mocks/src when running plain jest
-    // 2. @cognite/<package>/mocks/src when running through bazel
-    '^@cognite/(.*)/mocks$': [
+    // resolve @cognite/<package>/dist/mocks to
+    // 1. @cognite/<package>/src/mocks when running plain jest
+    // 2. @cognite/<package>/dist/mocks when running through bazel
+    '^@cognite/(.*)/dist/mocks$': [
       '../../../packages/$1/src/mocks',
       '../../../packages/$1/dist/mocks',
     ],

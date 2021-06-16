@@ -3,6 +3,6 @@
 // expect(element).toHaveTextContent(/react/i)
 // learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom/extend-expect';
-import * as mocks from '@cognite/metrics/mocks';
+import * as mocks from '@cognite/metrics/dist/mocks';
 
 jest.mock('@cognite/metrics', () => mocks);
