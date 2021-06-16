@@ -57,6 +57,12 @@ module.exports = {
     'default-case': 'error',
     'no-console': ['warn', { allow: ['warn', 'error', 'assert'] }],
 
+    // https://github.com/typescript-eslint/typescript-eslint/blob/master/packages/eslint-plugin/docs/rules/naming-convention.md
+    '@typescript-eslint/naming-convention': [
+      'warn',
+      { selector: 'typeLike', format: ['PascalCase'] },
+      { selector: 'method', format: ['camelCase'], leadingUnderscore: 'allow' }
+    ],
     '@typescript-eslint/unbound-method': 'error',
     '@typescript-eslint/prefer-for-of': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
