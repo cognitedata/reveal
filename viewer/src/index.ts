@@ -33,6 +33,9 @@ export {
 export { IndexSet } from './utilities/IndexSet';
 export { NumericRange } from './utilities/NumericRange';
 
+// Custom Node Set deserialization free-function
+export { registerCustomNodeSetType, TypeName, NodeSetDescriptor, NodeSetContext } from './datamodels/cad/styling';
+
 // Export ThreeJS to enable easy import for our users
 import * as THREE from 'three';
 export { THREE };

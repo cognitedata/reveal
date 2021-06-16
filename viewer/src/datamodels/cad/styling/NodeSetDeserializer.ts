@@ -16,9 +16,9 @@ import {
 import { IndexSet } from '../../../utilities/IndexSet';
 import { NumericRange } from '../../../utilities/NumericRange';
 
-type TypeName = string;
-type NodeSetContext = { client: CogniteClient; model: Cognite3DModel };
-type NodeSetDescriptor = { token: TypeName; state: any; options?: any };
+export type TypeName = string;
+export type NodeSetContext = { client: CogniteClient; model: Cognite3DModel };
+export type NodeSetDescriptor = { token: TypeName; state: any; options?: any };
 
 export class NodeSetDeserializer {
   public static readonly Instance = new NodeSetDeserializer();
@@ -88,4 +88,11 @@ export class NodeSetDeserializer {
       return new InvertedNodeSet(context.model, innerSet);
     });
   }
+}
+
+export function registerCustomNodeSetType<T extends NodeSet>(
+  nodeSetType: TypeName,
+  deserializer: (descriptor: NodeSetDescriptor, context: NodeSetContext) => Promise<T>
+) {
+  NodeSetDeserializer.Instance.registerNodeSetType(nodeSetType, deserializer);
 }
