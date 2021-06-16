@@ -16,8 +16,8 @@
     "eslint:fix": "yarn eslint --fix",
     "eslint:bazel": "bazel test :eslint_test",
     "eslint:bazel-fix": "bazel run :eslint_test -- --fix",
-    "prettier": "../../node_modules/.bin/prettier --config .prettierrc -l 'src/**/*.{js,ts,tsx}' || (echo \nThese files are not formatted correctly && false)",
-    "prettier:fix": "../../node_modules/.bin/prettier --config .prettierrc --write -l 'src/**/*.{js,ts,tsx}'",
+    "prettier": "../../node_modules/.bin/prettier --config ../../.prettierrc.js -l 'src/**/*.{js,ts,tsx}' || (echo \nThese files are not formatted correctly && false)",
+    "prettier:fix": "../../node_modules/.bin/prettier --config ../../.prettierrc.js --write -l 'src/**/*.{js,ts,tsx}'",
     "prettier:bazel": "bazel test :prettier_test",
     "prettier:bazel-fix": "bazel run :prettier_test -- --write",
     "update-helpers": "bazel run :generate_package_json_helpers"

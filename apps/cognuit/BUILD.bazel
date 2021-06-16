@@ -118,7 +118,6 @@ eslint_config(
     src = ":.eslintrc.js",
     deps = [
         ".eslintrc.production.js",
-        ".prettierrc",
         "//:eslint_config",
     ],
 )

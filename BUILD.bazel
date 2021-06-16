@@ -6,7 +6,7 @@ exports_files(
     [
         "tsconfig.json",
         "package.json",
-        ".prettierrc",
+        ".prettierrc.js",
     ],
     visibility = ["//visibility:public"],
 )
@@ -17,7 +17,7 @@ eslint_config(
     src = ":.eslintrc.js",
     visibility = ["//visibility:public"],
     deps = [
-        ".prettierrc",
+        ".prettierrc.js",
         "tsconfig.json",
     ],
 )
@@ -25,7 +25,7 @@ eslint_config(
 # Base Prettier config
 prettier_config(
     name = "prettier_config",
-    src = ".prettierrc",
+    src = ".prettierrc.js",
     visibility = ["//visibility:public"],
 )
 
