@@ -25,16 +25,6 @@ export const MetadataList = ({ timeseriesId }: MetadataListProps) => {
   return (
     <>
       <MetadataItem label="Name" value={timeseries?.name} copyable />
-      <MetadataItem label="ID" value={timeseries?.id} copyable />
-      <MetadataItem
-        label="Is Step"
-        value={timeseries?.isStep ? 'True' : 'False'}
-      />
-      <MetadataItem
-        label="Created At"
-        value={dayjs(timeseries?.createdTime).format('YYYY-MM-DD HH:mm:ss')}
-      />
-      <MetadataItem label="Description" value={timeseries?.description} />
       <MetadataItem
         label="External ID"
         value={timeseries?.externalId}
@@ -42,14 +32,11 @@ export const MetadataList = ({ timeseriesId }: MetadataListProps) => {
       />
       <DataSetItem timeseries={timeseries} />
       <MetadataItem
-        label="Updated At"
+        label="Updated"
         value={dayjs(timeseries?.lastUpdatedTime).format('YYYY-MM-DD HH:mm:ss')}
       />
-      <MetadataItem label="Unit" value={timeseries?.unit} />
-      <MetadataItem
-        label="Is String"
-        value={timeseries?.isString ? 'True' : 'False'}
-      />
+      <MetadataItem label="Step" value={timeseries?.isStep ? 'Yes' : 'No'} />
+      <MetadataItem label="ID" value={timeseries?.id} copyable />
       <LinkedAssetItem timeseries={timeseries} />
     </>
   );
