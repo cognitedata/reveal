@@ -8,11 +8,18 @@ import { createSearchParams } from 'utils/integrationUtils';
 import { Colors } from '@cognite/cogs.js';
 import { createExtPipePath } from 'utils/baseURL';
 import { EXT_PIPE_PATH } from 'routing/RoutingConfig';
-import { CDF_LABEL, DATA_SETS_LABEL } from 'utils/constants';
+import {
+  CDF_LABEL,
+  DATA_SETS_LABEL,
+  EXTRACTION_PIPELINES_OVERVIEW,
+} from 'utils/constants';
+import { StyledNavLink } from 'styles/StyledLinks';
 
 const BreadcrumbsWrapper = styled.nav`
   grid-area: breadcrumbs;
-  padding: 0.875rem 0 0.875rem 2rem;
+  padding: 0.875rem 2rem;
+  display: flex;
+  justify-content: space-between;
   ol {
     margin: 0;
     padding-left: 0;
@@ -93,6 +100,13 @@ export const IntegrationBreadcrumbs: FunctionComponent<IntegrationBreadcrumbsPro
           );
         })}
       </ol>
+      <StyledNavLink
+        to={{
+          pathname: createExtPipePath(),
+        }}
+      >
+        {EXTRACTION_PIPELINES_OVERVIEW}
+      </StyledNavLink>
     </BreadcrumbsWrapper>
   );
 };

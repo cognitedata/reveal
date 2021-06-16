@@ -11,7 +11,7 @@ const getBaseUrl = (project: string): string => {
   return `/api/playground/projects/${project}/${EXTRACTION_PIPELINE_PATH}`;
 };
 const createExtPipePath = (
-  path?: string,
+  path: string = '',
   queries?: any,
   opts?: StringifyOptions
 ) => {

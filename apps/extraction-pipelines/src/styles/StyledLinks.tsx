@@ -24,8 +24,6 @@ export const StyledLink = styled((props) => <a {...props}>{props.children}</a>)`
   }
 `;
 export const StyledNavLink = styled(NavLink)`
-  color: ${Colors.black.hex()};
-  margin-right: 0.5rem;
   &:hover {
     text-decoration: underline;
   }
