@@ -65,6 +65,7 @@ eslint_test(
     data = SOURCES + TESTS + [
         ":tsconfig.json",
         "//packages:tsconfig.json",
+        "//:tsconfig.json",
     ],
     eslint_config = ":eslint_config",
 )
@@ -81,6 +82,7 @@ jest_test(
         "//packages:jest.config.js",
         ":tsconfig.json",
         "//packages:tsconfig.json",
+        "//:tsconfig.json",
     ],
     jest_args = [],
     jest_config = "jest.config.js",
@@ -108,6 +110,7 @@ jest(
         "chdir-workspace.js",
         "jest.config.js",
         "tsconfig.json",
+        "//:tsconfig.json",
         "//packages:jest.config.js",
         "//packages:tsconfig.json",
     ],
@@ -152,6 +155,7 @@ rollup(
         ":copy_static_files",
         ":package-json",
         "//packages:tsconfig",
+        "//:tsconfig",
         "@npm//@types/jest",
         "@npm//@types/node",
         "@npm//tslib",
