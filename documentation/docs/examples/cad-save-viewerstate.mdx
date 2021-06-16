@@ -94,17 +94,14 @@ Serialization is handled through the abstract method `serialize` which needs to 
 The output of `serialize` is of type `SerializedNodeSet` and contains a `token` which is used to recreate the `NodeSet` during deserialization, and a `state` object which contains the data needed to restore the `NodeSet`.
 It is up to the application developer to fill this state object with any nessesary data needed to recreate the state of the `NodeSet`.
 An optional `options` object can also be supplied containing any metadata for loading data (e.g. the number of API calls to fetch the needed data in parallel).
-
 The contents returned from `serialize` is contained in the result of `getViewState`.
 
 In addition to serialization, Reveal also needs to know how to recreate the custom `NodeSet` during deserialization.
 This is done by calling the free-function `registerCustomNodeSetType` with the same `token` defined by the custom `NodeSet` and a lambda function which instantiates and restore the state of the `NodeSet`.
 The lambda function has two parameters: the `descriptor` containing the state and options which should be applied to the `NodeSet` and the context containing an instance of the [CogniteClient from the Cognite SDK](https://docs.cognite.com/dev/guides/sdk/js/) and the `Cognite3DModel` which the `NodeSet` was originally applied to.
-
 It is up to the application developer how and if they want to use the context and/or descriptor, but it is provided as a convinience. 
 
 An example of a simple custom `NodeSet` can be seen below.
-
 For more information on creating a custom `NodeSet`, see [Create custom node sets](cad-styling-custom).
 ```jsx
 // MyNodeSet.ts
