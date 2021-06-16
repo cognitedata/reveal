@@ -1,8 +1,10 @@
 import { Col, Input, Row } from '@cognite/cogs.js';
 import { format } from 'date-fns';
-import { Section } from './elements';
+
 import { UNIX_TIMESTAMP_FACTOR } from '../../../typings/interfaces';
 import { getFormattedTimestampOrString } from '../../../pages/DataTransfers/utils';
+
+import { Section } from './elements';
 import { TargetType } from './DetailView';
 import Step from './Step';
 
@@ -16,6 +18,7 @@ const TranslationTabContent = ({ ...target }: TargetType) => (
               <summary>Revision steps</summary>
               <div>
                 {target.revisionSteps.map((step) => (
+                  // eslint-disable-next-line react/jsx-key
                   <Step {...step} />
                 ))}
               </div>

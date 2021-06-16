@@ -1,16 +1,16 @@
 import React, { useEffect } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
-
 import { Title, Body } from '@cognite/cogs.js';
 import { AuthConsumer, AuthContext } from '@cognite/react-container';
 import {
   intercomHelper,
   intercomInitialization,
 } from '@cognite/intercom-helper';
-
 import sidecar from 'utils/sidecar';
-import { Content } from './elements';
+
 import { Container, Code } from '../elements';
+
+import { Content } from './elements';
 
 const IntercomPageWrapper: React.FC = () => (
   <AuthConsumer>

@@ -30,11 +30,11 @@ export class ApiClient {
     this.client = client;
   }
 
-  getAppData(linkedGroupsOnly: boolean = true): Promise<AppDataResponse> {
+  getAppData(linkedGroupsOnly = true): Promise<AppDataResponse> {
     return this.makeGETRequest(`/appData?linkedGroupsOnly=${linkedGroupsOnly}`);
   }
 
-  getUserGroups(linkedOnly: boolean = true): Promise<Group[]> {
+  getUserGroups(linkedOnly = true): Promise<Group[]> {
     return this.makeGETRequest(`/groups?linkedOnly=${linkedOnly}`);
   }
 
@@ -77,6 +77,7 @@ export class ApiClient {
    * Helper POST function
    * @private
    */
+  // eslint-disable-next-line @typescript-eslint/ban-types
   private async makePOSTRequest<T extends object>(url: string, data?: T) {
     if (!this.client) {
       throw new Error('Unreachable code');
@@ -96,6 +97,7 @@ export class ApiClient {
    * Helper GET function
    * @private
    */
+  // eslint-disable-next-line @typescript-eslint/ban-types
   private async makeGETRequest<T extends object>(url: string) {
     if (!this.client) {
       throw new Error('Unreachable code');
@@ -114,6 +116,7 @@ export class ApiClient {
    * Helper DELETE function
    * @private
    */
+  // eslint-disable-next-line @typescript-eslint/ban-types
   private async makeDELETERequest<T extends object>(url: string, data?: T) {
     if (!this.client) {
       throw new Error('Unreachable code');

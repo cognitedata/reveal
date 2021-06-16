@@ -6,6 +6,10 @@ import {
   GenericResponseObject,
   UNIX_TIMESTAMP_FACTOR,
 } from 'typings/interfaces';
+
+import { DATE_RANGE_VALUES, DateRangeValueType } from '../utils';
+import EmptyTableMessage from '../../../components/Molecules/EmptyTableMessage/EmptyTableMessage';
+
 import {
   Container,
   ChartContainer,
@@ -17,9 +21,7 @@ import {
   StatusText,
   OnOfWrapper,
 } from './elements';
-import { DATE_RANGE_VALUES, DateRangeValueType } from '../utils';
 import { getDayDates, getHourDates, getMonthDates } from './utils';
-import EmptyTableMessage from '../../../components/Molecules/EmptyTableMessage/EmptyTableMessage';
 
 type Props = {
   dateRange: DateRangeValueType;

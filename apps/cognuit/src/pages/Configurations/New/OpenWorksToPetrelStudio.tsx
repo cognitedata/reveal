@@ -29,11 +29,12 @@ import {
   SaveButton,
   ThreeColsLayout,
 } from '../elements';
-import { makeConnectorLines } from './utils';
 import DatatypeSection from '../DatatypeSection/DatatypeSection';
 import LoadingBox from '../../../components/Molecules/LoadingBox';
-import ConfigArrow from './ConfigArrow';
 import { CloseIcon } from '../../../components/Organisms/DetailView/elements';
+
+import ConfigArrow from './ConfigArrow';
+import { makeConnectorLines } from './utils';
 
 type Props = {
   name: string | undefined | null;

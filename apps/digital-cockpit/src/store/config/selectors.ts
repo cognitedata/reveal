@@ -5,7 +5,7 @@ import { ConfigState } from './types';
 export const getConfigState = (state: StoreState): ConfigState => state.config;
 
 export const getApplications =
-  (tenantName: string = '') =>
+  (tenantName = '') =>
   (state: StoreState) => {
     const { applications = [] } = getConfigState(state);
     return allApplications

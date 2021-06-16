@@ -1,4 +1,5 @@
 import { Body, Row, Col, Title } from '@cognite/cogs.js';
+
 import { staticText } from './staticText';
 import { Container } from './elements';
 

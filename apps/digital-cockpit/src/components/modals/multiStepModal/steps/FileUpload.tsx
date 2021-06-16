@@ -117,7 +117,7 @@ export const FileUpload: React.FC<Props> = ({
   const renderFileName = (
     fname: string,
     onCloseFn: () => void,
-    withTooltip: boolean = false
+    withTooltip = false
   ) => {
     const fileTag = (
       <Tag closable onClose={onCloseFn}>

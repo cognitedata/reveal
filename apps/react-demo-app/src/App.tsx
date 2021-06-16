@@ -1,7 +1,6 @@
 import GlobalStyles from 'global-styles';
 import { Switch, Redirect, Route } from 'react-router-dom';
 import { Container } from '@cognite/react-container';
-
 import sidecar from 'utils/sidecar';
 import Info from 'pages/Info';
 import Home from 'pages/Home';

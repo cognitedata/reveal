@@ -1,5 +1,6 @@
 import Label from 'components/Atoms/Label';
 import { Dropdown } from '@cognite/cogs.js';
+
 import { FilterListProps } from './types';
 import { DropdownButton, FieldWrapper } from './elements';
 import { FilterListItems } from './FilterListItems';

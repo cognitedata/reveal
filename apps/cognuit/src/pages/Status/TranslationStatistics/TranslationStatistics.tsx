@@ -7,6 +7,7 @@ import {
   GenericResponseObject,
   TranslationStatisticsObject,
 } from 'typings/interfaces';
+
 import { Container, ChartContainer } from '../Heartbeats/elements';
 import { DATE_RANGE_VALUES, DateRangeValueType } from '../utils';
 import EmptyTableMessage from '../../../components/Molecules/EmptyTableMessage/EmptyTableMessage';

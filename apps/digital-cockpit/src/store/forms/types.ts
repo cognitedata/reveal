@@ -34,6 +34,7 @@ export enum FormActionTypes {
 
 export type FormRootAction = ActionType<typeof actions>;
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export type BoardState = Board | {};
 
 export type ImageFileState = {

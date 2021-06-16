@@ -1,5 +1,6 @@
 import { Colors } from '@cognite/cogs.js';
 import CircleProgressBar from 'components/Atoms/CircleProgressBar';
+
 import { LoadingBoxWrapper, LoadingText } from './elements';
 
 type Props = {

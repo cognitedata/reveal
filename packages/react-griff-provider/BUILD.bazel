@@ -57,7 +57,7 @@ generate_package_json_helpers(
 DEPENDENCIES = [
     "@npm//bluebird",
     "@npm//d3",
-    "@npm//lodash.isequal",
+    "@npm//lodash",
     "@npm//react",
 ]
 
@@ -65,7 +65,7 @@ DEPENDENCIES = [
 TYPE_DEPENDENCIES = [
     "@npm//@types/bluebird",
     "@npm//@types/d3",
-    "@npm//@types/lodash.isequal",
+    "@npm//@types/lodash",
     "@npm//@types/react",
     "@npm//@types/sinon",
 ]
@@ -99,6 +99,7 @@ eslint_config(
     src = ":.eslintrc.js",
     deps = [
         ".prettierrc",
+        "//:eslint_config",
         "//packages:eslint_config",
     ],
 )

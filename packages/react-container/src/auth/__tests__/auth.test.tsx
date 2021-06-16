@@ -22,24 +22,26 @@ describe('getAuthHeaders', () => {
   });
 
   it('should work with ID token', () => {
+    const wrapper = ({ children }: { children: React.ReactNode }) => (
+      <AuthProvider.Provider value={authState}>
+        {children}
+      </AuthProvider.Provider>
+    );
     const { result } = renderHook(() => getAuthHeaders({ useIdToken: true }), {
-      wrapper: ({ children }) => (
-        <AuthProvider.Provider value={authState}>
-          {children}
-        </AuthProvider.Provider>
-      ),
+      wrapper,
     });
 
     expect(result.current).toEqual({ Authorization: 'Bearer idToken-test' });
   });
 
   it('should work with auth token', () => {
+    const wrapper = ({ children }: { children: React.ReactNode }) => (
+      <AuthProvider.Provider value={authState}>
+        {children}
+      </AuthProvider.Provider>
+    );
     const { result } = renderHook(() => getAuthHeaders(), {
-      wrapper: ({ children }) => (
-        <AuthProvider.Provider value={authState}>
-          {children}
-        </AuthProvider.Provider>
-      ),
+      wrapper,
     });
 
     expect(result.current).toEqual({ Authorization: 'Bearer token-test' });
@@ -49,20 +51,21 @@ describe('getAuthHeaders', () => {
     const testKey = 'test-api-key-1';
     process.env.REACT_APP_E2E_MODE = 'true';
     process.env.REACT_APP_API_KEY = testKey;
+    const wrapper = ({ children }: { children: React.ReactNode }) => (
+      <AuthProvider.Provider
+        value={{
+          authState: {
+            ...authState.authState,
+            token: undefined,
+            idToken: undefined,
+          },
+        }}
+      >
+        {children}
+      </AuthProvider.Provider>
+    );
     const { result } = renderHook(() => getAuthHeaders(), {
-      wrapper: ({ children }) => (
-        <AuthProvider.Provider
-          value={{
-            authState: {
-              ...authState.authState,
-              token: undefined,
-              idToken: undefined,
-            },
-          }}
-        >
-          {children}
-        </AuthProvider.Provider>
-      ),
+      wrapper,
     });
 
     expect(result.current).toEqual({ 'api-key': testKey });

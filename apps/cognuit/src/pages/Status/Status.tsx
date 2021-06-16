@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { Row, Col, Menu, Dropdown, Button } from '@cognite/cogs.js';
-
 import Card from 'components/Atoms/Card';
 import Label from 'components/Atoms/Label';
 

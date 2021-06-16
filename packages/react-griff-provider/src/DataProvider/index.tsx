@@ -1,7 +1,7 @@
 import React from 'react';
 import BluebirdPromise from 'bluebird';
 import * as d3 from 'd3';
-import isEqual from 'lodash.isequal';
+import isEqual from 'lodash/isEqual';
 
 import { DataContext, DataType } from '../context';
 import Scaler from '../Scaler';

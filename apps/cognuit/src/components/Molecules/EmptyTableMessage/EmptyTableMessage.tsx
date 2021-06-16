@@ -1,5 +1,6 @@
 import { Graphic, Colors } from '@cognite/cogs.js';
 import styled from 'styled-components';
+
 import LoadingBox from '../LoadingBox';
 
 type Props = {

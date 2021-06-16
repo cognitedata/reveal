@@ -94,6 +94,7 @@ eslint_config(
     src = ":.eslintrc.js",
     deps = [
         ".prettierrc",
+        "//:eslint_config",
         "//packages:eslint_config",
     ],
 )

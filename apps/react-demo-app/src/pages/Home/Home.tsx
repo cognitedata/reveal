@@ -2,8 +2,9 @@ import * as React from 'react';
 import { Button, A, Body, Graphic } from '@cognite/cogs.js';
 import { useTranslation, Trans } from 'react-i18next';
 
-import { Header } from './elements';
 import { Container } from '../elements';
+
+import { Header } from './elements';
 
 const Home = () => {
   const [crashing, setCrashing] = React.useState(false);

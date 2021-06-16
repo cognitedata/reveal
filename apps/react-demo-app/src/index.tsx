@@ -2,7 +2,6 @@ import ReactDOM from 'react-dom';
 import * as Sentry from '@sentry/browser';
 import { Metrics } from '@cognite/metrics';
 import '@cognite/cogs.js/dist/cogs.css';
-
 import config from 'utils/config';
 
 import App from './App';

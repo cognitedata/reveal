@@ -12,6 +12,7 @@ import ApiContext from 'contexts/ApiContext';
 import APIErrorContext from 'contexts/APIErrorContext';
 import { Link, useHistory } from 'react-router-dom';
 import ErrorMessage from 'components/Molecules/ErrorMessage';
+
 import {
   BadgesContainer,
   ConfigurationContainer,
@@ -26,8 +27,9 @@ import {
   SaveButton,
   ThreeColsLayout,
 } from '../elements';
-import { makeConnectorLines } from './utils';
 import { CloseIcon } from '../../../components/Organisms/DetailView/elements';
+
+import { makeConnectorLines } from './utils';
 import ConfigArrow from './ConfigArrow';
 
 type Props = {

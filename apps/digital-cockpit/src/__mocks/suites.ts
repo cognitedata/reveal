@@ -1,6 +1,6 @@
 import { Suite } from 'store/suites/types';
 
-export const getSuiteWithImages = (key: string = 'test-suite-with-images') => ({
+export const getSuiteWithImages = (key = 'test-suite-with-images') => ({
   key,
   title: 'Test suite with images',
   color: '#FFE1D1',
@@ -25,7 +25,7 @@ export const getSuiteWithImages = (key: string = 'test-suite-with-images') => ({
 });
 
 export const getSuiteWithEmbedTags = (
-  key: string = 'test-suite-with-embedded-tags'
+  key = 'test-suite-with-embedded-tags'
 ) => ({
   key,
   title: 'Test suite with embeded tags',
@@ -53,7 +53,7 @@ export const getSuiteWithEmbedTags = (
   ],
 });
 
-export const getEmptySuite = (key: string = 'test-empty-suite') => ({
+export const getEmptySuite = (key = 'test-empty-suite') => ({
   key,
   title: 'Test empty syite',
   color: '#FFE1D1',

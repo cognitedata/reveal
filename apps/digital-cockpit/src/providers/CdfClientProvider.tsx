@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import { CdfClient } from '../utils';
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 export const CdfClientContext = React.createContext<CdfClient>(null);
 

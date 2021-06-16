@@ -43,7 +43,7 @@ describe('AppHeader', () => {
       const broupPreviewBar = await screen.findByTestId(
         'user-group-preview-bar'
       );
-      expect(broupPreviewBar).toBeTruthy();
+      expect(broupPreviewBar).toBeInTheDocument();
     });
 
     it('should NOT show group preview button for regular users', async () => {
@@ -57,7 +57,7 @@ describe('AppHeader', () => {
 
       await waitFor(() => {
         const broupPreviewBar = screen.queryByTestId('user-group-preview-bar');
-        expect(broupPreviewBar).toBeFalsy();
+        expect(broupPreviewBar).not.toBeInTheDocument();
       });
     });
 
@@ -83,7 +83,7 @@ describe('AppHeader', () => {
       const groupPreviewBar = await screen.findByTestId(
         'user-group-preview-bar'
       );
-      expect(groupPreviewBar).toBeTruthy();
+      expect(groupPreviewBar).toBeInTheDocument();
     });
 
     it('should hide group preview bar when click on "Clear view" btn', async () => {
@@ -102,7 +102,7 @@ describe('AppHeader', () => {
       clearViewBtn.click();
 
       const groupPreviewBar = screen.queryByTestId('user-group-preview-bar');
-      expect(groupPreviewBar).toBeFalsy();
+      expect(groupPreviewBar).not.toBeInTheDocument();
     });
   });
 });

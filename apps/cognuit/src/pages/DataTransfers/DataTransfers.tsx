@@ -14,7 +14,6 @@ import {
   Tooltip,
   Range,
 } from '@cognite/cogs.js';
-
 import ApiContext from 'contexts/ApiContext';
 import APIErrorContext from 'contexts/APIErrorContext';
 import sortBy from 'lodash/sortBy';
@@ -30,14 +29,15 @@ import {
 } from 'typings/interfaces';
 
 import { ContentContainer } from '../../elements';
-import Revisions from './Revisions';
-import config from './datatransfer.config';
 import ErrorMessage from '../../components/Molecules/ErrorMessage';
-import { getMappedColumnName, getFormattedTimestampOrString } from './utils';
-import { Filters } from './Filters';
 import DetailView, {
   DetailDataProps,
 } from '../../components/Organisms/DetailView/DetailView';
+
+import Revisions from './Revisions';
+import config from './datatransfer.config';
+import { getMappedColumnName, getFormattedTimestampOrString } from './utils';
+import { Filters } from './Filters';
 import {
   TableActions,
   ColumnsSelector,

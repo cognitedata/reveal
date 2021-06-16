@@ -4,8 +4,9 @@ import { Asset, CogniteClient } from '@cognite/sdk';
 import { Title, Body, A } from '@cognite/cogs.js';
 import { useTranslation, Trans } from 'react-i18next';
 
-import { Elevation, Content } from './elements';
 import { Container, Code } from '../elements';
+
+import { Elevation, Content } from './elements';
 
 const CogniteSDKPageWrapper: React.FC = () => (
   <AuthConsumer>

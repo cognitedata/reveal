@@ -20,7 +20,9 @@ export interface TransProps<E extends Element = HTMLDivElement>
   i18nKey?: string;
   ns?: string;
   parent?: string | React.ComponentType<any> | null; // used in React.createElement if not null
+  // eslint-disable-next-line @typescript-eslint/ban-types
   tOptions?: {};
+  // eslint-disable-next-line @typescript-eslint/ban-types
   values?: {};
   t?: TFunction;
 }

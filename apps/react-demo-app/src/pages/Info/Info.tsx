@@ -1,7 +1,7 @@
 import { A, Body, Title } from '@cognite/cogs.js';
 import { useTranslation, Trans } from 'react-i18next';
-
 import sidecar from 'utils/sidecar';
+
 import { Container, Code } from '../elements';
 
 const Info = () => {
