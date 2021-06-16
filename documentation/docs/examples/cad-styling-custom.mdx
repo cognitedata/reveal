@@ -56,7 +56,7 @@ mySet.getIndexSet = () => {
   }
   return indexSet;
 };
-mySet.clear = () => throw new Error('Not supported');
+mySet.clear = () => { throw new Error('Not supported'); }
 
 model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
 model.addStyledNodeSet(mySet, { renderGhosted: false, color: [40, 200, 20] } );
