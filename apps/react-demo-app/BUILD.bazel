@@ -304,6 +304,8 @@ testcafe_test(
         "'testcafe/desktop'",
         "--stop-on-first-fail",
         "--app './scripts/testcafe-bazel-serve.sh'",
+        "–q",
+        "--config-file .testcaferc.json",
     ],
     data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + SCRIPTS + [
         ":build_sed",
