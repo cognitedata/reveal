@@ -9,7 +9,7 @@ import SharingDropdown from 'components/SharingDropdown/SharingDropdown';
 import { trackUsage } from 'utils/metrics';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 
-export const ChartActions = () => {
+export const ChartActions = ({ className }: { className?: string }) => {
   const move = useNavigate();
 
   const { chartId } = useParams<{ chartId: string }>();
@@ -85,7 +85,7 @@ export const ChartActions = () => {
   }
 
   return (
-    <TopBar.Item style={{ padding: '0 3px' }}>
+    <TopBar.Item className={className} style={{ padding: '0 3px' }}>
       <Tooltip content="Share">
         <SharingDropdown chart={chart} disabled={!isOwner} />
       </Tooltip>

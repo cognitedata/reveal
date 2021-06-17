@@ -25,6 +25,7 @@ import { getEntryColor } from 'utils/colors';
 import { useSearchParam } from 'hooks';
 import { SEARCH_KEY } from 'utils/constants';
 import { metrics, trackUsage } from 'utils/metrics';
+import { toggleDownloadChartElements } from 'utils/charts';
 import { ITimer } from '@cognite/metrics';
 import { Modes } from 'pages/types';
 import DetailsSidebar from 'components/DetailsSidebar';
@@ -70,7 +71,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   const isWorkspaceMode = workspaceMode === 'workspace';
 
   const screenshotRef = useRef(null);
-  const { takeScreenshot } = useScreenshot({ ref: screenshotRef });
+  const { takeScreenshot } = useScreenshot();
   const downloadScreenshot = (
     image: string | undefined,
     chartName: string | undefined
@@ -84,7 +85,9 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     a.click();
   };
   const downloadChart = (e: any) => {
+    const height = toggleDownloadChartElements(true);
     takeScreenshot('png').then((image) => {
+      toggleDownloadChartElements(false, height);
       // @ts-ignore
       downloadScreenshot(image, e.detail.chartName);
     });
@@ -290,27 +293,42 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
               <SourceName>Unit</SourceName>
             </SourceItem>
           </th>
-          <th style={{ width: 50, paddingLeft: 0 }}>
+          <th
+            style={{ width: 50, paddingLeft: 0 }}
+            className="downloadChartHideTd"
+          >
             <SourceItem style={{ justifyContent: 'center' }}>
               <SourceName>P&amp;IDs</SourceName>
             </SourceItem>
           </th>
-          <th style={{ width: 50, paddingLeft: 0 }}>
+          <th
+            style={{ width: 50, paddingLeft: 0 }}
+            className="downloadChartHideTd"
+          >
             <SourceItem style={{ justifyContent: 'center' }}>
               <SourceName>Style</SourceName>
             </SourceItem>
           </th>
-          <th style={{ width: 50, paddingLeft: 0 }}>
+          <th
+            style={{ width: 50, paddingLeft: 0 }}
+            className="downloadChartHideTd"
+          >
             <SourceItem style={{ justifyContent: 'center' }}>
               <SourceName>Remove</SourceName>
             </SourceItem>
           </th>
-          <th style={{ width: 50, paddingLeft: 0 }}>
+          <th
+            style={{ width: 50, paddingLeft: 0 }}
+            className="downloadChartHideTd"
+          >
             <SourceItem style={{ justifyContent: 'center' }}>
               <SourceName>Details</SourceName>
             </SourceItem>
           </th>
-          <th style={{ width: 50, paddingLeft: 0 }}>
+          <th
+            style={{ width: 50, paddingLeft: 0 }}
+            className="downloadChartHideTd"
+          >
             <SourceItem style={{ justifyContent: 'center' }}>
               <SourceName>More</SourceName>
             </SourceItem>
@@ -326,7 +344,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
         <Search visible={showSearch} onClose={handleCloseSearch} />
       )}
       <ContentWrapper showSearch={showSearch}>
-        <Header inSearch={showSearch}>
+        <Header className="downloadChartHide" inSearch={showSearch}>
           {!showSearch && (
             <section className="actions">
               <Button icon="Plus" type="primary" onClick={handleOpenSearch}>
