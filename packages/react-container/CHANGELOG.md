@@ -1,3 +1,12 @@
+## 1.3.0 Jun 17 2021
+
+- Add peer dep for SDK to align versions
+- Include cogs.css import
+
+## 1.2.10 Jun 10 2021
+
+- BROKEN, use v1.3
+
 ## 1.2.7 Jun 4 2021
 
 - Bump tsa to v1.2.9 and auth-utils to 1.0.6
