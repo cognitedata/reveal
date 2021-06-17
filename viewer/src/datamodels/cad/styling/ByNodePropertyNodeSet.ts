@@ -12,6 +12,8 @@ import { NodeSet } from './NodeSet';
 
 import range from 'lodash/range';
 
+import cloneDeep from 'lodash/cloneDeep';
+
 /**
  * Options for {@link ByNodePropertyNodeSet}.
  */
@@ -35,9 +37,10 @@ export class ByNodePropertyNodeSet extends NodeSet {
   private readonly _revisionId: number;
   private readonly _options: Required<ByNodePropertyNodeSetOptions>;
   private _fetchResultHelper: PopulateIndexSetFromPagedResponseHelper<Node3D> | undefined;
+  private _filter = {};
 
   constructor(client: CogniteClient, model: Cognite3DModel, options: ByNodePropertyNodeSetOptions = {}) {
-    super();
+    super('ByNodePropertyNodeSet');
     this._client = client;
     this._modelId = model.modelId;
     this._revisionId = model.revisionId;
@@ -87,10 +90,15 @@ export class ByNodePropertyNodeSet extends NodeSet {
       return fetchResultHelper.pageResults(indexSet, response);
     });
 
+    this._filter = filter;
+
     this.notifyChanged();
     await Promise.all(requests);
   }
 
+  getFilter() {
+    return this._filter;
+  }
   /**
    * Clears the node set and interrupts any ongoing operations.
    */
@@ -104,5 +112,14 @@ export class ByNodePropertyNodeSet extends NodeSet {
 
   getIndexSet(): IndexSet {
     return this._indexSet;
+  }
+
+  /** @internal */
+  serialize() {
+    return {
+      token: this.classToken,
+      state: cloneDeep(this._filter),
+      options: { ...this._options }
+    };
   }
 }

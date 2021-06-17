@@ -18,13 +18,13 @@ module.exports = {
       collapsed: false,
       items: [
         'examples/cad-basic',
-        { 
+        {
           "Styling CAD models": [
             'examples/cad-styling',
             'examples/cad-styling-assets',
             'examples/cad-styling-nodes',
             'examples/cad-styling-custom',
-          ] 
+          ]
         },
         'examples/cad-transform-override',
         'examples/cad-2doverlay',
@@ -32,6 +32,7 @@ module.exports = {
         'examples/node-visiting',
         'examples/cad-preview',
         'examples/clipping',
+        'examples/cad-save-viewerstate',
         'examples/pointcloud',
         'examples/pointcloud-intersections',
         'examples/antialiasing',
