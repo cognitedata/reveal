@@ -3,6 +3,7 @@ import { Checkbox } from 'antd';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
 import { Badge, Icon, Input, Tooltip } from '@cognite/cogs.js';
 import { DataTransferObject } from 'typings/interfaces';
+
 import { CollapsePanel, Container, ExpandButton, Header } from './elements';
 
 type Props = {

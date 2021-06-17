@@ -1,6 +1,6 @@
 {
   "name": "@cognite/auth-utils",
-  "version": "1.0.9",
+  "version": "1.0.9-rc.0",
   "description": "The auth layer of all cognite react apps",
   "source": "src/index.ts",
   "main": "dist/index.js",
@@ -15,7 +15,10 @@
   ],
   "scripts": {
     "build": "bazel build :auth-utils",
-    "test": "bazel test :jest_test",
+    "test": "../../node_modules/.bin/jest",
+    "test:watch": "yarn test --watchAll",
+    "test:bazel": "bazel test :jest_test",
+    "test:bazel-run": "ibazel run :jest --",
     "lint": "bazel test :eslint_test :prettier_test",
     "eslint": "bazel test :eslint_test",
     "eslint:fix": "bazel run :eslint_test -- --fix",

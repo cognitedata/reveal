@@ -1,7 +1,9 @@
 import { format } from 'date-fns';
 import { UNIX_TIMESTAMP_FACTOR } from 'typings/interfaces';
-import dataTransfersConfig from './datatransfer.config';
+
 import configurationsConfig from '../Configurations/configurations.config';
+
+import dataTransfersConfig from './datatransfer.config';
 
 export const getFormattedTimestampOrString = (revision: string | number) => {
   if (new Date(Number(revision) * UNIX_TIMESTAMP_FACTOR).getTime() > 0) {
@@ -12,7 +14,7 @@ export const getFormattedTimestampOrString = (revision: string | number) => {
 
 export const getMappedColumnName = (
   colName: string,
-  page: string = 'datatransfers'
+  page = 'datatransfers'
 ) => {
   let mapped = null;
   if (page === 'datatransfers') {

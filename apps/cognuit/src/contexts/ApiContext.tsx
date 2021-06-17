@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { AuthConsumer, AuthContext } from '@cognite/react-container';
+
 import Api from '../services/Api';
 
 type Props = {

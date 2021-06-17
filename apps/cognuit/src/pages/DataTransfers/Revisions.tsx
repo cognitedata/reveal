@@ -1,8 +1,10 @@
 import { useState, useEffect, useContext } from 'react';
 import { Button, Colors, Tooltip } from '@cognite/cogs.js';
 import { apiStatuses } from 'utils/statuses';
+
 import { DataTransferObject, RevisionObject } from '../../typings/interfaces';
 import ApiContext from '../../contexts/ApiContext';
+
 import { SubTable, RevisionLabel, StatusDot } from './elements';
 import { getFormattedTimestampOrString } from './utils';
 

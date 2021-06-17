@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Button, Tooltip, Input } from '@cognite/cogs.js';
+
 import { Container } from './elements';
 
 type Props = {

@@ -1,8 +1,10 @@
 import { useEffect } from 'react';
 import { Colors, Modal } from '@cognite/cogs.js';
 import { Tabs } from 'antd';
-import { CloseIcon, Content } from './elements';
+
 import LoadingBox from '../../Molecules/LoadingBox';
+
+import { CloseIcon, Content } from './elements';
 import SourceTabContent from './SourceTabContent';
 import TranslationTabContent from './TranslationTabContent';
 

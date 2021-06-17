@@ -1,7 +1,9 @@
 import { Col, Input, Row } from '@cognite/cogs.js';
 import { format } from 'date-fns';
+
 import { UNIX_TIMESTAMP_FACTOR } from '../../../typings/interfaces';
 import { getFormattedTimestampOrString } from '../../../pages/DataTransfers/utils';
+
 import { Section } from './elements';
 import { SourceType } from './DetailView';
 import Step from './Step';
@@ -139,6 +141,7 @@ const SourceTabContent = ({ ...source }: SourceType) => (
         <summary>Upload to CDF</summary>
         {source.revisionSteps &&
           source.revisionSteps.length > 0 &&
+          // eslint-disable-next-line react/jsx-key
           source.revisionSteps.map((step) => <Step {...step} />)}
       </details>
     </Section>

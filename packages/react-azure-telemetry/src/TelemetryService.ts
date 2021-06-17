@@ -5,6 +5,15 @@ import { History } from 'history';
 const reactPlugin: ReactPlugin = new ReactPlugin();
 let appInsights: ApplicationInsights | null = null;
 
+export type AzureTelemetryOptions = {
+  enableDebug?: boolean;
+  loggingLevelConsole?: number;
+  loggingLevelTelemetry?: number;
+  enableAutoRouteTracking?: boolean;
+  enableAjaxPerfTracking?: boolean;
+  autoTrackPageVisitTime?: boolean;
+};
+
 /**
  * Create the App Insights Telemetry Service
  * @return {{reactPlugin: ReactPlugin, appInsights: Object, initialize: Function}} - Object
@@ -16,7 +25,18 @@ const createTelemetryService = () => {
    * @param {Object} browserHistory - client's browser history, supplied by the withRouter HOC
    * @return {void}
    */
-  const initialize = (browserHistory: History, instrumentationKey?: string) => {
+  const initialize = (
+    browserHistory: History,
+    instrumentationKey?: string,
+    options: AzureTelemetryOptions = {
+      enableDebug: false,
+      loggingLevelConsole: 1,
+      loggingLevelTelemetry: 1,
+      enableAutoRouteTracking: true,
+      enableAjaxPerfTracking: true,
+      autoTrackPageVisitTime: true,
+    }
+  ) => {
     if (!browserHistory) {
       throw new Error('Could not initialize Telemetry Service');
     }
@@ -29,15 +49,13 @@ const createTelemetryService = () => {
         instrumentationKey,
         maxBatchInterval: 0,
         disableFetchTracking: false,
+        ...options,
         extensions: [reactPlugin],
         extensionConfig: {
           [reactPlugin.identifier]: {
             history: browserHistory,
           },
         },
-        enableDebug: true,
-        loggingLevelConsole: 2,
-        loggingLevelTelemetry: 2,
       },
     });
 

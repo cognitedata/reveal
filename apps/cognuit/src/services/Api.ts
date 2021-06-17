@@ -1,5 +1,6 @@
 import SIDECAR from 'utils/sidecar';
 import { CogniteClient } from '@cognite/sdk';
+
 import {
   GenericResponseObject,
   RESTConfigurationsFilter,
@@ -19,7 +20,7 @@ import {
 } from './mockData';
 
 export type QueryParameters = {
-  [property: string]: number | string | boolean | object | undefined;
+  [property: string]: number | string | boolean | undefined;
 };
 
 export function buildQueryString(parameters: QueryParameters): string {
@@ -73,9 +74,7 @@ class Api {
     //     },
     //   ];
     // }
-    const urlWithStringQuery: string = `${url}?${buildQueryString(
-      parameters || {}
-    )}`;
+    const urlWithStringQuery = `${url}?${buildQueryString(parameters || {})}`;
     const response = await fetch(urlWithStringQuery, {
       method: 'GET',
       headers: this.headers,

@@ -1,10 +1,10 @@
 import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 import { Avatar, Tooltip } from '@cognite/cogs.js';
-
 import { AuthConsumer } from '@cognite/react-container';
 import Logo from 'components/Atoms/Logo';
 import zIndex from 'utils/zIndex';
+
 import AppSwitcher from '../Atoms/AppSwitcher';
 
 const Header = styled.header`

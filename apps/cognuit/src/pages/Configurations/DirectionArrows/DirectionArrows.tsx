@@ -1,4 +1,5 @@
 import { Colors, Icon } from '@cognite/cogs.js';
+
 import { ArrowsContainer, Arrow } from './elements';
 
 type Props = {

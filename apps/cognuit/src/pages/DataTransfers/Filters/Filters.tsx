@@ -1,5 +1,4 @@
 import { useState } from 'react';
-
 import { Button } from '@cognite/cogs.js';
 
 import { FiltersProps, FilterTypes, FilterListFilters } from './types';

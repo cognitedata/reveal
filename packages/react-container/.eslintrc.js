@@ -4,7 +4,6 @@ module.exports = {
   ...baseConfig,
   rules: {
     ...baseConfig.rules,
-    'react/require-default-props': [0],
-    'react/prop-types': 'off',
+    // We can extend package rules below
   },
 };

@@ -1,6 +1,6 @@
 {
   "name": "@cognite/react-azure-telemetry",
-  "version": "0.0.2-rc.0",
+  "version": "0.0.3-rc.0",
   "source": "src/index.ts",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
@@ -14,7 +14,10 @@
   ],
   "scripts": {
     "build": "bazel build :react-azure-telemetry",
-    "test": "bazel test :jest_test",
+    "test": "../../node_modules/.bin/jest",
+    "test:watch": "yarn test --watchAll",
+    "test:bazel": "bazel test :jest_test",
+    "test:bazel-run": "ibazel run :jest --",
     "lint": "bazel test :eslint_test :prettier_test",
     "eslint": "bazel test :eslint_test",
     "eslint:fix": "bazel run :eslint_test -- --fix",

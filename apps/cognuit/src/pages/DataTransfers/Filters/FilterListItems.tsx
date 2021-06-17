@@ -17,7 +17,7 @@ export const FilterListItems = (
   onSelect: (source: SourceType) => void,
   closeHandler: () => void,
   onReset?: () => void,
-  resetText: string = 'Reset'
+  resetText = 'Reset'
 ) => (
   <Menu>
     {onReset && (

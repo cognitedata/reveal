@@ -8,7 +8,6 @@ import {
 import { Badge, Colors, Icon, Tooltip } from '@cognite/cogs.js';
 import { Table } from 'antd';
 import { ColumnsType } from 'antd/es/table';
-
 import { ContentContainer } from 'elements';
 import ApiContext from 'contexts/ApiContext';
 import CreateNewConfiguration from 'components/Molecules/CreateNewConfiguration';
@@ -25,9 +24,11 @@ import {
 } from 'typings/interfaces';
 import EmptyTableMessage from 'components/Molecules/EmptyTableMessage/EmptyTableMessage';
 import ProgressBar, { ProgressType } from 'components/Molecules/ProgressBar';
+
 import APIErrorContext from '../../contexts/APIErrorContext';
 import ErrorMessage from '../../components/Molecules/ErrorMessage';
 import { ExpandRowIcon, StatusDot } from '../DataTransfers/elements';
+
 import config from './configurations.config';
 import DirectionArrows from './DirectionArrows';
 import {

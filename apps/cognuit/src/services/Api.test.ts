@@ -7,7 +7,7 @@ describe('Utility function buildQueryString', () => {
       a: 1,
       b: true,
     };
-    const output: string = 'foo=bar&a=1&b=true';
+    const output = 'foo=bar&a=1&b=true';
     expect(buildQueryString(input)).toEqual(output);
   });
 });

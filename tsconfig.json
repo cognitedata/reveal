@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "baseUrl": "src",
     "target": "es5",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
@@ -17,8 +18,17 @@
     "jsx": "react-jsx",
     "sourceMap": true,
     "paths": {
-      "@cognite/*": ["*", "../../../packages/*/src"]
+      "@cognite/*": [
+        "../../../packages/*/src",
+        "<rootDir>/../../packages/*/src",
+        "../../../node_modules/@cognite/*",
+        "<rootDir>/../../node_modules/@cognite/*"
+      ],
+      "@cognite/metrics/dist/mocks": [
+        "../../../packages/metrics/src/mocks",
+        "<rootDir>/../../packages/metrics/src/mocks"
+      ]
     }
   },
-  "exclude": ["node_modules", "dist"]
+  "exclude": ["node_modules", "dist", "build"]
 }

@@ -1,4 +1,5 @@
 load("@npm//rollup:index.bzl", "rollup")
+load("@npm//jest:index.bzl", "jest")
 load("@build_bazel_rules_nodejs//:index.bzl", "copy_to_bin", "js_library", "pkg_npm")
 load("@bazel_skylib//rules:write_file.bzl", "write_file")
 load("//rules/test:jest.bzl", "jest_test")
@@ -86,7 +87,7 @@ eslint_config(
     name = "eslint_config",
     src = ":.eslintrc.js",
     deps = [
-        ".prettierrc",
+        "//:eslint_config",
         "//packages:eslint_config",
     ],
 )
@@ -96,6 +97,7 @@ eslint_test(
     data = SOURCES + TESTS + [
         ":tsconfig.json",
         "//packages:tsconfig.json",
+        "//:tsconfig.json",
     ],
     eslint_config = ":eslint_config",
 )
@@ -113,11 +115,44 @@ jest_test(
         "//packages:jest.react.config.js",
         ":tsconfig.json",
         "//packages:tsconfig.json",
+        "//:tsconfig.json",
     ],
     jest_args = [],
     jest_config = "jest.config.js",
     service_name = "react-azure-telemetry",
     deps = DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES,
+)
+
+# For ibazel run to properly pick the changes we need to run from the Workspace directory
+write_file(
+    name = "write_chdir_worspace_script",
+    out = "chdir-workspace.js",
+    content = ["process.chdir(require('path').join(process.env.BUILD_WORKSPACE_DIRECTORY, '" + package_name() + "'));"],
+)
+
+jest(
+    name = "jest",
+    args = [
+        "--node_options=--require=./$(rootpath chdir-workspace.js)",
+        "--config",
+        "jest.config.js",
+        "--runInBand",
+        "--watchAll",
+    ],
+    data = [
+        "chdir-workspace.js",
+        "jest.config.js",
+        "tsconfig.json",
+        "//:tsconfig.json",
+        "//packages:jest.config.js",
+        "//packages:tsconfig.json",
+    ],
+    tags = [
+        # This tag instructs ibazel to pipe into stdin a event describing actions.
+        # ibazel send EOF to stdin by default and `react-scripts start` will stop when getting EOF in stdin.
+        # So use this to prevent EOF.
+        "ibazel_notify_changes",
+    ],
 )
 
 write_file(
@@ -153,6 +188,7 @@ rollup(
         ":copy_static_files",
         ":package-json",
         "//packages:tsconfig",
+        "//:tsconfig",
         "@npm//@types/jest",
         "@npm//@types/node",
         "@npm//tslib",

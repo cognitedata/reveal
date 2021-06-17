@@ -1,11 +1,10 @@
 import { Switch, Route } from 'react-router-dom';
 import { AuthConsumer, Container } from '@cognite/react-container';
 import { Loader } from '@cognite/cogs.js';
-
 import GlobalStyles from 'global-styles';
-
 import sidecar from 'utils/sidecar';
 import Home from 'pages/Home';
+
 import Configurations from './pages/Configurations';
 import DataTransfers from './pages/DataTransfers';
 import Status from './pages/Status';

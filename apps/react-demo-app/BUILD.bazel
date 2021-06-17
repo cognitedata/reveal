@@ -3,7 +3,7 @@ load("@build_bazel_rules_nodejs//:index.bzl", "copy_to_bin")
 load("@npm//@storybook/react:index.bzl", "build_storybook", "start_storybook")
 load("@npm//react-scripts:index.bzl", "react_scripts")
 load("@npm//testcafe:index.bzl", "testcafe")
-load("//rules/lint:index.bzl", "eslint_test", "prettier_test")
+load("//rules/lint:index.bzl", "eslint_config", "eslint_test", "prettier_test")
 load("//rules/package_json_helpers:generate.bzl", "generate_package_json_helpers")
 load("//rules/publish:publish_fas.bzl", "publish_fas")
 load("//rules/publish:publish_storybook.bzl", "publish_storybook")
@@ -121,12 +121,22 @@ mappings_dict = {
 
 ### end of auto-generated helpers ###
 
+eslint_config(
+    name = "eslint_config",
+    src = ":.eslintrc.js",
+    deps = [
+        ".eslintrc.production.js",
+        "//:eslint_config",
+    ],
+)
+
 eslint_test(
     name = "eslint_test",
     data = SOURCES + TESTS + [
         ":tsconfig.json",
+        "//:tsconfig.json",
     ],
-    eslint_config = "//:eslint_config",
+    eslint_config = ":eslint_config",
 )
 
 prettier_test(
@@ -294,6 +304,8 @@ testcafe_test(
         "'testcafe/desktop'",
         "--stop-on-first-fail",
         "--app './scripts/testcafe-bazel-serve.sh'",
+        "–q",
+        "--config-file .testcaferc.json",
     ],
     data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + SCRIPTS + [
         ":build_sed",

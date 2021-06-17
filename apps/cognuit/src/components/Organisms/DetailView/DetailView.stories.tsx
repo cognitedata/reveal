@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Button } from '@cognite/cogs.js';
+
 import DetailView from './DetailView';
 
 // noinspection JSUnusedGlobalSymbols

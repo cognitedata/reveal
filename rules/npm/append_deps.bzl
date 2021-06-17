@@ -2,33 +2,33 @@
 
 load("@build_bazel_rules_nodejs//:providers.bzl", "JSModuleInfo")
 
-def _append_deps_impl(ctx):
-    out_file = ctx.actions.declare_file("package.json")
-
+def _filter_deps(dependencies):
     packages = []
-    for dep in ctx.attr.dependencies:
+    for dep in dependencies:
         for source in dep[JSModuleInfo].direct_sources.to_list():
             if (source.basename == "package.json"):
                 # If a package (e.g. nodegit) has submodules (vendor/libgit2)
                 # we don't want their name and version to appear in resulting package.json.
-                # Since Starlark does not come with match regexp function we are filtering out paths
-                # where node_modules appering not on the second last position of the path.
-                # For example:
+                # Examples:
                 # external/npm/node_modules/nodegit - true
                 # external/npm/node_modules/nodegit/vendor/libgit2 - false
+                # external/npm/node_modules/@microsoft/applicationinsights-react-js - true
                 # We also want to skip internal packages from checking
                 if source.dirname.find("node_modules") > -1:
                     parts = source.dirname.split("/")
-                    if (len(parts) - 1 - parts.index("node_modules") == 1):
+
+                    # package name should be last in the package path
+                    if (source.dirname.index(dep.label.package) + len(dep.label.package) == len(source.dirname)):
                         packages.append(source)
                 else:
                     packages.append(source)
+    return packages
 
-    dev_packages = []
-    for dep in ctx.attr.dev_dependencies:
-        for source in dep[JSModuleInfo].direct_sources.to_list():
-            if (source.basename == "package.json"):
-                dev_packages.append(source)
+def _append_deps_impl(ctx):
+    out_file = ctx.actions.declare_file("package.json")
+
+    packages = _filter_deps(ctx.attr.dependencies)
+    dev_packages = _filter_deps(ctx.attr.dev_dependencies)
 
     ctx.actions.run(
         inputs = depset(packages + dev_packages + [ctx.file.package]),

@@ -1,4 +1,5 @@
 import { Colors } from '@cognite/cogs.js';
+
 import { StyledFigure } from './elements';
 
 const INITIAL_OFFSET = 25;

@@ -1,5 +1,6 @@
 import { Colors, Tooltip } from '@cognite/cogs.js';
 import styled from 'styled-components';
+
 import { ValueProps, ProgressType, ProgressBarProps } from '.';
 
 const Bar = styled.div`

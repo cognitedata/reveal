@@ -26,7 +26,7 @@ const CLUSTER = 'ew1';
 // #
 // # -------------------------------------
 
-const generateBaseUrls = (cluster: string, prod: boolean = false) => {
+const generateBaseUrls = (cluster: string, prod = false) => {
   switch (cluster) {
     case 'ew1': {
       return {

@@ -1,5 +1,6 @@
 import { useLocation } from 'react-router-dom';
 import { ColumnsType, ColumnType } from 'antd/es/table';
+
 import { GenericResponseObject, Rule } from '../typings/interfaces';
 import { getMappedColumnName } from '../pages/DataTransfers/utils';
 import config from '../pages/Configurations/configurations.config';

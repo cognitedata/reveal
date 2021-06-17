@@ -36,11 +36,25 @@ Then wrap your app with:
 <Router history={history}>
   <AzureTelemetryProvider
     instrumentationKey={instrumentationKey}
+    options={options}
   >
     {children}
   </AzureTelemetryProvider>
 </Router>
 ```
+
+Example options:
+
+```
+   enableDebug: false,
+   loggingLevelConsole: 1,
+   loggingLevelTelemetry: 1,
+   enableAutoRouteTracking: true,
+   enableAjaxPerfTracking: true,
+   autoTrackPageVisitTime: true,
+```
+
+For notes on these fields see: https://docs.microsoft.com/en-us/azure/azure-monitor/app/javascript#configuration
 
 ### 2 Add user context
 
@@ -57,3 +71,30 @@ if (insights && email) {
 ```
 
 More info [here](https://github.com/microsoft/ApplicationInsights-JS/blob/master/API-reference.md#setauthenticatedusercontext)
+
+### 3 Track individual events
+
+```
+import { getAppInsights } from '@cognite/react-azure-telemetry';
+
+const MyComponent = () => {
+  const appInsights = getAppInsights();
+
+  const handleClick = () => {
+    appInsights?.trackEvent({ name: 'click test button' });
+  }
+
+  return <div onClick={handleClick}>test</div>
+}
+
+```
+
+Some other events are:
+
+```
+  appInsights.trackException({ error: new Error('some error'), severityLevel: SeverityLevel.Error });
+  appInsights.trackTrace({ message: 'some trace', severityLevel: SeverityLevel.Information });
+  appInsights.trackEvent({ name: 'some event' });
+```
+
+More info [here](https://docs.microsoft.com/en-us/azure/azure-monitor/app/api-custom-events-metrics)
