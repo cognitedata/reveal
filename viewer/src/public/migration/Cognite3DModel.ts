@@ -34,6 +34,11 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     return this.cadNode.nodeTransformProvider;
   }
 
+  /** @internal */
+  get styleNodeSets(): { nodes: NodeSet; appearance: NodeAppearance }[] {
+    return this._styledNodeSets;
+  }
+
   /**
    * The CDF model ID of the model.
    */
@@ -48,6 +53,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   private readonly cadModel: CadModelMetadata;
   private readonly client: CogniteClient;
   private readonly nodeIdAndTreeIndexMaps: NodeIdAndTreeIndexMaps;
+  private readonly _styledNodeSets: { nodes: NodeSet; appearance: NodeAppearance }[] = [];
 
   /**
    * @param modelId
@@ -106,7 +112,6 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    *
    * @param nodeSet Dynamic set of nodes to apply the provided appearance to.
    * @param appearance Appearance to style the provided set with.
-   *
    * @example
    * ```js
    * model.setDefaultNodeAppearance({ rendererGhosted: true });
@@ -115,6 +120,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * ```
    */
   addStyledNodeSet(nodeSet: NodeSet, appearance: NodeAppearance) {
+    this._styledNodeSets.push({ nodes: nodeSet, appearance });
     this.cadNode.nodeAppearanceProvider.addStyledSet(nodeSet, appearance);
   }
 

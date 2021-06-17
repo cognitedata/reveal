@@ -4,7 +4,7 @@
 import { Cognite3DModel } from '../../../public/migration/Cognite3DModel';
 import { NumericRange } from '../../../utilities';
 import { IndexSet } from '../../../utilities/IndexSet';
-import { NodeSet } from './NodeSet';
+import { NodeSet, SerializedNodeSet } from './NodeSet';
 
 /**
  * Node sets that inverts the result from another node set.
@@ -15,7 +15,7 @@ export class InvertedNodeSet extends NodeSet {
   private _cachedIndexSet?: IndexSet;
 
   constructor(model: Cognite3DModel, innerSet: NodeSet) {
-    super();
+    super('InvertedNodeSet');
     this._innerSet = innerSet;
     this._innerSet.on('changed', () => {
       this._cachedIndexSet = undefined;
@@ -40,6 +40,10 @@ export class InvertedNodeSet extends NodeSet {
     return this._cachedIndexSet;
   }
 
+  /** @internal */
+  serialize(): SerializedNodeSet {
+    return { token: this.classToken, state: { innerSet: this._innerSet.serialize() } };
+  }
   /**
    * Not supported.
    * @throws Always throws an error.
