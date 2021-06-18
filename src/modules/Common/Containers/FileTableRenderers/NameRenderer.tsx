@@ -6,7 +6,15 @@ import { Tooltip } from '@cognite/cogs.js';
 import exifIcon from 'src/assets/exifIcon.svg';
 import React from 'react';
 import styled from 'styled-components';
-import FileIcon from 'src/assets/FileIcon.svg';
+import ImageIcon from 'src/assets/ImageIcon.svg';
+import ImageWithExifIcon from 'src/assets/ImageWithExifIcon.svg';
+import VideoIcon from 'src/assets/VideoIcon.svg';
+import VideoWithExifIcon from 'src/assets/VideoWithExifIcon.svg';
+import ImageWithAnnotationsIcon from 'src/assets/ImageWithAnnotationsIcon.svg';
+import ImageWithAnnotationsAndExifIcon from 'src/assets/ImageWithAnnotationsAndExifIcon.svg';
+import { FileInfo } from '@cognite/cdf-sdk-singleton';
+import { isVideo } from '../../Components/FileUploader/utils/FileUtils';
+import { selectFileAnnotations } from '../../annotationSlice';
 
 export const FileNameText = styled.div`
   display: flex;
@@ -34,13 +42,50 @@ export const ExifIcon = styled.div`
   flex: 0 0 auto;
 `;
 
-export function NameRenderer({ rowData: { name, id } }: CellRenderer) {
+export function NameRenderer({
+  rowData: { name, id, mimeType, geoLocation },
+}: CellRenderer) {
   const fileDetails = useSelector((state: RootState) =>
     selectUpdatedFileDetails(state, id)
   );
+
+  const hasAnnotations = useSelector(
+    ({ annotationReducer }: RootState) =>
+      !!selectFileAnnotations(annotationReducer, id).length
+  );
+
+  const renderIcon = () => {
+    const isVideoFile = isVideo({ mimeType } as FileInfo);
+    let icon = null;
+
+    if (hasAnnotations) {
+      icon = geoLocation ? (
+        <img
+          src={ImageWithAnnotationsAndExifIcon}
+          alt="ImageWithAnnotationsAndExifIcon"
+        />
+      ) : (
+        <img src={ImageWithAnnotationsIcon} alt="ImageWithAnnotationsIcon" />
+      );
+    } else if (isVideoFile) {
+      icon = geoLocation ? (
+        <img src={VideoWithExifIcon} alt="VideoWithExifIcon" />
+      ) : (
+        <img src={VideoIcon} alt="VideoIcon" />
+      );
+    } else {
+      icon = geoLocation ? (
+        <img src={ImageWithExifIcon} alt="ImageWithExifIcon" />
+      ) : (
+        <img src={ImageIcon} alt="ImageIcon" />
+      );
+    }
+
+    return icon;
+  };
   return (
     <FileRow>
-      <img src={FileIcon} alt="FileIcon" />
+      {renderIcon()}
       <FileNameText>{name}</FileNameText>
       {fileDetails?.geoLocation && (
         <Tooltip content="Exif data added">
