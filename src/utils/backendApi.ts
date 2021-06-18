@@ -1,12 +1,12 @@
 import queryString from 'query-string';
+import axios from 'axios';
 import { CogniteClient } from '@cognite/sdk';
-import config, { getBackendServiceBaseUrl, getSidecar } from 'config';
+import { getBackendServiceBaseUrl, getSidecar } from 'config';
 import {
   BACKEND_SERVICE_URL_KEY,
   CLUSTER_KEY,
   FALLBACK_TO_FUNCTIONS_URL_KEY,
 } from 'utils/constants';
-import { getLoginStatus } from './login';
 
 export type CogniteFunction = {
   id: number;
@@ -32,26 +32,17 @@ const cdfApiUrl = `https://${
 }.cognitedata.com`;
 
 const getServiceClient = async (sdk: CogniteClient) => {
-  const login = await getLoginStatus(sdk);
+  await sdk.get('/api/v1/token/inspect');
 
-  if (!login?.id) {
-    return sdk;
-  }
-
-  const client = new CogniteClient({
-    appId: config.appId,
-    baseUrl: fallBackToFunctions
+  const client = axios.create({
+    baseURL: fallBackToFunctions
       ? cdfApiUrl
       : backendServiceBaseUrlFromQuery || getBackendServiceBaseUrl(),
-  });
-
-  const accessToken = sdk
-    .getDefaultRequestHeaders()
-    .Authorization.split('Bearer ')[1];
-
-  client.loginWithOAuth({
-    project: sdk.project,
-    accessToken,
+    timeout: 10000,
+    headers: {
+      ...sdk.getDefaultRequestHeaders(),
+      'X-COGNITE-AUTH-FLOW': sdk.getOAuthFlowType(),
+    },
   });
 
   return client;
@@ -86,7 +77,7 @@ export async function callFunction(
     .post(
       `/api/playground/projects/${sdk.project}/functions/${functionId}/call`,
       {
-        data: { data },
+        data,
       }
     )
     .then((r) => r.data);
