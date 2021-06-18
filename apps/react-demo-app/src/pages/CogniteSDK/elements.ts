@@ -17,3 +17,11 @@ export const Content = styled.div`
   text-align: left;
   justify-content: left;
 `;
+
+export const Warning = styled.div`
+  background-color: var(--cogs-danger);
+  margin: 32px;
+  width: 300px;
+  padding: 20px;
+  color: white;
+`;

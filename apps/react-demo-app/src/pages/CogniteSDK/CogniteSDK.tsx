@@ -6,7 +6,7 @@ import { useTranslation, Trans } from 'react-i18next';
 
 import { Container, Code } from '../elements';
 
-import { Elevation, Content } from './elements';
+import { Elevation, Content, Warning } from './elements';
 
 const CogniteSDKPageWrapper: React.FC = () => (
   <AuthConsumer>
@@ -23,12 +23,16 @@ const CogniteSDKDataWrapper: React.FC<DataWrapperProps> = ({
   client,
 }: DataWrapperProps) => {
   const [data, setData] = React.useState<Asset>();
+  const [errorMessage, setErrorMessage] = React.useState('');
 
   const fetchData = async () => {
-    const assets = await client.assets.list();
-
-    if (assets.items) {
-      setData(assets.items[0]);
+    try {
+      const assets = await client.assets.list();
+      if (assets.items) {
+        setData(assets.items[0]);
+      }
+    } catch (error) {
+      setErrorMessage(error.message);
     }
   };
 
@@ -37,17 +41,18 @@ const CogniteSDKDataWrapper: React.FC<DataWrapperProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // only run once
 
-  if (!data) {
+  if (!data && !errorMessage) {
     return null;
   }
 
-  return <CogniteSDKPage data={data} />;
+  return <CogniteSDKPage data={data} error={errorMessage} />;
 };
 
 interface Props {
-  data: Asset;
+  data?: Asset;
+  error?: string;
 }
-export const CogniteSDKPage: React.FC<Props> = ({ data }: Props) => {
+export const CogniteSDKPage: React.FC<Props> = ({ data, error }) => {
   const { t } = useTranslation('CogniteSDK');
 
   return (
@@ -83,6 +88,11 @@ export const CogniteSDKPage: React.FC<Props> = ({ data }: Props) => {
       >
         How do I use the Cognite SDK?
       </A>
+
+      {error && (
+        <Warning>There was an error loading your data: {error}</Warning>
+      )}
+
       {data && (
         <Elevation className="z-4">
           <Body>

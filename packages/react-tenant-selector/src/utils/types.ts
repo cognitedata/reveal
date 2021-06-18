@@ -2,14 +2,15 @@
 import { IntercomBootSettings } from '@cognite/intercom-helper';
 
 export type FakeIdp = {
-  roles: string[];
-  groups: string[];
-  project: string;
   cluster: string;
-  name?: string;
+  customExpiry?: number;
   fakeApplicationId: string;
-  otherIdTokenFields: Record<string, string>;
+  groups: string[];
+  name?: string;
   otherAccessTokenFields: Record<string, string>;
+  otherIdTokenFields: Record<string, string>;
+  project: string;
+  roles: string[];
 };
 
 export type SidecarConfig = {
