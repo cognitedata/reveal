@@ -28,6 +28,8 @@ def testcafe_test(name, app_name, data, args = [], **kwargs):
         name = "%s_base" % name,
         data = [
             "@npm//@ffmpeg-installer/ffmpeg",
+            "@npm//kill-port",
+            "@npm//serve",
         ] + data,
         **kwargs
     )

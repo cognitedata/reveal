@@ -1,6 +1,6 @@
 @Library('jenkins-helpers') _
 
-static final String NODE_VERSION = 'node:12'
+static final String NODE_VERSION = 'node:16'
 
 static final Map<String, String> CONTEXTS = [
   checkout: "continuous-integration/jenkins/checkout",

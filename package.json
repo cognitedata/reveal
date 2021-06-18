@@ -70,6 +70,7 @@
     "@bazel/typescript": "^3.5.1",
     "@cognite/eslint-config": "^2.0.1",
     "@cognite/eslint-plugin": "^2.0.0",
+    "@cognite/fas-tools": "^1.0.0",
     "@cognite/testing": "^0.0.15",
     "@ffmpeg-installer/ffmpeg": "^1.0.20",
     "@rollup/plugin-image": "^2.0.6",
