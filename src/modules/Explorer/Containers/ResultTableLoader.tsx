@@ -13,7 +13,6 @@ import {
   Timeseries,
   Sequence,
 } from '@cognite/sdk';
-import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import { useHistory } from 'react-router-dom';
 import {
   getParamLink,
@@ -29,6 +28,7 @@ import {
   selectExplorerAllFiles,
   setExplorerFiles,
 } from '../store/explorerSlice';
+import { searchFilesWithValidMimeTypes } from '../../../api/file/searchFilesWithValidMimeTypes';
 
 type Resource = FileInfo | Asset | CogniteEvent | Sequence | Timeseries;
 
@@ -62,11 +62,11 @@ export const ResultTableLoader = <T extends Resource>({
 
   useEffect(() => {
     (async () => {
-      const fileSearchResult = await sdkv3.files.search({
-        filter: props.filter,
-        search: { name: props.query },
-        limit: EXPLORER_FILE_FETCH_LIMIT,
-      });
+      const fileSearchResult = await searchFilesWithValidMimeTypes(
+        props.filter,
+        { name: props.query },
+        EXPLORER_FILE_FETCH_LIMIT
+      );
       dispatch(setExplorerFiles(fileSearchResult));
     })();
 

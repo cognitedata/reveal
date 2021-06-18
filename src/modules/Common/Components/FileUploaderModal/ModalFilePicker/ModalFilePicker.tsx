@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { Button, Detail, Title } from '@cognite/cogs.js';
 import { margin } from 'src/cogs-variables';
 import * as UPLODER_CONST from 'src/constants/UploderConstants';
+import { VALID_MIME_TYPES } from 'src/constants/validMimeTypes';
 import DocumentsImg from '../../FileUploader/FilePicker/img/Documents.svg';
 import { FileDropzone } from '../../FileUploader/FilePicker/FileDropzone';
 import { FilePickerHeadless } from '../../FileUploader/FilePicker/FilePickerHeadless';
@@ -30,7 +31,9 @@ export function ModalFilePicker({
   optionDisabled,
   clearButton,
 }: ModalFilePickerProps) {
-  const acceptTypes = UPLODER_CONST.ACCEPT_TYPES.join(', ');
+  const acceptTypes = VALID_MIME_TYPES.map(
+    (mimeType) => mimeType.extention
+  ).join(', ');
   const maxTotalSizeInGB = UPLODER_CONST.MAX_TOTAL_SIZE_IN_BYTES / 1024 ** 3;
   const maxFileCount = UPLODER_CONST.MAX_FILE_COUNT;
 
