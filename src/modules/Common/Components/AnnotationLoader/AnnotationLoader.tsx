@@ -14,7 +14,7 @@ export function AnnotationLoader(props: {
 
   useEffect(() => {
     if (fileIds && fileIds.length) {
-      fileIds.forEach((id) => dispatch(RetrieveAnnotations({ fileIds: [id] })));
+      dispatch(RetrieveAnnotations(fileIds));
     }
   }, [fileIds]);
 

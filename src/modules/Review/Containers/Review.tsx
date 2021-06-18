@@ -23,9 +23,9 @@ import { AddAnnotationsFromEditModeAssetIds } from 'src/store/thunks/AddAnnotati
 import { resetEditHistory } from 'src/modules/FileDetails/fileDetailsSlice';
 import { CreateAnnotations } from 'src/store/thunks/CreateAnnotations';
 import { DeleteAnnotationsByFileIds } from 'src/store/thunks/DeleteAnnotationsByFileIds';
-import { PopulateAnnotations } from 'src/store/thunks/PopulateAnnotations';
 import { StatusToolBar } from 'src/modules/Process/Containers/StatusToolBar';
 import { fetchFilesById } from 'src/store/thunks/fetchFilesById';
+import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
 
 const DeleteButton = (props: { onConfirm: () => void }) => (
   <Popconfirm
@@ -103,7 +103,7 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
       dispatch(fetchFilesById([{ id: +fileId }]));
     }
     if (file) {
-      dispatch(PopulateAnnotations({ fileId, assetIds: file.assetIds }));
+      dispatch(RetrieveAnnotations([+fileId]));
     }
   }, [file]);
 

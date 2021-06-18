@@ -11,7 +11,8 @@ import { UnsavedAnnotation } from 'src/api/annotation/types';
 
 export enum AnnotationStatus {
   Verified = 'verified',
-  Rejected = 'deleted', // TODO: this should be rejected. What are consequences of changing it?
+  Rejected = 'rejected',
+  Deleted = 'deleted', // todo: remove this once this is not needed
   Unhandled = 'unhandled',
 }
 
@@ -225,7 +226,7 @@ export class AnnotationUtils {
       modelType,
       type,
       source,
-      status,
+      status: tempConvertAnnotationStatus(status),
       text,
       label: text,
       data,
@@ -308,3 +309,16 @@ export const isUnSavedAnnotation = (
 export const isLinkedAnnotation = (ann: Annotation): boolean => {
   return !!(ann as LinkedAnnotation).linkedResourceType;
 };
+
+// todo: remove this function once they are not needed - start
+
+export const tempConvertAnnotationStatus = (
+  status: AnnotationStatus
+): AnnotationStatus => {
+  if (status === AnnotationStatus.Deleted) {
+    return AnnotationStatus.Rejected;
+  }
+  return status;
+};
+
+// todo: remove these function once they are not needed - end

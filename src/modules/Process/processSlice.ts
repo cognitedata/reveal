@@ -154,11 +154,7 @@ export const postAnnotationJob = createAsyncThunk<
         onTick: async (latestJobVersion) => {
           await dispatch(AnnotationDetectionJobUpdate(latestJobVersion));
           if (latestJobVersion.status === 'Completed') {
-            await dispatch(
-              RetrieveAnnotations({
-                fileIds,
-              })
-            );
+            await dispatch(RetrieveAnnotations(fileIds));
           }
           dispatch(
             fileProcessUpdate({

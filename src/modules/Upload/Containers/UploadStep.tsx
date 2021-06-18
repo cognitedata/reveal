@@ -6,8 +6,8 @@ import { Body, Detail, Tabs } from '@cognite/cogs.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { addUploadedFile, selectAllFiles } from 'src/modules/Common/filesSlice';
-import { PopulateAnnotations } from 'src/store/thunks/PopulateAnnotations';
 import { pushMetric } from 'src/utils/pushMetric';
+import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
 
 pushMetric('Vision.Upload');
 
@@ -24,12 +24,7 @@ export default function UploadStep() {
   const onUploadSuccess = React.useCallback(
     (file) => {
       dispatch(addUploadedFile(file));
-      dispatch(
-        PopulateAnnotations({
-          fileId: file.id.toString(),
-          assetIds: file.assetIds,
-        })
-      );
+      dispatch(RetrieveAnnotations([file.id]));
     },
     [dispatch]
   );

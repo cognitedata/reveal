@@ -24,6 +24,7 @@ import { AnnotationDetectionJobUpdate } from 'src/store/thunks/AnnotationDetecti
 import { CreateAnnotations } from 'src/store/thunks/CreateAnnotations';
 import { UpdateAnnotationsById } from 'src/store/thunks/UpdateAnnotationsById';
 import { AddAnnotationsFromEditModeAssetIds } from 'src/store/thunks/AddAnnotationsFromEditModeAssetIds';
+import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
 
 export interface VisionAnnotationState extends Omit<VisionAnnotation, 'id'> {
   id: number;
@@ -303,7 +304,8 @@ const previewSlice = createSlice({
         addAnnotations,
         CreateAnnotations.fulfilled,
         AnnotationDetectionJobUpdate.fulfilled,
-        UpdateAnnotationsById.fulfilled
+        UpdateAnnotationsById.fulfilled,
+        RetrieveAnnotations.fulfilled
       ),
       (state, action) => {
         addEditAnnotationsToState(state, action.payload);

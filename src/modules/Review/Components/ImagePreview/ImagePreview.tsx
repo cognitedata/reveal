@@ -70,18 +70,16 @@ export const ImagePreview: React.FC<FilePreviewProps> = ({
   const [selectedAnnotation, setSelectedAnnotation] =
     useState<ProposedCogniteAnnotation>();
 
-  const styledAnnotations: ProposedCogniteAnnotation[] = annotations.map(
-    (item) => ({
-      ...item,
-      id: item.id.toString(),
-      mark: AnnotationUtils.getAnnotationStyle(
-        item.color,
-        item.status,
-        item.id === Number(selectedAnnotation?.id)
-      ),
-      version: 1,
-    })
-  );
+  const styledAnnotations: any[] = annotations.map((item) => ({
+    ...item,
+    status: item.status,
+    mark: AnnotationUtils.getAnnotationStyle(
+      item.color,
+      item.status,
+      item.id === Number(selectedAnnotation?.id)
+    ),
+    version: 1,
+  }));
 
   const handleAnnotationSelected = (annotation: ProposedCogniteAnnotation) => {
     setSelectedAnnotation(annotation);
