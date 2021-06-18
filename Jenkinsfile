@@ -51,7 +51,7 @@ pods {
   def getTitle
 
   def isPullRequest = !!env.CHANGE_ID
-  def isRelease = env.BRANCH_NAME == 'master'
+  def isRelease = env.BRANCH_NAME == 'master' || env.BRANCH_NAME.contains("release-");
   def bucketBundles = "cdf-hub-bundles"
 
   def context_checkout = "continuous-integration/jenkins/checkout"
