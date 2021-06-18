@@ -50,7 +50,7 @@ export const getCalls = async (sdk: CogniteClient, fnId: number) => {
 
   return client
     .get(`/api/playground/projects/${sdk.project}/functions/${fnId}/calls`)
-    .then((response: any) => response?.data?.items || []);
+    .then((response) => response?.data?.items || []);
 };
 
 export async function listFunctions(sdk: CogniteClient) {
