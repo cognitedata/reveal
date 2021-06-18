@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Button, Icon, Title } from '@cognite/cogs.js';
 
@@ -6,17 +6,17 @@ interface InfoBoxProps {
   isTagInfoBox: boolean;
 }
 
+const tagName = 'ShowTagHelpBox';
+const timeSeries = 'ShowTimeSeriesHelpBox';
+
 interface InfoBoxData {
   title: string;
   body: any;
 }
 
-const InfoBox = (props: InfoBoxProps) => {
+const InfoBox = ({ isTagInfoBox }: InfoBoxProps) => {
   const [displayInfo, setDisplayInfo] = useState(true);
-  console.log(props.isTagInfoBox);
-  const handleOnClick = () => {
-    setDisplayInfo(false);
-  };
+  const infoType = isTagInfoBox ? tagName : timeSeries;
 
   const timeSeriesInfo = {
     title: 'Timeseries ID',
@@ -45,7 +45,21 @@ const InfoBox = (props: InfoBoxProps) => {
     ),
   } as InfoBoxData;
 
-  const data = props.isTagInfoBox ? tagInfo : timeSeriesInfo;
+  const data = isTagInfoBox ? tagInfo : timeSeriesInfo;
+
+  const handleOnClick = () => {
+    localStorage.setItem(infoType, JSON.stringify({ display: false }));
+    setDisplayInfo(false);
+  };
+
+  useEffect(() => {
+    const toDisplay = localStorage.getItem(infoType);
+    if (toDisplay) {
+      setDisplayInfo(JSON.parse(toDisplay).display);
+    } else {
+      localStorage.setItem(infoType, JSON.stringify({ display: true }));
+    }
+  }, []);
 
   return (
     <>
