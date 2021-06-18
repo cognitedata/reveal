@@ -39,7 +39,10 @@ const getServiceClient = async (sdk: CogniteClient) => {
       ? cdfApiUrl
       : backendServiceBaseUrlFromQuery || getBackendServiceBaseUrl(),
     timeout: 10000,
-    headers: { ...sdk.getDefaultRequestHeaders() },
+    headers: {
+      ...sdk.getDefaultRequestHeaders(),
+      'X-COGNITE-AUTH-FLOW': sdk.getOAuthFlowType(),
+    },
   });
 
   return client;
