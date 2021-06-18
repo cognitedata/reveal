@@ -22,6 +22,9 @@ export default {
   external: [
     ...Object.keys(pkg.dependencies || {}),
     ...Object.keys(pkg.peerDependencies || {}),
+    // https://github.com/facebook/react/issues/20235
+    // with react 17 we are getting Unresolved dependencies for react/jsx-runtime
+    'react/jsx-runtime',
     '@cognite/cogs.js/dist/cogs.css',
   ],
   plugins: [
