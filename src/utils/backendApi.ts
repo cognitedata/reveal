@@ -1,5 +1,5 @@
 import queryString from 'query-string';
-import axios, { AxiosInstance } from 'axios';
+import axios from 'axios';
 import { CogniteClient } from '@cognite/sdk';
 import { getBackendServiceBaseUrl, getSidecar } from 'config';
 import {
