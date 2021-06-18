@@ -437,8 +437,8 @@ export class Cognite3DViewer {
       .filter(model => model instanceof Cognite3DModel)
       .map(model => model as Cognite3DModel)
       .forEach(model => {
-        model.styleNodeSets.forEach(nodeSet => nodeSet.nodes.clear());
-        model.styleNodeSets.splice(0);
+        model.styledNodeCollections.forEach(nodeCollection => nodeCollection.nodes.clear());
+        model.styledNodeCollections.splice(0);
       });
 
     this._viewStateHelper.setState(state);

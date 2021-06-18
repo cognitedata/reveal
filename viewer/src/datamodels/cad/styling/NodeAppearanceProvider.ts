@@ -6,7 +6,7 @@ import { NodeAppearance } from '..';
 import { assertNever } from '../../../utilities';
 import { EventTrigger } from '../../../utilities/events';
 import { IndexSet } from '../../../utilities/IndexSet';
-import { NodeSet } from './NodeSet';
+import { NodeCollectionBase } from './NodeCollection';
 
 /**
  * Delegate for applying styles in {@see NodeStyleProvider}.
@@ -15,14 +15,14 @@ import { NodeSet } from './NodeSet';
  */
 export type ApplyStyleDelegate = (treeIndices: IndexSet, appearance: NodeAppearance) => void;
 
-type StyledSet = {
-  nodeSet: NodeSet;
+type StyledNodeCollection = {
+  nodeCollection: NodeCollectionBase;
   appearance: NodeAppearance;
-  handleNodeSetChangedListener: () => void;
+  handleNodeCollectionChangedListener: () => void;
 };
 
 export class NodeAppearanceProvider {
-  private readonly _styledSet = new Array<StyledSet>();
+  private readonly _styledCollections = new Array<StyledNodeCollection>();
   private _lastFiredLoadingState?: boolean;
 
   private readonly _events = {
@@ -62,60 +62,56 @@ export class NodeAppearanceProvider {
     }
   }
 
-  addStyledSet(nodeSet: NodeSet, appearance: NodeAppearance) {
-    const styledSet: StyledSet = {
-      nodeSet,
-      appearance,
-      handleNodeSetChangedListener: () => {
-        this.handleNodeSetChanged(styledSet);
-      }
-    };
+  assignStyleToNodeCollection(nodeCollection: NodeCollectionBase, appearance: NodeAppearance) {
+    const existingCollection = this._styledCollections.find(x => x.nodeCollection === nodeCollection);
+    if (existingCollection !== undefined) {
+      existingCollection.appearance = appearance;
+      this.handleNodeCollectionChanged(existingCollection);
+    } else {
+      const styledCollection: StyledNodeCollection = {
+        nodeCollection: nodeCollection,
+        appearance,
+        handleNodeCollectionChangedListener: () => {
+          this.handleNodeCollectionChanged(styledCollection);
+        }
+      };
 
-    this._styledSet.push(styledSet);
-    nodeSet.on('changed', styledSet.handleNodeSetChangedListener);
-    this.notifyChanged();
-  }
-
-  changeStyledSetAppearance(nodeSet: NodeSet, appearance: NodeAppearance) {
-    const styledSet = this._styledSet.find(x => x.nodeSet === nodeSet);
-    if (!styledSet) {
-      throw new Error('Node set not added');
+      this._styledCollections.push(styledCollection);
+      nodeCollection.on('changed', styledCollection.handleNodeCollectionChangedListener);
+      this.notifyChanged();
     }
-    styledSet.appearance = appearance;
-
-    this.handleNodeSetChanged(styledSet);
   }
 
-  removeStyledSet(nodeSet: NodeSet) {
-    const index = this._styledSet.findIndex(x => x.nodeSet === nodeSet);
+  unassignStyleFromNodeCollection(nodeCollection: NodeCollectionBase) {
+    const index = this._styledCollections.findIndex(x => x.nodeCollection === nodeCollection);
     if (index === -1) {
       throw new Error('Node set not added');
     }
-    const styledSet = this._styledSet[index];
+    const styledCollection = this._styledCollections[index];
 
-    this._styledSet.splice(index, 1);
-    nodeSet.off('changed', styledSet.handleNodeSetChangedListener);
+    this._styledCollections.splice(index, 1);
+    nodeCollection.off('changed', styledCollection.handleNodeCollectionChangedListener);
     this.notifyChanged();
   }
 
   applyStyles(applyCb: ApplyStyleDelegate) {
-    this._styledSet.forEach(styledSet => {
-      const set = styledSet.nodeSet.getIndexSet();
+    this._styledCollections.forEach(styledSet => {
+      const set = styledSet.nodeCollection.getIndexSet();
       applyCb(set, styledSet.appearance);
     });
   }
 
   clear() {
-    for (const styledSet of this._styledSet) {
-      const nodeSet = styledSet.nodeSet;
-      nodeSet.off('changed', styledSet.handleNodeSetChangedListener);
+    for (const styledSet of this._styledCollections) {
+      const nodeCollection = styledSet.nodeCollection;
+      nodeCollection.off('changed', styledSet.handleNodeCollectionChangedListener);
     }
-    this._styledSet.splice(0);
+    this._styledCollections.splice(0);
     this.notifyChanged();
   }
 
   get isLoading(): boolean {
-    return this._styledSet.some(x => x.nodeSet.isLoading);
+    return this._styledCollections.some(x => x.nodeCollection.isLoading);
   }
 
   private notifyChanged() {
@@ -128,7 +124,7 @@ export class NodeAppearanceProvider {
     this._events.loadingStateChanged.fire(this.isLoading);
   }
 
-  private handleNodeSetChanged(_styledSet: StyledSet) {
+  private handleNodeCollectionChanged(_styledSet: StyledNodeCollection) {
     this.notifyChanged();
     this.notifyLoadingStateChanged();
   }

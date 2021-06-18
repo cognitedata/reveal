@@ -9,7 +9,7 @@ import { Cognite3DModel } from '../../../public/migration/Cognite3DModel';
 import { IndexSet } from '../../../utilities/IndexSet';
 import { PopulateIndexSetFromPagedResponseHelper } from './PopulateIndexSetFromPagedResponseHelper';
 import { NumericRange } from '../../../utilities/NumericRange';
-import { NodeSet, SerializedNodeSet } from './NodeSet';
+import { NodeCollectionBase, SerializedNodeCollection } from './NodeCollection';
 import cloneDeep from 'lodash/cloneDeep';
 
 /**
@@ -18,7 +18,9 @@ import cloneDeep from 'lodash/cloneDeep';
  * is considered to be part of an asset if it has a direct asset mapping or if one of its ancestors has an asset mapping
  * to the asset.
  */
-export class ByAssetNodeSet extends NodeSet {
+export class AssetNodeCollection extends NodeCollectionBase {
+  public static readonly classToken = 'AssetNodeCollection';
+
   private readonly _client: CogniteClient;
   private _indexSet = new IndexSet();
   private readonly _model: Cognite3DModel;
@@ -26,7 +28,7 @@ export class ByAssetNodeSet extends NodeSet {
   private _filter: any;
 
   constructor(client: CogniteClient, model: Cognite3DModel) {
-    super('ByAssetNodeSet');
+    super(AssetNodeCollection.classToken);
     this._client = client;
     this._model = model;
     this._fetchResultHelper = undefined;
@@ -102,7 +104,7 @@ export class ByAssetNodeSet extends NodeSet {
   }
 
   /** @internal */
-  serialize(): SerializedNodeSet {
+  serialize(): SerializedNodeCollection {
     return {
       token: this.classToken,
       state: cloneDeep(this._filter)

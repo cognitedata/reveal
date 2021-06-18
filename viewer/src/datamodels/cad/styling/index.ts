@@ -1,11 +1,16 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-export { CombinedNodeSet } from './CombinedNodeSet';
-export { ByNodePropertyNodeSet } from './ByNodePropertyNodeSet';
-export { ByTreeIndexNodeSet } from './ByTreeIndexNodeSet';
-export { InvertedNodeSet } from './InvertedNodeSet';
-export { NodeSet, SerializedNodeSet } from './NodeSet';
+export { AggregateNodeCollection } from './AggregateNodeCollection';
+export { AssetNodeCollection } from './AssetNodeCollection';
+export { PropertyFilterNodeCollection } from './PropertyFilterNodeCollection';
+export { SimpleNodeCollection } from './SimpleNodeCollection';
+export { InvertedNodeCollection } from './InvertedNodeCollection';
+export { NodeCollectionBase, SerializedNodeCollection } from './NodeCollection';
 export { NodeAppearanceProvider } from './NodeAppearanceProvider';
-export { ByAssetNodeSet } from './ByAssetNodeSet';
-export { registerCustomNodeSetType, TypeName, NodeSetDescriptor, NodeSetContext } from './NodeSetDeserializer';
+export {
+  registerCustomNodeCollectionType,
+  TypeName,
+  NodeCollectionDescriptor,
+  NodeCollectionSerializationContext
+} from './NodeCollectionDeserializer';
