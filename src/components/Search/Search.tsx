@@ -5,6 +5,7 @@ import styled from 'styled-components/macro';
 import { SEARCH_KEY } from 'utils/constants';
 import { useSearchParam } from 'hooks';
 import debounce from 'lodash/debounce';
+import InfoBox from 'components/InfoBox';
 
 type SearchProps = {
   visible: boolean;
@@ -66,6 +67,8 @@ const Search = ({ visible, onClose }: SearchProps) => {
             />
           </Tooltip>
         </SearchBar>
+        <InfoBox isTagInfoBox={false} />
+        <InfoBox isTagInfoBox />
         <SearchResultsContainer>
           <SearchResultList query={urlQuery} />
         </SearchResultsContainer>
