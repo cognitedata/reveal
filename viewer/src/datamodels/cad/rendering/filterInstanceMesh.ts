@@ -18,16 +18,6 @@ export function filterInstanceMesh(
   instanceMesh: InstancedMesh,
   geometryClipBox: THREE.Box3 | null
 ): InstancedMesh {
-  
-
-  /* console.log("Filtering instance mesh with triangle offset " + instanceMesh.triangleOffset + ", count " + instanceMesh.triangleCount);
-  console.log("First vertex is " + vertices[indices[3 * instanceMesh.triangleOffset] + 0]
-              + ", " + vertices[indices[3 * instanceMesh.triangleOffset] + 1]
-              + ", " + vertices[indices[3 * instanceMesh.triangleOffset] + 2]);
-  for (let i = 0; i < 10; i++) {
-    console.log("First index + " + i + " is " + indices[3 * instanceMesh.triangleOffset + i]);
-  } */
-  
   if (geometryClipBox === null) {
     return instanceMesh;
   }

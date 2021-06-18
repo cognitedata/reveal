@@ -61,7 +61,7 @@ export class InstancedMeshManager {
 
     for (const instance of meshFile.instances) {
       const instanceIdentifier = JSON.stringify([meshFile.fileId, instance.triangleOffset]);
-      console.log("Found instance!");
+
       if (!this._instancedAttributeMap.has(instanceIdentifier)) {
         this.createInstance(instance, geometryAttributes, material, instanceIdentifier, sectorId);
       } else {
