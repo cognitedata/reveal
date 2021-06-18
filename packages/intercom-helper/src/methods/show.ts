@@ -5,5 +5,8 @@ export default (show: boolean): void => {
     } else {
       window.Intercom('hide');
     }
+  } else {
+    // eslint-disable-next-line no-console
+    console.warn('Intercom not setup properly.');
   }
 };

@@ -1,6 +1,15 @@
+## 1.2.12 June 2021
+
+- Add `customExpiry` to fakeIdp options
+
+## 1.2.11 June 2021
+
+- Release to bump auth-utils
+
 ## 1.2.10 June 2021
 
-- Add given_name and family_name to fake-idp
+- Add given_name and family_name to fake-idp token generation options
+- First release post transition into applications mono repo
 
 ## 1.2.9 June 2021
 

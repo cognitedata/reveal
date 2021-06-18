@@ -8,6 +8,7 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 
 if (process.env.REACT_APP_SENTRY_DSN) {
+  // Instantiate Sentry project
   Sentry.init({
     dsn: process.env.REACT_APP_SENTRY_DSN,
     // This is populated by the FAS build process. Change it if you want to
@@ -20,6 +21,7 @@ if (process.env.REACT_APP_SENTRY_DSN) {
 }
 
 if (process.env.REACT_APP_MIXPANEL_TOKEN) {
+  // Instantiate Mixpanel project
   Metrics.init({
     mixpanelToken: process.env.REACT_APP_MIXPANEL_TOKEN || '',
     debug: process.env.REACT_APP_MIXPANEL_DEBUG === 'true',

@@ -10,6 +10,7 @@ export interface AuthContext {
   client?: CogniteClient;
   authState?: AuthenticatedUser;
   initialized?: Promise<unknown>;
+  reauthenticate?: () => Promise<unknown>;
 }
 
 // exporting so users can also directly do:
@@ -75,19 +76,33 @@ export const AuthContainer: React.FC<AuthContainerProps> = ({
           setAuthState({
             client: authClient.getClient(),
             authState: authenticatedUser,
+            reauthenticate: () => {
+              if (authenticatedUser.project) {
+                return authClient.loginAndAuthIfNeeded({
+                  project: authenticatedUser.project,
+                });
+              }
+
+              return Promise.reject(
+                new Error('No project set, can not re-auth')
+              );
+            },
           });
           setLoading(false);
         }
       }
     );
 
-    authClient.loginAndAuthIfNeeded({ flow: flowToUse, project: tenant });
+    if (flowToUse) {
+      authClient.loginAndAuthIfNeeded({ flow: flowToUse, project: tenant });
+    }
 
     return () => {
       unsubscribe();
     };
   }, []);
 
+  // this effect handles errors and stops loading after response changes.
   React.useEffect(() => {
     log(
       '[AuthContainer] State info:',
@@ -101,7 +116,7 @@ export const AuthContainer: React.FC<AuthContainerProps> = ({
       1
     );
 
-    if (flow === 'COGNITE_AUTH') {
+    if (flow && ['COGNITE_AUTH', 'FAKE_IDP'].includes(flow)) {
       setLoading(false);
       return;
     }
@@ -110,15 +125,11 @@ export const AuthContainer: React.FC<AuthContainerProps> = ({
       setLoading(false);
     } else {
       log(
-        '[AuthContainer] UnAuthenticated state found, going to login page.',
+        '[AuthContainer] Unauthenticated state found, going to login page.',
         [authResponse],
         2
       );
-      if (authResponse?.initialized && authError) {
-        authResponse.initialized.then(() => {
-          authError();
-        });
-      }
+      authError();
     }
   }, [authResponse]);
 
@@ -135,7 +146,7 @@ export const AuthContainer: React.FC<AuthContainerProps> = ({
   );
 
   if (loading) {
-    log('Loading from react-container', [], 1);
+    log('[AuthContainer] Loading from react-container', [], 1);
     return <Loader />;
   }
 

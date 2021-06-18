@@ -7,11 +7,11 @@ export const fetchProjects = async ({
   authClient?: CogniteAuth;
   enabled?: boolean;
 }) => {
-  if (!enabled) {
+  if (!enabled || !authClient) {
     return Promise.resolve([]);
   }
 
-  return authClient?.getProjects();
+  return authClient.getProjects();
 };
 
 export default fetchProjects;
