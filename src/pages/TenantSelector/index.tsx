@@ -11,6 +11,7 @@ const clusters = [
         label: 'Europe 1 (Google)',
         legacyAuth: true,
       },
+      { value: 'asia-northeast1-1', label: 'Asia 1', legacyAuth: true },
     ],
   },
   {
