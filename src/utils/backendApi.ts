@@ -46,7 +46,7 @@ const getServiceClient = async (sdk: CogniteClient) => {
 };
 
 export const getCalls = async (sdk: CogniteClient, fnId: number) => {
-  const client = (await getServiceClient(sdk)) as AxiosInstance;
+  const client = await getServiceClient(sdk);
 
   return client
     .get(`/api/playground/projects/${sdk.project}/functions/${fnId}/calls`)
@@ -54,7 +54,7 @@ export const getCalls = async (sdk: CogniteClient, fnId: number) => {
 };
 
 export async function listFunctions(sdk: CogniteClient) {
-  const client = (await getServiceClient(sdk)) as AxiosInstance;
+  const client = await getServiceClient(sdk);
 
   return client
     .get<{ items: CogniteFunction[] }>(
@@ -68,7 +68,7 @@ export async function callFunction(
   functionId: number,
   data?: object
 ) {
-  const client = (await getServiceClient(sdk)) as AxiosInstance;
+  const client = await getServiceClient(sdk);
 
   return client
     .post(
@@ -85,7 +85,7 @@ export async function getCallStatus(
   functionId: number,
   callId: number
 ) {
-  const client = (await getServiceClient(sdk)) as AxiosInstance;
+  const client = await getServiceClient(sdk);
 
   return client
     .get(
@@ -99,7 +99,7 @@ export async function getCallResponse(
   functionId: number,
   callId: number
 ) {
-  const client = (await getServiceClient(sdk)) as AxiosInstance;
+  const client = await getServiceClient(sdk);
 
   return client
     .get(
