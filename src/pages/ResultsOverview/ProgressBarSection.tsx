@@ -34,7 +34,7 @@ const ProgressBarSection = (): JSX.Element => {
   const total = running + completed + queued + failed;
 
   const parsingJobPercent: number = Math.round(
-    ((completed + failed) / total) * 100
+    ((completed + failed + running / 2) / total) * 100
   );
 
   const FilesStatusCounts = () => (
@@ -61,7 +61,8 @@ const ProgressBarSection = (): JSX.Element => {
       <Flex column style={{ width: '100%', margin: '4px 0' }}>
         <Body level={2} strong>
           <Popover content={<FilesStatusCounts />}>
-            Matching tags in diagrams to targets ({completed + failed}/{total})
+            Matching tags in diagrams to targets ({completed + failed}/{total}){' '}
+            <Icon type="Info" style={{ verticalAlign: '-0.225em' }} />
           </Popover>
         </Body>
 
@@ -95,7 +96,7 @@ const MappedLoadProgressBars = (): JSX.Element => {
             1
           )}`;
           return (
-            <Flex column style={{ width: '100%' }}>
+            <Flex column style={{ width: '100%' }} key={label}>
               <LoadingProgress type={type} label={label} />
             </Flex>
           );
