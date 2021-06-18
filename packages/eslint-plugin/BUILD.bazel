@@ -1,0 +1,143 @@
+load("@build_bazel_rules_nodejs//:index.bzl", "js_library", "pkg_npm")
+load("@bazel_skylib//rules:write_file.bzl", "write_file")
+load("//rules/test:jest.bzl", "jest_test")
+load("//rules/lint:index.bzl", "eslint_config", "eslint_test")
+load("//rules/package_json_helpers:generate.bzl", "generate_package_json_helpers")
+load("//rules/package_json_helpers:module_mappings.bzl", "module_mappings")
+load("//rules/npm:is_published.bzl", "is_published")
+load("//rules/npm:package_info.bzl", "package_info")
+load("//rules/npm:append_deps.bzl", "append_deps")
+
+TESTS = glob(["__tests__/**/*.js"])
+
+LIB = glob(["lib/**/*.js"])
+
+# Generates the below helpers.
+#
+# Usage:
+#   bazel run :generate_package_json_helpers
+generate_package_json_helpers(
+    name = "generate_package_json_helpers",
+    local_package_json = ":package.json",
+    out_dir = "dist",
+    package_json = "//:package.json",
+    src_dir = "lib",
+    workspace = "@npm",
+)
+
+### start of auto-generated helpers ###
+
+# Dependencies from package.json
+DEPENDENCIES = [
+    "@npm//lodash",
+    "@npm//randexp",
+]
+
+# Type dependencies from package.json
+TYPE_DEPENDENCIES = ["@npm//@types/lodash"]
+
+# Dev dependencies from package.json
+DEV_DEPENDENCIES = [
+    "@npm//babel-eslint",
+    "@npm//eslint-config-prettier",
+    "@npm//eslint-plugin-import",
+    "@npm//eslint-plugin-jest",
+    "@npm//eslint-plugin-prettier",
+    "@npm//eslint-plugin-jsx-a11y",
+    "@npm//prettier",
+]
+
+# Mappings for absolute imports from baseUrl @unused
+mappings_dict = {
+    "index": "dist/index",
+    "rules": "dist/rules",
+    "utils": "dist/utils",
+}
+
+### end of auto-generated helpers ###
+
+eslint_config(
+    name = "eslint_config",
+    src = ":.eslintrc.js",
+    deps = [
+        "//:eslint_config",
+        "//packages:eslint_config",
+    ],
+)
+
+eslint_test(
+    name = "eslint_test",
+    data = LIB + TESTS + [
+        ":tsconfig.json",
+        "//packages:tsconfig.json",
+        "//:tsconfig.json",
+        "@npm//eslint-plugin-eslint-plugin",
+    ],
+    eslint_config = ":eslint_config",
+)
+
+jest_test(
+    name = "jest_test",
+    srcs = LIB + TESTS + [
+        "//packages:jest.config.js",
+        "//:tsconfig.json",
+        ":tsconfig.json",
+        "//packages:tsconfig.json",
+    ],
+    jest_args = [],
+    jest_config = "jest.config.js",
+    service_name = "eslint-plugin",
+    deps = DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES,
+)
+
+write_file(
+    name = "write_chdir_script",
+    out = "chdir.js",
+    content = ["process.chdir(__dirname)"],
+)
+
+append_deps(
+    name = "package-json",
+    dependencies = [],
+    dev_dependencies = [],
+    package = "package.json",
+)
+
+_mappings = module_mappings(
+    name = "mappings",
+    mappings = mappings_dict,
+)
+
+filegroup(
+    name = "lib",
+    srcs = LIB,
+)
+
+js_library(
+    name = "eslint-plugin",
+    package_name = "@cognite/eslint-plugin",
+    srcs = ["package-json"],
+    visibility = ["//visibility:public"],
+    deps = DEPENDENCIES + [":lib"],
+)
+
+pkg_npm(
+    name = "npm-package",
+    package_name = "@cognite/eslint-plugin",
+    visibility = ["//visibility:public"],
+    deps = [
+        "package-json",
+        ":lib",
+    ] + _mappings,
+)
+
+is_published(
+    name = "is_published",
+    package = ":npm-package",
+)
+
+package_info(
+    name = "package_info",
+    display_name = "eslint-plugin",
+    package = ":npm-package",
+)

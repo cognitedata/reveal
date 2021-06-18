@@ -1,0 +1,34 @@
+{
+  "name": "@cognite/eslint-plugin",
+  "version": "2.0.1",
+  "description": "Custom eslint plugins for Cognite's front end applications.",
+  "main": "lib/index.js",
+  "repository": "https://github.com/cognitedata/applications/packages/eslint-plugin",
+  "license": "UNLICENSED",
+  "author": "Cognite AS",
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "test": "bazel test :jest_test",
+    "lint": "bazel test :eslint_test :prettier_test",
+    "eslint": "bazel test :eslint_test",
+    "eslint:fix": "bazel run :eslint_test -- --fix"
+  },
+  "keywords": [
+    "eslint"
+  ],
+  "peerDependencies": {
+    "babel-eslint": ">=10.0",
+    "eslint": "^6.5",
+    "eslint-config-prettier": ">=6",
+    "eslint-plugin-import": ">=2.18",
+    "eslint-plugin-jest": ">=22.19",
+    "eslint-plugin-jsx-a11y": ">=6.2",
+    "eslint-plugin-prettier": ">=3.1",
+    "prettier": ">=1.18"
+  },
+  "optionalDependencies": {
+    "typescript": ">=3.6"
+  }
+}

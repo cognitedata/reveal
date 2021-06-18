@@ -21,9 +21,8 @@ def eslint_test(name, data, eslint_config, **kwargs):
     default_args = [
         "--max-warnings",
         "0",
-        "--ext",
-        ".ts",
-        "**/*.ts*",
+        "--no-error-on-unmatched-pattern",
+        "**/{src,dist,tests,lib}/**/*.{ts,tsx,js}",
         "--config",
         "$(rootpath %s)" % eslint_config,
     ]
@@ -34,11 +33,11 @@ def eslint_test(name, data, eslint_config, **kwargs):
     inputs.extend([eslint_config])
 
     deps = [
+        "//packages/eslint-config",
+        "//packages/eslint-plugin",
         "@npm//@testing-library/jest-dom",
         "@npm//@testing-library/react",
         "@npm//@testing-library/testcafe",
-        "@npm//@cognite/eslint-config",
-        "@npm//@cognite/eslint-plugin",
         "@npm//eslint-config-airbnb",
         "@npm//eslint-config-prettier",
         "@npm//eslint-plugin-import",

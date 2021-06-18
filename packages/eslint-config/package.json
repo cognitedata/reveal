@@ -1,0 +1,37 @@
+{
+  "name": "@cognite/eslint-config",
+  "version": "2.0.2",
+  "description": "Cognite eslint config",
+  "main": "index.js",
+  "repository": "https://github.com/cognitedata/applications/packages/eslint-config",
+  "license": "UNLICENSED",
+  "author": "Cognite AS",
+  "keywords": [
+    "eslint",
+    "prettier",
+    "cognite",
+    "javascript"
+  ],
+  "scripts": {
+    "update-helpers": "bazel run :generate_package_json_helpers"
+  },
+  "peerDependencies": {
+    "@cognite/eslint-plugin": "^2.0.0",
+    "babel-eslint": ">=10.0",
+    "eslint": "^6.5",
+    "eslint-config-airbnb": ">=18.0",
+    "eslint-config-prettier": ">=6",
+    "eslint-plugin-import": ">=2.18",
+    "eslint-plugin-jest": ">=22.19",
+    "eslint-plugin-jsx-a11y": ">=6.2",
+    "eslint-plugin-prettier": ">=3.1",
+    "eslint-plugin-react": ">=7.16",
+    "eslint-plugin-react-hooks": ">=1.7",
+    "prettier": ">=1.18"
+  },
+  "optionalDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.10.0",
+    "@typescript-eslint/parser": "^4.10.0",
+    "typescript": "^4.1.3"
+  }
+}

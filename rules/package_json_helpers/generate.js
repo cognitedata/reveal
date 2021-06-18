@@ -165,7 +165,10 @@ if (ruleImpl.length === 1 && buildFileParts.length !== 2) {
 }
 
 depcheck(`${process.cwd()}/${path.dirname(srcPath)}`, {
-  detectors: [depcheck.detector.importDeclaration],
+  detectors: [
+    depcheck.detector.importDeclaration,
+    depcheck.detector.requireCallExpression,
+  ],
   ignorePatterns: [
     // do not parse files starting with dot (.), e.g. .eslintrc.js
     '.*',

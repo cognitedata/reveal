@@ -23,6 +23,7 @@ TESTS = glob(["src/**/*.spec.ts"])
 #   bazel run :generate_package_json_helpers
 generate_package_json_helpers(
     name = "generate_package_json_helpers",
+    local_package_json = ":package.json",
     out_dir = "dist",
     package_json = "//:package.json",
     src_dir = "src",
