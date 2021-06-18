@@ -5,7 +5,7 @@ module.exports = {
     project: ['./tsconfig.json'],
   },
   extends: [
-    '@cognite',
+    '@cognite/eslint-config',
     'plugin:@typescript-eslint/recommended',
     'plugin:jest-dom/recommended',
     'plugin:lodash/recommended',
@@ -44,6 +44,7 @@ module.exports = {
     'lodash/prefer-is-nil': ['off'],
     'lodash/prefer-get': ['off'],
     'lodash/prefer-includes': ['off'],
+    'lodash/prefer-startswith': ['off'],
 
     '@typescript-eslint/explicit-function-return-type': [
       'off',
@@ -85,6 +86,12 @@ module.exports = {
       rules: {
         'react/prop-types': ['off'],
         'react/require-default-props': ['off'],
+      },
+    },
+    {
+      files: ['*.js'],
+      rules: {
+        '@typescript-eslint/no-var-requires': ['off'],
       },
     },
   ],

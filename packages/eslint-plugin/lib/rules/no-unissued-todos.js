@@ -2,8 +2,9 @@
  * @fileoverview Rule to disallow unissed use of todos
  */
 
-const { escapeRegExp } = require('lodash');
+const escapeRegExp = require('lodash/escapeRegExp');
 const RandExp = require('randexp');
+
 const { isDirectiveComment } = require('../utils');
 
 //------------------------------------------------------------------------------

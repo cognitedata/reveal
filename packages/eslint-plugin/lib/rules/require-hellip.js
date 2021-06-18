@@ -33,12 +33,8 @@ module.exports = {
         context.report({
           node,
           messageId: 'require-hellip',
-          fix: (fixer) => {
-            return fixer.replaceText(
-              node,
-              node.value.replace(/\.\.\./g, '&hellip;')
-            );
-          },
+          fix: (fixer) =>
+            fixer.replaceText(node, node.value.replace(/\.\.\./g, '&hellip;')),
         });
       },
       Literal(node) {
@@ -61,12 +57,11 @@ module.exports = {
         context.report({
           node,
           messageId: 'require-hellip',
-          fix: (fixer) => {
-            return fixer.replaceTextRange(
+          fix: (fixer) =>
+            fixer.replaceTextRange(
               node.range,
               node.raw.replace(/\.\.\./g, HELLIP)
-            );
-          },
+            ),
         });
       },
     };

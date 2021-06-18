@@ -69,6 +69,7 @@ DEPENDENCIES = [
     "//packages/react-errors",
     "//packages/react-tenant-selector",
     "//packages/intercom-helper",
+    "//packages/testing",
     "//packages/auth-utils",
     "//packages/react-loop-detector",
     "//packages/react-sentry",
@@ -86,12 +87,12 @@ TYPE_DEPENDENCIES = [
 
 # Dev dependencies from package.json
 DEV_DEPENDENCIES = [
-    "@npm//@cognite/testing",
     "@npm//@testing-library/jest-dom",
     "@npm//@testing-library/react",
     "@npm//@testing-library/react-hooks",
     "@npm//rollup-plugin-json",
     "@npm//rollup-plugin-typescript2",
+    "@npm//typescript",
 ]
 
 # Mappings for absolute imports from baseUrl @unused

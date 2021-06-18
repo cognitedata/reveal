@@ -54,6 +54,7 @@ generate_package_json_helpers(
 DEPENDENCIES = [
     "@npm//react",
     "@npm//unleash-proxy-client",
+    "//packages/testing",
 ]
 
 # Type dependencies from package.json
@@ -61,12 +62,12 @@ TYPE_DEPENDENCIES = ["@npm//@types/react"]
 
 # Dev dependencies from package.json
 DEV_DEPENDENCIES = [
-    "@npm//@cognite/testing",
     "@npm//@testing-library/jest-dom",
     "@npm//@testing-library/react",
     "@npm//@testing-library/react-hooks",
     "@npm//rollup-plugin-json",
     "@npm//rollup-plugin-typescript2",
+    "@npm//typescript",
 ]
 
 # Mappings for absolute imports from baseUrl @unused

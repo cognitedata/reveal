@@ -1,0 +1,92 @@
+load("@build_bazel_rules_nodejs//:index.bzl", "js_library", "pkg_npm")
+load("@bazel_skylib//rules:write_file.bzl", "write_file")
+load("//rules/package_json_helpers:generate.bzl", "generate_package_json_helpers")
+load("//rules/package_json_helpers:module_mappings.bzl", "module_mappings")
+load("//rules/npm:is_published.bzl", "is_published")
+load("//rules/npm:package_info.bzl", "package_info")
+load("//rules/npm:append_deps.bzl", "append_deps")
+
+# Generates the below helpers.
+#
+# Usage:
+#   bazel run :generate_package_json_helpers
+generate_package_json_helpers(
+    name = "generate_package_json_helpers",
+    local_package_json = ":package.json",
+    out_dir = "dist",
+    package_json = "//:package.json",
+    src_dir = "src",
+    workspace = "@npm",
+)
+
+### start of auto-generated helpers ###
+
+# Dependencies from package.json
+DEPENDENCIES = []
+
+# Type dependencies from package.json
+TYPE_DEPENDENCIES = []
+
+# Dev dependencies from package.json
+DEV_DEPENDENCIES = [
+    "@npm//rollup-plugin-json",
+    "@npm//rollup-plugin-typescript2",
+]
+
+# Mappings for absolute imports from baseUrl @unused
+mappings_dict = {
+    "index.spec": "dist/index.spec",
+    "index": "dist/index",
+}
+
+### end of auto-generated helpers ###
+
+write_file(
+    name = "write_chdir_script",
+    out = "chdir.js",
+    content = ["process.chdir(__dirname)"],
+)
+
+append_deps(
+    name = "package-json",
+    dependencies = DEPENDENCIES,
+    dev_dependencies = DEV_DEPENDENCIES + TYPE_DEPENDENCIES,
+    package = "package.json",
+)
+
+_mappings = module_mappings(
+    name = "mappings",
+    mappings = mappings_dict,
+)
+
+js_library(
+    name = "eslint-config",
+    package_name = "@cognite/eslint-config",
+    srcs = [
+        ".eslintrc.js",
+        "index.js",
+        "package-json",
+    ],
+    visibility = ["//visibility:public"],
+    deps = DEPENDENCIES,
+)
+
+pkg_npm(
+    name = "npm-package",
+    package_name = "@cognite/eslint-config",
+    visibility = ["//visibility:public"],
+    deps = [
+        "eslint-config",
+    ] + _mappings,
+)
+
+is_published(
+    name = "is_published",
+    package = ":npm-package",
+)
+
+package_info(
+    name = "package_info",
+    display_name = "eslint-config",
+    package = ":npm-package",
+)

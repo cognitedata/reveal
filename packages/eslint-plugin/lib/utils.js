@@ -1,6 +1,5 @@
-const getDocsUrl = (ruleName) => {
-  return `https://github.com/cognitedata/frontend/tree/master/packages/dev/eslint-plugin/docs/rules/${ruleName}.md`;
-};
+const getDocsUrl = (ruleName) =>
+  `https://github.com/cognitedata/frontend/tree/master/packages/dev/eslint-plugin/docs/rules/${ruleName}.md`;
 
 const isDirectiveComment = (node) => {
   const comment = node.value.trim();

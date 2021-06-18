@@ -1,0 +1,16 @@
+{
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "files.insertFinalNewline": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "editor.formatOnSave": true,
+  "files.watcherExclude": {
+    "**/node_modules/**": true,
+    "node_modules/**": true,
+    "/dist/**": true
+  },
+  "search.exclude": {
+    "/dist/**": true
+  }
+}

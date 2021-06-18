@@ -1,20 +1,24 @@
 {
   "name": "@cognite/testing",
-  "version": "0.1.0",
+  "version": "0.1.1-rc.0",
   "source": "src/index.ts",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "typings": "./dist/index.d.ts",
-  "repository": "https://github.com/cognitedata/frontend",
+  "repository": "https://github.com/cognitedata/applications/packages/testing",
   "license": "UNLICENSED",
+  "author": "Cognite AS",
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
-    "lint": "concurrently \"yarn prettier\" \"yarn eslint\"",
-    "eslint": "eslint --max-warnings 0 --ext .ts 'src/**/*'",
-    "prettier": "prettier -l 'src/**/*'"
+    "build": "bazel build :testing",
+    "lint": "bazel test :eslint_test :prettier_test",
+    "eslint": "bazel test :eslint_test",
+    "eslint:fix": "bazel run :eslint_test -- --fix",
+    "prettier": "bazel test :prettier_test",
+    "prettier:fix": "bazel run :prettier_test -- --write",
+    "update-helpers": "bazel run :generate_package_json_helpers"
   },
   "peerDependencies": {
     "@storybook/addons": "^6.1.14",

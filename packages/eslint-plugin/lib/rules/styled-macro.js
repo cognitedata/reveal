@@ -40,9 +40,8 @@ module.exports = {
           context.report({
             node,
             messageId: `${mode}-styled-macro`,
-            fix: (fixer) => {
-              return fixer.replaceTextRange(node.source.range, `'${replace}'`);
-            },
+            fix: (fixer) =>
+              fixer.replaceTextRange(node.source.range, `'${replace}'`),
           });
         }
       },
