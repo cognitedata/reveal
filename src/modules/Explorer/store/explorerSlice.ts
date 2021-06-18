@@ -39,6 +39,7 @@ export type State = {
   filter: FileFilterProps;
   showFilter: boolean;
   showFileUploadModal: boolean;
+  showFileDownloadModal: boolean;
   selectedIds: number[];
   files: {
     byId: Record<number, ExplorerFileState>;
@@ -54,6 +55,7 @@ const initialState: State = {
   filter: {},
   showFilter: true,
   showFileUploadModal: false,
+  showFileDownloadModal: false,
   files: {
     byId: {},
     allIds: [],
@@ -130,6 +132,12 @@ const explorerSlice = createSlice({
     ) {
       state.showFileUploadModal = action.payload;
     },
+    setExplorerFileDownloadModalVisibility(
+      state,
+      action: PayloadAction<boolean>
+    ) {
+      state.showFileDownloadModal = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(deleteFilesById.fulfilled, (state, { payload }) => {
@@ -159,6 +167,7 @@ export const {
   setExplorerCurrentView,
   toggleExplorerFilterView,
   setExplorerFileUploadModalVisibility,
+  setExplorerFileDownloadModalVisibility,
 } = explorerSlice.actions;
 
 export default explorerSlice.reducer;

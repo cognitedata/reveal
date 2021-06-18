@@ -24,6 +24,7 @@ import {
   workflowRoutes,
 } from 'src/modules/Workflow/workflowRoutes';
 import { MAX_SELECT_COUNT } from 'src/constants/ExplorerConstants';
+import { FileDownloaderModal } from 'src/modules/Common/Components/FileDownloaderModal/FileDownloaderModal';
 import {
   setExplorerCurrentView,
   setExplorerFileSelectState,
@@ -35,6 +36,7 @@ import {
   toggleExplorerFilterView,
   selectExplorerSelectedFileIds,
   setExplorerFileUploadModalVisibility,
+  setExplorerFileDownloadModalVisibility,
 } from '../store/explorerSlice';
 
 const Explorer = () => {
@@ -58,9 +60,11 @@ const Explorer = () => {
   const query = useSelector(
     ({ explorerReducer }: RootState) => explorerReducer.query
   );
-
   const showFileUploadModal = useSelector(
     ({ explorerReducer }: RootState) => explorerReducer.showFileUploadModal
+  );
+  const showFileDownloadModal = useSelector(
+    ({ explorerReducer }: RootState) => explorerReducer.showFileDownloadModal
   );
   const selectedFileIds = useSelector((state: RootState) =>
     selectExplorerSelectedFileIds(state.explorerReducer)
@@ -96,6 +100,7 @@ const Explorer = () => {
     },
     [dispatch]
   );
+
   const handleMetadataClose = () => {
     dispatch(toggleExplorerFileMetadata());
   };
@@ -103,6 +108,11 @@ const Explorer = () => {
   const onUpload = () => {
     dispatch(setExplorerFileUploadModalVisibility(true));
   };
+
+  const onDownload = () => {
+    dispatch(setExplorerFileDownloadModalVisibility(true));
+  };
+
   const onContextualise = () => {
     // fetch latest
     dispatch(fetchFilesById(selectedFileIds.map((i) => ({ id: i }))));
@@ -143,6 +153,11 @@ const Explorer = () => {
         onUploadSuccess={onUploadSuccess}
         showModal={showFileUploadModal}
         onCancel={() => dispatch(setExplorerFileUploadModalVisibility(false))}
+      />
+      <FileDownloaderModal
+        fileIds={selectedFileIds}
+        showModal={showFileDownloadModal}
+        onCancel={() => dispatch(setExplorerFileDownloadModalVisibility(false))}
       />
       <StatusToolBar current="Vision Explore" />
       <Wrapper>
@@ -198,6 +213,7 @@ const Explorer = () => {
                 }
                 onSearch={handleSearch}
                 onUpload={onUpload}
+                onDownload={onDownload}
                 onContextualise={onContextualise}
                 onReview={onReview}
               />

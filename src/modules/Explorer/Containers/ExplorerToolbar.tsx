@@ -11,6 +11,7 @@ export const ExplorerToolbar = ({
   currentView = 'list',
   onSearch,
   onUpload,
+  onDownload,
   onContextualise,
   onReview,
 }: {
@@ -21,6 +22,7 @@ export const ExplorerToolbar = ({
   currentView?: string;
   onSearch: (text: string) => void;
   onUpload: () => void;
+  onDownload: () => void;
   onContextualise: () => void;
   onReview: () => void;
 }) => {
@@ -44,7 +46,22 @@ export const ExplorerToolbar = ({
           >
             Upload
           </Button>
-
+          <Tooltip
+            content={
+              <span data-testid="text-content">{exceededLimitMessage}</span>
+            }
+            disabled={!!inLimit}
+          >
+            <Button
+              style={{ marginLeft: 14 }}
+              icon="Upload"
+              type="tertiary"
+              onClick={onDownload}
+              disabled={!count}
+            >
+              Download {count}
+            </Button>
+          </Tooltip>
           <Tooltip
             content={
               <span data-testid="text-content">{exceededLimitMessage}</span>
