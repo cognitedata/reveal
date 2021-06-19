@@ -29,8 +29,7 @@ export {
   IntersectionNodeCollection,
   UnionNodeCollection,
   InvertedNodeCollection,
-  NodeAppearanceProvider,
-  SerializedNodeCollection
+  NodeAppearanceProvider
 } from './datamodels/cad/styling';
 export { IndexSet } from './utilities/IndexSet';
 export { NumericRange } from './utilities/NumericRange';
@@ -40,7 +39,8 @@ export {
   registerCustomNodeCollectionType,
   TypeName,
   NodeCollectionDescriptor,
-  NodeCollectionSerializationContext
+  NodeCollectionSerializationContext,
+  SerializedNodeCollection
 } from './datamodels/cad/styling';
 
 // Export ThreeJS to enable easy import for our users
