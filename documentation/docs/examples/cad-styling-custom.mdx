@@ -1,6 +1,6 @@
 ---
 id: cad-styling-custom
-title: Create custom node collections
+title: Custom node collections
 describe: Create custom node collections to filter based on custom data sources and mechanisms
 ---
 
@@ -27,7 +27,7 @@ class MyNodeCollection extends NodeCollectionBase {
   isLoading = false;
 
   constructor(model) {
-    super();
+    super('MyNodeCollection'); // Token for (de)serialization
     this._nodeCount = model.nodeCount;
     this._indexSet = new IndexSet();
     for (let i = 0; i < model.nodeCount; i += 100) {
@@ -43,6 +43,8 @@ class MyNodeCollection extends NodeCollectionBase {
     this._indexSet.clear();
     this.notifyChanged();
   }
+
+  serialize() { throw new Error('Not supported'); }
 };
 
 const myNodes = new MyNodeCollection(model);
@@ -63,6 +65,8 @@ mySet.clear = () => { throw new Error('Not supported'); }
 model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
 model.assignStyleToNodeCollection(mySet, { renderGhosted: false, color: [40, 200, 20] } );
 ```
+
+See also [guide on (de)serializing node collections](cad-save-viewerstate#serializing-and-deserializing-custom-node-colletions).
 
 # Details about IndexSet
 
