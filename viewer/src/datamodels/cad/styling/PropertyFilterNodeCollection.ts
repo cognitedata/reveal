@@ -54,7 +54,7 @@ export class PropertyFilterNodeCollection extends NodeCollectionBase {
   }
 
   /**
-   * Populates the node set with nodes matching the provided filter. This will replace
+   * Populates the node collection with nodes matching the provided filter. This will replace
    * the current nodes held by the filter.
    * @param filter A filter for matching node properties.
    * @example
@@ -102,7 +102,7 @@ export class PropertyFilterNodeCollection extends NodeCollectionBase {
     return this._filter;
   }
   /**
-   * Clears the node set and interrupts any ongoing operations.
+   * Clears the node collection and interrupts any ongoing operations.
    */
   clear(): void {
     if (this._fetchResultHelper !== undefined) {

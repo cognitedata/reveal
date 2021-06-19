@@ -85,7 +85,7 @@ export class NodeAppearanceProvider {
   unassignStyleFromNodeCollection(nodeCollection: NodeCollectionBase) {
     const index = this._styledCollections.findIndex(x => x.nodeCollection === nodeCollection);
     if (index === -1) {
-      throw new Error('Node set not added');
+      throw new Error('NodeCollection not added');
     }
     const styledCollection = this._styledCollections[index];
 

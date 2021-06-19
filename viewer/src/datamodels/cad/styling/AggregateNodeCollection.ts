@@ -8,7 +8,7 @@ import { NodeCollectionBase, SerializedNodeCollection } from './NodeCollection';
 export type AggregateNodeCollectionOperator = 'intersection' | 'union';
 
 /**
- * Node sets that combines the result from multiple underlying node sets
+ * Node collection that combines the result from multiple underlying node collections.
  * by taking the set union or intersection between the sets.
  */
 export class AggregateNodeCollection extends NodeCollectionBase {
@@ -47,7 +47,7 @@ export class AggregateNodeCollection extends NodeCollectionBase {
   }
 
   /**
-   * Clears all underlying node sets.
+   * Clears all underlying node collections.
    */
   clear() {
     this._nodeCollection.forEach(collection => collection.clear());

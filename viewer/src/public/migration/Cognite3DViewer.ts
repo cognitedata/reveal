@@ -429,7 +429,8 @@ export class Cognite3DViewer {
   }
 
   /**
-   * Clears all current styled node sets and applies the `state` object.
+   * Restores camera settings from the state provided, and clears all current styled
+   * node collections and applies the `state` object.
    * @param state Viewer state retrieved from {@link Cognite3DViewer.getViewState}.
    */
   setViewState(state: ViewerState) {

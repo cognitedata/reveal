@@ -96,7 +96,7 @@ describe('NodeAppearanceTextureBuilder', () => {
     expect(builder.infrontNodeTreeIndices).toEqual(new IndexSet([0]));
   });
 
-  test('build() resets styles of removed node sets', () => {
+  test('build() resets styles of removed node collections', () => {
     // Arrange
     styleProvider.assignStyleToNodeCollection(nodeCollection, { renderGhosted: true });
     builder.build();

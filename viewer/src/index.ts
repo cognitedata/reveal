@@ -34,7 +34,7 @@ export {
 export { IndexSet } from './utilities/IndexSet';
 export { NumericRange } from './utilities/NumericRange';
 
-// Custom Node Set deserialization free-function
+// Custom NodeCollection deserialization free-function
 export {
   registerCustomNodeCollectionType,
   TypeName,

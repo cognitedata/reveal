@@ -39,7 +39,7 @@ export class AssetNodeCollection extends NodeCollectionBase {
   }
 
   /**
-   * Updates the node set to hold nodes associated with the asset given, or
+   * Updates the node collection to hold nodes associated with the asset given, or
    * assets within the bounding box or all assets associated with the 3D model.
    * @param filter Empty object semantically means all mapped assets
    * @param filter.assetId Id of asset

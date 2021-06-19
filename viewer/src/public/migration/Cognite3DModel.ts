@@ -129,7 +129,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
 
   /**
    * Removes styling for previously added set, resetting the style to the default.
-   * @param nodeCollection   Node set previously added using {@link assignStyleToNodeCollection}.
+   * @param nodeCollection   Node collection previously added using {@link assignStyleToNodeCollection}.
    */
   unassignStyleFromNodeCollection(nodeCollection: NodeCollectionBase) {
     this.cadNode.nodeAppearanceProvider.unassignStyleFromNodeCollection(nodeCollection);

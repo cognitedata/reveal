@@ -6,7 +6,7 @@ import { IndexSet } from '../../../utilities/IndexSet';
 import { NodeCollectionBase, SerializedNodeCollection } from './NodeCollection';
 
 /**
- * Node set that holds a set of nodes defined by a set of tree indices.
+ * Node collection that holds a set of nodes defined by a set of tree indices.
  */
 export class SimpleNodeCollection extends NodeCollectionBase {
   public static readonly classToken = 'SimpleNodeCollection';

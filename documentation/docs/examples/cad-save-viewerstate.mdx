@@ -88,8 +88,8 @@ const myState = {
 viewer.setViewState(myState);
 ```
 
-## Serializing and deserializing custom node sets
-When working with custom node sets, the Reveal viewer needs to know how to serialize and deserialize the set.
+## Serializing and deserializing custom node colletions
+When working with styled custom node collections, the Reveal viewer needs to know how to serialize and deserialize the set.
 Serialization is handled through the abstract method `serialize` which needs to be implemented when extending `NodeCollectionBase`.
 The output of `serialize` is of type `SerializedNodeCollection` and contains a `token` which is used to recreate 
 the `NodeCollectionBase` during deserialization, and a `state` object which contains the data needed to restore 

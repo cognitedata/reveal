@@ -7,7 +7,7 @@ import { IndexSet } from '../../../utilities/IndexSet';
 import { NodeCollectionBase, SerializedNodeCollection } from './NodeCollection';
 
 /**
- * Node sets that inverts the result from another node set.
+ * Node collection that inverts the result from another node collection.
  */
 export class InvertedNodeCollection extends NodeCollectionBase {
   public static readonly classToken = 'InvertedNodeCollection';
