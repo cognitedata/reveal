@@ -4,7 +4,7 @@
 import { Cognite3DModel } from '../../../public/migration/Cognite3DModel';
 import { NumericRange } from '../../../utilities';
 import { IndexSet } from '../../../utilities/IndexSet';
-import { NodeCollectionBase, SerializedNodeCollection } from './NodeCollection';
+import { NodeCollectionBase, SerializedNodeCollection } from './NodeCollectionBase';
 
 /**
  * Node collection that inverts the result from another node collection.

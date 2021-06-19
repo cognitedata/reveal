@@ -12,7 +12,7 @@ import { PopulateIndexSetFromPagedResponseHelper } from './PopulateIndexSetFromP
 import range from 'lodash/range';
 
 import cloneDeep from 'lodash/cloneDeep';
-import { NodeCollectionBase } from './NodeCollection';
+import { NodeCollectionBase } from './NodeCollectionBase';
 
 /**
  * Options for {@link PropertyFilterNodeCollection}.

@@ -7,11 +7,11 @@ import { CogniteClient } from '@cognite/sdk';
 import { Cognite3DModel } from '../../../migration';
 import { IndexSet } from '../../../utilities/IndexSet';
 import { NumericRange } from '../../../utilities/NumericRange';
-import { NodeCollectionBase } from './NodeCollection';
+import { NodeCollectionBase } from './NodeCollectionBase';
 import { AssetNodeCollection } from './AssetNodeCollection';
 import { PropertyFilterNodeCollection } from './PropertyFilterNodeCollection';
 import { SimpleNodeCollection } from './SimpleNodeCollection';
-import { AggregateNodeCollection } from './AggregateNodeCollection';
+import { CombineNodeCollectionBase } from './CombineNodeCollectionBase';
 import { InvertedNodeCollection } from './InvertedNodeCollection';
 
 export type TypeName = string;
@@ -87,15 +87,15 @@ export class NodeCollectionDeserializer {
       return Promise.resolve(nodeCollection);
     });
 
-    this.registerNodeCollectionType<AggregateNodeCollection>(
-      AggregateNodeCollection.classToken,
+    this.registerNodeCollectionType<CombineNodeCollectionBase>(
+      CombineNodeCollectionBase.classToken,
       async (descriptor, context) => {
         const subCollections: NodeCollectionBase[] = await Promise.all(
           descriptor.state.subCollections.map((subSet: any) => {
             return this.deserialize(context.client, context.model, subSet);
           })
         );
-        return new AggregateNodeCollection(descriptor.state.operator, subCollections);
+        return new CombineNodeCollectionBase(descriptor.state.operator, subCollections);
       }
     );
 

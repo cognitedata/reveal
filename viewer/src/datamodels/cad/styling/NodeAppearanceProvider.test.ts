@@ -6,7 +6,7 @@ import { NodeAppearance } from '../NodeAppearance';
 import { SimpleNodeCollection } from './SimpleNodeCollection';
 import { IndexSet } from '../../../utilities/IndexSet';
 import { NodeAppearanceProvider } from './NodeAppearanceProvider';
-import { NodeCollectionBase, SerializedNodeCollection } from './NodeCollection';
+import { NodeCollectionBase, SerializedNodeCollection } from './NodeCollectionBase';
 import { NodeOutlineColor } from '../NodeAppearance';
 
 describe('NodeAppearanceProvider', () => {

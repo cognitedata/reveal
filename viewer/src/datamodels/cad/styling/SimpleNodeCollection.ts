@@ -3,7 +3,7 @@
  */
 import { NumericRange } from '../../../utilities';
 import { IndexSet } from '../../../utilities/IndexSet';
-import { NodeCollectionBase, SerializedNodeCollection } from './NodeCollection';
+import { NodeCollectionBase, SerializedNodeCollection } from './NodeCollectionBase';
 
 /**
  * Node collection that holds a set of nodes defined by a set of tree indices.

@@ -26,7 +26,8 @@ export {
   PropertyFilterNodeCollection,
   SimpleNodeCollection,
   AssetNodeCollection,
-  AggregateNodeCollection,
+  IntersectionNodeCollection,
+  UnionNodeCollection,
   InvertedNodeCollection,
   NodeAppearanceProvider,
   SerializedNodeCollection

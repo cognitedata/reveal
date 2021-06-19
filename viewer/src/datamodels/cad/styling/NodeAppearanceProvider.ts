@@ -6,7 +6,7 @@ import { NodeAppearance } from '..';
 import { assertNever } from '../../../utilities';
 import { EventTrigger } from '../../../utilities/events';
 import { IndexSet } from '../../../utilities/IndexSet';
-import { NodeCollectionBase } from './NodeCollection';
+import { NodeCollectionBase } from './NodeCollectionBase';
 
 /**
  * Delegate for applying styles in {@see NodeStyleProvider}.

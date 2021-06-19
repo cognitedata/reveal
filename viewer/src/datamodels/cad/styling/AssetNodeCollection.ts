@@ -9,7 +9,7 @@ import { Cognite3DModel } from '../../../public/migration/Cognite3DModel';
 import { IndexSet } from '../../../utilities/IndexSet';
 import { PopulateIndexSetFromPagedResponseHelper } from './PopulateIndexSetFromPagedResponseHelper';
 import { NumericRange } from '../../../utilities/NumericRange';
-import { NodeCollectionBase, SerializedNodeCollection } from './NodeCollection';
+import { NodeCollectionBase, SerializedNodeCollection } from './NodeCollectionBase';
 import cloneDeep from 'lodash/cloneDeep';
 
 /**
