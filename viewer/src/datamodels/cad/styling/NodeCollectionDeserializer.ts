@@ -11,8 +11,10 @@ import { NodeCollectionBase } from './NodeCollectionBase';
 import { AssetNodeCollection } from './AssetNodeCollection';
 import { PropertyFilterNodeCollection } from './PropertyFilterNodeCollection';
 import { SimpleNodeCollection } from './SimpleNodeCollection';
-import { CombineNodeCollectionBase } from './CombineNodeCollectionBase';
+
 import { InvertedNodeCollection } from './InvertedNodeCollection';
+import { IntersectionNodeCollection } from './IntersectionNodeCollection';
+import { UnionNodeCollection } from './UnionNodeCollection';
 
 export type TypeName = string;
 export type NodeCollectionSerializationContext = { client: CogniteClient; model: Cognite3DModel };
@@ -87,15 +89,27 @@ export class NodeCollectionDeserializer {
       return Promise.resolve(nodeCollection);
     });
 
-    this.registerNodeCollectionType<CombineNodeCollectionBase>(
-      CombineNodeCollectionBase.classToken,
+    this.registerNodeCollectionType<IntersectionNodeCollection>(
+      IntersectionNodeCollection.classToken,
       async (descriptor, context) => {
         const subCollections: NodeCollectionBase[] = await Promise.all(
           descriptor.state.subCollections.map((subSet: any) => {
             return this.deserialize(context.client, context.model, subSet);
           })
         );
-        return new CombineNodeCollectionBase(descriptor.state.operator, subCollections);
+        return new IntersectionNodeCollection(subCollections);
+      }
+    );
+
+    this.registerNodeCollectionType<UnionNodeCollection>(
+      UnionNodeCollection.classToken,
+      async (descriptor, context) => {
+        const subCollections: NodeCollectionBase[] = await Promise.all(
+          descriptor.state.subCollections.map((subSet: any) => {
+            return this.deserialize(context.client, context.model, subSet);
+          })
+        );
+        return new UnionNodeCollection(subCollections);
       }
     );
 
