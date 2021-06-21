@@ -14,6 +14,7 @@ export type Chart = {
   workflowCollection?: ChartWorkflow[];
   dateFrom: string;
   dateTo: string;
+  selectedDateRange?: string;
   public?: boolean;
   dirty?: boolean;
 };
