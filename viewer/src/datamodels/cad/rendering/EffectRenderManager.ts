@@ -16,6 +16,8 @@ import { SsaoSampleQuality } from '../../../public/types';
 import { WebGLRendererStateHelper } from '../../../utilities/WebGLRendererStateHelper';
 import { SectorNode } from '../sector/SectorNode';
 import { LevelOfDetail } from '../sector/LevelOfDetail';
+import { NodeOutlineColor } from '../NodeAppearance';
+import { RevealColors } from '../../../utilities/types';
 
 export class EffectRenderManager {
   private readonly _materialManager: CadMaterialManager;
@@ -706,13 +708,13 @@ export class EffectRenderManager {
   private createOutlineColorTexture(): THREE.DataTexture {
     const outlineColorBuffer = new Uint8Array(8 * 4);
     const outlineColorTexture = new THREE.DataTexture(outlineColorBuffer, 8, 1);
-    setOutlineColor(outlineColorTexture.image.data, 1, CogniteColors.White);
-    setOutlineColor(outlineColorTexture.image.data, 2, CogniteColors.Black);
-    setOutlineColor(outlineColorTexture.image.data, 3, CogniteColors.Cyan);
-    setOutlineColor(outlineColorTexture.image.data, 4, CogniteColors.Blue);
-    setOutlineColor(outlineColorTexture.image.data, 5, CogniteColors.Purple);
-    setOutlineColor(outlineColorTexture.image.data, 6, CogniteColors.Pink);
-    setOutlineColor(outlineColorTexture.image.data, 7, CogniteColors.Orange);
+    setOutlineColor(outlineColorTexture.image.data, NodeOutlineColor.White, CogniteColors.White);
+    setOutlineColor(outlineColorTexture.image.data, NodeOutlineColor.Black, CogniteColors.Black);
+    setOutlineColor(outlineColorTexture.image.data, NodeOutlineColor.Cyan, CogniteColors.Cyan);
+    setOutlineColor(outlineColorTexture.image.data, NodeOutlineColor.Blue, CogniteColors.Blue);
+    setOutlineColor(outlineColorTexture.image.data, NodeOutlineColor.Green, RevealColors.Green);
+    setOutlineColor(outlineColorTexture.image.data, NodeOutlineColor.Red, RevealColors.Red);
+    setOutlineColor(outlineColorTexture.image.data, NodeOutlineColor.Orange, CogniteColors.Orange);
     return outlineColorTexture;
   }
 
