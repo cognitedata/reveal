@@ -67,7 +67,7 @@ const Search = ({ visible, onClose }: SearchProps) => {
             />
           </Tooltip>
         </SearchBar>
-        <InfoBox isTagInfoBox={false} />
+        <InfoBox infoType="TimeSeriesHelpBox" />
         <SearchResultsContainer>
           <SearchResultList query={urlQuery} />
         </SearchResultsContainer>

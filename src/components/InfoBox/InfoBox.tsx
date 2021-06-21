@@ -1,75 +1,61 @@
-import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
+import React, { useState } from 'react';
 import { Button, Icon, Title } from '@cognite/cogs.js';
+import styled from 'styled-components/macro';
 
 interface InfoBoxProps {
-  isTagInfoBox: boolean;
+  infoType: 'TagHelpBox' | 'TimeSeriesHelpBox';
 }
-
-const tagName = 'ShowTagHelpBox';
-const timeSeries = 'ShowTimeSeriesHelpBox';
 
 interface InfoBoxData {
   title: string;
   body: any;
 }
+const timeSeriesInfo: InfoBoxData = {
+  title: 'Timeseries ID',
+  body: (
+    <>
+      You can search for Timeseries name (ID) e.g. VAL_21_ZT_1018_04:Z.X.Value
+      or Timeseries description, e.g. Utløpstrykk pigsluse eksportlinje B.
+      {'\n\n'} You can scope the search by the asset hierarchy (e.g. IAA or ULA)
+      {'\n\n'}
+      Read more on
+      <a href="cog.link/charts-doc"> cog.link/charts-doc.</a>
+    </>
+  ),
+};
 
-const InfoBox = ({ isTagInfoBox }: InfoBoxProps) => {
-  const [displayInfo, setDisplayInfo] = useState(true);
-  const infoType = isTagInfoBox ? tagName : timeSeries;
+const tagInfo: InfoBoxData = {
+  title: 'Search Tag numbers',
+  body: (
+    <>
+      Search for Tag number (asset) e.g. 21PT1019 or description (e.g. LAUN TO
+      OIL TRANS LN B){'\n\n'} You can filter the search by suffix (e.g. .PV or
+      .PRIM) and choose priority of results (e.g. .PV on top){'\n\n'}
+      Read more on
+      <a href="cog.link/charts-doc"> cog.link/charts-doc.</a>
+    </>
+  ),
+};
 
-  const timeSeriesInfo = {
-    title: 'Timeseries ID',
-    body: (
-      <>
-        You can search for Timeseries name (ID) e.g. VAL_21_ZT_1018_04:Z.X.Value
-        or Timeseries description, e.g. Utløpstrykk pigsluse eksportlinje B.
-        {'\n\n'} You can scope the search by the asset hierarchy (e.g. IAA or
-        ULA){'\n\n'}
-        Read more on
-        <a href="cog.link/charts-doc"> cog.link/charts-doc.</a>
-      </>
-    ),
-  } as InfoBoxData;
+const InfoBox = ({ infoType }: InfoBoxProps) => {
+  const [displayInfo, setDisplayInfo] = useState(
+    localStorage ? !localStorage.getItem(infoType) : true
+  );
 
-  const tagInfo = {
-    title: 'Search Tag numbers',
-    body: (
-      <>
-        Search for Tag number (asset) e.g. 21PT1019 or description (e.g. LAUN TO
-        OIL TRANS LN B){'\n\n'} You can filter the search by suffix (e.g. .PV or
-        .PRIM) and choose priority of results (e.g. .PV on top){'\n\n'}
-        Read more on
-        <a href="cog.link/charts-doc"> cog.link/charts-doc.</a>
-      </>
-    ),
-  } as InfoBoxData;
-
-  const data = isTagInfoBox ? tagInfo : timeSeriesInfo;
+  const data = infoType === 'TagHelpBox' ? tagInfo : timeSeriesInfo;
 
   const handleOnClick = () => {
     localStorage.setItem(infoType, JSON.stringify({ display: false }));
     setDisplayInfo(false);
   };
 
-  useEffect(() => {
-    const toDisplay = localStorage.getItem(infoType);
-    if (toDisplay) {
-      setDisplayInfo(JSON.parse(toDisplay).display);
-    } else {
-      localStorage.setItem(infoType, JSON.stringify({ display: true }));
-    }
-  }, []);
-
   return (
     <>
       {displayInfo && (
         <InfoBoxWrapper>
-          <Icon type="Info" dataset-id="InfoFilled" />
+          <Icon type="Info" />
           <InfoWrapper>
-            <Title level={5} color="#333333">
-              {data.title}
-            </Title>
+            <StyledTitle level={5}>{data.title}</StyledTitle>
             <TextContainer>{data.body}</TextContainer>
           </InfoWrapper>
           <Button
@@ -110,6 +96,10 @@ const InfoWrapper = styled.div`
   width: max-content;
   flex: 1;
   padding: 0 1em;
+`;
+
+const StyledTitle = styled(Title)`
+  color: var(--cogs-text-primary);
 `;
 
 export default InfoBox;
