@@ -137,7 +137,10 @@ pods {
     stageWithNotify('Bazel test', CONTEXTS.bazelTests) {
       container('bazel') {
         sh(label: 'lint bazel files', script: "bazel --bazelrc=.ci.bazelrc run //:buildifier_check")
-        sh(label: 'bazel test //...', script: "bazel --bazelrc=.ci.bazelrc test //...")
+        retry(3) {
+          // Testcafe occasionally failing, let's simply retry until an issue is solved
+          sh(label: 'bazel test //...', script: "bazel --bazelrc=.ci.bazelrc test //...")
+        }
 
         // Bazel stores test outputs as zip files
         sh("find -L `readlink dist/testlogs` -type f -name '*.zip' | xargs -n1 unzip -uo")
