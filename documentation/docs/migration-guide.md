@@ -18,6 +18,7 @@ There are some important differences between version 1 and version 2 of `@cognit
 
 - The node styling/filtering API has been reworked and will require changes. See below for more information.
 - [ThreeJS](https://www.npmjs.com/package/three) and [@types/three](https://www.npmjs.com/package/@types/three) is included in the package, so it's no longer necessary to include this in the application you are using Reveal from if you are not using ThreeJS directly.
+- `Cognite3DViewer.getIntersectionFromPixel` is now async.
 
 ### Migrating to the new node styling API
 
