@@ -14,17 +14,17 @@ The serialized JSON blob also keeps information about styling/filtering of the m
 <DemoWrapper name="Cognite3DViewerDemo" />
 
 ## Getting the viewer state
-In the example below we apply some filter to our loaded model using the `NodeSet` type from [Styling Cad models](./cad-styling.mdx).
+In the example below we apply some filter to our loaded model using the `NodeCollectionBase` type from [Styling Cad models](./cad-styling.mdx).
 Then we can call the ```viewer.getViewState()``` function which return a serialized JSON blob containing the view state.
 Depending on the application, the view state can be additionally transformed into e.g. a URL parameter and transferred through a link.
 
 In the example below, we keep simply print it to the developer console. 
 
 ```js runnable
-const allPipes = new ByNodePropertyNodeSet(sdk, model);
+const allPipes = new PropertyFilterNodeCollection(sdk, model);
 allPipes.executeFilter({'PDMS': {'Type': 'PIPE'}});
 model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
-model.addStyledNodeSet(allPipes, { renderGhosted: false, color: [40, 200, 20] } );
+model.assignStyledNodeCollection(allPipes, { renderGhosted: false, color: [40, 200, 20] } );
 
 console.log(JSON.stringify(viewer.getViewState(), null, 2));
 ```
@@ -62,7 +62,7 @@ const myState = {
       "revisionId": 6664823881595566,
       "styledSets": [
         {
-          "token": "ByNodePropertyNodeSet",
+          "token": "PropertyFilterNodeCollection",
           "state": {
             "PDMS": {
               "Type": "PIPE"
@@ -88,34 +88,40 @@ const myState = {
 viewer.setViewState(myState);
 ```
 
-## Serializing and deserializing custom node sets
-When working with custom node sets, the Reveal viewer needs to know how to serialize and deserialize the set.
-Serialization is handled through the abstract method `serialize` which needs to be implemented when extending `NodeSet`.
-The output of `serialize` is of type `SerializedNodeSet` and contains a `token` which is used to recreate the `NodeSet` during deserialization, and a `state` object which contains the data needed to restore the `NodeSet`.
-It is up to the application developer to fill this state object with any nessesary data needed to recreate the state of the `NodeSet`.
-An optional `options` object can also be supplied containing any metadata for loading data (e.g. the number of API calls to fetch the needed data in parallel).
+## Serializing and deserializing custom node colletions
+When working with styled custom node collections, the Reveal viewer needs to know how to serialize and deserialize the set.
+Serialization is handled through the abstract method `serialize` which needs to be implemented when extending `NodeCollectionBase`.
+The output of `serialize` is of type `SerializedNodeCollection` and contains a `token` which is used to recreate 
+the `NodeCollectionBase` during deserialization, and a `state` object which contains the data needed to restore 
+the `NodeCollectionBase`. It is up to the application developer to fill this state object with any nessesary 
+data needed to recreate the state of the `NodeCollectionBase`. An optional `options` object can also be supplied 
+containing any metadata for loading data (e.g. the number of API calls to fetch the needed data in parallel).
 The contents returned from `serialize` is contained in the result of `getViewState`.
 
-In addition to serialization, Reveal also needs to know how to recreate the custom `NodeSet` during deserialization.
-This is done by calling the free-function `registerCustomNodeSetType` with the same `token` defined by the custom `NodeSet` and a lambda function which instantiates and restore the state of the `NodeSet`.
-The lambda function has two parameters: the `descriptor` containing the state and options which should be applied to the `NodeSet` and the context containing an instance of the [CogniteClient from the Cognite SDK](https://docs.cognite.com/dev/guides/sdk/js/) and the `Cognite3DModel` which the `NodeSet` was originally applied to.
-It is up to the application developer how and if they want to use the context and/or descriptor, but it is provided as a convinience. 
+In addition to serialization, Reveal also needs to know how to recreate the custom `NodeCollectionBase` during 
+deserialization. This is done by calling the free-function `registerCustomNodeCollectionType` with the same `token`
+defined by the custom `NodeCollectionBase` and a lambda function which instantiates and restore the state of
+the `NodeCollectionBase`. The lambda function has two parameters: the `descriptor` containing the state and 
+options which should be applied to the `NodeCollectionBase` and the context containing an instance of 
+the [CogniteClient from the Cognite SDK](https://docs.cognite.com/dev/guides/sdk/js/) and the `Cognite3DModel`
+which the `NodeCollectionBase` was originally applied to. It is up to the application developer how and if they 
+want to use the context and/or descriptor, but it is provided as a convinience. 
 
-An example of a simple custom `NodeSet` can be seen below.
-For more information on creating a custom `NodeSet`, see [Create custom node sets](cad-styling-custom).
+An example of a simple custom `NodeCollectionBase` can be seen below.
+For more information on creating a custom `NodeCollectionBase`, see [create custom node collections](cad-styling-custom).
 ```jsx
-// MyNodeSet.ts
+// MyNodeCollection.ts
 
-import { NodeSet, registerCustomNodeSetType } from '@cognite/reveal';
+import { NodeCollectionBase, registerCustomNodeCollectionType } from '@cognite/reveal';
 
-class MyNodeSet extends NodeSet {
+class MyNodeCollection extends NodeCollectionBase {
   
   isLoading = false;
   private _indexSet: IndexSet;
   
   constructor(model: Cognite3DModel) {
     // token used for serialization / deserialization
-    super('MyNodeSet');
+    super('MyNodeCollection');
 
     this._indexSet = new IndexSet();
     for (let i = 0; i < model.nodeCount / 2; i++) {
@@ -127,7 +133,7 @@ class MyNodeSet extends NodeSet {
     return this._indexSet;
   }
 
-  serialize(): SerializedNodeSet {
+  serialize(): SerializedNodeCollection {
     return { token: this.classToken, state: this._indexSet.toRangeArray()}
   }
 
@@ -137,7 +143,8 @@ class MyNodeSet extends NodeSet {
   }
 };
 
-registerCustomNodeSetType<MyNodeSet>('MyNodeSet', (descriptor, context) => {
-  return Promise.resolve(new MyNodeSet(context.model));
+// Register deserializer for type
+registerCustomNodeCollectionType<MyNodeCollection>('MyNodeCollection', (descriptor, context) => {
+  return Promise.resolve(new MyNodeCollection(context.model));
 });
 ```

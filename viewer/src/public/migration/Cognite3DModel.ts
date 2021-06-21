@@ -15,7 +15,7 @@ import { trackError } from '../../utilities/metrics';
 import { SupportedModelTypes, CadModelMetadata } from '../types';
 import { callActionWithIndicesAsync } from '../../utilities/callActionWithIndicesAsync';
 import { CogniteClientNodeIdAndTreeIndexMapper } from '../../utilities/networking/CogniteClientNodeIdAndTreeIndexMapper';
-import { NodeSet } from '../../datamodels/cad/styling';
+import { NodeCollectionBase } from '../../datamodels/cad/styling';
 import { NodeAppearance } from '../../datamodels/cad';
 import { NodeTransformProvider } from '../../datamodels/cad/styling/NodeTransformProvider';
 
@@ -35,8 +35,8 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
 
   /** @internal */
-  get styleNodeSets(): { nodes: NodeSet; appearance: NodeAppearance }[] {
-    return this._styledNodeSets;
+  get styledNodeCollections(): { nodes: NodeCollectionBase; appearance: NodeAppearance }[] {
+    return this._styledNodeCollections;
   }
 
   /**
@@ -53,7 +53,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   private readonly cadModel: CadModelMetadata;
   private readonly client: CogniteClient;
   private readonly nodeIdAndTreeIndexMaps: NodeIdAndTreeIndexMaps;
-  private readonly _styledNodeSets: { nodes: NodeSet; appearance: NodeAppearance }[] = [];
+  private readonly _styledNodeCollections: { nodes: NodeCollectionBase; appearance: NodeAppearance }[] = [];
 
   /**
    * @param modelId
@@ -78,7 +78,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
 
   /**
    * Sets the default appearance for nodes that are not styled using
-   * {@link addStyledNodeSet}. Updating the default style can be an
+   * {@link addStyledNodeCollection}. Updating the default style can be an
    * expensive operation, so use with care.
    *
    * @param appearance  Default node appearance.
@@ -89,7 +89,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
 
   /**
    * Gets the default appearance for nodes that are not styled using
-   * {@link addStyledNodeSet}.
+   * {@link addStyledNodeCollection}.
    */
   getDefaultNodeAppearance(): NodeAppearance {
     return this.cadNode.defaultNodeAppearance;
@@ -102,7 +102,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * color code the 3D model based on information (e.g. coloring the 3D model
    * by construction status).
    *
-   * The {@link NodeSet} can be updated dynamically and the rendered nodes will be
+   * The {@link NodeCollectionBase} can be updated dynamically and the rendered nodes will be
    * updated automatically as the styling changes. The appearance of the style nodes
    * cannot be changed.
    *
@@ -110,42 +110,37 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * the sets were added, i.e. styled sets added late can overwrite styled sets added
    * early.
    *
-   * @param nodeSet Dynamic set of nodes to apply the provided appearance to.
+   * If the {@link nodeCollection} provided already has an assigned style, this style will
+   * be replaced with style provided.
+   *
+   * @param nodeCollection Dynamic set of nodes to apply the provided appearance to.
    * @param appearance Appearance to style the provided set with.
    * @example
    * ```js
    * model.setDefaultNodeAppearance({ rendererGhosted: true });
-   * const visibleSet = new FixedNodeSet(someTreeIndices);
-   * model.addStyledSet(visibleSet, { rendererGhosted: false });
+   * const visibleNodes = new TreeIndexNodeCollection(someTreeIndices);
+   * model.assignStyledNodeCollection(visibleSet, { rendererGhosted: false });
    * ```
    */
-  addStyledNodeSet(nodeSet: NodeSet, appearance: NodeAppearance) {
-    this._styledNodeSets.push({ nodes: nodeSet, appearance });
-    this.cadNode.nodeAppearanceProvider.addStyledSet(nodeSet, appearance);
+  assignStyledNodeCollection(nodeCollection: NodeCollectionBase, appearance: NodeAppearance) {
+    this._styledNodeCollections.push({ nodes: nodeCollection, appearance });
+    this.cadNode.nodeAppearanceProvider.assignStyledNodeCollection(nodeCollection, appearance);
   }
 
   /**
-   * Changes appearance for the existing styled node set.
-   * @param nodeSet Node set previously added using {@see addStyledNodeSet}.
-   * @param appearance Appearance that should replace previous one for the provided set.
+   * Removes styling for previously added styled collection, resetting the style to the default (or
+   * the style imposed by other styled collections).
+   * @param nodeCollection   Node collection previously added using {@link assignStyledNodeCollection}.
    */
-  changeStyledNodeSetAppearance(nodeSet: NodeSet, appearance: NodeAppearance) {
-    this.cadNode.nodeAppearanceProvider.changeStyledSetAppearance(nodeSet, appearance);
+  unassignStyledNodeCollection(nodeCollection: NodeCollectionBase) {
+    this.cadNode.nodeAppearanceProvider.unassignStyledNodeCollection(nodeCollection);
   }
 
   /**
-   * Removes styling for previously added set, resetting the style to the default.
-   * @param nodeSet   Node set previously added using {@see addStyledNodeSet}.
-   */
-  removeStyledNodeSet(nodeSet: NodeSet) {
-    this.cadNode.nodeAppearanceProvider.removeStyledSet(nodeSet);
-  }
-
-  /**
-   * Removes all styled sets, resetting the appearance of all nodes to the
+   * Removes all styled collections, resetting the appearance of all nodes to the
    * default appearance.
    */
-  removeAllStyledNodeSets() {
+  removeAllStyledNodeCollections() {
     this.cadNode.nodeAppearanceProvider.clear();
   }
 
@@ -458,7 +453,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * some operations on these nodes using the SDK.
    *
    * @param treeIndices Tree indices to map to node IDs.
-   * @returns A list of node IDs corresponding to the elements of the inpu.
+   * @returns A list of node IDs corresponding to the elements of the input.
    * @throws If an invalid tree index is provided the function throws an error.
    */
   async mapTreeIndicesToNodeIds(treeIndices: number[]): Promise<CogniteInternalId[]> {

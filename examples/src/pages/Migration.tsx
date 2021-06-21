@@ -14,7 +14,7 @@ import {
   CognitePointCloudModel,
   PotreePointColorType, 
   PotreePointShape,
-  ByTreeIndexNodeSet,
+  TreeIndexNodeCollection,
   IndexSet
 } from '@cognite/reveal';
 import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, AxisViewTool } from '@cognite/reveal/tools';
@@ -420,7 +420,7 @@ export function Migration() {
         await addModel({ modelId, revisionId, geometryFilter: createGeometryFilterFromState(guiState.geometryFilter) });
       }
 
-      const selectedSet = new ByTreeIndexNodeSet([]);
+      const selectedSet = new TreeIndexNodeCollection([]);
 
       let expandTool: ExplodedViewTool | null;
       let explodeSlider: dat.GUIController | null;
@@ -437,8 +437,8 @@ export function Migration() {
           const rootTreeIndex = explodeParams.rootTreeIndex;
           const treeIndices = await cadModels[0].getSubtreeTreeIndices(rootTreeIndex);
           cadModels[0].setDefaultNodeAppearance({ visible: false });
-          const explodeSet = new ByTreeIndexNodeSet(treeIndices);
-          cadModels[0].addStyledNodeSet(explodeSet, { visible: true });
+          const explodeSet = new TreeIndexNodeCollection(treeIndices);
+          cadModels[0].assignStyledNodeCollection(explodeSet, { visible: true });
 
           const rootBoundingBox = await cadModels[0].getBoundingBoxByTreeIndex(rootTreeIndex);
           viewer.fitCameraToBoundingBox(rootBoundingBox, 0);
@@ -458,7 +458,7 @@ export function Migration() {
         reset: () => {
           expandTool?.reset();
           cadModels[0].setDefaultNodeAppearance({ visible: true });
-          cadModels[0].removeAllStyledNodeSets();
+          cadModels[0].removeAllStyledNodeCollections();
           explodeParams.explodeFactor = 0;
           expandTool = null;
           if (explodeSlider) {
