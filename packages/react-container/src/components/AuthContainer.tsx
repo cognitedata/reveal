@@ -118,15 +118,16 @@ export const AuthContainer: React.FC<AuthContainerProps> = ({
 
     if (flow && ['COGNITE_AUTH', 'FAKE_IDP'].includes(flow)) {
       setLoading(false);
-      return;
     }
 
     if (authResponse?.authState?.authenticated) {
       setLoading(false);
-    } else {
+    }
+
+    if (authResponse?.authState?.error) {
       log(
-        '[AuthContainer] Unauthenticated state found, going to login page.',
-        [authResponse],
+        '[AuthContainer] Error found, going to login page.',
+        [authResponse?.authState?.errorMessage],
         2
       );
       authError();

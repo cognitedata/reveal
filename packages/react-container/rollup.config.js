@@ -23,6 +23,7 @@ export default {
     'react/jsx-runtime',
     'lodash/noop',
     'lodash/merge',
+    '@cognite/cogs.js/dist/cogs.css',
     'history',
   ],
   plugins: [
