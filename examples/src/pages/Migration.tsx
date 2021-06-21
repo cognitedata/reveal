@@ -438,7 +438,7 @@ export function Migration() {
           const treeIndices = await cadModels[0].getSubtreeTreeIndices(rootTreeIndex);
           cadModels[0].setDefaultNodeAppearance({ visible: false });
           const explodeSet = new TreeIndexNodeCollection(treeIndices);
-          cadModels[0].assignStyleToNodeCollection(explodeSet, { visible: true });
+          cadModels[0].assignStyledNodeCollection(explodeSet, { visible: true });
 
           const rootBoundingBox = await cadModels[0].getBoundingBoxByTreeIndex(rootTreeIndex);
           viewer.fitCameraToBoundingBox(rootBoundingBox, 0);

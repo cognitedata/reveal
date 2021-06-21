@@ -28,7 +28,7 @@ const allAssetMappedNodes = new AssetNodeCollection(sdk, model);
 // When no asset ID is provided, all nodes mapped to assets are included
 allAssetMappedNodes.executeFilter({});
 model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
-model.assignStyleToNodeCollection(allAssetMappedNodes, { renderGhosted: false, outlineColor: NodeOutlineColor.Cyan } );
+model.assignStyledNodeCollection(allAssetMappedNodes, { renderGhosted: false, outlineColor: NodeOutlineColor.Cyan } );
 ```
 
 # Style a given asset
@@ -40,7 +40,7 @@ It is also possible to only style nodes mapped to a single asset. Assets are ide
 const assetNodes = new AssetNodeCollection(sdk, model);
 assetNodes.executeFilter({ assetId: 4222791488928479 });
 model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
-model.assignStyleToNodeCollection(assetNodes, { renderGhosted: false, outlineColor: NodeOutlineColor.Cyan } );
+model.assignStyledNodeCollection(assetNodes, { renderGhosted: false, outlineColor: NodeOutlineColor.Cyan } );
 ```
 
 Note that there is no way to list multiple assets directly with `AssetNodeCollection`, but This
@@ -66,7 +66,7 @@ const areaOfInterest = new THREE.Box3().setFromCenterAndSize(
 const assetsWithinAreaNodes = new AssetNodeCollection(sdk, model);
 assetsWithinAreaNodes.executeFilter({ boundingBox: areaOfInterest });
 model.setDefaultNodeAppearance(DefaultNodeAppearance.Hidden);
-model.assignStyleToNodeCollection(assetsWithinAreaNodes, { visible: true } );
+model.assignStyledNodeCollection(assetsWithinAreaNodes, { visible: true } );
 
 // Simple helper to show the area of interest
 const boxMaterial = new THREE.MeshBasicMaterial({wireframe: true, color: 0xffff00 });

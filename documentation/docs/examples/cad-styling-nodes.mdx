@@ -37,7 +37,7 @@ retrieve nodes of a certain type. In the following example, only pipes are accep
 const allPipes = new PropertyFilterNodeCollection(sdk, model);
 allPipes.executeFilter({'PDMS': {'Type': 'PIPE'}});
 model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
-model.assignStyleToNodeCollection(allPipes, { renderGhosted: false, color: [40, 200, 20] } );
+model.assignStyledNodeCollection(allPipes, { renderGhosted: false, color: [40, 200, 20] } );
 ```
 
 ## Partitioning requests
@@ -54,7 +54,7 @@ const nodesFromFile = new PropertyFilterNodeCollection(sdk, model, { requestPart
 // All nodes originating from a given file
 nodesFromFile.executeFilter({'Item': {'Source File': 'PRO-S_CD-MUM.rvm'}});
 model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
-model.assignStyleToNodeCollection(nodesFromFile, { renderGhosted: false, outlineColor: NodeOutlineColor.Orange } );
+model.assignStyledNodeCollection(nodesFromFile, { renderGhosted: false, outlineColor: NodeOutlineColor.Orange } );
 ```
 
 To compare speed-up, set `requestPartitions` to `1`.
@@ -74,7 +74,7 @@ const stuMechNodes = new PropertyFilterNodeCollection(sdk, model);
 stuMechNodes.executeFilter({'PDMS': {':capDisc': 'MECH', 'Purpose': 'STU' }});
 
 model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
-model.assignStyleToNodeCollection(stuMechNodes, { renderGhosted: false, color: [40, 200, 20] } );
+model.assignStyledNodeCollection(stuMechNodes, { renderGhosted: false, color: [40, 200, 20] } );
 ```
 
 Combining two separate queries requires the use of `IntersectionNodeCollection`:
@@ -93,7 +93,7 @@ combined.add(mechNodes);
 combined.add(stuNodes);
 
 model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
-model.assignStyleToNodeCollection(combined, { renderGhosted: false, color: [40, 200, 20] } );
+model.assignStyledNodeCollection(combined, { renderGhosted: false, color: [40, 200, 20] } );
 ```
 
 The two approaches has their pros and cons. Often it will be faster to combine the
@@ -116,5 +116,5 @@ livingQuarters.executeFilter({'Item': {'Name': '/SLP/S/LQ'}});
 const notLivingQuarters = new InvertedNodeCollection(model, livingQuarters);
 
 model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
-model.assignStyleToNodeCollection(notLivingQuarters, { renderGhosted: false } );
+model.assignStyledNodeCollection(notLivingQuarters, { renderGhosted: false } );
 ```

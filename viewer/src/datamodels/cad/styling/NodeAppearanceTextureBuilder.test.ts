@@ -33,40 +33,40 @@ describe('NodeAppearanceTextureBuilder', () => {
 
   test('needsUpdate() is true after style provider is changed', () => {
     builder.build(); // Reset needsUpdate
-    styleProvider.assignStyleToNodeCollection(nodeCollection, { renderGhosted: true });
+    styleProvider.assignStyledNodeCollection(nodeCollection, { renderGhosted: true });
     expect(builder.needsUpdate).toBeTrue();
   });
 
   test('build() applies color override', () => {
-    styleProvider.assignStyleToNodeCollection(nodeCollection, { color: [128, 255, 64] });
+    styleProvider.assignStyledNodeCollection(nodeCollection, { color: [128, 255, 64] });
     builder.build();
 
     expect(texelsOf(builder.overrideColorPerTreeIndexTexture)).toEqual([128, 255, 64, 1]);
   });
 
   test('build() applies hidden', () => {
-    styleProvider.assignStyleToNodeCollection(nodeCollection, { visible: false });
+    styleProvider.assignStyledNodeCollection(nodeCollection, { visible: false });
     builder.build();
 
     expect(texelsOf(builder.overrideColorPerTreeIndexTexture)).toEqual([0, 0, 0, 0]);
   });
 
   test('build() applies in front', () => {
-    styleProvider.assignStyleToNodeCollection(nodeCollection, { renderInFront: true });
+    styleProvider.assignStyledNodeCollection(nodeCollection, { renderInFront: true });
     builder.build();
 
     expect(texelsOf(builder.overrideColorPerTreeIndexTexture)).toEqual([0, 0, 0, 3]);
   });
 
   test('build() applies ghost mode', () => {
-    styleProvider.assignStyleToNodeCollection(nodeCollection, { renderGhosted: true });
+    styleProvider.assignStyledNodeCollection(nodeCollection, { renderGhosted: true });
     builder.build();
 
     expect(texelsOf(builder.overrideColorPerTreeIndexTexture)).toEqual([0, 0, 0, 5]);
   });
 
   test('build() applies outline', () => {
-    styleProvider.assignStyleToNodeCollection(nodeCollection, { outlineColor: NodeOutlineColor.Orange });
+    styleProvider.assignStyledNodeCollection(nodeCollection, { outlineColor: NodeOutlineColor.Orange });
     builder.build();
 
     expect(texelsOf(builder.overrideColorPerTreeIndexTexture)).toEqual([0, 0, 0, 1 + (NodeOutlineColor.Orange << 3)]);
@@ -77,7 +77,7 @@ describe('NodeAppearanceTextureBuilder', () => {
     expect(builder.regularNodeTreeIndices).toEqual(new IndexSet([0]));
     expect(builder.ghostedNodeTreeIndices).toEqual(new IndexSet([]));
 
-    styleProvider.assignStyleToNodeCollection(nodeCollection, { renderGhosted: true });
+    styleProvider.assignStyledNodeCollection(nodeCollection, { renderGhosted: true });
     builder.build();
 
     expect(builder.regularNodeTreeIndices).toEqual(new IndexSet([]));
@@ -89,7 +89,7 @@ describe('NodeAppearanceTextureBuilder', () => {
     expect(builder.regularNodeTreeIndices).toEqual(new IndexSet([0]));
     expect(builder.infrontNodeTreeIndices).toEqual(new IndexSet([]));
 
-    styleProvider.assignStyleToNodeCollection(nodeCollection, { renderInFront: true });
+    styleProvider.assignStyledNodeCollection(nodeCollection, { renderInFront: true });
     builder.build();
 
     expect(builder.regularNodeTreeIndices).toEqual(new IndexSet([]));
@@ -98,7 +98,7 @@ describe('NodeAppearanceTextureBuilder', () => {
 
   test('build() resets styles of removed node collections', () => {
     // Arrange
-    styleProvider.assignStyleToNodeCollection(nodeCollection, { renderGhosted: true });
+    styleProvider.assignStyledNodeCollection(nodeCollection, { renderGhosted: true });
     builder.build();
     expect(texelsOf(builder.overrideColorPerTreeIndexTexture)).toEqual([0, 0, 0, 5]); // Alpha = 5 -> visible, ghosted
 
@@ -114,7 +114,7 @@ describe('NodeAppearanceTextureBuilder', () => {
     // Arrange
     builder.build();
     const originalTexels = texelsOf(builder.overrideColorPerTreeIndexTexture);
-    styleProvider.assignStyleToNodeCollection(nodeCollection, { renderGhosted: true });
+    styleProvider.assignStyledNodeCollection(nodeCollection, { renderGhosted: true });
     builder.build();
     expect(texelsOf(builder.overrideColorPerTreeIndexTexture)).not.toEqual(originalTexels);
 
@@ -129,7 +129,7 @@ describe('NodeAppearanceTextureBuilder', () => {
   test('add then remove index from set, resets styling', () => {
     const set = new TreeIndexNodeCollection(new IndexSet([0]));
     const style: NodeAppearance = { color: [127, 128, 192], visible: false };
-    styleProvider.assignStyleToNodeCollection(set, style);
+    styleProvider.assignStyledNodeCollection(set, style);
 
     builder.build();
     expect(texelsOf(builder.overrideColorPerTreeIndexTexture)).toEqual([127, 128, 192, 0]);
@@ -157,7 +157,7 @@ describe('NodeAppearanceTextureBuilder', () => {
 
   test('setDefaultStyle() has effect for unset fields in styled sets', () => {
     builder.setDefaultAppearance({ color: [1, 2, 3], renderGhosted: true });
-    styleProvider.assignStyleToNodeCollection(new TreeIndexNodeCollection([0]), { renderGhosted: false });
+    styleProvider.assignStyledNodeCollection(new TreeIndexNodeCollection([0]), { renderGhosted: false });
     builder.build();
 
     expect(texelsOf(builder.overrideColorPerTreeIndexTexture)).toEqual([1, 2, 3, 1]); // Color is from default style, but 'renderGhosted' from styled set
@@ -172,8 +172,8 @@ describe('NodeAppearanceTextureBuilder', () => {
     expect(builder.infrontNodeTreeIndices).toEqual(new IndexSet());
 
     // Override settings for node 1+2, moving these into ghosted and infront sets
-    styleProvider.assignStyleToNodeCollection(new TreeIndexNodeCollection([1]), { renderGhosted: true });
-    styleProvider.assignStyleToNodeCollection(new TreeIndexNodeCollection([2]), { renderInFront: true });
+    styleProvider.assignStyledNodeCollection(new TreeIndexNodeCollection([1]), { renderGhosted: true });
+    styleProvider.assignStyledNodeCollection(new TreeIndexNodeCollection([2]), { renderInFront: true });
     builder.build();
     expect(builder.regularNodeTreeIndices).toEqual(new IndexSet([0]));
     expect(builder.ghostedNodeTreeIndices).toEqual(new IndexSet([1]));

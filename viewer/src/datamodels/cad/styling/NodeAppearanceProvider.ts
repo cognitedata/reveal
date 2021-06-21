@@ -62,7 +62,7 @@ export class NodeAppearanceProvider {
     }
   }
 
-  assignStyleToNodeCollection(nodeCollection: NodeCollectionBase, appearance: NodeAppearance) {
+  assignStyledNodeCollection(nodeCollection: NodeCollectionBase, appearance: NodeAppearance) {
     const existingCollection = this._styledCollections.find(x => x.nodeCollection === nodeCollection);
     if (existingCollection !== undefined) {
       existingCollection.appearance = appearance;

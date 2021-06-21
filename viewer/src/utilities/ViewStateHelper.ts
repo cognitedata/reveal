@@ -111,7 +111,7 @@ export class ViewStateHelper {
             options: styleFilter.options
           });
 
-          model.assignStyleToNodeCollection(nodeCollection, styleFilter.appearance);
+          model.assignStyledNodeCollection(nodeCollection, styleFilter.appearance);
         });
       });
   }

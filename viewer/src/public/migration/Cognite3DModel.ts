@@ -119,17 +119,18 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * ```js
    * model.setDefaultNodeAppearance({ rendererGhosted: true });
    * const visibleNodes = new TreeIndexNodeCollection(someTreeIndices);
-   * model.assignStyleToNodeCollection(visibleSet, { rendererGhosted: false });
+   * model.assignStyledNodeCollection(visibleSet, { rendererGhosted: false });
    * ```
    */
-  assignStyleToNodeCollection(nodeCollection: NodeCollectionBase, appearance: NodeAppearance) {
+  assignStyledNodeCollection(nodeCollection: NodeCollectionBase, appearance: NodeAppearance) {
     this._styledNodeCollections.push({ nodes: nodeCollection, appearance });
-    this.cadNode.nodeAppearanceProvider.assignStyleToNodeCollection(nodeCollection, appearance);
+    this.cadNode.nodeAppearanceProvider.assignStyledNodeCollection(nodeCollection, appearance);
   }
 
   /**
-   * Removes styling for previously added set, resetting the style to the default.
-   * @param nodeCollection   Node collection previously added using {@link assignStyleToNodeCollection}.
+   * Removes styling for previously added styled collection, resetting the style to the default (or
+   * the style imposed by other styled collections).
+   * @param nodeCollection   Node collection previously added using {@link assignStyledNodeCollection}.
    */
   unassignStyleFromNodeCollection(nodeCollection: NodeCollectionBase) {
     this.cadNode.nodeAppearanceProvider.unassignStyleFromNodeCollection(nodeCollection);

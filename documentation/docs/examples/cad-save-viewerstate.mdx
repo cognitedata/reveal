@@ -24,7 +24,7 @@ In the example below, we keep simply print it to the developer console.
 const allPipes = new PropertyFilterNodeCollection(sdk, model);
 allPipes.executeFilter({'PDMS': {'Type': 'PIPE'}});
 model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
-model.assignStyleToNodeCollection(allPipes, { renderGhosted: false, color: [40, 200, 20] } );
+model.assignStyledNodeCollection(allPipes, { renderGhosted: false, color: [40, 200, 20] } );
 
 console.log(JSON.stringify(viewer.getViewState(), null, 2));
 ```

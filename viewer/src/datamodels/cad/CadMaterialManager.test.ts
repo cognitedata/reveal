@@ -67,7 +67,7 @@ describe('CadMaterialManager', () => {
     const listener = jest.fn();
     manager.on('materialsChanged', listener);
 
-    provider.assignStyleToNodeCollection(new TreeIndexNodeCollection(new IndexSet([1, 2, 3])), { renderGhosted: true });
+    provider.assignStyledNodeCollection(new TreeIndexNodeCollection(new IndexSet([1, 2, 3])), { renderGhosted: true });
 
     expect(manager.getModelBackTreeIndices('model')).toEqual(new IndexSet([0, 4]));
     expect(manager.getModelGhostedTreeIndices('model')).toEqual(new IndexSet([1, 2, 3]));

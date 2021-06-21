@@ -84,7 +84,7 @@ Now, the same can be implemented using:
 const visibleSet = new IndexSet();
 const visibleNodes = new TreeIndexNodeCollection(visibleSet);
 model.setDefaultNodeAppearance(DefaultNodeAppearance.Hidden);
-model.assignStyleToNodeCollection(visibleNodes, DefaultNodeAppearance.Default);
+model.assignStyledNodeCollection(visibleNodes, DefaultNodeAppearance.Default);
 
 // Populate set
 sdk.revisions3D.list3DNodes(model.modelId, model.revisionId,
@@ -130,13 +130,13 @@ the same result. When you also have a `subtreeSize` available, use `TreeIndexNod
 const indexSet = new IndexSet();
 indexSet.add(subtreeRootIndex);
 const nodes = new TreeIndexNodeCollection(indexSet);
-model.assignStyleToNodeCollection(nodes, { visible: false });
+model.assignStyledNodeCollection(nodes, { visible: false });
 
 // ✅ Correct - all descendants are affected
 const indexSet = new IndexSet();
 indexSet.addRange(await model.getSubtreeIndices(subtreeRootIndex));
 const nodes = new TreeIndexNodeCollection(indexSet);
-model.assignStyleToNodeCollection(nodes, { visible: false });
+model.assignStyledNodeCollection(nodes, { visible: false });
 ```
 
 ## Migrating from [@cognite/3d‑viewer](https://www.npmjs.com/package/@cognite/3d-viewer)

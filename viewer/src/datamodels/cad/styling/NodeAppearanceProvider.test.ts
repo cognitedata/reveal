@@ -35,8 +35,8 @@ describe('NodeAppearanceProvider', () => {
     const style1: NodeAppearance = { visible: false };
     const nodeCollection2 = new TreeIndexNodeCollection(new IndexSet([2, 3, 4]));
     const style2: NodeAppearance = { visible: true };
-    provider.assignStyleToNodeCollection(nodeCollection1, style1);
-    provider.assignStyleToNodeCollection(nodeCollection2, style2);
+    provider.assignStyledNodeCollection(nodeCollection1, style1);
+    provider.assignStyledNodeCollection(nodeCollection2, style2);
 
     provider.applyStyles(applyCb);
 
@@ -51,8 +51,8 @@ describe('NodeAppearanceProvider', () => {
     const style1: NodeAppearance = { visible: false };
     const nodeCollection2 = new TreeIndexNodeCollection(new IndexSet([2, 3, 4]));
     const style2: NodeAppearance = { visible: true };
-    provider.assignStyleToNodeCollection(nodeCollection1, style1);
-    provider.assignStyleToNodeCollection(nodeCollection2, style2);
+    provider.assignStyledNodeCollection(nodeCollection1, style1);
+    provider.assignStyledNodeCollection(nodeCollection2, style2);
 
     provider.unassignStyleFromNodeCollection(nodeCollection2);
     provider.applyStyles(applyCb);
@@ -66,10 +66,10 @@ describe('NodeAppearanceProvider', () => {
     const nodeCollection = new TreeIndexNodeCollection(new IndexSet([1, 2, 3]));
     provider.on('changed', listener);
 
-    provider.assignStyleToNodeCollection(nodeCollection, {});
+    provider.assignStyledNodeCollection(nodeCollection, {});
     expect(listener).toBeCalledTimes(1);
 
-    provider.assignStyleToNodeCollection(nodeCollection, { visible: false });
+    provider.assignStyledNodeCollection(nodeCollection, { visible: false });
     expect(listener).toBeCalledTimes(2);
 
     provider.unassignStyleFromNodeCollection(nodeCollection);
@@ -79,7 +79,7 @@ describe('NodeAppearanceProvider', () => {
   test('triggers changed when underlying set is changed', () => {
     const set = new TreeIndexNodeCollection(new IndexSet([1, 2, 3]));
     const style: NodeAppearance = { visible: false };
-    provider.assignStyleToNodeCollection(set, style);
+    provider.assignStyledNodeCollection(set, style);
     const listener = jest.fn();
     provider.on('changed', listener);
 
@@ -92,7 +92,7 @@ describe('NodeAppearanceProvider', () => {
   test('does not trigger changed when removed set is changed', () => {
     const nodeCollection = new TreeIndexNodeCollection(new IndexSet([1, 2, 3]));
     const style: NodeAppearance = { visible: false };
-    provider.assignStyleToNodeCollection(nodeCollection, style);
+    provider.assignStyledNodeCollection(nodeCollection, style);
     provider.unassignStyleFromNodeCollection(nodeCollection);
     const listener = jest.fn();
     provider.on('changed', listener);
@@ -107,7 +107,7 @@ describe('NodeAppearanceProvider', () => {
     const isLoadingChangedListener = jest.fn();
     provider.on('loadingStateChanged', isLoadingChangedListener);
     const nodeCollection = new StubNodeCollection();
-    provider.assignStyleToNodeCollection(nodeCollection, { outlineColor: NodeOutlineColor.Blue });
+    provider.assignStyledNodeCollection(nodeCollection, { outlineColor: NodeOutlineColor.Blue });
 
     nodeCollection.isLoading = true;
     nodeCollection.triggerChanged();
