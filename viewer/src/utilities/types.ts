@@ -26,6 +26,14 @@ export class CogniteColors {
 }
 
 /**
+ * Some additional colors to supplement {@link CogniteColors}.
+ */
+export class RevealColors {
+  public static readonly Red = new THREE.Color('rgb(235,0,4)');
+  public static readonly Green = new THREE.Color('rgb(46,164,79)');
+}
+
+/**
  * State holding information about data being loaded.
  */
 export type LoadingState = {
