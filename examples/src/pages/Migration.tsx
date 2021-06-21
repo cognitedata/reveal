@@ -476,7 +476,7 @@ export function Migration() {
       viewer.on('click', async event => {
         const { offsetX, offsetY } = event;
         console.log('2D coordinates', event);
-        const intersection = viewer.getIntersectionFromPixel(offsetX, offsetY);
+        const intersection = await viewer.getIntersectionFromPixel(offsetX, offsetY);
         if (intersection !== null) {
           console.log(intersection);
           switch (intersection.type) {
