@@ -58,7 +58,7 @@ export class SinglePropertyFilterNodeCollection extends NodeCollectionBase {
   /**
    * Execute filter asynchronously, replacing any existing filter active. When {@link propertyValues}
    * contains more than 1000 elements, the operation will be split into multiple batches that
-   * are executed in parallel. Note that when providing a {@link ByNodePropertyNodeSetOptions.requestPartitions}
+   * are executed in parallel. Note that when providing a {@link PropertyFilterNodeCollectionOptions.requestPartitions}
    * during construction of the node set, the total number of batches will be requestPartitions*numberOfBatches.
    *
    * @param propertyCategory Node property category, e.g. `'PDMS'`.
