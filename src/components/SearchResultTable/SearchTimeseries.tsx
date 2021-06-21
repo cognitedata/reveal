@@ -1,13 +1,10 @@
 import React, { useMemo } from 'react';
 import { useSDK } from '@cognite/sdk-provider';
 import { Icon, Button, Checkbox } from '@cognite/cogs.js';
-import dayjs from 'dayjs';
 import { useParams } from 'react-router-dom';
 import { useChart, useUpdateChart } from 'hooks/firebase';
 import { Timeseries } from '@cognite/sdk';
 import { useInfiniteSearch } from '@cognite/sdk-react-query-hooks';
-import { TimeseriesChart } from '@cognite/data-exploration';
-import DelayedComponent from 'components/DelayedComponent';
 import styled from 'styled-components/macro';
 import {
   addTimeseries,
@@ -16,11 +13,12 @@ import {
 } from 'utils/charts';
 import { calculateDefaultYAxis } from 'utils/axis';
 import { trackUsage } from 'utils/metrics';
+import TimeseriesRows from './TimeseriesRows';
 
 type Props = {
   query: string;
 };
-export default function SearchResultList({ query }: Props) {
+export default function SearchTimeseries({ query }: Props) {
   const sdk = useSDK();
   const { chartId } = useParams<{ chartId: string }>();
   const { data: chart } = useChart(chartId);
@@ -35,7 +33,7 @@ export default function SearchResultList({ query }: Props) {
   } = useInfiniteSearch<Timeseries>('timeseries', query, 20, undefined, {
     enabled: !!query,
   });
-  const assets = useMemo(
+  const timeseries = useMemo(
     () => data?.pages?.reduce((accl, page) => accl.concat(page), []),
     [data]
   );
@@ -51,20 +49,13 @@ export default function SearchResultList({ query }: Props) {
   if (isLoading) {
     return <Icon type="Loading" />;
   }
-  if (assets?.length === 0) {
+  if (timeseries?.length === 0) {
     return null;
   }
 
   const selectedIds: undefined | number[] = chart?.timeSeriesCollection?.map(
     (t) => t.tsId
   );
-
-  const sparklineStartDate = dayjs()
-    .subtract(1, 'years')
-    .startOf('day')
-    .toDate();
-
-  const sparklineEndDate = dayjs().endOf('day').toDate();
 
   const handleTimeSeriesClick = async (timeSeries: Timeseries) => {
     if (chart) {
@@ -91,49 +82,19 @@ export default function SearchResultList({ query }: Props) {
 
   return (
     <TSList>
-      {assets?.map((t, i) => (
-        <TSItem key={t.id}>
-          <Row>
-            <Right>
-              <Checkbox
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleTimeSeriesClick(t);
-                }}
-                name={`${t.id}`}
-                value={selectedIds?.includes(t.id)}
-              />
-              <InfoContainer>
-                <ResourceNameWrapper>
-                  <Icon type="ResourceTimeseries" style={{ minWidth: 14 }} />
-                  <span style={{ marginLeft: 5 }}>{t.name}</span>
-                </ResourceNameWrapper>
-                <Description>{t.description}</Description>
-              </InfoContainer>
-            </Right>
-            <Right>
-              <DelayedComponent delay={250 + i}>
-                <div style={{ width: 190 }}>
-                  <TimeseriesChart
-                    height={65}
-                    showSmallerTicks
-                    timeseriesId={t.id}
-                    numberOfPoints={25}
-                    showAxis="horizontal"
-                    timeOptions={[]}
-                    showContextGraph={false}
-                    showPoints={false}
-                    enableTooltip={false}
-                    showGridLine="none"
-                    minRowTicks={2}
-                    dateRange={[sparklineStartDate, sparklineEndDate]}
-                  />
-                </div>
-              </DelayedComponent>
-            </Right>
-          </Row>
-        </TSItem>
-      ))}
+      <TimeseriesRows
+        timeseries={timeseries}
+        renderCheckbox={(ts) => (
+          <Checkbox
+            onClick={(e) => {
+              e.preventDefault();
+              handleTimeSeriesClick(ts);
+            }}
+            name={`${ts.id}`}
+            value={selectedIds?.includes(ts.id)}
+          />
+        )}
+      />
       {hasNextPage && (
         <TSItem>
           <Button type="link" onClick={() => fetchNextPage()}>
@@ -158,36 +119,4 @@ const TSItem = styled.li`
   :nth-child(odd) {
     background-color: var(--cogs-greyscale-grey2);
   }
-`;
-
-const Row = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const InfoContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  word-break: break-word;
-`;
-
-const ResourceNameWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: top;
-  font-size: 12px;
-  font-weight: 500;
-  line-height: 16px;
-`;
-
-const Description = styled.span`
-  margin-left: 20px;
-  font-size: 10px;
-`;
-
-const Right = styled.div`
-  display: flex;
-  flex-direction: row;
 `;

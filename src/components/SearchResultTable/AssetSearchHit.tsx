@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import { Icon, Checkbox, Button } from '@cognite/cogs.js';
 import DelayedComponent from 'components/DelayedComponent';
 import { PnidButton } from 'components/SearchResultTable';
-import { TimeseriesChart } from '@cognite/data-exploration';
 import { useInfiniteList, useAggregate } from '@cognite/sdk-react-query-hooks';
 import { Asset, Timeseries } from '@cognite/sdk';
 import { useParams } from 'react-router-dom';
@@ -14,9 +13,9 @@ import {
   covertTSToChartTS,
   removeTimeseries,
 } from 'utils/charts';
-import dayjs from 'dayjs';
 import { calculateDefaultYAxis } from 'utils/axis';
 import { trackUsage } from 'utils/metrics';
+import TimeseriesRows from './TimeseriesRows';
 
 type Props = {
   asset: Asset;
@@ -50,13 +49,6 @@ export default function AssetSearchHit({ asset }: Props) {
   const selectedIds: undefined | number[] = chart?.timeSeriesCollection?.map(
     (t) => t.tsId
   );
-
-  const sparklineStartDate = dayjs()
-    .subtract(1, 'years')
-    .startOf('day')
-    .toDate();
-
-  const sparklineEndDate = dayjs().endOf('day').toDate();
 
   const handleTimeSeriesClick = async (timeSeries: Timeseries) => {
     if (chart) {
@@ -100,52 +92,19 @@ export default function AssetSearchHit({ asset }: Props) {
       </Row>
       <Row>
         <TSList>
-          {ts?.map((t, i) => (
-            <TSItem key={t.id}>
-              <Row>
-                <Right>
-                  <Checkbox
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleTimeSeriesClick(t);
-                    }}
-                    name={`${t.id}`}
-                    value={selectedIds?.includes(t.id)}
-                  />
-                  <InfoContainer>
-                    <ResourceNameWrapper>
-                      <Icon
-                        type="ResourceTimeseries"
-                        style={{ minWidth: 14 }}
-                      />
-                      <span style={{ marginLeft: 5 }}>{t.name}</span>
-                    </ResourceNameWrapper>
-                    <Description>{t.description}</Description>
-                  </InfoContainer>
-                </Right>
-                <Right>
-                  <DelayedComponent delay={250 + i}>
-                    <div style={{ width: 190 }}>
-                      <TimeseriesChart
-                        height={65}
-                        showSmallerTicks
-                        timeseriesId={t.id}
-                        numberOfPoints={25}
-                        showAxis="horizontal"
-                        timeOptions={[]}
-                        showContextGraph={false}
-                        showPoints={false}
-                        enableTooltip={false}
-                        showGridLine="none"
-                        minRowTicks={2}
-                        dateRange={[sparklineStartDate, sparklineEndDate]}
-                      />
-                    </div>
-                  </DelayedComponent>
-                </Right>
-              </Row>
-            </TSItem>
-          ))}
+          <TimeseriesRows
+            timeseries={ts}
+            renderCheckbox={(t) => (
+              <Checkbox
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleTimeSeriesClick(t);
+                }}
+                name={`${t.id}`}
+                value={selectedIds?.includes(t.id)}
+              />
+            )}
+          />
           {hasNextPage && (
             <TSItem>
               <Button type="link" onClick={() => fetchNextPage()}>
