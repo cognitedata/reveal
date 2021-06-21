@@ -19,15 +19,17 @@ using a red sphere.
 
 ```js runnable
 viewer.on('click', event => {
-  const intersection = viewer.getIntersectionFromPixel(
-    event.offsetX, event.offsetY
-  );
-  if (intersection) {
-    const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.1),
-      new THREE.MeshBasicMaterial({ wireframe: true, color: 'red' }));
-    sphere.position.copy(intersection.point);
-    viewer.addObject3D(sphere);
-  };
+  viewer.getIntersectionFromPixel(
+    event.offsetX, 
+    event.offsetY
+  ).then(intersection => {
+    if (intersection) {
+      const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.1),
+        new THREE.MeshBasicMaterial({ wireframe: true, color: 'red' }));
+      sphere.position.copy(intersection.point);
+      viewer.addObject3D(sphere);
+    }
+  });
 });
 ```
 
@@ -41,5 +43,5 @@ The intersection threshold can be changed using the `pointIntersectionThreshold`
 
 ```js
 const options = { pointIntersectionThreshold: 1.0 /* 1 m */ };
-const intersection = viewer.getIntersectionFromPixel(event.offsetX, event.offsetY, options);
+const intersection = await viewer.getIntersectionFromPixel(event.offsetX, event.offsetY, options);
 ```
