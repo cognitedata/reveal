@@ -26,7 +26,7 @@ export function NodePropertyFilterIndicator({ style = {} }: Props) {
   };
 
   return (
-    <Tooltip content={`Highlighted nodes: ${JSON.stringify(filterValue)}`}>
+    <Tooltip content={`Filter: ${JSON.stringify(filterValue)}`}>
       <Tag
         closable
         onClose={() => dispatch(setNodePropertyFilter(null))}
