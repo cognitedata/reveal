@@ -1054,14 +1054,15 @@ export class Cognite3DViewer {
    * @param offsetX X coordinate in pixels (relative to the domElement).
    * @param offsetY Y coordinate in pixels (relative to the domElement).
    * @param options Options to control the behaviour of the intersection operation. Optional (new in 1.3.0).
-   * @returns If there was an intersection then return the intersection object - otherwise it returns `null` if there were no intersections.
+   * @returns A promise that if there was an intersection then return the intersection object - otherwise it 
+   *          returns `null` if there were no intersections.
    * @see {@link https://en.wikipedia.org/wiki/Ray_casting}.
    
    * @example For CAD model
    * ```js
    * const offsetX = 50 // pixels from the left
    * const offsetY = 100 // pixels from the top
-   * const intersection = viewer.getIntersectionFromPixel(offsetX, offsetY);
+   * const intersection = await viewer.getIntersectionFromPixel(offsetX, offsetY);
    * if (intersection) // it was a hit
    *   console.log(
    *   'You hit model ', intersection.model,
@@ -1074,7 +1075,7 @@ export class Cognite3DViewer {
    * ```js
    * const offsetX = 50 // pixels from the left
    * const offsetY = 100 // pixels from the top
-   * const intersection = viewer.getIntersectionFromPixel(offsetX, offsetY);
+   * const intersection = await viewer.getIntersectionFromPixel(offsetX, offsetY);
    * if (intersection) // it was a hit
    *   console.log(
    *   'You hit model ', intersection.model,
@@ -1083,11 +1084,11 @@ export class Cognite3DViewer {
    *   );
    * ```
    */
-  getIntersectionFromPixel(
+  async getIntersectionFromPixel(
     offsetX: number,
     offsetY: number,
     options?: IntersectionFromPixelOptions
-  ): null | Intersection {
+  ): Promise<null | Intersection> {
     const cadModels = this.getModels('cad');
     const pointCloudModels = this.getModels('pointcloud');
     const cadNodes = cadModels.map(x => x.cadNode);
