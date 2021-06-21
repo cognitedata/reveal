@@ -8,10 +8,10 @@ import { IndexSet } from '../../../utilities/IndexSet';
 
 import nock from 'nock';
 import { NumericRange } from '../../../utilities';
-import { ByNodePropertyMultiValueNodeSet } from './ByNodePropertyMultiValueNodeSet';
+import { SinglePropertyFilterNodeCollection } from './SinglePropertyFilterNodeCollection';
 
-describe('ByNodePropertyMultiValueNodeSet', () => {
-  let set: ByNodePropertyMultiValueNodeSet;
+describe('SinglePropertyFilterNodeCollection', () => {
+  let set: SinglePropertyFilterNodeCollection;
   let client: CogniteClient;
   let model: Cognite3DModel;
   const filterNodesEndpointPath = /.*\/nodes\/list/;
@@ -20,7 +20,7 @@ describe('ByNodePropertyMultiValueNodeSet', () => {
     client = new CogniteClient({ appId: 'test', baseUrl: 'http://localhost' });
     client.loginWithApiKey({ apiKey: 'dummy', project: 'unittest' });
     model = { modelId: 112, revisionId: 113 } as Cognite3DModel;
-    set = new ByNodePropertyMultiValueNodeSet(client, model);
+    set = new SinglePropertyFilterNodeCollection(client, model);
   });
 
   afterEach(() => {
@@ -141,7 +141,7 @@ describe('ByNodePropertyMultiValueNodeSet', () => {
 
   test('executeFilter() with two partitions, finishes and merges both', async () => {
     // Arrange
-    set = new ByNodePropertyMultiValueNodeSet(client, model, { requestPartitions: 2 });
+    set = new SinglePropertyFilterNodeCollection(client, model, { requestPartitions: 2 });
 
     nock(/.*/)
       .post(filterNodesEndpointPath)

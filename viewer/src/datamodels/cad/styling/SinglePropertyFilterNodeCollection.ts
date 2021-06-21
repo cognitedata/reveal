@@ -8,13 +8,14 @@ import { IndexSet } from '../../../utilities/IndexSet';
 import { NumericRange } from '../../../utilities/NumericRange';
 import { Cognite3DModel } from '../../../public/migration/Cognite3DModel';
 import { PopulateIndexSetFromPagedResponseHelper } from './PopulateIndexSetFromPagedResponseHelper';
-import { NodeSet } from './NodeSet';
 
 import range from 'lodash/range';
-import { ByNodePropertyNodeSetOptions } from './ByNodePropertyNodeSet';
+import { PropertyFilterNodeCollectionOptions } from './PropertyFilterNodeCollection';
+import { NodeCollectionBase } from './NodeCollectionBase';
+import cloneDeep from 'lodash/cloneDeep';
 
 /**
- * Node set that filters nodes based on a node property from a set of values, similarly to how
+ * Node collection that filters nodes based on a node property from a list of values, similarly to how
  * `SELECT ... IN (...)` works. This is useful when looking up nodes based on a list of identifiers,
  * nodes within a set of areas or systems. The node set is optimized for matching with properties with
  * a large number of values (i.e. thousands).
@@ -22,22 +23,28 @@ import { ByNodePropertyNodeSetOptions } from './ByNodePropertyNodeSet';
  * @experimental This is an experimental feature that might be changed or removed, and changes
  * in minor releases might cause breaking changes.
  */
-export class ByNodePropertyMultiValueNodeSet extends NodeSet {
+export class SinglePropertyFilterNodeCollection extends NodeCollectionBase {
+  public static readonly classToken = 'SinglePropertyNodeCollection';
+
   private readonly _client: CogniteClient;
   private _indexSet = new IndexSet();
   private readonly _modelId: number;
   private readonly _revisionId: number;
-  private readonly _options: Required<ByNodePropertyNodeSetOptions>;
+  private readonly _options: Required<PropertyFilterNodeCollectionOptions>;
   private _fetchResultHelper: PopulateIndexSetFromPagedResponseHelper<Node3D> | undefined;
-
+  private readonly _filter = {
+    propertyCategory: '',
+    propertyKey: '',
+    propertyValues: new Array<string>()
+  };
   /**
    * Construct a new node set.
    * @param client   {@link CogniteClient} authenticated to the project the model is loaded from.
    * @param model    CAD model.
    * @param options
    */
-  constructor(client: CogniteClient, model: Cognite3DModel, options: ByNodePropertyNodeSetOptions = {}) {
-    super();
+  constructor(client: CogniteClient, model: Cognite3DModel, options: PropertyFilterNodeCollectionOptions = {}) {
+    super(SinglePropertyFilterNodeCollection.classToken);
     this._client = client;
     this._modelId = model.modelId;
     this._revisionId = model.revisionId;
@@ -115,6 +122,15 @@ export class ByNodePropertyMultiValueNodeSet extends NodeSet {
     return `${this._client.getBaseUrl()}/api/playground/projects/${this._client.project}/3d/v2/models/${
       this._modelId
     }/revisions/${this._revisionId}/nodes/list`;
+  }
+
+  /** @internal */
+  serialize() {
+    return {
+      token: this.classToken,
+      state: cloneDeep(this._filter),
+      options: { ...this._options }
+    };
   }
 }
 

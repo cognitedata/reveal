@@ -15,6 +15,7 @@ import { TreeIndexNodeCollection } from './TreeIndexNodeCollection';
 import { InvertedNodeCollection } from './InvertedNodeCollection';
 import { IntersectionNodeCollection } from './IntersectionNodeCollection';
 import { UnionNodeCollection } from './UnionNodeCollection';
+import { SinglePropertyFilterNodeCollection } from './SinglePropertyFilterNodeCollection';
 
 export type TypeName = string;
 export type NodeCollectionSerializationContext = { client: CogniteClient; model: Cognite3DModel };
@@ -78,6 +79,20 @@ export class NodeCollectionDeserializer {
       async (descriptor, context) => {
         const nodeCollection = new PropertyFilterNodeCollection(context.client, context.model, descriptor.options);
         await nodeCollection.executeFilter(descriptor.state);
+        return nodeCollection;
+      }
+    );
+
+    this.registerNodeCollectionType<SinglePropertyFilterNodeCollection>(
+      SinglePropertyFilterNodeCollection.classToken,
+      async (descriptor, context) => {
+        const nodeCollection = new SinglePropertyFilterNodeCollection(
+          context.client,
+          context.model,
+          descriptor.options
+        );
+        const { propertyCategory, propertyKey } = descriptor.state;
+        await nodeCollection.executeFilter(propertyCategory, propertyKey, propertyValues);
         return nodeCollection;
       }
     );
