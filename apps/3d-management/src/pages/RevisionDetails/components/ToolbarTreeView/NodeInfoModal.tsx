@@ -127,32 +127,39 @@ export const NodeInfoModal = ({ treeIndex, onClose, ...restProps }: Props) => {
     }
 
     return Object.entries(data).map(([key, value]) => {
+      let valueElement;
+      const stringifiedValue = `${value || '""'}`;
+
+      if (typeof value === 'object') {
+        valueElement = (
+          <pre style={{ font: 'inherit' }}>
+            {JSON.stringify(value, null, 2)}
+          </pre>
+        );
+      } else if (tabKey !== defaultCdfMetaTabKey) {
+        valueElement = (
+          <Tooltip content="Click to see 3D-nodes with the same value">
+            <Button
+              style={{ textAlign: 'left' }}
+              type="link"
+              onClick={() => {
+                dispatch(
+                  setNodePropertyFilter({ [tabKey]: { [key]: `${value}` } })
+                );
+                onClose();
+              }}
+            >
+              {stringifiedValue}
+            </Button>
+          </Tooltip>
+        );
+      } else {
+        valueElement = stringifiedValue;
+      }
+
       return {
         key,
-        value:
-          // eslint-disable-next-line no-nested-ternary
-          typeof value === 'object' ? (
-            <pre style={{ font: 'inherit' }}>
-              {JSON.stringify(value, null, 2)}
-            </pre>
-          ) : tabKey !== defaultCdfMetaTabKey ? (
-            <Tooltip content="Click to see 3D-nodes with the same value">
-              <Button
-                style={{ textAlign: 'left' }}
-                type="link"
-                onClick={() => {
-                  dispatch(
-                    setNodePropertyFilter({ [tabKey]: { [key]: `${value}` } })
-                  );
-                  onClose();
-                }}
-              >
-                {`${value || '""'}`}
-              </Button>
-            </Tooltip>
-          ) : (
-            value
-          ),
+        value: valueElement,
       };
     });
   };
