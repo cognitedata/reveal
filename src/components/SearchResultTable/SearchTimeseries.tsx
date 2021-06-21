@@ -13,7 +13,7 @@ import {
 } from 'utils/charts';
 import { calculateDefaultYAxis } from 'utils/axis';
 import { trackUsage } from 'utils/metrics';
-import TimeseriesRows from './TimeseriesRows';
+import TimeseriesSearchHit from './TimeseriesSearchHit';
 
 type Props = {
   query: string;
@@ -82,7 +82,7 @@ export default function SearchTimeseries({ query }: Props) {
 
   return (
     <TSList>
-      <TimeseriesRows
+      <TimeseriesSearchHit
         timeseries={timeseries}
         renderCheckbox={(ts) => (
           <Checkbox

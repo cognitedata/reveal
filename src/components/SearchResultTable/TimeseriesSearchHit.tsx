@@ -6,7 +6,7 @@ import DelayedComponent from 'components/DelayedComponent';
 import { TimeseriesChart } from '@cognite/data-exploration';
 import { Timeseries } from '@cognite/sdk';
 
-export default function TimeseriesRows({
+export default function TimeseriesSearchHit({
   timeseries,
   renderCheckbox,
 }: {

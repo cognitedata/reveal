@@ -15,7 +15,7 @@ import {
 } from 'utils/charts';
 import { calculateDefaultYAxis } from 'utils/axis';
 import { trackUsage } from 'utils/metrics';
-import TimeseriesRows from './TimeseriesRows';
+import TimeseriesSearchHit from './TimeseriesSearchHit';
 
 type Props = {
   asset: Asset;
@@ -92,7 +92,7 @@ export default function AssetSearchHit({ asset }: Props) {
       </Row>
       <Row>
         <TSList>
-          <TimeseriesRows
+          <TimeseriesSearchHit
             timeseries={ts}
             renderCheckbox={(t) => (
               <Checkbox
