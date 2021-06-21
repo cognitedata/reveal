@@ -3,11 +3,6 @@
   border: none;
 }
 
-/* cogs fix */
-.unified-cdf-3d-management-style-scope .cogs-switch .switch-ui {
-  margin-left: 0;
-}
-
 /* tabs fixes */
 
 .ant-tabs-tab-btn {
