@@ -3,7 +3,7 @@
  */
 export { AssetNodeCollection } from './AssetNodeCollection';
 export { PropertyFilterNodeCollection } from './PropertyFilterNodeCollection';
-export { SimpleNodeCollection } from './SimpleNodeCollection';
+export { TreeIndexNodeCollection } from './TreeIndexNodeCollection';
 export { InvertedNodeCollection } from './InvertedNodeCollection';
 export { UnionNodeCollection } from './UnionNodeCollection';
 export { IntersectionNodeCollection } from './IntersectionNodeCollection';

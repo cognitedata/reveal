@@ -3,7 +3,7 @@
  */
 
 import { NodeAppearance } from '../NodeAppearance';
-import { SimpleNodeCollection } from './SimpleNodeCollection';
+import { TreeIndexNodeCollection } from './TreeIndexNodeCollection';
 import { IndexSet } from '../../../utilities/IndexSet';
 import { NodeAppearanceProvider } from './NodeAppearanceProvider';
 import { NodeCollectionBase, SerializedNodeCollection } from './NodeCollectionBase';
@@ -31,9 +31,9 @@ describe('NodeAppearanceProvider', () => {
 
   test('applyStyles() applies styles in the order they were added', () => {
     const applyCb = jest.fn();
-    const nodeCollection1 = new SimpleNodeCollection(new IndexSet([1, 2, 3]));
+    const nodeCollection1 = new TreeIndexNodeCollection(new IndexSet([1, 2, 3]));
     const style1: NodeAppearance = { visible: false };
-    const nodeCollection2 = new SimpleNodeCollection(new IndexSet([2, 3, 4]));
+    const nodeCollection2 = new TreeIndexNodeCollection(new IndexSet([2, 3, 4]));
     const style2: NodeAppearance = { visible: true };
     provider.assignStyleToNodeCollection(nodeCollection1, style1);
     provider.assignStyleToNodeCollection(nodeCollection2, style2);
@@ -47,9 +47,9 @@ describe('NodeAppearanceProvider', () => {
 
   test('applyStyles() is not invoced for removed style set', () => {
     const applyCb = jest.fn();
-    const nodeCollection1 = new SimpleNodeCollection(new IndexSet([1, 2, 3]));
+    const nodeCollection1 = new TreeIndexNodeCollection(new IndexSet([1, 2, 3]));
     const style1: NodeAppearance = { visible: false };
-    const nodeCollection2 = new SimpleNodeCollection(new IndexSet([2, 3, 4]));
+    const nodeCollection2 = new TreeIndexNodeCollection(new IndexSet([2, 3, 4]));
     const style2: NodeAppearance = { visible: true };
     provider.assignStyleToNodeCollection(nodeCollection1, style1);
     provider.assignStyleToNodeCollection(nodeCollection2, style2);
@@ -63,7 +63,7 @@ describe('NodeAppearanceProvider', () => {
 
   test('add/change/remove style triggers changed-listener', () => {
     const listener = jest.fn();
-    const nodeCollection = new SimpleNodeCollection(new IndexSet([1, 2, 3]));
+    const nodeCollection = new TreeIndexNodeCollection(new IndexSet([1, 2, 3]));
     provider.on('changed', listener);
 
     provider.assignStyleToNodeCollection(nodeCollection, {});
@@ -77,7 +77,7 @@ describe('NodeAppearanceProvider', () => {
   });
 
   test('triggers changed when underlying set is changed', () => {
-    const set = new SimpleNodeCollection(new IndexSet([1, 2, 3]));
+    const set = new TreeIndexNodeCollection(new IndexSet([1, 2, 3]));
     const style: NodeAppearance = { visible: false };
     provider.assignStyleToNodeCollection(set, style);
     const listener = jest.fn();
@@ -90,7 +90,7 @@ describe('NodeAppearanceProvider', () => {
   });
 
   test('does not trigger changed when removed set is changed', () => {
-    const nodeCollection = new SimpleNodeCollection(new IndexSet([1, 2, 3]));
+    const nodeCollection = new TreeIndexNodeCollection(new IndexSet([1, 2, 3]));
     const style: NodeAppearance = { visible: false };
     provider.assignStyleToNodeCollection(nodeCollection, style);
     provider.unassignStyleFromNodeCollection(nodeCollection);

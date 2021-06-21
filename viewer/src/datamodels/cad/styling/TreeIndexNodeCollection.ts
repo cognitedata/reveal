@@ -8,8 +8,8 @@ import { NodeCollectionBase, SerializedNodeCollection } from './NodeCollectionBa
 /**
  * Node collection that holds a set of nodes defined by a set of tree indices.
  */
-export class SimpleNodeCollection extends NodeCollectionBase {
-  public static readonly classToken = 'SimpleNodeCollection';
+export class TreeIndexNodeCollection extends NodeCollectionBase {
+  public static readonly classToken = 'TreeIndexNodeCollection';
 
   private _treeIndices: IndexSet;
 
@@ -17,7 +17,7 @@ export class SimpleNodeCollection extends NodeCollectionBase {
   constructor(treeIndices?: Iterable<number>);
   constructor(treeIndexRange?: NumericRange);
   constructor(values?: IndexSet | Iterable<number> | NumericRange) {
-    super(SimpleNodeCollection.classToken);
+    super(TreeIndexNodeCollection.classToken);
     if (values instanceof IndexSet) {
       this._treeIndices = values;
     } else if (values instanceof NumericRange) {

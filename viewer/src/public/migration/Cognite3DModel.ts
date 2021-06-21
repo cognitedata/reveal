@@ -118,7 +118,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * @example
    * ```js
    * model.setDefaultNodeAppearance({ rendererGhosted: true });
-   * const visibleNodes = new SimpleNodeCollection(someTreeIndices);
+   * const visibleNodes = new TreeIndexNodeCollection(someTreeIndices);
    * model.assignStyleToNodeCollection(visibleSet, { rendererGhosted: false });
    * ```
    */

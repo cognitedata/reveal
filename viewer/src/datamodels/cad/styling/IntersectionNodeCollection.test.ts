@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { SimpleNodeCollection } from './SimpleNodeCollection';
+import { TreeIndexNodeCollection } from './TreeIndexNodeCollection';
 import { IndexSet } from '../../../utilities/IndexSet';
 
 import { IntersectionNodeCollection } from './IntersectionNodeCollection';
@@ -15,13 +15,13 @@ describe('IntersectionNodeCollection', () => {
   });
 
   test('single set, getIndexSet() returns original', () => {
-    const set = new IntersectionNodeCollection([new SimpleNodeCollection(new IndexSet([1, 2, 3]))]);
+    const set = new IntersectionNodeCollection([new TreeIndexNodeCollection(new IndexSet([1, 2, 3]))]);
     expect(set.getIndexSet()).toEqual(new IndexSet([1, 2, 3]));
   });
 
-  test('two SimpleNodeCollection returns intersection', () => {
-    const setA = new SimpleNodeCollection(new IndexSet([1, 2, 3]));
-    const setB = new SimpleNodeCollection(new IndexSet([2, 3, 4]));
+  test('two TreeIndexNodeCollection returns intersection', () => {
+    const setA = new TreeIndexNodeCollection(new IndexSet([1, 2, 3]));
+    const setB = new TreeIndexNodeCollection(new IndexSet([2, 3, 4]));
     const combinedSet = new IntersectionNodeCollection([setA, setB]);
     expect(combinedSet.getIndexSet()).toEqual(new IndexSet([2, 3]));
   });

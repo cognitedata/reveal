@@ -24,7 +24,7 @@ export { NodeAppearance, NodeOutlineColor, DefaultNodeAppearance } from './datam
 export {
   NodeCollectionBase,
   PropertyFilterNodeCollection,
-  SimpleNodeCollection,
+  TreeIndexNodeCollection,
   AssetNodeCollection,
   IntersectionNodeCollection,
   UnionNodeCollection,

@@ -34,7 +34,7 @@ identifies 3D nodes by `treeIndex`. There are several implementations of `NodeCo
 
 | Class                          |                                                                                  |
 | ------------------------------ | -------------------------------------------------------------------------------- |
-| `SimpleNodeCollection`         | A set of nodes defined by a list of tree indices. Can be updated with a new set of indices. |
+| `TreeIndexNodeCollection`         | A set of nodes defined by a list of tree indices. Can be updated with a new set of indices. |
 | `PropertyFilterNodeCollection` | A set of nodes defined by a query to the 3D backend to find nodes that matches one or more properties/attributes. |
 | `AssetNodeCollection`          | A set of nodes defined by [asset mappings](https://docs.cognite.com/api/v1/#tag/3D-Asset-Mapping) linking 3D nodes to [assets](https://docs.cognite.com/dev/concepts/resource_types/assets.html). |
 | `InvertedNodeCollection`       | Inverts the result of a node collection to match the opposite nodes (i.e. a NOT-operator). |
@@ -48,10 +48,10 @@ sets from custom data sources.
 `Cognite3DModel.assignStyleToNodeCollection` and `unassignStyleFromNodeCollection` is used to manage styled set associated with a model:
 
 ```js
-// import { SimpleNodeCollection, DefaultNodeAppearance, NumericRange } from '@cognite/reveal'
+// import { TreeIndexNodeCollection, DefaultNodeAppearance, NumericRange } from '@cognite/reveal'
 
 // you can start from binding styles to an empty set and populate it later
-const myNodes = new SimpleNodeCollection();
+const myNodes = new TreeIndexNodeCollection();
 model.assignStyleToNodeCollection(myNodes, DefaultNodeAppearance.Highlighted);
 
 // later you might want to update the set as user does something, for example, selects an asset
@@ -72,12 +72,12 @@ like how multiple classes are combined when working with CSS. Styled sets are ap
 in the order the are added.
 
 ```js
-// import { SimpleNodeCollection, DefaultNodeAppearance, NumericRange } from '@cognite/reveal'
+// import { TreeIndexNodeCollection, DefaultNodeAppearance, NumericRange } from '@cognite/reveal'
 
 // you can start from binding styles to an empty set and populate it later
-const set1 = new SimpleNodeCollection(NumericRange.createFromInterval(0, 100));
+const set1 = new TreeIndexNodeCollection(NumericRange.createFromInterval(0, 100));
 model.assignStyleToNodeCollection(set1, { color: [ 255, 0, 0 ] });
-const set2 = new SimpleNodeCollection(NumericRange.createFromInterval(50, 150));
+const set2 = new TreeIndexNodeCollection(NumericRange.createFromInterval(50, 150));
 model.assignStyleToNodeCollection(set2, { outlineColor: NodeOutlineColor.White });
 
 // [0..49] will be colored red

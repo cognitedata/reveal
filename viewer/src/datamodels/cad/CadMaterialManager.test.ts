@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import range from 'lodash/range';
 import { IndexSet } from '../../utilities/IndexSet';
 import { RenderMode } from './rendering/RenderMode';
-import { SimpleNodeCollection } from './styling';
+import { TreeIndexNodeCollection } from './styling';
 import { NumericRange } from '../../utilities';
 import { CadMaterialManager } from './CadMaterialManager';
 
@@ -67,7 +67,7 @@ describe('CadMaterialManager', () => {
     const listener = jest.fn();
     manager.on('materialsChanged', listener);
 
-    provider.assignStyleToNodeCollection(new SimpleNodeCollection(new IndexSet([1, 2, 3])), { renderGhosted: true });
+    provider.assignStyleToNodeCollection(new TreeIndexNodeCollection(new IndexSet([1, 2, 3])), { renderGhosted: true });
 
     expect(manager.getModelBackTreeIndices('model')).toEqual(new IndexSet([0, 4]));
     expect(manager.getModelGhostedTreeIndices('model')).toEqual(new IndexSet([1, 2, 3]));

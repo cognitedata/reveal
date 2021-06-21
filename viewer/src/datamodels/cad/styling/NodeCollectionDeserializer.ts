@@ -10,7 +10,7 @@ import { NumericRange } from '../../../utilities/NumericRange';
 import { NodeCollectionBase } from './NodeCollectionBase';
 import { AssetNodeCollection } from './AssetNodeCollection';
 import { PropertyFilterNodeCollection } from './PropertyFilterNodeCollection';
-import { SimpleNodeCollection } from './SimpleNodeCollection';
+import { TreeIndexNodeCollection } from './TreeIndexNodeCollection';
 
 import { InvertedNodeCollection } from './InvertedNodeCollection';
 import { IntersectionNodeCollection } from './IntersectionNodeCollection';
@@ -82,10 +82,10 @@ export class NodeCollectionDeserializer {
       }
     );
 
-    this.registerNodeCollectionType<SimpleNodeCollection>(SimpleNodeCollection.classToken, descriptor => {
+    this.registerNodeCollectionType<TreeIndexNodeCollection>(TreeIndexNodeCollection.classToken, descriptor => {
       const indexSet = new IndexSet();
       descriptor.state.forEach((range: NumericRange) => indexSet.addRange(new NumericRange(range.from, range.count)));
-      const nodeCollection = new SimpleNodeCollection(indexSet);
+      const nodeCollection = new TreeIndexNodeCollection(indexSet);
       return Promise.resolve(nodeCollection);
     });
 

@@ -14,7 +14,7 @@ import {
   CognitePointCloudModel,
   PotreePointColorType, 
   PotreePointShape,
-  SimpleNodeCollection,
+  TreeIndexNodeCollection,
   IndexSet
 } from '@cognite/reveal';
 import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, AxisViewTool } from '@cognite/reveal/tools';
@@ -420,7 +420,7 @@ export function Migration() {
         await addModel({ modelId, revisionId, geometryFilter: createGeometryFilterFromState(guiState.geometryFilter) });
       }
 
-      const selectedSet = new SimpleNodeCollection([]);
+      const selectedSet = new TreeIndexNodeCollection([]);
 
       let expandTool: ExplodedViewTool | null;
       let explodeSlider: dat.GUIController | null;
@@ -437,7 +437,7 @@ export function Migration() {
           const rootTreeIndex = explodeParams.rootTreeIndex;
           const treeIndices = await cadModels[0].getSubtreeTreeIndices(rootTreeIndex);
           cadModels[0].setDefaultNodeAppearance({ visible: false });
-          const explodeSet = new SimpleNodeCollection(treeIndices);
+          const explodeSet = new TreeIndexNodeCollection(treeIndices);
           cadModels[0].assignStyleToNodeCollection(explodeSet, { visible: true });
 
           const rootBoundingBox = await cadModels[0].getBoundingBoxByTreeIndex(rootTreeIndex);
