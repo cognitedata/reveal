@@ -1,26 +1,50 @@
-import React from 'react';
+import React, { CSSProperties } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store';
 import { setNodePropertyFilter } from 'src/store/modules/toolbar';
+import { Tag, Tooltip } from '@cognite/cogs.js';
+import styled from 'styled-components';
 
-export function NodePropertyFilterIndicator() {
+type Props = {
+  style?: CSSProperties;
+};
+
+export function NodePropertyFilterIndicator({ style = {} }: Props) {
   const dispatch = useDispatch();
-  const { value, isLoading } = useSelector(
+  const { value: filterValue, isLoading } = useSelector(
     (state: RootState) => state.toolbar.nodePropertyFilter
   );
 
-  if (isLoading) {
-    return <div>Loading...</div>;
+  if (!filterValue) {
+    return <div style={style} />;
   }
+
+  const getFilterLabel = (): string => {
+    const filterKey = Object.keys(filterValue)[0];
+    const [key, val] = Object.entries(filterValue[filterKey])[0];
+    return `${key}: ${val}`;
+  };
+
   return (
-    <div>
-      {JSON.stringify(value)}
-      <button
-        type="button"
-        onClick={() => dispatch(setNodePropertyFilter(null))}
+    <Tooltip content={`Highlighted nodes: ${JSON.stringify(filterValue)}`}>
+      <Tag
+        closable
+        onClose={() => dispatch(setNodePropertyFilter(null))}
+        color="midblue"
+        ghost
+        style={style}
       >
-        Remove
-      </button>
-    </div>
+        <TextEllipsis>
+          {isLoading ? 'Loading filter...' : getFilterLabel()}
+        </TextEllipsis>
+      </Tag>
+    </Tooltip>
   );
 }
+
+const TextEllipsis = styled.div`
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  width: 100%;
+`;

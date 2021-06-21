@@ -43,6 +43,7 @@ type Props = {
   model: Cognite3DModel | CognitePointCloudModel | Legacy3DModel;
 };
 
+// base size is thumbnail and edit rotation btns minimum width
 const SIDEBAR_SECTION_MAX_WIDTH = 313;
 
 export default function ThreeDViewerSidebar(props: Props) {
@@ -143,8 +144,9 @@ export default function ThreeDViewerSidebar(props: Props) {
 
       {showTreeView && (
         <>
-          <MenuSection>
+          <MenuSection style={{ display: 'flex', flexWrap: 'nowrap' }}>
             <Switch
+              style={{ flexShrink: 0 }}
               name="ghostMode"
               size="small"
               onChange={(nextState) => dispatch(toggleGhostMode(nextState))}
@@ -153,9 +155,13 @@ export default function ThreeDViewerSidebar(props: Props) {
               Ghost mode
             </Switch>
 
-            <NodePropertyFilterIndicator />
+            <NodePropertyFilterIndicatorContainer>
+              <NodePropertyFilterIndicator style={{ width: '100%' }} />
+            </NodePropertyFilterIndicatorContainer>
           </MenuSection>
+
           <Divider style={{ margin: `${DEFAULT_MARGIN_V}px 0` }} />
+
           <ToolbarTreeView
             model={props.model as Cognite3DModel}
             viewer={props.viewer as Cognite3DViewer}
@@ -171,8 +177,7 @@ function SidebarContainer({
   defaultWidth = 400,
   ...props
 }: any) {
-  // base size is thumbnail and edit rotation btns minimum width
-  // but minWidth have to include paddings and borders
+  // minWidth have to include paddings and borders
   const minWidth = SIDEBAR_SECTION_MAX_WIDTH + 16 + 2 + 1;
 
   const minHeight = '100%';
@@ -209,8 +214,7 @@ const MenuSection = styled.div`
   & ~ & {
     margin-top: ${DEFAULT_MARGIN_V}px;
   }
-  width: 100%;
-  max-width: ${SIDEBAR_SECTION_MAX_WIDTH}px;
+  width: ${SIDEBAR_SECTION_MAX_WIDTH}px;
   text-align: left;
 `;
 
@@ -223,4 +227,12 @@ const ResizableStyled = styled(Resizable)`
   overflow: hidden;
   border: 1px solid var(--cogs-border-default);
   border-left-width: 2px;
+`;
+
+const NodePropertyFilterIndicatorContainer = styled.div`
+  margin-left: ${DEFAULT_MARGIN_H}px;
+  flex-shrink: 1;
+  flex-grow: 1;
+  width: 0;
+  height: 0;
 `;
