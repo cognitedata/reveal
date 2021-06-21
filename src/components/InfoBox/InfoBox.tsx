@@ -16,7 +16,6 @@ const timeSeriesInfo: InfoBoxData = {
     <>
       You can search for Timeseries name (ID) e.g. VAL_21_ZT_1018_04:Z.X.Value
       or Timeseries description, e.g. Utløpstrykk pigsluse eksportlinje B.
-      {'\n\n'} You can scope the search by the asset hierarchy (e.g. IAA or ULA)
       {'\n\n'}
       Read more on
       <a href="cog.link/charts-doc"> cog.link/charts-doc.</a>
@@ -53,7 +52,7 @@ const InfoBox = ({ infoType }: InfoBoxProps) => {
     <>
       {displayInfo && (
         <InfoBoxWrapper>
-          <Icon type="Info" />
+          <StyledIcon type="InfoFilled" />
           <InfoWrapper>
             <StyledTitle level={5}>{data.title}</StyledTitle>
             <TextContainer>{data.body}</TextContainer>
@@ -102,4 +101,7 @@ const StyledTitle = styled(Title)`
   color: var(--cogs-text-primary);
 `;
 
+const StyledIcon = styled(Icon)`
+  color: var(--cogs-text-accent);
+`;
 export default InfoBox;
