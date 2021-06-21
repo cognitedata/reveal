@@ -17,6 +17,8 @@
   },
   "dependencies": {
     "@cognite/cogs.js": "^3.9.2",
+    "@cognite/eslint-plugin": "link:packages/eslint-plugin",
+    "@cognite/eslint-config": "link:packages/eslint-config",
     "@cognite/gcs-browser-upload": "^1.1.0",
     "@cognite/sdk": "^4.1.0",
     "@cognite/sdk-v2": "npm:@cognite/sdk@^2.33.0",

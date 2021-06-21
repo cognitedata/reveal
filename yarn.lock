@@ -1469,6 +1469,14 @@
     react-toastify "^6.0.9"
     tippy.js "6.2.0"
 
+"@cognite/eslint-config@link:packages/eslint-config":
+  version "0.0.0"
+  uid ""
+
+"@cognite/eslint-plugin@link:packages/eslint-plugin":
+  version "0.0.0"
+  uid ""
+
 "@cognite/fas-tools@^1.0.0":
   version "1.1.5"
   resolved "https://registry.yarnpkg.com/@cognite/fas-tools/-/fas-tools-1.1.5.tgz#a3225b20c6f40b304c37bac8010241a727217cfe"
