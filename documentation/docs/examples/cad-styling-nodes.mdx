@@ -124,7 +124,7 @@ for (let q = 200; q < 300; q++) {
 nodeSet.executeFilter('Item', 'Name', names);
 
 model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
-model.addStyledNodeSet(nodeSet, { renderGhosted: false, outlineColor: NodeOutlineColor.Orange } );
+model.assignStyledNodeCollection(nodeSet, { renderGhosted: false, outlineColor: NodeOutlineColor.Orange } );
 ```
 
 ## Inverting filters
