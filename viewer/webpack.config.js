@@ -61,7 +61,7 @@ module.exports = env => {
                   }
             }
           },
-          exclude: [/node_modules/, /src\/__tests__/]
+          exclude: [/node_modules/, /src\/.*\.test\.tsx?/, /src\/__testutilities__/, /src\/.*\/stubs\//]
         },
         {
           test: /\.(png|svg|jpg|jpeg|gif)$/,

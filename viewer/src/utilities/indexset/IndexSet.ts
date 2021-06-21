@@ -161,7 +161,7 @@ export class IndexSet {
   intersectWith(otherSet: IndexSet): IndexSet {
     if (this.rootNode && otherSet.rootNode) {
       // Tackle endpoints
-      // Remove left bounds outside input node set
+      // Remove left bounds outside input set
       if (this.rootNode.range.from < otherSet.rootNode.range.from) {
         const leftBoundRange = NumericRange.createFromInterval(
           this.rootNode.range.from,
@@ -174,7 +174,7 @@ export class IndexSet {
         }
       }
 
-      // Remove right bounds outside input node set
+      // Remove right bounds outside input set
       if (this.rootNode.range.toInclusive > otherSet.rootNode.range.toInclusive) {
         const rightBoundRange = NumericRange.createFromInterval(
           otherSet.rootNode.range.toInclusive + 1,
