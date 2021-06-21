@@ -1,4 +1,4 @@
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store';
 import React, { useEffect } from 'react';
 import { v3Client } from '@cognite/cdf-sdk-singleton';
@@ -7,18 +7,26 @@ import {
   Cognite3DModel,
   NodeOutlineColor,
 } from '@cognite/reveal';
+import {
+  setNodeFilterLoadingState,
+  setNodePropertyFilter,
+} from 'src/store/modules/toolbar/toolbarActions';
 
 export function useFilteredNodesHighlights({
   model,
 }: {
   model: Cognite3DModel;
 }) {
-  const filter = useSelector(
-    ({ treeView }: RootState) => treeView.nodePropertyFilter
+  const dispatch = useDispatch();
+  const { value: filter } = useSelector(
+    ({ toolbar }: RootState) => toolbar.nodePropertyFilter
   );
+
   const filteredNodes = React.useRef<ByNodePropertyNodeSet>(
     new ByNodePropertyNodeSet(v3Client as any, model, { requestPartitions: 10 })
   );
+
+  // bind filteredNodes to model
   useEffect(() => {
     const filteredNodesSet = filteredNodes.current;
     model.addStyledNodeSet(filteredNodesSet, {
@@ -31,14 +39,27 @@ export function useFilteredNodesHighlights({
       if (filteredNodesSet) {
         filteredNodesSet.clear();
       }
+      dispatch(setNodePropertyFilter(null));
     };
-  }, [model]);
+  }, [dispatch, model]);
 
+  // filter execution and loading state updates
   useEffect(() => {
     if (!filter) {
       filteredNodes.current.clear();
     } else {
-      filteredNodes.current.executeFilter(filter);
+      dispatch(setNodeFilterLoadingState(true));
+
+      const currentFilter = filter;
+      filteredNodes.current.executeFilter(filter).finally(() => {
+        if (currentFilter === filter) {
+          dispatch(setNodeFilterLoadingState(false));
+        }
+      });
     }
-  }, [filter]);
+
+    return () => {
+      dispatch(setNodeFilterLoadingState(false));
+    };
+  }, [dispatch, filter]);
 }

@@ -1,14 +1,16 @@
-import {
-  GhostModeUpdated,
-  ToolbarState,
-} from 'src/store/modules/toolbar/types';
-import { Dispatch } from 'redux';
-import { RootState } from 'src/store';
+import { Actions, ToolbarState } from 'src/store/modules/toolbar/types';
+
+function getInitialState(): ToolbarState {
+  return {
+    ghostModeEnabled: false,
+    nodePropertyFilter: { isLoading: false, value: null },
+  };
+}
 
 export default function toolbarReducer(
-  state: ToolbarState = { ghostModeEnabled: false },
-  action: { type: string; payload: boolean }
-) {
+  state: ToolbarState = getInitialState(),
+  action: Actions
+): ToolbarState {
   switch (action.type) {
     case 'toolbar/ghostModeUpdated': {
       return {
@@ -16,17 +18,24 @@ export default function toolbarReducer(
         ghostModeEnabled: action.payload,
       };
     }
+    case 'toolbar/setNodePropertyFilterValue': {
+      return {
+        ...state,
+        nodePropertyFilter: {
+          ...state.nodePropertyFilter,
+          value: action.payload,
+        },
+      };
+    }
+    case 'toolbar/setNodePropertyFilterLoadingState': {
+      return {
+        ...state,
+        nodePropertyFilter: {
+          ...state.nodePropertyFilter,
+          isLoading: action.payload,
+        },
+      };
+    }
   }
   return state;
 }
-
-export const toggleGhostMode = (isEnabled?: boolean) => (
-  dispatch: Dispatch<GhostModeUpdated>,
-  getState: () => RootState
-) => {
-  const { ghostModeEnabled } = getState().toolbar;
-  dispatch({
-    type: 'toolbar/ghostModeUpdated',
-    payload: typeof isEnabled === 'undefined' ? !ghostModeEnabled : isEnabled,
-  });
-};

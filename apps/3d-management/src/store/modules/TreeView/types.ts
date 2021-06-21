@@ -2,7 +2,6 @@ import {
   CustomDataNode,
   TreeDataNode,
 } from 'src/pages/RevisionDetails/components/TreeView/types';
-import { NodePropertyFilterType } from 'src/utils';
 
 export type TreeIndex = number;
 export type TreeParent = {
@@ -75,22 +74,6 @@ export type LoadAncestorsError = {
   payload: { error: Error };
 };
 
-export type SetNodePropertyFilter = {
-  type: 'treeView/setNodePropertyFilter';
-  payload: NodePropertyFilterType | null;
-};
-export type LoadFilteredData = {
-  type: 'treeView/loadFilteredData';
-};
-export type LoadFilteredDataOk = {
-  type: 'treeView/loadFilteredDataOk';
-  // payload: {};
-};
-export type LoadFilteredDataFail = {
-  type: 'treeView/loadFilteredDataFail';
-  payload: { error: Error };
-};
-
 export type ResetState = { type: 'treeView/resetState' };
 
 export type Actions =
@@ -112,12 +95,7 @@ export type Actions =
   | LoadSiblingsError
   //
   | LoadAncestorsOk
-  | LoadAncestorsError
-  //
-  | SetNodePropertyFilter
-  | LoadFilteredData
-  | LoadFilteredDataOk
-  | LoadFilteredDataFail;
+  | LoadAncestorsError;
 
 export type SelectedNode = {
   treeIndex: number;
@@ -148,6 +126,4 @@ export type TreeViewState = {
 
   selectedNodes: Array<SelectedNode>;
   treeData: Array<TreeDataNode>;
-
-  nodePropertyFilter: NodePropertyFilterType | null;
 };

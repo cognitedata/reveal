@@ -25,7 +25,6 @@ export function getInitialState(): TreeViewState {
     expandedNodes: [0],
     selectedNodes: [],
     loadingCursors: [],
-    nodePropertyFilter: null,
   };
 }
 
@@ -226,13 +225,6 @@ export default function treeDataReducer(
       return {
         ...prevState,
         error: action.payload.error,
-      };
-    }
-
-    case 'treeView/setNodePropertyFilter': {
-      return {
-        ...prevState,
-        nodePropertyFilter: action.payload,
       };
     }
 

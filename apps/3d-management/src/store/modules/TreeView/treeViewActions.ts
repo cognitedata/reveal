@@ -15,7 +15,6 @@ import {
   NodeChecked,
   NodeExpanded,
   NodeSelected,
-  SetNodePropertyFilter,
   TreeIndex,
 } from 'src/store/modules/TreeView/types';
 import {
@@ -37,7 +36,6 @@ import {
   getCheckedNodesAndStateOfUnknownChildren,
   getSafeDispatch,
 } from 'src/store/modules/TreeView/treeViewUtils';
-import { NodePropertyFilterType } from 'src/utils';
 
 export const fetchInitialNodes = (
   modelId: number,
@@ -326,8 +324,3 @@ export const selectNodes = (payload: NodeSelected['payload']) => (
 export const expandNodes = (payload: NodeExpanded['payload']) => (
   dispatch: (arg: Actions) => void
 ) => dispatch({ type: 'treeView/nodeExpanded', payload });
-
-export const setNodePropertyFilter = (
-  payload: NodePropertyFilterType | null
-) => (dispatch: (arg: SetNodePropertyFilter) => void) =>
-  dispatch({ type: 'treeView/setNodePropertyFilter', payload });

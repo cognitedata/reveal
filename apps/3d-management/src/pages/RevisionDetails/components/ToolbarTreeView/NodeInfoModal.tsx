@@ -11,7 +11,7 @@ import { Button, Tooltip } from '@cognite/cogs.js';
 import { getContainer } from 'src/utils';
 import styled from 'styled-components';
 import omit from 'lodash/omit';
-import { setNodePropertyFilter } from 'src/store/modules/TreeView';
+import { setNodePropertyFilter } from 'src/store/modules/toolbar';
 
 type DataSource = {
   key: string;

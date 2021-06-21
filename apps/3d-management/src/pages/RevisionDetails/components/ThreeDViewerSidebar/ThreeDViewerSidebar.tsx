@@ -23,6 +23,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store';
 import { Resizable } from 're-resizable';
 import { Divider } from 'antd';
+import { NodePropertyFilterIndicator } from 'src/pages/RevisionDetails/components/ThreeDViewerSidebar/NodePropertyFilterIndicator';
 import { EditRotation } from './EditRotation';
 import { ThumbnailUploader } from './ThumbnailUploader';
 import { ColorTypePicker } from './ColorTypePicker';
@@ -151,6 +152,8 @@ export default function ThreeDViewerSidebar(props: Props) {
             >
               Ghost mode
             </Switch>
+
+            <NodePropertyFilterIndicator />
           </MenuSection>
           <Divider style={{ margin: `${DEFAULT_MARGIN_V}px 0` }} />
           <ToolbarTreeView
