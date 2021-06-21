@@ -1,7 +1,7 @@
 import React, { Suspense } from 'react';
 import { Loader } from '@cognite/cogs.js';
 import { Switch, Redirect, useLocation } from 'react-router-dom';
-import { EXTRACTION_PIPELINE_PATH } from 'utils/baseURL';
+import { EXTRACTION_PIPELINES_PATH } from 'utils/baseURL';
 import { useAppEnv } from 'hooks/useAppEnv';
 import { Routes } from 'routing/RoutingConfig';
 import { SelectedIntegrationProvider } from 'hooks/useSelectedIntegration';
@@ -16,7 +16,7 @@ const Home = () => {
           <Routes />
           <Redirect
             to={{
-              pathname: `/${project}/${EXTRACTION_PIPELINE_PATH}`,
+              pathname: `/${project}/${EXTRACTION_PIPELINES_PATH}`,
               search,
             }}
           />

@@ -3,7 +3,7 @@ export const EXTRACTION_PIPELINE: Readonly<string> = 'Extraction pipeline';
 export const EXTRACTION_PIPELINE_LOWER: Readonly<string> =
   'extraction pipeline';
 export const EXTRACTION_PIPELINES: Readonly<string> = 'Extraction pipelines';
-export const EXTRACTION_PIPELINES_OVERVIEW: Readonly<string> = `${EXTRACTION_PIPELINES} overview`;
+export const EXTRACTION_PIPELINES_LIST: Readonly<string> = `${EXTRACTION_PIPELINES} list`;
 export const EMAIL_NOTIFICATION_TOOLTIP: Readonly<string> = `If checked, the person will receive e-mail notification when an ${EXTRACTION_PIPELINE.toLowerCase()} run fails. To edit, please click Edit button.`;
 
 export const CONTACTS_DESCRIPTION: Readonly<string> = `Document contacts related to the ${EXTRACTION_PIPELINES.toLowerCase()}. This will help getting in touch with the right people on troubleshooting`;

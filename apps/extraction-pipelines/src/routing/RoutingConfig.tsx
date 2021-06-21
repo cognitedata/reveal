@@ -1,6 +1,6 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
-import { EXTRACTION_PIPELINE_PATH } from 'utils/baseURL';
+import { EXTRACTION_PIPELINES_PATH } from 'utils/baseURL';
 
 const LazyIntegrations = React.lazy(
   () =>
@@ -34,8 +34,8 @@ export type RouterParams = { id: string };
 export const EXT_PIPE_PATH = `extpipe`;
 export const HEALTH_PATH: Readonly<string> = 'health';
 
-export const CREATE_EXT_PIPE_PAGE_PATH = `/${EXTRACTION_PIPELINE_PATH}/create`;
-export const EXT_PIPES_OVERVIEW_PAGE_PATH = `/${EXTRACTION_PIPELINE_PATH}`;
+export const CREATE_EXT_PIPE_PAGE_PATH = `/${EXTRACTION_PIPELINES_PATH}/create`;
+export const EXT_PIPES_OVERVIEW_PAGE_PATH = `/${EXTRACTION_PIPELINES_PATH}`;
 
 export const routingConfig: IntegrationsRoute[] = [
   {
@@ -51,7 +51,7 @@ export const routingConfig: IntegrationsRoute[] = [
   },
   {
     name: 'Integration',
-    path: `/:tenant/${EXTRACTION_PIPELINE_PATH}/${EXT_PIPE_PATH}/:id`,
+    path: `/:tenant/${EXTRACTION_PIPELINES_PATH}/${EXT_PIPE_PATH}/:id`,
     exact: false,
     component: LazyIntegration,
   },

@@ -1,5 +1,5 @@
 import React from 'react';
-import { EXTRACTION_PIPELINE_PATH } from 'utils/baseURL';
+import { EXTRACTION_PIPELINES_PATH } from 'utils/baseURL';
 
 export const LazyCreateIntegrationCreate = React.lazy(
   () =>
@@ -62,22 +62,22 @@ export const LazyCreateIntegrationSchedule = React.lazy(
 );
 
 export const NAME_PATH = `name`;
-export const NAME_PAGE_PATH = `/${EXTRACTION_PIPELINE_PATH}/create/${NAME_PATH}`;
+export const NAME_PAGE_PATH = `/${EXTRACTION_PIPELINES_PATH}/create/${NAME_PATH}`;
 export const EXTERNAL_ID = `external-id`;
-export const EXTERNAL_ID_PAGE_PATH = `/${EXTRACTION_PIPELINE_PATH}/create/${EXTERNAL_ID}`;
+export const EXTERNAL_ID_PAGE_PATH = `/${EXTRACTION_PIPELINES_PATH}/create/${EXTERNAL_ID}`;
 export const DOCUMENTATION = `documentation`;
-export const DOCUMENTATION_PAGE_PATH = `/${EXTRACTION_PIPELINE_PATH}/create/${DOCUMENTATION}`;
+export const DOCUMENTATION_PAGE_PATH = `/${EXTRACTION_PIPELINES_PATH}/create/${DOCUMENTATION}`;
 const CONTACTS = `contacts`;
-export const CONTACTS_PAGE_PATH = `/${EXTRACTION_PIPELINE_PATH}/create/${CONTACTS}`;
+export const CONTACTS_PAGE_PATH = `/${EXTRACTION_PIPELINES_PATH}/create/${CONTACTS}`;
 const SCHEDULE = `schedule`;
-export const SCHEDULE_PAGE_PATH = `/${EXTRACTION_PIPELINE_PATH}/create/${SCHEDULE}`;
+export const SCHEDULE_PAGE_PATH = `/${EXTRACTION_PIPELINES_PATH}/create/${SCHEDULE}`;
 const DATA_SET = `dataset`;
-export const DATA_SET_PAGE_PATH = `/${EXTRACTION_PIPELINE_PATH}/create/${DATA_SET}`;
+export const DATA_SET_PAGE_PATH = `/${EXTRACTION_PIPELINES_PATH}/create/${DATA_SET}`;
 const RAW_TABLES = `raw-table`;
-export const RAW_TABLE_PAGE_PATH = `/${EXTRACTION_PIPELINE_PATH}/create/${RAW_TABLES}`;
+export const RAW_TABLE_PAGE_PATH = `/${EXTRACTION_PIPELINES_PATH}/create/${RAW_TABLES}`;
 const META_DATA = `meta-data`;
-export const METADATA_PAGE_PATH = `/${EXTRACTION_PIPELINE_PATH}/create/${META_DATA}`;
-export const CREATE_INTEGRATION_PAGE_PATH = `/${EXTRACTION_PIPELINE_PATH}/create`;
+export const METADATA_PAGE_PATH = `/${EXTRACTION_PIPELINES_PATH}/create/${META_DATA}`;
+export const CREATE_INTEGRATION_PAGE_PATH = `/${EXTRACTION_PIPELINES_PATH}/create`;
 export const withTenant = (path: string) => {
   return `/:tenant${path}`;
 };

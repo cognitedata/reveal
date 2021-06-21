@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Colors } from '@cognite/cogs.js';
 import { EXT_PIPE_PATH } from 'routing/RoutingConfig';
 import { useAppEnv } from 'hooks/useAppEnv';
-import { EXTRACTION_PIPELINE_PATH } from 'utils/baseURL';
+import { EXTRACTION_PIPELINES_PATH } from 'utils/baseURL';
 
 export const StyledRouterLink = styled((props) => (
   <Link {...props}>{props.children}</Link>
@@ -33,7 +33,7 @@ const Name: FunctionComponent<Props> = ({
     <StyledRouterLink
       id={`integration-${name}`}
       to={{
-        pathname: `/${project}/${EXTRACTION_PIPELINE_PATH}/${EXT_PIPE_PATH}/${integrationId}`,
+        pathname: `/${project}/${EXTRACTION_PIPELINES_PATH}/${EXT_PIPE_PATH}/${integrationId}`,
         search: cdfEnv ? `?env=${cdfEnv}` : '',
       }}
       aria-selected={selected}

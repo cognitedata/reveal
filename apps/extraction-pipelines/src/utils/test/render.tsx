@@ -9,7 +9,7 @@ import { SelectedIntegrationProvider } from 'hooks/useSelectedIntegration';
 import { AppEnvProvider } from 'hooks/useAppEnv';
 import { Integration, RegisterIntegrationInfo } from 'model/Integration';
 import { RegisterIntegrationProvider } from 'hooks/useStoredRegisterIntegration';
-import { EXTRACTION_PIPELINE_PATH } from 'utils/baseURL';
+import { EXTRACTION_PIPELINES_PATH } from 'utils/baseURL';
 import {
   RunFilterProvider,
   RunFilterProviderProps,
@@ -28,7 +28,7 @@ export default (
 
 export const renderWithRouter = (
   ui: React.ReactNode,
-  { route = EXTRACTION_PIPELINE_PATH, ...renderOptions }
+  { route = EXTRACTION_PIPELINES_PATH, ...renderOptions }
 ) => {
   const history = createMemoryHistory();
   history.push(route);
@@ -40,7 +40,7 @@ export const renderWithSelectedIntegrationContext = (
   {
     initIntegration,
     client,
-    route = EXTRACTION_PIPELINE_PATH,
+    route = EXTRACTION_PIPELINES_PATH,
     ...renderOptions
   }: { initIntegration: Integration; client: QueryClient; route: string }
 ) => {
@@ -97,7 +97,7 @@ export const renderWithReQueryCacheSelectedIntegrationContext = (
   cdfEnv: string,
   origin: string,
   initIntegration?: Integration,
-  route: string = EXTRACTION_PIPELINE_PATH,
+  route: string = EXTRACTION_PIPELINES_PATH,
   runFilter?: RunFilterProviderProps
 ) => {
   const history = createMemoryHistory();
@@ -124,7 +124,7 @@ export const renderRegisterContext = (
     project,
     cdfEnv,
     origin,
-    route = EXTRACTION_PIPELINE_PATH,
+    route = EXTRACTION_PIPELINES_PATH,
     initRegisterIntegration = {},
     ...renderOptions
   }: {

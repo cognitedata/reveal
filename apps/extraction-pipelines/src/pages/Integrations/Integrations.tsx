@@ -16,6 +16,7 @@ import { MainFullWidthGrid } from 'styles/grid/StyledGrid';
 import { useAppEnv } from 'hooks/useAppEnv';
 import { Integration } from 'model/Integration';
 import { LinkWrapper } from 'styles/StyledLinks';
+import { ExtPipesBreadcrumbs } from 'components/navigation/breadcrumbs/ExtPipesBreadcrumbs';
 
 export const LEARNING_AND_RESOURCES_URL: Readonly<string> =
   'https://docs.cognite.com/cdf/integration/';
@@ -78,6 +79,7 @@ const Integrations: FunctionComponent<Props> = () => {
           />
         </LinkWrapper>
       }
+      breadcrumbs={<ExtPipesBreadcrumbs />}
     >
       <IntegrationsTable tableData={data as Integration[]} />
     </FullPageLayout>
