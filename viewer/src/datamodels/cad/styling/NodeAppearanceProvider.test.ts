@@ -54,7 +54,7 @@ describe('NodeAppearanceProvider', () => {
     provider.assignStyledNodeCollection(nodeCollection1, style1);
     provider.assignStyledNodeCollection(nodeCollection2, style2);
 
-    provider.unassignStyleFromNodeCollection(nodeCollection2);
+    provider.unassignStyledNodeCollection(nodeCollection2);
     provider.applyStyles(applyCb);
 
     expect(applyCb).toBeCalledTimes(1);
@@ -72,7 +72,7 @@ describe('NodeAppearanceProvider', () => {
     provider.assignStyledNodeCollection(nodeCollection, { visible: false });
     expect(listener).toBeCalledTimes(2);
 
-    provider.unassignStyleFromNodeCollection(nodeCollection);
+    provider.unassignStyledNodeCollection(nodeCollection);
     expect(listener).toBeCalledTimes(3);
   });
 
@@ -93,7 +93,7 @@ describe('NodeAppearanceProvider', () => {
     const nodeCollection = new TreeIndexNodeCollection(new IndexSet([1, 2, 3]));
     const style: NodeAppearance = { visible: false };
     provider.assignStyledNodeCollection(nodeCollection, style);
-    provider.unassignStyleFromNodeCollection(nodeCollection);
+    provider.unassignStyledNodeCollection(nodeCollection);
     const listener = jest.fn();
     provider.on('changed', listener);
 

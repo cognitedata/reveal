@@ -45,7 +45,7 @@ identifies 3D nodes by `treeIndex`. There are several implementations of `NodeCo
 It's also possible [implement custom node collections](cad-styling-custom). This can be useful for specialized queries or to load
 sets from custom data sources.
 
-`Cognite3DModel.assignStyledNodeCollection` and `unassignStyleFromNodeCollection` is used to manage styled set associated with a model:
+`Cognite3DModel.assignStyledNodeCollection` and `unassignStyledNodeCollection` is used to manage styled set associated with a model:
 
 ```js
 // import { TreeIndexNodeCollection, DefaultNodeAppearance, NumericRange } from '@cognite/reveal'
@@ -64,7 +64,7 @@ myNodes.updateSet(new IndexSet(new NumericRange(nodeTreeIndex, nodeSubtreeSize))
 model.assignStyledNodeCollection(myNodes, DefaultNodeAppearance.Ghosted);
 
 // and when you don't need to style this set anymore, just remove it completely
-model.unassignStyleFromNodeCollection(myNodes);
+model.unassignStyledNodeCollection(myNodes);
 ```
 
 Styling is "additive", meaning that styles from multiple styled sets are accumulated per node, much 

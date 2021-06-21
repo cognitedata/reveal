@@ -103,7 +103,7 @@ describe('NodeAppearanceTextureBuilder', () => {
     expect(texelsOf(builder.overrideColorPerTreeIndexTexture)).toEqual([0, 0, 0, 5]); // Alpha = 5 -> visible, ghosted
 
     // Act
-    styleProvider.unassignStyleFromNodeCollection(nodeCollection);
+    styleProvider.unassignStyledNodeCollection(nodeCollection);
     builder.build();
 
     // Assert
@@ -119,7 +119,7 @@ describe('NodeAppearanceTextureBuilder', () => {
     expect(texelsOf(builder.overrideColorPerTreeIndexTexture)).not.toEqual(originalTexels);
 
     // Act
-    styleProvider.unassignStyleFromNodeCollection(nodeCollection);
+    styleProvider.unassignStyledNodeCollection(nodeCollection);
     builder.build();
 
     // Assert

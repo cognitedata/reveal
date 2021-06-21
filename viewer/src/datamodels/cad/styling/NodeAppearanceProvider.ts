@@ -82,7 +82,7 @@ export class NodeAppearanceProvider {
     }
   }
 
-  unassignStyleFromNodeCollection(nodeCollection: NodeCollectionBase) {
+  unassignStyledNodeCollection(nodeCollection: NodeCollectionBase) {
     const index = this._styledCollections.findIndex(x => x.nodeCollection === nodeCollection);
     if (index === -1) {
       throw new Error('NodeCollection not added');
