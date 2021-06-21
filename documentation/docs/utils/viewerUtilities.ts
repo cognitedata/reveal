@@ -22,5 +22,5 @@ export function resetViewerEventHandlers(viewer: Cognite3DViewer): void {
  */
 export function resetCognite3DModel(model: Cognite3DModel): void {
   model.setDefaultNodeAppearance(DefaultNodeAppearance.Default);
-  model.removeAllStyledNodeSets();
+  model.removeAllStyledNodeCollections();
 }

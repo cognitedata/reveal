@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import range from 'lodash/range';
 import { IndexSet } from '../../utilities/IndexSet';
 import { RenderMode } from './rendering/RenderMode';
-import { ByTreeIndexNodeSet } from './styling';
+import { TreeIndexNodeCollection } from './styling';
 import { NumericRange } from '../../utilities';
 import { CadMaterialManager } from './CadMaterialManager';
 
@@ -52,7 +52,7 @@ describe('CadMaterialManager', () => {
     expect(materialsChangedListener).toBeCalledTimes(1);
   });
 
-  test('setModelDefaultNodeAppearance, node sets are updated', () => {
+  test('setModelDefaultNodeAppearance, node collection are updated', () => {
     manager.addModelMaterials('model', 4);
 
     manager.setModelDefaultNodeAppearance('model', { renderGhosted: true });
@@ -61,13 +61,13 @@ describe('CadMaterialManager', () => {
     expect(manager.getModelGhostedTreeIndices('model')).toEqual(new IndexSet([0, 1, 2, 3, 4]));
   });
 
-  test('style provider triggers update, node sets are updated', () => {
+  test('style provider triggers update, node collections are updated', () => {
     manager.addModelMaterials('model', 4);
     const provider = manager.getModelNodeAppearanceProvider('model');
     const listener = jest.fn();
     manager.on('materialsChanged', listener);
 
-    provider.addStyledSet(new ByTreeIndexNodeSet(new IndexSet([1, 2, 3])), { renderGhosted: true });
+    provider.assignStyledNodeCollection(new TreeIndexNodeCollection(new IndexSet([1, 2, 3])), { renderGhosted: true });
 
     expect(manager.getModelBackTreeIndices('model')).toEqual(new IndexSet([0, 4]));
     expect(manager.getModelGhostedTreeIndices('model')).toEqual(new IndexSet([1, 2, 3]));

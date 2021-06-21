@@ -10,7 +10,7 @@ import { Cognite3DViewer } from '../public/migration/Cognite3DViewer';
 import { CogniteClient } from '@cognite/sdk';
 
 import * as THREE from 'three';
-import { NodeSetDeserializer } from '../datamodels/cad/styling/NodeSetDeserializer';
+import { NodeCollectionDeserializer } from '../datamodels/cad/styling/NodeCollectionDeserializer';
 
 export type ViewerState = {
   camera: {
@@ -49,8 +49,8 @@ export class ViewStateHelper {
         const modelId = model.modelId;
         const revisionId = model.revisionId;
 
-        const styledNodeSets = model.styleNodeSets.map(styledNodeSet => {
-          const { nodes, appearance } = styledNodeSet;
+        const styledCollections = model.styledNodeCollections.map(styledNodeCollection => {
+          const { nodes, appearance } = styledNodeCollection;
           return { ...nodes.serialize(), appearance: appearance };
         });
 
@@ -58,7 +58,7 @@ export class ViewStateHelper {
           defaultNodeAppearance: defaultNodeAppearance,
           modelId,
           revisionId,
-          styledSets: styledNodeSets
+          styledSets: styledCollections
         } as ModelState;
       });
 
@@ -105,13 +105,13 @@ export class ViewStateHelper {
         model.setDefaultNodeAppearance(state.defaultNodeAppearance);
 
         state.styledSets.forEach(async styleFilter => {
-          const nodeSet = await NodeSetDeserializer.Instance.deserialize(this._client, model, {
+          const nodeCollection = await NodeCollectionDeserializer.Instance.deserialize(this._client, model, {
             token: styleFilter.token,
             state: styleFilter.state,
             options: styleFilter.options
           });
 
-          model.addStyledNodeSet(nodeSet, styleFilter.appearance);
+          model.assignStyledNodeCollection(nodeCollection, styleFilter.appearance);
         });
       });
   }

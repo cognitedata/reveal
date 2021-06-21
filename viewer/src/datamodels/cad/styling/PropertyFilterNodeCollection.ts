@@ -8,16 +8,16 @@ import { IndexSet } from '../../../utilities/IndexSet';
 import { NumericRange } from '../../../utilities/NumericRange';
 import { Cognite3DModel } from '../../../public/migration/Cognite3DModel';
 import { PopulateIndexSetFromPagedResponseHelper } from './PopulateIndexSetFromPagedResponseHelper';
-import { NodeSet } from './NodeSet';
 
 import range from 'lodash/range';
 
 import cloneDeep from 'lodash/cloneDeep';
+import { NodeCollectionBase } from './NodeCollectionBase';
 
 /**
- * Options for {@link ByNodePropertyNodeSet}.
+ * Options for {@link PropertyFilterNodeCollection}.
  */
-export type ByNodePropertyNodeSetOptions = {
+export type PropertyFilterNodeCollectionOptions = {
   /**
    * How many partitions to split the request into. More partitions can yield better performance
    * for queries with very large result set (in order of magnitude 100.000 plus).
@@ -28,19 +28,21 @@ export type ByNodePropertyNodeSetOptions = {
 
 /**
  * Represents a set of nodes that has matching node properties to a provided filter. Note that
- * a node is considered to match if it or any of its ancestors match the filter.
+ * a node is considered to match if it or a {@link NodeCollectionBase} ancestors match the filter.
  */
-export class ByNodePropertyNodeSet extends NodeSet {
+export class PropertyFilterNodeCollection extends NodeCollectionBase {
+  public static readonly classToken = 'PropertyFilterNodeCollection';
+
   private readonly _client: CogniteClient;
   private _indexSet = new IndexSet();
   private readonly _modelId: number;
   private readonly _revisionId: number;
-  private readonly _options: Required<ByNodePropertyNodeSetOptions>;
+  private readonly _options: Required<PropertyFilterNodeCollectionOptions>;
   private _fetchResultHelper: PopulateIndexSetFromPagedResponseHelper<Node3D> | undefined;
   private _filter = {};
 
-  constructor(client: CogniteClient, model: Cognite3DModel, options: ByNodePropertyNodeSetOptions = {}) {
-    super('ByNodePropertyNodeSet');
+  constructor(client: CogniteClient, model: Cognite3DModel, options: PropertyFilterNodeCollectionOptions = {}) {
+    super(PropertyFilterNodeCollection.classToken);
     this._client = client;
     this._modelId = model.modelId;
     this._revisionId = model.revisionId;
@@ -52,7 +54,7 @@ export class ByNodePropertyNodeSet extends NodeSet {
   }
 
   /**
-   * Populates the node set with nodes matching the provided filter. This will replace
+   * Populates the node collection with nodes matching the provided filter. This will replace
    * the current nodes held by the filter.
    * @param filter A filter for matching node properties.
    * @example
@@ -100,7 +102,7 @@ export class ByNodePropertyNodeSet extends NodeSet {
     return this._filter;
   }
   /**
-   * Clears the node set and interrupts any ongoing operations.
+   * Clears the node collection and interrupts any ongoing operations.
    */
   clear(): void {
     if (this._fetchResultHelper !== undefined) {
