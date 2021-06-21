@@ -59,6 +59,6 @@ const AssetList = styled.ul`
   height: 100%;
   overflow: auto;
   list-style: none;
-  padding: 0;
+  padding: 0 10px 0 0;
   margin: 0;
 `;
