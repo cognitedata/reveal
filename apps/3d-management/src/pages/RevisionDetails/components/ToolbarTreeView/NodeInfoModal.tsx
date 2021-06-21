@@ -16,7 +16,6 @@ import { setNodePropertyFilter } from 'src/store/modules/toolbar';
 type DataSource = {
   key: string;
   value: any;
-  action?: React.ReactNode;
 };
 
 // for some reason if Table is used as styled component, styles are not applied
@@ -131,30 +130,29 @@ export const NodeInfoModal = ({ treeIndex, onClose, ...restProps }: Props) => {
       return {
         key,
         value:
+          // eslint-disable-next-line no-nested-ternary
           typeof value === 'object' ? (
             <pre style={{ font: 'inherit' }}>
               {JSON.stringify(value, null, 2)}
             </pre>
-          ) : (
-            value
-          ),
-        ...(tabKey !== defaultCdfMetaTabKey && {
-          action: (
-            <Tooltip content="Show 3D-nodes with the same value">
+          ) : tabKey !== defaultCdfMetaTabKey ? (
+            <Tooltip content="Click to see 3D-nodes with the same value">
               <Button
-                type="ghost"
-                icon="ArrowRight"
-                aria-label="Show 3D-nodes with the same value"
+                style={{ textAlign: 'left' }}
+                type="link"
                 onClick={() => {
                   dispatch(
                     setNodePropertyFilter({ [tabKey]: { [key]: `${value}` } })
                   );
                   onClose();
                 }}
-              />
+              >
+                {`${value || '""'}`}
+              </Button>
             </Tooltip>
+          ) : (
+            value
           ),
-        }),
       };
     });
   };
@@ -213,11 +211,6 @@ export const NodeInfoModal = ({ treeIndex, onClose, ...restProps }: Props) => {
             {
               title: () => <b>Value</b>,
               key: 'value',
-            },
-            {
-              title: null,
-              sorter: undefined,
-              key: 'action',
             },
           ])}
           pagination={false}
