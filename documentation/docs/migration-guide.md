@@ -18,6 +18,7 @@ There are some important differences between version 1 and version 2 of `@cognit
 
 - The node styling/filtering API has been reworked and will require changes. See below for more information.
 - [ThreeJS](https://www.npmjs.com/package/three) and [@types/three](https://www.npmjs.com/package/@types/three) is included in the package, so it's no longer necessary to include this in the application you are using Reveal from if you are not using ThreeJS directly.
+- `Cognite3DViewer.getIntersectionFromPixel` is now async.
 
 ### Migrating to the new node styling API
 
@@ -51,12 +52,12 @@ style to make them stand out. Before, this could be achieved using a `ghostAllNo
 apply the default styling, and a combination of the different per-node styling functions mentioned above to style the 
 nodes that should stand out. In Reveal 2, this is replaced by `Cognite3DModel.setDefaultNodeAppearance` which is a style that will be applied to any node that is not styled by another styled set.
 
-### Using ByTreeIndexNodeSet to migrate existing filtering logic
+### Using TreeIndexNodeCollection to migrate existing filtering logic
 
 <DemoWrapper name="Cognite3DViewerDemo" />
 
-In general, it is recommended to use the [specialized `NodeSet`-implementations](examples/cad-styling) for best performance. However,
-it is possible to use `ByTreeIndexNodeSet` as a migration step. This allows the use of previously implemented logic for
+In general, it is recommended to use the [specialized `NodeCollectionBase`-implementations](examples/cad-styling) for best performance. However,
+it is possible to use `TreeIndexNodeCollection` as a migration step. This allows the use of previously implemented logic for
 populating the set based on some application specific logic.
 
 As an example, consider an application that has some logic for only showing objects that are part of the 'EA'-function. In previous versions
@@ -79,10 +80,12 @@ sdk.revisions3D.list3DNodes(model.modelId, model.revisionId,
 Now, the same can be implemented using:
 
 ```js runnable
+// import { TreeIndexNodeCollection, IndexSet } from '@cognite/reveal';
+
 const visibleSet = new IndexSet();
-const visibleNodeSet = new ByTreeIndexNodeSet(visibleSet);
+const visibleNodes = new TreeIndexNodeCollection(visibleSet);
 model.setDefaultNodeAppearance(DefaultNodeAppearance.Hidden);
-model.addStyledNodeSet(visibleNodeSet, DefaultNodeAppearance.Default);
+model.assignStyledNodeCollection(visibleNodes, DefaultNodeAppearance.Default);
 
 // Populate set
 sdk.revisions3D.list3DNodes(model.modelId, model.revisionId,
@@ -99,7 +102,7 @@ sdk.revisions3D.list3DNodes(model.modelId, model.revisionId,
     // an update after each batch of nodes have been fetch from the SDK.
     // However, avoid calling updateSet() too often as it can take some time
     // to complete.
-    visibleNodeSet.updateSet(visibleSet);
+    visibleNodes.updateSet(visibleSet);
   });
 ```
 
@@ -107,7 +110,7 @@ Note that the styling is set up before any nodes actually are fetched and that t
 set is populated asynchronously.
 
 :::note
-This example could easily have been migrated using `ByNodePropertyNodeSet`, but in
+This example could easily have been migrated using `TreeIndexNodeCollection`, but in
 other cases this might not be as straight forward as shown.
 :::
 
@@ -115,8 +118,8 @@ other cases this might not be as straight forward as shown.
 
 In previous versions, all styling functions accepted an optional `applyToAllChildren`-argument.
 When this was `true`, Reveal would apply the styling to all descendants. When migrating
-to the new version, adding the root tree index of the subtree to `ByTreeIndexNodeSet` will not have
-the same result. When you also have a `subtreeSize` available, use `ByTreeIndexNodeSet.addRange` with
+to the new version, adding the root tree index of the subtree to `TreeIndexNodeCollection` will not have
+the same result. When you also have a `subtreeSize` available, use `TreeIndexNodeCollection.addRange` with
 `new NumericRange(treeIndex, subtreeSize)` to add the full subtree. If you don't know the 
 `subtreeSize`, `Cognite3DModel.getSubtreeIndices()` can be used to get the full range of tree indices.
 
@@ -127,14 +130,14 @@ the same result. When you also have a `subtreeSize` available, use `ByTreeIndexN
 // ❌ Wrong - will only affect a single tree index, not all descendants
 const indexSet = new IndexSet();
 indexSet.add(subtreeRootIndex);
-const nodeSet = new ByTreeIndexNodeSet(indexSet);
-model.addStyledSet(nodeSet, { visible: false });
+const nodes = new TreeIndexNodeCollection(indexSet);
+model.assignStyledNodeCollection(nodes, { visible: false });
 
 // ✅ Correct - all descendants are affected
 const indexSet = new IndexSet();
 indexSet.addRange(await model.getSubtreeIndices(subtreeRootIndex));
-const nodeSet = new ByTreeIndexNodeSet(indexSet);
-model.addStyledSet(nodeSet, { visible: false });
+const nodes = new TreeIndexNodeCollection(indexSet);
+model.assignStyledNodeCollection(nodes, { visible: false });
 ```
 
 ## Migrating from [@cognite/3d‑viewer](https://www.npmjs.com/package/@cognite/3d-viewer)

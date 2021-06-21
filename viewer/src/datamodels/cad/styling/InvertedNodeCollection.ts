@@ -4,20 +4,22 @@
 import { Cognite3DModel } from '../../../public/migration/Cognite3DModel';
 import { NumericRange } from '../../../utilities';
 import { IndexSet } from '../../../utilities/IndexSet';
-import { NodeSet } from './NodeSet';
+import { NodeCollectionBase, SerializedNodeCollection } from './NodeCollectionBase';
 
 /**
- * Node sets that inverts the result from another node set.
+ * Node collection that inverts the result from another node collection.
  */
-export class InvertedNodeSet extends NodeSet {
+export class InvertedNodeCollection extends NodeCollectionBase {
+  public static readonly classToken = 'InvertedNodeCollection';
+
   private readonly _allTreeIndicesRange: NumericRange;
-  private readonly _innerSet: NodeSet;
+  private readonly _innerCollection: NodeCollectionBase;
   private _cachedIndexSet?: IndexSet;
 
-  constructor(model: Cognite3DModel, innerSet: NodeSet) {
-    super();
-    this._innerSet = innerSet;
-    this._innerSet.on('changed', () => {
+  constructor(model: Cognite3DModel, innerSet: NodeCollectionBase) {
+    super(InvertedNodeCollection.classToken);
+    this._innerCollection = innerSet;
+    this._innerCollection.on('changed', () => {
       this._cachedIndexSet = undefined;
       this.notifyChanged();
     });
@@ -26,12 +28,12 @@ export class InvertedNodeSet extends NodeSet {
   }
 
   get isLoading(): boolean {
-    return this._innerSet.isLoading;
+    return this._innerCollection.isLoading;
   }
 
   getIndexSet(): IndexSet {
     if (this._cachedIndexSet === undefined) {
-      const inner = this._innerSet.getIndexSet();
+      const inner = this._innerCollection.getIndexSet();
       const invertedIndices = new IndexSet();
       invertedIndices.addRange(this._allTreeIndicesRange);
       invertedIndices.differenceWith(inner);
@@ -40,6 +42,10 @@ export class InvertedNodeSet extends NodeSet {
     return this._cachedIndexSet;
   }
 
+  /** @internal */
+  serialize(): SerializedNodeCollection {
+    return { token: this.classToken, state: { innerCollection: this._innerCollection.serialize() } };
+  }
   /**
    * Not supported.
    * @throws Always throws an error.

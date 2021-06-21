@@ -56,6 +56,7 @@ import {
 import { PropType } from '../../utilities/reflection';
 import { CadModelSectorLoadStatistics } from '../../datamodels/cad/CadModelSectorLoadStatistics';
 import ComboControls from '../../combo-camera-controls';
+import { ViewerState, ViewStateHelper } from '../../utilities/ViewStateHelper';
 
 type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered' | 'disposed';
 
@@ -70,6 +71,7 @@ type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered
  * @module @cognite/reveal
  */
 export class Cognite3DViewer {
+  private readonly _viewStateHelper: ViewStateHelper;
   private get canvas(): HTMLCanvasElement {
     return this.renderer.domElement;
   }
@@ -225,6 +227,8 @@ export class Cognite3DViewer {
 
     this.sdkClient = options.sdk;
     this.renderController = new RenderController(this.camera);
+
+    this._viewStateHelper = new ViewStateHelper(this, this.sdkClient);
 
     const revealOptions = createRevealManagerOptions(options);
 
@@ -414,6 +418,31 @@ export class Cognite3DViewer {
       default:
         assertNever(event);
     }
+  }
+
+  /**
+   * Gets the current viewer state which includes the camera pose as well as applied styling.
+   * @returns JSON object containing viewer state.
+   */
+  getViewState() {
+    return this._viewStateHelper.getCurrentState();
+  }
+
+  /**
+   * Restores camera settings from the state provided, and clears all current styled
+   * node collections and applies the `state` object.
+   * @param state Viewer state retrieved from {@link Cognite3DViewer.getViewState}.
+   */
+  setViewState(state: ViewerState) {
+    this.models
+      .filter(model => model instanceof Cognite3DModel)
+      .map(model => model as Cognite3DModel)
+      .forEach(model => {
+        model.styledNodeCollections.forEach(nodeCollection => nodeCollection.nodes.clear());
+        model.styledNodeCollections.splice(0);
+      });
+
+    this._viewStateHelper.setState(state);
   }
 
   /**
@@ -1026,14 +1055,15 @@ export class Cognite3DViewer {
    * @param offsetX X coordinate in pixels (relative to the domElement).
    * @param offsetY Y coordinate in pixels (relative to the domElement).
    * @param options Options to control the behaviour of the intersection operation. Optional (new in 1.3.0).
-   * @returns If there was an intersection then return the intersection object - otherwise it returns `null` if there were no intersections.
+   * @returns A promise that if there was an intersection then return the intersection object - otherwise it 
+   *          returns `null` if there were no intersections.
    * @see {@link https://en.wikipedia.org/wiki/Ray_casting}.
    
    * @example For CAD model
    * ```js
    * const offsetX = 50 // pixels from the left
    * const offsetY = 100 // pixels from the top
-   * const intersection = viewer.getIntersectionFromPixel(offsetX, offsetY);
+   * const intersection = await viewer.getIntersectionFromPixel(offsetX, offsetY);
    * if (intersection) // it was a hit
    *   console.log(
    *   'You hit model ', intersection.model,
@@ -1046,7 +1076,7 @@ export class Cognite3DViewer {
    * ```js
    * const offsetX = 50 // pixels from the left
    * const offsetY = 100 // pixels from the top
-   * const intersection = viewer.getIntersectionFromPixel(offsetX, offsetY);
+   * const intersection = await viewer.getIntersectionFromPixel(offsetX, offsetY);
    * if (intersection) // it was a hit
    *   console.log(
    *   'You hit model ', intersection.model,
@@ -1055,11 +1085,11 @@ export class Cognite3DViewer {
    *   );
    * ```
    */
-  getIntersectionFromPixel(
+  async getIntersectionFromPixel(
     offsetX: number,
     offsetY: number,
     options?: IntersectionFromPixelOptions
-  ): null | Intersection {
+  ): Promise<null | Intersection> {
     const cadModels = this.getModels('cad');
     const pointCloudModels = this.getModels('pointcloud');
     const cadNodes = cadModels.map(x => x.cadNode);

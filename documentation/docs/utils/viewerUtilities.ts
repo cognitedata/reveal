@@ -10,7 +10,7 @@ import {
  * this to better approaches than this.
  */
 export function resetViewerEventHandlers(viewer: Cognite3DViewer): void {
-  const eventListeners = viewer._events;
+  const eventListeners = (viewer as any)._events;
   eventListeners.cameraChange.unsubscribeAll();
   eventListeners.click.unsubscribeAll();
   eventListeners.hover.unsubscribeAll();
@@ -22,5 +22,5 @@ export function resetViewerEventHandlers(viewer: Cognite3DViewer): void {
  */
 export function resetCognite3DModel(model: Cognite3DModel): void {
   model.setDefaultNodeAppearance(DefaultNodeAppearance.Default);
-  model.removeAllStyledNodeSets();
+  model.removeAllStyledNodeCollections();
 }

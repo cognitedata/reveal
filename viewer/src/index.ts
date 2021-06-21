@@ -22,17 +22,27 @@ export * from './public/types';
 export { NodeAppearance, NodeOutlineColor, DefaultNodeAppearance } from './datamodels/cad/NodeAppearance';
 
 export {
-  NodeSet,
-  ByAssetNodeSet,
-  ByTreeIndexNodeSet,
-  ByNodePropertyNodeSet,
-  ByNodePropertyMultiValueNodeSet,
-  CombinedNodeSet,
-  InvertedNodeSet,
+  NodeCollectionBase,
+  PropertyFilterNodeCollection,
+  SinglePropertyNodeCollection,
+  TreeIndexNodeCollection,
+  AssetNodeCollection,
+  IntersectionNodeCollection,
+  UnionNodeCollection,
+  InvertedNodeCollection,
   NodeAppearanceProvider
 } from './datamodels/cad/styling';
 export { IndexSet } from './utilities/IndexSet';
 export { NumericRange } from './utilities/NumericRange';
+
+// Custom NodeCollection deserialization free-function
+export {
+  registerCustomNodeCollectionType,
+  TypeName,
+  NodeCollectionDescriptor,
+  NodeCollectionSerializationContext,
+  SerializedNodeCollection
+} from './datamodels/cad/styling';
 
 // Export ThreeJS to enable easy import for our users
 import * as THREE from 'three';

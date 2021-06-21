@@ -9,7 +9,8 @@ import { Cognite3DModel } from '../../../public/migration/Cognite3DModel';
 import { IndexSet } from '../../../utilities/IndexSet';
 import { PopulateIndexSetFromPagedResponseHelper } from './PopulateIndexSetFromPagedResponseHelper';
 import { NumericRange } from '../../../utilities/NumericRange';
-import { NodeSet } from './NodeSet';
+import { NodeCollectionBase, SerializedNodeCollection } from './NodeCollectionBase';
+import cloneDeep from 'lodash/cloneDeep';
 
 /**
  * Represents a set of nodes associated with an [asset in Cognite Fusion]{@link https://docs.cognite.com/api/v1/#tag/Assets}
@@ -17,14 +18,17 @@ import { NodeSet } from './NodeSet';
  * is considered to be part of an asset if it has a direct asset mapping or if one of its ancestors has an asset mapping
  * to the asset.
  */
-export class ByAssetNodeSet extends NodeSet {
+export class AssetNodeCollection extends NodeCollectionBase {
+  public static readonly classToken = 'AssetNodeCollection';
+
   private readonly _client: CogniteClient;
   private _indexSet = new IndexSet();
   private readonly _model: Cognite3DModel;
   private _fetchResultHelper: PopulateIndexSetFromPagedResponseHelper<AssetMapping3D> | undefined;
+  private _filter: any;
 
   constructor(client: CogniteClient, model: Cognite3DModel) {
-    super();
+    super(AssetNodeCollection.classToken);
     this._client = client;
     this._model = model;
     this._fetchResultHelper = undefined;
@@ -35,7 +39,7 @@ export class ByAssetNodeSet extends NodeSet {
   }
 
   /**
-   * Updates the node set to hold nodes associated with the asset given, or
+   * Updates the node collection to hold nodes associated with the asset given, or
    * assets within the bounding box or all assets associated with the 3D model.
    * @param filter
    * @param filter.assetId      ID of a single [asset]{@link https://docs.cognite.com/dev/concepts/resource_types/assets.html} (optional)
@@ -73,6 +77,8 @@ export class ByAssetNodeSet extends NodeSet {
     const indexSet = new IndexSet();
     this._indexSet = indexSet;
 
+    this._filter = filter;
+
     const request = this._client.assetMappings3D.list(model.modelId, model.revisionId, filterQuery);
     const completed = await fetchResultHelper.pageResults(indexSet, request);
 
@@ -80,6 +86,10 @@ export class ByAssetNodeSet extends NodeSet {
       // Completed without being interrupted
       this._fetchResultHelper = undefined;
     }
+  }
+
+  getFilter() {
+    return this._filter;
   }
 
   clear() {
@@ -91,5 +101,13 @@ export class ByAssetNodeSet extends NodeSet {
 
   getIndexSet(): IndexSet {
     return this._indexSet;
+  }
+
+  /** @internal */
+  serialize(): SerializedNodeCollection {
+    return {
+      token: this.classToken,
+      state: cloneDeep(this._filter)
+    };
   }
 }
