@@ -6,6 +6,7 @@ import styled from 'styled-components/macro';
 import { SEARCH_KEY } from 'utils/constants';
 import { useSearchParam } from 'hooks';
 import debounce from 'lodash/debounce';
+import InfoBox from 'components/InfoBox';
 
 type SearchProps = {
   visible: boolean;
@@ -70,6 +71,7 @@ const Search = ({ visible, onClose }: SearchProps) => {
             />
           </Tooltip>
         </SearchBar>
+        <InfoBox infoType="TimeSeriesHelpBox" />
         <div style={{ marginTop: 16, marginRight: 10 }}>
           <SegmentedControl
             currentKey={searchType}
