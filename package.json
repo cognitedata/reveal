@@ -1,6 +1,6 @@
 {
   "name": "@cognite/cognite-charts",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "private": true,
   "scripts": {
     "start": "./scripts/start.sh",
@@ -34,6 +34,7 @@
     "@cognite/z-index": "^0.1.0",
     "@sentry/browser": "^5.30.0",
     "antd": "^4.16.2",
+    "axios": "^0.21.1",
     "date-fns": "^2.22.1",
     "dayjs": "^1.10.5",
     "dotenv": "^9.0.2",
