@@ -1,12 +1,12 @@
 {
   "name": "@cognite/react-errors",
-  "version": "0.3.0-rc.1",
+  "version": "0.3.0-rc.2",
   "source": "src/index.ts",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
   "browser": "dist/index.js",
   "typings": "dist/index.d.ts",
-  "repository": "https://github.com/cognitedata/applications/packages/react-error",
+  "repository": "https://github.com/cognitedata/applications/packages/react-errors",
   "license": "UNLICENSED",
   "author": "Cognite AS",
   "files": [
@@ -14,7 +14,7 @@
     "jest-mocks.js"
   ],
   "scripts": {
-    "build": "bazel build :react-error",
+    "build": "bazel build :react-errors",
     "test": "../../node_modules/.bin/jest",
     "test:watch": "yarn test --watchAll",
     "test:bazel": "bazel test :jest_test",
