@@ -91,7 +91,7 @@ export class NodeCollectionDeserializer {
           context.model,
           descriptor.options
         );
-        const { propertyCategory, propertyKey } = descriptor.state;
+        const { propertyCategory, propertyKey, propertyValues } = descriptor.state;
         await nodeCollection.executeFilter(propertyCategory, propertyKey, propertyValues);
         return nodeCollection;
       }
