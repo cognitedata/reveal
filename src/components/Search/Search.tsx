@@ -1,6 +1,7 @@
 import React, { ChangeEvent, useEffect, useState } from 'react';
-import { Button, Input, Tooltip } from '@cognite/cogs.js';
+import { Button, Input, Tooltip, SegmentedControl } from '@cognite/cogs.js';
 import SearchResultList from 'components/SearchResultTable/SearchResultList';
+import SearchTimeseries from 'components/SearchResultTable/SearchTimeseries';
 import styled from 'styled-components/macro';
 import { SEARCH_KEY } from 'utils/constants';
 import { useSearchParam } from 'hooks';
@@ -12,6 +13,9 @@ type SearchProps = {
 };
 
 const Search = ({ visible, onClose }: SearchProps) => {
+  const [searchType, setSearchType] = useState<'assets' | 'timeseries'>(
+    'assets'
+  );
   const [searchInputValue, setSearchInputValue] = useState('');
   const [urlQuery = '', setUrlQuery] = useSearchParam(SEARCH_KEY, false);
   const debouncedSetUrlQuery = debounce(setUrlQuery, 200);
@@ -66,8 +70,36 @@ const Search = ({ visible, onClose }: SearchProps) => {
             />
           </Tooltip>
         </SearchBar>
+        <div style={{ marginTop: 16, marginRight: 10 }}>
+          <SegmentedControl
+            currentKey={searchType}
+            style={{ width: '100%' }}
+            onButtonClicked={(type) =>
+              setSearchType(type as 'assets' | 'timeseries')
+            }
+          >
+            <SegmentedControl.Button key="assets">
+              Tag number
+            </SegmentedControl.Button>
+            <SegmentedControl.Button key="timeseries">
+              Timeseries ID
+            </SegmentedControl.Button>
+          </SegmentedControl>
+          {/* {searchType === 'assets' && (
+            <label
+              className="cogs-switch"
+              htmlFor="example"
+              style={{ marginTop: 10 }}
+            >
+              <input type="checkbox" name="example" id="example" />
+              <div className="switch-ui" />
+              Hide empty assets
+            </label>
+          )} */}
+        </div>
         <SearchResultsContainer>
-          <SearchResultList query={urlQuery} />
+          {searchType === 'assets' && <SearchResultList query={urlQuery} />}
+          {searchType === 'timeseries' && <SearchTimeseries query={urlQuery} />}
         </SearchResultsContainer>
       </ContentWrapper>
     </SearchContainer>
@@ -81,6 +113,15 @@ const SearchContainer = styled.div<SearchProps>`
   visibility: ${(props) => (props.visible ? 'visible' : 'hidden')};
   padding: ${(props) => (props.visible ? '20px 0 10px 10px' : 0)};
   transition: visibility 0s linear 200ms, width 200ms ease;
+
+  .cog-button-group {
+    & > span {
+      width: 50%;
+      button {
+        width: 100%;
+      }
+    }
+  }
 `;
 
 const ContentWrapper = styled.div<SearchProps>`
@@ -96,9 +137,10 @@ const SearchBar = styled.div`
 `;
 
 const SearchResultsContainer = styled.div`
-  margin-top: 1rem;
+  padding-top: 1rem;
+  padding-bottom: 2rem;
   height: calc(100% - 70px);
-  overflow: hidden;
+  overflow: auto;
   width: 100%;
 `;
 
