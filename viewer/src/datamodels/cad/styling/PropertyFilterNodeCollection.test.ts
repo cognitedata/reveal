@@ -5,22 +5,22 @@
 import { CogniteClient } from '@cognite/sdk';
 import { Cognite3DModel } from '../../../public/migration/Cognite3DModel';
 import { IndexSet } from '../../../utilities/IndexSet';
-import { ByNodePropertyNodeSet } from '.';
+import { PropertyFilterNodeCollection } from './PropertyFilterNodeCollection';
 
 import nock from 'nock';
 import { NumericRange } from '../../../utilities';
 
-describe('ByNodePropertyNodeSet', () => {
+describe('PropertyFilterNodeCollection', () => {
   let client: CogniteClient;
   let model: Cognite3DModel;
-  let set: ByNodePropertyNodeSet;
+  let set: PropertyFilterNodeCollection;
   const listNodesEndpointPath: RegExp = /.*\/nodes/;
 
   beforeEach(() => {
     client = new CogniteClient({ appId: 'test', baseUrl: 'http://localhost' });
     client.loginWithApiKey({ apiKey: 'dummy', project: 'unittest' });
     model = { modelId: 112, revisionId: 113 } as Cognite3DModel;
-    set = new ByNodePropertyNodeSet(client, model);
+    set = new PropertyFilterNodeCollection(client, model);
   });
 
   afterEach(() => {
@@ -138,7 +138,7 @@ describe('ByNodePropertyNodeSet', () => {
 
   test('executeFilter() with two partitions, finishes and merges both', async () => {
     // Arrange
-    set = new ByNodePropertyNodeSet(client, model, { requestPartitions: 2 });
+    set = new PropertyFilterNodeCollection(client, model, { requestPartitions: 2 });
 
     nock(/.*/)
       .get(listNodesEndpointPath)

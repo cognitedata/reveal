@@ -6,7 +6,7 @@ import assert from 'assert';
 import { EventTrigger } from '../../../utilities/events/EventTrigger';
 import { IndexSet } from '../../../utilities/IndexSet';
 
-export type SerializedNodeSet = {
+export type SerializedNodeCollection = {
   token: string;
   state: any;
   options?: any;
@@ -15,7 +15,7 @@ export type SerializedNodeSet = {
 /**
  * Abstract class for implementing a set of nodes to be styled.
  */
-export abstract class NodeSet {
+export abstract class NodeCollectionBase {
   private readonly _changedEvent = new EventTrigger<() => void>();
   private readonly _classToken: string;
 
@@ -68,5 +68,5 @@ export abstract class NodeSet {
     this._changedEvent.fire();
   }
 
-  abstract serialize(): SerializedNodeSet;
+  abstract serialize(): SerializedNodeCollection;
 }

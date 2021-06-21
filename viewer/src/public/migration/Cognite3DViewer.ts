@@ -429,7 +429,8 @@ export class Cognite3DViewer {
   }
 
   /**
-   * Clears all current styled node sets and applies the `state` object.
+   * Restores camera settings from the state provided, and clears all current styled
+   * node collections and applies the `state` object.
    * @param state Viewer state retrieved from {@link Cognite3DViewer.getViewState}.
    */
   setViewState(state: ViewerState) {
@@ -437,8 +438,8 @@ export class Cognite3DViewer {
       .filter(model => model instanceof Cognite3DModel)
       .map(model => model as Cognite3DModel)
       .forEach(model => {
-        model.styleNodeSets.forEach(nodeSet => nodeSet.nodes.clear());
-        model.styleNodeSets.splice(0);
+        model.styledNodeCollections.forEach(nodeCollection => nodeCollection.nodes.clear());
+        model.styledNodeCollections.splice(0);
       });
 
     this._viewStateHelper.setState(state);

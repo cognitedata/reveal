@@ -11,14 +11,14 @@ import { NumericRange } from '../../../utilities/NumericRange';
  */
 export class PopulateIndexSetFromPagedResponseHelper<T> {
   private readonly _itemToTreeIndexRangeCallback: (item: T) => NumericRange;
-  private readonly _notifySetChangedCallback: () => void;
+  private readonly _notifyChangedCallback: () => void;
 
   private _ongoingOperations = 0;
   private _interrupted = false;
 
   constructor(itemToTreeIndexRangeCallback: (item: T) => NumericRange, notifySetChangedCallback: () => void) {
     this._itemToTreeIndexRangeCallback = itemToTreeIndexRangeCallback;
-    this._notifySetChangedCallback = notifySetChangedCallback;
+    this._notifyChangedCallback = notifySetChangedCallback;
   }
 
   interrupt() {
@@ -37,7 +37,7 @@ export class PopulateIndexSetFromPagedResponseHelper<T> {
    */
   public async pageResults(indexSet: IndexSet, request: Promise<ListResponse<T[]>>): Promise<boolean> {
     const itemToTreeIndexRangeCallback = this._itemToTreeIndexRangeCallback;
-    const notifySetChangedCallback = this._notifySetChangedCallback;
+    const notifyChangedCallback = this._notifyChangedCallback;
     this._ongoingOperations++;
     try {
       let response: ListResponse<T[]> = await request;
@@ -47,7 +47,7 @@ export class PopulateIndexSetFromPagedResponseHelper<T> {
           const range = itemToTreeIndexRangeCallback(x);
           indexSet.addRange(range);
         });
-        notifySetChangedCallback();
+        notifyChangedCallback();
 
         if (nextRequest) {
           response = await nextRequest;
