@@ -91,23 +91,38 @@ export default function AssetSearchHit({ asset }: Props) {
           </ResourceNameWrapper>
           <Description>{asset.description}</Description>
         </InfoContainer>
-        <DelayedComponent delay={100}>
-          <PnidButton asset={asset} />
-        </DelayedComponent>
-        <AssetCount>{dataAmount?.count} </AssetCount>
+        <Right>
+          <AssetCount>{dataAmount?.count} </AssetCount>
+          <DelayedComponent delay={100}>
+            <PnidButton asset={asset}>P&amp;ID</PnidButton>
+          </DelayedComponent>
+        </Right>
       </Row>
       <Row>
         <TSList>
           {ts?.map((t, i) => (
             <TSItem key={t.id}>
               <Row>
-                <InfoContainer>
-                  <ResourceNameWrapper>
-                    <Icon type="ResourceTimeseries" style={{ minWidth: 14 }} />
-                    <span style={{ marginLeft: 5 }}>{t.name}</span>
-                  </ResourceNameWrapper>
-                  <Description>{t.description}</Description>
-                </InfoContainer>
+                <Right>
+                  <Checkbox
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleTimeSeriesClick(t);
+                    }}
+                    name={`${t.id}`}
+                    value={selectedIds?.includes(t.id)}
+                  />
+                  <InfoContainer>
+                    <ResourceNameWrapper>
+                      <Icon
+                        type="ResourceTimeseries"
+                        style={{ minWidth: 14 }}
+                      />
+                      <span style={{ marginLeft: 5 }}>{t.name}</span>
+                    </ResourceNameWrapper>
+                    <Description>{t.description}</Description>
+                  </InfoContainer>
+                </Right>
                 <Right>
                   <DelayedComponent delay={250 + i}>
                     <div style={{ width: 190 }}>
@@ -127,15 +142,6 @@ export default function AssetSearchHit({ asset }: Props) {
                       />
                     </div>
                   </DelayedComponent>
-
-                  <Checkbox
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleTimeSeriesClick(t);
-                    }}
-                    name={`${t.id}`}
-                    value={selectedIds?.includes(t.id)}
-                  />
                 </Right>
               </Row>
             </TSItem>
@@ -165,7 +171,9 @@ const AssetCount = styled.span`
   border: 1px solid var(--cogs-greyscale-grey4);
   border-radius: 5px;
   float: right;
-  padding: 5px;
+  padding: 0 5px;
+  margin-right: 8px;
+  line-height: 26px;
 `;
 
 const TSList = styled.ul`
@@ -177,7 +185,7 @@ const TSList = styled.ul`
 
 const TSItem = styled.li`
   border-radius: 5px;
-  padding: 5px;
+  padding: 0 5px;
   :nth-child(odd) {
     background-color: var(--cogs-greyscale-grey2);
   }
