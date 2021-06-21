@@ -13,6 +13,14 @@ import ApiContext from 'contexts/ApiContext';
 import APIErrorContext from 'contexts/APIErrorContext';
 import { Link, useHistory } from 'react-router-dom';
 import ErrorMessage from 'components/Molecules/ErrorMessage';
+import {
+  ObjectsRevisionsResponse,
+  ProjectRepositoryTheeResponse,
+  ProjectsResponse,
+} from 'types/ApiInterface';
+import { CustomError } from 'services/CustomError';
+import LoadingBox from 'components/Molecules/LoadingBox';
+import { CloseIcon } from 'components/Organisms/DetailView/elements';
 
 import {
   BorderedBottomContainer,
@@ -29,10 +37,8 @@ import {
   SaveButton,
   ThreeColsLayout,
 } from '../elements';
-import DatatypeSection from '../DatatypeSection/DatatypeSection';
-import LoadingBox from '../../../components/Molecules/LoadingBox';
-import { CloseIcon } from '../../../components/Organisms/DetailView/elements';
 
+import DatatypeSection from './DatatypeSection/DatatypeSection';
 import ConfigArrow from './ConfigArrow';
 import { makeConnectorLines } from './utils';
 
@@ -120,17 +126,17 @@ const OpenWorksToPetrelStudio = ({ name }: Props) => {
     }));
   }, [user]);
 
-  async function fetchRepositories(): Promise<GenericResponseObject[]> {
+  async function fetchRepositories(): Promise<ProjectsResponse[]> {
     return api!.projects.get(Source.STUDIO);
   }
 
-  async function fetchProjects(): Promise<GenericResponseObject[]> {
+  async function fetchProjects(): Promise<ProjectsResponse[]> {
     return api!.projects.get(Source.OPENWORKS);
   }
 
   async function fetchTargetObjects(
     projectName: string
-  ): Promise<GenericResponseObject[]> {
+  ): Promise<ObjectsRevisionsResponse[]> {
     return api!.objects.getFiltered({
       connector: 'Openworks',
       datatype: 'Target',
@@ -138,7 +144,9 @@ const OpenWorksToPetrelStudio = ({ name }: Props) => {
     });
   }
 
-  async function fetchRepoTree(repo: string): Promise<GenericResponseObject[]> {
+  async function fetchRepoTree(
+    repo: string
+  ): Promise<ProjectRepositoryTheeResponse[]> {
     return api!.sources.getRepositoryTree(Source.STUDIO, repo);
   }
 
@@ -146,13 +154,9 @@ const OpenWorksToPetrelStudio = ({ name }: Props) => {
     if (type === ChangeType.PROJECT) {
       setDataTypesLoading(true);
       updateSourceProject(value);
-      fetchTargetObjects((value || '').toString()).then((response) => {
-        if (response && Array.isArray(response)) {
-          if (response.length > 0 && response[0].error) {
-            setSourceUIState(ConfigUIState.ERROR);
-            addError('Failed to fetch', response[0].status);
-            setDataTypesLoading(false);
-          } else {
+      fetchTargetObjects((value || '').toString())
+        .then((response) => {
+          if (response && Array.isArray(response)) {
             setSourceUIState(ConfigUIState.CONFIGURING);
             // setAvailableWPS(response); // Change this to fetch Well Plan Scenarios
             setAvailableTargets(response);
@@ -163,25 +167,29 @@ const OpenWorksToPetrelStudio = ({ name }: Props) => {
             }));
             setDataTypesLoading(false);
           }
-        }
-      });
+        })
+        .catch((err: CustomError) => {
+          setSourceUIState(ConfigUIState.ERROR);
+          addError('Failed to fetch', err.status);
+          setDataTypesLoading(false);
+        });
     } else if (type === ChangeType.REPO) {
       updateTargetRepository(value);
       setFoldersLoading(false);
       updateDestinationFolder(ROOT_FOLDER);
-      fetchRepoTree(String(value)).then((response) => {
-        if (response.length > 0) {
-          if (!response[0].error) {
+      fetchRepoTree(String(value))
+        .then((response) => {
+          if (response.length > 0) {
             setAvailableDestinationFolders(response);
           } else {
-            setTargetUIState(ConfigUIState.ERROR);
-            addError('Failed to fetch', response[0].status);
+            setAvailableDestinationFolders([]);
           }
-        } else {
-          setAvailableDestinationFolders([]);
-        }
-        setFoldersLoading(false);
-      });
+          setFoldersLoading(false);
+        })
+        .catch((err: CustomError) => {
+          setTargetUIState(ConfigUIState.ERROR);
+          addError('Failed to fetch', err.status);
+        });
     } else if (type === ChangeType.DESTINATION_FOLDER) {
       updateDestinationFolder(value);
     }
@@ -197,25 +205,21 @@ const OpenWorksToPetrelStudio = ({ name }: Props) => {
 
   function handleSaveConfigurationClick() {
     setIsSaving(true);
-    api!.configurations.create(configuration).then((response) => {
-      if (Array.isArray(response) && response.length > 0 && response[0].error) {
-        setIsSaving(false);
-        addError(
-          `Failed to save configuration - ${response[0].statusText}`,
-          response[0].status
-        );
-        setCreationError(
-          `Server status: - ${response[0].status}: ${response[0].statusText}`
-        );
-      } else {
+    api!.configurations
+      .create(configuration)
+      .then(() => {
         setIsSaving(false);
         notification.success({
           message: 'Configuration created',
           description: 'Configuration was created successfully',
         });
         history.push('/configurations'); // Bug in react-router-dom - does not render after history.push()
-      }
-    });
+      })
+      .catch((err: CustomError) => {
+        setIsSaving(false);
+        addError(`Failed to save configuration - ${err.message}`, err.status);
+        setCreationError(`Server status: - ${err.status}: ${err.message}`);
+      });
   }
 
   function updateSourceProject(value: SelectValue) {
@@ -335,15 +339,15 @@ const OpenWorksToPetrelStudio = ({ name }: Props) => {
                   <Button
                     type="primary"
                     onClick={() => {
-                      fetchProjects().then((response) => {
-                        if (!response[0].error) {
+                      fetchProjects()
+                        .then((response) => {
                           setSourceUIState(ConfigUIState.CONFIGURING);
                           setAvailableProjects(response);
-                        } else {
+                        })
+                        .catch((err: CustomError) => {
                           setSourceUIState(ConfigUIState.ERROR);
-                          addError('Failed to fetch', response[0].status);
-                        }
-                      });
+                          addError('Failed to fetch', err.status);
+                        });
                     }}
                   >
                     Configure
@@ -512,15 +516,15 @@ const OpenWorksToPetrelStudio = ({ name }: Props) => {
                   <Button
                     type="primary"
                     onClick={() => {
-                      fetchRepositories().then((response) => {
-                        if (!response[0].error) {
+                      fetchRepositories()
+                        .then((response) => {
                           setTargetUIState(ConfigUIState.CONFIGURING);
                           setAvailableRepositories(response);
-                        } else {
+                        })
+                        .catch((err: CustomError) => {
                           setTargetUIState(ConfigUIState.ERROR);
-                          addError('Failed to fetch', response[0].status);
-                        }
-                      });
+                          addError('Failed to fetch', err.status);
+                        });
                     }}
                   >
                     Configure

@@ -2,10 +2,9 @@ import { useState, useEffect, useContext, useCallback } from 'react';
 import { Tabs } from 'antd';
 import ApiContext from 'contexts/ApiContext';
 import APIErrorContext from 'contexts/APIErrorContext';
-import {
-  GenericResponseObject,
-  UNIX_TIMESTAMP_FACTOR,
-} from 'typings/interfaces';
+import { UNIX_TIMESTAMP_FACTOR } from 'typings/interfaces';
+import { SourcesHeartbeatsResponse } from 'types/ApiInterface';
+import { CustomError } from 'services/CustomError';
 
 import { DATE_RANGE_VALUES, DateRangeValueType } from '../utils';
 import EmptyTableMessage from '../../../components/Molecules/EmptyTableMessage/EmptyTableMessage';
@@ -32,26 +31,19 @@ const { TabPane } = Tabs;
 const Heartbeats = ({ dateRange, afterTimestamp }: Props) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [activeTabKey, setActiveTabKey] = useState<string>('psToOw');
-  const [psHeartbeats, setPsHeartbeats] = useState<GenericResponseObject[]>([]);
-  const [owHeartbeats, setOwHeartbeats] = useState<GenericResponseObject[]>([]);
+  const [psHeartbeats, setPsHeartbeats] = useState<SourcesHeartbeatsResponse>(
+    []
+  );
+  const [owHeartbeats, setOwHeartbeats] = useState<SourcesHeartbeatsResponse>(
+    []
+  );
   const { api } = useContext(ApiContext);
   const { addError } = useContext(APIErrorContext);
 
   const setBeats = useCallback(
-    (response: GenericResponseObject[], source: string) => {
+    (response: SourcesHeartbeatsResponse, source: string) => {
       if (response && Array.isArray(response)) {
-        if (response.length > 0 && response[0].error) {
-          const errorObj = {
-            message: response[0].statusText,
-            status: response[0].status,
-          };
-          addError(errorObj.message, errorObj.status);
-        }
-
-        if (
-          response.length === 0 ||
-          (response.length > 0 && !response[0].error)
-        ) {
+        if (response.length === 0 || response.length > 0) {
           if (source === 'ps') {
             setPsHeartbeats(response);
           } else {
@@ -61,7 +53,7 @@ const Heartbeats = ({ dateRange, afterTimestamp }: Props) => {
       }
       setIsLoading(false);
     },
-    [addError, setPsHeartbeats, setOwHeartbeats]
+    [setPsHeartbeats, setOwHeartbeats]
   );
 
   const fetchBeats = useCallback(() => {
@@ -72,8 +64,11 @@ const Heartbeats = ({ dateRange, afterTimestamp }: Props) => {
           'Studio',
           Math.floor(afterTimestamp / UNIX_TIMESTAMP_FACTOR)
         )
-        .then((response: GenericResponseObject[]) => {
+        .then((response: SourcesHeartbeatsResponse) => {
           setBeats(response, 'ps');
+        })
+        .catch((err: CustomError) => {
+          addError(err.message, err.status);
         });
     } else {
       api!.sources
@@ -81,11 +76,14 @@ const Heartbeats = ({ dateRange, afterTimestamp }: Props) => {
           'Openworks',
           Math.floor(afterTimestamp / UNIX_TIMESTAMP_FACTOR)
         )
-        .then((owResponse: GenericResponseObject[]) => {
+        .then((owResponse: SourcesHeartbeatsResponse) => {
           setBeats(
             owResponse.sort((a, b) => Number(a) - Number(b)),
             'ow'
           );
+        })
+        .catch((err: CustomError) => {
+          addError(err.message, err.status);
         });
     }
   }, [afterTimestamp, api, setBeats, activeTabKey]);
@@ -99,7 +97,7 @@ const Heartbeats = ({ dateRange, afterTimestamp }: Props) => {
     setActiveTabKey(key);
   }
 
-  const getBars = (heartbeats: GenericResponseObject[]) => {
+  const getBars = (heartbeats: SourcesHeartbeatsResponse) => {
     let items: { date: string; isOn: string | undefined }[] = [];
     if (dateRange === DATE_RANGE_VALUES.lastMonth) {
       items = getMonthDates(heartbeats);
@@ -135,7 +133,7 @@ const Heartbeats = ({ dateRange, afterTimestamp }: Props) => {
     );
   };
 
-  const renderChart = (type: string, heartbeats: GenericResponseObject[]) => {
+  const renderChart = (type: string, heartbeats: SourcesHeartbeatsResponse) => {
     const getStatus = () => (
       <StatusText>
         {type === 'ps' ? 'Petrel Studio' : 'Openworks'} connector status:{' '}

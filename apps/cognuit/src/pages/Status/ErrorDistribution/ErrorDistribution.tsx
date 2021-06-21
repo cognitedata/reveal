@@ -1,12 +1,10 @@
 import { useState, useContext, useEffect } from 'react';
 import { Pie } from 'react-chartjs-2';
 import { APIContextValue } from 'contexts/ApiContext';
+import { CustomError } from 'services/CustomError';
+import { ErrorDistributionObject } from 'typings/interfaces';
 
 import ApiContext from '../../../contexts/ApiContext';
-import {
-  ErrorDistributionObject,
-  GenericResponseObject,
-} from '../../../typings/interfaces';
 import EmptyTableMessage from '../../../components/Molecules/EmptyTableMessage/EmptyTableMessage';
 
 import { ChartContainer, Container } from './elements';
@@ -29,18 +27,26 @@ const ErrorDistribution = ({ afterTimestamp }: Props) => {
     api!.sources
       .getErrorDistribution('Studio', afterTimestamp)
       .then((response) => {
-        if (response.length === 0 || !response[0].error) {
+        if (response.length === 0) {
           setPsData(response as ErrorDistributionObject[]);
         }
         setIsLoading(false);
+      })
+      .catch((err: CustomError) => {
+        // eslint-disable-next-line no-console
+        console.trace('Unhandled error response in error', err);
       });
     api!.sources
       .getErrorDistribution('Openworks', afterTimestamp)
-      .then((response: ErrorDistributionObject[] | GenericResponseObject[]) => {
-        if (response.length === 0 || !response[0].error) {
+      .then((response) => {
+        if (response.length === 0) {
           setOwData(response as ErrorDistributionObject[]);
         }
         setIsLoading(false);
+      })
+      .catch((err: CustomError) => {
+        // eslint-disable-next-line no-console
+        console.trace('Unhandled error response in error', err);
       });
   }, [afterTimestamp, api]);
 

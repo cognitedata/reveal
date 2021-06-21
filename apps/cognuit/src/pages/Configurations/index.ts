@@ -1,1 +1,1 @@
-export { default } from './Configurations';
+export { default } from './Root';

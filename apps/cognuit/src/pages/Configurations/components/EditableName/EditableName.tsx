@@ -48,20 +48,30 @@ const EditableName = ({ name, onSaveChange }: Props) => {
     return (
       <Container>
         <Input
+          aria-label="editText"
           size="small"
           value={text}
           onChange={(e) => setText(e.target.value)}
         />
         {text !== name && (
-          <Button size="small" type="primary" onClick={() => onSave()}>
+          <Button
+            size="small"
+            type="primary"
+            onClick={(e) => {
+              e.stopPropagation();
+              onSave();
+            }}
+          >
             Save
           </Button>
         )}
         <Button
           size="small"
-          type="primary"
-          variant="outline"
-          onClick={() => onCancel()}
+          type="tertiary"
+          onClick={(e) => {
+            e.stopPropagation();
+            onCancel();
+          }}
         >
           Cancel
         </Button>
@@ -83,9 +93,12 @@ const EditableName = ({ name, onSaveChange }: Props) => {
         className="pencil-button"
         size="small"
         unstyled
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={(e) => {
+          e.stopPropagation();
+          setIsOpen(!isOpen);
+        }}
         icon="Edit"
-        aria-label=""
+        aria-label="Edit"
       />
     </Container>
   );

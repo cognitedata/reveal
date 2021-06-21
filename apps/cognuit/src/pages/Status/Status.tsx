@@ -63,7 +63,7 @@ const Status = () => {
                 <Button
                   icon="Select"
                   iconPlacement="right"
-                  variant="outline"
+                  type="tertiary"
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();

@@ -50,7 +50,7 @@ export const RenderSecondaryFilters = ({
           value={nameFilter}
           icon="Search"
           iconPlacement="left"
-          size="large"
+          size="default"
           onChange={(e) => {
             setNameFilter(e.target.value);
             onNameSearchChange(e.target.value);

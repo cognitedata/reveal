@@ -40,7 +40,7 @@ const ExpandableInput = ({
     <Container>
       <Button
         type="primary"
-        size="large"
+        size="default"
         icon={state === INPUT_STATE.EXPANDED ? undefined : buttonIcon}
         onClick={state === INPUT_STATE.COLLAPSED ? expand : onClick}
       >

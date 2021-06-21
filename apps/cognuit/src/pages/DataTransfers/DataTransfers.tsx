@@ -27,6 +27,12 @@ import {
   RESTTransfersFilter,
   RevisionObject,
 } from 'typings/interfaces';
+import {
+  DataTransfersResponse,
+  ProjectsResponse,
+  SourcesResponse,
+} from 'types/ApiInterface';
+import { CustomError } from 'services/CustomError';
 
 import { ContentContainer } from '../../elements';
 import ErrorMessage from '../../components/Molecules/ErrorMessage';
@@ -48,7 +54,6 @@ import {
 import {
   ProgressState,
   Action,
-  DataTransfersError,
   DataTransfersState,
   DataTransfersAction,
   UserAction,
@@ -211,14 +216,10 @@ const DataTransfers: React.FC = () => {
   );
   const [selectedConfiguration, setSelectedConfiguration] =
     useState<GenericResponseObject | null>(null);
-  const [sourceProjects, setSourceProjects] = useState<DataTransferObject[]>(
-    []
-  );
+  const [sourceProjects, setSourceProjects] = useState<ProjectsResponse[]>([]);
   const [selectedSourceProject, setSelectedSourceProject] =
     useState<DataTransferObject | null>(null);
-  const [targetProjects, setTargetProjects] = useState<DataTransferObject[]>(
-    []
-  );
+  const [targetProjects, setTargetProjects] = useState<ProjectsResponse[]>([]);
   const [selectedTargetProject, setSelectedTargetProject] =
     useState<DataTransferObject | null>(null);
   const [selectedDateRange, setSelectedDateRange] = useState<Range>({});
@@ -312,41 +313,37 @@ const DataTransfers: React.FC = () => {
       }
       api!.datatransfers
         .get(options)
-        .then((response: DataTransferObject[]) => {
+        .then((response: DataTransfersResponse[]) => {
           if (response.length > 0) {
-            if (!response[0].error) {
-              const handledData = response.map((item) => ({
-                ...item.source,
-                status: item.status,
-                report: item.status,
-              }));
+            const handledData = response.map((item) => ({
+              ...item.source,
+              status: item.status,
+              report: item.status,
+            }));
 
-              dispatch({
-                type: Action.SUCCEED,
-                payload: {
-                  data: handledData,
-                  columns: selectColumns(
-                    handledData.length > 0 ? handledData : data.data,
-                    data.selectedColumnNames.length > 0
-                      ? data.selectedColumnNames
-                      : config.initialSelectedColumnNames
-                  ),
-                  rawColumns: selectColumns(
-                    handledData.length > 0 ? handledData : data.data,
-                    []
-                  ),
-                  allColumnNames: getColumnNames(
-                    handledData.length > 0 ? handledData : data.data
-                  ),
-                  selectedColumnNames:
-                    data.selectedColumnNames.length > 0
-                      ? data.selectedColumnNames
-                      : config.initialSelectedColumnNames,
-                },
-              });
-            } else {
-              throw new Error(response[0].status);
-            }
+            dispatch({
+              type: Action.SUCCEED,
+              payload: {
+                data: handledData,
+                columns: selectColumns(
+                  handledData.length > 0 ? handledData : data.data,
+                  data.selectedColumnNames.length > 0
+                    ? data.selectedColumnNames
+                    : config.initialSelectedColumnNames
+                ),
+                rawColumns: selectColumns(
+                  handledData.length > 0 ? handledData : data.data,
+                  []
+                ),
+                allColumnNames: getColumnNames(
+                  handledData.length > 0 ? handledData : data.data
+                ),
+                selectedColumnNames:
+                  data.selectedColumnNames.length > 0
+                    ? data.selectedColumnNames
+                    : config.initialSelectedColumnNames,
+              },
+            });
           } else {
             dispatch({
               type: Action.SUCCEED,
@@ -368,8 +365,8 @@ const DataTransfers: React.FC = () => {
             });
           }
         })
-        .catch((err: DataTransfersError) => {
-          addError(err.message, parseInt(err.message, 10));
+        .catch((err: CustomError) => {
+          addError(err.message, err.status);
           dispatch({ type: Action.FAIL, error: err });
         });
     }
@@ -382,16 +379,12 @@ const DataTransfers: React.FC = () => {
         .get(selectedSource)
         .then((response) => {
           if (response.length > 0) {
-            if (!response[0].error) {
-              setSourceProjects(response);
-            } else {
-              throw new Error(response[0].status);
-            }
+            setSourceProjects(response);
           }
           dispatch({ type: Action.SUCCEED });
         })
-        .catch((err: DataTransfersError) => {
-          addError(err.message, parseInt(err.message, 10));
+        .catch((err: CustomError) => {
+          addError(err.message, err.status);
         });
     }
     if (selectedTarget) {
@@ -399,16 +392,12 @@ const DataTransfers: React.FC = () => {
         .get(selectedTarget)
         .then((response) => {
           if (response.length > 0) {
-            if (!response[0].error) {
-              setTargetProjects(response);
-            } else {
-              throw new Error(response[0].status);
-            }
+            setTargetProjects(response);
             dispatch({ type: Action.SUCCEED });
           }
         })
-        .catch((err: DataTransfersError) => {
-          addError(err.message, parseInt(err.message, 10));
+        .catch((err: CustomError) => {
+          addError(err.message, err.status);
         });
     }
   }
@@ -420,8 +409,8 @@ const DataTransfers: React.FC = () => {
         .then((response: string[]) => {
           setDatatypes(response);
         })
-        .catch((err: DataTransfersError) => {
-          addError(err.message, parseInt(err.message, 10));
+        .catch((err: CustomError) => {
+          addError(err.message, err.status);
         });
     }
   }
@@ -458,7 +447,7 @@ const DataTransfers: React.FC = () => {
     api!.objects
       .getSingleObject(translation.revision.object_id)
       .then((response) => {
-        if (response && response.length > 0 && !response[0].error) {
+        if (response?.length > 0) {
           const item = response[0];
           selectedObject.target = {
             name: item.name,
@@ -496,28 +485,26 @@ const DataTransfers: React.FC = () => {
       api!.configurations
         .get()
         .then((response: GenericResponseObject[]) => {
-          if (response.length > 0 && !response[0].error) {
+          if (response.length > 0) {
             setConfigurations(response);
-          } else if (response.length === 0) {
-            setConfigurations([]);
           } else {
-            throw new Error(response[0].status);
+            setConfigurations([]);
           }
         })
-        .catch((err: DataTransfersError) => {
-          addError(err.message, parseInt(err.message, 10));
+        .catch((err: CustomError) => {
+          addError(err.message, err.status);
         });
     }
 
     function fetchSources() {
       api!.sources
         .get()
-        .then((response: string[]) => {
+        .then((response: SourcesResponse) => {
           setSources(response);
           dispatch({ type: Action.SUCCEED });
         })
-        .catch((err: DataTransfersError) => {
-          addError(err.message, parseInt(err.message, 10));
+        .catch((err: CustomError) => {
+          addError(err.message, err.status);
           dispatch({ type: Action.FAIL, error: err });
         });
     }
@@ -714,7 +701,7 @@ const DataTransfers: React.FC = () => {
                 }
               >
                 <Button
-                  size="large"
+                  size="default"
                   style={{ width: 42, height: 42 }}
                   aria-label="Show/hide table columns"
                   icon="Settings"

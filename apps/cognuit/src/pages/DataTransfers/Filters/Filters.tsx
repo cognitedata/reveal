@@ -115,9 +115,8 @@ export const Filters = ({
             </DropdownWrapper>
 
             <Button
-              variant="ghost"
               type="danger"
-              size="large"
+              size="default"
               style={{ marginRight: 16 }}
               disabled={!source.selected && !configuration.selected}
               onClick={resetFilters}

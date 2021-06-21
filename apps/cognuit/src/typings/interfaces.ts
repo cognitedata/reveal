@@ -1,10 +1,14 @@
 /* eslint-disable camelcase */
 import React from 'react';
 
+import { ConfigurationsResponse } from '../types/ApiInterface';
+
+// Goal: Remove this interface
 export interface DataTransferObject {
   [key: string]: any;
 }
 
+// Goal: Remove this interface
 export interface GenericResponseObject {
   [key: string]: any;
 }
@@ -138,13 +142,13 @@ export enum SessionType {
 export enum DummyUser {
   DEMO = 'Demo User',
 }
-
 export interface Rule {
   key: string;
-  render: (record: any) => React.ReactFragment;
+  render: ({ value }: { value: any }) => React.ReactFragment;
+  disableSortBy?: boolean;
 }
 
-export interface ErrorDistributionObject {
+export interface ErrorDistributionObject extends GenericResponseObject {
   name: string;
   total_errors: number;
 }
@@ -156,3 +160,29 @@ export interface TranslationStatisticsObject {
 }
 
 export const UNIX_TIMESTAMP_FACTOR = 1000;
+
+/**
+ * For some reason the properties are extended in
+ * "curateConfigurationsData"
+ */
+export interface ExtendedConfigurationsResponse extends ConfigurationsResponse {
+  statusColor: ConfigurationsResponse['status_active'];
+  repoProject: string;
+  actions: {
+    direction: ConfigurationsResponse['source']['source'];
+    statusActive: ConfigurationsResponse['status_active'];
+    id: ConfigurationsResponse['id'];
+    name: ConfigurationsResponse['name'];
+  };
+  conf_name: {
+    name: ConfigurationsResponse['name'];
+    id: ConfigurationsResponse['id'];
+  };
+}
+
+export interface GenerateConfigurationsColumns {
+  title: string;
+  dataIndex: string;
+  key: string;
+  sorter: ((a: any, b: any) => number) | boolean;
+}

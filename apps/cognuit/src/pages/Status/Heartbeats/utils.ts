@@ -1,9 +1,6 @@
+import { SourcesHeartbeatsResponse } from 'types/ApiInterface';
 import { format } from 'date-fns';
-
-import {
-  GenericResponseObject,
-  UNIX_TIMESTAMP_FACTOR,
-} from '../../../typings/interfaces';
+import { UNIX_TIMESTAMP_FACTOR } from 'typings/interfaces';
 
 const getUniques = (all: string[]) =>
   all.reduce(
@@ -12,7 +9,7 @@ const getUniques = (all: string[]) =>
     []
   );
 
-export const getMonthDates = (heartbeats: GenericResponseObject[]) => {
+export const getMonthDates = (heartbeats: SourcesHeartbeatsResponse) => {
   const allDateBeats = heartbeats.map((beat) => {
     const beatDate = new Date(Number(beat) * UNIX_TIMESTAMP_FACTOR);
     beatDate.setHours(0);
@@ -37,7 +34,7 @@ export const getMonthDates = (heartbeats: GenericResponseObject[]) => {
   return dates;
 };
 
-export const getDayDates = (heartbeats: GenericResponseObject[]) => {
+export const getDayDates = (heartbeats: SourcesHeartbeatsResponse) => {
   const allDateBeats = heartbeats.map((beat) => {
     const beatDate = new Date(Number(beat) * UNIX_TIMESTAMP_FACTOR);
     beatDate.setMinutes(0);
@@ -64,7 +61,7 @@ export const getDayDates = (heartbeats: GenericResponseObject[]) => {
   return hours;
 };
 
-export const getHourDates = (heartbeats: GenericResponseObject[]) => {
+export const getHourDates = (heartbeats: SourcesHeartbeatsResponse) => {
   const allDateBeats = heartbeats.map((beat) => {
     const beatDate = new Date(Number(beat) * UNIX_TIMESTAMP_FACTOR);
     beatDate.setSeconds(0);

@@ -1,7 +1,7 @@
 import { format } from 'date-fns';
 import { UNIX_TIMESTAMP_FACTOR } from 'typings/interfaces';
 
-import configurationsConfig from '../Configurations/configurations.config';
+import configurationsConfig from '../Configurations/Root/configurations.config';
 
 import dataTransfersConfig from './datatransfer.config';
 

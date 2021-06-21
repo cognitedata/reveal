@@ -1,6 +1,11 @@
 import { DataTransferObject } from 'typings/interfaces';
 import { ColumnsType } from 'antd/es/table';
 
+export type DataTransfersError = {
+  message: string;
+  status: number;
+};
+
 export enum ProgressState {
   LOADING = 'loading',
   SUCCESS = 'success',
@@ -14,11 +19,6 @@ export enum Action {
   ADD_COLUMN = 'add_column',
   REMOVE_COLUMN = 'remove_column',
 }
-
-export type DataTransfersError = {
-  message: string;
-  status: number;
-};
 
 interface Data {
   data: DataTransferObject[];

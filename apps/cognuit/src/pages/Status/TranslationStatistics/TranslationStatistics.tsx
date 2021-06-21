@@ -3,10 +3,8 @@ import { Tabs } from 'antd';
 import { Line } from 'react-chartjs-2';
 import ApiContext from 'contexts/ApiContext';
 import APIErrorContext from 'contexts/APIErrorContext';
-import {
-  GenericResponseObject,
-  TranslationStatisticsObject,
-} from 'typings/interfaces';
+import { TranslationStatisticsObject } from 'typings/interfaces';
+import { CustomError } from 'services/CustomError';
 
 import { Container, ChartContainer } from '../Heartbeats/elements';
 import { DATE_RANGE_VALUES, DateRangeValueType } from '../utils';
@@ -26,20 +24,9 @@ const TranslationStatistics = ({ dateRange }: Props) => {
   const { addError } = useContext(APIErrorContext);
 
   const setData = useCallback(
-    (response: GenericResponseObject[], source: string) => {
+    (response: TranslationStatisticsObject[], source: string) => {
       if (response && Array.isArray(response)) {
-        if (response.length > 0 && response[0].error) {
-          const errorObj = {
-            message: response[0].statusText,
-            status: response[0].status,
-          };
-          addError(errorObj.message, errorObj.status);
-        }
-
-        if (
-          response.length === 0 ||
-          (response.length > 0 && !response[0].error)
-        ) {
+        if (response.length === 0 || response.length > 0) {
           if (source === 'ps') {
             setPsData(response as TranslationStatisticsObject[]);
           } else {
@@ -49,7 +36,7 @@ const TranslationStatistics = ({ dateRange }: Props) => {
       }
       setIsLoading(false);
     },
-    [addError, setPsData, setOwData]
+    [setPsData, setOwData]
   );
 
   const fetchData = useCallback(() => {
@@ -64,14 +51,20 @@ const TranslationStatistics = ({ dateRange }: Props) => {
     if (activeTabKey === 'psToOw') {
       api!.sources
         .getTranslationStatistics('Studio', timeRange)
-        .then((response: GenericResponseObject[]) => {
+        .then((response: TranslationStatisticsObject[]) => {
           setData(response, 'ps');
+        })
+        .catch((err: CustomError) => {
+          addError(err.message, err.status);
         });
     } else {
       api!.sources
         .getTranslationStatistics('Openworks', timeRange)
-        .then((owResponse: GenericResponseObject[]) => {
+        .then((owResponse: TranslationStatisticsObject[]) => {
           setData(owResponse, 'ow');
+        })
+        .catch((err: CustomError) => {
+          addError(err.message, err.status);
         });
     }
   }, [api, setData, activeTabKey, dateRange]);

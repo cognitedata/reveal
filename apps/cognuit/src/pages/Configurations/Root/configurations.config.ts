@@ -17,6 +17,14 @@ export default {
       value: '',
     },
     {
+      keyName: 'actions',
+      value: 'Actions',
+    },
+    {
+      keyName: 'author',
+      value: 'Author',
+    },
+    {
       keyName: 'progress',
       value: 'Progress',
     },
