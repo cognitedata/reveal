@@ -63,7 +63,7 @@ const Search = ({ visible, onClose }: SearchProps) => {
           </div>
           <Tooltip content="Hide">
             <Button
-              icon="Close"
+              icon="PanelLeft"
               type="ghost"
               onClick={onClose}
               aria-label="close"
