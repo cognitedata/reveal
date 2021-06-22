@@ -49,7 +49,7 @@ const AppHeader: React.FC = () => {
   const [customerLogoUrl, setCustomerLogoUrl] = useState('');
   const { toggleHelpCenter } = useHelpCenter();
 
-  const { documentTitle } = useLink();
+  const { documentTitle, accessManageLink } = useLink();
 
   const setFilter = (groupName: string) => {
     const alreadyChecked = groupsFilter.includes(groupName);
@@ -197,8 +197,11 @@ const AppHeader: React.FC = () => {
             key="cogniteDataFusion"
             style={{ display: 'flex', justifyContent: 'space-between' }}
           >
-            {/* Update link to the correct one */}
-            <CustomMenuLink href="/" key="cdf-link" target="_blank">
+            <CustomMenuLink
+              href={accessManageLink}
+              key="cdf-link"
+              target="_blank"
+            >
               Cognite Data Fusion
             </CustomMenuLink>
             <Icon type="ExternalLink" />

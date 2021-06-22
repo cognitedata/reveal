@@ -1,3 +1,4 @@
+import { AllIconTypes } from '@cognite/cogs.js';
 import { ActionType } from 'typesafe-actions';
 import * as actions from './actions';
 
@@ -19,4 +20,5 @@ export type ApplicationItem = {
   iconKey: string;
   title: string;
   url: string;
+  rightIconKey?: AllIconTypes;
 };

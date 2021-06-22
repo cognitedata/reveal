@@ -66,7 +66,6 @@ export const TilePreview = styled.div`
 `;
 
 export const ApplicationTileHeader = styled(TileHeader)`
-  justify-content: normal;
   border-bottom: none;
 `;
 
@@ -91,6 +90,12 @@ export const StyledTitle = styled(Title)`
   overflow: hidden;
   text-overflow: ellipsis;
 `;
+
+export const IconContainer = styled.div`
+  display: flex;
+  color: var(--cogs-greyscale-grey6);
+`;
+
 export const ImgPreview = styled.div`
   display: flex;
   max-width: 100%;

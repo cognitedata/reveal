@@ -38,6 +38,7 @@ import { ADMIN_GROUP_NAME } from 'constants/cdf';
 import { getApplications } from 'store/config/selectors';
 import { ApplicationItem } from 'store/config/types';
 import { TenantContext } from 'providers/TenantProvider';
+import { useLink } from 'hooks';
 
 const Home = () => {
   const itemsToDisplay = 6;
@@ -51,6 +52,7 @@ const Home = () => {
   const isAdmin = useSelector(isAdminSelector);
   const { filter: groupsFilter } = useSelector(getGroupsState);
   const canEdit = isAdmin && !groupsFilter?.length;
+  const { fusionLink } = useLink();
 
   const apiClient = useContext(ApiClientContext);
   const { loaded: userSpaceLoaded, loading: userSpaceLoading }: UserSpaceState =
@@ -87,6 +89,24 @@ const Home = () => {
     metrics.track('NewSuite_Click');
     dispatch(modalOpen({ modalType }));
   };
+
+  const usefulLinks: ApplicationItem[] = [
+    {
+      url: fusionLink,
+      key: 'cognite-data-fusion',
+      iconKey: 'Cognite',
+      title: 'Cognite Data Fusion',
+      rightIconKey: 'ExternalLink',
+    },
+    {
+      url: 'https://hub.cognite.com',
+      key: 'cognite-hub',
+      iconKey: 'Cognite',
+      title: 'Cognite HUB',
+      rightIconKey: 'ExternalLink',
+    },
+  ];
+
   return (
     <>
       <Suitebar
@@ -212,6 +232,24 @@ const Home = () => {
                   color={suite.color}
                 />
               </Link>
+            ))}
+          </TilesContainer>
+          <TilesContainer>
+            <Title level={6}>Useful links</Title>
+            {usefulLinks.map((item: ApplicationItem) => (
+              <A
+                key={item.key}
+                href={item.url}
+                target="_blank"
+                onClick={() =>
+                  metrics.track('Application_Click', {
+                    key: item.key,
+                    application: item.title,
+                  })
+                }
+              >
+                <ApplicationTile item={item} />
+              </A>
             ))}
           </TilesContainer>
         </OverviewContainer>

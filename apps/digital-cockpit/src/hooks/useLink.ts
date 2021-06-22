@@ -1,8 +1,10 @@
+import { usePossibleTenant } from 'hooks';
 import { useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
 
 export function useLink() {
   const history = useHistory();
+  const tenant = usePossibleTenant();
   const documentTitle = useMemo(() => {
     switch (window.location.hostname) {
       case 'cogniteapp.com':
@@ -11,6 +13,14 @@ export function useLink() {
         return 'Digital Cockpit';
     }
   }, [window.location.hostname]);
+  const fusionLink = useMemo(
+    () => `https://fusion.cognite.com/${tenant}`,
+    [tenant]
+  );
+  const accessManageLink = useMemo(
+    () => `${fusionLink}/new-access-management/groups`,
+    [tenant]
+  );
 
   return {
     createLink: (pathname: string) => {
@@ -20,5 +30,7 @@ export function useLink() {
       return `${baseUrl}${path}`;
     },
     documentTitle,
+    fusionLink,
+    accessManageLink,
   };
 }
