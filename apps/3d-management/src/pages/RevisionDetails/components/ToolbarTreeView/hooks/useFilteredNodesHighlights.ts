@@ -3,7 +3,7 @@ import { RootState } from 'src/store';
 import React, { useEffect } from 'react';
 import { v3Client } from '@cognite/cdf-sdk-singleton';
 import {
-  ByNodePropertyNodeSet,
+  PropertyFilterNodeCollection,
   Cognite3DModel,
   NodeOutlineColor,
 } from '@cognite/reveal';
@@ -22,20 +22,22 @@ export function useFilteredNodesHighlights({
     ({ toolbar }: RootState) => toolbar.nodePropertyFilter
   );
 
-  const filteredNodes = React.useRef<ByNodePropertyNodeSet>(
-    new ByNodePropertyNodeSet(v3Client as any, model, { requestPartitions: 10 })
+  const filteredNodes = React.useRef<PropertyFilterNodeCollection>(
+    new PropertyFilterNodeCollection(v3Client as any, model, {
+      requestPartitions: 10,
+    })
   );
 
   // bind filteredNodes to model
   useEffect(() => {
     const filteredNodesSet = filteredNodes.current;
-    model.addStyledNodeSet(filteredNodesSet, {
+    model.assignStyledNodeCollection(filteredNodesSet, {
       outlineColor: NodeOutlineColor.Cyan,
       renderInFront: true,
       renderGhosted: false,
     });
     return () => {
-      model.removeStyledNodeSet(filteredNodesSet);
+      model.unassignStyledNodeCollection(filteredNodesSet);
       if (filteredNodesSet) {
         filteredNodesSet.clear();
       }

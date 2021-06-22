@@ -1,5 +1,5 @@
 import {
-  ByTreeIndexNodeSet,
+  TreeIndexNodeCollection,
   Cognite3DModel,
   DefaultNodeAppearance,
   IndexSet,
@@ -22,16 +22,16 @@ export function useSelectedNodesHighlights({
   const ghostModeEnabled = useSelector(
     ({ toolbar }: RootState) => toolbar.ghostModeEnabled
   );
-  const selectedTreeIndicesNodeSetRef = React.useRef<ByTreeIndexNodeSet>(
-    new ByTreeIndexNodeSet()
+  const selectedTreeIndicesNodeSetRef = React.useRef<TreeIndexNodeCollection>(
+    new TreeIndexNodeCollection()
   );
 
   useEffect(() => {
     const selectedTreeIndicesNodeSet = selectedTreeIndicesNodeSetRef.current;
-    model.addStyledNodeSet(selectedTreeIndicesNodeSet, {});
+    model.assignStyledNodeCollection(selectedTreeIndicesNodeSet, {});
     return () => {
       if (selectedTreeIndicesNodeSet) {
-        model.removeStyledNodeSet(selectedTreeIndicesNodeSet);
+        model.unassignStyledNodeCollection(selectedTreeIndicesNodeSet);
         selectedTreeIndicesNodeSet.clear();
       }
     };
@@ -41,7 +41,7 @@ export function useSelectedNodesHighlights({
   useEffect(() => {
     model.setDefaultNodeAppearance({ renderGhosted: ghostModeEnabled });
 
-    model.changeStyledNodeSetAppearance(
+    model.assignStyledNodeCollection(
       selectedTreeIndicesNodeSetRef.current,
       ghostModeEnabled
         ? { renderGhosted: false }

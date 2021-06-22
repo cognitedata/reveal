@@ -173,15 +173,15 @@ describe('useCheckedNodesVisibility tests', () => {
     // that's a very implementation-specific, but the point is to test that we feed models with right data
     const modelMock = {
       ownCheckedNodes: null,
-      addStyledNodeSet(set) {
-        set.on('changed', (...args) => {
+      assignStyledNodeCollection(set) {
+        set.on('changed', () => {
           const indexSet = set.getIndexSet();
           this.ownCheckedNodes = allTreeIndexes
             .filter((treeIndex) => !indexSet.contains(treeIndex))
             .sort();
         });
       },
-      removeStyledNodeSet: jest.fn(),
+      unassignStyledNodeCollection: jest.fn(),
     };
 
     // start with all checked

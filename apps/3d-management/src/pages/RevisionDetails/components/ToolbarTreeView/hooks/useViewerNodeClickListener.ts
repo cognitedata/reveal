@@ -23,8 +23,8 @@ export function useViewerNodeClickListener({
   const dispatch = useDispatch();
 
   const viewerNodeClickListener: PointerEventDelegate = useCallback(
-    (event) => {
-      const intersection = viewer.getIntersectionFromPixel(
+    async (event) => {
+      const intersection = await viewer.getIntersectionFromPixel(
         event.offsetX,
         event.offsetY
       );

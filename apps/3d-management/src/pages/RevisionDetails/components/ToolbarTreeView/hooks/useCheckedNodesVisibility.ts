@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect } from 'react';
 
 import {
-  ByTreeIndexNodeSet,
+  TreeIndexNodeCollection,
   Cognite3DModel,
   DefaultNodeAppearance,
   IndexSet,
@@ -24,7 +24,7 @@ export function useCheckedNodesVisibility({
 }: Args) {
   const hiddenNodesSet = React.useRef(new IndexSet());
   const hiddenNodesStyledSet = React.useRef(
-    new ByTreeIndexNodeSet(hiddenNodesSet.current)
+    new TreeIndexNodeCollection(hiddenNodesSet.current)
   );
 
   const nodesVisibilityChanged = useCallback(
@@ -80,9 +80,9 @@ export function useCheckedNodesVisibility({
 
   useEffect(() => {
     const styledSet = hiddenNodesStyledSet.current;
-    model.addStyledNodeSet(styledSet, DefaultNodeAppearance.Hidden);
+    model.assignStyledNodeCollection(styledSet, DefaultNodeAppearance.Hidden);
     return () => {
-      model.removeStyledNodeSet(styledSet);
+      model.unassignStyledNodeCollection(styledSet);
     };
   }, [model]);
 
