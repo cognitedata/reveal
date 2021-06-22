@@ -47,7 +47,11 @@ export default function SearchResultList({ query }: Props) {
         </li>
       ))}
       {hasNextPage && (
-        <Button type="link" onClick={() => fetchNextPage()}>
+        <Button
+          type="link"
+          onClick={() => fetchNextPage()}
+          style={{ marginBottom: '20px' }}
+        >
           Load more
         </Button>
       )}
@@ -57,7 +61,6 @@ export default function SearchResultList({ query }: Props) {
 
 const AssetList = styled.ul`
   height: 100%;
-  overflow: auto;
   list-style: none;
   padding: 0 10px 0 0;
   margin: 0;
