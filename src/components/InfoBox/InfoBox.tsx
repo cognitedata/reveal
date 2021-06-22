@@ -76,7 +76,7 @@ const InfoBoxWrapper = styled.div`
   width: initial;
   display: flex;
   flex-direction: row;
-  margin: 10px 10px 10px 0;
+  margin: 5px 5px 10px 0;
   padding: 1em;
   min-height: 200px;
   background-color: #f6f9ff;
