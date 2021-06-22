@@ -103,6 +103,30 @@ the user will want to show 'ARCH'-nodes within the 'STU'-purpose) it might
 be better to use two separate queries and combine the results. Also, the latter
 approach also allows for more complex types of filters.
 
+## Matching nodes with a list of values
+
+There might be situations where an application has a long list of identifiers of nodes to show
+or style. In this case, `SinglePropertyFilterNodeCollection` might be useful. This class will match
+one node property towards many values - e.g. a node identifier towards a list of IDs. This node set
+supports thoushands of IDs - `PropertyFilterNodeCollection` only supports one matching value.
+
+```js runnable
+// import { SinglePropertyFilterNodeCollection, DefaultNodeAppearance } from '@cognite/reveal';
+
+const nodeSet = new SinglePropertyFilterNodeCollection(sdk, model, { requestPartitions: 10 });
+const names = [];
+for (let q = 200; q < 300; q++) {
+  for (let e = 1; e <= 9; e++) {
+    const name = `/60-EL-9016-Q${q}-E0${e}`;
+    names.push(name);
+  }
+}
+nodeSet.executeFilter('Item', 'Name', names);
+
+model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
+model.assignStyledNodeCollection(nodeSet, { renderGhosted: false, outlineColor: NodeOutlineColor.Orange } );
+```
+
 ## Inverting filters
 
 Often it is interesting to invert results from filters to find elements that does not match the query. This
