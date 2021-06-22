@@ -75,8 +75,8 @@ const PlotlyChartComponent = ({
   const [yAxisLocked, setYAxisLocked] = useState<boolean>(true);
 
   const queries =
-    chart?.timeSeriesCollection?.map(({ tsId }) => ({
-      items: [{ id: tsId }],
+    chart?.timeSeriesCollection?.map(({ tsExternalId }) => ({
+      items: [{ externalId: tsExternalId }],
       start: new Date(chart.dateFrom),
       end: new Date(chart.dateTo),
       granularity: calculateGranularity(

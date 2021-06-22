@@ -53,9 +53,9 @@ export default function SearchTimeseries({ query }: Props) {
     return null;
   }
 
-  const selectedIds: undefined | number[] = chart?.timeSeriesCollection?.map(
-    (t) => t.tsId
-  );
+  const selectedExternalIds:
+    | undefined
+    | string[] = chart?.timeSeriesCollection?.map((t) => t.tsExternalId || '');
 
   const handleTimeSeriesClick = async (timeSeries: Timeseries) => {
     if (chart) {
@@ -69,7 +69,7 @@ export default function SearchTimeseries({ query }: Props) {
         const range = await calculateDefaultYAxis({
           chart,
           sdk,
-          timeSeriesId: timeSeries.id,
+          timeSeriesExternalId: timeSeries.externalId || '',
         });
 
         const newTs = covertTSToChartTS(timeSeries, range);
@@ -91,7 +91,7 @@ export default function SearchTimeseries({ query }: Props) {
               handleTimeSeriesClick(ts);
             }}
             name={`${ts.id}`}
-            value={selectedIds?.includes(ts.id)}
+            value={selectedExternalIds?.includes(ts.externalId || '')}
           />
         )}
       />
