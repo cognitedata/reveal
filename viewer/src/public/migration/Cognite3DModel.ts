@@ -78,7 +78,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
 
   /**
    * Sets the default appearance for nodes that are not styled using
-   * {@link addStyledNodeCollection}. Updating the default style can be an
+   * {@link assignStyledNodeCollection}. Updating the default style can be an
    * expensive operation, so use with care.
    *
    * @param appearance  Default node appearance.
@@ -89,7 +89,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
 
   /**
    * Gets the default appearance for nodes that are not styled using
-   * {@link addStyledNodeCollection}.
+   * {@link assignStyledNodeCollection}.
    */
   getDefaultNodeAppearance(): NodeAppearance {
     return this.cadNode.defaultNodeAppearance;
@@ -110,7 +110,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * the sets were added, i.e. styled sets added late can overwrite styled sets added
    * early.
    *
-   * If the {@link nodeCollection} provided already has an assigned style, this style will
+   * If the `nodeCollection` provided already has an assigned style, this style will
    * be replaced with style provided.
    *
    * @param nodeCollection Dynamic set of nodes to apply the provided appearance to.
