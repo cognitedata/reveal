@@ -83,11 +83,10 @@ const PlotlyChartComponent = ({
         [new Date(chart.dateFrom).getTime(), new Date(chart.dateTo).getTime()],
         pointsPerSeries
       ),
-      aggregates: ['average', 'min', 'max'],
+      aggregates: ['average'],
       limit: pointsPerSeries,
     })) || [];
 
-  console.log('Queries: ', queries);
   const {
     data: tsRaw,
     isFetching: timeseriesFetching,
@@ -129,8 +128,6 @@ const PlotlyChartComponent = ({
     { enabled: !isPreview }
   );
 
-  console.log('ts raw: ', tsRaw); // TODOS:
-  console.log('Data: ', workflowsRaw);
   const [timeseries, setLocalTimeseries] = useState<DatapointAggregate[][]>([]);
   const [workflows, setLocalWorkflows] = useState<
     { value: number; timestamp: Date }[][]
@@ -243,7 +240,6 @@ const PlotlyChartComponent = ({
       timeseriesFetching,
     ]
   );
-  console.log('seriesData: ', seriesData);
   const data = seriesData.map(
     ({ name, color, mode, width, dash, datapoints, outdatedData }, index) => {
       return {
@@ -262,14 +258,13 @@ const PlotlyChartComponent = ({
         )[]).map((datapoint) =>
           'timestamp' in datapoint ? new Date(datapoint.timestamp) : null
         ),
-        y: (datapoints as (Datapoints | DatapointAggregate)[]).map(
-          (datapoint) =>
-            'average' in datapoint
-              ? datapoint.average
-              : (datapoint as DoubleDatapoint).value
-          // 'min' in datapoint
-          //   ? datapoint.min
-          //   : (datapoint as DoubleDatapoint).value;
+        y: (datapoints as (
+          | Datapoints
+          | DatapointAggregate
+        )[]).map((datapoint) =>
+          'average' in datapoint
+            ? datapoint.average
+            : (datapoint as DoubleDatapoint).value
         ),
         hovertemplate:
           '%{y} &#183; <span style="color:#8c8c8c">%{fullData.name}</span><extra></extra>',
