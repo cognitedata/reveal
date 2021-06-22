@@ -55,6 +55,7 @@ const annotationSlice = createSlice({
             source: item.source,
             status: item.status,
             text: item.text,
+            region: item.region,
           };
           if (fileAnnotations[item.annotatedResourceId]) {
             fileAnnotations[item.annotatedResourceId].push(item.id);
@@ -97,6 +98,20 @@ export const selectFileAnnotations = createSelector(
       return annotationIds.map((id) => allAnnotations[id]);
     }
     return [];
+  }
+);
+
+export const selectAnnotationsForAllFiles = createSelector(
+  (state: State, fileIds: number[]) =>
+    fileIds.map((id) => selectFileAnnotations(state, id)),
+  (_: State, fileIds: number[]) => fileIds,
+  (annotations, fileIds) => {
+    const data: Record<number, AnnotationPreview[]> = {};
+    fileIds.forEach((id, index) => {
+      data[id] = annotations[index];
+    });
+
+    return data;
   }
 );
 

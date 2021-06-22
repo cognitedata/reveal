@@ -4,9 +4,8 @@ import { STATUS } from '../FileUploaderModal/enums';
 
 export const getDownloadControls = (
   downloadStatus: STATUS,
-  onDownloadStart: () => unknown,
-  onFinish: () => unknown,
-  onDownloadStop: () => unknown
+  onDownloadStart: () => unknown
+  // onDownloadStop: () => unknown
 ) => {
   let DownloadButton;
   let CancelButton;
@@ -31,21 +30,15 @@ export const getDownloadControls = (
     case STATUS.STARTED:
       DownloadButton = (
         <Button type="primary" icon="Loading">
-          Starting download
+          Downloading
         </Button>
       );
-      CancelButton = (
-        <Button type="danger" icon="XLarge" onClick={onDownloadStop}>
-          Cancel upload
-        </Button>
-      );
-      break;
-    case STATUS.DONE:
-      DownloadButton = (
-        <Button type="primary" onClick={onFinish}>
-          Finished downloading
-        </Button>
-      );
+      // TODO: fix cancel
+      // CancelButton = (
+      //   <Button type="danger" icon="XLarge" onClick={onDownloadStop}>
+      //     Cancel upload
+      //   </Button>
+      // );
       break;
   }
 

@@ -6,7 +6,7 @@ import { Annotation, JobStatus, VisionAPIType } from 'src/api/types';
 export interface AnnotationPreview
   extends Pick<
     Annotation,
-    'id' | 'annotatedResourceId' | 'status' | 'source' | 'text'
+    'id' | 'annotatedResourceId' | 'status' | 'source' | 'text' | 'region'
   > {
   annotationType: VisionAPIType;
 }

@@ -1,5 +1,6 @@
 import {
   Annotation,
+  AnnotationRegion,
   AnnotationSource,
   AnnotationType,
   DetectedAnnotation,
@@ -46,10 +47,7 @@ export type AnnotationBoundingBox = {
 
 export type VisionAnnotation = Omit<
   Annotation,
-  | 'region'
-  | 'linkedResourceId'
-  | 'linkedResourceExternalId'
-  | 'linkedResourceType'
+  'linkedResourceId' | 'linkedResourceExternalId' | 'linkedResourceType'
 > & {
   label: string;
   type: RegionType;
@@ -185,7 +183,8 @@ export class AnnotationUtils {
         value.status,
         value.data,
         value.annotationType,
-        value.annotatedResourceExternalId
+        value.annotatedResourceExternalId,
+        value.region
       );
 
       if (isLinkedAnnotation(value)) {
@@ -214,6 +213,7 @@ export class AnnotationUtils {
     data = {},
     annotationType: AnnotationType = 'vision/ocr',
     fileExternalId?: string,
+    region?: AnnotationRegion,
     assetId?: number,
     assetExternalId?: string,
     virtual = false
@@ -244,6 +244,7 @@ export class AnnotationUtils {
       createdTime,
       lastUpdatedTime,
       virtual,
+      region,
     };
   }
 
