@@ -240,6 +240,7 @@ const PlotlyChartComponent = ({
       timeseriesFetching,
     ]
   );
+
   const data = seriesData.map(
     ({ name, color, mode, width, dash, datapoints, outdatedData }, index) => {
       return {
