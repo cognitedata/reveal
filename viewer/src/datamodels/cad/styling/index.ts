@@ -9,6 +9,7 @@ export { UnionNodeCollection } from './UnionNodeCollection';
 export { IntersectionNodeCollection } from './IntersectionNodeCollection';
 export { NodeCollectionBase, SerializedNodeCollection } from './NodeCollectionBase';
 export { NodeAppearanceProvider } from './NodeAppearanceProvider';
+export { SinglePropertyFilterNodeCollection } from './SinglePropertyFilterNodeCollection';
 export {
   registerCustomNodeCollectionType,
   TypeName,
