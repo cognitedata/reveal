@@ -48,7 +48,9 @@ export default function AssetSearchHit({ asset }: Props) {
 
   const selectedExternalIds:
     | undefined
-    | string[] = chart?.timeSeriesCollection?.map((t) => t.tsExternalId || '');
+    | string[] = chart?.timeSeriesCollection
+    ?.map((t) => t.tsExternalId || '')
+    .filter(Boolean);
 
   const handleTimeSeriesClick = async (timeSeries: Timeseries) => {
     if (chart) {
@@ -101,7 +103,7 @@ export default function AssetSearchHit({ asset }: Props) {
                   handleTimeSeriesClick(t);
                 }}
                 name={`${t.id}`}
-                value={selectedExternalIds?.includes(t.externalId || '')}
+                checked={selectedExternalIds?.includes(t.externalId || '')}
               />
             )}
           />

@@ -55,7 +55,9 @@ export default function SearchTimeseries({ query }: Props) {
 
   const selectedExternalIds:
     | undefined
-    | string[] = chart?.timeSeriesCollection?.map((t) => t.tsExternalId || '');
+    | string[] = chart?.timeSeriesCollection
+    ?.map((t) => t.tsExternalId || '')
+    .filter(Boolean);
 
   const handleTimeSeriesClick = async (timeSeries: Timeseries) => {
     if (chart) {
@@ -91,7 +93,7 @@ export default function SearchTimeseries({ query }: Props) {
               handleTimeSeriesClick(ts);
             }}
             name={`${ts.id}`}
-            value={selectedExternalIds?.includes(ts.externalId || '')}
+            checked={selectedExternalIds?.includes(ts.externalId || '')}
           />
         )}
       />
