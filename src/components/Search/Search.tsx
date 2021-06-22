@@ -71,7 +71,6 @@ const Search = ({ visible, onClose }: SearchProps) => {
             />
           </Tooltip>
         </SearchBar>
-        <InfoBox infoType="TimeSeriesHelpBox" />
         <div style={{ marginTop: 16, marginRight: 10 }}>
           <SegmentedControl
             currentKey={searchType}
@@ -100,8 +99,18 @@ const Search = ({ visible, onClose }: SearchProps) => {
           )} */}
         </div>
         <SearchResultsContainer>
-          {searchType === 'assets' && <SearchResultList query={urlQuery} />}
-          {searchType === 'timeseries' && <SearchTimeseries query={urlQuery} />}
+          {searchType === 'assets' && (
+            <>
+              <InfoBox infoType="TagHelpBox" />
+              <SearchResultList query={urlQuery} />
+            </>
+          )}
+          {searchType === 'timeseries' && (
+            <>
+              <InfoBox infoType="TimeSeriesHelpBox" />
+              <SearchTimeseries query={urlQuery} />
+            </>
+          )}
         </SearchResultsContainer>
       </ContentWrapper>
     </SearchContainer>
