@@ -1,6 +1,5 @@
 import { RegisterIntegrationLayout } from 'components/layout/RegisterIntegrationLayout';
 import React from 'react';
-import { NAME_PAGE_PATH, NAME_PATH } from 'routing/CreateRouteConfig';
 import { screen } from '@testing-library/react';
 import {
   BACK,
@@ -14,6 +13,7 @@ import {
   ORIGIN_DEV,
   PROJECT_ITERA_INT_GREEN,
 } from 'utils/baseURL';
+import { CREATE_INTEGRATION_PAGE_PATH } from 'routing/CreateRouteConfig';
 
 describe('RegisterIntegrationLayout', () => {
   const props = {
@@ -21,7 +21,7 @@ describe('RegisterIntegrationLayout', () => {
     project: PROJECT_ITERA_INT_GREEN,
     cdfEnv: CDF_ENV_GREENFIELD,
     origin: ORIGIN_DEV,
-    route: `${NAME_PATH}`,
+    route: `${CREATE_INTEGRATION_PAGE_PATH}`,
     initRegisterIntegration: {},
   };
 
@@ -38,12 +38,11 @@ describe('RegisterIntegrationLayout', () => {
   });
   test('Renders back btn if path provided', () => {
     renderRegisterContext(
-      <RegisterIntegrationLayout backPath={NAME_PAGE_PATH}>
+      <RegisterIntegrationLayout>
         <p>Im the content</p>
       </RegisterIntegrationLayout>,
       { ...props }
     );
-    expect(screen.getByText(BACK)).toBeInTheDocument();
     expect(screen.getByText(ADD_EXTRACTION_PIPELINE)).toBeInTheDocument();
     expect(screen.getByText(EXTRACTION_PIPELINE_OVERVIEW)).toBeInTheDocument();
   });

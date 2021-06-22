@@ -1,7 +1,15 @@
 import { RawDBTable } from '@cognite/sdk';
 import { IntegrationRawTable } from 'model/Integration';
-import { RawTableFormInput, RawTableOptions } from 'pages/create/RawTablePage';
 import { DatabaseWithTablesItem } from 'components/inputs/rawSelector/RawSelector';
+
+export enum RawTableOptions {
+  YES = 'Yes',
+  NO = 'No',
+}
+export interface RawTableFormInput {
+  rawTable: RawTableOptions | '';
+  selectedRawTables: IntegrationRawTable[];
+}
 
 interface Args {
   databaseList: DatabaseWithTablesItem[];

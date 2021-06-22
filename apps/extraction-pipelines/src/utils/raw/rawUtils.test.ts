@@ -1,5 +1,8 @@
-import { RawTableOptions } from 'pages/create/RawTablePage';
-import { getDatabaseTables, mapStoredToDefault } from 'utils/raw/rawUtils';
+import {
+  getDatabaseTables,
+  mapStoredToDefault,
+  RawTableOptions,
+} from 'utils/raw/rawUtils';
 import { databaseListMock } from 'utils/mockResponse';
 
 describe('rawUtils', () => {

@@ -45,12 +45,22 @@ export const METADATA_CONTENT_LABEL: Readonly<string> = 'Metadata content';
 export const METADATA_DESC_HEADING: Readonly<string> = 'Description';
 export const METADATA_CONTENT_HEADING: Readonly<string> = 'Content';
 
+export const INTEGRATION_DATA_SET_HEADING: Readonly<string> = `${EXTRACTION_PIPELINE} data set`;
+export const DATA_SET_TIP: Readonly<string> = `The data your ${EXTRACTION_PIPELINE_LOWER} sends to CDF can be linked to a data set.`;
 export const NO_DATA_SET_ID_SET: Readonly<string> = 'No data set';
 export const NO_DATA_SET_ID_SET_TOOLTIP: Readonly<string> =
   'No data set registered';
 export const NO_META_DATA: Readonly<string> = 'No metadata registered';
+export const INTEGRATION_DOCUMENTATION_HEADING: Readonly<string> = `${EXTRACTION_PIPELINE} documentation`;
+export const DESCRIPTION_HINT: Readonly<string> =
+  'For users of data a good description of data content and other relevant metrics connected to data will give value for them to know the data better. Please enter a description.';
+export const DESCRIPTION_LABEL: Readonly<string> = 'Description (optional)';
+
+export const INTEGRATION_SCHEDULE_HEADING: Readonly<string> = `${EXTRACTION_PIPELINE} schedule`;
 export const NO_SCHEDULE: Readonly<string> = 'Not defined';
+
 export const NO_CONTACTS_MSG: Readonly<string> = 'No contacts registered';
+export const INTEGRATION_RAW_TABLE_HEADING: Readonly<string> = `${EXTRACTION_PIPELINE} Raw Tables`;
 export const NO_RAW_TABLES_MESSAGE: Readonly<string> =
   'No raw tables registered';
 
@@ -87,6 +97,9 @@ export const DOCUMENTATION_HINT: Readonly<string> =
 export const SOURCE_HINT: Readonly<string> =
   '**** Source hint placeholder ****';
 export const SOURCE_LABEL: Readonly<string> = 'Source';
+
+export const INTEGRATION_EXTERNAL_ID_HEADING: Readonly<string> = 'External id';
+export const EXTERNAL_ID_HINT: Readonly<string> = `The external id is the id used to refer to this ${EXTRACTION_PIPELINE_LOWER} externally. It must be unique. Follow company conventions.`;
 
 // Page headings
 export const ADD_EXTRACTION_PIPELINE: Readonly<string> = `Add ${EXTRACTION_PIPELINE.toLowerCase()}`;

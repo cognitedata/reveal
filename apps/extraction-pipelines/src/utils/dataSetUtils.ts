@@ -1,7 +1,12 @@
 import { DataSet, ListResponse } from '@cognite/sdk';
-import { DataSetFormInput, DataSetOptions } from 'pages/create/DataSetPage';
 import { Integration } from 'model/Integration';
 import { DataSetMetadata, DataSetModel } from 'model/DataSetModel';
+import { DataSetOptions } from 'utils/validation/integrationSchemas';
+
+export interface DataSetFormInput {
+  dataset: string;
+  dataSetId: string;
+}
 
 export const mapUniqueDataSetIds = (integrations?: Integration[]) => {
   return integrations

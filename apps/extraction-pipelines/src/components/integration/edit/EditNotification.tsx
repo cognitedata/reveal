@@ -22,10 +22,10 @@ import {
   HOURS_LABEL,
   HourWrapper,
   NOTIFICATION_CONFIG_HEADER,
+  NotificationFormInput,
 } from 'components/inputs/NotificationConfig';
 import { CreateFormWrapper, Hint, StyledLabel } from 'styles/StyledForm';
 import { CloseButton, SaveButton, EditButton } from 'styles/StyledButton';
-import { ContactsFormInput } from 'pages/create/ContactsPage';
 import { Checkbox } from '@cognite/cogs.js';
 import { DivFlex } from 'styles/flex/StyledFlex';
 import { BtnTestIds, ERROR_NO_ID, SERVER_ERROR_TITLE } from 'utils/constants';
@@ -150,7 +150,9 @@ export const EditNotification: FunctionComponent = () => {
           defaultValue={hasConfig}
           render={({
             value,
-          }: ControllerRenderProps<Pick<ContactsFormInput, 'hasConfig'>>) => {
+          }: ControllerRenderProps<
+            Pick<NotificationFormInput, 'hasConfig'>
+          >) => {
             return (
               <Checkbox
                 id="has-config"

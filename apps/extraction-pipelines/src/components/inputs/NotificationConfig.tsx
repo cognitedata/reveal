@@ -7,7 +7,6 @@ import {
 } from 'react-hook-form';
 import { DivFlex } from 'styles/flex/StyledFlex';
 import styled from 'styled-components';
-import { ContactsFormInput } from 'pages/create/ContactsPage';
 import { InputController } from 'components/inputs/InputController';
 import { Hint, StyledLabel } from 'styles/StyledForm';
 import ValidationError from 'components/form/ValidationError';
@@ -33,6 +32,10 @@ export const HOURS_LABEL: Readonly<string> =
 export const HOURS_HINT: Readonly<string> =
   'Allowed pause time is between 1 and 24 hours';
 
+export interface NotificationFormInput {
+  skipNotificationInHours: number;
+  hasConfig: boolean;
+}
 interface NotificationConfigProps {
   renderLabel?: (labelText: string, inputId: string) => React.ReactNode;
 }
@@ -56,7 +59,7 @@ export const NotificationConfig: FunctionComponent<NotificationConfigProps> = ({
         render={({
           onChange,
           value,
-        }: ControllerRenderProps<Pick<ContactsFormInput, 'hasConfig'>>) => (
+        }: ControllerRenderProps<Pick<NotificationFormInput, 'hasConfig'>>) => (
           <Checkbox
             id="has-config"
             name="hasConfig"

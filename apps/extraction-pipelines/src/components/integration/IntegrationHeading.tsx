@@ -9,13 +9,16 @@ import {
 import InlineEdit from 'components/integration/InlineEdit';
 import { Icon, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { DESCRIPTION_LABEL } from 'pages/create/DocumentationPage';
 import { useAppEnv } from 'hooks/useAppEnv';
 import { rootUpdate } from 'hooks/details/useDetailsUpdate';
 import { DivFlex } from 'styles/flex/StyledFlex';
 import DetailsValueView from 'components/table/details/DetailsValueView';
 import { bottomSpacing } from 'styles/StyledVariables';
-import { EXT_PIPE_NAME_HEADING, SOURCE_LABEL } from 'utils/constants';
+import {
+  DESCRIPTION_LABEL,
+  EXT_PIPE_NAME_HEADING,
+  SOURCE_LABEL,
+} from 'utils/constants';
 
 const Wrapper = styled.div`
   margin: 0.5rem 1rem 1rem 1rem;

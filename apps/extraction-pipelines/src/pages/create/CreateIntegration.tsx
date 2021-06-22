@@ -8,10 +8,14 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
 import {
   CANCEL,
+  DESCRIPTION_HINT,
+  DESCRIPTION_LABEL,
   DOCUMENTATION_HINT,
   EXT_PIPE_NAME_HEADING,
+  EXTERNAL_ID_HINT,
   EXTRACTION_PIPELINE,
   EXTRACTION_PIPELINE_LOWER,
+  INTEGRATION_EXTERNAL_ID_HEADING,
   NAME_HINT,
   SAVE,
   SOURCE_HINT,
@@ -22,20 +26,10 @@ import { ButtonPlaced } from 'styles/StyledButton';
 import * as yup from 'yup';
 import { useForm, FormProvider } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import {
-  EXTERNAL_ID_HINT,
-  externalIdRule,
-  INTEGRATION_EXTERNAL_ID_HEADING,
-} from 'pages/create/ExternalIdPage';
 import { useDataSet } from 'hooks/useDataSets';
 import { FullInput } from 'components/inputs/FullInput';
 import { FullTextArea } from 'components/inputs/FullTextArea';
 import { usePostIntegration } from 'hooks/usePostIntegration';
-import {
-  DESCRIPTION_HINT,
-  DESCRIPTION_LABEL,
-  descriptionRule,
-} from 'pages/create/DocumentationPage';
 import { GridH2Wrapper, SideInfo } from 'styles/StyledPage';
 import ExtractorDownloadsLink from 'components/links/ExtractorDownloadsLink';
 import styled from 'styled-components';
@@ -49,6 +43,8 @@ import {
   MAX_DOCUMENTATION_LENGTH,
   selectedRawTablesRule,
   sourceRule,
+  externalIdRule,
+  descriptionRule,
 } from 'utils/validation/integrationSchemas';
 import DataSetIdInput, {
   DATASET_LIST_LIMIT,
@@ -58,15 +54,17 @@ import { RegisterMetaData } from 'components/inputs/metadata/RegisterMetaData';
 import { DivFlex } from 'styles/flex/StyledFlex';
 import { ScheduleSelector } from 'components/inputs/ScheduleSelector';
 import CronInput from 'components/inputs/cron/CronInput';
-import { CronWrapper } from 'components/integration/edit/Schedule';
+import {
+  CronWrapper,
+  ScheduleFormInput,
+} from 'components/integration/edit/Schedule';
 import { OptionTypeBase } from 'react-select';
 import { SupportedScheduleStrings } from 'components/integrations/cols/Schedule';
-import { ScheduleFormInput } from 'pages/create/SchedulePage';
 import { createExtPipePath } from 'utils/baseURL';
 import { EXT_PIPE_PATH } from 'routing/RoutingConfig';
 import { translateServerErrorMessage } from 'utils/error/TranslateErrorMessages';
 import { TableHeadings } from 'components/table/IntegrationTableCol';
-import { DetailFieldNames } from 'model/Integration';
+import { DetailFieldNames, IntegrationRawTable } from 'model/Integration';
 import { NotificationConfig } from 'components/inputs/NotificationConfig';
 import { contactsRule } from 'utils/validation/contactsSchema';
 import { CreateContacts } from 'components/integration/create/CreateContacts';
@@ -75,7 +73,6 @@ import { HeadingLabel } from 'components/inputs/HeadingLabel';
 import { InfoIcon } from 'styles/StyledIcon';
 import { InfoBox } from 'components/message/InfoBox';
 import ConnectRawTablesInput from 'components/inputs/rawSelector/ConnectRawTablesInput';
-import { RawTableFormInput } from 'pages/create/RawTablePage';
 import { createAddIntegrationInfo } from 'utils/integrationUtils';
 
 const StyledCollapse = styled(Collapse)`
@@ -137,9 +134,7 @@ const linkDataSetText = (dataSet: DataSetModel): Readonly<string> => {
 };
 interface CreateIntegrationProps {}
 
-export interface AddIntegrationFormInput
-  extends ScheduleFormInput,
-    Pick<RawTableFormInput, 'selectedRawTables'> {
+export interface AddIntegrationFormInput extends ScheduleFormInput {
   name: string;
   externalId: string;
   description?: string;
@@ -149,6 +144,7 @@ export interface AddIntegrationFormInput
   skipNotificationInHours?: number;
   contacts?: User[];
   documentation: string;
+  selectedRawTables: IntegrationRawTable[];
 }
 const pageSchema = yup.object().shape({
   ...nameRule,

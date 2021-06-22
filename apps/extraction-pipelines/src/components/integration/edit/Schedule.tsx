@@ -9,7 +9,6 @@ import DisplaySchedule, {
   SupportedScheduleStrings,
 } from 'components/integrations/cols/Schedule';
 import CronInput from 'components/inputs/cron/CronInput';
-import { ScheduleFormInput } from 'pages/create/SchedulePage';
 import styled from 'styled-components';
 import { DivFlex } from 'styles/flex/StyledFlex';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -63,6 +62,11 @@ const ButtonWrapper = styled.div`
   display: flex;
   justify-content: flex-end;
 `;
+
+export interface ScheduleFormInput {
+  schedule: string;
+  cron: string;
+}
 
 interface ScheduleProps {
   integration: Integration;

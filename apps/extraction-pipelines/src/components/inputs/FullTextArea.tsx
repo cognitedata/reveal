@@ -1,12 +1,29 @@
 import React, { FunctionComponent, PropsWithChildren } from 'react';
 import { ErrorMessage } from '@hookform/error-message';
-import { StyledTextArea } from 'pages/create/DocumentationPage';
 import { Controller, ControllerRenderProps } from 'react-hook-form';
 import { HeadingLabel } from 'components/inputs/HeadingLabel';
 import { FullInputProps } from 'components/inputs/FullInput';
 import { ErrorMessage as Error } from 'components/error/ErrorMessage';
 import { Hint } from 'styles/StyledForm';
+import styled from 'styled-components';
+import { Colors } from '@cognite/cogs.js';
 
+const StyledTextArea = styled.textarea`
+  height: 10rem;
+  padding-bottom: 2rem;
+  margin-bottom: 2rem;
+  border-bottom: 0.125rem solid ${Colors['greyscale-grey3'].hex()};
+  &.has-error {
+    border-color: ${Colors.danger.hex()};
+  }
+  :before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 3px;
+    background-color: black;
+  }
+`;
 export const FullTextArea: FunctionComponent<FullInputProps> = ({
   name,
   labelText,

@@ -3,23 +3,25 @@ import { fireEvent, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import { QueryClient } from 'react-query';
 import { renderRegisterContext } from 'utils/test/render';
-import { EXT_PIPE_NAME_HEADING, SAVE } from 'utils/constants';
+import {
+  DESCRIPTION_LABEL,
+  EXT_PIPE_NAME_HEADING,
+  INTEGRATION_EXTERNAL_ID_HEADING,
+  SAVE,
+} from 'utils/constants';
 import {
   CDF_ENV_GREENFIELD,
   ORIGIN_DEV,
   PROJECT_ITERA_INT_GREEN,
 } from 'utils/baseURL';
-import { NAME_PATH } from 'routing/CreateRouteConfig';
 import 'utils/test/windowLocation';
 import CreateIntegration, {
   ADD_MORE_INFO_HEADING,
 } from 'pages/create/CreateIntegration';
 import {
   EXTERNAL_ID_REQUIRED,
-  INTEGRATION_EXTERNAL_ID_HEADING,
-} from 'pages/create/ExternalIdPage';
-import { DESCRIPTION_LABEL } from 'pages/create/DocumentationPage';
-import { NAME_REQUIRED } from 'utils/validation/integrationSchemas';
+  NAME_REQUIRED,
+} from 'utils/validation/integrationSchemas';
 import { TableHeadings } from 'components/table/IntegrationTableCol';
 import { DetailFieldNames } from 'model/Integration';
 import { DEFINE_METADATA_LABEL } from 'components/inputs/metadata/RegisterMetaData';
@@ -30,6 +32,7 @@ import {
 } from 'components/inputs/rawSelector/RawSelector';
 import { useRawDBAndTables } from 'hooks/useRawDBAndTables';
 import { databaseListMock } from 'utils/mockResponse';
+import { CREATE_INTEGRATION_PAGE_PATH } from 'routing/CreateRouteConfig';
 
 jest.mock('hooks/useRawDBAndTables', () => {
   return {
@@ -44,7 +47,7 @@ describe('CreateIntegration', () => {
     project: PROJECT_ITERA_INT_GREEN,
     cdfEnv: CDF_ENV_GREENFIELD,
     origin: ORIGIN_DEV,
-    route: `${NAME_PATH}`,
+    route: `${CREATE_INTEGRATION_PAGE_PATH}`,
     initRegisterIntegration: {},
   };
 

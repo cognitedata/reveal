@@ -1,9 +1,8 @@
 import * as yup from 'yup';
 import { SupportedScheduleStrings } from 'components/integrations/cols/Schedule';
 import { CRON_REQUIRED, cronValidator } from 'utils/validation/cronValidation';
-import { RawTableOptions } from 'pages/create/RawTablePage';
-import { DataSetOptions } from 'pages/create/DataSetPage';
 import { EXTRACTION_PIPELINE } from 'utils/constants';
+import { RawTableOptions } from 'utils/raw/rawUtils';
 
 export const NAME_REQUIRED: Readonly<string> = `${EXTRACTION_PIPELINE} name is required`;
 export const MAX_DESC_LENGTH: Readonly<number> = 500;
@@ -67,7 +66,9 @@ export const descriptionSchema = yup.object().shape({
       `Description can only contain ${MAX_DESC_LENGTH} characters`
     ),
 });
-
+export const descriptionRule = {
+  description: yup.string(),
+};
 export const scheduleRule = {
   schedule: yup.string(),
   cron: yup.string().when('schedule', {
@@ -125,7 +126,11 @@ export const sourceRule = {
     ),
 };
 export const sourceSchema = yup.object().shape(sourceRule);
-
+export enum DataSetOptions {
+  YES = 'Yes',
+  NO = 'No',
+  CREATE = 'Create',
+}
 export const DATA_SET_REQUIRED: Readonly<string> = 'Data set is required';
 export const datasetSchema = yup.object().shape({
   dataset: yup.string().required(DATA_SET_REQUIRED),
@@ -138,3 +143,8 @@ export const datasetSchema = yup.object().shape({
 export const dataSetIdSchema = yup.object().shape({
   dataSetId: yup.number().required(DATA_SET_REQUIRED),
 });
+
+export const EXTERNAL_ID_REQUIRED: Readonly<string> = 'External id is required';
+export const externalIdRule = {
+  externalId: yup.string().required(EXTERNAL_ID_REQUIRED),
+};
