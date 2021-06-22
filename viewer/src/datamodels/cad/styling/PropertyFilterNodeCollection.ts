@@ -116,7 +116,6 @@ export class PropertyFilterNodeCollection extends NodeCollectionBase {
     return this._indexSet;
   }
 
-  /** @internal */
   serialize() {
     return {
       token: this.classToken,

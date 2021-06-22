@@ -17,7 +17,6 @@ export class IntersectionNodeCollection extends CombineNodeCollectionBase {
     super(UnionNodeCollection.classToken, nodeCollections);
   }
 
-  /** @internal */
   serialize(): SerializedNodeCollection {
     return {
       token: this.classToken,
