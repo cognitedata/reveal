@@ -13,6 +13,7 @@ import {
 } from 'utils/charts';
 import { calculateDefaultYAxis } from 'utils/axis';
 import { trackUsage } from 'utils/metrics';
+import InfoBox from 'components/InfoBox';
 import TimeseriesSearchHit from './TimeseriesSearchHit';
 
 type Props = {
@@ -82,6 +83,7 @@ export default function SearchTimeseries({ query }: Props) {
 
   return (
     <TSList>
+      <InfoBox infoType="TimeSeriesHelpBox" />
       <TimeseriesSearchHit
         timeseries={timeseries}
         renderCheckbox={(ts) => (

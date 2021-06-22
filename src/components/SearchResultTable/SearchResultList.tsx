@@ -4,6 +4,7 @@ import { Asset } from '@cognite/sdk';
 import { useInfiniteSearch } from '@cognite/sdk-react-query-hooks';
 import styled from 'styled-components/macro';
 
+import InfoBox from 'components/InfoBox';
 import AssetSearchHit from './AssetSearchHit';
 
 type Props = {
@@ -41,6 +42,7 @@ export default function SearchResultList({ query }: Props) {
 
   return (
     <AssetList>
+      <InfoBox infoType="TagHelpBox" />
       {assets?.map((asset) => (
         <li key={asset.id}>
           <AssetSearchHit asset={asset} />
