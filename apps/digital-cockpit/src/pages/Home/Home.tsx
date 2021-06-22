@@ -102,7 +102,7 @@ const Home = () => {
       url: 'https://hub.cognite.com',
       key: 'cognite-hub',
       iconKey: 'Cognite',
-      title: 'Cognite HUB',
+      title: 'COGNITE HUB',
       rightIconKey: 'ExternalLink',
     },
   ];
