@@ -4,7 +4,6 @@ import { Asset } from '@cognite/sdk';
 import { useInfiniteSearch } from '@cognite/sdk-react-query-hooks';
 import styled from 'styled-components/macro';
 
-import InfoBox from 'components/InfoBox';
 import AssetSearchHit from './AssetSearchHit';
 
 type Props = {
@@ -42,14 +41,17 @@ export default function SearchResultList({ query }: Props) {
 
   return (
     <AssetList>
-      <InfoBox infoType="TagHelpBox" />
       {assets?.map((asset) => (
         <li key={asset.id}>
           <AssetSearchHit asset={asset} />
         </li>
       ))}
       {hasNextPage && (
-        <Button type="link" onClick={() => fetchNextPage()}>
+        <Button
+          type="link"
+          onClick={() => fetchNextPage()}
+          style={{ marginBottom: '20px' }}
+        >
           Load more
         </Button>
       )}
@@ -59,7 +61,6 @@ export default function SearchResultList({ query }: Props) {
 
 const AssetList = styled.ul`
   height: 100%;
-  overflow: auto;
   list-style: none;
   padding: 0 10px 0 0;
   margin: 0;

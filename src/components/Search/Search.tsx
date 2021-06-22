@@ -6,6 +6,7 @@ import styled from 'styled-components/macro';
 import { SEARCH_KEY } from 'utils/constants';
 import { useSearchParam } from 'hooks';
 import debounce from 'lodash/debounce';
+import InfoBox from 'components/InfoBox';
 
 type SearchProps = {
   visible: boolean;
@@ -98,8 +99,18 @@ const Search = ({ visible, onClose }: SearchProps) => {
           )} */}
         </div>
         <SearchResultsContainer>
-          {searchType === 'assets' && <SearchResultList query={urlQuery} />}
-          {searchType === 'timeseries' && <SearchTimeseries query={urlQuery} />}
+          {searchType === 'assets' && (
+            <>
+              <InfoBox infoType="TagHelpBox" />
+              <SearchResultList query={urlQuery} />
+            </>
+          )}
+          {searchType === 'timeseries' && (
+            <>
+              <InfoBox infoType="TimeSeriesHelpBox" />
+              <SearchTimeseries query={urlQuery} />
+            </>
+          )}
         </SearchResultsContainer>
       </ContentWrapper>
     </SearchContainer>

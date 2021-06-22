@@ -17,8 +17,6 @@ const timeSeriesInfo: InfoBoxData = {
       You can search for Timeseries name (ID) e.g. VAL_21_ZT_1018_04:Z.X.Value
       or Timeseries description, e.g. Utløpstrykk pigsluse eksportlinje B.
       {'\n\n'}
-      You can scope the search by the asset hierarchy (e.g. IAA or ULA)
-      {'\n\n'}
       Read more on
       <a href="cog.link/charts-doc"> cog.link/charts-doc.</a>
     </>
@@ -30,8 +28,7 @@ const tagInfo: InfoBoxData = {
   body: (
     <>
       Search for Tag number (asset) e.g. 21PT1019 or description (e.g. LAUN TO
-      OIL TRANS LN B){'\n\n'} You can filter the search by suffix (e.g. .PV or
-      .PRIM) and choose priority of results (e.g. .PV on top){'\n\n'}
+      OIL TRANS LN B){'\n\n'}
       Read more on
       <a href="cog.link/charts-doc"> cog.link/charts-doc.</a>
     </>
