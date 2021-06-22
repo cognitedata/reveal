@@ -1,5 +1,6 @@
 import {
   Button,
+  ButtonType,
   Dropdown,
   Icon,
   Menu,
@@ -11,6 +12,7 @@ import exifIcon from 'src/assets/exifIcon.svg';
 import { ExifIcon } from '../../Containers/FileTableRenderers/NameRenderer';
 
 interface ActionMenuProps {
+  buttonType?: string;
   showExifIcon?: boolean;
   disabled?: boolean;
   handleReview?: () => void;
@@ -19,6 +21,7 @@ interface ActionMenuProps {
 }
 
 export const ActionMenu = ({
+  buttonType,
   showExifIcon,
   disabled,
   handleReview,
@@ -69,7 +72,8 @@ export const ActionMenu = ({
   return (
     <Dropdown content={MenuContent}>
       <Button
-        type="ghost"
+        type={(buttonType as ButtonType) || 'ghost'}
+        variant={buttonType ? 'inverted' : 'default'}
         icon="MoreOverflowEllipsisHorizontal"
         aria-label="dropdown button"
         onClick={handleClick}

@@ -90,6 +90,17 @@ export const FileGridPreview = ({
             handleItemSelect={onSelect}
           />
         )}
+
+        <MenuContainer>
+          <ActionMenu
+            buttonType="primary"
+            showExifIcon={fileDetails?.geoLocation !== undefined}
+            disabled={reviewDisabled}
+            handleReview={showReviewButton ? undefined : handleReview} // skip menu item if button is shown
+            handleFileDelete={handleFileDelete}
+            handleMetadataEdit={handleMetadataEdit}
+          />
+        </MenuContainer>
         <div className="footer">
           <div className="nameAndExif">
             <div className="name">{item.name}</div>
@@ -102,15 +113,6 @@ export const FileGridPreview = ({
             )}
           </div>
 
-          <div className="action">
-            <ActionMenu
-              showExifIcon={fileDetails?.geoLocation !== undefined}
-              disabled={reviewDisabled}
-              handleReview={showReviewButton ? undefined : handleReview} // skip menu item if button is shown
-              handleFileDelete={handleFileDelete}
-              handleMetadataEdit={handleMetadataEdit}
-            />
-          </div>
           <div className="badge">
             <Popover
               placement="bottom"
@@ -134,6 +136,12 @@ export const FileGridPreview = ({
   );
 };
 
+const MenuContainer = styled.div`
+  position: absolute;
+  top: 7px;
+  right: calc(10% + 7px);
+`;
+
 const PreviewCell = styled.div`
   margin-top: 30px;
   padding-left: 20px;
@@ -156,7 +164,7 @@ const PreviewCell = styled.div`
       grid-template-columns: 120px 1fr 1fr;
       grid-template-rows: auto;
       grid-template-areas:
-        'name name name name . action'
+        'name name name name . .'
         'badge badge badge . . review';
       .nameAndExif {
         display: flex;
@@ -175,10 +183,6 @@ const PreviewCell = styled.div`
       .exif > img {
         padding-bottom: 15px;
         grid-area: name;
-      }
-      .action {
-        grid-area: action;
-        justify-self: end;
       }
       .badge {
         grid-area: badge;
