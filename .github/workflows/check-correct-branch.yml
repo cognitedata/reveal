@@ -1,0 +1,60 @@
+name: Branch validation
+on: pull_request
+
+jobs:
+  comment:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v4
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const refBranchName = context.payload.pull_request.base.ref;
+
+            const branches = [{
+                name: 'release-dev',
+                url: 'https://dev.fusion.cogniteapp.com/',
+                emoji: '⚒️',
+                desc: 'Your changes will appear in DEV environment. This branch is supposed to be for hotfixes and changes to the current production release, which need to be tested before being pushed to prod.'
+            }, {
+                name: 'release-next',
+                url: 'https://next-release.fusion.cognite.com/',
+                emoji: '⏳',
+                desc: "Your changes will appear in NEXT-RELEASE environment. This branch is supposed to be released to production every major release (every ~two months)."
+            }, {
+                name: 'master',
+                url: 'https://fusion.cognite.com/',
+                emoji: '⚠️',
+                desc: "What you're merging now will appear most importantly in production, and also all environments that are not DEV or NEXT-RELEASE, so proceed with caution!"
+            }];
+            const unknownBranch = {
+                name: refBranchName,
+                desc: "I don't recognite the branch you're merging to. Good luck.",
+                emoji: '🤔',
+                url: 'https://http.cat/404'
+            }
+
+            const getBranch = () => {
+              const b = branches.find(branch => branch.name === refBranchName);
+              if (b) return b;
+              else return unknownBranch;
+            }
+            const branch = getBranch();
+            const title = `# ${branch.emoji} You're commiting to the ${refBranchName} branch!`
+            const urlAppServices = '[Is this version compatibile with application-services?](https://github.com/cognitedata/application-services/blob/master/services/release-configs/src/configs/apps.ts)'
+            const urlDocumentation = '[Need more in-depth documentation?](https://cognitedata.atlassian.net/wiki/spaces/CON/pages/2871558508/Commit+linting+and+changelog+for+future+releases#Fusion-setup)'
+            const body = `${title}
+
+            ${branch.desc}
+
+            - env url: ${branch.url}
+            - ${urlAppServices}
+            - ${urlDocumentation}
+            `;
+
+            await github.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body
+            })
