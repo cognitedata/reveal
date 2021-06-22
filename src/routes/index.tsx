@@ -33,9 +33,15 @@ const BREADCRUMBS = {
     title: 'Interactive engineering diagrams',
     path: '/pnid_parsing_new',
   },
+  workflow: {
+    title: 'Create interactive diagrams',
+  },
 };
 
 const getBreadcrumbs = () => {
+  if (window.location.href.includes('workflow')) {
+    return [BREADCRUMBS.default, BREADCRUMBS.workflow];
+  }
   return [BREADCRUMBS.default];
 };
 
