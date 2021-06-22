@@ -46,19 +46,22 @@ const relativeTimeOptions = [
 
 const DateRangeSelector = ({ chart }: DateRangeSelectorProps) => {
   const { mutate: updateChart } = useUpdateChart();
-
+  const selectedRange = chart.selectedDateRange ?? '1M';
   const handleDateChange = ({
     dateFrom,
     dateTo,
     source = 'daterange',
+    dateRange,
   }: {
     dateFrom?: Date;
     dateTo?: Date;
     source?: 'button' | 'daterange';
+    dateRange: string;
   }) => {
     if (dateFrom || dateTo) {
       updateChart({
         ...chart,
+        selectedDateRange: dateRange,
         dateFrom: (dateFrom || new Date(chart?.dateFrom!)).toJSON(),
         dateTo: (dateTo || new Date(chart?.dateTo!)).toJSON(),
       });
@@ -75,6 +78,7 @@ const DateRangeSelector = ({ chart }: DateRangeSelectorProps) => {
       dateFrom: selectedTimeOption?.dateFrom().toDate(),
       dateTo: selectedTimeOption?.dateTo().toDate(),
       source: 'button',
+      dateRange: selectedTimeOption ? selectedTimeOption.label : '1M',
     });
   };
 
@@ -82,7 +86,7 @@ const DateRangeSelector = ({ chart }: DateRangeSelectorProps) => {
     <Wrapper>
       <Column>
         <SegmentedControl
-          currentKey="1M"
+          currentKey={selectedRange}
           variant="ghost"
           onButtonClicked={handleTimeOptionSelected}
         >
@@ -114,6 +118,7 @@ const DateRangeSelector = ({ chart }: DateRangeSelectorProps) => {
             handleDateChange({
               dateFrom: newStart,
               dateTo: newEnd,
+              dateRange: selectedRange,
             });
           }}
           prependComponent={() => (
@@ -127,7 +132,10 @@ const DateRangeSelector = ({ chart }: DateRangeSelectorProps) => {
                 <TimeSelector
                   value={new Date(chart.dateFrom)}
                   onChange={(value) => {
-                    handleDateChange({ dateFrom: value });
+                    handleDateChange({
+                      dateFrom: value,
+                      dateRange: selectedRange,
+                    });
                   }}
                 />
               </div>
@@ -135,7 +143,10 @@ const DateRangeSelector = ({ chart }: DateRangeSelectorProps) => {
                 <TimeSelector
                   value={new Date(chart.dateTo)}
                   onChange={(value) => {
-                    handleDateChange({ dateTo: value });
+                    handleDateChange({
+                      dateTo: value,
+                      dateRange: selectedRange,
+                    });
                   }}
                 />
               </div>
