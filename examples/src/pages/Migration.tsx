@@ -132,8 +132,8 @@ export function Migration() {
         revisionId: 0,
         geometryFilter:
           geometryFilter !== undefined
-          ? geometryFilter
-          : { center: new THREE.Vector3(), size: new THREE.Vector3() },
+          ? { ...geometryFilter, enabled: true }
+          : { center: new THREE.Vector3(), size: new THREE.Vector3(), enabled: false },
         antiAliasing: urlParams.get('antialias'),
         ssaoQuality: urlParams.get('ssao'),
         debug: {
@@ -230,6 +230,7 @@ export function Migration() {
       geometryFilterGui.add(guiState.geometryFilter.size, 'x', 0, 100, 1).name('SizeX').onChange(updateGeometryFilterPreview);
       geometryFilterGui.add(guiState.geometryFilter.size, 'y', 0, 100, 1).name('SizeY').onChange(updateGeometryFilterPreview);
       geometryFilterGui.add(guiState.geometryFilter.size, 'z', 0, 100, 1).name('SizeZ').onChange(updateGeometryFilterPreview);
+      geometryFilterGui.add(guiState.geometryFilter, 'enabled').name('Apply to new models?');
       geometryFilterGui.add(guiActions, 'applyGeometryFilter').name('Apply and reload');
       geometryFilterGui.add(guiActions, 'resetGeometryFilter').name('Reset and reload');
 
@@ -575,10 +576,10 @@ function createGeometryFilterStateFromBounds(bounds: THREE.Box3, out: { center: 
   return out;
 }
 
-function createGeometryFilterFromState(state: { center: THREE.Vector3, size: THREE.Vector3 }):
+function createGeometryFilterFromState(state: { center: THREE.Vector3, size: THREE.Vector3, enabled: boolean }):
  { boundingBox: THREE.Box3, isBoundingBoxInModelCoordinates: true } | undefined {
   state.size.clamp(new THREE.Vector3(0,0,0), new THREE.Vector3(Infinity, Infinity, Infinity));
-  if (state.size.equals(new THREE.Vector3(0,0,0))) {
+  if (!state.enabled || state.size.equals(new THREE.Vector3(0,0,0))) {
     return undefined;
   }
   return { boundingBox: new THREE.Box3().setFromCenterAndSize(state.center, state.size), isBoundingBoxInModelCoordinates: true };
