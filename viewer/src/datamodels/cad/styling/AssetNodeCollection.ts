@@ -103,7 +103,6 @@ export class AssetNodeCollection extends NodeCollectionBase {
     return this._indexSet;
   }
 
-  /** @internal */
   serialize(): SerializedNodeCollection {
     return {
       token: this.classToken,

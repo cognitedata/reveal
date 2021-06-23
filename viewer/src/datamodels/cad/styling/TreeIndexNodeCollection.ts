@@ -48,7 +48,6 @@ export class TreeIndexNodeCollection extends NodeCollectionBase {
     return false;
   }
 
-  /** @internal */
   serialize(): SerializedNodeCollection {
     return {
       token: this.classToken,
