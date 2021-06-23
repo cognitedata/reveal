@@ -28,6 +28,21 @@ $ yarn build
 
 This command generates static content into the `build` directory and can be served using any static contents hosting service.
 
+### Deployment
+
+We deploy docs automatically for every merge into master. See workflows for details.
+
+There are 2 repos where we host our docs:
+
+* https://github.com/cognitedata/reveal-docs – for production documentation
+* https://github.com/cognitedata/reveal-docs-preview - for PR previews
+
+Also, reveal has own [gh-pages](https://github.com/cognitedata/reveal/settings/pages)
+but it's merely has redirects [here](https://github.com/cognitedata/reveal/blob/gh-pages/index.html) and [there](https://github.com/cognitedata/reveal/blob/gh-pages/docs/index.html)
+to reveal-docs, i.e.
+
+`cognitedata.github.io/reveal/docs` → `cognitedata.github.io/reveal-docs`
+
 ### Versioning
 
 ![reveal-docs-versioning.png](static/img/reveal-docs-versioning.png)
@@ -64,27 +79,28 @@ For API reference use `@version` tag in jsdoc. For example:
 
 #### How to create new docs version?
 
-Let's say you want to roll out new reveal@10.0.0, that what needs to be done:
+Let's say you want to roll out new reveal@2.0.0, that what needs to be done:
 
-* create new 10.x section and make it default for docs website 
-* tweak copying of next version to replace your 10.x with updates on every release
+* create new 2.x section and make it default for docs website 
+* tweak copying of next version to replace your 2.x with updates on every release
 * introduce a new versioned dependency on reveal in your archived version
+* configure search
 
-##### Create new 10.x section
+##### Create new 2.x section
 
-Feel free to read docusaurus [versioning guide](https://docusaurus.io/docs/2.0.0-beta.0/versioning) 
+[[Docusaurus versioning guide](https://docusaurus.io/docs/2.0.0-beta.0/versioning)] 
 for the version of docusaurus you currently use, but basic usage is covered below.
 
 Basically you need to copy the whole content of your `next` version under `versioned_docs` and version sidebars as well.
 Run this command to do it:
 
 ```bash
-yarn docusaurus docs:version 10.x
+yarn docusaurus docs:version 2.x
 ```
 
 That will become default version for the docs website.
 
-##### Tweak copying of next version into your 10.x version
+##### Tweak copying of next version into your 2.x version
 
 The copying should happen on every reveal release (called by bump `scrips`).
 
@@ -92,43 +108,40 @@ It's handled by `yarn run replace-latest` script, but for a new version you need
 So, go to `package.json` and do that change at `replace-latest` script
 
 ```diff
-- "replace-latest-by-next": "yarn apiref && rimraf versioned_sidebars/version-9.x-sidebars.json versioned_docs/version-9.x versions.json && yarn docusaurus docs:version 9.x && git checkout HEAD -- versions.json"
-+ "replace-latest-by-next": "yarn apiref && rimraf versioned_sidebars/version-10.x-sidebars.json versioned_docs/version-10.x versions.json && yarn docusaurus docs:version 10.x && git checkout HEAD -- versions.json"
+- "replace-latest-by-next": "yarn apiref && rimraf versioned_sidebars/version-1.x-sidebars.json versioned_docs/version-1.x versions.json && yarn docusaurus docs:version 1.x && git checkout HEAD -- versions.json"
++ "replace-latest-by-next": "yarn apiref && rimraf versioned_sidebars/version-2.x-sidebars.json versioned_docs/version-2.x versions.json && yarn docusaurus docs:version 2.x && git checkout HEAD -- versions.json"
 ```
 
-### Deployment
+##### Introduce a new versioned dependency on reveal in your archived version
 
-We deploy docs automatically for every merge into master.  
+That step is needed because we are actually using reveal in docs, so docs not just docs, but they have a dependency on reveal to show live demos.
 
-* `2.x`
-* `1.x` version is default. 
-    There should be only documentation for the published versions of `@cognite/reveal`.
-    Files for `1.x` are in `/versioned_docs/version-1.x`. **You shouldn't edit these files** unless you want to publish some fix ASAP.
-    In that case you need to apply the fix for the both `next` and `1.x` versions.
-* `next` contains docs for the latest unpublished `@cognite/reveal` (master branch). 
-    You should always edit files for the next version only (they are stored in `/docs` folder).
-    Files for `1.x` version are replaced with files from `/docs` for every release. It's handled inside viewer `bump` script.
-    
-When you write documentation for new features please specify from which version feature is available.
-Use the following comment:
+So when you archive a version you must fix the version of reveal for that part of the documentation website.
 
-```
-> **New in 1.1.0**
-```
+Below is an example of archiving `1.x` version.
 
-> **New in 1.1.0**
+1. Go to `documentation/package.json`
+2. Add aliased fixed dependency, e.g. `"@cognite/reveal-1.x": "npm:@cognite/reveal@^1.5.5",`
+3. At `versioned_docs/1.x`:
+   * replace all `@cognite/reveal` appearances in imports with `@cognite/reveal-1.x`
+   * replace all `runnable` annotations with `runnable-1x`
+4. At `remark-runnable-reveal-demo.js` add a new record to the `versionedImportNode`:
+  ```js
+      'runnable-1x': {
+        type: 'import',
+          value:
+        "import { LiveCodeSnippet } from '@site/versioned_docs/version-1.x/components/LiveCodeSnippet';",
+      },
+  ```
 
-For API reference use `@version` tag in jsdoc. For example:
+##### Configure search
+
+[[Docusaurus guide on search](https://docusaurus.io/docs/2.0.0-beta.0/search)]
+
+Find `algolia` at `docusaurus.config.js` and adjust `facetFilters` param by adding your new version. E.g. 
 
 ```js
-/**
-  * Sets transformation matrix of the model.
-  * @param transformationMatrix
-  * @version Added in 2.1.0
-  */
+    facetFilters: [['version:1.x', 'version:2.x']]
 ```
 
-The `@version` tag is used to indicate changed functionality between minor versions within the same
-major release, e.g. if a function `clear()` is added in 2.1.0 it's marked with `@version New in 2.1.0`.
-When releasing the next major version (e.g. version 3.0.0), the `@version` tags are removed since
-the functionality will be available for all version 3 releases.
+That's pretty much all you need to do to create a new version of your docs.
