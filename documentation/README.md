@@ -66,8 +66,7 @@ For API reference use `@version` tag in jsdoc. For example:
 
 Let's say you want to roll out new reveal@10.0.0, that what needs to be done:
 
-* create new 10.x section
-* make it default for docs website 
+* create new 10.x section and make it default for docs website 
 * tweak copying of next version to replace your 10.x with updates on every release
 * introduce a new versioned dependency on reveal in your archived version
 
@@ -76,17 +75,26 @@ Let's say you want to roll out new reveal@10.0.0, that what needs to be done:
 Feel free to read docusaurus [versioning guide](https://docusaurus.io/docs/2.0.0-beta.0/versioning) 
 for the version of docusaurus you currently use, but basic usage is covered below.
 
-Basically you need to copy the whole content of your `next` version under `versioned_docs`.
+Basically you need to copy the whole content of your `next` version under `versioned_docs` and version sidebars as well.
+Run this command to do it:
 
-That's already handled by `yarn run replace-latest` script, but you for new version you need to adjust version name in that script. 
+```bash
+yarn docusaurus docs:version 10.x
+```
+
+That will become default version for the docs website.
+
+##### Tweak copying of next version into your 10.x version
+
+The copying should happen on every reveal release (called by bump `scrips`).
+
+It's handled by `yarn run replace-latest` script, but for a new version you need to adjust version name in that script. 
 So, go to `package.json` and do that change at `replace-latest` script
 
 ```diff
-- "replace-latest": "yarn apiref && rimraf versioned_sidebars versioned_docs versions.json && yarn docusaurus docs:version 9.x"
-+ "replace-latest": "yarn apiref && rimraf versioned_sidebars versioned_docs versions.json && yarn docusaurus docs:version 10.x"
+- "replace-latest-by-next": "yarn apiref && rimraf versioned_sidebars/version-9.x-sidebars.json versioned_docs/version-9.x versions.json && yarn docusaurus docs:version 9.x && git checkout HEAD -- versions.json"
++ "replace-latest-by-next": "yarn apiref && rimraf versioned_sidebars/version-10.x-sidebars.json versioned_docs/version-10.x versions.json && yarn docusaurus docs:version 10.x && git checkout HEAD -- versions.json"
 ```
-
-That script is also used during release process of reveal to replace default docs section with the contents of `next`.
 
 ### Deployment
 
