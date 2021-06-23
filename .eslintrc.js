@@ -63,6 +63,8 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': ['off'],
     '@typescript-eslint/no-non-null-assertion': ['off'],
 
+    'import/prefer-default-export': ['off'],
+    'import/no-anonymous-default-export': ['off'],
     'import/order': [
       1,
       {

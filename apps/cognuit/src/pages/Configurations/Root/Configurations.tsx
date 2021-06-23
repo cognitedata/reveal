@@ -18,8 +18,8 @@ import { CustomError } from 'services/CustomError';
 import ErrorMessage from 'components/Molecules/ErrorMessage';
 import APIErrorContext from 'contexts/APIErrorContext';
 
-import { columnRules } from '../components/Table/columnRules';
-import { renderExpandedRow } from '../components/Table/expandedRow';
+import { ColumnRules } from '../components/Table/ColumnRule';
+import { ExpandedSubRow } from '../components/Table/ExpandedSubRow';
 import { generateConfigurationsColumnsFromData } from '../functions/generate';
 import { curateColumns, curateConfigurationsData } from '../functions/curate';
 
@@ -103,13 +103,14 @@ const Configurations = () => {
     if (token && token !== 'NO_TOKEN') {
       fetchConfigurations();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
   useEffect(() => {
     const rawColumns = generateConfigurationsColumnsFromData(data);
     const curatedColumns = curateColumns(
       rawColumns,
-      columnRules({ handleNameChange, handleStopStart })
+      ColumnRules({ handleNameChange, handleStopStart })
     );
     setColumns(curatedColumns);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -141,10 +142,11 @@ const Configurations = () => {
         <Table<ExtendedConfigurationsResponse>
           dataSource={data}
           expandedIds={expanded}
+          rowKey={(data, index) => `configuration-${data.id}-${index}`}
           columns={sortBy(columns, (obj) =>
             indexOf(config.visibleColumns, obj.accessor)
           )}
-          renderSubRowComponent={renderExpandedRow}
+          renderSubRowComponent={ExpandedSubRow}
           onRowClick={onRowHandleClick}
         />
       </ContentContainer>

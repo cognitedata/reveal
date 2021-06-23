@@ -3,8 +3,8 @@ import styled from 'styled-components';
 import { Avatar, Tooltip } from '@cognite/cogs.js';
 import { AuthConsumer } from '@cognite/react-container';
 import Logo from 'components/Atoms/Logo';
-import zIndex from 'utils/zIndex';
 
+import layers from '../../utils/z';
 import AppSwitcher from '../Atoms/AppSwitcher';
 
 const Header = styled.header`
@@ -15,7 +15,7 @@ const Header = styled.header`
   left: 0;
   width: 100%;
   height: 56px;
-  z-index: ${zIndex.DEFAULT};
+  z-index: ${layers.DEFAULT};
 
   background-color: var(--cogs-white);
   border-bottom: 1px solid var(--cogs-greyscale-grey3);

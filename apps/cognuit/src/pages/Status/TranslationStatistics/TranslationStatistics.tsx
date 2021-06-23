@@ -67,6 +67,7 @@ const TranslationStatistics = ({ dateRange }: Props) => {
           addError(err.message, err.status);
         });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [api, setData, activeTabKey, dateRange]);
 
   useEffect(() => {

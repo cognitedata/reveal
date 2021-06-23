@@ -25,7 +25,7 @@ interface Props {
   handleNameChange: (id: number, newName: string) => boolean;
 }
 
-export const columnRules: (actions: Props) => Rule[] = ({
+export const ColumnRules: (actions: Props) => Rule[] = ({
   handleStopStart,
   handleNameChange,
 }: Props) => {

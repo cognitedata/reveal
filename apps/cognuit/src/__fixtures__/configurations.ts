@@ -1,4 +1,4 @@
-import { columnRules } from 'pages/Configurations/components/Table/columnRules';
+import { ColumnRules } from 'pages/Configurations/components/Table/ColumnRule';
 import { ConfigurationsResponse } from 'types/ApiInterface';
 import {
   ExtendedConfigurationsResponse,
@@ -122,7 +122,7 @@ const generatedColumns = [
   },
 ] as GenerateConfigurationsColumns[];
 
-const getColumnRules = columnRules({
+const getColumnRules = ColumnRules({
   handleNameChange: jest.fn(),
   handleStopStart: jest.fn(),
 });

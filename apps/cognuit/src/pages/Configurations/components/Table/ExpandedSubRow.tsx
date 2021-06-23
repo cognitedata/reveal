@@ -4,7 +4,7 @@ import { Badge } from '@cognite/cogs.js';
 import { ExpandedRow } from '../../elements';
 
 // TODO_: Move date functions to utils
-export function renderExpandedRow({
+export function ExpandedSubRow({
   original: record,
 }: {
   original: DataTransferObject;

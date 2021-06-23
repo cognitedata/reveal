@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
 import { Button, Colors, Tooltip } from '@cognite/cogs.js';
 import { apiStatuses } from 'utils/statuses';
+import { CustomError } from 'services/CustomError';
 
 import { DataTransferObject, RevisionObject } from '../../typings/interfaces';
 import ApiContext from '../../contexts/ApiContext';
@@ -117,10 +118,15 @@ const Revisions = ({ record, onDetailClick }: Props) => {
             ),
           };
         })
-      ).then((resp: any) => {
-        setData(resp);
-      });
+      )
+        .then((resp: any) => {
+          setData(resp);
+        })
+        .catch((err: CustomError) => {
+          console.log('Error', err);
+        });
     };
+
     runEffect();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

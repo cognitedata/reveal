@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { Icon } from '@cognite/cogs.js';
 import { Table } from 'antd';
 
-export const TableActions = styled.div`
+export const TableActionsContainer = styled.div`
   padding: 2rem 2rem 1rem 2rem;
   border-bottom: 1px solid var(--cogs-greyscale-grey4);
   display: flex;

@@ -86,6 +86,7 @@ const Heartbeats = ({ dateRange, afterTimestamp }: Props) => {
           addError(err.message, err.status);
         });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [afterTimestamp, api, setBeats, activeTabKey]);
 
   useEffect(() => {

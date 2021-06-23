@@ -1,9 +1,9 @@
-import { columnRules } from '../Table/columnRules';
+import { ColumnRules } from '../Table/ColumnRule';
 
 describe('Configurations/Table', () => {
   describe('Columns', () => {
     it('... WIP', () => {
-      const columns = columnRules({
+      const columns = ColumnRules({
         handleNameChange: jest.fn(),
         handleStopStart: jest.fn,
       });
