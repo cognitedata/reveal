@@ -77,6 +77,8 @@ For API reference use `@version` tag in jsdoc. For example:
   */
 ```
 
+Notice that `documentation/static` is not versioned, so if you remove something from there – double check that it's not used by other versions.
+
 #### How to create new docs version?
 
 Let's say you want to roll out new reveal@2.0.0, that what needs to be done:
