@@ -98,7 +98,7 @@ consult [parser-worker/README.md](parser-worker/README.md)
 To publish a new version of `@cognite/reveal` or `@cognite/reveal-parser-worker` follow the steps below
 (example is for the viewer package, but commands are the same for parser-worker except folder name).
 
-### Git setup
+### Create release branch
 
 Checkout at some stable revision that you want to release (normally, the latest state from master or
 version-1 if you are releasing fix for a previous version) and create a new branch from it. 
@@ -167,7 +167,7 @@ If you are not currently logged into npm on your CLI, do the following:
 Once logged in, run:
 
 ```bash
-yarn release:prod
+yarn release
 ```
 
 or if you are releasing a beta version:
