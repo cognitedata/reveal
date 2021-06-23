@@ -267,10 +267,10 @@ export default function WorkflowRow({
               onConversionUnitClick={updatePrefferedUnit}
             />
           </td>
-          <td className="downloadChartHideTd" />
+          <td className="downloadChartHide" />
           <td
             style={{ textAlign: 'center', paddingLeft: 0 }}
-            className="downloadChartHideTd"
+            className="downloadChartHide"
           >
             <Dropdown
               content={<AppearanceDropdown update={updateAppearance} />}
@@ -285,7 +285,7 @@ export default function WorkflowRow({
           </td>
           <td
             style={{ textAlign: 'center', paddingLeft: 0 }}
-            className="downloadChartHideTd"
+            className="downloadChartHide"
           >
             <Popconfirm
               onConfirm={remove}
@@ -306,7 +306,7 @@ export default function WorkflowRow({
           </td>
           <td
             style={{ textAlign: 'center', paddingLeft: 0 }}
-            className="downloadChartHideTd"
+            className="downloadChartHide"
           >
             <Button
               type="tertiary"
@@ -323,7 +323,7 @@ export default function WorkflowRow({
           </td>
           <td
             style={{ textAlign: 'center', paddingLeft: 0 }}
-            className="downloadChartHideTd"
+            className="downloadChartHide"
           >
             <Dropdown
               content={

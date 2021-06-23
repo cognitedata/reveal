@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Avatar, Menu, Title, TopBar } from '@cognite/cogs.js';
+import { Avatar, Menu, Title, TopBar, Icon } from '@cognite/cogs.js';
 import sidecar from 'config/sidecar';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import { useParams } from 'react-router-dom';
@@ -86,14 +86,22 @@ const TopBarWrapper = () => {
             actions={[
               {
                 key: 'chat',
-                icon: 'SpeechBubble',
                 name: 'Feedback',
+                component: (
+                  <span className="downloadChartHide">
+                    <Icon type="SpeechBubble" />
+                  </span>
+                ),
                 onClick: () => chat.show(),
               },
               {
                 key: 'help',
-                icon: 'Help',
                 name: 'Help',
+                component: (
+                  <span className="downloadChartHide">
+                    <Icon type="Help" />
+                  </span>
+                ),
                 menu: (
                   <Menu>
                     <Menu.Item

@@ -188,96 +188,68 @@ export function updateSourceAxisForChart(
 
 export const toggleDownloadChartElements = (hide: boolean, height?: number) => {
   const elementsToHide = document.getElementsByClassName('downloadChartHide');
-  const tdToHide = document.getElementsByClassName('downloadChartHideTd');
   const chartViewEl = document.getElementById('chart-view');
   if (hide) {
-    const pane2Height = +document
-      .getElementsByClassName('Pane2')[0]
-      // @ts-ignore
-      .style.height.replace('px', '');
+    const pane2Height = +(document.getElementsByClassName(
+      'Pane2'
+    )[0] as HTMLElement).style.height.replace('px', '');
     Array.prototype.forEach.call(elementsToHide, (el) => {
-      el.style.display = 'none';
-    });
-    Array.prototype.forEach.call(tdToHide, (el) => {
       el.style.display = 'none';
     });
     if (chartViewEl) {
       chartViewEl.style.overflow = 'auto';
       chartViewEl.style.height = 'auto';
     }
-    // @ts-ignore
-    document.querySelector(
-      '.cogs-topbar--left .cogs-topbar--item__actions'
-      // @ts-ignore
-    ).style.display = 'none';
-    // @ts-ignore
-    document.querySelector(
-      '.cogs-topbar--right .cogs-topbar--item__actions span:nth-child(1)'
-      // @ts-ignore
-    ).style.display = 'none';
-    // @ts-ignore
-    document.querySelector(
-      '.cogs-topbar--right .cogs-topbar--item__actions span:nth-child(2)'
-      // @ts-ignore
-    ).style.display = 'none';
-    // @ts-ignore
-    document.getElementsByClassName('SplitPane')[0].style.overflow = 'auto';
-    // @ts-ignore
-    document.getElementsByClassName('SplitPane')[0].style.display = 'block';
-    // @ts-ignore
-    document.getElementsByClassName('SplitPane')[0].style.position = 'relative';
-    // @ts-ignore
-    document.getElementsByClassName('Pane1')[0].style.height = `${
+    (document.getElementsByClassName(
+      'SplitPane'
+    )[0] as HTMLElement).style.overflow = 'auto';
+    (document.getElementsByClassName(
+      'SplitPane'
+    )[0] as HTMLElement).style.display = 'block';
+    (document.getElementsByClassName(
+      'SplitPane'
+    )[0] as HTMLElement).style.position = 'relative';
+    (document.getElementsByClassName(
+      'Pane1'
+    )[0] as HTMLElement).style.height = `${
       window.innerHeight - pane2Height - 130
     }px`;
-    // @ts-ignore
-    document.getElementsByClassName('Pane2')[0].style.height = 'auto';
-    // @ts-ignore
-    document.getElementsByClassName('Resizer')[0].style.display = 'none';
-    // @ts-ignore
-    document.getElementsByClassName('PageLayout')[0].style.height = 'auto';
+    (document.getElementsByClassName('Pane2')[0] as HTMLElement).style.height =
+      'auto';
+    (document.getElementsByClassName(
+      'Resizer'
+    )[0] as HTMLElement).style.display = 'none';
+    (document.getElementsByClassName(
+      'PageLayout'
+    )[0] as HTMLElement).style.height = 'auto';
     return pane2Height;
   }
-  Array.prototype.forEach.call(elementsToHide, (el) => {
-    el.style.display = 'flex';
-  });
-  Array.prototype.forEach.call(tdToHide, (el) => {
-    el.style.display = 'table-cell';
+  Array.prototype.forEach.call(elementsToHide, (el: HTMLElement) => {
+    el.style.display =
+      el.nodeName === 'TH' || el.nodeName === 'TD' ? 'table-cell' : 'flex';
   });
   if (chartViewEl) {
     chartViewEl.style.overflow = 'hidden';
     chartViewEl.style.height = '100%';
   }
-  // @ts-ignore
-  document.querySelector(
-    '.cogs-topbar--left .cogs-topbar--item__actions'
-    // @ts-ignore
-  ).style.display = 'block';
-  // @ts-ignore
-  document.querySelector(
-    '.cogs-topbar--right .cogs-topbar--item__actions span:nth-child(1)'
-    // @ts-ignore
-  ).style.display = 'block';
-  // @ts-ignore
-  document.querySelector(
-    '.cogs-topbar--right .cogs-topbar--item__actions span:nth-child(2)'
-    // @ts-ignore
-  ).style.display = 'block';
-  // @ts-ignore
-  document.getElementsByClassName('SplitPane')[0].style.overflow = 'hidden';
-  // @ts-ignore
-  document.getElementsByClassName('SplitPane')[0].style.display = 'flex';
-  // @ts-ignore
-  document.getElementsByClassName('SplitPane')[0].style.position = 'absolute';
-  // @ts-ignore
-  document.getElementsByClassName('Pane1')[0].style.height = 'auto';
-  document.getElementsByClassName(
+  (document.getElementsByClassName(
+    'SplitPane'
+  )[0] as HTMLElement).style.overflow = 'hidden';
+  (document.getElementsByClassName(
+    'SplitPane'
+  )[0] as HTMLElement).style.display = 'flex';
+  (document.getElementsByClassName(
+    'SplitPane'
+  )[0] as HTMLElement).style.position = 'absolute';
+  (document.getElementsByClassName('Pane1')[0] as HTMLElement).style.height =
+    'auto';
+  (document.getElementsByClassName(
     'Pane2'
-    // @ts-ignore
-  )[0].style.height = `${height}px`;
-  // @ts-ignore
-  document.getElementsByClassName('Resizer')[0].style.display = 'block';
-  // @ts-ignore
-  document.getElementsByClassName('PageLayout')[0].style.height = '100vh';
+  )[0] as HTMLElement).style.height = `${height}px`;
+  (document.getElementsByClassName('Resizer')[0] as HTMLElement).style.display =
+    'block';
+  (document.getElementsByClassName(
+    'PageLayout'
+  )[0] as HTMLElement).style.height = '100vh';
   return 0;
 };

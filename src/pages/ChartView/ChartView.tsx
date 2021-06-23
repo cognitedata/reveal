@@ -295,7 +295,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
           </th>
           <th
             style={{ width: 50, paddingLeft: 0 }}
-            className="downloadChartHideTd"
+            className="downloadChartHide"
           >
             <SourceItem style={{ justifyContent: 'center' }}>
               <SourceName>P&amp;IDs</SourceName>
@@ -303,7 +303,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
           </th>
           <th
             style={{ width: 50, paddingLeft: 0 }}
-            className="downloadChartHideTd"
+            className="downloadChartHide"
           >
             <SourceItem style={{ justifyContent: 'center' }}>
               <SourceName>Style</SourceName>
@@ -311,7 +311,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
           </th>
           <th
             style={{ width: 50, paddingLeft: 0 }}
-            className="downloadChartHideTd"
+            className="downloadChartHide"
           >
             <SourceItem style={{ justifyContent: 'center' }}>
               <SourceName>Remove</SourceName>
@@ -319,7 +319,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
           </th>
           <th
             style={{ width: 50, paddingLeft: 0 }}
-            className="downloadChartHideTd"
+            className="downloadChartHide"
           >
             <SourceItem style={{ justifyContent: 'center' }}>
               <SourceName>Details</SourceName>
@@ -327,7 +327,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
           </th>
           <th
             style={{ width: 50, paddingLeft: 0 }}
-            className="downloadChartHideTd"
+            className="downloadChartHide"
           >
             <SourceItem style={{ justifyContent: 'center' }}>
               <SourceName>More</SourceName>

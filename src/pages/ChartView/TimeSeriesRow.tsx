@@ -433,7 +433,7 @@ export default function TimeSeriesRow({
       {(isWorkspaceMode || isFileViewerMode) && (
         <td
           style={{ textAlign: 'center', paddingLeft: 0 }}
-          className="downloadChartHideTd"
+          className="downloadChartHide"
         >
           <PnidButton
             timeseriesExternalId={tsExternalId}
@@ -445,7 +445,7 @@ export default function TimeSeriesRow({
       {isWorkspaceMode && (
         <td
           style={{ textAlign: 'center', paddingLeft: 0 }}
-          className="downloadChartHideTd"
+          className="downloadChartHide"
         >
           <Dropdown content={<AppearanceDropdown update={updateAppearance} />}>
             <Button
@@ -460,7 +460,7 @@ export default function TimeSeriesRow({
       {(isWorkspaceMode || isFileViewerMode) && (
         <td
           style={{ textAlign: 'center', paddingLeft: 0 }}
-          className="downloadChartHideTd"
+          className="downloadChartHide"
         >
           <Popconfirm
             onConfirm={() => remove()}
@@ -484,7 +484,7 @@ export default function TimeSeriesRow({
         <>
           <td
             style={{ textAlign: 'center', paddingLeft: 0 }}
-            className="downloadChartHideTd"
+            className="downloadChartHide"
           >
             <Button
               type="tertiary"
@@ -501,7 +501,7 @@ export default function TimeSeriesRow({
           </td>
           <td
             style={{ textAlign: 'center', paddingLeft: 0 }}
-            className="downloadChartHideTd"
+            className="downloadChartHide"
           >
             {!isFileViewerMode && (
               // <Dropdown content={<TimeSeriesMenu chartId={chart.id} id={id} />}>
