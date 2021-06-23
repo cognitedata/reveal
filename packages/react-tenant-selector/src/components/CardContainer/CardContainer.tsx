@@ -73,21 +73,13 @@ const CardContainer = ({
   validateTenant,
   enabledLoginModes,
 }: Props) => {
-  const [containerHeight, setContainerHeight] = React.useState<string>();
-  const [showProjectSelection, setShowProjectSelection] = React.useState(false);
+  const [showProjectSelection, setShowProjectSelection] =
+    React.useState<boolean>();
   const container = React.createRef<HTMLDivElement>();
 
   React.useEffect(() => {
     setShowProjectSelection(authState?.authenticated || false);
   }, [authState?.authenticated]);
-
-  React.useEffect(() => {
-    if (container?.current) {
-      if (container.current.clientHeight > 0) {
-        setContainerHeight(`${container?.current?.clientHeight}px`);
-      }
-    }
-  }, [container, authState?.error, authState?.project]);
 
   const showLoginOptions = !showProjectSelection;
 
@@ -108,21 +100,22 @@ const CardContainer = ({
   // });
 
   const ErrorDisplay = () => {
-    if (!authState?.error) {
+    if (!authState?.error || !authState?.errorMessage) {
       return null;
     }
+
     return (
       <ErrorExpandable
         title="There has been an error"
         style={{ marginTop: '30px' }}
       >
-        {authState?.errorMessage || ''}
+        {authState?.errorMessage}
       </ErrorExpandable>
     );
   };
 
   return (
-    <StyledCardContainer style={{ height: `${containerHeight}` }}>
+    <StyledCardContainer>
       <div ref={container}>
         <StyledContentWrapper>
           <TitleChanger

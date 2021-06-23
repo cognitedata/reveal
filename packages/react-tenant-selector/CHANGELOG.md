@@ -1,3 +1,9 @@
+## 1.2.13 June 2021
+
+- Update loading states of buttons
+- Add extra error handling to initial login
+- Fix card auto resize (by removing it)
+
 ## 1.2.12 June 2021
 
 - Add `customExpiry` to fakeIdp options

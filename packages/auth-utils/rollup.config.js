@@ -23,7 +23,7 @@ export default [
       // with react 17 we are getting Unresolved dependencies for react/jsx-runtime
       'react/jsx-runtime',
       'lodash/isFunction',
-      'lodash/noop',
+      'lodash/isString',
       'lodash/isObject',
     ],
     plugins: [

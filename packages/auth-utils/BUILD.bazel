@@ -35,11 +35,14 @@ generate_package_json_helpers(
 # Dependencies from package.json
 DEPENDENCIES = [
     "@npm//@cognite/sdk",
+    "@npm//lodash",
     "//packages/storage",
 ]
 
 # Type dependencies from package.json
-TYPE_DEPENDENCIES = []
+TYPE_DEPENDENCIES = [
+    "@npm//@types/lodash",
+]
 
 # Dev dependencies from package.json
 DEV_DEPENDENCIES = [

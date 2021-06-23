@@ -1,5 +1,6 @@
 import { CogniteClient } from '@cognite/sdk';
 import { getFromLocalStorage } from '@cognite/storage';
+import isString from 'lodash/isString';
 
 import { getFlow, saveFlow, log } from './utils';
 import {
@@ -222,11 +223,15 @@ export class CogniteAuth {
           },
         })
         .then(() => {
-          this.resetError();
           return this.client.authenticate();
         })
         .then((response) => {
           this.state.authenticated = response;
+
+          if (!this.state.authenticated) {
+            throw new Error('Invalid CDF token.');
+          }
+
           return this.getCDFToken();
         })
         .then((token) => {
@@ -238,6 +243,8 @@ export class CogniteAuth {
               accessToken,
               authFlow: 'AZURE_AD',
             };
+          } else {
+            throw new Error('No token found');
           }
         })
         .catch((error) => {
@@ -419,9 +426,13 @@ export class CogniteAuth {
     };
   }
 
-  private setError(message: string) {
+  private setError(message: string | Error) {
     this.state.error = true;
-    this.state.errorMessage = message;
+    if (isString(message)) {
+      this.state.errorMessage = message;
+    } else {
+      this.state.errorMessage = message.message;
+    }
   }
 
   private resetError() {

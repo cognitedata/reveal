@@ -24,7 +24,10 @@ const LoginWithFakeIDP: React.FC<Props> = ({
   handleSubmit,
   disabled,
 }) => {
-  const handleClick = () =>
+  const [loading, setLoading] = React.useState(false);
+
+  const handleClick = () => {
+    setLoading(true);
     axios
       .post(`http://localhost:8200/login/token`, {
         fakeApplicationId,
@@ -57,6 +60,7 @@ const LoginWithFakeIDP: React.FC<Props> = ({
           'There has been an error, do you have the FakeIdP service running?'
         );
       });
+  };
 
   return (
     <>
@@ -65,6 +69,7 @@ const LoginWithFakeIDP: React.FC<Props> = ({
         size="default"
         type="secondary"
         disabled={disabled}
+        loading={loading}
         onClick={handleClick}
       >
         Login with Fake IDP ({name || fakeApplicationId})
