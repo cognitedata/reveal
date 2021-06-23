@@ -17,12 +17,8 @@ be incrementally updated to avoid blocking the viewer.
 # Simple, static node collection
 
 ```js runnable
-
 // import { NodeCollectionBase, DefaultNodeAppearance } from '@cognite/reveal';
 
-// Note! ES6 classes are not supported in this documentation, but
-// the example below corresponds to the following:
-/*
 class MyNodeCollection extends NodeCollectionBase {
   isLoading = false;
 
@@ -43,27 +39,11 @@ class MyNodeCollection extends NodeCollectionBase {
     this._indexSet.clear();
     this.notifyChanged();
   }
-
-  serialize() { throw new Error('Not supported'); }
-};
+}
 
 const myNodes = new MyNodeCollection(model);
 model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
 model.assignStyledNodeCollection(myNodes, { renderGhosted: false, color: [40, 200, 20] } );
-*/
-
-const mySet = new NodeCollectionBase();
-mySet.getIndexSet = () => {
-  const indexSet = new IndexSet();
-  for (let i = 0; i < model.nodeCount; i += 10) {
-    indexSet.add(i);
-  }
-  return indexSet;
-};
-mySet.clear = () => { throw new Error('Not supported'); }
-
-model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
-model.assignStyledNodeCollection(mySet, { renderGhosted: false, color: [40, 200, 20] } );
 ```
 
 See also [guide on (de)serializing node collections](cad-save-viewerstate#serializing-and-deserializing-custom-node-colletions).
