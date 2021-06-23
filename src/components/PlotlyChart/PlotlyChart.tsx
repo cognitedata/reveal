@@ -267,7 +267,6 @@ const PlotlyChartComponent = ({
             ? datapoint.average
             : (datapoint as DoubleDatapoint).value
         ),
-
         hovertemplate:
           '%{y} &#183; <span style="color:#8c8c8c">%{fullData.name}</span><extra></extra>',
         hoverlabel: {
@@ -286,16 +285,16 @@ const PlotlyChartComponent = ({
     ({ name, color, mode, width, dash, datapoints, outdatedData }, index) => {
       return {
         type: 'scatter',
-        mode: mode || 'lines',
-        opacity: outdatedData ? 0.5 : 1,
+        mode: mode || 'markers',
+        opacity: 0.1,
         name,
         marker: {
-          color: 'red',
-          opacity: 0.2,
+          color,
+          opacity: 0.1,
         },
         // TODOS:
 
-        line: { color: 'red', width: width || 1, dash: dash || 'solid' },
+        line: { color, width: width || 1, dash: dash || 'solid' },
         yaxis: `y${index !== 0 ? index + 1 : ''}`,
         x: (datapoints as (
           | Datapoints
@@ -311,14 +310,56 @@ const PlotlyChartComponent = ({
             ? datapoint.min
             : (datapoint as DoubleDatapoint).value
         ),
+        fill: 'tonextx',
 
         hovertemplate:
-          '%{y} &#183; <span style="color:#8c8c8c">%{fullData.name}</span><extra></extra>',
+          '%{y} &#183; <span style="color:#8c8c8c">Min value: %{fullData.name}</span><extra></extra>',
         hoverlabel: {
-          bgcolor: 'red',
+          bgcolor: '#ffffff',
           bordercolor: color,
           font: {
-            color: '#572525',
+            color: '#333333',
+          },
+        },
+      };
+    }
+  );
+  const maxData = seriesData.map(
+    ({ name, color, mode, width, dash, datapoints, outdatedData }, index) => {
+      return {
+        type: 'scatter',
+        mode: mode || 'markers',
+        opacity: 0.1,
+        name,
+        marker: {
+          color,
+          opacity: 0.1,
+        },
+
+        line: { color, width: width || 1, dash: dash || 'solid' },
+        yaxis: `y${index !== 0 ? index + 1 : ''}`,
+        x: (datapoints as (
+          | Datapoints
+          | DatapointAggregate
+        )[]).map((datapoint) =>
+          'timestamp' in datapoint ? new Date(datapoint.timestamp) : null
+        ),
+        y: (datapoints as (
+          | Datapoints
+          | DatapointAggregate
+        )[]).map((datapoint) =>
+          'max' in datapoint
+            ? datapoint.max
+            : (datapoint as DoubleDatapoint).value
+        ),
+        fill: 'tonextx',
+        hovertemplate:
+          '%{y} &#183; <span style="color:#8c8c8c">Max value: %{fullData.name}</span><extra></extra>',
+        hoverlabel: {
+          bgcolor: '#ffffff',
+          bordercolor: color,
+          font: {
+            color: '#333333',
           },
         },
       };
@@ -366,7 +407,7 @@ const PlotlyChartComponent = ({
   );
 
   // TODOS: correct to concat?
-  const data = average.concat(minData);
+  const data = average.concat(minData, maxData);
 
   const showYAxis = !isInSearch && !isPreview && isYAxisShown;
   const showAdjustButton = showYAxis && seriesData.length > 0;
@@ -446,7 +487,6 @@ const PlotlyChartComponent = ({
       visible: showYAxis,
       linecolor: color,
       linewidth: 1,
-
       tickcolor: color,
       tickwidth: 1,
       tickvals,
@@ -518,6 +558,8 @@ const PlotlyChartComponent = ({
     }
   });
 
+  console.log('DATA: ', data);
+  console.log('layout: ', layout);
   const config = {
     staticPlot: isPreview || isLoading || data.length === 0,
     autosize: true,
