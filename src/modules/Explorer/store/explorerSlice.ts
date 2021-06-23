@@ -108,8 +108,8 @@ const explorerSlice = createSlice({
     setExplorerSelectedFileId(state, action: PayloadAction<number>) {
       state.selectedFileId = action.payload;
     },
-    toggleExplorerFileMetadata(state) {
-      state.showFileMetadata = !state.showFileMetadata;
+    hideExplorerFileMetadata(state) {
+      state.showFileMetadata = false;
     },
     showExplorerFileMetadata(state) {
       state.showFileMetadata = true;
@@ -160,7 +160,7 @@ export const {
   setExplorerFiles,
   setExplorerFileSelectState,
   setExplorerSelectedFileId,
-  toggleExplorerFileMetadata,
+  hideExplorerFileMetadata,
   showExplorerFileMetadata,
   setExplorerQueryString,
   setExplorerFilter,

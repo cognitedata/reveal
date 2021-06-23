@@ -5,7 +5,7 @@ import { margin } from 'src/cogs-variables';
 import { Body, Detail, Tabs } from '@cognite/cogs.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { addUploadedFile, selectAllFiles } from 'src/modules/Common/filesSlice';
+import { addFileInfo, selectAllFiles } from 'src/modules/Common/filesSlice';
 import { pushMetric } from 'src/utils/pushMetric';
 import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
 
@@ -23,7 +23,7 @@ export default function UploadStep() {
 
   const onUploadSuccess = React.useCallback(
     (file) => {
-      dispatch(addUploadedFile(file));
+      dispatch(addFileInfo(file));
       dispatch(RetrieveAnnotations([file.id]));
     },
     [dispatch]

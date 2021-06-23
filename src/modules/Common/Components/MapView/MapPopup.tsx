@@ -34,23 +34,16 @@ export const MapPopup = ({
     return <div />;
   }
   const dispatch = useDispatch();
-
-  const fileInfo = {
-    id: item.id,
-    uploaded: item.uploaded,
-    mimeType: item.mimeType,
-  } as FileInfo;
+  const { menuActions, ...fileInfo } = item;
 
   const handleReview = () => {
-    if (item.menu?.onReviewClick) {
-      item.menu.onReviewClick(item.id);
-    }
+    if (menuActions.onReviewClick)
+      menuActions.onReviewClick(fileInfo as FileInfo);
   };
 
-  const handleMetadataEdit = () => {
-    if (item.menu?.showMetadataPreview) {
-      item.menu.showMetadataPreview(item.id);
-    }
+  const handleFileDetails = () => {
+    if (menuActions.onFileDetailsClicked)
+      menuActions.onFileDetailsClicked(fileInfo as FileInfo);
   };
 
   const handleFileDelete = () => {
@@ -78,7 +71,7 @@ export const MapPopup = ({
     <MapPopupContainer style={style}>
       <div className="preview">
         <div className="image">
-          <Thumbnail fileInfo={fileInfo} />
+          <Thumbnail fileInfo={fileInfo as FileInfo} />
         </div>
         <div className="fileDetails">
           <table>
@@ -128,7 +121,7 @@ export const MapPopup = ({
             disabled={reviewDisabled}
             handleReview={handleReview}
             handleFileDelete={handleFileDelete}
-            handleMetadataEdit={handleMetadataEdit}
+            handleFileDetails={handleFileDetails}
           />{' '}
         </div>
       </div>

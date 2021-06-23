@@ -33,6 +33,7 @@ import { Detail } from '@cognite/cogs.js';
 import { PageBasedGridView } from 'src/modules/Common/Components/GridView/PageBasedGridView';
 import { VisionMode } from 'src/constants/enums/VisionEnums';
 import { setSelectedAllFiles } from 'src/store/commonActions';
+import { FileInfo } from '@cognite/cdf-sdk-singleton';
 
 export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
   const dispatch = useDispatch();
@@ -57,30 +58,30 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
     selectAllSelectedIds(state.filesSlice)
   );
 
-  const data: ResultData[] = useMemo(() => {
-    return processFiles.map((file) => {
-      const menuActions: FileActions = {
-        // TODO: should onDelete be added here as well?
-        showMetadataPreview: (fileId: number) => {
-          dispatch(setSelectedFileId(fileId));
-          dispatch(resetEditHistory());
-          dispatch(showFileMetadataPreview());
-        },
-        onReviewClick: (fileId: number) => {
-          history.push(
-            getParamLink(workflowRoutes.review, ':fileId', String(fileId)),
-            { from: 'process' }
-          );
-        },
-      };
+  const menuActions: FileActions = {
+    // TODO: should onDelete be added here as well?
+    onFileDetailsClicked: (fileInfo: FileInfo) => {
+      dispatch(setSelectedFileId(fileInfo.id));
+      dispatch(resetEditHistory());
+      dispatch(showFileMetadataPreview());
+    },
+    onReviewClick: (fileInfo: FileInfo) => {
+      history.push(
+        getParamLink(workflowRoutes.review, ':fileId', String(fileInfo.id)),
+        { from: 'process' }
+      );
+    },
+  };
 
-      return {
+  const data: ResultData[] = useMemo(
+    () =>
+      processFiles.map((file) => ({
         ...file,
-        menu: menuActions,
+        menuActions,
         mimeType: file.mimeType || '',
-      };
-    });
-  }, [processFiles]);
+      })),
+    [processFiles, menuActions]
+  );
 
   const handleItemClick = (
     item: TableDataItem,

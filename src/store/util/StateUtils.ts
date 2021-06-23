@@ -7,9 +7,9 @@ import { FileState } from 'src/modules/Common/filesSlice';
 export const createFileState = (file: FileInfo): FileState => {
   return {
     ...file,
-    createdTime: file.createdTime.getTime(),
+    createdTime: file.createdTime?.getTime(),
     uploadedTime: file.uploadedTime?.getTime(),
-    lastUpdatedTime: file.lastUpdatedTime.getTime(),
+    lastUpdatedTime: file.lastUpdatedTime?.getTime(),
     sourceCreatedTime: file.sourceCreatedTime?.getTime(),
     linkedAnnotations: [],
   };

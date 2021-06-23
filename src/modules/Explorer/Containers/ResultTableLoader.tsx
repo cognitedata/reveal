@@ -18,15 +18,18 @@ import {
   getParamLink,
   workflowRoutes,
 } from 'src/modules/Workflow/workflowRoutes';
-import { ResultData } from 'src/modules/Common/types';
+import { FileActions } from 'src/modules/Common/types';
 import { EXPLORER_FILE_FETCH_LIMIT } from 'src/constants/ExplorerConstants';
 import { totalFileCount } from 'src/api/file/aggregate';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { fetchFilesById } from 'src/store/thunks/fetchFilesById';
+import { addFileInfo } from 'src/modules/Common/filesSlice';
 import {
   selectExplorerAllFiles,
   setExplorerFiles,
+  setExplorerSelectedFileId,
+  showExplorerFileMetadata,
 } from '../store/explorerSlice';
 import { searchFilesWithValidMimeTypes } from '../../../api/file/searchFilesWithValidMimeTypes';
 
@@ -49,16 +52,31 @@ export const ResultTableLoader = <T extends Resource>({
     selectExplorerAllFiles(explorerReducer)
   );
 
-  const tableData = useMemo(() => {
-    const onReviewClick = (file: FileInfo) => {
-      dispatch(fetchFilesById([{ id: file.id }]));
+  const menuActions: FileActions = {
+    // TODO: should onDelete be added here as well?
+    onFileDetailsClicked: (fileInfo: FileInfo) => {
+      dispatch(addFileInfo(fileInfo as FileInfo));
+      dispatch(setExplorerSelectedFileId(fileInfo.id));
+      dispatch(showExplorerFileMetadata());
+    },
+    onReviewClick: (fileInfo: FileInfo) => {
+      dispatch(fetchFilesById([{ id: fileInfo.id }]));
       history.push(
-        getParamLink(workflowRoutes.review, ':fileId', String(file.id)),
+        getParamLink(workflowRoutes.review, ':fileId', String(fileInfo.id)),
         { from: 'explorer' }
       );
-    };
-    return populateTableData(explorerFiles, onReviewClick);
-  }, [explorerFiles]);
+    },
+  };
+
+  const tableData = useMemo(
+    () =>
+      explorerFiles.map((file) => ({
+        ...file,
+        menuActions,
+        mimeType: file.mimeType || '',
+      })),
+    [explorerFiles, menuActions]
+  );
 
   useEffect(() => {
     (async () => {
@@ -78,22 +96,4 @@ export const ResultTableLoader = <T extends Resource>({
   }, [props.query, props.filter]);
 
   return <>{children({ data: tableData, totalCount })}</>;
-};
-
-const populateTableData = (
-  files: FileInfo[],
-  onReviewClick: (file: FileInfo) => void
-): ResultData[] => {
-  return files.map((file: any) => {
-    const menuActions = {
-      onReviewClick: () => {
-        onReviewClick(file);
-      },
-    };
-    return {
-      ...file,
-      menu: menuActions,
-      mimeType: file.mimeType || '',
-    };
-  });
 };

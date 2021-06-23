@@ -12,7 +12,7 @@ import { ExplorerSearchResults } from 'src/modules/Explorer/Containers/ExplorerS
 import { FileDetails } from 'src/modules/FileDetails/Containers/FileDetails';
 import { TableDataItem, ViewMode } from 'src/modules/Common/types';
 import { ExplorerToolbar } from 'src/modules/Explorer/Containers/ExplorerToolbar';
-import { addUploadedFile } from 'src/modules/Common/filesSlice';
+import { addFileInfo } from 'src/modules/Common/filesSlice';
 import { FileUploadModal } from 'src/modules/Common/Components/FileUploaderModal/FileUploaderModal';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import { StatusToolBar } from 'src/modules/Process/Containers/StatusToolBar';
@@ -31,8 +31,8 @@ import {
   setExplorerFilter,
   setExplorerQueryString,
   setExplorerSelectedFileId,
+  hideExplorerFileMetadata,
   showExplorerFileMetadata,
-  toggleExplorerFileMetadata,
   toggleExplorerFilterView,
   selectExplorerSelectedFileIds,
   setExplorerFileUploadModalVisibility,
@@ -80,10 +80,10 @@ const Explorer = () => {
 
   const handleItemClick = (
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    { menu, ...file }: TableDataItem,
+    { menuActions, ...file }: TableDataItem,
     showFileDetailsOnClick: boolean = true
   ) => {
-    dispatch(addUploadedFile(file as FileInfo));
+    dispatch(addFileInfo(file as FileInfo));
     dispatch(setExplorerSelectedFileId(file.id));
     if (showFileDetailsOnClick) {
       dispatch(showExplorerFileMetadata());
@@ -96,13 +96,13 @@ const Explorer = () => {
 
   const onUploadSuccess = React.useCallback(
     (file) => {
-      dispatch(addUploadedFile(file));
+      dispatch(addFileInfo(file));
     },
     [dispatch]
   );
 
   const handleMetadataClose = () => {
-    dispatch(toggleExplorerFileMetadata());
+    dispatch(hideExplorerFileMetadata());
   };
 
   const onUpload = () => {

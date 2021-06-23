@@ -133,7 +133,7 @@ const filesSlice = createSlice({
         });
       },
     },
-    addUploadedFile: {
+    addFileInfo: {
       prepare: (file: FileInfo) => {
         return { payload: createFileState(file) };
       },
@@ -230,7 +230,7 @@ export const {
   setFiles,
   addFiles,
   setUploadedFiles,
-  addUploadedFile,
+  addFileInfo,
   setDataSetIds,
   setExtractExif,
   setAllFilesStatus,

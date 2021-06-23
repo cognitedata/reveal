@@ -16,8 +16,8 @@ import { Button, Title, Modal } from '@cognite/cogs.js';
 import { DetectionModelSelect } from 'src/modules/Process/Components/DetectionModelSelect';
 import { isVideo } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
 import {
+  addFileInfo,
   addFiles,
-  addUploadedFile,
   FileState,
   selectAllFiles,
 } from 'src/modules/Common/filesSlice';
@@ -88,7 +88,7 @@ export const ProcessToolBar = () => {
   const [isModalOpen, setModalOpen] = useState(false);
   const onUploadSuccess = React.useCallback(
     (file) => {
-      dispatch(addUploadedFile(file));
+      dispatch(addFileInfo(file));
     },
     [dispatch]
   );
@@ -123,7 +123,10 @@ export const ProcessToolBar = () => {
   const handleExploreSearchChange = (text: string) => {
     dispatch(setExplorerQueryString(text));
   };
-  const handleExplorerModalItemClick = ({ menu, ...file }: TableDataItem) => {
+  const handleExplorerModalItemClick = ({
+    menuActions,
+    ...file
+  }: TableDataItem) => {
     dispatch(setExplorerSelectedFileId(file.id));
   };
   const handleExploreModalRowSelect = (

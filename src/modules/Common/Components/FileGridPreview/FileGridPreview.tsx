@@ -38,23 +38,16 @@ export const FileGridPreview = ({
   onSelect?: (item: TableDataItem, selected: boolean) => void;
 }) => {
   const dispatch = useDispatch();
-
-  const fileInfo = {
-    id: item.id,
-    uploaded: item.uploaded,
-    mimeType: item.mimeType,
-  } as FileInfo;
+  const { menuActions, ...fileInfo } = item;
 
   const handleReview = () => {
-    if (item.menu?.onReviewClick) {
-      item.menu.onReviewClick(item.id);
-    }
+    if (menuActions.onReviewClick)
+      menuActions.onReviewClick(fileInfo as FileInfo);
   };
 
-  const handleMetadataEdit = () => {
-    if (item.menu?.showMetadataPreview) {
-      item.menu.showMetadataPreview(item.id);
-    }
+  const handleFileDetails = () => {
+    if (menuActions.onFileDetailsClicked)
+      menuActions.onFileDetailsClicked(fileInfo as FileInfo);
   };
 
   const handleFileDelete = () => {
@@ -82,7 +75,7 @@ export const FileGridPreview = ({
   return (
     <PreviewCell style={style}>
       <div className="preview">
-        <Thumbnail fileInfo={fileInfo} />
+        <Thumbnail fileInfo={fileInfo as FileInfo} />
         {onSelect && (
           <SelectionCheckbox
             dataItem={item}
@@ -98,7 +91,7 @@ export const FileGridPreview = ({
             disabled={reviewDisabled}
             handleReview={showReviewButton ? undefined : handleReview} // skip menu item if button is shown
             handleFileDelete={handleFileDelete}
-            handleMetadataEdit={handleMetadataEdit}
+            handleFileDetails={handleFileDetails}
           />
         </MenuContainer>
         <div className="footer">

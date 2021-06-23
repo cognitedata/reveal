@@ -37,15 +37,16 @@ export interface AnnotationsBadgeStatuses {
 }
 
 export type FileActions = {
-  showMetadataPreview: (fileId: number) => void;
-  onReviewClick?: (fileId: number) => void;
+  onFileDetailsClicked: (fileInfo: FileInfo) => void;
+  onReviewClick?: (fileInfo: FileInfo) => void;
 };
 
 export type TableDataItem = Pick<
   FileInfo,
   'id' | 'mimeType' | 'name' | 'sourceCreatedTime' | 'geoLocation' | 'uploaded'
 > & {
-  menu: FileActions;
+  // menu: FileActions;
+  menuActions: FileActions;
 };
 
 export type ResultData = TableDataItem;

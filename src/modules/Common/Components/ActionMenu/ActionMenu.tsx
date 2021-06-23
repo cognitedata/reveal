@@ -17,8 +17,12 @@ interface ActionMenuProps {
   disabled?: boolean;
   handleReview?: () => void;
   handleFileDelete: () => void;
-  handleMetadataEdit: () => void;
+  handleFileDetails: () => void;
 }
+const handleClick = (evt: any) => {
+  // dummy handler to stop event propagation
+  evt.stopPropagation();
+};
 
 export const ActionMenu = ({
   buttonType,
@@ -26,15 +30,16 @@ export const ActionMenu = ({
   disabled,
   handleReview,
   handleFileDelete,
-  handleMetadataEdit,
+  handleFileDetails,
 }: ActionMenuProps) => {
   const MenuContent = (
     <Menu
       style={{
         color: 'black' /* typpy styles make color to be white here ... */,
       }}
+      onClick={handleClick}
     >
-      <Menu.Item onClick={handleMetadataEdit}>
+      <Menu.Item onClick={handleFileDetails}>
         <Icon type="ResourceDocuments" style={{ marginRight: '17px' }} />
         File details
         {showExifIcon && (
@@ -64,11 +69,6 @@ export const ActionMenu = ({
       </Popconfirm>
     </Menu>
   );
-
-  const handleClick = (evt: any) => {
-    // dummy handler to stop event propagation
-    evt.stopPropagation();
-  };
   return (
     <Dropdown content={MenuContent}>
       <Button
