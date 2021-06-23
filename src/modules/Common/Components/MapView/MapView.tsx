@@ -176,6 +176,7 @@ export const MapView = (props: FileExplorerTableProps) => {
                   (element: TableDataItem) => element.id === selectedFile!.id
                 )}
                 onClose={() => setPopupState('close')}
+                actionDisabled={!!props.selectedRowIds.length}
               />
             </Popup>
           ) : undefined}

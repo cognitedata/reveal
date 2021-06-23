@@ -78,6 +78,7 @@ export const ExplorerSearchResults = ({
                     renderCell={(cellProps: any) => (
                       <FileGridPreview
                         mode={VisionMode.Explore}
+                        actionDisabled={!!selectedFileIds.length}
                         {...cellProps}
                       />
                     )}

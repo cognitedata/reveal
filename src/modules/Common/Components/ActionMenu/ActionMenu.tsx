@@ -14,7 +14,8 @@ import { ExifIcon } from '../../Containers/FileTableRenderers/NameRenderer';
 interface ActionMenuProps {
   buttonType?: string;
   showExifIcon?: boolean;
-  disabled?: boolean;
+  reviewDisabled?: boolean;
+  actionDisabled?: boolean;
   handleReview?: () => void;
   handleFileDelete: () => void;
   handleFileDetails: () => void;
@@ -27,7 +28,8 @@ const handleClick = (evt: any) => {
 export const ActionMenu = ({
   buttonType,
   showExifIcon,
-  disabled,
+  reviewDisabled,
+  actionDisabled,
   handleReview,
   handleFileDelete,
   handleFileDetails,
@@ -51,7 +53,7 @@ export const ActionMenu = ({
         )}
       </Menu.Item>
       {handleReview && (
-        <Menu.Item onClick={handleReview} disabled={disabled}>
+        <Menu.Item onClick={handleReview} disabled={reviewDisabled}>
           <Icon type="Edit" style={{ marginRight: '17px' }} />
           Review file
         </Menu.Item>
@@ -62,7 +64,7 @@ export const ActionMenu = ({
         onConfirm={handleFileDelete}
         content="Are you sure you want to permanently delete this file?"
       >
-        <Menu.Item disabled={disabled}>
+        <Menu.Item disabled={reviewDisabled}>
           <Icon type="Trash" style={{ marginRight: '17px' }} />
           Delete
         </Menu.Item>
@@ -70,13 +72,14 @@ export const ActionMenu = ({
     </Menu>
   );
   return (
-    <Dropdown content={MenuContent}>
+    <Dropdown content={MenuContent} disabled={actionDisabled}>
       <Button
         type={(buttonType as ButtonType) || 'ghost'}
         variant={buttonType ? 'inverted' : 'default'}
         icon="MoreOverflowEllipsisHorizontal"
         aria-label="dropdown button"
         onClick={handleClick}
+        disabled={actionDisabled}
       />
     </Dropdown>
   );

@@ -28,6 +28,7 @@ export const FileGridPreview = ({
   item,
   style,
   mode,
+  actionDisabled,
   onSelect,
   selected,
 }: {
@@ -35,6 +36,7 @@ export const FileGridPreview = ({
   item: TableDataItem;
   style?: React.CSSProperties;
   mode: VisionMode;
+  actionDisabled: boolean;
   onSelect?: (item: TableDataItem, selected: boolean) => void;
 }) => {
   const dispatch = useDispatch();
@@ -88,7 +90,8 @@ export const FileGridPreview = ({
           <ActionMenu
             buttonType="primary"
             showExifIcon={fileDetails?.geoLocation !== undefined}
-            disabled={reviewDisabled}
+            reviewDisabled={reviewDisabled}
+            actionDisabled={actionDisabled}
             handleReview={showReviewButton ? undefined : handleReview} // skip menu item if button is shown
             handleFileDelete={handleFileDelete}
             handleFileDetails={handleFileDetails}

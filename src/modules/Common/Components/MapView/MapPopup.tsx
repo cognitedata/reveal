@@ -25,9 +25,11 @@ export const MapPopup = ({
   item,
   style,
   onClose,
+  actionDisabled,
 }: {
   item: TableDataItem | undefined;
   style?: React.CSSProperties;
+  actionDisabled: boolean;
   onClose: () => void;
 }) => {
   if (!item) {
@@ -118,11 +120,12 @@ export const MapPopup = ({
         <div className="action">
           <ActionMenu
             showExifIcon={fileDetails?.geoLocation !== undefined}
-            disabled={reviewDisabled}
+            reviewDisabled={reviewDisabled}
+            actionDisabled={actionDisabled}
             handleReview={handleReview}
             handleFileDelete={handleFileDelete}
             handleFileDetails={handleFileDetails}
-          />{' '}
+          />
         </div>
       </div>
     </MapPopupContainer>

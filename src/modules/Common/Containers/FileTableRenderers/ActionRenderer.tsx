@@ -11,11 +11,17 @@ import {
 import { DeleteAnnotationsByFileIds } from 'src/store/thunks/DeleteAnnotationsByFileIds';
 import { selectUpdatedFileDetails } from 'src/modules/FileDetails/fileDetailsSlice';
 import { VisionMode } from 'src/constants/enums/VisionEnums';
+import { selectExplorerSelectedFileIds } from 'src/modules/Explorer/store/explorerSlice';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import { ReviewButton } from '../../Components/ReviewButton/ReviewButton';
 import { ActionMenu } from '../../Components/ActionMenu/ActionMenu';
+import { selectAllSelectedFiles } from '../../filesSlice';
 
-export function ActionRenderer(rowData: TableDataItem, mode: VisionMode) {
+export function ActionRenderer(
+  rowData: TableDataItem,
+  mode: VisionMode,
+  actionDisabled: boolean
+) {
   const dispatch = useDispatch();
   const { menuActions, ...fileInfo } = rowData;
 
@@ -60,7 +66,8 @@ export function ActionRenderer(rowData: TableDataItem, mode: VisionMode) {
       )}
       <ActionMenu
         showExifIcon={fileDetails?.geoLocation !== undefined}
-        disabled={reviewDisabled}
+        actionDisabled={actionDisabled}
+        reviewDisabled={reviewDisabled}
         handleReview={showReviewButton ? undefined : handleReview} // skip menu item if button is shown
         handleFileDelete={handleFileDelete}
         handleFileDetails={handleFileDetails}
@@ -70,11 +77,18 @@ export function ActionRenderer(rowData: TableDataItem, mode: VisionMode) {
 }
 
 export function ActionRendererExplorer({ rowData }: CellRenderer) {
-  return ActionRenderer(rowData, VisionMode.Explore);
+  const filesSelected = useSelector(
+    (state: RootState) =>
+      !!selectExplorerSelectedFileIds(state.explorerReducer).length
+  );
+  return ActionRenderer(rowData, VisionMode.Explore, filesSelected);
 }
 
 export function ActionRendererProcess({ rowData }: CellRenderer) {
-  return ActionRenderer(rowData, VisionMode.Contextualize);
+  const filesSelected = useSelector(
+    (state: RootState) => !!selectAllSelectedFiles(state.filesSlice).length
+  );
+  return ActionRenderer(rowData, VisionMode.Contextualize, filesSelected);
 }
 
 export const Action = styled.div`

@@ -143,7 +143,11 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
           onSelect={handleRowSelect}
           data={data}
           renderCell={(cellProps: any) => (
-            <FileGridPreview mode={VisionMode.Contextualize} {...cellProps} />
+            <FileGridPreview
+              mode={VisionMode.Contextualize}
+              actionDisabled={!!selectedFileIds.length}
+              {...cellProps}
+            />
           )}
           totalCount={data.length}
           selectedIds={selectedFileIds}
