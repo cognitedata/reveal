@@ -1,17 +1,17 @@
 import { FileFilterProps, FileInfo, sdkv3 } from '@cognite/cdf-sdk-singleton';
 import { VALID_MIME_TYPES } from 'src/constants/validMimeTypes';
+import { concat, defer, from, lastValueFrom } from 'rxjs';
+import { last, scan, takeWhile } from 'rxjs/operators';
 
 const validMimeTypes = VALID_MIME_TYPES.map((mimeType) => mimeType.type);
 
 export const searchFilesWithValidMimeTypes = async (
-  filter?: FileFilterProps,
-  search?: {
+  filter: FileFilterProps,
+  search: {
     name?: string;
   },
-  limit?: number
+  limit: number
 ): Promise<FileInfo[]> => {
-  const serchResults: FileInfo[] = [];
-
   // if user specify a mime type
   if (filter?.mimeType) {
     return sdkv3.files.search({
@@ -22,15 +22,28 @@ export const searchFilesWithValidMimeTypes = async (
   }
 
   // if user do not specify a mime type
-  await Promise.all(
-    validMimeTypes.map(async (mimeType) => {
-      const fileSearchResult = await sdkv3.files.search({
-        filter: { ...filter, mimeType },
-        search,
-        limit,
-      });
-      serchResults.push(...fileSearchResult);
-    })
+  const requestObservables = validMimeTypes.map((mimeType) => {
+    return defer(() =>
+      from(
+        sdkv3.files.search({
+          filter: { ...filter, mimeType },
+          search,
+          limit,
+        })
+      )
+    );
+  });
+  const searchResultsObs = concat(...requestObservables).pipe(
+    scan((acc, res) => {
+      return acc.concat(res);
+    }),
+    takeWhile((res) => {
+      return res.length < limit;
+    }, true),
+    last()
   );
-  return serchResults.slice(0, limit);
+
+  const searchResults = await lastValueFrom(searchResultsObs);
+
+  return searchResults.slice(0, limit);
 };

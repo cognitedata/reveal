@@ -44,6 +44,7 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "^4.0.3",
     "reselect": "^4.0.0",
+    "rxjs": "^7.1.0",
     "single-spa-react": "^3.1.0",
     "styled-components": "^5.2.1",
     "swiper": "^6.5.9",
