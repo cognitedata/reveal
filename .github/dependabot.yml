@@ -54,3 +54,7 @@ updates:
     commit-message:
       prefix: chore
       include: scope
+    labels:
+      - 'dependencies'
+      - 'auto-merge'
+      - 'auto-update'
