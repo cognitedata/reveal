@@ -23,7 +23,6 @@ export const SelectColumnsMenu: React.FC<Props> = ({
         <Menu.Item key={name}>
           <Checkbox
             name={name}
-            id={name}
             onChange={(nextState: boolean) => onChange(name, nextState)}
             checked={selectedColumnNames.includes(name)}
             disabled={config.mandatoryColumns.includes(name)}
