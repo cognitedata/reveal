@@ -133,7 +133,7 @@
     "eslint-plugin-testing-library": "^4.6.0",
     "fetch-mock": "^9.11.0",
     "husky": "^6.0.0",
-    "jest-css-modules-transform": "^2.1.1",
+    "jest-css-modules-transform": "^4.2.1",
     "jest-environment-jsdom-sixteen": "^2.0.0",
     "jest-junit": "^12.2.0",
     "jest-localstorage-mock": "^2.4.3",
