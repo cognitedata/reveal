@@ -23,19 +23,41 @@ export function getColor(value: number) {
   return availableColors[modulo(value, availableColors.length)];
 }
 
-export function createColorGetter() {
-  const availableColorsKeyValue = window.localStorage.getItem(
-    availableColorsKey
-  );
-  let count = -1;
-  if (availableColorsKeyValue) {
-    count = +availableColorsKeyValue;
-  }
-  return () => {
-    count += 1;
-    window.localStorage.setItem(availableColorsKey, count.toString());
-    return getColor(count);
-  };
+function getNextColorValue(primaryObj: string[]) {
+  const primaryValues = Object.values(primaryObj);
+  const parsedPrimaryValues = primaryValues.map(Number);
+  const maxValue = Math.max(...parsedPrimaryValues) || 0;
+
+  return maxValue + 1;
 }
 
-export const getEntryColor = createColorGetter();
+export function getEntryColor(primaryId: string, secondaryId: string) {
+  const availableColorsKeyValue = JSON.parse(
+    window.localStorage.getItem(availableColorsKey) || '{}'
+  );
+  let value = 0;
+
+  if (
+    !availableColorsKeyValue[primaryId] ||
+    !availableColorsKeyValue[primaryId][secondaryId]
+  ) {
+    value = availableColorsKeyValue[primaryId]
+      ? getNextColorValue(availableColorsKeyValue[primaryId])
+      : 0;
+
+    window.localStorage.setItem(
+      availableColorsKey,
+      JSON.stringify({
+        ...availableColorsKeyValue,
+        [primaryId]: {
+          ...availableColorsKeyValue[primaryId],
+          [secondaryId]: value.toString(),
+        },
+      })
+    );
+  } else {
+    value = availableColorsKeyValue[primaryId][secondaryId];
+  }
+
+  return getColor(value);
+}
