@@ -18,6 +18,7 @@ import { CogniteClientNodeIdAndTreeIndexMapper } from '../../utilities/networkin
 import { NodeCollectionBase } from '../../datamodels/cad/styling';
 import { NodeAppearance } from '../../datamodels/cad';
 import { NodeTransformProvider } from '../../datamodels/cad/styling/NodeTransformProvider';
+import assert from 'assert';
 
 /**
  * Represents a single 3D CAD model loaded from CDF.
@@ -238,13 +239,14 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * node defined by a tree index.
    *
    * @param treeIndex     Tree index of node to find ancestor tree index range for.
-   * @param ancestorLevel What ancestor level to find. 0 is the node itself,
+   * @param generation    What "generation" to find. 0 is the node itself,
    *                      1 means parent, 2 means grandparent etc. If the node doesn't
    *                      have as many ancestors, the root of the model is returned. This can
    *                      be determined by checking that the range returned includes 0.
-   * @returns             Tree index range of the subtree spanned by the ancestor at level ancestorLevel.
+   * @returns             Tree index range of the subtree spanned by the ancestor at the
+   *                      "generation" specified, or the root.
    */
-  async getAncestorTreeIndices(treeIndex: number, ancestorLevel: number): Promise<NumericRange> {
+  async getAncestorTreeIndices(treeIndex: number, generation: number): Promise<NumericRange> {
     // This might fail if treeIndex is invalid, error checking below is just to be safe
     // and should not really happen.
     const nodeId = await this.mapTreeIndexToNodeId(treeIndex);
@@ -252,19 +254,16 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     const ancestors = await this.client.revisions3D.list3DNodeAncestors(this.modelId, this.revisionId, nodeId, {
       limit: 1000
     });
-    const node = ancestors.items.find(x => x.treeIndex === treeIndex);
-    if (node === undefined) {
-      // Should not happen
-      throw new Error(`Could not find ancestor for node with treeIndex ${treeIndex}`);
-    }
+    const node = ancestors.items.find(x => x.treeIndex === treeIndex)!;
+    assert(node !== undefined, `Could not find ancestor for node with treeIndex ${treeIndex}`);
 
     // Clamp to root if necessary
-    ancestorLevel = Math.min(node.depth, ancestorLevel);
-    const ancestor = ancestors.items.find(x => x.depth === node.depth - ancestorLevel);
-    if (ancestor === undefined) {
-      // Should not happen either
-      throw new Error(`Could not find ancestor for node with treeIndex ${treeIndex} at depth ${ancestorLevel}`);
-    }
+    generation = Math.min(node.depth, generation);
+    const ancestor = ancestors.items.find(x => x.depth === node.depth - generation)!;
+    assert(
+      node !== undefined,
+      `Could not find ancestor for node with treeIndex ${treeIndex} at 'generation' ${generation}`
+    );
 
     return new NumericRange(ancestor.treeIndex, ancestor.subtreeSize);
   }
