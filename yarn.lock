@@ -9,11 +9,6 @@
   dependencies:
     "@ctrl/tinycolor" "^3.4.0"
 
-"@ant-design/css-animation@^1.7.2":
-  version "1.7.3"
-  resolved "https://registry.yarnpkg.com/@ant-design/css-animation/-/css-animation-1.7.3.tgz#60a1c970014e86b28f940510d69e503e428f1136"
-  integrity sha512-LrX0OGZtW+W6iLnTAqnTaoIsRelYeuLZWsrmBJFUXDALQphPsN8cE5DCsmoSlL0QYb94BQxINiuS70Ar/8BNgA==
-
 "@ant-design/icons-svg@^4.0.0":
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/@ant-design/icons-svg/-/icons-svg-4.1.0.tgz#480b025f4b20ef7fe8f47d4a4846e4fee84ea06c"
@@ -15965,16 +15960,6 @@ rc-animate@2.x:
     rc-util "^4.15.3"
     react-lifecycles-compat "^3.0.4"
 
-rc-animate@3.x:
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/rc-animate/-/rc-animate-3.1.1.tgz#defdd863f56816c222534e4dc68feddecd081386"
-  integrity sha512-8wg2Zg3EETy0k/9kYuis30NJNQg1D6/WSQwnCiz6SvyxQXNet/rVraRz3bPngwY6rcU2nlRvoShiYOorXyF7Sg==
-  dependencies:
-    "@ant-design/css-animation" "^1.7.2"
-    classnames "^2.2.6"
-    raf "^3.4.0"
-    rc-util "^4.15.3"
-
 rc-cascader@~1.4.0:
   version "1.4.3"
   resolved "https://registry.yarnpkg.com/rc-cascader/-/rc-cascader-1.4.3.tgz#d91b0dcf8157b60ebe9ec3e58b4db054d5299464"
@@ -16007,19 +15992,7 @@ rc-collapse@^1.11.8:
     react-lifecycles-compat "^3.0.4"
     shallowequal "^1.1.0"
 
-rc-collapse@^2.0.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/rc-collapse/-/rc-collapse-2.1.0.tgz#b3cda539f82063085f9273b8da86ceb481f4e8de"
-  integrity sha512-ktCArgJsFXfl87Tmwvtu4T3X2UnWfidzA0j/gnG2nesDVianQATKMerLPxcEWR1s/NZbhch5WbOL7Pog20wYIQ==
-  dependencies:
-    "@ant-design/css-animation" "^1.7.2"
-    "@babel/runtime" "^7.10.1"
-    classnames "2.x"
-    rc-animate "3.x"
-    rc-util "^5.2.1"
-    shallowequal "^1.1.0"
-
-rc-collapse@~3.1.0:
+rc-collapse@^3.1.1, rc-collapse@~3.1.0:
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/rc-collapse/-/rc-collapse-3.1.1.tgz#2421d454e85781d1cf2f04f906918e0677d779e6"
   integrity sha512-/oetKApTHzGGeR8Q8vD168EXkCs2MpEIrURGyy2D+LrrJd29LY/huuIMvOiJoSV6W3bcGhJqIdgHtg1Dxn1smA==
