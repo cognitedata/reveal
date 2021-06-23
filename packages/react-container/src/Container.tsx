@@ -133,20 +133,9 @@ const RawContainer: React.FC<Props> = ({
 };
 
 export const Container = (props: Props) => {
-  const [_, initialTenant] = getTenantInfo(window.location);
-  const projectIsSelected = project || initialTenant;
-
   const sidecar = {
     ...props.sidecar,
   };
-
-  // do not wrap the container with translations if we are actually going to be on the TSA
-  // because TSA has it's own translation system, so we don't want to mix with our apps.
-  if (!projectIsSelected) {
-    // but we still need to have this wrapper, because there is t() calls in the component
-    // so we need to set this flag to load it all in the mocked mode
-    sidecar.disableTranslations = true;
-  }
 
   const WrappedConatiner = withI18nSuspense<Props>(RawContainer);
   return (

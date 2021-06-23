@@ -1,3 +1,11 @@
+## 1.3.4 Jun 2021
+
+- Disable translations from hosted TSA (your app should have it's own tsa translations now)
+
+## 1.3.3 Jun 2021
+
+- Upgrade tenant selector
+
 ## 1.3.1 Jun 17 2021
 
 - Bump auth-utils
@@ -5,6 +13,7 @@
 
 ## 1.3.0 Jun 17 2021
 
+- NOTE: only use this version and higher if you do NOT use the hosted TSA version!
 - Add peer dep for SDK to align versions
 - Include cogs.css import
 
