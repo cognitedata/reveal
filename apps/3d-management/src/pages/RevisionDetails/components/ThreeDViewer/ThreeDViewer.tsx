@@ -9,6 +9,7 @@ import {
 import styled from 'styled-components';
 import { v3Client as sdk } from '@cognite/cdf-sdk-singleton';
 import * as THREE from 'three';
+import { AxisViewTool } from '@cognite/reveal/tools';
 import { OverlayToolbar } from '../OverlayToolbar/OverlayToolbar';
 import ThreeDViewerSidebar from '../ThreeDViewerSidebar';
 import { ThreeDViewerProps } from './ThreeDViewer.d';
@@ -67,6 +68,19 @@ export default function ThreeDViewer(props: ThreeDViewerProps) {
 
     return () => viewerLocal?.dispose();
   }, [revisionId, props.ViewerConstructor]);
+
+  // setup axis tool
+  useEffect(() => {
+    let axisTool: AxisViewTool | undefined;
+    if (viewer && viewer instanceof Cognite3DViewer) {
+      axisTool = new AxisViewTool(viewer);
+    }
+    return () => {
+      if (axisTool) {
+        axisTool.dispose();
+      }
+    };
+  }, [viewer]);
 
   // set model
   useEffect(() => {
