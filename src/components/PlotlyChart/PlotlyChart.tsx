@@ -240,10 +240,9 @@ const PlotlyChartComponent = ({
       timeseriesFetching,
     ]
   );
-  console.log('seriesData: ', seriesData);
-  const average = seriesData.map(
+  const data = seriesData.map(
     ({ name, color, mode, width, dash, datapoints, outdatedData }, index) => {
-      return {
+      const average = {
         type: 'scatter',
         mode: mode || 'lines',
         opacity: outdatedData ? 0.5 : 1,
@@ -251,6 +250,7 @@ const PlotlyChartComponent = ({
         marker: {
           color,
         },
+
         line: { color, width: width || 1, dash: dash || 'solid' },
         yaxis: `y${index !== 0 ? index + 1 : ''}`,
         x: (datapoints as (
@@ -277,24 +277,12 @@ const PlotlyChartComponent = ({
           },
         },
       };
-    }
-  );
-
-  // TODOS: Add mindata
-  const minData = seriesData.map(
-    ({ name, color, mode, width, dash, datapoints, outdatedData }, index) => {
-      return {
+      const min = {
         type: 'scatter',
-        mode: mode || 'markers',
-        opacity: 0.1,
+        opacity: 0.5,
         name,
-        marker: {
-          color,
-          opacity: 0.1,
-        },
-        // TODOS:
-
-        line: { color, width: width || 1, dash: dash || 'solid' },
+        line: { color, width: 0, dash },
+        fill: 'tonextx', // TODOS: traces with reduced opacity stacking on each other gives wrong color shade.
         yaxis: `y${index !== 0 ? index + 1 : ''}`,
         x: (datapoints as (
           | Datapoints
@@ -310,8 +298,6 @@ const PlotlyChartComponent = ({
             ? datapoint.min
             : (datapoint as DoubleDatapoint).value
         ),
-        fill: 'tonextx',
-
         hovertemplate:
           '%{y} &#183; <span style="color:#8c8c8c">Min value: %{fullData.name}</span><extra></extra>',
         hoverlabel: {
@@ -322,21 +308,12 @@ const PlotlyChartComponent = ({
           },
         },
       };
-    }
-  );
-  const maxData = seriesData.map(
-    ({ name, color, mode, width, dash, datapoints, outdatedData }, index) => {
-      return {
+      const max = {
         type: 'scatter',
-        mode: mode || 'markers',
-        opacity: 0.1,
+        opacity: 0.5,
         name,
-        marker: {
-          color,
-          opacity: 0.1,
-        },
 
-        line: { color, width: width || 1, dash: dash || 'solid' },
+        line: { color, width: 0, dash },
         yaxis: `y${index !== 0 ? index + 1 : ''}`,
         x: (datapoints as (
           | Datapoints
@@ -363,6 +340,7 @@ const PlotlyChartComponent = ({
           },
         },
       };
+      return isPreview ? average : [average, min, max];
     }
   );
 
@@ -405,9 +383,6 @@ const PlotlyChartComponent = ({
     ),
     1000
   );
-
-  // TODOS: correct to concat?
-  const data = average.concat(minData, maxData);
 
   const showYAxis = !isInSearch && !isPreview && isYAxisShown;
   const showAdjustButton = showYAxis && seriesData.length > 0;
@@ -558,8 +533,6 @@ const PlotlyChartComponent = ({
     }
   });
 
-  console.log('DATA: ', data);
-  console.log('layout: ', layout);
   const config = {
     staticPlot: isPreview || isLoading || data.length === 0,
     autosize: true,
@@ -587,14 +560,27 @@ const PlotlyChartComponent = ({
         </>
       )}
 
-      <PlotWrapper>
-        <MemoizedPlot
-          data={data as Plotly.Data[]}
-          layout={(layout as unknown) as Plotly.Layout}
-          config={(config as unknown) as Plotly.Config}
-          onRelayout={handleRelayout}
-        />
-      </PlotWrapper>
+      {isPreview ? (
+        <PlotWrapper>
+          <MemoizedPlot
+            data={data as Plotly.Data[]}
+            layout={(layout as unknown) as Plotly.Layout}
+            config={(config as unknown) as Plotly.Config}
+            onRelayout={handleRelayout}
+          />
+        </PlotWrapper>
+      ) : (
+        data.map((e) => (
+          <PlotWrapper>
+            <MemoizedPlot
+              data={e as Plotly.Data[]}
+              layout={(layout as unknown) as Plotly.Layout}
+              config={(config as unknown) as Plotly.Config}
+              onRelayout={handleRelayout}
+            />
+          </PlotWrapper>
+        ))
+      )}
     </ChartingContainer>
   );
 };
