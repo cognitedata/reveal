@@ -34,12 +34,16 @@ const TopBarWrapper = () => {
         {!chart && <TopBar.Navigation links={[]} />}
         {!!chart && (
           <>
-            <TopBar.Actions
+            <StyledTopbarActions
               actions={[
                 {
                   key: 'backToCharts',
                   component: (
-                    <span style={{ color: 'var(--cogs-greyscale-grey9)' }}>
+                    <span
+                      style={{
+                        color: 'var(--cogs-greyscale-grey9)',
+                      }}
+                    >
                       ← All charts
                     </span>
                   ),
@@ -121,4 +125,9 @@ const ChartDetails = styled.span`
   margin: 0 17px;
 `;
 
+const StyledTopbarActions = styled(TopBar.Actions)`
+  & > span > button {
+    width: fit-content !important;
+  }
+`;
 export default TopBarWrapper;
