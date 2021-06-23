@@ -124,7 +124,6 @@ export class SinglePropertyFilterNodeCollection extends NodeCollectionBase {
     }/revisions/${this._revisionId}/nodes/list`;
   }
 
-  /** @internal */
   serialize() {
     return {
       token: this.classToken,

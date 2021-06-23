@@ -6,7 +6,6 @@ import { NodeCollectionBase, SerializedNodeCollection } from './NodeCollectionBa
 
 /**
  * Node collection that combines the result from multiple underlying node collections.
- * @internal
  */
 export abstract class CombineNodeCollectionBase extends NodeCollectionBase {
   private _changedUnderlyingNodeCollectionHandler: () => void;
