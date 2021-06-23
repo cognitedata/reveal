@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { Button, Tooltip } from '@cognite/cogs.js';
 import { Asset } from '@cognite/sdk';
 import { useParams } from 'react-router-dom';
@@ -9,14 +9,16 @@ import { useNavigate } from 'hooks';
 
 export const PnidButton = ({
   asset,
-  timeseriesId,
+  timeseriesExternalId,
   showTooltip = true,
   hideWhenEmpty = true,
+  children,
 }: {
   asset?: Asset;
-  timeseriesId?: number;
+  timeseriesExternalId?: string;
   showTooltip?: boolean;
   hideWhenEmpty?: boolean;
+  children?: ReactNode;
 }) => {
   const move = useNavigate();
   const { chartId } = useParams<{ chartId: string }>();
@@ -24,7 +26,7 @@ export const PnidButton = ({
   const shouldFetchLinkedAsset = !asset;
 
   const { data: linkedAsset, isFetched: isAssetFetched } = useLinkedAsset(
-    timeseriesId,
+    timeseriesExternalId,
     shouldFetchLinkedAsset
   );
 
@@ -57,7 +59,9 @@ export const PnidButton = ({
         }}
         style={{ height: 28 }}
         aria-label="search"
-      />
+      >
+        {children}
+      </Button>
     </WithTooltip>
   );
 };

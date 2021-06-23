@@ -208,7 +208,11 @@ export function getStepsFromWorkflow(
         .map((inputNodeConnection) => {
           const nodeCandidate = totalNodes?.find(
             (nd) => nd.id === inputNodeConnection.outputPin.nodeId
-          )!;
+          );
+
+          if (!nodeCandidate) {
+            return undefined;
+          }
 
           let selectedNode: StorableNode = nodeCandidate;
 
@@ -319,7 +323,11 @@ export function getStepsFromWorkflow(
 
           const inputNode = totalNodes?.find(
             (nd) => nd.id === inputNodeConnection.outputPin.nodeId
-          )!;
+          );
+
+          if (!inputNode) {
+            return undefined;
+          }
 
           return getInputFromNode(inputNode, allNodes);
         })
