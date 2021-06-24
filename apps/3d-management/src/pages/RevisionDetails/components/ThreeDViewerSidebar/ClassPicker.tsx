@@ -1,4 +1,5 @@
 import {
+  Cognite3DViewer,
   CognitePointCloudModel,
   WellKnownAsprsPointClassCodes,
 } from '@cognite/reveal';
@@ -7,6 +8,7 @@ import { Select } from 'antd';
 
 type Props = {
   model: CognitePointCloudModel;
+  viewer: Cognite3DViewer;
 };
 
 export function ClassPicker(props: Props) {
@@ -50,8 +52,9 @@ export function ClassPicker(props: Props) {
         classValue,
         classesToDisplayInModel.includes(classValue)
       );
+      props.viewer.forceRerender();
     });
-  }, [selectedValues, props.model, keyValueMapping, ALL_CLASSES]);
+  }, [selectedValues, props.model, keyValueMapping, ALL_CLASSES, props.viewer]);
 
   const onChange = (values: number[]) => {
     const getValues = ({
@@ -94,6 +97,7 @@ export function ClassPicker(props: Props) {
       mode="multiple"
       style={{ width: '100%', minHeight: 32, maxHeight: 32 }}
       value={selectedValues}
+      placeholder="Select classes"
       maxTagCount={0}
       maxTagPlaceholder={
         selectedValues.includes(ALL_CLASSES)
