@@ -1,6 +1,6 @@
 {
   "name": "@cognite/react-errors",
-  "version": "0.3.0-rc.2",
+  "version": "0.3.1",
   "source": "src/index.ts",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",

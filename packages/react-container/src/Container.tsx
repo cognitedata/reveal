@@ -78,9 +78,6 @@ const RawContainer: React.FC<Props> = ({
   //   possibleTenant,
   // });
 
-  // this will only ever run locally
-  // when deployed it will use the hosted 'Tenant Selector' application
-  // which is served by FAS when browsing to '/'
   if (!possibleTenant) {
     if (!initialTenantOrApiKeyTenant) {
       return <TenantSelector sidecar={sidecar} />;
@@ -98,7 +95,7 @@ const RawContainer: React.FC<Props> = ({
     ChosenAuthContainer = AuthContainerForApiKeyMode;
   }
 
-  const authError = () => {
+  const refreshPage = () => {
     document.location.href = '/';
   };
 
@@ -108,7 +105,7 @@ const RawContainer: React.FC<Props> = ({
         <ChosenAuthContainer
           sidecar={sidecar}
           sdkClient={client}
-          authError={authError}
+          authError={refreshPage}
           tenant={initialTenant}
         >
           <IntercomContainer
@@ -138,6 +135,8 @@ export const Container = (props: Props) => {
   };
 
   const WrappedConatiner = withI18nSuspense<Props>(RawContainer);
+
+  // wrappers here are for both TSA and the authed flow
   return (
     <TranslationWrapper {...sidecar}>
       <WrappedConatiner {...props} sidecar={sidecar} />
