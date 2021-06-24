@@ -32,6 +32,10 @@ const clusters = [
         label: 'Greenfield',
         legacyAuth: true,
       },
+      {
+        value: 'bluefield',
+        label: 'Bluefield',
+      },
     ],
   },
 ];

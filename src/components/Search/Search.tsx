@@ -74,7 +74,7 @@ const Search = ({ visible, onClose }: SearchProps) => {
         <div style={{ marginTop: 16, marginRight: 10 }}>
           <SegmentedControl
             currentKey={searchType}
-            style={{ width: '100%' }}
+            fullWidth
             onButtonClicked={(type) =>
               setSearchType(type as 'assets' | 'timeseries')
             }

@@ -23,7 +23,7 @@
     "@cognite/annotations": "^1.1.0",
     "@cognite/auth-utils": "^0.8.2",
     "@cognite/cdf-hub-tenant-selector": "^0.5.0",
-    "@cognite/cogs.js": "^3.12.3",
+    "@cognite/cogs.js": "^3.24.2",
     "@cognite/connect": "^0.0.8",
     "@cognite/data-exploration": "^0.5.7",
     "@cognite/metrics": "^1.1.0",
