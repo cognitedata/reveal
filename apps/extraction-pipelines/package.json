@@ -75,7 +75,7 @@
     "@testing-library/react-hooks": "^6.0.0",
     "@types/jest": "^26.0.22",
     "@types/match-sorter": "^5.0.0",
-    "@types/node": "^14.14.37",
+    "@types/node": "^15.12.4",
     "@types/plotly.js": "^1.54.10",
     "@types/react": "^17.0.3",
     "@types/react-dom": "^17.0.8",
