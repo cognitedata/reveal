@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { Spin } from 'antd';
-import { Colors, Input } from '@cognite/cogs.js';
+import { Button, Colors, Input } from '@cognite/cogs.js';
 import { ResourceType } from 'modules/sdk-builder/types';
 import { Flex } from 'components/Common';
 import DataSetSelect from 'components/DataSetSelect';
@@ -10,9 +10,11 @@ import { searchCountSelector } from 'pages/SelectionPage/selectors';
 import { LabelFilter } from 'components/LabelFilter';
 import omit from 'lodash/omit';
 import { PNID_METRICS, trackUsage } from 'utils/Metrics';
+import FilterList from 'components/FilterList';
 import { OptionsType } from './types';
 import RootAssetsSelect from './RootAssetSelect';
 import MimeTypeSelect from './MimeTypeSelect';
+import FilterMenu from '../FilterMenu';
 
 type Props = {
   type: ResourceType;
@@ -20,10 +22,20 @@ type Props = {
   isSelectAll: boolean;
   selectedRowKeys: number[];
   updateFilter: (f: any) => void;
+  setShowSelected: (val: boolean) => void;
+  showSelected: boolean;
 };
 
 export default function SelectionBar(props: Props): JSX.Element {
-  const { type, filter, isSelectAll, selectedRowKeys, updateFilter } = props;
+  const {
+    type,
+    filter,
+    isSelectAll,
+    selectedRowKeys,
+    updateFilter,
+    setShowSelected,
+    showSelected,
+  } = props;
   const count = useSelector(searchCountSelector(type, filter));
 
   const labels = filter?.filter?.labels?.containsAny ?? [];
@@ -66,6 +78,13 @@ export default function SelectionBar(props: Props): JSX.Element {
         count: newDataSetIds.length,
       });
     }
+    updateFilter(newFilter);
+  };
+  const onNameClear = () => {
+    const newFilter = {
+      ...filter,
+      search: undefined,
+    };
     updateFilter(newFilter);
   };
   const onNameSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -147,27 +166,47 @@ export default function SelectionBar(props: Props): JSX.Element {
             selectedDataSetIds={dataSetIds}
             onDataSetSelected={onDataSetSelected}
           />
-          <LabelFilter value={labels} setValue={onLabelsChange} />
-          {type === 'assets' && (
-            <RootAssetsSelect
-              selectedRootAsset={rootAsset}
-              onRootAssetSelected={onRootAssetSelected}
-            />
-          )}
-          {type === 'files' && (
-            <MimeTypeSelect
-              selectedMimeType={filter.filter?.mimeType}
-              onMimeTypeSelected={onMimeTypeSelected}
-            />
-          )}
+          <FilterMenu
+            options={[
+              <LabelFilter value={labels} setValue={onLabelsChange} />,
+              type === 'assets' ? (
+                <RootAssetsSelect
+                  selectedRootAsset={rootAsset}
+                  onRootAssetSelected={onRootAssetSelected}
+                />
+              ) : (
+                <MimeTypeSelect
+                  selectedMimeType={filter.filter?.mimeType}
+                  onMimeTypeSelected={onMimeTypeSelected}
+                />
+              ),
+            ]}
+          />
         </InputRow>
         <Selected>
-          {selected} {type} selected
+          <Button
+            type="link"
+            disabled={!selected}
+            onClick={() => setShowSelected(!showSelected)}
+          >
+            {showSelected
+              ? `Show all ${type}`
+              : `Show ${selected} ${type} selected`}
+          </Button>
         </Selected>
       </StyledFlex>
       <FilterBar row>
-        <Results>{results} results</Results>
+        <FilterList
+          labels={labels as Array<{ externalId: string }>}
+          dataSetIds={dataSetIds}
+          onDataSetsChange={onDataSetSelected}
+          onLabelsChange={onLabelsChange}
+          searchQuery={filter?.search?.name}
+          onQueryClear={onNameClear}
+          onClearAll={() => updateFilter({ filter: {}, search: undefined })}
+        />
       </FilterBar>
+      <Results>{results} results</Results>
     </Flex>
   );
 }
@@ -186,10 +225,12 @@ const Selected = styled.span`
   color: ${Colors['greyscale-grey7'].hex()};
   font-weight: 500;
 `;
-const Results = styled.span`
+const Results = styled(Flex)`
   color: ${Colors['greyscale-grey6'].hex()};
+  justify-content: flex-end;
+  margin-bottom: 20px;
 `;
 const FilterBar = styled(Flex)`
-  justify-content: flex-end;
+  justify-content: space-between;
   margin-bottom: 16px;
 `;

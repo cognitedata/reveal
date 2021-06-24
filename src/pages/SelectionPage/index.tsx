@@ -45,7 +45,7 @@ export default function SelectionPage(props: Props): JSX.Element {
     defaultFilters[type] ?? EMPTY_FILTER
   );
   const [delayedFilter, setDelayedFilter] = useState<Filter>(filter);
-  const [debouncedSetFilter] = useDebouncedCallback(setDelayedFilter, 300);
+  const [debouncedSetFilter] = useDebouncedCallback(setDelayedFilter, 200);
   const count = useSelector(searchCountSelector(type, filter));
   useActiveWorkflow(step);
   const { goToNextStep, goToPrevStep } = usePrevAndNextStep(step);

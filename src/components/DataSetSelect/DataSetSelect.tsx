@@ -102,10 +102,11 @@ export default function DataSetSelect({
   }, [dispatch, isLoaded]);
 
   return (
-    <div style={{ minWidth: '250px' }}>
+    <div style={{ minWidth: '250px', maxWidth: '300px' }}>
       <Spin spinning={!!isLoading} size="small">
         {canReadDataSets ? (
           <Select
+            maxHeight={80}
             isMulti
             title="Data sets"
             placeholder=""

@@ -39,11 +39,13 @@ export const LabelFilter = ({
     >
       <div
         style={{
+          maxWidth: '300px',
           minWidth: '250px',
           cursor: !hasPermission ? 'not-allowed' : 'pointer',
         }}
       >
         <Select
+          maxHeight={80}
           placeholder=""
           title="Labels"
           options={labels.map((el) => ({

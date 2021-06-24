@@ -5,7 +5,12 @@ import { Asset, FileInfo } from '@cognite/sdk';
 import { Tooltip } from '@cognite/cogs.js';
 import isEqual from 'lodash/isEqual';
 import { ResourceType, Filter } from 'modules/sdk-builder/types';
-import { usePrevious, useItemsAndFetching, Item } from 'hooks';
+import {
+  usePrevious,
+  useItemsAndFetching,
+  Item,
+  useSelectedItems,
+} from 'hooks';
 import { searchCountSelector } from 'pages/SelectionPage/selectors';
 import { Flex } from 'components/Common';
 import { getColumns } from './columns';
@@ -18,6 +23,7 @@ type Props = {
   setSelectAll: (isSelectAll: boolean) => void;
   setSelectedRowKeys: (selectedRowKeys: number[]) => void;
   diagramsToContextualizeIds?: number[];
+  showSelected: boolean;
 };
 
 export default function SelectionTable(props: Props): JSX.Element {
@@ -29,6 +35,7 @@ export default function SelectionTable(props: Props): JSX.Element {
     setSelectAll,
     setSelectedRowKeys,
     diagramsToContextualizeIds,
+    showSelected,
   } = props;
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -44,6 +51,13 @@ export default function SelectionTable(props: Props): JSX.Element {
     type,
     filter,
     diagramsToContextualizeIds
+  );
+
+  const selectedItems = useSelectedItems(
+    items,
+    filter,
+    isSelectAll,
+    selectedRowKeys
   );
 
   const onPaginationChange = (newPage: number, newPageSize?: number) => {
@@ -99,7 +113,7 @@ export default function SelectionTable(props: Props): JSX.Element {
         // @ts-ignore
         columns={getColumns(type)}
         // @ts-ignore
-        dataSource={items}
+        dataSource={showSelected ? selectedItems : items}
         loading={fetching}
         rowKey="id"
         rowSelection={{

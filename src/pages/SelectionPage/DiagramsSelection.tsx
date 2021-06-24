@@ -21,6 +21,8 @@ type SelectionProps = {
 
 export default function DiagramsSelection(props: SelectionProps): JSX.Element {
   const dispatch = useDispatch();
+  const [showSelected, setShowSelected] = useState<boolean>(false);
+
   const { workflowId } = useActiveWorkflow();
   const {
     filter,
@@ -83,6 +85,8 @@ export default function DiagramsSelection(props: SelectionProps): JSX.Element {
         isSelectAll={isSelectAll}
         selectedRowKeys={selectedRowKeys}
         updateFilter={updateFilter}
+        showSelected={showSelected}
+        setShowSelected={setShowSelected}
       />
       <SelectionTable
         type="files"
@@ -92,6 +96,7 @@ export default function DiagramsSelection(props: SelectionProps): JSX.Element {
         setSelectAll={setSelectAll}
         setSelectedRowKeys={setSelectedRowKeys}
         diagramsToContextualizeIds={diagramsToContextualizeIds}
+        showSelected={showSelected}
       />
     </Flex>
   );

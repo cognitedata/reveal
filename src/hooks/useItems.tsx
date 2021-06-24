@@ -128,3 +128,24 @@ export const useIncludeSelectedDiagramInDiagramList = (
 
   return { items: fixedDiagrams, fetching };
 };
+
+export const useSelectedItems = (
+  items: Item[],
+  filter: Filter,
+  isSelectAll: boolean,
+  selectedRowKeys: number[]
+) => {
+  const [selectedItems, setSelectedItems] = useState<Item[]>([]);
+
+  useEffect(() => {
+    if (isSelectAll) {
+      setSelectedItems(items);
+    } else if (selectedRowKeys) {
+      setSelectedItems(
+        items.filter((item) => selectedRowKeys.includes(item.id))
+      );
+    }
+  }, [filter, isSelectAll, items, selectedRowKeys]);
+
+  return selectedItems;
+};

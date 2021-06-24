@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Filter } from 'modules/sdk-builder/types';
 import { Flex, PageTitle } from 'components/Common';
 import { Colors } from '@cognite/cogs.js';
@@ -30,6 +30,7 @@ export default function ResourcesSelection(
 
   const targetLabel =
     target === 'files' ? 'other engineering diagrams' : target;
+  const [showSelected, setShowSelected] = useState<boolean>(false);
 
   return (
     <Flex column style={{ paddingBottom: '50px' }}>
@@ -45,6 +46,8 @@ export default function ResourcesSelection(
         isSelectAll={isSelectAll}
         selectedRowKeys={selectedRowKeys}
         updateFilter={updateFilter}
+        showSelected={showSelected}
+        setShowSelected={setShowSelected}
       />
       <SelectionTable
         type={target}
@@ -53,6 +56,7 @@ export default function ResourcesSelection(
         selectedRowKeys={selectedRowKeys}
         setSelectAll={setSelectAll}
         setSelectedRowKeys={setSelectedRowKeys}
+        showSelected={showSelected}
       />
     </Flex>
   );

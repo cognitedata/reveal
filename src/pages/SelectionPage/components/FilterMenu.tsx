@@ -1,36 +1,23 @@
 import React from 'react';
 import { Dropdown, Menu, Button } from '@cognite/cogs.js';
 
-export default function FilterMenu(): JSX.Element {
+type FileMenuProps = {
+  options: React.ReactNode[];
+};
+
+export default function FilterMenu({ options }: FileMenuProps): JSX.Element {
   const filterMenu = (
     <Menu>
-      <Menu.Header>Shortcuts</Menu.Header>
-      <Menu.Item disabled>Select all</Menu.Item>
-      <Menu.Item disabled appendIcon="Info">
-        From the previous step
-      </Menu.Item>
-      <Menu.Item disabled appendIcon="Info">
-        Linked files
-      </Menu.Item>
-      <Menu.Divider />
-      <Menu.Header>More filters</Menu.Header>
-      <Menu.Submenu
-        content={
-          <Menu>
-            <Menu.Item disabled>Some option</Menu.Item>
-            <Menu.Item disabled>Some other option</Menu.Item>
-          </Menu>
-        }
-      >
-        <>File type</>
-      </Menu.Submenu>
+      {options.map((option) => (
+        <Menu.Item>{option}</Menu.Item>
+      ))}
     </Menu>
   );
 
   return (
     <Dropdown content={filterMenu}>
       <Button icon="Down" iconPlacement="right">
-        Filters
+        More filters
       </Button>
     </Dropdown>
   );
