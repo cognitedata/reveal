@@ -99,6 +99,11 @@ def handleError = { err ->
 
 pods {
   final boolean isPullRequest = versioning.getEnv().isPullRequest
+  final String hasChangedRef = isPullRequest ?
+    // for PRs use the commit hash on the master branch that the PR branch is originated from
+    "\$(git merge-base refs/remotes/origin/master HEAD)" :
+    // for staging/production compare current and previous commit hashes
+    "HEAD^1"
 
   app.safeRun(
     logErrors: !isPullRequest,
@@ -163,7 +168,7 @@ pods {
         container('bazel') {
           def changedStorybooks = sh(
             label: "Which storybooks were changed?",
-            script: "bazel run //:has-changed -- -ref=HEAD^1 'kind(publish_storybook, //...)'",
+            script: "bazel run //:has-changed -- -ref=${hasChangedRef} 'kind(publish_storybook, //...)'",
             returnStdout: true
           )
           print(changedStorybooks)
@@ -191,7 +196,7 @@ pods {
       container('bazel') {
         def changedApps = sh(
           label: "Which apps were changed?",
-          script: "bazel run //:has-changed -- -ref=HEAD^1 'kind(publish_fas, //...)'",
+          script: "bazel run //:has-changed -- -ref=${hasChangedRef} 'kind(publish_fas, //...)'",
           returnStdout: true
         )
         print(changedApps)
@@ -284,7 +289,11 @@ pods {
 
     stageWithNotify("Publish to NPM", CONTEXTS.publishPackages) {
       container('bazel') {
-        def publishPackages = sh(label: "Which packages were changed?", script: "bazel run //:has-changed -- -ref=HEAD^1 'kind(package_info, //...)'", returnStdout: true)
+        def publishPackages = sh(
+          label: "Which packages were changed?",
+          script: "bazel run //:has-changed -- -ref=${hasChangedRef} 'kind(package_info, //...)'",
+          returnStdout: true
+        )
         print(publishPackages)
 
         catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
