@@ -77,7 +77,7 @@ export const TimeseriesList = ({ assetId }: { assetId: number }) => {
   const handleTimeSeriesClick = async (timeSeries: Timeseries) => {
     if (chart) {
       const tsToRemove = chart.timeSeriesCollection?.find(
-        (t) => t.tsId === timeSeries.id
+        (t) => t.tsExternalId === timeSeries.externalId
       );
       if (tsToRemove) {
         updateChart(removeTimeseries(chart, tsToRemove.id));
@@ -127,7 +127,11 @@ export const TimeseriesList = ({ assetId }: { assetId: number }) => {
               handleTimeSeriesClick(ts);
             }}
             name={`${ts.id}`}
-            value={!!chart?.timeSeriesCollection?.find((t) => t.tsId === ts.id)}
+            value={
+              !!chart?.timeSeriesCollection?.find(
+                (t) => t.tsExternalId === ts.externalId
+              )
+            }
           />
         </TimeseriesItem>
       ))}

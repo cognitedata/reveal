@@ -71,17 +71,17 @@ const getCallStatus = (
 };
 
 type LoadingProps = {
-  tsId: number;
+  tsExternalId?: string;
   dateFrom: string;
   dateTo: string;
 };
 
-const LoadingFeedback = ({ tsId, dateFrom, dateTo }: LoadingProps) => {
+const LoadingFeedback = ({ tsExternalId, dateFrom, dateTo }: LoadingProps) => {
   const queryCache = useQueryClient();
   const cacheKey = [
     'timeseries',
     {
-      items: [{ id: tsId }],
+      items: [{ externalId: tsExternalId }],
       start: new Date(dateFrom),
       end: new Date(dateTo),
       limit: 1000,
@@ -165,7 +165,7 @@ export default function TimeSeriesRow({
     originalUnit,
     enabled,
     color,
-    tsId,
+    tsExternalId,
   } = timeseries;
   const [isEditingName, setIsEditingName] = useState<boolean>(false);
 
@@ -197,7 +197,7 @@ export default function TimeSeriesRow({
     const range = await calculateDefaultYAxis({
       chart,
       sdk,
-      timeSeriesId: timeseries.tsId,
+      timeSeriesExternalId: timeseries.tsExternalId || '',
       inputUnit: unitOption?.value,
       outputUnit: preferredUnit,
     });
@@ -211,7 +211,7 @@ export default function TimeSeriesRow({
     const range = await calculateDefaultYAxis({
       chart,
       sdk,
-      timeSeriesId: timeseries.tsId,
+      timeSeriesExternalId: timeseries.tsExternalId || '',
       inputUnit: unit,
       outputUnit: unitOption?.value,
     });
@@ -257,7 +257,7 @@ export default function TimeSeriesRow({
   const { statistics = [] } = (results as StatisticsResult) || {};
   const statisticsForSource = statistics[0];
 
-  const { data: linkedAsset } = useLinkedAsset(tsId, true);
+  const { data: linkedAsset } = useLinkedAsset(tsExternalId, true);
 
   const { mutate: callFunction } = useCallFunction('individual_calc-master');
 
@@ -355,7 +355,7 @@ export default function TimeSeriesRow({
             fade={!enabled}
           />
           <LoadingFeedback
-            tsId={tsId}
+            tsExternalId={tsExternalId}
             dateFrom={chart.dateFrom}
             dateTo={chart.dateTo}
           />
@@ -433,7 +433,7 @@ export default function TimeSeriesRow({
       {(isWorkspaceMode || isFileViewerMode) && (
         <td style={{ textAlign: 'center', paddingLeft: 0 }}>
           <PnidButton
-            timeseriesId={tsId}
+            timeseriesExternalId={tsExternalId}
             showTooltip={false}
             hideWhenEmpty={false}
           />
