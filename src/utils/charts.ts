@@ -189,6 +189,9 @@ export function updateSourceAxisForChart(
 export const toggleDownloadChartElements = (hide: boolean, height?: number) => {
   const elementsToHide = document.getElementsByClassName('downloadChartHide');
   const chartViewEl = document.getElementById('chart-view');
+  const splitPane = (document.getElementsByClassName(
+    'SplitPane'
+  )[0] as HTMLElement).style;
   if (hide) {
     const pane2Height = +(document.getElementsByClassName(
       'Pane2'
@@ -200,15 +203,9 @@ export const toggleDownloadChartElements = (hide: boolean, height?: number) => {
       chartViewEl.style.overflow = 'auto';
       chartViewEl.style.height = 'auto';
     }
-    (document.getElementsByClassName(
-      'SplitPane'
-    )[0] as HTMLElement).style.overflow = 'auto';
-    (document.getElementsByClassName(
-      'SplitPane'
-    )[0] as HTMLElement).style.display = 'block';
-    (document.getElementsByClassName(
-      'SplitPane'
-    )[0] as HTMLElement).style.position = 'relative';
+    splitPane.overflow = 'auto';
+    splitPane.display = 'block';
+    splitPane.position = 'relative';
     (document.getElementsByClassName(
       'Pane1'
     )[0] as HTMLElement).style.height = `${
@@ -232,15 +229,9 @@ export const toggleDownloadChartElements = (hide: boolean, height?: number) => {
     chartViewEl.style.overflow = 'hidden';
     chartViewEl.style.height = '100%';
   }
-  (document.getElementsByClassName(
-    'SplitPane'
-  )[0] as HTMLElement).style.overflow = 'hidden';
-  (document.getElementsByClassName(
-    'SplitPane'
-  )[0] as HTMLElement).style.display = 'flex';
-  (document.getElementsByClassName(
-    'SplitPane'
-  )[0] as HTMLElement).style.position = 'absolute';
+  splitPane.overflow = 'hidden';
+  splitPane.display = 'flex';
+  splitPane.position = 'absolute';
   (document.getElementsByClassName('Pane1')[0] as HTMLElement).style.height =
     'auto';
   (document.getElementsByClassName(
@@ -252,4 +243,17 @@ export const toggleDownloadChartElements = (hide: boolean, height?: number) => {
     'PageLayout'
   )[0] as HTMLElement).style.height = '100vh';
   return 0;
+};
+
+export const downloadImage = (
+  image: string | undefined,
+  chartName: string | undefined
+) => {
+  if (!image) {
+    return;
+  }
+  const a = document.createElement('a');
+  a.href = image;
+  a.download = `${chartName}.png`;
+  a.click();
 };

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components/macro';
 import {
   Button,
@@ -12,7 +12,6 @@ import {
 } from '@cognite/cogs.js';
 import { Alert } from 'antd';
 import { useParams } from 'react-router-dom';
-import { useScreenshot } from 'use-screenshot-hook';
 import NodeEditor from 'components/NodeEditor';
 import SplitPaneLayout from 'components/Layout/SplitPaneLayout';
 import PlotlyChartComponent from 'components/PlotlyChart/PlotlyChart';
@@ -25,7 +24,6 @@ import { getEntryColor } from 'utils/colors';
 import { useSearchParam } from 'hooks';
 import { SEARCH_KEY } from 'utils/constants';
 import { metrics, trackUsage } from 'utils/metrics';
-import { toggleDownloadChartElements } from 'utils/charts';
 import { ITimer } from '@cognite/metrics';
 import { Modes } from 'pages/types';
 import DetailsSidebar from 'components/DetailsSidebar';
@@ -70,35 +68,11 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   const [editorTimer, setEditorTimer] = useState<ITimer | undefined>();
   const isWorkspaceMode = workspaceMode === 'workspace';
 
-  const screenshotRef = useRef(null);
-  const { takeScreenshot } = useScreenshot();
-  const downloadScreenshot = (
-    image: string | undefined,
-    chartName: string | undefined
-  ) => {
-    if (!image) {
-      return;
-    }
-    const a = document.createElement('a');
-    a.href = image;
-    a.download = `${chartName}.png`;
-    a.click();
-  };
-  const downloadChart = (e: any) => {
-    const height = toggleDownloadChartElements(true);
-    takeScreenshot('png').then((image) => {
-      toggleDownloadChartElements(false, height);
-      // @ts-ignore
-      downloadScreenshot(image, e.detail.chartName);
-    });
-  };
   useEffect(() => {
-    window.addEventListener('DownloadChart', downloadChart);
     trackUsage('PageView.ChartView', { isOwner: chart?.user === login?.id });
     const timer = metrics.start('ChartView.ViewTime');
 
     return () => {
-      window.removeEventListener('DownloadChart', downloadChart);
       timer.stop();
       if (editorTimer) {
         editorTimer.stop();
@@ -409,15 +383,13 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
           <SplitPaneLayout defaultSize={200}>
             <TopPaneWrapper className="chart">
               <ChartWrapper>
-                <div ref={screenshotRef}>
-                  <PlotlyChartComponent
-                    key={chartId}
-                    chartId={chartId}
-                    isInSearch={showSearch}
-                    isYAxisShown={showYAxis}
-                    stackedMode={stackedMode}
-                  />
-                </div>
+                <PlotlyChartComponent
+                  key={chartId}
+                  chartId={chartId}
+                  isInSearch={showSearch}
+                  isYAxisShown={showYAxis}
+                  stackedMode={stackedMode}
+                />
               </ChartWrapper>
             </TopPaneWrapper>
             <BottomPaneWrapper className="table">

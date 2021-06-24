@@ -1,15 +1,21 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components/macro';
+import { useScreenshot } from 'use-screenshot-hook';
 import { Button, toast, Tooltip, TopBar } from '@cognite/cogs.js';
 import { useNavigate } from 'hooks';
 import { useChart, useDeleteChart, useUpdateChart } from 'hooks/firebase';
 import { useParams } from 'react-router-dom';
-import { duplicate } from 'utils/charts';
+import {
+  duplicate,
+  downloadImage,
+  toggleDownloadChartElements,
+} from 'utils/charts';
 import SharingDropdown from 'components/SharingDropdown/SharingDropdown';
 import { trackUsage } from 'utils/metrics';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 
-export const ChartActions = ({ className }: { className?: string }) => {
+export const ChartActions = () => {
+  const { takeScreenshot } = useScreenshot();
   const move = useNavigate();
 
   const { chartId } = useParams<{ chartId: string }>();
@@ -85,7 +91,7 @@ export const ChartActions = ({ className }: { className?: string }) => {
   }
 
   return (
-    <TopBar.Item className={className} style={{ padding: '0 3px' }}>
+    <TopBar.Item className="downloadChartHide" style={{ padding: '0 3px' }}>
       <Tooltip content="Share">
         <SharingDropdown chart={chart} disabled={!isOwner} />
       </Tooltip>
@@ -95,11 +101,11 @@ export const ChartActions = ({ className }: { className?: string }) => {
           type="ghost"
           aria-label="download"
           onClick={() => {
-            window.dispatchEvent(
-              new CustomEvent('DownloadChart', {
-                detail: { chartName: chart.name },
-              })
-            );
+            const height = toggleDownloadChartElements(true);
+            takeScreenshot('png').then((image) => {
+              toggleDownloadChartElements(false, height);
+              downloadImage(image, chart.name);
+            });
           }}
         />
       </Tooltip>

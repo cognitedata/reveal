@@ -81,7 +81,7 @@ const TopBarWrapper = () => {
           )}
           {/** Need to keep the actions component in DOM even if chart does not exist
            * to ensure update/delete callbacks are working properly */}
-          <ChartActions className="downloadChartHide" />
+          <ChartActions />
           <TopBar.Actions
             actions={[
               {
