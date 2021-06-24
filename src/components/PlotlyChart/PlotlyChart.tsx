@@ -242,6 +242,21 @@ const PlotlyChartComponent = ({
   );
   const data = seriesData.map(
     ({ name, color, mode, width, dash, datapoints, outdatedData }, index) => {
+      // TODOS: kinda hacky solution to compare min and avg in cases where min is less than avg and need to be fill based on that. In addition should Min value be less than Avg value?
+      const firstDatapoint = (datapoints as (
+        | Datapoints
+        | DatapointAggregate
+      )[]).find((x) => x);
+      const currMin = firstDatapoint
+        ? ('min' in firstDatapoint
+            ? firstDatapoint.min
+            : (firstDatapoint as DoubleDatapoint).value) ?? 0
+        : 0;
+      const currAvg = firstDatapoint
+        ? ('average' in firstDatapoint
+            ? firstDatapoint.average
+            : (firstDatapoint as DoubleDatapoint).value) ?? 0
+        : 0;
       const average = {
         type: 'scatter',
         mode: mode || 'lines',
@@ -250,7 +265,7 @@ const PlotlyChartComponent = ({
         marker: {
           color,
         },
-
+        fill: 'none',
         line: { color, width: width || 1, dash: dash || 'solid' },
         yaxis: `y${index !== 0 ? index + 1 : ''}`,
         x: (datapoints as (
@@ -277,19 +292,17 @@ const PlotlyChartComponent = ({
           },
         },
       };
+
       const min = {
-        type: 'scatter',
-        opacity: 0.5,
-        name,
-        line: { color, width: 0, dash },
-        fill: 'tonextx', // TODOS: traces with reduced opacity stacking on each other gives wrong color shade.
-        yaxis: `y${index !== 0 ? index + 1 : ''}`,
-        x: (datapoints as (
-          | Datapoints
-          | DatapointAggregate
-        )[]).map((datapoint) =>
-          'timestamp' in datapoint ? new Date(datapoint.timestamp) : null
-        ),
+        ...average,
+        opacity: 0.2,
+        marker: {
+          color,
+          opacity: 0.1,
+        },
+        line: { width: 0 },
+        fill: currMin > currAvg ? 'tonexty' : 'none',
+
         y: (datapoints as (
           | Datapoints
           | DatapointAggregate
@@ -300,27 +313,17 @@ const PlotlyChartComponent = ({
         ),
         hovertemplate:
           '%{y} &#183; <span style="color:#8c8c8c">Min value: %{fullData.name}</span><extra></extra>',
-        hoverlabel: {
-          bgcolor: '#ffffff',
-          bordercolor: color,
-          font: {
-            color: '#333333',
-          },
-        },
       };
-      const max = {
-        type: 'scatter',
-        opacity: 0.5,
-        name,
 
-        line: { color, width: 0, dash },
-        yaxis: `y${index !== 0 ? index + 1 : ''}`,
-        x: (datapoints as (
-          | Datapoints
-          | DatapointAggregate
-        )[]).map((datapoint) =>
-          'timestamp' in datapoint ? new Date(datapoint.timestamp) : null
-        ),
+      const max = {
+        ...average,
+        marker: {
+          color,
+          opacity: 0.1,
+        },
+        opacity: 0.2,
+        line: { width: 0 },
+        fill: 'tonexty',
         y: (datapoints as (
           | Datapoints
           | DatapointAggregate
@@ -329,17 +332,10 @@ const PlotlyChartComponent = ({
             ? datapoint.max
             : (datapoint as DoubleDatapoint).value
         ),
-        fill: 'tonextx',
         hovertemplate:
           '%{y} &#183; <span style="color:#8c8c8c">Max value: %{fullData.name}</span><extra></extra>',
-        hoverlabel: {
-          bgcolor: '#ffffff',
-          bordercolor: color,
-          font: {
-            color: '#333333',
-          },
-        },
       };
+
       return isPreview ? average : [average, min, max];
     }
   );
