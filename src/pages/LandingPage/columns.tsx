@@ -2,11 +2,11 @@ import React from 'react';
 import styled from 'styled-components';
 import { Graphic, Tooltip } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
-import { Flex, IconButton, Popover } from 'components/Common';
-import DetectedTags from 'components/DetectedTags';
+import { CountTag, Flex, IconButton, Popover } from 'components/Common';
 import { dateSorter, stringCompare } from 'modules/contextualization/utils';
 import { PERMISSIONS_STRINGS, TOOLTIP_STRINGS } from 'stringConstants';
 import { FileSmallPreview } from 'components/FileSmallPreview';
+import { FileWithAnnotations } from 'hooks/useFileWithAnnotations';
 import { trackUsage, PNID_METRICS } from '../../utils/Metrics';
 
 const SettingButtons = styled(Flex)`
@@ -14,6 +14,21 @@ const SettingButtons = styled(Flex)`
     margin: 0 4px;
   }
 `;
+
+const renderDetectedTags = (file: FileWithAnnotations) => {
+  const assetTagsCount =
+    (file.annotations ?? []).filter((an) => an.resourceType === 'asset')
+      ?.length ?? 0;
+  const fileTagsCount =
+    (file.annotations ?? []).filter((an) => an.resourceType === 'file')
+      ?.length ?? 0;
+  return (
+    <Flex>
+      <CountTag type="assets" value={assetTagsCount} draft={false} />
+      <CountTag type="files" value={fileTagsCount} draft={false} />
+    </Flex>
+  );
+};
 
 export const getColumns = (
   onFileEdit: (file: FileInfo) => void,
@@ -49,7 +64,9 @@ export const getColumns = (
   {
     title: 'Detected tags',
     key: 'tags',
-    render: (row: FileInfo) => <DetectedTags fileId={row.id} />,
+    render: (row: FileWithAnnotations) => renderDetectedTags(row),
+    sorter: (a: FileWithAnnotations, b: FileWithAnnotations) =>
+      a?.annotations?.length ?? 0 - b?.annotations?.length ?? 0,
   },
   {
     title: 'Last modified',

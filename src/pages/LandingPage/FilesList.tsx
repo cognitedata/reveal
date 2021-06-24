@@ -31,6 +31,7 @@ type FilesListProps = {
 
 export default function FilesList(props: FilesListProps) {
   const { shouldUpdate, loadChunk, setShouldUpdate, setLoadChunk } = props;
+
   const { tenant } = useParams<{ tenant: string }>();
   const history = useHistory();
   const dispatch = useDispatch();
@@ -43,7 +44,6 @@ export default function FilesList(props: FilesListProps) {
     shouldUpdate,
     loadChunk
   );
-
   const writeAccess = filesAcl && eventsAcl;
   const noFiles = !isLoading && total === 0;
 

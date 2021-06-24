@@ -4,12 +4,18 @@ import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 import { FileInfo, IdEither } from 'cognite-sdk-v3';
 import chunk from 'lodash/chunk';
 import uniq from 'lodash/uniq';
+import { useFileWithAnnotations } from './useFileWithAnnotations';
 
 export const useAnnotatedFiles = (shouldUpdate: boolean, loadChunk: number) => {
   const [fileIds, setFileIds] = useState<Array<IdEither>>([]);
   const [fetchedFileIds, setFetchedFileIds] = useState<boolean>(false);
   const [fileIdsChunks, setFileIdsChunks] = useState<Array<IdEither[]>>([]);
   const [files, setFiles] = useState<FileInfo[]>([]);
+
+  const {
+    files: annotatedFiles,
+    isFetching: isFetchingAnnotations,
+  } = useFileWithAnnotations(files);
 
   useEffect(() => {
     const fetchFileIds = async () => {
@@ -54,7 +60,7 @@ export const useAnnotatedFiles = (shouldUpdate: boolean, loadChunk: number) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentFilesChunk]);
 
-  const isLoading = !fetchedFileIds || !filesFetched;
+  const isLoading = !fetchedFileIds || !filesFetched || isFetchingAnnotations;
 
-  return { isLoading, files, total: fileIds.length };
+  return { isLoading, files: annotatedFiles, total: fileIds.length };
 };
