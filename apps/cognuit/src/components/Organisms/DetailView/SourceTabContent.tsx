@@ -141,8 +141,9 @@ const SourceTabContent = ({ ...source }: SourceType) => (
         <summary>Upload to CDF</summary>
         {source.revisionSteps &&
           source.revisionSteps.length > 0 &&
-          // eslint-disable-next-line react/jsx-key
-          source.revisionSteps.map((step) => <Step {...step} />)}
+          source.revisionSteps.map((step) => (
+            <Step key={`${step.status}-${step.created_time}`} {...step} />
+          ))}
       </details>
     </Section>
   </>

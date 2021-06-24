@@ -34,6 +34,7 @@ const Configurations = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState<ExtendedConfigurationsResponse[]>([]);
   const [columns, setColumns] = useState<any>([]);
+  const [expandedColumns, setExpandedColumns] = React.useState<any>({});
 
   const handleNameChange = (id: number, newName: string) => {
     const nameIndex = data.findIndex((item) => item.name === newName);
@@ -116,11 +117,13 @@ const Configurations = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
-  const [expanded, setExpanded] = React.useState<any>({});
-
-  const onRowHandleClick = (rowElement: any) => {
+  // Cogs.js hasn't exported Row from React Table.
+  const handleRowClick = (rowElement: any) => {
     const { id } = rowElement.original as any;
-    setExpanded({ ...expanded, [id]: !expanded[id] });
+    setExpandedColumns((prevState: any) => ({
+      ...prevState,
+      [id]: !expandedColumns[id],
+    }));
   };
 
   if (error) {
@@ -141,13 +144,13 @@ const Configurations = () => {
       <ContentContainer>
         <Table<ExtendedConfigurationsResponse>
           dataSource={data}
-          expandedIds={expanded}
+          expandedIds={expandedColumns}
           rowKey={(data, index) => `configuration-${data.id}-${index}`}
           columns={sortBy(columns, (obj) =>
             indexOf(config.visibleColumns, obj.accessor)
           )}
           renderSubRowComponent={ExpandedSubRow}
-          onRowClick={onRowHandleClick}
+          onRowClick={handleRowClick}
         />
       </ContentContainer>
     </>

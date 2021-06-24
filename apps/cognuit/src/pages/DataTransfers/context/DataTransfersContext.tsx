@@ -2,7 +2,7 @@ import React, { useReducer } from 'react';
 
 import {
   Action,
-  Config,
+  DataTypesFilters,
   DataTransfersAction,
   DataTransfersError,
   DataTransfersState,
@@ -21,7 +21,7 @@ export const initialState: DataTransfersState = {
     selectedColumnNames: [],
     columns: [],
   },
-  config: {
+  filters: {
     sources: [],
     selectedSource: null,
     selectedTarget: null,
@@ -86,11 +86,11 @@ function filterReducer(
         },
       };
     }
-    case Action.UPDATE_CONFIG: {
+    case Action.UPDATE_FILTERS: {
       return {
         ...state,
-        config: {
-          ...state.config,
+        filters: {
+          ...state.filters,
           ...action.payload,
         },
       };
@@ -160,7 +160,7 @@ export const reportError = (error: DataTransfersError) => ({
   error,
 });
 
-export const updateConfig = (payload: Partial<Config>) => ({
-  type: Action.UPDATE_CONFIG,
+export const updateFilters = (payload: Partial<DataTypesFilters>) => ({
+  type: Action.UPDATE_FILTERS,
   payload,
 });

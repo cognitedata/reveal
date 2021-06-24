@@ -6,7 +6,6 @@ import {
   GenerateConfigurationsColumns,
   Rule,
 } from 'typings/interfaces';
-import { getMappedColumnName } from 'pages/DataTransfers/utils';
 
 export function curateConfigurationsData(
   data: ConfigurationsResponse[]
@@ -42,7 +41,7 @@ export function curateColumns(
     const rule = rules.find((rule: Rule) => rule.key === column.key);
 
     return {
-      Header: getMappedColumnName(String(column.title)),
+      Header: column.title,
       accessor: column.key,
       Cell: rule?.render,
       disableSortBy: rule?.disableSortBy,

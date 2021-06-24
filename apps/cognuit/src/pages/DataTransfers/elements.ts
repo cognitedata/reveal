@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Icon } from '@cognite/cogs.js';
+import { Button, Icon } from '@cognite/cogs.js';
 import { Table } from 'antd';
 
 export const TableActionsContainer = styled.div`
@@ -26,10 +26,6 @@ export const ColumnsSelector = styled.div`
 
 export const ExpandRowIcon = styled(Icon)`
   cursor: pointer;
-`;
-
-export const RevisionContainer = styled.td`
-  flex: 1;
 `;
 
 export const RevisionLabel = styled.div`
@@ -70,4 +66,17 @@ export const StatusDot = styled.div<{ bgColor: string }>`
   height: 0.7rem;
   background-color: ${(props) => props.bgColor};
   margin: 0 auto;
+`;
+
+export const RevisionContainer = styled.div`
+  display: grid;
+  width: 100%;
+  grid-column-gap: 10px;
+  grid-template-columns: 100px 1fr 1fr 1fr auto;
+  align-items: center;
+  padding: 0 20px;
+`;
+
+export const DetailButton = styled(Button)`
+  width: 150px;
 `;

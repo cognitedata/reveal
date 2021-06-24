@@ -1,40 +1,45 @@
 import { ReactElement } from 'react';
-import { Range } from '@cognite/cogs.js';
-import { DataTransferObject, GenericResponseObject } from 'typings/interfaces';
+import { DataTypesFilters } from 'pages/DataTransfers/types';
 
 export type FilterSourceType = {
   sources: string[];
-  selected: string | null;
-  onSelectSource: (selected: string) => void;
-  projects: DataTransferObject[];
-  selectedProject: DataTransferObject | null;
-  onSelectProject: (selected: DataTransferObject) => void;
+  selected: DataTypesFilters['selectedSource'];
+  onSelectSource: (selected: DataTypesFilters['selectedSource']) => void;
+  projects: DataTypesFilters['sourceProjects'];
+  selectedProject: DataTypesFilters['selectedSourceProject'];
+  onSelectProject: (
+    selected: DataTypesFilters['selectedSourceProject']
+  ) => void;
 };
 
 export type FilterTargetType = {
   targets: string[];
-  selected: string | null;
-  onSelectTarget: (selected: string) => void;
-  projects: DataTransferObject[];
-  selectedProject: DataTransferObject | null;
-  onSelectProject: (selected: DataTransferObject) => void;
+  selected: DataTypesFilters['selectedTarget'];
+  onSelectTarget: (selected: DataTypesFilters['selectedTarget']) => void;
+  projects: DataTypesFilters['targetProjects'];
+  selectedProject: DataTypesFilters['selectedTargetProject'];
+  onSelectProject: (
+    selected: DataTypesFilters['selectedTargetProject']
+  ) => void;
 };
 
 export type FilterDataTypeType = {
-  types: string[];
-  selected: string | null;
-  onSelectType: (selected: string | null) => void;
+  types: DataTypesFilters['datatypes'];
+  selected: DataTypesFilters['selectedDatatype'];
+  onSelectType: (selected: DataTypesFilters['selectedDatatype']) => void;
 };
 
 export type FilterDateType = {
-  selectedRange: Range;
-  onSelectDate: (selected: Range) => void;
+  selectedRange: DataTypesFilters['selectedDateRange'];
+  onSelectDate: (selected: DataTypesFilters['selectedDateRange']) => void;
 };
 
 export type FilterConfigurationType = {
-  configurations: GenericResponseObject[];
-  selected: GenericResponseObject | null;
-  onSelectConfiguration: (selected: GenericResponseObject | null) => void;
+  configurations: DataTypesFilters['configurations'];
+  selected: DataTypesFilters['selectedConfiguration'];
+  onSelectConfiguration: (
+    selected: DataTypesFilters['selectedConfiguration']
+  ) => void;
 };
 
 export type FiltersProps = {
@@ -57,15 +62,20 @@ export interface FilterTypes {
   date: ReactElement | null;
 }
 
-export type FilterListFiltersSource = string[] | GenericResponseObject[];
+export type FilterListFiltersSource =
+  | FiltersProps['configuration']['configurations']
+  | FiltersProps['source']['sources']
+  | FiltersProps['source']['projects']
+  | FiltersProps['target']['targets']
+  | FiltersProps['target']['projects'];
 
 export type FilterListFilters = {
-  source: FilterListFiltersSource;
   name: keyof FilterTypes;
   label: string;
+  source: FilterListFiltersSource;
   onSelect: (action: any) => void;
-  value: string | null;
   visible: boolean;
+  value: string | null | undefined;
 }[];
 
 export interface FilterListProps {

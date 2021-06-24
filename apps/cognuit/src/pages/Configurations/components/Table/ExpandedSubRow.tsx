@@ -1,4 +1,7 @@
-import { DataTransferObject, UNIX_TIMESTAMP_FACTOR } from 'typings/interfaces';
+import {
+  ExtendedConfigurationsResponse,
+  UNIX_TIMESTAMP_FACTOR,
+} from 'typings/interfaces';
 import { Badge } from '@cognite/cogs.js';
 
 import { ExpandedRow } from '../../elements';
@@ -7,7 +10,7 @@ import { ExpandedRow } from '../../elements';
 export function ExpandedSubRow({
   original: record,
 }: {
-  original: DataTransferObject;
+  original: ExtendedConfigurationsResponse;
 }) {
   return (
     <ExpandedRow>

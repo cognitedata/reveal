@@ -13,6 +13,10 @@ export const LoadingBoxWrapper = styled.div<{
   bgColor?: string;
   txtColor?: string;
 }>`
+  display: flex;
+  flex-direction: center;
+  align-items: center;
+  flex-direction: column;
   background-color: ${(props) =>
     props.bgColor ? props.bgColor : 'var(--cogs-greyscale-grey10)'};
   color: ${(props) =>
@@ -20,7 +24,6 @@ export const LoadingBoxWrapper = styled.div<{
   padding: 1rem 2rem;
   border-radius: 4px;
   width: auto;
-  display: inline-block;
 
   .loading-circle {
     width: 40px;

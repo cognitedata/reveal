@@ -12,7 +12,7 @@ import {
 } from 'pages/DataTransfers/context/DataTransfersContext';
 import { DataTransferObject, RESTTransfersFilter } from 'typings/interfaces';
 import { DataTransfersResponse } from 'types/ApiInterface';
-import { Action } from 'pages/DataTransfers/types';
+import { Action, DataTypesTableData } from 'pages/DataTransfers/types';
 import { selectColumns } from 'pages/DataTransfers/utils';
 import { CustomError } from 'services/CustomError';
 
@@ -36,7 +36,7 @@ export function useFetchDataTransfers() {
 
   const {
     data,
-    config: {
+    filters: {
       selectedConfiguration,
       selectedSource,
       selectedTarget,
@@ -93,7 +93,7 @@ export function useFetchDataTransfers() {
         .get(options)
         .then((response: DataTransfersResponse[]) => {
           if (response.length > 0) {
-            const handledData = response.map((item) => ({
+            const handledData: DataTypesTableData[] = response.map((item) => ({
               ...item.source,
               status: item.status,
               report: item.status,

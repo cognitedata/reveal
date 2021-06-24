@@ -1,12 +1,13 @@
 import ApiContext from 'contexts/ApiContext';
 import APIErrorContext from 'contexts/APIErrorContext';
 import {
-  updateConfig,
+  updateFilters,
   useDataTransfersDispatch,
   useDataTransfersState,
 } from 'pages/DataTransfers/context/DataTransfersContext';
 import { useContext } from 'react';
 import { CustomError } from 'services/CustomError';
+import { DatatypesResponse } from 'types/ApiInterface';
 
 export function useFetchDatatypes() {
   const { api } = useContext(ApiContext);
@@ -14,15 +15,15 @@ export function useFetchDatatypes() {
 
   const dispatch = useDataTransfersDispatch();
   const {
-    config: { selectedSourceProject },
+    filters: { selectedSourceProject },
   } = useDataTransfersState();
 
   return () => {
     if (selectedSourceProject) {
       api!.datatypes
         .get(selectedSourceProject.id)
-        .then((response: string[]) => {
-          dispatch(updateConfig({ datatypes: response }));
+        .then((response: DatatypesResponse[]) => {
+          dispatch(updateFilters({ datatypes: response }));
         })
         .catch((err: CustomError) => {
           addError(err.message, err.status);

@@ -1,17 +1,24 @@
-import { useState, useEffect, useContext } from 'react';
-import { Button, Colors, Tooltip } from '@cognite/cogs.js';
+import React, { useState, useEffect, useContext } from 'react';
+import { Colors, Loader, Tooltip } from '@cognite/cogs.js';
 import { apiStatuses } from 'utils/statuses';
 import { CustomError } from 'services/CustomError';
+import { Revision } from 'types/ApiInterface';
 
-import { DataTransferObject, RevisionObject } from '../../typings/interfaces';
+import { DataTransferObject } from '../../typings/interfaces';
 import ApiContext from '../../contexts/ApiContext';
 
-import { SubTable, RevisionLabel, StatusDot } from './elements';
+import {
+  DetailButton,
+  RevisionContainer,
+  RevisionLabel,
+  StatusDot,
+} from './elements';
 import { getFormattedTimestampOrString } from './utils';
+import { DataTypesTableData } from './types';
 
 type Props = {
-  record: DataTransferObject;
-  onDetailClick: (record: DataTransferObject, revision: RevisionObject) => void;
+  record: DataTypesTableData;
+  onDetailClick: (record: DataTypesTableData, revision: Revision) => void;
 };
 
 type DataType = {
@@ -20,6 +27,7 @@ type DataType = {
   statusOk: JSX.Element;
   details: JSX.Element;
   objectId: number;
+  lastUpdated: JSX.Element;
   datatype?: JSX.Element;
   author?: JSX.Element;
 };
@@ -29,18 +37,8 @@ const Revisions = ({ record, onDetailClick }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
   const { api } = useContext(ApiContext);
 
-  const columns = [
-    { title: 'Status', dataIndex: 'statusOk', key: 'statusOk' },
-    { title: 'Name', dataIndex: 'name', key: 'name' },
-    { title: 'Last updated', dataIndex: 'last_updated', key: 'last_updated' },
-    { title: 'Author', dataIndex: 'author', key: 'author' },
-    { title: 'placeholder1', dataIndex: 'placeholder1', key: 'placeholder1' },
-    { title: 'placeholder2', dataIndex: 'placeholder2', key: 'placeholder2' },
-    { title: 'Details', dataIndex: 'details', key: 'details' },
-  ];
-
-  const getRevisionsList = () =>
-    record.revisions.reverse().map((rev: RevisionObject) => {
+  const getRevisionsList = (): DataType[] =>
+    record.revisions.reverse().map((rev: Revision) => {
       let statusColor = Colors['greyscale-grey3'].hex();
       let statusText: string | undefined = 'Couldn`t find status';
       if (
@@ -58,6 +56,7 @@ const Revisions = ({ record, onDetailClick }: Props) => {
         }
         statusText = translation.status;
       }
+
       return {
         key: rev.id,
         objectId: rev.object_id,
@@ -72,7 +71,7 @@ const Revisions = ({ record, onDetailClick }: Props) => {
             <div>{rev.revision}</div>
           </div>
         ),
-        last_updated: (
+        lastUpdated: (
           <div>
             <RevisionLabel>Last changed</RevisionLabel>
             <div>
@@ -84,26 +83,28 @@ const Revisions = ({ record, onDetailClick }: Props) => {
           </div>
         ),
         details: (
-          <Button onClick={() => onDetailClick(record, rev)}>
+          <DetailButton onClick={() => onDetailClick(record, rev)}>
             Detail view
-          </Button>
+          </DetailButton>
         ),
       };
     });
 
-  const getSingleObj = async (revision: DataTransferObject) =>
+  const getSingleObj = async (revision: DataType) =>
     api!.objects.getSingleObject(revision.objectId).then((res) => res[0]);
 
   useEffect(() => {
     const runEffect = async () => {
+      setIsLoading(true);
       const revisions = getRevisionsList();
       setData(revisions);
-      setIsLoading(false);
+
       Promise.all(
-        revisions.map(async (rev: RevisionObject) => {
+        revisions.map(async (rev: DataType) => {
           const singleObj: DataTransferObject = await getSingleObj(rev);
           return {
             ...rev,
+            // Mark as delete - not being
             datatype: (
               <div>
                 <RevisionLabel>Datatype</RevisionLabel>
@@ -123,7 +124,11 @@ const Revisions = ({ record, onDetailClick }: Props) => {
           setData(resp);
         })
         .catch((err: CustomError) => {
+          // eslint-disable-next-line no-console
           console.log('Error', err);
+        })
+        .finally(() => {
+          setIsLoading(false);
         });
     };
 
@@ -131,17 +136,24 @@ const Revisions = ({ record, onDetailClick }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  if (isLoading) {
+    return <Loader />;
+  }
+
   return (
-    <SubTable
-      columns={columns}
-      dataSource={data}
-      pagination={false}
-      showHeader={false}
-      loading={isLoading}
-      locale={{
-        emptyText: isLoading ? 'Loading...' : 'No data',
-      }}
-    />
+    <RevisionContainer>
+      {data.map((item) => {
+        return (
+          <React.Fragment key={item.key}>
+            {item.statusOk}
+            {item.name}
+            {item.lastUpdated}
+            {item.author}
+            {item.details}
+          </React.Fragment>
+        );
+      })}
+    </RevisionContainer>
   );
 };
 

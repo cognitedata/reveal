@@ -15,7 +15,7 @@ const defaultConfigurations = [
       external_id: 'TargetTestProject',
       source: 'Openworks',
     },
-    business_tags: ['Coguit', 'Integration'],
+    business_tags: ['Cognuit', 'Integration'],
     author: 'Cognuit',
     datatypes: ['PointSet', 'Target'],
     data_status: [],

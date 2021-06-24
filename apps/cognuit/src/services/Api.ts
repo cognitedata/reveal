@@ -123,7 +123,7 @@ class Api {
   public datatypes = {
     get: async (
       projectId: number | null = null
-    ): Promise<DatatypesResponse> => {
+    ): Promise<DatatypesResponse[]> => {
       let queryParameters;
       if (projectId) queryParameters = { project_id: projectId };
       return this.get(`${this.baseURL}/datatypes`, queryParameters);
@@ -166,7 +166,7 @@ class Api {
   };
 
   public sources = {
-    get: async (): Promise<SourcesResponse> =>
+    get: async (): Promise<SourcesResponse[]> =>
       this.get(`${this.baseURL}/sources`),
     getHeartbeats: async (
       source: string,

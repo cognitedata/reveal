@@ -1,9 +1,9 @@
 import React, { useContext, useEffect } from 'react';
 import { Button, Dropdown, Tooltip } from '@cognite/cogs.js';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { DataTransferObject } from 'typings/interfaces';
 import ApiContext from 'contexts/ApiContext';
 import { useQuery } from 'utils/functions';
+import { DataTypesTableData } from 'pages/DataTransfers/types';
 
 import {
   addColumnName,
@@ -12,7 +12,7 @@ import {
   useDataTransfersDispatch,
   useDataTransfersState,
   reportLoading,
-  updateConfig,
+  updateFilters,
 } from '../../../context/DataTransfersContext';
 import { Filters } from '../../Filters';
 import { TableActionsContainer, ColumnsSelector } from '../../../elements';
@@ -28,7 +28,7 @@ import {
 } from './api';
 
 interface Props {
-  setFilteredData: React.Dispatch<React.SetStateAction<DataTransferObject[]>>;
+  setFilteredData: React.Dispatch<React.SetStateAction<DataTypesTableData[]>>;
 }
 
 const TableActions: React.FC<Props> = ({ setFilteredData }) => {
@@ -42,7 +42,7 @@ const TableActions: React.FC<Props> = ({ setFilteredData }) => {
   const dispatch = useDataTransfersDispatch();
   const {
     data,
-    config: {
+    filters: {
       sourceProjects,
       sources,
       selectedConfiguration,
@@ -90,7 +90,7 @@ const TableActions: React.FC<Props> = ({ setFilteredData }) => {
     fetchProjects();
     clearData();
     dispatch(
-      updateConfig({
+      updateFilters({
         selectedTarget: null,
         selectedSourceProject: null,
         selectedTargetProject: null,
@@ -132,7 +132,7 @@ const TableActions: React.FC<Props> = ({ setFilteredData }) => {
   useEffect(() => {
     clearData();
     dispatch(
-      updateConfig({
+      updateFilters({
         selectedTarget: null,
         selectedSourceProject: null,
         selectedTargetProject: null,
@@ -146,7 +146,7 @@ const TableActions: React.FC<Props> = ({ setFilteredData }) => {
     clearData();
     fetchDatatypes();
     dispatch(
-      updateConfig({
+      updateFilters({
         selectedTarget: null,
         selectedTargetProject: null,
       })
@@ -158,7 +158,7 @@ const TableActions: React.FC<Props> = ({ setFilteredData }) => {
     clearData();
     fetchProjects();
     dispatch(
-      updateConfig({
+      updateFilters({
         selectedTargetProject: null,
       })
     );
@@ -177,12 +177,12 @@ const TableActions: React.FC<Props> = ({ setFilteredData }) => {
         (item) => item.name === configurationNameFromUrl
       );
       if (selectedConfig) {
-        dispatch(updateConfig({ selectedConfiguration: selectedConfig }));
+        dispatch(updateFilters({ selectedConfiguration: selectedConfig }));
       } else {
-        dispatch(updateConfig({ selectedConfiguration: null }));
+        dispatch(updateFilters({ selectedConfiguration: null }));
       }
     } else {
-      dispatch(updateConfig({ selectedConfiguration: null }));
+      dispatch(updateFilters({ selectedConfiguration: null }));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [configurationNameFromUrl, configurations]);
@@ -208,21 +208,21 @@ const TableActions: React.FC<Props> = ({ setFilteredData }) => {
             sources,
             selected: selectedSource,
             onSelectSource: (nextSelected) =>
-              dispatch(updateConfig({ selectedSource: nextSelected })),
+              dispatch(updateFilters({ selectedSource: nextSelected })),
             projects: sourceProjects,
             selectedProject: selectedSourceProject,
             onSelectProject: (nextSelected) =>
-              dispatch(updateConfig({ selectedSourceProject: nextSelected })),
+              dispatch(updateFilters({ selectedSourceProject: nextSelected })),
           }}
           target={{
             targets: sources,
             selected: selectedTarget,
             onSelectTarget: (nextSelected) =>
-              dispatch(updateConfig({ selectedTarget: nextSelected })),
+              dispatch(updateFilters({ selectedTarget: nextSelected })),
             projects: targetProjects,
             selectedProject: selectedTargetProject,
             onSelectProject: (nextSelected) =>
-              dispatch(updateConfig({ selectedTargetProject: nextSelected })),
+              dispatch(updateFilters({ selectedTargetProject: nextSelected })),
           }}
           configuration={{
             configurations,
@@ -239,12 +239,12 @@ const TableActions: React.FC<Props> = ({ setFilteredData }) => {
             types: datatypes,
             selected: selectedDatatype,
             onSelectType: (nextSelected) =>
-              dispatch(updateConfig({ selectedDatatype: nextSelected })),
+              dispatch(updateFilters({ selectedDatatype: nextSelected })),
           }}
           date={{
             selectedRange: selectedDateRange,
             onSelectDate: (nextSelected) =>
-              dispatch(updateConfig({ selectedDateRange: nextSelected })),
+              dispatch(updateFilters({ selectedDateRange: nextSelected })),
           }}
           onNameSearchChange={filterByNameSearch}
           onReset={resetFilters}

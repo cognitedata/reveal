@@ -7,10 +7,10 @@ export type ErrorDistributionResponse = {
 };
 
 // Data types
-export type DatatypesResponse = string[];
+export type DatatypesResponse = string;
 
 // Sources
-export type SourcesResponse = string[];
+export type SourcesResponse = string;
 export type SourcesHeartbeatsResponse = number[];
 
 // Projects
@@ -99,12 +99,6 @@ interface Translation {
   status: string;
 }
 
-interface Step {
-  status: string;
-  error_message: string;
-  created_time: number;
-}
-
 export interface ObjectsRevisionsResponse {
   id: number;
   created_time: number;
@@ -128,21 +122,22 @@ export interface ObjectsRevisionsResponse {
   revisions_count: number;
 }
 
-interface Revision {
+export interface Revision {
   id: number;
   created_time: number;
   last_updated: number;
   object_id: number;
   revision: string;
-  cdf_file: CdfFile;
-  status: string;
+  cdf_file?: CdfFile;
+  status?: string;
   steps: Step[];
-  translations: Translation[];
-}
+  translations: {
+    revision: Revision;
+    status: string;
+  }[];
 
-interface Translation {
-  revision: string;
-  status: string;
+  // NOTE: Figure out if the property cdf_metadata is included in Revision
+  // cdf_metadata: any;
 }
 
 interface Step {
@@ -152,9 +147,9 @@ interface Step {
 }
 
 interface CdfFile {
-  id: number;
-  upload_link: string;
-  uploaded: boolean;
+  id?: number;
+  upload_link?: string;
+  uploaded?: boolean;
 }
 
 interface Package {
@@ -174,7 +169,5 @@ interface Package {
 }
 
 interface CdfMetadata {
-  additionalProp1: string;
-  additionalProp2: string;
-  additionalProp3: string;
+  [key: string]: string;
 }

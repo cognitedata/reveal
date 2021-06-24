@@ -1,7 +1,12 @@
-import { DataTransferObject, GenericResponseObject } from 'typings/interfaces';
-import { ColumnsType } from 'antd/es/table';
-import { ProjectsResponse } from 'types/ApiInterface';
-import { Range } from '@cognite/cogs.js';
+import {
+  ConfigurationsResponse,
+  DataTransfersResponse,
+  DatatypesResponse,
+  ObjectsRevisionsResponse,
+  ProjectsResponse,
+  SourcesResponse,
+} from 'types/ApiInterface';
+import { Range, TableProps } from '@cognite/cogs.js';
 
 export type DataTransfersError = {
   message: string;
@@ -20,35 +25,36 @@ export enum Action {
   FAIL = 'fail',
   ADD_COLUMN = 'add_column',
   REMOVE_COLUMN = 'remove_column',
-  UPDATE_CONFIG = 'update_config',
+  UPDATE_FILTERS = 'update_filters',
 }
 
 interface Data {
-  data: DataTransferObject[];
-  rawColumns: ColumnsType<DataTransferObject>;
+  data: DataTypesTableData[];
+  rawColumns: TableProps<DataTypesTableData>['columns'];
   allColumnNames: string[];
   selectedColumnNames: string[];
-  columns: ColumnsType<DataTransferObject>;
+  columns: TableProps<DataTypesTableData>['columns'];
 }
 
-export interface Config {
-  sources: string[];
+export interface DataTypesFilters {
+  sources: SourcesResponse[];
   selectedSource: string | null;
   selectedTarget: string | null;
-  configurations: GenericResponseObject[];
-  selectedConfiguration: GenericResponseObject | null;
+  configurations: ConfigurationsResponse[];
+  selectedConfiguration: ConfigurationsResponse | null;
   sourceProjects: ProjectsResponse[];
-  selectedSourceProject: DataTransferObject | null;
+  selectedSourceProject: ProjectsResponse | null;
   targetProjects: ProjectsResponse[];
-  selectedTargetProject: DataTransferObject | null;
+  selectedTargetProject: ProjectsResponse | null;
   selectedDateRange: Range;
-  datatypes: string[];
-  selectedDatatype: string | null;
+  datatypes: DatatypesResponse[];
+  selectedDatatype: DatatypesResponse | null;
 }
+
 export interface DataTransfersState {
   status: ProgressState;
   data: Data;
-  config: Config;
+  filters: DataTypesFilters;
   error: DataTransfersError | undefined;
 }
 
@@ -56,8 +62,13 @@ export type DataTransfersAction =
   | { type: Action.LOAD }
   | { type: Action.SUCCEED; payload?: Data }
   | { type: Action.FAIL; error: DataTransfersError }
-  | { type: Action.UPDATE_CONFIG; payload: Config };
+  | { type: Action.UPDATE_FILTERS; payload: DataTypesFilters };
 
 export type UserAction =
   | { type: Action.ADD_COLUMN; payload: string }
   | { type: Action.REMOVE_COLUMN; payload: string };
+
+export interface DataTypesTableData extends ObjectsRevisionsResponse {
+  report: DataTransfersResponse['status'];
+  status: DataTransfersResponse['status'];
+}

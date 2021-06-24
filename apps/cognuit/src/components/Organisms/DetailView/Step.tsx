@@ -13,7 +13,7 @@ type StepType = {
 };
 
 const Step = ({ status, error_message, created_time }: StepType) => (
-  <StepItem key={`${status}-${created_time}`}>
+  <StepItem>
     <StepIconCircle
       bgColor={error_message ? Colors.danger.hex() : Colors.success.hex()}
       txtColor={error_message ? Colors.danger.hex() : Colors.white.hex()}

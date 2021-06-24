@@ -3,12 +3,12 @@ import APIErrorContext from 'contexts/APIErrorContext';
 import {
   reportError,
   reportSuccess,
-  updateConfig,
+  updateFilters,
   useDataTransfersDispatch,
 } from 'pages/DataTransfers/context/DataTransfersContext';
 import { useContext } from 'react';
 import { CustomError } from 'services/CustomError';
-import { GenericResponseObject } from 'typings/interfaces';
+import { ConfigurationsResponse } from 'types/ApiInterface';
 
 export function useFetchConfigurations() {
   const { api } = useContext(ApiContext);
@@ -19,11 +19,11 @@ export function useFetchConfigurations() {
   return () => {
     api!.configurations
       .get()
-      .then((response: GenericResponseObject[]) => {
+      .then((response: ConfigurationsResponse[]) => {
         if (response.length > 0) {
-          dispatch(updateConfig({ configurations: response }));
+          dispatch(updateFilters({ configurations: response }));
         } else {
-          dispatch(updateConfig({ configurations: [] }));
+          dispatch(updateFilters({ configurations: [] }));
         }
         dispatch(reportSuccess());
       })

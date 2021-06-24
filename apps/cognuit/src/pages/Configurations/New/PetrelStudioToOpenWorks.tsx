@@ -117,7 +117,9 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
     return api!.projects.get(Source.OPENWORKS);
   }
 
-  async function fetchDataTypes(projectId: number): Promise<DatatypesResponse> {
+  async function fetchDataTypes(
+    projectId: number
+  ): Promise<DatatypesResponse[]> {
     return api!.datatypes.get(projectId);
   }
 

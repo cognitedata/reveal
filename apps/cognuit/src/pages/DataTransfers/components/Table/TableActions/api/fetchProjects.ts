@@ -4,12 +4,13 @@ import {
   reportError,
   reportLoading,
   reportSuccess,
-  updateConfig,
+  updateFilters,
   useDataTransfersDispatch,
   useDataTransfersState,
 } from 'pages/DataTransfers/context/DataTransfersContext';
 import { useContext } from 'react';
 import { CustomError } from 'services/CustomError';
+import { ProjectsResponse } from 'types/ApiInterface';
 
 export function useFetchProjects() {
   const { api } = useContext(ApiContext);
@@ -17,7 +18,7 @@ export function useFetchProjects() {
 
   const dispatch = useDataTransfersDispatch();
   const {
-    config: { selectedSource, selectedTarget },
+    filters: { selectedSource, selectedTarget },
   } = useDataTransfersState();
 
   return () => {
@@ -25,9 +26,9 @@ export function useFetchProjects() {
     if (selectedSource) {
       api!.projects
         .get(selectedSource)
-        .then((response) => {
+        .then((response: ProjectsResponse[]) => {
           if (response.length > 0) {
-            dispatch(updateConfig({ sourceProjects: response }));
+            dispatch(updateFilters({ sourceProjects: response }));
           }
           dispatch(reportSuccess());
         })
@@ -39,9 +40,9 @@ export function useFetchProjects() {
     if (selectedTarget) {
       api!.projects
         .get(selectedTarget)
-        .then((response) => {
+        .then((response: ProjectsResponse[]) => {
           if (response.length > 0) {
-            dispatch(updateConfig({ targetProjects: response }));
+            dispatch(updateFilters({ targetProjects: response }));
             dispatch(reportSuccess());
           }
         })

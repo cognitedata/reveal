@@ -3,7 +3,7 @@ import APIErrorContext from 'contexts/APIErrorContext';
 import {
   reportError,
   reportSuccess,
-  updateConfig,
+  updateFilters,
   useDataTransfersDispatch,
 } from 'pages/DataTransfers/context/DataTransfersContext';
 import { useContext } from 'react';
@@ -19,8 +19,8 @@ export function useFetchSources() {
   return () => {
     api!.sources
       .get()
-      .then((response: SourcesResponse) => {
-        dispatch(updateConfig({ sources: response }));
+      .then((response: SourcesResponse[]) => {
+        dispatch(updateFilters({ sources: response }));
         dispatch(reportSuccess());
       })
       .catch((err: CustomError) => {

@@ -1,23 +1,21 @@
 import React, { useContext, useEffect, useState } from 'react';
-import 'antd/dist/antd.css';
-import { Table } from 'antd';
 import ApiContext from 'contexts/ApiContext';
-import sortBy from 'lodash/sortBy';
-import indexOf from 'lodash/indexOf';
 import EmptyTableMessage from 'components/Molecules/EmptyTableMessage/EmptyTableMessage';
-import { DataTransferObject, RevisionObject } from 'typings/interfaces';
 import DetailView, {
   DetailDataProps,
 } from 'components/Organisms/DetailView/DetailView';
-import { Loader } from '@cognite/cogs.js';
+import { Loader, Table } from '@cognite/cogs.js';
+import { Revision } from 'types/ApiInterface';
+import sortBy from 'lodash/sortBy';
+import indexOf from 'lodash/indexOf';
 
 import { ContentContainer } from '../../elements';
 import ErrorMessage from '../../components/Molecules/ErrorMessage';
 
 import Revisions from './Revisions';
 import config from './datatransfer.config';
-import { ExpandRowIcon, DetailViewWrapper } from './elements';
-import { ProgressState } from './types';
+import { DetailViewWrapper } from './elements';
+import { DataTypesTableData, ProgressState } from './types';
 import { useDataTransfersState } from './context/DataTransfersContext';
 import TableActions from './components/Table/TableActions';
 
@@ -26,7 +24,7 @@ const DataTransfers: React.FC = () => {
     status,
     data,
     error,
-    config: {
+    filters: {
       sources,
       selectedConfiguration,
       selectedSource,
@@ -36,9 +34,11 @@ const DataTransfers: React.FC = () => {
     },
   } = useDataTransfersState();
 
-  const [filteredData, setFilteredData] = useState<DataTransferObject[]>(
+  const [filteredData, setFilteredData] = useState<DataTypesTableData[]>(
     data.data
   );
+
+  const [expandedColumns, setExpandedColumns] = React.useState<any>({});
 
   const { api } = useContext(ApiContext);
 
@@ -50,8 +50,8 @@ const DataTransfers: React.FC = () => {
   }, [data]);
 
   function handleOpenDetailClick(
-    sourceObj: DataTransferObject,
-    revision: RevisionObject
+    sourceObj: DataTypesTableData,
+    revision: Revision
   ) {
     setSelectedTransfer({
       isLoading: true,
@@ -99,20 +99,21 @@ const DataTransfers: React.FC = () => {
       });
   }
 
-  if (error) {
+  const handleRowClick = (rowElement: any) => {
+    const { id } = rowElement.original as any;
+    setExpandedColumns((prevState: any) => ({
+      ...prevState,
+      [id]: !expandedColumns[id],
+    }));
+  };
+
+  function ExpandedRow({ original }: { original: DataTypesTableData }) {
     return (
-      <ErrorMessage
-        message={`Failed to fetch transfers - ${error.message}`}
-        fullView
-      />
+      <Revisions record={original} onDetailClick={handleOpenDetailClick} />
     );
   }
 
-  function renderExpandedRow(record: DataTransferObject) {
-    return <Revisions record={record} onDetailClick={handleOpenDetailClick} />;
-  }
-
-  function NoDataText() {
+  function renderNoDataText() {
     let message = 'Select configuration';
     if (selectedSource) {
       if (selectedSourceProject) {
@@ -149,33 +150,28 @@ const DataTransfers: React.FC = () => {
     return null;
   }
 
+  if (error) {
+    return (
+      <ErrorMessage
+        message={`Failed to fetch transfers - ${error.message}`}
+        fullView
+      />
+    );
+  }
+
   return (
     <ContentContainer>
       <TableActions setFilteredData={setFilteredData} />
-      <Table
+      <Table<DataTypesTableData>
         dataSource={filteredData}
+        expandedIds={expandedColumns}
+        rowKey={(data, index) => `datatypes-${data.id}-${index}`}
         columns={sortBy(data.columns, (obj) =>
-          indexOf(config.columnOrder, obj.key)
+          indexOf(config.columnOrder, obj.accessor)
         )}
-        rowKey="id"
-        key={`${data.selectedColumnNames.join('')}_${selectedSource}_${
-          // eslint-disable-next-line camelcase
-          selectedSourceProject?.external_id
-          // eslint-disable-next-line camelcase
-        }_${selectedTarget}_${selectedTargetProject?.external_id}`}
-        expandable={{
-          expandedRowRender: renderExpandedRow,
-          // eslint-disable-next-line react/prop-types
-          expandIcon: ({ expanded, onExpand, record }) => (
-            <ExpandRowIcon
-              type={expanded ? 'Down' : 'Right'}
-              onClick={(e) => onExpand(record, e)}
-            />
-          ),
-        }}
-        locale={{
-          emptyText: NoDataText(),
-        }}
+        renderSubRowComponent={ExpandedRow}
+        onRowClick={handleRowClick}
+        locale={{ emptyText: renderNoDataText() }}
       />
       <DetailViewWrapper>
         <DetailView
