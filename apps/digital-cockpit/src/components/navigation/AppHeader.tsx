@@ -51,6 +51,12 @@ const AppHeader: React.FC = () => {
 
   const { documentTitle, accessManageLink } = useLink();
 
+  const isNoc = () => {
+    return (
+      tenant === 'noc' || tenant === 'noc-test' || tenant === 'noc-pre-prod'
+    );
+  };
+
   const setFilter = (groupName: string) => {
     const alreadyChecked = groupsFilter.includes(groupName);
     if (alreadyChecked) {
@@ -236,6 +242,14 @@ const AppHeader: React.FC = () => {
     },
   ];
 
+  if (isNoc()) {
+    actions.push({
+      key: 'NOCDTlogo',
+      component: <Graphic type="NOC" />,
+      onClick: goHome,
+    });
+  }
+
   const filteredActions = admin ? [...adminActions, ...actions] : actions;
 
   return (
@@ -284,14 +298,16 @@ const AppHeader: React.FC = () => {
           />
         </TopBar.Left>
         <TopBar.Right>
-          <TopBar.Item className="topbar-logo-wrapper">
-            <LogoWrapper>
-              <TopBar.Logo
-                onLogoClick={goHome}
-                logo={<CustomerLogo imgUrl={customerLogoUrl} />}
-              />
-            </LogoWrapper>
-          </TopBar.Item>
+          {!isNoc() && (
+            <TopBar.Item className="topbar-logo-wrapper">
+              <LogoWrapper>
+                <TopBar.Logo
+                  onLogoClick={goHome}
+                  logo={<CustomerLogo imgUrl={customerLogoUrl} />}
+                />
+              </LogoWrapper>
+            </TopBar.Item>
+          )}
           <TopBar.Actions actions={filteredActions} />
         </TopBar.Right>
       </TopBar>

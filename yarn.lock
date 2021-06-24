@@ -1442,10 +1442,10 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@cognite/cogs.js@^3.24.0":
-  version "3.24.0"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.24.0.tgz#3674decd38cfb46826e52e957fa892c4ab8227b0"
-  integrity sha512-eiepS/YzwbFXgaA/O+Sc0V2i5+AvBE/QekRpVpamJvSTr0go2OqjlWr5UaoPbCBLuDmLr1bqIE/oYDfPBfvk5A==
+"@cognite/cogs.js@^3.25.0":
+  version "3.25.0"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.25.0.tgz#1d1c4330886b84e302f2a7ef49d4921917672625"
+  integrity sha512-YVzBr/51fNolFO4qhxz6s+nyGCaUzqNHZwsBdSNKOXs0j1Psa9DUDccH6xp0BQy2TFe1X7BhFzV9SzKVhDi3wA==
   dependencies:
     "@tippyjs/react" "4.2.3"
     "@types/react-date-range" "^1.1.2"
@@ -1466,9 +1466,11 @@
 
 "@cognite/eslint-config@link:packages/eslint-config":
   version "0.0.0"
+  uid ""
 
 "@cognite/eslint-plugin@link:packages/eslint-plugin":
   version "0.0.0"
+  uid ""
 
 "@cognite/fas-tools@^1.0.0":
   version "1.1.5"
