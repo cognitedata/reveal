@@ -234,6 +234,7 @@ pods {
                 sentryProjectName: args.sentryProjectName,
                 performBuild: performBuild,
                 baseVersion: args.baseVersion,
+                shouldInstallPackages: false,
               )
               fas.publish(
                 previewSubdomain: args.previewSubdomain
