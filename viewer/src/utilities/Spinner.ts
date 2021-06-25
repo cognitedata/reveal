@@ -3,10 +3,17 @@
  */
 
 import css from './spinnerStyles.css';
+import svg from '!!raw-loader!./spinnerCogniteLogo.svg';
 
 export class Spinner {
   private static readonly stylesId = 'reveal-viewer-spinner-styles';
-  private static readonly cssClass = 'reveal-viewer-spinner';
+  static classnames = {
+    base: 'reveal-viewer-spinner',
+    loading: 'reveal-viewer-spinner--loading',
+    dark: 'reveal-viewer-spinner--dark'
+  };
+
+  private _loading = false;
 
   private static loadStyles() {
     if (document.getElementById(Spinner.stylesId)) {
@@ -24,28 +31,41 @@ export class Spinner {
     Spinner.loadStyles();
     this.el = document.createElement('div');
     this.el.title = 'Loading...';
-    this.el.style.position = 'absolute';
-    this.el.style.top = '0';
-    this.el.style.left = '0';
-    this.el.style.display = 'none';
 
-    const spinner = document.createElement('div');
-    spinner.className = Spinner.cssClass;
-    this.el.appendChild(spinner);
+    this.el.className = Spinner.classnames.base;
+    this.el.innerHTML = svg;
 
     parent.style.position = 'relative';
     parent.appendChild(this.el);
   }
 
-  show() {
-    this.el.style.display = 'block';
+  get loading() {
+    return this._loading;
   }
 
-  hide() {
-    this.el.style.display = 'none';
+  set loading(loadingState: boolean) {
+    this._loading = loadingState;
+    if (loadingState) {
+      this.el.classList.add(Spinner.classnames.loading);
+    } else {
+      this.el.classList.remove(Spinner.classnames.loading);
+    }
+  }
+
+  updateBackgroundColor(color: { r: number; g: number; b: number }) {
+    // https://en.wikipedia.org/wiki/Relative_luminance
+    const { r, g, b } = color;
+    const lightness = 0.2126 * (r / 255) + 0.7152 * (g / 255) + 0.0722 * (b / 255);
+
+    if (lightness > 0.5) {
+      this.el.classList.add(Spinner.classnames.dark);
+    } else {
+      this.el.classList.remove(Spinner.classnames.dark);
+    }
   }
 
   dispose() {
+    this.el.remove();
     const styleTag = document.getElementById(Spinner.stylesId);
     if (styleTag) {
       styleTag.remove();
