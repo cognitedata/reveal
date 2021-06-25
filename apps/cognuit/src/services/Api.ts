@@ -1,4 +1,4 @@
-import SIDECAR from 'utils/sidecar';
+import SIDECAR from 'configs/sidecar';
 import { CogniteClient } from '@cognite/sdk';
 import {
   ConfigurationsResponse,
@@ -241,6 +241,8 @@ class Api {
     },
     update: async (id: number, options: any): Promise<ConfigurationsResponse> =>
       this.post(`${this.baseURL}/configurations/${id}/update`, options),
+    restart: async (id: number): Promise<ConfigurationsResponse> =>
+      this.post(`${this.baseURL}/configurations/${id}/restart`, {}),
   };
 
   public revisions = {

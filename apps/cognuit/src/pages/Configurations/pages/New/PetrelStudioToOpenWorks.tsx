@@ -28,11 +28,11 @@ import {
   InitialState,
   SaveButton,
   ThreeColsLayout,
-} from '../elements';
-import { CloseIcon } from '../../../components/Organisms/DetailView/elements';
+} from '../../elements';
+import { CloseIcon } from '../../../../components/Organisms/DetailView/elements';
 
 import { makeConnectorLines } from './utils';
-import ConfigArrow from './ConfigArrow';
+import ConfigArrow from './components/ConfigArrow';
 
 type Props = {
   name: string | undefined | null;

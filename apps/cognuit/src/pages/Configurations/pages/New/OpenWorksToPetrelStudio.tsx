@@ -36,10 +36,10 @@ import {
   InitialState,
   SaveButton,
   ThreeColsLayout,
-} from '../elements';
+} from '../../elements';
 
-import DatatypeSection from './DatatypeSection/DatatypeSection';
-import ConfigArrow from './ConfigArrow';
+import DatatypeSection from './components/DatatypeSection/DatatypeSection';
+import ConfigArrow from './components/ConfigArrow';
 import { makeConnectorLines } from './utils';
 
 type Props = {

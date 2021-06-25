@@ -8,7 +8,7 @@ import {
 } from 'typings/interfaces';
 
 export function curateConfigurationsData(
-  data: ConfigurationsResponse[]
+  data?: ConfigurationsResponse[]
 ): ExtendedConfigurationsResponse[] {
   if (isUndefined(data) || data.length === 0) return [];
 

@@ -1,7 +1,7 @@
 import {
   extendedConfigurations,
   generatedColumns,
-} from '__fixtures__/configurations';
+} from '__fixtures__/fixtureConfigurations';
 
 import { generateConfigurationsColumnsFromData } from '../generate';
 

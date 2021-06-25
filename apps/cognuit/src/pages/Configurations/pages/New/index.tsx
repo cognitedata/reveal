@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom';
 import { useQuery } from 'utils/functions';
 
-import { SessionType } from '../../../typings/interfaces';
+import { SessionType } from '../../../../typings/interfaces';
 
 import PetrelStudioToOpenWorks from './PetrelStudioToOpenWorks';
 import OpenWorksToPetrelStudio from './OpenWorksToPetrelStudio';

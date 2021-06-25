@@ -1,6 +1,6 @@
 import ReactDOM from 'react-dom';
 import * as Sentry from '@sentry/browser';
-import config from 'utils/config';
+import config from 'configs/config';
 
 import '@cognite/cogs.js/dist/cogs.css';
 

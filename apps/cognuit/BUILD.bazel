@@ -70,6 +70,7 @@ DEPENDENCIES = [
     "@npm//react-chartjs-2",
     "@npm//react-dom",
     "@npm//react-router-dom",
+    "@npm//react-query",
     "@npm//styled-components",
     "//packages/react-container",
     "//packages/z-index",

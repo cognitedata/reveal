@@ -4,7 +4,7 @@ import { Colors, TableProps } from '@cognite/cogs.js';
 import { apiStatuses } from 'utils/statuses';
 import capitalize from 'lodash/capitalize';
 
-import configurationsConfig from '../Configurations/Root/configurations.config';
+import configurationsConfig from '../Configurations/configs/configurations.config';
 
 import dataTransfersConfig from './datatransfer.config';
 import { StatusDot } from './elements';

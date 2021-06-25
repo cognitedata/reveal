@@ -34,6 +34,12 @@ export const PlayStopButton = styled(Button)`
   }
 `;
 
+export const RestartButton = styled(PlayStopButton)`
+  border: none;
+  &:hover {
+    border: none;
+  }
+`;
 export const LinkButton = styled(NavLink)`
   color: var(--cogs-greyscale-grey5);
 

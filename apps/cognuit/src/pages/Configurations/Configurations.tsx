@@ -1,40 +1,30 @@
 import React, { useContext, useEffect, useState } from 'react';
 import sortBy from 'lodash/sortBy';
 import indexOf from 'lodash/indexOf';
-import {
-  AuthContext,
-  AuthProvider as ContainerAuthProvider,
-} from '@cognite/react-container';
 import { Loader, Table } from '@cognite/cogs.js';
 import { ContentContainer } from 'elements';
-import ApiContext from 'contexts/ApiContext';
 import CreateNewConfiguration from 'components/Molecules/CreateNewConfiguration';
-import {
-  ExtendedConfigurationsResponse,
-  GenericResponseObject,
-} from 'typings/interfaces';
-import { ConfigurationsResponse } from 'types/ApiInterface';
-import { CustomError } from 'services/CustomError';
+import { ExtendedConfigurationsResponse } from 'typings/interfaces';
 import ErrorMessage from 'components/Molecules/ErrorMessage';
 import APIErrorContext from 'contexts/APIErrorContext';
+import { useConfigurationsQuery } from 'services/interfaces/configurations/query';
+import { useConfigurationsMutation } from 'services/interfaces/configurations/mutation';
+import { ConfigurationsResponse } from 'types/ApiInterface';
 
-import { ColumnRules } from '../components/Table/ColumnRule';
-import { ExpandedSubRow } from '../components/Table/ExpandedSubRow';
-import { generateConfigurationsColumnsFromData } from '../functions/generate';
-import { curateColumns, curateConfigurationsData } from '../functions/curate';
-
-import config from './configurations.config';
+import { columnRules } from './components/Table/columnRules';
+import { ExpandedSubRow } from './components/Table/ExpandedSubRow';
+import { generateConfigurationsColumnsFromData } from './utils/generate';
+import { curateColumns, curateConfigurationsData } from './utils/curate';
+import config from './configs/configurations.config';
 
 const Configurations = () => {
-  const { api } = useContext(ApiContext);
-  const { authState } = React.useContext<AuthContext>(ContainerAuthProvider);
-  const { token } = authState || {};
-
-  const { error, addError, removeError } = useContext(APIErrorContext);
-  const [isLoading, setIsLoading] = useState(true);
+  const { error, addError } = useContext(APIErrorContext);
   const [data, setData] = useState<ExtendedConfigurationsResponse[]>([]);
   const [columns, setColumns] = useState<any>([]);
   const [expandedColumns, setExpandedColumns] = React.useState<any>({});
+
+  const { isLoading, ...configsQuery } = useConfigurationsQuery();
+  const { update, startOrStop, restart } = useConfigurationsMutation();
 
   const handleNameChange = (id: number, newName: string) => {
     const nameIndex = data.findIndex((item) => item.name === newName);
@@ -45,21 +35,17 @@ const Configurations = () => {
       );
       return false;
     }
-    api!.configurations
-      .update(id, { name: newName })
-      .then(() => {
-        removeError();
-        return false;
-      })
-      .catch((err: CustomError) => {
-        addError(err.message, err.status);
-      });
+
+    update.mutateAsync({ id, name: newName }).then(() => {
+      return false;
+    });
+
     return true;
   };
 
   function setUpdatedConfiguration(
     id: number,
-    response: GenericResponseObject
+    response: ConfigurationsResponse
   ) {
     const dataClone = JSON.parse(JSON.stringify(data));
     const selIndex = data.findIndex((item) => item.id === id);
@@ -70,52 +56,17 @@ const Configurations = () => {
     }
   }
 
-  function fetchConfigurations() {
-    setIsLoading(true);
-    api!.configurations
-      .get()
-      .then((response: ConfigurationsResponse[]) => {
-        setData(curateConfigurationsData(response));
-        setIsLoading(false);
-        removeError();
-        return response;
-      })
-      .catch((err: CustomError) => {
-        addError(err.message, err.status);
-      });
-  }
-
   function handleStopStart(id: number, isActive: boolean) {
-    api!.configurations
-      .startOrStopConfiguration(id, isActive)
-      .then((response) => {
-        setIsLoading(true);
+    startOrStop
+      .mutateAsync({ id, isActive })
+      .then((response: ConfigurationsResponse) => {
         setUpdatedConfiguration(id, response);
-        setIsLoading(false);
-        removeError();
-        return response;
-      })
-      .catch((err: CustomError) => {
-        addError(err.message, err.status);
       });
   }
 
-  useEffect(() => {
-    if (token && token !== 'NO_TOKEN') {
-      fetchConfigurations();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token]);
-
-  useEffect(() => {
-    const rawColumns = generateConfigurationsColumnsFromData(data);
-    const curatedColumns = curateColumns(
-      rawColumns,
-      ColumnRules({ handleNameChange, handleStopStart })
-    );
-    setColumns(curatedColumns);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
+  function handleRestart(id: number) {
+    restart.mutate({ id });
+  }
 
   // Cogs.js hasn't exported Row from React Table.
   const handleRowClick = (rowElement: any) => {
@@ -126,16 +77,32 @@ const Configurations = () => {
     }));
   };
 
+  useEffect(() => {
+    if (configsQuery.isSuccess) {
+      setData(curateConfigurationsData(configsQuery.data));
+    }
+  }, [configsQuery.data, configsQuery.isSuccess]);
+
+  useEffect(() => {
+    const rawColumns = generateConfigurationsColumnsFromData(data);
+    const curatedColumns = curateColumns(
+      rawColumns,
+      columnRules({ handleNameChange, handleStopStart, handleRestart })
+    );
+    setColumns(curatedColumns);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
+
+  if (isLoading) {
+    return <Loader />;
+  }
+
   if (error) {
     return (
       <ErrorMessage
         message={`Failed to fetch configurations. API error: ${error.status} ${error.message}`}
       />
     );
-  }
-
-  if (isLoading) {
-    return <Loader />;
   }
 
   return (

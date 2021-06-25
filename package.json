@@ -52,7 +52,7 @@
     "react-helmet": "^6.1.0",
     "react-i18next": "^11.8.11",
     "react-modal": "^3.14.2",
-    "react-query": "^3.7.1",
+    "react-query": "^3.17.2",
     "react-redux": "^7.2.4",
     "react-router-dom": "^5.2.0",
     "react-scripts": "^4.0.3",

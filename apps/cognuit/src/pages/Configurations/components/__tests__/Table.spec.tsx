@@ -1,9 +1,9 @@
 import { screen } from '@testing-library/react';
 import { Rule } from 'typings/interfaces';
 import { render } from 'utils/test';
-import { extendedConfigurations } from '__fixtures__/configurations';
+import { extendedConfigurations } from '__fixtures__/fixtureConfigurations';
 
-import { ColumnRules } from '../Table/ColumnRule';
+import { columnRules } from '../Table/columnRules';
 import { ExpandedSubRow } from '../Table/ExpandedSubRow';
 
 function findRenderComponent(columns: Rule[], key: string): any {
@@ -12,9 +12,10 @@ function findRenderComponent(columns: Rule[], key: string): any {
 
 describe('Configurations/Table', () => {
   describe('ColumnRules', () => {
-    const columns = ColumnRules({
+    const columns = columnRules({
       handleNameChange: jest.fn(),
-      handleStopStart: jest.fn,
+      handleRestart: jest.fn(),
+      handleStopStart: jest.fn(),
     });
 
     const [config] = extendedConfigurations;

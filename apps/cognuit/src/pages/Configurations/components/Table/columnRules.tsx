@@ -9,6 +9,7 @@ import {
   ActionWrapper,
   LinkButton,
   PlayStopButton,
+  RestartButton,
   TableActionsContainer,
 } from '../../elements';
 import DirectionArrows from '../DirectionArrows';
@@ -22,11 +23,13 @@ type ActionsType = {
 
 interface Props {
   handleStopStart: (id: number, isActive: boolean) => void;
+  handleRestart: (id: number) => void;
   handleNameChange: (id: number, newName: string) => boolean;
 }
 
-export const ColumnRules: (actions: Props) => Rule[] = ({
+export const columnRules: (actions: Props) => Rule[] = ({
   handleStopStart,
+  handleRestart,
   handleNameChange,
 }: Props) => {
   return [
@@ -150,6 +153,20 @@ export const ColumnRules: (actions: Props) => Rule[] = ({
               content={value.direction === 'psToOw' ? 'PS to OW' : 'OW to PS'}
             >
               <DirectionArrows psToOw={value.direction === 'psToOw'} />
+            </Tooltip>
+          </ActionWrapper>
+          <ActionWrapper>
+            <Tooltip content="Restart Translations">
+              <RestartButton
+                unstyled
+                aria-label="Restart"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleRestart(value.id);
+                }}
+              >
+                <Icon type="Refresh" />
+              </RestartButton>
             </Tooltip>
           </ActionWrapper>
           <ActionWrapper>
