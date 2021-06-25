@@ -424,6 +424,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
         visible={showContextMenu}
         onClose={handleCloseContextMenu}
         sourceItem={selectedSourceItem}
+        setSourceItem={setSelectedSourceId}
       />
     </ChartViewContainer>
   );

@@ -27,6 +27,7 @@ import { convertValue } from 'utils/units';
 type Props = {
   chart: Chart;
   sourceItem: ChartWorkflow | ChartTimeSeries | undefined;
+  setSourceItem: (_: string) => void;
   onClose: () => void;
   visible?: boolean;
 };
@@ -80,6 +81,7 @@ export default function DetailsSidebar({
   chart,
   visible,
   sourceItem,
+  setSourceItem,
   onClose,
 }: Props) {
   const [selectedMenu, setSelectedMenu] = useState<string>('statistics');
@@ -115,7 +117,11 @@ export default function DetailsSidebar({
       </TopContainer>
       <ContentOverflowWrapper>
         {selectedMenu === 'metadata' && (
-          <Metadata sourceItem={sourceItem} chart={chart} />
+          <Metadata
+            sourceItem={sourceItem}
+            setSourceItem={setSourceItem}
+            chart={chart}
+          />
         )}
         {selectedMenu === 'statistics' && (
           <Statistics chart={chart} sourceItem={sourceItem} />
@@ -127,9 +133,11 @@ export default function DetailsSidebar({
 
 const Metadata = ({
   sourceItem,
+  setSourceItem,
   chart,
 }: {
   sourceItem: ChartWorkflow | ChartTimeSeries | undefined;
+  setSourceItem: (_: string) => void;
   chart: Chart;
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
@@ -159,7 +167,12 @@ const Metadata = ({
         content={
           <Menu onClick={closeMenu}>
             {chart.timeSeriesCollection?.map((ts) => (
-              <TimeseriesMenuItem onClick={() => setSelectedItem(ts)}>
+              <TimeseriesMenuItem
+                onClick={() => {
+                  setSelectedItem(ts);
+                  setSourceItem(ts.id);
+                }}
+              >
                 {ts.name}
               </TimeseriesMenuItem>
             ))}
