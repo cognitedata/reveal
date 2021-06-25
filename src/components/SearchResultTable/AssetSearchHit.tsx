@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import { Icon, Checkbox, Button } from '@cognite/cogs.js';
 import DelayedComponent from 'components/DelayedComponent';
 import { PnidButton } from 'components/SearchResultTable';
-import { TimeseriesChart } from '@cognite/data-exploration';
 import { useInfiniteList, useAggregate } from '@cognite/sdk-react-query-hooks';
 import { Asset, Timeseries } from '@cognite/sdk';
 import { useParams } from 'react-router-dom';
@@ -14,9 +13,9 @@ import {
   covertTSToChartTS,
   removeTimeseries,
 } from 'utils/charts';
-import dayjs from 'dayjs';
 import { calculateDefaultYAxis } from 'utils/axis';
 import { trackUsage } from 'utils/metrics';
+import TimeseriesSearchHit from './TimeseriesSearchHit';
 
 type Props = {
   asset: Asset;
@@ -47,21 +46,16 @@ export default function AssetSearchHit({ asset }: Props) {
     [data]
   );
 
-  const selectedIds: undefined | number[] = chart?.timeSeriesCollection?.map(
-    (t) => t.tsId
-  );
-
-  const sparklineStartDate = dayjs()
-    .subtract(1, 'years')
-    .startOf('day')
-    .toDate();
-
-  const sparklineEndDate = dayjs().endOf('day').toDate();
+  const selectedExternalIds:
+    | undefined
+    | string[] = chart?.timeSeriesCollection
+    ?.map((t) => t.tsExternalId || '')
+    .filter(Boolean);
 
   const handleTimeSeriesClick = async (timeSeries: Timeseries) => {
     if (chart) {
       const tsToRemove = chart.timeSeriesCollection?.find(
-        (t) => t.tsId === timeSeries.id
+        (t) => t.tsExternalId === timeSeries.externalId
       );
       if (tsToRemove) {
         updateChart(removeTimeseries(chart, tsToRemove.id));
@@ -70,7 +64,7 @@ export default function AssetSearchHit({ asset }: Props) {
         const range = await calculateDefaultYAxis({
           chart,
           sdk,
-          timeSeriesId: timeSeries.id,
+          timeSeriesExternalId: timeSeries.externalId || '',
         });
 
         const newTs = covertTSToChartTS(timeSeries, range);
@@ -91,55 +85,28 @@ export default function AssetSearchHit({ asset }: Props) {
           </ResourceNameWrapper>
           <Description>{asset.description}</Description>
         </InfoContainer>
-        <DelayedComponent delay={100}>
-          <PnidButton asset={asset} />
-        </DelayedComponent>
-        <AssetCount>{dataAmount?.count} </AssetCount>
+        <Right>
+          <AssetCount>{dataAmount?.count} </AssetCount>
+          <DelayedComponent delay={100}>
+            <PnidButton asset={asset}>P&amp;ID</PnidButton>
+          </DelayedComponent>
+        </Right>
       </Row>
       <Row>
         <TSList>
-          {ts?.map((t, i) => (
-            <TSItem key={t.id}>
-              <Row>
-                <InfoContainer>
-                  <ResourceNameWrapper>
-                    <Icon type="ResourceTimeseries" style={{ minWidth: 14 }} />
-                    <span style={{ marginLeft: 5 }}>{t.name}</span>
-                  </ResourceNameWrapper>
-                  <Description>{t.description}</Description>
-                </InfoContainer>
-                <Right>
-                  <DelayedComponent delay={250 + i}>
-                    <div style={{ width: 190 }}>
-                      <TimeseriesChart
-                        height={65}
-                        showSmallerTicks
-                        timeseriesId={t.id}
-                        numberOfPoints={25}
-                        showAxis="horizontal"
-                        timeOptions={[]}
-                        showContextGraph={false}
-                        showPoints={false}
-                        enableTooltip={false}
-                        showGridLine="none"
-                        minRowTicks={2}
-                        dateRange={[sparklineStartDate, sparklineEndDate]}
-                      />
-                    </div>
-                  </DelayedComponent>
-
-                  <Checkbox
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleTimeSeriesClick(t);
-                    }}
-                    name={`${t.id}`}
-                    value={selectedIds?.includes(t.id)}
-                  />
-                </Right>
-              </Row>
-            </TSItem>
-          ))}
+          <TimeseriesSearchHit
+            timeseries={ts}
+            renderCheckbox={(t) => (
+              <Checkbox
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleTimeSeriesClick(t);
+                }}
+                name={`${t.id}`}
+                checked={selectedExternalIds?.includes(t.externalId || '')}
+              />
+            )}
+          />
           {hasNextPage && (
             <TSItem>
               <Button type="link" onClick={() => fetchNextPage()}>
@@ -165,7 +132,9 @@ const AssetCount = styled.span`
   border: 1px solid var(--cogs-greyscale-grey4);
   border-radius: 5px;
   float: right;
-  padding: 5px;
+  padding: 0 5px;
+  margin-right: 8px;
+  line-height: 26px;
 `;
 
 const TSList = styled.ul`
@@ -177,7 +146,7 @@ const TSList = styled.ul`
 
 const TSItem = styled.li`
   border-radius: 5px;
-  padding: 5px;
+  padding: 0 5px;
   :nth-child(odd) {
     background-color: var(--cogs-greyscale-grey2);
   }

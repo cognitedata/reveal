@@ -323,7 +323,11 @@ export function getStepsFromWorkflow(
 
           const inputNode = totalNodes?.find(
             (nd) => nd.id === inputNodeConnection.outputPin.nodeId
-          )!;
+          );
+
+          if (!inputNode) {
+            return undefined;
+          }
 
           return getInputFromNode(inputNode, allNodes);
         })
