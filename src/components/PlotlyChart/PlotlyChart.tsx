@@ -257,6 +257,22 @@ const PlotlyChartComponent = ({
             ? firstDatapoint.average
             : (firstDatapoint as DoubleDatapoint).value) ?? 0
         : 0;
+      console.log(
+        'SSS ',
+        (datapoints as (Datapoints | DatapointAggregate)[]).map((datapoint) => {
+          return (
+            'average' in datapoint
+              ? datapoint.average
+              : (datapoint as DoubleDatapoint).value,
+            'min' in datapoint
+              ? datapoint.min
+              : (datapoint as DoubleDatapoint).value,
+            'max' in datapoint
+              ? datapoint.max
+              : (datapoint as DoubleDatapoint).value
+          );
+        })
+      );
       const average = {
         type: 'scatter',
         mode: mode || 'lines',
@@ -339,6 +355,8 @@ const PlotlyChartComponent = ({
       return isPreview ? average : [average, min, max];
     }
   );
+
+  console.log('data: ', data);
 
   const handleRelayout = debounce(
     useCallback(
@@ -538,6 +556,8 @@ const PlotlyChartComponent = ({
     displayModeBar: false,
   };
 
+  const flatenData = data.flat(); // TODOS:
+  console.log('flatenData', flatenData);
   return (
     <ChartingContainer ref={containerRef}>
       {showAdjustButton && (
@@ -566,16 +586,14 @@ const PlotlyChartComponent = ({
           />
         </PlotWrapper>
       ) : (
-        data.map((e) => (
-          <PlotWrapper>
-            <MemoizedPlot
-              data={e as Plotly.Data[]}
-              layout={(layout as unknown) as Plotly.Layout}
-              config={(config as unknown) as Plotly.Config}
-              onRelayout={handleRelayout}
-            />
-          </PlotWrapper>
-        ))
+        <PlotWrapper>
+          <MemoizedPlot
+            data={flatenData as Plotly.Data[]}
+            layout={(layout as unknown) as Plotly.Layout}
+            config={(config as unknown) as Plotly.Config}
+            onRelayout={handleRelayout}
+          />
+        </PlotWrapper>
       )}
     </ChartingContainer>
   );
@@ -600,7 +618,6 @@ const MemoizedPlot = React.memo(
   ),
   (prev, next) => isEqual(prev, next)
 );
-
 /* eslint-disable @cognite/no-number-z-index */
 const LoadingIcon = () => (
   <Icon
