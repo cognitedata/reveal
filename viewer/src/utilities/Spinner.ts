@@ -13,6 +13,10 @@ export class Spinner {
     loading: 'reveal-viewer-spinner--loading',
     dark: 'reveal-viewer-spinner--dark'
   };
+  private static readonly titles = {
+    idle: process.env.VERSION,
+    loading: `${process.env.VERSION} Loading...`
+  };
 
   private _loading = false;
 
@@ -31,7 +35,7 @@ export class Spinner {
   constructor(parent: HTMLElement) {
     Spinner.loadStyles();
     this.el = document.createElement('div');
-    this.el.title = 'Loading...';
+    this.el.title = Spinner.titles.idle;
 
     this.el.className = Spinner.classnames.base;
     this.el.innerHTML = svg;
@@ -48,8 +52,10 @@ export class Spinner {
     this._loading = loadingState;
     if (loadingState) {
       this.el.classList.add(Spinner.classnames.loading);
+      this.el.title = Spinner.titles.loading;
     } else {
       this.el.classList.remove(Spinner.classnames.loading);
+      this.el.title = Spinner.titles.idle;
     }
   }
 
