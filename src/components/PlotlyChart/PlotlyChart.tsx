@@ -240,9 +240,10 @@ const PlotlyChartComponent = ({
       timeseriesFetching,
     ]
   );
-  const data = seriesData.map(
+  const groupedTraces = seriesData.map(
     ({ name, color, mode, width, dash, datapoints, outdatedData }, index) => {
-      // TODOS: kinda hacky solution to compare min and avg in cases where min is less than avg and need to be fill based on that. In addition should Min value be less than Avg value?
+      /* TODO: kinda hacky solution to compare min and avg in cases where min is less than avg and need to be fill based on that.
+      In addition, should min value be less than avg value? */
       const firstDatapoint = (datapoints as (
         | Datapoints
         | DatapointAggregate
@@ -257,22 +258,7 @@ const PlotlyChartComponent = ({
             ? firstDatapoint.average
             : (firstDatapoint as DoubleDatapoint).value) ?? 0
         : 0;
-      console.log(
-        'SSS ',
-        (datapoints as (Datapoints | DatapointAggregate)[]).map((datapoint) => {
-          return (
-            'average' in datapoint
-              ? datapoint.average
-              : (datapoint as DoubleDatapoint).value,
-            'min' in datapoint
-              ? datapoint.min
-              : (datapoint as DoubleDatapoint).value,
-            'max' in datapoint
-              ? datapoint.max
-              : (datapoint as DoubleDatapoint).value
-          );
-        })
-      );
+
       const average = {
         type: 'scatter',
         mode: mode || 'lines',
@@ -356,7 +342,7 @@ const PlotlyChartComponent = ({
     }
   );
 
-  console.log('data: ', data);
+  const data = groupedTraces.flat(); // flatten the grouped traces into list of traces.
 
   const handleRelayout = debounce(
     useCallback(
@@ -556,8 +542,6 @@ const PlotlyChartComponent = ({
     displayModeBar: false,
   };
 
-  const flatenData = data.flat(); // TODOS:
-  console.log('flatenData', flatenData);
   return (
     <ChartingContainer ref={containerRef}>
       {showAdjustButton && (
@@ -576,25 +560,14 @@ const PlotlyChartComponent = ({
         </>
       )}
 
-      {isPreview ? (
-        <PlotWrapper>
-          <MemoizedPlot
-            data={data as Plotly.Data[]}
-            layout={(layout as unknown) as Plotly.Layout}
-            config={(config as unknown) as Plotly.Config}
-            onRelayout={handleRelayout}
-          />
-        </PlotWrapper>
-      ) : (
-        <PlotWrapper>
-          <MemoizedPlot
-            data={flatenData as Plotly.Data[]}
-            layout={(layout as unknown) as Plotly.Layout}
-            config={(config as unknown) as Plotly.Config}
-            onRelayout={handleRelayout}
-          />
-        </PlotWrapper>
-      )}
+      <PlotWrapper>
+        <MemoizedPlot
+          data={data as Plotly.Data[]}
+          layout={(layout as unknown) as Plotly.Layout}
+          config={(config as unknown) as Plotly.Config}
+          onRelayout={handleRelayout}
+        />
+      </PlotWrapper>
     </ChartingContainer>
   );
 };
