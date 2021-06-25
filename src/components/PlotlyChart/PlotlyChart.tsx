@@ -183,6 +183,20 @@ const PlotlyChartComponent = ({
     }
   }, [containerRef]);
 
+  // need to use Fillcolor with rgba as value type to set specific opacity
+  const hexToRGBA = (hex: string | undefined, alpha?: number) => {
+    if (!hex) {
+      return null;
+    }
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result
+      ? `rgba(${parseInt(result[1], 16)},
+              ${parseInt(result[2], 16)},
+              ${parseInt(result[3], 16)},
+              ${alpha ?? 1}`
+      : null;
+  };
+
   const seriesData: SeriesData[] = useMemo(
     () =>
       [
@@ -259,6 +273,30 @@ const PlotlyChartComponent = ({
             : (firstDatapoint as DoubleDatapoint).value) ?? 0
         : 0;
 
+      const [avgYValues, minYValues, maxYValues] = [[], [], []] as (
+        | number
+        | undefined
+      )[][];
+      // Loop through data once and push all values into its respectively array
+      (datapoints as (Datapoints | DatapointAggregate)[]).forEach(
+        (datapoint) => {
+          avgYValues.push(
+            'average' in datapoint
+              ? datapoint.average
+              : (datapoint as DoubleDatapoint).value
+          );
+          minYValues.push(
+            'min' in datapoint
+              ? datapoint.min
+              : (datapoint as DoubleDatapoint).value
+          );
+          maxYValues.push(
+            'max' in datapoint
+              ? datapoint.max
+              : (datapoint as DoubleDatapoint).value
+          );
+        }
+      );
       const average = {
         type: 'scatter',
         mode: mode || 'lines',
@@ -276,14 +314,7 @@ const PlotlyChartComponent = ({
         )[]).map((datapoint) =>
           'timestamp' in datapoint ? new Date(datapoint.timestamp) : null
         ),
-        y: (datapoints as (
-          | Datapoints
-          | DatapointAggregate
-        )[]).map((datapoint) =>
-          'average' in datapoint
-            ? datapoint.average
-            : (datapoint as DoubleDatapoint).value
-        ),
+        y: avgYValues,
         hovertemplate:
           '%{y} &#183; <span style="color:#8c8c8c">%{fullData.name}</span><extra></extra>',
         hoverlabel: {
@@ -297,43 +328,20 @@ const PlotlyChartComponent = ({
 
       const min = {
         ...average,
-        opacity: 0.2,
-        marker: {
-          color,
-          opacity: 0.1,
-        },
         line: { width: 0 },
         fill: currMin > currAvg ? 'tonexty' : 'none',
-
-        y: (datapoints as (
-          | Datapoints
-          | DatapointAggregate
-        )[]).map((datapoint) =>
-          'min' in datapoint
-            ? datapoint.min
-            : (datapoint as DoubleDatapoint).value
-        ),
+        fillcolor: hexToRGBA(color, 0.2),
+        y: minYValues,
         hovertemplate:
           '%{y} &#183; <span style="color:#8c8c8c">Min value: %{fullData.name}</span><extra></extra>',
       };
 
       const max = {
         ...average,
-        marker: {
-          color,
-          opacity: 0.1,
-        },
-        opacity: 0.2,
+        fillcolor: hexToRGBA(color, 0.2),
         line: { width: 0 },
         fill: 'tonexty',
-        y: (datapoints as (
-          | Datapoints
-          | DatapointAggregate
-        )[]).map((datapoint) =>
-          'max' in datapoint
-            ? datapoint.max
-            : (datapoint as DoubleDatapoint).value
-        ),
+        y: maxYValues,
         hovertemplate:
           '%{y} &#183; <span style="color:#8c8c8c">Max value: %{fullData.name}</span><extra></extra>',
       };
@@ -341,7 +349,6 @@ const PlotlyChartComponent = ({
       return isPreview ? average : [average, min, max];
     }
   );
-
   const data = groupedTraces.flat(); // flatten the grouped traces into list of traces.
 
   const handleRelayout = debounce(
