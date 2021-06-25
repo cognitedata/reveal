@@ -2,10 +2,8 @@ import React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import FilterToggleButton from 'src/modules/Explorer/Components/FilterToggleButton';
 import styled from 'styled-components';
-import { Colors, Tooltip, Button, Title } from '@cognite/cogs.js';
-import { Col, Row } from 'antd';
+import { Colors } from '@cognite/cogs.js';
 import { lightGrey } from 'src/utils/Colors';
-import { FileFilters } from 'src/modules/Common/Components/Search/FileFilters';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { ExplorerSearchResults } from 'src/modules/Explorer/Containers/ExplorerSearchResults';
@@ -28,7 +26,6 @@ import { FileDownloaderModal } from 'src/modules/Common/Components/FileDownloade
 import {
   setExplorerCurrentView,
   setExplorerFileSelectState,
-  setExplorerFilter,
   setExplorerQueryString,
   setExplorerSelectedFileId,
   hideExplorerFileMetadata,
@@ -38,6 +35,7 @@ import {
   setExplorerFileUploadModalVisibility,
   setExplorerFileDownloadModalVisibility,
 } from '../store/explorerSlice';
+import { FilterSidePanel } from './FilterSidePanel';
 
 const Explorer = () => {
   const history = useHistory();
@@ -164,27 +162,7 @@ const Explorer = () => {
         <QueryClientProvider client={queryClient}>
           {showFilter && (
             <FilterPanel>
-              <HeaderRow align="middle" justify="center">
-                <Col flex="auto">
-                  <Title level={4}> Filters</Title>
-                </Col>
-                <Col flex="none">
-                  <HideFiltersTooltip content="Hide">
-                    <Button
-                      icon="PanelLeft"
-                      onClick={() => dispatch(toggleExplorerFilterView())}
-                    />
-                  </HideFiltersTooltip>
-                </Col>
-              </HeaderRow>
-              <FiltersContainer>
-                <FileFilters
-                  filter={filter}
-                  setFilter={(newFilter) => {
-                    dispatch(setExplorerFilter(newFilter));
-                  }}
-                />
-              </FiltersContainer>
+              <FilterSidePanel />
             </FilterPanel>
           )}
 
@@ -277,14 +255,6 @@ const TablePanel = styled.div<tablePanelProps>`
   height: 100%;
 `;
 
-const FiltersContainer = styled.div`
-  padding-left: 16px;
-  padding-right: 16px;
-  padding-bottom: 16px;
-  overflow: auto;
-  height: 100%;
-`;
-
 const ViewContainer = styled.div`
   height: 100%;
   width: 100%;
@@ -293,17 +263,6 @@ const ViewContainer = styled.div`
   grid-template-rows: 32px 40px auto;
   grid-template-columns: 100%;
   grid-row-gap: 15px;
-`;
-
-const HeaderRow = styled(Row)`
-  padding-right: 16px;
-  padding-left: 16px;
-  padding-bottom: 20px;
-  margin-top: 24px;
-`;
-
-const HideFiltersTooltip = styled(Tooltip)`
-  margin-bottom: 8;
 `;
 
 const DrawerContainer = styled.div`

@@ -176,6 +176,9 @@ export default explorerSlice.reducer;
 export const selectExplorerSelectedIds = (state: State): number[] =>
   state.selectedIds;
 
+export const selectExploreFileCount = (state: State): number =>
+  state.files.allIds.length;
+
 export const selectExplorerAllFiles = createSelector(
   (state: State) => state.files.allIds,
   (state) => state.files.byId,
