@@ -704,6 +704,7 @@ export class Cognite3DViewer {
 
     this.renderer.setClearColor(color);
     this.spinner.updateBackgroundColor(color);
+    this.forceRerender();
   }
 
   /**
