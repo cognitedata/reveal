@@ -267,7 +267,7 @@ const ViewContainer = styled.div`
 
 const DrawerContainer = styled.div`
   width: 400px;
-  border: 1px solid #d9d9d9;
+  border-left: 1px solid #d9d9d9;
   box-sizing: content-box;
   height: 100%;
   flex-shrink: 0;

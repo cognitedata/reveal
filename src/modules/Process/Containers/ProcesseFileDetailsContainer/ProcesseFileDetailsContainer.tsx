@@ -13,7 +13,7 @@ import { useHistory } from 'react-router-dom';
 
 const Container = styled.div`
   width: 400px;
-  border: 1px solid #d9d9d9;
+  border-left: 1px solid #d9d9d9;
   box-sizing: content-box;
   flex-shrink: 0;
   height: 100%;

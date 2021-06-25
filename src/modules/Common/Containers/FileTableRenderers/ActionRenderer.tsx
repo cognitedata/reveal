@@ -61,7 +61,7 @@ export function ActionRenderer(
         <ReviewButton
           disabled={reviewDisabled}
           onClick={handleReview}
-          style={{ marginRight: '10px' }}
+          style={{ marginRight: '10px', background: 'white' }}
         />
       )}
       <ActionMenu

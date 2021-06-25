@@ -1,9 +1,7 @@
 import { CellRenderer } from 'src/modules/Common/types';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { selectUpdatedFileDetails } from 'src/modules/FileDetails/fileDetailsSlice';
 import { Tooltip } from '@cognite/cogs.js';
-import exifIcon from 'src/assets/exifIcon.svg';
 import React from 'react';
 import styled from 'styled-components';
 import ImageIcon from 'src/assets/ImageIcon.svg';
@@ -45,10 +43,6 @@ export const ExifIcon = styled.div`
 export function NameRenderer({
   rowData: { name, id, mimeType, geoLocation },
 }: CellRenderer) {
-  const fileDetails = useSelector((state: RootState) =>
-    selectUpdatedFileDetails(state, id)
-  );
-
   const hasAnnotations = useSelector(
     ({ annotationReducer }: RootState) =>
       !!selectFileAnnotations(annotationReducer, id).length
@@ -60,22 +54,34 @@ export function NameRenderer({
 
     if (hasAnnotations) {
       icon = geoLocation ? (
-        <img
-          src={ImageWithAnnotationsAndExifIcon}
-          alt="ImageWithAnnotationsAndExifIcon"
-        />
+        <Tooltip content="Geolocated">
+          <ExifIcon>
+            <img
+              src={ImageWithAnnotationsAndExifIcon}
+              alt="ImageWithAnnotationsAndExifIcon"
+            />
+          </ExifIcon>
+        </Tooltip>
       ) : (
         <img src={ImageWithAnnotationsIcon} alt="ImageWithAnnotationsIcon" />
       );
     } else if (isVideoFile) {
       icon = geoLocation ? (
-        <img src={VideoWithExifIcon} alt="VideoWithExifIcon" />
+        <Tooltip content="Geolocated">
+          <ExifIcon>
+            <img src={VideoWithExifIcon} alt="VideoWithExifIcon" />
+          </ExifIcon>
+        </Tooltip>
       ) : (
         <img src={VideoIcon} alt="VideoIcon" />
       );
     } else {
       icon = geoLocation ? (
-        <img src={ImageWithExifIcon} alt="ImageWithExifIcon" />
+        <Tooltip content="Geolocated">
+          <ExifIcon>
+            <img src={ImageWithExifIcon} alt="ImageWithExifIcon" />
+          </ExifIcon>
+        </Tooltip>
       ) : (
         <img src={ImageIcon} alt="ImageIcon" />
       );
@@ -87,13 +93,6 @@ export function NameRenderer({
     <FileRow>
       {renderIcon()}
       <FileNameText>{name}</FileNameText>
-      {fileDetails?.geoLocation && (
-        <Tooltip content="Exif data added">
-          <ExifIcon>
-            <img src={exifIcon} alt="exifIcon" />
-          </ExifIcon>
-        </Tooltip>
-      )}
     </FileRow>
   );
 }

@@ -209,6 +209,7 @@ export const ProcessToolBar = () => {
                 onClick={() =>
                   dispatch(setProcessViewFileUploadModalVisibility(true))
                 }
+                style={{ background: 'white' }}
               >
                 Upload
               </Button>
@@ -216,7 +217,7 @@ export const ProcessToolBar = () => {
                 type="tertiary"
                 icon="AddToList"
                 disabled={disableAddFiles}
-                style={{ marginLeft: 8 }}
+                style={{ marginLeft: 8, background: 'white' }}
                 onClick={() =>
                   dispatch(setSelectFromExploreModalVisibility(true))
                 }

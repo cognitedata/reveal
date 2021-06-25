@@ -105,6 +105,16 @@ const ConfirmDeleteButton = (props: {
         icon="Delete"
         iconPlacement="left"
         disabled={props.disabled}
+        style={
+          // not available in cogs yet
+          props.disabled
+            ? {
+                color: '#b30539',
+                background: 'rgba(255, 255, 255, 0.0001)',
+                opacity: 0.4,
+              }
+            : undefined
+        }
       >
         Delete [{props.selectedNumber || 0}]
       </Button>

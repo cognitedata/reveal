@@ -56,6 +56,7 @@ const Container = styled.div`
   align-items: center;
   height: 40px;
   padding: 0 25px;
+  border-bottom: 1px solid #d9d9d9;
 `;
 
 const Text = styled(Body)`
