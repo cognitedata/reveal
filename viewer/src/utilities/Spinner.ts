@@ -4,6 +4,7 @@
 
 import css from './spinnerStyles.css';
 import svg from '!!raw-loader!./spinnerCogniteLogo.svg';
+import * as THREE from 'three';
 
 export class Spinner {
   private static readonly stylesId = 'reveal-viewer-spinner-styles';
@@ -52,10 +53,15 @@ export class Spinner {
     }
   }
 
-  updateBackgroundColor(color: { r: number; g: number; b: number }) {
-    // https://en.wikipedia.org/wiki/Relative_luminance
-    const { r, g, b } = color;
-    const lightness = 0.2126 * (r / 255) + 0.7152 * (g / 255) + 0.0722 * (b / 255);
+  /**
+   * Pass background cover of the viewer to adjust Logo color
+   * @param color
+   * @param color.r 0..1 red
+   * @param color.g 0..1 green
+   * @param color.b 0..1 blue
+   */
+  updateBackgroundColor(color: Pick<THREE.Color, 'getHSL'>) {
+    const { l: lightness } = color.getHSL({ h: 0, s: 0, l: 0 });
 
     if (lightness > 0.5) {
       this.el.classList.add(Spinner.classnames.dark);

@@ -23,8 +23,8 @@ describe('Spinner test cases', () => {
   });
 
   test('.updateBackgroundColor() updates spinner color', () => {
-    const lightBackground = new THREE.Color(215, 215, 215);
-    const darkBackground = new THREE.Color(33, 33, 33);
+    const lightBackground = new THREE.Color(0.6, 0.6, 0.6);
+    const darkBackground = new THREE.Color(0.1, 0.1, 0.1);
 
     const parent = document.createElement('div');
     const spinner = new Spinner(parent);
