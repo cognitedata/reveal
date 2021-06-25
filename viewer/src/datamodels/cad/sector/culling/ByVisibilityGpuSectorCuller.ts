@@ -19,7 +19,7 @@ import {
   DetermineSectorsInput,
   SectorCost,
   addSectorCost,
-  SectorLoadingSpendage
+  SectorLoadingSpent
 } from './types';
 import { LevelOfDetail } from '../LevelOfDetail';
 import { CadModelMetadata } from '../../CadModelMetadata';
@@ -159,7 +159,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     this.options.coverageUtil.dispose();
   }
 
-  determineSectors(input: DetermineSectorsInput): { wantedSectors: WantedSector[]; spendage: SectorLoadingSpendage } {
+  determineSectors(input: DetermineSectorsInput): { wantedSectors: WantedSector[]; spentBudget: SectorLoadingSpent } {
     const takenSectors = this.update(
       input.camera,
       input.cadModelsMetadata,
@@ -183,7 +183,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     this.log(
       `Scene: ${takenSectorCount} (${forcedDetailedSectorCount} required, ${totalSectorCount} sectors, ${takenPercent}% of all sectors - ${takenDetailedPercent}% detailed)`
     );
-    const spendage: SectorLoadingSpendage = {
+    const spentBudget: SectorLoadingSpent = {
       drawCalls: takenSectors.totalCost.drawCalls,
       downloadSize: takenSectors.totalCost.downloadSize,
       totalSectorCount,
@@ -193,7 +193,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
       detailedSectorCount: takenSectorCount - takenSimpleCount,
       accumulatedPriority
     };
-    return { spendage, wantedSectors: wanted };
+    return { spentBudget, wantedSectors: wanted };
   }
 
   filterSectorsToLoad(input: DetermineSectorsInput, wantedSectors: WantedSector[]): Promise<WantedSector[]> {

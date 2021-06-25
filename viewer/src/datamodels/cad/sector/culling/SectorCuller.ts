@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { DetermineSectorsInput, SectorLoadingSpendage } from './types';
+import { DetermineSectorsInput, SectorLoadingSpent } from './types';
 import { WantedSector } from '../types';
 
 /**
@@ -15,7 +15,7 @@ export interface SectorCuller {
    * what sectors we should load. Use {@link filterSectorsToLoad} to improve this estimate as new data is loaded.
    * @param input
    */
-  determineSectors(input: DetermineSectorsInput): { wantedSectors: WantedSector[]; spendage: SectorLoadingSpendage };
+  determineSectors(input: DetermineSectorsInput): { wantedSectors: WantedSector[]; spentBudget: SectorLoadingSpent };
 
   /**
    * Evaluates if sectors provided should be loaded or not, e.g. based on geometry we have now loaded
