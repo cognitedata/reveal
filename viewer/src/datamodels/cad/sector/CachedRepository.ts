@@ -79,7 +79,7 @@ export class CachedRepository implements Repository {
 
         case LevelOfDetail.Discarded:
           return {
-            blobUrl: sector.blobUrl,
+            modelIdentifier: sector.modelIdentifier,
             metadata: sector.metadata,
             levelOfDetail: sector.levelOfDetail,
             instancedMeshes: [],
@@ -99,12 +99,12 @@ export class CachedRepository implements Repository {
   private async loadSimpleSectorFromNetwork(wantedSector: WantedSector): Promise<ConsumedSector> {
     // TODO 2021-05-05 larsmoa: Retry
     const buffer = await this._modelSectorProvider.getBinaryFile(
-      wantedSector.blobUrl,
+      wantedSector.modelIdentifier,
       wantedSector.metadata.facesFile.fileName!
     );
     const geometry = await this._modelDataParser.parseF3D(new Uint8Array(buffer));
     const transformed = await this._modelDataTransformer.transformSimpleSector(
-      wantedSector.blobUrl,
+      wantedSector.modelIdentifier,
       wantedSector.metadata,
       geometry,
       wantedSector.geometryClipBox
@@ -117,16 +117,16 @@ export class CachedRepository implements Repository {
     return consumedSector;
   }
 
-  private async loadI3DFromNetwork(modelBlobUrl: string, filename: string): Promise<ParseSectorResult> {
-    const buffer = await this._modelSectorProvider.getBinaryFile(modelBlobUrl, filename);
+  private async loadI3DFromNetwork(modelBaseUrl: string, filename: string): Promise<ParseSectorResult> {
+    const buffer = await this._modelSectorProvider.getBinaryFile(modelBaseUrl, filename);
     return this._modelDataParser.parseI3D(new Uint8Array(buffer));
   }
 
   private async loadCtmsFromNetwork(
-    modelBlobUrl: string,
+    modelBaseUrl: string,
     ctmFilenames: string[]
   ): Promise<Map<string, ParseCtmResult>> {
-    const ctms = await Promise.all(ctmFilenames.map(x => this.loadCtmFileFromNetwork(modelBlobUrl, x)));
+    const ctms = await Promise.all(ctmFilenames.map(x => this.loadCtmFileFromNetwork(modelBaseUrl, x)));
     return ctmFilenames.reduce(
       (map, filename, index) => map.set(filename, ctms[index]),
       new Map<string, ParseCtmResult>()
@@ -136,15 +136,15 @@ export class CachedRepository implements Repository {
   private async loadDetailedSectorFromNetwork(wantedSector: WantedSector): Promise<ConsumedSector> {
     const indexFile = wantedSector.metadata.indexFile;
 
-    const i3dPromise = this.loadI3DFromNetwork(wantedSector.blobUrl, indexFile.fileName);
-    const ctmsPromise = this.loadCtmsFromNetwork(wantedSector.blobUrl, indexFile.peripheralFiles);
+    const i3dPromise = this.loadI3DFromNetwork(wantedSector.modelBaseUrl, indexFile.fileName);
+    const ctmsPromise = this.loadCtmsFromNetwork(wantedSector.modelBaseUrl, indexFile.peripheralFiles);
 
     const i3d = await i3dPromise;
     const ctms = await ctmsPromise;
     const geometry = this.finalizeDetailed(i3d, ctms);
 
     const transformed = await this._modelDataTransformer.transformDetailedSector(
-      wantedSector.blobUrl,
+      wantedSector.modelIdentifier,
       wantedSector.metadata,
       geometry,
       wantedSector.geometryClipBox
@@ -158,14 +158,13 @@ export class CachedRepository implements Repository {
     return consumedSector;
   }
 
-  private async loadCtmFileFromNetwork(modelBlobUrl: string, filename: string): Promise<ParseCtmResult> {
-    const cacheKey = this.ctmFileCacheKey(modelBlobUrl, filename);
+  private async loadCtmFileFromNetwork(modelBaseUrl: string, filename: string): Promise<ParseCtmResult> {
+    const cacheKey = this.ctmFileCacheKey(modelBaseUrl, filename);
     const cached = this._ctmFileCache.get(cacheKey);
     if (cached !== undefined) {
       return cached;
     }
-    // TODO 2021-05-05 larsmoa: Move retry to getBinaryFile()
-    const buffer = await this._modelSectorProvider.getBinaryFile(modelBlobUrl, filename);
+    const buffer = await this._modelSectorProvider.getBinaryFile(modelBaseUrl, filename);
     const parsedCtm = await this._modelDataParser.parseCTM(new Uint8Array(buffer));
     this._ctmFileCache.set(cacheKey, parsedCtm);
     return parsedCtm;
@@ -287,10 +286,10 @@ export class CachedRepository implements Repository {
   }
 
   private wantedSectorCacheKey(wantedSector: WantedSector) {
-    return wantedSector.blobUrl + '.' + wantedSector.metadata.id + '.' + wantedSector.levelOfDetail;
+    return wantedSector.modelBaseUrl + '.' + wantedSector.metadata.id + '.' + wantedSector.levelOfDetail;
   }
 
-  private ctmFileCacheKey(blobUrl: string, fileName: string) {
-    return blobUrl + '.' + fileName;
+  private ctmFileCacheKey(modelBaseUrl: string, fileName: string) {
+    return modelBaseUrl + '.' + fileName;
   }
 }

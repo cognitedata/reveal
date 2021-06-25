@@ -12,7 +12,8 @@ let modelIdRunningNumber = 0;
 export function createCadModelMetadata(root: SectorMetadata): CadModelMetadata {
   const scene = SectorSceneImpl.createFromRootSector(8, 1, 'Meters', root);
   const model: CadModelMetadata = {
-    blobUrl: `testModel_${modelIdRunningNumber++}`,
+    modelIdentifier: `testModel_${modelIdRunningNumber++}`,
+    modelBaseUrl: `testModel_${modelIdRunningNumber++}`,
     modelMatrix: new THREE.Matrix4().identity(),
     inverseModelMatrix: new THREE.Matrix4().identity(),
     scene,

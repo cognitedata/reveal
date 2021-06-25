@@ -15,7 +15,7 @@ export class ModelStateHandler {
   }
 
   hasStateChanged(wantedSector: WantedSector): boolean {
-    const modelState = this._sceneModelState[wantedSector.blobUrl];
+    const modelState = this._sceneModelState[wantedSector.modelIdentifier];
     if (modelState !== undefined) {
       const sectorLevelOfDetail = modelState[wantedSector.metadata.id];
       if (sectorLevelOfDetail !== undefined) {
@@ -27,22 +27,26 @@ export class ModelStateHandler {
     return true;
   }
 
-  addModel(modelBlobUrl: string) {
-    assert(this._sceneModelState[modelBlobUrl] === undefined, `Model ${modelBlobUrl} is already added`);
-    this._sceneModelState[modelBlobUrl] = {};
+  addModel(modelIdentifier: string) {
+    assert(this._sceneModelState[modelIdentifier] === undefined, `Model ${modelIdentifier} is already added`);
+    this._sceneModelState[modelIdentifier] = {};
   }
 
-  removeModel(modelBlobUrl: string) {
-    assert(this._sceneModelState[modelBlobUrl] !== undefined, `Model ${modelBlobUrl} is not added`);
-    delete this._sceneModelState[modelBlobUrl];
+  removeModel(modelIdentifier: string) {
+    assert(this._sceneModelState[modelIdentifier] !== undefined, `Model ${modelIdentifier} is not added`);
+    delete this._sceneModelState[modelIdentifier];
   }
 
   updateState(consumedSector: ConsumedSector) {
+    if (this._sceneModelState[consumedSector.modelIdentifier] === undefined) {
+      console.log('Stale sector ignored', consumedSector);
+      return;
+    }
     assert(
-      this._sceneModelState[consumedSector.blobUrl] !== undefined,
-      `Received sector from model ${consumedSector.blobUrl}, but the model is not added`
+      this._sceneModelState[consumedSector.modelIdentifier] !== undefined,
+      `Received sector from model ${consumedSector.modelIdentifier}, but the model is not added`
     );
-    const modelState = this._sceneModelState[consumedSector.blobUrl];
+    const modelState = this._sceneModelState[consumedSector.modelIdentifier];
     if (consumedSector.levelOfDetail === LevelOfDetail.Discarded) {
       delete modelState[consumedSector.metadata.id];
     } else {

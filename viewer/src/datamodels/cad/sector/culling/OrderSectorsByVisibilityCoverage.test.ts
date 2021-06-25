@@ -138,9 +138,10 @@ function createStubScene(tree: SectorTree): SectorScene {
   return new SectorSceneImpl(8, 1, 'Meters', root, sectorsMap);
 }
 
-function createStubModel(blobUrl: string, scene: SectorScene, modelMatrix: THREE.Matrix4) {
+function createStubModel(modelIdentifier: string, scene: SectorScene, modelMatrix: THREE.Matrix4) {
   const cadModel: CadModelMetadata = {
-    blobUrl,
+    modelIdentifier,
+    modelBaseUrl: `https://localhost/${modelIdentifier}/`,
     modelMatrix,
     inverseModelMatrix: new THREE.Matrix4().copy(modelMatrix).invert(),
     scene,

@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import { CameraConfiguration } from '../../utilities';
 
 export interface PointCloudMetadata {
-  blobUrl: string;
+  modelBaseUrl: string;
   modelMatrix: THREE.Matrix4;
   cameraConfiguration?: CameraConfiguration;
   scene: any;

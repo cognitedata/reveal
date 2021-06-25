@@ -138,12 +138,12 @@ export class CadModelUpdateHandler {
   }
 
   addModel(model: CadNode) {
-    this._modelStateHandler.addModel(model.cadModelMetadata.blobUrl);
+    this._modelStateHandler.addModel(model.cadModelMetadata.modelIdentifier);
     this._modelSubject.next({ model, operation: 'add' });
   }
 
   removeModel(model: CadNode) {
-    this._modelStateHandler.removeModel(model.cadModelMetadata.blobUrl);
+    this._modelStateHandler.removeModel(model.cadModelMetadata.modelIdentifier);
     this._modelSubject.next({ model, operation: 'remove' });
   }
 

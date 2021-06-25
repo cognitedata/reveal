@@ -74,13 +74,14 @@ export function handleDetermineSectorsInput(
                 return consumedSector;
               } catch (error) {
                 // Ignore error but mark sector as discarded since we didn't load any geometry
-                return {
-                  blobUrl: x.blobUrl,
+                const errorSector: ConsumedSector = {
+                  modelIdentifier: x.modelIdentifier,
                   metadata: x.metadata,
                   levelOfDetail: LevelOfDetail.Discarded,
                   group: undefined,
                   instancedMeshes: undefined
                 };
+                return errorSector;
               } finally {
                 reportNewSectorsDone(1, 0);
               }
@@ -110,5 +111,5 @@ export interface ModelState {
   [id: number]: LevelOfDetail;
 }
 export interface SceneModelState {
-  [blobUrl: string]: ModelState;
+  [modelIdentifier: string]: ModelState;
 }

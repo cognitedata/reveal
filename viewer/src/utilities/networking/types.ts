@@ -22,11 +22,11 @@ export interface CdfModelIdentifier {
 }
 
 export interface JsonFileProvider {
-  getJsonFile(blobUrl: string, fileName: string): Promise<any>;
+  getJsonFile(baseUrl: string, fileName: string): Promise<any>;
 }
 
 export interface BinaryFileProvider {
-  getBinaryFile(blobUrl: string, fileName: string): Promise<ArrayBuffer>;
+  getBinaryFile(baseUrl: string, fileName: string): Promise<ArrayBuffer>;
 }
 
 export interface ModelMetadataProvider<TModelIdentifier> {
@@ -40,8 +40,8 @@ export interface ModelDataClient<TModelIdentifier>
     ModelMetadataProvider<TModelIdentifier>,
     JsonFileProvider,
     BinaryFileProvider {
-  getJsonFile(blobUrl: string, fileName: string): Promise<any>;
-  getBinaryFile(blobUrl: string, fileName: string): Promise<ArrayBuffer>;
+  getJsonFile(baseUrl: string, fileName: string): Promise<any>;
+  getBinaryFile(baseUrl: string, fileName: string): Promise<ArrayBuffer>;
 
   /**
    * Returns an identifier that can be used to identify the application Reveal is used in.
