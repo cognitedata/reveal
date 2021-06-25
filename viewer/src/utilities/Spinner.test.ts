@@ -40,4 +40,23 @@ describe('Spinner test cases', () => {
 
     expect(spinnerDomElement.classList.contains(Spinner.classnames.dark)).toBeFalse();
   });
+
+  test('setting loading state updates CSS and title', () => {
+    const parent = document.createElement('div');
+    const spinner = new Spinner(parent);
+    const spinnerDomElement = parent.firstElementChild!;
+
+    expect(spinnerDomElement.classList.contains(Spinner.classnames.loading)).toBeFalse();
+
+    const idleTitle = spinnerDomElement.getAttribute('title');
+    spinner.loading = true;
+
+    expect(spinnerDomElement.getAttribute('title')).not.toBe(idleTitle);
+    expect(spinnerDomElement.classList.contains(Spinner.classnames.loading)).toBeTrue();
+
+    spinner.loading = false;
+
+    expect(spinnerDomElement.getAttribute('title')).toBe(idleTitle);
+    expect(spinnerDomElement.classList.contains(Spinner.classnames.loading)).toBeFalse();
+  });
 });
