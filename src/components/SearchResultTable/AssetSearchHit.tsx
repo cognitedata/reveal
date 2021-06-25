@@ -46,14 +46,16 @@ export default function AssetSearchHit({ asset }: Props) {
     [data]
   );
 
-  const selectedIds: undefined | number[] = chart?.timeSeriesCollection?.map(
-    (t) => t.tsId
-  );
+  const selectedExternalIds:
+    | undefined
+    | string[] = chart?.timeSeriesCollection
+    ?.map((t) => t.tsExternalId || '')
+    .filter(Boolean);
 
   const handleTimeSeriesClick = async (timeSeries: Timeseries) => {
     if (chart) {
       const tsToRemove = chart.timeSeriesCollection?.find(
-        (t) => t.tsId === timeSeries.id
+        (t) => t.tsExternalId === timeSeries.externalId
       );
       if (tsToRemove) {
         updateChart(removeTimeseries(chart, tsToRemove.id));
@@ -62,7 +64,7 @@ export default function AssetSearchHit({ asset }: Props) {
         const range = await calculateDefaultYAxis({
           chart,
           sdk,
-          timeSeriesId: timeSeries.id,
+          timeSeriesExternalId: timeSeries.externalId || '',
         });
 
         const newTs = covertTSToChartTS(timeSeries, range);
@@ -101,7 +103,7 @@ export default function AssetSearchHit({ asset }: Props) {
                   handleTimeSeriesClick(t);
                 }}
                 name={`${t.id}`}
-                value={selectedIds?.includes(t.id)}
+                checked={selectedExternalIds?.includes(t.externalId || '')}
               />
             )}
           />

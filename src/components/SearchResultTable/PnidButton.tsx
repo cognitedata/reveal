@@ -9,13 +9,13 @@ import { useNavigate } from 'hooks';
 
 export const PnidButton = ({
   asset,
-  timeseriesId,
+  timeseriesExternalId,
   showTooltip = true,
   hideWhenEmpty = true,
   children,
 }: {
   asset?: Asset;
-  timeseriesId?: number;
+  timeseriesExternalId?: string;
   showTooltip?: boolean;
   hideWhenEmpty?: boolean;
   children?: ReactNode;
@@ -26,7 +26,7 @@ export const PnidButton = ({
   const shouldFetchLinkedAsset = !asset;
 
   const { data: linkedAsset, isFetched: isAssetFetched } = useLinkedAsset(
-    timeseriesId,
+    timeseriesExternalId,
     shouldFetchLinkedAsset
   );
 

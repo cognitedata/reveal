@@ -52,13 +52,13 @@ export const roundToSignificantDigits = (value: number, digits: number) => {
 export async function calculateDefaultYAxis({
   sdk,
   chart,
-  timeSeriesId,
+  timeSeriesExternalId,
   inputUnit,
   outputUnit,
 }: {
   sdk: CogniteClient;
   chart: Chart;
-  timeSeriesId: number;
+  timeSeriesExternalId: string;
   inputUnit?: string;
   outputUnit?: string;
 }) {
@@ -66,7 +66,7 @@ export async function calculateDefaultYAxis({
   const dateTo = new Date(chart.dateTo);
 
   const lastYearDatapointsQuery = {
-    items: [{ id: timeSeriesId }],
+    items: [{ externalId: timeSeriesExternalId }],
     start: dateFrom,
     end: dateTo,
     aggregates: ['average'] as Aggregate[],

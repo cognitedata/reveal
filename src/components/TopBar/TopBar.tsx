@@ -34,18 +34,11 @@ const TopBarWrapper = () => {
         {!chart && <TopBar.Navigation links={[]} />}
         {!!chart && (
           <>
-            <TopBar.Actions
-              actions={[
-                {
-                  key: 'backToCharts',
-                  component: (
-                    <span style={{ color: 'var(--cogs-greyscale-grey9)' }}>
-                      ← All charts
-                    </span>
-                  ),
-                  onClick: () => move(''),
-                },
-              ]}
+            <TopBar.Action
+              text="← All charts"
+              key="backToCharts"
+              onClick={() => move('')}
+              style={{ paddingLeft: 0, color: 'var(--cogs-greyscale-grey9)' }}
             />
             <TopBar.Item>
               <Title level={4} style={{ marginLeft: 17 }}>
