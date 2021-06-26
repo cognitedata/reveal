@@ -99,7 +99,7 @@ export class CachedRepository implements Repository {
   private async loadSimpleSectorFromNetwork(wantedSector: WantedSector): Promise<ConsumedSector> {
     // TODO 2021-05-05 larsmoa: Retry
     const buffer = await this._modelSectorProvider.getBinaryFile(
-      wantedSector.modelIdentifier,
+      wantedSector.modelBaseUrl,
       wantedSector.metadata.facesFile.fileName!
     );
     const geometry = await this._modelDataParser.parseF3D(new Uint8Array(buffer));
