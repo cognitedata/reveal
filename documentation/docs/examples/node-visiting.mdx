@@ -19,11 +19,11 @@ This example only demonstrates how iteration over model nodes performed graduall
 
 ```jsx runnable
 let sum = 0;
-model
+await model
   .iterateNodesByTreeIndex(
     treeIndex => sum = sum + treeIndex
-  )
-  .then(() => alert('Iteration is done! Sum of all tree indexes is ' + sum));
+  );
+alert('Iteration is done! Sum of all tree indexes is ' + sum);
 ```
 
 ## Iterate over subtree nodes
@@ -35,10 +35,9 @@ set to `true`.
 
 ```jsx runnable
 let sum = 0;
-model
+await model
   .iterateSubtreeByTreeIndex(917985, treeIndex => {
     sum = sum + treeIndex;
-  })
-  .then(() => alert('Iteration is done! Sum of all tree indexes in subtree is ' + sum));
-;
+  });
+alert('Iteration is done! Sum of all tree indexes in subtree is ' + sum);
 ```

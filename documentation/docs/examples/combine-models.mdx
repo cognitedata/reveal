@@ -23,18 +23,17 @@ should also be applied to ensure that the axis system is correct.
 The following example shows how to modify the coordinate system of a point cloud model to make it fit with a CAD model.
 
 ```js runnable
-viewer.addModel({
+const pointCloudModel = viewer.addModel({
   modelId: 5564365369975452 ,
   revisionId: 2817572261344477,
-}).then(pointCloudModel => {
-  // Retrieve default transformation
-  const modelTransformation = pointCloudModel.getModelTransformation();
-  // Apply translation
-  const translation = new THREE.Matrix4().makeTranslation(140, 75, -110);
-  modelTransformation.multiply(translation);
-  // Update model transformation
-  pointCloudModel.setModelTransformation(modelTransformation);
-
-  viewer.fitCameraToModel(pointCloudModel);
 });
+// Retrieve default transformation
+const modelTransformation = pointCloudModel.getModelTransformation();
+// Apply translation
+const translation = new THREE.Matrix4().makeTranslation(140, 75, -110);
+modelTransformation.multiply(translation);
+// Update model transformation
+pointCloudModel.setModelTransformation(modelTransformation);
+
+viewer.fitCameraToModel(pointCloudModel);
 ```

@@ -35,26 +35,22 @@ Another good usecase would be to bind the `expand` function to a slider which th
 const rootTreeIndex = 570730;
 
 const explodeTool = new ExplodedViewTool(rootTreeIndex, model);
+await explodeTool.readyPromise;
 
 model.hideAllNodes();
 model.showNodeByTreeIndex(rootTreeIndex, true);
 
-const rootBoundingBox = model.getBoundingBoxByTreeIndex(rootTreeIndex)
-  .then(boundingBox => {
-    viewer.fitCameraToBoundingBox(boundingBox, 0);
-  })
-  .then(() => {
-    return explodeTool.readyPromise;
-  })
-  .then(() => {
-    const clock = new THREE.Clock(true);
-    clock.start();
+const boundingBox = await model.getBoundingBoxByTreeIndex(rootTreeIndex)
+viewer.fitCameraToBoundingBox(boundingBox, 0);
+// Wait for tool to cache necessary data
+await explodeTool.readyPromise;
 
-    setInterval(() =>{
-      const elapsedTime = clock.getElapsedTime();
-      const expandRadius = Math.sin(elapsedTime) * 0.5 + 0.5;
-      explodeTool.expand(expandRadius);
-    }, 20);
-  });
+const clock = new THREE.Clock(true);
+clock.start();
 
+setInterval(() =>{
+  const elapsedTime = clock.getElapsedTime();
+  const expandRadius = Math.sin(elapsedTime) * 0.5 + 0.5;
+  explodeTool.expand(expandRadius);
+}, 20);
 ```
