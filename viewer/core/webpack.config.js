@@ -7,7 +7,7 @@ const logger = require('webpack-log')('reveal');
 const packageJSON = require('./package.json');
 const workerPackageJSON = require('./node_modules/@cognite/reveal-parser-worker/package.json');
 const webpack = require('webpack');
-const { publicPath, getWorkerCdnUrl, getEnvArg } = require('../parser-worker/buildUtils');
+const { publicPath, getWorkerCdnUrl, getEnvArg } = require('../../parser-worker/buildUtils');
 
 const MIXPANEL_TOKEN_DEV = '00193ed55feefdfcf8a70a76bc97ec6f';
 const MIXPANEL_TOKEN_PROD = '8c900bdfe458e32b768450c20750853d';
@@ -32,14 +32,14 @@ module.exports = env => {
     // Internals is not part of prod builds
     entry: development
       ? {
-          index: './src/index.ts',
-          tools: './src/tools.ts',
-          internals: './src/internals.ts'
-        }
+        index: './src/index.ts',
+        tools: './src/tools.ts',
+        internals: './src/internals.ts'
+      }
       : {
-          index: './src/index.ts',
-          tools: './src/tools.ts'
-        },
+        index: './src/index.ts',
+        tools: './src/tools.ts'
+      },
     target: 'web',
     resolve: {
       extensions: ['.tsx', '.ts', '.js'],
@@ -56,9 +56,9 @@ module.exports = env => {
               compilerOptions: !development
                 ? {}
                 : {
-                    noUnusedLocals: false,
-                    noUnusedParameters: false
-                  }
+                  noUnusedLocals: false,
+                  noUnusedParameters: false
+                }
             }
           },
           exclude: [/node_modules/, /src\/.*\.test\.tsx?/, /src\/__testutilities__/, /src\/.*\/stubs\//]
