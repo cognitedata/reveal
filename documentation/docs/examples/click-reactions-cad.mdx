@@ -52,7 +52,8 @@ viewer.on('click', event => {
 
 In CAD models, it's quite common that equipment consists of many small geometry parts. Often it's desirable to
 highlight the entire equipment (e.g. a tank) and not just the individual pieces (e.g. a valve connected to the tank).
-This can be achieved by determining the an
+This can be achieved by determining the ancestor tree indices of the clicked geometry. `Cognite3DModel.getAncestorTreeIndices()`
+can be used to determine this.
 
 ```js runnable
 const selectedNodes = new ByTreeIndexNodeSet();
@@ -63,10 +64,11 @@ viewer.on('click', event => {
     event.offsetX, event.offsetY
   );
   if (intersection) {
+    // Retrieve tree indices of parent. Second argument is used to control what ancestor level to retrieve;
+    // 1 is direct parent, 2 is grand-parent etc
+    const parentRange = await model.getAncestorTreeIndices(intersection.treeIndex, 1);
     // Replace current selection
-    model.getAncestorTreeIndices(intersection.treeIndex, 1).then(parentRange => {
-      selectedNodes.updateSet(new IndexSet(parentRange));
-    }, error => alert(error));
+    selectedNodes.updateSet(new IndexSet(parentRange));
   };
 });
 ```
