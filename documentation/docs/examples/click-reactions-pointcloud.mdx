@@ -41,5 +41,5 @@ The intersection threshold can be changed using the `pointIntersectionThreshold`
 
 ```js
 const options = { pointIntersectionThreshold: 1.0 /* 1 m */ };
-const intersection = viewer.getIntersectionFromPixel(event.offsetX, event.offsetY, options);
+const intersection = await viewer.getIntersectionFromPixel(event.offsetX, event.offsetY, options);
 ```
