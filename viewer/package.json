@@ -1,0 +1,7 @@
+{
+  "name": "viewer",
+  "private": true,
+  "workspaces": [
+    "core"
+  ]
+}

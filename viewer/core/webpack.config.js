@@ -32,14 +32,14 @@ module.exports = env => {
     // Internals is not part of prod builds
     entry: development
       ? {
-        index: './src/index.ts',
-        tools: './src/tools.ts',
-        internals: './src/internals.ts'
-      }
+          index: './src/index.ts',
+          tools: './src/tools.ts',
+          internals: './src/internals.ts'
+        }
       : {
-        index: './src/index.ts',
-        tools: './src/tools.ts'
-      },
+          index: './src/index.ts',
+          tools: './src/tools.ts'
+        },
     target: 'web',
     resolve: {
       extensions: ['.tsx', '.ts', '.js'],
@@ -56,9 +56,9 @@ module.exports = env => {
               compilerOptions: !development
                 ? {}
                 : {
-                  noUnusedLocals: false,
-                  noUnusedParameters: false
-                }
+                    noUnusedLocals: false,
+                    noUnusedParameters: false
+                  }
             }
           },
           exclude: [/node_modules/, /src\/.*\.test\.tsx?/, /src\/__testutilities__/, /src\/.*\/stubs\//]
