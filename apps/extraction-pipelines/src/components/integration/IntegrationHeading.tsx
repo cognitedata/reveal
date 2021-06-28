@@ -13,7 +13,6 @@ import { useAppEnv } from 'hooks/useAppEnv';
 import { rootUpdate } from 'hooks/details/useDetailsUpdate';
 import { DivFlex } from 'styles/flex/StyledFlex';
 import DetailsValueView from 'components/table/details/DetailsValueView';
-import { bottomSpacing } from 'styles/StyledVariables';
 import {
   DESCRIPTION_LABEL,
   EXT_PIPE_NAME_HEADING,
@@ -22,25 +21,17 @@ import {
 
 const Wrapper = styled.div`
   margin: 0.5rem 1rem 1rem 1rem;
+
   #description,
   #name {
     flex: 1;
   }
 `;
-const ImportantWrapper = styled(DivFlex)`
-  margin-left: 1rem;
-  margin-bottom: ${bottomSpacing};
-  .cogs-icon {
-    margin-right: 1rem;
-    &.icon-no-margin {
-      margin: 0;
-    }
-  }
-  .cogs-icon-Dot {
-    margin-left: 0.5rem;
-    margin-right: 1rem;
-  }
+
+const IconWithMargin = styled(Icon)`
+  margin: 0 1em;
 `;
+
 const StyledTitle = styled(Title)`
   &.cogs-title-1 {
     font-size: 1.5rem;
@@ -48,36 +39,36 @@ const StyledTitle = styled(Title)`
     margin: 0;
   }
 `;
-interface IntegrationHeadingProps {}
 
-export const IntegrationHeading: FunctionComponent<IntegrationHeadingProps> = () => {
+export const IntegrationHeading: FunctionComponent = () => {
   const { project } = useAppEnv();
   const { integration: selected } = useSelectedIntegration();
   const { data: integration } = useIntegrationById(selected?.id);
   if (!integration || !project) {
     return <></>;
   }
+
   return (
     <Wrapper className="heading">
-      <InlineEdit
-        name="name"
-        defaultValues={{ name: integration?.name }}
-        schema={nameSchema}
-        updateFn={rootUpdate({ integration, name: 'name', project })}
-        label={EXT_PIPE_NAME_HEADING}
-        viewComp={<StyledTitle level={1}>{integration.name}</StyledTitle>}
-      />
-      <ImportantWrapper>
+      <DivFlex>
+        <InlineEdit
+          name="name"
+          defaultValues={{ name: integration?.name }}
+          schema={nameSchema}
+          updateFn={rootUpdate({ integration, name: 'name', project })}
+          label={EXT_PIPE_NAME_HEADING}
+          viewComp={<StyledTitle level={1}>{integration.name}</StyledTitle>}
+        />
         {integration?.dataSet && (
           <>
-            <Icon type="Grid" />
+            <IconWithMargin type="Grid" />
             <DetailsValueView
               fieldName="dataSet"
               fieldValue={integration.dataSet}
             />
           </>
         )}
-        <Icon type="Dot" />
+        <IconWithMargin type="Dot" />
         <Icon type="datasource" />
         <InlineEdit
           name="source"
@@ -86,7 +77,7 @@ export const IntegrationHeading: FunctionComponent<IntegrationHeadingProps> = ()
           schema={sourceSchema}
           label={SOURCE_LABEL}
         />
-      </ImportantWrapper>
+      </DivFlex>
       <InlineEdit
         name="description"
         updateFn={rootUpdate({ integration, name: 'description', project })}
