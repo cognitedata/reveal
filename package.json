@@ -141,7 +141,7 @@
     "kill-port": "^1.6.1",
     "patch-package": "^6.2.2",
     "plop": "^2.7.4",
-    "prettier": "^2.3.1",
+    "prettier": "^2.3.2",
     "pretty-quick": "^3.1.0",
     "redux-mock-store": "^1.5.4",
     "rollup": "^2.50.6",
