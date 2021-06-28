@@ -8,8 +8,8 @@ export const useIntegrationById = (integrationId?: number) => {
   const { project } = useAppEnv();
   return useQuery<Integration, SDKError>(
     ['integration', integrationId, project],
-    (ctx) => {
-      return getIntegrationById(ctx.queryKey[1], ctx.queryKey[2]);
+    () => {
+      return getIntegrationById(integrationId!, project ?? '');
     },
     {
       enabled: !!integrationId,

@@ -16,8 +16,8 @@ export const useRuns = (
   const { project } = useAppEnv();
   return useQuery<RunsAPIResponse, SDKError>(
     [project, externalId, nextCursor],
-    (ctx) => {
-      return getRuns(ctx.queryKey[0], ctx.queryKey[1], ctx.queryKey[2], limit);
+    () => {
+      return getRuns(project ?? '', externalId ?? '', nextCursor ?? '', limit);
     },
     {
       enabled: !!externalId && nextCursor !== null,
@@ -43,8 +43,8 @@ export const useFilteredRuns = (params: CreateRunFilterParam) => {
       data.filter.createdTime?.min,
       data.filter.createdTime?.max,
     ],
-    (ctx) => {
-      return getFilteredRuns(ctx.queryKey[0], data);
+    () => {
+      return getFilteredRuns(project ?? '', data);
     },
     {
       enabled: !!data.filter.externalId,

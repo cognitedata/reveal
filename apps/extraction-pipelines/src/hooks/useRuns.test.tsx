@@ -73,7 +73,7 @@ describe('useFilteredRuns', () => {
       expect(result.current.data?.runs).toBeDefined();
     });
     expect(sdkv3.post).toHaveBeenCalledTimes(1);
-    expect(sdkv3.post).toHaveBeenCalledWith(`${getBaseUrl(null)}/runs/list`, {
+    expect(sdkv3.post).toHaveBeenCalledWith(`${getBaseUrl('')}/runs/list`, {
       data: {
         filter: { externalId: params.externalId },
         cursor: undefined,
