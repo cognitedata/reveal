@@ -14,7 +14,8 @@ module.exports = {
   moduleFileExtensions: ['ts', 'js', 'json', 'node'],
   moduleNameMapper: {
     '\\.(frag|vert)$': '<rootDir>/src/__mocks__/glslMocks.js',
-    '\\.css$': '<rootDir>/src/__mocks__/cssMock.js'
+    '\\.css$': '<rootDir>/src/__mocks__/cssMock.js',
+    '\\.svg$': '<rootDir>/src/__mocks__/svgMock.js'
   },
   globals: {
     __webpack_public_path__: '',
