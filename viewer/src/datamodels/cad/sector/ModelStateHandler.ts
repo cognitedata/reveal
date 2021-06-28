@@ -16,15 +16,13 @@ export class ModelStateHandler {
 
   hasStateChanged(wantedSector: WantedSector): boolean {
     const modelState = this._sceneModelState[wantedSector.modelIdentifier];
-    if (modelState !== undefined) {
-      const sectorLevelOfDetail = modelState[wantedSector.metadata.id];
-      if (sectorLevelOfDetail !== undefined) {
-        return sectorLevelOfDetail !== wantedSector.levelOfDetail;
-      } else {
-        return wantedSector.levelOfDetail !== LevelOfDetail.Discarded;
-      }
+    assert(modelState !== undefined, `Model ${wantedSector.modelIdentifier} has not been added`);
+    const sectorLevelOfDetail = modelState[wantedSector.metadata.id];
+    if (sectorLevelOfDetail !== undefined) {
+      return sectorLevelOfDetail !== wantedSector.levelOfDetail;
+    } else {
+      return wantedSector.levelOfDetail !== LevelOfDetail.Discarded;
     }
-    return true;
   }
 
   addModel(modelIdentifier: string) {
