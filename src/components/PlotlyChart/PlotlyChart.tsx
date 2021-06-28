@@ -49,6 +49,7 @@ const Y_AXIS_MARGIN = 40;
 type ChartProps = {
   chartId: string;
   isYAxisShown?: boolean;
+  isAggregatesShown?: boolean;
   isPreview?: boolean;
   isInSearch?: boolean;
   stackedMode?: boolean;
@@ -60,6 +61,7 @@ const Plot = createPlotlyComponent(Plotly);
 const PlotlyChartComponent = ({
   chartId,
   isYAxisShown = true,
+  isAggregatesShown = false,
   isPreview = false,
   isInSearch = false,
   stackedMode = false,
@@ -346,7 +348,7 @@ const PlotlyChartComponent = ({
           '%{y} &#183; <span style="color:#8c8c8c">Max value: %{fullData.name}</span><extra></extra>',
       };
 
-      return isPreview ? average : [average, min, max];
+      return isPreview || !isAggregatesShown ? average : [average, min, max];
     }
   );
   const data = groupedTraces.flat(); // flatten the grouped traces into list of traces.
