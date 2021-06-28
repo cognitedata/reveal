@@ -25,8 +25,10 @@ import { IntegrationHeading } from 'components/integration/IntegrationHeading';
 import { LinkWrapper } from 'styles/StyledLinks';
 import { RunFilterProvider } from 'hooks/runs/RunsFilterContext';
 import { IntegrationBreadcrumbs } from 'components/navigation/breadcrumbs/IntegrationBreadcrumbs';
+import { Span3 } from 'styles/grid/StyledGrid';
 
 const PageNav = styled.ul`
+  ${Span3};
   margin: 0;
   padding: 1rem 0 0.8rem 0;
   list-style: none;

@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { Colors } from '@cognite/cogs.js';
 import { pageDividerBorder } from 'styles/StyledVariables';
 
@@ -79,8 +79,17 @@ export const GridRowStyle = styled(PaddedGridDiv)`
 export const MainFullWidthGrid = styled.div`
   grid-area: main;
   display: grid;
-  grid-template-columns: auto;
+  grid-template-columns: 1fr 3fr 1fr;
   border-top: ${pageDividerBorder};
+  .error-dialog {
+    grid-column: 2;
+    margin-top: 2rem;
+    height: fit-content;
+  }
+`;
+
+export const Span3 = css`
+  grid-column: 1 / span 3;
 `;
 
 export const SimpleGrid = styled.div`

@@ -1,9 +1,4 @@
-import React, {
-  FunctionComponent,
-  PropsWithChildren,
-  useEffect,
-  useState,
-} from 'react';
+import React, { useEffect, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
 import {
@@ -24,7 +19,7 @@ import { RegisterIntegrationLayout } from 'components/layout/RegisterIntegration
 import { CreateFormWrapper } from 'styles/StyledForm';
 import { ButtonPlaced } from 'styles/StyledButton';
 import * as yup from 'yup';
-import { useForm, FormProvider } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useDataSet } from 'hooks/useDataSets';
 import { FullInput } from 'components/inputs/FullInput';
@@ -37,14 +32,14 @@ import { Collapse, Colors } from '@cognite/cogs.js';
 import { CountSpan, PriSecBtnWrapper } from 'styles/StyledWrapper';
 import { DataSetModel } from 'model/DataSetModel';
 import {
-  scheduleRule,
-  nameRule,
+  descriptionRule,
   documentationRule,
+  externalIdRule,
   MAX_DOCUMENTATION_LENGTH,
+  nameRule,
+  scheduleRule,
   selectedRawTablesRule,
   sourceRule,
-  externalIdRule,
-  descriptionRule,
 } from 'utils/validation/integrationSchemas';
 import DataSetIdInput, {
   DATASET_LIST_LIMIT,
@@ -74,6 +69,8 @@ import { InfoIcon } from 'styles/StyledIcon';
 import { InfoBox } from 'components/message/InfoBox';
 import ConnectRawTablesInput from 'components/inputs/rawSelector/ConnectRawTablesInput';
 import { createAddIntegrationInfo } from 'utils/integrationUtils';
+import { EXTPIPES_ACL_WRITE } from 'model/AclAction';
+import { CapabilityCheck } from 'components/accessCheck/CapabilityCheck';
 
 const StyledCollapse = styled(Collapse)`
   background-color: red;
@@ -104,7 +101,6 @@ const Panel = styled(Collapse.Panel)`
   }
 `;
 const InfoMessage = styled.span`
-  grid-area: description;
   display: flex;
   align-items: center;
   .cogs-icon {
@@ -132,7 +128,6 @@ const NOT_LINKED: Readonly<string> = `${EXTRACTION_PIPELINE} will not be linked 
 const linkDataSetText = (dataSet: DataSetModel): Readonly<string> => {
   return `${EXTRACTION_PIPELINE} will be linked to data set: ${dataSet.name} (${dataSet.id})`;
 };
-interface CreateIntegrationProps {}
 
 export interface AddIntegrationFormInput extends ScheduleFormInput {
   name: string;
@@ -160,9 +155,8 @@ const pageSchema = yup.object().shape({
 const findDataSetId = (search: string) => {
   return new URLSearchParams(search).get('dataSetId');
 };
-const CreateIntegration: FunctionComponent<CreateIntegrationProps> = (
-  _: PropsWithChildren<CreateIntegrationProps>
-) => {
+
+const CreateIntegration = () => {
   const [dataSetLoadError, setDataSetLoadError] = useState<string | null>(null);
   const [showCron, setShowCron] = useState(false);
   const history = useHistory();
@@ -255,10 +249,11 @@ const CreateIntegration: FunctionComponent<CreateIntegrationProps> = (
   };
 
   return (
-    <RegisterIntegrationLayout>
+    <>
       {dataSetLoadError && (
         <InfoMessage
           id="dataset-error"
+          className="data-set-info"
           role="region"
           aria-live="polite"
           color={`${Colors.yellow.hex()}`}
@@ -268,13 +263,23 @@ const CreateIntegration: FunctionComponent<CreateIntegrationProps> = (
         </InfoMessage>
       )}
       {data && (
-        <InfoMessage id="dataset-data" role="region" aria-live="polite">
+        <InfoMessage
+          id="dataset-data"
+          className="data-set-info"
+          role="region"
+          aria-live="polite"
+        >
           <InfoIcon />
           {linkDataSetText(data[0])}
         </InfoMessage>
       )}
       {!dataSetId && (
-        <InfoMessage id="dataset-data" role="region" aria-live="polite">
+        <InfoMessage
+          id="dataset-data"
+          className="data-set-info"
+          role="region"
+          aria-live="polite"
+        >
           <InfoIcon />
           {NOT_LINKED}
         </InfoMessage>
@@ -424,7 +429,15 @@ const CreateIntegration: FunctionComponent<CreateIntegrationProps> = (
           linkText={ADD_MORE_INFO_LINK}
         />
       </SideInfo>
-    </RegisterIntegrationLayout>
+    </>
   );
 };
-export default CreateIntegration;
+export default function CombinedComponent() {
+  return (
+    <RegisterIntegrationLayout>
+      <CapabilityCheck requiredAccess={EXTPIPES_ACL_WRITE}>
+        <CreateIntegration />
+      </CapabilityCheck>
+    </RegisterIntegrationLayout>
+  );
+}

@@ -10,10 +10,14 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { AppEnvProvider } from 'hooks/useAppEnv';
 import { Route, Router, Switch } from 'react-router-dom';
 import { createBrowserHistory } from 'history';
+// eslint-disable-next-line
+import { SDKProvider } from '@cognite/sdk-provider';
+import { sdkv3 } from '@cognite/cdf-sdk-singleton';
+import { CogniteClient } from '@cognite/sdk';
+import { getCdfEnvFromUrl, projectName } from 'utils/config';
 import theme from './styles/theme';
 import AppScopeStyles from './styles/AppScopeStyles';
 import rootStyles from './styles/index.css';
-import { getCdfEnvFromUrl, projectName } from './utils/config';
 
 const App = () => {
   const project = projectName();
@@ -42,27 +46,33 @@ const App = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AppScopeStyles>
-        <SubAppWrapper padding={false}>
-          <AuthWrapper
-            showLoader
-            includeGroups
-            loadingScreen={<Loader />}
-            subAppName="cdf-integrations-ui"
-          >
-            <ThemeProvider theme={theme}>
-              <AppEnvProvider cdfEnv={cdfEnv} project={project} origin={origin}>
-                <Router history={history}>
-                  <Switch>
-                    <Route path="/:tenant" component={Home} />
-                  </Switch>
-                </Router>
-              </AppEnvProvider>
-            </ThemeProvider>
-            <GlobalStyles theme={theme} />
-          </AuthWrapper>
-        </SubAppWrapper>
-      </AppScopeStyles>
+      <SDKProvider sdk={(sdkv3 as unknown) as CogniteClient}>
+        <AppScopeStyles>
+          <SubAppWrapper padding={false}>
+            <AuthWrapper
+              showLoader
+              includeGroups
+              loadingScreen={<Loader />}
+              subAppName="cdf-integrations-ui"
+            >
+              <ThemeProvider theme={theme}>
+                <AppEnvProvider
+                  cdfEnv={cdfEnv}
+                  project={project}
+                  origin={origin}
+                >
+                  <Router history={history}>
+                    <Switch>
+                      <Route path="/:tenant" component={Home} />
+                    </Switch>
+                  </Router>
+                </AppEnvProvider>
+              </ThemeProvider>
+              <GlobalStyles theme={theme} />
+            </AuthWrapper>
+          </SubAppWrapper>
+        </AppScopeStyles>
+      </SDKProvider>
     </QueryClientProvider>
   );
 };

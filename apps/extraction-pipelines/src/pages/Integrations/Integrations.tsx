@@ -64,6 +64,10 @@ const Integrations: FunctionComponent<Props> = () => {
     );
   }
 
+  return <IntegrationsTable tableData={data as Integration[]} />;
+};
+
+export default function CombinedComponent() {
   return (
     <FullPageLayout
       pageHeadingText={EXTRACTION_PIPELINES}
@@ -81,8 +85,7 @@ const Integrations: FunctionComponent<Props> = () => {
       }
       breadcrumbs={<ExtPipesBreadcrumbs />}
     >
-      <IntegrationsTable tableData={data as Integration[]} />
+      <Integrations />
     </FullPageLayout>
   );
-};
-export default Integrations;
+}

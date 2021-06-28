@@ -51,8 +51,9 @@ const RawTable: FunctionComponent<Props> = ({ rawTables }: OwnProps) => {
           <th scope="col">Table name</th>
         </tr>
         {rawTables?.map(({ dbName, tableName }, index) => {
+          const key = `${dbName}-${tableName}-${index}`;
           return (
-            <tr className="grid-row" key={`${dbName}-${tableName}-${index}`}>
+            <tr className="grid-row" key={key}>
               <td className="grid-cell cell-0">
                 <LinkWithCopy
                   href={`${origin}/${project}/raw/${dbName}/${

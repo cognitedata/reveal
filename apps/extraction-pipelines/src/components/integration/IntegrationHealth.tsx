@@ -34,8 +34,10 @@ import {
   DateFormatRecordType,
   mapRangeToGraphTimeFormat,
 } from 'components/chart/runChartUtils';
+import { Span3 } from 'styles/grid/StyledGrid';
 
 const TableWrapper = styled(PageWrapperColumn)`
+  ${Span3};
   padding: 0 2rem;
 `;
 const FilterWrapper = styled.div`

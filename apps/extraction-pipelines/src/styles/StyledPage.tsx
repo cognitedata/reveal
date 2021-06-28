@@ -7,7 +7,7 @@ import {
   mainContentSpaceSides,
 } from 'styles/StyledVariables';
 import { StyledRouterLink } from 'components/integrations/cols/Name';
-import { MainFullWidthGrid } from 'styles/grid/StyledGrid';
+import { MainFullWidthGrid, Span3 } from 'styles/grid/StyledGrid';
 
 export const PageWrapper = styled.div`
   flex: 1;
@@ -57,35 +57,33 @@ export const MainWithAsidesWrapper = styled(MainFullWidthGrid)`
   grid-template-columns: 1fr 3fr 1fr;
   grid-template-rows: min-content min-content min-content auto;
   grid-row-gap: 1rem;
-  grid-template-areas:
-    '. back .'
-    'left title .'
-    'left description .'
-    'left  form .';
   overflow-y: auto;
   height: calc(100vh - 16.375rem);
   @media screen and (min-width: 1400px) {
     grid-template-columns: 2fr 4fr 2fr;
   }
-  form {
-    grid-area: form;
+  form,
+  h2,
+  .data-set-info {
+    grid-column: 2 / span 1;
   }
-  h2 {
-    grid-area: title;
+  aside {
+    grid-column: 1;
+    grid-row: 1 / span 2;
   }
-  .description {
-    grid-area: description;
+  .error-dialog {
+    grid-column-start: 2;
   }
 `;
 
 export const SideInfo = styled.aside`
-  grid-area: left;
   padding: 1rem 1rem 1rem 0;
   border-right: ${pageDividerBorder};
   margin-right: 2rem;
 `;
 
 export const PageWrapperColumn = styled.div`
+  ${Span3};
   overflow-y: auto;
   height: calc(100vh - 15rem);
   display: flex;

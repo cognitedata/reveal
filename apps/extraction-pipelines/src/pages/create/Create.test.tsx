@@ -19,7 +19,14 @@ import {
   withTenant,
 } from 'routing/CreateRouteConfig';
 import 'utils/test/windowLocation';
+// eslint-disable-next-line
+import { usePermissions } from '@cognite/sdk-react-query-hooks';
 
+jest.mock('@cognite/sdk-react-query-hooks', () => {
+  return {
+    usePermissions: jest.fn(),
+  };
+});
 describe('Register', () => {
   window.location.href =
     'https://dev.fusion.cogniteapp.com/itera-int-green/integrations/create?env=greenfield';
@@ -41,6 +48,7 @@ describe('Register', () => {
     jest.resetAllMocks();
   });
   test('Renders', async () => {
+    usePermissions.mockReturnValue({ isLoading: false, data: true });
     renderRegisterContext(
       <React.Suspense fallback="This is the fallback">
         <Create />

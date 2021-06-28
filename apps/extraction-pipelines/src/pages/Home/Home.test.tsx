@@ -18,9 +18,17 @@ import {
   PROJECT_ITERA_INT_GREEN,
 } from 'utils/baseURL';
 import { EXTRACTION_PIPELINES } from 'utils/constants';
+// eslint-disable-next-line
+import { usePermissions } from '@cognite/sdk-react-query-hooks';
 
+jest.mock('@cognite/sdk-react-query-hooks', () => {
+  return {
+    usePermissions: jest.fn(),
+  };
+});
 describe('<Home />', () => {
   test('Renders Home page', async () => {
+    usePermissions.mockReturnValue({ isLoading: false, data: true });
     sdkv3.get.mockResolvedValueOnce({ data: { items: getMockResponse() } });
     sdkv3.get.mockResolvedValueOnce({ data: getMockResponse()[0] });
     sdkv3.datasets.retrieve.mockResolvedValue([]);
