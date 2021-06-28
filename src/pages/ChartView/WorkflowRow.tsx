@@ -273,7 +273,7 @@ export default function WorkflowRow({
               content={<AppearanceDropdown update={updateAppearance} />}
             >
               <Button
-                type="tertiary"
+                type="ghost"
                 icon="Timeseries"
                 style={{ height: 28 }}
                 aria-label="timeseries"
@@ -291,7 +291,7 @@ export default function WorkflowRow({
               }
             >
               <Button
-                type="tertiary"
+                type="ghost"
                 icon="Delete"
                 style={{ height: 28 }}
                 aria-label="delete"
@@ -300,7 +300,7 @@ export default function WorkflowRow({
           </td>
           <td style={{ textAlign: 'center', paddingLeft: 0 }}>
             <Button
-              type="tertiary"
+              type="ghost"
               icon="Info"
               onClick={(event) => {
                 if (isSelected) {
@@ -323,7 +323,7 @@ export default function WorkflowRow({
               }
             >
               <Button
-                type="tertiary"
+                type="ghost"
                 icon="MoreOverflowEllipsisHorizontal"
                 style={{ height: 28 }}
                 aria-label="more"
