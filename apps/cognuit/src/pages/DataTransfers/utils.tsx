@@ -9,6 +9,7 @@ import configurationsConfig from '../Configurations/configs/configurations.confi
 import dataTransfersConfig from './datatransfer.config';
 import { StatusDot } from './elements';
 import { DataTypesTableData } from './types';
+import { SelectColumnFilter } from './components/Table/Filters/SelectColumnFilter';
 
 export const getFormattedTimestampOrString = (revision: string | number) => {
   if (new Date(Number(revision) * UNIX_TIMESTAMP_FACTOR).getTime() > 0) {
@@ -56,6 +57,21 @@ export function selectColumns(
         (columnNames.length === 0 || columnNames.includes(key)) &&
         !dataTransfersConfig.ignoreColumns.includes(key)
       ) {
+        if (key === 'report') {
+          results.push({
+            Header: getMappedColumnName(key),
+            accessor: key,
+            disableSortBy: true,
+            Cell: ({ value }: { value: any }) => {
+              return getFormattedTimestampOrString(value);
+            },
+            Filter: SelectColumnFilter,
+            filter: 'includes',
+          });
+
+          return;
+        }
+
         results.push({
           Header: getMappedColumnName(key),
           accessor: key,

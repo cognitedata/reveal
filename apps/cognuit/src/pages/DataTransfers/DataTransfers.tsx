@@ -163,6 +163,7 @@ const DataTransfers: React.FC = () => {
     <ContentContainer>
       <TableActions setFilteredData={setFilteredData} />
       <Table<DataTypesTableData>
+        filterable
         dataSource={filteredData}
         expandedIds={expandedColumns}
         rowKey={(data, index) => `datatypes-${data.id}-${index}`}

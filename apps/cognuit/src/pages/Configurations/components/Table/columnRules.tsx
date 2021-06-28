@@ -150,7 +150,11 @@ export const columnRules: (actions: Props) => Rule[] = ({
         <TableActionsContainer>
           <ActionWrapper>
             <Tooltip
-              content={value.direction === 'psToOw' ? 'PS to OW' : 'OW to PS'}
+              content={
+                value.direction === 'psToOw'
+                  ? 'Petrel Studio to Open Works'
+                  : 'Open Works to Petrel Studio'
+              }
             >
               <DirectionArrows psToOw={value.direction === 'psToOw'} />
             </Tooltip>
