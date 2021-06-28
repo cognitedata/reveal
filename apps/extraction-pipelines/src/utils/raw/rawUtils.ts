@@ -27,9 +27,9 @@ export const getDatabaseTables = ({
         return curr.tables.filter(
           (table) =>
             table.name.toUpperCase().search(tableSearch.toUpperCase()) >= 0
-        );
+        ) as RawDBTable[];
       }
-      return curr.tables;
+      return [...curr.tables] as RawDBTable[];
     }
     return acc;
   }, [] as RawDBTable[]);
