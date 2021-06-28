@@ -8,8 +8,8 @@ export enum NodeOutlineColor {
   Black,
   Cyan,
   Blue,
-  Purple,
-  Pink,
+  Green,
+  Red,
   Orange
 }
 

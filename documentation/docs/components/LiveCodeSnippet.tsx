@@ -38,6 +38,12 @@ export function LiveCodeSnippet(props: LiveCodeSnippetProps) {
   return (
     <LiveProvider
       code={children}
+      transpileOptions={{
+        transforms: {
+          classes: false,
+          asyncAwait: false
+        }
+      }}
       transformCode={(code: string) => {
         const fullCode = `
             // make these things to be available in live-editor

@@ -2,7 +2,7 @@
     <img src="./cognite_logo.png" alt="Cognite logo" title="Cognite" align="right" height="80" />
 </a>
 
-# Reveal 3D viewer and libraries #
+# Reveal 3D viewer and libraries
 
 [![Build Status](https://github.com/cognitedata/reveal/actions/workflows/ci.yml/badge.svg
 )](https://github.com/cognitedata/reveal/actions/workflows/ci.yml)
@@ -98,7 +98,7 @@ consult [parser-worker/README.md](parser-worker/README.md)
 To publish a new version of `@cognite/reveal` or `@cognite/reveal-parser-worker` follow the steps below
 (example is for the viewer package, but commands are the same for parser-worker except folder name).
 
-### Git setup
+### Create release branch
 
 Checkout at some stable revision that you want to release (normally, the latest state from master or
 version-1 if you are releasing fix for a previous version) and create a new branch from it. 
@@ -108,11 +108,6 @@ git checkout master # or version-1 if you are releasing a hotfix to 1.x.x
 git pull
 git checkout -b <your_username>/<package-name>@<version_to_release>
 ```
-
-### Update installation documentation
-
-Edit `documentation/docs/installation.mdx` and update the ThreeJS version to match the version used by Reveal. Commit
-this change.
 
 ### Bump version and create a PR
 
@@ -167,7 +162,7 @@ If you are not currently logged into npm on your CLI, do the following:
 Once logged in, run:
 
 ```bash
-yarn release:prod
+yarn release
 ```
 
 or if you are releasing a beta version:
@@ -189,7 +184,9 @@ targeting the master branch.
 1. Go to [https://github.com/cognitedata/reveal/releases/new](https://github.com/cognitedata/reveal/releases/new)
 1. Under the "Tag version" field, look for the newly-created tag, e.g. `@cognite/reveal@2.1.0`
 1. Specify the same release title as the tag name.
-1. Write the changes that new version brings. Get inspired by done tasks from your spring board. 
+1. Write the changes that new version brings. Get inspired by done tasks from your sprint board. Note! 
+   Remember to specify the correct ThreeJS version required by the released version - you can find this in package.json 
+   of the viewer.
 Also, you can check what's committed from the previous tag with that command:
    ```bash
    git log --pretty=format:"* %s" @cognite/reveal@2.0.0...HEAD

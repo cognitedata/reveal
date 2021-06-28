@@ -61,13 +61,14 @@ function createOverlay() {
 const overlays = new HtmlOverlayTool(viewer);
 viewer.on('click', event => {
   // Find 3D coordinate of what the user clicks
-  const intersection = viewer.getIntersectionFromPixel(event.offsetX, event.offsetY);
-  if (intersection) {
-    const el = createOverlay();
-    overlays.add(el, intersection.point);
-    // Remove overlay after 5 seconds
-    setTimeout(() => overlays.remove(el), 5000);
-  }
+  viewer.getIntersectionFromPixel(event.offsetX, event.offsetY).then(intersection => {
+    if (intersetion) {
+      const el = createOverlay();
+      overlays.add(el, intersection.point);
+      // Remove overlay after 5 seconds
+      setTimeout(() => overlays.remove(el), 5000);
+    }
+  });
 });
 ```
 
@@ -106,18 +107,19 @@ function createOverlay() {
 const overlays = new HtmlOverlayTool(viewer);
 viewer.on('click', event => {
   // Find 3D coordinate of what the user clicks
-  const intersection = viewer.getIntersectionFromPixel(event.offsetX, event.offsetY);
-  if (intersection) {
-    const el = createOverlay();
-    const options = {
-      positionUpdatedCallback: (element, position2D, position3D, distanceToCamera) => {
-        // Compute opacity based on distance to camera
-        const opacity = 0.3 + 0.7 * (1.0 - (Math.min(Math.max(distanceToCamera, 10), 110) - 10) / 100.0);
-        element.style.opacity = opacity;
-      }
-    };
-    overlays.add(el, intersection.point, options);
-  }
+  viewer.getIntersectionFromPixel(event.offsetX, event.offsetY).then(intersection => {
+    if (intersection) {
+      const el = createOverlay();
+      const options = {
+        positionUpdatedCallback: (element, position2D, position3D, distanceToCamera) => {
+          // Compute opacity based on distance to camera
+          const opacity = 0.3 + 0.7 * (1.0 - (Math.min(Math.max(distanceToCamera, 10), 110) - 10) / 100.0);
+          element.style.opacity = opacity;
+        }
+      };
+      overlays.add(el, intersection.point, options);
+    }
+  });
 });
 ```
 

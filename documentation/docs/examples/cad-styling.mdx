@@ -34,8 +34,9 @@ identifies 3D nodes by `treeIndex`. There are several implementations of `NodeCo
 
 | Class                          |                                                                                  |
 | ------------------------------ | -------------------------------------------------------------------------------- |
-| `TreeIndexNodeCollection`         | A set of nodes defined by a list of tree indices. Can be updated with a new set of indices. |
+| `TreeIndexNodeCollection`      | A set of nodes defined by a list of tree indices. Can be updated with a new set of indices. |
 | `PropertyFilterNodeCollection` | A set of nodes defined by a query to the 3D backend to find nodes that matches one or more properties/attributes. |
+| `SinglePropertyFilterNodeCollection` | Similar to `PropertyFilterNodeCollection`, but only matches one node property to many values (e.g. for looking up nodes with a list of IDs).<br/>**Experimental! Might be changed or removed in future releases** |
 | `AssetNodeCollection`          | A set of nodes defined by [asset mappings](https://docs.cognite.com/api/v1/#tag/3D-Asset-Mapping) linking 3D nodes to [assets](https://docs.cognite.com/dev/concepts/resource_types/assets.html). |
 | `InvertedNodeCollection`       | Inverts the result of a node collection to match the opposite nodes (i.e. a NOT-operator). |
 | `UnionNodeCollection`          | Combines nodes from several node colletions by finding the [set union](https://en.wikipedia.org/wiki/Union_(set_theory)"). |
@@ -128,8 +129,8 @@ enum NodeOutlineColor {
   Black = 2,
   Cyan = 3,
   Blue = 4,
-  Purple = 5,
-  Pink = 6,
+  Green = 5,
+  Red = 6,
   Orange = 7
 }
 ```

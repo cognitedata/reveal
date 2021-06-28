@@ -41,9 +41,9 @@ export class AssetNodeCollection extends NodeCollectionBase {
   /**
    * Updates the node collection to hold nodes associated with the asset given, or
    * assets within the bounding box or all assets associated with the 3D model.
-   * @param filter Empty object semantically means all mapped assets
-   * @param filter.assetId Id of asset
-   * @param filter.boundingBox Will restrict the filter of assets within a bounding box
+   * @param filter
+   * @param filter.assetId      ID of a single [asset]{@link https://docs.cognite.com/dev/concepts/resource_types/assets.html} (optional)
+   * @param filter.boundingBox  When provided, only assets within the provided bounds will be included in the filter.
    */
   async executeFilter(filter: { assetId?: number; boundingBox?: THREE.Box3 }): Promise<void> {
     const model = this._model;
@@ -103,7 +103,6 @@ export class AssetNodeCollection extends NodeCollectionBase {
     return this._indexSet;
   }
 
-  /** @internal */
   serialize(): SerializedNodeCollection {
     return {
       token: this.classToken,

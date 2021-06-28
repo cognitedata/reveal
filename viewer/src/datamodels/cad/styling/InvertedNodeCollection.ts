@@ -42,7 +42,6 @@ export class InvertedNodeCollection extends NodeCollectionBase {
     return this._cachedIndexSet;
   }
 
-  /** @internal */
   serialize(): SerializedNodeCollection {
     return { token: this.classToken, state: { innerCollection: this._innerCollection.serialize() } };
   }

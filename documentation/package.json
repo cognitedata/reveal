@@ -32,6 +32,7 @@
     "npm-to-yarn": "^1.0.1",
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
+    "react-live": "maksnester/react-live#mn/disable-transpilation-options-dist",
     "styled-components": "^5.1.1",
     "three": "0.125.2"
   },
