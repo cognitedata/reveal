@@ -1,4 +1,4 @@
-import { t } from 'testcafe';
+import { t, Selector } from 'testcafe';
 import { screen } from '@testing-library/testcafe';
 
 import { log, logErrors } from '../utils';
@@ -15,7 +15,10 @@ fixture('App')
 
 test('Check sidecars page content', async () => {
   log('Goto the sidecar page');
-  await t.click(screen.getByText('Sidecar info', { exact: false }));
+  const sidecarInfo = Selector('button').withText('Sidecar Info');
+  await t.expect(sidecarInfo.exists).ok('');
+
+  await t.click(sidecarInfo);
 
   log('Checking for page content');
   await t.click(screen.getByText('What is the Sidecar', { exact: false }));

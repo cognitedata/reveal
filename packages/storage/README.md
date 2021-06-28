@@ -7,6 +7,7 @@ LocalStorage and cookie helpers
 ```sh
 yarn add @cognite/storage
 ```
+
 ## Usage
 
 Initialize this somewhere (optional) <- this will prefix all keys saved
@@ -24,6 +25,7 @@ storage.saveToLocalStorage('test', 'customValue');
 ```
 
 ### Get
-```js
+
+```ts
 const value = storage.getFromLocalStorage<string>('test');
 ```

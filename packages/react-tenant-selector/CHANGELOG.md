@@ -1,3 +1,7 @@
+## 1.2.15 June 25 2021
+
+- Change path of `utils` import in LoginWithFakeIDP
+
 ## 1.2.13 June 2021
 
 - Update loading states of buttons

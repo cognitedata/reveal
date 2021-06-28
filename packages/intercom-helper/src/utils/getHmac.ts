@@ -4,10 +4,11 @@ import { AuthHeaders, GetHmacSettings } from '../types';
 
 export default (
   appsApiUrl: string,
-  headers: AuthHeaders
+  headers: AuthHeaders,
+  project?: string
 ): Promise<GetHmacSettings> =>
   axios
-    .get(`${appsApiUrl}/intercom`, {
+    .get(`${appsApiUrl}${project ? `/${project}` : ''}/intercom`, {
       params: {},
       headers,
     })

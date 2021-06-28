@@ -7,7 +7,7 @@ type Response = {
 };
 
 export default (settings: IdentityVerificationSettings): Promise<Response> =>
-  getHmac(settings.appsApiUrl, settings.headers)
+  getHmac(settings.appsApiUrl, settings.headers, settings.project)
     .then((obj): Response => {
       window.Intercom('update', {
         user_id: obj.userUid,

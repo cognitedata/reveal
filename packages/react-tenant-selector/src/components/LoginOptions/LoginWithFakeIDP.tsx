@@ -3,7 +3,8 @@ import axios from 'axios';
 import { Button } from '@cognite/cogs.js';
 import { saveToLocalStorage } from '@cognite/storage';
 import { CogniteAuth } from '@cognite/auth-utils';
-import { FakeIdp } from 'utils';
+
+import { FakeIdp } from '../../utils';
 
 type Props = {
   authClient?: CogniteAuth;

@@ -13,11 +13,13 @@ import { ConditionalWrapperWithProps } from './ConditionalWrapper';
 
 interface IntercomProps {
   intercomSettings: IntercomBootSettings;
+  project: string;
   sidecar: SidecarConfig;
   children: React.ReactElement;
 }
 export const Intercom: React.FC<IntercomProps> = ({
   intercomSettings,
+  project,
   sidecar,
   children,
 }) => {
@@ -30,6 +32,7 @@ export const Intercom: React.FC<IntercomProps> = ({
       intercomHelper.identityVerification({
         appsApiUrl: appsApiBaseUrl,
         headers: authHeaders,
+        project,
       });
     });
 
@@ -44,12 +47,14 @@ export const Intercom: React.FC<IntercomProps> = ({
 interface IntercomContainerProps {
   disabled?: boolean;
   intercomSettings?: IntercomBootSettings;
+  project: string;
   sidecar: SidecarConfig;
   children: React.ReactElement;
 }
 export const IntercomContainer: React.FC<IntercomContainerProps> = ({
   disabled,
   intercomSettings,
+  project,
   children,
   sidecar,
 }) => (
@@ -57,6 +62,7 @@ export const IntercomContainer: React.FC<IntercomContainerProps> = ({
     condition={!disabled && intercomSettings && !!intercomSettings.app_id}
     sidecar={sidecar}
     intercomSettings={intercomSettings}
+    project={project}
     wrap={Intercom}
   >
     {children}

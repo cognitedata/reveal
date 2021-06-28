@@ -1,3 +1,7 @@
+## 1.3.6 Jun 25 2021
+
+- Add `project` parameter to Intercom component
+
 ## 1.3.4 Jun 2021
 
 - Disable translations from hosted TSA (your app should have it's own tsa translations now)

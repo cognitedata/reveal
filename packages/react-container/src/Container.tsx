@@ -114,6 +114,7 @@ const RawContainer: React.FC<Props> = ({
               intercomSettings,
               sidecar.intercomSettings
             )}
+            project={initialTenantOrApiKeyTenant}
             sidecar={sidecar}
             disabled={disableIntercom}
           >

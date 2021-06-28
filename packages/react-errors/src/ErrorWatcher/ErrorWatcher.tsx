@@ -33,7 +33,7 @@ const ErrorWatcher = ({
   zIndex,
 }: Props) => {
   const overlayRef = useRef<HTMLDivElement>(null);
-  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | undefined>();
+  const [timeoutId, setTimeoutId] = useState<number | undefined>();
 
   const clear = useCallback(() => {
     if (!overlayRef.current) {
@@ -51,7 +51,7 @@ const ErrorWatcher = ({
     if (timeoutId) {
       clearTimeout(timeoutId);
     }
-    const id = setTimeout(clear, flashDurationMillis);
+    const id = window.setTimeout(clear, flashDurationMillis);
     setTimeoutId(id);
   }, [clear, flashDurationMillis, timeoutId]);
 
@@ -63,7 +63,7 @@ const ErrorWatcher = ({
     if (timeoutId) {
       clearTimeout(timeoutId);
     }
-    const id = setTimeout(clear, flashDurationMillis);
+    const id = window.setTimeout(clear, flashDurationMillis);
     setTimeoutId(id);
   }, [clear, flashDurationMillis, timeoutId]);
 

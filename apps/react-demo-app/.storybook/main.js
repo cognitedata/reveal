@@ -14,7 +14,7 @@ module.exports = {
   webpackFinal: async (config) => {
     config.resolve.modules = [
       ...(config.resolve.modules || []),
-      path.resolve(__dirname, "../src"),
+      path.resolve(__dirname, '../src'),
     ];
 
     return config;

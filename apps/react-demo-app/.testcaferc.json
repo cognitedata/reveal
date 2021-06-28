@@ -11,7 +11,11 @@
   "videoOptions": {
     "failedOnly": true
   },
-  "configPath": "./tsconfig.testcafe.json",
+  "compilerOptions": {
+    "typescript": {
+      "configPath": "./tsconfig.testcafe.json"
+    }
+  },
   "clientScripts": [
     {
       "module": "@testing-library/dom/dist/@testing-library/dom.umd.js"

@@ -10,6 +10,7 @@ export type IntercomBootSettings = {
 
 export type IdentityVerificationSettings = {
   appsApiUrl: string;
+  project?: string;
   headers: AuthHeaders;
 };
 

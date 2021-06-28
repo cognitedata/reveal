@@ -4,7 +4,7 @@ module.exports = {
     '.ts': 'ts-jest',
   },
   modulePaths: ['src'],
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node', 'd.ts'],
   testEnvironment: 'node',
   coveragePathIgnorePatterns: ['/node_modules/', '/test/'],
   moduleNameMapper: {
@@ -16,7 +16,7 @@ module.exports = {
       '../../../packages/$1/dist/mocks',
     ],
     // we don't want external private packages to be treated as local
-    '^@cognite/(?!cogs.js|sdk|testing)(.*)$': [
+    '^@cognite/(?!cogs.js|sdk)(.*)$': [
       '../../../packages/$1/src',
       '../../../packages/$1/dist',
       '<rootDir>/../../packages/$1/src',

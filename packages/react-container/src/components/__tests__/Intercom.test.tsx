@@ -30,7 +30,11 @@ describe('Intercom', () => {
     };
 
     const Test = () => (
-      <IntercomContainer intercomSettings={intercomSettings} sidecar={sidecar}>
+      <IntercomContainer
+        intercomSettings={intercomSettings}
+        sidecar={sidecar}
+        project="project"
+      >
         <div>test-content</div>
       </IntercomContainer>
     );
@@ -51,6 +55,7 @@ describe('Intercom', () => {
       intercomPackage.intercomHelper.identityVerification
     ).toHaveBeenCalledWith({
       appsApiUrl: sidecar.appsApiBaseUrl,
+      project: 'project',
       headers: {
         Authorization: 'Bearer test',
       },
@@ -61,7 +66,7 @@ describe('Intercom', () => {
     const sidecar = generateSidecar();
 
     const Test = () => (
-      <IntercomContainer sidecar={sidecar}>
+      <IntercomContainer sidecar={sidecar} project="">
         <div>test-content</div>
       </IntercomContainer>
     );
