@@ -21,7 +21,7 @@ import { trackError } from '../../../utilities/metrics';
 // TODO: j-bjorne 16-04-2020: REFACTOR FINALIZE INTO SOME OTHER FILE PLEZ!
 export class CachedRepository implements Repository {
   private readonly _consumedSectorCache: MemoryRequestCache<string, ConsumedSector>;
-  private readonly _ctmFileCache: MostFrequentlyUsedCache<string, ParseCtmResult>;
+  private readonly _ctmFileCache: MostFrequentlyUsedCache<string, Promise<ParseCtmResult>>;
 
   private readonly _modelSectorProvider: BinaryFileProvider;
   private readonly _modelDataParser: CadSectorParser;
@@ -164,11 +164,11 @@ export class CachedRepository implements Repository {
     if (cached !== undefined) {
       return cached;
     }
-    // TODO 2021-05-05 larsmoa: Move retry to getBinaryFile()
-    const buffer = await this._modelSectorProvider.getBinaryFile(modelBlobUrl, filename);
-    const parsedCtm = await this._modelDataParser.parseCTM(new Uint8Array(buffer));
-    this._ctmFileCache.set(cacheKey, parsedCtm);
-    return parsedCtm;
+    const ctmPromise = this._modelSectorProvider.getBinaryFile(modelBlobUrl, filename)
+      .then((buffer) => this._modelDataParser.parseCTM(new Uint8Array(buffer)))
+    ;
+    this._ctmFileCache.set(cacheKey, ctmPromise);
+    return ctmPromise;
   }
 
   private finalizeDetailed(i3dFile: ParseSectorResult, ctmFiles: Map<string, ParseCtmResult>): SectorGeometry {
