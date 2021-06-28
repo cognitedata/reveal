@@ -8,6 +8,7 @@ import { ConsumedSector, WantedSector } from './types';
 import { ModelStateHandler } from './ModelStateHandler';
 import { Repository } from './Repository';
 import chunk from 'lodash/chunk';
+import { PromiseUtils } from '../../../utilities/PromiseUtils';
 
 /**
  * How many sectors to load per batch before doing another filtering pass, i.e. perform culling to determine
@@ -64,13 +65,8 @@ export class SectorLoader {
       const filtered = await this.filterSectors(input, batch, progressHelper);
       const consumedPromises = this.startLoadingBatch(filtered, progressHelper);
 
-      // TODO 2021-06-28 larsmoa: This will await promises in-order, better if
-      // we do Promise.race() until all operations has completed
-      for await (const consumed of consumedPromises) {
+      for await (const consumed of PromiseUtils.raceUntilAllCompleted(consumedPromises)) {
         this._modelStateHandler.updateState(consumed);
-
-        // Return operations to caller so they can wait for the operations
-        // to finish and show geometry on screen
         yield consumed;
       }
     }
@@ -140,6 +136,7 @@ class ProgressReportHelper {
 
   reportNewSectorsCulled(culledCountChange: number) {
     this._sectorsCulled += culledCountChange;
+    this._sectorsLoaded += culledCountChange;
     this.triggerCallback();
   }
 
