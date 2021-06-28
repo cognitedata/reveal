@@ -293,8 +293,10 @@ export const ModalFileUploader = ({
               {
                 id: fileMetadata.id,
                 update: {
-                  geoLocation: { set: data.geoLocation },
-                  metadata: { set: data.exifTags },
+                  geoLocation: data.geoLocation
+                    ? { set: data.geoLocation }
+                    : undefined,
+                  metadata: data.exifTags ? { set: data.exifTags } : undefined,
                 },
               },
             ]);
