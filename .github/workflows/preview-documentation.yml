@@ -53,6 +53,8 @@ jobs:
           publish_branch: master
           publish_dir: documentation/build
           destination_dir: ${{ env.PR_NUMBER }}
+          keep_files: false
+          force_orphan: true
 
       - name: Add comment about preview URL
         uses: unsplash/comment-on-pr@master
