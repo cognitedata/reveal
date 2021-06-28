@@ -1056,7 +1056,7 @@ export class Cognite3DViewer {
    * @param offsetY Y coordinate in pixels (relative to the domElement).
    * @param options Options to control the behaviour of the intersection operation. Optional (new in 1.3.0).
    * @returns A promise that if there was an intersection then return the intersection object - otherwise it 
-   *          returns `null` if there were no intersections.
+   * returns `null` if there were no intersections.
    * @see {@link https://en.wikipedia.org/wiki/Ray_casting}.
    
    * @example For CAD model
