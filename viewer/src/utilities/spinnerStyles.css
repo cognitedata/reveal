@@ -1,38 +1,47 @@
-.reveal-viewer-spinner,
-.reveal-viewer-spinner:after {
-    border-radius: 50%;
-    width: 32px;
-    height: 32px;
-    box-sizing: border-box;
-}
 .reveal-viewer-spinner {
-    margin: 10px;
-    position: relative;
-    border: 5px solid rgba(255, 255, 255, 0.22);
-    border-left: 5px solid #ffffff;
-    -webkit-transform: translateZ(0);
-    -ms-transform: translateZ(0);
-    transform: translateZ(0);
-    -webkit-animation: reveal-spinner-animation 0.7s infinite linear;
-    animation: reveal-spinner-animation 0.7s infinite linear;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  color: white;
 }
-@-webkit-keyframes reveal-spinner-animation {
-    0% {
-        -webkit-transform: rotate(0deg);
-        transform: rotate(0deg);
-    }
-    100% {
-        -webkit-transform: rotate(360deg);
-        transform: rotate(360deg);
-    }
+.reveal-viewer-spinner--dark {
+  color: black;
 }
-@keyframes reveal-spinner-animation {
-    0% {
-        -webkit-transform: rotate(0deg);
-        transform: rotate(0deg);
-    }
-    100% {
-        -webkit-transform: rotate(360deg);
-        transform: rotate(360deg);
-    }
+
+.reveal-viewer-spinner--loading #reveal-spinner-bot-1,
+.reveal-viewer-spinner--loading #reveal-spinner-top-1 {
+  animation: reveal-loading-opacity 0.8s ease-out infinite alternate;
+}
+.reveal-viewer-spinner--loading #reveal-spinner-bot-2,
+.reveal-viewer-spinner--loading #reveal-spinner-top-2 {
+  animation: reveal-loading-opacity 0.8s ease-out 0.2s infinite alternate;
+}
+.reveal-viewer-spinner--loading #reveal-spinner-bot-3,
+.reveal-viewer-spinner--loading #reveal-spinner-top-3 {
+  animation: reveal-loading-opacity 0.8s ease-out 0.4s infinite alternate;
+}
+.reveal-viewer-spinner--loading #reveal-spinner-bot-4,
+.reveal-viewer-spinner--loading #reveal-spinner-top-4 {
+  animation: reveal-loading-opacity 0.8s ease-out 0.6s infinite alternate;
+}
+
+.reveal-viewer-spinner--loading #center {
+  transform-origin: center;
+  animation: reveal-loading-scale 1.6s ease-out infinite 0.8s alternate,
+    reveal-loading-opacity 1.6s ease-out infinite alternate;
+}
+
+@keyframes reveal-loading-opacity {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.2;
+  }
+}
+
+@keyframes reveal-loading-scale {
+  100% {
+    transform: scaleY(1.2) translateY(0.6px);
+  }
 }
