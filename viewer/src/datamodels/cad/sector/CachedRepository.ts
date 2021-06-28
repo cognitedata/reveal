@@ -286,7 +286,7 @@ export class CachedRepository implements Repository {
   }
 
   private wantedSectorCacheKey(wantedSector: WantedSector) {
-    return wantedSector.modelBaseUrl + '.' + wantedSector.metadata.id + '.' + wantedSector.levelOfDetail;
+    return wantedSector.modelIdentifier + '.' + wantedSector.metadata.id + '.' + wantedSector.levelOfDetail;
   }
 
   private ctmFileCacheKey(modelBaseUrl: string, fileName: string) {

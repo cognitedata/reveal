@@ -272,8 +272,6 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
           depth: x.distance
         };
       });
-    // console.log('Saw sectors', result.map(x => `${x.sectorId}@${x.model.modelIdentifier}`).join());
-
     return result;
   }
 
@@ -354,7 +352,6 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
   }
 
   private removeModel(modelIdentifier: string) {
-    console.log('REMOVE', modelIdentifier);
     const container = this.containers.get(modelIdentifier);
     if (!container) {
       throw new Error(`Could not find model '${modelIdentifier}'`);
@@ -373,7 +370,6 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
   }
 
   private addModel(model: CadModelMetadata) {
-    console.log('ADD', model.modelIdentifier);
     const sectors = model.scene.getAllSectors();
     const [mesh, attributesBuffer, attributesValues] = this.createSectorTreeGeometry(this.sectorIdOffset, sectors);
 
@@ -402,7 +398,6 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
   }
 
   private updateModel(container: SectorContainer, model: CadModelMetadata) {
-    console.log('UPDATE', model.modelIdentifier);
     container.renderable.matrix.copy(model.modelMatrix);
     container.renderable.updateMatrixWorld(true);
   }

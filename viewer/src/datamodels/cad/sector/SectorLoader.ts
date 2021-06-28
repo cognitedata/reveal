@@ -35,8 +35,10 @@ export class SectorLoader {
     this._collectStatisticsCallback = collectStatisticsCallback;
     this._progressCallback = progressCallback;
   }
-
+  private _runs = 0;
   async *determineSectors(input: DetermineSectorsInput): AsyncIterable<ConsumedSector> {
+    const runId = this._runs++;
+
     if (input.cameraInMotion) {
       return [];
     }
@@ -76,7 +78,7 @@ export class SectorLoader {
           return consumedSector;
         } catch (error) {
           // ts-ignore no-console
-          console.error('Failed to load sector', wantedSector, 'error:', error);
+          console.error(runId, 'Failed to load sector', wantedSector, 'error:', error);
           // Ignore error but mark sector as discarded since we didn't load any geometry
           const errorSector: ConsumedSector = {
             modelIdentifier: wantedSector.modelIdentifier,
@@ -91,6 +93,7 @@ export class SectorLoader {
         }
       });
       for (const consumed of consumedPromises) {
+        // Return sectors to caller
         yield consumed;
       }
       for (const consumed of await Promise.all(consumedPromises)) {

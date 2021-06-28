@@ -122,7 +122,7 @@ describe('OrderSectorsByVisibilityCoverage', () => {
 
     // Assert - ensure output is first sector in second model
     expect(result.length).toBe(1);
-    expect(result[0].sectorId).toBe(1);
+    expect(result[0].sectorId).toBe(0);
     expect(result[0].priority).toBe(1.0);
     expect(result[0].model).toBe(model2);
   });
