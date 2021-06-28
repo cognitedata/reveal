@@ -256,7 +256,7 @@ const PlotlyChartComponent = ({
   );
   const groupedTraces = seriesData.map(
     ({ name, color, mode, width, dash, datapoints, outdatedData }, index) => {
-      /* TODO(PI-416) kinda hacky solution to compare min and avg in cases where min is less than avg and need to be fill based on that, 
+      /* kinda hacky solution to compare min and avg in cases where min is less than avg and need to be fill based on that, 
       In addition, should min value be less than avg value? */
       const firstDatapoint = (datapoints as (
         | Datapoints
