@@ -164,11 +164,9 @@ export class CachedRepository implements Repository {
     if (cached !== undefined) {
       return cached;
     }
-    const ctmPromise = (async () => {
-      const buffer = await this._modelSectorProvider.getBinaryFile(modelBlobUrl, filename);
-      const parsedCtm = await this._modelDataParser.parseCTM(new Uint8Array(buffer));
-      return parsedCtm;
-    })();
+    const ctmPromise = this._modelSectorProvider.getBinaryFile(modelBlobUrl, filename)
+      .then((buffer) => this._modelDataParser.parseCTM(new Uint8Array(buffer)))
+    ;
     this._ctmFileCache.set(cacheKey, ctmPromise);
     return ctmPromise;
   }
