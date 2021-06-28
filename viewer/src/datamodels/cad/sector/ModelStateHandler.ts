@@ -38,10 +38,6 @@ export class ModelStateHandler {
   }
 
   updateState(consumedSector: ConsumedSector) {
-    if (this._sceneModelState[consumedSector.modelIdentifier] === undefined) {
-      console.log('Stale sector ignored', consumedSector);
-      return;
-    }
     assert(
       this._sceneModelState[consumedSector.modelIdentifier] !== undefined,
       `Received sector from model ${consumedSector.modelIdentifier}, but the model is not added`
