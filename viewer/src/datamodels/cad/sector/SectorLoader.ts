@@ -4,7 +4,7 @@
 import { DetermineSectorsInput, SectorLoadingSpent } from './culling/types';
 import { LevelOfDetail } from './LevelOfDetail';
 import { SectorCuller } from './culling/SectorCuller';
-import { ConsumedSector } from './types';
+import { ConsumedSector, WantedSector } from './types';
 import { ModelStateHandler } from './ModelStateHandler';
 import { Repository } from './Repository';
 import chunk from 'lodash/chunk';
@@ -15,6 +15,15 @@ import chunk from 'lodash/chunk';
  */
 export const SectorLoadingBatchSize = 20;
 
+/**
+ * Loads sector based on a given camera pose, a set of models and budget.
+ * Uses {@link SectorCuller} to determine what to load, {@link Repository} to
+ * load sectors and {@link ModelStateHandler} to keep track of what has been
+ * loaded to avoid loading data that's already available.
+ *
+ * The caller is responsible for making the result from the load operation visible
+ * on screen.
+ */
 export class SectorLoader {
   private readonly _modelStateHandler: ModelStateHandler;
   private readonly _sectorCuller: SectorCuller;
@@ -36,67 +45,105 @@ export class SectorLoader {
     this._progressCallback = progressCallback;
   }
 
-  async *determineSectors(input: DetermineSectorsInput): AsyncIterable<ConsumedSector> {
+  async *loadSectors(input: DetermineSectorsInput): AsyncIterable<ConsumedSector> {
     if (input.cameraInMotion) {
       return [];
     }
 
-    const collectStatisticsCallback = this._collectStatisticsCallback;
-    const progressCallback = this._progressCallback;
-    const sectorCuller = this._sectorCuller;
-    const modelStateHandler = this._modelStateHandler;
-
     // Initial prioritization
-    const prioritizedResult = sectorCuller.determineSectors(input);
-    collectStatisticsCallback(prioritizedResult.spentBudget);
+    const prioritizedResult = this._sectorCuller.determineSectors(input);
+    this._collectStatisticsCallback(prioritizedResult.spentBudget);
 
-    let progress = 0;
-    let culled = 0;
-    function reportNewSectorsDone(newlyLoaded: number, newlyCulled: number) {
-      progress += newlyLoaded + newlyCulled;
-      culled += newlyCulled;
-      progressCallback(progress, wantedSectorsCount, culled);
-    }
+    const hasSectorChanged = this._modelStateHandler.hasStateChanged.bind(this._modelStateHandler);
+    const changedSectors = prioritizedResult.wantedSectors.filter(hasSectorChanged);
 
-    const modelStateChanged = modelStateHandler.hasStateChanged.bind(modelStateHandler);
-    const changedSectors = prioritizedResult.wantedSectors.filter(modelStateChanged);
-    const wantedSectorsCount = changedSectors.length;
-    progressCallback(0, wantedSectorsCount, culled);
+    const progressHelper = new ProgressReportHelper(this._progressCallback);
+    progressHelper.start(changedSectors.length);
 
     for (const batch of chunk(changedSectors, SectorLoadingBatchSize)) {
-      const filteredSectors = await sectorCuller.filterSectorsToLoad(input, batch);
+      const filtered = await this.filterSectors(input, batch, progressHelper);
+      const consumedPromises = this.startLoadingBatch(filtered, progressHelper);
 
-      // We consider sectors that we no longer want to load as done, report progress
-      const culledSectorsCount = batch.length - filteredSectors.length;
-      reportNewSectorsDone(0, culledSectorsCount);
+      // TODO 2021-06-28 larsmoa: This will await promises in-order, better if
+      // we do Promise.race() until all operations has completed
+      for await (const consumed of consumedPromises) {
+        this._modelStateHandler.updateState(consumed);
 
-      const consumedPromises = filteredSectors.filter(modelStateChanged).map(async wantedSector => {
-        try {
-          const consumedSector = await this._sectorRepository.loadSector(wantedSector);
-          return consumedSector;
-        } catch (error) {
-          // ts-ignore no-console
-          console.error('Failed to load sector', wantedSector, 'error:', error);
-          // Ignore error but mark sector as discarded since we didn't load any geometry
-          const errorSector: ConsumedSector = {
-            modelIdentifier: wantedSector.modelIdentifier,
-            metadata: wantedSector.metadata,
-            levelOfDetail: LevelOfDetail.Discarded,
-            group: undefined,
-            instancedMeshes: undefined
-          };
-          return errorSector;
-        } finally {
-          reportNewSectorsDone(1, 0);
-        }
-      });
-      for (const consumed of consumedPromises) {
-        // Return sectors to caller
+        // Return operations to caller so they can wait for the operations
+        // to finish and show geometry on screen
         yield consumed;
       }
-      for (const consumed of await Promise.all(consumedPromises)) {
-        modelStateHandler.updateState(consumed);
-      }
     }
+  }
+
+  private async filterSectors(
+    input: DetermineSectorsInput,
+    batch: WantedSector[],
+    progressHelper: ProgressReportHelper
+  ): Promise<WantedSector[]> {
+    // Determine if some of the sectors in the batch is culled by already loaded geometry
+    const filteredSectors = await this._sectorCuller.filterSectorsToLoad(input, batch);
+    progressHelper.reportNewSectorsCulled(batch.length - filteredSectors.length);
+    return filteredSectors;
+  }
+
+  private startLoadingBatch(batch: WantedSector[], progressHelper: ProgressReportHelper): Promise<ConsumedSector>[] {
+    const consumedPromises = batch.map(async wantedSector => {
+      try {
+        const consumedSector = await this._sectorRepository.loadSector(wantedSector);
+        return consumedSector;
+      } catch (error) {
+        // ts-ignore no-console
+        console.error('Failed to load sector', wantedSector, 'error:', error);
+        // Ignore error but mark sector as discarded since we didn't load any geometry
+        const errorSector = makeErrorSector(wantedSector);
+        return errorSector;
+      } finally {
+        progressHelper.reportNewSectorsLoaded(1);
+      }
+    });
+    return consumedPromises;
+  }
+}
+
+function makeErrorSector(wantedSector: WantedSector): ConsumedSector {
+  return {
+    modelIdentifier: wantedSector.modelIdentifier,
+    metadata: wantedSector.metadata,
+    levelOfDetail: LevelOfDetail.Discarded,
+    group: undefined,
+    instancedMeshes: undefined
+  };
+}
+
+class ProgressReportHelper {
+  private readonly _progressCallback: (sectorsLoaded: number, sectorsScheduled: number, sectorsCulled: number) => void;
+  private _sectorsScheduled = 0;
+  private _sectorsLoaded = 0;
+  private _sectorsCulled = 0;
+
+  constructor(reportCb: (sectorsLoaded: number, sectorsScheduled: number, sectorsCulled: number) => void) {
+    this._progressCallback = reportCb;
+  }
+
+  start(sectorsScheduled: number) {
+    this._sectorsScheduled = sectorsScheduled;
+    this._sectorsLoaded = 0;
+    this._sectorsCulled = 0;
+    this.triggerCallback();
+  }
+
+  reportNewSectorsLoaded(loadedCountChange: number) {
+    this._sectorsLoaded += loadedCountChange;
+    this.triggerCallback();
+  }
+
+  reportNewSectorsCulled(culledCountChange: number) {
+    this._sectorsCulled += culledCountChange;
+    this.triggerCallback();
+  }
+
+  private triggerCallback() {
+    this._progressCallback(this._sectorsLoaded, this._sectorsScheduled, this._sectorsCulled);
   }
 }

@@ -99,7 +99,7 @@ export class CadModelUpdateHandler {
     );
 
     async function* loadSectors(input: DetermineSectorsInput) {
-      for await (const sector of determineSectorsHandler.determineSectors(input)) {
+      for await (const sector of determineSectorsHandler.loadSectors(input)) {
         yield sector;
       }
     }
