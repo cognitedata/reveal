@@ -86,6 +86,7 @@ export default function SearchTimeseries({ query }: Props) {
     <TSList>
       <TimeseriesSearchHit
         timeseries={timeseries}
+        query={query}
         renderCheckbox={(ts) => (
           <Checkbox
             onClick={(e) => {

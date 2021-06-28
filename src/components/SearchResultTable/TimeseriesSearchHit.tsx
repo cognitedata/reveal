@@ -5,12 +5,15 @@ import { Icon } from '@cognite/cogs.js';
 import DelayedComponent from 'components/DelayedComponent';
 import { TimeseriesChart } from '@cognite/data-exploration';
 import { Timeseries } from '@cognite/sdk';
+import Highlighter from 'react-highlight-words';
 
 export default function TimeseriesSearchHit({
   timeseries,
+  query = '',
   renderCheckbox,
 }: {
   timeseries: Timeseries[] | undefined;
+  query?: string;
   renderCheckbox: (timeseries: Timeseries) => ReactNode;
 }) {
   const sparklineStartDate = dayjs()
@@ -28,7 +31,14 @@ export default function TimeseriesSearchHit({
               <InfoContainer>
                 <ResourceNameWrapper>
                   <Icon type="ResourceTimeseries" style={{ minWidth: 14 }} />
-                  <span style={{ marginLeft: 5 }}>{t.name}</span>
+                  <Highlighter
+                    highlightStyle={{
+                      backgroundColor: 'rgba(74, 103, 251, 0.1)',
+                      marginLeft: 5,
+                    }}
+                    searchWords={[query]}
+                    textToHighlight={t.name ?? ''}
+                  />
                 </ResourceNameWrapper>
                 <Description>{t.description}</Description>
               </InfoContainer>

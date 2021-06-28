@@ -15,13 +15,15 @@ import {
 } from 'utils/charts';
 import { calculateDefaultYAxis } from 'utils/axis';
 import { trackUsage } from 'utils/metrics';
+import Highlighter from 'react-highlight-words';
 import TimeseriesSearchHit from './TimeseriesSearchHit';
 
 type Props = {
   asset: Asset;
+  query?: string;
 };
 
-export default function AssetSearchHit({ asset }: Props) {
+export default function AssetSearchHit({ asset, query = '' }: Props) {
   const sdk = useSDK();
   const { chartId } = useParams<{ chartId: string }>();
   const { data: chart } = useChart(chartId);
@@ -81,7 +83,15 @@ export default function AssetSearchHit({ asset }: Props) {
         <InfoContainer>
           <ResourceNameWrapper>
             <Icon type="ResourceAssets" size={14} />
-            <strong style={{ marginLeft: 5 }}>{asset.name}</strong>
+            <Highlighter
+              highlightStyle={{
+                backgroundColor: 'rgba(74, 103, 251, 0.1)',
+                fontWeight: 'bold',
+                marginLeft: 5,
+              }}
+              searchWords={[query]}
+              textToHighlight={asset.name}
+            />
           </ResourceNameWrapper>
           <Description>{asset.description}</Description>
         </InfoContainer>
