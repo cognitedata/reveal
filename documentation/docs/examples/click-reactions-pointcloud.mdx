@@ -11,7 +11,6 @@ a mouse click.
 import { DemoWrapper } from '@site/docs/components/DemoWrapper';
 
 <DemoWrapper name="Cognite3DViewerDemo" modelType="pointcloud" />
-<DemoWrapper name="Cognite3DViewerDemo" />
 
 ## Detecting clicked positions
 
@@ -20,7 +19,7 @@ using a red sphere.
 
 ```js runnable
 viewer.on('click', event => {
-  const intersection = viewer.getIntersectionFromPixel(
+  const intersection = await viewer.getIntersectionFromPixel(
     event.offsetX, event.offsetY
   );
   if (intersection) {

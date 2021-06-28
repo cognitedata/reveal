@@ -40,7 +40,7 @@ const selectedNodes = new ByTreeIndexNodeSet();
 model.addStyledNodeSet(selectedNodes, DefaultNodeAppearance.Highlighted);
 
 viewer.on('click', event => {
-  const intersection = viewer.getIntersectionFromPixel(
+  const intersection = await viewer.getIntersectionFromPixel(
     event.offsetX, event.offsetY
   );
   if (intersection) {
