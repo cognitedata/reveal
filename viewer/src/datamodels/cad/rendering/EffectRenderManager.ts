@@ -499,9 +499,9 @@ export class EffectRenderManager {
       const cadNode: CadNode = rootSectorNodeData[1];
       const root: RootSectorNode = rootSectorNodeData[0];
 
-      const backSet = this._materialManager.getModelBackTreeIndices(cadNode.cadModelMetadata.blobUrl);
-      const infrontSet = this._materialManager.getModelInFrontTreeIndices(cadNode.cadModelMetadata.blobUrl);
-      const ghostSet = this._materialManager.getModelGhostedTreeIndices(cadNode.cadModelMetadata.blobUrl);
+      const backSet = this._materialManager.getModelBackTreeIndices(cadNode.cadModelMetadata.modelIdentifier);
+      const infrontSet = this._materialManager.getModelInFrontTreeIndices(cadNode.cadModelMetadata.modelIdentifier);
+      const ghostSet = this._materialManager.getModelGhostedTreeIndices(cadNode.cadModelMetadata.modelIdentifier);
       const hasBackElements = backSet.count > 0;
       const hasInFrontElements = infrontSet.count > 0;
       const hasGhostElements = ghostSet.count > 0;

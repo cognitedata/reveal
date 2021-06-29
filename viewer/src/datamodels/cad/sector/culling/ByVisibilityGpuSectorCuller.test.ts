@@ -76,8 +76,8 @@ describe('ByVisibilityGpuSectorCuller', () => {
 
     // Assert
     expect(orderSectorsByVisibilityMock).toBeCalledTimes(1); // Only render scene once
-    const sectors1 = sectors.filter(x => x.blobUrl === model1.blobUrl);
-    const sectors2 = sectors.filter(x => x.blobUrl === model2.blobUrl);
+    const sectors1 = sectors.filter(x => x.modelIdentifier === model1.modelIdentifier);
+    const sectors2 = sectors.filter(x => x.modelIdentifier === model2.modelIdentifier);
     expect(sectors1).not.toBeEmpty();
     expect(model1.scene.getAllSectors().map(x => x.id)).toContainAllValues(sectors1.map(x => x.metadata.id));
     expect(sectors2).not.toBeEmpty();
@@ -170,7 +170,7 @@ describe('ByVisibilityGpuSectorCuller', () => {
     expect(sectors.filter(x => x.levelOfDetail === LevelOfDetail.Simple).map(x => x.metadata.id)).toEqual([2]);
   });
 
-  test('dispose() disposes coverge utility', () => {
+  test('dispose() disposes coverage utility', () => {
     const culler = new ByVisibilityGpuSectorCuller({ renderer, coverageUtil });
     culler.dispose();
     expect(coverageUtil.dispose).toBeCalledTimes(1);

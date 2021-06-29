@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import { Subject, Observable, combineLatest, asyncScheduler, BehaviorSubject } from 'rxjs';
 import { CadNode } from './CadNode';
-import { scan, share, startWith, auditTime, filter, map, finalize, observeOn } from 'rxjs/operators';
+import { scan, share, startWith, auditTime, filter, map, finalize, observeOn, mergeMap } from 'rxjs/operators';
 import { SectorCuller } from './sector/culling/SectorCuller';
 import { CadLoadingHints } from './CadLoadingHints';
 import { ConsumedSector } from './sector/types';
@@ -13,9 +13,10 @@ import { Repository } from './sector/Repository';
 
 import { assertNever, emissionLastMillis, LoadingState } from '../../utilities';
 import { CadModelMetadata } from '.';
-import { loadingEnabled, handleDetermineSectorsInput } from './sector/rxSectorUtilities';
+import { loadingEnabled } from './sector/rxSectorUtilities';
+import { SectorLoader } from './sector/SectorLoader';
 import { CadModelSectorBudget, defaultCadModelSectorBudget } from './CadModelSectorBudget';
-import { DetermineSectorsInput, SectorLoadingSpendage } from './sector/culling/types';
+import { DetermineSectorsInput, SectorLoadingSpent } from './sector/culling/types';
 import { ModelStateHandler } from './sector/ModelStateHandler';
 
 const notLoadingState: LoadingState = { isLoading: false, itemsLoaded: 0, itemsRequested: 0, itemsCulled: 0 };
@@ -25,7 +26,7 @@ export class CadModelUpdateHandler {
   private readonly _sectorCuller: SectorCuller;
   private readonly _modelStateHandler: ModelStateHandler;
   private _budget: CadModelSectorBudget;
-  private _lastSpendage: SectorLoadingSpendage;
+  private _lastSpent: SectorLoadingSpent;
 
   private readonly _cameraSubject: Subject<THREE.PerspectiveCamera> = new Subject();
   private readonly _clippingPlaneSubject: Subject<THREE.Plane[]> = new Subject();
@@ -42,7 +43,7 @@ export class CadModelUpdateHandler {
     this._sectorCuller = sectorCuller;
     this._modelStateHandler = new ModelStateHandler();
     this._budget = defaultCadModelSectorBudget;
-    this._lastSpendage = {
+    this._lastSpent = {
       downloadSize: 0,
       drawCalls: 0,
       loadedSectorCount: 0,
@@ -77,8 +78,8 @@ export class CadModelUpdateHandler {
       ]).pipe(map(makeClippingInput)),
       this.loadingModelObservable()
     ]);
-    const collectStatisticsCallback = (spendage: SectorLoadingSpendage) => {
-      this._lastSpendage = spendage;
+    const collectStatisticsCallback = (spendage: SectorLoadingSpent) => {
+      this._lastSpent = spendage;
     };
     const reportProgressCallback = (loaded: number, requested: number, culled: number) => {
       const state: LoadingState = {
@@ -89,18 +90,27 @@ export class CadModelUpdateHandler {
       };
       this._progressSubject.next(state);
     };
+    const determineSectorsHandler = new SectorLoader(
+      sectorRepository,
+      sectorCuller,
+      this._modelStateHandler,
+      collectStatisticsCallback,
+      reportProgressCallback
+    );
+
+    async function* loadSectors(input: DetermineSectorsInput) {
+      for await (const sector of determineSectorsHandler.loadSectors(input)) {
+        yield sector;
+      }
+    }
+
     this._updateObservable = combinator.pipe(
       observeOn(asyncScheduler), // Schedule tasks on macro task queue (setInterval)
       auditTime(250), // Take the last value every 250ms
       map(createDetermineSectorsInput), // Map from array to interface (enables destructuring)
       filter(loadingEnabled), // should we load?
-      handleDetermineSectorsInput(
-        sectorRepository,
-        sectorCuller,
-        this._modelStateHandler,
-        collectStatisticsCallback,
-        reportProgressCallback
-      ),
+      mergeMap(async x => loadSectors(x)),
+      mergeMap(x => x),
       finalize(() => {
         this._sectorRepository.clear(); // clear the cache once this is unsubscribed from.
       })
@@ -133,17 +143,17 @@ export class CadModelUpdateHandler {
     this._budgetSubject.next(b);
   }
 
-  get lastBudgetSpendage(): SectorLoadingSpendage {
-    return this._lastSpendage;
+  get lastBudgetSpendage(): SectorLoadingSpent {
+    return this._lastSpent;
   }
 
   addModel(model: CadNode) {
-    this._modelStateHandler.addModel(model.cadModelMetadata.blobUrl);
+    this._modelStateHandler.addModel(model.cadModelMetadata.modelIdentifier);
     this._modelSubject.next({ model, operation: 'add' });
   }
 
   removeModel(model: CadNode) {
-    this._modelStateHandler.removeModel(model.cadModelMetadata.blobUrl);
+    this._modelStateHandler.removeModel(model.cadModelMetadata.modelIdentifier);
     this._modelSubject.next({ model, operation: 'remove' });
   }
 
@@ -159,8 +169,9 @@ export class CadModelUpdateHandler {
     return this._progressSubject;
   }
 
-  /* When loading hints of a cadmodel changes, propagate the event down to the stream and either add or remove
-   * the cadmodelmetadata from the array and push the new array down stream
+  /**
+   * When loading hints of a CAD model changes, propagate the event down to the stream and either add or remove
+   * the {@link CadModelMetadata} from the array and push the new array down stream
    */
   private loadingModelObservable() {
     return this._modelSubject.pipe(
@@ -171,7 +182,7 @@ export class CadModelUpdateHandler {
             array.push(model.cadModelMetadata);
             return array;
           case 'remove':
-            return array.filter(x => x !== model.cadModelMetadata);
+            return array.filter(x => x.modelIdentifier !== model.cadModelMetadata.modelIdentifier);
           default:
             assertNever(operation);
         }

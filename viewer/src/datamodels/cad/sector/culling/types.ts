@@ -21,7 +21,7 @@ export interface DetermineSectorsInput {
 /**
  * Statistics for how much data is required to load set of sectors.
  */
-export type SectorLoadingSpendage = {
+export type SectorLoadingSpent = {
   /**
    * Estimated number of bytes to download sectors.
    */
