@@ -1578,11 +1578,6 @@
   resolved "https://registry.yarnpkg.com/@cognite/potree-core/-/potree-core-1.2.1.tgz#f979e3de0c8fba7fb6dfcec07e016e75a859fcf8"
   integrity sha512-OzVE9R/cZ9YWOQXtej9rE9fEIRO/P3rKH02tz+qhDt7avIjNCWBvrAnOg9nLyXvkIBDQhy4r1SatJ8oT8Gfxpg==
 
-"@cognite/potree-core@^1.1.6":
-  version "1.1.6"
-  resolved "https://registry.yarnpkg.com/@cognite/potree-core/-/potree-core-1.1.6.tgz#26434a4070d1bb2afcb18912b42471d5b123a477"
-  integrity sha512-9mR9r/Xb7q87FSMxvnCDXKlu+jeFS9dhDVjH8lN9vQUBZEwjP7A8jo4uvCtxEUdnWjuOCVhB0Y/iqpp8Vk9vmg==
-
 "@cognite/reveal-parser-worker@1.1.1":
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/@cognite/reveal-parser-worker/-/reveal-parser-worker-1.1.1.tgz#49eabb2cafc8ebe53ac757b4be338e1745b1cb2d"
@@ -1590,7 +1585,7 @@
   dependencies:
     comlink "4.3.1"
 
-"@cognite/reveal@link:../viewer/core/dist":
+"@cognite/reveal@link:../viewer/dist":
   version "0.0.0"
   uid ""
 
@@ -1606,7 +1601,7 @@
     query-string "^5.1.1"
     url "^0.11.0"
 
-"@cognite/sdk@link:../viewer/core/node_modules/@cognite/sdk":
+"@cognite/sdk@link:../viewer/node_modules/@cognite/sdk":
   version "0.0.0"
   uid ""
 
