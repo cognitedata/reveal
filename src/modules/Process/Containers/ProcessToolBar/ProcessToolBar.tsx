@@ -4,10 +4,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import {
   detectAnnotations,
+  setDetectionModelParameters,
   selectIsPollingComplete,
   setProcessViewFileUploadModalVisibility,
   setSelectedDetectionModels,
   setSelectFromExploreModalVisibility,
+  revertDetectionModelParameters,
+  resetDetectionModelParameters,
 } from 'src/modules/Process/processSlice';
 import { message, notification } from 'antd';
 import { toastProps } from 'src/utils/ToastUtils';
@@ -154,6 +157,30 @@ export const ProcessToolBar = () => {
     }
   }, [isPollingFinished, showDrawer]);
 
+  const detectionModelConfiguration = () => {
+    return (
+      <ConfiguratioModelFooter>
+        <Button
+          type="tertiary"
+          onClick={() => {
+            dispatch(resetDetectionModelParameters());
+          }}
+        >
+          Reset to default
+        </Button>
+        <Button
+          type="primary"
+          onClick={() => {
+            setModalOpen(false);
+            dispatch(setDetectionModelParameters());
+          }}
+        >
+          Save & close
+        </Button>
+      </ConfiguratioModelFooter>
+    );
+  };
+
   return (
     <>
       <FileUploadModal
@@ -180,19 +207,31 @@ export const ProcessToolBar = () => {
       />
 
       <Container>
-        <Modal
+        <StyledModal
           getContainer={getContainer}
-          footer={null}
+          title="Model settings"
+          footer={detectionModelConfiguration()}
           visible={isModalOpen}
           width={900}
           closable={false}
+          closeIcon={
+            <div style={{ paddingTop: '12px' }}>
+              <Button icon="Close" iconPlacement="right" type="ghost">
+                Close
+              </Button>
+            </div>
+          }
           onCancel={() => {
             setModalOpen(false);
+            dispatch(revertDetectionModelParameters());
           }}
-          style={{ background: '#fafafa', borderRadius: '10px' }}
+          style={{
+            background: '#fafafa',
+            borderRadius: '10px',
+          }}
         >
           <ModelConfiguration />
-        </Modal>
+        </StyledModal>
         <ToolContainer>
           <ProcessToolBarElement
             disabled={disableAddFiles}
@@ -276,6 +315,15 @@ const Container = styled.div`
   grid-template-columns: max-content auto;
 `;
 
+const StyledModal = styled(Modal)`
+  .cogs-modal-footer {
+    border-top: 0px;
+  }
+  .cogs-modal-header {
+    border-bottom: 0px;
+  }
+`;
+
 type ToolBarElemProps = {
   disabled: boolean;
   active: boolean;
@@ -318,4 +366,10 @@ const ModelOptions = styled.div`
   display: flex;
   flex-direction: row;
   align-items: flex-end;
+`;
+
+const ConfiguratioModelFooter = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 `;

@@ -46,7 +46,26 @@ type State = {
     tagDetection: ParamsTagDetection;
     objectDetection: ParamsObjectDetection;
   };
+  temporaryDetectionModelParameters: {
+    ocr: ParamsOCR;
+    tagDetection: ParamsTagDetection;
+    objectDetection: ParamsObjectDetection;
+  };
   showExploreModal: boolean;
+};
+
+const initalDetectionModelParameters = {
+  ocr: {
+    useCache: true,
+  },
+  tagDetection: {
+    useCache: true,
+    partialMatch: true,
+    assetSubtreeIds: [],
+  },
+  objectDetection: {
+    threshold: 0.8,
+  },
 };
 
 const initialState: State = {
@@ -65,19 +84,8 @@ const initialState: State = {
   // eslint-disable-next-line global-require
   // jobsByFileId: require('./fakeJobs.json'),
   error: undefined,
-  detectionModelParameters: {
-    ocr: {
-      useCache: true,
-    },
-    tagDetection: {
-      useCache: true,
-      partialMatch: true,
-      assetSubtreeIds: [],
-    },
-    objectDetection: {
-      threshold: 0.8,
-    },
-  },
+  detectionModelParameters: initalDetectionModelParameters,
+  temporaryDetectionModelParameters: initalDetectionModelParameters,
   showExploreModal: false,
 };
 
@@ -198,16 +206,26 @@ const processSlice = createSlice({
       state.selectedDetectionModels = action.payload;
     },
     setParamsOCR(state, action: PayloadAction<ParamsOCR>) {
-      state.detectionModelParameters.ocr = action.payload;
+      state.temporaryDetectionModelParameters.ocr = action.payload;
     },
     setParamsTagDetection(state, action: PayloadAction<ParamsTagDetection>) {
-      state.detectionModelParameters.tagDetection = action.payload;
+      state.temporaryDetectionModelParameters.tagDetection = action.payload;
     },
     setParamsObjectDetection(
       state,
       action: PayloadAction<ParamsObjectDetection>
     ) {
-      state.detectionModelParameters.objectDetection = action.payload;
+      state.temporaryDetectionModelParameters.objectDetection = action.payload;
+    },
+    setDetectionModelParameters(state) {
+      state.detectionModelParameters = state.temporaryDetectionModelParameters;
+    },
+
+    revertDetectionModelParameters(state) {
+      state.temporaryDetectionModelParameters = state.detectionModelParameters;
+    },
+    resetDetectionModelParameters(state) {
+      state.temporaryDetectionModelParameters = initalDetectionModelParameters;
     },
     removeJobById(state, action: PayloadAction<number>) {
       const existingJob = state.jobs.byId[action.payload];
@@ -325,6 +343,9 @@ export const {
   setParamsOCR,
   setParamsTagDetection,
   setParamsObjectDetection,
+  setDetectionModelParameters,
+  revertDetectionModelParameters,
+  resetDetectionModelParameters,
   setProcessViewFileUploadModalVisibility,
   setSelectFromExploreModalVisibility,
 } = processSlice.actions;

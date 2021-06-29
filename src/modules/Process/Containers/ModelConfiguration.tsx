@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
-import { Title } from '@cognite/cogs.js';
+import { Row, Col } from '@cognite/cogs.js';
 
 import styled from 'styled-components';
 
@@ -35,7 +35,6 @@ export const ModelConfiguration = () => {
   return (
     <>
       <QueryClientProvider client={queryClient}>
-        <Title level={2}>Model settings</Title>
         <Container>
           <CarouselLeftContainer>
             {Object.entries(modelData).map((pair) => (
@@ -56,10 +55,29 @@ export const ModelConfiguration = () => {
                     setCurrentModelSettings(pair[0]);
                   }}
                 >
-                  <NameContainer>
-                    {pair[1].badge}
-                    {pair[1].description}
-                  </NameContainer>
+                  <Row
+                    cols={12}
+                    style={{ alignContent: 'center', gap: '16px !important' }}
+                  >
+                    <StyledCol span={9}>
+                      <NameContainer>
+                        {pair[1].badge}
+                        {pair[1].description}
+                      </NameContainer>
+                    </StyledCol>
+                    <StyledCol span={2}>
+                      <div />
+                    </StyledCol>
+                    <StyledCol span={1}>
+                      <input
+                        type="radio"
+                        name={`${pair[0]}_focused`}
+                        id={`${pair[0]}_focused`}
+                        checked={currentModelSettings === pair[0]}
+                        onChange={() => {}} // added to avoid warning
+                      />
+                    </StyledCol>
+                  </Row>
                 </FancyButton>
               </>
             ))}
@@ -82,7 +100,7 @@ const Container = styled.div`
   display: flex;
   width: 100%;
   border-radius: 6px;
-  margin-top: 12px;
+  border: 0;
 `;
 
 const CarouselLeftContainer = styled.div`
@@ -101,6 +119,8 @@ const CarouselRightContainer = styled.div`
   overflow-y: auto;
   background: white;
   padding: 17px;
+  border: 1px solid #d9d9d9;
+  border-radius: 10px;
 `;
 
 const NameContainer = styled.div`
@@ -116,4 +136,11 @@ const FancyButton = styled.div`
   border-radius: 6px;
   padding: 1rem;
   width: 98%;
+  border: 1px solid #d9d9d9;
+  border-radius: 10px;
+`;
+
+const StyledCol = styled(Col)`
+  display: flex;
+  align-items: center;
 `;

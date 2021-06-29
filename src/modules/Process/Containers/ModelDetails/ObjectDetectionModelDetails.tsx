@@ -16,7 +16,7 @@ import { ColorsObjectDetection } from 'src/constants/Colors';
 import { setParamsObjectDetection } from '../../processSlice';
 import { ModelDescription } from './ModelDescription';
 
-const modelName = 'Object & person detection';
+const modelName = 'Object detection';
 
 export const description = () => {
   return (
@@ -43,7 +43,7 @@ export const content = () => {
 
   const params: ParamsObjectDetection = useSelector(
     ({ processSlice }: RootState) =>
-      processSlice.detectionModelParameters.objectDetection
+      processSlice.temporaryDetectionModelParameters.objectDetection
   );
 
   const isValidThreshold = !!(
@@ -61,14 +61,7 @@ export const content = () => {
 
   return (
     <Container>
-      <Tabs defaultActiveKey="description">
-        <Tabs.TabPane key="description" tab="Description">
-          {ModelDescription({
-            name: modelName,
-            description: description(),
-            icon: badge(true),
-          })}
-        </Tabs.TabPane>
+      <Tabs defaultActiveKey="config">
         <Tabs.TabPane key="config" tab="Model configuration">
           <table>
             <tbody>
@@ -93,6 +86,7 @@ export const content = () => {
                       step={0.05}
                       value={params.threshold}
                       setValue={onThresholdChange}
+                      style={{ height: '40px', MozAppearance: 'textfield' }}
                     />
                     <input
                       type="range"
@@ -109,6 +103,13 @@ export const content = () => {
               </tr>
             </tbody>
           </table>
+        </Tabs.TabPane>
+        <Tabs.TabPane key="description" tab="Description">
+          {ModelDescription({
+            name: modelName,
+            description: description(),
+            icon: badge(true),
+          })}
         </Tabs.TabPane>
       </Tabs>
     </Container>

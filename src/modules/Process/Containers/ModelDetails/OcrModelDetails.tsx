@@ -40,7 +40,8 @@ export const content = () => {
   const dispatch = useDispatch();
 
   const params: ParamsOCR = useSelector(
-    ({ processSlice }: RootState) => processSlice.detectionModelParameters.ocr
+    ({ processSlice }: RootState) =>
+      processSlice.temporaryDetectionModelParameters.ocr
   );
 
   const onUseCacheChange = (key: string) => {
@@ -52,14 +53,7 @@ export const content = () => {
 
   return (
     <Container>
-      <Tabs defaultActiveKey="description">
-        <Tabs.TabPane key="description" tab="Description">
-          {ModelDescription({
-            name: modelName,
-            description: description(),
-            icon: badge(true),
-          })}
-        </Tabs.TabPane>
+      <Tabs defaultActiveKey="config">
         <Tabs.TabPane key="config" tab="Model configuration">
           <table>
             <tbody>
@@ -90,6 +84,13 @@ export const content = () => {
               </tr>
             </tbody>
           </table>
+        </Tabs.TabPane>
+        <Tabs.TabPane key="description" tab="Description">
+          {ModelDescription({
+            name: modelName,
+            description: description(),
+            icon: badge(true),
+          })}
         </Tabs.TabPane>
       </Tabs>
     </Container>

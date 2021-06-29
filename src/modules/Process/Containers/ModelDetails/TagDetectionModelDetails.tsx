@@ -45,7 +45,7 @@ export const content = () => {
 
   const params: ParamsTagDetection = useSelector(
     ({ processSlice }: RootState) =>
-      processSlice.detectionModelParameters.tagDetection
+      processSlice.temporaryDetectionModelParameters.tagDetection
   );
 
   const onUseCacheChange = (key: string) => {
@@ -78,19 +78,12 @@ export const content = () => {
   return (
     <Container>
       <Tabs
-        defaultActiveKey="description"
+        defaultActiveKey="config"
         style={{
           overflowY: 'auto',
           height: '100%',
         }}
       >
-        <Tabs.TabPane key="description" tab="Description">
-          {ModelDescription({
-            name: modelName,
-            description: description(),
-            icon: badge(true),
-          })}
-        </Tabs.TabPane>
         <Tabs.TabPane key="config" tab="Model configuration">
           <table>
             <tbody>
@@ -166,6 +159,13 @@ export const content = () => {
               </tr>
             </tbody>
           </table>
+        </Tabs.TabPane>
+        <Tabs.TabPane key="description" tab="Description">
+          {ModelDescription({
+            name: modelName,
+            description: description(),
+            icon: badge(true),
+          })}
         </Tabs.TabPane>
       </Tabs>
     </Container>
