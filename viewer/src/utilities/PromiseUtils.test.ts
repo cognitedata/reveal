@@ -2,6 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
+import { asyncIteratorToArray } from '../__testutilities__/asyncIteratorToArray';
 import { PromiseUtils } from './PromiseUtils';
 
 describe('PromiseUtils', () => {
@@ -40,14 +41,6 @@ describe('PromiseUtils', () => {
     });
   });
 });
-
-async function asyncIteratorToArray<T>(it: AsyncIterable<T>): Promise<T[]> {
-  const values: T[] = [];
-  for await (const v of it) {
-    values.push(v);
-  }
-  return values;
-}
 
 class FakePromise<T> {
   readonly promise: Promise<T>;
