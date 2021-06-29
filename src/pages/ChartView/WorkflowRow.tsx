@@ -267,20 +267,26 @@ export default function WorkflowRow({
               onConversionUnitClick={updatePrefferedUnit}
             />
           </td>
-          <td />
-          <td style={{ textAlign: 'center', paddingLeft: 0 }}>
+          <td className="downloadChartHide" />
+          <td
+            style={{ textAlign: 'center', paddingLeft: 0 }}
+            className="downloadChartHide"
+          >
             <Dropdown
               content={<AppearanceDropdown update={updateAppearance} />}
             >
               <Button
-                type="tertiary"
+                type="ghost"
                 icon="Timeseries"
                 style={{ height: 28 }}
                 aria-label="timeseries"
               />
             </Dropdown>
           </td>
-          <td style={{ textAlign: 'center', paddingLeft: 0 }}>
+          <td
+            style={{ textAlign: 'center', paddingLeft: 0 }}
+            className="downloadChartHide"
+          >
             <Popconfirm
               onConfirm={remove}
               content={
@@ -291,16 +297,19 @@ export default function WorkflowRow({
               }
             >
               <Button
-                type="tertiary"
+                type="ghost"
                 icon="Delete"
                 style={{ height: 28 }}
                 aria-label="delete"
               />
             </Popconfirm>
           </td>
-          <td style={{ textAlign: 'center', paddingLeft: 0 }}>
+          <td
+            style={{ textAlign: 'center', paddingLeft: 0 }}
+            className="downloadChartHide"
+          >
             <Button
-              type="tertiary"
+              type="ghost"
               icon="Info"
               onClick={(event) => {
                 if (isSelected) {
@@ -312,7 +321,10 @@ export default function WorkflowRow({
               aria-label="info"
             />
           </td>
-          <td style={{ textAlign: 'center', paddingLeft: 0 }}>
+          <td
+            style={{ textAlign: 'center', paddingLeft: 0 }}
+            className="downloadChartHide"
+          >
             <Dropdown
               content={
                 <WorkflowMenu chart={chart} id={id}>
@@ -323,7 +335,7 @@ export default function WorkflowRow({
               }
             >
               <Button
-                type="tertiary"
+                type="ghost"
                 icon="MoreOverflowEllipsisHorizontal"
                 style={{ height: 28 }}
                 aria-label="more"

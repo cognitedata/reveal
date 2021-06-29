@@ -9751,6 +9751,11 @@ html-tags@^3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/html-tags/-/html-tags-3.1.0.tgz#7b5e6f7e665e9fb41f30007ed9e0d41e97fb2140"
 
+html-to-image@^0.1.1:
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/html-to-image/-/html-to-image-0.1.3.tgz#9661a54c30ed9c4b269f4612416b1c7e887de3a7"
+  integrity sha512-8JTGEAAdJGL/nlp3wb/WI8fLMx2dHKOFZMdsvdon23D45ZdtsXDeRm39Wddf04ludQe3OPmvjMJ9nPjI/7hPlg==
+
 html-void-elements@^1.0.0:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/html-void-elements/-/html-void-elements-1.0.5.tgz#ce9159494e86d95e45795b166c2021c2cfca4483"
@@ -17213,11 +17218,6 @@ use-debounce@^5.2.0:
   resolved "https://registry.yarnpkg.com/use-debounce/-/use-debounce-5.2.0.tgz#3cb63f5c46f40092c570356e441dbc016ffb2f8b"
   integrity sha512-lW4tbPsTnvPKYqOYXp5xZ7SP7No/ARLqqQqoyRKuSzP0HxR9arhSAhznXUZFoNPWDRij8fog+N6sYbjb8c3kzw==
 
-use-debounce@^6.0.1:
-  version "6.0.1"
-  resolved "https://registry.yarnpkg.com/use-debounce/-/use-debounce-6.0.1.tgz#ed1eb2b30189408fb9792ea2887f4c6c3cb401a3"
-  integrity sha512-kpvIxpa0vOLz/2I2sfNJ72mUeaT2CMNCu5BT1f2HkV9qZK27UVSOFf1sSSu+wjJE4TcR2VTXS2SM569+m3TN7Q==
-
 use-isomorphic-layout-effect@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/use-isomorphic-layout-effect/-/use-isomorphic-layout-effect-1.1.0.tgz#4db2111e0d53ca694187ea5fd5cb2ba610286fe0"
@@ -17227,6 +17227,13 @@ use-latest@^1.0.0:
   resolved "https://registry.yarnpkg.com/use-latest/-/use-latest-1.2.0.tgz#a44f6572b8288e0972ec411bdd0840ada366f232"
   dependencies:
     use-isomorphic-layout-effect "^1.0.0"
+
+use-screenshot-hook@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/use-screenshot-hook/-/use-screenshot-hook-1.0.2.tgz#dd8cadb4f21162b47f02f4394d97ba3b853f8017"
+  integrity sha512-H4/OCjh+lF3t3++lHChfldQ+muTVGvUUJMdfIQab//oSbi2mzIZa+mO1I5IOAgSYnzwib3JBWO597PBZAlckSg==
+  dependencies:
+    html-to-image "^0.1.1"
 
 use@^3.1.0:
   version "3.1.1"
