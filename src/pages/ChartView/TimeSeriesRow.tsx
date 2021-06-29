@@ -449,7 +449,7 @@ export default function TimeSeriesRow({
         >
           <Dropdown content={<AppearanceDropdown update={updateAppearance} />}>
             <Button
-              type="tertiary"
+              type="ghost"
               icon="Timeseries"
               style={{ height: 28 }}
               aria-label="timeseries"
@@ -472,7 +472,7 @@ export default function TimeSeriesRow({
             }
           >
             <Button
-              type="tertiary"
+              type="ghost"
               icon="Delete"
               style={{ height: 28 }}
               aria-label="delete"
@@ -487,7 +487,7 @@ export default function TimeSeriesRow({
             className="downloadChartHide"
           >
             <Button
-              type="tertiary"
+              type="ghost"
               icon="Info"
               onClick={(event) => {
                 if (isSelected) {
@@ -506,7 +506,7 @@ export default function TimeSeriesRow({
             {!isFileViewerMode && (
               // <Dropdown content={<TimeSeriesMenu chartId={chart.id} id={id} />}>
               <Button
-                type="tertiary"
+                type="ghost"
                 icon="MoreOverflowEllipsisHorizontal"
                 style={{ height: 28 }}
                 disabled

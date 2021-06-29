@@ -120,7 +120,7 @@ export const UnitDropdown = ({
     >
       <Button
         icon="Down"
-        type="tertiary"
+        type="ghost"
         iconPlacement="right"
         style={{ height: 28 }}
       >
