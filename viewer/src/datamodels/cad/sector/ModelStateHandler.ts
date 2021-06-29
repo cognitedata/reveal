@@ -15,34 +15,32 @@ export class ModelStateHandler {
   }
 
   hasStateChanged(wantedSector: WantedSector): boolean {
-    const modelState = this._sceneModelState[wantedSector.blobUrl];
-    if (modelState !== undefined) {
-      const sectorLevelOfDetail = modelState[wantedSector.metadata.id];
-      if (sectorLevelOfDetail !== undefined) {
-        return sectorLevelOfDetail !== wantedSector.levelOfDetail;
-      } else {
-        return wantedSector.levelOfDetail !== LevelOfDetail.Discarded;
-      }
+    const modelState = this._sceneModelState[wantedSector.modelIdentifier];
+    assert(modelState !== undefined, `Model ${wantedSector.modelIdentifier} has not been added`);
+    const sectorLevelOfDetail = modelState[wantedSector.metadata.id];
+    if (sectorLevelOfDetail !== undefined) {
+      return sectorLevelOfDetail !== wantedSector.levelOfDetail;
+    } else {
+      return wantedSector.levelOfDetail !== LevelOfDetail.Discarded;
     }
-    return true;
   }
 
-  addModel(modelBlobUrl: string) {
-    assert(this._sceneModelState[modelBlobUrl] === undefined, `Model ${modelBlobUrl} is already added`);
-    this._sceneModelState[modelBlobUrl] = {};
+  addModel(modelIdentifier: string) {
+    assert(this._sceneModelState[modelIdentifier] === undefined, `Model ${modelIdentifier} is already added`);
+    this._sceneModelState[modelIdentifier] = {};
   }
 
-  removeModel(modelBlobUrl: string) {
-    assert(this._sceneModelState[modelBlobUrl] !== undefined, `Model ${modelBlobUrl} is not added`);
-    delete this._sceneModelState[modelBlobUrl];
+  removeModel(modelIdentifier: string) {
+    assert(this._sceneModelState[modelIdentifier] !== undefined, `Model ${modelIdentifier} is not added`);
+    delete this._sceneModelState[modelIdentifier];
   }
 
   updateState(consumedSector: ConsumedSector) {
     assert(
-      this._sceneModelState[consumedSector.blobUrl] !== undefined,
-      `Received sector from model ${consumedSector.blobUrl}, but the model is not added`
+      this._sceneModelState[consumedSector.modelIdentifier] !== undefined,
+      `Received sector from model ${consumedSector.modelIdentifier}, but the model is not added`
     );
-    const modelState = this._sceneModelState[consumedSector.blobUrl];
+    const modelState = this._sceneModelState[consumedSector.modelIdentifier];
     if (consumedSector.levelOfDetail === LevelOfDetail.Discarded) {
       delete modelState[consumedSector.metadata.id];
     } else {
