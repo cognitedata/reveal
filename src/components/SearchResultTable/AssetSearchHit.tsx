@@ -93,7 +93,18 @@ export default function AssetSearchHit({ asset, query = '' }: Props) {
               textToHighlight={asset.name}
             />
           </ResourceNameWrapper>
-          <Description>{asset.description}</Description>
+
+          <Description>
+            <Highlighter
+              highlightStyle={{
+                backgroundColor: 'rgba(74, 103, 251, 0.1)',
+                fontWeight: 'bold',
+                marginLeft: 5,
+              }}
+              searchWords={[query]}
+              textToHighlight={asset.description ?? ' '}
+            />
+          </Description>
         </InfoContainer>
         <Right>
           <AssetCount>{dataAmount?.count} </AssetCount>
