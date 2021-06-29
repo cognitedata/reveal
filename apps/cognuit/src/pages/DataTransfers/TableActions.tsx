@@ -1,38 +1,38 @@
-import React, { useContext, useEffect } from 'react';
-import { Button, Dropdown, Tooltip } from '@cognite/cogs.js';
+import React, { useEffect } from 'react';
+import { Button, Dropdown, Loader, Tooltip } from '@cognite/cogs.js';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import ApiContext from 'contexts/ApiContext';
 import { useQuery } from 'utils/functions';
 import { DataTypesTableData } from 'pages/DataTransfers/types';
-
+import { useConfigurationsQuery } from 'services/endpoints/configurations/query';
+import { useDatatypesQuery } from 'services/endpoints/datatypes/query';
+import { useSourcesQuery } from 'services/endpoints/sources/query';
+import { useProjectsQuery } from 'services/endpoints/projects/query';
+import config from 'configs/datatransfer.config';
 import {
   addColumnName,
   reportSuccess,
   removeColumnName,
   useDataTransfersDispatch,
   useDataTransfersState,
-  reportLoading,
   updateFilters,
-} from '../../../context/DataTransfersContext';
-import { Filters } from '../../Filters';
-import { TableActionsContainer, ColumnsSelector } from '../../../elements';
-import config from '../../../datatransfer.config';
-import { SelectColumnsMenu } from '../SelectColumnsMenu';
+  reportClear,
+  initialState,
+} from 'contexts/DataTransfersContext';
 
+import { Filters } from './components/Filters';
+import { TableActionsContainer, ColumnsSelector } from './elements';
+import { SelectColumnsMenu } from './components/Table/SelectColumnsMenu';
 import {
-  useFetchConfigurations,
-  useFetchDataTransfers,
-  useFetchDatatypes,
-  useFetchProjects,
-  useFetchSources,
-} from './api';
+  getColumnNames,
+  usePrepareDataTransfersQuery,
+} from './hooks/usePrepareDataTransfersQuery';
+import { selectColumns } from './utils';
 
 interface Props {
   setFilteredData: React.Dispatch<React.SetStateAction<DataTypesTableData[]>>;
 }
 
 const TableActions: React.FC<Props> = ({ setFilteredData }) => {
-  const { api } = useContext(ApiContext);
   const { url } = useRouteMatch();
   const history = useHistory();
 
@@ -43,26 +43,95 @@ const TableActions: React.FC<Props> = ({ setFilteredData }) => {
   const {
     data,
     filters: {
-      sourceProjects,
-      sources,
       selectedConfiguration,
       selectedSource,
       selectedTarget,
-      configurations,
       selectedSourceProject,
-      targetProjects,
       selectedTargetProject,
       selectedDateRange,
       selectedDatatype,
-      datatypes,
     },
   } = useDataTransfersState();
 
-  const fetchDataTransfers = useFetchDataTransfers();
-  const fetchDatatypes = useFetchDatatypes();
-  const fetchProjects = useFetchProjects();
-  const fetchConfigurations = useFetchConfigurations();
-  const fetchSources = useFetchSources();
+  const { data: configurations, ...queryConfigurations } =
+    useConfigurationsQuery();
+
+  const { data: datatypes } = useDatatypesQuery({
+    id: selectedSourceProject?.id,
+    enabled: !!(selectedSourceProject && selectedSourceProject.id),
+  });
+
+  const { data: sources } = useSourcesQuery();
+
+  const { data: sourceProjects } = useProjectsQuery({
+    key: 'source',
+    source: selectedSource,
+    enabled: !!selectedSource,
+  });
+
+  const { data: targetProjects } = useProjectsQuery({
+    key: 'target',
+    source: selectedTarget,
+    enabled: !!selectedTarget,
+  });
+
+  const { data: datatransfers, ...queryDataTransfers } =
+    usePrepareDataTransfersQuery();
+
+  useEffect(() => {
+    if (datatransfers.length > 0) {
+      const handledData: DataTypesTableData[] = datatransfers.map((item) => ({
+        ...item.source,
+        status: item.status,
+        report: item.status,
+      }));
+
+      dispatch(
+        reportSuccess({
+          data: handledData,
+          columns: selectColumns(
+            handledData.length > 0 ? handledData : data.data,
+            data.selectedColumnNames.length > 0
+              ? data.selectedColumnNames
+              : config.initialSelectedColumnNames
+          ),
+          rawColumns: selectColumns(
+            handledData.length > 0 ? handledData : data.data,
+            []
+          ),
+          allColumnNames: getColumnNames(
+            handledData.length > 0 ? handledData : data.data
+          ),
+          selectedColumnNames:
+            data.selectedColumnNames.length > 0
+              ? data.selectedColumnNames
+              : config.initialSelectedColumnNames,
+        })
+      );
+    } else {
+      dispatch(
+        reportSuccess({
+          ...initialState.data,
+          columns: selectColumns(
+            data.data,
+            data.selectedColumnNames.length > 0
+              ? data.selectedColumnNames
+              : config.initialSelectedColumnNames
+          ),
+          rawColumns: selectColumns(data.data, []),
+          allColumnNames: getColumnNames(data.data),
+          selectedColumnNames:
+            data.selectedColumnNames.length > 0
+              ? data.selectedColumnNames
+              : config.initialSelectedColumnNames,
+        })
+      );
+    }
+  }, [
+    selectedConfiguration,
+    selectedDatatype,
+    queryDataTransfers.dataUpdatedAt,
+  ]);
 
   function filterByNameSearch(name: string) {
     let filtered = data.data;
@@ -74,21 +143,8 @@ const TableActions: React.FC<Props> = ({ setFilteredData }) => {
     setFilteredData(filtered);
   }
 
-  function clearData() {
-    dispatch(
-      reportSuccess({
-        data: [],
-        columns: data.columns,
-        rawColumns: data.rawColumns,
-        allColumnNames: data.allColumnNames,
-        selectedColumnNames: data.selectedColumnNames,
-      })
-    );
-  }
-
   function resetFilters() {
-    fetchProjects();
-    clearData();
+    dispatch(reportClear());
     dispatch(
       updateFilters({
         selectedTarget: null,
@@ -120,17 +176,8 @@ const TableActions: React.FC<Props> = ({ setFilteredData }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Might be useful to move this into a "common" hook
   useEffect(() => {
-    dispatch(reportLoading());
-
-    fetchConfigurations();
-    fetchSources();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [api]);
-
-  useEffect(() => {
-    clearData();
+    dispatch(reportClear());
     dispatch(
       updateFilters({
         selectedTarget: null,
@@ -138,13 +185,11 @@ const TableActions: React.FC<Props> = ({ setFilteredData }) => {
         selectedTargetProject: null,
       })
     );
-    fetchProjects();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedSource]);
 
   useEffect(() => {
-    clearData();
-    fetchDatatypes();
+    dispatch(reportClear());
     dispatch(
       updateFilters({
         selectedTarget: null,
@@ -155,8 +200,7 @@ const TableActions: React.FC<Props> = ({ setFilteredData }) => {
   }, [selectedSourceProject]);
 
   useEffect(() => {
-    clearData();
-    fetchProjects();
+    dispatch(reportClear());
     dispatch(
       updateFilters({
         selectedTargetProject: null,
@@ -166,8 +210,7 @@ const TableActions: React.FC<Props> = ({ setFilteredData }) => {
   }, [selectedTarget]);
 
   useEffect(() => {
-    clearData();
-    fetchProjects();
+    dispatch(reportClear());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedTarget, selectedTargetProject, selectedDateRange]);
 
@@ -185,20 +228,11 @@ const TableActions: React.FC<Props> = ({ setFilteredData }) => {
       dispatch(updateFilters({ selectedConfiguration: null }));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [configurationNameFromUrl, configurations]);
+  }, [configurationNameFromUrl, queryConfigurations.isFetched]);
 
-  useEffect(() => {
-    clearData();
-    fetchDataTransfers();
-    fetchDatatypes();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedConfiguration]);
-
-  useEffect(() => {
-    clearData();
-    fetchDataTransfers();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedDatatype]);
+  if (queryDataTransfers.isLoading) {
+    return <Loader />;
+  }
 
   return (
     <TableActionsContainer>

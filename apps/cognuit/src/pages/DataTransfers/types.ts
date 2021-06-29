@@ -4,7 +4,6 @@ import {
   DatatypesResponse,
   ObjectsRevisionsResponse,
   ProjectsResponse,
-  SourcesResponse,
 } from 'types/ApiInterface';
 import { Range, TableProps } from '@cognite/cogs.js';
 
@@ -26,6 +25,7 @@ export enum Action {
   ADD_COLUMN = 'add_column',
   REMOVE_COLUMN = 'remove_column',
   UPDATE_FILTERS = 'update_filters',
+  CLEAR = 'clear',
 }
 
 interface Data {
@@ -37,17 +37,12 @@ interface Data {
 }
 
 export interface DataTypesFilters {
-  sources: SourcesResponse[];
   selectedSource: string | null;
   selectedTarget: string | null;
-  configurations: ConfigurationsResponse[];
   selectedConfiguration: ConfigurationsResponse | null;
-  sourceProjects: ProjectsResponse[];
   selectedSourceProject: ProjectsResponse | null;
-  targetProjects: ProjectsResponse[];
   selectedTargetProject: ProjectsResponse | null;
   selectedDateRange: Range;
-  datatypes: DatatypesResponse[];
   selectedDatatype: DatatypesResponse | null;
 }
 
@@ -60,6 +55,7 @@ export interface DataTransfersState {
 
 export type DataTransfersAction =
   | { type: Action.LOAD }
+  | { type: Action.CLEAR }
   | { type: Action.SUCCEED; payload?: Data }
   | { type: Action.FAIL; error: DataTransfersError }
   | { type: Action.UPDATE_FILTERS; payload: DataTypesFilters };

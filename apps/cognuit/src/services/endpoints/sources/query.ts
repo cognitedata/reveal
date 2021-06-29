@@ -1,24 +1,24 @@
-import { AuthContext, AuthProvider } from '@cognite/react-container';
 import ApiContext from 'contexts/ApiContext';
 import APIErrorContext from 'contexts/APIErrorContext';
-import React, { useContext } from 'react';
+import { useIsTokenAndApiValid } from 'hooks/useIsTokenAndApiValid';
+import { useContext } from 'react';
 import { useQuery } from 'react-query';
-import { CONFIGURATIONS_KEYS } from 'services/configs/queryKeys';
+import { SOURCES_KEY } from 'services/configs/queryKeys';
 import { CustomError } from 'services/CustomError';
 
-const useConfigurationsQuery = () => {
+const useSourcesQuery = () => {
   const { api } = useContext(ApiContext);
   const { addError, removeError } = useContext(APIErrorContext);
-  const { authState } = React.useContext<AuthContext>(AuthProvider);
-  const { token } = authState || {};
 
-  return useQuery(
-    CONFIGURATIONS_KEYS.getAll,
+  const isValid = useIsTokenAndApiValid();
+
+  const { data, ...rest } = useQuery(
+    SOURCES_KEY.default,
     async () => {
-      return api!.configurations.get();
+      return api!.sources.get();
     },
     {
-      enabled: !!(token && token !== 'NO_TOKEN'),
+      enabled: isValid,
       onSuccess: (data) => {
         removeError();
         return data;
@@ -28,6 +28,8 @@ const useConfigurationsQuery = () => {
       },
     }
   );
+
+  return { data: data || [], ...rest };
 };
 
-export { useConfigurationsQuery };
+export { useSourcesQuery };

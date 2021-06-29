@@ -1,5 +1,6 @@
+import { DataTransfersProvider } from 'contexts/DataTransfersContext';
+
 import DataTransfers from './DataTransfers';
-import { DataTransfersProvider } from './context/DataTransfersContext';
 
 export default () => (
   <DataTransfersProvider>

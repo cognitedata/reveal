@@ -8,8 +8,8 @@ import {
   DataTransfersState,
   ProgressState,
   UserAction,
-} from '../types';
-import { selectColumns } from '../utils';
+} from '../pages/DataTransfers/types';
+import { selectColumns } from '../pages/DataTransfers/utils';
 
 // State & Reducer
 export const initialState: DataTransfersState = {
@@ -22,17 +22,12 @@ export const initialState: DataTransfersState = {
     columns: [],
   },
   filters: {
-    sources: [],
     selectedSource: null,
     selectedTarget: null,
-    configurations: [],
     selectedConfiguration: null,
-    sourceProjects: [],
     selectedSourceProject: null,
-    targetProjects: [],
     selectedTargetProject: null,
     selectedDateRange: {},
-    datatypes: [],
     selectedDatatype: null,
   },
   error: undefined,
@@ -61,6 +56,16 @@ function filterReducer(
         ...state,
         status: ProgressState.ERROR,
         error: action.error,
+      };
+    }
+    case Action.CLEAR: {
+      return {
+        ...state,
+        status: ProgressState.SUCCESS,
+        data: {
+          ...state.data,
+          data: [],
+        },
       };
     }
     case Action.ADD_COLUMN: {
@@ -153,6 +158,10 @@ export const reportSuccess = (payload?: DataTransfersState['data']) => ({
 
 export const reportLoading = () => ({
   type: Action.LOAD,
+});
+
+export const reportClear = () => ({
+  type: Action.CLEAR,
 });
 
 export const reportError = (error: DataTransfersError) => ({

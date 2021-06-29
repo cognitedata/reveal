@@ -3,8 +3,7 @@ import {
   ExtendedConfigurationsResponse,
   GenerateConfigurationsColumns,
 } from 'typings/interfaces';
-
-import config from '../configs/configurations.config';
+import config from 'configs/configurations.config';
 
 export function generateConfigurationsColumnsFromData(
   response: ExtendedConfigurationsResponse[]

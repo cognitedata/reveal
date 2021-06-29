@@ -3,10 +3,9 @@ import { UNIX_TIMESTAMP_FACTOR } from 'typings/interfaces';
 import { Colors, TableProps } from '@cognite/cogs.js';
 import { apiStatuses } from 'utils/statuses';
 import capitalize from 'lodash/capitalize';
+import configurationsConfig from 'configs/configurations.config';
+import dataTransfersConfig from 'configs/datatransfer.config';
 
-import configurationsConfig from '../Configurations/configs/configurations.config';
-
-import dataTransfersConfig from './datatransfer.config';
 import { StatusDot } from './elements';
 import { DataTypesTableData } from './types';
 import { SelectColumnFilter } from './components/Table/Filters/SelectColumnFilter';

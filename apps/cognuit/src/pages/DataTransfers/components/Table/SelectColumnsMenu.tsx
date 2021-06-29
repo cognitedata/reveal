@@ -1,8 +1,7 @@
 import React from 'react';
 import { Checkbox, Menu } from '@cognite/cogs.js';
 import { getMappedColumnName } from 'pages/DataTransfers/utils';
-
-import config from '../../datatransfer.config';
+import config from 'configs/datatransfer.config';
 
 interface Props {
   columnNames: string[];

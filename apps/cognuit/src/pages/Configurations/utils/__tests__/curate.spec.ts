@@ -4,8 +4,8 @@ import {
   generatedColumns,
   getColumnRules,
 } from '__fixtures__/fixtureConfigurations';
+import config from 'configs/configurations.config';
 
-import config from '../../configs/configurations.config';
 import { curateColumns, curateConfigurationsData } from '../curate';
 
 describe('Configurations/Curate', () => {

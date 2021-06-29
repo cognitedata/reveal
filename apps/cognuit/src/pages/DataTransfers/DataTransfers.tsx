@@ -8,24 +8,25 @@ import { Loader, Table } from '@cognite/cogs.js';
 import { Revision } from 'types/ApiInterface';
 import sortBy from 'lodash/sortBy';
 import indexOf from 'lodash/indexOf';
+import APIErrorContext from 'contexts/APIErrorContext';
+import config from 'configs/datatransfer.config';
+import { useDataTransfersState } from 'contexts/DataTransfersContext';
+import ErrorMessage from 'components/Molecules/ErrorMessage';
 
 import { ContentContainer } from '../../elements';
-import ErrorMessage from '../../components/Molecules/ErrorMessage';
 
 import Revisions from './Revisions';
-import config from './datatransfer.config';
 import { DetailViewWrapper } from './elements';
 import { DataTypesTableData, ProgressState } from './types';
-import { useDataTransfersState } from './context/DataTransfersContext';
-import TableActions from './components/Table/TableActions';
+import TableActions from './TableActions';
 
 const DataTransfers: React.FC = () => {
+  const { error } = useContext(APIErrorContext);
+
   const {
     status,
     data,
-    error,
     filters: {
-      sources,
       selectedConfiguration,
       selectedSource,
       selectedTarget,
@@ -146,14 +147,10 @@ const DataTransfers: React.FC = () => {
     <Loader />;
   }
 
-  if (!sources) {
-    return null;
-  }
-
   if (error) {
     return (
       <ErrorMessage
-        message={`Failed to fetch transfers - ${error.message}`}
+        message={`Failed to fetch transfers - ${error.message} (status: ${error.status})`}
         fullView
       />
     );

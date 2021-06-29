@@ -7,15 +7,15 @@ import CreateNewConfiguration from 'components/Molecules/CreateNewConfiguration'
 import { ExtendedConfigurationsResponse } from 'typings/interfaces';
 import ErrorMessage from 'components/Molecules/ErrorMessage';
 import APIErrorContext from 'contexts/APIErrorContext';
-import { useConfigurationsQuery } from 'services/interfaces/configurations/query';
-import { useConfigurationsMutation } from 'services/interfaces/configurations/mutation';
+import { useConfigurationsQuery } from 'services/endpoints/configurations/query';
+import { useConfigurationsMutation } from 'services/endpoints/configurations/mutation';
 import { ConfigurationsResponse } from 'types/ApiInterface';
+import config from 'configs/configurations.config';
 
 import { columnRules } from './components/Table/columnRules';
 import { ExpandedSubRow } from './components/Table/ExpandedSubRow';
 import { generateConfigurationsColumnsFromData } from './utils/generate';
 import { curateColumns, curateConfigurationsData } from './utils/curate';
-import config from './configs/configurations.config';
 
 const Configurations = () => {
   const { error, addError } = useContext(APIErrorContext);

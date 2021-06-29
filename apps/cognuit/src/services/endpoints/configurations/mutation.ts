@@ -12,7 +12,7 @@ const useConfigurationsMutation = () => {
 
   const defaultConfigs = {
     onSuccess: () => {
-      queryCache.invalidateQueries(CONFIGURATIONS_KEYS.getAll);
+      queryCache.invalidateQueries(CONFIGURATIONS_KEYS.default);
       removeError();
     },
     onError: (error: CustomError) => {

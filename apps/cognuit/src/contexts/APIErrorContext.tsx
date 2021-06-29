@@ -1,18 +1,14 @@
 import React, { useState, useCallback } from 'react';
 import { notification } from 'antd';
 import noop from 'lodash/fp';
+import { CustomError } from 'services/CustomError';
 
 type Props = {
   children: any;
 };
 
-type ErrorType = {
-  message: string;
-  status: number;
-};
-
 export type Values = {
-  error: ErrorType | null;
+  error: CustomError | null;
   addError: (message: string, status: number) => void;
   removeError: () => void;
 };
@@ -24,12 +20,12 @@ const APIErrorContext = React.createContext<Values>({
 });
 
 const APIErrorProvider = ({ children }: Props) => {
-  const [error, setError] = useState<ErrorType | null>(null);
+  const [error, setError] = useState<CustomError | null>(null);
 
-  const removeError = () => setError(null);
+  const removeError = () => error && setError(null);
 
   const addError = (message: string, status: number) => {
-    setError({ message, status });
+    setError(new CustomError(message, status));
     notification.error({
       message: `API error ${status}`,
       description: message,
