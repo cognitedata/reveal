@@ -14,7 +14,7 @@ import { PromiseUtils } from '../../../utilities/PromiseUtils';
  * How many sectors to load per batch before doing another filtering pass, i.e. perform culling to determine
  * potential visible sectors.
  */
-export const SectorLoadingBatchSize = 20;
+const SectorLoadingBatchSize = 20;
 
 /**
  * Loads sector based on a given camera pose, a set of models and budget.
