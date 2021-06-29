@@ -19,7 +19,8 @@ export enum NodeOutlineColor {
  */
 export type NodeAppearance = {
   /**
-   * Overrides the default color of the node.
+   * Overrides the default color of the node in RGB. Each component
+   * is in range [0, 255]. `[0, 0, 0]` means no override.
    */
   readonly color?: [number, number, number];
   /**
@@ -70,7 +71,13 @@ const GhostedAppearance: NodeAppearance = {
  * A set of default node appearances used in Reveal.
  */
 export const DefaultNodeAppearance = {
-  Default: { visible: true, renderGhosted: false, renderInFront: false, outlineColor: NodeOutlineColor.NoOutline },
+  Default: {
+    visible: true,
+    renderGhosted: false,
+    renderInFront: false,
+    outlineColor: NodeOutlineColor.NoOutline,
+    color: [0, 0, 0]
+  },
   Outlined: OutlinedAppearance,
   Hidden: HiddenAppearance,
   InFront: InFrontAppearance,
