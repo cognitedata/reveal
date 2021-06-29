@@ -156,6 +156,7 @@ export function covertTSToChartTS(
     enabled: true,
     description: ts.description || '-',
     range,
+    createdAt: Date.now(),
   };
 }
 
