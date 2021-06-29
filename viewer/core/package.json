@@ -4,31 +4,11 @@
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {
-    "build": "rimraf -rf dist/ && yarn run mkdist && webpack --env.development",
-    "build:prod": "yarn run clean && yarn run mkdist && webpack && node script/copyPackage.js",
-    "build:watch": "yarn run build -- --watch",
-    "serve": "cd ../examples && yarn && yarn start",
-    "mkdist": "shx mkdir -p dist && shx cp package.json README.md LICENSE dist",
-    "clean": "rimraf -rf dist/ ../../target ../../parser-worker/pkg/",
     "test": "jest",
     "coverage": "jest --coverage",
-    "lint": "eslint . --ext .ts,.js --max-warnings 0 && yarn run tsc",
-    "lint:fix": "eslint . --ext .ts,.js --max-warnings 0 --fix",
-    "tsc": "tsc --noEmit --incremental false --skipLibCheck true",
-    "prebump": "yarn version --no-git-tag-version && yarn",
-    "bump": " yarn bump:commit && yarn bump:tag && yarn bump:push",
-    "bump:commit": "git add -A && cross-var git commit -m \"chore(viewer): bump version $npm_package_version\"",
-    "bump:tag": "cross-var git tag $npm_package_name@$npm_package_version",
-    "bump:push": "git push -u origin head && git push --tags",
-    "release": "yarn build:prod && cd dist && yarn publish --non-interactive"
+    "lint": "eslint . --ext .ts,.js --max-warnings 0",
+    "lint:fix": "eslint . --ext .ts,.js --max-warnings 0 --fix"
   },
-  "author": "Lars Moastuen <lars.moastuen@cognite.com>",
-  "contributors": [
-    "Joachim Bjørne <joachim.bjorne@cognite.com>",
-    "Christopher Tannum <christopher.tannum@cognite.com>",
-    "Maksim Nesterenko <maksim.nesterenko@cognite.com>"
-  ],
-  "license": "Apache-2.0",
   "sideEffects": false,
   "glslify": {
     "transform": [
