@@ -315,3 +315,17 @@ export const getCapabilityScopes = (
       return ['all'];
   }
 };
+
+
+export const stringContains = (value?: string, searchText?: string) => {
+  if (!searchText) {
+    return true;
+  }
+  try {
+    return (
+      value && value.trim().toUpperCase().search(searchText.toUpperCase()) >= 0
+    );
+  } catch (e) {
+    return 'Invalid search term';
+  }
+};

@@ -24,6 +24,7 @@ import { ColumnType } from 'antd/lib/table';
 import { useGroups } from 'hooks';
 import GroupDrawer from './GroupDrawer';
 import CapabilityTag from './CapabilityTag';
+import { stringContains } from './utils';
 
 const { Text } = Typography;
 
@@ -305,8 +306,7 @@ export default function Groups() {
         columns={columns}
         dataSource={groups?.filter(
           s =>
-            s.name.toLowerCase().includes(searchValue.toLowerCase()) ||
-            s.id.toString().includes(searchValue) ||
+            stringContains(s.name ?? String(s.id), searchValue) ||
             s.capabilities?.find(c =>
               Object.keys(c)[0]!
                 .toLowerCase()
