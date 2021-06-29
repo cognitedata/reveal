@@ -40,7 +40,15 @@ export default function TimeseriesSearchHit({
                     textToHighlight={t.name ?? ''}
                   />
                 </ResourceNameWrapper>
-                <Description>{t.description}</Description>
+                <Description>
+                  <Highlighter
+                    highlightStyle={{
+                      backgroundColor: 'rgba(74, 103, 251, 0.1)',
+                    }}
+                    searchWords={[query]}
+                    textToHighlight={t.description ?? ''}
+                  />
+                </Description>
               </InfoContainer>
             </Right>
             <Right>

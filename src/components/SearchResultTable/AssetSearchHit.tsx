@@ -106,6 +106,7 @@ export default function AssetSearchHit({ asset, query = '' }: Props) {
         <TSList>
           <TimeseriesSearchHit
             timeseries={ts}
+            query={query}
             renderCheckbox={(t) => (
               <Checkbox
                 onClick={(e) => {
