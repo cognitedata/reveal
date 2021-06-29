@@ -1,6 +1,8 @@
 import styled from 'styled-components';
-import { Button } from '@cognite/cogs.js';
+import { Button, Body } from '@cognite/cogs.js';
 import { NavLink } from 'react-router-dom';
+
+import type { ExpandedItemProps } from './types';
 
 export const ConfigurationsMainContainer = styled.div`
   display: block;
@@ -53,26 +55,39 @@ export const LinkButton = styled(NavLink)`
 `;
 
 export const ExpandedRow = styled.div`
-  padding-left: 4rem;
+  padding-left: 2rem;
   padding-right: 2rem;
-  display: inline-block;
+  display: flex;
   width: 100%;
+  gap: 3rem;
 
-  .expanded-item {
-    margin-right: 5rem;
-    float: left;
-  }
-
-  .expanded-item__label {
-    font-weight: 500;
-    display: inline-block;
-    margin-right: 0.5rem;
-  }
-
-  .expanded-item__content {
-    display: inline-block;
+  & > *:first-child {
+    min-width: 250px;
   }
 `;
+
+export const ExpandedItem = styled.div<ExpandedItemProps>`
+  display: flex;
+  flex-wrap: wrap;
+  align-content: center;
+  flex-direction: ${(props) => (props.column ? 'column' : 'row')};
+  gap: 5px;
+
+  flex: 0 1 auto;
+`;
+
+export const ExpandedItemLabel = styled.div`
+  font-weight: 500;
+`;
+
+export const ExpandedItemRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
+`;
+
+export const ExpandedItemContent = styled(Body).attrs(() => ({ level: 3 }))``;
 
 export const ConnectionLinesWrapper = styled.div`
   position: absolute;

@@ -17,7 +17,7 @@ const defaultConfigurations = [
     },
     business_tags: ['Cognuit', 'Integration'],
     author: 'Cognuit',
-    datatypes: ['PointSet', 'Target'],
+    datatypes: ['PointSet', 'Target', 'FaultInterpretation'],
     data_status: [],
     name: 'Cognuit 91523',
     ow_to_studio_config: {
