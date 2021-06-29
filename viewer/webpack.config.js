@@ -4,8 +4,8 @@
 const path = require('path');
 const nodeExternals = require('webpack-node-externals');
 const logger = require('webpack-log')('reveal');
-const packageJSON = require('./core/package.json');
-const workerPackageJSON = require('./core/node_modules/@cognite/reveal-parser-worker/package.json');
+const packageJSON = require('./package.json');
+const workerPackageJSON = require('./node_modules/@cognite/reveal-parser-worker/package.json');
 const webpack = require('webpack');
 const { publicPath, getWorkerCdnUrl, getEnvArg } = require('../parser-worker/buildUtils');
 
