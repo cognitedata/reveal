@@ -46,7 +46,7 @@
     "react-hook-form": "^6.15.5",
     "react-i18next": "^11.8.12",
     "react-markdown": "^6.0.2",
-    "react-modal": "^3.12.1",
+    "react-modal": "^3.14.3",
     "react-plotly.js": "^2.5.1",
     "react-query": "^3.18.0",
     "react-router-dom": "^5.2.0",
