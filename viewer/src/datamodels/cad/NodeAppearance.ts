@@ -76,7 +76,7 @@ export const DefaultNodeAppearance = {
     renderGhosted: false,
     renderInFront: false,
     outlineColor: NodeOutlineColor.NoOutline,
-    color: [0, 0, 0]
+    color: [0, 0, 0] as [number, number, number]
   },
   Outlined: OutlinedAppearance,
   Hidden: HiddenAppearance,
