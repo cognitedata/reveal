@@ -1,7 +1,29 @@
 {
   "name": "viewer",
   "private": true,
+  "scripts": {
+    "build": "shx rm -rf dist/ && shx mkdir -p dist",
+    "build:prod": "echo NOT IMPLEMENTED",
+    "build:watch": "echo NOT IMPLEMENTED",
+    "serve": "echo NOT IMPLEMENTED",
+    "mkdist": "echo NOT IMPLEMENTED",
+    "clean": "echo NOT IMPLEMENTED",
+    "test": "echo NOT IMPLEMENTED",
+    "coverage": "echo NOT IMPLEMENTED",
+    "lint": "echo NOT IMPLEMENTED",
+    "lint:fix": "echo NOT IMPLEMENTED",
+    "tsc": "echo NOT IMPLEMENTED",
+    "prebump": "echo NOT IMPLEMENTED",
+    "bump": " echo NOT IMPLEMENTED",
+    "bump:commit": "echo NOT IMPLEMENTED",
+    "bump:tag": "echo NOT IMPLEMENTED",
+    "bump:push": "echo NOT IMPLEMENTED",
+    "release": "echo NOT IMPLEMENTED"
+  },
   "workspaces": [
     "core"
-  ]
+  ],
+  "devDependencies": {
+    "shx": "^0.3.3"
+  }
 }

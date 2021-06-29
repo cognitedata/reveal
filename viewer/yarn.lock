@@ -12725,6 +12725,8 @@ typescript@^4.3.2:
 "viewer@workspace:.":
   version: 0.0.0-use.local
   resolution: "viewer@workspace:."
+  dependencies:
+    shx: ^0.3.3
   languageName: unknown
   linkType: soft
 
