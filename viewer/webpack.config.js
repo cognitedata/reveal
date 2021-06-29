@@ -4,10 +4,10 @@
 const path = require('path');
 const nodeExternals = require('webpack-node-externals');
 const logger = require('webpack-log')('reveal');
-const packageJSON = require('./package.json');
-const workerPackageJSON = require('./node_modules/@cognite/reveal-parser-worker/package.json');
+const packageJSON = require('./core/package.json');
+const workerPackageJSON = require('./core/node_modules/@cognite/reveal-parser-worker/package.json');
 const webpack = require('webpack');
-const { publicPath, getWorkerCdnUrl, getEnvArg } = require('../../parser-worker/buildUtils');
+const { publicPath, getWorkerCdnUrl, getEnvArg } = require('../parser-worker/buildUtils');
 
 const MIXPANEL_TOKEN_DEV = '00193ed55feefdfcf8a70a76bc97ec6f';
 const MIXPANEL_TOKEN_PROD = '8c900bdfe458e32b768450c20750853d';
@@ -32,14 +32,14 @@ module.exports = env => {
     // Internals is not part of prod builds
     entry: development
       ? {
-          index: './src/index.ts',
-          tools: './src/tools.ts',
-          internals: './src/internals.ts'
-        }
+        index: './core/src/index.ts',
+        tools: './core/src/tools.ts',
+        internals: './core/src/internals.ts'
+      }
       : {
-          index: './src/index.ts',
-          tools: './src/tools.ts'
-        },
+        index: './core/src/index.ts',
+        tools: './core/src/tools.ts'
+      },
     target: 'web',
     resolve: {
       extensions: ['.tsx', '.ts', '.js'],
@@ -54,11 +54,14 @@ module.exports = env => {
             options: {
               onlyCompileBundledFiles: true,
               compilerOptions: !development
-                ? {}
+                ? {
+                  declarationDir: path.resolve(__dirname, 'dist')
+                }
                 : {
-                    noUnusedLocals: false,
-                    noUnusedParameters: false
-                  }
+                  noUnusedLocals: false,
+                  noUnusedParameters: false,
+                  declarationDir: path.resolve(__dirname, 'dist')
+                }
             }
           },
           exclude: [/node_modules/, /src\/.*\.test\.tsx?/, /src\/__testutilities__/, /src\/.*\/stubs\//]
@@ -78,7 +81,7 @@ module.exports = env => {
         }
       ]
     },
-    externals: [nodeExternals()],
+    externals: [nodeExternals({ additionalModuleDirs: ["core/node_modules"] })],
     output: {
       filename: '[name].js',
       publicPath: publicPathViewer,
@@ -90,7 +93,7 @@ module.exports = env => {
     devtool: development ? 'inline-source-map' : 'source-map',
     watchOptions: {
       aggregateTimeout: 1500,
-      ignored: [/node_modules/]
+      ignored: /node_modules/
     },
     optimization: {
       usedExports: true

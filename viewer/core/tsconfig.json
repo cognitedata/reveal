@@ -4,8 +4,7 @@
     "target": "ES2019",
     "module": "esnext",
     "declaration": true,
-    "declarationDir": "dist",
-    "outDir": "dist-ts",
+    "outDir": "dist",
     "rootDir": "src",
     "esModuleInterop": true,
     "downlevelIteration": true,
@@ -16,16 +15,25 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "typeRoots": [
-        "node_modules/@types",
-        "src/@types"
+      "node_modules/@types",
+      "src/@types"
     ],
     "lib": [
-        "dom",
-        "esnext"
+      "dom",
+      "esnext"
     ]
     // do not add path aliases. They'll end up in generated declaration files.
   },
   // include is also used for eslint to understand which files should be linted
-  "include": ["*.js", "*.ts", "src/**/*", ".eslintrc.js", "script"],
-  "exclude": ["node_modules/**/*", "dist/**/*"]
+  "include": [
+    "*.js",
+    "*.ts",
+    "src/**/*",
+    ".eslintrc.js",
+    "script"
+  ],
+  "exclude": [
+    "node_modules/**/*",
+    "dist/**/*"
+  ]
 }
