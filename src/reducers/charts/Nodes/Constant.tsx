@@ -41,7 +41,6 @@ export const ConfigPanel = ({
           setValue(newValue.target.value);
           if (!Number.isNaN(Number(newValue.target.value))) {
             onUpdateNode({
-              title: String(newValue.target.value),
               functionData: {
                 ...node.functionData,
                 value: Number(newValue.target.value),
