@@ -93,7 +93,7 @@ module.exports = env => {
     devtool: development ? 'inline-source-map' : 'source-map',
     watchOptions: {
       aggregateTimeout: 1500,
-      ignored: /node_modules/
+      ignored: [/node_modules/]
     },
     optimization: {
       usedExports: true
