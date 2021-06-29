@@ -17,13 +17,13 @@ export class LocalModelDataClient implements ModelDataClient<{ fileName: string 
     return {};
   }
 
-  async getBinaryFile(blobUrl: string, fileName: string): Promise<ArrayBuffer> {
-    const response = await fetchWithStatusCheck(`${blobUrl}/${fileName}`);
+  async getBinaryFile(baseUrl: string, fileName: string): Promise<ArrayBuffer> {
+    const response = await fetchWithStatusCheck(`${baseUrl}/${fileName}`);
     return response.arrayBuffer();
   }
 
-  async getJsonFile(blobUrl: string, fileName: string): Promise<any> {
-    const response = await fetchWithStatusCheck(`${blobUrl}/${fileName}`);
+  async getJsonFile(baseUrl: string, fileName: string): Promise<any> {
+    const response = await fetchWithStatusCheck(`${baseUrl}/${fileName}`);
     return response.json();
   }
 

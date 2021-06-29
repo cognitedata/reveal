@@ -19,7 +19,7 @@ import {
   DetermineSectorsInput,
   SectorCost,
   addSectorCost,
-  SectorLoadingSpendage
+  SectorLoadingSpent
 } from './types';
 import { LevelOfDetail } from '../LevelOfDetail';
 import { CadModelMetadata } from '../../CadModelMetadata';
@@ -79,7 +79,7 @@ class TakenSectorMap {
   }
 
   initializeScene(modelMetadata: CadModelMetadata) {
-    this._takenSectorTrees.set(modelMetadata.blobUrl, {
+    this._takenSectorTrees.set(modelMetadata.modelIdentifier, {
       sectorTree: new TakenSectorTree(modelMetadata.scene.root, this.determineSectorCost),
       modelMetadata
     });
@@ -94,12 +94,12 @@ class TakenSectorMap {
   }
 
   markSectorDetailed(model: CadModelMetadata, sectorId: number, priority: number) {
-    const entry = this._takenSectorTrees.get(model.blobUrl);
+    const entry = this._takenSectorTrees.get(model.modelIdentifier);
     assert(
       !!entry,
-      `Could not find sector tree for ${model.blobUrl} (have trees ${Array.from(this._takenSectorTrees.keys()).join(
-        ', '
-      )})`
+      `Could not find sector tree for ${model.modelIdentifier} (have trees ${Array.from(
+        this._takenSectorTrees.keys()
+      ).join(', ')})`
     );
     const { sectorTree } = entry!;
     sectorTree!.markSectorDetailed(sectorId, priority);
@@ -116,8 +116,10 @@ class TakenSectorMap {
     const allWanted = new Array<PrioritizedWantedSector>();
 
     // Collect sectors
-    for (const [modelBlobUrl, { sectorTree, modelMetadata }] of this._takenSectorTrees) {
-      allWanted.push(...sectorTree.toWantedSectors(modelBlobUrl, modelMetadata.geometryClipBox));
+    for (const [modelIdentifier, { sectorTree, modelMetadata }] of this._takenSectorTrees) {
+      allWanted.push(
+        ...sectorTree.toWantedSectors(modelIdentifier, modelMetadata.modelBaseUrl, modelMetadata.geometryClipBox)
+      );
     }
 
     // Sort by priority
@@ -157,7 +159,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     this.options.coverageUtil.dispose();
   }
 
-  determineSectors(input: DetermineSectorsInput): { wantedSectors: WantedSector[]; spendage: SectorLoadingSpendage } {
+  determineSectors(input: DetermineSectorsInput): { wantedSectors: WantedSector[]; spentBudget: SectorLoadingSpent } {
     const takenSectors = this.update(
       input.camera,
       input.cadModelsMetadata,
@@ -181,7 +183,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     this.log(
       `Scene: ${takenSectorCount} (${forcedDetailedSectorCount} required, ${totalSectorCount} sectors, ${takenPercent}% of all sectors - ${takenDetailedPercent}% detailed)`
     );
-    const spendage: SectorLoadingSpendage = {
+    const spentBudget: SectorLoadingSpent = {
       drawCalls: takenSectors.totalCost.drawCalls,
       downloadSize: takenSectors.totalCost.downloadSize,
       totalSectorCount,
@@ -191,7 +193,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
       detailedSectorCount: takenSectorCount - takenSimpleCount,
       accumulatedPriority
     };
-    return { spendage, wantedSectors: wanted };
+    return { spentBudget, wantedSectors: wanted };
   }
 
   filterSectorsToLoad(input: DetermineSectorsInput, wantedSectors: WantedSector[]): Promise<WantedSector[]> {
