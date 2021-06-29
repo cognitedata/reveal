@@ -28,7 +28,7 @@ describe('ModelStateHandler', () => {
 
   test('hasStateChanged for added model, updates sectors', () => {
     const modelStateHandler = new ModelStateHandler();
-    modelStateHandler.addModel(simple.blobUrl);
+    modelStateHandler.addModel(simple.modelIdentifier);
     const consumedSimple: ConsumedSector = { ...simple, group: undefined, instancedMeshes: undefined };
 
     modelStateHandler.updateState(consumedSimple);
@@ -42,7 +42,7 @@ describe('ModelStateHandler', () => {
 
   test('updateState', () => {
     const modelStateHandler = new ModelStateHandler();
-    modelStateHandler.addModel(simple.blobUrl);
+    modelStateHandler.addModel(simple.modelIdentifier);
     const sectors = [simple, detailed, discarded];
     sectors.forEach(wantedSector => {
       const consumedSector: ConsumedSector = { ...wantedSector, group: undefined, instancedMeshes: undefined };
@@ -88,10 +88,17 @@ function mockWantedSectors(
     children: []
   };
 
-  const blobUrl = 'modelIdentifer';
+  const modelIdentifier = 'modelIdentifer';
+  const modelBaseUrl = 'https://localhost/';
   return {
-    simple: { blobUrl, metadata, levelOfDetail: LevelOfDetail.Simple, geometryClipBox: null },
-    detailed: { blobUrl, metadata, levelOfDetail: LevelOfDetail.Detailed, geometryClipBox: null },
-    discarded: { blobUrl, metadata, levelOfDetail: LevelOfDetail.Discarded, geometryClipBox: null }
+    simple: { modelIdentifier, modelBaseUrl, metadata, levelOfDetail: LevelOfDetail.Simple, geometryClipBox: null },
+    detailed: { modelIdentifier, modelBaseUrl, metadata, levelOfDetail: LevelOfDetail.Detailed, geometryClipBox: null },
+    discarded: {
+      modelIdentifier,
+      modelBaseUrl,
+      metadata,
+      levelOfDetail: LevelOfDetail.Discarded,
+      geometryClipBox: null
+    }
   };
 }

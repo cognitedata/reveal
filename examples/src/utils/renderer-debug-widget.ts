@@ -397,7 +397,8 @@ function updateWantedSectorOverride(
     levelOfDetail: reveal.LevelOfDetail
   ): reveal.WantedSector {
     return {
-      blobUrl: cadNode.cadModelMetadata.blobUrl,
+      modelIdentifier: cadNode.cadModelMetadata.modelIdentifier,
+      modelBaseUrl: cadNode.cadModelMetadata.modelBaseUrl,
       levelOfDetail,
       metadata: node,
       geometryClipBox: null

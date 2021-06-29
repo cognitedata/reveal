@@ -80,7 +80,7 @@ export function consumeSectorDetailed(
 
 export function distinctUntilLevelOfDetailChanged() {
   return pipe(
-    groupBy((sector: ConsumedSector) => sector.blobUrl),
+    groupBy((sector: ConsumedSector) => sector.modelIdentifier),
     mergeMap((modelGroup: GroupedObservable<string, ConsumedSector>) => {
       return modelGroup.pipe(
         groupBy((sector: ConsumedSector) => sector.metadata.id),
@@ -100,7 +100,7 @@ export function filterCurrentWantedSectors(
     filter(([loaded, wanted]) => {
       for (const wantedSector of wanted) {
         if (
-          loaded.blobUrl === wantedSector.blobUrl &&
+          loaded.modelIdentifier === wantedSector.modelIdentifier &&
           loaded.metadata.id === wantedSector.metadata.id &&
           loaded.levelOfDetail === wantedSector.levelOfDetail
         ) {

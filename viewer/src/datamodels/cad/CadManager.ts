@@ -73,14 +73,14 @@ export class CadManager<TModelIdentifier> {
     this._subscription.add(
       this._cadModelUpdateHandler.consumedSectorObservable().subscribe(
         sector => {
-          const cadModel = this._cadModelMap.get(sector.blobUrl);
+          const cadModel = this._cadModelMap.get(sector.modelIdentifier);
           if (!cadModel) {
             // Model has been removed - results can come in for a period just after removal
             return;
           }
 
           if (sector.instancedMeshes && sector.levelOfDetail === LevelOfDetail.Detailed) {
-            cadModel.updateInstancedMeshes(sector.instancedMeshes, sector.blobUrl, sector.metadata.id);
+            cadModel.updateInstancedMeshes(sector.instancedMeshes, sector.modelIdentifier, sector.metadata.id);
           } else if (
             sector.levelOfDetail === LevelOfDetail.Simple ||
             sector.levelOfDetail === LevelOfDetail.Discarded
@@ -162,7 +162,7 @@ export class CadManager<TModelIdentifier> {
 
   async addModel(modelIdentifier: TModelIdentifier, geometryFilter?: GeometryFilter): Promise<CadNode> {
     const metadata = await this._cadModelMetadataRepository.loadData(modelIdentifier);
-    if (this._cadModelMap.has(metadata.blobUrl)) {
+    if (this._cadModelMap.has(metadata.modelIdentifier)) {
       throw new Error(`Model ${modelIdentifier} has already been added`);
     }
     // Apply clipping box
@@ -171,15 +171,15 @@ export class CadManager<TModelIdentifier> {
 
     const model = this._cadModelFactory.createModel(clippedMetadata);
     model.addEventListener('update', this._markNeedsRedrawBound);
-    this._cadModelMap.set(metadata.blobUrl, model);
+    this._cadModelMap.set(metadata.modelIdentifier, model);
     this._cadModelUpdateHandler.addModel(model);
     return model;
   }
 
   removeModel(model: CadNode): void {
     const metadata = model.cadModelMetadata;
-    if (!this._cadModelMap.delete(metadata.blobUrl)) {
-      throw new Error(`Could not remove model ${metadata.blobUrl} because it's not added`);
+    if (!this._cadModelMap.delete(metadata.modelIdentifier)) {
+      throw new Error(`Could not remove model ${metadata.modelIdentifier} because it's not added`);
     }
     model.removeEventListener('update', this._markNeedsRedrawBound);
     this._cadModelUpdateHandler.removeModel(model);

@@ -67,15 +67,20 @@ export class TakenSectorTree {
     }, 0);
   }
 
-  toWantedSectors(modelBlobUrl: string, geometryClipBox: THREE.Box3 | null): PrioritizedWantedSector[] {
+  toWantedSectors(
+    modelIdentifier: string,
+    modelBaseUrl: string,
+    geometryClipBox: THREE.Box3 | null
+  ): PrioritizedWantedSector[] {
     return this.sectors
       .filter(x => x !== undefined)
       .map(sector => {
         const wanted: PrioritizedWantedSector = {
+          modelIdentifier,
+          modelBaseUrl,
           levelOfDetail: sector.lod,
           metadata: sector.sector,
           priority: sector.priority,
-          blobUrl: modelBlobUrl,
           geometryClipBox
         };
         return wanted;
