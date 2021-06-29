@@ -316,7 +316,6 @@ export const getCapabilityScopes = (
   }
 };
 
-
 export const stringContains = (value?: string, searchText?: string) => {
   if (!searchText) {
     return true;
