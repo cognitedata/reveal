@@ -431,7 +431,10 @@ export default function TimeSeriesRow({
         </>
       )}
       {(isWorkspaceMode || isFileViewerMode) && (
-        <td style={{ textAlign: 'center', paddingLeft: 0 }}>
+        <td
+          style={{ textAlign: 'center', paddingLeft: 0 }}
+          className="downloadChartHide"
+        >
           <PnidButton
             timeseriesExternalId={tsExternalId}
             showTooltip={false}
@@ -440,7 +443,10 @@ export default function TimeSeriesRow({
         </td>
       )}
       {isWorkspaceMode && (
-        <td style={{ textAlign: 'center', paddingLeft: 0 }}>
+        <td
+          style={{ textAlign: 'center', paddingLeft: 0 }}
+          className="downloadChartHide"
+        >
           <Dropdown content={<AppearanceDropdown update={updateAppearance} />}>
             <Button
               type="ghost"
@@ -452,7 +458,10 @@ export default function TimeSeriesRow({
         </td>
       )}
       {(isWorkspaceMode || isFileViewerMode) && (
-        <td style={{ textAlign: 'center', paddingLeft: 0 }}>
+        <td
+          style={{ textAlign: 'center', paddingLeft: 0 }}
+          className="downloadChartHide"
+        >
           <Popconfirm
             onConfirm={() => remove()}
             content={
@@ -473,7 +482,10 @@ export default function TimeSeriesRow({
       )}
       {isWorkspaceMode && (
         <>
-          <td style={{ textAlign: 'center', paddingLeft: 0 }}>
+          <td
+            style={{ textAlign: 'center', paddingLeft: 0 }}
+            className="downloadChartHide"
+          >
             <Button
               type="ghost"
               icon="Info"
@@ -487,7 +499,10 @@ export default function TimeSeriesRow({
               aria-label="info"
             />
           </td>
-          <td style={{ textAlign: 'center', paddingLeft: 0 }}>
+          <td
+            style={{ textAlign: 'center', paddingLeft: 0 }}
+            className="downloadChartHide"
+          >
             {!isFileViewerMode && (
               // <Dropdown content={<TimeSeriesMenu chartId={chart.id} id={id} />}>
               <Button
