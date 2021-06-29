@@ -31,30 +31,29 @@ Another good usecase would be to bind the `expand` function to a slider which th
 
 ```jsx runnable
 // import { ExplodedViewTool } from '@cognite/reveal/tools';
+async function animate() {
+  const rootTreeIndex = 570730;
 
-const rootTreeIndex = 570730;
+  const explodeTool = new ExplodedViewTool(rootTreeIndex, model);
 
-const explodeTool = new ExplodedViewTool(rootTreeIndex, model);
+  model.setDefaultNodeAppearance(DefaultNodeAppearance.Hidden);
+  const explodedIndices = new TreeIndexNodeCollection(
+    await model.getSubtreeTreeIndices(rootTreeIndex)
+  );
+  model.assignStyledNodeCollection(explodedIndices, DefaultNodeAppearance.Default);
 
-model.hideAllNodes();
-model.showNodeByTreeIndex(rootTreeIndex, true);
+  const rootBoundingBox = await model.getBoundingBoxByTreeIndex(rootTreeIndex);
+  viewer.fitCameraToBoundingBox(rootBoundingBox, 0);
+  await explodeTool.readyPromise;
 
-const rootBoundingBox = model.getBoundingBoxByTreeIndex(rootTreeIndex)
-  .then(boundingBox => {
-    viewer.fitCameraToBoundingBox(boundingBox, 0);
-  })
-  .then(() => {
-    return explodeTool.readyPromise;
-  })
-  .then(() => {
-    const clock = new THREE.Clock(true);
-    clock.start();
+  const clock = new THREE.Clock(true);
+  clock.start();
 
-    setInterval(() =>{
-      const elapsedTime = clock.getElapsedTime();
-      const expandRadius = Math.sin(elapsedTime) * 0.5 + 0.5;
-      explodeTool.expand(expandRadius);
-    }, 20);
-  });
-
+  setInterval(() =>{
+    const elapsedTime = clock.getElapsedTime();
+    const expandRadius = Math.sin(elapsedTime) * 0.5 + 0.5;
+    explodeTool.expand(expandRadius);
+  }, 20);
+}
+animate();
 ```
