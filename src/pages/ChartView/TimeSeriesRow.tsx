@@ -431,7 +431,10 @@ export default function TimeSeriesRow({
         </>
       )}
       {(isWorkspaceMode || isFileViewerMode) && (
-        <td style={{ textAlign: 'center', paddingLeft: 0 }}>
+        <td
+          style={{ textAlign: 'center', paddingLeft: 0 }}
+          className="downloadChartHide"
+        >
           <PnidButton
             timeseriesExternalId={tsExternalId}
             showTooltip={false}
@@ -440,10 +443,13 @@ export default function TimeSeriesRow({
         </td>
       )}
       {isWorkspaceMode && (
-        <td style={{ textAlign: 'center', paddingLeft: 0 }}>
+        <td
+          style={{ textAlign: 'center', paddingLeft: 0 }}
+          className="downloadChartHide"
+        >
           <Dropdown content={<AppearanceDropdown update={updateAppearance} />}>
             <Button
-              type="tertiary"
+              type="ghost"
               icon="Timeseries"
               style={{ height: 28 }}
               aria-label="timeseries"
@@ -452,7 +458,10 @@ export default function TimeSeriesRow({
         </td>
       )}
       {(isWorkspaceMode || isFileViewerMode) && (
-        <td style={{ textAlign: 'center', paddingLeft: 0 }}>
+        <td
+          style={{ textAlign: 'center', paddingLeft: 0 }}
+          className="downloadChartHide"
+        >
           <Popconfirm
             onConfirm={() => remove()}
             content={
@@ -463,7 +472,7 @@ export default function TimeSeriesRow({
             }
           >
             <Button
-              type="tertiary"
+              type="ghost"
               icon="Delete"
               style={{ height: 28 }}
               aria-label="delete"
@@ -473,9 +482,12 @@ export default function TimeSeriesRow({
       )}
       {isWorkspaceMode && (
         <>
-          <td style={{ textAlign: 'center', paddingLeft: 0 }}>
+          <td
+            style={{ textAlign: 'center', paddingLeft: 0 }}
+            className="downloadChartHide"
+          >
             <Button
-              type="tertiary"
+              type="ghost"
               icon="Info"
               onClick={(event) => {
                 if (isSelected) {
@@ -487,11 +499,14 @@ export default function TimeSeriesRow({
               aria-label="info"
             />
           </td>
-          <td style={{ textAlign: 'center', paddingLeft: 0 }}>
+          <td
+            style={{ textAlign: 'center', paddingLeft: 0 }}
+            className="downloadChartHide"
+          >
             {!isFileViewerMode && (
               // <Dropdown content={<TimeSeriesMenu chartId={chart.id} id={id} />}>
               <Button
-                type="tertiary"
+                type="ghost"
                 icon="MoreOverflowEllipsisHorizontal"
                 style={{ height: 28 }}
                 disabled

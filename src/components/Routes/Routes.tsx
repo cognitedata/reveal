@@ -29,7 +29,7 @@ const RouteWithTopbar = ({ component, ...rest }: RouteProps) => {
       {...rest}
       render={(routeProps) => {
         return (
-          <PageLayout>
+          <PageLayout className="PageLayout">
             <TopBar />
             <main>
               <Component {...routeProps} />

@@ -58,7 +58,7 @@ const SharingDropdown = ({ chart, disabled = false }: SharingDropdownProps) => {
   };
 
   return (
-    <Dropdown
+    <StyledDropdown
       disabled={disabled}
       content={
         <SharingMenu>
@@ -105,7 +105,7 @@ const SharingDropdown = ({ chart, disabled = false }: SharingDropdownProps) => {
         disabled={disabled}
         aria-label="share"
       />
-    </Dropdown>
+    </StyledDropdown>
   );
 };
 
@@ -114,7 +114,7 @@ export const SharingMenu = styled(Menu)`
 `;
 
 export const SharingSwitchContainer = styled.div`
-  margin: 16px 0 0 -8px;
+  margin: 16px 0 0 0;
 `;
 
 export const SharingMenuContent = styled.div`
@@ -128,6 +128,15 @@ export const SharingMenuBody = styled(Body)`
 
 export const ShareLinkContainer = styled.div`
   margin-top: 8px;
+  display: flex;
+  gap: 1em;
+`;
+
+const StyledDropdown = styled(Dropdown)`
+  top: 0;
+  position: absolute;
+  right: 1px;
+  transform: translate(50%);
 `;
 
 export default SharingDropdown;
