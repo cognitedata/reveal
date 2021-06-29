@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { useSDK } from '@cognite/sdk-provider';
 import styled from 'styled-components';
-import { Icon, Checkbox, Button } from '@cognite/cogs.js';
+import { Icon, Checkbox, Button, Colors } from '@cognite/cogs.js';
 import DelayedComponent from 'components/DelayedComponent';
 import { PnidButton } from 'components/SearchResultTable';
 import { useInfiniteList, useAggregate } from '@cognite/sdk-react-query-hooks';
@@ -85,7 +85,7 @@ export default function AssetSearchHit({ asset, query = '' }: Props) {
             <Icon type="ResourceAssets" size={14} />
             <Highlighter
               highlightStyle={{
-                backgroundColor: 'rgba(74, 103, 251, 0.1)',
+                backgroundColor: Colors.midblue.alpha(0.1),
                 fontWeight: 'bold',
                 marginLeft: 5,
               }}
@@ -97,7 +97,7 @@ export default function AssetSearchHit({ asset, query = '' }: Props) {
           <Description>
             <Highlighter
               highlightStyle={{
-                backgroundColor: 'rgba(74, 103, 251, 0.1)',
+                backgroundColor: Colors.midblue.alpha(0.1),
                 fontWeight: 'bold',
                 marginLeft: 5,
               }}

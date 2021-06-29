@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react';
 import styled from 'styled-components';
 import dayjs from 'dayjs';
-import { Icon } from '@cognite/cogs.js';
+import { Colors, Icon } from '@cognite/cogs.js';
 import DelayedComponent from 'components/DelayedComponent';
 import { TimeseriesChart } from '@cognite/data-exploration';
 import { Timeseries } from '@cognite/sdk';
@@ -33,7 +33,7 @@ export default function TimeseriesSearchHit({
                   <Icon type="ResourceTimeseries" style={{ minWidth: 14 }} />
                   <Highlighter
                     highlightStyle={{
-                      backgroundColor: 'rgba(74, 103, 251, 0.1)',
+                      backgroundColor: Colors.midblue.alpha(0.1),
                       marginLeft: 5,
                     }}
                     searchWords={[query]}
@@ -43,7 +43,7 @@ export default function TimeseriesSearchHit({
                 <Description>
                   <Highlighter
                     highlightStyle={{
-                      backgroundColor: 'rgba(74, 103, 251, 0.1)',
+                      backgroundColor: Colors.midblue.alpha(0.1),
                     }}
                     searchWords={[query]}
                     textToHighlight={t.description}
