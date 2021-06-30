@@ -36,6 +36,7 @@ export type ChartTimeSeries = {
   description?: string;
   range?: number[];
   statisticsCalls?: Call[];
+  createdAt: number;
 };
 
 // We can't store function definitions, so we need to work around this.
@@ -70,6 +71,7 @@ export type ChartWorkflow = {
   connections?: Record<string, Connection>;
   calls?: Call[];
   statisticsCalls?: Call[];
+  createdAt?: number;
 };
 
 export type ConfigPanelComponentProps = {
