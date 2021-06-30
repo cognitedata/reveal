@@ -29,8 +29,7 @@ import { Modes } from 'pages/types';
 import DetailsSidebar from 'components/DetailsSidebar';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
-import TimeSeriesRows from './TimeSeriesRows';
-import WorkflowRows from './WorkflowRows';
+import SourceRows from './SourceRows';
 
 import {
   BottomPaneWrapper,
@@ -64,6 +63,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
 
   const [showSearch, setShowSearch] = useState(false);
   const [showYAxis, setShowYAxis] = useState(true);
+  const [showAggregates, setShowAggregates] = useState(true);
   const [workspaceMode, setWorkspaceMode] = useState<Modes>('workspace');
   const [stackedMode, setStackedMode] = useState<boolean>(false);
   const [editorTimer, setEditorTimer] = useState<ITimer | undefined>();
@@ -141,6 +141,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
               enabled: true,
               nodes: [],
               connections: [],
+              createdAt: Date.now(),
             },
           ],
         },
@@ -371,9 +372,32 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
             <Dropdown
               content={
                 <Menu>
-                  <YaxisDropdownWrapper>
+                  <DropdownWrapper>
                     <Flex>
-                      <YaxisDropdownTitle>Y axis</YaxisDropdownTitle>
+                      <DropdownTitle>Time series aggregates</DropdownTitle>
+                    </Flex>
+                    <Flex direction="row">
+                      <Switch
+                        name="toggleAggregates"
+                        value={showAggregates}
+                        onChange={() => setShowAggregates(!showAggregates)}
+                      >
+                        Show Aggregates
+                      </Switch>
+                    </Flex>
+                  </DropdownWrapper>
+                </Menu>
+              }
+            >
+              <Button icon="Timeseries" type="ghost" aria-label="view" />
+            </Dropdown>
+
+            <Dropdown
+              content={
+                <Menu>
+                  <DropdownWrapper>
+                    <Flex>
+                      <DropdownTitle>Y axis</DropdownTitle>
                     </Flex>
                     <Flex direction="row">
                       <Switch
@@ -384,7 +408,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                         Show Y-axes
                       </Switch>
                     </Flex>
-                  </YaxisDropdownWrapper>
+                  </DropdownWrapper>
                 </Menu>
               }
             >
@@ -412,6 +436,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                   chartId={chartId}
                   isInSearch={showSearch}
                   isYAxisShown={showYAxis}
+                  isAggregatesShown={showAggregates}
                   stackedMode={stackedMode}
                 />
               </ChartWrapper>
@@ -425,26 +450,17 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                         <SourceTable ref={provided.innerRef}>
                           <thead>{sourceTableHeaderRow}</thead>
                           <tbody>
-                            <TimeSeriesRows
+                            <SourceRows
                               draggable
                               chart={chart}
                               updateChart={updateChart}
                               mode={workspaceMode}
                               selectedSourceId={selectedSourceId}
+                              openNodeEditor={openNodeEditor}
                               onRowClick={handleSourceClick}
                               onInfoClick={handleInfoClick}
                               dateFrom={chart.dateFrom}
                               dateTo={chart.dateTo}
-                            />
-
-                            <WorkflowRows
-                              chart={chart}
-                              updateChart={updateChart}
-                              mode={workspaceMode}
-                              openNodeEditor={openNodeEditor}
-                              selectedSourceId={selectedSourceId}
-                              onRowClick={handleSourceClick}
-                              onInfoClick={handleInfoClick}
                             />
                             {provided.placeholder}
                           </tbody>
@@ -488,13 +504,13 @@ const Divider = styled.div`
   margin-left: 10px;
 `;
 
-const YaxisDropdownTitle = styled.div`
+const DropdownTitle = styled.div`
   color: var(--cogs-greyscale-grey6);
   font-size: 12px;
-  margin: 0 0 8px 8px;
+  margin: 0 0 8px 0;
 `;
 
-const YaxisDropdownWrapper = styled.div`
+const DropdownWrapper = styled.div`
   padding: 8px;
 `;
 
