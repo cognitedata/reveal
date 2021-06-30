@@ -9,6 +9,7 @@ import { RenderMode } from './rendering/RenderMode';
 import { TreeIndexNodeCollection } from './styling';
 import { NumericRange } from '../../utilities';
 import { CadMaterialManager } from './CadMaterialManager';
+import { Materials } from './rendering/materials';
 
 describe('CadMaterialManager', () => {
   let manager: CadMaterialManager;
@@ -75,4 +76,32 @@ describe('CadMaterialManager', () => {
 
     expect(listener).toBeCalled();
   });
+
+  test('per-model clipping planes are combined with global clipping planes', () => {
+    // Arrange
+    const globalClipPlanes = [new THREE.Plane(), new THREE.Plane()];
+    manager.clippingPlanes = globalClipPlanes;
+    manager.addModelMaterials('1', 16);
+    manager.addModelMaterials('2', 16);
+
+    // Act
+    manager.setModelClippingPlanes('1', [new THREE.Plane(), new THREE.Plane()]);
+    manager.setModelClippingPlanes('2', [new THREE.Plane()]);
+
+    // Assert
+    for (const material of iterateMaterials(manager.getModelMaterials('1'))) {
+      expect(material.clipIntersection).toBeFalse();
+      expect(material.clipping).toBeTrue();
+      expect(material.clippingPlanes.length).toBe(4);
+    }
+    for (const material of iterateMaterials(manager.getModelMaterials('2'))) {
+      expect(material.clipIntersection).toBeFalse();
+      expect(material.clipping).toBeTrue();
+      expect(material.clippingPlanes.length).toBe(3);
+    }
+  });
 });
+
+function* iterateMaterials(materials: Materials): Generator<THREE.ShaderMaterial> {
+  return Object.values(materials).map(x => x as THREE.ShaderMaterial);
+}

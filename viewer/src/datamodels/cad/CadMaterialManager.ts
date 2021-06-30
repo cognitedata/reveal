@@ -20,6 +20,7 @@ import throttle from 'lodash/throttle';
 
 interface MaterialsWrapper {
   materials: Materials;
+  perModelClippingPlanes: THREE.Plane[];
   nodeAppearanceProvider: NodeAppearanceProvider;
   nodeTransformProvider: NodeTransformProvider;
   nodeAppearanceTextureBuilder: NodeAppearanceTextureBuilder;
@@ -39,9 +40,9 @@ export class CadMaterialManager {
 
   set clippingPlanes(clippingPlanes: THREE.Plane[]) {
     this._clippingPlanes = clippingPlanes;
-    this.applyToAllMaterials(material => {
-      material.clippingPlanes = clippingPlanes;
-    });
+    for (const modelIdentifier of this.materialsMap.keys()) {
+      this.updateClippingPlanesForModel(modelIdentifier);
+    }
     this.triggerMaterialsChanged();
   }
 
@@ -104,6 +105,7 @@ export class CadMaterialManager {
     );
     this.materialsMap.set(modelIdentifier, {
       materials,
+      perModelClippingPlanes: [],
       nodeAppearanceProvider,
       nodeTransformProvider,
       nodeAppearanceTextureBuilder,
@@ -111,6 +113,8 @@ export class CadMaterialManager {
       updateMaterialsCallback,
       updateTransformsCallback
     });
+
+    this.updateClippingPlanesForModel(modelIdentifier);
   }
 
   getModelMaterials(modelIdentifier: string): Materials {
@@ -131,6 +135,35 @@ export class CadMaterialManager {
   getModelDefaultNodeAppearance(modelIdentifier: string): NodeAppearance {
     const wrapper = this.getModelMaterialsWrapper(modelIdentifier);
     return wrapper.nodeAppearanceTextureBuilder.getDefaultAppearance();
+  }
+
+  setModelClippingPlanes(modelIdentifier: string, clippingPlanes: THREE.Plane[]) {
+    const materialWrapper = this.materialsMap.get(modelIdentifier);
+    if (materialWrapper === undefined) {
+      throw new Error(
+        `Materials for model ${modelIdentifier} has not been added, call ${this.addModelMaterials.name} first`
+      );
+    }
+
+    materialWrapper.perModelClippingPlanes = clippingPlanes;
+    this.updateClippingPlanesForModel(modelIdentifier);
+    this.triggerMaterialsChanged();
+  }
+
+  private updateClippingPlanesForModel(modelIdentifier: string) {
+    const materialWrapper = this.materialsMap.get(modelIdentifier);
+    if (materialWrapper === undefined) {
+      throw new Error(
+        `Materials for model ${modelIdentifier} has not been added, call ${this.addModelMaterials.name} first`
+      );
+    }
+
+    const clippingPlanes = [...materialWrapper.perModelClippingPlanes, ...this.clippingPlanes];
+    applyToModelMaterials(materialWrapper.materials, m => {
+      m.clipping = true;
+      m.clipIntersection = false;
+      m.clippingPlanes = clippingPlanes;
+    });
   }
 
   setModelDefaultNodeAppearance(modelIdentifier: string, defaultAppearance: NodeAppearance) {
