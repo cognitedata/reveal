@@ -15,7 +15,6 @@ import { intersectCadNodes } from '../../datamodels/cad/picking';
 import {
   AddModelOptions,
   Cognite3DViewerOptions,
-  GeometryFilter,
   Intersection,
   CameraChangeDelegate,
   PointerEventDelegate,
@@ -1583,15 +1582,4 @@ function determineSsaoRenderParameters(quality: SsaoQuality): SsaoParameters {
   }
 
   return ssaoParameters;
-}
-
-function transformGeometryFilterToModelSpace(filter: GeometryFilter, model: Cognite3DModel): GeometryFilter {
-  if (filter.boundingBox === undefined || filter.isBoundingBoxInModelCoordinates) {
-    return filter;
-  }
-
-  const min = model.mapFromCdfToModelCoordinates(filter.boundingBox.min);
-  const max = model.mapFromCdfToModelCoordinates(filter.boundingBox.max);
-  const modelSpaceBounds = new THREE.Box3().setFromPoints([min, max]);
-  return { ...filter, boundingBox: modelSpaceBounds };
 }
