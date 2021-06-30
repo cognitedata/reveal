@@ -1,9 +1,4 @@
-import {
-  getColor,
-  availableColors,
-  getEntryColor,
-  hexToRGBA,
-} from './colors';
+import { getColor, availableColors, getEntryColor, hexToRGBA } from './colors';
 
 describe('Colors', () => {
   it('handles numbers', () => expect(getColor(1)).toBe(availableColors[1]));
