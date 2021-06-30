@@ -66,19 +66,19 @@ export class CadNode extends THREE.Object3D {
   }
 
   get nodeTransformProvider(): NodeTransformProvider {
-    return this._materialManager.getModelNodeTransformProvider(this._cadModelMetadata.blobUrl);
+    return this._materialManager.getModelNodeTransformProvider(this._cadModelMetadata.modelIdentifier);
   }
 
   get nodeAppearanceProvider(): NodeAppearanceProvider {
-    return this._materialManager.getModelNodeAppearanceProvider(this._cadModelMetadata.blobUrl);
+    return this._materialManager.getModelNodeAppearanceProvider(this._cadModelMetadata.modelIdentifier);
   }
 
   get defaultNodeAppearance(): NodeAppearance {
-    return this._materialManager.getModelDefaultNodeAppearance(this._cadModelMetadata.blobUrl);
+    return this._materialManager.getModelDefaultNodeAppearance(this._cadModelMetadata.modelIdentifier);
   }
 
   set defaultNodeAppearance(appearance: NodeAppearance) {
-    this._materialManager.setModelDefaultNodeAppearance(this._cadModelMetadata.blobUrl, appearance);
+    this._materialManager.setModelDefaultNodeAppearance(this._cadModelMetadata.modelIdentifier, appearance);
   }
 
   get clippingPlanes(): THREE.Plane[] {

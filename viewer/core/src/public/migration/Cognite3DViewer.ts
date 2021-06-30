@@ -1052,7 +1052,7 @@ export class Cognite3DViewer {
    * Raycasting model(s) for finding where the ray intersects with the model.
    * @param offsetX X coordinate in pixels (relative to the domElement).
    * @param offsetY Y coordinate in pixels (relative to the domElement).
-   * @param options Options to control the behaviour of the intersection operation. Optional (new in 1.3.0).
+   * @param options Options to control the behavior of the intersection operation. Optional (new in 1.3.0).
    * @returns A promise that if there was an intersection then return the intersection object - otherwise it
    * returns `null` if there were no intersections.
    * @see {@link https://en.wikipedia.org/wiki/Ray_casting}.

@@ -19,6 +19,7 @@ export class CadModelMetadataRepository<TModelIdentifier>
   private readonly _modelMetadataProvider: ModelDataClient<ModelIdentifierWithFormat<TModelIdentifier>>;
   private readonly _cadSceneParser: CadMetadataParser;
   private readonly _blobFileName: string;
+  private _currentModelIdentifier = 0;
 
   constructor(
     modelMetadataProvider: ModelDataClient<TModelIdentifier>,
@@ -30,21 +31,23 @@ export class CadModelMetadataRepository<TModelIdentifier>
     this._blobFileName = blobFileName;
   }
 
-  async loadData(modelIdentifier: TModelIdentifier): Promise<CadModelMetadata> {
-    const identifierWithFormat = { format: File3dFormat.RevealCadModel, ...modelIdentifier };
-    const blobUrlPromise = this._modelMetadataProvider.getModelUrl(identifierWithFormat);
+  async loadData(model: TModelIdentifier): Promise<CadModelMetadata> {
+    const identifierWithFormat = { format: File3dFormat.RevealCadModel, ...model };
+    const blobBaseUrlPromise = this._modelMetadataProvider.getModelUrl(identifierWithFormat);
     const modelMatrixPromise = this._modelMetadataProvider.getModelMatrix(identifierWithFormat);
     const modelCameraPromise = this._modelMetadataProvider.getModelCamera(identifierWithFormat);
 
-    const blobUrl = await blobUrlPromise;
-    const json = await this._modelMetadataProvider.getJsonFile(blobUrl, this._blobFileName);
+    const blobBaseUrl = await blobBaseUrlPromise;
+    const json = await this._modelMetadataProvider.getJsonFile(blobBaseUrl, this._blobFileName);
+    const modelIdentifier = `${this._currentModelIdentifier++}`;
     const scene: SectorScene = this._cadSceneParser.parse(json);
     const modelMatrix = createScaleToMetersModelMatrix(scene.unit, await modelMatrixPromise);
     const inverseModelMatrix = new THREE.Matrix4().copy(modelMatrix).invert();
     const cameraConfiguration = await modelCameraPromise;
 
     return {
-      blobUrl,
+      modelIdentifier,
+      modelBaseUrl: blobBaseUrl,
       // Clip box is not loaded, it must be set elsewhere
       geometryClipBox: null,
       modelMatrix,

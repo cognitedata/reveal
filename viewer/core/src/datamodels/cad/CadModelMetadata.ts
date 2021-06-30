@@ -8,9 +8,14 @@ import { CameraConfiguration } from '../../utilities';
 
 export interface CadModelMetadata {
   /**
-   * URL of the model. This is a unique identifier.
+   * A unique identifier of the model.
    */
-  readonly blobUrl: string;
+  readonly modelIdentifier: string;
+
+  /**
+   * Base URL of the model.
+   */
+  readonly modelBaseUrl: string;
   /**
    * If not null, geometry outside this box might be clipped
    * away to avoid representing unused geometry. Will typically

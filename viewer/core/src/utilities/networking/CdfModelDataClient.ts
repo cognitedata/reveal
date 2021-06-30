@@ -29,8 +29,8 @@ export class CdfModelDataClient
     return this.client.getDefaultRequestHeaders();
   }
 
-  public async getBinaryFile(blobUrl: string, fileName: string): Promise<ArrayBuffer> {
-    const url = `${blobUrl}/${fileName}`;
+  public async getBinaryFile(baseUrl: string, fileName: string): Promise<ArrayBuffer> {
+    const url = `${baseUrl}/${fileName}`;
     const headers = {
       ...this.client.getDefaultRequestHeaders(),
       Accept: '*/*'
@@ -40,8 +40,8 @@ export class CdfModelDataClient
     return response.arrayBuffer();
   }
 
-  async getJsonFile(blobUrl: string, fileName: string): Promise<any> {
-    const response = await this.client.get(`${blobUrl}/${fileName}`);
+  async getJsonFile(baseUrl: string, fileName: string): Promise<any> {
+    const response = await this.client.get(`${baseUrl}/${fileName}`);
     return response.data;
   }
 

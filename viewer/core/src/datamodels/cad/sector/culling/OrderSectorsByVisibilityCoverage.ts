@@ -29,6 +29,14 @@ type SectorVisibility = {
   distance: number;
 };
 
+function nullSectorVisibility(): SectorVisibility {
+  return {
+    sectorIdWithOffset: -1,
+    weight: -1,
+    distance: Infinity
+  };
+}
+
 const identityRotation = new THREE.Quaternion();
 
 /**
@@ -166,9 +174,9 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
   setModels(models: CadModelMetadata[]) {
     const keepModelIdentifiers = new Set<string>();
     for (const model of models) {
-      const blobUrl = model.blobUrl;
-      keepModelIdentifiers.add(blobUrl);
-      const container = this.containers.get(blobUrl);
+      const modelIdentifier = model.modelIdentifier;
+      keepModelIdentifiers.add(modelIdentifier);
+      const container = this.containers.get(modelIdentifier);
       if (container) {
         this.updateModel(container, model);
       } else {
@@ -196,14 +204,14 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
 
       const ordered = this.orderSectorsByVisibility(camera);
       const filtered = sectors.filter(toBeFiltered => {
-        const container = this.containers.get(toBeFiltered.blobUrl);
+        const container = this.containers.get(toBeFiltered.modelIdentifier);
         if (container === undefined) {
-          throw new Error(`Model ${toBeFiltered.blobUrl} is not registered`);
+          throw new Error(`Model ${toBeFiltered.modelIdentifier} is not registered`);
         }
         const isCameraInsideSector = isWithinSectorBounds(container.model, toBeFiltered.metadata, camera.position);
         // Note! O(N), but N is number of input sectors (i.e. low)
         const found = ordered.some(
-          x => x.model.blobUrl === toBeFiltered.blobUrl && x.sectorId === toBeFiltered.metadata.id
+          x => x.model.modelIdentifier === toBeFiltered.modelIdentifier && x.sectorId === toBeFiltered.metadata.id
         );
         return found || isCameraInsideSector;
       });
@@ -333,7 +341,7 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
     const visibilityValue = visible ? 1.0 : 0.0;
     sectors.forEach(s => {
       const id = s.metadata.id;
-      const container = this.containers.get(s.blobUrl);
+      const container = this.containers.get(s.modelIdentifier);
       if (container === undefined) {
         throw new Error(`Sector ${s} is from a model not added`);
       }
@@ -349,8 +357,16 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
       throw new Error(`Could not find model '${modelIdentifier}'`);
     }
     container.mesh.geometry.dispose();
+    this.deleteSectorsFromBuffers(container.sectorIdOffset, container.lastSectorIdWithOffset);
     this.scene.remove(container.renderable);
     this.containers.delete(modelIdentifier);
+  }
+
+  private deleteSectorsFromBuffers(firstSectorId: number, lastSectorId: number) {
+    const sectorVisibility = this.buffers.sectorVisibilityBuffer;
+    for (let i = firstSectorId; i <= lastSectorId; ++i) {
+      sectorVisibility[i] = nullSectorVisibility();
+    }
   }
 
   private addModel(model: CadModelMetadata) {
@@ -366,7 +382,7 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
     const maxSectorId = sectors.reduce((max, sector) => Math.max(sector.id, max), 0);
     const sectorIndexById = new Array<number>(maxSectorId);
     sectors.forEach((x, index) => (sectorIndexById[x.id] = index));
-    this.containers.set(model.blobUrl, {
+    this.containers.set(model.modelIdentifier, {
       model,
       sectors,
       sectorIndexById,
@@ -377,7 +393,7 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
       attributesBuffer,
       attributesValues
     });
-    this.sectorIdOffset += maxSectorId;
+    this.sectorIdOffset += maxSectorId + 1;
     this.scene.add(group);
   }
 
