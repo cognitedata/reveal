@@ -12635,10 +12635,10 @@ mat4-recompose@^1.0.3:
   dependencies:
     gl-mat4 "^1.0.1"
 
-match-sorter@^6.0.2, match-sorter@^6.1.0:
-  version "6.1.0"
-  resolved "https://registry.yarnpkg.com/match-sorter/-/match-sorter-6.1.0.tgz#7fec6808d94311a35fef7fd842a11634f2361bd7"
-  integrity sha512-sKPMf4kbF7Dm5Crx0bbfLpokK68PUJ/0STUIOPa1ZmTZEA3lCaPK3gapQR573oLmvdkTfGojzySkIwuq6Z6xRQ==
+match-sorter@^6.0.2, match-sorter@^6.3.0:
+  version "6.3.0"
+  resolved "https://registry.yarnpkg.com/match-sorter/-/match-sorter-6.3.0.tgz#454a1b31ed218cddbce6231a0ecb5fdc549fed01"
+  integrity sha512-efYOf/wUpNb8FgNY+cOD2EIJI1S5I7YPKsw0LBp7wqPh5pmMS6i/wr3ZWwfwrAw1NvqTA2KUReVRWDX84lUcOQ==
   dependencies:
     "@babel/runtime" "^7.12.5"
     remove-accents "0.4.2"
