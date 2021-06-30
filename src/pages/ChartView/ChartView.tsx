@@ -63,6 +63,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
 
   const [showSearch, setShowSearch] = useState(false);
   const [showYAxis, setShowYAxis] = useState(true);
+  const [showAggregates, setShowAggregates] = useState(true);
   const [workspaceMode, setWorkspaceMode] = useState<Modes>('workspace');
   const [stackedMode, setStackedMode] = useState<boolean>(false);
   const [editorTimer, setEditorTimer] = useState<ITimer | undefined>();
@@ -347,9 +348,32 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
             <Dropdown
               content={
                 <Menu>
-                  <YaxisDropdownWrapper>
+                  <DropdownWrapper>
                     <Flex>
-                      <YaxisDropdownTitle>Y axis</YaxisDropdownTitle>
+                      <DropdownTitle>Time series aggregates</DropdownTitle>
+                    </Flex>
+                    <Flex direction="row">
+                      <Switch
+                        name="toggleAggregates"
+                        value={showAggregates}
+                        onChange={() => setShowAggregates(!showAggregates)}
+                      >
+                        Show Aggregates
+                      </Switch>
+                    </Flex>
+                  </DropdownWrapper>
+                </Menu>
+              }
+            >
+              <Button icon="Timeseries" type="ghost" aria-label="view" />
+            </Dropdown>
+
+            <Dropdown
+              content={
+                <Menu>
+                  <DropdownWrapper>
+                    <Flex>
+                      <DropdownTitle>Y axis</DropdownTitle>
                     </Flex>
                     <Flex direction="row">
                       <Switch
@@ -360,7 +384,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                         Show Y-axes
                       </Switch>
                     </Flex>
-                  </YaxisDropdownWrapper>
+                  </DropdownWrapper>
                 </Menu>
               }
             >
@@ -388,6 +412,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                   chartId={chartId}
                   isInSearch={showSearch}
                   isYAxisShown={showYAxis}
+                  isAggregatesShown={showAggregates}
                   stackedMode={stackedMode}
                 />
               </ChartWrapper>
@@ -456,13 +481,13 @@ const Divider = styled.div`
   margin-left: 10px;
 `;
 
-const YaxisDropdownTitle = styled.div`
+const DropdownTitle = styled.div`
   color: var(--cogs-greyscale-grey6);
   font-size: 12px;
-  margin: 0 0 8px 8px;
+  margin: 0 0 8px 0;
 `;
 
-const YaxisDropdownWrapper = styled.div`
+const DropdownWrapper = styled.div`
   padding: 8px;
 `;
 
