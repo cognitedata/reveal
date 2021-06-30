@@ -435,7 +435,7 @@ const CreateIntegration = () => {
 export default function CombinedComponent() {
   return (
     <RegisterIntegrationLayout>
-      <CapabilityCheck requiredAccess={EXTPIPES_ACL_WRITE}>
+      <CapabilityCheck requiredPermissions={[EXTPIPES_ACL_WRITE]}>
         <CreateIntegration />
       </CapabilityCheck>
     </RegisterIntegrationLayout>

@@ -2,34 +2,30 @@ import React, { FunctionComponent, PropsWithChildren } from 'react';
 import { AclAction } from 'model/AclAction';
 import styled from 'styled-components';
 import { Colors, Icon, Loader } from '@cognite/cogs.js';
-// eslint-disable-next-line
-import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { Code } from 'styles/StyledText';
 import { StyledTitle2 } from 'styles/StyledHeadings';
+import { useOneOfPermissions } from 'hooks/useOneOfPermissions';
 
 export interface CapabilityCheckProps {
-  requiredAccess: Readonly<AclAction>;
+  requiredPermissions: Readonly<AclAction>[];
   heading?: string;
   text?: string;
 }
 
 export const CapabilityCheck: FunctionComponent<CapabilityCheckProps> = ({
-  requiredAccess,
+  requiredPermissions,
   heading = 'You have insufficient access rights to access this feature',
-  text = 'To access this page you must have the following capability:',
+  text = 'To access this page you must have one of the following capabilities:',
   children,
 }: PropsWithChildren<CapabilityCheckProps>) => {
-  const { data: hasAccess, isLoading } = usePermissions(
-    requiredAccess.acl,
-    requiredAccess.action
-  );
+  const permissions = useOneOfPermissions(requiredPermissions);
 
-  if (isLoading) {
+  if (permissions.isLoading) {
     return <Loader />;
   }
-  return !hasAccess ? (
+  return !permissions.data ? (
     <ErrorDialog
-      requiredAccess={requiredAccess}
+      requiredPermissions={requiredPermissions}
       heading={heading}
       text={text}
     />
@@ -42,6 +38,12 @@ const Wrapper = styled.div`
   padding: 2rem;
 `;
 
+const MissingCapabilityList = styled.ul`
+  li {
+    margin: 1em 0;
+  }
+`;
+
 const StyledErrorHeader = styled(StyledTitle2)`
   display: flex;
   align-items: center;
@@ -50,7 +52,7 @@ const StyledErrorHeader = styled(StyledTitle2)`
   }
 `;
 const ErrorDialog = ({
-  requiredAccess,
+  requiredPermissions,
   text,
   heading,
 }: CapabilityCheckProps) => {
@@ -60,12 +62,17 @@ const ErrorDialog = ({
         <Icon type="Warning" css="margin-right: 0.5rem" />
         {heading}
       </StyledErrorHeader>
-      <p>
-        {text}
-        <Code>
-          {requiredAccess.acl}:{requiredAccess.action}
-        </Code>
-      </p>
+      <p>{text}</p>
+      <MissingCapabilityList>
+        {requiredPermissions.map((requiredPermission) => {
+          const permissionName = `${requiredPermission.acl}:${requiredPermission.action}`;
+          return (
+            <li key={permissionName}>
+              <Code>{permissionName}</Code>
+            </li>
+          );
+        })}
+      </MissingCapabilityList>
     </Wrapper>
   );
 };

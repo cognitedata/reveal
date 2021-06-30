@@ -17,6 +17,8 @@ import { useAppEnv } from 'hooks/useAppEnv';
 import { Integration } from 'model/Integration';
 import { LinkWrapper } from 'styles/StyledLinks';
 import { ExtPipesBreadcrumbs } from 'components/navigation/breadcrumbs/ExtPipesBreadcrumbs';
+import { CapabilityCheck } from 'components/accessCheck/CapabilityCheck';
+import { DATASETS_ACL_READ, EXTPIPES_ACL_READ } from 'model/AclAction';
 
 export const LEARNING_AND_RESOURCES_URL: Readonly<string> =
   'https://docs.cognite.com/cdf/integration/';
@@ -85,7 +87,11 @@ export default function CombinedComponent() {
       }
       breadcrumbs={<ExtPipesBreadcrumbs />}
     >
-      <Integrations />
+      <CapabilityCheck
+        requiredPermissions={[EXTPIPES_ACL_READ, DATASETS_ACL_READ]}
+      >
+        <Integrations />
+      </CapabilityCheck>
     </FullPageLayout>
   );
 }

@@ -17,6 +17,11 @@ jest.mock('utils/Metrics', () => {
     trackUsage: jest.fn(),
   };
 });
+jest.mock('@cognite/sdk-react-query-hooks', () => {
+  return {
+    useCapabilities: jest.fn(),
+  };
+});
 
 sdkv3.get = jest.fn();
 sdkv3.post = jest.fn();

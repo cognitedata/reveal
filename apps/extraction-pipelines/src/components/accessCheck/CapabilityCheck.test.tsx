@@ -2,22 +2,20 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import { render } from 'utils/test';
 import { CapabilityCheck } from 'components/accessCheck/CapabilityCheck';
-import { EXTPIPES_ACL_READ } from 'model/AclAction';
+import { EXTPIPES_ACL_READ, INTEGRATIONS_ACL } from 'model/AclAction';
 // eslint-disable-next-line
-import { usePermissions } from '@cognite/sdk-react-query-hooks';
+import { useCapabilities } from '@cognite/sdk-react-query-hooks';
 
-jest.mock('@cognite/sdk-react-query-hooks', () => {
-  return {
-    usePermissions: jest.fn(),
-  };
-});
 describe('CapabilityCheck', () => {
   const text = 'Im the content';
   const content = <p>{text}</p>;
   test('Render content when permission is ok', () => {
-    usePermissions.mockReturnValue({ isLoading: false, data: true });
+    useCapabilities.mockReturnValue({
+      isLoading: false,
+      data: [{ acl: INTEGRATIONS_ACL, actions: ['READ', 'WRITE'] }],
+    });
     render(
-      <CapabilityCheck requiredAccess={EXTPIPES_ACL_READ}>
+      <CapabilityCheck requiredPermissions={[EXTPIPES_ACL_READ]}>
         {content}
       </CapabilityCheck>
     );
@@ -25,9 +23,12 @@ describe('CapabilityCheck', () => {
   });
 
   test('Render error when permission is NOT ok', () => {
-    usePermissions.mockReturnValue({ isLoading: false, data: false });
+    useCapabilities.mockReturnValue({
+      isLoading: false,
+      data: [{}],
+    });
     render(
-      <CapabilityCheck requiredAccess={EXTPIPES_ACL_READ}>
+      <CapabilityCheck requiredPermissions={[EXTPIPES_ACL_READ]}>
         {content}
       </CapabilityCheck>
     );

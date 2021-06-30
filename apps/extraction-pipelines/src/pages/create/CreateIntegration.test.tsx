@@ -34,18 +34,15 @@ import { useRawDBAndTables } from 'hooks/useRawDBAndTables';
 import { databaseListMock } from 'utils/mockResponse';
 import { CREATE_INTEGRATION_PAGE_PATH } from 'routing/CreateRouteConfig';
 // eslint-disable-next-line
-import { usePermissions } from '@cognite/sdk-react-query-hooks';
+import { useCapabilities } from '@cognite/sdk-react-query-hooks';
+import { INTEGRATIONS_ACL } from 'model/AclAction';
 
 jest.mock('hooks/useRawDBAndTables', () => {
   return {
     useRawDBAndTables: jest.fn(),
   };
 });
-jest.mock('@cognite/sdk-react-query-hooks', () => {
-  return {
-    usePermissions: jest.fn(),
-  };
-});
+
 describe('CreateIntegration', () => {
   window.location.href =
     'https://dev.fusion.cogniteapp.com/itera-int-green/integrations/create/name?env=greenfield';
@@ -58,8 +55,14 @@ describe('CreateIntegration', () => {
     initRegisterIntegration: {},
   };
 
+  beforeEach(() => {
+    useCapabilities.mockReturnValue({
+      isLoading: false,
+      data: [{ acl: INTEGRATIONS_ACL, actions: ['READ', 'WRITE'] }],
+    });
+  });
+
   test('Renders stored value', () => {
-    usePermissions.mockReturnValue({ isLoading: false, data: true });
     const name = 'Preset name';
     const withName = { ...props, initRegisterIntegration: { name } };
     renderRegisterContext(<CreateIntegration />, { ...withName });
@@ -80,7 +83,6 @@ describe('CreateIntegration', () => {
       isLoading: false,
       data: databaseListMock,
     });
-    usePermissions.mockReturnValue({ isLoading: false, data: true });
     renderRegisterContext(<CreateIntegration />, { ...props });
     const nameInput = screen.getByLabelText(EXT_PIPE_NAME_HEADING);
     expect(nameInput).toBeInTheDocument();

@@ -19,16 +19,18 @@ import {
 } from 'utils/baseURL';
 import { EXTRACTION_PIPELINES } from 'utils/constants';
 // eslint-disable-next-line
-import { usePermissions } from '@cognite/sdk-react-query-hooks';
+import { useCapabilities } from '@cognite/sdk-react-query-hooks';
+import { INTEGRATIONS_ACL } from 'model/AclAction';
 
-jest.mock('@cognite/sdk-react-query-hooks', () => {
-  return {
-    usePermissions: jest.fn(),
-  };
-});
 describe('<Home />', () => {
+  beforeAll(() => {
+    useCapabilities.mockReturnValue({
+      isLoading: false,
+      data: [{ acl: INTEGRATIONS_ACL, actions: ['READ', 'WRITE'] }],
+    });
+  });
+
   test('Renders Home page', async () => {
-    usePermissions.mockReturnValue({ isLoading: false, data: true });
     sdkv3.get.mockResolvedValueOnce({ data: { items: getMockResponse() } });
     sdkv3.get.mockResolvedValueOnce({ data: getMockResponse()[0] });
     sdkv3.datasets.retrieve.mockResolvedValue([]);
