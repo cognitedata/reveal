@@ -5,6 +5,7 @@ import {
   useInfiniteList,
   useSearch,
 } from '@cognite/sdk-react-query-hooks';
+import { stringContains } from './utils';
 
 const { Option } = Select;
 
@@ -84,8 +85,7 @@ export default function ResourcesSelector({
       filterOption={
         useSearchApi
           ? false
-          : (input, option) =>
-              option?.title?.toLowerCase().includes(input?.toLowerCase() || '')
+          : (input, option) => stringContains(option?.title, input)
       }
     >
       {result.map(resource => (

@@ -316,15 +316,19 @@ export const getCapabilityScopes = (
   }
 };
 
-export const stringContains = (value?: string, searchText?: string) => {
+export const stringContains = (
+  value?: string,
+  searchText?: string
+): boolean => {
   if (!searchText) {
     return true;
   }
   try {
-    return (
+    return !!(
       value && value.trim().toUpperCase().search(searchText.toUpperCase()) >= 0
     );
   } catch (e) {
-    return 'Invalid search term';
+    // Error here means invalid character was used
+    return false;
   }
 };

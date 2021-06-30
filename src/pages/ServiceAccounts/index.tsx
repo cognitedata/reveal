@@ -19,6 +19,7 @@ import { sleep } from 'utils/utils';
 
 import { useGroups } from 'hooks';
 import columns from './columns';
+import { stringContains } from '../Groups/utils';
 
 const { Option } = Select;
 
@@ -104,9 +105,7 @@ export default function ServiceAccounts() {
                 defaultValue={[]}
                 onChange={ids => setNewGroups(ids)}
                 filterOption={(input, option) =>
-                  option?.title
-                    ?.toLowerCase()
-                    .includes(input?.toLowerCase() || '')
+                  stringContains(option?.title, input)
                 }
               >
                 {allGroups.map(g => (
@@ -146,20 +145,19 @@ export default function ServiceAccounts() {
         rowKey="id"
         loading={!isFetched}
         columns={columns}
-        dataSource={accounts?.filter(a =>
-          searchValue
-            ? a.name.toLowerCase().includes(searchValue.toLowerCase()) ||
-              a.id.toString().includes(searchValue.toLowerCase()) ||
-              allGroups
-                .filter(g => a.groups?.includes(g.id))
-                .find(
-                  g =>
-                    g.name.toLowerCase().includes(searchValue.toLowerCase()) ||
-                    !!g.capabilities?.find(c =>
-                      Object.keys(c)[0]!.toLowerCase().includes(searchValue)
-                    )
-                )
-            : true
+        dataSource={accounts?.filter(
+          a =>
+            stringContains(a.name, searchValue) ||
+            stringContains(String(a.id), searchValue) ||
+            allGroups
+              .filter(g => a.groups?.includes(g.id))
+              .find(
+                grp =>
+                  stringContains(grp.name, searchValue) ||
+                  grp.capabilities?.find(cap =>
+                    stringContains(Object.keys(cap)[0]!, searchValue)
+                  )
+              )
         )}
         pagination={{ pageSize: 25, hideOnSinglePage: true }}
       />

@@ -8,6 +8,7 @@ import { useSDK } from '@cognite/sdk-provider';
 import { ServiceAccount } from '@cognite/sdk';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { useGroups } from 'hooks';
+import { stringContains } from '../Groups/utils';
 
 function GroupTag({ id }: { id: number }) {
   const sdk = useSDK();
@@ -107,9 +108,7 @@ export default function EditGroups({ account }: { account: ServiceAccount }) {
           style={{ width: '90%' }}
           placeholder="Select groups"
           defaultValue={account.groups}
-          filterOption={(input, option) =>
-            option?.title?.toLowerCase().includes(input?.toLowerCase() || '')
-          }
+          filterOption={(input, option) => stringContains(option?.title, input)}
           optionLabelProp="title"
           onChange={e => {
             setLocalList(e);

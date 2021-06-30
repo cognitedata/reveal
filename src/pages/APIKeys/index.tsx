@@ -5,6 +5,7 @@ import { useQuery } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
 
 import columns from './columns';
+import { stringContains } from '../Groups/utils';
 
 export default function APIKeys() {
   const sdk = useSDK();
@@ -52,16 +53,10 @@ export default function APIKeys() {
         rowKey="id"
         dataSource={apiKeys
           .filter(a => (showDeleted ? true : a.status === 'ACTIVE'))
-          .filter(a =>
-            searchValue
-              ? a.serviceAccountId
-                  .toString()
-                  .includes(searchValue.toLowerCase()) ||
-                a.id.toString().includes(searchValue.toLowerCase()) ||
-                a.serviceAccountName
-                  ?.toString()
-                  .includes(searchValue.toLowerCase())
-              : true
+          .filter(
+            a =>
+              stringContains(String(a.serviceAccountId) ?? a.id, searchValue) ||
+              stringContains(String(a.serviceAccountName) ?? a.id, searchValue)
           )}
         pagination={{ pageSize: 25, hideOnSinglePage: true }}
       />
