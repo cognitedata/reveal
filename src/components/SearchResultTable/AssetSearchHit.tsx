@@ -67,7 +67,7 @@ export default function AssetSearchHit({ asset }: Props) {
           timeSeriesExternalId: timeSeries.externalId || '',
         });
 
-        const newTs = covertTSToChartTS(timeSeries, range);
+        const newTs = covertTSToChartTS(timeSeries, chart.id, range);
 
         updateChart(addTimeseries(chart, newTs));
         trackUsage('ChartView.AddTimeSeries', { source: 'search' });

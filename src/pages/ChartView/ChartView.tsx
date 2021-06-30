@@ -134,7 +134,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
             {
               id: newWorkflowId,
               name: 'New Calculation',
-              color: getEntryColor(),
+              color: getEntryColor(chart.id, newWorkflowId),
               lineWeight: 1,
               lineStyle: 'solid',
               enabled: true,

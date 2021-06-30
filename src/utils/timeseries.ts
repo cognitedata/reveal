@@ -33,7 +33,10 @@ export const calculateGranularity = (domain: number[], pps: number) => {
   return 'd';
 };
 
-export const convertTsToWorkFlow = (ts: ChartTimeSeries): ChartWorkflow => {
+export const convertTsToWorkFlow = (
+  chartId: string,
+  ts: ChartTimeSeries
+): ChartWorkflow => {
   const workflowId = nanoid();
   const inputNodeId = `${TimeSeriesReferenceNode.subtitle}-${nanoid()}`;
   const outputNodeId = `${OutputSeriesNode.subtitle}-${nanoid()}`;
@@ -74,7 +77,7 @@ export const convertTsToWorkFlow = (ts: ChartTimeSeries): ChartWorkflow => {
         },
       },
     },
-    color: getEntryColor(),
+    color: getEntryColor(chartId, workflowId),
     lineWeight: 1,
     lineStyle: 'solid',
     displayMode: 'lines',
