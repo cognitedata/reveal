@@ -21,6 +21,10 @@ export interface CadModelMetadata {
    * away to avoid representing unused geometry. Will typically
    * be used with geometry filters where only a part of the model
    * is loaded.
+   * Note that the coordinates of this box is in "model space" and
+   * not in "viewer space". To use this to e.g. create clip planes
+   * around the geometry, it must be transformed to "viewer space"
+   * first.
    */
   readonly geometryClipBox: THREE.Box3 | null;
   /**

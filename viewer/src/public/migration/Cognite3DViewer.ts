@@ -37,7 +37,7 @@ import {
 } from '../types';
 
 import { CdfModelDataClient } from '../../utilities/networking/CdfModelDataClient';
-import { assertNever, BoundingBoxClipper, File3dFormat, LoadingState } from '../../utilities';
+import { assertNever, File3dFormat, LoadingState } from '../../utilities';
 import { Spinner } from '../../utilities/Spinner';
 import { trackError, trackEvent } from '../../utilities/metrics';
 import { CdfModelIdentifier } from '../../utilities/networking/types';
@@ -132,7 +132,6 @@ export class Cognite3DViewer {
   private latestRequestId: number = -1;
   private readonly clock = new THREE.Clock();
   private _slicingNeedsUpdate: boolean = false;
-  private _geometryFilters: [Cognite3DModel, GeometryFilter][] = [];
 
   private readonly spinner: Spinner;
 
@@ -194,6 +193,8 @@ export class Cognite3DViewer {
 
   constructor(options: Cognite3DViewerOptions) {
     this._renderer = options.renderer || new THREE.WebGLRenderer();
+    this._renderer.localClippingEnabled = true;
+
     this._automaticNearFarPlane = options.automaticCameraNearFar !== undefined ? options.automaticCameraNearFar : true;
     this._automaticControlsSensitivity =
       options.automaticControlsSensitivity !== undefined ? options.automaticControlsSensitivity : true;
@@ -488,7 +489,7 @@ export class Cognite3DViewer {
       throw new NotSupportedInMigrationWrapperError('localPath is not supported');
     }
     if (options.orthographicCamera) {
-      throw new NotSupportedInMigrationWrapperError('ortographicsCamera is not supported');
+      throw new NotSupportedInMigrationWrapperError('orthographicCamera is not supported');
     }
     if (options.onComplete) {
       throw new NotSupportedInMigrationWrapperError('onComplete is not supported');
@@ -508,12 +509,6 @@ export class Cognite3DViewer {
     const model3d = new Cognite3DModel(modelId, revisionId, cadNode, this.sdkClient);
     this._models.push(model3d);
     this.scene.add(model3d);
-
-    if (options.geometryFilter) {
-      const geometryFilter = transformGeometryFilterToModelSpace(options.geometryFilter, model3d);
-      this._geometryFilters.push([model3d, geometryFilter]);
-      this.updateSlicingPlanes();
-    }
 
     return model3d;
   }
@@ -576,7 +571,6 @@ export class Cognite3DViewer {
     switch (model.type) {
       case 'cad':
         const cadModel = model as Cognite3DModel;
-        this.removeGeometryFilterForModel(cadModel);
         this._revealManager.removeModel(model.type, cadModel.cadNode);
         return;
 
@@ -738,16 +732,7 @@ export class Cognite3DViewer {
    * ```
    */
   setSlicingPlanes(slicingPlanes: THREE.Plane[]): void {
-    const geometryFilterPlanes = this._geometryFilters
-      .map(x => {
-        const [, filter] = x;
-        return new BoundingBoxClipper(filter.boundingBox).clippingPlanes;
-      })
-      .reduce((a, b) => a.concat(b), []);
-
-    const combinedSlicingPlanes = slicingPlanes.concat(geometryFilterPlanes);
-    this.renderer.localClippingEnabled = combinedSlicingPlanes.length > 0;
-    this._revealManager.clippingPlanes = combinedSlicingPlanes;
+    this._revealManager.clippingPlanes = slicingPlanes;
     this._slicingNeedsUpdate = true;
   }
 
@@ -1475,28 +1460,6 @@ export class Cognite3DViewer {
     // on hover callback
     canvas.addEventListener('mousemove', onHoverCallback);
   };
-
-  /**
-   * Removes a geometry filter for the model provided.
-   * @param model
-   */
-  private removeGeometryFilterForModel(model: Cognite3DModel) {
-    const filterIndex = this._geometryFilters.findIndex(x => {
-      const [candidateModel] = x;
-      return candidateModel === model;
-    });
-    if (filterIndex >= 0) {
-      this._geometryFilters.splice(filterIndex, 0);
-      this.updateSlicingPlanes();
-    }
-  }
-
-  /**
-   * Updates slicing planes. Must be called after manipulating geometry filters.
-   */
-  private updateSlicingPlanes() {
-    this.setSlicingPlanes(this._revealManager.clippingPlanes);
-  }
 }
 
 function adjustCamera(camera: THREE.Camera, width: number, height: number) {
