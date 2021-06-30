@@ -65,7 +65,7 @@ function SourceRows({
         />
       ),
     })),
-  ].sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+  ].sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
 
   return <>{sources.map((source) => source.render())}</>;
 }
