@@ -1,15 +1,21 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components/macro';
+import { useScreenshot } from 'use-screenshot-hook';
 import { Button, toast, Tooltip, TopBar } from '@cognite/cogs.js';
 import { useNavigate } from 'hooks';
 import { useChart, useDeleteChart, useUpdateChart } from 'hooks/firebase';
 import { useParams } from 'react-router-dom';
-import { duplicate } from 'utils/charts';
+import {
+  duplicate,
+  downloadImage,
+  toggleDownloadChartElements,
+} from 'utils/charts';
 import SharingDropdown from 'components/SharingDropdown/SharingDropdown';
 import { trackUsage } from 'utils/metrics';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 
 export const ChartActions = () => {
+  const { takeScreenshot } = useScreenshot();
   const move = useNavigate();
 
   const { chartId } = useParams<{ chartId: string }>();
@@ -85,12 +91,23 @@ export const ChartActions = () => {
   }
 
   return (
-    <TopBar.Item style={{ padding: '0 3px' }}>
+    <TopBar.Item className="downloadChartHide" style={{ padding: '0 3px' }}>
       <Tooltip content="Share">
         <SharingDropdown chart={chart} disabled={!isOwner} />
       </Tooltip>
-      <Tooltip content="Export">
-        <Button icon="Download" type="ghost" disabled aria-label="download" />
+      <Tooltip content="Download chart">
+        <Button
+          icon="Download"
+          type="ghost"
+          aria-label="download"
+          onClick={() => {
+            const height = toggleDownloadChartElements(true);
+            takeScreenshot('png').then((image) => {
+              toggleDownloadChartElements(false, height);
+              downloadImage(image, chart.name);
+            });
+          }}
+        />
       </Tooltip>
       <Tooltip content="Duplicate">
         <Button
