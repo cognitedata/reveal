@@ -26,7 +26,7 @@ export const WellKnownDistanceToMeterConversionFactors = new Map<string, number>
 ]);
 
 export interface ConsumedSector {
-  blobUrl: string;
+  modelIdentifier: string;
   metadata: SectorMetadata;
   levelOfDetail: LevelOfDetail;
   group: THREEext.AutoDisposeGroup | undefined;
@@ -34,14 +34,15 @@ export interface ConsumedSector {
 }
 
 export interface ParsedSector {
-  blobUrl: string;
+  modelIdentifier: string;
   metadata: SectorMetadata;
   data: null | ParseSectorResult | ParseCtmResult | SectorGeometry | SectorQuads;
   levelOfDetail: LevelOfDetail;
 }
 
 export interface WantedSector {
-  blobUrl: string;
+  modelIdentifier: string;
+  modelBaseUrl: string;
   geometryClipBox: THREE.Box3 | null;
   levelOfDetail: LevelOfDetail;
   metadata: SectorMetadata;

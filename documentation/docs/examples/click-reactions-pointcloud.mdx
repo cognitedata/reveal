@@ -1,7 +1,7 @@
 ---
-id: pointcloud-intersections
-title: Intersections in point clouds
-description: Detecting intersections from clicked positions in point cloud models
+id: click-reactions-pointcloud
+title: Reacting to clicks in point cloud models
+description: Detecting intersections from clicks in point cloud models
 ---
 
 While point clouds doesn't have a concept of nodes, applications can detect clicked points. Just like with
@@ -19,17 +19,15 @@ using a red sphere.
 
 ```js runnable
 viewer.on('click', event => {
-  viewer.getIntersectionFromPixel(
-    event.offsetX, 
-    event.offsetY
-  ).then(intersection => {
-    if (intersection) {
-      const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.1),
-        new THREE.MeshBasicMaterial({ wireframe: true, color: 'red' }));
-      sphere.position.copy(intersection.point);
-      viewer.addObject3D(sphere);
-    }
-  });
+  const intersection = await viewer.getIntersectionFromPixel(
+    event.offsetX, event.offsetY
+  );
+  if (intersection) {
+    const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.1),
+      new THREE.MeshBasicMaterial({ wireframe: true, color: 'red' }));
+    sphere.position.copy(intersection.point);
+    viewer.addObject3D(sphere);
+  };
 });
 ```
 
