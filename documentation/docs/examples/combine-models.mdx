@@ -74,7 +74,6 @@ for (let i = 0; i < 5; i++) {
   const sliceCenter = sliceOffset.clone().multiplyScalar(i).add(center);
   const sliceBounds = new THREE.Box3().setFromCenterAndSize(sliceCenter, sliceSize);
   const sliceColor = [...sliceColors[i]];
-  
 
   addFilteredModel(sliceBounds).then(model => {
     model.setDefaultNodeAppearance({ color: sliceColor });
