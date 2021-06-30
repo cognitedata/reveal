@@ -13,6 +13,7 @@ type Props = {
   onInfoClick?: (id?: string) => void;
   dateFrom: string;
   dateTo: string;
+  draggable?: boolean;
 };
 export default function TimeSeriesRows({
   chart,
@@ -23,6 +24,7 @@ export default function TimeSeriesRows({
   selectedSourceId,
   dateFrom,
   dateTo,
+  draggable = false,
 }: Props) {
   const isWorkspaceMode = mode === 'workspace';
   const isEditorMode = mode === 'editor';
@@ -34,6 +36,7 @@ export default function TimeSeriesRows({
         <Draggable key={t.id} draggableId={t.id} index={index}>
           {(draggableProvided, snapshot) => (
             <TimeSeriesRow
+              draggable={draggable}
               provided={draggableProvided}
               key={t.id}
               mutate={updateChart}

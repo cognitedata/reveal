@@ -426,6 +426,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                           <thead>{sourceTableHeaderRow}</thead>
                           <tbody>
                             <TimeSeriesRows
+                              draggable
                               chart={chart}
                               updateChart={updateChart}
                               mode={workspaceMode}

@@ -142,6 +142,7 @@ type Props = {
   dateFrom: string;
   provided?: DraggableProvided | undefined;
   dateTo: string;
+  draggable?: boolean;
 };
 export default function TimeSeriesRow({
   mutate,
@@ -155,6 +156,7 @@ export default function TimeSeriesRow({
   isFileViewerMode = false,
   dateFrom,
   dateTo,
+  draggable = false,
   provided = undefined,
 }: Props) {
   const sdk = useSDK();
@@ -344,7 +346,7 @@ export default function TimeSeriesRow({
       key={id}
       onClick={() => !disabled && onRowClick(id)}
       className={isSelected ? 'active' : undefined}
-      ref={provided?.innerRef}
+      ref={draggable ? provided?.innerRef : null}
       {...provided?.draggableProps}
       {...provided?.dragHandleProps}
     >
