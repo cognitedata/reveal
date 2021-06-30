@@ -1,6 +1,7 @@
 import React from 'react';
 import { Chart } from 'reducers/charts/types';
 import { Modes } from 'pages/types';
+import { Draggable } from 'react-beautiful-dnd';
 import TimeSeriesRow from './TimeSeriesRow';
 
 type Props = {
@@ -29,21 +30,26 @@ export default function TimeSeriesRows({
 
   return (
     <>
-      {chart?.timeSeriesCollection?.map((t) => (
-        <TimeSeriesRow
-          key={t.id}
-          mutate={updateChart}
-          chart={chart}
-          timeseries={t}
-          isWorkspaceMode={isWorkspaceMode}
-          onRowClick={onRowClick}
-          onInfoClick={onInfoClick}
-          isSelected={selectedSourceId === t.id}
-          disabled={isEditorMode}
-          isFileViewerMode={isFileViewerMode}
-          dateFrom={dateFrom}
-          dateTo={dateTo}
-        />
+      {chart?.timeSeriesCollection?.map((t, index) => (
+        <Draggable key={t.id} draggableId={t.id} index={index}>
+          {(draggableProvided, snapshot) => (
+            <TimeSeriesRow
+              provided={draggableProvided}
+              key={t.id}
+              mutate={updateChart}
+              chart={chart}
+              timeseries={t}
+              isWorkspaceMode={isWorkspaceMode}
+              onRowClick={onRowClick}
+              onInfoClick={onInfoClick}
+              isSelected={selectedSourceId === t.id}
+              disabled={isEditorMode}
+              isFileViewerMode={isFileViewerMode}
+              dateFrom={dateFrom}
+              dateTo={dateTo}
+            />
+          )}
+        </Draggable>
       ))}
     </>
   );

@@ -31,6 +31,7 @@ import { CogniteClient } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 import { calculateDefaultYAxis } from 'utils/axis';
 import { convertValue } from 'utils/units';
+import { DraggableProvided } from 'react-beautiful-dnd';
 import {
   SourceItem,
   SourceCircle,
@@ -139,6 +140,7 @@ type Props = {
   isWorkspaceMode?: boolean;
   isFileViewerMode?: boolean;
   dateFrom: string;
+  provided?: DraggableProvided | undefined;
   dateTo: string;
 };
 export default function TimeSeriesRow({
@@ -153,6 +155,7 @@ export default function TimeSeriesRow({
   isFileViewerMode = false,
   dateFrom,
   dateTo,
+  provided = undefined,
 }: Props) {
   const sdk = useSDK();
 
@@ -341,6 +344,9 @@ export default function TimeSeriesRow({
       key={id}
       onClick={() => !disabled && onRowClick(id)}
       className={isSelected ? 'active' : undefined}
+      ref={provided?.innerRef}
+      {...provided?.draggableProps}
+      {...provided?.dragHandleProps}
     >
       <td>
         <SourceItem isDisabled={disabled} key={id}>

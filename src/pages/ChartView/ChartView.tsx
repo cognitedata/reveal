@@ -28,6 +28,7 @@ import { ITimer } from '@cognite/metrics';
 import { Modes } from 'pages/types';
 import DetailsSidebar from 'components/DetailsSidebar';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
+import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import TimeSeriesRows from './TimeSeriesRows';
 import WorkflowRows from './WorkflowRows';
 
@@ -311,6 +312,29 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
       )}
     </tr>
   );
+  const reorder = (
+    list: ChartTimeSeries[],
+    startIndex: number,
+    endIndex: number
+  ) => {
+    const [removed] = list.splice(startIndex, 1);
+    list.splice(endIndex, 0, removed);
+    return list;
+  };
+
+  const onDragEnd = (result: any) => {
+    if (!result.destination) return;
+
+    const reorderedChart = {
+      ...chart,
+      timeSeriesCollection: reorder(
+        chart?.timeSeriesCollection || [],
+        result.source.index,
+        result.destination.index
+      ),
+    };
+    updateChart(reorderedChart);
+  };
 
   return (
     <ChartViewContainer id="chart-view">
@@ -393,43 +417,50 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
               </ChartWrapper>
             </TopPaneWrapper>
             <BottomPaneWrapper className="table">
-              <div style={{ display: 'flex', height: '100%' }}>
-                <SourceTableWrapper>
-                  <SourceTable>
-                    <thead>{sourceTableHeaderRow}</thead>
-                    <tbody>
-                      <TimeSeriesRows
-                        chart={chart}
-                        updateChart={updateChart}
-                        mode={workspaceMode}
-                        selectedSourceId={selectedSourceId}
-                        onRowClick={handleSourceClick}
-                        onInfoClick={handleInfoClick}
-                        dateFrom={chart.dateFrom}
-                        dateTo={chart.dateTo}
-                      />
+              <DragDropContext onDragEnd={onDragEnd}>
+                <Droppable droppableId="droppable-timeseries" type="TIMESERIES">
+                  {(provided, snapshot) => (
+                    <div style={{ display: 'flex', height: '100%' }}>
+                      <SourceTableWrapper>
+                        <SourceTable ref={provided.innerRef}>
+                          <thead>{sourceTableHeaderRow}</thead>
+                          <tbody>
+                            <TimeSeriesRows
+                              chart={chart}
+                              updateChart={updateChart}
+                              mode={workspaceMode}
+                              selectedSourceId={selectedSourceId}
+                              onRowClick={handleSourceClick}
+                              onInfoClick={handleInfoClick}
+                              dateFrom={chart.dateFrom}
+                              dateTo={chart.dateTo}
+                            />
 
-                      <WorkflowRows
-                        chart={chart}
-                        updateChart={updateChart}
-                        mode={workspaceMode}
-                        openNodeEditor={openNodeEditor}
-                        selectedSourceId={selectedSourceId}
-                        onRowClick={handleSourceClick}
-                        onInfoClick={handleInfoClick}
-                      />
-                    </tbody>
-                  </SourceTable>
-                </SourceTableWrapper>
-                {workspaceMode === 'editor' && !!selectedSourceId && (
-                  <NodeEditor
-                    mutate={updateChart}
-                    workflowId={selectedSourceId}
-                    closeNodeEditor={closeNodeEditor}
-                    chart={chart}
-                  />
-                )}
-              </div>
+                            <WorkflowRows
+                              chart={chart}
+                              updateChart={updateChart}
+                              mode={workspaceMode}
+                              openNodeEditor={openNodeEditor}
+                              selectedSourceId={selectedSourceId}
+                              onRowClick={handleSourceClick}
+                              onInfoClick={handleInfoClick}
+                            />
+                            {provided.placeholder}
+                          </tbody>
+                        </SourceTable>
+                      </SourceTableWrapper>
+                      {workspaceMode === 'editor' && !!selectedSourceId && (
+                        <NodeEditor
+                          mutate={updateChart}
+                          workflowId={selectedSourceId}
+                          closeNodeEditor={closeNodeEditor}
+                          chart={chart}
+                        />
+                      )}
+                    </div>
+                  )}
+                </Droppable>
+              </DragDropContext>
             </BottomPaneWrapper>
           </SplitPaneLayout>
         </ChartContainer>
