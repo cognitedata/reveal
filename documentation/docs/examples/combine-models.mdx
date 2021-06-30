@@ -12,7 +12,7 @@ import { DemoWrapper } from '@site/docs/components/DemoWrapper';
 
 <DemoWrapper name="Cognite3DViewerDemo" />
 
-# Modify coordinate systems
+## Modify coordinate systems
 
 In many cases, it will be necessary to apply some transformation to the models to make them be in the same
 coordinate system. This can be done using `setModelTransformation` with a [`THREE.Matrix4`](https://threejs.org/docs/#api/en/math/Matrix4)
@@ -38,3 +38,36 @@ viewer.addModel({
   viewer.fitCameraToModel(pointCloudModel);
 });
 ```
+
+## Use geometry filters to extract parts of a model
+
+Geometry filters allows only loading geometry within a specified box. By loading the same model with different geometry
+filters several subsections of the same model can be loaded in the same viewer.
+
+```js runnable
+viewer.models.forEach(x => viewer.removeModel(x));
+
+async function addFilteredModel(box) {
+  const model = await viewer.addModel({
+    modelId: 3356984403684032,
+    revisionId: 6664823881595566,
+    geometryFilter: {
+      boundingBox: box
+    }
+  });
+  viewer.fitCameraToModel(model);
+}
+
+const center = new THREE.Vector3(100, 75, 50);
+
+for (let i = 0; i < 5; i++) {
+  const offset = new THREE.Vector3().random().multiplyScalar(50);
+  const size = new THREE.Vector3().random().multiplyScalar(20);
+  addFilteredModel(new THREE.Box3().setFromCenterAndSize(offset.add(center), size));
+}
+```
+
+:::note 
+Geometry filters should not overlap as this will cause the same geometry to be loaded and 
+visualized more than once.
+:::
