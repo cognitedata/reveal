@@ -1,4 +1,9 @@
-import { getColor, availableColors, createColorGetter } from './colors';
+import {
+  getColor,
+  availableColors,
+  createColorGetter,
+  hexToRGBA,
+} from './colors';
 
 describe('Colors', () => {
   it('handles numbers', () => expect(getColor(1)).toBe(availableColors[1]));
@@ -20,5 +25,29 @@ describe('Stateful colors', () => {
     expect(getNextColor()).toBe(availableColors[6]);
     expect(getNextColor()).toBe(availableColors[7]);
     expect(getNextColor()).toBe(availableColors[8]);
+  });
+});
+
+describe('Hex to RGBA', () => {
+  it('handles 6 char hex', () => {
+    const rgba = hexToRGBA('#FFFFFF');
+
+    expect(rgba).toBe(`rgba(255, 255, 255, 1)`);
+  });
+
+  it('handles 3 char hex', () => {
+    const rgba = hexToRGBA('#FFF');
+
+    expect(rgba).toBe(`rgba(255, 255, 255, 1)`);
+  });
+
+  it('handle alpha value', () => {
+    const rgba = hexToRGBA('#FFF333', 0.5);
+    expect(rgba).toBe('rgba(255, 243, 51, 0.5)');
+  });
+
+  it('does not handle hex without #', () => {
+    const rgba = hexToRGBA('FFF');
+    expect(rgba).toBe(null);
   });
 });
