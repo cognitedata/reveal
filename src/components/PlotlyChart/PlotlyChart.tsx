@@ -35,6 +35,7 @@ import { useChart, useUpdateChart } from 'hooks/firebase';
 import { updateSourceAxisForChart } from 'utils/charts';
 import { trackUsage } from 'utils/metrics';
 import { roundToSignificantDigits } from 'utils/axis';
+import { hexToRGBA } from 'utils/colors';
 import {
   calculateStackedYRange,
   getXaxisUpdateFromEventData,
@@ -185,20 +186,6 @@ const PlotlyChartComponent = ({
     }
   }, [containerRef]);
 
-  // need to use Fillcolor with rgba as value type to set specific opacity
-  const hexToRGBA = (hex: string | undefined, alpha?: number) => {
-    if (!hex) {
-      return null;
-    }
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result
-      ? `rgba(${parseInt(result[1], 16)},
-              ${parseInt(result[2], 16)},
-              ${parseInt(result[3], 16)},
-              ${alpha ?? 1}`
-      : null;
-  };
-
   const seriesData: SeriesData[] = useMemo(
     () =>
       [
@@ -332,7 +319,7 @@ const PlotlyChartComponent = ({
         ...average,
         line: { width: 0 },
         fill: currMin > currAvg ? 'tonexty' : 'none',
-        fillcolor: hexToRGBA(color, 0.2),
+        fillcolor: hexToRGBA(color, 0.2) ?? 'none',
         y: minYValues,
         hovertemplate:
           '%{y} &#183; <span style="color:#8c8c8c">Min value: %{fullData.name}</span><extra></extra>',
@@ -340,7 +327,7 @@ const PlotlyChartComponent = ({
 
       const max = {
         ...average,
-        fillcolor: hexToRGBA(color, 0.2),
+        fillcolor: hexToRGBA(color, 0.2) ?? 'none',
         line: { width: 0 },
         fill: 'tonexty',
         y: maxYValues,
