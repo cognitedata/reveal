@@ -31,6 +31,6 @@ const consoleWarn = console.warn.bind(console);
 };
 
 Object.assign(process.env, {
-  VERSION: require('../../package.json').version,
-  WORKER_VERSION: require('../../node_modules/@cognite/reveal-parser-worker/package.json').version
+  VERSION: require('../../../package.json').version,
+  WORKER_VERSION: require('../../../node_modules/@cognite/reveal-parser-worker/package.json').version
 });

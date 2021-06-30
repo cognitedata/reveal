@@ -6,11 +6,11 @@ import { RevealParserWorker } from '@cognite/reveal-parser-worker';
 import { checkWorkerVersion } from './WorkerPool';
 
 const createWorkerWithVersion = (version: string) => {
-  return ({
+  return {
     async getVersion() {
       return version;
     }
-  } as any) as RevealParserWorker;
+  } as any as RevealParserWorker;
 };
 
 describe('WorkerPool test cases', () => {
