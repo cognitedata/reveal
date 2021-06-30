@@ -45,23 +45,10 @@ export class CadMaterialManager {
     this.triggerMaterialsChanged();
   }
 
-  get clipIntersection(): boolean {
-    return this._clipIntersection;
-  }
-
-  set clipIntersection(intersection: boolean) {
-    this._clipIntersection = intersection;
-    this.applyToAllMaterials(material => {
-      material.clipIntersection = intersection;
-    });
-    this.triggerMaterialsChanged();
-  }
-
   private _renderMode: RenderMode = RenderMode.Color;
   private readonly materialsMap: Map<string, MaterialsWrapper> = new Map();
   // TODO: j-bjorne 29-04-2020: Move into separate cliping manager?
   private _clippingPlanes: THREE.Plane[] = [];
-  private _clipIntersection: boolean = false;
 
   public on(event: 'materialsChanged', listener: () => void): void {
     switch (event) {

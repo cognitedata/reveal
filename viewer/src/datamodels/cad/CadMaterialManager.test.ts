@@ -34,15 +34,6 @@ describe('CadMaterialManager', () => {
     expect(materialsChangedListener).toBeCalledTimes(1);
   });
 
-  test('set clip intersections, materials are updated', () => {
-    manager.addModelMaterials('model', 16);
-    const materialsChangedListener = jest.fn();
-    manager.on('materialsChanged', materialsChangedListener);
-
-    manager.clipIntersection = !manager.clipIntersection;
-    expect(materialsChangedListener).toBeCalledTimes(1);
-  });
-
   test('set render mode, materials are updated', () => {
     manager.addModelMaterials('model', 16);
     const materialsChangedListener = jest.fn();
