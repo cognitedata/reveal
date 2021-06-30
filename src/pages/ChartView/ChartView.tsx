@@ -28,8 +28,7 @@ import { ITimer } from '@cognite/metrics';
 import { Modes } from 'pages/types';
 import DetailsSidebar from 'components/DetailsSidebar';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
-import TimeSeriesRows from './TimeSeriesRows';
-import WorkflowRows from './WorkflowRows';
+import SourceRows from './SourceRows';
 
 import {
   BottomPaneWrapper,
@@ -141,6 +140,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
               enabled: true,
               nodes: [],
               connections: [],
+              createdAt: Date.now(),
             },
           ],
         },
@@ -423,25 +423,16 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                   <SourceTable>
                     <thead>{sourceTableHeaderRow}</thead>
                     <tbody>
-                      <TimeSeriesRows
+                      <SourceRows
                         chart={chart}
                         updateChart={updateChart}
                         mode={workspaceMode}
                         selectedSourceId={selectedSourceId}
+                        openNodeEditor={openNodeEditor}
                         onRowClick={handleSourceClick}
                         onInfoClick={handleInfoClick}
                         dateFrom={chart.dateFrom}
                         dateTo={chart.dateTo}
-                      />
-
-                      <WorkflowRows
-                        chart={chart}
-                        updateChart={updateChart}
-                        mode={workspaceMode}
-                        openNodeEditor={openNodeEditor}
-                        selectedSourceId={selectedSourceId}
-                        onRowClick={handleSourceClick}
-                        onInfoClick={handleInfoClick}
                       />
                     </tbody>
                   </SourceTable>
