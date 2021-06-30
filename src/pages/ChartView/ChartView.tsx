@@ -268,27 +268,42 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
               <SourceName>Unit</SourceName>
             </SourceItem>
           </th>
-          <th style={{ width: 50, paddingLeft: 0 }}>
+          <th
+            style={{ width: 50, paddingLeft: 0 }}
+            className="downloadChartHide"
+          >
             <SourceItem style={{ justifyContent: 'center' }}>
               <SourceName>P&amp;IDs</SourceName>
             </SourceItem>
           </th>
-          <th style={{ width: 50, paddingLeft: 0 }}>
+          <th
+            style={{ width: 50, paddingLeft: 0 }}
+            className="downloadChartHide"
+          >
             <SourceItem style={{ justifyContent: 'center' }}>
               <SourceName>Style</SourceName>
             </SourceItem>
           </th>
-          <th style={{ width: 50, paddingLeft: 0 }}>
+          <th
+            style={{ width: 50, paddingLeft: 0 }}
+            className="downloadChartHide"
+          >
             <SourceItem style={{ justifyContent: 'center' }}>
               <SourceName>Remove</SourceName>
             </SourceItem>
           </th>
-          <th style={{ width: 50, paddingLeft: 0 }}>
+          <th
+            style={{ width: 50, paddingLeft: 0 }}
+            className="downloadChartHide"
+          >
             <SourceItem style={{ justifyContent: 'center' }}>
               <SourceName>Details</SourceName>
             </SourceItem>
           </th>
-          <th style={{ width: 50, paddingLeft: 0 }}>
+          <th
+            style={{ width: 50, paddingLeft: 0 }}
+            className="downloadChartHide"
+          >
             <SourceItem style={{ justifyContent: 'center' }}>
               <SourceName>More</SourceName>
             </SourceItem>
@@ -304,7 +319,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
         <Search visible={showSearch} onClose={handleCloseSearch} />
       )}
       <ContentWrapper showSearch={showSearch}>
-        <Header inSearch={showSearch}>
+        <Header className="downloadChartHide" inSearch={showSearch}>
           {!showSearch && (
             <section className="actions">
               <Button icon="Plus" type="primary" onClick={handleOpenSearch}>
