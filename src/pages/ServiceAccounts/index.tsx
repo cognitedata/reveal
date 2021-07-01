@@ -109,7 +109,7 @@ export default function ServiceAccounts() {
                 }
               >
                 {allGroups.map(g => (
-                  <Option key={g.id} value={g.id}>
+                  <Option key={g.id} value={g.id} title={g.name}>
                     {g.name}
                   </Option>
                 ))}
