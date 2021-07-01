@@ -48,13 +48,6 @@ export default function AssetSearchHit({ asset, query = '' }: Props) {
     [data]
   );
 
-  // const style = {
-  //   backgroundColor: var('--cogs-yellow-4'),
-  //   opacity: 0.4,
-  //   fontWeight: 'bold',
-  //   marginLeft: 5,
-  // } as React.CSSProperties;
-
   const selectedExternalIds:
     | undefined
     | string[] = chart?.timeSeriesCollection
@@ -93,7 +86,6 @@ export default function AssetSearchHit({ asset, query = '' }: Props) {
             <Highlighter
               highlightStyle={{
                 backgroundColor: Colors['yellow-4'].alpha(0.4),
-                fontWeight: 'bold',
                 marginLeft: 5,
               }}
               searchWords={[query]}
@@ -105,7 +97,6 @@ export default function AssetSearchHit({ asset, query = '' }: Props) {
             <Highlighter
               highlightStyle={{
                 backgroundColor: Colors['yellow-4'].alpha(0.4),
-                fontWeight: 'bold',
                 marginLeft: 5,
               }}
               searchWords={[query]}
