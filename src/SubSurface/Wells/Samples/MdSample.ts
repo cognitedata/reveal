@@ -20,6 +20,8 @@ export class MdSample {
 
   public md: number;
 
+  public mdUnit?: string;
+
   //= =================================================
   // INSTANCE PROPERTIES
   //= =================================================
@@ -30,7 +32,7 @@ export class MdSample {
   // CONSTRUCTOR
   //= =================================================
 
-  public constructor(md = 0) { this.md = md; }
+  public constructor(md = 0, mdUnit?: string) { this.md = md; this.mdUnit = mdUnit}
 
   //= =================================================
   // VIRTUAL METHODS

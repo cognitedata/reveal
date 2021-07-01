@@ -36,8 +36,8 @@ export class PointLogSample extends BaseLogSample {
   // CONSTRUCTOR
   //= =================================================
 
-  public constructor(description: string, topMd: number, baseMd?: number) {
-    super(topMd);
+  public constructor(description: string, topMd: number, topMdUnit?: string, baseMd?: number) {
+    super(topMd, topMdUnit);
     this.description = description;
     if (baseMd === undefined || Number.isNaN(baseMd))
       this.baseMd = topMd;

@@ -210,7 +210,7 @@ export class PointLogView extends BaseGroupThreeView {
     if (!sample)
       return;
 
-    const md = WellTrajectoryView.startPickingAndReturnMd(this, viewInfo, intersection, sample.md);
+    const md = WellTrajectoryView.startPickingAndReturnMd(this, viewInfo, intersection, sample.md, sample.mdUnit);
     if (md === undefined)
       return;
 

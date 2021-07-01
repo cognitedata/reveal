@@ -25,6 +25,17 @@ import {
   trajectory,
   trajectoryData,
 } from '../../src/__tests__/Solutions/BP/subsurface.mock';
+import {
+  bpWells,
+  bpWellBores,
+  bpTrajectories,
+  bpTrajectoryData,
+  bpCasings,
+  bpLogs,
+  bpLogsFrmTops,
+  bpNdsEvents,
+  bpNptEvents
+} from '../../src/__tests__/Solutions/BP/subsurfaceWithEvents.mock'
 
 const StyledRow = styled(Row)`
   margin-bottom: 5px;
@@ -332,3 +343,38 @@ export const NodeVisualiserWithWells = () => {
     </div>
   );
 };
+
+export const NodeVisualiserWithWellsAndEvents = () => {
+  Modules.instance.clearModules()
+
+  const modules = Modules.instance
+  modules.add(new ThreeModule())
+
+  const subsurfaceModule = new SubSurfaceModule()
+
+  subsurfaceModule.addWellData({
+    wells: bpWells,
+    wellBores: bpWellBores,
+    trajectories: bpTrajectories,
+    trajectoryData: bpTrajectoryData,
+    casings: bpCasings,
+    ndsEvents: bpNdsEvents,
+    nptEvents: bpNptEvents,
+    logs: bpLogs,
+    logsFrmTops: bpLogsFrmTops,
+  })
+
+  modules.add(subsurfaceModule)
+
+  modules.install()
+
+  const root = modules.createRoot()
+
+  return (
+    <div style={{ width: '100%', height: '100%' }}>
+      <Provider store={store}>
+        <NodeVisualizer root={root} />
+      </Provider>
+    </div>
+  )
+}

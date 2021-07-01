@@ -48,6 +48,7 @@ export interface INptMetaData {
   npt_detail_code: string
   npt_level: string; // "1.0"
   npt_md: string;
+  npt_md_unit?: string;
   root_cause: string;
   total_npt_duration_hrs: string; // "1.0"
   type: string;

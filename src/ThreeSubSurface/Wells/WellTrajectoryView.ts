@@ -649,7 +649,13 @@ export class WellTrajectoryView extends BaseGroupThreeView {
   // STATIC METHODS:
   //= =================================================
 
-  public static startPickingAndReturnMd(view: BaseThreeView, viewInfo: ViewInfo, intersection: THREE.Intersection, md?: number): number | undefined {
+  private static generateMeterAndFeetMdValues(md: number, mdUnit?: string): string {
+		return !mdUnit || Units.isFeet(mdUnit)
+			? `${Units.convertFeetToMeter(md).toFixed(2)} m / ${md.toFixed(2)} ft`
+			: `${md.toFixed(2)} ${mdUnit}`;
+	}
+
+  public static startPickingAndReturnMd(view: BaseThreeView, viewInfo: ViewInfo, intersection: THREE.Intersection, md?: number, mdUnit?: string): number | undefined {
     const node = view.getNode();
     const wellNode = node.getThisOrAncestorByType(WellNode);
     if (!wellNode)
@@ -676,7 +682,7 @@ export class WellTrajectoryView extends BaseGroupThreeView {
 
     viewInfo.addValue("Well", wellNode.displayName);
     viewInfo.addValue("Trajectory", trajectoryNode.displayName);
-    viewInfo.addValue("Md", `${md.toFixed(2)} m / ${Units.convertMeterToFeet(md).toFixed(2)} ft`);
+    viewInfo.addValue('Md', this.generateMeterAndFeetMdValues(md, mdUnit));
     viewInfo.addValue("Tvd", `${tvd.toFixed(2)} m / ${Units.convertMeterToFeet(tvd).toFixed(2)} ft`);
     return md;
   }

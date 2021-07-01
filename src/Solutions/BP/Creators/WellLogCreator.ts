@@ -172,7 +172,7 @@ export class WellLogCreator {
         risk_sub_category: riskSubCategory,
         details
       } = metadata as INdsMetadata;
-      const { npt_md: nptMd } = metadata as INptMetaData;
+      const { npt_md: nptMd, npt_md_unit: nptMdUnit } = metadata as INptMetaData;
 
       let topMd = Number.NaN;
       if (mdHoleStart !== undefined)
@@ -185,7 +185,7 @@ export class WellLogCreator {
 
       const baseMd = Util.getNumberWithUnit( mdHoleEnd, mdHoleEndUnit);
       const { subtype, description } = event;
-      const sample = new PointLogSample(description, topMd, baseMd);
+      const sample = new PointLogSample(description, topMd, nptMdUnit, baseMd);
       sample.subtype = subtype;
       if ( riskSubCategory !== undefined)
         sample.riskSubCategory = riskSubCategory;
