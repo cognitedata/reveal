@@ -95,11 +95,9 @@ export enum Source {
   EDM = 'EDM',
 }
 
-export interface Configuration {
-  id?: string;
-  created_time?: string;
-  last_updated?: string;
-  name: string | null | undefined;
+export interface NewConfiguration {
+  name: string | null;
+  author: string;
   source: {
     external_id: string;
     source: Source;
@@ -108,10 +106,9 @@ export interface Configuration {
     external_id: string;
     source: Source;
   };
-  business_tags?: string[];
-  author: string;
-  status_active?: boolean;
+  business_tags: string[];
   datatypes: string[];
+  data_status: string[];
 }
 
 export interface ConfigurationOWtoPS {

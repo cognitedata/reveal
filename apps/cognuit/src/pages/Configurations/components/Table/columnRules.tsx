@@ -2,6 +2,7 @@ import { Rule, UNIX_TIMESTAMP_FACTOR } from 'typings/interfaces';
 import { Badge, Colors, Icon, Tooltip } from '@cognite/cogs.js';
 import { ProgressType } from 'components/Molecules/ProgressBar/types';
 import ProgressBar from 'components/Molecules/ProgressBar';
+import { ThirdPartySystems } from 'types/globalTypes';
 
 import EditableName from '../EditableName';
 import { StatusDot } from '../../../DataTransfers/elements';
@@ -152,8 +153,8 @@ export const columnRules: (actions: Props) => Rule[] = ({
             <Tooltip
               content={
                 value.direction === 'psToOw'
-                  ? 'Petrel Studio to Open Works'
-                  : 'Open Works to Petrel Studio'
+                  ? `${ThirdPartySystems.PS} to ${ThirdPartySystems.OW}`
+                  : `${ThirdPartySystems.OW} to ${ThirdPartySystems.PS}`
               }
             >
               <DirectionArrows psToOw={value.direction === 'psToOw'} />

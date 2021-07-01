@@ -1,3 +1,4 @@
+import { reportException } from '@cognite/react-errors';
 import ApiContext from 'contexts/ApiContext';
 import APIErrorContext from 'contexts/APIErrorContext';
 import { useContext } from 'react';
@@ -16,29 +17,38 @@ const useConfigurationsMutation = () => {
       removeError();
     },
     onError: (error: CustomError) => {
+      reportException(error);
       addError(error.message, error.status);
     },
   };
 
-  const update = useMutation(({ id, name }: { id: number; name: string }) => {
-    return api!.configurations.update(id, { name });
-  }, defaultConfigs);
+  const createConfigurations = useMutation((data: any) => {
+    return api!.configurations.create(data);
+  });
 
-  const startOrStop = useMutation(
+  const updateConfigurations = useMutation(
+    ({ id, name }: { id: number; name: string }) => {
+      return api!.configurations.update(id, { name });
+    },
+    defaultConfigs
+  );
+
+  const startOrStopConfigurations = useMutation(
     ({ id, isActive }: { id: number; isActive: boolean }) => {
       return api!.configurations.startOrStopConfiguration(id, isActive);
     },
     defaultConfigs
   );
 
-  const restart = useMutation(({ id }: { id: number }) => {
+  const restartConfigurations = useMutation(({ id }: { id: number }) => {
     return api!.configurations.restart(id);
   }, defaultConfigs);
 
   return {
-    update,
-    startOrStop,
-    restart,
+    createConfigurations,
+    updateConfigurations,
+    startOrStopConfigurations,
+    restartConfigurations,
   };
 };
 

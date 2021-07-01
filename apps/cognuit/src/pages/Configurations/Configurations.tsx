@@ -24,7 +24,11 @@ const Configurations = () => {
   const [expandedColumns, setExpandedColumns] = React.useState<any>({});
 
   const { isLoading, ...configsQuery } = useConfigurationsQuery();
-  const { update, startOrStop, restart } = useConfigurationsMutation();
+  const {
+    updateConfigurations,
+    startOrStopConfigurations,
+    restartConfigurations,
+  } = useConfigurationsMutation();
 
   const handleNameChange = (id: number, newName: string) => {
     const nameIndex = data.findIndex((item) => item.name === newName);
@@ -36,7 +40,7 @@ const Configurations = () => {
       return false;
     }
 
-    update.mutateAsync({ id, name: newName }).then(() => {
+    updateConfigurations.mutateAsync({ id, name: newName }).then(() => {
       return false;
     });
 
@@ -57,7 +61,7 @@ const Configurations = () => {
   }
 
   function handleStopStart(id: number, isActive: boolean) {
-    startOrStop
+    startOrStopConfigurations
       .mutateAsync({ id, isActive })
       .then((response: ConfigurationsResponse) => {
         setUpdatedConfiguration(id, response);
@@ -65,7 +69,7 @@ const Configurations = () => {
   }
 
   function handleRestart(id: number) {
-    restart.mutate({ id });
+    restartConfigurations.mutate({ id });
   }
 
   // Cogs.js hasn't exported Row from React Table.

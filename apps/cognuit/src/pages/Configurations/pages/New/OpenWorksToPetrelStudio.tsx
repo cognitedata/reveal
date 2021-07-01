@@ -21,6 +21,7 @@ import {
 import { CustomError } from 'services/CustomError';
 import LoadingBox from 'components/Molecules/LoadingBox';
 import { CloseIcon } from 'components/Organisms/DetailView/elements';
+import { ThirdPartySystems } from 'types/globalTypes';
 
 import {
   BorderedBottomContainer,
@@ -36,8 +37,7 @@ import {
   InitialState,
   SaveButton,
   ThreeColsLayout,
-} from '../../elements';
-
+} from './elements';
 import DatatypeSection from './components/DatatypeSection/DatatypeSection';
 import ConfigArrow from './components/ConfigArrow';
 import { makeConnectorLines } from './utils';
@@ -319,7 +319,7 @@ const OpenWorksToPetrelStudio = ({ name }: Props) => {
         <ThreeColsLayout>
           <ConfigurationContainer>
             <header>
-              <ContainerHeading>OpenWorks</ContainerHeading>
+              <ContainerHeading>{ThirdPartySystems.OW}</ContainerHeading>
               {sourceUIState === ConfigUIState.CONFIRMED && (
                 <>
                   <div>{configuration.source.external_id}</div>
@@ -496,7 +496,7 @@ const OpenWorksToPetrelStudio = ({ name }: Props) => {
           <ConfigArrow />
           <ConfigurationContainer>
             <header>
-              <ContainerHeading>Petrel Studio</ContainerHeading>
+              <ContainerHeading>{ThirdPartySystems.PS}</ContainerHeading>
               {targetUIState === ConfigUIState.CONFIRMED && (
                 <>
                   <div>{configuration.target.external_id}</div>

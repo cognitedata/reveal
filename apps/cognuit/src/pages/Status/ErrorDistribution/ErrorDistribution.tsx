@@ -3,6 +3,7 @@ import { Pie } from 'react-chartjs-2';
 import { APIContextValue } from 'contexts/ApiContext';
 import { CustomError } from 'services/CustomError';
 import { ErrorDistributionObject } from 'typings/interfaces';
+import { ThirdPartySystems } from 'types/globalTypes';
 
 import ApiContext from '../../../contexts/ApiContext';
 import EmptyTableMessage from '../../../components/Molecules/EmptyTableMessage/EmptyTableMessage';
@@ -87,13 +88,17 @@ const ErrorDistribution = ({ afterTimestamp }: Props) => {
         <>
           {psData.length > 0 && (
             <ChartContainer>
-              <h3>Petrel Studio to Openworks</h3>
+              <h3>
+                {ThirdPartySystems.PS} to {ThirdPartySystems.OW}
+              </h3>
               {renderPie(psData, 'Studio')}
             </ChartContainer>
           )}
           {owData.length > 0 && (
             <ChartContainer>
-              <h3>Openworks to Petrel Studio</h3>
+              <h3>
+                {ThirdPartySystems.OW} to {ThirdPartySystems.PS}{' '}
+              </h3>
               {renderPie(owData, 'Openworks')}
             </ChartContainer>
           )}

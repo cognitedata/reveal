@@ -1,62 +1,50 @@
-import { useContext, useEffect, useState } from 'react';
-import { Badge, Button, Icon, Modal } from '@cognite/cogs.js';
-import { Checkbox, notification, Select } from 'antd';
-import {
-  Configuration,
-  GenericResponseObject,
-  Source,
-} from 'typings/interfaces';
+import { useContext, useEffect, useState, useMemo, FC } from 'react';
+import { Button, Modal } from '@cognite/cogs.js';
+import { notification } from 'antd';
+import { NewConfiguration, Source } from 'typings/interfaces';
 import { AuthProvider, AuthContext } from '@cognite/react-container';
 import { SelectValue } from 'antd/es/select';
-import ApiContext from 'contexts/ApiContext';
 import APIErrorContext from 'contexts/APIErrorContext';
 import { Link, useHistory } from 'react-router-dom';
-import ErrorMessage from 'components/Molecules/ErrorMessage';
-import { DatatypesResponse, ProjectsResponse } from 'types/ApiInterface';
 import { CustomError } from 'services/CustomError';
+import { CloseIcon } from 'components/Organisms/DetailView/elements';
+import {
+  useProjectsBusinessTagsQuery,
+  useProjectsQuery,
+} from 'services/endpoints/projects/query';
+import { useDatatypesQuery } from 'services/endpoints/datatypes/query';
+import { useConfigurationsMutation } from 'services/endpoints/configurations/mutation';
+import { useDataStatusQuery } from 'services/endpoints/datastatus/query';
 
 import {
-  BadgesContainer,
-  ConfigurationContainer,
   ConfigurationsMainContainer,
   ConnectionLinesWrapper,
-  ConnectorList,
-  ContainerHeading,
-  EditButton,
   ErrorModal,
   Header,
-  InitialState,
   SaveButton,
   ThreeColsLayout,
-} from '../../elements';
-import { CloseIcon } from '../../../../components/Organisms/DetailView/elements';
-
-import { makeConnectorLines } from './utils';
+  Title,
+} from './elements';
+import { TargetOrigin, SourceOrigin } from './components/PsToOwContainer';
+import {
+  getRepositoryIdInArrayFromExternalId,
+  makeConnectorLines,
+} from './utils';
 import ConfigArrow from './components/ConfigArrow';
+import { ChangeType, ConfigUIState, Origin } from './types';
 
-type Props = {
-  name: string | undefined | null;
-};
-
-enum ConfigUIState {
-  INITIAL,
-  CONFIGURING,
-  CONFIRMED,
-  ERROR,
+interface Props {
+  name: string | null;
 }
 
-enum ChangeType {
-  REPO,
-  PROJECT,
-  TAGS,
-  DATATYPES,
-}
-
-const PetrelStudioToOpenWorks = ({ name }: Props) => {
+const PetrelStudioToOpenWorks: FC<Props> = ({ name }) => {
   const { authState } = useContext<AuthContext>(AuthProvider);
+  const { addError } = useContext(APIErrorContext);
+  const history = useHistory();
+
   const user = authState?.email;
 
-  const [configuration, setConfiguration] = useState<Configuration>({
+  const [configuration, setConfiguration] = useState<NewConfiguration>({
     name,
     source: {
       external_id: '',
@@ -69,9 +57,12 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
     business_tags: [],
     author: String(user),
     datatypes: [],
+    data_status: [],
   });
+
   const [configurationIsComplete, setConfigurationIsComplete] =
     useState<boolean>(false);
+
   const [sourceUIState, setSourceUIState] = useState<ConfigUIState>(
     ConfigUIState.INITIAL
   );
@@ -80,102 +71,45 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
   );
   const [sourceComplete, setSourceComplete] = useState<boolean>(false);
   const [targetComplete, setTargetComplete] = useState<boolean>(false);
-  const [availableRepositories, setAvailableRepositories] = useState<
-    GenericResponseObject[]
-  >([]);
-  const [availableProjects, setAvailableProjects] = useState<
-    GenericResponseObject[]
-  >([]);
-  const [availableDataTypes, setAvailableDataTypes] = useState<
-    { label: string; value: string }[]
-  >([
-    {
-      label: 'apple',
-      value: 'apple',
-    },
-  ]);
-  const [availableTags, setAvailableTags] = useState<string[]>([]);
+
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [creationError, setCreationError] = useState<string | null>(null);
-  const { api } = useContext(ApiContext);
-  const { error: apiError, addError } = useContext(APIErrorContext);
-  const history = useHistory();
-  const { Option } = Select;
 
-  useEffect(() => {
-    setConfiguration((prevState) => ({
-      ...prevState,
-      author: String(user),
-    }));
-  }, [user]);
+  const { createConfigurations } = useConfigurationsMutation();
 
-  async function fetchRepositories(): Promise<ProjectsResponse[]> {
-    return api!.projects.get(Source.STUDIO);
-  }
+  const { data: availableRepositories } = useProjectsQuery({
+    source: Source.STUDIO,
+    enabled: sourceUIState !== ConfigUIState.INITIAL,
+  });
 
-  async function fetchProjects(): Promise<ProjectsResponse[]> {
-    return api!.projects.get(Source.OPENWORKS);
-  }
+  const { data: availableProjects } = useProjectsQuery({
+    source: Source.OPENWORKS,
+    enabled: targetUIState !== ConfigUIState.INITIAL,
+  });
 
-  async function fetchDataTypes(
-    projectId: number
-  ): Promise<DatatypesResponse[]> {
-    return api!.datatypes.get(projectId);
-  }
+  const { data: availableDataStatus } = useDataStatusQuery({
+    enabled: sourceUIState !== ConfigUIState.INITIAL,
+  });
 
-  async function fetchBusinessTags(
-    repository: string = configuration.source.external_id
-  ): Promise<string[]> {
-    return api!.projects.getBusinessTags(
-      configuration.source.source,
-      repository
+  const { data: availableBusinessTags } = useProjectsBusinessTagsQuery({
+    repository: configuration.source.external_id,
+    source: configuration.source.source,
+    enabled: !!(
+      configuration.source.source && configuration.source.external_id
+    ),
+  });
+
+  const repoId = useMemo(() => {
+    return getRepositoryIdInArrayFromExternalId(
+      availableRepositories,
+      configuration.source.external_id
     );
-  }
+  }, [configuration.source.external_id]);
 
-  function getRepositoryIdInArrayFromExternalId(externalId: string) {
-    return availableRepositories.find(
-      (element) => element.external_id === externalId
-    );
-  }
-
-  function handleChange(type: ChangeType, value: SelectValue) {
-    if (type === ChangeType.REPO) {
-      updateSourceRepository(value);
-      fetchDataTypes(
-        getRepositoryIdInArrayFromExternalId((value || '').toString())!.id
-      ).then((response) => {
-        const results: any = [];
-        response.map((item) => results.push({ label: item, value: item }));
-        setAvailableDataTypes(results);
-        updateDataTypes([]);
-      });
-    } else if (type === ChangeType.PROJECT) {
-      updateTargetProject(value);
-    } else if (type === ChangeType.TAGS) {
-      updateBusinessTags(value);
-    } else if (type === ChangeType.DATATYPES) {
-      updateDataTypes(value);
-    }
-  }
-
-  function handleSaveConfigurationClick() {
-    setIsSaving(true);
-    api!.configurations
-      .create(configuration)
-      .then(() => {
-        setIsSaving(false);
-        notification.success({
-          message: 'Configuration created',
-          description: 'Configuration was created successfully',
-        });
-        history.push('/configurations'); // Bug in react-router-dom - does not render after history.push()
-      })
-      .catch((err: CustomError) => {
-        setIsSaving(false);
-        addError(`Failed to save configuration - ${err.message}`, err.status);
-        setCreationError(`Server status: - ${err.status}: ${err.message}`);
-      });
-  }
+  const { data: availableDataTypes } = useDatatypesQuery({
+    id: repoId,
+    enabled: !!repoId,
+  });
 
   function updateSourceRepository(value: SelectValue) {
     setConfiguration((prevState) => ({
@@ -183,10 +117,8 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
       source: { ...prevState.source, external_id: (value || '').toString() },
       business_tags: [],
       datatypes: [],
+      data_status: [],
     }));
-    fetchBusinessTags((value || '').toString()).then((response) =>
-      setAvailableTags(response)
-    );
   }
 
   function updateTargetProject(value: SelectValue) {
@@ -208,6 +140,53 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
       ...prevState,
       datatypes: value,
     }));
+  }
+
+  function updateDataStatus(value: any) {
+    setConfiguration((prevState) => ({
+      ...prevState,
+      data_status: value,
+    }));
+  }
+
+  function handleChange(type: ChangeType, value: any) {
+    if (type === ChangeType.REPO) {
+      updateSourceRepository(value);
+    } else if (type === ChangeType.PROJECT) {
+      updateTargetProject(value);
+    } else if (type === ChangeType.TAGS) {
+      updateBusinessTags(value);
+    } else if (type === ChangeType.DATATYPES) {
+      updateDataTypes(value);
+    } else if (type === ChangeType.DATASTATUS) {
+      updateDataStatus(value);
+    }
+  }
+
+  const handleUiStateChange = (origin: Origin, newState: ConfigUIState) => {
+    const setStateFn =
+      origin === Origin.SOURCE ? setSourceUIState : setTargetUIState;
+    setStateFn(newState);
+  };
+
+  function handleSaveConfigurationClick() {
+    setIsSaving(true);
+
+    createConfigurations
+      .mutateAsync(configuration)
+      .then(() => {
+        setIsSaving(false);
+        notification.success({
+          message: 'Configuration created',
+          description: 'Configuration was created successfully',
+        });
+        history.push('/configurations'); // Bug in react-router-dom - does not render after history.push()
+      })
+      .catch((err: CustomError) => {
+        setIsSaving(false);
+        addError(`Failed to save configuration - ${err.message}`, err.status);
+        setCreationError(`Server status: - ${err.status}: ${err.message}`);
+      });
   }
 
   useEffect(() => {
@@ -245,12 +224,23 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
     }
   }, [configurationIsComplete]);
 
-  // noinspection HtmlUnknownTarget
+  useEffect(() => {
+    // clear the selected date types when the users change "state"
+    updateDataTypes([]);
+  }, [configuration.source.external_id]);
+
+  useEffect(() => {
+    setConfiguration((prevState) => ({
+      ...prevState,
+      author: String(user),
+    }));
+  }, [user]);
+
   return (
     <>
       <ConfigurationsMainContainer>
         <Header>
-          <b>{name}</b>
+          <Title>{name}</Title>
           <SaveButton
             type="primary"
             disabled={!configurationIsComplete}
@@ -262,237 +252,32 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
           </SaveButton>
         </Header>
         <ThreeColsLayout>
-          <ConfigurationContainer>
-            <header>
-              <ContainerHeading>Petrel Studio</ContainerHeading>
-              {sourceUIState === ConfigUIState.CONFIRMED && (
-                <>
-                  <div>{configuration.source.external_id}</div>
-                  <BadgesContainer>
-                    {configuration.business_tags?.map((tag) => (
-                      <Badge
-                        key={tag}
-                        text={tag}
-                        background="greyscale-grey3"
-                      />
-                    ))}
-                  </BadgesContainer>
-                  <EditButton
-                    type="primary"
-                    onClick={() => setSourceUIState(ConfigUIState.CONFIGURING)}
-                  >
-                    Edit
-                  </EditButton>
-                </>
-              )}
-            </header>
-            {sourceUIState === ConfigUIState.INITIAL && (
-              <main className="initial-main">
-                <InitialState>
-                  <p>No source repository selected</p>
-                  <Button
-                    type="primary"
-                    onClick={() => {
-                      fetchRepositories()
-                        .then((response) => {
-                          setSourceUIState(ConfigUIState.CONFIGURING);
-                          setAvailableRepositories(response);
-                        })
-                        .catch((err: CustomError) => {
-                          setSourceUIState(ConfigUIState.ERROR);
-                          addError('Failed to fetch', err.status);
-                        });
-                    }}
-                  >
-                    Configure
-                  </Button>
-                </InitialState>
-              </main>
-            )}
-            {sourceUIState === ConfigUIState.CONFIGURING && (
-              <>
-                <main>
-                  <div>Select repository:</div>
-                  <Select
-                    value={
-                      configuration.source.external_id.length > 0
-                        ? configuration.source.external_id
-                        : undefined
-                    }
-                    placeholder="Available repositories"
-                    style={{ width: '100%', marginBottom: '16px' }}
-                    onChange={(value) => handleChange(ChangeType.REPO, value)}
-                    suffixIcon={<Icon type="Down" />}
-                  >
-                    {availableRepositories.map((repository) => (
-                      <Option
-                        key={repository.external_id}
-                        value={repository.external_id}
-                      >
-                        {repository.external_id}
-                      </Option>
-                    ))}
-                  </Select>
-                  {configuration.source.external_id !== '' &&
-                    availableTags.length > 0 && (
-                      <>
-                        <div>Select tags:</div>
-                        <Select
-                          mode="tags"
-                          placeholder="Available tags"
-                          style={{ width: '100%', marginBottom: '16px' }}
-                          onChange={updateBusinessTags}
-                          suffixIcon={<Icon type="Down" />}
-                          value={configuration.business_tags}
-                        >
-                          {availableTags.map((tag) => (
-                            <Option key={`tag_${tag}`} value={tag}>
-                              {tag}
-                            </Option>
-                          ))}
-                        </Select>
-                        <div>Select Datatypes:</div>
-                        <Checkbox.Group
-                          options={availableDataTypes}
-                          onChange={(value: any) =>
-                            handleChange(ChangeType.DATATYPES, value)
-                          }
-                          value={configuration.datatypes}
-                        />
-                      </>
-                    )}
-                </main>
-                <footer>
-                  <Button
-                    type="primary"
-                    disabled={!sourceComplete}
-                    onClick={() => setSourceUIState(ConfigUIState.CONFIRMED)}
-                  >
-                    Confirm
-                  </Button>
-                </footer>
-              </>
-            )}
-            {sourceUIState === ConfigUIState.CONFIRMED && (
-              <main>
-                <ConnectorList
-                  connectorPosition="right"
-                  connected={targetUIState === ConfigUIState.CONFIRMED}
-                >
-                  {configuration.datatypes.map((datatype, index) => (
-                    <li key={`datatypeItem${datatype}`}>
-                      {datatype}
-                      <div
-                        key={`connectorPoint${datatype}`}
-                        id={`connectorPoint${index}`}
-                        className={`connectorPoint connectorPoint${index}`}
-                      />
-                    </li>
-                  ))}
-                </ConnectorList>
-              </main>
-            )}
-            {sourceUIState === ConfigUIState.ERROR && (
-              <main>
-                <ErrorMessage
-                  message={`${apiError?.message} available repositories` || ''}
-                />
-              </main>
-            )}
-          </ConfigurationContainer>
+          <SourceOrigin
+            sourceComplete={sourceComplete}
+            sourceUIState={sourceUIState}
+            targetUIState={targetUIState}
+            configuration={configuration}
+            availableRepositories={availableRepositories}
+            availableBusinessTags={availableBusinessTags}
+            availableDataTypes={availableDataTypes}
+            availableDataStatus={availableDataStatus}
+            onUiStateChange={handleUiStateChange}
+            handleChange={handleChange}
+          />
+
           <ConfigArrow />
-          <ConfigurationContainer>
-            <header>
-              <ContainerHeading>OpenWorks</ContainerHeading>
-              {targetUIState === ConfigUIState.CONFIRMED && (
-                <>
-                  <div>{configuration.target.external_id}</div>
-                  <EditButton
-                    type="primary"
-                    onClick={() => setTargetUIState(ConfigUIState.CONFIGURING)}
-                  >
-                    Edit
-                  </EditButton>
-                </>
-              )}
-            </header>
-            {targetUIState === ConfigUIState.INITIAL && (
-              <main className="initial-main">
-                <InitialState>
-                  <p>No destination project selected</p>
-                  <Button
-                    type="primary"
-                    onClick={() => {
-                      fetchProjects()
-                        .then((response) => {
-                          setTargetUIState(ConfigUIState.CONFIGURING);
-                          setAvailableProjects(response);
-                        })
-                        .catch((err: CustomError) => {
-                          setTargetUIState(ConfigUIState.ERROR);
-                          addError('Failed to fetch', err.status);
-                        });
-                    }}
-                  >
-                    Configure
-                  </Button>
-                </InitialState>
-              </main>
-            )}
-            {targetUIState === ConfigUIState.CONFIGURING && (
-              <>
-                <main>
-                  <div>Select project:</div>
-                  <Select
-                    defaultValue={undefined}
-                    placeholder="Available projects"
-                    style={{ width: '100%', marginBottom: '16px' }}
-                    onChange={(value) =>
-                      handleChange(ChangeType.PROJECT, value || '')
-                    }
-                    suffixIcon={<Icon type="Down" />}
-                  >
-                    {availableProjects.map((project) => (
-                      <Option
-                        key={project.external_id}
-                        value={project.external_id}
-                      >
-                        {project.external_id}
-                      </Option>
-                    ))}
-                  </Select>
-                </main>
-                <footer>
-                  <Button
-                    type="primary"
-                    disabled={!targetComplete}
-                    onClick={() => setTargetUIState(ConfigUIState.CONFIRMED)}
-                  >
-                    Confirm
-                  </Button>
-                </footer>
-              </>
-            )}
-            {targetUIState === ConfigUIState.CONFIRMED && (
-              <main>
-                <ConnectorList connectorPosition="left" connected>
-                  <li>
-                    _Root
-                    <div id="connectorTarget" className="connectorTarget" />
-                  </li>
-                </ConnectorList>
-              </main>
-            )}
-            {targetUIState === ConfigUIState.ERROR && (
-              <main>
-                <ErrorMessage
-                  message={`${apiError?.message} available projects` || ''}
-                />
-              </main>
-            )}
-          </ConfigurationContainer>
+
+          <TargetOrigin
+            targetComplete={targetComplete}
+            targetUIState={targetUIState}
+            configuration={configuration}
+            availableProjects={availableProjects}
+            onUiStateChange={handleUiStateChange}
+            handleChange={handleChange}
+          />
         </ThreeColsLayout>
       </ConfigurationsMainContainer>
+
       {targetUIState === ConfigUIState.CONFIRMED && (
         <ConnectionLinesWrapper>
           <svg id="connectorLinesSvg">
@@ -508,6 +293,7 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
           </svg>
         </ConnectionLinesWrapper>
       )}
+
       {creationError && (
         <Modal
           visible={creationError !== null}

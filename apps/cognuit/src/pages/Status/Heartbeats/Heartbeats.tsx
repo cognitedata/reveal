@@ -5,6 +5,7 @@ import APIErrorContext from 'contexts/APIErrorContext';
 import { UNIX_TIMESTAMP_FACTOR } from 'typings/interfaces';
 import { SourcesHeartbeatsResponse } from 'types/ApiInterface';
 import { CustomError } from 'services/CustomError';
+import { ThirdPartySystems } from 'types/globalTypes';
 
 import { DATE_RANGE_VALUES, DateRangeValueType } from '../utils';
 import EmptyTableMessage from '../../../components/Molecules/EmptyTableMessage/EmptyTableMessage';
@@ -137,8 +138,8 @@ const Heartbeats = ({ dateRange, afterTimestamp }: Props) => {
   const renderChart = (type: string, heartbeats: SourcesHeartbeatsResponse) => {
     const getStatus = () => (
       <StatusText>
-        {type === 'ps' ? 'Petrel Studio' : 'Openworks'} connector status:{' '}
-        <strong>{heartbeats.length > 0 ? 'on' : 'off'}</strong>
+        {type === 'ps' ? ThirdPartySystems.PS : ThirdPartySystems.OW} connector
+        status: <strong>{heartbeats.length > 0 ? 'on' : 'off'}</strong>
       </StatusText>
     );
 

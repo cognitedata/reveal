@@ -12,6 +12,7 @@ import {
   DatatypesResponse,
   DataTransfersResponse,
   ErrorDistributionResponse,
+  DataStatusResponse,
 } from 'types/ApiInterface';
 
 import {
@@ -113,6 +114,11 @@ class Api {
     return Promise.resolve(response.json());
   }
 
+  public datastatus = {
+    get: async (): Promise<DataStatusResponse[]> =>
+      this.get(`${this.baseURL}/datastatus`, { synced: true }),
+  };
+
   public datatransfers = {
     get: async (
       filter: RESTTransfersFilter
@@ -159,7 +165,7 @@ class Api {
     get: async (source: Source | string): Promise<ProjectsResponse[]> =>
       this.get(`${this.baseURL}/sources/${source}/projects`),
     getBusinessTags: async (
-      source: Source,
+      source: Source | string,
       project: string
     ): Promise<ProjectBusinessTagsResponse> =>
       this.get(`${this.baseURL}/sources/${source}/projects/${project}/tags`),

@@ -54,7 +54,15 @@ export function ExpandedSubRow({
       {record.business_tags.length > 0 && (
         <ExpandedItem>
           <ExpandedItemLabel>Business tags: </ExpandedItemLabel>
-          {record.business_tags.map((tag: string) => (
+          {record.business_tags.map((tag) => (
+            <Badge key={tag} text={tag} background="greyscale-grey3" />
+          ))}
+        </ExpandedItem>
+      )}
+      {record.data_status.length > 0 && (
+        <ExpandedItem>
+          <ExpandedItemLabel>Quality tags: </ExpandedItemLabel>
+          {record.data_status.map((tag) => (
             <Badge key={tag} text={tag} background="greyscale-grey3" />
           ))}
         </ExpandedItem>

@@ -5,12 +5,13 @@ import { useQuery } from 'react-query';
 import { DATATYPES_KEYS } from 'services/configs/queryKeys';
 import { CustomError } from 'services/CustomError';
 import { useIsTokenAndApiValid } from 'hooks/useIsTokenAndApiValid';
+import { reportException } from '@cognite/react-errors';
 
 const useDatatypesQuery = ({
   id,
   enabled = true,
 }: {
-  id?: number;
+  id: number | null;
   enabled?: boolean;
 }) => {
   const { api } = useContext(ApiContext);
@@ -19,9 +20,10 @@ const useDatatypesQuery = ({
   const isValid = useIsTokenAndApiValid();
 
   const { data, ...rest } = useQuery(
-    id ? [DATATYPES_KEYS.default, id] : DATATYPES_KEYS.default,
-    async () => {
-      return api!.datatypes.get(id);
+    [DATATYPES_KEYS.default, id],
+    ({ queryKey }) => {
+      const [_key, idKey] = queryKey as [string, number | null];
+      return api!.datatypes.get(idKey);
     },
     {
       enabled: enabled && isValid,
@@ -30,6 +32,7 @@ const useDatatypesQuery = ({
         return data;
       },
       onError: (error: CustomError) => {
+        reportException(error);
         addError(error.message, error.status);
       },
     }

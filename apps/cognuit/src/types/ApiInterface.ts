@@ -6,6 +6,9 @@ export type ErrorDistributionResponse = {
   total_errors: number;
 };
 
+// Data status tags
+export type DataStatusResponse = string;
+
 // Data types
 export type DatatypesResponse = string;
 
@@ -37,10 +40,10 @@ export type ConfigurationsResponse = {
   id: number;
   source: Source;
   target: Source;
-  business_tags: any[];
+  business_tags: string[];
   author: string;
   datatypes: any[];
-  data_status: any[];
+  data_status: string[];
   name: string;
   ow_to_studio_config?: OwToStudioConfig;
   created_time: number;

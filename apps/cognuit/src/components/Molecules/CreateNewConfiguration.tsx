@@ -3,6 +3,7 @@ import { Button, Dropdown, Icon, Input, Menu } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { SessionType } from 'typings/interfaces';
+import { ThirdPartySystems } from 'types/globalTypes';
 
 const Container = styled.div`
   display: flex;
@@ -31,12 +32,11 @@ const CreateNewConfiguration = () => {
   const MenuContent = (
     <Menu>
       <Menu.Item onClick={() => handleFinish(SessionType.PS_TO_OW)}>
-        <Icon type="Plus" />
-        PS to OW
+        <Icon type="Plus" /> {ThirdPartySystems.PS} to {ThirdPartySystems.OW}
       </Menu.Item>
       <Menu.Item onClick={() => handleFinish(SessionType.OW_TO_PS)}>
         <Icon type="Plus" />
-        OW to PS
+        {ThirdPartySystems.OW} to {ThirdPartySystems.PS}
       </Menu.Item>
     </Menu>
   );

@@ -23,4 +23,9 @@ export const SOURCES_KEY = {
 // Projects
 export const PROJECTS_KEY = {
   default: 'projects',
+  business_tag: 'business_tag',
+};
+
+export const DATATSTATUS_KEY = {
+  default: 'datastatus',
 };

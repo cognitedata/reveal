@@ -57,20 +57,18 @@ const TableActions: React.FC<Props> = ({ setFilteredData }) => {
     useConfigurationsQuery();
 
   const { data: datatypes } = useDatatypesQuery({
-    id: selectedSourceProject?.id,
+    id: selectedSourceProject?.id || null,
     enabled: !!(selectedSourceProject && selectedSourceProject.id),
   });
 
   const { data: sources } = useSourcesQuery();
 
   const { data: sourceProjects } = useProjectsQuery({
-    key: 'source',
     source: selectedSource,
     enabled: !!selectedSource,
   });
 
   const { data: targetProjects } = useProjectsQuery({
-    key: 'target',
     source: selectedTarget,
     enabled: !!selectedTarget,
   });

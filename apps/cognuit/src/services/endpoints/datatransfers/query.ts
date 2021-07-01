@@ -6,6 +6,7 @@ import { DATATRANSFERS_KEYS } from 'services/configs/queryKeys';
 import { CustomError } from 'services/CustomError';
 import { useIsTokenAndApiValid } from 'hooks/useIsTokenAndApiValid';
 import { RESTTransfersFilter } from 'typings/interfaces';
+import { reportException } from '@cognite/react-errors';
 
 const useDataTransfersQuery = ({
   options,
@@ -36,6 +37,7 @@ const useDataTransfersQuery = ({
         return data;
       },
       onError: (error: CustomError) => {
+        reportException(error);
         addError(error.message, error.status);
       },
     }
