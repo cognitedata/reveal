@@ -85,12 +85,10 @@ export class SinglePropertyFilterNodeCollection extends NodeCollectionBase {
       const filter = { [`${propertyCategory}`]: { [`${propertyKey}`]: batch } };
       const batchRequests = range(1, requestPartitions + 1).map(async p => {
         const response = postAsListResponse<Node3D[]>(this._client, outputsUrl, {
-          params: {
-            partition: `${p}/${requestPartitions}`,
-            limit: 1000
-          },
           data: {
-            filter
+            filter,
+            limit: 1000,
+            partition: `${p}/${requestPartitions}`,
           }
         });
 
@@ -119,7 +117,7 @@ export class SinglePropertyFilterNodeCollection extends NodeCollectionBase {
   }
 
   private buildUrl(): string {
-    return `${this._client.getBaseUrl()}/api/playground/projects/${this._client.project}/3d/v2/models/${
+    return `${this._client.getBaseUrl()}/api/v1/projects/${this._client.project}/3d/models/${
       this._modelId
     }/revisions/${this._revisionId}/nodes/list`;
   }
@@ -155,7 +153,7 @@ class EmulatedListResponse<T> {
     this.nextCursor = rawResponse.nextCursor;
     if (this.nextCursor !== undefined) {
       this.next = async () => {
-        const nextOptions = { ...options, cursor: this.nextCursor };
+        const nextOptions = { ...options, data: {... options.data, cursor: this.nextCursor} };
         const response = await postAsListResponseRaw<T>(client, url, nextOptions);
         return new EmulatedListResponse<T>(client, url, options, response);
       };
