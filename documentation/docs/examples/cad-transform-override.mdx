@@ -59,7 +59,8 @@ the following statement:
 first applies `worldToModel`, then `rotationMatrix` and finally `modelToWorld`.
 
 ```jsx runnable
-model.getBoundingBoxByTreeIndex(533010).then(boundingBox => {
+async function animate() {
+  const boundingBox = await model.getBoundingBoxByTreeIndex(533010);
   const center = boundingBox.getCenter(new THREE.Vector3());
 
   const modelToWorld = new THREE.Matrix4();
@@ -84,5 +85,7 @@ model.getBoundingBoxByTreeIndex(533010).then(boundingBox => {
 
     if (clock.elapsedTime >= 10) clearInterval(intervalID);
   }, 20);
-});
+}
+
+animate();
 ```
