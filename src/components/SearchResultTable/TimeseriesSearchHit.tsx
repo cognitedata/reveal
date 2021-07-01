@@ -33,7 +33,7 @@ export default function TimeseriesSearchHit({
                   <Icon type="ResourceTimeseries" style={{ minWidth: 14 }} />
                   <Highlighter
                     highlightStyle={{
-                      backgroundColor: Colors.midblue.alpha(0.1),
+                      backgroundColor: Colors['yellow-4'].alpha(0.4),
                       marginLeft: 5,
                     }}
                     searchWords={[query]}
@@ -43,7 +43,7 @@ export default function TimeseriesSearchHit({
                 <Description>
                   <Highlighter
                     highlightStyle={{
-                      backgroundColor: Colors.midblue.alpha(0.1),
+                      backgroundColor: Colors['yellow-4'].alpha(0.4),
                     }}
                     searchWords={[query]}
                     textToHighlight={t.description}
