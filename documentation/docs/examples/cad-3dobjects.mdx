@@ -45,14 +45,13 @@ const markerMaterial = new THREE.MeshBasicMaterial({
   transparent: true,
   opacity: 0.7
 });
-viewer.on('click', (event) => {
-  viewer.getIntersectionFromPixel(event.offsetX, event.offsetY).then(intersection => {
-    if (intersection) {
-      const marker = new THREE.Mesh(markerGeometry, markerMaterial);
-      marker.position.copy(intersection.point);
-      viewer.addObject3D(marker);
-    }
-  });
+viewer.on('click', async event => {
+  const intersection = await viewer.getIntersectionFromPixel(event.offsetX, event.offsetY);
+  if (intersection) {
+    const marker = new THREE.Mesh(markerGeometry, markerMaterial);
+    marker.position.copy(intersection.point);
+    viewer.addObject3D(marker);
+  }
 });
 ```
 
