@@ -110,7 +110,7 @@ export function duplicateWorkflow(chart: Chart, wfId: string): Chart {
       ...wf,
       id: nanoid(),
       name: `${wf.name} Copy`,
-      color: getEntryColor(),
+      color: getEntryColor(chart.id, wf.id),
     };
     return addWorkflow(chart, newWf);
   }
@@ -130,7 +130,7 @@ export function convertTimeseriesToWorkflow(chart: Chart, id: string): Chart {
       ),
       workflowCollection: [
         ...(chart.workflowCollection || []),
-        convertTsToWorkFlow(ts),
+        convertTsToWorkFlow(chart.id, ts),
       ],
     };
   }
@@ -139,6 +139,7 @@ export function convertTimeseriesToWorkflow(chart: Chart, id: string): Chart {
 
 export function covertTSToChartTS(
   ts: Timeseries,
+  chartId: string,
   range: number[] = []
 ): ChartTimeSeries {
   return {
@@ -149,13 +150,14 @@ export function covertTSToChartTS(
     unit: ts.unit || '*',
     originalUnit: ts.unit || '*',
     preferredUnit: ts.unit || '*',
-    color: getEntryColor(),
+    color: getEntryColor(chartId, ts.id.toString()),
     lineWeight: 1,
     lineStyle: 'solid',
     displayMode: 'lines',
     enabled: true,
     description: ts.description || '-',
     range,
+    createdAt: Date.now(),
   };
 }
 

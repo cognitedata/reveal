@@ -174,7 +174,7 @@ export const OpenInCharts: FC = () => {
             sdk,
             timeSeriesExternalId: timeSeries.externalId || '',
           });
-          const newTs = covertTSToChartTS(timeSeries, range);
+          const newTs = covertTSToChartTS(timeSeries, newChart.id, range);
           updateChart(addTimeseries(newChart, newTs));
           newChart.timeSeriesCollection?.push(newTs);
         })
@@ -207,7 +207,7 @@ export const OpenInCharts: FC = () => {
             sdk,
             timeSeriesExternalId: timeSeries.externalId || '',
           });
-          const newTs = covertTSToChartTS(timeSeries, range);
+          const newTs = covertTSToChartTS(timeSeries, existingChart.id, range);
           updateChart(addTimeseries(existingChart, newTs));
           existingChart.timeSeriesCollection?.push(newTs);
         })
