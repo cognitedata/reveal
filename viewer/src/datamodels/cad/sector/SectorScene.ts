@@ -88,9 +88,9 @@ export class SectorSceneImpl implements SectorScene {
       }
       return true;
     });
-
-    // Cluster the corners into two groups and determine bounds of each cluster
-    const clusters = skmeans(corners, 4, 'kmpp', 10);
+    // Cluster the corners into four groups and determine bounds of each cluster
+    const numClusters = Math.min(corners.length, 4);
+    const clusters = skmeans(corners, numClusters, 'kmpp', 10);
     const clusterCounts = new Array<number>(clusters.idxs.length).fill(0);
     const clusterBounds = clusterCounts.map(_ => new THREE.Box3());
     clusters.idxs.map(x => clusterCounts[x]++);
