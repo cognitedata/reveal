@@ -35,14 +35,12 @@ export default function AssetSelect(props: Props) {
   const { onAssetSelected = () => {}, selectedAssetId, rootOnly } = props;
   const [assetSearch, assetRootSearch] = getFilters(query);
 
-  const getAsset: (q: AssetSearchFilter) => Result<Asset> = useSelector(
-    searchAssetSelector
-  );
+  const getAsset: (q: AssetSearchFilter) => Result<Asset> =
+    useSelector(searchAssetSelector);
   const { items, fetching } = getAsset(assetSearch);
-  // @ts-ignore
-  const { items: rootItems, fetching: rootFetching } = useSelector(
-    searchAssetSelector
-  )(assetRootSearch);
+  const { items: rootItems, fetching: rootFetching } =
+    // @ts-ignore
+    useSelector(searchAssetSelector)(assetRootSearch);
 
   useEffect(() => {
     const [f1, f2] = getFilters(query);

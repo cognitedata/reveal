@@ -19,7 +19,12 @@ module.exports = {
       'error',
       {
         props: true,
-        ignorePropertyModificationsFor: ['draft', 'state', 'prev'],
+        ignorePropertyModificationsFor: [
+          'draft',
+          'state',
+          'prev',
+          'accumulator',
+        ],
       },
     ],
 

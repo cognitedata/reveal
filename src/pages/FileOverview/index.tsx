@@ -62,12 +62,14 @@ export default function FileOverview(props: Props) {
 
   const { data: annotations } = useAnnotations(fileIdNumber);
 
-  const { data: fileInfo, isFetched, isError, error } = useCdfItem<FileInfo>(
-    'files',
-    {
-      id: fileIdNumber,
-    }
-  );
+  const {
+    data: fileInfo,
+    isFetched,
+    isError,
+    error,
+  } = useCdfItem<FileInfo>('files', {
+    id: fileIdNumber,
+  });
 
   const { jobStarted } = useSelector(
     (state: RootState) => state.contextualization.uploadJobs[fileIdNumber] || {}

@@ -22,9 +22,11 @@ export default function PnidParsingStatus({
   workflowId,
   file,
 }: Props): JSX.Element {
-  const { status: parsingJobStatus, jobId, failedFiles } = useParsingJob(
-    workflowId
-  );
+  const {
+    status: parsingJobStatus,
+    jobId,
+    failedFiles,
+  } = useParsingJob(workflowId);
 
   const didFileFail = failedFiles?.find(
     (failedFile) => failedFile.fileId === file?.id

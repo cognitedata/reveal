@@ -1,11 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Button } from '@cognite/cogs.js';
-import 'antd/dist/antd.css';
-import '@cognite/cogs.js/dist/cogs.css';
-import GlobalStyle from 'styles/GlobalStyles';
 import { FileInfo } from '@cognite/sdk';
-
 import { FileDetailsAbstract } from './FileDetailsAbstract';
 
 const file: FileInfo = {
@@ -24,16 +20,14 @@ export default { title: 'Organisms/FileDetailsAbstract' };
 
 export const Example = () => {
   return (
-    <GlobalStyle>
-      <Container>
-        <FileDetailsAbstract
-          file={file}
-          imgPreview={<img src="//unsplash.it/400/200" alt="" />}
-        >
-          <Button>Hover me!</Button>
-        </FileDetailsAbstract>
-      </Container>
-    </GlobalStyle>
+    <Container>
+      <FileDetailsAbstract
+        file={file}
+        imgPreview={<img src="//unsplash.it/400/200" alt="" />}
+      >
+        <Button>Hover me!</Button>
+      </FileDetailsAbstract>
+    </Container>
   );
 };
 

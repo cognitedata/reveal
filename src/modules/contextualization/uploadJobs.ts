@@ -175,9 +175,8 @@ export const startConvertFileToSvgJob = (
                 } else {
                   try {
                     const svg = await UploadJobs.downloadFile(data.svgUrl);
-                    const [item] = summarizeAssetIdsFromAnnotations(
-                      annotations
-                    );
+                    const [item] =
+                      summarizeAssetIdsFromAnnotations(annotations);
                     const assetIds = (item ? item.assetIds : []) as any[];
                     const newName =
                       file.name.lastIndexOf('.') !== 0

@@ -141,9 +141,8 @@ export const deleteAnnotationsForFile = async (
   try {
     const metadataFilter: { [key: string]: string } = {};
     if (fileExtId) {
-      metadataFilter[
-        `${ANNOTATION_METADATA_PREFIX}file_external_id`
-      ] = fileExtId;
+      metadataFilter[`${ANNOTATION_METADATA_PREFIX}file_external_id`] =
+        fileExtId;
     } else {
       metadataFilter[`${ANNOTATION_METADATA_PREFIX}file_id`] = String(fileId);
     }

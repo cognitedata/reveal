@@ -1,5 +1,4 @@
 // @ts-nocheck
-import { ids } from 'cogs-variables';
 import React, { useEffect } from 'react';
 import {
   ConfigProvider,
@@ -79,6 +78,7 @@ import tooltipStyle from 'antd/es/tooltip/style/index.less';
 import treeStyle from 'antd/es/tree/style/index.less';
 import typographyStyle from 'antd/es/typography/style/index.less';
 import uploadStyle from 'antd/es/upload/style/index.less';
+import { ids } from '../cogs-variables';
 
 const styles = [
   affixStyle,
@@ -152,10 +152,10 @@ Dropdown.defaultProp = {
 
 Spin.setDefaultIndicator(<Icon type="Loading" />);
 
-export default function AntStyles(props: { children: React.Node }) {
+export function AntStyles(props: { children: React.Node }) {
   useEffect(() => {
-    styles.forEach((style) => style.use());
-    return () => styles.forEach((style) => style.unuse());
+    styles.forEach((style) => style?.use && style?.use());
+    return () => styles.forEach((style) => style?.unuse && style.unuse());
   }, []);
 
   return (
@@ -164,7 +164,7 @@ export default function AntStyles(props: { children: React.Node }) {
         document.getElementsByClassName(ids.styleScope).item(0)!
       }
     >
-      <div className="context-ui-pnid-style-scope">{props.children}</div>
+      <div className="relationships-ui-style-scope">{props.children}</div>
     </ConfigProvider>
   );
 }

@@ -207,16 +207,20 @@ export const FilePreviewOverview = ({
   useEffect(() => {
     if (retrievingFiles) return;
     const ids = {
-      ids: (fileIds.filter(
-        (id: number | string) => typeof id === 'number'
-      ) as number[]).map((id: number) => ({
+      ids: (
+        fileIds.filter(
+          (id: number | string) => typeof id === 'number'
+        ) as number[]
+      ).map((id: number) => ({
         id,
       })),
     };
     const externalIds = {
-      ids: (fileIds.filter(
-        (id: number | string) => typeof id === 'string'
-      ) as string[]).map((externalId: string) => ({
+      ids: (
+        fileIds.filter(
+          (id: number | string) => typeof id === 'string'
+        ) as string[]
+      ).map((externalId: string) => ({
         externalId,
       })),
     };
@@ -228,16 +232,20 @@ export const FilePreviewOverview = ({
   useEffect(() => {
     if (retrievingAssets) return;
     const ids = {
-      ids: (assetIds.filter(
-        (id: number | string) => typeof id === 'number'
-      ) as number[]).map((id: number) => ({
+      ids: (
+        assetIds.filter(
+          (id: number | string) => typeof id === 'number'
+        ) as number[]
+      ).map((id: number) => ({
         id,
       })),
     };
     const externalIds = {
-      ids: (assetIds.filter(
-        (id: number | string) => typeof id === 'string'
-      ) as string[]).map((externalId: string) => ({
+      ids: (
+        assetIds.filter(
+          (id: number | string) => typeof id === 'string'
+        ) as string[]
+      ).map((externalId: string) => ({
         externalId,
       })),
     };

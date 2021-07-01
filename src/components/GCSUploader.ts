@@ -12,6 +12,7 @@ export default function GCSUploader(
   const chunkMultiple = Math.min(
     Math.max(
       2, // 0.5MB min chunks
+      // @ts-ignore
       Math.ceil((file.size / 20) * 262144) // will divide into 20 segments
     ),
     200 // 50 MB max

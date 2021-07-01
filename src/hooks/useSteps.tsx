@@ -19,7 +19,7 @@ export const usePrevAndNextStep = (step?: WorkflowStep) => {
 
   const routes = routesMap();
 
-  const goToNextStep = (...args: any) => {
+  const goToNextStep = (skipStep: boolean = false, ...args: any) => {
     trackUsage(PNID_METRICS.navigation.nextButton, {
       step,
     });
@@ -28,7 +28,10 @@ export const usePrevAndNextStep = (step?: WorkflowStep) => {
     );
     const nextStepIndex = currentStepIndex + 1;
     if (nextStepIndex < routes.length) {
-      const stepNext = routes[nextStepIndex];
+      let stepNext = routes[nextStepIndex];
+      if (skipStep && stepNext.skippable && nextStepIndex + 1 < routes.length) {
+        stepNext = routes[nextStepIndex + 1];
+      }
       if (args) history.push(stepNext.path(tenant, workflowId, ...args));
       else history.push(stepNext.path(tenant, workflowId));
     }

@@ -1,8 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { startPnidParsingJob } from 'modules/contextualization/pnidParsing/actions';
-import { RootState } from 'store';
-import { PNID_METRICS, trackUsage } from 'utils/Metrics';
 import {
+  defaultModelOptions,
   loadWorkflowDiagrams,
   loadWorkflowResources,
   workflowDiagramStatusSelector,
@@ -10,6 +9,8 @@ import {
   workflowDiagramsSelector,
   workflowAllResourcesSelector,
 } from 'modules/workflows';
+import { RootState } from 'store';
+import { PNID_METRICS, trackUsage } from 'utils/Metrics';
 
 interface WorkflowStatus {
   completed: boolean;
@@ -34,8 +35,9 @@ export const startPnidParsingWorkflow = {
       const activeWorkflow = getState().workflows.items[workflowId];
       const workflowStatus = activeWorkflow?.status;
       const {
-        partialMatch = undefined,
-        minTokens = undefined,
+        partialMatch = defaultModelOptions.partialMatch,
+        minTokens = defaultModelOptions.minTokens,
+        matchFields = defaultModelOptions.matchFields,
       } = activeWorkflow?.options;
 
       if (workflowStatus === 'pending' || workflowStatus === 'success') return;
@@ -58,7 +60,7 @@ export const startPnidParsingWorkflow = {
         files: files?.length ?? 0,
       });
 
-      trackUsage(PNID_METRICS.configuration, {
+      trackUsage(PNID_METRICS.configPage.configuration, {
         minTokens,
         partialMatch,
       });
@@ -70,7 +72,7 @@ export const startPnidParsingWorkflow = {
           options: {
             minTokens,
             partialMatch,
-            searchField: 'name',
+            matchFields,
           },
           workflowId,
         })

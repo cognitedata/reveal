@@ -82,7 +82,10 @@ export const PNID_METRICS = {
     byRootAsset: 'filters.byRootAsset',
     byMimeType: 'filters.byMimeType',
   },
-  configuration: 'configuration',
+  configPage: {
+    skipSettings: 'configPage.skipSettings',
+    configuration: 'configPage.configuration',
+  },
   parsingJob: {
     start: 'pasringJob.start',
     end: 'pasringJob.end',

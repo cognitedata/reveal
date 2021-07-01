@@ -21,7 +21,7 @@ export const abbreviateNumber = (n: number) => {
 
 export const mapArrayToObj = <T>(key: keyof T, items: T[]) => {
   return items.reduce(
-    (acc, cur) => ({ ...acc, [(cur[key] as unknown) as string]: cur }),
+    (acc, cur) => ({ ...acc, [cur[key] as unknown as string]: cur }),
     {}
   );
 };

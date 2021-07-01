@@ -27,9 +27,10 @@ export const dataSetCount = createSelector(dataSetCounts, (counts) => {
   return (id: number) => counts[id];
 });
 
-export const dataSetSelector = (id: number) => (
-  state: RootState
-): DataSet | undefined => state.datasets.items[id];
+export const dataSetSelector =
+  (id: number) =>
+  (state: RootState): DataSet | undefined =>
+    state.datasets.items[id];
 
 export const selectAllDataSets = (state: RootState): DataSet[] =>
   Object.values(state.datasets.items);

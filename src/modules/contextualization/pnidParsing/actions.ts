@@ -121,20 +121,22 @@ export const startPnidParsingJob = {
       }
       // Job not created yet, so need to create it
       try {
+        const { matchFields, ...otherOptions } = options;
+
         const mappedDiagrams = diagrams.map((diagram: FileInfo) => ({
           fileId: diagram.id,
         }));
 
         const mappedResources = [
-          ...mapAssetsToEntities(resources.assets),
-          ...mapFilesToEntities(resources.files),
+          ...mapAssetsToEntities(resources.assets, matchFields.assets),
+          ...mapFilesToEntities(resources.files, matchFields.files),
         ];
 
         const response = await sdk.post(createPnidDetectJobPath(sdk.project), {
           data: {
             items: mappedDiagrams,
             entities: mappedResources,
-            ...options,
+            ...otherOptions,
           },
         });
 

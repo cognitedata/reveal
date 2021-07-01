@@ -1,4 +1,4 @@
-import { Asset, FileInfo } from 'cognite-sdk-v3/dist/src';
+import { Asset, FileInfo } from '@cognite/sdk';
 
 export type PnidsParsingJobSchema = {
   jobId?: number;
@@ -22,7 +22,10 @@ export type StartPnidParsingJobProps = {
   options: {
     minTokens: number;
     partialMatch: boolean;
-    searchField: string | string[];
+    matchFields: {
+      files?: keyof FileInfo;
+      assets?: keyof Asset;
+    };
   };
   workflowId: number;
 };

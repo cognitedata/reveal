@@ -1,10 +1,11 @@
 import { useLocalStorage } from '@cognite/cogs.js';
 import Alert from 'antd/lib/alert';
 import React from 'react';
+import { LS_BETA_BANNER } from 'stringConstants';
 import { trackUsage, PNID_METRICS } from 'utils/Metrics';
 
 const BetaBanner = () => {
-  const [hideBanner, setHideBanner] = useLocalStorage('beta-banner', false);
+  const [hideBanner, setHideBanner] = useLocalStorage(LS_BETA_BANNER, false);
 
   if (!hideBanner) {
     return (

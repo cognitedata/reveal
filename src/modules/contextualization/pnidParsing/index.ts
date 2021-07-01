@@ -32,12 +32,8 @@ export const pnidParsingSlice = createSlice({
       };
     },
     finishJob: (state, action) => {
-      const {
-        workflowId,
-        annotationCounts,
-        statusCount,
-        failedFiles,
-      } = action.payload;
+      const { workflowId, annotationCounts, statusCount, failedFiles } =
+        action.payload;
       state[workflowId] = {
         ...state[workflowId],
         statusCount,
@@ -51,10 +47,5 @@ export const pnidParsingSlice = createSlice({
 
 export { startPnidParsingJob };
 export const { reducer } = pnidParsingSlice;
-export const {
-  createJob,
-  updateJob,
-  rejectJob,
-  finishJob,
-  resetJob,
-} = pnidParsingSlice.actions;
+export const { createJob, updateJob, rejectJob, finishJob, resetJob } =
+  pnidParsingSlice.actions;

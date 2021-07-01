@@ -1,15 +1,23 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { RootState } from 'store';
-import { Button, Checkbox, Input } from '@cognite/cogs.js';
-import { Card } from 'antd';
-import { moveToStep, changeOptions, WorkflowStep } from 'modules/workflows';
-import { useActiveWorkflow } from 'hooks';
-import { Flex, PageTitle } from 'components/Common';
+import { Button, Body, useLocalStorage } from '@cognite/cogs.js';
+import { moveToStep, WorkflowStep } from 'modules/workflows';
+import { useActiveWorkflow, useSavedSettings, getSelectedModel } from 'hooks';
+import { Flex, PageTitle, CollapsibleRadio } from 'components/Common';
 import StickyBottomRow from 'components/StickyBottomRow';
 import { reviewPage } from 'routes/paths';
 import { AppStateContext } from 'context';
+import { LS_SAVED_SETTINGS } from 'stringConstants';
+import { trackUsage, PNID_METRICS } from 'utils/Metrics';
+import {
+  OptionPartialMatch,
+  OptionMinTokens,
+  OptionFieldsToMatch,
+} from './AdvancedOptions';
+import StandardModelTooltip from './StandardModelTooltip';
+import SkipSettingsPanel from './SkipSettingsPanel';
 
 type Props = {
   step: WorkflowStep;
@@ -18,15 +26,35 @@ export default function Options(props: Props) {
   const history = useHistory();
   const dispatch = useDispatch();
   const { step } = props;
-
   const { tenant } = useContext(AppStateContext);
   const { workflowId } = useActiveWorkflow(step);
-  const { partialMatch, minTokens } = useSelector(
-    (state: RootState) => state.workflows.items[workflowId].options
+  const [savedSettings] = useLocalStorage(LS_SAVED_SETTINGS, {
+    skip: false,
+    modelSelected: 'standard',
+  });
+  const { options } = useSelector(
+    (state: RootState) => state.workflows.items[workflowId]
   );
+  const [shouldSkipSettings, setShouldSkipSettings] = useState<boolean>(
+    savedSettings?.skip ?? false
+  );
+  const [modelSelected, setModelSelected] = useState(
+    getSelectedModel(options, savedSettings?.modelSelected)
+  );
+
+  useSavedSettings({
+    step,
+    modelSelected,
+    shouldSkipSettings,
+  });
 
   const summarizePnID = () => {
     history.push(reviewPage.path(tenant, workflowId));
+  };
+
+  const onSkipSettingsChange = (skipSettings: boolean) => {
+    trackUsage(PNID_METRICS.configPage.skipSettings, { skip: skipSettings });
+    setShouldSkipSettings(skipSettings);
   };
 
   useEffect(() => {
@@ -35,49 +63,54 @@ export default function Options(props: Props) {
 
   return (
     <Flex column style={{ width: '100%' }}>
-      <PageTitle>Settings</PageTitle>
-      <Flex column grow style={{ marginTop: '24px' }}>
-        <Card style={{ marginRight: '8px ' }}>
-          <Card.Meta
-            title={
-              <Checkbox
-                name="checkbox-partial"
-                value={partialMatch}
-                onChange={(checked: boolean) => {
-                  dispatch(changeOptions({ partialMatch: checked }));
-                }}
-              >
-                Allow partial matches
-              </Checkbox>
+      <PageTitle>Select model</PageTitle>
+      <Body level={1} style={{ margin: '16px 0' }}>
+        Select the model you want to be applied to create interactive diagrams
+      </Body>
+      <Flex row style={{ paddingBottom: '50px' }}>
+        <Flex column style={{ width: '100%' }}>
+          <CollapsibleRadio
+            name="standard"
+            value="standard"
+            title="Standard model"
+            info={<StandardModelTooltip />}
+            groupRadioValue={modelSelected}
+            setGroupRadioValue={setModelSelected as (value: string) => void}
+            maxWidth={1024}
+            style={{ marginBottom: '14px' }}
+          >
+            <Body level={2}>
+              Uses the default set of configurations for creating interactive
+              engineering diagrams. This is recommended for most engineering
+              diagrams.
+            </Body>
+          </CollapsibleRadio>
+          <CollapsibleRadio
+            name="advanced"
+            value="advanced"
+            title="Advanced model"
+            groupRadioValue={modelSelected}
+            setGroupRadioValue={setModelSelected as (value: string) => void}
+            maxWidth={1024}
+            collapse={
+              <>
+                <OptionPartialMatch workflowId={workflowId} />
+                <OptionMinTokens workflowId={workflowId} />
+                <OptionFieldsToMatch workflowId={workflowId} />
+              </>
             }
-            description="Select to include matches where the tag names do not exactly match the asset list. 
-            CDF finds matches by comparing similar characters, such as 0 and O, 8 and B. 
-            Clear this option to only allow exact matches."
-          />
-        </Card>
-        <Card>
-          <Card.Meta
-            title={
-              <Input
-                name="input-min_tokens"
-                value={minTokens}
-                type="number"
-                placeholder="Minimum Tokens for Matching"
-                label="Minimum Tokens for Matching"
-                min={1}
-                step={1}
-                onChange={(ev) => {
-                  dispatch(
-                    changeOptions({ minTokens: Number(ev.target.value) })
-                  );
-                }}
-              />
-            }
-            description="Each detected asset must match the matched entity on at least this number of tokens. That is, substrings of consecutive letters or consecutive digits."
-          />
-        </Card>
+          >
+            <Body level={2}>
+              Allows you to configure advanced options such as number of tokens
+              matched for an entity, partial matches and others.
+            </Body>
+          </CollapsibleRadio>
+        </Flex>
+        <SkipSettingsPanel
+          shouldSkipSettings={shouldSkipSettings}
+          onSkipSettingsChange={onSkipSettingsChange}
+        />
       </Flex>
-
       <StickyBottomRow justify="space-between">
         <Button size="large" type="secondary" onClick={() => history.goBack()}>
           Back

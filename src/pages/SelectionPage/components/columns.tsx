@@ -1,4 +1,4 @@
-import { FileInfo, Asset } from 'cognite-sdk-v3';
+import { FileInfo, Asset } from '@cognite/sdk';
 import { dateSorter, stringCompare } from 'modules/contextualization/utils';
 import { ResourceType } from 'modules/types';
 import DetectedTags from 'components/DetectedTags';

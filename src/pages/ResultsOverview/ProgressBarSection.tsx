@@ -15,9 +15,11 @@ const ProgressBarSection = (): JSX.Element => {
 
   const workflowId = useSelector(getActiveWorkflowId);
 
-  const { statusCount, status: parsingJobStatus, jobId } = useParsingJob(
-    workflowId
-  );
+  const {
+    statusCount,
+    status: parsingJobStatus,
+    jobId,
+  } = useParsingJob(workflowId);
   const isJobDone =
     parsingJobStatus === 'Completed' || parsingJobStatus === 'Failed';
 
@@ -29,8 +31,12 @@ const ProgressBarSection = (): JSX.Element => {
 
   useInterval(pollJobIfRunning, isJobDone ? null : 5000);
 
-  const { completed = 0, running = 0, queued = 0, failed = 0 } =
-    statusCount ?? {};
+  const {
+    completed = 0,
+    running = 0,
+    queued = 0,
+    failed = 0,
+  } = statusCount ?? {};
   const total = running + completed + queued + failed;
 
   const parsingJobPercent: number = Math.round(

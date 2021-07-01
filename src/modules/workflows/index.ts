@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { LS_SAVED_SETTINGS } from 'stringConstants';
 import { list as listFiles } from 'modules/files';
 import {
   list as listAssets,
@@ -19,16 +20,22 @@ interface WorkflowState {
   localStorage: any;
 }
 
+export const defaultModelOptions = {
+  partialMatch: false,
+  minTokens: 2,
+  matchFields: {
+    files: 'name',
+    assets: 'name',
+  },
+};
+
 const initialState: WorkflowState = {
   active: -1,
   items: {},
   localStorage: { version: 1 },
 };
-const initialWorkflow: Workflow = {
-  options: {
-    partialMatch: false,
-    minTokens: 2,
-  },
+const defaultInitialWorkflow: Workflow = {
+  options: defaultModelOptions,
   step: 'diagramSelection',
 };
 
@@ -147,6 +154,15 @@ export const workflowsSlice = createSlice({
         diagrams = undefined,
         resources = undefined,
       } = action.payload;
+      const savedSettings = JSON.parse(
+        window.localStorage.getItem(LS_SAVED_SETTINGS) ?? '{}'
+      );
+      const initialWorkflow = {
+        ...defaultInitialWorkflow,
+        options: savedSettings?.skip
+          ? savedSettings?.options ?? defaultInitialWorkflow.options
+          : defaultInitialWorkflow.options,
+      };
       const newWorkflow = {
         ...initialWorkflow,
         ...(diagrams ? { diagrams } : {}),
@@ -212,9 +228,13 @@ export const workflowsSlice = createSlice({
       const minTokens = action.payload.minTokens
         ? action.payload.minTokens
         : activeWorkflow.options.minTokens;
+      const matchFields = action.payload.matchFields
+        ? action.payload.matchFields
+        : activeWorkflow.options.matchFields;
       state.items[workflowId].options = {
         partialMatch,
         minTokens,
+        matchFields,
       };
     },
     moveToStep: (state, action) => {

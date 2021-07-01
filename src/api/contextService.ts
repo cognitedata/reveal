@@ -1,5 +1,5 @@
 import sdk from 'sdk-singleton';
-import { CogniteClient, IdEither } from 'cognite-sdk-v3';
+import { CogniteClient, IdEither } from '@cognite/sdk';
 import { projectName, getCdfEnvFromUrl } from 'utils/config';
 
 const useLocalApi = false; // Toggle on if using api locally

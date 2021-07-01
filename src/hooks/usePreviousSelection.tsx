@@ -19,10 +19,8 @@ export const usePreviousSelection = (
   setSelectAll: (selectAll: boolean) => void,
   setSelectedRowKeys: (selectedRowKeys: Array<number>) => void
 ): boolean => {
-  const [
-    loadItemsStatus,
-    setLoadItemsStatus,
-  ] = useState<AwaitingResourcesToLoad>('idle');
+  const [loadItemsStatus, setLoadItemsStatus] =
+    useState<AwaitingResourcesToLoad>('idle');
   const [previousSelectionLoaded, setPreviousSelectionLoaded] = useState(false);
   const [itemFilter, setItemFilter] = useState<Filter>({});
   const { items } = useSelector(searchItemSelector)(resourceType, itemFilter);

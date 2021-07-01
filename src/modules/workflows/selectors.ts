@@ -61,18 +61,17 @@ export const getActiveWorkflowResources = createSelector(
 export const getActiveWorkflowResourcesByResourceType = createSelector(
   (state: RootState) => state.workflows.active,
   (state: RootState) => state.workflows.items,
-  (workflowId: number, items: { [id: number]: Workflow }) => (
-    resourceType: ResourceType
-  ) => {
-    if (workflowId) {
-      const { resources } = items[workflowId];
-      const resourceOfType = resources?.find(
-        (resource: ResourceSelection) => resource.type === resourceType
-      );
-      return resourceOfType;
+  (workflowId: number, items: { [id: number]: Workflow }) =>
+    (resourceType: ResourceType) => {
+      if (workflowId) {
+        const { resources } = items[workflowId];
+        const resourceOfType = resources?.find(
+          (resource: ResourceSelection) => resource.type === resourceType
+        );
+        return resourceOfType;
+      }
+      return undefined;
     }
-    return undefined;
-  }
 );
 
 export const getCountsSelector = createSelector(

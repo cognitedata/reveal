@@ -6,7 +6,7 @@ import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { Button, Tooltip, Icon, Body } from '@cognite/cogs.js';
 import { createLink } from '@cognite/cdf-utilities';
 import { message, Modal, notification } from 'antd';
-import { FileInfo } from 'cognite-sdk-v3';
+import { FileInfo } from '@cognite/sdk';
 import { Flex, Table } from 'components/Common';
 import { sleep } from 'utils/utils';
 import { useAnnotatedFiles } from 'hooks';

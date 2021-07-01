@@ -1,20 +1,19 @@
 import React, { useEffect } from 'react';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import { Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'react-redux';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { AuthWrapper, SubAppWrapper } from '@cognite/cdf-utilities';
-import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 import { SDKProvider } from '@cognite/sdk-provider';
-import { Loader } from '@cognite/cogs.js';
 import { CogniteClient } from '@cognite/sdk';
 import sdk from 'sdk-singleton';
+import { Loader } from '@cognite/cogs.js';
+import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 import debounce from 'lodash/debounce';
 import { createBrowserHistory } from 'history';
-import GlobalStyles from 'styles/GlobalStyles';
-import AntStyles from 'components/AntStyles';
 import { setupSentry } from 'utils/setupSentry';
 import store, { persistedState, loadLocalStorage } from 'store';
 import { AppStateProvider } from 'context';
+import { AntStyles, GlobalStyles } from 'styles';
 import RootApp from 'pages/App';
 
 const App = () => {
@@ -48,10 +47,10 @@ const App = () => {
   }, [LS_KEY]);
 
   useEffect(() => {
-    cogsStyles.use();
+    if (cogsStyles?.use) cogsStyles.use();
     setupSentry();
     return () => {
-      cogsStyles.unuse();
+      if (cogsStyles?.unuse) cogsStyles.unuse();
     };
   }, []);
 
@@ -67,7 +66,7 @@ const App = () => {
               loadingScreen={<Loader darkMode={false} />}
               subAppName="context-ui-pnid"
             >
-              <SDKProvider sdk={(sdk as unknown) as CogniteClient}>
+              <SDKProvider sdk={sdk as CogniteClient}>
                 <AppStateProvider>
                   <Provider store={store}>
                     <Router history={history}>

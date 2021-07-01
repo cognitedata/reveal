@@ -11,6 +11,7 @@ export type PathData = {
   title: string;
   workflowStepName?: WorkflowStep;
   isNotStep?: boolean;
+  skippable?: boolean;
 };
 
 export default function routesMap() {

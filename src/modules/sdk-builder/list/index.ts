@@ -127,7 +127,7 @@ export default function buildList<T extends InternalId, Q extends Query>(
           all,
           partition,
           nth,
-        };
+        } as ListPartialAction;
       }
     ),
     pending: (state: any, action: any) => {

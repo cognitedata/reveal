@@ -35,10 +35,8 @@ export default function DiagramsSelection(props: SelectionProps): JSX.Element {
   const [diagramsToContextualizeIds, setDiagramsToContextualizeIds] = useState<
     number[]
   >([]);
-  const [
-    diagramsToContextualizeLoaded,
-    setDiagramsToContextualizeLoaded,
-  ] = useState(false);
+  const [diagramsToContextualizeLoaded, setDiagramsToContextualizeLoaded] =
+    useState(false);
   const { diagrams = undefined } = useSelector(getActiveWorkflowItems);
 
   const fetchUserSelectedDiagrams = () => {

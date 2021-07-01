@@ -22,7 +22,11 @@ import {
 export const FileSmallPreview = ({ fileId }: { fileId: number }) => {
   const sdk = useSDK();
 
-  const { data: file, isFetched, error } = useCdfItem<FileInfo>('files', {
+  const {
+    data: file,
+    isFetched,
+    error,
+  } = useCdfItem<FileInfo>('files', {
     id: fileId,
   });
 

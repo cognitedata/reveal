@@ -11,6 +11,12 @@ export type ResourceSelection = {
   filter: any;
 };
 
+export type MatchFields = {
+  assets?: string;
+  files?: string;
+  diagrams?: string;
+};
+
 export type ResourceObjectType = {
   assets?: Asset[];
   files?: FileInfo[];
@@ -40,4 +46,5 @@ export type WorkflowStep =
 export type WorkflowOptions = {
   partialMatch: boolean;
   minTokens: number;
+  matchFields: MatchFields;
 };

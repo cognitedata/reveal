@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useDebouncedCallback } from 'use-debounce';
 import { Button, Tooltip, message } from 'antd';
+import { useLocalStorage } from '@cognite/cogs.js';
 import { doSearch } from 'modules/search';
 import {
   PendingResourceSelection,
@@ -16,6 +17,7 @@ import {
   useActiveWorkflow,
   usePreviousSelection,
 } from 'hooks';
+import { LS_SAVED_SETTINGS } from 'stringConstants';
 import StickyBottomRow from 'components/StickyBottomRow';
 import { Flex, IconButton } from 'components/Common';
 import { searchCountSelector } from 'pages/SelectionPage/selectors';
@@ -45,6 +47,9 @@ export default function SelectionPage(props: Props): JSX.Element {
     defaultFilters[type] ?? EMPTY_FILTER
   );
   const [delayedFilter, setDelayedFilter] = useState<Filter>(filter);
+  const [savedSettings] = useLocalStorage(LS_SAVED_SETTINGS, {
+    skip: false,
+  });
   const [debouncedSetFilter] = useDebouncedCallback(setDelayedFilter, 200);
   const count = useSelector(searchCountSelector(type, filter));
   useActiveWorkflow(step);
@@ -110,7 +115,8 @@ export default function SelectionPage(props: Props): JSX.Element {
       return;
     }
     if (!type) return;
-    goToNextStep();
+    const skipStep = savedSettings.skip === true;
+    goToNextStep(skipStep);
   };
 
   useEffect(() => {

@@ -1,4 +1,4 @@
-import { Asset, FileInfo } from 'cognite-sdk-v3/dist/src';
+import { Asset, FileInfo } from '@cognite/sdk';
 import { Vertices } from 'modules/types';
 
 export const verticesToBoundingBox = (
@@ -18,10 +18,22 @@ export const verticesToBoundingBox = (
   return { xMin, yMin, xMax, yMax };
 };
 
-export const mapAssetsToEntities = (assets?: Asset[]) => {
-  return (assets ?? []).map((asset) => ({ ...asset, resourceType: 'asset' }));
+export const mapAssetsToEntities = (
+  assets?: Asset[],
+  fieldToMatch: keyof Asset = 'name'
+) => {
+  return (assets ?? []).map((asset) => ({
+    resourceType: 'asset',
+    name: asset[fieldToMatch] ?? asset.name, // temporary solution - mapping fields chosen by user to name
+  }));
 };
 
-export const mapFilesToEntities = (files?: FileInfo[]) => {
-  return (files ?? []).map((file) => ({ ...file, resourceType: 'file' }));
+export const mapFilesToEntities = (
+  files?: FileInfo[],
+  fieldToMatch: keyof FileInfo = 'name'
+) => {
+  return (files ?? []).map((file) => ({
+    resourceType: 'file',
+    name: file[fieldToMatch] ?? file.name, // temporary solution - mapping fields chosen by user to name
+  }));
 };

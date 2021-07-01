@@ -52,12 +52,14 @@ export const FilePreview = ({
     }
   }, [isActive, resourcesState, fileId, setResourcesState]);
 
-  const { data: fileInfo, isFetched, isError, error } = useCdfItem<FileInfo>(
-    'files',
-    {
-      id: fileId!,
-    }
-  );
+  const {
+    data: fileInfo,
+    isFetched,
+    isError,
+    error,
+  } = useCdfItem<FileInfo>('files', {
+    id: fileId!,
+  });
 
   if (!isFetched) {
     return <Loader />;

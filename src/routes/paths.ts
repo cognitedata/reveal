@@ -35,8 +35,9 @@ export const paths: { [key: string]: PathData } = {
     path: (tenant: string, workflowId: string | number) =>
       `/${tenant}/${root}/workflow/${workflowId}/config`,
     staticPath: `${staticRoot}/workflow/:workflowId/config`,
-    title: 'Settings',
+    title: 'Select model',
     workflowStepName: 'config',
+    skippable: true,
   },
   reviewPage: {
     path: (tenant: string, workflowId: string | number) =>
