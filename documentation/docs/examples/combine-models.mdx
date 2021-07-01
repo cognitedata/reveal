@@ -23,10 +23,12 @@ should also be applied to ensure that the axis system is correct.
 The following example shows how to modify the coordinate system of a point cloud model to make it fit with a CAD model.
 
 ```js runnable
-viewer.addModel({
-  modelId: 5564365369975452 ,
-  revisionId: 2817572261344477,
-}).then(pointCloudModel => {
+async function updateModelTransformation() {
+  const pointCloudModel = await viewer.addModel({
+    modelId: 5564365369975452 ,
+    revisionId: 2817572261344477,
+  })
+
   // Retrieve default transformation
   const modelTransformation = pointCloudModel.getModelTransformation();
   // Apply translation
@@ -36,7 +38,9 @@ viewer.addModel({
   pointCloudModel.setModelTransformation(modelTransformation);
 
   viewer.fitCameraToModel(pointCloudModel);
-});
+}
+
+updateModelTransformation();
 ```
 
 ## Use geometry filters to extract parts of a model
