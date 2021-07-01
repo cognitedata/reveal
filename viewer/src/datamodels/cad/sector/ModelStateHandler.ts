@@ -36,10 +36,12 @@ export class ModelStateHandler {
   }
 
   updateState(consumedSector: ConsumedSector) {
-    assert(
-      this._sceneModelState[consumedSector.modelIdentifier] !== undefined,
-      `Received sector from model ${consumedSector.modelIdentifier}, but the model is not added`
-    );
+    if (this._sceneModelState[consumedSector.modelIdentifier] === undefined) {
+      // Received sector from model but the model is not added - happens when
+      // sectors from newly removed model are loaded
+      return;
+    }
+
     const modelState = this._sceneModelState[consumedSector.modelIdentifier];
     if (consumedSector.levelOfDetail === LevelOfDetail.Discarded) {
       delete modelState[consumedSector.metadata.id];
