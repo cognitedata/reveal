@@ -5,6 +5,7 @@ import { Button } from '@cognite/cogs.js';
 import { Col, Form, Input, Modal, Row, Table, notification } from 'antd';
 import { getContainer } from 'utils/utils';
 import columns from './columns';
+import { stringContains } from '../Groups/utils';
 
 export default function SecurityCategories() {
   const sdk = useSDK();
@@ -98,8 +99,8 @@ export default function SecurityCategories() {
         pagination={{ pageSize: 100, hideOnSinglePage: true }}
         dataSource={data?.filter(
           s =>
-            s.name.toLowerCase().includes(searchValue.toLowerCase()) ||
-            s.id.toString().includes(searchValue.toLowerCase())
+            stringContains(s.name, searchValue) ||
+            stringContains(String(s.id), searchValue)
         )}
         style={{ marginTop: '20px' }}
         getPopupContainer={getContainer}

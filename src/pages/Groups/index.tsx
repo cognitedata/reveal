@@ -306,11 +306,10 @@ export default function Groups() {
         columns={columns}
         dataSource={groups?.filter(
           s =>
-            stringContains(s.name ?? String(s.id), searchValue) ||
+            stringContains(s.name, searchValue) ||
+            stringContains(String(s.id), searchValue) ||
             s.capabilities?.find(c =>
-              Object.keys(c)[0]!
-                .toLowerCase()
-                .includes(searchValue.toLowerCase())
+              stringContains(Object.keys(c)[0]!, searchValue)
             )
         )}
         style={{ marginTop: '20px' }}
