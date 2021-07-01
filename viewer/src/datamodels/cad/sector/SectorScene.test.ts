@@ -114,6 +114,28 @@ describe('SectorSceneImpl', () => {
     expect(scene.root.bounds.containsPoint(bounds.min)).toBeTrue();
     expect(scene.root.bounds.containsPoint(bounds.max)).toBeTrue();
   });
+
+  test('getBoundsOfMostGeometry with root with only one child, result is child bounds', () => {
+    // Arrange
+    const leafBounds = new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1, 1, 1));
+    const root = createSectorMetadata([
+      0,
+      [[1, [], leafBounds]],
+      new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(10, 10, 10))
+    ]);
+    const sectorsById = new Map<number, SectorMetadata>();
+    traverseDepthFirst(root, x => {
+      sectorsById.set(x.id, x);
+      return true;
+    });
+
+    // Act
+    const scene = new SectorSceneImpl(8, 3, 'Meters', root, sectorsById);
+    const bounds = scene.getBoundsOfMostGeometry();
+
+    // Assert
+    expect(bounds).toEqual(leafBounds);
+  });
 });
 
 function sectorIds(sectors: SectorMetadata[]): number[] {
