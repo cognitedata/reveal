@@ -8,6 +8,7 @@ import {
   ItemsState,
   ItemsAsyncStatus,
 } from 'modules/types';
+import { mapArrayToObj } from 'utils/utils';
 import {
   createItemSelector,
   createExternalIdMapSelector,
@@ -41,33 +42,36 @@ export default function buildItems<
     ),
     pending: (state: any, action: any) => {
       const { ids } = action.meta.arg;
-      ids.forEach((item: InternalId) => {
-        state.items.retrieve.byId = {
-          ...state.items.retrieve.byId,
-          [item.id]: { status: 'pending', id: item.id },
-        };
-      });
+      state.items.retrieve.byId = {
+        ...state.items.retrieve.byId,
+        ...mapArrayToObj(
+          'id',
+          ids.map((item: { id: any }) => ({ status: 'pending', id: item.id }))
+        ),
+      };
     },
     rejected: (state: any, action: any) => {
       const { ids } = action.meta.arg;
-      ids.forEach((item: InternalId) => {
-        state.items.retrieve.byId = {
-          ...state.items.retrieve.byId,
-          [item.id]: { status: 'error', id: item.id },
-        };
-      });
+      state.items.retrieve.byId = {
+        ...state.items.retrieve.byId,
+        ...mapArrayToObj(
+          'id',
+          ids.map((item: { id: any }) => ({ status: 'error', id: item.id }))
+        ),
+      };
     },
     fulfilled: (
       state: any,
       action: PayloadAction<{ items: T[]; ids: InternalId[] }>
     ) => {
       const { items } = action.payload;
-      items.forEach((item: InternalId) => {
-        state.items.retrieve.byId = {
-          ...state.items.retrieve.byId,
-          [item.id]: { status: 'success', id: item.id },
-        };
-      });
+      state.items.retrieve.byId = {
+        ...state.items.retrieve.byId,
+        ...mapArrayToObj(
+          'id',
+          items.map((item: { id: any }) => ({ status: 'success', id: item.id }))
+        ),
+      };
     },
   };
 
@@ -92,42 +96,45 @@ export default function buildItems<
     ),
     pending: (state: any, action: any) => {
       const { ids } = action.meta.arg;
-      ids.forEach((item: ExternalId) => {
-        state.items.retrieve.byExternalId = {
-          ...state.items.retrieve.byExternalId,
-          [item.externalId]: {
-            ...state.items.retrieve.byExternalId[item.externalId],
+      state.items.retrieve.byExternalId = {
+        ...state.items.retrieve.byExternalId,
+        ...mapArrayToObj(
+          'id',
+          ids.map((item: { externalId: any }) => ({
+            id: item.externalId,
             status: 'pending',
-          },
-        };
-      });
+          }))
+        ),
+      };
     },
     rejected: (state: any, action: any) => {
       const { ids } = action.meta.arg;
-      ids.forEach((item: ExternalId) => {
-        state.items.retrieve.byExternalId = {
-          ...state.items.retrieve.byExternalId,
-          [item.externalId]: {
-            ...state.items.retrieve.byExternalId[item.externalId],
+      state.items.retrieve.byExternalId = {
+        ...state.items.retrieve.byExternalId,
+        ...mapArrayToObj(
+          'id',
+          ids.map((item: { externalId: any }) => ({
+            id: item.externalId,
             status: 'error',
-          },
-        };
-      });
+          }))
+        ),
+      };
     },
     fulfilled: (
       state: any,
       action: PayloadAction<{ items: T[]; ids: ExternalId[] }>
     ) => {
       const { items } = action.payload;
-      items.forEach((item: any) => {
-        state.items.retrieve.byExternalId = {
-          ...state.items.retrieve.byExternalId,
-          [item.externalId]: {
-            status: 'success',
-            id: item.id,
-          },
-        };
-      });
+      state.items.retrieve.byExternalId = {
+        ...state.items.retrieve.byExternalId,
+        ...mapArrayToObj(
+          'id',
+          items.map((item) => ({
+            id: item.externalId,
+            status: 'pending',
+          }))
+        ),
+      };
     },
   };
 
@@ -152,33 +159,45 @@ export default function buildItems<
     ),
     pending: (state: any, action: any) => {
       const { updates } = action.meta.arg;
-      updates.forEach((item: U) => {
-        state.items.update.byId = {
-          ...state.items.update.byId,
-          [item.id]: { ...state.items.update.byId[item.id], status: 'pending' },
-        };
-      });
+      state.items.update.byId = {
+        ...state.items.update.byId,
+        ...mapArrayToObj(
+          'id',
+          updates.map((item: { id: string | number }) => ({
+            ...state.items.update.byId[item.id],
+            status: 'pending',
+          }))
+        ),
+      };
     },
     rejected: (state: any, action: any) => {
       const { updates } = action.meta.arg;
-      updates.forEach((item: U) => {
-        state.items.update.byId = {
-          ...state.items.update.byId,
-          [item.id]: { ...state.items.update.byId[item.id], status: 'error' },
-        };
-      });
+      state.items.update.byId = {
+        ...state.items.update.byId,
+        ...mapArrayToObj(
+          'id',
+          updates.map((item: { id: string | number }) => ({
+            ...state.items.update.byId[item.id],
+            status: 'error',
+          }))
+        ),
+      };
     },
     fulfilled: (
       state: any,
       action: PayloadAction<{ items: T[]; updates: U[] }>
     ) => {
       const { items } = action.payload;
-      items.forEach((item: T) => {
-        state.items.update.byId = {
-          ...state.items.update.byId,
-          [item.id]: { status: 'success', id: item.id },
-        };
-      });
+      state.items.update.byId = {
+        ...state.items.update.byId,
+        ...mapArrayToObj(
+          'id',
+          items.map((item: { id: string | number }) => ({
+            id: item.id,
+            status: 'success',
+          }))
+        ),
+      };
     },
   };
 

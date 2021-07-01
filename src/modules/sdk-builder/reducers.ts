@@ -1,6 +1,7 @@
 import { InternalId, ExternalId } from '@cognite/sdk';
 import { createAction } from '@reduxjs/toolkit';
 import { ResourceType, Status } from 'modules/types';
+import { mapArrayToObj } from 'utils/utils';
 
 /**
  * Action that allows us to update specific type of items from any part of the store.
@@ -17,14 +18,11 @@ export const updateAction = (resourceType: ResourceType) =>
 
 export const update = (state: any, action: any) => {
   const { items: itemsToUpdate } = action.payload;
-  itemsToUpdate.forEach((item: any) => {
-    state.items.list = {
-      ...state.items.list,
-      [item.id]: { ...item },
-    };
-  });
+  state.items.list = {
+    ...state.items.list,
+    ...mapArrayToObj('id', itemsToUpdate),
+  };
 };
-
 /**
  * Action that allows us to update status of the endpoint request from any part of the store.
  * For example, to update status of state.items.retrieve.byExternalId we need to pass an object:
@@ -55,19 +53,11 @@ export const updateStatusAction = (resourceType: ResourceType) =>
 
 export const updateStatus = (state: any, action: any) => {
   const { items, endpoint, status } = action.payload;
-  items.forEach((item: any) => {
-    const getIdType = (): 'byId' | 'byExternalId' | undefined => {
-      if (item.id) return 'byId';
-      if (item.externalId) return 'byExternalId';
-      return undefined;
-    };
-    const id = item.id ?? item.externalId;
-    const idType = getIdType();
-    if (id && idType) {
-      state.items[endpoint][idType] = {
-        ...state.items[endpoint][idType],
-        [id]: { status, id },
-      };
-    }
-  });
+  state.items[endpoint].byId = {
+    ...state.items[endpoint].byExternalId,
+    ...mapArrayToObj(
+      'id',
+      items.map((item: { id: any }) => ({ id: item.id, status }))
+    ),
+  };
 };

@@ -18,3 +18,10 @@ export const abbreviateNumber = (n: number) => {
   if (n >= 1e12) return `${+(n / 1e12).toFixed(1)}T`;
   return n;
 };
+
+export const mapArrayToObj = <T>(key: keyof T, items: T[]) => {
+  return items.reduce(
+    (acc, cur) => ({ ...acc, [(cur[key] as unknown) as string]: cur }),
+    {}
+  );
+};

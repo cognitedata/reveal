@@ -81,13 +81,10 @@ export default function SelectionPage(props: Props): JSX.Element {
     if (!isSelectAll) {
       return selectedRowKeys.map((el) => ({ id: el }));
     }
-    if (selectionSize > 5000) {
-      return {
-        ...filter,
-        limit: 1000,
-      };
-    }
-    return filter;
+    return {
+      ...filter,
+      limit: 1000,
+    };
   };
 
   const updateCurrentSelection = () => {
