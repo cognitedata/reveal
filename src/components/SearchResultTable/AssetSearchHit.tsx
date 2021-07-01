@@ -197,6 +197,7 @@ const ResourceNameWrapper = styled.div`
 const Description = styled.span`
   margin-left: 20px;
   font-size: 10px;
+  padding-top: 4px;
 `;
 
 const Right = styled.div`
