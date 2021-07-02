@@ -324,12 +324,6 @@ export const ModalFileUploader = ({
           uploadedBytes: number;
           totalBytes: number;
         }) => {
-          // console.log(
-          //   'file chunk response',
-          //   file.name,
-          //   `${(info.uploadedBytes / info.totalBytes) * 100}%`
-          // );
-
           // eslint-disable-next-line no-param-reassign
           file.percent = (info.uploadedBytes / info.totalBytes) * 100;
 
@@ -354,20 +348,24 @@ export const ModalFileUploader = ({
         /* eslint-enable no-await-in-loop */
       }
       onUploadSuccess(fileInfo || fileMetadata);
+      // eslint-disable-next-line no-param-reassign
+      file.status = 'done';
     } catch (e) {
-      if (e.code === 401) {
+      if (e.status === 401) {
         // eslint-disable-next-line no-alert
         alert('Authorization is expired. The page will be reloaded');
         // eslint-disable-next-line no-restricted-globals
         location.reload();
       } else {
         console.error(e);
-        message.error(`Unable to upload ${file.name} on server.`);
+        message.error(
+          `Unable to upload ${file.name} on server. ${e.errorMessage} | code: ${e.status}`
+        );
+        // eslint-disable-next-line no-param-reassign
+        file.status = 'idle';
       }
     }
 
-    // eslint-disable-next-line no-param-reassign
-    file.status = 'done';
     setFileList([...fileList]);
 
     clearLocalUploadMetadata(file);
