@@ -97,6 +97,16 @@ export const FileDetailsContainer = (props: {
           onInput={onFieldChange}
         />
       )}
+      {/* ToDo: remove 'as any' once FileInfo have been properly updated with directory field */}
+      <FileDetailFieldView
+        id="directory"
+        title="Directory"
+        placeholder="None Set"
+        value={(info as any).directory}
+        editable
+        onBlur={updateInfo}
+        onInput={onFieldChange}
+      />
       <DataSetFieldView fileId={info.id} />
 
       <FieldRow>

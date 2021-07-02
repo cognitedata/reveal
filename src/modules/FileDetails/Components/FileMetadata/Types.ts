@@ -1,7 +1,11 @@
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import { ReactText } from 'react';
 
-export type VisionFileDetails = Omit<FileInfo, 'metadata'>;
+// ToDo: remove { directory?: string } once FileInfo have been properly updated with directory field
+export type VisionFileDetails = Omit<FileInfo, 'metadata'> & {
+  directory?: string;
+};
+
 export type VisionFileInfo = VisionFileDetails & {
   metadata: MetadataItem[];
 };
