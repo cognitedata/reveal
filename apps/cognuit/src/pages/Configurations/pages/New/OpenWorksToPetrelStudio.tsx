@@ -20,10 +20,10 @@ import {
 } from 'types/ApiInterface';
 import { CustomError } from 'services/CustomError';
 import LoadingBox from 'components/Molecules/LoadingBox';
-import { CloseIcon } from 'components/Organisms/DetailView/elements';
 import { ThirdPartySystems } from 'types/globalTypes';
 
 import {
+  CloseIcon,
   BorderedBottomContainer,
   CenteredLoader,
   ConfigurationContainer,

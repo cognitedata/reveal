@@ -7,7 +7,6 @@ import { SelectValue } from 'antd/es/select';
 import APIErrorContext from 'contexts/APIErrorContext';
 import { Link, useHistory } from 'react-router-dom';
 import { CustomError } from 'services/CustomError';
-import { CloseIcon } from 'components/Organisms/DetailView/elements';
 import {
   useProjectsBusinessTagsQuery,
   useProjectsQuery,
@@ -17,6 +16,7 @@ import { useConfigurationsMutation } from 'services/endpoints/configurations/mut
 import { useDataStatusQuery } from 'services/endpoints/datastatus/query';
 
 import {
+  CloseIcon,
   ConfigurationsMainContainer,
   ConnectionLinesWrapper,
   ErrorModal,

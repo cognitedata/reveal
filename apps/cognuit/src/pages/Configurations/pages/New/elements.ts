@@ -3,8 +3,13 @@ import {
   Button,
   Checkbox as DefaultCheckbox,
   Body,
+  Icon,
   Title as DefaultTitle,
 } from '@cognite/cogs.js';
+
+export const CloseIcon = styled(Icon)`
+  cursor: pointer;
+`;
 
 export const Title = styled(DefaultTitle).attrs({ level: 2 })``;
 

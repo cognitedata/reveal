@@ -4,15 +4,15 @@ import Card from 'components/Atoms/Card';
 import Label from 'components/Atoms/Label';
 
 import { StatusContainer, CardContent, HeadingContainer } from './elements';
-import StatusCardHeader from './StatusCardHeader';
-import Heartbeats from './Heartbeats';
+import StatusCardHeader from './components/StatusCardHeader';
+import Heartbeats from './components/Heartbeats';
 import {
   DATE_RANGE_VALUES,
   DateRangeValueType,
   getTimestampParamForDateRange,
 } from './utils';
-import ErrorDistribution from './ErrorDistribution';
-import TranslationStatistics from './TranslationStatistics';
+import ErrorDistribution from './components/ErrorDistribution';
+import TranslationStatistics from './components/TranslationStatistics';
 
 const Status = () => {
   const [dateRangeOpen, setDateRangeOpen] = useState<boolean>(false);

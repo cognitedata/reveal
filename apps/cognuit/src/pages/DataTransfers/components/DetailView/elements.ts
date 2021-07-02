@@ -1,8 +1,20 @@
 import styled from 'styled-components';
-import { Icon } from '@cognite/cogs.js';
+import { Icon, Tabs } from '@cognite/cogs.js';
 
 export const CloseIcon = styled(Icon)`
   cursor: pointer;
+`;
+
+export const ExtendedTabs = styled(Tabs)`
+  && {
+    .rc-tabs-nav-wrap {
+      border-bottom: 1px solid var(--cogs-greyscale-grey3);
+      margin-bottom: 1rem;
+    }
+    .rc-tabs-tab-active {
+      font-weight: 600;
+    }
+  }
 `;
 
 export const Content = styled.div`

@@ -202,9 +202,9 @@ class Api {
       console.log('Not used yet: queryParameters', queryParameters);
       // return this.get(`${this.baseURL}/sources/${source}/errors`, queryParameters);
       if (source === 'Studio') {
-        return mockDataErrorsPsToOw;
+        return Promise.resolve(mockDataErrorsPsToOw);
       }
-      return mockDataErrorsOwToPs;
+      return Promise.resolve(mockDataErrorsOwToPs);
     },
     getTranslationStatistics: async (
       _source: string,
@@ -214,12 +214,12 @@ class Api {
       // const queryParameters = { timeRange };
       // return this.get(`${this.baseURL}/sources/${source}/statistics`, queryParameters);
       if (timeRange === 'month') {
-        return mockDataTranslationsStatsMonthly();
+        return Promise.resolve(mockDataTranslationsStatsMonthly());
       }
       if (timeRange === 'day') {
-        return mockDataTranslationsStatsDaily();
+        return Promise.resolve(mockDataTranslationsStatsDaily());
       }
-      return mockDataTranslationsStatsHourly();
+      return Promise.resolve(mockDataTranslationsStatsHourly());
     },
   };
 

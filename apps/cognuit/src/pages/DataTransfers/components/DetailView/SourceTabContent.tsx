@@ -1,8 +1,8 @@
 import { Col, Input, Row } from '@cognite/cogs.js';
 import { format } from 'date-fns';
+import { UNIX_TIMESTAMP_FACTOR } from 'typings/interfaces';
 
-import { UNIX_TIMESTAMP_FACTOR } from '../../../typings/interfaces';
-import { getFormattedTimestampOrString } from '../../../pages/DataTransfers/utils';
+import { getFormattedTimestampOrString } from '../../utils';
 
 import { Section } from './elements';
 import { SourceType } from './DetailView';

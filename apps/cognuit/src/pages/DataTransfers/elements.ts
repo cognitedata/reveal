@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 import { Button, Icon } from '@cognite/cogs.js';
-import { Table } from 'antd';
 
 export const TableActionsContainer = styled.div`
   padding: 2rem 2rem 1rem 2rem;
@@ -36,26 +35,6 @@ export const DetailViewWrapper = styled.div`
   .cogs-modal-footer-buttons {
     .cogs-btn.cogs-btn-secondary {
       display: none;
-    }
-  }
-`;
-
-export const SubTable = styled(Table)`
-  .ant-table {
-    .ant-table-tbody .ant-table-row {
-      background: #fafafa;
-
-      .ant-table-cell {
-        background: #fafafa;
-        &:first-of-type {
-          padding-left: 6px;
-        }
-        &:last-of-type {
-          margin-left: auto;
-          padding-right: 32px;
-          text-align: right;
-        }
-      }
     }
   }
 `;

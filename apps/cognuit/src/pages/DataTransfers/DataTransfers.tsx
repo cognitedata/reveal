@@ -1,9 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import ApiContext from 'contexts/ApiContext';
 import EmptyTableMessage from 'components/Molecules/EmptyTableMessage/EmptyTableMessage';
-import DetailView, {
-  DetailDataProps,
-} from 'components/Organisms/DetailView/DetailView';
 import { Loader, Table } from '@cognite/cogs.js';
 import { Revision } from 'types/ApiInterface';
 import sortBy from 'lodash/sortBy';
@@ -15,6 +12,9 @@ import ErrorMessage from 'components/Molecules/ErrorMessage';
 
 import { ContentContainer } from '../../elements';
 
+import DetailView, {
+  DetailDataProps,
+} from './components/DetailView/DetailView';
 import Revisions from './Revisions';
 import { DetailViewWrapper } from './elements';
 import { DataTypesTableData, ProgressState } from './types';

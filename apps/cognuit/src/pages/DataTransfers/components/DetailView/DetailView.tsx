@@ -1,10 +1,8 @@
 import { useEffect } from 'react';
-import { Colors, Modal } from '@cognite/cogs.js';
-import { Tabs } from 'antd';
+import { Colors, Modal, Tabs } from '@cognite/cogs.js';
+import LoadingBox from 'components/Molecules/LoadingBox';
 
-import LoadingBox from '../../Molecules/LoadingBox';
-
-import { CloseIcon, Content } from './elements';
+import { CloseIcon, Content, ExtendedTabs } from './elements';
 import SourceTabContent from './SourceTabContent';
 import TranslationTabContent from './TranslationTabContent';
 
@@ -60,8 +58,6 @@ export type DetailDataProps = {
   target: TargetType;
 } | null;
 
-const { TabPane } = Tabs;
-
 const DetailView = ({ onClose, data }: Props) => {
   function upHandler(event: KeyboardEvent) {
     if (event.key === 'Escape' || event.code === 'Escape') {
@@ -101,14 +97,14 @@ const DetailView = ({ onClose, data }: Props) => {
         <>
           {source && target && (
             <Content>
-              <Tabs defaultActiveKey="1">
-                <TabPane tab="Source" key="1">
+              <ExtendedTabs defaultActiveKey="1">
+                <Tabs.TabPane tab="Source" key="1">
                   <SourceTabContent {...source} />
-                </TabPane>
-                <TabPane tab="Translation" key="2">
+                </Tabs.TabPane>
+                <Tabs.TabPane tab="Translation" key="2">
                   <TranslationTabContent {...target} />
-                </TabPane>
-              </Tabs>
+                </Tabs.TabPane>
+              </ExtendedTabs>
             </Content>
           )}
         </>
