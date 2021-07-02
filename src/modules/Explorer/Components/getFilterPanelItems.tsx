@@ -6,6 +6,8 @@ import { DataSetSelectFilter } from './Filters/DataSetSelectFilter';
 import { SelectLabelsFilter } from './Filters/SelectLabelsFilter';
 import { MetadataSelectFilter } from './Filters/MetadataSelectFilter';
 import { ExternalIdFilter } from './Filters/ExternalIDFilter';
+import { DirectoryPrefixesProvider } from '../Containers/DirectoryPrefixesProvider';
+import { DirectoryPrefixFilter } from './Filters/DirectoryPrefixFilter';
 
 export type FilterPanelConfigItem = {
   key: string;
@@ -30,6 +32,29 @@ export const getFilterPanelItems = (
       });
     },
     filterItem: <DataSetSelectFilter filter={filter} setFilter={setFilter} />,
+  },
+  {
+    key: '2',
+    headerText: 'Directory Prefix',
+    disableClear: !(filter as any).directoryPrefix,
+    clear: () => {
+      setFilter({
+        ...filter,
+        // @ts-ignore
+        directoryPrefix: undefined,
+      });
+    },
+    filterItem: (
+      <DirectoryPrefixesProvider>
+        {(availablePrefixes) => (
+          <DirectoryPrefixFilter
+            availablePrefixes={availablePrefixes}
+            filter={filter}
+            setFilter={setFilter}
+          />
+        )}
+      </DirectoryPrefixesProvider>
+    ),
   },
   {
     key: '3',
