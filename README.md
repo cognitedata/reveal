@@ -1,44 +1,44 @@
-# Unified CDF UI Demo App
+# Document Search UI
 
-This repository shows how to bootstrap a [React]-based application at Cognite.
-It demonstrates best practices, such as:
+This repo hosts the Admin UI frontend for the Unstructured Search API.
 
-- Lint setup to use
-- Jenkinsfile steps
-- TypeScript usage
-- Folder / component layout
-- Test / utils already setup to work
-- ...
+## Requirements
 
-## Deploying the app
+Configure your environment as described on [this Confluence page](https://cognitedata.atlassian.net/wiki/spaces/COG/pages/711950382/Nvm+npm+node+setup). This will give you the `nvm`, `npm` and `yarn` commands.
 
-Please see the [deployment guide] for more information how to actually get this app into production.
-(It should be pretty easy!)
-
-## Template repo
-
-This repo is configured as a template, so it's easy to get started.
-Simply go to the [create repo page] and select "cognitedata/unified-cdf-ui-demo-app" as a template.
-
-## Help
-
-If you have any questions related to frontend development, please join us in [#frontend] and ask away!
-If you have any questions related to fusion development, please join us in [#unified-cdf-ui-devs] and ask away!
-
-[React](https://reactjs.org/)
-
-[React testing library](https://testing-library.com/docs/react-testing-library/intro)
-
-[Wiki; all you need to know about unified cdf ui](https://cog.link/cdf-frontend-wiki)
-
-[Core cdf ui repo](https://github.com/cognitedata/cdf-hub)
-
-[#frontend slack channel](https://cognitedata.slack.com/archives/C6KNJCEEA)
-
-[Create repo page](https://github.com/organizations/cognitedata/repositories/new)
-
-## Run the preview
+We currently use node version `12.19.0`. Ensure you are using this version by doing:
 
 ```
-cdf-ui-cli -pr -b cdf-hub-dev -p @cognite/cdf-demo-app -o index.js -d ./build
+nvm install 12.19.0
+nvm use 12.19.0
 ```
+
+## Useful commands
+
+### Build and run
+
+```js
+yarn
+yarn start
+```
+
+### Testing
+
+```js
+yarn test
+yarn test:once:unittests      # non-interactive, single run
+```
+
+## Running locally
+
+The Document Search UI can be run locally, using [dev.fusion.cogniteapp.com](https://dev.fusion.cogniteapp.com). In order to enable this, perform the following steps:
+
+1. Run the document search microfrontend locally with `yarn start`
+2. Navigate to [dev.fusion.cogniteapp.com](https://dev.fusion.cogniteapp.com) with your browser.
+3. Open the console and run `importMapOverrides.enableUI()`.
+4. Open the `Import Map Overrides` overlay by pressing the `{...}` button that has appeared in the bottom right corner of the page.
+5. Press `Add new module`
+6. Enter Module Name: `@cognite/cdf-document-search-ui`
+7. Enter Override URL: `https://localhost:3016/index.js`
+8. Press `Apply override`
+9. Edit the url bar in the browser, and add `/documents` at the end of the path. Example: if you are using the `unstructured-search` tenant, the full url should be: `https://dev.fusion.cogniteapp.com/unstructured-search/documents?env=greenfield`
