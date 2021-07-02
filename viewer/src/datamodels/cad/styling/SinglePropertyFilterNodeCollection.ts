@@ -79,7 +79,7 @@ export class SinglePropertyFilterNodeCollection extends NodeCollectionBase {
     const outputsUrl = this.buildUrl();
     const batches = Array.from(splitQueryToBatches(propertyValues));
     const requests = batches.flatMap(batch => {
-      const filter = { [`${propertyCategory}`]: { [`${propertyKey}`]: batch } };
+      const filter = { properties: { [`${propertyCategory}`]: { [`${propertyKey}`]: batch } } };
       const batchRequests = range(1, requestPartitions + 1).map(async p => {
         const response = postAsListResponse<Node3D[]>(this._client, outputsUrl, {
           data: {
