@@ -146,9 +146,8 @@ describe('SinglePropertyFilterNodeCollection', () => {
     nock(/.*/)
       .post(filterNodesEndpointPath)
       .twice()
-      .reply(200, uri => {
-        const searchParams = new URLSearchParams(uri);
-        const partition = searchParams.get('partition');
+      .reply(200, (_, body) => {
+        const partition = (body as any).partition;
         switch (partition) {
           case '1/2':
             return { items: [createNodeJson(1, 10)] };
