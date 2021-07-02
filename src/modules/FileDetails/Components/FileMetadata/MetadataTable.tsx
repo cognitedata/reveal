@@ -78,7 +78,11 @@ const EditableCell = (cellProps: {
       />
     );
   }
-  return <span>{cellProps.cellData}</span>;
+  return (
+    <span style={{ overflow: 'auto', maxHeight: '50px' }}>
+      {cellProps.cellData}
+    </span>
+  );
 };
 
 const components = {
