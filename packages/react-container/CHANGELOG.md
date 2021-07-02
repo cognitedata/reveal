@@ -1,3 +1,7 @@
+## 1.4.0 Jul 02 2021
+
+- Bump TSA to change fake idp settings to add new fields
+
 ## 1.3.6 Jun 25 2021
 
 - Add `project` parameter to Intercom component

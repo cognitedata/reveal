@@ -164,7 +164,7 @@ const CardContainer = ({
                   handleSubmit={handleSubmit}
                   authClient={authClient}
                   disabled={fakeIdp.cluster !== authClient?.getCluster()}
-                  {...fakeIdp}
+                  fakeIdpOptions={fakeIdp}
                 />
               ))}
             </>

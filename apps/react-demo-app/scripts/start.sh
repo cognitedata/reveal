@@ -28,4 +28,22 @@ export REACT_APP_MIXPANEL_TOKEN="${REACT_APP_MIXPANEL_TOKEN:-}"
 export REACT_APP_MIXPANEL_DEBUG="${REACT_APP_MIXPANEL_DEBUG:-false}"
 export HTTPS=${HTTPS:-true}
 
+echo ' '
+echo '-> Starting FakeIdP service'
+./scripts/start-fake-idp.sh &
+IDP_PID=$!
+
+function cleanup {
+  echo ' '
+  echo '-> Stopping FAKE IDP services'
+  echo ' '
+  kill $IDP_PID
+}
+
+trap cleanup EXIT
+
 ../../node_modules/.bin/react-scripts start
+
+EXIT_CODE=$?
+
+exit $EXIT_CODE

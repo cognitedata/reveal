@@ -1,5 +1,6 @@
 import * as React from 'react';
 import axios from 'axios';
+import omit from 'lodash/omit';
 import { Button } from '@cognite/cogs.js';
 import { saveToLocalStorage } from '@cognite/storage';
 import { CogniteAuth } from '@cognite/auth-utils';
@@ -10,17 +11,10 @@ type Props = {
   authClient?: CogniteAuth;
   handleSubmit: (tenant: string) => void;
   disabled?: boolean;
-} & FakeIdp;
+  fakeIdpOptions: FakeIdp;
+};
 const LoginWithFakeIDP: React.FC<Props> = ({
-  roles,
-  groups,
-  project,
-  cluster,
-  name,
-  fakeApplicationId,
-  otherIdTokenFields,
-  customExpiry,
-  otherAccessTokenFields,
+  fakeIdpOptions,
   authClient,
   handleSubmit,
   disabled,
@@ -30,19 +24,11 @@ const LoginWithFakeIDP: React.FC<Props> = ({
   const handleClick = () => {
     setLoading(true);
     axios
-      .post(`http://localhost:8200/login/token`, {
-        fakeApplicationId,
-        groups,
-        project,
-        customExpiry,
-        otherIdTokenFields,
-        otherAccessTokenFields,
-        roles,
-      })
+      .post(`http://localhost:8200/login/token`, omit(fakeIdpOptions, 'name'))
       .then((result) => {
         saveToLocalStorage('fakeIdp', {
-          project,
-          cluster,
+          project: fakeIdpOptions.project,
+          cluster: fakeIdpOptions.cluster,
           idToken: result.data.id_token,
           accessToken: result.data.access_token,
         });
@@ -53,12 +39,14 @@ const LoginWithFakeIDP: React.FC<Props> = ({
           });
         }
 
-        handleSubmit(project);
+        handleSubmit(fakeIdpOptions.project);
       })
-      .catch(() => {
+      .catch((error) => {
+        setLoading(false);
         // eslint-disable-next-line no-console
         console.error(
-          'There has been an error, do you have the FakeIdP service running?'
+          'There has been an error, do you have the FakeIdP service running?',
+          error
         );
       });
   };
@@ -73,7 +61,8 @@ const LoginWithFakeIDP: React.FC<Props> = ({
         loading={loading}
         onClick={handleClick}
       >
-        Login with Fake IDP ({name || fakeApplicationId})
+        Login with Fake IDP (
+        {fakeIdpOptions.name || fakeIdpOptions.fakeApplicationId || ''})
       </Button>
     </>
   );

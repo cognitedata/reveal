@@ -1,3 +1,7 @@
+## 1.3.0 July 02 2021
+
+- Add extra fakeIdp options to token body
+
 ## 1.2.15 June 25 2021
 
 - Change path of `utils` import in LoginWithFakeIDP

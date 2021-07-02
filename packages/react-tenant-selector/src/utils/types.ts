@@ -10,6 +10,8 @@ export type FakeIdp = {
   otherAccessTokenFields: Record<string, string>;
   otherIdTokenFields: Record<string, string>;
   project: string;
+  userId?: string;
+  tokenId?: string;
   roles: string[];
 };
 

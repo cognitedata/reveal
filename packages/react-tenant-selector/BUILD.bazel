@@ -58,6 +58,7 @@ DEPENDENCIES = [
     "@npm//@cognite/cogs.js",
     "@npm//@cognite/sdk",
     "@npm//axios",
+    "@npm//lodash",
     "@npm//react",
     "@npm//react-dom",
     "@npm//react-helmet",
@@ -76,6 +77,7 @@ DEPENDENCIES = [
 # Type dependencies from package.json
 TYPE_DEPENDENCIES = [
     "@npm//@types/axios",
+    "@npm//@types/lodash",
     "@npm//@types/react",
     "@npm//@types/react-dom",
     "@npm//@types/react-helmet",

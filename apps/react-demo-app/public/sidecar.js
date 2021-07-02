@@ -8,9 +8,11 @@ window.__cogniteSidecar = {
       fakeApplicationId: 'user',
       // project to run e2e tests against
       project: 'react-demo-app-e2e-azure-dev',
-      // to match `Login with Fake IDP (react-demo-app-e2e-azure-dev)` button
-      name: 'react-demo-app-e2e-azure-dev',
+      // to match `Login with Fake IDP (azure-dev)` button
+      name: 'azure-dev',
       cluster: 'azure-dev',
+      tokenId: 'token-1',
+      userId: 'user-1',
     },
   ],
 };
