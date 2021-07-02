@@ -274,16 +274,19 @@ export const ModalFileUploader = ({
     setFileList((list) => [...list]);
 
     const mimeType = getMIMEType(file.name);
+    const directoryPrefix = file.relativePath.substring(
+      0,
+      file.relativePath.lastIndexOf('/')
+    ); // remove file name
     try {
       const fileMetadata = (await sdk.files.upload({
         name: file.name,
         mimeType,
         source: 'CDF Vision',
         dataSetId: dataSetIds ? dataSetIds[0] : undefined,
-        // I can see directory in api docs, but looks like SDK misses it
-        // https://docs.cognite.com/api/v1/#operation/initFileUpload
+        directory: `/${directoryPrefix}`, // path should start with '/' to be a valid unix directory
         ...(assetIds && { assetIds }),
-      })) as FileUploadResponse;
+      } as any)) as FileUploadResponse;
 
       // Add exif data async to the file if selected, after the file is uploaded
       if (extractExif) {
