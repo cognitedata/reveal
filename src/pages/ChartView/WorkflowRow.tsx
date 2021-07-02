@@ -57,7 +57,7 @@ type Props = {
   openNodeEditor?: () => void;
   mode: string;
   mutate: (c: Chart) => void;
-  draggable: boolean;
+  draggable?: boolean;
   provided?: DraggableProvided | undefined;
 };
 export default function WorkflowRow({

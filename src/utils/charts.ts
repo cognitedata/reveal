@@ -41,6 +41,16 @@ function updateCollItem<T extends ChartTimeSeries | ChartWorkflow>(
           }
         : t
     ),
+    // sourceCollection: [
+    //   ...(chart?.timeSeriesCollection || []).map((ts) => ({
+    //     ...ts,
+    //     type: 'timeseries',
+    //   })),
+    //   ...(chart?.workflowCollection || []).map((flow) => ({
+    //     ...flow,
+    //     type: 'workflow',
+    //   })),
+    // ],
   };
 }
 
@@ -53,6 +63,7 @@ function removeItem(
     ...chart,
     // @ts-ignore
     [collectionType]: chart[collectionType]?.filter((t) => t.id !== collId),
+    // sourceCollection: chart.sourceCollection?.filter((t) => t.id !== collId),
   };
 }
 
@@ -64,6 +75,7 @@ function addItem<T extends ChartWorkflow | ChartTimeSeries>(
   return {
     ...chart,
     [collectionType]: [...(chart[collectionType] || []), item],
+    // sourceCollection: [item, ...(chart.sourceCollection || [])],
   };
 }
 
@@ -132,6 +144,10 @@ export function convertTimeseriesToWorkflow(chart: Chart, id: string): Chart {
         ...(chart.workflowCollection || []),
         convertTsToWorkFlow(ts),
       ],
+      // sourceCollection: [
+      //   ...(chart?.timeSeriesCollection || []),
+      //   ...(chart?.workflowCollection || []),
+      // ],
     };
   }
   return chart;
@@ -165,12 +181,14 @@ export function updateSourceCollection(chart: Chart): Chart {
   return {
     ...chart,
     sourceCollection: [
-      ...(chart?.timeSeriesCollection || [])
-        .map((ts) => ({ ...ts, type: 'timeseries' }))
-        .flat(),
-      ...(chart?.workflowCollection || [])
-        .map((flow) => ({ ...flow, type: 'workflow' }))
-        .flat(),
+      ...(chart?.timeSeriesCollection || []).map((ts) => ({
+        ...ts,
+        type: 'timeseries',
+      })),
+      ...(chart?.workflowCollection || []).map((flow) => ({
+        ...flow,
+        type: 'workflow',
+      })),
     ],
   };
 }

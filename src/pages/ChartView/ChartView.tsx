@@ -334,7 +334,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
         result.destination.index
       ),
     };
-    updateChart(reorderedChart);
+    // updateChart(reorderedChart);
   };
 
   return (
@@ -443,7 +443,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
             </TopPaneWrapper>
             <BottomPaneWrapper className="table">
               <DragDropContext onDragEnd={onDragEnd}>
-                <Droppable droppableId="droppable-timeseries" type="TIMESERIES">
+                <Droppable droppableId="droppable-sources">
                   {(provided, snapshot) => (
                     <div style={{ display: 'flex', height: '100%' }}>
                       <SourceTableWrapper>
