@@ -147,6 +147,7 @@ export function covertTSToChartTS(
     tsId: ts.id,
     tsExternalId: ts.externalId,
     unit: ts.unit || '*',
+    type: 'timeseries',
     originalUnit: ts.unit || '*',
     preferredUnit: ts.unit || '*',
     color: getEntryColor(),
@@ -160,6 +161,19 @@ export function covertTSToChartTS(
   };
 }
 
+export function updateSourceCollection(chart: Chart): Chart {
+  return {
+    ...chart,
+    sourceCollection: [
+      ...(chart?.timeSeriesCollection || [])
+        .map((ts) => ({ ...ts, type: 'timeseries' }))
+        .flat(),
+      ...(chart?.workflowCollection || [])
+        .map((flow) => ({ ...flow, type: 'workflow' }))
+        .flat(),
+    ],
+  };
+}
 export function updateSourceAxisForChart(
   chart: Chart,
   { x, y }: { x: string[]; y: AxisUpdate[] }
@@ -181,6 +195,9 @@ export function updateSourceAxisForChart(
       updatedChart.workflowCollection = updatedChart.workflowCollection?.map(
         (wf) => (wf.id === update.id ? { ...wf, range: update.range } : wf)
       );
+      // updatedChart.sourceCollection = updatedChart.sourceCollection?.map(
+      //   (src) => (src.id === update.id ? { ...src, range: update.range } : src)
+      // );
     });
   }
 

@@ -12,6 +12,7 @@ export type Chart = {
   updatedAt: number;
   timeSeriesCollection?: ChartTimeSeries[];
   workflowCollection?: ChartWorkflow[];
+  sourceCollection?: (ChartTimeSeries | ChartWorkflow)[];
   dateFrom: string;
   dateTo: string;
   selectedDateRange?: string;
