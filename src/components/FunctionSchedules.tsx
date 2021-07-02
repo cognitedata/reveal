@@ -78,7 +78,12 @@ export default function FunctionSchedules({ externalId, id }: Props) {
   const { data, isFetched, error } = useSchedules();
   const schedules =
     data
-      ?.filter(s => s.functionExternalId === externalId)
+      ?.filter(s => {
+        return (
+          (s.functionExternalId && s.functionExternalId === externalId) ||
+          (s.functionId && s.functionId === id)
+        );
+      })
       ?.sort((a: Schedule, b: Schedule) => {
         if (a.createdTime > b.createdTime) {
           return -1;

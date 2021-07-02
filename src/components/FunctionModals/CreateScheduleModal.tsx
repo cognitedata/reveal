@@ -32,10 +32,15 @@ const isValidCronExpression = (cronExpression: string) =>
 
 type Props = {
   onCancel: () => void;
-  externalId: string;
+  externalId?: string;
+  id?: number;
 };
 
-export default function CreateScheduleModal({ externalId, onCancel }: Props) {
+export default function CreateScheduleModal({
+  id,
+  externalId,
+  onCancel,
+}: Props) {
   const queryCache = useQueryCache();
   const [scheduleName, setScheduleName] = useState({
     value: '',
@@ -214,6 +219,7 @@ export default function CreateScheduleModal({ externalId, onCancel }: Props) {
                 triggerCreateSchedule({
                   name: scheduleName.value,
                   functionExternalId: externalId,
+                  functionId: id,
                   description,
                   cronExpression: cronExpression.value,
                   data: data === '' ? {} : JSON.parse(data),
