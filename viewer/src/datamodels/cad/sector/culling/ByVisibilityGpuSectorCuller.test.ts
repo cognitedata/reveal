@@ -58,9 +58,8 @@ describe('ByVisibilityGpuSectorCuller', () => {
     const model = createCadModelMetadata(generateSectorTree(1));
     const input = createDetermineSectorInput(camera, model);
     input.clippingPlanes = clippingPlanes;
-    input.clipIntersection = true;
     culler.determineSectors(input);
-    expect(setClippingMock).toBeCalledWith(clippingPlanes, true);
+    expect(setClippingMock).toBeCalledWith(clippingPlanes);
   });
 
   test('determineSectors returns sectors for all models', () => {
@@ -185,7 +184,6 @@ function createDetermineSectorInput(
   const determineSectorsInput: DetermineSectorsInput = {
     camera,
     clippingPlanes: [],
-    clipIntersection: false,
     cadModelsMetadata: Array.isArray(models) ? models : [models],
     loadingHints: {},
     cameraInMotion: false,

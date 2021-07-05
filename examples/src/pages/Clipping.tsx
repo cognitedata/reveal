@@ -75,7 +75,6 @@ export function Clipping() {
       revealManager.update(camera);
 
       const params = {
-        clipIntersection: true,
         width: 10,
         height: 10,
         depth: 10,
@@ -99,13 +98,11 @@ export function Clipping() {
             params.y + params.height / 2,
             params.z + params.depth / 2
           )
-        ),
-        params.clipIntersection
+        )
       );
 
       function updateClippingPlanes() {
         revealManager.clippingPlanes = boxClipper.clippingPlanes;
-        revealManager.clipIntersection = boxClipper.intersection;
       }
       updateClippingPlanes();
 
@@ -144,15 +141,6 @@ export function Clipping() {
         }
       });
       animationLoopHandler.start();
-
-      gui
-        .add(params, 'clipIntersection')
-        .name('clip intersection')
-        .onChange((value) => {
-          revealManager.clipIntersection = value;
-          boxClipper.intersection = value;
-          updateClippingPlanes();
-        });
 
       gui
         .add(params, 'x', -600, 600)

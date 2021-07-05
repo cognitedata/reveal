@@ -142,16 +142,6 @@ export class CadManager<TModelIdentifier> {
     this._needsRedraw = true;
   }
 
-  get clipIntersection(): boolean {
-    return this._materialManager.clipIntersection;
-  }
-
-  set clipIntersection(clipIntersection: boolean) {
-    this._materialManager.clipIntersection = clipIntersection;
-    this._cadModelUpdateHandler.clipIntersection = clipIntersection;
-    this._needsRedraw = true;
-  }
-
   get renderMode(): RenderMode {
     return this._materialManager.getRenderMode();
   }
