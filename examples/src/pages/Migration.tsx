@@ -43,6 +43,7 @@ export function Migration() {
       const geometryFilterInput = urlParams.get('geometryFilter');
       const geometryFilter = createGeometryFilter(geometryFilterInput);
       const baseUrl = urlParams.get('baseUrl') || undefined;
+      const apiKey = urlParams.get('apiKey') || undefined;
       if (!project) {
         throw new Error('Must provide "project"as URL parameter');
       }
@@ -79,8 +80,12 @@ export function Migration() {
 
       // Login
       const client = new CogniteClient({ appId: 'cognite.reveal.example', baseUrl });
-      client.loginWithOAuth({ project });
-      await client.authenticate();
+      if (apiKey !== undefined) {
+        client.loginWithApiKey({ project, apiKey });
+      } else {
+        client.loginWithOAuth({ project });
+        await client.authenticate();
+      }
 
       const progress = (itemsLoaded: number, itemsRequested: number, itemsCulled: number) => {
         guiState.debug.loadedSectors.statistics.culledCount = itemsCulled;
