@@ -875,9 +875,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@reveal/camera-manager@workspace:*, @reveal/camera-manager@workspace:packages/camera-manager":
+  version: 0.0.0-use.local
+  resolution: "@reveal/camera-manager@workspace:packages/camera-manager"
+  dependencies:
+    "@reveal/package-a": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
 "@reveal/core@workspace:core":
   version: 0.0.0-use.local
   resolution: "@reveal/core@workspace:core"
+  dependencies:
+    "@reveal/camera-manager": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@reveal/package-a@workspace:*, @reveal/package-a@workspace:packages/package-a":
+  version: 0.0.0-use.local
+  resolution: "@reveal/package-a@workspace:packages/package-a"
   languageName: unknown
   linkType: soft
 

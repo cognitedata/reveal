@@ -1,0 +1,12 @@
+{
+  "name": "@reveal/camera-manager",
+  "private": true,
+  "main": "index.ts",
+  "scripts": {
+    "start": "node --experimental-modules dist/index.js",
+    "build": "yarn ws:build"
+  },
+  "dependencies": {
+    "@reveal/package-a": "workspace:*"
+  }
+}

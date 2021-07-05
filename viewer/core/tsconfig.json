@@ -1,10 +1,9 @@
 {
   "extends": "../tsconfig.common.json",
   "compilerOptions": {
-    "incremental": true,
     "declaration": true,
-    "outDir": "dist",
     "rootDir": "src",
+    "outDir": "dist",
     "downlevelIteration": true,
     "sourceMap": true,
     "typeRoots": [
@@ -18,11 +17,11 @@
     "*.js",
     "*.ts",
     "src/**/*",
+    "node_modules",
     ".eslintrc.js",
-    "script"
   ],
   "exclude": [
-    "node_modules/**/*",
+    //"node_modules/**/*",
     "dist/**/*"
   ]
 }

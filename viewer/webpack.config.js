@@ -64,7 +64,7 @@ module.exports = env => {
                 }
             }
           },
-          exclude: [/node_modules/, /src\/.*\.test\.tsx?/, /src\/__testutilities__/, /src\/.*\/stubs\//]
+          exclude: [/src\/.*\.test\.tsx?/, /src\/__testutilities__/, /src\/.*\/stubs\//]
         },
         {
           test: /\.(png|svg|jpg|jpeg|gif)$/,
@@ -81,7 +81,7 @@ module.exports = env => {
         }
       ]
     },
-    externals: [nodeExternals({ additionalModuleDirs: ["core/node_modules"] })],
+    externals: [nodeExternals()],
     output: {
       filename: '[name].js',
       publicPath: publicPathViewer,
