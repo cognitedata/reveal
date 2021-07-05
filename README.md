@@ -20,7 +20,7 @@ All information below is for developers.
 
 ## Getting started
 
-Install [Node](https://nodejs.org/en/download/)
+Install [Node](https://nodejs.org/en/download/) and [Rust](https://doc.rust-lang.org/cargo/getting-started/installation.html).
 
 To test the viewer, you need to build the viewer and then the serve script will handle dependencies for examples:
 
@@ -33,6 +33,12 @@ yarn serve
 
 If you now navigate to [localhost:8080](https://localhost:8080), you will see a list of examples
 that can be explored in the browser.
+
+## Hosting models locally
+
+If you have locally converted 3D models, these can be viewed locally using the "Simple" example by
+placing the converted model folder under `examples/public/`, by providing a `modelUrl`-parameter, e.g.
+`https://localhost:8080/Simple?modelUrl=/primitives`.
 
 ## Use local build with a project that uses reveal
 
