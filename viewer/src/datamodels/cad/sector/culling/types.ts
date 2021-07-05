@@ -11,7 +11,6 @@ import { CadModelSectorBudget } from '../../CadModelSectorBudget';
 export interface DetermineSectorsInput {
   camera: THREE.PerspectiveCamera;
   clippingPlanes: THREE.Plane[];
-  clipIntersection: boolean;
   cadModelsMetadata: CadModelMetadata[];
   loadingHints: CadLoadingHints;
   cameraInMotion: boolean;

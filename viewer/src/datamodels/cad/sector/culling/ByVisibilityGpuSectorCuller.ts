@@ -160,13 +160,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
   }
 
   determineSectors(input: DetermineSectorsInput): { wantedSectors: WantedSector[]; spentBudget: SectorLoadingSpent } {
-    const takenSectors = this.update(
-      input.camera,
-      input.cadModelsMetadata,
-      input.clippingPlanes,
-      input.clipIntersection,
-      input.budget
-    );
+    const takenSectors = this.update(input.camera, input.cadModelsMetadata, input.clippingPlanes, input.budget);
     const wanted = takenSectors.collectWantedSectors();
     const nonDiscarded = wanted.filter(x => x.levelOfDetail !== LevelOfDetail.Discarded);
 
@@ -205,7 +199,6 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     camera: THREE.PerspectiveCamera,
     models: CadModelMetadata[],
     clippingPlanes: THREE.Plane[] | null,
-    clipIntersection: boolean,
     budget: CadModelSectorBudget
   ): TakenSectorMap {
     const { coverageUtil } = this.options;
@@ -215,11 +208,11 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
 
     // Update wanted sectors
     coverageUtil.setModels(models);
-    coverageUtil.setClipping(clippingPlanes, clipIntersection);
+    coverageUtil.setClipping(clippingPlanes);
     const prioritized = coverageUtil.orderSectorsByVisibility(camera);
 
     // Add high details for all sectors the camera is inside or near
-    this.addHighDetailsForNearSectors(camera, models, budget, takenSectors, clippingPlanes, clipIntersection);
+    this.addHighDetailsForNearSectors(camera, models, budget, takenSectors, clippingPlanes);
 
     let debugAccumulatedPriority = 0.0;
     const prioritizedLength = prioritized.length;
@@ -248,8 +241,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     models: CadModelMetadata[],
     budget: CadModelSectorBudget,
     takenSectors: TakenSectorMap,
-    clippingPlanes: THREE.Plane[] | null,
-    clipIntersection: boolean
+    clippingPlanes: THREE.Plane[] | null
   ) {
     const shortRangeCamera = camera.clone(true) as THREE.PerspectiveCamera;
     shortRangeCamera.far = budget.highDetailProximityThreshold;
@@ -268,12 +260,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
       );
 
       if (clippingPlanes != null && clippingPlanes.length > 0) {
-        intersectingSectors = this.testForClippingOcclusion(
-          intersectingSectors,
-          clippingPlanes,
-          model.modelMatrix,
-          clipIntersection
-        );
+        intersectingSectors = this.testForClippingOcclusion(intersectingSectors, clippingPlanes, model.modelMatrix);
       }
 
       this.markSectorsAsDetailed(intersectingSectors, takenSectors, model);
@@ -283,8 +270,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
   private testForClippingOcclusion(
     intersectingSectors: SectorMetadata[],
     clippingPlanes: THREE.Plane[],
-    modelMatrix: THREE.Matrix4,
-    clipIntersection: boolean
+    modelMatrix: THREE.Matrix4
   ): SectorMetadata[] {
     const passingSectors = [];
 
@@ -295,7 +281,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
         return outvec;
       });
 
-      let shouldKeep = !clipIntersection;
+      let shouldKeep = true;
       for (let k = 0; k < clippingPlanes.length; k++) {
         let planeAccepts = false;
 
@@ -303,11 +289,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
           planeAccepts = clippingPlanes[k].distanceToPoint(boundPoints[j]) >= 0 || planeAccepts;
         }
 
-        if (clipIntersection) {
-          shouldKeep = shouldKeep || planeAccepts;
-        } else {
-          shouldKeep = shouldKeep && planeAccepts;
-        }
+        shouldKeep = shouldKeep && planeAccepts;
       }
 
       if (shouldKeep) {

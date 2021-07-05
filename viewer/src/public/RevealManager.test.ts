@@ -53,12 +53,6 @@ describe('RevealManager', () => {
     expect(manager.needsRedraw).toBeTrue();
   });
 
-  test('set clipIntersection triggers redraw', () => {
-    expect(manager.needsRedraw).toBeFalse();
-    manager.clipIntersection = !manager.clipIntersection;
-    expect(manager.needsRedraw).toBeTrue();
-  });
-
   test('update only triggers update when camera changes', () => {
     manager.resetRedraw();
     const camera = new THREE.PerspectiveCamera(60, 1, 0.5, 100);
