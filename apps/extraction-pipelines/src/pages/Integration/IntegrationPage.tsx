@@ -26,6 +26,8 @@ import { LinkWrapper } from 'styles/StyledLinks';
 import { RunFilterProvider } from 'hooks/runs/RunsFilterContext';
 import { IntegrationBreadcrumbs } from 'components/navigation/breadcrumbs/IntegrationBreadcrumbs';
 import { Span3 } from 'styles/grid/StyledGrid';
+import { CapabilityCheck } from 'components/accessCheck/CapabilityCheck';
+import { EXTPIPES_READS } from 'model/AclAction';
 
 const PageNav = styled.ul`
   ${Span3};
@@ -119,4 +121,12 @@ const IntegrationPage: FunctionComponent<IntegrationPageProps> = () => {
     </RunFilterProvider>
   );
 };
-export default IntegrationPage;
+
+export default () => (
+  <CapabilityCheck
+    requiredPermissions={EXTPIPES_READS}
+    topLevelHeading="Extraction pipeline"
+  >
+    <IntegrationPage />
+  </CapabilityCheck>
+);

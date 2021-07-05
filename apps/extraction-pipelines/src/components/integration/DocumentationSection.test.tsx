@@ -31,7 +31,7 @@ describe('DocumentationSection', () => {
     sdkv3.post.mockResolvedValue({ data: { items: [mock] } });
     sdkv3.get.mockResolvedValueOnce({ data: mock });
     sdkv3.datasets.retrieve.mockResolvedValue([mockDataSet]);
-    render(<DocumentationSection />, {
+    render(<DocumentationSection canEdit />, {
       wrapper: wrapper.wrapper,
     });
     await waitFor(() => {
@@ -72,7 +72,7 @@ describe('DocumentationSection', () => {
     sdkv3.post.mockResolvedValue({ data: { items: [mock] } });
     sdkv3.get.mockResolvedValueOnce({ data: noDescriptionMock });
     sdkv3.datasets.retrieve.mockResolvedValue([mockDataSet]);
-    render(<DocumentationSection />, {
+    render(<DocumentationSection canEdit />, {
       wrapper: wrapper.wrapper,
     });
     await waitFor(() => {

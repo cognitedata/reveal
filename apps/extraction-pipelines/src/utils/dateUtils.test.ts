@@ -88,13 +88,6 @@ describe('findSelectedRangeOption', () => {
     {
       dateRange: {
         startDate: moment().subtract(1, 'month').toDate(),
-        endDate: moment().toDate(),
-      },
-      expected: undefined,
-    },
-    {
-      dateRange: {
-        startDate: moment().subtract(1, 'month').toDate(),
         endDate: moment().subtract(1, 'hour').toDate(),
       },
       expected: undefined,

@@ -21,6 +21,9 @@ import { RunTableHeading } from 'components/integration/RunLogsCols';
 import { useFilteredRuns, useRuns } from 'hooks/useRuns';
 import IntegrationPage from 'pages/Integration/IntegrationPage';
 import { useDataSetsList } from 'hooks/useDataSetsList';
+// eslint-disable-next-line
+import { useCapabilities } from '@cognite/sdk-react-query-hooks';
+import { INTEGRATIONS_ACL } from 'model/AclAction';
 
 jest.mock('react-router-dom', () => {
   const r = jest.requireActual('react-router-dom');
@@ -61,6 +64,10 @@ describe('IntegrationPage', () => {
     useRouteMatch.mockReturnValue({ path: 'path', url: '/' });
     useParams.mockReturnValue({ id: 1 });
     useDataSetsList.mockReturnValue({ data: mockDataSetResponse() });
+    useCapabilities.mockReturnValue({
+      isLoading: false,
+      data: [{ acl: INTEGRATIONS_ACL, actions: ['READ', 'WRITE'] }],
+    });
   });
   afterEach(() => {
     jest.resetAllMocks();

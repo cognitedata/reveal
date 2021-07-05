@@ -8,6 +8,9 @@ import { QueryClient } from 'react-query';
 import { ORIGIN_DEV, PROJECT_ITERA_INT_GREEN } from 'utils/baseURL';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import { IntegrationHeading } from 'components/integration/IntegrationHeading';
+// eslint-disable-next-line
+import { useCapabilities } from '@cognite/sdk-react-query-hooks';
+import { INTEGRATIONS_ACL } from 'model/AclAction';
 
 describe('IntegrationHeading', () => {
   const mock = getMockResponse()[0];
@@ -22,6 +25,10 @@ describe('IntegrationHeading', () => {
       mock,
       '/'
     );
+    useCapabilities.mockReturnValue({
+      isLoading: false,
+      data: [{ acl: INTEGRATIONS_ACL, actions: ['READ', 'WRITE'] }],
+    });
   });
   test('Render with minimal info', async () => {
     const mockIntegration = {

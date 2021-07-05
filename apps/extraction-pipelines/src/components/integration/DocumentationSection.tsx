@@ -85,11 +85,15 @@ const DocumentationForm = styled.form`
 `;
 
 export const TEST_ID_BTN_SAVE: Readonly<string> = 'btn-save-';
-interface DocumentationSectionProps {}
+interface DocumentationSectionProps {
+  canEdit: boolean;
+}
 
 type Fields = { documentation: string; server: string };
 
-export const DocumentationSection: FunctionComponent<DocumentationSectionProps> = () => {
+export const DocumentationSection: FunctionComponent<DocumentationSectionProps> = ({
+  canEdit,
+}) => {
   const { project } = useAppEnv();
   const [isEdit, setEdit] = useState(false);
   const { integration } = useSelectedIntegration();
@@ -137,7 +141,9 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
   };
 
   const onEditClick = () => {
-    setEdit(true);
+    if (canEdit) {
+      setEdit(true);
+    }
   };
   const handleClickError = () => {
     clearErrors('server');
@@ -195,6 +201,7 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
         ) : (
           <EditDocumentationButton
             onClick={onEditClick}
+            disabled={!canEdit}
             className={`edit-button ${
               currentIntegration?.documentation && 'has-content'
             }`}

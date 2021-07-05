@@ -4,14 +4,21 @@ import { AddFieldInfoText } from 'components/message/AddFieldInfoText';
 
 interface AddFieldValueBtnProps {
   onClick: () => void;
+  canEdit: boolean;
 }
 
 export const AddFieldValueBtn = ({
   onClick,
   children,
+  canEdit,
 }: PropsWithChildren<AddFieldValueBtnProps>) => {
   return (
-    <EditButton onClick={onClick} $full $isBottom>
+    <EditButton
+      disabled={!canEdit}
+      onClick={canEdit && onClick}
+      $full
+      $isBottom
+    >
       <AddFieldInfoText>{children}</AddFieldInfoText>
     </EditButton>
   );

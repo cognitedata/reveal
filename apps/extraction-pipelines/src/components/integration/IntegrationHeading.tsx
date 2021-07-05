@@ -18,6 +18,8 @@ import {
   EXT_PIPE_NAME_HEADING,
   SOURCE_LABEL,
 } from 'utils/constants';
+import { useOneOfPermissions } from 'hooks/useOneOfPermissions';
+import { EXTPIPES_WRITES } from 'model/AclAction';
 
 const Wrapper = styled.div`
   margin: 0.5rem 1rem 1rem 1rem;
@@ -44,6 +46,8 @@ export const IntegrationHeading: FunctionComponent = () => {
   const { project } = useAppEnv();
   const { integration: selected } = useSelectedIntegration();
   const { data: integration } = useIntegrationById(selected?.id);
+  const perm = useOneOfPermissions(EXTPIPES_WRITES);
+  const canEdit = perm.data;
   if (!integration || !project) {
     return <></>;
   }
@@ -58,6 +62,7 @@ export const IntegrationHeading: FunctionComponent = () => {
           updateFn={rootUpdate({ integration, name: 'name', project })}
           label={EXT_PIPE_NAME_HEADING}
           viewComp={<StyledTitle level={1}>{integration.name}</StyledTitle>}
+          canEdit={canEdit}
         />
         {integration?.dataSet && (
           <>
@@ -76,6 +81,7 @@ export const IntegrationHeading: FunctionComponent = () => {
           defaultValues={{ source: integration?.source }}
           schema={sourceSchema}
           label={SOURCE_LABEL}
+          canEdit={canEdit}
         />
       </DivFlex>
       <InlineEdit
@@ -84,6 +90,7 @@ export const IntegrationHeading: FunctionComponent = () => {
         defaultValues={{ description: integration?.description }}
         schema={descriptionSchema}
         label={DESCRIPTION_LABEL}
+        canEdit={canEdit}
       />
     </Wrapper>
   );

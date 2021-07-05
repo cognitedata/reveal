@@ -18,9 +18,13 @@ import { sideBarSectionSpacing } from 'styles/StyledVariables';
 const Wrapper = styled.div`
   margin-bottom: ${sideBarSectionSpacing};
 `;
-interface ContactsViewProps {}
+interface ContactsViewProps {
+  canEdit: boolean;
+}
 
-export const ContactsView: FunctionComponent<ContactsViewProps> = () => {
+export const ContactsView: FunctionComponent<ContactsViewProps> = ({
+  canEdit,
+}) => {
   const { project } = useAppEnv();
   const { integration: selected } = useSelectedIntegration();
   const { data: integration } = useIntegrationById(selected?.id);
@@ -43,19 +47,19 @@ export const ContactsView: FunctionComponent<ContactsViewProps> = () => {
 
   return (
     <Wrapper>
-      <DetailHeadingEditBtn onClick={openEdit}>
+      <DetailHeadingEditBtn canEdit={canEdit} onClick={openEdit}>
         {DetailFieldNames.OWNER}
       </DetailHeadingEditBtn>
 
       {owner[0] ? (
         <ContactCard {...owner[0]} />
       ) : (
-        <AddFieldValueBtn onClick={openEdit}>
+        <AddFieldValueBtn canEdit={canEdit} onClick={openEdit}>
           {DetailFieldNames.OWNER.toLowerCase()}
         </AddFieldValueBtn>
       )}
 
-      <DetailHeadingEditBtn onClick={openEdit}>
+      <DetailHeadingEditBtn canEdit={canEdit} onClick={openEdit}>
         {TableHeadings.CONTACTS}
       </DetailHeadingEditBtn>
 
@@ -64,7 +68,7 @@ export const ContactsView: FunctionComponent<ContactsViewProps> = () => {
           return <ContactCard key={contact.email} {...contact} />;
         })
       ) : (
-        <AddFieldValueBtn onClick={openEdit}>
+        <AddFieldValueBtn canEdit={canEdit} onClick={openEdit}>
           {TableHeadings.CONTACTS.toLowerCase()}
         </AddFieldValueBtn>
       )}

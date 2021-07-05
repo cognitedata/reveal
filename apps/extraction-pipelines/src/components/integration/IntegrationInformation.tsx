@@ -21,42 +21,48 @@ const Wrapper = styled.div`
   padding: 2rem;
   background-color: ${Colors['greyscale-grey1'].hex()};
 `;
-interface IntegrationInformationProps {}
+interface IntegrationInformationProps {
+  canEdit: boolean;
+}
 
-export const IntegrationInformation: FunctionComponent<IntegrationInformationProps> = () => {
+export const IntegrationInformation: FunctionComponent<IntegrationInformationProps> = ({
+  canEdit,
+}) => {
   const { project } = useAppEnv();
   const { integration: selected } = useSelectedIntegration();
   const { data: integration } = useIntegrationById(selected?.id);
   if (!integration || !project) {
-    return <></>;
+    return null;
   }
 
   return (
     <Wrapper>
-      <ContactsView />
+      <ContactsView canEdit={canEdit} />
       <InlineEdit
         name="externalId"
         label={DetailFieldNames.EXTERNAL_ID}
+        canEdit={canEdit}
         schema={yup.object().shape({
           externalId: yup.string().required('ExternalId is required'),
         })}
         defaultValues={{ externalId: integration?.externalId }}
         fullWidth
         updateFn={rootUpdate({ integration, name: 'externalId', project })}
-        mb
+        marginBottom
         showLabel
       />
       <FieldVerticalDisplay
         label={DetailFieldNames.ID}
         fieldName="id"
         fieldValue={integration?.id}
-        mb={bottomSpacing}
+        marginBottom={bottomSpacing}
       />
-      <EditDataSetId />
-      <EditRawTable />
+      <EditDataSetId canEdit={canEdit} />
+      <EditRawTable canEdit={canEdit} />
       <InlineEdit
         name="source"
         label={DetailFieldNames.SOURCE}
+        canEdit={canEdit}
         schema={yup.object().shape({})}
         updateFn={rootUpdate({ integration, name: 'source', project })}
         defaultValues={{
@@ -64,32 +70,33 @@ export const IntegrationInformation: FunctionComponent<IntegrationInformationPro
         }}
         fullWidth
         showLabel
-        mb
+        marginBottom
       />
       <Schedule
         name="schedule"
         integration={integration}
         label={TableHeadings.SCHEDULE}
+        canEdit={canEdit}
       />
       <FieldVerticalDisplay
         label={DetailFieldNames.CREATED_BY}
         fieldName="createdBy"
         fieldValue={integration?.createdBy}
-        mb={bottomSpacing}
+        marginBottom={bottomSpacing}
       />
       <FieldVerticalDisplay
         label={DetailFieldNames.CREATED_TIME}
         fieldName="createdTime"
         fieldValue={integration?.createdTime}
-        mb={bottomSpacing}
+        marginBottom={bottomSpacing}
       />
       <FieldVerticalDisplay
         label={DetailFieldNames.LAST_UPDATED_TIME}
         fieldName="lastUpdatedTime"
         fieldValue={integration?.lastUpdatedTime}
-        mb={sideBarSectionSpacing}
+        marginBottom={sideBarSectionSpacing}
       />
-      <MetaData />
+      <MetaData canEdit={canEdit} />
     </Wrapper>
   );
 };

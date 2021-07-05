@@ -72,12 +72,14 @@ interface ScheduleProps {
   integration: Integration;
   name: IntegrationFieldName;
   label: string;
+  canEdit: boolean;
 }
 
 export const Schedule: FunctionComponent<ScheduleProps> = ({
   integration,
   name,
   label,
+  canEdit,
 }: PropsWithChildren<ScheduleProps>) => {
   const [showCron, setShowCron] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
@@ -125,7 +127,9 @@ export const Schedule: FunctionComponent<ScheduleProps> = ({
   };
 
   const onEditClick = () => {
-    setIsEdit(true);
+    if (canEdit) {
+      setIsEdit(true);
+    }
   };
 
   const handleClickError = () => {
@@ -197,6 +201,7 @@ export const Schedule: FunctionComponent<ScheduleProps> = ({
         ) : (
           <EditButton
             onClick={onEditClick}
+            disabled={!canEdit}
             title="Toggle edit row"
             aria-expanded={isEdit}
             aria-controls={name}

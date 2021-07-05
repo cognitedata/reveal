@@ -69,7 +69,7 @@ import { InfoIcon } from 'styles/StyledIcon';
 import { InfoBox } from 'components/message/InfoBox';
 import ConnectRawTablesInput from 'components/inputs/rawSelector/ConnectRawTablesInput';
 import { createAddIntegrationInfo } from 'utils/integrationUtils';
-import { EXTPIPES_ACL_WRITE } from 'model/AclAction';
+import { EXTPIPES_WRITES } from 'model/AclAction';
 import { CapabilityCheck } from 'components/accessCheck/CapabilityCheck';
 
 const StyledCollapse = styled(Collapse)`
@@ -319,7 +319,7 @@ const CreateIntegration = () => {
           errors={errors}
         />
         <PriSecBtnWrapper>
-          <ButtonPlaced type="primary" htmlType="submit" mb={0}>
+          <ButtonPlaced type="primary" htmlType="submit" marginbottom={0}>
             {SAVE}
           </ButtonPlaced>
           <a
@@ -416,7 +416,7 @@ const CreateIntegration = () => {
               )}
 
               <RegisterMetaData />
-              <ButtonPlaced type="primary" htmlType="submit" mb={5}>
+              <ButtonPlaced type="primary" htmlType="submit" marginbottom={5}>
                 {SAVE}
               </ButtonPlaced>
             </FormProvider>
@@ -435,7 +435,7 @@ const CreateIntegration = () => {
 export default function CombinedComponent() {
   return (
     <RegisterIntegrationLayout>
-      <CapabilityCheck requiredPermissions={[EXTPIPES_ACL_WRITE]}>
+      <CapabilityCheck requiredPermissions={EXTPIPES_WRITES}>
         <CreateIntegration />
       </CapabilityCheck>
     </RegisterIntegrationLayout>

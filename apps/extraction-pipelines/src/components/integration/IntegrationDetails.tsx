@@ -9,6 +9,8 @@ import { PageWrapperColumn } from 'styles/StyledPage';
 import { DocumentationSection } from 'components/integration/DocumentationSection';
 import { RunScheduleConnection } from 'components/integration/RunScheduleConnection';
 import { IntegrationInformation } from 'components/integration/IntegrationInformation';
+import { useOneOfPermissions } from 'hooks/useOneOfPermissions';
+import { EXTPIPES_WRITES } from 'model/AclAction';
 
 const MiddleSectionGrid = styled.div`
   display: grid;
@@ -30,6 +32,8 @@ export const IntegrationDetails: FunctionComponent<IntegrationViewProps> = () =>
   const { id } = useParams<RouterParams>();
   const { integration } = useSelectedIntegration();
   const integrationId = integration?.id;
+  const permissions = useOneOfPermissions(EXTPIPES_WRITES);
+  const canEdit = permissions.data;
 
   useEffect(() => {
     if (integrationId) {
@@ -46,8 +50,8 @@ export const IntegrationDetails: FunctionComponent<IntegrationViewProps> = () =>
         <RunScheduleConnection />
       </TopSection>
       <MiddleSectionGrid>
-        <DocumentationSection />
-        <IntegrationInformation />
+        <DocumentationSection canEdit={canEdit} />
+        <IntegrationInformation canEdit={canEdit} />
       </MiddleSectionGrid>
     </PageWrapperColumn>
   );

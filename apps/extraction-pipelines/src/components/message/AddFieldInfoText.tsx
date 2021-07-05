@@ -1,14 +1,23 @@
 import React, { FunctionComponent, PropsWithChildren } from 'react';
-import { BluePlus, BlueText } from 'styles/StyledButton';
+import { Colors, Icon } from '@cognite/cogs.js';
+import styled from 'styled-components';
 
 interface AddFieldInfoTextProps {}
+
+const Styled = styled.span`
+  display: flex;
+  align-items: center;
+  button:enabled > & {
+    color: ${Colors.primary.hex()};
+  }
+`;
 
 export const AddFieldInfoText: FunctionComponent<AddFieldInfoTextProps> = ({
   children,
 }: PropsWithChildren<AddFieldInfoTextProps>) => {
   return (
-    <BlueText>
-      <BluePlus /> add {children}
-    </BlueText>
+    <Styled>
+      <Icon type="Plus" style={{ marginRight: '1rem' }} /> add {children}
+    </Styled>
   );
 };

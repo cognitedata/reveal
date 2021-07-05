@@ -158,7 +158,7 @@ export const CreateContacts: FunctionComponent<CreateContactsProps> = ({
         );
       })}
       <ButtonPlaced
-        mb={2}
+        marginbottom={2}
         type="secondary"
         htmlType="button"
         onClick={addContact}

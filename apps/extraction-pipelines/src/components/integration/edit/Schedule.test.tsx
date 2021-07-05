@@ -30,6 +30,7 @@ describe('Schedule', () => {
         integration={mock}
         name="schedule"
         label={TableHeadings.SCHEDULE}
+        canEdit
       />,
       { wrapper: wrapper.wrapper }
     );

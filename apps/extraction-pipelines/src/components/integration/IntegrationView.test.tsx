@@ -13,11 +13,14 @@ import { trackUsage } from 'utils/Metrics';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import { render } from 'utils/test';
 import { RAW_DB } from 'components/inputs/rawSelector/EditRawTable';
+// eslint-disable-next-line
+import { useCapabilities } from '@cognite/sdk-react-query-hooks';
+import { INTEGRATIONS_ACL } from 'model/AclAction';
 
 describe('IntegrationView', () => {
   const mockIntegration = getMockResponse()[0];
   const mockDataSet = mockDataSetResponse()[0];
-  let wrapper;
+  let wrapper: any;
   beforeEach(() => {
     wrapper = renderWithReQueryCacheSelectedIntegrationContext(
       new QueryClient(),
@@ -27,6 +30,10 @@ describe('IntegrationView', () => {
       mockIntegration,
       '/'
     );
+    useCapabilities.mockReturnValue({
+      isLoading: false,
+      data: [{ acl: INTEGRATIONS_ACL, actions: ['READ', 'WRITE'] }],
+    });
   });
   afterEach(() => {
     jest.resetAllMocks();

@@ -53,7 +53,9 @@ interface FormInput {
   dataSetId: number;
 }
 
-export const EditDataSetId: FunctionComponent = () => {
+export const EditDataSetId: FunctionComponent<{ canEdit: boolean }> = ({
+  canEdit,
+}) => {
   const { project } = useAppEnv();
   const [isEdit, setIsEdit] = useState(false);
   const [errorVisible, setErrorVisible] = useState(false);
@@ -96,7 +98,9 @@ export const EditDataSetId: FunctionComponent = () => {
   };
 
   const onEditClick = () => {
-    setIsEdit(true);
+    if (canEdit) {
+      setIsEdit(true);
+    }
   };
 
   const handleClickError = () => {
@@ -109,7 +113,7 @@ export const EditDataSetId: FunctionComponent = () => {
 
   return (
     <FormProvider {...methods}>
-      <ColumnForm onSubmit={handleSubmit(onSave)} mb>
+      <ColumnForm onSubmit={handleSubmit(onSave)} marginBottom>
         <StyledLabel id="data-set-id-label" htmlFor="data-set-id">
           {TableHeadings.DATA_SET}
         </StyledLabel>
@@ -139,6 +143,8 @@ export const EditDataSetId: FunctionComponent = () => {
         ) : (
           <EditButton
             onClick={onEditClick}
+            disabled={!canEdit}
+            canEdit={canEdit}
             title="Toggle edit row"
             aria-expanded={isEdit}
             aria-controls="dataSetId"

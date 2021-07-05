@@ -24,11 +24,13 @@ const MetaWrapper = styled.section`
 `;
 interface MetaProps {
   testId?: string;
+  canEdit: boolean;
 }
 const META_HINT: Readonly<string> = '*** hint about metadata ***';
 
 export const MetaData = ({
   testId = 'meta-',
+  canEdit,
 }: PropsWithChildren<MetaProps>) => {
   const [showMetaModal, setShowMetaModal] = useState(false);
   const { integration: selected } = useSelectedIntegration();
@@ -43,7 +45,7 @@ export const MetaData = ({
   const renderMeta = (meta?: MetaDataModel) => {
     if (!meta) {
       return (
-        <AddFieldValueBtn onClick={toggleModal(true)}>
+        <AddFieldValueBtn canEdit={canEdit} onClick={toggleModal(true)}>
           {DetailFieldNames.META_DATA.toLowerCase()}
         </AddFieldValueBtn>
       );
@@ -67,7 +69,10 @@ export const MetaData = ({
 
   return (
     <MetaWrapper>
-      <DetailHeadingEditBtn onClick={() => setShowMetaModal(true)}>
+      <DetailHeadingEditBtn
+        canEdit={canEdit}
+        onClick={() => setShowMetaModal(true)}
+      >
         {DetailFieldNames.META_DATA}
       </DetailHeadingEditBtn>
       {renderMeta(storedIntegration?.metadata)}

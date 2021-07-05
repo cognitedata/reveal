@@ -94,7 +94,8 @@ export const StyledForm = styled((props) => (
 export const ColumnForm = styled.form`
   display: flex;
   flex-direction: column;
-  margin-bottom: ${(props: { mb?: boolean }) => (props.mb ? '1rem' : '0')};
+  margin-bottom: ${(props: { marginBottom?: boolean }) =>
+    props.marginBottom ? '1rem' : '0'};
   label {
     margin-left: 1rem;
     color: ${sideBarLabelColor};

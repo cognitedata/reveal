@@ -14,7 +14,7 @@ import {
 } from 'utils/baseURL';
 // eslint-disable-next-line
 import { useCapabilities } from '@cognite/sdk-react-query-hooks';
-import { EXTPIPES_ACL_READ, INTEGRATIONS_ACL } from 'model/AclAction';
+import { INTEGRATIONS_ACL } from 'model/AclAction';
 
 jest.mock('hooks/useRawDBAndTables', () => {
   return {
@@ -102,9 +102,7 @@ describe('Integrations', () => {
         CDF_ENV_GREENFIELD
       );
       render(<Integrations />, { wrapper });
-      const errorMessage = await screen.findByText(
-        `${EXTPIPES_ACL_READ.acl}:${EXTPIPES_ACL_READ.action}`
-      );
+      const errorMessage = await screen.findByText(`extpipesAcl:READ`);
       expect(errorMessage).toBeInTheDocument();
     });
   });

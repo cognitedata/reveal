@@ -16,15 +16,17 @@ export const StyledTitle = styled(Title)`
 
 interface DetailHeadingEditProps {
   onClick: () => void;
+  canEdit: boolean;
 }
 
 export const DetailHeadingEditBtn = ({
   onClick,
   children,
+  canEdit,
 }: PropsWithChildren<DetailHeadingEditProps>) => {
   return (
     <StyledTitle level={3}>
-      <EditButton onClick={onClick} $full>
+      <EditButton disabled={!canEdit} onClick={canEdit && onClick} $full>
         {children}
       </EditButton>
     </StyledTitle>

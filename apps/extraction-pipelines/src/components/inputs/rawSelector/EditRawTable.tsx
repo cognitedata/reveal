@@ -23,21 +23,23 @@ const RawTableWrapper = styled.div`
 `;
 export const RAW_DB: Readonly<string> = 'Raw database';
 export const RAW_TABLE: Readonly<string> = 'Raw table';
-const EditRawTable: FunctionComponent = () => {
+const EditRawTable: FunctionComponent<{ canEdit: boolean }> = ({ canEdit }) => {
   const [showRawModal, setShowRawModal] = useState(false);
   const { integration: selected } = useSelectedIntegration();
   const { data: storedIntegration } = useIntegrationById(selected?.id);
 
   const toggleModal = (show: boolean) => {
     return () => {
-      setShowRawModal(show);
+      if (canEdit) {
+        setShowRawModal(show);
+      }
     };
   };
 
   const renderRaw = (integration?: Integration) => {
     if (!integration?.rawTables?.length) {
       return (
-        <AddFieldValueBtn onClick={toggleModal(true)}>
+        <AddFieldValueBtn canEdit={canEdit} onClick={toggleModal(true)}>
           {DetailFieldNames.RAW_TABLE.toLowerCase()}
         </AddFieldValueBtn>
       );
@@ -82,6 +84,7 @@ const EditRawTable: FunctionComponent = () => {
         onClick={toggleModal(true)}
         title="Toggle raw table modal"
         data-testid={`${TEST_ID_BTN_SAVE}rawTable`}
+        canEdit={canEdit}
         $full
       >
         <RawLabel id="raw-table-label" htmlFor="raw-table-grid">

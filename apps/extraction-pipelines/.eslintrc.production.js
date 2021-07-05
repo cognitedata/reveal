@@ -12,6 +12,7 @@ module.exports = {
       { issuePattern: '\\(((DEMO)-[0-9]+)\\)' },
     ],
 
+    'react/prop-types': 'off',
     'max-classes-per-file': ['off'],
     'lines-between-class-members': ['off'],
     'class-methods-use-this': ['off'],

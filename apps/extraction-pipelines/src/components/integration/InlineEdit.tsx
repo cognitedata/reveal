@@ -34,7 +34,8 @@ export interface InlineEditProps<Fields> {
   showLabel?: boolean;
   viewComp?: React.ReactNode;
   fullWidth?: boolean;
-  mb?: boolean;
+  marginBottom?: boolean;
+  canEdit: boolean;
 }
 
 const InlineEdit = <Fields extends FieldValues>({
@@ -46,7 +47,8 @@ const InlineEdit = <Fields extends FieldValues>({
   updateFn,
   label,
   fullWidth = false,
-  mb = false,
+  marginBottom = false,
+  canEdit,
 }: PropsWithChildren<InlineEditProps<Fields>>) => {
   const [isEdit, setIsEdit] = useState(false);
   const { mutate } = useDetailsUpdate();
@@ -72,7 +74,7 @@ const InlineEdit = <Fields extends FieldValues>({
   };
 
   const onEditClick = () => {
-    setIsEdit(true);
+    if (canEdit) setIsEdit(true);
   };
 
   const handleClickError = () => {
@@ -84,7 +86,7 @@ const InlineEdit = <Fields extends FieldValues>({
   };
 
   return (
-    <ColumnForm onSubmit={handleSubmit(onSave)} mb={mb}>
+    <ColumnForm onSubmit={handleSubmit(onSave)} marginBottom={marginBottom}>
       {showLabel && (
         <StyledLabel htmlFor={name} className="input-label">
           {label}
@@ -136,6 +138,7 @@ const InlineEdit = <Fields extends FieldValues>({
           title="Toggle edit row"
           aria-expanded={isEdit}
           aria-controls={name}
+          disabled={!canEdit}
           data-testid={`${ContactBtnTestIds.EDIT_BTN}${name}`}
           $full={!!fullWidth}
         >

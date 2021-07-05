@@ -3,19 +3,25 @@ import { AclAction } from 'model/AclAction';
 import styled from 'styled-components';
 import { Colors, Icon, Loader } from '@cognite/cogs.js';
 import { Code } from 'styles/StyledText';
-import { StyledTitle2 } from 'styles/StyledHeadings';
+import { PageTitle, StyledTitle2 } from 'styles/StyledHeadings';
 import { useOneOfPermissions } from 'hooks/useOneOfPermissions';
 
 export interface CapabilityCheckProps {
   requiredPermissions: Readonly<AclAction>[];
   heading?: string;
   text?: string;
+  topLevelHeading?: string;
 }
+
+const Padded = styled.div`
+  padding: 1.5em;
+`;
 
 export const CapabilityCheck: FunctionComponent<CapabilityCheckProps> = ({
   requiredPermissions,
   heading = 'You have insufficient access rights to access this feature',
   text = 'To access this page you must have one of the following capabilities:',
+  topLevelHeading,
   children,
 }: PropsWithChildren<CapabilityCheckProps>) => {
   const permissions = useOneOfPermissions(requiredPermissions);
@@ -24,11 +30,19 @@ export const CapabilityCheck: FunctionComponent<CapabilityCheckProps> = ({
     return <Loader />;
   }
   return !permissions.data ? (
-    <ErrorDialog
-      requiredPermissions={requiredPermissions}
-      heading={heading}
-      text={text}
-    />
+    <Padded>
+      {topLevelHeading && (
+        <>
+          <PageTitle>{topLevelHeading}</PageTitle>
+          <br />
+        </>
+      )}
+      <ErrorDialog
+        requiredPermissions={requiredPermissions}
+        heading={heading}
+        text={text}
+      />
+    </Padded>
   ) : (
     <>{children}</>
   );
