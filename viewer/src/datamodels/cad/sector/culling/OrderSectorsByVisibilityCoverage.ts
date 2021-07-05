@@ -88,9 +88,8 @@ export interface OrderSectorsByVisibilityCoverage {
   /**
    * Specify clipping planes.
    * @param planes            A list of clip planes or null to disable clipping.
-   * @param clipIntersection  When true, intersection clipping is enabled.
    */
-  setClipping(planes: THREE.Plane[] | null, clipIntersection: boolean): void;
+  setClipping(planes: THREE.Plane[] | null): void;
 
   /**
    * Cull a set of sectors potentially being loaded towards already loaded geometry to determine if
@@ -191,9 +190,8 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
     }
   }
 
-  setClipping(planes: THREE.Plane[] | null, clipIntersection: boolean) {
+  setClipping(planes: THREE.Plane[] | null) {
     this.coverageMaterial.clippingPlanes = planes;
-    this.coverageMaterial.clipIntersection = clipIntersection;
   }
 
   cullOccludedSectors(camera: THREE.PerspectiveCamera, sectors: WantedSector[]): WantedSector[] {

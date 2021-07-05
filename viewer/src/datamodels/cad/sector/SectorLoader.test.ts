@@ -46,7 +46,6 @@ describe('SectorLoader', () => {
       budget: { geometryDownloadSizeBytes: 0, highDetailProximityThreshold: 0, maximumNumberOfDrawCalls: 0 },
       cameraInMotion: false,
       cadModelsMetadata: [model],
-      clipIntersection: false,
       clippingPlanes: [],
       loadingHints: {}
     };
