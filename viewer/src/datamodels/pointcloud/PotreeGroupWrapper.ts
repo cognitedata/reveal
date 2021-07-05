@@ -60,6 +60,16 @@ export class PotreeGroupWrapper extends THREE.Object3D {
 
     this._loadingObservable = this.createLoadingStateObservable(pollLoadingStatusInterval);
     this._lastDrawPointBuffersHash = this.pointBuffersHash;
+
+    this.pointBudget = 2_000_000;
+  }
+
+  get pointBudget(): number {
+    return this.potreeGroup.pointBudget;
+  }
+
+  set pointBudget(points: number) {
+    this.potreeGroup.pointBudget = points;
   }
 
   getLoadingStateObserver(): Observable<LoadingState> {

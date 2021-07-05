@@ -30,6 +30,7 @@ import { createCdfRevealManager } from '../createRevealManager';
 import {
   defaultRenderOptions,
   DisposedDelegate,
+  PointCloudBudget,
   SceneRenderedDelegate,
   SsaoParameters,
   SsaoSampleQuality
@@ -174,6 +175,22 @@ export class Cognite3DViewer {
     // Note! Type here differes from the one in RevealManager to expose a documentated
     // type. This should map 1:1 with type in RevealManager
     this._revealManager.cadBudget = budget;
+  }
+
+  /**
+   * Returns the point cloud budget. The budget is shared between all loaded
+   * point cloud models.
+   */
+  public get pointCloudBudget(): PointCloudBudget {
+    return this._revealManager.pointCloudBudget;
+  }
+
+  /**
+   * Sets the point cloud budget. The budget is shared between all loaded
+   * point cloud models.
+   */
+  public set pointCloudBudget(budget: PointCloudBudget) {
+    this._revealManager.pointCloudBudget = budget;
   }
 
   /**

@@ -67,12 +67,11 @@ export function Migration() {
         pointColorType: PotreePointColorType.Rgb,
         pointShape: PotreePointShape.Circle,
         apply: () => {
+          viewer.pointCloudBudget = { numberOfPoints: pointCloudParams.budget };
           pointCloudModels.forEach(model => {
-            model.pointBudget = pointCloudParams.budget;
             model.pointSize = pointCloudParams.pointSize;
             model.pointColorType = pointCloudParams.pointColorType;
             model.pointShape = pointCloudParams.pointShape;
-            console.log(model.pointColorType, model.pointShape);
           });
         }
       };

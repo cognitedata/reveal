@@ -30,6 +30,14 @@ export class PointCloudManager<TModelIdentifier> {
     this._pointCloudGroupWrapper.resetRedraw();
   }
 
+  get pointBudget(): number {
+    return this._pointCloudGroupWrapper.pointBudget;
+  }
+
+  set pointBudget(points: number) {
+    this._pointCloudGroupWrapper.pointBudget = points;
+  }
+
   get needsRedraw(): boolean {
     return this._pointCloudGroupWrapper.needsRedraw;
   }
