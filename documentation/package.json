@@ -16,7 +16,7 @@
     "apiref": "yarn run apiref:generate && yarn run apiref:concat",
     "apiref:generate": "typedoc --entryPoints ../viewer/src/index.ts --entryPoints ../viewer/src/tools.ts --listInvalidSymbolLinks",
     "apiref:concat": "concat-md ./generated --startTitleLevelAt 1 --decrease-title-levels --dir-name-as-title > \"./docs/API Reference.md\"",
-    "replace-1.x": "yarn apiref && rimraf versioned_sidebars versioned_docs versions.json && yarn docusaurus docs:version 1.x"
+    "replace-latest-by-next": "yarn apiref && rimraf versioned_sidebars/version-2.x-sidebars.json versioned_docs/version-2.x versions.json && yarn docusaurus docs:version 2.x && git checkout HEAD -- versions.json"
   },
   "dependencies": {
     "@cognite/reveal": "link:../viewer/dist",

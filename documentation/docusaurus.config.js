@@ -12,12 +12,13 @@ module.exports = {
       indexName: 'reveal-docs',
 
       // doesn't look like it works for 1.x and next. Looks like 'next' considered unversioned
-      // so next is excluded from the search below
+      // so next is excluded from the search below by using facetFilters
       contextualSearch: true,
 
       // Optional: Algolia search parameters
       searchParameters: {
-        facetFilters: ["version:1.x"]
+        // https://www.algolia.com/doc/api-reference/api-parameters/facetFilters/?client=javascript
+        facetFilters: [['version:1.x', 'version:2.x']],
       },
 
       //... other Algolia params https://autocomplete-experimental.netlify.app/docs/docsearchmodal/#reference
@@ -71,5 +72,5 @@ module.exports = {
     ],
   ],
   themes: ['@docusaurus/theme-live-codeblock'],
-  plugins: ['docusaurus2-dotenv']
+  plugins: ['docusaurus2-dotenv'],
 };
