@@ -314,7 +314,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     </tr>
   );
   const reorder = (
-    list: ChartTimeSeries[],
+    list: (ChartTimeSeries | ChartWorkflow)[],
     startIndex: number,
     endIndex: number
   ) => {
@@ -334,7 +334,6 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
         result.destination.index
       ),
     };
-    // updateChart(reorderedChart);
   };
 
   return (

@@ -183,11 +183,11 @@ export function updateSourceCollection(chart: Chart): Chart {
     sourceCollection: [
       ...(chart?.timeSeriesCollection || []).map((ts) => ({
         ...ts,
-        type: 'timeseries',
+        type: ts.type ?? 'timeseries',
       })),
       ...(chart?.workflowCollection || []).map((flow) => ({
         ...flow,
-        type: 'workflow',
+        type: flow.type ?? 'workflow',
       })),
     ],
   };
