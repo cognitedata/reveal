@@ -12,7 +12,6 @@ export function ClippingTestPage() {
     <TestViewer
       modifyTestEnv={({ revealManager }: TestEnvCad) => {
         const params = {
-          clipIntersection: true,
           width: 10,
           height: 10,
           depth: 10,
@@ -34,12 +33,10 @@ export function ClippingTestPage() {
               params.y + params.height / 2,
               params.z + params.depth / 2
             )
-          ),
-          params.clipIntersection
+          )
         );
 
         revealManager.clippingPlanes = boxClipper.clippingPlanes;
-        revealManager.clipIntersection = boxClipper.intersection;
 
         return {
           camera: new THREE.PerspectiveCamera(),
