@@ -39,7 +39,12 @@ export const AddMetadata: FunctionComponent = () => {
   const [addMode, setAddMode] = useState(false);
   const [errorVisible, setErrorVisible] = useState(false);
   const { mutate } = useDetailsUpdate();
-  const { control, errors, handleSubmit } = useForm({
+  const {
+    control,
+    formState: { errors },
+    reset,
+    handleSubmit,
+  } = useForm({
     resolver: yupResolver(metaDataSchema),
   });
 
@@ -68,6 +73,7 @@ export const AddMetadata: FunctionComponent = () => {
           setErrorVisible(true);
         },
         onSuccess: () => {
+          reset();
           setAddMode(false);
         },
       });
@@ -76,7 +82,6 @@ export const AddMetadata: FunctionComponent = () => {
   const handleClickError = () => {
     setErrorVisible(false);
   };
-
   return (
     <>
       {addMode ? (

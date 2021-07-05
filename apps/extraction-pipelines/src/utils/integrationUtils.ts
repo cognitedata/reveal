@@ -173,7 +173,7 @@ export const createAddIntegrationInfo = (
     name,
     externalId,
     ...(description && { description }),
-    ...(data && { dataSetId: fieldDataSetId }),
+    ...((data || fieldDataSetId) && { dataSetId: fieldDataSetId }),
     ...(metadata && {
       metadata: Object.assign({}, ...metadata),
     }),

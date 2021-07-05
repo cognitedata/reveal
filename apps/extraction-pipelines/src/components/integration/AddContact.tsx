@@ -49,11 +49,17 @@ export const AddContact: FunctionComponent<AddContactProps> = ({
   const [addMode, setAddMode] = useState(false);
   const [errorVisible, setErrorVisible] = useState(false);
   const { mutate } = useDetailsUpdate();
-  const { control, errors, watch, handleSubmit, setValue, getValues } = useForm(
-    {
-      resolver: yupResolver(contactSchema),
-    }
-  );
+  const {
+    control,
+    formState: { errors },
+    watch,
+    handleSubmit,
+    setValue,
+    getValues,
+    reset,
+  } = useForm({
+    resolver: yupResolver(contactSchema),
+  });
 
   const handleClick = () => {
     const v = getValues('sendNotification');
@@ -81,6 +87,7 @@ export const AddContact: FunctionComponent<AddContactProps> = ({
           setErrorVisible(true);
         },
         onSuccess: () => {
+          reset();
           setAddMode(false);
         },
       });
@@ -106,19 +113,21 @@ export const AddContact: FunctionComponent<AddContactProps> = ({
             name="sendNotification"
             control={control}
             defaultValue={false}
-            as={
-              <SwitchButton
-                id="sendNotification"
-                role="switch"
-                type="button"
-                onClick={() => handleClick()}
-                aria-checked={watch('sendNotification') ?? false}
-                aria-labelledby="integration-contacts-notification-label"
-              >
-                <span className="on">On</span>
-                <span className="off">Off</span>
-              </SwitchButton>
-            }
+            render={() => {
+              return (
+                <SwitchButton
+                  id="sendNotification"
+                  role="switch"
+                  type="button"
+                  onClick={() => handleClick()}
+                  aria-checked={watch('sendNotification') ?? false}
+                  aria-labelledby="integration-contacts-notification-label"
+                >
+                  <span className="on">On</span>
+                  <span className="off">Off</span>
+                </SwitchButton>
+              );
+            }}
           />
           <InputError
             name="name"

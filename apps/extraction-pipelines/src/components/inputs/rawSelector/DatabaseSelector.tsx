@@ -38,7 +38,7 @@ export const DatabaseSelector: FunctionComponent<DatabaseSelectorProps> = ({
   handleDatabaseChecked,
 }: PropsWithChildren<DatabaseSelectorProps>) => {
   const [filteredList, setFilteredList] = useState<DatabaseWithTablesItem[]>(
-    databaseList
+    []
   );
   useEffect(() => {
     if (databaseList.length > 0) {

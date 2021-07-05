@@ -19,7 +19,7 @@ import { RegisterIntegrationLayout } from 'components/layout/RegisterIntegration
 import { CreateFormWrapper } from 'styles/StyledForm';
 import { ButtonPlaced } from 'styles/StyledButton';
 import * as yup from 'yup';
-import { FormProvider, useForm } from 'react-hook-form';
+import { FieldValues, FormProvider, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useDataSet } from 'hooks/useDataSets';
 import { FullInput } from 'components/inputs/FullInput';
@@ -123,13 +123,15 @@ export const ADD_MORE_INFO_HEADING: Readonly<string> = `Add more ${EXTRACTION_PI
 const ADD_MORE_INFO_TEXT_1: Readonly<string> = `When managing and using your data it would give value to enter as much information about the data and the ${EXTRACTION_PIPELINE_LOWER} details as possible, such as scheduling, source and contacts. Please enter this below.`;
 const ADD_MORE_INFO_TEXT_2: Readonly<string> = `You could also add this information on ${EXTRACTION_PIPELINE_LOWER} details page.`;
 const ADD_MORE_INFO_LINK: Readonly<string> = `Read about registering an ${EXTRACTION_PIPELINE_LOWER}`;
-const NOT_LINKED: Readonly<string> = `${EXTRACTION_PIPELINE} will not be linked to data set. You can link your ${EXTRACTION_PIPELINE_LOWER} to a data set using edit later.`;
+export const NOT_LINKED: Readonly<string> = `${EXTRACTION_PIPELINE} will not be linked to data set. You can link your ${EXTRACTION_PIPELINE_LOWER} to a data set using edit later.`;
 
 const linkDataSetText = (dataSet: DataSetModel): Readonly<string> => {
   return `${EXTRACTION_PIPELINE} will be linked to data set: ${dataSet.name} (${dataSet.id})`;
 };
 
-export interface AddIntegrationFormInput extends ScheduleFormInput {
+export interface AddIntegrationFormInput
+  extends ScheduleFormInput,
+    FieldValues {
   name: string;
   externalId: string;
   description?: string;
@@ -180,12 +182,13 @@ const CreateIntegration = () => {
       dataSetId: parseInt(dataSetId, 10),
       selectedRawTables: [],
       documentation: '',
+      contacts: [],
     },
     reValidateMode: 'onSubmit',
   });
   const {
     control,
-    errors,
+    formState: { errors },
     setError,
     handleSubmit,
     register,
@@ -208,6 +211,9 @@ const CreateIntegration = () => {
     register('dataSetId');
     register('selectedRawTables');
   }, [register]);
+  useEffect(() => {
+    setValue('selectedRawTables', []);
+  }, [setValue]);
   const scheduleValue = watch('schedule');
   useEffect(() => {
     if (scheduleValue === SupportedScheduleStrings.SCHEDULED) {
@@ -234,7 +240,7 @@ const CreateIntegration = () => {
             errorRes?.data,
             variables.integrationInfo
           );
-          setError(serverErrorMessage.field, {
+          setError('server', {
             type: 'server',
             message: serverErrorMessage.message,
             shouldFocus: true,
@@ -289,7 +295,7 @@ const CreateIntegration = () => {
           name="name"
           inputId="integration-name"
           defaultValue=""
-          control={control}
+          control={control as any}
           errors={errors}
           labelText={EXT_PIPE_NAME_HEADING}
           hintText={NAME_HINT}
@@ -301,7 +307,7 @@ const CreateIntegration = () => {
           name="externalId"
           inputId="integration-external-id"
           defaultValue=""
-          control={control}
+          control={control as any}
           errors={errors}
           labelText={INTEGRATION_EXTERNAL_ID_HEADING}
           hintText={EXTERNAL_ID_HINT}
@@ -311,7 +317,7 @@ const CreateIntegration = () => {
         />
         <FullTextArea
           name="description"
-          control={control}
+          control={control as any}
           defaultValue=""
           labelText={DESCRIPTION_LABEL}
           hintText={DESCRIPTION_HINT}
@@ -391,7 +397,7 @@ const CreateIntegration = () => {
                 name="source"
                 inputId="source-input"
                 defaultValue=""
-                control={control}
+                control={control as any}
                 errors={errors}
                 labelText={DetailFieldNames.SOURCE}
                 hintText={SOURCE_HINT}
@@ -405,7 +411,7 @@ const CreateIntegration = () => {
                 inputId="documentation-input"
                 labelText={DetailFieldNames.DOCUMENTATION}
                 hintText={DOCUMENTATION_HINT}
-                control={control}
+                control={control as any}
                 errors={errors}
                 defaultValue=""
               />

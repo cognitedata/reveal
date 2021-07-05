@@ -4,6 +4,7 @@ import '@testing-library/jest-dom/extend-expect';
 import { QueryClient } from 'react-query';
 import { renderRegisterContext } from 'utils/test/render';
 import {
+  DATA_SET_ID_HINT,
   DESCRIPTION_LABEL,
   EXT_PIPE_NAME_HEADING,
   INTEGRATION_EXTERNAL_ID_HEADING,
@@ -17,6 +18,7 @@ import {
 import 'utils/test/windowLocation';
 import CreateIntegration, {
   ADD_MORE_INFO_HEADING,
+  NOT_LINKED,
 } from 'pages/create/CreateIntegration';
 import {
   EXTERNAL_ID_REQUIRED,
@@ -31,8 +33,10 @@ import {
   TABLES_LABEL,
 } from 'components/inputs/rawSelector/RawSelector';
 import { useRawDBAndTables } from 'hooks/useRawDBAndTables';
-import { databaseListMock } from 'utils/mockResponse';
+import { databaseListMock, mockDataSetResponse } from 'utils/mockResponse';
 import { CREATE_INTEGRATION_PAGE_PATH } from 'routing/CreateRouteConfig';
+// eslint-disable-next-line
+import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 // eslint-disable-next-line
 import { useCapabilities } from '@cognite/sdk-react-query-hooks';
 import { INTEGRATIONS_ACL } from 'model/AclAction';
@@ -131,5 +135,46 @@ describe('CreateIntegration', () => {
         'rc-collapse-content-inactive'
       );
     });
+  });
+
+  test('Interact data set id', async () => {
+    useRawDBAndTables.mockReturnValue({
+      isLoading: false,
+      data: databaseListMock,
+    });
+    const { container } = renderRegisterContext(<CreateIntegration />, {
+      ...props,
+    });
+    sdkv3.datasets.list.mockResolvedValue(mockDataSetResponse());
+    expect(screen.getByText(NOT_LINKED)).toBeInTheDocument();
+
+    const nameInput = screen.getByLabelText(EXT_PIPE_NAME_HEADING);
+
+    const integrationName = 'My integration';
+    fireEvent.change(nameInput, { target: { value: integrationName } });
+    expect(screen.getByDisplayValue(integrationName)).toBeInTheDocument();
+
+    const externalId = 'external_id_1';
+    fireEvent.change(screen.getByLabelText(INTEGRATION_EXTERNAL_ID_HEADING), {
+      target: { value: externalId },
+    });
+    expect(screen.getByDisplayValue(externalId)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('tab'));
+    await waitFor(() => {
+      expect(screen.getByRole('tabpanel').classList).toContain(
+        'rc-collapse-content-active'
+      );
+    });
+    expect(screen.getByText(DATA_SET_ID_HINT)).toBeVisible();
+
+    const selectInput = await container.querySelector(
+      '.cogs-select__input input'
+    );
+    fireEvent.change(selectInput, {
+      target: { value: mockDataSetResponse()[0].name },
+    });
+    expect(
+      screen.getByDisplayValue(mockDataSetResponse()[0].name)
+    ).toBeInTheDocument();
   });
 });

@@ -169,6 +169,11 @@ describe('createAddIntegrationInfo', () => {
       expect(res).toEqual(expected);
     });
   });
+
+  test('Sets data set id from field when no data set model exist', () => {
+    const res = createAddIntegrationInfo(cases[0].values, null);
+    expect(res.dataSetId).toEqual(cases[0].values.dataSetId);
+  });
 });
 
 describe('minutesToHours', () => {

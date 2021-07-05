@@ -102,7 +102,7 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
   const {
     handleSubmit,
     register,
-    errors,
+    formState: { errors },
     setError,
     watch,
     clearErrors,
@@ -168,8 +168,7 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
             <ValidationError errors={errors} name="documentation" />
             <StyledTextArea
               id="documentation-textarea"
-              name="documentation"
-              ref={register}
+              {...register('documentation')}
               defaultValue={currentIntegration?.documentation}
               className={`cogs-input ${!!errors.documentation && 'has-error'}`}
               rows={30}

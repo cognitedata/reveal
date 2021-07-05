@@ -3,12 +3,7 @@ import {
   createUpdateSpec,
   useDetailsUpdate,
 } from 'hooks/details/useDetailsUpdate';
-import {
-  Controller,
-  ControllerRenderProps,
-  FormProvider,
-  useForm,
-} from 'react-hook-form';
+import { Controller, FormProvider, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { skipNotificationRule } from 'utils/validation/notificationValidation';
 import * as yup from 'yup';
@@ -22,7 +17,6 @@ import {
   HOURS_LABEL,
   HourWrapper,
   NOTIFICATION_CONFIG_HEADER,
-  NotificationFormInput,
 } from 'components/inputs/NotificationConfig';
 import { CreateFormWrapper, Hint, StyledLabel } from 'styles/StyledForm';
 import { CloseButton, SaveButton, EditButton } from 'styles/StyledButton';
@@ -64,7 +58,7 @@ export const EditNotification: FunctionComponent = () => {
     reValidateMode: 'onSubmit',
   });
   const {
-    errors,
+    formState: { errors },
     watch,
     handleSubmit,
     control,
@@ -148,16 +142,12 @@ export const EditNotification: FunctionComponent = () => {
           name="hasConfig"
           control={control}
           defaultValue={hasConfig}
-          render={({
-            value,
-          }: ControllerRenderProps<
-            Pick<NotificationFormInput, 'hasConfig'>
-          >) => {
+          render={({ field }) => {
             return (
               <Checkbox
                 id="has-config"
                 name="hasConfig"
-                value={value}
+                value={field.value}
                 onChange={handleChange}
                 aria-describedby="has-config-hint"
               >
@@ -183,7 +173,7 @@ export const EditNotification: FunctionComponent = () => {
                   <InputError
                     name="skipNotificationInHours"
                     inputId="skipNotificationInHours"
-                    control={control}
+                    control={control as any}
                     defaultValue={minutesToHours(
                       storedIntegration?.skipNotificationsInMinutes
                     )}

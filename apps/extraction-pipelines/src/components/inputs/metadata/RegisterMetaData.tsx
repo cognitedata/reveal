@@ -27,7 +27,10 @@ export const DEFINE_METADATA_LABEL: Readonly<string> = 'Define metadata';
 interface RegisterMetaDataProps {}
 export type MetaData = { description: string; content: string };
 export const RegisterMetaData: FunctionComponent<RegisterMetaDataProps> = () => {
-  const { control, errors } = useFormContext();
+  const {
+    control,
+    formState: { errors },
+  } = useFormContext();
   const { append, remove, fields } = useFieldArray({
     control,
     name: 'metadata',
@@ -68,25 +71,23 @@ export const RegisterMetaData: FunctionComponent<RegisterMetaDataProps> = () => 
           </tr>
         </thead>
         <tbody>
-          {fields.map(({ id, description, content }, index) => {
+          {fields.map((field, index) => {
             return (
-              <tr key={`${id}`}>
+              <tr key={`${field.id}`}>
                 <StyledTd>
                   <InputController
-                    name={`metadata[${index}].description`}
+                    name={`metadata.${index}.description`}
                     control={control}
                     inputId={`metadata-description-${index}`}
-                    defaultValue={description}
                     aria-invalid={!!errors.metadata?.[index]?.description}
                     aria-label={`${METADATA_DESCRIPTION_LABEL} ${index}`}
                   />
                 </StyledTd>
                 <StyledTd>
                   <InputController
-                    name={`metadata[${index}].content`}
+                    name={`metadata.${index}.content`}
                     control={control}
                     inputId={`metadata-content-${index}`}
-                    defaultValue={content}
                     aria-invalid={!!errors.metadata?.[index]?.content}
                     aria-label={`${METADATA_CONTENT_LABEL} ${index}`}
                   />

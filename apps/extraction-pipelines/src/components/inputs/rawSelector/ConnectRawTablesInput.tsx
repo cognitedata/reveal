@@ -23,7 +23,12 @@ const ConnectRawTablesInput: FunctionComponent<ConnectRawTablesPageProps> = ({
   onSelect,
 }: PropsWithoutRef<ConnectRawTablesPageProps>) => {
   const [selectedDb, setSelectedDb] = useState<string>('');
-  const { setValue, errors, watch, clearErrors } = useFormContext();
+  const {
+    setValue,
+    formState: { errors },
+    watch,
+    clearErrors,
+  } = useFormContext();
   const { data, isLoading } = useRawDBAndTables();
   const selectedTables = watch('selectedRawTables');
   if (isLoading) {

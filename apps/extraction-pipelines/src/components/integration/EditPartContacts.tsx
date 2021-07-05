@@ -4,12 +4,7 @@ import {
   createUpdateSpec,
   useDetailsUpdate,
 } from 'hooks/details/useDetailsUpdate';
-import {
-  Controller,
-  ControllerRenderProps,
-  FieldValues,
-  useForm,
-} from 'react-hook-form';
+import { Controller, FieldValues, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Integration } from 'model/Integration';
 import { Input } from '@cognite/cogs.js';
@@ -80,10 +75,11 @@ export const EditPartContacts = <Fields extends FieldValues>({
   const { project } = useAppEnv();
   const { mutate } = useDetailsUpdate();
   const [errorVisible, setErrorVisible] = useState(false);
-  const { control, handleSubmit, errors } = useForm<
-    Record<string, unknown>,
-    object
-  >({
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<Record<string, unknown>, object>({
     resolver: yupResolver(schema),
     reValidateMode: 'onSubmit',
   });
@@ -127,14 +123,14 @@ export const EditPartContacts = <Fields extends FieldValues>({
             name={field}
             control={control}
             defaultValue={defaultValues[field] ?? ''}
-            render={({ onChange, value }: ControllerRenderProps) => {
+            render={({ field: renderField, fieldState }) => {
               return (
                 <Input
                   id={`${name}${index}${field}`}
-                  value={value}
-                  onChange={onChange}
+                  value={renderField.value as string}
+                  onChange={renderField.onChange}
                   onBlur={handleSubmit(onSave)}
-                  error={!!errors[field]}
+                  error={!!fieldState.error}
                   fullWidth={fullWidth}
                   aria-label={`${label}`}
                   aria-describedby={`${name}-error`}

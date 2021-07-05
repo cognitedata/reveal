@@ -1,10 +1,5 @@
 import React, { PropsWithChildren, useState } from 'react';
-import {
-  Controller,
-  ControllerRenderProps,
-  FieldValues,
-  useForm,
-} from 'react-hook-form';
+import { Controller, FieldValues, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { IntegrationFieldName } from 'model/Integration';
 import MessageDialog from 'components/buttons/MessageDialog';
@@ -54,10 +49,11 @@ const InlineEdit = <Fields extends FieldValues>({
   const { mutate } = useDetailsUpdate();
   const [errorVisible, setErrorVisible] = useState(false);
 
-  const { control, handleSubmit, errors } = useForm<
-    Record<string, unknown>,
-    object
-  >({
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<Record<string, unknown>, object>({
     resolver: yupResolver(schema),
     reValidateMode: 'onSubmit',
   });
@@ -100,13 +96,13 @@ const InlineEdit = <Fields extends FieldValues>({
               name={name}
               control={control}
               defaultValue={defaultValues[name]}
-              render={({ onChange, value }: ControllerRenderProps) => {
+              render={({ field, fieldState }) => {
                 return (
                   <StyledInput
                     id={name}
-                    value={value}
-                    onChange={onChange}
-                    error={!!errors[name]}
+                    value={field.value as string}
+                    onChange={field.onChange}
+                    error={!!fieldState.error}
                     fullWidth={fullWidth}
                     aria-describedby={`${name}-error`}
                   />

@@ -42,7 +42,12 @@ const DataSetIdInput: FunctionComponent<DataSetIdPageProps> = ({
   renderLabel,
   autoFocus = false,
 }: PropsWithoutRef<DataSetIdPageProps>) => {
-  const { setValue, errors, watch, control } = useFormContext();
+  const {
+    setValue,
+    formState: { errors },
+    watch,
+    control,
+  } = useFormContext();
   const storedValue = parseInt(watch('dataSetId'), 10);
 
   const getOptions = (): SelectOption[] => {

@@ -28,6 +28,7 @@ sdkv3.post = jest.fn();
 // @ts-ignore
 sdkv3.datasets = {
   retrieve: jest.fn(),
+  list: jest.fn(),
 };
 // @ts-ignore
 sdkv3.raw = {

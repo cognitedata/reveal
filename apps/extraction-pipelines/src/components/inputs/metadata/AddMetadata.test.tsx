@@ -59,5 +59,8 @@ describe('AddMetadata', () => {
     await waitFor(() => {
       screen.getByText(ADD_ROW);
     });
+    fireEvent.click(screen.getByText(ADD_ROW));
+    expect(screen.getByLabelText(METADATA_DESCRIPTION_LABEL).value).toEqual('');
+    expect(screen.getByLabelText(METADATA_CONTENT_LABEL).value).toEqual('');
   });
 });

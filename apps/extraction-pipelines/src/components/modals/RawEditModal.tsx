@@ -51,10 +51,9 @@ export const RawEditModal: FunctionComponent<RawEditModalProps> = ({
   useEffect(() => {
     register('selectedRawTables');
   }, [register]);
+
   useEffect(() => {
-    if (storedIntegration?.rawTables) {
-      setValue('selectedRawTables', storedIntegration.rawTables);
-    }
+    setValue('selectedRawTables', storedIntegration?.rawTables ?? []);
   }, [setValue, storedIntegration]);
 
   const onSelect = async (values: IntegrationRawTable[]) => {

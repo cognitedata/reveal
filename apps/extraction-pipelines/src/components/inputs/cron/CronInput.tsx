@@ -23,7 +23,11 @@ export const CRON_TIP: Readonly<string> = `Enter a cron expression for when the 
 interface CronPageProps {}
 
 const CronInput: FunctionComponent<CronPageProps> = () => {
-  const { errors, control, watch } = useFormContext();
+  const {
+    formState: { errors },
+    control,
+    watch,
+  } = useFormContext();
   const i = watch('cron');
   const readCron = (exp: string) => {
     try {

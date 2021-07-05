@@ -61,5 +61,9 @@ describe('AddContact', () => {
     await waitFor(() => {
       screen.getByText(ADD_CONTACT);
     });
+    fireEvent.click(screen.getByText(ADD_CONTACT));
+    expect(screen.getByLabelText(NAME_LABEL).value).toEqual('');
+    expect(screen.getByLabelText(EMAIL_LABEL).value).toEqual('');
+    expect(screen.getByLabelText(ROLE_LABEL).value).toEqual('');
   });
 });

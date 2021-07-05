@@ -36,7 +36,7 @@ export const CreateContacts: FunctionComponent<CreateContactsProps> = ({
   ),
 }: PropsWithoutRef<CreateContactsProps>) => {
   const {
-    errors,
+    formState: { errors },
     watch,
     control,
     getValues,
@@ -66,7 +66,7 @@ export const CreateContacts: FunctionComponent<CreateContactsProps> = ({
   }
   return (
     <>
-      {renderLabel(TableHeadings.CONTACTS, 'inpu')}
+      {renderLabel(TableHeadings.CONTACTS, 'contacts')}
       <Hint>{CONTACTS_DESCRIPTION}</Hint>
       {fields.map((field, index) => {
         return (
@@ -74,7 +74,7 @@ export const CreateContacts: FunctionComponent<CreateContactsProps> = ({
             <FullInput
               name={`contacts[${index}].name`}
               inputId={`integration-contacts-name-${index}`}
-              defaultValue={field.name}
+              defaultValue=""
               control={control}
               errors={errors}
               labelText={NAME_LABEL}
@@ -82,7 +82,7 @@ export const CreateContacts: FunctionComponent<CreateContactsProps> = ({
             <FullInput
               name={`contacts[${index}].email`}
               inputId={`integration-contacts-email-${index}`}
-              defaultValue={field.email}
+              defaultValue=""
               control={control}
               errors={errors}
               labelText={EMAIL_LABEL}
@@ -91,7 +91,7 @@ export const CreateContacts: FunctionComponent<CreateContactsProps> = ({
             <FullInput
               name={`contacts[${index}].role`}
               inputId={`integration-contacts-role-${index}`}
-              defaultValue={field.role}
+              defaultValue=""
               control={control}
               errors={errors}
               labelText={ROLE_LABEL}
@@ -126,24 +126,28 @@ export const CreateContacts: FunctionComponent<CreateContactsProps> = ({
                 />
 
                 <Controller
-                  as={
-                    <SwitchButton
-                      id={`integration-contacts-notification-${index}`}
-                      role="switch"
-                      type="button"
-                      ref={register}
-                      onClick={() => handleClick(index)}
-                      aria-checked={calcChecked(index)}
-                      aria-labelledby="integration-contacts-notification-label"
-                      aria-describedby={`contact-${index}-notification-hint contact-${index}-notification-error`}
-                    >
-                      <span className="on">On</span>
-                      <span className="off">Off</span>
-                    </SwitchButton>
-                  }
+                  render={() => {
+                    return (
+                      <SwitchButton
+                        id={`integration-contacts-notification-${index}`}
+                        role="switch"
+                        type="button"
+                        ref={
+                          register(`contacts[${index}].sendNotification`).ref
+                        }
+                        onClick={() => handleClick(index)}
+                        aria-checked={calcChecked(index)}
+                        aria-labelledby="integration-contacts-notification-label"
+                        aria-describedby={`contact-${index}-notification-hint contact-${index}-notification-error`}
+                      >
+                        <span className="on">On</span>
+                        <span className="off">Off</span>
+                      </SwitchButton>
+                    );
+                  }}
                   name={`contacts[${index}].sendNotification`}
                   control={control}
-                  defaultValue={field.sendNotification}
+                  defaultValue={false}
                 />
               </DivFlex>
               <Button

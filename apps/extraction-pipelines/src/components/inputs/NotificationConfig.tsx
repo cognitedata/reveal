@@ -1,10 +1,6 @@
 import { Checkbox } from '@cognite/cogs.js';
 import React, { FunctionComponent, PropsWithoutRef } from 'react';
-import {
-  Controller,
-  ControllerRenderProps,
-  useFormContext,
-} from 'react-hook-form';
+import { Controller, useFormContext } from 'react-hook-form';
 import { DivFlex } from 'styles/flex/StyledFlex';
 import styled from 'styled-components';
 import { InputController } from 'components/inputs/InputController';
@@ -45,7 +41,11 @@ export const NotificationConfig: FunctionComponent<NotificationConfigProps> = ({
     <StyledLabel htmlFor={inputId}>{labelText}</StyledLabel>
   ),
 }: PropsWithoutRef<NotificationConfigProps>) => {
-  const { errors, watch, control } = useFormContext();
+  const {
+    formState: { errors },
+    watch,
+    control,
+  } = useFormContext();
   const hasConfig = watch('hasConfig');
 
   return (
@@ -56,15 +56,12 @@ export const NotificationConfig: FunctionComponent<NotificationConfigProps> = ({
         name="hasConfig"
         control={control}
         defaultValue={false}
-        render={({
-          onChange,
-          value,
-        }: ControllerRenderProps<Pick<NotificationFormInput, 'hasConfig'>>) => (
+        render={({ field }) => (
           <Checkbox
             id="has-config"
             name="hasConfig"
-            value={value}
-            onChange={onChange}
+            value={field.value}
+            onChange={field.onChange}
             aria-describedby="has-config-hint"
           >
             {CONFIG_LABEL}

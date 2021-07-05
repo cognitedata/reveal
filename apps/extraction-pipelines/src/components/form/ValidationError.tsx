@@ -18,7 +18,13 @@ const ValidationError = ({
     <ErrorMessage
       errors={errors}
       name={name}
-      as={<ErrorSpan role="alert" className="error-message" {...rest} />}
+      render={({ message }) => {
+        return (
+          <ErrorSpan role="alert" className="error-message" {...rest}>
+            {message}
+          </ErrorSpan>
+        );
+      }}
     />
   );
 };

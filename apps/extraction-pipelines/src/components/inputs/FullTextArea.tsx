@@ -1,6 +1,6 @@
 import React, { FunctionComponent, PropsWithChildren } from 'react';
 import { ErrorMessage } from '@hookform/error-message';
-import { Controller, ControllerRenderProps } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 import { HeadingLabel } from 'components/inputs/HeadingLabel';
 import { FullInputProps } from 'components/inputs/FullInput';
 import { ErrorMessage as Error } from 'components/error/ErrorMessage';
@@ -46,15 +46,15 @@ export const FullTextArea: FunctionComponent<FullInputProps> = ({
         name={name}
         control={control}
         defaultValue={defaultValue}
-        render={({ onChange, value }: ControllerRenderProps) => (
+        render={({ field, fieldState }) => (
           <StyledTextArea
             id={inputId}
             cols={30}
             rows={10}
-            value={value}
-            onChange={onChange}
+            value={field.value}
+            onChange={field.onChange}
             className="cogs-input full-width"
-            aria-invalid={!!errors[name]}
+            aria-invalid={!!fieldState.error}
             aria-describedby={`${name}-hint ${name}-error`}
           />
         )}
