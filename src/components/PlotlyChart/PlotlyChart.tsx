@@ -331,6 +331,7 @@ const PlotlyChartComponent = ({
         line: { width: 0 },
         fill: 'tonexty',
         y: maxYValues,
+        hovertemplate: '',
         hoverinfo: 'skip',
       };
 
