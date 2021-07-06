@@ -63,6 +63,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   const [showSearch, setShowSearch] = useState(false);
   const [showYAxis, setShowYAxis] = useState(true);
   const [showAggregates, setShowAggregates] = useState(true);
+  const [showGridlines, setShowGridlines] = useState(true);
   const [workspaceMode, setWorkspaceMode] = useState<Modes>('workspace');
   const [stackedMode, setStackedMode] = useState<boolean>(false);
   const [editorTimer, setEditorTimer] = useState<ITimer | undefined>();
@@ -345,6 +346,31 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
             </section>
           )}
           <section className="daterange">
+            <Tooltip content="Gridlines">
+              <Dropdown
+                content={
+                  <Menu>
+                    <DropdownWrapper>
+                      <Flex>
+                        <DropdownTitle>Gridlines</DropdownTitle>
+                      </Flex>
+                      <Flex direction="row">
+                        <Switch
+                          name="toggleGridlines"
+                          value={showGridlines}
+                          onChange={() => setShowGridlines(!showGridlines)}
+                        >
+                          Show gridlines
+                        </Switch>
+                      </Flex>
+                    </DropdownWrapper>
+                  </Menu>
+                }
+              >
+                <Button icon="GridLines" type="ghost" aria-label="view" />
+              </Dropdown>
+            </Tooltip>
+
             <Dropdown
               content={
                 <Menu>
@@ -413,6 +439,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                   isInSearch={showSearch}
                   isYAxisShown={showYAxis}
                   isAggregatesShown={showAggregates}
+                  isGridlinesShown={showGridlines}
                   stackedMode={stackedMode}
                 />
               </ChartWrapper>
