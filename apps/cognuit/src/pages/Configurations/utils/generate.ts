@@ -1,9 +1,9 @@
-import { getMappedColumnName } from 'pages/DataTransfers/utils';
 import {
   ExtendedConfigurationsResponse,
   GenerateConfigurationsColumns,
 } from 'typings/interfaces';
 import config from 'configs/configurations.config';
+import { getMappedColumnName } from 'utils/columns';
 
 export function generateConfigurationsColumnsFromData(
   response: ExtendedConfigurationsResponse[]

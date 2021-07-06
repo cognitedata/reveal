@@ -5,7 +5,6 @@ import { useQuery } from 'react-query';
 import { DATATSTATUS_KEY } from 'services/configs/queryKeys';
 import { CustomError } from 'services/CustomError';
 import { useIsTokenAndApiValid } from 'hooks/useIsTokenAndApiValid';
-import { reportException } from '@cognite/react-errors';
 
 const useDataStatusQuery = (
   { enabled }: { enabled?: boolean } = { enabled: true }
@@ -27,7 +26,6 @@ const useDataStatusQuery = (
         return data;
       },
       onError: (error: CustomError) => {
-        reportException(error);
         addError(error.message, error.status);
       },
     }

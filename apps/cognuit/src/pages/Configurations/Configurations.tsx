@@ -1,7 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import sortBy from 'lodash/sortBy';
-import indexOf from 'lodash/indexOf';
-import { Loader, Table } from '@cognite/cogs.js';
+import { Loader, Table, TableProps } from '@cognite/cogs.js';
 import { ContentContainer } from 'elements';
 import CreateNewConfiguration from 'components/Molecules/CreateNewConfiguration';
 import { ExtendedConfigurationsResponse } from 'typings/interfaces';
@@ -11,6 +9,7 @@ import { useConfigurationsQuery } from 'services/endpoints/configurations/query'
 import { useConfigurationsMutation } from 'services/endpoints/configurations/mutation';
 import { ConfigurationsResponse } from 'types/ApiInterface';
 import config from 'configs/configurations.config';
+import { sortColumnsByRules } from 'utils/sorts';
 
 import { columnRules } from './components/Table/columnRules';
 import { ExpandedSubRow } from './components/Table/ExpandedSubRow';
@@ -20,7 +19,9 @@ import { curateColumns, curateConfigurationsData } from './utils/curate';
 const Configurations = () => {
   const { error, addError } = useContext(APIErrorContext);
   const [data, setData] = useState<ExtendedConfigurationsResponse[]>([]);
-  const [columns, setColumns] = useState<any>([]);
+  const [columns, setColumns] = useState<
+    TableProps<ConfigurationsResponse>['columns']
+  >([]);
   const [expandedColumns, setExpandedColumns] = React.useState<any>({});
 
   const { isLoading, ...configsQuery } = useConfigurationsQuery();
@@ -81,6 +82,10 @@ const Configurations = () => {
     }));
   };
 
+  const tableColumns = React.useMemo(() => {
+    return sortColumnsByRules(columns, config.visibleColumns);
+  }, [columns]);
+
   useEffect(() => {
     if (configsQuery.isSuccess) {
       setData(curateConfigurationsData(configsQuery.data));
@@ -117,9 +122,7 @@ const Configurations = () => {
           dataSource={data}
           expandedIds={expandedColumns}
           rowKey={(data, index) => `configuration-${data.id}-${index}`}
-          columns={sortBy(columns, (obj) =>
-            indexOf(config.visibleColumns, obj.accessor)
-          )}
+          columns={tableColumns}
           renderSubRowComponent={ExpandedSubRow}
           onRowClick={handleRowClick}
         />

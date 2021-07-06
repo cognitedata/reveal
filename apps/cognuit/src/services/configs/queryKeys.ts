@@ -29,6 +29,14 @@ export const PROJECTS_KEY = {
   business_tag: 'business_tag',
 };
 
+// Data Status
 export const DATATSTATUS_KEY = {
   default: 'datastatus',
+};
+
+// Objects
+
+export const OBJECTS_KEY = {
+  default: 'objects',
+  singleObject: 'single-object',
 };

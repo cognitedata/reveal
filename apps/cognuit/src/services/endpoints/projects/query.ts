@@ -6,7 +6,6 @@ import { useQuery } from 'react-query';
 import { PROJECTS_KEY } from 'services/configs/queryKeys';
 import { Source } from 'typings/interfaces';
 import { CustomError } from 'services/CustomError';
-import { reportException } from '@cognite/react-errors';
 
 const useProjectsQuery = ({
   source,
@@ -42,7 +41,6 @@ const useProjectsQuery = ({
         return data;
       },
       onError: (error: CustomError) => {
-        reportException(error);
         addError(error.message, error.status);
       },
     }

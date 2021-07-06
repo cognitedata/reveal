@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { notification } from 'antd';
 import noop from 'lodash/fp';
 import { CustomError } from 'services/CustomError';
+import { reportException } from '@cognite/react-errors';
 
 type Props = {
   children: any;
@@ -25,11 +26,13 @@ const APIErrorProvider = ({ children }: Props) => {
   const removeError = () => error && setError(null);
 
   const addError = (message: string, status: number) => {
-    setError(new CustomError(message, status));
+    const error = new CustomError(message, status);
+    setError(error);
     notification.error({
       message: `API error ${status}`,
       description: message,
     });
+    reportException(error);
   };
 
   const contextValue = {

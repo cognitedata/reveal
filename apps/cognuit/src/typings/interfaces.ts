@@ -141,8 +141,11 @@ export enum DummyUser {
 }
 export interface Rule {
   key: string;
-  render: ({ value }: { value: any }) => React.ReactFragment;
+  render: (props: any) => React.ReactFragment;
   disableSortBy?: boolean;
+  Filter?: (props: any) => JSX.Element;
+  filter?: string;
+  width?: number;
 }
 
 export interface ErrorDistributionObject extends GenericResponseObject {

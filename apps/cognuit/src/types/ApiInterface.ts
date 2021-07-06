@@ -115,13 +115,14 @@ export interface ObjectsRevisionsResponse {
   data_status: any[];
   origin: string;
   project: string;
-  package: Package;
+  package: Package | null;
   revisions: Revision[];
   external_id: string;
-  source_created_time: number;
-  source_last_updated: number;
-  author: string;
-  source_object_id: number;
+  source_created_time: number | null;
+  source_last_updated: number | null;
+  author: string | null;
+  grouping: unknown | null;
+  source_object_id: number | null;
   revisions_count: number;
 }
 
@@ -134,10 +135,12 @@ export interface Revision {
   cdf_file?: CdfFile;
   status?: string;
   steps: Step[];
-  translations: {
-    revision: Revision;
-    status: string;
-  }[];
+  translations:
+    | {
+        revision: Revision;
+        status: string;
+      }[]
+    | null;
 
   // NOTE: Figure out if the property cdf_metadata is included in Revision
   // cdf_metadata: any;
@@ -145,7 +148,7 @@ export interface Revision {
 
 interface Step {
   status: string;
-  error_message: string;
+  error_message: string | null;
   created_time: number;
 }
 

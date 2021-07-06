@@ -2,22 +2,9 @@ import { useEffect, useState } from 'react';
 import set from 'date-fns/set';
 import { format } from 'date-fns';
 import { useDataTransfersState } from 'contexts/DataTransfersContext';
-import { DataTransferObject, RESTTransfersFilter } from 'typings/interfaces';
+import { RESTTransfersFilter } from 'typings/interfaces';
 import { useDataTransfersQuery } from 'services/endpoints/datatransfers/query';
 import isEmpty from 'lodash/isEmpty';
-
-// TODO_: MAKE THIS A MAP?! & move to UTILS
-export function getColumnNames(
-  dataTransferObjects: DataTransferObject[]
-): string[] {
-  const results: string[] = [];
-  if (dataTransferObjects.length > 0) {
-    Object.keys(dataTransferObjects[0]).forEach((k) => {
-      results.push(k);
-    });
-  }
-  return results;
-}
 
 export function usePrepareDataTransfersQuery() {
   const [options, setOptions] = useState<RESTTransfersFilter>({});

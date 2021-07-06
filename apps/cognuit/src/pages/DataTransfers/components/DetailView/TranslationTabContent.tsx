@@ -18,8 +18,7 @@ const TranslationTabContent = ({ ...target }: TargetType) => (
               <summary>Revision steps</summary>
               <div>
                 {target.revisionSteps.map((step) => (
-                  // eslint-disable-next-line react/jsx-key
-                  <Step {...step} />
+                  <Step key={`${step.created_time}+${step.status}`} {...step} />
                 ))}
               </div>
             </details>

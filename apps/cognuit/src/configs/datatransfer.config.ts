@@ -12,7 +12,7 @@ export default {
   ],
   filterableColumns: ['report', 'author'],
   mandatoryColumns: ['status', 'datatype', 'name', 'report'],
-  nonSortableColumns: ['status'],
+  nonSortableColumns: ['status', 'report'],
   ignoreColumns: [
     'cdf_metadata',
     'business_tags',
@@ -30,10 +30,15 @@ export default {
     'project',
     'report',
     'actions',
+    'detailViewButton',
   ],
   columnNameMapping: [
     {
       keyName: 'status',
+      value: '',
+    },
+    {
+      keyName: 'detailViewButton',
       value: '',
     },
     {

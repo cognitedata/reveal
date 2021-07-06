@@ -1,4 +1,3 @@
-import { reportException } from '@cognite/react-errors';
 import ApiContext from 'contexts/ApiContext';
 import APIErrorContext from 'contexts/APIErrorContext';
 import { useContext } from 'react';
@@ -17,7 +16,6 @@ const useConfigurationsMutation = () => {
       removeError();
     },
     onError: (error: CustomError) => {
-      reportException(error);
       addError(error.message, error.status);
     },
   };

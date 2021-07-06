@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { Button, Dropdown, Loader, Tooltip } from '@cognite/cogs.js';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useQuery } from 'utils/functions';
-import { DataTypesTableData } from 'pages/DataTransfers/types';
 import { useConfigurationsQuery } from 'services/endpoints/configurations/query';
 import { useDatatypesQuery } from 'services/endpoints/datatypes/query';
 import { useSourcesQuery } from 'services/endpoints/sources/query';
@@ -19,17 +18,18 @@ import {
   initialState,
 } from 'contexts/DataTransfersContext';
 
+import { DataTransfersTableData } from './types';
 import { Filters } from './components/Filters';
 import { TableActionsContainer, ColumnsSelector } from './elements';
 import { SelectColumnsMenu } from './components/Table/SelectColumnsMenu';
-import {
-  getColumnNames,
-  usePrepareDataTransfersQuery,
-} from './hooks/usePrepareDataTransfersQuery';
-import { selectColumns } from './utils';
+import { usePrepareDataTransfersQuery } from './hooks/usePrepareDataTransfersQuery';
+import { getSelectedColumnsPersistently } from './utils/Table/managePersistentColumns';
+import { getColumnNames } from './utils/Table/columns';
 
 interface Props {
-  setFilteredData: React.Dispatch<React.SetStateAction<DataTypesTableData[]>>;
+  setFilteredData: React.Dispatch<
+    React.SetStateAction<DataTransfersTableData[]>
+  >;
 }
 
 const TableActions: React.FC<Props> = ({ setFilteredData }) => {
@@ -78,50 +78,29 @@ const TableActions: React.FC<Props> = ({ setFilteredData }) => {
 
   useEffect(() => {
     if (datatransfers.length > 0) {
-      const handledData: DataTypesTableData[] = datatransfers.map((item) => ({
-        ...item.source,
-        status: item.status,
-        report: item.status,
-      }));
+      const handledData: DataTransfersTableData[] = datatransfers.map(
+        (item) => ({
+          ...item.source,
+          status: item.status,
+          report: item.status,
+        })
+      );
 
       dispatch(
         reportSuccess({
           data: handledData,
-          columns: selectColumns(
-            handledData.length > 0 ? handledData : data.data,
-            data.selectedColumnNames.length > 0
-              ? data.selectedColumnNames
-              : config.initialSelectedColumnNames
-          ),
-          rawColumns: selectColumns(
-            handledData.length > 0 ? handledData : data.data,
-            []
-          ),
           allColumnNames: getColumnNames(
             handledData.length > 0 ? handledData : data.data
           ),
-          selectedColumnNames:
-            data.selectedColumnNames.length > 0
-              ? data.selectedColumnNames
-              : config.initialSelectedColumnNames,
+          selectedColumnNames: getSelectedColumnsPersistently(),
         })
       );
     } else {
       dispatch(
         reportSuccess({
           ...initialState.data,
-          columns: selectColumns(
-            data.data,
-            data.selectedColumnNames.length > 0
-              ? data.selectedColumnNames
-              : config.initialSelectedColumnNames
-          ),
-          rawColumns: selectColumns(data.data, []),
           allColumnNames: getColumnNames(data.data),
-          selectedColumnNames:
-            data.selectedColumnNames.length > 0
-              ? data.selectedColumnNames
-              : config.initialSelectedColumnNames,
+          selectedColumnNames: getSelectedColumnsPersistently(),
         })
       );
     }
@@ -154,6 +133,7 @@ const TableActions: React.FC<Props> = ({ setFilteredData }) => {
 
   function handleColumnSelection(name: string, nextState: boolean) {
     if (name === undefined) return;
+
     if (nextState) {
       dispatch(addColumnName(name));
     } else {
@@ -165,8 +145,6 @@ const TableActions: React.FC<Props> = ({ setFilteredData }) => {
     dispatch(
       reportSuccess({
         data: [],
-        columns: data.columns,
-        rawColumns: data.rawColumns,
         allColumnNames: data.allColumnNames,
         selectedColumnNames: config.initialSelectedColumnNames,
       })

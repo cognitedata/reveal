@@ -5,7 +5,6 @@ import { useQuery } from 'react-query';
 import { DATATYPES_KEYS } from 'services/configs/queryKeys';
 import { CustomError } from 'services/CustomError';
 import { useIsTokenAndApiValid } from 'hooks/useIsTokenAndApiValid';
-import { reportException } from '@cognite/react-errors';
 
 const useDatatypesQuery = ({
   id,
@@ -32,7 +31,6 @@ const useDatatypesQuery = ({
         return data;
       },
       onError: (error: CustomError) => {
-        reportException(error);
         addError(error.message, error.status);
       },
     }

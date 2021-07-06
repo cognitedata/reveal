@@ -1,5 +1,6 @@
 import { Switch, Route } from 'react-router-dom';
 import { AuthConsumer, Container } from '@cognite/react-container';
+import { storage } from '@cognite/storage';
 import { Loader } from '@cognite/cogs.js';
 import GlobalStyles from 'global-styles';
 import sidecar from 'configs/sidecar';
@@ -15,52 +16,56 @@ import New from './pages/Configurations/pages/New';
 import { ApiProvider } from './contexts/ApiContext';
 import { APIErrorProvider } from './contexts/APIErrorContext';
 
-const App = () => (
-  <Container sidecar={sidecar}>
-    <>
-      <GlobalStyles />
-      <Providers>
-        <ApiProvider>
-          <APIErrorProvider>
-            <Layout>
-              <Main>
-                <MainHeader />
-                <Content>
-                  <AuthConsumer>
-                    {({ authState }) => {
-                      if (!authState || !authState.authenticated) {
-                        return <Loader darkMode={false} />;
-                      }
+storage.init({ appName: 'cognuit' });
 
-                      return (
-                        <Switch>
-                          <Route exact path="/">
-                            <Home />
-                          </Route>
-                          <Route exact path="/configurations">
-                            <Configurations />
-                          </Route>
-                          <Route exact path="/configurations/new/:type">
-                            <New />
-                          </Route>
-                          <Route exact path="/data-transfers">
-                            <DataTransfers />
-                          </Route>
-                          <Route exact path="/status">
-                            <Status />
-                          </Route>
-                        </Switch>
-                      );
-                    }}
-                  </AuthConsumer>
-                </Content>
-              </Main>
-            </Layout>
-          </APIErrorProvider>
-        </ApiProvider>
-      </Providers>
-    </>
-  </Container>
-);
+const App = () => {
+  return (
+    <Container sidecar={sidecar}>
+      <>
+        <GlobalStyles />
+        <Providers>
+          <ApiProvider>
+            <APIErrorProvider>
+              <Layout>
+                <Main>
+                  <MainHeader />
+                  <Content>
+                    <AuthConsumer>
+                      {({ authState }) => {
+                        if (!authState || !authState.authenticated) {
+                          return <Loader darkMode={false} />;
+                        }
+
+                        return (
+                          <Switch>
+                            <Route exact path="/">
+                              <Home />
+                            </Route>
+                            <Route exact path="/configurations">
+                              <Configurations />
+                            </Route>
+                            <Route exact path="/configurations/new/:type">
+                              <New />
+                            </Route>
+                            <Route exact path="/data-transfers">
+                              <DataTransfers />
+                            </Route>
+                            <Route exact path="/status">
+                              <Status />
+                            </Route>
+                          </Switch>
+                        );
+                      }}
+                    </AuthConsumer>
+                  </Content>
+                </Main>
+              </Layout>
+            </APIErrorProvider>
+          </ApiProvider>
+        </Providers>
+      </>
+    </Container>
+  );
+};
 
 export default App;

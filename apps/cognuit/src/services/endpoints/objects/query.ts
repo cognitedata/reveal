@@ -1,17 +1,16 @@
 import ApiContext from 'contexts/ApiContext';
 import APIErrorContext from 'contexts/APIErrorContext';
+import { useIsTokenAndApiValid } from 'hooks/useIsTokenAndApiValid';
 import { useContext } from 'react';
 import { useQuery } from 'react-query';
-import { DATATRANSFERS_KEYS } from 'services/configs/queryKeys';
+import { OBJECTS_KEY } from 'services/configs/queryKeys';
 import { CustomError } from 'services/CustomError';
-import { useIsTokenAndApiValid } from 'hooks/useIsTokenAndApiValid';
-import { RESTTransfersFilter } from 'typings/interfaces';
 
-const useDataTransfersQuery = ({
-  options,
+const useObjectsSingleObjectQuery = ({
+  objectId,
   enabled = true,
 }: {
-  options: RESTTransfersFilter;
+  objectId: number;
   enabled?: boolean;
 }) => {
   const { api } = useContext(ApiContext);
@@ -20,14 +19,9 @@ const useDataTransfersQuery = ({
   const isValid = useIsTokenAndApiValid();
 
   const { data, ...rest } = useQuery(
-    [DATATRANSFERS_KEYS.default, options],
-    async ({ queryKey }) => {
-      const [_key, extractedOptions] = queryKey as [
-        string,
-        RESTTransfersFilter
-      ];
-
-      return api!.datatransfers.get(extractedOptions);
+    [OBJECTS_KEY.singleObject, objectId],
+    async () => {
+      return api!.objects.getSingleObject(objectId);
     },
     {
       enabled: enabled && isValid,
@@ -44,4 +38,4 @@ const useDataTransfersQuery = ({
   return { data: data || [], ...rest };
 };
 
-export { useDataTransfersQuery };
+export { useObjectsSingleObjectQuery };

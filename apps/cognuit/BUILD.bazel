@@ -73,6 +73,7 @@ DEPENDENCIES = [
     "@npm//react-query",
     "@npm//styled-components",
     "//packages/react-container",
+    "//packages/storage",
     "//packages/z-index",
 ]
 

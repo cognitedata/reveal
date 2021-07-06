@@ -1,4 +1,3 @@
-import { reportException } from '@cognite/react-errors';
 import ApiContext from 'contexts/ApiContext';
 import APIErrorContext from 'contexts/APIErrorContext';
 import { useIsTokenAndApiValid } from 'hooks/useIsTokenAndApiValid';
@@ -25,7 +24,6 @@ const useConfigurationsQuery = () => {
         return data;
       },
       onError: (error: CustomError) => {
-        reportException(error);
         addError(error.message, error.status);
       },
     }

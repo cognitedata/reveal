@@ -1,10 +1,11 @@
 import React from 'react';
 import { Checkbox, Menu } from '@cognite/cogs.js';
-import { getMappedColumnName } from 'pages/DataTransfers/utils';
 import config from 'configs/datatransfer.config';
+import { DataTransfersTableKeys } from 'pages/DataTransfers/types';
+import { getMappedColumnName } from 'utils/columns';
 
 interface Props {
-  columnNames: string[];
+  columnNames: DataTransfersTableKeys[];
   selectedColumnNames: string[];
   onChange: (name: string, nextState: boolean) => void;
 }
@@ -26,7 +27,7 @@ export const SelectColumnsMenu: React.FC<Props> = ({
             checked={selectedColumnNames.includes(name)}
             disabled={config.mandatoryColumns.includes(name)}
           >
-            {name === 'status_ok' ? 'Status' : getMappedColumnName(name)}
+            {name === 'status' ? 'Status' : getMappedColumnName(name)}
           </Checkbox>
         </Menu.Item>
       );

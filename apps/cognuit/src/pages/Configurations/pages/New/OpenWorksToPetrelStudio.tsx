@@ -12,7 +12,6 @@ import { SelectValue } from 'antd/es/select';
 import ApiContext from 'contexts/ApiContext';
 import APIErrorContext from 'contexts/APIErrorContext';
 import { Link, useHistory } from 'react-router-dom';
-import ErrorMessage from 'components/Molecules/ErrorMessage';
 import {
   ObjectsRevisionsResponse,
   ProjectRepositoryTheeResponse,
@@ -21,6 +20,7 @@ import {
 import { CustomError } from 'services/CustomError';
 import LoadingBox from 'components/Molecules/LoadingBox';
 import { ThirdPartySystems } from 'types/globalTypes';
+import ErrorMessage from 'components/Molecules/ErrorMessage';
 
 import {
   CloseIcon,

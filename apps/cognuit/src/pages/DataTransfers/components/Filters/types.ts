@@ -1,5 +1,5 @@
 import { ReactElement } from 'react';
-import { DataTypesFilters } from 'pages/DataTransfers/types';
+import { DataTypesFilters } from 'contexts/types/dataTransfersTypes';
 import {
   ConfigurationsResponse,
   DatatypesResponse,

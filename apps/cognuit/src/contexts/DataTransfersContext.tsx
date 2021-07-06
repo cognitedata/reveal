@@ -1,3 +1,7 @@
+import {
+  addSelectedColumnPersistently,
+  removeSelectedColumnPersistently,
+} from 'pages/DataTransfers/utils/Table/managePersistentColumns';
 import React, { useReducer } from 'react';
 
 import {
@@ -8,18 +12,15 @@ import {
   DataTransfersState,
   ProgressState,
   UserAction,
-} from '../pages/DataTransfers/types';
-import { selectColumns } from '../pages/DataTransfers/utils';
+} from './types/dataTransfersTypes';
 
 // State & Reducer
 export const initialState: DataTransfersState = {
   status: ProgressState.LOADING,
   data: {
     data: [],
-    rawColumns: [],
     allColumnNames: [],
     selectedColumnNames: [],
-    columns: [],
   },
   filters: {
     selectedSource: null,
@@ -69,25 +70,23 @@ function filterReducer(
       };
     }
     case Action.ADD_COLUMN: {
-      const tmp = [action.payload, ...state.data!.selectedColumnNames];
+      const updatedColumns = addSelectedColumnPersistently(action.payload);
+
       return {
         ...state,
         data: {
           ...state.data,
-          selectedColumnNames: tmp,
-          columns: selectColumns(state.data.data, tmp),
+          selectedColumnNames: updatedColumns,
         },
       };
     }
     case Action.REMOVE_COLUMN: {
-      const tmp = [...state.data.selectedColumnNames];
-      tmp.splice(tmp.indexOf(action.payload), 1);
+      const updatedColumns = removeSelectedColumnPersistently(action.payload);
       return {
         ...state,
         data: {
           ...state.data,
-          selectedColumnNames: tmp,
-          columns: selectColumns(state.data.data, tmp),
+          selectedColumnNames: updatedColumns,
         },
       };
     }

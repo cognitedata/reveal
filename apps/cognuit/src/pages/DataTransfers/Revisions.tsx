@@ -3,10 +3,10 @@ import { Colors, Loader, Tooltip } from '@cognite/cogs.js';
 import { apiStatuses } from 'utils/statuses';
 import { CustomError } from 'services/CustomError';
 import { Revision } from 'types/ApiInterface';
+import { DataTransferObject } from 'typings/interfaces';
+import ApiContext from 'contexts/ApiContext';
 
-import { DataTransferObject } from '../../typings/interfaces';
-import ApiContext from '../../contexts/ApiContext';
-
+import { DataTransfersTableData } from './types';
 import {
   DetailButton,
   RevisionContainer,
@@ -14,11 +14,10 @@ import {
   StatusDot,
 } from './elements';
 import { getFormattedTimestampOrString } from './utils';
-import { DataTypesTableData } from './types';
 
 type Props = {
-  record: DataTypesTableData;
-  onDetailClick: (record: DataTypesTableData, revision: Revision) => void;
+  record: DataTransfersTableData;
+  onDetailClick: (record: DataTransfersTableData, revision: Revision) => void;
 };
 
 type DataType = {
@@ -75,10 +74,11 @@ const Revisions = ({ record, onDetailClick }: Props) => {
           <div>
             <RevisionLabel>Last changed</RevisionLabel>
             <div>
-              {getFormattedTimestampOrString(
-                rev.translations[rev.translations.length - 1].revision
-                  .last_updated
-              )}
+              {rev.translations &&
+                getFormattedTimestampOrString(
+                  rev.translations[rev.translations.length - 1].revision
+                    .last_updated
+                )}
             </div>
           </div>
         ),
@@ -104,7 +104,7 @@ const Revisions = ({ record, onDetailClick }: Props) => {
           const singleObj: DataTransferObject = await getSingleObj(rev);
           return {
             ...rev,
-            // Mark as delete - not being
+            // Mark as delete - not being used
             datatype: (
               <div>
                 <RevisionLabel>Datatype</RevisionLabel>
