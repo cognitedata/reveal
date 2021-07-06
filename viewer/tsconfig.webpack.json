@@ -1,14 +1,14 @@
 {
-  "extends": "../tsconfig.common.json",
+  "extends": "./tsconfig.common.json",
   "compilerOptions": {
     "declaration": true,
-    "rootDir": "src",
+    "rootDir": ".",
     "outDir": "dist",
     "downlevelIteration": true,
     "sourceMap": true,
     "typeRoots": [
-      "../node_modules/@types",
-      "src/@types"
+      "node_modules/@types",
+      "core/src/@types"
     ],
     // do not add path aliases. They'll end up in generated declaration files.
   },
@@ -16,8 +16,7 @@
   "include": [
     "*.js",
     "*.ts",
-    "src/**/*",
-    "node_modules",
+    "core/src/**/*",
     ".eslintrc.js",
   ],
   "exclude": [

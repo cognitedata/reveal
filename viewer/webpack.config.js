@@ -32,18 +32,18 @@ module.exports = env => {
     // Internals is not part of prod builds
     entry: development
       ? {
-        index: './core/src/index.ts',
-        tools: './core/src/tools.ts',
-        internals: './core/src/internals.ts'
+        index: './index.ts',
+        tools: './tools.ts',
+        internals: './internals.ts'
       }
       : {
-        index: './core/src/index.ts',
-        tools: './core/src/tools.ts'
+        index: './index.ts',
+        tools: './tools.ts'
       },
     target: 'web',
     resolve: {
       extensions: ['.tsx', '.ts', '.js'],
-      symlinks: false
+      symlinks: true
     },
     module: {
       rules: [
@@ -52,6 +52,7 @@ module.exports = env => {
           use: {
             loader: 'ts-loader',
             options: {
+              configFile: "tsconfig.webpack.json",
               onlyCompileBundledFiles: true,
               compilerOptions: !development
                 ? {
