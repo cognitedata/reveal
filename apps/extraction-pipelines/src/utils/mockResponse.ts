@@ -130,7 +130,7 @@ const mockResponseV2 = {
       lastSeen: 1604271600000,
       lastMessage:
         'This is a failed run. Error message with a longer text for detailed description of error',
-      schedule: 'On Trigger',
+      schedule: 'On trigger',
       contacts: [
         {
           email: 'Jacek.Fijalkowski@itera.no',

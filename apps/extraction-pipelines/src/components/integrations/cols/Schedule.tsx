@@ -18,7 +18,7 @@ interface OwnProps {
 }
 export enum SupportedScheduleStrings {
   NOT_DEFINED = 'Not defined',
-  ON_TRIGGER = 'On Trigger',
+  ON_TRIGGER = 'On trigger',
   CONTINUOUS = 'Continuous',
   SCHEDULED = 'Scheduled',
 }

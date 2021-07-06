@@ -70,7 +70,7 @@
       "lastSuccess": 1584064700012,
       "lastFailure": 1584065700011,
       "lastSeen": 1584066700013,
-      "schedule": "On Trigger",
+      "schedule": "On trigger",
       "owner": {
         "email": "katrine.tjolsen@cognite.com",
         "name": "Katrine Tjølsen"
