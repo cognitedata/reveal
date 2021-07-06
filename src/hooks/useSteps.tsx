@@ -5,14 +5,13 @@ import { AppStateContext } from 'context';
 import {
   moveToStep,
   WorkflowStep,
-  getActiveWorkflowStep,
+  getActiveWorkflowSteps,
 } from 'modules/workflows';
-
 import { useActiveWorkflow } from 'hooks';
 import routesMap from 'routes/routesMap';
 import { PNID_METRICS, trackUsage } from 'utils/Metrics';
 
-export const usePrevAndNextStep = (step?: WorkflowStep) => {
+export const useSteps = (step?: WorkflowStep) => {
   const history = useHistory();
   const { tenant } = useContext(AppStateContext);
   const { workflowId } = useActiveWorkflow();
@@ -62,8 +61,36 @@ export const usePrevAndNextStep = (step?: WorkflowStep) => {
 
 export const useLoadStepOnMount = (step?: WorkflowStep) => {
   const dispatch = useDispatch();
-  const prevStep = useSelector(getActiveWorkflowStep);
-  if (step && prevStep !== step) {
-    dispatch(moveToStep(step));
+  const steps = useSelector(getActiveWorkflowSteps);
+  if (step && steps?.current !== step) {
+    const lastCompletedStep = getLastCompletedStep(step, steps?.lastCompleted);
+    dispatch(moveToStep({ step, lastCompletedStep }));
   }
+};
+
+export const useCompletedSteps = () => {
+  const steps = useSelector(getActiveWorkflowSteps);
+  const lastCompleted = steps?.lastCompleted;
+  const routes = routesMap();
+  const allSteps = routes.map((route) => route.workflowStepName);
+  const completedSteps = allSteps.splice(
+    0,
+    allSteps.findIndex((route) => route === lastCompleted) + 1
+  );
+  return completedSteps;
+};
+
+const getLastCompletedStep = (
+  stepToGo: WorkflowStep,
+  stepLastCompleted?: WorkflowStep
+): WorkflowStep | undefined => {
+  const routes = routesMap();
+  const stepLastCompletedIndex = routes.findIndex(
+    (route) => route.workflowStepName === stepLastCompleted
+  );
+  const stepToGoIndex = routes.findIndex(
+    (route) => route.workflowStepName === stepToGo
+  );
+  if (stepToGoIndex >= stepLastCompletedIndex) return stepToGo;
+  return stepLastCompleted;
 };

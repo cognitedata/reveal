@@ -1,10 +1,10 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 import { PageTitle } from '@cognite/cdf-utilities';
-import SelectionPage from 'pages/SelectionPage';
-import ResultsOverview from 'pages/ResultsOverview';
-import FileOverview from 'pages/FileOverview';
-import Options from 'pages/Options';
+import PageSelection from 'pages/PageSelection';
+import PageResultsOverview from 'pages/PageResultsOverview';
+import PageFileOverview from 'pages/PageFileOverview';
+import PageOptions from 'pages/PageOptions';
 import LandingPage from 'pages/LandingPage';
 import GroupsRequired from 'components/GroupsRequired';
 import Breadcrumbs from 'components/Breadcrumbs';
@@ -71,7 +71,7 @@ export default function Routes() {
                   <PageTitle title="Interactive Engineering Diagrams" />
                   <Flex row style={{ width: '100%' }}>
                     <StepsList />
-                    <SelectionPage
+                    <PageSelection
                       defaultFilters={PDF_FILTER}
                       required
                       type="files"
@@ -90,7 +90,7 @@ export default function Routes() {
                   <PageTitle title="Interactive Engineering Diagrams" />
                   <Flex row style={{ width: '100%' }}>
                     <StepsList />
-                    <SelectionPage
+                    <PageSelection
                       type="assets"
                       step="resourceSelectionAssets"
                       key="assetSelection"
@@ -107,7 +107,7 @@ export default function Routes() {
                   <PageTitle title="Interactive Engineering Diagrams" />
                   <Flex row style={{ width: '100%' }}>
                     <StepsList />
-                    <SelectionPage
+                    <PageSelection
                       defaultFilters={PDF_FILTER}
                       type="files"
                       step="resourceSelectionFiles"
@@ -125,7 +125,7 @@ export default function Routes() {
                   <PageTitle title="Interactive Engineering Diagrams" />
                   <Flex row style={{ width: '100%' }}>
                     <StepsList />
-                    <Options step="config" />
+                    <PageOptions step="config" />
                   </Flex>
                 </>
               )}
@@ -138,7 +138,7 @@ export default function Routes() {
                   <PageTitle title="Interactive Engineering Diagrams" />
                   <Flex row style={{ width: '100%' }}>
                     <StepsList />
-                    <ResultsOverview step="review" />
+                    <PageResultsOverview step="review" />
                   </Flex>
                 </>
               )}
@@ -151,7 +151,7 @@ export default function Routes() {
                   <PageTitle title="Interactive Engineering Diagrams" />
                   <Flex row style={{ width: '100%' }}>
                     <StepsList />
-                    <FileOverview step="diagramPreview" />
+                    <PageFileOverview step="diagramPreview" />
                   </Flex>
                 </>
               )}

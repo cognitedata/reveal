@@ -30,10 +30,15 @@ export interface Workflow {
   diagrams?: ResourceSelection;
   resources?: ResourceSelection[];
   options: WorkflowOptions;
-  step: WorkflowStep;
+  steps: WorkflowSteps;
   status?: Status;
   jobId?: number;
 }
+
+export type WorkflowSteps = {
+  current: WorkflowStep;
+  lastCompleted: WorkflowStep;
+};
 
 export type WorkflowStep =
   | 'diagramSelection'

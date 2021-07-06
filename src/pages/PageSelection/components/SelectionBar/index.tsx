@@ -6,7 +6,7 @@ import { Button, Colors, Input } from '@cognite/cogs.js';
 import { ResourceType } from 'modules/sdk-builder/types';
 import { Flex } from 'components/Common';
 import DataSetSelect from 'components/DataSetSelect';
-import { searchCountSelector } from 'pages/SelectionPage/selectors';
+import { searchCountSelector } from 'pages/PageSelection/selectors';
 import { LabelFilter } from 'components/LabelFilter';
 import omit from 'lodash/omit';
 import { PNID_METRICS, trackUsage } from 'utils/Metrics';

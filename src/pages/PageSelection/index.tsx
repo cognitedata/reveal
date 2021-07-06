@@ -12,15 +12,11 @@ import {
   getActiveWorkflowItems,
 } from 'modules/workflows';
 import { ResourceType, Filter } from 'modules/types';
-import {
-  usePrevAndNextStep,
-  useActiveWorkflow,
-  usePreviousSelection,
-} from 'hooks';
+import { useSteps, useActiveWorkflow, usePreviousSelection } from 'hooks';
 import { LS_SAVED_SETTINGS } from 'stringConstants';
 import StickyBottomRow from 'components/StickyBottomRow';
 import { Flex, IconButton } from 'components/Common';
-import { searchCountSelector } from 'pages/SelectionPage/selectors';
+import { searchCountSelector } from 'pages/PageSelection/selectors';
 import NotFound from 'pages/NotFound';
 import DiagramsSelection from './DiagramsSelection';
 import ResourcesSelection from './ResourcesSelection';
@@ -38,9 +34,12 @@ type Props = {
   defaultFilters?: { [key in ResourceType]?: Filter };
 };
 
-export default function SelectionPage(props: Props): JSX.Element {
+export default function PageSelection(props: Props): JSX.Element {
   const dispatch = useDispatch();
   const { type, step, required, defaultFilters = DEFAULT_FILTERS } = props;
+
+  useActiveWorkflow(step);
+
   const [isSelectAll, setSelectAll] = useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<Array<number>>([]);
   const [filter, setFilter] = useState<Filter>(
@@ -52,8 +51,7 @@ export default function SelectionPage(props: Props): JSX.Element {
   });
   const [debouncedSetFilter] = useDebouncedCallback(setDelayedFilter, 200);
   const count = useSelector(searchCountSelector(type, filter));
-  useActiveWorkflow(step);
-  const { goToNextStep, goToPrevStep } = usePrevAndNextStep(step);
+  const { goToNextStep, goToPrevStep } = useSteps(step);
   const { resources } = useSelector(getActiveWorkflowItems);
 
   const previousSelectionLoaded = usePreviousSelection(

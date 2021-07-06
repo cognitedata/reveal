@@ -1,14 +1,16 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { RootState } from 'store';
 import { Button, Body, useLocalStorage } from '@cognite/cogs.js';
-import { moveToStep, WorkflowStep } from 'modules/workflows';
-import { useActiveWorkflow, useSavedSettings, getSelectedModel } from 'hooks';
+import { WorkflowStep } from 'modules/workflows';
+import {
+  useActiveWorkflow,
+  useSavedSettings,
+  useSteps,
+  getSelectedModel,
+} from 'hooks';
 import { Flex, PageTitle, CollapsibleRadio } from 'components/Common';
 import StickyBottomRow from 'components/StickyBottomRow';
-import { reviewPage } from 'routes/paths';
-import { AppStateContext } from 'context';
 import { LS_SAVED_SETTINGS } from 'stringConstants';
 import { trackUsage, PNID_METRICS } from 'utils/Metrics';
 import {
@@ -22,12 +24,10 @@ import SkipSettingsPanel from './SkipSettingsPanel';
 type Props = {
   step: WorkflowStep;
 };
-export default function Options(props: Props) {
-  const history = useHistory();
-  const dispatch = useDispatch();
+export default function PageOptions(props: Props) {
   const { step } = props;
-  const { tenant } = useContext(AppStateContext);
   const { workflowId } = useActiveWorkflow(step);
+  const { goToNextStep, goToPrevStep } = useSteps(step);
   const [savedSettings] = useLocalStorage(LS_SAVED_SETTINGS, {
     skip: false,
     modelSelected: 'standard',
@@ -48,18 +48,13 @@ export default function Options(props: Props) {
     shouldSkipSettings,
   });
 
-  const summarizePnID = () => {
-    history.push(reviewPage.path(tenant, workflowId));
-  };
-
   const onSkipSettingsChange = (skipSettings: boolean) => {
     trackUsage(PNID_METRICS.configPage.skipSettings, { skip: skipSettings });
     setShouldSkipSettings(skipSettings);
   };
 
-  useEffect(() => {
-    dispatch(moveToStep('config'));
-  }, [dispatch]);
+  const onNextButtonClick = () => goToNextStep();
+  const onBackButtonClick = () => goToPrevStep();
 
   return (
     <Flex column style={{ width: '100%' }}>
@@ -112,10 +107,10 @@ export default function Options(props: Props) {
         />
       </Flex>
       <StickyBottomRow justify="space-between">
-        <Button size="large" type="secondary" onClick={() => history.goBack()}>
+        <Button size="large" type="secondary" onClick={onBackButtonClick}>
           Back
         </Button>
-        <Button size="large" type="primary" onClick={summarizePnID}>
+        <Button size="large" type="primary" onClick={onNextButtonClick}>
           Next
         </Button>
       </StickyBottomRow>

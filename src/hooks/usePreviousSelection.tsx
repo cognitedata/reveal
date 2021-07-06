@@ -7,7 +7,7 @@ import {
   ResourceType,
   Filter,
 } from 'modules/types';
-import { searchItemSelector } from 'pages/SelectionPage/selectors';
+import { searchItemSelector } from 'pages/PageSelection/selectors';
 
 type AwaitingResourcesToLoad = 'idle' | 'awaiting' | 'done';
 

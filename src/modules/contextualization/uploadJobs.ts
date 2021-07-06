@@ -17,7 +17,7 @@ import { ModelStatus } from 'modules/types';
 import {
   convertErrorNotification,
   convertSuccessNotification,
-} from 'pages/ResultsOverview/utils';
+} from 'pages/PageResultsOverview/utils';
 import { tryToStringify } from 'utils/handleError';
 import * as UploadJobs from './uploadJobs';
 import { PNID_METRICS } from '../../utils/Metrics';

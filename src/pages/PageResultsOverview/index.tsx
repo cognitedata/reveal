@@ -28,7 +28,7 @@ import EmptyStateFiles from './EmptyStateFiles';
 type Props = {
   step: WorkflowStep;
 };
-export default function ResultsOverview(props: Props) {
+export default function PageResultsOverview(props: Props) {
   const { step } = props;
   const history = useHistory();
   const dispatch = useDispatch();

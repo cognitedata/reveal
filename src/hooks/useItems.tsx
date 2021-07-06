@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import isEqual from 'lodash/isEqual';
 import { usePrevious } from 'hooks';
 import { FileInfo } from '@cognite/sdk';
-import { searchItemSelector } from 'pages/SelectionPage/selectors';
+import { searchItemSelector } from 'pages/PageSelection/selectors';
 import { RootState } from 'store';
 import { ResourceType, Filter } from 'modules/types';
 

@@ -11,7 +11,7 @@ import {
   Item,
   useSelectedItems,
 } from 'hooks';
-import { searchCountSelector } from 'pages/SelectionPage/selectors';
+import { searchCountSelector } from 'pages/PageSelection/selectors';
 import { Flex } from 'components/Common';
 import { getColumns } from './columns';
 

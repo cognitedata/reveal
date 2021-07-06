@@ -1,16 +1,16 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { useParams, useHistory } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { Divider, Space } from 'antd';
+import { Divider } from 'antd';
 import { Button, Title, Badge, Colors } from '@cognite/cogs.js';
 import { RootState } from 'store';
 import { useCdfItem, usePermissions } from '@cognite/sdk-react-query-hooks';
 import { FileInfo } from '@cognite/sdk';
-import { useActiveWorkflow } from 'hooks';
+import { useSteps, useActiveWorkflow } from 'hooks';
 import { WorkflowStep } from 'modules/workflows';
 import { startConvertFileToSvgJob } from 'modules/contextualization/uploadJobs';
 import { retrieveItemsById as retrieve } from 'modules/files';
-import { reviewPage } from 'routes/paths';
+import { Flex } from 'components/Common';
 import { ResourceSidebar } from 'containers/ResourceSidebar';
 import { ContextFileViewer as CogniteFileViewer } from 'components/CogniteFileViewer';
 import MissingPermissionFeedback from 'components/MissingPermissionFeedback';
@@ -25,7 +25,6 @@ import {
   ResourceItem,
   useAnnotations,
 } from '@cognite/data-exploration';
-import { AppStateContext } from 'context';
 import { PNID_METRICS, trackUsage } from 'utils/Metrics';
 import {
   Wrapper,
@@ -44,24 +43,23 @@ type Props = {
   step: WorkflowStep;
 };
 
-export default function FileOverview(props: Props) {
-  const { step } = props;
-  const { fileId } = useParams<{
-    fileId: string;
-  }>();
+export default function PageFileOverview(props: Props) {
   const dispatch = useDispatch();
-  const history = useHistory();
-  const { tenant } = useContext(AppStateContext);
-  const { workflowId } = useActiveWorkflow(step);
-
+  const { step } = props;
+  const { fileId } = useParams<{ fileId: string }>();
+  const { data: canEditFiles } = usePermissions('filesAcl', 'WRITE');
+  const { goToPrevStep } = useSteps(step);
   const [activeTab, setActiveTab] = useState<FilePreviewTabType>('preview');
   const [renderFeedback, setRenderFeedback] = useState(false);
   const [editMode, setEditMode] = useState<boolean>(false);
 
+  useActiveWorkflow(step);
+
   const fileIdNumber = Number(fileId);
 
-  const { data: annotations } = useAnnotations(fileIdNumber);
+  if (!fileIdNumber) goToPrevStep();
 
+  const { data: annotations } = useAnnotations(fileIdNumber);
   const {
     data: fileInfo,
     isFetched,
@@ -70,54 +68,25 @@ export default function FileOverview(props: Props) {
   } = useCdfItem<FileInfo>('files', {
     id: fileIdNumber,
   });
-
   const { jobStarted } = useSelector(
     (state: RootState) => state.contextualization.uploadJobs[fileIdNumber] || {}
   );
-
-  useEffect(() => {
-    dispatch(retrieve({ ids: [{ id: fileIdNumber }] }));
-  }, [dispatch, fileIdNumber]);
-
-  const BackButton = () => (
-    <div
-      style={{
-        display: 'inline-block',
-        overflow: 'hidden',
-      }}
-    >
-      <Space>
-        <Button
-          icon="ArrowBack"
-          onClick={() => history.push(reviewPage.path(tenant, workflowId))}
-        >
-          Back
-        </Button>{' '}
-        <Divider type="vertical" style={{ height: '36px' }} />
-      </Space>
-    </div>
-  );
-  const { data: canEditFiles } = usePermissions('filesAcl', 'WRITE');
-
   const resourceDetails: ResourceItem = {
     type: 'file',
     id: fileIdNumber,
     externalId: fileInfo?.externalId || '',
   };
-
   const { counts } = useRelatedResourceCounts(resourceDetails);
 
-  if (!isFetched) {
-    return <Loader />;
-  }
+  const onBackButtonClick = () => goToPrevStep();
 
-  if (isError) {
-    return <ErrorFeedback error={error} />;
-  }
+  useEffect(() => {
+    dispatch(retrieve({ ids: [{ id: fileIdNumber }] }));
+  }, [dispatch, fileIdNumber]);
 
-  if (!fileInfo) {
-    return <>File {fileId} not found!</>;
-  }
+  if (!isFetched) return <Loader />;
+  if (isError) return <ErrorFeedback error={error} />;
+  if (!fileInfo) return <>File {fileId} not found!</>;
 
   return (
     <Wrapper>
@@ -125,7 +94,12 @@ export default function FileOverview(props: Props) {
         <MissingPermissionFeedback key="filesAcl" acl="filesAcl" type="WRITE" />
       )}
       <TitleRowWrapper>
-        <BackButton />
+        <Flex align justify>
+          <Button icon="ArrowBack" onClick={onBackButtonClick}>
+            Back
+          </Button>
+          <Divider type="vertical" style={{ height: '36px' }} />
+        </Flex>
         <Title level={3} style={{ flex: 1 }}>
           {fileInfo.name}
         </Title>

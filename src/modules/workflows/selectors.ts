@@ -20,12 +20,12 @@ export const getActiveWorkflowId = createSelector(
   (workflowId: number) => workflowId
 );
 
-export const getActiveWorkflowStep = createSelector(
+export const getActiveWorkflowSteps = createSelector(
   (state: RootState) => state.workflows.active,
   (state: RootState) => state.workflows.items,
   (workflowId: number, items: { [id: number]: Workflow }) => {
     const activeWorkflow = items[workflowId];
-    return activeWorkflow?.step;
+    return activeWorkflow?.steps;
   }
 );
 
