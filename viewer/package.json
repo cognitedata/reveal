@@ -109,7 +109,7 @@
     "three": "0.128.0"
   },
   "peerDependencies": {
-    "@cognite/sdk": "^4.2.2",
+    "@cognite/sdk": "^4.2.0",
     "@cognite/sdk-core": "^2.0.0"
   },
   "husky": {
