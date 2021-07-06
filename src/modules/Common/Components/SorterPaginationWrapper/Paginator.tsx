@@ -1,5 +1,6 @@
-import { ButtonProps, Input, SegmentedControl } from '@cognite/cogs.js';
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { ButtonProps, SegmentedControl } from '@cognite/cogs.js';
+import { InputNumber } from 'antd';
+import React, { Dispatch, SetStateAction } from 'react';
 import * as CONSTS from 'src/constants/PaginationConsts';
 import styled from 'styled-components';
 
@@ -74,35 +75,24 @@ const getPageOptionButtons = (
 export const Paginator = (props: {
   currentPage: number;
   totalPages: number;
-  pageSize: number;
   setCurrentPage: Dispatch<SetStateAction<number>>;
   setPageSize: Dispatch<SetStateAction<number>>;
 }) => {
-  const { currentPage, totalPages, pageSize, setCurrentPage, setPageSize } =
-    props;
-  const [tempCurrentPage, setTempCurrentPage] = useState(currentPage);
+  const { currentPage, totalPages, setCurrentPage, setPageSize } = props;
   const pageOptionButtons = getPageOptionButtons(currentPage, totalPages);
 
   const handleButtonClicked = (key: string | number) => {
     switch (key) {
       case 'Start':
         setCurrentPage(1);
-        setTempCurrentPage(1);
         break;
       case 'End':
         setCurrentPage(totalPages);
-        setTempCurrentPage(totalPages);
         break;
       default:
         setCurrentPage(+key);
-        setTempCurrentPage(+key);
     }
   };
-
-  useEffect(() => {
-    if (tempCurrentPage > 0 && tempCurrentPage <= totalPages)
-      setCurrentPage(tempCurrentPage);
-  }, [tempCurrentPage]);
 
   return (
     <Container>
@@ -113,33 +103,21 @@ export const Paginator = (props: {
       >
         {pageOptionButtons}
       </SegmentedControl>
-      <Input
-        type="number"
-        width={64}
+      <InputNumber
         size="small"
-        style={{ height: '26px', MozAppearance: 'textfield' }}
-        value={tempCurrentPage}
         min={1}
         max={totalPages}
-        step={1}
-        setValue={setTempCurrentPage}
-        onChange={(newValue) =>
-          setTempCurrentPage(parseInt(newValue.target.value, 10))
-        }
+        defaultValue={1}
+        onChange={setCurrentPage}
+        style={{ backgroundColor: '#ffffff', width: '64px', fontSize: '12px' }}
       />
-      <Input
-        type="number"
-        width={64}
+      <InputNumber
         size="small"
-        style={{ height: '26px', MozAppearance: 'textfield' }}
-        value={pageSize}
         min={CONSTS.MIN_PAGE_SIZE}
         max={CONSTS.MAX_PAGE_SIZE}
-        step={1}
-        setValue={setPageSize}
-        onChange={(newValue) => {
-          setPageSize(parseInt(newValue.target.value, 10));
-        }}
+        defaultValue={CONSTS.DEFAULT_PAGE_SIZE}
+        onChange={setPageSize}
+        style={{ backgroundColor: '#ffffff', width: '64px', fontSize: '12px' }}
       />
     </Container>
   );

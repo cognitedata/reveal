@@ -37,8 +37,14 @@ const getData = (
   }
   // if pagination enabled
   if (pagination && pageNumber && pageSize) {
-    const startIndex = (pageNumber - 1) * pageSize;
-    const endIndex = startIndex + pageSize;
+    if (pageNumber > 0 && pageSize > 0) {
+      const startIndex = (pageNumber - 1) * pageSize;
+      const endIndex = startIndex + pageSize;
+      tableData = tableData.slice(startIndex, endIndex);
+    }
+  } else {
+    const startIndex = 0;
+    const endIndex = startIndex + CONST.DEFAULT_PAGE_SIZE;
     tableData = tableData.slice(startIndex, endIndex);
   }
   return tableData;
@@ -53,7 +59,10 @@ export const SorterPaginationWrapper = (
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(CONST.DEFAULT_PAGE_SIZE);
   const fetchedCount = data.length;
-  const totalPages = Math.ceil(fetchedCount / pageSize);
+  const totalPages =
+    pageSize > 0
+      ? Math.ceil(fetchedCount / pageSize)
+      : Math.ceil(fetchedCount / CONST.DEFAULT_PAGE_SIZE);
 
   const header =
     totalCount > fetchedCount ? (
@@ -95,7 +104,6 @@ export const SorterPaginationWrapper = (
           <Paginator
             currentPage={currentPage}
             totalPages={totalPages}
-            pageSize={pageSize}
             setCurrentPage={setCurrentPage}
             setPageSize={setPageSize}
           />
