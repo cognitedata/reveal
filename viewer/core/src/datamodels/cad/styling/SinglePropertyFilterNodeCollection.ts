@@ -19,9 +19,6 @@ import cloneDeep from 'lodash/cloneDeep';
  * `SELECT ... IN (...)` works. This is useful when looking up nodes based on a list of identifiers,
  * nodes within a set of areas or systems. The node set is optimized for matching with properties with
  * a large number of values (i.e. thousands).
- *
- * @experimental This is an experimental feature that might be changed or removed, and changes
- * in minor releases might cause breaking changes.
  */
 export class SinglePropertyFilterNodeCollection extends NodeCollectionBase {
   public static readonly classToken = 'SinglePropertyNodeCollection';
@@ -82,15 +79,13 @@ export class SinglePropertyFilterNodeCollection extends NodeCollectionBase {
     const outputsUrl = this.buildUrl();
     const batches = Array.from(splitQueryToBatches(propertyValues));
     const requests = batches.flatMap(batch => {
-      const filter = { [`${propertyCategory}`]: { [`${propertyKey}`]: batch } };
+      const filter = { properties: { [`${propertyCategory}`]: { [`${propertyKey}`]: batch } } };
       const batchRequests = range(1, requestPartitions + 1).map(async p => {
         const response = postAsListResponse<Node3D[]>(this._client, outputsUrl, {
-          params: {
-            partition: `${p}/${requestPartitions}`,
-            limit: 1000
-          },
           data: {
-            filter
+            filter,
+            limit: 1000,
+            partition: `${p}/${requestPartitions}`
           }
         });
 
@@ -119,9 +114,9 @@ export class SinglePropertyFilterNodeCollection extends NodeCollectionBase {
   }
 
   private buildUrl(): string {
-    return `${this._client.getBaseUrl()}/api/playground/projects/${this._client.project}/3d/v2/models/${
-      this._modelId
-    }/revisions/${this._revisionId}/nodes/list`;
+    return `${this._client.getBaseUrl()}/api/v1/projects/${this._client.project}/3d/models/${this._modelId}/revisions/${
+      this._revisionId
+    }/nodes/list`;
   }
 
   serialize() {
@@ -155,7 +150,7 @@ class EmulatedListResponse<T> {
     this.nextCursor = rawResponse.nextCursor;
     if (this.nextCursor !== undefined) {
       this.next = async () => {
-        const nextOptions = { ...options, cursor: this.nextCursor };
+        const nextOptions = { ...options, data: { ...options.data, cursor: this.nextCursor } };
         const response = await postAsListResponseRaw<T>(client, url, nextOptions);
         return new EmulatedListResponse<T>(client, url, options, response);
       };
