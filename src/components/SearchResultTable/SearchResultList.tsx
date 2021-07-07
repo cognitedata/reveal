@@ -43,7 +43,7 @@ export default function SearchResultList({ query }: Props) {
     <AssetList>
       {assets?.map((asset) => (
         <li key={asset.id}>
-          <AssetSearchHit asset={asset} />
+          <AssetSearchHit asset={asset} query={query} />
         </li>
       ))}
       {hasNextPage && (

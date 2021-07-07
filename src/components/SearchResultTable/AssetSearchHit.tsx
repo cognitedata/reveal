@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { useSDK } from '@cognite/sdk-provider';
 import styled from 'styled-components';
-import { Icon, Checkbox, Button } from '@cognite/cogs.js';
+import { Icon, Checkbox, Button, Colors } from '@cognite/cogs.js';
 import DelayedComponent from 'components/DelayedComponent';
 import { PnidButton } from 'components/SearchResultTable';
 import { useInfiniteList, useAggregate } from '@cognite/sdk-react-query-hooks';
@@ -15,13 +15,15 @@ import {
 } from 'utils/charts';
 import { calculateDefaultYAxis } from 'utils/axis';
 import { trackUsage } from 'utils/metrics';
+import Highlighter from 'react-highlight-words';
 import TimeseriesSearchHit from './TimeseriesSearchHit';
 
 type Props = {
   asset: Asset;
+  query?: string;
 };
 
-export default function AssetSearchHit({ asset }: Props) {
+export default function AssetSearchHit({ asset, query = '' }: Props) {
   const sdk = useSDK();
   const { chartId } = useParams<{ chartId: string }>();
   const { data: chart } = useChart(chartId);
@@ -67,7 +69,7 @@ export default function AssetSearchHit({ asset }: Props) {
           timeSeriesExternalId: timeSeries.externalId || '',
         });
 
-        const newTs = covertTSToChartTS(timeSeries, range);
+        const newTs = covertTSToChartTS(timeSeries, chart.id, range);
 
         updateChart(addTimeseries(chart, newTs));
         trackUsage('ChartView.AddTimeSeries', { source: 'search' });
@@ -81,9 +83,26 @@ export default function AssetSearchHit({ asset }: Props) {
         <InfoContainer>
           <ResourceNameWrapper>
             <Icon type="ResourceAssets" size={14} />
-            <strong style={{ marginLeft: 5 }}>{asset.name}</strong>
+            <Highlighter
+              highlightStyle={{
+                backgroundColor: Colors['yellow-4'].alpha(0.4),
+                marginLeft: 5,
+              }}
+              searchWords={[query]}
+              textToHighlight={asset.name}
+            />
           </ResourceNameWrapper>
-          <Description>{asset.description}</Description>
+
+          <Description>
+            <Highlighter
+              highlightStyle={{
+                backgroundColor: Colors['yellow-4'].alpha(0.4),
+                marginLeft: 5,
+              }}
+              searchWords={[query]}
+              textToHighlight={asset.description ?? ' '}
+            />
+          </Description>
         </InfoContainer>
         <Right>
           <AssetCount>{dataAmount?.count} </AssetCount>
@@ -96,6 +115,7 @@ export default function AssetSearchHit({ asset }: Props) {
         <TSList>
           <TimeseriesSearchHit
             timeseries={ts}
+            query={query}
             renderCheckbox={(t) => (
               <Checkbox
                 onClick={(e) => {
@@ -177,6 +197,7 @@ const ResourceNameWrapper = styled.div`
 const Description = styled.span`
   margin-left: 20px;
   font-size: 10px;
+  padding-top: 4px;
 `;
 
 const Right = styled.div`

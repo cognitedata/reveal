@@ -1,6 +1,6 @@
 {
   "name": "@cognite/cognite-charts",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "private": true,
   "scripts": {
     "start": "./scripts/start.sh",
@@ -48,6 +48,7 @@
     "react-beautiful-dnd": "^13.1.0",
     "react-datepicker": "^3.8.0",
     "react-dom": "^17.0.2",
+    "react-highlight-words": "^0.17.0",
     "react-plotly.js": "^2.5.1",
     "react-query": "^3.16.1",
     "react-router-dom": "^5.2.0",
@@ -76,6 +77,7 @@
     "@types/react-beautiful-dnd": "^13.0.0",
     "@types/react-datepicker": "^3.1.2",
     "@types/react-dom": "^17.0.1",
+    "@types/react-highlight-words": "^0.16.2",
     "@types/react-plotly.js": "^2.2.4",
     "@types/react-router-dom": "^5.1.6",
     "@types/sinon": "^9.0.9",
