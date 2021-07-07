@@ -168,6 +168,8 @@ export const ModalFileUploader = ({
   const [fileList, setFileList] = useState<Array<CogsFileInfo | CogsFile>>([]);
   const [uploadStatus, setUploadStatus] = useState(STATUS.NO_FILES);
   const [processAfter, setProcessAfter] = useState<boolean>(false);
+  const [cursor, setCursor] = useState<number>(-1);
+  const [cursorSize, setCursorSize] = useState<number>(0);
 
   const history = useHistory();
 
@@ -175,6 +177,26 @@ export const ModalFileUploader = ({
     onFileListChange(fileList);
     setUploadStatus(updateUploadStatus(fileList));
   }, [fileList]);
+
+  useEffect(() => {
+    if (cursor >= 0 && cursor < fileList.length) {
+      if (uploadFileAtIndex(cursor)) setCursorSize(cursor + 1);
+      if (cursorSize < UPLODER_CONST.MAX_CURSOR_SIZE) setCursor(cursor + 1);
+    }
+  }, [cursor]);
+
+  const uploadFileAtIndex = (index: number) => {
+    const file = fileList[index];
+    if (file.status === 'idle' || file.status === 'paused') {
+      if (file.status === 'idle' && file instanceof File) {
+        uploadFile(file);
+      } else if (file.status === 'paused' && file instanceof File) {
+        resumeFileUpload(file);
+      }
+      return true;
+    }
+    return false;
+  };
 
   const startUpload = async () => {
     message.info('Starting Upload...');
@@ -220,22 +242,8 @@ export const ModalFileUploader = ({
         return;
       }
     }
-
-    setFileList((list) =>
-      list.map((file) => {
-        if (file.status === 'idle' || file.status === 'paused') {
-          if (file.status === 'idle' && file instanceof File) {
-            uploadFile(file);
-          } else if (file.status === 'paused' && file instanceof File) {
-            resumeFileUpload(file);
-          }
-          // eslint-disable-next-line no-param-reassign
-          file.status = 'uploading';
-        }
-
-        return file;
-      })
-    );
+    setCursorSize(0);
+    setCursor(0);
   };
 
   const parseExif = async (file: File) => {
@@ -369,6 +377,9 @@ export const ModalFileUploader = ({
     setFileList([...fileList]);
 
     clearLocalUploadMetadata(file);
+
+    // move cursor when upload finished
+    setCursor((currentCursor) => currentCursor + 1);
   };
 
   const resumeFileUpload = (file: CogsFile) => {
@@ -382,6 +393,7 @@ export const ModalFileUploader = ({
       title: 'Do you want to cancel the file upload?',
       content: 'If you cancel, the file upload will be cancelled!',
       onOk: () => {
+        setCursor(-1);
         setFileList((list) =>
           list.map((file) => {
             if (file.status === 'uploading' || file.status === 'paused') {
