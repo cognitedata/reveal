@@ -1,11 +1,9 @@
-import { DataTransfersTableData } from 'pages/DataTransfers/types';
 import {
   fixtureDataTransferDataTable,
   fixtureInitialSelectedColumnNames,
 } from '__fixtures__/fixtureDataTransfers';
 
 import { dataTransfersColumnRules } from '../Table/columnRules';
-import { curateDataTransfersColumns } from '../Table/curate';
 import { generatesDataTypesColumnsFromData } from '../Table/generate';
 
 const columnNames = fixtureInitialSelectedColumnNames;
@@ -75,43 +73,5 @@ describe('datatransfers/utils', () => {
       const wildcard = result[result.length - 1];
       expect(wildcard.key).toMatch('*');
     });
-  });
-
-  describe('curate', () => {
-    it('Curates the columns with the defined rules to columns used in the Table', () => {
-      const mockHandleDetailView = jest.fn();
-
-      const generateColumns = generatesDataTypesColumnsFromData(
-        response,
-        columnNames
-      );
-
-      const result = curateDataTransfersColumns<DataTransfersTableData>(
-        generateColumns,
-        dataTransfersColumnRules({
-          handleDetailViewClick: mockHandleDetailView,
-        })
-      );
-
-      expect(result.length).toBeGreaterThan(0);
-
-      expect(result.length).toBe(generateColumns!.length);
-
-      const detailViewButton = result[result.length - 1];
-      expect(detailViewButton.accessor).toMatch('detailViewButton');
-    });
-
-    it('returns the empty list if columns are undefined', () => {
-      const result = curateDataTransfersColumns<DataTransfersTableData>(
-        [],
-        dataTransfersColumnRules({
-          handleDetailViewClick: jest.fn(),
-        })
-      );
-
-      expect(result).toMatchObject([]);
-    });
-
-    it.todo('Test outcome of when rule is undefined');
   });
 });

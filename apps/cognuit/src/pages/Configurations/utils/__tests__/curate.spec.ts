@@ -1,12 +1,6 @@
-import {
-  curatedColumns,
-  defaultConfigurations,
-  generatedColumns,
-  getColumnRules,
-} from '__fixtures__/fixtureConfigurations';
-import config from 'configs/configurations.config';
+import { defaultConfigurations } from '__fixtures__/fixtureConfigurations';
 
-import { curateColumns, curateConfigurationsData } from '../curate';
+import { curateConfigurationsData } from '../curate';
 
 describe('Configurations/Curate', () => {
   describe('curateConfigurationsData', () => {
@@ -37,23 +31,5 @@ describe('Configurations/Curate', () => {
   it('returns the empty list if configurations are empty', () => {
     const result = curateConfigurationsData([]);
     expect(result).toEqual([]);
-  });
-
-  describe('curateColumns', () => {
-    it('Returns empty list if undefined', () => {
-      const result = curateColumns(undefined, getColumnRules);
-      expect(result).toEqual([]);
-    });
-
-    it('Generates the correct columns, as well as, sets the disabled sorting disabled flag', () => {
-      const result = curateColumns(generatedColumns, getColumnRules);
-
-      expect(result).toMatchObject(curatedColumns);
-      expect(result.length).toEqual(generatedColumns.length);
-      config.nonSortableColumns.forEach((nonSortableItem) => {
-        const item = result.find((item) => item.accessor === nonSortableItem);
-        expect(item.disableSortBy).toBeTruthy();
-      });
-    });
   });
 });

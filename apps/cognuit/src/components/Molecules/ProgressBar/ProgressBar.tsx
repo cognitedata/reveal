@@ -1,4 +1,5 @@
 import { Colors, Tooltip } from '@cognite/cogs.js';
+import { FC } from 'react';
 import styled from 'styled-components';
 
 import { ValueProps, ProgressType, ProgressBarProps } from '.';
@@ -38,42 +39,44 @@ const emptyProgress = [
   },
 ];
 
-const ToolTipContent = (props: ProgressBarProps) => (
-  <>
-    {props.progress.map(({ label, value }: ProgressType) => (
-      <TooltipValue key={`${label}_tooltip`}>
-        {label}: {value}
-      </TooltipValue>
-    ))}
-    <TooltipValue>
-      <strong>total: {props.total}</strong>
-    </TooltipValue>
-  </>
-);
-
-const ProgressBar = (props: Partial<ProgressBarProps>) => {
+const ProgressBar: FC<Partial<ProgressBarProps>> = ({ name, ...props }) => {
   const progress = props.progress || emptyProgress;
   const total = props.total || 0;
   const totalProgress = props.totalProgress || 0;
 
+  const ToolTipContent = () => (
+    <>
+      {progress.map(({ label, value }: ProgressType) => (
+        <TooltipValue key={`${label}_tooltip`}>
+          {label}: {value}
+        </TooltipValue>
+      ))}
+      <TooltipValue>
+        <strong>total: {props.total}</strong>
+      </TooltipValue>
+    </>
+  );
+
+  const progressBarTitle = [
+    name,
+    name && ':',
+    ' ',
+    totalProgress,
+    '/',
+    total,
+  ].join('');
+
   return (
-    <Tooltip
-      placement="bottom"
-      content={<ToolTipContent progress={progress} total={total} />}
-    >
+    <Tooltip placement="left" content={<ToolTipContent />}>
       <>
-        <P>
-          {totalProgress} / {total}
-        </P>
+        <P>{progressBarTitle}</P>
         <Bar>
           {progress.map(({ value, label, color }: ProgressType) => (
             <Value
               key={label}
               color={color}
               percentage={total ? Math.round((value / total) * 100) : 0}
-            >
-              <br />
-            </Value>
+            />
           ))}
         </Bar>
       </>

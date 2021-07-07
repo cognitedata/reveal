@@ -7,10 +7,10 @@ import { reportException } from '@cognite/react-errors';
  * Curate the columns to match the defined rules together with the accessible columns,
  * to a format that is specific to Cogs.js table (React Table).
  *
- * @param columns All the transformed columns from {@link generatesDataTypesColumnsFromData};
- * @param rules All the defined rules from {@link dataTransfersColumnRules}
+ * @param columns All the transformed columns from {@link generatesDataTypesColumnsFromData} / {@link generateConfigurationsColumnsFromData}
+ * @param rules All the defined rules from {@link dataTransfersColumnRules} / {@link columnRules}
  */
-export function curateDataTransfersColumns<T extends { id: number }>(
+export function curateTableColumns<T extends { id: number }>(
   columns: GenerateConfigurationsColumns[] | undefined,
   rules: Rule[]
 ): TableProps<T>['columns'] {

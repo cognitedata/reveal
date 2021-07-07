@@ -129,7 +129,7 @@ export const SourceOrigin: FC<Props> = ({
       </>
     );
 
-    const isTagsAvailable =
+    const areTagsAvailable =
       configuration.source.external_id !== '' &&
       availableBusinessTags.length > 0;
 
@@ -138,7 +138,7 @@ export const SourceOrigin: FC<Props> = ({
         <main>
           <Label>Select repository:</Label>
           <Select
-            placeholder="Available quality tags"
+            placeholder="Available repositories"
             closeMenuOnSelect
             theme="filled"
             value={
@@ -158,7 +158,7 @@ export const SourceOrigin: FC<Props> = ({
             }}
           />
 
-          {isTagsAvailable && renderOptions()}
+          {areTagsAvailable && renderOptions()}
         </main>
         <footer>
           <Button

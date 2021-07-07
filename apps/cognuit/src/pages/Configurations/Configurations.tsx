@@ -10,11 +10,12 @@ import { useConfigurationsMutation } from 'services/endpoints/configurations/mut
 import { ConfigurationsResponse } from 'types/ApiInterface';
 import config from 'configs/configurations.config';
 import { sortColumnsByRules } from 'utils/sorts';
+import { curateTableColumns } from 'utils/Table/curate';
 
 import { columnRules } from './components/Table/columnRules';
 import { ExpandedSubRow } from './components/Table/ExpandedSubRow';
 import { generateConfigurationsColumnsFromData } from './utils/generate';
-import { curateColumns, curateConfigurationsData } from './utils/curate';
+import { curateConfigurationsData } from './utils/curate';
 
 const Configurations = () => {
   const { error, addError } = useContext(APIErrorContext);
@@ -94,7 +95,7 @@ const Configurations = () => {
 
   useEffect(() => {
     const rawColumns = generateConfigurationsColumnsFromData(data);
-    const curatedColumns = curateColumns(
+    const curatedColumns = curateTableColumns(
       rawColumns,
       columnRules({ handleNameChange, handleStopStart, handleRestart })
     );
@@ -103,7 +104,7 @@ const Configurations = () => {
   }, [data]);
 
   if (isLoading) {
-    return <Loader />;
+    return <Loader infoTitle="Loading configurations" darkMode={false} />;
   }
 
   if (error) {

@@ -84,6 +84,7 @@ export const columnRules: (actions: Props) => Rule[] = ({
     },
     {
       key: 'progress',
+      width: 100,
       render: ({ value }: { value: any[] }) => {
         if (Object.values(value).length) {
           return Object.entries(value).map(([key, progress]) => {
@@ -110,6 +111,7 @@ export const columnRules: (actions: Props) => Rule[] = ({
             return (
               <ProgressBar
                 key={key}
+                name={key}
                 total={total}
                 progress={[succeeded, outdated, notUploaded]}
                 totalProgress={progress.succeeded}

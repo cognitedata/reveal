@@ -1,11 +1,6 @@
 import isUndefined from 'lodash/isUndefined';
-import { TableProps } from '@cognite/cogs.js';
 import { ConfigurationsResponse } from 'types/ApiInterface';
-import {
-  ExtendedConfigurationsResponse,
-  GenerateConfigurationsColumns,
-  Rule,
-} from 'typings/interfaces';
+import { ExtendedConfigurationsResponse } from 'typings/interfaces';
 
 export function curateConfigurationsData(
   data?: ConfigurationsResponse[]
@@ -27,26 +22,4 @@ export function curateConfigurationsData(
       id: item.id,
     },
   }));
-}
-
-export function curateColumns(
-  columns: GenerateConfigurationsColumns[] | undefined,
-  rules: Rule[]
-): TableProps<ConfigurationsResponse>['columns'] {
-  if (isUndefined(columns)) {
-    return [];
-  }
-
-  const curatedColumns = columns.map((column) => {
-    const rule = rules.find((rule: Rule) => rule.key === column.key);
-
-    return {
-      Header: column.title,
-      accessor: column.key,
-      Cell: rule?.render,
-      disableSortBy: rule?.disableSortBy,
-    };
-  });
-
-  return curatedColumns;
 }

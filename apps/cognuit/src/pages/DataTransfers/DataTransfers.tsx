@@ -7,6 +7,7 @@ import { useDataTransfersState } from 'contexts/DataTransfersContext';
 import ErrorMessage from 'components/Molecules/ErrorMessage';
 import { ProgressState } from 'contexts/types/dataTransfersTypes';
 import { sortColumnsByRules } from 'utils/sorts';
+import { curateTableColumns } from 'utils/Table/curate';
 
 import { ContentContainer } from '../../elements';
 
@@ -14,7 +15,6 @@ import DetailView from './components/DetailView/DetailView';
 import { DetailViewWrapper } from './elements';
 import TableActions from './TableActions';
 import { dataTransfersColumnRules } from './utils/Table/columnRules';
-import { curateDataTransfersColumns } from './utils/Table/curate';
 import { generatesDataTypesColumnsFromData } from './utils/Table/generate';
 import { DataTransfersTableData } from './types';
 
@@ -79,7 +79,7 @@ const DataTransfers: React.FC = () => {
       data.selectedColumnNames
     );
 
-    const curatedColumns = curateDataTransfersColumns<DataTransfersTableData>(
+    const curatedColumns = curateTableColumns<DataTransfersTableData>(
       generateColumns,
       dataTransfersColumnRules({ handleDetailViewClick })
     );

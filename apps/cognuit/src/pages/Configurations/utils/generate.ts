@@ -18,9 +18,7 @@ export function generateConfigurationsColumnsFromData(
         title: getMappedColumnName(key, 'configurations'),
         dataIndex: key,
         key,
-        sorter: !config.nonSortableColumns.includes(key)
-          ? (a, b) => (a[key] < b[key] ? -1 : 1)
-          : false,
+        sorter: !!config.nonSortableColumns.includes(key),
       });
     }
   });
