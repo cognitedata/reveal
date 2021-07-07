@@ -35,72 +35,18 @@ function SourceRows({
   const isFileViewerMode = mode === 'file';
 
   useEffect(() => {
-    if (chart.sourceCollection === undefined) {
-      console.log('Souyrce collec ', chart.sourceCollection);
+    if (!chart.sourceCollection || chart.sourceCollection === undefined) {
       const updatedChart = updateSourceCollection(chart);
       console.log('updatedChart ', updatedChart);
       updateChart(updatedChart);
     }
   }, [chart, updateChart]);
-
-  // const sources2 = [
-  //   ...(chart?.timeSeriesCollection || []).map((ts, index) => ({
-  //     ...ts,
-  //     render: () => (
-  //       <Draggable key={ts.id} draggableId={ts.id} index={index}>
-  //         {(draggableProvided, snapshot) => (
-  //           <TimeSeriesRow
-  //             key={ts.id}
-  //             mutate={updateChart}
-  //             provided={draggableProvided}
-  //             draggable={draggable}
-  //             chart={chart}
-  //             timeseries={ts}
-  //             isWorkspaceMode={isWorkspaceMode}
-  //             onRowClick={onRowClick}
-  //             onInfoClick={onInfoClick}
-  //             isSelected={selectedSourceId === ts.id}
-  //             disabled={isEditorMode}
-  //             isFileViewerMode={isFileViewerMode}
-  //             dateFrom={dateFrom}
-  //             dateTo={dateTo}
-  //           />
-  //         )}
-  //       </Draggable>
-  //     ),
-  //   })),
-  //   ...(chart?.workflowCollection || []).map((flow, index) => ({
-  //     ...flow,
-  //     render: () => (
-  //       <Draggable key={flow.id} draggableId={flow.id} index={index}>
-  //         {(draggableProvided, snapshot) => (
-  //           <WorkflowRow
-  //             provided={draggableProvided}
-  //             draggable={draggable}
-  //             key={flow.id}
-  //             workflow={flow}
-  //             chart={chart}
-  //             isSelected={selectedSourceId === flow.id}
-  //             onRowClick={onRowClick}
-  //             onInfoClick={onInfoClick}
-  //             mode={mode}
-  //             openNodeEditor={openNodeEditor}
-  //             mutate={updateChart}
-  //           />
-  //         )}
-  //       </Draggable>
-  //     ),
-  //   })),
-  // ].sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-  console.log('src ', chart.sourceCollection);
-  // return <>{sources2.map((source) => source.render())}</>;
-
   return (
     <>
       {(chart?.sourceCollection || []).map(
         (src: ChartTimeSeries | ChartWorkflow, index) => (
           <Draggable key={src.id} draggableId={src.id} index={index}>
-            {(draggableProvided, snapshot) =>
+            {(draggableProvided) =>
               src.type === 'timeseries' ? (
                 <TimeSeriesRow
                   key={src.id}

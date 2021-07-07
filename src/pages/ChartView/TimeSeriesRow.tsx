@@ -289,6 +289,14 @@ export default function TimeSeriesRow({
               }
             : ts
         ),
+        sourceCollection: chart.sourceCollection?.map((ts) =>
+          ts.id === timeseries.id
+            ? {
+                ...ts,
+                ...diff,
+              }
+            : ts
+        ),
       });
     },
     [chart, mutate, timeseries]

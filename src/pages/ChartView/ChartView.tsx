@@ -314,13 +314,13 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     </tr>
   );
   const reorder = (
-    list: (ChartTimeSeries | ChartWorkflow)[],
+    sourceCollection: (ChartTimeSeries | ChartWorkflow)[],
     startIndex: number,
     endIndex: number
   ) => {
-    const [removed] = list.splice(startIndex, 1);
-    list.splice(endIndex, 0, removed);
-    return list;
+    const [removed] = sourceCollection.splice(startIndex, 1);
+    sourceCollection.splice(endIndex, 0, removed);
+    return sourceCollection;
   };
 
   const onDragEnd = (result: any) => {
@@ -328,12 +328,13 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
 
     const reorderedChart = {
       ...chart,
-      timeSeriesCollection: reorder(
-        chart?.timeSeriesCollection || [],
+      sourceCollection: reorder(
+        chart?.sourceCollection || [],
         result.source.index,
         result.destination.index
       ),
     };
+    updateChart(reorderedChart);
   };
 
   return (
@@ -443,7 +444,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
             <BottomPaneWrapper className="table">
               <DragDropContext onDragEnd={onDragEnd}>
                 <Droppable droppableId="droppable-sources">
-                  {(provided, snapshot) => (
+                  {(provided) => (
                     <div style={{ display: 'flex', height: '100%' }}>
                       <SourceTableWrapper>
                         <SourceTable ref={provided.innerRef}>
