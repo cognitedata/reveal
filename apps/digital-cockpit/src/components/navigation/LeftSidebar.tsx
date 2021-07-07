@@ -16,6 +16,7 @@ import {
   CollapseButton,
   SidebarContainer,
 } from './elements';
+import { handleHideSidebar } from './utils';
 
 const LeftSidebar: React.FC = () => {
   const { suites } = useSelector(getSuitesTableState);
@@ -36,11 +37,6 @@ const LeftSidebar: React.FC = () => {
     // No suites? Lets remove this sidebar until we add some.
     return null;
   }
-
-  const handleHideSidebar = () => {
-    metrics.track(isOpen ? 'Hide' : 'Show');
-    setOpen(() => !isOpen);
-  };
 
   const renderApplicationItem = (item: ApplicationItem) => (
     <A
@@ -75,7 +71,8 @@ const LeftSidebar: React.FC = () => {
       <CollapseButton
         className="collapse-button"
         open={isOpen}
-        onClick={handleHideSidebar}
+        onClick={() => handleHideSidebar(isOpen, setOpen, metrics)}
+        role="button"
       >
         <Icon
           type={isOpen ? 'LargeLeft' : 'LargeRight'}

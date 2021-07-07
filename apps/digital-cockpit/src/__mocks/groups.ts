@@ -83,3 +83,12 @@ export const allUserGroups: Group[] = [
 ] as unknown as Group[];
 
 export const emptyUserGroups: Group[] = [] as Group[];
+
+export const mockGroupStateAdmin = {
+  loading: false,
+  loaded: false,
+  error: '',
+  isAdmin: true,
+  filter: [],
+  groups: adminUserGroups,
+};

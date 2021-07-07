@@ -147,3 +147,11 @@ export const getSuites = () =>
       ],
     },
   ] as Suite[];
+
+export const mockSuitesTable = {
+  loading: false,
+  loaded: true,
+  loadFailed: false,
+  suites: getSuites(),
+  imageUrls: '',
+};

@@ -10,6 +10,11 @@ import Authentication from './Authentication';
 import AppProviders from './AppProviders';
 import ErrorBoundary from './ErrorBoundary';
 
+export const createBrowserHistory = (possibleTenant: string): History =>
+  createNewBrowserHistory({
+    basename: possibleTenant,
+  });
+
 const AppRoot = (): JSX.Element => {
   const tenant = usePossibleTenant();
   const { documentTitle } = useLink();
@@ -17,7 +22,7 @@ const AppRoot = (): JSX.Element => {
 
   useEffect(() => {
     document.title = documentTitle;
-  }, []);
+  }, [documentTitle]);
 
   return (
     <Container sidecar={sidecar}>
@@ -29,10 +34,5 @@ const AppRoot = (): JSX.Element => {
     </Container>
   );
 };
-
-const createBrowserHistory = (possibleTenant: string): History =>
-  createNewBrowserHistory({
-    basename: possibleTenant,
-  });
 
 export default AppRoot;

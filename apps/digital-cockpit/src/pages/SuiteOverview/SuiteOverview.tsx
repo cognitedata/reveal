@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useMemo } from 'react';
 import { Redirect, useHistory, useParams } from 'react-router-dom';
 import { Button, Graphic, Loader, Title } from '@cognite/cogs.js';
 import SuiteAvatar from 'components/suiteAvatar';
@@ -54,10 +54,13 @@ const SuiteOverview: React.FC = () => {
 
   const { title, color, boards } = suite || {};
 
-  const imageFileIds: string[] =
-    boards
-      ?.filter((board) => board.imageFileId)
-      .map((board) => board.imageFileId) || [];
+  const imageFileIds: string[] = useMemo(() => {
+    return (
+      boards
+        ?.filter((board) => board.imageFileId)
+        .map((board) => board.imageFileId) || []
+    );
+  }, [boards]);
 
   const infographicsBoards = boards?.filter(
     (board) => board.type === 'infographics'

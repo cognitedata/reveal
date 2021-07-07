@@ -40,7 +40,10 @@ describe('SuiteOverview', () => {
   it('should fetch image preview urls', () => {
     const fetchImgUrlsStub = sandbox
       .stub(mockClient.cogniteClient.files, 'getDownloadUrls')
-      .resolves([{ externalId: 'test-1' }, { externalId: 'test-2' }]);
+      .resolves([
+        { externalId: 'test-1', downloadUrl: 'test-1' },
+        { externalId: 'test-2', downloadUrl: 'test-2' },
+      ]);
     const suitesTable = getMockSuiteTableImages();
     render(<SuiteOverview />, {
       state: { suitesTable },

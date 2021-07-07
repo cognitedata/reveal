@@ -31,3 +31,5 @@ yalc.lock
 .user.bazelrc
 
 junit.xml
+
+.idea

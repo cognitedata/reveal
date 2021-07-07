@@ -1,5 +1,6 @@
-import { Store } from 'redux';
+import { DeepPartial, Store } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
+import { RootState } from 'store/reducer';
 import { AuthRootAction, AuthState } from './auth/types';
 import { SuitesTableRootAction, SuitesTableState } from './suites/types';
 import { ModalRootAction, ModalState } from './modals/types';
@@ -11,6 +12,8 @@ import {
   NotificationRootAction,
 } from './notification/types';
 import { ConfigState, ConfigRootAction } from './config/types';
+
+export type PartialRootState = DeepPartial<RootState>;
 
 export type StoreAction =
   | SuitesTableRootAction

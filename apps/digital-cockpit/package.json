@@ -20,7 +20,11 @@
     "prettier:fix": "../../node_modules/.bin/prettier --config ../../.prettierrc.js --write -l 'src/**/*.{js,ts,tsx}'",
     "prettier:bazel": "bazel test :prettier_test",
     "prettier:bazel-fix": "bazel run :prettier_test -- --write",
-    "update-helpers": "bazel run :generate_package_json_helpers"
+    "update-helpers": "bazel run :generate_package_json_helpers",
+    "storybook": "../../node_modules/.bin/start-storybook -p 6006",
+    "storybook:bazel": "ibazel run :start-storybook",
+    "build-storybook": "../../node_modules/.bin/build-storybook",
+    "build-storybook:bazel": "bazel build :storybook-static"
   },
   "jest": {
     "coveragePathIgnorePatterns": [

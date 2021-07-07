@@ -23,7 +23,7 @@ describe('AppHeader', () => {
   });
 
   it('should render', async () => {
-    const view = render(<AppHeader />, { cdfClient: mockClient });
+    const view = render(<AppHeader />);
     await waitFor(() => {
       expect(view).toBeTruthy();
     });

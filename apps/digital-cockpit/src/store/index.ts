@@ -1,7 +1,7 @@
 import { StoreEnhancer, applyMiddleware, compose, createStore } from 'redux';
 import ReduxThunk, { ThunkMiddleware } from 'redux-thunk';
 import { devToolsEnhancer } from 'redux-devtools-extension';
-import { StoreAction, StoreState } from './types';
+import { PartialRootState, StoreAction, StoreState } from './types';
 
 import rootReducer from './reducer';
 
@@ -17,7 +17,7 @@ const composedEnhancers: StoreEnhancer = compose(
   ...enhancers
 );
 
-export const configureStore = (initialState?: StoreState) =>
+export const configureStore = (initialState?: PartialRootState) =>
   createStore(
     rootReducer,
     (initialState || {}) as StoreState,

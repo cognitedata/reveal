@@ -12,7 +12,7 @@ export const getMetrics = () => {
   }
   return Metrics;
 };
-type MetricsHookMock = {
+export type MetricsHookMock = {
   start: () => {
     stop: () => undefined;
   };
