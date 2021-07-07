@@ -54,7 +54,7 @@ export const ExplorerToolbar = ({
           >
             <Button
               style={{ marginLeft: 14 }}
-              icon="Upload"
+              icon="Download"
               type="tertiary"
               onClick={onDownload}
               disabled={!count}
