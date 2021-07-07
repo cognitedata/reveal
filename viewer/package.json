@@ -3,14 +3,26 @@
   "version": "2.0.0-beta.4",
   "private": true,
   "description": "WebGL based 3D viewer for CAD and point clouds processed in Cognite Data Fusion.",
+  "homepage": "https://github.com/cognitedata/reveal/tree/master/viewer",
   "repository": {
     "type": "git",
-    "directory": "viewer",
-    "url": "https://github.com/cognitedata/reveal.git"
+    "url": "https://github.com/cognitedata/reveal.git",
+    "directory": "viewer"
   },
-  "homepage": "https://github.com/cognitedata/reveal/tree/master/viewer",
+  "license": "Apache-2.0",
+  "author": "Lars Moastuen <lars.moastuen@cognite.com>",
+  "contributors": [
+    "Joachim Bjørne <joachim.bjorne@cognite.com>",
+    "Christopher Tannum <christopher.tannum@cognite.com>",
+    "Maksim Nesterenko <maksim.nesterenko@cognite.com>"
+  ],
+  "sideEffects": false,
   "main": "index.js",
   "types": "index.d.ts",
+  "workspaces": [
+    "core",
+    "packages/*"
+  ],
   "scripts": {
     "build": "yarn run clean && webpack --env.development",
     "build:watch": "yarn run clean && webpack --env.development --watch",
@@ -31,10 +43,21 @@
     "ws:test": "cd $INIT_CWD && jest",
     "ws:coverage": "cd $INIT_CWD && jest --coverage"
   },
-  "workspaces": [
-    "core",
-    "packages/*"
-  ],
+  "dependencies": {
+    "@cognite/potree-core": "1.2.1",
+    "@cognite/reveal-parser-worker": "1.1.1",
+    "@tweenjs/tween.js": "^18.6.4",
+    "@types/three": "0.128.0",
+    "assert": "^2.0.0",
+    "comlink": "4.3.1",
+    "glslify": "^7.1.1",
+    "glslify-import": "^3.1.0",
+    "lodash": "^4.17.20",
+    "mixpanel-browser": "^2.39.0",
+    "rxjs": "^7.1.0",
+    "skmeans": "^0.11.3",
+    "three": "0.128.0"
+  },
   "devDependencies": {
     "@cognite/sdk": "^3.4.0",
     "@cognite/sdk-core": "^1.0.0",
@@ -85,33 +108,10 @@
     "whatwg-fetch": "^3.4.1",
     "worker-plugin": "^5.0.0"
   },
-  "dependencies": {
-    "@cognite/potree-core": "1.2.1",
-    "@cognite/reveal-parser-worker": "1.1.1",
-    "@tweenjs/tween.js": "^18.6.4",
-    "@types/three": "0.128.0",
-    "assert": "^2.0.0",
-    "comlink": "4.3.1",
-    "glslify": "^7.1.1",
-    "glslify-import": "^3.1.0",
-    "lodash": "^4.17.20",
-    "mixpanel-browser": "^2.39.0",
-    "rxjs": "^7.1.0",
-    "skmeans": "^0.11.3",
-    "three": "0.128.0"
-  },
   "peerDependencies": {
     "@cognite/sdk": "^3.0.0",
     "@cognite/sdk-core": "^1.0.0"
   },
-  "author": "Lars Moastuen <lars.moastuen@cognite.com>",
-  "contributors": [
-    "Joachim Bjørne <joachim.bjorne@cognite.com>",
-    "Christopher Tannum <christopher.tannum@cognite.com>",
-    "Maksim Nesterenko <maksim.nesterenko@cognite.com>"
-  ],
-  "license": "Apache-2.0",
-  "sideEffects": false,
   "glslify": {
     "transform": [
       "glslify-import"
