@@ -489,6 +489,7 @@ __metadata:
     "@typescript-eslint/parser": ^4.28.0
     assert: ^2.0.0
     comlink: 4.3.1
+    copy-pkg-json-webpack-plugin: ^0.0.40
     copy-webpack-plugin: ^6.2.1
     core-js: ^3.6.5
     cross-var: ^1.1.0
@@ -3953,6 +3954,15 @@ __metadata:
   version: 0.1.1
   resolution: "copy-descriptor@npm:0.1.1"
   checksum: c052cf571ff6b69b604607a3d41f03cb742af9472026013e690ab33e1bef5e64930c53a5f881dc79c7e4f5ccc3cea0ebb9f420315d3690989329088976b68ee9
+  languageName: node
+  linkType: hard
+
+"copy-pkg-json-webpack-plugin@npm:^0.0.40":
+  version: 0.0.40
+  resolution: "copy-pkg-json-webpack-plugin@npm:0.0.40"
+  peerDependencies:
+    webpack: <=5.x.x
+  checksum: 7464a5c755bc0d93c18a925d9b087a30f56dc6384d91a4ac4b2e8e1ed29a89cd7fc74711e24ebc10076ac3f427a4cda3fcb13b0b5675717598f2f86df2599cff
   languageName: node
   linkType: hard
 
