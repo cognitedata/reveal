@@ -134,6 +134,13 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
   }
 
   /**
+   * Returns the current number of visible/loaded points.
+   */
+  get visiblePointCount(): number {
+    return this.pointCloudNode.visiblePointCount;
+  }
+
+  /**
    * Determines how points currently are colored.
    */
   get pointColorType(): PotreePointColorType {
