@@ -16,7 +16,6 @@ import { ToastUtils } from 'src/utils/ToastUtils';
 import { createFileInfo, createFileState } from 'src/store/util/StateUtils';
 import { UpdateFiles } from 'src/store/thunks/UpdateFiles';
 import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
-import { SaveAvailableAnnotations } from 'src/store/thunks/SaveAvailableAnnotations';
 import { SaveAnnotations } from 'src/store/thunks/SaveAnnotations';
 import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
 import { DeleteAnnotations } from 'src/store/thunks/DeleteAnnotations';
@@ -182,12 +181,6 @@ const filesSlice = createSlice({
       payload.forEach((fileState) => {
         updateFileState(state, fileState);
       });
-    });
-
-    builder.addCase(SaveAvailableAnnotations.fulfilled, (state) => {
-      state.dataSetIds = initialState.dataSetIds;
-      state.extractExif = initialState.extractExif;
-      state.files = initialState.files;
     });
 
     builder.addCase(setSelectedAllFiles, makeReducerSelectAllFilesWithFilter());

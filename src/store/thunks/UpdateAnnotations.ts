@@ -2,12 +2,15 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { Annotation } from 'src/api/types';
 import { AnnotationApi } from 'src/api/annotation/AnnotationApi';
+import { validateAnnotation } from 'src/api/utils';
 
 export const UpdateAnnotations = createAsyncThunk<
   Annotation[],
   Annotation[],
   ThunkConfig
 >('UpdateAnnotations', async (annotations) => {
+  annotations.forEach((annotation) => validateAnnotation(annotation)); // validate annotations
+
   const annotationUpdateRequest = {
     items: annotations.map((ann) => ({
       id: ann.id,

@@ -7,7 +7,6 @@ import {
 } from 'src/modules/FileDetails/Components/FileMetadata/Types';
 import { updateFileInfoField } from 'src/store/thunks/updateFileInfoField';
 import { generateKeyValueArray } from 'src/utils/FormatUtils';
-import { SaveAvailableAnnotations } from 'src/store/thunks/SaveAvailableAnnotations';
 import { selectFileById } from 'src/modules/Common/filesSlice';
 
 export type FileInfoValueState = string | Label[] | number[] | null;
@@ -111,13 +110,6 @@ const fileDetailsSlice = createSlice({
       const field = meta.arg.key;
       delete state.fileDetails[field];
       state.loadingField = null;
-    });
-
-    builder.addCase(SaveAvailableAnnotations.fulfilled, (state) => {
-      state.metadataEdit = initialState.metadataEdit;
-      state.fileDetails = initialState.fileDetails;
-      state.fileMetaData = initialState.fileMetaData;
-      state.loadingField = initialState.loadingField;
     });
   },
 });

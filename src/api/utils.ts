@@ -1,4 +1,5 @@
 import {
+  Annotation,
   AnnotationJobQueued,
   AnnotationRegion,
   AnnotationSource,
@@ -87,4 +88,18 @@ export function getRegionFromBox(
       },
     ],
   };
+}
+
+export function validateAnnotation(
+  annotation: Annotation | UnsavedAnnotation
+): boolean {
+  if (annotation.region) {
+    const validVertices = annotation.region.vertices.every((vertex) => {
+      return vertex.x >= 0 && vertex.x <= 1 && vertex.y >= 0 && vertex.y <= 1;
+    });
+    if (!validVertices) {
+      throw new Error('Annotation coordinates must be between 0 and 1');
+    }
+  }
+  return true;
 }

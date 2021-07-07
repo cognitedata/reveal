@@ -17,7 +17,6 @@ import {
 import { getFakeQueuedJob } from 'src/api/utils';
 import { fileProcessUpdate } from 'src/store/commonActions';
 import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
-import { SaveAvailableAnnotations } from 'src/store/thunks/SaveAvailableAnnotations';
 import { ThunkConfig } from 'src/store/rootReducer';
 import isEqual from 'lodash-es/isEqual';
 import { AnnotationDetectionJobUpdate } from 'src/store/thunks/AnnotationDetectionJobUpdate';
@@ -320,15 +319,6 @@ const processSlice = createSlice({
       }
 
       state.error = error.message;
-    });
-
-    builder.addCase(SaveAvailableAnnotations.fulfilled, (state) => {
-      state.selectedFileId = null;
-      state.jobs = initialState.jobs;
-      state.files = initialState.files;
-      state.error = initialState.error;
-      state.showFileMetadataDrawer = initialState.showFileMetadataDrawer;
-      state.selectedDetectionModels = initialState.selectedDetectionModels;
     });
   },
   /* eslint-enable no-param-reassign */

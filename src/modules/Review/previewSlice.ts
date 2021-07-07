@@ -19,7 +19,6 @@ import {
 } from 'src/store/commonActions';
 import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
 import { ImagePreviewEditMode } from 'src/constants/enums/VisionEnums';
-import { SaveAvailableAnnotations } from 'src/store/thunks/SaveAvailableAnnotations';
 import { AnnotationDetectionJobUpdate } from 'src/store/thunks/AnnotationDetectionJobUpdate';
 import { CreateAnnotations } from 'src/store/thunks/CreateAnnotations';
 import { UpdateAnnotationsById } from 'src/store/thunks/UpdateAnnotationsById';
@@ -282,13 +281,6 @@ const previewSlice = createSlice({
 
         delete state.modelsByFileId[fileId.id];
       });
-    });
-
-    builder.addCase(SaveAvailableAnnotations.fulfilled, (state) => {
-      resetPreviewState(state);
-      state.annotations = initialState.annotations;
-      state.models = initialState.models;
-      state.modelsByFileId = initialState.modelsByFileId;
     });
 
     // Matchers
