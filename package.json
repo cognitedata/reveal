@@ -18,7 +18,7 @@
     "@cognite/cdf-utilities": "^0.9.2",
     "@cognite/cogs.js": "^3.18.1",
     "@cognite/data-exploration": "0.6.3",
-    "@cognite/react-image-annotate": "^1.8.0-rc-5",
+    "@cognite/react-image-annotate": "^1.8.0-rc-7",
     "@cognite/react-picture-annotation": "^1.15.1",
     "@reduxjs/toolkit": "^1.5.1",
     "@sentry/browser": "^6.2.3",

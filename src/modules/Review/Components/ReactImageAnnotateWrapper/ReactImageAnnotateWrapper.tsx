@@ -1,6 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { FilePreviewProps } from 'src/modules/Review/types';
-import { Annotator, Region } from '@cognite/react-image-annotate';
+import {
+  Annotator,
+  Region,
+  AnnotatorTool,
+} from '@cognite/react-image-annotate';
 import { retrieveDownloadUrl } from 'src/api/file/fileDownloadUrl';
 import { AnnotationEditPopup } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/AnnotationEditPopup';
 import { convertToRegion } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/ConversionUtils';
@@ -16,6 +20,7 @@ export const ReactImageAnnotateWrapper: React.FC<FilePreviewProps> = ({
   fileInfo,
 }: FilePreviewProps) => {
   const [imageUrl, setImageUrl] = useState<string>();
+  const [selectedTool, setSelectedTool] = useState<AnnotatorTool>();
   const regions: any[] = useMemo(() => {
     return annotations.map((item) => convertToRegion(item));
   }, [annotations]);
@@ -88,25 +93,28 @@ export const ReactImageAnnotateWrapper: React.FC<FilePreviewProps> = ({
     dispatch(deselectAllAnnotations());
   };
 
-  if (images.length) {
-    return (
-      <Container>
-        <Annotator
-          onExit={() => {}}
-          hideHeader
-          images={images}
-          keypointDefinitions={{}}
-          enabledTools={['create-box', 'create-polygon', 'create-point']}
-          RegionEditLabel={NewRegionEditLabel}
-          showTags
-          onSelectRegion={onRegionSelect}
-          deSelectAllRegions={deselectAllRegions}
-        />
-      </Container>
-    );
-  }
+  const onSelectTool = (tool: AnnotatorTool) => {
+    dispatch(deselectAllAnnotations());
+    setSelectedTool(tool);
+  };
 
-  return null;
+  return (
+    <Container>
+      <Annotator
+        onExit={() => {}}
+        hideHeader
+        images={images}
+        keypointDefinitions={{}}
+        enabledTools={['create-box', 'create-polygon', 'create-point']}
+        RegionEditLabel={NewRegionEditLabel}
+        showTags
+        onSelectRegion={onRegionSelect}
+        deSelectAllRegions={deselectAllRegions}
+        onSelectTool={onSelectTool}
+        selectedTool={selectedTool}
+      />
+    </Container>
+  );
 };
 
 const Container = styled.div`
