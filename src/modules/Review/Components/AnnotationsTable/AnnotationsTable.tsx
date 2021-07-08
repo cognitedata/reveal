@@ -13,7 +13,10 @@ import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
 import {
   annotationApproval,
+  deselectAnnotation,
+  selectAnnotation,
   toggleAnnotationVisibility,
+  VisibleAnnotation,
   VisionAnnotationState,
 } from 'src/modules/Review/previewSlice';
 import {
@@ -38,12 +41,13 @@ export const AnnotationsTable = ({
 }) => {
   const dispatch = useDispatch();
 
-  const checkableAnnotations = useMemo(() => {
-    const annotationIdsSet = new Set(selectedAnnotationIds);
-    return annotations.map((ann) => ({
-      ...ann,
-      checked: annotationIdsSet.has(ann.id),
-    }));
+  const allAnnotations: VisibleAnnotation[] = useMemo(() => {
+    return annotations.map((ann) => {
+      if (selectedAnnotationIds.includes(ann.id)) {
+        return { ...ann, selected: true };
+      }
+      return { ...ann, selected: false };
+    });
   }, [annotations, selectedAnnotationIds]);
 
   const annotationsAvailable = annotations.length > 0;
@@ -67,6 +71,15 @@ export const AnnotationsTable = ({
 
   const handleDeleteAnnotations = (id: number) => {
     dispatch(DeleteAnnotationsAndRemoveLinkedAssets([id]));
+  };
+
+  const handleOnAnnotationSelect = (id: number) => {
+    const alreadySelected = selectedAnnotationIds.includes(id);
+    if (alreadySelected) {
+      dispatch(deselectAnnotation(id));
+    } else {
+      dispatch(selectAnnotation(id));
+    }
   };
 
   const getColor = (annotation: { text: string; modelType: VisionAPIType }) => {
@@ -95,9 +108,14 @@ export const AnnotationsTable = ({
       </TitleRow>
       <Body>
         {annotationsAvailable &&
-          checkableAnnotations.map((annotation) => {
+          allAnnotations.map((annotation) => {
             return (
-              <StyledRow cols={8} key={annotation.id}>
+              <StyledRow
+                cols={8}
+                key={annotation.id}
+                onClick={() => handleOnAnnotationSelect(annotation.id)}
+                className={annotation.selected ? 'active' : ''}
+              >
                 <StyledCol span={2}>
                   <ColContainer>
                     <StyledSegmentedControl
@@ -276,8 +294,8 @@ const StyledRow = styled(Row)`
   &:hover {
     background-color: var(--cogs-greyscale-grey2);
   }
-  &:active {
-    background: var(--cogs-midblue-6);
+  &.active {
+    background-color: var(--cogs-midblue-6);
   }
 `;
 

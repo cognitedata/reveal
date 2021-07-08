@@ -3,12 +3,10 @@ import {
   AnnotationJobQueued,
   AnnotationRegion,
   AnnotationSource,
-  RegionType,
   VisionAPIType,
 } from 'src/api/types';
 import { v3Client as sdk } from '@cognite/cdf-sdk-singleton';
 import {
-  AnnotationBoundingBox,
   AnnotationStatus,
   ModelTypeAnnotationTypeMap,
   ModelTypeSourceMap,
@@ -65,28 +63,6 @@ export function getUnsavedAnnotation(
       linkedResourceExternalId: assetExternalId || text,
       linkedResourceType: 'asset',
     }),
-  };
-}
-
-export function getRegionFromBox(
-  type: RegionType = 'rectangle',
-  box: AnnotationBoundingBox | null
-): AnnotationRegion | undefined {
-  if (!box) {
-    return undefined;
-  }
-  return {
-    shape: type,
-    vertices: [
-      {
-        x: box.xMin,
-        y: box.yMin,
-      },
-      {
-        x: box.xMax,
-        y: box.yMax,
-      },
-    ],
   };
 }
 

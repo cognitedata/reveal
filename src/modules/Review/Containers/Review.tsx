@@ -5,23 +5,13 @@ import { Button, Icon, Popconfirm } from '@cognite/cogs.js';
 import { Prompt, RouteComponentProps, useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import {
-  closeAnnotationDrawer,
-  resetEditState,
-  resetPreview,
-} from 'src/modules/Review/previewSlice';
+import { resetPreview } from 'src/modules/Review/previewSlice';
 import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
 import { selectFileById } from 'src/modules/Common/filesSlice';
 import ImageReview from 'src/modules/Review/Containers/ImageReview';
 import VideoReview from 'src/modules/Review/Containers/VideoReview';
 import { isVideo } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
-import { AnnotationDrawer } from 'src/modules/Review/Components/AnnotationDrawer/AnnotationDrawer';
-import { AnnotationDrawerMode } from 'src/utils/AnnotationUtils';
-import { ImageReviewDrawerContent } from 'src/modules/Review/Components/AnnotationDrawerContent/ImageReviewAnnotationDrawerContent';
-import { ImagePreviewEditMode } from 'src/constants/enums/VisionEnums';
-import { AddAnnotationsFromEditModeAssetIds } from 'src/store/thunks/AddAnnotationsFromEditModeAssetIds';
 import { resetEditHistory } from 'src/modules/FileDetails/fileDetailsSlice';
-import { CreateAnnotations } from 'src/store/thunks/CreateAnnotations';
 import { DeleteAnnotationsByFileIds } from 'src/store/thunks/DeleteAnnotationsByFileIds';
 import { StatusToolBar } from 'src/modules/Process/Containers/StatusToolBar';
 import { fetchFilesById } from 'src/store/thunks/fetchFilesById';
@@ -45,24 +35,6 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
   const dispatch = useDispatch();
   const { fileId } = props.match.params;
 
-  const showDrawer = useSelector(
-    (state: RootState) => state.previewSlice.drawer.show
-  );
-  const drawerMode = useSelector(
-    (state: RootState) => state.previewSlice.drawer.mode
-  );
-
-  const imagePreviewEditable = useSelector(
-    (state: RootState) =>
-      state.previewSlice.imagePreview.editable ===
-      ImagePreviewEditMode.Creatable
-  );
-  const addAnnotationTextNotAvailable = useSelector(
-    (state: RootState) =>
-      state.previewSlice.drawer.mode === AnnotationDrawerMode.AddAnnotation &&
-      !state.previewSlice.drawer.text
-  );
-
   const file = useSelector(({ filesSlice }: RootState) =>
     selectFileById(filesSlice, +fileId)
   );
@@ -78,22 +50,6 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
     dispatch(DeleteAnnotationsByFileIds([file!.id]));
     dispatch(deleteFilesById([{ id: file!.id }]));
     onBackButtonClick();
-  };
-
-  const handleOnCloseDrawer = () => {
-    dispatch(closeAnnotationDrawer());
-  };
-
-  const handleOnDrawerCreate = () => {
-    if (drawerMode === AnnotationDrawerMode.AddAnnotation) {
-      dispatch(CreateAnnotations({ fileId: file!.id, type: drawerMode }));
-    } else if (drawerMode === AnnotationDrawerMode.LinkAsset) {
-      dispatch(AddAnnotationsFromEditModeAssetIds(file!));
-    }
-  };
-
-  const handleOnDrawerDelete = () => {
-    dispatch(resetEditState());
   };
 
   useEffect(() => {
@@ -138,31 +94,8 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
           {isVideo(file) ? (
             <VideoReview file={file} prev={previousPage} />
           ) : (
-            <ImageReview
-              file={file}
-              drawerMode={drawerMode}
-              prev={previousPage}
-            />
+            <ImageReview file={file} prev={previousPage} />
           )}
-          <AnnotationDrawer
-            visible={showDrawer}
-            title={
-              drawerMode !== null &&
-              drawerMode === AnnotationDrawerMode.LinkAsset
-                ? 'Link to Asset'
-                : 'Add annotations'
-            }
-            disableFooterButtons={
-              imagePreviewEditable || addAnnotationTextNotAvailable
-            }
-            onClose={handleOnCloseDrawer}
-            onCreate={handleOnDrawerCreate}
-            onDelete={handleOnDrawerDelete}
-          >
-            {!isVideo(file) && drawerMode !== null && (
-              <ImageReviewDrawerContent mode={drawerMode} />
-            )}
-          </AnnotationDrawer>
         </Container>
       </>
     );
@@ -198,7 +131,6 @@ const Container = styled.div`
 
 const ToolBar = styled.div`
   padding: 5px;
-  border-radius: 8px;
   width: 100%;
   display: grid;
   align-items: center;

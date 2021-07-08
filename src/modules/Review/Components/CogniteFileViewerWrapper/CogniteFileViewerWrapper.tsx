@@ -4,33 +4,30 @@ import {
   ProposedCogniteAnnotation,
   ViewerEditCallbacks,
 } from '@cognite/react-picture-annotation';
-import { FileInfo, v3Client as sdk } from '@cognite/cdf-sdk-singleton';
+import { v3Client as sdk } from '@cognite/cdf-sdk-singleton';
 import { Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import {
-  VisibleAnnotations,
-  VisionAnnotationState,
-} from 'src/modules/Review/previewSlice';
-import { AnnotationStyle, AnnotationUtils } from 'src/utils/AnnotationUtils';
+import { VisionAnnotationState } from 'src/modules/Review/previewSlice';
+import { AnnotationStatus, AnnotationUtils } from 'src/utils/AnnotationUtils';
 import * as pdfjs from 'pdfjs-dist';
+import { FilePreviewProps } from 'src/modules/Review/types';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `https://cdf-hub-bundles.cogniteapp.com/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.js`;
 
-const LoaderContainer = styled.div`
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
+export type DrawFunction = (
+  canvas: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  width: number,
+  height: number
+) => void;
 
-type FilePreviewProps = {
-  fileObj: FileInfo;
-  annotations: VisibleAnnotations[];
-  editable: boolean;
-  creatable: boolean;
-  onCreateAnnotation: (annotation: any) => void;
-  onUpdateAnnotation: (annotation: any) => void;
+export type AnnotationStyle = {
+  backgroundColor?: string;
+  strokeColor?: string;
+  strokeWidth?: number;
+  highlight?: boolean;
+  draw?: DrawFunction;
 };
 
 export type StyledVisionAnnotation = Required<VisionAnnotationState> & {
@@ -45,9 +42,9 @@ const LoaderView = () => {
   );
 };
 
-export const ImagePreview: React.FC<FilePreviewProps> = ({
+export const CogniteFileViewerWrapper: React.FC<FilePreviewProps> = ({
   annotations,
-  fileObj,
+  fileInfo,
   editable,
   creatable,
   onCreateAnnotation,
@@ -73,7 +70,7 @@ export const ImagePreview: React.FC<FilePreviewProps> = ({
   const styledAnnotations: any[] = annotations.map((item) => ({
     ...item,
     status: item.status,
-    mark: AnnotationUtils.getAnnotationStyle(
+    mark: getAnnotationStyle(
       item.color,
       item.status,
       item.id === Number(selectedAnnotation?.id)
@@ -88,7 +85,7 @@ export const ImagePreview: React.FC<FilePreviewProps> = ({
   return (
     <CogniteFileViewer
       sdk={sdk}
-      file={fileObj}
+      file={fileInfo}
       disableAutoFetch
       hideDownload
       hideSearch
@@ -104,3 +101,56 @@ export const ImagePreview: React.FC<FilePreviewProps> = ({
     />
   );
 };
+
+const LoaderContainer = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+export function getAnnotationStyle(
+  color: string,
+  status?: AnnotationStatus,
+  selected?: boolean
+): AnnotationStyle {
+  const lineColor = color;
+  const { lineWidth } = AnnotationUtils;
+
+  if (status && status === AnnotationStatus.Verified) {
+    return {
+      strokeColor: lineColor,
+      strokeWidth: lineWidth,
+      highlight: false,
+      backgroundColor: selected ? `${lineColor}20` : undefined,
+    };
+  }
+
+  const drawDashedRectangle = (
+    canvas: CanvasRenderingContext2D,
+    x: number,
+    y: number,
+    width: number,
+    height: number
+  ) => {
+    canvas.beginPath();
+    /* eslint-disable no-param-reassign */
+    canvas.strokeStyle = lineColor;
+    canvas.lineWidth = lineWidth;
+    /* eslint-enable no-param-reassign */
+    canvas.setLineDash([5, 5]);
+    canvas.moveTo(x, y);
+    canvas.rect(
+      x - lineWidth / 2,
+      y - lineWidth / 2,
+      width + lineWidth,
+      height + lineWidth
+    );
+    canvas.stroke();
+  };
+
+  return {
+    draw: drawDashedRectangle,
+  };
+}

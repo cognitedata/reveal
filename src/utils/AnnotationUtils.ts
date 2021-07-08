@@ -17,34 +17,6 @@ export enum AnnotationStatus {
   Unhandled = 'unhandled',
 }
 
-export enum AnnotationDrawerMode {
-  LinkAsset,
-  AddAnnotation,
-}
-
-export type DrawFunction = (
-  canvas: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  width: number,
-  height: number
-) => void;
-
-export type AnnotationStyle = {
-  backgroundColor?: string;
-  strokeColor?: string;
-  strokeWidth?: number;
-  highlight?: boolean;
-  draw?: DrawFunction;
-};
-
-export type AnnotationBoundingBox = {
-  xMax: number;
-  xMin: number;
-  yMax: number;
-  yMin: number;
-};
-
 export type VisionAnnotation = Omit<
   Annotation,
   'linkedResourceId' | 'linkedResourceExternalId' | 'linkedResourceType'
@@ -52,8 +24,6 @@ export type VisionAnnotation = Omit<
   label: string;
   type: RegionType;
   color: string;
-  box?: AnnotationBoundingBox;
-  virtual?: boolean;
   modelType: VisionAPIType;
   linkedResourceId?: number;
   linkedResourceExternalId?: string;
@@ -108,59 +78,6 @@ export class AnnotationUtils {
     return ModelTypeStyleMap[modelType].color;
   }
 
-  public static generateAnnotationId(
-    fileId: string,
-    type: AnnotationType,
-    index: number
-  ): string {
-    return `${index}-${type}-${fileId}`;
-  }
-
-  public static getAnnotationStyle(
-    color: string,
-    status?: AnnotationStatus,
-    selected?: boolean
-  ): AnnotationStyle {
-    const lineColor = color;
-    const { lineWidth } = AnnotationUtils;
-
-    if (status && status === AnnotationStatus.Verified) {
-      return {
-        strokeColor: lineColor,
-        strokeWidth: lineWidth,
-        highlight: false,
-        backgroundColor: selected ? `${lineColor}20` : undefined,
-      };
-    }
-
-    const drawDashedRectangle = (
-      canvas: CanvasRenderingContext2D,
-      x: number,
-      y: number,
-      width: number,
-      height: number
-    ) => {
-      canvas.beginPath();
-      /* eslint-disable no-param-reassign */
-      canvas.strokeStyle = lineColor;
-      canvas.lineWidth = lineWidth;
-      /* eslint-enable no-param-reassign */
-      canvas.setLineDash([5, 5]);
-      canvas.moveTo(x, y);
-      canvas.rect(
-        x - lineWidth / 2,
-        y - lineWidth / 2,
-        width + lineWidth,
-        height + lineWidth
-      );
-      canvas.stroke();
-    };
-
-    return {
-      draw: drawDashedRectangle,
-    };
-  }
-
   public static convertToVisionAnnotations(
     annotations: Annotation[]
   ): VisionAnnotation[] {
@@ -172,19 +89,13 @@ export class AnnotationUtils {
         value.annotatedResourceId,
         value.createdTime,
         value.lastUpdatedTime,
-        value.region && {
-          xMin: value.region.vertices[0].x,
-          yMin: value.region.vertices[0].y,
-          xMax: value.region.vertices[1].x,
-          yMax: value.region.vertices[1].y,
-        },
+        value.region,
         value.region && value.region.shape,
         value.source,
         value.status,
         value.data,
         value.annotationType,
-        value.annotatedResourceExternalId,
-        value.region
+        value.annotatedResourceExternalId
       );
 
       if (isLinkedAnnotation(value)) {
@@ -206,17 +117,15 @@ export class AnnotationUtils {
     fileId: number,
     createdTime: number,
     lastUpdatedTime: number,
-    box?: AnnotationBoundingBox,
+    region?: AnnotationRegion,
     type: RegionType = 'rectangle',
     source: AnnotationSource = 'user',
     status = AnnotationStatus.Unhandled,
     data = {},
     annotationType: AnnotationType = 'vision/ocr',
     fileExternalId?: string,
-    region?: AnnotationRegion,
     assetId?: number,
-    assetExternalId?: string,
-    virtual = false
+    assetExternalId?: string
   ): VisionAnnotation {
     return {
       color:
@@ -235,7 +144,7 @@ export class AnnotationUtils {
       annotatedResourceExternalId: fileExternalId!,
       annotationType,
       id,
-      box,
+      region,
       ...(!!assetId && {
         linkedResourceId: assetId,
         linkedResourceExternalId: assetExternalId,
@@ -243,8 +152,6 @@ export class AnnotationUtils {
       }),
       createdTime,
       lastUpdatedTime,
-      virtual,
-      region,
     };
   }
 
@@ -253,19 +160,7 @@ export class AnnotationUtils {
       id: value.id,
       createdTime: value.createdTime,
       lastUpdatedTime: value.lastUpdatedTime,
-      region: value.box && {
-        shape: value.type,
-        vertices: [
-          {
-            x: value.box.xMin,
-            y: value.box.yMin,
-          },
-          {
-            x: value.box.xMax,
-            y: value.box.yMax,
-          },
-        ],
-      },
+      region: value.region,
       source: value.source,
       status: value.status,
       text: value.text,

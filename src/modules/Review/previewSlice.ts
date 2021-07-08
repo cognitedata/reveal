@@ -1,28 +1,23 @@
 import {
-  createAction,
   createSelector,
   createSlice,
   isAnyOf,
   PayloadAction,
 } from '@reduxjs/toolkit';
 import {
-  AnnotationBoundingBox,
-  AnnotationDrawerMode,
   AnnotationStatus,
   AnnotationUtils,
   VisionAnnotation,
 } from 'src/utils/AnnotationUtils';
-import { VisionAPIType } from 'src/api/types';
+import { Annotation, VisionAPIType } from 'src/api/types';
 import {
   addAnnotations,
   deleteAnnotationsFromState,
 } from 'src/store/commonActions';
 import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
-import { ImagePreviewEditMode } from 'src/constants/enums/VisionEnums';
 import { AnnotationDetectionJobUpdate } from 'src/store/thunks/AnnotationDetectionJobUpdate';
 import { CreateAnnotations } from 'src/store/thunks/CreateAnnotations';
 import { UpdateAnnotationsById } from 'src/store/thunks/UpdateAnnotationsById';
-import { AddAnnotationsFromEditModeAssetIds } from 'src/store/thunks/AddAnnotationsFromEditModeAssetIds';
 import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
 
 export interface VisionAnnotationState extends Omit<VisionAnnotation, 'id'> {
@@ -32,10 +27,8 @@ export interface VisionAnnotationState extends Omit<VisionAnnotation, 'id'> {
   show: boolean;
 }
 
-export interface VisibleAnnotations extends VisionAnnotationState {
-  box: AnnotationBoundingBox;
-  show: true;
-  selected?: false;
+export interface VisibleAnnotation extends VisionAnnotationState {
+  selected?: boolean;
 }
 
 export interface VisionModelState {
@@ -46,20 +39,7 @@ export interface VisionModelState {
 }
 
 type State = {
-  drawer: {
-    show: boolean;
-    mode: number | null;
-    text: string;
-    box: AnnotationBoundingBox | null;
-    selectedAssetIds: number[];
-  };
-  selectedAnnotations: {
-    asset: number[];
-    other: number[];
-  };
-  imagePreview: {
-    editable: number;
-  };
+  selectedAnnotationIds: number[];
   annotations: {
     counter: number;
     byId: Record<number, VisionAnnotationState>;
@@ -73,20 +53,7 @@ type State = {
 };
 
 const initialState: State = {
-  selectedAnnotations: {
-    asset: [],
-    other: [],
-  },
-  drawer: {
-    show: false,
-    mode: null,
-    text: '',
-    box: null,
-    selectedAssetIds: [],
-  },
-  imagePreview: {
-    editable: ImagePreviewEditMode.NotEditable,
-  },
+  selectedAnnotationIds: [],
   annotations: {
     counter: 0,
     byId: {},
@@ -98,19 +65,6 @@ const initialState: State = {
   },
   modelsByFileId: {},
 };
-
-// Actions
-type LabelEdit = {
-  label: string;
-};
-type PolygonEdit = {
-  box: AnnotationBoundingBox;
-  modelType: VisionAPIType;
-};
-export const editLabelAddAnnotation = createAction<LabelEdit>(
-  'editLabelAddAnnotation'
-);
-export const addPolygon = createAction<PolygonEdit>('addPolygon');
 
 const previewSlice = createSlice({
   name: 'previewSlice',
@@ -127,58 +81,30 @@ const previewSlice = createSlice({
       const visibility = state.annotations.byId[id].show;
       state.annotations.byId[id].show = !visibility;
     },
-    selectAnnotation(
-      state,
-      action: PayloadAction<{ id: number; asset: boolean }>
-    ) {
-      const annId = action.payload.id;
-      if (action.payload.asset) {
-        if (!state.selectedAnnotations.asset.includes(annId)) {
-          state.selectedAnnotations.asset.push(annId);
-        }
-      } else if (!state.selectedAnnotations.other.includes(annId)) {
-        state.selectedAnnotations.other.push(annId);
+    selectAnnotation(state, action: PayloadAction<number>) {
+      const annotationId = action.payload;
+      state.selectedAnnotationIds = [annotationId];
+    },
+    deselectAnnotation(state, action: PayloadAction<number>) {
+      if (state.selectedAnnotationIds.includes(action.payload)) {
+        state.selectedAnnotationIds = state.selectedAnnotationIds.filter(
+          (id) => id !== action.payload
+        );
       }
     },
-    deselectAnnotation(
-      state,
-      action: PayloadAction<{ id: number; asset: boolean }>
-    ) {
-      const annId = action.payload.id;
-      if (action.payload.asset) {
-        const assetAnnotationIdIndex =
-          state.selectedAnnotations.asset.findIndex((item) => item === annId);
-        if (assetAnnotationIdIndex >= 0) {
-          state.selectedAnnotations.asset.splice(assetAnnotationIdIndex, 1);
-        }
-      } else {
-        const otherAnnotationIdIndex =
-          state.selectedAnnotations.other.findIndex((item) => item === annId);
-        if (otherAnnotationIdIndex >= 0) {
-          state.selectedAnnotations.other.splice(otherAnnotationIdIndex, 1);
-        }
-      }
+    deselectAllAnnotations(state) {
+      state.selectedAnnotationIds = [];
     },
-    showAnnotationDrawer(state, action: PayloadAction<AnnotationDrawerMode>) {
-      state.drawer.show = false;
-      state.drawer.mode = action.payload;
-      state.imagePreview.editable = ImagePreviewEditMode.NotEditable; // disable any existing edit mode
-    },
-    closeAnnotationDrawer(state) {
-      state.drawer.show = false;
-    },
-    setImagePreviewEditState(
-      state,
-      action: PayloadAction<ImagePreviewEditMode>
-    ) {
-      state.imagePreview.editable = action.payload;
-    },
-    updateAnnotationBoundingBox(
-      state,
-      action: PayloadAction<{ id: number; boundingBox: AnnotationBoundingBox }>
-    ) {
+    updateAnnotation(state, action: PayloadAction<Annotation>) {
       const annotation = state.annotations.byId[action.payload.id];
-      annotation.box = action.payload.boundingBox;
+      const newAnnotation = AnnotationUtils.convertToVisionAnnotations([
+        action.payload,
+      ])[0];
+      annotation.region = newAnnotation.region;
+      annotation.text = newAnnotation.text;
+      annotation.status = newAnnotation.status;
+      annotation.annotationType = newAnnotation.annotationType;
+      annotation.color = newAnnotation.color;
     },
     annotationApproval: {
       prepare: (id: number, status: AnnotationStatus) => {
@@ -196,9 +122,6 @@ const previewSlice = createSlice({
 
         annotation.status = status;
       },
-    },
-    selectAssetsIds(state, action: PayloadAction<number[]>) {
-      state.drawer.selectedAssetIds = action.payload;
     },
     addTagAnnotations(state, action: PayloadAction<VisionAnnotation[]>) {
       if (!action.payload.length) {
@@ -245,11 +168,6 @@ const previewSlice = createSlice({
         addEditAnnotationsToState(state, freshTagAnnotations);
       }
     },
-    resetEditState(state) {
-      state.drawer.text = '';
-      state.drawer.box = null;
-      state.drawer.selectedAssetIds = [];
-    },
     resetPreview(state) {
       resetPreviewState(state);
     },
@@ -285,12 +203,6 @@ const previewSlice = createSlice({
 
     // Matchers
 
-    const isLabelEdit = (
-      action: PayloadAction<LabelEdit> | PayloadAction<PolygonEdit>
-    ): action is PayloadAction<LabelEdit> => {
-      return 'label' in (action as PayloadAction<LabelEdit>).payload;
-    };
-
     builder.addMatcher(
       isAnyOf(
         addAnnotations,
@@ -303,27 +215,6 @@ const previewSlice = createSlice({
         addEditAnnotationsToState(state, action.payload);
       }
     );
-
-    builder.addMatcher(
-      isAnyOf(editLabelAddAnnotation, addPolygon),
-      (state, action) => {
-        if (isLabelEdit(action)) {
-          state.drawer.text = action.payload.label;
-        } else {
-          state.drawer.box = action.payload.box;
-        }
-      }
-    );
-
-    builder.addMatcher(
-      isAnyOf(
-        CreateAnnotations.fulfilled,
-        AddAnnotationsFromEditModeAssetIds.fulfilled
-      ),
-      (state) => {
-        resetDrawerEditState(state);
-      }
-    );
   },
 });
 
@@ -332,35 +223,17 @@ export const {
   toggleAnnotationVisibility,
   selectAnnotation,
   deselectAnnotation,
-  showAnnotationDrawer,
-  closeAnnotationDrawer,
-  setImagePreviewEditState,
-  updateAnnotationBoundingBox,
+  deselectAllAnnotations,
+  updateAnnotation,
   annotationApproval,
-  selectAssetsIds,
   addTagAnnotations,
-  resetEditState,
   resetPreview,
 } = previewSlice.actions;
 
 // state helper functions
 
 const resetPreviewState = (state: State) => {
-  resetDrawerEditState(state);
-  state.selectedAnnotations = { asset: [], other: [] };
-};
-
-const resetDrawerEditState = (state: State) => {
-  state.drawer = {
-    show: false,
-    mode: state.drawer.mode,
-    text: state.drawer.text, // Keep the state for sequencial labeling
-    box: null,
-    selectedAssetIds: [],
-  };
-  state.imagePreview = {
-    editable: state.imagePreview.editable,
-  };
+  state.selectedAnnotationIds = [];
 };
 
 export const addEditAnnotationsToState = (
@@ -400,8 +273,8 @@ export const addEditAnnotationsToState = (
     const annotation = state.annotations.byId[id];
     if (annotation) {
       state.annotations.byId[id] = {
-        ...createVisionAnnotationState(item, id, modelId, true),
         ...annotation,
+        ...createVisionAnnotationState(item, id, modelId, true),
       };
     } else {
       if (state.models.byId[modelId].annotations.includes(id)) {
@@ -436,10 +309,7 @@ const deleteAnnotationsByIds = (state: State, annotationIds: number[]) => {
     delete state.annotations.byId[annotation.id];
     state.annotations.allIds = Object.keys(state.annotations.byId);
   });
-  state.selectedAnnotations.asset = state.selectedAnnotations.asset.filter(
-    (id) => !annotationIds.includes(id)
-  );
-  state.selectedAnnotations.other = state.selectedAnnotations.other.filter(
+  state.selectedAnnotationIds = state.selectedAnnotationIds.filter(
     (id) => !annotationIds.includes(id)
   );
 };
@@ -523,7 +393,7 @@ export const selectAnnotationsByFileIdModelTypes = createSelector(
 export const selectVisibleAnnotationsByFileId = createSelector(
   selectAnnotationsByFileId,
   (annotationIdsByFile) => {
-    return annotationIdsByFile.filter((item) => !!item.box && item.show);
+    return annotationIdsByFile.filter((item) => !!item.region && item.show);
   }
 );
 
@@ -532,36 +402,6 @@ export const selectVisibleNonRejectedAnnotationsByFileId = createSelector(
   (visibleAnnotationIdsByFile) => {
     return visibleAnnotationIdsByFile.filter(
       (item) => item.status !== AnnotationStatus.Rejected
-    );
-  }
-);
-
-export const selectEditModeAnnotations = (state: State, fileId: string) =>
-  state.drawer.box
-    ? [
-        AnnotationUtils.createVisionAnnotationStub(
-          0,
-          state.drawer.text,
-          state.drawer.mode === AnnotationDrawerMode.AddAnnotation
-            ? VisionAPIType.ObjectDetection
-            : VisionAPIType.TagDetection,
-          parseInt(fileId, 10),
-          0,
-          0,
-          state.drawer.box,
-          'rectangle',
-          'user',
-          AnnotationStatus.Verified
-        ),
-      ]
-    : [];
-
-export const selectVisibleNonRejectAndEditModeAnnotations = createSelector(
-  selectVisibleNonRejectedAnnotationsByFileId,
-  selectEditModeAnnotations,
-  (VisibleNonRejectedAnnotations, editModeAnnotations) => {
-    return VisibleNonRejectedAnnotations.concat(
-      editModeAnnotations as VisionAnnotationState[]
     );
   }
 );

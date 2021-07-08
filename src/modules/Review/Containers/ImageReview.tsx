@@ -1,34 +1,22 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { DataExplorationProvider, Tabs } from '@cognite/data-exploration';
-import {
-  Contextualization,
-  EditContextualization,
-} from 'src/modules/Review/Containers/Contextualization';
+import { Contextualization } from 'src/modules/Review/Containers/Contextualization';
 import { FileDetailsReview } from 'src/modules/FileDetails/Containers/FileDetailsReview/FileDetailsReview';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { selectAnnotationsByFileIdModelTypes } from 'src/modules/Review/previewSlice';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { FileInfo, v3Client as sdk } from '@cognite/cdf-sdk-singleton';
-import { ImagePreviewEditMode } from 'src/constants/enums/VisionEnums';
 import { VisionAPIType } from 'src/api/types';
 import { ImagePreviewContainer } from 'src/modules/Review/Containers/ImagePreviewContainer';
 import { Title } from '@cognite/cogs.js';
-import { CreateAnnotations } from 'src/store/thunks/CreateAnnotations';
-import { AnnotationDrawerMode } from 'src/utils/AnnotationUtils';
 import { VerticalCarousel } from '../Components/VerticalCarousel/VerticalCarousel';
 
 const queryClient = new QueryClient();
 
-const ImageReview = (props: {
-  drawerMode: number | null;
-  file: FileInfo;
-  prev: string | undefined;
-}) => {
-  const [previewInFocus, setPreviewInFocus] = useState<boolean>(false);
-  const { drawerMode, file, prev } = props;
-  const dispatch = useDispatch();
+const ImageReview = (props: { file: FileInfo; prev: string | undefined }) => {
+  const { file, prev } = props;
   const tagAnnotations = useSelector(({ previewSlice }: RootState) =>
     selectAnnotationsByFileIdModelTypes(previewSlice, String(file.id), [
       VisionAPIType.TagDetection,
@@ -42,17 +30,6 @@ const ImageReview = (props: {
         VisionAPIType.ObjectDetection,
       ])
   );
-  const editMode = useSelector(
-    (state: RootState) =>
-      state.previewSlice.imagePreview.editable ===
-      ImagePreviewEditMode.Modifiable
-  );
-
-  const handleAddToFile = () => {
-    if (drawerMode === AnnotationDrawerMode.AddAnnotation) {
-      dispatch(CreateAnnotations({ fileId: file!.id, type: drawerMode }));
-    }
-  };
 
   return (
     <>
@@ -60,25 +37,8 @@ const ImageReview = (props: {
         <AnnotationContainer id="annotationContainer">
           <FilePreviewMetadataContainer>
             <FilePreviewContainer>
-              <VerticalCarouselContainer id="verticalCarouselContainer">
-                <VerticalCarousel prev={prev} />
-              </VerticalCarouselContainer>
-              <EditContextualization
-                editMode={editMode}
-                tagAnnotations={tagAnnotations}
-                gdprAndTextAndObjectAnnotations={
-                  gdprAndTextAndObjectAnnotations
-                }
-                handleAddToFile={handleAddToFile}
-                handleInEditMode={setPreviewInFocus}
-              />
-              {file && (
-                <ImagePreviewContainer
-                  file={file}
-                  drawerMode={drawerMode}
-                  inFocus={previewInFocus}
-                />
-              )}
+              <VerticalCarousel prev={prev} />
+              {file && <ImagePreviewContainer file={file} />}
             </FilePreviewContainer>
             <RightPanelContainer>
               <StyledTitle level={4}>{file?.name}</StyledTitle>
@@ -131,15 +91,6 @@ const AnnotationContainer = styled.div`
   display: flex;
   height: 100%;
   box-sizing: border-box;
-`;
-
-const VerticalCarouselContainer = styled.div`
-  max-width: 136px;
-  padding: 10px;
-  height: 100%;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
 `;
 
 const FilePreviewMetadataContainer = styled.div`

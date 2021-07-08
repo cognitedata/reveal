@@ -70,7 +70,7 @@ export const VerticalCarousel = (props?: any) => {
     );
   });
   return filesSlice.length > 1 ? (
-    <>
+    <CarouselContainer id="verticalCarouselContainer">
       <Swiper
         className="carouselView"
         slidesPerView={Math.min(filesSlice.length, 10)} // "auto" does not work with virtual
@@ -96,7 +96,7 @@ export const VerticalCarousel = (props?: any) => {
       >
         <>{slides}</>
       </Swiper>
-    </>
+    </CarouselContainer>
   ) : null;
 };
 
@@ -128,4 +128,13 @@ const ThumbnailContainer = styled(Button)<OnFocusProp>`
     object-fit: cover;
     overflow: hidden;
   }
+`;
+
+const CarouselContainer = styled.div`
+  max-width: 136px;
+  padding: 10px;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
 `;
