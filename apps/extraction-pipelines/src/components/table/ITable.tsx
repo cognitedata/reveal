@@ -5,7 +5,6 @@ import {
   Column,
   HeaderGroup,
   Row,
-  TableOptions,
   TableState,
   useFilters,
   useGlobalFilter,
@@ -94,17 +93,17 @@ const ITable = <T extends { id: ReactText }>({
     state,
     setGlobalFilter,
     preGlobalFilteredRows,
-  } = useTable(
+  } = useTable<T>(
     {
       columns: headerCols,
       data: dataSource,
       autoResetSelectedRows: false,
-      stateReducer: selectReducer,
+      stateReducer: selectReducer as any,
       filterTypes,
       initialState: {
         hiddenColumns: ['externalId'],
       },
-    } as TableOptions<T>,
+    },
     useFilters,
     useGlobalFilter,
     useSortBy,
@@ -126,7 +125,7 @@ const ITable = <T extends { id: ReactText }>({
           aria-label={`List of ${EXTRACTION_PIPELINE_LOWER} for the ${project} project`}
         >
           <thead>
-            {headerGroups.map((headerGroup: HeaderGroup<T>) => (
+            {headerGroups.map((headerGroup: HeaderGroup<any>) => (
               <tr {...headerGroup.getHeaderGroupProps()}>
                 {headerGroup.headers.map((col: HeaderGroup<T>) => {
                   return (
