@@ -20,7 +20,6 @@ import { CadModelSectorBudget } from '../datamodels/cad/CadModelSectorBudget';
 import { CadModelSectorLoadStatistics } from '../datamodels/cad/CadModelSectorLoadStatistics';
 import { GeometryFilter, NodeAppearanceProvider, RenderOptions } from '..';
 import { EventTrigger } from '../utilities/events';
-import { hello } from '@reveal/camera-manager';
 
 /* eslint-disable jsdoc/require-jsdoc */
 
@@ -53,7 +52,6 @@ export class RevealManager<TModelIdentifier> {
     renderManager: EffectRenderManager,
     pointCloudManager: PointCloudManager<TModelIdentifier>
   ) {
-    hello();
     this._effectRenderManager = renderManager;
     this._cadManager = cadManager;
     this._pointCloudManager = pointCloudManager;

@@ -1,8 +1,0 @@
-{
-  "name": "@reveal/package-a",
-  "private": true,
-  "main": "index.ts",
-  "scripts": {
-    "build": "yarn ws:build"
-  }
-}

@@ -1,1 +1,0 @@
-export const helloPackageA = () => console.log('hello from package-a');

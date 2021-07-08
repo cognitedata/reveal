@@ -39,7 +39,9 @@
     "bump:tag": "cross-var git tag $npm_package_name@$npm_package_version",
     "bump:push": "git push -u origin head && git push --tags",
     "release": "yarn build:prod && cd dist && yarn publish --non-interactive",
+    "ws:start": "cd $INIT_CWD && webpack-dev-server --open",
     "ws:build": "cd $INIT_CWD && tsc",
+    "ws:bundle": "cd $INIT_CWD && webpack",
     "ws:test": "cd $INIT_CWD && jest",
     "ws:coverage": "cd $INIT_CWD && jest --coverage"
   },
