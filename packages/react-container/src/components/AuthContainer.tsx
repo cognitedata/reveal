@@ -95,6 +95,8 @@ export const AuthContainer: React.FC<AuthContainerProps> = ({
 
     if (flowToUse) {
       authClient.loginAndAuthIfNeeded({ flow: flowToUse, project: tenant });
+    } else {
+      authError();
     }
 
     return () => {

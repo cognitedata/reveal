@@ -1,3 +1,7 @@
+## 1.4.1 Jul 08 2021
+
+- Fixed infinite loading bug when no login flow is found
+
 ## 1.4.0 Jul 02 2021
 
 - Bump TSA to change fake idp settings to add new fields
