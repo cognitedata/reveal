@@ -370,53 +370,54 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                 <Button icon="GridLines" type="ghost" aria-label="view" />
               </Dropdown>
             </Tooltip>
-
-            <Dropdown
-              content={
-                <Menu>
-                  <DropdownWrapper>
-                    <Flex>
-                      <DropdownTitle>Time series aggregates</DropdownTitle>
-                    </Flex>
-                    <Flex direction="row">
-                      <Switch
-                        name="toggleAggregates"
-                        value={showAggregates}
-                        onChange={() => setShowAggregates(!showAggregates)}
-                      >
-                        Show Aggregates
-                      </Switch>
-                    </Flex>
-                  </DropdownWrapper>
-                </Menu>
-              }
-            >
-              <Button icon="Timeseries" type="ghost" aria-label="view" />
-            </Dropdown>
-
-            <Dropdown
-              content={
-                <Menu>
-                  <DropdownWrapper>
-                    <Flex>
-                      <DropdownTitle>Y axis</DropdownTitle>
-                    </Flex>
-                    <Flex direction="row">
-                      <Switch
-                        name="toggleYAxis"
-                        value={showYAxis}
-                        onChange={() => setShowYAxis(!showYAxis)}
-                      >
-                        Show Y-axes
-                      </Switch>
-                    </Flex>
-                  </DropdownWrapper>
-                </Menu>
-              }
-            >
-              <Button icon="YAxis" type="ghost" aria-label="view" />
-            </Dropdown>
-
+            <Tooltip content="Show/hide aggregates">
+              <Dropdown
+                content={
+                  <Menu>
+                    <DropdownWrapper>
+                      <Flex>
+                        <DropdownTitle>Time series aggregates</DropdownTitle>
+                      </Flex>
+                      <Flex direction="row">
+                        <Switch
+                          name="toggleAggregates"
+                          value={showAggregates}
+                          onChange={() => setShowAggregates(!showAggregates)}
+                        >
+                          Show Aggregates
+                        </Switch>
+                      </Flex>
+                    </DropdownWrapper>
+                  </Menu>
+                }
+              >
+                <Button icon="Timeseries" type="ghost" aria-label="view" />
+              </Dropdown>
+            </Tooltip>
+            <Tooltip content="Y axes">
+              <Dropdown
+                content={
+                  <Menu>
+                    <DropdownWrapper>
+                      <Flex>
+                        <DropdownTitle>Y axis</DropdownTitle>
+                      </Flex>
+                      <Flex direction="row">
+                        <Switch
+                          name="toggleYAxis"
+                          value={showYAxis}
+                          onChange={() => setShowYAxis(!showYAxis)}
+                        >
+                          Show Y axes
+                        </Switch>
+                      </Flex>
+                    </DropdownWrapper>
+                  </Menu>
+                }
+              >
+                <Button icon="YAxis" type="ghost" aria-label="view" />
+              </Dropdown>
+            </Tooltip>
             <Tooltip content={`${stackedMode ? 'Disable' : 'Enable'} stacking`}>
               <Button
                 icon="ChartStackedView"
