@@ -415,7 +415,16 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                   </Menu>
                 }
               >
-                <Button icon="YAxis" type="ghost" aria-label="view" />
+                <>
+                  <Button
+                    icon="YAxis"
+                    type="ghost"
+                    aria-label="view"
+                    style={{ paddingRight: 8 }}
+                  >
+                    <Icon type="CaretDown" />
+                  </Button>
+                </>
               </Dropdown>
             </Tooltip>
             <Tooltip content={`${stackedMode ? 'Disable' : 'Enable'} stacking`}>
