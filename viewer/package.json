@@ -41,6 +41,7 @@
     "release": "yarn build:prod && cd dist && yarn publish --non-interactive",
     "ws:start": "cd $INIT_CWD && webpack-dev-server --open --env.dir=$INIT_CWD",
     "ws:test": "cd $INIT_CWD && jest",
+    "ws:lint": "cd $INIT_CWD && eslint . --ext .ts,.js --max-warnings 0",
     "ws:coverage": "cd $INIT_CWD && jest --coverage"
   },
   "dependencies": {

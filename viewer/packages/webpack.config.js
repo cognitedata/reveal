@@ -1,16 +1,18 @@
+/*!
+ * Copyright 2021 Cognite AS
+ */
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = env => {
   return {
-
     mode: 'development',
 
     entry: path.resolve(env.dir, './app/index.ts'),
 
     output: {
       path: path.resolve(env.dir, 'dist'),
-      filename: 'index.js',
+      filename: 'index.js'
     },
 
     resolve: {
@@ -19,7 +21,7 @@ module.exports = env => {
     },
 
     devServer: {
-      contentBase: path.resolve(env.dir, './dist'),
+      contentBase: path.resolve(env.dir, './dist')
     },
 
     module: {
@@ -32,11 +34,10 @@ module.exports = env => {
               configFile: path.resolve(__dirname, '../tsconfig.common.json')
             }
           }
-
         }
       ]
     },
 
     plugins: [new HtmlWebpackPlugin({ title: require(path.resolve(env.dir, './package.json')).name })]
-  }
-}
+  };
+};
