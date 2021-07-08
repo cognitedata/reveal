@@ -37,7 +37,6 @@ function SourceRows({
   useEffect(() => {
     if (!chart.sourceCollection || chart.sourceCollection === undefined) {
       const updatedChart = updateSourceCollection(chart);
-      console.log('updatedChart ', updatedChart);
       updateChart(updatedChart);
     }
   }, [chart, updateChart]);
