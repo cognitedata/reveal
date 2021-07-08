@@ -127,23 +127,26 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   const handleClickNewWorkflow = () => {
     if (chart) {
       const newWorkflowId = nanoid();
+      const newWorkflow = {
+        id: newWorkflowId,
+        name: 'New Calculation',
+        color: getEntryColor(chart.id, newWorkflowId),
+        lineWeight: 1,
+        lineStyle: 'solid',
+        enabled: true,
+        nodes: [],
+        connections: [],
+        createdAt: Date.now(),
+      } as ChartWorkflow;
+
       updateChart(
         {
           ...chart,
           workflowCollection: [
             ...(chart.workflowCollection || []),
-            {
-              id: newWorkflowId,
-              name: 'New Calculation',
-              color: getEntryColor(chart.id, newWorkflowId),
-              lineWeight: 1,
-              lineStyle: 'solid',
-              enabled: true,
-              nodes: [],
-              connections: [],
-              createdAt: Date.now(),
-            },
+            newWorkflow,
           ],
+          sourceCollection: [newWorkflow, ...(chart.sourceCollection || [])],
         },
         {
           onSuccess: () => {

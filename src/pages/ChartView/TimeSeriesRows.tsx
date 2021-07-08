@@ -13,7 +13,6 @@ type Props = {
   onInfoClick?: (id?: string) => void;
   dateFrom: string;
   dateTo: string;
-  draggable?: boolean;
 };
 export default function TimeSeriesRows({
   chart,
@@ -24,7 +23,6 @@ export default function TimeSeriesRows({
   selectedSourceId,
   dateFrom,
   dateTo,
-  draggable = false,
 }: Props) {
   const isWorkspaceMode = mode === 'workspace';
   const isEditorMode = mode === 'editor';
@@ -32,27 +30,21 @@ export default function TimeSeriesRows({
 
   return (
     <>
-      {chart?.timeSeriesCollection?.map((t, index) => (
-        <Draggable key={t.id} draggableId={t.id} index={index}>
-          {(draggableProvided, snapshot) => (
-            <TimeSeriesRow
-              draggable={draggable}
-              provided={draggableProvided}
-              key={t.id}
-              mutate={updateChart}
-              chart={chart}
-              timeseries={t}
-              isWorkspaceMode={isWorkspaceMode}
-              onRowClick={onRowClick}
-              onInfoClick={onInfoClick}
-              isSelected={selectedSourceId === t.id}
-              disabled={isEditorMode}
-              isFileViewerMode={isFileViewerMode}
-              dateFrom={dateFrom}
-              dateTo={dateTo}
-            />
-          )}
-        </Draggable>
+      {chart?.timeSeriesCollection?.map((t) => (
+        <TimeSeriesRow
+          key={t.id}
+          mutate={updateChart}
+          chart={chart}
+          timeseries={t}
+          isWorkspaceMode={isWorkspaceMode}
+          onRowClick={onRowClick}
+          onInfoClick={onInfoClick}
+          isSelected={selectedSourceId === t.id}
+          disabled={isEditorMode}
+          isFileViewerMode={isFileViewerMode}
+          dateFrom={dateFrom}
+          dateTo={dateTo}
+        />
       ))}
     </>
   );
