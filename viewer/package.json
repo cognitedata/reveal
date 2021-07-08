@@ -31,7 +31,7 @@
     "mkdist": "shx mkdir -p dist && shx cp README.md LICENSE dist",
     "clean": "shx rm -rf dist/ && yarn run mkdist",
     "test": "yarn workspaces foreach run test",
-    "coverage": "yarn workspaces foreach run coverage",
+    "coverage": "jest --coverage",
     "lint": "yarn workspaces foreach run lint",
     "prebump": "yarn version --no-git-tag-version && yarn",
     "bump": " yarn bump:commit && yarn bump:tag && yarn bump:push",
@@ -41,8 +41,7 @@
     "release": "yarn build:prod && cd dist && yarn publish --non-interactive",
     "ws:start": "cd $INIT_CWD && webpack-dev-server --open --env.dir=$INIT_CWD",
     "ws:test": "cd $INIT_CWD && jest",
-    "ws:lint": "cd $INIT_CWD && eslint . --ext .ts,.js --max-warnings 0",
-    "ws:coverage": "cd $INIT_CWD && jest --coverage"
+    "ws:lint": "cd $INIT_CWD && eslint . --ext .ts,.js --max-warnings 0"
   },
   "dependencies": {
     "@cognite/potree-core": "1.2.1",

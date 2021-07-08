@@ -6,7 +6,6 @@
   "scripts": {
     "build": "yarn ws:build",
     "test": "yarn ws:test --config ./../jest.config.js",
-    "coverage": "yarn ws:coverage",
     "lint": "yarn ws:lint"
   },
   "dependencies": {
