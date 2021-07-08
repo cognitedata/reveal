@@ -51,6 +51,7 @@ type ChartProps = {
   chartId: string;
   isYAxisShown?: boolean;
   isAggregatesShown?: boolean;
+  isGridlinesShown?: boolean;
   isPreview?: boolean;
   isInSearch?: boolean;
   stackedMode?: boolean;
@@ -63,6 +64,7 @@ const PlotlyChartComponent = ({
   chartId,
   isYAxisShown = true,
   isAggregatesShown = false,
+  isGridlinesShown = false,
   isPreview = false,
   isInSearch = false,
   stackedMode = false,
@@ -407,6 +409,7 @@ const PlotlyChartComponent = ({
       spikethickness: 1,
       spikecolor: '#bfbfbf',
       spikedash: 'solid',
+      showgrid: isGridlinesShown,
     },
     spikedistance: -1,
     hovermode: 'x',
@@ -469,6 +472,7 @@ const PlotlyChartComponent = ({
       anchor: 'free',
       position: yAxisValues.width * index,
       range: rangeY,
+      showgrid: isGridlinesShown,
     };
 
     if (showYAxis) {
