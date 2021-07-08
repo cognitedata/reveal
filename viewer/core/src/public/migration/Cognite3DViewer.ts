@@ -54,7 +54,7 @@ import {
 } from '../..';
 import { PropType } from '../../utilities/reflection';
 import { CadModelSectorLoadStatistics } from '../../datamodels/cad/CadModelSectorLoadStatistics';
-import ComboControls from '../../combo-camera-controls';
+import ComboControls from '@reveal/camera-manager';
 import { ViewerState, ViewStateHelper } from '../../utilities/ViewStateHelper';
 
 type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered' | 'disposed';
@@ -1265,15 +1265,8 @@ export class Cognite3DViewer {
       return;
     }
 
-    const {
-      combinedBbox,
-      bbox,
-      cameraPosition,
-      cameraDirection,
-      corners,
-      nearPlane,
-      nearPlaneCoplanarPoint
-    } = this._updateNearAndFarPlaneBuffers;
+    const { combinedBbox, bbox, cameraPosition, cameraDirection, corners, nearPlane, nearPlaneCoplanarPoint } =
+      this._updateNearAndFarPlaneBuffers;
     // 1. Compute the bounds of all geometry
     combinedBbox.makeEmpty();
     this._models.forEach(model => {
@@ -1526,9 +1519,10 @@ function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions): Reve
   return revealOptions;
 }
 
-function determineAntiAliasingMode(
-  mode: PropType<Cognite3DViewerOptions, 'antiAliasingHint'>
-): { antiAliasing: AntiAliasingMode; multiSampleCount: number } {
+function determineAntiAliasingMode(mode: PropType<Cognite3DViewerOptions, 'antiAliasingHint'>): {
+  antiAliasing: AntiAliasingMode;
+  multiSampleCount: number;
+} {
   mode = mode || 'fxaa';
 
   switch (mode) {

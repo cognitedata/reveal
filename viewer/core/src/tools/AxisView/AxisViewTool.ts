@@ -15,7 +15,7 @@ import {
   AbsolutePosition,
   RelativePosition
 } from './types';
-import ComboControls from '../../combo-camera-controls';
+import ComboControls from '@reveal/camera-manager';
 import cloneDeep from 'lodash/cloneDeep';
 import merge from 'lodash/merge';
 
