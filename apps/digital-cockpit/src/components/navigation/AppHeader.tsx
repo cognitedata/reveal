@@ -7,15 +7,12 @@ import {
   getUsersGroupNames,
   isAdmin,
 } from 'store/groups/selectors';
-import defaultCustomerLogo from 'images/default_logo.png';
 import { CustomMenuItem, CustomMenuLink } from 'styles/common';
 import { useLink, usePossibleTenant } from 'hooks';
 import { CdfClientContext } from 'providers/CdfClientProvider';
 import { clearGroupsFilter, setGroupsFilter } from 'store/groups/actions';
 import { useHistory } from 'react-router-dom';
 import { useMetrics } from 'utils/metrics';
-import { CUSTOMER_LOGO_ID } from 'constants/cdf';
-import * as Sentry from '@sentry/browser';
 import { setHttpError } from 'store/notification/thunks';
 import { modalOpen } from 'store/modals/actions';
 import { getConfigState } from 'store/config/selectors';
@@ -31,6 +28,7 @@ import {
   AppHeaderWrapper,
 } from './elements';
 import UserMenu from './UserMenu';
+import { fetchCustomerLogoUrl } from '../../store/thunks';
 
 const AppHeader: React.FC = () => {
   const dispatch = useDispatch();
@@ -112,22 +110,8 @@ const AppHeader: React.FC = () => {
   };
 
   useEffect(() => {
-    const fetchCustomerLogoUrl = async () => {
-      try {
-        const { downloadUrl } = (
-          await client.getDownloadUrls([CUSTOMER_LOGO_ID])
-        )[0];
-        setCustomerLogoUrl(downloadUrl);
-      } catch (e) {
-        setCustomerLogoUrl(defaultCustomerLogo);
-        if (e.status !== 400 && e.status !== 403) {
-          Sentry.captureException(e);
-          dispatch(setHttpError(`Failed to fetch a logo`, e));
-        }
-      }
-    };
     if (!customerLogoFetched) {
-      fetchCustomerLogoUrl();
+      dispatch(fetchCustomerLogoUrl(client, setCustomerLogoUrl));
       dispatch(addConfigItems({ customerLogoFetched: true }));
     }
   }, [customerLogoFetched, dispatch, client]);
