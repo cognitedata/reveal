@@ -25,6 +25,15 @@ target
 # use yarn.lock
 **/package-lock.json
 
+# yarn
+**/.yarn/*
+!**/.yarn/patches
+!**/.yarn/releases
+!**/.yarn/plugins
+!**/.yarn/sdks
+!**/.yarn/versions
+.pnp.*
+
 **/tsconfig.tsbuildinfo
 
 **/.env

@@ -1,0 +1,26 @@
+{
+  "extends": "./tsconfig.common.json",
+  "compilerOptions": {
+    "declaration": true,
+    "rootDir": ".",
+    "outDir": "dist",
+    "downlevelIteration": true,
+    "sourceMap": true,
+    "typeRoots": [
+      "node_modules/@types",
+      "core/src/@types"
+    ],
+    // do not add path aliases. They'll end up in generated declaration files.
+  },
+  // include is also used for eslint to understand which files should be linted
+  "include": [
+    "*.js",
+    "*.ts",
+    "core/src/**/*",
+    ".eslintrc.js",
+  ],
+  "exclude": [
+    "node_modules/**/*",
+    "dist/**/*"
+  ]
+}

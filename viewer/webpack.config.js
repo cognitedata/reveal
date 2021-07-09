@@ -3,6 +3,7 @@
  */
 const path = require('path');
 const nodeExternals = require('webpack-node-externals');
+const copyPkgJsonPlugin = require('copy-pkg-json-webpack-plugin');
 const logger = require('webpack-log')('reveal');
 const packageJSON = require('./package.json');
 const workerPackageJSON = require('./node_modules/@cognite/reveal-parser-worker/package.json');
@@ -32,18 +33,18 @@ module.exports = env => {
     // Internals is not part of prod builds
     entry: development
       ? {
-          index: './src/index.ts',
-          tools: './src/tools.ts',
-          internals: './src/internals.ts'
+          index: './index.ts',
+          tools: './tools.ts',
+          internals: './internals.ts'
         }
       : {
-          index: './src/index.ts',
-          tools: './src/tools.ts'
+          index: './index.ts',
+          tools: './tools.ts'
         },
     target: 'web',
     resolve: {
       extensions: ['.tsx', '.ts', '.js'],
-      symlinks: false
+      symlinks: true
     },
     module: {
       rules: [
@@ -52,16 +53,20 @@ module.exports = env => {
           use: {
             loader: 'ts-loader',
             options: {
+              configFile: 'tsconfig.webpack.json',
               onlyCompileBundledFiles: true,
               compilerOptions: !development
-                ? {}
+                ? {
+                    declarationDir: path.resolve(__dirname, 'dist')
+                  }
                 : {
                     noUnusedLocals: false,
-                    noUnusedParameters: false
+                    noUnusedParameters: false,
+                    declarationDir: path.resolve(__dirname, 'dist')
                   }
             }
           },
-          exclude: [/node_modules/, /src\/.*\.test\.tsx?/, /src\/__testutilities__/, /src\/.*\/stubs\//]
+          exclude: [/src\/.*\.test\.tsx?/, /src\/__testutilities__/, /src\/.*\/stubs\//]
         },
         {
           test: /\.(png|svg|jpg|jpeg|gif)$/,
@@ -96,6 +101,11 @@ module.exports = env => {
       usedExports: true
     },
     plugins: [
+      new copyPkgJsonPlugin({
+        remove: development
+          ? ['devDependencies', 'scripts', 'workspaces', 'husky']
+          : ['devDependencies', 'scripts', 'private', 'workspaces', 'husky']
+      }),
       new webpack.DefinePlugin({
         'process.env': JSON.stringify({
           VERSION: packageJSON.version,

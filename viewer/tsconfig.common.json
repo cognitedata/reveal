@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    // Basic Options
+    "target": "ES2019",
+    "module": "esnext",
+    "lib": [
+      "dom",
+      "esnext"
+    ],
+    "stripInternal": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    // Strict Type-Checking Options
+    "strict": true,
+    // Module Resolution Options
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "declaration": true
+  }
+}

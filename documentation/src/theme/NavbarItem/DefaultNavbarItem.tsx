@@ -10,11 +10,6 @@ import clsx from 'clsx';
 import Link from '@docusaurus/Link';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import useOnClickOutside from 'use-onclickoutside';
-import type {
-  NavLinkProps,
-  DesktopOrMobileNavBarItemProps,
-  Props,
-} from '@theme/NavbarItem/DefaultNavbarItem';
 
 function NavLink({
   activeBasePath,
@@ -25,7 +20,7 @@ function NavLink({
   activeClassName = 'navbar__link--active',
   prependBaseUrlToHref,
   ...props
-}: NavLinkProps) {
+}: any) {
   // TODO all this seems hacky
   // {to: 'version'} should probably be forbidden, in favor of {to: '/version'}
   const toUrl = useBaseUrl(to);
@@ -64,7 +59,7 @@ function NavItemDesktop({
   position,
   className,
   ...props
-}: DesktopOrMobileNavBarItemProps) {
+}) {
   const dropDownRef = React.useRef<HTMLDivElement>(null);
   const dropDownMenuRef = React.useRef<HTMLUListElement>(null);
   const [showDropDown, setShowDropDown] = useState(false);
@@ -139,7 +134,7 @@ function NavItemMobile({
   position: _position,
   className,
   ...props
-}: DesktopOrMobileNavBarItemProps) {
+}) {
   // Need to destructure position from props so that it doesn't get passed on.
   const navLinkClassNames = (extraClassName?: string, isSubList = false) =>
     clsx(
@@ -179,8 +174,9 @@ function NavItemMobile({
   );
 }
 
-function DefaultNavbarItem({mobile = false, ...props}: Props): JSX.Element {
+function DefaultNavbarItem({mobile = false, ...props}): JSX.Element {
   const Comp = mobile ? NavItemMobile : NavItemDesktop;
+  // @ts-ignore
   return <Comp {...props} />;
 }
 

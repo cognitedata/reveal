@@ -42,7 +42,7 @@ jobs:
       - name: Install and Build documentation 🔧
         working-directory: documentation
         run: |
-          yarn install --frozen-lockfile
+          yarn install --immutable
           yarn build
 
       - name: Deploy documentation preview 🚀
