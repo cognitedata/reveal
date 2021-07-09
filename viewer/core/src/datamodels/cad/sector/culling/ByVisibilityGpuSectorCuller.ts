@@ -59,10 +59,8 @@ function assert(condition: boolean, message: string = 'assertion hit') {
 }
 
 class TakenSectorMap {
-  private readonly _takenSectorTrees: Map<
-    string,
-    { sectorTree: TakenSectorTree; modelMetadata: CadModelMetadata }
-  > = new Map();
+  private readonly _takenSectorTrees: Map<string, { sectorTree: TakenSectorTree; modelMetadata: CadModelMetadata }> =
+    new Map();
   private readonly determineSectorCost: DetermineSectorCostDelegate;
 
   get totalCost(): SectorCost {

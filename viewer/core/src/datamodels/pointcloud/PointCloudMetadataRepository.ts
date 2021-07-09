@@ -15,7 +15,8 @@ type ModelIdentifierWithFormat<T> = T & { format: File3dFormat };
 const identityMatrix = new THREE.Matrix4().identity();
 
 export class PointCloudMetadataRepository<TModelIdentifier>
-  implements MetadataRepository<TModelIdentifier, Promise<PointCloudMetadata>> {
+  implements MetadataRepository<TModelIdentifier, Promise<PointCloudMetadata>>
+{
   private readonly _modelMetadataProvider: ModelDataClient<ModelIdentifierWithFormat<TModelIdentifier>>;
   private readonly _blobFileName: string;
 

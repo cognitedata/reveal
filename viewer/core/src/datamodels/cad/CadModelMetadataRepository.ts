@@ -15,7 +15,8 @@ import { ModelDataClient } from '../../utilities/networking/types';
 type ModelIdentifierWithFormat<T> = T & { format: File3dFormat };
 
 export class CadModelMetadataRepository<TModelIdentifier>
-  implements MetadataRepository<TModelIdentifier, Promise<CadModelMetadata>> {
+  implements MetadataRepository<TModelIdentifier, Promise<CadModelMetadata>>
+{
   private readonly _modelMetadataProvider: ModelDataClient<ModelIdentifierWithFormat<TModelIdentifier>>;
   private readonly _cadSceneParser: CadMetadataParser;
   private readonly _blobFileName: string;

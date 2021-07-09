@@ -17,7 +17,8 @@ import { getSdkApplicationId } from './utilities';
  * Provides 3D V2 specific extensions for the standard CogniteClient used by Reveal.
  */
 export class CdfModelDataClient
-  implements ModelDataClient<{ modelId: number; revisionId: number; format: File3dFormat }> {
+  implements ModelDataClient<{ modelId: number; revisionId: number; format: File3dFormat }>
+{
   private readonly client: CogniteClient;
   private appId: string | undefined;
 

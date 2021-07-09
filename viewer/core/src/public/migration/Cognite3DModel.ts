@@ -243,8 +243,8 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * 1 means parent, 2 means grandparent etc. If the node doesn't have as many
    * ancestors, the root of the model is returned. This can be determined by checking
    * that the range returned includes 0.
-   * @returns             Tree index range of the subtree spanned by the ancestor at the
-   *                      "generation" specified, or the root.
+   * @returns Tree index range of the subtree spanned by the ancestor at the
+   * "generation" specified, or the root.
    */
   async getAncestorTreeIndices(treeIndex: number, generation: number): Promise<NumericRange> {
     // This might fail if treeIndex is invalid, error checking below is just to be safe

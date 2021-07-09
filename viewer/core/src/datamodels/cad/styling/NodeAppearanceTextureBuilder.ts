@@ -182,9 +182,10 @@ export class NodeAppearanceTextureBuilder {
   }
 }
 
-function allocateTextures(
-  treeIndexCount: number
-): { overrideColorPerTreeIndexTexture: THREE.DataTexture; transformOverrideIndexTexture: THREE.DataTexture } {
+function allocateTextures(treeIndexCount: number): {
+  overrideColorPerTreeIndexTexture: THREE.DataTexture;
+  transformOverrideIndexTexture: THREE.DataTexture;
+} {
   const { width, height } = determinePowerOfTwoDimensions(treeIndexCount);
   const textureElementCount = width * height;
 

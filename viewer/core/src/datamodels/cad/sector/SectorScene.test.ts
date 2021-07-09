@@ -38,12 +38,12 @@ describe('SectorSceneImpl', () => {
     expect(
       sectorIds(scene.getSectorsIntersectingBox(new THREE.Box3().setFromArray([-10, -10, -10, 10, 10, 10])))
     ).toEqual([0, 1, 2]);
-    expect(
-      sectorIds(scene.getSectorsIntersectingBox(new THREE.Box3().setFromArray([0, 0, 0, 0.2, 0.2, 0.2])))
-    ).toEqual([0, 1]);
-    expect(
-      sectorIds(scene.getSectorsIntersectingBox(new THREE.Box3().setFromArray([0.6, 0.6, 0.6, 1, 1, 1])))
-    ).toEqual([0, 2]);
+    expect(sectorIds(scene.getSectorsIntersectingBox(new THREE.Box3().setFromArray([0, 0, 0, 0.2, 0.2, 0.2])))).toEqual(
+      [0, 1]
+    );
+    expect(sectorIds(scene.getSectorsIntersectingBox(new THREE.Box3().setFromArray([0.6, 0.6, 0.6, 1, 1, 1])))).toEqual(
+      [0, 2]
+    );
   });
 
   test('getSectorsIntersectingFrustum, some sectors inside', () => {

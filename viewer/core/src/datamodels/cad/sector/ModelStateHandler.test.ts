@@ -52,9 +52,7 @@ describe('ModelStateHandler', () => {
   });
 });
 
-function mockWantedSectors(
-  id: number
-): {
+function mockWantedSectors(id: number): {
   simple: WantedSector;
   detailed: WantedSector;
   discarded: WantedSector;

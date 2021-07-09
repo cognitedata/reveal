@@ -115,5 +115,10 @@
     "transform": [
       "glslify-import"
     ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn run lint"
+    }
   }
 }

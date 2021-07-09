@@ -19,10 +19,8 @@ describe('ByVisibilityGpuSectorCuller', () => {
   const materialManager = new CadMaterialManager();
   const setModelsMock: PropType<OrderSectorsByVisibilityCoverage, 'setModels'> = jest.fn();
   const setClippingMock: PropType<OrderSectorsByVisibilityCoverage, 'setClipping'> = jest.fn();
-  const orderSectorsByVisibilityMock: PropType<
-    OrderSectorsByVisibilityCoverage,
-    'orderSectorsByVisibility'
-  > = jest.fn();
+  const orderSectorsByVisibilityMock: PropType<OrderSectorsByVisibilityCoverage, 'orderSectorsByVisibility'> =
+    jest.fn();
   const context = createGlContext(64, 64, { preserveDrawingBuffer: true });
   const renderer = new THREE.WebGLRenderer({ context });
 

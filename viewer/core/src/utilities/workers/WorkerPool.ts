@@ -35,7 +35,7 @@ export class WorkerPool {
       const newWorker = {
         // NOTE: As of Comlink 4.2.0 we need to go through unknown before RevealParserWorker
         // Please feel free to remove `as unknown` if possible.
-        worker: (wrap(this.createWorker()) as unknown) as RevealParserWorker,
+        worker: wrap(this.createWorker()) as unknown as RevealParserWorker,
         activeJobCount: 0,
         messageIdCounter: 0
       };
