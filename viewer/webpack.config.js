@@ -103,8 +103,8 @@ module.exports = env => {
     plugins: [
       new copyPkgJsonPlugin({
         remove: development
-          ? ['devDependencies', 'scripts', 'workspaces']
-          : ['devDependencies', 'scripts', 'private', 'workspaces']
+          ? ['devDependencies', 'scripts', 'workspaces', 'husky']
+          : ['devDependencies', 'scripts', 'private', 'workspaces', 'husky']
       }),
       new webpack.DefinePlugin({
         'process.env': JSON.stringify({
