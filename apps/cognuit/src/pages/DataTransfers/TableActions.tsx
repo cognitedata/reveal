@@ -26,13 +26,7 @@ import { usePrepareDataTransfersQuery } from './hooks/usePrepareDataTransfersQue
 import { getSelectedColumnsPersistently } from './utils/Table/managePersistentColumns';
 import { getColumnNames } from './utils/Table/columns';
 
-interface Props {
-  setFilteredData: React.Dispatch<
-    React.SetStateAction<DataTransfersTableData[]>
-  >;
-}
-
-const TableActions: React.FC<Props> = ({ setFilteredData }) => {
+const TableActions: React.FC = () => {
   const { url } = useRouteMatch();
   const history = useHistory();
 
@@ -109,16 +103,6 @@ const TableActions: React.FC<Props> = ({ setFilteredData }) => {
     selectedDatatype,
     queryDataTransfers.dataUpdatedAt,
   ]);
-
-  function filterByNameSearch(name: string) {
-    let filtered = data.data;
-    if (name.length > 0) {
-      filtered = data.data.filter((item) =>
-        item.name.toLowerCase().includes(name.toLowerCase())
-      );
-    }
-    setFilteredData(filtered);
-  }
 
   function resetFilters() {
     dispatch(reportClear());
@@ -256,7 +240,6 @@ const TableActions: React.FC<Props> = ({ setFilteredData }) => {
             onSelectDate: (nextSelected) =>
               dispatch(updateFilters({ selectedDateRange: nextSelected })),
           }}
-          onNameSearchChange={filterByNameSearch}
           onReset={resetFilters}
         />
       )}

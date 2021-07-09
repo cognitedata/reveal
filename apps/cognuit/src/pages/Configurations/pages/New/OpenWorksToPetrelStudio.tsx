@@ -370,7 +370,7 @@ const OpenWorksToPetrelStudio = ({ name }: Props) => {
                     onChange={(value) =>
                       handleChange(ChangeType.PROJECT, value)
                     }
-                    suffixIcon={<Icon type="Down" />}
+                    suffixIcon={<Icon type="ChevronDownCompact" />}
                   >
                     {availableProjects.map((project) => (
                       <Option
@@ -557,7 +557,7 @@ const OpenWorksToPetrelStudio = ({ name }: Props) => {
                         onChange={(value) =>
                           handleChange(ChangeType.REPO, value)
                         }
-                        suffixIcon={<Icon type="Down" />}
+                        suffixIcon={<Icon type="ChevronDownCompact" />}
                       >
                         {availableRepositories.map((repository) => (
                           <Option
@@ -585,7 +585,7 @@ const OpenWorksToPetrelStudio = ({ name }: Props) => {
                         onChange={(value) =>
                           handleChange(ChangeType.DESTINATION_FOLDER, value)
                         }
-                        suffixIcon={<Icon type="Down" />}
+                        suffixIcon={<Icon type="ChevronDownCompact" />}
                       >
                         {availableDestinationFolders.map((folder) => (
                           <Option

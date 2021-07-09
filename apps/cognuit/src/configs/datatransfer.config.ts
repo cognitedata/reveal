@@ -12,7 +12,7 @@ export default {
   ],
   filterableColumns: ['report', 'author'],
   mandatoryColumns: ['status', 'datatype', 'name', 'report'],
-  nonSortableColumns: ['status', 'report'],
+  nonSortableColumns: ['status', 'report', 'name'],
   ignoreColumns: [
     'cdf_metadata',
     'business_tags',

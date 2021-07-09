@@ -19,7 +19,7 @@ const Step = ({ status, error_message, created_time }: StepType) => (
       txtColor={error_message ? Colors.danger.hex() : Colors.white.hex()}
     >
       <Icon
-        type={error_message ? 'WarningFilled' : 'Check'}
+        type={error_message ? 'WarningFilled' : 'Checkmark'}
         style={{ width: !error_message ? '65%' : 'auto' }}
       />
     </StepIconCircle>

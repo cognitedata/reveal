@@ -34,7 +34,7 @@ export const FilterList = ({
                 <Label>{dropdown.label}</Label>
                 <DropdownButton
                   type="secondary"
-                  icon="Down"
+                  icon="ChevronDownCompact"
                   iconPlacement="right"
                   onClick={() => toggleFilter(dropdown.name)}
                 >

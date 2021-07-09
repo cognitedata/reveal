@@ -17,14 +17,11 @@ export const Filters = ({
   date,
   datatype,
   configuration,
-  onNameSearchChange,
   onReset,
 }: FiltersProps) => {
-  const [nameFilter, setNameFilter] = useState('');
   const [openFilter, setOpenFilter] = useState<keyof FilterTypes | ''>('');
 
   const resetFilters = () => {
-    setNameFilter('');
     source.onSelectSource('');
     target.onSelectTarget('');
     configuration.onSelectConfiguration(null);
@@ -132,9 +129,6 @@ export const Filters = ({
             target.selected &&
             target.selectedProject)) && (
           <RenderSecondaryFilters
-            nameFilter={nameFilter}
-            setNameFilter={setNameFilter}
-            onNameSearchChange={onNameSearchChange}
             openFilter={openFilter}
             datatype={datatype}
             closeFilters={closeFilters}

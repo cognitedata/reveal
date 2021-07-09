@@ -18,7 +18,7 @@ describe('datatransfers/utils', () => {
 
       const name = result?.find((item) => item.key === 'name');
       expect(name?.title).toMatch('Name');
-      expect(name?.sorter).toBeFalsy();
+      expect(name?.sorter).toBeTruthy();
 
       const status = result?.find((item) => item.key === 'status');
       expect(status?.title).toMatch('');

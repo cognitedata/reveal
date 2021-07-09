@@ -1,4 +1,4 @@
-import { Input, Range, DateRange } from '@cognite/cogs.js';
+import { Range, DateRange } from '@cognite/cogs.js';
 import Label from 'components/Atoms/Label';
 
 import {
@@ -13,9 +13,6 @@ import { FilterList } from './FilterList';
 interface Props {
   date: FilterDateType;
   datatype: FilterDataTypeType;
-  nameFilter: string;
-  setNameFilter: (name: string) => void;
-  onNameSearchChange: (searchString: string) => void;
   openFilter: keyof FilterTypes | '';
   closeFilters: () => void;
   toggleFilter: (filterName: keyof FilterTypes) => void;
@@ -24,9 +21,6 @@ interface Props {
 export const RenderSecondaryFilters = ({
   date,
   datatype,
-  nameFilter,
-  setNameFilter,
-  onNameSearchChange,
   openFilter,
   closeFilters,
   toggleFilter,
@@ -44,21 +38,6 @@ export const RenderSecondaryFilters = ({
 
   return (
     <StartContainer>
-      <FieldWrapper>
-        <Label>Filter by name</Label>
-        <Input
-          value={nameFilter}
-          icon="Search"
-          iconPlacement="left"
-          size="default"
-          onChange={(e) => {
-            setNameFilter(e.target.value);
-            onNameSearchChange(e.target.value);
-          }}
-          placeholder="Name"
-          className={openFilter !== 'date' ? 'input-visible' : 'input-hidden'}
-        />
-      </FieldWrapper>
       <FilterList
         onReset={() => datatype.onSelectType(null)}
         resetText="All DataTypes"

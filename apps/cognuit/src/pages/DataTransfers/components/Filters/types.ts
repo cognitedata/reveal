@@ -53,7 +53,6 @@ export type FiltersProps = {
   configuration: FilterConfigurationType;
   datatype: FilterDataTypeType;
   date: FilterDateType;
-  onNameSearchChange: (searchString: string) => void;
   onReset: () => void;
 };
 

@@ -1,4 +1,4 @@
-import { Colors } from '@cognite/cogs.js';
+import { Colors, Table } from '@cognite/cogs.js';
 import { StatusDot } from 'pages/DataTransfers/elements';
 import { DataTransfersTableData } from 'pages/DataTransfers/types';
 import { getFormattedTimestampOrString } from 'pages/DataTransfers/utils';
@@ -6,7 +6,6 @@ import { Rule } from 'typings/interfaces';
 import { apiStatuses } from 'utils/statuses';
 
 import { DetailViewButton } from '../../components/DetailView/DetailViewButton';
-import { SelectColumnFilter } from '../../components/Table/Filters/SelectColumnFilter';
 
 interface Props {
   handleDetailViewClick: (record: DataTransfersTableData) => void;
@@ -23,11 +22,19 @@ export const dataTransfersColumnRules = ({
 }: Props): Rule[] => {
   return [
     {
+      key: 'name',
+      render: ({ value }: { value: any }) => {
+        return getFormattedTimestampOrString(value);
+      },
+      Filter: Table.InputFilter(),
+      filter: 'fuzzyText',
+    },
+    {
       key: 'report',
       render: ({ value }: { value: any }) => {
         return getFormattedTimestampOrString(value);
       },
-      Filter: SelectColumnFilter,
+      Filter: Table.SelectColumnFilter(),
       filter: 'includes',
     },
     {

@@ -106,7 +106,7 @@ const DataTransfers: React.FC = () => {
 
   return (
     <ContentContainer>
-      <TableActions setFilteredData={setFilteredData} />
+      <TableActions />
       <Table<DataTransfersTableData>
         filterable
         dataSource={filteredData}
