@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React from 'react';
-import { Button, Menu } from '@cognite/cogs.js';
+import { Button, Menu, Icon } from '@cognite/cogs.js';
 import { useClickAwayListener } from 'hooks';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootDispatcher } from 'store/types';
@@ -9,7 +9,11 @@ import { ModalType } from 'store/modals/types';
 import { Suite } from 'store/suites/types';
 import { useMetrics } from 'utils/metrics';
 import { getGroupsState, isAdmin } from 'store/groups/selectors';
-import { ActionsContainer, MenuContainer, MenuItemContent } from './elements';
+import {
+  SuiteActionsContainer,
+  MenuContainer,
+  MenuItemContent,
+} from './elements';
 
 interface Props {
   dataItem: Suite;
@@ -52,13 +56,27 @@ export const SuiteMenu: React.FC<Props> = ({ dataItem }) => {
   return (
     <MenuContainer ref={ref}>
       <Button
-        variant="ghost"
+        type="ghost"
         icon="MoreOverflowEllipsisHorizontal"
         onClick={handleMenuOpen}
+        aria-label="View more"
       />
-      <ActionsContainer>
+      <SuiteActionsContainer>
         {isComponentVisible && (
           <Menu>
+            <Menu.Item>
+              <MenuItemContent
+                className={canEdit ? 'share-action' : ''}
+                role="button"
+                tabIndex={0}
+                onClick={(event) =>
+                  handleOpenModal(event, 'ShareLink', { suite: dataItem })
+                }
+              >
+                <Icon type="Share" />
+                Share suite
+              </MenuItemContent>
+            </Menu.Item>
             {canEdit && (
               <>
                 <Menu.Item>
@@ -69,6 +87,7 @@ export const SuiteMenu: React.FC<Props> = ({ dataItem }) => {
                       handleOpenModal(event, 'EditSuite', { suite: dataItem })
                     }
                   >
+                    <Icon type="Edit" />
                     Edit suite
                   </MenuItemContent>
                 </Menu.Item>
@@ -80,25 +99,15 @@ export const SuiteMenu: React.FC<Props> = ({ dataItem }) => {
                       handleOpenModal(event, 'DeleteSuite', { suite: dataItem })
                     }
                   >
+                    <Icon type="Trash" />
                     Delete suite
                   </MenuItemContent>
                 </Menu.Item>
               </>
             )}
-            <Menu.Item>
-              <MenuItemContent
-                role="button"
-                tabIndex={0}
-                onClick={(event) =>
-                  handleOpenModal(event, 'ShareLink', { suite: dataItem })
-                }
-              >
-                Share suite
-              </MenuItemContent>
-            </Menu.Item>
           </Menu>
         )}
-      </ActionsContainer>
+      </SuiteActionsContainer>
     </MenuContainer>
   );
 };

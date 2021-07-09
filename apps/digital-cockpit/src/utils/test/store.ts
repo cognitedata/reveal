@@ -11,6 +11,7 @@ export const createMockStore = (initState: StoreState) => {
     form,
     notification,
     config,
+    layout,
   } = initState || {};
   return configureStore({
     suitesTable,
@@ -21,5 +22,6 @@ export const createMockStore = (initState: StoreState) => {
     form,
     notification,
     config,
+    layout,
   });
 };

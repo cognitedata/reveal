@@ -6,8 +6,11 @@ const TileBasic = styled.div`
   display: inline-flex;
   cursor: pointer;
   background-color: var(--cogs-white);
+  border-radius: 4px;
+  box-shadow: var(--cogs-z-2);
+
   &:hover {
-    box-shadow: var(--cogs-z-4);
+    box-shadow: var(--cogs-z-8);
   }
 `;
 
@@ -24,12 +27,29 @@ export const ApplicationTileContainer = styled(SmallTileContainer)`
   margin: 0 48px 24px 0;
 `;
 
-export const TileContainer = styled(TileBasic)`
+export const TileContainer = styled(TileBasic)<{
+  isBoard?: boolean;
+}>`
   position: relative;
   flex-direction: column;
-  width: 300px;
-  border: 1px solid var(--cogs-greyscale-grey4);
+  width: ${({ isBoard }) => (isBoard ? '100%' : '307px')};
+  height: 100%;
   margin: 0 48px 24px 0;
+  border-radius: 4px;
+  .iframe-preview {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 8px 8px;
+    height: 184px;
+
+    iframe {
+      border-radius: 4px;
+      border: 1px solid var(--cogs-greyscale-grey4);
+      width: 100%;
+      height: 100%;
+    }
+  }
 `;
 
 export const TileDescription = styled.div`
@@ -41,28 +61,49 @@ export const TileDescription = styled.div`
   & > span {
     display: grid;
   }
+  & > p {
+    color: var(--cogs-greyscale-grey6);
+  }
 `;
 
 export const TileHeader = styled(SpaceBetween)<{
   isBoard?: boolean;
   color?: string;
 }>`
-  padding: 8px 12px;
-  height: 56px;
   display: flex;
   align-items: center;
   background-color: var(--cogs-white);
-  border-bottom: ${({ isBoard, color }) =>
-    isBoard ? `2px solid ${color}` : '1px solid var(--cogs-greyscale-grey4)'};
+  width: -webkit-fill-available;
+  padding: 0 8px 0 12px;
+  ${({ isBoard }) =>
+    !isBoard && 'border-bottom: 1px solid var(--cogs-greyscale-grey4);'}
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  height: 60px;
+
+  & > div {
+    align-items: center;
+  }
 `;
 
 export const TilePreview = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 184px;
+  height: calc(100% - 56px);
   background-color: var(--cogs-white);
-  padding: 12px;
+  border-bottom-right-radius: 4px;
+  border-bottom-left-radius: 4px;
+  min-height: 184px;
+
+  & > .cogs-detail {
+    border-radius: 4px;
+    width: 264px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--cogs-greyscale-grey7);
+  }
 `;
 
 export const ApplicationTileHeader = styled(TileHeader)`
@@ -79,10 +120,25 @@ export const LargeTileContainer = styled(TileBasic)`
 export const LargeTilePreview = styled.div`
   display: flex;
   align-items: center;
-  height: 578px;
-  width: 952px;
+  height: 576px;
   background-color: var(--cogs-white);
+  border-radius: 4px;
   justify-content: center;
+
+  .iframe-preview {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 8px 8px;
+    height: 100%;
+    width: 100%;
+
+    iframe {
+      border-radius: 4px;
+      width: 100%;
+      height: 100%;
+    }
+  }
 `;
 
 export const StyledTitle = styled(Title)`
@@ -91,17 +147,21 @@ export const StyledTitle = styled(Title)`
   text-overflow: ellipsis;
 `;
 
+export const ImgPreview = styled.div`
+  display: flex;
+  height: 100%;
+  width: 100%;
+  padding: 0 8px 8px;
+
+  & img {
+    border-radius: 4px;
+    width: 100%;
+    height: 100%;
+    object-fit: scale-down;
+  }
+`;
+
 export const IconContainer = styled.div`
   display: flex;
   color: var(--cogs-greyscale-grey6);
-`;
-
-export const ImgPreview = styled.div`
-  display: flex;
-  max-width: 100%;
-  max-height: 100%;
-  & img {
-    max-width: 100%;
-    max-height: 100%;
-  }
 `;

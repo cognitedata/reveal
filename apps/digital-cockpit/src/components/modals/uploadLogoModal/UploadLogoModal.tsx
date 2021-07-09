@@ -100,13 +100,13 @@ const UploadLogoModal: React.FC = () => {
 
   const Footer = () => (
     <ModalFooter>
-      <Button variant="ghost" onClick={cancel} disabled={isSaving}>
+      <Button type="ghost" onClick={cancel} disabled={isSaving}>
         Cancel
       </Button>
       {isSaving ? (
         <Icon type="Loading" />
       ) : (
-        <Button type="primary" variant="ghost" onClick={uploadLogoFile}>
+        <Button type="primary" variant="outline" onClick={uploadLogoFile}>
           Upload logo
         </Button>
       )}

@@ -12,6 +12,7 @@ export interface ConfigState extends ConfigItems {
   dataSetId?: number;
   customerLogoFetched?: boolean;
   applications?: string[];
+  useAllGroups: boolean;
 }
 export type ConfigRootAction = ActionType<typeof actions>;
 
@@ -21,4 +22,13 @@ export type ApplicationItem = {
   title: string;
   url: string;
   rightIconKey?: AllIconTypes;
+};
+
+export type AppConfigItemResponse = {
+  values: string[];
+};
+
+export type ConfigItemPayload = {
+  name: string;
+  values: string[];
 };

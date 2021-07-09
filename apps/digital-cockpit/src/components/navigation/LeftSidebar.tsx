@@ -82,7 +82,7 @@ const LeftSidebar: React.FC = () => {
       {!!applications.length && (
         <>
           <TitleContainer>
-            <Overline level={2}>Applications</Overline>
+            <Overline level={2}>{isOpen ? 'Applications' : 'Apps'}</Overline>
           </TitleContainer>
           <ItemsContainer>
             {applications.map((item) => renderApplicationItem(item))}

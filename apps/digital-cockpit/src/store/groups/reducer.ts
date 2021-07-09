@@ -4,7 +4,7 @@ import { checkIsAdmin } from 'utils/groups';
 import {
   GroupsState,
   UserGroupsActionTypes,
-  UserGroupsootAction,
+  UserGroupsRootAction,
 } from './types';
 
 export const initialState: GroupsState = {
@@ -27,19 +27,19 @@ export const GroupsReducer = createReducer(initialState)
   )
   .handleAction(
     UserGroupsActionTypes.USER_GROUPS_LOADED,
-    (state: GroupsState, action: UserGroupsootAction) => ({
+    (state: GroupsState, action: UserGroupsRootAction) => ({
       ...state,
       loading: false,
       loaded: true,
       error: '',
-      groups: (action.payload as Group[]).filter((group) => !!group.sourceId),
+      groups: action.payload as Group[],
       isAdmin: checkIsAdmin(action.payload as Group[]),
       filter: [],
     })
   )
   .handleAction(
     UserGroupsActionTypes.USER_GROUPS_ERROR,
-    (state: GroupsState, action: UserGroupsootAction) => ({
+    (state: GroupsState, action: UserGroupsRootAction) => ({
       ...state,
       loading: false,
       error: (action.payload as Error)?.message,
@@ -47,7 +47,7 @@ export const GroupsReducer = createReducer(initialState)
   )
   .handleAction(
     UserGroupsActionTypes.SET_GROUP_FILTER,
-    (state: GroupsState, action: UserGroupsootAction) => ({
+    (state: GroupsState, action: UserGroupsRootAction) => ({
       ...state,
       filter: action.payload as string[],
     })

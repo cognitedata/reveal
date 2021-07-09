@@ -23,7 +23,7 @@ interface Props {
 }
 
 export const Tile: React.FC<Props> = ({
-  avatar = false,
+  avatar = true,
   color,
   dataItem,
   menu,
@@ -52,7 +52,10 @@ export const Tile: React.FC<Props> = ({
 
   return (
     <>
-      <TileContainer {...(isBoard && { onClick: setAsLastvisited })}>
+      <TileContainer
+        isBoard={isBoard}
+        {...(isBoard && { onClick: setAsLastvisited })}
+      >
         <TileHeader isBoard={isBoard} color={color}>
           <Flex>
             {avatar && <SuiteAvatar title={dataItem.title} color={color} />}

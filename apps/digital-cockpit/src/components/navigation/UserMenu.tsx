@@ -8,11 +8,13 @@ type UserMenuProps = {
   email: string;
   client: CdfClient;
   openUploadLogoModal: () => void;
+  openAppConfigModal: () => void;
   isAdmin: boolean;
 };
 
 const UserMenu = (props: UserMenuProps) => {
-  const { email, client, openUploadLogoModal, isAdmin } = props;
+  const { email, client, openUploadLogoModal, openAppConfigModal, isAdmin } =
+    props;
   const { changeLanguage, availableLanguages, currentLanguage } =
     useTranslation('UserMenu');
 
@@ -46,6 +48,9 @@ const UserMenu = (props: UserMenuProps) => {
           <Menu.Divider />
           <Menu.Item appendIcon="Upload" onClick={() => openUploadLogoModal()}>
             Upload customer logo
+          </Menu.Item>
+          <Menu.Item appendIcon="Settings" onClick={() => openAppConfigModal()}>
+            Change configuration
           </Menu.Item>
         </>
       )}

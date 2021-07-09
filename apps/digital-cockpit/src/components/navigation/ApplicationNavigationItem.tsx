@@ -12,7 +12,11 @@ const ApplicationNavigationItem: React.FC<Props> = ({ item }: Props) => {
   const { setAsLastvisited } = useLastVisited(item.key);
   return (
     <NavigationItemContainer className="nav-item" onClick={setAsLastvisited}>
-      <Graphic type={item.iconKey} style={{ width: '32px' }} />
+      <Graphic
+        type={item.iconKey}
+        style={{ width: '32px' }}
+        title={item.title}
+      />
       <Tooltip content={item.title}>
         <Body level={2} as={NavigationItemTitle} className="nav-item-text">
           {item.title}

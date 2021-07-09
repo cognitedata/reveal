@@ -64,6 +64,7 @@ DEPENDENCIES = [
     "@npm//@cognite/gcs-browser-upload",
     "@npm//@cognite/sdk",
     "@npm//@sentry/browser",
+    "@npm//gridstack",
     "@npm//i18next",
     "@npm//lodash",
     "@npm//moment",

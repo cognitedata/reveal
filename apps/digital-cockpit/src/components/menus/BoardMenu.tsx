@@ -1,7 +1,6 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React from 'react';
-import { Button, Menu } from '@cognite/cogs.js';
-import { useClickAwayListener } from 'hooks';
+import { Menu, Icon, Dropdown } from '@cognite/cogs.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { getGroupsState, isAdmin } from 'store/groups/selectors';
 import { RootDispatcher } from 'store/types';
@@ -14,12 +13,10 @@ import { ActionsContainer, MenuContainer, MenuItemContent } from './elements';
 
 interface Props {
   board: Board;
-  suite: Suite;
+  suite?: Suite;
 }
 export const BoardMenu: React.FC<Props> = ({ board, suite }) => {
   const dispatch = useDispatch<RootDispatcher>();
-  const { ref, isComponentVisible, setIsComponentVisible } =
-    useClickAwayListener(false);
   const metrics = useMetrics('BoardMenu');
 
   const admin = useSelector(isAdmin);
@@ -46,7 +43,6 @@ export const BoardMenu: React.FC<Props> = ({ board, suite }) => {
     // prevent from calling quick access click handler
     event.stopPropagation();
     trackMetrics('OpenMenu', { board, suite });
-    setIsComponentVisible(() => !isComponentVisible);
   };
 
   const handleOpenModal = (
@@ -56,65 +52,68 @@ export const BoardMenu: React.FC<Props> = ({ board, suite }) => {
   ) => {
     event.preventDefault();
     event.stopPropagation();
-    setIsComponentVisible(() => !isComponentVisible);
     trackMetrics(modalType as string, modalProps);
     dispatch(modalOpen({ modalType, modalProps }));
   };
 
-  return (
-    <MenuContainer ref={ref}>
-      <Button
-        variant="ghost"
-        icon="MoreOverflowEllipsisHorizontal"
-        onClick={handleMenuOpen}
-      />
-      <ActionsContainer>
-        {isComponentVisible && (
-          <Menu>
-            {canEdit && (
-              <>
-                <Menu.Item>
-                  <MenuItemContent
-                    role="button"
-                    tabIndex={0}
-                    // TODO(dtc-256) avoid using callbacks with passed modal type and data
-                    onClick={(event) =>
-                      handleOpenModal(event, 'EditBoard', {
-                        board,
-                        suite,
-                      })
-                    }
-                  >
-                    Edit board
-                  </MenuItemContent>
-                </Menu.Item>
-                <Menu.Item>
-                  <MenuItemContent
-                    role="button"
-                    tabIndex={0}
-                    onClick={(event) =>
-                      handleOpenModal(event, 'DeleteBoard', { board, suite })
-                    }
-                  >
-                    Remove board
-                  </MenuItemContent>
-                </Menu.Item>
-              </>
-            )}
+  const renderMenuContent = () => (
+    <ActionsContainer>
+      <Menu>
+        <Menu.Item>
+          <MenuItemContent
+            className={canEdit ? 'share-action' : ''}
+            role="button"
+            tabIndex={0}
+            onClick={(event) => handleOpenModal(event, 'ShareLink', { board })}
+          >
+            <Icon type="Share" />
+            Share board
+          </MenuItemContent>
+        </Menu.Item>
+        {canEdit && (
+          <>
             <Menu.Item>
               <MenuItemContent
                 role="button"
                 tabIndex={0}
                 onClick={(event) =>
-                  handleOpenModal(event, 'ShareLink', { board })
+                  handleOpenModal(event, 'EditBoard', {
+                    board,
+                    suite,
+                  })
                 }
               >
-                Share board
+                <Icon type="Edit" />
+                Edit board
               </MenuItemContent>
             </Menu.Item>
-          </Menu>
+            <Menu.Item>
+              <MenuItemContent
+                role="button"
+                tabIndex={0}
+                onClick={(event) =>
+                  handleOpenModal(event, 'DeleteBoard', { board, suite })
+                }
+              >
+                <Icon type="Trash" />
+                Remove board
+              </MenuItemContent>
+            </Menu.Item>
+          </>
         )}
-      </ActionsContainer>
+      </Menu>
+    </ActionsContainer>
+  );
+
+  return (
+    <MenuContainer onClick={handleMenuOpen} className="cogs-btn-ghost">
+      <Dropdown
+        content={renderMenuContent()}
+        appendTo={document.body}
+        hideOnClick
+      >
+        <Icon type="MoreOverflowEllipsisHorizontal" />
+      </Dropdown>
     </MenuContainer>
   );
 };

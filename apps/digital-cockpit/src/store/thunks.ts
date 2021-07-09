@@ -5,6 +5,7 @@ import { getMetrics } from 'utils/metrics';
 import { setHttpError } from 'store/notification/thunks';
 import { Metrics } from '@cognite/metrics';
 import { checkIsAdmin } from 'utils/groups';
+import * as layoutActions from 'store/layout/actions';
 import * as suiteActions from './suites/actions';
 import * as groupActions from './groups/actions';
 import * as configActions from './config/actions';
@@ -15,7 +16,24 @@ export const fetchAppData =
     dispatch(groupActions.loadGroups());
     dispatch(suiteActions.loadSuitesTable());
     try {
-      const { groups, suites, applications } = await apiClient.getAppData();
+      // get user groups configuration
+      const {
+        values: [useAllGroupsConfig],
+      } = await apiClient.getAppConfigItem('useAllGroups');
+      const linkedGroupsOnly = useAllGroupsConfig !== 'true';
+      dispatch(
+        configActions.addConfigItems({
+          useAllGroups: useAllGroupsConfig === 'true',
+        })
+      );
+      // get the app data
+      const {
+        groups,
+        suites,
+        applications,
+        layouts = [],
+      } = await apiClient.getAppData(linkedGroupsOnly);
+      dispatch(layoutActions.layoutsLoaded(layouts));
       dispatch(groupActions.loadedGroups(groups));
       dispatch(suiteActions.loadedSuitesTable(suites));
       dispatch(configActions.addConfigItems({ applications }));

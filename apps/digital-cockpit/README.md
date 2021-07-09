@@ -50,3 +50,38 @@ Creating it manually gives you more options in configuring the data set itself. 
 **Name**: `digital-cockpit`
 
 **ExternalId**: `dc_img_preview_storage`
+
+### How to run the app locally with application-services
+
+In order to run digital-cockpit-api and digital cockpit (CSP) locally, you need to clone [https://github.com/cognitedata/application-services](application services) repository. Then, follow this [https://github.com/cognitedata/application-services#setup-for-local-development](guide) to set up ibazel.
+
+Once you are completed with the set up, go ahead and modify the following files for local development:
+
+- `digital-cockpit-api/src/config/config.ts`
+
+```js
+const LOCAL_DB_SERVICE = true;
+export const AADAPPID = 'b1340a2b-1e14-466f-8a9c-22ebbd948b16';
+```
+
+- `db-service/src/config/config.ts`
+
+```js
+const CLUSTER = 'ew1';
+const PROJECT = 'db-service-staging-ew1-1';
+// also change the PK. If you don't have one, ask in the team channel.
+```
+
+Then, run `yarn start` in `application-services/services/db-service` and in `application-services/services/digital-cockpit-api`.
+
+If you don't have ibazel installed, you can manually run bazel:
+
+```
+..application-services/services/db-service $ bazel run :db-service.binary
+```
+
+```
+..application-services/services/digital-cockpit-api $ bazel run :digital-cockpit-api.binary
+```
+
+Finally, return to `digital-cockpit` and run `REACT_APP_DC_API_URL=http://localhost:8001 yarn start`

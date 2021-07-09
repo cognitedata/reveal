@@ -31,6 +31,7 @@
     "chart.js": "^2.9.4",
     "d3": "^6.2.0",
     "date-fns": "^2.19.0",
+    "gridstack": "^4.2.5",
     "i18next": "^20.3.2",
     "i18next-chained-backend": "^3.0.2",
     "i18next-localstorage-backend": "^3.1.2",

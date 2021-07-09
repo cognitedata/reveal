@@ -8,7 +8,7 @@ import Modal from 'components/modals/simpleModal/Modal';
 import {
   ModalContainer,
   ModalFooter,
-  ApplicationsSwitchContainer,
+  SwitchContainer,
 } from 'components/modals/elements';
 import { useMetrics } from 'utils/metrics';
 import { getApplications } from 'store/config/selectors';
@@ -66,7 +66,7 @@ const SelectApplications: React.FC = () => {
       >
         <ModalContainer>
           <Title level={5}>Select deployed applications</Title>
-          <ApplicationsSwitchContainer>
+          <SwitchContainer>
             {allApplications.map((app: ApplicationItem) => (
               <Switch
                 key={app.key}
@@ -78,7 +78,7 @@ const SelectApplications: React.FC = () => {
                 {app.title}
               </Switch>
             ))}
-          </ApplicationsSwitchContainer>
+          </SwitchContainer>
         </ModalContainer>
       </Modal>
     </>

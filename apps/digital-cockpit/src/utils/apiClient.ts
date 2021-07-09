@@ -1,12 +1,18 @@
 import { ClientOptions, CogniteClient, Group } from '@cognite/sdk';
 import { LastVisited, UserSpacePayload } from 'store/userSpace/types';
 import { Suite } from 'store/suites/types';
+import {
+  BoardLayoutPayloadItem,
+  BoardLayoutResponse,
+} from 'store/layout/types';
+import { ConfigItemPayload, AppConfigItemResponse } from 'store/config/types';
 import sidecar from './sidecar';
 
 type AppDataResponse = {
   suites: Suite[];
   groups: Group[];
   applications: string[];
+  layouts: BoardLayoutPayloadItem[];
 };
 
 type dcClientOptions = {
@@ -71,6 +77,23 @@ export class ApiClient {
   }
   saveApplications(applications: string[]): Promise<void> {
     return this.makePOSTRequest('/applications', { applications });
+  }
+
+  getLayout(): Promise<BoardLayoutResponse> {
+    return this.makeGETRequest('/layout');
+  }
+  saveLayout(layouts: BoardLayoutPayloadItem[]): Promise<void> {
+    return this.makePOSTRequest('/layout', { layouts });
+  }
+
+  getAppConfigItem(name: string): Promise<AppConfigItemResponse> {
+    return this.makeGETRequest(`/config/${name}`);
+  }
+  saveAppConfig(items: ConfigItemPayload[]): Promise<void> {
+    return this.makePOSTRequest(`/config`, { items });
+  }
+  saveAppConfigItem({ name, values }: ConfigItemPayload): Promise<string[]> {
+    return this.makePOSTRequest(`/config/${name}`, { values });
   }
 
   /**

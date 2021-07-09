@@ -87,7 +87,7 @@ const ActionButtons: React.FC<Props> = ({
     <ActionButtonsContainer>
       {board.key && !isEmpty(suite?.boards) ? (
         <>
-          <Button variant="ghost" onClick={clear}>
+          <Button type="ghost" onClick={clear}>
             Cancel
           </Button>
           <Button

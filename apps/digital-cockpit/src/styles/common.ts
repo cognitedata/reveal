@@ -38,6 +38,33 @@ export const CustomMenuLink = styled.a`
 
 export const OverviewContainer = styled.div`
   padding: 24px 48px;
+
+  .grid-stack > .grid-stack-item > .grid-stack-item-content {
+    overflow-y: hidden;
+  }
+
+  .grid-stack-item[gs-w='4'] {
+    width: 100%;
+  }
+  .grid-stack-item[gs-w='3'] {
+    width: 75%;
+  }
+  .grid-stack-item[gs-w='2'] {
+    width: 50%;
+  }
+  .grid-stack-item[gs-w='1'] {
+    width: 25%;
+  }
+
+  .grid-stack-item[gs-x='3'] {
+    left: 75%;
+  }
+  .grid-stack-item[gs-x='2'] {
+    left: 50%;
+  }
+  .grid-stack-item[gs-x='1'] {
+    left: 25%;
+  }
 `;
 
 export const Flex = styled.div`

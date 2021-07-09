@@ -11312,6 +11312,11 @@ graphlib@^2.1.5:
   dependencies:
     lodash "^4.17.15"
 
+gridstack@^4.2.5:
+  version "4.2.5"
+  resolved "https://registry.yarnpkg.com/gridstack/-/gridstack-4.2.5.tgz#f024e16fe95914cd506115ae88c945770244fd7c"
+  integrity sha512-pOnUmNHlx47RTyOu9UWigmPo2YSBpAfTlQQnpAl2zvi+UxglIjUfTHEsRe4ce8qMLiS73VtmwfBwAhbEF67TLA==
+
 growly@^1.3.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/growly/-/growly-1.3.0.tgz#f10748cbe76af964b7c96c93c6bcc28af120c081"

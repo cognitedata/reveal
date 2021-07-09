@@ -80,7 +80,7 @@ const CustomModal: React.FC<Props> = ({
         <Title level={3}>{headerText}</Title>
         {closeIcon && (
           <ModalCloseButton>
-            <Button unstyled variant="ghost" onClick={onCancel}>
+            <Button unstyled type="ghost" onClick={onCancel}>
               {closeIcon}
             </Button>
           </ModalCloseButton>

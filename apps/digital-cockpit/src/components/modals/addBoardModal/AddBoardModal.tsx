@@ -68,7 +68,7 @@ const AddBoardModal: React.FC<Props> = ({ dataItem }: Props) => {
 
   const footer = (
     <ModalFooter>
-      <Button variant="ghost" onClick={cancel} disabled={formSaving}>
+      <Button type="ghost" onClick={cancel} disabled={formSaving}>
         Cancel
       </Button>
       {formSaving ? (

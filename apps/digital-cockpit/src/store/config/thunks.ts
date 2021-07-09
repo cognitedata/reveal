@@ -3,8 +3,14 @@ import { ApiClient, CdfClient } from 'utils';
 import { FILE_STORAGE_DATA_SET_ID } from 'constants/cdf';
 import { setHttpError } from 'store/notification/thunks';
 import * as Sentry from '@sentry/browser';
-import { setNotification } from 'store/notification/actions';
+import {
+  setNotification,
+  setCustomNotification,
+} from 'store/notification/actions';
+import map from 'lodash/map';
+import isArray from 'lodash/isArray';
 import * as actions from './actions';
+import { ConfigItems, ConfigItemPayload } from './types';
 
 export const getDataSet =
   (client: CdfClient) => async (dispatch: RootDispatcher) => {
@@ -69,6 +75,30 @@ export const saveApplicationsList =
       );
     } catch (e) {
       dispatch(setHttpError(`Failed to save applications list`, e));
+      Sentry.captureException(e);
+    }
+  };
+
+export const saveAppConfig =
+  (apiClient: ApiClient, items: ConfigItems) =>
+  async (dispatch: RootDispatcher) => {
+    try {
+      const payload: ConfigItemPayload[] = map(items, (val, key) => ({
+        name: key,
+        values: isArray(val) ? val : [`${val}`],
+      }));
+      await apiClient.saveAppConfig(payload);
+      dispatch(actions.addConfigItems(items));
+      dispatch(
+        setCustomNotification({
+          type: 'success',
+          title: 'Configuration saved',
+          message: 'Please reload the page',
+          actions: ['reload'],
+        })
+      );
+    } catch (e) {
+      dispatch(setHttpError(`Failed to save configuration`, e));
       Sentry.captureException(e);
     }
   };

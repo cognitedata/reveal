@@ -10,7 +10,7 @@ export enum UserGroupsActionTypes {
   CLEAR_GROUP_FILTER = 'userGroups/CLEAR_FILTER',
 }
 
-export type UserGroupsootAction = ActionType<typeof actions>;
+export type UserGroupsRootAction = ActionType<typeof actions>;
 
 export interface GroupsState {
   loading: boolean;

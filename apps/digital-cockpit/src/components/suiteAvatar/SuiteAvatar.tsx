@@ -28,20 +28,23 @@ const SuiteAvatar: React.FC<Props> = ({
   logo,
 }: Props) => {
   const avatarSize = sizeComponentMap[size];
-  return (
-    <SuiteAvatarContainer as={avatarSize} color={color} disabled={disabled}>
-      {logo ? (
-        <img
-          width={24}
-          height={24}
-          src={types[logo] || types.default}
-          alt={logo}
-        />
-      ) : (
-        title && acronym(title)
-      )}
-    </SuiteAvatarContainer>
-  );
+
+  const getLogoComponent = () => {
+    if (logo && types[logo]) {
+      return (
+        <SuiteAvatarContainer as={avatarSize} color={color} disabled={disabled}>
+          <img width={24} height={24} src={types[logo]} alt={logo} />
+        </SuiteAvatarContainer>
+      );
+    }
+
+    return (
+      <SuiteAvatarContainer as={avatarSize} color={color} disabled={disabled}>
+        {title && acronym(title)}
+      </SuiteAvatarContainer>
+    );
+  };
+  return <>{getLogoComponent()}</>;
 };
 
 export default SuiteAvatar;

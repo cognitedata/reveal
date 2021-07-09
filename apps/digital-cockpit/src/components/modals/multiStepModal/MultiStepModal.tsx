@@ -82,7 +82,7 @@ export const MultiStepModal: React.FC<Props> = ({ modalSettings }: Props) => {
 
   const Footer = () => (
     <ModalFooter>
-      <Button variant="ghost" onClick={cancel} disabled={formSaving}>
+      <Button type="ghost" onClick={cancel} disabled={formSaving}>
         Cancel
       </Button>
       <div>

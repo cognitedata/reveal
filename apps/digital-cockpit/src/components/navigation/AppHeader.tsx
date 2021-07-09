@@ -136,6 +136,10 @@ const AppHeader: React.FC = () => {
     dispatch(modalOpen({ modalType: 'UploadLogo' }));
   };
 
+  const openAppConfigModal = () => {
+    dispatch(modalOpen({ modalType: 'AppConfig' }));
+  };
+
   if (!customerLogoFetched) {
     return null;
   }
@@ -178,7 +182,7 @@ const AppHeader: React.FC = () => {
         </Tooltip>
       ),
       menu: (
-        <Menu>
+        <Menu className="app-header-groups-list-menu">
           <Menu.Header>Select Group Access to View</Menu.Header>
           <GroupItemWrapper>
             {allGroupNames.map((groupName) => (
@@ -236,6 +240,7 @@ const AppHeader: React.FC = () => {
           email={authState?.email || ''}
           client={client}
           openUploadLogoModal={openUploadLogoModal}
+          openAppConfigModal={openAppConfigModal}
           isAdmin={admin}
         />
       ),

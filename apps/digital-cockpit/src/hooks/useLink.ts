@@ -12,14 +12,14 @@ export function useLink() {
       default:
         return 'Digital Cockpit';
     }
-  }, []);
+  }, [window.location.hostname]);
   const fusionLink = useMemo(
     () => `https://fusion.cognite.com/${tenant}`,
     [tenant]
   );
   const accessManageLink = useMemo(
     () => `${fusionLink}/new-access-management/groups`,
-    [fusionLink]
+    [tenant]
   );
 
   return {

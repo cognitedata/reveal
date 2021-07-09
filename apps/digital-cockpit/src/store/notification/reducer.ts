@@ -10,6 +10,7 @@ const initialState: NotificationState = {
   type: 'default',
   title: '',
   message: '',
+  actions: [],
 };
 
 export const NotificationReducer = createReducer(initialState)
@@ -33,8 +34,15 @@ export const NotificationReducer = createReducer(initialState)
         : '',
     })
   )
+  .handleAction(
+    NotificationTypes.SET_CUSTOM_NOTIFICATION,
+    (_: NotificationState, action: NotificationRootAction) => ({
+      ...(action.payload as NotificationState),
+    })
+  )
   .handleAction(NotificationTypes.CLEAR_NOTIFICATION, () => ({
     type: 'default',
     title: '',
     message: '',
+    actions: [],
   }));

@@ -110,6 +110,10 @@ export const AppHeaderWrapper = styled.div`
   .topbar-logo-wrapper {
     border-left: none;
   }
+  .app-header-groups-list-menu {
+    max-height: calc(100vh - 65px);
+    overflow-y: scroll;
+  }
 `;
 
 export const GroupPreview = styled.div`

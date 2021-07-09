@@ -18,6 +18,7 @@ export type ModalType =
   | 'ShareLink'
   | 'UploadLogo'
   | 'SelectApplications'
+  | 'AppConfig'
   | null;
 
 export type Modal = {

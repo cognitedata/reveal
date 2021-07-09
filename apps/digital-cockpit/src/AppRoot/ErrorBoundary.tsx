@@ -5,19 +5,20 @@ import { StoreState } from 'store/types';
 import { toast, ToastContainer } from '@cognite/cogs.js';
 import { clearNotification } from 'store/notification/actions';
 import ErrorPage from 'pages/ErrorPage';
+import Toast from './Toast';
 
 type Props = {
   children?: React.ReactNode;
 };
 
-const openToast = (type: string, child: React.ReactNode) => {
+const toastType = (type: string) => {
   if (type === 'error') {
-    toast.error(child, { autoClose: 6000 });
-  } else if (type === 'success') {
-    toast.success(child, { autoClose: 2000 });
-  } else {
-    toast.open(child);
+    return toast.error;
   }
+  if (type === 'success') {
+    return toast.success;
+  }
+  return toast.open;
 };
 
 const ErrorBoundary: React.FC<Props> = ({ children }: Props): JSX.Element => {
@@ -25,20 +26,38 @@ const ErrorBoundary: React.FC<Props> = ({ children }: Props): JSX.Element => {
     type = 'error',
     title,
     message = '',
+    actions = [],
   } = useSelector((state: StoreState) => state.notification);
   const dispatch = useDispatch();
+
   useEffect(() => {
-    if (title) {
-      openToast(
-        type,
-        <div>
-          <h3>{title}</h3>
-          {message}
-        </div>
-      );
-      dispatch(clearNotification());
+    if (!title) {
+      return;
     }
-  }, [type, title, message, dispatch]);
+    const toastContent = {
+      title,
+      message,
+      actions,
+    };
+    const hasActions = !!actions?.length;
+    let autoClose: false | number | undefined;
+    if (hasActions) {
+      autoClose = false as const;
+    } else if (type === 'error') {
+      autoClose = 10000;
+    } else {
+      autoClose = 5000;
+    }
+    const toastProps = {
+      autoClose,
+    };
+    toastType(type)(
+      <Toast {...(toastContent as any)} key={new Date().getTime()} />,
+      toastProps
+    );
+    dispatch(clearNotification());
+  }, [type, title, message, actions, dispatch]);
+
   try {
     return (
       <>
@@ -51,4 +70,4 @@ const ErrorBoundary: React.FC<Props> = ({ children }: Props): JSX.Element => {
     return <ErrorPage />;
   }
 };
-export default ErrorBoundary;
+export default React.memo(ErrorBoundary);

@@ -33,7 +33,7 @@ export const insertSuite =
     try {
       await apiClient.saveSuite(suite);
       dispatch(fetchSuites(apiClient));
-      dispatch(setNotification('Saved'));
+      dispatch(setNotification(['Saved.', 'Please edit & save the layout']));
     } catch (e) {
       dispatch(actions.suiteError());
       dispatch(setHttpError('Failed to save a suite', e));

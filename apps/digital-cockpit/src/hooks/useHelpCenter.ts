@@ -1,7 +1,7 @@
 import { HelpCenterContext } from 'context/HelpCenterContext';
 import { useContext } from 'react';
 
-const useHelpCenter = () => {
+export default () => {
   const { isVisible, setIsVisible } = useContext(HelpCenterContext);
 
   return {
@@ -9,5 +9,3 @@ const useHelpCenter = () => {
     toggleHelpCenter: () => setIsVisible(!isVisible),
   };
 };
-
-export default useHelpCenter;

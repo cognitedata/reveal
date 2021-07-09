@@ -23,7 +23,6 @@ export type BoardType =
   | 'plotly'
   | 'spotfire'
   | 'application'
-  | 'infographics'
   | 'other';
 
 export type Board = {

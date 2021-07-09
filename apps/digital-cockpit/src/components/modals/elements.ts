@@ -13,6 +13,9 @@ export const ModalCloseButton = styled.div`
   position: absolute;
   top: 24px;
   right: 24px;
+  & > button {
+    padding: 10px;
+  }
 `;
 
 export const ModalHeaderUnderline = styled.div<{ underlineColor?: string }>`
@@ -302,7 +305,7 @@ export const UploadLogoContainer = styled.div`
   margin-bottom: 10px;
 `;
 
-export const ApplicationsSwitchContainer = styled.div`
+export const SwitchContainer = styled.div`
   margin-top: 16px;
   display: flex;
   flex-wrap: wrap;

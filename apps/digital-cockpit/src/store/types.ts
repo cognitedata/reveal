@@ -4,7 +4,7 @@ import { RootState } from 'store/reducer';
 import { AuthRootAction, AuthState } from './auth/types';
 import { SuitesTableRootAction, SuitesTableState } from './suites/types';
 import { ModalRootAction, ModalState } from './modals/types';
-import { GroupsState, UserGroupsootAction } from './groups/types';
+import { GroupsState, UserGroupsRootAction } from './groups/types';
 import { UserSpaceRootAction, UserSpaceState } from './userSpace/types';
 import { FormRootAction, FormState } from './forms/types';
 import {
@@ -12,18 +12,20 @@ import {
   NotificationRootAction,
 } from './notification/types';
 import { ConfigState, ConfigRootAction } from './config/types';
+import { LayoutRootAction, LayoutState } from './layout/types';
 
 export type PartialRootState = DeepPartial<RootState>;
 
 export type StoreAction =
   | SuitesTableRootAction
-  | UserGroupsootAction
+  | UserGroupsRootAction
   | AuthRootAction
   | ModalRootAction
   | UserSpaceRootAction
   | FormRootAction
   | NotificationRootAction
-  | ConfigRootAction;
+  | ConfigRootAction
+  | LayoutRootAction;
 
 export type StoreState = {
   suitesTable: SuitesTableState;
@@ -34,6 +36,7 @@ export type StoreState = {
   form: FormState;
   notification: NotificationState;
   config: ConfigState;
+  layout: LayoutState;
 };
 
 export type AppStore = Store<StoreState, StoreAction>;
