@@ -42,6 +42,17 @@ export class PointCloudManager<TModelIdentifier> {
     return this._pointCloudGroupWrapper.needsRedraw;
   }
 
+  set clippingPlanes(planes: THREE.Plane[]) {
+    this._pointCloudGroupWrapper.traverse(x => {
+      if ((x as any).material) {
+        const material = (x as THREE.Mesh).material as THREE.RawShaderMaterial;
+        material.clipping = true;
+        material.clipIntersection = false;
+        material.clippingPlanes = planes;
+      }
+    });
+  }
+
   getLoadingStateObserver(): Observable<LoadingState> {
     return this._pointCloudGroupWrapper.getLoadingStateObserver();
   }

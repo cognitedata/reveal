@@ -13,6 +13,7 @@ import CameraControls from 'camera-controls';
 import dat, { GUI } from 'dat.gui';
 import { getParamsFromURL } from '../utils/example-helpers';
 import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
+import { ClippingUI } from '../utils/ClippingUI';
 
 CameraControls.install({ THREE });
 
@@ -115,6 +116,10 @@ export function SimplePointcloud() {
             pointCloudNode.setClassVisible(clazz, visible);
           });
       }
+
+      new ClippingUI(gui.addFolder('Clipping'), planes => {
+        revealManager.clippingPlanes = planes;
+      });
 
       const camera = new THREE.PerspectiveCamera(
         75,

@@ -144,6 +144,7 @@ export class RevealManager<TModelIdentifier> {
 
   public set clippingPlanes(clippingPlanes: THREE.Plane[]) {
     this._cadManager.clippingPlanes = clippingPlanes;
+    this._pointCloudManager.clippingPlanes = clippingPlanes;
   }
 
   public get clippingPlanes(): THREE.Plane[] {

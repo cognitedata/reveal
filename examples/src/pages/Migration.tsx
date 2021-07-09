@@ -2,11 +2,11 @@
  * Copyright 2021 Cognite AS
  */
 
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { CanvasWrapper } from '../components/styled';
 import * as THREE from 'three';
 import { CogniteClient } from '@cognite/sdk';
-import dat from 'dat.gui';
+import dat from 'dat.gui'; 
 import {
   AddModelOptions,
   Cognite3DViewer,
@@ -20,6 +20,7 @@ import {
 import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, AxisViewTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
 import { CadNode } from '@cognite/reveal/internals';
+import { ClippingUI } from '../utils/ClippingUI';
 
 window.THREE = THREE;
 (window as any).reveal = reveal;
@@ -49,18 +50,6 @@ export function Migration() {
 
       const totalBounds = new THREE.Box3();
 
-      const slicingParams = {
-        enabledX: false,
-        enabledY: false,
-        enabledZ: false,
-        flipX: false,
-        flipY: false,
-        flipZ: false,
-        x: 0,
-        y: 0,
-        z: 0,
-        showHelpers: false,
-      };
       const pointCloudParams = {
         pointSize: 1.0,
         budget: 2_000_000,
@@ -104,7 +93,6 @@ export function Migration() {
           const bounds = model.getModelBoundingBox();
           totalBounds.expandByPoint(bounds.min);
           totalBounds.expandByPoint(bounds.max);
-          updateSlicingGui();
 
           viewer.loadCameraFromModel(model);
           if (model instanceof Cognite3DModel) {
@@ -343,51 +331,8 @@ export function Migration() {
         cadModels.forEach(m => m.setDefaultNodeAppearance({ visible: !hide }));
       });
 
-      const slicing = gui.addFolder('Slicing');
-      // X
-      slicing
-        .add(slicingParams, 'enabledX')
-        .name('X')
-        .onChange(updateSlicingPlanes);
-      slicing
-        .add(slicingParams, 'flipX')
-        .name('Flip X')
-        .onChange(updateSlicingPlanes);
-      const slicingXGui = slicing
-        .add(slicingParams, 'x', -600, 600)
-        .step(0.1)
-        .name('X')
-        .onChange(updateSlicingPlanes);
+      new ClippingUI(gui.addFolder('Slicing'), planes => viewer.setSlicingPlanes(planes));
 
-      // Y
-      slicing
-        .add(slicingParams, 'enabledY')
-        .name('Y')
-        .onChange(updateSlicingPlanes);
-      slicing
-        .add(slicingParams, 'flipY')
-        .name('Flip Y')
-        .onChange(updateSlicingPlanes);
-      const slicingYGui = slicing
-        .add(slicingParams, 'y', -600, 600)
-        .step(0.1)
-        .name('y')
-        .onChange(updateSlicingPlanes);
-
-      // Z
-      slicing
-        .add(slicingParams, 'enabledZ')
-        .name('Z')
-        .onChange(updateSlicingPlanes);
-      slicing
-        .add(slicingParams, 'flipZ')
-        .name('Flip Z')
-        .onChange(updateSlicingPlanes);
-      const slicingZGui = slicing
-        .add(slicingParams, 'z', -600, 600)
-        .step(0.1)
-        .name('z')
-        .onChange(updateSlicingPlanes);
 
       const pcSettings = gui.addFolder('Point clouds');
       pcSettings.add(pointCloudParams, 'budget', 0, 20_000_000, 100_000).onFinishChange(() => pointCloudParams.apply());
@@ -503,38 +448,7 @@ export function Migration() {
           }
         }
       });
-
-      function updateSlicingGui() {
-        slicingXGui.min(totalBounds.min.x);
-        slicingXGui.max(totalBounds.max.x);
-        slicingYGui.min(totalBounds.min.y);
-        slicingYGui.max(totalBounds.max.y);
-        slicingZGui.min(totalBounds.min.z);
-        slicingZGui.max(totalBounds.max.z);
-      }
-
-      function updateSlicingPlanes() {
-        const dirX = new THREE.Vector3(1, 0, 0);
-        const dirY = new THREE.Vector3(0, -1, 0);
-        const dirZ = new THREE.Vector3(0, 0, 1);
-        const planes: THREE.Plane[] = [];
-        const point = new THREE.Vector3(slicingParams.x, slicingParams.y, slicingParams.z);
-        if (slicingParams.enabledX) {
-          const normal = dirX.clone().multiplyScalar(slicingParams.flipX ? -1 : 1);
-          planes.push(new THREE.Plane().setFromNormalAndCoplanarPoint(normal, point));
-        }
-        if (slicingParams.enabledY) {
-          const normal = dirY.clone().multiplyScalar(slicingParams.flipY ? -1 : 1);
-          planes.push(new THREE.Plane().setFromNormalAndCoplanarPoint(normal, point));
-        }
-        if (slicingParams.enabledZ) {
-          const normal = dirZ.clone().multiplyScalar(slicingParams.flipZ ? -1 : 1);
-          planes.push(new THREE.Plane().setFromNormalAndCoplanarPoint(normal, point));
-        }
-        viewer.setSlicingPlanes(planes);
-      }
     }
-
 
     function showBoundsForAllGeometries(model: Cognite3DModel) {
       const boxes = new THREE.Group();
