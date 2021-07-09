@@ -27,7 +27,6 @@
     "build": "yarn run clean && webpack --env.development",
     "build:watch": "yarn run clean && webpack --env.development --watch",
     "build:prod": "yarn run clean && webpack --env.production",
-    "serve": "cd ../examples && yarn && yarn start",
     "mkdist": "shx mkdir -p dist && shx cp README.md LICENSE dist",
     "clean": "shx rm -rf dist/ && yarn run mkdist",
     "test": "yarn workspaces foreach run test",
