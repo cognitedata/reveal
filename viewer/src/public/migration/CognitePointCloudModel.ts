@@ -134,19 +134,10 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
   }
 
   /**
-   * Returns the current budget measured in number of points.
+   * Returns the current number of visible/loaded points.
    */
-  get pointBudget(): number {
-    return this.pointCloudNode.pointBudget;
-  }
-
-  /**
-   * The point budget limits the number of points loaded and rendered at any given time,
-   * which helps to adapt performance requirements to the capabilities of different hardware.
-   * Recommended values are between 500.000  and 10.000.000.
-   */
-  set pointBudget(count: number) {
-    this.pointCloudNode.pointBudget = count;
+  get visiblePointCount(): number {
+    return this.pointCloudNode.visiblePointCount;
   }
 
   /**

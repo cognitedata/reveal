@@ -196,7 +196,6 @@ export class CadMaterialManager {
       material.colorWrite = colorWrite;
       material.transparent = transparent;
     });
-    this.triggerMaterialsChanged();
   }
 
   getRenderMode(): RenderMode {
