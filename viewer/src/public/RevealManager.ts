@@ -175,6 +175,7 @@ export class RevealManager<TModelIdentifier> {
 
   public render(camera: THREE.PerspectiveCamera) {
     this._effectRenderManager.render(camera);
+    this.resetRedraw();
   }
 
   /**
