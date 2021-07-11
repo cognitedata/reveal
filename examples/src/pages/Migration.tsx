@@ -93,6 +93,7 @@ export function Migration() {
           const bounds = model.getModelBoundingBox();
           totalBounds.expandByPoint(bounds.min);
           totalBounds.expandByPoint(bounds.max);
+          clippingUi.updateWorldBounds(totalBounds);
 
           viewer.loadCameraFromModel(model);
           if (model instanceof Cognite3DModel) {
@@ -331,7 +332,7 @@ export function Migration() {
         cadModels.forEach(m => m.setDefaultNodeAppearance({ visible: !hide }));
       });
 
-      new ClippingUI(gui.addFolder('Slicing'), planes => viewer.setSlicingPlanes(planes));
+      const clippingUi = new ClippingUI(gui.addFolder('Slicing'), planes => viewer.setSlicingPlanes(planes));
 
 
       const pcSettings = gui.addFolder('Point clouds');

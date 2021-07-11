@@ -35,6 +35,16 @@ export class ClippingUI {
     this._yUi.max(bounds.max.y);
     this._zUi.min(bounds.min.z);
     this._zUi.max(bounds.max.z);
+
+    const size = bounds.getSize(new THREE.Vector3());
+    this._xUi.step(size.x / 100.0);
+    this._yUi.step(size.y / 100.0);
+    this._zUi.step(size.z / 100.0);
+  }
+
+  private orderOfMagnitude(v: number): number {
+    const order = Math.floor(Math.log(v) / Math.LN10 + 0.00001);
+    return Math.pow(10, order);
   }
 
   private createGui(ui: dat.GUI) {
@@ -69,7 +79,7 @@ export class ClippingUI {
       .onChange(updateSlicingPlanes);
 
     // Z
-    const zUi = ui
+    ui
       .add(this._params, 'enabledZ')
       .name('Z')
       .onChange(updateSlicingPlanes);
@@ -77,7 +87,7 @@ export class ClippingUI {
       .add(this._params, 'flipZ')
       .name('Flip Z')
       .onChange(updateSlicingPlanes);
-    ui
+    const zUi = ui
       .add(this._params, 'z', -600, 600)
       .step(0.1)
       .name('z')
