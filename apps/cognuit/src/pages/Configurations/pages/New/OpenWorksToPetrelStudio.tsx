@@ -1,9 +1,14 @@
 import { useContext, useEffect, useState } from 'react';
-import { Button, Colors, Icon, Modal, Tooltip } from '@cognite/cogs.js';
+import {
+  Button,
+  Checkbox,
+  Colors,
+  Modal,
+  Tooltip,
+  Select,
+} from '@cognite/cogs.js';
 import { AuthProvider, AuthContext } from '@cognite/react-container';
-import { Checkbox, notification, Select } from 'antd';
 import { ConfigurationOWtoPS, Source } from 'typings/interfaces';
-import { SelectValue } from 'antd/es/select';
 import ApiContext from 'contexts/ApiContext';
 import APIErrorContext from 'contexts/APIErrorContext';
 import { Link, useHistory } from 'react-router-dom';
@@ -16,6 +21,7 @@ import { CustomError } from 'services/CustomError';
 import LoadingBox from 'components/Molecules/LoadingBox';
 import { ThirdPartySystems } from 'types/globalTypes';
 import ErrorMessage from 'components/Molecules/ErrorMessage';
+import { notification } from 'components/Molecules/notification';
 
 import {
   CloseIcon,
@@ -111,7 +117,6 @@ const OpenWorksToPetrelStudio = ({ name }: Props) => {
   const { api } = useContext(ApiContext);
   const { error: apiError, addError } = useContext(APIErrorContext);
   const history = useHistory();
-  const { Option } = Select;
 
   useEffect(() => {
     setConfiguration((prevState) => ({
@@ -144,7 +149,7 @@ const OpenWorksToPetrelStudio = ({ name }: Props) => {
     return api!.sources.getRepositoryTree(Source.STUDIO, repo);
   }
 
-  function handleChange(type: ChangeType, value: SelectValue) {
+  function handleChange(type: ChangeType, value: any) {
     if (type === ChangeType.PROJECT) {
       setDataTypesLoading(true);
       updateSourceProject(value);
@@ -216,7 +221,7 @@ const OpenWorksToPetrelStudio = ({ name }: Props) => {
       });
   }
 
-  function updateSourceProject(value: SelectValue) {
+  function updateSourceProject(value: any) {
     setConfiguration((prevState) => ({
       ...prevState,
       source: { ...prevState.source, external_id: (value || '').toString() },
@@ -225,14 +230,14 @@ const OpenWorksToPetrelStudio = ({ name }: Props) => {
     }));
   }
 
-  function updateTargetRepository(value: SelectValue) {
+  function updateTargetRepository(value: any) {
     setConfiguration((prevState) => ({
       ...prevState,
       target: { ...prevState.target, external_id: (value || '').toString() },
     }));
   }
 
-  function updateDestinationFolder(value: SelectValue | null) {
+  function updateDestinationFolder(value: any | null) {
     setConfiguration((prevState) => ({
       ...prevState,
       ow_to_studio_config: {
@@ -356,38 +361,36 @@ const OpenWorksToPetrelStudio = ({ name }: Props) => {
                   <Select
                     value={
                       configuration.source.external_id.length > 0
-                        ? configuration.source.external_id
+                        ? {
+                            label: configuration.source.external_id,
+                            value: configuration.source.external_id,
+                          }
                         : undefined
                     }
                     placeholder="Available OpenWorks projects"
-                    style={{ width: '100%', marginBottom: '16px' }}
-                    onChange={(value) =>
-                      handleChange(ChangeType.PROJECT, value)
+                    onChange={(event: any) =>
+                      handleChange(ChangeType.PROJECT, event.value)
                     }
-                    suffixIcon={<Icon type="ChevronDownCompact" />}
-                  >
-                    {availableProjects.map((project) => (
-                      <Option
-                        key={project.external_id}
-                        value={project.external_id}
-                      >
-                        {project.external_id}
-                      </Option>
-                    ))}
-                  </Select>
+                    options={availableProjects.map((item) => ({
+                      label: item.external_id,
+                      value: item.external_id,
+                    }))}
+                  />
+
                   {configuration.source.external_id !== '' && (
                     <BorderedBottomContainer>
                       <Checkbox
+                        name="metatag"
                         checked={
                           configuration.ow_to_studio_config.tag_name !==
                           undefined
                         }
-                        onChange={(e) => {
+                        onChange={(nextState: boolean) => {
                           setConfiguration((prevState) => ({
                             ...prevState,
                             ow_to_studio_config: {
                               ...prevState.ow_to_studio_config,
-                              tag_name: e.target.checked ? name : undefined,
+                              tag_name: nextState ? name : undefined,
                             },
                           }));
                         }}
@@ -543,25 +546,21 @@ const OpenWorksToPetrelStudio = ({ name }: Props) => {
                       <Select
                         value={
                           configuration.target.external_id.length > 0
-                            ? configuration.target.external_id
+                            ? {
+                                label: configuration.target.external_id,
+                                value: configuration.target.external_id,
+                              }
                             : undefined
                         }
                         placeholder="Available repositories"
-                        style={{ width: '100%', marginBottom: '16px' }}
-                        onChange={(value) =>
-                          handleChange(ChangeType.REPO, value)
+                        onChange={(event: any) =>
+                          handleChange(ChangeType.REPO, event.value)
                         }
-                        suffixIcon={<Icon type="ChevronDownCompact" />}
-                      >
-                        {availableRepositories.map((repository) => (
-                          <Option
-                            key={repository.external_id}
-                            value={repository.external_id}
-                          >
-                            {repository.external_id}
-                          </Option>
-                        ))}
-                      </Select>
+                        options={availableRepositories.map((item) => ({
+                          label: item.external_id,
+                          value: item.external_id,
+                        }))}
+                      />
                     </BorderedBottomContainer>
                   )}
                   {availableDestinationFolders.length > 0 && (
@@ -571,25 +570,24 @@ const OpenWorksToPetrelStudio = ({ name }: Props) => {
                         value={
                           configuration.ow_to_studio_config.folder &&
                           configuration.ow_to_studio_config.folder !== '_Root'
-                            ? configuration.ow_to_studio_config.folder
+                            ? {
+                                label: configuration.ow_to_studio_config.folder,
+                                value: configuration.ow_to_studio_config.folder,
+                              }
                             : undefined
                         }
                         placeholder="Available folders"
-                        style={{ width: '100%', marginBottom: '16px' }}
-                        onChange={(value) =>
-                          handleChange(ChangeType.DESTINATION_FOLDER, value)
+                        onChange={(event: any) =>
+                          handleChange(
+                            ChangeType.DESTINATION_FOLDER,
+                            event.value
+                          )
                         }
-                        suffixIcon={<Icon type="ChevronDownCompact" />}
-                      >
-                        {availableDestinationFolders.map((folder) => (
-                          <Option
-                            key={folder.external_id}
-                            value={folder.external_id}
-                          >
-                            {folder.name}
-                          </Option>
-                        ))}
-                      </Select>
+                        options={availableDestinationFolders.map((item) => ({
+                          label: item.name, // Might be external_id
+                          value: item.name,
+                        }))}
+                      />
                     </>
                   )}
                   {configuration.target.external_id.length > 0 && (
@@ -597,16 +595,17 @@ const OpenWorksToPetrelStudio = ({ name }: Props) => {
                       {/* Remove tooltip and disabled prop on Checkbox when API is ready */}
                       <Tooltip content="This feature is not implemented yet, but will be in later release">
                         <Checkbox
+                          name="dsg-session-name"
                           checked={
                             configuration.ow_to_studio_config.session_name !==
                             null
                           }
-                          onChange={(e) => {
+                          onChange={(nextState: boolean) => {
                             setConfiguration((prevState) => ({
                               ...prevState,
                               ow_to_studio_config: {
                                 ...prevState.ow_to_studio_config,
-                                session_name: e.target.checked ? name : null,
+                                session_name: nextState ? name : null,
                               },
                             }));
                           }}

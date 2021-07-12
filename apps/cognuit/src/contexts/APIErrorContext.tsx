@@ -1,8 +1,8 @@
 import React, { useState, useCallback } from 'react';
-import { notification } from 'antd';
 import noop from 'lodash/fp';
 import { CustomError } from 'services/CustomError';
 import { reportException } from '@cognite/react-errors';
+import { notification } from 'components/Molecules/notification';
 
 type Props = {
   children: any;

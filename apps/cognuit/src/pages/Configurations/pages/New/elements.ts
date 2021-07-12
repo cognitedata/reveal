@@ -121,6 +121,7 @@ export const BadgesContainer = styled.div`
 `;
 
 export const BorderedBottomContainer = styled.div<{ leftPad?: boolean }>`
+  padding-top: 0.5rem;
   border-bottom: 1px solid var(--cogs-greyscale-grey4);
   padding-bottom: 1rem;
   padding-left: ${(props) => (props.leftPad ? '1rem' : '0')};

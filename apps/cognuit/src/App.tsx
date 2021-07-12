@@ -1,7 +1,7 @@
 import { Switch, Route } from 'react-router-dom';
 import { AuthConsumer, Container } from '@cognite/react-container';
 import { storage } from '@cognite/storage';
-import { Loader } from '@cognite/cogs.js';
+import { Loader, ToastContainer } from '@cognite/cogs.js';
 import GlobalStyles from 'global-styles';
 import sidecar from 'configs/sidecar';
 import Home from 'pages/Home';
@@ -28,6 +28,7 @@ const App = () => {
             <APIErrorProvider>
               <Layout>
                 <Main>
+                  <ToastContainer />
                   <MainHeader />
                   <Content>
                     <AuthConsumer>

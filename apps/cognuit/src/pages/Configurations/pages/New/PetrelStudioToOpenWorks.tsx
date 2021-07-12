@@ -1,9 +1,7 @@
 import { useContext, useEffect, useState, useMemo, FC } from 'react';
 import { Button, Modal } from '@cognite/cogs.js';
-import { notification } from 'antd';
 import { NewConfiguration, Source } from 'typings/interfaces';
 import { AuthProvider, AuthContext } from '@cognite/react-container';
-import { SelectValue } from 'antd/es/select';
 import APIErrorContext from 'contexts/APIErrorContext';
 import { Link, useHistory } from 'react-router-dom';
 import { CustomError } from 'services/CustomError';
@@ -14,6 +12,7 @@ import {
 import { useDatatypesQuery } from 'services/endpoints/datatypes/query';
 import { useConfigurationsMutation } from 'services/endpoints/configurations/mutation';
 import { useDataStatusQuery } from 'services/endpoints/datastatus/query';
+import { notification } from 'components/Molecules/notification';
 
 import {
   CloseIcon,
@@ -111,7 +110,7 @@ const PetrelStudioToOpenWorks: FC<Props> = ({ name }) => {
     enabled: !!repoId,
   });
 
-  function updateSourceRepository(value: SelectValue) {
+  function updateSourceRepository(value: any) {
     setConfiguration((prevState) => ({
       ...prevState,
       source: { ...prevState.source, external_id: (value || '').toString() },
@@ -121,7 +120,7 @@ const PetrelStudioToOpenWorks: FC<Props> = ({ name }) => {
     }));
   }
 
-  function updateTargetProject(value: SelectValue) {
+  function updateTargetProject(value: any) {
     setConfiguration((prevState) => ({
       ...prevState,
       target: { ...prevState.target, external_id: (value || '').toString() },

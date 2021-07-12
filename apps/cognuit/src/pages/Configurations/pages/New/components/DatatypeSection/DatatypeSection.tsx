@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Checkbox } from 'antd';
-import { CheckboxChangeEvent } from 'antd/es/checkbox';
-import { Badge, Icon, Input, Tooltip } from '@cognite/cogs.js';
+import { Badge, Icon, Input, Checkbox } from '@cognite/cogs.js';
 import { ObjectsRevisionsResponse } from 'types/ApiInterface';
 
 import { CollapsePanel, Container, ExpandButton, Header } from './elements';
@@ -19,7 +17,7 @@ const DatatypeSection = ({
   objects,
   selectedObjects,
 }: Props) => {
-  const [filteredObjects, setFilteredObjects] = useState(objects);
+  const [_filteredObjects, setFilteredObjects] = useState(objects);
   const [expanded, setExpanded] = useState(false);
   const [filterValue, setFilterValue] = useState('');
   useEffect(() => {
@@ -45,13 +43,14 @@ const DatatypeSection = ({
     <Container>
       <Header>
         <Checkbox
-          onChange={(e: CheckboxChangeEvent) => {
-            if (e && e.target && e.target.checked) {
+          onChange={(nextState: boolean) => {
+            if (nextState) {
               onChange(objects.map((item) => item.id));
             } else {
               onChange([]);
             }
           }}
+          name={name}
           checked={selectedObjects.length > 0}
         >
           {name}
@@ -76,9 +75,14 @@ const DatatypeSection = ({
           placeholder="Filter"
           value={filterValue}
           onChange={(e) => setFilterValue(e.target.value)}
+          disabled
         />
         {/* Remove tooltip and disabled prop on Checkbox.Group when API is ready */}
-        <Tooltip content="Object selection feature is not implemented yet, but will be in later release">
+        <h4>
+          Object selection feature is not implemented yet, but will be in later
+          release
+        </h4>
+        {/* <Tooltip content="Object selection feature is not implemented yet, but will be in later release">
           <Checkbox.Group
             options={filteredObjects.map((object) => ({
               label: object.name,
@@ -88,7 +92,7 @@ const DatatypeSection = ({
             value={selectedObjects}
             disabled
           />
-        </Tooltip>
+        </Tooltip> */}
       </CollapsePanel>
     </Container>
   );

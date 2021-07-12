@@ -3,7 +3,6 @@ import * as Sentry from '@sentry/browser';
 import config from 'configs/config';
 
 import '@cognite/cogs.js/dist/cogs.css';
-import 'antd/dist/antd.css';
 
 import App from './App';
 import * as serviceWorker from './serviceWorker';

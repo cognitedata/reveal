@@ -63,7 +63,6 @@ DEPENDENCIES = [
     "@npm//@cognite/cogs.js",
     "@npm//@cognite/sdk",
     "@npm//@sentry/browser",
-    "@npm//antd",
     "@npm//date-fns",
     "@npm//lodash",
     "@npm//react",
