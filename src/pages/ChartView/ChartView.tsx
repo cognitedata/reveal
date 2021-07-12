@@ -488,11 +488,9 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
         </ChartContainer>
       </ContentWrapper>
       <DetailsSidebar
-        chart={chart}
         visible={showContextMenu}
         onClose={handleCloseContextMenu}
         sourceItem={selectedSourceItem}
-        setSourceItem={setSelectedSourceId}
       />
     </ChartViewContainer>
   );

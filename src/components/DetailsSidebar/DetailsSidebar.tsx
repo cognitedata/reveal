@@ -1,33 +1,25 @@
-import {
-  Button,
-  Icon,
-  Tooltip,
-  SegmentedControl,
-  Dropdown,
-  Body,
-  Menu,
-} from '@cognite/cogs.js';
+import { Button, Tooltip, SegmentedControl } from '@cognite/cogs.js';
 import { useSDK } from '@cognite/sdk-provider';
 import { MetadataList } from 'components/DetailsSidebar';
-import FunctionCall from 'components/FunctionCall';
-import { useUpdateChart } from 'hooks/firebase';
 import React, { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
-import {
-  Chart,
-  ChartTimeSeries,
-  ChartWorkflow,
-  FunctionCallStatus,
-} from 'reducers/charts/types';
-import styled from 'styled-components/macro';
+import { ChartTimeSeries, ChartWorkflow } from 'reducers/charts/types';
 import { getCallResponse } from 'utils/backendApi';
-import { functionResponseKey, useCallFunction } from 'utils/backendService';
+import { functionResponseKey } from 'utils/backendService';
 import { convertValue } from 'utils/units';
+import {
+  Sidebar,
+  TopContainer,
+  TopContainerAside,
+  TopContainerTitle,
+  ContentOverflowWrapper,
+  Container,
+  ColorCircle,
+} from './elements';
+import { MetadataItem } from './MetadataItem';
 
 type Props = {
-  chart: Chart;
   sourceItem: ChartWorkflow | ChartTimeSeries | undefined;
-  setSourceItem: (_: string) => void;
   onClose: () => void;
   visible?: boolean;
 };
@@ -63,25 +55,9 @@ const menuOptions = [
   },
 ];
 
-const renderStatusIcon = (status?: FunctionCallStatus) => {
-  switch (status) {
-    case 'Running':
-      return <Icon type="Loading" />;
-    case 'Completed':
-      return <Icon type="Check" />;
-    case 'Failed':
-    case 'Timeout':
-      return <Icon type="Close" />;
-    default:
-      return null;
-  }
-};
-
 export default function DetailsSidebar({
-  chart,
   visible,
   sourceItem,
-  setSourceItem,
   onClose,
 }: Props) {
   const [selectedMenu, setSelectedMenu] = useState<string>('statistics');
@@ -116,15 +92,9 @@ export default function DetailsSidebar({
         </TopContainerAside>
       </TopContainer>
       <ContentOverflowWrapper>
-        {selectedMenu === 'metadata' && (
-          <Metadata
-            sourceItem={sourceItem}
-            setSourceItem={setSourceItem}
-            chart={chart}
-          />
-        )}
+        {selectedMenu === 'metadata' && <Metadata sourceItem={sourceItem} />}
         {selectedMenu === 'statistics' && (
-          <Statistics chart={chart} sourceItem={sourceItem} />
+          <Statistics sourceItem={sourceItem} />
         )}
       </ContentOverflowWrapper>
     </Sidebar>
@@ -133,14 +103,9 @@ export default function DetailsSidebar({
 
 const Metadata = ({
   sourceItem,
-  setSourceItem,
-  chart,
 }: {
   sourceItem: ChartWorkflow | ChartTimeSeries | undefined;
-  setSourceItem: (_: string) => void;
-  chart: Chart;
 }) => {
-  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [selectedItem, setSelectedItem] = useState<
     ChartWorkflow | ChartTimeSeries | undefined
   >(sourceItem);
@@ -156,121 +121,20 @@ const Metadata = ({
     return <p>Not available for calculations</p>;
   }
 
-  const closeMenu = () => setIsMenuOpen(false);
-
   return (
     <Container>
-      <Body style={{ fontSize: 14 }}>Time series</Body>
-      <Dropdown
-        visible={isMenuOpen}
-        onClickOutside={closeMenu}
-        content={
-          <Menu onClick={closeMenu}>
-            {chart.timeSeriesCollection?.map((ts) => (
-              <TimeseriesMenuItem
-                onClick={() => {
-                  setSelectedItem(ts);
-                  setSourceItem(ts.id);
-                }}
-              >
-                {ts.name}
-              </TimeseriesMenuItem>
-            ))}
-          </Menu>
-        }
-      >
-        <Button
-          icon="Down"
-          iconPlacement="right"
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-        >
-          <NameWrapper>{selectedItem?.name}</NameWrapper>
-        </Button>
-      </Dropdown>
+      <SourceHeader sourceItem={sourceItem} />
       <MetadataList timeseriesId={(selectedItem as ChartTimeSeries)?.tsId} />
     </Container>
   );
 };
 
 const Statistics = ({
-  chart,
   sourceItem,
 }: {
-  chart: Chart;
   sourceItem: ChartWorkflow | ChartTimeSeries | undefined;
 }) => {
   const sdk = useSDK();
-  const { mutate: callFunction } = useCallFunction('individual_calc-master');
-  const { mutate } = useUpdateChart();
-
-  const update = (diff: Partial<ChartWorkflow | ChartTimeSeries>) => {
-    if (!sourceItem) {
-      return;
-    }
-
-    mutate({
-      ...chart,
-      ...(sourceItem.type === 'timeseries'
-        ? {
-            timeSeriesCollection: chart.timeSeriesCollection?.map((ts) =>
-              ts.id === sourceItem.id
-                ? {
-                    ...ts,
-                    ...diff,
-                  }
-                : ts
-            ),
-          }
-        : {}),
-      ...(sourceItem.type === 'timeseries'
-        ? {
-            workflowCollection: chart.workflowCollection?.map((wf) =>
-              wf.id === sourceItem.id
-                ? {
-                    ...wf,
-                    ...diff,
-                  }
-                : wf
-            ),
-          }
-        : {}),
-    });
-  };
-
-  const handleCalculateStatistics = () => {
-    callFunction(
-      {
-        data: {
-          calculation_input: {
-            timeseries: [
-              {
-                tag:
-                  sourceItem?.type === 'timeseries'
-                    ? (sourceItem as ChartTimeSeries).tsExternalId
-                    : 'does-not-exist',
-              },
-            ],
-            start_time: new Date(chart.dateFrom).getTime(),
-            end_time: new Date(chart.dateTo).getTime(),
-          },
-        },
-      },
-      {
-        onSuccess({ functionId, callId }) {
-          update({
-            statisticsCalls: [
-              {
-                callDate: Date.now(),
-                functionId,
-                callId,
-              },
-            ],
-          });
-        },
-      }
-    );
-  };
-
   const statisticsCall = (sourceItem?.statisticsCalls || [])[0];
 
   const { data } = useQuery({
@@ -293,81 +157,81 @@ const Statistics = ({
 
   return (
     <Container>
-      <h3>Selected:</h3>
-      <p style={{ display: 'flex' }}>
-        <span style={{ paddingRight: 10 }}>
-          <ColorCircle color={sourceItem?.color} />
-        </span>
-        {sourceItem?.name}
-      </p>
+      <SourceHeader sourceItem={sourceItem} />
       {sourceItem?.type === 'timeseries' ? (
         <>
-          <h3>Min:</h3>
-          <p>
-            {statisticsForSource
-              ? convertValue(statisticsForSource.min, unit, preferredUnit)
-              : '-'}
-          </p>
-          <h3>Max:</h3>
-          <p>
-            {statisticsForSource
-              ? convertValue(statisticsForSource.max, unit, preferredUnit)
-              : '-'}
-          </p>
-          <h3>Mean:</h3>
-          <p>
-            {statisticsForSource
-              ? convertValue(statisticsForSource.mean, unit, preferredUnit)
-              : '-'}
-          </p>
-          <h3>Median:</h3>
-          <p>
-            {statisticsForSource
-              ? convertValue(statisticsForSource.median, unit, preferredUnit)
-              : '-'}
-          </p>
-          <h3>Standard Deviation:</h3>
-          <p>
-            {statisticsForSource
-              ? convertValue(statisticsForSource.std, unit, preferredUnit)
-              : '-'}
-          </p>
-          <h3>25th Percentile:</h3>
-          <p>
-            {statisticsForSource
-              ? convertValue(statisticsForSource.q25, unit, preferredUnit)
-              : '-'}
-          </p>
-          <h3>50th Percentile:</h3>
-          <p>
-            {statisticsForSource
-              ? convertValue(statisticsForSource.q50, unit, preferredUnit)
-              : '-'}
-          </p>
-          <h3>75th Percentile:</h3>
-          <p>
-            {statisticsForSource
-              ? convertValue(statisticsForSource.q75, unit, preferredUnit)
-              : '-'}
-          </p>
-          <h3>Skewness:</h3>
-          <p>{statisticsForSource ? statisticsForSource.skewness : '-'}</p>
-          <h3>Kurtosis:</h3>
-          <p>{statisticsForSource ? statisticsForSource.kurtosis : '-'}</p>
-          {statisticsCall && (
-            <FunctionCall
-              id={statisticsCall.functionId}
-              callId={statisticsCall.callId}
-              renderLoading={() => renderStatusIcon('Running')}
-              renderCall={({ status }) => renderStatusIcon(status)}
-            />
-          )}
-          <Button
-            style={{ marginLeft: 10 }}
-            onClick={() => handleCalculateStatistics()}
-          >
-            Refresh
-          </Button>
+          <MetadataItem
+            label="Min"
+            value={
+              statisticsForSource
+                ? convertValue(statisticsForSource.min, unit, preferredUnit)
+                : '-'
+            }
+          />
+          <MetadataItem
+            label="Max"
+            value={
+              statisticsForSource
+                ? convertValue(statisticsForSource.max, unit, preferredUnit)
+                : '-'
+            }
+          />
+          <MetadataItem
+            label="Mean"
+            value={
+              statisticsForSource
+                ? convertValue(statisticsForSource.mean, unit, preferredUnit)
+                : '-'
+            }
+          />
+          <MetadataItem
+            label="Median"
+            value={
+              statisticsForSource
+                ? convertValue(statisticsForSource.median, unit, preferredUnit)
+                : '-'
+            }
+          />
+          <MetadataItem
+            label="Standard Deviation"
+            value={
+              statisticsForSource
+                ? convertValue(statisticsForSource.std, unit, preferredUnit)
+                : '-'
+            }
+          />
+          <MetadataItem
+            label="25th Percentile"
+            value={
+              statisticsForSource
+                ? convertValue(statisticsForSource.q25, unit, preferredUnit)
+                : '-'
+            }
+          />
+          <MetadataItem
+            label="50th Percentile"
+            value={
+              statisticsForSource
+                ? convertValue(statisticsForSource.q50, unit, preferredUnit)
+                : '-'
+            }
+          />
+          <MetadataItem
+            label="75th Percentile"
+            value={
+              statisticsForSource
+                ? convertValue(statisticsForSource.q75, unit, preferredUnit)
+                : '-'
+            }
+          />
+          <MetadataItem
+            label="Skewness"
+            value={statisticsForSource ? statisticsForSource.skewness : '-'}
+          />
+          <MetadataItem
+            label="Kurtosis"
+            value={statisticsForSource ? statisticsForSource.kurtosis : '-'}
+          />
         </>
       ) : (
         <p>(currently unavailable for calculations)</p>
@@ -376,58 +240,20 @@ const Statistics = ({
   );
 };
 
-const TopContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--cogs-greyscale-grey4);
-  padding: 9px 0 10px 10px;
-`;
-
-const TopContainerTitle = styled.div`
-  font-size: 18px;
-  font-weight: 600;
-`;
-
-const TopContainerAside = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-`;
-
-const ContentOverflowWrapper = styled.div`
-  height: calc(100% - 32px);
-  overflow: auto;
-`;
-
-const ColorCircle = styled.span`
-  display: inline-block;
-  background-color: ${(props) => props.color};
-  width: 20px;
-  height: 20px;
-`;
-
-const Sidebar = styled.div<{ visible?: boolean }>`
-  border-left: 1px solid var(--cogs-greyscale-grey4);
-  visibility: ${(props) => (props.visible ? 'visible' : 'hidden')};
-  width: ${(props) => (props.visible ? '400px' : 0)};
-  transition: 0s linear 200ms, width 200ms ease;
-`;
-
-const Container = styled.div`
-  padding: 20px;
-`;
-
-const TimeseriesMenuItem = styled(Menu.Item)`
-  max-width: 300px;
-  text-align: left;
-  word-break: break-word;
-`;
-
-const NameWrapper = styled.span`
-  max-width: 300px;
-  padding: 10px 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
+const SourceHeader = ({
+  sourceItem,
+}: {
+  sourceItem: ChartWorkflow | ChartTimeSeries | undefined;
+}) => {
+  return (
+    <div style={{ wordBreak: 'break-word' }}>
+      <h3>Source:</h3>
+      <p style={{ display: 'flex' }}>
+        <span style={{ paddingRight: 10 }}>
+          <ColorCircle color={sourceItem?.color} />
+        </span>
+        {sourceItem?.name}
+      </p>
+    </div>
+  );
+};
