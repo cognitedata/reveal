@@ -16,7 +16,6 @@ import {
 } from 'types/ApiInterface';
 
 import {
-  GenericResponseObject,
   RESTConfigurationsFilter,
   RESTObjectsFilter,
   RESTPackageFilter,
@@ -147,13 +146,13 @@ class Api {
       objectId: number
     ): Promise<ObjectsRevisionsResponse[]> =>
       this.post(`${this.baseURL}/objects/byids`, [objectId]),
-    getDatatransfersForRevision: async (
-      objectId: number,
-      revision: string
-    ): Promise<GenericResponseObject> =>
-      this.get(
-        `${this.baseURL}/objects/${objectId}/revisions/${revision}/datatransfers`
-      ),
+    // getDatatransfersForRevision: async (
+    //   objectId: number,
+    //   revision: string
+    // ): Promise<GenericResponseObject> =>
+    //   this.get(
+    //     `${this.baseURL}/objects/${objectId}/revisions/${revision}/datatransfers`
+    //   ),
   };
 
   public packages = {

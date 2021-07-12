@@ -2,12 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { Button, Colors, Icon, Modal, Tooltip } from '@cognite/cogs.js';
 import { AuthProvider, AuthContext } from '@cognite/react-container';
 import { Checkbox, notification, Select } from 'antd';
-import {
-  ConfigurationOWtoPS,
-  DataTransferObject,
-  GenericResponseObject,
-  Source,
-} from 'typings/interfaces';
+import { ConfigurationOWtoPS, Source } from 'typings/interfaces';
 import { SelectValue } from 'antd/es/select';
 import ApiContext from 'contexts/ApiContext';
 import APIErrorContext from 'contexts/APIErrorContext';
@@ -98,20 +93,19 @@ const OpenWorksToPetrelStudio = ({ name }: Props) => {
   const [sourceComplete, setSourceComplete] = useState<boolean>(false);
   const [targetComplete, setTargetComplete] = useState<boolean>(false);
   const [availableRepositories, setAvailableRepositories] = useState<
-    GenericResponseObject[]
+    ProjectsResponse[]
   >([]);
   const [availableProjects, setAvailableProjects] = useState<
-    GenericResponseObject[]
+    ProjectsResponse[]
   >([]);
   const [availableTargets, setAvailableTargets] = useState<
-    DataTransferObject[]
+    ObjectsRevisionsResponse[]
   >([]);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [availableWPS] = useState<DataTransferObject[]>([]);
+  const [availableWPS] = useState<ObjectsRevisionsResponse[]>([]);
   const [dataTypesLoading, setDataTypesLoading] = useState<boolean>(false);
   const [foldersLoading, setFoldersLoading] = useState<boolean>(false);
   const [availableDestinationFolders, setAvailableDestinationFolders] =
-    useState<DataTransferObject[]>([]);
+    useState<ProjectRepositoryTheeResponse[]>([]);
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [creationError, setCreationError] = useState<string | null>(null);
   const { api } = useContext(ApiContext);

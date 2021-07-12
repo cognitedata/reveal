@@ -1,20 +1,13 @@
 import { Menu } from '@cognite/cogs.js';
 import uniqueId from 'lodash/uniqueId';
 import isObject from 'lodash/isObject';
-import { GenericResponseObject } from 'typings/interfaces';
+import { ConfigurationsResponse, ProjectsResponse } from 'types/ApiInterface';
 
 import { FilterListFiltersSource } from './types';
 
-type SourceType = {
-  name?: string;
-  id?: string;
-  // eslint-disable-next-line camelcase
-  external_id?: string;
-};
-
 export const FilterListItems = (
   filterList: FilterListFiltersSource,
-  onSelect: (source: SourceType) => void,
+  onSelect: (source: FilterListFiltersSource[number]) => void,
   closeHandler: () => void,
   onReset?: () => void,
   resetText = 'Reset'
@@ -34,7 +27,7 @@ export const FilterListItems = (
         <Menu.Divider />
       </>
     )}
-    {(filterList as GenericResponseObject[]).map((source: SourceType) => (
+    {filterList.map((source) => (
       <Menu.Item
         key={uniqueId()}
         onClick={() => {
@@ -44,7 +37,9 @@ export const FilterListItems = (
       >
         {isObject(source)
           ? // eslint-disable-next-line camelcase
-            source.name || source.external_id || source.id
+            (source as ConfigurationsResponse).name ||
+            (source as ProjectsResponse).external_id ||
+            source.id
           : source}
       </Menu.Item>
     ))}

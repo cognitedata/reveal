@@ -3,16 +3,6 @@ import React from 'react';
 
 import { ConfigurationsResponse } from '../types/ApiInterface';
 
-// Goal: Remove this interface
-export interface DataTransferObject {
-  [key: string]: any;
-}
-
-// Goal: Remove this interface
-export interface GenericResponseObject {
-  [key: string]: any;
-}
-
 export interface RevisionObject {
   id: number;
   created_time: number;
@@ -148,7 +138,7 @@ export interface Rule {
   width?: number;
 }
 
-export interface ErrorDistributionObject extends GenericResponseObject {
+export interface ErrorDistributionObject {
   name: string;
   total_errors: number;
 }
