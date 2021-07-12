@@ -34,11 +34,6 @@ export type FilterDataTypeType = {
   onSelectType: (selected: DataTypesFilters['selectedDatatype']) => void;
 };
 
-export type FilterDateType = {
-  selectedRange: DataTypesFilters['selectedDateRange'];
-  onSelectDate: (selected: DataTypesFilters['selectedDateRange']) => void;
-};
-
 export type FilterConfigurationType = {
   configurations: ConfigurationsResponse[];
   selected: DataTypesFilters['selectedConfiguration'];
@@ -52,7 +47,6 @@ export type FiltersProps = {
   target: FilterTargetType;
   configuration: FilterConfigurationType;
   datatype: FilterDataTypeType;
-  date: FilterDateType;
   onReset: () => void;
 };
 

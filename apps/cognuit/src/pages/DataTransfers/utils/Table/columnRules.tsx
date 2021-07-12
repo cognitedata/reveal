@@ -1,4 +1,5 @@
 import { Colors, Table } from '@cognite/cogs.js';
+import { DataRangeFilter } from 'pages/DataTransfers/components/Table/filters/DataRangeFilter';
 import { StatusDot } from 'pages/DataTransfers/elements';
 import { DataTransfersTableData } from 'pages/DataTransfers/types';
 import { getFormattedTimestampOrString } from 'pages/DataTransfers/utils';
@@ -53,7 +54,16 @@ export const dataTransfersColumnRules = ({
       width: 70,
     },
     {
+      key: 'last_updated',
+      render: ({ value }: { value: any }) => {
+        return getFormattedTimestampOrString(value);
+      },
+      Filter: DataRangeFilter,
+      filter: 'between',
+    },
+    {
       key: 'detailViewButton',
+      width: 150,
       render: ({
         cell: {
           row: { original },

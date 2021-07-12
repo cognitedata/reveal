@@ -1,17 +1,8 @@
-import { Range, DateRange } from '@cognite/cogs.js';
-import Label from 'components/Atoms/Label';
-
-import {
-  FilterDataTypeType,
-  FilterDateType,
-  FilterListFilters,
-  FilterTypes,
-} from './types';
-import { StartContainer, FieldWrapper } from './elements';
+import { FilterDataTypeType, FilterListFilters, FilterTypes } from './types';
+import { StartContainer } from './elements';
 import { FilterList } from './FilterList';
 
 interface Props {
-  date: FilterDateType;
   datatype: FilterDataTypeType;
   openFilter: keyof FilterTypes | '';
   closeFilters: () => void;
@@ -19,7 +10,6 @@ interface Props {
 }
 
 export const RenderSecondaryFilters = ({
-  date,
   datatype,
   openFilter,
   closeFilters,
@@ -47,21 +37,6 @@ export const RenderSecondaryFilters = ({
         openFilter={openFilter}
         filters={secondaryFiltersList}
       />
-      <FieldWrapper>
-        <Label>Filter by date</Label>
-        <DateRange
-          showClose
-          months={2}
-          direction="horizontal"
-          startDatePlaceholder="From date"
-          endDatePlaceholder="To date"
-          onChange={(range: Range) => {
-            date.onSelectDate(range);
-            closeFilters();
-          }}
-          range={date.selectedRange}
-        />
-      </FieldWrapper>
     </StartContainer>
   );
 };

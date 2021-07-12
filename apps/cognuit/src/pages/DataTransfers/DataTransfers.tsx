@@ -110,7 +110,7 @@ const DataTransfers: React.FC = () => {
       <Table<DataTransfersTableData>
         filterable
         dataSource={filteredData}
-        rowKey={(data, index) => `datatypes-${data.id}-${index}`}
+        rowKey={(data) => `datatypes-${data.id}`}
         columns={tableColumns}
         locale={{ emptyText: renderNoDataText() }}
       />

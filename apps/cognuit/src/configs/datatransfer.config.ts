@@ -12,7 +12,7 @@ export default {
   ],
   filterableColumns: ['report', 'author'],
   mandatoryColumns: ['status', 'datatype', 'name', 'report'],
-  nonSortableColumns: ['status', 'report', 'name'],
+  nonSortableColumns: ['status', 'report', 'name', 'last_updated'],
   ignoreColumns: [
     'cdf_metadata',
     'business_tags',
@@ -29,6 +29,7 @@ export default {
     'author',
     'project',
     'report',
+    'last_updated',
     'actions',
     'detailViewButton',
   ],

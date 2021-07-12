@@ -235,11 +235,6 @@ const TableActions: React.FC = () => {
             onSelectType: (nextSelected) =>
               dispatch(updateFilters({ selectedDatatype: nextSelected })),
           }}
-          date={{
-            selectedRange: selectedDateRange,
-            onSelectDate: (nextSelected) =>
-              dispatch(updateFilters({ selectedDateRange: nextSelected })),
-          }}
           onReset={resetFilters}
         />
       )}

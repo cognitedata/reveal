@@ -14,7 +14,6 @@ import {
 export const Filters = ({
   source,
   target,
-  date,
   datatype,
   configuration,
   onReset,
@@ -26,7 +25,6 @@ export const Filters = ({
     target.onSelectTarget('');
     configuration.onSelectConfiguration(null);
     datatype.onSelectType('');
-    date.onSelectDate({});
     onReset();
   };
 
@@ -133,7 +131,6 @@ export const Filters = ({
             datatype={datatype}
             closeFilters={closeFilters}
             toggleFilter={toggleFilter}
-            date={date}
           />
         )}
       </>

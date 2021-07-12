@@ -43,7 +43,7 @@ export interface DataTypesFilters {
   selectedConfiguration: ConfigurationsResponse | null;
   selectedSourceProject: ProjectsResponse | null;
   selectedTargetProject: ProjectsResponse | null;
-  selectedDateRange: Range;
+  selectedDateRange: Range; // Keep, as might be useful to store the state of the date here.
   selectedDatatype: DatatypesResponse | null;
 }
 
