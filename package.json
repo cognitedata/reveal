@@ -17,8 +17,8 @@
   },
   "dependencies": {
     "@cognite/cogs.js": "^3.29.2",
-    "@cognite/eslint-plugin": "link:packages/eslint-plugin",
     "@cognite/eslint-config": "link:packages/eslint-config",
+    "@cognite/eslint-plugin": "link:packages/eslint-plugin",
     "@cognite/gcs-browser-upload": "^1.1.0",
     "@cognite/sdk": "^4.1.0",
     "@cognite/sdk-v2": "npm:@cognite/sdk@^2.33.0",
@@ -31,6 +31,7 @@
     "chart.js": "^2.9.4",
     "d3": "^6.2.0",
     "date-fns": "^2.19.0",
+    "eslint-config-react-app": "^6.0.0",
     "gridstack": "^4.2.5",
     "i18next": "^20.3.2",
     "i18next-chained-backend": "^3.0.2",
