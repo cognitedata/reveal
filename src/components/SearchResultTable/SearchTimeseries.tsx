@@ -74,7 +74,7 @@ export default function SearchTimeseries({ query }: Props) {
           timeSeriesExternalId: timeSeries.externalId || '',
         });
 
-        const newTs = covertTSToChartTS(timeSeries, range);
+        const newTs = covertTSToChartTS(timeSeries, chartId, range);
 
         updateChart(addTimeseries(chart, newTs));
         trackUsage('ChartView.AddTimeSeries', { source: 'search' });
@@ -86,6 +86,7 @@ export default function SearchTimeseries({ query }: Props) {
     <TSList>
       <TimeseriesSearchHit
         timeseries={timeseries}
+        query={query}
         renderCheckbox={(ts) => (
           <Checkbox
             onClick={(e) => {

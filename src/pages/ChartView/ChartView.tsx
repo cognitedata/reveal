@@ -28,8 +28,7 @@ import { ITimer } from '@cognite/metrics';
 import { Modes } from 'pages/types';
 import DetailsSidebar from 'components/DetailsSidebar';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
-import TimeSeriesRows from './TimeSeriesRows';
-import WorkflowRows from './WorkflowRows';
+import SourceRows from './SourceRows';
 
 import {
   BottomPaneWrapper,
@@ -63,6 +62,8 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
 
   const [showSearch, setShowSearch] = useState(false);
   const [showYAxis, setShowYAxis] = useState(true);
+  const [showAggregates, setShowAggregates] = useState(true);
+  const [showGridlines, setShowGridlines] = useState(true);
   const [workspaceMode, setWorkspaceMode] = useState<Modes>('workspace');
   const [stackedMode, setStackedMode] = useState<boolean>(false);
   const [editorTimer, setEditorTimer] = useState<ITimer | undefined>();
@@ -134,12 +135,13 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
             {
               id: newWorkflowId,
               name: 'New Calculation',
-              color: getEntryColor(),
+              color: getEntryColor(chart.id, newWorkflowId),
               lineWeight: 1,
               lineStyle: 'solid',
               enabled: true,
               nodes: [],
               connections: [],
+              createdAt: Date.now(),
             },
           ],
         },
@@ -267,27 +269,42 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
               <SourceName>Unit</SourceName>
             </SourceItem>
           </th>
-          <th style={{ width: 50, paddingLeft: 0 }}>
+          <th
+            style={{ width: 50, paddingLeft: 0 }}
+            className="downloadChartHide"
+          >
             <SourceItem style={{ justifyContent: 'center' }}>
               <SourceName>P&amp;IDs</SourceName>
             </SourceItem>
           </th>
-          <th style={{ width: 50, paddingLeft: 0 }}>
+          <th
+            style={{ width: 50, paddingLeft: 0 }}
+            className="downloadChartHide"
+          >
             <SourceItem style={{ justifyContent: 'center' }}>
               <SourceName>Style</SourceName>
             </SourceItem>
           </th>
-          <th style={{ width: 50, paddingLeft: 0 }}>
+          <th
+            style={{ width: 50, paddingLeft: 0 }}
+            className="downloadChartHide"
+          >
             <SourceItem style={{ justifyContent: 'center' }}>
               <SourceName>Remove</SourceName>
             </SourceItem>
           </th>
-          <th style={{ width: 50, paddingLeft: 0 }}>
+          <th
+            style={{ width: 50, paddingLeft: 0 }}
+            className="downloadChartHide"
+          >
             <SourceItem style={{ justifyContent: 'center' }}>
               <SourceName>Details</SourceName>
             </SourceItem>
           </th>
-          <th style={{ width: 50, paddingLeft: 0 }}>
+          <th
+            style={{ width: 50, paddingLeft: 0 }}
+            className="downloadChartHide"
+          >
             <SourceItem style={{ justifyContent: 'center' }}>
               <SourceName>More</SourceName>
             </SourceItem>
@@ -303,7 +320,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
         <Search visible={showSearch} onClose={handleCloseSearch} />
       )}
       <ContentWrapper showSearch={showSearch}>
-        <Header inSearch={showSearch}>
+        <Header className="downloadChartHide" inSearch={showSearch}>
           {!showSearch && (
             <section className="actions">
               <Button icon="Plus" type="primary" onClick={handleOpenSearch}>
@@ -329,29 +346,87 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
             </section>
           )}
           <section className="daterange">
-            <Dropdown
-              content={
-                <Menu>
-                  <YaxisDropdownWrapper>
-                    <Flex>
-                      <YaxisDropdownTitle>Y axis</YaxisDropdownTitle>
-                    </Flex>
-                    <Flex direction="row">
-                      <Switch
-                        name="toggleYAxis"
-                        value={showYAxis}
-                        onChange={() => setShowYAxis(!showYAxis)}
-                      >
-                        Show Y-axes
-                      </Switch>
-                    </Flex>
-                  </YaxisDropdownWrapper>
-                </Menu>
-              }
-            >
-              <Button icon="YAxis" type="ghost" aria-label="view" />
-            </Dropdown>
-
+            <Tooltip content="Gridlines">
+              <Dropdown
+                content={
+                  <Menu>
+                    <DropdownWrapper>
+                      <Flex>
+                        <DropdownTitle>Gridlines</DropdownTitle>
+                      </Flex>
+                      <Flex direction="row">
+                        <Switch
+                          name="toggleGridlines"
+                          value={showGridlines}
+                          onChange={() => setShowGridlines(!showGridlines)}
+                        >
+                          Show gridlines
+                        </Switch>
+                      </Flex>
+                    </DropdownWrapper>
+                  </Menu>
+                }
+              >
+                <Button icon="GridLines" type="ghost" aria-label="view" />
+              </Dropdown>
+            </Tooltip>
+            <Tooltip content="Show/hide aggregates">
+              <Dropdown
+                content={
+                  <Menu>
+                    <DropdownWrapper>
+                      <Flex>
+                        <DropdownTitle>Time series aggregates</DropdownTitle>
+                      </Flex>
+                      <Flex direction="row">
+                        <Switch
+                          name="toggleAggregates"
+                          value={showAggregates}
+                          onChange={() => setShowAggregates(!showAggregates)}
+                        >
+                          Show Aggregates
+                        </Switch>
+                      </Flex>
+                    </DropdownWrapper>
+                  </Menu>
+                }
+              >
+                <Button icon="Timeseries" type="ghost" aria-label="view" />
+              </Dropdown>
+            </Tooltip>
+            <Tooltip content="Y axes">
+              <Dropdown
+                content={
+                  <Menu>
+                    <DropdownWrapper>
+                      <Flex>
+                        <DropdownTitle>Y axis</DropdownTitle>
+                      </Flex>
+                      <Flex direction="row">
+                        <Switch
+                          name="toggleYAxis"
+                          value={showYAxis}
+                          onChange={() => setShowYAxis(!showYAxis)}
+                        >
+                          Show Y axes
+                        </Switch>
+                      </Flex>
+                    </DropdownWrapper>
+                  </Menu>
+                }
+              >
+                <>
+                  <Button
+                    icon="YAxis"
+                    type="ghost"
+                    aria-label="view"
+                    style={{ paddingRight: 8 }}
+                  >
+                    <Icon type="CaretDown" />
+                  </Button>
+                </>
+              </Dropdown>
+            </Tooltip>
             <Tooltip content={`${stackedMode ? 'Disable' : 'Enable'} stacking`}>
               <Button
                 icon="ChartStackedView"
@@ -373,6 +448,8 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                   chartId={chartId}
                   isInSearch={showSearch}
                   isYAxisShown={showYAxis}
+                  isAggregatesShown={showAggregates}
+                  isGridlinesShown={showGridlines}
                   stackedMode={stackedMode}
                 />
               </ChartWrapper>
@@ -383,25 +460,16 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                   <SourceTable>
                     <thead>{sourceTableHeaderRow}</thead>
                     <tbody>
-                      <TimeSeriesRows
+                      <SourceRows
                         chart={chart}
                         updateChart={updateChart}
                         mode={workspaceMode}
                         selectedSourceId={selectedSourceId}
+                        openNodeEditor={openNodeEditor}
                         onRowClick={handleSourceClick}
                         onInfoClick={handleInfoClick}
                         dateFrom={chart.dateFrom}
                         dateTo={chart.dateTo}
-                      />
-
-                      <WorkflowRows
-                        chart={chart}
-                        updateChart={updateChart}
-                        mode={workspaceMode}
-                        openNodeEditor={openNodeEditor}
-                        selectedSourceId={selectedSourceId}
-                        onRowClick={handleSourceClick}
-                        onInfoClick={handleInfoClick}
                       />
                     </tbody>
                   </SourceTable>
@@ -442,13 +510,13 @@ const Divider = styled.div`
   margin-left: 10px;
 `;
 
-const YaxisDropdownTitle = styled.div`
+const DropdownTitle = styled.div`
   color: var(--cogs-greyscale-grey6);
   font-size: 12px;
-  margin: 0 0 8px 8px;
+  margin: 0 0 8px 0;
 `;
 
-const YaxisDropdownWrapper = styled.div`
+const DropdownWrapper = styled.div`
   padding: 8px;
 `;
 

@@ -11,13 +11,20 @@ const clusters = [
         label: 'Europe 1 (Google)',
         legacyAuth: true,
       },
-      { value: 'asia-northeast1-1', label: 'Asia 1', legacyAuth: true },
+      {
+        value: 'asia-northeast1-1',
+        label: 'Asia 1 (Google)',
+        legacyAuth: true,
+      },
+      { value: 'az-eastus-1', label: 'East US 1 (Azure)' },
+      { value: 'westeurope-1', label: 'West Europe 1 (Azure)' },
     ],
   },
   {
     label: 'Single customer clusters',
     options: [
       { value: 'bp', label: 'BP', legacyAuth: true },
+      { value: 'bp-northeurope', label: 'BP North Europe (Azure)' },
       { value: 'omv', label: 'OMV', legacyAuth: true },
       { value: 'pgs', label: 'PGS', legacyAuth: true },
       { value: 'power-no', label: 'Power NO', legacyAuth: true },
@@ -35,6 +42,10 @@ const clusters = [
       {
         value: 'bluefield',
         label: 'Bluefield',
+      },
+      {
+        value: 'azure-dev',
+        label: 'Azure Dev',
       },
     ],
   },
