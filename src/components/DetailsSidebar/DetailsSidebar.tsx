@@ -1,7 +1,7 @@
 import { Button, Tooltip, SegmentedControl } from '@cognite/cogs.js';
 import { useSDK } from '@cognite/sdk-provider';
 import { MetadataList } from 'components/DetailsSidebar';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 import { ChartTimeSeries, ChartWorkflow } from 'reducers/charts/types';
 import { getCallResponse } from 'utils/backendApi';
@@ -106,17 +106,6 @@ const Metadata = ({
 }: {
   sourceItem: ChartWorkflow | ChartTimeSeries | undefined;
 }) => {
-  const [selectedItem, setSelectedItem] = useState<
-    ChartWorkflow | ChartTimeSeries | undefined
-  >(sourceItem);
-
-  useEffect(() => {
-    if (sourceItem?.id !== selectedItem?.id) {
-      setSelectedItem(sourceItem);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sourceItem]);
-
   if (sourceItem?.type === 'workflow') {
     return <p>Not available for calculations</p>;
   }
@@ -124,7 +113,7 @@ const Metadata = ({
   return (
     <Container>
       <SourceHeader sourceItem={sourceItem} />
-      <MetadataList timeseriesId={(selectedItem as ChartTimeSeries)?.tsId} />
+      <MetadataList timeseriesId={(sourceItem as ChartTimeSeries)?.tsId} />
     </Container>
   );
 };
