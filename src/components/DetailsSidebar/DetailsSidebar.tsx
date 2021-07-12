@@ -106,14 +106,14 @@ const Metadata = ({
 }: {
   sourceItem: ChartWorkflow | ChartTimeSeries | undefined;
 }) => {
-  if (sourceItem?.type === 'workflow') {
-    return <p>Not available for calculations</p>;
-  }
-
   return (
     <Container>
       <SourceHeader sourceItem={sourceItem} />
-      <MetadataList timeseriesId={(sourceItem as ChartTimeSeries)?.tsId} />
+      {sourceItem?.type === 'timeseries' ? (
+        <MetadataList timeseriesId={(sourceItem as ChartTimeSeries)?.tsId} />
+      ) : (
+        <p>(currently unavailable for calculations)</p>
+      )}
     </Container>
   );
 };
