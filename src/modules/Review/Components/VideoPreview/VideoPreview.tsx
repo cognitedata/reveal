@@ -32,7 +32,7 @@ export const retrieveDownloadUrl = async (
   try {
     const result = await client.post(
       // call post directly since getDownloadUrls() does not support extendedExpiration
-      '/api/v1/projects/computervision-test/files/downloadlink',
+      `/api/v1/projects/${client.project}/files/downloadlink`,
       {
         data: { items: [{ id: fileId }] },
         params: { extendedExpiration: true },

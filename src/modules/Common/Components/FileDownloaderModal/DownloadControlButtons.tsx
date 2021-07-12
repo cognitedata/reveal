@@ -4,7 +4,9 @@ import { STATUS } from '../FileUploaderModal/enums';
 
 export const getDownloadControls = (
   downloadStatus: STATUS,
-  onDownloadStart: () => unknown
+  onDownloadStart: () => unknown,
+  downloadMessage: string
+
   // onDownloadStop: () => unknown
 ) => {
   let DownloadButton;
@@ -30,7 +32,7 @@ export const getDownloadControls = (
     case STATUS.STARTED:
       DownloadButton = (
         <Button type="primary" icon="Loading">
-          Downloading
+          {`Downloading (${downloadMessage})`}
         </Button>
       );
       // TODO: fix cancel

@@ -5,7 +5,7 @@ export type FileDownloaderModalProps = {
 };
 
 export enum AnnotationFileFormat {
-  CSV = 'CSV (Google AutoML)',
+  CSV = 'CSV (Google Vertex AI)',
   TXT = 'TXT (YOLO Darknet)',
   XML = 'XML (Pascal VOC)',
 }

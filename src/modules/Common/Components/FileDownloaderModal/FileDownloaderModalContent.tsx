@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import { getTimeStringNow } from 'src/utils';
-import { IdEither, v3Client as sdk } from '@cognite/cdf-sdk-singleton';
+import {
+  FileLink,
+  IdEither,
+  v3Client as sdk,
+} from '@cognite/cdf-sdk-singleton';
 import { Dropdown, Menu, Title, Button, Body, Radio } from '@cognite/cogs.js';
 import { saveAs } from 'file-saver';
 import styled from 'styled-components';
@@ -8,6 +12,7 @@ import JSZip from 'jszip';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { AnnotationStatus } from 'src/utils/AnnotationUtils';
+import { ToastUtils } from 'src/utils/ToastUtils';
 import { getDownloadControls } from './DownloadControlButtons';
 import { STATUS } from '../FileUploaderModal/enums';
 import { selectAnnotationsForAllFiles } from '../../annotationSlice';
@@ -34,6 +39,7 @@ export const FileDownloaderModalContent = ({
     STATUS.READY_TO_START
   );
   const [hideDropDown, setHideDropDown] = useState<boolean>(true);
+  const [downloadedMessage, setDownloadedMessage] = useState<string>('0%');
   const annotations = useSelector(({ annotationReducer }: RootState) =>
     selectAnnotationsForAllFiles(annotationReducer, fileIds)
   );
@@ -53,6 +59,8 @@ export const FileDownloaderModalContent = ({
   };
 
   const downloadFiles = async () => {
+    const batchSize = 100;
+
     const files = await sdk.files.retrieve(
       fileIds.map((id) => {
         return {
@@ -83,45 +91,79 @@ export const FileDownloaderModalContent = ({
         currentFileChoice
       )
     ) {
-      const req: { id: number }[] = [];
-      fileIds?.forEach((id) => {
-        req.push({ id });
-      });
+      const batchFileIdsList: number[][] = fileIds.reduce((acc, _, i) => {
+        if (i % batchSize === 0) {
+          acc.push(fileIds.slice(i, i + batchSize));
+        }
+        return acc;
+      }, [] as number[][]);
 
-      const result = await sdk.files.getDownloadUrls(req);
+      const getBlobs = async (batch: number[], batchId: number) => {
+        const req = batch.map((id) => {
+          return {
+            id,
+          };
+        });
 
-      const promises: Promise<Blob>[] = [];
-      result.forEach((d) => {
-        const promise = fetch(d.downloadUrl, { method: 'GET' }).then((value) =>
-          value.blob()
+        const data = await sdk
+          .post(
+            // call post directly since getDownloadUrls() does not support extendedExpiration
+            `/api/v1/projects/${sdk.project}/files/downloadlink`,
+            {
+              data: { items: req },
+              params: { extendedExpiration: true },
+            }
+          )
+          .then((response) => response.data.items as (FileLink & IdEither)[]);
+
+        await Promise.all(
+          data.map((item, index) => {
+            return fetch(item.downloadUrl, {
+              method: 'GET',
+            }).then((value) => {
+              zip.file(files[index + batchId].name, value.blob());
+            });
+          })
         );
-        promises.push(promise);
-      });
-      const data = Promise.all(promises);
-
-      (await data).forEach((el: Blob, index) => {
-        const filename = files[index].name;
-        zip.file(filename, el);
-      });
+      };
+      for (let i = 0; i < batchFileIdsList.length; i++) {
+        const batchId = i * batchSize;
+        const batch = batchFileIdsList[i];
+        try {
+          // eslint-disable-next-line no-await-in-loop
+          await getBlobs(batch, batchId);
+          setDownloadedMessage(
+            (i + 1) / batchFileIdsList.length !== 1
+              ? `${Math.round((i / batchFileIdsList.length) * 100).toString()}%`
+              : 'zipping files...'
+          );
+        } catch (error) {
+          ToastUtils.onFailure(`Failed to download files ${error?.message}`);
+          console.error(`Failed to download files ${error?.message}`);
+          setDownloadStatus(STATUS.READY_TO_START);
+          return undefined;
+        }
+      }
     }
 
     try {
-      zip.generateAsync({ type: 'blob' }).then(
+      await zip.generateAsync({ type: 'blob' }).then(
         (content: Blob | string) => {
           saveAs(content, `${zipfilename}.zip`);
         },
-        (err: string) => {
-          console.log(err);
+        (error: string) => {
+          console.error(`Failed to zip files ${error}`);
         }
       );
       setDownloadStatus(STATUS.DONE);
       onCancel();
       setDownloadStatus(STATUS.READY_TO_START);
+      setDownloadedMessage('0%');
 
       return 'success';
-    } catch {
-      // eslint-disable-next-line no-console
-      console.log('Could not fetch file');
+    } catch (error) {
+      ToastUtils.onFailure(`Failed to download files ${error?.message}`);
+      console.error(`Failed to download files ${error?.message}`);
       return undefined;
     }
   };
@@ -145,7 +187,8 @@ export const FileDownloaderModalContent = ({
 
   const [DownloadButton, CancelButton] = getDownloadControls(
     downloadStatus,
-    onDownloadStart
+    onDownloadStart,
+    downloadedMessage
   );
 
   const FileMenuContent = (

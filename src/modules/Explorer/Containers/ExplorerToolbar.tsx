@@ -46,22 +46,15 @@ export const ExplorerToolbar = ({
           >
             Upload
           </Button>
-          <Tooltip
-            content={
-              <span data-testid="text-content">{exceededLimitMessage}</span>
-            }
-            disabled={!!inLimit}
+          <Button
+            style={{ marginLeft: 14 }}
+            icon="Download"
+            type="tertiary"
+            onClick={onDownload}
+            disabled={!count}
           >
-            <Button
-              style={{ marginLeft: 14 }}
-              icon="Download"
-              type="tertiary"
-              onClick={onDownload}
-              disabled={!count}
-            >
-              Download {count}
-            </Button>
-          </Tooltip>
+            Download {count}
+          </Button>
           <Tooltip
             content={
               <span data-testid="text-content">{exceededLimitMessage}</span>
