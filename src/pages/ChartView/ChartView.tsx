@@ -346,53 +346,23 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
             </section>
           )}
           <section className="daterange">
-            <Tooltip content="Gridlines">
-              <Dropdown
-                content={
-                  <Menu>
-                    <DropdownWrapper>
-                      <Flex>
-                        <DropdownTitle>Gridlines</DropdownTitle>
-                      </Flex>
-                      <Flex direction="row">
-                        <Switch
-                          name="toggleGridlines"
-                          value={showGridlines}
-                          onChange={() => setShowGridlines(!showGridlines)}
-                        >
-                          Show gridlines
-                        </Switch>
-                      </Flex>
-                    </DropdownWrapper>
-                  </Menu>
-                }
-              >
-                <Button icon="GridLines" type="ghost" aria-label="view" />
-              </Dropdown>
+            <Tooltip content={`${showGridlines ? 'Hide' : 'Show'} gridlines`}>
+              <Button
+                icon="GridLines"
+                type={showGridlines ? 'link' : 'ghost'}
+                aria-label="view"
+                onClick={() => setShowGridlines(!showGridlines)}
+                style={{ marginLeft: 4 }}
+              />
             </Tooltip>
-            <Tooltip content="Show/hide aggregates">
-              <Dropdown
-                content={
-                  <Menu>
-                    <DropdownWrapper>
-                      <Flex>
-                        <DropdownTitle>Time series aggregates</DropdownTitle>
-                      </Flex>
-                      <Flex direction="row">
-                        <Switch
-                          name="toggleAggregates"
-                          value={showAggregates}
-                          onChange={() => setShowAggregates(!showAggregates)}
-                        >
-                          Show Aggregates
-                        </Switch>
-                      </Flex>
-                    </DropdownWrapper>
-                  </Menu>
-                }
-              >
-                <Button icon="Timeseries" type="ghost" aria-label="view" />
-              </Dropdown>
+            <Tooltip content={`${showAggregates ? 'Hide' : 'Show'} aggregates`}>
+              <Button
+                icon="Timeseries"
+                type={showAggregates ? 'link' : 'ghost'}
+                aria-label="view"
+                onClick={() => setShowAggregates(!showAggregates)}
+                style={{ marginLeft: 4 }}
+              />
             </Tooltip>
             <Tooltip content="Y axes">
               <Dropdown
@@ -420,7 +390,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                     icon="YAxis"
                     type="ghost"
                     aria-label="view"
-                    style={{ paddingRight: 8 }}
+                    style={{ paddingRight: 8, marginLeft: 4 }}
                   >
                     <Icon type="CaretDown" />
                   </Button>
@@ -430,9 +400,10 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
             <Tooltip content={`${stackedMode ? 'Disable' : 'Enable'} stacking`}>
               <Button
                 icon="ChartStackedView"
-                type={stackedMode ? 'primary' : 'ghost'}
+                type={stackedMode ? 'link' : 'ghost'}
                 onClick={() => setStackedMode(!stackedMode)}
                 aria-label="view"
+                style={{ marginLeft: 4 }}
               />
             </Tooltip>
             <Divider />
