@@ -40,10 +40,10 @@ export type State = {
   showFilter: boolean;
   showFileUploadModal: boolean;
   showFileDownloadModal: boolean;
-  selectedIds: number[];
   files: {
     byId: Record<number, ExplorerFileState>;
     allIds: number[];
+    selectedIds: number[];
   };
 };
 
@@ -59,8 +59,8 @@ const initialState: State = {
   files: {
     byId: {},
     allIds: [],
+    selectedIds: [],
   },
-  selectedIds: [],
 };
 
 const explorerSlice = createSlice({
@@ -95,12 +95,14 @@ const explorerSlice = createSlice({
       ) => {
         const { fileId } = action.payload;
         if (fileId) {
-          const alreadySelected = state.selectedIds.includes(fileId);
+          const alreadySelected = state.files.selectedIds.includes(fileId);
           if (alreadySelected) {
-            const index = state.selectedIds.findIndex((id) => id === fileId);
-            state.selectedIds.splice(index, 1);
+            const index = state.files.selectedIds.findIndex(
+              (id) => id === fileId
+            );
+            state.files.selectedIds.splice(index, 1);
           } else {
-            state.selectedIds.push(fileId);
+            state.files.selectedIds.push(fileId);
           }
         }
       },
@@ -143,6 +145,9 @@ const explorerSlice = createSlice({
     builder.addCase(deleteFilesById.fulfilled, (state, { payload }) => {
       payload.forEach((fileId) => {
         deleteFileById(state, fileId.id);
+        state.files.selectedIds = state.files.selectedIds.filter(
+          (id) => id !== fileId.id
+        );
       });
     });
 
@@ -174,7 +179,7 @@ export default explorerSlice.reducer;
 
 // selectors
 export const selectExplorerSelectedIds = (state: State): number[] =>
-  state.selectedIds;
+  state.files.selectedIds;
 
 export const selectExploreFileCount = (state: State): number =>
   state.files.allIds.length;
@@ -228,7 +233,7 @@ const updateFileState = (state: State, file: FileState) => {
 const clearFileState = (state: State) => {
   state.files.byId = {};
   state.files.allIds = [];
-  state.selectedIds = [];
+  state.files.selectedIds = [];
 };
 
 const convertToExplorerFileState = (

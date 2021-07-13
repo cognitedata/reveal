@@ -12,7 +12,7 @@ import { convertToAnnotation } from 'src/modules/Review/Components/ReactImageAnn
 import { PopupUIElementContainer } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/TitleContainer';
 import { Input } from 'antd';
 import { useDispatch } from 'react-redux';
-import { deselectAnnotation } from '../../previewSlice';
+import { deselectAllAnnotations } from '../../previewSlice';
 
 export const AnnotationEditPopup = (props: {
   region: Region;
@@ -69,7 +69,7 @@ export const AnnotationEditPopup = (props: {
   const handleOnCancel = () => {
     onClose(region);
     if (alreadyCreated) {
-      dispatch(deselectAnnotation(region.id as number));
+      dispatch(deselectAllAnnotations());
     } else {
       onDelete(region);
     }
@@ -82,7 +82,6 @@ export const AnnotationEditPopup = (props: {
 
   const handleOnUpdate = () => {
     onClose(region);
-    dispatch(deselectAnnotation(region.id as number));
     onUpdateAnnotation({ ...convertToAnnotation(region), text: labelValue });
   };
 

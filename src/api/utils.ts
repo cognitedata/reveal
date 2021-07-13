@@ -76,6 +76,7 @@ export function validateAnnotation(
     if (!validVertices) {
       throw new Error('Annotation coordinates must be between 0 and 1');
     }
+    return true;
   }
-  return true;
+  return false;
 }

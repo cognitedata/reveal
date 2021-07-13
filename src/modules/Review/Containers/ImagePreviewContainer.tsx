@@ -2,17 +2,17 @@ import React, { useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import {
+  deselectAllAnnotations,
   selectVisibleNonRejectedAnnotationsByFileId,
-  updateAnnotation,
   VisibleAnnotation,
 } from 'src/modules/Review/previewSlice';
 import { Annotation } from 'src/api/types';
-import { UpdateAnnotationsById } from 'src/store/thunks/UpdateAnnotationsById';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import { ReactImageAnnotateWrapper } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/ReactImageAnnotateWrapper';
 import { UnsavedAnnotation } from 'src/api/annotation/types';
 import { DeleteAnnotationsAndRemoveLinkedAssets } from 'src/store/thunks/DeleteAnnotationsAndRemoveLinkedAssets';
 import { CreateAnnotations } from 'src/store/thunks/CreateAnnotations';
+import { UpdateAnnotations } from 'src/store/thunks/UpdateAnnotations';
 
 export const ImagePreviewContainer = ({ file }: { file: FileInfo }) => {
   const [inFocus, setInFocus] = useState<boolean>(false);
@@ -42,9 +42,9 @@ export const ImagePreviewContainer = ({ file }: { file: FileInfo }) => {
     dispatch(CreateAnnotations({ fileId: file.id, annotation }));
   };
 
-  const handleModifyAnnotation = (annotation: Annotation) => {
-    dispatch(updateAnnotation(annotation));
-    dispatch(UpdateAnnotationsById([annotation.id]));
+  const handleModifyAnnotation = async (annotation: Annotation) => {
+    await dispatch(UpdateAnnotations([annotation]));
+    dispatch(deselectAllAnnotations());
   };
 
   const handleDeleteAnnotation = (annotation: Annotation) => {

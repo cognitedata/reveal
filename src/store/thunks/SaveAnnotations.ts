@@ -10,9 +10,11 @@ export const SaveAnnotations = createAsyncThunk<
   UnsavedAnnotation[],
   ThunkConfig
 >('SaveAnnotations', async (annotations) => {
-  annotations.forEach((annotation) => validateAnnotation(annotation)); // validate annotations
+  const filteredAnnotations = annotations.filter((annotation) =>
+    validateAnnotation(annotation)
+  ); // validate annotations
 
-  const data = { items: annotations };
+  const data = { items: filteredAnnotations };
 
   const response = await AnnotationApi.create(data);
   return response.data.items;

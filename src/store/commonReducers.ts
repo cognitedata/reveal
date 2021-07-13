@@ -8,10 +8,10 @@ type FileState = {
 };
 
 type State = {
-  selectedIds: number[];
   files: {
     byId: Record<number, FileState>;
     allIds: number[];
+    selectedIds: number[];
   };
 };
 
@@ -44,18 +44,18 @@ export const makeReducerSelectAllFilesWithFilter =
 
     if (selectStatus) {
       selectedIds.forEach((id) => {
-        if (!state.selectedIds.includes(id)) {
-          state.selectedIds.push(id);
+        if (!state.files.selectedIds.includes(id)) {
+          state.files.selectedIds.push(id);
         }
       });
     }
     if (!selectStatus) {
       if (selectedIds.length === state.files.allIds.length) {
         // eslint-disable-next-line no-param-reassign
-        state.selectedIds = [];
+        state.files.selectedIds = [];
       } else {
         // eslint-disable-next-line no-param-reassign
-        state.selectedIds = state.selectedIds.filter(
+        state.files.selectedIds = state.files.selectedIds.filter(
           (id) => !selectedIds.includes(id)
         );
       }

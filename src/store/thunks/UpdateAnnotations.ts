@@ -1,18 +1,25 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ThunkConfig } from 'src/store/rootReducer';
-import { Annotation } from 'src/api/types';
 import { AnnotationApi } from 'src/api/annotation/AnnotationApi';
 import { validateAnnotation } from 'src/api/utils';
+import { AnnotationUtils, VisionAnnotation } from 'src/utils/AnnotationUtils';
+import { Annotation } from 'src/api/types';
 
 export const UpdateAnnotations = createAsyncThunk<
-  Annotation[],
+  VisionAnnotation[],
   Annotation[],
   ThunkConfig
 >('UpdateAnnotations', async (annotations) => {
-  annotations.forEach((annotation) => validateAnnotation(annotation)); // validate annotations
+  if (!annotations.length) {
+    return [];
+  }
+
+  const filteredAnnotations = annotations.filter((annotation) =>
+    validateAnnotation(annotation)
+  ); // validate annotations
 
   const annotationUpdateRequest = {
-    items: annotations.map((ann) => ({
+    items: filteredAnnotations.map((ann) => ({
       id: ann.id,
       update: {
         text: getFieldOrSetNull(ann.text),
@@ -30,7 +37,11 @@ export const UpdateAnnotations = createAsyncThunk<
     })),
   };
   const response = await AnnotationApi.update(annotationUpdateRequest);
-  return response.data.items;
+  const responseAnnotations = response.data.items;
+
+  const updatedVisionAnnotations =
+    AnnotationUtils.convertToVisionAnnotations(responseAnnotations);
+  return updatedVisionAnnotations;
 });
 
 const getFieldOrSetNull = (value: any): { set: any } | { setNull: true } => {

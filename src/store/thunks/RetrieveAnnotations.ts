@@ -2,6 +2,8 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { AnnotationApi } from 'src/api/annotation/AnnotationApi';
 import { AnnotationUtils, VisionAnnotation } from 'src/utils/AnnotationUtils';
+import { Annotation } from 'src/api/types';
+import { validateAnnotation } from 'src/api/utils';
 
 export const RetrieveAnnotations = createAsyncThunk<
   VisionAnnotation[],
@@ -27,8 +29,19 @@ export const RetrieveAnnotations = createAsyncThunk<
     const annotations = annotationsPerResponse.reduce((acc, rs) => {
       return acc.concat(rs);
     });
+    const filteredAnnotations = annotations.filter((annotation: Annotation) => {
+      try {
+        return validateAnnotation(annotation);
+      } catch (error) {
+        console.error(
+          'Annotation is invalid!, will not be visible',
+          annotation
+        );
+        return false;
+      }
+    });
     const visionAnnotations =
-      AnnotationUtils.convertToVisionAnnotations(annotations);
+      AnnotationUtils.convertToVisionAnnotations(filteredAnnotations);
     return visionAnnotations;
   }
   return [];

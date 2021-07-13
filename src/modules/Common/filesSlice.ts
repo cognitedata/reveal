@@ -48,8 +48,8 @@ export type State = {
   files: {
     byId: Record<number, FileState>;
     allIds: number[];
+    selectedIds: number[];
   };
-  selectedIds: number[];
   saveState: {
     mode: CDFStatusModes;
     time?: number;
@@ -71,8 +71,8 @@ const initialState: State = {
   files: {
     byId: {},
     allIds: [],
+    selectedIds: [],
   },
-  selectedIds: [],
   saveState: {
     mode: 'saved' as CDFStatusModes,
     time: new Date().getTime(),
@@ -159,12 +159,14 @@ const filesSlice = createSlice({
       ) => {
         const { fileId } = action.payload;
         if (fileId) {
-          const alreadySelected = state.selectedIds.includes(fileId);
+          const alreadySelected = state.files.selectedIds.includes(fileId);
           if (alreadySelected) {
-            const index = state.selectedIds.findIndex((id) => id === fileId);
-            state.selectedIds.splice(index, 1);
+            const index = state.files.selectedIds.findIndex(
+              (id) => id === fileId
+            );
+            state.files.selectedIds.splice(index, 1);
           } else {
-            state.selectedIds.push(fileId);
+            state.files.selectedIds.push(fileId);
           }
         }
       },
@@ -174,6 +176,9 @@ const filesSlice = createSlice({
     builder.addCase(deleteFilesById.fulfilled, (state, { payload }) => {
       payload.forEach((fileId) => {
         deleteFileById(state, fileId.id);
+        state.files.selectedIds = state.files.selectedIds.filter(
+          (id) => id !== fileId.id
+        );
       });
     });
 
@@ -233,7 +238,7 @@ export const {
 export default filesSlice.reducer;
 
 export const selectAllSelectedIds = (state: State): number[] =>
-  state.selectedIds;
+  state.files.selectedIds;
 
 export const selectAllFiles = createSelector(
   (state: State) => state.files.allIds,
@@ -288,5 +293,5 @@ const updateFileState = (state: State, file: FileState) => {
 const clearFileState = (state: State) => {
   state.files.byId = {};
   state.files.allIds = [];
-  state.selectedIds = [];
+  state.files.selectedIds = [];
 };

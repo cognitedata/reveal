@@ -12,8 +12,7 @@ import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
 import {
-  annotationApproval,
-  deselectAnnotation,
+  deselectAllAnnotations,
   selectAnnotation,
   toggleAnnotationVisibility,
   VisibleAnnotation,
@@ -21,14 +20,15 @@ import {
 } from 'src/modules/Review/previewSlice';
 import {
   AnnotationStatus,
+  AnnotationUtils,
   ModelTypeIconMap,
   ModelTypeStyleMap,
 } from 'src/utils/AnnotationUtils';
 import { VisionAPIType } from 'src/api/types';
 import { HandleFileAssetLinksByAnnotationId } from 'src/store/thunks/HandleFileAssetLinksByAnnotationId';
 import { DeleteAnnotationsAndRemoveLinkedAssets } from 'src/store/thunks/DeleteAnnotationsAndRemoveLinkedAssets';
-import { UpdateAnnotationsById } from 'src/store/thunks/UpdateAnnotationsById';
 import { AnnotationActionMenuExtended } from 'src/modules/Common/Components/AnnotationActionMenu/AnnotationActionMenuExtended';
+import { UpdateAnnotations } from 'src/store/thunks/UpdateAnnotations';
 
 export const AnnotationsTable = ({
   annotations,
@@ -56,8 +56,11 @@ export const AnnotationsTable = ({
     annotation: VisionAnnotationState,
     status: AnnotationStatus
   ) => {
-    dispatch(annotationApproval(annotation.id, status));
-    dispatch(UpdateAnnotationsById([annotation.id]));
+    const unsavedAnnotation = AnnotationUtils.convertToAnnotation({
+      ...annotation,
+      status,
+    });
+    dispatch(UpdateAnnotations([unsavedAnnotation]));
     dispatch(HandleFileAssetLinksByAnnotationId(annotation.id));
   };
 
@@ -76,7 +79,7 @@ export const AnnotationsTable = ({
   const handleOnAnnotationSelect = (id: number) => {
     const alreadySelected = selectedAnnotationIds.includes(id);
     if (alreadySelected) {
-      dispatch(deselectAnnotation(id));
+      dispatch(deselectAllAnnotations());
     } else {
       dispatch(selectAnnotation(id));
     }
@@ -117,7 +120,7 @@ export const AnnotationsTable = ({
                 className={annotation.selected ? 'active' : ''}
               >
                 <StyledCol span={2}>
-                  <ColContainer>
+                  <ColContainer onClick={(evt) => evt.stopPropagation()}>
                     <StyledSegmentedControl
                       status={annotation.status}
                       className="approvalButton"
@@ -214,7 +217,7 @@ export const AnnotationsTable = ({
                     </Tooltip>
                   </AnnotationLbl>
                 </StyledCol>
-                <StyledCol span={1}>
+                <StyledCol span={1} onClick={(evt) => evt.stopPropagation()}>
                   <AnnotationActionMenuExtended
                     showPolygon={annotation.show}
                     disableShowPolygon={

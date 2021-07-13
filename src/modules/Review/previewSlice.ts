@@ -9,7 +9,7 @@ import {
   AnnotationUtils,
   VisionAnnotation,
 } from 'src/utils/AnnotationUtils';
-import { Annotation, VisionAPIType } from 'src/api/types';
+import { VisionAPIType } from 'src/api/types';
 import {
   addAnnotations,
   deleteAnnotationsFromState,
@@ -17,8 +17,8 @@ import {
 import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
 import { AnnotationDetectionJobUpdate } from 'src/store/thunks/AnnotationDetectionJobUpdate';
 import { CreateAnnotations } from 'src/store/thunks/CreateAnnotations';
-import { UpdateAnnotationsById } from 'src/store/thunks/UpdateAnnotationsById';
 import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
+import { UpdateAnnotations } from 'src/store/thunks/UpdateAnnotations';
 
 export interface VisionAnnotationState extends Omit<VisionAnnotation, 'id'> {
   id: number;
@@ -85,43 +85,8 @@ const previewSlice = createSlice({
       const annotationId = action.payload;
       state.selectedAnnotationIds = [annotationId];
     },
-    deselectAnnotation(state, action: PayloadAction<number>) {
-      if (state.selectedAnnotationIds.includes(action.payload)) {
-        state.selectedAnnotationIds = state.selectedAnnotationIds.filter(
-          (id) => id !== action.payload
-        );
-      }
-    },
     deselectAllAnnotations(state) {
       state.selectedAnnotationIds = [];
-    },
-    updateAnnotation(state, action: PayloadAction<Annotation>) {
-      const annotation = state.annotations.byId[action.payload.id];
-      const newAnnotation = AnnotationUtils.convertToVisionAnnotations([
-        action.payload,
-      ])[0];
-      annotation.region = newAnnotation.region;
-      annotation.text = newAnnotation.text;
-      annotation.status = newAnnotation.status;
-      annotation.annotationType = newAnnotation.annotationType;
-      annotation.color = newAnnotation.color;
-    },
-    annotationApproval: {
-      prepare: (id: number, status: AnnotationStatus) => {
-        return { payload: { annotationId: id, status } };
-      },
-      reducer: (
-        state,
-        action: PayloadAction<{
-          annotationId: number;
-          status: AnnotationStatus;
-        }>
-      ) => {
-        const { status, annotationId } = action.payload;
-        const annotation = state.annotations.byId[annotationId];
-
-        annotation.status = status;
-      },
     },
     addTagAnnotations(state, action: PayloadAction<VisionAnnotation[]>) {
       if (!action.payload.length) {
@@ -208,7 +173,7 @@ const previewSlice = createSlice({
         addAnnotations,
         CreateAnnotations.fulfilled,
         AnnotationDetectionJobUpdate.fulfilled,
-        UpdateAnnotationsById.fulfilled,
+        UpdateAnnotations.fulfilled,
         RetrieveAnnotations.fulfilled
       ),
       (state, action) => {
@@ -222,10 +187,7 @@ export default previewSlice.reducer;
 export const {
   toggleAnnotationVisibility,
   selectAnnotation,
-  deselectAnnotation,
   deselectAllAnnotations,
-  updateAnnotation,
-  annotationApproval,
   addTagAnnotations,
   resetPreview,
 } = previewSlice.actions;
