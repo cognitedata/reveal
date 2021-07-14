@@ -64,7 +64,7 @@ export const TargetOrigin: FC<Props> = ({
                   label: configuration.target.external_id,
                   value: configuration.target.external_id,
                 }
-              : undefined
+              : []
           }
           options={availableProjects.map((item) => ({
             label: item.external_id,

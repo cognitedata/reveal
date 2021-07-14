@@ -45,7 +45,7 @@ const BoardTypeSelector: React.FC<Props> = ({ error, validate, touched }) => {
   };
 
   const boardTypeValue =
-    options.find((option) => isEqual(option.value, board.type)) || null;
+    options.find((option) => isEqual(option.value, board.type)) || [];
   return (
     <CustomSelectContainer selectError={!!(error && touched)}>
       <CustomLabel>Select type</CustomLabel>

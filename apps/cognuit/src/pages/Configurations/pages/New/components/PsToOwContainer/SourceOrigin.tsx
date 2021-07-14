@@ -147,7 +147,7 @@ export const SourceOrigin: FC<Props> = ({
                     label: configuration.source.external_id,
                     value: configuration.source.external_id,
                   }
-                : undefined
+                : []
             }
             options={availableRepositories.map((item) => ({
               label: item.external_id,

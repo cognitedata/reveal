@@ -365,7 +365,7 @@ const OpenWorksToPetrelStudio = ({ name }: Props) => {
                             label: configuration.source.external_id,
                             value: configuration.source.external_id,
                           }
-                        : undefined
+                        : []
                     }
                     placeholder="Available OpenWorks projects"
                     onChange={(event: any) =>
@@ -550,7 +550,7 @@ const OpenWorksToPetrelStudio = ({ name }: Props) => {
                                 label: configuration.target.external_id,
                                 value: configuration.target.external_id,
                               }
-                            : undefined
+                            : []
                         }
                         placeholder="Available repositories"
                         onChange={(event: any) =>
@@ -574,7 +574,7 @@ const OpenWorksToPetrelStudio = ({ name }: Props) => {
                                 label: configuration.ow_to_studio_config.folder,
                                 value: configuration.ow_to_studio_config.folder,
                               }
-                            : undefined
+                            : []
                         }
                         placeholder="Available folders"
                         onChange={(event: any) =>
