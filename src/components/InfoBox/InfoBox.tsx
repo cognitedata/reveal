@@ -78,7 +78,9 @@ const InfoBox = ({ infoType, query }: InfoBoxProps) => {
                 : 'Search for Time series ID'}
             </div>
             <div>those might look like this:</div>
-            <EmptyResultsExample>21PT1019</EmptyResultsExample>
+            <EmptyResultsExample>
+              {infoType === 'TagHelpBox' ? '21PT1019' : 'IA_21PT1019.PV'}
+            </EmptyResultsExample>
           </EmptyResults>
         </EmptyResultsContainer>
       )}
