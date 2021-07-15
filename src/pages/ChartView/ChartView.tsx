@@ -62,7 +62,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
 
   const [showSearch, setShowSearch] = useState(false);
   const [showYAxis, setShowYAxis] = useState(true);
-  const [showAggregates, setShowAggregates] = useState(true);
+  const [showAggregates, setShowAggregates] = useState(false);
   const [showGridlines, setShowGridlines] = useState(true);
   const [workspaceMode, setWorkspaceMode] = useState<Modes>('workspace');
   const [stackedMode, setStackedMode] = useState<boolean>(false);
