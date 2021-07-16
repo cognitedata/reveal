@@ -126,15 +126,15 @@ export default function OIDCConfigContainer() {
       {...formItemLayout}
       onFinish={handleSubmit}
       initialValues={{
-        ...data![0].oidcConfiguration,
-        accessClaims: data![0].oidcConfiguration?.accessClaims?.map(
+        ...data?.[0].oidcConfiguration,
+        accessClaims: data?.[0].oidcConfiguration?.accessClaims?.map(
           o => o.claimName
         ),
-        scopeClaims: data![0].oidcConfiguration?.scopeClaims?.map(
+        scopeClaims: data?.[0].oidcConfiguration?.scopeClaims?.map(
           o => o.claimName
         ),
-        logClaims: data![0].oidcConfiguration?.logClaims?.map(o => o.claimName),
-        isOidcEnabled: data![1].isOidcEnabled,
+        logClaims: data?.[0].oidcConfiguration?.logClaims?.map(o => o.claimName),
+        isOidcEnabled: data?.[1].isOidcEnabled,
       }}
     >
       <Form.Item name="isOidcEnabled" label="Enabled" valuePropName="checked">
