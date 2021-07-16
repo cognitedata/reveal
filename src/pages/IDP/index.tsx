@@ -120,9 +120,8 @@ const LegacyIdentityProviderForm = () => {
   );
   const { data: writeOk } = usePermissions('projectsAcl', 'UPDATE');
 
-  const [identityProvider, setIdentityProvider] = useState<IdentityProvider>(
-    'current'
-  );
+  const [identityProvider, setIdentityProvider] =
+    useState<IdentityProvider>('current');
 
   const [azureState, setAzureState] = useState<AzureADState>({
     appId: { value: '' },
