@@ -39,9 +39,8 @@ export default function GroupDrawer({ group, onClose }: Props) {
       // @ts-ignore
       const { name, sourceId, source, capabilities, id } = g;
       const defaultGroup = project?.defaultGroupId === id;
-      const groupAccountIds = (legacyAuth && !!id
-        ? await sdk.groups.listServiceAccounts(id)
-        : []
+      const groupAccountIds = (
+        legacyAuth && !!id ? await sdk.groups.listServiceAccounts(id) : []
       ).map(account => account.id);
 
       const [newGroup] = await sdk.groups.create([

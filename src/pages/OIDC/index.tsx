@@ -133,7 +133,9 @@ export default function OIDCConfigContainer() {
         scopeClaims: data?.[0].oidcConfiguration?.scopeClaims?.map(
           o => o.claimName
         ),
-        logClaims: data?.[0].oidcConfiguration?.logClaims?.map(o => o.claimName),
+        logClaims: data?.[0].oidcConfiguration?.logClaims?.map(
+          o => o.claimName
+        ),
         isOidcEnabled: data?.[1].isOidcEnabled,
       }}
     >

@@ -38,11 +38,12 @@ export default function () {
   const flow = sdk.getOAuthFlowType();
   const nativeTokens = flow === 'AAD_OAUTH' || flow === 'ADFS_OAUTH';
 
-  const { params } = useRouteMatch<{
-    tenant: string;
-    path: string;
-    page?: string;
-  }>();
+  const { params } =
+    useRouteMatch<{
+      tenant: string;
+      path: string;
+      page?: string;
+    }>();
   const { pathname, search, hash } = history.location;
 
   return (

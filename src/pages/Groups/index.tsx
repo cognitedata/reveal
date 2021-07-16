@@ -45,9 +45,8 @@ export default function Groups() {
   const { data: createPermission } = usePermissions('groupsAcl', 'CREATE');
 
   // API is a bit slow, so keep a local copy
-  const [localDefaultGroup, setLocalDefaultGroup] = useState<
-    number | undefined
-  >();
+  const [localDefaultGroup, setLocalDefaultGroup] =
+    useState<number | undefined>();
 
   const { data: project, isFetched: projectFetched } = useQuery(
     ['project', match?.params.tenant],
