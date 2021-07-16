@@ -6,10 +6,10 @@ import { Repository } from './Repository';
 import { WantedSector, SectorGeometry, ConsumedSector } from './types';
 import { LevelOfDetail } from './LevelOfDetail';
 
-import { CadSectorParser, ParseGltfResult } from './CadSectorParser';
+import { CadSectorParser, ParseGltfResult, ParseExtendedGltfResult } from './CadSectorParser';
 import { SimpleAndDetailedToSector3D } from './SimpleAndDetailedToSector3D';
 import { MemoryRequestCache } from '../../../utilities/cache/MemoryRequestCache';
-import { ParseCtmResult, ParseSectorResult } from '@cognite/reveal-parser-worker';
+import { ParseCtmResult, ParseSectorResult, ParsedPrimitives } from '@cognite/reveal-parser-worker';
 import { TriangleMesh, InstancedMeshFile, InstancedMesh } from '../rendering/types';
 import { assertNever, createOffsetsArray } from '../../../utilities';
 
@@ -18,11 +18,18 @@ import { groupMeshesByNumber } from './groupMeshesByNumber';
 import { MostFrequentlyUsedCache } from '../../../utilities/MostFrequentlyUsedCache';
 import { trackError } from '../../../utilities/metrics';
 
+enum InputMode {
+  Ctm,
+  Gltf,
+  ExtendedGltf
+}
+
 // TODO: j-bjorne 16-04-2020: REFACTOR FINALIZE INTO SOME OTHER FILE PLEZ!
 export class CachedRepository implements Repository {
   private readonly _consumedSectorCache: MemoryRequestCache<string, ConsumedSector>;
   private readonly _ctmFileCache: MostFrequentlyUsedCache<string, ParseCtmResult>;
   private readonly _gltfFileCache: MostFrequentlyUsedCache<string, ParseGltfResult>;
+  private readonly _extendedGltfFileCache: MostFrequentlyUsedCache<string, ParseExtendedGltfResult>;
 
   private readonly _modelSectorProvider: BinaryFileProvider;
   private readonly _modelDataParser: CadSectorParser;
@@ -45,12 +52,14 @@ export class CachedRepository implements Repository {
     });
     this._ctmFileCache = new MostFrequentlyUsedCache(10);
     this._gltfFileCache = new MostFrequentlyUsedCache(10);
+    this._extendedGltfFileCache = new MostFrequentlyUsedCache(10);
   }
 
   clear() {
     this._consumedSectorCache.clear();
     this._ctmFileCache.clear();
     this._gltfFileCache.clear();
+    this._extendedGltfFileCache.clear();
   }
 
   // TODO j-bjorne 16-04-2020: Should look into ways of not sending in discarded sectors,
@@ -147,29 +156,46 @@ export class CachedRepository implements Repository {
     );
   }
 
+  private async loadExtendedGltfsFromNetwork(
+    modelBlobUrl: string,
+    gltfFileNames: string[]
+  ): Promise<Map<string, ParseExtendedGltfResult>> {
+    const gltfs = await Promise.all(gltfFileNames.map(x => this.loadExtendedGltfFileFromNetwork(modelBlobUrl, x)));
+    return gltfFileNames.reduce(
+      (map, filename, index) => map.set(filename, gltfs[index]),
+      new Map<string, ParseExtendedGltfResult>()
+    );
+  }
+
   private async loadDetailedSectorFromNetwork(wantedSector: WantedSector): Promise<ConsumedSector> {
     const indexFile = wantedSector.metadata.indexFile;
 
-    const gltf = true;
+    const inputMode: InputMode = InputMode.ExtendedGltf;
 
     const i3dPromise = this.loadI3DFromNetwork(wantedSector.blobUrl, indexFile.fileName);
 
     let geometry: SectorGeometry;
 
-    if (gltf) {
+    if (inputMode == InputMode.Gltf) {
       const gltfPromise = this.loadGltfsFromNetwork(wantedSector.blobUrl, indexFile.peripheralFiles);
 
       const i3d = await i3dPromise;
       const gltfs = await gltfPromise;
 
       geometry = this.finalizeDetailedGltf(i3d, gltfs);
-    } else {
+    } else if (inputMode == InputMode.Ctm) {
       const ctmsPromise = this.loadCtmsFromNetwork(wantedSector.blobUrl, indexFile.peripheralFiles);
 
       const i3d = await i3dPromise;
       const ctms = await ctmsPromise;
 
       geometry = this.finalizeDetailedCtm(i3d, ctms);
+    } else {
+      const extendedGltfPromise = this.loadExtendedGltfsFromNetwork(wantedSector.blobUrl, indexFile.peripheralFiles);
+
+      const i3d = await i3dPromise;
+      const gltfs = await extendedGltfPromise;
+      geometry = this.finalizeDetailedExtendedGltf(i3d, gltfs);
     }
 
     const transformed = await this._modelDataTransformer.transformDetailedSector(
@@ -215,8 +241,29 @@ export class CachedRepository implements Repository {
     return parsedGltf;
   }
 
-  private finalizeDetailedGltf(i3dFile: ParseSectorResult, gltfFiles: Map<string, ParseGltfResult>): SectorGeometry {
+  private async loadExtendedGltfFileFromNetwork(
+    modelBlobUrl: string,
+    filename: string
+  ): Promise<ParseExtendedGltfResult> {
+    const cacheKey = this.gltfFileCacheKey(modelBlobUrl, filename);
+    const cached = this._extendedGltfFileCache.get(cacheKey);
+    if (cached !== undefined) {
+      return cached;
+    }
+
+    const parsedGltf = await this._modelDataParser.parseExtendedGltf(modelBlobUrl + '/' + filename);
+
+    this._gltfFileCache.set(cacheKey, parsedGltf);
+    return parsedGltf;
+  }
+
+  private finalizeDetailedExtendedGltf(
+    i3dFile: ParseSectorResult,
+    gltfFiles: Map<string, ParseExtendedGltfResult>
+  ): SectorGeometry {
     const { instanceMeshes, triangleMeshes } = i3dFile;
+
+    let primitives: ParsedPrimitives = i3dFile.primitives;
 
     const finalTriangleMeshes = (() => {
       const { fileIds, colors, triangleCounts, treeIndices } = triangleMeshes;
@@ -229,7 +276,11 @@ export class CachedRepository implements Repository {
         // Load glb (geometry)
         const fileName = `mesh_${fileId}.glb`;
 
-        const { indices, vertices, normals, meshNameToOffsetCountMap } = gltfFiles.get(fileName)!; // TODO: j-bjorne 16-04-2020: try catch error???
+        const { indices, vertices, normals, meshNameToOffsetCountMap, parsedPrimitives } = gltfFiles.get(fileName)!; // TODO: j-bjorne 16-04-2020: try catch error???
+
+        if (parsedPrimitives) {
+          primitives = parsedPrimitives;
+        }
 
         const sharedColors = new Uint8Array(3 * indices.length);
         const sharedTreeIndices = new Float32Array(indices.length);
@@ -269,8 +320,6 @@ export class CachedRepository implements Repository {
         };
         finalMeshes.push(mesh);
       }
-
-      // debugger;
 
       return finalMeshes;
     })();
@@ -344,7 +393,7 @@ export class CachedRepository implements Repository {
     const sector: SectorGeometry = {
       treeIndexToNodeIdMap: i3dFile.treeIndexToNodeIdMap,
       nodeIdToTreeIndexMap: i3dFile.nodeIdToTreeIndexMap,
-      primitives: i3dFile.primitives,
+      primitives: primitives,
       instanceMeshes: finalInstanceMeshes,
       triangleMeshes: finalTriangleMeshes
     };
@@ -438,6 +487,141 @@ export class CachedRepository implements Repository {
           instancedMeshes.push({
             triangleCount,
             triangleOffset,
+            instanceMatrices: instanceMatrixBuffer,
+            colors: colorBuffer,
+            treeIndices: treeIndicesBuffer
+          });
+        }
+
+        const mesh: InstancedMeshFile = {
+          fileId,
+          indices,
+          vertices,
+          instances: instancedMeshes
+        };
+        finalMeshes.push(mesh);
+      }
+
+      return finalMeshes;
+    })();
+
+    const sector: SectorGeometry = {
+      treeIndexToNodeIdMap: i3dFile.treeIndexToNodeIdMap,
+      nodeIdToTreeIndexMap: i3dFile.nodeIdToTreeIndexMap,
+      primitives: i3dFile.primitives,
+      instanceMeshes: finalInstanceMeshes,
+      triangleMeshes: finalTriangleMeshes
+    };
+
+    return sector;
+  }
+
+  private finalizeDetailedGltf(i3dFile: ParseSectorResult, gltfFiles: Map<string, ParseGltfResult>): SectorGeometry {
+    const { instanceMeshes, triangleMeshes } = i3dFile;
+
+    const finalTriangleMeshes = (() => {
+      const { fileIds, colors, triangleCounts, treeIndices } = triangleMeshes;
+
+      const finalMeshes = [];
+
+      for (const { id: fileId, meshIndices } of groupMeshesByNumber(fileIds)) {
+        const fileTriangleCounts = meshIndices.map(i => triangleCounts[i]);
+        const offsets = createOffsetsArray(fileTriangleCounts);
+        // Load glb (geometry)
+        const fileName = `mesh_${fileId}.glb`;
+
+        const { indices, vertices, normals, meshNameToOffsetCountMap } = gltfFiles.get(fileName)!; // TODO: j-bjorne 16-04-2020: try catch error???
+
+        const sharedColors = new Uint8Array(3 * indices.length);
+        const sharedTreeIndices = new Float32Array(indices.length);
+
+        for (let i = 0; i < meshIndices.length; i++) {
+          const meshIdx = meshIndices[i];
+          const treeIndex = treeIndices[meshIdx];
+          const originalTriOffset = offsets[i];
+          const originalTriCount = fileTriangleCounts[i];
+
+          const meshName = `mesh_${originalTriOffset}_${originalTriCount}`;
+          const offsetCountTuple = meshNameToOffsetCountMap.get(meshName)!;
+
+          const triOffset = offsetCountTuple!.triangleOffset;
+          const triCount = offsetCountTuple!.triangleCount;
+
+          const [r, g, b] = [colors[4 * meshIdx + 0], colors[4 * meshIdx + 1], colors[4 * meshIdx + 2]];
+          for (let triIdx = triOffset; triIdx < triOffset + triCount; triIdx++) {
+            for (let j = 0; j < 3; j++) {
+              const vIdx = indices[3 * triIdx + j];
+
+              sharedTreeIndices[vIdx] = treeIndex;
+
+              sharedColors[3 * vIdx] = r;
+              sharedColors[3 * vIdx + 1] = g;
+              sharedColors[3 * vIdx + 2] = b;
+            }
+          }
+        }
+        const mesh: TriangleMesh = {
+          colors: sharedColors,
+          treeIndices: sharedTreeIndices,
+          fileId,
+          indices,
+          vertices,
+          normals
+        };
+        finalMeshes.push(mesh);
+      }
+
+      return finalMeshes;
+    })();
+
+    const finalInstanceMeshes = (() => {
+      const { fileIds, colors, treeIndices, triangleCounts, triangleOffsets, instanceMatrices } = instanceMeshes;
+
+      const finalMeshes: InstancedMeshFile[] = [];
+      // Merge meshes by file
+      // TODO do this in Rust instead
+      // TODO de-duplicate this with the merged meshes above
+      for (const { id: fileId, meshIndices } of groupMeshesByNumber(fileIds)) {
+        const fileName = `mesh_${fileId}.glb`;
+        const gltf = gltfFiles.get(fileName)!;
+
+        const vertices = gltf.vertices;
+        const instancedMeshes: InstancedMesh[] = [];
+
+        const fileTriangleOffsets = new Float64Array(meshIndices.map(i => triangleOffsets[i]));
+        const fileTriangleCounts = new Float64Array(meshIndices.map(i => triangleCounts[i]));
+
+        const indices = gltf.indices;
+
+        for (const { id: triangleOffset, meshIndices: fileMeshIndices } of groupMeshesByNumber(fileTriangleOffsets)) {
+          // NOTE the triangle counts should be the same for all meshes with the same offset,
+          const triangleCount = fileTriangleCounts[fileMeshIndices[0]];
+
+          const meshName = `mesh_${triangleOffset}_${triangleCount}`;
+
+          const instanceMatrixBuffer = new Float32Array(16 * fileMeshIndices.length);
+          const treeIndicesBuffer = new Float32Array(fileMeshIndices.length);
+          const colorBuffer = new Uint8Array(4 * fileMeshIndices.length);
+
+          for (let i = 0; i < fileMeshIndices.length; i++) {
+            const meshIdx = meshIndices[fileMeshIndices[i]];
+            const treeIndex = treeIndices[meshIdx];
+            const instanceMatrix = instanceMatrices.subarray(meshIdx * 16, meshIdx * 16 + 16);
+
+            instanceMatrixBuffer.set(instanceMatrix, i * 16);
+            treeIndicesBuffer[i] = treeIndex;
+            const color = colors.subarray(meshIdx * 4, meshIdx * 4 + 4);
+            colorBuffer.set(color, i * 4);
+          }
+
+          const offsetCountTuple = gltf.meshNameToOffsetCountMap.get(meshName)!;
+
+          const offset = offsetCountTuple!.triangleOffset;
+          const count = offsetCountTuple!.triangleCount;
+
+          instancedMeshes.push({
+            triangleOffset: offset,
+            triangleCount: count,
             instanceMatrices: instanceMatrixBuffer,
             colors: colorBuffer,
             treeIndices: treeIndicesBuffer

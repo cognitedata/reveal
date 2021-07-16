@@ -3,19 +3,93 @@
  */
 
 import { WorkerPool } from '../../../utilities/workers/WorkerPool';
-import { ParseSectorResult, ParseCtmResult, RevealParserWorker } from '@cognite/reveal-parser-worker';
+import {
+  ParseSectorResult,
+  ParseCtmResult,
+  ParsedPrimitives,
+  RevealParserWorker,
+  ParsePrimitiveAttribute
+} from '@cognite/reveal-parser-worker';
 import { SectorQuads } from '../rendering/types';
 
 import { GLTFLoader, GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
 
 import * as THREE from 'three';
+import { getBoxOutputSize, transformBoxes } from './primitiveTransformers';
 
 export interface ParseGltfResult {
   indices: Uint32Array;
   vertices: Float32Array;
   normals: Float32Array | undefined;
   meshNameToOffsetCountMap: Map<string, { triangleOffset: number; triangleCount: number }>;
+}
+
+export interface ParseExtendedGltfResult {
+  indices: Uint32Array;
+  vertices: Float32Array;
+  normals: Float32Array | undefined;
+  meshNameToOffsetCountMap: Map<string, { triangleOffset: number; triangleCount: number }>;
+  parsedPrimitives?: ParsedPrimitives;
+}
+
+/*
+ * For primitive parsing from glTF
+ */
+
+interface PrimitiveSpec {
+  byteOffset: number;
+  byteCount: number;
+}
+
+interface AllPrimitiveSpecs {
+  bufferView: number;
+  boxes: PrimitiveSpec;
+
+  circles: PrimitiveSpec;
+  closedCones: PrimitiveSpec;
+  closedCylinders: PrimitiveSpec;
+  closedEccentricCones: PrimitiveSpec;
+  closedEllipsoidSegments: PrimitiveSpec;
+  closedExtrudedRingSegments: PrimitiveSpec;
+  closedSphericalSegments: PrimitiveSpec;
+  closedTorusSegments: PrimitiveSpec;
+  ellipsoids: PrimitiveSpec;
+  extrudedRings: PrimitiveSpec;
+  nuts: PrimitiveSpec;
+  openCones: PrimitiveSpec;
+  openCylinders: PrimitiveSpec;
+  openEccentricCones: PrimitiveSpec;
+  openEllipsoidSegments: PrimitiveSpec;
+  openExtrudedRingSegments: PrimitiveSpec;
+  openSphericalSegments: PrimitiveSpec;
+  openTorusSegments: PrimitiveSpec;
+  rings: PrimitiveSpec;
+  spheres: PrimitiveSpec;
+  toruses: PrimitiveSpec;
+  openGeneralCylinders: PrimitiveSpec;
+  closedGeneralCylinders: PrimitiveSpec;
+  solidOpenGeneralCylinders: PrimitiveSpec;
+  solidClosedGeneralCylinders: PrimitiveSpec;
+  openGeneralCones: PrimitiveSpec;
+  closedGeneralCones: PrimitiveSpec;
+  solidOpenGeneralCones: PrimitiveSpec;
+  solidClosedGeneralCones: PrimitiveSpec;
+}
+
+interface InstanceMeshSpec {
+  // Each number is an index to a buffer
+  fileId: number;
+  treeIndices: number;
+  colors: number;
+  triangleOffsets: number;
+  triangleCounts: number;
+  instanceMatrices: number;
+}
+
+interface ExtendedGltfExtra {
+  primitives: AllPrimitiveSpecs;
+  instanceMeshes: InstanceMeshSpec;
 }
 
 export class CadSectorParser {
@@ -44,6 +118,10 @@ export class CadSectorParser {
 
   parseGltf(data: string): Promise<ParseGltfResult> {
     return this.parseGltfInner(data);
+  }
+
+  parseExtendedGltf(data: string): Promise<ParseExtendedGltfResult> {
+    return this.parseExtendedGltfInner(data);
   }
 
   private async parseSimple(quadsArrayBuffer: Uint8Array): Promise<SectorQuads> {
@@ -129,6 +207,329 @@ export class CadSectorParser {
         }
       );
     });
+  }
+
+  private parseExtendedGltfInner(fileName: string): Promise<ParseExtendedGltfResult> {
+    return new Promise<ParseExtendedGltfResult>((resolve, reject) => {
+      const loader = new GLTFLoader();
+
+      loader.setDRACOLoader(this.dracoLoader);
+
+      loader.load(
+        fileName,
+        (gltf: GLTF) => {
+          let foundGeometry = false;
+
+          let allVertices = new Float32Array();
+          let allIndices = new Uint32Array();
+          let allNormals = new Float32Array();
+
+          const meshNameToOffsetCount = new Map<string, { triangleOffset: number; triangleCount: number }>();
+
+          const meshes: THREE.Mesh<any, any>[] = [];
+
+          gltf.scene.traverse((obj: THREE.Object3D) => {
+            if (obj instanceof THREE.Mesh) {
+              foundGeometry = true;
+              meshes.push(obj as THREE.Mesh);
+            }
+          });
+
+          if (!foundGeometry) {
+            reject('Could not find any geometry');
+          }
+
+          meshes.sort((mesh0, mesh1) => (mesh0.name < mesh1.name ? -1 : 1));
+
+          for (const mesh of meshes) {
+            const triangleStart = allIndices.length / 3;
+
+            // Starting index for this mesh inside the whole vertex list
+            const startIndex = allVertices.length / 3;
+
+            allVertices = this.addSpatialAttributes(allVertices, mesh.geometry.attributes['position'].array);
+            allIndices = this.addIndices(allIndices, mesh.geometry.index.array, startIndex);
+
+            const triangleCount = allIndices.length / 3 - triangleStart;
+
+            if ('normals' in mesh.geometry.attributes) {
+              allNormals = this.addSpatialAttributes(allNormals, mesh.geometry.attributes['normals'].array);
+            }
+
+            meshNameToOffsetCount.set(mesh.name, { triangleOffset: triangleStart, triangleCount: triangleCount });
+          }
+
+          // If attributes differ in length, set normals to null
+          const finalNormals = allNormals.length == allVertices.length ? allNormals : undefined;
+
+          const extraData = gltf.userData as ExtendedGltfExtra;
+
+          if (!extraData || !('primitives' in extraData)) {
+            resolve({
+              vertices: allVertices,
+              indices: allIndices,
+              normals: finalNormals,
+              meshNameToOffsetCountMap: meshNameToOffsetCount
+            });
+            return;
+          }
+
+          const primitiveSpecs = extraData.primitives;
+
+          gltf.parser
+            .loadBufferView(primitiveSpecs.bufferView)
+            .then(bufferView => {
+              const buffer = bufferView.slice(0) as Uint8Array;
+
+              const parsedPrimitives = this.parsePrimitives(buffer, primitiveSpecs);
+
+              resolve({
+                vertices: allVertices,
+                indices: allIndices,
+                normals: finalNormals,
+                meshNameToOffsetCountMap: meshNameToOffsetCount,
+                parsedPrimitives
+              });
+            })
+            .catch(err => reject(err));
+        },
+        () => {},
+        () => {
+          throw new Error('Error when loading GLTF.');
+        }
+      );
+    });
+  }
+
+  private parsePrimitives(buffer: Uint8Array, primitiveSpecs: AllPrimitiveSpecs): ParsedPrimitives {
+    const boxAttributes: Map<string, ParsePrimitiveAttribute> = new Map<string, ParsePrimitiveAttribute>([
+      ['treeIndex', { offset: 0, size: 4 }],
+      ['color', { offset: 4, size: 4 }],
+      ['instanceMatrix', { offset: 8, size: 64 }]
+    ]);
+
+    const circleAttributes: Map<string, ParsePrimitiveAttribute> = new Map<string, ParsePrimitiveAttribute>([
+      ['treeIndex', { offset: 0, size: 4 }],
+      ['color', { offset: 4, size: 4 }],
+      ['normal', { offset: 8, size: 12 }],
+      ['instanceMatrix', { offset: 20, size: 64 }]
+    ]);
+
+    const coneAttributes: Map<string, ParsePrimitiveAttribute> = new Map<string, ParsePrimitiveAttribute>([
+      ['treeIndex', { offset: 0, size: 4 }],
+      ['color', { offset: 4, size: 4 }],
+      ['centerA', { offset: 8, size: 12 }],
+      ['centerB', { offset: 20, size: 12 }],
+      ['radiusA', { offset: 32, size: 4 }],
+      ['radiusB', { offset: 36, size: 4 }],
+      ['angle', { offset: 40, size: 4 }],
+      ['arcAngle', { offset: 44, size: 4 }],
+      ['localXAxis', { offset: 48, size: 12 }]
+    ]);
+
+    const eccentricConeAttributes: Map<string, ParsePrimitiveAttribute> = new Map<string, ParsePrimitiveAttribute>([
+      ['treeIndex', { offset: 0, size: 4 }],
+      ['color', { offset: 4, size: 4 }],
+      ['centerA', { offset: 8, size: 12 }],
+      ['centerB', { offset: 20, size: 12 }],
+      ['radiusA', { offset: 32, size: 4 }],
+      ['radiusB', { offset: 36, size: 4 }],
+      ['normal', { offset: 40, size: 12 }]
+    ]);
+
+    const ellipsoidSegmentAttributes: Map<string, ParsePrimitiveAttribute> = new Map<string, ParsePrimitiveAttribute>([
+      ['treeIndex', { offset: 0, size: 4 }],
+      ['color', { offset: 4, size: 4 }],
+      ['center', { offset: 8, size: 12 }],
+      ['normal', { offset: 20, size: 12 }],
+      ['horizontalRadius', { offset: 32, size: 4 }],
+      ['verticalRadius', { offset: 36, size: 4 }],
+      ['height', { offset: 40, size: 4 }]
+    ]);
+
+    const generalCylinderAttributes: Map<string, ParsePrimitiveAttribute> = new Map<string, ParsePrimitiveAttribute>([
+      ['treeIndex', { offset: 0, size: 4 }],
+      ['color', { offset: 4, size: 4 }],
+      ['centerA', { offset: 8, size: 12 }],
+      ['centerB', { offset: 20, size: 12 }],
+      ['radius', { offset: 32, size: 4 }],
+      ['angle', { offset: 36, size: 4 }],
+      ['planeA', { offset: 40, size: 16 }],
+      ['planeB', { offset: 56, size: 16 }],
+      ['arcAngle', { offset: 72, size: 4 }],
+      ['localXAxis', { offset: 76, size: 12 }]
+    ]);
+
+    const generalRingAttributes: Map<string, ParsePrimitiveAttribute> = new Map<string, ParsePrimitiveAttribute>([
+      ['treeIndex', { offset: 0, size: 4 }],
+      ['color', { offset: 4, size: 4 }],
+      ['normal', { offset: 8, size: 12 }],
+      ['thickness', { offset: 20, size: 4 }],
+      ['angle', { offset: 24, size: 4 }],
+      ['arcAngle', { offset: 28, size: 4 }],
+      ['instanceMatrix', { offset: 32, size: 64 }]
+    ]);
+
+    const nutAttributes: Map<string, ParsePrimitiveAttribute> = new Map<string, ParsePrimitiveAttribute>([
+      ['treeIndex', { offset: 0, size: 4 }],
+      ['color', { offset: 4, size: 4 }],
+      ['instanceMatrix', { offset: 8, size: 64 }]
+    ]);
+
+    const quadAttributes: Map<string, ParsePrimitiveAttribute> = new Map<string, ParsePrimitiveAttribute>([
+      ['treeIndex', { offset: 0, size: 4 }],
+      ['color', { offset: 4, size: 4 }],
+      ['instanceMatrix', { offset: 8, size: 64 }]
+    ]);
+
+    const sphericalSegmentAttributes: Map<string, ParsePrimitiveAttribute> = new Map<string, ParsePrimitiveAttribute>([
+      ['treeIndex', { offset: 0, size: 4 }],
+      ['color', { offset: 4, size: 4 }],
+      ['center', { offset: 8, size: 12 }],
+      ['normal', { offset: 20, size: 12 }],
+      ['radius', { offset: 32, size: 4 }],
+      ['height', { offset: 36, size: 4 }]
+    ]);
+
+    const torusSegmentAttributes: Map<string, ParsePrimitiveAttribute> = new Map<string, ParsePrimitiveAttribute>([
+      ['treeIndex', { offset: 0, size: 4 }],
+      ['color', { offset: 4, size: 4 }],
+      ['size', { offset: 8, size: 4 }],
+      ['radius', { offset: 12, size: 4 }],
+      ['tubeRadius', { offset: 16, size: 4 }],
+      ['arcAngle', { offset: 20, size: 4 }],
+      ['instanceMatrix', { offset: 24, size: 64 }]
+    ]);
+
+    const trapeziumAttributes: Map<string, ParsePrimitiveAttribute> = new Map<string, ParsePrimitiveAttribute>([
+      ['treeIndex', { offset: 0, size: 4 }],
+      ['color', { offset: 4, size: 4 }],
+      ['vertex1', { offset: 8, size: 12 }],
+      ['vertex2', { offset: 20, size: 12 }],
+      ['vertex3', { offset: 32, size: 12 }],
+      ['vertex4', { offset: 44, size: 12 }]
+    ]);
+
+    const boxSlice = buffer.slice(
+      primitiveSpecs.boxes.byteOffset,
+      primitiveSpecs.boxes.byteOffset + primitiveSpecs.boxes.byteCount
+    );
+    /* const circleSlice = buffer.slice(primitiveSpecs.circles.byteOffset,
+                                     primitiveSpecs.circles.byteOffset + primitiveSpecs.circles.byteCount);
+    const closedConeSlice = buffer.slice(primitiveSpecs.closedCones.byteOffset,
+                                         primitiveSpecs.closedCones.byteOffset + primitiveSpecs.closedCones.byteCount);
+    const closedCylinderSlice = buffer.slice(primitiveSpecs.closedCylinders.byteOffset,
+                                             primitiveSpecs.closedCylinders.byteOffset + primitiveSpecs.closedCylinders.byteCount);
+    const closedEccentricConeSlice = buffer.slice(primitiveSpecs.closedEccentricCones.byteOffset,
+                                                  primitiveSpecs.closedEccentricCones.byteOffset + primitiveSpecs.closedEccentricCones.byteCount);
+    const closedEllipsoidSegmentSlice = buffer.slice(primitiveSpecs.closedEllipsoidSegments.byteOffset,
+                                                     primitiveSpecs.closedEllipsoidSegments.byteOffset + primitiveSpecs.closedEllipsoidSegments.byteCount);
+    const closedExtrudedRingSegmentSlice = buffer.slice(primitiveSpecs.closedExtrudedRingSegments.byteOffset, 
+                                                        primitiveSpecs.closedExtrudedRingSegments.byteOffset + primitiveSpecs.closedExtrudedRingSegments.byteCount);
+    const closedSphericalSegmentSlice = buffer.slice(primitiveSpecs.closedSphericalSegments.byteOffset,
+                                                     primitiveSpecs.closedSphericalSegments.byteOffset + primitiveSpecs.closedSphericalSegments.byteCount);
+    const closedTorusSegmentSlice = buffer.slice(primitiveSpecs.closedTorusSegments.byteOffset,
+                                                 primitiveSpecs.closedTorusSegments.byteOffset + primitiveSpecs.closedTorusSegments.byteCount);
+    const ellipsoidSlice = buffer.slice(primitiveSpecs.ellipsoids.byteOffset,
+                                        primitiveSpecs.ellipsoids.byteOffset + primitiveSpecs.ellipsoids.byteCount);
+    const extrudedRingSlice = buffer.slice(primitiveSpecs.extrudedRings.byteOffset,
+                                           primitiveSpecs.extrudedRings.byteOffset + primitiveSpecs.extrudedRings.byteCount);
+    const nutSlice = buffer.slice(primitiveSpecs.nuts.byteOffset,
+                                  primitiveSpecs.nuts.byteOffset + primitiveSpecs.nuts.byteCount);
+    const openConeSlice = buffer.slice(primitiveSpecs.openCones.byteOffset,
+                                       primitiveSpecs.openCones.byteOffset + primitiveSpecs.openCones.byteCount);
+    const openCylinderSlice = buffer.slice(primitiveSpecs.openCylinders.byteOffset,
+                                           primitiveSpecs.openCylinders.byteOffset + primitiveSpecs.openCylinders.byteCount);
+    const openEccentricConeSlice = buffer.slice(primitiveSpecs.openEccentricCones.byteOffset,
+                                                primitiveSpecs.openEccentricCones.byteOffset + primitiveSpecs.openEccentricCones.byteCount);
+    const openEllipsoidSegmentSlice = buffer.slice(primitiveSpecs.openEllipsoidSegments.byteOffset,
+                                                   primitiveSpecs.openEllipsoidSegments.byteOffset + primitiveSpecs.openEllipsoidSegments.byteCount);
+    const openExtrudedRingSegmentSlice = buffer.slice(primitiveSpecs.openExtrudedRingSegments.byteOffset,
+                                                      primitiveSpecs.openExtrudedRingSegments.byteOffset + primitiveSpecs.openExtrudedRingSegments.byteCount);
+    const openSphericalSegmentSlice = buffer.slice(primitiveSpecs.openSphericalSegments.byteOffset,
+                                                   primitiveSpecs.openSphericalSegments.byteOffset + primitiveSpecs.openSphericalSegments.byteCount);
+    const openTorusSegmentSlice = buffer.slice(primitiveSpecs.openTorusSegments.byteOffset,
+                                               primitiveSpecs.openTorusSegments.byteOffset + primitiveSpecs.openTorusSegments.byteCount);
+    const ringSlice = buffer.slice(primitiveSpecs.rings.byteOffset,
+                                   primitiveSpecs.rings.byteOffset + primitiveSpecs.rings.byteCount);
+    const sphereSlice = buffer.slice(primitiveSpecs.spheres.byteOffset,
+                                     primitiveSpecs.spheres.byteOffset + primitiveSpecs.spheres.byteCount);
+    const torusSlice = buffer.slice(primitiveSpecs.toruses.byteOffset,
+                                    primitiveSpecs.toruses.byteOffset + primitiveSpecs.toruses.byteCount);
+    const openGeneralCylinderSlice = buffer.slice(primitiveSpecs.openGeneralCylinders.byteOffset,
+                                                  primitiveSpecs.openGeneralCylinders.byteOffset + primitiveSpecs.openGeneralCylinders.byteCount);
+    const closedGeneralCylinderSlice = buffer.slice(primitiveSpecs.closedGeneralCylinders.byteOffset,
+                                                    primitiveSpecs.closedGeneralCylinders.byteOffset + primitiveSpecs.closedGeneralCylinders.byteCount);
+    const solidOpenGeneralCylinderSlice = buffer.slice(primitiveSpecs.solidOpenGeneralCylinders.byteOffset,
+                                                       primitiveSpecs.solidOpenGeneralCylinders.byteOffset + primitiveSpecs.solidOpenGeneralCylinders.byteCount);
+    const solidClosedGeneralCylinderSlice = buffer.slice(primitiveSpecs.solidClosedGeneralCylinders.byteOffset,
+                                                         primitiveSpecs.solidClosedGeneralCylinders.byteOffset + primitiveSpecs.solidClosedGeneralCylinders.byteCount);
+    const openGeneralConeSlice = buffer.slice(primitiveSpecs.openGeneralCones.byteOffset,
+                                              primitiveSpecs.openGeneralCones.byteOffset + primitiveSpecs.openGeneralCones.byteCount);
+    const closedGeneralConeSlice = buffer.slice(primitiveSpecs.closedGeneralCones.byteOffset,
+                                                primitiveSpecs.closedGeneralCones.byteOffset + primitiveSpecs.closedGeneralCones.byteCount);
+    const solidOpenGeneralConeSlice = buffer.slice(primitiveSpecs.solidOpenGeneralCones.byteOffset,
+                                                   primitiveSpecs.solidOpenGeneralCones.byteOffset + primitiveSpecs.solidOpenGeneralCones.byteCount);
+    const solidClosedGeneralConeSlice = buffer.slice(primitiveSpecs.solidClosedGeneralCones.byteOffset,
+                                                     primitiveSpecs.solidClosedGeneralCones.byteOffset + primitiveSpecs.solidClosedGeneralCones.byteCount); */
+
+    const boxOutput = new Uint8Array(getBoxOutputSize(boxSlice));
+    // const boxOutput = new Uint8Array();
+    const circleOutput = new Uint8Array();
+    const coneOutput = new Uint8Array();
+    const eccentricConeOutput = new Uint8Array();
+    const ellipsoidSegmentOutput = new Uint8Array();
+    const generalCylinderOutput = new Uint8Array();
+    const generalRingOutput = new Uint8Array();
+    const nutOutput = new Uint8Array();
+    const quadOutput = new Uint8Array();
+    const sphericalSegmentOutput = new Uint8Array();
+    const torusSegmentOutput = new Uint8Array();
+    const trapeziumOutput = new Uint8Array();
+
+    let boxOutputOffset = 0;
+    /* let circleOutputOffset = 0;
+    let coneOutputOffset = 0;
+    let eccentricConeOutputOffset = 0;
+    let ellipsoidSegmentOutputOffset = 0;
+    let generalCylinderOutputOffset = 0;
+    let generalRingOutputOffset = 0;
+    let nutOutputOffset = 0;
+    let quadOutputOffset = 0;
+    let sphericalSegmentOffset = 0;
+    let torusSegmentOffset = 0;
+    let trapeziumOffset = 0; */
+
+    boxOutputOffset = transformBoxes(boxSlice, boxOutput, boxOutputOffset);
+
+    const res: ParsedPrimitives = {
+      boxCollection: boxOutput,
+      boxAttributes,
+      circleCollection: circleOutput,
+      circleAttributes,
+      coneCollection: coneOutput,
+      coneAttributes,
+      eccentricConeCollection: eccentricConeOutput,
+      eccentricConeAttributes,
+      ellipsoidSegmentCollection: ellipsoidSegmentOutput,
+      ellipsoidSegmentAttributes,
+      generalCylinderCollection: generalCylinderOutput,
+      generalCylinderAttributes,
+      generalRingCollection: generalRingOutput,
+      generalRingAttributes,
+      nutCollection: nutOutput,
+      nutAttributes,
+      quadCollection: quadOutput,
+      quadAttributes,
+      sphericalSegmentCollection: sphericalSegmentOutput,
+      sphericalSegmentAttributes,
+      torusSegmentCollection: torusSegmentOutput,
+      torusSegmentAttributes,
+      trapeziumCollection: trapeziumOutput,
+      trapeziumAttributes
+    };
+
+    return res;
   }
 
   private addSpatialAttributes(original: Float32Array, inputVerts: Float32Array): Float32Array {
