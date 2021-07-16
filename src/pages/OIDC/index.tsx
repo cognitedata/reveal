@@ -126,7 +126,6 @@ export default function OIDCConfigContainer() {
       {...formItemLayout}
       onFinish={handleSubmit}
       initialValues={{
-        ...data?.map(x => x),
         ...data![0].oidcConfiguration,
         accessClaims: data![0].oidcConfiguration?.accessClaims?.map(
           o => o.claimName
