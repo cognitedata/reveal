@@ -17,7 +17,7 @@
     "@cognite/acl-protos": "^0.13.2",
     "@cognite/cdf-utilities": "^0.9.2",
     "@cognite/cogs.js": "^3.8.1",
-    "@cognite/sdk": "^4.0.2",
+    "@cognite/sdk": "^4.3.1",
     "@cognite/sdk-provider": "^1.0.0",
     "@cognite/sdk-react-query-hooks": "^4.0.0",
     "@rescripts/cli": "^0.0.16",
@@ -38,6 +38,7 @@
     "systemjs-webpack-interop": "^2.3.6"
   },
   "devDependencies": {
+    "@babel/helper-compilation-targets": "^7.14.4",
     "@cognite/babel-plugin-styled-components": "^1.10.7",
     "@cognite/cdf-ui-cli": "^1.0.0",
     "@cognite/eslint-config": "^2.0.1",

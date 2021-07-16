@@ -5,26 +5,7 @@ import { useSDK } from '@cognite/sdk-provider';
 import { Icon, Button } from '@cognite/cogs.js';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { getContainer } from 'utils/utils';
-
-interface Claim {
-  claimName: string;
-}
-
-type OidcConfiguration = {
-  jwksUrl: string;
-  tokenUrl?: string | null;
-  issuer: string;
-  audience: string;
-  accessClaims: Array<Claim>;
-  scopeClaims: Array<Claim>;
-  logClaims: Array<Claim>;
-  skewMs?: number;
-};
-type Authentication = {
-  isOidcEnabled: boolean;
-  isLegacyLoginFlowAndApiKeysEnabled: boolean;
-  validDomains: string[];
-};
+import { useRouteMatch } from 'react-router';
 
 const formItemLayout = {
   labelCol: {
@@ -62,10 +43,11 @@ const noLabelItemLayout = {
 export default function OIDCConfigContainer() {
   const cache = useQueryClient();
   const sdk = useSDK();
+  const match = useRouteMatch<{ tenant: string }>('/:tenant');
 
   const { mutate, isLoading: updating } = useMutation(
     (update: any) =>
-      sdk.post(`/api/playground/projects/${sdk.project}/update`, {
+      sdk.post(`/api/v1/projects/${sdk.project}/update`, {
         data: {
           update,
         },
@@ -86,7 +68,7 @@ export default function OIDCConfigContainer() {
       onError() {
         notification.error({
           key: 'oidc-settings',
-          message: 'An error occured when updating settings',
+          message: 'An error occurred when updating settings',
         });
       },
       onSettled() {
@@ -94,18 +76,17 @@ export default function OIDCConfigContainer() {
       },
     }
   );
-  const { data, isFetched } = useQuery<{
-    oidcConfiguration: OidcConfiguration;
-    authentication: Authentication;
-  }>('oidc-settings', () =>
-    sdk
-      .post(`/api/playground/projects/${sdk.project}/update`, {
-        data: {
-          update: {},
-        },
-      })
-      .then(r => r.data)
-  );
+
+  const { data, isFetched } = useQuery('oidc-settings', () => {
+    return Promise.all([
+      sdk.projects.retrieve(match?.params.tenant!),
+      sdk
+        .get<{ isOidcEnabled: boolean }>(
+          `/api/playground/projects/${sdk.project}/configuration`
+        )
+        .then(r => r.data),
+    ]);
+  });
 
   const handleSubmit = (values: any) => {
     mutate({
@@ -145,16 +126,16 @@ export default function OIDCConfigContainer() {
       {...formItemLayout}
       onFinish={handleSubmit}
       initialValues={{
-        ...data?.oidcConfiguration,
-        accessClaims: data?.oidcConfiguration?.accessClaims?.map(
+        ...data?.map(x => x),
+        ...data![0].oidcConfiguration,
+        accessClaims: data![0].oidcConfiguration?.accessClaims?.map(
           o => o.claimName
         ),
-        scopeClaims: data?.oidcConfiguration?.scopeClaims?.map(
+        scopeClaims: data![0].oidcConfiguration?.scopeClaims?.map(
           o => o.claimName
         ),
-        logClaims: data?.oidcConfiguration?.logClaims?.map(o => o.claimName),
-
-        isOidcEnabled: data?.authentication?.isOidcEnabled,
+        logClaims: data![0].oidcConfiguration?.logClaims?.map(o => o.claimName),
+        isOidcEnabled: data![1].isOidcEnabled,
       }}
     >
       <Form.Item name="isOidcEnabled" label="Enabled" valuePropName="checked">
