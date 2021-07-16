@@ -38,7 +38,6 @@
     "systemjs-webpack-interop": "^2.3.6"
   },
   "devDependencies": {
-    "@babel/helper-compilation-targets": "^7.14.4",
     "@cognite/babel-plugin-styled-components": "^1.10.7",
     "@cognite/cdf-ui-cli": "^1.0.0",
     "@cognite/eslint-config": "^2.0.1",
