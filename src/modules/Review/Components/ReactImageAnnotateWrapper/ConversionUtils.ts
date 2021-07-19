@@ -6,6 +6,7 @@ import {
   Point,
   Polygon,
   Region,
+  RegionStatus,
 } from '@cognite/react-image-annotate/Types/ImageCanvas/region-tools';
 import { AnnotationRegion } from 'src/api/types';
 
@@ -18,6 +19,8 @@ export const convertToRegion = (annotation: VisibleAnnotation): Region => {
     visible: true,
     editingLabels: annotation.selected,
     tags: [annotation.text],
+    source: annotation.annotationType,
+    status: annotation.status as unknown as RegionStatus,
     ...getRegion(annotation.region),
   };
 };
