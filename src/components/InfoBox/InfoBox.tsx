@@ -49,7 +49,7 @@ const InfoBox = ({ infoType, query }: InfoBoxProps) => {
   };
 
   return (
-    <>
+    <InfoBoxContainer style={query === '' ? { height: '100%' } : {}}>
       {displayInfo && (
         <InfoBoxWrapper>
           <StyledIcon type="InfoFilled" />
@@ -66,7 +66,7 @@ const InfoBox = ({ infoType, query }: InfoBoxProps) => {
           />
         </InfoBoxWrapper>
       )}
-      {!displayInfo && query === '' && (
+      {query === '' && (
         <EmptyResultsContainer>
           <EmptyResults>
             <Graphic
@@ -84,9 +84,14 @@ const InfoBox = ({ infoType, query }: InfoBoxProps) => {
           </EmptyResults>
         </EmptyResultsContainer>
       )}
-    </>
+    </InfoBoxContainer>
   );
 };
+
+const InfoBoxContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
 
 const InfoBoxWrapper = styled.div`
   width: initial;
@@ -125,6 +130,7 @@ const StyledIcon = styled(Icon)`
 
 const EmptyResultsContainer = styled.div`
   display: flex;
+  flex-grow: 1;
   height: 100%;
   justify-content: center;
 `;
