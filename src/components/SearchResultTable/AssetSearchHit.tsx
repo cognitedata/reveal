@@ -73,6 +73,8 @@ export default function AssetSearchHit({ asset, query = '' }: Props) {
 
         updateChart(addTimeseries(chart, newTs));
         trackUsage('ChartView.AddTimeSeries', { source: 'search' });
+
+        // Add to recentlyViewed assets and timeseries
       }
     }
   };

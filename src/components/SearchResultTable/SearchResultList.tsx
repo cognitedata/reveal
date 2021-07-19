@@ -1,10 +1,11 @@
 import React, { useMemo } from 'react';
-import { Icon, Button } from '@cognite/cogs.js';
+import { Icon, Button, Title } from '@cognite/cogs.js';
 import { Asset } from '@cognite/sdk';
 import { useInfiniteSearch } from '@cognite/sdk-react-query-hooks';
 import styled from 'styled-components/macro';
 
 import AssetSearchHit from './AssetSearchHit';
+import RecentlyViewed from './RecentlyViewed';
 
 type Props = {
   query: string;
@@ -24,10 +25,6 @@ export default function SearchResultList({ query }: Props) {
     [data]
   );
 
-  if (!query) {
-    return null;
-  }
-
   if (isError) {
     return <Icon type="XLarge" />;
   }
@@ -41,6 +38,7 @@ export default function SearchResultList({ query }: Props) {
 
   return (
     <AssetList>
+      <RecentlyViewed viewType="assets" />
       {assets?.map((asset) => (
         <li key={asset.id}>
           <AssetSearchHit asset={asset} query={query} />

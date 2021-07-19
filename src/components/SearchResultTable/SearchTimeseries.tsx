@@ -14,6 +14,7 @@ import {
 import { calculateDefaultYAxis } from 'utils/axis';
 import { trackUsage } from 'utils/metrics';
 import TimeseriesSearchHit from './TimeseriesSearchHit';
+import RecentlyViewed from './RecentlyViewed';
 
 type Props = {
   query: string;
@@ -37,10 +38,6 @@ export default function SearchTimeseries({ query }: Props) {
     () => data?.pages?.reduce((accl, page) => accl.concat(page), []),
     [data]
   );
-
-  if (!query) {
-    return null;
-  }
 
   if (isError) {
     return <Icon type="XLarge" />;
@@ -84,6 +81,7 @@ export default function SearchTimeseries({ query }: Props) {
 
   return (
     <TSList>
+      <RecentlyViewed viewType="timeseries" />
       <TimeseriesSearchHit
         timeseries={timeseries}
         query={query}
