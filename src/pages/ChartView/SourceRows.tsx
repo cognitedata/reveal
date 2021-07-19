@@ -1,5 +1,7 @@
-import React from 'react';
-import { Chart } from 'reducers/charts/types';
+import React, { useEffect } from 'react';
+import { Draggable } from 'react-beautiful-dnd';
+import { Chart, ChartTimeSeries, ChartWorkflow } from 'reducers/charts/types';
+import { updateSourceCollection } from 'utils/charts';
 import TimeSeriesRow from './TimeSeriesRow';
 import WorkflowRow from './WorkflowRow';
 
@@ -13,6 +15,7 @@ type Props = {
   onInfoClick: (id?: string) => void;
   dateFrom: string;
   dateTo: string;
+  draggable?: boolean;
 };
 
 function SourceRows({
@@ -25,49 +28,62 @@ function SourceRows({
   onInfoClick = () => {},
   dateFrom,
   dateTo,
+  draggable = false,
 }: Props) {
   const isWorkspaceMode = mode === 'workspace';
   const isEditorMode = mode === 'editor';
   const isFileViewerMode = mode === 'file';
-  const sources = [
-    ...(chart?.timeSeriesCollection || []).map((ts) => ({
-      ...ts,
-      render: () => (
-        <TimeSeriesRow
-          key={ts.id}
-          mutate={updateChart}
-          chart={chart}
-          timeseries={ts}
-          isWorkspaceMode={isWorkspaceMode}
-          onRowClick={onRowClick}
-          onInfoClick={onInfoClick}
-          isSelected={selectedSourceId === ts.id}
-          disabled={isEditorMode}
-          isFileViewerMode={isFileViewerMode}
-          dateFrom={dateFrom}
-          dateTo={dateTo}
-        />
-      ),
-    })),
-    ...(chart?.workflowCollection || []).map((flow) => ({
-      ...flow,
-      render: () => (
-        <WorkflowRow
-          key={flow.id}
-          workflow={flow}
-          chart={chart}
-          isSelected={selectedSourceId === flow.id}
-          onRowClick={onRowClick}
-          onInfoClick={onInfoClick}
-          mode={mode}
-          openNodeEditor={openNodeEditor}
-          mutate={updateChart}
-        />
-      ),
-    })),
-  ].sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
 
-  return <>{sources.map((source) => source.render())}</>;
+  useEffect(() => {
+    if (!chart.sourceCollection || chart.sourceCollection === undefined) {
+      const updatedChart = updateSourceCollection(chart);
+      updateChart(updatedChart);
+    }
+  }, [chart, updateChart]);
+  return (
+    <>
+      {(chart?.sourceCollection || []).map(
+        (src: ChartTimeSeries | ChartWorkflow, index) => (
+          <Draggable key={src.id} draggableId={src.id} index={index}>
+            {(draggableProvided) =>
+              src.type === 'timeseries' ? (
+                <TimeSeriesRow
+                  key={src.id}
+                  mutate={updateChart}
+                  provided={draggableProvided}
+                  draggable={draggable}
+                  chart={chart}
+                  timeseries={src as ChartTimeSeries}
+                  isWorkspaceMode={isWorkspaceMode}
+                  onRowClick={onRowClick}
+                  onInfoClick={onInfoClick}
+                  isSelected={selectedSourceId === src.id}
+                  disabled={isEditorMode}
+                  isFileViewerMode={isFileViewerMode}
+                  dateFrom={dateFrom}
+                  dateTo={dateTo}
+                />
+              ) : (
+                <WorkflowRow
+                  provided={draggableProvided}
+                  draggable={draggable}
+                  key={src.id}
+                  workflow={src as ChartWorkflow}
+                  chart={chart}
+                  isSelected={selectedSourceId === src.id}
+                  onRowClick={onRowClick}
+                  onInfoClick={onInfoClick}
+                  mode={mode}
+                  openNodeEditor={openNodeEditor}
+                  mutate={updateChart}
+                />
+              )
+            }
+          </Draggable>
+        )
+      )}
+    </>
+  );
 }
 
 export default SourceRows;

@@ -31,6 +31,7 @@ import { CogniteClient } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 import { calculateDefaultYAxis } from 'utils/axis';
 import { convertValue } from 'utils/units';
+import { DraggableProvided } from 'react-beautiful-dnd';
 import {
   SourceItem,
   SourceCircle,
@@ -139,7 +140,9 @@ type Props = {
   isWorkspaceMode?: boolean;
   isFileViewerMode?: boolean;
   dateFrom: string;
+  provided?: DraggableProvided | undefined;
   dateTo: string;
+  draggable?: boolean;
 };
 export default function TimeSeriesRow({
   mutate,
@@ -153,6 +156,8 @@ export default function TimeSeriesRow({
   isFileViewerMode = false,
   dateFrom,
   dateTo,
+  draggable = false,
+  provided = undefined,
 }: Props) {
   const sdk = useSDK();
 
@@ -179,6 +184,14 @@ export default function TimeSeriesRow({
     mutate({
       ...chart,
       timeSeriesCollection: chart.timeSeriesCollection?.map((t) =>
+        t.id === _tsId
+          ? {
+              ...t,
+              ...diff,
+            }
+          : t
+      ),
+      sourceCollection: chart.sourceCollection?.map((t) =>
         t.id === _tsId
           ? {
               ...t,
@@ -276,6 +289,14 @@ export default function TimeSeriesRow({
               }
             : ts
         ),
+        sourceCollection: chart.sourceCollection?.map((ts) =>
+          ts.id === timeseries.id
+            ? {
+                ...ts,
+                ...diff,
+              }
+            : ts
+        ),
       });
     },
     [chart, mutate, timeseries]
@@ -341,6 +362,9 @@ export default function TimeSeriesRow({
       key={id}
       onClick={() => !disabled && onRowClick(id)}
       className={isSelected ? 'active' : undefined}
+      ref={draggable ? provided?.innerRef : null}
+      {...provided?.draggableProps}
+      {...provided?.dragHandleProps}
     >
       <td>
         <SourceItem isDisabled={disabled} key={id}>
