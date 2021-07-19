@@ -72,7 +72,7 @@
     "@babel/preset-env": "^7.14.7",
     "@babel/preset-react": "^7.0.0",
     "@bazel/ibazel": "^0.15.10",
-    "@bazel/typescript": "^3.5.1",
+    "@bazel/typescript": "^3.7.0",
     "@cognite/fas-tools": "^1.0.0",
     "@ffmpeg-installer/ffmpeg": "^1.0.20",
     "@rollup/plugin-image": "^2.0.6",
