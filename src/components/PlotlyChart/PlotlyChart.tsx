@@ -323,8 +323,8 @@ const PlotlyChartComponent = ({
         fill: currMin > currAvg ? 'tonexty' : 'none',
         fillcolor: hexToRGBA(color, 0.2) ?? 'none',
         y: minYValues,
-        hovertemplate:
-          '%{y} &#183; <span style="color:#8c8c8c">Min value: %{fullData.name}</span><extra></extra>',
+        hovertemplate: '',
+        hoverinfo: 'skip',
       };
 
       const max = {
@@ -333,8 +333,8 @@ const PlotlyChartComponent = ({
         line: { width: 0 },
         fill: 'tonexty',
         y: maxYValues,
-        hovertemplate:
-          '%{y} &#183; <span style="color:#8c8c8c">Max value: %{fullData.name}</span><extra></extra>',
+        hovertemplate: '',
+        hoverinfo: 'skip',
       };
 
       return isPreview || !isMinMaxShown ? average : [average, min, max];

@@ -24,6 +24,7 @@ import { isWorkflowRunnable } from 'components/NodeEditor/utils';
 import { AppearanceDropdown } from 'components/AppearanceDropdown';
 import { UnitDropdown } from 'components/UnitDropdown';
 import { getHash } from 'utils/hash';
+import { DraggableProvided } from 'react-beautiful-dnd';
 import {
   SourceItem,
   SourceSquare,
@@ -56,6 +57,8 @@ type Props = {
   openNodeEditor?: () => void;
   mode: string;
   mutate: (c: Chart) => void;
+  draggable?: boolean;
+  provided?: DraggableProvided | undefined;
 };
 export default function WorkflowRow({
   chart,
@@ -66,6 +69,8 @@ export default function WorkflowRow({
   openNodeEditor = () => {},
   isSelected = false,
   mutate,
+  draggable = false,
+  provided = undefined,
 }: Props) {
   const { mutate: callFunction, isLoading: isCallLoading } = useCallFunction(
     'simple_calc-master'
@@ -203,6 +208,9 @@ export default function WorkflowRow({
       onClick={() => onRowClick(id)}
       className={isSelected ? 'active' : undefined}
       onDoubleClick={openNodeEditor}
+      ref={draggable ? provided?.innerRef : null}
+      {...provided?.draggableProps}
+      {...provided?.dragHandleProps}
     >
       <td>
         <SourceItem key={id}>
