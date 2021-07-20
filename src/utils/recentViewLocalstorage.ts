@@ -47,7 +47,10 @@ export const orderViewArray = (
   order: number[]
 ) => {
   viewArray.sort((a, b) => {
-    if (order.indexOf(a.id) > order.indexOf(b.id)) {
+    const A = a.id;
+    const B = b.id;
+
+    if (order.indexOf(A) > order.indexOf(B)) {
       return 1;
     }
     return -1;
