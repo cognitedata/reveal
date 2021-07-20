@@ -14,6 +14,8 @@ This repo uses [Bazel](https://bazel.build/) as a build tool. To get that set up
    yarn global add @bazel/ibazel
    ```
 
+If you want to read more details about the Bazel setup, see [bazel.md](https://github.com/cognitedata/application-services/tree/master/bazel.md).
+
 ## How do I run my application locally?
 
 All the api middleware have a set of scripts defined in their `package.json`.
