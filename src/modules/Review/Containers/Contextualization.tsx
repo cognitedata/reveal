@@ -6,12 +6,14 @@ import { VisionAnnotationState } from 'src/modules/Review/previewSlice';
 import { RootState } from 'src/store/rootReducer';
 import { VisionAPIType } from 'src/api/types';
 import { useSelector } from 'react-redux';
+import { FileInfo } from '@cognite/cdf-sdk-singleton';
 
 export const Contextualization = (props: {
+  file: FileInfo;
   tagAnnotations?: VisionAnnotationState[];
   gdprAndTextAndObjectAnnotations?: VisionAnnotationState[];
 }) => {
-  const { tagAnnotations, gdprAndTextAndObjectAnnotations } = props;
+  const { file, tagAnnotations, gdprAndTextAndObjectAnnotations } = props;
   const selectedAnnotationIds = useSelector(
     (state: RootState) => state.previewSlice.selectedAnnotationIds
   );
@@ -34,6 +36,7 @@ export const Contextualization = (props: {
       <TableContainer>
         {tagAnnotations && (
           <AnnotationsTable
+            file={file}
             annotations={tagAnnotations}
             selectedAnnotationIds={selectedAnnotationIds}
             mode={VisionAPIType.TagDetection}
@@ -41,9 +44,9 @@ export const Contextualization = (props: {
         )}
         {gdprAndTextAndObjectAnnotations && (
           <AnnotationsTable
+            file={file}
             annotations={gdprAndTextAndObjectAnnotations}
             selectedAnnotationIds={selectedAnnotationIds}
-            mode={VisionAPIType.ObjectDetection} // TODO: only used to check if it is a tagdetection (?), refactor
           />
         )}
       </TableContainer>

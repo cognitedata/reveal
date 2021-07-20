@@ -5,10 +5,12 @@ import { Contextualization } from 'src/modules/Review/Containers/Contextualizati
 import { FileDetailsReview } from 'src/modules/FileDetails/Containers/FileDetailsReview/FileDetailsReview';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { selectAnnotationsByFileIdModelTypes } from 'src/modules/Review/previewSlice';
+import {
+  selectOtherAnnotationsByFileIdModelType,
+  selectTagAnnotationsByFileIdModelType,
+} from 'src/modules/Review/previewSlice';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { FileInfo, v3Client as sdk } from '@cognite/cdf-sdk-singleton';
-import { VisionAPIType } from 'src/api/types';
 import { ImagePreviewContainer } from 'src/modules/Review/Containers/ImagePreviewContainer';
 import { Title } from '@cognite/cogs.js';
 import { VerticalCarousel } from '../Components/VerticalCarousel/VerticalCarousel';
@@ -18,17 +20,12 @@ const queryClient = new QueryClient();
 const ImageReview = (props: { file: FileInfo; prev: string | undefined }) => {
   const { file, prev } = props;
   const tagAnnotations = useSelector(({ previewSlice }: RootState) =>
-    selectAnnotationsByFileIdModelTypes(previewSlice, String(file.id), [
-      VisionAPIType.TagDetection,
-    ])
+    selectTagAnnotationsByFileIdModelType(previewSlice, file.id.toString())
   );
 
   const gdprAndTextAndObjectAnnotations = useSelector(
     ({ previewSlice }: RootState) =>
-      selectAnnotationsByFileIdModelTypes(previewSlice, String(file.id), [
-        VisionAPIType.OCR,
-        VisionAPIType.ObjectDetection,
-      ])
+      selectOtherAnnotationsByFileIdModelType(previewSlice, file.id.toString())
   );
 
   return (
@@ -56,6 +53,7 @@ const ImageReview = (props: { file: FileInfo; prev: string | undefined }) => {
                     style={{ overflow: 'hidden', height: `calc(100% - 45px)` }}
                   >
                     <Contextualization
+                      file={file}
                       tagAnnotations={tagAnnotations}
                       gdprAndTextAndObjectAnnotations={
                         gdprAndTextAndObjectAnnotations

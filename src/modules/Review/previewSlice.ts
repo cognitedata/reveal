@@ -278,16 +278,21 @@ const deleteAnnotationsByIds = (state: State, annotationIds: number[]) => {
 
 // selectors
 
-export const selectModelIdsByFileId = (
-  state: State,
-  fileId: string
-): string[] => {
-  const models = state.modelsByFileId[fileId] || [];
-  return models;
-};
+export const selectModelIdsByFileId = createSelector(
+  (state: State) => state,
+  (_: State, fileId: string) => fileId,
+  (state, fileId) => {
+    const models = state.modelsByFileId[fileId] || [];
+    return models;
+  }
+);
 
-export const modelsById = (state: State): { [id: string]: VisionModelState } =>
-  state.models.byId;
+export const modelsById = createSelector(
+  (state: State) => state,
+  (state: State) => {
+    return state.models.byId;
+  }
+);
 
 export const selectModelsByFileId = createSelector(
   modelsById,
@@ -299,9 +304,12 @@ export const selectModelsByFileId = createSelector(
   }
 );
 
-export const annotationsById = (
-  state: State
-): { [id: string]: VisionAnnotationState } => state.annotations.byId;
+export const annotationsById = createSelector(
+  (state: State) => state,
+  (state: State) => {
+    return state.annotations.byId;
+  }
+);
 
 export const selectAnnotationsByFileId = createSelector(
   annotationsById,
@@ -334,21 +342,29 @@ export const selectAnnotationsByFileIdModelType = createSelector(
   }
 );
 
-export const selectAnnotationsByFileIdModelTypes = createSelector(
-  selectAnnotationsByFileId,
-  selectModelsByFileId,
-  (state: State, fileId: string, modelTypes: VisionAPIType[]) => modelTypes,
-  (annotationByFileId, modelsByFileId, modelTypes) => {
-    const modelIds = modelsByFileId
-      .filter((item) => modelTypes.includes(item.modelType))
-      .map((model) => model.modelId);
+export const selectTagAnnotationsByFileIdModelType = createSelector(
+  (state: State, fileId: string) =>
+    selectAnnotationsByFileIdModelType(
+      state,
+      fileId,
+      VisionAPIType.TagDetection
+    ),
+  (tagAnnotations) => {
+    return tagAnnotations;
+  }
+);
 
-    if (modelIds && modelIds.length) {
-      return annotationByFileId.filter((item) =>
-        modelIds.includes(item.modelId)
-      );
-    }
-    return [];
+export const selectOtherAnnotationsByFileIdModelType = createSelector(
+  (state: State, fileId: string) =>
+    selectAnnotationsByFileIdModelType(
+      state,
+      fileId,
+      VisionAPIType.ObjectDetection
+    ),
+  (state: State, fileId: string) =>
+    selectAnnotationsByFileIdModelType(state, fileId, VisionAPIType.OCR),
+  (objectAnnotations, textAnnotations) => {
+    return objectAnnotations.concat(textAnnotations);
   }
 );
 

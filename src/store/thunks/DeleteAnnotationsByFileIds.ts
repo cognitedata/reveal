@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ThunkConfig } from 'src/store/rootReducer';
-import { DeleteAnnotationsAndRemoveLinkedAssets } from 'src/store/thunks/DeleteAnnotationsAndRemoveLinkedAssets';
+import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from 'src/store/thunks/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
 
 export const DeleteAnnotationsByFileIds = createAsyncThunk<
   void,
@@ -22,5 +22,10 @@ export const DeleteAnnotationsByFileIds = createAsyncThunk<
     })
     .flat();
 
-  await dispatch(DeleteAnnotationsAndRemoveLinkedAssets(fileAnnotationIds));
+  await dispatch(
+    DeleteAnnotationsAndHandleLinkedAssetsOfFile({
+      annotationIds: fileAnnotationIds,
+      showWarnings: false,
+    })
+  );
 });

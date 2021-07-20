@@ -43,7 +43,7 @@ const AnnotationsEdit = (props: {
                     style={{ overflow: 'hidden', height: `calc(100% - 45px)` }}
                     disabled
                   >
-                    <Contextualization />
+                    <Contextualization file={file} />
                   </Tabs.Pane>
                   <Tabs.Pane
                     title="File details"

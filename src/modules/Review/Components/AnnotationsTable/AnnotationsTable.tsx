@@ -20,24 +20,26 @@ import {
 } from 'src/modules/Review/previewSlice';
 import {
   AnnotationStatus,
-  AnnotationUtils,
   ModelTypeIconMap,
   ModelTypeStyleMap,
 } from 'src/utils/AnnotationUtils';
 import { VisionAPIType } from 'src/api/types';
-import { HandleFileAssetLinksByAnnotationId } from 'src/store/thunks/HandleFileAssetLinksByAnnotationId';
-import { DeleteAnnotationsAndRemoveLinkedAssets } from 'src/store/thunks/DeleteAnnotationsAndRemoveLinkedAssets';
+import { ApproveAnnotation } from 'src/store/thunks/ApproveAnnotation';
+import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from 'src/store/thunks/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
 import { AnnotationActionMenuExtended } from 'src/modules/Common/Components/AnnotationActionMenu/AnnotationActionMenuExtended';
-import { UpdateAnnotations } from 'src/store/thunks/UpdateAnnotations';
+import { FileInfo } from '@cognite/cdf-sdk-singleton';
+import { AssetLinkWarning } from 'src/modules/Review/Components/AnnotationsTable/AssetLinkWarning';
 
 export const AnnotationsTable = ({
+  file,
   annotations,
   selectedAnnotationIds,
   mode,
 }: {
+  file: FileInfo;
   selectedAnnotationIds: number[];
   annotations: VisionAnnotationState[];
-  mode: number;
+  mode?: number;
 }) => {
   const dispatch = useDispatch();
 
@@ -52,16 +54,16 @@ export const AnnotationsTable = ({
 
   const annotationsAvailable = annotations.length > 0;
 
-  const handleApprovalState = (
+  const handleApprovalState = async (
     annotation: VisionAnnotationState,
     status: AnnotationStatus
   ) => {
-    const unsavedAnnotation = AnnotationUtils.convertToAnnotation({
-      ...annotation,
-      status,
-    });
-    dispatch(UpdateAnnotations([unsavedAnnotation]));
-    dispatch(HandleFileAssetLinksByAnnotationId(annotation.id));
+    await dispatch(
+      ApproveAnnotation({
+        ...annotation,
+        status,
+      })
+    );
   };
 
   const handleVisibility = (id: number) => {
@@ -73,7 +75,12 @@ export const AnnotationsTable = ({
   };
 
   const handleDeleteAnnotations = (id: number) => {
-    dispatch(DeleteAnnotationsAndRemoveLinkedAssets([id]));
+    dispatch(
+      DeleteAnnotationsAndHandleLinkedAssetsOfFile({
+        annotationIds: [id],
+        showWarnings: true,
+      })
+    );
   };
 
   const handleOnAnnotationSelect = (id: number) => {
@@ -112,7 +119,7 @@ export const AnnotationsTable = ({
       <Body>
         {annotationsAvailable &&
           allAnnotations.map((annotation) => {
-            return (
+            const row = (
               <StyledRow
                 cols={8}
                 key={annotation.id}
@@ -235,6 +242,15 @@ export const AnnotationsTable = ({
                 </StyledCol>
               </StyledRow>
             );
+
+            if (mode === VisionAPIType.TagDetection) {
+              return (
+                <AssetLinkWarning file={file} annotation={annotation}>
+                  {row}
+                </AssetLinkWarning>
+              );
+            }
+            return row;
           })}
         {!annotationsAvailable && (
           <EmptyPlaceHolderContainer>

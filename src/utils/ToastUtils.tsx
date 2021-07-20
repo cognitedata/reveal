@@ -1,4 +1,4 @@
-import { Icon } from '@cognite/cogs.js';
+import { Button, Icon } from '@cognite/cogs.js';
 import { notification } from 'antd';
 import { ArgsProps } from 'antd/lib/notification';
 import React from 'react';
@@ -13,6 +13,38 @@ export class ToastUtils {
   public static onFailure(msg: string) {
     notification.error({
       message: msg,
+    });
+  }
+
+  public static onWarn(
+    title: string,
+    msg: string,
+    onConfirm: () => void,
+    btnMsg: string
+  ) {
+    const key = `open${Date.now()}`;
+    const btn = (
+      <Button
+        type="danger"
+        size="small"
+        onClick={() => {
+          onConfirm();
+          notification.close(key);
+        }}
+      >
+        {btnMsg}
+      </Button>
+    );
+    let options: any = { duration: 0 };
+
+    if (!!onConfirm && !!btnMsg) {
+      options = { ...options, btn, key };
+    }
+
+    notification.warn({
+      message: title,
+      description: msg,
+      ...options,
     });
   }
 }

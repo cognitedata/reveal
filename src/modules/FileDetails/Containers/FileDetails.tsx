@@ -16,7 +16,7 @@ import {
   selectUpdatedFileMeta,
 } from 'src/modules/FileDetails/fileDetailsSlice';
 import { Tabs } from '@cognite/data-exploration';
-import { DeleteAnnotationsAndRemoveLinkedAssets } from 'src/store/thunks/DeleteAnnotationsAndRemoveLinkedAssets';
+import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from 'src/store/thunks/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
 import { FileDetailsAnnotationsPreview } from './FileDetailsAnnotationsPreview/FileDetailsAnnotationsPreview';
 
 export const FileDetails = ({
@@ -77,7 +77,12 @@ export const FileDetails = ({
   };
 
   const onAnnotationDeleteClick = (annotationId: number) => {
-    dispatch(DeleteAnnotationsAndRemoveLinkedAssets([annotationId]));
+    dispatch(
+      DeleteAnnotationsAndHandleLinkedAssetsOfFile({
+        annotationIds: [annotationId],
+        showWarnings: true,
+      })
+    );
   };
 
   return (

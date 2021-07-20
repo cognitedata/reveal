@@ -10,7 +10,7 @@ import { Annotation } from 'src/api/types';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import { ReactImageAnnotateWrapper } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/ReactImageAnnotateWrapper';
 import { UnsavedAnnotation } from 'src/api/annotation/types';
-import { DeleteAnnotationsAndRemoveLinkedAssets } from 'src/store/thunks/DeleteAnnotationsAndRemoveLinkedAssets';
+import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from 'src/store/thunks/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
 import { CreateAnnotations } from 'src/store/thunks/CreateAnnotations';
 import { UpdateAnnotations } from 'src/store/thunks/UpdateAnnotations';
 
@@ -48,7 +48,12 @@ export const ImagePreviewContainer = ({ file }: { file: FileInfo }) => {
   };
 
   const handleDeleteAnnotation = (annotation: Annotation) => {
-    dispatch(DeleteAnnotationsAndRemoveLinkedAssets([annotation.id]));
+    dispatch(
+      DeleteAnnotationsAndHandleLinkedAssetsOfFile({
+        annotationIds: [annotation.id],
+        showWarnings: true,
+      })
+    );
   };
 
   const handleInEditMode = (mode: boolean) => {
