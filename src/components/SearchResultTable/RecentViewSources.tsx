@@ -13,7 +13,10 @@ import { calculateDefaultYAxis } from 'utils/axis';
 import { useSDK } from '@cognite/sdk-provider';
 import { trackUsage } from 'utils/metrics';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
-import { addTSToRecentLocalStorage } from 'utils/recentViewLocalstorage';
+import {
+  addTSToRecentLocalStorage,
+  orderViewArray,
+} from 'utils/recentViewLocalstorage';
 import TimeseriesSearchHit from './TimeseriesSearchHit';
 import AssetSearchHit from './AssetSearchHit';
 
@@ -21,7 +24,7 @@ type Props = {
   viewType: 'assets' | 'timeseries';
 };
 
-const RecentlyViewed = ({ viewType }: Props) => {
+const RecentViewSources = ({ viewType }: Props) => {
   const [rvResults, setRvResults] = useState<number[]>([]);
   const title = viewType === 'assets' ? 'tags / assets' : 'time series';
 
@@ -36,33 +39,7 @@ const RecentlyViewed = ({ viewType }: Props) => {
     ?.map((t) => t.tsExternalId || '')
     .filter(Boolean);
 
-  useEffect(() => {
-    const rv = localStorage.getItem(`rv-${viewType}`);
-    if (rv) {
-      setRvResults(JSON.parse(rv) ?? []);
-    } else {
-      localStorage.setItem(`rv-${viewType}`, JSON.stringify([]));
-    }
-  }, [viewType, updateChart]); // Does not update when adding
-
-  const orderViewArray = (
-    viewArray: (Asset | Timeseries)[],
-    order: number[]
-  ) => {
-    viewArray.sort((a, b) => {
-      const A = a.id;
-      const B = b.id;
-
-      if (order.indexOf(A) > order.indexOf(B)) {
-        return 1;
-      }
-      return -1;
-    });
-
-    return viewArray;
-  };
-
-  // useCDFItems does not return data in the order the id array is when send in. Need therefore to order it again.
+  // useCDFItems does not return data in the order the id array is when send in. Need therefore to order it again with orderViewArray().
   const sources = orderViewArray(
     useCdfItems<Asset | Timeseries>(
       viewType,
@@ -73,6 +50,23 @@ const RecentlyViewed = ({ viewType }: Props) => {
     ).data ?? [],
     rvResults
   );
+
+  useEffect(() => {
+    const fetchRecentView = () => {
+      const rv = localStorage.getItem(`rv-${viewType}`);
+      if (rv) {
+        setRvResults(JSON.parse(rv) ?? []);
+      } else {
+        localStorage.setItem(`rv-${viewType}`, JSON.stringify([]));
+      }
+    };
+    fetchRecentView();
+
+    window.addEventListener('storage', fetchRecentView);
+    return () => {
+      window.removeEventListener('storage', fetchRecentView);
+    };
+  }, [viewType, updateChart]); // Does not update when adding
 
   const handleTimeSeriesClick = async (timeSeries: Timeseries) => {
     if (chart) {
@@ -88,7 +82,6 @@ const RecentlyViewed = ({ viewType }: Props) => {
           sdk,
           timeSeriesExternalId: timeSeries.externalId || '',
         });
-        console.log('FDSFS');
         addTSToRecentLocalStorage(timeSeries.id);
         const newTs = covertTSToChartTS(timeSeries, chartId, range);
 
@@ -97,8 +90,6 @@ const RecentlyViewed = ({ viewType }: Props) => {
       }
     }
   };
-
-  console.log('Srouce: ', sources);
 
   return (
     <Container>
@@ -147,4 +138,4 @@ const TitleWrapper = styled.div`
   margin: 10px 28px 20px 28px;
 `;
 
-export default RecentlyViewed;
+export default RecentViewSources;

@@ -1,4 +1,4 @@
-import { Asset } from '@cognite/sdk';
+import { Asset, Timeseries } from '@cognite/sdk';
 
 const maxRecentViewLength = 10;
 
@@ -12,19 +12,17 @@ export const addAssetToRecentLocalStorage = (
     const newRvAssets = addRecentView(JSON.parse(rvAssets), asset.id);
     localStorage.setItem('rv-assets', JSON.stringify(newRvAssets));
   }
-
   addTSToRecentLocalStorage(timeseriesId);
 };
 
 export const addTSToRecentLocalStorage = (timeseriesId: number) => {
-  console.log('adding');
   const rvTS = localStorage.getItem('rv-timeseries') ?? '[]';
 
   if (rvTS) {
-    console.log('timeseries');
     const newRvTs = addRecentView(JSON.parse(rvTS), timeseriesId);
     localStorage.setItem('rv-timeseries', JSON.stringify(newRvTs));
   }
+  window.dispatchEvent(new Event('storage')); // dispatch event to notify changes in RecentView
 };
 
 const addRecentView = (array: number[], source: number): number[] => {
@@ -41,5 +39,21 @@ const addRecentView = (array: number[], source: number): number[] => {
     viewArray.splice(maxRecentViewLength, 1);
   }
 
+  return viewArray;
+};
+
+export const orderViewArray = (
+  viewArray: (Asset | Timeseries)[],
+  order: number[]
+) => {
+  viewArray.sort((a, b) => {
+    const A = a.id;
+    const B = b.id;
+
+    if (order.indexOf(A) > order.indexOf(B)) {
+      return 1;
+    }
+    return -1;
+  });
   return viewArray;
 };
