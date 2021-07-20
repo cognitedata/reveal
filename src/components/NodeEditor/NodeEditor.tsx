@@ -78,6 +78,9 @@ const WorkflowEditor = ({
             }
           : wf
       ),
+      sourceCollection: chart.sourceCollection?.map((t) =>
+        t.id === workflowId ? { ...t, ...applicableDiff } : t
+      ),
     });
   };
 
