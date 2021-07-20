@@ -39,18 +39,6 @@ const RecentViewSources = ({ viewType }: Props) => {
     ?.map((t) => t.tsExternalId || '')
     .filter(Boolean);
 
-  // useCDFItems does not return data in the order the id array is when send in. Need therefore to order it again with orderViewArray().
-  const sources = orderViewArray(
-    useCdfItems<Asset | Timeseries>(
-      viewType,
-      (rvResults || []).map((id) => ({ id })) || [],
-      {
-        enabled: !!rvResults && rvResults.length > 0,
-      }
-    ).data ?? [],
-    rvResults
-  );
-
   useEffect(() => {
     const fetchRecentView = () => {
       const rv = localStorage.getItem(`rv-${viewType}`);
@@ -65,7 +53,17 @@ const RecentViewSources = ({ viewType }: Props) => {
       window.removeEventListener('storage', fetchRecentView);
     };
   }, [viewType, updateChart]); // Does not update when adding
-
+  // useCDFItems does not return data in the order the id array is when send in. Need therefore to order it again with orderViewArray().
+  const sources = orderViewArray(
+    useCdfItems<Asset | Timeseries>(
+      viewType,
+      (rvResults || []).map((id) => ({ id })) || [],
+      {
+        enabled: !!rvResults && rvResults.length > 0,
+      }
+    ).data ?? [],
+    rvResults
+  );
   const handleTimeSeriesClick = async (timeSeries: Timeseries) => {
     if (chart) {
       const tsToRemove = chart.timeSeriesCollection?.find(

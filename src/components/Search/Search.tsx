@@ -39,6 +39,7 @@ const Search = ({ visible, onClose }: SearchProps) => {
   const handleSearchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     setSearchInputValue(value);
+    window.dispatchEvent(new Event('storage')); // dispatch event to notify changes in RecentView
   };
 
   return (
