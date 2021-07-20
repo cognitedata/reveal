@@ -81,7 +81,7 @@ export default function SearchTimeseries({ query }: Props) {
 
   return (
     <TSList>
-      <RecentlyViewed viewType="timeseries" />
+      {!query && <RecentlyViewed viewType="timeseries" />}
       <TimeseriesSearchHit
         timeseries={timeseries}
         query={query}
@@ -110,7 +110,7 @@ export default function SearchTimeseries({ query }: Props) {
 const TSList = styled.ul`
   width: 100%;
   padding: 0;
-  margin: 10px 0 10px 0;
+  margin: 0 0 10px 0;
   list-style: none;
 `;
 

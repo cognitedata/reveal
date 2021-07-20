@@ -38,7 +38,7 @@ export default function SearchResultList({ query }: Props) {
 
   return (
     <AssetList>
-      <RecentlyViewed viewType="assets" />
+      {!query && <RecentlyViewed viewType="assets" />}
       {assets?.map((asset) => (
         <li key={asset.id}>
           <AssetSearchHit asset={asset} query={query} />
