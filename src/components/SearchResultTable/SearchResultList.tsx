@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Icon, Button, Title } from '@cognite/cogs.js';
+import { Icon, Button } from '@cognite/cogs.js';
 import { Asset } from '@cognite/sdk';
 import { useInfiniteSearch } from '@cognite/sdk-react-query-hooks';
 import styled from 'styled-components/macro';

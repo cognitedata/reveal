@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Icon, Title, Graphic } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
 
@@ -41,6 +41,7 @@ const InfoBox = ({ infoType, query }: InfoBoxProps) => {
     localStorage ? !localStorage.getItem(infoType) : true
   );
 
+  const [recentViewExist, setRecentviewExists] = useState(true);
   const data = infoType === 'TagHelpBox' ? tagInfo : timeSeriesInfo;
 
   const handleOnClick = () => {
@@ -48,8 +49,18 @@ const InfoBox = ({ infoType, query }: InfoBoxProps) => {
     setDisplayInfo(false);
   };
 
+  useEffect(() => {
+    const rvAssets = localStorage.getItem('rv-assets');
+    const rvTs = localStorage.getItem('rv-timeseries');
+    if (!rvAssets || !rvTs) {
+      setRecentviewExists(false);
+    }
+  }, []);
+
   return (
-    <InfoBoxContainer style={query === '' ? { height: '100%' } : {}}>
+    <InfoBoxContainer
+      style={query === '' && !recentViewExist ? { height: '100%' } : {}}
+    >
       {displayInfo && (
         <InfoBoxWrapper>
           <StyledIcon type="InfoFilled" />
@@ -66,7 +77,7 @@ const InfoBox = ({ infoType, query }: InfoBoxProps) => {
           />
         </InfoBoxWrapper>
       )}
-      {query === '' && (
+      {query === '' && !recentViewExist && (
         <EmptyResultsContainer>
           <EmptyResults>
             <Graphic
