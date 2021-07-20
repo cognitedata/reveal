@@ -51,25 +51,20 @@ const RecentViewSources = ({ viewType }: Props) => {
     rvResults
   );
 
-  const fetchRecentView = useCallback(async () => {
-    const rv = localStorage.getItem(`rv-${viewType}`);
-    if (rv) {
-      setRvResults(JSON.parse(rv) ?? []);
-    } else {
-      localStorage.setItem(`rv-${viewType}`, JSON.stringify([]));
-    }
-  }, [viewType]);
-
   useEffect(() => {
+    const fetchRecentView = () => {
+      const rv = localStorage.getItem(`rv-${viewType}`);
+      if (rv) {
+        setRvResults(JSON.parse(rv) ?? []);
+      }
+    };
     fetchRecentView();
-  });
 
-  useEffect(() => {
     window.addEventListener('storage', fetchRecentView);
     return () => {
       window.removeEventListener('storage', fetchRecentView);
     };
-  });
+  }, [viewType, updateChart]); // Does not update when adding
 
   const handleTimeSeriesClick = async (timeSeries: Timeseries) => {
     if (chart) {
@@ -95,36 +90,40 @@ const RecentViewSources = ({ viewType }: Props) => {
   };
 
   return (
-    <Container>
-      <TitleWrapper>
-        <Icon type="History" size={20} />
-        <Title level={4}> Recently viewed {title}</Title>
-      </TitleWrapper>
+    <>
+      {rvResults && rvResults.length > 0 ? (
+        <Container>
+          <TitleWrapper>
+            <Icon type="History" size={20} />
+            <Title level={4}> Recently viewed {title}</Title>
+          </TitleWrapper>
 
-      <div>
-        {viewType === 'assets' ? (
-          (sources || []).map((source) => (
-            <li key={source.id}>
-              <AssetSearchHit asset={source as Asset} />
-            </li>
-          ))
-        ) : (
-          <TimeseriesSearchHit
-            timeseries={sources as Timeseries[]}
-            renderCheckbox={(ts) => (
-              <Checkbox
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleTimeSeriesClick(ts);
-                }}
-                name={`${ts.id}`}
-                checked={selectedExternalIds?.includes(ts.externalId || '')}
+          <div>
+            {viewType === 'assets' ? (
+              (sources || []).map((source) => (
+                <li key={source.id}>
+                  <AssetSearchHit asset={source as Asset} />
+                </li>
+              ))
+            ) : (
+              <TimeseriesSearchHit
+                timeseries={sources as Timeseries[]}
+                renderCheckbox={(ts) => (
+                  <Checkbox
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleTimeSeriesClick(ts);
+                    }}
+                    name={`${ts.id}`}
+                    checked={selectedExternalIds?.includes(ts.externalId || '')}
+                  />
+                )}
               />
             )}
-          />
-        )}
-      </div>
-    </Container>
+          </div>
+        </Container>
+      ) : null}
+    </>
   );
 };
 
