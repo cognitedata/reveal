@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Checkbox, Icon, Title } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
 import { Asset, Timeseries } from '@cognite/sdk';
@@ -51,22 +51,25 @@ const RecentViewSources = ({ viewType }: Props) => {
     rvResults
   );
 
-  useEffect(() => {
-    const fetchRecentView = () => {
-      const rv = localStorage.getItem(`rv-${viewType}`);
-      if (rv) {
-        setRvResults(JSON.parse(rv) ?? []);
-      } else {
-        localStorage.setItem(`rv-${viewType}`, JSON.stringify([]));
-      }
-    };
-    fetchRecentView();
+  const fetchRecentView = useCallback(async () => {
+    const rv = localStorage.getItem(`rv-${viewType}`);
+    if (rv) {
+      setRvResults(JSON.parse(rv) ?? []);
+    } else {
+      localStorage.setItem(`rv-${viewType}`, JSON.stringify([]));
+    }
+  }, [viewType]);
 
+  useEffect(() => {
+    fetchRecentView();
+  }, []);
+
+  useEffect(() => {
     window.addEventListener('storage', fetchRecentView);
     return () => {
       window.removeEventListener('storage', fetchRecentView);
     };
-  }, [viewType, updateChart]); // Does not update when adding
+  });
 
   const handleTimeSeriesClick = async (timeSeries: Timeseries) => {
     if (chart) {
@@ -135,7 +138,7 @@ const TitleWrapper = styled.div`
   flex-direction: row;
   align-items: center;
   gap: 1em;
-  margin: 10px 28px 20px 28px;
+  margin: 10px 28px 20px 10px;
 `;
 
 export default RecentViewSources;
