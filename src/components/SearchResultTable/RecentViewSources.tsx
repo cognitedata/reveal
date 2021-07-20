@@ -62,7 +62,7 @@ const RecentViewSources = ({ viewType }: Props) => {
 
   useEffect(() => {
     fetchRecentView();
-  }, []);
+  });
 
   useEffect(() => {
     window.addEventListener('storage', fetchRecentView);
