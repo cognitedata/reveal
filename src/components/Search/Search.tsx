@@ -101,13 +101,13 @@ const Search = ({ visible, onClose }: SearchProps) => {
         <SearchResultsContainer>
           {searchType === 'assets' && (
             <>
-              <InfoBox infoType="TagHelpBox" />
+              <InfoBox infoType="TagHelpBox" query={urlQuery} />
               <SearchResultList query={urlQuery} />
             </>
           )}
           {searchType === 'timeseries' && (
             <>
-              <InfoBox infoType="TimeSeriesHelpBox" />
+              <InfoBox infoType="TimeSeriesHelpBox" query={urlQuery} />
               <SearchTimeseries query={urlQuery} />
             </>
           )}

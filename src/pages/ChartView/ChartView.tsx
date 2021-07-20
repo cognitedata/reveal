@@ -63,7 +63,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
 
   const [showSearch, setShowSearch] = useState(false);
   const [showYAxis, setShowYAxis] = useState(true);
-  const [showAggregates, setShowAggregates] = useState(true);
+  const [showMinMax, setShowMinMax] = useState(false);
   const [showGridlines, setShowGridlines] = useState(true);
   const [workspaceMode, setWorkspaceMode] = useState<Modes>('workspace');
   const [stackedMode, setStackedMode] = useState<boolean>(false);
@@ -382,12 +382,12 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                 style={{ marginLeft: 4 }}
               />
             </Tooltip>
-            <Tooltip content={`${showAggregates ? 'Hide' : 'Show'} aggregates`}>
+            <Tooltip content={`${showMinMax ? 'Hide' : 'Show'} min/max`}>
               <Button
                 icon="Timeseries"
-                type={showAggregates ? 'link' : 'ghost'}
+                type={showMinMax ? 'link' : 'ghost'}
                 aria-label="view"
-                onClick={() => setShowAggregates(!showAggregates)}
+                onClick={() => setShowMinMax(!showMinMax)}
                 style={{ marginLeft: 4 }}
               />
             </Tooltip>
@@ -446,7 +446,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                   chartId={chartId}
                   isInSearch={showSearch}
                   isYAxisShown={showYAxis}
-                  isAggregatesShown={showAggregates}
+                  isMinMaxShown={showMinMax}
                   isGridlinesShown={showGridlines}
                   stackedMode={stackedMode}
                 />
