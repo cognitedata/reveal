@@ -15,6 +15,7 @@ import { trackUsage } from 'utils/metrics';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 import {
   addTSToRecentLocalStorage,
+  getRvFromLocal,
   orderViewArray,
 } from 'utils/recentViewLocalstorage';
 import { getProject } from 'hooks';
@@ -42,13 +43,10 @@ const RecentViewSources = ({ viewType }: Props) => {
 
   useEffect(() => {
     const fetchRecentView = () => {
-      const rv = localStorage.getItem(`rv-${viewType}`);
+      const rvDictionary = getRvFromLocal(viewType, project);
 
-      if (rv) {
-        const parsedRV = JSON.parse(rv);
-        if (project in parsedRV) {
-          setRvResults(parsedRV[project] ?? {});
-        }
+      if (rvDictionary) {
+        setRvResults(rvDictionary ?? {});
       }
     };
     fetchRecentView();

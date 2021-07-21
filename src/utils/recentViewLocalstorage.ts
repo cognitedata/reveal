@@ -71,3 +71,14 @@ export const orderViewArray = (
   });
   return viewArray;
 };
+
+export const getRvFromLocal = (viewType: string, projectName: string) => {
+  const rvSources = localStorage.getItem(`rv-${viewType}`);
+  const parsedSources = rvSources ? JSON.parse(rvSources ?? '{}') : null;
+
+  const rvDictionary =
+    !!parsedSources && projectName in parsedSources
+      ? parsedSources[projectName]
+      : null;
+  return rvDictionary;
+};
