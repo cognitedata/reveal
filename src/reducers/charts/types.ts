@@ -12,7 +12,7 @@ export type Chart = {
   updatedAt: number;
   timeSeriesCollection?: ChartTimeSeries[];
   workflowCollection?: ChartWorkflow[];
-  sourceCollection?: (ChartTimeSeries | ChartWorkflow)[];
+  sourceCollection?: SourceCollectionData[];
   dateFrom: string;
   dateTo: string;
   selectedDateRange?: string;
@@ -73,6 +73,11 @@ export type ChartWorkflow = {
   calls?: Call[];
   statisticsCalls?: Call[];
   createdAt?: number;
+};
+
+export type SourceCollectionData = {
+  type: 'timeseries' | 'workflow';
+  id: string;
 };
 
 export type ConfigPanelComponentProps = {

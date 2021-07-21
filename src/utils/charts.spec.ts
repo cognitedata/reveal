@@ -63,11 +63,12 @@ describe('charts util', () => {
       color: 'red',
       enabled: true,
       tsId: 42,
+      createdAt: 0,
     };
     const chartWithTS: Chart = {
       ...chart,
       timeSeriesCollection: [ts],
-      sourceCollection: [ts],
+      sourceCollection: [{ type: 'timeseries', id }],
     };
     describe('updateTimeseries', () => {
       it('should do nothing for unknown ts', () => {
@@ -139,7 +140,7 @@ describe('charts util', () => {
     const chartWithWF: Chart = {
       ...chart,
       workflowCollection: [wf],
-      sourceCollection: [wf],
+      sourceCollection: [{ type: 'workflow', id }],
     };
     describe('updateWorkflow', () => {
       it('should do nothing for unknown wf', () => {

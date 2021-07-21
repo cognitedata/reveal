@@ -19,7 +19,11 @@ import DateRangeSelector from 'components/DateRangeSelector';
 import Search from 'components/Search';
 import { useChart, useUpdateChart } from 'hooks/firebase';
 import { nanoid } from 'nanoid';
-import { ChartTimeSeries, ChartWorkflow } from 'reducers/charts/types';
+import {
+  ChartTimeSeries,
+  ChartWorkflow,
+  SourceCollectionData,
+} from 'reducers/charts/types';
 import { getEntryColor } from 'utils/colors';
 import { useSearchParam } from 'hooks';
 import { SEARCH_KEY } from 'utils/constants';
@@ -147,7 +151,10 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
             ...(chart.workflowCollection || []),
             newWorkflow,
           ],
-          sourceCollection: [newWorkflow, ...(chart.sourceCollection || [])],
+          sourceCollection: [
+            { type: 'workflow', id: newWorkflowId },
+            ...(chart.sourceCollection || []),
+          ],
         },
         {
           onSuccess: () => {
@@ -318,7 +325,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     </tr>
   );
   const reorder = (
-    sourceCollection: (ChartTimeSeries | ChartWorkflow)[],
+    sourceCollection: SourceCollectionData[],
     startIndex: number,
     endIndex: number
   ) => {
