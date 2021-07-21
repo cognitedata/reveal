@@ -66,7 +66,7 @@ const InfoBox = ({ infoType, query }: InfoBoxProps) => {
     return () => {
       window.removeEventListener('storage', fetchRecentView);
     };
-  }, []);
+  });
 
   return (
     <InfoBoxContainer
