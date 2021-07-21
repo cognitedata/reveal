@@ -16,8 +16,8 @@ import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 import {
   addTSToRecentLocalStorage,
   orderViewArray,
-  removeRecentViewFromLocal,
 } from 'utils/recentViewLocalstorage';
+import { getProject } from 'hooks';
 import TimeseriesSearchHit from './TimeseriesSearchHit';
 import AssetSearchHit from './AssetSearchHit';
 
@@ -33,7 +33,7 @@ const RecentViewSources = ({ viewType }: Props) => {
   const { chartId } = useParams<{ chartId: string }>();
   const { data: chart } = useChart(chartId);
   const { mutate: updateChart } = useUpdateChart();
-
+  const project: string = getProject();
   const selectedExternalIds:
     | undefined
     | string[] = chart?.timeSeriesCollection
@@ -43,8 +43,12 @@ const RecentViewSources = ({ viewType }: Props) => {
   useEffect(() => {
     const fetchRecentView = () => {
       const rv = localStorage.getItem(`rv-${viewType}`);
+
       if (rv) {
-        setRvResults(JSON.parse(rv) ?? []);
+        const parsedRV = JSON.parse(rv);
+        if (project in parsedRV) {
+          setRvResults(parsedRV[project] ?? {});
+        }
       }
     };
     fetchRecentView();
@@ -53,13 +57,15 @@ const RecentViewSources = ({ viewType }: Props) => {
     return () => {
       window.removeEventListener('storage', fetchRecentView);
     };
-  }, [viewType, updateChart]); // Does not update when adding
+  }, [viewType, updateChart, project]); // Does not update when adding
 
-  const { data: sources, isLoadingError, failureCount } = useCdfItems<
-    Asset | Timeseries
-  >(viewType, (rvResults || []).map((id) => ({ id })) || [], {
-    enabled: !!rvResults && rvResults.length > 0,
-  });
+  const { data: sources } = useCdfItems<Asset | Timeseries>(
+    viewType,
+    (rvResults || []).map((id) => ({ id })) || [],
+    {
+      enabled: !!rvResults && rvResults.length > 0,
+    }
+  );
 
   // useCDFItems does not return data in the order the id array is sent in. Need therefore to order it again with orderViewArray().
   const orderedViewArray = orderViewArray(sources ?? [], rvResults);
@@ -78,7 +84,7 @@ const RecentViewSources = ({ viewType }: Props) => {
           sdk,
           timeSeriesExternalId: timeSeries.externalId || '',
         });
-        addTSToRecentLocalStorage(timeSeries.id);
+        addTSToRecentLocalStorage(timeSeries.id, project);
         const newTs = covertTSToChartTS(timeSeries, chartId, range);
 
         updateChart(addTimeseries(chart, newTs));
@@ -86,10 +92,6 @@ const RecentViewSources = ({ viewType }: Props) => {
       }
     }
   };
-  if (isLoadingError || failureCount > 0) {
-    // remove local state if no items found with local ids.
-    removeRecentViewFromLocal(viewType);
-  }
 
   return (
     <>

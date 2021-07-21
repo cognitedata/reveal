@@ -21,23 +21,37 @@ const addRecentView = (array: number[], source: number): number[] => {
 
 export const addAssetToRecentLocalStorage = (
   asset: Asset,
-  timeseriesId: number
+  timeseriesId: number,
+  projectName: string
 ) => {
-  const rvAssets = localStorage.getItem('rv-assets') ?? '[]';
+  const rvTS = localStorage.getItem('rv-assets') ?? '{}';
+  const rvDictionary = JSON.parse(rvTS);
 
-  if (rvAssets) {
-    const newRvAssets = addRecentView(JSON.parse(rvAssets), asset.id);
-    localStorage.setItem('rv-assets', JSON.stringify(newRvAssets));
+  if (rvDictionary) {
+    rvDictionary[projectName] = addRecentView(
+      rvDictionary[projectName] ?? [],
+      asset.id
+    );
+    localStorage.setItem('rv-assets', JSON.stringify(rvDictionary));
   }
-  addTSToRecentLocalStorage(timeseriesId);
+  addTSToRecentLocalStorage(timeseriesId, projectName);
+
+  window.dispatchEvent(new Event('storage')); // dispatch event to notify changes in RecentView
 };
 
-export const addTSToRecentLocalStorage = (timeseriesId: number) => {
-  const rvTS = localStorage.getItem('rv-timeseries') ?? '[]';
+export const addTSToRecentLocalStorage = (
+  timeseriesId: number,
+  projectName: string
+) => {
+  const rvTS = localStorage.getItem('rv-timeseries') ?? '{}';
+  const rvDictionary = JSON.parse(rvTS);
 
-  if (rvTS) {
-    const newRvTs = addRecentView(JSON.parse(rvTS), timeseriesId);
-    localStorage.setItem('rv-timeseries', JSON.stringify(newRvTs));
+  if (rvDictionary) {
+    rvDictionary[projectName] = addRecentView(
+      rvDictionary[projectName] ?? [],
+      timeseriesId
+    );
+    localStorage.setItem('rv-timeseries', JSON.stringify(rvDictionary));
   }
   window.dispatchEvent(new Event('storage')); // dispatch event to notify changes in RecentView
 };
@@ -56,9 +70,4 @@ export const orderViewArray = (
     return -1;
   });
   return viewArray;
-};
-
-export const removeRecentViewFromLocal = (viewType: string) => {
-  localStorage.removeItem(`rv-${viewType}`);
-  window.dispatchEvent(new Event('storage')); // dispatch event to notify changes in RecentView
 };

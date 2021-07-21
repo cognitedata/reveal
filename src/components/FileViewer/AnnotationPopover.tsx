@@ -16,6 +16,7 @@ import {
 } from 'utils/charts';
 import { trackUsage } from 'utils/metrics';
 import { addTSToRecentLocalStorage } from 'utils/recentViewLocalstorage';
+import { getProject } from 'hooks';
 
 export const AnnotationPopover = ({
   annotations,
@@ -65,6 +66,7 @@ export const TimeseriesList = ({ assetId }: { assetId: number }) => {
   const { chartId } = useParams<{ chartId: string }>();
   const { data: chart } = useChart(chartId);
   const { mutate: updateChart } = useUpdateChart();
+  const project = getProject();
 
   const { data: timeseries = [], isLoading } = useAssetTimeseries(assetId);
 
@@ -83,7 +85,7 @@ export const TimeseriesList = ({ assetId }: { assetId: number }) => {
       if (tsToRemove) {
         updateChart(removeTimeseries(chart, tsToRemove.id));
       } else {
-        addTSToRecentLocalStorage(timeSeries.id);
+        addTSToRecentLocalStorage(timeSeries.id, project);
         const ts = covertTSToChartTS(timeSeries, chartId);
         updateChart(addTimeseries(chart, ts));
         trackUsage('ChartView.AddTimeSeries', { source: 'annotation' });
