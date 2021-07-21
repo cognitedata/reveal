@@ -16,6 +16,7 @@ import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 import {
   addTSToRecentLocalStorage,
   orderViewArray,
+  removeRecentViewFromLocal,
 } from 'utils/recentViewLocalstorage';
 import TimeseriesSearchHit from './TimeseriesSearchHit';
 import AssetSearchHit from './AssetSearchHit';
@@ -53,17 +54,16 @@ const RecentViewSources = ({ viewType }: Props) => {
       window.removeEventListener('storage', fetchRecentView);
     };
   }, [viewType, updateChart]); // Does not update when adding
-  // useCDFItems does not return data in the order the id array is when send in. Need therefore to order it again with orderViewArray().
-  const sources = orderViewArray(
-    useCdfItems<Asset | Timeseries>(
-      viewType,
-      (rvResults || []).map((id) => ({ id })) || [],
-      {
-        enabled: !!rvResults && rvResults.length > 0,
-      }
-    ).data ?? [],
-    rvResults
-  );
+
+  const { data: sources, isLoadingError, failureCount } = useCdfItems<
+    Asset | Timeseries
+  >(viewType, (rvResults || []).map((id) => ({ id })) || [], {
+    enabled: !!rvResults && rvResults.length > 0,
+  });
+
+  // useCDFItems does not return data in the order the id array is sent in. Need therefore to order it again with orderViewArray().
+  const orderedViewArray = orderViewArray(sources ?? [], rvResults);
+
   const handleTimeSeriesClick = async (timeSeries: Timeseries) => {
     if (chart) {
       const tsToRemove = chart.timeSeriesCollection?.find(
@@ -86,6 +86,10 @@ const RecentViewSources = ({ viewType }: Props) => {
       }
     }
   };
+  if (isLoadingError || failureCount > 0) {
+    // remove local state if no items found with local ids.
+    removeRecentViewFromLocal(viewType);
+  }
 
   return (
     <>
@@ -98,14 +102,14 @@ const RecentViewSources = ({ viewType }: Props) => {
 
           <div>
             {viewType === 'assets' ? (
-              (sources || []).map((source) => (
+              (orderedViewArray || []).map((source) => (
                 <li key={source.id}>
                   <AssetSearchHit asset={source as Asset} />
                 </li>
               ))
             ) : (
               <TimeseriesSearchHit
-                timeseries={sources as Timeseries[]}
+                timeseries={orderedViewArray as Timeseries[]}
                 renderCheckbox={(ts) => (
                   <Checkbox
                     onClick={(e) => {

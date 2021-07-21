@@ -2,6 +2,23 @@ import { Asset, Timeseries } from '@cognite/sdk';
 
 const maxRecentViewLength = 10;
 
+const addRecentView = (array: number[], source: number): number[] => {
+  let viewArray = array;
+
+  // Remove id from array if duplicate
+  if (array.includes(source)) {
+    viewArray = array.filter((x) => x !== source);
+  }
+
+  viewArray.unshift(source); // add to front
+
+  if (viewArray && viewArray.length > maxRecentViewLength) {
+    viewArray.splice(maxRecentViewLength, 1);
+  }
+
+  return viewArray;
+};
+
 export const addAssetToRecentLocalStorage = (
   asset: Asset,
   timeseriesId: number
@@ -25,27 +42,10 @@ export const addTSToRecentLocalStorage = (timeseriesId: number) => {
   window.dispatchEvent(new Event('storage')); // dispatch event to notify changes in RecentView
 };
 
-const addRecentView = (array: number[], source: number): number[] => {
-  let viewArray = array;
-
-  // Remove id from array if duplicate
-  if (array.includes(source)) {
-    viewArray = array.filter((x) => x !== source);
-  }
-
-  viewArray.unshift(source); // add to front
-
-  if (viewArray && viewArray.length > maxRecentViewLength) {
-    viewArray.splice(maxRecentViewLength, 1);
-  }
-
-  return viewArray;
-};
-
 export const orderViewArray = (
   viewArray: (Asset | Timeseries)[],
   order: number[]
-) => {
+): (Asset | Timeseries)[] => {
   viewArray.sort((a, b) => {
     const A = a.id;
     const B = b.id;
@@ -56,4 +56,9 @@ export const orderViewArray = (
     return -1;
   });
   return viewArray;
+};
+
+export const removeRecentViewFromLocal = (viewType: string) => {
+  localStorage.removeItem(`rv-${viewType}`);
+  window.dispatchEvent(new Event('storage')); // dispatch event to notify changes in RecentView
 };

@@ -51,9 +51,10 @@ const InfoBox = ({ infoType, query }: InfoBoxProps) => {
 
   useEffect(() => {
     const fetchRecentView = () => {
-      const rvAssets = localStorage.getItem('rv-assets');
-      const rvTs = localStorage.getItem('rv-timeseries');
-      setRecentviewExists(!!rvAssets || !!rvTs);
+      const rvSources = localStorage.getItem(
+        `rv-${infoType === 'TagHelpBox' ? 'assets' : 'timeseries'}`
+      );
+      setRecentviewExists(!!rvSources);
     };
     fetchRecentView();
 
