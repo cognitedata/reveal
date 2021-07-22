@@ -1,9 +1,15 @@
 import { Metrics } from '@cognite/metrics';
-import { Dict } from 'mixpanel-browser';
+import { UserInfo } from 'reducers/charts/types';
 
 export const metrics = Metrics.create('Charts');
 
-export const trackUsage = (name: string, properties?: Dict) => {
+export const identifyUser = (user: UserInfo) => {
+  if (user) {
+    Metrics.identify(user.email || user.displayName || user.id);
+  }
+};
+
+export const trackUsage = (name: string, properties?: any) => {
   const { host } = window?.location;
   const { pathname } = window?.location;
   if (!host || !pathname) {
@@ -12,12 +18,10 @@ export const trackUsage = (name: string, properties?: Dict) => {
 
   const pathWithoutTenant = pathname.substring(pathname.indexOf('/', 1));
 
-  if (host.indexOf('localhost') === -1) {
-    metrics.track(name, {
-      ...properties,
-      appVersion: process.env.REACT_APP_VERSION_NAME,
-      location: window.location.pathname,
-      pathname: pathWithoutTenant,
-    });
-  }
+  metrics.track(name, {
+    ...properties,
+    appVersion: process.env.REACT_APP_VERSION_NAME,
+    location: window.location.pathname,
+    pathname: pathWithoutTenant,
+  });
 };
