@@ -28,6 +28,7 @@ import { ITimer } from '@cognite/metrics';
 import { Modes } from 'pages/types';
 import DetailsSidebar from 'components/DetailsSidebar';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
+import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import SourceRows from './SourceRows';
 
 import {
@@ -62,7 +63,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
 
   const [showSearch, setShowSearch] = useState(false);
   const [showYAxis, setShowYAxis] = useState(true);
-  const [showAggregates, setShowAggregates] = useState(true);
+  const [showMinMax, setShowMinMax] = useState(false);
   const [showGridlines, setShowGridlines] = useState(true);
   const [workspaceMode, setWorkspaceMode] = useState<Modes>('workspace');
   const [stackedMode, setStackedMode] = useState<boolean>(false);
@@ -127,23 +128,26 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   const handleClickNewWorkflow = () => {
     if (chart) {
       const newWorkflowId = nanoid();
+      const newWorkflow = {
+        id: newWorkflowId,
+        name: 'New Calculation',
+        color: getEntryColor(chart.id, newWorkflowId),
+        lineWeight: 1,
+        lineStyle: 'solid',
+        enabled: true,
+        nodes: [],
+        connections: [],
+        createdAt: Date.now(),
+      } as ChartWorkflow;
+
       updateChart(
         {
           ...chart,
           workflowCollection: [
             ...(chart.workflowCollection || []),
-            {
-              id: newWorkflowId,
-              name: 'New Calculation',
-              color: getEntryColor(chart.id, newWorkflowId),
-              lineWeight: 1,
-              lineStyle: 'solid',
-              enabled: true,
-              nodes: [],
-              connections: [],
-              createdAt: Date.now(),
-            },
+            newWorkflow,
           ],
+          sourceCollection: [newWorkflow, ...(chart.sourceCollection || [])],
         },
         {
           onSuccess: () => {
@@ -313,6 +317,29 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
       )}
     </tr>
   );
+  const reorder = (
+    sourceCollection: (ChartTimeSeries | ChartWorkflow)[],
+    startIndex: number,
+    endIndex: number
+  ) => {
+    const [removed] = sourceCollection.splice(startIndex, 1);
+    sourceCollection.splice(endIndex, 0, removed);
+    return sourceCollection;
+  };
+
+  const onDragEnd = (result: any) => {
+    if (!result.destination) return;
+
+    const reorderedChart = {
+      ...chart,
+      sourceCollection: reorder(
+        chart?.sourceCollection || [],
+        result.source.index,
+        result.destination.index
+      ),
+    };
+    updateChart(reorderedChart);
+  };
 
   return (
     <ChartViewContainer id="chart-view">
@@ -355,12 +382,12 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                 style={{ marginLeft: 4 }}
               />
             </Tooltip>
-            <Tooltip content={`${showAggregates ? 'Hide' : 'Show'} aggregates`}>
+            <Tooltip content={`${showMinMax ? 'Hide' : 'Show'} min/max`}>
               <Button
                 icon="Timeseries"
-                type={showAggregates ? 'link' : 'ghost'}
+                type={showMinMax ? 'link' : 'ghost'}
                 aria-label="view"
-                onClick={() => setShowAggregates(!showAggregates)}
+                onClick={() => setShowMinMax(!showMinMax)}
                 style={{ marginLeft: 4 }}
               />
             </Tooltip>
@@ -419,41 +446,49 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                   chartId={chartId}
                   isInSearch={showSearch}
                   isYAxisShown={showYAxis}
-                  isAggregatesShown={showAggregates}
+                  isMinMaxShown={showMinMax}
                   isGridlinesShown={showGridlines}
                   stackedMode={stackedMode}
                 />
               </ChartWrapper>
             </TopPaneWrapper>
             <BottomPaneWrapper className="table">
-              <div style={{ display: 'flex', height: '100%' }}>
-                <SourceTableWrapper>
-                  <SourceTable>
-                    <thead>{sourceTableHeaderRow}</thead>
-                    <tbody>
-                      <SourceRows
-                        chart={chart}
-                        updateChart={updateChart}
-                        mode={workspaceMode}
-                        selectedSourceId={selectedSourceId}
-                        openNodeEditor={openNodeEditor}
-                        onRowClick={handleSourceClick}
-                        onInfoClick={handleInfoClick}
-                        dateFrom={chart.dateFrom}
-                        dateTo={chart.dateTo}
-                      />
-                    </tbody>
-                  </SourceTable>
-                </SourceTableWrapper>
-                {workspaceMode === 'editor' && !!selectedSourceId && (
-                  <NodeEditor
-                    mutate={updateChart}
-                    workflowId={selectedSourceId}
-                    closeNodeEditor={closeNodeEditor}
-                    chart={chart}
-                  />
-                )}
-              </div>
+              <DragDropContext onDragEnd={onDragEnd}>
+                <Droppable droppableId="droppable-sources">
+                  {(provided) => (
+                    <div style={{ display: 'flex', height: '100%' }}>
+                      <SourceTableWrapper>
+                        <SourceTable ref={provided.innerRef}>
+                          <thead>{sourceTableHeaderRow}</thead>
+                          <tbody>
+                            <SourceRows
+                              draggable
+                              chart={chart}
+                              updateChart={updateChart}
+                              mode={workspaceMode}
+                              selectedSourceId={selectedSourceId}
+                              openNodeEditor={openNodeEditor}
+                              onRowClick={handleSourceClick}
+                              onInfoClick={handleInfoClick}
+                              dateFrom={chart.dateFrom}
+                              dateTo={chart.dateTo}
+                            />
+                            {provided.placeholder}
+                          </tbody>
+                        </SourceTable>
+                      </SourceTableWrapper>
+                      {workspaceMode === 'editor' && !!selectedSourceId && (
+                        <NodeEditor
+                          mutate={updateChart}
+                          workflowId={selectedSourceId}
+                          closeNodeEditor={closeNodeEditor}
+                          chart={chart}
+                        />
+                      )}
+                    </div>
+                  )}
+                </Droppable>
+              </DragDropContext>
             </BottomPaneWrapper>
           </SplitPaneLayout>
         </ChartContainer>
