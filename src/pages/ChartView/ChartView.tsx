@@ -151,10 +151,6 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
             ...(chart.workflowCollection || []),
             newWorkflow,
           ],
-          sourceCollection: [
-            { type: 'workflow', id: newWorkflowId },
-            ...(chart.sourceCollection || []),
-          ],
         },
         {
           onSuccess: () => {

@@ -137,9 +137,6 @@ export function convertTimeseriesToWorkflow(chart: Chart, id: string): Chart {
       ...chart,
       timeSeriesCollection: filteredTsCollection,
       workflowCollection: filteredWorkFlowCollection,
-      sourceCollection: chart.sourceCollection?.map((x) =>
-        x.id === ts.id ? { type: 'workflow', id: workflow.id } : x
-      ),
     };
   }
   return chart;
