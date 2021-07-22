@@ -190,7 +190,6 @@ export function initializeSourceCollection(chart: Chart): Chart {
   };
 }
 
-
 export function updateSourceAxisForChart(
   chart: Chart,
   { x, y }: { x: string[]; y: AxisUpdate[] }

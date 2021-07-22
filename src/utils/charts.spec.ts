@@ -63,11 +63,13 @@ describe('charts util', () => {
       color: 'red',
       enabled: true,
       tsId: 42,
+      type: 'timeseries',
       createdAt: 0,
     };
     const chartWithTS: Chart = {
       ...chart,
       timeSeriesCollection: [ts],
+      sourceCollection: [{ id: ts.id, type: 'timeseries' }],
     };
     describe('updateTimeseries', () => {
       it('should do nothing for unknown ts', () => {
@@ -98,6 +100,7 @@ describe('charts util', () => {
               color: 'blue',
             },
           ],
+          sourceCollection: [{ id: '42', type: 'timeseries' }],
         });
       });
     });
@@ -106,6 +109,7 @@ describe('charts util', () => {
         expect(removeTimeseries(chartWithTS, '42')).toEqual({
           ...chart,
           timeSeriesCollection: [],
+          sourceCollection: [],
         });
       });
       it('should remove return an unchanged chart for unknown ids', () => {
@@ -124,11 +128,13 @@ describe('charts util', () => {
       id: '42',
       name: 'ts1',
       color: 'red',
+      type: 'workflow',
       enabled: true,
     };
     const chartWithWF: Chart = {
       ...chart,
       workflowCollection: [wf],
+      sourceCollection: [{ id: wf.id, type: 'workflow' }],
     };
     describe('updateWorkflow', () => {
       it('should do nothing for unknown wf', () => {
@@ -159,6 +165,7 @@ describe('charts util', () => {
               color: 'blue',
             },
           ],
+          sourceCollection: [{ id: '42', type: 'workflow' }],
         });
       });
     });
@@ -167,6 +174,7 @@ describe('charts util', () => {
         expect(removeWorkflow(chartWithWF, '42')).toEqual({
           ...chart,
           workflowCollection: [],
+          sourceCollection: [],
         });
       });
       it('should remove return an unchanged chart for unknown ids', () => {
