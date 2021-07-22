@@ -42,7 +42,7 @@
     "lodash": "^4.17.21",
     "nanoid": "^3.1.23",
     "plotly.js-basic-dist": "^1.58.4",
-    "query-string": "^7.0.0",
+    "query-string": "^7.0.1",
     "react": "^17.0.2",
     "react-beautiful-dnd": "^13.1.0",
     "react-datepicker": "^3.8.0",
