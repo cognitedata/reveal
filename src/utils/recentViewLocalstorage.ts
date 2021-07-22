@@ -1,4 +1,6 @@
-import { Asset, Timeseries } from '@cognite/sdk';
+import { Asset } from '@cognite/sdk'; // dispatch event to notify changes in RecentView
+
+import { getProject } from 'hooks';
 
 const maxRecentViewLength = 10;
 
@@ -21,11 +23,11 @@ const addRecentView = (array: number[], source: number): number[] => {
 
 export const addAssetToRecentLocalStorage = (
   asset: Asset,
-  timeseriesId: number,
-  projectName: string
+  timeseriesId: number
 ) => {
   const rvTS = localStorage.getItem('rv-assets') ?? '{}';
   const rvDictionary = JSON.parse(rvTS);
+  const projectName = getProject();
 
   if (rvDictionary) {
     rvDictionary[projectName] = addRecentView(
@@ -34,17 +36,14 @@ export const addAssetToRecentLocalStorage = (
     );
     localStorage.setItem('rv-assets', JSON.stringify(rvDictionary));
   }
-  addTSToRecentLocalStorage(timeseriesId, projectName);
-
+  addTSToRecentLocalStorage(timeseriesId);
   window.dispatchEvent(new Event('storage')); // dispatch event to notify changes in RecentView
 };
 
-export const addTSToRecentLocalStorage = (
-  timeseriesId: number,
-  projectName: string
-) => {
+export const addTSToRecentLocalStorage = (timeseriesId: number) => {
   const rvTS = localStorage.getItem('rv-timeseries') ?? '{}';
   const rvDictionary = JSON.parse(rvTS);
+  const projectName = getProject();
 
   if (rvDictionary) {
     rvDictionary[projectName] = addRecentView(
@@ -56,23 +55,8 @@ export const addTSToRecentLocalStorage = (
   window.dispatchEvent(new Event('storage')); // dispatch event to notify changes in RecentView
 };
 
-export const orderViewArray = (
-  viewArray: (Asset | Timeseries)[],
-  order: number[]
-): (Asset | Timeseries)[] => {
-  viewArray.sort((a, b) => {
-    const A = a.id;
-    const B = b.id;
-
-    if (order.indexOf(A) > order.indexOf(B)) {
-      return 1;
-    }
-    return -1;
-  });
-  return viewArray;
-};
-
-export const getRvFromLocal = (viewType: string, projectName: string) => {
+export const getRvFromLocal = (viewType: string) => {
+  const projectName = getProject();
   const rvSources = localStorage.getItem(`rv-${viewType}`);
   const parsedSources = rvSources ? JSON.parse(rvSources ?? '{}') : null;
 

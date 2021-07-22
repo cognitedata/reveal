@@ -14,7 +14,6 @@ import {
 import { calculateDefaultYAxis } from 'utils/axis';
 import { trackUsage } from 'utils/metrics';
 import { addTSToRecentLocalStorage } from 'utils/recentViewLocalstorage';
-import { getProject } from 'hooks';
 import TimeseriesSearchHit from './TimeseriesSearchHit';
 import RecentViewSources from './RecentViewSources';
 
@@ -26,7 +25,6 @@ export default function SearchTimeseries({ query }: Props) {
   const { chartId } = useParams<{ chartId: string }>();
   const { data: chart } = useChart(chartId);
   const { mutate: updateChart } = useUpdateChart();
-  const project: string = getProject();
 
   const {
     data,
@@ -73,7 +71,7 @@ export default function SearchTimeseries({ query }: Props) {
           sdk,
           timeSeriesExternalId: timeSeries.externalId || '',
         });
-        addTSToRecentLocalStorage(timeSeries.id, project);
+        addTSToRecentLocalStorage(timeSeries.id);
         const newTs = covertTSToChartTS(timeSeries, chartId, range);
 
         updateChart(addTimeseries(chart, newTs));

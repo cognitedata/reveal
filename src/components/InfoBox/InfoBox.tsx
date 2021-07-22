@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Icon, Title, Graphic } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
-import { getProject } from 'hooks';
 import { getRvFromLocal } from 'utils/recentViewLocalstorage';
 
 interface InfoBoxProps {
@@ -42,7 +41,6 @@ const InfoBox = ({ infoType, query }: InfoBoxProps) => {
   const [displayInfo, setDisplayInfo] = useState(
     localStorage ? !localStorage.getItem(infoType) : true
   );
-  const project = getProject();
 
   const [recentViewExist, setRecentviewExists] = useState(true);
   const data = infoType === 'TagHelpBox' ? tagInfo : timeSeriesInfo;
@@ -55,8 +53,7 @@ const InfoBox = ({ infoType, query }: InfoBoxProps) => {
   useEffect(() => {
     const fetchRecentView = () => {
       const rvSources = getRvFromLocal(
-        infoType === 'TagHelpBox' ? 'assets' : 'timeseries',
-        project
+        infoType === 'TagHelpBox' ? 'assets' : 'timeseries'
       );
       setRecentviewExists(!!rvSources);
     };

@@ -12,13 +12,11 @@ import {
 import { calculateDefaultYAxis } from 'utils/axis';
 import { useSDK } from '@cognite/sdk-provider';
 import { trackUsage } from 'utils/metrics';
-import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 import {
   addTSToRecentLocalStorage,
   getRvFromLocal,
-  orderViewArray,
 } from 'utils/recentViewLocalstorage';
-import { getProject } from 'hooks';
+import { useCdfItems } from 'utils/cogniteFunctions';
 import TimeseriesSearchHit from './TimeseriesSearchHit';
 import AssetSearchHit from './AssetSearchHit';
 
@@ -29,12 +27,10 @@ type Props = {
 const RecentViewSources = ({ viewType }: Props) => {
   const [rvResults, setRvResults] = useState<number[]>([]);
   const title = viewType === 'assets' ? 'tags / assets' : 'time series';
-
   const sdk = useSDK();
   const { chartId } = useParams<{ chartId: string }>();
   const { data: chart } = useChart(chartId);
   const { mutate: updateChart } = useUpdateChart();
-  const project: string = getProject();
   const selectedExternalIds:
     | undefined
     | string[] = chart?.timeSeriesCollection
@@ -43,7 +39,7 @@ const RecentViewSources = ({ viewType }: Props) => {
 
   useEffect(() => {
     const fetchRecentView = () => {
-      const rvDictionary = getRvFromLocal(viewType, project);
+      const rvDictionary = getRvFromLocal(viewType);
 
       if (rvDictionary) {
         setRvResults(rvDictionary ?? {});
@@ -55,18 +51,14 @@ const RecentViewSources = ({ viewType }: Props) => {
     return () => {
       window.removeEventListener('storage', fetchRecentView);
     };
-  }, [viewType, updateChart, project]); // Does not update when adding
+  }, [viewType, updateChart]);
 
   const { data: sources } = useCdfItems<Asset | Timeseries>(
     viewType,
     (rvResults || []).map((id) => ({ id })) || [],
-    {
-      enabled: !!rvResults && rvResults.length > 0,
-    }
+    false,
+    { enabled: !!rvResults && rvResults.length > 0 }
   );
-
-  // useCDFItems does not return data in the order the id array is sent in. Need therefore to order it again with orderViewArray().
-  const orderedViewArray = orderViewArray(sources ?? [], rvResults);
 
   const handleTimeSeriesClick = async (timeSeries: Timeseries) => {
     if (chart) {
@@ -82,7 +74,7 @@ const RecentViewSources = ({ viewType }: Props) => {
           sdk,
           timeSeriesExternalId: timeSeries.externalId || '',
         });
-        addTSToRecentLocalStorage(timeSeries.id, project);
+        addTSToRecentLocalStorage(timeSeries.id);
         const newTs = covertTSToChartTS(timeSeries, chartId, range);
 
         updateChart(addTimeseries(chart, newTs));
@@ -91,41 +83,41 @@ const RecentViewSources = ({ viewType }: Props) => {
     }
   };
 
-  return (
-    <>
-      {rvResults && rvResults.length > 0 ? (
-        <Container>
-          <TitleWrapper>
-            <Icon type="History" size={20} />
-            <Title level={4}> Recently viewed {title}</Title>
-          </TitleWrapper>
+  if (!rvResults || rvResults.length === 0) {
+    return null;
+  }
 
-          <div>
-            {viewType === 'assets' ? (
-              (orderedViewArray || []).map((source) => (
-                <li key={source.id}>
-                  <AssetSearchHit asset={source as Asset} />
-                </li>
-              ))
-            ) : (
-              <TimeseriesSearchHit
-                timeseries={orderedViewArray as Timeseries[]}
-                renderCheckbox={(ts) => (
-                  <Checkbox
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleTimeSeriesClick(ts);
-                    }}
-                    name={`${ts.id}`}
-                    checked={selectedExternalIds?.includes(ts.externalId || '')}
-                  />
-                )}
+  return (
+    <Container>
+      <TitleWrapper>
+        <Icon type="History" size={20} />
+        <Title level={4}> Recently viewed {title}</Title>
+      </TitleWrapper>
+
+      <div>
+        {viewType === 'assets' ? (
+          (sources || []).map((source) => (
+            <li key={source.id}>
+              <AssetSearchHit asset={source as Asset} />
+            </li>
+          ))
+        ) : (
+          <TimeseriesSearchHit
+            timeseries={sources as Timeseries[]}
+            renderCheckbox={(ts) => (
+              <Checkbox
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleTimeSeriesClick(ts);
+                }}
+                name={`${ts.id}`}
+                checked={selectedExternalIds?.includes(ts.externalId || '')}
               />
             )}
-          </div>
-        </Container>
-      ) : null}
-    </>
+          />
+        )}
+      </div>
+    </Container>
   );
 };
 
