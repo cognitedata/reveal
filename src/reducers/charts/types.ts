@@ -76,7 +76,7 @@ export type ChartWorkflow = {
 };
 
 export type SourceCollectionData = {
-  type: 'timeseries' | 'workflow';
+  type: string;
   id: string;
 };
 

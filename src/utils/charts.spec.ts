@@ -68,7 +68,6 @@ describe('charts util', () => {
     const chartWithTS: Chart = {
       ...chart,
       timeSeriesCollection: [ts],
-      sourceCollection: [{ type: 'timeseries', id }],
     };
     describe('updateTimeseries', () => {
       it('should do nothing for unknown ts', () => {
@@ -78,7 +77,6 @@ describe('charts util', () => {
             {
               ...chart,
               timeSeriesCollection: [],
-              sourceCollection: [],
             },
             '42',
             { color: 'red' }
@@ -86,7 +84,6 @@ describe('charts util', () => {
         ).toEqual({
           ...chart,
           timeSeriesCollection: [],
-          sourceCollection: [],
         });
       });
       it('should update existing ts', () => {
@@ -101,13 +98,6 @@ describe('charts util', () => {
               color: 'blue',
             },
           ],
-          sourceCollection: [
-            {
-              ...ts,
-              enabled: false,
-              color: 'blue',
-            },
-          ],
         });
       });
     });
@@ -116,7 +106,6 @@ describe('charts util', () => {
         expect(removeTimeseries(chartWithTS, '42')).toEqual({
           ...chart,
           timeSeriesCollection: [],
-          sourceCollection: [],
         });
       });
       it('should remove return an unchanged chart for unknown ids', () => {
@@ -140,7 +129,6 @@ describe('charts util', () => {
     const chartWithWF: Chart = {
       ...chart,
       workflowCollection: [wf],
-      sourceCollection: [{ type: 'workflow', id }],
     };
     describe('updateWorkflow', () => {
       it('should do nothing for unknown wf', () => {
@@ -171,13 +159,6 @@ describe('charts util', () => {
               color: 'blue',
             },
           ],
-          sourceCollection: [
-            {
-              ...wf,
-              enabled: false,
-              color: 'blue',
-            },
-          ],
         });
       });
     });
@@ -186,7 +167,6 @@ describe('charts util', () => {
         expect(removeWorkflow(chartWithWF, '42')).toEqual({
           ...chart,
           workflowCollection: [],
-          sourceCollection: [],
         });
       });
       it('should remove return an unchanged chart for unknown ids', () => {

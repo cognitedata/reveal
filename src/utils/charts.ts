@@ -54,7 +54,6 @@ function removeItem(
     ...chart,
     // @ts-ignore
     [collectionType]: chart[collectionType]?.filter((t) => t.id !== collId),
-    sourceCollection: chart.sourceCollection?.filter((t) => t.id !== collId),
   };
 }
 
@@ -171,7 +170,7 @@ export function covertTSToChartTS(
   };
 }
 
-export function updateSourceCollection(chart: Chart): Chart {
+export function initializeSourceCollection(chart: Chart): Chart {
   return {
     ...chart,
     sourceCollection: [
@@ -183,15 +182,50 @@ export function updateSourceCollection(chart: Chart): Chart {
         id: flow.id,
         type: flow.type ?? 'workflow',
       })),
-    ].filter(
-      (x) =>
-        (x.type === 'timeseries'
-          ? chart?.timeSeriesCollection?.find((ts) => ts.id === x.id)
-          : chart?.workflowCollection?.find((flow) => flow.id === x.id)) !==
-        undefined
-    ) as SourceCollectionData[],
+    ] as SourceCollectionData[],
   };
 }
+
+export function updateSourceCollection(chart: Chart): Chart {
+  console.log('Fdsfs');
+  // Filter removed timeseries/workflow
+  const filteredSourceCollection = (chart?.sourceCollection || []).filter(
+    (x) =>
+      (x.type === 'timeseries'
+        ? chart?.timeSeriesCollection?.find((ts) => ts.id === x.id)
+        : chart?.workflowCollection?.find((flow) => flow.id === x.id)) !==
+      undefined
+  );
+
+  // merged together two list.
+  const mergedCollection: (ChartTimeSeries | ChartWorkflow)[] = [
+    ...(chart?.timeSeriesCollection || []).map((x) => ({
+      ...x,
+      type: x.type ?? 'timeseries',
+    })),
+    ...(chart?.workflowCollection || []).map((x) => ({
+      ...x,
+      type: x.type ?? 'workflow',
+    })),
+  ];
+
+  // find new source that is not added.
+  const notAddedSources = mergedCollection
+    .filter(
+      (x) =>
+        filteredSourceCollection.find((src) => x.id === src.id) === undefined
+    )
+    .map((x) => ({ id: x.id, type: x.type!! }));
+
+  // add it to the top.
+  const filteredSourceCollectionChart = {
+    ...chart,
+    sourceCollection: [...notAddedSources, ...filteredSourceCollection],
+  };
+
+  return filteredSourceCollectionChart;
+}
+
 export function updateSourceAxisForChart(
   chart: Chart,
   { x, y }: { x: string[]; y: AxisUpdate[] }
