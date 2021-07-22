@@ -33,6 +33,7 @@ import { Modes } from 'pages/types';
 import DetailsSidebar from 'components/DetailsSidebar';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
+import { addWorkflow } from 'utils/charts';
 import SourceRows from './SourceRows';
 
 import {
@@ -144,21 +145,13 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
         createdAt: Date.now(),
       } as ChartWorkflow;
 
-      updateChart(
-        {
-          ...chart,
-          workflowCollection: [
-            ...(chart.workflowCollection || []),
-            newWorkflow,
-          ],
+      const updatedChart = addWorkflow(chart, newWorkflow);
+      updateChart(updatedChart, {
+        onSuccess: () => {
+          setSelectedSourceId(newWorkflowId);
+          openNodeEditor();
         },
-        {
-          onSuccess: () => {
-            setSelectedSourceId(newWorkflowId);
-            openNodeEditor();
-          },
-        }
-      );
+      });
       trackUsage('ChartView.AddCalculation');
     }
   };

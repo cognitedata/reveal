@@ -1,10 +1,7 @@
 import React, { useEffect } from 'react';
 import { Draggable } from 'react-beautiful-dnd';
 import { Chart, ChartTimeSeries, ChartWorkflow } from 'reducers/charts/types';
-import {
-  initializeSourceCollection,
-  updateSourceCollection,
-} from 'utils/charts';
+import { initializeSourceCollection } from 'utils/charts';
 import TimeSeriesRow from './TimeSeriesRow';
 import WorkflowRow from './WorkflowRow';
 
@@ -40,9 +37,6 @@ function SourceRows({
   useEffect(() => {
     if (!chart.sourceCollection || chart.sourceCollection === undefined) {
       const updatedChart = initializeSourceCollection(chart);
-      updateChart(updatedChart);
-    } else {
-      const updatedChart = updateSourceCollection(chart); // updateSourceCollection
       updateChart(updatedChart);
     }
   }, [chart, updateChart]);
