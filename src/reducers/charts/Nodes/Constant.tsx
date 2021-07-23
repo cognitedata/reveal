@@ -39,11 +39,14 @@ export const ConfigPanel = ({
         value={value}
         onChange={(newValue: React.ChangeEvent<HTMLInputElement>) => {
           setValue(newValue.target.value);
-          if (!Number.isNaN(Number(newValue.target.value))) {
+          const formattedValue = Number(
+            newValue.target.value.replace(',', '.')
+          );
+          if (!Number.isNaN(formattedValue)) {
             onUpdateNode({
               functionData: {
                 ...node.functionData,
-                value: Number(newValue.target.value),
+                value: formattedValue,
               },
             });
           }

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Avatar, Menu, Title, TopBar, Icon } from '@cognite/cogs.js';
 import sidecar from 'config/sidecar';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
@@ -10,7 +10,6 @@ import dayjs from 'dayjs';
 import { ChartActions } from 'components/TopBar';
 import EditableText from 'components/EditableText';
 import useChat from 'hooks/useChat';
-import { Metrics } from '@cognite/metrics';
 
 const TopBarWrapper = () => {
   const { data: user } = useUserInfo();
@@ -20,12 +19,6 @@ const TopBarWrapper = () => {
   const { chartId } = useParams<{ chartId: string }>();
   const { data: chart } = useChart(chartId);
   const { mutate: updateChart } = useUpdateChart();
-
-  useEffect(() => {
-    if (user) {
-      Metrics.identify(user.email || user.displayName || user.id);
-    }
-  }, [user]);
 
   return (
     <TopBarWrap>
