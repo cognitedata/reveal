@@ -14,9 +14,10 @@ import { useSDK } from '@cognite/sdk-provider';
 import { trackUsage } from 'utils/metrics';
 import {
   addTSToRecentLocalStorage,
-  getRvFromLocal,
+  useRecentLocalStorage,
 } from 'utils/recentViewLocalstorage';
 import { useCdfItems } from 'utils/cogniteFunctions';
+import { useQueryClient } from 'react-query';
 import TimeseriesSearchHit from './TimeseriesSearchHit';
 import AssetSearchHit from './AssetSearchHit';
 
@@ -25,12 +26,15 @@ type Props = {
 };
 
 const RecentViewSources = ({ viewType }: Props) => {
-  const [rvResults, setRvResults] = useState<number[]>([]);
   const title = viewType === 'assets' ? 'tags / assets' : 'time series';
   const sdk = useSDK();
   const { chartId } = useParams<{ chartId: string }>();
   const { data: chart } = useChart(chartId);
   const { mutate: updateChart } = useUpdateChart();
+  // Takes alot of time to load data
+  const { data: rvResults } = useRecentLocalStorage(viewType, []);
+  const cached = useQueryClient();
+
   const selectedExternalIds:
     | undefined
     | string[] = chart?.timeSeriesCollection
@@ -38,20 +42,8 @@ const RecentViewSources = ({ viewType }: Props) => {
     .filter(Boolean);
 
   useEffect(() => {
-    const fetchRecentView = () => {
-      const rvDictionary = getRvFromLocal(viewType);
-
-      if (rvDictionary) {
-        setRvResults(rvDictionary ?? {});
-      }
-    };
-    fetchRecentView();
-
-    window.addEventListener('storage', fetchRecentView);
-    return () => {
-      window.removeEventListener('storage', fetchRecentView);
-    };
-  }, [viewType, updateChart]);
+    cached.invalidateQueries([`rv-${viewType}`]);
+  }, [viewType, cached]);
 
   const { data: sources } = useCdfItems<Asset | Timeseries>(
     viewType,
@@ -75,8 +67,9 @@ const RecentViewSources = ({ viewType }: Props) => {
           timeSeriesExternalId: timeSeries.externalId || '',
         });
         addTSToRecentLocalStorage(timeSeries.id);
-        const newTs = covertTSToChartTS(timeSeries, chartId, range);
+        await cached.invalidateQueries([`rv-${viewType}`]);
 
+        const newTs = covertTSToChartTS(timeSeries, chartId, range);
         updateChart(addTimeseries(chart, newTs));
         trackUsage('ChartView.AddTimeSeries', { source: 'search' });
       }

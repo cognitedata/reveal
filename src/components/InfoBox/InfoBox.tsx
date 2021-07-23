@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Button, Icon, Title, Graphic } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
-import { getRvFromLocal } from 'utils/recentViewLocalstorage';
+import { useRecentLocalStorage } from 'utils/recentViewLocalstorage';
 
 interface InfoBoxProps {
   infoType: 'TagHelpBox' | 'TimeSeriesHelpBox';
@@ -42,32 +42,20 @@ const InfoBox = ({ infoType, query }: InfoBoxProps) => {
     localStorage ? !localStorage.getItem(infoType) : true
   );
 
-  const [recentViewExist, setRecentviewExists] = useState(true);
   const data = infoType === 'TagHelpBox' ? tagInfo : timeSeriesInfo;
 
   const handleOnClick = () => {
     localStorage.setItem(infoType, JSON.stringify({ display: false }));
     setDisplayInfo(false);
   };
-
-  useEffect(() => {
-    const fetchRecentView = () => {
-      const rvSources = getRvFromLocal(
-        infoType === 'TagHelpBox' ? 'assets' : 'timeseries'
-      );
-      setRecentviewExists(!!rvSources);
-    };
-    fetchRecentView();
-
-    window.addEventListener('storage', fetchRecentView);
-    return () => {
-      window.removeEventListener('storage', fetchRecentView);
-    };
-  });
+  const { data: rvResults } = useRecentLocalStorage(
+    infoType === 'TagHelpBox' ? 'assets' : 'timeseries',
+    []
+  );
 
   return (
     <InfoBoxContainer
-      style={query === '' && !recentViewExist ? { height: '100%' } : {}}
+      style={query === '' && rvResults?.length === 0 ? { height: '100%' } : {}}
     >
       {displayInfo && (
         <InfoBoxWrapper>
@@ -85,7 +73,7 @@ const InfoBox = ({ infoType, query }: InfoBoxProps) => {
           />
         </InfoBoxWrapper>
       )}
-      {query === '' && !recentViewExist && (
+      {query === '' && rvResults?.length === 0 && (
         <EmptyResultsContainer>
           <EmptyResults>
             <Graphic

@@ -1,6 +1,7 @@
 import { Asset } from '@cognite/sdk'; // dispatch event to notify changes in RecentView
 
 import { getProject } from 'hooks';
+import { useQuery } from 'react-query';
 
 const maxRecentViewLength = 10;
 
@@ -37,7 +38,6 @@ export const addAssetToRecentLocalStorage = (
     localStorage.setItem('rv-assets', JSON.stringify(rvDictionary));
   }
   addTSToRecentLocalStorage(timeseriesId);
-  window.dispatchEvent(new Event('storage')); // dispatch event to notify changes in RecentView
 };
 
 export const addTSToRecentLocalStorage = (timeseriesId: number) => {
@@ -52,7 +52,6 @@ export const addTSToRecentLocalStorage = (timeseriesId: number) => {
     );
     localStorage.setItem('rv-timeseries', JSON.stringify(rvDictionary));
   }
-  window.dispatchEvent(new Event('storage')); // dispatch event to notify changes in RecentView
 };
 
 export const getRvFromLocal = (viewType: string) => {
@@ -66,3 +65,17 @@ export const getRvFromLocal = (viewType: string) => {
       : null;
   return rvDictionary;
 };
+
+export function useRecentLocalStorage<T>(viewType: string, defaultValue: T) {
+  const queryKey = `rv-${viewType}`;
+
+  return useQuery<T>(
+    queryKey,
+    () => {
+      return getRvFromLocal(viewType) ?? defaultValue;
+    },
+    {
+      initialData: () => getRvFromLocal(viewType) ?? defaultValue,
+    }
+  );
+}
