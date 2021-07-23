@@ -14,7 +14,7 @@ import { useSDK } from '@cognite/sdk-provider';
 import { trackUsage } from 'utils/metrics';
 import {
   addTSToRecentLocalStorage,
-  useRecentLocalStorage,
+  useRecentViewLocalStorage,
 } from 'utils/recentViewLocalstorage';
 import { useCdfItems } from 'utils/cogniteFunctions';
 import { useQueryClient } from 'react-query';
@@ -32,7 +32,7 @@ const RecentViewSources = ({ viewType }: Props) => {
   const { data: chart } = useChart(chartId);
   const { mutate: updateChart } = useUpdateChart();
   // Takes alot of time to load data
-  const { data: rvResults } = useRecentLocalStorage(viewType, []);
+  const { data: rvResults } = useRecentViewLocalStorage(viewType, []);
   const cached = useQueryClient();
 
   const selectedExternalIds:

@@ -66,7 +66,10 @@ export const getRvFromLocal = (viewType: string) => {
   return rvDictionary;
 };
 
-export function useRecentLocalStorage<T>(viewType: string, defaultValue: T) {
+export function useRecentViewLocalStorage<T>(
+  viewType: string,
+  defaultValue: T
+) {
   const queryKey = `rv-${viewType}`;
 
   return useQuery<T>(
