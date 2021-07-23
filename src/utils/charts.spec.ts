@@ -63,11 +63,13 @@ describe('charts util', () => {
       color: 'red',
       enabled: true,
       tsId: 42,
+      type: 'timeseries',
+      createdAt: 0,
     };
     const chartWithTS: Chart = {
       ...chart,
       timeSeriesCollection: [ts],
-      sourceCollection: [ts],
+      sourceCollection: [{ id: ts.id, type: 'timeseries' }],
     };
     describe('updateTimeseries', () => {
       it('should do nothing for unknown ts', () => {
@@ -77,7 +79,6 @@ describe('charts util', () => {
             {
               ...chart,
               timeSeriesCollection: [],
-              sourceCollection: [],
             },
             '42',
             { color: 'red' }
@@ -85,7 +86,6 @@ describe('charts util', () => {
         ).toEqual({
           ...chart,
           timeSeriesCollection: [],
-          sourceCollection: [],
         });
       });
       it('should update existing ts', () => {
@@ -100,13 +100,7 @@ describe('charts util', () => {
               color: 'blue',
             },
           ],
-          sourceCollection: [
-            {
-              ...ts,
-              enabled: false,
-              color: 'blue',
-            },
-          ],
+          sourceCollection: [{ id: '42', type: 'timeseries' }],
         });
       });
     });
@@ -134,12 +128,13 @@ describe('charts util', () => {
       id: '42',
       name: 'ts1',
       color: 'red',
+      type: 'workflow',
       enabled: true,
     };
     const chartWithWF: Chart = {
       ...chart,
       workflowCollection: [wf],
-      sourceCollection: [wf],
+      sourceCollection: [{ id: wf.id, type: 'workflow' }],
     };
     describe('updateWorkflow', () => {
       it('should do nothing for unknown wf', () => {
@@ -170,13 +165,7 @@ describe('charts util', () => {
               color: 'blue',
             },
           ],
-          sourceCollection: [
-            {
-              ...wf,
-              enabled: false,
-              color: 'blue',
-            },
-          ],
+          sourceCollection: [{ id: '42', type: 'workflow' }],
         });
       });
     });
