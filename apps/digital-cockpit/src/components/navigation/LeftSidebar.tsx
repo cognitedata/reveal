@@ -75,7 +75,7 @@ const LeftSidebar: React.FC = () => {
         role="button"
       >
         <Icon
-          type={isOpen ? 'LargeLeft' : 'LargeRight'}
+          type={isOpen ? 'ChevronLeftLarge' : 'ChevronRightLarge'}
           style={{ width: 12 }}
         />
       </CollapseButton>

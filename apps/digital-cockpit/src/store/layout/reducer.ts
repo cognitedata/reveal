@@ -1,3 +1,4 @@
+import { CogniteExternalId } from '@cognite/sdk';
 import { createReducer } from 'typesafe-actions';
 import {
   LayoutActionTypes,
@@ -9,6 +10,7 @@ import {
 export const initialState: LayoutState = {
   loading: false,
   saving: false,
+  deleteQueue: [],
   layouts: [],
 };
 
@@ -41,4 +43,18 @@ export const LayoutReducer = createReducer(initialState)
     ...state,
     loading: false,
     saving: false,
-  }));
+  }))
+  .handleAction(
+    LayoutActionTypes.LAYOUT_ADD_TO_DELETE_QUEUE,
+    (state: LayoutState, action: LayoutRootAction) => ({
+      ...state,
+      deleteQueue: [...state.deleteQueue, action.payload as CogniteExternalId],
+    })
+  )
+  .handleAction(
+    LayoutActionTypes.LAYOUT_RESET_DELETE_QUEUE,
+    (state: LayoutState) => ({
+      ...state,
+      deleteQueue: [],
+    })
+  );

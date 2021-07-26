@@ -71,7 +71,12 @@ export const saveApplicationsList =
       await apiClient.saveApplications(applicationKeys);
       dispatch(actions.addConfigItems({ applicationKeys }));
       dispatch(
-        setNotification('Applications list updated. Please refresh the page')
+        setCustomNotification({
+          type: 'success',
+          title: 'Applications list updated',
+          message: 'Please reload the page',
+          actions: ['reload'],
+        })
       );
     } catch (e) {
       dispatch(setHttpError(`Failed to save applications list`, e));

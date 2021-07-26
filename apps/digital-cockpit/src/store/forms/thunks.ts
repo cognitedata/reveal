@@ -8,6 +8,7 @@ import { Board, Suite } from 'store/suites/types';
 import { setHttpError } from 'store/notification/thunks';
 import * as Sentry from '@sentry/browser';
 import { setError } from 'store/notification/actions';
+import { deleteLayoutItems } from 'store/layout/thunks';
 import * as actions from './actions';
 import { BoardState } from './types';
 
@@ -23,14 +24,25 @@ export function setBoardState(client: CdfClient, board: BoardState) {
   };
 }
 
-export function saveForm(
-  client: CdfClient,
-  apiClient: ApiClient,
-  suite: Suite,
-  filesUploadQueue: Map<string, File>,
-  filesDeleteQueue: CogniteExternalId[],
-  dataSetId?: CogniteInternalId
-) {
+type SaveFormProps = {
+  client: CdfClient;
+  apiClient: ApiClient;
+  suite: Suite;
+  filesUploadQueue: Map<string, File>;
+  filesDeleteQueue: CogniteExternalId[];
+  layoutDeleteQueue: CogniteExternalId[];
+  dataSetId?: CogniteInternalId;
+};
+
+export function saveForm({
+  client,
+  apiClient,
+  suite,
+  filesUploadQueue,
+  filesDeleteQueue,
+  layoutDeleteQueue,
+  dataSetId,
+}: SaveFormProps) {
   return async (dispatch: RootDispatcher) => {
     dispatch(actions.formSaving());
     if (filesDeleteQueue?.length) {
@@ -48,6 +60,9 @@ export function saveForm(
       }
     }
     await dispatch(insertSuite(apiClient, suite));
+    if (layoutDeleteQueue?.length) {
+      await dispatch(deleteLayoutItems(apiClient, layoutDeleteQueue));
+    }
     dispatch(actions.formSaved());
   };
 }

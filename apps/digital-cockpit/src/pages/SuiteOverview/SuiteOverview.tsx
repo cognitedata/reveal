@@ -163,7 +163,7 @@ const SuiteOverview: React.FC = () => {
         <Button
           key="add-board"
           type="ghost"
-          icon="Plus"
+          icon="PlusCompact"
           iconPlacement="left"
           onClick={() => handleOpenModal('AddBoard', { dataItem: suite })}
         >

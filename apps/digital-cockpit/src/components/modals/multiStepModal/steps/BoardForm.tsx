@@ -28,6 +28,7 @@ import { RootDispatcher } from 'store/types';
 import { CdfClientContext } from 'providers/CdfClientProvider';
 import { flushFilesQueue } from 'utils/files';
 import { useMetrics } from 'utils/metrics';
+import { addLayoutItemToDeleteQueue } from 'store/layout/actions';
 import { FileUpload } from './FileUpload';
 import ActionButtons from './ActionButtons';
 import BoardTypeSelector from './BoardTypeSelector';
@@ -106,6 +107,7 @@ export const BoardForm: React.FC<Props> = ({ filesUploadQueue }) => {
     if (boardItem.key === board.key) {
       clearErrors();
     }
+    dispatch(addLayoutItemToDeleteQueue(boardItem.key));
     dispatch(deleteBoard(boardItem.key));
   };
 

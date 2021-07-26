@@ -106,7 +106,7 @@ const UploadLogoModal: React.FC = () => {
       {isSaving ? (
         <Icon type="Loading" />
       ) : (
-        <Button type="primary" variant="outline" onClick={uploadLogoFile}>
+        <Button type="tertiary" onClick={uploadLogoFile}>
           Upload logo
         </Button>
       )}

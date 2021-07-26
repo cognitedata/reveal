@@ -1,10 +1,11 @@
 {
   "name": "@cognite/digital-cockpit",
-  "version": "0.7.1",
+  "version": "0.8.0",
   "private": true,
   "scripts": {
     "start": "./scripts/start.sh",
     "start:bazel": "ibazel run :start",
+    "start:application-services": "REACT_APP_DC_API_URL=http://localhost:8001 yarn start:bazel",
     "build": "./scripts/build.sh",
     "build:bazel": "bazel build :build_sed",
     "test": "./scripts/test.sh",

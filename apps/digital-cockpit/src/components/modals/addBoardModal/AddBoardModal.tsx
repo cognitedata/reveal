@@ -15,6 +15,8 @@ import { useFormState } from 'hooks';
 import { saveForm } from 'store/forms/thunks';
 import { useMetrics } from 'utils/metrics';
 import { getConfigState } from 'store/config/selectors';
+import { getLayoutDeleteQueue } from 'store/layout/selectors';
+import { resetLayoutDeleteQueue } from 'store/layout/actions';
 
 interface Props {
   dataItem: Suite;
@@ -27,7 +29,8 @@ const AddBoardModal: React.FC<Props> = ({ dataItem }: Props) => {
   const dispatch = useDispatch<RootDispatcher>();
   const suite = useSelector(suiteState);
   const { saving: formSaving } = useSelector(formState);
-  const { deleteQueue } = useSelector(filesUploadState);
+  const { deleteQueue: filesDeleteQueue } = useSelector(filesUploadState);
+  const layoutDeleteQueue = useSelector(getLayoutDeleteQueue);
   const [filesUploadQueue] = useState(new Map());
   const metrics = useMetrics('EditSuite');
   const { dataSetId } = useSelector(getConfigState);
@@ -39,19 +42,21 @@ const AddBoardModal: React.FC<Props> = ({ dataItem }: Props) => {
   const handleCloseModal = () => {
     clearForm();
     filesUploadQueue.clear();
+    dispatch(resetLayoutDeleteQueue());
     dispatch(modalClose());
   };
 
   const handleSubmit = async () => {
     await dispatch(
-      saveForm(
+      saveForm({
         client,
         apiClient,
         suite,
         filesUploadQueue,
-        deleteQueue,
-        dataSetId
-      )
+        filesDeleteQueue,
+        layoutDeleteQueue,
+        dataSetId,
+      })
     );
     metrics.track('Saved', {
       suiteKey: suite.key,

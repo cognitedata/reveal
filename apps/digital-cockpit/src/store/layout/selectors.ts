@@ -30,3 +30,6 @@ export const getBoardsGridLayoutItems = (suiteBoards: Board[] | undefined) =>
       return result;
     }
   );
+
+export const getLayoutDeleteQueue = (state: StoreState) =>
+  getLayoutState(state).deleteQueue;

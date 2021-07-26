@@ -14,7 +14,6 @@ export const getEmptySuite = (order = -1) => ({
   order,
   boards: [],
 });
-export const updatedBoardList: Board[] = [];
 
 export const updateSuite = (suite: Suite, board: Board) => {
   const boardIndex = suite.boards.findIndex((element: Board) =>
@@ -32,14 +31,9 @@ export const updateSuite = (suite: Suite, board: Board) => {
 };
 
 export const deleteBoardFromSuite = (suite: Suite, boardKey: string) => {
-  updatedBoardList.splice(0, updatedBoardList.length);
-  const filtered = suite.boards.filter((item) => item.key !== boardKey);
-  if (filtered?.length) {
-    updatedBoardList.push(...filtered);
-  }
   return {
     ...suite,
-    boards: updatedBoardList,
+    boards: suite.boards?.filter((board) => board.key !== boardKey),
   };
 };
 

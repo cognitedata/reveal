@@ -1,4 +1,9 @@
-import { ClientOptions, CogniteClient, Group } from '@cognite/sdk';
+import {
+  ClientOptions,
+  CogniteClient,
+  CogniteExternalId,
+  Group,
+} from '@cognite/sdk';
 import { LastVisited, UserSpacePayload } from 'store/userSpace/types';
 import { Suite } from 'store/suites/types';
 import {
@@ -64,13 +69,6 @@ export class ApiClient {
       lastVisited,
     });
   }
-  // TODO(CM-406) methods to move data from RAW to DB Service
-  syncSuites() {
-    return this.makeGETRequest('/suites/sync');
-  }
-  syncLastVisited() {
-    return this.makeGETRequest('/lastVisited/sync');
-  }
 
   getApplications(): Promise<{ applications: string[] }> {
     return this.makeGETRequest('/applications');
@@ -84,6 +82,9 @@ export class ApiClient {
   }
   saveLayout(layouts: BoardLayoutPayloadItem[]): Promise<void> {
     return this.makePOSTRequest('/layout', { layouts });
+  }
+  deleteLayoutItems(keys: CogniteExternalId[]) {
+    return this.makeDELETERequest('/layout', { keys });
   }
 
   getAppConfigItem(name: string): Promise<AppConfigItemResponse> {

@@ -115,18 +115,16 @@ const Home = () => {
           canEdit && (
             <>
               <Button
-                variant="outline"
-                type="secondary"
-                icon="Plus"
+                type="tertiary"
+                icon="PlusCompact"
                 iconPlacement="left"
                 onClick={() => handleOpenModal('SelectApplications')}
               >
                 Add application
               </Button>
               <Button
-                variant="outline"
-                type="secondary"
-                icon="Plus"
+                type="tertiary"
+                icon="PlusCompact"
                 iconPlacement="left"
                 onClick={() => handleOpenModal('CreateSuite')}
               >
@@ -143,9 +141,8 @@ const Home = () => {
           <Body>
             {canEdit ? (
               <Button
-                variant="outline"
-                type="secondary"
-                icon="Plus"
+                type="tertiary"
+                icon="PlusCompact"
                 iconPlacement="left"
                 onClick={() => handleOpenModal('CreateSuite')}
                 style={{ marginTop: 8 }}
@@ -166,8 +163,8 @@ const Home = () => {
                 itemWidth={glideItemWidth}
                 exactWidth={glideItemWidth}
                 slidesToShow="auto"
-                iconLeft={<Icon type="LargeLeft" />}
-                iconRight={<Icon type="LargeRight" />}
+                iconLeft={<Icon type="ChevronLeftLarge" />}
+                iconRight={<Icon type="ChevronRightLarge" />}
                 skipTrack
               >
                 <div className="glider-track">

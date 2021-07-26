@@ -11,6 +11,7 @@ import Modal from 'components/modals/simpleModal/Modal';
 import { ModalContainer, DeleteModalFooter } from 'components/modals/elements';
 import { Suite } from 'store/suites/types';
 import { useMetrics } from 'utils/metrics';
+import { deleteLayoutItems } from 'store/layout/thunks';
 
 interface Props {
   suite: Suite;
@@ -41,8 +42,10 @@ const DeleteSuite: React.FC<Props> = ({ suite }: Props) => {
     if (imageFileIds.length) {
       dispatch(deleteFiles(client, imageFileIds));
     }
+    const layoutItems = suite.boards.map((board) => board.key);
 
     await dispatch(deleteSuite(apiClient, suite.key));
+    await dispatch(deleteLayoutItems(apiClient, layoutItems));
     history.push('/');
   };
 

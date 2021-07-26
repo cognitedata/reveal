@@ -10,6 +10,7 @@ import Modal from 'components/modals/simpleModal/Modal';
 import { ModalContainer, DeleteModalFooter } from 'components/modals/elements';
 import { Board, Suite } from 'store/suites/types';
 import { useMetrics } from 'utils/metrics';
+import { deleteLayoutItems } from 'store/layout/thunks';
 
 interface Props {
   suite: Suite;
@@ -44,6 +45,7 @@ const DeleteBoard: React.FC<Props> = ({ board, suite }: Props) => {
         boards: suite.boards.filter((item) => item.key !== board.key),
       })
     );
+    await dispatch(deleteLayoutItems(apiClient, [board.key]));
   };
 
   const cancel = () => {

@@ -19,6 +19,7 @@ import {
   replaceNewFileKey,
 } from 'utils/files';
 import { useMetrics } from 'utils/metrics';
+import * as layoutActions from 'store/layout/actions';
 
 type Props = {
   filesUploadQueue: Map<string, File>;
@@ -79,6 +80,7 @@ const ActionButtons: React.FC<Props> = ({
     if (deleteQueue.includes(board?.imageFileId)) {
       dispatch(actions.excludeFileFromDeleteQueue(board.imageFileId));
     }
+    dispatch(layoutActions.resetLayoutDeleteQueue());
     dispatch(actions.clearBoardForm());
     clearValidation();
     metrics.track('Cancel_BoardForm', { component: 'BoardForm' });

@@ -13,6 +13,8 @@ import { useFormState } from 'hooks';
 import { saveForm } from 'store/forms/thunks';
 import { useMetrics } from 'utils/metrics';
 import { getConfigState } from 'store/config/selectors';
+import { getLayoutDeleteQueue } from 'store/layout/selectors';
+import { resetLayoutDeleteQueue } from 'store/layout/actions';
 import { BoardForm, SuiteForm } from './steps';
 import Modal from '../simpleModal/Modal';
 import { ModalContainer } from '../elements';
@@ -33,7 +35,8 @@ export const MultiStepModal: React.FC<Props> = ({ modalSettings }: Props) => {
   const suite = useSelector(suiteState);
   const { clearForm } = useFormState();
   const { saving: formSaving, valid: isValid } = useSelector(formState);
-  const { deleteQueue } = useSelector(filesUploadState);
+  const { deleteQueue: filesDeleteQueue } = useSelector(filesUploadState);
+  const layoutDeleteQueue = useSelector(getLayoutDeleteQueue);
   const [filesUploadQueue] = useState(new Map());
   const { dataSetId } = useSelector(getConfigState);
   const metrics = useMetrics('EditSuite');
@@ -50,22 +53,24 @@ export const MultiStepModal: React.FC<Props> = ({ modalSettings }: Props) => {
   };
 
   const handleCloseModal = () => {
-    dispatch(modalClose());
     clearForm();
     filesUploadQueue.clear();
+    dispatch(resetLayoutDeleteQueue());
+    dispatch(modalClose());
   };
 
   const handleSubmit = async () => {
     if (hasErrors) return;
     await dispatch(
-      saveForm(
+      saveForm({
         client,
         apiClient,
         suite,
         filesUploadQueue,
-        deleteQueue,
-        dataSetId
-      )
+        filesDeleteQueue,
+        layoutDeleteQueue,
+        dataSetId,
+      })
     );
     trackMetrics('Saved', {
       suiteKey: suite.key,

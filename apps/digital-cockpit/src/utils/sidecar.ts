@@ -22,6 +22,7 @@ const generateBaseUrls = (cluster: string, prod = false) => {
   switch (cluster) {
     case 'ew1': {
       return {
+        aadApplicationId: 'b1340a2b-1e14-466f-8a9c-22ebbd948b16',
         appsApiBaseUrl: 'https://apps-api.staging.cognite.ai',
         cdfApiBaseUrl: 'https://api.cognitedata.com',
         cdfCluster: '',
@@ -49,7 +50,6 @@ const generateBaseUrls = (cluster: string, prod = false) => {
   __sidecarFormatVersion: 1,
   applicationId: 'digital-cockpit-dev',
   applicationName: 'Digital Cockpit (dev)',
-  aadApplicationId: 'TBA',
   cdfApiBaseUrl: 'https://api.cognitedata.com',
   digitalCockpitApiBaseUrl:
     process.env.REACT_APP_DC_API_URL ||

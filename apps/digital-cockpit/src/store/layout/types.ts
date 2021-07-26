@@ -28,12 +28,15 @@ export enum LayoutActionTypes {
   LAYOUT_SAVING = 'layout/SAVING',
   LAYOUT_SAVED = 'layout/SAVED',
   LAYOUT_ERROR = 'layout/ERROR',
+  LAYOUT_ADD_TO_DELETE_QUEUE = 'layout/ADD_TO_DELETE_QUEUE',
+  LAYOUT_RESET_DELETE_QUEUE = 'layout/RESET_DELETE_QUEUE',
 }
 
 export type LayoutRootAction = ActionType<typeof actions>;
 
 export type LayoutState = {
   layouts: BoardLayoutPayloadItem[];
+  deleteQueue: string[];
   loading: boolean;
   saving: boolean;
 };

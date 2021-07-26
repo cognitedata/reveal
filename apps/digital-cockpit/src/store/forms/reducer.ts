@@ -5,7 +5,6 @@ import {
   getEmptySuite,
   updateSuite,
   deleteBoardFromSuite,
-  updatedBoardList,
   updateBoardWithFileId,
 } from 'utils/forms';
 import {
@@ -87,9 +86,7 @@ export const FormReducer = createReducer(getInitialState())
     (state: FormState, action: FormRootAction) => ({
       ...state,
       suite: deleteBoardFromSuite(state.suite, action.payload as string),
-      board: !(state.board as Board).key
-        ? state.board
-        : updatedBoardList[0] || {},
+      board: !(state.board as Board).key ? state.board : {},
     })
   )
   .handleAction(FormActionTypes.CLEAR_BOARD_FORM, (state: FormState) => ({

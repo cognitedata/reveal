@@ -71,7 +71,7 @@ const ShareLinkModal: React.FC<Props> = ({ board, suite }: Props) => {
       <Body>{title}</Body>
       <ShareURLInputContainer>
         <ShareURLInput ref={ref} value={url} readOnly />
-        <Button type="primary" variant="outline" onClick={copyToClipboard}>
+        <Button type="tertiary" onClick={copyToClipboard}>
           {copySuccess ? 'Copied' : 'Copy'}
         </Button>
       </ShareURLInputContainer>

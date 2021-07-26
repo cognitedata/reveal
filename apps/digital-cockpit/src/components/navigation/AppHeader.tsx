@@ -13,13 +13,10 @@ import { CdfClientContext } from 'providers/CdfClientProvider';
 import { clearGroupsFilter, setGroupsFilter } from 'store/groups/actions';
 import { useHistory } from 'react-router-dom';
 import { useMetrics } from 'utils/metrics';
-import { setHttpError } from 'store/notification/thunks';
 import { modalOpen } from 'store/modals/actions';
 import { getConfigState } from 'store/config/selectors';
 import { addConfigItems } from 'store/config/actions';
 import useHelpCenter from 'hooks/useHelpCenter';
-import { setNotification } from 'store/notification/actions';
-import { ApiClientContext } from 'providers/ApiClientProvider';
 import CustomerLogo from './CustomerLogo';
 import {
   GroupPreview,
@@ -42,7 +39,6 @@ const AppHeader: React.FC = () => {
   const tenant = usePossibleTenant();
 
   const client = useContext(CdfClientContext);
-  const apiClient = useContext(ApiClientContext);
 
   const [customerLogoUrl, setCustomerLogoUrl] = useState('');
   const { toggleHelpCenter } = useHelpCenter();
@@ -76,39 +72,6 @@ const AppHeader: React.FC = () => {
     history.push('/');
   };
 
-  // TODO(CM-406)
-  const syncSuites = async () => {
-    if (
-      // eslint-disable-next-line no-alert
-      window.confirm(
-        `Do you want to copy suites from RAW database to DB-Service?`
-      )
-    ) {
-      try {
-        await apiClient.syncSuites();
-        dispatch(setNotification(`Suites successfully copied`));
-      } catch (e) {
-        dispatch(setHttpError('Failed to copy suites to DB-Service', e));
-      }
-    }
-  };
-  // TODO(CM-406)
-  const syncLastVisited = async () => {
-    if (
-      // eslint-disable-next-line no-alert
-      window.confirm(
-        `Do you want to copy lastVisited data from RAW database to DB-Service?`
-      )
-    ) {
-      try {
-        await apiClient.syncLastVisited();
-        dispatch(setNotification(`lastVisited data successfully copied`));
-      } catch (e) {
-        dispatch(setHttpError('Failed to copy lastVisited to DB-Service', e));
-      }
-    }
-  };
-
   useEffect(() => {
     if (!customerLogoFetched) {
       dispatch(fetchCustomerLogoUrl(client, setCustomerLogoUrl));
@@ -129,31 +92,6 @@ const AppHeader: React.FC = () => {
   }
 
   const adminActions = [
-    {
-      key: 'settings',
-      component: (
-        <Tooltip content="Settings">
-          <Icon
-            type="Settings"
-            data-testid="select-settings-menu"
-            onClick={() => metrics.track('Settings_Click')}
-          />
-        </Tooltip>
-      ),
-      menu: (
-        <Menu>
-          <Menu.Header>System admin</Menu.Header>
-          {/* TODO(CM-406) */}
-          <Menu.Item onClick={syncSuites}>
-            Copy suites data from RAW to db-service
-          </Menu.Item>
-          {/* TODO(CM-406) */}
-          <Menu.Item onClick={syncLastVisited}>
-            Copy lastVisited data from RAW to db-service
-          </Menu.Item>
-        </Menu>
-      ),
-    },
     {
       key: 'view',
       component: (

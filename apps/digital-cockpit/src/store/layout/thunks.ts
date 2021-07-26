@@ -5,6 +5,7 @@ import { setHttpError } from 'store/notification/thunks';
 import { setNotification } from 'store/notification/actions';
 import * as Sentry from '@sentry/browser';
 import { GridStackWidget } from 'gridstack';
+import { CogniteExternalId } from '@cognite/sdk';
 import { BoardLayoutPayloadItem, BoardLayoutResponse } from './types';
 import * as actions from './actions';
 
@@ -45,6 +46,24 @@ export function saveBoardLayout(
       dispatch(actions.layoutError());
       dispatch(setHttpError('Failed to save layout configuration', e));
       Sentry.captureException(e);
+    }
+  };
+}
+
+export function deleteLayoutItems(
+  apiClient: ApiClient,
+  items: CogniteExternalId[]
+) {
+  return async (dispatch: RootDispatcher) => {
+    if (!items.length) return;
+    try {
+      await apiClient.deleteLayoutItems(items);
+    } catch (e) {
+      dispatch(actions.layoutError());
+      dispatch(setHttpError('Failed to delete layout items', e));
+      Sentry.captureException(e);
+    } finally {
+      dispatch(actions.resetLayoutDeleteQueue());
     }
   };
 }
