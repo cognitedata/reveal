@@ -13,8 +13,7 @@ import { calculateDefaultYAxis } from 'utils/axis';
 import { useSDK } from '@cognite/sdk-provider';
 import { trackUsage } from 'utils/metrics';
 import {
-  addAssetToRecentLocalStorage,
-  addTSToRecentLocalStorage,
+  useAddToRecentLocalStorage,
   useRecentViewLocalStorage,
 } from 'utils/recentViewLocalstorage';
 import { useCdfItems } from 'utils/cogniteFunctions';
@@ -34,8 +33,9 @@ const RecentViewSources = ({ viewType }: Props) => {
   const { mutate: updateChart } = useUpdateChart();
   // Takes alot of time to load data
   const { data: rvResults } = useRecentViewLocalStorage(viewType, []);
-  const cached = useQueryClient();
+  const { addTsToRecent, addAssetToRecent } = useAddToRecentLocalStorage();
 
+  const cached = useQueryClient();
   const selectedExternalIds:
     | undefined
     | string[] = chart?.timeSeriesCollection
@@ -68,12 +68,10 @@ const RecentViewSources = ({ viewType }: Props) => {
           timeSeriesExternalId: timeSeries.externalId || '',
         });
         if (timeSeries.assetId) {
-          addAssetToRecentLocalStorage(timeSeries.assetId, timeSeries.id);
+          addAssetToRecent(timeSeries.assetId, timeSeries.id);
         } else {
-          addTSToRecentLocalStorage(timeSeries.id);
+          addTsToRecent(timeSeries.id);
         }
-
-        await cached.invalidateQueries([`rv-${viewType}`]);
 
         const newTs = covertTSToChartTS(timeSeries, chartId, range);
         updateChart(addTimeseries(chart, newTs));

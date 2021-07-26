@@ -15,11 +15,7 @@ import {
   covertTSToChartTS,
 } from 'utils/charts';
 import { trackUsage } from 'utils/metrics';
-import {
-  addAssetToRecentLocalStorage,
-  addTSToRecentLocalStorage,
-} from 'utils/recentViewLocalstorage';
-import { useQueryClient } from 'react-query';
+import { useAddToRecentLocalStorage } from 'utils/recentViewLocalstorage';
 
 export const AnnotationPopover = ({
   annotations,
@@ -69,9 +65,8 @@ export const TimeseriesList = ({ assetId }: { assetId: number }) => {
   const { chartId } = useParams<{ chartId: string }>();
   const { data: chart } = useChart(chartId);
   const { mutate: updateChart } = useUpdateChart();
-
+  const { addTsToRecent, addAssetToRecent } = useAddToRecentLocalStorage();
   const { data: timeseries = [], isLoading } = useAssetTimeseries(assetId);
-  const cached = useQueryClient();
 
   const sparklineStartDate = dayjs()
     .subtract(1, 'years')
@@ -89,11 +84,10 @@ export const TimeseriesList = ({ assetId }: { assetId: number }) => {
         updateChart(removeTimeseries(chart, tsToRemove.id));
       } else {
         if (timeSeries.assetId) {
-          addAssetToRecentLocalStorage(timeSeries.assetId, timeSeries.id);
+          addAssetToRecent(timeSeries.assetId, timeSeries.id);
         } else {
-          addTSToRecentLocalStorage(timeSeries.id);
+          addTsToRecent(timeSeries.id);
         }
-        await cached.invalidateQueries(['rv-timeseries']);
 
         const ts = covertTSToChartTS(timeSeries, chartId);
         updateChart(addTimeseries(chart, ts));

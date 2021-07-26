@@ -13,10 +13,7 @@ import {
 } from 'utils/charts';
 import { calculateDefaultYAxis } from 'utils/axis';
 import { trackUsage } from 'utils/metrics';
-import {
-  addAssetToRecentLocalStorage,
-  addTSToRecentLocalStorage,
-} from 'utils/recentViewLocalstorage';
+import { useAddToRecentLocalStorage } from 'utils/recentViewLocalstorage';
 import TimeseriesSearchHit from './TimeseriesSearchHit';
 import RecentViewSources from './RecentViewSources';
 
@@ -28,7 +25,7 @@ export default function SearchTimeseries({ query }: Props) {
   const { chartId } = useParams<{ chartId: string }>();
   const { data: chart } = useChart(chartId);
   const { mutate: updateChart } = useUpdateChart();
-
+  const { addTsToRecent, addAssetToRecent } = useAddToRecentLocalStorage();
   const {
     data,
     isLoading,
@@ -77,9 +74,9 @@ export default function SearchTimeseries({ query }: Props) {
 
         if (timeSeries.assetId) {
           // add both asset and ts if asset exists
-          addAssetToRecentLocalStorage(timeSeries.assetId, timeSeries.id);
+          addAssetToRecent(timeSeries.assetId, timeSeries.id);
         } else {
-          addTSToRecentLocalStorage(timeSeries.id);
+          addTsToRecent(timeSeries.id);
         }
 
         const newTs = covertTSToChartTS(timeSeries, chartId, range);

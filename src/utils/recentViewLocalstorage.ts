@@ -1,5 +1,5 @@
 import { getProject } from 'hooks';
-import { useQuery } from 'react-query';
+import { QueryClient, useQuery, useQueryClient } from 'react-query';
 
 const maxRecentViewLength = 10;
 
@@ -20,9 +20,10 @@ const addRecentView = (array: number[], source: number): number[] => {
   return viewArray;
 };
 
-export const addAssetToRecentLocalStorage = (
+export const addAssetToRecentLocalStorage = async (
   assetId: number,
-  timeseriesId: number
+  timeseriesId: number,
+  cached: QueryClient
 ) => {
   const rvTS = localStorage.getItem('rv-assets') ?? '{}';
   const rvDictionary = JSON.parse(rvTS);
@@ -35,10 +36,14 @@ export const addAssetToRecentLocalStorage = (
     );
     localStorage.setItem('rv-assets', JSON.stringify(rvDictionary));
   }
-  addTSToRecentLocalStorage(timeseriesId);
+  addTSToRecentLocalStorage(timeseriesId, cached);
+  await cached.invalidateQueries(['rv-assets']);
 };
 
-export const addTSToRecentLocalStorage = (timeseriesId: number) => {
+const addTSToRecentLocalStorage = async (
+  timeseriesId: number,
+  cached: QueryClient
+) => {
   const rvTS = localStorage.getItem('rv-timeseries') ?? '{}';
   const rvDictionary = JSON.parse(rvTS);
   const projectName = getProject();
@@ -50,9 +55,10 @@ export const addTSToRecentLocalStorage = (timeseriesId: number) => {
     );
     localStorage.setItem('rv-timeseries', JSON.stringify(rvDictionary));
   }
+  await cached.invalidateQueries(['rv-timeseries']);
 };
 
-export const getRvFromLocal = (viewType: string) => {
+const getRvFromLocal = (viewType: string) => {
   const projectName = getProject();
   const rvSources = localStorage.getItem(`rv-${viewType}`);
   const parsedSources = rvSources ? JSON.parse(rvSources ?? '{}') : null;
@@ -80,3 +86,13 @@ export function useRecentViewLocalStorage<T>(
     }
   );
 }
+
+export const useAddToRecentLocalStorage = () => {
+  const cached = useQueryClient();
+  return {
+    addAssetToRecent: (assetId: number, timeseriesId: number) =>
+      addAssetToRecentLocalStorage(assetId, timeseriesId, cached),
+    addTsToRecent: (timeseriesId: number) =>
+      addTSToRecentLocalStorage(timeseriesId, cached),
+  };
+};
