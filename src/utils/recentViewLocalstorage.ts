@@ -1,5 +1,3 @@
-import { Asset } from '@cognite/sdk'; // dispatch event to notify changes in RecentView
-
 import { getProject } from 'hooks';
 import { useQuery } from 'react-query';
 
