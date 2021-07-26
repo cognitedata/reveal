@@ -13,6 +13,7 @@ import { calculateDefaultYAxis } from 'utils/axis';
 import { useSDK } from '@cognite/sdk-provider';
 import { trackUsage } from 'utils/metrics';
 import {
+  addAssetToRecentLocalStorage,
   addTSToRecentLocalStorage,
   useRecentViewLocalStorage,
 } from 'utils/recentViewLocalstorage';
@@ -66,7 +67,12 @@ const RecentViewSources = ({ viewType }: Props) => {
           sdk,
           timeSeriesExternalId: timeSeries.externalId || '',
         });
-        addTSToRecentLocalStorage(timeSeries.id);
+        if (timeSeries.assetId) {
+          addAssetToRecentLocalStorage(timeSeries.assetId, timeSeries.id);
+        } else {
+          addTSToRecentLocalStorage(timeSeries.id);
+        }
+
         await cached.invalidateQueries([`rv-${viewType}`]);
 
         const newTs = covertTSToChartTS(timeSeries, chartId, range);

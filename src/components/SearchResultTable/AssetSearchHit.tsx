@@ -72,7 +72,7 @@ export default function AssetSearchHit({ asset, query = '' }: Props) {
           timeSeriesExternalId: timeSeries.externalId || '',
         });
         // Add to recentlyViewed assets and timeseries
-        addAssetToRecentLocalStorage(asset, timeSeries.id);
+        addAssetToRecentLocalStorage(asset.id, timeSeries.id);
         await cached.invalidateQueries([`rv-assets`]);
 
         const newTs = covertTSToChartTS(timeSeries, chart.id, range);

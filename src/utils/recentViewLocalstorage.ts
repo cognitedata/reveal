@@ -23,7 +23,7 @@ const addRecentView = (array: number[], source: number): number[] => {
 };
 
 export const addAssetToRecentLocalStorage = (
-  asset: Asset,
+  assetId: number,
   timeseriesId: number
 ) => {
   const rvTS = localStorage.getItem('rv-assets') ?? '{}';
@@ -33,7 +33,7 @@ export const addAssetToRecentLocalStorage = (
   if (rvDictionary) {
     rvDictionary[projectName] = addRecentView(
       rvDictionary[projectName] ?? [],
-      asset.id
+      assetId
     );
     localStorage.setItem('rv-assets', JSON.stringify(rvDictionary));
   }

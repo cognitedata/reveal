@@ -13,7 +13,10 @@ import {
 } from 'utils/charts';
 import { calculateDefaultYAxis } from 'utils/axis';
 import { trackUsage } from 'utils/metrics';
-import { addTSToRecentLocalStorage } from 'utils/recentViewLocalstorage';
+import {
+  addAssetToRecentLocalStorage,
+  addTSToRecentLocalStorage,
+} from 'utils/recentViewLocalstorage';
 import TimeseriesSearchHit from './TimeseriesSearchHit';
 import RecentViewSources from './RecentViewSources';
 
@@ -71,7 +74,14 @@ export default function SearchTimeseries({ query }: Props) {
           sdk,
           timeSeriesExternalId: timeSeries.externalId || '',
         });
-        addTSToRecentLocalStorage(timeSeries.id);
+
+        if (timeSeries.assetId) {
+          // add both asset and ts if asset exists
+          addAssetToRecentLocalStorage(timeSeries.assetId, timeSeries.id);
+        } else {
+          addTSToRecentLocalStorage(timeSeries.id);
+        }
+
         const newTs = covertTSToChartTS(timeSeries, chartId, range);
 
         updateChart(addTimeseries(chart, newTs));

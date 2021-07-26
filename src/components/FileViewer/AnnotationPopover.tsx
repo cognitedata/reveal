@@ -15,7 +15,10 @@ import {
   covertTSToChartTS,
 } from 'utils/charts';
 import { trackUsage } from 'utils/metrics';
-import { addTSToRecentLocalStorage } from 'utils/recentViewLocalstorage';
+import {
+  addAssetToRecentLocalStorage,
+  addTSToRecentLocalStorage,
+} from 'utils/recentViewLocalstorage';
 import { useQueryClient } from 'react-query';
 
 export const AnnotationPopover = ({
@@ -85,7 +88,11 @@ export const TimeseriesList = ({ assetId }: { assetId: number }) => {
       if (tsToRemove) {
         updateChart(removeTimeseries(chart, tsToRemove.id));
       } else {
-        addTSToRecentLocalStorage(timeSeries.id);
+        if (timeSeries.assetId) {
+          addAssetToRecentLocalStorage(timeSeries.assetId, timeSeries.id);
+        } else {
+          addTSToRecentLocalStorage(timeSeries.id);
+        }
         await cached.invalidateQueries(['rv-timeseries']);
 
         const ts = covertTSToChartTS(timeSeries, chartId);
