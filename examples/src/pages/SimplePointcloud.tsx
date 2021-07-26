@@ -83,7 +83,7 @@ export function SimplePointcloud() {
       client.loginWithOAuth({ project });
 
       const scene = new THREE.Scene();
-      const renderer = new THREE.WebGL1Renderer({
+      const renderer = new THREE.WebGLRenderer({
         canvas: canvasRef.current!,
       });
       renderer.setClearColor('#444444');
