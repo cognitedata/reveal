@@ -19,7 +19,11 @@ import DateRangeSelector from 'components/DateRangeSelector';
 import Search from 'components/Search';
 import { useChart, useUpdateChart } from 'hooks/firebase';
 import { nanoid } from 'nanoid';
-import { ChartTimeSeries, ChartWorkflow } from 'reducers/charts/types';
+import {
+  ChartTimeSeries,
+  ChartWorkflow,
+  SourceCollectionData,
+} from 'reducers/charts/types';
 import { getEntryColor } from 'utils/colors';
 import { useSearchParam } from 'hooks';
 import { SEARCH_KEY } from 'utils/constants';
@@ -29,6 +33,7 @@ import { Modes } from 'pages/types';
 import DetailsSidebar from 'components/DetailsSidebar';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
+import { addWorkflow } from 'utils/charts';
 import SourceRows from './SourceRows';
 
 import {
@@ -140,22 +145,13 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
         createdAt: Date.now(),
       } as ChartWorkflow;
 
-      updateChart(
-        {
-          ...chart,
-          workflowCollection: [
-            ...(chart.workflowCollection || []),
-            newWorkflow,
-          ],
-          sourceCollection: [newWorkflow, ...(chart.sourceCollection || [])],
+      const updatedChart = addWorkflow(chart, newWorkflow);
+      updateChart(updatedChart, {
+        onSuccess: () => {
+          setSelectedSourceId(newWorkflowId);
+          openNodeEditor();
         },
-        {
-          onSuccess: () => {
-            setSelectedSourceId(newWorkflowId);
-            openNodeEditor();
-          },
-        }
-      );
+      });
       trackUsage('ChartView.AddCalculation');
     }
   };
@@ -318,7 +314,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     </tr>
   );
   const reorder = (
-    sourceCollection: (ChartTimeSeries | ChartWorkflow)[],
+    sourceCollection: SourceCollectionData[],
     startIndex: number,
     endIndex: number
   ) => {

@@ -21,6 +21,8 @@ import { getProject, useProject } from 'hooks';
 import { useFirebaseInit } from 'hooks/firebase';
 import { useSDK } from '@cognite/sdk-provider';
 import { getAzureAppId, getSidecar, useCluster } from 'config';
+import { identifyUser } from 'utils/metrics';
+import { azureInfo, loginStatus } from 'utils/users';
 
 const RouteWithTopbar = ({ component, ...rest }: RouteProps) => {
   const Component = component as React.ComponentClass;
@@ -83,9 +85,13 @@ const AppRoutes = () => {
               })
               .then((gotToken) => {
                 if (!gotToken) {
-                  sdk.authenticate().then((wasAuthenticated) => {
+                  sdk.authenticate().then(async (wasAuthenticated) => {
                     setAuthenticated(wasAuthenticated);
                     sdk.setProject(project);
+                    if (wasAuthenticated) {
+                      const login = await azureInfo(sdk);
+                      identifyUser(login);
+                    }
                     setInitializing(false);
                   });
                 } else {
@@ -109,8 +115,12 @@ const AppRoutes = () => {
                 project,
               })
               .then(() => sdk.authenticate())
-              .then((wasAuthenticated) => {
+              .then(async (wasAuthenticated) => {
                 setAuthenticated(wasAuthenticated);
+                if (wasAuthenticated) {
+                  const login = await loginStatus(sdk);
+                  identifyUser(login);
+                }
                 setInitializing(false);
               });
           }

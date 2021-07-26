@@ -4,6 +4,7 @@
 const domainsWithDoNotTrack = [
   'statnett.cogniteapp.com',
   'power-no.cogniteapp.com',
+  'localhost',
 ];
 
 export const isDoNotTrackDomain = () => {

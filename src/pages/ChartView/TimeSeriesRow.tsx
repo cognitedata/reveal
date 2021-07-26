@@ -191,14 +191,6 @@ export default function TimeSeriesRow({
             }
           : t
       ),
-      sourceCollection: chart.sourceCollection?.map((t) =>
-        t.id === _tsId
-          ? {
-              ...t,
-              ...diff,
-            }
-          : t
-      ),
     });
 
   const remove = () => mutate(removeTimeseries(chart, id));
@@ -282,14 +274,6 @@ export default function TimeSeriesRow({
       mutate({
         ...chart,
         timeSeriesCollection: chart.timeSeriesCollection?.map((ts) =>
-          ts.id === timeseries.id
-            ? {
-                ...ts,
-                ...diff,
-              }
-            : ts
-        ),
-        sourceCollection: chart.sourceCollection?.map((ts) =>
           ts.id === timeseries.id
             ? {
                 ...ts,

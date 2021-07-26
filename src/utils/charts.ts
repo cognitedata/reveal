@@ -5,6 +5,7 @@ import {
   Chart,
   ChartTimeSeries,
   ChartWorkflow,
+  SourceCollectionData,
   UserInfo,
 } from 'reducers/charts/types';
 import { getEntryColor } from './colors';
@@ -41,9 +42,6 @@ function updateCollItem<T extends ChartTimeSeries | ChartWorkflow>(
           }
         : t
     ),
-    sourceCollection: chart.sourceCollection?.map((t) =>
-      t.id === collId ? { ...t, ...diff } : t
-    ),
   };
 }
 
@@ -65,10 +63,15 @@ function addItem<T extends ChartWorkflow | ChartTimeSeries>(
   collectionType: 'timeSeriesCollection' | 'workflowCollection',
   item: T
 ): Chart {
+  const type =
+    collectionType === 'timeSeriesCollection' ? 'timeseries' : 'workflow';
   return {
     ...chart,
-    [collectionType]: [...(chart[collectionType] || []), item],
-    sourceCollection: [item, ...(chart.sourceCollection || [])],
+    [collectionType]: [...(chart[collectionType] || []), { ...item, type }],
+    sourceCollection: [
+      { id: item.id, type },
+      ...(chart.sourceCollection || []),
+    ],
   };
 }
 
@@ -131,19 +134,16 @@ export function convertTimeseriesToWorkflow(chart: Chart, id: string): Chart {
     const filteredTsCollection = chart.timeSeriesCollection?.filter(
       (t) => t.id !== id
     );
+    const workflow = convertTsToWorkFlow(chart.id, ts);
     const filteredWorkFlowCollection = [
       ...(chart.workflowCollection || []),
-      convertTsToWorkFlow(chart.id, ts),
+      workflow,
     ];
 
     return {
       ...chart,
       timeSeriesCollection: filteredTsCollection,
       workflowCollection: filteredWorkFlowCollection,
-      sourceCollection: [
-        ...(filteredTsCollection || []),
-        ...filteredWorkFlowCollection,
-      ],
     };
   }
   return chart;
@@ -174,21 +174,22 @@ export function covertTSToChartTS(
   };
 }
 
-export function updateSourceCollection(chart: Chart): Chart {
+export function initializeSourceCollection(chart: Chart): Chart {
   return {
     ...chart,
     sourceCollection: [
       ...(chart?.timeSeriesCollection || []).map((ts) => ({
-        ...ts,
         type: ts.type ?? 'timeseries',
+        id: ts.id,
       })),
       ...(chart?.workflowCollection || []).map((flow) => ({
-        ...flow,
+        id: flow.id,
         type: flow.type ?? 'workflow',
       })),
-    ],
+    ] as SourceCollectionData[],
   };
 }
+
 export function updateSourceAxisForChart(
   chart: Chart,
   { x, y }: { x: string[]; y: AxisUpdate[] }
@@ -209,9 +210,6 @@ export function updateSourceAxisForChart(
       );
       updatedChart.workflowCollection = updatedChart.workflowCollection?.map(
         (wf) => (wf.id === update.id ? { ...wf, range: update.range } : wf)
-      );
-      updatedChart.sourceCollection = updatedChart.sourceCollection?.map(
-        (src) => (src.id === update.id ? { ...src, range: update.range } : src)
       );
     });
   }
