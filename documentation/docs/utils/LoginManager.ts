@@ -27,15 +27,6 @@ class LoginManager {
     // to make it available in examples
     window.sdk = this.client;
 
-    this.client.loginWithOAuth({
-      project: env.project,
-      accessToken,
-      onAuthenticate: REDIRECT,
-      onTokens: (tokens) => {
-        sessionStorage.setItem(tokenCacheKey, tokens.accessToken);
-      },
-    });
-
     this.client.login.status().then((s) => {
       // id_token in url means we already redirected from auth api
       // so it's safe to mark as logged in, when API call will happen
@@ -66,8 +57,20 @@ class LoginManager {
     };
   }
 
-  authenticate() {
-    this.client
+  async authenticate() {
+    await this.client.loginWithOAuth({
+      type: 'CDF_OAUTH',
+      options: {
+        project: env.project,
+        accessToken,
+        onAuthenticate: REDIRECT,
+        onTokens: (tokens) => {
+          sessionStorage.setItem(tokenCacheKey, tokens.accessToken);
+        },
+      }
+    });
+
+    await this.client
       .authenticate()
       .then(() => {
         this.isLoggedIn = true;
