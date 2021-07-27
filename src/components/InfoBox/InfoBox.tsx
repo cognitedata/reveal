@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Icon, Title, Graphic } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
+import { useRecentViewLocalStorage } from 'utils/recentViewLocalstorage';
 
 interface InfoBoxProps {
   infoType: 'TagHelpBox' | 'TimeSeriesHelpBox';
@@ -47,9 +48,15 @@ const InfoBox = ({ infoType, query }: InfoBoxProps) => {
     localStorage.setItem(infoType, JSON.stringify({ display: false }));
     setDisplayInfo(false);
   };
-
+  const { data: rvResults } = useRecentViewLocalStorage(
+    infoType === 'TagHelpBox' ? 'assets' : 'timeseries',
+    []
+  );
+  const recentViewExists = !!rvResults && rvResults.length > 0;
   return (
-    <InfoBoxContainer style={query === '' ? { height: '100%' } : {}}>
+    <InfoBoxContainer
+      style={query === '' && !recentViewExists ? { height: '100%' } : {}}
+    >
       {displayInfo && (
         <InfoBoxWrapper>
           <StyledIcon type="InfoFilled" />
@@ -66,7 +73,7 @@ const InfoBox = ({ infoType, query }: InfoBoxProps) => {
           />
         </InfoBoxWrapper>
       )}
-      {query === '' && (
+      {query === '' && !recentViewExists && (
         <EmptyResultsContainer>
           <EmptyResults>
             <Graphic

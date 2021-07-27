@@ -1,6 +1,10 @@
 import { useSDK } from '@cognite/sdk-provider';
+import {
+  retrieveItemsKey,
+  SdkResourceType,
+} from '@cognite/sdk-react-query-hooks';
 import zipWith from 'lodash/zipWith';
-import { CogniteClient, DoubleDatapoint } from '@cognite/sdk';
+import { CogniteClient, DoubleDatapoint, IdEither } from '@cognite/sdk';
 import {
   useMutation,
   useQuery,
@@ -24,6 +28,8 @@ export interface FunctionCall {
   endTime?: number;
   status: FunctionCallStatus;
 }
+
+type ErrorResponse = { message?: string };
 
 export const useFunctionCall = (
   functionId: number,
@@ -151,3 +157,32 @@ export async function getFunctionResponseWhenDone(
 
   return response;
 }
+
+export const post = (sdk: CogniteClient, path: string, data: any) =>
+  sdk
+    .post(`/api/v1/projects/${sdk.project}${path}`, { data })
+    .then((response) => response.data);
+
+export const useCdfItems = <T>(
+  type: SdkResourceType,
+  ids: IdEither[],
+  ignoreUnknownIds = false,
+  config?: UseQueryOptions<T[], ErrorResponse>
+) => {
+  const sdk = useSDK();
+  const filteredIds = ids.filter((i: any) => !!i.id || !!i.externalId);
+
+  return useQuery<T[], ErrorResponse>(
+    retrieveItemsKey(type, filteredIds),
+    () => {
+      if (filteredIds.length > 0) {
+        return post(sdk, `/${type}/byids`, {
+          items: filteredIds,
+          ignoreUnknownIds,
+        }).then((d) => d?.items);
+      }
+      return [];
+    },
+    config
+  );
+};

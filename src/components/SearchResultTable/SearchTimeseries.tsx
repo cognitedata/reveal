@@ -13,7 +13,9 @@ import {
 } from 'utils/charts';
 import { calculateDefaultYAxis } from 'utils/axis';
 import { trackUsage } from 'utils/metrics';
+import { useAddToRecentLocalStorage } from 'utils/recentViewLocalstorage';
 import TimeseriesSearchHit from './TimeseriesSearchHit';
+import RecentViewSources from './RecentViewSources';
 
 type Props = {
   query: string;
@@ -23,7 +25,7 @@ export default function SearchTimeseries({ query }: Props) {
   const { chartId } = useParams<{ chartId: string }>();
   const { data: chart } = useChart(chartId);
   const { mutate: updateChart } = useUpdateChart();
-
+  const { addTsToRecent, addAssetToRecent } = useAddToRecentLocalStorage();
   const {
     data,
     isLoading,
@@ -37,10 +39,6 @@ export default function SearchTimeseries({ query }: Props) {
     () => data?.pages?.reduce((accl, page) => accl.concat(page), []),
     [data]
   );
-
-  if (!query) {
-    return null;
-  }
 
   if (isError) {
     return <Icon type="XLarge" />;
@@ -74,6 +72,13 @@ export default function SearchTimeseries({ query }: Props) {
           timeSeriesExternalId: timeSeries.externalId || '',
         });
 
+        if (timeSeries.assetId) {
+          // add both asset and ts if asset exists
+          addAssetToRecent(timeSeries.assetId, timeSeries.id);
+        } else {
+          addTsToRecent(timeSeries.id);
+        }
+
         const newTs = covertTSToChartTS(timeSeries, chartId, range);
 
         updateChart(addTimeseries(chart, newTs));
@@ -84,6 +89,7 @@ export default function SearchTimeseries({ query }: Props) {
 
   return (
     <TSList>
+      {!query && <RecentViewSources viewType="timeseries" />}
       <TimeseriesSearchHit
         timeseries={timeseries}
         query={query}
@@ -112,7 +118,7 @@ export default function SearchTimeseries({ query }: Props) {
 const TSList = styled.ul`
   width: 100%;
   padding: 0;
-  margin: 10px 0 10px 0;
+  margin: 0 0 10px 0;
   list-style: none;
 `;
 

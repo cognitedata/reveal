@@ -16,6 +16,7 @@ import {
 import { calculateDefaultYAxis } from 'utils/axis';
 import { trackUsage } from 'utils/metrics';
 import Highlighter from 'react-highlight-words';
+import { useAddToRecentLocalStorage } from 'utils/recentViewLocalstorage';
 import TimeseriesSearchHit from './TimeseriesSearchHit';
 
 type Props = {
@@ -29,6 +30,7 @@ export default function AssetSearchHit({ asset, query = '' }: Props) {
   const { data: chart } = useChart(chartId);
   const { mutate: updateChart } = useUpdateChart();
 
+  const { addAssetToRecent } = useAddToRecentLocalStorage();
   const { data, hasNextPage, fetchNextPage } = useInfiniteList<Timeseries>(
     'timeseries',
     5,
@@ -68,9 +70,10 @@ export default function AssetSearchHit({ asset, query = '' }: Props) {
           sdk,
           timeSeriesExternalId: timeSeries.externalId || '',
         });
+        // Add to recentlyViewed assets and timeseries
+        addAssetToRecent(asset.id, timeSeries.id);
 
         const newTs = covertTSToChartTS(timeSeries, chart.id, range);
-
         updateChart(addTimeseries(chart, newTs));
         trackUsage('ChartView.AddTimeSeries', { source: 'search' });
       }

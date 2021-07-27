@@ -5,6 +5,7 @@ import { useInfiniteSearch } from '@cognite/sdk-react-query-hooks';
 import styled from 'styled-components/macro';
 
 import AssetSearchHit from './AssetSearchHit';
+import RecentViewSources from './RecentViewSources';
 
 type Props = {
   query: string;
@@ -24,10 +25,6 @@ export default function SearchResultList({ query }: Props) {
     [data]
   );
 
-  if (!query) {
-    return null;
-  }
-
   if (isError) {
     return <Icon type="XLarge" />;
   }
@@ -41,6 +38,7 @@ export default function SearchResultList({ query }: Props) {
 
   return (
     <AssetList>
+      {!query && <RecentViewSources viewType="assets" />}
       {assets?.map((asset) => (
         <li key={asset.id}>
           <AssetSearchHit asset={asset} query={query} />

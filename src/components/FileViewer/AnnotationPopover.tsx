@@ -15,6 +15,7 @@ import {
   covertTSToChartTS,
 } from 'utils/charts';
 import { trackUsage } from 'utils/metrics';
+import { useAddToRecentLocalStorage } from 'utils/recentViewLocalstorage';
 
 export const AnnotationPopover = ({
   annotations,
@@ -64,7 +65,7 @@ export const TimeseriesList = ({ assetId }: { assetId: number }) => {
   const { chartId } = useParams<{ chartId: string }>();
   const { data: chart } = useChart(chartId);
   const { mutate: updateChart } = useUpdateChart();
-
+  const { addTsToRecent, addAssetToRecent } = useAddToRecentLocalStorage();
   const { data: timeseries = [], isLoading } = useAssetTimeseries(assetId);
 
   const sparklineStartDate = dayjs()
@@ -82,6 +83,12 @@ export const TimeseriesList = ({ assetId }: { assetId: number }) => {
       if (tsToRemove) {
         updateChart(removeTimeseries(chart, tsToRemove.id));
       } else {
+        if (timeSeries.assetId) {
+          addAssetToRecent(timeSeries.assetId, timeSeries.id);
+        } else {
+          addTsToRecent(timeSeries.id);
+        }
+
         const ts = covertTSToChartTS(timeSeries, chartId);
         updateChart(addTimeseries(chart, ts));
         trackUsage('ChartView.AddTimeSeries', { source: 'annotation' });
