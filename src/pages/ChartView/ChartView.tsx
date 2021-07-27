@@ -8,7 +8,6 @@ import {
   Dropdown,
   Menu,
   Switch,
-  Flex,
 } from '@cognite/cogs.js';
 import { Alert } from 'antd';
 import { useParams } from 'react-router-dom';
@@ -68,6 +67,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
 
   const [showSearch, setShowSearch] = useState(false);
   const [showYAxis, setShowYAxis] = useState(true);
+  const [mergeUnits, setMergeUnits] = useState(false);
   const [showMinMax, setShowMinMax] = useState(false);
   const [showGridlines, setShowGridlines] = useState(true);
   const [workspaceMode, setWorkspaceMode] = useState<Modes>('workspace');
@@ -392,18 +392,22 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                 content={
                   <Menu>
                     <DropdownWrapper>
-                      <Flex>
-                        <DropdownTitle>Y axis</DropdownTitle>
-                      </Flex>
-                      <Flex direction="row">
-                        <Switch
-                          name="toggleYAxis"
-                          value={showYAxis}
-                          onChange={() => setShowYAxis(!showYAxis)}
-                        >
-                          Show Y axes
-                        </Switch>
-                      </Flex>
+                      <DropdownTitle>Y axis</DropdownTitle>
+                      <Switch
+                        name="toggleYAxis"
+                        value={showYAxis}
+                        onChange={() => setShowYAxis(!showYAxis)}
+                        style={{ marginBottom: 15 }}
+                      >
+                        Show Y axes
+                      </Switch>
+                      <Switch
+                        name="toggleUnitMerging"
+                        value={mergeUnits}
+                        onChange={() => setMergeUnits(!mergeUnits)}
+                      >
+                        Merge units
+                      </Switch>
                     </DropdownWrapper>
                   </Menu>
                 }
@@ -445,6 +449,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                   isMinMaxShown={showMinMax}
                   isGridlinesShown={showGridlines}
                   stackedMode={stackedMode}
+                  mergeUnits={mergeUnits}
                 />
               </ChartWrapper>
             </TopPaneWrapper>
@@ -513,11 +518,13 @@ const Divider = styled.div`
 const DropdownTitle = styled.div`
   color: var(--cogs-greyscale-grey6);
   font-size: 12px;
-  margin: 0 0 8px 0;
+  margin-bottom: 15px;
 `;
 
 const DropdownWrapper = styled.div`
   padding: 8px;
+  display: flex;
+  flex-direction: column;
 `;
 
 export default ChartView;

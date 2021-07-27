@@ -2,52 +2,65 @@ import { addMinutes } from 'date-fns';
 import {
   getYaxisUpdatesFromEventData,
   getXaxisUpdateFromEventData,
+  SeriesData,
 } from './utils';
 
-const seriesData = [
+const seriesData: SeriesData[] = [
   {
-    id: 'VAL_RESERVOIR_PT_well01',
-    type: 'timeseries',
+    unit: 'PSI',
     range: [1459.8294756630028, 1491.8053766553744],
-    name: 'VAL_RESERVOIR_PT_well01',
-    color: '#8E44AD',
-    width: 2,
-    dash: 'solid',
-    mode: 'lines',
-    unit: 'PSI',
-    datapoints: [
-      { average: 1, timestamp: new Date('2021-01-01T00:00:00.000Z') },
-      { average: 1, timestamp: new Date('2021-01-01T00:10:00.000Z') },
+    series: [
+      {
+        id: 'VAL_RESERVOIR_PT_well01',
+        type: 'timeseries',
+        color: '#8E44AD',
+        name: 'VAL_RESERVOIR_PT_well01',
+        width: 2,
+        dash: 'solid',
+        mode: 'lines',
+        datapoints: [
+          { average: 1, timestamp: new Date('2021-01-01T00:00:00.000Z') },
+          { average: 1, timestamp: new Date('2021-01-01T00:10:00.000Z') },
+        ],
+      },
     ],
   },
   {
-    id: 'VAL_RESERVOIR_PT_well09',
-    type: 'timeseries',
+    unit: 'PSI',
     range: [1456.247265175954, 1488.6541100613447],
-    name: 'VAL_RESERVOIR_PT_well09',
-    color: '#e1b12c',
-    width: 2,
-    dash: 'solid',
-    mode: 'lines',
-    unit: 'PSI',
-    datapoints: [
-      { average: 1, timestamp: new Date('2021-01-01T00:10:00.000Z') },
-      { average: 1, timestamp: new Date('2021-01-01T00:20:00.000Z') },
+    series: [
+      {
+        id: 'VAL_RESERVOIR_PT_well09',
+        type: 'timeseries',
+        color: '#e1b12c',
+        name: 'VAL_RESERVOIR_PT_well09',
+        width: 2,
+        dash: 'solid',
+        mode: 'lines',
+        datapoints: [
+          { average: 1, timestamp: new Date('2021-01-01T00:10:00.000Z') },
+          { average: 1, timestamp: new Date('2021-01-01T00:20:00.000Z') },
+        ],
+      },
     ],
   },
   {
-    id: 'VAL_RESERVOIR_PT_well07',
-    type: 'timeseries',
-    range: [1523.9999095776425, 1523.9999896001514],
-    name: 'VAL_RESERVOIR_PT_well07',
-    color: '#0097e6',
-    width: 2,
-    dash: 'solid',
-    mode: 'lines',
     unit: 'PSI',
-    datapoints: [
-      { average: 1, timestamp: new Date('2021-01-01T00:00:00.000Z') },
-      { average: 1, timestamp: new Date('2021-01-01T00:30:00.000Z') },
+    range: [1523.9999095776425, 1523.9999896001514],
+    series: [
+      {
+        id: 'VAL_RESERVOIR_PT_well07',
+        type: 'timeseries',
+        name: 'VAL_RESERVOIR_PT_well07',
+        color: '#0097e6',
+        width: 2,
+        dash: 'solid',
+        mode: 'lines',
+        datapoints: [
+          { average: 1, timestamp: new Date('2021-01-01T00:00:00.000Z') },
+          { average: 1, timestamp: new Date('2021-01-01T00:30:00.000Z') },
+        ],
+      },
     ],
   },
 ];
@@ -86,35 +99,6 @@ describe('getYaxisUpdatesFromEventData', () => {
     ]);
   });
 
-  it('handles autoscale input', () => {
-    const eventdata = {
-      'xaxis.autorange': true,
-      'yaxis.autorange': true,
-      'yaxis2.autorange': true,
-      'yaxis3.autorange': true,
-    };
-
-    const axisUpdates = getYaxisUpdatesFromEventData(seriesData, eventdata);
-
-    expect(axisUpdates).toEqual([
-      {
-        id: 'VAL_RESERVOIR_PT_well01',
-        type: 'timeseries',
-        range: [],
-      },
-      {
-        id: 'VAL_RESERVOIR_PT_well09',
-        type: 'timeseries',
-        range: [],
-      },
-      {
-        id: 'VAL_RESERVOIR_PT_well07',
-        type: 'timeseries',
-        range: [],
-      },
-    ]);
-  });
-
   it('handles empty input', () => {
     const eventdata = {};
 
@@ -137,7 +121,7 @@ describe('getXaxisUpdate', () => {
       'yaxis3.range[1]': 1523.9999670154064,
     };
 
-    const axisUpdates = getXaxisUpdateFromEventData(seriesData, eventdata);
+    const axisUpdates = getXaxisUpdateFromEventData(eventdata);
 
     expect(axisUpdates).toEqual([
       addMinutes(
@@ -151,26 +135,10 @@ describe('getXaxisUpdate', () => {
     ]);
   });
 
-  it('handles autoscale input', () => {
-    const eventdata = {
-      'xaxis.autorange': true,
-      'yaxis.autorange': true,
-      'yaxis2.autorange': true,
-      'yaxis3.autorange': true,
-    };
-
-    const axisUpdates = getXaxisUpdateFromEventData(seriesData, eventdata);
-
-    expect(axisUpdates).toEqual([
-      '2021-01-01T00:00:00.000Z',
-      '2021-01-01T00:30:00.000Z',
-    ]);
-  });
-
   it('handles empty input', () => {
     const eventdata = {};
 
-    const axisUpdates = getXaxisUpdateFromEventData(seriesData, eventdata);
+    const axisUpdates = getXaxisUpdateFromEventData(eventdata);
 
     expect(axisUpdates).toEqual([]);
   });

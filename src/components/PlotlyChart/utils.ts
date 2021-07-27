@@ -1,34 +1,29 @@
 import { DatapointAggregate, Datapoints, DoubleDatapoint } from '@cognite/sdk';
-
-export function convertLineStyle(lineStyle?: 'solid' | 'dashed' | 'dotted') {
-  switch (lineStyle) {
-    case 'solid':
-      return 'solid';
-    case 'dashed':
-      return 'dash';
-    case 'dotted':
-      return 'dot';
-    default:
-      return 'solid';
-  }
-}
+import groupBy from 'lodash/groupBy';
+import { ChartTimeSeries, ChartWorkflow } from 'reducers/charts/types';
+import { hexToRGBA } from 'utils/colors';
+import { convertUnits, units } from 'utils/units';
 
 export type PlotlyEventData = {
   [key: string]: any;
 };
 
-export type SeriesData = {
+export type SeriesInfo = {
   id: string | undefined;
   type: string;
-  range: number[] | undefined;
   name: string | undefined;
   color: string | undefined;
   width: number | undefined;
   dash: string;
   mode: string | undefined;
-  unit: string | undefined;
   datapoints: Datapoints | DatapointAggregate[];
   outdatedData?: boolean;
+};
+
+export type SeriesData = {
+  range: number[] | undefined;
+  unit: string | undefined;
+  series: SeriesInfo[];
 };
 
 export type AxisUpdate = {
@@ -36,6 +31,212 @@ export type AxisUpdate = {
   type: string;
   range: any[];
 };
+
+export function calculateSeriesData(
+  timeSeriesCollection: ChartTimeSeries[] = [],
+  workflowCollection: ChartWorkflow[] = [],
+  timeseries: DatapointAggregate[][],
+  timeseriesFetching: boolean,
+  workflows: { value: number; timestamp: Date }[][],
+  workflowsRunning: boolean,
+  mergeUnits: boolean
+): SeriesData[] {
+  const seriesData = [
+    ...timeSeriesCollection
+      .filter((t) => t.enabled)
+      .map((t, i) => ({
+        range: t.range,
+        unit: units.find(
+          (unitOption) => unitOption.value === t.preferredUnit?.toLowerCase()
+        )?.label,
+        series: [
+          {
+            ...t,
+            type: 'timeseries',
+            width: t.lineWeight,
+            name: t.name,
+            outdatedData: timeseriesFetching,
+            datapoints: convertUnits(
+              (timeseries?.[i] || []) as DatapointAggregate[],
+              t.unit,
+              t.preferredUnit
+            ),
+            dash: convertLineStyle(t.lineStyle),
+            mode: t.displayMode,
+          },
+        ],
+      })),
+    ...workflowCollection
+      .filter((t) => t.enabled)
+      .map((workflow, i) => ({
+        range: workflow.range,
+        unit: units.find(
+          (unitOption) =>
+            unitOption.value === workflow.preferredUnit?.toLowerCase()
+        )?.label,
+        series: [
+          {
+            enabled: workflow.enabled,
+            outdatedData: workflowsRunning,
+            id: workflow?.id,
+            type: 'workflow',
+            name: workflow.name,
+            color: workflow.color,
+            mode: workflow.displayMode,
+            width: workflow.lineWeight,
+            dash: convertLineStyle(workflow.lineStyle),
+
+            datapoints: convertUnits(
+              workflows?.[i] || [],
+              workflow.unit,
+              workflow.preferredUnit
+            ),
+          },
+        ],
+      })),
+  ];
+
+  if (mergeUnits) {
+    const mergedSeries: SeriesData[] = [];
+    const seriesGrouppedByUnit = groupBy(seriesData, 'unit');
+    Object.keys(seriesGrouppedByUnit).forEach((unit) => {
+      if (unit === 'undefined') {
+        mergedSeries.push(...seriesGrouppedByUnit[unit]);
+      } else {
+        mergedSeries.push({
+          unit,
+          range: calculateMaxRange(seriesGrouppedByUnit[unit]),
+          series: seriesGrouppedByUnit[unit].reduce(
+            (result: any[], { series }: SeriesData) => result.concat(...series),
+            []
+          ),
+        });
+      }
+    });
+    return mergedSeries;
+  }
+
+  return seriesData;
+}
+
+export function calculateMaxRange(series: SeriesData[]): number[] {
+  const lowerRanges = series.map((s) => s.range?.[0]).filter(Boolean);
+  const upperRanges = series.map((s) => s.range?.[1]).filter(Boolean);
+
+  return [
+    Math.min(...(lowerRanges as number[])),
+    Math.max(...(upperRanges as number[])),
+  ];
+}
+
+export function formatPlotlyData(
+  seriesData: SeriesData[],
+  hideMinMax: boolean
+): Plotly.Data[] {
+  const groupedAggregateTraces = seriesData.map(({ series }, index) =>
+    series.map(
+      ({ name, color, mode, width, dash, datapoints, outdatedData }) => {
+        /* kinda hacky solution to compare min and avg in cases where min is less than avg and need to be fill based on that, 
+    In addition, should min value be less than avg value? */
+        const firstDatapoint = (datapoints as (
+          | Datapoints
+          | DatapointAggregate
+        )[]).find((x) => x);
+        const currMin = firstDatapoint
+          ? ('min' in firstDatapoint
+              ? firstDatapoint.min
+              : (firstDatapoint as DoubleDatapoint).value) ?? 0
+          : 0;
+        const currAvg = firstDatapoint
+          ? ('average' in firstDatapoint
+              ? firstDatapoint.average
+              : (firstDatapoint as DoubleDatapoint).value) ?? 0
+          : 0;
+
+        const avgYValues = (datapoints as (
+          | Datapoints
+          | DatapointAggregate
+        )[]).map((datapoint) =>
+          'average' in datapoint
+            ? datapoint.average
+            : (datapoint as DoubleDatapoint).value
+        );
+
+        const minYValues = (datapoints as (
+          | Datapoints
+          | DatapointAggregate
+        )[]).map((datapoint) =>
+          'min' in datapoint
+            ? datapoint.min
+            : (datapoint as DoubleDatapoint).value
+        );
+
+        const maxYValues = (datapoints as (
+          | Datapoints
+          | DatapointAggregate
+        )[]).map((datapoint) =>
+          'max' in datapoint
+            ? datapoint.max
+            : (datapoint as DoubleDatapoint).value
+        );
+
+        const average = {
+          type: 'scatter',
+          mode: mode || 'lines',
+          opacity: outdatedData ? 0.5 : 1,
+          name,
+          marker: {
+            color,
+          },
+          fill: 'none',
+          line: { color, width: width || 1, dash: dash || 'solid' },
+          yaxis: `y${index !== 0 ? index + 1 : ''}`,
+          x: (datapoints as (
+            | Datapoints
+            | DatapointAggregate
+          )[]).map((datapoint) =>
+            'timestamp' in datapoint ? new Date(datapoint.timestamp) : null
+          ),
+          y: avgYValues,
+          hovertemplate:
+            '%{y} &#183; <span style="color:#8c8c8c">%{fullData.name}</span><extra></extra>',
+          hoverlabel: {
+            bgcolor: '#ffffff',
+            bordercolor: color,
+            font: {
+              color: '#333333',
+            },
+          },
+        };
+
+        const min = {
+          ...average,
+          y: minYValues,
+          line: { width: 0 },
+          fill: currMin > currAvg ? 'tonexty' : 'none',
+          fillcolor: hexToRGBA(color, 0.2) ?? 'none',
+          hovertemplate: '',
+          hoverinfo: 'skip',
+        };
+
+        const max = {
+          ...average,
+          y: maxYValues,
+          fillcolor: hexToRGBA(color, 0.2) ?? 'none',
+          line: { width: 0 },
+          fill: 'tonexty',
+          hovertemplate: '',
+          hoverinfo: 'skip',
+        };
+
+        return hideMinMax ? [average] : [average, min, max];
+      }
+    )
+  );
+
+  // flatten the grouped traces into list of traces.
+  return groupedAggregateTraces.flat(2) as Plotly.Data[];
+}
 
 export function getYaxisUpdatesFromEventData(
   seriesData: SeriesData[],
@@ -46,22 +247,21 @@ export function getYaxisUpdatesFromEventData(
       .filter((key) => key.includes('yaxis'))
       .reduce((result: { [key: string]: any }, key) => {
         const axisIndex = (+key.split('.')[0].split('yaxis')[1] || 1) - 1;
-        const series = seriesData[axisIndex];
-        const { id = '', type = '' } = series;
-        const isAutoscale = key.includes('autorange');
+        const { series } = seriesData[axisIndex];
 
-        const range = isAutoscale
-          ? []
-          : ((result[id] || {}).range || []).concat(eventdata[key]);
+        const update = series.reduce((diff: { [key: string]: any }, s) => {
+          const { id = '', type = '' } = s;
+          const range = ((result[id] || {}).range || []).concat(eventdata[key]);
+
+          return {
+            ...diff,
+            [id]: { ...(diff[id] || {}), id, type, range },
+          };
+        }, {});
 
         return {
           ...result,
-          [id]: {
-            ...(result[id] || {}),
-            id,
-            type,
-            range,
-          },
+          ...update,
         };
       }, {})
   );
@@ -69,46 +269,13 @@ export function getYaxisUpdatesFromEventData(
   return axisUpdates;
 }
 
-function getAutoScaleRange(seriesData: SeriesData[]) {
-  let min: Date | undefined;
-  let max: Date | undefined;
-
-  seriesData.forEach((series) => {
-    if (Array.isArray(series.datapoints)) {
-      series.datapoints.forEach((datapoint) => {
-        if ('timestamp' in datapoint) {
-          if (min === undefined || datapoint.timestamp < min) {
-            min = datapoint.timestamp;
-          }
-          if (max === undefined || datapoint.timestamp > max) {
-            max = datapoint.timestamp;
-          }
-        }
-      });
-    }
-  });
-
-  min = min || new Date();
-  max = max || new Date();
-
-  return [min.toJSON(), max.toJSON()];
-}
-
 export function getXaxisUpdateFromEventData(
-  seriesData: SeriesData[],
   eventdata: PlotlyEventData
 ): string[] {
   const xaxisKeys = Object.keys(eventdata).filter((key) =>
     key.includes('xaxis')
   );
-
-  const isAutoscale = xaxisKeys.some((key) => key.includes('autorange'));
-
-  const range = isAutoscale
-    ? getAutoScaleRange(seriesData)
-    : xaxisKeys.map((key) => new Date(eventdata[key]).toJSON());
-
-  return range;
+  return xaxisKeys.map((key) => new Date(eventdata[key]).toJSON());
 }
 
 export function calculateStackedYRange(
@@ -130,4 +297,17 @@ export function calculateStackedYRange(
   const upper = lower + numSeries * range;
 
   return [lower, upper];
+}
+
+export function convertLineStyle(lineStyle?: 'solid' | 'dashed' | 'dotted') {
+  switch (lineStyle) {
+    case 'solid':
+      return 'solid';
+    case 'dashed':
+      return 'dash';
+    case 'dotted':
+      return 'dot';
+    default:
+      return 'solid';
+  }
 }

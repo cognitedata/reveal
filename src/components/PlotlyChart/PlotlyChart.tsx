@@ -16,15 +16,12 @@ import {
   DatapointAggregate,
   Datapoints,
   DatapointsMultiQuery,
-  DoubleDatapoint,
 } from '@cognite/sdk';
 import { Button, Icon } from '@cognite/cogs.js';
 import { calculateGranularity } from 'utils/timeseries';
-import { convertUnits, units } from 'utils/units';
 import Layers from 'utils/z-index';
 import createPlotlyComponent from 'react-plotly.js/factory';
 import Plotly from 'plotly.js-basic-dist';
-import { convertLineStyle } from 'components/PlotlyChart';
 import { useSDK } from '@cognite/sdk-provider';
 import {
   getFunctionResponseWhenDone,
@@ -35,9 +32,10 @@ import { useChart, useUpdateChart } from 'hooks/firebase';
 import { updateSourceAxisForChart } from 'utils/charts';
 import { trackUsage } from 'utils/metrics';
 import { roundToSignificantDigits } from 'utils/axis';
-import { hexToRGBA } from 'utils/colors';
 import {
+  calculateSeriesData,
   calculateStackedYRange,
+  formatPlotlyData,
   getXaxisUpdateFromEventData,
   getYaxisUpdatesFromEventData,
   PlotlyEventData,
@@ -55,6 +53,7 @@ type ChartProps = {
   isPreview?: boolean;
   isInSearch?: boolean;
   stackedMode?: boolean;
+  mergeUnits?: boolean;
 };
 
 // Use "basic" version of plotly.js to reduce bundle size
@@ -68,6 +67,7 @@ const PlotlyChartComponent = ({
   isPreview = false,
   isInSearch = false,
   stackedMode = false,
+  mergeUnits = false,
 }: ChartProps) => {
   const sdk = useSDK();
   const client = useQueryClient();
@@ -76,6 +76,7 @@ const PlotlyChartComponent = ({
   const { mutate, isLoading } = useUpdateChart();
 
   const pointsPerSeries = isPreview ? 100 : 1000;
+
   const [dragmode, setDragmode] = useState<'zoom' | 'pan'>('pan');
   const [yAxisLocked, setYAxisLocked] = useState<boolean>(true);
 
@@ -190,52 +191,15 @@ const PlotlyChartComponent = ({
 
   const seriesData: SeriesData[] = useMemo(
     () =>
-      [
-        ...(chart?.timeSeriesCollection || [])
-          .map((t, i) => ({
-            ...t,
-            type: 'timeseries',
-            width: t.lineWeight,
-            range: t.range,
-            name: t.name,
-            outdatedData: timeseriesFetching,
-            datapoints: convertUnits(
-              (timeseries?.[i] || []) as DatapointAggregate[],
-              t.unit,
-              t.preferredUnit
-            ),
-            dash: convertLineStyle(t.lineStyle),
-            mode: t.displayMode,
-            unit: units.find(
-              (unitOption) =>
-                unitOption.value === t.preferredUnit?.toLowerCase()
-            )?.label,
-          }))
-          .filter((t) => t.enabled),
-        ...(chart?.workflowCollection || [])
-          .map((workflow, i) => ({
-            enabled: workflow.enabled,
-            outdatedData: workflowsRunning,
-            id: workflow?.id,
-            type: 'workflow',
-            range: workflow.range,
-            name: workflow.name,
-            color: workflow.color,
-            mode: workflow.displayMode,
-            width: workflow.lineWeight,
-            dash: convertLineStyle(workflow.lineStyle),
-            unit: units.find(
-              (unitOption) =>
-                unitOption.value === workflow.preferredUnit?.toLowerCase()
-            )?.label,
-            datapoints: convertUnits(
-              workflows?.[i] || [],
-              workflow.unit,
-              workflow.preferredUnit
-            ),
-          }))
-          .filter((t) => t.enabled),
-      ] || [],
+      calculateSeriesData(
+        chart?.timeSeriesCollection,
+        chart?.workflowCollection,
+        timeseries,
+        timeseriesFetching,
+        workflows,
+        workflowsRunning,
+        mergeUnits
+      ),
     [
       chart?.timeSeriesCollection,
       chart?.workflowCollection,
@@ -243,104 +207,14 @@ const PlotlyChartComponent = ({
       workflows,
       workflowsRunning,
       timeseriesFetching,
+      mergeUnits,
     ]
   );
-  const groupedTraces = seriesData.map(
-    ({ name, color, mode, width, dash, datapoints, outdatedData }, index) => {
-      /* kinda hacky solution to compare min and avg in cases where min is less than avg and need to be fill based on that, 
-      In addition, should min value be less than avg value? */
-      const firstDatapoint = (datapoints as (
-        | Datapoints
-        | DatapointAggregate
-      )[]).find((x) => x);
-      const currMin = firstDatapoint
-        ? ('min' in firstDatapoint
-            ? firstDatapoint.min
-            : (firstDatapoint as DoubleDatapoint).value) ?? 0
-        : 0;
-      const currAvg = firstDatapoint
-        ? ('average' in firstDatapoint
-            ? firstDatapoint.average
-            : (firstDatapoint as DoubleDatapoint).value) ?? 0
-        : 0;
 
-      const [avgYValues, minYValues, maxYValues] = [[], [], []] as (
-        | number
-        | undefined
-      )[][];
-      // Loop through data once and push all values into its respectively array
-      (datapoints as (Datapoints | DatapointAggregate)[]).forEach(
-        (datapoint) => {
-          avgYValues.push(
-            'average' in datapoint
-              ? datapoint.average
-              : (datapoint as DoubleDatapoint).value
-          );
-          minYValues.push(
-            'min' in datapoint
-              ? datapoint.min
-              : (datapoint as DoubleDatapoint).value
-          );
-          maxYValues.push(
-            'max' in datapoint
-              ? datapoint.max
-              : (datapoint as DoubleDatapoint).value
-          );
-        }
-      );
-      const average = {
-        type: 'scatter',
-        mode: mode || 'lines',
-        opacity: outdatedData ? 0.5 : 1,
-        name,
-        marker: {
-          color,
-        },
-        fill: 'none',
-        line: { color, width: width || 1, dash: dash || 'solid' },
-        yaxis: `y${index !== 0 ? index + 1 : ''}`,
-        x: (datapoints as (
-          | Datapoints
-          | DatapointAggregate
-        )[]).map((datapoint) =>
-          'timestamp' in datapoint ? new Date(datapoint.timestamp) : null
-        ),
-        y: avgYValues,
-        hovertemplate:
-          '%{y} &#183; <span style="color:#8c8c8c">%{fullData.name}</span><extra></extra>',
-        hoverlabel: {
-          bgcolor: '#ffffff',
-          bordercolor: color,
-          font: {
-            color: '#333333',
-          },
-        },
-      };
-
-      const min = {
-        ...average,
-        line: { width: 0 },
-        fill: currMin > currAvg ? 'tonexty' : 'none',
-        fillcolor: hexToRGBA(color, 0.2) ?? 'none',
-        y: minYValues,
-        hovertemplate: '',
-        hoverinfo: 'skip',
-      };
-
-      const max = {
-        ...average,
-        fillcolor: hexToRGBA(color, 0.2) ?? 'none',
-        line: { width: 0 },
-        fill: 'tonexty',
-        y: maxYValues,
-        hovertemplate: '',
-        hoverinfo: 'skip',
-      };
-
-      return isPreview || !isMinMaxShown ? average : [average, min, max];
-    }
+  const data: Plotly.Data[] = useMemo(
+    () => formatPlotlyData(seriesData, isPreview || !isMinMaxShown),
+    [seriesData, isMinMaxShown, isPreview]
   );
-  const data = groupedTraces.flat(); // flatten the grouped traces into list of traces.
 
   const handleRelayout = debounce(
     useCallback(
@@ -352,7 +226,7 @@ const PlotlyChartComponent = ({
         }
 
         if (!isPreview) {
-          const x = getXaxisUpdateFromEventData(seriesData, eventdata);
+          const x = getXaxisUpdateFromEventData(eventdata);
           // Should not edit the saved y-axis ranges if in stacked mode or in search
           const y = !(stackedMode || isInSearch)
             ? getYaxisUpdatesFromEventData(seriesData, eventdata)
@@ -372,6 +246,7 @@ const PlotlyChartComponent = ({
         dragmode,
         isInSearch,
         stackedMode,
+        mergeUnits,
         updateChart,
         chartId,
         client,
@@ -426,7 +301,8 @@ const PlotlyChartComponent = ({
     fixedrange: yAxisLocked,
   };
 
-  seriesData.forEach(({ unit, color, range, datapoints }, index) => {
+  seriesData.forEach(({ unit, range, series }, index) => {
+    const { color, datapoints } = series[0];
     /**
      * For some reason plotly doesn't like that you overwrite the range input (doing this the wrong way?)
      */
