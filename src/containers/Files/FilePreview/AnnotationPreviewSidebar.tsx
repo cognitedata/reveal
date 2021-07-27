@@ -109,11 +109,13 @@ const AnnotationPreviewSidebar = ({
   const [currentIndex, setCurrentIndex] = useState<number>(0);
 
   const {
-    selectedAnnotations,
+    selectedAnnotations = [],
     setSelectedAnnotations,
   } = useSelectedAnnotations();
 
-  const selectedAnnotation = selectedAnnotations[currentIndex];
+  const selectedAnnotation = selectedAnnotations?.length
+    ? selectedAnnotations[currentIndex]
+    : undefined;
 
   const extractFromCanvas = useExtractFromCanvas();
 
@@ -133,11 +135,11 @@ const AnnotationPreviewSidebar = ({
   useEffect(() => {
     setCurrentIndex(0);
     window.dispatchEvent(new Event(SIDEBAR_RESIZE_EVENT));
-  }, [selectedAnnotations.length]);
+  }, [selectedAnnotations?.length]);
 
   let annotationPreview: string | undefined;
   if (selectedAnnotation && extractFromCanvas) {
-    const { xMin, yMin, xMax, yMax } = selectedAnnotation.box;
+    const { xMin, yMin, xMax, yMax } = selectedAnnotation?.box;
     annotationPreview = extractFromCanvas(xMin, yMin, xMax - xMin, yMax - yMin);
   }
 
@@ -279,8 +281,10 @@ const AnnotationPreviewSidebar = ({
 
   const Header = ({
     annotation,
+    onClose,
   }: {
     annotation: CogniteAnnotation | ProposedCogniteAnnotation;
+    onClose: () => void;
   }) => {
     const { metadata } = annotation;
 
@@ -315,13 +319,17 @@ const AnnotationPreviewSidebar = ({
     if (!isEditingMode) {
       return (
         <>
-          <InfoGrid noBorders>
-            <InfoCell noBorders>
-              <Overline level={2}>LABEL</Overline>
-              <Title level={5}>{annotation.label}</Title>
-              <Overline level={2} style={{ marginTop: 8 }}>
-                DESCRIPTION
-              </Overline>
+          <InfoGrid>
+            <InfoCell>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Title level={5}>{annotation.label} </Title>
+                <Button
+                  icon="Close"
+                  variant="ghost"
+                  onClick={onClose}
+                  style={{ alignSelf: 'flex-end' }}
+                />
+              </div>
               <Body level={2}>{annotation.description || 'N/A'}</Body>
               {extraDetails}
             </InfoCell>
@@ -373,19 +381,8 @@ const AnnotationPreviewSidebar = ({
   }
   return (
     <div style={{ width: 360, borderLeft: `2px solid ${lightGrey}` }}>
-      {selectedAnnotations.length > 1 && (
-        <Pagination
-          total={selectedAnnotations.length}
-          pageSize={1}
-          showPrevNextJumpers={false}
-          showQuickJumper={false}
-          defaultCurrent={currentIndex}
-          onChange={i => {
-            setCurrentIndex(i - 1);
-          }}
-        />
-      )}
       <ResourcePreviewSidebar
+        closable={false}
         item={
           item && {
             id: item.id,
@@ -409,12 +406,31 @@ const AnnotationPreviewSidebar = ({
             </Button>,
           ]
         }
-        header={<Header annotation={selectedAnnotation} />}
-        footer={
-          <ContextualizationData
-            selectedAnnotation={selectedAnnotation}
-            extractFromCanvas={extractFromCanvas}
+        header={
+          <Header
+            annotation={selectedAnnotation}
+            onClose={() => setSelectedAnnotations([])}
           />
+        }
+        footer={
+          <>
+            <ContextualizationData
+              selectedAnnotation={selectedAnnotation}
+              extractFromCanvas={extractFromCanvas}
+            />
+            {selectedAnnotations?.length > 1 && (
+              <Pagination
+                total={selectedAnnotations.length}
+                pageSize={1}
+                showPrevNextJumpers={false}
+                showQuickJumper={false}
+                defaultCurrent={currentIndex}
+                onChange={i => {
+                  setCurrentIndex(i - 1);
+                }}
+              />
+            )}
+          </>
         }
         content={
           isEditingMode ? (
