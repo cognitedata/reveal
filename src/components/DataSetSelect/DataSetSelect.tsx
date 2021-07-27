@@ -6,8 +6,7 @@ import {
   usePermissions,
 } from '@cognite/sdk-react-query-hooks';
 import styled from 'styled-components';
-import { Body, Colors } from '@cognite/cogs.js';
-import { Link } from 'react-router-dom';
+import { A, Body, Colors } from '@cognite/cogs.js';
 import { createLink } from 'utils/URLUtils';
 import { stringContains } from 'utils/stringUtils';
 
@@ -86,8 +85,8 @@ export const DataSetSelect = ({
         content={
           <Body level={2}>
             Go to{' '}
-            <Link to={createLink('/access-management')}>Access management</Link>{' '}
-            to enable access to DataSetAcl.READ
+            <A href={createLink('/access-management')}>Access management</A> to
+            enable access to DataSetAcl.READ
           </Body>
         }
       >

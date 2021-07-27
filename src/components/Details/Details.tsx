@@ -1,9 +1,8 @@
 import React from 'react';
 import Typography from 'antd/lib/typography';
 import styled from 'styled-components';
-import { Body, Colors, Icon } from '@cognite/cogs.js';
+import { Body, Colors, Icon, A } from '@cognite/cogs.js';
 import { List } from 'antd';
-import { Link } from 'react-router-dom';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { convertResourceType, ResourceType } from 'types';
 import { DataSet } from '@cognite/sdk';
@@ -54,7 +53,13 @@ export const DetailsTabItem = ({
             : false
         }
       >
-        {link ? <Link to={link}>{value}</Link> : value}
+        {link ? (
+          <A href={link} target="_blank" rel="noopener">
+            {value}
+          </A>
+        ) : (
+          value
+        )}
       </Value>
     ) : (
       <em>Not set</em>
