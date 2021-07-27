@@ -62,7 +62,7 @@ export function AnnotationTable({
     data: items = [],
     isFetched: itemsFetched,
     isError: itemsError,
-  } = useCdfItems(convertResourceType(resourceType), ids, {
+  } = useCdfItems(convertResourceType(resourceType), ids, false, {
     enabled: itemsEnabled,
   });
 

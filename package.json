@@ -14,7 +14,7 @@
     "@cognite/react-picture-annotation": "^1.13.3",
     "@cognite/sdk": "^3.3.6",
     "@cognite/sdk-provider": "^1.0.0",
-    "@cognite/sdk-react-query-hooks": "^3.1.0",
+    "@cognite/sdk-react-query-hooks": "^5.0.1",
     "@visx/axis": "^1.8.0",
     "@visx/event": "^1.7.0",
     "@visx/gradient": "^1.7.0",

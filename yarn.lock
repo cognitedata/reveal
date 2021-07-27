@@ -1378,9 +1378,9 @@
     unleash-proxy-client "^1.0.1"
 
 "@cognite/react-picture-annotation@^1.13.3":
-  version "1.13.3"
-  resolved "https://registry.yarnpkg.com/@cognite/react-picture-annotation/-/react-picture-annotation-1.13.3.tgz#d3e6f33f6e5015470ac7f0a276b7bc48d3ddc4ae"
-  integrity sha512-1r+vJ0qxFvOP9hdyN/jdbE5qhOyJZIkvOxYVQQJi5rRdwveXbtDmF5lGg9Uqi5Qkp2YYZdJfZfmnQbk+ko8vCg==
+  version "1.15.1"
+  resolved "https://registry.yarnpkg.com/@cognite/react-picture-annotation/-/react-picture-annotation-1.15.1.tgz#874206cfd4ede8ab899d4cd651b980c33543ab47"
+  integrity sha512-gg9vZTZSTO4RJLcTnsdvJxh67c5OD+AT/q3JS9L+CQQ54YCWBqoMHafw31qR8TbYToIVSJE2mxqeiF05AVZCJA==
   dependencies:
     "@cognite/annotations" "^1.1.0"
     "@cognite/sdk" "^3.3.0"
@@ -1412,13 +1412,10 @@
   dependencies:
     react "^16.14.0"
 
-"@cognite/sdk-react-query-hooks@^3.1.0":
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk-react-query-hooks/-/sdk-react-query-hooks-3.1.0.tgz#90d023e4f91bdc7d9f2da923fa8499e5a791d62f"
-  integrity sha512-vQYs/VEXYbdECzwJX4PYwFC3eeYG8jyyy1yGTGtJn/x5zXMBvgLtR6XjXrSrfMfUzPfJsHWXCk0OXs9ai99Eyw==
-  dependencies:
-    "@cognite/sdk-provider" "^1.0.0"
-    react-query "^3.13.10"
+"@cognite/sdk-react-query-hooks@^5.0.1":
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk-react-query-hooks/-/sdk-react-query-hooks-5.0.1.tgz#e59aa8b47ead9e9fa2d9c64aa0d83e9e4bd155ea"
+  integrity sha512-TzzDdZHcNqo89sTT4BtsjzkJ8rlD/uSuJp2mZBF69oEzautbQbnsngtA6IzlhSzDkpclGV56Tu2+huh4N02wgg==
 
 "@cognite/sdk@^3.3.0", "@cognite/sdk@^3.3.6":
   version "3.3.6"
@@ -5797,9 +5794,9 @@ caniuse-api@^3.0.0:
     lodash.uniq "^4.5.0"
 
 caniuse-lite@^1.0.0, caniuse-lite@^1.0.30000929, caniuse-lite@^1.0.30000981, caniuse-lite@^1.0.30001035, caniuse-lite@^1.0.30001109, caniuse-lite@^1.0.30001181:
-  version "1.0.30001183"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001183.tgz#7a57ba9d6584119bb5f2bc76d3cc47ba9356b3e2"
-  integrity sha512-7JkwTEE1hlRKETbCFd8HDZeLiQIUcl8rC6JgNjvHCNaxOeNmQ9V4LvQXRUsKIV2CC73qKxljwVhToaA3kLRqTw==
+  version "1.0.30001247"
+  resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001247.tgz"
+  integrity sha512-4rS7co+7+AoOSPRPOPUt5/GdaqZc0EsUpWk66ofE3HJTAajUK2Ss2VwoNzVN69ghg8lYYlh0an0Iy4LIHHo9UQ==
 
 capture-exit@^2.0.0:
   version "2.0.0"

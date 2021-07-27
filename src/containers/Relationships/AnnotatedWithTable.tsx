@@ -53,7 +53,7 @@ export const AnnotatedWithTable = ({
     data: items = [],
     isFetched: itemsFetched,
     isError: itemsError,
-  } = useCdfItems('files', ids, { enabled: itemsEnabled });
+  } = useCdfItems('files', ids, false, { enabled: itemsEnabled });
 
   if (isError || itemsError) {
     return <Alert type="warning" message="Error fetching files" />;

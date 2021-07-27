@@ -63,11 +63,13 @@ export const FileSmallPreview = ({
   const { data: files } = useCdfItems<FileInfo>(
     'files',
     uniq(fileIds).map(getIdParam),
+    false,
     { enabled: fileIds.length > 0 }
   );
   const { data: assets } = useCdfItems<Asset>(
     'assets',
     uniq(assetIds).map(getIdParam),
+    false,
     { enabled: assetIds.length > 0 }
   );
 

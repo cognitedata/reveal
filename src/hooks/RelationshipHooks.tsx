@@ -119,6 +119,7 @@ export const useInfiniteRelationshipsList = <T extends Resource>(
   const { data: sourceResources = [] } = useCdfItems<T>(
     convertResourceType(type!),
     sourceItems,
+    false,
     {
       enabled: sourceItems.length > 0,
     }
@@ -150,6 +151,7 @@ export const useInfiniteRelationshipsList = <T extends Resource>(
   const { data: targetResources = [] } = useCdfItems<T>(
     convertResourceType(type!),
     targetItems,
+    false,
     {
       enabled: targetItems.length > 0,
     }

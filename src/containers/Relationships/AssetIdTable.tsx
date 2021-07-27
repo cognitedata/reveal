@@ -25,6 +25,7 @@ export const AssetIdTable = ({
   const { data: assets } = useCdfItems<Asset>(
     'assets',
     assetIds.map(id => ({ id })),
+    false,
     { enabled: isItemFetched && !!assetIds && assetIds.length > 0 }
   );
 

@@ -195,6 +195,7 @@ export const FilePreviewOverview = ({
   const { data: files = [] } = useCdfItems<FileInfo>(
     'files',
     fileIds.map(getIdParam),
+    false,
     { enabled: fileIds && fileIds.length > 0 }
   );
 
@@ -202,6 +203,7 @@ export const FilePreviewOverview = ({
   const { data: assets = [] } = useCdfItems<Asset>(
     'assets',
     assetIds.map(getIdParam),
+    false,
     { enabled: assetIds && assetIds.length > 0 }
   );
 
@@ -209,6 +211,7 @@ export const FilePreviewOverview = ({
   const { data: timeseries = [] } = useCdfItems<Timeseries>(
     'timeseries',
     timeseriesIds.map(getIdParam),
+    false,
     { enabled: timeseriesIds && timeseriesIds.length > 0 }
   );
 
@@ -216,6 +219,7 @@ export const FilePreviewOverview = ({
   const { data: events = [] } = useCdfItems<CogniteEvent>(
     'events',
     eventIds.map(getIdParam),
+    false,
     { enabled: eventIds && eventIds.length > 0 }
   );
 
@@ -223,6 +227,7 @@ export const FilePreviewOverview = ({
   const { data: sequences = [] } = useCdfItems<Sequence>(
     'sequences',
     sequenceIds.map(getIdParam),
+    false,
     { enabled: sequenceIds && sequenceIds.length > 0 }
   );
 

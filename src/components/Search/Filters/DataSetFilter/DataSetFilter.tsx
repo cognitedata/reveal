@@ -20,6 +20,7 @@ export const DataSetFilter = ({
   const { data: currentDataSets } = useCdfItems<DataSet>(
     'datasets',
     value || [],
+    false,
     {
       enabled: value && value.length > 0,
     }
