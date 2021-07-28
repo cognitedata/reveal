@@ -6,27 +6,31 @@ import {
   Overline,
   Collapse,
   Pagination,
+  Menu,
+  Icon,
 } from '@cognite/cogs.js';
 import {
   useSelectedAnnotations,
   ProposedCogniteAnnotation,
   useExtractFromCanvas,
 } from '@cognite/react-picture-annotation';
-import { SpacedRow, Divider, InfoGrid, InfoCell } from 'components';
-import { Modal, notification } from 'antd';
+import { Divider, InfoGrid, InfoCell } from 'components';
+import { Modal, notification, Dropdown } from 'antd';
 import {
+  AnnotationStatus,
   CogniteAnnotation,
   convertAnnotationsToEvents,
   hardDeleteAnnotations,
+  updateAnnotations,
 } from '@cognite/annotations';
 import styled from 'styled-components';
 import { useResourceSelector } from 'context/ResourceSelectorContext';
 import {
   ResourceItemState,
   isModelRunning,
-  ResourceType,
   ResourceItem,
   convertResourceType,
+  ResourceType,
 } from 'types';
 import { useCreate } from 'hooks/sdk';
 import { useQueryClient, useMutation } from 'react-query';
@@ -49,8 +53,9 @@ import { useFlag } from '@cognite/react-feature-flags';
 import { SIDEBAR_RESIZE_EVENT } from 'utils/WindowEvents';
 import { ContextualizationData } from './ContextualizationModule';
 import { CreateAnnotationForm } from './CreateAnnotationForm/CreateAnnotationForm';
+import ReviewTagBar from './ReviewTagBar';
 
-const FindSimilarButton = ({
+export const FindSimilarButton = ({
   fileId,
   selectedAnnotation,
 }: {
@@ -99,8 +104,10 @@ const AnnotationPreviewSidebar = ({
 }: Props) => {
   const cancelFindObjects = useDeleteFindObjectsJob();
   const cancelFindSimilar = useDeleteFindSimilarJob();
+
   const findObjectsJobId = useFindObjectsJobId(fileId);
   const findSimilarJobId = useFindSimilarJobId(fileId);
+
   const { data: findObjectsJob } = useJob(findObjectsJobId, 'findobjects');
   const { data: findSimilarJob } = useJob(findSimilarJobId, 'findsimilar');
 
@@ -146,8 +153,14 @@ const AnnotationPreviewSidebar = ({
   const isEditingMode = isPendingAnnotation || editing;
 
   const onSuccess = () => {
-    const invalidate = () =>
-      client.invalidateQueries(['cdf', 'events', 'list']);
+    const invalidate = () => {
+      client.invalidateQueries([
+        'sdk-react-query-hooks',
+        'cdf',
+        'events',
+        'list',
+      ]);
+    };
     invalidate();
     // The sleep shouldn't be necessary, but await (POST /resource
     // {data}) && await(POST /resource/byids) might not return the
@@ -183,6 +196,24 @@ const AnnotationPreviewSidebar = ({
     }
   );
 
+  const { mutate: updateAnnotationStatus } = useMutation(
+    (update: { annotation: CogniteAnnotation; status: AnnotationStatus }) =>
+      updateAnnotations(sdk, [
+        {
+          id: update.annotation.id,
+          annotation: update.annotation,
+          update: {
+            status: {
+              set: update.status,
+            },
+          },
+        },
+      ]),
+    {
+      onSuccess,
+    }
+  );
+
   const onSaveAnnotation = (
     annotation: ProposedCogniteAnnotation | CogniteAnnotation
   ) => {
@@ -209,6 +240,28 @@ const AnnotationPreviewSidebar = ({
         updateEvent(update);
       }
     }
+  };
+
+  const onUpdateAnnotationStatus = (
+    annotation: CogniteAnnotation,
+    status: AnnotationStatus
+  ) => {
+    const isApprove = status === 'verified';
+    Modal.confirm({
+      okText: isApprove ? 'Approve tag' : 'Reject tag',
+      title: 'Are you sure?',
+      content: (
+        <span>
+          Are you sure you want to {isApprove ? 'approve' : 'reject'} this tag
+          for this file? Changes will be saved to CDF.
+        </span>
+      ),
+      onOk: async () => {
+        updateAnnotationStatus({ annotation, status });
+        setSelectedAnnotations([]);
+      },
+      onCancel: () => {},
+    });
   };
 
   const onDeleteAnnotation = (
@@ -316,49 +369,58 @@ const AnnotationPreviewSidebar = ({
         );
       }
     }
+
+    const menuOptions = () => (
+      <Menu>
+        <Menu.Item onClick={() => setEditing(true)}> Edit</Menu.Item>
+        <Menu.Item onClick={() => onDeleteAnnotation(annotation)}>
+          Delete
+        </Menu.Item>
+      </Menu>
+    );
+
     if (!isEditingMode) {
       return (
-        <>
-          <InfoGrid>
-            <InfoCell>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <Title level={5}>{annotation.label} </Title>
-                <Button
-                  icon="Close"
-                  variant="ghost"
-                  onClick={onClose}
-                  style={{ alignSelf: 'flex-end' }}
-                />
+        <InfoGrid>
+          <InfoCell>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+              }}
+            >
+              <Title level={5}>{annotation.label} </Title>
+              <div>
+                <Dropdown overlay={menuOptions}>
+                  <Icon type="MoreOverflowEllipsisVertical" />
+                </Dropdown>
+                <Button icon="Close" variant="ghost" onClick={onClose} />
               </div>
-              <Body level={2}>{annotation.description || 'N/A'}</Body>
-              {extraDetails}
+            </div>
+            <Body level={2}>{annotation.description || 'N/A'}</Body>
+            {extraDetails}
+          </InfoCell>
+          {contextualization && (
+            <InfoCell noBorders>
+              <ReviewTagBar
+                annotation={annotation}
+                onApprove={curAnnotation =>
+                  onUpdateAnnotationStatus(
+                    curAnnotation as CogniteAnnotation,
+                    'verified'
+                  )
+                }
+                onReject={curAnnotation =>
+                  onUpdateAnnotationStatus(
+                    curAnnotation as CogniteAnnotation,
+                    'deleted'
+                  )
+                }
+              />
             </InfoCell>
-            {contextualization && (
-              <InfoCell noBorders>
-                <SpacedRow>
-                  <Button
-                    icon="Edit"
-                    variant="outline"
-                    onClick={() => {
-                      setEditing(true);
-                    }}
-                  />
-                  <Button
-                    variant="outline"
-                    type="danger"
-                    icon="Delete"
-                    onClick={() => onDeleteAnnotation(annotation)}
-                  />
-                  <FindSimilarButton
-                    selectedAnnotation={selectedAnnotation}
-                    fileId={fileId}
-                  />
-                </SpacedRow>
-              </InfoCell>
-            )}
-            <Divider.Horizontal />
-          </InfoGrid>
-        </>
+          )}
+          <Divider.Horizontal />
+        </InfoGrid>
       );
     }
     return <></>;
@@ -380,8 +442,9 @@ const AnnotationPreviewSidebar = ({
     return null;
   }
   return (
-    <div style={{ width: 360, borderLeft: `2px solid ${lightGrey}` }}>
+    <div style={{ width: 360, borderLeft: `1px solid ${lightGrey}` }}>
       <ResourcePreviewSidebar
+        hideTitle
         closable={false}
         item={
           item && {
@@ -456,12 +519,7 @@ const AnnotationPreviewSidebar = ({
               onCancel={
                 isPendingAnnotation ? undefined : () => setEditing(false)
               }
-            >
-              <Divider.Horizontal />
-              <SpacedRow>
-                <FindSimilarButton fileId={fileId} />
-              </SpacedRow>
-            </CreateAnnotationForm>
+            />
           ) : undefined
         }
         onClose={() => setSelectedAnnotations([])}

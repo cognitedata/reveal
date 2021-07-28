@@ -22,7 +22,6 @@ import { SelectableItemProps, SmallPreviewProps } from 'CommonProps';
 import { useSelectionButton } from 'hooks/useSelection';
 
 import { lightGrey } from 'utils/Colors';
-import { Link } from 'react-router-dom';
 import { createLink } from 'utils/URLUtils';
 
 const LIST_ITEM_HEIGHT = 42;
@@ -68,6 +67,7 @@ export const AssetSmallPreview = ({
   selectionMode = 'none',
   isSelected = false,
   onSelect = () => {},
+  hideTitle = false,
 }: {
   assetId: number;
 } & SmallPreviewProps &
@@ -162,7 +162,7 @@ export const AssetSmallPreview = ({
           {extras}
         </div>
       )}
-      {asset.name && (
+      {!hideTitle && asset.name && (
         <InfoCell noPadding noBorders>
           <Title
             level={5}

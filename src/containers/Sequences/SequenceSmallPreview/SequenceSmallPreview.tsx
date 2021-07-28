@@ -23,6 +23,7 @@ export const SequenceSmallPreview = ({
   selectionMode = 'none',
   isSelected = false,
   onSelect = () => {},
+  hideTitle = false,
 }: {
   sequenceId: number;
 } & SmallPreviewProps &
@@ -85,7 +86,7 @@ export const SequenceSmallPreview = ({
           {extras}
         </div>
       )}
-      {sequence.name && (
+      {!hideTitle && sequence.name && (
         <InfoCell noBorders noPadding>
           <Title level={5} style={{ display: 'flex', alignItems: 'center' }}>
             <ResourceIcons.Sequence />

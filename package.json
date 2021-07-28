@@ -8,7 +8,7 @@
   "dependencies": {
     "@babel/runtime": "^7.12.5",
     "@cognite/annotations": "^1.1.0",
-    "@cognite/cogs.js": "^3.10.0",
+    "@cognite/cogs.js": "^3.23.0",
     "@cognite/gcs-browser-upload": "^1.1.0",
     "@cognite/react-feature-flags": "^0.1.0",
     "@cognite/react-picture-annotation": "^1.13.3",

@@ -179,12 +179,12 @@ export const renderCustomHeader = (
         <div className="spacer" />
         <div style={{ width: 80 }}>
           <Select
-            value={{ label: year, value: year }}
+            value={{ label: String(year), value: year }}
             onChange={(value: any) => {
               changeYear((value as { value: number }).value);
             }}
             options={years.map(option => ({
-              label: option,
+              label: String(option),
               value: option,
               isDisabled: isYearDisabled(option),
             }))}

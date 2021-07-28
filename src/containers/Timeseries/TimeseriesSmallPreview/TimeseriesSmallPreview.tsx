@@ -25,6 +25,7 @@ export const TimeseriesSmallPreview = ({
   selectionMode = 'none',
   isSelected = false,
   onSelect = () => {},
+  hideTitle = false,
 }: {
   timeseriesId: number;
 } & SmallPreviewProps &
@@ -81,7 +82,7 @@ export const TimeseriesSmallPreview = ({
           {extras}
         </div>
       )}
-      {timeseries.name && (
+      {!hideTitle && timeseries.name && (
         <InfoCell noBorders noPadding>
           <Title level={5} style={{ display: 'flex', alignItems: 'center' }}>
             <ResourceIcons.Timeseries />

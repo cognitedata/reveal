@@ -31,6 +31,7 @@ export const FileSmallPreview = ({
   selectionMode = 'none',
   isSelected = false,
   onSelect = () => {},
+  hideTitle = false,
 }: {
   fileId: number;
 } & SmallPreviewProps &
@@ -114,7 +115,7 @@ export const FileSmallPreview = ({
           {extras}
         </div>
       )}
-      {file.name && (
+      {!hideTitle && file.name && (
         <InfoCell noBorders noPadding>
           <Title level={5} style={{ display: 'flex', alignItems: 'center' }}>
             <ResourceIcons.File />
