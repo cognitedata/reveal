@@ -50,7 +50,9 @@ const AppRoutes = () => {
   const project = useProject();
   const [initializing, setInitializing] = useState(false);
   const [authenticated, setAuthenticated] = useState(false);
-  const { isFetched: firebaseDone, isError } = useFirebaseInit(!initializing);
+  const { isFetched: firebaseDone, isError } = useFirebaseInit(
+    !initializing && authenticated
+  );
 
   const foo = getSidecar();
   const [cluster] = useCluster();
