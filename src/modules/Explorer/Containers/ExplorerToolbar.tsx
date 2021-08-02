@@ -1,3 +1,4 @@
+/* eslint-disable @cognite/no-number-z-index */
 import React from 'react';
 import { Button, SegmentedControl, Title, Tooltip } from '@cognite/cogs.js';
 import styled from 'styled-components';
@@ -90,6 +91,7 @@ export const ExplorerToolbar = ({
         <SegmentedControl
           onButtonClicked={onViewChange}
           currentKey={currentView}
+          style={{ zIndex: 1 }}
         >
           <SegmentedControl.Button
             key="list"
@@ -125,6 +127,7 @@ export const ExplorerToolbar = ({
 const TitleBar = styled.div`
   display: grid;
   grid-template-columns: auto auto;
+  z-index: 1;
 `;
 const Left = styled.div`
   align-self: center;
