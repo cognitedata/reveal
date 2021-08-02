@@ -17,7 +17,7 @@
     "apiref:generate": "typedoc --entryPoints ../viewer/src/index.ts --entryPoints ../viewer/src/tools.ts --listInvalidSymbolLinks",
     "apiref:concat": "concat-md ./generated --startTitleLevelAt 1 --decrease-title-levels --dir-name-as-title > \"./docs/API Reference.md\"",
     "replace-1.x:copy-docs": "yarn apiref && rimraf versioned_sidebars versioned_docs versions.json && yarn docusaurus docs:version 1.x",
-    "replace-1.x:update-sdk": "yarn replace \"\\'@cognite/sdk\\'\" \"''@cognite/sdk-1.x''\" versioned_docs/version-1.x/ --include '*.ts?' -r",
+    "replace-1.x:update-sdk": "yarn replace \"\\'@cognite/sdk\\'\" \"''@cognite/sdk-1.x''\" versioned_docs/version-1.x/ --include '*.ts*' -r",
     "replace-1.x:update-reveal": "yarn replace \"\\'@cognite/reveal\\'\" \"''@cognite/reveal-1.x''\" versioned_docs/version-1.x/ --include '*.ts*' -r",
     "replace-1.x": "yarn replace-1.x:copy-docs && yarn replace-1.x:update-sdk && yarn replace-1.x:update-reveal"
   },

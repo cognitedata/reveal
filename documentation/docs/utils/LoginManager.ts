@@ -16,6 +16,7 @@ class LoginManager {
   listeners: Array<(isLoggedIn: boolean) => void>;
 
   constructor() {
+    console.log('LoginManager', env.project);
     this.listeners = [];
     // might be expired so it's not a guarantee, but good default state
     this.isLoggedIn = !!accessToken;
@@ -31,7 +32,7 @@ class LoginManager {
       // id_token in url means we already redirected from auth api
       // so it's safe to mark as logged in, when API call will happen
       // inside demo component - it will be authenticated automatically
-      if (s && s.project !== env.project) {
+      if (!s || s.project !== env.project) {
         sessionStorage.removeItem(tokenCacheKey);
         this.isLoggedIn = false;
       } else {
@@ -58,6 +59,7 @@ class LoginManager {
   }
 
   async authenticate() {
+    debugger;
     await this.client.loginWithOAuth({
       type: 'CDF_OAUTH',
       options: {
@@ -69,6 +71,7 @@ class LoginManager {
         },
       }
     });
+    this.client.setProject(env.project);
 
     await this.client
       .authenticate()
