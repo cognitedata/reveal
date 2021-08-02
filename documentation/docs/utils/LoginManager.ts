@@ -16,7 +16,6 @@ class LoginManager {
   listeners: Array<(isLoggedIn: boolean) => void>;
 
   constructor() {
-    console.log('LoginManager', env.project);
     this.listeners = [];
     // might be expired so it's not a guarantee, but good default state
     this.isLoggedIn = !!accessToken;
