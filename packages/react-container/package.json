@@ -6,7 +6,7 @@
   "module": "dist/index.esm.js",
   "browser": "dist/index.js",
   "typings": "dist/index.d.ts",
-  "repository": "https://github.com/cognitedata/applications/packages/react-container",
+  "repository": "https://github.com/cognitedata/applications/tree/master/packages/react-container",
   "license": "UNLICENSED",
   "author": "Cognite AS",
   "files": [
