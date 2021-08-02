@@ -13,7 +13,8 @@
     "lint-fast": "pretty-quick --staged",
     "prepare": "husky install",
     "generate": "plop --plopfile generators/index.ts",
-    "update-helpers": "for i in `bazel query 'kind(generate_package_json_helpers, //...)'`; do bazel run $i; done"
+    "update-helpers": "for i in `bazel query 'kind(generate_package_json_helpers, //...)'`; do bazel run $i; done",
+    "deploy": "./scripts/deploy.sh"
   },
   "dependencies": {
     "@cognite/cogs.js": "^3.29.10",

@@ -92,7 +92,7 @@ In order to release a new version please follow the steps below:
 - Start on a branch you want to release from (most cases is master), make sure it is checked out and up-to-date locally.
 - Run the following helper command which will create and push branches.
 
-  `npx @cognite/fas-utils cut-release --release-branch-prefix release-<your-app>- --package-path apps/<your-app> --cut-version x.y.z`
+  `yarn deploy <your-app> <version x.y.z>`
 
 - Add `--no-dry-run` to the above command if you want to actually make the changes. By default, it will just output what would have been changed without performing any of the actual changes.
 - This command creates a commit with the updated version in `package.json` on two branches, `bump-version/*` and `release-prefix-*`, pushes them to GitHub, and creates pull requests from the branches into master if you have GitHub CLI set up.

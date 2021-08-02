@@ -27,7 +27,8 @@
     "testcafe:start-idp": "./scripts/start-fake-idp.sh",
     "testcafe:run-live": "./scripts/testcafe-run-live.sh",
     "testcafe:bazel-run-live": "ibazel run :testcafe",
-    "update-helpers": "bazel run :generate_package_json_helpers"
+    "update-helpers": "bazel run :generate_package_json_helpers",
+    "deploy": "cd ../.. && ./scripts/deploy.sh react-demo-app"
   },
   "jest": {
     "coveragePathIgnorePatterns": [

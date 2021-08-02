@@ -24,7 +24,8 @@
     "storybook:bazel": "ibazel run :start-storybook",
     "build-storybook": "../../node_modules/.bin/build-storybook",
     "build-storybook:bazel": "bazel build :storybook-static",
-    "update-helpers": "bazel run :generate_package_json_helpers"
+    "update-helpers": "bazel run :generate_package_json_helpers",
+    "deploy": "cd ../.. && ./scripts/deploy.sh tenant-selector"
   },
   "jest": {
     "coveragePathIgnorePatterns": [
