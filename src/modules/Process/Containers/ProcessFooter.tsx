@@ -1,3 +1,4 @@
+/* eslint-disable @cognite/no-number-z-index */
 import React, { useState } from 'react';
 import { Modal } from 'antd';
 import { Button } from '@cognite/cogs.js';
@@ -95,6 +96,7 @@ export const ProcessFooter = () => {
           <Button
             onClick={() => setModalOpen(true)}
             disabled={!processFiles.length || !isPollingFinished}
+            style={{ zIndex: 1 }}
           >
             Finish session
           </Button>
@@ -103,6 +105,7 @@ export const ProcessFooter = () => {
           <Button
             onClick={handleSkipClick}
             disabled={!isPollingFinished || !allFilesStatus}
+            style={{ zIndex: 1 }}
           >
             Finish session without processing
           </Button>

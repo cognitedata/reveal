@@ -1,3 +1,4 @@
+/* eslint-disable @cognite/no-number-z-index */
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
@@ -10,15 +11,6 @@ import {
   workflowRoutes,
 } from 'src/modules/Workflow/workflowRoutes';
 import { useHistory } from 'react-router-dom';
-
-const Container = styled.div`
-  width: 400px;
-  border-left: 1px solid #d9d9d9;
-  box-sizing: content-box;
-  flex-shrink: 0;
-  height: 100%;
-  overflow: auto;
-`;
 
 export const ProcessFileDetailsContainer = () => {
   const queryClient = new QueryClient();
@@ -58,3 +50,13 @@ export const ProcessFileDetailsContainer = () => {
   }
   return null;
 };
+
+const Container = styled.div`
+  width: 400px;
+  border-left: 1px solid #d9d9d9;
+  box-sizing: content-box;
+  flex-shrink: 0;
+  height: 100%;
+  overflow: auto;
+  z-index: 1;
+`;
