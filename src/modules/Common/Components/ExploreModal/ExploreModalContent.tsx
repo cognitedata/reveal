@@ -1,6 +1,6 @@
 import React from 'react';
 import { FileFilterProps } from '@cognite/cdf-sdk-singleton';
-import { Button, Title, Tooltip } from '@cognite/cogs.js';
+import { Body, Button, Title, Tooltip } from '@cognite/cogs.js';
 import { ExplorationSearchBar } from 'src/modules/Explorer/Containers/ExplorationSearchBar';
 import { ExplorerSearchResults } from 'src/modules/Explorer/Containers/ExplorerSearchResults';
 import styled from 'styled-components';
@@ -48,7 +48,7 @@ export const ExploreModalContent = ({
       <FilterBar>
         {/* TODO(VIS-276): Add filters */}
         <ExplorationSearchBar searchString={query} onChange={onSearch} />
-        {/* TODO(VIS-277): Add selected count */}
+        <Body level={2}>{selectedCount} selected</Body>
       </FilterBar>
       <ExploreTableContainer>
         <ExplorerSearchResults
