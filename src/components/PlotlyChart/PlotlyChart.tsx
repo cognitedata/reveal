@@ -80,6 +80,12 @@ const PlotlyChartComponent = ({
   const [dragmode, setDragmode] = useState<'zoom' | 'pan'>('pan');
   const [yAxisLocked, setYAxisLocked] = useState<boolean>(true);
 
+  const enabledTimeseries = chart?.timeSeriesCollection?.filter(
+    (ts) => ts.enabled
+  ).length;
+  const enabledWorkflows = chart?.workflowCollection?.filter((wf) => wf.enabled)
+    .length;
+
   const queries =
     chart?.timeSeriesCollection?.map(({ tsExternalId }) => ({
       items: [{ externalId: tsExternalId }],
@@ -252,6 +258,8 @@ const PlotlyChartComponent = ({
         client,
         chart?.timeSeriesCollection?.length,
         chart?.workflowCollection?.length,
+        enabledTimeseries,
+        enabledWorkflows,
       ]
     ),
     1000
@@ -303,10 +311,10 @@ const PlotlyChartComponent = ({
 
   seriesData.forEach(({ unit, range, series }, index) => {
     const { color, datapoints } = series[0];
+
     /**
      * For some reason plotly doesn't like that you overwrite the range input (doing this the wrong way?)
      */
-
     const serializedYRange = range
       ? JSON.parse(JSON.stringify(range))
       : undefined;

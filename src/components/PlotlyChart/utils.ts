@@ -21,6 +21,7 @@ export type SeriesInfo = {
 };
 
 export type SeriesData = {
+  enabled?: boolean;
   range: number[] | undefined;
   unit: string | undefined;
   series: SeriesInfo[];
@@ -43,8 +44,8 @@ export function calculateSeriesData(
 ): SeriesData[] {
   const seriesData = [
     ...timeSeriesCollection
-      .filter((t) => t.enabled)
       .map((t, i) => ({
+        enabled: t.enabled,
         range: t.range,
         unit: units.find(
           (unitOption) => unitOption.value === t.preferredUnit?.toLowerCase()
@@ -65,10 +66,11 @@ export function calculateSeriesData(
             mode: t.displayMode,
           },
         ],
-      })),
+      }))
+      .filter((t) => t.enabled),
     ...workflowCollection
-      .filter((t) => t.enabled)
       .map((workflow, i) => ({
+        enabled: workflow.enabled,
         range: workflow.range,
         unit: units.find(
           (unitOption) =>
@@ -93,7 +95,8 @@ export function calculateSeriesData(
             ),
           },
         ],
-      })),
+      }))
+      .filter((t) => t.enabled),
   ];
 
   if (mergeUnits) {
@@ -104,6 +107,7 @@ export function calculateSeriesData(
         mergedSeries.push(...seriesGrouppedByUnit[unit]);
       } else {
         mergedSeries.push({
+          enabled: true,
           unit,
           range: calculateMaxRange(seriesGrouppedByUnit[unit]),
           series: seriesGrouppedByUnit[unit].reduce(
