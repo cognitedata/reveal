@@ -275,6 +275,9 @@ export const selectFileById = createSelector(
   }
 );
 
+export const selectFileCount = (state: State): number =>
+  state.files.allIds.length;
+
 // state utility functions
 
 const deleteFileById = (state: State, id: number) => {

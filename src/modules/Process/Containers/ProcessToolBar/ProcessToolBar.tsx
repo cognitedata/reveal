@@ -24,6 +24,7 @@ import {
   addFiles,
   FileState,
   selectAllFiles,
+  selectFileCount,
 } from 'src/modules/Common/filesSlice';
 import { VisionAPIType } from 'src/api/types';
 import { getContainer } from 'src/utils';
@@ -51,6 +52,10 @@ export const ProcessToolBar = () => {
   const isPollingFinished = useSelector((state: RootState) => {
     return selectIsPollingComplete(state.processSlice);
   });
+
+  const processFileCount = useSelector(({ filesSlice }: RootState) =>
+    selectFileCount(filesSlice)
+  );
 
   const showDrawer = useSelector(
     (state: RootState) => state.processSlice.showFileMetadataDrawer
@@ -187,6 +192,7 @@ export const ProcessToolBar = () => {
       <FileUploadModal
         onUploadSuccess={onUploadSuccess}
         showModal={showFileUploadModal}
+        processFileCount={processFileCount}
         onCancel={() =>
           dispatch(setProcessViewFileUploadModalVisibility(false))
         }
@@ -205,6 +211,7 @@ export const ProcessToolBar = () => {
           dispatch(setSelectFromExploreModalVisibility(false))
         }
         onUseFiles={handleUseFiles}
+        processFileCount={processFileCount}
       />
 
       <Container>
