@@ -99,6 +99,11 @@ const ChartList = () => {
       dateTo: dateTo.toJSON(),
       public: false,
       version: CHART_VERSION,
+      settings: {
+        showYAxis: true,
+        showMinMax: false,
+        showGridlines: true,
+      },
     };
     await updateChart(newChart);
 

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import get from 'lodash/get';
 import styled from 'styled-components/macro';
 import {
   Button,
@@ -53,6 +54,12 @@ type ChartViewProps = {
   chartId: string;
 };
 
+const CHART_SETTINGS_KEYS = {
+  SHOW_Y_AXIS: 'showYAxis',
+  SHOW_MIN_MAX: 'showMinMax',
+  SHOW_GRIDLINES: 'showGridlines',
+};
+
 const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   const [query = '', setQuery] = useSearchParam(SEARCH_KEY, false);
 
@@ -66,14 +73,15 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   >();
 
   const [showSearch, setShowSearch] = useState(false);
-  const [showYAxis, setShowYAxis] = useState(true);
   const [mergeUnits, setMergeUnits] = useState(false);
-  const [showMinMax, setShowMinMax] = useState(false);
-  const [showGridlines, setShowGridlines] = useState(true);
   const [workspaceMode, setWorkspaceMode] = useState<Modes>('workspace');
   const [stackedMode, setStackedMode] = useState<boolean>(false);
   const [editorTimer, setEditorTimer] = useState<ITimer | undefined>();
   const isWorkspaceMode = workspaceMode === 'workspace';
+
+  const showYAxis = get(chart, 'settings.showYAxis', true);
+  const showMinMax = get(chart, 'settings.showMinMax', false);
+  const showGridlines = get(chart, 'settings.showGridlines', true);
 
   useEffect(() => {
     trackUsage('PageView.ChartView', { isOwner: chart?.user === login?.id });
@@ -201,6 +209,20 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     setQuery('');
     trackUsage('ChartView.CloseSearch');
     setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
+  };
+
+  const handleSettingsToggle = async (key: string, value: boolean) => {
+    if (chart) {
+      updateChart({
+        ...chart,
+        settings: {
+          showYAxis,
+          showMinMax,
+          showGridlines,
+          [key]: value,
+        },
+      });
+    }
   };
 
   const selectedSourceItem = [
@@ -374,7 +396,12 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                 icon="GridLines"
                 type={showGridlines ? 'link' : 'ghost'}
                 aria-label="view"
-                onClick={() => setShowGridlines(!showGridlines)}
+                onClick={() =>
+                  handleSettingsToggle(
+                    CHART_SETTINGS_KEYS.SHOW_GRIDLINES,
+                    !showGridlines
+                  )
+                }
                 style={{ marginLeft: 4 }}
               />
             </Tooltip>
@@ -383,7 +410,12 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                 icon="Timeseries"
                 type={showMinMax ? 'link' : 'ghost'}
                 aria-label="view"
-                onClick={() => setShowMinMax(!showMinMax)}
+                onClick={() =>
+                  handleSettingsToggle(
+                    CHART_SETTINGS_KEYS.SHOW_MIN_MAX,
+                    !showMinMax
+                  )
+                }
                 style={{ marginLeft: 4 }}
               />
             </Tooltip>
@@ -396,7 +428,12 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                       <Switch
                         name="toggleYAxis"
                         value={showYAxis}
-                        onChange={() => setShowYAxis(!showYAxis)}
+                        onChange={() =>
+                          handleSettingsToggle(
+                            CHART_SETTINGS_KEYS.SHOW_Y_AXIS,
+                            !showYAxis
+                          )
+                        }
                         style={{ marginBottom: 15 }}
                       >
                         Show Y axes

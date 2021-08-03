@@ -1,6 +1,12 @@
 import { Node, Connection } from '@cognite/connect';
 import { FunctionComponent } from 'react';
 
+type ChartSettings = {
+  showYAxis: boolean;
+  showMinMax: boolean;
+  showGridlines: boolean;
+};
+
 export type Chart = {
   version: number;
   id: string;
@@ -18,6 +24,7 @@ export type Chart = {
   selectedDateRange?: string;
   public?: boolean;
   dirty?: boolean;
+  settings?: ChartSettings;
 };
 
 export type ChartTimeSeries = {
