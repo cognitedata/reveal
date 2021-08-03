@@ -4,7 +4,7 @@ import { Body, Button, Title, Tooltip } from '@cognite/cogs.js';
 import { ExplorationSearchBar } from 'src/modules/Explorer/Containers/ExplorationSearchBar';
 import { ExplorerSearchResults } from 'src/modules/Explorer/Containers/ExplorerSearchResults';
 import styled from 'styled-components';
-import { MAX_SELECT_COUNT } from 'src/constants/ExplorerConstants';
+import { MAX_CID_FILE_COUNT } from 'src/constants/CIDConstants';
 import { TableDataItem } from '../../types';
 
 export type ExploreModalContentProps = {
@@ -18,6 +18,7 @@ export type ExploreModalContentProps = {
   selectedCount: number;
   filter: FileFilterProps;
   setFilter: (newFilter: FileFilterProps) => void;
+  processFileCount: number;
 };
 
 export const ExploreModalContent = ({
@@ -33,12 +34,12 @@ export const ExploreModalContent = ({
   // TODO(VIS-276): Add filters
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   setFilter,
+  processFileCount,
 }: ExploreModalContentProps) => {
-  const maxSelectCount = MAX_SELECT_COUNT;
+  const maxSelectCount = MAX_CID_FILE_COUNT;
   const count = selectedCount ? `[${selectedCount}]` : null;
   // TODO(VIS-278): Calculate the count with total number of items in the review page
-  const inLimit =
-    selectedCount && maxSelectCount ? selectedCount <= maxSelectCount : true;
+  const inLimit = processFileCount + selectedCount <= maxSelectCount;
   const exceededLimitMessage = `Total number of files that can be processed simultaneously is ${maxSelectCount}`;
   return (
     <>

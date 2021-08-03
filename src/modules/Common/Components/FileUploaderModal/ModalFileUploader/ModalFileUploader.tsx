@@ -16,6 +16,7 @@ import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 import { getLink, workflowRoutes } from 'src/modules/Workflow/workflowRoutes';
 import * as UPLODER_CONST from 'src/constants/UploderConstants';
+import { MAX_CID_FILE_COUNT } from 'src/constants/CIDConstants';
 import { sleep } from '../../FileUploader/utils';
 import { getMIMEType } from '../../FileUploader/utils/FileUtils';
 import { ModalFilePicker } from '../ModalFilePicker/ModalFilePicker';
@@ -66,6 +67,7 @@ export type ModalFileUploaderProps = {
   initialUploadedFiles?: FileInfo[]; // feels a bit lame, but not sure about other way to keep uploaded items in the list between remounts
   assetIds?: number[];
   enableProcessAfter?: boolean;
+  processFileCount?: number;
   onUploadSuccess?: (file: FileInfo) => void;
   onFileListChange?: (fileList: CogsFileInfo[]) => void;
   onUploadFailure?: (error: string) => void;
@@ -154,6 +156,7 @@ const updateUploadStatus = (fileList: CogsFileInfo[]) => {
 export const ModalFileUploader = ({
   assetIds,
   enableProcessAfter = false,
+  processFileCount = 0,
   onUploadSuccess = () => {},
   onUploadFailure = alert,
   onCancel = () => {},
@@ -221,10 +224,19 @@ export const ModalFileUploader = ({
   };
 
   const startOrResumeAllUploads = () => {
+    const count = fileList.length + processFileCount;
     if (fileList.length > UPLODER_CONST.MAX_FILE_COUNT) {
       onUploadFailure(
         `You exceeded the upload limit for number of files by ${
           fileList.length - UPLODER_CONST.MAX_FILE_COUNT
+        }. Please remove some files for uploading.`
+      );
+      return;
+    }
+    if (count > MAX_CID_FILE_COUNT) {
+      onUploadFailure(
+        `You exceeded the number files that can be processed simultaneously by ${
+          count - MAX_CID_FILE_COUNT
         }. Please remove some files for uploading.`
       );
       return;
