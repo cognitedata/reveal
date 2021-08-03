@@ -13,11 +13,14 @@ import { useMetrics } from 'utils/metrics';
 import { deleteLayoutItems } from 'store/layout/thunks';
 
 interface Props {
-  suite: Suite;
-  board: Board;
+  suiteItem: Suite;
+  boardItem: Board;
 }
 
-const DeleteBoard: React.FC<Props> = ({ board, suite }: Props) => {
+const DeleteBoard: React.FC<Props> = ({
+  boardItem: board,
+  suiteItem: suite,
+}: Props) => {
   const client = useContext(CdfClientContext);
   const apiClient = useContext(ApiClientContext);
   const dispatch = useDispatch<RootDispatcher>();

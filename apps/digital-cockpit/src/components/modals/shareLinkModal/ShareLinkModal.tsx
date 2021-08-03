@@ -15,12 +15,15 @@ import * as Sentry from '@sentry/browser';
 import assign from 'lodash/assign';
 
 interface Props {
-  board: Board;
-  suite: Suite;
+  boardItem: Board;
+  suiteItem: Suite;
 }
 const ModalWidth = 528;
 
-const ShareLinkModal: React.FC<Props> = ({ board, suite }: Props) => {
+const ShareLinkModal: React.FC<Props> = ({
+  boardItem: board,
+  suiteItem: suite,
+}: Props) => {
   const [copySuccess, setCopySuccess] = useState<boolean>(false);
   const ref = useRef<HTMLInputElement>(null);
   const dispatch = useDispatch<RootDispatcher>();

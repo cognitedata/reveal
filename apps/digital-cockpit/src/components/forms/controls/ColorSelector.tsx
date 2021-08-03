@@ -2,12 +2,9 @@
 import React from 'react';
 import { Select } from '@cognite/cogs.js';
 import isEqual from 'lodash/isEqual';
-import { useDispatch, useSelector } from 'react-redux';
-import { suiteState } from 'store/forms/selectors';
-import { setSuite } from 'store/forms/actions';
-import { CustomLabel, CustomSelectContainer } from 'components/modals/elements';
+import { CustomLabel } from 'components/forms/elements';
+import { FieldProps } from 'formik';
 import { OptionTypeBase } from 'types/core';
-import { RootDispatcher } from 'store/types';
 
 export const options = [
   { value: '#DBE1FE', label: 'Blue' },
@@ -49,37 +46,43 @@ const colourStyles = {
   }),
 };
 
-const ColorSelector: React.FC = () => {
-  const suite = useSelector(suiteState);
-  const dispatch = useDispatch<RootDispatcher>();
+type Props = {
+  title: string;
+};
 
-  const handleOnChange = (selectedOption: OptionTypeBase) => {
-    dispatch(
-      setSuite({
-        ...suite,
-        color: selectedOption.value || options[0].value,
-      })
-    );
+const ColorSelector: React.FC<Props & FieldProps<string | undefined>> = ({
+  title,
+  field: { name, value, onBlur },
+  form: { setFieldValue, setFieldTouched },
+}) => {
+  const suiteColorValue =
+    options.find((option) => isEqual(option.value, value)) || options[0];
+
+  const handleChange = (selectedOption: OptionTypeBase) => {
+    setFieldValue(name, selectedOption.value || options[0].value);
   };
 
-  const suiteColorValue =
-    options.find((option) => isEqual(option.value, suite.color)) || options[0];
+  const handleBlur = (e: any) => {
+    setFieldTouched(name, true);
+    onBlur(e);
+  };
 
   return (
-    <CustomSelectContainer>
-      <CustomLabel>Select color</CustomLabel>
+    <>
+      <CustomLabel>{title}</CustomLabel>
       <Select
         theme="grey"
-        placeholder="Select color"
-        name="color"
+        placeholder={title}
+        name={name}
         value={suiteColorValue}
-        onChange={handleOnChange}
+        onChange={handleChange}
+        onBlur={handleBlur}
         options={options}
         styles={colourStyles}
         maxMenuHeight={150}
         closeMenuOnSelect
       />
-    </CustomSelectContainer>
+    </>
   );
 };
 

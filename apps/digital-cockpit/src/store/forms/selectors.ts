@@ -1,17 +1,5 @@
-import { Suite } from 'store/suites/types';
 import { StoreState } from 'store/types';
-import {
-  BoardState,
-  FilesUploadState,
-  FormState,
-  ImageFileState,
-} from './types';
-
-export const isValid = (state: StoreState): boolean => state.form.valid;
-
-export const suiteState = (state: StoreState): Suite => state.form.suite;
-
-export const boardState = (state: StoreState): BoardState => state.form.board;
+import { FilesUploadState, FormState, ImageFileState } from './types';
 
 export const formState = (state: StoreState): FormState => state.form;
 

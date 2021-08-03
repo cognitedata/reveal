@@ -136,9 +136,9 @@ const SuiteOverview: React.FC = () => {
 
   const handleOpenModal = (
     modalType: ModalType,
-    modalProps: { dataItem: Suite }
+    modalProps: { suiteItem: Suite }
   ) => {
-    const { dataItem: suiteItem } = modalProps;
+    const { suiteItem } = modalProps;
     metrics.track(`Select_${modalType}`, {
       suiteKey: suiteItem.key,
       suite: suiteItem.title,
@@ -152,7 +152,7 @@ const SuiteOverview: React.FC = () => {
       <Title as={StyledTitle} level={5}>
         {title}
       </Title>
-      {canEdit && <SuiteMenu dataItem={suite} />}
+      {canEdit && <SuiteMenu suiteItem={suite} />}
     </>
   );
 
@@ -165,7 +165,7 @@ const SuiteOverview: React.FC = () => {
           type="ghost"
           icon="PlusCompact"
           iconPlacement="left"
-          onClick={() => handleOpenModal('AddBoard', { dataItem: suite })}
+          onClick={() => handleOpenModal('EditBoard', { suiteItem: suite })}
         >
           Add board
         </Button>

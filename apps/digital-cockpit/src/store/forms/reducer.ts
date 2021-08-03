@@ -1,17 +1,9 @@
 import { CogniteExternalId, FileInfo } from '@cognite/sdk';
-import { Board } from 'store/suites/types';
 import { createReducer } from 'typesafe-actions';
-import {
-  getEmptySuite,
-  updateSuite,
-  deleteBoardFromSuite,
-  updateBoardWithFileId,
-} from 'utils/forms';
 import {
   FormActionTypes,
   FormState,
   FormRootAction,
-  FileUploadResult,
   FileUpdateError,
   ImageFileState,
   FilesUploadState,
@@ -29,71 +21,12 @@ const getFilesInitialState = (): FilesUploadState => ({
 });
 
 const getInitialState = (): FormState => ({
-  valid: false,
-  suite: getEmptySuite(),
-  board: {},
   imageFile: getImageFileInitialState(),
   files: getFilesInitialState(),
   saving: false,
 });
 
 export const FormReducer = createReducer(getInitialState())
-  .handleAction(
-    FormActionTypes.SET_VALIDITY,
-    (state: FormState, action: FormRootAction) => ({
-      ...state,
-      valid: action.payload,
-    })
-  )
-  .handleAction(
-    FormActionTypes.SET_SUITE,
-    (state: FormState, action: FormRootAction) => ({
-      ...state,
-      suite: action.payload,
-    })
-  )
-  .handleAction(
-    FormActionTypes.SET_BOARD,
-    (state: FormState, action: FormRootAction) => ({
-      ...state,
-      board: action.payload,
-      imageFile: getImageFileInitialState(),
-    })
-  )
-  .handleAction(
-    FormActionTypes.ADD_BOARD,
-    (state: FormState, action: FormRootAction) => ({
-      ...state,
-      suite: {
-        ...state.suite,
-        boards:
-          state.suite.boards.concat({
-            ...(state.board as Board),
-            key: action.payload as string, // new key
-          }) || [],
-      },
-      imageFile: getImageFileInitialState(),
-    })
-  )
-  .handleAction(FormActionTypes.UPDATE_BOARD, (state: FormState) => ({
-    ...state,
-    suite: updateSuite(state.suite, state.board as Board),
-    board: {},
-    imageFile: getImageFileInitialState(),
-  }))
-  .handleAction(
-    FormActionTypes.DELETE_BOARD,
-    (state: FormState, action: FormRootAction) => ({
-      ...state,
-      suite: deleteBoardFromSuite(state.suite, action.payload as string),
-      board: !(state.board as Board).key ? state.board : {},
-    })
-  )
-  .handleAction(FormActionTypes.CLEAR_BOARD_FORM, (state: FormState) => ({
-    ...state,
-    board: {},
-    imageFile: getImageFileInitialState(),
-  }))
   .handleAction(FormActionTypes.CLEAR_FORM, () => ({
     ...getInitialState(),
   }))
@@ -138,16 +71,6 @@ export const FormReducer = createReducer(getInitialState())
     })
   )
   .handleAction(
-    FormActionTypes.FILE_UPLOADED,
-    (state: FormState, action: FormRootAction) => ({
-      ...state,
-      suite: updateBoardWithFileId(
-        state.suite,
-        action.payload as FileUploadResult
-      ),
-    })
-  )
-  .handleAction(
     FormActionTypes.FILE_UPLOAD_ERROR,
     (state: FormState, action: FormRootAction) => ({
       ...state,
@@ -188,16 +111,6 @@ export const FormReducer = createReducer(getInitialState())
         deleteQueue: state.files.deleteQueue.filter(
           (item) => item !== (action.payload as CogniteExternalId)
         ),
-      },
-    })
-  )
-  .handleAction(
-    FormActionTypes.FILE_EXCLUDE_FROM_BOARD,
-    (state: FormState) => ({
-      ...state,
-      board: {
-        ...state.board,
-        imageFileId: '',
       },
     })
   )

@@ -4,33 +4,34 @@ import { RootDispatcher } from 'store/types';
 import { ApiClient, CdfClient } from 'utils';
 
 import { insertSuite } from 'store/suites/thunks';
-import { Board, Suite } from 'store/suites/types';
+import { Suite } from 'store/suites/types';
 import { setHttpError } from 'store/notification/thunks';
 import * as Sentry from '@sentry/browser';
 import { setError } from 'store/notification/actions';
 import { deleteLayoutItems } from 'store/layout/thunks';
+import { updateBoardWithFileId } from 'utils/forms';
 import * as actions from './actions';
-import { BoardState } from './types';
 
-export function setBoardState(client: CdfClient, board: BoardState) {
+export function updateFileInfoState(
+  client: CdfClient,
+  imageFileId?: CogniteExternalId
+) {
   return async (dispatch: RootDispatcher) => {
-    const { imageFileId } = board as Board;
     if (imageFileId) {
       dispatch(retrieveFileInfo(client, imageFileId));
     } else {
       dispatch(actions.clearFile());
     }
-    dispatch(actions.setBoard(board));
   };
 }
 
 type SaveFormProps = {
-  client: CdfClient;
+  client?: CdfClient;
   apiClient: ApiClient;
   suite: Suite;
-  filesUploadQueue: Map<string, File>;
-  filesDeleteQueue: CogniteExternalId[];
-  layoutDeleteQueue: CogniteExternalId[];
+  filesUploadQueue?: Map<string, File>;
+  filesDeleteQueue?: CogniteExternalId[];
+  layoutDeleteQueue?: CogniteExternalId[];
   dataSetId?: CogniteInternalId;
 };
 
@@ -45,10 +46,10 @@ export function saveForm({
 }: SaveFormProps) {
   return async (dispatch: RootDispatcher) => {
     dispatch(actions.formSaving());
-    if (filesDeleteQueue?.length) {
+    if (filesDeleteQueue?.length && client) {
       await dispatch(deleteFiles(client, filesDeleteQueue));
     }
-    if (filesUploadQueue.size) {
+    if (filesUploadQueue?.size && client) {
       if (!dataSetId) {
         dispatch(setError(['Cannot upload image files', 'Missing DataSetId']));
         Sentry.captureMessage(
@@ -56,7 +57,9 @@ export function saveForm({
           Sentry.Severity.Error
         );
       } else {
-        await dispatch(uploadFiles(client, filesUploadQueue, dataSetId));
+        await dispatch(
+          uploadFiles({ client, filesUploadQueue, dataSetId, suite })
+        );
       }
     }
     await dispatch(insertSuite(apiClient, suite));
@@ -67,11 +70,19 @@ export function saveForm({
   };
 }
 
-function uploadFiles(
-  client: CdfClient,
-  filesUploadQueue: Map<string, File>,
-  dataSetId: CogniteInternalId
-) {
+type UploadFilesProps = {
+  suite: Suite;
+  client: CdfClient;
+  filesUploadQueue: Map<string, File>;
+  dataSetId: CogniteInternalId;
+};
+
+function uploadFiles({
+  suite,
+  client,
+  filesUploadQueue,
+  dataSetId,
+}: UploadFilesProps) {
   return async (dispatch: RootDispatcher) => {
     dispatch(actions.filesUpload());
     // eslint-disable-next-line no-restricted-syntax
@@ -80,12 +91,10 @@ function uploadFiles(
       const { externalId } = fileInfo;
       try {
         await uploadFile(client, fileInfo, file);
-        dispatch(
-          actions.fileUploaded({
-            boardKey,
-            fileExternalId: externalId as string,
-          })
-        );
+        updateBoardWithFileId(suite, {
+          boardKey,
+          fileExternalId: externalId as CogniteExternalId,
+        });
       } catch (e) {
         dispatch(actions.fileUploadError({ boardKey, error: e?.message }));
         dispatch(setHttpError(`Failed to upload file ${externalId}`, e));

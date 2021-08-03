@@ -1,28 +1,7 @@
 import { CogniteExternalId, FileInfo } from '@cognite/sdk';
-import { Suite } from 'store/suites/types';
 import { createAction } from 'typesafe-actions';
-import {
-  BoardState,
-  FormActionTypes,
-  FileUploadResult,
-  FileUpdateError,
-} from './types';
+import { FormActionTypes, FileUpdateError } from './types';
 
-export const setIsValid = createAction(FormActionTypes.SET_VALIDITY)<boolean>();
-
-export const setSuite = createAction(FormActionTypes.SET_SUITE)<Suite>();
-
-export const setBoard = createAction(FormActionTypes.SET_BOARD)<BoardState>();
-
-export const addBoard = createAction(FormActionTypes.ADD_BOARD)<string>();
-
-export const updateBoard = createAction(FormActionTypes.UPDATE_BOARD)<void>();
-
-export const deleteBoard = createAction(FormActionTypes.DELETE_BOARD)<string>();
-
-export const clearBoardForm = createAction(
-  FormActionTypes.CLEAR_BOARD_FORM
-)<void>();
 export const clearForm = createAction(FormActionTypes.CLEAR_FORM)<void>();
 
 export const formSaving = createAction(FormActionTypes.FORM_SAVING)<void>();
@@ -42,9 +21,6 @@ export const retrievedFile = createAction(
 export const fileUploadError = createAction(
   FormActionTypes.FILE_UPLOAD_ERROR
 )<FileUpdateError>();
-export const fileUploaded = createAction(
-  FormActionTypes.FILE_UPLOADED
-)<FileUploadResult>();
 
 export const filesUpload = createAction(FormActionTypes.FILES_UPLOAD)<void>();
 export const filesUploaded = createAction(
@@ -56,8 +32,5 @@ export const addFileToDeleteQueue = createAction(
 )<CogniteExternalId>();
 export const excludeFileFromDeleteQueue = createAction(
   FormActionTypes.FILE_EXCLUDE_FROM_DELETE_QUEUE
-)<CogniteExternalId>();
-export const excludeFileFromBoard = createAction(
-  FormActionTypes.FILE_EXCLUDE_FROM_BOARD
 )<CogniteExternalId>();
 export const filesDeleted = createAction(FormActionTypes.FILES_DELETED)<void>();

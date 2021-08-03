@@ -8,47 +8,42 @@ import {
 import {
   UploadFileNameContainer,
   UploadImageContainer,
-} from 'components/modals/elements';
+} from 'components/forms/elements';
 import { Icon, Tooltip, Tag } from '@cognite/cogs.js';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  boardState,
-  filesUploadState,
-  imageFileState,
-} from 'store/forms/selectors';
-import { Board } from 'store/suites/types';
+import { filesUploadState, imageFileState } from 'store/forms/selectors';
 import { boardValidator } from 'validators';
 import { useMetrics } from 'utils/metrics';
 
 import { addFileToDeleteQueue } from 'store/forms/actions';
+import { FieldProps } from 'formik';
 
 type Props = {
   filesUploadQueue: Map<string, File>;
-  setErrors: React.Dispatch<any>;
-  error: string;
+  setCustomErrors: (errors: any) => void;
+  boardKey: string;
+  boardTitle: string;
 };
 
-export const FileUpload: React.FC<Props> = ({
+export const FileUpload: React.FC<Props & FieldProps<string | undefined>> = ({
+  boardKey,
+  boardTitle,
   filesUploadQueue,
-  error,
-  setErrors,
+  setCustomErrors,
+  field: { name, value: imageFileId = '' },
+  form: { errors, setTouched },
 }) => {
   const dispatch = useDispatch();
-  const {
-    key: boardKey,
-    title: boardTitle,
-    imageFileId,
-  } = useSelector(boardState) as Board;
   const { loading, fileInfo: currentFileInfo } = useSelector(imageFileState);
   const { deleteQueue } = useSelector(filesUploadState);
   const metrics = useMetrics('EditSuite');
   const [uploadQueuedName, setUploadQueuedName] = useState('');
+  const inDeleteQueue = deleteQueue.includes(imageFileId);
+  const error = errors[name];
   const fileName = filesUploadQueue.get(boardKey || newFileKey)?.name || '';
   if (uploadQueuedName !== fileName) {
     setUploadQueuedName(fileName);
   }
-
-  const inDeleteQueue = deleteQueue.includes(imageFileId);
 
   const handleFileInputChange = (e: React.FormEvent<HTMLInputElement>) => {
     const file = e.currentTarget.files && e.currentTarget.files[0];
@@ -56,10 +51,10 @@ export const FileUpload: React.FC<Props> = ({
       return;
     }
     if (!validateFileType(file)) {
-      setErrors((prevState: Board) => ({
-        ...prevState,
-        imageFileId: boardValidator.imageFileId?.mimeType?.message,
-      }));
+      setCustomErrors({
+        [name]: boardValidator.imageFileId?.mimeType?.message,
+      });
+      setTouched({ [name]: true }, true);
       metrics.track('FileUploadValidationError_FileType', {
         boardKey,
         board: boardTitle,
@@ -68,10 +63,8 @@ export const FileUpload: React.FC<Props> = ({
       return;
     }
     if (!validateFileSize(file)) {
-      setErrors((prevState: Board) => ({
-        ...prevState,
-        imageFileId: boardValidator.imageFileId?.maxSize?.message,
-      }));
+      setCustomErrors({ [name]: boardValidator.imageFileId?.maxSize?.message });
+      setTouched({ [name]: true }, true);
       metrics.track('FileUploadValidationError_MaxSize', {
         boardKey,
         board: boardTitle,
@@ -79,12 +72,10 @@ export const FileUpload: React.FC<Props> = ({
       });
       return;
     }
-    setErrors((prevState: Board) => ({
-      ...prevState,
-      imageFileId: '',
-    }));
+    setCustomErrors({ [name]: undefined });
     filesUploadQueue.set(boardKey || newFileKey, file);
     setUploadQueuedName(file.name);
+    setTouched({ [name]: true }, true);
 
     metrics.track('FileUpload', {
       boardKey,
@@ -148,6 +139,7 @@ export const FileUpload: React.FC<Props> = ({
         </>
       );
     }
+
     if (uploadQueuedName) {
       return renderFileName(uploadQueuedName, cancelUpload, true);
     }

@@ -4,11 +4,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { modalClose } from 'store/modals/actions';
 import { RootDispatcher } from 'store/types';
 import { Button, Icon } from '@cognite/cogs.js';
-import {
-  CustomInputContainer,
-  ModalFooter,
-  UploadLogoContainer,
-} from 'components/modals/elements';
+import { ModalFooter, UploadLogoContainer } from 'components/modals/elements';
+import { CustomInputContainer } from 'components/forms/elements';
 import { useMetrics } from 'utils/metrics';
 import * as Sentry from '@sentry/browser';
 import { CdfClientContext } from 'providers/CdfClientProvider';

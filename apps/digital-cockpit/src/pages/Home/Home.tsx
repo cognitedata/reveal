@@ -126,7 +126,7 @@ const Home = () => {
                 type="tertiary"
                 icon="PlusCompact"
                 iconPlacement="left"
-                onClick={() => handleOpenModal('CreateSuite')}
+                onClick={() => handleOpenModal('EditSuite')}
               >
                 New suite
               </Button>
@@ -144,7 +144,7 @@ const Home = () => {
                 type="tertiary"
                 icon="PlusCompact"
                 iconPlacement="left"
-                onClick={() => handleOpenModal('CreateSuite')}
+                onClick={() => handleOpenModal('EditSuite')}
                 style={{ marginTop: 8 }}
               >
                 New suite
@@ -224,7 +224,7 @@ const Home = () => {
                 <Tile
                   key={suite.key}
                   dataItem={suite}
-                  menu={<SuiteMenu dataItem={suite} />}
+                  menu={<SuiteMenu suiteItem={suite} />}
                   avatar
                   color={suite.color}
                 />

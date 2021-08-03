@@ -64,6 +64,8 @@ DEPENDENCIES = [
     "@npm//@cognite/gcs-browser-upload",
     "@npm//@cognite/sdk",
     "@npm//@sentry/browser",
+    "@npm//eslint-config-react-app",
+    "@npm//formik",
     "@npm//gridstack",
     "@npm//i18next",
     "@npm//lodash",

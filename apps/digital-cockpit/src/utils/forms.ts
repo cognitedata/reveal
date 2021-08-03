@@ -1,6 +1,5 @@
-import isEqual from 'lodash/isEqual';
-import cloneDeep from 'lodash/cloneDeep';
 import omit from 'lodash/omit';
+import findIndex from 'lodash/findIndex';
 import { Board, Suite } from 'store/suites/types';
 import { FileUploadResult } from 'store/forms/types';
 
@@ -16,11 +15,14 @@ export const getEmptySuite = (order = -1) => ({
 });
 
 export const updateSuite = (suite: Suite, board: Board) => {
-  const boardIndex = suite.boards.findIndex((element: Board) =>
-    isEqual(element.key, board.key)
-  );
-  const boardsCopy = cloneDeep(suite.boards);
-  boardsCopy[boardIndex] = board;
+  const boardsCopy = [...suite.boards];
+  const boardIndex = findIndex(suite.boards, { key: board.key });
+  if (boardIndex !== -1) {
+    boardsCopy[boardIndex] = board;
+  } else {
+    boardsCopy.push(board);
+  }
+
   return omit(
     {
       ...suite,
@@ -37,14 +39,21 @@ export const deleteBoardFromSuite = (suite: Suite, boardKey: string) => {
   };
 };
 
+export const excludeFileFromBoard = (suite: Suite, boardKey: string): Suite => {
+  const { boards } = suite;
+  const boardUpdated = boards.find((board) => board.key === boardKey);
+  boardUpdated && (boardUpdated.imageFileId = '');
+  return { ...suite };
+};
+
+// modifies existing suite
 export const updateBoardWithFileId = (
   suite: Suite,
   fileUploadResult: FileUploadResult
-): Suite => {
+): void => {
   const { boards } = suite;
   const boardUpdated = boards.find(
     (board) => board.key === fileUploadResult.boardKey
   );
   boardUpdated && (boardUpdated.imageFileId = fileUploadResult.fileExternalId);
-  return suite;
 };

@@ -16,9 +16,9 @@ import {
 } from './elements';
 
 interface Props {
-  dataItem: Suite;
+  suiteItem: Suite;
 }
-export const SuiteMenu: React.FC<Props> = ({ dataItem }) => {
+export const SuiteMenu: React.FC<Props> = ({ suiteItem }) => {
   const dispatch = useDispatch<RootDispatcher>();
   const { ref, isComponentVisible, setIsComponentVisible } =
     useClickAwayListener(false);
@@ -34,21 +34,21 @@ export const SuiteMenu: React.FC<Props> = ({ dataItem }) => {
     event.preventDefault();
     setIsComponentVisible(() => !isComponentVisible);
     metrics.track(`OpenMenu`, {
-      suiteKey: dataItem?.key,
-      suite: dataItem?.title,
+      suiteKey: suiteItem?.key,
+      suite: suiteItem?.title,
     });
   };
 
   const handleOpenModal = (
     event: React.MouseEvent,
     modalType: ModalType,
-    modalProps: { suite: Suite }
+    modalProps: { suiteItem: Suite }
   ) => {
     event.preventDefault();
     setIsComponentVisible(() => !isComponentVisible);
     metrics.track(`Select_${modalType}`, {
-      suiteKey: modalProps.suite?.key,
-      suite: modalProps.suite?.title,
+      suiteKey: suiteItem?.key,
+      suite: suiteItem?.title,
     });
     dispatch(modalOpen({ modalType, modalProps }));
   };
@@ -70,7 +70,7 @@ export const SuiteMenu: React.FC<Props> = ({ dataItem }) => {
                 role="button"
                 tabIndex={0}
                 onClick={(event) =>
-                  handleOpenModal(event, 'ShareLink', { suite: dataItem })
+                  handleOpenModal(event, 'ShareLink', { suiteItem })
                 }
               >
                 <Icon type="Share" />
@@ -84,7 +84,7 @@ export const SuiteMenu: React.FC<Props> = ({ dataItem }) => {
                     role="button"
                     tabIndex={0}
                     onClick={(event) =>
-                      handleOpenModal(event, 'EditSuite', { suite: dataItem })
+                      handleOpenModal(event, 'EditSuite', { suiteItem })
                     }
                   >
                     <Icon type="Edit" />
@@ -96,7 +96,9 @@ export const SuiteMenu: React.FC<Props> = ({ dataItem }) => {
                     role="button"
                     tabIndex={0}
                     onClick={(event) =>
-                      handleOpenModal(event, 'DeleteSuite', { suite: dataItem })
+                      handleOpenModal(event, 'DeleteSuite', {
+                        suiteItem,
+                      })
                     }
                   >
                     <Icon type="Trash" />

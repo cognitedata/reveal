@@ -12,8 +12,6 @@ export type ModalType =
   | 'DeleteSuite'
   | 'DeleteBoard'
   | 'EditSuite'
-  | 'CreateSuite'
-  | 'AddBoard'
   | 'EditBoard'
   | 'ShareLink'
   | 'UploadLogo'

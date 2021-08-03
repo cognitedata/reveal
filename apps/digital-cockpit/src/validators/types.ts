@@ -5,7 +5,7 @@ type ValidationPattern = {
   message: string;
   value: string;
 };
-type ValidationFunction = (value: string) => string;
+type ValidationFunction = (value: string) => string | undefined;
 
 export type ValidationRules = {
   required?: ValidationMessage;

@@ -123,7 +123,7 @@ const SuiteOverviewGrid: ForwardRefRenderFunction<GridCallbacks, Props> = (
                 dataItem={board}
                 color={color}
                 view="board"
-                menu={<BoardMenu suite={suite} board={board} />}
+                menu={<BoardMenu suiteItem={suite} boardItem={board} />}
               />
             </a>
           </div>

@@ -12,10 +12,10 @@ import assign from 'lodash/assign';
 import { ActionsContainer, MenuContainer, MenuItemContent } from './elements';
 
 interface Props {
-  board: Board;
-  suite?: Suite;
+  boardItem: Board;
+  suiteItem?: Suite;
 }
-export const BoardMenu: React.FC<Props> = ({ board, suite }) => {
+export const BoardMenu: React.FC<Props> = ({ boardItem, suiteItem }) => {
   const dispatch = useDispatch<RootDispatcher>();
   const metrics = useMetrics('BoardMenu');
 
@@ -26,9 +26,9 @@ export const BoardMenu: React.FC<Props> = ({ board, suite }) => {
 
   const trackMetrics = (
     name: string,
-    modalProps: { board?: Board; suite?: Suite }
+    modalProps: { boardItem?: Board; suiteItem?: Suite }
   ) => {
-    const { suite: suiteItem, board: boardItem } = modalProps;
+    const { suiteItem, boardItem } = modalProps;
     const props = assign(
       {},
       suiteItem ? { suiteKey: suiteItem.key, suite: suiteItem.title } : null,
@@ -42,13 +42,13 @@ export const BoardMenu: React.FC<Props> = ({ board, suite }) => {
     event.preventDefault();
     // prevent from calling quick access click handler
     event.stopPropagation();
-    trackMetrics('OpenMenu', { board, suite });
+    trackMetrics('OpenMenu', { boardItem, suiteItem });
   };
 
   const handleOpenModal = (
     event: React.MouseEvent,
     modalType: ModalType,
-    modalProps: { board?: Board; suite?: Suite }
+    modalProps: { boardItem?: Board; suiteItem?: Suite }
   ) => {
     event.preventDefault();
     event.stopPropagation();
@@ -64,7 +64,9 @@ export const BoardMenu: React.FC<Props> = ({ board, suite }) => {
             className={canEdit ? 'share-action' : ''}
             role="button"
             tabIndex={0}
-            onClick={(event) => handleOpenModal(event, 'ShareLink', { board })}
+            onClick={(event) =>
+              handleOpenModal(event, 'ShareLink', { boardItem })
+            }
           >
             <Icon type="Share" />
             Share board
@@ -78,8 +80,8 @@ export const BoardMenu: React.FC<Props> = ({ board, suite }) => {
                 tabIndex={0}
                 onClick={(event) =>
                   handleOpenModal(event, 'EditBoard', {
-                    board,
-                    suite,
+                    boardItem,
+                    suiteItem,
                   })
                 }
               >
@@ -92,7 +94,10 @@ export const BoardMenu: React.FC<Props> = ({ board, suite }) => {
                 role="button"
                 tabIndex={0}
                 onClick={(event) =>
-                  handleOpenModal(event, 'DeleteBoard', { board, suite })
+                  handleOpenModal(event, 'DeleteBoard', {
+                    boardItem,
+                    suiteItem,
+                  })
                 }
               >
                 <Icon type="Trash" />

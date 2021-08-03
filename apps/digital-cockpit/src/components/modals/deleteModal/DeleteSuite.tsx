@@ -14,10 +14,10 @@ import { useMetrics } from 'utils/metrics';
 import { deleteLayoutItems } from 'store/layout/thunks';
 
 interface Props {
-  suite: Suite;
+  suiteItem: Suite;
 }
 
-const DeleteSuite: React.FC<Props> = ({ suite }: Props) => {
+const DeleteSuite: React.FC<Props> = ({ suiteItem: suite }: Props) => {
   const history = useHistory();
   const client = useContext(CdfClientContext);
   const apiClient = useContext(ApiClientContext);

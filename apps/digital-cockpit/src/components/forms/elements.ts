@@ -1,0 +1,230 @@
+import styled from 'styled-components/macro';
+import { A, Icon, Body } from '@cognite/cogs.js';
+import { EllipsisText } from 'styles/common';
+import { ModalFooter } from 'components/modals/elements';
+
+export const CustomLabel = styled.div`
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  margin: 0 0 4px;
+  & > span {
+    margin-right: 8px;
+  }
+`;
+
+export const CustomInputContainer = styled.div`
+  & > .has-error {
+    box-shadow: inset 0px -2px 0px 0px var(--cogs-danger);
+  }
+  & > .has-error:focus {
+    border: 1px solid var(--cogs-greyscale-grey2);
+  }
+  & .has-error:hover {
+    border-style: solid;
+    border-color: var(--cogs-danger);
+    border-width: 1px 1px 0 1px;
+  }
+  & .error-space {
+    color: var(--cogs-danger);
+  }
+`;
+
+export const CustomSelectContainer = styled.div<{ selectError?: boolean }>`
+  margin-bottom: 16px;
+  & .cogs-select__single-value {
+    color: var(--cogs-black);
+  }
+  & .cogs-select {
+    ${({ selectError }) =>
+      selectError &&
+      'box-shadow: inset 0px -2px 0px 0px var(--cogs-danger); border-bottom: 2px solid var(--cogs-danger);'};
+  }
+  & .cogs-select:hover {
+    ${({ selectError }) => selectError && 'border-style: solid;'}
+    border-color: var(--cogs-danger);
+    ${({ selectError }) => selectError && 'border-width: 1px 1px 2px 1px;'};
+  }
+  & .error-space {
+    color: var(--cogs-danger);
+  }
+`;
+
+export const CustomTooltipContainer = styled.div`
+  & > a {
+    color: var(--cogs-white);
+    text-decoration: underline;
+  }
+  & > a:hover {
+    color: var(--cogs-white);
+  }
+`;
+
+export const SnapshotInputContainer = styled(CustomInputContainer)`
+  margin-bottom: 16px;
+`;
+
+export const FormFooter = styled(ModalFooter)``;
+
+export const BoardsContainer = styled.div`
+  width: 384px;
+  padding-left: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+`;
+
+export const Boards = styled.div`
+  max-height: 324px;
+  overflow-y: auto;
+`;
+
+export const AddedBoardItem = styled.div<{ selected?: boolean }>`
+  display: flex;
+  width: 320px;
+  align-items: center;
+  padding: 0 4px 0 14px;
+  background-color: ${({ selected }) =>
+    selected ? 'var(--cogs-midblue-8)' : 'transparent'};
+  border-radius: 4px;
+  &:hover {
+    cursor: pointer;
+    background-color: var(--cogs-greyscale-grey2);
+    & > :last-child {
+      color: var(--cogs-greyscale-grey6);
+    }
+  }
+  & > :last-child {
+    margin-left: auto;
+    color: transparent;
+  }
+  & > span {
+    display: grid;
+  }
+`;
+
+export const StyledCheckIcon = styled(Icon)`
+  display: table;
+  margin-right: 12px;
+  color: var(--cogs-midblue-3);
+`;
+
+export const StyledTitle = styled.p<{ empty: boolean }>`
+  font-size: 18px;
+  font-weight: 600;
+  color: ${({ empty }) =>
+    empty ? 'var(--cogs-greyscale-grey5)' : 'var(--cogs-greyscale-grey9)'};
+`;
+
+export const StyledBody = styled(Body)`
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
+export const StyledLink = styled(A)`
+  text-decoration: underline;
+  & svg {
+    width: 8px;
+  }
+`;
+
+export const FormContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 520px;
+  padding-right: 36px;
+  border-right: 1px solid var(--cogs-greyscale-grey5);
+`;
+
+export const ActionButtonsContainer = styled.div`
+  display flex;
+  justify-content: flex-end;
+  margin-left: auto;
+  & > .cogs-btn {
+    margin-left: 16px;
+  }
+  `;
+
+export const Textarea = styled.textarea`
+  font-style: normal;
+  font-weight: 400;
+  font-size: var(--cogs-font-size-sm);
+  line-height: 20px;
+  color: var(--cogs-greyscale-grey10);
+  background: var(--cogs-greyscale-grey2);
+  border: 1px solid var(--cogs-greyscale-grey2);
+  width: 100%;
+  resize: none;
+  border-radius: 4px;
+  outline: none;
+  padding: 12px 16px;
+  height: 96px;
+  &:focus {
+    border: 1px solid var(--cogs-midblue-4);
+  }
+  &:hover {
+    border: 1px solid var(--cogs-midblue-4);
+    background: var(--cogs-greyscale-grey2);
+  }
+`;
+
+export const ValidationContainer = styled.div<{ exceedWarningLength: boolean }>`
+  display: flex;
+  & > .error-space {
+    font-size: 13px;
+  }
+  & > :last-child {
+    color: var(--cogs-greyscale-grey7);
+    margin-left: auto;
+    ${({ exceedWarningLength }) => exceedWarningLength && 'font-weight: 700;'};
+  }
+`;
+
+type Props = {
+  hasError?: boolean;
+};
+
+export const UploadImageContainer = styled(CustomInputContainer)<Props>`
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+
+  white-space: nowrap;
+  flex-wrap: ${(props) => (props.hasError ? 'wrap' : 'nowrap')};
+  & .error-space {
+    padding-top: 5px;
+  }
+  & .break {
+    flex-basis: 100%;
+    height: 0;
+  }
+
+  & input {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+  }
+  & input + label {
+    display: flex;
+    align-items: center;
+  }
+  & input:focus + label {
+    /* keyboard navigation */
+    outline: 1px dotted #000;
+    outline: -webkit-focus-ring-color auto 5px;
+  }
+  & input + label * {
+    pointer-events: none;
+  }
+`;
+
+export const UploadFileNameContainer = styled(EllipsisText)`
+  padding-left: 10px;
+  .cogs-tag {
+    max-width: 100%;
+  }
+`;
