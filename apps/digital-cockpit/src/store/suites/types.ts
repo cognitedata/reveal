@@ -6,6 +6,7 @@ export enum SuitesTableActionTypes {
   SUITES_TABLE_LOAD = 'suitesTable/LOAD',
   SUITES_TABLE_LOADED = 'suitesTable/LOADED',
   SUITES_TABLE_LOAD_FAILED = 'suitesTable/LOAD_FAILED',
+  REPLACE_SUITES = 'suitesTable/REPLACE_SUITES',
   SUITE_SAVE = 'suite/SAVE',
   SUITE_ERROR = 'suite/ERROR',
   SUITE_DELETE = 'suite/DELETE',
@@ -17,13 +18,7 @@ export enum SuitesTableActionTypes {
 
 export type SuitesTableRootAction = ActionType<typeof actions>;
 
-export type BoardType =
-  | 'grafana'
-  | 'powerbi'
-  | 'plotly'
-  | 'spotfire'
-  | 'application'
-  | 'other';
+export type BoardType = 'grafana' | 'powerbi' | 'plotly' | 'spotfire' | 'other';
 
 export type Board = {
   key: string;

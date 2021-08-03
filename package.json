@@ -23,6 +23,8 @@
     "@cognite/gcs-browser-upload": "^1.1.0",
     "@cognite/sdk": "^4.1.0",
     "@cognite/sdk-v2": "npm:@cognite/sdk@^2.33.0",
+    "@dnd-kit/core": "^3.1.1",
+    "@dnd-kit/sortable": "^4.0.0",
     "@microsoft/applicationinsights-react-js": "3.1.0",
     "@microsoft/applicationinsights-web": "2.6.3",
     "@sentry/browser": "^6.6.0",

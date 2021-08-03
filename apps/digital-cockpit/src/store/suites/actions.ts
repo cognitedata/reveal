@@ -14,6 +14,10 @@ export const loadSuitesTableFailed = createAction(
   SuitesTableActionTypes.SUITES_TABLE_LOAD_FAILED
 )<void>();
 
+export const replaceSuites = createAction(
+  SuitesTableActionTypes.REPLACE_SUITES
+)<Suite[]>();
+
 export const saveSuite = createAction(
   SuitesTableActionTypes.SUITE_SAVE
 )<void>();

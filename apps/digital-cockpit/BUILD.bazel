@@ -63,6 +63,8 @@ DEPENDENCIES = [
     "@npm//@cognite/cogs.js",
     "@npm//@cognite/gcs-browser-upload",
     "@npm//@cognite/sdk",
+    "@npm//@dnd-kit/core",
+    "@npm//@dnd-kit/sortable",
     "@npm//@sentry/browser",
     "@npm//eslint-config-react-app",
     "@npm//formik",

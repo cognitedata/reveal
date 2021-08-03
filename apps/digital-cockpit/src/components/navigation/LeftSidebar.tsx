@@ -1,37 +1,110 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { A, Icon, Overline } from '@cognite/cogs.js';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { getSuitesTableState } from 'store/suites/selectors';
 import { Suite } from 'store/suites/types';
 import { useMetrics } from 'utils/metrics';
 import { ApplicationItem } from 'store/config/types';
 import { getApplications } from 'store/config/selectors';
 import { TenantContext } from 'providers/TenantProvider';
-import SuiteNavigationItem from './SuiteNavigationItem';
-import ApplicationNavigationItem from './ApplicationNavigationItem';
+
+import {
+  DndContext,
+  DragEndEvent,
+  MouseSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { isAdmin } from 'store/groups/selectors';
+import { changeAndSaveSuitesOrder } from 'store/suites/thunks';
+import { ApiClientContext } from 'providers/ApiClientProvider';
+import { handleHideSidebar } from './utils';
 import {
   TitleContainer,
   ItemsContainer,
   CollapseButton,
   SidebarContainer,
 } from './elements';
-import { handleHideSidebar } from './utils';
+import ApplicationNavigationItem from './ApplicationNavigationItem';
+import SuiteNavigationItem from './SuiteNavigationItem';
+
+type SuiteItemProps = {
+  item: Suite;
+  handleClick: () => void;
+};
+const SortableSuiteNavigationItem: React.FC<SuiteItemProps> = ({
+  item,
+  handleClick,
+}) => {
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({ id: item.key });
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  } as { transform: string; transition: string };
+
+  return (
+    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+      <NavLink to={`/suites/${item.key}`} key={item.key} onClick={handleClick}>
+        <SuiteNavigationItem dataItem={item} />
+      </NavLink>
+    </div>
+  );
+};
 
 const LeftSidebar: React.FC = () => {
+  const dispatch = useDispatch();
+  const apiClient = useContext(ApiClientContext);
   const { suites } = useSelector(getSuitesTableState);
   const tenant = useContext(TenantContext);
   const applications = useSelector(getApplications(tenant));
   const metrics = useMetrics('LeftSidebar');
+  const admin = useSelector(isAdmin);
 
   const sideBarState = JSON.parse(
     localStorage.getItem('sideBarState') || 'true' // TODO(DTC-215) store in state
   );
   const [isOpen, setOpen] = useState(sideBarState);
+  const [suitesOrder, setSuitesOrder] = useState<string[]>([]);
 
   useEffect(() => {
     localStorage.setItem('sideBarState', JSON.stringify(isOpen));
   }, [isOpen]);
+
+  useEffect(() => {
+    suites && setSuitesOrder(suites.map(({ key }) => key));
+  }, [suites]);
+
+  const dndSensors = useSensors(
+    useSensor(MouseSensor, {
+      // Require the mouse to move by 10 pixels before activating
+      activationConstraint: {
+        distance: 10,
+      },
+    })
+  );
+
+  const handleDragEnd = useCallback(
+    (event: DragEndEvent): void => {
+      const { active, over } = event;
+      if (over && active.id !== over.id) {
+        const oldIndex = suitesOrder.indexOf(active.id);
+        const newIndex = suitesOrder.indexOf(over.id);
+        const newSuitesOrder = arrayMove(suitesOrder, oldIndex, newIndex);
+        suites &&
+          dispatch(changeAndSaveSuitesOrder(apiClient, suites, newSuitesOrder));
+      }
+    },
+    [suites, suitesOrder]
+  );
 
   if (!suites || suites.length === 0) {
     // No suites? Lets remove this sidebar until we add some.
@@ -54,17 +127,41 @@ const LeftSidebar: React.FC = () => {
     </A>
   );
 
-  const renderSuiteNavigationItem = (item: Suite) => (
-    <NavLink
-      to={`/suites/${item.key}`}
-      key={item.key}
-      onClick={() =>
-        metrics.track('Suite_Click', { suiteKey: item.key, suite: item.title })
-      }
-    >
-      <SuiteNavigationItem dataItem={item} />
-    </NavLink>
-  );
+  const renderNavigationItems = (items: Suite[], admin: boolean) => {
+    const handleSuiteItemClick = (item: Suite) => () =>
+      metrics.track('Suite_Click', {
+        suiteKey: item.key,
+        suite: item.title,
+      });
+
+    if (admin) {
+      return (
+        <DndContext onDragEnd={handleDragEnd} sensors={dndSensors}>
+          <SortableContext
+            items={suitesOrder}
+            strategy={verticalListSortingStrategy}
+          >
+            {items?.map((item) => (
+              <SortableSuiteNavigationItem
+                key={item.key}
+                item={item}
+                handleClick={handleSuiteItemClick(item)}
+              />
+            ))}
+          </SortableContext>
+        </DndContext>
+      );
+    }
+    return items?.map((item) => (
+      <NavLink
+        to={`/suites/${item.key}`}
+        key={item.key}
+        onClick={handleSuiteItemClick(item)}
+      >
+        <SuiteNavigationItem dataItem={item} />
+      </NavLink>
+    ));
+  };
 
   return (
     <SidebarContainer open={isOpen}>
@@ -92,9 +189,7 @@ const LeftSidebar: React.FC = () => {
       <TitleContainer>
         <Overline level={2}>Suites</Overline>
       </TitleContainer>
-      <ItemsContainer>
-        {suites?.map((suite) => renderSuiteNavigationItem(suite))}
-      </ItemsContainer>
+      <ItemsContainer>{renderNavigationItems(suites, admin)}</ItemsContainer>
     </SidebarContainer>
   );
 };

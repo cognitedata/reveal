@@ -1,6 +1,8 @@
 import { createReducer } from 'typesafe-actions';
+import { replaceSuites } from 'utils/suitesTable';
 import {
   ImgUrlLink,
+  Suite,
   SuitesTableActionTypes,
   SuitesTableRootAction,
   SuitesTableState,
@@ -106,5 +108,12 @@ export const SuitesReducer = createReducer(initialState)
     (state: SuitesTableState) => ({
       ...state,
       imageUrls: getInitialImageUrls(),
+    })
+  )
+  .handleAction(
+    SuitesTableActionTypes.REPLACE_SUITES,
+    (state: SuitesTableState, action: SuitesTableRootAction) => ({
+      ...state,
+      suites: replaceSuites(state.suites, action.payload as Suite[]),
     })
   );

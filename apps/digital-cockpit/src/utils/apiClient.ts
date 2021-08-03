@@ -57,6 +57,10 @@ export class ApiClient {
     return this.makePOSTRequest('/suites', { suite });
   }
 
+  updateSuites(suites: Suite[]): Promise<void> {
+    return this.makePOSTRequest('/suites', { suites });
+  }
+
   deleteSuite(suiteKey: string): Promise<void> {
     return this.makeDELETERequest('/suites', { key: suiteKey });
   }

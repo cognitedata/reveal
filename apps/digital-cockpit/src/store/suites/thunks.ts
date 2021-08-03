@@ -6,6 +6,7 @@ import { setHttpError } from 'store/notification/thunks';
 import * as Sentry from '@sentry/browser';
 import { CogniteExternalId } from '@cognite/sdk';
 import { Metrics } from '@cognite/metrics';
+import { updateSuitesOrder } from 'utils/suitesTable';
 import { Suite } from './types';
 import * as actions from './actions';
 
@@ -86,3 +87,25 @@ export const fetchImageUrls =
       Sentry.captureException(e);
     }
   };
+
+export const changeAndSaveSuitesOrder =
+  (apiClient: ApiClient, suites: Suite[], newOrder: string[]) =>
+  async (dispatch: RootDispatcher) => {
+    const suitesToReplace = updateSuitesOrder(suites, newOrder);
+    if (!suitesToReplace.length) {
+      return;
+    }
+    dispatch(actions.replaceSuites(suitesToReplace));
+    dispatch(saveSuitesSilently(apiClient, suitesToReplace));
+  };
+
+function saveSuitesSilently(apiClient: ApiClient, suites: Suite[]) {
+  return async (dispatch: RootDispatcher) => {
+    try {
+      await apiClient.updateSuites(suites);
+    } catch (e) {
+      dispatch(setHttpError(`Failed to update suites`, e));
+      Sentry.captureException(e);
+    }
+  };
+}
