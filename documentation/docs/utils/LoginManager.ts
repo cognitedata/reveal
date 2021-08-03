@@ -37,8 +37,8 @@ class LoginManager {
       } else {
         let params = new URL(document.location.toString()).searchParams;
         this.isLoggedIn = !!params.get('id_token') || !!s;
-        this.notifyListeners();
       }
+      this.notifyListeners();
     });
   }
 
@@ -58,7 +58,6 @@ class LoginManager {
   }
 
   async authenticate() {
-    debugger;
     await this.client.loginWithOAuth({
       type: 'CDF_OAUTH',
       options: {
@@ -70,15 +69,19 @@ class LoginManager {
         },
       }
     });
-    this.client.setProject(env.project);
 
     await this.client
       .authenticate()
       .then(() => {
         this.isLoggedIn = true;
-        this.notifyListeners();
       })
-      .catch((e: Error) => console.error(e));
+      .catch((e: Error) => {
+        this.isLoggedIn = false;
+        console.error(e);
+      })
+      .finally(() => {
+        this.notifyListeners();
+      });
   }
 }
 
