@@ -139,7 +139,7 @@ const ProjectSelector: React.FC<Props> = ({
           onClick={() => setShowMenu(true)}
           disabled={projects.length <= 1}
           type="tertiary"
-          icon="Down"
+          icon="ChevronDownCompact"
           iconPlacement="right"
         >
           {projects.length === 0

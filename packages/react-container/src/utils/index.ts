@@ -2,4 +2,4 @@ export * from './log';
 export * from './env';
 export * from './localStorage';
 export * from './tenancy';
-export { retrieveAccessToken } from './persistance';
+export { AUTH_RESULT_STORAGE_KEY, retrieveAccessToken } from './persistance';

@@ -1,25 +1,38 @@
 import React from 'react';
-import { Button } from '@cognite/cogs.js';
+import {
+  KEY_LAST_TENANT,
+  AUTH_RESULT_STORAGE_KEY,
+  useAuthContext,
+  storage,
+} from '@cognite/react-container';
+import { EndSessionRequest } from '@azure/msal-browser';
 import { saveFlow } from '@cognite/auth-utils';
 
-import { storage } from '../utils';
+export const Logout: React.FC = () => {
+  const { client } = useAuthContext();
 
-// get these from container perhaps?
-const AUTH_RESULT_STORAGE_KEY = 'authResult';
-const KEY_LAST_TENANT = 'last_CDF_project';
-
-export const LogoutButton: React.FC = () => {
-  const handleLogout = () => {
+  React.useEffect(() => {
     storage.removeItem(AUTH_RESULT_STORAGE_KEY);
     storage.removeItem(KEY_LAST_TENANT);
-
     saveFlow('UNKNOWN');
 
-    window.location.href = '/';
-  };
-  return (
-    <Button type="secondary" icon="LogOut" onClick={handleLogout}>
-      Logout
-    </Button>
-  );
+    // @ts-expect-error azureAdClient is private?
+    const azureAdClient = client?.azureAdClient;
+    if (azureAdClient) {
+      if (!azureAdClient) {
+        // this is E2E testing mode (aka: fake idp)
+        window.location.href = '/';
+      }
+
+      const logOutRequest: EndSessionRequest = {
+        account: azureAdClient.getAccount(),
+        postLogoutRedirectUri: azureAdClient.msalApplication.getRedirectUri(),
+      };
+      azureAdClient.msalApplication.logout(logOutRequest);
+    } else {
+      window.location.href = '/';
+    }
+  }, [client]);
+
+  return null;
 };

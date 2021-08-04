@@ -4,7 +4,7 @@ import type { AuthResult, DecodedIdToken, OAuthAuthResult } from 'auth';
 
 import { storage } from './localStorage';
 
-const AUTH_RESULT_STORAGE_KEY = 'authResult';
+export const AUTH_RESULT_STORAGE_KEY = 'authResult';
 // if token is valid for less than 5 more minutes we might just discard it
 const TOKEN_TTL_BUFFER_SECCONDS = 60 * 5;
 

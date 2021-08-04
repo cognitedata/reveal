@@ -1,6 +1,6 @@
 import GlobalStyles from 'global-styles';
 import { Switch, Redirect, Route } from 'react-router-dom';
-import { Container } from '@cognite/react-container';
+import { Container, Logout } from '@cognite/react-container';
 import sidecar from 'utils/sidecar';
 import Info from 'pages/Info';
 import Home from 'pages/Home';
@@ -20,6 +20,7 @@ const App = () => (
         <Route path={PAGES.INFO} render={() => <Info />} />
         <Route path={PAGES.SDK} render={() => <CogniteSDK />} />
         <Route path={PAGES.INTERCOM} render={() => <Intercom />} />
+        <Route path={PAGES.LOGOUT} render={() => <Logout />} />
         <Redirect from="" to={PAGES.HOME} />
         <Redirect from="/" to={PAGES.HOME} />
         <Route render={() => <NotFoundPage />} />

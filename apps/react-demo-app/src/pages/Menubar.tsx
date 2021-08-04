@@ -2,11 +2,14 @@ import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { TopBar } from '@cognite/cogs.js';
 
+import { SidebarIcon } from './Sidebar';
+
 export const PAGES = {
   HOME: '/home',
   INFO: '/info',
   SDK: '/sdk',
   INTERCOM: '/intercom',
+  LOGOUT: '/logout',
 };
 
 export const MenuBar = () => {
@@ -53,6 +56,9 @@ export const MenuBar = () => {
           },
         ]}
       />
+      <TopBar.Right>
+        <SidebarIcon />
+      </TopBar.Right>
     </TopBar>
   );
 };

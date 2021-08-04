@@ -1,3 +1,8 @@
+## 1.5.0 Aug 03 2021
+
+- BREAKING: Change Logout component to take into account Azure AD. Please check demo app for usage.
+- Added `useAuthContext` to easily get auth context.
+
 ## 1.4.1 Jul 08 2021
 
 - Fixed infinite loading bug when no login flow is found

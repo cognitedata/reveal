@@ -94,9 +94,9 @@ const CardContainer = ({
   // console.log('Render gates', {
   //   showProjectSelection,
   //   showLoginOptions,
-  //   showLoading,
   //   showSpacer,
   //   showOr,
+  //   loading,
   // });
 
   const ErrorDisplay = () => {

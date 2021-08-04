@@ -13,11 +13,8 @@ export interface AuthContext {
   reauthenticate?: () => Promise<unknown>;
 }
 
-// exporting so users can also directly do:
-//
-// const {...} = useContext(AuthProvider)
-//
 export const AuthProvider = React.createContext<AuthContext>({});
+export const useAuthContext = () => React.useContext(AuthProvider);
 export const AuthConsumer = AuthProvider.Consumer;
 export type EnabledModes = {
   cognite?: boolean;

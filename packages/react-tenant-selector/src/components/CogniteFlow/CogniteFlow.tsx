@@ -57,7 +57,7 @@ const CogniteFlow = ({
         <Button
           type="ghost"
           iconPlacement="right"
-          icon="MicroRight"
+          icon="ChevronRightMicro"
           unstyled
           disabled={loading}
           onClick={() => {

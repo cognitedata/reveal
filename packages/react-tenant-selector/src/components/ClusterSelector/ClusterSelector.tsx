@@ -61,7 +61,7 @@ const ClusterSelector = ({
             <Button
               type="ghost"
               iconPlacement="left"
-              icon="MicroLeft"
+              icon="ChevronLeftMicro"
               unstyled
               onClick={backToTenantSelector}
               disabled={loading}

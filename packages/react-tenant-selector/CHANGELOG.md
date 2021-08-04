@@ -1,3 +1,7 @@
+## 1.3.1 August 03 2021
+
+- Fix cogs icon deprecation notices
+
 ## 1.3.0 July 02 2021
 
 - Add extra fakeIdp options to token body
