@@ -30,7 +30,8 @@ export function Simple() {
         modelUrl: 'primitives',
       });
       const client = new CogniteClient({ appId: 'reveal.example.simple' });
-      client.loginWithOAuth({ project });
+      await client.loginWithOAuth({ type: 'CDF_OAUTH', options: { project }});
+      await client.authenticate();
 
       const renderer = new THREE.WebGLRenderer({
         canvas: canvas.current,

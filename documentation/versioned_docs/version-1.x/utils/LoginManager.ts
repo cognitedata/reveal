@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { CogniteClient, REDIRECT } from '@cognite/sdk';
+import { CogniteClient, REDIRECT } from '@cognite/sdk-1.x';
 import { env } from './env';
 
 const tokenCacheKey = 'cachedAT';
@@ -40,7 +40,7 @@ class LoginManager {
       // id_token in url means we already redirected from auth api
       // so it's safe to mark as logged in, when API call will happen
       // inside demo component - it will be authenticated automatically
-      if (s && s.project !== env.project) {
+      if (!s || s.project !== env.project) {
         sessionStorage.removeItem(tokenCacheKey);
         this.isLoggedIn = false;
       } else {
