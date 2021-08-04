@@ -25,16 +25,16 @@
     tunnel "0.0.6"
 
 "@azure/msal-browser@^2.11.0":
-  version "2.14.2"
-  resolved "https://registry.yarnpkg.com/@azure/msal-browser/-/msal-browser-2.14.2.tgz#4efa031ad16d5a3a527eddb6222e15dd6e2ea3e8"
-  integrity sha512-JKHE9Rer41CI8tweiyE91M8ZbGvQV9P+jOPB4ZtPxyxCi2f7ED3jNfdzyUJ1eGB+hCRnvO56M1Xc61T1R+JfYg==
+  version "2.16.1"
+  resolved "https://registry.yarnpkg.com/@azure/msal-browser/-/msal-browser-2.16.1.tgz#4b41afc1654eb27e090892893a2a2600af589af7"
+  integrity sha512-PcYi4seUGdtu30mOIdwk4FvbOdHFQ+fKAptEqV0tcsrvor0Hox/R0Xr0GEiBMfKkJbagLOYX7ORPRCYhZrWeqw==
   dependencies:
-    "@azure/msal-common" "^4.3.0"
+    "@azure/msal-common" "^4.5.1"
 
-"@azure/msal-common@^4.3.0":
-  version "4.3.0"
-  resolved "https://registry.yarnpkg.com/@azure/msal-common/-/msal-common-4.3.0.tgz#b540e92748656724088bf77192e59943a93135bc"
-  integrity sha512-jFqUWe83wVb6O8cNGGBFg2QlKvqM1ezUgJTEV7kIsAPX0RXhGFE4B1DLNt6hCnkTXDbw+KGW0zgxOEr4MJQwLw==
+"@azure/msal-common@^4.5.1":
+  version "4.5.1"
+  resolved "https://registry.yarnpkg.com/@azure/msal-common/-/msal-common-4.5.1.tgz#f35af8b634ae24aebd0906deb237c0db1afa5826"
+  integrity sha512-/i5dXM+QAtO+6atYd5oHGBAx48EGSISkXNXViheliOQe+SIFMDo3gSq3lL54W0suOSAsVPws3XnTaIHlla0PIQ==
   dependencies:
     debug "^4.1.1"
 
@@ -11254,9 +11254,9 @@ rxjs@^6.6.3:
     tslib "^1.9.0"
 
 rxjs@^7.1.0:
-  version "7.1.0"
-  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-7.1.0.tgz#94202d27b19305ef7b1a4f330277b2065df7039e"
-  integrity sha512-gCFO5iHIbRPwznl6hAYuwNFld8W4S2shtSJIqG27ReWXo9IWrCyEICxUA+6vJHwSR/OakoenC4QsDxq50tzYmw==
+  version "7.3.0"
+  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-7.3.0.tgz#39fe4f3461dc1e50be1475b2b85a0a88c1e938c6"
+  integrity sha512-p2yuGIg9S1epc3vrjKf6iVb3RCaAYjYskkO+jHIaV0IjOPlJop4UnodOoFb2xeNwlguqLYvGw1b1McillYb5Gw==
   dependencies:
     tslib "~2.1.0"
 
@@ -12210,9 +12210,9 @@ tar-stream@^2.1.4:
     readable-stream "^3.1.1"
 
 tar@^6.0.2:
-  version "6.1.0"
-  resolved "https://registry.yarnpkg.com/tar/-/tar-6.1.0.tgz#d1724e9bcc04b977b18d5c573b333a2207229a83"
-  integrity sha512-DUCttfhsnLCjwoDoFcI+B2iJgYa93vBnDUATYEeRx6sntCTdN01VnqsIuTlALXla/LWooNg0yEGeB+Y8WdFxGA==
+  version "6.1.4"
+  resolved "https://registry.yarnpkg.com/tar/-/tar-6.1.4.tgz#9f0722b772a5e00dba7d52e1923b37a7ec3799b3"
+  integrity sha512-kcPWrO8S5ABjuZ/v1xQHP8xCEvj1dQ1d9iAb6Qs4jLYzaAIYWwST2IQpz7Ud8VNYRI+fGhFjrnzRKmRggKWg3g==
   dependencies:
     chownr "^2.0.0"
     fs-minipass "^2.0.0"
