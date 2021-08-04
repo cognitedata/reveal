@@ -49,7 +49,7 @@ The Reveal viewer is structured using local packages.
 This allows you to test features in isolation and constrain the dependencies with logical barriers between features.
 Packages are located in the `/packages/` subfolder.
 There is no enforced structure of the packages and their layout and content will vary depending on what the package exposes to the rest of the system.
-Dependencies that are located in the root `package.json` will be shared and are accessible by any package without having to explicitly declare a depencency in the respective package's `package.json`.
+Dependencies that are located in the `viewer/package.json` will be shared and are accessible by any package without having to explicitly declare a dependency in the respective package's `package.json`.
 Any external dependency (e.g. `lodash`, `threejs`, etc.) must be declared in the root `package.json` such that they will be properly installed by users that consume the `Reveal` NPM package. 
 
 ### Creating a local package
