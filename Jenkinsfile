@@ -2,6 +2,9 @@
 
 static final String NODE_VERSION = 'node:16'
 
+static final String PR_COMMENT_MARKER = "[pr-server]\n"
+static final String STORYBOOK_COMMENT_MARKER = "[storybook-server]\n"
+
 static final Map<String, String> CONTEXTS = [
   checkout: "continuous-integration/jenkins/checkout",
   bazelSetup: "continuous-integration/jenkins/bazel-setup",
@@ -111,6 +114,12 @@ pods {
     slackChannel: 'frontend-alerts',
   ) {
     stageWithNotify('Bazel setup', CONTEXTS.bazelSetup) {
+      if (isPullRequest) {
+        // always cleanup at the start of a run:
+        deleteComments(PR_COMMENT_MARKER)
+        deleteComments(STORYBOOK_COMMENT_MARKER)
+      }
+            
       container('bazel') {
         // TODO: Define custom docker image to include bazel instead of installing
         // We are using custom docker.io/timbru31/node-chrome:latest
