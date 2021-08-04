@@ -132,8 +132,8 @@ export function SectorWithPointcloud() {
       const client = new CogniteClient({
         appId: 'reveal.example.hybrid-cad-pointcloud',
       });
-      client.loginWithOAuth({ project });
       if (modelRevision || pointCloudModelRevision) {
+        await client.loginWithOAuth({ type: 'CDF_OAUTH', options: { project }});
         await client.authenticate()
       }
 

@@ -83,7 +83,7 @@ export function Migration() {
       if (apiKey !== undefined) {
         client.loginWithApiKey({ project, apiKey });
       } else {
-        client.loginWithOAuth({ project });
+        await client.loginWithOAuth({ type: 'CDF_OAUTH', options: { project: '3ddemo' }});
         await client.authenticate();
       }
 
