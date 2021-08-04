@@ -104,7 +104,6 @@ Add the following script to your package's `package.json`:
 
 Running the command `yarn start` will host a localhost site with a template HTML that includes the `/app/index.ts` script that has been transpiled to javascript.
 To see an example of this check out the `packages/camera-manager` package.
-<<<<<<< HEAD
 
 ### Recommended package folder structure
     ├── app                   # Runnable app
@@ -114,6 +113,3 @@ To see an example of this check out the `packages/camera-manager` package.
     ├── package.json          # Package declaration
     ├── index.ts              # Entry point for package
     └── README.md             # Readme
-=======
- 
->>>>>>> f7e11bcd20cf5c5a11e5c336ced7cb5b872ebb17
