@@ -1,4 +1,3 @@
-import UploadGCS from '@cognite/gcs-browser-upload';
 import {
   CogniteInternalId,
   ExternalFileInfo,
@@ -23,14 +22,13 @@ export function validateFileSize(
   return file?.size <= maxSize;
 }
 
-export function GCSUploader(file: Blob | File, uploadUrl: string) {
-  // This is what is recommended from google when uploading files.
-  // https://github.com/QubitProducts/gcs-browser-upload
-
-  return new UploadGCS({
-    id: 'digital-cockpit-upload',
-    url: uploadUrl,
-    file,
+async function uploader(file: Blob | File, uploadUrl: string) {
+  return new Promise<void>((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('PUT', uploadUrl);
+    xhr.onload = () => resolve();
+    xhr.onerror = (e) => reject(e);
+    xhr.send(file);
   });
 }
 
@@ -46,8 +44,7 @@ export async function uploadFile(
   if (!uploadUrl) {
     throw new Error('Unable to create file. Failed to get Upload URL.');
   }
-  const currentUpload = await GCSUploader(fileToUpload, uploadUrl);
-  return currentUpload.start();
+  return uploader(fileToUpload, uploadUrl);
 }
 
 export function getExternalFileInfo(
