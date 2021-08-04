@@ -37,7 +37,8 @@ export function TwoModels() {
       });
       const { modelUrl: modelUrl2, modelRevision: modelRevision2 } = getModel2Params();
       const client = new CogniteClient({ appId: 'reveal.example.two-models' });
-      client.loginWithOAuth({ project });
+      await client.loginWithOAuth({ type: 'CDF_OAUTH', options: { project }});
+      await client.authenticate();
 
       const renderer = new THREE.WebGLRenderer({
         canvas: canvasRef.current!,
