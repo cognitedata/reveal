@@ -108,12 +108,23 @@ export const { coneGeometry, coneGeometryBoundingBox } = (() => {
   };
 })();
 
-export const { torusGeometry, torusGeometryBoundingBox } = (() => {
-  const tubularSegments = 7;
-  const radialSegments = 7;
+export const { torusLodGeometries, torusGeometryBoundingBox } = (() => {
+  const lods = [
+    { tubularSegments: 4, radialSegments: 3 },
+    { tubularSegments: 5, radialSegments: 12 },
+    { tubularSegments: 7, radialSegments: 18 }
+  ];
   const transformFunc = (u: number, v: number) => [u, v * 2.0 * Math.PI];
-  const torusGeometry = generatePlane3D(radialSegments, tubularSegments, transformFunc);
-  return { torusGeometry, torusGeometryBoundingBox: new THREE.Box3().setFromArray(torusGeometry.position.array) };
+  const torusLodGeometries = lods.map(({ tubularSegments, radialSegments }) => {
+    return generatePlane3D(radialSegments, tubularSegments, transformFunc);
+  });
+
+  return {
+    torusLodGeometries,
+    torusGeometryBoundingBox: new THREE.Box3().setFromArray(
+      torusLodGeometries[torusLodGeometries.length - 1].position.array
+    )
+  };
 })();
 
 export const { nutGeometry, nutGeometryBoundingBox } = (() => {

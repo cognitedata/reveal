@@ -10,7 +10,7 @@ import {
   coneGeometry,
   trapeziumGeometry,
   nutGeometry,
-  torusGeometry,
+  torusLodGeometries,
   boxGeometryBoundingBox,
   quadGeometryBoundingBox,
   torusGeometryBoundingBox,
@@ -26,6 +26,7 @@ import {
   filterPrimitivesOutsideClipBoxByEllipse,
   filterPrimitivesOutsideClipBoxByVertices
 } from './filterPrimitives';
+import { BoundingBoxLOD } from '../../../utilities/three';
 
 export function* createPrimitives(
   sector: SectorGeometry,
@@ -475,6 +476,35 @@ function createTrapeziums(
   return mesh;
 }
 
+function getBiggestTorusSize(
+  torusSegmentCollection: Uint8Array,
+  torusSegmentAttributes: Map<string, ParsePrimitiveAttribute>
+) {
+  const collectionStride = Array.from(torusSegmentAttributes.values()).reduce((sum, element) => sum + element.size, 0);
+
+  const numberOfTorusSegments = torusSegmentCollection.length / collectionStride;
+
+  let biggest = 0.0;
+
+  const collectionView = new DataView(torusSegmentCollection.buffer);
+  const sizeAttribute = torusSegmentAttributes.get('size')!;
+  const sizeAttributeOffset = sizeAttribute.offset;
+
+  for (let i = 0; i < numberOfTorusSegments; i++) {
+    biggest = Math.max(biggest, collectionView.getFloat32(i * collectionStride + sizeAttributeOffset!, true));
+  }
+
+  return biggest;
+}
+
+function calcLODDistance(size: number, lodLevel: number, numLevels: number): number {
+  if (lodLevel >= numLevels - 1) {
+    return 0;
+  }
+  const scaleFactor = 5; // Seems to be a reasonable number
+  return size * scaleFactor ** (numLevels - 1 - lodLevel);
+}
+
 function createTorusSegments(
   torusSegmentCollection: Uint8Array,
   torusSegmentAttributes: Map<string, ParsePrimitiveAttribute>,
@@ -488,17 +518,28 @@ function createTorusSegments(
     geometryClipBox
   );
 
-  const geometry = new THREE.InstancedBufferGeometry();
-  const mesh = new THREE.Mesh(geometry, material);
+  const biggestTorus = getBiggestTorusSize(filteredCollection, torusSegmentAttributes);
 
-  geometry.setIndex(torusGeometry.index);
-  geometry.setAttribute('position', torusGeometry.position);
-  setAttributes(geometry, filteredCollection, torusSegmentAttributes, mesh);
-  setBoundsFromInstanceMatrices(geometry);
+  const lod = new BoundingBoxLOD(new THREE.Box3());
+  lod.name = 'Primitives (TorusSegments)';
+  for (const [level, torus] of torusLodGeometries.entries()) {
+    const geometry = new THREE.InstancedBufferGeometry();
+    const mesh = new THREE.Mesh(geometry, material);
 
-  mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
-  mesh.name = `Primitives (TorusSegments)`;
-  return mesh;
+    geometry.setIndex(torus.index);
+    geometry.setAttribute('position', torus.position);
+    setAttributes(geometry, torusSegmentCollection, torusSegmentAttributes, mesh);
+    setBoundsFromInstanceMatrices(geometry);
+    lod.setBoundingBox(geometry.boundingBox!);
+
+    mesh.frustumCulled = false;
+    mesh.name = `Primitives (TorusSegments) - LOD ${level}`;
+    lod.addLevel(mesh, calcLODDistance(biggestTorus, level, torusLodGeometries.length));
+
+    mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
+  }
+
+  return lod;
 }
 
 function createNuts(
@@ -547,7 +588,9 @@ const setBoundingSphereFromVerticesVars = {
   p: new THREE.Vector3()
 };
 
-function setBoundsFromInstanceMatrices(geometry: THREE.InstancedBufferGeometry) {
+export function determineBoundsFromInstanceMatrices(
+  geometry: THREE.InstancedBufferGeometry
+): { boundingBox: THREE.Box3; boundingSphere: THREE.Sphere } {
   const { baseBoundingBox, instanceBoundingBox, instanceMatrix, p } = setBoundingSphereFromVerticesVars;
   baseBoundingBox.makeEmpty();
   const bbox = new THREE.Box3();
@@ -584,9 +627,14 @@ function setBoundsFromInstanceMatrices(geometry: THREE.InstancedBufferGeometry) 
     bbox.expandByPoint(instanceBoundingBox.min);
     bbox.expandByPoint(instanceBoundingBox.max);
   }
-  geometry.boundingBox = bbox;
-  geometry.boundingSphere = geometry.boundingSphere || new THREE.Sphere();
-  geometry.boundingBox.getBoundingSphere(geometry.boundingSphere);
+
+  return { boundingBox: bbox, boundingSphere: bbox.getBoundingSphere(new THREE.Sphere()) };
+}
+
+function setBoundsFromInstanceMatrices(geometry: THREE.InstancedBufferGeometry) {
+  const { boundingBox, boundingSphere } = determineBoundsFromInstanceMatrices(geometry);
+  geometry.boundingBox = boundingBox;
+  geometry.boundingSphere = boundingSphere;
 }
 
 const setBoundsFromVertexAttributesVars = {
@@ -621,6 +669,7 @@ function setBoundsFromVertexAttributes(geometry: THREE.InstancedBufferGeometry) 
   }
 
   geometry.boundingBox = bbox;
+  // TODO 20210804 larsmoa: Compute better bounding spheres for primitives
   geometry.boundingSphere = geometry.boundingSphere || new THREE.Sphere();
   geometry.boundingBox.getBoundingSphere(geometry.boundingSphere);
 }
