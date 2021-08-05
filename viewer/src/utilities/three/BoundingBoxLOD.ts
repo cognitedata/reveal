@@ -3,9 +3,19 @@
  */
 import * as THREE from 'three';
 
+// For BoundingBoxLOD.update()
+const updateVars = {
+  camPos: new THREE.Vector3(),
+  bounds: new THREE.Box3()
+};
+
+/**
+ * Class similar to THREE.LOD except that it doesn't use `matrixWorld` to determine distance to camera, but a
+ * bounding box.
+ */
 export class BoundingBoxLOD extends THREE.Object3D {
-  private _currentLevel = 0;
   private readonly _boundingBox: THREE.Box3;
+  private _activeLevel = 0;
   private readonly _levels: { distance: number; object: THREE.Object3D }[] = [];
 
   // Note! isLOD and autoUpdate is used by WebGLRenderer to perform automatic update of LOD
@@ -25,21 +35,28 @@ export class BoundingBoxLOD extends THREE.Object3D {
 
   addLevel(object: THREE.Object3D, distance: number = 0) {
     this._levels.push({ object, distance: Math.abs(distance) });
-    this._levels.sort((a, b) => a.distance - b.distance);
+    this._levels.sort((a, b) => b.distance - a.distance);
+    object.visible = false;
     this.add(object);
   }
 
+  /**
+   * Returns the index of the current active LOD. 0 means highest detail.
+   */
   getCurrentLevel() {
-    return this._currentLevel;
+    return this._levels.length > 0 ? this._levels.length - this._activeLevel - 1 : 0;
   }
 
-  private readonly _updateVars = {
-    camPos: new THREE.Vector3(),
-    bounds: new THREE.Box3()
-  };
+  /**
+   * Update selected LOD level based on distance to camera.
+   */
   update(camera: THREE.Camera) {
+    this.updateCurrentLevel(camera);
+  }
+
+  private updateCurrentLevel(camera: THREE.Camera) {
     const levels = this._levels;
-    const { camPos, bounds } = this._updateVars;
+    const { camPos, bounds } = updateVars;
     bounds.copy(this._boundingBox).applyMatrix4(this.matrixWorld);
     const cameraZoom = camera instanceof THREE.PerspectiveCamera ? camera.zoom : 1.0;
 
@@ -47,22 +64,10 @@ export class BoundingBoxLOD extends THREE.Object3D {
       camPos.setFromMatrixPosition(camera.matrixWorld);
       const distanceToCamera = bounds.distanceToPoint(camPos) / cameraZoom;
 
-      this._currentLevel = 0;
-      levels[0].object.visible = true;
-
-      for (let i = 1; i < levels.length; ++i) {
-        if (distanceToCamera >= levels[i].distance) {
-          levels[i - 1].object.visible = false;
-          levels[i].object.visible = true;
-          this._currentLevel = i;
-        } else {
-          break;
-        }
-      }
-
-      for (let i = this._currentLevel + 1; i < levels.length; ++i) {
-        levels[i].object.visible = false;
-      }
+      levels[this._activeLevel].object.visible = false;
+      this._activeLevel = levels.findIndex(p => distanceToCamera >= p.distance);
+      this._activeLevel = this._activeLevel >= 0 ? this._activeLevel : levels.length - 1;
+      levels[this._activeLevel].object.visible = true;
     }
   }
 }

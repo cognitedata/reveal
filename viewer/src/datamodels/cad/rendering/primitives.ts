@@ -501,9 +501,8 @@ function calcLODDistance(size: number, lodLevel: number): number {
   if (lodLevel === 0) {
     return 0;
   }
-  const scaleFactor = 5.0; // Seems to be a reasonable number
+  const scaleFactor = 5.0;
   const distance = size * scaleFactor ** lodLevel;
-  console.log('calcLOD, size:', size, 'lodLevel:', lodLevel, 'distance:', distance);
   return distance;
 }
 
@@ -525,6 +524,8 @@ function createTorusSegments(
   const lod = new BoundingBoxLOD(new THREE.Box3());
   lod.name = 'Primitives (TorusSegments)';
 
+  let boundingBox: THREE.Box3 | null = null;
+  let boundingSphere: THREE.Sphere | null = null;
   for (const [level, torus] of torusLodGeometries.entries()) {
     const geometry = new THREE.InstancedBufferGeometry();
     const mesh = new THREE.Mesh(geometry, material);
@@ -532,10 +533,16 @@ function createTorusSegments(
     geometry.setIndex(torus.index);
     geometry.setAttribute('position', torus.position);
     setAttributes(geometry, torusSegmentCollection, torusSegmentAttributes, mesh);
-    setBoundsFromInstanceMatrices(geometry);
-    lod.setBoundingBox(geometry.boundingBox!);
 
-    mesh.frustumCulled = false;
+    if (boundingBox === null) {
+      const bounds = determineBoundsFromInstanceMatrices(geometry);
+      boundingBox = bounds.boundingBox;
+      boundingSphere = bounds.boundingSphere;
+      lod.setBoundingBox(boundingBox);
+    }
+    geometry.boundingBox = boundingBox;
+    geometry.boundingSphere = boundingSphere;
+
     mesh.name = `Primitives (TorusSegments) - LOD ${level}`;
     lod.addLevel(mesh, calcLODDistance(biggestTorus, level));
 

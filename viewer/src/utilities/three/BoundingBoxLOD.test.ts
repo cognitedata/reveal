@@ -55,4 +55,18 @@ describe('BoundingBoxLOD', () => {
     expect(lod.getCurrentLevel()).toBe(3);
     expect(l.visible).toBe(true);
   });
+
+  test('No LOD with distance 0.0, top LOD is returned for distances below top LOD', () => {
+    const l0 = new THREE.Object3D();
+    lod.addLevel(l0, 5.0);
+    lod.addLevel(new THREE.Object3D(), 10.0);
+    lod.addLevel(new THREE.Object3D(), 15.0);
+    camera.position.set(2, 0, 0);
+    camera.updateMatrixWorld();
+
+    lod.update(camera);
+
+    expect(lod.getCurrentLevel()).toBe(0);
+    expect(l0.visible).toBeTrue();
+  });
 });
