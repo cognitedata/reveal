@@ -10646,9 +10646,10 @@ react-live@^2.2.1:
     react-simple-code-editor "^0.10.0"
     unescape "^1.0.1"
 
-react-live@maksnester/react-live#mn/disable-transpilation-options-dist:
-  version "2.2.3"
-  resolved "https://codeload.github.com/maksnester/react-live/tar.gz/9e12a71a142123887e88dd406c203cd1f66d7bbc"
+react-live@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/react-live/-/react-live-2.3.0.tgz#09fbac361903970e7cf51cee60729eeb164a5d87"
+  integrity sha512-b+Nc7x/bLu2sPX/If1uncrmUvYtXTqxY8QpzBw/X76SA3QJ1ggU0Ld6X5phLXZ469+XWO5lOU7OpAt0JoTyZPQ==
   dependencies:
     "@types/buble" "^0.20.0"
     buble "0.19.6"
