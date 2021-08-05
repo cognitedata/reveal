@@ -16,7 +16,7 @@ import { GLTFLoader, GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
 
 import * as THREE from 'three';
-import { getBoxOutputSize, transformBoxes } from './primitiveTransformers';
+import { getBoxOutputSize, getCircleOutputSize, transformBoxes, transformCircles } from './primitiveTransformers';
 
 export interface ParseGltfResult {
   indices: Uint32Array;
@@ -414,21 +414,34 @@ export class CadSectorParser {
       primitiveSpecs.boxes.byteOffset,
       primitiveSpecs.boxes.byteOffset + primitiveSpecs.boxes.byteCount
     );
-    /* const circleSlice = buffer.slice(primitiveSpecs.circles.byteOffset,
-                                     primitiveSpecs.circles.byteOffset + primitiveSpecs.circles.byteCount);
-    const closedConeSlice = buffer.slice(primitiveSpecs.closedCones.byteOffset,
-                                         primitiveSpecs.closedCones.byteOffset + primitiveSpecs.closedCones.byteCount);
-    const closedCylinderSlice = buffer.slice(primitiveSpecs.closedCylinders.byteOffset,
-                                             primitiveSpecs.closedCylinders.byteOffset + primitiveSpecs.closedCylinders.byteCount);
-    const closedEccentricConeSlice = buffer.slice(primitiveSpecs.closedEccentricCones.byteOffset,
-                                                  primitiveSpecs.closedEccentricCones.byteOffset + primitiveSpecs.closedEccentricCones.byteCount);
-    const closedEllipsoidSegmentSlice = buffer.slice(primitiveSpecs.closedEllipsoidSegments.byteOffset,
-                                                     primitiveSpecs.closedEllipsoidSegments.byteOffset + primitiveSpecs.closedEllipsoidSegments.byteCount);
-    const closedExtrudedRingSegmentSlice = buffer.slice(primitiveSpecs.closedExtrudedRingSegments.byteOffset, 
-                                                        primitiveSpecs.closedExtrudedRingSegments.byteOffset + primitiveSpecs.closedExtrudedRingSegments.byteCount);
-    const closedSphericalSegmentSlice = buffer.slice(primitiveSpecs.closedSphericalSegments.byteOffset,
-                                                     primitiveSpecs.closedSphericalSegments.byteOffset + primitiveSpecs.closedSphericalSegments.byteCount);
-    const closedTorusSegmentSlice = buffer.slice(primitiveSpecs.closedTorusSegments.byteOffset,
+
+    const circleSlice = buffer.slice(
+      primitiveSpecs.circles.byteOffset,
+      primitiveSpecs.circles.byteOffset + primitiveSpecs.circles.byteCount
+    );
+    const closedConeSlice = buffer.slice(
+      primitiveSpecs.closedCones.byteOffset,
+      primitiveSpecs.closedCones.byteOffset + primitiveSpecs.closedCones.byteCount
+    );
+    const closedCylinderSlice = buffer.slice(
+      primitiveSpecs.closedCylinders.byteOffset,
+      primitiveSpecs.closedCylinders.byteOffset + primitiveSpecs.closedCylinders.byteCount
+    );
+    const closedEccentricConeSlice = buffer.slice(
+      primitiveSpecs.closedEccentricCones.byteOffset,
+      primitiveSpecs.closedEccentricCones.byteOffset + primitiveSpecs.closedEccentricCones.byteCount
+    );
+    const closedEllipsoidSegmentSlice = buffer.slice(
+      primitiveSpecs.closedEllipsoidSegments.byteOffset,
+      primitiveSpecs.closedEllipsoidSegments.byteOffset + primitiveSpecs.closedEllipsoidSegments.byteCount
+    );
+    /* const closedExtrudedRingSegmentSlice = buffer.slice(primitiveSpecs.closedExtrudedRingSegments.byteOffset, 
+                                                        primitiveSpecs.closedExtrudedRingSegments.byteOffset + primitiveSpecs.closedExtrudedRingSegments.byteCount); */
+    const closedSphericalSegmentSlice = buffer.slice(
+      primitiveSpecs.closedSphericalSegments.byteOffset,
+      primitiveSpecs.closedSphericalSegments.byteOffset + primitiveSpecs.closedSphericalSegments.byteCount
+    );
+    /* const closedTorusSegmentSlice = buffer.slice(primitiveSpecs.closedTorusSegments.byteOffset,
                                                  primitiveSpecs.closedTorusSegments.byteOffset + primitiveSpecs.closedTorusSegments.byteCount);
     const ellipsoidSlice = buffer.slice(primitiveSpecs.ellipsoids.byteOffset,
                                         primitiveSpecs.ellipsoids.byteOffset + primitiveSpecs.ellipsoids.byteCount);
@@ -475,7 +488,17 @@ export class CadSectorParser {
 
     const boxOutput = new Uint8Array(getBoxOutputSize(boxSlice));
     // const boxOutput = new Uint8Array();
-    const circleOutput = new Uint8Array();
+    const circleOutput = new Uint8Array(
+      getCircleOutputSize(
+        circleSlice,
+        closedConeSlice,
+        closedEccentricConeSlice,
+        closedCylinderSlice,
+        closedEllipsoidSegmentSlice,
+        closedSphericalSegmentSlice
+      )
+    );
+    // const circleOutput = new Uint8Array();
     const coneOutput = new Uint8Array();
     const eccentricConeOutput = new Uint8Array();
     const ellipsoidSegmentOutput = new Uint8Array();
@@ -488,8 +511,8 @@ export class CadSectorParser {
     const trapeziumOutput = new Uint8Array();
 
     let boxOutputOffset = 0;
-    /* let circleOutputOffset = 0;
-    let coneOutputOffset = 0;
+    let circleOutputOffset = 0;
+    /* let coneOutputOffset = 0;
     let eccentricConeOutputOffset = 0;
     let ellipsoidSegmentOutputOffset = 0;
     let generalCylinderOutputOffset = 0;
@@ -500,7 +523,8 @@ export class CadSectorParser {
     let torusSegmentOffset = 0;
     let trapeziumOffset = 0; */
 
-    boxOutputOffset = transformBoxes(boxSlice, boxOutput, boxOutputOffset);
+    boxOutputOffset += transformBoxes(boxSlice, boxOutput, boxOutputOffset, boxAttributes);
+    circleOutputOffset += transformCircles(circleSlice, circleOutput, circleOutputOffset, circleAttributes);
 
     const res: ParsedPrimitives = {
       boxCollection: boxOutput,
