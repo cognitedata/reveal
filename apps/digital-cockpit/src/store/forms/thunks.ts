@@ -117,7 +117,7 @@ export function deleteFiles(
       Sentry.captureException(e);
       dispatch(
         setHttpError(
-          `Failed to image preview(s): ${fileExternalIds.join(', ')}`,
+          `Failed to delete image preview(s): ${fileExternalIds.join(', ')}`,
           e
         )
       );

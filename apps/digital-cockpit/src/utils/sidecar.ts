@@ -17,6 +17,7 @@ type Sidecar = {
 
 const PROD = false;
 const CLUSTER = 'ew1';
+// const CLUSTER = 'westeurope-1';
 
 const generateBaseUrls = (cluster: string, prod = false) => {
   switch (cluster) {
@@ -26,6 +27,19 @@ const generateBaseUrls = (cluster: string, prod = false) => {
         appsApiBaseUrl: 'https://apps-api.staging.cognite.ai',
         cdfApiBaseUrl: 'https://api.cognitedata.com',
         cdfCluster: '',
+        digitalCockpitApiBaseUrl:
+          process.env.REACT_APP_DC_API_URL ||
+          'https://digital-cockpit-api.staging.cognite.ai',
+      };
+    }
+    case 'westeurope-1': {
+      return {
+        aadApplicationId: 'f9e9e254-d484-4789-aaed-8f6e2bde532a',
+        appsApiBaseUrl: 'https://apps-api.westeurope-1.cognite.ai',
+        cdfApiBaseUrl: 'https://westeurope-1.cognitedata.com',
+        digitalCockpitApiBaseUrl:
+          process.env.REACT_APP_DC_API_URL ||
+          'https://digital-cockpit-api.westeurope-1.cognite.ai',
       };
     }
     default: {
@@ -36,6 +50,9 @@ const generateBaseUrls = (cluster: string, prod = false) => {
           : `https://apps-api.staging.${cluster}.cognite.ai`,
         cdfApiBaseUrl: `https://${cluster}.cognitedata.com`,
         cdfCluster: cluster,
+        digitalCockpitApiBaseUrl:
+          process.env.REACT_APP_DC_API_URL ||
+          'https://digital-cockpit-api.staging.cognite.ai',
       };
     }
   }
@@ -50,10 +67,6 @@ const generateBaseUrls = (cluster: string, prod = false) => {
   __sidecarFormatVersion: 1,
   applicationId: 'digital-cockpit-dev',
   applicationName: 'Digital Cockpit (dev)',
-  cdfApiBaseUrl: 'https://api.cognitedata.com',
-  digitalCockpitApiBaseUrl:
-    process.env.REACT_APP_DC_API_URL ||
-    'https://digital-cockpit-api.staging.cognite.ai',
   docsSiteBaseUrl: 'https://docs.cognite.com',
   privacyPolicyUrl: 'https://www.cognite.com/en/policy',
   ...((window as any).__cogniteSidecar || {}),

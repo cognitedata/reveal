@@ -182,6 +182,10 @@ export const BoardForm: React.FC<BoardFormProps> = ({
   ) => {
     let { key: boardKey } = boardValues;
     boardKey = boardKey || key();
+    const newBoardItem = {
+      ...boardValues,
+      key: boardKey,
+    };
     // handle fileUploadQueue
     if (isNewItem) {
       replaceNewFileKey(filesUploadQueue, boardKey); // if uploaded a file => give it a key
@@ -189,18 +193,17 @@ export const BoardForm: React.FC<BoardFormProps> = ({
       setSuiteItem((prevState: Suite) =>
         excludeFileFromBoard(prevState, boardKey)
       );
+      newBoardItem.imageFileId = '';
     }
-    // imageFileId will be updated after a file is successfully uploaded
-    setSuiteItem((prevState: Suite) =>
-      updateSuite(prevState, { ...boardValues, key: boardKey })
-    );
+    // board.imageFileId will be updated after a file is successfully uploaded
+    setSuiteItem((prevState: Suite) => updateSuite(prevState, newBoardItem));
     resetForm();
     metrics.track(isNewItem ? 'AddNewBoard' : 'UpdateBoard', {
       boardKey,
-      board: boardValues.title,
-      useEmbedTag: !!boardValues.embedTag,
+      board: newBoardItem.title,
+      useEmbedTag: !!newBoardItem.embedTag,
       useImagePreview:
-        !!boardValues.imageFileId || filesUploadQueue.has(boardKey),
+        !!newBoardItem.imageFileId || filesUploadQueue.has(boardKey),
     });
   };
 
