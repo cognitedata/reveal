@@ -12,7 +12,7 @@ load("//rules/npm:append_deps.bzl", "append_deps")
 
 SOURCES = glob(
     [
-        "src/*.tsx", 
+        "src/*.tsx",
         "src/**/*.ts",
     ],
     exclude = ["src/**/*.spec.ts"],
@@ -36,10 +36,15 @@ generate_package_json_helpers(
 ### start of auto-generated helpers ###
 
 # Dependencies from package.json
-DEPENDENCIES = []
+DEPENDENCIES = [
+    "@npm//@cognite/comment-service-types",
+    "@npm//react",
+]
 
 # Type dependencies from package.json
-TYPE_DEPENDENCIES = []
+TYPE_DEPENDENCIES = [
+    "@npm//@types/react",
+]
 
 # Dev dependencies from package.json
 DEV_DEPENDENCIES = []
@@ -65,8 +70,8 @@ eslint_test(
     name = "eslint_test",
     data = SOURCES + TESTS + [
         ":tsconfig.json",
-        "//packages:tsconfig.json",
         "//:tsconfig.json",
+        "//packages:tsconfig.json",
     ],
     eslint_config = ":eslint_config",
 )
@@ -80,14 +85,14 @@ prettier_test(
 jest_test(
     name = "jest_test",
     srcs = SOURCES + TESTS + [
-        "//packages:jest.config.js",
         ":tsconfig.json",
+        "//packages:jest.config.js",
         "//:tsconfig.json",
         "//packages:tsconfig.json",
     ],
     jest_args = [],
     jest_config = "jest.config.js",
-    service_name = "{{ name }}",
+    service_name = "react-comments",
     deps = DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES,
 )
 
@@ -165,8 +170,8 @@ _mappings = module_mappings(
 )
 
 js_library(
-    name = "{{ name }}",
-    package_name = "@cognite/{{ name }}",
+    name = "react-comments",
+    package_name = "@cognite/react-comments",
     srcs = ["package-json"],
     visibility = ["//visibility:public"],
     deps = DEPENDENCIES + ["dist"],
@@ -181,7 +186,7 @@ append_deps(
 
 pkg_npm(
     name = "npm-package",
-    package_name = "@cognite/{{ name }}",
+    package_name = "@cognite/react-comments",
     visibility = ["//visibility:public"],
     deps = [
         "dist",
@@ -196,6 +201,6 @@ is_published(
 
 package_info(
     name = "package_info",
-    display_name = "{{ name }}",
+    display_name = "react-comments",
     package = ":npm-package",
 )

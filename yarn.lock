@@ -1488,11 +1488,18 @@
     stylelint "^13.13.1"
     tippy.js "6.2.0"
 
+"@cognite/comment-service-types@^0.0.1":
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/@cognite/comment-service-types/-/comment-service-types-0.0.1.tgz#d138d7caedef42f6660c465934b47359b7cbe8b3"
+  integrity sha512-kSfDnrR9huis4Q58ABKTXgKca3hgQIlQFyhvDxwVUvNmObAiZcVGvCsc5BKLXnOXLE1vy2NeXU778LfUy9WI/A==
+
 "@cognite/eslint-config@link:packages/eslint-config":
   version "0.0.0"
+  uid ""
 
 "@cognite/eslint-plugin@link:packages/eslint-plugin":
   version "0.0.0"
+  uid ""
 
 "@cognite/fas-tools@^1.0.0":
   version "1.1.5"
