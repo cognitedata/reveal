@@ -46,7 +46,6 @@ export class BoundingBoxLOD extends THREE.Object3D {
     if (levels.length > 0) {
       camPos.setFromMatrixPosition(camera.matrixWorld);
       const distanceToCamera = bounds.distanceToPoint(camPos) / cameraZoom;
-      console.log(distanceToCamera);
 
       this._currentLevel = 0;
       levels[0].object.visible = true;
