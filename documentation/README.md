@@ -102,18 +102,6 @@ yarn docusaurus docs:version 2.x
 
 That will become default version for the docs website.
 
-##### Tweak copying of next version into your 2.x version
-
-The copying should happen on every reveal release (called by bump `scrips`).
-
-It's handled by `yarn run replace-latest` script, but for a new version you need to adjust version name in that script. 
-So, go to `package.json` and do that change at `replace-latest` script
-
-```diff
-- "replace-latest-by-next": "yarn apiref && rimraf versioned_sidebars/version-1.x-sidebars.json versioned_docs/version-1.x versions.json && yarn docusaurus docs:version 1.x && git checkout HEAD -- versions.json"
-+ "replace-latest-by-next": "yarn apiref && rimraf versioned_sidebars/version-2.x-sidebars.json versioned_docs/version-2.x versions.json && yarn docusaurus docs:version 2.x && git checkout HEAD -- versions.json"
-```
-
 ##### Introduce a new versioned dependency on reveal in your archived version
 
 That step is needed because we are actually using reveal in docs, so docs not just docs, but they have a dependency on reveal to show live demos.
@@ -123,11 +111,8 @@ So when you archive a version you must fix the version of reveal for that part o
 Below is an example of archiving `1.x` version.
 
 1. Go to `documentation/package.json`
-2. Add aliased fixed dependency, e.g. `"@cognite/reveal-1.x": "npm:@cognite/reveal@^1.5.5",`
-3. At `versioned_docs/1.x`:
-   * replace all `@cognite/reveal` appearances in imports with `@cognite/reveal-1.x`
-   * replace all `runnable` annotations with `runnable-1x`
-4. At `remark-runnable-reveal-demo.js` add a new record to the `versionedImportNode`:
+2. Add aliased fixed dependency, e.g. `"@cognite/reveal-2.x": "npm:@cognite/reveal@^2.1.0",` and `"@cognite/sdk-2.x": "npm:@cognite/sdk@^5.1.3",`
+3. At `remark-runnable-reveal-demo.js` add a new record to the `versionedImportNode`:
   ```js
       'runnable-1x': {
         type: 'import',
@@ -135,7 +120,10 @@ Below is an example of archiving `1.x` version.
         "import { LiveCodeSnippet } from '@site/versioned_docs/version-1.x/components/LiveCodeSnippet';",
       },
   ```
-
+4. Inside `documentation/`, run e.g. `yarn replace-2.x` to replace 2.x docs with the current docs. This will:
+-- Copy current documentation (available as "Next" in the hosted site) to 2.x versioned docs
+-- Update references to `@cognite/reveal` to `@cognite/reveal-2.x` and `@cognite/sdk` to `@cognite/sdk-2.x`
+-- Update runnable examples to use Reveal 2
 ##### Configure search
 
 [[Docusaurus guide on search](https://docusaurus.io/docs/2.0.0-beta.0/search)]
