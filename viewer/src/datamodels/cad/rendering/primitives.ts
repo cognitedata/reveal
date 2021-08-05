@@ -497,12 +497,14 @@ function getBiggestTorusSize(
   return biggest;
 }
 
-function calcLODDistance(size: number, lodLevel: number, numLevels: number): number {
-  if (lodLevel >= numLevels - 1) {
+function calcLODDistance(size: number, lodLevel: number): number {
+  if (lodLevel === 0) {
     return 0;
   }
-  const scaleFactor = 5; // Seems to be a reasonable number
-  return size * scaleFactor ** (numLevels - 1 - lodLevel);
+  const scaleFactor = 5.0; // Seems to be a reasonable number
+  const distance = size * scaleFactor ** lodLevel;
+  console.log('calcLOD, size:', size, 'lodLevel:', lodLevel, 'distance:', distance);
+  return distance;
 }
 
 function createTorusSegments(
@@ -522,6 +524,7 @@ function createTorusSegments(
 
   const lod = new BoundingBoxLOD(new THREE.Box3());
   lod.name = 'Primitives (TorusSegments)';
+
   for (const [level, torus] of torusLodGeometries.entries()) {
     const geometry = new THREE.InstancedBufferGeometry();
     const mesh = new THREE.Mesh(geometry, material);
@@ -534,7 +537,7 @@ function createTorusSegments(
 
     mesh.frustumCulled = false;
     mesh.name = `Primitives (TorusSegments) - LOD ${level}`;
-    lod.addLevel(mesh, calcLODDistance(biggestTorus, level, torusLodGeometries.length));
+    lod.addLevel(mesh, calcLODDistance(biggestTorus, level));
 
     mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
   }

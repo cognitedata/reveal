@@ -110,9 +110,9 @@ export const { coneGeometry, coneGeometryBoundingBox } = (() => {
 
 export const { torusLodGeometries, torusGeometryBoundingBox } = (() => {
   const lods = [
-    { tubularSegments: 4, radialSegments: 3 },
+    { tubularSegments: 9, radialSegments: 18 },
     { tubularSegments: 5, radialSegments: 12 },
-    { tubularSegments: 9, radialSegments: 18 }
+    { tubularSegments: 4, radialSegments: 3 }
   ];
   const transformFunc = (u: number, v: number) => [u, v * 2.0 * Math.PI];
   const torusLodGeometries = lods.map(({ tubularSegments, radialSegments }) => {
