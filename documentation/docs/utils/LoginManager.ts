@@ -27,27 +27,18 @@ class LoginManager {
     // to make it available in examples
     window.sdk = this.client;
 
-    this.client.loginWithOAuth({
-      project: env.project,
-      accessToken,
-      onAuthenticate: REDIRECT,
-      onTokens: (tokens) => {
-        sessionStorage.setItem(tokenCacheKey, tokens.accessToken);
-      },
-    });
-
     this.client.login.status().then((s) => {
       // id_token in url means we already redirected from auth api
       // so it's safe to mark as logged in, when API call will happen
       // inside demo component - it will be authenticated automatically
-      if (s && s.project !== env.project) {
+      if (!s || s.project !== env.project) {
         sessionStorage.removeItem(tokenCacheKey);
         this.isLoggedIn = false;
       } else {
         let params = new URL(document.location.toString()).searchParams;
         this.isLoggedIn = !!params.get('id_token') || !!s;
-        this.notifyListeners();
       }
+      this.notifyListeners();
     });
   }
 
@@ -66,14 +57,31 @@ class LoginManager {
     };
   }
 
-  authenticate() {
-    this.client
+  async authenticate() {
+    await this.client.loginWithOAuth({
+      type: 'CDF_OAUTH',
+      options: {
+        project: env.project,
+        accessToken,
+        onAuthenticate: REDIRECT,
+        onTokens: (tokens) => {
+          sessionStorage.setItem(tokenCacheKey, tokens.accessToken);
+        },
+      }
+    });
+
+    await this.client
       .authenticate()
       .then(() => {
         this.isLoggedIn = true;
-        this.notifyListeners();
       })
-      .catch((e: Error) => console.error(e));
+      .catch((e: Error) => {
+        this.isLoggedIn = false;
+        console.error(e);
+      })
+      .finally(() => {
+        this.notifyListeners();
+      });
   }
 }
 

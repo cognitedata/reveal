@@ -68,7 +68,8 @@ export function WalkablePath() {
       const client = new CogniteClient({
         appId: 'reveal.example.walkable-path',
       });
-      client.loginWithOAuth({ project });
+      await client.loginWithOAuth({ type: 'CDF_OAUTH', options: { project }});
+      await client.authenticate();
 
       const scene = new THREE.Scene();
       const renderer = new THREE.WebGLRenderer({
