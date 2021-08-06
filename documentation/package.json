@@ -45,7 +45,7 @@
     "@docusaurus/module-type-aliases": "2.0.0-alpha.64",
     "@docusaurus/preset-classic": "2.0.0-alpha.64",
     "@docusaurus/theme-live-codeblock": "2.0.0-alpha.64",
-    "@google/model-viewer": "1.1.0",
+    "@google/model-viewer": "^1.1.0",
     "clsx": "^1.1.1",
     "cross-env": "^7.0.2",
     "npm-to-yarn": "^1.0.1",
