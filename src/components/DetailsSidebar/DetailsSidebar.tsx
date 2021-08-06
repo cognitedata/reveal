@@ -236,7 +236,7 @@ const SourceHeader = ({
 }) => {
   return (
     <div style={{ wordBreak: 'break-word' }}>
-      <h3>Source:</h3>
+      <h4>Time Series</h4>
       <p style={{ display: 'flex' }}>
         <span style={{ paddingRight: 10 }}>
           <ColorCircle color={sourceItem?.color} />
