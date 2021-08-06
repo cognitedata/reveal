@@ -157,7 +157,7 @@ const Statistics = ({
                 { label: 'Max', value: statisticsForSource?.max },
                 { label: 'Mean', value: statisticsForSource?.mean },
                 { label: 'Median', value: statisticsForSource?.median },
-                // TODO: Add missing values from backend according to the sketch
+                // Missing values from backend according to the sketch
                 // { label: 'Avg', value: statisticsForSource?.average },
                 // { label: 'Last', value: statisticsForSource?.last },
               ]}
