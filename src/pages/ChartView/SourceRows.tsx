@@ -46,8 +46,14 @@ function SourceRows({
   )
     .map((x) =>
       x.type === 'timeseries'
-        ? chart?.timeSeriesCollection?.find((ts) => ts.id === x.id)
-        : chart?.workflowCollection?.find((flow) => flow.id === x.id)
+        ? {
+            type: 'timeseries',
+            ...chart?.timeSeriesCollection?.find((ts) => ts.id === x.id),
+          }
+        : {
+            type: 'workflow',
+            ...chart?.workflowCollection?.find((flow) => flow.id === x.id),
+          }
     )
     .filter(Boolean) as (ChartTimeSeries | ChartWorkflow)[];
 
