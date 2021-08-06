@@ -38,7 +38,7 @@
     "@cognite/reveal-1.x": "npm:@cognite/reveal@^1.5.5",
     "@cognite/sdk-1.x": "npm:@cognite/sdk@^3.4.0",
 
-    "@cognite/reveal-2.x": "npm:@cognite/reveal@^2.0.0",
+    "@cognite/reveal-2.x": "npm:@cognite/reveal@^>=2.0.0-beta.0",
     "@cognite/sdk-2.x": "npm:@cognite/sdk@^5.1.3",
 
     "@docusaurus/core": "2.0.0-alpha.64",
