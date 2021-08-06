@@ -1,5 +1,7 @@
 import { Button, Tooltip, SegmentedControl } from '@cognite/cogs.js';
 import { useSDK } from '@cognite/sdk-provider';
+import { Row, Col, List, Typography } from 'antd';
+import DetailsBlock from 'components/common/DetailsBlock';
 import { MetadataList } from 'components/DetailsSidebar';
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
@@ -16,7 +18,6 @@ import {
   Container,
   ColorCircle,
 } from './elements';
-import { MetadataItem } from './MetadataItem';
 
 type Props = {
   sourceItem: ChartWorkflow | ChartTimeSeries | undefined;
@@ -149,81 +150,72 @@ const Statistics = ({
       <SourceHeader sourceItem={sourceItem} />
       {sourceItem?.type === 'timeseries' ? (
         <>
-          <MetadataItem
-            label="Min"
-            value={
-              statisticsForSource
-                ? convertValue(statisticsForSource.min, unit, preferredUnit)
-                : '-'
-            }
-          />
-          <MetadataItem
-            label="Max"
-            value={
-              statisticsForSource
-                ? convertValue(statisticsForSource.max, unit, preferredUnit)
-                : '-'
-            }
-          />
-          <MetadataItem
-            label="Mean"
-            value={
-              statisticsForSource
-                ? convertValue(statisticsForSource.mean, unit, preferredUnit)
-                : '-'
-            }
-          />
-          <MetadataItem
-            label="Median"
-            value={
-              statisticsForSource
-                ? convertValue(statisticsForSource.median, unit, preferredUnit)
-                : '-'
-            }
-          />
-          <MetadataItem
-            label="Standard Deviation"
-            value={
-              statisticsForSource
-                ? convertValue(statisticsForSource.std, unit, preferredUnit)
-                : '-'
-            }
-          />
-          <MetadataItem
-            label="25th Percentile"
-            value={
-              statisticsForSource
-                ? convertValue(statisticsForSource.q25, unit, preferredUnit)
-                : '-'
-            }
-          />
-          <MetadataItem
-            label="50th Percentile"
-            value={
-              statisticsForSource
-                ? convertValue(statisticsForSource.q50, unit, preferredUnit)
-                : '-'
-            }
-          />
-          <MetadataItem
-            label="75th Percentile"
-            value={
-              statisticsForSource
-                ? convertValue(statisticsForSource.q75, unit, preferredUnit)
-                : '-'
-            }
-          />
-          <MetadataItem
-            label="Skewness"
-            value={statisticsForSource ? statisticsForSource.skewness : '-'}
-          />
-          <MetadataItem
-            label="Kurtosis"
-            value={statisticsForSource ? statisticsForSource.kurtosis : '-'}
-          />
+          <DetailsBlock title="Statistics">
+            <List
+              dataSource={[
+                { label: 'Min', value: statisticsForSource?.min },
+                { label: 'Max', value: statisticsForSource?.max },
+                { label: 'Mean', value: statisticsForSource?.mean },
+                { label: 'Median', value: statisticsForSource?.median },
+                // TODO: Add missing values from backend according to the sketch
+                // { label: 'Avg', value: statisticsForSource?.average },
+                // { label: 'Last', value: statisticsForSource?.last },
+              ]}
+              size="small"
+              renderItem={({ label, value }) => (
+                <Row className="ant-list-item">
+                  <Col span={14}>{label}</Col>
+                  <Col span={10} style={{ textAlign: 'right' }}>
+                    {value ? convertValue(value, unit, preferredUnit) : '-'}
+                  </Col>
+                </Row>
+              )}
+            />
+          </DetailsBlock>
+          <DetailsBlock title="Variation">
+            <List
+              dataSource={[
+                {
+                  label: 'Standard Deviation',
+                  value: statisticsForSource?.std,
+                },
+                { label: '25th Percentile', value: statisticsForSource?.q25 },
+                { label: '50th Percentile', value: statisticsForSource?.q50 },
+                { label: '75th Percentile', value: statisticsForSource?.q75 },
+              ]}
+              size="small"
+              renderItem={({ label, value }) => (
+                <Row className="ant-list-item">
+                  <Col span={14}>{label}</Col>
+                  <Col span={10} style={{ textAlign: 'right' }}>
+                    {value ? convertValue(value, unit, preferredUnit) : '-'}
+                  </Col>
+                </Row>
+              )}
+            />
+          </DetailsBlock>
+          <DetailsBlock title="Shape">
+            <List
+              dataSource={[
+                { label: 'Skewness', value: statisticsForSource?.skewness },
+                { label: 'Kurtosis', value: statisticsForSource?.kurtosis },
+              ]}
+              size="small"
+              renderItem={({ label, value }) => (
+                <Row className="ant-list-item">
+                  <Col span={14}>{label}</Col>
+                  <Col span={10} style={{ textAlign: 'right' }}>
+                    {value || '-'}
+                  </Col>
+                </Row>
+              )}
+            />
+          </DetailsBlock>
         </>
       ) : (
-        <p>(currently unavailable for calculations)</p>
+        <Typography.Text>
+          Statistics are currently unavailable for calculations
+        </Typography.Text>
       )}
     </Container>
   );
