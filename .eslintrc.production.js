@@ -28,10 +28,8 @@ module.exports = {
 
     '@typescript-eslint/no-unused-vars': 'off',
     '@typescript-eslint/no-unused-vars-experimental': [
-      2,
-      {
-        ignoredNamesRegex: '^_',
-      },
+      'error',
+      { ignoredNamesRegex: '^_' },
     ],
     'prettier/prettier': [
       'error',

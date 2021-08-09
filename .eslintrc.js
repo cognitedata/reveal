@@ -13,25 +13,13 @@ module.exports = {
     ],
     'no-console': 'off',
     'no-debugger': 'off',
-    '@cognite/no-unissued-todos': 'off',
-    '@typescript-eslint/no-unused-vars': 'off',
-    '@typescript-eslint/no-unused-vars-experimental': [
-      1,
-      {
-        ignoredNamesRegex: '^_',
-      },
+    '@cognite/no-unissued-todos': [
+      'warn',
+      { issuePattern: '\\(((DEMO)-[0-9]+)\\)' },
     ],
-    'react/jsx-uses-react': 'off',
-    'react/react-in-jsx-scope': 'off',
-    'no-shadow': 'off',
-    '@typescript-eslint/no-shadow': 'error',
+    '@typescript-eslint/no-unused-vars-experimental': [
+      'warn',
+      { ignoredNamesRegex: '^_' },
+    ],
   },
-  overrides: [
-    {
-      files: ['**/*.tsx'],
-      rules: {
-        'react/prop-types': 'off',
-      },
-    },
-  ],
 };
