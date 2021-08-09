@@ -909,6 +909,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@reveal/sector-parser@workspace:packages/sector-parser":
+  version: 0.0.0-use.local
+  resolution: "@reveal/sector-parser@workspace:packages/sector-parser"
+  languageName: unknown
+  linkType: soft
+
 "@sinonjs/commons@npm:^1.7.0":
   version: 1.8.3
   resolution: "@sinonjs/commons@npm:1.8.3"

@@ -21,7 +21,7 @@ module.exports = env => {
     },
 
     devServer: {
-      contentBase: path.resolve(env.dir, './dist')
+      contentBase: path.resolve(env.dir, './app')
     },
 
     module: {
