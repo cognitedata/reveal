@@ -22,13 +22,13 @@ All information below is for developers.
 
 Install [Node](https://nodejs.org/en/download/) and [Rust](https://doc.rust-lang.org/cargo/getting-started/installation.html).
 
-To test the viewer, you need to build the viewer and then the serve script will handle dependencies for examples:
+To test the viewer, you need to build the viewer and then start the examples. 
 
 ```
 cd viewer
-yarn install
-yarn build
-yarn serve
+yarn && yarn run build
+cd ../examples
+yarn && yarn run start
 ```
 
 If you now navigate to [localhost:8080](https://localhost:8080), you will see a list of examples

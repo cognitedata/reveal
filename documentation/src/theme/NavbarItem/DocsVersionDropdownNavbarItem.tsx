@@ -18,7 +18,6 @@ import {
   useLatestVersion,
   useActiveDocContext,
 } from '@theme/hooks/useDocs';
-import type {Props} from '@theme/NavbarItem/DocsVersionDropdownNavbarItem';
 
 const getVersionMainDoc = (version: any) =>
   version.docs.find((doc: any) => doc.id === version.mainDocId);
@@ -27,7 +26,7 @@ export default function DocsVersionDropdownNavbarItem({
   mobile,
   docsPluginId,
   ...props
-}: Props): JSX.Element {
+}): JSX.Element {
   const activeDocContext = useActiveDocContext(docsPluginId);
   const versions = useVersions(docsPluginId);
   const latestVersion = useLatestVersion(docsPluginId);

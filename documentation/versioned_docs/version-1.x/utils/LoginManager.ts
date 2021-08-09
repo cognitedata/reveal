@@ -25,6 +25,7 @@ class LoginManager {
     });
 
     // to make it available in examples
+    //@ts-ignore
     window.sdk = this.client;
 
     this.client.loginWithOAuth({

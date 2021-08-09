@@ -1,0 +1,20 @@
+{
+  "name": "@reveal/core",
+  "private": true,
+  "main": "index.js",
+  "types": "index.d.ts",
+  "scripts": {
+    "build": "yarn ws:build",
+    "test": "yarn ws:test --config ./../jest.config.js",
+    "lint": "yarn ws:lint"
+  },
+  "dependencies": {
+    "@reveal/camera-manager": "workspace:*"
+  },
+  "sideEffects": false,
+  "glslify": {
+    "transform": [
+      "glslify-import"
+    ]
+  }
+}

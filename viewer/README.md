@@ -48,3 +48,73 @@ In case if you see an error like that:
 > Refused to load the script 'https://apps-cdn.cogniteapp.com/@cognite/reveal-parser-worker/1.1.0/reveal.parser.worker.js' because it violates the following Content Security Policy directive: "script-src 'self' https://localhost:* blob:"
 
 See the next steps in our [documentation](https://cognitedata.github.io/reveal-docs/docs/installation#installation-for-projects-with-content-security-policy).
+
+## Local Packages
+The Reveal viewer is structured using local packages.
+This allows you to test features in isolation and constrain the dependencies with logical barriers between features.
+Packages are located in the `/packages/` subfolder.
+There is no enforced structure of the packages and their layout and content will vary depending on what the package exposes to the rest of the system.
+Dependencies that are located in the `viewer/package.json` will be shared and are accessible by any package without having to explicitly declare a dependency in the respective package's `package.json`.
+Any external dependency (e.g. `lodash`, `threejs`, etc.) must be declared in the root `package.json` such that they will be properly installed by users that consume the `Reveal` NPM package. 
+
+### Creating a local package
+Create a new folder under the `/packages/` folder, e.g. `/packages/[MY-PACKAGE-NAME]` and include a package with the following structure:
+
+```json
+{
+  "name": "@reveal/[MY-PACKAGE-NAME]",
+  "private": true,
+  "main": "index.ts",
+}
+```
+
+Technically the `private: true` field can be omitted but it is highly recommended such that one does not accidentally publish the local package to NPM with the `npm publish` command.
+The `index.ts` should include any types, functions and/or classes you wish to expose to consumers of this package. You should also create a `README.md` file for your package that explains its intent and any information that is needed to use the package.
+
+If your package depends on another local package, it must be explicitly declared as a dependency:
+```json
+{
+  "name": "@reveal/[MY-PACKAGE-NAME]",
+  "private": true,
+  "main": "index.ts",
+  "dependencies": {
+    "@reveal/[SOME-LOCAL-PACKAGE]": "workspace:*"
+  }
+}
+```
+The `workspace` keyword declares that the dependency is a local package and should never be fetched from NPM.
+And the `':*'` syntax means that it should just grab any version available. See [this](https://yarnpkg.com/features/workspaces) for more documentation on yarn workspaces.
+
+It is also possible to run and test a local package in isolation from the rest of Reveal.
+Convenience functionality has been created to make this easy.
+Add the following script to your package's `package.json`:
+```json
+{
+  "scripts": {
+    "test": "yarn ws:test --config ./../../jest.config.js"
+  }
+}
+```
+Running `yarn run test` will run all tests in your package that resolves the `*.test.*` regex pattern.
+
+To run a test app that includes your package (and any dependencies), create a `/app/` subfolder in your package that includes an `index.ts` file.
+Add the following script to your package's `package.json`:
+```json
+{
+  "scripts": {
+    "start": "yarn ws:start"
+  }
+}
+```
+
+Running the command `yarn start` will host a localhost site with a template HTML that includes the `/app/index.ts` script that has been transpiled to javascript.
+To see an example of this check out the `packages/camera-manager` package.
+
+### Recommended package folder structure
+    ├── app                   # Runnable app
+      └──index.ts             # Entry point for runnable app
+    ├── src                   # Source code for package
+    ├── test                  # Automated tests
+    ├── package.json          # Package declaration
+    ├── index.ts              # Entry point for package
+    └── README.md             # Readme

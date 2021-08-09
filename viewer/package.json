@@ -3,47 +3,59 @@
   "version": "2.0.0-beta.4",
   "private": true,
   "description": "WebGL based 3D viewer for CAD and point clouds processed in Cognite Data Fusion.",
+  "homepage": "https://github.com/cognitedata/reveal/tree/master/viewer",
   "repository": {
     "type": "git",
-    "directory": "viewer",
-    "url": "https://github.com/cognitedata/reveal.git"
+    "url": "https://github.com/cognitedata/reveal.git",
+    "directory": "viewer"
   },
-  "homepage": "https://github.com/cognitedata/reveal/tree/master/viewer",
-  "main": "index.js",
-  "types": "index.d.ts",
-  "scripts": {
-    "build": "rimraf -rf dist/ && yarn run mkdist && webpack --env.development",
-    "build:prod": "yarn run clean && yarn run mkdist && webpack && node script/copyPackage.js",
-    "build:watch": "yarn run build -- --watch",
-    "serve": "cd ../examples && yarn && yarn start",
-    "mkdist": "npx run-script-os",
-    "mkdist:win32": "@powershell $(if(-not(Test-Path dist -PathType Container)) { mkdir dist;$? } else { $true;$? }) -and $(Copy-Item -Path package.json, README.md, LICENSE -Destination dist;$?)",
-    "mkdist:default": "mkdir -p dist && cp package.json README.md LICENSE dist",
-    "clean": "rimraf -rf dist/ ../target ../parser-worker/pkg/",
-    "test": "jest",
-    "coverage": "jest --coverage",
-    "lint": "eslint . --ext .ts,.js --max-warnings 0 && yarn run tsc",
-    "lint:fix": "eslint . --ext .ts,.js --max-warnings 0 --fix",
-    "tsc": "tsc --noEmit --incremental false --skipLibCheck true",
-    "prebump": "yarn version --no-git-tag-version && yarn && cd ../documentation && yarn replace-latest-by-next",
-    "bump": " yarn bump:commit && yarn bump:tag && yarn bump:push",
-    "bump:commit": "git add -A && cross-var git commit -m \"chore(viewer): bump version $npm_package_version\"",
-    "bump:tag": "cross-var git tag $npm_package_name@$npm_package_version",
-    "bump:push": "git push -u origin head && git push --tags",
-    "release": "yarn build:prod && cd dist && yarn publish --non-interactive"
-  },
+  "license": "Apache-2.0",
   "author": "Lars Moastuen <lars.moastuen@cognite.com>",
   "contributors": [
     "Joachim Bjørne <joachim.bjorne@cognite.com>",
     "Christopher Tannum <christopher.tannum@cognite.com>",
     "Maksim Nesterenko <maksim.nesterenko@cognite.com>"
   ],
-  "license": "Apache-2.0",
   "sideEffects": false,
-  "glslify": {
-    "transform": [
-      "glslify-import"
-    ]
+  "main": "index.js",
+  "types": "index.d.ts",
+  "workspaces": [
+    "core",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "yarn run clean && webpack --env.development",
+    "build:watch": "yarn run clean && webpack --env.development --watch",
+    "build:prod": "yarn run clean && webpack --env.production",
+    "mkdist": "shx mkdir -p dist && shx cp README.md LICENSE dist",
+    "clean": "shx rm -rf dist/ && yarn run mkdist",
+    "test": "yarn workspaces foreach run test",
+    "coverage": "jest --coverage",
+    "lint": "yarn workspaces foreach run lint",
+    "prebump": "yarn version --no-git-tag-version && yarn && cd ../documentation && yarn replace-latest-by-next",
+    "bump": " yarn bump:commit && yarn bump:tag && yarn bump:push",
+    "bump:commit": "git add -A && cross-var git commit -m \"chore(viewer): bump version $npm_package_version\"",
+    "bump:tag": "cross-var git tag $npm_package_name@$npm_package_version",
+    "bump:push": "git push -u origin head && git push --tags",
+    "release": "yarn build:prod && cd dist && yarn publish --non-interactive",
+    "ws:start": "cd $INIT_CWD && webpack-dev-server --open --env.dir=$INIT_CWD",
+    "ws:test": "cd $INIT_CWD && jest",
+    "ws:lint": "cd $INIT_CWD && eslint . --ext .ts,.js --max-warnings 0"
+  },
+  "dependencies": {
+    "@cognite/potree-core": "1.4.0",
+    "@cognite/reveal-parser-worker": "1.1.1",
+    "@tweenjs/tween.js": "^18.6.4",
+    "@types/three": "0.128.0",
+    "assert": "^2.0.0",
+    "comlink": "4.3.1",
+    "glslify": "^7.1.1",
+    "glslify-import": "^3.1.0",
+    "lodash": "^4.17.20",
+    "mixpanel-browser": "^2.39.0",
+    "rxjs": "^7.1.0",
+    "skmeans": "^0.11.3",
+    "three": "0.128.0"
   },
   "devDependencies": {
     "@cognite/sdk": "^5.0.0",
@@ -57,6 +69,7 @@
     "@types/tween.js": "^18.5.1",
     "@typescript-eslint/eslint-plugin": "^4.28.0",
     "@typescript-eslint/parser": "^4.28.0",
+    "copy-pkg-json-webpack-plugin": "^0.0.40",
     "copy-webpack-plugin": "^6.2.1",
     "core-js": "^3.6.5",
     "cross-var": "^1.1.0",
@@ -82,6 +95,7 @@
     "raw-loader": "^4.0.2",
     "rimraf": "^3.0.2",
     "run-script-os": "^1.1.3",
+    "shx": "^0.3.3",
     "ts-jest": "^26.4.3",
     "ts-loader": "8.0.7",
     "typescript": "^4.3.2",
@@ -93,31 +107,18 @@
     "whatwg-fetch": "^3.4.1",
     "worker-plugin": "^5.0.0"
   },
-  "dependencies": {
-    "@cognite/potree-core": "1.4.0",
-    "@cognite/reveal-parser-worker": "1.1.1",
-    "@tweenjs/tween.js": "^18.6.4",
-    "@types/three": "0.128.0",
-    "assert": "^2.0.0",
-    "comlink": "4.3.1",
-    "glslify": "^7.1.1",
-    "glslify-import": "^3.1.0",
-    "lodash": "^4.17.20",
-    "mixpanel-browser": "^2.39.0",
-    "rxjs": "^7.1.0",
-    "skmeans": "^0.11.3",
-    "three": "0.128.0"
-  },
   "peerDependencies": {
     "@cognite/sdk": "^5.0.0",
     "@cognite/sdk-core": "^3.0.0"
   },
+  "glslify": {
+    "transform": [
+      "glslify-import"
+    ]
+  },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged -q && yarn run tsc"
+      "pre-commit": "yarn run lint"
     }
-  },
-  "lint-staged": {
-    "*.{js,ts}": "eslint --max-warnings 0 --fix"
   }
 }
