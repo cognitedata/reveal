@@ -36,9 +36,7 @@ const RecentViewSources = ({ viewType }: Props) => {
   const { addTsToRecent, addAssetToRecent } = useAddToRecentLocalStorage();
 
   const cached = useQueryClient();
-  const selectedExternalIds:
-    | undefined
-    | string[] = chart?.timeSeriesCollection
+  const selectedExternalIds: undefined | string[] = chart?.timeSeriesCollection
     ?.map((t) => t.tsExternalId || '')
     .filter(Boolean);
 
