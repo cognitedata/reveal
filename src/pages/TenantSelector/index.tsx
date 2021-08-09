@@ -1,4 +1,3 @@
-import React from 'react';
 import TenantSelector, { Background } from '@cognite/cdf-hub-tenant-selector';
 import { getAzureAppId, useCluster } from 'config';
 

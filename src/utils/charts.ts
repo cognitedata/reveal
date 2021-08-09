@@ -205,9 +205,10 @@ export function updateSourceAxisForChart(
 
   if (y.length > 0) {
     y.forEach((update) => {
-      updatedChart.timeSeriesCollection = updatedChart.timeSeriesCollection?.map(
-        (t) => (t.id === update.id ? { ...t, range: update.range } : t)
-      );
+      updatedChart.timeSeriesCollection =
+        updatedChart.timeSeriesCollection?.map((t) =>
+          t.id === update.id ? { ...t, range: update.range } : t
+        );
       updatedChart.workflowCollection = updatedChart.workflowCollection?.map(
         (wf) => (wf.id === update.id ? { ...wf, range: update.range } : wf)
       );
@@ -220,13 +221,13 @@ export function updateSourceAxisForChart(
 export const toggleDownloadChartElements = (hide: boolean, height?: number) => {
   const elementsToHide = document.getElementsByClassName('downloadChartHide');
   const chartViewEl = document.getElementById('chart-view');
-  const splitPane = (document.getElementsByClassName(
-    'SplitPane'
-  )[0] as HTMLElement).style;
+  const splitPane = (
+    document.getElementsByClassName('SplitPane')[0] as HTMLElement
+  ).style;
   if (hide) {
-    const pane2Height = +(document.getElementsByClassName(
-      'Pane2'
-    )[0] as HTMLElement).style.height.replace('px', '');
+    const pane2Height = +(
+      document.getElementsByClassName('Pane2')[0] as HTMLElement
+    ).style.height.replace('px', '');
     Array.prototype.forEach.call(elementsToHide, (el) => {
       el.style.display = 'none';
     });
@@ -237,19 +238,17 @@ export const toggleDownloadChartElements = (hide: boolean, height?: number) => {
     splitPane.overflow = 'auto';
     splitPane.display = 'block';
     splitPane.position = 'relative';
-    (document.getElementsByClassName(
-      'Pane1'
-    )[0] as HTMLElement).style.height = `${
-      window.innerHeight - pane2Height - 130
-    }px`;
+    (
+      document.getElementsByClassName('Pane1')[0] as HTMLElement
+    ).style.height = `${window.innerHeight - pane2Height - 130}px`;
     (document.getElementsByClassName('Pane2')[0] as HTMLElement).style.height =
       'auto';
-    (document.getElementsByClassName(
-      'Resizer'
-    )[0] as HTMLElement).style.display = 'none';
-    (document.getElementsByClassName(
-      'PageLayout'
-    )[0] as HTMLElement).style.height = 'auto';
+    (
+      document.getElementsByClassName('Resizer')[0] as HTMLElement
+    ).style.display = 'none';
+    (
+      document.getElementsByClassName('PageLayout')[0] as HTMLElement
+    ).style.height = 'auto';
     return pane2Height;
   }
   Array.prototype.forEach.call(elementsToHide, (el: HTMLElement) => {
@@ -265,14 +264,14 @@ export const toggleDownloadChartElements = (hide: boolean, height?: number) => {
   splitPane.position = 'absolute';
   (document.getElementsByClassName('Pane1')[0] as HTMLElement).style.height =
     'auto';
-  (document.getElementsByClassName(
-    'Pane2'
-  )[0] as HTMLElement).style.height = `${height}px`;
+  (
+    document.getElementsByClassName('Pane2')[0] as HTMLElement
+  ).style.height = `${height}px`;
   (document.getElementsByClassName('Resizer')[0] as HTMLElement).style.display =
     'block';
-  (document.getElementsByClassName(
-    'PageLayout'
-  )[0] as HTMLElement).style.height = '100vh';
+  (
+    document.getElementsByClassName('PageLayout')[0] as HTMLElement
+  ).style.height = '100vh';
   return 0;
 };
 

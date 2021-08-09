@@ -34,39 +34,31 @@ const getFunctionId = (sdk: CogniteClient, externalId: string) => async () => {
   return Promise.reject(new Error(`Could not find function ${externalId}`));
 };
 
-const callFunction = (
-  sdk: CogniteClient,
-  fnId: number,
-  data: any = {}
-) => async () => {
-  const response = await backendApi.callFunction(sdk, fnId, data);
-  if (response?.id) {
-    return response?.id as number;
-  }
-  return Promise.reject(new Error('did not get call id'));
-};
+const callFunction =
+  (sdk: CogniteClient, fnId: number, data: any = {}) =>
+  async () => {
+    const response = await backendApi.callFunction(sdk, fnId, data);
+    if (response?.id) {
+      return response?.id as number;
+    }
+    return Promise.reject(new Error('did not get call id'));
+  };
 
-const getCallStatus = (
-  sdk: CogniteClient,
-  fnId: number,
-  callId: number
-) => async () => {
-  const response = await backendApi.getCallStatus(sdk, fnId, callId);
-  return response;
-};
+const getCallStatus =
+  (sdk: CogniteClient, fnId: number, callId: number) => async () => {
+    const response = await backendApi.getCallStatus(sdk, fnId, callId);
+    return response;
+  };
 
-const getOps = (
-  sdk: CogniteClient,
-  fnId: number,
-  callId: number
-) => async () => {
-  const response = await backendApi.getCallResponse(sdk, fnId, callId);
+const getOps =
+  (sdk: CogniteClient, fnId: number, callId: number) => async () => {
+    const response = await backendApi.getCallResponse(sdk, fnId, callId);
 
-  if (response.all_available_ops) {
-    return response.all_available_ops as DSPFunction[];
-  }
-  return Promise.reject(new Error('did not get DSPFunction list'));
-};
+    if (response.all_available_ops) {
+      return response.all_available_ops as DSPFunction[];
+    }
+    return Promise.reject(new Error('did not get DSPFunction list'));
+  };
 
 export function useAvailableOps(): [boolean, Error?, DSPFunction[]?] {
   const sdk = useSDK();
@@ -121,7 +113,11 @@ export function useAvailableOps(): [boolean, Error?, DSPFunction[]?] {
     setRefetchInterval(false);
   }
 
-  const { data: response, isFetched, isError: responseError } = useQuery(
+  const {
+    data: response,
+    isFetched,
+    isError: responseError,
+  } = useQuery(
     [...key, callId, 'response'],
     getOps(sdk, fnId as number, callId as number),
     {

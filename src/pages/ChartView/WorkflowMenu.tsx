@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import { Menu } from '@cognite/cogs.js';
 import { useUpdateChart } from 'hooks/firebase';
 import { Chart } from 'reducers/charts/types';
