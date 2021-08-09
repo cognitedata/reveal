@@ -20,6 +20,7 @@ type Props = {
   actions?: React.ReactNode[];
   onClose?: () => void;
   hideTitle?: boolean;
+  hideContent?: boolean;
 } & Partial<SelectableItemProps>;
 
 export const ResourcePreviewSidebar = ({
@@ -48,6 +49,7 @@ export const ResourcePreviewSidebar = ({
   onSelect = () => {},
   isSelected = false,
   hideTitle = false,
+  hideContent = false,
 }: Props) => {
   const commonProps = { selectionMode, onSelect, isSelected, actions };
   let content: React.ReactNode = placeholder || <Loader />;
@@ -106,7 +108,7 @@ export const ResourcePreviewSidebar = ({
         <CloseButton icon="Close" variant="ghost" onClick={onClose} />
       )}
       {header}
-      {propContent || content}
+      {!hideContent && (propContent || content)}
       {footer}
     </ResourcePreviewWrapper>
   );
