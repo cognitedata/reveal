@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import styled from 'styled-components/macro';
 import { useScreenshot } from 'use-screenshot-hook';
 import { Button, toast, Tooltip, TopBar } from '@cognite/cogs.js';

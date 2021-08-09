@@ -1,4 +1,3 @@
-import React from 'react';
 import * as pdfjs from 'pdfjs-dist';
 import { FileInfo as File } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';

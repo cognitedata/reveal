@@ -1,5 +1,4 @@
 import { Menu } from '@cognite/cogs.js';
-import React from 'react';
 import styled from 'styled-components/macro';
 import { availableColors } from 'utils/colors';
 import { trackUsage } from 'utils/metrics';

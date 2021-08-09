@@ -1,4 +1,3 @@
-import React from 'react';
 import configureStory from 'storybook/configureStory';
 
 import ChartView from './ChartView';

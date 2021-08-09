@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Dropdown, Menu, toast } from '@cognite/cogs.js';
 
 import { Chart } from 'reducers/charts/types';

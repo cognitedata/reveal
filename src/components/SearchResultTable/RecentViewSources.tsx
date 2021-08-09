@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { Checkbox, Icon, Title } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
 import { Asset, Timeseries } from '@cognite/sdk';
