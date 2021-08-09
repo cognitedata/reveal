@@ -6,41 +6,37 @@ import {
   Overline,
   Collapse,
   Pagination,
+  Menu,
+  Icon,
 } from '@cognite/cogs.js';
 import {
   useSelectedAnnotations,
   ProposedCogniteAnnotation,
   useExtractFromCanvas,
 } from '@cognite/react-picture-annotation';
-import { SpacedRow, Divider, InfoGrid, InfoCell } from 'components';
-import { Modal, notification } from 'antd';
+import { Divider, InfoGrid, InfoCell } from 'components';
+import { Modal, notification, Dropdown } from 'antd';
 import {
+  AnnotationStatus,
   CogniteAnnotation,
+  CogniteAnnotationPatch,
   convertAnnotationsToEvents,
   hardDeleteAnnotations,
+  updateAnnotations,
 } from '@cognite/annotations';
 import styled from 'styled-components';
 import { useResourceSelector } from 'context/ResourceSelectorContext';
 import {
   ResourceItemState,
-  isModelRunning,
-  ResourceType,
   ResourceItem,
   convertResourceType,
+  ResourceType,
 } from 'types';
 import { useCreate } from 'hooks/sdk';
 import { useQueryClient, useMutation } from 'react-query';
 import { sleep } from 'utils';
 import { useSDK } from '@cognite/sdk-provider';
-import { CogniteEvent, EventChange } from '@cognite/sdk';
-import {
-  useJob,
-  useFindObjects,
-  useFindSimilarJobId,
-  useDeleteFindSimilarJob,
-  useDeleteFindObjectsJob,
-  useFindObjectsJobId,
-} from 'hooks/objectDetection';
+import { CogniteEvent, EventChange, FileInfo } from '@cognite/sdk';
 import { lightGrey } from 'utils/Colors';
 import { ResourcePreviewSidebar } from 'containers';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
@@ -49,71 +45,38 @@ import { useFlag } from '@cognite/react-feature-flags';
 import { SIDEBAR_RESIZE_EVENT } from 'utils/WindowEvents';
 import { ContextualizationData } from './ContextualizationModule';
 import { CreateAnnotationForm } from './CreateAnnotationForm/CreateAnnotationForm';
-
-const FindSimilarButton = ({
-  fileId,
-  selectedAnnotation,
-}: {
-  fileId: number;
-  selectedAnnotation?: CogniteAnnotation | ProposedCogniteAnnotation;
-}) => {
-  const jobId = useFindSimilarJobId(fileId);
-  const { data } = useJob(jobId, 'findsimilar');
-  const running = !!jobId && isModelRunning(data?.status);
-
-  const { mutate: findSimilarObjects } = useFindObjects();
-  return (
-    <Button
-      variant="outline"
-      loading={running}
-      icon="Search"
-      onClick={() => {
-        if (
-          (!jobId || !running) &&
-          selectedAnnotation &&
-          selectedAnnotation.box
-        ) {
-          findSimilarObjects({ fileId, boundingBox: selectedAnnotation.box });
-        }
-      }}
-    >
-      Find similar
-    </Button>
-  );
-};
+import ReviewTagBar from './ReviewTagBar';
+import FileReview from './FileReview';
 
 type Props = {
-  fileId: number;
+  file?: FileInfo;
   contextualization: boolean;
   onItemClicked?: (item: ResourceItem) => void;
   setPendingAnnotations: React.Dispatch<
     React.SetStateAction<ProposedCogniteAnnotation[]>
   >;
+  annotations: Array<CogniteAnnotation | ProposedCogniteAnnotation>;
 };
 
 const AnnotationPreviewSidebar = ({
-  fileId,
+  file,
   setPendingAnnotations,
   contextualization,
   onItemClicked,
+  annotations,
 }: Props) => {
-  const cancelFindObjects = useDeleteFindObjectsJob();
-  const cancelFindSimilar = useDeleteFindSimilarJob();
-  const findObjectsJobId = useFindObjectsJobId(fileId);
-  const findSimilarJobId = useFindSimilarJobId(fileId);
-  const { data: findObjectsJob } = useJob(findObjectsJobId, 'findobjects');
-  const { data: findSimilarJob } = useJob(findSimilarJobId, 'findsimilar');
-
   const client = useQueryClient();
   const [editing, setEditing] = useState<boolean>(false);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
 
   const {
-    selectedAnnotations,
+    selectedAnnotations = [],
     setSelectedAnnotations,
   } = useSelectedAnnotations();
 
-  const selectedAnnotation = selectedAnnotations[currentIndex];
+  const selectedAnnotation = selectedAnnotations?.length
+    ? selectedAnnotations[currentIndex]
+    : undefined;
 
   const extractFromCanvas = useExtractFromCanvas();
 
@@ -133,19 +96,25 @@ const AnnotationPreviewSidebar = ({
   useEffect(() => {
     setCurrentIndex(0);
     window.dispatchEvent(new Event(SIDEBAR_RESIZE_EVENT));
-  }, [selectedAnnotations.length]);
+  }, [selectedAnnotations?.length]);
 
   let annotationPreview: string | undefined;
   if (selectedAnnotation && extractFromCanvas) {
-    const { xMin, yMin, xMax, yMax } = selectedAnnotation.box;
+    const { xMin, yMin, xMax, yMax } = selectedAnnotation?.box;
     annotationPreview = extractFromCanvas(xMin, yMin, xMax - xMin, yMax - yMin);
   }
 
   const isEditingMode = isPendingAnnotation || editing;
 
   const onSuccess = () => {
-    const invalidate = () =>
-      client.invalidateQueries(['cdf', 'events', 'list']);
+    const invalidate = () => {
+      client.invalidateQueries([
+        'sdk-react-query-hooks',
+        'cdf',
+        'events',
+        'list',
+      ]);
+    };
     invalidate();
     // The sleep shouldn't be necessary, but await (POST /resource
     // {data}) && await(POST /resource/byids) might not return the
@@ -174,8 +143,33 @@ const AnnotationPreviewSidebar = ({
   );
 
   const { mutate: deleteAnnotations } = useMutation(
-    (annotations: CogniteAnnotation[]) =>
-      hardDeleteAnnotations(sdk, annotations),
+    (deletedAnnotations: CogniteAnnotation[]) =>
+      hardDeleteAnnotations(sdk, deletedAnnotations),
+    {
+      onSuccess,
+    }
+  );
+
+  const { mutate: updateAnnotationStatus } = useMutation(
+    (update: { annotation: CogniteAnnotation; status: AnnotationStatus }) =>
+      updateAnnotations(sdk, [
+        {
+          id: update.annotation.id,
+          annotation: update.annotation,
+          update: {
+            status: {
+              set: update.status,
+            },
+          },
+        },
+      ]),
+    {
+      onSuccess,
+    }
+  );
+
+  const { mutate: approveAnnotations } = useMutation(
+    (update: CogniteAnnotationPatch[]) => updateAnnotations(sdk, update),
     {
       onSuccess,
     }
@@ -209,6 +203,57 @@ const AnnotationPreviewSidebar = ({
     }
   };
 
+  const onUpdateAnnotationStatus = (
+    annotation: CogniteAnnotation,
+    status: AnnotationStatus
+  ) => {
+    const isApprove = status === 'verified';
+    Modal.confirm({
+      okText: isApprove ? 'Approve tag' : 'Reject tag',
+      title: 'Are you sure?',
+      content: (
+        <span>
+          Are you sure you want to {isApprove ? 'approve' : 'reject'} this tag
+          for this file? Changes will be saved to CDF.
+        </span>
+      ),
+      onOk: async () => {
+        updateAnnotationStatus({ annotation, status });
+        setSelectedAnnotations([]);
+      },
+      onCancel: () => {},
+    });
+  };
+
+  const onApproveAllAnnotations = () => {
+    Modal.confirm({
+      okText: 'Approve tags',
+      title: 'Are you sure?',
+      content: (
+        <span>
+          Are you sure you want to approve all tags for this file? Changes will
+          be saved to CDF.
+        </span>
+      ),
+      onOk: async () => {
+        const unhandedAnnotations = annotations.filter(
+          a => a.status === 'unhandled'
+        ) as Array<CogniteAnnotation>;
+        const updatePatch = unhandedAnnotations.map(annotation => ({
+          id: Number(annotation.id),
+          annotation,
+          update: {
+            status: {
+              set: 'verified' as AnnotationStatus,
+            },
+          },
+        }));
+        approveAnnotations(updatePatch);
+        setSelectedAnnotations([]);
+      },
+      onCancel: () => {},
+    });
+  };
   const onDeleteAnnotation = (
     annotation: CogniteAnnotation | ProposedCogniteAnnotation
   ) => {
@@ -218,11 +263,7 @@ const AnnotationPreviewSidebar = ({
       }
       return pendingAnnotations;
     });
-    if (findObjectsJob?.annotations?.find(a => a.id === annotation.id)) {
-      cancelFindObjects(fileId);
-    } else if (findSimilarJob?.annotations?.find(a => a.id === annotation.id)) {
-      cancelFindSimilar(fileId);
-    } else if (Number.isFinite(annotation.id)) {
+    if (Number.isFinite(annotation.id)) {
       Modal.confirm({
         title: 'Are you sure?',
         content: (
@@ -279,8 +320,10 @@ const AnnotationPreviewSidebar = ({
 
   const Header = ({
     annotation,
+    onClose,
   }: {
     annotation: CogniteAnnotation | ProposedCogniteAnnotation;
+    onClose: () => void;
   }) => {
     const { metadata } = annotation;
 
@@ -312,45 +355,58 @@ const AnnotationPreviewSidebar = ({
         );
       }
     }
+
+    const menuOptions = () => (
+      <Menu>
+        <Menu.Item onClick={() => setEditing(true)}> Edit</Menu.Item>
+        <Menu.Item onClick={() => onDeleteAnnotation(annotation)}>
+          Delete
+        </Menu.Item>
+      </Menu>
+    );
+
     if (!isEditingMode) {
       return (
-        <>
-          <InfoGrid noBorders>
+        <InfoGrid>
+          <InfoCell>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+              }}
+            >
+              <Title level={5}>{annotation.label} </Title>
+              <div>
+                <Dropdown overlay={menuOptions}>
+                  <Icon type="MoreOverflowEllipsisVertical" />
+                </Dropdown>
+                <Button icon="Close" variant="ghost" onClick={onClose} />
+              </div>
+            </div>
+            <Body level={2}>{annotation.description || 'N/A'}</Body>
+            {extraDetails}
+          </InfoCell>
+          {contextualization && (
             <InfoCell noBorders>
-              <Overline level={2}>LABEL</Overline>
-              <Title level={5}>{annotation.label}</Title>
-              <Overline level={2} style={{ marginTop: 8 }}>
-                DESCRIPTION
-              </Overline>
-              <Body level={2}>{annotation.description || 'N/A'}</Body>
-              {extraDetails}
+              <ReviewTagBar
+                annotation={annotation}
+                onApprove={curAnnotation =>
+                  onUpdateAnnotationStatus(
+                    curAnnotation as CogniteAnnotation,
+                    'verified'
+                  )
+                }
+                onReject={curAnnotation =>
+                  onUpdateAnnotationStatus(
+                    curAnnotation as CogniteAnnotation,
+                    'deleted'
+                  )
+                }
+              />
             </InfoCell>
-            {contextualization && (
-              <InfoCell noBorders>
-                <SpacedRow>
-                  <Button
-                    icon="Edit"
-                    variant="outline"
-                    onClick={() => {
-                      setEditing(true);
-                    }}
-                  />
-                  <Button
-                    variant="outline"
-                    type="danger"
-                    icon="Delete"
-                    onClick={() => onDeleteAnnotation(annotation)}
-                  />
-                  <FindSimilarButton
-                    selectedAnnotation={selectedAnnotation}
-                    fileId={fileId}
-                  />
-                </SpacedRow>
-              </InfoCell>
-            )}
-            <Divider.Horizontal />
-          </InfoGrid>
-        </>
+          )}
+          <Divider.Horizontal />
+        </InfoGrid>
       );
     }
     return <></>;
@@ -369,23 +425,48 @@ const AnnotationPreviewSidebar = ({
   );
 
   if (!selectedAnnotation) {
-    return null;
+    return (
+      <div style={{ width: 360, borderLeft: `1px solid ${lightGrey}` }}>
+        <ResourcePreviewSidebar
+          hideTitle
+          closable={false}
+          actions={
+            onItemClicked &&
+            item && [
+              <Button
+                icon="ArrowRight"
+                iconPlacement="right"
+                onClick={() =>
+                  onItemClicked({
+                    id: item.id,
+                    type,
+                  })
+                }
+              >
+                View {type}
+              </Button>,
+            ]
+          }
+          header={
+            <TitleWrapper>
+              <Icon type="PDF" />
+              <Title level={5}>{file?.name} </Title>
+              <FileReview
+                annotations={annotations}
+                onApprove={onApproveAllAnnotations}
+              />
+            </TitleWrapper>
+          }
+          onClose={() => setSelectedAnnotations([])}
+        />
+      </div>
+    );
   }
   return (
-    <div style={{ width: 360, borderLeft: `2px solid ${lightGrey}` }}>
-      {selectedAnnotations.length > 1 && (
-        <Pagination
-          total={selectedAnnotations.length}
-          pageSize={1}
-          showPrevNextJumpers={false}
-          showQuickJumper={false}
-          defaultCurrent={currentIndex}
-          onChange={i => {
-            setCurrentIndex(i - 1);
-          }}
-        />
-      )}
+    <div style={{ width: 360, borderLeft: `1px solid ${lightGrey}` }}>
       <ResourcePreviewSidebar
+        hideTitle
+        closable={false}
         item={
           item && {
             id: item.id,
@@ -409,12 +490,31 @@ const AnnotationPreviewSidebar = ({
             </Button>,
           ]
         }
-        header={<Header annotation={selectedAnnotation} />}
-        footer={
-          <ContextualizationData
-            selectedAnnotation={selectedAnnotation}
-            extractFromCanvas={extractFromCanvas}
+        header={
+          <Header
+            annotation={selectedAnnotation}
+            onClose={() => setSelectedAnnotations([])}
           />
+        }
+        footer={
+          <>
+            <ContextualizationData
+              selectedAnnotation={selectedAnnotation}
+              extractFromCanvas={extractFromCanvas}
+            />
+            {selectedAnnotations?.length > 1 && (
+              <Pagination
+                total={selectedAnnotations.length}
+                pageSize={1}
+                showPrevNextJumpers={false}
+                showQuickJumper={false}
+                defaultCurrent={currentIndex}
+                onChange={i => {
+                  setCurrentIndex(i - 1);
+                }}
+              />
+            )}
+          </>
         }
         content={
           isEditingMode ? (
@@ -440,12 +540,7 @@ const AnnotationPreviewSidebar = ({
               onCancel={
                 isPendingAnnotation ? undefined : () => setEditing(false)
               }
-            >
-              <Divider.Horizontal />
-              <SpacedRow>
-                <FindSimilarButton fileId={fileId} />
-              </SpacedRow>
-            </CreateAnnotationForm>
+            />
           ) : undefined
         }
         onClose={() => setSelectedAnnotations([])}
@@ -465,4 +560,7 @@ const PreviewImage = styled.img`
   margin-bottom: 16px;
 `;
 
+const TitleWrapper = styled.div`
+  padding: 20px 10px;
+`;
 export { AnnotationPreviewSidebar };

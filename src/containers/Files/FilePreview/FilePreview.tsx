@@ -15,21 +15,10 @@ import {
 } from 'utils/FileUtils';
 import {
   PendingCogniteAnnotation,
-  CURRENT_VERSION,
-  AnnotationStatus,
   CogniteAnnotation,
 } from '@cognite/annotations';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
-import {
-  PNID_ANNOTATION_TYPE,
-  removeSimilarAnnotations,
-} from 'utils/AnnotationUtils';
-import {
-  useJob,
-  useFindObjectsJobId,
-  ObjectDetectionEntity,
-  useFindSimilarJobId,
-} from 'hooks/objectDetection';
+import { removeSimilarAnnotations } from 'utils/AnnotationUtils';
 import { ResourceItem } from 'types/Types';
 import { Colors } from '@cognite/cogs.js';
 import { useFlag } from '@cognite/react-feature-flags';
@@ -37,24 +26,6 @@ import { AnnotationPreviewSidebar } from './AnnotationPreviewSidebar';
 import { useAnnotations } from '../hooks';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `https://cdf-hub-bundles.cogniteapp.com/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.js`;
-
-const convertAnnotation = (jobId: number, fileId: number) => (
-  el: ObjectDetectionEntity
-): ProposedCogniteAnnotation => ({
-  id: el.id,
-  box: el.boundingBox,
-  version: CURRENT_VERSION,
-  fileId,
-  type: PNID_ANNOTATION_TYPE,
-  label: '',
-  source: `job:${jobId}`,
-  status: 'unhandled' as AnnotationStatus,
-  metadata: {
-    fromSimilarObject: 'true',
-    score: `${el.score}`,
-    originalBoxJson: `${jobId}`,
-  },
-});
 
 type FilePreviewProps = {
   fileId: number;
@@ -92,30 +63,10 @@ export const FilePreview = ({
   const isMimeTypeSet = file && file.mimeType;
   const canPreviewFile = file && isFilePreviewable(file);
 
-  const findSimilarJobId = useFindSimilarJobId(fileId);
-  const { data: similarData } = useJob(findSimilarJobId, 'findsimilar');
-  const { annotations: findSimilarItems } = similarData || {};
-  const findSimilarAnnotations =
-    findSimilarJobId && findSimilarItems
-      ? findSimilarItems.map(convertAnnotation(findSimilarJobId, fileId))
-      : [];
-
-  const findObjectsJobId = useFindObjectsJobId(fileId);
-  const { data: objectData } = useJob(findObjectsJobId, 'findobjects');
-  const { annotations: findObjectsItems } = objectData || {};
-  const findObjectsAnnotations =
-    findObjectsJobId && findObjectsItems
-      ? findObjectsItems.map(convertAnnotation(findObjectsJobId, fileId))
-      : [];
-
   const persistedAnnotations = useAnnotations(fileId);
   const allAnnotations = [
     ...persistedAnnotations,
-    ...[
-      ...pendingAnnotations,
-      ...findSimilarAnnotations,
-      ...findObjectsAnnotations,
-    ].filter(removeSimilarAnnotations),
+    ...[...pendingAnnotations].filter(removeSimilarAnnotations),
   ];
 
   if (!fileFetched) {
@@ -176,24 +127,6 @@ export const FilePreview = ({
                 return true;
               };
             }
-            // iAnnotation.mark.draw = (canvas, x, y) => {
-            //   if (annotation.resourceType) {
-            //     canvas.save();
-            //     // circle
-            //     canvas.translate(x - 20, y - 3);
-            //     canvas.fillStyle = `${
-            //       iAnnotation.mark.strokeColor || Colors['midblue-3'].hex()
-            //     }80`;
-            //     canvas.beginPath();
-            //     canvas.arc(8, 8, 8, 0, 2 * Math.PI, false);
-            //     canvas.closePath();
-            //     canvas.fill();
-            //     // Icon
-            //     drawIcon(canvas, annotation);
-            //     canvas.restore();
-            //   }
-            //   return true;
-            // };
             return iAnnotation;
           }}
           editCallbacks={{
@@ -207,10 +140,11 @@ export const FilePreview = ({
         />
       </div>
       <AnnotationPreviewSidebar
-        fileId={fileId}
+        file={file}
         setPendingAnnotations={setPendingAnnotations}
         contextualization={contextualization}
         onItemClicked={onItemClicked}
+        annotations={allAnnotations}
       />
     </div>
   );

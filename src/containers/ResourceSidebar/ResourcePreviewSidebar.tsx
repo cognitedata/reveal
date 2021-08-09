@@ -19,6 +19,8 @@ type Props = {
   content?: React.ReactNode;
   actions?: React.ReactNode[];
   onClose?: () => void;
+  hideTitle?: boolean;
+  hideContent?: boolean;
 } & Partial<SelectableItemProps>;
 
 export const ResourcePreviewSidebar = ({
@@ -46,28 +48,50 @@ export const ResourcePreviewSidebar = ({
   selectionMode = 'none',
   onSelect = () => {},
   isSelected = false,
+  hideTitle = false,
+  hideContent = false,
 }: Props) => {
   const commonProps = { selectionMode, onSelect, isSelected, actions };
   let content: React.ReactNode = placeholder || <Loader />;
   if (item) {
     switch (item.type) {
       case 'asset': {
-        content = <AssetSmallPreview assetId={item.id} {...commonProps} />;
+        content = (
+          <AssetSmallPreview
+            hideTitle={hideTitle}
+            assetId={item.id}
+            {...commonProps}
+          />
+        );
         break;
       }
       case 'file': {
-        content = <FileSmallPreview fileId={item.id} {...commonProps} />;
+        content = (
+          <FileSmallPreview
+            hideTitle={hideTitle}
+            fileId={item.id}
+            {...commonProps}
+          />
+        );
         break;
       }
       case 'sequence': {
         content = (
-          <SequenceSmallPreview sequenceId={item.id} {...commonProps} />
+          <SequenceSmallPreview
+            hideTitle={hideTitle}
+            sequenceId={item.id}
+            {...commonProps}
+          />
         );
         break;
       }
       case 'timeSeries': {
         content = (
-          <TimeseriesSmallPreview timeseriesId={item.id} {...commonProps} />
+          <TimeseriesSmallPreview
+            hideTitle={hideTitle}
+            timeseriesId={item.id}
+            {...commonProps}
+          />
         );
         break;
       }
@@ -84,7 +108,7 @@ export const ResourcePreviewSidebar = ({
         <CloseButton icon="Close" variant="ghost" onClick={onClose} />
       )}
       {header}
-      {propContent || content}
+      {!hideContent && (propContent || content)}
       {footer}
     </ResourcePreviewWrapper>
   );
@@ -98,6 +122,7 @@ const ResourcePreviewWrapper = styled.div`
   display: flex;
   flex-direction: column;
   position: relative;
+  margin-top: -1px;
 `;
 
 const CloseButton = styled(Button)`

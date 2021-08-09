@@ -5,7 +5,7 @@ import {
   useList,
   SdkResourceType,
 } from '@cognite/sdk-react-query-hooks';
-import { Icon, Button, Title, Badge, Colors, Body } from '@cognite/cogs.js';
+import { Icon, Button, Title, Badge, Colors, Body, A } from '@cognite/cogs.js';
 import { FixedSizeList as List } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import {
@@ -22,7 +22,6 @@ import { SelectableItemProps, SmallPreviewProps } from 'CommonProps';
 import { useSelectionButton } from 'hooks/useSelection';
 
 import { lightGrey } from 'utils/Colors';
-import { Link } from 'react-router-dom';
 import { createLink } from 'utils/URLUtils';
 
 const LIST_ITEM_HEIGHT = 42;
@@ -68,6 +67,7 @@ export const AssetSmallPreview = ({
   selectionMode = 'none',
   isSelected = false,
   onSelect = () => {},
+  hideTitle = false,
 }: {
   assetId: number;
 } & SmallPreviewProps &
@@ -162,7 +162,7 @@ export const AssetSmallPreview = ({
           {extras}
         </div>
       )}
-      {asset.name && (
+      {!hideTitle && asset.name && (
         <InfoCell noPadding noBorders>
           <Title
             level={5}
@@ -172,7 +172,11 @@ export const AssetSmallPreview = ({
             }}
           >
             <ResourceIcons.Asset />
-            <Link to={createLink(`/explore/asset/${assetId}`)}>
+            <A
+              href={createLink(`/explore/asset/${assetId}`)}
+              target="_blank"
+              rel="noopener"
+            >
               <span
                 style={{
                   flex: 1,
@@ -183,7 +187,7 @@ export const AssetSmallPreview = ({
               >
                 {asset.name}→
               </span>
-            </Link>
+            </A>
           </Title>
         </InfoCell>
       )}

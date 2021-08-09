@@ -13,6 +13,7 @@ export type SmallPreviewProps = {
   extras?: React.ReactNode[];
   children?: React.ReactNode;
   statusText?: string;
+  hideTitle?: boolean;
 };
 
 export type SelectableItemsProps = {

@@ -31,6 +31,7 @@ export const FileSmallPreview = ({
   selectionMode = 'none',
   isSelected = false,
   onSelect = () => {},
+  hideTitle = false,
 }: {
   fileId: number;
 } & SmallPreviewProps &
@@ -63,11 +64,13 @@ export const FileSmallPreview = ({
   const { data: files } = useCdfItems<FileInfo>(
     'files',
     uniq(fileIds).map(getIdParam),
+    false,
     { enabled: fileIds.length > 0 }
   );
   const { data: assets } = useCdfItems<Asset>(
     'assets',
     uniq(assetIds).map(getIdParam),
+    false,
     { enabled: assetIds.length > 0 }
   );
 
@@ -112,7 +115,7 @@ export const FileSmallPreview = ({
           {extras}
         </div>
       )}
-      {file.name && (
+      {!hideTitle && file.name && (
         <InfoCell noBorders noPadding>
           <Title level={5} style={{ display: 'flex', alignItems: 'center' }}>
             <ResourceIcons.File />

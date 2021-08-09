@@ -47,5 +47,7 @@ export const Select = <
       />
     );
   }
-  return <CogsSelect {...(props as CogsSelectProps)} />;
+  return (
+    <CogsSelect {...((props as unknown) as CogsSelectProps<OptionType>)} />
+  );
 };
