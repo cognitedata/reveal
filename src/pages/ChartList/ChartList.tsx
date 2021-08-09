@@ -182,6 +182,7 @@ const ChartList = () => {
         </Tabs>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <div style={{ width: 200 }}>
+            {/* @ts-ignore next line */}
             <Select
               title="Sort by:"
               icon="ArrowDown"
