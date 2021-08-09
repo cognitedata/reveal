@@ -160,13 +160,13 @@ const Statistics = ({
             <List
               dataSource={[
                 { label: 'Mean', value: statisticsForSource?.mean },
+                { label: 'Median', value: statisticsForSource?.median },
                 {
                   label: 'Standard Deviation',
                   value: statisticsForSource?.std,
                 },
                 { label: 'Max', value: statisticsForSource?.max },
                 { label: 'Min', value: statisticsForSource?.min },
-                { label: 'Median', value: statisticsForSource?.median },
                 // Missing values from backend according to the sketch
                 // { label: 'Avg', value: statisticsForSource?.average },
                 // { label: 'Last', value: statisticsForSource?.last },
