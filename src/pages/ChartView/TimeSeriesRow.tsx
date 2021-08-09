@@ -58,18 +58,15 @@ const renderStatusIcon = (status?: FunctionCallStatus) => {
   }
 };
 
-const getCallStatus = (
-  sdk: CogniteClient,
-  fnId: number,
-  callId: number
-) => async () => {
-  const response = await backendApi.getCallStatus(sdk, fnId, callId);
+const getCallStatus =
+  (sdk: CogniteClient, fnId: number, callId: number) => async () => {
+    const response = await backendApi.getCallStatus(sdk, fnId, callId);
 
-  if (response?.status) {
-    return response.status as FunctionCallStatus;
-  }
-  return Promise.reject(new Error('could not find call status'));
-};
+    if (response?.status) {
+      return response.status as FunctionCallStatus;
+    }
+    return Promise.reject(new Error('could not find call status'));
+  };
 
 type LoadingProps = {
   tsExternalId?: string;
@@ -244,19 +241,18 @@ export default function TimeSeriesRow({
     enabled: !!statisticsCall,
   });
 
-  const { data: callStatus, error: callStatusError } = useQuery<
-    FunctionCallStatus
-  >(
-    [...key, statisticsCall?.callId, 'call_status'],
-    getCallStatus(
-      sdk,
-      statisticsCall?.functionId as number,
-      statisticsCall?.callId as number
-    ),
-    {
-      enabled: !!statisticsCall?.callId,
-    }
-  );
+  const { data: callStatus, error: callStatusError } =
+    useQuery<FunctionCallStatus>(
+      [...key, statisticsCall?.callId, 'call_status'],
+      getCallStatus(
+        sdk,
+        statisticsCall?.functionId as number,
+        statisticsCall?.callId as number
+      ),
+      {
+        enabled: !!statisticsCall?.callId,
+      }
+    );
 
   const { results } = (data as any) || {};
   const { statistics = [] } = (results as StatisticsResult) || {};

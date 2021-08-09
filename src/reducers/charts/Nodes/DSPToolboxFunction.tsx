@@ -99,10 +99,9 @@ export const ConfigPanel = ({
             <Menu>
               <Menu.Header>Tool Functions</Menu.Header>
               {Object.keys(categories).map((category) => {
-                const filtered = categories[
-                  category
-                ].filter(({ description }) =>
-                  description.toLowerCase().includes(phrase.toLowerCase())
+                const filtered = categories[category].filter(
+                  ({ description }) =>
+                    description.toLowerCase().includes(phrase.toLowerCase())
                 );
                 return (
                   <React.Fragment key={category}>

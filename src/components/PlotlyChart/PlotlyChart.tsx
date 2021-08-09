@@ -77,8 +77,9 @@ const PlotlyChartComponent = ({
   const enabledTimeseries = chart?.timeSeriesCollection?.filter(
     (ts) => ts.enabled
   ).length;
-  const enabledWorkflows = chart?.workflowCollection?.filter((wf) => wf.enabled)
-    .length;
+  const enabledWorkflows = chart?.workflowCollection?.filter(
+    (wf) => wf.enabled
+  ).length;
 
   const queries =
     chart?.timeSeriesCollection?.map(({ tsExternalId }) => ({
@@ -441,8 +442,8 @@ const PlotlyChartComponent = ({
       <PlotWrapper>
         <MemoizedPlot
           data={data as Plotly.Data[]}
-          layout={(layout as unknown) as Plotly.Layout}
-          config={(config as unknown) as Plotly.Config}
+          layout={layout as unknown as Plotly.Layout}
+          config={config as unknown as Plotly.Config}
           onRelayout={handleRelayout}
         />
       </PlotWrapper>
