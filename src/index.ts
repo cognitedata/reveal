@@ -1,6 +1,7 @@
 export { NodeVisualizer, NodeVisualizerProps } from '@/UserInterface/NodeVisualizer/NodeVisualizer';
 export { NodeVisualizerReducer } from '@/UserInterface/Redux/reducers/NodeVisualizerReducer';
 export { NodeVisualizerMiddleware } from '@/UserInterface/Redux/Middlewares/NodeVisualizerMiddleware';
+export { NodeVisualizerProvider } from '@/UserInterface/Redux/providers/NodeVisualizerProvider';
 export { BaseRootNode } from '@/Core/Nodes/BaseRootNode';
 export { Modules } from '@/Core/Module/Modules';
 export { ThreeModule } from '@/ThreeSubSurface/ThreeModule';
