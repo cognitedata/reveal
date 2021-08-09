@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { Button, Input, Tooltip, SegmentedControl } from '@cognite/cogs.js';
 import SearchResultList from 'components/SearchResultTable/SearchResultList';
 import SearchTimeseries from 'components/SearchResultTable/SearchTimeseries';

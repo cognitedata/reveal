@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Body, Button, Icon, Title, toast } from '@cognite/cogs.js';
 import { Asset, FileInfo as File } from '@cognite/sdk';
 import { FileViewer } from 'components/FileViewer';

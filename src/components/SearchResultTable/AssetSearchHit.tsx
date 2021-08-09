@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { useSDK } from '@cognite/sdk-provider';
 import styled from 'styled-components';
 import { Icon, Checkbox, Button, Colors } from '@cognite/cogs.js';

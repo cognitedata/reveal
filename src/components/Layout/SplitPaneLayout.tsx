@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import styled from 'styled-components/macro';
 import SplitPane from 'react-split-pane';
 import Layers from 'utils/z-index';

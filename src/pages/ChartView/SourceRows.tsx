@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { Draggable } from 'react-beautiful-dnd';
 import { Chart, ChartTimeSeries, ChartWorkflow } from 'reducers/charts/types';
 import { initializeSourceCollection } from 'utils/charts';

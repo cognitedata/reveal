@@ -9,7 +9,7 @@ import { useSDK } from '@cognite/sdk-provider';
 import { Row, Col, List } from 'antd';
 import DetailsBlock from 'components/common/DetailsBlock';
 import { MetadataList } from 'components/DetailsSidebar';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useQuery } from 'react-query';
 import { ChartTimeSeries, ChartWorkflow } from 'reducers/charts/types';
 import { getCallResponse } from 'utils/backendApi';

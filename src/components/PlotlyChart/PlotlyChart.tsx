@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 import styled from 'styled-components/macro';
 import debounce from 'lodash/debounce';
@@ -463,7 +457,7 @@ type MemoizedPlotProps = {
   config: Plotly.Config;
   onRelayout: (e: Plotly.PlotRelayoutEvent) => void;
 };
-const MemoizedPlot = React.memo(
+const MemoizedPlot = memo(
   ({ data, layout, config, onRelayout }: MemoizedPlotProps) => (
     <Plot
       data={data}

@@ -1,4 +1,5 @@
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
+import * as React from 'react';
 import styled from 'styled-components/macro';
 import debounce from 'lodash/debounce';
 import isEqual from 'lodash/isEqual';

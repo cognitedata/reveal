@@ -1,4 +1,3 @@
-import React from 'react';
 import { Meta, Story } from '@storybook/react';
 import { Col, List, Row } from 'antd';
 import DetailsBlock, { DetailsBlockProps } from './DetailsBlock';

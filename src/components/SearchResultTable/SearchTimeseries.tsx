@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { useSDK } from '@cognite/sdk-provider';
 import { Icon, Button, Checkbox } from '@cognite/cogs.js';
 import { useParams } from 'react-router-dom';

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { Icon, Button } from '@cognite/cogs.js';
 import { Asset } from '@cognite/sdk';
 import { useInfiniteSearch } from '@cognite/sdk-react-query-hooks';

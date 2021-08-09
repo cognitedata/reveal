@@ -1,5 +1,5 @@
 import { Button, Input } from '@cognite/cogs.js';
-import React, { useEffect, useState } from 'react';
+import { createElement, useEffect, useState } from 'react';
 import { StorableNode } from 'reducers/charts/types';
 import defaultNodeOptions from 'reducers/charts/Nodes';
 import styled from 'styled-components/macro';
@@ -98,7 +98,7 @@ const ConfigPanel = ({
       />
       {NodeSpecificConfigPanel && (
         <div className="config-panel">
-          {React.createElement(NodeSpecificConfigPanel, {
+          {createElement(NodeSpecificConfigPanel, {
             node: workingNode,
             onUpdateNode: (nextNode: StorableNode) => {
               setDirty(true);
