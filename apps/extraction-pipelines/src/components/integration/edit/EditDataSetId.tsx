@@ -144,7 +144,6 @@ export const EditDataSetId: FunctionComponent<{ canEdit: boolean }> = ({
           <EditButton
             onClick={onEditClick}
             disabled={!canEdit}
-            canEdit={canEdit}
             title="Toggle edit row"
             aria-expanded={isEdit}
             aria-controls="dataSetId"

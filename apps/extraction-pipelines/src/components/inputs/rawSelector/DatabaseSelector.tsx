@@ -72,7 +72,7 @@ export const DatabaseSelector: FunctionComponent<DatabaseSelectorProps> = ({
           >
             <Checkbox
               name={item.database.name}
-              value={anyDbTableSelected(item.database.name)}
+              checked={anyDbTableSelected(item.database.name)}
               onChange={() => handleDatabaseChecked(item)}
             >
               {item.database.name}

@@ -49,7 +49,7 @@ export const RemoveFromArrayButton: FunctionComponent<RemoveButtonProps> = ({
     >
       <RemoveBtn
         type="tertiary"
-        icon="Delete"
+        icon="Trash"
         aria-label={`Remove ${name} ${index}`}
         onClick={removeRow}
       />

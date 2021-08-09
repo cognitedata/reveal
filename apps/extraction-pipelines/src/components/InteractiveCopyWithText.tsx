@@ -67,7 +67,7 @@ const InteractiveCopyWithText: React.FC<
         {...rest}
       >
         {children}
-        {hasCopied ? <Icons.Check /> : <Icons.Copy />}
+        {hasCopied ? <Icons.Checkmark /> : <Icons.Copy />}
       </IconWrapper>
     </StyledTooltip>
   );

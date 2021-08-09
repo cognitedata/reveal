@@ -98,7 +98,7 @@ export const RegisterMetaData: FunctionComponent<RegisterMetaDataProps> = () => 
                     aria-label={`${REMOVE_ROW} ${index}`}
                     onClick={removeRow(index)}
                   >
-                    <Icon type="Delete" />
+                    <Icon type="Trash" />
                   </Button>
                 </StyledTd>
               </tr>

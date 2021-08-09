@@ -60,7 +60,7 @@ export const NotificationConfig: FunctionComponent<NotificationConfigProps> = ({
           <Checkbox
             id="has-config"
             name="hasConfig"
-            value={field.value}
+            checked={field.value}
             onChange={field.onChange}
             aria-describedby="has-config-hint"
           >

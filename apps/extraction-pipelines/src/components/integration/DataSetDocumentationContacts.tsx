@@ -54,7 +54,7 @@ export const DataSetDocumentationContacts: FunctionComponent<DataSetDocumentatio
       <Card2Sides>
         <div className="card-section">
           <StyledTitleCard>
-            <Icon type="User" />
+            <Icon type="Person" />
             {TableHeadings.CONTACTS}
           </StyledTitleCard>
           <CardValue>{integration?.contacts.length} contacts</CardValue>

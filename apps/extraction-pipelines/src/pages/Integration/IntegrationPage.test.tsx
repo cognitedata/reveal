@@ -1,7 +1,11 @@
 import React from 'react';
-import { fireEvent, screen } from '@testing-library/react';
+import {
+  fireEvent,
+  screen,
+  waitForElementToBeRemoved,
+} from '@testing-library/react';
 import { QueryClient } from 'react-query';
-import { useLocation, useRouteMatch, useParams } from 'react-router-dom';
+import { useLocation, useParams, useRouteMatch } from 'react-router-dom';
 import {
   CONTACTS,
   EXT_PIPE_TAB_OVERVIEW,
@@ -68,6 +72,9 @@ describe('IntegrationPage', () => {
       isLoading: false,
       data: [{ acl: INTEGRATIONS_ACL, actions: ['READ', 'WRITE'] }],
     });
+    const modalRoot = document.createElement('div');
+    modalRoot.setAttribute('class', 'integrations-ui-style-scope');
+    document.body.appendChild(modalRoot);
   });
   afterEach(() => {
     jest.resetAllMocks();
@@ -90,10 +97,10 @@ describe('IntegrationPage', () => {
     expect(screen.queryByText(CONTACTS)).not.toBeInTheDocument();
   });
 
-  test('Render integration and navigate on subpages', async () => {
-    const mockIntegration = getMockResponse()[2];
-    const mockDataSet = mockDataSetResponse()[2];
-    const mockData = { ...mockIntegration, dataSet: mockDataSet };
+  const mockIntegration = getMockResponse()[2];
+  const mockDataSet = mockDataSetResponse()[2];
+  const mockData = { ...mockIntegration, dataSet: mockDataSet };
+  function renderIntegrationPage() {
     useIntegrationById.mockReturnValue({
       data: mockData,
       isLoading: false,
@@ -112,15 +119,19 @@ describe('IntegrationPage', () => {
       '/'
     );
     render(<IntegrationPage />, { wrapper });
+  }
+
+  test('Render integration and navigate on subpages', () => {
+    renderIntegrationPage();
     expect(screen.getByText(EXT_PIPE_TAB_OVERVIEW)).toBeInTheDocument();
     const runsLink = screen.getByText(EXT_PIPE_TAB_RUN_HISTORY);
     expect(runsLink).toBeInTheDocument();
     // check some details are renderd
     expect(screen.getAllByText(mockData.name).length).toEqual(2); // heading + breadcrumb
-    expect(screen.getByText(mockData.description)).toBeInTheDocument();
+    expect(screen.getByText(mockData.description!)).toBeInTheDocument();
     expect(screen.getByText(mockData.externalId)).toBeInTheDocument();
-    expect(screen.getAllByText(mockData.dataSet.name).length).toEqual(3); // breadcrumb, heading and side bar
-    expect(screen.getAllByText(mockIntegration.source).length).toEqual(2); // heading and side bar
+    expect(screen.getAllByText(mockData.dataSet.name!).length).toEqual(3); // breadcrumb, heading and side bar
+    expect(screen.getAllByText(mockIntegration.source!).length).toEqual(2); // heading and side bar
     // navigate to runs
     fireEvent.click(runsLink);
     expect(
@@ -131,5 +142,62 @@ describe('IntegrationPage', () => {
       screen.getAllByText(new RegExp(TableHeadings.LAST_RUN_STATUS, 'i')).length
     ).toEqual(2); // filter and heading
     expect(screen.getByText(RunTableHeading.MESSAGE)).toBeInTheDocument();
+  });
+
+  const deleteDialogHeader = () =>
+    screen.queryByText('Delete "PI AF integration"?');
+
+  function clickDeletePipeline() {
+    fireEvent.click(screen.getByText('Delete extraction pipeline'));
+  }
+
+  test('Dialog pops up when clicking', () => {
+    renderIntegrationPage();
+    expect(deleteDialogHeader()).not.toBeInTheDocument();
+    clickDeletePipeline();
+    expect(deleteDialogHeader()).toBeInTheDocument();
+  });
+
+  test('Dialog closes when clicking cancel', async () => {
+    renderIntegrationPage();
+    clickDeletePipeline();
+    fireEvent.click(screen.getByText('Cancel'));
+    await waitForElementToBeRemoved(() => deleteDialogHeader());
+  });
+
+  const getInputFieldForDeleteConfirm = () =>
+    screen.getByLabelText('Type DELETE to confirm') as HTMLInputElement;
+
+  test('Delete button should only be enabled when DELETE is written', async () => {
+    renderIntegrationPage();
+    clickDeletePipeline();
+
+    const confirmTextField = getInputFieldForDeleteConfirm();
+    const deleteButtonInsideDialog = screen.getByText(
+      'Delete'
+    ) as HTMLButtonElement;
+
+    expect(deleteButtonInsideDialog.disabled).toBe(true);
+    fireEvent.change(confirmTextField, { target: { value: 'DELETE' } });
+    expect(deleteButtonInsideDialog.disabled).toBe(false);
+    fireEvent.change(confirmTextField, { target: { value: 'abc' } });
+    expect(deleteButtonInsideDialog.disabled).toBe(true);
+    fireEvent.change(confirmTextField, { target: { value: 'delete' } });
+    expect(deleteButtonInsideDialog.disabled).toBe(false);
+  });
+
+  test('Forget text in between dialog opens', async () => {
+    renderIntegrationPage();
+    clickDeletePipeline();
+
+    const confirmTextField = getInputFieldForDeleteConfirm();
+
+    fireEvent.change(confirmTextField, { target: { value: 'abc' } });
+
+    fireEvent.click(screen.getByText('Cancel'));
+    await waitForElementToBeRemoved(() => deleteDialogHeader());
+
+    clickDeletePipeline();
+    expect(confirmTextField.value).toBe('');
   });
 });

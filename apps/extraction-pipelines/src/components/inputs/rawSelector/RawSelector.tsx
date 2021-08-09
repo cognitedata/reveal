@@ -180,7 +180,7 @@ const RawSelector = ({
           />
         </SearchWrapper>
       </Selector>
-      <Table<IntegrationRawTable>
+      <Table<any>
         pagination
         locale={localeEmpty()}
         columns={SelectionColumns}

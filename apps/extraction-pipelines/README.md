@@ -1,24 +1,10 @@
-# Unified CDF UI Demo App
-
-This repository shows how to bootstrap a [React]-based application at Cognite.
-It demonstrates best practices, such as:
-
-- Lint setup to use
-- Jenkinsfile steps
-- TypeScript usage
-- Folder / component layout
-- Test / utils already setup to work
-- ...
+# Frontend for Extraction Pipeline (formerly Integrations) administration
 
 ## Deploying the app
 
 Please see the [deployment guide] for more information how to actually get this app into production.
 (It should be pretty easy!)
 
-## Template repo
-
-This repo is configured as a template, so it's easy to get started.
-Simply go to the [create repo page] and select "cognitedata/unified-cdf-ui-demo-app" as a template.
 
 ## Help
 

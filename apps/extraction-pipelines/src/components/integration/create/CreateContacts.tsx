@@ -155,7 +155,7 @@ export const CreateContacts: FunctionComponent<CreateContactsProps> = ({
                 aria-label={REMOVE_CONTACT}
                 onClick={removeContact(index)}
               >
-                <Icon type="Delete" />
+                <Icon type="Trash" />
               </Button>
             </DivFlex>
           </ContactWrapper>

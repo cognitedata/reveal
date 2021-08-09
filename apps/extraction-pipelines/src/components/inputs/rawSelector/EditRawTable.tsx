@@ -84,7 +84,6 @@ const EditRawTable: FunctionComponent<{ canEdit: boolean }> = ({ canEdit }) => {
         onClick={toggleModal(true)}
         title="Toggle raw table modal"
         data-testid={`${TEST_ID_BTN_SAVE}rawTable`}
-        canEdit={canEdit}
         $full
       >
         <RawLabel id="raw-table-label" htmlFor="raw-table-grid">

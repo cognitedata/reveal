@@ -57,7 +57,7 @@ export const DatabaseTables: FunctionComponent<DatabaseTablesProps> = ({
           <DBTableItem key={`${selectedDb}/${table.name || ''}`}>
             <Checkbox
               name={table.name}
-              value={selectedTables.some(
+              checked={selectedTables.some(
                 (record) =>
                   record.dbName === selectedDb &&
                   record.tableName === table.name

@@ -86,3 +86,13 @@ export const registerIntegration = async (
   );
   return response.data.items[0];
 };
+
+export const deleteExtractionPipeline = (extPipeId: number) => {
+  return sdkv3.post(`${getBaseUrl(sdkv3.project)}/delete`, {
+    withCredentials: true,
+    responseType: 'text', // <- to avoid trying to parse response as json resulting in errors
+    data: {
+      items: [{ id: extPipeId }],
+    },
+  });
+};

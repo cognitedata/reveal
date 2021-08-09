@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react';
-import { Loader } from '@cognite/cogs.js';
+import { Loader, ToastContainer } from '@cognite/cogs.js';
 import { Switch, Redirect, useLocation } from 'react-router-dom';
 import { EXTRACTION_PIPELINES_PATH } from 'utils/baseURL';
 import { useAppEnv } from 'hooks/useAppEnv';
@@ -11,6 +11,7 @@ const Home = () => {
   const { project } = useAppEnv();
   return (
     <Suspense fallback={<Loader />}>
+      <ToastContainer />
       <SelectedIntegrationProvider>
         <Switch>
           <Routes />

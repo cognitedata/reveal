@@ -62,7 +62,7 @@ export const RemoveContactButton: FunctionComponent<RemoveButtonProps> = ({
         aria-label={`Remove ${name} ${index}`}
         onClick={removeRow}
       >
-        <Icon type="Delete" />
+        <Icon type="Trash" />
       </RemoveBtn>
     </MessageDialog>
   );

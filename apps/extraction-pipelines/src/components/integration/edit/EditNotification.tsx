@@ -147,7 +147,7 @@ export const EditNotification: FunctionComponent = () => {
               <Checkbox
                 id="has-config"
                 name="hasConfig"
-                value={field.value}
+                checked={field.value}
                 onChange={handleChange}
                 aria-describedby="has-config-hint"
               >

@@ -1,10 +1,24 @@
-import React, { FunctionComponent, useEffect } from 'react';
+import React, {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 import { useParams } from 'react-router';
-import { Colors, Loader } from '@cognite/cogs.js';
+import {
+  Button,
+  Colors,
+  Icon,
+  Input,
+  Loader,
+  Modal,
+  toast,
+} from '@cognite/cogs.js';
 import {
   NavLink,
   Route,
   Switch,
+  useHistory,
   useLocation,
   useRouteMatch,
 } from 'react-router-dom';
@@ -28,6 +42,10 @@ import { IntegrationBreadcrumbs } from 'components/navigation/breadcrumbs/Integr
 import { Span3 } from 'styles/grid/StyledGrid';
 import { CapabilityCheck } from 'components/accessCheck/CapabilityCheck';
 import { EXTPIPES_READS } from 'model/AclAction';
+import { createExtPipePath } from 'utils/baseURL';
+import { ids } from 'cogs-variables';
+import { useQueryClient } from 'react-query';
+import { deleteExtractionPipeline } from 'utils/IntegrationsAPI';
 
 const PageNav = styled.ul`
   ${Span3};
@@ -57,14 +75,67 @@ const PageNav = styled.ul`
   }
 `;
 
+const IconWithSpace = styled(Icon)`
+  margin-right: 1rem;
+`;
+
 interface IntegrationPageProps {}
+const DeleteDialog: FunctionComponent<{
+  isOpen: boolean;
+  close: () => void;
+  doDelete: () => void;
+  pipelineName: string;
+}> = (props) => {
+  const [inputText, setInputText] = useState('');
+  const isDisabled = inputText.toLocaleLowerCase() !== 'delete';
+  const { close } = props;
+  const closeCallback = useCallback(() => {
+    setInputText('');
+    close();
+  }, [close]);
+  return (
+    <Modal
+      title={`Delete "${props.pipelineName}"?`}
+      okDisabled={isDisabled}
+      visible={props.isOpen}
+      okText="Delete"
+      onCancel={closeCallback}
+      onOk={props.doDelete}
+      appElement={document.getElementsByClassName(ids.styleScope).item(0)!}
+      getContainer={() =>
+        document.getElementsByClassName(ids.styleScope).item(0) as any
+      }
+    >
+      <p>
+        This will remove the extraction pipeline and its metadata and run
+        history. It will NOT delete any data already ingested through the
+        pipeline.
+      </p>
+      <p>Are you sure you want to delete &quot;{props.pipelineName}&quot;?</p>
+      <p style={{ marginTop: '1.5rem' }}>
+        <Input
+          id="delete-input-text"
+          value={inputText}
+          title="Type DELETE to confirm"
+          onChange={(ev) => setInputText(ev.target.value)}
+          placeholder="Type here"
+          fullWidth
+        />
+      </p>
+    </Modal>
+  );
+};
 
 const IntegrationPage: FunctionComponent<IntegrationPageProps> = () => {
   const { pathname, search } = useLocation();
   const { path, url } = useRouteMatch();
   const { origin } = useAppEnv();
   const { id } = useParams<RouterParams>();
+  const history = useHistory();
+  const { project } = useAppEnv();
+  const queryClient = useQueryClient();
   const { setIntegration } = useSelectedIntegration();
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const { data: integration, isLoading } = useIntegrationById(parseInt(id, 10));
   useEffect(() => {
     if (integration) {
@@ -72,24 +143,85 @@ const IntegrationPage: FunctionComponent<IntegrationPageProps> = () => {
     }
   }, [integration, setIntegration]);
 
-  if (isLoading) {
-    return <Loader />;
-  }
-  return (
+  const deletePipeline = useCallback(() => {
+    if (integration == null) return;
+    deleteExtractionPipeline(integration.id)
+      .then(() => {
+        toast.success(
+          <div>
+            <h3>Extraction pipeline deleted</h3>
+            <span>
+              The extraction pipeline &quot;{integration.name}&quot; was
+              successfully deleted
+            </span>
+          </div>,
+          {
+            autoClose: 4000,
+            position: 'bottom-right',
+          }
+        );
+        setIsDeleteDialogOpen(false);
+        queryClient.invalidateQueries(['integrations', project]).then(() => {
+          // queryClient.invalidateQueries([
+          //   'integration',
+          //   integration.id,
+          //   project,
+          // ]);
+          history.push(createExtPipePath());
+        });
+      })
+      .catch(() => {
+        toast.error(
+          <div>
+            <h3>Failed to delete extraction pipeline</h3>
+            <span>
+              Something went wrong when attempting to delete the extraction
+              pipeline.
+            </span>
+          </div>,
+          {
+            autoClose: 4000,
+            position: 'bottom-right',
+          }
+        );
+        setIsDeleteDialogOpen(false);
+      });
+  }, [integration, history, project, queryClient]);
+
+  return isLoading || integration == null ? (
+    <Loader />
+  ) : (
     <RunFilterProvider>
       <FullPageLayout
-        pageHeadingText={integration?.name ?? ''}
+        pageHeadingText={integration.name}
         pageHeading={<IntegrationHeading />}
         headingSide={
-          <LinkWrapper>
-            <InteractiveCopyWithText
-              id="copy-link-this-page"
-              textToCopy={`${origin}${pathname}${search}`}
-              copyType="pageLink"
-            >
-              <>Copy link to this page</>
-            </InteractiveCopyWithText>
-          </LinkWrapper>
+          <div>
+            <LinkWrapper>
+              <InteractiveCopyWithText
+                id="copy-link-this-page"
+                textToCopy={`${origin}${pathname}${search}`}
+                copyType="pageLink"
+              >
+                <>Copy link to this page</>
+              </InteractiveCopyWithText>
+              <DeleteDialog
+                isOpen={isDeleteDialogOpen}
+                doDelete={deletePipeline}
+                pipelineName={integration.name}
+                close={() => {
+                  setIsDeleteDialogOpen(false);
+                }}
+              />
+              <Button
+                type="ghost-danger"
+                onClick={() => setIsDeleteDialogOpen(true)}
+              >
+                <IconWithSpace type="Trash" />
+                Delete extraction pipeline
+              </Button>
+            </LinkWrapper>
+          </div>
         }
         breadcrumbs={<IntegrationBreadcrumbs integration={integration} />}
       >
@@ -114,7 +246,7 @@ const IntegrationPage: FunctionComponent<IntegrationPageProps> = () => {
             <IntegrationDetails />
           </Route>
           <Route path={`${path}/${HEALTH_PATH}`}>
-            <IntegrationHealth integration={integration ?? null} />
+            <IntegrationHealth integration={integration} />
           </Route>
         </Switch>
       </FullPageLayout>

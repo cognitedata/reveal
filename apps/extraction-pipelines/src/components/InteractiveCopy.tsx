@@ -55,7 +55,7 @@ const InteractiveCopy = ({
         }}
         data-testid="interactive-copy"
       >
-        {hasCopied ? <Icons.Check /> : <Icons.Copy />}
+        {hasCopied ? <Icons.Checkmark /> : <Icons.Copy />}
       </IconWrapper>
     </StyledTooltip>
   );
