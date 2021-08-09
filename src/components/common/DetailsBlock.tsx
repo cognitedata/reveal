@@ -1,4 +1,6 @@
+import { Title } from '@cognite/cogs.js';
 import React, { CSSProperties, FC } from 'react';
+import styled from 'styled-components';
 
 export interface DetailsBlockProps {
   title: string;
@@ -6,29 +8,22 @@ export interface DetailsBlockProps {
   style?: CSSProperties;
 }
 
-const roundedBoxStyle: CSSProperties = {
-  border: '1px solid #D9D9D9',
-  boxSizing: 'border-box',
-  borderRadius: 6,
-  padding: '8px',
-};
+const RoundedBox = styled.div`
+  border: 1px solid #d9d9d9;
+  box-sizing: border-box;
+  border-radius: 6px;
+  margin: 8px 0;
+`;
 
-const mainDivStyle: CSSProperties = {
-  margin: '8px 0',
-};
+const MainDiv = styled.div`
+  margin: 8px 0;
+`;
 
-const DetailsBlock: FC<DetailsBlockProps> = ({
-  title,
-  children,
-  style,
-  ...props
-}) => (
-  <div style={{ ...mainDivStyle, ...style }} {...props}>
-    <h4>{title}</h4>
-    <div style={roundedBoxStyle}>
-      {children || <span>No info to display</span>}
-    </div>
-  </div>
+const DetailsBlock: FC<DetailsBlockProps> = ({ title, children, ...props }) => (
+  <MainDiv {...props}>
+    <Title level={6}>{title}</Title>
+    <RoundedBox>{children || 'No info to display'}</RoundedBox>
+  </MainDiv>
 );
 
 export default DetailsBlock;
