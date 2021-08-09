@@ -32,7 +32,7 @@ const getNavbarItemComponent = (
   return navbarItemComponent();
 };
 
-export default function NavbarItem({type, ...props}: Props): JSX.Element {
+export default function NavbarItem({type, ...props}): JSX.Element {
   const NavbarItemComponent = getNavbarItemComponent(type);
   return <NavbarItemComponent {...props} />;
 }

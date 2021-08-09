@@ -28,6 +28,7 @@ class LoginManager {
     window.sdk = this.client;
 
     this.client.loginWithOAuth({
+      //@ts-ignore
       project: env.project,
       accessToken,
       onAuthenticate: REDIRECT,

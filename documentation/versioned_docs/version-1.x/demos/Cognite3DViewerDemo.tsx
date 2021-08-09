@@ -9,6 +9,8 @@ import {
   SupportedModelTypes
 } from '@cognite/reveal-1.x';
 
+import { CogniteClient } from '@cognite/sdk-1.x';
+
 import { CanvasWrapper } from '@site/versioned_docs/version-1.x/components/styled';
 import { DemoProps } from '@site/versioned_docs/version-1.x/components/DemoProps';
 
@@ -30,14 +32,15 @@ export default function Cognite3DViewerDemo({
 
     // Prepare viewer
     const viewer = new Cognite3DViewer({
-      sdk: client,
+      //@ts-ignore
+      sdk: client as CogniteClient,
       domElement: canvasWrapperRef.current,
       antiAliasingHint: 'msaa4+fxaa'
     });
 
     async function addModel(options: AddModelOptions) {
       const model = await viewer.addModel(options);
-      viewer.loadCameraFromModel(model);
+      viewer.loadCameraFromModel(model as any);
       // @ts-ignore
       window.model = model;
     }

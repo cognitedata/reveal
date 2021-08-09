@@ -23,7 +23,7 @@ jobs:
 
     - name: Install NPM dependencies
       working-directory: viewer
-      run: yarn install --frozen-lockfile
+      run: yarn install --immutable
 
     - name: Lint
       working-directory: viewer
@@ -61,7 +61,7 @@ jobs:
 
     - name: Install NPM dependencies
       working-directory: viewer
-      run: yarn install --frozen-lockfile
+      run: yarn install --immutable
 
     - name: Build development build
       working-directory: viewer
@@ -69,7 +69,7 @@ jobs:
 
     - name: Install examples-dependencies
       working-directory: examples
-      run: yarn --frozen-lockfile
+      run: yarn --immutable
 
     - name: Build examples
       working-directory: examples
@@ -110,7 +110,7 @@ jobs:
 
       - name: Install Reveal dependencies
         working-directory: viewer
-        run: yarn --frozen-lockfile
+        run: yarn --immutable
 
       - name: Build Reveal
         working-directory: viewer
@@ -118,7 +118,7 @@ jobs:
 
       - name: Install NPM dependencies
         working-directory: documentation
-        run: yarn --frozen-lockfile
+        run: yarn --immutable
 
       - name: Build docs
         working-directory: documentation

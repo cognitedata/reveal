@@ -1,0 +1,36 @@
+/*!
+ * Copyright 2021 Cognite AS
+ */
+
+// fetch() polyfill
+import 'whatwg-fetch';
+
+// Create document.currentScript required by potree-core
+Object.defineProperty(document, 'currentScript', {
+  value: document.createElement('script')
+});
+(document.currentScript as any).src = 'http://localhost/iamdummy.html';
+
+window.URL.createObjectURL = jest.fn();
+
+// Mock Worker for web workers
+class StubWorker {
+  constructor(_: string) {}
+  public postMessage(_: any) {}
+}
+(window as any).Worker = StubWorker;
+
+// Filter away warning from ThreeJS about "THREE.WebGLRenderer: EXT_xxx extension not supported."
+// which is caused by using a mock WebGL implementation for unit testing
+const consoleWarn = console.warn.bind(console);
+(console as any).warn = (message?: any, ...optionalParams: any[]) => {
+  const messageStr = message + '';
+  if (!messageStr.match(/THREE\.WebGLRenderer: .* extension not supported\./)) {
+    consoleWarn(message, ...optionalParams);
+  }
+};
+
+Object.assign(process.env, {
+  VERSION: require('../../../package.json').version,
+  WORKER_VERSION: require('../../../node_modules/@cognite/reveal-parser-worker/package.json').version
+});
