@@ -153,9 +153,13 @@ const Statistics = ({
           <DetailsBlock title="Statistics">
             <List
               dataSource={[
-                { label: 'Min', value: statisticsForSource?.min },
-                { label: 'Max', value: statisticsForSource?.max },
                 { label: 'Mean', value: statisticsForSource?.mean },
+                {
+                  label: 'Standard Deviation',
+                  value: statisticsForSource?.std,
+                },
+                { label: 'Max', value: statisticsForSource?.max },
+                { label: 'Min', value: statisticsForSource?.min },
                 { label: 'Median', value: statisticsForSource?.median },
                 // Missing values from backend according to the sketch
                 // { label: 'Avg', value: statisticsForSource?.average },
@@ -172,13 +176,9 @@ const Statistics = ({
               )}
             />
           </DetailsBlock>
-          <DetailsBlock title="Variation">
+          <DetailsBlock title="Percentiles">
             <List
               dataSource={[
-                {
-                  label: 'Standard Deviation',
-                  value: statisticsForSource?.std,
-                },
                 { label: '25th Percentile', value: statisticsForSource?.q25 },
                 { label: '50th Percentile', value: statisticsForSource?.q50 },
                 { label: '75th Percentile', value: statisticsForSource?.q75 },
