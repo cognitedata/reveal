@@ -3,7 +3,7 @@
   "version": "0.10.0",
   "private": true,
   "scripts": {
-    "start": "./scripts/start.sh",
+    "start": "react-scripts start",
     "build": "./scripts/build.sh",
     "test": "./scripts/test.sh --watchAll=false",
     "test:watch": "./scripts/test.sh",
