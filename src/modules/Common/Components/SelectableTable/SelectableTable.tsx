@@ -16,13 +16,13 @@ import { StringRenderer } from 'src/modules/Common/Containers/FileTableRenderers
 import { SelectionRenderer } from 'src/modules/Common/Containers/FileTableRenderers/SelectionRenderer';
 import { SelectAllHeaderRenderer } from 'src/modules/Common/Containers/FileTableRenderers/SelectAllHeaderRendrerer';
 import { StringHeaderRenderer } from 'src/modules/Common/Containers/FileTableRenderers/StringHeaderRenderer';
-import { PaginationProps } from 'src/modules/Common/Components/FileTable/types';
+import { PaginatedTableProps } from 'src/modules/Common/Components/FileTable/types';
 
 export type SelectableTableProps = Omit<
   BaseTableProps<TableDataItem>,
   'width'
 > &
-  PaginationProps<TableDataItem> & {
+  PaginatedTableProps<TableDataItem> & {
     selectedRowIds: number[];
     allRowsSelected: boolean;
     selectable: boolean;
@@ -157,17 +157,15 @@ export function SelectableTable(props: SelectableTableProps) {
             rowClassName={rowClassNames}
             rowEventHandlers={rowEventHandlers}
             onColumnSort={({ key }) => {
-              if ((key as string) !== sortKey) {
+              if (setSortKey && (key as string) !== sortKey) {
                 setSortKey(key as string);
-                if (reverse) {
+                if (setReverse && reverse) {
                   setReverse(false);
                 }
-              } else {
-                setReverse(!reverse);
-              }
+              } else if (setReverse) setReverse(!reverse);
             }}
             sortBy={{
-              key: sortKey,
+              key: sortKey || '',
               order: reverse ? 'asc' : 'desc',
             }}
             footerHeight={tableFooter ? 50 : 0}

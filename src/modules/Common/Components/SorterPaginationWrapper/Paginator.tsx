@@ -1,6 +1,6 @@
+import React from 'react';
 import { ButtonProps, SegmentedControl } from '@cognite/cogs.js';
 import { InputNumber } from 'antd';
-import React, { Dispatch, SetStateAction } from 'react';
 import * as CONSTS from 'src/constants/PaginationConsts';
 import styled from 'styled-components';
 
@@ -74,11 +74,13 @@ const getPageOptionButtons = (
 
 export const Paginator = (props: {
   currentPage: number;
+  pageSize: number;
   totalPages: number;
-  setCurrentPage: Dispatch<SetStateAction<number>>;
-  setPageSize: Dispatch<SetStateAction<number>>;
+  setCurrentPage: (page: number) => void;
+  setPageSize: (size: number) => void;
 }) => {
-  const { currentPage, totalPages, setCurrentPage, setPageSize } = props;
+  const { currentPage, pageSize, totalPages, setCurrentPage, setPageSize } =
+    props;
   const pageOptionButtons = getPageOptionButtons(currentPage, totalPages);
 
   const handleButtonClicked = (key: string | number) => {
@@ -107,7 +109,8 @@ export const Paginator = (props: {
         size="small"
         min={1}
         max={totalPages}
-        defaultValue={1}
+        defaultValue={currentPage}
+        value={currentPage}
         onChange={setCurrentPage}
         style={{ backgroundColor: '#ffffff', width: '64px', fontSize: '12px' }}
       />
@@ -115,7 +118,8 @@ export const Paginator = (props: {
         size="small"
         min={CONSTS.MIN_PAGE_SIZE}
         max={CONSTS.MAX_PAGE_SIZE}
-        defaultValue={CONSTS.DEFAULT_PAGE_SIZE}
+        defaultValue={pageSize}
+        value={pageSize}
         onChange={setPageSize}
         style={{ backgroundColor: '#ffffff', width: '64px', fontSize: '12px' }}
       />

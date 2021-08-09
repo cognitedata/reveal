@@ -13,6 +13,16 @@ import { UpdateFiles } from 'src/store/thunks/UpdateFiles';
 import { FileState } from 'src/modules/Common/filesSlice';
 import { setSelectedAllFiles } from 'src/store/commonActions';
 import { makeReducerSelectAllFilesWithFilter } from 'src/store/commonReducers';
+import { DEFAULT_PAGE_SIZE } from 'src/constants/PaginationConsts';
+import { SortPaginate } from 'src/modules/Common/Components/FileTable/types';
+
+export enum ExploreSortPaginateType {
+  list = 'LIST',
+  grid = 'GRID',
+  mapLocation = 'LOCATION',
+  mapNoLocation = 'NO_LOCATION',
+  modal = 'MODAL',
+}
 
 export type ExplorerFileState = {
   id: number;
@@ -36,6 +46,7 @@ export type State = {
   showFileMetadata: boolean;
   query: string;
   currentView: ViewMode;
+  mapTableTabKey: string;
   filter: FileFilterProps;
   showFilter: boolean;
   showFileUploadModal: boolean;
@@ -45,6 +56,7 @@ export type State = {
     allIds: number[];
     selectedIds: number[];
   };
+  sortPaginate: Record<ExploreSortPaginateType, SortPaginate>;
 };
 
 const initialState: State = {
@@ -52,6 +64,7 @@ const initialState: State = {
   showFileMetadata: false,
   query: '',
   currentView: 'list',
+  mapTableTabKey: 'fileInMap',
   filter: {},
   showFilter: true,
   showFileUploadModal: false,
@@ -60,6 +73,13 @@ const initialState: State = {
     byId: {},
     allIds: [],
     selectedIds: [],
+  },
+  sortPaginate: {
+    LIST: { currentPage: 1, pageSize: DEFAULT_PAGE_SIZE },
+    GRID: { currentPage: 1, pageSize: DEFAULT_PAGE_SIZE },
+    LOCATION: { currentPage: 1, pageSize: DEFAULT_PAGE_SIZE },
+    NO_LOCATION: { currentPage: 1, pageSize: DEFAULT_PAGE_SIZE },
+    MODAL: { currentPage: 1, pageSize: DEFAULT_PAGE_SIZE },
   },
 };
 
@@ -122,9 +142,6 @@ const explorerSlice = createSlice({
     setExplorerFilter(state, action: PayloadAction<FileFilterProps>) {
       state.filter = action.payload;
     },
-    setExplorerCurrentView(state, action: PayloadAction<ViewMode>) {
-      state.currentView = action.payload;
-    },
     toggleExplorerFilterView(state) {
       state.showFilter = !state.showFilter;
     },
@@ -139,6 +156,51 @@ const explorerSlice = createSlice({
       action: PayloadAction<boolean>
     ) {
       state.showFileDownloadModal = action.payload;
+    },
+    setSortKey(
+      state,
+      action: PayloadAction<{ type: ExploreSortPaginateType; sortKey: string }>
+    ) {
+      const { type, sortKey } = action.payload;
+      state.sortPaginate[type] = { ...state.sortPaginate[type], sortKey };
+    },
+    setReverse(
+      state,
+      action: PayloadAction<{ type: ExploreSortPaginateType; reverse: boolean }>
+    ) {
+      const { type, reverse } = action.payload;
+      state.sortPaginate[type] = { ...state.sortPaginate[type], reverse };
+    },
+    setCurrentPage(
+      state,
+      action: PayloadAction<{
+        type: ExploreSortPaginateType;
+        currentPage: number;
+      }>
+    ) {
+      const { type, currentPage } = action.payload;
+      state.sortPaginate[type] = { ...state.sortPaginate[type], currentPage };
+    },
+    setPageSize(
+      state,
+      action: PayloadAction<{
+        type: ExploreSortPaginateType;
+        pageSize: number;
+      }>
+    ) {
+      const { type, pageSize } = action.payload;
+      state.sortPaginate[type] = { ...state.sortPaginate[type], pageSize };
+    },
+    setExplorerCurrentView(state, action: PayloadAction<ViewMode>) {
+      state.currentView = action.payload;
+    },
+    setMapTableTabKey(
+      state,
+      action: PayloadAction<{
+        mapTableTabKey: string;
+      }>
+    ) {
+      state.mapTableTabKey = action.payload.mapTableTabKey;
     },
   },
   extraReducers: (builder) => {
@@ -169,10 +231,15 @@ export const {
   showExplorerFileMetadata,
   setExplorerQueryString,
   setExplorerFilter,
-  setExplorerCurrentView,
   toggleExplorerFilterView,
   setExplorerFileUploadModalVisibility,
   setExplorerFileDownloadModalVisibility,
+  setSortKey,
+  setReverse,
+  setCurrentPage,
+  setPageSize,
+  setExplorerCurrentView,
+  setMapTableTabKey,
 } = explorerSlice.actions;
 
 export default explorerSlice.reducer;

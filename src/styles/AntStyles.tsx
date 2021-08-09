@@ -68,7 +68,7 @@ import spinStyle from 'antd/es/spin/style/index.less';
 import stepsStyle from 'antd/es/steps/style/index.less';
 // import switchStyle from 'antd/es/switch/style/index.less';
 // import tableStyle from 'antd/es/table/style/index.less';
-// import tabsStyle from 'antd/es/tabs/style/index.less';
+import tabsStyle from 'antd/es/tabs/style/index.less';
 // import tagStyle from 'antd/es/tag/style/index.less';
 // import themeStyle from 'antd/es/style/themes/index.less';
 // import timePickerStyle from 'antd/es/time-picker/style/index.less';
@@ -119,7 +119,7 @@ const styles = [
   spinStyle,
   stepsStyle,
   // tableStyle,
-  // tabsStyle,
+  tabsStyle,
   tooltipStyle,
   // treeStyle,
   typographyStyle,

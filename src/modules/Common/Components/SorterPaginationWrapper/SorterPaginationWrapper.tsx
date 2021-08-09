@@ -1,22 +1,14 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import * as CONST from 'src/constants/PaginationConsts';
 import styled from 'styled-components';
-import { PaginationProps } from 'src/modules/Common/Components/FileTable/types';
+import {
+  SortPaginateControls,
+  PaginatedTableProps,
+} from 'src/modules/Common/Components/FileTable/types';
 import { TableDataItem } from '../../types';
 import { Footer } from './Footer';
 import { Header } from './Header';
 import { Paginator } from './Paginator';
-
-type ISorterPaginationWrapperProps = {
-  children: (tableProps: PaginationProps<TableDataItem>) => React.ReactNode;
-} & {
-  data: TableDataItem[];
-  totalCount: number;
-  sorters?: {
-    [key: string]: (data: TableDataItem[], reverse: boolean) => TableDataItem[];
-  };
-  pagination?: boolean;
-};
 
 const getData = (
   data: TableDataItem[],
@@ -50,14 +42,35 @@ const getData = (
   return tableData;
 };
 
-export const SorterPaginationWrapper = (
-  props: ISorterPaginationWrapperProps
-) => {
-  const { data, totalCount, sorters, children, pagination } = props;
-  const [reverse, setReverse] = useState(false);
-  const [sortKey, setSortKey] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(CONST.DEFAULT_PAGE_SIZE);
+type SorterPaginationWrapperProps = {
+  data: TableDataItem[];
+  totalCount: number;
+  sorters?: {
+    [key: string]: (data: TableDataItem[], reverse: boolean) => TableDataItem[];
+  };
+  pagination?: boolean;
+  sortPaginateControls: SortPaginateControls;
+  children: (tableProps: PaginatedTableProps<TableDataItem>) => React.ReactNode;
+};
+
+export const SorterPaginationWrapper = ({
+  data,
+  totalCount,
+  sorters,
+  pagination,
+  sortPaginateControls,
+  children,
+}: SorterPaginationWrapperProps) => {
+  const {
+    sortKey,
+    reverse,
+    currentPage,
+    pageSize,
+    setSortKey,
+    setReverse,
+    setCurrentPage,
+    setPageSize,
+  } = sortPaginateControls;
   const fetchedCount = data.length;
   const totalPages =
     pageSize > 0
@@ -103,6 +116,7 @@ export const SorterPaginationWrapper = (
         {pagination ? (
           <Paginator
             currentPage={currentPage}
+            pageSize={pageSize}
             totalPages={totalPages}
             setCurrentPage={setCurrentPage}
             setPageSize={setPageSize}

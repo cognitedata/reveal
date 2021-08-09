@@ -9,7 +9,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { MapPopup } from './MapPopup';
 import { MapFileTable } from '../MapFileTable/MapFileTable';
 import { TableDataItem } from '../../types';
-import { FileExplorerTableProps } from '../FileTable/types';
+import { FileMapTableProps } from '../FileTable/types';
 
 // should be defined outside MapView to avoid re-rendering
 const Mapbox = ReactMapboxGl({
@@ -20,7 +20,7 @@ const Mapbox = ReactMapboxGl({
   trackResize: true,
 });
 
-export const MapView = (props: FileExplorerTableProps) => {
+export const MapView = (props: FileMapTableProps) => {
   const [selectedFile, setSelectedFile] = useState<ResultData | undefined>();
   const [popupState, setPopupState] =
     useState<'open' | 'hidden' | 'close'>('close');

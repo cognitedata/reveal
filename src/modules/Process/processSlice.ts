@@ -21,7 +21,16 @@ import { ThunkConfig } from 'src/store/rootReducer';
 import isEqual from 'lodash-es/isEqual';
 import { AnnotationDetectionJobUpdate } from 'src/store/thunks/AnnotationDetectionJobUpdate';
 import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
-import { AnnotationsBadgeStatuses } from '../Common/types';
+import { DEFAULT_PAGE_SIZE } from 'src/constants/PaginationConsts';
+import { AnnotationsBadgeStatuses, ViewMode } from '../Common/types';
+import { SortPaginate } from '../Common/Components/FileTable/types';
+
+export enum FileSortPaginateType {
+  list = 'LIST',
+  grid = 'GRID',
+  mapLocation = 'LOCATION',
+  mapNoLocation = 'NO_LOCATION',
+}
 
 export type JobState = AnnotationJob & {
   fileIds: number[];
@@ -51,6 +60,9 @@ type State = {
     objectDetection: ParamsObjectDetection;
   };
   showExploreModal: boolean;
+  sortPaginate: Record<FileSortPaginateType, SortPaginate>;
+  currentView: ViewMode;
+  mapTableTabKey: string;
 };
 
 const initalDetectionModelParameters = {
@@ -86,6 +98,14 @@ const initialState: State = {
   detectionModelParameters: initalDetectionModelParameters,
   temporaryDetectionModelParameters: initalDetectionModelParameters,
   showExploreModal: false,
+  sortPaginate: {
+    LIST: { currentPage: 1, pageSize: DEFAULT_PAGE_SIZE },
+    GRID: { currentPage: 1, pageSize: DEFAULT_PAGE_SIZE },
+    LOCATION: { currentPage: 1, pageSize: DEFAULT_PAGE_SIZE },
+    NO_LOCATION: { currentPage: 1, pageSize: DEFAULT_PAGE_SIZE },
+  },
+  currentView: 'list',
+  mapTableTabKey: 'fileInMap',
 };
 
 // for requested files, create annotation jobs with requested detectionModels and setup polling on these jobs
@@ -253,6 +273,51 @@ const processSlice = createSlice({
     setSelectFromExploreModalVisibility(state, action: PayloadAction<boolean>) {
       state.showExploreModal = action.payload;
     },
+    setSortKey(
+      state,
+      action: PayloadAction<{ type: FileSortPaginateType; sortKey: string }>
+    ) {
+      const { type, sortKey } = action.payload;
+      state.sortPaginate[type] = { ...state.sortPaginate[type], sortKey };
+    },
+    setReverse(
+      state,
+      action: PayloadAction<{ type: FileSortPaginateType; reverse: boolean }>
+    ) {
+      const { type, reverse } = action.payload;
+      state.sortPaginate[type] = { ...state.sortPaginate[type], reverse };
+    },
+    setCurrentPage(
+      state,
+      action: PayloadAction<{
+        type: FileSortPaginateType;
+        currentPage: number;
+      }>
+    ) {
+      const { type, currentPage } = action.payload;
+      state.sortPaginate[type] = { ...state.sortPaginate[type], currentPage };
+    },
+    setPageSize(
+      state,
+      action: PayloadAction<{
+        type: FileSortPaginateType;
+        pageSize: number;
+      }>
+    ) {
+      const { type, pageSize } = action.payload;
+      state.sortPaginate[type] = { ...state.sortPaginate[type], pageSize };
+    },
+    setProcessCurrentView(state, action: PayloadAction<ViewMode>) {
+      state.currentView = action.payload;
+    },
+    setMapTableTabKey(
+      state,
+      action: PayloadAction<{
+        mapTableTabKey: string;
+      }>
+    ) {
+      state.mapTableTabKey = action.payload.mapTableTabKey;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fileProcessUpdate, (state, { payload }) => {
@@ -338,6 +403,12 @@ export const {
   resetDetectionModelParameters,
   setProcessViewFileUploadModalVisibility,
   setSelectFromExploreModalVisibility,
+  setSortKey,
+  setReverse,
+  setCurrentPage,
+  setPageSize,
+  setProcessCurrentView,
+  setMapTableTabKey,
 } = processSlice.actions;
 
 export default processSlice.reducer;
