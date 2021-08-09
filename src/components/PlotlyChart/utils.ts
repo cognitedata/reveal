@@ -142,9 +142,10 @@ export function formatPlotlyData(
       ({ name, color, mode, width, dash, datapoints, outdatedData }) => {
         /* kinda hacky solution to compare min and avg in cases where min is less than avg and need to be fill based on that, 
     In addition, should min value be less than avg value? */
-        const firstDatapoint = (
-          datapoints as (Datapoints | DatapointAggregate)[]
-        ).find((x) => x);
+        const firstDatapoint = (datapoints as (
+          | Datapoints
+          | DatapointAggregate
+        )[]).find((x) => x);
         const currMin = firstDatapoint
           ? ('min' in firstDatapoint
               ? firstDatapoint.min
@@ -156,25 +157,28 @@ export function formatPlotlyData(
               : (firstDatapoint as DoubleDatapoint).value) ?? 0
           : 0;
 
-        const avgYValues = (
-          datapoints as (Datapoints | DatapointAggregate)[]
-        ).map((datapoint) =>
+        const avgYValues = (datapoints as (
+          | Datapoints
+          | DatapointAggregate
+        )[]).map((datapoint) =>
           'average' in datapoint
             ? datapoint.average
             : (datapoint as DoubleDatapoint).value
         );
 
-        const minYValues = (
-          datapoints as (Datapoints | DatapointAggregate)[]
-        ).map((datapoint) =>
+        const minYValues = (datapoints as (
+          | Datapoints
+          | DatapointAggregate
+        )[]).map((datapoint) =>
           'min' in datapoint
             ? datapoint.min
             : (datapoint as DoubleDatapoint).value
         );
 
-        const maxYValues = (
-          datapoints as (Datapoints | DatapointAggregate)[]
-        ).map((datapoint) =>
+        const maxYValues = (datapoints as (
+          | Datapoints
+          | DatapointAggregate
+        )[]).map((datapoint) =>
           'max' in datapoint
             ? datapoint.max
             : (datapoint as DoubleDatapoint).value
@@ -191,9 +195,11 @@ export function formatPlotlyData(
           fill: 'none',
           line: { color, width: width || 1, dash: dash || 'solid' },
           yaxis: `y${index !== 0 ? index + 1 : ''}`,
-          x: (datapoints as (Datapoints | DatapointAggregate)[]).map(
-            (datapoint) =>
-              'timestamp' in datapoint ? new Date(datapoint.timestamp) : null
+          x: (datapoints as (
+            | Datapoints
+            | DatapointAggregate
+          )[]).map((datapoint) =>
+            'timestamp' in datapoint ? new Date(datapoint.timestamp) : null
           ),
           y: avgYValues,
           hovertemplate:

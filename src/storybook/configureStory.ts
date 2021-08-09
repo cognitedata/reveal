@@ -8,8 +8,7 @@ type BaseRenderOptions = {
 
 export type AppProvidersParameters = BaseRenderOptions;
 
-export const APP_PROVIDERS_PARAMETER_NAME =
-  'providersConfig' as 'providersConfig';
+export const APP_PROVIDERS_PARAMETER_NAME = 'providersConfig' as 'providersConfig';
 
 type StorybookParameters = {
   [key in typeof APP_PROVIDERS_PARAMETER_NAME]: BaseRenderOptions;
@@ -37,12 +36,12 @@ function configureStory<T extends StoryConfiguration>({
     },
   };
 
-  return {
+  return ({
     ...rest,
     parameters,
     decorators,
     setupMocks,
-  } as unknown as T;
+  } as unknown) as T;
 }
 
 export default configureStory;

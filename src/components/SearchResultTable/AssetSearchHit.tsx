@@ -50,7 +50,9 @@ export default function AssetSearchHit({ asset, query = '' }: Props) {
     [data]
   );
 
-  const selectedExternalIds: undefined | string[] = chart?.timeSeriesCollection
+  const selectedExternalIds:
+    | undefined
+    | string[] = chart?.timeSeriesCollection
     ?.map((t) => t.tsExternalId || '')
     .filter(Boolean);
 

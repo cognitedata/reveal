@@ -72,8 +72,9 @@ export default function WorkflowRow({
   draggable = false,
   provided = undefined,
 }: Props) {
-  const { mutate: callFunction, isLoading: isCallLoading } =
-    useCallFunction('simple_calc-master');
+  const { mutate: callFunction, isLoading: isCallLoading } = useCallFunction(
+    'simple_calc-master'
+  );
   const [isEditingName, setIsEditingName] = useState<boolean>(false);
   const [lastSuccessfulCall, setLastSuccessfulCall] = useState<Call>();
   const { id, enabled, color, name, calls, unit, preferredUnit } = workflow;
