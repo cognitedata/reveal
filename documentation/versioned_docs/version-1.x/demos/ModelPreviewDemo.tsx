@@ -4,7 +4,7 @@
 import React, { useEffect } from 'react';
 import { DemoProps } from '@site/versioned_docs/version-1.x/components/DemoProps';
 import '@google/model-viewer';
-import { ItemsResponse } from '@cognite/sdk';
+import { ItemsResponse } from '@cognite/sdk-1.x';
 
 declare global {
   export namespace JSX {

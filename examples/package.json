@@ -32,8 +32,8 @@
     "dat.gui": "^0.7.7",
     "hold-event": "^0.0.1",
     "install": "^0.13.0",
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
     "react-router-dom": "^5.2.0",
     "styled-components": "^5.2.0",
     "three": "0.128.0"

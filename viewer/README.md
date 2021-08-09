@@ -14,13 +14,18 @@ import { CogniteClient } from "@cognite/sdk";
 const appId = "com.cognite.reveal.example";
 const client = new CogniteClient({ appId });
 
-client.loginWithOAuth({ project: "publicdata" });
+async function start() {
+  await client.loginWithOAuth({ type: "CDF_OAUTH", options: { project: "publicdata" }});
+  await client.authenticate();
 
-const viewer = new Cognite3DViewer({
-  sdk: client,
-  domElement: document.querySelector("#your-element-for-viewer")
-});
-viewer.addModel({ modelId: 4715379429968321, revisionId: 5688854005909501 });
+  const viewer = new Cognite3DViewer({
+    sdk: client,
+    domElement: document.querySelector("#your-element-for-viewer")
+  });
+  viewer.addModel({ modelId: 4715379429968321, revisionId: 5688854005909501 });
+}
+
+start();
 ```
 
 ## Installation

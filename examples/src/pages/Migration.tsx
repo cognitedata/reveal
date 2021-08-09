@@ -67,7 +67,7 @@ export function Migration() {
 
       // Login
       const client = new CogniteClient({ appId: 'cognite.reveal.example', baseUrl });
-      client.loginWithOAuth({ project });
+      await client.loginWithOAuth({ type: 'CDF_OAUTH', options: { project } });
       await client.authenticate();
 
       const progress = (itemsLoaded: number, itemsRequested: number, itemsCulled: number) => {
