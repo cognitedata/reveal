@@ -38,7 +38,7 @@
     "date-fns": "^2.23.0",
     "dayjs": "^1.10.6",
     "dotenv": "^10.0.0",
-    "firebase": "^8.6.3",
+    "firebase": "^8.9.0",
     "lodash": "^4.17.21",
     "nanoid": "^3.1.23",
     "plotly.js-basic-dist": "^1.58.4",
