@@ -23,7 +23,7 @@
   "dependencies": {
     "@cognite/annotations": "^1.0.5",
     "@cognite/cdf-utilities": "^0.7.3",
-    "@cognite/cogs.js": "^3.23.0",
+    "@cognite/cogs.js": "^3.30.6",
     "@cognite/data-exploration": "^0.5.7",
     "@cognite/gcs-browser-upload": "^1.1.1",
     "@cognite/griff-react": "~0.4.2",
@@ -47,6 +47,7 @@
     "@types/redux-mock-store": "^1.0.2",
     "@types/uuid": "^8.3.0",
     "antd": "^4.13.1",
+    "chart.js": "^3.4.1",
     "commander": "^5.1.0",
     "enzyme": "^3.11.0",
     "fs-extra": "^9.0.1",

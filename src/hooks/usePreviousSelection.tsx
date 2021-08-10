@@ -7,7 +7,7 @@ import {
   ResourceType,
   Filter,
 } from 'modules/types';
-import { searchItemSelector } from 'pages/PageSelection/selectors';
+import { useItemsAndFetching } from 'hooks';
 
 type AwaitingResourcesToLoad = 'idle' | 'awaiting' | 'done';
 
@@ -18,15 +18,15 @@ export const usePreviousSelection = (
   setFilter: (filter: Filter) => void,
   setSelectAll: (selectAll: boolean) => void,
   setSelectedRowKeys: (selectedRowKeys: Array<number>) => void
-): boolean => {
+) => {
   const [loadItemsStatus, setLoadItemsStatus] =
     useState<AwaitingResourcesToLoad>('idle');
   const [previousSelectionLoaded, setPreviousSelectionLoaded] = useState(false);
   const [itemFilter, setItemFilter] = useState<Filter>({});
-  const { items } = useSelector(searchItemSelector)(resourceType, itemFilter);
+  const { items } = useItemsAndFetching(resourceType, itemFilter);
   const { diagrams, resources } = useSelector(getActiveWorkflowItems);
 
-  const itemsDownloaded = items?.length;
+  const itemsDownloaded = Boolean(items?.length);
   const isStepDiagramSelection = step === 'diagramSelection';
   const isStepResourceSelection = step.startsWith('resourceSelection');
   const resource = resources?.find(
@@ -98,5 +98,5 @@ export const usePreviousSelection = (
     setLoadItemsStatus('done');
   };
 
-  return previousSelectionLoaded;
+  return { previousSelectionLoaded, itemFilter };
 };

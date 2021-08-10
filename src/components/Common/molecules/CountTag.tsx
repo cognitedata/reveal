@@ -54,7 +54,7 @@ const StyledTag = styled.span<{ draft: boolean }>`
   flex: none;
   order: 1;
   flex-grow: 0;
-  margin: 0px 6px;
+  margin-right: 6px;
   font-family: Inter;
   font-style: normal;
   font-weight: 500;

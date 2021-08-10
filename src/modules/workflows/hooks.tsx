@@ -1,8 +1,15 @@
-import { useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import { useMemo, useContext } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
+import { useLocalStorage } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
+import { diagramSelection } from 'routes/paths';
+import { AppStateContext } from 'context';
+import { LS_SAVED_SETTINGS } from 'stringConstants';
 import { ResourceType } from 'modules/sdk-builder/types';
 import {
+  standardModelOptions,
+  createNewWorkflow,
   countOfLoadedDiagramsForWorkflowSelector,
   countOfLoadedResourcesForWorkflowSelector,
   countOfTotalDiagramsForWorkflowSelector,
@@ -13,6 +20,34 @@ import {
   workflowResourceStatusSelector,
   workflowAllResourcesStatusSelector,
 } from 'modules/workflows';
+
+/**
+ * Creates a new workflow.
+ */
+export const useWorkflowCreateNew = () => {
+  const { tenant } = useContext(AppStateContext);
+  const dispatch = useDispatch();
+  const history = useHistory();
+
+  const [savedSettings] = useLocalStorage(LS_SAVED_SETTINGS, {
+    skip: false,
+    modelSelected: 'standard',
+  });
+
+  const createWorkflow = (args?: any) => {
+    const newWorkflowId = Number(new Date());
+    const options =
+      savedSettings?.skip && savedSettings?.options
+        ? savedSettings.options
+        : standardModelOptions;
+    dispatch(
+      createNewWorkflow({ workflowId: newWorkflowId, options, ...(args ?? {}) })
+    );
+    history.push(diagramSelection.path(tenant, String(newWorkflowId)));
+  };
+
+  return { createWorkflow };
+};
 
 /**
  * Returns all the items data associated with the specific workflow.
@@ -37,7 +72,7 @@ export const useWorkflowDiagrams = (
 ) => {
   const getDiagrams = useMemo(
     () => workflowDiagramsSelector(workflowId, all),
-    [workflowId, all]
+    [all, workflowId]
   );
   const diagrams: FileInfo[] = useSelector(getDiagrams);
   return diagrams;
@@ -54,7 +89,7 @@ export const useWorkflowResources = (
 ) => {
   const getResources = useMemo(
     () => workflowAllResourcesSelector(workflowId, all),
-    [workflowId, all]
+    [all, workflowId]
   );
   const resources = useSelector(getResources);
 
@@ -104,7 +139,7 @@ export const useWorkflowTotalCounts = (workflowId: number) => {
 };
 
 /**
- * Returns an info of how much of the workflow is already loaded.
+ * Returns an info of how many of the workflow resources are already loaded.
  * @param workflowId
  * @param all
  * @returns
@@ -122,13 +157,41 @@ export const useWorkflowLoadPercentages = (
     : workflowLoadedCounts.resources?.[type] ?? 0;
   const totalCount: number = diagrams
     ? workflowTotalCounts.diagrams
-    : workflowTotalCounts.resources?.[type] ?? 0;
+    : workflowTotalCounts.resources?.[type as ResourceType] ?? 0;
   const loadedPercent: number = Math.round(
     (totalCount ? downloadedCount / totalCount : 0) * 100
   );
-  const loaded = loadedPercent === 100;
+  const isLoaded = loadedPercent === 100;
 
-  return { downloadedCount, totalCount, loadedPercent, loaded };
+  return { downloadedCount, totalCount, loadedPercent, isLoaded };
+};
+
+/**
+ * Returns an info of how much of the entire workflow is already loaded.
+ * @param workflowId
+ * @param all
+ * @returns
+ */
+export const useWorkflowAllLoadPercentages = (workflowId: number) => {
+  const workflowLoadedCounts = useWorkflowLoadedCounts(Number(workflowId));
+  const workflowTotalCounts = useWorkflowTotalCounts(Number(workflowId));
+
+  const totalCount = [
+    ...Object.values(workflowTotalCounts?.resources ?? {}),
+    workflowTotalCounts?.diagrams ?? 0,
+  ].reduce((sum, count) => sum + count, 0);
+
+  const downloadedCount = [
+    ...Object.values(workflowLoadedCounts?.resources ?? {}),
+    workflowLoadedCounts?.diagrams ?? 0,
+  ].reduce((sum, count) => sum + count, 0);
+
+  const loadedPercent: number = Math.round(
+    (totalCount ? downloadedCount / totalCount : 0) * 100
+  );
+  const isLoaded = loadedPercent === 100;
+
+  return { downloadedCount, totalCount, loadedPercent, isLoaded };
 };
 
 /**

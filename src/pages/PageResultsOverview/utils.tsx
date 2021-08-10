@@ -1,7 +1,8 @@
 import React from 'react';
-import { notification, Typography } from 'antd';
-import { getContainer } from 'utils/utils';
 import { createLink } from '@cognite/cdf-utilities';
+import { notification, Typography } from 'antd';
+import { ApiStatusCount } from 'modules/contextualization/pnidParsing';
+import { getContainer } from 'utils/utils';
 
 const { Paragraph } = Typography;
 
@@ -40,4 +41,9 @@ export const convertErrorNotification = (
     duration: null, // Keep notification till user closes it
     description: <Paragraph>{errorMessage}</Paragraph>,
   });
+};
+
+export type StatusInfo = {
+  type: keyof ApiStatusCount | 'idle';
+  hover?: string;
 };

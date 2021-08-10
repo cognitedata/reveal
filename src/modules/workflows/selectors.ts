@@ -190,14 +190,14 @@ export const countOfTotalDiagramsForWorkflowSelector = (workflowId: number) =>
     (state: RootState) => state.workflows.items[workflowId]?.diagrams,
     getCountsSelector,
     (diagrams: ResourceSelection | undefined, countSelector) => {
-      if (!diagrams) return 0;
+      if (!diagrams) return undefined;
       const { filter, endpoint } = diagrams;
       if (endpoint === 'list') {
         const fixedFilter = filter.filter ?? filter;
-        return countSelector('files')(fixedFilter)?.count || 0;
+        return countSelector('files')(fixedFilter)?.count ?? 0;
       }
-      if (endpoint === 'retrieve') return filter?.length || 0;
-      return 0;
+      if (endpoint === 'retrieve') return filter?.length ?? 0;
+      return undefined;
     }
   );
 
@@ -211,16 +211,16 @@ export const countOfTotalResourcesForWorkflowSelector = (workflowId: number) =>
     getCountsSelector,
     (resources: ResourceSelection[] | undefined, countSelector) => {
       if (!resources) return undefined;
-      const resourcesCounts: { [key: string]: number } = {};
+      const resourcesCounts: { [key in ResourceType]?: number } = {};
       resources.forEach((resource: ResourceSelection) => {
         const { filter, endpoint, type } = resource;
-        resourcesCounts[type] = 0;
+        resourcesCounts[type] = undefined;
         if (endpoint === 'list') {
           const fixedFilter = filter.filter ?? filter;
-          resourcesCounts[type] = countSelector(type)(fixedFilter)?.count || 0;
+          resourcesCounts[type] = countSelector(type)(fixedFilter)?.count ?? 0;
         }
         if (endpoint === 'retrieve')
-          resourcesCounts[type] = filter?.length || 0;
+          resourcesCounts[type] = filter?.length ?? 0;
       });
       return resourcesCounts;
     }

@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Body, Title, Colors } from '@cognite/cogs.js';
-import { defaultModelOptions } from 'modules/workflows';
+import { standardModelOptions } from 'modules/workflows';
 import { Flex } from 'components/Common';
 
 const TooltipWrapper = styled(Flex)`
@@ -25,7 +25,7 @@ export default function StandardModelTooltip() {
           entities.
         </Body>
         <Body level={2}>
-          Default value = &quot;{defaultModelOptions.matchFields.files}&quot;
+          Default value = &quot;{standardModelOptions.matchFields.files}&quot;
         </Body>
       </Flex>
       <Flex column>
@@ -36,7 +36,7 @@ export default function StandardModelTooltip() {
           unambiguously.
         </Body>
         <Body level={2}>
-          Default value: {String(defaultModelOptions.partialMatch)}
+          Default value: {String(standardModelOptions.partialMatch)}
         </Body>
       </Flex>
       <Flex column>
@@ -46,7 +46,7 @@ export default function StandardModelTooltip() {
           number of tokens. A token is a substring of consecutive letters or
           digits.
         </Body>
-        <Body level={2}>Default value: {defaultModelOptions.minTokens}</Body>
+        <Body level={2}>Default value: {standardModelOptions.minTokens}</Body>
       </Flex>
     </TooltipWrapper>
   );

@@ -164,7 +164,7 @@ export function AntStyles(props: { children: React.Node }) {
         document.getElementsByClassName(ids.styleScope).item(0)!
       }
     >
-      <div className="relationships-ui-style-scope">{props.children}</div>
+      <div className="context-ui-pnid-style-scope">{props.children}</div>
     </ConfigProvider>
   );
 }

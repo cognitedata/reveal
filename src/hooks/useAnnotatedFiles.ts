@@ -6,6 +6,8 @@ import chunk from 'lodash/chunk';
 import uniq from 'lodash/uniq';
 import { useFileWithAnnotations } from './useFileWithAnnotations';
 
+export const chunkSize = 1000;
+
 export const useAnnotatedFiles = (shouldUpdate: boolean, loadChunk: number) => {
   const [fileIds, setFileIds] = useState<Array<IdEither>>([]);
   const [fetchedFileIds, setFetchedFileIds] = useState<boolean>(false);
@@ -19,7 +21,7 @@ export const useAnnotatedFiles = (shouldUpdate: boolean, loadChunk: number) => {
     const fetchFileIds = async () => {
       const ids = (await contextServiceApi.getAnnotatedFiles()) ?? [];
       setFileIds(ids);
-      setFileIdsChunks(chunk(ids, 1000));
+      setFileIdsChunks(chunk(ids, chunkSize));
       setFetchedFileIds(true);
     };
     if (!fetchedFileIds) {

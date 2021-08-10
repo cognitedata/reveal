@@ -7,6 +7,7 @@ export type PnidsParsingJobSchema = {
   items?: { fileId: number }[];
   annotationCounts?: { [fileId: number]: FileAnnotationsCount };
   failedFiles?: Array<{ fileId: number; errorMessage: string }>;
+  selectedDiagramIds?: number[];
 };
 
 export interface PnidResponseEntity {

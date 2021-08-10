@@ -1,59 +1,51 @@
-import { useEffect } from 'react';
+import { useEffect, useContext } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useLocalStorage } from '@cognite/cogs.js';
-import isEqual from 'lodash/isEqual';
 import { RootState } from 'store';
-import { LS_SAVED_SETTINGS } from 'stringConstants';
-import {
-  WorkflowOptions,
-  WorkflowStep,
-  changeOptions,
-  defaultModelOptions,
-} from 'modules/workflows';
+import { AppStateContext } from 'context';
+import { changeOptions, standardModelOptions } from 'modules/workflows';
 import { useActiveWorkflow } from 'hooks';
 
-type ModelSelected = 'standard' | 'advanced';
-type Props = {
-  step: WorkflowStep;
-  modelSelected: ModelSelected;
-  shouldSkipSettings: boolean;
-};
-export const useSavedSettings = (props: Props) => {
+/**
+ *
+ */
+export const useSavedSettings = () => {
   const dispatch = useDispatch();
-  const { step, modelSelected, shouldSkipSettings } = props;
-  const { workflowId } = useActiveWorkflow(step);
-  const options: WorkflowOptions = useSelector(
-    (state: RootState) => state.workflows.items[workflowId].options
+  const { workflowId } = useActiveWorkflow();
+  const {
+    setSavedSettings,
+    skipSettings,
+    setSkipSettings,
+    modelSelected,
+    setModelSelected,
+  } = useContext(AppStateContext);
+
+  const { options } = useSelector(
+    (state: RootState) => state.workflows.items[workflowId]
   );
-  const [savedSettings, setSavedSettings] = useLocalStorage(LS_SAVED_SETTINGS, {
-    skip: false,
-    modelSelected: 'standard',
-  });
 
   useEffect(() => {
-    if (shouldSkipSettings) {
-      setSavedSettings({ skip: true, ...({ modelSelected, options } ?? {}) });
-    } else {
+    if (!skipSettings) {
       setSavedSettings({ skip: false });
-    }
+    } else
+      setSavedSettings({
+        modelSelected,
+        options,
+        skip: skipSettings,
+      });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [modelSelected, options, shouldSkipSettings]);
+  }, [skipSettings, options, modelSelected]);
 
   useEffect(() => {
     if (modelSelected === 'standard') {
-      dispatch(changeOptions(defaultModelOptions));
+      dispatch(changeOptions(standardModelOptions));
     }
-  }, [dispatch, modelSelected]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [modelSelected]);
 
-  return savedSettings;
-};
-
-export const getSelectedModel = (
-  options: WorkflowOptions,
-  modelSelected?: ModelSelected
-) => {
-  if (modelSelected) return modelSelected;
-  const isStandardModelSelected = isEqual(defaultModelOptions, options);
-  if (isStandardModelSelected) return 'standard';
-  return 'advanced';
+  return {
+    skipSettings,
+    setSkipSettings,
+    modelSelected,
+    setModelSelected,
+  };
 };

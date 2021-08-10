@@ -7,3 +7,5 @@ export * from './InfoField';
 export * from './Steps';
 export * from './CountTag';
 export * from './CollapsibleRadio';
+export * from './DoughnutChart';
+export * from './Select';

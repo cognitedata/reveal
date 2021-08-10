@@ -1,14 +1,16 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Body, Title, Switch } from '@cognite/cogs.js';
+import { trackUsage, PNID_METRICS } from 'utils/Metrics';
+import { AppStateContext } from 'context';
 import { SkipSettings } from 'pages/PageOptions/components';
 
-type Props = {
-  shouldSkipSettings: boolean;
-  onSkipSettingsChange: (skipSettings: boolean) => void;
-};
+export default function SkipSettingsPanel() {
+  const { skipSettings, setSkipSettings } = useContext(AppStateContext);
 
-export default function SkipSettingsPanel(props: Props) {
-  const { shouldSkipSettings, onSkipSettingsChange } = props;
+  const onSkipSettingsChange = (skip: boolean) => {
+    trackUsage(PNID_METRICS.configPage.skipSettings, { skip });
+    setSkipSettings(skip);
+  };
 
   return (
     <SkipSettings>
@@ -19,7 +21,7 @@ export default function SkipSettingsPanel(props: Props) {
       </Body>
       <Switch
         name="skipSettingsOption"
-        value={shouldSkipSettings ?? false}
+        value={skipSettings}
         onChange={onSkipSettingsChange}
         style={{ margin: '20px 0 0 -8px' }}
       />

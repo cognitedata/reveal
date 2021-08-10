@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { OptionType } from '@cognite/cogs.js';
 import {
   RelationshipTable,
   RelationshipTableProps,
@@ -11,7 +12,7 @@ import {
   AnnotationTable,
   AnnotatedWithTable,
 } from '@cognite/data-exploration';
-import { Select } from '@cognite/cogs.js';
+import { Select } from 'components/Common';
 
 import styled from 'styled-components';
 
@@ -26,7 +27,8 @@ export const RelatedResources = ({
   type,
   ...props
 }: RelationshipTableProps & SelectableItemsProps) => {
-  const [selectedType, setSelectedType] = useState<TypeOption>();
+  const [selectedType, setSelectedType] =
+    useState<OptionType<React.ReactText>>();
 
   const {
     relationshipCount,
@@ -38,7 +40,7 @@ export const RelatedResources = ({
   } = useRelatedResourceCount(parentResource, type);
 
   const relatedResourceTypes = useMemo(() => {
-    let types: TypeOption[] = [
+    let types: OptionType<React.ReactText>[] = [
       {
         label: `Relationships (${relationshipCount})`,
         value: 'relationship',
@@ -117,11 +119,12 @@ export const RelatedResources = ({
         <h4 style={{ marginBottom: 0 }}>Filter by:</h4>
         <SelectWrapper>
           <Select
-            value={selectedType}
-            onChange={setSelectedType}
-            options={relatedResourceTypes}
-            styles={selectStyles}
-            closeMenuOnSelect
+            selectProps={{
+              value: selectedType ?? relatedResourceTypes[0],
+              onChange: setSelectedType,
+              options: relatedResourceTypes,
+              closeMenuOnSelect: true,
+            }}
           />
         </SelectWrapper>
       </FilterWrapper>
@@ -165,16 +168,6 @@ export const RelatedResources = ({
 const TableOffsetHeightWrapper = styled.div`
   height: calc(100% - 170px);
 `;
-const selectStyles = {
-  option: (styles: any) => ({
-    ...styles,
-    cursor: 'pointer',
-  }),
-  control: (styles: any) => ({
-    ...styles,
-    cursor: 'pointer',
-  }),
-};
 
 const RelatedResourcesContainer = styled.div`
   padding-left: 16px;

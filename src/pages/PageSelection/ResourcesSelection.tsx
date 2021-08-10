@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { Filter } from 'modules/sdk-builder/types';
 import { Flex, PageTitle } from 'components/Common';
 import { Colors } from '@cognite/cogs.js';
-import SelectionBar from './components/SelectionBar';
-import SelectionTable from './components/SelectionTable';
+import { SelectionBar, SelectionTable } from 'pages/PageSelection/components';
 
 type SelectionProps = {
   filter: Filter;
@@ -43,8 +42,6 @@ export default function ResourcesSelection(
       <SelectionBar
         type={target}
         filter={filter}
-        isSelectAll={isSelectAll}
-        selectedRowKeys={selectedRowKeys}
         updateFilter={updateFilter}
         showSelected={showSelected}
         setShowSelected={setShowSelected}

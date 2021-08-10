@@ -78,10 +78,8 @@ export default function DiagramsSelection(props: SelectionProps): JSX.Element {
     <Flex column style={{ paddingBottom: '50px' }}>
       <PageTitle>Select engineering diagrams</PageTitle>
       <SelectionBar
-        type="files"
+        type="diagrams"
         filter={filter}
-        isSelectAll={isSelectAll}
-        selectedRowKeys={selectedRowKeys}
         updateFilter={updateFilter}
         showSelected={showSelected}
         setShowSelected={setShowSelected}

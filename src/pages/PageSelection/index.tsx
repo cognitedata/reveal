@@ -45,16 +45,17 @@ export default function PageSelection(props: Props): JSX.Element {
   const [filter, setFilter] = useState<Filter>(
     defaultFilters[type] ?? EMPTY_FILTER
   );
+
   const [delayedFilter, setDelayedFilter] = useState<Filter>(filter);
+  const [debouncedSetFilter] = useDebouncedCallback(setDelayedFilter, 200);
   const [savedSettings] = useLocalStorage(LS_SAVED_SETTINGS, {
     skip: false,
   });
-  const [debouncedSetFilter] = useDebouncedCallback(setDelayedFilter, 200);
   const count = useSelector(searchCountSelector(type, filter));
   const { goToNextStep, goToPrevStep } = useSteps(step);
   const { resources } = useSelector(getActiveWorkflowItems);
 
-  const previousSelectionLoaded = usePreviousSelection(
+  const { previousSelectionLoaded } = usePreviousSelection(
     step,
     type,
     filter,
@@ -76,7 +77,7 @@ export default function PageSelection(props: Props): JSX.Element {
   const updateFilter = useCallback(
     (f: Filter) => {
       setFilter(f);
-      debouncedSetFilter(f);
+      debouncedSetFilter(f); // [todo] problem: this NEVER gets triggered if filter is only mime type
     },
     [debouncedSetFilter]
   );

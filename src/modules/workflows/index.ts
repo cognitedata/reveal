@@ -1,5 +1,4 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { LS_SAVED_SETTINGS } from 'stringConstants';
 import { list as listFiles } from 'modules/files';
 import {
   list as listAssets,
@@ -20,7 +19,7 @@ interface WorkflowState {
   localStorage: any;
 }
 
-export const defaultModelOptions = {
+export const standardModelOptions = {
   partialMatch: false,
   minTokens: 2,
   matchFields: {
@@ -35,7 +34,7 @@ const initialState: WorkflowState = {
   localStorage: { version: 1 },
 };
 const defaultInitialWorkflow: Workflow = {
-  options: defaultModelOptions,
+  options: standardModelOptions,
   steps: {
     current: 'diagramSelection',
     lastCompleted: 'diagramSelection',
@@ -156,18 +155,11 @@ export const workflowsSlice = createSlice({
         workflowId = Number(new Date()),
         diagrams = undefined,
         resources = undefined,
+        options = undefined,
       } = action.payload;
-      const savedSettings = JSON.parse(
-        window.localStorage.getItem(LS_SAVED_SETTINGS) ?? '{}'
-      );
-      const initialWorkflow = {
-        ...defaultInitialWorkflow,
-        options: savedSettings?.skip
-          ? savedSettings?.options ?? defaultInitialWorkflow.options
-          : defaultInitialWorkflow.options,
-      };
       const newWorkflow = {
-        ...initialWorkflow,
+        ...defaultInitialWorkflow,
+        ...(options ? { options } : standardModelOptions),
         ...(diagrams ? { diagrams } : {}),
         ...(resources ? { resources } : {}),
       };
@@ -176,9 +168,15 @@ export const workflowsSlice = createSlice({
     },
     updateSelection: (state, action) => {
       const { type, endpoint, query, filter } = action.payload;
+
       const workflowId = state.active ?? Number(new Date());
       const { steps } = state.items[workflowId];
-      const selection = { type, endpoint, query, filter };
+      const selection = {
+        type,
+        endpoint,
+        query,
+        filter,
+      };
 
       // Remove jobId to trigger new run
       state.items[workflowId].jobId = undefined;
@@ -225,15 +223,17 @@ export const workflowsSlice = createSlice({
       state.items[workflowId].jobId = undefined;
       const activeWorkflow = state.items[workflowId];
       const partialMatch =
-        action.payload.partialMatch !== undefined
-          ? action.payload.partialMatch
-          : activeWorkflow.options.partialMatch;
-      const minTokens = action.payload.minTokens
-        ? action.payload.minTokens
-        : activeWorkflow.options.minTokens;
-      const matchFields = action.payload.matchFields
-        ? action.payload.matchFields
-        : activeWorkflow.options.matchFields;
+        action.payload.partialMatch ??
+        activeWorkflow.options?.partialMatch ??
+        standardModelOptions.partialMatch;
+      const minTokens =
+        action.payload.minTokens ??
+        activeWorkflow.options?.minTokens ??
+        standardModelOptions.minTokens;
+      const matchFields =
+        action.payload.matchFields ??
+        activeWorkflow.options?.matchFields ??
+        standardModelOptions.matchFields;
       state.items[workflowId].options = {
         partialMatch,
         minTokens,
@@ -249,6 +249,7 @@ export const workflowsSlice = createSlice({
         lastCompletedStep: WorkflowStep | undefined;
       } = action.payload;
       const workflowId = state.active;
+      if (!state.items[workflowId]) return;
       state.items[workflowId].steps = {
         ...state.items[workflowId].steps,
         current: step,
@@ -299,5 +300,6 @@ export const {
 } = workflowsSlice.actions;
 
 export * from './selectors';
+export * from './helpers';
 export * from './hooks';
 export * from './types';

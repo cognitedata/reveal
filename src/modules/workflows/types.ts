@@ -53,3 +53,5 @@ export type WorkflowOptions = {
   minTokens: number;
   matchFields: MatchFields;
 };
+
+export type ModelSelected = 'standard' | 'advanced';

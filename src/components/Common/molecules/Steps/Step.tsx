@@ -27,7 +27,6 @@ export default function Step(props: StepProps) {
     additionalText,
   } = props;
   const completedSteps = useCompletedSteps();
-  console.log(completedSteps);
   const wasVisited: boolean = completedSteps.includes(workflowStep);
   const isCurrent: boolean = stepIndex === currentStepIndex;
 
@@ -45,19 +44,30 @@ export default function Step(props: StepProps) {
 
   return (
     <StyledStep small={!!small} isCurrent={isCurrent} wasVisited={wasVisited}>
-      <StepNumber small={!!small} isCurrent={isCurrent} wasVisited={wasVisited}>
-        {showStepIconOrNumber()}
-      </StepNumber>
-      <Flex column>
-        {wasVisited ? (
-          <Link to={url} onClick={onLinkClick}>
-            {title}
-          </Link>
-        ) : (
-          <div>{title}</div>
-        )}
-        <StyledAdditionalText level={2}>{additionalText}</StyledAdditionalText>
-      </Flex>
+      <Link to={url} onClick={onLinkClick}>
+        <Flex
+          row
+          style={{
+            flexWrap: 'no-wrap',
+            justifyContent: 'flex-start',
+            alignItems: 'flex-start',
+          }}
+        >
+          <StepNumber
+            small={!!small}
+            isCurrent={isCurrent}
+            wasVisited={wasVisited}
+          >
+            {showStepIconOrNumber()}
+          </StepNumber>
+          <Flex column>
+            <div>{title}</div>
+            <StyledAdditionalText level={2}>
+              {additionalText}
+            </StyledAdditionalText>
+          </Flex>
+        </Flex>
+      </Link>
     </StyledStep>
   );
 }

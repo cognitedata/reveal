@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { startPnidParsingJob } from 'modules/contextualization/pnidParsing/actions';
 import {
-  defaultModelOptions,
+  standardModelOptions,
   loadWorkflowDiagrams,
   loadWorkflowResources,
   workflowDiagramStatusSelector,
@@ -35,9 +35,9 @@ export const startPnidParsingWorkflow = {
       const activeWorkflow = getState().workflows.items[workflowId];
       const workflowStatus = activeWorkflow?.status;
       const {
-        partialMatch = defaultModelOptions.partialMatch,
-        minTokens = defaultModelOptions.minTokens,
-        matchFields = defaultModelOptions.matchFields,
+        partialMatch = standardModelOptions.partialMatch,
+        minTokens = standardModelOptions.minTokens,
+        matchFields = standardModelOptions.matchFields,
       } = activeWorkflow?.options;
 
       if (workflowStatus === 'pending' || workflowStatus === 'success') return;

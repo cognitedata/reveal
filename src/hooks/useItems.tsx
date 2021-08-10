@@ -144,7 +144,7 @@ export const useSelectedItems = (
       setSelectedItems(
         items.filter((item) => selectedRowKeys.includes(item.id))
       );
-    }
+    } else setSelectedItems([]);
   }, [filter, isSelectAll, items, selectedRowKeys]);
 
   return selectedItems;

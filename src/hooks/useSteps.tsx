@@ -59,6 +59,25 @@ export const useSteps = (step?: WorkflowStep) => {
   };
 };
 
+export const useGoToStep = () => {
+  const history = useHistory();
+  const { tenant } = useContext(AppStateContext);
+  const { workflowId } = useActiveWorkflow();
+
+  const routes = routesMap();
+
+  const goToStep = (stepToGo?: WorkflowStep) => {
+    trackUsage(PNID_METRICS.navigation.moveToStep, {
+      stepToGo,
+    });
+    const step = routes.find((route) => route.workflowStepName === stepToGo);
+    if (!step) return;
+    history.push(step.path(tenant, workflowId));
+  };
+
+  return { goToStep };
+};
+
 export const useLoadStepOnMount = (step?: WorkflowStep) => {
   const dispatch = useDispatch();
   const steps = useSelector(getActiveWorkflowSteps);

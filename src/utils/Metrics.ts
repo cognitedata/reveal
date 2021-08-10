@@ -101,6 +101,7 @@ export const PNID_METRICS = {
     nextButton: 'navigation.nextButton',
     backButton: 'navigation.backButton',
     breadcrumbs: 'navigation.breadcrumbs',
+    moveToStep: 'navigation.moveToStep',
   },
   fileViewer: {
     convertToSvg: 'fileViewer.convertToSvg',

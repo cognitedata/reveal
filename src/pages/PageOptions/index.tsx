@@ -1,18 +1,10 @@
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from 'store';
-import { Button, Body, useLocalStorage } from '@cognite/cogs.js';
+import React from 'react';
+import { Button, Body } from '@cognite/cogs.js';
 import { WorkflowStep } from 'modules/workflows';
-import {
-  useActiveWorkflow,
-  useSavedSettings,
-  useSteps,
-  getSelectedModel,
-} from 'hooks';
+import { ModelSelected } from 'modules/types';
+import { useActiveWorkflow, useSavedSettings, useSteps } from 'hooks';
 import { Flex, PageTitle, CollapsibleRadio } from 'components/Common';
 import StickyBottomRow from 'components/StickyBottomRow';
-import { LS_SAVED_SETTINGS } from 'stringConstants';
-import { trackUsage, PNID_METRICS } from 'utils/Metrics';
 import {
   OptionPartialMatch,
   OptionMinTokens,
@@ -28,31 +20,11 @@ export default function PageOptions(props: Props) {
   const { step } = props;
   const { workflowId } = useActiveWorkflow(step);
   const { goToNextStep, goToPrevStep } = useSteps(step);
-  const [savedSettings] = useLocalStorage(LS_SAVED_SETTINGS, {
-    skip: false,
-    modelSelected: 'standard',
-  });
-  const { options } = useSelector(
-    (state: RootState) => state.workflows.items[workflowId]
-  );
-  const [shouldSkipSettings, setShouldSkipSettings] = useState<boolean>(
-    savedSettings?.skip ?? false
-  );
-  const [modelSelected, setModelSelected] = useState(
-    getSelectedModel(options, savedSettings?.modelSelected)
-  );
 
-  useSavedSettings({
-    step,
-    modelSelected,
-    shouldSkipSettings,
-  });
+  const { modelSelected, setModelSelected } = useSavedSettings();
 
-  const onSkipSettingsChange = (skipSettings: boolean) => {
-    trackUsage(PNID_METRICS.configPage.skipSettings, { skip: skipSettings });
-    setShouldSkipSettings(skipSettings);
-  };
-
+  const onModelSet = (model: string) =>
+    setModelSelected(model as ModelSelected);
   const onNextButtonClick = () => goToNextStep();
   const onBackButtonClick = () => goToPrevStep();
 
@@ -70,7 +42,7 @@ export default function PageOptions(props: Props) {
             title="Standard model"
             info={<StandardModelTooltip />}
             groupRadioValue={modelSelected}
-            setGroupRadioValue={setModelSelected as (value: string) => void}
+            setGroupRadioValue={onModelSet}
             maxWidth={1024}
             style={{ marginBottom: '14px' }}
           >
@@ -85,7 +57,7 @@ export default function PageOptions(props: Props) {
             value="advanced"
             title="Advanced model"
             groupRadioValue={modelSelected}
-            setGroupRadioValue={setModelSelected as (value: string) => void}
+            setGroupRadioValue={onModelSet}
             maxWidth={1024}
             collapse={
               <>
@@ -101,10 +73,7 @@ export default function PageOptions(props: Props) {
             </Body>
           </CollapsibleRadio>
         </Flex>
-        <SkipSettingsPanel
-          shouldSkipSettings={shouldSkipSettings}
-          onSkipSettingsChange={onSkipSettingsChange}
-        />
+        <SkipSettingsPanel />
       </Flex>
       <StickyBottomRow justify="space-between">
         <Button size="large" type="secondary" onClick={onBackButtonClick}>

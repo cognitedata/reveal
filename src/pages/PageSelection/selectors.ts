@@ -24,7 +24,9 @@ export const searchItemSelector = createSelector(
   getItemsSearchSelector,
   (getItemsList: any, getItemsSearch: any) =>
     (type: ResourceType, filter: Filter) => {
-      if (filter.search) return getItemsSearch(type)(filter);
+      if (filter.search) {
+        return getItemsSearch(type)(filter);
+      }
       return getItemsList(type)(filter, false);
     }
 );

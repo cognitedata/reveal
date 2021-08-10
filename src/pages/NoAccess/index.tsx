@@ -1,5 +1,5 @@
 import React from 'react';
-import { Icons } from '@cognite/cogs.js';
+import { Icon } from '@cognite/cogs.js';
 import {
   Warning,
   Instructions,
@@ -17,7 +17,7 @@ export default function NoAccessPage(props: Props): JSX.Element {
   return (
     <div>
       <Warning>
-        <Icons.Warning />
+        <Icon type="Warning" />
         <div>
           You have insufficient access rights to access Interactive Engineering
           Diagrams

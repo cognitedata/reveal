@@ -42,10 +42,25 @@ export const pnidParsingSlice = createSlice({
         failedFiles,
       };
     },
+    selectDiagrams: (state, action) => {
+      const { workflowId, diagramIds = [] } = action.payload;
+      state[workflowId] = {
+        ...state[workflowId],
+        selectedDiagramIds: diagramIds,
+      };
+    },
   },
 });
 
 export { startPnidParsingJob };
 export const { reducer } = pnidParsingSlice;
-export const { createJob, updateJob, rejectJob, finishJob, resetJob } =
-  pnidParsingSlice.actions;
+export const {
+  createJob,
+  updateJob,
+  rejectJob,
+  finishJob,
+  resetJob,
+  selectDiagrams,
+} = pnidParsingSlice.actions;
+export * from './hooks';
+export * from './types';

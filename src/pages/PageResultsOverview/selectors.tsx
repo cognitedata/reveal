@@ -26,3 +26,11 @@ export const getContextualizationJobs = createSelector(
     };
   }
 );
+
+export const getSelectedDiagramsIds = createSelector(
+  (state: RootState) => state.workflows.active,
+  (state: RootState) => state.contextualization.pnidParsing,
+  (workflowId: number, pnidParsing: any) => {
+    return pnidParsing[workflowId]?.selectedDiagramIds ?? [];
+  }
+);

@@ -13,3 +13,4 @@ export * from './Flex';
 export * from './PageWrapper';
 export * from './TitledSection';
 export * from './Disclosure';
+export * from './HugeButton';

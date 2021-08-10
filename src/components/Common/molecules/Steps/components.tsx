@@ -8,11 +8,7 @@ type StyledStepProps = {
 };
 
 export const StyledStep = styled.div<StyledStepProps>`
-  display: flex;
-  flex-direction: row;
-  flex-wrap: no-wrap;
-  justify-content: flex-start;
-  align-items: flex-start;
+  display: block;
   user-select: none;
   width: 100%;
   margin: 8px 0;
