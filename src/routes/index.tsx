@@ -11,6 +11,7 @@ import Breadcrumbs from 'components/Breadcrumbs';
 import StepsList from 'components/StepsList';
 import { Flex, PageWrapper } from 'components/Common';
 import BetaBanner from 'components/BetaBanner';
+import JobDiagrams from 'pages/PageFileOverview/JobDiagrams';
 import {
   landingPage,
   diagramSelection,
@@ -150,7 +151,7 @@ export default function Routes() {
                 <>
                   <PageTitle title="Interactive Engineering Diagrams" />
                   <Flex row style={{ width: '100%' }}>
-                    <StepsList />
+                    <JobDiagrams step="diagramPreview" />
                     <PageFileOverview step="diagramPreview" />
                   </Flex>
                 </>

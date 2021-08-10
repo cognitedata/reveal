@@ -5,8 +5,6 @@ import {
   ErrorFeedback,
   Loader,
 } from '@cognite/data-exploration';
-import { useSDK } from '@cognite/sdk-provider';
-import { CogniteFileViewer } from '@cognite/react-picture-annotation';
 import { useCdfItem, usePermissions } from '@cognite/sdk-react-query-hooks';
 import { FileInfo } from '@cognite/sdk';
 import isMatch from 'lodash/isMatch';
@@ -29,7 +27,6 @@ export const FilePreview = ({
   fileId: number;
   editMode: boolean;
 }) => {
-  const sdk = useSDK();
   const { resourcesState, setResourcesState } = useContext(
     ResourceSelectionContext
   );
@@ -76,14 +73,12 @@ export const FilePreview = ({
   }
 
   return (
-    <CogniteFileViewer.Provider sdk={sdk}>
-      <Flex column style={{ flex: '1' }}>
-        <CogniteFilePreview
-          fileId={fileId!}
-          creatable={editMode}
-          contextualization={writeAccess}
-        />
-      </Flex>
-    </CogniteFileViewer.Provider>
+    <Flex column style={{ flex: '1' }}>
+      <CogniteFilePreview
+        fileId={fileId!}
+        creatable={editMode}
+        contextualization={writeAccess}
+      />
+    </Flex>
   );
 };

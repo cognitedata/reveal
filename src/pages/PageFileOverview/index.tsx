@@ -156,6 +156,7 @@ export default function PageFileOverview(props: Props) {
           trackUsage(PNID_METRICS.fileViewer.viewTab, { tab: newTab });
           setActiveTab(newTab as FilePreviewTabType);
         }}
+        style={{ paddingLeft: '20px' }}
       >
         <Tabs.Pane key="preview" title={<TabTitle>Preview</TabTitle>}>
           <ContentWrapper>

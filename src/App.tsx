@@ -15,6 +15,7 @@ import store, { persistedState, loadLocalStorage } from 'store';
 import { AppStateProvider } from 'context';
 import { AntStyles, GlobalStyles } from 'styles';
 import RootApp from 'pages/App';
+import { ReactQueryDevtools } from 'react-query/devtools';
 
 const App = () => {
   const tenant = window.location.pathname.split('/')[1];
@@ -84,6 +85,7 @@ const App = () => {
           </SubAppWrapper>
         </AntStyles>
       </GlobalStyles>
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
 };

@@ -17,6 +17,7 @@ const Wrapper = styled.div`
   font-size: 14px;
   background: ${Colors['greyscale-grey1'].hex()};
   padding: 16px 40px;
+  border: 1px solid ${Colors['greyscale-grey4'].hex()};
 `;
 
 const Breadcrumbs = ({ breadcrumbs }: BreadcrumbsProps) => (

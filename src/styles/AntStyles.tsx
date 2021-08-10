@@ -154,8 +154,8 @@ Spin.setDefaultIndicator(<Icon type="Loading" />);
 
 export function AntStyles(props: { children: React.Node }) {
   useEffect(() => {
-    styles.forEach((style) => style?.use && style?.use());
-    return () => styles.forEach((style) => style?.unuse && style.unuse());
+    styles.forEach((style) => style.use());
+    return () => styles.forEach((style) => style.unuse());
   }, []);
 
   return (
@@ -164,7 +164,7 @@ export function AntStyles(props: { children: React.Node }) {
         document.getElementsByClassName(ids.styleScope).item(0)!
       }
     >
-      <div className="context-ui-pnid-style-scope">{props.children}</div>
+      <div className={ids.styleScope}>{props.children}</div>
     </ConfigProvider>
   );
 }

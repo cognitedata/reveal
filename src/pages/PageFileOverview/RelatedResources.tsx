@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { OptionType } from '@cognite/cogs.js';
 import {
   RelationshipTable,
   RelationshipTableProps,
@@ -27,8 +26,7 @@ export const RelatedResources = ({
   type,
   ...props
 }: RelationshipTableProps & SelectableItemsProps) => {
-  const [selectedType, setSelectedType] =
-    useState<OptionType<React.ReactText>>();
+  const [selectedType, setSelectedType] = useState<TypeOption>();
 
   const {
     relationshipCount,
@@ -40,7 +38,7 @@ export const RelatedResources = ({
   } = useRelatedResourceCount(parentResource, type);
 
   const relatedResourceTypes = useMemo(() => {
-    let types: OptionType<React.ReactText>[] = [
+    let types: TypeOption[] = [
       {
         label: `Relationships (${relationshipCount})`,
         value: 'relationship',

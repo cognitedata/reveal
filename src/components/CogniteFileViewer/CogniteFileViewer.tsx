@@ -2,8 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 import { Colors } from '@cognite/cogs.js';
 
-import sdk from 'sdk-singleton';
-import { CogniteFileViewer } from '@cognite/react-picture-annotation';
 import { FilePreview } from '../FileView';
 
 const Wrapper = styled.div`
@@ -26,19 +24,17 @@ type Props = {
 
 export const ContextFileViewer = ({ fileId, editMode }: Props) => {
   return (
-    <CogniteFileViewer.Provider sdk={sdk}>
-      <Wrapper>
-        <div
-          style={{
-            flex: '1',
-            display: 'flex',
-            flexDirection: 'column',
-            height: '100%',
-          }}
-        >
-          <FilePreview fileId={fileId!} editMode={editMode} />
-        </div>
-      </Wrapper>
-    </CogniteFileViewer.Provider>
+    <Wrapper>
+      <div
+        style={{
+          flex: '1',
+          display: 'flex',
+          flexDirection: 'column',
+          height: '100%',
+        }}
+      >
+        <FilePreview fileId={fileId!} editMode={editMode} />
+      </div>
+    </Wrapper>
   );
 };

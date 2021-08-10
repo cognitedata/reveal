@@ -68,6 +68,7 @@ export default function App() {
       <FileContextualizationContextProvider>
         <ResourceSelectionProvider allowEdit mode="multiple">
           <ResourceActionsProvider>
+            {/* @ts-ignore */}
             <DataExplorationProvider sdk={sdk}>
               <Switch>
                 <Redirect
