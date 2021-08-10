@@ -9,7 +9,7 @@ export const ExplorerToolbar = ({
   selectedCount,
   maxSelectCount,
   onViewChange,
-  currentView = 'list',
+  currentView,
   onSearch,
   onUpload,
   onDownload,

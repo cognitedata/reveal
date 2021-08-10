@@ -2,15 +2,18 @@ import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { ColumnShape } from 'react-base-table';
 import { NameAndAnnotationRenderer } from 'src/modules/Common/Containers/FileTableRenderers/NameAndAnnotation';
-import { Tabs } from '@cognite/data-exploration';
 import { AnnotationLoader } from 'src/modules/Common/Components/AnnotationLoader/AnnotationLoader';
+import { Tabs } from 'antd';
 import { SelectableTable } from '../SelectableTable/SelectableTable';
 import { ResultData, TableDataItem } from '../../types';
 import { NameSorter } from '../../Containers/Sorters/NameSorter';
 import { SorterPaginationWrapper } from '../SorterPaginationWrapper/SorterPaginationWrapper';
-import { FileExplorerTableProps } from '../FileTable/types';
+import { FileMapTableProps, MapTableTabKey } from '../FileTable/types';
 
-type MapTableProps = FileExplorerTableProps & {
+const { TabPane } = Tabs;
+
+type MapTableProps = FileMapTableProps & {
+  mapTableTabKey: MapTableTabKey;
   setMapActive: (active: boolean) => void;
   mapCallback: (fileId: number) => void;
 };
@@ -34,6 +37,8 @@ export const MapFileTable = (props: MapTableProps) => {
       sortable: true,
     },
   ];
+
+  const { activeKey, setActiveKey } = props.mapTableTabKey;
 
   const withGeoData = useMemo(() => {
     return props.data.filter(
@@ -83,34 +88,24 @@ export const MapFileTable = (props: MapTableProps) => {
 
   return (
     <Container>
-      <Tabs
-        onTabChange={(key) => {
+      <StyledTabs
+        defaultActiveKey={activeKey}
+        onChange={(key) => {
+          setActiveKey(key);
           if (key === 'fileInMap') {
             props.setMapActive(true);
           } else {
             props.setMapActive(false);
           }
         }}
-        style={{
-          fontSize: 14,
-          fontWeight: 600,
-          lineHeight: '20px',
-          paddingBottom: '13px',
-          border: 0,
-          // eslint-disable-next-line
-          zIndex: 0, // HACK: to not cover the ML model dropdown menu
-        }}
       >
-        <Tabs.Pane
-          title="Files in map"
-          key="fileInMap"
-          style={{ overflow: 'hidden', height: 'calc(100% - 100px)' }}
-        >
+        <TabPane tab="Files in map" key="fileInMap">
           <SorterPaginationWrapper
             data={withGeoData}
             totalCount={props.totalCount}
             sorters={sorters}
             pagination
+            sortPaginateControls={props.sortPaginateControlsLocation}
           >
             {(paginationProps) => (
               <AnnotationLoader data={paginationProps.data}>
@@ -134,18 +129,15 @@ export const MapFileTable = (props: MapTableProps) => {
               </AnnotationLoader>
             )}
           </SorterPaginationWrapper>
-        </Tabs.Pane>
+        </TabPane>
 
-        <Tabs.Pane
-          title="Files without location"
-          key="filesWithoutMap"
-          style={{ overflow: 'hidden', height: 'calc(100% - 100px)' }}
-        >
+        <TabPane tab="Files without location" key="filesWithoutMap">
           <SorterPaginationWrapper
             data={withOutGeoData}
             totalCount={props.totalCount}
             sorters={sorters}
             pagination
+            sortPaginateControls={props.sortPaginateControlsNoLocation}
           >
             {(paginationProps) => (
               <AnnotationLoader data={paginationProps.data}>
@@ -168,8 +160,8 @@ export const MapFileTable = (props: MapTableProps) => {
               </AnnotationLoader>
             )}
           </SorterPaginationWrapper>
-        </Tabs.Pane>
-      </Tabs>
+        </TabPane>
+      </StyledTabs>
     </Container>
   );
 };
@@ -180,4 +172,15 @@ const Container = styled.div`
   margin-right: 20px;
   width: 100%;
   height: 100%;
+`;
+const StyledTabs = styled(Tabs)`
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  padding-bottom: 13px;
+  border: 0;
+  height: 100%;
+  .ant-tabs-content {
+    height: 100%;
+  }
 `;

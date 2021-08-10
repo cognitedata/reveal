@@ -24,6 +24,11 @@ import { setSelectedAllFiles } from 'src/store/commonActions';
 import { makeReducerSelectAllFilesWithFilter } from 'src/store/commonReducers';
 import { CDFStatusModes } from '../Common/Components/CDFStatus/CDFStatus';
 
+export type VisionAsset = Omit<
+  Asset,
+  'createdTime' | 'lastUpdatedTime' | 'sourceCreatedType'
+> & { createdTime: number; lastUpdatedTime: number };
+
 export type FileState = {
   id: number;
   createdTime: number;
@@ -55,11 +60,6 @@ export type State = {
     time?: number;
   };
 };
-
-export type VisionAsset = Omit<
-  Omit<Omit<Asset, 'createdTime'>, 'lastUpdatedTime'>,
-  'sourceCreatedType'
-> & { createdTime: number; lastUpdatedTime: number };
 
 const initialState: State = {
   dataSetIds: undefined,
@@ -274,7 +274,6 @@ export const selectFileById = createSelector(
     return file ? createFileInfo(file) : null;
   }
 );
-
 export const selectFileCount = (state: State): number =>
   state.files.allIds.length;
 

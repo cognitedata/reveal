@@ -1,20 +1,16 @@
 import React from 'react';
-import { TableDataItem } from '../../types';
+import { FileGridTableProps } from '../FileTable/types';
 import { SorterPaginationWrapper } from '../SorterPaginationWrapper/SorterPaginationWrapper';
-import { GridTableProps, GridView } from './GridView';
+import { GridView } from './GridView';
 
-export const PageBasedGridView = (
-  props: {
-    totalCount: number;
-    pagination?: boolean;
-  } & GridTableProps<TableDataItem>
-) => {
+export const PageBasedGridView = (props: FileGridTableProps) => {
   const { onItemClicked, renderCell, selectedIds } = props;
   return (
     <SorterPaginationWrapper
       data={props.data}
       totalCount={props.totalCount}
       pagination={props.pagination ?? true}
+      sortPaginateControls={props.sortPaginateControls}
     >
       {(paginationProps) => (
         <GridView

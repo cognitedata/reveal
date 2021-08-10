@@ -1,3 +1,4 @@
+import React, { useMemo } from 'react';
 import {
   FileActions,
   ResultData,
@@ -6,8 +7,14 @@ import {
   ViewMode,
 } from 'src/modules/Common/types';
 import {
+  FileSortPaginateType,
   selectIsPollingComplete,
+  setCurrentPage,
+  setMapTableTabKey,
+  setPageSize,
+  setReverse,
   setSelectedFileId,
+  setSortKey,
   showFileMetadataPreview,
 } from 'src/modules/Process/processSlice';
 import {
@@ -19,7 +26,6 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { MapView } from 'src/modules/Common/Components/MapView/MapView';
-import React, { useMemo } from 'react';
 import { resetEditHistory } from 'src/modules/FileDetails/fileDetailsSlice';
 import {
   getParamLink,
@@ -56,6 +62,10 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
 
   const selectedFileIds = useSelector((state: RootState) =>
     selectAllSelectedIds(state.filesSlice)
+  );
+
+  const sortPaginateState = useSelector(
+    ({ processSlice }: RootState) => processSlice.sortPaginate
   );
 
   const menuActions: FileActions = {
@@ -123,6 +133,66 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
     );
   };
 
+  const handleSetSortKey = (type: FileSortPaginateType, sortKey: string) => {
+    dispatch(setSortKey({ type, sortKey }));
+  };
+  const handleSetReverse = (type: FileSortPaginateType, reverse: boolean) => {
+    dispatch(setReverse({ type, reverse }));
+  };
+  const handleSetCurrentPage = (
+    type: FileSortPaginateType,
+    currentPage: number
+  ) => {
+    dispatch(setCurrentPage({ type, currentPage }));
+  };
+  const handleSetPageSize = (type: FileSortPaginateType, pageSize: number) => {
+    dispatch(setPageSize({ type, pageSize }));
+  };
+
+  const getSortControls = (type: FileSortPaginateType) => ({
+    sortKey: sortPaginateState[type].sortKey,
+    reverse: sortPaginateState[type].reverse,
+    setSortKey: (sortKey: string) => {
+      handleSetSortKey(type, sortKey);
+    },
+    setReverse: (reverse: boolean) => {
+      handleSetReverse(type, reverse);
+    },
+  });
+  const getPaginationControls = (type: FileSortPaginateType) => ({
+    currentPage: sortPaginateState[type].currentPage,
+    pageSize: sortPaginateState[type].pageSize,
+    setCurrentPage: (currentPage: number) => {
+      handleSetCurrentPage(type, currentPage);
+    },
+    setPageSize: (pageSize: number) => {
+      handleSetPageSize(type, pageSize);
+    },
+  });
+
+  const listSortPaginateControls = {
+    ...getSortControls(FileSortPaginateType.list),
+    ...getPaginationControls(FileSortPaginateType.list),
+  };
+  const gridSortPaginateControls = {
+    ...getPaginationControls(FileSortPaginateType.grid),
+  };
+  const sortPaginateControlsLocation = {
+    ...getSortControls(FileSortPaginateType.mapLocation),
+    ...getPaginationControls(FileSortPaginateType.mapLocation),
+  };
+  const sortPaginateControlsNoLocation = {
+    ...getSortControls(FileSortPaginateType.mapNoLocation),
+    ...getPaginationControls(FileSortPaginateType.mapNoLocation),
+  };
+
+  const activeKey = useSelector(
+    ({ processSlice }: RootState) => processSlice.mapTableTabKey
+  );
+  const setActiveKey = (key: string) => {
+    dispatch(setMapTableTabKey({ mapTableTabKey: key }));
+  };
+
   const renderView = () => {
     if (!data.length) {
       return (
@@ -147,10 +217,12 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
               mode={VisionMode.Contextualize}
               actionDisabled={!!selectedFileIds.length}
               {...cellProps}
+              sortPaginateControls={gridSortPaginateControls}
             />
           )}
           totalCount={data.length}
           selectedIds={selectedFileIds}
+          sortPaginateControls={gridSortPaginateControls}
         />
       );
     }
@@ -165,6 +237,9 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
           allRowsSelected={allFilesSelected}
           onSelectAllRows={handleSelectAllFiles}
           selectedRowIds={selectedFileIds}
+          sortPaginateControlsLocation={sortPaginateControlsLocation}
+          sortPaginateControlsNoLocation={sortPaginateControlsNoLocation}
+          mapTableTabKey={{ activeKey, setActiveKey }}
         />
       );
     }
@@ -179,6 +254,7 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
         allRowsSelected={allFilesSelected}
         onSelectAllRows={handleSelectAllFiles}
         selectedRowIds={selectedFileIds}
+        sortPaginateControls={listSortPaginateControls}
       />
     );
   };

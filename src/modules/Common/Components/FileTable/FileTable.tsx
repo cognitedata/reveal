@@ -9,7 +9,7 @@ import { AnnotationRenderer } from 'src/modules/Common/Containers/FileTableRende
 import { ActionRendererProcess } from 'src/modules/Common/Containers/FileTableRenderers/ActionRenderer';
 import { NameSorter } from 'src/modules/Common/Containers/Sorters/NameSorter';
 import { AnnotationLoader } from 'src/modules/Common/Components/AnnotationLoader/AnnotationLoader';
-import { FileTableProps } from './types';
+import { FileListTableProps } from './types';
 import { SorterPaginationWrapper } from '../SorterPaginationWrapper/SorterPaginationWrapper';
 import { MimeTypeSorter } from '../../Containers/Sorters/MimeTypeSorter';
 
@@ -26,7 +26,7 @@ const sorters = {
   mimeType: MimeTypeSorter,
 };
 
-export function FileTable(props: FileTableProps) {
+export function FileTable(props: FileListTableProps) {
   const columns: ColumnShape<TableDataItem>[] = [
     {
       key: 'name',
@@ -88,6 +88,7 @@ export function FileTable(props: FileTableProps) {
       totalCount={props.totalCount}
       pagination
       sorters={sorters}
+      sortPaginateControls={props.sortPaginateControls}
     >
       {(paginationProps) => (
         <AnnotationLoader data={paginationProps.data}>

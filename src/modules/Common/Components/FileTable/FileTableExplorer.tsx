@@ -10,7 +10,7 @@ import { DateSorter } from 'src/modules/Common/Containers/Sorters/DateSorter';
 import { DateRenderer } from 'src/modules/Common/Containers/FileTableRenderers/DateRenderer';
 import { NameSorter } from 'src/modules/Common/Containers/Sorters/NameSorter';
 import { AnnotationLoader } from 'src/modules/Common/Components/AnnotationLoader/AnnotationLoader';
-import { FileExplorerTableProps, PaginationProps } from './types';
+import { FileListTableProps, PaginatedTableProps } from './types';
 import { SorterPaginationWrapper } from '../SorterPaginationWrapper/SorterPaginationWrapper';
 import { MimeTypeSorter } from '../../Containers/Sorters/MimeTypeSorter';
 
@@ -28,7 +28,7 @@ const sorters = {
   sourceCreatedTime: DateSorter,
 };
 
-export function FileTableExplorer(props: FileExplorerTableProps) {
+export function FileTableExplorer(props: FileListTableProps) {
   const columns: ColumnShape<TableDataItem>[] = [
     {
       key: 'name',
@@ -101,8 +101,9 @@ export function FileTableExplorer(props: FileExplorerTableProps) {
       totalCount={props.totalCount}
       sorters={sorters}
       pagination
+      sortPaginateControls={props.sortPaginateControls}
     >
-      {(paginationProps: PaginationProps<TableDataItem>) => (
+      {(paginationProps: PaginatedTableProps<TableDataItem>) => (
         <AnnotationLoader data={paginationProps.data}>
           <SelectableTable
             {...props}

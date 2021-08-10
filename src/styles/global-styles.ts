@@ -41,6 +41,11 @@ const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`
   .ant-select-dropdown-menu {
     margin-top: 0;
   }
+
+  .cdf-vision-subapp-style-scope .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+    color: #333333;
+    text-shadow: 0 0 0.25px currentColor;
+  }
 `;
 
 export default GlobalStyle;
