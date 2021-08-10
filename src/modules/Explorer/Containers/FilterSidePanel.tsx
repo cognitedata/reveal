@@ -1,3 +1,4 @@
+/* eslint-disable @cognite/no-number-z-index */
 import React, { useEffect, useState } from 'react';
 import { Collapse } from 'antd';
 import { CaretRightOutlined } from '@ant-design/icons';
@@ -117,6 +118,7 @@ export const FilterSidePanel = () => {
 
 const FilterResult = styled.div`
   padding: 11px 17px 0px 20px;
+  z-index: 1;
 `;
 const FilterTitle = styled.div`
   display: flex;

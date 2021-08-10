@@ -182,6 +182,7 @@ const Explorer = () => {
                 style={{
                   borderRight: `1px solid ${Colors['greyscale-grey3'].hex()}`,
                   padding: '10px',
+                  zIndex: 1,
                 }}
               >
                 <FilterToggleButton
