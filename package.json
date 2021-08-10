@@ -33,12 +33,12 @@
     "@cognite/sdk-react-query-hooks": "^4.0.0",
     "@cognite/z-index": "^0.1.0",
     "@sentry/browser": "^5.30.0",
-    "antd": "^4.16.8",
+    "antd": "^4.16.11",
     "axios": "^0.21.1",
     "date-fns": "^2.23.0",
     "dayjs": "^1.10.6",
     "dotenv": "^10.0.0",
-    "firebase": "^8.6.3",
+    "firebase": "^8.9.0",
     "lodash": "^4.17.21",
     "nanoid": "^3.1.23",
     "plotly.js-basic-dist": "^1.58.4",
@@ -49,7 +49,7 @@
     "react-dom": "^17.0.2",
     "react-highlight-words": "^0.17.0",
     "react-plotly.js": "^2.5.1",
-    "react-query": "^3.19.1",
+    "react-query": "^3.19.2",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
     "react-split-pane": "^0.1.92",
@@ -99,7 +99,7 @@
     "serve": "^11.3.2",
     "sinon": "^9.2.1",
     "testcafe": "^1.9.4",
-    "typescript": "^4.0.5"
+    "typescript": "^4.3.5"
   },
   "resolutions": {
     "react": "^17.0.1",

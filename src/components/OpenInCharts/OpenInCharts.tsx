@@ -1,4 +1,4 @@
-import React, {
+import {
   FC,
   useEffect,
   useState,
@@ -6,6 +6,7 @@ import React, {
   useCallback,
   useMemo,
 } from 'react';
+import * as React from 'react';
 import { compact } from 'lodash';
 import { nanoid } from 'nanoid';
 import { Chart } from 'reducers/charts/types';

@@ -1,6 +1,12 @@
-import { Button, Tooltip, SegmentedControl } from '@cognite/cogs.js';
+import {
+  Button,
+  Tooltip,
+  SegmentedControl,
+  Body,
+  Title,
+} from '@cognite/cogs.js';
 import { useSDK } from '@cognite/sdk-provider';
-import { Row, Col, List, Typography } from 'antd';
+import { Row, Col, List } from 'antd';
 import DetailsBlock from 'components/common/DetailsBlock';
 import { MetadataList } from 'components/DetailsSidebar';
 import { useState } from 'react';
@@ -153,10 +159,14 @@ const Statistics = ({
           <DetailsBlock title="Statistics">
             <List
               dataSource={[
-                { label: 'Min', value: statisticsForSource?.min },
-                { label: 'Max', value: statisticsForSource?.max },
                 { label: 'Mean', value: statisticsForSource?.mean },
                 { label: 'Median', value: statisticsForSource?.median },
+                {
+                  label: 'Standard Deviation',
+                  value: statisticsForSource?.std,
+                },
+                { label: 'Max', value: statisticsForSource?.max },
+                { label: 'Min', value: statisticsForSource?.min },
                 // Missing values from backend according to the sketch
                 // { label: 'Avg', value: statisticsForSource?.average },
                 // { label: 'Last', value: statisticsForSource?.last },
@@ -172,13 +182,9 @@ const Statistics = ({
               )}
             />
           </DetailsBlock>
-          <DetailsBlock title="Variation">
+          <DetailsBlock title="Percentiles">
             <List
               dataSource={[
-                {
-                  label: 'Standard Deviation',
-                  value: statisticsForSource?.std,
-                },
                 { label: '25th Percentile', value: statisticsForSource?.q25 },
                 { label: '50th Percentile', value: statisticsForSource?.q50 },
                 { label: '75th Percentile', value: statisticsForSource?.q75 },
@@ -213,9 +219,7 @@ const Statistics = ({
           </DetailsBlock>
         </>
       ) : (
-        <Typography.Text>
-          Statistics are currently unavailable for calculations
-        </Typography.Text>
+        <Body>Statistics are currently unavailable for calculations</Body>
       )}
     </Container>
   );
@@ -228,7 +232,7 @@ const SourceHeader = ({
 }) => {
   return (
     <div style={{ wordBreak: 'break-word' }}>
-      <h4>Time Series</h4>
+      <Title level={6}>Time Series</Title>
       <p style={{ display: 'flex' }}>
         <span style={{ paddingRight: 10 }}>
           <ColorCircle color={sourceItem?.color} />

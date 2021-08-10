@@ -6,6 +6,8 @@ module.exports = {
   ],
   plugins: ['@cognite', 'testing-library'],
   rules: {
+    'react/jsx-uses-react': 'off',
+    'react/react-in-jsx-scope': 'off',
     '@cognite/no-unissued-todos': [
       'error',
       { issuePattern: '\\(((DEMO)-[0-9]+)\\)' },

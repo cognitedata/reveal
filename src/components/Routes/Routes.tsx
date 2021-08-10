@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import * as React from 'react';
 import { getFlow } from '@cognite/auth-utils';
 import qs from 'query-string';
 import { omit } from 'lodash';
