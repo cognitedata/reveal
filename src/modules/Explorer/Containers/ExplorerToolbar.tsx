@@ -1,5 +1,14 @@
 import React from 'react';
-import { Button, SegmentedControl, Title, Tooltip } from '@cognite/cogs.js';
+import {
+  Button,
+  Detail,
+  Dropdown,
+  Icon,
+  Menu,
+  SegmentedControl,
+  Title,
+  Tooltip,
+} from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { ExplorationSearchBar } from './ExplorationSearchBar';
 
@@ -30,7 +39,47 @@ export const ExplorerToolbar = ({
   const inLimit =
     selectedCount && maxSelectCount ? selectedCount <= maxSelectCount : true;
   const exceededLimitMessage = `Total number of files that can be processed simultaneously is ${maxSelectCount}`;
-
+  const MenuContent = (
+    <Menu
+      style={{
+        color: 'black' /* typpy styles make color to be white here ... */,
+      }}
+    >
+      <Menu.Item
+        onClick={onContextualise}
+        disabled={!count || !inLimit}
+        style={{ color: '#595959' }}
+      >
+        <Tooltip
+          content={
+            <span data-testid="text-content">{exceededLimitMessage}</span>
+          }
+          disabled={!!inLimit}
+        >
+          <>
+            <Icon type="Scan" style={{ marginRight: 17 }} />
+            <Detail strong>Contextualise {count}</Detail>
+          </>
+        </Tooltip>
+      </Menu.Item>
+      <Menu.Item
+        onClick={onReview}
+        disabled={!count}
+        style={{ color: '#595959' }}
+      >
+        <Icon type="Edit" style={{ marginRight: 17 }} />
+        <Detail strong>Review {count}</Detail>
+      </Menu.Item>
+      <Menu.Item
+        onClick={onDownload}
+        disabled={!count}
+        style={{ color: '#595959' }}
+      >
+        <Icon type="Download" style={{ marginRight: 17 }} />
+        <Detail strong>Download {count}</Detail>
+      </Menu.Item>
+    </Menu>
+  );
   return (
     <>
       <TitleBar>
@@ -46,41 +95,19 @@ export const ExplorerToolbar = ({
           >
             Upload
           </Button>
-          <Button
-            style={{ marginLeft: 14 }}
-            icon="Download"
-            type="tertiary"
-            onClick={onDownload}
-            disabled={!count}
-          >
-            Download {count}
-          </Button>
-          <Tooltip
-            content={
-              <span data-testid="text-content">{exceededLimitMessage}</span>
-            }
-            disabled={!!inLimit}
-          >
-            <Button
-              style={{ marginLeft: 14 }}
-              icon="ExpandMax"
-              type="primary"
-              onClick={onContextualise}
-              disabled={!count || !inLimit}
-            >
-              Contextualise {count}
-            </Button>
-          </Tooltip>
 
-          <Button
-            style={{ marginLeft: 14 }}
-            icon="Edit"
-            type="primary"
-            onClick={onReview}
-            disabled={!count}
-          >
-            Review {count}
-          </Button>
+          <Dropdown content={MenuContent}>
+            <Button
+              type="primary"
+              icon="ChevronDownCompact"
+              aria-label="dropdown button"
+              disabled={!count}
+              iconPlacement="right"
+              style={{ marginLeft: 14 }}
+            >
+              Bulk actions {count}
+            </Button>
+          </Dropdown>
         </Right>
       </TitleBar>
 
@@ -131,9 +158,9 @@ const Left = styled.div`
 `;
 
 const Right = styled.div`
-  justify-self: end;
-  align-self: center;
-  grid-gap: 14px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
 `;
 
 const Container = styled.div`
