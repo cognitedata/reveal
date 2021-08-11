@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import {
@@ -14,8 +14,13 @@ import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from 'src/store/thunks/D
 import { CreateAnnotations } from 'src/store/thunks/CreateAnnotations';
 import { UpdateAnnotations } from 'src/store/thunks/UpdateAnnotations';
 
-export const ImagePreviewContainer = ({ file }: { file: FileInfo }) => {
-  const [inFocus, setInFocus] = useState<boolean>(false);
+export const ImagePreview = ({
+  file,
+  onEditMode,
+}: {
+  file: FileInfo;
+  onEditMode: (editMode: boolean) => void;
+}) => {
   const dispatch = useDispatch();
   const visibleNonRejectedAnnotations = useSelector(
     ({ previewSlice }: RootState) =>
@@ -57,30 +62,17 @@ export const ImagePreviewContainer = ({ file }: { file: FileInfo }) => {
   };
 
   const handleInEditMode = (mode: boolean) => {
-    if (mode) {
-      setInFocus(true);
-    } else {
-      setInFocus(false);
-    }
+    onEditMode(mode);
   };
 
   return (
-    <div
-      style={{
-        width: '100%',
-        height: '100%',
-        background: 'grey',
-        outline: inFocus ? ' 3px solid #4A67FB' : undefined,
-      }}
-    >
-      <ReactImageAnnotateWrapper
-        fileInfo={file}
-        annotations={annotations}
-        onCreateAnnotation={handleCreateAnnotation}
-        onUpdateAnnotation={handleModifyAnnotation}
-        onDeleteAnnotation={handleDeleteAnnotation}
-        handleInEditMode={handleInEditMode}
-      />
-    </div>
+    <ReactImageAnnotateWrapper
+      fileInfo={file}
+      annotations={annotations}
+      onCreateAnnotation={handleCreateAnnotation}
+      onUpdateAnnotation={handleModifyAnnotation}
+      onDeleteAnnotation={handleDeleteAnnotation}
+      handleInEditMode={handleInEditMode}
+    />
   );
 };

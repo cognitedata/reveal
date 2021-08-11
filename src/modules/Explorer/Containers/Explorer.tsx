@@ -116,9 +116,9 @@ const Explorer = () => {
     dispatch(fetchFilesById(selectedFileIds.map((i) => ({ id: i }))));
     history.push(getLink(workflowRoutes.process));
   };
-  const onReview = () => {
+  const onReview = async () => {
     // fetch latest
-    dispatch(fetchFilesById(selectedFileIds.map((i) => ({ id: i }))));
+    await dispatch(fetchFilesById(selectedFileIds.map((i) => ({ id: i }))));
     history.push(
       // selecting first item in review
       getParamLink(

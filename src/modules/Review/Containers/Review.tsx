@@ -18,16 +18,18 @@ import { fetchFilesById } from 'src/store/thunks/fetchFilesById';
 import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
 
 const DeleteButton = (props: { onConfirm: () => void }) => (
-  <Popconfirm
-    icon="WarningFilled"
-    placement="bottom-end"
-    onConfirm={props.onConfirm}
-    content="Are you sure you want to permanently delete this file?"
-  >
-    <Button type="ghost-danger" icon="Delete">
-      Delete file
-    </Button>
-  </Popconfirm>
+  <div style={{ minWidth: '120px' }}>
+    <Popconfirm
+      icon="WarningFilled"
+      placement="bottom-end"
+      onConfirm={props.onConfirm}
+      content="Are you sure you want to permanently delete this file?"
+    >
+      <Button type="ghost-danger" icon="Delete">
+        Delete file
+      </Button>
+    </Popconfirm>
+  </div>
 );
 
 const Review = (props: RouteComponentProps<{ fileId: string }>) => {
@@ -73,24 +75,28 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
       <>
         <PageTitle title="Review Annotations" />
         <Container>
-          <ToolBar className="z-4">
-            <div>
-              {showBackButton && (
-                <Button
-                  type="secondary"
-                  style={{ background: 'white' }}
-                  shape="round"
-                  onClick={onBackButtonClick}
-                >
-                  <Icon type="Left" />
-                  Back
-                </Button>
-              )}
-            </div>
-            <StatusToolBar current="Review" previous={previousPage} />
-            <DeleteButton onConfirm={handleFileDelete} />
+          <ToolBar>
+            <StatusToolBar
+              current="Review"
+              previous={previousPage!}
+              left={
+                showBackButton ? (
+                  <Button
+                    type="secondary"
+                    style={{ background: 'white' }}
+                    shape="round"
+                    onClick={onBackButtonClick}
+                  >
+                    <Icon type="Left" />
+                    Back
+                  </Button>
+                ) : (
+                  <></>
+                )
+              }
+              right={<DeleteButton onConfirm={handleFileDelete} />}
+            />
           </ToolBar>
-          <HorizontalLine />
           {isVideo(file) ? (
             <VideoReview file={file} prev={previousPage} />
           ) : (
@@ -124,22 +130,12 @@ const Container = styled.div`
   width: 100%;
   height: 100%;
   display: grid;
-  grid-template-rows: 50px 0px calc(100% - 55px);
-  position: relative;
+  grid-template-rows: 50px calc(100% - 50px);
+  grid-template-columns: auto;
   overflow: hidden;
 `;
 
 const ToolBar = styled.div`
-  padding: 5px;
   width: 100%;
-  display: grid;
-  align-items: center;
-  grid-template-columns: min-content auto 130px;
-  grid-column-gap: 16px;
-`;
-
-const HorizontalLine = styled.div`
-  width: 100%;
-  height: 0;
-  border: 1px solid #e8e8e8;
+  height: 40px;
 `;
