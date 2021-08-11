@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { getTimeStringNow } from 'src/utils';
+import moment from 'moment';
 import {
   FileLink,
   IdEither,
@@ -22,7 +22,10 @@ import {
   DownloadChoice,
   FileDownloaderModalProps,
 } from './types';
-import { convertAnnotationsToAutoML } from './annotationConverters';
+import {
+  convertAnnotationsToAutoML,
+  convertAnnotationsToCOCO,
+} from './annotationConverters';
 
 export const FileDownloaderModalContent = ({
   fileIds,
@@ -69,8 +72,7 @@ export const FileDownloaderModalContent = ({
       }) as IdEither[]
     );
     const zip = new JSZip();
-    const zipfilename = `Vision-DL-${getTimeStringNow()}`;
-
+    const zipfilename = `fusion-download-${moment().format()}`;
     if (
       [DownloadChoice.Annotations, DownloadChoice.FilesAndAnnotations].includes(
         currentFileChoice
@@ -79,6 +81,14 @@ export const FileDownloaderModalContent = ({
       if (currentAnnotationFileFormat === AnnotationFileFormat.CSV) {
         const [annotationFilename, annotationFileBlob] =
           await convertAnnotationsToAutoML(
+            files,
+            annotations,
+            annotationStatusMap()
+          );
+        zip.file(annotationFilename as string, annotationFileBlob);
+      } else if (currentAnnotationFileFormat === AnnotationFileFormat.COCO) {
+        const [annotationFilename, annotationFileBlob] =
+          await convertAnnotationsToCOCO(
             files,
             annotations,
             annotationStatusMap()
@@ -239,16 +249,11 @@ export const FileDownloaderModalContent = ({
         As: {AnnotationFileFormat.CSV}
       </Menu.Item>
       <Menu.Item
-        disabled
-        onClick={() => setCurrentAnnotationFileFormat(AnnotationFileFormat.TXT)}
+        onClick={() =>
+          setCurrentAnnotationFileFormat(AnnotationFileFormat.COCO)
+        }
       >
-        As: {AnnotationFileFormat.TXT}
-      </Menu.Item>
-      <Menu.Item
-        disabled
-        onClick={() => setCurrentAnnotationFileFormat(AnnotationFileFormat.XML)}
-      >
-        As: {AnnotationFileFormat.XML}
+        As: {AnnotationFileFormat.COCO}
       </Menu.Item>
     </Menu>
   );
@@ -334,7 +339,7 @@ export const FileDownloaderModalContent = ({
           Download annotations
         </Title>
 
-        <Dropdown disabled content={AnnotationMenuContent}>
+        <Dropdown content={AnnotationMenuContent}>
           <Button
             type="tertiary"
             aria-label="dropdown file selection"

@@ -5,9 +5,8 @@ export type FileDownloaderModalProps = {
 };
 
 export enum AnnotationFileFormat {
-  CSV = 'CSV (Google Vertex AI)',
-  TXT = 'TXT (YOLO Darknet)',
-  XML = 'XML (Pascal VOC)',
+  CSV = 'CSV (Google Vertex AI, only bounding boxes)',
+  COCO = 'COCO format',
 }
 export enum AnnotationChoice {
   VerifiedAndUnreviewed = 'Only verified and unreviewed annotations',
