@@ -41,7 +41,7 @@ const FileReview = ({
 
         <Body level={2}>{annotations.length}</Body>
       </div>
-      {pendingAnnotations.length && (
+      {pendingAnnotations.length ? (
         <ButtonWrapper>
           <Button
             onClick={() => onApprove(annotations)}
@@ -52,7 +52,7 @@ const FileReview = ({
             Approve {pendingAnnotations.length} new tags
           </Button>
         </ButtonWrapper>
-      )}
+      ) : null}
 
       <StyledTag>
         <IconWrapper>
@@ -63,9 +63,9 @@ const FileReview = ({
             }}
             type="asset"
           />
-          {pendingAssetAnnotations.length && (
+          {pendingAssetAnnotations.length ? (
             <strong> {pendingAssetAnnotations.length} new</strong>
-          )}
+          ) : null}
         </IconWrapper>
         <Body level={5}>{assetAnnotations.length}</Body>
       </StyledTag>
@@ -78,9 +78,9 @@ const FileReview = ({
             }}
             type="file"
           />{' '}
-          {pendingFileAnnotations.length && (
+          {pendingFileAnnotations.length ? (
             <strong> {pendingFileAnnotations.length} new</strong>
-          )}
+          ) : null}
         </IconWrapper>
         <Body level={5}>{fileAnnotations.length}</Body>
       </StyledTag>
