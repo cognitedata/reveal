@@ -154,7 +154,6 @@ export const ExplorerToolbar = ({
 const TitleBar = styled.div`
   display: grid;
   grid-template-columns: auto auto;
-  z-index: 1;
 `;
 const Left = styled.div`
   align-self: center;
@@ -164,6 +163,7 @@ const Right = styled.div`
   display: flex;
   justify-content: flex-end;
   align-items: center;
+  z-index: 2;
 `;
 
 const Container = styled.div`
