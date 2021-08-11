@@ -5998,6 +5998,11 @@ gensync@^1.0.0-beta.1, gensync@^1.0.0-beta.2:
   resolved "https://registry.yarnpkg.com/gensync/-/gensync-1.0.0-beta.2.tgz#32a6ee76c3d7f52d46b2b1ae5d93fea8580a25e0"
   integrity sha512-3hN7NaskYvMDLQY55gnW3NQ+mesEAepTqlg+VEbj7zzqEMBVNhzcGYYeqFo/TlYz6eQiFcp1HcsCZO+nGgS8zg==
 
+geo-three@^0.0.10:
+  version "0.0.10"
+  resolved "https://registry.yarnpkg.com/geo-three/-/geo-three-0.0.10.tgz#b100699554cafa1bf8520d92e01d0cb4bf3da740"
+  integrity sha512-btBw4yozQMN4ut8ta/mxiQN7dJTrmezoCHJM3HM7zWtAPvjFmVdnYLxw+U2rXjddJWm8YNLvQ1gUZCcC/ifHnw==
+
 get-caller-file@^2.0.1:
   version "2.0.5"
   resolved "https://registry.yarnpkg.com/get-caller-file/-/get-caller-file-2.0.5.tgz#4f94412a82db32f36e3b0b9741f8a97feb031f7e"

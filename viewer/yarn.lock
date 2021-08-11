@@ -906,6 +906,7 @@ __metadata:
   resolution: "@reveal/core@workspace:core"
   dependencies:
     "@reveal/camera-manager": "workspace:*"
+    geo-three: ^0.0.10
   languageName: unknown
   linkType: soft
 
@@ -5941,6 +5942,15 @@ fsevents@^1.2.7:
   version: 1.0.0-beta.2
   resolution: "gensync@npm:1.0.0-beta.2"
   checksum: d523437689c97b3aba9c5cdeca4677d5fff9a29d620db693fea40d852bad63563110f16979d0170248439dbcd2ecee0780fb2533d3f0519f019081aa10767c60
+  languageName: node
+  linkType: hard
+
+"geo-three@npm:^0.0.10":
+  version: 0.0.10
+  resolution: "geo-three@npm:0.0.10"
+  peerDependencies:
+    three: ">0.80.0"
+  checksum: 02c5b056d7e7b2fd56984267253a546a6f54d9178577b4f83a4aa783562564dd05b98718a676f3030430cf40b76bf52d29dbb72066e2d7967ee8bdc99f7a45cc
   languageName: node
   linkType: hard
 

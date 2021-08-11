@@ -2,6 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
+import { from } from 'rxjs';
+
 /**
  * @module @cognite/reveal/tools
  */
@@ -20,3 +22,4 @@ export {
 } from './tools/AxisView/types';
 export { Cognite3DViewerToolBase } from './tools/Cognite3DViewerToolBase';
 export { DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions } from './tools/DebugLoadedSectorsTool';
+export { GeomapTool } from './tools/Geomap/GeomapTool';
