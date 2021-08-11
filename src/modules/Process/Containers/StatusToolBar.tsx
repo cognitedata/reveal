@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import styled from 'styled-components';
 import { CDFStatus } from 'src/modules/Common/Components/CDFStatus/CDFStatus';
 import { Body } from '@cognite/cogs.js';
@@ -6,13 +6,22 @@ import { Breadcrumb } from 'antd';
 import { useHistory } from 'react-router-dom';
 import { getLink, workflowRoutes } from 'src/modules/Workflow/workflowRoutes';
 
-export const StatusToolBar = (props: any) => {
-  const { current, previous } = props;
+export const StatusToolBar = (props: {
+  current: string;
+  previous?: string;
+  left?: ReactElement;
+  right?: ReactElement;
+}) => {
+  const { current, previous, left, right } = props;
 
   return (
     <Container>
-      <CustomBreadCrumb current={current} previous={previous} />
-      <CDFStatus />
+      <div>{left}</div>
+      <BreadCrumbContainer>
+        <CustomBreadCrumb current={current} previous={previous} />
+        <CDFStatus />
+      </BreadCrumbContainer>
+      {right}
     </Container>
   );
 };
@@ -51,12 +60,20 @@ const CustomBreadCrumb = (props: any) => {
 };
 
 const Container = styled.div`
+  border-bottom: 1px solid #d9d9d9;
+  display: grid;
+  align-items: center;
+  grid-template-columns: min-content auto min-content;
+  grid-column-gap: 16px;
+`;
+
+const BreadCrumbContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
   height: 40px;
+  width: 100%;
   padding: 0 25px;
-  border-bottom: 1px solid #d9d9d9;
 `;
 
 const Text = styled(Body)`

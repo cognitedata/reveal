@@ -58,7 +58,7 @@ const Container = styled.div`
   height: 100%;
   width: 100%;
   display: grid;
-  grid-template-rows: auto calc(100% - 50px) auto;
+  grid-template-rows: auto calc(100% - 50px);
   padding-top: 15px;
   box-sizing: border-box;
 `;
