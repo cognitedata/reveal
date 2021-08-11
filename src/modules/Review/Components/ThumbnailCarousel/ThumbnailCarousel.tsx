@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 // Import Swiper React components
 import { Swiper, SwiperSlide } from 'swiper/react';
-
-// Import Swiper styles
-import 'swiper/swiper.min.css';
-import 'swiper/components/pagination/pagination.min.css';
-
 // import Swiper core and required modules
-import SwiperCore, { Pagination, Mousewheel, Virtual } from 'swiper/core';
+import SwiperCore, {
+  Pagination,
+  Mousewheel,
+  Virtual,
+  Navigation,
+} from 'swiper/core';
 import styled from 'styled-components';
 import { getIdfromUrl } from 'src/utils/tenancy';
 import {
@@ -15,35 +15,39 @@ import {
   workflowRoutes,
 } from 'src/modules/Workflow/workflowRoutes';
 import { useHistory } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { RootState } from 'src/store/rootReducer';
-import { selectAllFiles } from 'src/modules/Common/filesSlice';
 import { Thumbnail } from 'src/modules/Common/Components/Thumbnail/Thumbnail';
 import { Button } from '@cognite/cogs.js';
+import { FileInfo } from '@cognite/cdf-sdk-singleton';
+// Import Swiper styles
+import swiperStyles from 'swiper/swiper-bundle.css';
 
-SwiperCore.use([Mousewheel, Pagination, Virtual]);
+SwiperCore.use([Navigation, Mousewheel, Pagination, Virtual]);
 
-export const VerticalCarousel = (props?: any) => {
-  const { prev } = props;
-  const filesSlice = useSelector((state: RootState) =>
-    selectAllFiles(state.filesSlice)
-  );
-
+export const ThumbnailCarousel = (props: {
+  prev?: string;
+  files: FileInfo[];
+}) => {
+  const { prev, files } = props;
   const history = useHistory();
   const initialSlide = Number(getIdfromUrl());
   const [currentSlide, setCurrentSlide] = useState<number>(initialSlide);
   const [currentSlideIndex, setCurrentSlideIndex] = useState<number>(
-    filesSlice.findIndex((item: any) => item.id === initialSlide)
+    files.findIndex((item: any) => item.id === initialSlide)
   );
 
-  const thumbnailHeight = 66;
+  const thumbnailHeight = 100;
+
+  useEffect(() => {
+    swiperStyles.use();
+    return () => {
+      swiperStyles.unuse();
+    };
+  }, []);
 
   const handleOnClick = (fileId: number) => {
     // For background color / focus
     setCurrentSlide(fileId);
-    setCurrentSlideIndex(
-      filesSlice.findIndex((item: any) => item.id === fileId)
-    );
+    setCurrentSlideIndex(files.findIndex((item: any) => item.id === fileId));
 
     // Go to this file
     history.replace(
@@ -52,7 +56,7 @@ export const VerticalCarousel = (props?: any) => {
     );
   };
 
-  const slides = filesSlice.map((data, index) => {
+  const slides = files.map((data, index) => {
     return (
       /* eslint-disable react/no-array-index-key */
       <SwiperSlide key={`${index}-swiperslide`} virtualIndex={+index}>
@@ -69,35 +73,37 @@ export const VerticalCarousel = (props?: any) => {
       </SwiperSlide>
     );
   });
-  return filesSlice.length > 1 ? (
+  return (
     <CarouselContainer id="verticalCarouselContainer">
       <Swiper
         className="carouselView"
-        slidesPerView={Math.min(filesSlice.length, 10)} // "auto" does not work with virtual
+        slidesPerView={Math.min(files.length, 10)} // "auto" does not work with virtual
         initialSlide={currentSlideIndex}
+        navigation
         freeMode
-        direction="vertical"
+        freeModeSticky
         mousewheel={{
           sensitivity: 2,
           releaseOnEdges: true,
         }}
         grabCursor
-        centeredSlides
-        centeredSlidesBounds
-        // TODO: Fix virtual loading
-        // virtual
-        // virtual={{
-        //   addSlidesAfter: 5,
-        //   addSlidesBefore: 5,
-        // }}
+        virtual={
+          files.length > 10
+            ? {
+                addSlidesBefore: 5,
+                addSlidesAfter: 5,
+              }
+            : false
+        }
         style={{
-          height: `${thumbnailHeight * Math.min(filesSlice.length, 10)}px`, // HACK: to avoid scroll out of view
+          width: '100%',
+          height: '100%',
         }}
       >
         <>{slides}</>
       </Swiper>
     </CarouselContainer>
-  ) : null;
+  );
 };
 
 interface OnFocusProp {
@@ -111,19 +117,17 @@ interface OnFocusProp {
 }
 
 const ThumbnailContainer = styled(Button)<OnFocusProp>`
-  flex: '1 0 auto';
   height: ${(props) => `${props.thumbnailheight}px`};
-  width: 110px;
-  padding-left: 5px !important;
-  padding-right: 5px !important;
-  padding-top: 0px !important;
-  padding-bottom: 0px !important;
-  color: ${(props) =>
-    props.focusedid === props.currentid ? '#000000' : '#bebebe'};
-  background: ${(props) =>
-    props.focusedid === props.currentid ? '#6E85FC' : '#ffffff'};
+  width: 150px;
+  padding: 0 !important;
+  border: ${(props) =>
+    props.focusedid === props.currentid ? '5px solid #4A67FB' : 'none'};
+  ${(props) => props.focusedid === props.currentid && 'background: #4A67FB'};
+  border-radius: 4px;
+  box-sizing: content-box;
+  opacity: ${(props) => (props.focusedid === props.currentid ? '1' : '0.6')};
   img {
-    height: 85%;
+    height: 100%;
     width: 100%;
     object-fit: cover;
     overflow: hidden;
@@ -131,10 +135,18 @@ const ThumbnailContainer = styled(Button)<OnFocusProp>`
 `;
 
 const CarouselContainer = styled.div`
-  max-width: 136px;
-  padding: 10px;
-  height: 100%;
+  width: 100%;
+  padding: 4px;
+  height: 120px;
   overflow: hidden;
   display: flex;
   justify-content: center;
+  border: 1px solid #d9d9d9;
+
+  .swiper-slide {
+    width: 160px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 `;

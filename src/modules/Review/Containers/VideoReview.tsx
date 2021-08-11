@@ -7,116 +7,122 @@ import { FileDetailsReview } from 'src/modules/FileDetails/Containers/FileDetail
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { FileInfo, v3Client as sdk } from '@cognite/cdf-sdk-singleton';
 import { Title } from '@cognite/cogs.js';
-import { VerticalCarousel } from '../Components/VerticalCarousel/VerticalCarousel';
+import { useSelector } from 'react-redux';
+import { RootState } from 'src/store/rootReducer';
+import { selectAllFiles } from 'src/modules/Common/filesSlice';
+import { ThumbnailCarousel } from '../Components/ThumbnailCarousel/ThumbnailCarousel';
 
 const queryClient = new QueryClient();
 
-const AnnotationsEdit = (props: {
-  file: FileInfo;
-  prev: string | undefined;
-}) => {
+const VideoReview = (props: { file: FileInfo; prev: string | undefined }) => {
   const { file, prev } = props;
+
+  const allFiles = useSelector((state: RootState) =>
+    selectAllFiles(state.filesSlice)
+  );
+
   return (
     <>
       <QueryClientProvider client={queryClient}>
         <AnnotationContainer>
-          <FilePreviewMetadataContainer>
-            <FilePreviewContainer>
-              <VerticalCarouselContainer id="verticalCarouselContainerVideo">
-                <VerticalCarousel prev={prev} />
-              </VerticalCarouselContainer>
+          <FilePreviewContainer>
+            <PreviewContainer
+              fullHeight={allFiles.length === 1}
+              inFocus={false}
+            >
               {file && <VideoPreview fileObj={file} />}
-            </FilePreviewContainer>
-            <RightPanelContainer>
-              <StyledTitle level={4}>{file?.name}</StyledTitle>
-              <TabsContainer>
-                <Tabs
-                  tab="file-detail"
-                  onTabChange={() => {}}
-                  style={{
-                    border: 0,
-                  }}
+            </PreviewContainer>
+            {allFiles.length > 1 && (
+              <ThumbnailCarousel prev={prev} files={allFiles} />
+            )}
+          </FilePreviewContainer>
+          <RightPanelContainer>
+            <StyledTitle level={4}>{file?.name}</StyledTitle>
+            <TabsContainer>
+              <Tabs
+                tab="file-detail"
+                onTabChange={() => {}}
+                style={{
+                  border: 0,
+                }}
+              >
+                <Tabs.Pane
+                  title="Contextualization"
+                  key="context"
+                  style={{ overflow: 'hidden', height: `calc(100% - 45px)` }}
+                  disabled
                 >
-                  <Tabs.Pane
-                    title="Contextualization"
-                    key="context"
-                    style={{ overflow: 'hidden', height: `calc(100% - 45px)` }}
-                    disabled
-                  >
-                    <Contextualization file={file} />
-                  </Tabs.Pane>
-                  <Tabs.Pane
-                    title="File details"
-                    key="file-detail"
-                    style={{ overflow: 'hidden', height: `calc(100% - 45px)` }}
-                  >
-                    {file && (
-                      <DataExplorationProvider sdk={sdk}>
-                        <QueryClientProvider client={queryClient}>
-                          <FileDetailsReview fileObj={file} />
-                        </QueryClientProvider>
-                      </DataExplorationProvider>
-                    )}
-                  </Tabs.Pane>
-                </Tabs>
-              </TabsContainer>
-            </RightPanelContainer>
-          </FilePreviewMetadataContainer>
+                  <Contextualization file={file} />
+                </Tabs.Pane>
+                <Tabs.Pane
+                  title="File details"
+                  key="file-detail"
+                  style={{ overflow: 'hidden', height: `calc(100% - 45px)` }}
+                >
+                  {file && (
+                    <DataExplorationProvider sdk={sdk}>
+                      <QueryClientProvider client={queryClient}>
+                        <FileDetailsReview fileObj={file} />
+                      </QueryClientProvider>
+                    </DataExplorationProvider>
+                  )}
+                </Tabs.Pane>
+              </Tabs>
+            </TabsContainer>
+          </RightPanelContainer>
         </AnnotationContainer>
       </QueryClientProvider>
     </>
   );
 };
-export default AnnotationsEdit;
+export default VideoReview;
 
 const AnnotationContainer = styled.div`
-  width: 100%;
-  display: flex;
-  height: 100%;
-  box-sizing: border-box;
-`;
-
-const FilePreviewMetadataContainer = styled.div`
   height: 100%;
   width: 100%;
   display: grid;
-  grid-template-columns: 70% auto;
+  grid-template-columns: 68% 32%;
   grid-template-rows: 100%;
-  grid-column-gap: 30px;
 `;
 
 const FilePreviewContainer = styled.div`
-  display: grid;
-  grid-template-columns: 136px auto;
-  grid-template-rows: 100%;
-  grid-column-gap: 5px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+`;
+type PreviewProps = {
+  fullHeight: boolean;
+  inFocus: boolean;
+};
+const PreviewContainer = styled.div<PreviewProps>`
+  max-height: ${(props) => (props.fullHeight ? '100%' : 'calc(100% - 120px)')};
+  height: ${(props) => (props.fullHeight ? '100%' : 'calc(100% - 120px)')};
+  background: grey;
+  outline: ${(props) => (props.inFocus ? '3px solid #4A67FB' : 'none')};
 `;
 
 const RightPanelContainer = styled.div`
   width: 100%;
   height: 100%;
+  padding: 17px;
+  display: grid;
+  grid-template-rows: 36px 1fr;
+  grid-template-columns: 100%;
 `;
 
 const StyledTitle = styled(Title)`
   color: #4a67fb;
-  padding-top: 17px;
-  padding-bottom: 17px;
+  padding-bottom: 12px;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-  max-width: 290px;
-`;
-const TabsContainer = styled.div`
-  height: 100%;
-  padding-right: 10px;
-  border-radius: 8px;
 `;
 
-const VerticalCarouselContainer = styled.div`
-  max-width: 136px;
-  padding: 10px;
+const TabsContainer = styled.div`
   height: 100%;
+  width: 100%;
+  border-radius: 8px;
   overflow: hidden;
-  display: flex;
-  justify-content: center;
+  box-sizing: content-box;
 `;
