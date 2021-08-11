@@ -44,24 +44,3 @@ export const userHasCapabilities = (
     isEmpty(result.actions.filter((action) => action !== ''))
   );
 };
-
-export const getTimeStringNow = () => {
-  const d = new Date();
-  const localeTime = d.toLocaleString('no-NO');
-  const localeDay =
-    localeTime.split(',')[0].trim().split('.')[0].length > 1
-      ? localeTime.split(',')[0].trim().split('.')[0]
-      : `0${localeTime.split(',')[0].trim().split('.')[0]}`;
-  const localeMonth =
-    localeTime.split(',')[0].trim().split('.')[1].length > 1
-      ? localeTime.split(',')[0].trim().split('.')[1]
-      : `0${localeTime.split(',')[0].trim().split('.')[1]}`;
-  const localeYear =
-    localeTime.split(',')[0].trim().split('.')[2].length > 1
-      ? localeTime.split(',')[0].trim().split('.')[2]
-      : `0${localeTime.split(',')[0].trim().split('.')[2]}`;
-  const localeHours = localeTime.split(',')[1].trim().split(':')[0];
-  const localeMinutes = localeTime.split(',')[1].trim().split(':')[1];
-  const localeSeconds = localeTime.split(',')[1].trim().split(':')[2];
-  return `${localeDay}${localeMonth}${localeYear}${localeHours}${localeMinutes}${localeSeconds}`;
-};
