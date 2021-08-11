@@ -16,7 +16,50 @@ import { GLTFLoader, GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
 
 import * as THREE from 'three';
-import { getBoxOutputSize, getCircleOutputSize, transformBoxes, transformCircles } from './primitiveTransformers';
+import {
+  getBoxOutputSize,
+  getCircleOutputSize,
+  getConeOutputSize,
+  getEccentricConeOutputSize,
+  getEllipsoidSegmentOutputSize,
+  getGeneralCylinderOutputSize,
+  getGeneralRingOutputSize,
+  getNutOutputSize,
+  getQuadOutputSize,
+  getSphericalSegmentOutputSize,
+  getTorusSegmentOutputSize,
+  getTrapeziumOutputSize,
+  transformBoxes,
+  transformCircles,
+  transformClosedCones,
+  transformClosedCylinders,
+  transformClosedEccentricCones,
+  transformClosedEllipsoidSegments,
+  transformClosedExtrudedRingSegments,
+  transformClosedGeneralCones,
+  transformClosedGeneralCylinders,
+  transformClosedSphericalSegments,
+  transformClosedTorusSegments,
+  transformEllipsoids,
+  transformExtrudedRings,
+  transformNuts,
+  transformOpenCones,
+  transformOpenCylinders,
+  transformOpenEccentricCones,
+  transformOpenEllipsoidSegments,
+  transformOpenExtrudedRingSegments,
+  transformOpenGeneralCones,
+  transformOpenGeneralCylinders,
+  transformOpenSphericalSegments,
+  transformOpenTorusSegments,
+  transformRings,
+  transformSolidClosedGeneralCones,
+  transformSolidClosedGeneralCylinders,
+  transformSolidOpenGeneralCones,
+  transformSolidOpenGeneralCylinders,
+  transformSpheres,
+  transformToruses
+} from './primitiveTransformers';
 
 export interface ParseGltfResult {
   indices: Uint32Array;
@@ -435,59 +478,104 @@ export class CadSectorParser {
       primitiveSpecs.closedEllipsoidSegments.byteOffset,
       primitiveSpecs.closedEllipsoidSegments.byteOffset + primitiveSpecs.closedEllipsoidSegments.byteCount
     );
-    /* const closedExtrudedRingSegmentSlice = buffer.slice(primitiveSpecs.closedExtrudedRingSegments.byteOffset, 
-                                                        primitiveSpecs.closedExtrudedRingSegments.byteOffset + primitiveSpecs.closedExtrudedRingSegments.byteCount); */
+    const closedExtrudedRingSegmentSlice = buffer.slice(
+      primitiveSpecs.closedExtrudedRingSegments.byteOffset,
+      primitiveSpecs.closedExtrudedRingSegments.byteOffset + primitiveSpecs.closedExtrudedRingSegments.byteCount
+    );
     const closedSphericalSegmentSlice = buffer.slice(
       primitiveSpecs.closedSphericalSegments.byteOffset,
       primitiveSpecs.closedSphericalSegments.byteOffset + primitiveSpecs.closedSphericalSegments.byteCount
     );
-    /* const closedTorusSegmentSlice = buffer.slice(primitiveSpecs.closedTorusSegments.byteOffset,
-                                                 primitiveSpecs.closedTorusSegments.byteOffset + primitiveSpecs.closedTorusSegments.byteCount);
-    const ellipsoidSlice = buffer.slice(primitiveSpecs.ellipsoids.byteOffset,
-                                        primitiveSpecs.ellipsoids.byteOffset + primitiveSpecs.ellipsoids.byteCount);
-    const extrudedRingSlice = buffer.slice(primitiveSpecs.extrudedRings.byteOffset,
-                                           primitiveSpecs.extrudedRings.byteOffset + primitiveSpecs.extrudedRings.byteCount);
-    const nutSlice = buffer.slice(primitiveSpecs.nuts.byteOffset,
-                                  primitiveSpecs.nuts.byteOffset + primitiveSpecs.nuts.byteCount);
-    const openConeSlice = buffer.slice(primitiveSpecs.openCones.byteOffset,
-                                       primitiveSpecs.openCones.byteOffset + primitiveSpecs.openCones.byteCount);
-    const openCylinderSlice = buffer.slice(primitiveSpecs.openCylinders.byteOffset,
-                                           primitiveSpecs.openCylinders.byteOffset + primitiveSpecs.openCylinders.byteCount);
-    const openEccentricConeSlice = buffer.slice(primitiveSpecs.openEccentricCones.byteOffset,
-                                                primitiveSpecs.openEccentricCones.byteOffset + primitiveSpecs.openEccentricCones.byteCount);
-    const openEllipsoidSegmentSlice = buffer.slice(primitiveSpecs.openEllipsoidSegments.byteOffset,
-                                                   primitiveSpecs.openEllipsoidSegments.byteOffset + primitiveSpecs.openEllipsoidSegments.byteCount);
-    const openExtrudedRingSegmentSlice = buffer.slice(primitiveSpecs.openExtrudedRingSegments.byteOffset,
-                                                      primitiveSpecs.openExtrudedRingSegments.byteOffset + primitiveSpecs.openExtrudedRingSegments.byteCount);
-    const openSphericalSegmentSlice = buffer.slice(primitiveSpecs.openSphericalSegments.byteOffset,
-                                                   primitiveSpecs.openSphericalSegments.byteOffset + primitiveSpecs.openSphericalSegments.byteCount);
-    const openTorusSegmentSlice = buffer.slice(primitiveSpecs.openTorusSegments.byteOffset,
-                                               primitiveSpecs.openTorusSegments.byteOffset + primitiveSpecs.openTorusSegments.byteCount);
-    const ringSlice = buffer.slice(primitiveSpecs.rings.byteOffset,
-                                   primitiveSpecs.rings.byteOffset + primitiveSpecs.rings.byteCount);
-    const sphereSlice = buffer.slice(primitiveSpecs.spheres.byteOffset,
-                                     primitiveSpecs.spheres.byteOffset + primitiveSpecs.spheres.byteCount);
-    const torusSlice = buffer.slice(primitiveSpecs.toruses.byteOffset,
-                                    primitiveSpecs.toruses.byteOffset + primitiveSpecs.toruses.byteCount);
-    const openGeneralCylinderSlice = buffer.slice(primitiveSpecs.openGeneralCylinders.byteOffset,
-                                                  primitiveSpecs.openGeneralCylinders.byteOffset + primitiveSpecs.openGeneralCylinders.byteCount);
-    const closedGeneralCylinderSlice = buffer.slice(primitiveSpecs.closedGeneralCylinders.byteOffset,
-                                                    primitiveSpecs.closedGeneralCylinders.byteOffset + primitiveSpecs.closedGeneralCylinders.byteCount);
-    const solidOpenGeneralCylinderSlice = buffer.slice(primitiveSpecs.solidOpenGeneralCylinders.byteOffset,
-                                                       primitiveSpecs.solidOpenGeneralCylinders.byteOffset + primitiveSpecs.solidOpenGeneralCylinders.byteCount);
-    const solidClosedGeneralCylinderSlice = buffer.slice(primitiveSpecs.solidClosedGeneralCylinders.byteOffset,
-                                                         primitiveSpecs.solidClosedGeneralCylinders.byteOffset + primitiveSpecs.solidClosedGeneralCylinders.byteCount);
-    const openGeneralConeSlice = buffer.slice(primitiveSpecs.openGeneralCones.byteOffset,
-                                              primitiveSpecs.openGeneralCones.byteOffset + primitiveSpecs.openGeneralCones.byteCount);
-    const closedGeneralConeSlice = buffer.slice(primitiveSpecs.closedGeneralCones.byteOffset,
-                                                primitiveSpecs.closedGeneralCones.byteOffset + primitiveSpecs.closedGeneralCones.byteCount);
-    const solidOpenGeneralConeSlice = buffer.slice(primitiveSpecs.solidOpenGeneralCones.byteOffset,
-                                                   primitiveSpecs.solidOpenGeneralCones.byteOffset + primitiveSpecs.solidOpenGeneralCones.byteCount);
-    const solidClosedGeneralConeSlice = buffer.slice(primitiveSpecs.solidClosedGeneralCones.byteOffset,
-                                                     primitiveSpecs.solidClosedGeneralCones.byteOffset + primitiveSpecs.solidClosedGeneralCones.byteCount); */
+    const closedTorusSegmentSlice = buffer.slice(
+      primitiveSpecs.closedTorusSegments.byteOffset,
+      primitiveSpecs.closedTorusSegments.byteOffset + primitiveSpecs.closedTorusSegments.byteCount
+    );
+    const ellipsoidSlice = buffer.slice(
+      primitiveSpecs.ellipsoids.byteOffset,
+      primitiveSpecs.ellipsoids.byteOffset + primitiveSpecs.ellipsoids.byteCount
+    );
+    const extrudedRingSlice = buffer.slice(
+      primitiveSpecs.extrudedRings.byteOffset,
+      primitiveSpecs.extrudedRings.byteOffset + primitiveSpecs.extrudedRings.byteCount
+    );
+    const nutSlice = buffer.slice(
+      primitiveSpecs.nuts.byteOffset,
+      primitiveSpecs.nuts.byteOffset + primitiveSpecs.nuts.byteCount
+    );
+    const openConeSlice = buffer.slice(
+      primitiveSpecs.openCones.byteOffset,
+      primitiveSpecs.openCones.byteOffset + primitiveSpecs.openCones.byteCount
+    );
+    const openCylinderSlice = buffer.slice(
+      primitiveSpecs.openCylinders.byteOffset,
+      primitiveSpecs.openCylinders.byteOffset + primitiveSpecs.openCylinders.byteCount
+    );
+    const openEccentricConeSlice = buffer.slice(
+      primitiveSpecs.openEccentricCones.byteOffset,
+      primitiveSpecs.openEccentricCones.byteOffset + primitiveSpecs.openEccentricCones.byteCount
+    );
+    const openEllipsoidSegmentSlice = buffer.slice(
+      primitiveSpecs.openEllipsoidSegments.byteOffset,
+      primitiveSpecs.openEllipsoidSegments.byteOffset + primitiveSpecs.openEllipsoidSegments.byteCount
+    );
+    const openExtrudedRingSegmentSlice = buffer.slice(
+      primitiveSpecs.openExtrudedRingSegments.byteOffset,
+      primitiveSpecs.openExtrudedRingSegments.byteOffset + primitiveSpecs.openExtrudedRingSegments.byteCount
+    );
+    const openSphericalSegmentSlice = buffer.slice(
+      primitiveSpecs.openSphericalSegments.byteOffset,
+      primitiveSpecs.openSphericalSegments.byteOffset + primitiveSpecs.openSphericalSegments.byteCount
+    );
+    const openTorusSegmentSlice = buffer.slice(
+      primitiveSpecs.openTorusSegments.byteOffset,
+      primitiveSpecs.openTorusSegments.byteOffset + primitiveSpecs.openTorusSegments.byteCount
+    );
+    const ringSlice = buffer.slice(
+      primitiveSpecs.rings.byteOffset,
+      primitiveSpecs.rings.byteOffset + primitiveSpecs.rings.byteCount
+    );
+    const sphereSlice = buffer.slice(
+      primitiveSpecs.spheres.byteOffset,
+      primitiveSpecs.spheres.byteOffset + primitiveSpecs.spheres.byteCount
+    );
+    const torusSlice = buffer.slice(
+      primitiveSpecs.toruses.byteOffset,
+      primitiveSpecs.toruses.byteOffset + primitiveSpecs.toruses.byteCount
+    );
+    const openGeneralCylinderSlice = buffer.slice(
+      primitiveSpecs.openGeneralCylinders.byteOffset,
+      primitiveSpecs.openGeneralCylinders.byteOffset + primitiveSpecs.openGeneralCylinders.byteCount
+    );
+    const closedGeneralCylinderSlice = buffer.slice(
+      primitiveSpecs.closedGeneralCylinders.byteOffset,
+      primitiveSpecs.closedGeneralCylinders.byteOffset + primitiveSpecs.closedGeneralCylinders.byteCount
+    );
+    const solidOpenGeneralCylinderSlice = buffer.slice(
+      primitiveSpecs.solidOpenGeneralCylinders.byteOffset,
+      primitiveSpecs.solidOpenGeneralCylinders.byteOffset + primitiveSpecs.solidOpenGeneralCylinders.byteCount
+    );
+    const solidClosedGeneralCylinderSlice = buffer.slice(
+      primitiveSpecs.solidClosedGeneralCylinders.byteOffset,
+      primitiveSpecs.solidClosedGeneralCylinders.byteOffset + primitiveSpecs.solidClosedGeneralCylinders.byteCount
+    );
+    const openGeneralConeSlice = buffer.slice(
+      primitiveSpecs.openGeneralCones.byteOffset,
+      primitiveSpecs.openGeneralCones.byteOffset + primitiveSpecs.openGeneralCones.byteCount
+    );
+    const closedGeneralConeSlice = buffer.slice(
+      primitiveSpecs.closedGeneralCones.byteOffset,
+      primitiveSpecs.closedGeneralCones.byteOffset + primitiveSpecs.closedGeneralCones.byteCount
+    );
+    const solidOpenGeneralConeSlice = buffer.slice(
+      primitiveSpecs.solidOpenGeneralCones.byteOffset,
+      primitiveSpecs.solidOpenGeneralCones.byteOffset + primitiveSpecs.solidOpenGeneralCones.byteCount
+    );
+    const solidClosedGeneralConeSlice = buffer.slice(
+      primitiveSpecs.solidClosedGeneralCones.byteOffset,
+      primitiveSpecs.solidClosedGeneralCones.byteOffset + primitiveSpecs.solidClosedGeneralCones.byteCount
+    );
 
     const boxOutput = new Uint8Array(getBoxOutputSize(boxSlice));
-    // const boxOutput = new Uint8Array();
     const circleOutput = new Uint8Array(
       getCircleOutputSize(
         circleSlice,
@@ -498,33 +586,337 @@ export class CadSectorParser {
         closedSphericalSegmentSlice
       )
     );
-    // const circleOutput = new Uint8Array();
-    const coneOutput = new Uint8Array();
-    const eccentricConeOutput = new Uint8Array();
-    const ellipsoidSegmentOutput = new Uint8Array();
-    const generalCylinderOutput = new Uint8Array();
-    const generalRingOutput = new Uint8Array();
-    const nutOutput = new Uint8Array();
-    const quadOutput = new Uint8Array();
-    const sphericalSegmentOutput = new Uint8Array();
-    const torusSegmentOutput = new Uint8Array();
-    const trapeziumOutput = new Uint8Array();
+    const coneOutput = new Uint8Array(
+      getConeOutputSize(
+        closedConeSlice,
+        openConeSlice,
+        openGeneralConeSlice,
+        closedGeneralConeSlice,
+        solidOpenGeneralConeSlice,
+        solidClosedGeneralConeSlice,
+        closedCylinderSlice,
+        openCylinderSlice,
+        closedExtrudedRingSegmentSlice,
+        extrudedRingSlice,
+        openExtrudedRingSegmentSlice
+      )
+    );
+    const eccentricConeOutput = new Uint8Array(
+      getEccentricConeOutputSize(closedEccentricConeSlice, openEccentricConeSlice)
+    );
+    const ellipsoidSegmentOutput = new Uint8Array(
+      getEllipsoidSegmentOutputSize(closedEllipsoidSegmentSlice, ellipsoidSlice, openEllipsoidSegmentSlice)
+    );
+    const generalCylinderOutput = new Uint8Array(
+      getGeneralCylinderOutputSize(
+        openGeneralCylinderSlice,
+        closedGeneralCylinderSlice,
+        solidOpenGeneralCylinderSlice,
+        solidClosedGeneralCylinderSlice
+      )
+    );
+    const generalRingOutput = new Uint8Array(
+      getGeneralRingOutputSize(
+        closedGeneralConeSlice,
+        solidOpenGeneralConeSlice,
+        solidClosedGeneralConeSlice,
+        closedGeneralCylinderSlice,
+        solidOpenGeneralCylinderSlice,
+        solidClosedGeneralCylinderSlice,
+        closedExtrudedRingSegmentSlice,
+        extrudedRingSlice,
+        openExtrudedRingSegmentSlice,
+        ringSlice
+      )
+    );
+    const nutOutput = new Uint8Array(getNutOutputSize(nutSlice));
+    const quadOutput = new Uint8Array(getQuadOutputSize(closedExtrudedRingSegmentSlice));
+    const sphericalSegmentOutput = new Uint8Array(
+      getSphericalSegmentOutputSize(openSphericalSegmentSlice, sphereSlice, closedSphericalSegmentSlice)
+    );
+    const torusSegmentOutput = new Uint8Array(
+      getTorusSegmentOutputSize(torusSlice, closedTorusSegmentSlice, openTorusSegmentSlice)
+    );
+    const trapeziumOutput = new Uint8Array(
+      getTrapeziumOutputSize(solidClosedGeneralConeSlice, solidClosedGeneralCylinderSlice)
+    );
 
     let boxOutputOffset = 0;
     let circleOutputOffset = 0;
-    /* let coneOutputOffset = 0;
+    let coneOutputOffset = 0;
     let eccentricConeOutputOffset = 0;
     let ellipsoidSegmentOutputOffset = 0;
     let generalCylinderOutputOffset = 0;
     let generalRingOutputOffset = 0;
     let nutOutputOffset = 0;
     let quadOutputOffset = 0;
-    let sphericalSegmentOffset = 0;
-    let torusSegmentOffset = 0;
-    let trapeziumOffset = 0; */
+    let sphericalSegmentOutputOffset = 0;
+    let torusSegmentOutputOffset = 0;
+    let trapeziumOutputOffset = 0;
 
     boxOutputOffset += transformBoxes(boxSlice, boxOutput, boxOutputOffset, boxAttributes);
+
     circleOutputOffset += transformCircles(circleSlice, circleOutput, circleOutputOffset, circleAttributes);
+
+    const closedConeOutputOffsets = transformClosedCones(
+      closedConeSlice,
+      coneOutput,
+      circleOutput,
+      coneOutputOffset,
+      circleOutputOffset,
+      coneAttributes,
+      circleAttributes
+    );
+    coneOutputOffset += closedConeOutputOffsets[0];
+    circleOutputOffset += closedConeOutputOffsets[1];
+
+    coneOutputOffset += transformOpenCones(openConeSlice, coneOutput, coneOutputOffset, coneAttributes);
+
+    const closedEccentricConeOutputOffsets = transformClosedEccentricCones(
+      closedEccentricConeSlice,
+      eccentricConeOutput,
+      circleOutput,
+      eccentricConeOutputOffset,
+      circleOutputOffset,
+      eccentricConeAttributes,
+      circleAttributes
+    );
+    eccentricConeOutputOffset += closedEccentricConeOutputOffsets[0];
+    circleOutputOffset += closedEccentricConeOutputOffsets[1];
+
+    eccentricConeOutputOffset += transformOpenEccentricCones(
+      openEccentricConeSlice,
+      eccentricConeOutput,
+      eccentricConeOutputOffset,
+      eccentricConeAttributes
+    );
+
+    coneOutputOffset += transformOpenGeneralCones(openGeneralConeSlice, coneOutput, coneOutputOffset, coneAttributes);
+
+    const closedGeneralConeOutputOffsets = transformClosedGeneralCones(
+      closedGeneralConeSlice,
+      coneOutput,
+      generalRingOutput,
+      coneOutputOffset,
+      generalRingOutputOffset,
+      coneAttributes,
+      generalRingAttributes
+    );
+    coneOutputOffset += closedGeneralConeOutputOffsets[0];
+    generalRingOutputOffset += closedGeneralConeOutputOffsets[1];
+
+    const solidOpenGeneralConesOutputOffsets = transformSolidOpenGeneralCones(
+      openGeneralConeSlice,
+      coneOutput,
+      generalRingOutput,
+      coneOutputOffset,
+      generalRingOutputOffset,
+      coneAttributes,
+      generalRingAttributes
+    );
+    coneOutputOffset += solidOpenGeneralConesOutputOffsets[0];
+    generalRingOutputOffset += solidOpenGeneralConesOutputOffsets[1];
+
+    const solidClosedGeneralConesOutputOffsets = transformSolidClosedGeneralCones(
+      closedGeneralConeSlice,
+      coneOutput,
+      generalRingOutput,
+      trapeziumOutput,
+      coneOutputOffset,
+      generalRingOutputOffset,
+      trapeziumOutputOffset,
+      coneAttributes,
+      generalRingAttributes,
+      trapeziumAttributes
+    );
+    coneOutputOffset += solidClosedGeneralConesOutputOffsets[0];
+    generalRingOutputOffset += solidClosedGeneralConesOutputOffsets[1];
+    trapeziumOutputOffset += solidClosedGeneralConesOutputOffsets[2];
+
+    const closedCylinderOutputOffsets = transformClosedCylinders(
+      closedCylinderSlice,
+      coneOutput,
+      circleOutput,
+      coneOutputOffset,
+      circleOutputOffset,
+      coneAttributes,
+      circleAttributes
+    );
+    coneOutputOffset += closedCylinderOutputOffsets[0];
+    circleOutputOffset += closedCylinderOutputOffsets[1];
+
+    coneOutputOffset += transformOpenCylinders(openCylinderSlice, coneOutput, coneOutputOffset, coneAttributes);
+
+    generalCylinderOutputOffset += transformOpenGeneralCylinders(
+      openCylinderSlice,
+      generalCylinderOutput,
+      generalCylinderOutputOffset,
+      generalCylinderAttributes
+    );
+
+    const closedGeneralCylinderOutputOffsets = transformClosedGeneralCylinders(
+      closedGeneralCylinderSlice,
+      generalCylinderOutput,
+      generalRingOutput,
+      generalCylinderOutputOffset,
+      generalRingOutputOffset,
+      generalCylinderAttributes,
+      generalRingAttributes
+    );
+
+    generalCylinderOutputOffset += closedGeneralCylinderOutputOffsets[0];
+    generalRingOutputOffset += closedGeneralCylinderOutputOffsets[1];
+
+    const solidOpenGeneralCylinderOutputOffsets = transformSolidOpenGeneralCylinders(
+      openGeneralCylinderSlice,
+      generalCylinderOutput,
+      generalRingOutput,
+      generalCylinderOutputOffset,
+      generalRingOutputOffset,
+      generalCylinderAttributes,
+      generalRingAttributes
+    );
+
+    generalCylinderOutputOffset += solidOpenGeneralCylinderOutputOffsets[0];
+    generalRingOutputOffset += solidOpenGeneralCylinderOutputOffsets[1];
+
+    const solidClosedGeneralCylinderOutputOffsets = transformSolidClosedGeneralCylinders(
+      solidClosedGeneralCylinderSlice,
+      generalCylinderOutput,
+      generalRingOutput,
+      trapeziumOutput,
+      generalCylinderOutputOffset,
+      generalRingOutputOffset,
+      trapeziumOutputOffset,
+      generalCylinderAttributes,
+      generalRingAttributes,
+      trapeziumAttributes
+    );
+    generalCylinderOutputOffset += solidClosedGeneralCylinderOutputOffsets[0];
+    generalRingOutputOffset += solidClosedGeneralCylinderOutputOffsets[1];
+    trapeziumOutputOffset += solidClosedGeneralCylinderOutputOffsets[2];
+
+    const closedEllipsoidSegmentOutputOffsets = transformClosedEllipsoidSegments(
+      closedEllipsoidSegmentSlice,
+      ellipsoidSegmentOutput,
+      circleOutput,
+      ellipsoidSegmentOutputOffset,
+      circleOutputOffset,
+      ellipsoidSegmentAttributes,
+      circleAttributes
+    );
+    ellipsoidSegmentOutputOffset += closedEllipsoidSegmentOutputOffsets[0];
+    circleOutputOffset += closedEllipsoidSegmentOutputOffsets[1];
+
+    ellipsoidSegmentOutputOffset += transformEllipsoids(
+      ellipsoidSlice,
+      ellipsoidSegmentOutput,
+      ellipsoidSegmentOutputOffset,
+      ellipsoidSegmentAttributes
+    );
+
+    ellipsoidSegmentOutputOffset += transformOpenEllipsoidSegments(
+      openEllipsoidSegmentSlice,
+      ellipsoidSegmentOutput,
+      ellipsoidSegmentOutputOffset,
+      ellipsoidSegmentAttributes
+    );
+
+    nutOutputOffset += transformNuts(nutSlice, nutOutput, nutOutputOffset, nutAttributes);
+
+    const closedExtrudedRingSegmentOutputOffsets = transformClosedExtrudedRingSegments(
+      closedExtrudedRingSegmentSlice,
+      generalRingOutput,
+      coneOutput,
+      quadOutput,
+      generalRingOutputOffset,
+      coneOutputOffset,
+      quadOutputOffset,
+      generalRingAttributes,
+      coneAttributes,
+      quadAttributes
+    );
+    generalRingOutputOffset += closedExtrudedRingSegmentOutputOffsets[0];
+    coneOutputOffset += closedExtrudedRingSegmentOutputOffsets[1];
+    quadOutputOffset += closedExtrudedRingSegmentOutputOffsets[2];
+
+    const extrudedRingOutputOffsets = transformExtrudedRings(
+      extrudedRingSlice,
+      generalRingOutput,
+      coneOutput,
+      generalRingOutputOffset,
+      coneOutputOffset,
+      generalRingAttributes,
+      coneAttributes
+    );
+    generalRingOutputOffset += extrudedRingOutputOffsets[0];
+    coneOutputOffset += extrudedRingOutputOffsets[1];
+
+    const openExtrudedRingSegmentOffsets = transformOpenExtrudedRingSegments(
+      openExtrudedRingSegmentSlice,
+      generalRingOutput,
+      coneOutput,
+      generalRingOutputOffset,
+      coneOutputOffset,
+      generalRingAttributes,
+      coneAttributes
+    );
+    generalRingOutputOffset += openExtrudedRingSegmentOffsets[0];
+    coneOutputOffset += openExtrudedRingSegmentOffsets[1];
+
+    generalRingOutputOffset += transformRings(
+      ringSlice,
+      generalRingOutput,
+      generalRingOutputOffset,
+      generalRingAttributes
+    );
+
+    sphericalSegmentOutputOffset += transformOpenSphericalSegments(
+      openSphericalSegmentSlice,
+      sphericalSegmentOutput,
+      sphericalSegmentOutputOffset,
+      sphericalSegmentAttributes
+    );
+
+    sphericalSegmentOutputOffset += transformSpheres(
+      sphereSlice,
+      sphericalSegmentOutput,
+      sphericalSegmentOutputOffset,
+      sphericalSegmentAttributes
+    );
+
+    const closedSphericalSegmentOffsets = transformClosedSphericalSegments(
+      closedSphericalSegmentSlice,
+      sphericalSegmentOutput,
+      circleOutput,
+      sphericalSegmentOutputOffset,
+      circleOutputOffset,
+      sphericalSegmentAttributes,
+      circleAttributes
+    );
+    sphericalSegmentOutputOffset += closedSphericalSegmentOffsets[0];
+    circleOutputOffset += closedSphericalSegmentOffsets[1];
+
+    torusSegmentOutputOffset += transformToruses(
+      torusSlice,
+      torusSegmentOutput,
+      torusSegmentOutputOffset,
+      torusSegmentAttributes
+    );
+
+    torusSegmentOutputOffset += transformClosedTorusSegments(
+      closedTorusSegmentSlice,
+      torusSegmentOutput,
+      torusSegmentOutputOffset,
+      torusSegmentAttributes
+    );
+
+    torusSegmentOutputOffset += transformOpenTorusSegments(
+      openTorusSegmentSlice,
+      torusSegmentOutput,
+      torusSegmentOutputOffset,
+      torusSegmentAttributes
+    );
 
     const res: ParsedPrimitives = {
       boxCollection: boxOutput,

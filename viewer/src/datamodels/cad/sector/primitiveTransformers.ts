@@ -363,7 +363,7 @@ function getCylinderCap(
     color,
     normal,
     thickness,
-    angle: capAngleA,
+    angle: normalizeRadians(capAngleA),
     arcAngle,
     instanceMatrix,
     plane,
@@ -384,6 +384,8 @@ interface GeneralCylinder {
   localXAxis: THREE.Vector3;
   capA: CylinderCap;
   capB: CylinderCap;
+  extA: THREE.Vector3;
+  extB: THREE.Vector3;
 }
 
 function getGeneralCylinder(
@@ -461,13 +463,15 @@ function getGeneralCylinder(
     centerA,
     centerB,
     radius,
-    angle: rotationAngle,
+    angle: normalizeRadians(rotationAngle),
     planeA: capA.plane,
     planeB: capB.plane,
     arcAngle,
     localXAxis,
     capA,
-    capB
+    capB,
+    extA,
+    extB
   };
 }
 
@@ -685,6 +689,144 @@ function outputGeneralCylinder(
   writeVector4(planeB, outView, planeBOffset);
   writeFloat(arcAngle, outView, arcAngleOffset);
   writeVector3(localXAxis, outView, localXAxisOffset);
+}
+
+function outputEllipsoidSegment(
+  treeIndex: number,
+  color: THREE.Vector4,
+  center: THREE.Vector3,
+  normal: THREE.Vector3,
+  horizontalRadius: number,
+  verticalRadius: number,
+  height: number,
+  outView: DataView,
+  offset: number,
+  ellipsoidSegmentAttributes: Map<string, ParsePrimitiveAttribute>
+) {
+  const treeIndexOffset = offset + ellipsoidSegmentAttributes.get('treeIndex')!.offset;
+  const colorOffset = offset + ellipsoidSegmentAttributes.get('color')!.offset;
+  const centerOffset = offset + ellipsoidSegmentAttributes.get('center')!.offset;
+  const normalOffset = offset + ellipsoidSegmentAttributes.get('normal')!.offset;
+  const horizontalRadiusOffset = offset + ellipsoidSegmentAttributes.get('horizontalRadius')!.offset;
+  const verticalRadiusOffset = offset + ellipsoidSegmentAttributes.get('verticalRadius')!.offset;
+  const heightOffset = offset + ellipsoidSegmentAttributes.get('height')!.offset;
+
+  writeFloat(treeIndex, outView, treeIndexOffset);
+  writeColor(color, outView, colorOffset);
+  writeVector3(center, outView, centerOffset);
+  writeVector3(normal, outView, normalOffset);
+  writeFloat(horizontalRadius, outView, horizontalRadiusOffset);
+  writeFloat(verticalRadius, outView, verticalRadiusOffset);
+  writeFloat(height, outView, heightOffset);
+}
+
+function outputNut(
+  treeIndex: number,
+  color: THREE.Vector4,
+  center: THREE.Vector3,
+  centerAxis: THREE.Vector3,
+  height: number,
+  radius: number,
+  rotationAngle: number,
+  outView: DataView,
+  offset: number,
+  nutAttributes: Map<string, ParsePrimitiveAttribute>
+) {
+  const treeIndexOffset = offset + nutAttributes.get('treeIndex')!.offset;
+  const colorOffset = offset + nutAttributes.get('color')!.offset;
+  const instanceMatrixOffset = offset + nutAttributes.get('instanceMatrix')!.offset;
+
+  const diameter = 2 * radius;
+  const translationMatrix = createTranslation(center);
+  const firstRotation = createRotationAxisAngle(new THREE.Vector3(0, 0, 1), rotationAngle);
+  const secondRotation = createRotationBetweenZ(centerAxis);
+  const scaleMatrix = createScale(new THREE.Vector3(diameter, diameter, height));
+  const instanceMatrix = translationMatrix.multiply(secondRotation).multiply(firstRotation).multiply(scaleMatrix);
+
+  writeFloat(treeIndex, outView, treeIndexOffset);
+  writeColor(color, outView, colorOffset);
+  writeMatrix4(instanceMatrix, outView, instanceMatrixOffset);
+}
+
+function outputSphericalSegment(
+  treeIndex: number,
+  color: THREE.Vector4,
+  center: THREE.Vector3,
+  normal: THREE.Vector3,
+  radius: number,
+  height: number,
+  outView: DataView,
+  offset: number,
+  sphericalSegmentAttributes: Map<string, ParsePrimitiveAttribute>
+) {
+  const treeIndexOffset = offset + sphericalSegmentAttributes.get('treeIndex')!.offset;
+  const colorOffset = offset + sphericalSegmentAttributes.get('color')!.offset;
+  const centerOffset = offset + sphericalSegmentAttributes.get('center')!.offset;
+  const normalOffset = offset + sphericalSegmentAttributes.get('normal')!.offset;
+  const radiusOffset = offset + sphericalSegmentAttributes.get('radius')!.offset;
+  const heightOffset = offset + sphericalSegmentAttributes.get('height')!.offset;
+
+  writeFloat(treeIndex, outView, treeIndexOffset);
+  writeColor(color, outView, colorOffset);
+  writeVector3(center, outView, centerOffset);
+  writeVector3(normal, outView, normalOffset);
+  writeFloat(radius, outView, radiusOffset);
+  writeFloat(height, outView, heightOffset);
+}
+
+function outputTorusSegment(
+  treeIndex: number,
+  color: THREE.Vector4,
+  center: THREE.Vector3,
+  normal: THREE.Vector3,
+  radius: number,
+  tubeRadius: number,
+  rotationAngle: number,
+  arcAngle: number,
+  outView: DataView,
+  offset: number,
+  torusSegmentAttributes: Map<string, ParsePrimitiveAttribute>
+) {
+  const treeIndexOffset = offset + torusSegmentAttributes.get('treeIndex')!.offset;
+  const colorOffset = offset + torusSegmentAttributes.get('color')!.offset;
+  const centerOffset = offset + torusSegmentAttributes.get('center')!.offset;
+  const normalOffset = offset + torusSegmentAttributes.get('normal')!.offset;
+  const radiusOffset = offset + torusSegmentAttributes.get('radius')!.offset;
+  const tubeRadiusOffset = offset + torusSegmentAttributes.get('tubeRadius')!.offset;
+  const rotationAngleOffset = offset + torusSegmentAttributes.get('rotationAngle')!.offset;
+  const arcAngleOffset = offset + torusSegmentAttributes.get('arcAngle')!.offset;
+
+  writeFloat(treeIndex, outView, treeIndexOffset);
+  writeColor(color, outView, colorOffset);
+  writeVector3(center, outView, centerOffset);
+  writeVector3(normal, outView, normalOffset);
+  writeFloat(radius, outView, radiusOffset);
+  writeFloat(tubeRadius, outView, tubeRadiusOffset);
+  writeFloat(rotationAngle, outView, rotationAngleOffset);
+  writeFloat(arcAngle, outView, arcAngleOffset);
+}
+
+function outputQuad(
+  treeIndex: number,
+  color: THREE.Vector4,
+  vertices: THREE.Vector3[],
+  outView: DataView,
+  offset: number,
+  quadAttributes: Map<string, ParsePrimitiveAttribute>
+) {
+  const treeIndexOffset = offset + quadAttributes.get('treeIndex')!.offset;
+  const colorOffset = offset + quadAttributes.get('color')!.offset;
+  const vertex1Offset = offset + quadAttributes.get('vertex1')!.offset;
+  const vertex2Offset = offset + quadAttributes.get('vertex2')!.offset;
+  const vertex3Offset = offset + quadAttributes.get('vertex3')!.offset;
+
+  writeFloat(treeIndex, outView, treeIndexOffset);
+  writeColor(color, outView, colorOffset);
+
+  // Only output the last three vertices
+  writeVector3(vertices[1], outView, vertex1Offset);
+  writeVector3(vertices[2], outView, vertex2Offset);
+  writeVector3(vertices[3], outView, vertex3Offset);
 }
 
 function outputTrapezium(
@@ -1824,4 +1966,1186 @@ export function transformClosedGeneralCylinders(
   }
 
   return [currentCylindersOutputOffset, currentRingsOutputOffset];
+}
+
+export function transformSolidOpenGeneralCylinders(
+  inputBuffer: Uint8Array,
+  outCylindersArray: Uint8Array,
+  outRingsArray: Uint8Array,
+  originalCylindersOutputOffset: number,
+  originalRingsOutputOffset: number,
+  generalCylinderAttributes: Map<string, ParsePrimitiveAttribute>,
+  generalRingAttributes: Map<string, ParsePrimitiveAttribute>
+): [number, number] {
+  let currentInputOffset = 0;
+  let currentCylindersOutputOffset = 0;
+  let currentRingsOutputOffset = 0;
+
+  while (currentInputOffset < inputBuffer.byteLength) {
+    const inView = new DataView(inputBuffer, currentInputOffset, closedCylinderInputStructSize);
+    const outCylindersView = new DataView(
+      outCylindersArray.buffer,
+      originalCylindersOutputOffset + currentCylindersOutputOffset,
+      2 * generalCylinderOutputStructSize
+    );
+    const outRingsView = new DataView(
+      outRingsArray,
+      originalRingsOutputOffset + currentRingsOutputOffset,
+      2 * generalRingOutputStructSize
+    );
+
+    const treeIndex = inView.getFloat32(0, true);
+    const color = getColor(inView, 4);
+    // const diagonal = inView.getFloat32(8, true);
+    const center = getVector3(inView, 12);
+    const axis = getVector3(inView, 24);
+    const height = inView.getFloat32(36, true);
+    const radius = inView.getFloat32(40, true);
+    const thickness = inView.getFloat32(44, true);
+    const rotationAngle = inView.getFloat32(48, true);
+    const arcAngle = inView.getFloat32(52, true);
+    const slopeA = inView.getFloat32(56, true);
+    const slopeB = inView.getFloat32(60, true);
+    const zAngleA = inView.getFloat32(64, true);
+    const zAngleB = inView.getFloat32(68, true);
+
+    const cylinder = getGeneralCylinder(
+      treeIndex,
+      color,
+      center,
+      axis,
+      height,
+      radius,
+      thickness,
+      rotationAngle,
+      arcAngle,
+      slopeA,
+      slopeB,
+      zAngleA,
+      zAngleB
+    );
+
+    const innerRadius = cylinder.radius - thickness;
+
+    outputGeneralCylinder(
+      cylinder.treeIndex,
+      cylinder.color,
+      cylinder.centerA,
+      cylinder.centerB,
+      cylinder.radius,
+      cylinder.angle,
+      cylinder.planeA,
+      cylinder.planeB,
+      cylinder.arcAngle,
+      cylinder.localXAxis,
+      outCylindersView,
+      0,
+      generalCylinderAttributes
+    );
+
+    outputGeneralCylinder(
+      cylinder.treeIndex,
+      cylinder.color,
+      cylinder.centerA,
+      cylinder.centerB,
+      innerRadius,
+      cylinder.angle,
+      cylinder.planeA,
+      cylinder.planeB,
+      cylinder.arcAngle,
+      cylinder.localXAxis,
+      outCylindersView,
+      generalCylinderOutputStructSize,
+      generalCylinderAttributes
+    );
+
+    outputRing(
+      cylinder.capA.treeIndex,
+      cylinder.capA.color,
+      cylinder.capA.normal,
+      cylinder.capA.thickness,
+      cylinder.capA.angle,
+      cylinder.capA.arcAngle,
+      cylinder.capA.instanceMatrix,
+      outRingsView,
+      0,
+      generalRingAttributes
+    );
+
+    outputRing(
+      cylinder.capB.treeIndex,
+      cylinder.capB.color,
+      cylinder.capB.normal,
+      cylinder.capB.thickness,
+      cylinder.capB.angle,
+      cylinder.capB.arcAngle,
+      cylinder.capB.instanceMatrix,
+      outRingsView,
+      generalRingOutputStructSize,
+      generalRingAttributes
+    );
+
+    currentInputOffset += closedCylinderInputStructSize;
+    currentCylindersOutputOffset += 2 * generalCylinderOutputStructSize;
+    currentRingsOutputOffset += 2 * generalRingOutputStructSize;
+  }
+
+  return [currentCylindersOutputOffset, currentRingsOutputOffset];
+}
+
+export function transformSolidClosedGeneralCylinders(
+  inputBuffer: Uint8Array,
+  outCylindersArray: Uint8Array,
+  outRingsArray: Uint8Array,
+  outTrapeziumsArray: Uint8Array,
+  originalCylindersOutputOffset: number,
+  originalRingsOutputOffset: number,
+  originalTrapeziumsOutputOffset: number,
+  generalCylinderAttributes: Map<string, ParsePrimitiveAttribute>,
+  generalRingAttributes: Map<string, ParsePrimitiveAttribute>,
+  trapeziumAttributes: Map<string, ParsePrimitiveAttribute>
+): [number, number, number] {
+  let currentInputOffset = 0;
+  let currentCylindersOutputOffset = 0;
+  let currentRingsOutputOffset = 0;
+  let currentTrapeziumsOutputOffset = 0;
+
+  while (currentInputOffset < inputBuffer.byteLength) {
+    const inView = new DataView(inputBuffer, currentInputOffset, closedCylinderInputStructSize);
+    const outCylindersView = new DataView(
+      outCylindersArray.buffer,
+      originalCylindersOutputOffset + currentCylindersOutputOffset,
+      2 * generalCylinderOutputStructSize
+    );
+    const outRingsView = new DataView(
+      outRingsArray,
+      originalRingsOutputOffset + currentRingsOutputOffset,
+      2 * generalRingOutputStructSize
+    );
+    const outTrapeziumsView = new DataView(
+      outTrapeziumsArray.buffer,
+      originalTrapeziumsOutputOffset + currentTrapeziumsOutputOffset,
+      2 * trapeziumOutputStructSize
+    );
+
+    const treeIndex = inView.getFloat32(0, true);
+    const color = getColor(inView, 4);
+    // const diagonal = inView.getFloat32(8, true);
+    const center = getVector3(inView, 12);
+    const axis = getVector3(inView, 24);
+    const height = inView.getFloat32(36, true);
+    const radius = inView.getFloat32(40, true);
+    const thickness = inView.getFloat32(44, true);
+    const rotationAngle = inView.getFloat32(48, true);
+    const arcAngle = inView.getFloat32(52, true);
+    const slopeA = inView.getFloat32(56, true);
+    const slopeB = inView.getFloat32(60, true);
+    const zAngleA = inView.getFloat32(64, true);
+    const zAngleB = inView.getFloat32(68, true);
+
+    const cylinder = getGeneralCylinder(
+      treeIndex,
+      color,
+      center,
+      axis,
+      height,
+      radius,
+      thickness,
+      rotationAngle,
+      arcAngle,
+      slopeA,
+      slopeB,
+      zAngleA,
+      zAngleB
+    );
+
+    const innerRadius = cylinder.radius - thickness;
+
+    outputGeneralCylinder(
+      cylinder.treeIndex,
+      cylinder.color,
+      cylinder.centerA,
+      cylinder.centerB,
+      cylinder.radius,
+      cylinder.angle,
+      cylinder.planeA,
+      cylinder.planeB,
+      cylinder.arcAngle,
+      cylinder.localXAxis,
+      outCylindersView,
+      0,
+      generalCylinderAttributes
+    );
+
+    outputGeneralCylinder(
+      cylinder.treeIndex,
+      cylinder.color,
+      cylinder.centerA,
+      cylinder.centerB,
+      innerRadius,
+      cylinder.angle,
+      cylinder.planeA,
+      cylinder.planeB,
+      cylinder.arcAngle,
+      cylinder.localXAxis,
+      outCylindersView,
+      generalCylinderOutputStructSize,
+      generalCylinderAttributes
+    );
+
+    outputRing(
+      cylinder.capA.treeIndex,
+      cylinder.capA.color,
+      cylinder.capA.normal,
+      cylinder.capA.thickness,
+      cylinder.capA.angle,
+      cylinder.capA.arcAngle,
+      cylinder.capA.instanceMatrix,
+      outRingsView,
+      0,
+      generalRingAttributes
+    );
+
+    outputRing(
+      cylinder.capB.treeIndex,
+      cylinder.capB.color,
+      cylinder.capB.normal,
+      cylinder.capB.thickness,
+      cylinder.capB.angle,
+      cylinder.capB.arcAngle,
+      cylinder.capB.instanceMatrix,
+      outRingsView,
+      generalRingOutputStructSize,
+      generalRingAttributes
+    );
+
+    let trapeziumViewOffset = 0;
+
+    const capA = cylinder.capA;
+    const capB = cylinder.capB;
+    const extA = cylinder.extA;
+    const extB = cylinder.extB;
+
+    for (const second of [false, true]) {
+      const finalAngle = rotationAngle + (second ? arcAngle : 0);
+      const radii = second ? [radius - thickness, radius] : [radius, radius - thickness];
+      const rotation = createRotationBetweenZ(axis);
+      let point = new THREE.Vector3(Math.cos(finalAngle), Math.sin(finalAngle), 0);
+      point = point.applyMatrix4(rotation).normalize();
+
+      const vertices = [new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()];
+      let vertexIndex = 0;
+
+      for (const radius of radii) {
+        const lineStart = extB.sub(axis).addScaledVector(point, radius);
+        const lineEnd = extA.add(axis).addScaledVector(point, radius);
+        const lineVector = lineEnd.sub(lineStart);
+        vertices[vertexIndex] = intersect(lineVector, lineStart, capB.normal, capB.center);
+        vertices[vertexIndex + 1] = intersect(lineVector, lineStart, capA.normal, capA.center);
+        vertexIndex += 2;
+      }
+
+      outputTrapezium(treeIndex, color, vertices, outTrapeziumsView, trapeziumViewOffset, trapeziumAttributes);
+
+      trapeziumViewOffset += 4 + 4 + 4 * 3 * 4;
+    }
+
+    currentInputOffset += closedCylinderInputStructSize;
+    currentCylindersOutputOffset += 2 * generalCylinderOutputStructSize;
+    currentRingsOutputOffset += 2 * generalRingOutputStructSize;
+    currentTrapeziumsOutputOffset += 2 * trapeziumOutputStructSize;
+  }
+
+  return [currentCylindersOutputOffset, currentRingsOutputOffset, currentTrapeziumsOutputOffset];
+}
+
+export function transformClosedEllipsoidSegments(
+  inputBuffer: Uint8Array,
+  outEllipsoidSegmentsArray: Uint8Array,
+  outCirclesArray: Uint8Array,
+  originalEllipsoidSegmentsOutputOffset: number,
+  originalCircleOutputOffset: number,
+  ellipsoidSegmentAttributes: Map<string, ParsePrimitiveAttribute>,
+  circleAttributes: Map<string, ParsePrimitiveAttribute>
+): [number, number] {
+  let currentInputOffset = 0;
+  let currentEllipsoidSegmentsOutputOffset = 0;
+  let currentCirclesOutputOffset = 0;
+
+  while (currentInputOffset < inputBuffer.byteLength) {
+    const inView = new DataView(inputBuffer, currentInputOffset, closedEllipsoidSegmentInputStructSize);
+    const outEllipsoidSegmentsView = new DataView(
+      outEllipsoidSegmentsArray.buffer,
+      originalEllipsoidSegmentsOutputOffset + currentEllipsoidSegmentsOutputOffset,
+      ellipsoidSegmentOutputStructSize
+    );
+    const outCirclesView = new DataView(
+      outCirclesArray.buffer,
+      originalCircleOutputOffset + currentCirclesOutputOffset,
+      circleOutputStructSize
+    );
+
+    const treeIndex = inView.getFloat32(0, true);
+    const color = getColor(inView, 4);
+    // const diagonal = inView.getFloat32(8, true);
+    const center = getVector3(inView, 12);
+    const normal = getVector3(inView, 24);
+    const height = inView.getFloat32(36, true);
+    const horizontalRadius = inView.getFloat32(40, true);
+    const verticalRadius = inView.getFloat32(44, true);
+
+    outputEllipsoidSegment(
+      treeIndex,
+      color,
+      center,
+      normal,
+      horizontalRadius,
+      verticalRadius,
+      height,
+      outEllipsoidSegmentsView,
+      0,
+      ellipsoidSegmentAttributes
+    );
+
+    const length = verticalRadius - height;
+    const circleRadius =
+      (Math.sqrt(verticalRadius * verticalRadius - length * length) * horizontalRadius) / verticalRadius;
+    const circleCenter = center.addScaledVector(normal.normalize(), length);
+
+    outputCircle(treeIndex, color, circleCenter, normal, circleRadius, outCirclesView, 0, circleAttributes);
+
+    currentInputOffset += closedEllipsoidSegmentInputStructSize;
+    currentEllipsoidSegmentsOutputOffset += ellipsoidSegmentOutputStructSize;
+    currentCirclesOutputOffset += circleOutputStructSize;
+  }
+
+  return [currentEllipsoidSegmentsOutputOffset, currentCirclesOutputOffset];
+}
+
+export function transformEllipsoids(
+  inputBuffer: Uint8Array,
+  outEllipsoidSegmentsArray: Uint8Array,
+  originalEllipsoidSegmentsOutputOffset: number,
+  ellipsoidSegmentAttributes: Map<string, ParsePrimitiveAttribute>
+): number {
+  let currentInputOffset = 0;
+  let currentEllipsoidSegmentsOutputOffset = 0;
+
+  while (currentInputOffset < inputBuffer.byteLength) {
+    const inView = new DataView(inputBuffer, currentInputOffset, ellipsoidInputStructSize);
+    const outEllipsoidSegmentsView = new DataView(
+      outEllipsoidSegmentsArray.buffer,
+      originalEllipsoidSegmentsOutputOffset + currentEllipsoidSegmentsOutputOffset,
+      ellipsoidSegmentOutputStructSize
+    );
+
+    const treeIndex = inView.getFloat32(0, true);
+    const color = getColor(inView, 4);
+    // const diagonal = inView.getFloat32(8, true);
+    const center = getVector3(inView, 12);
+    const normal = getVector3(inView, 24);
+    const horizontalRadius = inView.getFloat32(36, true);
+    const verticalRadius = inView.getFloat32(40, true);
+
+    outputEllipsoidSegment(
+      treeIndex,
+      color,
+      center,
+      normal,
+      horizontalRadius,
+      verticalRadius,
+      verticalRadius * 2,
+      outEllipsoidSegmentsView,
+      0,
+      ellipsoidSegmentAttributes
+    );
+
+    currentInputOffset += ellipsoidInputStructSize;
+    currentEllipsoidSegmentsOutputOffset += ellipsoidSegmentOutputStructSize;
+  }
+
+  return currentEllipsoidSegmentsOutputOffset;
+}
+
+export function transformOpenEllipsoidSegments(
+  inputBuffer: Uint8Array,
+  outEllipsoidSegmentsArray: Uint8Array,
+  originalEllipsoidSegmentsOutputOffset: number,
+  ellipsoidSegmentAttributes: Map<string, ParsePrimitiveAttribute>
+): number {
+  let currentInputOffset = 0;
+  let currentEllipsoidSegmentsOutputOffset = 0;
+
+  while (currentInputOffset < inputBuffer.byteLength) {
+    const inView = new DataView(inputBuffer, currentInputOffset, openEllipsoidSegmentInputStructSize);
+    const outEllipsoidSegmentsView = new DataView(
+      outEllipsoidSegmentsArray.buffer,
+      originalEllipsoidSegmentsOutputOffset + currentEllipsoidSegmentsOutputOffset,
+      ellipsoidSegmentOutputStructSize
+    );
+
+    const treeIndex = inView.getFloat32(0, true);
+    const color = getColor(inView, 4);
+    // const diagonal = inView.getFloat32(8, true);
+    const center = getVector3(inView, 12);
+    const normal = getVector3(inView, 24);
+    const height = inView.getFloat32(36, true);
+    const horizontalRadius = inView.getFloat32(40, true);
+    const verticalRadius = inView.getFloat32(44, true);
+
+    outputEllipsoidSegment(
+      treeIndex,
+      color,
+      center,
+      normal,
+      horizontalRadius,
+      verticalRadius,
+      height,
+      outEllipsoidSegmentsView,
+      0,
+      ellipsoidSegmentAttributes
+    );
+
+    currentInputOffset += openEllipsoidSegmentInputStructSize;
+    currentEllipsoidSegmentsOutputOffset += ellipsoidSegmentOutputStructSize;
+  }
+
+  return currentEllipsoidSegmentsOutputOffset;
+}
+
+export function transformNuts(
+  inputBuffer: Uint8Array,
+  outNutsArray: Uint8Array,
+  originalNutsOutputOffset: number,
+  nutAttributes: Map<string, ParsePrimitiveAttribute>
+): number {
+  let currentInputOffset = 0;
+  let currentNutsOutputOffset = 0;
+
+  while (currentInputOffset < inputBuffer.byteLength) {
+    const inView = new DataView(inputBuffer, currentInputOffset, nutInputStructSize);
+    const outNutsView = new DataView(
+      outNutsArray.buffer,
+      originalNutsOutputOffset + currentNutsOutputOffset,
+      nutOutputStructSize
+    );
+
+    const treeIndex = inView.getFloat32(0, true);
+    const color = getColor(inView, 4);
+    // const diagonal = inView.getFloat32(8, true);
+    const center = getVector3(inView, 12);
+    const centerAxis = getVector3(inView, 24);
+    const height = inView.getFloat32(36, true);
+    const radius = inView.getFloat32(40, true);
+    const rotationAngle = inView.getFloat32(44, true);
+
+    outputNut(treeIndex, color, center, centerAxis, height, radius, rotationAngle, outNutsView, 0, nutAttributes);
+
+    currentInputOffset += nutInputStructSize;
+    currentNutsOutputOffset += nutOutputStructSize;
+  }
+
+  return currentNutsOutputOffset;
+}
+
+export function transformClosedExtrudedRingSegments(
+  inputBuffer: Uint8Array,
+  outGeneralRingsArray: Uint8Array,
+  outConesArray: Uint8Array,
+  outQuadsArray: Uint8Array,
+  originalGeneralRingsOutputOffset: number,
+  originalConesOutputOffset: number,
+  originalQuadsOutputOffset: number,
+  generalRingAttributes: Map<string, ParsePrimitiveAttribute>,
+  coneAttributes: Map<string, ParsePrimitiveAttribute>,
+  quadAttributes: Map<string, ParsePrimitiveAttribute>
+): [number, number, number] {
+  let currentInputOffset = 0;
+  let currentRingsOutputOffset = 0;
+  let currentConesOutputOffset = 0;
+  let currentQuadsOutputOffset = 0;
+
+  while (currentInputOffset < inputBuffer.byteLength) {
+    const inView = new DataView(inputBuffer, currentInputOffset, closedExtrudedRingSegmentInputStructSize);
+    const outGeneralRingsView = new DataView(
+      outGeneralRingsArray.buffer,
+      originalGeneralRingsOutputOffset + currentRingsOutputOffset,
+      generalRingOutputStructSize
+    );
+    const outConesView = new DataView(
+      outConesArray.buffer,
+      originalConesOutputOffset + currentConesOutputOffset,
+      coneOutputStructSize
+    );
+    const outQuadsView = new DataView(
+      outQuadsArray.buffer,
+      originalQuadsOutputOffset + currentQuadsOutputOffset,
+      quadOutputStructSize
+    );
+
+    const treeIndex = inView.getFloat32(0, true);
+    const color = getColor(inView, 4);
+    // const diagonal = inView.getFloat32(8, true);
+    const center = getVector3(inView, 12);
+    const centerAxis = getVector3(inView, 24);
+    const height = inView.getFloat32(36, true);
+    const innerRadius = inView.getFloat32(40, true);
+    const outerRadius = inView.getFloat32(44, true);
+    const rotationAngle = inView.getFloat32(48, true);
+    const arcAngle = inView.getFloat32(52, true);
+
+    const centerA = center.addScaledVector(centerAxis, height / 2);
+    const centerB = center.addScaledVector(centerAxis, -height / 2);
+
+    const rotation = createRotationBetweenZ(centerAxis);
+    const localXAxis = new THREE.Vector3(1, 0, 0).applyMatrix4(rotation);
+    const thickness = (outerRadius - innerRadius) / outerRadius;
+
+    const instanceMatrixA = createGeneralRingMatrix(centerA, centerAxis, localXAxis, outerRadius, outerRadius);
+    const instanceMatrixB = createGeneralRingMatrix(centerB, centerAxis, localXAxis, outerRadius, outerRadius);
+
+    outputRing(
+      treeIndex,
+      color,
+      centerAxis,
+      thickness,
+      rotationAngle,
+      arcAngle,
+      instanceMatrixA,
+      outGeneralRingsView,
+      0,
+      generalRingAttributes
+    );
+    outputRing(
+      treeIndex,
+      color,
+      new THREE.Vector3().copy(centerAxis).negate(),
+      thickness,
+      rotationAngle,
+      arcAngle,
+      instanceMatrixB,
+      outGeneralRingsView,
+      generalRingOutputStructSize,
+      generalRingAttributes
+    );
+
+    outputCone(
+      treeIndex,
+      color,
+      centerA,
+      centerB,
+      outerRadius,
+      outerRadius,
+      rotationAngle,
+      arcAngle,
+      localXAxis,
+      outConesView,
+      0,
+      coneAttributes
+    );
+    outputCone(
+      treeIndex,
+      color,
+      centerA,
+      centerB,
+      innerRadius,
+      innerRadius,
+      rotationAngle,
+      arcAngle,
+      localXAxis,
+      outConesView,
+      coneOutputStructSize,
+      coneAttributes
+    );
+
+    const c0 = Math.cos(rotationAngle);
+    const s0 = Math.sin(rotationAngle);
+
+    const vertexA = new THREE.Vector3(c0, s0, 0);
+    const vertexA0 = vertexA.applyMatrix4(rotation);
+    const vertexA1 = centerA.addScaledVector(vertexA0, outerRadius);
+    const vertexA2 = centerB.addScaledVector(vertexA0, innerRadius);
+    const vertexA3 = centerB.addScaledVector(vertexA0, outerRadius);
+
+    outputQuad(treeIndex, color, [vertexA0, vertexA1, vertexA2, vertexA3], outQuadsView, 0, quadAttributes);
+
+    const c1 = Math.cos(rotationAngle + arcAngle);
+    const s1 = Math.sin(rotationAngle + arcAngle);
+
+    const vertexB = new THREE.Vector3(c1, s1, 0);
+    const vertexB0 = vertexB.applyMatrix4(rotation);
+    const vertexB1 = centerA.addScaledVector(vertexB0, outerRadius);
+    const vertexB2 = centerB.addScaledVector(vertexB0, innerRadius);
+    const vertexB3 = centerB.addScaledVector(vertexB0, outerRadius);
+
+    outputQuad(
+      treeIndex,
+      color,
+      [vertexB0, vertexB1, vertexB2, vertexB3],
+      outQuadsView,
+      quadOutputStructSize,
+      quadAttributes
+    );
+
+    currentInputOffset += closedExtrudedRingSegmentInputStructSize;
+    currentRingsOutputOffset += 2 * generalRingOutputStructSize;
+    currentConesOutputOffset += 2 * coneOutputStructSize;
+    currentQuadsOutputOffset += 2 * quadOutputStructSize;
+  }
+
+  return [currentRingsOutputOffset, currentConesOutputOffset, currentQuadsOutputOffset];
+}
+
+export function transformExtrudedRings(
+  inputBuffer: Uint8Array,
+  outGeneralRingsArray: Uint8Array,
+  outConesArray: Uint8Array,
+  originalGeneralRingsOutputOffset: number,
+  originalConesOutputOffset: number,
+  generalRingAttributes: Map<string, ParsePrimitiveAttribute>,
+  coneAttributes: Map<string, ParsePrimitiveAttribute>
+): [number, number] {
+  let currentInputOffset = 0;
+  let currentRingsOutputOffset = 0;
+  let currentConesOutputOffset = 0;
+
+  while (currentInputOffset < inputBuffer.byteLength) {
+    const inView = new DataView(inputBuffer, currentInputOffset, extrudedRingInputStructSize);
+    const outGeneralRingsView = new DataView(
+      outGeneralRingsArray.buffer,
+      originalGeneralRingsOutputOffset + currentRingsOutputOffset,
+      generalRingOutputStructSize
+    );
+    const outConesView = new DataView(
+      outConesArray.buffer,
+      originalConesOutputOffset + currentConesOutputOffset,
+      coneOutputStructSize
+    );
+
+    const treeIndex = inView.getFloat32(0, true);
+    const color = getColor(inView, 4);
+    // const diagonal = inView.getFloat32(8, true);
+    const center = getVector3(inView, 12);
+    const centerAxis = getVector3(inView, 24);
+    const height = inView.getFloat32(36, true);
+    const innerRadius = inView.getFloat32(40, true);
+    const outerRadius = inView.getFloat32(44, true);
+
+    const centerA = center.addScaledVector(centerAxis, height / 2);
+    const centerB = center.addScaledVector(centerAxis, -height / 2);
+
+    const rotation = createRotationBetweenZ(centerAxis);
+    const localXAxis = new THREE.Vector3(1, 0, 0).applyMatrix4(rotation);
+    const thickness = (outerRadius - innerRadius) / outerRadius;
+
+    const instanceMatrixA = createGeneralRingMatrix(centerA, centerAxis, localXAxis, outerRadius, outerRadius);
+    const instanceMatrixB = createGeneralRingMatrix(centerB, centerAxis, localXAxis, outerRadius, outerRadius);
+
+    outputRing(
+      treeIndex,
+      color,
+      centerAxis,
+      thickness,
+      0,
+      2 * Math.PI,
+      instanceMatrixA,
+      outGeneralRingsView,
+      0,
+      generalRingAttributes
+    );
+    outputRing(
+      treeIndex,
+      color,
+      new THREE.Vector3().copy(centerAxis).negate(),
+      thickness,
+      0,
+      2 * Math.PI,
+      instanceMatrixB,
+      outGeneralRingsView,
+      generalRingOutputStructSize,
+      generalRingAttributes
+    );
+
+    outputCone(
+      treeIndex,
+      color,
+      centerA,
+      centerB,
+      outerRadius,
+      outerRadius,
+      0,
+      2 * Math.PI,
+      localXAxis,
+      outConesView,
+      0,
+      coneAttributes
+    );
+    outputCone(
+      treeIndex,
+      color,
+      centerA,
+      centerB,
+      innerRadius,
+      innerRadius,
+      0,
+      2 * Math.PI,
+      localXAxis,
+      outConesView,
+      coneOutputStructSize,
+      coneAttributes
+    );
+
+    currentInputOffset += extrudedRingInputStructSize;
+    currentRingsOutputOffset += 2 * generalRingOutputStructSize;
+    currentConesOutputOffset += 2 * coneOutputStructSize;
+  }
+
+  return [currentRingsOutputOffset, currentConesOutputOffset];
+}
+
+export function transformOpenExtrudedRingSegments(
+  inputBuffer: Uint8Array,
+  outGeneralRingsArray: Uint8Array,
+  outConesArray: Uint8Array,
+  originalGeneralRingsOutputOffset: number,
+  originalConesOutputOffset: number,
+  generalRingAttributes: Map<string, ParsePrimitiveAttribute>,
+  coneAttributes: Map<string, ParsePrimitiveAttribute>
+): [number, number] {
+  let currentInputOffset = 0;
+  let currentRingsOutputOffset = 0;
+  let currentConesOutputOffset = 0;
+
+  while (currentInputOffset < inputBuffer.byteLength) {
+    const inView = new DataView(inputBuffer, currentInputOffset, openExtrudedRingSegmentInputStructSize);
+    const outGeneralRingsView = new DataView(
+      outGeneralRingsArray.buffer,
+      originalGeneralRingsOutputOffset + currentRingsOutputOffset,
+      generalRingOutputStructSize
+    );
+    const outConesView = new DataView(
+      outConesArray.buffer,
+      originalConesOutputOffset + currentConesOutputOffset,
+      coneOutputStructSize
+    );
+
+    const treeIndex = inView.getFloat32(0, true);
+    const color = getColor(inView, 4);
+    // const diagonal = inView.getFloat32(8, true);
+    const center = getVector3(inView, 12);
+    const centerAxis = getVector3(inView, 24);
+    const height = inView.getFloat32(36, true);
+    const innerRadius = inView.getFloat32(40, true);
+    const outerRadius = inView.getFloat32(44, true);
+    const rotationAngle = inView.getFloat32(48, true);
+    const arcAngle = inView.getFloat32(52, true);
+
+    const centerA = center.addScaledVector(centerAxis, height / 2);
+    const centerB = center.addScaledVector(centerAxis, -height / 2);
+
+    const rotation = createRotationBetweenZ(centerAxis);
+    const localXAxis = new THREE.Vector3(1, 0, 0).applyMatrix4(rotation);
+    const thickness = (outerRadius - innerRadius) / outerRadius;
+
+    const instanceMatrixA = createGeneralRingMatrix(centerA, centerAxis, localXAxis, outerRadius, outerRadius);
+    const instanceMatrixB = createGeneralRingMatrix(centerB, centerAxis, localXAxis, outerRadius, outerRadius);
+
+    outputRing(
+      treeIndex,
+      color,
+      centerAxis,
+      thickness,
+      rotationAngle,
+      arcAngle,
+      instanceMatrixA,
+      outGeneralRingsView,
+      0,
+      generalRingAttributes
+    );
+    outputRing(
+      treeIndex,
+      color,
+      new THREE.Vector3().copy(centerAxis).negate(),
+      thickness,
+      rotationAngle,
+      arcAngle,
+      instanceMatrixB,
+      outGeneralRingsView,
+      generalRingOutputStructSize,
+      generalRingAttributes
+    );
+
+    outputCone(
+      treeIndex,
+      color,
+      centerA,
+      centerB,
+      outerRadius,
+      outerRadius,
+      rotationAngle,
+      arcAngle,
+      localXAxis,
+      outConesView,
+      0,
+      coneAttributes
+    );
+    outputCone(
+      treeIndex,
+      color,
+      centerA,
+      centerB,
+      innerRadius,
+      innerRadius,
+      rotationAngle,
+      arcAngle,
+      localXAxis,
+      outConesView,
+      coneOutputStructSize,
+      coneAttributes
+    );
+
+    currentInputOffset += openExtrudedRingSegmentInputStructSize;
+    currentRingsOutputOffset += 2 * generalRingOutputStructSize;
+    currentConesOutputOffset += 2 * coneOutputStructSize;
+  }
+
+  return [currentRingsOutputOffset, currentConesOutputOffset];
+}
+
+export function transformRings(
+  inputBuffer: Uint8Array,
+  outGeneralRingsArray: Uint8Array,
+  originalGeneralRingsOutputOffset: number,
+  generalRingAttributes: Map<string, ParsePrimitiveAttribute>
+): number {
+  let currentInputOffset = 0;
+  let currentGeneralRingsOutputOffset = 0;
+
+  while (currentInputOffset < inputBuffer.byteLength) {
+    const inView = new DataView(inputBuffer, currentInputOffset, generalRingOutputStructSize);
+    const outGeneralRingsView = new DataView(
+      outGeneralRingsArray.buffer,
+      originalGeneralRingsOutputOffset + currentGeneralRingsOutputOffset,
+      generalRingOutputStructSize
+    );
+
+    const treeIndex = inView.getFloat32(0, true);
+    const color = getColor(inView, 4);
+    // const diagonal = inView.getFloat32(8, true);
+    const center = getVector3(inView, 12);
+    const normal = getVector3(inView, 24);
+    const innerRadius = inView.getFloat32(36, true);
+    const outerRadius = inView.getFloat32(40, true);
+
+    const thickness = (outerRadius - innerRadius) / outerRadius;
+    const rotation = createRotationBetweenZ(normal);
+    const localXAxis = new THREE.Vector3(1, 0, 0).applyMatrix4(rotation);
+
+    const instanceMatrix = createGeneralRingMatrix(center, normal, localXAxis, outerRadius, outerRadius);
+
+    outputRing(
+      treeIndex,
+      color,
+      normal,
+      thickness,
+      0,
+      2 * Math.PI,
+      instanceMatrix,
+      outGeneralRingsView,
+      0,
+      generalRingAttributes
+    );
+
+    currentInputOffset += ringInputStructSize;
+    currentGeneralRingsOutputOffset += generalRingOutputStructSize;
+  }
+
+  return currentGeneralRingsOutputOffset;
+}
+
+export function transformOpenSphericalSegments(
+  inputBuffer: Uint8Array,
+  outSphericalSegmentsArray: Uint8Array,
+  originalSphericalSegmentsOutputOffset: number,
+  sphericalSegmentAttributes: Map<string, ParsePrimitiveAttribute>
+): number {
+  let currentInputOffset = 0;
+  let currentSphericalSegmentsOutputOffset = 0;
+
+  while (currentInputOffset < inputBuffer.byteLength) {
+    const inView = new DataView(inputBuffer, currentInputOffset, openSphericalSegmentInputStructSize);
+    const outSphericalSegmentsView = new DataView(
+      outSphericalSegmentsArray.buffer,
+      originalSphericalSegmentsOutputOffset + currentSphericalSegmentsOutputOffset,
+      sphericalSegmentOutputStructSize
+    );
+
+    const treeIndex = inView.getFloat32(0, true);
+    const color = getColor(inView, 4);
+    // const diagonal = inView.getFloat32(8, true);
+    const center = getVector3(inView, 12);
+    const normal = getVector3(inView, 24);
+    const height = inView.getFloat32(36, true);
+    const radius = inView.getFloat32(40, true);
+
+    outputSphericalSegment(
+      treeIndex,
+      color,
+      center,
+      normal,
+      radius,
+      height,
+      outSphericalSegmentsView,
+      0,
+      sphericalSegmentAttributes
+    );
+
+    currentInputOffset += openSphericalSegmentInputStructSize;
+    currentSphericalSegmentsOutputOffset += sphericalSegmentOutputStructSize;
+  }
+
+  return currentSphericalSegmentsOutputOffset;
+}
+
+export function transformSpheres(
+  inputBuffer: Uint8Array,
+  outSphericalSegmentsArray: Uint8Array,
+  originalSphericalSegmentsOutputOffset: number,
+  sphericalSegmentAttributes: Map<string, ParsePrimitiveAttribute>
+): number {
+  let currentInputOffset = 0;
+  let currentSphericalSegmentsOutputOffset = 0;
+
+  while (currentInputOffset < inputBuffer.byteLength) {
+    const inView = new DataView(inputBuffer, currentInputOffset, sphereInputStructSize);
+    const outSphericalSegmentsView = new DataView(
+      outSphericalSegmentsArray.buffer,
+      originalSphericalSegmentsOutputOffset + currentSphericalSegmentsOutputOffset,
+      sphericalSegmentOutputStructSize
+    );
+
+    const treeIndex = inView.getFloat32(0, true);
+    const color = getColor(inView, 4);
+    // const diagonal = inView.getFloat32(8, true);
+    const center = getVector3(inView, 12);
+    const radius = inView.getFloat32(24, true);
+
+    outputSphericalSegment(
+      treeIndex,
+      color,
+      center,
+      new THREE.Vector3(0, 0, 1),
+      radius,
+      2 * radius,
+      outSphericalSegmentsView,
+      0,
+      sphericalSegmentAttributes
+    );
+
+    currentInputOffset += sphereInputStructSize;
+    currentSphericalSegmentsOutputOffset += sphericalSegmentOutputStructSize;
+  }
+
+  return currentSphericalSegmentsOutputOffset;
+}
+
+export function transformClosedSphericalSegments(
+  inputBuffer: Uint8Array,
+  outSphericalSegmentsArray: Uint8Array,
+  outCirclesArray: Uint8Array,
+  originalSphericalSegmentsOutputOffset: number,
+  originalCirclesOutputOffset: number,
+  sphericalSegmentAttributes: Map<string, ParsePrimitiveAttribute>,
+  circleAttributes: Map<string, ParsePrimitiveAttribute>
+): [number, number] {
+  let currentInputOffset = 0;
+  let currentSphericalSegmentsOutputOffset = 0;
+  let currentCircleOutputOffset = 0;
+
+  while (currentInputOffset < inputBuffer.byteLength) {
+    const inView = new DataView(inputBuffer, currentInputOffset, closedSphericalSegmentInputStructSize);
+    const outSphericalSegmentsView = new DataView(
+      outSphericalSegmentsArray.buffer,
+      originalSphericalSegmentsOutputOffset + currentSphericalSegmentsOutputOffset,
+      sphericalSegmentOutputStructSize
+    );
+    const outCirclesView = new DataView(
+      outCirclesArray.buffer,
+      originalCirclesOutputOffset + currentCircleOutputOffset,
+      circleOutputStructSize
+    );
+
+    const treeIndex = inView.getFloat32(0, true);
+    const color = getColor(inView, 4);
+    // const diagonal = inView.getFloat32(8, true);
+    const center = getVector3(inView, 12);
+    const normal = getVector3(inView, 24);
+    const height = inView.getFloat32(36, true);
+    const radius = inView.getFloat32(40, true);
+
+    const length = radius - height;
+    const circleRadius = Math.sqrt(radius * radius - length * length);
+    const circleCenter = center.addScaledVector(normal.normalize(), length);
+
+    outputSphericalSegment(
+      treeIndex,
+      color,
+      center,
+      normal,
+      radius,
+      height,
+      outSphericalSegmentsView,
+      0,
+      sphericalSegmentAttributes
+    );
+    outputCircle(treeIndex, color, circleCenter, normal, circleRadius, outCirclesView, 0, circleAttributes);
+
+    currentInputOffset += closedSphericalSegmentInputStructSize;
+    currentSphericalSegmentsOutputOffset += sphericalSegmentOutputStructSize;
+    currentCircleOutputOffset += circleOutputStructSize;
+  }
+
+  return [currentSphericalSegmentsOutputOffset, currentCircleOutputOffset];
+}
+
+export function transformToruses(
+  inputBuffer: Uint8Array,
+  outTorusSegmentsArray: Uint8Array,
+  originalTorusSegmentsOutputOffset: number,
+  torusSegmentAttributes: Map<string, ParsePrimitiveAttribute>
+): number {
+  let currentInputOffset = 0;
+  let currentTorusOutputOffset = 0;
+
+  while (currentInputOffset < inputBuffer.byteLength) {
+    const inView = new DataView(inputBuffer, currentInputOffset, torusInputStructSize);
+    const outTorusSegmentsView = new DataView(
+      outTorusSegmentsArray.buffer,
+      originalTorusSegmentsOutputOffset + currentTorusOutputOffset,
+      torusSegmentOutputStructSize
+    );
+
+    const treeIndex = inView.getFloat32(0, true);
+    const color = getColor(inView, 4);
+    // const diagonal = inView.getFloat32(8, true);
+    const center = getVector3(inView, 12);
+    const normal = getVector3(inView, 24);
+    const radius = inView.getFloat32(36, true);
+    const tubeRadius = inView.getFloat32(40, true);
+
+    outputTorusSegment(
+      treeIndex,
+      color,
+      center,
+      normal,
+      radius,
+      tubeRadius,
+      0,
+      2 * Math.PI,
+      outTorusSegmentsView,
+      0,
+      torusSegmentAttributes
+    );
+
+    currentInputOffset += torusInputStructSize;
+    currentTorusOutputOffset += torusSegmentOutputStructSize;
+  }
+
+  return currentTorusOutputOffset;
+}
+
+export function transformClosedTorusSegments(
+  inputBuffer: Uint8Array,
+  outTorusSegmentsArray: Uint8Array,
+  originalTorusSegmentsOutputOffset: number,
+  torusSegmentAttributes: Map<string, ParsePrimitiveAttribute>
+): number {
+  let currentInputOffset = 0;
+  let currentTorusOutputOffset = 0;
+
+  while (currentInputOffset < inputBuffer.byteLength) {
+    const inView = new DataView(inputBuffer, currentInputOffset, closedTorusSegmentInputStructSize);
+    const outTorusSegmentsView = new DataView(
+      outTorusSegmentsArray.buffer,
+      originalTorusSegmentsOutputOffset + currentTorusOutputOffset,
+      torusSegmentOutputStructSize
+    );
+
+    const treeIndex = inView.getFloat32(0, true);
+    const color = getColor(inView, 4);
+    // const diagonal = inView.getFloat32(8, true);
+    const center = getVector3(inView, 12);
+    const normal = getVector3(inView, 24);
+    const radius = inView.getFloat32(36, true);
+    const tubeRadius = inView.getFloat32(40, true);
+    const rotationAngle = inView.getFloat32(44, true);
+    const arcAngle = inView.getFloat32(48, true);
+
+    outputTorusSegment(
+      treeIndex,
+      color,
+      center,
+      normal,
+      radius,
+      tubeRadius,
+      rotationAngle,
+      arcAngle,
+      outTorusSegmentsView,
+      0,
+      torusSegmentAttributes
+    );
+
+    currentInputOffset += closedTorusSegmentInputStructSize;
+    currentTorusOutputOffset += torusSegmentOutputStructSize;
+  }
+
+  return currentTorusOutputOffset;
+}
+
+export function transformOpenTorusSegments(
+  inputBuffer: Uint8Array,
+  outTorusSegmentsArray: Uint8Array,
+  originalTorusSegmentsOutputOffset: number,
+  torusSegmentAttributes: Map<string, ParsePrimitiveAttribute>
+): number {
+  let currentInputOffset = 0;
+  let currentTorusOutputOffset = 0;
+
+  while (currentInputOffset < inputBuffer.byteLength) {
+    const inView = new DataView(inputBuffer, currentInputOffset, openTorusSegmentInputStructSize);
+    const outTorusSegmentsView = new DataView(
+      outTorusSegmentsArray.buffer,
+      originalTorusSegmentsOutputOffset + currentTorusOutputOffset,
+      torusSegmentOutputStructSize
+    );
+
+    const treeIndex = inView.getFloat32(0, true);
+    const color = getColor(inView, 4);
+    // const diagonal = inView.getFloat32(8, true);
+    const center = getVector3(inView, 12);
+    const normal = getVector3(inView, 24);
+    const radius = inView.getFloat32(36, true);
+    const tubeRadius = inView.getFloat32(40, true);
+    const rotationAngle = inView.getFloat32(44, true);
+    const arcAngle = inView.getFloat32(48, true);
+
+    outputTorusSegment(
+      treeIndex,
+      color,
+      center,
+      normal,
+      radius,
+      tubeRadius,
+      rotationAngle,
+      arcAngle,
+      outTorusSegmentsView,
+      0,
+      torusSegmentAttributes
+    );
+
+    currentInputOffset += openTorusSegmentInputStructSize;
+    currentTorusOutputOffset += torusSegmentOutputStructSize;
+  }
+
+  return currentTorusOutputOffset;
 }
