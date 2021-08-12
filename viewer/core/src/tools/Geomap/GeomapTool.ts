@@ -3,7 +3,8 @@
  */
 
 import * as THREE from 'three';
-import * as GEOTHREE from 'geo-three';
+import * as GEOTHREE from '../../@types/geo-three';
+// const GEOTHREE = require('geo-three');
 
 import { Cognite3DViewer } from '../../migration';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';

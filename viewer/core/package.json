@@ -9,8 +9,7 @@
     "lint": "yarn ws:lint"
   },
   "dependencies": {
-    "@reveal/camera-manager": "workspace:*",
-    "geo-three": "^0.0.10"
+    "@reveal/camera-manager": "workspace:*"
   },
   "sideEffects": false,
   "glslify": {
