@@ -9,6 +9,7 @@ import {
   ItemsList,
   SearchState,
 } from 'modules/types';
+import { updateAction as update } from '../reducers';
 import { createSearchSelector } from './selectors';
 
 export const defaultSearch: ApiSearchResult = { ids: [], status: undefined };
@@ -19,10 +20,11 @@ export default function buildSearch<T extends InternalId, Q extends Query>(
   const search = {
     action: createAsyncThunk(
       `${resourceType}/search`,
-      async ({ filter }: { filter: any }) => {
+      async ({ filter }: { filter: any }, { dispatch }: { dispatch: any }) => {
         const searchFn: (q: Query) => Promise<InternalId[]> =
           sdk[resourceType].search;
         const result: InternalId[] = (await searchFn(filter)) as InternalId[];
+        if (result) dispatch(update(resourceType)(result));
         return {
           filter,
           result,
