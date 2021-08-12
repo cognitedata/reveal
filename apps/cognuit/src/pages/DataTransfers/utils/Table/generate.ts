@@ -5,8 +5,7 @@ import { getMappedColumnName } from 'utils/columns';
 
 /**
  * Generate the desired columns with correctly mapped names and
- * ability to sort (based on config). Additionally, regardlessly add the
- * {@link DetailViewButton} to all rows.
+ * ability to sort (based on config).
  *
  * @param response (almost) API response
  * @param columnNames All the desired/selected columns
@@ -19,13 +18,19 @@ export function generatesDataTypesColumnsFromData(
 
   if (response.length === 0) return undefined;
 
-  Object.keys(response[0]).forEach((key) => {
-    if (
-      (columnNames.length === 0 || columnNames.includes(key)) &&
-      !config.ignoreColumns.includes(key)
-    ) {
+  columnNames.forEach((key) => {
+    if (!config.ignoreColumns.includes(key)) {
+      const [name, parent] = key.split('.').reverse();
+
+      let title = getMappedColumnName(name, 'datatransfers');
+
+      // Note: This might be removed in favour of adding a "subtitle" property to cogs.js table column header
+      if (parent) {
+        title += ` (${parent})`;
+      }
+
       results.push({
-        title: getMappedColumnName(key, 'datatransfers'),
+        title,
         dataIndex: key, // mark for delete
         key,
         sorter: !!config.nonSortableColumns.includes(key), // Rename property

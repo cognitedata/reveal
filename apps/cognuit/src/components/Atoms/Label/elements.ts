@@ -5,5 +5,4 @@ export const Label = styled.span`
   font-weight: 500;
   color: var(--cogs-greyscale-grey10);
   display: block;
-  margin-bottom: 4px;
 `;

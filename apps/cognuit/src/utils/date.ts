@@ -1,4 +1,5 @@
 import { UNIX_TIMESTAMP_FACTOR } from 'typings/interfaces';
+import { format } from 'date-fns';
 
 const endOfDay = 24 * 60 * 60 * 999;
 export const toRawDate = (date: Date, addDay = false) => {
@@ -13,4 +14,8 @@ export const toUnixDate = (value: number) => {
 };
 export const toUnixLocalString = (value: number) => {
   return toUnixDate(value).toLocaleString();
+};
+
+export const formatDate = (value: number, formatString = 'Pp') => {
+  return format(toUnixDate(value), formatString);
 };

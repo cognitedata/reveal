@@ -31,13 +31,13 @@ export const FilterList = ({
               onClickOutside={closeHandler}
             >
               <>
-                <Label>{dropdown.label}</Label>
                 <DropdownButton
                   type="secondary"
                   icon="ChevronDownCompact"
                   iconPlacement="right"
                   onClick={() => toggleFilter(dropdown.name)}
                 >
+                  <Label>{dropdown.label}</Label>:{' '}
                   {dropdown.value || placeholder}
                 </DropdownButton>
               </>

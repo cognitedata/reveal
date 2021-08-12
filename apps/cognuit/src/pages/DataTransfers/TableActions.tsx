@@ -74,9 +74,10 @@ const TableActions: React.FC = () => {
     if (datatransfers.length > 0) {
       const handledData: DataTransfersTableData[] = datatransfers.map(
         (item) => ({
-          ...item.source,
+          id: item.source.id,
+          source: item.source,
+          target: item.target,
           status: item.status,
-          report: item.status,
         })
       );
 

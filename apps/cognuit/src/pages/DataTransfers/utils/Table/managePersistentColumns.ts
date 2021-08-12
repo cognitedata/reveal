@@ -1,7 +1,8 @@
 import { storage } from '@cognite/storage';
 import config from 'configs/datatransfer.config';
 
-const COLUMNS_KEY = 'columns';
+// Note: Change the cache key every time changes to the column structure occurs. This "invalidates" users column selection.
+const COLUMNS_KEY = 'columns-v2';
 
 export const addSelectedColumnPersistently = (name: string): string[] => {
   const value = storage.getFromLocalStorage<string[]>(COLUMNS_KEY);

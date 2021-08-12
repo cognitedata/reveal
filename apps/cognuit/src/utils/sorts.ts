@@ -6,5 +6,13 @@ export const sortColumnsByRules = <T extends { id: number }>(
   data: TableProps<T>['columns'],
   orderRules: string[]
 ) => {
-  return sortBy(data, (obj) => indexOf(orderRules, obj.accessor));
+  return sortBy(data, (obj) => {
+    const index = indexOf(orderRules, obj.accessor);
+
+    if (index === -1) {
+      return indexOf(orderRules, '*');
+    }
+
+    return indexOf(orderRules, obj.accessor);
+  });
 };

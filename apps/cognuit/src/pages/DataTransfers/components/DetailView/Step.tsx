@@ -1,6 +1,5 @@
 import { Colors, Icon } from '@cognite/cogs.js';
-import { format } from 'date-fns';
-import { UNIX_TIMESTAMP_FACTOR } from 'typings/interfaces';
+import { formatDate } from 'utils/date';
 
 import { StepIconCircle, StepItem, StepText, StepTime } from './elements';
 
@@ -26,10 +25,7 @@ const Step = ({ status, error_message, created_time }: StepType) => (
     <StepText>
       {error_message ? (
         <span>
-          {error_message}{' '}
-          <StepTime>
-            {format(new Date(created_time * UNIX_TIMESTAMP_FACTOR), 'Pp')}
-          </StepTime>
+          {error_message} <StepTime>{formatDate(created_time)}</StepTime>
         </span>
       ) : (
         <span>{status}</span>

@@ -1,12 +1,9 @@
 import { Col, Input, Row } from '@cognite/cogs.js';
-import { format } from 'date-fns';
-import { UNIX_TIMESTAMP_FACTOR } from 'typings/interfaces';
-
-import { getFormattedTimestampOrString } from '../../utils';
+import { formatDate } from 'utils/date';
 
 import { Section } from './elements';
-import { SourceType } from './DetailView';
 import Step from './Step';
+import { SourceType } from './types';
 
 const SourceTabContent = ({ ...source }: SourceType) => (
   <>
@@ -58,14 +55,7 @@ const SourceTabContent = ({ ...source }: SourceType) => (
           <h3>Created time</h3>
           <Input
             type="text"
-            value={
-              source.createdTime
-                ? format(
-                    new Date(source.createdTime * UNIX_TIMESTAMP_FACTOR),
-                    'Pp'
-                  )
-                : ''
-            }
+            value={source.createdTime ? formatDate(source.createdTime) : ''}
             variant="noBorder"
             readOnly
           />
@@ -82,6 +72,17 @@ const SourceTabContent = ({ ...source }: SourceType) => (
       </Row>
       <Row>
         <Col span={24}>
+          <h3>Interpreter</h3>
+          <Input
+            type="text"
+            value={source.interpreter || ''}
+            variant="noBorder"
+            readOnly
+          />
+        </Col>
+      </Row>
+      <Row>
+        <Col span={12}>
           <h3>Business project tag</h3>
           <Input
             type="text"
@@ -90,26 +91,11 @@ const SourceTabContent = ({ ...source }: SourceType) => (
             readOnly
           />
         </Col>
-      </Row>
-      <Row>
         <Col span={12}>
-          <h3>Revision</h3>
+          <h3>Quality tags</h3>
           <Input
             type="text"
-            value={
-              source.revision
-                ? getFormattedTimestampOrString(source.revision)
-                : ''
-            }
-            variant="noBorder"
-            readOnly
-          />
-        </Col>
-        <Col span={12}>
-          <h3>Interpreter</h3>
-          <Input
-            type="text"
-            value={source.interpreter || ''}
+            value={source.qualityTags?.join(', ') || ''}
             variant="noBorder"
             readOnly
           />

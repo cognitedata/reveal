@@ -56,7 +56,6 @@ describe('utils/Table', () => {
           );
 
           expect(result.length).toBeGreaterThan(0);
-
           expect(result.length).toBe(generateColumns?.length);
 
           const detailViewButton = result[result.length - 1];

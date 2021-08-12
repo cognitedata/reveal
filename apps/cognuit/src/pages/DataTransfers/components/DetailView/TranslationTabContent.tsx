@@ -1,12 +1,9 @@
 import { Col, Input, Row } from '@cognite/cogs.js';
-import { format } from 'date-fns';
-import { UNIX_TIMESTAMP_FACTOR } from 'typings/interfaces';
-
-import { getFormattedTimestampOrString } from '../../utils';
+import { formatDate } from 'utils/date';
 
 import { Section } from './elements';
-import { TargetType } from './DetailView';
 import Step from './Step';
+import { TargetType } from './types';
 
 const TranslationTabContent = ({ ...target }: TargetType) => (
   <Section>
@@ -57,18 +54,22 @@ const TranslationTabContent = ({ ...target }: TargetType) => (
         </Col>
       </Row>
       <Row>
+        <Col span={24}>
+          <h3>Configuration tag</h3>
+          <Input
+            type="text"
+            value={target.configTag || ''}
+            variant="noBorder"
+            readOnly
+          />
+        </Col>
+      </Row>
+      <Row>
         <Col span={12}>
           <h3>Created time</h3>
           <Input
             type="text"
-            value={
-              target.createdTime
-                ? format(
-                    new Date(target.createdTime * UNIX_TIMESTAMP_FACTOR),
-                    'Pp'
-                  )
-                : ''
-            }
+            value={target.createdTime ? formatDate(target.createdTime) : ''}
             variant="noBorder"
             readOnly
           />
@@ -83,30 +84,7 @@ const TranslationTabContent = ({ ...target }: TargetType) => (
           />
         </Col>
       </Row>
-      <Row>
-        <Col span={12}>
-          <h3>Configuration Tag</h3>
-          <Input
-            type="text"
-            value={target.configTag || ''}
-            variant="noBorder"
-            readOnly
-          />
-        </Col>
-        <Col span={12}>
-          <h3>Revision</h3>
-          <Input
-            type="text"
-            value={
-              target.revision
-                ? getFormattedTimestampOrString(target.revision)
-                : ''
-            }
-            variant="noBorder"
-            readOnly
-          />
-        </Col>
-      </Row>
+
       {target.cdfMetadata && Object.keys(target.cdfMetadata).length > 0 && (
         <details>
           <summary>

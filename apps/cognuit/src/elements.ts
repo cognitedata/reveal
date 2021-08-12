@@ -8,14 +8,15 @@ export const Layout = styled.div`
 `;
 
 export const Main = styled.div`
-  background-color: var(--cogs-greyscale-grey2);
+  background-color: var(--cogs-white);
   flex-grow: 1;
   overflow-y: scroll;
   position: relative;
 `;
 
 export const Content = styled.main`
-  padding: 32px 48px;
+  /* padding: 32px 48px; */
+  padding: 1rem;
   margin-top: 56px; // Height of header
 `;
 

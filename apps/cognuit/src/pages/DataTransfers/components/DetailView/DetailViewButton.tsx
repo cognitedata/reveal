@@ -4,24 +4,22 @@ import { FC } from 'react';
 
 interface Props {
   record: DataTransfersTableData;
-  onDetailViewClick: (record: DataTransfersTableData) => void;
+  onClick: (record: DataTransfersTableData) => void;
 }
-export const DetailViewButton: FC<Props> = ({ record, onDetailViewClick }) => {
-  const { revisions } = record;
+export const DetailViewButton: FC<Props> = ({ record, onClick }) => {
+  const { revisions = [] } = record?.source || {};
 
   if (revisions.length === 0) {
     return null;
   }
 
   return (
-    <>
-      <DetailButton
-        onClick={() => {
-          onDetailViewClick(record);
-        }}
-      >
-        Detail view
-      </DetailButton>
-    </>
+    <DetailButton
+      onClick={() => {
+        onClick(record);
+      }}
+    >
+      View
+    </DetailButton>
   );
 };

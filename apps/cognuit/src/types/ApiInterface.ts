@@ -76,11 +76,13 @@ interface Source {
   source: string;
 }
 
+export type Status = 'In progress' | 'Succeeded' | 'Failed';
+
 // Data transfers
 export interface DataTransfersResponse {
   source: ObjectsRevisionsResponse;
   target: ObjectsRevisionsResponse;
-  status: string;
+  status: Status;
 }
 
 // Object revisions
@@ -146,7 +148,7 @@ export interface Revision {
   // cdf_metadata: any;
 }
 
-interface Step {
+export interface Step {
   status: string;
   error_message: string | null;
   created_time: number;

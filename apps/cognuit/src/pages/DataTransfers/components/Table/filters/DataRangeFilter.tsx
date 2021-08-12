@@ -31,8 +31,9 @@ export const DataRangeFilter = ({
 
   return (
     <DateRange
-      showClose
-      months={2}
+      type="standard"
+      calendarHasBorder={false}
+      months={1}
       minDate={toUnixDate(min)}
       maxDate={toUnixDate(max)}
       direction="horizontal"

@@ -1,4 +1,5 @@
 /* eslint-disable camelcase */
+import { AllIconTypes } from '@cognite/cogs.js';
 import React from 'react';
 
 import { ConfigurationsResponse } from '../types/ApiInterface';
@@ -130,12 +131,13 @@ export enum DummyUser {
   DEMO = 'Demo User',
 }
 export interface Rule {
-  key: string;
+  key: string | string[];
   render: (props: any) => React.ReactFragment;
   disableSortBy?: boolean;
   Filter?: (props: any) => JSX.Element;
   filter?: string;
   width?: number;
+  filterIcon?: AllIconTypes;
 }
 
 export interface ErrorDistributionObject {

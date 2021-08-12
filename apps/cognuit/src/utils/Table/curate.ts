@@ -20,7 +20,10 @@ export function curateTableColumns<T extends { id: number }>(
 
   const curatedColumns = columns.map((column) => {
     const rule = rules.find(
-      (rule: Rule) => rule.key === column.key || rule.key === '*'
+      (rule: Rule) =>
+        rule.key === column.key ||
+        rule.key.includes(column.key) ||
+        rule.key === '*'
     );
 
     if (!rule) {
@@ -41,6 +44,12 @@ export function curateTableColumns<T extends { id: number }>(
     if (rule?.Filter && rule?.filter) {
       curateColumns.Filter = rule.Filter;
       curateColumns.filter = rule.filter;
+      // We want to disable sorting if a filter is defined.
+      curateColumns.disableSortBy = true;
+    }
+
+    if (rule?.filterIcon) {
+      curateColumns.filterIcon = rule.filterIcon;
     }
 
     return curateColumns;

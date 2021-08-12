@@ -6,7 +6,7 @@ import {
 import { Range } from '@cognite/cogs.js';
 import {
   DataTransfersTableData,
-  DataTransfersTableKeys,
+  MappedColumnNames,
 } from 'pages/DataTransfers/types';
 
 export type DataTransfersError = {
@@ -33,7 +33,7 @@ export enum Action {
 
 interface Data {
   data: DataTransfersTableData[];
-  allColumnNames: DataTransfersTableKeys[];
+  allColumnNames: MappedColumnNames[];
   selectedColumnNames: string[];
 }
 

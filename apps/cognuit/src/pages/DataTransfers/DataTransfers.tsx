@@ -9,8 +9,6 @@ import { ProgressState } from 'contexts/types/dataTransfersTypes';
 import { sortColumnsByRules } from 'utils/sorts';
 import { curateTableColumns } from 'utils/Table/curate';
 
-import { ContentContainer } from '../../elements';
-
 import DetailView from './components/DetailView/DetailView';
 import { DetailViewWrapper } from './elements';
 import TableActions from './TableActions';
@@ -41,6 +39,8 @@ const DataTransfers: React.FC = () => {
   >(undefined);
 
   function renderNoDataText() {
+    if (filteredData.length > 0) return null;
+
     let message = 'Select configuration';
     if (selectedSource) {
       if (selectedSourceProject) {
@@ -105,13 +105,13 @@ const DataTransfers: React.FC = () => {
   }
 
   return (
-    <ContentContainer>
+    <>
       <TableActions />
       <Table<DataTransfersTableData>
-        filterable
-        dataSource={filteredData}
         rowKey={(data) => `datatypes-${data.id}`}
+        dataSource={filteredData}
         columns={tableColumns}
+        filterable
         locale={{ emptyText: renderNoDataText() }}
       />
       <DetailViewWrapper>
@@ -122,7 +122,7 @@ const DataTransfers: React.FC = () => {
           />
         )}
       </DetailViewWrapper>
-    </ContentContainer>
+    </>
   );
 };
 

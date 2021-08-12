@@ -2,8 +2,6 @@ import styled from 'styled-components';
 import { Button } from '@cognite/cogs.js';
 
 export const TableActionsContainer = styled.div`
-  padding: 2rem 2rem 1rem 2rem;
-  border-bottom: 1px solid var(--cogs-greyscale-grey4);
   display: flex;
   justify-content: flex-start;
   align-items: center;
@@ -40,5 +38,5 @@ export const StatusDot = styled.div<{ bgColor: string }>`
 `;
 
 export const DetailButton = styled(Button)`
-  width: 150px;
+  width: 60px;
 `;

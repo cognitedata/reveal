@@ -11,11 +11,9 @@ describe('datatransfers/components/detailview', () => {
 
       const [record] = fixtureDataTransferDataTable;
 
-      render(
-        <DetailViewButton record={record} onDetailViewClick={mockHandleClick} />
-      );
+      render(<DetailViewButton record={record} onClick={mockHandleClick} />);
 
-      const detailViewButton = screen.getByText('Detail view');
+      const detailViewButton = screen.getByText('View');
       expect(detailViewButton).toBeInTheDocument();
 
       fireEvent.click(detailViewButton);
@@ -29,10 +27,10 @@ describe('datatransfers/components/detailview', () => {
       render(
         <DetailViewButton
           record={{ revisions: [] } as any}
-          onDetailViewClick={mockHandleClick}
+          onClick={mockHandleClick}
         />
       );
-      const detailViewButton = screen.queryByText('Detail view');
+      const detailViewButton = screen.queryByText('View');
 
       expect(detailViewButton).not.toBeInTheDocument();
       expect(mockHandleClick).not.toBeCalled();

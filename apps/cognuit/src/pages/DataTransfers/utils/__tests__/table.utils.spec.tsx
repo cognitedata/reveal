@@ -18,7 +18,7 @@ describe('datatransfers/utils', () => {
 
       const name = result?.find((item) => item.key === 'name');
       expect(name?.title).toMatch('Name');
-      expect(name?.sorter).toBeTruthy();
+      expect(name?.sorter).toBeFalsy();
 
       const status = result?.find((item) => item.key === 'status');
       expect(status?.title).toMatch('');
@@ -37,7 +37,9 @@ describe('datatransfers/utils', () => {
     });
 
     it('Ignores the columns that are configured to be ignored', () => {
-      const result = generatesDataTypesColumnsFromData(response, ['revisions']);
+      const result = generatesDataTypesColumnsFromData(response, [
+        'source.revisions',
+      ]);
 
       // 1 because detailViewButton is always present
       expect(result).toHaveLength(1);

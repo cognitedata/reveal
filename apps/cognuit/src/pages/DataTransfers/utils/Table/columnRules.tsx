@@ -1,10 +1,11 @@
-import { Colors, Table } from '@cognite/cogs.js';
+import { Table, Label, LabelVariants, Tag, Tooltip } from '@cognite/cogs.js';
 import { DataRangeFilter } from 'pages/DataTransfers/components/Table/filters/DataRangeFilter';
-import { StatusDot } from 'pages/DataTransfers/elements';
 import { DataTransfersTableData } from 'pages/DataTransfers/types';
 import { getFormattedTimestampOrString } from 'pages/DataTransfers/utils';
+import { getLatestRevisionStepsStatus } from 'services/endpoints/datatransfers/selector';
+import { Status } from 'types/ApiInterface';
 import { Rule } from 'typings/interfaces';
-import { apiStatuses } from 'utils/statuses';
+import { formatDate } from 'utils/date';
 
 import { DetailViewButton } from '../../components/DetailView/DetailViewButton';
 
@@ -23,43 +24,64 @@ export const dataTransfersColumnRules = ({
 }: Props): Rule[] => {
   return [
     {
-      key: 'name',
+      key: ['source.name', 'target.name'],
       render: ({ value }: { value: any }) => {
         return getFormattedTimestampOrString(value);
       },
       Filter: Table.InputFilter(),
       filter: 'fuzzyText',
-    },
-    {
-      key: 'report',
-      render: ({ value }: { value: any }) => {
-        return getFormattedTimestampOrString(value);
-      },
-      Filter: Table.SelectColumnFilter(),
-      filter: 'includes',
+      filterIcon: 'Search',
     },
     {
       key: 'status',
-      render: ({ value }: { value: any }) => {
-        let color = Colors['greyscale-grey3'].hex();
-        if (value === apiStatuses.Failed) {
-          color = Colors.danger.hex();
-        } else if (value === apiStatuses.Succeeded) {
-          color = Colors.success.hex();
-        } else if (value === apiStatuses.InProgress) {
-          color = Colors.yellow.hex();
-        }
-        return <StatusDot bgColor={color} />;
+      render: ({
+        value,
+        cell: {
+          row: { original },
+        },
+      }: {
+        value: Status;
+        cell: { row: { original: DataTransfersTableData } };
+      }) => {
+        const mapper: {
+          [x in Status]: LabelVariants;
+        } = {
+          'In progress': 'normal',
+          Succeeded: 'success',
+          Failed: 'danger',
+        };
+
+        const [latestStep, steps] = getLatestRevisionStepsStatus(original);
+
+        const message = latestStep.error_message || latestStep.status;
+        const date = formatDate(latestStep.created_time);
+
+        const tooltipText = `[Step ${steps}]: ${message} (${date})`;
+
+        return (
+          <Tooltip content={tooltipText}>
+            <Label variant={mapper[value]}>{value}</Label>
+          </Tooltip>
+        );
       },
-      width: 70,
+      width: 100,
+      Filter: Table.CheckboxColumnFilter(),
+      filter: 'arrayContains',
     },
     {
-      key: 'last_updated',
+      key: ['source.last_updated', 'target.last_updated'],
       render: ({ value }: { value: any }) => {
         return getFormattedTimestampOrString(value);
       },
       Filter: DataRangeFilter,
       filter: 'between',
+      filterIcon: 'Calendar',
+    },
+    {
+      key: 'source.datatype',
+      render: ({ value }: { value: string }) => {
+        return <Tag>{value}</Tag>;
+      },
     },
     {
       key: 'detailViewButton',
@@ -72,10 +94,7 @@ export const dataTransfersColumnRules = ({
         cell: { row: { original: DataTransfersTableData } };
       }) => {
         return (
-          <DetailViewButton
-            record={original}
-            onDetailViewClick={handleDetailViewClick}
-          />
+          <DetailViewButton record={original} onClick={handleDetailViewClick} />
         );
       },
     },

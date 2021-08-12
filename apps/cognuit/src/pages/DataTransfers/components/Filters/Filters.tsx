@@ -86,6 +86,23 @@ export const Filters = ({
     },
   ];
 
+  const renderClearButton = () => {
+    if (source.selected || configuration.selected) {
+      return (
+        <Button
+          size="default"
+          type="ghost-danger"
+          style={{ marginRight: 16 }}
+          disabled={!source.selected && !configuration.selected}
+          onClick={resetFilters}
+        >
+          Reset
+        </Button>
+      );
+    }
+    return null;
+  };
+
   return (
     <FiltersWrapper>
       <>
@@ -109,15 +126,7 @@ export const Filters = ({
               />
             </DropdownWrapper>
 
-            <Button
-              type="danger"
-              size="default"
-              style={{ marginRight: 16 }}
-              disabled={!source.selected && !configuration.selected}
-              onClick={resetFilters}
-            >
-              Reset
-            </Button>
+            {renderClearButton()}
           </StartContainer>
         )}
 
