@@ -1,4 +1,3 @@
-import React from 'react';
 import { Chart } from 'reducers/charts/types';
 import { Modes } from 'pages/types';
 import TimeSeriesRow from './TimeSeriesRow';

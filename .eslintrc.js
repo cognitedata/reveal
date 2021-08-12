@@ -13,7 +13,15 @@ module.exports = {
         ignoredNamesRegex: '^_',
       },
     ],
-    "no-shadow": "off",
-    "@typescript-eslint/no-shadow": "error"
+    'no-shadow': 'off',
+    '@typescript-eslint/no-shadow': 'error',
   },
+  overrides: [
+    {
+      files: ['**/*.tsx'],
+      rules: {
+        'react/prop-types': 'off',
+      },
+    },
+  ],
 };

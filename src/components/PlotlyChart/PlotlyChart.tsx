@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 import styled from 'styled-components/macro';
 import debounce from 'lodash/debounce';
@@ -83,8 +77,9 @@ const PlotlyChartComponent = ({
   const enabledTimeseries = chart?.timeSeriesCollection?.filter(
     (ts) => ts.enabled
   ).length;
-  const enabledWorkflows = chart?.workflowCollection?.filter((wf) => wf.enabled)
-    .length;
+  const enabledWorkflows = chart?.workflowCollection?.filter(
+    (wf) => wf.enabled
+  ).length;
 
   const queries =
     chart?.timeSeriesCollection?.map(({ tsExternalId }) => ({
@@ -447,8 +442,8 @@ const PlotlyChartComponent = ({
       <PlotWrapper>
         <MemoizedPlot
           data={data as Plotly.Data[]}
-          layout={(layout as unknown) as Plotly.Layout}
-          config={(config as unknown) as Plotly.Config}
+          layout={layout as unknown as Plotly.Layout}
+          config={config as unknown as Plotly.Config}
           onRelayout={handleRelayout}
         />
       </PlotWrapper>
@@ -462,7 +457,7 @@ type MemoizedPlotProps = {
   config: Plotly.Config;
   onRelayout: (e: Plotly.PlotRelayoutEvent) => void;
 };
-const MemoizedPlot = React.memo(
+const MemoizedPlot = memo(
   ({ data, layout, config, onRelayout }: MemoizedPlotProps) => (
     <Plot
       data={data}

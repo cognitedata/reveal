@@ -81,6 +81,7 @@
     "@types/react-router-dom": "^5.1.6",
     "@types/sinon": "^9.0.9",
     "@types/styled-components": "^5.1.7",
+    "babel-loader": "8.1.0",
     "eslint": "^7.27.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-prettier": "^6.15.0",
@@ -90,14 +91,16 @@
     "eslint-plugin-prettier": "^3.3.0",
     "eslint-plugin-testcafe": "^0.2.1",
     "eslint-plugin-testing-library": "^3.10.1",
+    "husky": "^7.0.1",
     "jest-environment-jsdom-sixteen": "^1.0.3",
     "jest-junit": "^12.0.0",
+    "jira-prepare-commit-msg": "^1.6.1",
     "kill-port": "^1.6.1",
     "prettier": "^2.1.2",
     "serve": "^11.3.2",
     "sinon": "^9.2.1",
     "testcafe": "^1.9.4",
-    "typescript": "^4.0.5"
+    "typescript": "^4.3.5"
   },
   "resolutions": {
     "react": "^17.0.1",

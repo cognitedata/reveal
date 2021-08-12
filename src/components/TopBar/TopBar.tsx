@@ -1,4 +1,3 @@
-import React from 'react';
 import { Avatar, Menu, Title, TopBar, Icon } from '@cognite/cogs.js';
 import sidecar from 'config/sidecar';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';

@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import styled from 'styled-components/macro';
 import { Link, useLocation } from 'react-router-dom';
 

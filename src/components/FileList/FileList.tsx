@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Body, DocumentIcon, Icon, Overline } from '@cognite/cogs.js';
 import { Asset, FileInfo as File } from '@cognite/sdk';
 import {

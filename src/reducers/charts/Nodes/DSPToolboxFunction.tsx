@@ -1,6 +1,8 @@
 /* eslint camelcase: 0 */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
+
+import * as React from 'react';
 import styled from 'styled-components';
 import {
   Icon,
@@ -97,10 +99,9 @@ export const ConfigPanel = ({
             <Menu>
               <Menu.Header>Tool Functions</Menu.Header>
               {Object.keys(categories).map((category) => {
-                const filtered = categories[
-                  category
-                ].filter(({ description }) =>
-                  description.toLowerCase().includes(phrase.toLowerCase())
+                const filtered = categories[category].filter(
+                  ({ description }) =>
+                    description.toLowerCase().includes(phrase.toLowerCase())
                 );
                 return (
                   <React.Fragment key={category}>

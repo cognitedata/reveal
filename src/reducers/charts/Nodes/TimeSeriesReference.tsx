@@ -1,4 +1,3 @@
-import React from 'react';
 import { AutoComplete } from '@cognite/cogs.js';
 import { Chart, StorableNode } from 'reducers/charts/types';
 import { ConfigPanelComponentProps } from '../types';

@@ -1,4 +1,3 @@
-import React from 'react';
 import { AutoComplete } from '@cognite/cogs.js';
 import { Chart, StorableNode } from 'reducers/charts/types';
 import { ConfigPanelComponentProps } from '../types';
@@ -86,8 +85,9 @@ export const ConfigPanel = ({
           const { type } =
             sourceList.find(({ id }) => id === nextValue.value) || {};
 
-          const subtitle = typeDisplayNames.find(({ id }) => id === type)
-            ?.label;
+          const subtitle = typeDisplayNames.find(
+            ({ id }) => id === type
+          )?.label;
 
           onUpdateNode({
             title: nextValue.label,

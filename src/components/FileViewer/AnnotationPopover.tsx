@@ -1,4 +1,3 @@
-import React from 'react';
 import { CogniteAnnotation } from '@cognite/annotations';
 import { ProposedCogniteAnnotation } from '@cognite/react-picture-annotation';
 import { Body, Checkbox, Icon, Menu, Overline, Title } from '@cognite/cogs.js';

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { Checkbox, Icon, Title } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
 import { Asset, Timeseries } from '@cognite/sdk';
@@ -36,9 +36,7 @@ const RecentViewSources = ({ viewType }: Props) => {
   const { addTsToRecent, addAssetToRecent } = useAddToRecentLocalStorage();
 
   const cached = useQueryClient();
-  const selectedExternalIds:
-    | undefined
-    | string[] = chart?.timeSeriesCollection
+  const selectedExternalIds: undefined | string[] = chart?.timeSeriesCollection
     ?.map((t) => t.tsExternalId || '')
     .filter(Boolean);
 

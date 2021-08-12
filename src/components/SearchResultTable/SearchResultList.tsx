@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { Icon, Button } from '@cognite/cogs.js';
 import { Asset } from '@cognite/sdk';
 import { useInfiniteSearch } from '@cognite/sdk-react-query-hooks';
@@ -11,15 +11,10 @@ type Props = {
   query: string;
 };
 export default function SearchResultList({ query }: Props) {
-  const {
-    data,
-    isLoading,
-    isError,
-    fetchNextPage,
-    hasNextPage,
-  } = useInfiniteSearch<Asset>('assets', query, 20, undefined, {
-    enabled: !!query,
-  });
+  const { data, isLoading, isError, fetchNextPage, hasNextPage } =
+    useInfiniteSearch<Asset>('assets', query, 20, undefined, {
+      enabled: !!query,
+    });
   const assets = useMemo(
     () => data?.pages?.reduce((accl, page) => accl.concat(page), []),
     [data]

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { useSDK } from '@cognite/sdk-provider';
 import styled from 'styled-components';
 import { Icon, Checkbox, Button, Colors } from '@cognite/cogs.js';
@@ -50,9 +50,7 @@ export default function AssetSearchHit({ asset, query = '' }: Props) {
     [data]
   );
 
-  const selectedExternalIds:
-    | undefined
-    | string[] = chart?.timeSeriesCollection
+  const selectedExternalIds: undefined | string[] = chart?.timeSeriesCollection
     ?.map((t) => t.tsExternalId || '')
     .filter(Boolean);
 

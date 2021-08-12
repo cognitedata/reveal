@@ -1,4 +1,5 @@
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
+import * as React from 'react';
 import { Button, Tooltip } from '@cognite/cogs.js';
 import { Asset } from '@cognite/sdk';
 import { useParams } from 'react-router-dom';

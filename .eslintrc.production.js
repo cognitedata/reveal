@@ -2,10 +2,12 @@ module.exports = {
   extends: [
     '@cognite',
     'plugin:testing-library/react',
-    'plugin:react-hooks/recommended'
+    'plugin:react-hooks/recommended',
   ],
   plugins: ['@cognite', 'testing-library'],
   rules: {
+    'react/jsx-uses-react': 'off',
+    'react/react-in-jsx-scope': 'off',
     '@cognite/no-unissued-todos': [
       'error',
       { issuePattern: '\\(((DEMO)-[0-9]+)\\)' },
@@ -24,7 +26,6 @@ module.exports = {
     'jest/no-test-callback': ['off'],
     'jest/no-export': ['off'],
 
-
     '@typescript-eslint/no-unused-vars': 'off',
     '@typescript-eslint/no-unused-vars-experimental': [
       2,
@@ -32,22 +33,30 @@ module.exports = {
         ignoredNamesRegex: '^_',
       },
     ],
-    "prettier/prettier": [
-      "error",
+    'prettier/prettier': [
+      'error',
       {
-        "singleQuote": true,
-        "trailingComma": "es5",
-        "arrowParens": "always",
-        "endOfLine": "auto"
-      }
+        singleQuote: true,
+        trailingComma: 'es5',
+        arrowParens: 'always',
+        endOfLine: 'auto',
+      },
     ],
-    "no-shadow": "off",
-    "@typescript-eslint/no-shadow": "error"
+    'no-shadow': 'off',
+    '@typescript-eslint/no-shadow': 'error',
   },
   parser: '@typescript-eslint/parser',
   parserOptions: {
-    project: "tsconfig.json",
+    project: 'tsconfig.json',
     tsconfigRootDir: __dirname,
-    sourceType: "module",
+    sourceType: 'module',
   },
+  overrides: [
+    {
+      files: ['**/*.tsx'],
+      rules: {
+        'react/prop-types': 'off',
+      },
+    },
+  ],
 };

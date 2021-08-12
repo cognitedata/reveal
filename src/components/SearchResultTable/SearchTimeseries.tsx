@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { useSDK } from '@cognite/sdk-provider';
 import { Icon, Button, Checkbox } from '@cognite/cogs.js';
 import { useParams } from 'react-router-dom';
@@ -26,15 +26,10 @@ export default function SearchTimeseries({ query }: Props) {
   const { data: chart } = useChart(chartId);
   const { mutate: updateChart } = useUpdateChart();
   const { addTsToRecent, addAssetToRecent } = useAddToRecentLocalStorage();
-  const {
-    data,
-    isLoading,
-    isError,
-    fetchNextPage,
-    hasNextPage,
-  } = useInfiniteSearch<Timeseries>('timeseries', query, 20, undefined, {
-    enabled: !!query,
-  });
+  const { data, isLoading, isError, fetchNextPage, hasNextPage } =
+    useInfiniteSearch<Timeseries>('timeseries', query, 20, undefined, {
+      enabled: !!query,
+    });
   const timeseries = useMemo(
     () => data?.pages?.reduce((accl, page) => accl.concat(page), []),
     [data]
@@ -51,9 +46,7 @@ export default function SearchTimeseries({ query }: Props) {
     return null;
   }
 
-  const selectedExternalIds:
-    | undefined
-    | string[] = chart?.timeSeriesCollection
+  const selectedExternalIds: undefined | string[] = chart?.timeSeriesCollection
     ?.map((t) => t.tsExternalId || '')
     .filter(Boolean);
 
