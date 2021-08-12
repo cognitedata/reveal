@@ -15,7 +15,7 @@ const closedEllipsoidSegmentInputStructSize = 48;
 const closedExtrudedRingSegmentInputStructSize = 56;
 const closedSphericalSegmentInputStructSize = 44;
 const closedTorusSegmentInputStructSize = 52;
-const ellipsoidInputStructSize = 48;
+const ellipsoidInputStructSize = 44;
 const extrudedRingInputStructSize = 48;
 const nutInputStructSize = 48;
 const openConeInputStructSize = 48;
@@ -249,7 +249,7 @@ function createGeneralRingMatrix(
   radiusA: number,
   radiusB: number
 ): THREE.Matrix4 {
-  const localYAxis = normal.cross(localXAxis);
+  const localYAxis = normal.clone().cross(localXAxis);
 
   const rotationMatrix = new THREE.Matrix4().set(
     localXAxis.x,
@@ -272,7 +272,7 @@ function createGeneralRingMatrix(
 
   const translationMatrix = createTranslation(center);
   const scale = createScale(new THREE.Vector3(2 * radiusA, 2 * radiusB, 1.0));
-  return translationMatrix.multiply(rotationMatrix).multiply(scale);
+  return translationMatrix.clone().multiply(rotationMatrix).multiply(scale);
 }
 
 /*
@@ -331,10 +331,10 @@ function getCylinderCap(
 ): CylinderCap {
   const slopeRotation = createRotationAxisAngle(new THREE.Vector3(0, 1, 0), slope);
   const zAngleRotation = createRotationAxisAngle(new THREE.Vector3(0, 0, 1), zAngle);
-  const rotation = zAngleRotation.multiply(slopeRotation);
+  const rotation = zAngleRotation.clone().multiply(slopeRotation);
   const localXAxis = new THREE.Vector3(1, 0, 0).applyMatrix4(rotation);
   const localZAxis = new THREE.Vector3(0, 0, 1).applyMatrix4(rotation);
-  const normal = localZAxis.multiplyScalar(invNormal ? -1 : 1);
+  const normal = localZAxis.clone().multiplyScalar(invNormal ? -1 : 1);
 
   const centerAxisRotation = createRotationBetweenZ(axis);
 
@@ -348,12 +348,12 @@ function getCylinderCap(
   let linePoint = new THREE.Vector3(Math.cos(cylinderRotationAngle), Math.sin(cylinderRotationAngle), 0);
 
   linePoint = linePoint.applyMatrix4(cylinderRotation).normalize();
-  const lineStartA = extB.sub(axis).add(linePoint);
-  const lineEndA = extA.add(axis).add(linePoint);
-  const lineVector = lineEndA.sub(lineStartA);
+  const lineStartA = extB.clone().sub(axis).add(linePoint);
+  const lineEndA = extA.clone().add(axis).add(linePoint);
+  const lineVector = lineEndA.clone().sub(lineStartA);
 
   const intersectionPoint = intersect(lineVector, lineStartA, capZAxisA, center);
-  const capAngleAxisA = intersectionPoint.sub(center).normalize();
+  const capAngleAxisA = intersectionPoint.clone().sub(center).normalize();
   const capAngleA = angleBetweenVectors(capAngleAxisA, capXAxisA, capZAxisA);
 
   const instanceMatrix = createGeneralRingMatrix(center, capZAxisA, capXAxisA, capRadiusXA, capRadiusY);
@@ -403,8 +403,8 @@ function getGeneralCylinder(
   zAngleA: number,
   zAngleB: number
 ): GeneralCylinder {
-  const centerA = center.addScaledVector(axis, height / 2);
-  const centerB = center.addScaledVector(axis, -height / 2);
+  const centerA = center.clone().addScaledVector(axis, height / 2);
+  const centerB = center.clone().addScaledVector(axis, -height / 2);
 
   const distFromAToExtA = radius + Math.tan(slopeA);
   const distFromBToExtB = radius + Math.tan(slopeB);
@@ -412,10 +412,10 @@ function getGeneralCylinder(
   const heightA = distFromBToExtB + height;
   const heightB = distFromBToExtB;
 
-  const extA = centerA.addScaledVector(axis, distFromAToExtA);
-  const extB = centerB.addScaledVector(axis, -distFromBToExtB);
+  const extA = centerA.clone().addScaledVector(axis, distFromAToExtA);
+  const extB = centerB.clone().addScaledVector(axis, -distFromBToExtB);
 
-  const normal = extA.sub(extB).normalize();
+  const normal = extA.clone().sub(extB).normalize();
 
   const rotation = createRotationBetweenZ(normal);
 
@@ -460,8 +460,8 @@ function getGeneralCylinder(
   return {
     treeIndex,
     color,
-    centerA,
-    centerB,
+    centerA: extA,
+    centerB: extB,
     radius,
     angle: normalizeRadians(rotationAngle),
     planeA: capA.plane,
@@ -547,7 +547,7 @@ function outputCircle(
   const rotationMatrix = createRotationBetweenZ(normal);
   const scale = createScale(new THREE.Vector3(2 * radius, 2 * radius, 1));
 
-  const instanceMatrix = translationMatrix.multiply(rotationMatrix).multiply(scale);
+  const instanceMatrix = translationMatrix.clone().multiply(rotationMatrix).multiply(scale);
 
   const treeIndexOffset = offset + circleAttributes.get('treeIndex')!.offset;
   const colorOffset = offset + circleAttributes.get('color')!.offset;
@@ -741,7 +741,11 @@ function outputNut(
   const firstRotation = createRotationAxisAngle(new THREE.Vector3(0, 0, 1), rotationAngle);
   const secondRotation = createRotationBetweenZ(centerAxis);
   const scaleMatrix = createScale(new THREE.Vector3(diameter, diameter, height));
-  const instanceMatrix = translationMatrix.multiply(secondRotation).multiply(firstRotation).multiply(scaleMatrix);
+  const instanceMatrix = translationMatrix
+    .clone()
+    .multiply(secondRotation)
+    .multiply(firstRotation)
+    .multiply(scaleMatrix);
 
   writeFloat(treeIndex, outView, treeIndexOffset);
   writeColor(color, outView, colorOffset);
@@ -777,6 +781,7 @@ function outputSphericalSegment(
 function outputTorusSegment(
   treeIndex: number,
   color: THREE.Vector4,
+  diagonal: number,
   center: THREE.Vector3,
   normal: THREE.Vector3,
   radius: number,
@@ -789,21 +794,29 @@ function outputTorusSegment(
 ) {
   const treeIndexOffset = offset + torusSegmentAttributes.get('treeIndex')!.offset;
   const colorOffset = offset + torusSegmentAttributes.get('color')!.offset;
-  const centerOffset = offset + torusSegmentAttributes.get('center')!.offset;
-  const normalOffset = offset + torusSegmentAttributes.get('normal')!.offset;
+  const sizeOffset = offset + torusSegmentAttributes.get('size')!.offset;
   const radiusOffset = offset + torusSegmentAttributes.get('radius')!.offset;
   const tubeRadiusOffset = offset + torusSegmentAttributes.get('tubeRadius')!.offset;
-  const rotationAngleOffset = offset + torusSegmentAttributes.get('rotationAngle')!.offset;
+  // const rotationAngleOffset = offset + torusSegmentAttributes.get('rotationAngle')!.offset;
   const arcAngleOffset = offset + torusSegmentAttributes.get('arcAngle')!.offset;
+  const instanceMatrixOffset = offset + torusSegmentAttributes.get('instanceMatrix')!.offset;
+
+  const translationMatrix = createTranslation(center);
+  const firstRotation = createRotationAxisAngle(new THREE.Vector3(0, 0, 1), rotationAngle);
+  const secondRotation = createRotationBetweenZ(normal);
+
+  const instanceMatrix = translationMatrix.clone().multiply(secondRotation).multiply(firstRotation);
 
   writeFloat(treeIndex, outView, treeIndexOffset);
   writeColor(color, outView, colorOffset);
-  writeVector3(center, outView, centerOffset);
-  writeVector3(normal, outView, normalOffset);
+  writeFloat(diagonal, outView, sizeOffset);
+  /* writeVector3(center, outView, centerOffset);
+  writeVector3(normal, outView, normalOffset); */
   writeFloat(radius, outView, radiusOffset);
   writeFloat(tubeRadius, outView, tubeRadiusOffset);
-  writeFloat(rotationAngle, outView, rotationAngleOffset);
+  // writeFloat(rotationAngle, outView, rotationAngleOffset);
   writeFloat(arcAngle, outView, arcAngleOffset);
+  writeMatrix4(instanceMatrix, outView, instanceMatrixOffset);
 }
 
 function outputQuad(
@@ -816,17 +829,50 @@ function outputQuad(
 ) {
   const treeIndexOffset = offset + quadAttributes.get('treeIndex')!.offset;
   const colorOffset = offset + quadAttributes.get('color')!.offset;
-  const vertex1Offset = offset + quadAttributes.get('vertex1')!.offset;
+  const instanceMatrixOffset = offset + quadAttributes.get('instanceMatrix')!.offset;
+  /* const vertex1Offset = offset + quadAttributes.get('vertex1')!.offset;
   const vertex2Offset = offset + quadAttributes.get('vertex2')!.offset;
-  const vertex3Offset = offset + quadAttributes.get('vertex3')!.offset;
+  const vertex3Offset = offset + quadAttributes.get('vertex3')!.offset; */
+
+  let side1 = vertices[3].clone().sub(vertices[1]);
+  let side2 = vertices[3].clone().sub(vertices[2]);
+
+  const scale = createScale(new THREE.Vector3(side2.length(), side1.length(), 1.0));
+  const normal = side2.cross(side1).normalize();
+  side1 = side1.normalize();
+  side2 = side2.normalize();
+
+  const basis = new THREE.Matrix4().fromArray([
+    side2.x,
+    side1.x,
+    normal.x,
+    0.0,
+    side2.y,
+    side1.y,
+    normal.y,
+    0.0,
+    side2.z,
+    side1.z,
+    normal.z,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+  ]);
+
+  const center = vertices[1].clone().add(vertices[2]).multiplyScalar(0.5);
+  const translation = createTranslation(center);
+  const instanceMatrix = translation.clone().multiply(basis).multiply(scale);
 
   writeFloat(treeIndex, outView, treeIndexOffset);
   writeColor(color, outView, colorOffset);
 
   // Only output the last three vertices
-  writeVector3(vertices[1], outView, vertex1Offset);
-  writeVector3(vertices[2], outView, vertex2Offset);
-  writeVector3(vertices[3], outView, vertex3Offset);
+  // writeVector3(vertices[1], outView, vertex1Offset);
+  // writeVector3(vertices[2], outView, vertex2Offset);
+  // writeVector3(vertices[3], outView, vertex3Offset);
+  writeMatrix4(instanceMatrix, outView, instanceMatrixOffset);
 }
 
 function outputTrapezium(
@@ -864,11 +910,11 @@ function intersect(
   planeNormal: THREE.Vector3,
   planePoint: THREE.Vector3
 ): THREE.Vector3 {
-  const diff = rayPoint.sub(planePoint);
+  const diff = rayPoint.clone().sub(planePoint);
   const prod1 = diff.dot(planeNormal);
   const prod2 = rayDir.dot(planeNormal);
   const prod3 = prod1 / prod2;
-  return rayPoint.sub(rayDir.multiplyScalar(prod3));
+  return rayPoint.clone().sub(rayDir.clone().multiplyScalar(prod3));
 }
 
 function normalizeRadians(angle: number): number {
@@ -929,7 +975,11 @@ export function transformBoxes(
     const secondRotation = createRotationBetweenZ(normal);
     const scaleMatrix = createScale(delta);
 
-    const instanceMatrix = translationMatrix.multiply(firstRotation).multiply(secondRotation).multiply(scaleMatrix);
+    const instanceMatrix = translationMatrix
+      .clone()
+      .multiply(firstRotation)
+      .multiply(secondRotation)
+      .multiply(scaleMatrix);
 
     outputBox3(treeIndex, color, instanceMatrix, outView, 0, boxAttributes);
 
@@ -965,7 +1015,6 @@ export function transformCircles(
     currentInputOffset += circleInputStructSize;
     currentOutputOffset += circleOutputStructSize;
   }
-  debugger;
 
   return currentOutputOffset;
 }
@@ -1005,10 +1054,10 @@ export function transformClosedCones(
     const radiusA = inView.getFloat32(40, true);
     const radiusB = inView.getFloat32(44, true);
 
-    const centerA = center.addScaledVector(axis, height / 2);
-    const centerB = center.addScaledVector(axis, -height / 2);
+    const centerA = center.clone().addScaledVector(axis, height / 2);
+    const centerB = center.clone().addScaledVector(axis, -height / 2);
 
-    const normal = centerA.sub(centerB).normalize();
+    const normal = centerA.clone().sub(centerB).normalize();
 
     const rotation = createRotationBetweenZ(normal);
     const localXAxis = new THREE.Vector3(1, 0, 0).applyMatrix4(rotation);
@@ -1033,7 +1082,7 @@ export function transformClosedCones(
       treeIndex,
       color,
       centerB,
-      new THREE.Vector3().copy(axis).negate(),
+      axis.clone().negate(),
       radiusB,
       outCirclesView,
       circleOutputStructSize,
@@ -1076,10 +1125,10 @@ export function transformOpenCones(
     const radiusA = inView.getFloat32(40, true);
     const radiusB = inView.getFloat32(44, true);
 
-    const centerA = center.addScaledVector(axis, height / 2);
-    const centerB = center.addScaledVector(axis, -height / 2);
+    const centerA = center.clone().addScaledVector(axis, height / 2);
+    const centerB = center.clone().addScaledVector(axis, -height / 2);
 
-    const normal = centerA.sub(centerB).normalize();
+    const normal = centerA.clone().sub(centerB).normalize();
 
     const rotation = createRotationBetweenZ(normal);
     const localXAxis = new THREE.Vector3(1, 0, 0).applyMatrix4(rotation);
@@ -1142,10 +1191,10 @@ export function transformClosedEccentricCones(
     const radiusB = inView.getFloat32(44, true);
     const capNormal = getVector3(inView, 48);
 
-    const centerA = center.addScaledVector(axis, height / 2);
-    const centerB = center.addScaledVector(axis, -height / 2);
+    const centerA = center.clone().addScaledVector(axis, height / 2);
+    const centerB = center.clone().addScaledVector(axis, -height / 2);
 
-    const dotProduct = capNormal.dot(centerA.sub(centerB));
+    const dotProduct = capNormal.dot(centerA.clone().sub(centerB));
 
     if (dotProduct < 0) {
       capNormal.negate();
@@ -1164,8 +1213,17 @@ export function transformClosedEccentricCones(
       eccentricConeAttributes
     );
 
-    outputCircle(treeIndex, color, centerA, axis, radiusA, outCirclesView, 0, circleAttributes);
-    outputCircle(treeIndex, color, centerB, axis, radiusB, outCirclesView, circleOutputStructSize, circleAttributes);
+    outputCircle(treeIndex, color, centerA, capNormal, radiusA, outCirclesView, 0, circleAttributes);
+    outputCircle(
+      treeIndex,
+      color,
+      centerB,
+      capNormal,
+      radiusB,
+      outCirclesView,
+      circleOutputStructSize,
+      circleAttributes
+    );
 
     currentInputOffset += closedEccentricConeInputStructSize;
     currentEccentricConesOutputOffset += eccentricConeOutputStructSize;
@@ -1201,10 +1259,10 @@ export function transformOpenEccentricCones(
     const radiusB = inView.getFloat32(44, true);
     const capNormal = getVector3(inView, 48);
 
-    const centerA = center.addScaledVector(axis, height / 2);
-    const centerB = center.addScaledVector(axis, -height / 2);
+    const centerA = center.clone().addScaledVector(axis, height / 2);
+    const centerB = center.clone().addScaledVector(axis, -height / 2);
 
-    const dotProduct = capNormal.dot(centerA.sub(centerB));
+    const dotProduct = capNormal.dot(centerA.clone().sub(centerB));
 
     if (dotProduct < 0) {
       capNormal.negate();
@@ -1262,10 +1320,10 @@ export function transformOpenGeneralCones(
     // const zAngleA = inView.getFloat32(64, true);
     // const zAngleB = inView.getFloat32(68, true);
 
-    const centerA = center.addScaledVector(axis, height / 2);
-    const centerB = center.addScaledVector(axis, -height / 2);
+    const centerA = center.clone().addScaledVector(axis, height / 2);
+    const centerB = center.clone().addScaledVector(axis, -height / 2);
 
-    const normal = centerA.sub(centerB).normalize();
+    const normal = centerA.clone().sub(centerB).normalize();
 
     const rotation = createRotationBetweenZ(normal);
     const localXAxis = new THREE.Vector3(1, 0, 0).applyMatrix4(rotation);
@@ -1333,10 +1391,10 @@ export function transformClosedGeneralCones(
     // const zAngleA = inView.getFloat32(64, true);
     // const zAngleB = inView.getFloat32(68, true);
 
-    const centerA = center.addScaledVector(axis, height / 2);
-    const centerB = center.addScaledVector(axis, -height / 2);
+    const centerA = center.clone().addScaledVector(axis, height / 2);
+    const centerB = center.clone().addScaledVector(axis, -height / 2);
 
-    const normal = centerA.sub(centerB).normalize();
+    const normal = centerA.clone().sub(centerB).normalize();
 
     const rotation = createRotationBetweenZ(normal);
     const localXAxis = new THREE.Vector3(1, 0, 0).applyMatrix4(rotation);
@@ -1384,7 +1442,7 @@ export function transformClosedGeneralCones(
       ringAttributes
     );
 
-    currentInputOffset += closedConeInputStructSize;
+    currentInputOffset += closedGeneralConeInputStructSize;
     currentConesOutputOffset += coneOutputStructSize;
     currentRingsOutputOffset += 2 * generalRingOutputStructSize;
   }
@@ -1406,7 +1464,7 @@ export function transformSolidOpenGeneralCones(
   let currentRingsOutputOffset = 0;
 
   while (currentInputOffset < inputBuffer.byteLength) {
-    const inView = new DataView(inputBuffer, currentInputOffset, closedGeneralConeInputStructSize);
+    const inView = new DataView(inputBuffer, currentInputOffset, solidOpenGeneralConeInputStructSize);
     const outConesView = new DataView(
       outConesArray.buffer,
       originalConesOutputOffset + currentConesOutputOffset,
@@ -1434,10 +1492,10 @@ export function transformSolidOpenGeneralCones(
     // const zAngleA = inView.getFloat32(68, true);
     // const zAngleB = inView.getFloat32(72, true);
 
-    const centerA = center.addScaledVector(axis, height / 2);
-    const centerB = center.addScaledVector(axis, -height / 2);
+    const centerA = center.clone().addScaledVector(axis, height / 2);
+    const centerB = center.clone().addScaledVector(axis, -height / 2);
 
-    const normal = centerA.sub(centerB).normalize();
+    const normal = centerA.clone().sub(centerB).normalize();
 
     const rotation = createRotationBetweenZ(normal);
     const localXAxis = new THREE.Vector3(1, 0, 0).applyMatrix4(rotation);
@@ -1500,7 +1558,7 @@ export function transformSolidOpenGeneralCones(
       ringAttributes
     );
 
-    currentInputOffset += closedConeInputStructSize;
+    currentInputOffset += solidOpenGeneralConeInputStructSize;
     currentConesOutputOffset += 2 * coneOutputStructSize;
     currentRingsOutputOffset += 2 * generalRingOutputStructSize;
   }
@@ -1526,7 +1584,7 @@ export function transformSolidClosedGeneralCones(
   let currentTrapeziumsOutputOffset = 0;
 
   while (currentInputOffset < inputBuffer.byteLength) {
-    const inView = new DataView(inputBuffer, currentInputOffset, closedGeneralConeInputStructSize);
+    const inView = new DataView(inputBuffer, currentInputOffset, solidClosedGeneralConeInputStructSize);
     const outConesView = new DataView(
       outConesArray.buffer,
       originalConesOutputOffset + currentConesOutputOffset,
@@ -1559,10 +1617,10 @@ export function transformSolidClosedGeneralCones(
     // const zAngleA = inView.getFloat32(68, true);
     // const zAngleB = inView.getFloat32(72, true);
 
-    const centerA = center.addScaledVector(axis, height / 2);
-    const centerB = center.addScaledVector(axis, -height / 2);
+    const centerA = center.clone().addScaledVector(axis, height / 2);
+    const centerB = center.clone().addScaledVector(axis, -height / 2);
 
-    const normal = centerA.sub(centerB).normalize();
+    const normal = centerA.clone().sub(centerB).normalize();
 
     const rotation = createRotationBetweenZ(normal);
     const localXAxis = new THREE.Vector3(1, 0, 0).applyMatrix4(rotation);
@@ -1615,7 +1673,7 @@ export function transformSolidClosedGeneralCones(
     outputRing(
       treeIndex,
       color,
-      new THREE.Vector3().copy(normal).negate(),
+      normal.clone().negate(),
       thickness / radiusB,
       rotationAngle,
       arcAngle,
@@ -1641,7 +1699,7 @@ export function transformSolidClosedGeneralCones(
         const radius = aForReal ? radiusA : radiusB;
         const center = aForReal ? centerA : centerB;
         for (const offset of [0.0, -thickness]) {
-          vertices[vertexIndex] = center.addScaledVector(point, radius + offset);
+          vertices[vertexIndex] = center.clone().addScaledVector(point, radius + offset);
           vertexIndex += 1;
         }
       }
@@ -1651,7 +1709,7 @@ export function transformSolidClosedGeneralCones(
       trapeziumViewOffset += 4 + 4 + 4 * 3 * 4;
     }
 
-    currentInputOffset += closedConeInputStructSize;
+    currentInputOffset += solidClosedGeneralConeInputStructSize;
     currentConesOutputOffset += 2 * coneOutputStructSize;
     currentRingsOutputOffset += 2 * generalRingOutputStructSize;
     currentTrapeziumsOutputOffset += 2 * trapeziumOutputStructSize;
@@ -1694,10 +1752,10 @@ export function transformClosedCylinders(
     const height = inView.getFloat32(36, true);
     const radius = inView.getFloat32(40, true);
 
-    const centerA = center.addScaledVector(axis, height / 2);
-    const centerB = center.addScaledVector(axis, -height / 2);
+    const centerA = center.clone().addScaledVector(axis, height / 2);
+    const centerB = center.clone().addScaledVector(axis, -height / 2);
 
-    const normal = centerA.sub(centerB).normalize();
+    const normal = centerA.clone().sub(centerB).normalize();
 
     const rotation = createRotationBetweenZ(normal);
     const localXAxis = new THREE.Vector3(1, 0, 0).applyMatrix4(rotation);
@@ -1722,7 +1780,7 @@ export function transformClosedCylinders(
       treeIndex,
       color,
       centerB,
-      new THREE.Vector3().copy(axis).negate(),
+      axis.clone().negate(),
       radius,
       outCirclesView,
       circleOutputStructSize,
@@ -1762,10 +1820,10 @@ export function transformOpenCylinders(
     const height = inView.getFloat32(36, true);
     const radius = inView.getFloat32(40, true);
 
-    const centerA = center.addScaledVector(axis, height / 2);
-    const centerB = center.addScaledVector(axis, -height / 2);
+    const centerA = center.clone().addScaledVector(axis, height / 2);
+    const centerB = center.clone().addScaledVector(axis, -height / 2);
 
-    const normal = centerA.sub(centerB).normalize();
+    const normal = centerA.clone().sub(centerB).normalize();
 
     const rotation = createRotationBetweenZ(normal);
     const localXAxis = new THREE.Vector3(1, 0, 0).applyMatrix4(rotation);
@@ -1802,7 +1860,7 @@ export function transformOpenGeneralCylinders(
   let currentCylindersOutputOffset = 0;
 
   while (currentInputOffset < inputBuffer.byteLength) {
-    const inView = new DataView(inputBuffer, currentInputOffset, openCylinderInputStructSize);
+    const inView = new DataView(inputBuffer, currentInputOffset, openGeneralCylinderInputStructSize);
     const outCylindersView = new DataView(
       outCylindersArray.buffer,
       originalCylindersOutputOffset + currentCylindersOutputOffset,
@@ -1855,7 +1913,7 @@ export function transformOpenGeneralCylinders(
       generalCylinderAttributes
     );
 
-    currentInputOffset += openCylinderInputStructSize;
+    currentInputOffset += openGeneralCylinderInputStructSize;
     currentCylindersOutputOffset += generalCylinderOutputStructSize;
   }
 
@@ -1876,14 +1934,14 @@ export function transformClosedGeneralCylinders(
   let currentRingsOutputOffset = 0;
 
   while (currentInputOffset < inputBuffer.byteLength) {
-    const inView = new DataView(inputBuffer, currentInputOffset, closedCylinderInputStructSize);
+    const inView = new DataView(inputBuffer, currentInputOffset, closedGeneralCylinderInputStructSize);
     const outCylindersView = new DataView(
       outCylindersArray.buffer,
       originalCylindersOutputOffset + currentCylindersOutputOffset,
       generalCylinderOutputStructSize
     );
     const outRingsView = new DataView(
-      outRingsArray,
+      outRingsArray.buffer,
       originalRingsOutputOffset + currentRingsOutputOffset,
       2 * generalRingOutputStructSize
     );
@@ -1960,7 +2018,7 @@ export function transformClosedGeneralCylinders(
       generalRingAttributes
     );
 
-    currentInputOffset += closedCylinderInputStructSize;
+    currentInputOffset += closedGeneralCylinderInputStructSize;
     currentCylindersOutputOffset += generalCylinderOutputStructSize;
     currentRingsOutputOffset += 2 * generalRingOutputStructSize;
   }
@@ -1982,14 +2040,14 @@ export function transformSolidOpenGeneralCylinders(
   let currentRingsOutputOffset = 0;
 
   while (currentInputOffset < inputBuffer.byteLength) {
-    const inView = new DataView(inputBuffer, currentInputOffset, closedCylinderInputStructSize);
+    const inView = new DataView(inputBuffer, currentInputOffset, solidOpenGeneralCylinderInputStructSize);
     const outCylindersView = new DataView(
       outCylindersArray.buffer,
       originalCylindersOutputOffset + currentCylindersOutputOffset,
       2 * generalCylinderOutputStructSize
     );
     const outRingsView = new DataView(
-      outRingsArray,
+      outRingsArray.buffer,
       originalRingsOutputOffset + currentRingsOutputOffset,
       2 * generalRingOutputStructSize
     );
@@ -2085,7 +2143,7 @@ export function transformSolidOpenGeneralCylinders(
       generalRingAttributes
     );
 
-    currentInputOffset += closedCylinderInputStructSize;
+    currentInputOffset += solidOpenGeneralCylinderInputStructSize;
     currentCylindersOutputOffset += 2 * generalCylinderOutputStructSize;
     currentRingsOutputOffset += 2 * generalRingOutputStructSize;
   }
@@ -2111,14 +2169,14 @@ export function transformSolidClosedGeneralCylinders(
   let currentTrapeziumsOutputOffset = 0;
 
   while (currentInputOffset < inputBuffer.byteLength) {
-    const inView = new DataView(inputBuffer, currentInputOffset, closedCylinderInputStructSize);
+    const inView = new DataView(inputBuffer, currentInputOffset, solidClosedGeneralCylinderInputStructSize);
     const outCylindersView = new DataView(
       outCylindersArray.buffer,
       originalCylindersOutputOffset + currentCylindersOutputOffset,
       2 * generalCylinderOutputStructSize
     );
     const outRingsView = new DataView(
-      outRingsArray,
+      outRingsArray.buffer,
       originalRingsOutputOffset + currentRingsOutputOffset,
       2 * generalRingOutputStructSize
     );
@@ -2237,9 +2295,9 @@ export function transformSolidClosedGeneralCylinders(
       let vertexIndex = 0;
 
       for (const radius of radii) {
-        const lineStart = extB.sub(axis).addScaledVector(point, radius);
-        const lineEnd = extA.add(axis).addScaledVector(point, radius);
-        const lineVector = lineEnd.sub(lineStart);
+        const lineStart = extB.clone().sub(axis).addScaledVector(point, radius);
+        const lineEnd = extA.clone().add(axis).addScaledVector(point, radius);
+        const lineVector = lineEnd.clone().sub(lineStart);
         vertices[vertexIndex] = intersect(lineVector, lineStart, capB.normal, capB.center);
         vertices[vertexIndex + 1] = intersect(lineVector, lineStart, capA.normal, capA.center);
         vertexIndex += 2;
@@ -2250,7 +2308,7 @@ export function transformSolidClosedGeneralCylinders(
       trapeziumViewOffset += 4 + 4 + 4 * 3 * 4;
     }
 
-    currentInputOffset += closedCylinderInputStructSize;
+    currentInputOffset += solidClosedGeneralCylinderInputStructSize;
     currentCylindersOutputOffset += 2 * generalCylinderOutputStructSize;
     currentRingsOutputOffset += 2 * generalRingOutputStructSize;
     currentTrapeziumsOutputOffset += 2 * trapeziumOutputStructSize;
@@ -2470,17 +2528,17 @@ export function transformClosedExtrudedRingSegments(
     const outGeneralRingsView = new DataView(
       outGeneralRingsArray.buffer,
       originalGeneralRingsOutputOffset + currentRingsOutputOffset,
-      generalRingOutputStructSize
+      2 * generalRingOutputStructSize
     );
     const outConesView = new DataView(
       outConesArray.buffer,
       originalConesOutputOffset + currentConesOutputOffset,
-      coneOutputStructSize
+      2 * coneOutputStructSize
     );
     const outQuadsView = new DataView(
       outQuadsArray.buffer,
       originalQuadsOutputOffset + currentQuadsOutputOffset,
-      quadOutputStructSize
+      2 * quadOutputStructSize
     );
 
     const treeIndex = inView.getFloat32(0, true);
@@ -2519,7 +2577,7 @@ export function transformClosedExtrudedRingSegments(
     outputRing(
       treeIndex,
       color,
-      new THREE.Vector3().copy(centerAxis).negate(),
+      centerAxis.clone().negate(),
       thickness,
       rotationAngle,
       arcAngle,
@@ -2614,12 +2672,12 @@ export function transformExtrudedRings(
     const outGeneralRingsView = new DataView(
       outGeneralRingsArray.buffer,
       originalGeneralRingsOutputOffset + currentRingsOutputOffset,
-      generalRingOutputStructSize
+      2 * generalRingOutputStructSize
     );
     const outConesView = new DataView(
       outConesArray.buffer,
       originalConesOutputOffset + currentConesOutputOffset,
-      coneOutputStructSize
+      2 * coneOutputStructSize
     );
 
     const treeIndex = inView.getFloat32(0, true);
@@ -2656,7 +2714,7 @@ export function transformExtrudedRings(
     outputRing(
       treeIndex,
       color,
-      new THREE.Vector3().copy(centerAxis).negate(),
+      centerAxis.clone().negate(),
       thickness,
       0,
       2 * Math.PI,
@@ -2765,7 +2823,7 @@ export function transformOpenExtrudedRingSegments(
     outputRing(
       treeIndex,
       color,
-      new THREE.Vector3().copy(centerAxis).negate(),
+      centerAxis.clone().negate(),
       thickness,
       rotationAngle,
       arcAngle,
@@ -2822,7 +2880,7 @@ export function transformRings(
   let currentGeneralRingsOutputOffset = 0;
 
   while (currentInputOffset < inputBuffer.byteLength) {
-    const inView = new DataView(inputBuffer, currentInputOffset, generalRingOutputStructSize);
+    const inView = new DataView(inputBuffer, currentInputOffset, ringInputStructSize);
     const outGeneralRingsView = new DataView(
       outGeneralRingsArray.buffer,
       originalGeneralRingsOutputOffset + currentGeneralRingsOutputOffset,
@@ -2985,7 +3043,7 @@ export function transformClosedSphericalSegments(
 
     const length = radius - height;
     const circleRadius = Math.sqrt(radius * radius - length * length);
-    const circleCenter = center.addScaledVector(normal.normalize(), length);
+    const circleCenter = center.clone().addScaledVector(normal.normalize(), length);
 
     outputSphericalSegment(
       treeIndex,
@@ -3027,7 +3085,7 @@ export function transformToruses(
 
     const treeIndex = inView.getFloat32(0, true);
     const color = getColor(inView, 4);
-    // const diagonal = inView.getFloat32(8, true);
+    const diagonal = inView.getFloat32(8, true); // Only use for diagonal, as far as I can see
     const center = getVector3(inView, 12);
     const normal = getVector3(inView, 24);
     const radius = inView.getFloat32(36, true);
@@ -3036,6 +3094,7 @@ export function transformToruses(
     outputTorusSegment(
       treeIndex,
       color,
+      diagonal,
       center,
       normal,
       radius,
@@ -3073,7 +3132,7 @@ export function transformClosedTorusSegments(
 
     const treeIndex = inView.getFloat32(0, true);
     const color = getColor(inView, 4);
-    // const diagonal = inView.getFloat32(8, true);
+    const diagonal = inView.getFloat32(8, true);
     const center = getVector3(inView, 12);
     const normal = getVector3(inView, 24);
     const radius = inView.getFloat32(36, true);
@@ -3084,6 +3143,7 @@ export function transformClosedTorusSegments(
     outputTorusSegment(
       treeIndex,
       color,
+      diagonal,
       center,
       normal,
       radius,
@@ -3121,7 +3181,7 @@ export function transformOpenTorusSegments(
 
     const treeIndex = inView.getFloat32(0, true);
     const color = getColor(inView, 4);
-    // const diagonal = inView.getFloat32(8, true);
+    const diagonal = inView.getFloat32(8, true);
     const center = getVector3(inView, 12);
     const normal = getVector3(inView, 24);
     const radius = inView.getFloat32(36, true);
@@ -3132,6 +3192,7 @@ export function transformOpenTorusSegments(
     outputTorusSegment(
       treeIndex,
       color,
+      diagonal,
       center,
       normal,
       radius,

@@ -706,7 +706,7 @@ export class CadSectorParser {
     generalRingOutputOffset += closedGeneralConeOutputOffsets[1];
 
     const solidOpenGeneralConesOutputOffsets = transformSolidOpenGeneralCones(
-      openGeneralConeSlice,
+      solidOpenGeneralConeSlice,
       coneOutput,
       generalRingOutput,
       coneOutputOffset,
@@ -718,7 +718,7 @@ export class CadSectorParser {
     generalRingOutputOffset += solidOpenGeneralConesOutputOffsets[1];
 
     const solidClosedGeneralConesOutputOffsets = transformSolidClosedGeneralCones(
-      closedGeneralConeSlice,
+      solidClosedGeneralConeSlice,
       coneOutput,
       generalRingOutput,
       trapeziumOutput,
@@ -748,7 +748,7 @@ export class CadSectorParser {
     coneOutputOffset += transformOpenCylinders(openCylinderSlice, coneOutput, coneOutputOffset, coneAttributes);
 
     generalCylinderOutputOffset += transformOpenGeneralCylinders(
-      openCylinderSlice,
+      openGeneralCylinderSlice,
       generalCylinderOutput,
       generalCylinderOutputOffset,
       generalCylinderAttributes
@@ -768,7 +768,7 @@ export class CadSectorParser {
     generalRingOutputOffset += closedGeneralCylinderOutputOffsets[1];
 
     const solidOpenGeneralCylinderOutputOffsets = transformSolidOpenGeneralCylinders(
-      openGeneralCylinderSlice,
+      solidOpenGeneralCylinderSlice,
       generalCylinderOutput,
       generalRingOutput,
       generalCylinderOutputOffset,
