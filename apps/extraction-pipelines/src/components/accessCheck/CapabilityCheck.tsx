@@ -1,10 +1,11 @@
 import React, { FunctionComponent, PropsWithChildren } from 'react';
 import { AclAction } from 'model/AclAction';
 import styled from 'styled-components';
-import { Colors, Icon, Loader } from '@cognite/cogs.js';
+import { Loader } from '@cognite/cogs.js';
 import { Code } from 'styles/StyledText';
-import { PageTitle, StyledTitle2 } from 'styles/StyledHeadings';
+import { PageTitle } from 'styles/StyledHeadings';
 import { useOneOfPermissions } from 'hooks/useOneOfPermissions';
+import { ErrorBox } from 'components/error/ErrorBox';
 
 export interface CapabilityCheckProps {
   requiredPermissions: Readonly<AclAction>[];
@@ -15,6 +16,12 @@ export interface CapabilityCheckProps {
 
 const Padded = styled.div`
   padding: 1.5em;
+`;
+
+const MissingCapabilityList = styled.ul`
+  li {
+    margin: 1em 0;
+  }
 `;
 
 export const CapabilityCheck: FunctionComponent<CapabilityCheckProps> = ({
@@ -37,56 +44,21 @@ export const CapabilityCheck: FunctionComponent<CapabilityCheckProps> = ({
           <br />
         </>
       )}
-      <ErrorDialog
-        requiredPermissions={requiredPermissions}
-        heading={heading}
-        text={text}
-      />
+      <ErrorBox heading={heading}>
+        <p>{text}</p>
+        <MissingCapabilityList>
+          {requiredPermissions.map((requiredPermission) => {
+            const permissionName = `${requiredPermission.acl}:${requiredPermission.action}`;
+            return (
+              <li key={permissionName}>
+                <Code>{permissionName}</Code>
+              </li>
+            );
+          })}
+        </MissingCapabilityList>
+      </ErrorBox>
     </Padded>
   ) : (
     <>{children}</>
-  );
-};
-
-const Wrapper = styled.div`
-  padding: 2rem;
-`;
-
-const MissingCapabilityList = styled.ul`
-  li {
-    margin: 1em 0;
-  }
-`;
-
-const StyledErrorHeader = styled(StyledTitle2)`
-  display: flex;
-  align-items: center;
-  &&& {
-    color: ${Colors['yellow-1'].hex()};
-  }
-`;
-const ErrorDialog = ({
-  requiredPermissions,
-  text,
-  heading,
-}: CapabilityCheckProps) => {
-  return (
-    <Wrapper className="z-4 error-dialog">
-      <StyledErrorHeader>
-        <Icon type="Warning" css="margin-right: 0.5rem" />
-        {heading}
-      </StyledErrorHeader>
-      <p>{text}</p>
-      <MissingCapabilityList>
-        {requiredPermissions.map((requiredPermission) => {
-          const permissionName = `${requiredPermission.acl}:${requiredPermission.action}`;
-          return (
-            <li key={permissionName}>
-              <Code>{permissionName}</Code>
-            </li>
-          );
-        })}
-      </MissingCapabilityList>
-    </Wrapper>
   );
 };

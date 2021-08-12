@@ -46,6 +46,7 @@ import { createExtPipePath } from 'utils/baseURL';
 import { ids } from 'cogs-variables';
 import { useQueryClient } from 'react-query';
 import { deleteExtractionPipeline } from 'utils/IntegrationsAPI';
+import { ErrorBox } from 'components/error/ErrorBox';
 
 const PageNav = styled.ul`
   ${Span3};
@@ -136,7 +137,9 @@ const IntegrationPage: FunctionComponent<IntegrationPageProps> = () => {
   const queryClient = useQueryClient();
   const { setIntegration } = useSelectedIntegration();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const { data: integration, isLoading } = useIntegrationById(parseInt(id, 10));
+  const { data: integration, isLoading, error } = useIntegrationById(
+    parseInt(id, 10)
+  );
   useEffect(() => {
     if (integration) {
       setIntegration(integration);
@@ -188,6 +191,21 @@ const IntegrationPage: FunctionComponent<IntegrationPageProps> = () => {
       });
   }, [integration, history, project, queryClient]);
 
+  if (error != null) {
+    return (
+      <FullPageLayout
+        pageHeadingText="Extraction pipeline"
+        breadcrumbs={<IntegrationBreadcrumbs />}
+      >
+        <ErrorBox heading={`Extraction pipeline id: '${id}' not found`}>
+          <p>
+            Extraction pipeline does not exist, or you may lack sufficient
+            access rights.
+          </p>
+        </ErrorBox>
+      </FullPageLayout>
+    );
+  }
   return isLoading || integration == null ? (
     <Loader />
   ) : (

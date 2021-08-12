@@ -81,11 +81,6 @@ export const MainFullWidthGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 3fr 1fr;
   border-top: ${pageDividerBorder};
-  .error-dialog {
-    grid-column: 2;
-    margin-top: 2rem;
-    height: fit-content;
-  }
 `;
 
 export const Span3 = css`

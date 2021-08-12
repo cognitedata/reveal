@@ -71,9 +71,6 @@ export const MainWithAsidesWrapper = styled(MainFullWidthGrid)`
     grid-column: 1;
     grid-row: 1 / span 2;
   }
-  .error-dialog {
-    grid-column-start: 2;
-  }
 `;
 
 export const SideInfo = styled.aside`
