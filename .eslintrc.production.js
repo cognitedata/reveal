@@ -21,6 +21,8 @@ module.exports = {
     'react/jsx-props-no-spreading': ['off'],
     'react/static-property-placement': ['off'],
     'react/state-in-constructor': ['off'],
+    'react/jsx-uses-react': 'off',
+    'react/react-in-jsx-scope': 'off',
 
     'jest/expect-expect': ['off'],
     'jest/no-test-callback': ['off'],
@@ -28,10 +30,8 @@ module.exports = {
 
     '@typescript-eslint/no-unused-vars': 'off',
     '@typescript-eslint/no-unused-vars-experimental': [
-      2,
-      {
-        ignoredNamesRegex: '^_',
-      },
+      'error',
+      { ignoredNamesRegex: '^_' },
     ],
     'prettier/prettier': [
       'error',

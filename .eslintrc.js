@@ -2,26 +2,24 @@ module.exports = {
   extends: './.eslintrc.production.js',
   // We can relax some settings here for nicer development experience; warnings will crash in CI
   rules: {
-    'prettier/prettier': 'warn',
-    'no-console': 'off',
-    'no-debugger': 'off',
-    '@cognite/no-unissued-todos': 'off',
-    '@typescript-eslint/no-unused-vars': 'off',
-    '@typescript-eslint/no-unused-vars-experimental': [
-      1,
+    'prettier/prettier': [
+      'warn',
       {
-        ignoredNamesRegex: '^_',
+        singleQuote: true,
+        trailingComma: 'es5',
+        arrowParens: 'always',
+        endOfLine: 'auto',
       },
     ],
-    'no-shadow': 'off',
-    '@typescript-eslint/no-shadow': 'error',
+    'no-console': 'off',
+    'no-debugger': 'off',
+    '@cognite/no-unissued-todos': [
+      'warn',
+      { issuePattern: '\\(((DEMO)-[0-9]+)\\)' },
+    ],
+    '@typescript-eslint/no-unused-vars-experimental': [
+      'warn',
+      { ignoredNamesRegex: '^_' },
+    ],
   },
-  overrides: [
-    {
-      files: ['**/*.tsx'],
-      rules: {
-        'react/prop-types': 'off',
-      },
-    },
-  ],
 };
