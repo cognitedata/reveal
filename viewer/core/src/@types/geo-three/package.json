@@ -1,8 +1,7 @@
 {
   "_args": [
     [
-      "geo-three@0.0.10",
-      "D:\\Work\\MySamples\\GeomapPOCNew\\GeomapPOC\\GeomapPOC"
+      "geo-three@0.0.10"
     ]
   ],
   "_from": "geo-three@0.0.10",
@@ -26,7 +25,7 @@
   ],
   "_resolved": "https://registry.npmjs.org/geo-three/-/geo-three-0.0.10.tgz",
   "_spec": "0.0.10",
-  "_where": "D:\\Work\\MySamples\\GeomapPOCNew\\GeomapPOC\\GeomapPOC",
+  "_where": "",
   "author": {
     "name": "Tentone"
   },
