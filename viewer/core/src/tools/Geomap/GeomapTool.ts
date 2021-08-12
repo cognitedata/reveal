@@ -13,6 +13,8 @@ export class GeomapTool extends Cognite3DViewerToolBase {
   private readonly _viewer: Cognite3DViewer;
 
   private _map: GEOTHREE.MapView;
+  private _currentMapProvider: GEOTHREE.MapProvider;
+  private _currentHeightMapProvider: GEOTHREE.MapProvider;
   ////Geomap variables/parameters
   private readonly DEV_MAPBOX_API_KEY : string = "pk.eyJ1IjoidGVudG9uZSIsImEiOiJjazBwNHU4eDQwZzE4M2VzOGhibWY5NXo5In0.8xpF1DEcT6Y4000vNhjj1g";
   private readonly OPEN_MAP_TILES_SERVER_MAP : string = "";
@@ -44,11 +46,11 @@ export class GeomapTool extends Cognite3DViewerToolBase {
   ];
 
   private readonly _modes = [
-    ["Planar", GEOTHREE.MapView.PLANAR],
-    ["Height", GEOTHREE.MapView.HEIGHT],
-    ["Martini", GEOTHREE.MapView.MARTINI],
-    ["Height Shader", GEOTHREE.MapView.HEIGHT_SHADER],
-    ["Spherical", GEOTHREE.MapView.SPHERICAL]
+    {"id" : "Planar", "mode" : GEOTHREE.MapView.PLANAR},
+    {"id" : "Height", "mode" : GEOTHREE.MapView.HEIGHT},
+    {"id" : "Martini", "mode" : GEOTHREE.MapView.MARTINI},
+    {"id" : "Height Shader", "mode" : GEOTHREE.MapView.HEIGHT_SHADER},
+    {"id" : "Spherical", "mode" : GEOTHREE.MapView.SPHERICAL}
   ];
 
 
@@ -56,7 +58,9 @@ export class GeomapTool extends Cognite3DViewerToolBase {
     super();
 
     this._viewer = viewer;
-    this._map = new GEOTHREE.MapView(GEOTHREE.MapView.PLANAR, new GEOTHREE.MapBoxProvider(this.DEV_MAPBOX_API_KEY, "mapbox/satellite-streets-v10", GEOTHREE.MapBoxProvider.STYLE, "jpg70"), new GEOTHREE.MapBoxProvider(this.DEV_MAPBOX_API_KEY, "mapbox.terrain-rgb", GEOTHREE.MapBoxProvider.MAP_ID, "pngraw"));
+    this._currentMapProvider = new GEOTHREE.MapBoxProvider(this.DEV_MAPBOX_API_KEY, "mapbox/satellite-streets-v10", GEOTHREE.MapBoxProvider.STYLE, "jpg70");
+    this._currentHeightMapProvider = new GEOTHREE.MapBoxProvider(this.DEV_MAPBOX_API_KEY, "mapbox.terrain-rgb", GEOTHREE.MapBoxProvider.MAP_ID, "pngraw");
+    this._map = new GEOTHREE.MapView(GEOTHREE.MapView.PLANAR, this._currentMapProvider, this._currentHeightMapProvider);
     this._viewer.addObject3D(this._map);
     this._map.updateMatrixWorld(true);
 
@@ -72,10 +76,18 @@ export class GeomapTool extends Cognite3DViewerToolBase {
 
   public SetMapProvider(idx : number) {
     this._map.setProvider(this._providers[idx].provider);
+    this._currentMapProvider = this._providers[idx].provider;
   }
 
   public SetMapHeightProvider(idx : number) {
     this._map.setHeightProvider(this._providers[idx].provider);
+    this._currentHeightMapProvider = this._providers[idx].provider;
+  }
+
+  public SetMapMode(idx : number) {
+    this._viewer.removeObject3D(this._map);
+    this._map = new GEOTHREE.MapView(this._modes[idx].mode, this._currentMapProvider, this._currentHeightMapProvider);
+    this._viewer.addObject3D(this._map);
   }
 
   public dispose(): void {

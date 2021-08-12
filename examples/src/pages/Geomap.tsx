@@ -19,7 +19,6 @@ import {
 } from '@cognite/reveal';
 import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, AxisViewTool, GeomapTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
-import { CadNode } from '@cognite/reveal/internals';
 
 window.THREE = THREE;
 (window as any).reveal = reveal;
@@ -49,18 +48,6 @@ export function Geomap() {
 
       const totalBounds = new THREE.Box3();
 
-      const slicingParams = {
-        enabledX: false,
-        enabledY: false,
-        enabledZ: false,
-        flipX: false,
-        flipY: false,
-        flipZ: false,
-        x: 0,
-        y: 0,
-        z: 0,
-        showHelpers: false,
-      };
       const pointCloudParams = {
         pointSize: 1.0,
         budget: 2_000_000,
@@ -223,7 +210,8 @@ export function Geomap() {
       const renderGui = gui.addFolder('Options');
       const renderModes = ['Planar', 'Height', 'Martini', 'Height Shader', 'Spherical'];
       renderGui.add(guiState, 'mode', renderModes).name('Mode').onFinishChange(value => {
-        const mode = renderModes.indexOf(value) + 1;
+        const mode = renderModes.indexOf(value);
+        geomapTool.SetMapMode(mode);
         viewer.forceRerender();
       });
 
@@ -232,8 +220,8 @@ export function Geomap() {
                             'Satellite Map Box', 'Satellite Map Box Labels', 'Satellite Here Maps', 'Satellite Bing Maps', 'Satellite Maps Tiler Labels', 
                             'Satellite Maps Tiler', 'Height Map Box', 'Height Map Tiler', 'Debug Height Map Box', 'Debug'];
       renderGui.add(guiState, 'providers', mapProviders).name('MapProviders').onFinishChange(value => {
-        const providers = mapProviders.indexOf(value) + 1;
-        geomapTool.SetMapProvider(providers);
+        const provider = mapProviders.indexOf(value);
+        geomapTool.SetMapProvider(provider);
         viewer.forceRerender();
       });
 
@@ -242,7 +230,7 @@ export function Geomap() {
       'Satellite Map Box', 'Satellite Map Box Labels', 'Satellite Here Maps', 'Satellite Bing Maps', 'Satellite Maps Tiler Labels', 
       'Satellite Maps Tiler', 'Height Map Box', 'Height Map Tiler', 'Debug Height Map Box', 'Debug'];
       renderGui.add(guiState, 'heightmap', heightMapProviders).name('HeightMapProvider').onFinishChange(value => {
-        const heightmap = heightMapProviders.indexOf(value) + 1;
+        const heightmap = heightMapProviders.indexOf(value);
         geomapTool.SetMapHeightProvider(heightmap);
         viewer.forceRerender();
       });
