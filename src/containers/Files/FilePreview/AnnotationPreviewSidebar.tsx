@@ -39,7 +39,7 @@ import { useSDK } from '@cognite/sdk-provider';
 import { CogniteEvent, EventChange, FileInfo } from '@cognite/sdk';
 import { lightGrey } from 'utils/Colors';
 import { ResourcePreviewSidebar } from 'containers';
-import { useCdfItem } from '@cognite/sdk-react-query-hooks';
+import { useCdfItem, useUserInfo } from '@cognite/sdk-react-query-hooks';
 
 import { useFlag } from '@cognite/react-feature-flags';
 import { SIDEBAR_RESIZE_EVENT } from 'utils/WindowEvents';
@@ -66,6 +66,8 @@ const AnnotationPreviewSidebar = ({
   annotations,
 }: Props) => {
   const client = useQueryClient();
+  const { data: userData } = useUserInfo();
+  const { email = 'UNKNOWN' } = userData || {};
   const [editing, setEditing] = useState<boolean>(false);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
 
@@ -160,6 +162,9 @@ const AnnotationPreviewSidebar = ({
             status: {
               set: update.status,
             },
+            checkedBy: {
+              set: email,
+            },
           },
         },
       ]),
@@ -245,6 +250,9 @@ const AnnotationPreviewSidebar = ({
           update: {
             status: {
               set: 'verified' as AnnotationStatus,
+            },
+            checkedBy: {
+              set: email,
             },
           },
         }));
