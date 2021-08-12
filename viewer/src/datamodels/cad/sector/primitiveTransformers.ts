@@ -347,7 +347,7 @@ function getCylinderCap(
 
   let linePoint = new THREE.Vector3(Math.cos(cylinderRotationAngle), Math.sin(cylinderRotationAngle), 0);
 
-  linePoint = linePoint.applyMatrix4(cylinderRotation).normalize();
+  linePoint = linePoint.applyMatrix4(cylinderRotation).normalize().multiplyScalar(radius);
   const lineStartA = extB.clone().sub(axis).add(linePoint);
   const lineEndA = extA.clone().add(axis).add(linePoint);
   const lineVector = lineEndA.clone().sub(lineStartA);
@@ -797,7 +797,6 @@ function outputTorusSegment(
   const sizeOffset = offset + torusSegmentAttributes.get('size')!.offset;
   const radiusOffset = offset + torusSegmentAttributes.get('radius')!.offset;
   const tubeRadiusOffset = offset + torusSegmentAttributes.get('tubeRadius')!.offset;
-  // const rotationAngleOffset = offset + torusSegmentAttributes.get('rotationAngle')!.offset;
   const arcAngleOffset = offset + torusSegmentAttributes.get('arcAngle')!.offset;
   const instanceMatrixOffset = offset + torusSegmentAttributes.get('instanceMatrix')!.offset;
 
@@ -810,11 +809,8 @@ function outputTorusSegment(
   writeFloat(treeIndex, outView, treeIndexOffset);
   writeColor(color, outView, colorOffset);
   writeFloat(diagonal, outView, sizeOffset);
-  /* writeVector3(center, outView, centerOffset);
-  writeVector3(normal, outView, normalOffset); */
   writeFloat(radius, outView, radiusOffset);
   writeFloat(tubeRadius, outView, tubeRadiusOffset);
-  // writeFloat(rotationAngle, outView, rotationAngleOffset);
   writeFloat(arcAngle, outView, arcAngleOffset);
   writeMatrix4(instanceMatrix, outView, instanceMatrixOffset);
 }
@@ -830,19 +826,16 @@ function outputQuad(
   const treeIndexOffset = offset + quadAttributes.get('treeIndex')!.offset;
   const colorOffset = offset + quadAttributes.get('color')!.offset;
   const instanceMatrixOffset = offset + quadAttributes.get('instanceMatrix')!.offset;
-  /* const vertex1Offset = offset + quadAttributes.get('vertex1')!.offset;
-  const vertex2Offset = offset + quadAttributes.get('vertex2')!.offset;
-  const vertex3Offset = offset + quadAttributes.get('vertex3')!.offset; */
 
   let side1 = vertices[3].clone().sub(vertices[1]);
   let side2 = vertices[3].clone().sub(vertices[2]);
 
   const scale = createScale(new THREE.Vector3(side2.length(), side1.length(), 1.0));
-  const normal = side2.cross(side1).normalize();
+  const normal = side2.clone().cross(side1).normalize();
   side1 = side1.normalize();
   side2 = side2.normalize();
 
-  const basis = new THREE.Matrix4().fromArray([
+  const basis = new THREE.Matrix4().set(
     side2.x,
     side1.x,
     normal.x,
@@ -859,7 +852,7 @@ function outputQuad(
     0.0,
     0.0,
     1.0
-  ]);
+  );
 
   const center = vertices[1].clone().add(vertices[2]).multiplyScalar(0.5);
   const translation = createTranslation(center);
@@ -868,10 +861,6 @@ function outputQuad(
   writeFloat(treeIndex, outView, treeIndexOffset);
   writeColor(color, outView, colorOffset);
 
-  // Only output the last three vertices
-  // writeVector3(vertices[1], outView, vertex1Offset);
-  // writeVector3(vertices[2], outView, vertex2Offset);
-  // writeVector3(vertices[3], outView, vertex3Offset);
   writeMatrix4(instanceMatrix, outView, instanceMatrixOffset);
 }
 
@@ -2552,8 +2541,8 @@ export function transformClosedExtrudedRingSegments(
     const rotationAngle = inView.getFloat32(48, true);
     const arcAngle = inView.getFloat32(52, true);
 
-    const centerA = center.addScaledVector(centerAxis, height / 2);
-    const centerB = center.addScaledVector(centerAxis, -height / 2);
+    const centerA = center.clone().addScaledVector(centerAxis, height / 2);
+    const centerB = center.clone().addScaledVector(centerAxis, - height / 2);
 
     const rotation = createRotationBetweenZ(centerAxis);
     const localXAxis = new THREE.Vector3(1, 0, 0).applyMatrix4(rotation);
@@ -2620,10 +2609,10 @@ export function transformClosedExtrudedRingSegments(
     const s0 = Math.sin(rotationAngle);
 
     const vertexA = new THREE.Vector3(c0, s0, 0);
-    const vertexA0 = vertexA.applyMatrix4(rotation);
-    const vertexA1 = centerA.addScaledVector(vertexA0, outerRadius);
-    const vertexA2 = centerB.addScaledVector(vertexA0, innerRadius);
-    const vertexA3 = centerB.addScaledVector(vertexA0, outerRadius);
+    const vertexA0 = vertexA.clone().applyMatrix4(rotation);
+    const vertexA1 = centerB.clone().addScaledVector(vertexA0, innerRadius);
+    const vertexA2 = centerA.clone().addScaledVector(vertexA0, outerRadius);
+    const vertexA3 = centerB.clone().addScaledVector(vertexA0, outerRadius);
 
     outputQuad(treeIndex, color, [vertexA0, vertexA1, vertexA2, vertexA3], outQuadsView, 0, quadAttributes);
 
@@ -2631,10 +2620,10 @@ export function transformClosedExtrudedRingSegments(
     const s1 = Math.sin(rotationAngle + arcAngle);
 
     const vertexB = new THREE.Vector3(c1, s1, 0);
-    const vertexB0 = vertexB.applyMatrix4(rotation);
-    const vertexB1 = centerA.addScaledVector(vertexB0, outerRadius);
-    const vertexB2 = centerB.addScaledVector(vertexB0, innerRadius);
-    const vertexB3 = centerB.addScaledVector(vertexB0, outerRadius);
+    const vertexB0 = vertexB.clone().applyMatrix4(rotation);
+    const vertexB1 = centerA.clone().addScaledVector(vertexB0, outerRadius);
+    const vertexB2 = centerB.clone().addScaledVector(vertexB0, innerRadius);
+    const vertexB3 = centerB.clone().addScaledVector(vertexB0, outerRadius);
 
     outputQuad(
       treeIndex,
@@ -2689,8 +2678,8 @@ export function transformExtrudedRings(
     const innerRadius = inView.getFloat32(40, true);
     const outerRadius = inView.getFloat32(44, true);
 
-    const centerA = center.addScaledVector(centerAxis, height / 2);
-    const centerB = center.addScaledVector(centerAxis, -height / 2);
+    const centerA = center.clone().addScaledVector(centerAxis, height / 2);
+    const centerB = center.clone().addScaledVector(centerAxis, - height / 2);
 
     const rotation = createRotationBetweenZ(centerAxis);
     const localXAxis = new THREE.Vector3(1, 0, 0).applyMatrix4(rotation);
@@ -2738,6 +2727,7 @@ export function transformExtrudedRings(
       0,
       coneAttributes
     );
+
     outputCone(
       treeIndex,
       color,
@@ -2798,8 +2788,8 @@ export function transformOpenExtrudedRingSegments(
     const rotationAngle = inView.getFloat32(48, true);
     const arcAngle = inView.getFloat32(52, true);
 
-    const centerA = center.addScaledVector(centerAxis, height / 2);
-    const centerB = center.addScaledVector(centerAxis, -height / 2);
+    const centerA = center.clone().addScaledVector(centerAxis, height / 2);
+    const centerB = center.clone().addScaledVector(centerAxis, - height / 2);
 
     const rotation = createRotationBetweenZ(centerAxis);
     const localXAxis = new THREE.Vector3(1, 0, 0).applyMatrix4(rotation);
@@ -2847,6 +2837,8 @@ export function transformOpenExtrudedRingSegments(
       0,
       coneAttributes
     );
+    
+    
     outputCone(
       treeIndex,
       color,
