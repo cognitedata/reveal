@@ -34,6 +34,7 @@ import {
   getYaxisUpdatesFromEventData,
   PlotlyEventData,
   SeriesData,
+  SeriesInfo,
 } from './utils';
 
 const Y_AXIS_WIDTH = 60;
@@ -305,7 +306,12 @@ const PlotlyChartComponent = ({
   };
 
   seriesData.forEach(({ unit, range, series }, index) => {
-    const { color, datapoints } = series[0];
+    const { color } = series[0];
+    const datapoints = series.reduce(
+      (acc: (Datapoints | DatapointAggregate)[], s: SeriesInfo) =>
+        acc.concat(s.datapoints),
+      []
+    );
 
     /**
      * For some reason plotly doesn't like that you overwrite the range input (doing this the wrong way?)

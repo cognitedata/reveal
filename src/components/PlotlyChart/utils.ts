@@ -16,7 +16,7 @@ export type SeriesInfo = {
   width: number | undefined;
   dash: string;
   mode: string | undefined;
-  datapoints: Datapoints | DatapointAggregate[];
+  datapoints: (Datapoints | DatapointAggregate)[];
   outdatedData?: boolean;
 };
 
@@ -42,7 +42,7 @@ export function calculateSeriesData(
   workflowsRunning: boolean,
   mergeUnits: boolean
 ): SeriesData[] {
-  const seriesData = [
+  const seriesData: SeriesData[] = [
     ...timeSeriesCollection
       .map((t, i) => ({
         enabled: t.enabled,
@@ -87,7 +87,6 @@ export function calculateSeriesData(
             mode: workflow.displayMode,
             width: workflow.lineWeight,
             dash: convertLineStyle(workflow.lineStyle),
-
             datapoints: convertUnits(
               workflows?.[i] || [],
               workflow.unit,
@@ -118,6 +117,38 @@ export function calculateSeriesData(
       }
     });
     return mergedSeries;
+  }
+
+  // Check if there is a workflow to be grouped
+  const workflowsToBeAttached = workflowCollection.filter(
+    (t) => t.enabled && t.attachTo
+  );
+
+  // Group workflows with the correct y-axes
+  if (workflowsToBeAttached.length > 0) {
+    seriesData.forEach((current, i) => {
+      const { series } = current;
+      const relatedWorkflowIds = workflowsToBeAttached
+        .filter((wf) => wf.attachTo! === series[0].id)
+        .map((wf) => wf.id);
+
+      if (relatedWorkflowIds.length > 0) {
+        relatedWorkflowIds.forEach((id) => {
+          const workflowIndex = seriesData.findIndex(
+            (s) => s.series[0].id === id
+          );
+
+          series.push(...seriesData[workflowIndex]!.series);
+          current.range = calculateMaxRange([
+            seriesData[i],
+            seriesData[workflowIndex],
+          ]);
+
+          // Workflow is grouped, remove from seriesData
+          seriesData.splice(workflowIndex, 1);
+        });
+      }
+    });
   }
 
   return seriesData;

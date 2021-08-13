@@ -80,6 +80,7 @@ export type ChartWorkflow = {
   calls?: Call[];
   statisticsCalls?: Call[];
   createdAt?: number;
+  attachTo?: string;
 };
 
 export type SourceCollectionData = {
