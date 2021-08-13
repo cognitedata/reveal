@@ -67,7 +67,7 @@ export class GeomapTool extends Cognite3DViewerToolBase {
     this._viewer.models
 
     const matrix = this._viewer.models[0].getModelTransformation();
-    var coords = GEOTHREE.UnitsUtils.datumsToSpherical(59.90526172119701, 10.626304236857035);
+    var coords = GEOTHREE.UnitsUtils.datumsToSpherical(59.9016426931744, 10.607235872426175);
     const newMatrix = matrix.setPosition(new THREE.Vector3(coords.x, 0, -coords.y));
     this._viewer.models[0].setModelTransformation(newMatrix);
     this._viewer.loadCameraFromModel(this._viewer.models[0]);
