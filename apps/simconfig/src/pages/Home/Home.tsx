@@ -33,7 +33,7 @@ const Home = () => {
         <Graphic type="Cognite" />
         <p>
           <Trans i18nKey="Home:welcome_paragraph" t={t}>
-            Welcome to the Cognite React Demo App.
+            Welcome to the Cognite Simconfig App.
           </Trans>
         </p>
       </Header>

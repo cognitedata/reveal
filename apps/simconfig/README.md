@@ -1,4 +1,4 @@
-# React Demo App
+# React Simconfig App
 
 This app is served as an example [React]-based application served using frontend-app-server (FAS).
 

@@ -30,7 +30,7 @@ export const MenuBar = () => {
   return (
     <TopBar>
       <TopBar.Left>
-        <TopBar.Logo title="React Demo App" />
+        <TopBar.Logo title="React Simconfig App" />
       </TopBar.Left>
       <TopBar.Navigation
         links={[

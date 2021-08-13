@@ -1,6 +1,6 @@
 {
-  "name": "@cognite/react-demo-app",
-  "version": "0.3.3",
+  "name": "@cognite/simconfig-app",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
     "start": "./scripts/start.sh",
@@ -28,7 +28,7 @@
     "testcafe:run-live": "./scripts/testcafe-run-live.sh",
     "testcafe:bazel-run-live": "ibazel run :testcafe",
     "update-helpers": "bazel run :generate_package_json_helpers",
-    "deploy": "cd ../.. && ./scripts/deploy.sh react-demo-app"
+    "deploy": "cd ../.. && ./scripts/deploy.sh simconfig"
   },
   "jest": {
     "coveragePathIgnorePatterns": [

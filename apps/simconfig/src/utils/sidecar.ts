@@ -73,8 +73,8 @@ const generateBaseUrls = (cluster: string, prod = false) => {
   __sidecarFormatVersion: 1,
   // to be used only locally as a sidecar placeholder
   // when deployed with FAS the values below are partly overriden
-  applicationId: 'fas-demo',
-  applicationName: 'React Demo (staging)',
+  applicationId: 'simconfig',
+  applicationName: 'Simulator Configuration App (staging)',
   docsSiteBaseUrl: 'https://docs.cognite.com',
   nomaApiBaseUrl: 'https://noma.development.cognite.ai',
   locize: {

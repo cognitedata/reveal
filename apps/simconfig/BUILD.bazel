@@ -194,7 +194,7 @@ react_scripts(
     ],
     env = {
         # Specify your Sentry DSN is the URL used to report runtime issues
-        "REACT_APP_SENTRY_DSN": "https://da67b4b23d3e4baea6c36de155a08491@sentry.io/3541732",
+        "REACT_APP_SENTRY_DSN": "https://8e7b7c02805d4384963d341c7428ad4e@o124058.ingest.sentry.io/5904266",
         # Specify your Mixpanel project token used in users analytics
         "REACT_APP_MIXPANEL_TOKEN": "1cc1cdc82fb93ec9a20a690216de41e4",
         # Specify your locize.io project ID used for localization
@@ -242,7 +242,7 @@ copy_to_bin(
 react_scripts_test(
     name = "test",
     # folder name to store jest coverage in during CI run
-    app_name = "react-demo-app",
+    app_name = "simconfig",
     data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + [
         "@npm//@storybook/addon-essentials",
         "@npm//@storybook/addon-links",
@@ -298,7 +298,7 @@ copy_to_bin(
 testcafe_test(
     name = "testcafe_test",
     # folder name to store artifacts during CI run
-    app_name = "react-demo-app",
+    app_name = "simconfig",
     args = [
         "'chrome --headless --no-sandbox --disable-software-rasterizer'",
         "'testcafe/desktop'",
@@ -388,7 +388,7 @@ publish_storybook(
     name = "publish_storybook",
     build = ":storybook-static",
     # Storybook sub domain to be used
-    sub_domain = "react-demo-app",
+    sub_domain = "simconfig",
 )
 
 ### FAS ###
@@ -398,14 +398,14 @@ publish_fas(
     build = ":build",
     package_json = ":package.json",
     # Subdomain name used for the pull requests preview.
-    preview_subdomain = "react-demo",
+    preview_subdomain = "simconfig",
     # FAS production app id
-    production_app_id = "fas-demo-prod",
+    production_app_id = "simconfig",
     # FAS app identifier (repo) shared across both production and staging apps
-    repo_id = "fas-demo",
+    repo_id = "simconfig",
     # Sentry project name
-    sentry_project_name = "react-demo-app",
+    sentry_project_name = "simconfig",
     # FAS staging app id
-    staging_app_id = "fas-demo",
+    staging_app_id = "simconfig-staging",
     versioning_strategy = "single-branch",
 )
