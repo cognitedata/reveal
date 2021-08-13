@@ -249,12 +249,12 @@ export default function SummaryStep() {
                   {totalAnnotations > 0 && (
                     <DetectionStats>
                       <PercentBar
-                        percentage1={tagPercent}
-                        percentage2={textPercent}
-                        percentage3={objectPercent}
-                        count1={tagNumber.length}
-                        count2={textNumber.length}
-                        count3={objectNumber.length}
+                        tagPercentage={tagPercent}
+                        textPercentage={textPercent}
+                        objectPercentage={objectPercent}
+                        tagCount={tagNumber.length}
+                        textCount={textNumber.length}
+                        objectCount={objectNumber.length}
                       />
                     </DetectionStats>
                   )}
@@ -295,20 +295,20 @@ export default function SummaryStep() {
 }
 
 export const PercentBar = (props: {
-  percentage1: number;
-  percentage2: number;
-  percentage3: number;
-  count1?: number;
-  count2?: number;
-  count3?: number;
+  tagPercentage: number;
+  textPercentage: number;
+  objectPercentage: number;
+  tagCount?: number;
+  textCount?: number;
+  objectCount?: number;
 }) => {
   return (
     <DetectionDetailsContainer>
       <PercentBarStyle>
         <Filler
-          percentage1={props.percentage1}
-          percentage2={props.percentage2}
-          percentage3={props.percentage3}
+          tagPercentage={props.tagPercentage}
+          textPercentage={props.textPercentage}
+          objectPercentage={props.objectPercentage}
         />
       </PercentBarStyle>
       <PercentBarStyle>
@@ -317,13 +317,18 @@ export const PercentBar = (props: {
           style={{
             display: 'flex',
             flexDirection: 'column',
-            color: '#fc4a72',
+            color: '#e3a1ec',
             justifyContent: 'center',
             alignItems: 'center',
-            width: `${props.percentage1}%`,
+            width: `${props.tagPercentage}%`,
           }}
         >
-          {props.percentage1}%<br />
+          {props.tagPercentage !== 0 && (
+            <>
+              {props.tagPercentage}%
+              <br />
+            </>
+          )}
           <div
             style={{
               fontSize: '8px',
@@ -332,7 +337,44 @@ export const PercentBar = (props: {
               minWidth: 'max-content',
             }}
           >
-            {props.count1} file{!!props.count1 && props.count1 !== 1 && 's'}
+            {!!props.tagCount && props.tagCount !== 0 && (
+              <div>
+                {props.tagCount} file
+                {!!props.tagCount && props.tagCount !== 1 && 's'}
+              </div>
+            )}
+          </div>
+        </Title>
+        <Title
+          level={6}
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            color: '#05b8a6',
+            justifyContent: 'center',
+            alignItems: 'center',
+            width: `${props.textPercentage}%`,
+          }}
+        >
+          {props.textPercentage !== 0 && (
+            <>
+              {props.textPercentage}%<br />
+            </>
+          )}
+          <div
+            style={{
+              fontSize: '8px',
+              display: 'flex',
+              justifyContent: 'center',
+              minWidth: 'max-content',
+            }}
+          >
+            {!!props.textCount && props.textCount !== 0 && (
+              <>
+                {props.textCount} file
+                {!!props.textCount && props.textCount !== 1 && 's'}
+              </>
+            )}
           </div>
         </Title>
         <Title
@@ -343,10 +385,14 @@ export const PercentBar = (props: {
             color: '#ff8746',
             justifyContent: 'center',
             alignItems: 'center',
-            width: `${props.percentage2}%`,
+            width: `${props.objectPercentage}%`,
           }}
         >
-          {props.percentage2}%<br />
+          {props.objectPercentage !== 0 && (
+            <>
+              {props.objectPercentage}%<br />
+            </>
+          )}
           <div
             style={{
               fontSize: '8px',
@@ -355,30 +401,12 @@ export const PercentBar = (props: {
               minWidth: 'max-content',
             }}
           >
-            {props.count2} file{!!props.count2 && props.count2 !== 1 && 's'}
-          </div>
-        </Title>
-        <Title
-          level={6}
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            color: '#f28fff',
-            justifyContent: 'center',
-            alignItems: 'center',
-            width: `${props.percentage3}%`,
-          }}
-        >
-          {props.percentage3}%<br />
-          <div
-            style={{
-              fontSize: '8px',
-              display: 'flex',
-              justifyContent: 'center',
-              minWidth: 'max-content',
-            }}
-          >
-            {props.count3} file{!!props.count3 && props.count3 !== 1 && 's'}
+            {!!props.objectCount && props.objectCount !== 0 && (
+              <>
+                {props.objectCount} file
+                {!!props.objectCount && props.objectCount !== 1 && 's'}{' '}
+              </>
+            )}
           </div>
         </Title>
       </PercentBarStyle>
@@ -387,15 +415,15 @@ export const PercentBar = (props: {
 };
 
 const Filler = (props: {
-  percentage1: number;
-  percentage2: number;
-  percentage3: number;
+  tagPercentage: number;
+  textPercentage: number;
+  objectPercentage: number;
 }) => {
   return (
     <>
-      <FillerStyleLeft style={{ width: `${props.percentage1}%` }} />
-      <FillerStyleMid style={{ width: `${props.percentage2}%` }} />
-      <FillerStyleRight style={{ width: `${props.percentage3}%` }} />
+      <FillerStyleLeft style={{ width: `${props.tagPercentage}%` }} />
+      <FillerStyleMid style={{ width: `${props.textPercentage}%` }} />
+      <FillerStyleRight style={{ width: `${props.objectPercentage}%` }} />
     </>
   );
 };
@@ -481,19 +509,19 @@ const PercentBarStyle = styled.div`
 `;
 
 const FillerStyleLeft = styled.div`
-  background: #fc4a72;
+  background: #e3a1ec;
   height: 100%;
   transition: width 0.2s ease-in;
 `;
 
 const FillerStyleRight = styled.div`
-  background: #f28fff;
+  background: #ff8746;
   height: 100%;
   transition: width 0.2s ease-in;
 `;
 
 const FillerStyleMid = styled.div`
-  background: #ff8746;
+  background: #05b8a6;
   height: 100%;
   transition: width 0.2s ease-in;
 `;
