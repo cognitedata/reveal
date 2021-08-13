@@ -90,7 +90,7 @@ export const DirectoryPrefixFilter = ({
   setFilter,
 }: { availablePrefixes: string[] } & DirectoryPrefixFilterProps) => {
   // ToDo: use FilterItemProps for DirectoryPrefixFilterProps once fileFilterProps have been properly updated with directoryPrefix field
-  const currentDirectory = filter.directoryPrefix ?? '';
+  const currentDirectory = filter.directoryPrefix ?? '/';
   const [subDirectoryList, setSubDirectoryList] = useState<
     { directory: string; isParentDirectory: boolean }[]
   >([]);
