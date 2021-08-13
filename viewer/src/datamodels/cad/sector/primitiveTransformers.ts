@@ -361,8 +361,8 @@ function getCylinderCap(
   return {
     treeIndex,
     color,
-    normal,
-    thickness,
+    normal: (invNormal ? capZAxisA.clone().negate() : capZAxisA),
+    thickness: thickness / radius,
     angle: normalizeRadians(capAngleA),
     arcAngle,
     instanceMatrix,
