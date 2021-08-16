@@ -83,7 +83,7 @@ export const FileView = () => {
         <SourceItem>
           <SourceName>
             <Icon
-              type="Eye"
+              type="EyeShow"
               style={{
                 marginLeft: 7,
                 marginRight: 20,

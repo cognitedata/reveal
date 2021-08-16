@@ -175,7 +175,7 @@ export const ConfigPanel = ({
         }
       >
         <Button
-          icon="Down"
+          icon="ChevronDownCompact"
           iconPlacement="right"
           onClick={() => {
             setVisible(true);

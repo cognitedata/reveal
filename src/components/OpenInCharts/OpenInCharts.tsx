@@ -286,10 +286,7 @@ export const OpenInCharts: FC = () => {
                       />
                       <InfoContainer>
                         <ResourceNameWrapper>
-                          <Icon
-                            type="ResourceTimeseries"
-                            style={{ minWidth: 14 }}
-                          />
+                          <Icon type="Timeseries" style={{ minWidth: 14 }} />
                           <span style={{ marginLeft: 5 }}>{t.name}</span>
                         </ResourceNameWrapper>
                         <Description>{t.description}</Description>

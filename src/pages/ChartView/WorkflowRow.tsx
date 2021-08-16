@@ -39,7 +39,7 @@ const renderStatusIcon = (status?: FunctionCallStatus) => {
     case 'Running':
       return <Icon type="Loading" />;
     case 'Completed':
-      return <Icon type="Check" />;
+      return <Icon type="Checkmark" />;
     case 'Failed':
     case 'Timeout':
       return <Icon type="Close" />;
@@ -284,7 +284,7 @@ export default function WorkflowRow({
             >
               <Button
                 type="ghost"
-                icon="Timeseries"
+                icon="ResourceTimeseries"
                 style={{ height: 28 }}
                 aria-label="timeseries"
               />
@@ -305,7 +305,7 @@ export default function WorkflowRow({
             >
               <Button
                 type="ghost"
-                icon="Delete"
+                icon="Trash"
                 style={{ height: 28 }}
                 aria-label="delete"
               />

@@ -156,7 +156,7 @@ const ChartList = () => {
   return (
     <div id="chart-list" style={{ padding: 16, width: '100%' }}>
       <div style={{ margin: 20 }}>
-        <Button type="primary" icon="Plus" onClick={handleNewChart}>
+        <Button type="primary" icon="PlusCompact" onClick={handleNewChart}>
           New chart
         </Button>
       </div>

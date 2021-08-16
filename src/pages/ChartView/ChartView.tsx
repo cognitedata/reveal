@@ -248,7 +248,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
         <SourceItem>
           <SourceName>
             <Icon
-              type="Eye"
+              type="EyeShow"
               style={{
                 marginLeft: 7,
                 marginRight: 20,
@@ -368,7 +368,11 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
         <Header className="downloadChartHide" inSearch={showSearch}>
           {!showSearch && (
             <section className="actions">
-              <Button icon="Plus" type="primary" onClick={handleOpenSearch}>
+              <Button
+                icon="PlusCompact"
+                type="primary"
+                onClick={handleOpenSearch}
+              >
                 Add time series
               </Button>
               <Button
@@ -407,7 +411,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
             </Tooltip>
             <Tooltip content={`${showMinMax ? 'Hide' : 'Show'} min/max`}>
               <Button
-                icon="Timeseries"
+                icon="ResourceTimeseries"
                 type={showMinMax ? 'link' : 'ghost'}
                 aria-label="view"
                 onClick={() =>

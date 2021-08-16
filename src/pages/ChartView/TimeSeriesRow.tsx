@@ -50,7 +50,7 @@ const renderStatusIcon = (status?: FunctionCallStatus) => {
     case 'Running':
       return <Icon type="Loading" />;
     case 'Completed':
-      return <Icon type="Check" />;
+      return <Icon type="Checkmark" />;
     case 'Failed':
     case 'Timeout':
       return <Icon type="Close" />;
@@ -456,7 +456,7 @@ export default function TimeSeriesRow({
           <Dropdown content={<AppearanceDropdown update={updateAppearance} />}>
             <Button
               type="ghost"
-              icon="Timeseries"
+              icon="ResourceTimeseries"
               style={{ height: 28 }}
               aria-label="timeseries"
             />
@@ -479,7 +479,7 @@ export default function TimeSeriesRow({
           >
             <Button
               type="ghost"
-              icon="Delete"
+              icon="Trash"
               style={{ height: 28 }}
               aria-label="delete"
             />
