@@ -248,6 +248,7 @@ const FilterPanel = styled.div`
   flex: 0 1 318px;
   flex-direction: column;
   border-right: 1px solid ${lightGrey};
+  z-index: 1;
 `;
 
 interface tablePanelProps {
