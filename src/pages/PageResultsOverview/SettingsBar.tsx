@@ -1,8 +1,13 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { Button, Title, Colors } from '@cognite/cogs.js';
+import { Body, Colors, Title, Button } from '@cognite/cogs.js';
+import { Modal } from 'antd';
 import { Flex } from 'components/Common';
+import { REVIEW_DIAGRAMS_LABELS, useReviewFiles } from 'hooks/useReviewFiles';
+import { selectDiagrams } from 'modules/contextualization/pnidParsing';
+import { useHistory, useParams } from 'react-router-dom';
+import { diagramPreview } from 'routes/paths';
 import { getSelectedDiagramsIds } from './selectors';
 
 const Bar = styled(Flex)`
@@ -22,12 +27,55 @@ const Buttons = styled(Flex)`
 `;
 
 export default function SettingsBar() {
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const { tenant, workflowId } =
+    useParams<{ tenant: string; workflowId: string }>();
+
   const selectedDiagramsIds = useSelector(getSelectedDiagramsIds);
 
-  const onDeleteSelectedClick = () => {};
-  const onApproveSelectedClick = () => {};
-  const onPreviewSelectedClick = () => {};
-  const onCancelClick = () => {};
+  const { onApproved, onRejected } = useReviewFiles(
+    selectedDiagramsIds.map((id: any) => Number(id))
+  );
+
+  const onRejectSelectedClick = async () => {
+    Modal.confirm({
+      icon: <></>,
+      width: 320,
+      maskClosable: true,
+      okText: REVIEW_DIAGRAMS_LABELS.reject.some.button,
+      cancelText: 'Cancel',
+      cancelButtonProps: { type: 'text' },
+      content: <Body level={2}>{REVIEW_DIAGRAMS_LABELS.reject.some.desc}</Body>,
+      onOk: async () =>
+        onRejected(selectedDiagramsIds.map((id: any) => Number(id))),
+    });
+  };
+
+  const onApproveSelectedClick = async () => {
+    Modal.confirm({
+      icon: <></>,
+      width: 320,
+      maskClosable: true,
+      okText: REVIEW_DIAGRAMS_LABELS.approve.some.button,
+      cancelText: 'Cancel',
+      cancelButtonProps: { type: 'text' },
+      content: (
+        <Body level={2}>{REVIEW_DIAGRAMS_LABELS.approve.some.desc}</Body>
+      ),
+      onOk: async () =>
+        onApproved(selectedDiagramsIds.map((id: any) => Number(id))),
+    });
+  };
+  const onPreviewSelectedClick = () => {
+    history.push(
+      diagramPreview.path(tenant, workflowId, selectedDiagramsIds[0])
+    );
+  };
+
+  const onCancelClick = () => {
+    dispatch(selectDiagrams({ workflowId, diagramIds: [] }));
+  };
 
   return (
     <Bar row align>
@@ -41,15 +89,15 @@ export default function SettingsBar() {
         {selectedDiagramsIds.length} diagrams selected
       </Title>
       <Buttons row>
-        <Button type="ghost-danger" onClick={onDeleteSelectedClick}>
-          Delete selected tags
+        <Button type="ghost-danger" onClick={onRejectSelectedClick}>
+          Reject tags on selected diagrams
         </Button>
         <Button
           type="ghost"
           variant="inverted"
           onClick={onApproveSelectedClick}
         >
-          Approve selected tags
+          Approve tags on selected diagrams
         </Button>
         <Button
           type="primary"

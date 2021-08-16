@@ -79,6 +79,23 @@ export const useWorkflowDiagrams = (
 };
 
 /**
+ * Returns all diagrams IDs associated with the specific workflow.
+ * @param workflowId
+ * @param all
+ */
+export const useWorkflowDiagramsIds = (
+  workflowId: number,
+  all: boolean = false
+) => {
+  const getDiagrams = useMemo(
+    () => workflowDiagramsSelector(workflowId, all),
+    [all, workflowId]
+  );
+  const diagrams: FileInfo[] = useSelector(getDiagrams);
+  return diagrams.map((item) => item.id);
+};
+
+/**
  * Returns all resources associated with the specific workflow.
  * @param workflowId
  * @param all

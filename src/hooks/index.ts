@@ -12,6 +12,7 @@ export * from './useSavedSettings';
 export * from './useSelectFilter';
 export * from './useSteps';
 export * from './useDatasets';
+export * from './useReviewFiles';
 
 // dev
 export * from './useTraceRerender';

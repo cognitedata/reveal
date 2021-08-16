@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import isEqual from 'lodash/isEqual';
 import { FileInfo } from '@cognite/sdk';
 import queryString from 'query-string';
 import { Table } from 'components/Common';
@@ -10,8 +9,9 @@ import {
   useParsingJob,
   selectDiagrams,
 } from 'modules/contextualization/pnidParsing';
-import { useWorkflowDiagrams } from 'modules/workflows';
+import { useWorkflowDiagramsIds } from 'modules/workflows';
 import { useActiveWorkflow } from 'hooks';
+import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 import { getContextualizationJobs } from '../selectors';
 import { getColumns, AdjustedFileInfo } from './columns';
 import { SelectionFilter } from './types';
@@ -26,11 +26,16 @@ export default function ResultsTable(props: ResultsTableProps): JSX.Element {
   const { selectionFilter } = props;
   const [selectedKeys, setSelectedKeys] = useState([] as number[]);
 
-  const [rows, setRows] = useState<AdjustedFileInfo[]>();
   const [columns, setColumns] = useState();
 
   const { workflowId } = useActiveWorkflow();
-  const diagrams = useWorkflowDiagrams(workflowId, true);
+  const diagramIds = useWorkflowDiagramsIds(workflowId, true);
+  const { data: diagrams } = useCdfItems<FileInfo>(
+    'files',
+    diagramIds.map((id) => ({ id })),
+    true
+  );
+
   const { uploadJobs } = useSelector(getContextualizationJobs);
   const { search } = history.location;
   const { page = 1 } = queryString.parse(search, { parseNumbers: true });
@@ -43,17 +48,6 @@ export default function ResultsTable(props: ResultsTableProps): JSX.Element {
     );
     return didFail ? 'failed' : 'completed';
   };
-
-  const adjustedDiagrams = diagrams
-    .filter((diagram: FileInfo) => Boolean(diagram))
-    .map((diagram: FileInfo) => ({
-      ...diagram,
-      uploadJob: uploadJobs[diagram.id],
-      status: didFileFail(diagram.id),
-      approval: true,
-      svg: false,
-      links: 0,
-    }));
 
   const filterDiagrams = (diagram: AdjustedFileInfo): boolean => {
     const isFilteredByName = diagram.name
@@ -88,6 +82,17 @@ export default function ResultsTable(props: ResultsTableProps): JSX.Element {
     );
   };
 
+  const adjustedDiagrams = diagrams
+    ?.filter((d: FileInfo) => Boolean(d))
+    .map((d: FileInfo) => ({
+      ...d,
+      uploadJob: uploadJobs[d.id],
+      status: didFileFail(d.id),
+      svg: false,
+      links: 0,
+    }))
+    .filter(filterDiagrams);
+
   const onRowChange = (keys: any) => setSelectedKeys(keys as number[]);
 
   const onPaginationChange = (newPage: number) => {
@@ -100,16 +105,10 @@ export default function ResultsTable(props: ResultsTableProps): JSX.Element {
   };
   const onSelectAll = (selectAll: boolean) =>
     setSelectedKeys(
-      selectAll && rows ? rows.map((el: any) => el.id) : ([] as number[])
+      selectAll && adjustedDiagrams
+        ? adjustedDiagrams.map((el: any) => el.id)
+        : ([] as number[])
     );
-
-  useEffect(() => {
-    const newRows = adjustedDiagrams.filter(filterDiagrams);
-    if (!isEqual(rows, newRows)) {
-      setRows(newRows);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectionFilter]);
 
   useEffect(() => {
     const newColumns = getColumns(workflowId);
@@ -131,7 +130,7 @@ export default function ResultsTable(props: ResultsTableProps): JSX.Element {
     <Table
       rowKey="id"
       columns={columns}
-      dataSource={rows}
+      dataSource={adjustedDiagrams}
       rowSelection={{
         onSelectAll,
         onChange: onRowChange,

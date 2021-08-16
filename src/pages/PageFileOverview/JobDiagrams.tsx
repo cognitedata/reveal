@@ -1,18 +1,12 @@
 import { Body, Colors, Icon, Input } from '@cognite/cogs.js';
-import { useActiveWorkflow } from 'hooks';
-import { WorkflowStep } from 'modules/types';
 import { useWorkflowItems } from 'modules/workflows';
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { FileInfo } from '@cognite/sdk';
 import { useHistory, useParams } from 'react-router-dom';
 import { diagramPreview } from 'routes/paths';
-import ColumnApproval from 'pages/PageResultsOverview/SectionResults/columns/ColumnApproval';
 import { stringContains } from 'modules/contextualization/utils';
-
-type JobDiagramsProps = {
-  step: WorkflowStep;
-};
+import ReviewStatus from 'components/ReviewStatus';
 
 type FileItemProps = {
   file: FileInfo;
@@ -35,22 +29,22 @@ const FileItem = ({ file, isSelected, onClick }: FileItemProps) => {
         <Body level={2}>{file.name}</Body>
       </div>
       <div className="tag">
-        <ColumnApproval />
+        <ReviewStatus file={file} />
       </div>
     </FileItemWrapper>
   );
 };
 
-const JobDiagrams = ({ step }: JobDiagramsProps) => {
+const JobDiagrams = () => {
   const history = useHistory();
+  const { tenant, workflowId, fileId } =
+    useParams<{ tenant: string; workflowId: string; fileId: string }>();
 
-  const { tenant, fileId } = useParams<{ tenant: string; fileId: string }>();
   const selectedFileId = Number(fileId);
 
-  const { workflowId } = useActiveWorkflow(step);
   const [query, setQuery] = useState<string>('');
 
-  const { diagrams } = useWorkflowItems(workflowId, true);
+  const { diagrams } = useWorkflowItems(Number(workflowId), true);
 
   const filteredDiagrams = diagrams.filter((file) =>
     stringContains(file.name, query)
@@ -120,7 +114,7 @@ const FileItemWrapper = styled.div<{ isSelected: boolean }>`
   border: ${(props) =>
     props.isSelected
       ? `2px solid ${Colors['link-primary-default'].hex()}`
-      : Colors['greyscale-grey2'].hex()};
+      : `2px solid ${Colors['greyscale-grey2'].hex()}`};
   cursor: pointer;
   width: 200px;
   .header {

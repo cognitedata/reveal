@@ -5,10 +5,10 @@ import { ApiStatusCount } from 'modules/contextualization/pnidParsing';
 import { UploadJobState } from 'modules/contextualization/uploadJobs';
 import { stringCompare } from 'modules/contextualization/utils';
 import { Flex } from 'components/Common';
+import ReviewStatus from 'components/ReviewStatus';
 import ColumnProgress from './ColumnProgress';
 import ColumnFileActions from './ColumnFileActions';
 import ColumnLinkedTo from './ColumnLinkedTo';
-import ColumnApproval from './ColumnApproval';
 
 export interface AdjustedFileInfo extends FileInfo {
   uploadJob?: UploadJobState;
@@ -53,9 +53,7 @@ export const getColumns: any = (workflowId: number) => {
       width: 150,
       sorter: (a: AdjustedFileInfo, b: AdjustedFileInfo) =>
         stringCompare(String(a?.approval), String(b?.approval)),
-      render: (_: any /* , file: any */) => (
-        <ColumnApproval /> // fileId={file.id} workflowId={workflowId} />
-      ),
+      render: (_: any, file: FileInfo) => <ReviewStatus file={file} />,
     },
     {
       title: 'Linked to',

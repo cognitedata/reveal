@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { FileInfo } from '@cognite/sdk';
+import { FileChangeUpdate, FileInfo } from '@cognite/sdk';
 import { createPendingAnnotationsFromJob } from 'utils/AnnotationUtils';
 import sdk from 'sdk-singleton';
 import {
@@ -18,6 +18,13 @@ import {
 import { setJobId, workflowDiagramsSelector } from 'modules/workflows';
 import handleError from 'utils/handleError';
 import { PNID_METRICS, trackUsage } from 'utils/Metrics';
+import {
+  doesLabelExist,
+  PENDING_LABEL,
+  isFileApproved,
+  INTERACTIVE_LABEL,
+  isFilePending,
+} from 'hooks/useReviewFiles';
 import {
   verticesToBoundingBox,
   mapAssetsToEntities,
@@ -39,6 +46,9 @@ const createPendingAnnotations = async (
 ): Promise<FileAnnotationsCount> => {
   const existingAnnotations = await listAnnotationsForFile(sdk, file, false);
 
+  const existingUnhandledAnnotations = existingAnnotations.filter(
+    (annotation) => annotation.status === 'unhandled'
+  );
   const preparedAnnotations: PnidResponseEntity[] = annotations.map(
     (annotation) => ({
       text: annotation.text,
@@ -61,7 +71,13 @@ const createPendingAnnotations = async (
   );
 
   await createAnnotations(sdk, pendingAnnotations);
+  const isFileMissingLabel =
+    !isFilePending(file) && !!existingUnhandledAnnotations.length;
 
+  // If file is missing the pending label OR has unapproved annotations
+  if (pendingAnnotations.length || isFileMissingLabel) {
+    await setFilePending(file);
+  }
   return {
     existingFilesAnnotations: existingAnnotations.filter(
       (anotation) => anotation.resourceType === 'file'
@@ -252,4 +268,27 @@ const handleNewAnnotations = async (
     )
   );
   return { annotationCounts, failedFiles };
+};
+
+const setFilePending = async (file: FileInfo) => {
+  await doesLabelExist(PENDING_LABEL);
+
+  const updatePatch: FileChangeUpdate['update'] = {
+    labels: {
+      add: [{ externalId: PENDING_LABEL.externalId }],
+    },
+  };
+
+  if (file && isFileApproved(file)) {
+    updatePatch.labels = {
+      ...updatePatch.labels,
+      remove: [{ externalId: INTERACTIVE_LABEL.externalId }],
+    };
+  }
+  await sdk.files.update([
+    {
+      id: file.id,
+      update: updatePatch,
+    },
+  ]);
 };

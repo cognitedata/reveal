@@ -151,7 +151,7 @@ export default function Routes() {
                 <>
                   <PageTitle title="Interactive Engineering Diagrams" />
                   <Flex row style={{ width: '100%' }}>
-                    <JobDiagrams step="diagramPreview" />
+                    <JobDiagrams />
                     <PageFileOverview step="diagramPreview" />
                   </Flex>
                 </>

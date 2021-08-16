@@ -37,7 +37,7 @@ export const useAnnotationsForFiles = (fileIds: number[]) => {
 
     const allEvents = convertEventsToAnnotations(
       uniqBy([...eventsById, ...eventsByExternalId], (el) => el.id)
-    );
+    ).filter((annotation) => annotation.status !== 'deleted');
 
     setAnnotations({ ...annotations, [fileId]: allEvents });
   };
