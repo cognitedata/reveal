@@ -6,6 +6,7 @@ import {
   ChartTimeSeries,
   FunctionCallStatus,
 } from 'reducers/charts/types';
+import { useDebouncedCallback } from 'use-debounce';
 import {
   AllIconTypes,
   Button,
@@ -261,6 +262,7 @@ export default function TimeSeriesRow({
   const { data: linkedAsset } = useLinkedAsset(tsExternalId, true);
 
   const { mutate: callFunction } = useCallFunction('individual_calc-master');
+  const debouncedCallFunction = useDebouncedCallback(callFunction, 1000);
 
   const updateStatistics = useCallback(
     (diff: Partial<ChartTimeSeries>) => {
@@ -296,7 +298,7 @@ export default function TimeSeriesRow({
       }
     }
 
-    callFunction(
+    debouncedCallFunction(
       {
         data: {
           calculation_input: {
@@ -325,7 +327,7 @@ export default function TimeSeriesRow({
       }
     );
   }, [
-    callFunction,
+    debouncedCallFunction,
     dateFrom,
     dateTo,
     timeseries,
