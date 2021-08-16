@@ -3,3 +3,6 @@
 # All code reviews go through the Subsurface Data Liberation team.
 # Ping us on #subsurface or #subsurface-data-liberation if you have questions!
 apps/cognuit @cognitedata/subsurface-data
+
+# The Simulator Configuration app is owned by the Simulator Integration team
+apps/simconfig @cognitedata/simulator-integration
