@@ -1,3 +1,4 @@
+/* eslint-disable @cognite/no-number-z-index */
 import React from 'react';
 import { ButtonProps, SegmentedControl } from '@cognite/cogs.js';
 import { InputNumber } from 'antd';
@@ -101,7 +102,7 @@ export const Paginator = (props: {
       <SegmentedControl
         onButtonClicked={handleButtonClicked}
         currentKey={`${currentPage}`}
-        style={{ height: '26px' }}
+        style={{ height: '26px', zIndex: 1 }}
       >
         {pageOptionButtons}
       </SegmentedControl>
