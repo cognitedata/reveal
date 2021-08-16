@@ -13,6 +13,12 @@ export const useLabels = (jobStarted: boolean) => {
 
   useEffect(() => {
     switch (jobStatus) {
+      case 'incomplete': {
+        setJobLabel('Set up incomplete');
+        setLabelVariant('warning');
+        setButtonLabel('Run model');
+        break;
+      }
       case 'ready': {
         setJobLabel('Ready to run');
         setLabelVariant('default');
@@ -46,6 +52,7 @@ export const useLabels = (jobStarted: boolean) => {
       default:
         break;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [jobStatus]);
 
   return { buttonLabel, jobLabel, labelVariant };

@@ -30,8 +30,8 @@ export const FilterWrapper = (props: Props) => {
 };
 
 const Wrapper = styled.div`
-  max-width: 200px;
-  min-width: 200px;
+  max-width: 220px;
+  min-width: 220px;
   z-index: ${Layers.POPOVER};
   cursor: ${({ hasPermission }: { hasPermission: boolean }) =>
     !hasPermission ? 'not-allowed' : 'pointer'};

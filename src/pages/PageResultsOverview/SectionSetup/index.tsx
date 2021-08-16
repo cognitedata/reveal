@@ -56,18 +56,56 @@ export default function SectionSetup(props: Props): JSX.Element {
           </Label>
         </Flex>
         <DetailsWrapper>
-          <SelectionInfo
-            editable={!jobStarted}
-            type="diagrams"
-            count={allCounts.diagrams}
-          />
-          <Body level={2}>will be linked to</Body>
-          {getLinkedResources()}
-          <Body level={2}>on</Body>
-          <ModelInfo editable={!jobStarted} onClick={onModelClick}>
-            {modelSelected}
-          </ModelInfo>
-          <Body level={2}>model.</Body>
+          {jobStatus === 'incomplete' ? (
+            <>
+              {!allCounts.diagrams && (
+                <Flex row align>
+                  <Body level={2}>No engineering diagrams selected. </Body>
+                  <SelectionInfo
+                    text="Select diagrams"
+                    editable={!jobStarted}
+                    type="diagrams"
+                    count={allCounts.diagrams}
+                  />
+                </Flex>
+              )}
+              {!getLinkedResources()?.length && (
+                <Flex row align>
+                  <Body level={2}>
+                    At least one resource type must be selected.
+                  </Body>
+                  <SelectionInfo
+                    text="Select assets"
+                    editable={!jobStarted}
+                    type="assets"
+                    count={allCounts.assets}
+                  />
+                  <Body level={2}>or</Body>
+                  <SelectionInfo
+                    text="Select files"
+                    editable={!jobStarted}
+                    type="files"
+                    count={allCounts.files}
+                  />
+                </Flex>
+              )}
+            </>
+          ) : (
+            <Flex row align>
+              <SelectionInfo
+                editable={!jobStarted}
+                type="diagrams"
+                count={allCounts.diagrams}
+              />
+              <Body level={2}>will be linked to</Body>
+              {getLinkedResources()}
+              <Body level={2}>on</Body>
+              <ModelInfo editable={!jobStarted} onClick={onModelClick}>
+                {modelSelected}
+              </ModelInfo>
+              <Body level={2}>model.</Body>
+            </Flex>
+          )}
         </DetailsWrapper>
       </Flex>
       <RunModelButton jobStarted={jobStarted} setJobStarted={setJobStarted} />

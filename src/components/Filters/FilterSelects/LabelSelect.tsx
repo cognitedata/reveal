@@ -43,14 +43,12 @@ export const LabelSelect = (props: Props) => {
         isLoaded,
       }}
       selectProps={{
-        title: 'Labels',
+        title: 'Label:',
         options,
         isDisabled: !hasPermission,
         onChange: setMultiSelection,
         value: currentSelection,
         isMulti: true,
-        isSearchable: true,
-        isClearable: true,
       }}
     />
   );

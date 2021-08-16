@@ -12,7 +12,7 @@ export const SetUpWrapper = styled.div.attrs(
       style.border = `1px solid ${Colors['greyscale-grey4'].hex()}`;
       style.backgroundColor = Colors.white.hex();
     }
-    if (jobStatus === 'error') {
+    if (jobStatus === 'incomplete' || jobStatus === 'error') {
       style.border = `1px solid ${Colors['yellow-5'].hex()}`;
       style.backgroundColor = `${Colors['yellow-8'].hex()}`;
     }
@@ -31,19 +31,19 @@ export const SetUpWrapper = styled.div.attrs(
 
 export const DetailsWrapper = styled.div`
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   flex-wrap: wrap;
-  align-items: center;
+  align-items: flex-start;
   justify-content: flex-start;
   margin: 16px 0 28px 0;
 
-  & > * {
-    margin: 0 3px;
+  & > div > * {
+    margin: 3px;
   }
-  & > :first-child {
+  & > div > :first-child {
     margin-left: 0;
   }
-  & > :last-child {
+  & > div > :last-child {
     margin-right: 0;
   }
 `;

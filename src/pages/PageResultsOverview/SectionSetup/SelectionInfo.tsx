@@ -7,10 +7,11 @@ type Props = {
   type: ResourceType | 'diagrams';
   count?: number;
   editable?: boolean;
+  text?: string;
 };
 
 export default function SelectionInfo(props: Props): JSX.Element {
-  const { type, count = 0, editable = false } = props;
+  const { text, type, count = 0, editable = false } = props;
 
   const { goToStep } = useGoToStep();
 
@@ -31,7 +32,7 @@ export default function SelectionInfo(props: Props): JSX.Element {
 
   return (
     <ModelInfo editable={editable} onClick={onSelectionClick}>
-      {count} {getLabel()}
+      {text || `${count} ${getLabel()}`}
     </ModelInfo>
   );
 }

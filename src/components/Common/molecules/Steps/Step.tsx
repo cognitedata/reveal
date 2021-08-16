@@ -29,6 +29,8 @@ export default function Step(props: StepProps) {
   const completedSteps = useCompletedSteps();
   const wasVisited: boolean = completedSteps.includes(workflowStep);
   const isCurrent: boolean = stepIndex === currentStepIndex;
+  const isClickable: boolean =
+    isCurrent || wasVisited || stepIndex === currentStepIndex + 1;
 
   const onLinkClick = () => {
     if (workflowStep)
@@ -42,32 +44,34 @@ export default function Step(props: StepProps) {
     return <>{stepNumber}</>;
   };
 
+  const StepContents = (): JSX.Element => (
+    <Flex
+      row
+      style={{
+        flexWrap: 'no-wrap',
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start',
+      }}
+    >
+      <StepNumber small={!!small} isCurrent={isCurrent} wasVisited={wasVisited}>
+        {showStepIconOrNumber()}
+      </StepNumber>
+      <Flex column>
+        <div>{title}</div>
+        <StyledAdditionalText level={2}>{additionalText}</StyledAdditionalText>
+      </Flex>
+    </Flex>
+  );
+
   return (
     <StyledStep small={!!small} isCurrent={isCurrent} wasVisited={wasVisited}>
-      <Link to={url} onClick={onLinkClick}>
-        <Flex
-          row
-          style={{
-            flexWrap: 'no-wrap',
-            justifyContent: 'flex-start',
-            alignItems: 'flex-start',
-          }}
-        >
-          <StepNumber
-            small={!!small}
-            isCurrent={isCurrent}
-            wasVisited={wasVisited}
-          >
-            {showStepIconOrNumber()}
-          </StepNumber>
-          <Flex column>
-            <div>{title}</div>
-            <StyledAdditionalText level={2}>
-              {additionalText}
-            </StyledAdditionalText>
-          </Flex>
-        </Flex>
-      </Link>
+      {isClickable ? (
+        <Link to={url} onClick={onLinkClick}>
+          <StepContents />
+        </Link>
+      ) : (
+        <StepContents />
+      )}
     </StyledStep>
   );
 }

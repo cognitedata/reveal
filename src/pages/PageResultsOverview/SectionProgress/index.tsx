@@ -38,7 +38,9 @@ const SectionProgress = (): JSX.Element => {
 
   useInterval(pollJobIfRunning, isJobDone ? null : 5000);
 
-  const successPercentage = Math.ceil((100 * statusCount.completed) / total);
+  const successPercentage = total
+    ? Math.ceil((100 * statusCount.completed) / total)
+    : 0;
   const idle =
     (total -
       (statusCount.completed +

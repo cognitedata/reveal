@@ -1,8 +1,8 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Button } from '@cognite/cogs.js';
-import { Row } from 'antd';
 import { selectAllDataSets } from 'modules/datasets';
+import { Flex } from 'components/Common';
 import { FilterTag } from './FilterTag';
 
 type FilterListProps = {
@@ -78,21 +78,19 @@ export const FilterList = ({
   };
 
   return (
-    <>
-      <Row gutter={[4, 4]} style={{ width: '100%' }}>
-        {displayDataSets()} {displayLabels()} {displayQueryTag()}
-      </Row>
+    <Flex row style={{ flexWrap: 'wrap' }}>
+      {displayDataSets()} {displayLabels()} {displayQueryTag()}
       {(dataSetIds?.length || labels?.length || searchQuery?.length) && (
         <Button
           icon="Close"
-          type="secondary"
+          type="ghost"
+          size="small"
           iconPlacement="left"
-          style={{ width: '130px' }}
           onClick={onClearAll}
         >
-          Clear filters
+          Clear all
         </Button>
       )}
-    </>
+    </Flex>
   );
 };

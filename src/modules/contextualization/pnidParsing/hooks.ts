@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { createSelector } from 'reselect';
 import { RootState } from 'store';
+import { useResourceCount } from 'hooks';
 
 const selectParsingJob = createSelector(
   (state: RootState) => state.workflows.items,
@@ -19,12 +20,23 @@ export const useParsingJob = (workflowId: number) => {
   return parsingJob;
 };
 
-export type JobStatus = 'ready' | 'loading' | 'running' | 'done' | 'error';
+export type JobStatus =
+  | 'incomplete'
+  | 'ready'
+  | 'loading'
+  | 'running'
+  | 'done'
+  | 'error';
 export const useJobStatus = (workflowId: number, jobInitiated?: boolean) => {
   const [jobStatus, setJobStatus] = useState<JobStatus>('ready');
   const parsingJob = useParsingJob(workflowId);
+  const allCounts = useResourceCount();
+
+  const isSetUpIncomplete =
+    !allCounts.diagrams || (!allCounts.files && !allCounts.assets);
 
   const getJobStatus = (): JobStatus | undefined => {
+    if (isSetUpIncomplete) return 'incomplete';
     const { statusCount, status: parsingJobStatus, jobId } = parsingJob;
     const {
       completed = 0,

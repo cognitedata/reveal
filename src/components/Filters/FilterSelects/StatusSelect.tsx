@@ -1,7 +1,6 @@
 import React from 'react';
 import { OptionType } from '@cognite/cogs.js';
 import { useSelectFilter } from 'hooks';
-
 import { Select } from 'components/Common';
 import { statusData, StatusData, StatusType } from 'components/Filters';
 
@@ -30,9 +29,8 @@ export const StatusSelect = (props: Props) => {
   return (
     <Select
       selectProps={{
-        title: 'Progress',
+        title: 'Progress:',
         isMulti: true,
-        isClearable: true,
         options,
         onChange: setMultiSelection,
         value: currentSelection,

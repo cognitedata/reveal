@@ -62,12 +62,10 @@ export const RootAssetSelect = (props: Props): JSX.Element => {
         tooltipContent: '',
       }}
       selectProps={{
-        title: 'Root assets',
-        backspaceRemovesValue: true,
-        escapeClearsValue: true,
-        isClearable: true,
+        title: 'Root asset:',
         options,
         value: currentSelection,
+        isClearable: true,
         onInputChange: onRootAssetSearch,
         onChange: setSingleSelection,
       }}

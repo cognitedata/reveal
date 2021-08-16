@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Dropdown, Menu, Button } from '@cognite/cogs.js';
 
 type FileMenuProps = {
@@ -6,6 +6,8 @@ type FileMenuProps = {
 };
 
 export const FilterMenu = ({ options }: FileMenuProps): JSX.Element => {
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+
   const filterMenu = (
     <Menu>
       {options.map((option) => (
@@ -15,8 +17,12 @@ export const FilterMenu = ({ options }: FileMenuProps): JSX.Element => {
   );
 
   return (
-    <Dropdown content={filterMenu}>
-      <Button icon="Down" iconPlacement="right">
+    <Dropdown content={filterMenu} visible={isMenuOpen}>
+      <Button
+        icon="Down"
+        iconPlacement="right"
+        onClick={() => setIsMenuOpen(!isMenuOpen)}
+      >
         More filters
       </Button>
     </Dropdown>

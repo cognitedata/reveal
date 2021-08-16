@@ -35,7 +35,7 @@ const StyledTag = styled(Tag)`
   min-width: 129px;
   height: 28px;
   overflow: hidden;
-  margin-right: 6px;
+  margin: 0 6px 6px 0;
   .cogs-tag {
     background-color: rgba(74, 103, 251, 0.1);
     color: #4255bb;

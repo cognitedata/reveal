@@ -47,6 +47,7 @@ export const paths: { [key: string]: PathData } = {
     workflowStepName: 'review',
   },
   diagramPreview: {
+    isNotStep: true,
     path: (
       tenant: string,
       workflowId: string | number,

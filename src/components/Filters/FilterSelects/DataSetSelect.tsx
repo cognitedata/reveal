@@ -3,10 +3,10 @@ import isEqual from 'lodash/isEqual';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { OptionType } from '@cognite/cogs.js';
 import { DataSet } from '@cognite/sdk';
-import { Select } from 'components/Common';
-import { useSelectFilter, useDatasets } from 'hooks';
 import { ResourceType } from 'modules/sdk-builder/types';
 import { stringContains } from 'modules/contextualization/utils';
+import { useSelectFilter, useDatasets } from 'hooks';
+import { Select } from 'components/Common';
 
 type Props = {
   resourceType: ResourceType;
@@ -74,7 +74,8 @@ export const DataSetSelect = (props: Props) => {
       }}
       selectProps={{
         isMulti: true,
-        title: 'Data set',
+        clearable: false,
+        title: 'Data set:',
         options: options!,
         value: currentSelection,
         onChange: setMultiSelection,

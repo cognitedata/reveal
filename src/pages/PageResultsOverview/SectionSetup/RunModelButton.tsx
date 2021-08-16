@@ -58,6 +58,7 @@ export default function RunModelButton(props: Props): JSX.Element {
     );
   }
 
+  if (jobStatus === 'incomplete') return <span />;
   if (jobStatus === 'done')
     return (
       <Flex row align>
