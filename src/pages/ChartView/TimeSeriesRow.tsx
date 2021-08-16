@@ -260,9 +260,12 @@ export default function TimeSeriesRow({
   const statisticsForSource = statistics[0];
 
   const { data: linkedAsset } = useLinkedAsset(tsExternalId, true);
-
   const { mutate: callFunction } = useCallFunction('individual_calc-master');
-  const debouncedCallFunction = useDebouncedCallback(callFunction, 1000);
+  const memoizedCallFunction = useCallback(callFunction, [callFunction]);
+  const debouncedCallFunction = useDebouncedCallback(
+    memoizedCallFunction,
+    1000
+  );
 
   const updateStatistics = useCallback(
     (diff: Partial<ChartTimeSeries>) => {
