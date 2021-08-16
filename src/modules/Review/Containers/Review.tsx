@@ -40,7 +40,7 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
 
   // ToDo: make initial state false when merging to master
   const [showCollectionSettingsModal, setShowCollectionSettingsModal] =
-    useState<boolean>(true);
+    useState<boolean>(false);
 
   const file = useSelector(({ filesSlice }: RootState) =>
     selectFileById(filesSlice, +fileId)
