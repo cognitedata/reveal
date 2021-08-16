@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { PageTitle } from '@cognite/cdf-utilities';
 import styled from 'styled-components';
 import { Button, Icon, Popconfirm } from '@cognite/cogs.js';
@@ -16,6 +16,7 @@ import { DeleteAnnotationsByFileIds } from 'src/store/thunks/DeleteAnnotationsBy
 import { StatusToolBar } from 'src/modules/Process/Containers/StatusToolBar';
 import { fetchFilesById } from 'src/store/thunks/fetchFilesById';
 import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
+import { CollectionSettingsModal } from 'src/modules/Common/Components/CollectionSettingsModal/CollectionSettingsModal';
 
 const DeleteButton = (props: { onConfirm: () => void }) => (
   <div style={{ minWidth: '120px' }}>
@@ -36,6 +37,10 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
   const history = useHistory();
   const dispatch = useDispatch();
   const { fileId } = props.match.params;
+
+  // ToDo: make initial state false when merging to master
+  const [showCollectionSettingsModal, setShowCollectionSettingsModal] =
+    useState<boolean>(true);
 
   const file = useSelector(({ filesSlice }: RootState) =>
     selectFileById(filesSlice, +fileId)
@@ -120,6 +125,10 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
       )}
 
       {renderView()}
+      <CollectionSettingsModal
+        showModal={showCollectionSettingsModal}
+        onCancel={() => setShowCollectionSettingsModal(false)}
+      />
     </>
   );
 };
