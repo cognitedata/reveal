@@ -264,7 +264,7 @@ export default function TimeSeriesRow({
   const memoizedCallFunction = useCallback(callFunction, [callFunction]);
   const debouncedCallFunction = useDebouncedCallback(
     memoizedCallFunction,
-    1000
+    1200
   );
 
   const updateStatistics = useCallback(
