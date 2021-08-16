@@ -4,7 +4,7 @@ import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
 import { DatapointAggregate, DatapointsMultiQuery } from '@cognite/sdk';
 import { calculateGranularity } from 'utils/timeseries';
-import Plot from 'react-plotly.js';
+import createPlotlyComponent from 'react-plotly.js/factory';
 import Plotly from 'plotly.js-basic-dist';
 import { useSDK } from '@cognite/sdk-provider';
 import {
@@ -30,6 +30,8 @@ import {
   LoadingIcon,
   PlotWrapper,
 } from './elements';
+
+const Plot = createPlotlyComponent(Plotly);
 
 const Y_AXIS_WIDTH = 60;
 const Y_AXIS_MARGIN = 40;
