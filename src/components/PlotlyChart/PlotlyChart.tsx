@@ -78,7 +78,7 @@ const PlotlyChartComponent = ({
   const dateFrom = chart?.dateFrom;
   const dateTo = chart?.dateTo;
 
-  const [debouncedRange] = useDebounce({ dateFrom, dateTo }, 2000, {
+  const [debouncedRange] = useDebounce({ dateFrom, dateTo }, 1000, {
     equalityFn: (l, r) => isEqual(l, r),
   });
 
