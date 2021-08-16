@@ -215,7 +215,7 @@ const processSlice = createSlice({
     showFileMetadataPreview(state) {
       state.showFileMetadataDrawer = true;
     },
-    setSelectedFileId(state, action: PayloadAction<number>) {
+    setSelectedFileId(state, action: PayloadAction<number | null>) {
       state.selectedFileId = action.payload;
     },
     setSelectedDetectionModels(

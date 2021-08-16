@@ -1,3 +1,4 @@
+/* eslint-disable @cognite/no-number-z-index */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
@@ -346,6 +347,8 @@ const ProcessToolBarElement = styled.div<ToolBarElemProps>`
 `;
 const ToolContainer = styled.div`
   display: flex;
+  width: fit-content;
+  z-index: 1;
 `;
 const ElementTitle = styled.div`
   display: flex;

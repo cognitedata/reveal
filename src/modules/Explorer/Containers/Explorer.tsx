@@ -1,3 +1,4 @@
+/* eslint-disable @cognite/no-number-z-index */
 import React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import FilterToggleButton from 'src/modules/Explorer/Components/FilterToggleButton';
@@ -88,6 +89,10 @@ const Explorer = () => {
     }
   };
 
+  const handleDeselect = () => {
+    dispatch(setExplorerSelectedFileId(null));
+  };
+
   const handleRowSelect = (item: TableDataItem, selected: boolean) => {
     dispatch(setExplorerFileSelectState(item.id, selected));
   };
@@ -146,6 +151,11 @@ const Explorer = () => {
 
   return (
     <>
+      <Deselect
+        onClick={() => {
+          handleDeselect();
+        }}
+      />
       <FileUploadModal
         enableProcessAfter
         onUploadSuccess={onUploadSuccess}
@@ -172,6 +182,7 @@ const Explorer = () => {
                 style={{
                   borderRight: `1px solid ${Colors['greyscale-grey3'].hex()}`,
                   padding: '10px',
+                  zIndex: 1,
                 }}
               >
                 <FilterToggleButton
@@ -273,6 +284,15 @@ const DrawerContainer = styled.div`
   flex-shrink: 0;
   overflow: auto;
   background: white;
+`;
+
+const Deselect = styled.div`
+  position: fixed;
+  z-index: 0;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
 `;
 
 export default Explorer;

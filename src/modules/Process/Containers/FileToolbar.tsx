@@ -1,3 +1,4 @@
+/* eslint-disable @cognite/no-number-z-index */
 import React from 'react';
 import { Button, SegmentedControl, Popconfirm } from '@cognite/cogs.js';
 import styled from 'styled-components';
@@ -54,6 +55,7 @@ export const FileToolbar = ({
             <SegmentedControl
               onButtonClicked={onViewChange}
               currentKey={currentView}
+              style={{ zIndex: 1 }}
             >
               <SegmentedControl.Button
                 key="list"

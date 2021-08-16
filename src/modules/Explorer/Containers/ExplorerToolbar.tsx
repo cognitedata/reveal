@@ -1,3 +1,4 @@
+/* eslint-disable @cognite/no-number-z-index */
 import React from 'react';
 import {
   Button,
@@ -117,6 +118,7 @@ export const ExplorerToolbar = ({
         <SegmentedControl
           onButtonClicked={onViewChange}
           currentKey={currentView}
+          style={{ zIndex: 1 }}
         >
           <SegmentedControl.Button
             key="list"
@@ -161,6 +163,7 @@ const Right = styled.div`
   display: flex;
   justify-content: flex-end;
   align-items: center;
+  z-index: 2;
 `;
 
 const Container = styled.div`

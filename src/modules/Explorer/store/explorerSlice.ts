@@ -127,7 +127,7 @@ const explorerSlice = createSlice({
         }
       },
     },
-    setExplorerSelectedFileId(state, action: PayloadAction<number>) {
+    setExplorerSelectedFileId(state, action: PayloadAction<number | null>) {
       state.selectedFileId = action.payload;
     },
     hideExplorerFileMetadata(state) {
