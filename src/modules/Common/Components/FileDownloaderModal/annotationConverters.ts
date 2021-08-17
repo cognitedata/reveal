@@ -1,6 +1,8 @@
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
+import { Vertex } from 'src/api/types';
 import { AnnotationStatus } from 'src/utils/AnnotationUtils';
 import { AnnotationPreview } from '../../types';
+import { Keypoint } from '../CollectionSettingsModal/CollectionSettingsTypes';
 
 export const convertAnnotationsToAutoML = async (
   files: FileInfo[],
@@ -70,24 +72,30 @@ export const convertAnnotationsToCOCO = async (
     });
   });
 
-  const unqiueAnnotations = Array.from(
-    new Set(
-      Object.entries(filteredAnnotations)
-        .map(([_, items]) => {
-          return items.map((item) => item.text.toLowerCase());
-        })
-        .flat()
-    )
-  );
+  const unqiueAnnotations = [] as AnnotationPreview[];
+  Object.entries(filteredAnnotations).filter(([_, annotationPreviews]) => {
+    annotationPreviews.forEach((annotation) => {
+      const i = unqiueAnnotations.findIndex(
+        (x) => annotation.text.toLowerCase() === x.text.toLowerCase()
+      );
+      if (i <= -1) {
+        unqiueAnnotations.push(annotation);
+      }
+    });
+    return null;
+  });
 
   const categories = unqiueAnnotations.map((item, index) => {
+    const extendedVertices = item.region?.vertices as (Vertex & Keypoint)[];
+    const keyPoints = extendedVertices.map((v) =>
+      v?.caption ? v.caption : null
+    );
+    const colors = extendedVertices.map((v) => (v?.color ? v.color : null));
     return {
       id: index,
-      name: item,
-      // supercategory: '', // TODO: should be conditional
-      // color: '#ff0000', // TODO: should be conditional
-      // keypoint_colors: [], // TODO: should be conditional
-      // metadata: {},
+      name: item.text,
+      ...(!keyPoints.includes(null) && { keyPoints }),
+      ...(!colors.includes(null) && { keypoint_colors: colors }),
     };
   });
 
@@ -96,18 +104,6 @@ export const convertAnnotationsToCOCO = async (
       id: index,
       file_name: item.name,
       path: item.name, // TODO: should be directory
-      // dataset_id: 1,
-      // category_ids: [], // TODO: should be conditional
-      // width: 0,
-      // height: 0,
-      // annotated: false,
-      // annotating: [],
-      // num_annotations: 0,
-      // metadata: {},
-      // deleted: false,
-      // milliseconds: 0,
-      // events: [],
-      // regenerate_thumbnail: false,
     };
   });
 
@@ -136,15 +132,10 @@ export const convertAnnotationsToCOCO = async (
           category_id: categories.findIndex(
             (category) => category.name === annotation.text.toLowerCase()
           ),
-          bbox: isRectangle ? vertices : [0, 0, 0, 0],
-          keypoints: isPoints ? vertices : [],
-          num_keypoints: isPoints ? vertices.length : 0,
-          segmentation: isPolygon ? [vertices] : [],
-          // area: 0,
-          // iscrowd: false,
-          // isbbox: false,
-          // color: '#ff0000', // TODO: should be conditional
-          // metadata: {},
+          ...(isRectangle && { bbox: vertices }),
+          ...(isPoints && { keypoints: vertices }),
+          ...(isPoints && { num_keypoints: vertices.length / 2 }), // each keypoint consist of (x, y)
+          ...(isPolygon && { segmentation: [vertices] }),
         };
       });
     })
