@@ -103,6 +103,7 @@ const ChartList = () => {
         showYAxis: true,
         showMinMax: false,
         showGridlines: true,
+        mergeUnits: false,
       },
     };
     await updateChart(newChart);
