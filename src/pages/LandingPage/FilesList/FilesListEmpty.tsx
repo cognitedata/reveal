@@ -26,7 +26,7 @@ export default function FilesListEmpty() {
     <Wrapper>
       <Graphic type="Documents" />
       <Title level={5} style={{ margin: '24px 0' }}>
-        No interactive diagrams have been created yet!
+        No pending interactive diagrams to review!
       </Title>
       <IconButton type="primary" icon="Document" onClick={onContextualizeNew}>
         Create new interactive diagrams

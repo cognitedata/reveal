@@ -8,6 +8,7 @@ import { PERMISSIONS_STRINGS, TOOLTIP_STRINGS } from 'stringConstants';
 import { CountTag, Flex, IconButton, Popover } from 'components/Common';
 import { FileSmallPreview } from 'components/FileSmallPreview';
 import { FileWithAnnotations } from 'hooks/useFileWithAnnotations';
+import ReviewStatus from 'components/ReviewStatus';
 
 const SettingButtons = styled(Flex)`
   & > * {
@@ -62,12 +63,19 @@ export const getColumns = (
     sorter: (a: any, b: any) => stringCompare(a?.name, b?.name),
   },
   {
+    title: 'Status',
+    key: 'status',
+    width: 150,
+    render: (_: any, file: FileInfo) => <ReviewStatus file={file} />,
+  },
+  {
     title: 'Detected tags',
     key: 'tags',
     render: (row: FileWithAnnotations) => renderDetectedTags(row),
     sorter: (a: FileWithAnnotations, b: FileWithAnnotations) =>
       a?.annotations?.length ?? 0 - b?.annotations?.length ?? 0,
   },
+
   {
     title: 'Last modified',
     dataIndex: 'lastUpdatedTime',

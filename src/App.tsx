@@ -16,6 +16,9 @@ import { AppStateProvider } from 'context';
 import { AntStyles, GlobalStyles } from 'styles';
 import RootApp from 'pages/App';
 import { ReactQueryDevtools } from 'react-query/devtools';
+import * as pdfjs from 'pdfjs-dist';
+
+pdfjs.GlobalWorkerOptions.workerSrc = `https://cdf-hub-bundles.cogniteapp.com/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.min.js`;
 
 const App = () => {
   const tenant = window.location.pathname.split('/')[1];

@@ -44,7 +44,7 @@ const createPendingAnnotations = async (
   jobId: string,
   annotations: NonNullable<RetrieveResultsResponseItem['annotations']>
 ): Promise<FileAnnotationsCount> => {
-  const existingAnnotations = await listAnnotationsForFile(sdk, file, false);
+  const existingAnnotations = await listAnnotationsForFile(sdk, file, true);
 
   const existingUnhandledAnnotations = existingAnnotations.filter(
     (annotation) => annotation.status === 'unhandled'

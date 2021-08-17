@@ -18,12 +18,11 @@ const PAGE_SIZE = 10;
 
 type Props = {
   query: string;
-  files: FileWithAnnotations[];
-  setShouldUpdate: (shouldUpdate: boolean) => void;
+  files?: FileWithAnnotations[];
 };
 
 export default function FilesList(props: Props) {
-  const { query, files, setShouldUpdate } = props;
+  const { query, files } = props;
 
   const client = useQueryClient();
   const { createWorkflow } = useWorkflowCreateNew();
@@ -54,23 +53,25 @@ export default function FilesList(props: Props) {
   };
   const onDeleteSuccess = (): void => {
     const invalidate = () =>
-      client.invalidateQueries(['cdf', 'events', 'list']);
+      client.invalidateQueries([
+        'sdk-react-query-hooks',
+        'cdf',
+        'events',
+        'list',
+      ]);
     invalidate();
     // The sleep shouldn't be necessary, but await (POST /resource
     // {data}) && await(POST /resource/byids) might not return the
     // newly created item.
     sleep(500).then(invalidate);
     sleep(1500).then(invalidate);
-    sleep(5000).then(() => {
-      invalidate();
-      // Trigger files list to update
-      setShouldUpdate(true);
-    });
+    sleep(5000).then(invalidate);
 
     notification.success({
       message: 'Annotation saved!',
     });
   };
+
   const onFileEdit = (file: FileInfo): void => {
     const diagramToContextualize = {
       type: 'files',
@@ -100,7 +101,7 @@ export default function FilesList(props: Props) {
   const handleSearchFiles = () => {
     if (query.trim().length) {
       trackUsage(PNID_METRICS.landingPage.useSearch);
-      return files.filter((file) =>
+      return (files ?? []).filter((file) =>
         stringContains(file.name, query)
       ) as FileInfo[];
     }

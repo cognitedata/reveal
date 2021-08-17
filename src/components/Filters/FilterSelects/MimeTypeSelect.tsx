@@ -8,6 +8,7 @@ type Props = {
   onMimeTypeSelected: (selectedMimeType: string[]) => void;
   loaded?: boolean;
   isMulti?: boolean;
+  style?: React.CSSProperties;
 };
 
 export const MimeTypeSelect = (props: Props) => {

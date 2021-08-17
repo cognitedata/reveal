@@ -24,7 +24,7 @@ export default function buildSearch<T extends InternalId, Q extends Query>(
         const searchFn: (q: Query) => Promise<InternalId[]> =
           sdk[resourceType].search;
         const result: InternalId[] = (await searchFn(filter)) as InternalId[];
-        dispatch(update(resourceType)(result));
+        if (result) dispatch(update(resourceType)(result));
         return {
           filter,
           result,

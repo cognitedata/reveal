@@ -48,11 +48,8 @@ export const getColumns: any = (workflowId: number) => {
       ),
     },
     {
-      title: 'Approval',
-      key: 'annotations_new',
+      title: 'Status',
       width: 150,
-      sorter: (a: AdjustedFileInfo, b: AdjustedFileInfo) =>
-        stringCompare(String(a?.approval), String(b?.approval)),
       render: (_: any, file: FileInfo) => <ReviewStatus file={file} />,
     },
     {
