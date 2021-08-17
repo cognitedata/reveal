@@ -114,9 +114,10 @@ const PlotlyChartComponent = ({
 
   const calls = isPreview
     ? []
-    : chart?.workflowCollection?.map((wf) =>
+    : originalChart?.workflowCollection?.map((wf) =>
         omit(wf.calls?.[0], ['callDate'])
       ) || [];
+
   const {
     data: workflowsRaw,
     isSuccess: wfSuccess,
@@ -427,6 +428,7 @@ const filteredChart = (chart: Chart) => {
     workflowCollection: chart.workflowCollection?.map((source) => {
       return {
         ...source,
+        calls: undefined,
         range: undefined,
         statisticsCalls: undefined,
       };
