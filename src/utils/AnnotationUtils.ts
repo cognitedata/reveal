@@ -1,14 +1,24 @@
 import {
   Annotation,
+  AnnotationMetadata,
   AnnotationRegion,
   AnnotationSource,
   AnnotationType,
   DetectedAnnotation,
   LinkedAnnotation,
   RegionType,
+  Vertex,
   VisionAPIType,
 } from 'src/api/types';
 import { UnsavedAnnotation } from 'src/api/annotation/types';
+import { Keypoint } from 'src/modules/Common/Components/CollectionSettingsModal/CollectionSettingsTypes';
+import {
+  ColorsObjectDetection,
+  ColorsOCR,
+  ColorsPersonDetection,
+  ColorsTagDetection,
+  ColorsTextAndIconsSecondary,
+} from 'src/constants/Colors';
 
 export enum AnnotationStatus {
   Verified = 'verified',
@@ -17,10 +27,25 @@ export enum AnnotationStatus {
   Unhandled = 'unhandled',
 }
 
+export type KeypointItem = Required<Keypoint> & {
+  id: string;
+  selected: boolean;
+};
+
+export type KeypointVertex = Vertex & KeypointItem;
+
+export type VisionAnnotationRegion = Pick<AnnotationRegion, 'shape'> & {
+  vertices: Array<Vertex | KeypointVertex>;
+};
+
 export type VisionAnnotation = Omit<
   Annotation,
-  'linkedResourceId' | 'linkedResourceExternalId' | 'linkedResourceType'
+  | 'linkedResourceId'
+  | 'linkedResourceExternalId'
+  | 'linkedResourceType'
+  | 'region'
 > & {
+  region?: VisionAnnotationRegion;
   label: string;
   type: RegionType;
   color: string;
@@ -31,18 +56,9 @@ export type VisionAnnotation = Omit<
 };
 
 export const ModelTypeStyleMap = {
-  [VisionAPIType.OCR]: {
-    color: '#00665C',
-    backgroundColor: '#F0FCF8',
-  },
-  [VisionAPIType.TagDetection]: {
-    color: '#C945DB',
-    backgroundColor: '#F4DAF8',
-  },
-  [VisionAPIType.ObjectDetection]: {
-    color: '#FF8746',
-    backgroundColor: '#FFE1D1',
-  },
+  [VisionAPIType.OCR]: ColorsOCR,
+  [VisionAPIType.TagDetection]: ColorsTagDetection,
+  [VisionAPIType.ObjectDetection]: ColorsObjectDetection,
 };
 export const ModelTypeIconMap: { [key: number]: string } = {
   [VisionAPIType.OCR]: 'Scan',
@@ -74,7 +90,22 @@ export class AnnotationUtils {
     return `${modelType}-${fileId}`;
   }
 
-  public static getAnnotationColor(modelType: VisionAPIType): string {
+  public static getAnnotationColor(
+    text: string,
+    modelType: VisionAPIType,
+    data?: AnnotationMetadata
+  ): string {
+    if (data) {
+      if (data.color) {
+        return data.color;
+      }
+      if (data.keypoint) {
+        return ColorsTextAndIconsSecondary.color;
+      }
+    }
+    if (text === 'person') {
+      return ColorsPersonDetection.color;
+    }
     return ModelTypeStyleMap[modelType].color;
   }
 
@@ -106,6 +137,9 @@ export class AnnotationUtils {
           linkedResourceType: 'asset',
         };
       }
+      if (isKeyPointAnnotation(value)) {
+        ann = populateKeyPoints(ann);
+      }
       return ann;
     });
   }
@@ -121,24 +155,21 @@ export class AnnotationUtils {
     type: RegionType = 'rectangle',
     source: AnnotationSource = 'user',
     status = AnnotationStatus.Unhandled,
-    data = {},
+    data?: AnnotationMetadata,
     annotationType: AnnotationType = 'vision/ocr',
     fileExternalId?: string,
     assetId?: number,
     assetExternalId?: string
   ): VisionAnnotation {
     return {
-      color:
-        text === 'person'
-          ? '#1AA3C1'
-          : AnnotationUtils.getAnnotationColor(modelType),
+      color: AnnotationUtils.getAnnotationColor(text, modelType, data),
       modelType,
       type,
       source,
       status: tempConvertAnnotationStatus(status),
       text,
       label: text,
-      data,
+      data: data || {},
       annotatedResourceId: fileId,
       annotatedResourceType: 'file',
       annotatedResourceExternalId: fileExternalId!,
@@ -190,6 +221,98 @@ export class AnnotationUtils {
   };
 }
 
+const populateKeyPoints = (annotation: VisionAnnotation) => {
+  const keypointAnnotation: VisionAnnotation = { ...annotation };
+  const keypointMeta = (annotation.data as AnnotationMetadata).keypoints;
+
+  if (keypointAnnotation.region) {
+    if (keypointMeta) {
+      keypointAnnotation.region.vertices =
+        keypointAnnotation.region.vertices.map((vertex, index) => {
+          const keyPointData =
+            (keypointMeta.find(
+              (keyPointMetaItem) => keyPointMetaItem.order === String(index + 1)
+            ) as KeypointItem) || {};
+
+          return {
+            ...vertex,
+            ...keyPointData,
+            defaultPosition: [vertex.x, vertex.y],
+            id: `${annotation.id}-${keyPointData.caption}`,
+          };
+        });
+    } else {
+      console.error(
+        'keypoint metadata was not found for annotation!',
+        keypointAnnotation.id
+      );
+      keypointAnnotation.region.vertices =
+        keypointAnnotation.region.vertices.map((vertex, index) => {
+          const keyPointData = {
+            order: String(index + 1),
+            caption: annotation.text,
+            color: ColorsObjectDetection.color,
+          };
+
+          return {
+            ...vertex,
+            ...keyPointData,
+            defaultPosition: [vertex.x, vertex.y],
+            id: `${annotation.id}-${keyPointData.order}`,
+          };
+        });
+      keypointAnnotation.data = { ...keypointAnnotation.data, keypoint: true };
+    }
+  }
+  // Populate keypoint data
+
+  // const keypointCollections = predefinedCollections?.predefinedKeyPoints;
+  // let keypointCollection: KeypointCollection | undefined;
+  // if (keypointCollections && keypointCollections.length) {
+  //   keypointCollection = keypointCollections.find(
+  //     (collection) => collection.collectionName === annotation.text
+  //   );
+  // }
+  // if (
+  //   keypointCollection &&
+  //   keypointAnnotation.region &&
+  //   keypointAnnotation.region.vertices
+  // ) {
+  //   keypointAnnotation.keypoints = keypointAnnotation.region.vertices.map(
+  //     (vertex, index) => {
+  //       const vertexOrder = String(index + 1);
+  //       const keypointSetting = keypointCollection?.keypoints?.find(
+  //         (keypoint) => keypoint.order === vertexOrder
+  //       );
+  //       if (keypointSetting) {
+  //         return {
+  //           id: vertex.id!,
+  //           color: keypointSetting.color,
+  //           label: keypointSetting.caption,
+  //           order: keypointSetting.order,
+  //         };
+  //       }
+  //       return {
+  //         id: vertex.id!,
+  //         color: keypointAnnotation.color,
+  //         label: 'No Collection Found',
+  //         order: vertexOrder,
+  //       };
+  //     }
+  //   );
+  // } else {
+  //   keypointAnnotation.keypoints = keypointAnnotation!.region!.vertices.map(
+  //     (vertex, index) => ({
+  //       id: vertex.id!,
+  //       color: keypointAnnotation.color,
+  //       label: 'No Collection Found',
+  //       order: String(index + 1),
+  //     })
+  //   );
+  // }
+  return keypointAnnotation;
+};
+
 export const isAnnotation = (
   ann: DetectedAnnotation | Annotation | UnsavedAnnotation
 ): ann is Annotation => {
@@ -204,6 +327,10 @@ export const isUnSavedAnnotation = (
 
 export const isLinkedAnnotation = (ann: Annotation): boolean => {
   return !!(ann as LinkedAnnotation).linkedResourceType;
+};
+
+export const isKeyPointAnnotation = (ann: Annotation): boolean => {
+  return (ann as LinkedAnnotation).region?.shape === 'points';
 };
 
 // todo: remove this function once they are not needed - start

@@ -104,7 +104,7 @@ const ConfirmDeleteButton = (props: {
     >
       <Button
         type="ghost-danger"
-        icon="Delete"
+        icon="Trash"
         iconPlacement="left"
         disabled={props.disabled}
         style={
@@ -127,9 +127,7 @@ const ConfirmDeleteButton = (props: {
 const Container = styled.div`
   display: flex;
   justify-content: flex-end;
-  align-items: bottom;
   padding: 15px 0;
-  align-items: flex-end;
 
   .cogs-input {
     min-width: 280px;

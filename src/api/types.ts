@@ -1,4 +1,5 @@
 import { AnnotationStatus } from 'src/utils/AnnotationUtils';
+import { Keypoint } from 'src/modules/Common/Components/CollectionSettingsModal/CollectionSettingsTypes';
 
 export enum VisionAPIType {
   OCR = 1,
@@ -34,9 +35,16 @@ export type AnnotationRegion = {
   shape: RegionType;
   vertices: Array<Vertex>;
 };
+
+export type AnnotationMetadata = {
+  keypoint?: boolean;
+  keypoints?: Keypoint[];
+  color?: string;
+};
+
 interface BaseAnnotation {
   text: string;
-  data?: any;
+  data?: AnnotationMetadata;
   region?: AnnotationRegion;
   annotatedResourceId: number;
   annotatedResourceExternalId?: string;

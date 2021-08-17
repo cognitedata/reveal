@@ -6,6 +6,7 @@ import previewSlice from 'src/modules/Review/previewSlice';
 import fileDetailsSlice from 'src/modules/FileDetails/fileDetailsSlice';
 import annotationReducer from 'src/modules/Common/annotationSlice';
 import explorerReducer from 'src/modules/Explorer/store/explorerSlice';
+import imagePreviewReducer from 'src/modules/Review/imagePreviewSlice';
 
 const rootReducer = combineReducers({
   filesSlice,
@@ -14,6 +15,7 @@ const rootReducer = combineReducers({
   fileDetailsSlice,
   annotationReducer,
   explorerReducer,
+  imagePreviewReducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

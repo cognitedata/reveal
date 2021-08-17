@@ -23,7 +23,8 @@ export const CreateAnnotations = createAsyncThunk<
       fileId,
       annotation.region,
       AnnotationStatus.Verified,
-      'user'
+      'user',
+      annotation.data
     ),
   ];
 

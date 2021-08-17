@@ -40,6 +40,7 @@ export const RetrieveAnnotations = createAsyncThunk<
         return false;
       }
     });
+
     const visionAnnotations =
       AnnotationUtils.convertToVisionAnnotations(filteredAnnotations);
     return visionAnnotations;

@@ -258,7 +258,7 @@ export const FileDownloaderModalContent = ({
     </Menu>
   );
 
-  const handleAnnotationRadioButton = (e: string) => {
+  const handleAnnotationRadioButton = (e?: string) => {
     if (e === AnnotationChoice.VerifiedAndUnreviewed) {
       setCurrentAnnotationChoice(AnnotationChoice.VerifiedAndUnreviewed);
     } else if (e === AnnotationChoice.OnlyRejected) {
@@ -279,7 +279,7 @@ export const FileDownloaderModalContent = ({
             currentAnnotationChoice === AnnotationChoice.VerifiedAndUnreviewed
           }
           disabled={currentFileChoice === DownloadChoice.Files}
-          onChange={(e) => handleAnnotationRadioButton(e)}
+          onChange={(isChecked, e) => handleAnnotationRadioButton(e)}
           style={{ paddingTop: '10px' }}
         >
           {AnnotationChoice.VerifiedAndUnreviewed}
@@ -290,7 +290,7 @@ export const FileDownloaderModalContent = ({
           value={AnnotationChoice.OnlyRejected}
           checked={currentAnnotationChoice === AnnotationChoice.OnlyRejected}
           disabled={currentFileChoice === DownloadChoice.Files}
-          onChange={(e) => handleAnnotationRadioButton(e)}
+          onChange={(isChecked, e) => handleAnnotationRadioButton(e)}
         >
           {AnnotationChoice.OnlyRejected}
         </Radio>
@@ -300,7 +300,7 @@ export const FileDownloaderModalContent = ({
           value={AnnotationChoice.All}
           checked={currentAnnotationChoice === AnnotationChoice.All}
           disabled={currentFileChoice === DownloadChoice.Files}
-          onChange={(e) => handleAnnotationRadioButton(e)}
+          onChange={(isChecked, e) => handleAnnotationRadioButton(e)}
         >
           {AnnotationChoice.All}
         </Radio>

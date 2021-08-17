@@ -43,7 +43,7 @@ export const Keypoints = ({
   setCollections,
 }: {
   collections: AnnotationCollection;
-  setCollections: React.Dispatch<React.SetStateAction<AnnotationCollection>>;
+  setCollections: (collections: AnnotationCollection) => void;
 }) => {
   const { predefinedKeypoints } = collections;
   const [newKeypoints, setNewKeypoints] =
@@ -219,7 +219,7 @@ export const Keypoints = ({
                     }}
                   />
                   <Button
-                    icon="Delete"
+                    icon="Trash"
                     onClick={() => setNewKeypoints(undefined)}
                     size="small"
                     type="ghost-danger"
@@ -263,7 +263,7 @@ export const Keypoints = ({
                       }}
                     />
                     <Button
-                      icon="Delete"
+                      icon="Trash"
                       onClick={() => onDeleteKeypoint(key)}
                       size="small"
                       type="ghost-danger"
@@ -315,7 +315,7 @@ const CollapsePanel = styled.div`
     padding: 12px 12px 12px 33px;
   }
   .ant-collapse-content-box {
-    padding: 0px;
+    padding: 0;
     background: #ffffff;
   }
 `;

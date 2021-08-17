@@ -1,256 +1,109 @@
-import {
-  AllIconTypes,
-  Col,
-  Icon,
-  Input,
-  Row,
-  SegmentedControl,
-  Title,
-  Tooltip,
-} from '@cognite/cogs.js';
-import React, { useMemo } from 'react';
+import { Title } from '@cognite/cogs.js';
+import React, { ReactText, useMemo } from 'react';
 import styled from 'styled-components';
-import { useDispatch } from 'react-redux';
-import {
-  deselectAllAnnotations,
-  selectAnnotation,
-  toggleAnnotationVisibility,
-  VisibleAnnotation,
-  VisionAnnotationState,
-} from 'src/modules/Review/previewSlice';
-import {
-  AnnotationStatus,
-  ModelTypeIconMap,
-  ModelTypeStyleMap,
-} from 'src/utils/AnnotationUtils';
+import { VisibleAnnotation } from 'src/modules/Review/previewSlice';
+import { AnnotationStatus, KeypointVertex } from 'src/utils/AnnotationUtils';
 import { VisionAPIType } from 'src/api/types';
-import { ApproveAnnotation } from 'src/store/thunks/ApproveAnnotation';
-import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from 'src/store/thunks/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
-import { AnnotationActionMenuExtended } from 'src/modules/Common/Components/AnnotationActionMenu/AnnotationActionMenuExtended';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import { AssetLinkWarning } from 'src/modules/Review/Components/AnnotationsTable/AssetLinkWarning';
+import { CollapsibleAnnotationTableRow } from 'src/modules/Review/Components/CollapsibleAnnotationTableRow/CollapsibleAnnotationTableRow';
+
+type AnnotationTableItem = Omit<VisibleAnnotation, 'id'> & { id: ReactText };
+export interface AnnotationTableProps {
+  title: string;
+  file: FileInfo;
+  selectedAnnotationIds: ReactText[];
+  annotations: AnnotationTableItem[];
+  mode?: number;
+  onDelete: (id: ReactText) => void;
+  onVisibilityChange: (id: ReactText) => void;
+  onApproveStateChange: (
+    annotation: AnnotationTableItem,
+    status: AnnotationStatus
+  ) => void;
+  onSelect: (id: ReactText) => void;
+  selectedKeypointIds: ReactText[];
+  onKeypointSelect?: (id: string) => void;
+}
 
 export const AnnotationsTable = ({
+  title,
   file,
   annotations,
   selectedAnnotationIds,
   mode,
-}: {
-  file: FileInfo;
-  selectedAnnotationIds: number[];
-  annotations: VisionAnnotationState[];
-  mode?: number;
-}) => {
-  const dispatch = useDispatch();
-
-  const allAnnotations: VisibleAnnotation[] = useMemo(() => {
+  onDelete,
+  onVisibilityChange,
+  onApproveStateChange,
+  onSelect,
+  onKeypointSelect,
+  selectedKeypointIds,
+}: AnnotationTableProps) => {
+  const allAnnotations: AnnotationTableItem[] = useMemo(() => {
     return annotations.map((ann) => {
+      let value: AnnotationTableItem = { ...ann, selected: false };
       if (selectedAnnotationIds.includes(ann.id)) {
-        return { ...ann, selected: true };
+        value = { ...ann, selected: true };
       }
-      return { ...ann, selected: false };
+
+      if (value.data?.keypoint) {
+        const keypoints = value.region?.vertices.map((keypointVertex) => ({
+          ...(keypointVertex as KeypointVertex),
+          selected: selectedKeypointIds.includes(
+            (keypointVertex as KeypointVertex).id
+          ),
+        }));
+        value = {
+          ...value,
+          region: {
+            vertices: keypoints as KeypointVertex[],
+            shape: value.region!.shape,
+          },
+        };
+      }
+      return value;
     });
-  }, [annotations, selectedAnnotationIds]);
+  }, [annotations, selectedAnnotationIds, selectedKeypointIds]);
 
   const annotationsAvailable = annotations.length > 0;
-
-  const handleApprovalState = async (
-    annotation: VisionAnnotationState,
-    status: AnnotationStatus
-  ) => {
-    await dispatch(
-      ApproveAnnotation({
-        ...annotation,
-        status,
-      })
-    );
-  };
-
-  const handleVisibility = (id: number) => {
-    dispatch(
-      toggleAnnotationVisibility({
-        annotationId: id,
-      })
-    );
-  };
-
-  const handleDeleteAnnotations = (id: number) => {
-    dispatch(
-      DeleteAnnotationsAndHandleLinkedAssetsOfFile({
-        annotationIds: [id],
-        showWarnings: true,
-      })
-    );
-  };
-
-  const handleOnAnnotationSelect = (id: number) => {
-    const alreadySelected = selectedAnnotationIds.includes(id);
-    if (alreadySelected) {
-      dispatch(deselectAllAnnotations());
-    } else {
-      dispatch(selectAnnotation(id));
-    }
-  };
-
-  const getColor = (annotation: { text: string; modelType: VisionAPIType }) => {
-    return annotation.text === 'person'
-      ? '#1AA3C1'
-      : ModelTypeStyleMap[annotation.modelType].color;
-  };
-
-  const getIconType = (annotation: {
-    text: string;
-    modelType: VisionAPIType;
-  }) => {
-    return annotation.text === 'person'
-      ? 'Personrounded'
-      : (ModelTypeIconMap[annotation.modelType] as AllIconTypes);
-  };
 
   return (
     <TableContainer>
       <TitleRow>
-        <Title level={5}>
-          {mode === VisionAPIType.TagDetection
-            ? 'Asset tags in image'
-            : 'Text and objects in image '}
-        </Title>
+        <Title level={5}>{title}</Title>
       </TitleRow>
       <Body>
         {annotationsAvailable &&
           allAnnotations.map((annotation) => {
-            const row = (
-              <StyledRow
-                cols={8}
-                key={annotation.id}
-                onClick={() => handleOnAnnotationSelect(annotation.id)}
-                className={annotation.selected ? 'active' : ''}
-              >
-                <StyledCol span={2}>
-                  <ColContainer onClick={(evt) => evt.stopPropagation()}>
-                    <StyledSegmentedControl
-                      status={annotation.status}
-                      className="approvalButton"
-                      currentKey={
-                        // eslint-disable-next-line no-nested-ternary
-                        annotation.status === AnnotationStatus.Verified
-                          ? 'verified'
-                          : annotation.status === AnnotationStatus.Rejected
-                          ? 'rejected'
-                          : undefined
-                      }
-                      onButtonClicked={(key) => {
-                        if (key === 'verified') {
-                          handleApprovalState(
-                            annotation,
-                            AnnotationStatus.Verified
-                          );
-                        }
-                        if (key === 'rejected') {
-                          handleApprovalState(
-                            annotation,
-                            AnnotationStatus.Rejected
-                          );
-                        }
-                      }}
-                    >
-                      <SegmentedControl.Button
-                        type="primary"
-                        icon="ThumbsUp"
-                        key="verified"
-                        aria-label="verify annotation"
-                        className="approveButton"
-                      >
-                        True
-                      </SegmentedControl.Button>
-                      <SegmentedControl.Button
-                        type="primary"
-                        icon="ThumbsDown"
-                        key="rejected"
-                        aria-label="reject annotation"
-                        className="rejectButton"
-                      >
-                        False
-                      </SegmentedControl.Button>
-                    </StyledSegmentedControl>
-                  </ColContainer>
-                </StyledCol>
-                <StyledCol span={3}>
-                  <AnnotationLbl
-                    style={{
-                      color: getColor(annotation),
-                    }}
-                  >
-                    <Tooltip
-                      content={
-                        <span data-testid="text-content">
-                          {annotation.text}
-                        </span>
-                      }
-                    >
-                      <Input
-                        readOnly
-                        fullWidth
-                        style={{
-                          width: `100%`,
-                          borderColor: getColor(annotation),
-                        }}
-                        value={annotation.text}
-                        icon={
-                          <Icon
-                            type={getIconType(annotation)}
-                            style={{
-                              color: getColor(annotation),
-                            }}
-                          />
-                        }
-                        subComponentPlacement="right"
-                        customSubComponent={
-                          !annotation.show
-                            ? () => {
-                                return (
-                                  <Icon
-                                    type="EyeHide"
-                                    style={{ color: '#595959' }}
-                                    onClick={() => {
-                                      handleVisibility(annotation.id);
-                                    }}
-                                  />
-                                );
-                              }
-                            : undefined
-                        }
-                      />
-                    </Tooltip>
-                  </AnnotationLbl>
-                </StyledCol>
-                <StyledCol span={1} onClick={(evt) => evt.stopPropagation()}>
-                  <AnnotationActionMenuExtended
-                    showPolygon={annotation.show}
-                    disableShowPolygon={
-                      annotation.status === AnnotationStatus.Rejected
-                    }
-                    // handleEditLabel={() => {}}
-                    // handleEditPolygon={() => {}}
-                    handleVisibility={() => {
-                      handleVisibility(annotation.id);
-                    }}
-                    handleAnnotationDelete={() => {
-                      handleDeleteAnnotations(annotation.id);
-                    }}
-                  />
-                </StyledCol>
-              </StyledRow>
-            );
-
             if (mode === VisionAPIType.TagDetection) {
               return (
-                <AssetLinkWarning file={file} annotation={annotation}>
-                  {row}
+                <AssetLinkWarning
+                  file={file}
+                  annotation={annotation}
+                  key={annotation.id}
+                >
+                  <CollapsibleAnnotationTableRow
+                    annotation={annotation}
+                    onSelect={onSelect}
+                    onDelete={onDelete}
+                    onApprove={onApproveStateChange}
+                    onVisibilityChange={onVisibilityChange}
+                    onKeyPointSelect={onKeypointSelect}
+                  />
                 </AssetLinkWarning>
               );
             }
-            return row;
+            return (
+              <CollapsibleAnnotationTableRow
+                key={annotation.id}
+                annotation={annotation}
+                onSelect={onSelect}
+                onDelete={onDelete}
+                onApprove={onApproveStateChange}
+                onVisibilityChange={onVisibilityChange}
+                onKeyPointSelect={onKeypointSelect}
+              />
+            );
           })}
         {!annotationsAvailable && (
           <EmptyPlaceHolderContainer>
@@ -281,18 +134,11 @@ const TitleRow = styled.div`
   color: #8c8c8c;
 `;
 
-const ColContainer = styled.div`
-  height: 100%;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-`;
-
 const TableContainer = styled.div`
   width: 100%;
   display: grid;
   grid-template-rows: 45px auto;
+  grid-template-columns: 100%;
   grid-gap: 10px;
   margin-bottom: 20px;
 `;
@@ -302,58 +148,4 @@ const Body = styled.div`
   border: 1px solid #e8e8e8;
   box-sizing: border-box;
   border-radius: 5px;
-`;
-
-const StyledRow = styled(Row)`
-  justify-content: space-around;
-  display: flex;
-  padding-left: 5px;
-  padding-right: 5px;
-  gap: 12px !important;
-  &:hover {
-    background-color: var(--cogs-greyscale-grey2);
-  }
-  &.active {
-    background-color: var(--cogs-midblue-6);
-  }
-`;
-
-const StyledCol = styled(Col)`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const AnnotationLbl = styled.div`
-  width: 100%;
-  padding: 10px 10px;
-  box-sizing: content-box;
-`;
-
-const StyledSegmentedControl = styled(SegmentedControl)<{ status: string }>`
-  .approveButton {
-    background: ${(props) =>
-      props.status === AnnotationStatus.Verified
-        ? '#6FCF97'
-        : 'var(--cogs-color-action-secondary)'};
-  }
-  .approveButton:hover {
-    color: ${(props) =>
-      props.status !== AnnotationStatus.Verified ? '#059b85' : 'unset'};
-    background: ${(props) =>
-      props.status !== AnnotationStatus.Verified ? '#d9d9d9' : '#6FCF97'};
-  }
-
-  .rejectButton {
-    background: ${(props) =>
-      props.status === AnnotationStatus.Rejected
-        ? '#FFCFCF'
-        : 'var(--cogs-color-action-secondary)'};
-  }
-  .rejectButton:hover {
-    color: ${(props) =>
-      props.status !== AnnotationStatus.Rejected ? '#eb5757' : 'unset'};
-    background: ${(props) =>
-      props.status !== AnnotationStatus.Rejected ? '#d9d9d9' : '#FFCFCF'};
-  }
 `;

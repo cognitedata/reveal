@@ -12,3 +12,11 @@ export const ColorsObjectDetection = {
   backgroundColor: '#FFE1D1',
   color: '#FF8746',
 };
+
+export const ColorsTextAndIconsSecondary = {
+  color: '#595959',
+};
+
+export const ColorsPersonDetection = {
+  color: '#1AA3C1',
+};

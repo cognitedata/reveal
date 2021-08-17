@@ -1,6 +1,7 @@
 import {
   Annotation,
   AnnotationJobQueued,
+  AnnotationMetadata,
   AnnotationRegion,
   AnnotationSource,
   VisionAPIType,
@@ -45,13 +46,22 @@ export function getUnsavedAnnotation(
   region?: AnnotationRegion,
   status = AnnotationStatus.Unhandled,
   source?: AnnotationSource,
+  data?: AnnotationMetadata,
   assetId?: number,
   assetExternalId?: string,
   fileExternalId?: string
 ): UnsavedAnnotation {
   return {
     text,
-    region,
+    region:
+      (region && {
+        ...region,
+        vertices: region.vertices.map((vertex) => ({
+          x: vertex.x,
+          y: vertex.y,
+        })),
+      }) ||
+      undefined,
     source: source || ModelTypeSourceMap[modelType],
     status,
     annotationType: ModelTypeAnnotationTypeMap[modelType],
@@ -63,6 +73,7 @@ export function getUnsavedAnnotation(
       linkedResourceExternalId: assetExternalId || text,
       linkedResourceType: 'asset',
     }),
+    data,
   };
 }
 

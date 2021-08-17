@@ -1,12 +1,13 @@
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import React, { useEffect, useState } from 'react';
-import { AnnotationStatus, VisionAnnotation } from 'src/utils/AnnotationUtils';
+import { AnnotationStatus } from 'src/utils/AnnotationUtils';
 import { Icon, Tooltip } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
 import { fetchAssets } from 'src/store/thunks/fetchAssets';
 import { VisionAsset } from 'src/modules/Common/filesSlice';
 import { unwrapResult } from '@reduxjs/toolkit';
+import { AnnotationTableItem } from 'src/modules/Review/types';
 
 export const AssetLinkWarning = ({
   file,
@@ -14,7 +15,7 @@ export const AssetLinkWarning = ({
   children,
 }: {
   file: FileInfo;
-  annotation: VisionAnnotation;
+  annotation: AnnotationTableItem;
   children: any;
 }) => {
   const dispatch = useDispatch();
@@ -57,7 +58,7 @@ export const AssetLinkWarning = ({
 
 const calculateWarningStatus = async (
   dispatch: any,
-  annotation: VisionAnnotation,
+  annotation: AnnotationTableItem,
   fileAssetIds: number[],
   setWarning: (status: boolean) => void
 ) => {

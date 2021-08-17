@@ -2,6 +2,7 @@ export type Keypoint = {
   caption: string;
   order: string;
   color: string;
+  defaultPosition?: [number, number];
 };
 
 export type KeypointCollection = {

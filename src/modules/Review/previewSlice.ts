@@ -50,6 +50,7 @@ type State = {
     allIds: string[];
   };
   modelsByFileId: Record<string, string[]>;
+  showCollectionSettings: boolean;
 };
 
 const initialState: State = {
@@ -64,6 +65,7 @@ const initialState: State = {
     allIds: [],
   },
   modelsByFileId: {},
+  showCollectionSettings: false,
 };
 
 const previewSlice = createSlice({
@@ -133,6 +135,9 @@ const previewSlice = createSlice({
         addEditAnnotationsToState(state, freshTagAnnotations);
       }
     },
+    showCollectionSettingsModel(state, action: PayloadAction<boolean>) {
+      state.showCollectionSettings = action.payload;
+    },
     resetPreview(state) {
       resetPreviewState(state);
     },
@@ -189,6 +194,7 @@ export const {
   selectAnnotation,
   deselectAllAnnotations,
   addTagAnnotations,
+  showCollectionSettingsModel,
   resetPreview,
 } = previewSlice.actions;
 

@@ -1,11 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { PageTitle } from '@cognite/cdf-utilities';
 import styled from 'styled-components';
 import { Button, Icon, Popconfirm } from '@cognite/cogs.js';
 import { Prompt, RouteComponentProps, useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { resetPreview } from 'src/modules/Review/previewSlice';
+import {
+  resetPreview,
+  showCollectionSettingsModel,
+} from 'src/modules/Review/previewSlice';
 import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
 import { selectFileById } from 'src/modules/Common/filesSlice';
 import ImageReview from 'src/modules/Review/Containers/ImageReview';
@@ -26,7 +29,7 @@ const DeleteButton = (props: { onConfirm: () => void }) => (
       onConfirm={props.onConfirm}
       content="Are you sure you want to permanently delete this file?"
     >
-      <Button type="ghost-danger" icon="Delete">
+      <Button type="ghost-danger" icon="Trash">
         Delete file
       </Button>
     </Popconfirm>
@@ -38,9 +41,9 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
   const dispatch = useDispatch();
   const { fileId } = props.match.params;
 
-  // ToDo: make initial state false when merging to master
-  const [showCollectionSettingsModal, setShowCollectionSettingsModal] =
-    useState<boolean>(false);
+  const showCollectionSettingsModal = useSelector(
+    ({ previewSlice }: RootState) => previewSlice.showCollectionSettings
+  );
 
   const file = useSelector(({ filesSlice }: RootState) =>
     selectFileById(filesSlice, +fileId)
@@ -127,7 +130,7 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
       {renderView()}
       <CollectionSettingsModal
         showModal={showCollectionSettingsModal}
-        onCancel={() => setShowCollectionSettingsModal(false)}
+        onCancel={() => dispatch(showCollectionSettingsModel(false))}
       />
     </>
   );

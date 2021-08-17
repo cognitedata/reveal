@@ -23,7 +23,7 @@ export const CDFStatus = () => {
     <>
       {mode === 'saved' && (
         <Status>
-          <Icon type="Check" />
+          <Icon type="Checkmark" />
           <Text level={3}>Saved to CDF</Text>
         </Status>
       )}

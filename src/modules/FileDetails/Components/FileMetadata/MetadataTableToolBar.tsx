@@ -46,7 +46,11 @@ export const MetadataTableToolBar = ({
 
   return (
     <TableToolBar>
-      <StyledButton type="ghost" icon="Plus" onClick={handleAddMetadataRow}>
+      <StyledButton
+        type="ghost"
+        icon="PlusCompact"
+        onClick={handleAddMetadataRow}
+      >
         Add row
       </StyledButton>
       <StyledButton

@@ -1,18 +1,32 @@
 import { Region } from '@cognite/react-image-annotate/Types/ImageCanvas/region-tools';
-import React, {
-  ChangeEvent,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
-import { Button, Col, Popconfirm, Row, Title } from '@cognite/cogs.js';
+import React, { useEffect, useMemo, useState } from 'react';
+import {
+  Button,
+  Col,
+  Popconfirm,
+  Row,
+  Title,
+  OptionType,
+} from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { convertToAnnotation } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/ConversionUtils';
-import { PopupUIElementContainer } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/TitleContainer';
-import { Input } from 'antd';
 import { useDispatch } from 'react-redux';
-import { deselectAllAnnotations } from '../../previewSlice';
+import {
+  deleteCurrentCollection,
+  deselectAllKeypoints,
+} from 'src/modules/Review/imagePreviewSlice';
+import { BodyContainer } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/BodyContainer';
+import { VisionOptionType } from 'src/modules/Review/types';
+import {
+  deselectAllAnnotations,
+  showCollectionSettingsModel,
+} from '../../previewSlice';
+
+const getKeypointOptions = (
+  optionsMap?: { key: string; value: VisionOptionType<string>[] }[],
+  key?: string
+): VisionOptionType<string>[] => {
+  return optionsMap?.find((val) => val.key === key)?.value || [];
+};
 
 export const AnnotationEditPopup = (props: {
   region: Region;
@@ -20,9 +34,26 @@ export const AnnotationEditPopup = (props: {
   onDelete: (region: Region) => void;
   onClose: (region: Region) => void;
   onChange: (region: Region) => void;
-  onCreateAnnotation: (annotation: any) => void;
-  onUpdateAnnotation: (annotation: any) => void;
-  onDeleteAnnotation: (annotation: any) => void;
+  onCreateRegion: (
+    region: Region,
+    labelValue: VisionOptionType<string>,
+    keyPointLabel: VisionOptionType<string>
+  ) => void;
+  onUpdateRegion: (
+    region: Region,
+    labelValue: VisionOptionType<string>,
+    keyPointLabel: VisionOptionType<string>
+  ) => void;
+  onDeleteRegion: (region: Region) => void;
+  collectionOptions?: VisionOptionType<string>[];
+  shapeOptions?: VisionOptionType<string>[];
+  keyPointLabelOptionMap?: {
+    key: string;
+    value: VisionOptionType<string>[];
+  }[];
+  nextPoint: string;
+  nextShape: string;
+  nextCollection: string;
 }) => {
   const {
     region,
@@ -30,9 +61,15 @@ export const AnnotationEditPopup = (props: {
     onDelete,
     onClose,
     onChange,
-    onCreateAnnotation,
-    onUpdateAnnotation,
-    onDeleteAnnotation,
+    onCreateRegion,
+    onUpdateRegion,
+    onDeleteRegion,
+    collectionOptions,
+    shapeOptions,
+    keyPointLabelOptionMap,
+    nextPoint,
+    nextShape,
+    nextCollection,
   } = props;
 
   const dispatch = useDispatch();
@@ -53,15 +90,83 @@ export const AnnotationEditPopup = (props: {
     }
   }, [region]);
 
-  const [labelValue, setLabelValue] = useState(
-    (region.tags && region.tags[0]) || ''
-  );
-  const inputElement = useRef<any>();
-
   const alreadyCreated = !!(region as any).lastUpdatedTime;
 
+  const isKeypoint = region.type === 'point';
+
+  const getInitialValue = (tags?: string[]): VisionOptionType<string> => {
+    if (!tags || !tags.length) {
+      if (region.type === 'point') {
+        return (
+          collectionOptions?.find((val) => val.value === nextCollection) || {
+            label: '',
+          }
+        );
+      }
+      return (
+        shapeOptions?.find((val) => val.value === nextShape) || { label: '' }
+      );
+    }
+    if (alreadyCreated && tags) {
+      if (region.type === 'point') {
+        return (
+          collectionOptions?.find((val) => val.value === tags[0]) || {
+            label: tags[0],
+            value: tags[0],
+          }
+        );
+      }
+      return (
+        shapeOptions?.find((val) => val.value === tags[0]) || {
+          label: tags[0],
+          value: tags[0],
+        }
+      );
+    }
+    return { label: '' };
+  };
+
+  const [labelValue, setLabelValue] = useState<VisionOptionType<string>>(
+    getInitialValue(region.tags)
+  );
+
+  const keyPointLabelOptions = getKeypointOptions(
+    keyPointLabelOptionMap,
+    labelValue?.value
+  );
+
+  const getInitialKeyPointValue = (
+    tags?: string[]
+  ): VisionOptionType<string> => {
+    if (!tags || !tags.length) {
+      return (
+        keyPointLabelOptions?.find((val) => val.value === nextPoint) || {
+          label: '',
+        }
+      );
+    }
+    if (alreadyCreated && tags.length >= 4) {
+      return (
+        keyPointLabelOptions?.find((val) => val.value === tags[1]) || {
+          label: tags[3],
+          value: tags[1],
+        }
+      );
+    }
+    return { label: '' };
+  };
+
+  const [keyPointValue, setKeyPointValue] = useState<OptionType<string>>(
+    getInitialKeyPointValue(region.tags)
+  );
+
+  const disabledCreationOrUpdate =
+    region.type === 'point'
+      ? !labelValue.value && !keyPointValue.value
+      : !labelValue.value;
+
   const handleOnDelete = () => {
-    onDeleteAnnotation(convertToAnnotation(region));
+    onDeleteRegion(region);
     onDelete(region);
     onClose(region);
   };
@@ -70,6 +175,7 @@ export const AnnotationEditPopup = (props: {
     onClose(region);
     if (alreadyCreated) {
       dispatch(deselectAllAnnotations());
+      dispatch(deselectAllKeypoints());
     } else {
       onDelete(region);
     }
@@ -77,12 +183,12 @@ export const AnnotationEditPopup = (props: {
 
   const handleOnCreate = () => {
     onClose(region);
-    onCreateAnnotation({ ...convertToAnnotation(region), text: labelValue });
+    onCreateRegion(region, labelValue, keyPointValue);
   };
 
   const handleOnUpdate = () => {
     onClose(region);
-    onUpdateAnnotation({ ...convertToAnnotation(region), text: labelValue });
+    onUpdateRegion(region, labelValue, keyPointValue);
   };
 
   const updateRegionLabel = (label: string) => {
@@ -99,15 +205,31 @@ export const AnnotationEditPopup = (props: {
     }
   };
 
-  const handleInput = (evt: ChangeEvent<HTMLInputElement>) => {
-    setLabelValue(evt.target.value);
-    updateRegionLabel(evt.target.value);
+  const handleSelect = (value: Required<OptionType<string>>) => {
+    if (value.value !== labelValue.value) {
+      dispatch(deleteCurrentCollection());
+    }
+    setLabelValue(value);
+    if (keyPointLabelOptions && keyPointLabelOptions.length) {
+      setKeyPointValue(
+        getKeypointOptions(keyPointLabelOptionMap, value.value).find(
+          (val) => val.value === '1'
+        ) || {
+          label: '',
+        }
+      );
+    }
+
+    updateRegionLabel(value.value);
   };
 
-  const handleInputClick = () => {
-    if (inputElement.current) {
-      inputElement.current.focus();
-    }
+  const handleSelectKeyPointValue = (value: Required<OptionType<string>>) => {
+    setKeyPointValue(value);
+    updateRegionLabel(value.value);
+  };
+
+  const onOpenCollectionSettings = () => {
+    dispatch(showCollectionSettingsModel(true));
   };
 
   useEffect(() => {
@@ -122,17 +244,23 @@ export const AnnotationEditPopup = (props: {
   }, [editing]);
 
   useEffect(() => {
-    if (inputElement.current) {
-      inputElement.current.focus();
+    if (editing && labelValue?.color) {
+      onChange({ ...region, color: labelValue.color });
     }
-  });
+  }, [labelValue, editing]);
+
+  useEffect(() => {
+    if (editing && keyPointValue?.color) {
+      onChange({ ...region, color: keyPointValue.color });
+    }
+  }, [keyPointValue, editing]);
 
   if (editing) {
     return (
       <Container>
         <OptionContainer>
           <Row
-            cols={3}
+            cols={6}
             style={{ display: 'flex', justifyContent: 'space-between' }}
           >
             <Col span={3}>
@@ -140,32 +268,37 @@ export const AnnotationEditPopup = (props: {
                 {title}
               </Title>
             </Col>
+            <Col span={3}>
+              <Button
+                size="small"
+                variant="default"
+                type="link"
+                icon="Settings"
+                iconPlacement="right"
+                style={{ textTransform: 'capitalize' }}
+                onClick={onOpenCollectionSettings}
+              >
+                Collection Settings
+              </Button>
+            </Col>
           </Row>
           <Row cols={5} style={{ paddingTop: '10px', paddingBottom: '10px' }}>
-            {/* <Col span={1}> */}
-            {/*  <PopupUIElementContainer title="Color"> */}
-            {/*    <ColorBadge color={region.color} /> */}
-            {/*  </PopupUIElementContainer> */}
-            {/* </Col> */}
-            <Col span={4}>
-              <PopupUIElementContainer title="Label">
-                {/* <Select */}
-                {/*  closeMenuOnSelect */}
-                {/*  value={selectedTag} */}
-                {/*  onChange={(val: { label: string; value: string }) => { */}
-                {/*    setSelectTag(val); */}
-                {/*  }} */}
-                {/*  options={LABEL_OPTIONS} */}
-                {/* /> */}
-                <Input
-                  placeholder="Add label"
-                  ref={inputElement}
-                  value={labelValue}
-                  onInput={handleInput}
-                  onClick={handleInputClick}
-                />
-              </PopupUIElementContainer>
-            </Col>
+            <BodyContainer
+              isKeypointMode={isKeypoint}
+              color={region.color}
+              disabledDropdown={alreadyCreated}
+              labelOption={labelValue}
+              keypointLabelOption={keyPointValue}
+              keypointLabelOptions={keyPointLabelOptions}
+              onSelectLabel={(val) => {
+                handleSelect(val);
+              }}
+              onSelectKeypoint={(val) => {
+                handleSelectKeyPointValue(val);
+              }}
+              labelOptions={collectionOptions}
+              shapeOptions={shapeOptions}
+            />
           </Row>
           <Row style={{ paddingTop: '30px' }} cols={12} gutter={0}>
             <Col span={3}>
@@ -175,7 +308,11 @@ export const AnnotationEditPopup = (props: {
                 onConfirm={handleOnDelete}
                 content="Are you sure you want to permanently delete this annotation?"
               >
-                <Button size="small" icon="Delete">
+                <Button
+                  size="small"
+                  icon="Trash"
+                  disabled={isKeypoint || disabledCreationOrUpdate}
+                >
                   Delete
                 </Button>
               </Popconfirm>
@@ -192,10 +329,10 @@ export const AnnotationEditPopup = (props: {
               {!alreadyCreated && (
                 <Button
                   type="primary"
-                  icon="Plus"
+                  icon="PlusCompact"
                   size="small"
                   onClick={handleOnCreate}
-                  disabled={!labelValue}
+                  disabled={disabledCreationOrUpdate}
                 >
                   Create
                 </Button>
@@ -206,7 +343,6 @@ export const AnnotationEditPopup = (props: {
                   icon="Upload"
                   size="small"
                   onClick={handleOnUpdate}
-                  disabled={!labelValue}
                 >
                   Update
                 </Button>

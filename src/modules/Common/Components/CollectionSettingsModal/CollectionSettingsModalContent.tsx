@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Button, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from 'src/store/rootReducer';
+import { setCollectionSettings } from 'src/modules/Review/imagePreviewSlice';
 import { Shapes } from './Body/Shapes';
-import { predefinedKeypoints, predefinedShapes } from './mockData';
 import { AnnotationCollection } from './CollectionSettingsTypes';
 import { Keypoints } from './Body/Keypoints';
 
@@ -11,10 +13,16 @@ export const CollectionSettingsModalContent = ({
 }: {
   onCancel: () => void;
 }) => {
-  const [collections, setCollections] = useState<AnnotationCollection>({
-    predefinedKeypoints,
-    predefinedShapes,
-  });
+  const dispatch = useDispatch();
+  const collections = useSelector(
+    ({ imagePreviewReducer }: RootState) =>
+      imagePreviewReducer.predefinedCollections
+  );
+
+  const setCollections = (collection: AnnotationCollection) => {
+    dispatch(setCollectionSettings(collection));
+  };
+
   return (
     <>
       <Title level={4} as="h1">
@@ -48,12 +56,7 @@ export const CollectionSettingsModalContent = ({
           <Button type="secondary" onClick={onCancel}>
             Cancel
           </Button>
-          <Button
-            type="primary"
-            onClick={() => {
-              console.error('Not Implemented');
-            }}
-          >
+          <Button type="primary" onClick={onCancel}>
             Done
           </Button>
         </RightFooter>

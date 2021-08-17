@@ -13,6 +13,14 @@ import { UnsavedAnnotation } from 'src/api/annotation/types';
 import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from 'src/store/thunks/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
 import { CreateAnnotations } from 'src/store/thunks/CreateAnnotations';
 import { UpdateAnnotations } from 'src/store/thunks/UpdateAnnotations';
+import {
+  currentCollection,
+  deSelectAllCollections,
+  deselectAllKeypoints,
+  nextKeyPoint,
+  nextShape,
+} from 'src/modules/Review/imagePreviewSlice';
+import { KeypointVertex } from 'src/utils/AnnotationUtils';
 
 export const ImagePreview = ({
   file,
@@ -34,14 +42,57 @@ export const ImagePreview = ({
     (state: RootState) => state.previewSlice.selectedAnnotationIds
   );
 
+  const definedCollection = useSelector(
+    ({ imagePreviewReducer }: RootState) =>
+      imagePreviewReducer.predefinedCollections
+  );
+
+  const currentShape = useSelector(({ imagePreviewReducer }: RootState) =>
+    nextShape(imagePreviewReducer)
+  );
+
+  const nextPoint = useSelector(({ imagePreviewReducer }: RootState) =>
+    nextKeyPoint(imagePreviewReducer)
+  );
+
+  const currentKeypointCollection = useSelector(
+    ({ imagePreviewReducer }: RootState) =>
+      currentCollection(imagePreviewReducer)
+  );
+
+  const selectedKeypointIds = useSelector(
+    (state: RootState) => state.imagePreviewReducer.keypointMap.selectedIds
+  );
+
   const annotations: VisibleAnnotation[] = useMemo(() => {
     return visibleNonRejectedAnnotations.map((ann) => {
+      let value: VisibleAnnotation = { ...ann, selected: false };
       if (selectedAnnotationIds.includes(ann.id)) {
-        return { ...ann, selected: true };
+        value = { ...ann, selected: true };
       }
-      return { ...ann, selected: false };
+
+      if (value.data?.keypoint) {
+        const keypoints = value.region?.vertices.map((keypointVertex) => ({
+          ...(keypointVertex as KeypointVertex),
+          selected: selectedKeypointIds.includes(
+            (keypointVertex as KeypointVertex).id
+          ),
+        }));
+        value = {
+          ...value,
+          region: {
+            vertices: keypoints as KeypointVertex[],
+            shape: value.region!.shape,
+          },
+        };
+      }
+      return value;
     });
-  }, [visibleNonRejectedAnnotations, selectedAnnotationIds]);
+  }, [
+    visibleNonRejectedAnnotations,
+    selectedAnnotationIds,
+    selectedKeypointIds,
+  ]);
 
   const handleCreateAnnotation = (annotation: UnsavedAnnotation) => {
     dispatch(CreateAnnotations({ fileId: file.id, annotation }));
@@ -50,6 +101,8 @@ export const ImagePreview = ({
   const handleModifyAnnotation = async (annotation: Annotation) => {
     await dispatch(UpdateAnnotations([annotation]));
     dispatch(deselectAllAnnotations());
+    dispatch(deSelectAllCollections());
+    dispatch(deselectAllKeypoints());
   };
 
   const handleDeleteAnnotation = (annotation: Annotation) => {
@@ -73,6 +126,10 @@ export const ImagePreview = ({
       onUpdateAnnotation={handleModifyAnnotation}
       onDeleteAnnotation={handleDeleteAnnotation}
       handleInEditMode={handleInEditMode}
+      collection={definedCollection}
+      currentShape={currentShape}
+      nextKeyPoint={nextPoint}
+      currentCollection={currentKeypointCollection}
     />
   );
 };

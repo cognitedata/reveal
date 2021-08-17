@@ -31,18 +31,25 @@ export const predefinedKeypoints: KeypointCollection[] = [
     keypoints: [
       {
         caption: 'V2',
-        order: '3',
+        order: '1',
         color: '#fd5190',
       },
       {
         caption: 'V3',
-        order: '4',
+        order: '2',
         color: '#ffbb00',
       },
     ],
   },
   {
     collectionName: 'Large gauge',
+    keypoints: [
+      {
+        caption: 'Center',
+        order: '1',
+        color: '#fd5190',
+      },
+    ],
   },
 ];
 

@@ -1,0 +1,29 @@
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import { ThunkConfig } from 'src/store/rootReducer';
+import { KeypointItemCollection } from 'src/modules/Review/types';
+import { KeypointItem } from 'src/utils/AnnotationUtils';
+
+export const RetrieveKeypointCollection = createAsyncThunk<
+  KeypointItemCollection | null,
+  string,
+  ThunkConfig
+>('RetrieveKeypointCollection', async (collectionId, { getState }) => {
+  const state = getState().imagePreviewReducer;
+  const allCollections = state.collections.byId;
+  const allKeypoints = state.keypointMap.byId;
+  const selectedCollectionIds = state.collections.selectedIds;
+  const selectedKeypointIds = state.keypointMap.selectedIds;
+  const collection = allCollections[collectionId];
+  const keypoints = collection.keypointIds.map(
+    (id) =>
+      ({
+        ...allKeypoints[id],
+        selected: selectedKeypointIds.includes(id),
+      } as KeypointItem)
+  );
+  return {
+    ...collection,
+    selected: selectedCollectionIds.includes(collection.id),
+    keypoints,
+  };
+});

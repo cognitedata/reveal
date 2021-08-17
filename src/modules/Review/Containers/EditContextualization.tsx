@@ -132,7 +132,7 @@ export const EditContextualization = ({
           <Col span={2}>
             <Button
               type="primary"
-              icon="Plus"
+              icon="PlusCompact"
               size="small"
               onClick={() => {
                 setAddAnnotationDisable(false);

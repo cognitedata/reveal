@@ -24,7 +24,6 @@ export const CollectionSettingsModal = (props: FileUploadModalProps) => {
         maxHeight: '710px',
       }}
     >
-      {/* ToDo: add local storage access logic */}
       <CollectionSettingsModalContent onCancel={props.onCancel} />
     </Modal>
   );

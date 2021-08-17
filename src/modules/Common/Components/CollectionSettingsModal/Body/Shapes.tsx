@@ -58,7 +58,7 @@ const EditableShapeItem = ({
         </ColorBoxContainer>
       </>
       <Button
-        icon="Delete"
+        icon="Trash"
         onClick={onDelete}
         size="small"
         type="ghost-danger"
@@ -91,7 +91,7 @@ export const Shapes = ({
   setCollections,
 }: {
   collections: AnnotationCollection;
-  setCollections: React.Dispatch<React.SetStateAction<AnnotationCollection>>;
+  setCollections: (collections: AnnotationCollection) => void;
 }) => {
   const { predefinedShapes } = collections;
   const [newShape, setNewShape] = useState<Shape | undefined>(undefined);
