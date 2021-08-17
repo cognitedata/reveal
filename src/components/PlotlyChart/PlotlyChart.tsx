@@ -349,14 +349,26 @@ const PlotlyChartComponent = ({
       return;
     }
 
+    /**
+     * Filter out properties from the chart
+     * that is irrelevant and should not trigger
+     * any updates
+     */
+    const filteredOriginalChart = filteredChart(originalChart);
+    const filteredCurrentChart = filteredChart(chart);
+
+    /**
+     * Sources have changed in some way
+     */
     if (
-      /**
-       * Source has been added or removed
-       */
-      originalChart?.timeSeriesCollection?.length !==
-        chart?.timeSeriesCollection?.length ||
-      originalChart?.workflowCollection?.length !==
-        chart?.workflowCollection?.length
+      !isEqual(
+        filteredOriginalChart.timeSeriesCollection,
+        filteredCurrentChart.timeSeriesCollection
+      ) ||
+      !isEqual(
+        filteredOriginalChart.workflowCollection,
+        filteredCurrentChart.workflowCollection
+      )
     ) {
       setLocalChart(originalChart);
     }
@@ -396,6 +408,30 @@ const PlotlyChartComponent = ({
       </PlotWrapper>
     </ChartingContainer>
   );
+};
+
+/**
+ * Filter out any properties from the chart type
+ * that trigger unnecessary updates
+ */
+const filteredChart = (chart: Chart) => {
+  return {
+    ...chart,
+    timeSeriesCollection: chart.timeSeriesCollection?.map((source) => {
+      return {
+        ...source,
+        range: undefined,
+        statisticsCalls: undefined,
+      } as typeof source;
+    }),
+    workflowCollection: chart.workflowCollection?.map((source) => {
+      return {
+        ...source,
+        range: undefined,
+        statisticsCalls: undefined,
+      };
+    }),
+  } as Chart;
 };
 
 const MemoizedPlot = memo(Plot, (prev, next) => {
