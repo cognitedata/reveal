@@ -91,6 +91,7 @@ export type SourceCollectionData = {
 
 export type ConfigPanelComponentProps = {
   node: StorableNode;
+  nodes?: StorableNode[];
   onUpdateNode: (nextNode: StorableNode) => void;
   context: any;
 };

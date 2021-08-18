@@ -50,6 +50,7 @@ const ConfigPanelWrapper = styled.div`
 
 type ConfigPanelProps = {
   node: StorableNode;
+  nodes?: StorableNode[];
   onRemove: (oldNode: StorableNode) => void;
   onSave: (nextNode: StorableNode) => void;
   onClose: () => void;
@@ -58,6 +59,7 @@ type ConfigPanelProps = {
 
 const ConfigPanel = ({
   node,
+  nodes,
   onRemove,
   onSave,
   onClose,
@@ -100,6 +102,7 @@ const ConfigPanel = ({
         <div className="config-panel">
           {createElement(NodeSpecificConfigPanel, {
             node: workingNode,
+            nodes,
             onUpdateNode: (nextNode: StorableNode) => {
               setDirty(true);
               setWorkingNode({

@@ -30,12 +30,6 @@ type FunctionData = {
   toolFunction?: DSPFunction;
 };
 
-const ToolFunctionWrapper = styled.div`
-  .cogs-checkbox .checkbox-ui {
-    margin: 0;
-  }
-`;
-
 export const effect = async (funcData: FunctionData) => {
   if (!funcData.toolFunction) {
     throw new Error('No external id given in config');
@@ -51,6 +45,7 @@ export const effectId = 'TOOLBOX_FUNCTION';
 
 export const ConfigPanel = ({
   node,
+  nodes,
   onUpdateNode,
 }: ConfigPanelComponentProps) => {
   const { functionData } = node;
@@ -62,8 +57,18 @@ export const ConfigPanel = ({
 
   const [isLoading, error, operations] = useAvailableOps();
 
-  const renderAvailableOperations = (availableOperations: DSPFunction[]) => {
+  const getCategories = (availableOperations: DSPFunction[]) => {
     const categories: { [key: string]: DSPFunction[] } = {};
+
+    categories.Recent = [];
+
+    nodes?.forEach((n) => {
+      const toolFunction = n?.functionData?.toolFunction;
+
+      if (toolFunction) {
+        categories.Recent.push(toolFunction);
+      }
+    });
 
     availableOperations.forEach((func) => {
       if (Array.isArray(func.category)) {
@@ -81,8 +86,106 @@ export const ConfigPanel = ({
       }
     });
 
+    return categories;
+  };
+
+  const renderFunctionsList = (
+    category: string,
+    toolFunctions: DSPFunction[]
+  ) => {
     return (
-      <Dropdown
+      <>
+        <Menu.Header>{category}</Menu.Header>
+        {toolFunctions.map((func) => (
+          <Menu.Item
+            key={func.description}
+            onClick={() => {
+              const { type_info, ...storableNextFunc } = func;
+
+              const inputPins = (getConfigFromDspFunction(func).input || [])
+                .filter((input) => input.pin)
+                .map((input) => ({
+                  id: input.field,
+                  title: input.name,
+                  types: input.types,
+                }));
+
+              const outputPins = (
+                getConfigFromDspFunction(func).output || []
+              ).map((output) => ({
+                id: `out-${output.field}`,
+                title: output.name,
+                type: output.type,
+              }));
+
+              onUpdateNode({
+                inputPins,
+                outputPins,
+                title: func.description,
+                functionData: {
+                  ...functionData,
+                  toolFunction: storableNextFunc,
+                },
+              });
+              setVisible(false);
+              trackUsage('ChartView.SelectFunction', {
+                function: func.description,
+              });
+            }}
+          >
+            <span style={{ textAlign: 'left' }}>{func.description}</span>
+          </Menu.Item>
+        ))}
+      </>
+    );
+  };
+
+  const renderSearchResultMenu = (categories: {
+    [key: string]: DSPFunction[];
+  }) => (
+    <Menu>
+      {Object.keys(categories).map((category: string) => {
+        const filtered = categories[category].filter(({ description }) =>
+          description.toLowerCase().includes(phrase.toLowerCase())
+        );
+
+        return !!filtered.length && renderFunctionsList(category, filtered);
+      })}
+    </Menu>
+  );
+
+  const renderCategoryMenu = (categories: { [key: string]: DSPFunction[] }) => {
+    return (
+      <Menu>
+        {Object.entries(categories).map(([category, toolFunctions]) => {
+          return (
+            <React.Fragment key={category}>
+              <Menu.Submenu
+                content={
+                  !!toolFunctions.length && (
+                    <Menu
+                      className="sub-menu"
+                      style={{ maxHeight: 615, overflowY: 'auto' }}
+                    >
+                      {renderFunctionsList(category, toolFunctions)}
+                    </Menu>
+                  )
+                }
+              >
+                <>{category}</>
+              </Menu.Submenu>
+            </React.Fragment>
+          );
+        })}
+      </Menu>
+    );
+  };
+
+  const renderAvailableOperations = (availableOperations: DSPFunction[]) => {
+    const categories = getCategories(availableOperations);
+
+    return (
+      <StyledDropdown
         visible={visible}
         onClickOutside={() => setVisible(false)}
         content={
@@ -90,87 +193,16 @@ export const ConfigPanel = ({
             <Input
               id="phrase"
               value={phrase}
+              icon="Search"
               onChange={(newValue: React.ChangeEvent<HTMLInputElement>) =>
                 setPhrase(newValue.target.value)
               }
-              placeholder="Search tool function..."
+              placeholder="Search"
               fullWidth
             />
-            <Menu>
-              <Menu.Header>Tool Functions</Menu.Header>
-              {Object.keys(categories).map((category) => {
-                const filtered = categories[category].filter(
-                  ({ description }) =>
-                    description.toLowerCase().includes(phrase.toLowerCase())
-                );
-                return (
-                  <React.Fragment key={category}>
-                    <Menu.Submenu
-                      disabled={filtered.length === 0}
-                      content={
-                        <Menu style={{ maxHeight: 615, overflowY: 'auto' }}>
-                          <Menu.Header>{category}</Menu.Header>
-                          {filtered.map((func) => (
-                            <Menu.Item
-                              key={func.description}
-                              appendIcon={
-                                func.description ===
-                                functionData?.toolFunction?.description
-                                  ? 'Checkmark'
-                                  : undefined
-                              }
-                              onClick={() => {
-                                const { type_info, ...storableNextFunc } = func;
-
-                                const inputPins = (
-                                  getConfigFromDspFunction(func).input || []
-                                )
-                                  .filter((input) => input.pin)
-                                  .map((input) => ({
-                                    id: input.field,
-                                    title: input.name,
-                                    types: input.types,
-                                  }));
-
-                                const outputPins = (
-                                  getConfigFromDspFunction(func).output || []
-                                ).map((output) => ({
-                                  id: `out-${output.field}`,
-                                  title: output.name,
-                                  type: output.type,
-                                }));
-
-                                onUpdateNode({
-                                  inputPins,
-                                  outputPins,
-                                  title: func.description,
-                                  functionData: {
-                                    ...functionData,
-                                    toolFunction: storableNextFunc,
-                                  },
-                                });
-                                setVisible(false);
-                                trackUsage('ChartView.SelectFunction', {
-                                  function: func.description,
-                                });
-                              }}
-                            >
-                              <span style={{ textAlign: 'left' }}>
-                                {func.description}
-                              </span>
-                            </Menu.Item>
-                          ))}
-                        </Menu>
-                      }
-                    >
-                      <>
-                        {category} ({filtered.length})
-                      </>
-                    </Menu.Submenu>
-                  </React.Fragment>
-                );
-              })}
-            </Menu>
+            {phrase
+              ? renderSearchResultMenu(categories)
+              : renderCategoryMenu(categories)}
           </>
         }
       >
@@ -190,7 +222,7 @@ export const ConfigPanel = ({
         >
           {functionData?.toolFunction?.description || 'Select tool function'}
         </Button>
-      </Dropdown>
+      </StyledDropdown>
     );
   };
 
@@ -250,6 +282,87 @@ export const ConfigPanel = ({
     </ToolFunctionWrapper>
   );
 };
+
+const ToolFunctionWrapper = styled.div`
+  .cogs-checkbox .checkbox-ui {
+    margin: 0;
+  }
+`;
+
+const StyledDropdown = styled(Dropdown)`
+  &.cogs-dropdown.tippy-box {
+    top: 8px;
+    border-radius: 8px;
+    color: var(--cogs-greyscale-grey7);
+    padding: 8px;
+
+    .cogs-input-container {
+      color: var(--cogs-greyscale-grey6);
+
+      input,
+      input:hover,
+      input:focus {
+        width: 100%;
+        height: 36px;
+        padding-left: 34px;
+        border: none;
+        border-radius: 6px;
+        color: var(--cogs-greyscale-grey7);
+        background: #f1f1f1 !important;
+        box-shadow: none;
+      }
+
+      .cogs-input.with-icon-left ~ .input-icon {
+        left: 10px;
+      }
+    }
+
+    input::placeholder {
+      color: var(--cogs-greyscale-grey7);
+    }
+
+    .cogs-menu.sub-menu {
+      padding: 8px;
+    }
+
+    .cogs-menu {
+      > span:nth-of-type(1) {
+        margin-bottom: 10px;
+
+        > button {
+          margin-bottom: 8px;
+        }
+
+        &::after {
+          position: absolute;
+          left: -8px;
+          content: ' ';
+          display: block;
+          border-bottom: 2px solid var(--cogs-greyscale-grey4);
+          width: 106.5%;
+        }
+      }
+
+      padding: 8px 0;
+      width: 250px;
+      box-shadow: none;
+      border: none;
+      border-radius: 8px;
+
+      .cogs-menu-header {
+        margin: 0;
+        color: var(--cogs-greyscale-grey6);
+        font-weight: 400;
+        text-transform: none;
+      }
+
+      .cogs-menu-item:hover {
+        color: var(--cogs-greyscale-grey9);
+        background: var(--cogs-greyscale-grey3);
+      }
+    }
+  }
+`;
 
 export const node = {
   title: 'Function',
