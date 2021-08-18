@@ -3,7 +3,7 @@
  */
 
 import * as THREE from 'three';
-import * as GEOTHREE from '../../@types/geo-three';
+import * as GEOTHREE from 'geo-three';
 
 import { Cognite3DViewer } from '../../migration';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
@@ -61,17 +61,13 @@ export class GeomapTool extends Cognite3DViewerToolBase {
     this._currentMapProvider = new GEOTHREE.MapBoxProvider(this.DEV_MAPBOX_API_KEY, "mapbox/satellite-streets-v10", GEOTHREE.MapBoxProvider.STYLE, "jpg70");
     this._currentHeightMapProvider = new GEOTHREE.MapBoxProvider(this.DEV_MAPBOX_API_KEY, "mapbox.terrain-rgb", GEOTHREE.MapBoxProvider.MAP_ID, "pngraw");
     this._map = new GEOTHREE.MapView(GEOTHREE.MapView.PLANAR, this._currentMapProvider, this._currentHeightMapProvider);
+
+    var coords = GEOTHREE.UnitsUtils.datumsToSpherical(59.9016426931744, 10.607235872426175);
+    this._map.translateX(-coords.x);
+    this._map.translateY(450.0);
+    this._map.translateZ(coords.y);
     this._viewer.addObject3D(this._map);
     this._map.updateMatrixWorld(true);
-
-    this._viewer.models
-
-    const matrix = this._viewer.models[0].getModelTransformation();
-    var coords = GEOTHREE.UnitsUtils.datumsToSpherical(59.9016426931744, 10.607235872426175);
-    const newMatrix = matrix.setPosition(new THREE.Vector3(coords.x, 0, -coords.y));
-    this._viewer.models[0].setModelTransformation(newMatrix);
-    this._viewer.loadCameraFromModel(this._viewer.models[0]);
-    this._viewer.cameraControls.setState(new THREE.Vector3(coords.x, 0, -coords.y), new THREE.Vector3(coords.x, 0, -coords.y));
   }
 
   public SetMapProvider(idx : number) {

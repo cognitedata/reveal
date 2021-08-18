@@ -207,13 +207,6 @@ export function Geomap() {
 
       let geomapTool = new GeomapTool(viewer);
 
-      //reset the model to align with map
-      const matrix = viewer.models[0].getModelTransformation();
-      let modelPosition = new THREE.Vector3();
-      modelPosition.setFromMatrixPosition(matrix);
-      const newMatrix = matrix.setPosition(modelPosition.x, modelPosition.y - 450, modelPosition.z);
-      viewer.models[0].setModelTransformation(newMatrix);
-
       const renderGui = gui.addFolder('Options');
       const renderModes = ['Planar', 'Height', 'Martini', 'Height Shader', 'Spherical'];
       renderGui.add(guiState, 'mode', renderModes).name('Mode').onFinishChange(value => {
