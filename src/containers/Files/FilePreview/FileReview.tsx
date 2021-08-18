@@ -1,6 +1,8 @@
 import { CogniteAnnotation } from '@cognite/annotations';
 import { Body, Button } from '@cognite/cogs.js';
 import { ProposedCogniteAnnotation } from '@cognite/react-picture-annotation';
+import { usePermissions } from '@cognite/sdk-react-query-hooks';
+import { Tooltip } from 'antd';
 import { ResourceIcons } from 'components';
 import React from 'react';
 import styled from 'styled-components';
@@ -14,6 +16,11 @@ const FileReview = ({
     annotations: Array<CogniteAnnotation | ProposedCogniteAnnotation>
   ) => void;
 }) => {
+  const { data: labelsReadAcl } = usePermissions('labelsAcl', 'READ');
+  const { data: labelsWriteAcl } = usePermissions('labelsAcl', 'WRITE');
+
+  const labelsAccess = labelsReadAcl && labelsWriteAcl;
+
   const pendingAnnotations = annotations.filter(a => a.status === 'unhandled');
 
   const assetAnnotations = annotations.filter(a => a.resourceType === 'asset');
@@ -63,6 +70,7 @@ const FileReview = ({
             }}
             type="asset"
           />
+          Assets
           {pendingAssetAnnotations.length ? (
             <strong> {pendingAssetAnnotations.length} new</strong>
           ) : null}
@@ -78,6 +86,7 @@ const FileReview = ({
             }}
             type="file"
           />{' '}
+          Files
           {pendingFileAnnotations.length ? (
             <strong> {pendingFileAnnotations.length} new</strong>
           ) : null}

@@ -35,16 +35,20 @@ const ReviewTagBar = ({
     </div>
     <StyledTag>
       {annotation?.label || 'N/A'}{' '}
-      <A
-        href={createLink(`/explore/asset/${annotation.resourceId}`)}
-        target="_blank"
-        rel="noopener"
-      >
-        <Icon
-          type="ArrowUpRight"
-          style={{ marginBottom: '-4px', marginLeft: '4px' }}
-        />
-      </A>
+      {annotation.resourceId ? (
+        <A
+          href={createLink(
+            `/explore/${annotation.resourceType}/${annotation.resourceId}`
+          )}
+          target="_blank"
+          rel="noopener"
+        >
+          <Icon
+            type="ArrowUpRight"
+            style={{ marginBottom: '-4px', marginLeft: '4px' }}
+          />
+        </A>
+      ) : undefined}
     </StyledTag>
 
     {annotation.status === 'unhandled' && (

@@ -43,6 +43,7 @@ import { useCdfItem, useUserInfo } from '@cognite/sdk-react-query-hooks';
 
 import { useFlag } from '@cognite/react-feature-flags';
 import { SIDEBAR_RESIZE_EVENT } from 'utils/WindowEvents';
+import { useReviewFile } from '../hooks';
 import { ContextualizationData } from './ContextualizationModule';
 import { CreateAnnotationForm } from './CreateAnnotationForm/CreateAnnotationForm';
 import ReviewTagBar from './ReviewTagBar';
@@ -71,6 +72,7 @@ const AnnotationPreviewSidebar = ({
   const [editing, setEditing] = useState<boolean>(false);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
 
+  const { isLoading: isApprovingFile, onApproveFile } = useReviewFile(file?.id);
   const {
     selectedAnnotations = [],
     setSelectedAnnotations,
@@ -227,6 +229,9 @@ const AnnotationPreviewSidebar = ({
         setSelectedAnnotations([]);
       },
       onCancel: () => {},
+      okButtonProps: {
+        loading: isApprovingFile,
+      },
     });
   };
 
@@ -257,6 +262,7 @@ const AnnotationPreviewSidebar = ({
           },
         }));
         approveAnnotations(updatePatch);
+        await onApproveFile();
         setSelectedAnnotations([]);
       },
       onCancel: () => {},

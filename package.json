@@ -11,7 +11,7 @@
     "@cognite/cogs.js": "^3.23.0",
     "@cognite/gcs-browser-upload": "^1.1.0",
     "@cognite/react-feature-flags": "^0.1.0",
-    "@cognite/react-picture-annotation": "^1.13.3",
+    "@cognite/react-picture-annotation": "^1.13.4-beta.1",
     "@cognite/sdk": "^3.3.6",
     "@cognite/sdk-provider": "^1.0.0",
     "@cognite/sdk-react-query-hooks": "^5.0.1",
