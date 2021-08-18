@@ -63,9 +63,7 @@ export class GeomapTool extends Cognite3DViewerToolBase {
     this._map = new GEOTHREE.MapView(GEOTHREE.MapView.PLANAR, this._currentMapProvider, this._currentHeightMapProvider);
 
     var coords = GEOTHREE.UnitsUtils.datumsToSpherical(59.9016426931744, 10.607235872426175);
-    this._map.translateX(-coords.x);
-    this._map.translateY(450.0);
-    this._map.translateZ(coords.y);
+    this._map.position.set(-coords.x, 450.0, coords.y);
     this._viewer.addObject3D(this._map);
     this._map.updateMatrixWorld(true);
   }
@@ -84,6 +82,12 @@ export class GeomapTool extends Cognite3DViewerToolBase {
     this._viewer.removeObject3D(this._map);
     this._map = new GEOTHREE.MapView(this._modes[idx].mode, this._currentMapProvider, this._currentHeightMapProvider);
     this._viewer.addObject3D(this._map);
+  }
+
+  public SetLatLong(lat : number, long : number) {
+    var coords = GEOTHREE.UnitsUtils.datumsToSpherical(lat, long);
+    this._map.position.set(-coords.x, 450.0, coords.y);
+    this._map.updateMatrixWorld(true);
   }
 
   public dispose(): void {

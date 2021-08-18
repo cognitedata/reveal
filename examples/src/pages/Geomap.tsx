@@ -157,10 +157,16 @@ export function Geomap() {
         showCameraTool: new DebugCameraTool(viewer),
         mode: 'Planar',
         providers: 'Satellite Map Box Labels',
-        heightmap: 'Satellite Map Box Labels'
+        heightmap: 'Satellite Map Box Labels',
+        latitude: 0.000001,
+        longitude: 0.000001
       };
 
-      
+      const guiActions = {
+        setLatLongPosition: () => {
+        geomapTool.SetLatLong(guiState.latitude, guiState.longitude);
+        viewer.forceRerender();}
+        };
 
       // Load model if provided by URL
       const modelIdStr = urlParams.get('modelId');
@@ -234,6 +240,10 @@ export function Geomap() {
         geomapTool.SetMapHeightProvider(heightmap);
         viewer.forceRerender();
       });
+
+      renderGui.add(guiState, 'latitude', -90.000000, 90.000000, 0.000001).name('Latitude');
+      renderGui.add(guiState, 'longitude', -180.000000, 180.000000, 0.000001).name('Longitude');
+      renderGui.add(guiActions, 'setLatLongPosition').name('Set Position');
     }
 
     main();
