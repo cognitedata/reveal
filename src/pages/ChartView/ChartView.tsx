@@ -58,6 +58,7 @@ const CHART_SETTINGS_KEYS = {
   SHOW_Y_AXIS: 'showYAxis',
   SHOW_MIN_MAX: 'showMinMax',
   SHOW_GRIDLINES: 'showGridlines',
+  MERGE_UNITS: 'mergeUnits',
 };
 
 const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
@@ -73,7 +74,6 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   >();
 
   const [showSearch, setShowSearch] = useState(false);
-  const [mergeUnits, setMergeUnits] = useState(false);
   const [workspaceMode, setWorkspaceMode] = useState<Modes>('workspace');
   const [stackedMode, setStackedMode] = useState<boolean>(false);
   const [editorTimer, setEditorTimer] = useState<ITimer | undefined>();
@@ -82,6 +82,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   const showYAxis = get(chart, 'settings.showYAxis', true);
   const showMinMax = get(chart, 'settings.showMinMax', false);
   const showGridlines = get(chart, 'settings.showGridlines', true);
+  const mergeUnits = get(chart, 'settings.mergeUnits', true);
 
   useEffect(() => {
     trackUsage('PageView.ChartView', { isOwner: chart?.user === login?.id });
@@ -219,6 +220,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
           showYAxis,
           showMinMax,
           showGridlines,
+          mergeUnits,
           [key]: value,
         },
       });
@@ -441,7 +443,12 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                       <Switch
                         name="toggleUnitMerging"
                         value={mergeUnits}
-                        onChange={() => setMergeUnits(!mergeUnits)}
+                        onChange={() =>
+                          handleSettingsToggle(
+                            CHART_SETTINGS_KEYS.MERGE_UNITS,
+                            !mergeUnits
+                          )
+                        }
                       >
                         Merge units
                       </Switch>
