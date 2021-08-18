@@ -1,6 +1,10 @@
 import React, { useEffect } from 'react';
 import Home from 'pages/Home';
-import { AuthWrapper, SubAppWrapper } from '@cognite/cdf-utilities';
+import {
+  AuthWrapper,
+  SubAppWrapper,
+  UserContext,
+} from '@cognite/cdf-utilities';
 import GlobalStyles from 'styles/GlobalStyles';
 import { Loader } from '@cognite/cogs.js';
 import { ThemeProvider } from 'styled-components';
@@ -10,6 +14,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { AppEnvProvider } from 'hooks/useAppEnv';
 import { Route, Router, Switch } from 'react-router-dom';
 import { createBrowserHistory } from 'history';
+import { FlagProvider } from '@cognite/react-feature-flags';
 // eslint-disable-next-line
 import { SDKProvider } from '@cognite/sdk-provider';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
@@ -55,20 +60,30 @@ const App = () => {
               loadingScreen={<Loader />}
               subAppName="cdf-integrations-ui"
             >
-              <ThemeProvider theme={theme}>
-                <AppEnvProvider
-                  cdfEnv={cdfEnv}
-                  project={project}
-                  origin={origin}
-                >
-                  <Router history={history}>
-                    <Switch>
-                      <Route path="/:tenant" component={Home} />
-                    </Switch>
-                  </Router>
-                </AppEnvProvider>
-              </ThemeProvider>
-              <GlobalStyles theme={theme} />
+              <UserContext.Consumer>
+                {(user) => (
+                  <FlagProvider
+                    apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
+                    appName="cdf-console"
+                    projectName={user.project}
+                  >
+                    <ThemeProvider theme={theme}>
+                      <AppEnvProvider
+                        cdfEnv={cdfEnv}
+                        project={project}
+                        origin={origin}
+                      >
+                        <Router history={history}>
+                          <Switch>
+                            <Route path="/:tenant" component={Home} />
+                          </Switch>
+                        </Router>
+                      </AppEnvProvider>
+                    </ThemeProvider>
+                    <GlobalStyles theme={theme} />
+                  </FlagProvider>
+                )}
+              </UserContext.Consumer>
             </AuthWrapper>
           </SubAppWrapper>
         </AppScopeStyles>

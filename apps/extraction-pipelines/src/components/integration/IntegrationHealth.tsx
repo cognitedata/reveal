@@ -35,6 +35,7 @@ import {
   mapRangeToGraphTimeFormat,
 } from 'components/chart/runChartUtils';
 import { Span3 } from 'styles/grid/StyledGrid';
+import { useFlag } from '@cognite/react-feature-flags';
 
 const TableWrapper = styled(PageWrapperColumn)`
   ${Span3};
@@ -94,6 +95,10 @@ export const IntegrationHealth: FunctionComponent<LogsViewProps> = ({
   const [nextCursor, setNextCursor] = useState<string | undefined>();
   const [pageSize] = useState(PAGE_SIZE_DEFAULT);
   const [pageCount, setPageCount] = React.useState(0);
+  const chartEnabled = useFlag('EXTPIPES_CHART_allowlist', {
+    fallback: false,
+    forceRerender: true,
+  });
   const history = useHistory();
   const { id: integrationId } = integration ?? {};
   useEffect(() => {
@@ -169,7 +174,9 @@ export const IntegrationHealth: FunctionComponent<LogsViewProps> = ({
     }
     return (
       <>
-        <RunChart allRuns={all} timeFormat={timeFormat} />
+        {chartEnabled ? (
+          <RunChart allRuns={all} timeFormat={timeFormat} />
+        ) : null}
         <RunLogsTable
           data={runsList}
           columns={columns}
