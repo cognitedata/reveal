@@ -42,6 +42,9 @@ export const useAnnotations = (fileId: number) => {
   ).filter(annotation => annotation.status !== 'deleted');
 };
 
+export const isFileApproved = (file: FileInfo) =>
+  file.labels?.find(label => label.externalId === INTERACTIVE_LABEL.externalId);
+
 export const isFilePending = (file: FileInfo) =>
   file.labels?.find(label => label.externalId === PENDING_LABEL.externalId);
 

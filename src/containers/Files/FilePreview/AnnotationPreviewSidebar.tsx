@@ -48,6 +48,7 @@ import { ContextualizationData } from './ContextualizationModule';
 import { CreateAnnotationForm } from './CreateAnnotationForm/CreateAnnotationForm';
 import ReviewTagBar from './ReviewTagBar';
 import FileReview from './FileReview';
+import DiagramReviewStatus from './DiagramStatus';
 
 type Props = {
   file?: FileInfo;
@@ -465,6 +466,7 @@ const AnnotationPreviewSidebar = ({
             <TitleWrapper>
               <Icon type="PDF" />
               <Title level={5}>{file?.name} </Title>
+              <DiagramReviewStatus file={file} />
               <FileReview
                 annotations={annotations}
                 onApprove={onApproveAllAnnotations}
