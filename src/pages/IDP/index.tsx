@@ -88,7 +88,7 @@ const LegacyIdentityProviderForm = () => {
   const sdk = useSDK();
   const { mutate } = useMutation(
     (update: UpdateBody) =>
-      sdk.post(`/api/playground/projects/${sdk.project}/update`, {
+      sdk.post(`/api/v1/projects/${sdk.project}/update`, {
         data: {
           update,
         },
