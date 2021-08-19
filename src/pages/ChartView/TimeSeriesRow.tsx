@@ -6,6 +6,7 @@ import {
   ChartTimeSeries,
   FunctionCallStatus,
 } from 'reducers/charts/types';
+import { useDebounce } from 'use-debounce';
 import {
   AllIconTypes,
   Button,
@@ -32,6 +33,7 @@ import { useSDK } from '@cognite/sdk-provider';
 import { calculateDefaultYAxis } from 'utils/axis';
 import { convertValue } from 'utils/units';
 import { DraggableProvided } from 'react-beautiful-dnd';
+import { isEqual } from 'lodash';
 import {
   SourceItem,
   SourceCircle,
@@ -171,10 +173,14 @@ export default function TimeSeriesRow({
   } = timeseries;
   const [isEditingName, setIsEditingName] = useState<boolean>(false);
 
-  const prevDateFromTo = usePrevious<{ dateFrom: string; dateTo: string }>({
-    dateFrom,
-    dateTo,
-  });
+  /**
+   * Using strings to avoid custom equality check
+   */
+  const datesAsString = JSON.stringify({ dateFrom, dateTo });
+  const [debouncedDatesAsString] = useDebounce(datesAsString, 3000);
+  const debouncedPrevDatesAsString = usePrevious<string>(
+    debouncedDatesAsString
+  );
 
   // Increasing this will cause a fresh render where the dropdown is closed
   const update = (_tsId: string, diff: Partial<ChartTimeSeries>) =>
@@ -283,8 +289,8 @@ export default function TimeSeriesRow({
   );
 
   const datesChanged =
-    (prevDateFromTo && prevDateFromTo.dateFrom !== dateFrom) ||
-    (prevDateFromTo && prevDateFromTo.dateTo !== dateTo);
+    debouncedPrevDatesAsString &&
+    debouncedPrevDatesAsString !== debouncedDatesAsString;
 
   useEffect(() => {
     if (!datesChanged) {
