@@ -33,7 +33,6 @@ import { useSDK } from '@cognite/sdk-provider';
 import { calculateDefaultYAxis } from 'utils/axis';
 import { convertValue } from 'utils/units';
 import { DraggableProvided } from 'react-beautiful-dnd';
-import { isEqual } from 'lodash';
 import {
   SourceItem,
   SourceCircle,
