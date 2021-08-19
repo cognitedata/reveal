@@ -5,7 +5,6 @@ import TimeSelector from 'components/TimeSelector';
 import { trackUsage } from 'utils/metrics';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { chartState } from 'atoms/chart';
-import { Chart } from 'reducers/charts/types';
 
 const relativeTimeOptions = [
   {
@@ -116,8 +115,6 @@ const DateRangeSelector = () => {
             const newEnd = new Date(endDate || new Date());
             newEnd.setHours(currentEnd.getHours());
             newEnd.setMinutes(currentEnd.getMinutes());
-
-            console.log('dates changed!');
 
             handleDateChange({
               dateFrom: newStart,
