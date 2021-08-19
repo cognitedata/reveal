@@ -319,7 +319,7 @@ const PlotlyChartComponent = ({
    */
   const allowUpdatesClick = useDebouncedCallback(() => {
     setIsAllowedToUpdate(true);
-  }, 100);
+  }, 200);
 
   /**
    * Disallow updates when scrolling
