@@ -9,6 +9,7 @@ type Sidecar = {
   docsSiteBaseUrl: string;
   intercom: string;
   nomaApiBaseUrl: string;
+  commentServiceBaseUrl: string;
 };
 
 // # -------------------------------------
@@ -45,8 +46,13 @@ const generateBaseUrls = (cluster: string, prod = false) => {
   switch (cluster) {
     case 'ew1': {
       return {
-        appsApiBaseUrl: 'https://apps-api.staging.cognite.ai',
+        appsApiBaseUrl: prod
+          ? 'https://apps-api.cognite.ai'
+          : 'https://apps-api.staging.cognite.ai',
         cdfApiBaseUrl: 'https://api.cognitedata.com',
+        commentServiceBaseUrl: prod
+          ? `https://comment-service.cognite.ai`
+          : `https://comment-service.staging.cognite.ai`,
         cdfCluster: '',
       };
     }
@@ -57,6 +63,9 @@ const generateBaseUrls = (cluster: string, prod = false) => {
           ? `https://apps-api.${cluster}.cognite.ai`
           : `https://apps-api.staging.${cluster}.cognite.ai`,
         cdfApiBaseUrl: `https://${cluster}.cognitedata.com`,
+        commentServiceBaseUrl: prod
+          ? `https://comment-service.${cluster}.cognite.ai`
+          : `https://comment-service.staging.${cluster}.cognite.ai`,
         cdfCluster: cluster,
       };
     }

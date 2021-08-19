@@ -17,8 +17,8 @@
     "deploy": "./scripts/deploy.sh"
   },
   "dependencies": {
-    "@cognite/cogs.js": "^3.31.1",
-    "@cognite/comment-service-types": "^0.0.1",
+    "@cognite/cogs.js": "^3.32.2",
+    "@cognite/comment-service-types": "^0.0.2",
     "@cognite/eslint-config": "link:packages/eslint-config",
     "@cognite/eslint-plugin": "link:packages/eslint-plugin",
     "@cognite/sdk": "^4.1.0",

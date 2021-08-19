@@ -1462,10 +1462,10 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@cognite/cogs.js@^3.31.1":
-  version "3.32.1"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.32.1.tgz#ea88082829c2f2cf8bea9a3ef547b56c4cc5f3f2"
-  integrity sha512-4oRVtLD2f/m7/+0/wZAkn0mpEkgLyoB9D+Ae761U7RwRElAp+0QlNPeMTJnRHvqduJEj6k+EkH/hUqzfrc90dw==
+"@cognite/cogs.js@^3.32.2":
+  version "3.32.2"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.32.2.tgz#1fb7b5ea7decb667ed11b8457c4e5bda8ab88a64"
+  integrity sha512-7M1+oKMyfybpkkLcxNtIotc5xqK9EoM6mrEwUX0eqPOuF4cHSaVZvMW+Vb3s9c/rBdO9InMnVb6V/EFVrhs1dQ==
   dependencies:
     "@tippyjs/react" "4.2.3"
     "@types/react-date-range" "^1.1.2"
@@ -1485,15 +1485,14 @@
     react-select "^3.1.0"
     react-table "^7.6.0"
     react-toastify "^6.0.9"
-    save-dev "^0.0.1-security"
     stylelint "^13.13.1"
     tippy.js "6.2.0"
     ts-dedent "^2.2.0"
 
-"@cognite/comment-service-types@^0.0.1":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@cognite/comment-service-types/-/comment-service-types-0.0.1.tgz#d138d7caedef42f6660c465934b47359b7cbe8b3"
-  integrity sha512-kSfDnrR9huis4Q58ABKTXgKca3hgQIlQFyhvDxwVUvNmObAiZcVGvCsc5BKLXnOXLE1vy2NeXU778LfUy9WI/A==
+"@cognite/comment-service-types@^0.0.2":
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/@cognite/comment-service-types/-/comment-service-types-0.0.2.tgz#285445e73f4425fb35123d5acd694003faf6c1f8"
+  integrity sha512-i5vXx/YB5Ik0u3HJrcvx63MDEQnn+6Oomnc7pxkjgiS/ph4iad+sL5tNzpSYG2+Ad67W8KnI9U8W4kCrB+ke4Q==
 
 "@cognite/eslint-config@link:packages/eslint-config":
   version "0.0.0"
@@ -19025,11 +19024,6 @@ sass@^1.29.0:
   integrity sha512-scLA7EIZM+MmYlej6sdVr0HRbZX5caX5ofDT9asWnUJj21oqgsC+1LuNfm0eg+vM0fCTZHhwImTiCU0sx9h9CQ==
   dependencies:
     chokidar ">=3.0.0 <4.0.0"
-
-save-dev@^0.0.1-security:
-  version "0.0.1-security"
-  resolved "https://registry.yarnpkg.com/save-dev/-/save-dev-0.0.1-security.tgz#5eb7267e25a8709c20ac336f0101c8d35900ca5e"
-  integrity sha512-k6knZTDNK8PKKbIqnvxiOveJinuw2LcQjqDoaorZWP9M5AR2EPsnpDeSbeoZZ0pHr5ze1uoaKdK8NBGQrJ34Uw==
 
 sax@~1.2.4:
   version "1.2.4"

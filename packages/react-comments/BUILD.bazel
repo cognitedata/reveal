@@ -12,8 +12,8 @@ load("//rules/npm:append_deps.bzl", "append_deps")
 
 SOURCES = glob(
     [
-        "src/*.tsx",
-        "src/**/*.ts",
+        "src/*.ts*",
+        "src/**/*.ts*",
     ],
     exclude = ["src/**/*.spec.ts"],
 )
@@ -37,13 +37,15 @@ generate_package_json_helpers(
 
 # Dependencies from package.json
 DEPENDENCIES = [
-    "@npm//@cognite/comment-service-types",
+    "@npm//@cognite/cogs.js",
     "@npm//react",
+    "//packages/react-container",
 ]
 
 # Type dependencies from package.json
 TYPE_DEPENDENCIES = [
     "@npm//@types/react",
+    "@npm//@cognite/comment-service-types",
 ]
 
 # Dev dependencies from package.json

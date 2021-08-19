@@ -9,6 +9,7 @@ export const PAGES = {
   INFO: '/info',
   SDK: '/sdk',
   INTERCOM: '/intercom',
+  COMMENTS: '/comments',
   LOGOUT: '/logout',
 };
 
@@ -48,6 +49,11 @@ export const MenuBar = () => {
             name: 'Cognite SDK',
             isActive: active === PAGES.SDK,
             onClick: handleNavigate(PAGES.SDK),
+          },
+          {
+            name: 'Comments',
+            isActive: active === PAGES.COMMENTS,
+            onClick: handleNavigate(PAGES.COMMENTS),
           },
           {
             name: 'Intercom',

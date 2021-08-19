@@ -1,58 +1,25 @@
 import * as React from 'react';
 import { AuthConsumer, AuthContext } from '@cognite/react-container';
-import { Asset, CogniteClient } from '@cognite/sdk';
+import { CogniteClient } from '@cognite/sdk';
 import { Title, Body, A } from '@cognite/cogs.js';
 import { useTranslation, Trans } from 'react-i18next';
 
 import { Container, Code } from '../elements';
 
-import { Elevation, Content, Warning } from './elements';
+import { Content } from './elements';
 
 const CogniteSDKPageWrapper: React.FC = () => (
   <AuthConsumer>
     {({ client }: AuthContext) =>
-      client ? <CogniteSDKDataWrapper client={client} /> : null
+      client ? <CogniteSDKPage client={client} /> : null
     }
   </AuthConsumer>
 );
 
-interface DataWrapperProps {
+interface Props {
   client: CogniteClient;
 }
-const CogniteSDKDataWrapper: React.FC<DataWrapperProps> = ({
-  client,
-}: DataWrapperProps) => {
-  const [data, setData] = React.useState<Asset>();
-  const [errorMessage, setErrorMessage] = React.useState('');
-
-  const fetchData = async () => {
-    try {
-      const assets = await client.assets.list();
-      if (assets.items) {
-        setData(assets.items[0]);
-      }
-    } catch (error) {
-      setErrorMessage(error.message);
-    }
-  };
-
-  React.useEffect(() => {
-    fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // only run once
-
-  if (!data && !errorMessage) {
-    return null;
-  }
-
-  return <CogniteSDKPage data={data} error={errorMessage} />;
-};
-
-interface Props {
-  data?: Asset;
-  error?: string;
-}
-export const CogniteSDKPage: React.FC<Props> = ({ data, error }) => {
+export const CogniteSDKPage: React.FC<Props> = ({ client }) => {
   const { t } = useTranslation('CogniteSDK');
 
   return (
@@ -89,18 +56,16 @@ export const CogniteSDKPage: React.FC<Props> = ({ data, error }) => {
         How do I use the Cognite SDK?
       </A>
 
-      {error && (
-        <Warning>There was an error loading your data: {error}</Warning>
-      )}
-
-      {data && (
-        <Elevation className="z-4">
-          <Body>
-            Your first data:
-            <div>Asset ID: {data.id}</div>
-            <div>Asset name: {data.name}</div>
-          </Body>
-        </Elevation>
+      {client && (
+        <Body>
+          SDK configured for project:{' '}
+          <Code>
+            {
+              // @ts-expect-error private key
+              client.projectName
+            }
+          </Code>
+        </Body>
       )}
     </Container>
   );

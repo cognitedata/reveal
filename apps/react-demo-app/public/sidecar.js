@@ -5,14 +5,30 @@ window.__cogniteSidecar = {
     {
       roles: [],
       groups: ['defaultGroup'],
-      fakeApplicationId: 'user',
+      fakeApplicationId: '5a262178-942b-4c8f-ac15-f96642b73b56',
       // project to run e2e tests against
       project: 'react-demo-app-e2e-azure-dev',
       // to match `Login with Fake IDP (azure-dev)` button
       name: 'azure-dev',
       cluster: 'azure-dev',
-      tokenId: 'token-1',
-      userId: 'user-1',
+      tokenId: 'react-demo-e2e',
+      userId: 'react-demo-app-e2e-azure-dev',
+      otherIdTokenFields: {
+        given_name: 'Normal',
+        family_name: 'User',
+      },
+    },
+    {
+      roles: [],
+      groups: ['defaultGroup'],
+      fakeApplicationId: '245a8a64-4142-4226-86fa-63d590de14c9',
+      // project to run e2e tests against
+      project: 'react-demo-app-e2e-bluefield',
+      // to match `Login with Fake IDP (bluefield)` button
+      name: 'bluefield',
+      cluster: 'bluefield',
+      tokenId: 'react-demo-e2e',
+      userId: 'react-demo-app-e2e-azure-dev',
     },
   ],
 };

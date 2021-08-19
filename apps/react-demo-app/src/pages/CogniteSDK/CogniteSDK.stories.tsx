@@ -7,12 +7,9 @@ export default {
 
 export const Base = () => (
   <CogniteSDKPage
-    data={{
-      id: 1,
-      rootId: 1,
-      name: 'test',
-      lastUpdatedTime: new Date(),
-      createdTime: new Date(),
+    client={{
+      // @ts-expect-error missing props
+      login: { status: () => Promise.resolve(null) },
     }}
   />
 );
