@@ -32,8 +32,6 @@ import { useSDK } from '@cognite/sdk-provider';
 import { calculateDefaultYAxis } from 'utils/axis';
 import { convertValue } from 'utils/units';
 import { DraggableProvided } from 'react-beautiful-dnd';
-import { useDebounce } from 'use-debounce';
-import isEqual from 'lodash/isEqual';
 import {
   SourceItem,
   SourceCircle,
