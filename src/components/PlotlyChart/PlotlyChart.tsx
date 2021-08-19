@@ -286,6 +286,10 @@ const PlotlyChartComponent = ({
     };
   }, [isPreview]);
 
+  /**
+   * Local state for data and layout in the chart
+   * that only updates when the user isn't doing any navigation
+   */
   const [activeState, setActiveState] = useState({
     data,
     layout,
