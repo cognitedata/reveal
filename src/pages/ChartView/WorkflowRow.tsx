@@ -6,6 +6,7 @@ import {
   ChartTimeSeries,
   Call,
 } from 'reducers/charts/types';
+import { useDebounce } from 'use-debounce';
 import {
   Button,
   Dropdown,
@@ -25,6 +26,7 @@ import { AppearanceDropdown } from 'components/AppearanceDropdown';
 import { UnitDropdown } from 'components/UnitDropdown';
 import { getHash } from 'utils/hash';
 import { DraggableProvided } from 'react-beautiful-dnd';
+import { isEqual } from 'lodash';
 import {
   SourceItem,
   SourceSquare,
@@ -84,7 +86,6 @@ export default function WorkflowRow({
     mutate(updateWorkflow(chart, wfId, diff));
   };
 
-  const { dateTo, dateFrom } = chart;
   const { nodes, connections } = workflow;
   const steps = useMemo(
     () =>
@@ -92,6 +93,14 @@ export default function WorkflowRow({
         ? getStepsFromWorkflow(chart, nodes, connections)
         : [],
     [chart, nodes, connections]
+  );
+
+  const [{ dateFrom, dateTo }] = useDebounce(
+    { dateFrom: chart.dateFrom, dateTo: chart.dateTo },
+    2000,
+    {
+      equalityFn: isEqual,
+    }
   );
 
   const computation = useMemo(
