@@ -216,20 +216,9 @@ const PlotlyChartComponent = ({
     [seriesData, isMinMaxShown, isPreview]
   );
 
-  const [activeData, setActiveData] = useState(data);
-
-  useEffect(() => {
-    if (isAllowedToUpdate) {
-      setActiveData(data);
-    }
-  }, [data, isAllowedToUpdate]);
-
   const handleRelayout = useCallback(
     (eventdata: PlotlyEventData) => {
       if (isPreview) {
-        return;
-      }
-      if (!chart) {
         return;
       }
       const x = getXaxisUpdateFromEventData(eventdata);
@@ -238,8 +227,7 @@ const PlotlyChartComponent = ({
         ? getYaxisUpdatesFromEventData(seriesData, eventdata)
         : [];
 
-      const newChart = updateSourceAxisForChart(chart, { x, y });
-      setChart(newChart);
+      setChart((oldChart) => updateSourceAxisForChart(oldChart!, { x, y }));
 
       if (eventdata.dragmode) {
         setDragmode(eventdata.dragmode || dragmode);
@@ -253,7 +241,6 @@ const PlotlyChartComponent = ({
       isInSearch,
       stackedMode,
       client,
-      chart,
       enabledTimeseries,
       enabledWorkflows,
     ]
@@ -299,28 +286,79 @@ const PlotlyChartComponent = ({
     };
   }, [isPreview]);
 
-  useEffect(() => {
-    if (isAllowedToUpdate && !isEqual(data, activeData)) {
-      setActiveData(data);
-    }
-  }, [isAllowedToUpdate, data, activeData]);
+  const [activeState, setActiveState] = useState({
+    data,
+    layout,
+  });
 
-  const allowUpdates = useDebouncedCallback(() => {
+  /**
+   * Update active state whenever allowed (not scrolling or navigating chart)
+   */
+  useEffect(() => {
+    if (isAllowedToUpdate) {
+      setActiveState({
+        data,
+        layout,
+      });
+    }
+  }, [data, layout, isAllowedToUpdate]);
+
+  /**
+   * Debounced callback that turns on updates again
+   */
+  const allowUpdatesScroll = useDebouncedCallback(() => {
+    setIsAllowedToUpdate(true);
+  }, 1000);
+
+  /**
+   * Debounced callback that turns on updates again
+   */
+  const allowUpdatesClick = useDebouncedCallback(() => {
     setIsAllowedToUpdate(true);
   }, 100);
 
+  /**
+   * Disallow updates when scrolling
+   */
   const handleMouseWheel = useCallback(() => {
     setIsAllowedToUpdate(false);
-    allowUpdates();
-  }, [allowUpdates]);
+    allowUpdatesScroll();
+  }, [allowUpdatesScroll]);
 
   useEffect(() => {
     window.addEventListener('mousewheel', handleMouseWheel);
-
     return () => {
       window.removeEventListener('mousewheel', handleMouseWheel);
     };
   }, [handleMouseWheel]);
+
+  /**
+   * Disallow updates when clicking and holding mouse (navigating chart)
+   */
+  const handleMouseDown = useCallback(() => {
+    setIsAllowedToUpdate(false);
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener('mousedown', handleMouseDown);
+    return () => {
+      window.removeEventListener('mousedown', handleMouseDown);
+    };
+  });
+
+  /**
+   * Allow updates when releasing mouse button (no longer navigating chart)
+   */
+  const handleMouseUp = useCallback(() => {
+    allowUpdatesClick();
+  }, [allowUpdatesClick]);
+
+  useEffect(() => {
+    window.addEventListener('mouseup', handleMouseUp);
+    return () => {
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  });
 
   const chartStyles = useMemo(() => {
     return { width: '100%', height: '100%' };
@@ -343,11 +381,10 @@ const PlotlyChartComponent = ({
           </AdjustButton>
         </>
       )}
-
       <PlotWrapper>
         <MemoizedPlot
-          data={activeData as Plotly.Data[]}
-          layout={layout as unknown as Plotly.Layout}
+          data={activeState.data as Plotly.Data[]}
+          layout={activeState.layout as unknown as Plotly.Layout}
           config={config as unknown as Plotly.Config}
           onRelayout={handleRelayout}
           style={chartStyles}
