@@ -62,6 +62,13 @@ const WorkflowEditor = ({
     (flow) => flow.id === workflowId
   );
 
+  const allNodes: StorableNode[] = [];
+  chart?.workflowCollection?.forEach((wf) => {
+    if (wf?.nodes?.length) {
+      allNodes.push(...wf?.nodes);
+    }
+  });
+
   if (!workflowId || !workflow) {
     return null;
   }
@@ -284,6 +291,7 @@ const WorkflowEditor = ({
       {activeNode && (
         <ConfigPanel
           node={activeNode}
+          nodes={allNodes}
           onSave={(node) => {
             onUpdateNode(node);
             setActiveNode(undefined);

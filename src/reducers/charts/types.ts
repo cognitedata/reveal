@@ -2,9 +2,10 @@ import { Node, Connection } from '@cognite/connect';
 import { FunctionComponent } from 'react';
 
 type ChartSettings = {
-  showYAxis: boolean;
-  showMinMax: boolean;
-  showGridlines: boolean;
+  showYAxis?: boolean;
+  showMinMax?: boolean;
+  showGridlines?: boolean;
+  mergeUnits?: boolean;
 };
 
 export type Chart = {
@@ -90,6 +91,7 @@ export type SourceCollectionData = {
 
 export type ConfigPanelComponentProps = {
   node: StorableNode;
+  nodes?: StorableNode[];
   onUpdateNode: (nextNode: StorableNode) => void;
   context: any;
 };
