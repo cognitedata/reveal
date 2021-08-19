@@ -6,8 +6,6 @@ import DelayedComponent from 'components/DelayedComponent';
 import { PnidButton } from 'components/SearchResultTable';
 import { useInfiniteList, useAggregate } from '@cognite/sdk-react-query-hooks';
 import { Asset, Timeseries } from '@cognite/sdk';
-import { useParams } from 'react-router-dom';
-import { useChart, useUpdateChart } from 'hooks/firebase';
 import {
   addTimeseries,
   covertTSToChartTS,
@@ -17,6 +15,8 @@ import { calculateDefaultYAxis } from 'utils/axis';
 import { trackUsage } from 'utils/metrics';
 import Highlighter from 'react-highlight-words';
 import { useAddToRecentLocalStorage } from 'utils/recentViewLocalstorage';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { chartState } from 'atoms/chart';
 import TimeseriesSearchHit from './TimeseriesSearchHit';
 
 type Props = {
@@ -26,10 +26,8 @@ type Props = {
 
 export default function AssetSearchHit({ asset, query = '' }: Props) {
   const sdk = useSDK();
-  const { chartId } = useParams<{ chartId: string }>();
-  const { data: chart } = useChart(chartId);
-  const { mutate: updateChart } = useUpdateChart();
-
+  const chart = useRecoilValue(chartState);
+  const setChart = useSetRecoilState(chartState);
   const { addAssetToRecent } = useAddToRecentLocalStorage();
   const { data, hasNextPage, fetchNextPage } = useInfiniteList<Timeseries>(
     'timeseries',
@@ -60,7 +58,7 @@ export default function AssetSearchHit({ asset, query = '' }: Props) {
         (t) => t.tsExternalId === timeSeries.externalId
       );
       if (tsToRemove) {
-        updateChart(removeTimeseries(chart, tsToRemove.id));
+        setChart(removeTimeseries(chart, tsToRemove.id));
       } else {
         // Calculate y-axis / range
         const range = await calculateDefaultYAxis({
@@ -72,7 +70,7 @@ export default function AssetSearchHit({ asset, query = '' }: Props) {
         addAssetToRecent(asset.id, timeSeries.id);
 
         const newTs = covertTSToChartTS(timeSeries, chart.id, range);
-        updateChart(addTimeseries(chart, newTs));
+        setChart(addTimeseries(chart, newTs));
         trackUsage('ChartView.AddTimeSeries', { source: 'search' });
       }
     }

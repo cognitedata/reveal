@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 import { useSDK } from '@cognite/sdk-provider';
 import { Icon, Button, Checkbox } from '@cognite/cogs.js';
 import { useParams } from 'react-router-dom';
-import { useChart, useUpdateChart } from 'hooks/firebase';
 import { Timeseries } from '@cognite/sdk';
 import { useInfiniteSearch } from '@cognite/sdk-react-query-hooks';
 import styled from 'styled-components/macro';
@@ -14,6 +13,8 @@ import {
 import { calculateDefaultYAxis } from 'utils/axis';
 import { trackUsage } from 'utils/metrics';
 import { useAddToRecentLocalStorage } from 'utils/recentViewLocalstorage';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { chartState } from 'atoms/chart';
 import TimeseriesSearchHit from './TimeseriesSearchHit';
 import RecentViewSources from './RecentViewSources';
 
@@ -23,8 +24,8 @@ type Props = {
 export default function SearchTimeseries({ query }: Props) {
   const sdk = useSDK();
   const { chartId } = useParams<{ chartId: string }>();
-  const { data: chart } = useChart(chartId);
-  const { mutate: updateChart } = useUpdateChart();
+  const chart = useRecoilValue(chartState);
+  const setChart = useSetRecoilState(chartState);
   const { addTsToRecent, addAssetToRecent } = useAddToRecentLocalStorage();
   const { data, isLoading, isError, fetchNextPage, hasNextPage } =
     useInfiniteSearch<Timeseries>('timeseries', query, 20, undefined, {
@@ -56,7 +57,7 @@ export default function SearchTimeseries({ query }: Props) {
         (t) => t.tsId === timeSeries.id
       );
       if (tsToRemove) {
-        updateChart(removeTimeseries(chart, tsToRemove.id));
+        setChart(removeTimeseries(chart, tsToRemove.id));
       } else {
         // Calculate y-axis / range
         const range = await calculateDefaultYAxis({
@@ -74,7 +75,7 @@ export default function SearchTimeseries({ query }: Props) {
 
         const newTs = covertTSToChartTS(timeSeries, chartId, range);
 
-        updateChart(addTimeseries(chart, newTs));
+        setChart(addTimeseries(chart, newTs));
         trackUsage('ChartView.AddTimeSeries', { source: 'search' });
       }
     }

@@ -1,23 +1,21 @@
 import { Avatar, Menu, Title, TopBar, Icon } from '@cognite/cogs.js';
 import sidecar from 'config/sidecar';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
-import { useParams } from 'react-router-dom';
 import { useNavigate } from 'hooks';
-import { useChart, useUpdateChart } from 'hooks/firebase';
 import styled from 'styled-components/macro';
 import dayjs from 'dayjs';
 import { ChartActions } from 'components/TopBar';
 import EditableText from 'components/EditableText';
 import useChat from 'hooks/useChat';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { chartState } from 'atoms/chart';
 
 const TopBarWrapper = () => {
   const { data: user } = useUserInfo();
   const move = useNavigate();
   const chat = useChat();
-
-  const { chartId } = useParams<{ chartId: string }>();
-  const { data: chart } = useChart(chartId);
-  const { mutate: updateChart } = useUpdateChart();
+  const chart = useRecoilValue(chartState);
+  const setChart = useSetRecoilState(chartState);
 
   return (
     <TopBarWrap>
@@ -36,7 +34,7 @@ const TopBarWrapper = () => {
                     value={chart?.name || ''}
                     onChange={(value) => {
                       if (chart) {
-                        updateChart({ ...chart, name: value });
+                        setChart({ ...chart, name: value });
                       }
                     }}
                   />

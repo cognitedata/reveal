@@ -6,7 +6,6 @@ import styled from 'styled-components/macro';
 import { TimeseriesChart } from '@cognite/data-exploration';
 import dayjs from 'dayjs';
 import { useParams } from 'react-router-dom';
-import { useChart, useUpdateChart } from 'hooks/firebase';
 import { Timeseries } from '@cognite/sdk';
 import {
   addTimeseries,
@@ -15,6 +14,8 @@ import {
 } from 'utils/charts';
 import { trackUsage } from 'utils/metrics';
 import { useAddToRecentLocalStorage } from 'utils/recentViewLocalstorage';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { chartState } from 'atoms/chart';
 
 export const AnnotationPopover = ({
   annotations,
@@ -62,8 +63,8 @@ export const AnnotationPopover = ({
 
 export const TimeseriesList = ({ assetId }: { assetId: number }) => {
   const { chartId } = useParams<{ chartId: string }>();
-  const { data: chart } = useChart(chartId);
-  const { mutate: updateChart } = useUpdateChart();
+  const chart = useRecoilValue(chartState);
+  const setChart = useSetRecoilState(chartState);
   const { addTsToRecent, addAssetToRecent } = useAddToRecentLocalStorage();
   const { data: timeseries = [], isLoading } = useAssetTimeseries(assetId);
 
@@ -80,7 +81,7 @@ export const TimeseriesList = ({ assetId }: { assetId: number }) => {
         (t) => t.tsExternalId === timeSeries.externalId
       );
       if (tsToRemove) {
-        updateChart(removeTimeseries(chart, tsToRemove.id));
+        setChart(removeTimeseries(chart, tsToRemove.id));
       } else {
         if (timeSeries.assetId) {
           addAssetToRecent(timeSeries.assetId, timeSeries.id);
@@ -89,7 +90,7 @@ export const TimeseriesList = ({ assetId }: { assetId: number }) => {
         }
 
         const ts = covertTSToChartTS(timeSeries, chartId);
-        updateChart(addTimeseries(chart, ts));
+        setChart(addTimeseries(chart, ts));
         trackUsage('ChartView.AddTimeSeries', { source: 'annotation' });
       }
     }

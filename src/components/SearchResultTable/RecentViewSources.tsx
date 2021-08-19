@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { Checkbox, Icon, Title } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
 import { Asset, Timeseries } from '@cognite/sdk';
-import { useChart, useUpdateChart } from 'hooks/firebase';
 import { useParams } from 'react-router-dom';
 import {
   addTimeseries,
@@ -18,6 +17,8 @@ import {
 } from 'utils/recentViewLocalstorage';
 import { useCdfItems } from 'utils/cogniteFunctions';
 import { useQueryClient } from 'react-query';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { chartState } from 'atoms/chart';
 import TimeseriesSearchHit from './TimeseriesSearchHit';
 import AssetSearchHit from './AssetSearchHit';
 
@@ -29,8 +30,8 @@ const RecentViewSources = ({ viewType }: Props) => {
   const title = viewType === 'assets' ? 'tags / assets' : 'time series';
   const sdk = useSDK();
   const { chartId } = useParams<{ chartId: string }>();
-  const { data: chart } = useChart(chartId);
-  const { mutate: updateChart } = useUpdateChart();
+  const chart = useRecoilValue(chartState);
+  const setChart = useSetRecoilState(chartState);
   // Takes alot of time to load data
   const { data: rvResults } = useRecentViewLocalStorage(viewType, []);
   const { addTsToRecent, addAssetToRecent } = useAddToRecentLocalStorage();
@@ -57,7 +58,7 @@ const RecentViewSources = ({ viewType }: Props) => {
         (t) => t.tsId === timeSeries.id
       );
       if (tsToRemove) {
-        updateChart(removeTimeseries(chart, tsToRemove.id));
+        setChart(removeTimeseries(chart, tsToRemove.id));
       } else {
         // Calculate y-axis / range
         const range = await calculateDefaultYAxis({
@@ -72,7 +73,7 @@ const RecentViewSources = ({ viewType }: Props) => {
         }
 
         const newTs = covertTSToChartTS(timeSeries, chartId, range);
-        updateChart(addTimeseries(chart, newTs));
+        setChart(addTimeseries(chart, newTs));
         trackUsage('ChartView.AddTimeSeries', { source: 'search' });
       }
     }

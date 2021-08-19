@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Body, Button, Icon, Title, toast } from '@cognite/cogs.js';
+import { Body, Button, Icon, Title } from '@cognite/cogs.js';
 import { Asset, FileInfo as File } from '@cognite/sdk';
 import { FileViewer } from 'components/FileViewer';
 import { FileList } from 'components/FileList';
@@ -14,14 +14,18 @@ import {
   SourceItem,
   SourceName,
 } from 'pages/ChartView/elements';
-import { useChart, useUpdateChart } from 'hooks/firebase';
 import TimeSeriesRows from 'pages/ChartView/TimeSeriesRows';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 import Layers from 'utils/z-index';
 import AssetSearchHit from 'components/SearchResultTable/AssetSearchHit';
 import { trackUsage } from 'utils/metrics';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { chartState } from 'atoms/chart';
 
 export const FileView = () => {
+  const chart = useRecoilValue(chartState);
+  const setChart = useSetRecoilState(chartState);
+
   const { chartId, assetId } = useParams<{
     chartId: string;
     assetId: string;
@@ -31,7 +35,6 @@ export const FileView = () => {
   const [showLinkedAssets, setShowLinkedAssets] = useState<boolean>(false);
   const move = useNavigate();
 
-  const { data: chart } = useChart(chartId);
   const { data: asset, isFetched: isAssetFetched } = useAsset(Number(assetId));
   const { data: linkedAssets = [] } = useCdfItems<Asset>(
     'assets',
@@ -44,26 +47,9 @@ export const FileView = () => {
     }
   );
 
-  const {
-    mutateAsync: updateChart,
-    isError: updateError,
-    error: updateErrorMsg,
-  } = useUpdateChart();
-
   useEffect(() => {
     trackUsage('PageView.FileView');
   }, []);
-
-  useEffect(() => {
-    if (updateError) {
-      toast.error('Chart could not be saved!', { toastId: 'update-chart' });
-    }
-    if (updateError && updateErrorMsg) {
-      toast.error(JSON.stringify(updateErrorMsg, null, 2), {
-        toastId: 'update-chart',
-      });
-    }
-  }, [updateError, updateErrorMsg]);
 
   if (!isAssetFetched) {
     return <Icon type="Loading" />;
@@ -164,7 +150,7 @@ export const FileView = () => {
                 <tbody>
                   <TimeSeriesRows
                     chart={chart}
-                    updateChart={updateChart}
+                    updateChart={setChart}
                     mode="file"
                     dateFrom={chart.dateFrom}
                     dateTo={chart.dateTo}

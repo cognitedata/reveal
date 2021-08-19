@@ -6,7 +6,6 @@ import {
   ChartTimeSeries,
   FunctionCallStatus,
 } from 'reducers/charts/types';
-import { useDebouncedCallback } from 'use-debounce';
 import {
   AllIconTypes,
   Button,
@@ -33,6 +32,8 @@ import { useSDK } from '@cognite/sdk-provider';
 import { calculateDefaultYAxis } from 'utils/axis';
 import { convertValue } from 'utils/units';
 import { DraggableProvided } from 'react-beautiful-dnd';
+import { useDebounce } from 'use-debounce';
+import isEqual from 'lodash/isEqual';
 import {
   SourceItem,
   SourceCircle,
@@ -262,10 +263,6 @@ export default function TimeSeriesRow({
   const { data: linkedAsset } = useLinkedAsset(tsExternalId, true);
   const { mutate: callFunction } = useCallFunction('individual_calc-master');
   const memoizedCallFunction = useCallback(callFunction, [callFunction]);
-  const debouncedCallFunction = useDebouncedCallback(
-    memoizedCallFunction,
-    1200
-  );
 
   const updateStatistics = useCallback(
     (diff: Partial<ChartTimeSeries>) => {
@@ -301,7 +298,7 @@ export default function TimeSeriesRow({
       }
     }
 
-    debouncedCallFunction(
+    memoizedCallFunction(
       {
         data: {
           calculation_input: {
@@ -330,7 +327,7 @@ export default function TimeSeriesRow({
       }
     );
   }, [
-    debouncedCallFunction,
+    memoizedCallFunction,
     dateFrom,
     dateTo,
     timeseries,
