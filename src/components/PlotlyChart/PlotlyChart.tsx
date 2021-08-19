@@ -310,24 +310,17 @@ const PlotlyChartComponent = ({
   /**
    * Debounced callback that turns on updates again
    */
-  const allowUpdatesScroll = useDebouncedCallback(() => {
+  const allowUpdates = useDebouncedCallback(() => {
     setIsAllowedToUpdate(true);
-  }, 1000);
-
-  /**
-   * Debounced callback that turns on updates again
-   */
-  const allowUpdatesClick = useDebouncedCallback(() => {
-    setIsAllowedToUpdate(true);
-  }, 200);
+  }, 500);
 
   /**
    * Disallow updates when scrolling
    */
   const handleMouseWheel = useCallback(() => {
     setIsAllowedToUpdate(false);
-    allowUpdatesScroll();
-  }, [allowUpdatesScroll]);
+    allowUpdates();
+  }, [allowUpdates]);
 
   useEffect(() => {
     window.addEventListener('mousewheel', handleMouseWheel);
@@ -341,7 +334,8 @@ const PlotlyChartComponent = ({
    */
   const handleMouseDown = useCallback(() => {
     setIsAllowedToUpdate(false);
-  }, []);
+    allowUpdates.cancel();
+  }, [allowUpdates]);
 
   useEffect(() => {
     window.addEventListener('mousedown', handleMouseDown);
@@ -354,8 +348,8 @@ const PlotlyChartComponent = ({
    * Allow updates when releasing mouse button (no longer navigating chart)
    */
   const handleMouseUp = useCallback(() => {
-    allowUpdatesClick();
-  }, [allowUpdatesClick]);
+    allowUpdates();
+  }, [allowUpdates]);
 
   useEffect(() => {
     window.addEventListener('mouseup', handleMouseUp);
@@ -368,11 +362,14 @@ const PlotlyChartComponent = ({
     return { width: '100%', height: '100%' };
   }, []);
 
+  const isLoadingChartData =
+    workflowsRunning || timeseriesFetching || !isAllowedToUpdate;
+
   return (
     <ChartingContainer ref={containerRef}>
       {showAdjustButton && (
         <>
-          {timeseriesFetching && <LoadingIcon />}
+          {isLoadingChartData && <LoadingIcon />}
           <AdjustButton
             type="tertiary"
             icon="YAxis"
