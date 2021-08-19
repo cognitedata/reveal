@@ -33,9 +33,10 @@ const TopBarWrapper = () => {
                   <EditableText
                     value={chart?.name || ''}
                     onChange={(value) => {
-                      if (chart) {
-                        setChart({ ...chart, name: value });
-                      }
+                      setChart((oldChart) => ({
+                        ...oldChart!,
+                        name: value,
+                      }));
                     }}
                   />
                 </Title>

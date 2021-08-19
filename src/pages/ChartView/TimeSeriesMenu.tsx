@@ -17,7 +17,10 @@ export default function TimeSeriesMenu({ id }: Props) {
   if (!chart || !login?.id || !ts) {
     return null;
   }
-  const convert = () => setChart(convertTimeseriesToWorkflow(chart, id));
+
+  const convert = () =>
+    setChart((oldChart) => convertTimeseriesToWorkflow(oldChart!, id));
+
   return (
     <Menu>
       <Menu.Item onClick={() => convert()} appendIcon="YAxis">

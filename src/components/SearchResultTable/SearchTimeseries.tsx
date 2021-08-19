@@ -52,32 +52,34 @@ export default function SearchTimeseries({ query }: Props) {
     .filter(Boolean);
 
   const handleTimeSeriesClick = async (timeSeries: Timeseries) => {
-    if (chart) {
-      const tsToRemove = chart.timeSeriesCollection?.find(
-        (t) => t.tsId === timeSeries.id
-      );
-      if (tsToRemove) {
-        setChart(removeTimeseries(chart, tsToRemove.id));
+    if (!chart) {
+      return;
+    }
+
+    const tsToRemove = chart.timeSeriesCollection?.find(
+      (t) => t.tsId === timeSeries.id
+    );
+    if (tsToRemove) {
+      setChart((oldChart) => removeTimeseries(oldChart!, tsToRemove.id));
+    } else {
+      // Calculate y-axis / range
+      const range = await calculateDefaultYAxis({
+        chart,
+        sdk,
+        timeSeriesExternalId: timeSeries.externalId || '',
+      });
+
+      if (timeSeries.assetId) {
+        // add both asset and ts if asset exists
+        addAssetToRecent(timeSeries.assetId, timeSeries.id);
       } else {
-        // Calculate y-axis / range
-        const range = await calculateDefaultYAxis({
-          chart,
-          sdk,
-          timeSeriesExternalId: timeSeries.externalId || '',
-        });
-
-        if (timeSeries.assetId) {
-          // add both asset and ts if asset exists
-          addAssetToRecent(timeSeries.assetId, timeSeries.id);
-        } else {
-          addTsToRecent(timeSeries.id);
-        }
-
-        const newTs = covertTSToChartTS(timeSeries, chartId, range);
-
-        setChart(addTimeseries(chart, newTs));
-        trackUsage('ChartView.AddTimeSeries', { source: 'search' });
+        addTsToRecent(timeSeries.id);
       }
+
+      const newTs = covertTSToChartTS(timeSeries, chartId, range);
+
+      setChart((oldChart) => addTimeseries(oldChart!, newTs));
+      trackUsage('ChartView.AddTimeSeries', { source: 'search' });
     }
   };
 

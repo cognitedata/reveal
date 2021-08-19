@@ -53,29 +53,32 @@ const RecentViewSources = ({ viewType }: Props) => {
   );
 
   const handleTimeSeriesClick = async (timeSeries: Timeseries) => {
-    if (chart) {
-      const tsToRemove = chart.timeSeriesCollection?.find(
-        (t) => t.tsId === timeSeries.id
-      );
-      if (tsToRemove) {
-        setChart(removeTimeseries(chart, tsToRemove.id));
-      } else {
-        // Calculate y-axis / range
-        const range = await calculateDefaultYAxis({
-          chart,
-          sdk,
-          timeSeriesExternalId: timeSeries.externalId || '',
-        });
-        if (timeSeries.assetId) {
-          addAssetToRecent(timeSeries.assetId, timeSeries.id);
-        } else {
-          addTsToRecent(timeSeries.id);
-        }
+    if (!chart) {
+      return;
+    }
 
-        const newTs = covertTSToChartTS(timeSeries, chartId, range);
-        setChart(addTimeseries(chart, newTs));
-        trackUsage('ChartView.AddTimeSeries', { source: 'search' });
+    const tsToRemove = chart.timeSeriesCollection?.find(
+      (t) => t.tsId === timeSeries.id
+    );
+
+    if (tsToRemove) {
+      setChart((oldChart) => removeTimeseries(oldChart!, tsToRemove.id));
+    } else {
+      // Calculate y-axis / range
+      const range = await calculateDefaultYAxis({
+        chart,
+        sdk,
+        timeSeriesExternalId: timeSeries.externalId || '',
+      });
+      if (timeSeries.assetId) {
+        addAssetToRecent(timeSeries.assetId, timeSeries.id);
+      } else {
+        addTsToRecent(timeSeries.id);
       }
+
+      const newTs = covertTSToChartTS(timeSeries, chartId, range);
+      setChart((oldChart) => addTimeseries(oldChart!, newTs));
+      trackUsage('ChartView.AddTimeSeries', { source: 'search' });
     }
   };
 

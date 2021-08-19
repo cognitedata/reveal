@@ -23,7 +23,7 @@ export default function WorkflowMenu({ id, chart, children }: Props) {
     return null;
   }
   const duplicate = () => {
-    setChart(duplicateWorkflow(chart, id));
+    setChart((oldChart) => duplicateWorkflow(oldChart!, id));
     trackUsage('ChartView.DuplicateCalculation');
   };
 

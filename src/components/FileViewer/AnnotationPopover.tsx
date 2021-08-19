@@ -16,6 +16,7 @@ import { trackUsage } from 'utils/metrics';
 import { useAddToRecentLocalStorage } from 'utils/recentViewLocalstorage';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { chartState } from 'atoms/chart';
+import { Chart } from 'reducers/charts/types';
 
 export const AnnotationPopover = ({
   annotations,
@@ -76,23 +77,24 @@ export const TimeseriesList = ({ assetId }: { assetId: number }) => {
   const sparklineEndDate = dayjs().endOf('day').toDate();
 
   const handleTimeSeriesClick = async (timeSeries: Timeseries) => {
-    if (chart) {
-      const tsToRemove = chart.timeSeriesCollection?.find(
-        (t) => t.tsExternalId === timeSeries.externalId
-      );
-      if (tsToRemove) {
-        setChart(removeTimeseries(chart, tsToRemove.id));
+    if (!chart) {
+      return;
+    }
+    const tsToRemove = chart.timeSeriesCollection?.find(
+      (t) => t.tsExternalId === timeSeries.externalId
+    );
+    if (tsToRemove) {
+      setChart((oldChart) => removeTimeseries(oldChart!, tsToRemove.id));
+    } else {
+      if (timeSeries.assetId) {
+        addAssetToRecent(timeSeries.assetId, timeSeries.id);
       } else {
-        if (timeSeries.assetId) {
-          addAssetToRecent(timeSeries.assetId, timeSeries.id);
-        } else {
-          addTsToRecent(timeSeries.id);
-        }
-
-        const ts = covertTSToChartTS(timeSeries, chartId);
-        setChart(addTimeseries(chart, ts));
-        trackUsage('ChartView.AddTimeSeries', { source: 'annotation' });
+        addTsToRecent(timeSeries.id);
       }
+
+      const ts = covertTSToChartTS(timeSeries, chartId);
+      setChart((oldChart) => addTimeseries(oldChart!, ts));
+      trackUsage('ChartView.AddTimeSeries', { source: 'annotation' });
     }
   };
 

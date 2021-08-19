@@ -172,26 +172,27 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   };
 
   const handleClickNewWorkflow = () => {
-    if (chart) {
-      const newWorkflowId = nanoid();
-      const newWorkflow = {
-        id: newWorkflowId,
-        name: 'New Calculation',
-        color: getEntryColor(chart.id, newWorkflowId),
-        lineWeight: 1,
-        lineStyle: 'solid',
-        enabled: true,
-        nodes: [],
-        connections: [],
-        createdAt: Date.now(),
-      } as ChartWorkflow;
-
-      const updatedChart = addWorkflow(chart, newWorkflow);
-      setChart(updatedChart);
-      setSelectedSourceId(newWorkflowId);
-      openNodeEditor();
-      trackUsage('ChartView.AddCalculation');
+    if (!chart) {
+      return;
     }
+
+    const newWorkflowId = nanoid();
+    const newWorkflow = {
+      id: newWorkflowId,
+      name: 'New Calculation',
+      color: getEntryColor(chart.id, newWorkflowId),
+      lineWeight: 1,
+      lineStyle: 'solid',
+      enabled: true,
+      nodes: [],
+      connections: [],
+      createdAt: Date.now(),
+    } as ChartWorkflow;
+
+    setChart((oldChart) => addWorkflow(oldChart!, newWorkflow));
+    setSelectedSourceId(newWorkflowId);
+    openNodeEditor();
+    trackUsage('ChartView.AddCalculation');
   };
 
   if (!isFetched) {
@@ -242,17 +243,15 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   };
 
   const handleSettingsToggle = async (key: string, value: boolean) => {
-    if (chart) {
-      setChart({
-        ...chart,
-        settings: {
-          showYAxis,
-          showMinMax,
-          showGridlines,
-          [key]: value,
-        },
-      });
-    }
+    setChart((oldChart) => ({
+      ...oldChart!,
+      settings: {
+        showYAxis,
+        showMinMax,
+        showGridlines,
+        [key]: value,
+      },
+    }));
   };
 
   const selectedSourceItem = [
@@ -376,17 +375,18 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   };
 
   const onDragEnd = (result: any) => {
-    if (!result.destination) return;
+    if (!result.destination) {
+      return;
+    }
 
-    const reorderedChart = {
-      ...chart,
+    setChart((oldChart) => ({
+      ...oldChart!,
       sourceCollection: reorder(
         chart?.sourceCollection || [],
         result.source.index,
         result.destination.index
       ),
-    };
-    setChart(reorderedChart);
+    }));
   };
 
   return (

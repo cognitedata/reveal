@@ -16,15 +16,12 @@ export const ConfigPanel = ({
   context,
 }: ConfigPanelComponentProps) => {
   const { functionData } = node;
-
   const { chart, workflow } = context;
 
   const setChart = useSetRecoilState(chartState);
 
-  const workspaceTimeSeries =
-    (context.chart as Chart).timeSeriesCollection || [];
-
-  const workspaceWorkflows = (context.chart as Chart).workflowCollection || [];
+  const workspaceTimeSeries = (chart as Chart).timeSeriesCollection || [];
+  const workspaceWorkflows = (chart as Chart).workflowCollection || [];
 
   const sourceList = [
     { value: '', label: 'None' },
@@ -62,9 +59,9 @@ export const ConfigPanel = ({
         loadOptions={loadOptions}
         onChange={(nextValue: { value: string; label: string }) => {
           // Update workflow
-          setChart({
-            ...chart,
-            workflowCollection: chart.workflowCollection?.map(
+          setChart((oldChart) => ({
+            ...oldChart!,
+            workflowCollection: oldChart!.workflowCollection?.map(
               (wf: ChartWorkflow) =>
                 wf.id === workflow.id
                   ? {
@@ -73,7 +70,7 @@ export const ConfigPanel = ({
                     }
                   : wf
             ),
-          });
+          }));
 
           onUpdateNode({
             functionData: {
