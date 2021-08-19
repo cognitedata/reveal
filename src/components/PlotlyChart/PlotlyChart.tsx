@@ -308,19 +308,27 @@ const PlotlyChartComponent = ({
   }, [data, layout, isAllowedToUpdate]);
 
   /**
-   * Debounced callback that turns on updates again
+   * Debounced callback that turns on updates again (scrolling)
    */
-  const allowUpdates = useDebouncedCallback(() => {
+  const allowUpdatesScroll = useDebouncedCallback(() => {
     setIsAllowedToUpdate(true);
   }, 500);
+
+  /**
+   * Debounced callback that turns on updates again (click and drag)
+   */
+  const allowUpdatesClick = useDebouncedCallback(() => {
+    setIsAllowedToUpdate(true);
+  }, 100);
 
   /**
    * Disallow updates when scrolling
    */
   const handleMouseWheel = useCallback(() => {
     setIsAllowedToUpdate(false);
-    allowUpdates();
-  }, [allowUpdates]);
+    allowUpdatesScroll();
+    allowUpdatesClick.cancel();
+  }, [allowUpdatesScroll, allowUpdatesClick]);
 
   useEffect(() => {
     window.addEventListener('mousewheel', handleMouseWheel);
@@ -334,8 +342,8 @@ const PlotlyChartComponent = ({
    */
   const handleMouseDown = useCallback(() => {
     setIsAllowedToUpdate(false);
-    allowUpdates.cancel();
-  }, [allowUpdates]);
+    allowUpdatesScroll.cancel();
+  }, [allowUpdatesScroll]);
 
   useEffect(() => {
     window.addEventListener('mousedown', handleMouseDown);
@@ -348,8 +356,8 @@ const PlotlyChartComponent = ({
    * Allow updates when releasing mouse button (no longer navigating chart)
    */
   const handleMouseUp = useCallback(() => {
-    allowUpdates();
-  }, [allowUpdates]);
+    allowUpdatesClick();
+  }, [allowUpdatesClick]);
 
   useEffect(() => {
     window.addEventListener('mouseup', handleMouseUp);
