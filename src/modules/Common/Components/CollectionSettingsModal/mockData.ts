@@ -54,8 +54,8 @@ export const predefinedKeypoints: KeypointCollection[] = [
 ];
 
 export const predefinedShapes: Shape[] = [
-  { ShapeName: 'Dial', color: '#00665c' },
-  { ShapeName: 'Gauge', color: '#6ED8BE' },
-  { ShapeName: 'Level', color: '#24D8ED' },
-  { ShapeName: 'Value', color: '#FF8746' },
+  { shapeName: 'Dial', color: '#00665c' },
+  { shapeName: 'Gauge', color: '#6ED8BE' },
+  { shapeName: 'Level', color: '#24D8ED' },
+  { shapeName: 'Value', color: '#FF8746' },
 ];

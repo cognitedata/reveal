@@ -334,7 +334,7 @@ export const nextShape = createSelector(
     if (lastShape) {
       return lastShape;
     }
-    return predefinedShapes[0]?.ShapeName || '';
+    return predefinedShapes[0]?.shapeName || '';
   }
 );
 
