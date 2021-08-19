@@ -24,9 +24,11 @@ import { KeypointVertex } from 'src/utils/AnnotationUtils';
 
 export const ImagePreview = ({
   file,
+  haveThumbnailCarousel,
   onEditMode,
 }: {
   file: FileInfo;
+  haveThumbnailCarousel: boolean;
   onEditMode: (editMode: boolean) => void;
 }) => {
   const dispatch = useDispatch();
@@ -130,6 +132,7 @@ export const ImagePreview = ({
       currentShape={currentShape}
       nextKeyPoint={nextPoint}
       currentCollection={currentKeypointCollection}
+      haveThumbnailCarousel={haveThumbnailCarousel}
     />
   );
 };

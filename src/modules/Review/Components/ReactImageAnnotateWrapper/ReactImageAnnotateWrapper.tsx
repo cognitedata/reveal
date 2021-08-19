@@ -22,7 +22,12 @@ import { unwrapResult } from '@reduxjs/toolkit';
 import { AppDispatch } from 'src/store';
 import { CreateKeypointAnnotation } from 'src/store/thunks/CreateKeypointAnnotation';
 import { RetrieveKeypointCollection } from 'src/store/thunks/RetrieveKeypointCollection';
-import { deselectAllAnnotations, selectAnnotation } from '../../previewSlice';
+import { Button, Tooltip } from '@cognite/cogs.js';
+import {
+  deselectAllAnnotations,
+  selectAnnotation,
+  showCollectionSettingsModel,
+} from '../../previewSlice';
 import {
   deleteCurrentCollection,
   deSelectAllCollections,
@@ -44,6 +49,7 @@ export const ReactImageAnnotateWrapper: React.FC<ReactImageAnnotateWrapperProps>
     nextKeyPoint,
     currentShape,
     currentCollection,
+    haveThumbnailCarousel,
   }: ReactImageAnnotateWrapperProps) => {
     const [imageUrl, setImageUrl] = useState<string>();
     const [selectedTool, setSelectedTool] = useState<AnnotatorTool>();
@@ -173,6 +179,10 @@ export const ReactImageAnnotateWrapper: React.FC<ReactImageAnnotateWrapperProps>
       onDeleteAnnotation(convertToAnnotation(region));
     };
 
+    const onOpenCollectionSettings = () => {
+      dispatch(showCollectionSettingsModel(true));
+    };
+
     const NewRegionEditLabel = useMemo(() => {
       return ({
         region,
@@ -203,6 +213,7 @@ export const ReactImageAnnotateWrapper: React.FC<ReactImageAnnotateWrapperProps>
             nextPoint={nextKeyPoint!.orderNumber.toString() || '1'}
             nextShape={currentShape!}
             nextCollection={nextKeyPoint!.collectionName}
+            onOpenCollectionSettings={onOpenCollectionSettings}
           />
         );
       };
@@ -270,6 +281,19 @@ export const ReactImageAnnotateWrapper: React.FC<ReactImageAnnotateWrapperProps>
           onSelectTool={onSelectTool}
           selectedTool={selectedTool}
         />
+        <ExtraToolbar haveThumbnailCarousel={haveThumbnailCarousel}>
+          <Tooltip
+            content={
+              <span data-testid="text-content">Collection settings</span>
+            }
+          >
+            <ExtraToolItem
+              variant="ghost"
+              icon="Settings"
+              onClick={onOpenCollectionSettings}
+            />
+          </Tooltip>
+        </ExtraToolbar>
       </Container>
     );
   };
@@ -281,4 +305,16 @@ const Container = styled.div`
   .MuiIconButton-colorPrimary {
     color: #3f51b5;
   }
+`;
+const ExtraToolbar = styled.div<{ haveThumbnailCarousel: boolean }>`
+  position: sticky;
+  bottom: ${(props) => (props.haveThumbnailCarousel ? '125px' : '10px')};
+  width: 50px;
+  display: grid;
+`;
+
+const ExtraToolItem = styled(Button)`
+  height: 50px;
+  width: 50px;
+  border-radius: 50px;
 `;
