@@ -11,11 +11,12 @@ import {
   getFunctionResponseWhenDone,
   transformSimpleCalcResult,
 } from 'utils/backendService';
-import { Chart } from 'reducers/charts/types';
-import { useChart, useUpdateChart } from 'hooks/firebase';
 import { updateSourceAxisForChart } from 'utils/charts';
 import { trackUsage } from 'utils/metrics';
 import { useDebouncedCallback, useDebounce } from 'use-debounce';
+import { useSetRecoilState } from 'recoil';
+import { chartState } from 'atoms/chart';
+import { Chart } from 'reducers/charts/types';
 import {
   calculateSeriesData,
   formatPlotlyData,
@@ -37,7 +38,7 @@ const Y_AXIS_WIDTH = 60;
 const Y_AXIS_MARGIN = 40;
 
 type ChartProps = {
-  chartId: string;
+  chart?: Chart;
   isYAxisShown?: boolean;
   isMinMaxShown?: boolean;
   isGridlinesShown?: boolean;
@@ -48,7 +49,7 @@ type ChartProps = {
 };
 
 const PlotlyChartComponent = ({
-  chartId,
+  chart = undefined,
   isYAxisShown = true,
   isMinMaxShown = false,
   isGridlinesShown = false,
@@ -61,12 +62,14 @@ const PlotlyChartComponent = ({
   const sdk = useSDK();
   const client = useQueryClient();
   const containerRef = useRef<HTMLDivElement>(null);
-  const { data: originalChart } = useChart(chartId);
-  const { mutate } = useUpdateChart();
-  const [chart, setLocalChart] = useState(originalChart);
   const pointsPerSeries = isPreview ? 100 : 1000;
   const [dragmode, setDragmode] = useState<'zoom' | 'pan'>('pan');
   const [yAxisLocked, setYAxisLocked] = useState<boolean>(true);
+
+  /**
+   * Get local chart context
+   */
+  const setChart = useSetRecoilState(chartState);
 
   const enabledTimeseries = chart?.timeSeriesCollection?.filter(
     (ts) => ts.enabled
@@ -114,7 +117,7 @@ const PlotlyChartComponent = ({
 
   const calls = isPreview
     ? []
-    : originalChart?.workflowCollection?.map((wf) =>
+    : chart?.workflowCollection?.map((wf) =>
         omit(wf.calls?.[0], ['callDate'])
       ) || [];
 
@@ -170,24 +173,6 @@ const PlotlyChartComponent = ({
       setYAxisLocked(true);
     }
   }, [isYAxisShown, yAxisLocked, onAdjustButtonClick]);
-
-  const updateChart = useCallback(
-    (c: Chart) => {
-      const oldChart = client.getQueryData<Chart>(['chart', chart?.id]);
-      const irrelevant = ['updatedAt'];
-      if (!isEqual(omit(oldChart, irrelevant), omit(c, irrelevant))) {
-        client.setQueryData(['chart', chart?.id], c);
-        mutate(c);
-      }
-    },
-    [chart?.id, client, mutate]
-  );
-
-  useEffect(() => {
-    if (chart) {
-      updateChart(chart);
-    }
-  }, [chart, updateChart]);
 
   const [yAxisValues, setYAxisValues] = useState<{
     width: number;
@@ -254,7 +239,7 @@ const PlotlyChartComponent = ({
         : [];
 
       const newChart = updateSourceAxisForChart(chart, { x, y });
-      setLocalChart(newChart);
+      setChart(newChart);
 
       if (eventdata.dragmode) {
         setDragmode(eventdata.dragmode || dragmode);
@@ -267,8 +252,6 @@ const PlotlyChartComponent = ({
       dragmode,
       isInSearch,
       stackedMode,
-      updateChart,
-      chartId,
       client,
       chart,
       enabledTimeseries,
@@ -339,42 +322,6 @@ const PlotlyChartComponent = ({
     };
   }, [handleMouseWheel]);
 
-  /**
-   * Overwrite the local chart and layout state when necessary
-   * (adding/removing sources, adjusting chart externally, etc)
-   *
-   * TODO: This needs to handle changes via the external date picker as well
-   */
-  useEffect(() => {
-    if (!originalChart || !chart) {
-      return;
-    }
-
-    /**
-     * Filter out properties from the chart
-     * that is irrelevant and should not trigger
-     * any updates
-     */
-    const filteredOriginalChart = filteredChart(originalChart);
-    const filteredCurrentChart = filteredChart(chart);
-
-    /**
-     * Sources have changed in some way
-     */
-    if (
-      !isEqual(
-        filteredOriginalChart.timeSeriesCollection,
-        filteredCurrentChart.timeSeriesCollection
-      ) ||
-      !isEqual(
-        filteredOriginalChart.workflowCollection,
-        filteredCurrentChart.workflowCollection
-      )
-    ) {
-      setLocalChart(originalChart);
-    }
-  }, [originalChart, chart]);
-
   const chartStyles = useMemo(() => {
     return { width: '100%', height: '100%' };
   }, []);
@@ -409,31 +356,6 @@ const PlotlyChartComponent = ({
       </PlotWrapper>
     </ChartingContainer>
   );
-};
-
-/**
- * Filter out any properties from the chart type
- * that trigger unnecessary updates
- */
-const filteredChart = (chart: Chart) => {
-  return {
-    ...chart,
-    timeSeriesCollection: chart.timeSeriesCollection?.map((source) => {
-      return {
-        ...source,
-        range: undefined,
-        statisticsCalls: undefined,
-      } as typeof source;
-    }),
-    workflowCollection: chart.workflowCollection?.map((source) => {
-      return {
-        ...source,
-        calls: undefined,
-        range: undefined,
-        statisticsCalls: undefined,
-      };
-    }),
-  } as Chart;
 };
 
 const MemoizedPlot = memo(Plot, (prev, next) => {

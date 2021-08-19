@@ -43,7 +43,7 @@ const ListViewItem = ({
         }}
       >
         <ImageColumn>
-          <PlotlyChart chartId={chart.id} isPreview />
+          <PlotlyChart chart={chart} isPreview />
         </ImageColumn>
         <NameColumn>
           <EditableText

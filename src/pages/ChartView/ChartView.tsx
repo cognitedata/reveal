@@ -34,6 +34,8 @@ import DetailsSidebar from 'components/DetailsSidebar';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { addWorkflow } from 'utils/charts';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { chartState } from 'atoms/chart';
 import SourceRows from './SourceRows';
 
 import {
@@ -61,12 +63,49 @@ const CHART_SETTINGS_KEYS = {
 };
 
 const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
-  const [query = '', setQuery] = useSearchParam(SEARCH_KEY, false);
-
-  const { chartId = chartIdProp } = useParams<{ chartId: string }>();
-  const { data: chart, isError, isFetched } = useChart(chartId);
-  const { data: login } = useUserInfo();
   const [showContextMenu, setShowContextMenu] = useState(false);
+  const [query = '', setQuery] = useSearchParam(SEARCH_KEY, false);
+  const { chartId = chartIdProp } = useParams<{ chartId: string }>();
+  const { data: login } = useUserInfo();
+
+  /**
+   * Get stored chart
+   */
+  const { data: originalChart, isError, isFetched } = useChart(chartId);
+
+  /**
+   * Get local chart context
+   */
+  const chart = useRecoilValue(chartState);
+  const setChart = useSetRecoilState(chartState);
+
+  /**
+   * Method for updating storage value of chart
+   */
+  const {
+    mutate: updateChart,
+    isError: updateError,
+    error: updateErrorMsg,
+  } = useUpdateChart();
+
+  /**
+   * Initialize local chart atom
+   */
+  useEffect(() => {
+    if (chart && chart.id === chartId) {
+      return;
+    }
+    setChart(originalChart);
+  }, [originalChart, chart, chartId, setChart]);
+
+  /**
+   * Sync local chart atom to storage
+   */
+  useEffect(() => {
+    if (chart) {
+      updateChart(chart);
+    }
+  }, [chart, updateChart]);
 
   const [selectedSourceId, setSelectedSourceId] = useState<
     string | undefined
@@ -96,12 +135,6 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     // Should not rerun when editorTimer is changed, only on initial load
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const {
-    mutate: updateChart,
-    isError: updateError,
-    error: updateErrorMsg,
-  } = useUpdateChart();
 
   useEffect(() => {
     if (updateError) {
@@ -154,12 +187,9 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
       } as ChartWorkflow;
 
       const updatedChart = addWorkflow(chart, newWorkflow);
-      updateChart(updatedChart, {
-        onSuccess: () => {
-          setSelectedSourceId(newWorkflowId);
-          openNodeEditor();
-        },
-      });
+      setChart(updatedChart);
+      setSelectedSourceId(newWorkflowId);
+      openNodeEditor();
       trackUsage('ChartView.AddCalculation');
     }
   };
@@ -213,7 +243,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
 
   const handleSettingsToggle = async (key: string, value: boolean) => {
     if (chart) {
-      updateChart({
+      setChart({
         ...chart,
         settings: {
           showYAxis,
@@ -356,7 +386,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
         result.destination.index
       ),
     };
-    updateChart(reorderedChart);
+    setChart(reorderedChart);
   };
 
   return (
@@ -475,7 +505,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
               />
             </Tooltip>
             <Divider />
-            <DateRangeSelector chart={chart} />
+            <DateRangeSelector />
           </section>
         </Header>
         <ChartContainer>
@@ -484,7 +514,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
               <ChartWrapper>
                 <PlotlyChartComponent
                   key={chartId}
-                  chartId={chartId}
+                  chart={chart}
                   isInSearch={showSearch}
                   isYAxisShown={showYAxis}
                   isMinMaxShown={showMinMax}
@@ -506,7 +536,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                             <SourceRows
                               draggable
                               chart={chart}
-                              updateChart={updateChart}
+                              updateChart={setChart}
                               mode={workspaceMode}
                               selectedSourceId={selectedSourceId}
                               openNodeEditor={openNodeEditor}
@@ -521,7 +551,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                       </SourceTableWrapper>
                       {workspaceMode === 'editor' && !!selectedSourceId && (
                         <NodeEditor
-                          mutate={updateChart}
+                          mutate={setChart}
                           workflowId={selectedSourceId}
                           closeNodeEditor={closeNodeEditor}
                           chart={chart}
