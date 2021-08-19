@@ -5,6 +5,7 @@ import { QueryClientProvider, QueryClient } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { CogniteClient } from '@cognite/sdk';
 import { ToastContainer } from '@cognite/cogs.js';
+import { RecoilRoot } from 'recoil';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -24,14 +25,16 @@ const sdk = new CogniteClient({
 
 export default function RootApp() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <SDKProvider sdk={sdk}>
-        <BrowserRouter>
-          <ToastContainer />
-          <Routes />
-        </BrowserRouter>
-        <ReactQueryDevtools />
-      </SDKProvider>
-    </QueryClientProvider>
+    <RecoilRoot>
+      <QueryClientProvider client={queryClient}>
+        <SDKProvider sdk={sdk}>
+          <BrowserRouter>
+            <ToastContainer />
+            <Routes />
+          </BrowserRouter>
+          <ReactQueryDevtools />
+        </SDKProvider>
+      </QueryClientProvider>
+    </RecoilRoot>
   );
 }
