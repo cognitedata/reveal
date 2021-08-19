@@ -47,13 +47,7 @@ const ImageReview = (props: { file: FileInfo; prev: string | undefined }) => {
               fullHeight={allFiles.length === 1}
               inFocus={inFocus}
             >
-              {file && (
-                <ImagePreview
-                  file={file}
-                  haveThumbnailCarousel={allFiles.length > 1}
-                  onEditMode={onEditMode}
-                />
-              )}
+              {file && <ImagePreview file={file} onEditMode={onEditMode} />}
             </PreviewContainer>
             {allFiles.length > 1 && (
               <ThumbnailCarousel prev={prev} files={allFiles} />

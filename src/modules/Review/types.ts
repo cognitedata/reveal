@@ -43,7 +43,6 @@ export type ReactImageAnnotateWrapperProps = FilePreviewProps & {
   currentShape: string;
   nextKeyPoint: { collectionName: string; orderNumber: number };
   currentCollection: KeypointItemCollection | null;
-  haveThumbnailCarousel: boolean;
 };
 
 export type AnnotationTableRowProps = {

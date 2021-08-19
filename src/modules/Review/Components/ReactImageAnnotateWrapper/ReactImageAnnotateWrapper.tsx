@@ -49,7 +49,6 @@ export const ReactImageAnnotateWrapper: React.FC<ReactImageAnnotateWrapperProps>
     nextKeyPoint,
     currentShape,
     currentCollection,
-    haveThumbnailCarousel,
   }: ReactImageAnnotateWrapperProps) => {
     const [imageUrl, setImageUrl] = useState<string>();
     const [selectedTool, setSelectedTool] = useState<AnnotatorTool>();
@@ -281,7 +280,7 @@ export const ReactImageAnnotateWrapper: React.FC<ReactImageAnnotateWrapperProps>
           onSelectTool={onSelectTool}
           selectedTool={selectedTool}
         />
-        <ExtraToolbar haveThumbnailCarousel={haveThumbnailCarousel}>
+        <ExtraToolbar>
           <Tooltip
             content={
               <span data-testid="text-content">Collection settings</span>
@@ -301,14 +300,15 @@ export const ReactImageAnnotateWrapper: React.FC<ReactImageAnnotateWrapperProps>
 const Container = styled.div`
   width: 100%;
   height: 100%;
+  position: relative;
 
   .MuiIconButton-colorPrimary {
     color: #3f51b5;
   }
 `;
-const ExtraToolbar = styled.div<{ haveThumbnailCarousel: boolean }>`
-  position: sticky;
-  bottom: ${(props) => (props.haveThumbnailCarousel ? '125px' : '10px')};
+const ExtraToolbar = styled.div`
+  position: absolute;
+  bottom: 10px;
   width: 50px;
   display: grid;
 `;
