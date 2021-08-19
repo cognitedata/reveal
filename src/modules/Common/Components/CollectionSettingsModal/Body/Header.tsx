@@ -1,30 +1,38 @@
-import { Button, Title } from '@cognite/cogs.js';
 import React from 'react';
+import { Button, Title, Tooltip } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 export const Header = ({
   title = 'Type',
   count = 0,
+  disabledMessage,
   onClickNew = () => {
     console.error('on Click New have not implemented ');
   },
 }: {
   title?: string;
   count?: number;
+  disabledMessage?: string;
   onClickNew?: () => void;
 }) => (
   <Container>
     <Title level={6} as="span">
       {title} ({count})
     </Title>
-    <Button
-      type="secondary"
-      size="small"
-      icon="PlusCompact"
-      onClick={onClickNew}
+    <Tooltip
+      content={<span data-testid="text-content">{disabledMessage}</span>}
+      disabled={!disabledMessage}
     >
-      New
-    </Button>
+      <Button
+        type="secondary"
+        size="small"
+        icon="PlusCompact"
+        onClick={onClickNew}
+        disabled={!!disabledMessage}
+      >
+        New
+      </Button>
+    </Tooltip>
   </Container>
 );
 

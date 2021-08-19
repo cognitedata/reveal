@@ -121,6 +121,7 @@ export const Keypoints = ({
       <Header
         title="Keypoints"
         count={predefinedKeypoints.length}
+        disabledMessage={newKeypoints && 'Finish before creating a new one'}
         onClickNew={() => {
           setNewKeypoints({
             collectionName: '',
