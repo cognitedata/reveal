@@ -10,11 +10,11 @@ export type KeypointCollection = {
   keypoints?: Keypoint[];
 };
 export type Shape = {
-  ShapeName: string;
+  shapeName: string;
   color: string;
 };
 
 export type AnnotationCollection = {
   predefinedKeypoints: KeypointCollection[];
-  predefinedShapes: Shape[]; // use proper type
+  predefinedShapes: Shape[];
 };

@@ -8,102 +8,60 @@ import { AnnotationCollection, Shape } from '../CollectionSettingsTypes';
 import { getRandomColor } from '../utill';
 import { ColorPicker } from './ColorPicker';
 
+const validNewShapes = (newShapes: { [key: string]: Shape }) => {
+  const shapeNames = Object.keys(newShapes).map(
+    (key) => newShapes[key].shapeName
+  );
+  return !shapeNames.includes('');
+};
+
 const handleClick = (evt: any) => {
   // dummy handler to stop event propagation
   evt.stopPropagation();
 };
-
-const ShapeItem = ({ shape }: { shape: Shape }) => (
-  <ShapeWrapper>
-    <ShapeName level={2}>{shape.ShapeName}</ShapeName>
-    <ColorBoxContainer>
-      <ColorBox color={shape.color} />
-    </ColorBoxContainer>
-  </ShapeWrapper>
-);
-const EditableShapeItem = ({
-  shape,
-  setNewShape,
-  onDelete,
-  onFinish,
-}: {
-  shape: Shape;
-  setNewShape: any;
-  onDelete: () => void;
-  onFinish: () => void;
-}) => (
-  <>
-    <ShapeWrapper>
-      <>
-        <RawInput
-          onClick={handleClick}
-          value={shape.ShapeName}
-          placeholder="Type label"
-          onChange={(event) => {
-            const { value } = event.target;
-            setNewShape((oldShape: any) => ({ ...oldShape, ShapeName: value }));
-          }}
-        />
-        <ColorBoxContainer>
-          <ColorPicker
-            size="28px"
-            color={shape.color}
-            onChange={(newColor: string) => {
-              setNewShape((oldShape: any) => ({
-                ...oldShape,
-                color: newColor,
-              }));
-            }}
-          />
-        </ColorBoxContainer>
-      </>
-      <Button
-        icon="Trash"
-        onClick={onDelete}
-        size="small"
-        type="ghost-danger"
-        aria-label="deleteButton"
-      />
-    </ShapeWrapper>
-    <ShapeControls>
-      <Tooltip
-        content={
-          <span data-testid="text-content">{NO_EMPTY_LABELS_MESSAGE}</span>
-        }
-        disabled={shape.ShapeName !== ''}
-      >
-        <Button
-          type="primary"
-          size="small"
-          icon="Checkmark"
-          onClick={onFinish}
-          disabled={shape.ShapeName === ''}
-        >
-          Finish
-        </Button>
-      </Tooltip>
-    </ShapeControls>
-  </>
-);
 
 export const Shapes = ({
   collections,
   setCollections,
 }: {
   collections: AnnotationCollection;
-  setCollections: (collections: AnnotationCollection) => void;
+  setCollections: (collection: AnnotationCollection) => void;
 }) => {
   const { predefinedShapes } = collections;
-  const [newShape, setNewShape] = useState<Shape | undefined>(undefined);
+  const [newShapes, setNewShapes] = useState<{ [key: string]: Shape }>({});
 
+  const addNewShape = () => {
+    const availableIndexes = Object.keys(newShapes);
+    const nextIndex = availableIndexes[availableIndexes.length - 1] + 1;
+    setNewShapes((shapes) => ({
+      ...shapes,
+      [`${nextIndex}`]: { shapeName: '', color: getRandomColor() },
+    }));
+  };
+  const updateCaption = (key: string, value: string) => {
+    setNewShapes((shapes) => ({
+      ...shapes,
+      [key]: { ...shapes[key], shapeName: value },
+    }));
+  };
+  const updateColor = (key: string, value: string) => {
+    setNewShapes((shapes) => ({
+      ...shapes,
+      [key]: { ...shapes[key], color: value },
+    }));
+  };
+  const deleteShape = (key: string) => {
+    const newShapesTemp = newShapes;
+    delete newShapesTemp[key];
+    setNewShapes({ ...newShapesTemp });
+  };
   const onFinish = () => {
-    if (newShape) {
-      setCollections({
-        ...collections,
-        predefinedShapes: [...collections.predefinedShapes, newShape],
-      });
-      setNewShape(undefined);
-    }
+    const newShapesTemp = Object.keys(newShapes).map((key) => newShapes[key]);
+    setCollections({
+      ...collections,
+      predefinedShapes: [...collections.predefinedShapes, ...newShapesTemp],
+    });
+    setNewShapes({});
   };
 
   return (
@@ -111,25 +69,66 @@ export const Shapes = ({
       <Header
         title="Shapes"
         count={predefinedShapes.length}
-        onClickNew={() =>
-          setNewShape({ ShapeName: '', color: getRandomColor() })
-        }
+        onClickNew={addNewShape}
       />
       <ShapePanel>
         {predefinedShapes &&
           predefinedShapes.map((shape) => (
-            <ShapeItem
-              shape={shape}
-              key={`${shape.ShapeName}-${shape.color}`}
-            />
+            <ShapeWrapper key={`${shape.shapeName}-${shape.color}`}>
+              <ShapeName level={2}>{shape.shapeName}</ShapeName>
+              <ColorBox color={shape.color} />
+            </ShapeWrapper>
           ))}
-        {newShape && (
-          <EditableShapeItem
-            shape={newShape}
-            setNewShape={setNewShape}
-            onDelete={() => setNewShape(undefined)}
-            onFinish={onFinish}
-          />
+        {Object.keys(newShapes).map((key) => (
+          <ShapeWrapper key={`${key}`}>
+            <>
+              <RawInput
+                onClick={handleClick}
+                value={newShapes[key].shapeName}
+                placeholder="Type label"
+                onChange={(event) => {
+                  const { value } = event.target;
+                  updateCaption(key, value);
+                }}
+              />
+              <ColorPicker
+                size="28px"
+                color={newShapes[key].color}
+                onChange={(newColor: string) => {
+                  updateColor(key, newColor);
+                }}
+              />
+            </>
+            <Button
+              icon="Delete"
+              onClick={() => deleteShape(key)}
+              size="small"
+              type="ghost-danger"
+              aria-label="deleteButton"
+            />
+          </ShapeWrapper>
+        ))}
+        {Object.keys(newShapes).length !== 0 && (
+          <ShapeControls>
+            <Tooltip
+              content={
+                <span data-testid="text-content">
+                  {NO_EMPTY_LABELS_MESSAGE}
+                </span>
+              }
+              disabled={validNewShapes(newShapes)}
+            >
+              <Button
+                type="primary"
+                size="small"
+                icon="Checkmark"
+                onClick={onFinish}
+                disabled={!validNewShapes(newShapes)}
+              >
+                Finish
+              </Button>
+            </Tooltip>
+          </ShapeControls>
         )}
       </ShapePanel>
     </>
@@ -149,11 +148,6 @@ const ShapeWrapper = styled.div`
   gap: 5px;
   padding: 12px;
   border-bottom: 1px solid #d9d9d9;
-`;
-const ColorBoxContainer = styled.div`
-  border: 1px black solid;
-  padding: 2px;
-  border-radius: 4px;
 `;
 const ColorBox = styled.div<{ color: string }>`
   width: 28px;

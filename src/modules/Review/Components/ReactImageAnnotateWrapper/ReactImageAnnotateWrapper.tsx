@@ -72,8 +72,8 @@ export const ReactImageAnnotateWrapper: React.FC<ReactImageAnnotateWrapperProps>
       })
     );
     const shapeOptions = collection?.predefinedShapes.map((shape) => ({
-      value: shape.ShapeName,
-      label: shape.ShapeName,
+      value: shape.shapeName,
+      label: shape.shapeName,
       color: shape.color,
     }));
     const keyPointOptionArray = collection?.predefinedKeypoints.map(

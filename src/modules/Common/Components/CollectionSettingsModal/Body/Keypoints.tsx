@@ -17,7 +17,10 @@ const { Panel } = Collapse;
 
 type NewKeypoints = {
   collectionName: string;
-  keypoints: { [key: string]: Keypoint };
+  keypoints: {
+    caption: string;
+    color: string;
+  }[];
 };
 
 const handleClick = (evt: any) => {
@@ -30,9 +33,7 @@ const validNewKeypoint = (newKeypoints: NewKeypoints | undefined) => {
     const { collectionName, keypoints } = newKeypoints;
     if (collectionName === '') return false;
 
-    const keypointCaptions = Object.keys(keypoints).map(
-      (key) => keypoints[key].caption
-    );
+    const keypointCaptions = keypoints.map((keypoint) => keypoint.caption);
     if (keypointCaptions.includes('')) return false;
   }
   return true;
@@ -43,93 +44,63 @@ export const Keypoints = ({
   setCollections,
 }: {
   collections: AnnotationCollection;
-  setCollections: (collections: AnnotationCollection) => void;
+  setCollections: (collection: AnnotationCollection) => void;
 }) => {
   const { predefinedKeypoints } = collections;
   const [newKeypoints, setNewKeypoints] =
     useState<NewKeypoints | undefined>(undefined);
-
   const addNewKeypoint = () => {
     if (newKeypoints) {
       const { keypoints } = newKeypoints;
-      const nextIndex = Object.keys(keypoints).length + 1;
-      const updatedKeypoints = {
-        ...newKeypoints,
-        keypoints: {
-          ...keypoints,
-          [`${nextIndex}`]: {
-            caption: '',
-            order: `${nextIndex}`,
-            color: getRandomColor(),
-          },
-        },
-      };
-      setNewKeypoints(updatedKeypoints);
-    }
-  };
-  const updateColor = (key: string, value: string) => {
-    if (newKeypoints) {
-      const { keypoints } = newKeypoints;
+      keypoints.push({
+        caption: '',
+        color: getRandomColor(),
+      });
       setNewKeypoints({
         ...newKeypoints,
-        keypoints: {
-          ...keypoints,
-          [key]: {
-            ...newKeypoints.keypoints[key],
-            color: value,
-          },
-        },
+        keypoints: [...keypoints],
       });
     }
   };
-  const updateOrder = (key: string, value: string) => {
+  const updateColor = (index: number, value: string) => {
     if (newKeypoints) {
       const { keypoints } = newKeypoints;
+      keypoints[index].color = value;
       setNewKeypoints({
         ...newKeypoints,
-        keypoints: {
-          ...keypoints,
-          [key]: {
-            ...newKeypoints.keypoints[key],
-            order: value,
-          },
-        },
+        keypoints: [...keypoints],
       });
     }
   };
-  const updateCaption = (key: string, value: string) => {
+  const updateCaption = (index: number, value: string) => {
     if (newKeypoints) {
       const { keypoints } = newKeypoints;
+      keypoints[index].caption = value;
       setNewKeypoints({
         ...newKeypoints,
-        keypoints: {
-          ...keypoints,
-          [key]: {
-            ...newKeypoints.keypoints[key],
-            caption: value,
-          },
-        },
+        keypoints: [...keypoints],
       });
     }
   };
-  const onDeleteKeypoint = (key: string) => {
+  const onDeleteKeypoint = (index: number) => {
     if (newKeypoints) {
       const { keypoints } = newKeypoints;
-      delete keypoints[key];
+      keypoints.splice(index, 1);
 
       setNewKeypoints({
         ...newKeypoints,
-        keypoints: {
-          ...keypoints,
-        },
+        keypoints: [...keypoints],
       });
     }
   };
   const onFinish = () => {
     if (newKeypoints) {
       const { collectionName, keypoints } = newKeypoints;
-      const finalKeypoints = Object.keys(keypoints).map(
-        (key) => keypoints[key]
+      const structuredNewKeypoints: Keypoint[] = keypoints.map(
+        (keypoint, index) => ({
+          ...keypoint,
+          order: `${index + 1}`,
+        })
       );
       setCollections({
         ...collections,
@@ -137,7 +108,7 @@ export const Keypoints = ({
           ...collections.predefinedKeypoints,
           {
             collectionName,
-            keypoints: finalKeypoints,
+            keypoints: structuredNewKeypoints,
           },
         ],
       });
@@ -150,16 +121,14 @@ export const Keypoints = ({
       <Header
         title="Keypoints"
         count={predefinedKeypoints.length}
+        disabledMessage={newKeypoints && 'Finish before creating a new one'}
         onClickNew={() => {
           setNewKeypoints({
             collectionName: '',
-            keypoints: {
-              '0': { caption: '', order: '1', color: 'red' },
-            },
+            keypoints: [{ caption: '', color: getRandomColor() }],
           });
         }}
       />
-
       <CollapsePanel>
         <Collapse
           bordered={false}
@@ -190,10 +159,10 @@ export const Keypoints = ({
                       </OrderDetail>
                       <KeyPointDetail>Key point</KeyPointDetail>
                     </Row>
-                    {keypointCollection.keypoints?.map((keypoint) => (
-                      <Row key={`${keypoint.order}-${keypoint.caption}`}>
+                    {keypointCollection.keypoints?.map((keypoint, index) => (
+                      <Row key={`${keypoint.caption} - ${keypoint.color}`}>
                         <ColorBox color={keypoint.color} />
-                        <OrderDetail>{keypoint.order}</OrderDetail>
+                        <OrderDetail>{index + 1}</OrderDetail>
                         <KeyPointDetail>{keypoint.caption}</KeyPointDetail>
                       </Row>
                     ))}
@@ -219,7 +188,7 @@ export const Keypoints = ({
                     }}
                   />
                   <Button
-                    icon="Trash"
+                    icon="Delete"
                     onClick={() => setNewKeypoints(undefined)}
                     size="small"
                     type="ghost-danger"
@@ -236,35 +205,28 @@ export const Keypoints = ({
                   </Body>
                   <Body level={3}>Keypoint</Body>
                 </Row>
-                {Object.keys(newKeypoints.keypoints).map((key) => (
+                {newKeypoints.keypoints.map((keypoint, index) => (
                   <Row>
                     <ColorPicker
                       size="16px"
-                      color={newKeypoints.keypoints[key].color}
+                      color={keypoint.color}
                       onChange={(newColor: string) => {
-                        updateColor(key, newColor);
+                        updateColor(index, newColor);
                       }}
                     />
-                    <OrderInput
-                      size="small"
-                      value={newKeypoints.keypoints[key].order}
-                      onChange={(e) => {
-                        const { value } = e.target;
-                        updateOrder(key, value);
-                      }}
-                    />
+                    <OrderDetail>{index + 1}</OrderDetail>
                     <KeypointInput
                       size="small"
-                      value={newKeypoints.keypoints[key].caption}
+                      value={keypoint.caption}
                       placeholder="Type label"
                       onChange={(e) => {
                         const { value } = e.target;
-                        updateCaption(key, value);
+                        updateCaption(index, value);
                       }}
                     />
                     <Button
-                      icon="Trash"
-                      onClick={() => onDeleteKeypoint(key)}
+                      icon="Delete"
+                      onClick={() => onDeleteKeypoint(index)}
                       size="small"
                       type="ghost-danger"
                       aria-label="deleteButton"
@@ -345,7 +307,7 @@ const ColorBox = styled.div<{ color: string }>`
   background: ${(props) => props.color};
 `;
 const OrderDetail = styled(Detail)`
-  width: 36px;
+  width: 34px;
   background: #ffffff;
   font-size: 12px;
 `;
@@ -359,14 +321,8 @@ const PanelHeaderInput = styled(Input)`
   width: 200px;
   background: #ffffff;
 `;
-const OrderInput = styled(Input)`
-  width: 24px;
-  height: 24px;
-  background: #ffffff;
-  font-size: 12px;
-`;
 const KeypointInput = styled(Input)`
-  width: 180px;
+  width: 160px;
   height: 24px;
   background: #ffffff;
   font-size: 12px;

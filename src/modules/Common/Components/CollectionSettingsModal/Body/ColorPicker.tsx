@@ -20,13 +20,15 @@ export const ColorPicker = ({
 
   return (
     <div>
-      <ColorBox
-        size={size}
-        color={color}
-        onClick={() => {
-          setDisplayColorPicker(true);
-        }}
-      />
+      <ColorBoxContainer>
+        <ColorBox
+          size={size}
+          color={color}
+          onClick={() => {
+            setDisplayColorPicker(true);
+          }}
+        />
+      </ColorBoxContainer>
       {displayColorPicker ? (
         <Popover>
           <ColorPickerCover
@@ -60,4 +62,10 @@ const ColorPickerCover = styled.div`
   right: 0px;
   bottom: 0px;
   left: 0px;
+`;
+
+const ColorBoxContainer = styled.div`
+  border: 1px black solid;
+  padding: 2px;
+  border-radius: 4px;
 `;
