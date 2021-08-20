@@ -1,6 +1,6 @@
 import { Body, Colors, Icon, Input } from '@cognite/cogs.js';
 import { useWorkflowItems } from 'modules/workflows';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { FileInfo } from '@cognite/sdk';
 import { useHistory, useParams } from 'react-router-dom';
@@ -13,9 +13,24 @@ type FileItemProps = {
   isSelected: boolean;
   onClick: () => void;
 };
+
 const FileItem = ({ file, isSelected, onClick }: FileItemProps) => {
+  const itemRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (isSelected && itemRef.current) {
+      itemRef.current.scrollIntoView();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
-    <FileItemWrapper isSelected={isSelected} onClick={onClick}>
+    <FileItemWrapper
+      isSelected={isSelected}
+      onClick={onClick}
+      className={`${file.id}-file-item`}
+      ref={itemRef}
+    >
       <div className="header">
         <Icon
           type="PDF"
@@ -57,28 +72,29 @@ const JobDiagrams = () => {
         onChange={(e) => setQuery(e.currentTarget.value)}
         value={query}
       />
-      {filteredDiagrams.length ? (
-        filteredDiagrams.map((file) => (
-          <FileItem
-            key={file.id}
-            file={file}
-            isSelected={selectedFileId === file.id}
-            onClick={() =>
-              history.push(diagramPreview.path(tenant, workflowId, file.id))
-            }
-          />
-        ))
-      ) : (
-        <Body level={2} style={{ marginTop: '12px' }}>
-          No file names match the query.
-        </Body>
-      )}
+      <ItemsList>
+        {filteredDiagrams.length ? (
+          filteredDiagrams.map((file) => (
+            <FileItem
+              key={file.id}
+              file={file}
+              isSelected={selectedFileId === file.id}
+              onClick={() =>
+                history.push(diagramPreview.path(tenant, workflowId, file.id))
+              }
+            />
+          ))
+        ) : (
+          <Body level={2} style={{ marginTop: '12px' }}>
+            No file names match the query.
+          </Body>
+        )}
+      </ItemsList>
     </ListWrapper>
   );
 };
 
 export default JobDiagrams;
-
 const ListWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -93,10 +109,17 @@ const ListWrapper = styled.div`
   color: ${Colors['greyscale-grey6'].hex()};
 `;
 
+const ItemsList = styled.div`
+  max-height: 90vh;
+  overflow-y: auto;
+`;
+
 const SearchBoxWrapper = styled(Input)`
   border: 2px solid #d9d9d9;
   box-sizing: border-box;
   border-radius: 6px;
+  position: sticky;
+  padding-bottom: 10px;
 `;
 
 const FileItemWrapper = styled.div<{ isSelected: boolean }>`

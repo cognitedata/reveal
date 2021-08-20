@@ -1551,28 +1551,6 @@
   dependencies:
     query-string "^6.13.4"
 
-"@cognite/cogs.js@^3.23.0":
-  version "3.23.0"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.23.0.tgz#14b4fa44b70601006face33cc03769d7e017fa75"
-  integrity sha512-F94OwgfUI/23JN9LKzhjMKEX6TcEtivekOhCKO2PCaKRODS75BI2wlwTzNn/Q+cAn8bayhpO33Rp1iVZM6W2yQ==
-  dependencies:
-    "@tippyjs/react" "4.2.3"
-    "@types/react-date-range" "^1.1.2"
-    classnames "^2.3.1"
-    color "^3.1.2"
-    dayjs "^1.9.7"
-    focus-visible "^5.1.0"
-    rc-collapse "^1.11.8"
-    rc-drawer "^4.1.0"
-    rc-slider "^9.5.4"
-    rc-tabs "^11.6.2"
-    react-date-range "^1.1.3"
-    react-modal "^3.11.2"
-    react-select "^3.1.0"
-    react-table "^7.6.0"
-    react-toastify "^6.0.9"
-    tippy.js "6.2.0"
-
 "@cognite/cogs.js@^3.32.1":
   version "3.32.1"
   resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.32.1.tgz#ea88082829c2f2cf8bea9a3ef547b56c4cc5f3f2"
@@ -1601,17 +1579,17 @@
     tippy.js "6.2.0"
     ts-dedent "^2.2.0"
 
-"@cognite/data-exploration@0.8.2":
-  version "0.8.2"
-  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-0.8.2.tgz#7c9d00303efbd00338c92a1ad69f71b8d2ad6c50"
-  integrity sha512-tUfgkwptM8wSpDzr2lWH+XNbMUrfQ2b7zUXZR0aaSwckCnJZidVxIRef1UXRslV5Tu+CUA+e1mgCIowcYPLNtA==
+"@cognite/data-exploration@0.8.5":
+  version "0.8.5"
+  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-0.8.5.tgz#bb0f88e72fbe65768fdd9e543a9689a7ad284f40"
+  integrity sha512-c/RsBKXBoE150L01pjc6YBMLpYGqAaXIUuhTh1A4Udtpe10jMvddxF9i6HY4xCgR6RRMnXjr5pwPwgycbpQUng==
   dependencies:
     "@babel/runtime" "^7.12.5"
     "@cognite/annotations" "^1.1.0"
-    "@cognite/cogs.js" "^3.23.0"
+    "@cognite/cogs.js" "^3.32.1"
     "@cognite/gcs-browser-upload" "^1.1.0"
     "@cognite/react-feature-flags" "^0.1.0"
-    "@cognite/react-picture-annotation" "^1.13.3"
+    "@cognite/react-picture-annotation" "^1.13.4-beta.1"
     "@cognite/sdk" "^3.3.6"
     "@cognite/sdk-provider" "^1.0.0"
     "@cognite/sdk-react-query-hooks" "^5.0.1"
@@ -1702,23 +1680,7 @@
   dependencies:
     unleash-proxy-client "^1.0.1"
 
-"@cognite/react-picture-annotation@^1.10.4":
-  version "1.15.1"
-  resolved "https://registry.yarnpkg.com/@cognite/react-picture-annotation/-/react-picture-annotation-1.15.1.tgz#874206cfd4ede8ab899d4cd651b980c33543ab47"
-  integrity sha512-gg9vZTZSTO4RJLcTnsdvJxh67c5OD+AT/q3JS9L+CQQ54YCWBqoMHafw31qR8TbYToIVSJE2mxqeiF05AVZCJA==
-  dependencies:
-    "@cognite/annotations" "^1.1.0"
-    "@cognite/sdk" "^3.3.0"
-    lodash "^4.17.21"
-    parse-color "^1.0.0"
-    pdf-lib "^1.12.0"
-    pdfjs-dist "2.6.347"
-    react-archer "^3.0.0"
-    react-is "^17.0.1"
-    react-splitter-layout "^4.0.0"
-    styled-components "^5.2.0"
-
-"@cognite/react-picture-annotation@^1.13.3":
+"@cognite/react-picture-annotation@^1.13.4-beta.1":
   version "1.16.2"
   resolved "https://registry.yarnpkg.com/@cognite/react-picture-annotation/-/react-picture-annotation-1.16.2.tgz#c44d5d422040405028deccba7ff1503a2f3659e5"
   integrity sha512-uPLD4o4GfLXxECsskqrbhI4ol545Dux+gI4XRal7aM8kbHSl2ZVvf0dCssr0L5K5Id6YUXCCYnLLb83i/Cg2Dw==
