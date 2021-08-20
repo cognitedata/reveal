@@ -5,7 +5,7 @@ import {
 } from 'utils/mockResponse';
 import { renderWithSelectedIntegrationContext } from 'utils/test/render';
 import { QueryClient } from 'react-query';
-import { screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { TableHeadings } from 'components/table/IntegrationTableCol';
 import React from 'react';
 import {
@@ -15,6 +15,7 @@ import {
 import { parseCron } from 'utils/cronUtils';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import moment from 'moment';
+import { renderError } from 'components/integration/IntegrationRunHistory';
 
 describe('RunScheduleConnection', () => {
   test('Renders information when last connected is more recent than latest run', async () => {
@@ -72,6 +73,28 @@ describe('RunScheduleConnection', () => {
     ).toEqual(2); // last failure run + connected
   });
 
+  test('On run history page, get an error box if you lack permissions', async () => {
+    const err: any = new Error('Failed because its forbidden');
+    err.status = 403;
+    render(renderError(err));
+    expect(
+      screen.queryByText(
+        'You have insufficient access rights to access this feature'
+      )
+    ).toBeInTheDocument();
+  });
+
+  test('Not see error if its a different code than 403', async () => {
+    const err: any = new Error('Failed because its forbidden');
+    err.status = 404;
+    render(renderError(err));
+    expect(
+      screen.queryByText(
+        'You have insufficient access rights to access this feature'
+      )
+    ).not.toBeInTheDocument();
+  });
+
   test('Renders without integration', () => {
     renderWithSelectedIntegrationContext(<RunScheduleConnection />, {
       initIntegration: null,
@@ -79,7 +102,9 @@ describe('RunScheduleConnection', () => {
     });
     expect(screen.getByText(TableHeadings.LATEST_RUN_TIME)).toBeInTheDocument();
     expect(screen.getByText(TableHeadings.SCHEDULE)).toBeInTheDocument();
-    expect(screen.getByText(FAILED_PAST_WEEK_HEADING)).toBeInTheDocument();
+    expect(
+      screen.queryByText(FAILED_PAST_WEEK_HEADING)
+    ).not.toBeInTheDocument();
     expect(screen.getByText(TableHeadings.LAST_SEEN)).toBeInTheDocument();
   });
 });

@@ -36,6 +36,7 @@ import {
 } from 'components/chart/runChartUtils';
 import { Span3 } from 'styles/grid/StyledGrid';
 import { useFlag } from '@cognite/react-feature-flags';
+import { ErrorBox } from 'components/error/ErrorBox';
 
 const TableWrapper = styled(PageWrapperColumn)`
   ${Span3};
@@ -78,13 +79,28 @@ interface LogsViewProps {
 export const PAGE_SIZE_DEFAULT: Readonly<number> = 10;
 const ERROR_SEARCH_LABEL: Readonly<string> = 'Search error message';
 const MESSAGE_SEARCH_PLACEHOLDER: Readonly<string> = 'Search in messages';
+const isForbidden = (statusCode: number) => statusCode === 403;
 
 export interface RangeType {
   startDate: Date;
   endDate: Date;
 }
 
-export const IntegrationHealth: FunctionComponent<LogsViewProps> = ({
+export const renderError = (error: Error & { status: number }) =>
+  !isForbidden(error.status) ? (
+    <ErrorFeedback error={error} />
+  ) : (
+    <PageWrapperColumn>
+      <ErrorBox heading="You have insufficient access rights to access this feature">
+        <p>
+          To access this page you must have the capability{' '}
+          <code>extractionruns:read</code>.
+        </p>
+      </ErrorBox>
+    </PageWrapperColumn>
+  );
+
+export const IntegrationRunHistory: FunctionComponent<LogsViewProps> = ({
   integration,
 }: PropsWithChildren<LogsViewProps>) => {
   const [all, setAll] = useState<RunUI[]>([]);
@@ -163,7 +179,7 @@ export const IntegrationHealth: FunctionComponent<LogsViewProps> = ({
   );
 
   if (error) {
-    return <ErrorFeedback error={error} />;
+    return renderError(error);
   }
 
   const columns = getRunLogTableCol();

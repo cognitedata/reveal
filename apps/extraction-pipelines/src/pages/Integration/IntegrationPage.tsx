@@ -34,7 +34,7 @@ import {
   EXT_PIPE_TAB_OVERVIEW,
   EXT_PIPE_TAB_RUN_HISTORY,
 } from 'utils/constants';
-import { IntegrationHealth } from 'components/integration/IntegrationHealth';
+import { IntegrationRunHistory } from 'components/integration/IntegrationRunHistory';
 import { IntegrationHeading } from 'components/integration/IntegrationHeading';
 import { LinkWrapper } from 'styles/StyledLinks';
 import { RunFilterProvider } from 'hooks/runs/RunsFilterContext';
@@ -264,7 +264,7 @@ const IntegrationPage: FunctionComponent<IntegrationPageProps> = () => {
             <IntegrationDetails />
           </Route>
           <Route path={`${path}/${HEALTH_PATH}`}>
-            <IntegrationHealth integration={integration} />
+            <IntegrationRunHistory integration={integration} />
           </Route>
         </Switch>
       </FullPageLayout>

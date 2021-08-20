@@ -20,6 +20,7 @@ import { SDKProvider } from '@cognite/sdk-provider';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import { CogniteClient } from '@cognite/sdk';
 import { getCdfEnvFromUrl, projectName } from 'utils/config';
+import isObject from 'lodash/isObject';
 import theme from './styles/theme';
 import AppScopeStyles from './styles/AppScopeStyles';
 import rootStyles from './styles/index.css';
@@ -44,6 +45,19 @@ const App = () => {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
+        retry: (failureCount, error) => {
+          if (isObject(error) && 'status' in error) {
+            switch ((error as any).status) {
+              case 400:
+              case 401:
+              case 403:
+              case 404:
+              case 409:
+                return false;
+            }
+          }
+          return failureCount < 3;
+        },
         staleTime: 10 * 60 * 1000, // Pretty long
       },
     },

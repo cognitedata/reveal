@@ -29,7 +29,6 @@ import moment from 'moment';
 import { useSelectedIntegration } from 'hooks/useSelectedIntegration';
 import { useIntegrationById } from 'hooks/useIntegration';
 import { LatestRunMessage } from 'components/integration/LatestRunMessage';
-import { ErrorFeedback } from 'components/error/ErrorFeedback';
 import { useLocation, useRouteMatch } from 'react-router-dom';
 import { HEALTH_PATH } from 'routing/RoutingConfig';
 
@@ -40,11 +39,11 @@ export const RunScheduleConnection: FunctionComponent = () => {
   const { url } = useRouteMatch();
   const { integration: selectedIntegration } = useSelectedIntegration();
   const { data: integration } = useIntegrationById(selectedIntegration?.id);
-  const { data, error } = useRuns(integration?.externalId);
-  if (error) {
-    return <ErrorFeedback error={error} />;
-  }
-  const runs = filterRuns(data?.items);
+  const { data: runsData, status: runsStatus } = useRuns(
+    integration?.externalId
+  );
+
+  const runs = filterRuns(runsData?.items);
   const errorsInThePastWeek = runs.filter(
     and<RunUI>(filterByStatus(RunStatusUI.FAILURE), isWithinDaysInThePast(7))
   );
@@ -96,15 +95,17 @@ export const RunScheduleConnection: FunctionComponent = () => {
           <Schedule id="top-schedule" schedule={integration?.schedule} />
         </CardValue>
       </CardInWrapper>
-      <CardInWrapper>
-        <StyledTitleCard className="card-title">
-          <Tag color="danger">{errorsInThePastWeek.length}</Tag>
-          {FAILED_PAST_WEEK_HEADING}
-        </StyledTitleCard>
-        <CardValue className="card-value">
-          {errorsComparedToLastWeek} runs compared to last week
-        </CardValue>
-      </CardInWrapper>
+      {runsStatus === 'success' && (
+        <CardInWrapper>
+          <StyledTitleCard className="card-title">
+            <Tag color="danger">{errorsInThePastWeek.length}</Tag>
+            {FAILED_PAST_WEEK_HEADING}
+          </StyledTitleCard>
+          <CardValue className="card-value">
+            {errorsComparedToLastWeek} runs compared to last week
+          </CardValue>
+        </CardInWrapper>
+      )}
       <CardNavLink to={`${url}/${HEALTH_PATH}${search}`} exact>
         <CardInWrapper>
           <StyledTitleCard className="card-title">

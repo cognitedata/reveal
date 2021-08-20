@@ -5,6 +5,7 @@
 import '@testing-library/jest-dom/extend-expect';
 import './utils/test/matchMedia';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
+import noop from 'lodash/noop';
 import './cognite-cdf-route-tracker.d.ts';
 
 jest.mock('@cognite/cdf-sdk-singleton', () => {
@@ -35,3 +36,4 @@ sdkv3.raw = {
   listDatabases: jest.fn(),
   listTables: jest.fn(),
 };
+window.URL.createObjectURL = noop as any;

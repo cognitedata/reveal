@@ -6,9 +6,9 @@ import { renderWithReQueryCacheSelectedIntegrationContext } from 'utils/test/ren
 import { ORIGIN_DEV, PROJECT_ITERA_INT_GREEN } from 'utils/baseURL';
 import { render } from 'utils/test';
 import {
-  IntegrationHealth,
+  IntegrationRunHistory,
   PAGE_SIZE_DEFAULT,
-} from 'components/integration/IntegrationHealth';
+} from 'components/integration/IntegrationRunHistory';
 import {
   getMockResponse,
   mockDataRunsResponse,
@@ -52,7 +52,9 @@ describe('IntegrationHealth', () => {
       undefined,
       '/'
     );
-    render(<IntegrationHealth integration={mockIntegration} />, { wrapper });
+    render(<IntegrationRunHistory integration={mockIntegration} />, {
+      wrapper,
+    });
     expect(screen.getByText(mockError.error.message)).toBeInTheDocument();
 
     // test tracking
@@ -76,7 +78,9 @@ describe('IntegrationHealth', () => {
       undefined,
       '/'
     );
-    render(<IntegrationHealth integration={mockIntegration} />, { wrapper });
+    render(<IntegrationRunHistory integration={mockIntegration} />, {
+      wrapper,
+    });
     expect(screen.getByText(RunTableHeading.TIMESTAMP)).toBeInTheDocument();
     expect(
       screen.getByText(`${TableHeadings.LAST_RUN_STATUS} - ALL`) // status filter btn
@@ -119,7 +123,9 @@ describe('IntegrationHealth', () => {
         statuses: [RunStatusAPI.FAILURE],
       }
     );
-    render(<IntegrationHealth integration={mockIntegration} />, { wrapper });
+    render(<IntegrationRunHistory integration={mockIntegration} />, {
+      wrapper,
+    });
     // sets url from stored filter
     expect(history.location.pathname).toEqual(route);
     const params = new URLSearchParams(history.location.search);

@@ -1,7 +1,7 @@
 import { useQuery } from 'react-query';
 import { DEFAULT_RUN_LIMIT, getFilteredRuns, getRuns } from 'utils/RunsAPI';
 import { useAppEnv } from 'hooks/useAppEnv';
-import { SDKError } from 'model/SDKErrors';
+import { ErrorObj } from 'model/SDKErrors';
 import { RunsAPIResponse, RunUI } from 'model/Runs';
 import { Range } from '@cognite/cogs.js';
 import { RunStatusAPI } from 'model/Status';
@@ -14,7 +14,7 @@ export const useRuns = (
   limit?: number
 ) => {
   const { project } = useAppEnv();
-  return useQuery<RunsAPIResponse, SDKError>(
+  return useQuery<RunsAPIResponse, ErrorObj>(
     [project, externalId, nextCursor],
     () => {
       return getRuns(project ?? '', externalId ?? '', nextCursor ?? '', limit);
@@ -31,7 +31,7 @@ export const useFilteredRuns = (params: CreateRunFilterParam) => {
   const data = createRunsFilter(params);
   return useQuery<
     RunsAPIResponse,
-    SDKError,
+    Error & { status: number },
     { runs: RunUI[]; nextCursor?: string }
   >(
     [
