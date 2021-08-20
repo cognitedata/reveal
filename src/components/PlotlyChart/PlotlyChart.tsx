@@ -256,6 +256,7 @@ const PlotlyChartComponent = ({
         chart?.workflowCollection?.length,
         enabledTimeseries,
         enabledWorkflows,
+        seriesData,
       ]
     ),
     1000
