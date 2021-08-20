@@ -22,7 +22,12 @@ import { unwrapResult } from '@reduxjs/toolkit';
 import { AppDispatch } from 'src/store';
 import { CreateKeypointAnnotation } from 'src/store/thunks/CreateKeypointAnnotation';
 import { RetrieveKeypointCollection } from 'src/store/thunks/RetrieveKeypointCollection';
-import { deselectAllAnnotations, selectAnnotation } from '../../previewSlice';
+import { Button, Tooltip } from '@cognite/cogs.js';
+import {
+  deselectAllAnnotations,
+  selectAnnotation,
+  showCollectionSettingsModel,
+} from '../../previewSlice';
 import {
   deleteCurrentCollection,
   deSelectAllCollections,
@@ -173,6 +178,10 @@ export const ReactImageAnnotateWrapper: React.FC<ReactImageAnnotateWrapperProps>
       onDeleteAnnotation(convertToAnnotation(region));
     };
 
+    const onOpenCollectionSettings = () => {
+      dispatch(showCollectionSettingsModel(true));
+    };
+
     const NewRegionEditLabel = useMemo(() => {
       return ({
         region,
@@ -203,6 +212,7 @@ export const ReactImageAnnotateWrapper: React.FC<ReactImageAnnotateWrapperProps>
             nextPoint={nextKeyPoint!.orderNumber.toString() || '1'}
             nextShape={currentShape!}
             nextCollection={nextKeyPoint!.collectionName}
+            onOpenCollectionSettings={onOpenCollectionSettings}
           />
         );
       };
@@ -270,6 +280,19 @@ export const ReactImageAnnotateWrapper: React.FC<ReactImageAnnotateWrapperProps>
           onSelectTool={onSelectTool}
           selectedTool={selectedTool}
         />
+        <ExtraToolbar>
+          <Tooltip
+            content={
+              <span data-testid="text-content">Collection settings</span>
+            }
+          >
+            <ExtraToolItem
+              variant="ghost"
+              icon="Settings"
+              onClick={onOpenCollectionSettings}
+            />
+          </Tooltip>
+        </ExtraToolbar>
       </Container>
     );
   };
@@ -277,8 +300,21 @@ export const ReactImageAnnotateWrapper: React.FC<ReactImageAnnotateWrapperProps>
 const Container = styled.div`
   width: 100%;
   height: 100%;
+  position: relative;
 
   .MuiIconButton-colorPrimary {
     color: #3f51b5;
   }
+`;
+const ExtraToolbar = styled.div`
+  position: absolute;
+  bottom: 10px;
+  width: 50px;
+  display: grid;
+`;
+
+const ExtraToolItem = styled(Button)`
+  height: 50px;
+  width: 50px;
+  border-radius: 50px;
 `;

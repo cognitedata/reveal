@@ -16,10 +16,7 @@ import {
 } from 'src/modules/Review/imagePreviewSlice';
 import { BodyContainer } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/BodyContainer';
 import { VisionOptionType } from 'src/modules/Review/types';
-import {
-  deselectAllAnnotations,
-  showCollectionSettingsModel,
-} from '../../previewSlice';
+import { deselectAllAnnotations } from '../../previewSlice';
 
 const getKeypointOptions = (
   optionsMap?: { key: string; value: VisionOptionType<string>[] }[],
@@ -54,6 +51,7 @@ export const AnnotationEditPopup = (props: {
   nextPoint: string;
   nextShape: string;
   nextCollection: string;
+  onOpenCollectionSettings: () => void;
 }) => {
   const {
     region,
@@ -70,6 +68,7 @@ export const AnnotationEditPopup = (props: {
     nextPoint,
     nextShape,
     nextCollection,
+    onOpenCollectionSettings,
   } = props;
 
   const dispatch = useDispatch();
@@ -226,10 +225,6 @@ export const AnnotationEditPopup = (props: {
   const handleSelectKeyPointValue = (value: Required<OptionType<string>>) => {
     setKeyPointValue(value);
     updateRegionLabel(value.value);
-  };
-
-  const onOpenCollectionSettings = () => {
-    dispatch(showCollectionSettingsModel(true));
   };
 
   useEffect(() => {
