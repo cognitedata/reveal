@@ -35,7 +35,14 @@ Whenever you've added a dependency and started using it, you need to run `yarn u
 To create a new application:
 
 1. Clone this repo
-2. Copy the `react-demo-app` folder
+2. Copy and rename the `react-demo-app` folder
+3. By default you'll be using the `azure-dev` cluster. Ask someone to share the private keys (in lastpass) for the shared testing projects and put them into the `/private-keys` folder.
+4. If it can not find the container, try and login with the gcloud utils:
+
+```
+gcloud auth login
+gcloud auth configure-docker eu.gcr.io
+```
 
 This will spit out all of the boilerplate that you need to have a production-capable [React]-based application at Cognite. It demonstrates best practices, such as:
 
