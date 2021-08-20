@@ -73,7 +73,7 @@ const FileReview = ({
             }}
             type="asset"
           />
-          Assets
+          Assets{' '}
           {pendingAssetAnnotations.length ? (
             <strong> {pendingAssetAnnotations.length} new</strong>
           ) : null}
@@ -89,7 +89,7 @@ const FileReview = ({
             }}
             type="file"
           />{' '}
-          Files
+          Files{' '}
           {pendingFileAnnotations.length ? (
             <strong> {pendingFileAnnotations.length} new</strong>
           ) : null}
