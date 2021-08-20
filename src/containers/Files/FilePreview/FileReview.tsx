@@ -49,16 +49,19 @@ const FileReview = ({
         <Body level={2}>{annotations.length}</Body>
       </div>
       {pendingAnnotations.length ? (
-        <ButtonWrapper>
-          <Button
-            onClick={() => onApprove(annotations)}
-            icon="Checkmark"
-            style={{ width: '100%' }}
-            type="tertiary"
-          >
-            Approve {pendingAnnotations.length} new tags
-          </Button>
-        </ButtonWrapper>
+        <Tooltip title="Missing permissions to approve tags, labels:read & labels:write">
+          <ButtonWrapper>
+            <Button
+              onClick={() => onApprove(annotations)}
+              icon="Checkmark"
+              style={{ width: '100%' }}
+              type="tertiary"
+              disabled={!labelsAccess}
+            >
+              Approve {pendingAnnotations.length} new tags
+            </Button>
+          </ButtonWrapper>
+        </Tooltip>
       ) : null}
 
       <StyledTag>
