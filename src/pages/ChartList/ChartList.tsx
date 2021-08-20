@@ -18,6 +18,8 @@ import { OpenInCharts } from 'components/OpenInCharts';
 import { CHART_VERSION } from 'config/';
 import { trackUsage } from 'utils/metrics';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
+import { useResetRecoilState } from 'recoil';
+import { chartState } from 'atoms/chart';
 
 type ActiveTabOption = 'mine' | 'public';
 type SortOption = 'name' | 'owner' | 'updatedAt';
@@ -49,6 +51,11 @@ const ChartList = () => {
   const { data: login } = useUserInfo();
   const myCharts = useMyCharts();
   const pubCharts = usePublicCharts();
+  const resetChart = useResetRecoilState(chartState);
+
+  useEffect(() => {
+    resetChart();
+  }, [resetChart]);
 
   const allCharts = useMemo(() => {
     const mine = myCharts.data || [];
