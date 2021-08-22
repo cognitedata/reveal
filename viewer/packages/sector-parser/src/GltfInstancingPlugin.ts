@@ -5,23 +5,24 @@
 import * as THREE from 'three';
 import { BufferGeometry, InstancedBufferGeometry } from 'three';
 import { GLTFLoader, GLTFLoaderPlugin, GLTFParser } from 'three/examples/jsm/loaders/GLTFLoader';
-import { setBoxGeometry } from './primitiveGeometries';
+import { setBoxGeometry, setConeGeometry, setQuadGeometry } from './primitiveGeometries';
 
 export default class GltfSectorLoader {
-  public async loadSector(url: string): Promise<InstancedBufferGeometry> {
+  public async loadSector(url: string): Promise<[PrimitiveCollection, InstancedBufferGeometry][]> {
     const loader = new GLTFLoader();
+    let resultCallback: () => [PrimitiveCollection, InstancedBufferGeometry][] = () => {
+      throw new Error('Parsing of sector failed');
+    };
 
-    return new Promise((resolve, _) => {
-      loader.register(parser => {
-        const plugin = new GltfInstancingPlugin(parser);
-        plugin.Result.then(geometryBuffers => {
-          resolve(geometryBuffers);
-        });
-        return plugin;
-      });
-
-      loader.load(url, _ => {});
+    loader.register(parser => {
+      const instancingPlugin = new GltfInstancingPlugin(parser);
+      resultCallback = instancingPlugin.getParseResult.bind(instancingPlugin);
+      return instancingPlugin;
     });
+
+    await loader.loadAsync(url, _ => {});
+
+    return resultCallback();
   }
 }
 
@@ -33,17 +34,17 @@ type TypedArrayConstructor =
   | Uint32ArrayConstructor
   | Float32ArrayConstructor;
 
-enum PrimitiveCollection {
-  BoxCollection
+export enum PrimitiveCollection {
+  BoxCollection,
+  CircleCollection,
+  ConeCollection
 }
 
 class GltfInstancingPlugin implements GLTFLoaderPlugin {
-  public readonly Result: Promise<InstancedBufferGeometry>;
+  private readonly _resultBuffer: [PrimitiveCollection, InstancedBufferGeometry][];
   private readonly _extensionName = 'EXT_mesh_gpu_instancing';
   private readonly _parser: GLTFParser;
   loadMaterial: any;
-
-  private _resolve: (value: InstancedBufferGeometry | PromiseLike<InstancedBufferGeometry>) => void;
 
   // https://github.com/KhronosGroup/glTF/blob/master/specification/2.0/README.md#accessortype-white_check_mark
   private readonly COLLECTION_TYPE_SIZES = new Map<string, number>([
@@ -67,10 +68,7 @@ class GltfInstancingPlugin implements GLTFLoaderPlugin {
 
   constructor(parser: GLTFParser) {
     this._parser = parser;
-    this._resolve = _ => {};
-    this.Result = new Promise((resolve, _) => {
-      this._resolve = resolve;
-    });
+    this._resultBuffer = [];
   }
 
   public async createNodeMesh(nodeIndex: number): Promise<THREE.Object3D | null> {
@@ -82,8 +80,8 @@ class GltfInstancingPlugin implements GLTFLoaderPlugin {
     const instancedAttributeReferences = nodeDefinition.extensions[this._extensionName].attributes;
 
     const geometry = new THREE.InstancedBufferGeometry();
-
-    this.setTopology(PrimitiveCollection[nodeDefinition.name as keyof typeof PrimitiveCollection], geometry);
+    const collectionType = PrimitiveCollection[nodeDefinition.name as keyof typeof PrimitiveCollection];
+    this.setTopology(collectionType, geometry);
 
     for (const attributeName in instancedAttributeReferences) {
       if (Object.prototype.hasOwnProperty.call(instancedAttributeReferences, attributeName)) {
@@ -92,9 +90,13 @@ class GltfInstancingPlugin implements GLTFLoaderPlugin {
       }
     }
 
-    this._resolve(geometry);
+    this._resultBuffer.push([collectionType, geometry]);
 
     return new THREE.Object3D();
+  }
+
+  public getParseResult() {
+    return this._resultBuffer;
   }
 
   async getAttributeFromAccessorId(accessorId: number): Promise<THREE.InterleavedBufferAttribute> {
@@ -119,6 +121,12 @@ class GltfInstancingPlugin implements GLTFLoaderPlugin {
     switch (primitiveCollectionName) {
       case PrimitiveCollection.BoxCollection:
         setBoxGeometry(geometry);
+        break;
+      case PrimitiveCollection.CircleCollection:
+        setQuadGeometry(geometry);
+        break;
+      case PrimitiveCollection.ConeCollection:
+        setConeGeometry(geometry);
         break;
       default:
         break;

@@ -7,7 +7,7 @@ import { Vector3 } from 'three';
 
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { sectorShaders } from '../../../core/src/datamodels/cad/rendering/shaders';
-import GltfSectorLoader from '../src/GltfInstancingPlugin';
+import GltfSectorLoader, { PrimitiveCollection } from '../src/GltfInstancingPlugin';
 
 init();
 
@@ -19,15 +19,33 @@ function init() {
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
 
-  const grid = new THREE.GridHelper(5000, 28);
-  grid.position.set(0, -1250, 0);
+  const grid = new THREE.GridHelper(4000, 28);
+  grid.position.set(-1800, -125, -600);
   scene.add(grid);
 
+  const cadFromCdfToThreeMatrix = new THREE.Matrix4().set(1, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1);
+  const group = new THREE.Group();
+  group.applyMatrix4(cadFromCdfToThreeMatrix);
+  scene.add(group);
+
+  const materialMap: Map<PrimitiveCollection, () => THREE.ShaderMaterial> = new Map([
+    [PrimitiveCollection.BoxCollection, createBoxMaterial],
+    [PrimitiveCollection.CircleCollection, createCircleMaterial],
+    [PrimitiveCollection.ConeCollection, createConeMaterial]
+  ]);
+
   const loader = new GltfSectorLoader();
-  loader.loadSector('test.glb').then(geometry => {
-    const mesh = new THREE.InstancedMesh(geometry, createBoxMaterial(), 2);
-    mesh.frustumCulled = false;
-    scene.add(mesh);
+  loader.loadSector('test2.glb').then(geometries => {
+    geometries.forEach(result => {
+      const material = materialMap.get(result[0])!();
+      const mesh = new THREE.InstancedMesh(result[1], material, 2);
+      mesh.frustumCulled = false;
+      mesh.onBeforeRender = () => {
+        const inverseModelMatrix: THREE.Matrix4 = material.uniforms.inverseModelMatrix.value;
+        inverseModelMatrix.copy(mesh.matrixWorld).invert();
+      };
+      group.add(mesh);
+    });
   });
 
   const controls = new OrbitControls(camera, renderer.domElement);
@@ -52,6 +70,38 @@ function createBoxMaterial(): THREE.ShaderMaterial {
     extensions: { fragDepth: true },
     vertexShader: sectorShaders.boxPrimitive.vertex,
     fragmentShader: sectorShaders.boxPrimitive.fragment,
+    side: THREE.DoubleSide,
+    uniforms: {
+      inverseModelMatrix: {
+        value: new THREE.Matrix4()
+      }
+    }
+  });
+}
+
+function createCircleMaterial(): THREE.ShaderMaterial {
+  return new THREE.ShaderMaterial({
+    name: 'Primitives (Circle)',
+    clipping: false,
+    extensions: { fragDepth: true },
+    vertexShader: sectorShaders.circlePrimitive.vertex,
+    fragmentShader: sectorShaders.circlePrimitive.fragment,
+    side: THREE.DoubleSide,
+    uniforms: {
+      inverseModelMatrix: {
+        value: new THREE.Matrix4()
+      }
+    }
+  });
+}
+
+function createConeMaterial(): THREE.ShaderMaterial {
+  return new THREE.ShaderMaterial({
+    name: 'Primitives (Cone)',
+    clipping: false,
+    extensions: { fragDepth: true },
+    vertexShader: sectorShaders.conePrimitive.vertex,
+    fragmentShader: sectorShaders.conePrimitive.fragment,
     side: THREE.DoubleSide,
     uniforms: {
       inverseModelMatrix: {

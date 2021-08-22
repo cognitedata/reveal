@@ -58,20 +58,17 @@ export function setBoxGeometry(geometry: THREE.BufferGeometry) {
   return geometry.boundingBox!;
 }
 
-export const { quadGeometry, quadGeometryBoundingBox } = (() => {
-  const geometry = new THREE.PlaneBufferGeometry(1, 1, 1, 1);
-  try {
-    const result = {
-      index: geometry.getIndex(),
-      position: geometry.getAttribute('position'),
-      normal: geometry.getAttribute('normal')
-    };
-    geometry.computeBoundingBox();
-    return { quadGeometry: result, quadGeometryBoundingBox: geometry.boundingBox! };
-  } finally {
-    geometry.dispose();
-  }
-})();
+export function setQuadGeometry(geometry: THREE.BufferGeometry) {
+  const quadGeometry = new THREE.PlaneBufferGeometry(1, 1, 1, 1);
+
+  geometry.setIndex(quadGeometry.getIndex());
+  geometry.setAttribute('position', quadGeometry.getAttribute('position'));
+  geometry.setAttribute('normal', quadGeometry.getAttribute('normal'));
+
+  geometry.computeBoundingBox();
+
+  return geometry.boundingBox!;
+}
 
 export const { trapeziumGeometry, trapeziumGeometryBoundingBox } = (() => {
   const index = [0, 1, 3, 0, 3, 2];
@@ -85,8 +82,7 @@ export const { trapeziumGeometry, trapeziumGeometryBoundingBox } = (() => {
   };
 })();
 
-// cone
-export const { coneGeometry, coneGeometryBoundingBox } = (() => {
+export function setConeGeometry(geometry: THREE.BufferGeometry) {
   const positions = [];
   positions.push(-1, 1, -1);
   positions.push(-1, -1, -1);
@@ -96,14 +92,11 @@ export const { coneGeometry, coneGeometryBoundingBox } = (() => {
   positions.push(1, -1, 1);
 
   const indices = new Uint16Array([1, 2, 0, 1, 3, 2, 3, 4, 2, 3, 5, 4]);
-  return {
-    coneGeometry: {
-      index: new THREE.BufferAttribute(indices, 1),
-      position: new THREE.BufferAttribute(new Float32Array(positions), 3)
-    },
-    coneGeometryBoundingBox: new THREE.Box3().setFromArray(positions)
-  };
-})();
+
+  geometry.setIndex(new THREE.BufferAttribute(indices, 1));
+  geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
+  return new THREE.Box3().setFromArray(positions);
+}
 
 export const { torusLodGeometries, torusGeometryBoundingBox } = (() => {
   const lods = [
