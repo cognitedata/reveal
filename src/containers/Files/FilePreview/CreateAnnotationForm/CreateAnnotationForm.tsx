@@ -153,7 +153,7 @@ export const CreateAnnotationForm = ({
         </Button>
         <div style={{ flex: 1 }} />
         {onCancel && <Button onClick={onCancel}>Cancel</Button>}
-        <Button onClick={onDelete} icon="Delete" type="danger" />
+        <Button onClick={onDelete} icon="Trash" type="danger" />
       </SpacedRow>
       {children}
     </Wrapper>
