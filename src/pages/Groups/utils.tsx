@@ -299,6 +299,7 @@ export const getCapabilityScopes = (
       return ['currentuserscope', 'all'];
     case 'raw':
       return ['tableScope', 'all'];
+    case '3d':
     case 'files':
     case 'assets':
     case 'events':
