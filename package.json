@@ -48,6 +48,7 @@
     "lodash": "^4.17.21",
     "mixpanel-browser": "^2.35.0",
     "moment": "^2.29.1",
+    "msw": "^0.34.0",
     "prop-types": "^15.7.2",
     "randexp": "^0.5.3",
     "rc-collapse": "^3.1.1",

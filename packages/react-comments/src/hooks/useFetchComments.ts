@@ -1,7 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import { CommentResponse, CommentTarget } from '@cognite/comment-service-types';
-import { useAuthContext, getAuthHeaders } from '@cognite/react-container';
+import { getAuthHeaders } from '@cognite/react-container';
 import { MessageType } from '@cognite/cogs.js';
 
 interface Props {
@@ -10,20 +10,15 @@ interface Props {
 }
 
 export const useFetchComments = ({ target, serviceUrl }: Props) => {
-  const { authState } = useAuthContext();
   const headers = getAuthHeaders({ useIdToken: true });
   const [fetchedComments, setFetchComments] = React.useState<CommentResponse[]>(
     []
   );
 
   React.useEffect(() => {
-    if (!authState) {
-      return;
-    }
-
     axios
       .post<{ items: CommentResponse[] }>(
-        `${serviceUrl}/${authState.project}/comment/list`,
+        `${serviceUrl}/comment/list`,
         {
           filter: { target, scope: ['fas-demo'] },
         },
@@ -32,9 +27,11 @@ export const useFetchComments = ({ target, serviceUrl }: Props) => {
       .then((result) => {
         setFetchComments(result.data.items);
       });
-  }, [authState]);
+  }, [serviceUrl]);
 
-  return { comments: fetchedComments.map(normalizeComment) };
+  return {
+    comments: fetchedComments ? fetchedComments.map(normalizeComment) : [],
+  };
 };
 
 const normalizeComment = (comment: CommentResponse): MessageType => {

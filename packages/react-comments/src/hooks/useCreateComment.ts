@@ -9,8 +9,7 @@ interface Props {
   headers: AuthHeaders;
   target: CommentTarget;
 }
-
-export const useCreateComment: (a: Props) => Promise<any> = ({
+export const useCreateComment: (props: Props) => Promise<any> = ({
   target,
   comment,
   project,

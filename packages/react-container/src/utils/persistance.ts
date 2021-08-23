@@ -1,6 +1,7 @@
 import { Metrics } from '@cognite/metrics';
 import jwtDecode from 'jwt-decode';
-import type { AuthResult, DecodedIdToken, OAuthAuthResult } from 'auth';
+
+import type { AuthResult, DecodedIdToken, OAuthAuthResult } from '../auth';
 
 import { storage } from './localStorage';
 

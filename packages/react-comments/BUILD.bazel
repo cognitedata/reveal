@@ -10,15 +10,30 @@ load("//rules/npm:is_published.bzl", "is_published")
 load("//rules/npm:package_info.bzl", "package_info")
 load("//rules/npm:append_deps.bzl", "append_deps")
 
+_TESTS = [
+    "src/**/*.test.js*",
+    "src/**/*.test.ts*",
+    "src/**/*.spec.js*",
+    "src/**/*.spec.ts*",
+]
+
+_STORYBOOK = [
+    ".storybook/*",
+    "src/**/*.stories.ts*",
+    "stories/**/*.stories.ts*",
+]
+
 SOURCES = glob(
     [
         "src/*.ts*",
         "src/**/*.ts*",
     ],
-    exclude = ["src/**/*.spec.ts"],
+    exclude = _TESTS + _STORYBOOK,
 )
 
-TESTS = glob(["src/**/*.spec.ts"])
+TESTS = glob(_TESTS + _STORYBOOK)
+
+# STORYBOOK = glob(_STORYBOOK)
 
 # Generates the below helpers.
 #
@@ -39,6 +54,7 @@ generate_package_json_helpers(
 DEPENDENCIES = [
     "@npm//@cognite/cogs.js",
     "@npm//react",
+    "@npm//msw",
     "//packages/react-container",
 ]
 
@@ -49,7 +65,7 @@ TYPE_DEPENDENCIES = [
 ]
 
 # Dev dependencies from package.json
-DEV_DEPENDENCIES = []
+DEV_DEPENDENCIES = ["@npm//@testing-library/react-hooks"]
 
 # Mappings for absolute imports from baseUrl @unused
 mappings_dict = {
@@ -88,8 +104,9 @@ jest_test(
     name = "jest_test",
     srcs = SOURCES + TESTS + [
         ":tsconfig.json",
-        "//packages:jest.config.js",
         "//:tsconfig.json",
+        "//packages:jest.config.js",
+        "//packages:jest.react.config.js",
         "//packages:tsconfig.json",
     ],
     jest_args = [],

@@ -140,11 +140,11 @@ prettier_test(
 jest_test(
     name = "jest_test",
     srcs = SOURCES + TESTS + [
+        ":tsconfig.json",
+        "//:tsconfig.json",
         "//packages:jest.config.js",
         "//packages:jest.react.config.js",
-        ":tsconfig.json",
         "//packages:tsconfig.json",
-        "//:tsconfig.json",
     ],
     jest_args = [],
     jest_config = "jest.config.js",

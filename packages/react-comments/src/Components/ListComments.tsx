@@ -16,7 +16,10 @@ export const ListComments: React.FC<ListCommentsProps> = ({
   const { authState } = useAuthContext();
   const headers = getAuthHeaders({ useIdToken: true });
 
-  const { comments } = useFetchComments({ target, serviceUrl });
+  const { comments } = useFetchComments({
+    target,
+    serviceUrl: `${serviceUrl}/${authState?.project}`,
+  });
   const [message, setMessage] = React.useState('');
 
   const handleCreateMessage = (comment: string) => {
