@@ -193,27 +193,32 @@ export function initializeSourceCollection(chart: Chart): Chart {
 export function updateSourceAxisForChart(
   chart: Chart,
   { x, y }: { x: string[]; y: AxisUpdate[] }
-) {
+): Chart {
   const updatedChart = {
     ...chart,
+    ...(x.length === 2
+      ? {
+          dateFrom: `${x[0]}`,
+          dateTo: `${x[1]}`,
+        }
+      : {}),
+    ...(y.length > 0
+      ? {
+          timeSeriesCollection: chart.timeSeriesCollection?.map((ts) => {
+            const correspondingUpdate = y.find((update) => update.id === ts.id);
+            return correspondingUpdate
+              ? { ...ts, range: correspondingUpdate.range }
+              : ts;
+          }),
+          workflowCollection: chart.workflowCollection?.map((wf) => {
+            const correspondingUpdate = y.find((update) => update.id === wf.id);
+            return correspondingUpdate
+              ? { ...wf, range: correspondingUpdate.range }
+              : wf;
+          }),
+        }
+      : {}),
   };
-
-  if (x.length === 2) {
-    updatedChart.dateFrom = `${x[0]}`;
-    updatedChart.dateTo = `${x[1]}`;
-  }
-
-  if (y.length > 0) {
-    y.forEach((update) => {
-      updatedChart.timeSeriesCollection =
-        updatedChart.timeSeriesCollection?.map((t) =>
-          t.id === update.id ? { ...t, range: update.range } : t
-        );
-      updatedChart.workflowCollection = updatedChart.workflowCollection?.map(
-        (wf) => (wf.id === update.id ? { ...wf, range: update.range } : wf)
-      );
-    });
-  }
 
   return updatedChart;
 }

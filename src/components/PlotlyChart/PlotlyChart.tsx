@@ -227,7 +227,9 @@ const PlotlyChartComponent = ({
       if (isPreview) {
         return;
       }
+
       const x = getXaxisUpdateFromEventData(eventdata);
+
       // Should not edit the saved y-axis ranges if in stacked mode or in search
       const y = !(stackedMode || isInSearch)
         ? getYaxisUpdatesFromEventData(seriesData, eventdata)
@@ -282,13 +284,18 @@ const PlotlyChartComponent = ({
     };
   }, [isPreview]);
 
+  // function copy<T>(val: T) {
+  //   return JSON.parse(JSON.stringify(val)) as T;
+  // }
+
   /**
    * Local state for data and layout in the chart
    * that only updates when the user isn't doing any navigation
    */
   const [activeState, setActiveState] = useState({
     data,
-    layout,
+    layout, // copy<typeof layout>(layout), // Plotly.js mutates input props!
+    handleRelayout,
   });
 
   /**
@@ -298,17 +305,18 @@ const PlotlyChartComponent = ({
     if (isAllowedToUpdate) {
       setActiveState({
         data,
-        layout,
+        layout, // : copy<typeof layout>(layout), // Plotly.js mutates input props!
+        handleRelayout,
       });
     }
-  }, [data, layout, isAllowedToUpdate]);
+  }, [data, layout, isAllowedToUpdate, handleRelayout]);
 
   /**
    * Debounced callback that turns on updates again (scrolling)
    */
   const allowUpdatesScroll = useDebouncedCallback(() => {
     setIsAllowedToUpdate(true);
-  }, 1000);
+  }, 100);
 
   /**
    * Debounced callback that turns on updates again (click and drag)
@@ -391,7 +399,7 @@ const PlotlyChartComponent = ({
           data={activeState.data as Plotly.Data[]}
           layout={activeState.layout as unknown as Plotly.Layout}
           config={config as unknown as Plotly.Config}
-          onRelayout={handleRelayout}
+          onRelayout={activeState.handleRelayout}
           style={chartStyles}
           useResizeHandler
         />

@@ -37,7 +37,7 @@ type WorkflowEditorProps = {
   chart: Chart;
   workflowId: string;
   closeNodeEditor: () => void;
-  mutate: (chart: Chart) => void;
+  mutate: (update: (c: Chart | undefined) => Chart) => void;
 };
 
 const WorkflowEditor = ({
@@ -76,9 +76,9 @@ const WorkflowEditor = ({
   const update = (diff: Partial<ChartWorkflow>) => {
     const applicableDiff = pick(diff, ['nodes', 'connections']);
 
-    mutate({
-      ...chart,
-      workflowCollection: chart.workflowCollection?.map((wf) =>
+    mutate((oldChart) => ({
+      ...oldChart!,
+      workflowCollection: oldChart?.workflowCollection?.map((wf) =>
         wf.id === workflowId
           ? {
               ...wf,
@@ -86,7 +86,7 @@ const WorkflowEditor = ({
             }
           : wf
       ),
-    });
+    }));
   };
 
   const { nodes = [], connections = [] } = workflow;

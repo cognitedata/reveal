@@ -128,7 +128,7 @@ const LoadingFeedback = ({ tsExternalId, dateFrom, dateTo }: LoadingProps) => {
 };
 
 type Props = {
-  mutate: (c: Chart) => void;
+  mutate: (update: (c: Chart | undefined) => Chart) => void;
   chart: Chart;
   timeseries: ChartTimeSeries;
   disabled?: boolean;
@@ -183,9 +183,9 @@ export default function TimeSeriesRow({
 
   // Increasing this will cause a fresh render where the dropdown is closed
   const update = (_tsId: string, diff: Partial<ChartTimeSeries>) =>
-    mutate({
-      ...chart,
-      timeSeriesCollection: chart.timeSeriesCollection?.map((t) =>
+    mutate((oldChart) => ({
+      ...oldChart!,
+      timeSeriesCollection: oldChart!.timeSeriesCollection?.map((t) =>
         t.id === _tsId
           ? {
               ...t,
@@ -193,12 +193,12 @@ export default function TimeSeriesRow({
             }
           : t
       ),
-    });
+    }));
 
-  const remove = () => mutate(removeTimeseries(chart, id));
+  const remove = () => mutate((oldChart) => removeTimeseries(oldChart!, id));
 
   const updateAppearance = (diff: Partial<ChartTimeSeries>) =>
-    mutate(updateTimeseries(chart, id, diff));
+    mutate((oldChart) => updateTimeseries(oldChart!, id, diff));
 
   const updateUnit = async (unitOption: any) => {
     const range = await calculateDefaultYAxis({
@@ -272,9 +272,9 @@ export default function TimeSeriesRow({
       if (!timeseries) {
         return;
       }
-      mutate({
-        ...chart,
-        timeSeriesCollection: chart.timeSeriesCollection?.map((ts) =>
+      mutate((oldChart) => ({
+        ...oldChart!,
+        timeSeriesCollection: oldChart?.timeSeriesCollection?.map((ts) =>
           ts.id === timeseries.id
             ? {
                 ...ts,
@@ -282,9 +282,9 @@ export default function TimeSeriesRow({
               }
             : ts
         ),
-      });
+      }));
     },
-    [chart, mutate, timeseries]
+    [mutate, timeseries]
   );
 
   const datesChanged =

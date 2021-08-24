@@ -58,7 +58,7 @@ type Props = {
   onInfoClick?: (id?: string) => void;
   openNodeEditor?: () => void;
   mode: string;
-  mutate: (c: Chart) => void;
+  mutate: (update: (c: Chart | undefined) => Chart) => void;
   draggable?: boolean;
   provided?: DraggableProvided | undefined;
 };
@@ -83,7 +83,7 @@ export default function WorkflowRow({
   const isWorkspaceMode = mode === 'workspace';
 
   const update = (wfId: string, diff: Partial<ChartWorkflow>) => {
-    mutate(updateWorkflow(chart, wfId, diff));
+    mutate((oldChart) => updateWorkflow(oldChart!, wfId, diff));
   };
 
   const { nodes, connections } = workflow;
@@ -183,18 +183,18 @@ export default function WorkflowRow({
       hash: getHash(computation),
     };
 
-    mutate(
-      updateWorkflow(chart, workflow.id, {
+    mutate((oldChart) =>
+      updateWorkflow(oldChart!, workflow.id, {
         calls: [newCall],
       })
     );
-  }, [chart, workflow.id, mutate, computation, lastSuccessfulCall, call]);
+  }, [workflow.id, mutate, computation, lastSuccessfulCall, call]);
 
   useEffect(handleRetries, [handleRetries]);
   useEffect(handleChanges, [handleChanges]);
   useEffect(handleCallUpdates, [handleCallUpdates]);
 
-  const remove = () => mutate(removeWorkflow(chart, id));
+  const remove = () => mutate((oldChart) => removeWorkflow(oldChart!, id));
 
   const updateUnit = (unitOption: any) => {
     update(id, {
@@ -209,7 +209,7 @@ export default function WorkflowRow({
   };
 
   const updateAppearance = (diff: Partial<ChartTimeSeries>) =>
-    mutate(updateWorkflow(chart, id, diff));
+    mutate((oldChart) => updateWorkflow(oldChart!, id, diff));
 
   return (
     <SourceRow
