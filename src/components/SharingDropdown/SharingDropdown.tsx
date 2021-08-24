@@ -12,7 +12,7 @@ import {
 import { Chart } from 'reducers/charts/types';
 
 import { trackUsage } from 'utils/metrics';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { chartState } from 'atoms/chart';
 
 interface SharingDropdownProps {
@@ -21,7 +21,7 @@ interface SharingDropdownProps {
 }
 
 const SharingDropdown = ({ chart, disabled = false }: SharingDropdownProps) => {
-  const setChart = useSetRecoilState(chartState);
+  const [, setChart] = useRecoilState(chartState);
   const [shareIconType, setShareIconType] = useState<
     'Copy' | 'Checkmark' | 'ErrorStroked'
   >('Copy');

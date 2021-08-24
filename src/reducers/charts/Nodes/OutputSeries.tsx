@@ -5,7 +5,7 @@ import {
   ConfigPanelComponentProps,
   StorableNode,
 } from 'reducers/charts/types';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { chartState } from 'atoms/chart';
 
 export const effectId = 'OUTPUT';
@@ -18,7 +18,7 @@ export const ConfigPanel = ({
   const { functionData } = node;
   const { chart, workflow } = context;
 
-  const setChart = useSetRecoilState(chartState);
+  const [, setChart] = useRecoilState(chartState);
 
   const workspaceTimeSeries = (chart as Chart).timeSeriesCollection || [];
   const workspaceWorkflows = (chart as Chart).workflowCollection || [];

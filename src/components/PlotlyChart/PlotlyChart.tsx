@@ -14,7 +14,7 @@ import {
 import { updateSourceAxisForChart } from 'utils/charts';
 import { trackUsage } from 'utils/metrics';
 import { useDebouncedCallback, useDebounce } from 'use-debounce';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { chartState } from 'atoms/chart';
 import { Chart } from 'reducers/charts/types';
 import {
@@ -69,7 +69,7 @@ const PlotlyChartComponent = ({
   /**
    * Get local chart context
    */
-  const setChart = useSetRecoilState(chartState);
+  const [, setChart] = useRecoilState(chartState);
 
   const enabledTimeseries = chart?.timeSeriesCollection?.filter(
     (ts) => ts.enabled

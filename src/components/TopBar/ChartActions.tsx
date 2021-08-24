@@ -12,13 +12,13 @@ import {
 import SharingDropdown from 'components/SharingDropdown/SharingDropdown';
 import { trackUsage } from 'utils/metrics';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { chartState } from 'atoms/chart';
 
 export const ChartActions = () => {
   const { takeScreenshot } = useScreenshot();
   const move = useNavigate();
-  const chart = useRecoilValue(chartState);
+  const [chart] = useRecoilState(chartState);
   const { data: login } = useUserInfo();
 
   const {

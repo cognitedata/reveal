@@ -3,7 +3,7 @@ import styled from 'styled-components/macro';
 import { DateRange, SegmentedControl } from '@cognite/cogs.js';
 import TimeSelector from 'components/TimeSelector';
 import { trackUsage } from 'utils/metrics';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { chartState } from 'atoms/chart';
 
 const relativeTimeOptions = [
@@ -40,8 +40,7 @@ const relativeTimeOptions = [
 ];
 
 const DateRangeSelector = () => {
-  const chart = useRecoilValue(chartState);
-  const setChart = useSetRecoilState(chartState);
+  const [chart, setChart] = useRecoilState(chartState);
   const selectedRange = chart?.selectedDateRange ?? '1M';
 
   if (!chart) {

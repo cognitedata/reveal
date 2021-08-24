@@ -13,7 +13,7 @@ import {
 import { calculateDefaultYAxis } from 'utils/axis';
 import { trackUsage } from 'utils/metrics';
 import { useAddToRecentLocalStorage } from 'utils/recentViewLocalstorage';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { chartState } from 'atoms/chart';
 import TimeseriesSearchHit from './TimeseriesSearchHit';
 import RecentViewSources from './RecentViewSources';
@@ -24,8 +24,7 @@ type Props = {
 export default function SearchTimeseries({ query }: Props) {
   const sdk = useSDK();
   const { chartId } = useParams<{ chartId: string }>();
-  const chart = useRecoilValue(chartState);
-  const setChart = useSetRecoilState(chartState);
+  const [chart, setChart] = useRecoilState(chartState);
   const { addTsToRecent, addAssetToRecent } = useAddToRecentLocalStorage();
   const { data, isLoading, isError, fetchNextPage, hasNextPage } =
     useInfiniteSearch<Timeseries>('timeseries', query, 20, undefined, {

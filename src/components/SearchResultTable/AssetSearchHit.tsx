@@ -15,7 +15,7 @@ import { calculateDefaultYAxis } from 'utils/axis';
 import { trackUsage } from 'utils/metrics';
 import Highlighter from 'react-highlight-words';
 import { useAddToRecentLocalStorage } from 'utils/recentViewLocalstorage';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { chartState } from 'atoms/chart';
 import TimeseriesSearchHit from './TimeseriesSearchHit';
 
@@ -26,8 +26,7 @@ type Props = {
 
 export default function AssetSearchHit({ asset, query = '' }: Props) {
   const sdk = useSDK();
-  const chart = useRecoilValue(chartState);
-  const setChart = useSetRecoilState(chartState);
+  const [chart, setChart] = useRecoilState(chartState);
   const { addAssetToRecent } = useAddToRecentLocalStorage();
   const { data, hasNextPage, fetchNextPage } = useInfiniteList<Timeseries>(
     'timeseries',

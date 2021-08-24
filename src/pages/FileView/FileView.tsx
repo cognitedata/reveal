@@ -19,12 +19,11 @@ import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 import Layers from 'utils/z-index';
 import AssetSearchHit from 'components/SearchResultTable/AssetSearchHit';
 import { trackUsage } from 'utils/metrics';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { chartState } from 'atoms/chart';
 
 export const FileView = () => {
-  const chart = useRecoilValue(chartState);
-  const setChart = useSetRecoilState(chartState);
+  const [chart, setChart] = useRecoilState(chartState);
 
   const { chartId, assetId } = useParams<{
     chartId: string;

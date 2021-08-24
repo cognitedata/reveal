@@ -17,7 +17,7 @@ import {
 } from 'utils/recentViewLocalstorage';
 import { useCdfItems } from 'utils/cogniteFunctions';
 import { useQueryClient } from 'react-query';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { chartState } from 'atoms/chart';
 import TimeseriesSearchHit from './TimeseriesSearchHit';
 import AssetSearchHit from './AssetSearchHit';
@@ -30,8 +30,7 @@ const RecentViewSources = ({ viewType }: Props) => {
   const title = viewType === 'assets' ? 'tags / assets' : 'time series';
   const sdk = useSDK();
   const { chartId } = useParams<{ chartId: string }>();
-  const chart = useRecoilValue(chartState);
-  const setChart = useSetRecoilState(chartState);
+  const [chart, setChart] = useRecoilState(chartState);
   // Takes alot of time to load data
   const { data: rvResults } = useRecentViewLocalStorage(viewType, []);
   const { addTsToRecent, addAssetToRecent } = useAddToRecentLocalStorage();

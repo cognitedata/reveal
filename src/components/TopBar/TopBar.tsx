@@ -7,15 +7,14 @@ import dayjs from 'dayjs';
 import { ChartActions } from 'components/TopBar';
 import EditableText from 'components/EditableText';
 import useChat from 'hooks/useChat';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { chartState } from 'atoms/chart';
 
 const TopBarWrapper = () => {
   const { data: user } = useUserInfo();
   const move = useNavigate();
   const chat = useChat();
-  const chart = useRecoilValue(chartState);
-  const setChart = useSetRecoilState(chartState);
+  const [chart, setChart] = useRecoilState(chartState);
 
   return (
     <TopBarWrap>

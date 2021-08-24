@@ -14,7 +14,7 @@ import {
 } from 'utils/charts';
 import { trackUsage } from 'utils/metrics';
 import { useAddToRecentLocalStorage } from 'utils/recentViewLocalstorage';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { chartState } from 'atoms/chart';
 
 export const AnnotationPopover = ({
@@ -63,8 +63,7 @@ export const AnnotationPopover = ({
 
 export const TimeseriesList = ({ assetId }: { assetId: number }) => {
   const { chartId } = useParams<{ chartId: string }>();
-  const chart = useRecoilValue(chartState);
-  const setChart = useSetRecoilState(chartState);
+  const [chart, setChart] = useRecoilState(chartState);
   const { addTsToRecent, addAssetToRecent } = useAddToRecentLocalStorage();
   const { data: timeseries = [], isLoading } = useAssetTimeseries(assetId);
 

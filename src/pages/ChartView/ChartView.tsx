@@ -34,7 +34,7 @@ import DetailsSidebar from 'components/DetailsSidebar';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { addWorkflow } from 'utils/charts';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { chartState } from 'atoms/chart';
 import SourceRows from './SourceRows';
 
@@ -77,8 +77,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   /**
    * Get local chart context
    */
-  const chart = useRecoilValue(chartState);
-  const setChart = useSetRecoilState(chartState);
+  const [chart, setChart] = useRecoilState(chartState);
 
   /**
    * Method for updating storage value of chart
