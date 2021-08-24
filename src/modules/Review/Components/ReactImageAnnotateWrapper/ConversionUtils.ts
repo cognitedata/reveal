@@ -44,7 +44,7 @@ export const convertAnnotations = (
             String(annotation.id),
             (pointRegion as unknown as KeypointVertex).caption,
           ],
-          source: annotation.annotationType,
+          source: 'user_defined',
           status: AnnotationStatus.Verified,
           ...pointRegion,
         }))
@@ -92,7 +92,7 @@ export const convertKeyPointCollectionToAnnotationStub = (
     },
     annotatedResourceId: 0,
     annotatedResourceType: 'file',
-    annotationType: 'vision/objectdetection', // TODO: Change this to user-defined or something similar
+    annotationType: 'user_defined',
     color: '',
     createdTime: 0,
     label: '',

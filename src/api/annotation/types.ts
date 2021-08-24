@@ -1,5 +1,10 @@
 import { IdEither } from '@cognite/cdf-sdk-singleton';
-import { Annotation, AnnotationRegion, LinkedAnnotation } from 'src/api/types';
+import {
+  Annotation,
+  AnnotationMetadata,
+  AnnotationRegion,
+  LinkedAnnotation,
+} from 'src/api/types';
 import { AnnotationStatus } from 'src/utils/AnnotationUtils';
 
 export interface AnnotationListRequest {
@@ -18,8 +23,11 @@ export interface AnnotationListRequest {
 
 export type UnsavedAnnotation = Omit<
   Annotation,
-  'id' | 'createdTime' | 'lastUpdatedTime'
-> & { data?: { useCache?: boolean; threshold?: number } };
+  'id' | 'createdTime' | 'lastUpdatedTime' | 'status'
+> & {
+  data?: { useCache?: boolean; threshold?: number };
+  status?: AnnotationStatus;
+};
 
 export interface AnnotationCreateRequest {
   items: UnsavedAnnotation[];
@@ -30,10 +38,10 @@ export interface AnnotationUpdateRequest {
   items: {
     id: number;
     update: {
-      text: annotationUpdateField<string>;
-      status: annotationUpdateField<AnnotationStatus>;
-      region: annotationUpdateField<AnnotationRegion>;
-      data: annotationUpdateField<object>;
+      text?: annotationUpdateField<string>;
+      status?: annotationUpdateField<AnnotationStatus>;
+      region?: annotationUpdateField<AnnotationRegion>;
+      data?: annotationUpdateField<AnnotationMetadata>;
     };
   }[];
 }

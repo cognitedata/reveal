@@ -3,7 +3,7 @@ import { Button, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { setCollectionSettings } from 'src/modules/Review/imagePreviewSlice';
+import { SaveAnnotationTemplates } from 'src/store/thunks/SaveAnnotationTemplates';
 import { Shapes } from './Body/Shapes';
 import { AnnotationCollection } from './CollectionSettingsTypes';
 import { Keypoints } from './Body/Keypoints';
@@ -20,7 +20,7 @@ export const CollectionSettingsModalContent = ({
   );
 
   const setCollections = (collection: AnnotationCollection) => {
-    dispatch(setCollectionSettings(collection));
+    dispatch(SaveAnnotationTemplates(collection));
   };
 
   return (
@@ -69,7 +69,7 @@ const Body = styled.div`
   display: grid;
   grid-template-columns: 50% 50%;
   grid-gap: 8px;
-  margin: 17px 0px;
+  margin: 17px 0;
 `;
 const LeftBody = styled.div`
   border: 1px solid #d9d9d9;

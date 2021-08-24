@@ -24,12 +24,11 @@ export type Vertex = {
 export type AnnotationType =
   | 'vision/ocr'
   | 'vision/tagdetection'
-  | 'vision/objectdetection';
-export type AnnotationSource =
-  | 'vision/ocr' // TODO: use contextApi instead?
-  | 'vision/tagdetection'
   | 'vision/objectdetection'
-  | 'user';
+  | 'user_defined'
+  | 'CDF_ANNOTATION_TEMPLATE';
+
+export type AnnotationSource = 'context_api' | 'user';
 
 export type AnnotationRegion = {
   shape: RegionType;

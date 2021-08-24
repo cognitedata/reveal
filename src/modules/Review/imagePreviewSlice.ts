@@ -18,6 +18,8 @@ import { CreateAnnotations } from 'src/store/thunks/CreateAnnotations';
 import { AnnotationDetectionJobUpdate } from 'src/store/thunks/AnnotationDetectionJobUpdate';
 import { UpdateAnnotations } from 'src/store/thunks/UpdateAnnotations';
 import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
+import { PopulateAnnotationTemplates } from 'src/store/thunks/PopulateAnnotationTemplates';
+import { SaveAnnotationTemplates } from 'src/store/thunks/SaveAnnotationTemplates';
 
 type KeyPointState = {
   id: string;
@@ -119,12 +121,6 @@ const imagePreviewSlice = createSlice({
     deselectAllKeypoints(state) {
       state.keypointMap.selectedIds = [];
     },
-    setCollectionSettings(state, action: PayloadAction<AnnotationCollection>) {
-      state.predefinedCollections.predefinedKeypoints =
-        action.payload.predefinedKeypoints;
-      state.predefinedCollections.predefinedShapes =
-        action.payload.predefinedShapes;
-    },
     onCreateOrUpdateShape(state, action: PayloadAction<string>) {
       state.lastShape = action.payload;
     },
@@ -206,6 +202,7 @@ const imagePreviewSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+    // Matchers
     builder.addMatcher(
       isAnyOf(
         addAnnotations,
@@ -244,6 +241,16 @@ const imagePreviewSlice = createSlice({
         });
       }
     );
+
+    builder.addMatcher(
+      isAnyOf(
+        PopulateAnnotationTemplates.fulfilled,
+        SaveAnnotationTemplates.fulfilled
+      ),
+      (state, action) => {
+        state.predefinedCollections = action.payload;
+      }
+    );
   },
 });
 export const {
@@ -253,7 +260,6 @@ export const {
   setCollectionStatus,
   keypointSelectStatusChange,
   deselectAllKeypoints,
-  setCollectionSettings,
   onCreateOrUpdateShape,
   onCreateKeyPoint,
   onUpdateKeyPoint,

@@ -10,7 +10,6 @@ import { v3Client as sdk } from '@cognite/cdf-sdk-singleton';
 import {
   AnnotationStatus,
   ModelTypeAnnotationTypeMap,
-  ModelTypeSourceMap,
 } from 'src/utils/AnnotationUtils';
 import { UnsavedAnnotation } from 'src/api/annotation/types';
 
@@ -43,9 +42,9 @@ export function getUnsavedAnnotation(
   text: string,
   modelType: VisionAPIType,
   fileId: number,
+  source: AnnotationSource,
   region?: AnnotationRegion,
   status = AnnotationStatus.Unhandled,
-  source?: AnnotationSource,
   data?: AnnotationMetadata,
   assetId?: number,
   assetExternalId?: string,
@@ -62,7 +61,7 @@ export function getUnsavedAnnotation(
         })),
       }) ||
       undefined,
-    source: source || ModelTypeSourceMap[modelType],
+    source,
     status,
     annotationType: ModelTypeAnnotationTypeMap[modelType],
     annotatedResourceId: fileId,
@@ -91,3 +90,16 @@ export function validateAnnotation(
   }
   return false;
 }
+
+export const getFieldOrSetNull = (
+  value: any
+): { set: any } | { setNull: true } => {
+  if (value === undefined || value === null) {
+    return {
+      setNull: true,
+    };
+  }
+  return {
+    set: value,
+  };
+};

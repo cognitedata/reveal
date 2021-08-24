@@ -66,11 +66,6 @@ export const ModelTypeIconMap: { [key: number]: string } = {
   [VisionAPIType.ObjectDetection]: 'Scan',
 };
 
-export const ModelTypeSourceMap: { [key: number]: AnnotationSource } = {
-  [VisionAPIType.OCR]: 'vision/ocr',
-  [VisionAPIType.TagDetection]: 'vision/tagdetection',
-  [VisionAPIType.ObjectDetection]: 'vision/objectdetection',
-};
 export const ModelTypeAnnotationTypeMap: { [key: number]: AnnotationType } = {
   [VisionAPIType.OCR]: 'vision/ocr',
   [VisionAPIType.TagDetection]: 'vision/tagdetection',
@@ -81,6 +76,8 @@ export const AnnotationTypeModelTypeMap = {
   'vision/ocr': VisionAPIType.OCR,
   'vision/tagdetection': VisionAPIType.TagDetection,
   'vision/objectdetection': VisionAPIType.ObjectDetection,
+  user_defined: VisionAPIType.ObjectDetection,
+  CDF_ANNOTATION_TEMPLATE: VisionAPIType.ObjectDetection,
 };
 
 export class AnnotationUtils {
@@ -214,7 +211,7 @@ export class AnnotationUtils {
       return VisionAPIType.TagDetection;
     }
 
-    if (ann.source === 'vision/ocr') {
+    if (ann.annotationType === 'vision/ocr') {
       return VisionAPIType.OCR;
     }
     return VisionAPIType.ObjectDetection;

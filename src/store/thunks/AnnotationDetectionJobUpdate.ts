@@ -18,7 +18,13 @@ export const AnnotationDetectionJobUpdate = createAsyncThunk<
 
       if (annotations && annotations.length) {
         const unsavedAnnotationsForFile = annotations.map((ann) =>
-          getUnsavedAnnotation(ann.text, job.type, annResult.fileId, ann.region)
+          getUnsavedAnnotation(
+            ann.text,
+            job.type,
+            annResult.fileId,
+            'context_api',
+            ann.region
+          )
         );
         unsavedAnnotations = unsavedAnnotations.concat(
           unsavedAnnotationsForFile

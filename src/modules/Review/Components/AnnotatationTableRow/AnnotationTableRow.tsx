@@ -1,10 +1,7 @@
 import { AnnotationStatus, ModelTypeIconMap } from 'src/utils/AnnotationUtils';
 import {
   AllIconTypes,
-  Col,
   Icon,
-  Input,
-  Row,
   SegmentedControl,
   Tooltip,
 } from '@cognite/cogs.js';
@@ -14,13 +11,11 @@ import styled from 'styled-components';
 import { VisionAPIType } from 'src/api/types';
 import { AnnotationTableRowProps } from 'src/modules/Review/types';
 
-const StyledRow = styled(Row)`
-  width: 100%;
-  justify-content: space-around;
+const StyledRow = styled.div`
   display: flex;
-  padding-left: 5px;
-  padding-right: 5px;
-  gap: 12px !important;
+  width: 100%;
+  padding: 7px 5px;
+  gap: 12px;
   &:hover {
     background-color: var(--cogs-greyscale-grey2);
   }
@@ -29,18 +24,9 @@ const StyledRow = styled(Row)`
   }
 `;
 
-const StyledCol = styled(Col)`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const ColContainer = styled.div`
+const ApproveBtnContainer = styled.div`
   height: 100%;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex: 0 0 fit-content;
 `;
 
 const getIconType = (annotation: {
@@ -61,123 +47,141 @@ export const AnnotationTableRow = ({
 }: AnnotationTableRowProps) => {
   return (
     <StyledRow
-      cols={6}
       key={annotation.id}
       onClick={() => onSelect(annotation.id)}
       className={annotation.selected ? 'active' : ''}
     >
-      <StyledCol span={2}>
-        <ColContainer onClick={(evt) => evt.stopPropagation()}>
-          <StyledSegmentedControl
-            status={annotation.status}
-            className="approvalButton"
-            currentKey={
-              // eslint-disable-next-line no-nested-ternary
-              annotation.status === AnnotationStatus.Verified
-                ? 'verified'
-                : annotation.status === AnnotationStatus.Rejected
-                ? 'rejected'
-                : undefined
+      <ApproveBtnContainer onClick={(evt) => evt.stopPropagation()}>
+        <StyledSegmentedControl
+          status={annotation.status}
+          className="approvalButton"
+          currentKey={
+            // eslint-disable-next-line no-nested-ternary
+            annotation.status === AnnotationStatus.Verified
+              ? 'verified'
+              : annotation.status === AnnotationStatus.Rejected
+              ? 'rejected'
+              : undefined
+          }
+          onButtonClicked={(key) => {
+            if (key === 'verified') {
+              onApprove(annotation, AnnotationStatus.Verified);
             }
-            onButtonClicked={(key) => {
-              if (key === 'verified') {
-                onApprove(annotation, AnnotationStatus.Verified);
-              }
-              if (key === 'rejected') {
-                onApprove(annotation, AnnotationStatus.Rejected);
-              }
-            }}
-          >
-            <SegmentedControl.Button
-              type="primary"
-              icon="ThumbsUp"
-              key="verified"
-              aria-label="verify annotation"
-              className="approveButton"
-            >
-              True
-            </SegmentedControl.Button>
-            <SegmentedControl.Button
-              type="primary"
-              icon="ThumbsDown"
-              key="rejected"
-              aria-label="reject annotation"
-              className="rejectButton"
-            >
-              False
-            </SegmentedControl.Button>
-          </StyledSegmentedControl>
-        </ColContainer>
-      </StyledCol>
-      <StyledCol span={3}>
-        <AnnotationLbl
-          style={{
-            color: annotation.color,
+            if (key === 'rejected') {
+              onApprove(annotation, AnnotationStatus.Rejected);
+            }
           }}
         >
-          <Tooltip
-            content={<span data-testid="text-content">{annotation.text}</span>}
+          <SegmentedControl.Button
+            type="primary"
+            icon="ThumbsUp"
+            key="verified"
+            aria-label="verify annotation"
+            className="approveButton"
           >
-            <Input
-              readOnly
-              fullWidth
+            True
+          </SegmentedControl.Button>
+          <SegmentedControl.Button
+            type="primary"
+            icon="ThumbsDown"
+            key="rejected"
+            aria-label="reject annotation"
+            className="rejectButton"
+          >
+            False
+          </SegmentedControl.Button>
+        </StyledSegmentedControl>
+      </ApproveBtnContainer>
+      <AnnotationLabelContainer>
+        <Tooltip
+          content={<span data-testid="text-content">{annotation.text}</span>}
+        >
+          <AnnotationLbl
+            style={{
+              color: annotation.color,
+            }}
+          >
+            <Icon
+              type={getIconType(annotation)}
               style={{
-                width: `100%`,
-                borderColor: annotation.color,
+                color: annotation.color,
               }}
-              value={annotation.text}
-              icon={
-                <Icon
-                  type={getIconType(annotation)}
-                  style={{
-                    color: annotation.color,
-                  }}
-                />
-              }
-              subComponentPlacement="right"
-              customSubComponent={
-                !annotation.show
-                  ? () => {
-                      return (
-                        <Icon
-                          type="EyeHide"
-                          style={{ color: '#595959' }}
-                          onClick={() => {
-                            onVisibilityChange(annotation.id);
-                          }}
-                        />
-                      );
-                    }
-                  : undefined
-              }
             />
-          </Tooltip>
-        </AnnotationLbl>
-      </StyledCol>
-      <StyledCol span={1}>
-        <div onClick={(evt) => evt.stopPropagation()} aria-hidden="true">
-          <AnnotationActionMenuExtended
-            showPolygon={annotation.show}
-            disableShowPolygon={annotation.status === AnnotationStatus.Rejected}
-            // handleEditLabel={() => {}}
-            // handleEditPolygon={() => {}}
-            handleVisibility={() => {
+            <span
+              style={{
+                padding: '5px 10px',
+              }}
+            >
+              {annotation.text}
+            </span>
+            {!annotation.show
+              ? () => {
+                  return (
+                    <Icon
+                      type="EyeHide"
+                      style={{ color: '#595959', padding: 5 }}
+                      onClick={() => {
+                        onVisibilityChange(annotation.id);
+                      }}
+                    />
+                  );
+                }
+              : undefined}
+          </AnnotationLbl>
+        </Tooltip>
+      </AnnotationLabelContainer>
+      <ShowHideIconContainer>
+        {!annotation.show ? (
+          <Icon
+            type="EyeHide"
+            style={{ color: '#595959' }}
+            onClick={() => {
               onVisibilityChange(annotation.id);
             }}
-            handleAnnotationDelete={() => {
-              onDelete(annotation.id);
-            }}
           />
-        </div>
-      </StyledCol>
+        ) : undefined}
+      </ShowHideIconContainer>
+      <ActionMenuContainer
+        onClick={(evt) => evt.stopPropagation()}
+        aria-hidden="true"
+      >
+        <AnnotationActionMenuExtended
+          showPolygon={annotation.show}
+          disableShowPolygon={annotation.status === AnnotationStatus.Rejected}
+          // handleEditLabel={() => {}}
+          // handleEditPolygon={() => {}}
+          handleVisibility={() => {
+            onVisibilityChange(annotation.id);
+          }}
+          handleAnnotationDelete={() => {
+            onDelete(annotation.id);
+          }}
+        />
+      </ActionMenuContainer>
     </StyledRow>
   );
 };
 
 const AnnotationLbl = styled.div`
   width: 100%;
-  padding: 10px 10px;
-  box-sizing: content-box;
+  display: flex;
+  align-items: center;
+  padding: 0 5px;
+`;
+
+const ShowHideIconContainer = styled.div`
+  display: flex;
+  align-items: center;
+  flex: 0 0 36px;
+  justify-content: center;
+`;
+
+const AnnotationLabelContainer = styled.div`
+  flex: 1 1 auto;
+`;
+
+const ActionMenuContainer = styled.div`
+  flex: 0 0 36px;
 `;
 
 const StyledSegmentedControl = styled(SegmentedControl)<{ status: string }>`

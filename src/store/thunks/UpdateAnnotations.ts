@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { AnnotationApi } from 'src/api/annotation/AnnotationApi';
-import { validateAnnotation } from 'src/api/utils';
+import { getFieldOrSetNull, validateAnnotation } from 'src/api/utils';
 import { AnnotationUtils, VisionAnnotation } from 'src/utils/AnnotationUtils';
 import { Annotation } from 'src/api/types';
 
@@ -43,14 +43,3 @@ export const UpdateAnnotations = createAsyncThunk<
     AnnotationUtils.convertToVisionAnnotations(responseAnnotations);
   return updatedVisionAnnotations;
 });
-
-const getFieldOrSetNull = (value: any): { set: any } | { setNull: true } => {
-  if (value === undefined || value === null) {
-    return {
-      setNull: true,
-    };
-  }
-  return {
-    set: value,
-  };
-};

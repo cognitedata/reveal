@@ -8,10 +8,14 @@ export type Keypoint = {
 export type KeypointCollection = {
   collectionName: string;
   keypoints?: Keypoint[];
+  lastUpdated?: number;
+  id?: number;
 };
 export type Shape = {
   shapeName: string;
   color: string;
+  lastUpdated?: number;
+  id?: number;
 };
 
 export type AnnotationCollection = {

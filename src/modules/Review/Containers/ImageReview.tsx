@@ -103,7 +103,7 @@ const AnnotationContainer = styled.div`
   height: 100%;
   width: 100%;
   display: grid;
-  grid-template-columns: 68% 32%;
+  grid-template-columns: auto minmax(500px, 32%);
   grid-template-rows: 100%;
 `;
 

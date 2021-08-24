@@ -20,6 +20,7 @@ import { StatusToolBar } from 'src/modules/Process/Containers/StatusToolBar';
 import { fetchFilesById } from 'src/store/thunks/fetchFilesById';
 import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
 import { CollectionSettingsModal } from 'src/modules/Common/Components/CollectionSettingsModal/CollectionSettingsModal';
+import { PopulateAnnotationTemplates } from 'src/store/thunks/PopulateAnnotationTemplates';
 
 const DeleteButton = (props: { onConfirm: () => void }) => (
   <div style={{ minWidth: '120px' }}>
@@ -72,6 +73,10 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
       dispatch(RetrieveAnnotations([+fileId]));
     }
   }, [file]);
+
+  useEffect(() => {
+    dispatch(PopulateAnnotationTemplates());
+  }, []);
 
   if (!file) {
     return null;

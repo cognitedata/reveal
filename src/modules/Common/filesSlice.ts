@@ -22,6 +22,7 @@ import { DeleteAnnotations } from 'src/store/thunks/DeleteAnnotations';
 import { UpdateAnnotations } from 'src/store/thunks/UpdateAnnotations';
 import { setSelectedAllFiles } from 'src/store/commonActions';
 import { makeReducerSelectAllFilesWithFilter } from 'src/store/commonReducers';
+import { SaveAnnotationTemplates } from 'src/store/thunks/SaveAnnotationTemplates';
 import { CDFStatusModes } from '../Common/Components/CDFStatus/CDFStatus';
 
 export type VisionAsset = Omit<
@@ -209,7 +210,8 @@ const filesSlice = createSlice({
         RetrieveAnnotations,
         DeleteAnnotations,
         UpdateAnnotations,
-        UpdateFiles
+        UpdateFiles,
+        SaveAnnotationTemplates
       ),
       (state, { error }) => {
         if (error && error.message) {

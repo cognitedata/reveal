@@ -45,16 +45,19 @@ export default function SummaryStep() {
     if (arr[1].label === 'person' && !personFiles.includes(aID)) {
       personFiles.push(aID);
     }
-    if (arr[1].source === 'vision/ocr' && !textNumber.includes(aID)) {
+    if (arr[1].annotationType === 'vision/ocr' && !textNumber.includes(aID)) {
       textNumber.push(aID);
     }
     if (
-      arr[1].source === 'vision/objectdetection' &&
+      arr[1].annotationType === 'vision/objectdetection' &&
       !objectNumber.includes(aID)
     ) {
       objectNumber.push(aID);
     }
-    if (arr[1].source === 'vision/tagdetection' && !tagNumber.includes(aID)) {
+    if (
+      arr[1].annotationType === 'vision/tagdetection' &&
+      !tagNumber.includes(aID)
+    ) {
       tagNumber.push(aID);
     }
   });
@@ -490,7 +493,7 @@ const StatsCarouselLeft = styled.div`
 const FileIconContainer = styled.div`
   margin-top: auto;
   padding: 5px;
-  bottom: 0px;
+  bottom: 0;
 `;
 
 const FancyButton = styled.button`
@@ -505,7 +508,7 @@ const PercentBarStyle = styled.div`
   height: 15px;
   width: 300px;
   margin: 10px;
-  border-radius: 2px 0px 0px 2px;
+  border-radius: 2px 0 0 2px;
 `;
 
 const FillerStyleLeft = styled.div`

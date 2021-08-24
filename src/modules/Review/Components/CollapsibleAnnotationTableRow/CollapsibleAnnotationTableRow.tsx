@@ -7,35 +7,22 @@ import { KeypointVertex } from 'src/utils/AnnotationUtils';
 
 const StyledRow = styled(Row)`
   width: 100%;
-  justify-content: space-around;
-  display: flex;
   padding-left: 5px;
   padding-right: 5px;
   gap: 12px !important;
-  &:hover {
-    background-color: var(--cogs-greyscale-grey2);
-  }
-  &.active {
-    background-color: var(--cogs-midblue-6);
-  }
 `;
 
 const StyledCol = styled(Col)`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
+  align-self: center;
+  justify-self: center;
 
-const ColorContainer = styled.div`
-  height: 100%;
-  width: 168px;
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
+  &.label {
+    align-self: center;
+    justify-self: self-start;
+  }
 `;
 
 const AnnotationTextContainer = styled.div`
-  width: 255px;
   padding: 10px 10px;
   box-sizing: content-box;
 `;
@@ -80,10 +67,10 @@ export const CollapsibleAnnotationTableRow = ({
             />
           }
           key={1}
+          className={annotation.selected ? 'active' : ''}
         >
           {annotation.region.vertices.map((keypoint) => (
-            <StyledRow
-              cols={6}
+            <CollapseRowContainer
               key={(keypoint as KeypointVertex).id}
               onClick={() => {
                 if (onKeyPointSelect) {
@@ -92,40 +79,42 @@ export const CollapsibleAnnotationTableRow = ({
               }}
               className={(keypoint as KeypointVertex).selected ? 'active' : ''}
             >
-              <StyledCol span={2}>
-                <ColorContainer>
+              <StyledRow cols={12}>
+                <StyledCol span={1}>
                   <ColorBox color={(keypoint as KeypointVertex).color} />
+                </StyledCol>
+                <StyledCol span={1}>
                   <div>{(keypoint as KeypointVertex).order}</div>
-                </ColorContainer>
-              </StyledCol>
-              <StyledCol span={3}>
-                <AnnotationTextContainer>
-                  <AnnotationText>
-                    {(keypoint as KeypointVertex).caption}
-                  </AnnotationText>
-                </AnnotationTextContainer>
-              </StyledCol>
-              {/* <StyledCol span={1}> */}
-              {/*  <AnnotationActionMenuExtended */}
-              {/*    showPolygon={annotation.show} */}
-              {/*    disableShowPolygon={false} */}
-              {/*    handleAnnotationDelete={() => { */}
-              {/*      if (onKeyPointDelete) { */}
-              {/*        onKeyPointDelete((keypoint as KeypointVertex).id); */}
-              {/*      } */}
-              {/*    }} */}
-              {/*    deleteMenuText="Delete keypoint" */}
-              {/*    deleteConfirmText="Are you sure you want to delete this keypoint?" */}
-              {/*  /> */}
-              {/* </StyledCol> */}
-            </StyledRow>
+                </StyledCol>
+                <StyledCol span={10} className="label">
+                  <AnnotationTextContainer>
+                    <AnnotationText>
+                      {(keypoint as KeypointVertex).caption}
+                    </AnnotationText>
+                  </AnnotationTextContainer>
+                </StyledCol>
+                {/* <StyledCol span={1}> */}
+                {/*  <AnnotationActionMenuExtended */}
+                {/*    showPolygon={annotation.show} */}
+                {/*    disableShowPolygon={false} */}
+                {/*    handleAnnotationDelete={() => { */}
+                {/*      if (onKeyPointDelete) { */}
+                {/*        onKeyPointDelete((keypoint as KeypointVertex).id); */}
+                {/*      } */}
+                {/*    }} */}
+                {/*    deleteMenuText="Delete keypoint" */}
+                {/*    deleteConfirmText="Are you sure you want to delete this keypoint?" */}
+                {/*  /> */}
+                {/* </StyledCol> */}
+              </StyledRow>
+            </CollapseRowContainer>
           ))}
         </StyledCollapsePanel>
       </Collapse>
     );
   }
   return (
-    <TableRowContainer>
+    <TableRowContainer className={annotation.selected ? 'active' : ''}>
       <AnnotationTableRow
         annotation={annotation}
         onSelect={onSelect}
@@ -138,18 +127,42 @@ export const CollapsibleAnnotationTableRow = ({
 };
 
 const TableRowContainer = styled.div`
-  padding: 0 16px 0 28px;
+  padding: 0 0 0 16px;
+  &:hover {
+    background-color: var(--cogs-greyscale-grey2);
+  }
+  &.active {
+    background-color: var(--cogs-midblue-6);
+  }
+`;
+
+const CollapseRowContainer = styled.div`
+  padding: 0 30px;
+
+  &:hover {
+    background-color: var(--cogs-greyscale-grey2);
+  }
+  &.active {
+    background-color: var(--cogs-midblue-6);
+  }
 `;
 
 const StyledCollapsePanel = styled(Collapse.Panel)`
   .rc-collapse-header {
-    padding: 0 16px;
+    padding: 0 0 0 16px;
   }
   .rc-collapse-content {
-    padding: 0 16px 0 28px;
+    padding: 0;
   }
   .rc-collapse-content-box {
     margin: 0;
     width: 100%;
+  }
+
+  &:hover {
+    background-color: var(--cogs-greyscale-grey2);
+  }
+  &.active {
+    background-color: var(--cogs-midblue-6);
   }
 `;

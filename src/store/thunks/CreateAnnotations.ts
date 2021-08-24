@@ -21,9 +21,9 @@ export const CreateAnnotations = createAsyncThunk<
       annotation.text,
       VisionAPIType.ObjectDetection,
       fileId,
+      'user',
       annotation.region,
       AnnotationStatus.Verified,
-      'user',
       annotation.data
     ),
   ];
