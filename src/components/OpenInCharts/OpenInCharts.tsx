@@ -45,12 +45,15 @@ export const OpenInCharts: FC = () => {
   const [initiated, setInitiated] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
   const [currentValue, setCurrentValue] = useState(options[0]);
-  const [chart, setChart] = useState<{ label: string; value: string }>({
+  const [selectedChart, setSelectedChart] = useState<{
+    label: string;
+    value: string;
+  }>({
     label: '',
     value: '',
   });
 
-  const { data: existingChart } = useChart(chart?.value);
+  const { data: existingChart } = useChart(selectedChart?.value);
 
   const [ts, setTs] = useState<Timeseries[]>([]);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
@@ -104,7 +107,7 @@ export const OpenInCharts: FC = () => {
 
   useEffect(() => {
     if (allCharts.length > 0) {
-      setChart({ label: allCharts[0].name, value: allCharts[0].id });
+      setSelectedChart({ label: allCharts[0].name, value: allCharts[0].id });
     }
   }, [allCharts]);
 
@@ -286,10 +289,7 @@ export const OpenInCharts: FC = () => {
                       />
                       <InfoContainer>
                         <ResourceNameWrapper>
-                          <Icon
-                            type="ResourceTimeseries"
-                            style={{ minWidth: 14 }}
-                          />
+                          <Icon type="Timeseries" style={{ minWidth: 14 }} />
                           <span style={{ marginLeft: 5 }}>{t.name}</span>
                         </ResourceNameWrapper>
                         <Description>{t.description}</Description>
@@ -357,13 +357,13 @@ export const OpenInCharts: FC = () => {
               </label>
             </div>
             <Select
-              value={chart}
+              value={selectedChart}
               options={allCharts.map(({ id, name }) => ({
                 label: name,
                 value: id,
               }))}
               onChange={(val: { label: string; value: string }) => {
-                setChart(val);
+                setSelectedChart(val);
                 setCurrentValue(options[1]);
               }}
               closeMenuOnSelect

@@ -6,6 +6,7 @@ import {
   ChartTimeSeries,
   FunctionCallStatus,
 } from 'reducers/charts/types';
+import { useDebounce } from 'use-debounce';
 import {
   AllIconTypes,
   Button,
@@ -49,7 +50,7 @@ const renderStatusIcon = (status?: FunctionCallStatus) => {
     case 'Running':
       return <Icon type="Loading" />;
     case 'Completed':
-      return <Icon type="Check" />;
+      return <Icon type="Checkmark" />;
     case 'Failed':
     case 'Timeout':
       return <Icon type="Close" />;
@@ -171,10 +172,14 @@ export default function TimeSeriesRow({
   } = timeseries;
   const [isEditingName, setIsEditingName] = useState<boolean>(false);
 
-  const prevDateFromTo = usePrevious<{ dateFrom: string; dateTo: string }>({
-    dateFrom,
-    dateTo,
-  });
+  /**
+   * Using strings to avoid custom equality check
+   */
+  const datesAsString = JSON.stringify({ dateFrom, dateTo });
+  const [debouncedDatesAsString] = useDebounce(datesAsString, 3000);
+  const debouncedPrevDatesAsString = usePrevious<string>(
+    debouncedDatesAsString
+  );
 
   // Increasing this will cause a fresh render where the dropdown is closed
   const update = (_tsId: string, diff: Partial<ChartTimeSeries>) =>
@@ -259,8 +264,8 @@ export default function TimeSeriesRow({
   const statisticsForSource = statistics[0];
 
   const { data: linkedAsset } = useLinkedAsset(tsExternalId, true);
-
   const { mutate: callFunction } = useCallFunction('individual_calc-master');
+  const memoizedCallFunction = useCallback(callFunction, [callFunction]);
 
   const updateStatistics = useCallback(
     (diff: Partial<ChartTimeSeries>) => {
@@ -283,8 +288,8 @@ export default function TimeSeriesRow({
   );
 
   const datesChanged =
-    (prevDateFromTo && prevDateFromTo.dateFrom !== dateFrom) ||
-    (prevDateFromTo && prevDateFromTo.dateTo !== dateTo);
+    debouncedPrevDatesAsString &&
+    debouncedPrevDatesAsString !== debouncedDatesAsString;
 
   useEffect(() => {
     if (!datesChanged) {
@@ -296,7 +301,7 @@ export default function TimeSeriesRow({
       }
     }
 
-    callFunction(
+    memoizedCallFunction(
       {
         data: {
           calculation_input: {
@@ -325,7 +330,7 @@ export default function TimeSeriesRow({
       }
     );
   }, [
-    callFunction,
+    memoizedCallFunction,
     dateFrom,
     dateTo,
     timeseries,
@@ -454,7 +459,7 @@ export default function TimeSeriesRow({
           <Dropdown content={<AppearanceDropdown update={updateAppearance} />}>
             <Button
               type="ghost"
-              icon="Timeseries"
+              icon="ResourceTimeseries"
               style={{ height: 28 }}
               aria-label="timeseries"
             />
@@ -477,7 +482,7 @@ export default function TimeSeriesRow({
           >
             <Button
               type="ghost"
-              icon="Delete"
+              icon="Trash"
               style={{ height: 28 }}
               aria-label="delete"
             />

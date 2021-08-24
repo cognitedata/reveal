@@ -6,6 +6,7 @@ import {
   ChartTimeSeries,
   Call,
 } from 'reducers/charts/types';
+import { useDebounce } from 'use-debounce';
 import {
   Button,
   Dropdown,
@@ -25,6 +26,7 @@ import { AppearanceDropdown } from 'components/AppearanceDropdown';
 import { UnitDropdown } from 'components/UnitDropdown';
 import { getHash } from 'utils/hash';
 import { DraggableProvided } from 'react-beautiful-dnd';
+import { isEqual } from 'lodash';
 import {
   SourceItem,
   SourceSquare,
@@ -39,7 +41,7 @@ const renderStatusIcon = (status?: FunctionCallStatus) => {
     case 'Running':
       return <Icon type="Loading" />;
     case 'Completed':
-      return <Icon type="Check" />;
+      return <Icon type="Checkmark" />;
     case 'Failed':
     case 'Timeout':
       return <Icon type="Close" />;
@@ -84,7 +86,6 @@ export default function WorkflowRow({
     mutate(updateWorkflow(chart, wfId, diff));
   };
 
-  const { dateTo, dateFrom } = chart;
   const { nodes, connections } = workflow;
   const steps = useMemo(
     () =>
@@ -92,6 +93,14 @@ export default function WorkflowRow({
         ? getStepsFromWorkflow(chart, nodes, connections)
         : [],
     [chart, nodes, connections]
+  );
+
+  const [{ dateFrom, dateTo }] = useDebounce(
+    { dateFrom: chart.dateFrom, dateTo: chart.dateTo },
+    2000,
+    {
+      equalityFn: isEqual,
+    }
   );
 
   const computation = useMemo(
@@ -284,7 +293,7 @@ export default function WorkflowRow({
             >
               <Button
                 type="ghost"
-                icon="Timeseries"
+                icon="ResourceTimeseries"
                 style={{ height: 28 }}
                 aria-label="timeseries"
               />
@@ -305,7 +314,7 @@ export default function WorkflowRow({
             >
               <Button
                 type="ghost"
-                icon="Delete"
+                icon="Trash"
                 style={{ height: 28 }}
                 aria-label="delete"
               />

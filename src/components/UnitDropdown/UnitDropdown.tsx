@@ -119,7 +119,7 @@ export const UnitDropdown = ({
       }
     >
       <Button
-        icon="Down"
+        icon="ChevronDownCompact"
         type="ghost"
         iconPlacement="right"
         style={{ height: 28 }}

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import styled from 'styled-components/macro';
 import {
   Button,
@@ -7,13 +7,13 @@ import {
   Title,
   Menu,
   Body,
-  toast,
   Input,
 } from '@cognite/cogs.js';
 import { Chart } from 'reducers/charts/types';
 
-import { useUpdateChart } from 'hooks/firebase';
 import { trackUsage } from 'utils/metrics';
+import { useRecoilState } from 'recoil';
+import { chartState } from 'atoms/chart';
 
 interface SharingDropdownProps {
   chart: Chart;
@@ -21,25 +21,18 @@ interface SharingDropdownProps {
 }
 
 const SharingDropdown = ({ chart, disabled = false }: SharingDropdownProps) => {
+  const [, setChart] = useRecoilState(chartState);
   const [shareIconType, setShareIconType] = useState<
     'Copy' | 'Checkmark' | 'ErrorStroked'
   >('Copy');
   const shareableLink = window.location.href;
-  const { mutate: updateChart, isError } = useUpdateChart();
-
-  useEffect(() => {
-    if (isError) {
-      toast.error('Unable to change chart access - try again!', {
-        toastId: 'share-error',
-      });
-    }
-  }, [isError]);
 
   const handleToggleChartAccess = async () => {
-    updateChart({
-      ...chart,
-      public: !chart.public,
-    });
+    setChart((oldChart) => ({
+      ...oldChart!,
+      public: !oldChart?.public,
+    }));
+
     trackUsage('ChartView.ChangeChartAccess', {
       state: chart.public ? 'public' : 'private',
     });

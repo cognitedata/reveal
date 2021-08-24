@@ -3,8 +3,7 @@ import styled from 'styled-components/macro';
 import { useScreenshot } from 'use-screenshot-hook';
 import { Button, toast, Tooltip, TopBar } from '@cognite/cogs.js';
 import { useNavigate } from 'hooks';
-import { useChart, useDeleteChart, useUpdateChart } from 'hooks/firebase';
-import { useParams } from 'react-router-dom';
+import { useDeleteChart, useUpdateChart } from 'hooks/firebase';
 import {
   duplicate,
   downloadImage,
@@ -13,13 +12,13 @@ import {
 import SharingDropdown from 'components/SharingDropdown/SharingDropdown';
 import { trackUsage } from 'utils/metrics';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
+import { useRecoilState } from 'recoil';
+import { chartState } from 'atoms/chart';
 
 export const ChartActions = () => {
   const { takeScreenshot } = useScreenshot();
   const move = useNavigate();
-
-  const { chartId } = useParams<{ chartId: string }>();
-  const { data: chart } = useChart(chartId);
+  const [chart] = useRecoilState(chartState);
   const { data: login } = useUserInfo();
 
   const {

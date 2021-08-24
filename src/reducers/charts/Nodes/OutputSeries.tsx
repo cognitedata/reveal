@@ -5,7 +5,8 @@ import {
   ConfigPanelComponentProps,
   StorableNode,
 } from 'reducers/charts/types';
-import { useUpdateChart } from 'hooks/firebase';
+import { useRecoilState } from 'recoil';
+import { chartState } from 'atoms/chart';
 
 export const effectId = 'OUTPUT';
 
@@ -15,15 +16,12 @@ export const ConfigPanel = ({
   context,
 }: ConfigPanelComponentProps) => {
   const { functionData } = node;
-
   const { chart, workflow } = context;
 
-  const { mutate: updateChart } = useUpdateChart();
+  const [, setChart] = useRecoilState(chartState);
 
-  const workspaceTimeSeries =
-    (context.chart as Chart).timeSeriesCollection || [];
-
-  const workspaceWorkflows = (context.chart as Chart).workflowCollection || [];
+  const workspaceTimeSeries = (chart as Chart).timeSeriesCollection || [];
+  const workspaceWorkflows = (chart as Chart).workflowCollection || [];
 
   const sourceList = [
     { value: '', label: 'None' },
@@ -61,9 +59,9 @@ export const ConfigPanel = ({
         loadOptions={loadOptions}
         onChange={(nextValue: { value: string; label: string }) => {
           // Update workflow
-          updateChart({
-            ...chart,
-            workflowCollection: chart.workflowCollection?.map(
+          setChart((oldChart) => ({
+            ...oldChart!,
+            workflowCollection: oldChart!.workflowCollection?.map(
               (wf: ChartWorkflow) =>
                 wf.id === workflow.id
                   ? {
@@ -72,7 +70,7 @@ export const ConfigPanel = ({
                     }
                   : wf
             ),
-          });
+          }));
 
           onUpdateNode({
             functionData: {

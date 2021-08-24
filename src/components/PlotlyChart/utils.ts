@@ -1,6 +1,8 @@
 import { DatapointAggregate, Datapoints, DoubleDatapoint } from '@cognite/sdk';
+import dayjs from 'dayjs';
 import groupBy from 'lodash/groupBy';
 import { ChartTimeSeries, ChartWorkflow } from 'reducers/charts/types';
+import { roundToSignificantDigits } from 'utils/axis';
 import { hexToRGBA } from 'utils/colors';
 import { convertUnits, units } from 'utils/units';
 
@@ -347,4 +349,174 @@ export function convertLineStyle(lineStyle?: 'solid' | 'dashed' | 'dotted') {
     default:
       return 'solid';
   }
+}
+
+export function generateLayout({
+  isPreview,
+  isGridlinesShown,
+  yAxisLocked,
+  showYAxis,
+  stackedMode,
+  seriesData,
+  yAxisValues,
+  dateFrom,
+  dateTo,
+  dragmode,
+}: any): any {
+  const horizontalMargin = isPreview ? 0 : 20;
+  const verticallMargin = isPreview ? 0 : 30;
+
+  const layout = {
+    margin: {
+      l: horizontalMargin,
+      r: horizontalMargin,
+      b: verticallMargin,
+      t: verticallMargin,
+    },
+    xaxis: {
+      type: 'date',
+      autorange: false,
+      domain: showYAxis
+        ? [yAxisValues.width * (seriesData.length - 1) + yAxisValues.margin, 1]
+        : [0, 1],
+      range: [
+        dayjs(dateFrom).format('YYYY-MM-DD HH:mm:ss'),
+        dayjs(dateTo).format('YYYY-MM-DD HH:mm:ss'),
+      ],
+      showspikes: true,
+      spikemode: 'across',
+      spikethickness: 1,
+      spikecolor: '#bfbfbf',
+      spikedash: 'solid',
+      showgrid: isGridlinesShown,
+    },
+    spikedistance: -1,
+    hovermode: 'x',
+    showlegend: false,
+    dragmode,
+    annotations: [],
+    shapes: [],
+  };
+
+  const yAxisDefaults = {
+    hoverformat: '.2f',
+    zeroline: false,
+    type: 'linear', // IMPORTANT! missing causes more renders
+    fixedrange: yAxisLocked,
+  };
+
+  seriesData.forEach(({ unit, range, series }: any, index: any) => {
+    const { color } = series[0];
+    const datapoints = series.reduce(
+      (acc: (Datapoints | DatapointAggregate)[], s: SeriesInfo) =>
+        acc.concat(s.datapoints),
+      []
+    );
+
+    /**
+     * For some reason plotly doesn't like that you overwrite the range input (doing this the wrong way?)
+     */
+    const serializedYRange = range
+      ? JSON.parse(JSON.stringify(range))
+      : undefined;
+
+    const rangeY = stackedMode
+      ? calculateStackedYRange(
+          datapoints as (Datapoints | DatapointAggregate)[],
+          index,
+          seriesData.length
+        )
+      : serializedYRange;
+
+    let tickvals;
+    if (rangeY) {
+      const ticksAmount = 6;
+      const rangeDifferenceThreshold = 0.001;
+      tickvals =
+        rangeY[1] - rangeY[0] < rangeDifferenceThreshold
+          ? Array.from(Array(ticksAmount)).map(
+              (_, idx) =>
+                rangeY[0] + (idx * (rangeY[1] - rangeY[0])) / (ticksAmount - 1)
+            )
+          : undefined;
+    }
+
+    (layout as any)[`yaxis${index ? index + 1 : ''}`] = {
+      ...yAxisDefaults,
+      visible: showYAxis,
+      linecolor: color,
+      linewidth: 1,
+      tickcolor: color,
+      tickwidth: 1,
+      tickvals,
+      ticktext: tickvals
+        ? tickvals.map((value) => roundToSignificantDigits(value, 3))
+        : undefined,
+      side: 'right',
+      overlaying: index !== 0 ? 'y' : undefined,
+      anchor: 'free',
+      position: yAxisValues.width * index,
+      range: rangeY,
+      showgrid: isGridlinesShown,
+    };
+
+    if (showYAxis) {
+      /**
+       * Display units as annotations and manually placing them on top of y-axis lines
+       * Plotly does not support labels on top of axes
+       */
+      if (unit) {
+        (layout.annotations as any[]).push({
+          xref: 'paper',
+          yref: 'paper',
+          x: yAxisValues.width * index,
+          xanchor: 'left',
+          y: 1,
+          yanchor: 'bottom',
+          text: unit,
+          showarrow: false,
+          xshift: -3,
+          yshift: 5,
+        });
+      }
+
+      /**
+       * Display y-axes top and bottom markers
+       */
+      (layout.shapes as any).push(
+        ...[
+          // Top axis marker
+          {
+            type: 'line',
+            xref: 'paper',
+            yref: 'paper',
+            x0: yAxisValues.width * index,
+            y0: 1,
+            x1: yAxisValues.width * index + 0.005,
+            y1: 1,
+            line: {
+              color,
+              width: 1,
+            },
+          },
+          // Bottom axis marker
+          {
+            type: 'line',
+            xref: 'paper',
+            yref: 'paper',
+            x0: yAxisValues.width * index,
+            y0: 0,
+            x1: yAxisValues.width * index + 0.005,
+            y1: 0,
+            line: {
+              color,
+              width: 1,
+            },
+          },
+        ]
+      );
+    }
+  });
+
+  return layout;
 }

@@ -34,6 +34,8 @@ import DetailsSidebar from 'components/DetailsSidebar';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { addWorkflow } from 'utils/charts';
+import { useRecoilState } from 'recoil';
+import { chartState } from 'atoms/chart';
 import SourceRows from './SourceRows';
 
 import {
@@ -62,12 +64,48 @@ const CHART_SETTINGS_KEYS = {
 };
 
 const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
-  const [query = '', setQuery] = useSearchParam(SEARCH_KEY, false);
-
-  const { chartId = chartIdProp } = useParams<{ chartId: string }>();
-  const { data: chart, isError, isFetched } = useChart(chartId);
-  const { data: login } = useUserInfo();
   const [showContextMenu, setShowContextMenu] = useState(false);
+  const [query = '', setQuery] = useSearchParam(SEARCH_KEY, false);
+  const { chartId = chartIdProp } = useParams<{ chartId: string }>();
+  const { data: login } = useUserInfo();
+
+  /**
+   * Get stored chart
+   */
+  const { data: originalChart, isError, isFetched } = useChart(chartId);
+
+  /**
+   * Get local chart context
+   */
+  const [chart, setChart] = useRecoilState(chartState);
+
+  /**
+   * Method for updating storage value of chart
+   */
+  const {
+    mutate: updateChart,
+    isError: updateError,
+    error: updateErrorMsg,
+  } = useUpdateChart();
+
+  /**
+   * Initialize local chart atom
+   */
+  useEffect(() => {
+    if (chart && chart.id === chartId) {
+      return;
+    }
+    setChart(originalChart);
+  }, [originalChart, chart, chartId, setChart]);
+
+  /**
+   * Sync local chart atom to storage
+   */
+  useEffect(() => {
+    if (chart) {
+      updateChart(chart);
+    }
+  }, [chart, updateChart]);
 
   const [selectedSourceId, setSelectedSourceId] = useState<
     string | undefined
@@ -97,12 +135,6 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     // Should not rerun when editorTimer is changed, only on initial load
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const {
-    mutate: updateChart,
-    isError: updateError,
-    error: updateErrorMsg,
-  } = useUpdateChart();
 
   useEffect(() => {
     if (updateError) {
@@ -140,29 +172,27 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   };
 
   const handleClickNewWorkflow = () => {
-    if (chart) {
-      const newWorkflowId = nanoid();
-      const newWorkflow = {
-        id: newWorkflowId,
-        name: 'New Calculation',
-        color: getEntryColor(chart.id, newWorkflowId),
-        lineWeight: 1,
-        lineStyle: 'solid',
-        enabled: true,
-        nodes: [],
-        connections: [],
-        createdAt: Date.now(),
-      } as ChartWorkflow;
-
-      const updatedChart = addWorkflow(chart, newWorkflow);
-      updateChart(updatedChart, {
-        onSuccess: () => {
-          setSelectedSourceId(newWorkflowId);
-          openNodeEditor();
-        },
-      });
-      trackUsage('ChartView.AddCalculation');
+    if (!chart) {
+      return;
     }
+
+    const newWorkflowId = nanoid();
+    const newWorkflow = {
+      id: newWorkflowId,
+      name: 'New Calculation',
+      color: getEntryColor(chart.id, newWorkflowId),
+      lineWeight: 1,
+      lineStyle: 'solid',
+      enabled: true,
+      nodes: [],
+      connections: [],
+      createdAt: Date.now(),
+    } as ChartWorkflow;
+
+    setChart((oldChart) => addWorkflow(oldChart!, newWorkflow));
+    setSelectedSourceId(newWorkflowId);
+    openNodeEditor();
+    trackUsage('ChartView.AddCalculation');
   };
 
   if (!isFetched) {
@@ -213,18 +243,16 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   };
 
   const handleSettingsToggle = async (key: string, value: boolean) => {
-    if (chart) {
-      updateChart({
-        ...chart,
-        settings: {
-          showYAxis,
-          showMinMax,
-          showGridlines,
-          mergeUnits,
-          [key]: value,
-        },
-      });
-    }
+    setChart((oldChart) => ({
+      ...oldChart!,
+      settings: {
+        showYAxis,
+        showMinMax,
+        showGridlines,
+        mergeUnits,
+        [key]: value,
+      },
+    }));
   };
 
   const selectedSourceItem = [
@@ -250,7 +278,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
         <SourceItem>
           <SourceName>
             <Icon
-              type="Eye"
+              type="EyeShow"
               style={{
                 marginLeft: 7,
                 marginRight: 20,
@@ -348,17 +376,18 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   };
 
   const onDragEnd = (result: any) => {
-    if (!result.destination) return;
+    if (!result.destination) {
+      return;
+    }
 
-    const reorderedChart = {
-      ...chart,
+    setChart((oldChart) => ({
+      ...oldChart!,
       sourceCollection: reorder(
         chart?.sourceCollection || [],
         result.source.index,
         result.destination.index
       ),
-    };
-    updateChart(reorderedChart);
+    }));
   };
 
   return (
@@ -370,7 +399,11 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
         <Header className="downloadChartHide" inSearch={showSearch}>
           {!showSearch && (
             <section className="actions">
-              <Button icon="Plus" type="primary" onClick={handleOpenSearch}>
+              <Button
+                icon="PlusCompact"
+                type="primary"
+                onClick={handleOpenSearch}
+              >
                 Add time series
               </Button>
               <Button
@@ -409,7 +442,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
             </Tooltip>
             <Tooltip content={`${showMinMax ? 'Hide' : 'Show'} min/max`}>
               <Button
-                icon="Timeseries"
+                icon="ResourceTimeseries"
                 type={showMinMax ? 'link' : 'ghost'}
                 aria-label="view"
                 onClick={() =>
@@ -478,7 +511,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
               />
             </Tooltip>
             <Divider />
-            <DateRangeSelector chart={chart} />
+            <DateRangeSelector />
           </section>
         </Header>
         <ChartContainer>
@@ -487,7 +520,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
               <ChartWrapper>
                 <PlotlyChartComponent
                   key={chartId}
-                  chartId={chartId}
+                  chart={chart}
                   isInSearch={showSearch}
                   isYAxisShown={showYAxis}
                   isMinMaxShown={showMinMax}
@@ -509,7 +542,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                             <SourceRows
                               draggable
                               chart={chart}
-                              updateChart={updateChart}
+                              updateChart={setChart}
                               mode={workspaceMode}
                               selectedSourceId={selectedSourceId}
                               openNodeEditor={openNodeEditor}
@@ -524,7 +557,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                       </SourceTableWrapper>
                       {workspaceMode === 'editor' && !!selectedSourceId && (
                         <NodeEditor
-                          mutate={updateChart}
+                          mutate={setChart}
                           workflowId={selectedSourceId}
                           closeNodeEditor={closeNodeEditor}
                           chart={chart}

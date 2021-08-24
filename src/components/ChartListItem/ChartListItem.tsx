@@ -78,10 +78,7 @@ const ChartListItem = ({ chart, view }: ChartListItemProps) => {
               >
                 <span>Rename</span>
               </Menu.Item>
-              <Menu.Item
-                onClick={() => handleDeleteChart()}
-                appendIcon="Delete"
-              >
+              <Menu.Item onClick={() => handleDeleteChart()} appendIcon="Trash">
                 <span>Delete</span>
               </Menu.Item>
             </>

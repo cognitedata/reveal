@@ -280,7 +280,7 @@ const WorkflowEditor = ({
         >
           <Button
             type="primary"
-            icon="Plus"
+            icon="PlusCompact"
             onClick={() => toggleAddNodeMenu(true)}
           >
             Add

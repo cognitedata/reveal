@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { Checkbox, Icon, Title } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
 import { Asset, Timeseries } from '@cognite/sdk';
-import { useChart, useUpdateChart } from 'hooks/firebase';
 import { useParams } from 'react-router-dom';
 import {
   addTimeseries,
@@ -18,6 +17,8 @@ import {
 } from 'utils/recentViewLocalstorage';
 import { useCdfItems } from 'utils/cogniteFunctions';
 import { useQueryClient } from 'react-query';
+import { useRecoilState } from 'recoil';
+import { chartState } from 'atoms/chart';
 import TimeseriesSearchHit from './TimeseriesSearchHit';
 import AssetSearchHit from './AssetSearchHit';
 
@@ -29,8 +30,7 @@ const RecentViewSources = ({ viewType }: Props) => {
   const title = viewType === 'assets' ? 'tags / assets' : 'time series';
   const sdk = useSDK();
   const { chartId } = useParams<{ chartId: string }>();
-  const { data: chart } = useChart(chartId);
-  const { mutate: updateChart } = useUpdateChart();
+  const [chart, setChart] = useRecoilState(chartState);
   // Takes alot of time to load data
   const { data: rvResults } = useRecentViewLocalStorage(viewType, []);
   const { addTsToRecent, addAssetToRecent } = useAddToRecentLocalStorage();
@@ -52,29 +52,32 @@ const RecentViewSources = ({ viewType }: Props) => {
   );
 
   const handleTimeSeriesClick = async (timeSeries: Timeseries) => {
-    if (chart) {
-      const tsToRemove = chart.timeSeriesCollection?.find(
-        (t) => t.tsId === timeSeries.id
-      );
-      if (tsToRemove) {
-        updateChart(removeTimeseries(chart, tsToRemove.id));
-      } else {
-        // Calculate y-axis / range
-        const range = await calculateDefaultYAxis({
-          chart,
-          sdk,
-          timeSeriesExternalId: timeSeries.externalId || '',
-        });
-        if (timeSeries.assetId) {
-          addAssetToRecent(timeSeries.assetId, timeSeries.id);
-        } else {
-          addTsToRecent(timeSeries.id);
-        }
+    if (!chart) {
+      return;
+    }
 
-        const newTs = covertTSToChartTS(timeSeries, chartId, range);
-        updateChart(addTimeseries(chart, newTs));
-        trackUsage('ChartView.AddTimeSeries', { source: 'search' });
+    const tsToRemove = chart.timeSeriesCollection?.find(
+      (t) => t.tsId === timeSeries.id
+    );
+
+    if (tsToRemove) {
+      setChart((oldChart) => removeTimeseries(oldChart!, tsToRemove.id));
+    } else {
+      // Calculate y-axis / range
+      const range = await calculateDefaultYAxis({
+        chart,
+        sdk,
+        timeSeriesExternalId: timeSeries.externalId || '',
+      });
+      if (timeSeries.assetId) {
+        addAssetToRecent(timeSeries.assetId, timeSeries.id);
+      } else {
+        addTsToRecent(timeSeries.id);
       }
+
+      const newTs = covertTSToChartTS(timeSeries, chartId, range);
+      setChart((oldChart) => addTimeseries(oldChart!, newTs));
+      trackUsage('ChartView.AddTimeSeries', { source: 'search' });
     }
   };
 

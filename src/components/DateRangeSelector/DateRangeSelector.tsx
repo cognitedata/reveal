@@ -1,14 +1,10 @@
 import dayjs from 'dayjs';
 import styled from 'styled-components/macro';
 import { DateRange, SegmentedControl } from '@cognite/cogs.js';
-import { Chart } from 'reducers/charts/types';
 import TimeSelector from 'components/TimeSelector';
-import { useUpdateChart } from 'hooks/firebase';
 import { trackUsage } from 'utils/metrics';
-
-interface DateRangeSelectorProps {
-  chart: Chart;
-}
+import { useRecoilState } from 'recoil';
+import { chartState } from 'atoms/chart';
 
 const relativeTimeOptions = [
   {
@@ -43,9 +39,14 @@ const relativeTimeOptions = [
   },
 ];
 
-const DateRangeSelector = ({ chart }: DateRangeSelectorProps) => {
-  const { mutate: updateChart } = useUpdateChart();
-  const selectedRange = chart.selectedDateRange ?? '1M';
+const DateRangeSelector = () => {
+  const [chart, setChart] = useRecoilState(chartState);
+  const selectedRange = chart?.selectedDateRange ?? '1M';
+
+  if (!chart) {
+    return null;
+  }
+
   const handleDateChange = ({
     dateFrom,
     dateTo,
@@ -58,12 +59,12 @@ const DateRangeSelector = ({ chart }: DateRangeSelectorProps) => {
     dateRange: string;
   }) => {
     if (dateFrom || dateTo) {
-      updateChart({
-        ...chart,
+      setChart((oldChart) => ({
+        ...oldChart!,
         selectedDateRange: dateRange,
-        dateFrom: (dateFrom || new Date(chart?.dateFrom!)).toJSON(),
-        dateTo: (dateTo || new Date(chart?.dateTo!)).toJSON(),
-      });
+        dateFrom: (dateFrom || new Date(oldChart?.dateFrom!)).toJSON(),
+        dateTo: (dateTo || new Date(oldChart?.dateTo!)).toJSON(),
+      }));
       trackUsage('ChartView.DateChange', { source });
     }
   };

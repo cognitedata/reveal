@@ -1,19 +1,9 @@
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useQuery, useQueryClient } from 'react-query';
-import styled from 'styled-components/macro';
-import debounce from 'lodash/debounce';
+import { useCallback, useEffect, useMemo, useRef, useState, memo } from 'react';
+import { useQuery } from 'react-query';
 import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
-import dayjs from 'dayjs';
-
-import {
-  DatapointAggregate,
-  Datapoints,
-  DatapointsMultiQuery,
-} from '@cognite/sdk';
-import { Button, Icon } from '@cognite/cogs.js';
+import { DatapointAggregate, DatapointsMultiQuery } from '@cognite/sdk';
 import { calculateGranularity } from 'utils/timeseries';
-import Layers from 'utils/z-index';
 import createPlotlyComponent from 'react-plotly.js/factory';
 import Plotly from 'plotly.js-basic-dist';
 import { useSDK } from '@cognite/sdk-provider';
@@ -21,27 +11,34 @@ import {
   getFunctionResponseWhenDone,
   transformSimpleCalcResult,
 } from 'utils/backendService';
-import { Chart } from 'reducers/charts/types';
-import { useChart, useUpdateChart } from 'hooks/firebase';
 import { updateSourceAxisForChart } from 'utils/charts';
 import { trackUsage } from 'utils/metrics';
-import { roundToSignificantDigits } from 'utils/axis';
+import { useDebouncedCallback, useDebounce } from 'use-debounce';
+import { useRecoilState } from 'recoil';
+import { chartState } from 'atoms/chart';
+import { Chart } from 'reducers/charts/types';
 import {
   calculateSeriesData,
-  calculateStackedYRange,
   formatPlotlyData,
   getXaxisUpdateFromEventData,
   getYaxisUpdatesFromEventData,
-  PlotlyEventData,
   SeriesData,
-  SeriesInfo,
 } from './utils';
+import { generateLayout, PlotlyEventData } from '.';
+import {
+  AdjustButton,
+  ChartingContainer,
+  LoadingIcon,
+  PlotWrapper,
+} from './elements';
+
+const Plot = createPlotlyComponent(Plotly);
 
 const Y_AXIS_WIDTH = 60;
 const Y_AXIS_MARGIN = 40;
 
 type ChartProps = {
-  chartId: string;
+  chart?: Chart;
   isYAxisShown?: boolean;
   isMinMaxShown?: boolean;
   isGridlinesShown?: boolean;
@@ -51,11 +48,8 @@ type ChartProps = {
   mergeUnits?: boolean;
 };
 
-// Use "basic" version of plotly.js to reduce bundle size
-const Plot = createPlotlyComponent(Plotly);
-
 const PlotlyChartComponent = ({
-  chartId,
+  chart = undefined,
   isYAxisShown = true,
   isMinMaxShown = false,
   isGridlinesShown = false,
@@ -64,31 +58,35 @@ const PlotlyChartComponent = ({
   stackedMode = false,
   mergeUnits = false,
 }: ChartProps) => {
+  const [isAllowedToUpdate, setIsAllowedToUpdate] = useState(true);
   const sdk = useSDK();
-  const client = useQueryClient();
   const containerRef = useRef<HTMLDivElement>(null);
-  const { data: chart } = useChart(chartId);
-  const { mutate, isLoading } = useUpdateChart();
-
   const pointsPerSeries = isPreview ? 100 : 1000;
-
   const [dragmode, setDragmode] = useState<'zoom' | 'pan'>('pan');
   const [yAxisLocked, setYAxisLocked] = useState<boolean>(true);
 
-  const enabledTimeseries = chart?.timeSeriesCollection?.filter(
-    (ts) => ts.enabled
-  ).length;
-  const enabledWorkflows = chart?.workflowCollection?.filter(
-    (wf) => wf.enabled
-  ).length;
+  /**
+   * Get local chart context
+   */
+  const [, setChart] = useRecoilState(chartState);
+
+  const dateFrom = chart?.dateFrom;
+  const dateTo = chart?.dateTo;
+
+  const [debouncedRange] = useDebounce({ dateFrom, dateTo }, 1000, {
+    equalityFn: (l, r) => isEqual(l, r),
+  });
 
   const queries =
     chart?.timeSeriesCollection?.map(({ tsExternalId }) => ({
       items: [{ externalId: tsExternalId }],
-      start: new Date(chart.dateFrom),
-      end: new Date(chart.dateTo),
+      start: new Date(debouncedRange.dateFrom!),
+      end: new Date(debouncedRange.dateTo!),
       granularity: calculateGranularity(
-        [new Date(chart.dateFrom).getTime(), new Date(chart.dateTo).getTime()],
+        [
+          new Date(debouncedRange.dateFrom!).getTime(),
+          new Date(debouncedRange.dateTo!).getTime(),
+        ],
         pointsPerSeries
       ),
       aggregates: ['average', 'min', 'max'],
@@ -108,11 +106,13 @@ const PlotlyChartComponent = ({
       )
     )
   );
+
   const calls = isPreview
     ? []
     : chart?.workflowCollection?.map((wf) =>
         omit(wf.calls?.[0], ['callDate'])
       ) || [];
+
   const {
     data: workflowsRaw,
     isSuccess: wfSuccess,
@@ -161,20 +161,10 @@ const PlotlyChartComponent = ({
   }, [yAxisLocked]);
 
   useEffect(() => {
-    if (!isYAxisShown && !yAxisLocked) setYAxisLocked(true);
+    if (!isYAxisShown && !yAxisLocked) {
+      setYAxisLocked(true);
+    }
   }, [isYAxisShown, yAxisLocked, onAdjustButtonClick]);
-
-  const updateChart = useCallback(
-    (c: Chart) => {
-      const oldChart = client.getQueryData<Chart>(['chart', chart?.id]);
-      const irrelevant = ['updatedAt'];
-      if (!isEqual(omit(oldChart, irrelevant), omit(c, irrelevant))) {
-        client.setQueryData(['chart', chart?.id], c);
-        mutate(c);
-      }
-    },
-    [chart?.id, client, mutate]
-  );
 
   const [yAxisValues, setYAxisValues] = useState<{
     width: number;
@@ -218,221 +208,158 @@ const PlotlyChartComponent = ({
     [seriesData, isMinMaxShown, isPreview]
   );
 
-  const handleRelayout = debounce(
-    useCallback(
-      (eventdata: PlotlyEventData) => {
-        // Using client.getQueryData unstead of creating a closure over `chart`, which changes often
-        const c = client.getQueryData<Chart>(['chart', chartId]);
-        if (!c) {
-          return;
-        }
+  const handleRelayout = useCallback(
+    (eventdata: PlotlyEventData) => {
+      if (isPreview) {
+        return;
+      }
+      const x = getXaxisUpdateFromEventData(eventdata);
+      // Should not edit the saved y-axis ranges if in stacked mode or in search
+      const y = !(stackedMode || isInSearch)
+        ? getYaxisUpdatesFromEventData(seriesData, eventdata)
+        : [];
 
-        if (!isPreview) {
-          const x = getXaxisUpdateFromEventData(eventdata);
-          // Should not edit the saved y-axis ranges if in stacked mode or in search
-          const y = !(stackedMode || isInSearch)
-            ? getYaxisUpdatesFromEventData(seriesData, eventdata)
-            : [];
+      setChart((oldChart) => updateSourceAxisForChart(oldChart!, { x, y }));
 
-          const newChart = updateSourceAxisForChart(c, { x, y });
-          updateChart(newChart);
-
-          if (eventdata.dragmode) {
-            setDragmode(eventdata.dragmode || dragmode);
-          }
-        }
-      },
-      // Some deps are left out to reduce re-renders
-      // eslint-disable-next-line
-      [
-        dragmode,
-        isInSearch,
-        stackedMode,
-        mergeUnits,
-        updateChart,
-        chartId,
-        client,
-        chart?.timeSeriesCollection?.length,
-        chart?.workflowCollection?.length,
-        enabledTimeseries,
-        enabledWorkflows,
-        seriesData,
-      ]
-    ),
-    1000
+      if (eventdata.dragmode) {
+        setDragmode(eventdata.dragmode || dragmode);
+      }
+    },
+    [setChart, isPreview, seriesData, dragmode, isInSearch, stackedMode]
   );
 
   const showYAxis = !isInSearch && !isPreview && isYAxisShown;
   const showAdjustButton = showYAxis && seriesData.length > 0;
-  const horizontalMargin = isPreview ? 0 : 20;
-  const verticallMargin = isPreview ? 0 : 30;
 
-  const layout = {
-    margin: {
-      l: horizontalMargin,
-      r: horizontalMargin,
-      b: verticallMargin,
-      t: verticallMargin,
-    },
-    xaxis: {
-      type: 'date',
-      autorange: false,
-      domain: showYAxis
-        ? [yAxisValues.width * (seriesData.length - 1) + yAxisValues.margin, 1]
-        : [0, 1],
-      range: [
-        dayjs(chart?.dateFrom!).format('YYYY-MM-DD HH:mm:ss'),
-        dayjs(chart?.dateTo!).format('YYYY-MM-DD HH:mm:ss'),
-      ],
-      showspikes: true,
-      spikemode: 'across',
-      spikethickness: 1,
-      spikecolor: '#bfbfbf',
-      spikedash: 'solid',
-      showgrid: isGridlinesShown,
-    },
-    spikedistance: -1,
-    hovermode: 'x',
-    showlegend: false,
+  const layout = useMemo(() => {
+    return generateLayout({
+      isPreview,
+      isGridlinesShown,
+      yAxisLocked,
+      showYAxis,
+      stackedMode,
+      seriesData,
+      yAxisValues,
+      dateFrom,
+      dateTo,
+      dragmode,
+    });
+  }, [
+    isPreview,
+    isGridlinesShown,
+    yAxisLocked,
+    showYAxis,
+    stackedMode,
+    seriesData,
+    yAxisValues,
+    dateFrom,
+    dateTo,
     dragmode,
-    annotations: [],
-    shapes: [],
-  };
+  ]);
 
-  const yAxisDefaults = {
-    hoverformat: '.2f',
-    zeroline: false,
-    type: 'linear', // IMPORTANT! missing causes more renders
-    fixedrange: yAxisLocked,
-  };
-
-  seriesData.forEach(({ unit, range, series }, index) => {
-    const { color } = series[0];
-    const datapoints = series.reduce(
-      (acc: (Datapoints | DatapointAggregate)[], s: SeriesInfo) =>
-        acc.concat(s.datapoints),
-      []
-    );
-
-    /**
-     * For some reason plotly doesn't like that you overwrite the range input (doing this the wrong way?)
-     */
-    const serializedYRange = range
-      ? JSON.parse(JSON.stringify(range))
-      : undefined;
-
-    const rangeY = stackedMode
-      ? calculateStackedYRange(
-          datapoints as (Datapoints | DatapointAggregate)[],
-          index,
-          seriesData.length
-        )
-      : serializedYRange;
-
-    let tickvals;
-    if (rangeY) {
-      const ticksAmount = 6;
-      const rangeDifferenceThreshold = 0.001;
-      tickvals =
-        rangeY[1] - rangeY[0] < rangeDifferenceThreshold
-          ? Array.from(Array(ticksAmount)).map(
-              (_, idx) =>
-                rangeY[0] + (idx * (rangeY[1] - rangeY[0])) / (ticksAmount - 1)
-            )
-          : undefined;
-    }
-
-    (layout as any)[`yaxis${index ? index + 1 : ''}`] = {
-      ...yAxisDefaults,
-      visible: showYAxis,
-      linecolor: color,
-      linewidth: 1,
-      tickcolor: color,
-      tickwidth: 1,
-      tickvals,
-      ticktext: tickvals
-        ? tickvals.map((value) => roundToSignificantDigits(value, 3))
-        : undefined,
-      side: 'right',
-      overlaying: index !== 0 ? 'y' : undefined,
-      anchor: 'free',
-      position: yAxisValues.width * index,
-      range: rangeY,
-      showgrid: isGridlinesShown,
+  const config = useMemo(() => {
+    return {
+      staticPlot: isPreview,
+      autosize: true,
+      responsive: true,
+      scrollZoom: true,
+      displaylogo: false,
+      displayModeBar: false,
     };
+  }, [isPreview]);
 
-    if (showYAxis) {
-      /**
-       * Display units as annotations and manually placing them on top of y-axis lines
-       * Plotly does not support labels on top of axes
-       */
-      if (unit) {
-        (layout.annotations as any[]).push({
-          xref: 'paper',
-          yref: 'paper',
-          x: yAxisValues.width * index,
-          xanchor: 'left',
-          y: 1,
-          yanchor: 'bottom',
-          text: unit,
-          showarrow: false,
-          xshift: -3,
-          yshift: 5,
-        });
-      }
-
-      /**
-       * Display y-axes top and bottom markers
-       */
-      (layout.shapes as any).push(
-        ...[
-          // Top axis marker
-          {
-            type: 'line',
-            xref: 'paper',
-            yref: 'paper',
-            x0: yAxisValues.width * index,
-            y0: 1,
-            x1: yAxisValues.width * index + 0.005,
-            y1: 1,
-            line: {
-              color,
-              width: 1,
-            },
-          },
-          // Bottom axis marker
-          {
-            type: 'line',
-            xref: 'paper',
-            yref: 'paper',
-            x0: yAxisValues.width * index,
-            y0: 0,
-            x1: yAxisValues.width * index + 0.005,
-            y1: 0,
-            line: {
-              color,
-              width: 1,
-            },
-          },
-        ]
-      );
-    }
+  /**
+   * Local state for data and layout in the chart
+   * that only updates when the user isn't doing any navigation
+   */
+  const [activeState, setActiveState] = useState({
+    data,
+    layout,
   });
 
-  const config = {
-    staticPlot: isPreview || isLoading || data.length === 0,
-    autosize: true,
-    responsive: true,
-    scrollZoom: true,
-    displaylogo: false,
-    displayModeBar: false,
-  };
+  /**
+   * Update active state whenever allowed (not scrolling or navigating chart)
+   */
+  useEffect(() => {
+    if (isAllowedToUpdate) {
+      setActiveState({
+        data,
+        layout,
+      });
+    }
+  }, [data, layout, isAllowedToUpdate]);
+
+  /**
+   * Debounced callback that turns on updates again (scrolling)
+   */
+  const allowUpdatesScroll = useDebouncedCallback(() => {
+    setIsAllowedToUpdate(true);
+  }, 500);
+
+  /**
+   * Debounced callback that turns on updates again (click and drag)
+   */
+  const allowUpdatesClick = useDebouncedCallback(() => {
+    setIsAllowedToUpdate(true);
+  }, 100);
+
+  /**
+   * Disallow updates when scrolling
+   */
+  const handleMouseWheel = useCallback(() => {
+    setIsAllowedToUpdate(false);
+    allowUpdatesScroll();
+    allowUpdatesClick.cancel();
+  }, [allowUpdatesScroll, allowUpdatesClick]);
+
+  useEffect(() => {
+    window.addEventListener('mousewheel', handleMouseWheel);
+    return () => {
+      window.removeEventListener('mousewheel', handleMouseWheel);
+    };
+  }, [handleMouseWheel]);
+
+  /**
+   * Disallow updates when clicking and holding mouse (navigating chart)
+   */
+  const handleMouseDown = useCallback(() => {
+    setIsAllowedToUpdate(false);
+    allowUpdatesScroll.cancel();
+  }, [allowUpdatesScroll]);
+
+  useEffect(() => {
+    window.addEventListener('mousedown', handleMouseDown);
+    return () => {
+      window.removeEventListener('mousedown', handleMouseDown);
+    };
+  });
+
+  /**
+   * Allow updates when releasing mouse button (no longer navigating chart)
+   */
+  const handleMouseUp = useCallback(() => {
+    allowUpdatesClick();
+  }, [allowUpdatesClick]);
+
+  useEffect(() => {
+    window.addEventListener('mouseup', handleMouseUp);
+    return () => {
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  });
+
+  const chartStyles = useMemo(() => {
+    return { width: '100%', height: '100%' };
+  }, []);
+
+  const isLoadingChartData =
+    workflowsRunning || timeseriesFetching || !isAllowedToUpdate;
 
   return (
     <ChartingContainer ref={containerRef}>
       {showAdjustButton && (
         <>
-          {(isLoading || timeseriesFetching) && <LoadingIcon />}
+          {isLoadingChartData && <LoadingIcon />}
           <AdjustButton
             type="tertiary"
             icon="YAxis"
@@ -445,83 +372,29 @@ const PlotlyChartComponent = ({
           </AdjustButton>
         </>
       )}
-
       <PlotWrapper>
         <MemoizedPlot
-          data={data as Plotly.Data[]}
-          layout={layout as unknown as Plotly.Layout}
+          data={activeState.data as Plotly.Data[]}
+          layout={activeState.layout as unknown as Plotly.Layout}
           config={config as unknown as Plotly.Config}
           onRelayout={handleRelayout}
+          style={chartStyles}
+          useResizeHandler
         />
       </PlotWrapper>
     </ChartingContainer>
   );
 };
 
-type MemoizedPlotProps = {
-  data: Plotly.Data[];
-  layout: Plotly.Layout;
-  config: Plotly.Config;
-  onRelayout: (e: Plotly.PlotRelayoutEvent) => void;
-};
-const MemoizedPlot = memo(
-  ({ data, layout, config, onRelayout }: MemoizedPlotProps) => (
-    <Plot
-      data={data}
-      layout={layout}
-      config={config}
-      onRelayout={onRelayout}
-      useResizeHandler
-      style={{ width: '100%', height: '100%' }}
-    />
-  ),
-  (prev, next) => isEqual(prev, next)
-);
-/* eslint-disable @cognite/no-number-z-index */
-const LoadingIcon = () => (
-  <Icon
-    type="Loading"
-    style={{
-      top: 10,
-      left: 10,
-      position: 'relative',
-      zIndex: 2,
-      float: 'left',
-    }}
-  />
-);
+const MemoizedPlot = memo(Plot, (prev, next) => {
+  const areEqual =
+    prev.data === next.data &&
+    prev.layout === next.layout &&
+    prev.config === next.config &&
+    prev.onRelayout === next.onRelayout &&
+    prev.style === next.style;
 
-const ChartingContainer = styled.div`
-  height: 100%;
-  width: 100%;
-
-  & > .adjust-button {
-    visibility: hidden;
-  }
-
-  &:hover > .adjust-button {
-    visibility: visible;
-  }
-`;
-
-const PlotWrapper = styled.div`
-  height: 100%;
-  width: 100%;
-  // Expanding the y-axis hitbox
-  .nsdrag {
-    width: 60px;
-    transform: translateX(-17px);
-  }
-`;
-
-const AdjustButton = styled(Button)`
-  position: absolute;
-  background-color: white;
-  top: 30px;
-  left: ${(props: { left: number }) => props.left}%;
-  margin-left: 40px;
-  z-index: ${Layers.MAXIMUM};
-  background: white;
-`;
+  return areEqual;
+});
 
 export default PlotlyChartComponent;
