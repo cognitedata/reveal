@@ -61,6 +61,7 @@ DEPENDENCIES = [
     "@npm//lodash",
     "@npm//react",
     "@npm//react-dom",
+    "@npm//react-query",
     "@npm//react-redux",
     "@npm//react-router-dom",
     "@npm//redux",

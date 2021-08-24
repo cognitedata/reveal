@@ -1,3 +1,8 @@
+## 1.6.0 Aug 24 2021
+
+- Add React Query provider
+- Add `disableReactQuery` prop and enabled React Query provider by default
+
 ## 1.5.0 Aug 03 2021
 
 - BREAKING: Change Logout component to take into account Azure AD. Please check demo app for usage.

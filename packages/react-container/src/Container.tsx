@@ -13,8 +13,9 @@ import { IntercomContainer } from './components/Intercom';
 import {
   AuthContainer,
   AuthContainerForApiKeyMode,
-  ConditionalSentry,
   ConditionalLoopDetector,
+  ConditionalQueryClientProvider,
+  ConditionalSentry,
   TranslationWrapper,
 } from './components';
 import { useCogniteSDKClient, createBrowserHistory } from './internal';
@@ -29,6 +30,7 @@ interface ContainerSidecarConfig extends SidecarConfig {
   disableLoopDetector?: boolean;
   disableSentry?: boolean;
   disableIntercom?: boolean;
+  disableReactQuery?: boolean;
 }
 
 type Props = {
@@ -51,6 +53,7 @@ const RawContainer: React.FC<Props> = ({
     disableLoopDetector,
     disableSentry,
     disableIntercom,
+    disableReactQuery,
   } = sidecar;
 
   storage.init({ tenant: possibleTenant, appName: applicationId });
@@ -101,31 +104,33 @@ const RawContainer: React.FC<Props> = ({
 
   return (
     <ConditionalLoopDetector disabled={disableLoopDetector}>
-      <ConditionalSentry disabled={disableSentry}>
-        <ChosenAuthContainer
-          sidecar={sidecar}
-          sdkClient={client}
-          authError={refreshPage}
-          tenant={initialTenant}
-        >
-          <IntercomContainer
-            intercomSettings={merge(
-              {},
-              intercomSettings,
-              sidecar.intercomSettings
-            )}
-            project={initialTenantOrApiKeyTenant}
+      <ConditionalQueryClientProvider disabled={disableReactQuery}>
+        <ConditionalSentry disabled={disableSentry}>
+          <ChosenAuthContainer
             sidecar={sidecar}
-            disabled={disableIntercom}
+            sdkClient={client}
+            authError={refreshPage}
+            tenant={initialTenant}
           >
-            <ConditionalReduxProvider store={store}>
-              <ErrorBoundary instanceId="container-root">
-                <Router history={history}>{children}</Router>
-              </ErrorBoundary>
-            </ConditionalReduxProvider>
-          </IntercomContainer>
-        </ChosenAuthContainer>
-      </ConditionalSentry>
+            <IntercomContainer
+              intercomSettings={merge(
+                {},
+                intercomSettings,
+                sidecar.intercomSettings
+              )}
+              project={initialTenantOrApiKeyTenant}
+              sidecar={sidecar}
+              disabled={disableIntercom}
+            >
+              <ConditionalReduxProvider store={store}>
+                <ErrorBoundary instanceId="container-root">
+                  <Router history={history}>{children}</Router>
+                </ErrorBoundary>
+              </ConditionalReduxProvider>
+            </IntercomContainer>
+          </ChosenAuthContainer>
+        </ConditionalSentry>
+      </ConditionalQueryClientProvider>
     </ConditionalLoopDetector>
   );
 };

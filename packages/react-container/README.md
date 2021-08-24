@@ -36,13 +36,13 @@ The prime example can be found in the demo app [here](https://github.com/cognite
 
 This container includes:
 
-- Error boundary
-- Loop detector
+- Error Boundary
+- React Query
+- Loop Detector
 - Sentry setup
 - i18n container
 - React router setup
 - Authentication provider - This makes sure your app is always authenticated and provides an initiated Cognite SDK
-- LocalStorage helpers
 
 ## How to disable unwanted features
 
@@ -52,6 +52,8 @@ The container has one prop of the sidecar. You can add these keys to your sideca
   disableTranslations: false
   disableLoopDetector: false
   disableSentry: false
+  disableIntercom: false
+  disableReactQuery: false
 ```
 
 ## How to access auth information
