@@ -20,6 +20,7 @@ export type SeriesInfo = {
   mode: string | undefined;
   datapoints: (Datapoints | DatapointAggregate)[];
   outdatedData?: boolean;
+  range?: number[];
 };
 
 export type SeriesData = {
@@ -278,11 +279,18 @@ export function getYaxisUpdatesFromEventData(
       .filter((key) => key.includes('yaxis'))
       .reduce((result: { [key: string]: any }, key) => {
         const axisIndex = (+key.split('.')[0].split('yaxis')[1] || 1) - 1;
+        const rangeMatch = key.split('.')[1].match(/(\d+)/g);
+        const rangeIndex = rangeMatch ? +rangeMatch[0] : 0;
         const { series } = seriesData[axisIndex];
 
         const update = series.reduce((diff: { [key: string]: any }, s) => {
-          const { id = '', type = '' } = s;
-          const range = ((result[id] || {}).range || []).concat(eventdata[key]);
+          const { id = '', type = '', range: seriesRange = [] } = s;
+          const resultRange = (result[id] || {}).range || [];
+          const range = resultRange.length
+            ? [...resultRange]
+            : [...seriesRange];
+
+          range.splice(rangeIndex, 1, eventdata[key]);
 
           return {
             ...diff,
