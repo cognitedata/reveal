@@ -25,6 +25,7 @@ const nameToAclTypeMap = {
   users: 'usersAcl',
   projects: 'projectsAcl',
   datasets: 'datasetsAcl',
+  transformations: 'transformationsAcl',
   labels: 'labelsAcl',
   seismic: 'seismicAcl',
   relationships: 'relationshipsAcl',
@@ -50,6 +51,7 @@ const nameToFormattedName = {
   timeseries: 'Time series',
   digitaltwin: 'Digital twin',
   datasets: 'Data sets',
+  transformations: 'Transformations',
   modelhosting: 'Model hosting',
   entitymatching: 'Entity matching',
   documentpipelines: 'Document pipelines',
@@ -62,6 +64,7 @@ const capabilityTypeGroups = [
   {
     name: 'Data',
     items: [
+      'transformations',
       '3d',
       'assets',
       'events',
@@ -123,6 +126,8 @@ export const capabilityDescriptions = {
     'Relationships represent connections between pairs of CDF resources',
   datasets:
     'Data sets are groups of data based on origin, such as all SAP work orders',
+  transformations:
+    'Transformations are used to transform data from RAW tables and write it to CDF resources or write back to RAW tables',
   labels:
     'With labels you as an IT manager or data engineer can create a predefined set of managed terms that you can use to annotate and group assets',
   seismic: 'Seismic is a representation of cubes of seismic traces',
@@ -307,6 +312,8 @@ export const getCapabilityScopes = (
       return ['datasetScope', 'all'];
     case 'datasets':
       return ['idScope', 'all']; // idScope (uppercase S) and ...
+    case 'transformations':
+      return ['all']
     case 'securitycategories':
       return ['idscope', 'all']; // ... idscope (lowercase s) are different
     case 'seismic':
