@@ -298,13 +298,14 @@ const PlotlyChartComponent = ({
    * Update active state whenever allowed (not scrolling or navigating chart)
    */
   useEffect(() => {
-    if (isAllowedToUpdate) {
-      setActiveState({
-        data,
-        layout,
-        handleRelayout,
-      });
+    if (!isAllowedToUpdate) {
+      return;
     }
+    setActiveState({
+      data,
+      layout,
+      handleRelayout,
+    });
   }, [data, layout, isAllowedToUpdate, handleRelayout]);
 
   /**
