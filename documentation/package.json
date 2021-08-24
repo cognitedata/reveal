@@ -16,13 +16,11 @@
     "apiref": "yarn run apiref:generate && yarn run apiref:concat",
     "apiref:generate": "typedoc --entryPoints ../viewer/core/src/index.ts --entryPoints ../viewer/core/src/tools.ts --listInvalidSymbolLinks",
     "apiref:concat": "concat-md ./generated --startTitleLevelAt 1 --decrease-title-levels --dir-name-as-title > \"./docs/API Reference.md\"",
-
     "replace-1.x:clean-versioned": "rimraf versioned_sidebars/version-1.x-sidebars.json versioned_docs/version-1.x versions.json",
     "replace-1.x:copy-docs": "yarn apiref && yarn docusaurus docs:version 1.x && git checkout HEAD -- versions.json",
     "replace-1.x:update-sdk": "yarn replace \"\\'@cognite/sdk\\'\" \"''@cognite/sdk-1.x''\" versioned_docs/version-1.x/ --include '*.ts*' -r",
     "replace-1.x:update-reveal": "yarn replace \"\\'@cognite/reveal\\'\" \"''@cognite/reveal-1.x''\" versioned_docs/version-1.x/ --include '*.ts*' -r",
     "replace-1.x:update-runnable": "yarn replace '^```(js[x]?) runnable$' '```$1 runnable-1x' versioned_docs/version-1.x/ --include '*.mdx' -r",
-    
     "replace-1.x": "yarn replace-1.x:clean-versioned && yarn replace-1.x:copy-docs && yarn replace-1.x:update-sdk && yarn replace-1.x:update-reveal && yarn replace-1.x:update-runnable",
     "replace-2.x:clean-versioned": "rimraf versioned_sidebars/version-2.x-sidebars.json versioned_docs/version-2.x versions.json",
     "replace-2.x:copy-docs": "yarn apiref && yarn docusaurus docs:version 2.x && git checkout HEAD -- versions.json",
@@ -30,15 +28,14 @@
     "replace-2.x:update-reveal": "yarn replace \"\\'@cognite/reveal\\'\" \"''@cognite/reveal-2.x''\" versioned_docs/version-2.x/ --include '*.ts*' -r",
     "replace-2.x:update-runnable": "yarn replace '^```(js[x]?) runnable$' '```$1 runnable-2x' versioned_docs/version-2.x/ --include '*.mdx' -r",
     "replace-2.x": "yarn replace-2.x:clean-versioned && yarn replace-2.x:copy-docs && yarn replace-2.x:update-sdk && yarn replace-2.x:update-reveal && yarn replace-2.x:update-runnable",
-
     "replace-latest-by-next": "yarn replace-2.x"
   },
   "dependencies": {
     "@cognite/reveal": "link:../viewer/dist",
-    "@cognite/sdk": "link:../viewer/node_modules/@cognite/sdk",
     "@cognite/reveal-1.x": "npm:@cognite/reveal@^1.5.5",
-    "@cognite/sdk-1.x": "npm:@cognite/sdk@^3.4.0",
     "@cognite/reveal-2.x": "npm:@cognite/reveal@^>=2.0.0-beta.0",
+    "@cognite/sdk": "link:../viewer/node_modules/@cognite/sdk",
+    "@cognite/sdk-1.x": "npm:@cognite/sdk@^3.4.0",
     "@cognite/sdk-2.x": "npm:@cognite/sdk@^5.1.3",
     "@docusaurus/core": "2.0.0-alpha.64",
     "@docusaurus/module-type-aliases": "2.0.0-alpha.64",
@@ -47,6 +44,7 @@
     "@google/model-viewer": "^1.1.0",
     "clsx": "^1.1.1",
     "cross-env": "^7.0.2",
+    "geo-three": "^0.0.10",
     "npm-to-yarn": "^1.0.1",
     "react": "^16.8.4",
     "react-dom": "^16.8.4",

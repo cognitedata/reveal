@@ -5784,6 +5784,11 @@ gentle-fs@^2.3.0, gentle-fs@^2.3.1:
     read-cmd-shim "^1.0.1"
     slide "^1.1.6"
 
+geo-three@^0.0.10:
+  version "0.0.10"
+  resolved "https://registry.yarnpkg.com/geo-three/-/geo-three-0.0.10.tgz#b100699554cafa1bf8520d92e01d0cb4bf3da740"
+  integrity sha512-btBw4yozQMN4ut8ta/mxiQN7dJTrmezoCHJM3HM7zWtAPvjFmVdnYLxw+U2rXjddJWm8YNLvQ1gUZCcC/ifHnw==
+
 get-caller-file@^1.0.1:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/get-caller-file/-/get-caller-file-1.0.3.tgz#f978fa4c90d1dfe7ff2d6beda2a515e713bdcf4a"

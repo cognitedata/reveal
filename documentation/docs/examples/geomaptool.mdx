@@ -1,0 +1,154 @@
+---
+id: geomaptool
+title: Geomap tool
+description: Geomap tool for geolocation of the model.
+---
+
+import { DemoWrapper } from '@site/docs/components/DemoWrapper';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+To effectivly navigate a 3D model it is often useful to have an helper to show the orientation of the model. The `GeomapTool` is
+a configurable overlay that shows the current orientation of the model. It also reacts to clicks, orienting the camera to face
+clicked.
+
+The tool provides list of options to set and choose:
+- Several map providers namely, Bing maps, Mapbox and Here maps
+- Different map mode like Planar, Spherical & Height 
+- Models can be placed on specific geolocation using latitude and longitude values
+
+<DemoWrapper name="Cognite3DViewerDemo" />
+
+## Basic example
+
+By default, the axis tool will be placed in the lower right corner
+of the viewer, and initialization is very easy:
+
+```jsx runnable
+// import { GeomapTool } from '@cognite/reveal/tools';
+
+new GeomapTool(viewer);
+```
+
+## Customize axis cross position
+
+It is possible to specify a custom position for the axis tool.
+Position can be specified using either `RelativePosition` or `AbsolutePosition`.
+Using `AbsolutePosition` will position the axis cross at a specific position within the canvas of the viewer.
+
+:::note
+The Y axis is positive upwards, meaning that 0 is at the bottom of the viewer.
+:::
+
+```jsx runnable
+// import { GeomapTool } from '@cognite/reveal/tools';
+
+new GeomapTool(viewer, {
+  position: { 
+    xAbsolute: viewer.domElement.clientWidth / 2 - 64, 
+    yAbsolute: 10
+  },
+  size: 128
+});
+```
+
+
+
+Using `RelativePosition` will position the axis cross relative to a specific corner (will also handle screen resize).
+
+```jsx runnable
+// import { GeomapTool, Corner } from '@cognite/reveal/tools';
+
+const axisConfig = {
+  position: {
+    corner: Corner.TopRight,
+    padding: new THREE.Vector2(50, 50)
+  }
+};
+new GeomapTool(viewer, axisConfig);
+```
+
+## Customize axis cross size and animation speed
+
+When clicking a face of the orientation box, the camera will move to face the respective direction.
+The animation speed of this movement can be configured. Size of the axis tool is also configurable.
+
+
+```jsx runnable
+// import { GeomapTool } from '@cognite/reveal/tools';
+
+const axisConfig = {
+  animationSpeed: 2000, // Suuuuuper-slow
+  size: 256 // In pixels
+};
+new GeomapTool(viewer, axisConfig);
+```
+
+
+## Customize orientation faces
+
+Each of the faces of the orientation box can be styled.
+
+```jsx runnable
+// import { GeomapTool } from '@cognite/reveal/tools';
+
+const axisConfig = {
+  faces: {
+    xNegativeFace: {
+      label: 'Left',
+      fontColor: new THREE.Color('white'),
+      faceColor: new THREE.Color(0x660000)
+    },
+    xPositiveFace: {
+      label: 'Right',
+      fontColor: new THREE.Color('white'),
+      faceColor: new THREE.Color(0x660000)
+    },
+    yNegativeFace: {
+      label: 'Down',
+      fontColor: new THREE.Color('white'),
+      faceColor: new THREE.Color(0x006600)
+    },
+    yPositiveFace: {
+      label: 'Top',
+      fontColor: new THREE.Color('white'),
+      faceColor: new THREE.Color(0x006600)
+    },
+    zNegativeFace: {
+      label: 'Back',
+      fontColor: new THREE.Color('white'),
+      faceColor: new THREE.Color(0x000066)
+    },
+    zPositiveFace: {
+      label: 'Front',
+      fontColor: new THREE.Color('white'),
+      faceColor: new THREE.Color(0x000066)
+    }
+  }
+};
+new GeomapTool(viewer, axisConfig);
+```
+
+In addition to the settings demonstrated above, the following settings can be set:
+- `fontSize` - size of the label font. Automatically determined when undefined
+- `outlineColor` - color of the outline of each of the faces
+- `outlineSize` - width of the outline. Automatically determine when undefined
+
+## Customize compass
+
+The compass at the base can be customized to change the orientation label (which
+defaults to N for North), font color and size and tick color.
+
+
+```jsx runnable
+// import { GeomapTool } from '@cognite/reveal/tools';
+
+const axisConfig = {
+  compass: {
+    ringLabel: 'S',
+    labelDelta: 0, // Place at South
+    fontColor: new THREE.Color('white'),
+    tickColor: new THREE.Color('white')
+  }
+};
+new GeomapTool(viewer, axisConfig);
+```

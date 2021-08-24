@@ -164,7 +164,7 @@ export function Geomap() {
 
       const guiActions = {
         setLatLongPosition: () => {
-        geomapTool.SetLatLong(guiState.latitude, guiState.longitude);
+        geomapTool.setLatLong(guiState.latitude, guiState.longitude);
         viewer.forceRerender();}
         };
 
@@ -217,7 +217,7 @@ export function Geomap() {
       const renderModes = ['Planar', 'Height', 'Martini', 'Height Shader', 'Spherical'];
       renderGui.add(guiState, 'mode', renderModes).name('Mode').onFinishChange(value => {
         const mode = renderModes.indexOf(value);
-        geomapTool.SetMapMode(mode);
+        geomapTool.setMapMode(mode);
         viewer.forceRerender();
       });
 
@@ -227,7 +227,7 @@ export function Geomap() {
                             'Satellite Maps Tiler', 'Height Map Box', 'Height Map Tiler', 'Debug Height Map Box', 'Debug'];
       renderGui.add(guiState, 'providers', mapProviders).name('MapProviders').onFinishChange(value => {
         const provider = mapProviders.indexOf(value);
-        geomapTool.SetMapProvider(provider);
+        geomapTool.setMapProvider(provider);
         viewer.forceRerender();
       });
 
@@ -237,7 +237,7 @@ export function Geomap() {
       'Satellite Maps Tiler', 'Height Map Box', 'Height Map Tiler', 'Debug Height Map Box', 'Debug'];
       renderGui.add(guiState, 'heightmap', heightMapProviders).name('HeightMapProvider').onFinishChange(value => {
         const heightmap = heightMapProviders.indexOf(value);
-        geomapTool.SetMapHeightProvider(heightmap);
+        geomapTool.setMapHeightProvider(heightmap);
         viewer.forceRerender();
       });
 

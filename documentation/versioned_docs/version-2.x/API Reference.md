@@ -5,7 +5,7 @@
 
 `@cognite/reveal` has two modules:
 - [@cognite/reveal](#module-cognitereveal) is the main module and has the main entry point of Reveal, [`Cognite3DViewer`](#class-cognite3dviewer). CAD models are represented by [`Cognite3DModel`](#class-cognite3dmodel) and points clouds by [`CognitePointCloudModel`](#class-cognitepointcloudmodel).
-- [@congite/reveal/tools](#module-cogniterevealtools) contains a set of tools, e.g. [`AxisViewTool`](#class-axisviewtool), [`ExplodedViewTool`](#class-explodedviewtool) and [`HtmlOverlayTool`](#class-htmloverlaytool) that works with `Cognite3DViewer`.
+- [@congite/reveal/tools](#module-cogniterevealtools) contains a set of tools, e.g. [`AxisViewTool`](#class-axisviewtool), [`GeomapTool`](#class-geomaptool), [`ExplodedViewTool`](#class-explodedviewtool) and [`HtmlOverlayTool`](#class-htmloverlaytool) that works with `Cognite3DViewer`.
 
 # Classes
 
@@ -5870,6 +5870,107 @@ Unregisters an event handler for the 'disposed'-event.
 
 Base class for tools attaching to a {@see Cognite3DViewer}.
 
+<a name="classes_cognite_reveal_toolsgeomaptoolmd"></a>
+
+[@cognite/reveal](#readmemd) / [Modules](#modulesmd) / [@cognite/reveal/tools](#modules_cognite_reveal_toolsmd) / GeomapTool
+
+## Class: GeomapTool
+
+[@cognite/reveal/tools](#modules_cognite_reveal_toolsmd).GeomapTool
+
+### Hierarchy
+
+- [Cognite3DViewerToolBase](#classes_cognite_reveal_toolscognite3dviewertoolbasemd)
+
+  ↳ **GeomapTool**
+
+### Table of contents
+
+#### Constructors
+
+- [constructor](#constructor)
+
+#### Methods
+
+- [dispose](#dispose)
+- [off](#off)
+
+### Constructors
+
+#### constructor
+
+• **new GeomapTool**(`viewer`)
+
+##### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `viewer` | [Cognite3DViewer](#classes_cognite_revealcognite3dviewermd) |
+
+##### Overrides
+
+[Cognite3DViewerToolBase](#classes_cognite_reveal_toolscognite3dviewertoolbasemd).[constructor](#constructor)
+
+##### Defined in
+
+[viewer/src/tools/Geomap/GeomapTool.ts:57](https://github.com/cognitedata/reveal/blob/pramodcog/tools-geomap/viewer/core/src/tools/Geomap/GeomapTool.ts#L57)
+
+### Methods
+
+#### dispose
+
+▸ **dispose**(): `void`
+
+##### Returns
+
+`void`
+
+##### Overrides
+
+[Cognite3DViewerToolBase](#classes_cognite_reveal_toolscognite3dviewertoolbasemd).[dispose](#dispose)
+
+##### Defined in
+
+[viewer/src/tools/Geomap/GeomapTool.ts:95](https://github.com/cognitedata/reveal/blob/pramodcog/tools-geomap/viewer/core/src/tools/Geomap/GeomapTool.ts#L95)
+
+___
+
+#### off
+
+▸ **off**(`event`, `handler`): `void`
+
+Unregisters an event handler for the 'disposed'-event.
+
+##### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `event` | ``"disposed"`` |
+| `handler` | () => `void` |
+
+##### Returns
+
+`void`
+
+##### Inherited from
+
+[Cognite3DViewerToolBase](#classes_cognite_reveal_toolscognite3dviewertoolbasemd).[off](#off)
+
+##### Defined in
+
+[viewer/src/tools/Cognite3DViewerToolBase.ts:38](https://github.com/cognitedata/reveal/blob/d0fe97f8/viewer/src/tools/Cognite3DViewerToolBase.ts#L38)
+
+
+<a name="classes_cognite_reveal_toolscognite3dviewertoolbasemd"></a>
+
+[@cognite/reveal](#readmemd) / [Modules](#modulesmd) / [@cognite/reveal/tools](#modules_cognite_reveal_toolsmd) / Cognite3DViewerToolBase
+
+## Class: Cognite3DViewerToolBase
+
+[@cognite/reveal/tools](#modules_cognite_reveal_toolsmd).Cognite3DViewerToolBase
+
+Base class for tools attaching to a {@see Cognite3DViewer}.
+
 ### Hierarchy
 
 - **Cognite3DViewerToolBase**
@@ -5881,6 +5982,8 @@ Base class for tools attaching to a {@see Cognite3DViewer}.
   ↳ [DebugCameraTool](#classes_cognite_reveal_toolsdebugcameratoolmd)
 
   ↳ [AxisViewTool](#classes_cognite_reveal_toolsaxisviewtoolmd)
+
+  ↳ [GeomapTool](#classes_cognite_reveal_toolsgeomaptoolmd)
 
   ↳ [DebugLoadedSectorsTool](#classes_cognite_reveal_toolsdebugloadedsectorstoolmd)
 
@@ -8599,6 +8702,7 @@ in cases when you need the latest local files or CDN is blocked by CSP.
 #### Classes
 
 - [AxisViewTool](#classes_cognite_reveal_toolsaxisviewtoolmd)
+- [GeomapTool](#classes_cognite_reveal_toolsgeomaptoolmd)
 - [Cognite3DViewerToolBase](#classes_cognite_reveal_toolscognite3dviewertoolbasemd)
 - [DebugCameraTool](#classes_cognite_reveal_toolsdebugcameratoolmd)
 - [DebugLoadedSectorsTool](#classes_cognite_reveal_toolsdebugloadedsectorstoolmd)

@@ -2,7 +2,6 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
 import * as GEOTHREE from 'geo-three';
 
 import { Cognite3DViewer } from '../../migration';
@@ -69,23 +68,23 @@ export class GeomapTool extends Cognite3DViewerToolBase {
     this._map.updateMatrixWorld(true);
   }
 
-  public SetMapProvider(idx : number) {
+  public setMapProvider(idx : number) {
     this._map.setProvider(this._providers[idx].provider);
     this._currentMapProvider = this._providers[idx].provider;
   }
 
-  public SetMapHeightProvider(idx : number) {
+  public setMapHeightProvider(idx : number) {
     this._map.setHeightProvider(this._providers[idx].provider);
     this._currentHeightMapProvider = this._providers[idx].provider;
   }
 
-  public SetMapMode(idx : number) {
+  public setMapMode(idx : number) {
     this._viewer.removeObject3D(this._map);
     this._map = new GEOTHREE.MapView(this._modes[idx].mode, this._currentMapProvider, this._currentHeightMapProvider);
     this._viewer.addObject3D(this._map);
   }
 
-  public SetLatLong(lat : number, long : number) {
+  public setLatLong(lat : number, long : number) {
     var coords = GEOTHREE.UnitsUtils.datumsToSpherical(lat, long);
     var bound = this._viewer.models[0].getModelBoundingBox();
     this._map.position.set(-coords.x, bound.min.y, coords.y);
