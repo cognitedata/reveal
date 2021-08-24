@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState, memo } from 'react';
-import { useQuery, useQueryClient } from 'react-query';
+import { useQuery } from 'react-query';
 import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
 import { DatapointAggregate, DatapointsMultiQuery } from '@cognite/sdk';
@@ -60,7 +60,6 @@ const PlotlyChartComponent = ({
 }: ChartProps) => {
   const [isAllowedToUpdate, setIsAllowedToUpdate] = useState(true);
   const sdk = useSDK();
-  const client = useQueryClient();
   const containerRef = useRef<HTMLDivElement>(null);
   const pointsPerSeries = isPreview ? 100 : 1000;
   const [dragmode, setDragmode] = useState<'zoom' | 'pan'>('pan');
@@ -70,13 +69,6 @@ const PlotlyChartComponent = ({
    * Get local chart context
    */
   const [, setChart] = useRecoilState(chartState);
-
-  const enabledTimeseries = chart?.timeSeriesCollection?.filter(
-    (ts) => ts.enabled
-  ).length;
-  const enabledWorkflows = chart?.workflowCollection?.filter(
-    (wf) => wf.enabled
-  ).length;
 
   const dateFrom = chart?.dateFrom;
   const dateTo = chart?.dateTo;
@@ -233,17 +225,7 @@ const PlotlyChartComponent = ({
         setDragmode(eventdata.dragmode || dragmode);
       }
     },
-    // Some deps are left out to reduce re-renders
-    // eslint-disable-next-line
-    [
-      seriesData,
-      dragmode,
-      isInSearch,
-      stackedMode,
-      client,
-      enabledTimeseries,
-      enabledWorkflows,
-    ]
+    [setChart, isPreview, seriesData, dragmode, isInSearch, stackedMode]
   );
 
   const showYAxis = !isInSearch && !isPreview && isYAxisShown;
