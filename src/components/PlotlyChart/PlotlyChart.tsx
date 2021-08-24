@@ -284,17 +284,13 @@ const PlotlyChartComponent = ({
     };
   }, [isPreview]);
 
-  // function copy<T>(val: T) {
-  //   return JSON.parse(JSON.stringify(val)) as T;
-  // }
-
   /**
    * Local state for data and layout in the chart
    * that only updates when the user isn't doing any navigation
    */
   const [activeState, setActiveState] = useState({
     data,
-    layout, // copy<typeof layout>(layout), // Plotly.js mutates input props!
+    layout,
     handleRelayout,
   });
 
@@ -305,7 +301,7 @@ const PlotlyChartComponent = ({
     if (isAllowedToUpdate) {
       setActiveState({
         data,
-        layout, // : copy<typeof layout>(layout), // Plotly.js mutates input props!
+        layout,
         handleRelayout,
       });
     }
