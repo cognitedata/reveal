@@ -36,7 +36,7 @@ export default function () {
   const history = useHistory();
   const sdk = useSDK();
   const flow = sdk.getOAuthFlowType();
-  const nativeTokens = flow === 'AAD_OAUTH' || flow === 'ADFS_OAUTH';
+  const nativeTokens = flow !== 'CDF_OAUTH';
 
   const { params } =
     useRouteMatch<{
@@ -71,25 +71,27 @@ export default function () {
         <Menu.Item disabled={!groupsRead} key="groups">
           Groups
         </Menu.Item>
-        <Menu.Item
-          key="service-accounts"
-          disabled={!usersRead}
-          hidden={nativeTokens}
-        >
-          Service accounts
-        </Menu.Item>
-        <Menu.Item key="api-keys" disabled={!keysRead} hidden={nativeTokens}>
-          API keys
-        </Menu.Item>
+        {!nativeTokens && (
+          <Menu.Item key="service-accounts" disabled={!usersRead}>
+            Service accounts
+          </Menu.Item>
+        )}
+        {!nativeTokens && (
+          <Menu.Item key="api-keys" disabled={!keysRead}>
+            API keys
+          </Menu.Item>
+        )}
         <Menu.Item key="security-categories" disabled={!secCatRead}>
           Security categories
         </Menu.Item>
         <Menu.Item key="oidc" disabled={!projectsRead}>
           OpenID connect
         </Menu.Item>
-        <Menu.Item key="idp" disabled={!projectsRead} hidden={nativeTokens}>
-          Identity provider configuration
-        </Menu.Item>
+        {!nativeTokens && (
+          <Menu.Item key="idp" disabled={!projectsRead}>
+            Identity provider configuration
+          </Menu.Item>
+        )}
       </StyledMeny>
       <Switch>
         <Redirect
