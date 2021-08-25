@@ -7,7 +7,7 @@ import WorkflowRow from './WorkflowRow';
 
 type Props = {
   chart: Chart;
-  updateChart: (c: Chart) => void;
+  updateChart: (update: (c: Chart | undefined) => Chart) => void;
   mode: string;
   openNodeEditor: () => void;
   selectedSourceId?: string;
@@ -36,8 +36,7 @@ function SourceRows({
 
   useEffect(() => {
     if (!chart.sourceCollection || chart.sourceCollection === undefined) {
-      const updatedChart = initializeSourceCollection(chart);
-      updateChart(updatedChart);
+      updateChart((oldChart) => initializeSourceCollection(oldChart!));
     }
   }, [chart, updateChart]);
 

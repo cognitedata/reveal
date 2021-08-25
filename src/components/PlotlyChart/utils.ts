@@ -380,8 +380,8 @@ export function generateLayout({
         ? [yAxisValues.width * (seriesData.length - 1) + yAxisValues.margin, 1]
         : [0, 1],
       range: [
-        dayjs(dateFrom).format('YYYY-MM-DD HH:mm:ss'),
-        dayjs(dateTo).format('YYYY-MM-DD HH:mm:ss'),
+        dayjs(dateFrom).format('YYYY-MM-DD HH:mm:ss.SSS'),
+        dayjs(dateTo).format('YYYY-MM-DD HH:mm:ss.SSS'),
       ],
       showspikes: true,
       spikemode: 'across',
@@ -520,3 +520,22 @@ export function generateLayout({
 
   return layout;
 }
+
+export const cleanTimeseriesCollection = (tsCollection?: ChartTimeSeries[]) => {
+  return tsCollection?.map((ts) => {
+    return {
+      ...ts,
+      statisticsCalls: undefined,
+    };
+  }) as ChartTimeSeries[];
+};
+
+export const cleanWorkflowCollection = (wfCollection?: ChartWorkflow[]) => {
+  return wfCollection?.map((wf) => {
+    return {
+      ...wf,
+      statisticsCalls: undefined,
+      calls: undefined,
+    };
+  }) as ChartWorkflow[];
+};

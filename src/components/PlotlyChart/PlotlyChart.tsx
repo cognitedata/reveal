@@ -16,7 +16,7 @@ import { trackUsage } from 'utils/metrics';
 import { useDebouncedCallback, useDebounce } from 'use-debounce';
 import { useRecoilState } from 'recoil';
 import { chartState } from 'atoms/chart';
-import { Chart } from 'reducers/charts/types';
+import { Chart, ChartTimeSeries, ChartWorkflow } from 'reducers/charts/types';
 import {
   calculateSeriesData,
   formatPlotlyData,
@@ -24,7 +24,12 @@ import {
   getYaxisUpdatesFromEventData,
   SeriesData,
 } from './utils';
-import { generateLayout, PlotlyEventData } from '.';
+import {
+  cleanTimeseriesCollection,
+  cleanWorkflowCollection,
+  generateLayout,
+  PlotlyEventData,
+} from '.';
 import {
   AdjustButton,
   ChartingContainer,
@@ -181,27 +186,36 @@ const PlotlyChartComponent = ({
     }
   }, [containerRef]);
 
-  const seriesData: SeriesData[] = useMemo(
-    () =>
-      calculateSeriesData(
-        chart?.timeSeriesCollection,
-        chart?.workflowCollection,
-        timeseries,
-        timeseriesFetching,
-        workflows,
-        workflowsRunning,
-        mergeUnits
-      ),
-    [
-      chart?.timeSeriesCollection,
-      chart?.workflowCollection,
+  /**
+   * Filter out callIDs that trigger unnecessary recalcs/rerenders
+   */
+  const tsCollectionAsString = JSON.stringify(
+    cleanTimeseriesCollection(chart?.timeSeriesCollection)
+  );
+  const wfCollectionAsString = JSON.stringify(
+    cleanWorkflowCollection(chart?.workflowCollection)
+  );
+
+  const seriesData: SeriesData[] = useMemo(() => {
+    const result = calculateSeriesData(
+      JSON.parse(tsCollectionAsString) as ChartTimeSeries[],
+      JSON.parse(wfCollectionAsString) as ChartWorkflow[],
       timeseries,
+      timeseriesFetching,
       workflows,
       workflowsRunning,
-      timeseriesFetching,
-      mergeUnits,
-    ]
-  );
+      mergeUnits
+    );
+    return result;
+  }, [
+    tsCollectionAsString,
+    wfCollectionAsString,
+    timeseries,
+    workflows,
+    workflowsRunning,
+    timeseriesFetching,
+    mergeUnits,
+  ]);
 
   const data: Plotly.Data[] = useMemo(
     () => formatPlotlyData(seriesData, isPreview || !isMinMaxShown),
@@ -213,7 +227,9 @@ const PlotlyChartComponent = ({
       if (isPreview) {
         return;
       }
+
       const x = getXaxisUpdateFromEventData(eventdata);
+
       // Should not edit the saved y-axis ranges if in stacked mode or in search
       const y = !(stackedMode || isInSearch)
         ? getYaxisUpdatesFromEventData(seriesData, eventdata)
@@ -275,26 +291,29 @@ const PlotlyChartComponent = ({
   const [activeState, setActiveState] = useState({
     data,
     layout,
+    handleRelayout,
   });
 
   /**
    * Update active state whenever allowed (not scrolling or navigating chart)
    */
   useEffect(() => {
-    if (isAllowedToUpdate) {
-      setActiveState({
-        data,
-        layout,
-      });
+    if (!isAllowedToUpdate) {
+      return;
     }
-  }, [data, layout, isAllowedToUpdate]);
+    setActiveState({
+      data,
+      layout,
+      handleRelayout,
+    });
+  }, [data, layout, isAllowedToUpdate, handleRelayout]);
 
   /**
    * Debounced callback that turns on updates again (scrolling)
    */
   const allowUpdatesScroll = useDebouncedCallback(() => {
     setIsAllowedToUpdate(true);
-  }, 500);
+  }, 100);
 
   /**
    * Debounced callback that turns on updates again (click and drag)
@@ -377,7 +396,7 @@ const PlotlyChartComponent = ({
           data={activeState.data as Plotly.Data[]}
           layout={activeState.layout as unknown as Plotly.Layout}
           config={config as unknown as Plotly.Config}
-          onRelayout={handleRelayout}
+          onRelayout={activeState.handleRelayout}
           style={chartStyles}
           useResizeHandler
         />

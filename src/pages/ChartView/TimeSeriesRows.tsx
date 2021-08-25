@@ -4,7 +4,7 @@ import TimeSeriesRow from './TimeSeriesRow';
 
 type Props = {
   chart: Chart;
-  updateChart: (c: Chart) => void;
+  updateChart: (update: (c: Chart | undefined) => Chart) => void;
   mode: Modes;
   selectedSourceId?: string;
   onRowClick?: (id?: string) => void;
