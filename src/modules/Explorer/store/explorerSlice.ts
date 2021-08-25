@@ -41,6 +41,12 @@ export type ExplorerFileState = {
   geoLocation?: FileGeoLocation;
 };
 
+export type BulkEditTempState = {
+  metadata?: Metadata;
+  keepOriginalMetadata?: Boolean;
+  labels?: Label[];
+};
+
 export type State = {
   selectedFileId: number | null;
   showFileMetadata: boolean;
@@ -51,12 +57,14 @@ export type State = {
   showFilter: boolean;
   showFileUploadModal: boolean;
   showFileDownloadModal: boolean;
+  showBulkEditModal: boolean;
   files: {
     byId: Record<number, ExplorerFileState>;
     allIds: number[];
     selectedIds: number[];
   };
   sortPaginate: Record<ExploreSortPaginateType, SortPaginate>;
+  bulkEditTemp: BulkEditTempState;
 };
 
 const initialState: State = {
@@ -69,6 +77,7 @@ const initialState: State = {
   showFilter: true,
   showFileUploadModal: false,
   showFileDownloadModal: false,
+  showBulkEditModal: false,
   files: {
     byId: {},
     allIds: [],
@@ -81,6 +90,7 @@ const initialState: State = {
     NO_LOCATION: { currentPage: 1, pageSize: DEFAULT_PAGE_SIZE },
     MODAL: { currentPage: 1, pageSize: DEFAULT_PAGE_SIZE },
   },
+  bulkEditTemp: {},
 };
 
 const explorerSlice = createSlice({
@@ -157,6 +167,9 @@ const explorerSlice = createSlice({
     ) {
       state.showFileDownloadModal = action.payload;
     },
+    setBulkEditModalVisibility(state, action: PayloadAction<boolean>) {
+      state.showBulkEditModal = action.payload;
+    },
     setSortKey(
       state,
       action: PayloadAction<{ type: ExploreSortPaginateType; sortKey: string }>
@@ -202,6 +215,9 @@ const explorerSlice = createSlice({
     ) {
       state.mapTableTabKey = action.payload.mapTableTabKey;
     },
+    setBulkEditTemp(state, action: PayloadAction<BulkEditTempState>) {
+      state.bulkEditTemp = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(deleteFilesById.fulfilled, (state, { payload }) => {
@@ -234,12 +250,14 @@ export const {
   toggleExplorerFilterView,
   setExplorerFileUploadModalVisibility,
   setExplorerFileDownloadModalVisibility,
+  setBulkEditModalVisibility,
   setSortKey,
   setReverse,
   setCurrentPage,
   setPageSize,
   setExplorerCurrentView,
   setMapTableTabKey,
+  setBulkEditTemp,
 } = explorerSlice.actions;
 
 export default explorerSlice.reducer;

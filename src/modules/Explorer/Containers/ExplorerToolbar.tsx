@@ -24,6 +24,7 @@ export const ExplorerToolbar = ({
   onDownload,
   onContextualise,
   onReview,
+  onBulkEdit,
 }: {
   query?: string;
   selectedCount?: number;
@@ -35,6 +36,7 @@ export const ExplorerToolbar = ({
   onDownload: () => void;
   onContextualise: () => void;
   onReview: () => void;
+  onBulkEdit: () => void;
 }) => {
   const count = selectedCount ? `[${selectedCount}]` : null;
   const inLimit =
@@ -46,6 +48,12 @@ export const ExplorerToolbar = ({
         color: 'black' /* typpy styles make color to be white here ... */,
       }}
     >
+      <Menu.Item onClick={onBulkEdit} style={{ color: '#595959' }}>
+        <>
+          <Icon type="Document" style={{ marginRight: 17 }} />
+          <Detail strong>Bulk Edit Data {count}</Detail>
+        </>
+      </Menu.Item>
       <Menu.Item
         onClick={onContextualise}
         disabled={!count || !inLimit}

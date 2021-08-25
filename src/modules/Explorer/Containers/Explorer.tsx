@@ -11,7 +11,7 @@ import { ExplorerSearchResults } from 'src/modules/Explorer/Containers/ExplorerS
 import { FileDetails } from 'src/modules/FileDetails/Containers/FileDetails';
 import { TableDataItem, ViewMode } from 'src/modules/Common/types';
 import { ExplorerToolbar } from 'src/modules/Explorer/Containers/ExplorerToolbar';
-import { addFileInfo } from 'src/modules/Common/filesSlice';
+import { addFileInfo, FileState } from 'src/modules/Common/filesSlice';
 import { FileUploadModal } from 'src/modules/Common/Components/FileUploaderModal/FileUploaderModal';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import { StatusToolBar } from 'src/modules/Process/Containers/StatusToolBar';
@@ -24,6 +24,8 @@ import {
 } from 'src/modules/Workflow/workflowRoutes';
 import { MAX_SELECT_COUNT } from 'src/constants/ExplorerConstants';
 import { FileDownloaderModal } from 'src/modules/Common/Components/FileDownloaderModal/FileDownloaderModal';
+import { BulkEditModal } from 'src/modules/Common/Components/BulkEdit/BulkEditModal';
+import { updateBulk } from 'src/store/thunks/updateBulk';
 import {
   setExplorerCurrentView,
   setExplorerFileSelectState,
@@ -35,6 +37,10 @@ import {
   selectExplorerSelectedFileIds,
   setExplorerFileUploadModalVisibility,
   setExplorerFileDownloadModalVisibility,
+  setBulkEditModalVisibility,
+  BulkEditTempState,
+  selectExplorerAllSelectedFiles,
+  setBulkEditTemp,
 } from '../store/explorerSlice';
 import { FilterSidePanel } from './FilterSidePanel';
 
@@ -67,6 +73,17 @@ const Explorer = () => {
   );
   const selectedFileIds = useSelector((state: RootState) =>
     selectExplorerSelectedFileIds(state.explorerReducer)
+  );
+  const selectedFiles: FileState[] = useSelector(
+    ({ explorerReducer }: RootState) => {
+      return selectExplorerAllSelectedFiles(explorerReducer);
+    }
+  );
+  const showBulkEditModal = useSelector(
+    ({ explorerReducer }: RootState) => explorerReducer.showBulkEditModal
+  );
+  const bulkEditTemp = useSelector(
+    ({ explorerReducer }: RootState) => explorerReducer.bulkEditTemp
   );
 
   const queryClient = new QueryClient();
@@ -149,6 +166,18 @@ const Explorer = () => {
     }
   };
 
+  const setBulkEdit = (value: BulkEditTempState) => {
+    dispatch(setBulkEditTemp(value));
+  };
+  const onFinishBulkEdit = () => {
+    dispatch(updateBulk({ selectedFiles, bulkEditTemp }));
+    onCloseBulkEdit();
+  };
+  const onCloseBulkEdit = () => {
+    dispatch(setBulkEditModalVisibility(false));
+    setBulkEdit({});
+  };
+
   return (
     <>
       <Deselect
@@ -205,6 +234,7 @@ const Explorer = () => {
                 onDownload={onDownload}
                 onContextualise={onContextualise}
                 onReview={onReview}
+                onBulkEdit={() => dispatch(setBulkEditModalVisibility(true))}
               />
               <ExplorerSearchResults
                 filter={filter}
@@ -228,6 +258,14 @@ const Explorer = () => {
               </QueryClientProvider>
             </DrawerContainer>
           )}
+          <BulkEditModal
+            showModal={showBulkEditModal}
+            selectedFiles={selectedFiles}
+            bulkEditTemp={bulkEditTemp}
+            onCancel={onCloseBulkEdit}
+            setBulkEditTemp={setBulkEdit}
+            onFinishBulkEdit={onFinishBulkEdit}
+          />
         </QueryClientProvider>
       </Wrapper>
     </>
