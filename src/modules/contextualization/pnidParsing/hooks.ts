@@ -4,7 +4,7 @@ import { createSelector } from 'reselect';
 import { RootState } from 'store';
 import { useResourceCount } from 'hooks';
 
-const selectParsingJob = createSelector(
+export const selectParsingJob = createSelector(
   (state: RootState) => state.workflows.items,
   (state: RootState) => state.contextualization.pnidParsing,
   (workflowItems, parsingData) => (workflowId: number) => {

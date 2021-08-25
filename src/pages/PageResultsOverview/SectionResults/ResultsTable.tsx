@@ -12,7 +12,7 @@ import {
 import { useWorkflowDiagramsIds } from 'modules/workflows';
 import { useActiveWorkflow } from 'hooks';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
-import { getContextualizationJobs } from '../selectors';
+import { getContextualizationJobs, getSelectedDiagramsIds } from '../selectors';
 import { getColumns, AdjustedFileInfo } from './columns';
 import { SelectionFilter } from './types';
 
@@ -21,26 +21,25 @@ type ResultsTableProps = {
 };
 
 export default function ResultsTable(props: ResultsTableProps): JSX.Element {
+  const { selectionFilter } = props;
   const history = useHistory();
   const dispatch = useDispatch();
-  const { selectionFilter } = props;
-  const [selectedKeys, setSelectedKeys] = useState([] as number[]);
 
   const [columns, setColumns] = useState();
 
   const { workflowId } = useActiveWorkflow();
   const diagramIds = useWorkflowDiagramsIds(workflowId, true);
-  const { data: diagrams } = useCdfItems<FileInfo>(
+  const { failedFiles } = useParsingJob(workflowId);
+  const { data: diagrams = [] } = useCdfItems<FileInfo>(
     'files',
     diagramIds.map((id) => ({ id })),
     true
   );
 
+  const selectedDiagramsIds = useSelector(getSelectedDiagramsIds);
   const { uploadJobs } = useSelector(getContextualizationJobs);
   const { search } = history.location;
   const { page = 1 } = queryString.parse(search, { parseNumbers: true });
-
-  const { failedFiles } = useParsingJob(workflowId);
 
   const didFileFail = (fileId: number): StatusType => {
     const didFail = failedFiles?.find(
@@ -83,7 +82,7 @@ export default function ResultsTable(props: ResultsTableProps): JSX.Element {
   };
 
   const adjustedDiagrams = diagrams
-    ?.filter((d: FileInfo) => Boolean(d))
+    .filter((d: FileInfo) => Boolean(d))
     .map((d: FileInfo) => ({
       ...d,
       uploadJob: uploadJobs[d.id],
@@ -93,7 +92,27 @@ export default function ResultsTable(props: ResultsTableProps): JSX.Element {
     }))
     .filter(filterDiagrams);
 
-  const onRowChange = (keys: any) => setSelectedKeys(keys as number[]);
+  const onRowChange = (keys: any) => {
+    const selectedIds = [...keys];
+    dispatch(
+      selectDiagrams({
+        workflowId,
+        diagramIds: selectedIds,
+      })
+    );
+  };
+  const onSelectAll = (selectAll?: boolean) => {
+    const selectedIds =
+      selectAll && adjustedDiagrams
+        ? adjustedDiagrams.map((el: any) => el.id)
+        : ([] as number[]);
+    dispatch(
+      selectDiagrams({
+        workflowId,
+        diagramIds: selectedIds,
+      })
+    );
+  };
 
   const onPaginationChange = (newPage: number) => {
     history.push({
@@ -103,12 +122,6 @@ export default function ResultsTable(props: ResultsTableProps): JSX.Element {
       }),
     });
   };
-  const onSelectAll = (selectAll: boolean) =>
-    setSelectedKeys(
-      selectAll && adjustedDiagrams
-        ? adjustedDiagrams.map((el: any) => el.id)
-        : ([] as number[])
-    );
 
   useEffect(() => {
     const newColumns = getColumns(workflowId);
@@ -117,9 +130,9 @@ export default function ResultsTable(props: ResultsTableProps): JSX.Element {
   }, []);
 
   useEffect(() => {
-    dispatch(selectDiagrams({ workflowId, diagramIds: selectedKeys }));
+    dispatch(selectDiagrams({ workflowId, diagramIds: selectedDiagramsIds }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedKeys]);
+  }, [selectedDiagramsIds]);
 
   useEffect(() => {
     dispatch(selectDiagrams({ workflowId, diagramIds: [] }));
@@ -134,11 +147,18 @@ export default function ResultsTable(props: ResultsTableProps): JSX.Element {
       rowSelection={{
         onSelectAll,
         onChange: onRowChange,
-        selectedRowKeys: selectedKeys,
+        selectedRowKeys: selectedDiagramsIds,
+        getCheckboxProps: (record: any) => ({
+          disabled: record.status === 'failed',
+        }),
       }}
       pagination={{
         onChange: onPaginationChange,
         current: Number(page),
+        position: ['bottomLeft'],
+        size: 'small',
+        showQuickJumper: true,
+        showSizeChanger: true,
       }}
       options={{
         narrow: true,

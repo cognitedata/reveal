@@ -7,6 +7,7 @@ import { diagramSelection } from 'routes/paths';
 import { AppStateContext } from 'context';
 import { LS_SAVED_SETTINGS } from 'stringConstants';
 import { ResourceType } from 'modules/sdk-builder/types';
+import { selectParsingJob } from 'modules/contextualization/pnidParsing';
 import {
   standardModelOptions,
   createNewWorkflow,
@@ -85,13 +86,21 @@ export const useWorkflowDiagrams = (
  */
 export const useWorkflowDiagramsIds = (
   workflowId: number,
-  all: boolean = false
+  all: boolean = false,
+  ignoreFailed: boolean = false
 ) => {
+  const parsingJob = useSelector(selectParsingJob)(workflowId);
+  const failedFiles =
+    parsingJob?.failedFiles?.map((file: any) => file.fileId) ?? [];
   const getDiagrams = useMemo(
     () => workflowDiagramsSelector(workflowId, all),
     [all, workflowId]
   );
   const diagrams: FileInfo[] = useSelector(getDiagrams);
+  if (ignoreFailed)
+    return diagrams
+      .filter((el: any) => !failedFiles.includes(el.id))
+      .map((item) => item.id);
   return diagrams.map((item) => item.id);
 };
 

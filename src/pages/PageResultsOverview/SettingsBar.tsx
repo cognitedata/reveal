@@ -1,10 +1,9 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { Body, Colors, Title, Button } from '@cognite/cogs.js';
-import { Modal } from 'antd';
+import { Colors, Title, Button } from '@cognite/cogs.js';
 import { Flex } from 'components/Common';
-import { REVIEW_DIAGRAMS_LABELS, useReviewFiles } from 'hooks/useReviewFiles';
+import { useReviewFiles } from 'hooks/useReviewFiles';
 import { selectDiagrams } from 'modules/contextualization/pnidParsing';
 import { useHistory, useParams } from 'react-router-dom';
 import { diagramPreview } from 'routes/paths';
@@ -34,39 +33,9 @@ export default function SettingsBar() {
 
   const selectedDiagramsIds = useSelector(getSelectedDiagramsIds);
 
-  const { onApproved, onRejected } = useReviewFiles(
-    selectedDiagramsIds.map((id: any) => Number(id))
-  );
+  const { onApproveDiagrams, onRejectDiagrams } =
+    useReviewFiles(selectedDiagramsIds);
 
-  const onRejectSelectedClick = async () => {
-    Modal.confirm({
-      icon: <></>,
-      width: 320,
-      maskClosable: true,
-      okText: REVIEW_DIAGRAMS_LABELS.reject.some.button,
-      cancelText: 'Cancel',
-      cancelButtonProps: { type: 'text' },
-      content: <Body level={2}>{REVIEW_DIAGRAMS_LABELS.reject.some.desc}</Body>,
-      onOk: async () =>
-        onRejected(selectedDiagramsIds.map((id: any) => Number(id))),
-    });
-  };
-
-  const onApproveSelectedClick = async () => {
-    Modal.confirm({
-      icon: <></>,
-      width: 320,
-      maskClosable: true,
-      okText: REVIEW_DIAGRAMS_LABELS.approve.some.button,
-      cancelText: 'Cancel',
-      cancelButtonProps: { type: 'text' },
-      content: (
-        <Body level={2}>{REVIEW_DIAGRAMS_LABELS.approve.some.desc}</Body>
-      ),
-      onOk: async () =>
-        onApproved(selectedDiagramsIds.map((id: any) => Number(id))),
-    });
-  };
   const onPreviewSelectedClick = () => {
     history.push(
       diagramPreview.path(tenant, workflowId, selectedDiagramsIds[0])
@@ -89,13 +58,13 @@ export default function SettingsBar() {
         {selectedDiagramsIds.length} diagrams selected
       </Title>
       <Buttons row>
-        <Button type="ghost-danger" onClick={onRejectSelectedClick}>
+        <Button type="ghost-danger" onClick={() => onRejectDiagrams()}>
           Reject tags on selected diagrams
         </Button>
         <Button
           type="ghost"
           variant="inverted"
-          onClick={onApproveSelectedClick}
+          onClick={() => onApproveDiagrams()}
         >
           Approve tags on selected diagrams
         </Button>

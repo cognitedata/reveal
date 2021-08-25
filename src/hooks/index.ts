@@ -13,6 +13,7 @@ export * from './useSelectFilter';
 export * from './useSteps';
 export * from './useDatasets';
 export * from './useReviewFiles';
+export * from './useConvertToSVG';
 
 // dev
 export * from './useTraceRerender';

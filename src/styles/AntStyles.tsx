@@ -124,6 +124,10 @@ const styles = [
 Modal.defaultProps = {
   ...Modal.defaultProps,
   getContainer: () => document.getElementsByClassName(ids.styleScope).item(0)!,
+  bodyStyle: {
+    padding: '20px',
+    borderRadius: '10px',
+  },
 };
 
 Tooltip.defaultProps = {

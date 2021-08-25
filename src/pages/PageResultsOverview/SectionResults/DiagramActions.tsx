@@ -1,43 +1,39 @@
 import React from 'react';
-import { Button } from '@cognite/cogs.js';
-import { useReviewFiles } from 'hooks';
-import { useWorkflowItems } from 'modules/workflows';
-import { useParams, useHistory } from 'react-router-dom';
-import { diagramPreview } from 'routes/paths';
+import { Button, Dropdown } from '@cognite/cogs.js';
+import { useReviewFiles, useActiveWorkflow } from 'hooks';
+import { useWorkflowDiagramsIds } from 'modules/workflows';
 import { InfoWrapper } from './components';
+import { MenuAll } from './DropdownMenu';
 
 export default function DiagramActions() {
-  const history = useHistory();
-  const { tenant, workflowId } =
-    useParams<{ tenant: string; workflowId: string }>();
+  const { workflowId } = useActiveWorkflow();
+  const diagramsIds = useWorkflowDiagramsIds(workflowId, true, true);
+  const { onApproveDiagrams, isOnApprovedLoading: isLoading } =
+    useReviewFiles(diagramsIds);
 
-  const { diagrams } = useWorkflowItems(Number(workflowId), true);
-
-  const { onApproved } = useReviewFiles(
-    diagrams.map((diagram) => Number(diagram.id))
-  );
-
-  const onApproveAllClick = () => {
-    onApproved(diagrams.map((diagram) => Number(diagram.id)));
-  };
-  const onPreviewAllClick = () => {
-    history.push(diagramPreview.path(tenant, workflowId, diagrams[0].id));
-  };
-  const onMoreClick = () => {};
+  const onPreviewAllClick = () => {};
 
   return (
     <InfoWrapper>
-      <Button icon="Checkmark" type="tertiary" onClick={onApproveAllClick}>
+      <Button
+        icon="Checkmark"
+        type="tertiary"
+        onClick={() => onApproveDiagrams(true)}
+        disabled={isLoading}
+      >
         Approve all
       </Button>
-      <Button icon="ExpandMax" type="primary" onClick={onPreviewAllClick}>
+      <Button
+        icon="ExpandMax"
+        type="primary"
+        onClick={onPreviewAllClick}
+        disabled={isLoading}
+      >
         Preview all
       </Button>
-      <Button
-        icon="MoreOverflowEllipsisHorizontal"
-        variant="ghost"
-        onClick={onMoreClick}
-      />
+      <Dropdown content={<MenuAll />}>
+        <Button icon="MoreOverflowEllipsisHorizontal" variant="ghost" />
+      </Dropdown>
     </InfoWrapper>
   );
 }

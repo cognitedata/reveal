@@ -1,3 +1,6 @@
+import React from 'react';
+import { Modal, notification } from 'antd';
+import { Body } from '@cognite/cogs.js';
 import { useCdfItems, useUserInfo } from '@cognite/sdk-react-query-hooks';
 import {
   ExternalLabelDefinition,
@@ -8,8 +11,7 @@ import sdk from 'sdk-singleton';
 import { useMutation, useQueryClient } from 'react-query';
 import { updateAnnotations } from '@cognite/annotations';
 import { sleep } from 'utils/utils';
-import { notification } from 'antd';
-import handleError from '../utils/handleError';
+import handleError from 'utils/handleError';
 import { useAnnotationsForFiles } from './useAnnotationsForFiles';
 
 export const PENDING_LABEL = {
@@ -150,7 +152,6 @@ export const useReviewFiles = (fileIds: Array<number>) => {
       };
     });
     await sdk.files.update(updatePatch);
-
     notification.success({
       message: 'Diagram approved successfully!',
     });
@@ -204,23 +205,21 @@ export const useReviewFiles = (fileIds: Array<number>) => {
     await sdk.files.update(updatePatch);
   };
 
-  const { mutate: onApproved } = useMutation(
+  const { isLoading: isOnApprovedLoading, mutate: onApproved } = useMutation(
     (selectedFileIds: Array<number>) => setFilesApproved(selectedFileIds),
     {
       onError,
       onSuccess,
     }
   );
-
-  const { mutate: onPending } = useMutation(
+  const { isLoading: isOnPendingLoading, mutate: onPending } = useMutation(
     (selectedFileIds: Array<number>) => setFilesPending(selectedFileIds),
     {
       onError,
       onSuccess,
     }
   );
-
-  const { mutate: onRejected } = useMutation(
+  const { isLoading: isOnRejectedLoading, mutate: onRejected } = useMutation(
     (selectedFileIds: Array<number>) => setFilesRejected(selectedFileIds),
     {
       onError,
@@ -228,13 +227,62 @@ export const useReviewFiles = (fileIds: Array<number>) => {
     }
   );
 
-  return { onApproved, onPending, onRejected };
+  const onApproveDiagrams = async (all?: boolean) => {
+    const okText = all
+      ? REVIEW_DIAGRAMS_LABELS.approve.all.button
+      : REVIEW_DIAGRAMS_LABELS.approve.some.button;
+    const content = all
+      ? REVIEW_DIAGRAMS_LABELS.approve.all.desc
+      : REVIEW_DIAGRAMS_LABELS.approve.some.desc;
+
+    Modal.confirm({
+      icon: <></>,
+      width: 320,
+      maskClosable: true,
+      okText,
+      cancelText: 'Cancel',
+      cancelButtonProps: { type: 'text' },
+      content: <Body level={2}>{content}</Body>,
+      onOk: async () => onApproved(fileIds),
+    });
+  };
+
+  const onRejectDiagrams = async (all?: boolean) => {
+    const okText = all
+      ? REVIEW_DIAGRAMS_LABELS.reject.all.button
+      : REVIEW_DIAGRAMS_LABELS.reject.some.button;
+    const content = all
+      ? REVIEW_DIAGRAMS_LABELS.reject.all.desc
+      : REVIEW_DIAGRAMS_LABELS.reject.some.desc;
+
+    Modal.confirm({
+      icon: <></>,
+      width: 320,
+      maskClosable: true,
+      okText,
+      cancelText: 'Cancel',
+      cancelButtonProps: { type: 'text' },
+      content: <Body level={2}>{content}</Body>,
+      onOk: async () => onRejected(fileIds),
+    });
+  };
+
+  return {
+    onApproved,
+    onPending,
+    onRejected,
+    isOnApprovedLoading,
+    isOnPendingLoading,
+    isOnRejectedLoading,
+    onApproveDiagrams,
+    onRejectDiagrams,
+  };
 };
 
 export const REVIEW_DIAGRAMS_LABELS = {
   approve: {
     all: {
-      button: 'Approve all tags',
+      button: 'Approve all pending tags',
       desc: 'Are you sure you want to approve all new links? Changes will be saved to CDF and everybody will have access to them.',
     },
     some: {
@@ -244,7 +292,7 @@ export const REVIEW_DIAGRAMS_LABELS = {
   },
   reject: {
     all: {
-      button: 'Reject all tags',
+      button: 'Reject all pending tags',
       desc: 'Are you sure you want to reject all new links? You will be able to recontextualize later.',
     },
     some: {
