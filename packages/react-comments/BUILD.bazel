@@ -54,6 +54,7 @@ generate_package_json_helpers(
 DEPENDENCIES = [
     "@npm//@cognite/cogs.js",
     "@npm//react",
+    "@npm//react-query",
     "@npm//msw",
     "//packages/react-container",
 ]
@@ -65,7 +66,11 @@ TYPE_DEPENDENCIES = [
 ]
 
 # Dev dependencies from package.json
-DEV_DEPENDENCIES = ["@npm//@testing-library/react-hooks"]
+DEV_DEPENDENCIES = [
+    "@npm//@testing-library/jest-dom",
+    "@npm//@testing-library/react",
+    "@npm//@testing-library/react-hooks",
+]
 
 # Mappings for absolute imports from baseUrl @unused
 mappings_dict = {

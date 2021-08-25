@@ -23,6 +23,7 @@ const PROD = false;
 // examples: bluefield, greenfield, ew1, bp-northeurope, azure-dev, bp
 // NOTE: leave on 'azure-dev' for testing in the PR's since that is the only place we have the FAKEIdp currently for this project:
 const CLUSTER = 'azure-dev';
+const LOCAL_COMMENTS_API = false;
 // #
 // #
 // #
@@ -43,29 +44,39 @@ const getAadApplicationId = (cluster: string) => {
 };
 
 const generateBaseUrls = (cluster: string, prod = false) => {
+  let commentServiceBaseUrl = 'http://localhost:8300';
+
   switch (cluster) {
     case 'ew1': {
+      if (!LOCAL_COMMENTS_API) {
+        commentServiceBaseUrl = prod
+          ? `https://comment-service.cognite.ai`
+          : `https://comment-service.staging.cognite.ai`;
+      }
+
       return {
         appsApiBaseUrl: prod
           ? 'https://apps-api.cognite.ai'
           : 'https://apps-api.staging.cognite.ai',
         cdfApiBaseUrl: 'https://api.cognitedata.com',
-        commentServiceBaseUrl: prod
-          ? `https://comment-service.cognite.ai`
-          : `https://comment-service.staging.cognite.ai`,
+        commentServiceBaseUrl,
         cdfCluster: '',
       };
     }
     default: {
+      if (!LOCAL_COMMENTS_API) {
+        commentServiceBaseUrl = prod
+          ? `https://comment-service.${cluster}.cognite.ai`
+          : `https://comment-service.staging.${cluster}.cognite.ai`;
+      }
+
       return {
         aadApplicationId: '245a8a64-4142-4226-86fa-63d590de14c9', // bluefield staging
         appsApiBaseUrl: prod
           ? `https://apps-api.${cluster}.cognite.ai`
           : `https://apps-api.staging.${cluster}.cognite.ai`,
         cdfApiBaseUrl: `https://${cluster}.cognitedata.com`,
-        commentServiceBaseUrl: prod
-          ? `https://comment-service.${cluster}.cognite.ai`
-          : `https://comment-service.staging.${cluster}.cognite.ai`,
+        commentServiceBaseUrl,
         cdfCluster: cluster,
       };
     }

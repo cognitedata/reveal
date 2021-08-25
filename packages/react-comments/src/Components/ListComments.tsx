@@ -3,7 +3,7 @@ import type { CommentTarget } from '@cognite/comment-service-types';
 import { Comment, Conversation, Loader } from '@cognite/cogs.js';
 import { useAuthContext, getAuthHeaders } from '@cognite/react-container';
 
-import { useFetchComments, useCreateComment } from '../hooks';
+import { useFetchComments, useCommentCreateMutate } from '../queries';
 
 interface ListCommentsProps {
   target: CommentTarget;
@@ -14,22 +14,22 @@ export const ListComments: React.FC<ListCommentsProps> = ({
   serviceUrl,
 }) => {
   const { authState } = useAuthContext();
-  const headers = getAuthHeaders({ useIdToken: true });
-
-  const { comments } = useFetchComments({
-    target,
-    serviceUrl: `${serviceUrl}/${authState?.project}`,
-  });
   const [message, setMessage] = React.useState('');
+  const headers = getAuthHeaders({ useIdToken: true });
+  const fullServiceUrl = `${serviceUrl}/${authState?.project}`;
+  const { mutate } = useCommentCreateMutate({
+    target,
+    serviceUrl: fullServiceUrl,
+    headers,
+  });
+
+  const { data: comments, isError } = useFetchComments({
+    target,
+    serviceUrl: fullServiceUrl,
+  });
 
   const handleCreateMessage = (comment: string) => {
-    useCreateComment({
-      target,
-      comment,
-      serviceUrl,
-      project: authState?.project || '',
-      headers,
-    });
+    mutate(comment);
     setMessage('');
   };
   const handleRemoveComment = (content: string) => {
@@ -37,16 +37,20 @@ export const ListComments: React.FC<ListCommentsProps> = ({
     console.log('HandleRemoveComment not ready yet:', content);
   };
 
-  const isReady = authState && headers;
+  const isLoading = !authState || !headers;
 
-  if (!isReady) {
+  if (isLoading) {
     return <Loader />;
+  }
+
+  if (isError) {
+    return <div>Error loading comments.</div>;
   }
 
   return (
     <Conversation
       reverseOrder
-      conversation={comments}
+      conversation={comments || []}
       user={authState?.email || ''}
       onRemoveComment={handleRemoveComment}
       input={
