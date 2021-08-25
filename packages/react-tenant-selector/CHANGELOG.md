@@ -1,3 +1,7 @@
+## 1.4.0 August 25 2021
+
+- Bump deps
+
 ## 1.3.1 August 03 2021
 
 - Fix cogs icon deprecation notices

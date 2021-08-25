@@ -1,3 +1,7 @@
+## 1.6.1 August 25 2021
+
+- Bump deps
+
 ## 1.6.0 Aug 24 2021
 
 - Add React Query provider

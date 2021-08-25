@@ -26,6 +26,7 @@ export default {
     // with react 17 we are getting Unresolved dependencies for react/jsx-runtime
     'react/jsx-runtime',
     '@cognite/cogs.js/dist/cogs.css',
+    'lodash/omit',
   ],
   plugins: [
     typescript({

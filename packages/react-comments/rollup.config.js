@@ -21,6 +21,9 @@ export default {
     // https://github.com/facebook/react/issues/20235
     // with react 17 we are getting Unresolved dependencies for react/jsx-runtime
     'react/jsx-runtime',
+    'react-query',
+    'axios',
+    '@cognite/cogs.js',
   ],
   plugins: [
     typescript({

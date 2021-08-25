@@ -22,6 +22,7 @@ export default [
       // https://github.com/facebook/react/issues/20235
       // with react 17 we are getting Unresolved dependencies for react/jsx-runtime
       'react/jsx-runtime',
+      'react-i18next',
       'lodash/noop',
       'lodash/merge',
       '@cognite/cogs.js/dist/cogs.css',

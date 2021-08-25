@@ -1,12 +1,10 @@
 import React from 'react';
-import {
-  KEY_LAST_TENANT,
-  AUTH_RESULT_STORAGE_KEY,
-  useAuthContext,
-  storage,
-} from '@cognite/react-container';
 import { EndSessionRequest } from '@azure/msal-browser';
 import { saveFlow } from '@cognite/auth-utils';
+
+import { AUTH_RESULT_STORAGE_KEY, KEY_LAST_TENANT, storage } from '../utils';
+
+import { useAuthContext } from './AuthContainer';
 
 export const Logout: React.FC = () => {
   const { client } = useAuthContext();

@@ -1,3 +1,7 @@
+## 0.5.0 August 25 2021
+
+- Bump deps
+
 ## 0.4.0 - May 14 2021
 
 ### Changes
