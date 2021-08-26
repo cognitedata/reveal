@@ -110,6 +110,7 @@ export const SorterPaginationWrapper = ({
           setReverse,
           data: pagedData,
           tableFooter,
+          fetchedCount,
         })}
       </TableContainer>
       <PaginationContainer>

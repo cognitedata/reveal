@@ -22,6 +22,7 @@ import {
   selectAllFilesSelected,
   selectAllSelectedIds,
   setFileSelectState,
+  setSelectedFiles,
 } from 'src/modules/Common/filesSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
@@ -132,6 +133,9 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
       setSelectedAllFiles({ selectStatus: value, filter: selectFilter })
     );
   };
+  const handleSetSelectedFiles = (fileIds: number[]) => {
+    dispatch(setSelectedFiles(fileIds));
+  };
 
   const handleSetSortKey = (type: FileSortPaginateType, sortKey: string) => {
     dispatch(setSortKey({ type, sortKey }));
@@ -236,6 +240,7 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
           totalCount={data.length}
           allRowsSelected={allFilesSelected}
           onSelectAllRows={handleSelectAllFiles}
+          onSelectPage={handleSetSelectedFiles}
           selectedRowIds={selectedFileIds}
           sortPaginateControlsLocation={sortPaginateControlsLocation}
           sortPaginateControlsNoLocation={sortPaginateControlsNoLocation}
@@ -253,6 +258,7 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
         totalCount={data.length}
         allRowsSelected={allFilesSelected}
         onSelectAllRows={handleSelectAllFiles}
+        onSelectPage={handleSetSelectedFiles}
         selectedRowIds={selectedFileIds}
         sortPaginateControls={listSortPaginateControls}
       />

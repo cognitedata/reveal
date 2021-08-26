@@ -30,6 +30,7 @@ export type SelectableTableProps = Omit<
     rendererMap: { [key: string]: (props: CellRenderer) => JSX.Element };
     onRowSelect: (item: TableDataItem, selected: boolean) => void;
     onSelectAllRows: (val: boolean) => void;
+    onSelectPage: (fileIds: number[]) => void;
     rowClassNames?: (data: {
       columns: ColumnShape<TableDataItem>[];
       rowData: TableDataItem;
@@ -62,12 +63,14 @@ export function SelectableTable(props: SelectableTableProps) {
     data,
     sortKey,
     reverse,
+    fetchedCount,
     setSortKey,
     setReverse,
     rowEventHandlers,
     tableFooter,
     onRowSelect,
     onSelectAllRows,
+    onSelectPage,
     rowClassNames,
   } = props;
 
@@ -82,8 +85,13 @@ export function SelectableTable(props: SelectableTableProps) {
     onRowSelect(rowData, selected);
   };
 
+  const fileIdsInCurrentPage = data.map((file) => file.id);
+
   const columns: SelectableTableColumnShape<TableDataItem>[] = useMemo(() => {
-    rendererMap = { ...defaultCellRenderers, ...props.rendererMap };
+    rendererMap = {
+      ...defaultCellRenderers,
+      ...props.rendererMap,
+    };
     if (selectable) {
       const selectionColumn = {
         key: 'selected',
@@ -96,6 +104,10 @@ export function SelectableTable(props: SelectableTableProps) {
         allSelected: allRowsSelected,
         onSelectAll: onSelectAllRows,
         selectedIds: selectedRowIds,
+        onSelectPage,
+        fileIdsInCurrentPage,
+        fetchedCount,
+        selectedRowIds,
       };
       return [selectionColumn, ...props.columns];
     }

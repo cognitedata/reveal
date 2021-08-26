@@ -172,6 +172,15 @@ const filesSlice = createSlice({
         }
       },
     },
+    setSelectedFiles: {
+      prepare: (id: number[]) => {
+        return { payload: { fileIds: id } };
+      },
+      reducer: (state, action: PayloadAction<{ fileIds: number[] }>) => {
+        const { fileIds } = action.payload;
+        state.files.selectedIds = fileIds;
+      },
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(deleteFilesById.fulfilled, (state, { payload }) => {
@@ -235,6 +244,7 @@ export const {
   setExtractExif,
   setAllFilesStatus,
   setFileSelectState,
+  setSelectedFiles,
 } = filesSlice.actions;
 
 export default filesSlice.reducer;

@@ -106,7 +106,7 @@ const TableWrapperInner = styled.div`
   }
 
   .BaseTable__header {
-    overflow: hidden !important;
+    overflow: visible !important;
   }
 
   /* .BaseTable .BaseTable__header,  // commented to allow table scroll
@@ -304,6 +304,7 @@ export const TableWrapper = styled(TableWrapperInner)(
     }
     .BaseTable__header-cell {
       background: ${Colors['greyscale-grey2'].hex()};
+      overflow: visible !important;
     }
     .BaseTable__header-row {
       border-bottom: 1px solid ${lightGrey};

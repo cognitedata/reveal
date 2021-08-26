@@ -20,6 +20,7 @@ import {
   setCurrentPage,
   setPageSize,
   setMapTableTabKey,
+  setExplorerSelectedFiles,
 } from 'src/modules/Explorer/store/explorerSlice';
 import { VisionMode } from 'src/constants/enums/VisionEnums';
 import { setSelectedAllFiles } from 'src/store/commonActions';
@@ -58,6 +59,9 @@ export const ExplorerSearchResults = ({
     dispatch(
       setSelectedAllFiles({ selectStatus: value, filter: selectFilter })
     );
+  };
+  const handleSetSelectedFiles = (fileIds: number[]) => {
+    dispatch(setExplorerSelectedFiles(fileIds));
   };
 
   const sortPaginateState = useSelector(
@@ -181,6 +185,7 @@ export const ExplorerSearchResults = ({
                       sortPaginateControlsNoLocation
                     }
                     mapTableTabKey={{ activeKey, setActiveKey }}
+                    onSelectPage={handleSetSelectedFiles}
                   />
                 );
               }
@@ -196,6 +201,7 @@ export const ExplorerSearchResults = ({
                     selectedRowIds={selectedFileIds}
                     {...props}
                     sortPaginateControls={modalSortPaginateControls}
+                    onSelectPage={handleSetSelectedFiles}
                   />
                 );
               }
@@ -210,6 +216,7 @@ export const ExplorerSearchResults = ({
                   selectedRowIds={selectedFileIds}
                   {...props}
                   sortPaginateControls={listSortPaginateControls}
+                  onSelectPage={handleSetSelectedFiles}
                 />
               );
             };

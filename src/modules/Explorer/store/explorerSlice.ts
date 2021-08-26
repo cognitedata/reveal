@@ -137,6 +137,15 @@ const explorerSlice = createSlice({
         }
       },
     },
+    setExplorerSelectedFiles: {
+      prepare: (id: number[]) => {
+        return { payload: { fileIds: id } };
+      },
+      reducer: (state, action: PayloadAction<{ fileIds: number[] }>) => {
+        const { fileIds } = action.payload;
+        state.files.selectedIds = fileIds;
+      },
+    },
     setExplorerSelectedFileId(state, action: PayloadAction<number | null>) {
       state.selectedFileId = action.payload;
     },
@@ -242,6 +251,7 @@ const explorerSlice = createSlice({
 export const {
   setExplorerFiles,
   setExplorerFileSelectState,
+  setExplorerSelectedFiles,
   setExplorerSelectedFileId,
   hideExplorerFileMetadata,
   showExplorerFileMetadata,

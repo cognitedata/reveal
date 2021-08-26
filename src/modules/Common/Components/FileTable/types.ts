@@ -8,6 +8,7 @@ export type PaginatedTableProps<T> = {
   setSortKey?: (key: string) => void;
   setReverse?: (rev: boolean) => void;
   tableFooter?: JSX.Element | null;
+  fetchedCount?: number;
 };
 
 type TableViewProps<T> = {
@@ -19,6 +20,7 @@ type TableViewProps<T> = {
   selectedRowIds: number[];
   allRowsSelected: boolean;
   onSelectAllRows: (value: boolean, filter?: SelectFilter) => void;
+  onSelectPage: (fileIds: number[]) => void;
   modalView?: boolean;
 };
 
