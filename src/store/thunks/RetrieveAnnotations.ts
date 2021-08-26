@@ -10,6 +10,7 @@ export const RetrieveAnnotations = createAsyncThunk<
   number[],
   ThunkConfig
 >('RetrieveAnnotations', async (payload) => {
+  // todo: use limit to batch these requests
   const requests = payload.map((fileId) => {
     const filterPayload: any = {
       annotatedResourceType: 'file',

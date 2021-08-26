@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { PageTitle } from '@cognite/cdf-utilities';
 import styled from 'styled-components';
-import { Button, Icon, Popconfirm } from '@cognite/cogs.js';
+import { Button, Icon, Popconfirm, ToastContainer } from '@cognite/cogs.js';
 import { Prompt, RouteComponentProps, useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
@@ -86,6 +86,7 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
   const renderView = () => {
     return (
       <>
+        <ToastContainer />
         <PageTitle title="Review Annotations" />
         <Container>
           <ToolBar>

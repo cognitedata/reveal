@@ -81,6 +81,7 @@ export const AnnotationsTable = ({
                   file={file}
                   annotation={annotation}
                   key={annotation.id}
+                  allAnnotations={allAnnotations}
                 >
                   <CollapsibleAnnotationTableRow
                     annotation={annotation}

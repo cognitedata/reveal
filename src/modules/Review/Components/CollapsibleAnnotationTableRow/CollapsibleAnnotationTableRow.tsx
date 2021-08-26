@@ -47,6 +47,8 @@ export const CollapsibleAnnotationTableRow = ({
   onVisibilityChange,
   onApprove,
   onKeyPointSelect,
+  iconComponent,
+  borderColor,
 }: AnnotationTableRowProps & {
   onKeyPointSelect?: (id: string) => void;
 }) => {
@@ -64,6 +66,8 @@ export const CollapsibleAnnotationTableRow = ({
               onDelete={onDelete}
               onApprove={onApprove}
               onVisibilityChange={onVisibilityChange}
+              iconComponent={iconComponent}
+              borderColor={borderColor}
             />
           }
           key={1}
@@ -121,13 +125,14 @@ export const CollapsibleAnnotationTableRow = ({
         onDelete={onDelete}
         onApprove={onApprove}
         onVisibilityChange={onVisibilityChange}
+        iconComponent={iconComponent}
+        borderColor={borderColor}
       />
     </TableRowContainer>
   );
 };
 
 const TableRowContainer = styled.div`
-  padding: 0 0 0 16px;
   &:hover {
     background-color: var(--cogs-greyscale-grey2);
   }

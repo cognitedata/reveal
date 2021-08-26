@@ -24,10 +24,8 @@ export const ApproveAnnotation = createAsyncThunk<
   ) => {
     const unSavedAnnotation = { ...updatedAnnotation };
 
-    dispatch(UpdateAnnotations([unSavedAnnotation])); // update annotation
-
     if (!(model.modelType === VisionAPIType.TagDetection)) {
-      // stop processing if not tag annotation
+      dispatch(UpdateAnnotations([unSavedAnnotation])); // update annotation
       return;
     }
 
@@ -84,6 +82,8 @@ export const ApproveAnnotation = createAsyncThunk<
         }
       }
     }
+
+    dispatch(UpdateAnnotations([unSavedAnnotation])); // update annotation
   };
 
   const annotationState =

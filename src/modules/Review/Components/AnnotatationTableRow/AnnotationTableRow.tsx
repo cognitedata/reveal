@@ -11,22 +11,27 @@ import styled from 'styled-components';
 import { VisionAPIType } from 'src/api/types';
 import { AnnotationTableRowProps } from 'src/modules/Review/types';
 
-const StyledRow = styled.div`
+type RowProps = {
+  icon?: boolean;
+  borderColor?: string;
+};
+
+const StyledRow = styled.div<RowProps>`
   display: flex;
   width: 100%;
-  padding: 7px 5px;
+  padding: 7px 5px 7px ${(props) => (props.icon ? '5px' : '16px')};
   gap: 12px;
-  &:hover {
-    background-color: var(--cogs-greyscale-grey2);
-  }
-  &.active {
-    background-color: var(--cogs-midblue-6);
-  }
+  border: ${(props) =>
+    props.borderColor ? `1px solid ${props.borderColor}` : 'none'};
+  border-radius: 5px;
+  overflow: hidden;
+  justify-content: center;
+  align-items: center;
 `;
 
 const ApproveBtnContainer = styled.div`
   height: 100%;
-  flex: 0 0 fit-content;
+  flex: 0 1 168px;
 `;
 
 const getIconType = (annotation: {
@@ -44,13 +49,17 @@ export const AnnotationTableRow = ({
   onDelete,
   onVisibilityChange,
   onApprove,
+  iconComponent,
+  borderColor,
 }: AnnotationTableRowProps) => {
   return (
     <StyledRow
       key={annotation.id}
       onClick={() => onSelect(annotation.id)}
-      className={annotation.selected ? 'active' : ''}
+      borderColor={borderColor}
+      icon={!!iconComponent}
     >
+      <>{!!iconComponent && React.cloneElement(iconComponent)}</>
       <ApproveBtnContainer onClick={(evt) => evt.stopPropagation()}>
         <StyledSegmentedControl
           status={annotation.status}
@@ -92,41 +101,18 @@ export const AnnotationTableRow = ({
           </SegmentedControl.Button>
         </StyledSegmentedControl>
       </ApproveBtnContainer>
+      <Icon
+        type={getIconType(annotation)}
+        style={{
+          color: annotation.color,
+          height: '100%',
+          flex: '0 0 16px',
+        }}
+      />
       <AnnotationLabelContainer>
-        <Tooltip
-          content={<span data-testid="text-content">{annotation.text}</span>}
-        >
-          <AnnotationLbl
-            style={{
-              color: annotation.color,
-            }}
-          >
-            <Icon
-              type={getIconType(annotation)}
-              style={{
-                color: annotation.color,
-              }}
-            />
-            <span
-              style={{
-                padding: '5px 10px',
-              }}
-            >
-              {annotation.text}
-            </span>
-            {!annotation.show
-              ? () => {
-                  return (
-                    <Icon
-                      type="EyeHide"
-                      style={{ color: '#595959', padding: 5 }}
-                      onClick={() => {
-                        onVisibilityChange(annotation.id);
-                      }}
-                    />
-                  );
-                }
-              : undefined}
+        <Tooltip className="lbl-tooltip" content={annotation.text}>
+          <AnnotationLbl color={annotation.color}>
+            {annotation.text}
           </AnnotationLbl>
         </Tooltip>
       </AnnotationLabelContainer>
@@ -162,26 +148,37 @@ export const AnnotationTableRow = ({
   );
 };
 
-const AnnotationLbl = styled.div`
+const AnnotationLabelContainer = styled.div`
+  flex: 1 1 150px;
+  overflow: hidden;
+
+  & span {
+    width: 100%;
+    height: 100%;
+  }
+`;
+
+type AnnotationLabelOpts = {
+  color?: string;
+};
+const AnnotationLbl = styled.div<AnnotationLabelOpts>`
   width: 100%;
-  display: flex;
-  align-items: center;
-  padding: 0 5px;
+  height: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: ${(props) => props.color || 'inherit'};
 `;
 
 const ShowHideIconContainer = styled.div`
   display: flex;
   align-items: center;
-  flex: 0 0 36px;
+  flex: 0 1 36px;
   justify-content: center;
 `;
 
-const AnnotationLabelContainer = styled.div`
-  flex: 1 1 auto;
-`;
-
 const ActionMenuContainer = styled.div`
-  flex: 0 0 36px;
+  flex: 0 1 36px;
 `;
 
 const StyledSegmentedControl = styled(SegmentedControl)<{ status: string }>`

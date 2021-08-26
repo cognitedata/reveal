@@ -2,7 +2,7 @@ import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import { VisibleAnnotation } from 'src/modules/Review/previewSlice';
 import { AnnotationCollection } from 'src/modules/Common/Components/CollectionSettingsModal/CollectionSettingsTypes';
 import { AnnotationStatus, KeypointItem } from 'src/utils/AnnotationUtils';
-import { ReactText } from 'react';
+import { ReactElement, ReactText } from 'react';
 import { OptionType } from '@cognite/cogs.js';
 
 export type TO_COMPLETE = number;
@@ -54,6 +54,8 @@ export type AnnotationTableRowProps = {
     annotation: AnnotationTableItem,
     status: AnnotationStatus
   ) => void;
+  iconComponent?: ReactElement;
+  borderColor?: string;
 };
 
 export type AnnotationTableItem = Omit<VisibleAnnotation, 'id'> & {
