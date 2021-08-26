@@ -5,8 +5,8 @@ import { TableWrapper } from '../../FileTable/FileTableWrapper';
 
 export type BulkEditTableDataType = {
   name: string;
-  original: string;
-  updated: string;
+  original: JSX.Element;
+  updated: JSX.Element;
 };
 
 export const BulkEditTable = ({

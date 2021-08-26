@@ -40,7 +40,7 @@ export const BulkEditModalContent = ({
             />
           </div>
         </EditType>
-        {selectedBulkEditOption.editPanel(bulkEditTemp, setBulkEditTemp)}
+        {selectedBulkEditOption.editPanel({ bulkEditTemp, setBulkEditTemp })}
         <BulkEditTable
           data={selectedBulkEditOption.data(selectedFiles, bulkEditTemp)}
           columns={selectedBulkEditOption.columns}
