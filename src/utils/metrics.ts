@@ -1,11 +1,17 @@
 import { Metrics } from '@cognite/metrics';
 import { UserInfo } from 'reducers/charts/types';
+import * as Sentry from '@sentry/react';
 
 export const metrics = Metrics.create('Charts');
 
 export const identifyUser = (user: UserInfo) => {
   if (user) {
     Metrics.identify(user.email || user.displayName || user.id);
+    Sentry.setUser({
+      email: user.email,
+      id: user.id,
+      username: user.displayName,
+    });
   }
 };
 
