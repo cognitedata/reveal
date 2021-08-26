@@ -120,6 +120,9 @@ const DateRangeSelector = () => {
               dateTo: newEnd,
               dateRange: selectedRange,
             });
+
+            // Force mouseup event as it doesn't bubble up for this component
+            window.dispatchEvent(new Event('mouseup'));
           }}
           prependComponent={() => (
             <div
