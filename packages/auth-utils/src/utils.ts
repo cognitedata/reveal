@@ -1,4 +1,5 @@
 import { getFromLocalStorage, saveToLocalStorage } from '@cognite/storage';
+import jwtDecode from 'jwt-decode';
 
 import { AuthFlow, FlowStorage } from './types';
 
@@ -20,9 +21,7 @@ type Flow = {
 };
 
 export function getFlow(tenant?: string, env?: string): Flow {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const tenantFlow = getFromLocalStorage<FlowStorage>(getFlowKey(tenant, env));
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const generalFlow = getFromLocalStorage<FlowStorage>(getFlowKey());
   const f = tenantFlow || generalFlow;
   return {
@@ -38,3 +37,19 @@ export const log = (value: string, options?: unknown): void => {
     console.log(`[Auth-Utils] ${value}`, options || '');
   }
 };
+
+export function decodeTokenUid(token: string): string | undefined {
+  try {
+    // always 'try' a decode, because we are not guaranteed a jwt
+    const decodedToken = jwtDecode(token) as any;
+
+    return decodedToken.oid || decodedToken.email || decodedToken.unique_name;
+  } catch (error) {
+    if (debugMode) {
+      // eslint-disable-next-line no-console
+      console.log(`[Auth-Utils] Failed to decode token`, error);
+    }
+
+    return '';
+  }
+}

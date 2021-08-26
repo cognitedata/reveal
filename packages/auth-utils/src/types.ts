@@ -40,6 +40,7 @@ export type AuthenticatedUser = {
   errorMessage?: string;
   username?: string;
   email?: string;
+  id?: string;
 };
 
 export type TokenInspect = {

@@ -2,7 +2,7 @@ import { CogniteClient } from '@cognite/sdk';
 import { getFromLocalStorage } from '@cognite/storage';
 import isString from 'lodash/isString';
 
-import { getFlow, saveFlow, log } from './utils';
+import { getFlow, saveFlow, log, decodeTokenUid } from './utils';
 import {
   AuthenticatedUser,
   AuthFlow,
@@ -22,6 +22,7 @@ export class CogniteAuth {
     email?: string;
     project?: string;
     authResult?: AuthResult;
+    id?: string;
   } = {
     error: false,
     initializing: false,
@@ -110,6 +111,7 @@ export class CogniteAuth {
                 authFlow,
                 expTime: expiresOn,
               };
+              this.state.id = decodeTokenUid(accessToken);
 
               const email = account?.username.includes('@')
                 ? account.username
@@ -148,6 +150,7 @@ export class CogniteAuth {
               accessToken,
               authFlow,
             };
+            this.state.id = decodeTokenUid(accessToken);
             this.state.project = project;
           }
           this.state.initializing = false;
@@ -243,6 +246,7 @@ export class CogniteAuth {
               accessToken,
               authFlow: 'AZURE_AD',
             };
+            this.state.id = decodeTokenUid(accessToken);
           } else {
             throw new Error('No token found');
           }
@@ -281,6 +285,7 @@ export class CogniteAuth {
             accessToken,
             authFlow,
           };
+          this.state.id = decodeTokenUid(accessToken);
         }
       }
     }
@@ -320,6 +325,7 @@ export class CogniteAuth {
                 accessToken,
                 authFlow,
               };
+              this.state.id = decodeTokenUid(accessToken);
             }
           })
           .catch((error) => {
@@ -369,6 +375,8 @@ export class CogniteAuth {
         accessToken: fakeAuth.accessToken,
         authFlow: 'FAKE_IDP',
       };
+      this.state.id = decodeTokenUid(fakeAuth.accessToken);
+      this.state.email = this.state.id;
     }
   }
 
@@ -423,6 +431,7 @@ export class CogniteAuth {
       errorMessage: this.state.errorMessage,
       email: this.state.email,
       username: this.state.username,
+      id: this.state.id,
     };
   }
 

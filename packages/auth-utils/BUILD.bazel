@@ -35,12 +35,14 @@ generate_package_json_helpers(
 # Dependencies from package.json
 DEPENDENCIES = [
     "@npm//@cognite/sdk",
+    "@npm//jwt-decode",
     "@npm//lodash",
     "//packages/storage",
 ]
 
 # Type dependencies from package.json
 TYPE_DEPENDENCIES = [
+    "@npm//@types/jwt-decode",
     "@npm//@types/lodash",
 ]
 
