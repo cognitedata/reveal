@@ -1,21 +1,13 @@
 import * as React from 'react';
 import { Drawer as CogsDrawer } from '@cognite/cogs.js';
-import { CommentTarget } from '@cognite/comment-service-types';
 
-import { ListComments } from './ListComments';
+import { ListComments, ListCommentsProps } from './ListComments';
 
-interface Props {
+interface Props extends ListCommentsProps {
   handleClose: () => void;
-  serviceUrl: string;
-  target?: CommentTarget;
   visible: boolean;
 }
-export const Drawer: React.FC<Props> = ({
-  handleClose,
-  serviceUrl,
-  target,
-  visible,
-}) => {
+export const Drawer: React.FC<Props> = ({ handleClose, visible, ...rest }) => {
   return (
     <CogsDrawer
       visible={visible}
@@ -23,7 +15,7 @@ export const Drawer: React.FC<Props> = ({
       onCancel={handleClose}
       onOk={handleClose}
     >
-      {target ? <ListComments target={target} serviceUrl={serviceUrl} /> : null}
+      {rest.target ? <ListComments {...rest} /> : null}
     </CogsDrawer>
   );
 };

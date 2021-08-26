@@ -1,5 +1,9 @@
 import React from 'react';
-import { AuthConsumer, AuthContext } from '@cognite/react-container';
+import {
+  AuthConsumer,
+  AuthContext,
+  useAuthContext,
+} from '@cognite/react-container';
 import { Drawer } from '@cognite/react-comments';
 import { Asset, CogniteClient } from '@cognite/sdk';
 import { CommentTarget } from '@cognite/comment-service-types';
@@ -57,6 +61,7 @@ interface Props {
 }
 export const CommentsPage: React.FC<Props> = ({ data, error }) => {
   const [target, setTarget] = React.useState<CommentTarget | undefined>();
+  const { authState } = useAuthContext();
 
   const handleCardClick = (field: number) => () => {
     setTarget({ id: `${field}`, targetType: 'asset' });
@@ -68,12 +73,16 @@ export const CommentsPage: React.FC<Props> = ({ data, error }) => {
 
   return (
     <Container>
-      <Drawer
-        visible={!!target}
-        target={target}
-        handleClose={handleClose}
-        serviceUrl={sidecar.commentServiceBaseUrl}
-      />
+      {target && authState && (
+        <Drawer
+          visible={!!target}
+          target={target}
+          userId={authState.id || ''}
+          project={authState.project || ''}
+          handleClose={handleClose}
+          serviceUrl={sidecar.commentServiceBaseUrl}
+        />
+      )}
 
       {error && (
         <Warning>There was an error loading your data: {error}</Warning>

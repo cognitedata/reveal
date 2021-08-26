@@ -22,12 +22,27 @@ describe('ListComments', () => {
   beforeAll(() => mockListComments.listen());
   afterAll(() => mockListComments.close());
 
+  it('should load without user id', async () => {
+    testRenderer(ListComments, {
+      target: {
+        id: 'test',
+        targetType: 'test-target',
+      },
+      project: testProject,
+      serviceUrl,
+    });
+
+    expect(screen.getByText('Loading...')).toBeInTheDocument();
+  });
+
   it('should be ok in good case', async () => {
     testRenderer(ListComments, {
       target: {
         id: 'test',
         targetType: 'test-target',
       },
+      project: testProject,
+      userId: 'test-user',
       serviceUrl,
     });
 

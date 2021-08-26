@@ -34,12 +34,10 @@ export const useDeleteComment: (props: Props) => Promise<any> = ({
 };
 
 export function useCommentDeleteMutate({
-  id,
   target,
   headers,
   serviceUrl,
 }: {
-  id: string;
   serviceUrl: string;
   headers: AuthHeaders;
   target: CommentTarget;
@@ -47,7 +45,7 @@ export function useCommentDeleteMutate({
   const queryClient = useQueryClient();
 
   return useMutation(
-    () =>
+    (id: string) =>
       useDeleteComment({
         id,
         target,

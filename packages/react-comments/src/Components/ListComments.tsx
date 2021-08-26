@@ -1,26 +1,38 @@
 import React from 'react';
 import type { CommentTarget } from '@cognite/comment-service-types';
-import { Comment, Conversation, Loader } from '@cognite/cogs.js';
-import { useAuthContext, getAuthHeaders } from '@cognite/react-container';
+import { Comment, Conversation } from '@cognite/cogs.js';
+import { getAuthHeaders } from '@cognite/react-container';
 
-import { useFetchComments, useCommentCreateMutate } from '../queries';
+import {
+  useFetchComments,
+  useCommentCreateMutate,
+  useCommentDeleteMutate,
+} from '../queries';
 
-interface ListCommentsProps {
-  target: CommentTarget;
+export interface ListCommentsProps {
+  project: string;
   serviceUrl: string;
+  target: CommentTarget;
+  userId: string;
 }
 export const ListComments: React.FC<ListCommentsProps> = ({
-  target,
+  project,
   serviceUrl,
+  target,
+  userId,
 }) => {
-  const { authState } = useAuthContext();
   const [message, setMessage] = React.useState('');
   const headers = getAuthHeaders({ useIdToken: true });
-  const fullServiceUrl = `${serviceUrl}/${authState?.project}`;
+  const fullServiceUrl = `${serviceUrl}/${project}`;
   const { mutate } = useCommentCreateMutate({
     target,
     serviceUrl: fullServiceUrl,
     headers,
+  });
+  const { mutate: deleteComment } = useCommentDeleteMutate({
+    headers,
+    serviceUrl: fullServiceUrl,
+    target,
   });
 
   const { data: comments, isError } = useFetchComments({
@@ -32,32 +44,33 @@ export const ListComments: React.FC<ListCommentsProps> = ({
     mutate(comment);
     setMessage('');
   };
-  const handleRemoveComment = (content: string) => {
-    // eslint-disable-next-line no-console
-    console.log('HandleRemoveComment not ready yet:', content);
+  const handleRemoveComment = (id: string) => {
+    deleteComment(id);
   };
 
-  const isLoading = !authState || !headers;
+  const isLoading = !userId || !headers;
 
   if (isLoading) {
-    return <Loader />;
+    return <span>Loading...</span>;
   }
 
   if (isError) {
     return <div>Error loading comments.</div>;
   }
 
+  // console.log('Comment info:', { userId, comments });
+
   return (
     <Conversation
       reverseOrder
       conversation={comments || []}
-      user={authState?.email || ''}
+      user={userId}
       onRemoveComment={handleRemoveComment}
       input={
         <Comment
           message={message}
           setMessage={setMessage}
-          avatar={authState?.email}
+          avatar={userId}
           onPostMessage={handleCreateMessage}
         />
       }
