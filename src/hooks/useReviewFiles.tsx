@@ -43,14 +43,17 @@ export const doesLabelExist = async (label: ExternalLabelDefinition) => {
   }
 };
 
-export const isFileApproved = (file: FileInfo) => {
-  return file.labels?.find(
+export const isFileApproved = (file?: FileInfo) => {
+  if (!file) {
+    return false;
+  }
+  return !!file.labels?.find(
     (label) => label.externalId === INTERACTIVE_LABEL.externalId
   );
 };
 
 export const isFilePending = (file: FileInfo) => {
-  return file.labels?.find(
+  return !!file.labels?.find(
     (label) => label.externalId === PENDING_LABEL.externalId
   );
 };
@@ -157,6 +160,10 @@ export const useReviewFiles = (fileIds: Array<number>) => {
     });
   };
 
+  const isFileInteractive = (fileId: number) => {
+    return annotationsMap[fileId]?.some((an) => an.status === 'verified');
+  };
+
   const setFilesRejected = async (selectedFileIds: Array<number>) => {
     await Promise.allSettled(
       selectedFileIds.map((fileId) => reviewAnnotations(fileId, false))
@@ -169,9 +176,11 @@ export const useReviewFiles = (fileIds: Array<number>) => {
         id: fileId,
         update: {
           labels: {
-            add: [{ externalId: INTERACTIVE_LABEL.externalId }],
+            add: isFileInteractive(fileId)
+              ? [{ externalId: INTERACTIVE_LABEL.externalId }]
+              : undefined,
             remove:
-              file && isFileApproved(file)
+              file && isFilePending(file)
                 ? [{ externalId: PENDING_LABEL.externalId }]
                 : undefined,
           },
@@ -205,6 +214,32 @@ export const useReviewFiles = (fileIds: Array<number>) => {
     await sdk.files.update(updatePatch);
   };
 
+  const clearFileLabels = async (fileId: number) => {
+    const file = files?.find((curFile) => curFile.id === fileId);
+    if (file) {
+      const labelsToRemove = [];
+      if (isFileApproved(file)) {
+        labelsToRemove.push({ externalId: INTERACTIVE_LABEL.externalId });
+      }
+      if (isFilePending(file)) {
+        labelsToRemove.push({ externalId: PENDING_LABEL.externalId });
+      }
+
+      if (labelsToRemove.length) {
+        await sdk.files.update([
+          {
+            id: fileId,
+            update: {
+              labels: {
+                remove: labelsToRemove,
+              },
+            },
+          },
+        ]);
+      }
+    }
+  };
+
   const { isLoading: isOnApprovedLoading, mutate: onApproved } = useMutation(
     (selectedFileIds: Array<number>) => setFilesApproved(selectedFileIds),
     {
@@ -221,6 +256,13 @@ export const useReviewFiles = (fileIds: Array<number>) => {
   );
   const { isLoading: isOnRejectedLoading, mutate: onRejected } = useMutation(
     (selectedFileIds: Array<number>) => setFilesRejected(selectedFileIds),
+    {
+      onError,
+      onSuccess,
+    }
+  );
+  const { isLoading: isOnClearFileTags, mutate: onClearFileTags } = useMutation(
+    (fileId: number) => clearFileLabels(fileId),
     {
       onError,
       onSuccess,
@@ -271,9 +313,11 @@ export const useReviewFiles = (fileIds: Array<number>) => {
     onApproved,
     onPending,
     onRejected,
+    onClearFileTags,
     isOnApprovedLoading,
     isOnPendingLoading,
     isOnRejectedLoading,
+    isOnClearFileTags,
     onApproveDiagrams,
     onRejectDiagrams,
   };

@@ -14,6 +14,8 @@ export default function LandingPage() {
   const [query, setQuery] = useState<string>('');
   const [filters, setFilter] = useState<FileRequestFilter>({});
 
+  const isFilterEmpty = !Object.keys(filters?.filter ?? {}).length;
+
   const { annotatedFiles: files = [], isLoading } = useAnnotatedFiles(filters);
   const { createWorkflow } = useWorkflowCreateNew();
 
@@ -22,15 +24,32 @@ export default function LandingPage() {
     createWorkflow();
   };
 
-  return (
-    <>
+  const Header = () => (
+    <div>
       <PageTitle>Interactive Engineering Diagrams</PageTitle>
       <Flex row style={{ margin: '32px 16px 56px 0' }}>
         <HugeButton type="primary" onClick={onContextualizeNew}>
           Create interactive diagrams
         </HugeButton>
       </Flex>
-      <Title level={4}>Existing interactive diagrams pending approval</Title>
+      <Title level={4}>Pending interactive diagrams</Title>
+    </div>
+  );
+
+  if (isLoading) {
+    return (
+      <>
+        <Header />
+        <Loading />
+      </>
+    );
+  }
+  if (!files.length && isFilterEmpty) {
+    return <FilesListEmpty />;
+  }
+  return (
+    <>
+      <Header />
       <Flex row style={{ margin: '20px 0', justifyContent: 'space-between' }}>
         <FilterBar
           query={query}
@@ -39,13 +58,7 @@ export default function LandingPage() {
           setFilters={setFilter}
         />
       </Flex>
-      {isLoading && <Loading />}
-
-      {!isLoading && !files?.length ? (
-        <FilesListEmpty />
-      ) : (
-        <FilesList query={query} files={files} />
-      )}
+      <FilesList query={query} files={files} />
     </>
   );
 }

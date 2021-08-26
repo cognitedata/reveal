@@ -20,7 +20,7 @@ export const useFileWithAnnotations = (
   const [annotations, setAnnotations] = useState<{
     [id: number]: CogniteAnnotation[];
   }>({});
-  const [isFetching, setIsFetching] = useState<boolean>(false);
+  const [isFetching, setIsFetching] = useState<boolean>(true);
 
   const fetchEventsForFile = async (
     fileId: number,
@@ -46,19 +46,17 @@ export const useFileWithAnnotations = (
     }));
   };
 
-  const getAnnotationsForFiles = async (fetchedFiles: FileInfo[]) => {
-    setIsFetching(true);
-    await Promise.all(
-      fetchedFiles.map((file) => fetchEventsForFile(file.id, file.externalId))
-    );
-    setIsFetching(false);
-  };
-
   useEffect(() => {
+    const getAnnotationsForFiles = async (fetchedFiles: FileInfo[]) => {
+      await Promise.all(
+        fetchedFiles.map((file) =>
+          fetchEventsForFile(file.id, file?.externalId)
+        )
+      );
+    };
     if (files) {
-      getAnnotationsForFiles(files);
+      getAnnotationsForFiles(files).then(() => setIsFetching(false));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [files]);
 
   return {

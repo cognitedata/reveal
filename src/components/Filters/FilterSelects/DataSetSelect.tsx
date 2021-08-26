@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import isEqual from 'lodash/isEqual';
-import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { OptionType } from '@cognite/cogs.js';
 import { DataSet } from '@cognite/sdk';
 import { ResourceType } from 'modules/sdk-builder/types';
@@ -22,7 +21,6 @@ export const DataSetSelect = (props: Props) => {
     [] as DataSet[]
   );
   const { datasets, dataSetResourceCounts, isLoaded } = useDatasets();
-  const { data: hasPermission } = usePermissions('datasetsAcl', 'READ');
 
   const { currentSelection, setMultiSelection } = useSelectFilter<number>(
     isLoaded,
@@ -67,9 +65,6 @@ export const DataSetSelect = (props: Props) => {
   return (
     <Select
       tooltipProps={{
-        tooltipContent:
-          'You do not have access to datasets, please make sure you have dataSetAcl:READ',
-        hasPermission,
         isLoaded,
       }}
       selectProps={{
@@ -79,7 +74,6 @@ export const DataSetSelect = (props: Props) => {
         options: options!,
         value: currentSelection,
         onChange: setMultiSelection,
-        isDisabled: !hasPermission,
       }}
     />
   );

@@ -23,14 +23,17 @@ export default function FilesListEmpty() {
   };
 
   return (
-    <Wrapper>
-      <Graphic type="Documents" />
-      <Title level={5} style={{ margin: '24px 0' }}>
-        No pending interactive diagrams to review!
-      </Title>
-      <IconButton type="primary" icon="Document" onClick={onContextualizeNew}>
-        Create new interactive diagrams
-      </IconButton>
-    </Wrapper>
+    <div>
+      <Title level={4}>Pending interactive diagrams</Title>
+      <Wrapper>
+        <Graphic type="Documents" />
+        <Title level={5} style={{ margin: '24px 0' }}>
+          No pending interactive diagrams to review!
+        </Title>
+        <IconButton type="primary" icon="Document" onClick={onContextualizeNew}>
+          Create new interactive diagrams
+        </IconButton>
+      </Wrapper>
+    </div>
   );
 }

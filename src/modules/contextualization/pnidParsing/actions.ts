@@ -70,14 +70,20 @@ const createPendingAnnotations = async (
     existingAnnotations
   );
 
+  const hasLinkedPendingTags = pendingAnnotations.some(
+    (an) =>
+      (an.resourceId || an.resourceExternalId) && an.status === 'unhandled'
+  );
+
   await createAnnotations(sdk, pendingAnnotations);
   const isFileMissingLabel =
     !isFilePending(file) && !!existingUnhandledAnnotations.length;
 
   // If file is missing the pending label OR has unapproved annotations
-  if (pendingAnnotations.length || isFileMissingLabel) {
+  if (hasLinkedPendingTags || isFileMissingLabel) {
     await setFilePending(file);
   }
+
   return {
     existingFilesAnnotations: existingAnnotations.filter(
       (anotation) => anotation.resourceType === 'file'

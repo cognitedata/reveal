@@ -1,18 +1,15 @@
 import React from 'react';
-import { message, Modal, notification, Tooltip } from 'antd';
+import { message, Modal, notification } from 'antd';
 import { Button } from '@cognite/cogs.js';
-import { usePermissions, useCdfItem } from '@cognite/sdk-react-query-hooks';
+import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { ResourceItem } from '@cognite/data-exploration';
 import { FileInfo } from '@cognite/sdk';
 import { sleep } from 'utils/utils';
 import { useQueryClient } from 'react-query';
 import { deleteAnnotationsForFile } from 'utils/AnnotationUtils';
 import { PNID_METRICS, trackUsage } from 'utils/Metrics';
-import {
-  PERMISSIONS_STRINGS,
-  WARNINGS_STRINGS,
-  TOOLTIP_STRINGS,
-} from 'stringConstants';
+import { WARNINGS_STRINGS } from 'stringConstants';
+import { useReviewFiles } from 'hooks';
 
 type Props = {
   id: ResourceItem['id'];
@@ -21,11 +18,7 @@ type Props = {
 export const ClearTagsButton = (props: Props) => {
   const { id, setEditMode } = props;
   const client = useQueryClient();
-  const { data: filesPermissions } = usePermissions('filesAcl', 'WRITE');
-  const { data: eventsPermissions } = usePermissions('eventsAcl', 'WRITE');
-
-  const writeAccess = filesPermissions && eventsPermissions;
-
+  const { onClearFileTags } = useReviewFiles([id]);
   const onDeleteSuccess = () => {
     trackUsage(PNID_METRICS.fileViewer.deleteAnnotations, {
       fileId: id,
@@ -49,29 +42,6 @@ export const ClearTagsButton = (props: Props) => {
     id: Number(id!),
   });
 
-  if (!writeAccess) {
-    const errors = [];
-    if (!filesPermissions) {
-      errors.push('files:write is missing');
-    }
-    if (!eventsPermissions) {
-      errors.push('events:write is missing');
-    }
-    return (
-      <Tooltip
-        placement="bottom"
-        title={
-          <>
-            <p>{PERMISSIONS_STRINGS.FILES_WRITE_PERMISSIONS}</p>
-            <p>Errors: {errors.join(' and ')}.</p>
-          </>
-        }
-      >
-        <Button icon="Close" disabled />
-      </Tooltip>
-    );
-  }
-
   const onDeleteClick = () =>
     Modal.confirm({
       title: 'Are you sure?',
@@ -81,6 +51,7 @@ export const ClearTagsButton = (props: Props) => {
         if (fileInfo) {
           // Make sure annotations are updated
           await deleteAnnotationsForFile(fileInfo.id, fileInfo.externalId);
+          await onClearFileTags(fileInfo.id);
           onDeleteSuccess();
         }
         return message.success(
@@ -90,20 +61,5 @@ export const ClearTagsButton = (props: Props) => {
       onCancel: () => {},
     });
 
-  return (
-    <Tooltip
-      title={
-        eventsPermissions
-          ? TOOLTIP_STRINGS.CLEAR_TAGS_TOOLTIP
-          : TOOLTIP_STRINGS.CANNOT_CLEAR_TAGS_TOOLTIP
-      }
-    >
-      <Button
-        icon="DeleteAlt"
-        key={id}
-        onClick={onDeleteClick}
-        disabled={!eventsPermissions}
-      />
-    </Tooltip>
-  );
+  return <Button icon="DeleteAlt" key={id} onClick={onDeleteClick} />;
 };

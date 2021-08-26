@@ -1,14 +1,17 @@
-import React from 'react';
+import React, { SyntheticEvent } from 'react';
 import styled from 'styled-components';
-import { Graphic, Tooltip } from '@cognite/cogs.js';
+import { Button } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
 import { trackUsage, PNID_METRICS } from 'utils/Metrics';
 import { dateSorter, stringCompare } from 'modules/contextualization/utils';
-import { PERMISSIONS_STRINGS, TOOLTIP_STRINGS } from 'stringConstants';
-import { CountTag, Flex, IconButton, Popover } from 'components/Common';
+import { Flex, IconButton, Popover } from 'components/Common';
 import { FileSmallPreview } from 'components/FileSmallPreview';
 import { FileWithAnnotations } from 'hooks/useFileWithAnnotations';
 import ReviewStatus from 'components/ReviewStatus';
+import InteractiveIcon from 'components/InteractiveIcon';
+import { Dropdown, Menu } from 'antd';
+import DetectedTags from 'components/DetectedTags';
+import { sortFilesByAnnotations } from './utils';
 
 const SettingButtons = styled(Flex)`
   & > * {
@@ -16,18 +19,55 @@ const SettingButtons = styled(Flex)`
   }
 `;
 
-const renderDetectedTags = (file: FileWithAnnotations) => {
-  const assetTagsCount =
-    (file.annotations ?? []).filter((an) => an.resourceType === 'asset')
-      ?.length ?? 0;
-  const fileTagsCount =
-    (file.annotations ?? []).filter((an) => an.resourceType === 'file')
-      ?.length ?? 0;
+type ContextMenuProps = {
+  onApproveFile: (e: SyntheticEvent) => void;
+  onRejectTags: (e: SyntheticEvent) => void;
+  onClearTags: (e: SyntheticEvent) => void;
+  onEditFile: (e: SyntheticEvent) => void;
+};
+
+const buttonStyle = {
+  width: '100%',
+};
+const FileContextMenu = ({
+  onApproveFile,
+  onRejectTags,
+  onClearTags,
+  onEditFile,
+}: ContextMenuProps) => {
   return (
-    <Flex>
-      <CountTag type="assets" value={assetTagsCount} draft={false} />
-      <CountTag type="files" value={fileTagsCount} draft={false} />
-    </Flex>
+    <Dropdown
+      overlay={
+        <Menu>
+          <Menu.Item key="edit">
+            <Button style={buttonStyle} onClick={onEditFile} type="ghost">
+              Recontextualize diagram
+            </Button>
+          </Menu.Item>
+          <Menu.Item key="approve">
+            <Button style={buttonStyle} onClick={onApproveFile} type="ghost">
+              Approve pending tags
+            </Button>
+          </Menu.Item>
+          <Menu.Item key="reject">
+            <Button
+              style={buttonStyle}
+              onClick={onRejectTags}
+              type="ghost-danger"
+            >
+              Reject pending tags
+            </Button>
+          </Menu.Item>
+          <Menu.Item key="clear">
+            <Button style={buttonStyle} onClick={onClearTags} type="danger">
+              Clear all tags
+            </Button>
+          </Menu.Item>
+        </Menu>
+      }
+    >
+      <IconButton icon="HorizontalEllipsis" variant="ghost" $square />
+    </Dropdown>
   );
 };
 
@@ -35,7 +75,8 @@ export const getColumns = (
   onFileEdit: (file: FileInfo) => void,
   onFileView: (file: FileInfo) => void,
   onClearAnnotations: (file: FileInfo) => void,
-  writeAccess: boolean
+  onApproveTags: (file: FileInfo) => void,
+  onRejectTags: (file: FileInfo) => void
 ) => [
   {
     title: 'Preview',
@@ -50,7 +91,9 @@ export const getColumns = (
             visible && trackUsage(PNID_METRICS.landingPage.previewFile)
           }
         >
-          <Graphic type="Image" />
+          <div>
+            <InteractiveIcon />
+          </div>
         </Popover>
       </Flex>
     ),
@@ -71,9 +114,9 @@ export const getColumns = (
   {
     title: 'Detected tags',
     key: 'tags',
-    render: (row: FileWithAnnotations) => renderDetectedTags(row),
+    render: (row: FileWithAnnotations) => <DetectedTags fileId={row.id} />,
     sorter: (a: FileWithAnnotations, b: FileWithAnnotations) =>
-      a?.annotations?.length ?? 0 - b?.annotations?.length ?? 0,
+      sortFilesByAnnotations(a, b),
   },
 
   {
@@ -94,49 +137,26 @@ export const getColumns = (
     render: (file: FileInfo) => {
       return (
         <SettingButtons row align>
-          <Tooltip content={TOOLTIP_STRINGS.EDIT_FILE_TOOLTIP}>
-            <IconButton
-              $square
-              icon="Edit"
-              onClick={(
-                event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-              ) => {
-                event.stopPropagation();
-                onFileEdit(file);
-              }}
-            />
-          </Tooltip>
-          <Tooltip content={TOOLTIP_STRINGS.VIEW_FILE_TOOLTIP}>
-            <IconButton
-              $square
-              icon="Eye"
-              onClick={(
-                event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-              ) => {
-                event.stopPropagation();
-                onFileView(file);
-              }}
-            />
-          </Tooltip>
-          <Tooltip
-            content={
-              writeAccess
-                ? TOOLTIP_STRINGS.CLEAR_TAGS_TOOLTIP
-                : PERMISSIONS_STRINGS.FILES_WRITE_PERMISSIONS
-            }
-          >
-            <IconButton
-              $square
-              icon="Trash"
-              onClick={(
-                event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-              ) => {
-                event.stopPropagation();
-                onClearAnnotations(file);
-              }}
-              disabled={!writeAccess}
-            />
-          </Tooltip>
+          <IconButton
+            icon="ExpandMax"
+            variant="ghost"
+            $square
+            onClick={(
+              event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+            ) => {
+              event.stopPropagation();
+              onFileView(file);
+            }}
+          />
+          <FileContextMenu
+            onEditFile={(event) => {
+              event.stopPropagation();
+              onFileEdit(file);
+            }}
+            onApproveFile={() => onApproveTags(file)}
+            onClearTags={() => onClearAnnotations(file)}
+            onRejectTags={() => onRejectTags(file)}
+          />
         </SettingButtons>
       );
     },

@@ -5,8 +5,9 @@ import DetectedTags from 'components/DetectedTags';
 import React from 'react';
 import { Flex, Popover } from 'components/Common';
 import { AssetSmallPreview } from '@cognite/data-exploration';
-import { Graphic } from '@cognite/cogs.js';
 import { FileSmallPreview } from 'components/FileSmallPreview';
+import InteractiveIcon from 'components/InteractiveIcon';
+import { Icon } from '@cognite/cogs.js';
 
 export const getColumns = (resourceType: ResourceType) => {
   const isAsset = resourceType === 'assets';
@@ -42,7 +43,13 @@ export const getColumns = (resourceType: ResourceType) => {
               )
             }
           >
-            <Graphic type="Image" />
+            {isAsset ? (
+              <Icon type="ResourceAssets" />
+            ) : (
+              <div>
+                <InteractiveIcon />
+              </div>
+            )}
           </Popover>
         </Flex>
       ),

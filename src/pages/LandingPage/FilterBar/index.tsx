@@ -57,8 +57,8 @@ export default function FilterBar({
       <MimeTypeSelect
         selectedMimeType={mimeType ? [mimeType] : undefined}
         onMimeTypeSelected={onMimeTypeSelected}
-        loaded
         isMulti={false}
+        loaded
       />
     </Flex>
   );

@@ -25,7 +25,7 @@ export const useAllNeededPermissions = () => {
     { label: 'assets:read', hasPermission: assetsReadPermission },
     { label: 'datasets:read', hasPermission: dsReadPermission },
     { label: 'labels:read', hasPermission: labelsReadAcl },
-    { label: 'labbels:write', hasPermission: labelsWriteAcl },
+    { label: 'labels:write', hasPermission: labelsWriteAcl },
     {
       label: !groupsReadPermission ? 'groups:read' : 'groups:list',
       hasPermission: groupsReadPermission || groupsListPermission,

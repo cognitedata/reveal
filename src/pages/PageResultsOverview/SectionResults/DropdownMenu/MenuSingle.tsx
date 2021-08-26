@@ -1,6 +1,8 @@
 import React from 'react';
 import { Button } from '@cognite/cogs.js';
-import { useReviewFiles, useConvertToSVG } from 'hooks';
+import { useReviewFiles, useConvertToSVG, isFileApproved } from 'hooks';
+import { useCdfItem } from '@cognite/sdk-react-query-hooks';
+import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import { DropdownMenu } from '.';
 
 // Context menu for a single diagram
@@ -12,7 +14,13 @@ export const MenuSingle = ({ fileId }: { fileId: number }) => {
     isOnApprovedLoading,
     isOnRejectedLoading,
   } = useReviewFiles([fileId]);
+
+  const { data: file } = useCdfItem<FileInfo>('files', {
+    id: Number(fileId!),
+  });
   const isLoading = isOnApprovedLoading || isOnRejectedLoading;
+
+  const isApproved = isFileApproved(file);
 
   return (
     <DropdownMenu column justify grow style={{ width: '200px' }}>
@@ -21,7 +29,7 @@ export const MenuSingle = ({ fileId }: { fileId: number }) => {
         icon={isLoading ? 'LoadingSpinner' : 'Checkmark'}
         iconPlacement="left"
         onClick={() => onApproveDiagrams()}
-        disabled={isLoading}
+        disabled={isLoading || isApproved}
         style={{ width: '100%' }}
       >
         Approve tags
@@ -41,10 +49,10 @@ export const MenuSingle = ({ fileId }: { fileId: number }) => {
         icon={isLoading ? 'LoadingSpinner' : 'Trash'}
         iconPlacement="left"
         onClick={() => onRejectDiagrams()}
-        disabled={isLoading}
+        disabled={isLoading || isApproved}
         style={{ width: '100%' }}
       >
-        Reject detected tags
+        Reject pending tags
       </Button>
     </DropdownMenu>
   );

@@ -1,11 +1,12 @@
 import React from 'react';
-import { Body, DocumentIcon } from '@cognite/cogs.js';
+import { Body } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
 import { ApiStatusCount } from 'modules/contextualization/pnidParsing';
 import { UploadJobState } from 'modules/contextualization/uploadJobs';
 import { stringCompare } from 'modules/contextualization/utils';
 import { Flex } from 'components/Common';
 import ReviewStatus from 'components/ReviewStatus';
+import InteractiveIcon from 'components/InteractiveIcon';
 import ColumnProgress from './ColumnProgress';
 import ColumnFileActions from './ColumnFileActions';
 import ColumnLinkedTo from './ColumnLinkedTo';
@@ -27,10 +28,7 @@ export const getColumns: any = (workflowId: number) => {
         stringCompare(a?.name, b?.name),
       render: (name: any) => (
         <Flex row align>
-          <DocumentIcon
-            file="PNG"
-            style={{ width: '30px', marginRight: '14px' }}
-          />
+          <InteractiveIcon />
           <Body strong level={2}>
             {name}
           </Body>

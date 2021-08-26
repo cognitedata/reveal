@@ -14,6 +14,7 @@ export * from './useSteps';
 export * from './useDatasets';
 export * from './useReviewFiles';
 export * from './useConvertToSVG';
+export * from './useAnnotationsDetails';
 
 // dev
 export * from './useTraceRerender';

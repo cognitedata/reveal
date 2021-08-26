@@ -1,6 +1,5 @@
 import React from 'react';
 import { useQueryClient } from 'react-query';
-import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { createLink } from '@cognite/cdf-utilities';
 import { FileInfo } from '@cognite/sdk';
 import { message, Modal, notification } from 'antd';
@@ -12,6 +11,7 @@ import { sleep } from 'utils/utils';
 import { deleteAnnotationsForFile } from 'utils/AnnotationUtils';
 import { PNID_METRICS, trackUsage } from 'utils/Metrics';
 import { Table } from 'components/Common';
+import { useReviewFiles } from 'hooks/useReviewFiles';
 import { getColumns } from './columns';
 
 const PAGE_SIZE = 10;
@@ -24,11 +24,11 @@ type Props = {
 export default function FilesList(props: Props) {
   const { query, files } = props;
 
+  const { onApproved, onRejected, onClearFileTags } = useReviewFiles(
+    files?.map((file) => file.id) ?? []
+  );
   const client = useQueryClient();
   const { createWorkflow } = useWorkflowCreateNew();
-  const { data: filesAcl } = usePermissions('filesAcl', 'WRITE');
-  const { data: eventsAcl } = usePermissions('eventsAcl', 'WRITE');
-  const writeAccess = filesAcl && eventsAcl;
 
   const onClearAnnotations = async (file: FileInfo): Promise<void> => {
     trackUsage(PNID_METRICS.landingPage.deleteAnnotations, {
@@ -42,6 +42,7 @@ export default function FilesList(props: Props) {
         if (file) {
           // Make sure annotations are updated
           await deleteAnnotationsForFile(file.id, file.externalId);
+          await onClearFileTags(file.id);
           onDeleteSuccess();
         }
         return message.success(
@@ -91,15 +92,24 @@ export default function FilesList(props: Props) {
     window.open(createLink(`/explore/file/${fileId}`), '_blank');
   };
 
+  const onApproveFile = (file: FileInfo): void => {
+    onApproved([file.id]);
+  };
+
+  const onRejectFile = (file: FileInfo): void => {
+    onRejected([file.id]);
+  };
+
   const interactiveColumns = getColumns(
     onFileEdit,
     onFileView,
     onClearAnnotations,
-    writeAccess
+    onApproveFile,
+    onRejectFile
   );
 
   const handleSearchFiles = () => {
-    if (query.trim().length) {
+    if (query.trim()?.length) {
       trackUsage(PNID_METRICS.landingPage.useSearch);
       return (files ?? []).filter((file) =>
         stringContains(file.name, query)
@@ -119,6 +129,9 @@ export default function FilesList(props: Props) {
       columns={interactiveColumns}
       size="middle"
       rowKey="id"
+      locale={{
+        emptyText: 'No pending engineering diagrams were found.',
+      }}
     />
   );
 }
