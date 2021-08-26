@@ -39,6 +39,7 @@ export type AnnotationMetadata = {
   keypoint?: boolean;
   keypoints?: Keypoint[];
   color?: string;
+  confidence?: number;
 };
 
 interface BaseAnnotation {

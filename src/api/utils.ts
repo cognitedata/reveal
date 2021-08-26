@@ -40,7 +40,7 @@ export function getFakeQueuedJob(
 
 export function getUnsavedAnnotation(
   text: string,
-  modelType: VisionAPIType,
+  jobType: VisionAPIType,
   fileId: number,
   source: AnnotationSource,
   region?: AnnotationRegion,
@@ -63,17 +63,36 @@ export function getUnsavedAnnotation(
       undefined,
     source,
     status,
-    annotationType: ModelTypeAnnotationTypeMap[modelType],
+    annotationType: ModelTypeAnnotationTypeMap[jobType],
     annotatedResourceId: fileId,
     annotatedResourceType: 'file',
     annotatedResourceExternalId: fileExternalId,
-    ...(modelType === VisionAPIType.TagDetection && {
+    ...(jobType === VisionAPIType.TagDetection && {
       linkedResourceId: assetId,
       linkedResourceExternalId: assetExternalId || text,
       linkedResourceType: 'asset',
     }),
     data,
   };
+}
+const enforceValidCoordinate = (coord: number) => {
+  if (coord < 0) {
+    return 0;
+  }
+  if (coord > 1) {
+    return 1;
+  }
+  return coord;
+};
+export function enforceRegionValidity(region: AnnotationRegion) {
+  const validRegion = {
+    ...region,
+    vertices: region.vertices.map((vertex) => ({
+      x: enforceValidCoordinate(vertex.x),
+      y: enforceValidCoordinate(vertex.y),
+    })),
+  };
+  return validRegion;
 }
 
 export function validateAnnotation(
