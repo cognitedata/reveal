@@ -2,10 +2,7 @@ import GlobalStyles from 'global-styles';
 import { Switch, Redirect, Route } from 'react-router-dom';
 import { Container, Logout } from '@cognite/react-container';
 import sidecar from 'utils/sidecar';
-import Info from 'pages/Info';
-import Home from 'pages/Home';
-import CogniteSDK from 'pages/CogniteSDK';
-import Intercom from 'pages/Intercom';
+import Homepage from 'pages/Homepage';
 import { MenuBar, PAGES } from 'pages/Menubar';
 import NotFoundPage from 'pages/Error404';
 
@@ -14,15 +11,11 @@ const App = () => (
     <>
       <GlobalStyles />
       <MenuBar />
-
       <Switch>
-        <Route path={PAGES.HOME} render={() => <Home />} />
-        <Route path={PAGES.INFO} render={() => <Info />} />
-        <Route path={PAGES.SDK} render={() => <CogniteSDK />} />
-        <Route path={PAGES.INTERCOM} render={() => <Intercom />} />
+        <Route path={PAGES.HOMEPAGE} component={Homepage} />
         <Route path={PAGES.LOGOUT} render={() => <Logout />} />
-        <Redirect from="" to={PAGES.HOME} />
-        <Redirect from="/" to={PAGES.HOME} />
+        <Redirect from="" to={PAGES.HOMEPAGE} />
+        <Redirect from="/" to={PAGES.HOMEPAGE} />
         <Route render={() => <NotFoundPage />} />
       </Switch>
     </>

@@ -5,16 +5,13 @@ import { TopBar } from '@cognite/cogs.js';
 import { SidebarIcon } from './Sidebar';
 
 export const PAGES = {
-  HOME: '/home',
-  INFO: '/info',
-  SDK: '/sdk',
-  INTERCOM: '/intercom',
+  HOMEPAGE: '/homepage',
   LOGOUT: '/logout',
 };
 
 export const MenuBar = () => {
   const history = useHistory();
-  const [active, setActive] = React.useState<string>(PAGES.HOME);
+  const [active, setActive] = React.useState<string>(PAGES.HOMEPAGE);
 
   const handleNavigate = (page: string) => () => {
     setActive(page);
@@ -30,29 +27,14 @@ export const MenuBar = () => {
   return (
     <TopBar>
       <TopBar.Left>
-        <TopBar.Logo title="React Simconfig App" />
+        <TopBar.Logo title="Simulator Configuration" />
       </TopBar.Left>
       <TopBar.Navigation
         links={[
           {
-            name: 'Home',
-            isActive: active === PAGES.HOME,
-            onClick: handleNavigate(PAGES.HOME),
-          },
-          {
-            name: 'Sidecar Info',
-            isActive: active === PAGES.INFO,
-            onClick: handleNavigate(PAGES.INFO),
-          },
-          {
-            name: 'Cognite SDK',
-            isActive: active === PAGES.SDK,
-            onClick: handleNavigate(PAGES.SDK),
-          },
-          {
-            name: 'Intercom',
-            isActive: active === PAGES.INTERCOM,
-            onClick: handleNavigate(PAGES.INTERCOM),
+            name: 'Homepage',
+            isActive: active === PAGES.HOMEPAGE,
+            onClick: handleNavigate(PAGES.HOMEPAGE),
           },
         ]}
       />

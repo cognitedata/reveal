@@ -1,14 +1,6 @@
-import { log, logErrors } from '../utils';
+import { log } from '../utils';
 
-import { regularUser } from './login.role';
-
-fixture('App')
-  .meta({ page: 'home' })
-  .page(process.env.BASE_URL)
-  .beforeEach((t) => t.useRole(regularUser))
-  .afterEach((t) =>
-    logErrors(t, { error: true, warn: true, log: true, info: true })
-  );
+fixture('App');
 
 test('Check sidecars page content', async () => {
   log('Goto the sidecar page');

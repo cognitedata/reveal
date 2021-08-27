@@ -73,8 +73,12 @@ generate_package_json_helpers(
 # Dependencies from package.json
 DEPENDENCIES = [
     "@npm//@cognite/cogs.js",
+    "@npm//@cognite/gcs-browser-upload",
     "@npm//@cognite/sdk",
     "@npm//@sentry/browser",
+    "@npm//antd",
+    "@npm//lodash",
+    "@npm//mime-types",
     "@npm//react",
     "@npm//react-dom",
     "@npm//react-i18next",
@@ -88,6 +92,7 @@ DEPENDENCIES = [
 
 # Type dependencies from package.json
 TYPE_DEPENDENCIES = [
+    "@npm//@types/lodash",
     "@npm//@types/react",
     "@npm//@types/react-dom",
     "@npm//@types/react-i18next",
