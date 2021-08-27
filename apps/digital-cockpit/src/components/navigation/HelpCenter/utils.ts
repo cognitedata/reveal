@@ -1,16 +1,16 @@
 export const docList = [
   {
-    url: 'https://pr-567.docs.preview.cogniteapp.com/cockpit/guides/getstarted.html',
+    url: 'https://docs.cognite.com/portal/guides/getstarted.html',
     titleKey: 'documentation-basics',
     title: 'Learn the basics',
   },
   {
-    url: '',
+    url: 'https://docs.cognite.com/portal/changelog.html',
     titleKey: 'documentation-changelog',
-    title: 'Changelog',
+    title: "What's new",
   },
   {
-    url: 'https://pr-567.docs.preview.cogniteapp.com/cockpit/guides/admins.html',
+    url: 'https://docs.cognite.com/portal/guides/admin-actions.html',
     titleKey: 'documentation-sys-admin',
     title: 'System Administrator role',
   },

@@ -4,7 +4,7 @@ Cognite Digital Cockpit allows heavy industry users to accumulate all their appl
 
 With live data from embedded dashboards & infographics overview of your KPIs, you can quickly get an overview of your organization´s status.
 
-For more information please read the [https://pr-567.docs.preview.cogniteapp.com/cockpit/guides/getstarted.html](documentation)
+For more information please read the [https://docs.cognite.com/portal/guides/getstarted.html](documentation)
 
 ## Setup a new tenant for Digital Cockpit
 
@@ -43,9 +43,7 @@ The data set is used to store image files such as board previews and a customer 
 
 This is optinal requirement since when system admin logs in to the app for the first time, the _data set_ will be created automatically.
 
-Creating it manually gives you possibility to restrict the capability `files:write` and `files:read` to this data set for the **dc-system-admin** group, and also more options in configuring the data set itself.
-
-Creating it manually gives you more options in configuring the data set itself. When created it also gives possibility to restrict the capability `files:write` and `files:read` to this data set for the system admin group.
+Creating it manually gives you possibility to restrict the capabilities `files:write` and `files:read` to this data set for the **dc-system-admin** group, and also more options in configuring the data set itself.
 
 **Name**: `digital-cockpit`
 

@@ -57,9 +57,8 @@ const SnapshotTooltip = () => (
   <CustomTooltipContainer>
     Find more information about how to embed a dashboard, e.g., Grafana,
     PowerBI,&nbsp;
-    {/* TODO(DTC-348) replace with stable link as soon as it is available */}
     <A
-      href="https://pr-567.docs.preview.cogniteapp.com/cockpit/guides/admins.html#example-use-links-from-a-grafana-report-to-show-live-data-in-the-digital-cockpit-board"
+      href="https://docs.cognite.com/portal/guides/admin-actions.html#example-add-a-link-to-a-grafana-report"
       isExternal
       target="_blank"
     >
@@ -319,10 +318,9 @@ export const BoardForm: React.FC<BoardFormProps> = ({
               {!isEmpty(values.visibleTo) && (
                 <Micro>
                   To give access to the right groups, make sure groups are
-                  set-up correctly in Azure AD, see our{' '}
-                  {/* TODO(DTC-348) replace with stable link as soon as it is available */}
+                  set-up correctly, see our{' '}
                   <StyledLink
-                    href="https://pr-567.docs.preview.cogniteapp.com/cockpit/guides/admins.html#manage-access-to-a-board"
+                    href="https://docs.cognite.com/portal/guides/admin-actions.html#see-which-suites-and-boards-a-group-can-access"
                     isExternal
                     target="_blank"
                   >
