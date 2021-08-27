@@ -15,6 +15,7 @@ import { setSelectedAllFiles } from 'src/store/commonActions';
 import { makeReducerSelectAllFilesWithFilter } from 'src/store/commonReducers';
 import { DEFAULT_PAGE_SIZE } from 'src/constants/PaginationConsts';
 import { SortPaginate } from 'src/modules/Common/Components/FileTable/types';
+import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
 
 export enum ExploreSortPaginateType {
   list = 'LIST',
@@ -64,6 +65,7 @@ export type State = {
     selectedIds: number[];
   };
   sortPaginate: Record<ExploreSortPaginateType, SortPaginate>;
+  loadingAnnotations?: boolean;
   bulkEditTemp: BulkEditTempState;
 };
 
@@ -84,12 +86,29 @@ const initialState: State = {
     selectedIds: [],
   },
   sortPaginate: {
-    LIST: { currentPage: 1, pageSize: DEFAULT_PAGE_SIZE },
+    LIST: {
+      currentPage: 1,
+      pageSize: DEFAULT_PAGE_SIZE,
+      reverse: false,
+    },
     GRID: { currentPage: 1, pageSize: DEFAULT_PAGE_SIZE },
-    LOCATION: { currentPage: 1, pageSize: DEFAULT_PAGE_SIZE },
-    NO_LOCATION: { currentPage: 1, pageSize: DEFAULT_PAGE_SIZE },
-    MODAL: { currentPage: 1, pageSize: DEFAULT_PAGE_SIZE },
+    LOCATION: {
+      currentPage: 1,
+      pageSize: DEFAULT_PAGE_SIZE,
+      reverse: false,
+    },
+    NO_LOCATION: {
+      currentPage: 1,
+      pageSize: DEFAULT_PAGE_SIZE,
+      reverse: false,
+    },
+    MODAL: {
+      currentPage: 1,
+      pageSize: DEFAULT_PAGE_SIZE,
+      reverse: false,
+    },
   },
+  loadingAnnotations: false,
   bulkEditTemp: {},
 };
 
@@ -156,9 +175,11 @@ const explorerSlice = createSlice({
       state.showFileMetadata = true;
     },
     setExplorerQueryString(state, action: PayloadAction<string>) {
+      if (state.query !== action.payload) resetSortKey(state);
       state.query = action.payload;
     },
     setExplorerFilter(state, action: PayloadAction<FileFilterProps>) {
+      if (state.filter !== action.payload) resetSortKey(state);
       state.filter = action.payload;
     },
     toggleExplorerFilterView(state) {
@@ -216,6 +237,9 @@ const explorerSlice = createSlice({
     setExplorerCurrentView(state, action: PayloadAction<ViewMode>) {
       state.currentView = action.payload;
     },
+    setLoadingAnnotations(state) {
+      state.loadingAnnotations = true;
+    },
     setMapTableTabKey(
       state,
       action: PayloadAction<{
@@ -245,6 +269,13 @@ const explorerSlice = createSlice({
     });
 
     builder.addCase(setSelectedAllFiles, makeReducerSelectAllFilesWithFilter());
+
+    builder.addCase(
+      RetrieveAnnotations.fulfilled,
+      (state: State, { payload: _ }) => {
+        state.loadingAnnotations = false;
+      }
+    );
   },
 });
 
@@ -267,6 +298,7 @@ export const {
   setPageSize,
   setExplorerCurrentView,
   setMapTableTabKey,
+  setLoadingAnnotations,
   setBulkEditTemp,
 } = explorerSlice.actions;
 
@@ -335,4 +367,12 @@ const convertToExplorerFileState = (
   fileState: FileState
 ): ExplorerFileState => {
   return { ...fileState };
+};
+
+const resetSortKey = (state: State) => {
+  // Workaround: rest sortKey, since annotations need to be refetched
+  state.sortPaginate.LIST.sortKey =
+    state.sortPaginate.LIST.sortKey === 'annotations'
+      ? undefined
+      : state.sortPaginate.LIST.sortKey;
 };

@@ -5,17 +5,25 @@ import {
   SortPaginateControls,
   PaginatedTableProps,
 } from 'src/modules/Common/Components/FileTable/types';
+import { useSelector } from 'react-redux';
+import { RootState } from 'src/store/rootReducer';
 import { TableDataItem } from '../../types';
 import { Footer } from './Footer';
 import { Header } from './Header';
 import { Paginator } from './Paginator';
+import { filesAnnotationCounts } from '../../annotationSlice';
 
 const getData = (
   data: TableDataItem[],
   sortKey?: string,
   sorters?: {
-    [key: string]: (data: TableDataItem[], reverse: boolean) => TableDataItem[];
+    [key: string]: (
+      data: TableDataItem[],
+      reverse: boolean,
+      args?: any
+    ) => TableDataItem[];
   },
+  sorterArgs?: any,
   reverse?: boolean,
   pagination?: boolean,
   pageNumber?: number,
@@ -25,7 +33,7 @@ const getData = (
   // if sorting enabled
   if (sorters && sortKey && reverse !== undefined) {
     const sorter = sorters[sortKey];
-    tableData = sorter ? sorter(data, reverse) : data;
+    tableData = sorter ? sorter(data, reverse, sorterArgs) : data;
   }
   // if pagination enabled
   if (pagination && pageNumber && pageSize) {
@@ -87,11 +95,19 @@ export const SorterPaginationWrapper = ({
       <Footer fetchedCount={fetchedCount} totalCount={totalCount} />
     ) : null;
 
+  const sorterArgs = useSelector(({ annotationReducer }: RootState) =>
+    filesAnnotationCounts(
+      annotationReducer,
+      data.map((item) => item.id)
+    )
+  );
+
   const pagedData = useMemo(() => {
     return getData(
       data,
       sortKey,
       sorters,
+      sorterArgs,
       reverse,
       pagination,
       currentPage,

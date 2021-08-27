@@ -115,6 +115,15 @@ export const selectAnnotationsForAllFiles = createSelector(
   }
 );
 
+export const filesAnnotationCounts = (state: State, fileIds: number[]) => {
+  const data: Record<number, number> = {};
+  fileIds.forEach((id) => {
+    data[id] = state.files.byId[id]?.length || 0;
+  });
+
+  return data;
+};
+
 const createDeepEqualSelector = createSelectorCreator(defaultMemoize, isEqual);
 
 export const makeSelectAnnotationCounts = () =>

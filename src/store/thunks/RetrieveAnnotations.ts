@@ -34,10 +34,7 @@ export const RetrieveAnnotations = createAsyncThunk<
       try {
         return validateAnnotation(annotation);
       } catch (error) {
-        console.error(
-          'Annotation is invalid!, will not be visible',
-          annotation
-        );
+        console.error('Annotation is invalid, will not be visible', annotation);
         return false;
       }
     });

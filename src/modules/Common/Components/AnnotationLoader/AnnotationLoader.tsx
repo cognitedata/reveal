@@ -2,6 +2,7 @@ import { useDispatch } from 'react-redux';
 import React, { ReactElement, useEffect, useMemo } from 'react';
 import { ResultData } from 'src/modules/Common/types';
 import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
+import { setLoadingAnnotations } from 'src/modules/Explorer/store/explorerSlice';
 
 export function AnnotationLoader(props: {
   children: ReactElement<{ data: ResultData[] }>;
@@ -14,6 +15,7 @@ export function AnnotationLoader(props: {
 
   useEffect(() => {
     if (fileIds && fileIds.length) {
+      dispatch(setLoadingAnnotations());
       dispatch(RetrieveAnnotations(fileIds));
     }
   }, [fileIds]);

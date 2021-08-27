@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Column, ColumnShape } from 'react-base-table';
 import { ResultData, TableDataItem } from 'src/modules/Common/types';
 import { StringRenderer } from 'src/modules/Common/Containers/FileTableRenderers/StringRenderer';
@@ -10,9 +10,14 @@ import { DateSorter } from 'src/modules/Common/Containers/Sorters/DateSorter';
 import { DateRenderer } from 'src/modules/Common/Containers/FileTableRenderers/DateRenderer';
 import { NameSorter } from 'src/modules/Common/Containers/Sorters/NameSorter';
 import { AnnotationLoader } from 'src/modules/Common/Components/AnnotationLoader/AnnotationLoader';
+import { useDispatch, useSelector } from 'react-redux';
+import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
+import { setLoadingAnnotations } from 'src/modules/Explorer/store/explorerSlice';
+import { RootState } from 'src/store/rootReducer';
 import { FileListTableProps, PaginatedTableProps } from './types';
 import { SorterPaginationWrapper } from '../SorterPaginationWrapper/SorterPaginationWrapper';
 import { MimeTypeSorter } from '../../Containers/Sorters/MimeTypeSorter';
+import { AnnotationSorter } from '../../Containers/Sorters/AnnotationSorter';
 
 const rendererMap = {
   name: NameRenderer,
@@ -26,6 +31,7 @@ const sorters = {
   name: NameSorter,
   mimeType: MimeTypeSorter,
   sourceCreatedTime: DateSorter,
+  annotations: AnnotationSorter,
 };
 
 export function FileTableExplorer(props: FileListTableProps) {
@@ -65,6 +71,7 @@ export function FileTableExplorer(props: FileListTableProps) {
       width: 0,
       flexGrow: 1,
       align: Column.Alignment.LEFT,
+      sortable: true,
     },
     ...(!props.modalView
       ? [
@@ -95,6 +102,19 @@ export function FileTableExplorer(props: FileListTableProps) {
     },
   };
 
+  const loadingAnnotations = useSelector(
+    ({ explorerReducer }: RootState) => explorerReducer.loadingAnnotations
+  );
+
+  const dispatch = useDispatch();
+  useEffect(() => {
+    if (props.sortPaginateControls.sortKey === 'annotations') {
+      const fileIds = props.data.map((item) => item.id);
+      dispatch(setLoadingAnnotations());
+      dispatch(RetrieveAnnotations(fileIds));
+    }
+  }, [props.sortPaginateControls.sortKey]);
+
   return (
     <SorterPaginationWrapper
       data={props.data}
@@ -103,19 +123,36 @@ export function FileTableExplorer(props: FileListTableProps) {
       pagination
       sortPaginateControls={props.sortPaginateControls}
     >
-      {(paginationProps: PaginatedTableProps<TableDataItem>) => (
-        <AnnotationLoader data={paginationProps.data}>
-          <SelectableTable
-            {...props}
-            {...paginationProps}
-            columns={columns}
-            rendererMap={rendererMap}
-            selectable
-            rowClassNames={rowClassNames}
-            rowEventHandlers={rowEventHandlers}
-          />
-        </AnnotationLoader>
-      )}
+      {(paginationProps: PaginatedTableProps<TableDataItem>) => {
+        if (props.sortPaginateControls.sortKey === 'annotations') {
+          return (
+            <SelectableTable
+              {...props}
+              {...paginationProps}
+              columns={columns}
+              rendererMap={rendererMap}
+              selectable
+              rowClassNames={rowClassNames}
+              rowEventHandlers={rowEventHandlers}
+              disabled={loadingAnnotations}
+            />
+          );
+        }
+        return (
+          <AnnotationLoader data={paginationProps.data}>
+            <SelectableTable
+              {...props}
+              {...paginationProps}
+              columns={columns}
+              rendererMap={rendererMap}
+              selectable
+              rowClassNames={rowClassNames}
+              rowEventHandlers={rowEventHandlers}
+              disabled={loadingAnnotations}
+            />
+          </AnnotationLoader>
+        );
+      }}
     </SorterPaginationWrapper>
   );
 }
