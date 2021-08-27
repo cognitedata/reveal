@@ -32,7 +32,9 @@
     "@cognite/sdk-provider": "^1.0.0",
     "@cognite/sdk-react-query-hooks": "^4.0.0",
     "@cognite/z-index": "^0.1.0",
-    "@sentry/browser": "^5.30.0",
+    "@sentry/react": "^6.11.0",
+    "@sentry/rrweb": "^0.3.1",
+    "@sentry/tracing": "^6.11.0",
     "antd": "^4.16.12",
     "axios": "^0.21.1",
     "date-fns": "^2.23.0",
@@ -54,6 +56,7 @@
     "react-scripts": "4.0.3",
     "react-split-pane": "^0.1.92",
     "recoil": "^0.4.0",
+    "rrweb": "^1.0.2",
     "styled-components": "^5.3.0",
     "use-screenshot-hook": "^1.0.2"
   },

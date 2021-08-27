@@ -1,4 +1,4 @@
-import { BrowserRouter } from 'react-router-dom';
+import { Router } from 'react-router-dom';
 import Routes from 'components/Routes';
 import { SDKProvider } from '@cognite/sdk-provider';
 import { QueryClientProvider, QueryClient } from 'react-query';
@@ -6,6 +6,36 @@ import { ReactQueryDevtools } from 'react-query/devtools';
 import { CogniteClient } from '@cognite/sdk';
 import { ToastContainer } from '@cognite/cogs.js';
 import { RecoilRoot } from 'recoil';
+import { createBrowserHistory } from 'history';
+import * as Sentry from '@sentry/react';
+import { Integrations } from '@sentry/tracing';
+import SentryRRWeb from '@sentry/rrweb';
+import config from '../../config/config';
+
+const history = createBrowserHistory();
+
+if (process.env.REACT_APP_SENTRY_DSN) {
+  Sentry.init({
+    dsn: process.env.REACT_APP_SENTRY_DSN,
+    // This is populated by the FAS build process. Change it if you want to
+    // source this information from somewhere else.
+    release: process.env.REACT_APP_RELEASE_ID,
+    // This is populated by react-scripts. However, this can be overridden by
+    // the app's build process if you wish.
+    environment: config.environment,
+    integrations: [
+      new Integrations.BrowserTracing({
+        routingInstrumentation: Sentry.reactRouterV5Instrumentation(history),
+      }),
+      new SentryRRWeb(),
+    ],
+    tracesSampleRate: 1,
+    beforeSend(event) {
+      if (event.exception) Sentry.showReportDialog({ eventId: event.event_id });
+      return event;
+    },
+  });
+}
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -25,16 +55,18 @@ const sdk = new CogniteClient({
 
 export default function RootApp() {
   return (
-    <RecoilRoot>
-      <QueryClientProvider client={queryClient}>
-        <SDKProvider sdk={sdk}>
-          <BrowserRouter>
-            <ToastContainer />
-            <Routes />
-          </BrowserRouter>
-          <ReactQueryDevtools />
-        </SDKProvider>
-      </QueryClientProvider>
-    </RecoilRoot>
+    <Sentry.ErrorBoundary fallback={<p>An error has occurred</p>} showDialog>
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <SDKProvider sdk={sdk}>
+            <Router history={history}>
+              <ToastContainer />
+              <Routes />
+            </Router>
+            <ReactQueryDevtools />
+          </SDKProvider>
+        </QueryClientProvider>
+      </RecoilRoot>
+    </Sentry.ErrorBoundary>
   );
 }

@@ -24,11 +24,14 @@ import { useSDK } from '@cognite/sdk-provider';
 import { getAzureAppId, getSidecar, useCluster } from 'config';
 import { identifyUser } from 'utils/metrics';
 import { azureInfo, loginStatus } from 'utils/users';
+import * as Sentry from '@sentry/react';
+
+const SentryRoute = Sentry.withSentryRouting(Route);
 
 const RouteWithTopbar = ({ component, ...rest }: RouteProps) => {
   const Component = component as React.ComponentClass;
   return (
-    <Route
+    <SentryRoute
       {...rest}
       render={(routeProps) => {
         return (
@@ -169,10 +172,10 @@ const Routes = () => {
   const project = getProject();
   return (
     <Switch>
-      <Route path="/" exact component={TenantSelectorView} />
-      <Route path={`/${project}`}>
+      <SentryRoute path="/" exact component={TenantSelectorView} />
+      <SentryRoute path={`/${project}`}>
         <AppRoutes />
-      </Route>
+      </SentryRoute>
     </Switch>
   );
 };
