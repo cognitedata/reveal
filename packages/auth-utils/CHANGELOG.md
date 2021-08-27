@@ -1,3 +1,7 @@
+## 1.0.13 Aug 27 2021
+
+- Add `id` to authState
+
 ## 1.0.9 Jun 9 2021
 
 - Add return type to `getProjects`

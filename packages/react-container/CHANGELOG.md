@@ -1,3 +1,7 @@
+## 1.6.3 August 27 2021
+
+- Bump deps: auth-utils
+
 ## 1.6.1 August 25 2021
 
 - Bump deps
