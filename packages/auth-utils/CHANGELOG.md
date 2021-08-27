@@ -1,4 +1,4 @@
-## 1.0.13 Aug 27 2021
+## 1.0.13,14 Aug 27 2021
 
 - Add `id` to authState
 

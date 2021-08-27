@@ -39,6 +39,7 @@ export default [
       {
         file: 'dist/mocks.js',
         format: 'cjs',
+        exports: 'default',
       },
     ],
     plugins: [
