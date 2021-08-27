@@ -21,7 +21,7 @@ export function CustomObjectWithHighlightAndGhosted() {
         const ghostedNodes = new TreeIndexNodeCollection([1, 3, 5, 7, 9, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]);
         model.nodeAppearanceProvider.assignStyledNodeCollection(ghostedNodes, DefaultNodeAppearance.Ghosted);
 
-        const sphere = new THREE.SphereBufferGeometry(5);
+        const sphere = new THREE.SphereBufferGeometry(5, 32, 16);
         const sphereMesh = new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({color: 'red'}));
         sphereMesh.position.set(12, 0, -5);
         scene.add(sphereMesh);
