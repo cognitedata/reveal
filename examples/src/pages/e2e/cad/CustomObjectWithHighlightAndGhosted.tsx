@@ -28,7 +28,7 @@ export function CustomObjectWithHighlightAndGhosted() {
 
         return {
           cameraConfig: {
-            position: new THREE.Vector3(3.3, 9, -24),
+            position: new THREE.Vector3(9, 3.4, -12),
             target: new THREE.Vector3(12, 0, -5), 
           },
         };
