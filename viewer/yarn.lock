@@ -901,11 +901,20 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@reveal/core@workspace:core":
+"@reveal/core@workspace:*, @reveal/core@workspace:core":
   version: 0.0.0-use.local
   resolution: "@reveal/core@workspace:core"
   dependencies:
     "@reveal/camera-manager": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@reveal/tools@workspace:packages/tools":
+  version: 0.0.0-use.local
+  resolution: "@reveal/tools@workspace:packages/tools"
+  dependencies:
+    "@reveal/camera-manager": "workspace:*"
+    "@reveal/core": "workspace:*"
   languageName: unknown
   linkType: soft
 

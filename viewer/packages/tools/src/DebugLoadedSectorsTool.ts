@@ -2,13 +2,10 @@
  * Copyright 2021 Cognite AS
  */
 import * as THREE from 'three';
-import { LevelOfDetail } from '../datamodels/cad/sector/LevelOfDetail';
 
-import { SectorNode } from '../datamodels/cad/sector/SectorNode';
-import { Cognite3DModel } from '../public/migration/Cognite3DModel';
-
-import { Cognite3DViewer } from '../public/migration/Cognite3DViewer';
-import { assertNever } from '../utilities';
+import { Cognite3DViewer, Cognite3DModel } from '@reveal/core';
+import { LevelOfDetail, SectorNode } from '@reveal/core/cad';
+import { assertNever } from '@reveal/core/utilities';
 
 import { Cognite3DViewerToolBase } from './Cognite3DViewerToolBase';
 
