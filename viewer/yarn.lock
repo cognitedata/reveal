@@ -483,7 +483,7 @@ __metadata:
     "@types/mixpanel-browser": ^2.35.4
     "@types/node": ^14.14.5
     "@types/skmeans": ^0.11.1
-    "@types/three": 0.128.0
+    "@types/three": 0.131.0
     "@types/tween.js": ^18.5.1
     "@typescript-eslint/eslint-plugin": ^4.29.1
     "@typescript-eslint/parser": ^4.29.1
@@ -522,7 +522,7 @@ __metadata:
     rxjs: ^7.1.0
     shx: ^0.3.3
     skmeans: ^0.11.3
-    three: 0.128.0
+    three: 0.131.0
     ts-jest: ^26.4.3
     ts-loader: 8.0.7
     typescript: ^4.3.2
@@ -1169,10 +1169,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/three@npm:0.128.0":
-  version: 0.128.0
-  resolution: "@types/three@npm:0.128.0"
-  checksum: 866e16b55a60941560df629a20fe005034058b25d41fa03a0c4363ef94f580768bae6d6065573ac6b3a5326d0c349ff5920d095f0ed66303a0785f56e88d5bfa
+"@types/three@npm:0.131.0":
+  version: 0.131.0
+  resolution: "@types/three@npm:0.131.0"
+  checksum: 8f705feb086330e92ad2165946f15d064006bd3dc9da38970b58617463cf1b2f92a089fd773780186c6a46644a987efe31bef5319d349ae0cf41827344c819dc
   languageName: node
   linkType: hard
 
@@ -11856,10 +11856,10 @@ resolve@^0.6.1:
   languageName: node
   linkType: hard
 
-"three@npm:0.128.0":
-  version: 0.128.0
-  resolution: "three@npm:0.128.0"
-  checksum: a15d9cef8fc203e537d4f031d6c70cb2a93a3969524a052b533ebd6d556255fd0e0a3c161772847ee7985522fe866f60cb8beb8fe7962d960a1d45276208560d
+"three@npm:0.131.0":
+  version: 0.131.0
+  resolution: "three@npm:0.131.0"
+  checksum: 6489938a293e297738ff10ff68a028bd84ce7fc6e87fa9b5f5bab927a5800dd27a5cd3bff7123fd499e540d0b93cfc41c3571a472d08a05aef42285c5c5c7370
   languageName: node
   linkType: hard
 
