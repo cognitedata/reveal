@@ -1,10 +1,9 @@
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, Redirect } from 'react-router-dom';
 import { AuthConsumer, Container } from '@cognite/react-container';
 import { storage } from '@cognite/storage';
 import { Loader, ToastContainer } from '@cognite/cogs.js';
 import GlobalStyles from 'global-styles';
 import sidecar from 'configs/sidecar';
-import Home from 'pages/Home';
 import { Providers } from 'Providers';
 
 import Configurations from './pages/Configurations';
@@ -40,7 +39,8 @@ const App = () => {
                         return (
                           <Switch>
                             <Route exact path="/">
-                              <Home />
+                              {/* <Home /> */}
+                              <Redirect to="/configurations" />
                             </Route>
                             <Route exact path="/configurations">
                               <Configurations />
@@ -54,6 +54,7 @@ const App = () => {
                             <Route exact path="/status">
                               <Status />
                             </Route>
+                            <Redirect from="*" to="/configurations" />
                           </Switch>
                         );
                       }}
