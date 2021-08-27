@@ -128,23 +128,6 @@ void main() {
     discard;
   }
   
-  // Combine color from ghost, back and custom object
-  vec4 color = backAlbedo;
-  float depth = backDepth;
-  if (customDepth < backDepth && ghostDepth == 1.0) {
-    color = vec4(customAlbedo.rgb * customAlbedo.a + (1.0 - customAlbedo.a) * backAlbedo.rgb, 1.0);
-    depth = customDepth;
-  } else if (customDepth < backDepth && ghostDepth < 1.0) {
-    float s = (1.0 - step(backDepth, ghostDepth)) * clampedGhostAlbedo.a;
-    vec3 modelAlbedo = mix(backAlbedo.rgb, clampedGhostAlbedo.rgb, s);
-    color = vec4(customAlbedo.rgb * customAlbedo.a + (1.0 - customAlbedo.a) * modelAlbedo.rgb, 1.0);
-    depth = customDepth;
-  } else {
-    float s = (1.0 - step(backDepth, ghostDepth)) * clampedGhostAlbedo.a;
-    color = vec4(mix(backAlbedo.rgb, clampedGhostAlbedo.rgb, s), backAlbedo.a);
-    depth = mix(backDepth, ghostDepth, s);
-  }
-
   float edgeStrength = 0.0;
 #if defined(EDGES)
   if (!any(equal(computeNeighborAlphas(tBack), vec4(0.0)))) {
@@ -152,6 +135,25 @@ void main() {
     edgeStrength = (1.0 - smoothstep(10.0, 40.0, depthEdge)) * edgeDetectionFilter(tBack, vUv, resolution) * edgeStrengthMultiplier;
   }
 #endif
+
+  // Combine color from ghost, back and custom object
+  vec4 color = backAlbedo;
+  float depth = backDepth;
+  if (customDepth < backDepth && ghostDepth == 1.0) {
+    color = vec4(customAlbedo.rgb * customAlbedo.a + (1.0 - customAlbedo.a) * backAlbedo.rgb, 1.0);
+    depth = customDepth;
+    edgeStrength = 0.0;
+  } else if (customDepth < backDepth && ghostDepth < 1.0) {
+    float s = (1.0 - step(backDepth, ghostDepth)) * clampedGhostAlbedo.a;
+    vec3 modelAlbedo = mix(backAlbedo.rgb, clampedGhostAlbedo.rgb, s);
+    color = vec4(customAlbedo.rgb * customAlbedo.a + (1.0 - customAlbedo.a) * modelAlbedo.rgb, 1.0);
+    depth = customDepth;
+    edgeStrength = 0.0;
+  } else {
+    float s = (1.0 - step(backDepth, ghostDepth)) * clampedGhostAlbedo.a;
+    color = vec4(mix(backAlbedo.rgb, clampedGhostAlbedo.rgb, s), backAlbedo.a);
+    depth = mix(backDepth, ghostDepth, s);
+  }
   
   gl_FragColor = color * (1.0 - edgeStrength) + vec4(vec3(edgeGrayScaleIntensity) * edgeStrength, 1.0);
 #if defined(gl_FragDepthEXT) || defined(GL_EXT_frag_depth)  
