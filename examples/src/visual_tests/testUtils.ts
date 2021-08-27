@@ -9,7 +9,8 @@ export enum TestCaseCad {
   rotateCadModel = 'rotateCadModel',
   scaledModel = 'scaledModel',
   userRenderTarget = 'userRenderTarget',
-  ssao = 'ssao'
+  ssao = 'ssao',
+  customObjectWithHighlightAndGhosted = 'customObjectWithHighlightAndGhosted'
 }
 
 export enum TestCasePointCloud {
