@@ -314,7 +314,7 @@ export function getXaxisUpdateFromEventData(
   const xaxisKeys = Object.keys(eventdata).filter((key) =>
     key.includes('xaxis')
   );
-  return xaxisKeys.map((key) => new Date(eventdata[key]).toJSON());
+  return xaxisKeys.map((key) => dayjs(eventdata[key]).toISOString());
 }
 
 export function calculateStackedYRange(

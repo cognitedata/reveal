@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import get from 'lodash/get';
 import styled from 'styled-components/macro';
+import dayjs from 'dayjs';
 import {
   Button,
   Icon,
@@ -92,10 +93,20 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
    * Initialize local chart atom
    */
   useEffect(() => {
-    if (chart && chart.id === chartId) {
+    if ((chart && chart.id === chartId) || !originalChart) {
       return;
     }
-    setChart(originalChart);
+
+    setChart({
+      ...originalChart,
+      // Fallback to default 1M if saved dates are not valid
+      dateFrom: Date.parse(originalChart.dateFrom!)
+        ? originalChart.dateFrom!
+        : dayjs().subtract(1, 'M').toISOString(),
+      dateTo: Date.parse(originalChart.dateTo!)
+        ? originalChart.dateTo!
+        : dayjs().toISOString(),
+    });
   }, [originalChart, chart, chartId, setChart]);
 
   /**
