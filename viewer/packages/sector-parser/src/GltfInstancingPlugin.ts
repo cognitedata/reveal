@@ -5,7 +5,14 @@
 import * as THREE from 'three';
 import { BufferGeometry, InstancedBufferGeometry } from 'three';
 import { GLTFLoader, GLTFLoaderPlugin, GLTFParser } from 'three/examples/jsm/loaders/GLTFLoader';
-import { setBoxGeometry, setConeGeometry, setQuadGeometry } from './primitiveGeometries';
+import {
+  setBoxGeometry,
+  setConeGeometry,
+  setNutGeometry,
+  setQuadGeometry,
+  setTorusGeometry,
+  setTrapeziumGeometry
+} from './primitiveGeometries';
 
 export default class GltfSectorLoader {
   public async loadSector(url: string): Promise<[PrimitiveCollection, InstancedBufferGeometry][]> {
@@ -37,7 +44,15 @@ type TypedArrayConstructor =
 export enum PrimitiveCollection {
   BoxCollection,
   CircleCollection,
-  ConeCollection
+  ConeCollection,
+  EccentricConeCollection,
+  EllipsoidSegmentCollection,
+  GeneralCylinderCollection,
+  GeneralRingCollection,
+  QuadCollection,
+  TorusSegmentCollection,
+  TrapeziumCollection,
+  NutCollection
 }
 
 class GltfInstancingPlugin implements GLTFLoaderPlugin {
@@ -81,7 +96,6 @@ class GltfInstancingPlugin implements GLTFLoaderPlugin {
 
     const geometry = new THREE.InstancedBufferGeometry();
     const collectionType = PrimitiveCollection[nodeDefinition.name as keyof typeof PrimitiveCollection];
-    this.setTopology(collectionType, geometry);
 
     for (const attributeName in instancedAttributeReferences) {
       if (Object.prototype.hasOwnProperty.call(instancedAttributeReferences, attributeName)) {
@@ -89,6 +103,8 @@ class GltfInstancingPlugin implements GLTFLoaderPlugin {
         geometry.setAttribute(`a${attributeName}`, await this.getAttributeFromAccessorId(accessorId));
       }
     }
+
+    this.setTopology(collectionType, geometry);
 
     this._resultBuffer.push([collectionType, geometry]);
 
@@ -112,7 +128,8 @@ class GltfInstancingPlugin implements GLTFLoaderPlugin {
     );
 
     const numberOfComponents = this.COLLECTION_TYPE_SIZES.get(accessorDefinition.type)!;
-    const offset: number = accessorDefinition.byteOffset / typedBuffer.BYTES_PER_ELEMENT ?? 0;
+    const byteOffset = accessorDefinition.byteOffset ?? 0;
+    const offset: number = byteOffset / typedBuffer.BYTES_PER_ELEMENT;
 
     return new THREE.InterleavedBufferAttribute(interleavedBuffer, numberOfComponents, offset);
   }
@@ -123,13 +140,37 @@ class GltfInstancingPlugin implements GLTFLoaderPlugin {
         setBoxGeometry(geometry);
         break;
       case PrimitiveCollection.CircleCollection:
-        setQuadGeometry(geometry);
+        setQuadGeometry(geometry); // should use the position as normal
         break;
       case PrimitiveCollection.ConeCollection:
         setConeGeometry(geometry);
         break;
-      default:
+      case PrimitiveCollection.EccentricConeCollection:
+        setConeGeometry(geometry);
         break;
+      case PrimitiveCollection.EllipsoidSegmentCollection:
+        setConeGeometry(geometry);
+        break;
+      case PrimitiveCollection.GeneralCylinderCollection:
+        setConeGeometry(geometry);
+        break;
+      case PrimitiveCollection.GeneralRingCollection:
+        setQuadGeometry(geometry, false);
+        break;
+      case PrimitiveCollection.NutCollection:
+        setNutGeometry(geometry);
+        break;
+      case PrimitiveCollection.QuadCollection:
+        setQuadGeometry(geometry);
+        break;
+      case PrimitiveCollection.TrapeziumCollection:
+        setTrapeziumGeometry(geometry);
+        break;
+      case PrimitiveCollection.TorusSegmentCollection:
+        setTorusGeometry(geometry);
+        break;
+      default:
+        throw new Error(`${PrimitiveCollection[primitiveCollectionName]} is not supported`);
     }
   }
 

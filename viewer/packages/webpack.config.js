@@ -22,7 +22,11 @@ module.exports = env => {
 
     devServer: {
       contentBase: path.resolve(env.dir, './app'),
-      disableHostCheck: true
+      disableHostCheck: true,
+      watchContentBase: true,
+      watchOptions: {
+        poll: true
+      }
     },
 
     module: {
