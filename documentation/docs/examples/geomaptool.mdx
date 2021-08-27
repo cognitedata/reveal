@@ -20,135 +20,75 @@ The tool provides list of options to set and choose:
 
 ## Basic example
 
-By default, the axis tool will be placed in the lower right corner
-of the viewer, and initialization is very easy:
-
 ```jsx runnable
+// import * as GEOTHREE from 'geo-three';
 // import { GeomapTool } from '@cognite/reveal/tools';
 
 new GeomapTool(viewer);
 ```
 
-## Customize axis cross position
+## Select different Map providers
 
-It is possible to specify a custom position for the axis tool.
-Position can be specified using either `RelativePosition` or `AbsolutePosition`.
-Using `AbsolutePosition` will position the axis cross at a specific position within the canvas of the viewer.
+In Geomap tool, you can select different map providers.
+- Bing Maps
+- Mapbox
+- Here Maps
+- Openstreet Maps
 
 :::note
-The Y axis is positive upwards, meaning that 0 is at the bottom of the viewer.
+Openstreet maps would require to byepass CORS.
 :::
 
-```jsx runnable
-// import { GeomapTool } from '@cognite/reveal/tools';
-
-new GeomapTool(viewer, {
-  position: { 
-    xAbsolute: viewer.domElement.clientWidth / 2 - 64, 
-    yAbsolute: 10
-  },
-  size: 128
-});
-```
-
-
-
-Using `RelativePosition` will position the axis cross relative to a specific corner (will also handle screen resize).
+Bing Satellite Maps
 
 ```jsx runnable
-// import { GeomapTool, Corner } from '@cognite/reveal/tools';
+// import { GeomapTool, APIKeys } from '@cognite/reveal/tools';
 
-const axisConfig = {
-  position: {
-    corner: Corner.TopRight,
-    padding: new THREE.Vector2(50, 50)
+const mapConfig = {
+  mapProvider: new GEOTHREE.BingMapsProvider(APIKeys.DEV_BING_API_KEY, GEOTHREE.BingMapsProvider.AERIAL),
+  mapMode: 1,
+  mapAPIKey: APIKeys.DEV_BING_API_KEY,
+  latlong: {
+      latitude: 59.9016426931744,
+      longitude: 10.607235872426175
   }
-};
-new GeomapTool(viewer, axisConfig);
+}
+
+new GeomapTool(viewer, mapConfig);
 ```
 
-## Customize axis cross size and animation speed
-
-When clicking a face of the orientation box, the camera will move to face the respective direction.
-The animation speed of this movement can be configured. Size of the axis tool is also configurable.
-
+Here Satellite Maps
 
 ```jsx runnable
-// import { GeomapTool } from '@cognite/reveal/tools';
+// import * as GEOTHREE from 'geo-three';
+// import { GeomapTool, APIKeys } from '@cognite/reveal/tools';
 
-const axisConfig = {
-  animationSpeed: 2000, // Suuuuuper-slow
-  size: 256 // In pixels
-};
-new GeomapTool(viewer, axisConfig);
-```
-
-
-## Customize orientation faces
-
-Each of the faces of the orientation box can be styled.
-
-```jsx runnable
-// import { GeomapTool } from '@cognite/reveal/tools';
-
-const axisConfig = {
-  faces: {
-    xNegativeFace: {
-      label: 'Left',
-      fontColor: new THREE.Color('white'),
-      faceColor: new THREE.Color(0x660000)
-    },
-    xPositiveFace: {
-      label: 'Right',
-      fontColor: new THREE.Color('white'),
-      faceColor: new THREE.Color(0x660000)
-    },
-    yNegativeFace: {
-      label: 'Down',
-      fontColor: new THREE.Color('white'),
-      faceColor: new THREE.Color(0x006600)
-    },
-    yPositiveFace: {
-      label: 'Top',
-      fontColor: new THREE.Color('white'),
-      faceColor: new THREE.Color(0x006600)
-    },
-    zNegativeFace: {
-      label: 'Back',
-      fontColor: new THREE.Color('white'),
-      faceColor: new THREE.Color(0x000066)
-    },
-    zPositiveFace: {
-      label: 'Front',
-      fontColor: new THREE.Color('white'),
-      faceColor: new THREE.Color(0x000066)
-    }
+const mapConfig = {
+  mapProvider: new GEOTHREE.HereMapsProvider(APIKeys.DEV_HEREMAPS_APP_ID, APIKeys.DEV_HEREMAPS_APP_CODE, "aerial", "satellite.day", "jpg", 512),
+  mapMode: 1,
+  mapAPIKey: APIKeys.DEV_HEREMAPS_APP_ID,
+  latlong: {
+      latitude: 59.9016426931744,
+      longitude: 10.607235872426175
   }
-};
-new GeomapTool(viewer, axisConfig);
+}
+new GeomapTool(viewer, mapConfig);
 ```
 
-In addition to the settings demonstrated above, the following settings can be set:
-- `fontSize` - size of the label font. Automatically determined when undefined
-- `outlineColor` - color of the outline of each of the faces
-- `outlineSize` - width of the outline. Automatically determine when undefined
-
-## Customize compass
-
-The compass at the base can be customized to change the orientation label (which
-defaults to N for North), font color and size and tick color.
-
+Mapbox Vector Map
 
 ```jsx runnable
-// import { GeomapTool } from '@cognite/reveal/tools';
+// import * as GEOTHREE from 'geo-three';
+// import { GeomapTool, APIKeys } from '@cognite/reveal/tools';
 
-const axisConfig = {
-  compass: {
-    ringLabel: 'S',
-    labelDelta: 0, // Place at South
-    fontColor: new THREE.Color('white'),
-    tickColor: new THREE.Color('white')
+const mapConfig = {
+  mapProvider: new GEOTHREE.MapBoxProvider(APIKeys.DEV_MAPBOX_API_KEY, "mapbox/streets-v10", GEOTHREE.MapBoxProvider.STYLE),
+  mapMode: 1,
+  mapAPIKey: APIKeys.DEV_MAPBOX_API_KEY,
+  latlong: {
+      latitude: 59.9016426931744,
+      longitude: 10.607235872426175
   }
-};
-new GeomapTool(viewer, axisConfig);
+}
+new GeomapTool(viewer, mapConfig);
 ```

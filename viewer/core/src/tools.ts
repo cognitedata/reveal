@@ -23,3 +23,4 @@ export {
 export { Cognite3DViewerToolBase } from './tools/Cognite3DViewerToolBase';
 export { DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions } from './tools/DebugLoadedSectorsTool';
 export { GeomapTool } from './tools/Geomap/GeomapTool';
+export { APIKeys } from './tools/Geomap/MapConfig';

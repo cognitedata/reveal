@@ -214,13 +214,6 @@ export function Geomap() {
       let geomapTool = new GeomapTool(viewer);
 
       const renderGui = gui.addFolder('Options');
-      const renderModes = ['Planar', 'Height', 'Martini', 'Height Shader', 'Spherical'];
-      renderGui.add(guiState, 'mode', renderModes).name('Mode').onFinishChange(value => {
-        const mode = renderModes.indexOf(value);
-        geomapTool.setMapMode(mode);
-        viewer.forceRerender();
-      });
-
       const mapProviders = ['Vector OpenSteet Maps', 'Vector OpenTile Maps', 'Vector Map Box', 'Vector Here Maps', 'Vector Here Maps Night',
                             'Vector Here Maps Terrain', 'Vector Bing Maps', 'Vector Map Tiler Basic', 'Vector Map Tiler Outdoor', 
                             'Satellite Map Box', 'Satellite Map Box Labels', 'Satellite Here Maps', 'Satellite Bing Maps', 'Satellite Maps Tiler Labels', 
@@ -237,7 +230,7 @@ export function Geomap() {
       'Satellite Maps Tiler', 'Height Map Box', 'Height Map Tiler', 'Debug Height Map Box', 'Debug'];
       renderGui.add(guiState, 'heightmap', heightMapProviders).name('HeightMapProvider').onFinishChange(value => {
         const heightmap = heightMapProviders.indexOf(value);
-        geomapTool.setMapHeightProvider(heightmap);
+        geomapTool.setMapProvider(heightmap);
         viewer.forceRerender();
       });
 
