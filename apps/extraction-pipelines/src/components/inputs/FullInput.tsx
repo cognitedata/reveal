@@ -9,7 +9,7 @@ import { Hint, StyledLabel } from 'styles/StyledForm';
 
 export interface FullInputProps extends InputControllerProps {
   errors: any;
-  hintText?: string;
+  hintText?: string | ReactNode;
   renderLabel?: (labelText: string, inputId: string) => ReactNode;
   labelText: string;
 }

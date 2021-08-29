@@ -1,3 +1,5 @@
+import React, { ReactFragment } from 'react';
+
 export const CDF_LABEL: Readonly<string> = 'Cognite Data Fusion';
 export const EXTRACTION_PIPELINE: Readonly<string> = 'Extraction pipeline';
 export const EXTRACTION_PIPELINE_LOWER: Readonly<string> =
@@ -6,7 +8,7 @@ export const EXTRACTION_PIPELINES: Readonly<string> = 'Extraction pipelines';
 export const EXTRACTION_PIPELINES_LIST: Readonly<string> = `${EXTRACTION_PIPELINES} list`;
 export const EMAIL_NOTIFICATION_TOOLTIP: Readonly<string> = `If checked, the person will receive e-mail notification when an ${EXTRACTION_PIPELINE_LOWER} run fails. To edit, please click Edit button.`;
 
-export const CONTACTS_DESCRIPTION: Readonly<string> = `Document contacts related to the ${EXTRACTION_PIPELINES.toLowerCase()}. This will help getting in touch with the right people on troubleshooting`;
+export const CONTACTS_DESCRIPTION: Readonly<string> = `Insert contact details for the source system owner and other stakeholders, such as a support team. Enable notification subscription to send e-mail alerts for pipeline issues.`;
 export const NAME_LABEL: Readonly<string> = 'Name';
 export const NAME_PLACEHOLDER: Readonly<string> = 'Enter name';
 export const ROLE_LABEL: Readonly<string> = 'Role';
@@ -33,8 +35,8 @@ export const BACK: Readonly<string> = 'Back';
 export const NEXT: Readonly<string> = 'Next';
 export const ADD_CONTACT: Readonly<string> = 'Add another contact';
 export const ADD_OWNER: Readonly<string> = 'Add owner';
-export const CONTACTS_HINT = `Contacts could be someone responsible for a relevant application or persons to contact if there is an issue with the ${EXTRACTION_PIPELINE_LOWER}. Please mark if the contact should recieve a notification if there is an issue.`;
-export const OWNER_HINT = `The owner of an ${EXTRACTION_PIPELINE_LOWER} is the person responsible for the ${EXTRACTION_PIPELINE_LOWER}`;
+export const CONTACTS_HINT = `List other extraction pipeline stakeholders, for instance, a support team or the source system owner. Enable notification subscription to send e-mail alerts for pipeline issues.`;
+export const OWNER_HINT = `Set a person/team as responsible for the extraction pipeline.`;
 export const REGISTER: Readonly<string> = 'Register';
 export const ADD_ROW: Readonly<string> = 'Add row';
 export const REMOVE_ROW: Readonly<string> = 'Remove row';
@@ -53,10 +55,12 @@ export const NO_DATA_SET_ID_SET_TOOLTIP: Readonly<string> =
 export const NO_META_DATA: Readonly<string> = 'No metadata registered';
 export const INTEGRATION_DOCUMENTATION_HEADING: Readonly<string> = `${EXTRACTION_PIPELINE} documentation`;
 export const DESCRIPTION_HINT: Readonly<string> =
-  'For users of data a good description of data content and other relevant metrics connected to data will give value for them to know the data better. Please enter a description.';
-export const DESCRIPTION_LABEL: Readonly<string> = 'Description (optional)';
+  'Describe the extraction pipeline data. This field is optional.';
+export const DESCRIPTION_LABEL: Readonly<string> = 'Description';
 
 export const INTEGRATION_SCHEDULE_HEADING: Readonly<string> = `${EXTRACTION_PIPELINE} schedule`;
+export const INTEGRATION_SCHEDULE_HINT: Readonly<string> =
+  'Select the schedule for running the extraction pipeline.';
 export const NO_SCHEDULE: Readonly<string> = 'Not defined';
 
 export const NO_CONTACTS_MSG: Readonly<string> = 'No contacts registered';
@@ -82,7 +86,7 @@ export const EXT_PIPE_TAB_RUN_HISTORY: Readonly<string> = `${EXTRACTION_PIPELINE
 export const CONTACTS: Readonly<string> = 'Contacts';
 
 // name
-export const NAME_HINT = `Enter a name for your ${EXTRACTION_PIPELINE_LOWER} to be able to view and monitor this.`;
+export const NAME_HINT = `Enter a descriptive name for the ${EXTRACTION_PIPELINE_LOWER}.`;
 export const EXT_PIPE_NAME_HEADING: Readonly<string> = `${EXTRACTION_PIPELINE} name`;
 
 // Data set
@@ -90,16 +94,24 @@ export const DATA_SET_ID_HINT: Readonly<string> =
   'Type in the name or id of your data set';
 export const DATA_SETS_LABEL: Readonly<string> = 'Data sets';
 // Documentation
-export const DOCUMENTATION_HINT: Readonly<string> =
-  'Please add any relevant documentation.';
+export const DOCUMENTATION_HINT: Readonly<ReactFragment> = (
+  <>
+    Add other documentation to provide context and insights about the extraction
+    pipeline.{' '}
+    <a href="https://guides.github.com/features/mastering-markdown/">
+      Use markdown for page formatting
+    </a>
+    .
+  </>
+);
 
 // Source
+export const SOURCE_LABEL: Readonly<string> = 'Source system';
 export const SOURCE_HINT: Readonly<string> =
-  '**** Source hint placeholder ****';
-export const SOURCE_LABEL: Readonly<string> = 'Source';
+  'Enter the name of the extraction pipeline source system.';
 
-export const INTEGRATION_EXTERNAL_ID_HEADING: Readonly<string> = 'External id';
-export const EXTERNAL_ID_HINT: Readonly<string> = `The external id is the id used to refer to this ${EXTRACTION_PIPELINE_LOWER} externally. It must be unique. Follow company conventions.`;
+export const INTEGRATION_EXTERNAL_ID_HEADING: Readonly<string> = 'External ID';
+export const EXTERNAL_ID_HINT: Readonly<string> = `Enter a unique identifier. Use this ID when setting up status and heartbeat reporting in the extractor.`;
 
 // Page headings
 export const ADD_EXTRACTION_PIPELINE: Readonly<string> = `Add ${EXTRACTION_PIPELINE_LOWER}`;

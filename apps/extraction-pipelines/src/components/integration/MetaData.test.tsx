@@ -7,6 +7,7 @@ import { QueryClient } from 'react-query';
 import { ORIGIN_DEV, PROJECT_ITERA_INT_GREEN } from 'utils/baseURL';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import { MetaData } from 'components/integration/MetaData';
+import { DetailFieldNames } from 'model/Integration';
 
 describe('MetaData', () => {
   const mock = getMockResponse()[0];
@@ -44,7 +45,9 @@ describe('MetaData', () => {
   test('Should render add metadata meta does not exist', () => {
     sdkv3.get.mockResolvedValue({ data: { ...mock, metadata: undefined } });
     render(<MetaData />, { wrapper: wrapper.wrapper });
-    expect(screen.getByText(/add metadata/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(`add ${DetailFieldNames.META_DATA.toLowerCase()}`)
+    ).toBeInTheDocument();
   });
 
   test('Should render add metadata meta when none to display exist', () => {
@@ -58,6 +61,8 @@ describe('MetaData', () => {
       },
     });
     render(<MetaData />, { wrapper: wrapper.wrapper });
-    expect(screen.getByText(/add metadata/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(`add ${DetailFieldNames.META_DATA.toLowerCase()}`)
+    ).toBeInTheDocument();
   });
 });

@@ -20,6 +20,7 @@ import {
 import MessageDialog from 'components/buttons/MessageDialog';
 import {
   ContactBtnTestIds,
+  INTEGRATION_SCHEDULE_HINT,
   SERVER_ERROR_CONTENT,
   SERVER_ERROR_TITLE,
 } from 'utils/constants';
@@ -29,7 +30,7 @@ import {
   createUpdateSpec,
   useDetailsUpdate,
 } from 'hooks/details/useDetailsUpdate';
-import { ColumnForm, StyledLabel } from 'styles/StyledForm';
+import { ColumnForm, Hint, StyledLabel } from 'styles/StyledForm';
 import { scheduleSchema } from 'utils/validation/integrationSchemas';
 import { ScheduleSelector } from 'components/inputs/ScheduleSelector';
 import { OptionTypeBase } from 'react-select';
@@ -74,6 +75,10 @@ interface ScheduleProps {
   label: string;
   canEdit: boolean;
 }
+
+const HintStyled = styled(Hint)`
+  margin-left: 1rem;
+`;
 
 export const Schedule: FunctionComponent<ScheduleProps> = ({
   integration,
@@ -162,42 +167,45 @@ export const Schedule: FunctionComponent<ScheduleProps> = ({
       <ColumnForm onSubmit={handleSubmit(onSave)}>
         <StyledLabel htmlFor="schedule-selector">{label}</StyledLabel>
         {isEdit ? (
-          <ScheduleWrapper>
-            <ScheduleSelector
-              inputId="schedule-selector"
-              schedule={scheduleValue}
-              onSelectChange={selectChanged}
-            />
-            {showCron && (
-              <CronWrapper
-                id="cron-expression"
-                role="region"
-                direction="column"
-                align="flex-start"
-              >
-                <CronInput />
-              </CronWrapper>
-            )}
-            <ButtonWrapper>
-              <MessageDialog
-                visible={errorVisible}
-                handleClickError={handleClickError}
-                title={SERVER_ERROR_TITLE}
-                contentText={SERVER_ERROR_CONTENT}
-              >
-                <SaveButton
-                  htmlType="submit"
-                  aria-controls={name}
-                  data-testid={`${ContactBtnTestIds.SAVE_BTN}${name}`}
-                />
-              </MessageDialog>
-              <CloseButton
-                onClick={onCancel}
-                aria-controls={name}
-                data-testid={`${ContactBtnTestIds.CANCEL_BTN}${name}`}
+          <>
+            <HintStyled>{INTEGRATION_SCHEDULE_HINT}</HintStyled>
+            <ScheduleWrapper>
+              <ScheduleSelector
+                inputId="schedule-selector"
+                schedule={scheduleValue}
+                onSelectChange={selectChanged}
               />
-            </ButtonWrapper>
-          </ScheduleWrapper>
+              {showCron && (
+                <CronWrapper
+                  id="cron-expression"
+                  role="region"
+                  direction="column"
+                  align="flex-start"
+                >
+                  <CronInput />
+                </CronWrapper>
+              )}
+              <ButtonWrapper>
+                <MessageDialog
+                  visible={errorVisible}
+                  handleClickError={handleClickError}
+                  title={SERVER_ERROR_TITLE}
+                  contentText={SERVER_ERROR_CONTENT}
+                >
+                  <SaveButton
+                    htmlType="submit"
+                    aria-controls={name}
+                    data-testid={`${ContactBtnTestIds.SAVE_BTN}${name}`}
+                  />
+                </MessageDialog>
+                <CloseButton
+                  onClick={onCancel}
+                  aria-controls={name}
+                  data-testid={`${ContactBtnTestIds.CANCEL_BTN}${name}`}
+                />
+              </ButtonWrapper>
+            </ScheduleWrapper>
+          </>
         ) : (
           <EditButton
             onClick={onEditClick}

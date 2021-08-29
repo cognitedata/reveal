@@ -17,7 +17,7 @@ interface ConnectRawTablesPageProps {
 
 export const INTEGRATION_CONNECT_RAW_TABLES_HEADING: Readonly<string> = `${EXTRACTION_PIPELINE} Connect Raw Tables`;
 
-export const CONNECT_RAW_TABLES_HINT: Readonly<string> = `Select the name of the database and tables that your ${EXTRACTION_PIPELINE_LOWER} writes data to`;
+export const CONNECT_RAW_TABLES_HINT: Readonly<string> = `Select the CDF RAW database and tables the ${EXTRACTION_PIPELINE_LOWER} ingest data into.`;
 
 const ConnectRawTablesInput: FunctionComponent<ConnectRawTablesPageProps> = ({
   onSelect,

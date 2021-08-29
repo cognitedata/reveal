@@ -26,7 +26,8 @@ interface MetaProps {
   testId?: string;
   canEdit: boolean;
 }
-const META_HINT: Readonly<string> = '*** hint about metadata ***';
+const META_HINT: Readonly<string> =
+  'Add metadata for the extraction pipeline in a key-value format.';
 
 export const MetaData = ({
   testId = 'meta-',

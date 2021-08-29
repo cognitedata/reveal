@@ -119,9 +119,9 @@ const InfoMessage = styled.span`
   }
 `;
 const NO_DATA_SET_MSG: Readonly<string> = `No data set found. You can link your ${EXTRACTION_PIPELINE_LOWER} to a data set trough edit later.`;
-export const ADD_MORE_INFO_HEADING: Readonly<string> = `Add more ${EXTRACTION_PIPELINE_LOWER} information`;
-const ADD_MORE_INFO_TEXT_1: Readonly<string> = `When managing and using your data it would give value to enter as much information about the data and the ${EXTRACTION_PIPELINE_LOWER} details as possible, such as scheduling, source and contacts. Please enter this below.`;
-const ADD_MORE_INFO_TEXT_2: Readonly<string> = `You could also add this information on ${EXTRACTION_PIPELINE_LOWER} details page.`;
+export const ADD_MORE_INFO_HEADING: Readonly<string> = `Additional information`;
+const ADD_MORE_INFO_TEXT_1: Readonly<string> = `Add more information about the ${EXTRACTION_PIPELINE_LOWER}, such as pipeline schedule configuration details and configure notifications.`;
+const ADD_MORE_INFO_TEXT_2: Readonly<string> = `You may add this information later on the ${EXTRACTION_PIPELINE} overview page.`;
 const ADD_MORE_INFO_LINK: Readonly<string> = `Read about registering an ${EXTRACTION_PIPELINE_LOWER}`;
 export const NOT_LINKED: Readonly<string> = `${EXTRACTION_PIPELINE} will not be linked to data set. You can link your ${EXTRACTION_PIPELINE_LOWER} to a data set using edit later.`;
 

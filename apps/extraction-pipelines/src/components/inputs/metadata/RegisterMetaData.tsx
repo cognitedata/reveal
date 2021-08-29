@@ -23,7 +23,7 @@ const MetaTable = styled.table`
   margin-bottom: 1rem;
 `;
 
-export const DEFINE_METADATA_LABEL: Readonly<string> = 'Define metadata';
+export const DEFINE_METADATA_LABEL: Readonly<string> = 'Additional metadata';
 interface RegisterMetaDataProps {}
 export type MetaData = { description: string; content: string };
 export const RegisterMetaData: FunctionComponent<RegisterMetaDataProps> = () => {
