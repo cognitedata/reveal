@@ -37,7 +37,7 @@ static final String MIXPANEL_TOKEN = '0837d632cca24291a0a1025d488d1a9a' // pragm
 
 // Specify your projects alerting slack channel here. If you do not have one of these, please
 // consider creating one for your projects alerts
-static final String SLACK_CHANNEL = 'cognite-charts'
+static final String SLACK_CHANNEL = 'devflow-charts'
 
 // This determines how this app is versioned. See https://cog.link/releases for
 // more information. The options available here are:

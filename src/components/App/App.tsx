@@ -30,11 +30,8 @@ if (process.env.REACT_APP_SENTRY_DSN) {
       new SentryRRWeb(),
     ],
     tracesSampleRate: 1,
-    beforeSend(event) {
-      if (event.exception) Sentry.showReportDialog({ eventId: event.event_id });
-      return event;
-    },
   });
+  Sentry.setTag('rrweb.active', 'yes');
 }
 
 const queryClient = new QueryClient({
