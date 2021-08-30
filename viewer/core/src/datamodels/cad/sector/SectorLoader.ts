@@ -89,8 +89,6 @@ export class SectorLoader {
         const consumedSector = await this._sectorRepository.loadSector(wantedSector);
         return consumedSector;
       } catch (error) {
-        // ts-ignore no-console
-        console.error('Failed to load sector', wantedSector, 'error:', error);
         // Ignore error but mark sector as discarded since we didn't load any geometry
         const errorSector = makeErrorSector(wantedSector);
         return errorSector;
