@@ -206,7 +206,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     trackUsage('ChartView.AddCalculation');
   };
 
-  if (!isFetched) {
+  if (!isFetched || (isFetched && originalChart && !chart)) {
     return <Icon type="Loading" />;
   }
 
