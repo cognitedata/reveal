@@ -52,7 +52,7 @@
     "react-highlight-words": "^0.17.0",
     "react-plotly.js": "^2.5.1",
     "react-query": "^3.21.1",
-    "react-router-dom": "^5.2.0",
+    "react-router-dom": "^5.2.1",
     "react-scripts": "4.0.3",
     "react-split-pane": "^0.1.92",
     "recoil": "^0.4.1",
