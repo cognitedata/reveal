@@ -21,6 +21,9 @@ import { fetchFilesById } from 'src/store/thunks/fetchFilesById';
 import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
 import { CollectionSettingsModal } from 'src/modules/Common/Components/CollectionSettingsModal/CollectionSettingsModal';
 import { PopulateAnnotationTemplates } from 'src/store/thunks/PopulateAnnotationTemplates';
+import { pushMetric } from 'src/utils/pushMetric';
+
+pushMetric('Vision.Review');
 
 const DeleteButton = (props: { onConfirm: () => void }) => (
   <div style={{ minWidth: '120px' }}>

@@ -26,6 +26,7 @@ import { MAX_SELECT_COUNT } from 'src/constants/ExplorerConstants';
 import { FileDownloaderModal } from 'src/modules/Common/Components/FileDownloaderModal/FileDownloaderModal';
 import { BulkEditModal } from 'src/modules/Common/Components/BulkEdit/BulkEditModal';
 import { updateBulk } from 'src/store/thunks/updateBulk';
+import { pushMetric } from 'src/utils/pushMetric';
 import {
   setExplorerCurrentView,
   setExplorerFileSelectState,
@@ -43,6 +44,8 @@ import {
   setBulkEditTemp,
 } from '../store/explorerSlice';
 import { FilterSidePanel } from './FilterSidePanel';
+
+pushMetric('Vision.Explorer');
 
 const Explorer = () => {
   const history = useHistory();

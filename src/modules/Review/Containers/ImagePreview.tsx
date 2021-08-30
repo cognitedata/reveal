@@ -21,6 +21,7 @@ import {
   nextShape,
 } from 'src/modules/Review/imagePreviewSlice';
 import { KeypointVertex } from 'src/utils/AnnotationUtils';
+import { pushMetric } from 'src/utils/pushMetric';
 
 export const ImagePreview = ({
   file,
@@ -95,6 +96,17 @@ export const ImagePreview = ({
   ]);
 
   const handleCreateAnnotation = (annotation: UnsavedAnnotation) => {
+    pushMetric('Vision.Review.CreateAnnotation');
+
+    if (annotation?.region?.shape === 'rectangle') {
+      pushMetric('Vision.Review.CreateAnnotation.Rectangle');
+    }
+    if (annotation?.region?.shape === 'points') {
+      pushMetric('Vision.Review.CreateAnnotation.Points');
+    }
+    if (annotation?.region?.shape === 'polygon') {
+      pushMetric('Vision.Review.CreateAnnotation.Polygon');
+    }
     dispatch(CreateAnnotations({ fileId: file.id, annotation }));
   };
 

@@ -10,6 +10,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { VisionAPIType } from 'src/api/types';
 import { AnnotationTableRowProps } from 'src/modules/Review/types';
+import { pushMetric } from 'src/utils/pushMetric';
 
 type RowProps = {
   icon?: boolean;
@@ -74,9 +75,11 @@ export const AnnotationTableRow = ({
           }
           onButtonClicked={(key) => {
             if (key === 'verified') {
+              pushMetric('Vision.Review.Annotation.Verified');
               onApprove(annotation, AnnotationStatus.Verified);
             }
             if (key === 'rejected') {
+              pushMetric('Vision.Review.Annotation.Rejected');
               onApprove(annotation, AnnotationStatus.Rejected);
             }
           }}

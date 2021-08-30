@@ -1,3 +1,4 @@
+// NOT IN USE
 import { FileUploader } from 'src/modules/Common/Components/FileUploader';
 import React from 'react';
 import styled from 'styled-components';
@@ -6,10 +7,7 @@ import { Body, Detail, Tabs } from '@cognite/cogs.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { addFileInfo, selectAllFiles } from 'src/modules/Common/filesSlice';
-import { pushMetric } from 'src/utils/pushMetric';
 import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
-
-pushMetric('Vision.Upload');
 
 const FileUploaderWrapper = styled.div`
   margin: ${margin.default} 0;

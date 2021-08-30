@@ -17,6 +17,7 @@ import { useHistory } from 'react-router-dom';
 import { getLink, workflowRoutes } from 'src/modules/Workflow/workflowRoutes';
 import * as UPLODER_CONST from 'src/constants/UploderConstants';
 import { MAX_CID_FILE_COUNT } from 'src/constants/CIDConstants';
+import { pushMetric } from 'src/utils/pushMetric';
 import { sleep } from '../../FileUploader/utils';
 import { getMIMEType } from '../../FileUploader/utils/FileUtils';
 import { ModalFilePicker } from '../ModalFilePicker/ModalFilePicker';
@@ -203,6 +204,7 @@ export const ModalFileUploader = ({
 
   const startUpload = async () => {
     message.info('Starting Upload...');
+    pushMetric('Vision.Upload');
 
     try {
       beforeUploadStart(fileList);
