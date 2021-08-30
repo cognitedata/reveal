@@ -46,8 +46,10 @@ function init() {
   ]);
 
   const loader = new GltfSectorLoader();
-  for (let i = 0; i < 1; i++) {
-    loader.loadSector(`test-models/${i}.glb`).then(geometries => {
+
+  fetch('test-models/0.glb').then(async file => {
+    const arrayBuffer = await (await file.blob()).arrayBuffer();
+    loader.parseSector(arrayBuffer).then(geometries => {
       geometries.forEach(result => {
         const material = materialMap.get(result[0])!;
         const mesh = new THREE.Mesh(result[1], material);
@@ -59,7 +61,7 @@ function init() {
         group.add(mesh);
       });
     });
-  }
+  });
 
   const controls = new OrbitControls(camera, renderer.domElement);
   const target = new THREE.Vector3(10, 0, 0);

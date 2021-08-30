@@ -15,21 +15,20 @@ import {
 } from './primitiveGeometries';
 
 export default class GltfSectorLoader {
-  public async loadSector(url: string): Promise<[PrimitiveCollection, InstancedBufferGeometry][]> {
+  public async parseSector(data: ArrayBuffer) {
     const loader = new GLTFLoader();
-    let resultCallback: () => [PrimitiveCollection, InstancedBufferGeometry][] = () => {
-      throw new Error('Parsing of sector failed');
-    };
+    const instancingPlugin = new GltfInstancingPlugin();
 
     loader.register(parser => {
-      const instancingPlugin = new GltfInstancingPlugin(parser);
-      resultCallback = instancingPlugin.getParseResult.bind(instancingPlugin);
+      instancingPlugin.parser = parser;
       return instancingPlugin;
     });
 
-    await loader.loadAsync(url, _ => {});
-
-    return resultCallback();
+    return new Promise<[PrimitiveCollection, InstancedBufferGeometry][]>((resolve, _) => {
+      loader.parse(data, '', _ => {
+        resolve(instancingPlugin.result);
+      });
+    });
   }
 }
 
@@ -58,7 +57,7 @@ export enum PrimitiveCollection {
 class GltfInstancingPlugin implements GLTFLoaderPlugin {
   private readonly _resultBuffer: [PrimitiveCollection, InstancedBufferGeometry][];
   private readonly _extensionName = 'EXT_mesh_gpu_instancing';
-  private readonly _parser: GLTFParser;
+  private _parser!: GLTFParser;
   loadMaterial: any;
 
   // https://github.com/KhronosGroup/glTF/blob/master/specification/2.0/README.md#accessortype-white_check_mark
@@ -81,8 +80,15 @@ class GltfInstancingPlugin implements GLTFLoaderPlugin {
     [5126, Float32Array]
   ]);
 
-  constructor(parser: GLTFParser) {
+  public set parser(parser: GLTFParser) {
     this._parser = parser;
+  }
+
+  public get result() {
+    return this._resultBuffer;
+  }
+
+  constructor() {
     this._resultBuffer = [];
   }
 
@@ -109,10 +115,6 @@ class GltfInstancingPlugin implements GLTFLoaderPlugin {
     this._resultBuffer.push([collectionType, geometry]);
 
     return new THREE.Object3D();
-  }
-
-  public getParseResult() {
-    return this._resultBuffer;
   }
 
   async getAttributeFromAccessorId(accessorId: number): Promise<THREE.InterleavedBufferAttribute> {
