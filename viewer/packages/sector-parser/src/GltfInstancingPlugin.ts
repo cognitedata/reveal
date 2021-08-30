@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import { BufferGeometry, InstancedBufferGeometry } from 'three';
-import { GLTFLoader, GLTFLoaderPlugin, GLTFParser } from 'three/examples/jsm/loaders/GLTFLoader';
+import { GLTFLoaderPlugin, GLTFParser } from 'three/examples/jsm/loaders/GLTFLoader';
 import {
   setBoxGeometry,
   setConeGeometry,
@@ -13,24 +13,6 @@ import {
   setTorusGeometry,
   setTrapeziumGeometry
 } from './primitiveGeometries';
-
-export default class GltfSectorLoader {
-  public async parseSector(data: ArrayBuffer) {
-    const loader = new GLTFLoader();
-    const instancingPlugin = new GltfInstancingPlugin();
-
-    loader.register(parser => {
-      instancingPlugin.parser = parser;
-      return instancingPlugin;
-    });
-
-    return new Promise<[PrimitiveCollection, InstancedBufferGeometry][]>((resolve, _) => {
-      loader.parse(data, '', _ => {
-        resolve(instancingPlugin.result);
-      });
-    });
-  }
-}
 
 type TypedArrayConstructor =
   | Int8ArrayConstructor
@@ -54,7 +36,7 @@ export enum PrimitiveCollection {
   NutCollection
 }
 
-class GltfInstancingPlugin implements GLTFLoaderPlugin {
+export class GltfInstancingPlugin implements GLTFLoaderPlugin {
   private readonly _resultBuffer: [PrimitiveCollection, InstancedBufferGeometry][];
   private readonly _extensionName = 'EXT_mesh_gpu_instancing';
   private _parser!: GLTFParser;
@@ -71,6 +53,7 @@ class GltfInstancingPlugin implements GLTFLoaderPlugin {
     ['MAT4', 16]
   ]);
 
+  // https://github.com/KhronosGroup/glTF/blob/master/specification/2.0/README.md#accessorcomponenttype-white_check_mark
   private readonly DATA_TYPE_BYTE_SIZES = new Map<number, TypedArrayConstructor>([
     [5120, Int8Array],
     [5121, Uint8Array],

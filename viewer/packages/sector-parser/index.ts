@@ -1,4 +1,5 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-export { default } from './src/GltfInstancingPlugin';
+export { default as GltfSectorParser } from './src/GltfSectorParser';
+export { PrimitiveCollection } from './src/GltfInstancingPlugin';
