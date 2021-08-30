@@ -7,6 +7,7 @@ import { FLOAT_NUMBER_PATTERN } from './constants';
 
 export type DSPFunction = {
   category: string;
+  name: string;
   description: string;
   op: string;
   n_inputs: number;

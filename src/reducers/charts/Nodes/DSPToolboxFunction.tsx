@@ -98,7 +98,7 @@ export const ConfigPanel = ({
         <Menu.Header>{category}</Menu.Header>
         {toolFunctions.map((func) => (
           <Menu.Item
-            key={func.description}
+            key={func.name}
             onClick={() => {
               const { type_info, ...storableNextFunc } = func;
 
@@ -121,7 +121,7 @@ export const ConfigPanel = ({
               onUpdateNode({
                 inputPins,
                 outputPins,
-                title: func.description,
+                title: func.name,
                 functionData: {
                   ...functionData,
                   toolFunction: storableNextFunc,
@@ -129,11 +129,11 @@ export const ConfigPanel = ({
               });
               setVisible(false);
               trackUsage('ChartView.SelectFunction', {
-                function: func.description,
+                function: func.name,
               });
             }}
           >
-            <span style={{ textAlign: 'left' }}>{func.description}</span>
+            <span style={{ textAlign: 'left' }}>{func.name}</span>
           </Menu.Item>
         ))}
       </>
@@ -145,8 +145,8 @@ export const ConfigPanel = ({
   }) => (
     <Menu>
       {Object.keys(categories).map((category: string) => {
-        const filtered = categories[category].filter(({ description }) =>
-          description.toLowerCase().includes(phrase.toLowerCase())
+        const filtered = categories[category].filter(({ name }) =>
+          name.toLowerCase().includes(phrase.toLowerCase())
         );
 
         return !!filtered.length && renderFunctionsList(category, filtered);
@@ -220,7 +220,7 @@ export const ConfigPanel = ({
           }}
           style={{ width: '100%' }}
         >
-          {functionData?.toolFunction?.description || 'Select tool function'}
+          {functionData?.toolFunction?.name || 'Select tool function'}
         </Button>
       </StyledDropdown>
     );
