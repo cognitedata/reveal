@@ -137,7 +137,7 @@ export default function GroupDrawer({ group, onClose }: Props) {
         <Form.Item
           hasFeedback={isLoading}
           validateStatus="validating"
-          label="Cabability"
+          label="Capability"
           extra={
             <>
               Select the capabilities to add to the group. These capabilities
