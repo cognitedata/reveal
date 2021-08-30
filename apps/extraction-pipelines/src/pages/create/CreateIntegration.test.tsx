@@ -27,7 +27,6 @@ import {
 import { TableHeadings } from 'components/table/IntegrationTableCol';
 import { DetailFieldNames } from 'model/Integration';
 import { DEFINE_METADATA_LABEL } from 'components/inputs/metadata/RegisterMetaData';
-import { NOTIFICATION_CONFIG_HEADER } from 'components/inputs/NotificationConfig';
 import {
   DBS_LABEL,
   TABLES_LABEL,
@@ -117,7 +116,6 @@ describe('CreateIntegration', () => {
     expect(screen.getByLabelText(TableHeadings.SCHEDULE)).toBeVisible();
     expect(screen.getByLabelText(DetailFieldNames.SOURCE)).toBeVisible();
     expect(screen.getByText(DEFINE_METADATA_LABEL)).toBeVisible();
-    expect(screen.getByText(NOTIFICATION_CONFIG_HEADER)).toBeVisible();
     expect(screen.getByText(TableHeadings.CONTACTS)).toBeVisible();
     expect(screen.getByText(DetailFieldNames.RAW_TABLE)).toBeVisible();
     expect(

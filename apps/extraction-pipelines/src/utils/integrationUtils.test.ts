@@ -1,7 +1,6 @@
 import moment from 'moment';
 import { User } from 'model/User';
 import { RunStatusUI } from 'model/Status';
-import { MIN_IN_HOURS } from 'utils/validation/notificationValidation';
 import { SupportedScheduleStrings } from 'components/integrations/cols/Schedule';
 import {
   calculate,
@@ -9,9 +8,7 @@ import {
   calculateStatus,
   createAddIntegrationInfo,
   createSearchParams,
-  hoursToMinutes,
   isOwner,
-  minutesToHours,
   partition,
 } from './integrationUtils';
 
@@ -156,7 +153,6 @@ describe('createAddIntegrationInfo', () => {
         contacts: [
           { name: 'Test Testsen', email: 'test@test.no', role: 'Tester' },
         ],
-        skipNotificationsInMinutes: 1 * MIN_IN_HOURS,
       },
     },
   ];
@@ -173,25 +169,6 @@ describe('createAddIntegrationInfo', () => {
   test('Sets data set id from field when no data set model exist', () => {
     const res = createAddIntegrationInfo(cases[0].values, null);
     expect(res.dataSetId).toEqual(cases[0].values.dataSetId);
-  });
-});
-
-describe('minutesToHours', () => {
-  test('Converts minutes to hours', () => {
-    const res = minutesToHours(180);
-    expect(res).toEqual(3);
-  });
-
-  test('Handles undefined', () => {
-    const res = minutesToHours();
-    expect(res).toBeUndefined();
-  });
-});
-
-describe('hoursToMinutes', () => {
-  test('Converts hours to minutes', () => {
-    const res = hoursToMinutes(2);
-    expect(res).toEqual(120);
   });
 });
 

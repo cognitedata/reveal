@@ -60,7 +60,6 @@ import { EXT_PIPE_PATH } from 'routing/RoutingConfig';
 import { translateServerErrorMessage } from 'utils/error/TranslateErrorMessages';
 import { TableHeadings } from 'components/table/IntegrationTableCol';
 import { DetailFieldNames, IntegrationRawTable } from 'model/Integration';
-import { NotificationConfig } from 'components/inputs/NotificationConfig';
 import { contactsRule } from 'utils/validation/contactsSchema';
 import { CreateContacts } from 'components/integration/create/CreateContacts';
 import { User } from 'model/User';
@@ -138,7 +137,6 @@ export interface AddIntegrationFormInput
   dataSetId?: number;
   metadata?: any;
   source: string;
-  skipNotificationInHours?: number;
   contacts?: User[];
   documentation: string;
   selectedRawTables: IntegrationRawTable[];
@@ -353,11 +351,6 @@ const CreateIntegration = () => {
           >
             <FormProvider {...methods}>
               <CreateContacts
-                renderLabel={(labelText, inputId) => (
-                  <HeadingLabel labelFor={inputId}>{labelText}</HeadingLabel>
-                )}
-              />
-              <NotificationConfig
                 renderLabel={(labelText, inputId) => (
                   <HeadingLabel labelFor={inputId}>{labelText}</HeadingLabel>
                 )}

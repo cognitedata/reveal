@@ -10,7 +10,6 @@ import {
 } from 'model/Status';
 import { toCamelCase } from 'utils/primitivesUtils';
 import { mapScheduleInputToScheduleValue } from 'utils/cronUtils';
-import { MIN_IN_HOURS } from 'utils/validation/notificationValidation';
 import { AddIntegrationFormInput } from 'pages/create/CreateIntegration';
 import { DataSetModel } from 'model/DataSetModel';
 import { Range } from '@cognite/cogs.js';
@@ -106,12 +105,6 @@ export const updateContactField = (
     return c;
   });
 };
-export const minutesToHours = (hours?: number): number | undefined => {
-  return hours ? hours / MIN_IN_HOURS : undefined;
-};
-export const hoursToMinutes = (hours: number) => {
-  return hours * MIN_IN_HOURS;
-};
 
 export const updateContact = (
   contacts: User[],
@@ -158,7 +151,6 @@ export const createAddIntegrationInfo = (
     name,
     externalId,
     description,
-    skipNotificationInHours,
     contacts,
     dataSetId: fieldDataSetId,
     selectedRawTables,
@@ -180,9 +172,6 @@ export const createAddIntegrationInfo = (
     ...(contacts && { contacts }),
     ...(source && { source }),
     ...(!!scheduleToStore && { schedule: scheduleToStore }),
-    ...(skipNotificationInHours && {
-      skipNotificationsInMinutes: hoursToMinutes(skipNotificationInHours),
-    }),
     ...(selectedRawTables && { rawTables: selectedRawTables }),
     ...(documentation && { documentation }),
   };
