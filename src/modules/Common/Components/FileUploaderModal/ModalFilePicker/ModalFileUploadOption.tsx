@@ -78,4 +78,8 @@ const DatasetTextContainer = styled.div`
 const DatasetOptionContainer = styled.div`
   display: flex;
   gap: 32px;
+
+  .ant-select-selector {
+    background: white;
+  }
 `;
