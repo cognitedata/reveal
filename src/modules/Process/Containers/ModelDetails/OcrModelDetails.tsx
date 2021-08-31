@@ -3,17 +3,25 @@ import {
   Detail,
   Icon,
   PrimaryTooltip,
+  Row,
   SegmentedControl,
-  Tabs,
+  Title,
 } from '@cognite/cogs.js';
 import React from 'react';
-import styled from 'styled-components';
+
 import { useDispatch, useSelector } from 'react-redux';
 import { ParamsOCR } from 'src/api/types';
 import { RootState } from 'src/store/rootReducer';
 import { ColorsOCR } from 'src/constants/Colors';
+import OcrIllustration from 'src/assets/visualDescriptions/OcrIllustration.svg';
 import { setParamsOCR } from '../../processSlice';
-import { ModelDescription } from './ModelDescription';
+import {
+  ColorBox,
+  NameContainer,
+  ModelDetailSettingContainer,
+  StyledCol,
+  TableContainer,
+} from './modelDetailsStyles';
 
 const modelName = 'Text detection';
 
@@ -30,6 +38,7 @@ export const badge = (hideText: boolean = false) => {
         backgroundColor: ColorsOCR.backgroundColor,
         color: ColorsOCR.color,
       }}
+      disabled
     >
       {!hideText && modelName}
     </Button>
@@ -52,65 +61,69 @@ export const content = () => {
   };
 
   return (
-    <Container>
-      <Tabs defaultActiveKey="config">
-        <Tabs.TabPane key="config" tab="Model configuration">
-          <table>
-            <tbody>
-              <tr>
-                <td>
-                  <Detail>Use cached results</Detail>
-                  <PrimaryTooltip
-                    tooltipTitle=""
-                    tooltipText="If True, uses cached result if the file has previously been analyzed."
-                  >
-                    <Icon type="HelpFilled" style={{ marginLeft: '11px' }} />
-                  </PrimaryTooltip>
-                </td>
-                <th>
-                  <SegmentedControl
-                    style={{ marginRight: 24 }}
-                    currentKey={params.useCache ? 'true' : 'false'}
-                    onButtonClicked={onUseCacheChange}
-                  >
-                    <SegmentedControl.Button key="true">
-                      True
-                    </SegmentedControl.Button>
-                    <SegmentedControl.Button key="false">
-                      False
-                    </SegmentedControl.Button>
-                  </SegmentedControl>
-                </th>
-              </tr>
-            </tbody>
-          </table>
-        </Tabs.TabPane>
-        <Tabs.TabPane key="description" tab="Description">
-          {ModelDescription({
-            name: modelName,
-            description: description(),
-            icon: badge(true),
-          })}
-        </Tabs.TabPane>
-      </Tabs>
-    </Container>
+    <ModelDetailSettingContainer>
+      <Row cols={2}>
+        <StyledCol span={1}>
+          <TableContainer>
+            <table>
+              <tbody>
+                <tr>
+                  <td>
+                    <Title level={5}> Key</Title>
+                  </td>
+                  <th>
+                    <Title level={5}> Value</Title>
+                  </th>
+                </tr>
+                <tr>
+                  <td>
+                    <Detail>Use cached results</Detail>
+                    <PrimaryTooltip
+                      tooltipTitle=""
+                      tooltipText="If True, uses cached result if the file has previously been analyzed."
+                    >
+                      <Icon type="HelpFilled" style={{ marginLeft: '11px' }} />
+                    </PrimaryTooltip>
+                  </td>
+                  <th>
+                    <SegmentedControl
+                      style={{ marginRight: 24 }}
+                      currentKey={params.useCache ? 'true' : 'false'}
+                      onButtonClicked={onUseCacheChange}
+                    >
+                      <SegmentedControl.Button key="true">
+                        True
+                      </SegmentedControl.Button>
+                      <SegmentedControl.Button key="false">
+                        False
+                      </SegmentedControl.Button>
+                    </SegmentedControl>
+                  </th>
+                </tr>
+                <tr>
+                  <td>
+                    <Detail>Color</Detail>
+                  </td>
+                  <th>
+                    <div style={{ display: 'flex' }}>
+                      <ColorBox color={ColorsOCR.color} />
+                    </div>
+                  </th>
+                </tr>
+              </tbody>
+            </table>
+          </TableContainer>
+        </StyledCol>
+        <StyledCol span={1}>
+          <div>
+            <NameContainer>
+              {badge()}
+              {description()}
+            </NameContainer>
+            <img src={OcrIllustration} alt="OcrIllustration" />
+          </div>
+        </StyledCol>
+      </Row>
+    </ModelDetailSettingContainer>
   );
 };
-
-const Container = styled.div`
-  display: inline-table;
-
-  table {
-    table-layout: fixed;
-    width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    font-size: smaller;
-    margin-top: 12px;
-
-    td {
-      padding: 16px;
-    }
-  }
-`;

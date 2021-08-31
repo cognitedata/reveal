@@ -5,16 +5,22 @@ import {
   Input,
   PrimaryTooltip,
   Row,
-  Tabs,
+  Title,
 } from '@cognite/cogs.js';
 import React from 'react';
-import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { ParamsObjectDetection } from 'src/api/types';
 import { RootState } from 'src/store/rootReducer';
 import { ColorsObjectDetection } from 'src/constants/Colors';
+import ObjectDetectionIllustration from 'src/assets/visualDescriptions/ObjectDetectionIllustration.svg';
 import { setParamsObjectDetection } from '../../processSlice';
-import { ModelDescription } from './ModelDescription';
+import {
+  ColorBox,
+  NameContainer,
+  ModelDetailSettingContainer,
+  StyledCol,
+  TableContainer,
+} from './modelDetailsStyles';
 
 const modelName = 'Object detection';
 
@@ -32,6 +38,7 @@ export const badge = (hideText: boolean = false) => {
         backgroundColor: ColorsObjectDetection.backgroundColor,
         color: ColorsObjectDetection.color,
       }}
+      disabled
     >
       {!hideText && modelName}
     </Button>
@@ -60,76 +67,83 @@ export const content = () => {
   };
 
   return (
-    <Container>
-      <Tabs defaultActiveKey="config">
-        <Tabs.TabPane key="config" tab="Model configuration">
-          <table>
-            <tbody>
-              <tr>
-                <td>
-                  <Detail>Confidence threshold</Detail>
-                  <PrimaryTooltip
-                    tooltipTitle=""
-                    tooltipText="Threshold for minimum confidence the model has on a detected object"
-                  >
-                    <Icon type="HelpFilled" style={{ marginLeft: '11px' }} />
-                  </PrimaryTooltip>
-                </td>
-                <th>
-                  <Row>
-                    <Input
-                      type="number"
-                      size="large"
-                      width={80}
-                      min={0.4}
-                      max={1}
-                      step={0.05}
-                      value={params.threshold}
-                      setValue={onThresholdChange}
-                      style={{ height: '40px', MozAppearance: 'textfield' }}
-                    />
-                    <input
-                      type="range"
-                      min={0.4}
-                      max={1}
-                      value={params.threshold}
-                      onChange={(e) =>
-                        onThresholdChange(parseFloat(e.target.value))
-                      }
-                      step={0.05}
-                    />
-                  </Row>
-                </th>
-              </tr>
-            </tbody>
-          </table>
-        </Tabs.TabPane>
-        <Tabs.TabPane key="description" tab="Description">
-          {ModelDescription({
-            name: modelName,
-            description: description(),
-            icon: badge(true),
-          })}
-        </Tabs.TabPane>
-      </Tabs>
-    </Container>
+    <ModelDetailSettingContainer>
+      <Row cols={2}>
+        <StyledCol span={1}>
+          <TableContainer>
+            <table>
+              <tbody>
+                <tr>
+                  <td>
+                    <Title level={5}> Key</Title>
+                  </td>
+                  <th>
+                    <Title level={5}> Value</Title>
+                  </th>
+                </tr>
+                <tr>
+                  <td>
+                    <Detail>Confidence threshold</Detail>
+                    <PrimaryTooltip
+                      tooltipTitle=""
+                      tooltipText="Threshold for minimum confidence the model has on a detected object"
+                    >
+                      <Icon type="HelpFilled" style={{ marginLeft: '11px' }} />
+                    </PrimaryTooltip>
+                  </td>
+                  <th>
+                    <Row>
+                      <Input
+                        type="number"
+                        size="large"
+                        width={80}
+                        min={0.4}
+                        max={1}
+                        step={0.05}
+                        value={params.threshold}
+                        setValue={onThresholdChange}
+                        style={{ height: '40px', MozAppearance: 'textfield' }}
+                      />
+                      <input
+                        type="range"
+                        min={0.4}
+                        max={1}
+                        value={params.threshold}
+                        onChange={(e) =>
+                          onThresholdChange(parseFloat(e.target.value))
+                        }
+                        step={0.05}
+                      />
+                    </Row>
+                  </th>
+                </tr>
+                <tr>
+                  <td>
+                    <Detail>Color</Detail>
+                  </td>
+                  <th>
+                    <div style={{ display: 'flex' }}>
+                      <ColorBox color={ColorsObjectDetection.color} />
+                    </div>
+                  </th>
+                </tr>
+              </tbody>
+            </table>
+          </TableContainer>
+        </StyledCol>
+        <StyledCol span={1}>
+          <div>
+            <NameContainer>
+              {badge()}
+              {description()}
+            </NameContainer>
+            <img
+              src={ObjectDetectionIllustration}
+              alt="ObjectDetectionIllustration"
+            />
+          </div>
+        </StyledCol>
+      </Row>
+    </ModelDetailSettingContainer>
   );
 };
-
-const Container = styled.div`
-  display: inline-table;
-
-  table {
-    table-layout: fixed;
-    width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    font-size: smaller;
-    margin-top: 12px;
-
-    td {
-      padding: 12px;
-    }
-  }
-`;

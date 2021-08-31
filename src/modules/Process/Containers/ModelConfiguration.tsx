@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
-import { Row, Col } from '@cognite/cogs.js';
+import { Select, Body } from '@cognite/cogs.js';
 
 import styled from 'styled-components';
 
@@ -14,82 +14,51 @@ const queryClient = new QueryClient();
 export const ModelConfiguration = () => {
   const [currentModelSettings, setCurrentModelSettings] = useState('ocr');
 
-  const modelData = {
-    ocr: {
-      badge: ocrModelDetails.badge(),
-      description: ocrModelDetails.description(),
+  const modelSelectOptions = [
+    {
+      label: 'Text detection',
+      value: 'ocr',
       content: ocrModelDetails.content(),
     },
-    tagDetection: {
-      badge: tagDetectionModelDetails.badge(),
-      description: tagDetectionModelDetails.description(),
+    {
+      label: 'Asset tag detection',
+      value: 'tagDetection',
       content: tagDetectionModelDetails.content(),
     },
-    objectDetection: {
-      badge: objectDetectionModelDetails.badge(),
-      description: objectDetectionModelDetails.description(),
+    {
+      label: 'Object detection',
+      value: 'objectDetection',
       content: objectDetectionModelDetails.content(),
     },
-  };
+  ];
 
   return (
     <>
       <QueryClientProvider client={queryClient}>
         <Container>
-          <CarouselLeftContainer>
-            {Object.entries(modelData).map((pair) => (
-              <>
-                <FancyButton
-                  key={`${pair[0]}_focused`}
-                  style={{
-                    background:
-                      currentModelSettings === pair[0]
-                        ? 'rgba(74, 103, 251, 0.1)'
-                        : 'white',
-                    border:
-                      currentModelSettings === pair[0]
-                        ? '1px solid #4A67FB'
-                        : undefined,
-                  }}
-                  onClick={() => {
-                    setCurrentModelSettings(pair[0]);
-                  }}
-                >
-                  <Row
-                    cols={12}
-                    style={{ alignContent: 'center', gap: '16px !important' }}
-                  >
-                    <StyledCol span={9}>
-                      <NameContainer>
-                        {pair[1].badge}
-                        {pair[1].description}
-                      </NameContainer>
-                    </StyledCol>
-                    <StyledCol span={2}>
-                      <div />
-                    </StyledCol>
-                    <StyledCol span={1}>
-                      <input
-                        type="radio"
-                        name={`${pair[0]}_focused`}
-                        id={`${pair[0]}_focused`}
-                        checked={currentModelSettings === pair[0]}
-                        onChange={() => {}} // added to avoid warning
-                      />
-                    </StyledCol>
-                  </Row>
-                </FancyButton>
-              </>
-            ))}
-          </CarouselLeftContainer>
+          <ModelSelectContainer>
+            <Body> Annotation Model</Body>
+            <div style={{ width: '255px', marginTop: '6px' }}>
+              <Select
+                closeMenuOnSelect
+                value={modelSelectOptions.filter(
+                  (item) => item.value === currentModelSettings
+                )}
+                onChange={(option: any) => {
+                  setCurrentModelSettings(option.value);
+                }}
+                options={modelSelectOptions}
+              />
+            </div>
+          </ModelSelectContainer>
 
-          {['ocr', 'objectDetection', 'tagDetection'].includes(
-            currentModelSettings
-          ) && (
-            <CarouselRightContainer key={currentModelSettings}>
-              {(modelData as any)[currentModelSettings].content}
-            </CarouselRightContainer>
-          )}
+          <ModelSettingsContainer>
+            {
+              modelSelectOptions.find(
+                (item) => item.value === currentModelSettings
+              )?.content
+            }
+          </ModelSettingsContainer>
         </Container>
       </QueryClientProvider>
     </>
@@ -98,49 +67,28 @@ export const ModelConfiguration = () => {
 
 const Container = styled.div`
   display: flex;
+  flex-direction: column;
   width: 100%;
   border-radius: 6px;
   border: 0;
+  border: 1px solid #d9d9d9;
+  background: white;
+  border-radius: 10px;
 `;
 
-const CarouselLeftContainer = styled.div`
+const ModelSelectContainer = styled.div`
   display: flex;
-  width: 300px;
   flex-direction: column;
-  align-items: flex-start;
-
-  padding-right: 20px;
-  row-gap: 16px;
+  margin-top: 22px;
+  margin-left: 22px;
 `;
 
-const CarouselRightContainer = styled.div`
+const ModelSettingsContainer = styled.div`
   display: grid;
-  width: calc(100% - 300px);
+  width: 100%;
   overflow-y: auto;
   background: white;
-  padding: 17px;
-  border: 1px solid #d9d9d9;
+  padding-left: 15px;
+  padding-bottom: 15px;
   border-radius: 10px;
-`;
-
-const NameContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  row-gap: 12px;
-  text-align: left;
-`;
-
-const FancyButton = styled.div`
-  background: white;
-  border: none;
-  border-radius: 6px;
-  padding: 1rem;
-  width: 98%;
-  border: 1px solid #d9d9d9;
-  border-radius: 10px;
-`;
-
-const StyledCol = styled(Col)`
-  display: flex;
-  align-items: center;
 `;

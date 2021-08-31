@@ -3,18 +3,26 @@ import {
   Detail,
   Icon,
   PrimaryTooltip,
+  Row,
   SegmentedControl,
-  Tabs,
+  Title,
 } from '@cognite/cogs.js';
 import React from 'react';
 import { AssetSelector } from 'src/modules/Review/Components/AssetSelector/AssetSelector';
-import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { ParamsTagDetection } from 'src/api/types';
 import { RootState } from 'src/store/rootReducer';
 import { ColorsTagDetection } from 'src/constants/Colors';
+import TagdetectionIllustration from 'src/assets/visualDescriptions/TagdetectionIllustration.svg';
 import { setParamsTagDetection } from '../../processSlice';
-import { ModelDescription } from './ModelDescription';
+
+import {
+  ColorBox,
+  NameContainer,
+  ModelDetailSettingContainer,
+  StyledCol,
+  TableContainer,
+} from './modelDetailsStyles';
 
 const modelName = 'Asset tag detection';
 
@@ -30,6 +38,7 @@ export const badge = (hideText: boolean = false) => {
     <Button
       icon="ResourceAssets"
       size="small"
+      disabled
       style={{
         backgroundColor: ColorsTagDetection.backgroundColor,
         color: ColorsTagDetection.color,
@@ -76,113 +85,117 @@ export const content = () => {
   };
 
   return (
-    <Container>
-      <Tabs
-        defaultActiveKey="config"
-        style={{
-          overflowY: 'auto',
-          height: '100%',
-        }}
-      >
-        <Tabs.TabPane key="config" tab="Model configuration">
-          <table>
-            <tbody>
-              <tr>
-                <td>
-                  <Detail>Use cached results</Detail>
-                  <PrimaryTooltip
-                    tooltipTitle=""
-                    tooltipText="If True, uses cached result if the file has previously been analyzed."
-                  >
-                    <Icon type="HelpFilled" style={{ marginLeft: '11px' }} />
-                  </PrimaryTooltip>
-                </td>
-                <th>
-                  <SegmentedControl
-                    style={{ marginRight: 24 }}
-                    currentKey={params.useCache ? 'true' : 'false'}
-                    onButtonClicked={onUseCacheChange}
-                  >
-                    <SegmentedControl.Button key="true">
-                      True
-                    </SegmentedControl.Button>
-                    <SegmentedControl.Button key="false">
-                      False
-                    </SegmentedControl.Button>
-                  </SegmentedControl>
-                </th>
-              </tr>
-              <tr>
-                <td>
-                  <Detail>Allow partial match </Detail>
-                  <PrimaryTooltip
-                    tooltipTitle=""
-                    tooltipText="Allow partial (fuzzy) matching of detected external IDs in the file. Will only match when it is possible to do so unambiguously."
-                  >
-                    <Icon type="HelpFilled" style={{ marginLeft: '11px' }} />
-                  </PrimaryTooltip>
-                </td>
-                <th>
-                  <SegmentedControl
-                    style={{ marginRight: 24 }}
-                    currentKey={params.partialMatch ? 'true' : 'false'}
-                    onButtonClicked={onPartialMatchChange}
-                  >
-                    <SegmentedControl.Button key="true">
-                      True
-                    </SegmentedControl.Button>
-                    <SegmentedControl.Button key="false">
-                      False
-                    </SegmentedControl.Button>
-                  </SegmentedControl>
-                </th>
-              </tr>
-              <tr>
-                <td>
-                  <Detail>Search within asset subtree</Detail>
-                  <PrimaryTooltip
-                    tooltipTitle=""
-                    tooltipText="Search for external ID of assets that are in a subtree rooted at one of the assetSubtreeIds (including the roots given).
+    <ModelDetailSettingContainer>
+      <Row cols={2}>
+        <StyledCol span={1}>
+          <TableContainer>
+            <table>
+              <tbody>
+                <tr>
+                  <td>
+                    <Title level={5}> Key</Title>
+                  </td>
+                  <th>
+                    <Title level={5}> Value</Title>
+                  </th>
+                </tr>
+                <tr>
+                  <td>
+                    <Detail>Use cached results</Detail>
+                    <PrimaryTooltip
+                      tooltipTitle=""
+                      tooltipText="If True, uses cached result if the file has previously been analyzed."
+                    >
+                      <Icon type="HelpFilled" style={{ marginLeft: '11px' }} />
+                    </PrimaryTooltip>
+                  </td>
+                  <th>
+                    <SegmentedControl
+                      style={{ marginRight: 24 }}
+                      currentKey={params.useCache ? 'true' : 'false'}
+                      onButtonClicked={onUseCacheChange}
+                    >
+                      <SegmentedControl.Button key="true">
+                        True
+                      </SegmentedControl.Button>
+                      <SegmentedControl.Button key="false">
+                        False
+                      </SegmentedControl.Button>
+                    </SegmentedControl>
+                  </th>
+                </tr>
+                <tr>
+                  <td>
+                    <Detail>Allow partial match </Detail>
+                    <PrimaryTooltip
+                      tooltipTitle=""
+                      tooltipText="Allow partial (fuzzy) matching of detected external IDs in the file. Will only match when it is possible to do so unambiguously."
+                    >
+                      <Icon type="HelpFilled" style={{ marginLeft: '11px' }} />
+                    </PrimaryTooltip>
+                  </td>
+                  <th>
+                    <SegmentedControl
+                      style={{ marginRight: 24 }}
+                      currentKey={params.partialMatch ? 'true' : 'false'}
+                      onButtonClicked={onPartialMatchChange}
+                    >
+                      <SegmentedControl.Button key="true">
+                        True
+                      </SegmentedControl.Button>
+                      <SegmentedControl.Button key="false">
+                        False
+                      </SegmentedControl.Button>
+                    </SegmentedControl>
+                  </th>
+                </tr>
+                <tr>
+                  <td>
+                    <Detail>Search within asset subtree</Detail>
+                    <PrimaryTooltip
+                      tooltipTitle=""
+                      tooltipText="Search for external ID of assets that are in a subtree rooted at one of the assetSubtreeIds (including the roots given).
                     "
-                  >
-                    <Icon type="HelpFilled" style={{ marginLeft: '11px' }} />
-                  </PrimaryTooltip>
-                </td>
-                <th style={{ maxWidth: '200px' }}>
-                  <AssetSelector
-                    assets={params.assetSubtreeIds}
-                    onSelectAssets={onAssetSubtreeIdsChange}
-                    hideTitle
-                    maxMenuHeight={85}
-                  />
-                </th>
-              </tr>
-            </tbody>
-          </table>
-        </Tabs.TabPane>
-        <Tabs.TabPane key="description" tab="Description">
-          {ModelDescription({
-            name: modelName,
-            description: description(),
-            icon: badge(true),
-          })}
-        </Tabs.TabPane>
-      </Tabs>
-    </Container>
+                    >
+                      <Icon type="HelpFilled" style={{ marginLeft: '11px' }} />
+                    </PrimaryTooltip>
+                  </td>
+                  <th style={{ maxWidth: '200px' }}>
+                    <AssetSelector
+                      assets={params.assetSubtreeIds}
+                      onSelectAssets={onAssetSubtreeIdsChange}
+                      hideTitle
+                      maxMenuHeight={85}
+                    />
+                  </th>
+                </tr>
+                <tr>
+                  <td>
+                    <Detail>Color</Detail>
+                  </td>
+                  <th>
+                    <div style={{ display: 'flex' }}>
+                      <ColorBox color={ColorsTagDetection.color} />
+                    </div>
+                  </th>
+                </tr>
+              </tbody>
+            </table>
+          </TableContainer>
+        </StyledCol>
+        <StyledCol span={1}>
+          <div>
+            <NameContainer>
+              {badge()}
+              {description()}
+            </NameContainer>
+            <img
+              src={TagdetectionIllustration}
+              alt="TagdetectionIllustration"
+            />
+          </div>
+        </StyledCol>
+      </Row>
+    </ModelDetailSettingContainer>
   );
 };
-
-const Container = styled.div`
-  display: grid;
-
-  table {
-    width: 100%;
-    height: 100%;
-    font-size: smaller;
-    margin-top: 12px;
-
-    td {
-      padding: 16px;
-    }
-  }
-`;

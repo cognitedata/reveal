@@ -217,10 +217,10 @@ export const ProcessToolBar = () => {
       <Container>
         <StyledModal
           getContainer={getContainer}
-          title="Model settings"
+          title={<Title level={3}>Processing and annotation settings</Title>}
           footer={detectionModelConfiguration()}
           visible={isModalOpen}
-          width={900}
+          width={967}
           closable={false}
           closeIcon={
             <div style={{ paddingTop: '12px' }}>
