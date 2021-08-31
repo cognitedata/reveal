@@ -19,7 +19,7 @@
     "@cognite/cogs.js": "^3.8.1",
     "@cognite/sdk": "^4.3.1",
     "@cognite/sdk-provider": "^1.0.0",
-    "@cognite/sdk-react-query-hooks": "^4.0.0",
+    "@cognite/sdk-react-query-hooks": "^5.1.0",
     "@rescripts/cli": "^0.0.16",
     "@rescripts/utilities": "^0.0.8",
     "@sentry/browser": "^6.2.5",
