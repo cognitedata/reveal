@@ -94,7 +94,7 @@ const ChartListItem = ({ chart, view }: ChartListItemProps) => {
     >
       <Button
         type="ghost"
-        icon="VerticalEllipsis"
+        icon="MoreOverflowEllipsisVertical"
         onClick={() => setIsMenuOpen(!isMenuOpen)}
         aria-label="more"
       />
