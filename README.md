@@ -36,7 +36,7 @@ To create a new application:
 
 1. Clone this repo
 2. Copy and rename the `react-demo-app` folder
-3. By default you'll be using the `azure-dev` cluster. Ask someone to share the private keys (in lastpass) for the shared testing projects and put them into the `/private-keys` folder.
+3. By default you'll be using the `azure-dev` cluster. Ask someone to share the private keys (in lastpass) for the shared testing projects and put them into the `./private-keys` folder of your app.
 4. If it can not find the container, try and login with the gcloud utils:
 
 ```

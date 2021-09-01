@@ -1,3 +1,7 @@
+## 1.7.0 August 31 2021
+
+- Handle legacy logout in `Logout` component.
+
 ## 1.6.2,3,4 August 27 2021
 
 - Bump deps: auth-utils

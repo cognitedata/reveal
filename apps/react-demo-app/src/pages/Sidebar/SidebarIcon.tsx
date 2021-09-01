@@ -24,7 +24,9 @@ export const SidebarIcon: React.FC = () => {
       <TopBarActions
         actions={[
           {
-            component: <Icon type="Settings" key={2} />,
+            component: (
+              <Icon type="Settings" key={2} aria-label="Open sidebar" />
+            ),
             key: 'settings',
             onClick: openPanel,
           },

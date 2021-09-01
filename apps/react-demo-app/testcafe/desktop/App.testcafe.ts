@@ -1,4 +1,4 @@
-import { t, Selector } from 'testcafe';
+import { t, Selector, ClientFunction } from 'testcafe';
 import { screen } from '@testing-library/testcafe';
 
 import { log, logErrors } from '../utils';
@@ -29,6 +29,23 @@ test('Checking sdk setup', async () => {
   const menuButton = screen.getByText('Cognite SDK');
   await t.click(menuButton);
 
-  log('Checking for page content');
+  // log('Checking for page content');
+  // eslint-disable-next-line @cognite/no-unissued-todos
   // TODO - add content into this tenant and check for it here
+});
+
+test('Logout redirects to the main page', async () => {
+  log('Open sidebar');
+  const sidebarOpenerButton = screen.getByLabelText('Open sidebar');
+  await t.click(sidebarOpenerButton);
+
+  log('Click logout button');
+  const logoutButton = screen.getByText('Logout');
+  await t.click(logoutButton);
+
+  const getWindowLocation = ClientFunction(() => window.location);
+
+  const location = await getWindowLocation();
+
+  await t.expect(location.href.slice(0, -1)).eql(location.origin);
 });
