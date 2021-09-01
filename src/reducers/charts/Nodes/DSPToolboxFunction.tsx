@@ -66,7 +66,10 @@ export const ConfigPanel = ({
       const toolFunction = n?.functionData?.toolFunction;
 
       if (toolFunction) {
-        categories.Recent.push(toolFunction);
+        const operation = availableOperations.find(
+          (op) => op.op.toLowerCase() === toolFunction.op.toLowerCase()
+        );
+        categories.Recent.push(operation!);
       }
     });
 
@@ -146,7 +149,7 @@ export const ConfigPanel = ({
     <Menu>
       {Object.keys(categories).map((category: string) => {
         const filtered = categories[category].filter(({ name }) =>
-          name.toLowerCase().includes(phrase.toLowerCase())
+          name?.toLowerCase().includes(phrase.toLowerCase())
         );
 
         return !!filtered.length && renderFunctionsList(category, filtered);
