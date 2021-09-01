@@ -5,7 +5,8 @@
 import { Subject, Observable } from 'rxjs';
 import { bufferTime, mergeMap, filter, mergeAll, map, share, tap, first } from 'rxjs/operators';
 import { CogniteClient, CogniteInternalId, InternalId } from '@cognite/sdk';
-import { CogniteClientNodeIdAndTreeIndexMapper } from '../../utilities/networking/CogniteClientNodeIdAndTreeIndexMapper';
+
+import { NodesApiClient } from '@reveal/nodes-api';
 
 type NodeIdRequest = CogniteInternalId;
 type TreeIndexRequest = number;
@@ -19,7 +20,7 @@ export class NodeIdAndTreeIndexMaps {
   private readonly modelId: number;
   private readonly revisionId: number;
   private readonly client: CogniteClient;
-  private readonly indexMapperClient: CogniteClientNodeIdAndTreeIndexMapper;
+  private readonly nodesApiClient: NodesApiClient;
 
   private readonly treeIndexSubTreeSizeMap: Map<number, number>;
 
@@ -35,16 +36,11 @@ export class NodeIdAndTreeIndexMaps {
   private readonly subtreeSizeObservable: Subject<SubtreeSizeRequest>;
   private readonly subtreeSizeResponse: Observable<{ treeIndex: number; subtreeSize: number }>;
 
-  constructor(
-    modelId: number,
-    revisionId: number,
-    client: CogniteClient,
-    indexMapperClient: CogniteClientNodeIdAndTreeIndexMapper
-  ) {
+  constructor(modelId: number, revisionId: number, client: CogniteClient, nodesApiClient: NodesApiClient) {
     this.modelId = modelId;
     this.revisionId = revisionId;
     this.client = client;
-    this.indexMapperClient = indexMapperClient;
+    this.nodesApiClient = nodesApiClient;
 
     this.nodeIdToTreeIndexMap = new Map();
     this.treeIndexToNodeIdMap = new Map();
@@ -56,11 +52,7 @@ export class NodeIdAndTreeIndexMaps {
       bufferTime(50),
       filter((requests: NodeIdRequest[]) => requests.length > 0),
       mergeMap(async (requests: NodeIdRequest[]) => {
-        const treeIndices = await this.indexMapperClient.mapNodeIdsToTreeIndices(
-          this.modelId,
-          this.revisionId,
-          requests
-        );
+        const treeIndices = await this.nodesApiClient.mapNodeIdsToTreeIndices(this.modelId, this.revisionId, requests);
         return requests.map((nodeId, index) => {
           return { nodeId, treeIndex: treeIndices[index] };
         });
@@ -79,7 +71,7 @@ export class NodeIdAndTreeIndexMaps {
       bufferTime(50),
       filter((requests: TreeIndexRequest[]) => requests.length > 0),
       mergeMap(async (requests: TreeIndexRequest[]) => {
-        const nodeIds = await this.indexMapperClient.mapTreeIndicesToNodeIds(this.modelId, this.revisionId, requests);
+        const nodeIds = await this.nodesApiClient.mapTreeIndicesToNodeIds(this.modelId, this.revisionId, requests);
         return requests.map((treeIndex, index) => {
           return { nodeId: nodeIds[index], treeIndex };
         });
@@ -171,7 +163,7 @@ export class NodeIdAndTreeIndexMaps {
     }
     const nodeIdToIndex = new Map(nodeIds.map((value, index) => [value, index]));
 
-    const treeIndices = await this.indexMapperClient.mapNodeIdsToTreeIndices(
+    const treeIndices = await this.nodesApiClient.mapNodeIdsToTreeIndices(
       this.modelId,
       this.revisionId,
       notCachedNodeIds
@@ -196,7 +188,7 @@ export class NodeIdAndTreeIndexMaps {
     }
     const treeIndexToIndex = new Map(treeIndices.map((value, index) => [value, index]));
 
-    const nodeIds = await this.indexMapperClient.mapTreeIndicesToNodeIds(
+    const nodeIds = await this.nodesApiClient.mapTreeIndicesToNodeIds(
       this.modelId,
       this.revisionId,
       notCachedTreeIndices

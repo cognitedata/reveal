@@ -14,11 +14,11 @@ import { trackError } from '../../utilities/metrics';
 
 import { SupportedModelTypes, CadModelMetadata } from '../types';
 import { callActionWithIndicesAsync } from '../../utilities/callActionWithIndicesAsync';
-import { CogniteClientNodeIdAndTreeIndexMapper } from '../../utilities/networking/CogniteClientNodeIdAndTreeIndexMapper';
 import { NodeCollectionBase } from '../../datamodels/cad/styling';
 import { NodeAppearance } from '../../datamodels/cad';
 import { NodeTransformProvider } from '../../datamodels/cad/styling/NodeTransformProvider';
 import assert from 'assert';
+import { NodesCdfClient } from '../../../../packages/nodes-api';
 
 /**
  * Represents a single 3D CAD model loaded from CDF.
@@ -69,8 +69,8 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     this.revisionId = revisionId;
     this.cadModel = cadNode.cadModelMetadata;
     this.client = client;
-    const indexMapper = new CogniteClientNodeIdAndTreeIndexMapper(client);
-    this.nodeIdAndTreeIndexMaps = new NodeIdAndTreeIndexMaps(modelId, revisionId, client, indexMapper);
+    const nodesCdfClient = new NodesCdfClient(client);
+    this.nodeIdAndTreeIndexMaps = new NodeIdAndTreeIndexMaps(modelId, revisionId, client, nodesCdfClient);
 
     this.cadNode = cadNode;
 
