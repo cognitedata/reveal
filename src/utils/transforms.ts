@@ -18,6 +18,9 @@ export type DSPFunction = {
     type: string[];
   }[];
   n_outputs: number;
+  outputs: {
+    name?: string;
+  }[];
   parameters: DSPFunctionParameter[];
   type_info: string[][];
 };
@@ -72,7 +75,7 @@ export function getConfigFromDspFunction(
 
   const output = [
     {
-      name: 'Output',
+      name: dspFunction.outputs[0]?.name || 'Output',
       field: 'result',
       type: getBlockTypeFromFunctionType('ts'),
     },
