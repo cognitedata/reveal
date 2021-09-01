@@ -64,13 +64,13 @@ export const ContactsSection: FunctionComponent<ContactsSectionProps> = () => {
       <StyledTitle2 id="owner-heading">{DetailFieldNames.OWNER}</StyledTitle2>
       <Hint>{OWNER_HINT}</Hint>
       {integration && contactTable(owners, integration)}
-      <AddContact isOwner />
+      {owners.length === 0 && <AddContact isOwner />}
 
       <StyledTitle2 id="contacts-heading">
         {TableHeadings.CONTACTS}
       </StyledTitle2>
       <Hint>{CONTACTS_HINT}</Hint>
-      {integration && contactTable(owners, integration)}
+      {integration && contactTable(nonOwners, integration)}
 
       <AddContact />
     </ContactsSectionWrapper>
@@ -96,14 +96,14 @@ function contactTable(contacts: User[], integration: Integration) {
               field="role"
               label="Role"
               schema={contactRoleSchema}
-              defaultValues={{ role: contact?.role }}
+              defaultValues={{ role: contact.role }}
             />
             <NotificationUpdateSwitch
               integration={integration}
               name="contacts"
               index={index}
               field="sendNotification"
-              defaultValues={{ sendNotification: contact?.sendNotification }}
+              defaultValues={{ sendNotification: contact.sendNotification }}
             />
             <EditPartContacts
               integration={integration}
@@ -112,7 +112,7 @@ function contactTable(contacts: User[], integration: Integration) {
               field="name"
               label={TableHeadings.NAME}
               schema={contactNameSchema}
-              defaultValues={{ name: contact?.name }}
+              defaultValues={{ name: contact.name }}
             />
             <EditPartContacts
               integration={integration}
@@ -121,7 +121,7 @@ function contactTable(contacts: User[], integration: Integration) {
               field="email"
               label="Email"
               schema={contactEmailSchema}
-              defaultValues={{ email: contact?.email }}
+              defaultValues={{ email: contact.email }}
             />
 
             <RemoveContactButton
