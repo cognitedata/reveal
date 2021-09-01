@@ -87,12 +87,8 @@ function contactTable(contacts: User[], integration: Integration) {
         <Heading>{EMAIL_LABEL}</Heading>
       </HeadingRow>
       {contacts.map((contact, index) => {
-        if (isOwner(contact)) {
-          return null;
-        }
-        const key = `contacts-${index}`;
         return (
-          <Row key={key} className="row-style-even row-height-4">
+          <Row key={contact.email} className="row-style-even row-height-4">
             <EditPartContacts
               integration={integration}
               name="contacts"
