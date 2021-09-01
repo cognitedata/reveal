@@ -77,7 +77,6 @@ export function Migration() {
       }
       // Prepare viewer
       viewer = new Cognite3DViewer(viewerOptions);
-
       (window as any).viewer = viewer;
 
       const totalBounds = new THREE.Box3();
