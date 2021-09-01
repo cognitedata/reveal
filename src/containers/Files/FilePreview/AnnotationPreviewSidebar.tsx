@@ -383,7 +383,29 @@ const AnnotationPreviewSidebar = ({
     if (!isEditingMode) {
       return (
         <InfoGrid>
+          {selectedAnnotations?.length > 1 && (
+            <Pagination
+              total={selectedAnnotations.length}
+              pageSize={1}
+              showPrevNextJumpers={false}
+              showQuickJumper={false}
+              defaultCurrent={currentIndex}
+              onChange={i => {
+                setCurrentIndex(i - 1);
+              }}
+            />
+          )}
+
           <InfoCell>
+            {selectedAnnotations?.length > 1 ? (
+              <InfoCell>
+                <Body level={3}>
+                  {currentIndex + 1} of {selectedAnnotations.length}
+                </Body>
+              </InfoCell>
+            ) : (
+              ''
+            )}
             <div
               style={{
                 display: 'flex',
@@ -439,7 +461,7 @@ const AnnotationPreviewSidebar = ({
     { enabled: !!type }
   );
 
-  if (!selectedAnnotation) {
+  if (!selectedAnnotation || !selectedAnnotations?.length) {
     return (
       <div style={{ width: 360, borderLeft: `1px solid ${lightGrey}` }}>
         <ResourcePreviewSidebar
@@ -518,18 +540,6 @@ const AnnotationPreviewSidebar = ({
               selectedAnnotation={selectedAnnotation}
               extractFromCanvas={extractFromCanvas}
             />
-            {selectedAnnotations?.length > 1 && (
-              <Pagination
-                total={selectedAnnotations.length}
-                pageSize={1}
-                showPrevNextJumpers={false}
-                showQuickJumper={false}
-                defaultCurrent={currentIndex}
-                onChange={i => {
-                  setCurrentIndex(i - 1);
-                }}
-              />
-            )}
           </>
         }
         content={

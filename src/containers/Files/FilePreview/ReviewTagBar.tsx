@@ -21,16 +21,20 @@ const ReviewTagBar = ({
 }) => (
   <ReviewTagWrapper>
     <div style={{ display: 'flex', flexDirection: 'row' }}>
-      <ResourceIcons
-        type={(annotation?.resourceType as ResourceType) || 'asset'}
-        style={{
-          background: 'white',
-          color: 'black',
-          marginTop: '-5px',
-        }}
-      />
+      {annotation?.resourceType && (
+        <ResourceIcons
+          type={annotation?.resourceType as ResourceType}
+          style={{
+            background: 'white',
+            color: 'black',
+            marginTop: '-5px',
+          }}
+        />
+      )}
       <Body level={2} strong>
-        {capitalizeFirstLetter(annotation?.resourceType) || 'Asset'}
+        {annotation?.resourceType
+          ? capitalizeFirstLetter(annotation?.resourceType)
+          : 'Unlinked tag'}
       </Body>
     </div>
     <StyledTag>

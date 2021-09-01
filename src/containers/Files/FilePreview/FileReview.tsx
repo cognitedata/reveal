@@ -65,7 +65,7 @@ const FileReview = ({
       ) : null}
 
       <StyledTag>
-        <IconWrapper>
+        <IconWrapper style={{ gap: '5px' }}>
           <ResourceIcons
             style={{
               marginTop: '-5px',
@@ -75,13 +75,13 @@ const FileReview = ({
           />
           Assets{' '}
           {pendingAssetAnnotations.length ? (
-            <strong> {pendingAssetAnnotations.length} new</strong>
+            <p>{pendingAssetAnnotations.length} new</p>
           ) : null}
         </IconWrapper>
         <Body level={5}>{assetAnnotations.length}</Body>
       </StyledTag>
       <StyledTag>
-        <IconWrapper>
+        <IconWrapper style={{ gap: '5px' }}>
           <ResourceIcons
             style={{
               marginTop: '-5px',
@@ -89,9 +89,9 @@ const FileReview = ({
             }}
             type="file"
           />{' '}
-          Files{' '}
+          Files
           {pendingFileAnnotations.length ? (
-            <strong> {pendingFileAnnotations.length} new</strong>
+            <p>{pendingFileAnnotations.length} new </p>
           ) : null}
         </IconWrapper>
         <Body level={5}>{fileAnnotations.length}</Body>
@@ -132,4 +132,5 @@ const ButtonWrapper = styled.div`
 
 const IconWrapper = styled.div`
   display: flex;
+  justify-content: space-between;
 `;
