@@ -810,7 +810,10 @@ export class EffectRenderManager {
     while (objectStack.length > 0) {
       const element = objectStack.pop()!;
       if (element instanceof RootSectorNode) {
-        this._rootSectorNodeBuffer.add([element, element.parent! as CadNode]);
+        const cadNode = element.parent! as CadNode;
+        if (cadNode.visible) {
+          this._rootSectorNodeBuffer.add([element, cadNode]);
+        }
       } else if (!(element instanceof THREE.Group)) {
         objectStack.push(...element.children);
       }
