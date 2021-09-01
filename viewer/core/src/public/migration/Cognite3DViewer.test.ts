@@ -188,13 +188,13 @@ describe('Cognite3DViewer', () => {
 
     try {
       viewer.on('sceneRendered', onRendered);
-      viewer.forceRender();
+      viewer.requestRedraw();
       requestAnimationFrameCallback(1000);
       expect(onRendered).toBeCalledTimes(1);
 
       jest.clearAllMocks();
       viewer.off('sceneRendered', onRendered);
-      viewer.forceRender();
+      viewer.requestRedraw();
       requestAnimationFrameCallback(1000);
       expect(onRendered).toBeCalledTimes(0);
     } finally {
