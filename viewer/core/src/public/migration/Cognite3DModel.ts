@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 import * as THREE from 'three';
-import { CogniteClient, CogniteInternalId } from '@cognite/sdk';
+import { CogniteInternalId } from '@cognite/sdk';
 
 import { NodeIdAndTreeIndexMaps } from './NodeIdAndTreeIndexMaps';
 import { CameraConfiguration } from './types';
@@ -17,7 +17,7 @@ import { callActionWithIndicesAsync } from '../../utilities/callActionWithIndice
 import { NodeCollectionBase } from '../../datamodels/cad/styling';
 import { NodeAppearance } from '../../datamodels/cad';
 import { NodeTransformProvider } from '../../datamodels/cad/styling/NodeTransformProvider';
-import { NodesApiClient, NodesCdfClient } from '../../../../packages/nodes-api';
+import { NodesApiClient } from '../../../../packages/nodes-api';
 
 /**
  * Represents a single 3D CAD model loaded from CDF.
@@ -51,7 +51,6 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   readonly cadNode: CadNode;
 
   private readonly cadModel: CadModelMetadata;
-  private readonly client: CogniteClient;
   private readonly nodesApiClient: NodesApiClient;
   private readonly nodeIdAndTreeIndexMaps: NodeIdAndTreeIndexMaps;
   private readonly _styledNodeCollections: { nodes: NodeCollectionBase; appearance: NodeAppearance }[] = [];
@@ -63,13 +62,12 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * @param client
    * @internal
    */
-  constructor(modelId: number, revisionId: number, cadNode: CadNode, client: CogniteClient) {
+  constructor(modelId: number, revisionId: number, cadNode: CadNode, client: NodesApiClient) {
     super();
     this.modelId = modelId;
     this.revisionId = revisionId;
     this.cadModel = cadNode.cadModelMetadata;
-    this.client = client;
-    this.nodesApiClient = new NodesCdfClient(client);
+    this.nodesApiClient = client;
     this.nodeIdAndTreeIndexMaps = new NodeIdAndTreeIndexMaps(modelId, revisionId, this.nodesApiClient);
 
     this.cadNode = cadNode;
