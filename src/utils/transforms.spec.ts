@@ -11,6 +11,12 @@ describe('getConfigFromDspFunction', () => {
     const dspFunctionDescription: DSPFunction = {
       description: 'Data smoother - Saviztky-Golay Filter',
       n_inputs: 1,
+      inputs: [
+        {
+          param: 'a',
+          type: ['ts'],
+        },
+      ],
       n_outputs: 1,
       op: 'SG_SMOOTHER',
       parameters: [
@@ -34,7 +40,7 @@ describe('getConfigFromDspFunction', () => {
       input: [
         {
           name: 'Input 1',
-          field: 'input0',
+          field: 'a',
           types: ['TIMESERIES'],
           pin: true,
         },
@@ -65,6 +71,16 @@ describe('getConfigFromDspFunction', () => {
     const dspFunctionDescription: DSPFunction = {
       description: 'Maximum function (element-wise)',
       n_inputs: 2,
+      inputs: [
+        {
+          param: 'a',
+          type: ['ts', 'const'],
+        },
+        {
+          param: 'b',
+          type: ['ts', 'const'],
+        },
+      ],
       n_outputs: 1,
       op: 'MAX',
       parameters: [],
@@ -80,13 +96,13 @@ describe('getConfigFromDspFunction', () => {
       input: [
         {
           name: 'Input 1',
-          field: 'input0',
+          field: 'a',
           types: ['TIMESERIES', 'CONSTANT'],
           pin: true,
         },
         {
           name: 'Input 2',
-          field: 'input1',
+          field: 'b',
           types: ['TIMESERIES', 'CONSTANT'],
           pin: true,
         },
