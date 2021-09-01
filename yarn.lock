@@ -1452,10 +1452,10 @@
     react-toastify "^6.0.9"
     tippy.js "6.2.0"
 
-"@cognite/cogs.js@^3.24.2":
-  version "3.31.0"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.31.0.tgz#a58b080d892132efb4d50f79df17abd5d974e8bb"
-  integrity sha512-TKF775eI40892ePxk9S7pI7OaD8L5v0W/r9HJdbRcwn3ziNwTlqyKgCXYGXqJSPohv71Va853LSy/AbgEn8BQg==
+"@cognite/cogs.js@^3.33.0":
+  version "3.33.0"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.33.0.tgz#17f7c1b951c9b197af91d03a6378cb0891fa58ed"
+  integrity sha512-zRVorDF1sbVZTn53A8jXLPY3rr0l+bBKevqOrF6q9JQ34UbvDLaXjns1yOz75vfXssGhxXORP6lDy0P8vORD1w==
   dependencies:
     "@tippyjs/react" "4.2.3"
     "@types/react-date-range" "^1.1.2"
@@ -1475,7 +1475,6 @@
     react-select "^3.1.0"
     react-table "^7.6.0"
     react-toastify "^6.0.9"
-    save-dev "^0.0.1-security"
     stylelint "^13.13.1"
     tippy.js "6.2.0"
     ts-dedent "^2.2.0"
@@ -16324,11 +16323,6 @@ sass-loader@^10.0.5:
     neo-async "^2.6.2"
     schema-utils "^3.0.0"
     semver "^7.3.2"
-
-save-dev@^0.0.1-security:
-  version "0.0.1-security"
-  resolved "https://registry.yarnpkg.com/save-dev/-/save-dev-0.0.1-security.tgz#5eb7267e25a8709c20ac336f0101c8d35900ca5e"
-  integrity sha512-k6knZTDNK8PKKbIqnvxiOveJinuw2LcQjqDoaorZWP9M5AR2EPsnpDeSbeoZZ0pHr5ze1uoaKdK8NBGQrJ34Uw==
 
 sax@~1.2.4:
   version "1.2.4"
