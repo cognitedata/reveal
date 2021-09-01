@@ -10,23 +10,19 @@ import { CogniteInternalId } from '@cognite/sdk';
 import { NodeTreeIndexAndSubtreeSize } from './types';
 
 export class NodesLocalClient implements NodesApiClient {
-  private readonly _modelBaseUrl: string;
-
-  constructor(modelBaseUrl: string) {
-    this._modelBaseUrl = modelBaseUrl;
-  }
+  constructor(_modelBaseUrl: string) {}
 
   mapTreeIndicesToNodeIds(
-    modelId: CogniteInternalId,
-    revisionId: CogniteInternalId,
+    _modelId: CogniteInternalId,
+    _revisionId: CogniteInternalId,
     treeIndices: number[]
   ): Promise<CogniteInternalId[]> {
     return Promise.resolve(treeIndices);
   }
 
   mapNodeIdsToTreeIndices(
-    modelId: CogniteInternalId,
-    revisionId: CogniteInternalId,
+    _modelId: CogniteInternalId,
+    _revisionId: CogniteInternalId,
     nodeIds: CogniteInternalId[]
   ): Promise<number[]> {
     return Promise.resolve(nodeIds);
@@ -37,9 +33,9 @@ export class NodesLocalClient implements NodesApiClient {
    * of) given a set of node IDs.
    */
   determineTreeIndexAndSubtreeSizesByNodeIds(
-    modelId: CogniteInternalId,
-    revisionId: CogniteInternalId,
-    nodeIds: CogniteInternalId[]
+    _modelId: CogniteInternalId,
+    _revisionId: CogniteInternalId,
+    _nodeIds: CogniteInternalId[]
   ): Promise<NodeTreeIndexAndSubtreeSize[]> {
     throw new Error('Not supported for local models');
   }
@@ -53,10 +49,10 @@ export class NodesLocalClient implements NodesApiClient {
    * @param generation    Generation to retrieve (0 means node itself, 1 is parent, 2 grand-parent etc).
    */
   determineNodeAncestorsByNodeId(
-    modelId: CogniteInternalId,
-    revisionId: CogniteInternalId,
-    nodeId: CogniteInternalId,
-    generation: number
+    _modelId: CogniteInternalId,
+    _revisionId: CogniteInternalId,
+    _nodeId: CogniteInternalId,
+    _generation: number
   ): Promise<NodeTreeIndexAndSubtreeSize> {
     throw new Error('Not supported for local models');
   }
@@ -72,10 +68,10 @@ export class NodesLocalClient implements NodesApiClient {
    * @param box           Pre-allocated THREE.Box3 (optional).
    */
   getBoundingBoxByNodeId(
-    modelId: CogniteInternalId,
-    revisionId: CogniteInternalId,
-    nodeId: CogniteInternalId,
-    box?: THREE.Box3
+    _modelId: CogniteInternalId,
+    _revisionId: CogniteInternalId,
+    _nodeId: CogniteInternalId,
+    _box?: THREE.Box3
   ): Promise<THREE.Box3> {
     throw new Error('Not supported for local models');
   }
