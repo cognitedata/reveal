@@ -4,7 +4,7 @@
 
 import { CogniteClient, CogniteInternalId, HttpError } from '@cognite/sdk';
 import { NodesApiClient } from './NodesApiClient';
-import { ByNodeIdsReponse, ByTreeIndicesResponse } from './types';
+import { ByNodeIdsResponse, ByTreeIndicesResponse, NodeTreeIndexAndSubtreeSize } from './types';
 
 export class NodesCdfClient implements NodesApiClient {
   private static readonly MaxItemsPerRequest = 1000;
@@ -41,6 +41,18 @@ export class NodesCdfClient implements NodesApiClient {
     return mappedIds.flat();
   }
 
+  async determineTreeIndexAndSubtreeSizesByNodeIds(
+    modelId: CogniteInternalId,
+    revisionId: CogniteInternalId,
+    nodeIds: CogniteInternalId[]
+  ): Promise<NodeTreeIndexAndSubtreeSize[]> {
+    const requests = nodeIds.map(id => ({ id }));
+    const nodes = await this._client.revisions3D.retrieve3DNodes(modelId, revisionId, requests);
+    return nodes.map(n => {
+      return { treeIndex: n.treeIndex, subtreeSize: n.subtreeSize };
+    });
+  }
+
   private async postByTreeIndicesRequest(
     modelId: CogniteInternalId,
     revisionId: CogniteInternalId,
@@ -69,7 +81,7 @@ export class NodesCdfClient implements NodesApiClient {
     const outputsUrl = `${this._client.getBaseUrl()}/api/v1/projects/${
       this._client.project
     }/3d/models/${modelId}/revisions/${revisionId}/nodes/treeindices/byinternalids`;
-    const response = await this._client.post<ByNodeIdsReponse>(outputsUrl, { data: { items: nodeIdsChunk } });
+    const response = await this._client.post<ByNodeIdsResponse>(outputsUrl, { data: { items: nodeIdsChunk } });
     if (response.status === 200) {
       return response.data.items;
     } else {

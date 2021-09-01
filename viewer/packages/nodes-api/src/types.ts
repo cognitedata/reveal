@@ -8,6 +8,11 @@ export type ByTreeIndicesResponse = {
   items: CogniteInternalId[];
 };
 
-export type ByNodeIdsReponse = {
+export type ByNodeIdsResponse = {
   items: number[];
+};
+
+export type NodeTreeIndexAndSubtreeSize = {
+  treeIndex: number;
+  subtreeSize: number;
 };

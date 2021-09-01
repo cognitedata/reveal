@@ -4,13 +4,12 @@
 
 import { Subject, Observable } from 'rxjs';
 import { bufferTime, mergeMap, filter, mergeAll, map, share, tap, first } from 'rxjs/operators';
-import { CogniteClient, CogniteInternalId, InternalId } from '@cognite/sdk';
+import { CogniteInternalId } from '@cognite/sdk';
 
 import { NodesApiClient } from '@reveal/nodes-api';
 
 type NodeIdRequest = CogniteInternalId;
 type TreeIndexRequest = number;
-type SubtreeSizeRequest = InternalId;
 
 /* eslint-disable jsdoc/require-jsdoc */
 /**
@@ -19,7 +18,6 @@ type SubtreeSizeRequest = InternalId;
 export class NodeIdAndTreeIndexMaps {
   private readonly modelId: number;
   private readonly revisionId: number;
-  private readonly client: CogniteClient;
   private readonly nodesApiClient: NodesApiClient;
 
   private readonly treeIndexSubTreeSizeMap: Map<number, number>;
@@ -33,13 +31,12 @@ export class NodeIdAndTreeIndexMaps {
   private readonly treeIndexRequestObservable: Subject<TreeIndexRequest>;
   private readonly treeIndexResponse: Observable<{ nodeId: CogniteInternalId; treeIndex: number }>;
 
-  private readonly subtreeSizeObservable: Subject<SubtreeSizeRequest>;
+  private readonly subtreeSizeObservable: Subject<CogniteInternalId>;
   private readonly subtreeSizeResponse: Observable<{ treeIndex: number; subtreeSize: number }>;
 
-  constructor(modelId: number, revisionId: number, client: CogniteClient, nodesApiClient: NodesApiClient) {
+  constructor(modelId: number, revisionId: number, nodesApiClient: NodesApiClient) {
     this.modelId = modelId;
     this.revisionId = revisionId;
-    this.client = client;
     this.nodesApiClient = nodesApiClient;
 
     this.nodeIdToTreeIndexMap = new Map();
@@ -84,16 +81,13 @@ export class NodeIdAndTreeIndexMaps {
       share()
     );
 
-    // Setup pipeline for request for determinging subtree size given nodeId
+    // Setup pipeline for request for determining subtree size given nodeId
     this.subtreeSizeObservable = new Subject();
     this.subtreeSizeResponse = this.subtreeSizeObservable.pipe(
       bufferTime(50),
-      filter((requests: SubtreeSizeRequest[]) => requests.length > 0),
-      mergeMap(async (requests: SubtreeSizeRequest[]) => {
-        const nodes = await this.client.revisions3D.retrieve3DNodes(this.modelId, this.revisionId, requests);
-        return nodes.map(n => {
-          return { treeIndex: n.treeIndex, subtreeSize: n.subtreeSize };
-        });
+      filter((requests: CogniteInternalId[]) => requests.length > 0),
+      mergeMap(async (requests: CogniteInternalId[]) => {
+        return this.nodesApiClient.determineTreeIndexAndSubtreeSizesByNodeIds(this.modelId, this.revisionId, requests);
       }),
       mergeAll(),
       tap((node: { treeIndex: number; subtreeSize: number }) => {
@@ -150,7 +144,7 @@ export class NodeIdAndTreeIndexMaps {
         map(node => node.subtreeSize)
       )
       .toPromise();
-    this.subtreeSizeObservable.next({ id: nodeId });
+    this.subtreeSizeObservable.next(nodeId);
 
     return (await result)!;
   }

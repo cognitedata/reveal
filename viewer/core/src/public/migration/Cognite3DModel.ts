@@ -70,7 +70,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     this.cadModel = cadNode.cadModelMetadata;
     this.client = client;
     const nodesCdfClient = new NodesCdfClient(client);
-    this.nodeIdAndTreeIndexMaps = new NodeIdAndTreeIndexMaps(modelId, revisionId, client, nodesCdfClient);
+    this.nodeIdAndTreeIndexMaps = new NodeIdAndTreeIndexMaps(modelId, revisionId, nodesCdfClient);
 
     this.cadNode = cadNode;
 
