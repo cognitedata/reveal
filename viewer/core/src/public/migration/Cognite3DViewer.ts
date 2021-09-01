@@ -511,7 +511,7 @@ export class Cognite3DViewer {
       nodesApiClient = new NodesCdfClient(this.sdkClient);
     }
 
-    const { modelId, revisionId, localPath, geometryFilter } = options;
+    const { modelId, revisionId } = options;
     const cadNode = await this._revealManagerHelper.addCadModel(options);
 
     const model3d = new Cognite3DModel(modelId, revisionId, cadNode, nodesApiClient);
