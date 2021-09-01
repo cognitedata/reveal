@@ -39,6 +39,9 @@ const ScopesSelector = ({ capabilityKey, value, onChange }: Props) => {
     case 'idScope':
       selectedResources = value.idScope.ids;
       break;
+    case 'extractionPipelineScope':
+      selectedResources = value.extractionPipelineScope.ids;
+      break;
     case 'tableScope':
       selectedResources = value.tableScope;
       break;
@@ -81,6 +84,9 @@ const ScopesSelector = ({ capabilityKey, value, onChange }: Props) => {
       case 'datasetScope':
         scope = { datasetScope: { ids: [] } };
         break;
+      case 'extractionPipelineScope':
+        scope = { extractionPipelineScope: { ids: [] } };
+        break;
       case 'tableScope':
         scope = { tableScope: {} };
         break;
@@ -111,6 +117,9 @@ const ScopesSelector = ({ capabilityKey, value, onChange }: Props) => {
       case 'datasetScope':
         scope = { datasetScope: { ids: newSelectedResources } };
         break;
+      case 'extractionPipelineScope':
+        scope = { extractionPipelineScope: { ids: newSelectedResources } };
+        break;
       case 'tableScope':
         scope = { tableScope: newSelectedResources };
         break;
@@ -126,99 +135,123 @@ const ScopesSelector = ({ capabilityKey, value, onChange }: Props) => {
     onChange(scope);
   };
 
-  const getScopesSelector = () => {
-    return (
-      <>
-        <Radio.Group value={selectedScope} onChange={e => onSelectScope(e)}>
-          {scopes.map(scope => (
-            <Radio value={scope} key={scope}>
-              {getScopeLabel(scope, capabilityKey)}
-            </Radio>
-          ))}
-        </Radio.Group>
-        {selectedScope === 'assetIdScope' && (
-          <SelectorContainer>
-            <ResourcesSelector
-              type="assets"
-              value={selectedResources}
-              onChange={onChangeResource}
-            />
-          </SelectorContainer>
-        )}
-        {selectedScope === 'idScope' && (
-          <SelectorContainer>
-            <ResourcesSelector
-              type="datasets"
-              value={selectedResources}
-              onChange={onChangeResource}
-              useSearchApi={false}
-              limit={1000}
-              itemFilter={(ds: DataSet) => ds.metadata?.archived !== 'true'}
-              downloadAll
-            />
-          </SelectorContainer>
-        )}
-        {selectedScope === 'datasetScope' && (
-          <SelectorContainer>
-            <ResourcesSelector
-              type="datasets"
-              value={selectedResources}
-              onChange={onChangeResource}
-              useSearchApi={false}
-              limit={1000}
-              itemFilter={(ds: DataSet) => ds.metadata?.archived !== 'true'}
-              downloadAll
-            />
-          </SelectorContainer>
-        )}
-        {selectedScope === 'idscope' &&
-          capabilityKey === 'securityCategoriesAcl' && (
-            <SelectorContainer>
-              <SecurityCategoriesSelector
-                value={selectedResources}
-                onChange={onChangeResource}
-              />
-            </SelectorContainer>
-          )}
-        {selectedScope === 'assetRootIdScope' && (
-          <SelectorContainer>
-            <ResourcesSelector
-              type="assets"
-              filter={{ root: true }}
-              value={selectedResources}
-              onChange={onChangeResource}
-            />
-          </SelectorContainer>
-        )}
-        {selectedScope === 'idscope' && capabilityKey === 'timeSeriesAcl' && (
-          <SelectorContainer>
-            <ResourcesSelector
-              type="timeseries"
-              value={selectedResources}
-              onChange={onChangeResource}
-            />
-          </SelectorContainer>
-        )}
-        {selectedScope === 'tableScope' && (
-          <SelectorContainer>
-            <RawSelector
-              value={selectedResources}
-              onChange={onChangeResource}
-            />
-          </SelectorContainer>
-        )}
-        {selectedScope === 'partition' && (
+  function getScopesSelector() {
+    switch (selectedScope) {
+      case 'assetIdScope':
+        return (
+          <ResourcesSelector
+            type="assets"
+            value={selectedResources}
+            onChange={onChangeResource}
+          />
+        );
+      case 'datasetScope':
+        return (
+          <ResourcesSelector
+            type="datasets"
+            value={selectedResources}
+            onChange={onChangeResource}
+            useSearchApi={false}
+            limit={1000}
+            itemFilter={(ds: DataSet) => ds.metadata?.archived !== 'true'}
+            downloadAll
+          />
+        );
+      case 'assetRootIdScope':
+        return (
+          <ResourcesSelector
+            type="assets"
+            filter={{ root: true }}
+            value={selectedResources}
+            onChange={onChangeResource}
+          />
+        );
+      case 'partition':
+        return (
           <SelectorContainer>
             <PartitionSelector
               value={selectedResources}
               onChange={onChangeResource}
             />
           </SelectorContainer>
-        )}
-      </>
-    );
-  };
+        );
+      case 'tableScope':
+        return (
+          <SelectorContainer>
+            <RawSelector
+              value={selectedResources}
+              onChange={onChangeResource}
+            />
+          </SelectorContainer>
+        );
+      case 'extractionPipelineScope':
+        return (
+          <ResourcesSelector
+            type="extpipes"
+            value={selectedResources}
+            onChange={onChangeResource}
+            useSearchApi={false}
+            limit={1000}
+            downloadAll
+          />
+        );
+      case 'idScope':
+      case 'idscope':
+        switch (capabilityKey) {
+          case 'extractionPipelinesAcl':
+            return (
+              <ResourcesSelector
+                type="extpipes"
+                value={selectedResources}
+                onChange={onChangeResource}
+                useSearchApi={false}
+                limit={1000}
+                downloadAll
+              />
+            );
+          case 'securityCategoriesAcl':
+            return (
+              <SecurityCategoriesSelector
+                value={selectedResources}
+                onChange={onChangeResource}
+              />
+            );
+          case 'timeSeriesAcl':
+            return (
+              <ResourcesSelector
+                type="timeseries"
+                value={selectedResources}
+                onChange={onChangeResource}
+              />
+            );
+          default:
+            return (
+              <ResourcesSelector
+                type="datasets"
+                value={selectedResources}
+                onChange={onChangeResource}
+                useSearchApi={false}
+                limit={1000}
+                itemFilter={(ds: DataSet) => ds.metadata?.archived !== 'true'}
+                downloadAll
+              />
+            );
+        }
+    }
+    return null;
+  }
 
-  return <div>{getScopesSelector()}</div>;
+  return (
+    <div>
+      <Radio.Group value={selectedScope} onChange={e => onSelectScope(e)}>
+        {scopes.map(scope => (
+          <Radio value={scope} key={scope}>
+            {getScopeLabel(scope, capabilityKey)}
+          </Radio>
+        ))}
+      </Radio.Group>
+      <SelectorContainer>{getScopesSelector()}</SelectorContainer>
+    </div>
+  );
 };
 export default ScopesSelector;

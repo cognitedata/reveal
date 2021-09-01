@@ -25,6 +25,8 @@ const nameToAclTypeMap = {
   users: 'usersAcl',
   projects: 'projectsAcl',
   datasets: 'datasetsAcl',
+  extractionpipelines: 'extractionPipelinesAcl',
+  extractionruns: 'extractionRunsAcl',
   labels: 'labelsAcl',
   seismic: 'seismicAcl',
   relationships: 'relationshipsAcl',
@@ -50,6 +52,8 @@ const nameToFormattedName = {
   timeseries: 'Time series',
   digitaltwin: 'Digital twin',
   datasets: 'Data sets',
+  extractionpipelines: 'Extraction pipelines',
+  extractionruns: 'Extraction pipeline runs',
   modelhosting: 'Model hosting',
   entitymatching: 'Entity matching',
   documentpipelines: 'Document pipelines',
@@ -85,6 +89,8 @@ const capabilityTypeGroups = [
   {
     name: 'Other',
     items: [
+      'extractionpipelines',
+      'extractionruns',
       'digitaltwin',
       'modelhosting',
       'generic',
@@ -123,6 +129,9 @@ export const capabilityDescriptions = {
     'Relationships represent connections between pairs of CDF resources',
   datasets:
     'Data sets are groups of data based on origin, such as all SAP work orders',
+  extractionpipelines:
+    'Extraction pipelines are used to extract data from a source system',
+  extractionruns: 'Execution history for extraction pipelines',
   labels:
     'With labels you as an IT manager or data engineer can create a predefined set of managed terms that you can use to annotate and group assets',
   seismic: 'Seismic is a representation of cubes of seismic traces',
@@ -222,31 +231,43 @@ export const getCapabilityDescription = (
   return capabilityDescriptions[capabilityName] || '';
 };
 
-const SCOPE_LABELS = {
-  all: 'All',
-  currentuserscope: 'Current user',
-  assetIdScope: 'Assets',
-  idscope: {
-    timeseries: 'Time series',
-    securitycategories: 'Security categories',
-  },
-  assetRootIdScope: 'Root assets',
-  tableScope: 'Tables',
-  datasetScope: 'Data sets',
-  idScope: 'Data sets',
-  partition: 'Partition',
-};
-
 export const getScopeLabel = (
   scope: string,
   capability: CogniteCapability | string | SingleCogniteCapability
 ) => {
-  if (scope === 'idscope') {
-    // @ts-ignore
-    return SCOPE_LABELS[scope][getCapabilityName(capability)];
+  switch (scope) {
+    case 'all':
+      return 'All';
+    case 'currentuserscope':
+      return 'Current user';
+    case 'assetIdScope':
+      return 'Assets';
+    case 'assetRootIdScope':
+      return 'Root assets';
+    case 'tableScope':
+      return 'Tables';
+    case 'datasetScope':
+      return 'Data sets';
+    case 'idScope':
+      switch (getCapabilityName(capability)) {
+        case 'extractionpipelines':
+          return 'Extraction pipelines';
+        default:
+          return 'Data sets';
+      }
+    case 'extractionPipelineScope':
+      return 'Extraction pipelines';
+    case 'partition':
+      return 'Partition';
+    case 'idscope':
+      switch (getCapabilityName(capability)) {
+        case 'timeseries':
+          return 'Time series';
+        case 'securitycategories':
+          return 'Security categories';
+      }
   }
-  // @ts-ignore
-  return SCOPE_LABELS[scope];
+  return null;
 };
 
 export const getStringCdfEnv = () => {
@@ -307,6 +328,10 @@ export const getCapabilityScopes = (
       return ['datasetScope', 'all'];
     case 'datasets':
       return ['idScope', 'all']; // idScope (uppercase S) and ...
+    case 'extractionpipelines':
+      return ['datasetScope', 'all']; // Add back: 'idScope',
+    case 'extractionruns':
+      return ['datasetScope', 'all']; // Add back: 'extractionPipelineScope'
     case 'securitycategories':
       return ['idscope', 'all']; // ... idscope (lowercase s) are different
     case 'seismic':
