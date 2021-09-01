@@ -17,8 +17,7 @@ import { callActionWithIndicesAsync } from '../../utilities/callActionWithIndice
 import { NodeCollectionBase } from '../../datamodels/cad/styling';
 import { NodeAppearance } from '../../datamodels/cad';
 import { NodeTransformProvider } from '../../datamodels/cad/styling/NodeTransformProvider';
-import assert from 'assert';
-import { NodesCdfClient } from '../../../../packages/nodes-api';
+import { NodesApiClient, NodesCdfClient } from '../../../../packages/nodes-api';
 
 /**
  * Represents a single 3D CAD model loaded from CDF.
@@ -53,6 +52,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
 
   private readonly cadModel: CadModelMetadata;
   private readonly client: CogniteClient;
+  private readonly nodesApiClient: NodesApiClient;
   private readonly nodeIdAndTreeIndexMaps: NodeIdAndTreeIndexMaps;
   private readonly _styledNodeCollections: { nodes: NodeCollectionBase; appearance: NodeAppearance }[] = [];
 
@@ -69,8 +69,8 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     this.revisionId = revisionId;
     this.cadModel = cadNode.cadModelMetadata;
     this.client = client;
-    const nodesCdfClient = new NodesCdfClient(client);
-    this.nodeIdAndTreeIndexMaps = new NodeIdAndTreeIndexMaps(modelId, revisionId, nodesCdfClient);
+    this.nodesApiClient = new NodesCdfClient(client);
+    this.nodeIdAndTreeIndexMaps = new NodeIdAndTreeIndexMaps(modelId, revisionId, this.nodesApiClient);
 
     this.cadNode = cadNode;
 
@@ -258,25 +258,15 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * "generation" specified, or the root.
    */
   async getAncestorTreeIndices(treeIndex: number, generation: number): Promise<NumericRange> {
-    // This might fail if treeIndex is invalid, error checking below is just to be safe
-    // and should not really happen.
     const nodeId = await this.mapTreeIndexToNodeId(treeIndex);
-
-    const ancestors = await this.client.revisions3D.list3DNodeAncestors(this.modelId, this.revisionId, nodeId, {
-      limit: 1000
-    });
-    const node = ancestors.items.find(x => x.treeIndex === treeIndex)!;
-    assert(node !== undefined, `Could not find ancestor for node with treeIndex ${treeIndex}`);
-
-    // Clamp to root if necessary
-    generation = Math.min(node.depth, generation);
-    const ancestor = ancestors.items.find(x => x.depth === node.depth - generation)!;
-    assert(
-      node !== undefined,
-      `Could not find ancestor for node with treeIndex ${treeIndex} at 'generation' ${generation}`
+    const subtree = await this.nodesApiClient.determineNodeAncestorsByNodeId(
+      this.modelId,
+      this.revisionId,
+      nodeId,
+      generation
     );
 
-    return new NumericRange(ancestor.treeIndex, ancestor.subtreeSize);
+    return new NumericRange(subtree.treeIndex, subtree.subtreeSize);
   }
 
   /**

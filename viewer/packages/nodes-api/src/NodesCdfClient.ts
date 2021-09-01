@@ -3,6 +3,7 @@
  */
 
 import { CogniteClient, CogniteInternalId, HttpError } from '@cognite/sdk';
+import assert from 'assert';
 import { NodesApiClient } from './NodesApiClient';
 import { ByNodeIdsResponse, ByTreeIndicesResponse, NodeTreeIndexAndSubtreeSize } from './types';
 
@@ -51,6 +52,26 @@ export class NodesCdfClient implements NodesApiClient {
     return nodes.map(n => {
       return { treeIndex: n.treeIndex, subtreeSize: n.subtreeSize };
     });
+  }
+
+  async determineNodeAncestorsByNodeId(
+    modelId: CogniteInternalId,
+    revisionId: CogniteInternalId,
+    nodeId: CogniteInternalId,
+    generation: number
+  ): Promise<NodeTreeIndexAndSubtreeSize> {
+    const ancestors = await this._client.revisions3D.list3DNodeAncestors(modelId, revisionId, nodeId, {
+      limit: 1000
+    });
+    const node = ancestors.items.find(x => x.id === nodeId)!;
+    assert(node !== undefined, `Could not find ancestor for node with nodeId ${nodeId}`);
+
+    // Clamp to root if necessary
+    generation = Math.min(node.depth, generation);
+    const ancestor = ancestors.items.find(x => x.depth === node.depth - generation)!;
+    assert(node !== undefined, `Could not find ancestor for node with nodeId ${nodeId} at 'generation' ${generation}`);
+
+    return { treeIndex: ancestor.treeIndex, subtreeSize: ancestor.subtreeSize };
   }
 
   private async postByTreeIndicesRequest(

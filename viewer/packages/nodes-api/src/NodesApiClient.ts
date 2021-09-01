@@ -35,4 +35,19 @@ export interface NodesApiClient {
     revisionId: CogniteInternalId,
     nodeIds: CogniteInternalId[]
   ): Promise<NodeTreeIndexAndSubtreeSize[]>;
+
+  /**
+   * Determine ancestor subtree span of a given node. If the node doesn't have an
+   * ancestor at the generation given, the span of the root node is returned.
+   * @param modelId       ID of 3D model
+   * @param revisionId    ID of 3D model revision
+   * @param nodeId        Node ID of node
+   * @param generation    Generation to retrieve (0 means node itself, 1 is parent, 2 grand-parent etc).
+   */
+  determineNodeAncestorsByNodeId(
+    modelId: CogniteInternalId,
+    revisionId: CogniteInternalId,
+    nodeId: CogniteInternalId,
+    generation: number
+  ): Promise<NodeTreeIndexAndSubtreeSize>;
 }
