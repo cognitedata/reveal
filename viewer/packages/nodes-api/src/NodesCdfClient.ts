@@ -2,6 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
+import * as THREE from 'three';
+
 import { CogniteClient, CogniteInternalId, HttpError } from '@cognite/sdk';
 import assert from 'assert';
 import { NodesApiClient } from './NodesApiClient';
@@ -72,6 +74,29 @@ export class NodesCdfClient implements NodesApiClient {
     assert(node !== undefined, `Could not find ancestor for node with nodeId ${nodeId} at 'generation' ${generation}`);
 
     return { treeIndex: ancestor.treeIndex, subtreeSize: ancestor.subtreeSize };
+  }
+
+  async getBoundingBoxByNodeId(
+    modelId: CogniteInternalId,
+    revisionId: CogniteInternalId,
+    nodeId: CogniteInternalId,
+    box?: THREE.Box3
+  ): Promise<THREE.Box3> {
+    const response = await this._client.revisions3D.retrieve3DNodes(modelId, revisionId, [{ id: nodeId }]);
+    if (response.length < 1) {
+      throw new Error('NodeId not found');
+    }
+    const boundingBox3D = response[0].boundingBox;
+    if (boundingBox3D === undefined) {
+      throw new Error(`Node ${nodeId} doesn't have a defined bounding box`);
+    }
+
+    const min = boundingBox3D.min;
+    const max = boundingBox3D.max;
+    const result = box || new THREE.Box3();
+    result.min.set(min[0], min[1], min[2]);
+    result.max.set(max[0], max[1], max[2]);
+    return result;
   }
 
   private async postByTreeIndicesRequest(

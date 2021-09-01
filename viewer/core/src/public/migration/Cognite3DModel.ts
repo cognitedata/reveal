@@ -341,25 +341,17 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * ```
    */
   async getBoundingBoxByNodeId(nodeId: number, box?: THREE.Box3): Promise<THREE.Box3> {
-    const response = await this.client.revisions3D.retrieve3DNodes(this.modelId, this.revisionId, [{ id: nodeId }]);
-    if (response.length < 1) {
-      throw new Error('NodeId not found');
-    }
-    const boundingBox3D = response[0].boundingBox;
-    if (boundingBox3D === undefined) {
-      trackError(new Error(`Node ${nodeId} doesn't have a defined bounding box, returning model bounding box`), {
+    try {
+      box = await this.nodesApiClient.getBoundingBoxByNodeId(this.modelId, this.revisionId, nodeId, box);
+      box.applyMatrix4(this.cadModel.modelMatrix);
+      return box;
+    } catch (error) {
+      trackError(error, {
         moduleName: 'Cognite3DModel',
         methodName: 'getBoundingBoxByNodeId'
       });
-      return this.getModelBoundingBox();
+      throw error;
     }
-
-    const min = boundingBox3D.min;
-    const max = boundingBox3D.max;
-    const result = box || new THREE.Box3();
-    result.min.set(min[0], min[1], min[2]);
-    result.max.set(max[0], max[1], max[2]);
-    return result.applyMatrix4(this.cadModel.modelMatrix);
   }
 
   /**
