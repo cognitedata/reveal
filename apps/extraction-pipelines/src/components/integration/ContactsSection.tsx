@@ -55,7 +55,7 @@ export const ContactsSection: FunctionComponent<ContactsSectionProps> = () => {
   const { integration } = useSelectedIntegration();
   const { data: current } = useIntegrationById(integration?.id);
   const { pass: owners, fail: nonOwners } = partition(
-    current?.contacts ?? [],
+    current?.contacts.map((u, index) => ({ ...u, index: index })) ?? [],
     isOwner
   );
 
@@ -77,7 +77,10 @@ export const ContactsSection: FunctionComponent<ContactsSectionProps> = () => {
   );
 };
 
-function contactTable(contacts: User[], integration: Integration) {
+function contactTable(
+  contacts: (User & { index: number })[],
+  integration: Integration
+) {
   return (
     <>
       <HeadingRow>
@@ -86,13 +89,13 @@ function contactTable(contacts: User[], integration: Integration) {
         <Heading>{NAME_LABEL}</Heading>
         <Heading>{EMAIL_LABEL}</Heading>
       </HeadingRow>
-      {contacts.map((contact, index) => {
+      {contacts.map((contact) => {
         return (
           <Row key={contact.email} className="row-style-even row-height-4">
             <EditPartContacts
               integration={integration}
               name="contacts"
-              index={index}
+              index={contact.index}
               field="role"
               label="Role"
               schema={contactRoleNotOwnerSchema}
@@ -101,14 +104,14 @@ function contactTable(contacts: User[], integration: Integration) {
             <NotificationUpdateSwitch
               integration={integration}
               name="contacts"
-              index={index}
+              index={contact.index}
               field="sendNotification"
               defaultValues={{ sendNotification: contact.sendNotification }}
             />
             <EditPartContacts
               integration={integration}
               name="contacts"
-              index={index}
+              index={contact.index}
               field="name"
               label={TableHeadings.NAME}
               schema={contactNameSchema}
@@ -117,7 +120,7 @@ function contactTable(contacts: User[], integration: Integration) {
             <EditPartContacts
               integration={integration}
               name="contacts"
-              index={index}
+              index={contact.index}
               field="email"
               label="Email"
               schema={contactEmailSchema}
@@ -127,7 +130,7 @@ function contactTable(contacts: User[], integration: Integration) {
             <RemoveContactButton
               integration={integration}
               name="contacts"
-              index={index}
+              index={contact.index}
             />
           </Row>
         );
