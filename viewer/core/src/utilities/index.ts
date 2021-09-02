@@ -12,3 +12,4 @@ export { emissionLastMillis } from './rxOperations';
 export { NumericRange } from './NumericRange';
 export { assertNever } from './assertNever';
 export { traverseDepthFirst } from './objectTraversal';
+export * from './events';
