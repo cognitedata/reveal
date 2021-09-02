@@ -18,8 +18,11 @@ export const CONTACT_EMAIL_REQUIRED: Readonly<string> = 'Email is required';
 export const emailRule = {
   email: yup.string().required(CONTACT_EMAIL_REQUIRED),
 };
-export const roleRule = {
-  role: yup.string(),
+export const roleNotOwnerRule = {
+  role: yup.string().lowercase().not(['owner']),
+};
+export const roleOwnerRule = {
+  role: yup.string().is(['Owner']),
 };
 export const sentNotificationRule = {
   sendNotification: yup.boolean(),
@@ -27,14 +30,22 @@ export const sentNotificationRule = {
 export const nameSchema = yup.object().shape(nameRule);
 export const contactNameSchema = yup.object().shape(contactNameRule);
 export const contactEmailSchema = yup.object().shape(emailRule);
-export const contactRoleSchema = yup.object().shape(roleRule);
+export const contactRoleNotOwnerSchema = yup.object().shape(roleNotOwnerRule);
+export const contactRoleOwnerSchema = yup.object().shape(roleOwnerRule);
 export const contactSendNotificationSchema = yup
   .object()
   .shape(sentNotificationRule);
-export const contactSchema = yup.object().shape({
+export const contactOwnerSchema = yup.object().shape({
   ...contactNameRule,
   ...emailRule,
-  ...roleRule,
+  ...roleOwnerRule,
+  ...sentNotificationRule,
+});
+
+export const contactNotOwnerSchema = yup.object().shape({
+  ...contactNameRule,
+  ...emailRule,
+  ...roleNotOwnerRule,
   ...sentNotificationRule,
 });
 

@@ -5,7 +5,7 @@ import { TableHeadings } from 'components/table/IntegrationTableCol';
 import {
   contactEmailSchema,
   contactNameSchema,
-  contactRoleSchema,
+  contactRoleNotOwnerSchema,
 } from 'utils/validation/integrationSchemas';
 import { EditPartContacts } from 'components/integration/EditPartContacts';
 import { RemoveContactButton } from 'components/integration/RemoveContactButton';
@@ -95,7 +95,7 @@ function contactTable(contacts: User[], integration: Integration) {
               index={index}
               field="role"
               label="Role"
-              schema={contactRoleSchema}
+              schema={contactRoleNotOwnerSchema}
               defaultValues={{ role: contact.role }}
             />
             <NotificationUpdateSwitch
