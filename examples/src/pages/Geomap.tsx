@@ -214,23 +214,12 @@ export function Geomap() {
       let geomapTool = new GeomapTool(viewer);
 
       const renderGui = gui.addFolder('Options');
-      const mapProviders = ['Vector OpenSteet Maps', 'Vector OpenTile Maps', 'Vector Map Box', 'Vector Here Maps', 'Vector Here Maps Night',
-                            'Vector Here Maps Terrain', 'Vector Bing Maps', 'Vector Map Tiler Basic', 'Vector Map Tiler Outdoor', 
-                            'Satellite Map Box', 'Satellite Map Box Labels', 'Satellite Here Maps', 'Satellite Bing Maps', 'Satellite Maps Tiler Labels', 
-                            'Satellite Maps Tiler', 'Height Map Box', 'Height Map Tiler', 'Debug Height Map Box', 'Debug'];
+      const mapProviders = ['Vector OpenSteet Maps', 'Vector Map Box', 'Vector Here Maps', 'Vector Bing Maps', 'Vector Map Tiler Outdoor',
+                            'Satellite Map Box Labels', 'Satellite Here Maps', 'Satellite Bing Maps', 'Satellite Maps Tiler Labels', 
+                            'Debug'];
       renderGui.add(guiState, 'providers', mapProviders).name('MapProviders').onFinishChange(value => {
         const provider = mapProviders.indexOf(value);
         geomapTool.setMapProvider(provider);
-        viewer.forceRerender();
-      });
-
-      const heightMapProviders = ['Vector OpenSteet Maps', 'Vector OpenTile Maps', 'Vector Map Box', 'Vector Here Maps', 'Vector Here Maps Night',
-      'Vector Here Maps Terrain', 'Vector Bing Maps', 'Vector Map Tiler Basic', 'Vector Map Tiler Outdoor', 
-      'Satellite Map Box', 'Satellite Map Box Labels', 'Satellite Here Maps', 'Satellite Bing Maps', 'Satellite Maps Tiler Labels', 
-      'Satellite Maps Tiler', 'Height Map Box', 'Height Map Tiler', 'Debug Height Map Box', 'Debug'];
-      renderGui.add(guiState, 'heightmap', heightMapProviders).name('HeightMapProvider').onFinishChange(value => {
-        const heightmap = heightMapProviders.indexOf(value);
-        geomapTool.setMapProvider(heightmap);
         viewer.forceRerender();
       });
 
