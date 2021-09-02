@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 import * as THREE from 'three';
-import { Cognite3DModel } from '../public/migration/Cognite3DModel';
+import { Cognite3DModel } from '@reveal/core';
 import { Cognite3DViewerToolBase } from './Cognite3DViewerToolBase';
 
 export class ExplodedViewTool extends Cognite3DViewerToolBase {
