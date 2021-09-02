@@ -45,6 +45,7 @@ export const useJobStatus = (workflowId: number, jobInitiated?: boolean) => {
       failed = 0,
     } = statusCount ?? {};
     const total = running + completed + queued + failed;
+
     if (parsingJobStatus === 'Completed') {
       if (total === failed) return 'error';
       if (total > failed) return 'done';

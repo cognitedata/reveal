@@ -4,13 +4,16 @@ import { Button } from '@cognite/cogs.js';
 import { selectAllDataSets } from 'modules/datasets';
 import { Flex } from 'components/Common';
 import { FilterTag } from './FilterTag';
+import { mimeTypes } from '../FilterSelects/utils';
 
 type FilterListProps = {
   dataSetIds: Array<number>;
   labels: Array<{ externalId: string }>;
   searchQuery: string;
+  mimeType?: string;
   onDataSetsChange: (val: Array<number>) => void;
   onLabelsChange: (externalIds: Array<string>) => void;
+  onMimeTypeChange: (mimeType: Array<string>) => void;
   onQueryClear: () => void;
   onClearAll: () => void;
 };
@@ -19,8 +22,10 @@ export const FilterList = ({
   dataSetIds = [],
   labels = [],
   searchQuery,
+  mimeType,
   onDataSetsChange,
   onLabelsChange,
+  onMimeTypeChange,
   onQueryClear,
   onClearAll,
 }: FilterListProps) => {
@@ -77,9 +82,25 @@ export const FilterList = ({
     return <span />;
   };
 
+  const displayFileTypeTag = () => {
+    if (mimeType) {
+      const fileType =
+        mimeTypes.find((mt) => mt.value === mimeType)?.label ?? '';
+      return (
+        <FilterTag
+          id="filter-tag-mimetype"
+          content={`File type: ${fileType}`}
+          onClose={() => onMimeTypeChange([])}
+        />
+      );
+    }
+    return <span />;
+  };
+
   return (
     <Flex row style={{ flexWrap: 'wrap' }}>
-      {displayDataSets()} {displayLabels()} {displayQueryTag()}
+      {displayDataSets()} {displayLabels()} {displayQueryTag()}{' '}
+      {displayFileTypeTag()}
       {(dataSetIds?.length || labels?.length || searchQuery?.length) && (
         <Button
           icon="Close"

@@ -21,14 +21,16 @@ export function useSelectFilter<T extends string | number>(
   >([]);
 
   const displayFilterLabels = () => {
-    const fixedSelection = selection!.map((id: T) => ({
-      label: String(
-        options!.find(
-          (option: OptionType<React.ReactText>) => option.value === id
-        )?.label ?? id
-      ),
-      value: id,
-    }));
+    const fixedSelection = selection!
+      .map((id: T) => ({
+        label: String(
+          options!.find(
+            (option: OptionType<React.ReactText>) => option.value === id
+          )?.label ?? id
+        ),
+        value: id,
+      }))
+      .filter((option) => option.label && option.value);
     const shouldSelectionUpdate = !isEqual(fixedSelection, currentSelection);
     if (shouldSelectionUpdate) setMultiSelection(fixedSelection);
   };

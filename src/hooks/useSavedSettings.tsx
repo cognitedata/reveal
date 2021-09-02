@@ -1,5 +1,6 @@
 import { useEffect, useContext } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import isEqual from 'lodash/isEqual';
 import { RootState } from 'store';
 import { AppStateContext } from 'context';
 import { changeOptions, standardModelOptions } from 'modules/workflows';
@@ -36,7 +37,10 @@ export const useSavedSettings = () => {
   }, [skipSettings, options, modelSelected]);
 
   useEffect(() => {
-    if (modelSelected === 'standard') {
+    if (
+      modelSelected === 'standard' &&
+      !isEqual(standardModelOptions, options)
+    ) {
       dispatch(changeOptions(standardModelOptions));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

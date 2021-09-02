@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useDebouncedCallback } from 'use-debounce';
-import { Button, Tooltip, message } from 'antd';
+import { message } from 'antd';
 import { useLocalStorage } from '@cognite/cogs.js';
 import { doSearch } from 'modules/search';
 import {
@@ -12,10 +12,10 @@ import {
   getActiveWorkflowItems,
 } from 'modules/workflows';
 import { ResourceType, Filter } from 'modules/types';
-import { useSteps, useActiveWorkflow, usePreviousSelection } from 'hooks';
+import { useActiveWorkflow, usePreviousSelection, useSteps } from 'hooks';
 import { LS_SAVED_SETTINGS } from 'stringConstants';
-import StickyBottomRow from 'components/StickyBottomRow';
-import { Flex, IconButton } from 'components/Common';
+import NavigationStickyBottomRow from 'components/NavigationStickyBottomRow';
+import { Flex } from 'components/Common';
 import { searchCountSelector } from 'pages/PageSelection/selectors';
 import NotFound from 'pages/NotFound';
 import DiagramsSelection from './DiagramsSelection';
@@ -39,6 +39,7 @@ export default function PageSelection(props: Props): JSX.Element {
   const { type, step, required, defaultFilters = DEFAULT_FILTERS } = props;
 
   useActiveWorkflow(step);
+  const { goToNextStep } = useSteps(step);
 
   const [isSelectAll, setSelectAll] = useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<Array<number>>([]);
@@ -52,7 +53,6 @@ export default function PageSelection(props: Props): JSX.Element {
     skip: false,
   });
   const count = useSelector(searchCountSelector(type, filter));
-  const { goToNextStep, goToPrevStep } = useSteps(step);
   const { resources } = useSelector(getActiveWorkflowItems);
 
   const { previousSelectionLoaded } = usePreviousSelection(
@@ -172,22 +172,15 @@ export default function PageSelection(props: Props): JSX.Element {
   return (
     <Flex column style={{ width: '100%' }}>
       {getSelectionPage()}
-      <StickyBottomRow>
-        <IconButton icon="ArrowBack" type="secondary" onClick={goToPrevStep}>
-          Back
-        </IconButton>
-        <Tooltip title={tooltipContent()}>
-          <Button
-            type="primary"
-            disabled={
-              isNoSelectionWhileRequired || isNoSelectionOfAtLeastOneOptional
-            }
-            onClick={onNextStep}
-          >
-            Next step
-          </Button>
-        </Tooltip>
-      </StickyBottomRow>
+      <NavigationStickyBottomRow
+        step={step}
+        next={{
+          tooltip: tooltipContent(),
+          disabled:
+            isNoSelectionWhileRequired || isNoSelectionOfAtLeastOneOptional,
+          onClick: onNextStep,
+        }}
+      />
     </Flex>
   );
 }

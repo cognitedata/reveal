@@ -4,7 +4,7 @@ import { useLocation, useParams } from 'react-router-dom';
 import 'antd/dist/antd.css';
 import { WorkflowStep } from 'modules/workflows';
 import { Steps, StepsType } from 'components/Common';
-import routesMap, { PathData } from 'routes/routesMap';
+import { PathData, stepsMap } from 'routes/routesMap';
 
 export default function StepsList() {
   const location = useLocation();
@@ -17,9 +17,9 @@ export default function StepsList() {
     workflowId?: string;
     fileId?: string;
   }>();
-  const routes = routesMap();
+  const steps = stepsMap();
 
-  const stepList: StepsType[] = routes.map((route: PathData) => {
+  const stepList: StepsType[] = steps.map((route: PathData) => {
     const { title } = route;
     const path = generatePath(route.staticPath, {
       tenant,

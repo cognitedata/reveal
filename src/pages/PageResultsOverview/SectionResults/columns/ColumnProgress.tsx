@@ -2,7 +2,7 @@ import React from 'react';
 import { Icon, Tooltip } from '@cognite/cogs.js';
 import { Flex } from 'components/Common';
 import StatusSquare from 'pages/PageResultsOverview/StatusSquare';
-import { useFileStatus } from './hooks';
+import { useFileStatus } from '../hooks';
 
 type Props = {
   workflowId: number;

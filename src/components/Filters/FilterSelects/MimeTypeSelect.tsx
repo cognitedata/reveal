@@ -37,6 +37,7 @@ export const MimeTypeSelect = (props: Props) => {
       selectProps={{
         title: 'File type:',
         isMulti,
+        placeholder: 'All',
         options: mimeTypes,
         value: currentSelection,
         onChange: isMulti ? setMultiSelection : setSingleSelection,

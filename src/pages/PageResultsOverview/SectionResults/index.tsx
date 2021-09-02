@@ -28,12 +28,18 @@ export default function SectionResults(props: Props) {
   const jobStatus = useJobStatus(workflowId, jobStarted);
   const parsingJob = useParsingJob(workflowId);
 
-  const isJobDone = jobStatus === 'done';
+  const isJobDone = jobStatus === 'done' || parsingJob?.status === 'Completed';
+  const shouldShowTable =
+    parsingJob?.status === 'Queued' ||
+    parsingJob?.status === 'Running' ||
+    parsingJob?.status === 'Collecting' ||
+    parsingJob?.status === 'Completed' ||
+    parsingJob?.annotationCounts;
 
   useEffect(() => {
-    if (parsingJob?.annotationCounts) setShowResults(true);
+    if (shouldShowTable) setShowResults(true);
     else setShowResults(false);
-  }, [parsingJob]);
+  }, [parsingJob, shouldShowTable]);
 
   return (
     <TitledSection
@@ -47,7 +53,12 @@ export default function SectionResults(props: Props) {
             setSelectionFilter={setSelectionFilter}
           />
         )}
-        {showResults && <ResultsTable selectionFilter={selectionFilter} />}
+        {showResults && (
+          <ResultsTable
+            selectionFilter={selectionFilter}
+            showLoadingSkeleton={!isJobDone}
+          />
+        )}
         {!showResults && <ResultsTableEmpty />}
       </Flex>
     </TitledSection>

@@ -4,19 +4,21 @@ import { paths } from './paths';
 export type PathData = {
   path: (
     tenant: string,
-    workflowId: string | number,
+    workflowId?: string | number,
     fileId?: string | number
   ) => string;
   staticPath: string;
   title: string;
   workflowStepName?: WorkflowStep;
-  isNotStep?: boolean;
   skippable?: boolean;
+  showOnStepList?: boolean;
 };
 
-export default function routesMap() {
-  const map: PathData[] = Object.values(paths).filter(
-    (path: PathData) => !path.isNotStep
-  );
+export const routesMap = () => {
+  const map: PathData[] = Object.values(paths);
   return map;
-}
+};
+
+export const stepsMap = () => {
+  return routesMap().filter((path: PathData) => path.showOnStepList);
+};

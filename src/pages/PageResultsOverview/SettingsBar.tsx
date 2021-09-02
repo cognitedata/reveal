@@ -58,7 +58,11 @@ export default function SettingsBar() {
         {selectedDiagramsIds.length} diagrams selected
       </Title>
       <Buttons row>
-        <Button type="ghost-danger" onClick={() => onRejectDiagrams()}>
+        <Button
+          type="ghost-danger"
+          onClick={() => onRejectDiagrams()}
+          style={{ color: Colors['red-5'].hex() }}
+        >
           Reject tags on selected diagrams
         </Button>
         <Button

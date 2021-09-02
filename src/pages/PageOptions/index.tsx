@@ -1,10 +1,10 @@
 import React from 'react';
-import { Button, Body } from '@cognite/cogs.js';
+import { Body } from '@cognite/cogs.js';
 import { WorkflowStep } from 'modules/workflows';
 import { ModelSelected } from 'modules/types';
-import { useActiveWorkflow, useSavedSettings, useSteps } from 'hooks';
+import { useActiveWorkflow, useSavedSettings } from 'hooks';
 import { Flex, PageTitle, CollapsibleRadio } from 'components/Common';
-import StickyBottomRow from 'components/StickyBottomRow';
+import NavigationStickyBottomRow from 'components/NavigationStickyBottomRow';
 import {
   OptionPartialMatch,
   OptionMinTokens,
@@ -19,14 +19,11 @@ type Props = {
 export default function PageOptions(props: Props) {
   const { step } = props;
   const { workflowId } = useActiveWorkflow(step);
-  const { goToNextStep, goToPrevStep } = useSteps(step);
 
   const { modelSelected, setModelSelected } = useSavedSettings();
 
   const onModelSet = (model: string) =>
     setModelSelected(model as ModelSelected);
-  const onNextButtonClick = () => goToNextStep();
-  const onBackButtonClick = () => goToPrevStep();
 
   return (
     <Flex column style={{ width: '100%' }}>
@@ -75,14 +72,7 @@ export default function PageOptions(props: Props) {
         </Flex>
         <SkipSettingsPanel />
       </Flex>
-      <StickyBottomRow justify="space-between">
-        <Button size="large" type="secondary" onClick={onBackButtonClick}>
-          Back
-        </Button>
-        <Button size="large" type="primary" onClick={onNextButtonClick}>
-          Next
-        </Button>
-      </StickyBottomRow>
+      <NavigationStickyBottomRow step={step} />
     </Flex>
   );
 }

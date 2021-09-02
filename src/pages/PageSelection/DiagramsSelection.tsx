@@ -42,6 +42,7 @@ export default function DiagramsSelection(props: SelectionProps): JSX.Element {
   const fetchUserSelectedDiagrams = () => {
     const isParticularDiagramEdited =
       diagrams && diagrams.type === 'files' && diagrams.endpoint === 'retrieve';
+    if (!isParticularDiagramEdited) setDiagramsToContextualizeIds([]);
     if (isParticularDiagramEdited && !diagramsToContextualizeLoaded) {
       const diagramsIds = diagrams?.filter?.map(
         (diagram: { id: number }) => diagram.id
@@ -52,11 +53,11 @@ export default function DiagramsSelection(props: SelectionProps): JSX.Element {
 
   useEffect(() => {
     fetchUserSelectedDiagrams();
-    // we want this to happen only on mount
+    // we want this to happen only on mount or on diagrams change
     // otherwise the first selected file will be treated as "edited" one
     // and be shifted to beginning of the page for no reason
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [diagrams]);
 
   useEffect(() => {
     if (

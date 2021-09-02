@@ -26,6 +26,7 @@ export default function ColumnFileActions({ file }: Props): JSX.Element {
 
   const jobFinished = parsingJobStatus === 'Completed';
   const isFileDisabled = !file || Boolean(didFileFail);
+  const isButtonDisabled = !jobFinished || Boolean(didFileFail);
 
   const onTooltipShow = () => {
     if (jobFinished) {
@@ -60,14 +61,18 @@ export default function ColumnFileActions({ file }: Props): JSX.Element {
           variant="ghost"
           $square
           onClick={onFileViewClick}
-          disabled={!jobFinished || Boolean(didFileFail)}
+          disabled={isButtonDisabled}
+          style={{ marginRight: '2px' }}
         />
       </Tooltip>
-      <Dropdown content={<MenuSingle fileId={file.id} />}>
+      <Dropdown
+        content={<MenuSingle file={file} />}
+        disabled={isButtonDisabled}
+      >
         <Button
           icon="MoreOverflowEllipsisHorizontal"
           variant="ghost"
-          disabled={isFileDisabled}
+          disabled={isButtonDisabled || isFileDisabled}
         />
       </Dropdown>
     </Flex>

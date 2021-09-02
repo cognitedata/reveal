@@ -8,7 +8,7 @@ import {
   getActiveWorkflowSteps,
 } from 'modules/workflows';
 import { useActiveWorkflow } from 'hooks';
-import routesMap from 'routes/routesMap';
+import { routesMap } from 'routes/routesMap';
 import { PNID_METRICS, trackUsage } from 'utils/Metrics';
 
 export const useSteps = (step?: WorkflowStep) => {

@@ -18,10 +18,11 @@ import { SelectionFilter } from './types';
 
 type ResultsTableProps = {
   selectionFilter: SelectionFilter;
+  showLoadingSkeleton: boolean;
 };
 
 export default function ResultsTable(props: ResultsTableProps): JSX.Element {
-  const { selectionFilter } = props;
+  const { selectionFilter, showLoadingSkeleton } = props;
   const history = useHistory();
   const dispatch = useDispatch();
 
@@ -124,10 +125,10 @@ export default function ResultsTable(props: ResultsTableProps): JSX.Element {
   };
 
   useEffect(() => {
-    const newColumns = getColumns(workflowId);
+    const newColumns = getColumns(workflowId, showLoadingSkeleton);
     setColumns(newColumns);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [showLoadingSkeleton]);
 
   useEffect(() => {
     dispatch(selectDiagrams({ workflowId, diagramIds: selectedDiagramsIds }));

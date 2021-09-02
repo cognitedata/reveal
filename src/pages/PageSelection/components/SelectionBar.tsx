@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import omit from 'lodash/omit';
@@ -144,6 +144,11 @@ export default function SelectionBar(props: Props): JSX.Element {
     updateFilter(newFilter);
   };
 
+  useEffect(() => {
+    setShowSelected(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filter]);
+
   const selected = resourceCounts[type] ?? 0;
   const results = count ?? <Spin size="small" />;
 
@@ -202,6 +207,8 @@ export default function SelectionBar(props: Props): JSX.Element {
           onDataSetsChange={onDataSetSelected}
           onLabelsChange={onLabelsSelected}
           searchQuery={filter?.search?.name}
+          mimeType={filter.filter?.mimeType}
+          onMimeTypeChange={onMimeTypeSelected}
           onQueryClear={onNameClear}
           onClearAll={() => updateFilter({ filter: {}, search: undefined })}
         />

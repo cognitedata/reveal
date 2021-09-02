@@ -4,7 +4,7 @@ import { FileInfo } from '@cognite/sdk';
 import { ApiStatusCount } from 'modules/contextualization/pnidParsing';
 import { UploadJobState } from 'modules/contextualization/uploadJobs';
 import { stringCompare } from 'modules/contextualization/utils';
-import { Flex } from 'components/Common';
+import { Flex, LoadingSkeleton } from 'components/Common';
 import ReviewStatus from 'components/ReviewStatus';
 import InteractiveIcon from 'components/InteractiveIcon';
 import ColumnProgress from './ColumnProgress';
@@ -18,7 +18,10 @@ export interface AdjustedFileInfo extends FileInfo {
   approval?: boolean;
   svg?: boolean;
 }
-export const getColumns: any = (workflowId: number) => {
+export const getColumns: any = (
+  workflowId: number,
+  showLoadingSkeleton: boolean
+) => {
   return [
     {
       title: 'Name',
@@ -42,13 +45,19 @@ export const getColumns: any = (workflowId: number) => {
       sorter: (a: AdjustedFileInfo, b: AdjustedFileInfo) =>
         stringCompare(a?.status, b?.status),
       render: (_: any, file: any) => (
-        <ColumnProgress file={file} workflowId={workflowId} />
+        <LoadingSkeleton loading={showLoadingSkeleton}>
+          <ColumnProgress file={file} workflowId={workflowId} />
+        </LoadingSkeleton>
       ),
     },
     {
       title: 'Status',
       width: 150,
-      render: (_: any, file: FileInfo) => <ReviewStatus file={file} />,
+      render: (_: any, file: FileInfo) => (
+        <LoadingSkeleton loading={showLoadingSkeleton}>
+          <ReviewStatus file={file} />
+        </LoadingSkeleton>
+      ),
     },
     {
       title: 'Linked to',
@@ -57,7 +66,9 @@ export const getColumns: any = (workflowId: number) => {
       sorter: (a: AdjustedFileInfo, b: AdjustedFileInfo) =>
         (a?.links ?? 0) - (b?.links ?? 0),
       render: (_: any, file: any) => (
-        <ColumnLinkedTo fileId={file.id} workflowId={workflowId} />
+        <LoadingSkeleton loading={showLoadingSkeleton}>
+          <ColumnLinkedTo fileId={file.id} workflowId={workflowId} />
+        </LoadingSkeleton>
       ),
     },
     {
@@ -66,7 +77,11 @@ export const getColumns: any = (workflowId: number) => {
       width: 120,
       sorter: (a: AdjustedFileInfo, b: AdjustedFileInfo) =>
         stringCompare(String(a?.svg), String(b?.svg)),
-      render: () => <span>N/A</span>,
+      render: () => (
+        <LoadingSkeleton loading={showLoadingSkeleton}>
+          <span>N/A</span>
+        </LoadingSkeleton>
+      ),
     },
     {
       title: '',

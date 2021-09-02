@@ -12,12 +12,14 @@ type Props = {
 export const StatusSelect = (props: Props) => {
   const { statusType, setStatusType } = props;
 
-  const options = statusData.map(
-    (status: StatusData): OptionType<React.ReactText> => ({
-      label: status.label,
-      value: status.type,
-    })
-  );
+  const options = statusData
+    .filter((status: StatusData) => status.type !== 'idle')
+    .map(
+      (status: StatusData): OptionType<React.ReactText> => ({
+        label: status.label,
+        value: status.type,
+      })
+    );
 
   const { currentSelection, setMultiSelection } = useSelectFilter<StatusType>(
     true,

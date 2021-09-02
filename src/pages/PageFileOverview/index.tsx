@@ -78,8 +78,6 @@ export default function PageFileOverview(props: Props) {
   };
   const { counts } = useRelatedResourceCounts(resourceDetails);
 
-  const onBackButtonClick = () => goToPrevStep();
-
   useEffect(() => {
     dispatch(retrieve({ ids: [{ id: fileIdNumber }] }));
   }, [dispatch, fileIdNumber]);
@@ -95,7 +93,7 @@ export default function PageFileOverview(props: Props) {
       )}
       <TitleRowWrapper>
         <Flex align justify>
-          <Button icon="ArrowBack" onClick={onBackButtonClick}>
+          <Button icon="ArrowBack" onClick={() => goToPrevStep()}>
             Back
           </Button>
           <Divider type="vertical" style={{ height: '36px' }} />
