@@ -20,12 +20,14 @@ export const useDeleteComment: (props: Props) => Promise<any> = ({
   return axios
     .post<{ items: CommentResponse[] }>(
       `${serviceUrl}/comment/delete`,
-      [
-        {
-          id,
-          target,
-        },
-      ],
+      {
+        items: [
+          {
+            id,
+            target,
+          },
+        ],
+      },
       { headers }
     )
     .then((result) => {

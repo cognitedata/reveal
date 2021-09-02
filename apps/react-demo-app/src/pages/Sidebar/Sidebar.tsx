@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Drawer } from '@cognite/cogs.js';
 import { useHistory } from 'react-router-dom';
-import { LogoutButton } from '@cognite/react-container';
+import { LogoutButton, useAuthContext } from '@cognite/react-container';
 
 import { Footer } from './Footer';
 import {
@@ -17,6 +17,8 @@ interface Props {
 
 export const Sidebar: React.FC<Props> = ({ isOverlayOpened, onCancel }) => {
   const history = useHistory();
+  const { authState } = useAuthContext();
+
   const handleClick = () => {
     history.push('/logout');
   };
@@ -30,6 +32,11 @@ export const Sidebar: React.FC<Props> = ({ isOverlayOpened, onCancel }) => {
     >
       <SettingsContainer>
         <SettingsContent>Here you can put some settings!</SettingsContent>
+        <SettingsContent>
+          <strong>Current user:</strong>
+        </SettingsContent>
+        <SettingsContent>{authState?.email}</SettingsContent>
+        <SettingsContent>{authState?.username}</SettingsContent>
         <LogOutButtonContainer>
           <LogoutButton handleClick={handleClick} />
         </LogOutButtonContainer>

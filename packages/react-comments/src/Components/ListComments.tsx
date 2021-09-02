@@ -1,31 +1,28 @@
 import React from 'react';
-import type { CommentTarget } from '@cognite/comment-service-types';
 import { Comment, Conversation } from '@cognite/cogs.js';
-import { getAuthHeaders } from '@cognite/react-container';
+import { getAuthHeaders, useAuthContext } from '@cognite/react-container';
 
 import {
   useFetchComments,
   useCommentCreateMutate,
   useCommentDeleteMutate,
+  FetchCommentProps,
 } from '../queries';
 
-export interface ListCommentsProps {
-  project: string;
-  serviceUrl: string;
-  target: CommentTarget;
-  userId: string;
-}
-export const ListComments: React.FC<ListCommentsProps> = ({
-  project,
+export type ListCommentsProps = FetchCommentProps;
+
+export const ListComments: React.FC<FetchCommentProps> = ({
   serviceUrl,
+  scope,
   target,
-  userId,
 }) => {
   const [message, setMessage] = React.useState('');
   const headers = getAuthHeaders({ useIdToken: true });
-  const fullServiceUrl = `${serviceUrl}/${project}`;
+  const { authState } = useAuthContext();
+  const fullServiceUrl = `${serviceUrl}/${authState?.project}`;
   const { mutate } = useCommentCreateMutate({
     target,
+    scope: scope ? scope[0] : undefined, // always assume first scope is 'home' app (for legacy)
     serviceUrl: fullServiceUrl,
     headers,
   });
@@ -37,6 +34,7 @@ export const ListComments: React.FC<ListCommentsProps> = ({
 
   const { data: comments, isError } = useFetchComments({
     target,
+    scope,
     serviceUrl: fullServiceUrl,
   });
 
@@ -48,7 +46,7 @@ export const ListComments: React.FC<ListCommentsProps> = ({
     deleteComment(id);
   };
 
-  const isLoading = !userId || !headers;
+  const isLoading = !authState?.id || !headers;
 
   if (isLoading) {
     return <span>Loading...</span>;
@@ -64,13 +62,13 @@ export const ListComments: React.FC<ListCommentsProps> = ({
     <Conversation
       reverseOrder
       conversation={comments || []}
-      user={userId}
+      user={authState?.id || ''}
       onRemoveComment={handleRemoveComment}
       input={
         <Comment
           message={message}
           setMessage={setMessage}
-          avatar={userId}
+          avatar={authState?.email}
           onPostMessage={handleCreateMessage}
         />
       }

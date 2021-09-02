@@ -71,7 +71,6 @@ const generateBaseUrls = (cluster: string, prod = false) => {
       }
 
       return {
-        aadApplicationId: '245a8a64-4142-4226-86fa-63d590de14c9', // bluefield staging
         appsApiBaseUrl: prod
           ? `https://apps-api.${cluster}.cognite.ai`
           : `https://apps-api.staging.${cluster}.cognite.ai`,

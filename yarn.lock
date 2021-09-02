@@ -1489,10 +1489,10 @@
     tippy.js "6.2.0"
     ts-dedent "^2.2.0"
 
-"@cognite/comment-service-types@^0.0.2":
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/@cognite/comment-service-types/-/comment-service-types-0.0.2.tgz#285445e73f4425fb35123d5acd694003faf6c1f8"
-  integrity sha512-i5vXx/YB5Ik0u3HJrcvx63MDEQnn+6Oomnc7pxkjgiS/ph4iad+sL5tNzpSYG2+Ad67W8KnI9U8W4kCrB+ke4Q==
+"@cognite/comment-service-types@^0.0.5":
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/@cognite/comment-service-types/-/comment-service-types-0.0.5.tgz#b505b363ee4de3fb80869f270f8e9f2f3fde924c"
+  integrity sha512-0dJeDQGiorHRrcYZdbNADkrgUvOSA30mQn1eDB04n1Tma0sF60VdE4wdg4Q3GzEgHHaQuzqK9BhSIP4UHqt/dQ==
 
 "@cognite/eslint-config@link:packages/eslint-config":
   version "0.0.0"

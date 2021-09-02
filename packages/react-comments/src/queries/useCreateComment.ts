@@ -12,11 +12,13 @@ import { commentKeys } from './queryKeys';
 interface Props {
   comment: string;
   serviceUrl: string;
+  scope?: string;
   headers: AuthHeaders;
   target: CommentTarget;
 }
 export const useCreateComment: (props: Props) => Promise<any> = ({
   target,
+  scope,
   comment,
   headers,
   serviceUrl,
@@ -26,6 +28,7 @@ export const useCreateComment: (props: Props) => Promise<any> = ({
       `${serviceUrl}/comment`,
       {
         target,
+        scope,
         comment,
       },
       { headers }
@@ -38,9 +41,11 @@ export const useCreateComment: (props: Props) => Promise<any> = ({
 export function useCommentCreateMutate({
   target,
   headers,
+  scope,
   serviceUrl,
 }: {
   serviceUrl: string;
+  scope?: string;
   headers: AuthHeaders;
   target: CommentTarget;
 }) {
@@ -50,6 +55,7 @@ export function useCommentCreateMutate({
     (comment: Comment['comment']) =>
       useCreateComment({
         target,
+        scope,
         comment,
         headers,
         serviceUrl,

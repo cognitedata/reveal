@@ -1,7 +1,8 @@
 export default {
   useAuthContext: () => {
     return {
-      authState: { project: 'test', email: 'test-email' },
+      authState: { id: 'test-id', project: 'test', email: 'test-email' },
     };
   },
+  getAuthHeaders: () => ({}),
 };

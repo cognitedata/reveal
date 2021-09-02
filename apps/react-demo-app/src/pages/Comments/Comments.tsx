@@ -77,10 +77,9 @@ export const CommentsPage: React.FC<Props> = ({ data, error }) => {
         <Drawer
           visible={!!target}
           target={target}
-          userId={authState.id || ''}
-          project={authState.project || ''}
           handleClose={handleClose}
           serviceUrl={sidecar.commentServiceBaseUrl}
+          scope={['fas-demo']}
         />
       )}
 

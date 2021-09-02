@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@cognite/cogs.js": "^3.32.2",
-    "@cognite/comment-service-types": "^0.0.2",
+    "@cognite/comment-service-types": "^0.0.5",
     "@cognite/eslint-config": "link:packages/eslint-config",
     "@cognite/eslint-plugin": "link:packages/eslint-plugin",
     "@cognite/gcs-browser-upload": "^1.1.1",

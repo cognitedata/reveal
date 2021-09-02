@@ -6,8 +6,7 @@ export const normalizeComments = (comments: CommentResponse[]): MessageType[] =>
 
 export const normalizeComment = (comment: CommentResponse): MessageType => {
   return {
-    // @ts-expect-error id will be there soon:
-    id: comment.id,
+    id: comment.id || '',
     // eslint-disable-next-line no-underscore-dangle
     user: comment._owner || 'Unknown',
     timestamp: Number(new Date(comment.lastUpdatedTime || '')),

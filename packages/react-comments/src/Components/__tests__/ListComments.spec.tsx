@@ -1,6 +1,6 @@
 import { screen, waitFor } from '@testing-library/react';
 import { testRenderer } from '__test_utils__/testRenderer';
-// import mocks from '@cognite/react-container/dist/mocks';
+import { useAuthContext, getAuthHeaders } from '@cognite/react-container';
 
 import { ListComments } from '../ListComments';
 import {
@@ -9,12 +9,20 @@ import {
   testProject,
 } from '../../__test_utils__/listComments';
 
+// need to figure out how to export this with BAZEL from react-container
+const mocks = {
+  useAuthContext: () => {
+    return {
+      authState: { id: 'test-id', project: testProject, email: 'test-email' },
+    };
+  },
+  getAuthHeaders: () => ({}),
+};
+
 jest.mock('@cognite/react-container', () => {
   return {
-    useAuthContext: () => ({
-      authState: { project: testProject, email: 'test-email' },
-    }),
-    getAuthHeaders: () => ({}),
+    useAuthContext: jest.fn(),
+    getAuthHeaders: jest.fn(),
   };
 });
 
@@ -23,6 +31,8 @@ describe('ListComments', () => {
   afterAll(() => mockListComments.close());
 
   it('should load without user id', async () => {
+    (useAuthContext as jest.Mock).mockImplementation(mocks.useAuthContext);
+
     testRenderer(ListComments, {
       target: {
         id: 'test',
@@ -36,6 +46,9 @@ describe('ListComments', () => {
   });
 
   it('should be ok in good case', async () => {
+    (useAuthContext as jest.Mock).mockImplementation(mocks.useAuthContext);
+    (getAuthHeaders as jest.Mock).mockImplementation(mocks.getAuthHeaders);
+
     testRenderer(ListComments, {
       target: {
         id: 'test',

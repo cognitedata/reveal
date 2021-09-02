@@ -3,6 +3,7 @@ import { MessageType } from '@cognite/cogs.js';
 
 export const getComment = (): CommentResponse => {
   return {
+    id: 'test-id',
     _owner: 'test-_owner',
     comment: 'test-comment',
     target: { id: 'test-id', targetType: 'test-target' },
