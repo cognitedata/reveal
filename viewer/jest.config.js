@@ -25,7 +25,7 @@ module.exports = () => {
       __webpack_public_path__: '',
       // process.env globals are in setupJest
       'ts-jest': {
-        tsconfig: path.resolve(__dirname, './tsconfig.json')
+        tsconfig: path.resolve(__dirname, './tsconfig.common.json')
       }
     },
     coverageDirectory: './coverage',
