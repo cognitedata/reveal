@@ -1,0 +1,14 @@
+{
+  "name": "@reveal/tools",
+  "private": true,
+  "main": "index.ts",
+  "scripts": {
+    "start": "yarn ws:start",
+    "test": "yarn ws:test --config ./../../jest.config.js",
+    "lint": "yarn ws:lint"
+  },
+  "dependencies": {
+    "@reveal/camera-manager": "workspace:*",
+    "@reveal/core": "workspace:*"
+  }
+}

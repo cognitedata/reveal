@@ -3,8 +3,8 @@
  */
 
 import * as THREE from 'three';
-import { Cognite3DViewer } from '../public/migration/Cognite3DViewer';
-import { DisposedDelegate } from '../public/types';
+import { Cognite3DViewer } from '@reveal/core';
+import { DisposedDelegate } from './types';
 
 import { Cognite3DViewerToolBase } from './Cognite3DViewerToolBase';
 

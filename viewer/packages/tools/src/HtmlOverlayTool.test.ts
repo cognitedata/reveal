@@ -5,10 +5,11 @@
 import * as THREE from 'three';
 
 import { HtmlOverlayOptions, HtmlOverlayTool } from './HtmlOverlayTool';
-import { Cognite3DViewer } from '../public/migration/Cognite3DViewer';
+
+import { Cognite3DViewer } from '@reveal/core';
 import { CogniteClient } from '@cognite/sdk';
-import { SectorCuller } from '../internals';
-import { createGlContext } from '../__testutilities__/createGlContext';
+import { SectorCuller } from '@reveal/core/internals';
+import { createGlContext } from '@reveal/core/__testutilities__';
 
 describe('HtmlOverlayTool', () => {
   let canvasContainer: HTMLElement;
