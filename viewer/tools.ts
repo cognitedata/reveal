@@ -6,4 +6,4 @@
  * @module @cognite/reveal/tools
  */
 
-export * from './core/src/tools';
+export * from './packages/tools';
