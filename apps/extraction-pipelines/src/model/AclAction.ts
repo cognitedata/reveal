@@ -5,7 +5,8 @@ export interface AclAction {
 
 export const INTEGRATIONS_ACL: 'integrationsAcl' = 'integrationsAcl';
 export const DATASETS_ACL: 'datasetsAcl' = 'datasetsAcl';
-export const EXTPIPES_ACL: 'extpipesAcl' = 'extpipesAcl';
+export const EXTRACTION_PIPELINES_ACL: 'extractionPipelinesAcl' =
+  'extractionPipelinesAcl';
 
 const aclAction = (
   acl: string,
@@ -18,9 +19,9 @@ const aclAction = (
 export const EXTPIPES_READS = [
   aclAction(DATASETS_ACL, 'READ'),
   aclAction(INTEGRATIONS_ACL, 'READ'),
-  aclAction(EXTPIPES_ACL, 'READ'),
+  aclAction(EXTRACTION_PIPELINES_ACL, 'READ'),
 ];
 export const EXTPIPES_WRITES = [
   aclAction(INTEGRATIONS_ACL, 'WRITE'),
-  aclAction(EXTPIPES_ACL, 'WRITE'),
+  aclAction(EXTRACTION_PIPELINES_ACL, 'WRITE'),
 ];

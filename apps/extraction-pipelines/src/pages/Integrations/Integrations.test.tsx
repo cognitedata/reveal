@@ -102,7 +102,9 @@ describe('Integrations', () => {
         CDF_ENV_GREENFIELD
       );
       render(<Integrations />, { wrapper });
-      const errorMessage = await screen.findByText(`extpipesAcl:READ`);
+      const errorMessage = await screen.findByText(
+        `extractionPipelinesAcl:READ`
+      );
       expect(errorMessage).toBeInTheDocument();
     });
   });
