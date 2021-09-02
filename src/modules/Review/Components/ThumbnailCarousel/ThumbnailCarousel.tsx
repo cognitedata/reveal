@@ -7,6 +7,7 @@ import SwiperCore, {
   Mousewheel,
   Virtual,
   Navigation,
+  Keyboard,
 } from 'swiper/core';
 import styled from 'styled-components';
 import { getIdfromUrl } from 'src/utils/tenancy';
@@ -21,7 +22,7 @@ import { FileInfo } from '@cognite/cdf-sdk-singleton';
 // Import Swiper styles
 import swiperStyles from 'swiper/swiper-bundle.css';
 
-SwiperCore.use([Navigation, Mousewheel, Pagination, Virtual]);
+SwiperCore.use([Navigation, Mousewheel, Pagination, Virtual, Keyboard]);
 
 export const ThumbnailCarousel = (props: {
   prev?: string;
@@ -34,8 +35,6 @@ export const ThumbnailCarousel = (props: {
   const [currentSlideIndex, setCurrentSlideIndex] = useState<number>(
     files.findIndex((item: any) => item.id === initialSlide)
   );
-
-  const thumbnailHeight = 100;
 
   useEffect(() => {
     swiperStyles.use();
@@ -64,7 +63,6 @@ export const ThumbnailCarousel = (props: {
           key={`${index}-navButton`}
           focusedid={`${currentSlide}`}
           currentid={`${data.id}`}
-          thumbnailheight={thumbnailHeight}
           onClick={() => handleOnClick(data.id)}
           aria-label={`${index} icon`}
         >
@@ -77,7 +75,33 @@ export const ThumbnailCarousel = (props: {
     <CarouselContainer id="verticalCarouselContainer">
       <Swiper
         className="carouselView"
-        slidesPerView={Math.min(files.length, 10)} // "auto" does not work with virtual
+        slidesPerView={1}
+        spaceBetween={4}
+        keyboard={{
+          enabled: true,
+        }}
+        breakpoints={{
+          '820': {
+            slidesPerView: 2,
+            spaceBetween: 4,
+          },
+          '990': {
+            slidesPerView: 3,
+            spaceBetween: 4,
+          },
+          '1160': {
+            slidesPerView: 4,
+            spaceBetween: 4,
+          },
+          '1500': {
+            slidesPerView: 6,
+            spaceBetween: 4,
+          },
+          '1840': {
+            slidesPerView: 8,
+            spaceBetween: 4,
+          },
+        }}
         initialSlide={currentSlideIndex}
         navigation
         freeMode
@@ -87,11 +111,12 @@ export const ThumbnailCarousel = (props: {
           releaseOnEdges: true,
         }}
         grabCursor
+        centeredSlides
         virtual={
           files.length > 10
             ? {
-                addSlidesBefore: 5,
-                addSlidesAfter: 5,
+                addSlidesBefore: 8,
+                addSlidesAfter: 8,
               }
             : false
         }
@@ -110,21 +135,20 @@ interface OnFocusProp {
   // NOTE: need to be lowercase, otherwise warnings
   focusedid: string;
   currentid: string;
-  thumbnailheight: number;
   color?: string;
   background?: string;
   disablestyle?: string;
 }
 
 const ThumbnailContainer = styled(Button)<OnFocusProp>`
-  height: ${(props) => `${props.thumbnailheight}px`};
-  width: 150px;
+  height: 100%;
+  width: 100%;
   padding: 0 !important;
   border: ${(props) =>
     props.focusedid === props.currentid ? '5px solid #4A67FB' : 'none'};
   ${(props) => props.focusedid === props.currentid && 'background: #4A67FB'};
   border-radius: 4px;
-  box-sizing: content-box;
+  box-sizing: border-box;
   opacity: ${(props) => (props.focusedid === props.currentid ? '1' : '0.6')};
   img {
     height: 100%;
@@ -142,11 +166,4 @@ const CarouselContainer = styled.div`
   display: flex;
   justify-content: center;
   border: 1px solid #d9d9d9;
-
-  .swiper-slide {
-    width: 160px !important;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
 `;
