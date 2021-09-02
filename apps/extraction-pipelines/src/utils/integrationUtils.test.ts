@@ -23,8 +23,7 @@ describe('Integration utils', () => {
       expected: RunStatusUI.SUCCESS,
     },
     {
-      desc:
-        'Should return SUCCESS when last succsess is the most recent - days',
+      desc: 'Should return SUCCESS when last success is the most recent - days',
       statuses: {
         lastSuccess: moment().valueOf(),
         lastFailure: moment().subtract(2, 'days').valueOf(),
@@ -33,7 +32,7 @@ describe('Integration utils', () => {
     },
     {
       desc:
-        'Should return SUCCESS when last succsess is the most recent - milliseconds',
+        'Should return SUCCESS when last success is the most recent - milliseconds',
       statuses: {
         lastSuccess: moment().valueOf(),
         lastFailure: moment().subtract(2, 'milliseconds').valueOf(),

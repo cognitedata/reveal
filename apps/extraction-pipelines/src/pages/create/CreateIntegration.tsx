@@ -30,7 +30,6 @@ import ExtractorDownloadsLink from 'components/links/ExtractorDownloadsLink';
 import styled from 'styled-components';
 import { Collapse, Colors } from '@cognite/cogs.js';
 import { CountSpan, PriSecBtnWrapper } from 'styles/StyledWrapper';
-import { DataSetModel } from 'model/DataSetModel';
 import {
   descriptionRule,
   documentationRule,
@@ -123,10 +122,6 @@ const ADD_MORE_INFO_TEXT_1: Readonly<string> = `Add more information about the $
 const ADD_MORE_INFO_TEXT_2: Readonly<string> = `You may add this information later on the ${EXTRACTION_PIPELINE} overview page.`;
 const ADD_MORE_INFO_LINK: Readonly<string> = `Read about registering an ${EXTRACTION_PIPELINE_LOWER}`;
 export const NOT_LINKED: Readonly<string> = `${EXTRACTION_PIPELINE} will not be linked to data set. You can link your ${EXTRACTION_PIPELINE_LOWER} to a data set using edit later.`;
-
-const linkDataSetText = (dataSet: DataSetModel): Readonly<string> => {
-  return `${EXTRACTION_PIPELINE} will be linked to data set: ${dataSet.name} (${dataSet.id})`;
-};
 
 export interface AddIntegrationFormInput
   extends ScheduleFormInput,
@@ -264,17 +259,6 @@ const CreateIntegration = () => {
         >
           <InfoIcon />
           {dataSetLoadError}
-        </InfoMessage>
-      )}
-      {data && (
-        <InfoMessage
-          id="dataset-data"
-          className="data-set-info"
-          role="region"
-          aria-live="polite"
-        >
-          <InfoIcon />
-          {linkDataSetText(data[0])}
         </InfoMessage>
       )}
       {!dataSetId && (
