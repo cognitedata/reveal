@@ -4,9 +4,9 @@
 
 import * as THREE from 'three';
 
-import { SectorMetadata, WantedSector } from '../types';
+import { WantedSector } from '../types';
+import { SectorMetadata, CadModelMetadata } from '@reveal/cad-parsers';
 import { coverageShaders } from '../../rendering/shaders';
-import { CadModelMetadata } from '../../CadModelMetadata';
 import { WebGLRendererStateHelper } from '../../../../utilities/WebGLRendererStateHelper';
 import { OccludingGeometryProvider } from './OccludingGeometryProvider';
 

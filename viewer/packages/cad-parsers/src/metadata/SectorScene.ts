@@ -3,7 +3,7 @@
  */
 
 import * as THREE from 'three';
-import { traverseDepthFirst } from '../../../utilities/objectTraversal';
+import { traverseDepthFirst } from './objectTraversal';
 import { SectorMetadata, SectorScene } from './types';
 import skmeans from 'skmeans';
 

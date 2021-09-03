@@ -4,12 +4,13 @@
 
 import * as THREE from 'three';
 
-import { SectorGeometry, SectorScene } from './sector/types';
+import { SectorScene, CadModelMetadata } from '@reveal/cad-parsers';
+
+import { SectorGeometry } from './sector/types';
 import { InstancedMeshFile, SectorQuads } from './rendering/types';
 import { RootSectorNode } from './sector/RootSectorNode';
 import { RenderMode } from './rendering/RenderMode';
 import { CadMaterialManager } from './CadMaterialManager';
-import { CadModelMetadata } from './CadModelMetadata';
 import { suggestCameraConfig } from './cameraconfig';
 
 import { NodeTransformProvider } from './styling/NodeTransformProvider';
@@ -93,7 +94,7 @@ export class CadNode extends THREE.Object3D {
     return this._cadModelMetadata;
   }
 
-  get sectorScene() {
+  get sectorScene(): SectorScene {
     return this._sectorScene;
   }
 

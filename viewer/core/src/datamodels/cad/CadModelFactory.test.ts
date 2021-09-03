@@ -8,7 +8,7 @@ import { createCadModelMetadata } from '../../__testutilities__/createCadModelMe
 import { generateSectorTree } from '../../__testutilities__/createSectorMetadata';
 import { CadMaterialManager } from './CadMaterialManager';
 import { CadModelFactory } from './CadModelFactory';
-import { CadModelMetadata } from './CadModelMetadata';
+import { CadModelMetadata } from '@reveal/cad-parsers';
 
 describe('CadModelFactory', () => {
   let materialManager: CadMaterialManager;

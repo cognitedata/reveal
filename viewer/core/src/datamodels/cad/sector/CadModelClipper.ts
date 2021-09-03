@@ -4,9 +4,7 @@
 
 import * as THREE from 'three';
 
-import { CadModelMetadata, SectorMetadata } from '..';
-import { traverseDepthFirst } from '../../../utilities/objectTraversal';
-import { SectorSceneImpl } from './SectorScene';
+import { traverseDepthFirst, SectorSceneImpl, CadModelMetadata, SectorMetadata } from '@reveal/cad-parsers';
 
 export class CadModelClipper {
   private readonly _geometryClipBox: THREE.Box3;

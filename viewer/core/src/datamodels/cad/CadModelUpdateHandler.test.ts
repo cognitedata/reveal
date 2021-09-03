@@ -3,7 +3,7 @@
  */
 
 import { SectorCuller } from '../../internals';
-import { BinaryFileProvider } from '../../utilities/networking/types';
+import { BinaryFileProvider } from '@reveal/cad-parsers';
 import { CadModelUpdateHandler } from './CadModelUpdateHandler';
 import { CadMaterialManager } from './CadMaterialManager';
 import { CachedRepository } from './sector/CachedRepository';

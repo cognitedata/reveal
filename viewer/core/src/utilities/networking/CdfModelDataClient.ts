@@ -3,10 +3,9 @@
  */
 import * as THREE from 'three';
 import { CogniteClient, ItemsResponse } from '@cognite/sdk';
+import { BlobOutputMetadata, ModelDataClient, File3dFormat, CameraConfiguration } from '@reveal/cad-parsers';
 
-import { BlobOutputMetadata, ModelDataClient } from './types';
 import { Model3DOutputList } from './Model3DOutputList';
-import { File3dFormat, CameraConfiguration } from '../types';
 import { applyDefaultModelTransformation } from './applyDefaultModelTransformation';
 import { getSdkApplicationId } from './utilities';
 

@@ -6,7 +6,6 @@ export { RevealManager } from './public/RevealManager';
 export { createLocalRevealManager, createCdfRevealManager } from './public/createRevealManager';
 
 // CAD
-export { SectorMetadata } from './datamodels/cad/sector/types';
 export { CadLoadingHints } from './datamodels/cad/CadLoadingHints';
 export { intersectCadNodes } from './datamodels/cad/picking';
 export { DetermineSectorsInput } from './datamodels/cad/sector/culling/types';
@@ -17,10 +16,11 @@ export { CadModelSectorLoadStatistics } from './datamodels/cad/CadModelSectorLoa
 export { NodeAppearance, DefaultNodeAppearance } from './datamodels/cad/NodeAppearance';
 export { NodeAppearanceProvider } from './datamodels/cad/styling/NodeAppearanceProvider';
 
-export { CadModelMetadata } from './datamodels/cad/CadModelMetadata';
+export { CadModelMetadata, SectorMetadata } from '@reveal/cad-parsers';
 export { CadNode, SuggestedCameraConfig } from './datamodels/cad/CadNode';
 
 export { WantedSector } from './datamodels/cad/sector/types';
+
 export { LevelOfDetail } from './datamodels/cad/sector/LevelOfDetail';
 
 // Point cloud

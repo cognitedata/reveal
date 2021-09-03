@@ -4,8 +4,8 @@
 
 import * as THREE from 'three';
 
-import { SectorMetadata, SectorMetadataFacesFileSection, SectorScene } from '../sector/types';
-import { SectorSceneImpl } from '../sector/SectorScene';
+import { SectorMetadata, SectorMetadataFacesFileSection, SectorScene } from '../types';
+import { SectorSceneImpl } from '../SectorScene';
 
 export interface CadSectorMetadataV8 {
   readonly id: number;

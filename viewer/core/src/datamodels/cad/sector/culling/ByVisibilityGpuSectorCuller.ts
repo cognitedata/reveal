@@ -7,6 +7,8 @@
 // WebGL.
 import * as THREE from 'three';
 
+import { SectorMetadata, CadModelMetadata } from '@reveal/cad-parsers';
+
 import {
   GpuOrderSectorsByVisibilityCoverage,
   OrderSectorsByVisibilityCoverage
@@ -22,8 +24,7 @@ import {
   SectorLoadingSpent
 } from './types';
 import { LevelOfDetail } from '../LevelOfDetail';
-import { CadModelMetadata } from '../../CadModelMetadata';
-import { SectorMetadata, WantedSector } from '../types';
+import { WantedSector } from '../types';
 import { CadModelSectorBudget } from '../../CadModelSectorBudget';
 import { OccludingGeometryProvider } from './OccludingGeometryProvider';
 import { getBox3CornerPoints } from '../../../../utilities/three';

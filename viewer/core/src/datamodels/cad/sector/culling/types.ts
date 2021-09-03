@@ -2,9 +2,10 @@
  * Copyright 2021 Cognite AS
  */
 import * as THREE from 'three';
+import { SectorMetadata, CadModelMetadata } from '@reveal/cad-parsers';
+
 import { LevelOfDetail } from '../LevelOfDetail';
-import { SectorMetadata, WantedSector } from '../types';
-import { CadModelMetadata } from '../../CadModelMetadata';
+import { WantedSector } from '../types';
 import { CadLoadingHints } from '../../CadLoadingHints';
 import { CadModelSectorBudget } from '../../CadModelSectorBudget';
 

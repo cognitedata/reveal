@@ -13,7 +13,7 @@ import { ParseCtmResult, ParseSectorResult } from '@cognite/reveal-parser-worker
 import { TriangleMesh, InstancedMeshFile, InstancedMesh } from '../rendering/types';
 import { assertNever, createOffsetsArray } from '../../../utilities';
 
-import { BinaryFileProvider } from '../../../utilities/networking/types';
+import { BinaryFileProvider } from '@reveal/cad-parsers';
 import { groupMeshesByNumber } from './groupMeshesByNumber';
 import { MostFrequentlyUsedCache } from '../../../utilities/MostFrequentlyUsedCache';
 import { trackError } from '../../../utilities/metrics';
