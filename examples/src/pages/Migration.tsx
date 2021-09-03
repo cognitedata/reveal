@@ -18,7 +18,7 @@ import {
   TreeIndexNodeCollection,
   IndexSet
 } from '@cognite/reveal';
-import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, AxisViewTool } from '@cognite/reveal/tools';
+import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, AxisViewTool, HtmlOverlayTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
 import { CadNode } from '@cognite/reveal/internals';
 
@@ -253,7 +253,7 @@ export function Migration() {
           const cadNode: CadNode = (m as any).cadNode;
           cadNode.renderMode = renderMode;
         });
-        viewer.forceRerender();
+        viewer.requestRedraw();
       });
       renderGui.add(guiState, 'antiAliasing',
         [
@@ -486,6 +486,7 @@ export function Migration() {
 
       assetExplode.add(explodeActions, 'reset').name('Reset');
 
+      const overlayTool = new HtmlOverlayTool(viewer);
       new AxisViewTool(viewer);
       viewer.on('click', async event => {
         const { offsetX, offsetY } = event;
@@ -498,6 +499,11 @@ export function Migration() {
               {
                 const { treeIndex, point, model } = intersection;
                 console.log(`Clicked node with treeIndex ${treeIndex} at`, point);
+                const overlayHtml = document.createElement('div');
+                overlayHtml.innerText = `Node ${treeIndex}`;
+                overlayHtml.style.cssText = 'background: white; position: absolute;';
+                overlayTool.add(overlayHtml, point);
+  
                 // highlight the object
                 selectedSet.updateSet(new IndexSet([treeIndex]));
                 const boundingBox = await model.getBoundingBoxByTreeIndex(treeIndex);
