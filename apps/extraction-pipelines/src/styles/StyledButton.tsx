@@ -49,7 +49,7 @@ export const EditButton = styled((props) => (
         props.$full ? '100%' : 'max-content'};
       display: ${(props: EditButtonProps) => (props.$full ? 'grid' : 'flex')};
       grid-template-columns: ${(props: EditButtonProps) =>
-        props.$full ? '1fr 3rem ' : '1fr'};
+        props.$full ? '1fr auto' : '1fr'};
       grid-template-rows: auto;
       justify-items: flex-start;
       height: fit-content;
@@ -59,7 +59,7 @@ export const EditButton = styled((props) => (
       word-break: break-word;
       .cogs-icon {
         &.cogs-icon-Edit {
-          grid-column: 3;
+          grid-column: 2;
           opacity: 0;
         }
       }
