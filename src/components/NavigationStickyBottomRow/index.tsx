@@ -12,9 +12,18 @@ type Props = {
   justify?: Justify;
   prev?: NavOptions;
   next?: NavOptions;
+  skip?: NavOptions;
+  showSkipButton?: boolean;
 };
 export default function NavigationStickyBottomRow(props: Props) {
-  const { step, justify = 'space-between', prev, next } = props;
+  const {
+    step,
+    justify = 'space-between',
+    prev,
+    next,
+    skip,
+    showSkipButton,
+  } = props;
 
   const { goToNextStep, goToPrevStep } = useSteps(step);
 
@@ -31,16 +40,31 @@ export default function NavigationStickyBottomRow(props: Props) {
           {prev?.text ?? 'Back'}
         </Button>
       </Tooltip>
-      <Tooltip title={next?.tooltip} placement="left" arrowPointAtCenter>
-        <Button
-          size="large"
-          type="primary"
-          onClick={() => (next?.onClick ? next.onClick() : goToNextStep())}
-          disabled={next?.disabled}
-        >
-          {next?.text ?? 'Next step'}
-        </Button>
-      </Tooltip>
+      <div>
+        {showSkipButton && (
+          <Tooltip title={skip?.tooltip} placement="left" arrowPointAtCenter>
+            <Button
+              size="large"
+              type="ghost"
+              onClick={() => (skip?.onClick ? skip.onClick() : goToNextStep())}
+              disabled={skip?.disabled}
+              style={{ marginRight: '8px' }}
+            >
+              {skip?.text ?? 'Skip'}
+            </Button>
+          </Tooltip>
+        )}
+        <Tooltip title={next?.tooltip} placement="left" arrowPointAtCenter>
+          <Button
+            size="large"
+            type="primary"
+            onClick={() => (next?.onClick ? next.onClick() : goToNextStep())}
+            disabled={next?.disabled}
+          >
+            {next?.text ?? 'Next step'}
+          </Button>
+        </Tooltip>
+      </div>
     </StickyBottomRow>
   );
 }
@@ -57,6 +81,5 @@ const StickyBottomRow = styled.div<{ justify: Justify }>`
   bottom: 0;
   left: 0;
   padding: 12px 16px;
-  border-top: 2px solid rgba(0, 0, 0, 0.1);
-  box-shadow: rgba(0, 0, 0, 0.1) 0px -5px 10px 0px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
 `;

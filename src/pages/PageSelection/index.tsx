@@ -74,6 +74,13 @@ export default function PageSelection(props: Props): JSX.Element {
   const isStepDiagramSelection = step === 'diagramSelection';
   const isStepResourceSelection = step.startsWith('resourceSelection');
 
+  const isStepSkippable =
+    (step === 'resourceSelectionAssets' &&
+      !resources?.some((resource) => resource.type === 'assets')) ||
+    (step === 'resourceSelectionFiles' &&
+      (resources ?? [])?.length > 0 &&
+      !resources?.some((resource) => resource.type === 'files'));
+
   const updateFilter = useCallback(
     (f: Filter) => {
       setFilter(f);
@@ -180,6 +187,10 @@ export default function PageSelection(props: Props): JSX.Element {
             isNoSelectionWhileRequired || isNoSelectionOfAtLeastOneOptional,
           onClick: onNextStep,
         }}
+        skip={{
+          onClick: onNextStep,
+        }}
+        showSkipButton={isStepSkippable}
       />
     </Flex>
   );
