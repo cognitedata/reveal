@@ -82,7 +82,7 @@ export class DebugLoadedSectorsTool extends Cognite3DViewerToolBase {
     });
     this._boundingBoxes.updateMatrixWorld(true);
 
-    this._viewer.forceRerender();
+    this._viewer.requestRedraw();
   }
 
   private createBboxNodeFor(node: SectorNode, allSelectedNodes: SectorNode[]) {

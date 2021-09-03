@@ -242,7 +242,7 @@ export function Migration() {
           const cadNode: CadNode = (m as any).cadNode;
           cadNode.renderMode = renderMode;
         });
-        viewer.forceRerender();
+        viewer.requestRedraw();
       });
       renderGui.add(guiState, 'antiAliasing',
         [
