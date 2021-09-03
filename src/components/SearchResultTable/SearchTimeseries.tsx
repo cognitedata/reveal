@@ -9,12 +9,14 @@ import {
   addTimeseries,
   covertTSToChartTS,
   removeTimeseries,
+  updateSourceAxisForChart,
 } from 'utils/charts';
 import { calculateDefaultYAxis } from 'utils/axis';
 import { trackUsage } from 'utils/metrics';
 import { useAddToRecentLocalStorage } from 'utils/recentViewLocalstorage';
 import { useRecoilState } from 'recoil';
 import { chartState } from 'atoms/chart';
+import { AxisUpdate } from 'components/PlotlyChart';
 import TimeseriesSearchHit from './TimeseriesSearchHit';
 import RecentViewSources from './RecentViewSources';
 
@@ -58,15 +60,12 @@ export default function SearchTimeseries({ query }: Props) {
     const tsToRemove = chart.timeSeriesCollection?.find(
       (t) => t.tsId === timeSeries.id
     );
+
     if (tsToRemove) {
       setChart((oldChart) => removeTimeseries(oldChart!, tsToRemove.id));
     } else {
-      // Calculate y-axis / range
-      const range = await calculateDefaultYAxis({
-        chart,
-        sdk,
-        timeSeriesExternalId: timeSeries.externalId || '',
-      });
+      const newTs = covertTSToChartTS(timeSeries, chartId, []);
+      setChart((oldChart) => addTimeseries(oldChart!, newTs));
 
       if (timeSeries.assetId) {
         // add both asset and ts if asset exists
@@ -75,9 +74,24 @@ export default function SearchTimeseries({ query }: Props) {
         addTsToRecent(timeSeries.id);
       }
 
-      const newTs = covertTSToChartTS(timeSeries, chartId, range);
+      // Calculate y-axis / range
+      const range = await calculateDefaultYAxis({
+        chart,
+        sdk,
+        timeSeriesExternalId: timeSeries.externalId || '',
+      });
 
-      setChart((oldChart) => addTimeseries(oldChart!, newTs));
+      const axisUpdate: AxisUpdate = {
+        id: newTs.id,
+        type: 'timeseries',
+        range,
+      };
+
+      // Update y axis when ready
+      setChart((oldChart) =>
+        updateSourceAxisForChart(oldChart!, { x: [], y: [axisUpdate] })
+      );
+
       trackUsage('ChartView.AddTimeSeries', { source: 'search' });
     }
   };

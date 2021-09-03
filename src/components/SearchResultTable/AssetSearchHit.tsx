@@ -10,6 +10,7 @@ import {
   addTimeseries,
   covertTSToChartTS,
   removeTimeseries,
+  updateSourceAxisForChart,
 } from 'utils/charts';
 import { calculateDefaultYAxis } from 'utils/axis';
 import { trackUsage } from 'utils/metrics';
@@ -17,6 +18,7 @@ import Highlighter from 'react-highlight-words';
 import { useAddToRecentLocalStorage } from 'utils/recentViewLocalstorage';
 import { useRecoilState } from 'recoil';
 import { chartState } from 'atoms/chart';
+import { AxisUpdate } from 'components/PlotlyChart';
 import TimeseriesSearchHit from './TimeseriesSearchHit';
 
 type Props = {
@@ -59,20 +61,34 @@ export default function AssetSearchHit({ asset, query = '' }: Props) {
     const tsToRemove = chart.timeSeriesCollection?.find(
       (t) => t.tsExternalId === timeSeries.externalId
     );
+
     if (tsToRemove) {
       setChart((oldChart) => removeTimeseries(oldChart!, tsToRemove.id));
     } else {
+      const newTs = covertTSToChartTS(timeSeries, chart.id, []);
+      setChart((oldChart) => addTimeseries(oldChart!, newTs));
+
+      // Add to recentlyViewed assets and timeseries
+      addAssetToRecent(asset.id, timeSeries.id);
+
       // Calculate y-axis / range
       const range = await calculateDefaultYAxis({
         chart,
         sdk,
         timeSeriesExternalId: timeSeries.externalId || '',
       });
-      // Add to recentlyViewed assets and timeseries
-      addAssetToRecent(asset.id, timeSeries.id);
 
-      const newTs = covertTSToChartTS(timeSeries, chart.id, range);
-      setChart((oldChart) => addTimeseries(oldChart!, newTs));
+      const axisUpdate: AxisUpdate = {
+        id: newTs.id,
+        type: 'timeseries',
+        range,
+      };
+
+      // Update y axis when ready
+      setChart((oldChart) =>
+        updateSourceAxisForChart(oldChart!, { x: [], y: [axisUpdate] })
+      );
+
       trackUsage('ChartView.AddTimeSeries', { source: 'search' });
     }
   };
