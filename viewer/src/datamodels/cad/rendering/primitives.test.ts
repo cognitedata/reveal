@@ -8,6 +8,7 @@ import { createEmptySector } from '../../../__testutilities__/emptySector';
 import { createMaterials, Materials } from './materials';
 import { ParsePrimitiveAttribute } from '@cognite/reveal-parser-worker';
 import { RenderMode } from './RenderMode';
+import { BoundingBoxLOD } from '../../../utilities/three';
 
 function createMockAttributes(): Map<string, ParsePrimitiveAttribute> {
   const map = new Map<string, ParsePrimitiveAttribute>();
@@ -169,12 +170,15 @@ describe('createPrimitives', () => {
     torusSegmentSector.primitives.torusSegmentCollection = new Uint8Array(mockAttributeBuffer.length + 4);
     torusSegmentSector.primitives.torusSegmentAttributes = mockAttributes;
 
-    testPrimitiveBase(torusSegmentSector, materials, mockAttributes, 'torussegment', bounds);
-    const result = [];
-
+    const results: (THREE.Mesh | BoundingBoxLOD)[] = [];
     for (const primitiveRoot of createPrimitives(torusSegmentSector, materials, bounds)) {
-      result.push(primitiveRoot);
+      results.push(primitiveRoot);
     }
+    expect(results.length).toBe(1);
+
+    const meshResult = results[0] as BoundingBoxLOD;
+
+    expect(meshResult.name.toLowerCase()).toInclude('torussegment');
   });
 
   test('Trapezium primitives, returns one geometry', () => {

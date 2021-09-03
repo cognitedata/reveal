@@ -18,7 +18,7 @@ The following example detects intersections at clicked positions and marks the i
 using a red sphere.
 
 ```js runnable
-viewer.on('click', event => {
+viewer.on('click', async event => {
   const intersection = await viewer.getIntersectionFromPixel(
     event.offsetX, event.offsetY
   );

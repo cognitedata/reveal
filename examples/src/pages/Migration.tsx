@@ -79,7 +79,7 @@ export function Migration() {
 
       // Login
       const client = new CogniteClient({ appId: 'cognite.reveal.example', baseUrl });
-      client.loginWithOAuth({ project });
+      await client.loginWithOAuth({ type: 'CDF_OAUTH', options: { project: '3ddemo' }});
       await client.authenticate();
 
       const progress = (itemsLoaded: number, itemsRequested: number, itemsCulled: number) => {
@@ -177,7 +177,7 @@ export function Migration() {
           addModel({
             modelId: guiState.modelId,
             revisionId: guiState.revisionId,
-            geometryFilter: createGeometryFilterFromState(guiState.geometryFilter)
+            geometryFilter: guiState.geometryFilter.enabled ? createGeometryFilterFromState(guiState.geometryFilter) : undefined
           }),
         fitToModel: () => {
           const model = cadModels[0] || pointCloudModels[0];
@@ -583,10 +583,10 @@ function createGeometryFilterStateFromBounds(bounds: THREE.Box3, out: { center: 
   return out;
 }
 
-function createGeometryFilterFromState(state: { center: THREE.Vector3, size: THREE.Vector3, enabled: boolean }):
+function createGeometryFilterFromState(state: { center: THREE.Vector3, size: THREE.Vector3 }):
  { boundingBox: THREE.Box3, isBoundingBoxInModelCoordinates: true } | undefined {
   state.size.clamp(new THREE.Vector3(0,0,0), new THREE.Vector3(Infinity, Infinity, Infinity));
-  if (!state.enabled || state.size.equals(new THREE.Vector3(0,0,0))) {
+  if (state.size.equals(new THREE.Vector3())) {
     return undefined;
   }
   return { boundingBox: new THREE.Box3().setFromCenterAndSize(state.center, state.size), isBoundingBoxInModelCoordinates: true };

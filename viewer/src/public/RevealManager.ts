@@ -142,14 +142,6 @@ export class RevealManager<TModelIdentifier> {
     return this._cadManager.clippingPlanes;
   }
 
-  public set clipIntersection(intersection: boolean) {
-    this._cadManager.clipIntersection = intersection;
-  }
-
-  public get clipIntersection() {
-    return this._cadManager.clipIntersection;
-  }
-
   public on(event: 'loadingStateChanged', listener: LoadingStateChangeListener): void {
     switch (event) {
       case 'loadingStateChanged':

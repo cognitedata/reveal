@@ -30,7 +30,6 @@ export class CadModelUpdateHandler {
 
   private readonly _cameraSubject: Subject<THREE.PerspectiveCamera> = new Subject();
   private readonly _clippingPlaneSubject: Subject<THREE.Plane[]> = new Subject();
-  private readonly _clipIntersectionSubject: Subject<boolean> = new Subject();
   private readonly _loadingHintsSubject: Subject<CadLoadingHints> = new Subject();
   private readonly _modelSubject: Subject<{ model: CadNode; operation: 'add' | 'remove' }> = new Subject();
   private readonly _budgetSubject: Subject<CadModelSectorBudget> = new Subject();
@@ -72,10 +71,7 @@ export class CadModelUpdateHandler {
         this._cameraSubject.pipe(auditTime(500)),
         this._cameraSubject.pipe(auditTime(250), emissionLastMillis(600))
       ]).pipe(map(makeCameraInput)),
-      combineLatest([
-        this._clippingPlaneSubject.pipe(startWith([])),
-        this._clipIntersectionSubject.pipe(startWith(false))
-      ]).pipe(map(makeClippingInput)),
+      combineLatest([this._clippingPlaneSubject.pipe(startWith([]))]).pipe(map(makeClippingInput)),
       this.loadingModelObservable()
     ]);
     const collectStatisticsCallback = (spendage: SectorLoadingSpent) => {
@@ -128,10 +124,6 @@ export class CadModelUpdateHandler {
 
   set clippingPlanes(value: THREE.Plane[]) {
     this._clippingPlaneSubject.next(value);
-  }
-
-  set clipIntersection(value: boolean) {
-    this._clipIntersectionSubject.next(value);
   }
 
   get budget(): CadModelSectorBudget {
@@ -201,7 +193,6 @@ type CameraInput = {
 };
 type ClippingInput = {
   clippingPlanes: THREE.Plane[] | never[];
-  clipIntersection: boolean;
 };
 
 function makeSettingsInput([loadingHints, budget]: [CadLoadingHints, CadModelSectorBudget]): SettingsInput {
@@ -210,8 +201,8 @@ function makeSettingsInput([loadingHints, budget]: [CadLoadingHints, CadModelSec
 function makeCameraInput([camera, cameraInMotion]: [THREE.PerspectiveCamera, boolean]): CameraInput {
   return { camera, cameraInMotion };
 }
-function makeClippingInput([clippingPlanes, clipIntersection]: [THREE.Plane[], boolean]): ClippingInput {
-  return { clippingPlanes, clipIntersection };
+function makeClippingInput([clippingPlanes]: [THREE.Plane[]]): ClippingInput {
+  return { clippingPlanes };
 }
 
 function createDetermineSectorsInput([settings, camera, clipping, cadModelsMetadata]: [

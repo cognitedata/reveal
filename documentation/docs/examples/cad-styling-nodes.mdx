@@ -139,6 +139,12 @@ const livingQuarters = new PropertyFilterNodeCollection(sdk, model);
 livingQuarters.executeFilter({'Item': {'Name': '/SLP/S/LQ'}});
 const notLivingQuarters = new InvertedNodeCollection(model, livingQuarters);
 
-model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
-model.assignStyledNodeCollection(notLivingQuarters, { renderGhosted: false } );
+model.setDefaultNodeAppearance({ 
+  outlineColor: NodeOutlineColor.Red, 
+  color: [120, 50, 0] 
+});
+model.assignStyledNodeCollection(notLivingQuarters, { 
+  outlineColor: NodeOutlineColor.NoOutline, 
+  color: [0,0,0] 
+});
 ```

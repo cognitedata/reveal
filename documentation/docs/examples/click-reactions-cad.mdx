@@ -20,7 +20,7 @@ The following example detects intersections at clicked positions and marks the i
 using a red sphere.
 
 ```js runnable
-viewer.on('click', event => {
+viewer.on('click', async event => {
   const intersection = await viewer.getIntersectionFromPixel(
     event.offsetX, event.offsetY
   );
@@ -36,10 +36,10 @@ viewer.on('click', event => {
 It's quite common to highlight clicked objects. This can be achieved by using [the node styling API](./cad-styling.mdx).
 
 ```js runnable
-const selectedNodes = new ByTreeIndexNodeSet();
-model.addStyledNodeSet(selectedNodes, DefaultNodeAppearance.Highlighted);
+const selectedNodes = new TreeIndexNodeCollection();
+model.assignStyledNodeCollection(selectedNodes, DefaultNodeAppearance.Highlighted);
 
-viewer.on('click', event => {
+viewer.on('click', async event => {
   const intersection = await viewer.getIntersectionFromPixel(
     event.offsetX, event.offsetY
   );
@@ -56,10 +56,10 @@ This can be achieved by determining the ancestor tree indices of the clicked geo
 can be used to determine this.
 
 ```js runnable
-const selectedNodes = new ByTreeIndexNodeSet();
-model.addStyledNodeSet(selectedNodes, DefaultNodeAppearance.Highlighted);
+const selectedNodes = new TreeIndexNodeCollection();
+model.assignStyledNodeCollection(selectedNodes, DefaultNodeAppearance.Highlighted);
 
-viewer.on('click', event => {
+viewer.on('click', async event => {
   const intersection = await viewer.getIntersectionFromPixel(
     event.offsetX, event.offsetY
   );
