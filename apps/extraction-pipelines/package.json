@@ -18,7 +18,7 @@
   "dependencies": {
     "@cognite/cdf-sdk-singleton": "^0.6.1",
     "@cognite/cdf-utilities": "^0.9.0",
-    "@cognite/cogs.js": "^3.29.2",
+    "@cognite/cogs.js": "^3.33.0",
     "@cognite/react-feature-flags": "^0.2.2-rc.0",
     "@cognite/sdk": "^4.2.2",
     "@cognite/sdk-provider": "^1.0.0",
