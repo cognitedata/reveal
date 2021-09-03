@@ -490,7 +490,6 @@ export function Migration() {
               overlayHtml.innerText = `Node ${treeIndex}`;
               overlayHtml.style.cssText = 'background: white; position: absolute;';
               overlayTool.add(overlayHtml, point);
-              console.log(overlayHtml);
 
               // highlight the object
               selectedSet.updateSet(new IndexSet([treeIndex]));
