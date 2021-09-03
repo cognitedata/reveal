@@ -47,11 +47,11 @@ the viewer must be explicitly re-rendered after setting the visibility flag:
 
 ```js runnable
 model.visible = false;
-viewer.forceRerender();
+viewer.requestRedraw();
 
 setTimeout(() => {
   model.visible = true;
-  viewer.forceRerender();
+  viewer.requestRedraw();
 }, 5000);
 ```
 
