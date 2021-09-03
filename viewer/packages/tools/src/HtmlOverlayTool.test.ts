@@ -24,19 +24,11 @@ describe('HtmlOverlayTool', () => {
     const getBoundingClientRectSpy = jest.spyOn(canvas, 'getBoundingClientRect');
     const rect: DOMRect = {
       width: 128,
-      height: 128,
-      x: 0,
-      y: 0,
-      left: 0,
-      right: 128,
-      top: 0,
-      bottom: 128,
-      toJSON: () => {}
-    };
+      height: 128
+    } as DOMRect;
     getBoundingClientRectSpy.mockReturnValue(rect);
 
     renderer = new THREE.WebGLRenderer({ context, canvas });
-    renderer.setSize(48, 48);
     const _sectorCuller: SectorCuller = {
       determineSectors: jest.fn(),
       filterSectorsToLoad: jest.fn(),
@@ -57,6 +49,8 @@ describe('HtmlOverlayTool', () => {
 
     viewer = new Cognite3DViewer({ domElement: canvasContainer, sdk, renderer, _sectorCuller });
     jest.spyOn(viewer, 'getCamera').mockReturnValue(camera);
+
+    renderer.setSize(128, 128);
   });
 
   test('add() only accepts absolute position', () => {
