@@ -978,19 +978,26 @@ export class Cognite3DViewer {
    */
   worldToScreen(point: THREE.Vector3, normalize?: boolean): THREE.Vector2 | null {
     this.camera.updateMatrixWorld();
-    const p = new THREE.Vector3();
+    const screenPosition = new THREE.Vector3();
     if (normalize) {
-      worldToNormalizedViewportCoordinates(this.renderer, this.camera, point, p);
+      worldToNormalizedViewportCoordinates(this.renderer, this.camera, point, screenPosition);
     } else {
-      worldToViewportCoordinates(this.renderer, this.camera, point, p);
+      worldToViewportCoordinates(this.renderer, this.camera, point, screenPosition);
     }
 
-    if (p.x < 0 || p.x > 1 || p.y < 0 || p.y > 1 || p.z < 0 || p.z > 1) {
+    if (
+      screenPosition.x < 0 ||
+      screenPosition.x > 1 ||
+      screenPosition.y < 0 ||
+      screenPosition.y > 1 ||
+      screenPosition.z < 0 ||
+      screenPosition.z > 1
+    ) {
       // Return null if point is outside camera frustum.
       return null;
     }
 
-    return new THREE.Vector2(p.x, p.y);
+    return new THREE.Vector2(screenPosition.x, screenPosition.y);
   }
 
   /**
