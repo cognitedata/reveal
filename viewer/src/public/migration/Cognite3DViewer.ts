@@ -9,7 +9,7 @@ import omit from 'lodash/omit';
 import { CogniteClient } from '@cognite/sdk';
 import { Subscription, fromEventPattern } from 'rxjs';
 
-import { from3DPositionToRelativeViewportCoordinates } from '../../utilities/worldToViewport';
+import { worldToNormalizedViewportCoordinates, worldToViewportCoordinates } from '../../utilities/worldToViewport';
 import { intersectCadNodes } from '../../datamodels/cad/picking';
 
 import {
@@ -978,17 +978,26 @@ export class Cognite3DViewer {
    */
   worldToScreen(point: THREE.Vector3, normalize?: boolean): THREE.Vector2 | null {
     this.camera.updateMatrixWorld();
-    const p = from3DPositionToRelativeViewportCoordinates(this.camera, point);
-    if (p.x < 0 || p.x > 1 || p.y < 0 || p.y > 1 || p.z < 0 || p.z > 1) {
+    const screenPosition = new THREE.Vector3();
+    if (normalize) {
+      worldToNormalizedViewportCoordinates(this.renderer, this.camera, point, screenPosition);
+    } else {
+      worldToViewportCoordinates(this.renderer, this.camera, point, screenPosition);
+    }
+
+    if (
+      screenPosition.x < 0 ||
+      screenPosition.x > 1 ||
+      screenPosition.y < 0 ||
+      screenPosition.y > 1 ||
+      screenPosition.z < 0 ||
+      screenPosition.z > 1
+    ) {
       // Return null if point is outside camera frustum.
       return null;
     }
-    if (!normalize) {
-      const canvas = this.renderer.domElement;
-      p.x = Math.round(p.x * canvas.clientWidth);
-      p.y = Math.round(p.y * canvas.clientHeight);
-    }
-    return new THREE.Vector2(p.x, p.y);
+
+    return new THREE.Vector2(screenPosition.x, screenPosition.y);
   }
 
   /**
