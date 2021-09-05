@@ -17,7 +17,6 @@ import { PotreeNodeWrapper } from './PotreeNodeWrapper';
  */
 export class PotreeGroupWrapper extends THREE.Object3D {
   private _needsRedraw: boolean = false;
-  private _lastDrawPointBuffersHash = -1;
   private readonly _forceLoadingSubject = new Subject<void>();
   private readonly _loadingObservable: Observable<LoadingState>;
 
