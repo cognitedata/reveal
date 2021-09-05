@@ -24,7 +24,6 @@ export class PotreeGroupWrapper extends THREE.Object3D {
   get needsRedraw(): boolean {
     return (
       this._needsRedraw ||
-      this._lastDrawPointBuffersHash !== this.pointBuffersHash ||
       Potree.Global.numNodesLoading !== this.numNodesLoadingAfterLastRedraw ||
       this.numChildrenAfterLastRedraw !== this.potreeGroup.children.length ||
       this.nodes.some(n => n.needsRedraw)
@@ -51,16 +50,10 @@ export class PotreeGroupWrapper extends THREE.Object3D {
     onAfterRenderTrigger.frustumCulled = false;
     onAfterRenderTrigger.onAfterRender = () => {
       this.resetRedraw();
-      // We only reset this when we actually redraw, not on resetRedraw. This is
-      // because there are times when this will onAfterRender is triggered
-      // just after buffers are uploaded but not visualized yet.
-      this._lastDrawPointBuffersHash = this.pointBuffersHash;
     };
     this.add(onAfterRenderTrigger);
 
     this._loadingObservable = this.createLoadingStateObservable(pollLoadingStatusInterval);
-    this._lastDrawPointBuffersHash = this.pointBuffersHash;
-
     this.pointBudget = 2_000_000;
   }
 
@@ -127,15 +120,6 @@ export class PotreeGroupWrapper extends THREE.Object3D {
       distinctUntilChanged(),
       share()
     );
-  }
-
-  private get pointBuffersHash() {
-    const buffers: Map<THREE.BufferGeometry, any> = this.potreeGroup.buffers;
-    let pointHash = 0xbaadf00d;
-    for (const buffer of buffers.keys()) {
-      pointHash ^= buffer.id;
-    }
-    return pointHash;
   }
 }
 
