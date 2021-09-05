@@ -124,8 +124,8 @@ export const UnitDropdown = ({
         iconPlacement="right"
         style={{ height: 28 }}
       >
-        {preferredUnitOption?.label}
-        {inputUnitOption?.value !== originalUnit?.toLowerCase() && ' *'}
+        {preferredUnitOption?.label || preferredUnit}
+        {preferredUnit !== originalUnit && ' *'}
       </Button>
     </Dropdown>
   );
