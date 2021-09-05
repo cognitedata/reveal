@@ -38,7 +38,6 @@ export function intersectPointClouds(
   input: IntersectInput,
   threshold: number = 0.05 // 5 cm
 ): IntersectPointCloudNodeResult[] {
-  debugger;
   const { normalizedCoords, camera } = input;
   normalized.set(normalizedCoords.x, normalizedCoords.y);
   raycaster.setFromCamera(normalizedCoords, camera);
