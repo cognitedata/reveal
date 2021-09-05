@@ -19,6 +19,15 @@ import {
 } from '@cognite/reveal';
 import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, AxisViewTool, GeomapTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
+import { MapConfig } from '../../../viewer/dist/core/src/tools/Geomap/MapConfig';
+
+enum MapProviders {
+  BINGMAP = "BingMap",
+  OPENSTREETMAP = "OpenStreetMap",
+  HEREMAP = "HereMap",
+  MAPBOXMAP = "MapBoxMap",
+  MAPTILERMAP = "MapTilerMap"
+}
 
 window.THREE = THREE;
 (window as any).reveal = reveal;
@@ -211,7 +220,18 @@ export function Geomap() {
         }
       });
 
-      let geomapTool = new GeomapTool(viewer);
+      const mapConfig: MapConfig = {
+        mapProvider: MapProviders.MAPBOXMAP,
+        mapAPIKey: "pk.eyJ1IjoicHJhbW9kLXMiLCJhIjoiY2tzb2JkbXdyMGd5cjJubnBrM3IwMTd0OCJ9.jA9US2D2FRXUlldhE8bZgA",
+        mapMode: 100,
+        id: "mapbox/satellite-streets-v10",
+        format: "jpg70",
+        latlong: {
+          latitude: 59.9016426931744,
+          longitude: 10.607235872426175
+        }
+      }
+      let geomapTool = new GeomapTool(viewer, mapConfig);
 
       const renderGui = gui.addFolder('Options');
       const mapProviders = ['Vector OpenSteet Maps', 'Vector Map Box', 'Vector Here Maps', 'Vector Bing Maps', 'Vector Map Tiler Outdoor',

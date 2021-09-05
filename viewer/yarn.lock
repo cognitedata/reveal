@@ -501,7 +501,7 @@ __metadata:
     eslint-plugin-prettier: ^3.1.4
     eslint-plugin-unused-imports: ^0.1.3
     file-loader: ^6.2.0
-    geo-three: ^0.0.10
+    geo-three: ^0.0.14
     gl: ^4.8.0
     glslify: ^7.1.1
     glslify-import: ^3.1.0
@@ -1114,6 +1114,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/offscreencanvas@npm:^2019.6.3":
+  version: 2019.6.3
+  resolution: "@types/offscreencanvas@npm:2019.6.3"
+  dependencies:
+    "@types/webgl2": "*"
+  checksum: 4cd69e5d1d4bf6edb02c834414e41bdb2e91157db2d1403952a303bf3a7d263affd4547ac0129e0150f90be91c8798cae8f28fdd938d7e4a57211bee772ba9d6
+  languageName: node
+  linkType: hard
+
 "@types/parse-json@npm:^4.0.0":
   version: 4.0.0
   resolution: "@types/parse-json@npm:4.0.0"
@@ -1197,6 +1206,13 @@ __metadata:
   dependencies:
     source-map: ^0.6.1
   checksum: 0617faf31899f73362bbd0d4a4da0c803bd17beaf7f1ca0321afc7d60268aa1131cfd5bc36d764e5b75c085cc6b1821147adfe3671738b4158caa789eb65143b
+  languageName: node
+  linkType: hard
+
+"@types/webgl2@npm:*":
+  version: 0.0.6
+  resolution: "@types/webgl2@npm:0.0.6"
+  checksum: 290395132be23ab93f57d859836997ea449e80c5d80de02b56184c6434f02463d20d91cdf06bdd7ee33b1a7c90ab9f0601b19d43ef553ed10546437fd00ff95a
   languageName: node
   linkType: hard
 
@@ -5945,12 +5961,14 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"geo-three@npm:^0.0.10":
-  version: 0.0.10
-  resolution: "geo-three@npm:0.0.10"
+"geo-three@npm:^0.0.14":
+  version: 0.0.14
+  resolution: "geo-three@npm:0.0.14"
+  dependencies:
+    "@types/offscreencanvas": ^2019.6.3
   peerDependencies:
     three: ">0.80.0"
-  checksum: 02c5b056d7e7b2fd56984267253a546a6f54d9178577b4f83a4aa783562564dd05b98718a676f3030430cf40b76bf52d29dbb72066e2d7967ee8bdc99f7a45cc
+  checksum: a1c3a5204e23a5210066ad181ff3b659f7bf9a5af22268a786011fb23d191e4bb61045c3e5a1de52c2edf2703fbbddf537a41d5209501b60a57e30730e7b32a0
   languageName: node
   linkType: hard
 

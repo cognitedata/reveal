@@ -30,7 +30,7 @@
     "@cognite/sdk": "link:../viewer/node_modules/@cognite/sdk",
     "camera-controls": "^1.25.1",
     "dat.gui": "^0.7.7",
-    "geo-three": "^0.0.10",
+    "geo-three": "^0.0.14",
     "hold-event": "^0.0.1",
     "install": "^0.13.0",
     "react": "^17.0.2",

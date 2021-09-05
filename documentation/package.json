@@ -44,7 +44,7 @@
     "@google/model-viewer": "^1.1.0",
     "clsx": "^1.1.1",
     "cross-env": "^7.0.2",
-    "geo-three": "^0.0.10",
+    "geo-three": "^0.0.14",
     "npm-to-yarn": "^1.0.1",
     "react": "^16.8.4",
     "react-dom": "^16.8.4",

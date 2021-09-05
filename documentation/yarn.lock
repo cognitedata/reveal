@@ -2071,6 +2071,13 @@
   resolved "https://registry.yarnpkg.com/@types/normalize-package-data/-/normalize-package-data-2.4.0.tgz#e486d0d97396d79beedd0a6e33f4534ff6b4973e"
   integrity sha512-f5j5b/Gf71L+dbqxIpQ4Z2WlmI/mPJ0fOkGGmFgtb6sAu97EPczzbS3/tJKxmcYDj55OX6ssqwDAWOHIYDRDGA==
 
+"@types/offscreencanvas@^2019.6.3":
+  version "2019.6.3"
+  resolved "https://registry.yarnpkg.com/@types/offscreencanvas/-/offscreencanvas-2019.6.3.tgz#0508eec9641f3228bf8a27009670166887dc966c"
+  integrity sha512-957DsU187Y90EmlXneuqrqnwmwCkC9oPyQ/IEGwmDRpMfuhcGtjIz72Me7HvdK04ZC16A0VWmv0TSNLwC9ZvXw==
+  dependencies:
+    "@types/webgl2" "*"
+
 "@types/parse-json@^4.0.0":
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/@types/parse-json/-/parse-json-4.0.0.tgz#2f8bb441434d163b35fb8ffdccd7138927ffb8c0"
@@ -2166,6 +2173,11 @@
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/@types/unist/-/unist-2.0.3.tgz#9c088679876f374eb5983f150d4787aa6fb32d7e"
   integrity sha512-FvUupuM3rlRsRtCN+fDudtmytGO6iHJuuRKS1Ss0pG5z8oX0diNEw94UEL7hgDbpN94rgaK5R7sWm6RrSkZuAQ==
+
+"@types/webgl2@*":
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/@types/webgl2/-/webgl2-0.0.6.tgz#1ea2db791362bd8521548d664dbd3c5311cdf4b6"
+  integrity sha512-50GQhDVTq/herLMiqSQkdtRu+d5q/cWHn4VvKJtrj4DJAjo1MNkWYa2MA41BaBO1q1HgsUjuQvEOk0QHvlnAaQ==
 
 "@types/webpack-sources@*":
   version "2.1.0"
@@ -5784,10 +5796,12 @@ gentle-fs@^2.3.0, gentle-fs@^2.3.1:
     read-cmd-shim "^1.0.1"
     slide "^1.1.6"
 
-geo-three@^0.0.10:
-  version "0.0.10"
-  resolved "https://registry.yarnpkg.com/geo-three/-/geo-three-0.0.10.tgz#b100699554cafa1bf8520d92e01d0cb4bf3da740"
-  integrity sha512-btBw4yozQMN4ut8ta/mxiQN7dJTrmezoCHJM3HM7zWtAPvjFmVdnYLxw+U2rXjddJWm8YNLvQ1gUZCcC/ifHnw==
+geo-three@^0.0.14:
+  version "0.0.14"
+  resolved "https://registry.yarnpkg.com/geo-three/-/geo-three-0.0.14.tgz#91fcb4f67a1fc81e32b14f3b37aae57839596844"
+  integrity sha512-zouJ2RosHnW7UMuMUwX5uie8IHhrjLMyaznHJJpFXc3jEzxYsOJNPEZxGmozgXzaklBWB/pkX5bxtu3FvruHwQ==
+  dependencies:
+    "@types/offscreencanvas" "^2019.6.3"
 
 get-caller-file@^1.0.1:
   version "1.0.3"
