@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, memo } from 'react';
 import { useQuery } from 'react-query';
 import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
-import { DatapointAggregate, DatapointsMultiQuery } from '@cognite/sdk';
+import { DatapointsMultiQuery } from '@cognite/sdk';
 import { calculateGranularity } from 'utils/timeseries';
 import createPlotlyComponent from 'react-plotly.js/factory';
 import Plotly from 'plotly.js-basic-dist';
@@ -17,6 +17,7 @@ import { useDebouncedCallback, useDebounce } from 'use-debounce';
 import { useRecoilState } from 'recoil';
 import { chartState } from 'atoms/chart';
 import { Chart, ChartTimeSeries, ChartWorkflow } from 'reducers/charts/types';
+import { timeseriesState } from 'atoms/timeseries';
 import {
   calculateSeriesData,
   formatPlotlyData,
@@ -107,7 +108,7 @@ const PlotlyChartComponent = ({
       queries.map((q) =>
         sdk.datapoints
           .retrieve(q as DatapointsMultiQuery)
-          .then((r) => r[0]?.datapoints)
+          .then((result) => result[0])
       )
     )
   );
@@ -141,7 +142,8 @@ const PlotlyChartComponent = ({
     { enabled: !isPreview }
   );
 
-  const [timeseries, setLocalTimeseries] = useState<DatapointAggregate[][]>([]);
+  const [timeseries, setLocalTimeseries] = useRecoilState(timeseriesState);
+
   const [workflows, setLocalWorkflows] = useState<
     { value: number; timestamp: Date }[][]
   >([]);
@@ -150,7 +152,7 @@ const PlotlyChartComponent = ({
     if (tsSuccess && tsRaw) {
       setLocalTimeseries(tsRaw);
     }
-  }, [tsSuccess, tsRaw]);
+  }, [tsSuccess, tsRaw, setLocalTimeseries]);
 
   useEffect(() => {
     if (wfSuccess && workflowsRaw) {

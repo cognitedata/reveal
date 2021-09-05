@@ -1,12 +1,7 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useState } from 'react';
 import dayjs from 'dayjs';
-import { useIsFetching, useQueryClient, useQuery } from 'react-query';
-import {
-  Chart,
-  ChartTimeSeries,
-  FunctionCallStatus,
-} from 'reducers/charts/types';
-import { useDebounce } from 'use-debounce';
+import { useIsFetching, useQueryClient } from 'react-query';
+import { Chart, ChartTimeSeries } from 'reducers/charts/types';
 import {
   AllIconTypes,
   Button,
@@ -18,21 +13,17 @@ import {
 import { calculateGranularity } from 'utils/timeseries';
 import { removeTimeseries, updateTimeseries } from 'utils/charts';
 import { useLinkedAsset } from 'hooks/api';
-import { usePrevious } from 'hooks/usePrevious';
 import EditableText from 'components/EditableText';
 import { AppearanceDropdown } from 'components/AppearanceDropdown';
 import { PnidButton } from 'components/SearchResultTable/PnidButton';
-import { functionResponseKey, useCallFunction } from 'utils/backendService';
-import FunctionCall from 'components/FunctionCall';
-import { StatisticsResult } from 'components/DetailsSidebar';
 import { UnitDropdown } from 'components/UnitDropdown';
-import * as backendApi from 'utils/backendApi';
 import { trackUsage } from 'utils/metrics';
-import { CogniteClient } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
-import { calculateDefaultYAxis } from 'utils/axis';
+import { calculateDefaultYAxis, roundToSignificantDigits } from 'utils/axis';
 import { convertValue } from 'utils/units';
 import { DraggableProvided } from 'react-beautiful-dnd';
+import { useRecoilValue } from 'recoil';
+import { timeseriesSummaryById } from 'atoms/timeseries';
 import {
   SourceItem,
   SourceCircle,
@@ -41,33 +32,6 @@ import {
   SourceDescription,
   SourceTag,
 } from './elements';
-// import TimeSeriesMenu from './TimeSeriesMenu';
-
-const key = ['functions', 'individual_calc'];
-
-const renderStatusIcon = (status?: FunctionCallStatus) => {
-  switch (status) {
-    case 'Running':
-      return <Icon type="Loading" />;
-    case 'Completed':
-      return <Icon type="Checkmark" />;
-    case 'Failed':
-    case 'Timeout':
-      return <Icon type="Close" />;
-    default:
-      return null;
-  }
-};
-
-const getCallStatus =
-  (sdk: CogniteClient, fnId: number, callId: number) => async () => {
-    const response = await backendApi.getCallStatus(sdk, fnId, callId);
-
-    if (response?.status) {
-      return response.status as FunctionCallStatus;
-    }
-    return Promise.reject(new Error('could not find call status'));
-  };
 
 type LoadingProps = {
   tsExternalId?: string;
@@ -152,8 +116,6 @@ export default function TimeSeriesRow({
   isSelected = false,
   isWorkspaceMode = false,
   isFileViewerMode = false,
-  dateFrom,
-  dateTo,
   draggable = false,
   provided = undefined,
 }: Props) {
@@ -171,15 +133,6 @@ export default function TimeSeriesRow({
     tsExternalId,
   } = timeseries;
   const [isEditingName, setIsEditingName] = useState<boolean>(false);
-
-  /**
-   * Using strings to avoid custom equality check
-   */
-  const datesAsString = JSON.stringify({ dateFrom, dateTo });
-  const [debouncedDatesAsString] = useDebounce(datesAsString, 3000);
-  const debouncedPrevDatesAsString = usePrevious<string>(
-    debouncedDatesAsString
-  );
 
   // Increasing this will cause a fresh render where the dropdown is closed
   const update = (_tsId: string, diff: Partial<ChartTimeSeries>) =>
@@ -228,119 +181,8 @@ export default function TimeSeriesRow({
     });
   };
 
-  const statisticsCall = (timeseries?.statisticsCalls || [])[0];
-
-  const { data } = useQuery({
-    queryKey: functionResponseKey(
-      statisticsCall?.functionId,
-      statisticsCall?.callId
-    ),
-    queryFn: (): Promise<string | undefined> =>
-      backendApi.getCallResponse(
-        sdk,
-        statisticsCall?.functionId,
-        statisticsCall?.callId
-      ),
-    retry: 1,
-    retryDelay: 1000,
-    enabled: !!statisticsCall,
-  });
-
-  const { data: callStatus, error: callStatusError } =
-    useQuery<FunctionCallStatus>(
-      [...key, statisticsCall?.callId, 'call_status'],
-      getCallStatus(
-        sdk,
-        statisticsCall?.functionId as number,
-        statisticsCall?.callId as number
-      ),
-      {
-        enabled: !!statisticsCall?.callId,
-      }
-    );
-
-  const { results } = (data as any) || {};
-  const { statistics = [] } = (results as StatisticsResult) || {};
-  const statisticsForSource = statistics[0];
-
   const { data: linkedAsset } = useLinkedAsset(tsExternalId, true);
-  const { mutate: callFunction } = useCallFunction('individual_calc-master');
-  const memoizedCallFunction = useCallback(callFunction, [callFunction]);
-
-  const updateStatistics = useCallback(
-    (diff: Partial<ChartTimeSeries>) => {
-      if (!timeseries) {
-        return;
-      }
-      mutate((oldChart) => ({
-        ...oldChart!,
-        timeSeriesCollection: oldChart?.timeSeriesCollection?.map((ts) =>
-          ts.id === timeseries.id
-            ? {
-                ...ts,
-                ...diff,
-              }
-            : ts
-        ),
-      }));
-    },
-    [mutate, timeseries]
-  );
-
-  const datesChanged =
-    debouncedPrevDatesAsString &&
-    debouncedPrevDatesAsString !== debouncedDatesAsString;
-
-  useEffect(() => {
-    if (!datesChanged) {
-      if (statisticsForSource) {
-        return;
-      }
-      if (statisticsCall && !callStatusError) {
-        return;
-      }
-    }
-
-    memoizedCallFunction(
-      {
-        data: {
-          calculation_input: {
-            timeseries: [
-              {
-                tag: (timeseries as ChartTimeSeries).tsExternalId,
-              },
-            ],
-            start_time: new Date(dateFrom).getTime(),
-            end_time: new Date(dateTo).getTime(),
-          },
-        },
-      },
-      {
-        onSuccess({ functionId, callId }) {
-          updateStatistics({
-            statisticsCalls: [
-              {
-                callDate: Date.now(),
-                functionId,
-                callId,
-              },
-            ],
-          });
-        },
-      }
-    );
-  }, [
-    memoizedCallFunction,
-    dateFrom,
-    dateTo,
-    timeseries,
-    updateStatistics,
-    statisticsForSource,
-    statisticsCall,
-    callStatus,
-    callStatusError,
-    datesChanged,
-  ]);
+  const summary = useRecoilValue(timeseriesSummaryById(tsExternalId));
 
   return (
     <SourceRow
@@ -407,25 +249,27 @@ export default function TimeSeriesRow({
       {isWorkspaceMode && (
         <>
           <td>
-            {statisticsForSource
-              ? convertValue(statisticsForSource?.min, unit, preferredUnit)
+            {summary
+              ? roundToSignificantDigits(
+                  convertValue(summary?.min, unit, preferredUnit),
+                  1
+                )
               : ''}
           </td>
           <td>
-            {statisticsForSource
-              ? convertValue(statisticsForSource?.max, unit, preferredUnit)
-              : statisticsCall && (
-                  <FunctionCall
-                    id={statisticsCall.functionId}
-                    callId={statisticsCall.callId}
-                    renderLoading={() => renderStatusIcon('Running')}
-                    renderCall={({ status }) => renderStatusIcon(status)}
-                  />
-                )}
+            {summary
+              ? roundToSignificantDigits(
+                  convertValue(summary?.max, unit, preferredUnit),
+                  1
+                )
+              : ''}
           </td>
           <td>
-            {statisticsForSource
-              ? convertValue(statisticsForSource?.median, unit, preferredUnit)
+            {summary
+              ? roundToSignificantDigits(
+                  convertValue(summary?.median, unit, preferredUnit),
+                  1
+                )
               : ''}
           </td>
           <td style={{ textAlign: 'right', paddingRight: 8 }}>

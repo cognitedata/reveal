@@ -1,4 +1,5 @@
 import {
+  Icon,
   Button,
   Tooltip,
   SegmentedControl,
@@ -7,14 +8,25 @@ import {
 } from '@cognite/cogs.js';
 import { useSDK } from '@cognite/sdk-provider';
 import { Row, Col, List } from 'antd';
+import { chartState } from 'atoms/chart';
 import DetailsBlock from 'components/common/DetailsBlock';
 import { MetadataList } from 'components/DetailsSidebar';
-import { useState } from 'react';
+import FunctionCall from 'components/FunctionCall';
+import { useState, useCallback, useEffect } from 'react';
 import { useQuery } from 'react-query';
-import { ChartTimeSeries, ChartWorkflow } from 'reducers/charts/types';
+import { useDebounce } from 'use-debounce';
+import { useRecoilState } from 'recoil';
+import {
+  ChartTimeSeries,
+  ChartWorkflow,
+  FunctionCallStatus,
+} from 'reducers/charts/types';
 import { getCallResponse } from 'utils/backendApi';
-import { functionResponseKey } from 'utils/backendService';
+import { functionResponseKey, useCallFunction } from 'utils/backendService';
 import { convertValue } from 'utils/units';
+import { usePrevious } from 'hooks/usePrevious';
+import { CogniteClient } from '@cognite/sdk';
+import * as backendApi from 'utils/backendApi';
 import {
   Sidebar,
   TopContainer,
@@ -24,6 +36,33 @@ import {
   Container,
   ColorCircle,
 } from './elements';
+
+const key = ['functions', 'individual_calc'];
+
+const getCallStatus =
+  (sdk: CogniteClient, fnId: number, callId: number) => async () => {
+    const response = await backendApi.getCallStatus(sdk, fnId, callId);
+
+    if (response?.status) {
+      return response.status as FunctionCallStatus;
+    }
+    return Promise.reject(new Error('could not find call status'));
+  };
+
+const renderStatusIcon = (status?: FunctionCallStatus) => {
+  console.log('yoyo');
+  switch (status) {
+    case 'Running':
+      return <Icon type="Loading" />;
+    case 'Completed':
+      return <Icon type="Checkmark" />;
+    case 'Failed':
+    case 'Timeout':
+      return <Icon type="Close" />;
+    default:
+      return null;
+  }
+};
 
 type Props = {
   sourceItem: ChartWorkflow | ChartTimeSeries | undefined;
@@ -80,7 +119,7 @@ export default function DetailsSidebar({
         <TopContainerAside>
           <SegmentedControl
             currentKey={selectedMenu}
-            onButtonClicked={(key) => handleMenuClick(key)}
+            onButtonClicked={(keyCode) => handleMenuClick(keyCode)}
           >
             {menuOptions.map(({ value, label }) => (
               <SegmentedControl.Button key={value}>
@@ -132,6 +171,22 @@ const Statistics = ({
 }) => {
   const sdk = useSDK();
   const statisticsCall = (sourceItem?.statisticsCalls || [])[0];
+  const [chart, setChart] = useRecoilState(chartState);
+  const { dateFrom, dateTo } = chart!;
+
+  const sourceId = sourceItem?.id;
+  const previousSourceId = usePrevious<string | undefined>(sourceId);
+  const sourceChanged = sourceId !== previousSourceId;
+
+  /**
+   * Using strings to avoid custom equality check
+   */
+  const datesAsString = JSON.stringify({ dateFrom, dateTo });
+
+  const [debouncedDatesAsString] = useDebounce(datesAsString, 3000);
+  const debouncedPrevDatesAsString = usePrevious<string>(
+    debouncedDatesAsString
+  );
 
   const { data } = useQuery({
     queryKey: functionResponseKey(
@@ -145,17 +200,125 @@ const Statistics = ({
     enabled: !!statisticsCall,
   });
 
+  const { data: callStatus, error: callStatusError } =
+    useQuery<FunctionCallStatus>(
+      [...key, statisticsCall?.callId, 'call_status'],
+      getCallStatus(
+        sdk,
+        statisticsCall?.functionId as number,
+        statisticsCall?.callId as number
+      ),
+      {
+        enabled: !!statisticsCall?.callId,
+      }
+    );
+
   const { results } = (data as any) || {};
   const { statistics = [] } = (results as StatisticsResult) || {};
   const statisticsForSource = statistics[0];
   const unit = sourceItem?.unit;
   const preferredUnit = sourceItem?.preferredUnit;
 
+  const { mutate: callFunction } = useCallFunction('individual_calc-master');
+  const memoizedCallFunction = useCallback(callFunction, [callFunction]);
+
+  const updateStatistics = useCallback(
+    (diff: Partial<ChartTimeSeries>) => {
+      if (!sourceItem) {
+        return;
+      }
+      setChart((oldChart) => ({
+        ...oldChart!,
+        timeSeriesCollection: oldChart?.timeSeriesCollection?.map((ts) =>
+          ts.id === sourceItem.id
+            ? {
+                ...ts,
+                ...diff,
+              }
+            : ts
+        ),
+      }));
+    },
+    [setChart, sourceItem]
+  );
+
+  const datesChanged =
+    debouncedPrevDatesAsString &&
+    debouncedPrevDatesAsString !== debouncedDatesAsString;
+
+  useEffect(() => {
+    if (sourceItem?.type !== 'timeseries') {
+      return;
+    }
+
+    if (!sourceChanged) {
+      if (!datesChanged) {
+        if (statisticsForSource) {
+          return;
+        }
+        if (statisticsCall && !callStatusError) {
+          return;
+        }
+      }
+    }
+
+    memoizedCallFunction(
+      {
+        data: {
+          calculation_input: {
+            timeseries: [
+              {
+                tag: (sourceItem as ChartTimeSeries).tsExternalId,
+              },
+            ],
+            start_time: new Date(dateFrom).getTime(),
+            end_time: new Date(dateTo).getTime(),
+          },
+        },
+      },
+      {
+        onSuccess({ functionId, callId }) {
+          updateStatistics({
+            statisticsCalls: [
+              {
+                callDate: Date.now(),
+                functionId,
+                callId,
+              },
+            ],
+          });
+        },
+      }
+    );
+  }, [
+    memoizedCallFunction,
+    dateFrom,
+    dateTo,
+    sourceItem,
+    updateStatistics,
+    statisticsForSource,
+    statisticsCall,
+    callStatus,
+    callStatusError,
+    datesChanged,
+    sourceChanged,
+  ]);
+
   return (
     <Container>
       <SourceHeader sourceItem={sourceItem} />
       {sourceItem?.type === 'timeseries' ? (
         <>
+          <div>
+            <div>
+              <FunctionCall
+                id={statisticsCall.functionId}
+                callId={statisticsCall.callId}
+                renderLoading={() => renderStatusIcon('Running')}
+                renderCall={({ status }) => renderStatusIcon(status)}
+              />
+            </div>
+          </div>
           <DetailsBlock title="Statistics">
             <List
               dataSource={[

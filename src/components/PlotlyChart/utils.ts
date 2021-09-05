@@ -1,4 +1,11 @@
-import { DatapointAggregate, Datapoints, DoubleDatapoint } from '@cognite/sdk';
+import {
+  DatapointAggregates,
+  DatapointAggregate,
+  Datapoints,
+  DoubleDatapoint,
+  StringDatapoints,
+  DoubleDatapoints,
+} from '@cognite/sdk';
 import dayjs from 'dayjs';
 import groupBy from 'lodash/groupBy';
 import { ChartTimeSeries, ChartWorkflow } from 'reducers/charts/types';
@@ -39,7 +46,7 @@ export type AxisUpdate = {
 export function calculateSeriesData(
   timeSeriesCollection: ChartTimeSeries[] = [],
   workflowCollection: ChartWorkflow[] = [],
-  timeseries: DatapointAggregate[][],
+  timeseries: (DatapointAggregates | StringDatapoints | DoubleDatapoints)[],
   timeseriesFetching: boolean,
   workflows: { value: number; timestamp: Date }[][],
   workflowsRunning: boolean,
@@ -61,7 +68,7 @@ export function calculateSeriesData(
             name: t.name,
             outdatedData: timeseriesFetching,
             datapoints: convertUnits(
-              (timeseries?.[i] || []) as DatapointAggregate[],
+              (timeseries?.[i]?.datapoints || []) as DatapointAggregate[],
               t.unit,
               t.preferredUnit
             ),
