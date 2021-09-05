@@ -378,7 +378,7 @@ export const convertUnits = (
   const convert: (val: number) => number =
     (conversions[inputUnit] || {})[outputUnit] || ((val) => val);
 
-  return datapoints.map((x) => ({
+  const convertedDataPoints = datapoints.map((x) => ({
     ...x,
     ...('average' in x
       ? {
@@ -386,7 +386,11 @@ export const convertUnits = (
         }
       : {}),
     ...('value' in x ? { value: convert(x.value) } : {}),
+    ...('min' in x ? { min: convert(x.min!) } : {}),
+    ...('max' in x ? { max: convert(x.max!) } : {}),
   }));
+
+  return convertedDataPoints;
 };
 
 export const convertValue = (
