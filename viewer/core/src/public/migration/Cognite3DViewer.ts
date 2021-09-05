@@ -718,8 +718,9 @@ export class Cognite3DViewer {
   }
 
   /**
-   * Sets per-pixel slicing planes. Pixels behind any of the planes will be sliced away.
-   * @param slicingPlanes The planes to use for slicing.
+   * Sets per-pixel slicing (clipping) planes. Pixels behind any of the planes will be sliced/clipped
+   * away.
+   * @param slicingPlanes The planes to use for slicing/clipping.
    * @example
    * ```js
    * // Hide pixels with values less than 0 in the x direction
@@ -750,6 +751,13 @@ export class Cognite3DViewer {
   setSlicingPlanes(slicingPlanes: THREE.Plane[]): void {
     this._revealManager.clippingPlanes = slicingPlanes;
     this._slicingNeedsUpdate = true;
+  }
+
+  /**
+   * Returns the current active slicing (clipping) planes;.
+   */
+  getSlicingPlanes(): THREE.Plane[] {
+    return this._revealManager.clippingPlanes;
   }
 
   /**
@@ -1098,10 +1106,12 @@ export class Cognite3DViewer {
       x: (offsetX / this.renderer.domElement.clientWidth) * 2 - 1,
       y: (offsetY / this.renderer.domElement.clientHeight) * -2 + 1
     };
+
     const input: IntersectInput = {
       normalizedCoords,
       camera: this.camera,
       renderer: this.renderer,
+      clippingPlanes: this.getSlicingPlanes(),
       domElement: this.renderer.domElement
     };
     const cadResults = intersectCadNodes(cadNodes, input);
