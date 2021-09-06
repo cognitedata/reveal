@@ -176,7 +176,13 @@ const Statistics = ({
                 <Row className="ant-list-item">
                   <Col span={14}>{label}</Col>
                   <Col span={10} style={{ textAlign: 'right' }}>
-                    {value ? convertValue(value, unit, preferredUnit) : '-'}
+                    {value
+                      ? `${convertValue(
+                          value,
+                          unit,
+                          preferredUnit
+                        )} ${preferredUnit}`
+                      : '-'}
                   </Col>
                 </Row>
               )}
@@ -194,7 +200,13 @@ const Statistics = ({
                 <Row className="ant-list-item">
                   <Col span={14}>{label}</Col>
                   <Col span={10} style={{ textAlign: 'right' }}>
-                    {value ? convertValue(value, unit, preferredUnit) : '-'}
+                    {value
+                      ? `${convertValue(
+                          value,
+                          unit,
+                          preferredUnit
+                        )} ${preferredUnit}`
+                      : '-'}
                   </Col>
                 </Row>
               )}
