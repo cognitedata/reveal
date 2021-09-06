@@ -68,7 +68,7 @@ export const ListComments: React.FC<FetchCommentProps> = ({
         <Comment
           message={message}
           setMessage={setMessage}
-          avatar={authState?.email}
+          avatar={authState?.email || authState?.id}
           onPostMessage={handleCreateMessage}
         />
       }

@@ -8,10 +8,9 @@ export const normalizeComment = (comment: CommentResponse): MessageType => {
   return {
     id: comment.id || '',
     // eslint-disable-next-line no-underscore-dangle
-    user: comment._owner || 'Unknown',
+    user: comment.displayName || comment._owner || 'Unknown',
     timestamp: Number(new Date(comment.lastUpdatedTime || '')),
     text: comment.comment,
-    // hide?: boolean,
     // isUnread?: boolean,
   };
 };
