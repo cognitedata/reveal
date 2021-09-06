@@ -11,8 +11,6 @@ module.exports = {
         endOfLine: 'auto',
       },
     ],
-    'no-console': 'off',
-    'no-debugger': 'off',
     '@cognite/no-unissued-todos': [
       'warn',
       { issuePattern: '\\(((DEMO)-[0-9]+)\\)' },
