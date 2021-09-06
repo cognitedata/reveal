@@ -3,7 +3,7 @@
  */
 
 import * as THREE from 'three';
-import { SectorScene, CameraConfiguration } from './types';
+import { SectorScene, CameraConfiguration } from '../utilities/types';
 
 export interface CadModelMetadata {
   /**

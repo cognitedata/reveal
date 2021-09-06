@@ -3,7 +3,7 @@
  */
 
 import { parseCadMetadataV8 } from './parsers/CadMetadataParserV8';
-import { SectorScene } from './types';
+import { SectorScene } from '../utilities/types';
 
 interface VersionHeader {
   readonly version: number;

@@ -4,7 +4,8 @@
 
 import * as THREE from 'three';
 import { traverseDepthFirst } from './objectTraversal';
-import { SectorMetadata, SectorScene } from './types';
+import { SectorScene } from './types';
+import { SectorMetadata } from '../metadata/types';
 import skmeans from 'skmeans';
 
 export class SectorSceneImpl implements SectorScene {

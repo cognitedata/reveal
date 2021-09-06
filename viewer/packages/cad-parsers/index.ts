@@ -5,20 +5,23 @@
 export { CadMetadataParser } from './src/metadata/CadMetadataParser';
 export { MetadataRepository } from './src/metadata/MetadataRepository';
 export { CadModelMetadataRepository } from './src/metadata/CadModelMetadataRepository';
-export { SectorSceneImpl } from './src/metadata/SectorScene';
+export { SectorSceneImpl } from './src/utilities/SectorScene';
 export {
   SectorScene,
-  SectorMetadataIndexFileSection,
-  SectorMetadataFacesFileSection,
-  SectorMetadata,
   BinaryFileProvider,
   File3dFormat,
   ModelDataClient,
   CameraConfiguration,
   BlobOutputMetadata
+} from './src/utilities/types';
+
+export {
+  SectorMetadataIndexFileSection,
+  SectorMetadataFacesFileSection,
+  SectorMetadata
 } from './src/metadata/types';
 
 export { CadModelMetadata } from './src/metadata/CadModelMetadata';
 
-export { traverseDepthFirst } from './src/metadata/objectTraversal';
-export { transformCameraConfiguration } from './src/metadata/transformCameraConfiguration';
+export { traverseDepthFirst } from './src/utilities/objectTraversal';
+export { transformCameraConfiguration } from './src/utilities/transformCameraConfiguration';
