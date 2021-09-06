@@ -137,7 +137,7 @@ export const getColumns = (
         <SettingButtons row align>
           <IconButton
             aria-label="Icon-Button"
-            icon="ExpandMax"
+            icon="EyeShow"
             type="ghost"
             $square
             onClick={(

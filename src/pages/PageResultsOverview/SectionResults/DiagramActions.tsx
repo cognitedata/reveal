@@ -46,7 +46,7 @@ export default function DiagramActions() {
       </Tooltip>
       <Button
         aria-label="Button-Preview-All"
-        icon="ExpandMax"
+        icon="EyeShow"
         type="primary"
         onClick={onPreviewAllClick}
         disabled={isLoading || noSuccessfulFiles}

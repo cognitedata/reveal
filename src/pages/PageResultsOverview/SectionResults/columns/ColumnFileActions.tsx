@@ -58,7 +58,7 @@ export default function ColumnFileActions({ file }: Props): JSX.Element {
       >
         <IconButton
           aria-label="Icon-Button"
-          icon="ExpandMax"
+          icon="EyeShow"
           type="ghost"
           $square
           onClick={onFileViewClick}
