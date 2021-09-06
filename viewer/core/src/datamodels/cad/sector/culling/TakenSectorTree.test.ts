@@ -3,8 +3,8 @@
  */
 
 import * as THREE from 'three';
-import { expectContainsSectorsWithLevelOfDetail } from '../../../../__testutilities__/expects';
-import { generateSectorTree, SectorMetadataFacesFileSection, traverseDepthFirst } from '@reveal/cad-parsers';
+import { generateSectorTree, expectContainsSectorsWithLevelOfDetail } from '../../../../../../test-utilities';
+import { SectorMetadataFacesFileSection, traverseDepthFirst } from '@reveal/cad-parsers';
 import { DetermineSectorCostDelegate, PrioritizedWantedSector } from './types';
 import { TakenSectorTree } from './TakenSectorTree';
 import { LevelOfDetail, SectorMetadata, CadModelMetadata } from '../../../../internals';

@@ -8,7 +8,7 @@ import { SectorCuller } from '../internals';
 import { createRevealManager } from './createRevealManager';
 import { RevealManager } from './RevealManager';
 import { LoadingStateChangeListener } from '..';
-import { createGlContext } from '../__testutilities__/createGlContext';
+import { createGlContext } from '../../../test-utilities';
 
 describe('RevealManager', () => {
   const mockClient: ModelDataClient<{ id: number }> = {

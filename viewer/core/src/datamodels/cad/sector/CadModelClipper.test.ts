@@ -3,7 +3,9 @@
  */
 
 import * as THREE from 'three';
-import { generateSectorTree, createCadModelMetadata, CadModelMetadata, SectorMetadata } from '@reveal/cad-parsers';
+import { CadModelMetadata, SectorMetadata } from '@reveal/cad-parsers';
+import { createCadModelMetadata } from '../../../../../test-utilities/src/createCadModelMetadata';
+import { generateSectorTree } from '../../../../../test-utilities/src/createSectorMetadata';
 import { CadModelClipper } from './CadModelClipper';
 import { Mutable } from '../../../utilities/reflection';
 

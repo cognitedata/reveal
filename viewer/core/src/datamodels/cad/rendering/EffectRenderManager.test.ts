@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import { RenderOptions } from '../../..';
-import { createGlContext } from '../../../__testutilities__/createGlContext';
+import { createGlContext } from '../../../../../test-utilities';
 
 import { CadMaterialManager } from '../CadMaterialManager';
 import { EffectRenderManager } from './EffectRenderManager';

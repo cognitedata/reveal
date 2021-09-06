@@ -4,9 +4,7 @@
 
 import * as THREE from 'three';
 
-import { SectorMetadata } from '../metadata/types';
-import { CadModelMetadata } from '../metadata/CadModelMetadata';
-import { SectorSceneImpl } from '../utilities/SectorScene';
+import { SectorMetadata, CadModelMetadata, SectorSceneImpl } from '../../packages/cad-parsers/index';
 
 let modelIdRunningNumber = 0;
 

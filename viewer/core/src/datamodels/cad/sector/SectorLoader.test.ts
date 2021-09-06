@@ -5,8 +5,8 @@
 import * as THREE from 'three';
 
 import { AutoDisposeGroup } from '../../../utilities/three';
-import { asyncIteratorToArray } from '../../../__testutilities__/asyncIteratorToArray';
-import { generateSectorTree, createCadModelMetadata, CadModelMetadata, SectorMetadata } from '@reveal/cad-parsers';
+import { generateSectorTree, asyncIteratorToArray, createCadModelMetadata } from '../../../../../test-utilities';
+import { CadModelMetadata, SectorMetadata } from '@reveal/cad-parsers';
 
 import { SectorCuller } from './culling/SectorCuller';
 import { DetermineSectorsInput, SectorLoadingSpent } from './culling/types';

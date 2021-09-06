@@ -8,7 +8,7 @@ import { HtmlOverlayOptions, HtmlOverlayTool } from './HtmlOverlayTool';
 import { Cognite3DViewer } from '../public/migration/Cognite3DViewer';
 import { CogniteClient } from '@cognite/sdk';
 import { SectorCuller } from '../internals';
-import { createGlContext } from '../__testutilities__/createGlContext';
+import { createGlContext } from '../../../test-utilities';
 
 describe('HtmlOverlayTool', () => {
   let canvasContainer: HTMLElement;

@@ -4,8 +4,7 @@
 import * as THREE from 'three';
 
 import { Mutable } from '../../utilities/reflection';
-import { createCadModelMetadata } from '@reveal/cad-parsers';
-import { generateSectorTree } from '@reveal/cad-parsers';
+import { generateSectorTree, createCadModelMetadata } from '../../../../test-utilities';
 import { CadMaterialManager } from './CadMaterialManager';
 import { CadModelFactory } from './CadModelFactory';
 import { CadModelMetadata } from '@reveal/cad-parsers';

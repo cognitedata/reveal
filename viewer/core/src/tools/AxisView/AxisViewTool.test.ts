@@ -5,7 +5,7 @@
 import { CogniteClient } from '@cognite/sdk';
 import * as THREE from 'three';
 import { Cognite3DViewer } from '../../public/migration/Cognite3DViewer';
-import { createGlContext } from '../../__testutilities__/createGlContext';
+import { createGlContext } from '../../../../test-utilities';
 import { AxisViewTool } from './AxisViewTool';
 import { defaultAxisBoxConfig } from './types';
 
