@@ -25,8 +25,8 @@ export class GeomapTool extends Cognite3DViewerToolBase {
     this._maps.setLatLong(lat, long);
   }
 
-  public setMapProvider(idx: number) {
-    this._maps.setMapProvider(idx);
+  public setMapProvider(provider: string) {
+    this._maps.setMapProvider(provider);
   }
 
   public dispose(): void {

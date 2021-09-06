@@ -12,19 +12,6 @@ export class Geomap {
     private _map: any;
     private _mapProvider: any;
 
-    private readonly _providers : { id : string, provider: GEOTHREE.MapProvider }[] = [
-        {"id" : "Vector OpenSteet Maps", "provider" : new GEOTHREE.OpenStreetMapsProvider()},
-        {"id" : "Vector Map Box", "provider" : new GEOTHREE.MapBoxProvider(APIKeys.DEV_MAPBOX_API_KEY, "mapbox/streets-v10", GEOTHREE.MapBoxProvider.STYLE)},
-        {"id" : "Vector Here Maps", "provider" : new GEOTHREE.HereMapsProvider(APIKeys.DEV_HEREMAPS_APP_ID, APIKeys.DEV_HEREMAPS_APP_CODE, "base", "normal.day", "jpg", 512)},
-        {"id" : "Vector Bing Maps", "provider" : new GEOTHREE.BingMapsProvider(APIKeys.DEV_BING_API_KEY, GEOTHREE.BingMapsProvider.ROAD)},
-        {"id" : "Vector Map Tiler Outdoor", "provider" : new GEOTHREE.MapTilerProvider(APIKeys.DEV_MAPTILER_API_KEY, "maps", "outdoor", "png")},
-        {"id" : "Satellite Map Box Labels", "provider" : new GEOTHREE.MapBoxProvider(APIKeys.DEV_MAPBOX_API_KEY, "mapbox/satellite-streets-v10", GEOTHREE.MapBoxProvider.STYLE, "jpg70")},
-        {"id" : "Satellite Here Maps", "provider" : new GEOTHREE.HereMapsProvider(APIKeys.DEV_HEREMAPS_APP_ID, APIKeys.DEV_HEREMAPS_APP_CODE, "aerial", "satellite.day", "jpg", 512)},
-        {"id" : "Satellite Bing Maps", "provider" : new GEOTHREE.BingMapsProvider(APIKeys.DEV_BING_API_KEY, GEOTHREE.BingMapsProvider.AERIAL)},
-        {"id" : "Satellite Maps Tiler Labels", "provider" : new GEOTHREE.MapTilerProvider(APIKeys.DEV_MAPTILER_API_KEY, "maps", "hybrid", "jpg")},
-        {"id" : "Debug", "provider" : new GEOTHREE.DebugProvider()}
-      ];
-
     public CreateMap(viewer: Cognite3DViewer, mapConfig: any) {
         this._viewer = viewer;
         this.GetMapProvider(mapConfig);
@@ -35,20 +22,14 @@ export class Geomap {
     private GetMapProvider(mapConfig: any) {
         switch(mapConfig.mapProvider) {
             case 'BingMap':
-                this._mapProvider = new GEOTHREE.BingMapsProvider(mapConfig.mapAPIKey, mapConfig.mapMode);
+                this._mapProvider = new GEOTHREE.BingMapsProvider( mapConfig.mapAPIKey || APIKeys.DEV_BING_API_KEY, mapConfig.mapMode);
                 break;
             case 'HereMap':
-                this._mapProvider = new GEOTHREE.HereMapsProvider(mapConfig.mapAPIKey, mapConfig.mapAPICode, mapConfig.mapMode, mapConfig.mapScheme, mapConfig.format, mapConfig.mapResSize);
-                break;
-            case 'MapTilerMap':
-                this._mapProvider = new GEOTHREE.MapTilerProvider(mapConfig.mapAPIKey, mapConfig.mapMode, mapConfig.mapMode, mapConfig.format);
-                break;
-            case 'OpenStreetMap':
-                this._mapProvider = new GEOTHREE.OpenStreetMapsProvider();
+                this._mapProvider = new GEOTHREE.HereMapsProvider(mapConfig.mapAPIKey || APIKeys.DEV_HEREMAPS_APP_ID, mapConfig.mapAPICode || APIKeys.DEV_HEREMAPS_APP_CODE, mapConfig.mapMode, mapConfig.mapScheme, mapConfig.format, mapConfig.mapResSize);
                 break;
             case 'MapBoxMap':
             default:
-                this._mapProvider = new GEOTHREE.MapBoxProvider(mapConfig.mapAPIKey, mapConfig.id, mapConfig.mapMode, mapConfig.format);
+                this._mapProvider = new GEOTHREE.MapBoxProvider(mapConfig.mapAPIKey || APIKeys.DEV_MAPBOX_API_KEY, mapConfig.id || "mapbox/satellite-streets-v10", mapConfig.mapMode, mapConfig.format);
                 break;
         }
     }
@@ -60,8 +41,13 @@ export class Geomap {
         this._map.updateMatrixWorld(true);
     }
 
-    public setMapProvider(idx: number) {
-        this._map.setProvider(this._providers[idx].provider);
+    public setMapProvider(provider: string, apiKey?: string) {
+        const mapConfig = {
+            mapProvider: provider,
+            mapAPIKey: apiKey
+        }
+        this.GetMapProvider(mapConfig);
+        this._map.setProvider(this._mapProvider);
     }
 
     public dispose(): void {

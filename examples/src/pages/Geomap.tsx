@@ -164,9 +164,7 @@ export function Geomap() {
           hideAllNodes: false
         },
         showCameraTool: new DebugCameraTool(viewer),
-        mode: 'Planar',
-        providers: 'Satellite Map Box Labels',
-        heightmap: 'Satellite Map Box Labels',
+        providers: 'MapBoxMap',
         latitude: 0.000001,
         longitude: 0.000001
       };
@@ -234,12 +232,9 @@ export function Geomap() {
       let geomapTool = new GeomapTool(viewer, mapConfig);
 
       const renderGui = gui.addFolder('Options');
-      const mapProviders = ['Vector OpenSteet Maps', 'Vector Map Box', 'Vector Here Maps', 'Vector Bing Maps', 'Vector Map Tiler Outdoor',
-                            'Satellite Map Box Labels', 'Satellite Here Maps', 'Satellite Bing Maps', 'Satellite Maps Tiler Labels', 
-                            'Debug'];
+      const mapProviders = ['MapBoxMap', 'HereMap', 'BingMap'];
       renderGui.add(guiState, 'providers', mapProviders).name('MapProviders').onFinishChange(value => {
-        const provider = mapProviders.indexOf(value);
-        geomapTool.setMapProvider(provider);
+        geomapTool.setMapProvider(value);
         viewer.requestRedraw();
       });
 
