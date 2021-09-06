@@ -32,16 +32,16 @@ export const timeseriesSummaryById = selectorFamily({
         ...ts.datapoints.map((datapoint) => datapoint.max || -Infinity)
       );
 
-      const median =
+      const mean =
         ts.datapoints
-          .map((datapoint) => datapoint.average)
-          .slice()
-          .sort()[Math.floor(ts.datapoints.length / 2)] || Infinity;
+          .map((datapoint) => datapoint.average || 0)
+          .reduce((total, average) => total + average, 0) /
+        ts.datapoints.length;
 
       return {
         min,
         max,
-        median,
+        mean,
       };
     },
 });

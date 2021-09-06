@@ -50,7 +50,6 @@ const getCallStatus =
   };
 
 const renderStatusIcon = (status?: FunctionCallStatus) => {
-  console.log('yoyo');
   switch (status) {
     case 'Running':
       return <Icon type="Loading" />;

@@ -324,7 +324,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
           </th>
           <th style={{ width: 60 }}>
             <SourceItem>
-              <SourceName>Median</SourceName>
+              <SourceName>Mean</SourceName>
             </SourceItem>
           </th>
           <th style={{ width: 180, paddingRight: 8 }}>

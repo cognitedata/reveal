@@ -267,7 +267,7 @@ export default function TimeSeriesRow({
           <td>
             {summary
               ? roundToSignificantDigits(
-                  convertValue(summary?.median, unit, preferredUnit),
+                  convertValue(summary?.mean, unit, preferredUnit),
                   1
                 )
               : ''}
