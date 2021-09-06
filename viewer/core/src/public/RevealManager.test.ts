@@ -3,7 +3,7 @@
  */
 import * as THREE from 'three';
 
-import { ModelDataClient } from '../utilities/networking/types';
+import { ModelDataClient } from '@reveal/cad-parsers';
 import { SectorCuller } from '../internals';
 import { createRevealManager } from './createRevealManager';
 import { RevealManager } from './RevealManager';

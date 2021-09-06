@@ -9,8 +9,7 @@ import { OrderSectorsByVisibilityCoverage } from './OrderSectorsByVisibilityCove
 import { ByVisibilityGpuSectorCuller, LevelOfDetail } from '../../../../internals';
 import { SectorMetadata, CadNode, CadModelMetadata } from '../../../../internals';
 
-import { generateSectorTree } from '../../../../__testutilities__/createSectorMetadata';
-import { createCadModelMetadata } from '../../../../__testutilities__/createCadModelMetadata';
+import { generateSectorTree, createCadModelMetadata } from '@reveal/cad-parsers';
 import { CadModelSectorBudget } from '../../CadModelSectorBudget';
 import { PropType } from '../../../../utilities/reflection';
 import { createGlContext } from '../../../../__testutilities__/createGlContext';

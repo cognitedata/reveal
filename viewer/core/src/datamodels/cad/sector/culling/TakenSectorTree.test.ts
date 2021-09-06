@@ -4,13 +4,11 @@
 
 import * as THREE from 'three';
 import { expectContainsSectorsWithLevelOfDetail } from '../../../../__testutilities__/expects';
-import { generateSectorTree } from '../../../../__testutilities__/createSectorMetadata';
+import { generateSectorTree, SectorMetadataFacesFileSection, traverseDepthFirst } from '@reveal/cad-parsers';
 import { DetermineSectorCostDelegate, PrioritizedWantedSector } from './types';
 import { TakenSectorTree } from './TakenSectorTree';
 import { LevelOfDetail, SectorMetadata, CadModelMetadata } from '../../../../internals';
 import { Mutable } from '../../../../utilities/reflection';
-import { SectorMetadataFacesFileSection } from '../types';
-import { traverseDepthFirst } from '../../../../utilities/objectTraversal';
 
 describe('TakenSectorTree', () => {
   const model: CadModelMetadata = {} as any;

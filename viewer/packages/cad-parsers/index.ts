@@ -25,3 +25,13 @@ export { CadModelMetadata } from './src/metadata/CadModelMetadata';
 
 export { traverseDepthFirst } from './src/utilities/objectTraversal';
 export { transformCameraConfiguration } from './src/utilities/transformCameraConfiguration';
+
+/*
+ * Test utils 
+ */
+
+export { generateSectorTree,
+	 createSectorMetadata,
+	 SectorTree } from './src/__testutilities__/createSectorMetadata';
+
+export { createCadModelMetadata } from './src/__testutilities__/createCadModelMetadata';

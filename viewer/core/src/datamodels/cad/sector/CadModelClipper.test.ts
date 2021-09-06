@@ -3,10 +3,8 @@
  */
 
 import * as THREE from 'three';
-import { generateSectorTree } from '../../../__testutilities__/createSectorMetadata';
-import { createCadModelMetadata } from '../../../__testutilities__/createCadModelMetadata';
+import { generateSectorTree, createCadModelMetadata, CadModelMetadata, SectorMetadata } from '@reveal/cad-parsers';
 import { CadModelClipper } from './CadModelClipper';
-import { CadModelMetadata, SectorMetadata } from '..';
 import { Mutable } from '../../../utilities/reflection';
 
 describe('CadModelClipper', () => {

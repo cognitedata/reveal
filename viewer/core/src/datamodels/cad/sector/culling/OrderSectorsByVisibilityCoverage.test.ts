@@ -4,13 +4,10 @@
 
 import * as THREE from 'three';
 
-import { createSectorMetadata, SectorTree } from '../../../../__testutilities__/createSectorMetadata';
+import { createSectorMetadata, SectorTree,
+	 SectorScene, SectorMetadata, CadModelMetadata, SectorSceneImpl, traverseDepthFirst } from '@reveal/cad-parsers';
 import { GpuOrderSectorsByVisibilityCoverage } from '../../../../internals';
-import { SectorSceneImpl } from '../SectorScene';
-import { CadModelMetadata } from '../..';
-import { SectorScene, SectorMetadata } from '../types';
 import { OccludingGeometryProvider } from './OccludingGeometryProvider';
-import { traverseDepthFirst } from '../../../../utilities/objectTraversal';
 import { createGlContext } from '../../../../__testutilities__/createGlContext';
 
 describe('OrderSectorsByVisibilityCoverage', () => {
