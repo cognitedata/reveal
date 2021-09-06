@@ -450,7 +450,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cognite/potree-core@npm:^1.5.0":
+"@cognite/potree-core@npm:1.5.0":
   version: 1.5.0
   resolution: "@cognite/potree-core@npm:1.5.0"
   peerDependencies:
@@ -472,7 +472,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@cognite/reveal@workspace:."
   dependencies:
-    "@cognite/potree-core": ^1.5.0
+    "@cognite/potree-core": 1.5.0
     "@cognite/reveal-parser-worker": 1.1.1
     "@cognite/sdk": ^5.0.0
     "@cognite/sdk-core": ^3.0.0
