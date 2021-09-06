@@ -1,7 +1,6 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import * as GEOTHREE from 'geo-three'; 
 /**
  * Supported map API Keys
  */

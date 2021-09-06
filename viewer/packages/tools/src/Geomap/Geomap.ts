@@ -3,7 +3,7 @@
  */
 
 import * as GEOTHREE from 'geo-three';
-import { Cognite3DViewer } from '../../migration';
+import { Cognite3DViewer } from '@reveal/core';
 import { APIKeys } from './MapConfig';
 
 export class Geomap {

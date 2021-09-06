@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { Cognite3DViewer } from '../../migration';
+import { Cognite3DViewer } from '@reveal/core';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 import { MapConfig } from './MapConfig';
 import { Geomap } from './Geomap';
