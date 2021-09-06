@@ -596,7 +596,7 @@ function createGeometryFilterStateFromBounds(bounds: THREE.Box3, out: { center: 
 }
 
 function createGeometryFilterFromState(state: { center: THREE.Vector3, size: THREE.Vector3 }): { boundingBox: THREE.Box3, isBoundingBoxInModelCoordinates: true } | undefined {
-  state.size.clamp(new THREE.Vector3(0, 0, 0), new THREE.Vector3(Infinity, Infinity, Infinity));
+  state.size.clamp(new THREE.Vector3(), new THREE.Vector3(Infinity, Infinity, Infinity));
   if (state.size.equals(new THREE.Vector3())) {
     return undefined;
   }

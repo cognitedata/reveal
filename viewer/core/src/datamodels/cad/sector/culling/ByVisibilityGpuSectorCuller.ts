@@ -143,11 +143,11 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     this.options = {
       renderer: options.renderer,
       determineSectorCost: options && options.determineSectorCost ? options.determineSectorCost : computeSectorCost,
-      logCallback: console.log,
-      // options && options.logCallback
-      //   ? options.logCallback
-      //   : // No logging
-      //     () => {},
+      logCallback:
+        options && options.logCallback
+          ? options.logCallback
+          : // No logging
+            () => {},
       coverageUtil: options.coverageUtil
     };
     this.takenSectors = new TakenSectorMap(this.options.determineSectorCost);

@@ -17,7 +17,7 @@ import { callActionWithIndicesAsync } from '../../utilities/callActionWithIndice
 import { NodeCollectionBase } from '../../datamodels/cad/styling';
 import { NodeAppearance } from '../../datamodels/cad';
 import { NodeTransformProvider } from '../../datamodels/cad/styling/NodeTransformProvider';
-import { NodesApiClient } from '../../../../packages/nodes-api';
+import { NodesApiClient } from '@reveal/nodes-api';
 
 /**
  * Represents a single 3D CAD model loaded from CDF.

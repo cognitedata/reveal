@@ -51,8 +51,8 @@ export class NodesCdfClient implements NodesApiClient {
   ): Promise<NodeTreeIndexAndSubtreeSize[]> {
     const requests = nodeIds.map(id => ({ id }));
     const nodes = await this._client.revisions3D.retrieve3DNodes(modelId, revisionId, requests);
-    return nodes.map(n => {
-      return { treeIndex: n.treeIndex, subtreeSize: n.subtreeSize };
+    return nodes.map(node => {
+      return { treeIndex: node.treeIndex, subtreeSize: node.subtreeSize };
     });
   }
 
