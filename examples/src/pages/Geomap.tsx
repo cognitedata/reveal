@@ -19,7 +19,7 @@ import {
 } from '@cognite/reveal';
 import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, AxisViewTool, GeomapTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
-import { MapConfig } from '../../../viewer/dist/core/src/tools/Geomap/MapConfig';
+import { MapConfig } from '../../../viewer/dist/packages/tools/src/Geomap/MapConfig';
 
 enum MapProviders {
   BINGMAP = "BingMap",
@@ -174,7 +174,7 @@ export function Geomap() {
       const guiActions = {
         setLatLongPosition: () => {
         geomapTool.setLatLong(guiState.latitude, guiState.longitude);
-        viewer.forceRerender();}
+        viewer.requestRedraw();}
         };
 
       // Load model if provided by URL
@@ -240,7 +240,7 @@ export function Geomap() {
       renderGui.add(guiState, 'providers', mapProviders).name('MapProviders').onFinishChange(value => {
         const provider = mapProviders.indexOf(value);
         geomapTool.setMapProvider(provider);
-        viewer.forceRerender();
+        viewer.requestRedraw();
       });
 
       renderGui.add(guiState, 'latitude', -90.000000, 90.000000, 0.000001).name('Latitude');
