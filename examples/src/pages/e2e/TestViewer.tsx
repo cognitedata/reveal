@@ -42,12 +42,14 @@ type PropsCad<T = TestEnvCad> = {
 };
 type PropsPointCloud<T = TestEnvPointCloud> = {
   modelType: 'pointcloud';
+  pointColorType?: reveal.PotreePointColorType;
   nodeAppearanceProvider?: never;
   modifyTestEnv?: (env: T) => TestEnvModified<T> | void;
 };
 
 type Props = {
   modelName?: string;
+  backgroundColor?: string;
 } & (PropsCad | PropsPointCloud);
 
 CameraControls.install({ THREE });
@@ -129,7 +131,7 @@ export function TestViewer(props: Props) {
       let renderer = new THREE.WebGLRenderer({
         canvas: canvas.current,
       });
-      renderer.setClearColor('#444');
+      renderer.setClearColor(props.backgroundColor ? props.backgroundColor : '#444');
       renderer.setPixelRatio(window.devicePixelRatio);
       renderer.localClippingEnabled = true;
 
@@ -140,6 +142,7 @@ export function TestViewer(props: Props) {
 
       if (props.modelType === 'pointcloud') {
         model = await revealManager.addModel('pointcloud', modelUrl);
+        model.pointColorType = props.pointColorType ? props.pointColorType : reveal.PotreePointColorType.Rgb;
       } else {
         model = await revealManager.addModel(
           'cad',
