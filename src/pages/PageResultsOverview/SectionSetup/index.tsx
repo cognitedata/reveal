@@ -30,14 +30,14 @@ export default function SectionSetup(): JSX.Element {
     Object.keys(allCounts)
       .filter((resourceType) => resourceType !== 'diagrams')
       .map<React.ReactNode>((resourceType, index: number) => (
-        <>
+        <React.Fragment key={`selection-badge-${resourceType}`}>
           {!!index && 'and'}
           <SelectionInfo
             editable={!jobStarted}
             type={resourceType as ResourceType}
             count={allCounts[resourceType as ResourceType]}
           />
-        </>
+        </React.Fragment>
       ));
 
   return (
@@ -87,7 +87,7 @@ export default function SectionSetup(): JSX.Element {
               )}
             </>
           ) : (
-            <Flex row align>
+            <Flex row align style={{ flexWrap: 'wrap' }}>
               <SelectionInfo
                 editable={!jobStarted}
                 type="diagrams"

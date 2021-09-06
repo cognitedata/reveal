@@ -63,7 +63,6 @@ export default function SectionResults() {
 const TitleBar = ({ jobStatus }: { jobStatus: JobStatus }) => {
   const { workflowId } = useActiveWorkflow();
   const { diagrams } = useWorkflowTotalCounts(workflowId);
-  const areResourcesLoading = jobStatus !== 'ready' && jobStatus !== 'done';
   const isJobDone = jobStatus === 'done';
 
   return (
@@ -74,8 +73,7 @@ const TitleBar = ({ jobStatus }: { jobStatus: JobStatus }) => {
           {diagrams}
         </span>
       </Title>
-      {areResourcesLoading && <ResourcesLoaded />}
-      {isJobDone && <DiagramActions />}
+      {isJobDone ? <DiagramActions /> : <ResourcesLoaded />}
     </Flex>
   );
 };

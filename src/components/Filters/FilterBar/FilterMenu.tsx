@@ -10,8 +10,8 @@ export const FilterMenu = ({ options }: FileMenuProps): JSX.Element => {
 
   const filterMenu = (
     <Menu>
-      {options.map((option) => (
-        <Menu.Item>{option}</Menu.Item>
+      {options.map((option, index) => (
+        <Menu.Item key={`menu-filter-${String(index)}`}>{option}</Menu.Item>
       ))}
     </Menu>
   );
@@ -19,7 +19,7 @@ export const FilterMenu = ({ options }: FileMenuProps): JSX.Element => {
   return (
     <Dropdown content={filterMenu} visible={isMenuOpen}>
       <Button
-        icon="Down"
+        icon="ChevronDownCompact"
         iconPlacement="right"
         onClick={() => setIsMenuOpen(!isMenuOpen)}
       >

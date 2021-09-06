@@ -32,7 +32,7 @@ export default function LandingPage() {
           Create interactive diagrams
         </HugeButton>
       </Flex>
-      <Title level={4}>Pending interactive diagrams</Title>
+      <Title level={4}>Review and approve pending interactive diagrams</Title>
     </div>
   );
 

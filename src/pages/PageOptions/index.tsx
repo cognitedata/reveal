@@ -29,7 +29,7 @@ export default function PageOptions(props: Props) {
     <Flex column style={{ width: '100%' }}>
       <PageTitle
         title="Select model"
-        subtitle="Select the model you want to be applied to create interactive diagrams"
+        subtitle="Select the model you want to use to create interactive diagrams"
       />
       <Flex row style={{ paddingBottom: '50px' }}>
         <Flex column style={{ width: '100%' }}>
@@ -44,9 +44,7 @@ export default function PageOptions(props: Props) {
             style={{ marginBottom: '14px' }}
           >
             <Body level={2}>
-              Uses the default set of configurations for creating interactive
-              engineering diagrams. This is recommended for most engineering
-              diagrams.
+              This model is recommended for most engineering diagrams.
             </Body>
           </CollapsibleRadio>
           <CollapsibleRadio
@@ -66,7 +64,7 @@ export default function PageOptions(props: Props) {
           >
             <Body level={2}>
               Allows you to configure advanced options such as number of tokens
-              matched for an entity, partial matches and others.
+              matched for an entity, partial matches, and others.
             </Body>
           </CollapsibleRadio>
         </Flex>

@@ -37,6 +37,7 @@ export const FilterList = ({
         const dataset = allDatasets.find((ds) => ds.id === dsId);
         return (
           <FilterTag
+            key={`filter-tag-${dsId}-ds`}
             onClose={() =>
               onDataSetsChange(dataSetIds.filter((id) => id !== dsId))
             }
@@ -55,6 +56,7 @@ export const FilterList = ({
     if (labels?.length) {
       return labels.map((label) => (
         <FilterTag
+          key={`filter-tag-${label.externalId}-label`}
           id={label.externalId}
           content={`Label: ${label.externalId}`}
           onClose={() =>

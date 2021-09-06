@@ -22,6 +22,7 @@ export const StepCombo = (props: Props): JSX.Element => {
     <SubstepWrapper>
       {substeps?.map((substep) => (
         <Substep
+          key={`substep-${substep.workflowStep}`}
           align
           onClick={(e) => e.preventDefault()}
           isCurrent={substep.workflowStep === currentStep}

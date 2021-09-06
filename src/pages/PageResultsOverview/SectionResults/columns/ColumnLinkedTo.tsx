@@ -16,7 +16,7 @@ export default function ColumnLinkedTo({
   const didFileFail = failedFiles?.find(
     (failedFile) => failedFile.fileId === fileId
   );
-  if (didFileFail) return <Body level={2}>No tags detected</Body>;
+  if (didFileFail) return <Body level={2}>No links</Body>;
 
   return <DetectedTags fileId={fileId} />;
 }

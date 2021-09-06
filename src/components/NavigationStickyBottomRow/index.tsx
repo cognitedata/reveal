@@ -32,7 +32,6 @@ export default function NavigationStickyBottomRow(props: Props) {
       <Tooltip title={prev?.tooltip} placement="right" arrowPointAtCenter>
         <Button
           icon="ArrowBack"
-          size="large"
           type="secondary"
           onClick={() => (prev?.onClick ? prev.onClick() : goToPrevStep())}
           disabled={prev?.disabled}

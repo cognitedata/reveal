@@ -35,6 +35,7 @@ export default function DiagramActions() {
         title={isApproveAllDisabled && 'All diagrams have been approved!'}
       >
         <Button
+          aria-label="Button-Approve-All"
           icon="Checkmark"
           type="tertiary"
           disabled={isApproveAllDisabled || noSuccessfulFiles}
@@ -44,6 +45,7 @@ export default function DiagramActions() {
         </Button>
       </Tooltip>
       <Button
+        aria-label="Button-Preview-All"
         icon="ExpandMax"
         type="primary"
         onClick={onPreviewAllClick}
@@ -52,7 +54,11 @@ export default function DiagramActions() {
         Preview all
       </Button>
       <Dropdown content={<MenuAll canRejectAll={!isApproveAllDisabled} />}>
-        <Button icon="MoreOverflowEllipsisHorizontal" variant="ghost" />
+        <Button
+          icon="MoreOverflowEllipsisHorizontal"
+          aria-label="Button-More-All"
+          type="ghost"
+        />
       </Dropdown>
     </InfoWrapper>
   );

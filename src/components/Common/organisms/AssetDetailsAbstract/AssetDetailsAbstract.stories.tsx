@@ -75,14 +75,7 @@ export const WithExtras = () => {
             createdTime: new Date(),
           },
         ]}
-        extras={
-          <Button
-            type="primary"
-            variant="ghost"
-            shape="round"
-            icon="VerticalEllipsis"
-          />
-        }
+        extras={<Button type="ghost" shape="round" icon="VerticalEllipsis" />}
       >
         <Button>Hover me!</Button>
       </AssetDetailsAbstract>

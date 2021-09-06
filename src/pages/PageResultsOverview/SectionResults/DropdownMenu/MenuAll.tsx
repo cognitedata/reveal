@@ -21,6 +21,7 @@ export const MenuAll = ({ canRejectAll }: { canRejectAll: boolean }) => {
         <Button
           type="ghost"
           icon="Save"
+          aria-label="Button-Save-SVG-All"
           iconPlacement="left"
           onClick={onSaveAllClick}
           disabled={isDisabled}
@@ -31,6 +32,7 @@ export const MenuAll = ({ canRejectAll }: { canRejectAll: boolean }) => {
       </Tooltip>
       <Button
         type="ghost-danger"
+        aria-label="Button-Reject-All"
         icon={isLoading ? 'LoadingSpinner' : 'Trash'}
         iconPlacement="left"
         onClick={() => onRejectDiagrams(true)}

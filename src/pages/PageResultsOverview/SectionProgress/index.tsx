@@ -3,7 +3,10 @@ import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { Colors, Title, Detail } from '@cognite/cogs.js';
 import { Flex, DoughnutChart } from 'components/Common';
-import { useParsingJob } from 'modules/contextualization/pnidParsing';
+import {
+  ApiStatusCount,
+  useParsingJob,
+} from 'modules/contextualization/pnidParsing';
 import { useResourceCount, useInterval, useActiveWorkflow } from 'hooks';
 import { pollJobResults } from 'modules/contextualization/pnidParsing/actions';
 import { statusData } from 'components/Filters';
@@ -87,21 +90,19 @@ const SectionProgress = (): JSX.Element => {
         }
       />
       <Flex column justify style={{ alignItems: 'flex-start' }}>
-        {statusData.map((status) => {
-          if (status.type !== 'idle') {
-            return (
-              <StatusSquare
-                small
-                status={status.type}
-                style={{ margin: '6px' }}
-                hoverContent={`${statusCount?.[status.type]} diagram(s) ${
-                  status.type
-                }`}
-              />
-            );
-          }
-          return <></>;
-        })}
+        {statusData
+          .filter((status) => status.type && status.type !== 'idle')
+          .map((status) => (
+            <StatusSquare
+              key={`status-square-${status.type}`}
+              small
+              status={status.type}
+              style={{ margin: '6px' }}
+              hoverContent={`${
+                statusCount?.[status.type as keyof ApiStatusCount]
+              } diagram(s) ${status.type}`}
+            />
+          ))}
       </Flex>
     </Wrapper>
   );

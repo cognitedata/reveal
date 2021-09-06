@@ -156,9 +156,8 @@ export default function SelectionBar(props: Props): JSX.Element {
     <Flex column>
       <StyledFlex row align>
         <InputRow row>
-          {/* <FilterMenu /> */}
           <Input
-            placeholder="Filter by name"
+            placeholder="Search by name"
             style={{ width: '250px' }}
             value={filter.search?.name ?? ''}
             onChange={onNameSearchChange}

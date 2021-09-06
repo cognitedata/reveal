@@ -35,6 +35,7 @@ export const MenuSingle = ({ file }: { file: FileInfo }) => {
     <DropdownMenu column justify grow style={{ width: '200px' }}>
       <Button
         type="ghost"
+        aria-label="Button-Approve-Single"
         icon={isLoading ? 'LoadingSpinner' : 'Checkmark'}
         iconPlacement="left"
         onClick={() => onApproveDiagrams()}
@@ -45,6 +46,7 @@ export const MenuSingle = ({ file }: { file: FileInfo }) => {
       </Button>
       <Button
         type="ghost"
+        aria-label="Button-Save-SVG-Single"
         icon={isConverting ? 'LoadingSpinner' : 'Save'}
         iconPlacement="left"
         onClick={() => convertDiagramToSVG()}
@@ -55,6 +57,7 @@ export const MenuSingle = ({ file }: { file: FileInfo }) => {
       </Button>
       <Button
         type="ghost-danger"
+        aria-label="Button-Reject-Single"
         icon={isLoading ? 'LoadingSpinner' : 'Trash'}
         iconPlacement="left"
         onClick={() => onRejectDiagrams()}

@@ -4,6 +4,7 @@ import { Colors, Icon, Body } from '@cognite/cogs.js';
 
 const StyledModelInfo = styled.div<{ editable: boolean }>`
   display: flex;
+  flex-direction: row;
   align-items: center;
   justify-content: space-between;
   background-color: ${Colors.white.hex()};
@@ -14,6 +15,10 @@ const StyledModelInfo = styled.div<{ editable: boolean }>`
   line-height: 20px;
   margin-top: 4px;
   cursor: ${({ editable }) => (editable ? 'pointer' : 'default')};
+
+  & > * {
+    white-space: nowrap;
+  }
 `;
 
 type Props = {
@@ -35,10 +40,15 @@ export default function ModelInfo(props: Props): JSX.Element {
         {children}
       </Body>
       {editable && (
-        <Icon
-          type="Edit"
-          style={{ color: Colors['greyscale-grey6'].hex(), marginLeft: '6px' }}
-        />
+        <span>
+          <Icon
+            type="Edit"
+            style={{
+              color: Colors['greyscale-grey6'].hex(),
+              marginLeft: '6px',
+            }}
+          />
+        </span>
       )}
     </StyledModelInfo>
   );

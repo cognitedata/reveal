@@ -56,14 +56,7 @@ export const WithExtras = () => {
           <Button type="primary">Click me</Button>,
           <Button>Click me too</Button>,
         ]}
-        extras={
-          <Button
-            type="primary"
-            variant="ghost"
-            shape="round"
-            icon="VerticalEllipsis"
-          />
-        }
+        extras={<Button type="ghost" shape="round" icon="VerticalEllipsis" />}
       >
         <Button>Hover me!</Button>
       </FileDetailsAbstract>

@@ -93,7 +93,11 @@ export default function PageFileOverview(props: Props) {
       )}
       <TitleRowWrapper>
         <Flex align justify>
-          <Button icon="ArrowBack" onClick={() => goToPrevStep()}>
+          <Button
+            icon="ArrowBack"
+            aria-label="Button-Back"
+            onClick={() => goToPrevStep()}
+          >
             Back
           </Button>
           <Divider type="vertical" style={{ height: '36px' }} />
@@ -119,8 +123,7 @@ export default function PageFileOverview(props: Props) {
                 />
                 <ClearTagsButton id={fileIdNumber} setEditMode={setEditMode} />
                 <Button
-                  shape="round"
-                  style={{ marginRight: '0px' }}
+                  style={{ marginRight: '0px', borderRadius: '8px' }}
                   loading={jobStarted}
                   onClick={() => {
                     if (canEditFiles) {

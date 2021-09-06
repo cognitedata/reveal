@@ -30,7 +30,12 @@ export default function FilesListEmpty() {
         <Title level={5} style={{ margin: '24px 0' }}>
           No pending interactive diagrams to review!
         </Title>
-        <IconButton type="primary" icon="Document" onClick={onContextualizeNew}>
+        <IconButton
+          aria-label="Icon-Button"
+          type="primary"
+          icon="Document"
+          onClick={onContextualizeNew}
+        >
           Create new interactive diagrams
         </IconButton>
       </Wrapper>

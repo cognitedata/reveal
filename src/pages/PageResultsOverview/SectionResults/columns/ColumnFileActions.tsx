@@ -57,8 +57,9 @@ export default function ColumnFileActions({ file }: Props): JSX.Element {
         onShow={onTooltipShow}
       >
         <IconButton
+          aria-label="Icon-Button"
           icon="ExpandMax"
-          variant="ghost"
+          type="ghost"
           $square
           onClick={onFileViewClick}
           disabled={isButtonDisabled}
@@ -70,8 +71,9 @@ export default function ColumnFileActions({ file }: Props): JSX.Element {
         disabled={isButtonDisabled}
       >
         <Button
+          aria-label="Button-More"
           icon="MoreOverflowEllipsisHorizontal"
-          variant="ghost"
+          type="ghost"
           disabled={isButtonDisabled || isFileDisabled}
         />
       </Dropdown>

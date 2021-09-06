@@ -66,7 +66,12 @@ const FileContextMenu = ({
         </Menu>
       }
     >
-      <IconButton icon="HorizontalEllipsis" variant="ghost" $square />
+      <IconButton
+        aria-label="Icon-Button"
+        icon="MoreOverflowEllipsisHorizontal"
+        type="ghost"
+        $square
+      />
     </Dropdown>
   );
 };
@@ -79,30 +84,23 @@ export const getColumns = (
   onRejectTags: (file: FileInfo) => void
 ) => [
   {
-    title: 'Preview',
-    key: 'preview',
-    width: 80,
-    align: 'center' as 'center',
+    title: 'Name',
+    key: 'name',
     render: (file: FileInfo) => (
-      <Flex row align justify>
+      <Flex row align style={{ justifyContent: 'flex-start' }}>
         <Popover
           content={<FileSmallPreview fileId={file.id} />}
           onVisibleChange={(visible) =>
             visible && trackUsage(PNID_METRICS.landingPage.previewFile)
           }
         >
-          <div>
-            <InteractiveIcon />
-          </div>
+          <InteractiveIcon />
+          <span style={{ fontWeight: 500, marginLeft: '12px' }}>
+            {file.name ?? '—'}
+          </span>
         </Popover>
       </Flex>
     ),
-  },
-  {
-    title: 'Name',
-    dataIndex: 'name',
-    key: 'name',
-    render: (name: string) => <div>{name}</div>,
     sorter: (a: any, b: any) => stringCompare(a?.name, b?.name),
   },
   {
@@ -112,7 +110,7 @@ export const getColumns = (
     render: (_: any, file: FileInfo) => <ReviewStatus file={file} />,
   },
   {
-    title: 'Detected tags',
+    title: 'Linked to',
     key: 'tags',
     render: (row: FileWithAnnotations) => <DetectedTags fileId={row.id} />,
     sorter: (a: FileWithAnnotations, b: FileWithAnnotations) =>
@@ -138,8 +136,9 @@ export const getColumns = (
       return (
         <SettingButtons row align>
           <IconButton
+            aria-label="Icon-Button"
             icon="ExpandMax"
-            variant="ghost"
+            type="ghost"
             $square
             onClick={(
               event: React.MouseEvent<HTMLButtonElement, MouseEvent>

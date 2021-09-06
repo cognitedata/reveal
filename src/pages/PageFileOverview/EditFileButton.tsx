@@ -42,7 +42,7 @@ export const EditFileButton = ({
           </>
         }
       >
-        <Button icon="Edit" disabled />
+        <Button icon="Edit" aria-label="Button-Edit" disabled />
       </Tooltip>
     );
   }
@@ -51,6 +51,7 @@ export const EditFileButton = ({
       <Button
         type="primary"
         icon="Edit"
+        aria-label="Button-Edit"
         key={id}
         onClick={onClick}
         style={{ whiteSpace: 'nowrap' }}
@@ -62,7 +63,7 @@ export const EditFileButton = ({
 
   return (
     <Tooltip title="Edit">
-      <Button icon="Edit" key={id} onClick={onClick} />
+      <Button icon="Edit" key={id} onClick={onClick} aria-label="Button-Edit" />
     </Tooltip>
   );
 };

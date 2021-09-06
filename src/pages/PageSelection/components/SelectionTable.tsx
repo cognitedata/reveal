@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { Table, Checkbox, message } from 'antd';
+import { Checkbox, message } from 'antd';
 import { Asset, FileInfo } from '@cognite/sdk';
-import { Tooltip } from '@cognite/cogs.js';
+import { Tooltip, Colors } from '@cognite/cogs.js';
 import isEqual from 'lodash/isEqual';
 import { ResourceType, Filter } from 'modules/sdk-builder/types';
 import {
@@ -12,7 +12,7 @@ import {
   useSelectedItems,
 } from 'hooks';
 import { searchCountSelector } from 'pages/PageSelection/selectors';
-import { Flex } from 'components/Common';
+import { Flex, Table } from 'components/Common';
 import { getColumns } from './columns';
 
 type Props = {
@@ -25,8 +25,10 @@ type Props = {
   diagramsToContextualizeIds?: number[];
   showSelected: boolean;
 };
-
-export default function SelectionTable(props: Props): JSX.Element {
+type RecordType = (Asset | FileInfo) & unknown;
+export default function SelectionTable<T extends RecordType>(
+  props: Props
+): JSX.Element {
   const {
     type,
     filter,
@@ -78,16 +80,16 @@ export default function SelectionTable(props: Props): JSX.Element {
         }
       : {};
   };
-  const onRowSelect = (resource: Asset | FileInfo, selected: boolean) => {
+  const onRowSelect = (record: RecordType, selected: boolean) => {
     if (isSelectAll) {
       message.info('Only manual selection OR select all is supported.');
     }
     if (!isSelectAll && selected) {
-      setSelectedRowKeys([...selectedRowKeys, resource.id]);
+      setSelectedRowKeys([...selectedRowKeys, record.id]);
     }
     if (!isSelectAll && !selected) {
       const newSelectedRowKeys = selectedRowKeys.filter(
-        (rowKey: number) => rowKey !== resource.id
+        (rowKey: number) => rowKey !== record.id
       );
       setSelectedRowKeys(newSelectedRowKeys);
     }
@@ -108,11 +110,17 @@ export default function SelectionTable(props: Props): JSX.Element {
   }, [shouldFilterUpdate]);
 
   return (
-    <Flex row style={{ width: '100%' }}>
+    <Flex
+      row
+      style={{
+        width: '100%',
+        border: `1px solid ${Colors['greyscale-grey3'].hex()}`,
+        borderRadius: '8px',
+        padding: '3px 0',
+      }}
+    >
       <Table
-        // @ts-ignore
         columns={getColumns(type)}
-        // @ts-ignore
         dataSource={showSelected ? selectedItems : items}
         loading={fetching}
         rowKey="id"
@@ -129,20 +137,21 @@ export default function SelectionTable(props: Props): JSX.Element {
           ),
           selectedRowKeys,
           getCheckboxProps,
+          // @ts-ignore
           onSelect: onRowSelect,
         }}
         pagination={{
           position: ['bottomLeft'],
           showQuickJumper: true,
           showSizeChanger: true,
+          size: 'small',
           pageSize,
           current: page,
           onChange: onPaginationChange,
           onShowSizeChange: onPaginationChange,
         }}
-        style={{
-          width: '100%',
-        }}
+        style={{ width: '100%', borderRadius: '8px' }}
+        options={{ narrow: true }}
       />
     </Flex>
   );

@@ -38,7 +38,7 @@ export const Table = styled(AntdTable)<CustomTableProps>`
   .ant-table-thead > tr > th.ant-table-column-sort,
   .ant-table-tbody > tr > td {
     height: 30px;
-    padding: ${(props) => (props.options?.narrow ? '8px' : '16px')};
+    padding: ${(props) => (props.options?.narrow ? '12px' : '16px')};
   }
   .ant-table-thead
     > tr

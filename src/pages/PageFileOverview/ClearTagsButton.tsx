@@ -61,5 +61,12 @@ export const ClearTagsButton = (props: Props) => {
       onCancel: () => {},
     });
 
-  return <Button icon="DeleteAlt" key={id} onClick={onDeleteClick} />;
+  return (
+    <Button
+      aria-label="Button-Clear-Tags"
+      icon="Trash"
+      key={id}
+      onClick={onDeleteClick}
+    />
+  );
 };

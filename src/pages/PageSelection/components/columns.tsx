@@ -9,7 +9,7 @@ import { FileSmallPreview } from 'components/FileSmallPreview';
 import InteractiveIcon from 'components/InteractiveIcon';
 import { Icon } from '@cognite/cogs.js';
 
-export const getColumns = (resourceType: ResourceType) => {
+export const getColumns: any = (resourceType: ResourceType) => {
   const isAsset = resourceType === 'assets';
 
   const descriptionColumn = {
@@ -17,49 +17,42 @@ export const getColumns = (resourceType: ResourceType) => {
     key: 'description',
     dataIndex: 'description',
     sorter: (a: any, b: any) => stringCompare(a?.description, b?.description),
-    render: (description: string) => description ?? '-',
+    render: (description: string) => description ?? '—',
   };
 
   const detectedTagsColumn = {
-    title: 'Detected tags',
+    title: 'Linked to',
     key: 'tags',
     render: (row: FileInfo) => <DetectedTags fileId={row?.id} />,
   };
 
+  const nameColumn = (resource: any) => (
+    <Flex row align style={{ justifyContent: 'flex-start' }}>
+      <Popover
+        content={
+          isAsset ? (
+            <AssetSmallPreview assetId={(resource as Asset)?.id} />
+          ) : (
+            <FileSmallPreview fileId={(resource as FileInfo)?.id} />
+          )
+        }
+      >
+        <Flex align justify>
+          {isAsset ? <Icon type="ResourceAssets" /> : <InteractiveIcon />}
+        </Flex>
+      </Popover>
+      <span style={{ marginLeft: '12px', fontWeight: 500 }}>
+        {resource?.name ?? '—'}
+      </span>
+    </Flex>
+  );
+
   return [
     {
-      title: 'Preview',
-      key: 'preview',
-      width: 80,
-      align: 'left',
-      render: (resource: any) => (
-        <Flex row align justify>
-          <Popover
-            content={
-              isAsset ? (
-                <AssetSmallPreview assetId={(resource as Asset)?.id} />
-              ) : (
-                <FileSmallPreview fileId={(resource as FileInfo)?.id} />
-              )
-            }
-          >
-            {isAsset ? (
-              <Icon type="ResourceAssets" />
-            ) : (
-              <div>
-                <InteractiveIcon />
-              </div>
-            )}
-          </Popover>
-        </Flex>
-      ),
-    },
-    {
       title: 'Name',
-      dataIndex: 'name',
       key: 'name',
       sorter: (a: any, b: any) => stringCompare(a?.name, b?.name),
-      render: (name: string) => name ?? '-',
+      render: nameColumn,
     },
     isAsset ? descriptionColumn : detectedTagsColumn,
     {
@@ -68,7 +61,7 @@ export const getColumns = (resourceType: ResourceType) => {
       dataIndex: 'lastUpdatedTime',
       sorter: (item: any) => dateSorter(item?.lastUpdatedTime),
       render: (lastUpdatedTime: Date) =>
-        lastUpdatedTime ? new Date(lastUpdatedTime).toLocaleDateString() : '-',
+        lastUpdatedTime ? new Date(lastUpdatedTime).toLocaleDateString() : '—',
     },
   ];
 };

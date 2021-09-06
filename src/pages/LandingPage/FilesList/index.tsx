@@ -132,6 +132,7 @@ export default function FilesList(props: Props) {
       locale={{
         emptyText: 'No pending engineering diagrams were found.',
       }}
+      options={{ narrow: true }}
     />
   );
 }

@@ -297,7 +297,9 @@ export const FilePreviewOverview = ({
                   text={uniqueResources(categorizedAnnotations.asset)}
                   background={Colors['purple-5'].hex()}
                 />
-                <Icon type={open.includes('assets') ? 'Up' : 'Down'} />
+                <Icon
+                  type={open.includes('assets') ? 'Up' : 'ChevronDownCompact'}
+                />
               </CollapseHeader>
             }
           >
@@ -347,7 +349,9 @@ export const FilePreviewOverview = ({
                   text={uniqueResources(categorizedAnnotations.file)}
                   background={Colors['midorange-5'].hex()}
                 />
-                <Icon type={open.includes('files') ? 'Up' : 'Down'} />
+                <Icon
+                  type={open.includes('files') ? 'Up' : 'ChevronDownCompact'}
+                />
               </CollapseHeader>
             }
           >
@@ -415,7 +419,7 @@ export const FilePreviewOverview = ({
       </SidebarHeader>
       {extras}
       <Tabs>
-        <Button variant="ghost" onClick={() => setTab('resources')}>
+        <Button type="ghost" onClick={() => setTab('resources')}>
           <Title
             level={5}
             style={{
@@ -426,7 +430,7 @@ export const FilePreviewOverview = ({
             Detected resources
           </Title>
         </Button>
-        <Button variant="ghost" onClick={() => setTab('fileInfo')}>
+        <Button type="ghost" onClick={() => setTab('fileInfo')}>
           <Title
             level={5}
             style={{

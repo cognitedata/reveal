@@ -2,7 +2,7 @@ import React from 'react';
 import Spin from 'antd/lib/spin';
 import { Flex, CountTag } from 'components/Common';
 import useAnnotationsDetails from 'hooks/useAnnotationsDetails';
-import { Body } from '@cognite/cogs.js';
+import { Body, Colors } from '@cognite/cogs.js';
 
 type DetectedTagsProps = {
   fileId: number;
@@ -16,7 +16,12 @@ const DetectedTags = ({ fileId }: DetectedTagsProps) => {
 
   if (!isFetched) return <Spin />;
 
-  if (noTags) return <Body level={2}>No tags detected</Body>;
+  if (noTags)
+    return (
+      <Body level={2} style={{ color: Colors['greyscale-grey6'].hex() }}>
+        No links
+      </Body>
+    );
 
   const renderTooltip = (assets?: boolean) => {
     const type = assets ? 'asset' : 'file';
