@@ -24,7 +24,16 @@ The tool provides list of options to set and choose:
 // import * as GEOTHREE from 'geo-three';
 // import { GeomapTool } from '@cognite/reveal/tools';
 
-new GeomapTool(viewer);
+const mapConfig = {
+  mapProvider: new GEOTHREE.MapBoxProvider(APIKeys.DEV_MAPBOX_API_KEY, "mapbox/streets-v10", GEOTHREE.MapBoxProvider.STYLE),
+  mapMode: 1,
+  mapAPIKey: APIKeys.DEV_MAPBOX_API_KEY,
+  latlong: {
+      latitude: 59.9016426931744,
+      longitude: 10.607235872426175
+  }
+}
+new GeomapTool(viewer, mapConfig);;
 ```
 
 ## Select different Map providers
@@ -67,24 +76,6 @@ const mapConfig = {
   mapProvider: new GEOTHREE.HereMapsProvider(APIKeys.DEV_HEREMAPS_APP_ID, APIKeys.DEV_HEREMAPS_APP_CODE, "aerial", "satellite.day", "jpg", 512),
   mapMode: 1,
   mapAPIKey: APIKeys.DEV_HEREMAPS_APP_ID,
-  latlong: {
-      latitude: 59.9016426931744,
-      longitude: 10.607235872426175
-  }
-}
-new GeomapTool(viewer, mapConfig);
-```
-
-Mapbox Vector Map
-
-```jsx runnable
-// import * as GEOTHREE from 'geo-three';
-// import { GeomapTool, APIKeys } from '@cognite/reveal/tools';
-
-const mapConfig = {
-  mapProvider: new GEOTHREE.MapBoxProvider(APIKeys.DEV_MAPBOX_API_KEY, "mapbox/streets-v10", GEOTHREE.MapBoxProvider.STYLE),
-  mapMode: 1,
-  mapAPIKey: APIKeys.DEV_MAPBOX_API_KEY,
   latlong: {
       latitude: 59.9016426931744,
       longitude: 10.607235872426175
