@@ -7,7 +7,7 @@ import { CadMetadataV8, parseCadMetadataV8, CadSectorMetadataV8 } from './CadMet
 import { SectorMetadata } from '../types';
 import { traverseDepthFirst } from '../../utilities/objectTraversal';
 
-import { Mutable } from '@reveal/test-utilities';
+import { Mutable } from '../../../../../test-utilities/src/reflection';
 
 describe('parseCadMetadataV8', () => {
   test('Metadata without sectors, throws', () => {

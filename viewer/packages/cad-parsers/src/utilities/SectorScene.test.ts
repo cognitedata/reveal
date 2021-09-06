@@ -8,7 +8,7 @@ import { SectorMetadata } from '../metadata/types';
 import { SectorSceneImpl } from './SectorScene';
 import { traverseDepthFirst } from './objectTraversal';
 
-import { createSectorMetadata } from '../__testutilities__/createSectorMetadata';
+import { createSectorMetadata } from '../../../../test-utilities/src/createSectorMetadata';
 
 describe('SectorSceneImpl', () => {
   const root = createSectorMetadata([
