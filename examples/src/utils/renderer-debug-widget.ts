@@ -375,7 +375,7 @@ function filterSectorNodes(
     if (!pathRegex.endsWith('$')) {
       pathRegex = pathRegex + '$';
     }
-    reveal.utilities.traverseDepthFirst(root, node => {
+    reveal.cadParsers.traverseDepthFirst(root, node => {
       if (node.path.match(pathRegex)) {
         acceptedNodes.push(node);
       }
@@ -411,7 +411,7 @@ function updateWantedSectorOverride(
     const acceptedSimple = filterSectorNodes(quadsFilter, root);
     const acceptedDetailed = filterSectorNodes(detailedFilter, root);
     const wanted: reveal.WantedSector[] = [
-      ...cadNode.sectorScene
+      ...(cadNode.sectorScene as reveal.cadParsers.SectorScene)
         .getAllSectors()
         .map((x) =>
           createWantedSector(x, reveal.LevelOfDetail.Discarded)
