@@ -245,6 +245,7 @@ export function formatPlotlyData(
         const min = {
           ...average,
           y: minYValues,
+          mode: 'lines',
           line: { width: 0 },
           fill: currMin > currAvg ? 'tonexty' : 'none',
           fillcolor: hexToRGBA(color, 0.2) ?? 'none',
@@ -256,6 +257,7 @@ export function formatPlotlyData(
           ...average,
           y: maxYValues,
           fillcolor: hexToRGBA(color, 0.2) ?? 'none',
+          mode: 'lines',
           line: { width: 0 },
           fill: 'tonexty',
           hovertemplate: '',
