@@ -1,25 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useDispatch } from 'react-redux';
 import { Button, Body, Colors, Icon } from '@cognite/cogs.js';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
+import { AppStateContext } from 'context';
 import { startPnidParsingWorkflow } from 'modules/contextualization/pnidWorkflow';
 import {
   useParsingJob,
   useJobStatus,
 } from 'modules/contextualization/pnidParsing';
-import { useActiveWorkflow } from 'hooks';
+import { useActiveWorkflow, useJobStatusLabels } from 'hooks';
 import MissingPermissionFeedback from 'components/MissingPermissionFeedback';
 import { Flex } from 'components/Common';
-import { useLabels } from './useLabels';
 
-type Props = {
-  jobStarted: boolean;
-  setJobStarted: (jobStarted: boolean) => void;
-};
-
-export default function RunModelButton(props: Props): JSX.Element {
+export default function RunModelButton(): JSX.Element {
   const dispatch = useDispatch();
-  const { jobStarted, setJobStarted } = props;
+  const { jobStarted, setJobStarted } = useContext(AppStateContext);
   const { workflowId } = useActiveWorkflow();
 
   const [renderFeedback, setRenderFeedback] = useState(false);
@@ -29,7 +24,7 @@ export default function RunModelButton(props: Props): JSX.Element {
   const { statusCount } = useParsingJob(workflowId);
   const jobStatus = useJobStatus(workflowId, jobStarted);
 
-  const { buttonLabel } = useLabels(jobStarted);
+  const { buttonLabel } = useJobStatusLabels();
 
   const onRunModelClick = () => {
     if (jobStarted) return;

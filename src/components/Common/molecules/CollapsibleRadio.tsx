@@ -72,7 +72,7 @@ interface CollapsibleRadioProps extends RadioProps {
   maxWidth?: number;
   groupRadioValue: string;
   setGroupRadioValue: (groupRadioValue: string) => void;
-  collapse?: React.ReactNode | string;
+  collapse?: React.ReactNode;
 }
 
 export const CollapsibleRadio = ({

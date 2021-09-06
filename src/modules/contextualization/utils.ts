@@ -5,6 +5,7 @@ export const stringCompare = (a = '', b = '') => {
   const bl = b.replace(/\s+/g, '');
   return al.localeCompare(bl, 'nb');
 };
+
 export const dateSorter = <A>(select: (x: A) => string) => {
   return function compare(a: A, b: A) {
     return moment(select(a)).diff(select(b));
@@ -33,6 +34,10 @@ export const stringContains = (value?: string, searchText?: string) => {
 
 export const stringContainsAny = (a = '', b: string[] = []) => {
   return b.some((query) => stringContains(a, query));
+};
+
+export const capitalizeFirstLetter = (input: string) => {
+  return `${input.charAt(0).toUpperCase()}${input.substring(1)}`;
 };
 
 export const getWorkflowIdFromPath = (path: string): string | false => {

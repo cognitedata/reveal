@@ -2,6 +2,7 @@ import { useContext } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { AppStateContext } from 'context';
+
 import {
   moveToStep,
   WorkflowStep,
@@ -10,6 +11,7 @@ import {
 import { useActiveWorkflow } from 'hooks';
 import { routesMap } from 'routes/routesMap';
 import { PNID_METRICS, trackUsage } from 'utils/Metrics';
+import { RootState } from 'store';
 
 export const useSteps = (step?: WorkflowStep) => {
   const history = useHistory();
@@ -78,15 +80,6 @@ export const useGoToStep = () => {
   return { goToStep };
 };
 
-export const useLoadStepOnMount = (step?: WorkflowStep) => {
-  const dispatch = useDispatch();
-  const steps = useSelector(getActiveWorkflowSteps);
-  if (step && steps?.current !== step) {
-    const lastCompletedStep = getLastCompletedStep(step, steps?.lastCompleted);
-    dispatch(moveToStep({ step, lastCompletedStep }));
-  }
-};
-
 export const useCompletedSteps = () => {
   const steps = useSelector(getActiveWorkflowSteps);
   const lastCompleted = steps?.lastCompleted;
@@ -97,6 +90,23 @@ export const useCompletedSteps = () => {
     allSteps.findIndex((route) => route === lastCompleted) + 1
   );
   return completedSteps;
+};
+
+export const useCurrentStep = () => {
+  const { workflowId } = useActiveWorkflow();
+  const currentStep = useSelector(
+    (state: RootState) => state.workflows.items[workflowId]?.steps?.current
+  );
+  return currentStep;
+};
+
+export const useLoadStepOnMount = (step?: WorkflowStep) => {
+  const dispatch = useDispatch();
+  const steps = useSelector(getActiveWorkflowSteps);
+  if (step && steps?.current !== step) {
+    const lastCompletedStep = getLastCompletedStep(step, steps?.lastCompleted);
+    dispatch(moveToStep({ step, lastCompletedStep }));
+  }
 };
 
 const getLastCompletedStep = (

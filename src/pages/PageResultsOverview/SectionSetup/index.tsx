@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Body, Title, Label } from '@cognite/cogs.js';
+import { AppStateContext } from 'context';
 import { ResourceType } from 'modules/types';
 import { useJobStatus } from 'modules/contextualization/pnidParsing';
 import {
@@ -7,23 +8,18 @@ import {
   useGoToStep,
   useSavedSettings,
   useResourceCount,
+  useJobStatusLabels,
 } from 'hooks';
 import { Flex } from 'components/Common';
 import { DetailsWrapper, SetUpWrapper } from './components';
-import { useLabels } from './useLabels';
 import ModelInfo from './ModelInfo';
 import SelectionInfo from './SelectionInfo';
 import RunModelButton from './RunModelButton';
 
-type Props = {
-  jobStarted: boolean;
-  setJobStarted: (jobStarted: boolean) => void;
-};
-
-export default function SectionSetup(props: Props): JSX.Element {
-  const { jobStarted, setJobStarted } = props;
+export default function SectionSetup(): JSX.Element {
+  const { jobStarted } = useContext(AppStateContext);
   const { goToStep } = useGoToStep();
-  const { jobLabel, labelVariant } = useLabels(jobStarted);
+  const { jobLabel, labelVariant } = useJobStatusLabels();
   const { modelSelected } = useSavedSettings();
   const { workflowId } = useActiveWorkflow();
   const jobStatus = useJobStatus(workflowId, jobStarted);
@@ -108,7 +104,7 @@ export default function SectionSetup(props: Props): JSX.Element {
           )}
         </DetailsWrapper>
       </Flex>
-      <RunModelButton jobStarted={jobStarted} setJobStarted={setJobStarted} />
+      <RunModelButton />
     </SetUpWrapper>
   );
 }

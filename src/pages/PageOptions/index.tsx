@@ -27,10 +27,10 @@ export default function PageOptions(props: Props) {
 
   return (
     <Flex column style={{ width: '100%' }}>
-      <PageTitle>Select model</PageTitle>
-      <Body level={1} style={{ margin: '16px 0' }}>
-        Select the model you want to be applied to create interactive diagrams
-      </Body>
+      <PageTitle
+        title="Select model"
+        subtitle="Select the model you want to be applied to create interactive diagrams"
+      />
       <Flex row style={{ paddingBottom: '50px' }}>
         <Flex column style={{ width: '100%' }}>
           <CollapsibleRadio

@@ -16,7 +16,7 @@ const Wrapper = styled.div`
 `;
 
 type Props = {
-  title: string | React.ReactNode;
+  title: React.ReactNode;
   children: React.ReactNode;
   useCustomPadding?: boolean;
 };

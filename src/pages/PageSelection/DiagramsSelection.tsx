@@ -77,7 +77,10 @@ export default function DiagramsSelection(props: SelectionProps): JSX.Element {
 
   return (
     <Flex column style={{ paddingBottom: '50px' }}>
-      <PageTitle>Select engineering diagrams</PageTitle>
+      <PageTitle
+        title="Select engineering diagrams"
+        subtitle="Select engineering diagrams you want to make interactive"
+      />
       <SelectionBar
         type="diagrams"
         filter={filter}

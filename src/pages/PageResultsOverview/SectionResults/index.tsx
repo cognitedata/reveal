@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { Title } from '@cognite/cogs.js';
+import { AppStateContext } from 'context';
 import { Flex, TitledSection } from 'components/Common';
 import { useActiveWorkflow } from 'hooks';
 import { useWorkflowTotalCounts } from 'modules/workflows';
@@ -15,12 +16,8 @@ import DiagramActions from './DiagramActions';
 import FilterBar from './FilterBar';
 import { SelectionFilter } from './types';
 
-type Props = {
-  jobStarted: boolean;
-};
-
-export default function SectionResults(props: Props) {
-  const { jobStarted } = props;
+export default function SectionResults() {
+  const { jobStarted } = useContext(AppStateContext);
   const [selectionFilter, setSelectionFilter] = useState<SelectionFilter>({});
   const [showResults, setShowResults] = useState(false);
   const { workflowId } = useActiveWorkflow();
@@ -42,15 +39,13 @@ export default function SectionResults(props: Props) {
   }, [parsingJob, shouldShowTable]);
 
   return (
-    <TitledSection
-      useCustomPadding
-      title={<TitleBar jobStarted={jobStarted} jobStatus={jobStatus} />}
-    >
+    <TitledSection useCustomPadding title={<TitleBar jobStatus={jobStatus} />}>
       <Flex column style={{ width: '100%' }}>
-        {isJobDone && (
+        {shouldShowTable && (
           <FilterBar
             selectionFilter={selectionFilter}
             setSelectionFilter={setSelectionFilter}
+            showLoadingSkeleton={!isJobDone}
           />
         )}
         {showResults && (
@@ -65,8 +60,7 @@ export default function SectionResults(props: Props) {
   );
 }
 
-const TitleBar = (props: { jobStarted: boolean; jobStatus: JobStatus }) => {
-  const { jobStarted, jobStatus } = props;
+const TitleBar = ({ jobStatus }: { jobStatus: JobStatus }) => {
   const { workflowId } = useActiveWorkflow();
   const { diagrams } = useWorkflowTotalCounts(workflowId);
   const areResourcesLoading = jobStatus !== 'ready' && jobStatus !== 'done';
@@ -80,7 +74,7 @@ const TitleBar = (props: { jobStarted: boolean; jobStatus: JobStatus }) => {
           {diagrams}
         </span>
       </Title>
-      {areResourcesLoading && <ResourcesLoaded jobStarted={jobStarted} />}
+      {areResourcesLoading && <ResourcesLoaded />}
       {isJobDone && <DiagramActions />}
     </Flex>
   );

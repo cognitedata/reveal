@@ -13,7 +13,7 @@ const SectionProgress = (): JSX.Element => {
   const dispatch = useDispatch();
 
   const { workflowId } = useActiveWorkflow();
-  const { diagrams: total } = useResourceCount();
+  const { diagrams: total = 0 } = useResourceCount();
 
   const {
     statusCount: parsingJobStatusCount = {},

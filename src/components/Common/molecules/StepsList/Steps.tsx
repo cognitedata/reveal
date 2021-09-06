@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Colors } from '@cognite/cogs.js';
-import { WorkflowStep } from 'modules/workflows';
 import Step from './Step';
+import { StepsProps, StepsType } from './types';
 
 Steps.Step = Step;
 
@@ -14,24 +14,12 @@ const StyledSteps = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  min-width: 300px;
+  min-width: 260px;
   font-family: 'Inter';
   font-weight: 600;
-  padding: 16px 24px 0 0;
+  margin-right: 24px;
   color: ${Colors['greyscale-grey6'].hex()};
 `;
-
-export type StepsType = {
-  path: string | undefined;
-  title: string | React.ReactNode;
-  workflowStep?: WorkflowStep;
-};
-
-interface StepsProps extends React.HTMLProps<HTMLDivElement> {
-  steps: StepsType[];
-  current: number;
-  small?: boolean;
-}
 
 export function Steps(props: StepsProps) {
   const { steps, current, small } = props;
@@ -45,6 +33,7 @@ export function Steps(props: StepsProps) {
         title={step.title}
         small={small}
         workflowStep={step.workflowStep}
+        substeps={step.substeps}
       />
     );
   });

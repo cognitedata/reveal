@@ -29,14 +29,14 @@ export default function buildCount<Q extends Query>(
       }
     ),
     pending: (state: any, action: any): void => {
-      const key: string = JSON.stringify(action.meta.arg.filter);
-      if (!state.count[key]) {
-        state.count[key] = { ...defaultCount };
-      }
+      const key: string = JSON.stringify(action?.meta?.arg?.filter);
+      if (!key) return;
+      if (!state.count[key]) state.count[key] = { ...defaultCount };
       state.count[key].status = 'pending';
     },
     rejected: (state: any, action: any): void => {
-      const key = JSON.stringify(action.meta.arg.filter);
+      const key = JSON.stringify(action?.meta?.arg?.filter);
+      if (!key) return;
       state.count[key].status = 'error';
     },
     fulfilled: (state: any, action: any): void => {

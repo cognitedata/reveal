@@ -77,3 +77,11 @@ export type ApiStatusCount = {
   queued?: number;
   failed?: number;
 };
+
+export type JobStatus =
+  | 'incomplete'
+  | 'ready'
+  | 'loading'
+  | 'running'
+  | 'done'
+  | 'error';

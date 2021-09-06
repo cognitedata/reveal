@@ -1,6 +1,7 @@
 import React from 'react';
 import { withKnobs, boolean } from '@storybook/addon-knobs';
-import { Steps, StepsType } from '../Steps';
+import { Steps } from '../StepsList/Steps';
+import { StepsType } from '../StepsList/types';
 
 export default { title: 'Molecules/Steps', decorator: withKnobs };
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import { Input } from '@cognite/cogs.js';
-import { Flex } from 'components/Common';
+import { Flex, LoadingSkeleton } from 'components/Common';
 import {
   DataSetSelect,
   LabelSelect,
@@ -12,11 +12,13 @@ import {
 import { SelectionFilter } from './types';
 
 type Props = {
+  showLoadingSkeleton: boolean;
   selectionFilter: SelectionFilter;
   setSelectionFilter: (selectionFilter: SelectionFilter) => void;
 };
 export default function FilterBar(props: Props) {
-  const { selectionFilter, setSelectionFilter } = props;
+  const { showLoadingSkeleton, selectionFilter, setSelectionFilter } = props;
+
   const [nameQuery, setNameQuery] = useState<string>('');
   const [dataSetIds, setDataSetIds] = useState<number[]>([]);
   const [labels, setLabels] = useState<string[]>([]);
@@ -55,36 +57,70 @@ export default function FilterBar(props: Props) {
 
   return (
     <FilterBarWrapper row>
-      <Input
-        placeholder="Filter by name"
-        style={{ width: '250px' }}
-        value={nameQuery}
-        onChange={onNameChange}
-      />
-      <DataSetSelect
-        resourceType="files"
-        onDataSetSelected={onDataSetSelected}
-      />
-      <LabelSelect
-        selectedLabels={labels}
-        onLabelsSelected={onLabelsSelected}
-      />
-      <MimeTypeSelect
-        selectedMimeType={fileTypes}
-        onMimeTypeSelected={onMimeTypeSelected}
-        loaded
-        isMulti
-      />
-      <StatusSelect statusType={status} setStatusType={setStatus} />
+      <LoadingSkeleton
+        loading={showLoadingSkeleton}
+        width="250px"
+        height="20px"
+      >
+        <Input
+          placeholder="Filter by name"
+          style={{ width: '250px' }}
+          value={nameQuery}
+          onChange={onNameChange}
+        />
+      </LoadingSkeleton>
+      <LoadingSkeleton
+        loading={showLoadingSkeleton}
+        width="220px"
+        height="20px"
+      >
+        <DataSetSelect
+          resourceType="files"
+          onDataSetSelected={onDataSetSelected}
+        />
+      </LoadingSkeleton>
+      <LoadingSkeleton
+        loading={showLoadingSkeleton}
+        width="220px"
+        height="20px"
+      >
+        <LabelSelect
+          selectedLabels={labels}
+          onLabelsSelected={onLabelsSelected}
+        />
+      </LoadingSkeleton>
+      <LoadingSkeleton
+        loading={showLoadingSkeleton}
+        width="220px"
+        height="20px"
+      >
+        <MimeTypeSelect
+          selectedMimeType={fileTypes}
+          onMimeTypeSelected={onMimeTypeSelected}
+          loaded
+          isMulti
+        />
+      </LoadingSkeleton>
+      <LoadingSkeleton
+        loading={showLoadingSkeleton}
+        width="220px"
+        height="20px"
+      >
+        <StatusSelect statusType={status} setStatusType={setStatus} />
+      </LoadingSkeleton>
     </FilterBarWrapper>
   );
 }
 
 const FilterBarWrapper = styled(Flex)`
-  width: 100%;
-  margin: 16px;
+  margin: 16px 16px 8px;
+  box-sizing: border-box;
   flex-wrap: wrap;
+
   & > * {
+    margin-bottom: 8px;
+  }
+  & > *:not(:last-child) {
     margin-right: 8px;
   }
 `;

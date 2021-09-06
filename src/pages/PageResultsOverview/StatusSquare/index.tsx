@@ -9,7 +9,7 @@ import { Square } from './Square';
 type Props = {
   status: keyof ApiStatusCount | 'idle';
   small?: boolean;
-  hoverContent?: string | React.ReactNode;
+  hoverContent?: React.ReactNode;
   style?: React.CSSProperties;
 };
 

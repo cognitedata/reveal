@@ -1,19 +1,22 @@
 import React from 'react';
 import { Icon } from '@cognite/cogs.js';
-import { WorkflowStep } from 'modules/workflows';
 import { useCompletedSteps } from 'hooks';
+import { WorkflowStep } from 'modules/types';
 import { Link, Flex } from 'components/Common';
 import { PNID_METRICS, trackUsage } from 'utils/Metrics';
-import { StyledStep, StepNumber, StyledAdditionalText } from './components';
+import { StyledStep, StepNumber } from './components';
+import { StepLabel } from './StepLabel';
+import { StepCombo } from './StepCombo';
+import { StepsType } from './types';
 
 type StepProps = {
-  title: string | React.ReactNode;
+  title: React.ReactNode;
   url: string;
   stepIndex: number;
   currentStepIndex: number;
-  additionalText?: string;
   small?: boolean;
   workflowStep?: WorkflowStep;
+  substeps?: StepsType[];
 };
 
 export default function Step(props: StepProps) {
@@ -24,9 +27,11 @@ export default function Step(props: StepProps) {
     currentStepIndex,
     small,
     workflowStep,
-    additionalText,
+    substeps,
   } = props;
   const completedSteps = useCompletedSteps();
+
+  const isCombo: boolean = Boolean(substeps);
   const wasVisited: boolean = completedSteps.includes(workflowStep);
   const isCurrent: boolean = stepIndex === currentStepIndex;
   const isClickable: boolean =
@@ -38,8 +43,8 @@ export default function Step(props: StepProps) {
   };
 
   const showStepIconOrNumber = (): JSX.Element => {
-    if (isCurrent) return <Icon type="ArrowForward" />;
-    if (wasVisited) return <Icon type="Checkmark" />;
+    if (isCurrent) return <Icon type="ArrowForward" size={small ? 14 : 16} />;
+    if (wasVisited) return <Icon type="Checkmark" size={small ? 14 : 16} />;
     const stepNumber = stepIndex + 1;
     return <>{stepNumber}</>;
   };
@@ -56,9 +61,10 @@ export default function Step(props: StepProps) {
       <StepNumber small={!!small} isCurrent={isCurrent} wasVisited={wasVisited}>
         {showStepIconOrNumber()}
       </StepNumber>
-      <Flex column>
+      <Flex column style={{ width: '100%' }}>
         <div>{title}</div>
-        <StyledAdditionalText level={2}>{additionalText}</StyledAdditionalText>
+        <StepLabel step={workflowStep} />
+        {isCombo && isCurrent && <StepCombo substeps={substeps} />}
       </Flex>
     </Flex>
   );

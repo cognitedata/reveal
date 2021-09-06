@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useEffect, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { message } from 'antd';
@@ -27,7 +27,6 @@ export default function PageResultsOverview(props: Props) {
 
   const { workflow } = useSelector(getWorkflowItems(workflowId));
   const selectedDiagramsIds = useSelector(getSelectedDiagramsIds);
-  const [jobStarted, setJobStarted] = useState(false);
 
   const areDiagramsSelected = Boolean(selectedDiagramsIds?.length);
 
@@ -43,7 +42,7 @@ export default function PageResultsOverview(props: Props) {
 
   return (
     <Flex column style={{ width: '100%', position: 'relative' }}>
-      <PageTitle>Run the model</PageTitle>
+      <PageTitle title="Run the model" />
       <Flex
         row
         style={{
@@ -52,10 +51,10 @@ export default function PageResultsOverview(props: Props) {
           justifyContent: 'space-between',
         }}
       >
-        <SectionSetup jobStarted={jobStarted} setJobStarted={setJobStarted} />
+        <SectionSetup />
         <SectionProgress />
       </Flex>
-      <SectionResults jobStarted={jobStarted} />
+      <SectionResults />
       {areDiagramsSelected && <SettingsBar />}
       <NavigationStickyBottomRow
         step={step}

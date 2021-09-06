@@ -18,21 +18,23 @@ export const paths: { [key: string]: PathData } = {
     title: 'Select engineering diagrams',
     workflowStepName: 'diagramSelection',
   },
-  resourceSelectionAssets: {
-    showOnStepList: true,
-    path: (tenant: string, workflowId?: string | number) =>
-      `/${tenant}/${root}/workflow/${workflowId}/selection/assets`,
-    staticPath: `${staticRoot}/workflow/:workflowId/selection/assets`,
-    title: 'Select resources (assets)',
-    workflowStepName: 'resourceSelectionAssets',
-  },
   resourceSelectionFiles: {
     showOnStepList: true,
     path: (tenant: string, workflowId?: string | number) =>
       `/${tenant}/${root}/workflow/${workflowId}/selection/files`,
     staticPath: `${staticRoot}/workflow/:workflowId/selection/files`,
-    title: 'Select resources (files)',
+    title: 'Other engineering diagrams',
     workflowStepName: 'resourceSelectionFiles',
+    comboBox: 'Link to...',
+  },
+  resourceSelectionAssets: {
+    showOnStepList: true,
+    path: (tenant: string, workflowId?: string | number) =>
+      `/${tenant}/${root}/workflow/${workflowId}/selection/assets`,
+    staticPath: `${staticRoot}/workflow/:workflowId/selection/assets`,
+    title: 'Assets',
+    workflowStepName: 'resourceSelectionAssets',
+    comboBox: 'Link to...',
   },
   configPage: {
     showOnStepList: true,

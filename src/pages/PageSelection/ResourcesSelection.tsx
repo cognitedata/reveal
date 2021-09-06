@@ -29,16 +29,23 @@ export default function ResourcesSelection(
 
   const targetLabel =
     target === 'files' ? 'other engineering diagrams' : target;
+  const targetSubtitleLabel = target === 'files' ? 'diagrams' : target;
+  const targetSubtitle = `These ${targetSubtitleLabel} will be linked to all diagrams selected in the first step`;
   const [showSelected, setShowSelected] = useState<boolean>(false);
 
   return (
     <Flex column style={{ paddingBottom: '50px' }}>
-      <PageTitle>
-        Link to {targetLabel}{' '}
-        <span style={{ color: Colors['greyscale-grey5'].hex() }}>
-          (optional)
-        </span>
-      </PageTitle>
+      <PageTitle
+        title={
+          <>
+            Link to {targetLabel}{' '}
+            <span style={{ color: Colors['greyscale-grey5'].hex() }}>
+              (optional)
+            </span>
+          </>
+        }
+        subtitle={targetSubtitle}
+      />
       <SelectionBar
         type={target}
         filter={filter}

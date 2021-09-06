@@ -8,8 +8,7 @@ import PageOptions from 'pages/PageOptions';
 import LandingPage from 'pages/LandingPage';
 import GroupsRequired from 'components/GroupsRequired';
 import Breadcrumbs from 'components/Breadcrumbs';
-import StepsList from 'components/StepsList';
-import { Flex, PageWrapper } from 'components/Common';
+import { Flex, PageWrapper, StepsList } from 'components/Common';
 import BetaBanner from 'components/BetaBanner';
 import JobDiagrams from 'pages/PageFileOverview/JobDiagrams';
 import {

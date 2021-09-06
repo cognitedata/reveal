@@ -9,24 +9,22 @@ interface BreadcrumbsProps {
   breadcrumbs: { title: string; path?: string }[];
 }
 const Wrapper = styled.div`
-  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
   height: 48px;
+  padding: 16px 40px;
+  background: ${Colors['greyscale-grey1'].hex()};
   color: ${Colors['greyscale-grey6'].hex()};
+  border-bottom: 1px solid ${Colors['greyscale-grey3'].hex()};
   font-weight: 400;
   font-style: 'Inter';
   font-size: 14px;
-  background: ${Colors['greyscale-grey1'].hex()};
-  padding: 16px 40px;
-  border: 1px solid ${Colors['greyscale-grey4'].hex()};
 `;
 
 const Breadcrumbs = ({ breadcrumbs }: BreadcrumbsProps) => (
   <Wrapper>
-    <Breadcrumb
-      separator={
-        <span style={{ fontSize: '16px', fontWeight: 'bold' }}>/</span>
-      }
-    >
+    <Breadcrumb separator={<span>/</span>}>
       <Breadcrumb.Item
         onClick={() =>
           trackUsage(PNID_METRICS.navigation.breadcrumbs, {
@@ -34,7 +32,7 @@ const Breadcrumbs = ({ breadcrumbs }: BreadcrumbsProps) => (
           })
         }
       >
-        <Link to="/">Cognite Data Fusion</Link>
+        <Link to="/">CDF</Link>
       </Breadcrumb.Item>
       {breadcrumbs &&
         breadcrumbs.map((crumb) => (

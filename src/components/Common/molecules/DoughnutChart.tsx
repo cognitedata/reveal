@@ -8,7 +8,7 @@ Chart.defaults.datasets.doughnut.cutout = '75%';
 
 type Props = {
   data: ChartData;
-  label?: string | React.ReactNode;
+  label?: React.ReactNode;
   width?: number;
   height?: number;
   style?: React.CSSProperties;

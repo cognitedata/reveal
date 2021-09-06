@@ -4,7 +4,7 @@ export * from './WithLabel';
 export * from './InfoGrid';
 export * from './Table';
 export * from './InfoField';
-export * from './Steps';
+export * from './StepsList';
 export * from './CountTag';
 export * from './CollapsibleRadio';
 export * from './DoughnutChart';

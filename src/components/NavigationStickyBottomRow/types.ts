@@ -11,6 +11,6 @@ export type Justify =
 export type NavOptions = {
   disabled?: boolean;
   text?: string;
-  tooltip?: string | React.ReactNode;
+  tooltip?: React.ReactNode;
   onClick?: () => void;
 };

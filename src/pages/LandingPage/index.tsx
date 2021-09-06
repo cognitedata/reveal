@@ -26,7 +26,7 @@ export default function LandingPage() {
 
   const Header = () => (
     <div>
-      <PageTitle>Interactive Engineering Diagrams</PageTitle>
+      <PageTitle title="Interactive Engineering Diagrams" />
       <Flex row style={{ margin: '32px 16px 56px 0' }}>
         <HugeButton type="primary" onClick={onContextualizeNew}>
           Create interactive diagrams

@@ -220,7 +220,7 @@ export default function SelectionBar(props: Props): JSX.Element {
 
 const StyledFlex = styled(Flex)`
   width: 100%;
-  margin: 24px 0 12px 0;
+  margin: 12px 0 12px 0;
   justify-content: space-between;
 `;
 const InputRow = styled(Flex)`

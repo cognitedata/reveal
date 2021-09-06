@@ -55,3 +55,9 @@ export type WorkflowOptions = {
 };
 
 export type ModelSelected = 'standard' | 'advanced';
+
+export type ResourceCount = {
+  assets?: number | undefined;
+  files?: number | undefined;
+  diagrams?: number;
+};

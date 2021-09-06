@@ -12,6 +12,8 @@ export type PathData = {
   workflowStepName?: WorkflowStep;
   skippable?: boolean;
   showOnStepList?: boolean;
+  comboBox?: string;
+  substeps?: PathData[];
 };
 
 export const routesMap = () => {
@@ -20,5 +22,28 @@ export const routesMap = () => {
 };
 
 export const stepsMap = () => {
-  return routesMap().filter((path: PathData) => path.showOnStepList);
+  const routes = routesMap();
+  const steps = routes
+    .filter((path: PathData) => path.showOnStepList)
+    .reduce((acc: PathData[], curr: PathData) => {
+      if (curr.comboBox) {
+        const existingComboBoxIndex = acc.findIndex(
+          (step) => step.title === curr.comboBox
+        );
+        if (existingComboBoxIndex !== -1) {
+          // eslint-disable-next-line no-param-reassign
+          acc[existingComboBoxIndex].substeps = [
+            ...(acc[existingComboBoxIndex].substeps ?? []),
+            curr,
+          ];
+        } else
+          acc.push({
+            ...curr,
+            substeps: [curr],
+            title: curr.comboBox,
+          });
+      } else acc.push(curr);
+      return acc;
+    }, [] as PathData[]);
+  return steps as PathData[];
 };

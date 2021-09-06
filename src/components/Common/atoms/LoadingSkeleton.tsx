@@ -3,13 +3,15 @@ import styled, { keyframes } from 'styled-components';
 import { Colors } from '@cognite/cogs.js';
 
 type Props = {
-  children: string | React.ReactNode;
+  children: React.ReactNode;
   loading: boolean;
+  width?: string;
+  height?: string;
 };
 export const LoadingSkeleton = (props: Props): JSX.Element => {
-  const { loading, children } = props;
+  const { loading, children, width, height } = props;
 
-  return loading ? <Skeleton /> : <>{children}</>;
+  return loading ? <Skeleton width={width} height={height} /> : <>{children}</>;
 };
 
 const load = keyframes`
@@ -21,10 +23,16 @@ const load = keyframes`
   }
 `;
 
-const Skeleton = styled.div`
+const Skeleton = styled.div.attrs(
+  ({ width, height }: { width?: string; height?: string }) => {
+    const style: React.CSSProperties = { width: '100%' };
+    if (width) style.width = width;
+    if (height) style.height = height;
+    return { style };
+  }
+)<{ width?: string; height?: string }>`
   display: inline-block;
   position: relative;
-  width: 100%;
   height: 1em;
   overflow: hidden;
   background-color: ${Colors['greyscale-grey3'].hex()};

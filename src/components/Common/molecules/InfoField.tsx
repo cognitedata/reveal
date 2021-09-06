@@ -9,7 +9,7 @@ const bodyStyle = {
 };
 
 type InfoFieldProps = {
-  content: string | React.ReactNode;
+  content: React.ReactNode;
 };
 export function InfoField(props: InfoFieldProps) {
   const { content } = props;

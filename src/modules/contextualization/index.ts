@@ -8,3 +8,4 @@ const reducer = combineReducers({
 });
 
 export { reducer };
+export * from './types';

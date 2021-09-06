@@ -1,14 +1,14 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Body, Icon } from '@cognite/cogs.js';
+import { AppStateContext } from 'context';
 import { Flex } from 'components/Common';
 import { useActiveWorkflow } from 'hooks';
 import { useJobStatus } from 'modules/contextualization/pnidParsing';
 import { useWorkflowAllLoadPercentages } from 'modules/workflows';
 import { InfoWrapper } from './components';
 
-type Props = { jobStarted: boolean };
-export default function ResourcesLoaded(props: Props) {
-  const { jobStarted } = props;
+export default function ResourcesLoaded() {
+  const { jobStarted } = useContext(AppStateContext);
   const { workflowId } = useActiveWorkflow();
   const jobStatus = useJobStatus(workflowId, jobStarted);
   const { isLoaded, loadedPercent } = useWorkflowAllLoadPercentages(
@@ -16,10 +16,11 @@ export default function ResourcesLoaded(props: Props) {
   );
 
   const areResourcesLoaded = isLoaded && jobStatus !== 'loading';
+  const didJobFail = jobStatus === 'error';
 
   return (
     <Flex row align>
-      {!areResourcesLoaded && (
+      {!areResourcesLoaded && !didJobFail && (
         <InfoWrapper>
           <Icon type="LoadingSpinner" />
           <Body strong level={2}>
