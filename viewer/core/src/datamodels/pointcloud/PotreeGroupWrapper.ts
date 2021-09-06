@@ -17,12 +17,14 @@ import { PotreeNodeWrapper } from './PotreeNodeWrapper';
  */
 export class PotreeGroupWrapper extends THREE.Object3D {
   private _needsRedraw: boolean = false;
+  private _lastDrawPointBuffersHash = 0;
   private readonly _forceLoadingSubject = new Subject<void>();
   private readonly _loadingObservable: Observable<LoadingState>;
 
   get needsRedraw(): boolean {
     return (
       this._needsRedraw ||
+      this._lastDrawPointBuffersHash !== this.pointBuffersHash ||
       Potree.Global.numNodesLoading !== this.numNodesLoadingAfterLastRedraw ||
       this.numChildrenAfterLastRedraw !== this.potreeGroup.children.length ||
       this.nodes.some(n => n.needsRedraw)
@@ -49,10 +51,16 @@ export class PotreeGroupWrapper extends THREE.Object3D {
     onAfterRenderTrigger.frustumCulled = false;
     onAfterRenderTrigger.onAfterRender = () => {
       this.resetRedraw();
+      // We only reset this when we actually redraw, not on resetRedraw. This is
+      // because there are times when this will onAfterRender is triggered
+      // just after buffers are uploaded but not visualized yet.
+      this._lastDrawPointBuffersHash = this.pointBuffersHash;
     };
     this.add(onAfterRenderTrigger);
 
     this._loadingObservable = this.createLoadingStateObservable(pollLoadingStatusInterval);
+    this._lastDrawPointBuffersHash = this.pointBuffersHash;
+
     this.pointBudget = 2_000_000;
   }
 
@@ -119,6 +127,23 @@ export class PotreeGroupWrapper extends THREE.Object3D {
       distinctUntilChanged(),
       share()
     );
+  }
+
+  private get pointBuffersHash() {
+    const pointClouds = this.potreeGroup.pointclouds;
+    let pointHash = 0xbaadf00d;
+    for (const pointCloud of pointClouds) {
+      pointCloud.traverseVisible((x: THREE.Points) => {
+        // Note! We pretend everything in the scene graph is THREE.Points,
+        // but verify that we only visit Points nodes here.
+        if (x.isPoints) {
+          const geometry = x.geometry as THREE.BufferGeometry;
+          pointHash ^= geometry.getAttribute('position').count;
+        }
+      });
+      pointHash ^= pointCloud.id;
+    }
+    return pointHash;
   }
 }
 
