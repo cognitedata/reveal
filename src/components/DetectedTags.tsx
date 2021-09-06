@@ -16,7 +16,7 @@ const DetectedTags = ({ fileId }: DetectedTagsProps) => {
 
   if (!isFetched) return <Spin />;
 
-  if (noTags) return <Body level={2}>No detected tags</Body>;
+  if (noTags) return <Body level={2}>No tags detected</Body>;
 
   const renderTooltip = (assets?: boolean) => {
     const type = assets ? 'asset' : 'file';
@@ -26,18 +26,18 @@ const DetectedTags = ({ fileId }: DetectedTagsProps) => {
     if (pendingTags?.length) {
       return (
         <Body style={{ color: 'white' }}>
-          {pendingTags.length} pending {type} tags.
+          {pendingTags.length} {type} tags pending review
         </Body>
       );
     }
     if (tags?.length)
       return (
         <Body style={{ color: 'white' }}>
-          {tags.length} approved {type} tags.
+          {tags.length} {type} tags approved
         </Body>
       );
 
-    return <Body style={{ color: 'white' }}>No detected {type} tags.</Body>;
+    return <Body style={{ color: 'white' }}>No {type} tags detected</Body>;
   };
 
   return (

@@ -5,7 +5,7 @@ import { useWorkflowDiagramsIds } from 'modules/workflows';
 import { DropdownMenu } from '.';
 
 // Context menu for all contextualized diagrams
-export const MenuAll = () => {
+export const MenuAll = ({ canRejectAll }: { canRejectAll: boolean }) => {
   const { workflowId } = useActiveWorkflow();
   const diagramIds = useWorkflowDiagramsIds(workflowId, true, true);
   const { onRejectDiagrams, isOnRejectedLoading: isLoading } =
@@ -34,7 +34,7 @@ export const MenuAll = () => {
         icon={isLoading ? 'LoadingSpinner' : 'Trash'}
         iconPlacement="left"
         onClick={() => onRejectDiagrams(true)}
-        disabled={isLoading}
+        disabled={isLoading || !canRejectAll}
         style={{ width: '100%', justifyContent: 'flex-start' }}
       >
         Reject all pending tags

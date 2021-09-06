@@ -51,7 +51,7 @@ export default function DiagramActions() {
       >
         Preview all
       </Button>
-      <Dropdown content={<MenuAll />}>
+      <Dropdown content={<MenuAll canRejectAll={!isApproveAllDisabled} />}>
         <Button icon="MoreOverflowEllipsisHorizontal" variant="ghost" />
       </Dropdown>
     </InfoWrapper>

@@ -28,9 +28,9 @@ export const approvalDetails: { [key: string]: ReviewStatus } = {
     label: 'Approved',
   },
   unknown: {
-    status: 'No detected tags',
+    status: 'No tags detected',
     variant: 'unknown',
-    label: 'No detected tags',
+    label: 'No tags detected',
   },
 };
 export default function DiagramReviewStatus({ file }: Props) {
