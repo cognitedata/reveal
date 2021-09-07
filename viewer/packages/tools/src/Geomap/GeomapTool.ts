@@ -16,12 +16,11 @@ export class GeomapTool extends Cognite3DViewerToolBase {
     super();
 
     this._viewer = viewer;
-    this._maps = new Geomap();
-    this._maps.CreateMap(this._viewer, config);
+    this._maps = new Geomap(this._viewer, config);
     this._maps.setLatLong(config.latlong.latitude, config.latlong.longitude);
   }
 
-  public setLatLong(lat : number, long : number) {
+  public setLatLong(lat: number, long : number) {
     this._maps.setLatLong(lat, long);
   }
 

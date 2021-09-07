@@ -13,7 +13,6 @@ export const customScope: Record<string, any> = {
   ...reveal,
   ...revealTools,
   THREE,
-  GEOTHREE,
   Water,
   DragControls,
   // you can't simply call useBaseUrl here because it's a react hook...

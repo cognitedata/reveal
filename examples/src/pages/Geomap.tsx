@@ -17,17 +17,8 @@ import {
   TreeIndexNodeCollection,
   IndexSet
 } from '@cognite/reveal';
-import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, AxisViewTool, GeomapTool } from '@cognite/reveal/tools';
+import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, AxisViewTool, GeomapTool, MapConfig, MapBoxMode, MapBoxStyle, MapProviders, MapBoxImageFormat } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
-import { MapConfig } from '../../../viewer/dist/packages/tools/src/Geomap/MapConfig';
-
-enum MapProviders {
-  BINGMAP = "BingMap",
-  OPENSTREETMAP = "OpenStreetMap",
-  HEREMAP = "HereMap",
-  MAPBOXMAP = "MapBoxMap",
-  MAPTILERMAP = "MapTilerMap"
-}
 
 window.THREE = THREE;
 (window as any).reveal = reveal;
@@ -219,11 +210,11 @@ export function Geomap() {
       });
 
       const mapConfig: MapConfig = {
-        mapProvider: MapProviders.MAPBOXMAP,
-        mapAPIKey: "pk.eyJ1IjoicHJhbW9kLXMiLCJhIjoiY2tzb2JkbXdyMGd5cjJubnBrM3IwMTd0OCJ9.jA9US2D2FRXUlldhE8bZgA",
-        mapMode: 100,
-        id: "mapbox/satellite-streets-v10",
-        format: "jpg70",
+        provider: MapProviders.MAPBOXMAP,
+        APIKey: "pk.eyJ1IjoicHJhbW9kLXMiLCJhIjoiY2tzb2JkbXdyMGd5cjJubnBrM3IwMTd0OCJ9.jA9US2D2FRXUlldhE8bZgA",
+        mode: MapBoxMode.STYLE,
+        id: MapBoxStyle.SATELLITE_STREETS,
+        format: MapBoxImageFormat.JPG70,
         latlong: {
           latitude: 59.9016426931744,
           longitude: 10.607235872426175
