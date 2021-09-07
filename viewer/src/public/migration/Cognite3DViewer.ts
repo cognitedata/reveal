@@ -697,7 +697,7 @@ export class Cognite3DViewer {
 
     this.renderer.setClearColor(color);
     this.spinner.updateBackgroundColor(color);
-    this.forceRerender();
+    this.requestRedraw();
   }
 
   /**
@@ -922,9 +922,8 @@ export class Cognite3DViewer {
 
   /**
    * Typically used when you perform some changes and can't see them unless you move camera.
-   * To fix this forceRerender might be used.
    */
-  forceRerender(): void {
+  requestRedraw(): void {
     this._revealManager.requestRedraw();
   }
 
@@ -1036,7 +1035,7 @@ export class Cognite3DViewer {
     this.renderer.setSize(originalWidth, originalHeight);
     this.renderer.render(this.scene, this.camera);
 
-    this.forceRerender();
+    this.requestRedraw();
 
     return url;
   }
