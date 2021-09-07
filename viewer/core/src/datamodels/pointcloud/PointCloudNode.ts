@@ -3,7 +3,7 @@
  */
 
 import * as THREE from 'three';
-import { CameraConfiguration } from '@reveal/cad-parsers';
+import { CameraConfiguration } from '@reveal/utilities';
 
 import { PotreeGroupWrapper } from './PotreeGroupWrapper';
 import { PotreeNodeWrapper } from './PotreeNodeWrapper';

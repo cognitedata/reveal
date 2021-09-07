@@ -3,7 +3,8 @@
  */
 import * as THREE from 'three';
 
-import { SectorMetadata, traverseDepthFirst } from '@reveal/cad-parsers';
+import { SectorMetadata } from '@reveal/cad-parsers';
+import { traverseDepthFirst } from '@reveal/utilities';
 
 export interface SuggestedCameraConfig {
   position: THREE.Vector3;

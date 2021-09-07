@@ -3,7 +3,7 @@
  */
 import * as THREE from 'three';
 
-import { CameraConfiguration } from './types';
+import { CameraConfiguration } from './CameraConfiguration';
 
 export function transformCameraConfiguration(
   cameraConfiguration: CameraConfiguration | undefined,

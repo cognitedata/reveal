@@ -8,12 +8,12 @@ import {
   SectorScene,
   SectorMetadata,
   CadModelMetadata,
-  SectorSceneImpl,
-  traverseDepthFirst
+  SectorSceneImpl
 } from '@reveal/cad-parsers';
 import { GpuOrderSectorsByVisibilityCoverage } from '../../../../internals';
 import { OccludingGeometryProvider } from './OccludingGeometryProvider';
 import { createSectorMetadata, SectorTree, createGlContext } from '../../../../../../test-utilities';
+import { traverseDepthFirst } from '@reveal/utilities';
 
 describe('OrderSectorsByVisibilityCoverage', () => {
   const glContext = createGlContext(64, 64);

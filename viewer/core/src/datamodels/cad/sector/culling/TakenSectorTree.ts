@@ -12,7 +12,7 @@ import {
   addSectorCost
 } from './types';
 
-import { traverseDepthFirst } from '@reveal/cad-parsers';
+import { traverseDepthFirst } from '@reveal/utilities';
 
 export class TakenSectorTree {
   get totalCost(): SectorCost {

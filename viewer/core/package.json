@@ -10,7 +10,8 @@
   },
   "dependencies": {
     "@reveal/cad-parsers": "workspace:*",
-    "@reveal/camera-manager": "workspace:*"
+    "@reveal/camera-manager": "workspace:*",
+    "@reveal/utilities": "workspace:*"
   },
   "sideEffects": false,
   "glslify": {

@@ -5,6 +5,8 @@
 import { HttpHeadersProvider } from './HttpHeadersProvider';
 import { SectorMetadata } from '../metadata/types';
 
+import { CameraConfiguration } from '@reveal/utilities';
+
 /**
  * Conversion factors from a given unit to meters.
  */
@@ -118,11 +120,3 @@ export interface ModelDataClient<TModelIdentifier>
    */
   getApplicationIdentifier(): string;
 }
-
-/**
- * Represents a camera configuration, consisting of a camera position and target.
- */
-export type CameraConfiguration = {
-  readonly position: THREE.Vector3;
-  readonly target: THREE.Vector3;
-};

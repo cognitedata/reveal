@@ -6,3 +6,5 @@ export * from './core/src/internals';
 
 import * as cadParsers from './packages/cad-parsers';
 export { cadParsers };
+
+export * from './packages/utilities';

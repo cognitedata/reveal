@@ -11,7 +11,7 @@ import { SectorScene,
 	 ModelDataClient } from '../utilities/types';
 import { CadModelMetadata } from './CadModelMetadata';
 import { MetadataRepository } from './MetadataRepository';
-import { transformCameraConfiguration } from '../utilities/transformCameraConfiguration';
+import { transformCameraConfiguration } from '@reveal/utilities';
 
 type ModelIdentifierWithFormat<T> = T & { format: File3dFormat };
 

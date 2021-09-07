@@ -4,7 +4,8 @@
 
 import * as THREE from 'three';
 import { generateSectorTree, expectContainsSectorsWithLevelOfDetail } from '../../../../../../test-utilities';
-import { SectorMetadataFacesFileSection, traverseDepthFirst } from '@reveal/cad-parsers';
+import { SectorMetadataFacesFileSection } from '@reveal/cad-parsers';
+import { traverseDepthFirst } from '@reveal/utilities';
 import { DetermineSectorCostDelegate, PrioritizedWantedSector } from './types';
 import { TakenSectorTree } from './TakenSectorTree';
 import { LevelOfDetail, SectorMetadata, CadModelMetadata } from '../../../../internals';

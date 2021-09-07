@@ -5,7 +5,7 @@ import * as THREE from 'three';
 
 import { CadMetadataV8, parseCadMetadataV8, CadSectorMetadataV8 } from './CadMetadataParserV8';
 import { SectorMetadata } from '../types';
-import { traverseDepthFirst } from '../../utilities/objectTraversal';
+import { traverseDepthFirst } from '@reveal/utilities';
 
 import { Mutable } from '../../../../../test-utilities/src/reflection';
 
