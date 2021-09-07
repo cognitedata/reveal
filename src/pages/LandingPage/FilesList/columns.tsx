@@ -1,15 +1,14 @@
 import React, { SyntheticEvent } from 'react';
 import styled from 'styled-components';
-import { Button } from '@cognite/cogs.js';
+import { Button, Dropdown } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
 import { trackUsage, PNID_METRICS } from 'utils/Metrics';
 import { dateSorter, stringCompare } from 'modules/contextualization/utils';
-import { Flex, IconButton, Popover } from 'components/Common';
+import { Flex, IconButton, Popover, DropdownMenu } from 'components/Common';
 import { FileSmallPreview } from 'components/FileSmallPreview';
 import { FileWithAnnotations } from 'hooks/useFileWithAnnotations';
 import ReviewStatus from 'components/ReviewStatus';
 import InteractiveIcon from 'components/InteractiveIcon';
-import { Dropdown, Menu } from 'antd';
 import DetectedTags from 'components/DetectedTags';
 import { sortFilesByAnnotations } from './utils';
 
@@ -36,43 +35,44 @@ const FileContextMenu = ({
   onEditFile,
 }: ContextMenuProps) => {
   return (
-    <Dropdown
-      overlay={
-        <Menu>
-          <Menu.Item key="edit">
-            <Button style={buttonStyle} onClick={onEditFile} type="ghost">
-              Recontextualize diagram
-            </Button>
-          </Menu.Item>
-          <Menu.Item key="approve">
-            <Button style={buttonStyle} onClick={onApproveFile} type="ghost">
-              Approve pending tags
-            </Button>
-          </Menu.Item>
-          <Menu.Item key="reject">
-            <Button
-              style={buttonStyle}
-              onClick={onRejectTags}
-              type="ghost-danger"
-            >
-              Reject pending tags
-            </Button>
-          </Menu.Item>
-          <Menu.Item key="clear">
-            <Button style={buttonStyle} onClick={onClearTags} type="danger">
-              Clear all tags
-            </Button>
-          </Menu.Item>
-        </Menu>
-      }
-    >
-      <IconButton
-        aria-label="Icon-Button"
-        icon="MoreOverflowEllipsisHorizontal"
+    <DropdownMenu column justify grow style={{ width: '250px' }}>
+      <Button
+        icon="Refresh"
+        iconPlacement="left"
+        style={buttonStyle}
+        onClick={onEditFile}
         type="ghost"
-        $square
-      />
-    </Dropdown>
+      >
+        Recontextualize diagram
+      </Button>
+      <Button
+        icon="Checkmark"
+        iconPlacement="left"
+        style={buttonStyle}
+        onClick={onApproveFile}
+        type="ghost"
+      >
+        Approve pending tags
+      </Button>
+      <Button
+        icon="XLarge"
+        iconPlacement="left"
+        style={buttonStyle}
+        onClick={onRejectTags}
+        type="ghost-danger"
+      >
+        Reject pending tags
+      </Button>
+      <Button
+        icon="Trash"
+        iconPlacement="left"
+        style={buttonStyle}
+        onClick={onClearTags}
+        type="ghost-danger"
+      >
+        Clear all tags
+      </Button>
+    </DropdownMenu>
   );
 };
 
@@ -147,15 +147,26 @@ export const getColumns = (
               onFileView(file);
             }}
           />
-          <FileContextMenu
-            onEditFile={(event) => {
-              event.stopPropagation();
-              onFileEdit(file);
-            }}
-            onApproveFile={() => onApproveTags(file)}
-            onClearTags={() => onClearAnnotations(file)}
-            onRejectTags={() => onRejectTags(file)}
-          />
+          <Dropdown
+            content={
+              <FileContextMenu
+                onEditFile={(event) => {
+                  event.stopPropagation();
+                  onFileEdit(file);
+                }}
+                onApproveFile={() => onApproveTags(file)}
+                onClearTags={() => onClearAnnotations(file)}
+                onRejectTags={() => onRejectTags(file)}
+              />
+            }
+          >
+            <IconButton
+              aria-label="Icon-Button"
+              icon="MoreOverflowEllipsisHorizontal"
+              type="ghost"
+              $square
+            />
+          </Dropdown>
         </SettingButtons>
       );
     },

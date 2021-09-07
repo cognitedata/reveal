@@ -5,7 +5,7 @@ import { Button, Dropdown, Tooltip } from '@cognite/cogs.js';
 import { Flex, IconButton } from 'components/Common';
 import { diagramPreview } from 'routes/paths';
 import { useParsingJob } from 'modules/contextualization/pnidParsing/hooks';
-import { MenuSingle } from '../DropdownMenu';
+import { MenuSingle } from '../Menu';
 
 type Props = { file: any };
 

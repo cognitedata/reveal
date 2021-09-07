@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Tooltip } from '@cognite/cogs.js';
 import { useReviewFiles, useActiveWorkflow } from 'hooks';
 import { useWorkflowDiagramsIds } from 'modules/workflows';
-import { DropdownMenu } from '.';
+import { DropdownMenu } from 'components/Common';
 
 // Context menu for all contextualized diagrams
 export const MenuAll = ({ canRejectAll }: { canRejectAll: boolean }) => {

@@ -8,9 +8,8 @@ import {
 } from 'hooks';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
+import { DropdownMenu } from 'components/Common';
 import { useFileStatus } from '../hooks';
-
-import { DropdownMenu } from '.';
 
 // Context menu for a single diagram
 export const MenuSingle = ({ file }: { file: FileInfo }) => {

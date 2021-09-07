@@ -30,6 +30,9 @@ export const FilterList = ({
   onClearAll,
 }: FilterListProps) => {
   const allDatasets = useSelector(selectAllDataSets);
+  const areFiltersSelected = Boolean(
+    dataSetIds?.length || labels?.length || searchQuery?.length
+  );
 
   const displayDataSets = () => {
     if (dataSetIds?.length) {
@@ -103,7 +106,7 @@ export const FilterList = ({
     <Flex row style={{ flexWrap: 'wrap' }}>
       {displayDataSets()} {displayLabels()} {displayQueryTag()}{' '}
       {displayFileTypeTag()}
-      {(dataSetIds?.length || labels?.length || searchQuery?.length) && (
+      {areFiltersSelected && (
         <Button
           icon="Close"
           type="ghost"

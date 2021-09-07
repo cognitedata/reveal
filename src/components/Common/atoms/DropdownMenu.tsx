@@ -1,8 +1,6 @@
 import styled from 'styled-components';
-import { Flex } from 'components/Common';
+import { Flex } from 'components/Common/atoms/Flex';
 
-export * from './MenuAll';
-export * from './MenuSingle';
 export const DropdownMenu = styled(Flex)`
   flex-direction: column;
   align-items: flex-start;

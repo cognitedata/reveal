@@ -15,3 +15,4 @@ export * from './TitledSection';
 export * from './Disclosure';
 export * from './HugeButton';
 export * from './LoadingSkeleton';
+export * from './DropdownMenu';

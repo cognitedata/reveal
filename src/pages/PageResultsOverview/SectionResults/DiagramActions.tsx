@@ -8,7 +8,7 @@ import { useReviewFiles, useActiveWorkflow, isFilePending } from 'hooks';
 
 import { Tooltip } from 'antd';
 import { InfoWrapper } from './components';
-import { MenuAll } from './DropdownMenu';
+import { MenuAll } from './Menu';
 
 export default function DiagramActions() {
   const history = useHistory();
