@@ -9,6 +9,7 @@ import { landingPage, diagramSelection } from 'routes/paths';
 import { AppStateContext } from 'context';
 import NavigationStickyBottomRow from 'components/NavigationStickyBottomRow';
 import { getSelectedDiagramsIds } from 'pages/PageResultsOverview/selectors';
+import { useParsingJob } from 'modules/contextualization/pnidParsing';
 import { getWorkflowItems } from './selectors';
 import SectionProgress from './SectionProgress';
 import SectionSetup from './SectionSetup';
@@ -27,6 +28,10 @@ export default function PageResultsOverview(props: Props) {
 
   const { workflow } = useSelector(getWorkflowItems(workflowId));
   const selectedDiagramsIds = useSelector(getSelectedDiagramsIds);
+
+  const { status: parsingJobStatus } = useParsingJob(workflowId);
+  const isJobDone =
+    parsingJobStatus === 'Completed' || parsingJobStatus === 'Failed';
 
   const areDiagramsSelected = Boolean(selectedDiagramsIds?.length);
 
@@ -58,7 +63,7 @@ export default function PageResultsOverview(props: Props) {
       {areDiagramsSelected && <SettingsBar />}
       <NavigationStickyBottomRow
         step={step}
-        next={{ text: 'Done', onClick: onGoBackHomePage }}
+        next={{ disabled: !isJobDone, text: 'Done', onClick: onGoBackHomePage }}
       />
     </Flex>
   );

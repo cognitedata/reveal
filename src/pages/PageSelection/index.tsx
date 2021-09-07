@@ -68,18 +68,18 @@ export default function PageSelection(props: Props): JSX.Element {
   const isNoSelectionWhileRequired = required && selectionSize === 0;
   const isNoSelectionOfAtLeastOneOptional =
     !required &&
-    step === 'resourceSelectionFiles' &&
+    step === 'resourceSelectionAssets' &&
     !Object.keys(resources ?? [])?.length;
 
   const isStepDiagramSelection = step === 'diagramSelection';
   const isStepResourceSelection = step.startsWith('resourceSelection');
 
   const isStepSkippable =
-    (step === 'resourceSelectionAssets' &&
-      !resources?.some((resource) => resource.type === 'assets')) ||
     (step === 'resourceSelectionFiles' &&
+      !resources?.some((resource) => resource.type === 'files')) ||
+    (step === 'resourceSelectionAssets' &&
       (resources ?? [])?.length > 0 &&
-      !resources?.some((resource) => resource.type === 'files'));
+      !resources?.some((resource) => resource.type === 'assets'));
 
   const updateFilter = useCallback(
     (f: Filter) => {
