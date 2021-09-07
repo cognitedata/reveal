@@ -3,18 +3,19 @@
  */
 
 import * as THREE from 'three';
-import { Vector3 } from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+
+import { GltfSectorParser, PrimitiveCollection } from '../';
 
 import matCapTextureImage from '../../../core/src/datamodels/cad/rendering/matCapTextureData';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { sectorShaders } from '../../../core/src/datamodels/cad/rendering/shaders';
-import GltfSectorLoader, { PrimitiveCollection } from '../src/GltfInstancingPlugin';
 
 const matCapTexture = new THREE.Texture(matCapTextureImage);
 matCapTexture.needsUpdate = true;
+
 init();
 
-function init() {
+async function init() {
   const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 10000);
 
   const scene = new THREE.Scene();
@@ -42,30 +43,53 @@ function init() {
     [PrimitiveCollection.QuadCollection, createQuadMaterial()],
     [PrimitiveCollection.TorusSegmentCollection, createTorusSegmentMaterial()],
     [PrimitiveCollection.TrapeziumCollection, createTrapeziumMaterial()],
-    [PrimitiveCollection.NutCollection, createNutMaterial()]
+    [PrimitiveCollection.NutCollection, createNutMaterial()],
+    [PrimitiveCollection.TriangleMesh, createTriangleMeshMaterial()]
   ]);
 
-  const loader = new GltfSectorLoader();
+  const loader = new GltfSectorParser();
 
-  fetch('test-models/0.glb').then(async file => {
-    const arrayBuffer = await (await file.blob()).arrayBuffer();
-    loader.parseSector(arrayBuffer).then(geometries => {
-      geometries.forEach(result => {
-        const material = materialMap.get(result[0])!;
-        const mesh = new THREE.Mesh(result[1], material);
-        mesh.frustumCulled = false;
-        mesh.onBeforeRender = () => {
-          const inverseModelMatrix: THREE.Matrix4 = material.uniforms.inverseModelMatrix.value;
-          inverseModelMatrix.copy(mesh.matrixWorld).invert();
-        };
-        group.add(mesh);
+  const domParser = new DOMParser();
+  const response = await (await fetch(`test-models/`)).text();
+  const doc = domParser.parseFromString(response, 'text/html');
+
+  const elems = doc.getElementsByClassName('name');
+
+  const fileNames: string[] = [];
+  for (let i = 0; i < elems.length; i++) {
+    const name = elems.item(i)!.innerHTML;
+    if (name.includes('.glb')) {
+      fileNames.push(name);
+    }
+  }
+
+  Promise.all(
+    fileNames.map(fileName =>
+      fetch(`test-models/` + fileName)
+        .then(file => file.blob())
+        .then(blob => blob.arrayBuffer())
+    )
+  ).then(buffers => {
+    buffers.forEach(element => {
+      loader.parseSector(element).then(geometries => {
+        geometries.forEach(result => {
+          const material = materialMap.get(result[0])!;
+          const mesh = new THREE.Mesh(result[1], material);
+          mesh.frustumCulled = false;
+          mesh.onBeforeRender = () => {
+            const inverseModelMatrix: THREE.Matrix4 = material.uniforms.inverseModelMatrix.value;
+            inverseModelMatrix.copy(mesh.matrixWorld).invert();
+          };
+          group.add(mesh);
+        });
       });
     });
   });
 
   const controls = new OrbitControls(camera, renderer.domElement);
   const target = new THREE.Vector3(10, 0, 0);
-  camera.position.add(new Vector3(10, 20, 20));
+  // camera.position.add(new THREE.Vector3(10, 20, 20));
+  camera.position.add(new THREE.Vector3(400, 800, -800));
   controls.target.copy(target);
   controls.update();
 
@@ -94,6 +118,28 @@ function createGeneralCylinderMaterial(): THREE.ShaderMaterial {
     vertexShader: sectorShaders.generalCylinderPrimitive.vertex,
     fragmentShader: sectorShaders.generalCylinderPrimitive.fragment,
     side: THREE.DoubleSide
+  });
+}
+
+function createTriangleMeshMaterial(): THREE.ShaderMaterial {
+  return new THREE.ShaderMaterial({
+    name: 'Triangle meshes',
+    clipping: false,
+    uniforms: {
+      renderMode: { value: 1 },
+      inverseModelMatrix: {
+        value: new THREE.Matrix4()
+      },
+      matCapTexture: { value: matCapTexture },
+      treeIndexTextureSize: { value: new THREE.Vector2(1, 1) },
+      colorDataTexture: { value: new THREE.DataTexture(new Uint8ClampedArray([0, 0, 0, 1]), 1, 1) }
+    },
+    extensions: {
+      derivatives: true
+    },
+    side: THREE.DoubleSide,
+    fragmentShader: sectorShaders.detailedMesh.fragment,
+    vertexShader: sectorShaders.detailedMesh.vertex
   });
 }
 

@@ -3,7 +3,7 @@
  */
 
 import * as THREE from 'three';
-import { BufferGeometry, InstancedBufferGeometry } from 'three';
+import { BufferGeometry } from 'three';
 import { GLTFLoaderPlugin, GLTFParser } from 'three/examples/jsm/loaders/GLTFLoader';
 import {
   setBoxGeometry,
@@ -33,11 +33,12 @@ export enum PrimitiveCollection {
   QuadCollection,
   TorusSegmentCollection,
   TrapeziumCollection,
-  NutCollection
+  NutCollection,
+  TriangleMesh
 }
 
 export class GltfInstancingPlugin implements GLTFLoaderPlugin {
-  private readonly _resultBuffer: [PrimitiveCollection, InstancedBufferGeometry][];
+  private readonly _resultBuffer: [PrimitiveCollection, BufferGeometry][];
   private readonly _extensionName = 'EXT_mesh_gpu_instancing';
   private _parser!: GLTFParser;
   loadMaterial: any;
@@ -79,7 +80,23 @@ export class GltfInstancingPlugin implements GLTFLoaderPlugin {
     const json = this._parser.json;
     const nodeDefinition = json.nodes[nodeIndex];
 
-    if (!this.isInstanceMeshNode(nodeDefinition)) return new THREE.Object3D();
+    if (!this.isInstanceMeshNode(nodeDefinition)) {
+      const meshDef = json.meshes[nodeDefinition.mesh];
+      const triangleMeshGeometry = new THREE.BufferGeometry();
+
+      const indicesAttribute = await this._parser.loadAccessor(meshDef.primitives[0].indices);
+      triangleMeshGeometry.setIndex(indicesAttribute as THREE.BufferAttribute);
+
+      const vertexAttribute = await this._parser.loadAccessor(meshDef.primitives[0].attributes.POSITION);
+      triangleMeshGeometry.setAttribute('position', vertexAttribute);
+
+      const colorAttribute = await this._parser.loadAccessor(meshDef.primitives[0].attributes.COLOR_0);
+      triangleMeshGeometry.setAttribute('color', colorAttribute);
+
+      this._resultBuffer.push([PrimitiveCollection.TriangleMesh, triangleMeshGeometry]);
+
+      return new THREE.Mesh(triangleMeshGeometry, new THREE.MeshBasicMaterial());
+    }
 
     const instancedAttributeReferences = nodeDefinition.extensions[this._extensionName].attributes;
 

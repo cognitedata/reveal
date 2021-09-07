@@ -16,7 +16,7 @@ export default class GltfSectorParser {
       return instancingPlugin;
     });
 
-    return new Promise<[PrimitiveCollection, THREE.InstancedBufferGeometry][]>((resolve, _) => {
+    return new Promise<[PrimitiveCollection, THREE.BufferGeometry][]>((resolve, _) => {
       loader.parse(data, '', _ => {
         resolve(instancingPlugin.result);
       });
