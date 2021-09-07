@@ -375,7 +375,7 @@ function filterSectorNodes(
     if (!pathRegex.endsWith('$')) {
       pathRegex = pathRegex + '$';
     }
-    reveal.cadParsers.traverseDepthFirst(root, node => {
+    reveal.traverseDepthFirst(root, node => {
       if (node.path.match(pathRegex)) {
         acceptedNodes.push(node);
       }
