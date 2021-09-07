@@ -25,3 +25,4 @@ export {
 export { CadSectorParser } from './src/cad/CadSectorParser';
 
 export { File3dFormat } from './src/utilities/types';
+
