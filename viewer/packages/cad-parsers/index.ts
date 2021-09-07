@@ -15,4 +15,4 @@ export {
   BlobOutputMetadata
 } from './src/utilities/types';
 
-export { SectorMetadataIndexFileSection, SectorMetadataFacesFileSection, SectorMetadata } from './src/metadata/types';
+export { SectorMetadata } from './src/metadata/types';
