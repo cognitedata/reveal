@@ -25,20 +25,20 @@ export default function SectionSetup(): JSX.Element {
   const jobStatus = useJobStatus(workflowId, jobStarted);
   const allCounts = useResourceCount();
 
+  const optionalResources = ['files', 'assets'];
+
   const onModelClick = () => goToStep('config');
   const getLinkedResources = () =>
-    Object.keys(allCounts)
-      .filter((resourceType) => resourceType !== 'diagrams')
-      .map<React.ReactNode>((resourceType, index: number) => (
-        <React.Fragment key={`selection-badge-${resourceType}`}>
-          {!!index && 'and'}
-          <SelectionInfo
-            editable={!jobStarted}
-            type={resourceType as ResourceType}
-            count={allCounts[resourceType as ResourceType]}
-          />
-        </React.Fragment>
-      ));
+    optionalResources.map<React.ReactNode>((resourceType, index: number) => (
+      <React.Fragment key={`selection-badge-${resourceType}`}>
+        {!!index && 'and'}
+        <SelectionInfo
+          editable={!jobStarted}
+          type={resourceType as ResourceType}
+          count={allCounts[resourceType as ResourceType]}
+        />
+      </React.Fragment>
+    ));
 
   return (
     <SetUpWrapper jobStatus={jobStatus}>
