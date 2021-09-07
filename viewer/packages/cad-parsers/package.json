@@ -8,7 +8,6 @@
     "lint": "yarn ws:lint"
   },
   "dependencies": {
-    "@reveal/utilities": "workspace:*",
-    "skmeans": "^0.11.3"
+    "@reveal/utilities": "workspace:*"
   }
 }
