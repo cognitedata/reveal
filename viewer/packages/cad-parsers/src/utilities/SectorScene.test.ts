@@ -6,7 +6,7 @@ import * as THREE from 'three';
 
 import { SectorMetadata } from '../metadata/types';
 import { SectorSceneImpl } from './SectorScene';
-import { traverseDepthFirst } from './objectTraversal';
+import { traverseDepthFirst } from '@reveal/utilities';
 
 import { createSectorMetadata } from '../../../../test-utilities/src/createSectorMetadata';
 
