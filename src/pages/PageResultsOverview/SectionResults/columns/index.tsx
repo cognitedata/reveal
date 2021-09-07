@@ -5,6 +5,7 @@ import { ApiStatusCount } from 'modules/contextualization/pnidParsing';
 import { UploadJobState } from 'modules/contextualization/uploadJobs';
 import { stringCompare } from 'modules/contextualization/utils';
 import { Flex, LoadingSkeleton } from 'components/Common';
+import { StatusType } from 'components/Filters';
 import ReviewStatus from 'components/ReviewStatus';
 import InteractiveIcon from 'components/InteractiveIcon';
 import ColumnProgress from './ColumnProgress';
@@ -13,7 +14,8 @@ import ColumnLinkedTo from './ColumnLinkedTo';
 
 export interface AdjustedFileInfo extends FileInfo {
   uploadJob?: UploadJobState;
-  status?: keyof ApiStatusCount | 'idle';
+  progress?: keyof ApiStatusCount | 'idle';
+  status?: StatusType;
   links?: number;
   approval?: boolean;
   svg?: boolean;

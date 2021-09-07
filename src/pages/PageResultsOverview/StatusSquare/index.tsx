@@ -3,7 +3,7 @@ import { Tooltip } from 'antd';
 import { Body } from '@cognite/cogs.js';
 import { ApiStatusCount } from 'modules/contextualization/pnidParsing';
 import { Flex } from 'components/Common';
-import { statusData, StatusData } from 'components/Filters';
+import { progressData, ProgressData } from 'components/Filters';
 import { Square } from './Square';
 
 type Props = {
@@ -15,10 +15,12 @@ type Props = {
 
 export default function StatusSquare(props: Props) {
   const { status, hoverContent, small = false, style = {} } = props;
-  const [currentStatus, setCurrentStatus] = useState<StatusData>(statusData[0]);
+  const [currentStatus, setCurrentStatus] = useState<ProgressData>(
+    progressData[0]
+  );
 
   useEffect(() => {
-    const newStatus = statusData.find((s) => s.type === status);
+    const newStatus = progressData.find((s) => s.type === status);
     if (newStatus) setCurrentStatus(newStatus);
   }, [status]);
 

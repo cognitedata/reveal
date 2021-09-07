@@ -9,7 +9,7 @@ import {
 } from 'modules/contextualization/pnidParsing';
 import { useResourceCount, useInterval, useActiveWorkflow } from 'hooks';
 import { pollJobResults } from 'modules/contextualization/pnidParsing/actions';
-import { statusData } from 'components/Filters';
+import { progressData } from 'components/Filters';
 import StatusSquare from '../StatusSquare';
 
 const SectionProgress = (): JSX.Element => {
@@ -23,7 +23,7 @@ const SectionProgress = (): JSX.Element => {
     status: parsingJobStatus,
     jobId,
   } = useParsingJob(workflowId);
-  const statusCount = {
+  const progressCount = {
     completed: 0,
     running: 0,
     queued: 0,
@@ -42,29 +42,29 @@ const SectionProgress = (): JSX.Element => {
   useInterval(pollJobIfRunning, isJobDone ? null : 5000);
 
   const successPercentage = total
-    ? Math.ceil((100 * statusCount.completed) / total)
+    ? Math.ceil((100 * progressCount.completed) / total)
     : 0;
   const idle =
     (total -
-      (statusCount.completed +
-        statusCount.running +
-        statusCount.queued +
-        statusCount.failed)) /
+      (progressCount.completed +
+        progressCount.running +
+        progressCount.queued +
+        progressCount.failed)) /
     total;
 
   const data = {
-    labels: statusData.map((status) => status.label),
+    labels: progressData.map((progress) => progress.label),
     datasets: [
       {
         label: 'test',
-        data: statusData.map((status) => {
+        data: progressData.map((progress) => {
           const statusProgress =
-            status.type === 'idle' ? idle : statusCount?.[status.type];
-          const progress =
+            progress.type === 'idle' ? idle : progressCount?.[progress.type];
+          const progressPercentage =
             total === 0 ? 0 : 100 * ((statusProgress ?? 0) / total);
-          return progress;
+          return progressPercentage;
         }),
-        backgroundColor: statusData.map((status) => status.color),
+        backgroundColor: progressData.map((progress) => progress.color),
       },
     ],
   };
@@ -90,17 +90,17 @@ const SectionProgress = (): JSX.Element => {
         }
       />
       <Flex column justify style={{ alignItems: 'flex-start' }}>
-        {statusData
-          .filter((status) => status.type && status.type !== 'idle')
-          .map((status) => (
+        {progressData
+          .filter((progress) => progress.type && progress.type !== 'idle')
+          .map((progress) => (
             <StatusSquare
-              key={`status-square-${status.type}`}
+              key={`status-square-${progress.type}`}
               small
-              status={status.type}
+              status={progress.type}
               style={{ margin: '6px' }}
               hoverContent={`${
-                statusCount?.[status.type as keyof ApiStatusCount]
-              } diagram(s) ${status.type}`}
+                progressCount?.[progress.type as keyof ApiStatusCount]
+              } diagram(s) ${progress.type}`}
             />
           ))}
       </Flex>

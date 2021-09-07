@@ -1,38 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import {
-  PENDING_LABEL,
-  INTERACTIVE_LABEL,
-  isFileApproved,
-  isFilePending,
-} from 'hooks/useReviewFiles';
 import { FileInfo } from '@cognite/sdk';
-import { Label, LabelVariants } from '@cognite/cogs.js';
+import { Label } from '@cognite/cogs.js';
+import { ReviewStatus, approvalDetails } from 'components/Filters';
+import { isFileApproved, isFilePending } from 'hooks';
 
 type Props = { file: FileInfo };
 
-export type ReviewStatus = {
-  status: string;
-  variant: LabelVariants;
-  label: string;
-};
-
-export const approvalDetails: { [key: string]: ReviewStatus } = {
-  pending: {
-    status: PENDING_LABEL.externalId,
-    variant: 'warning',
-    label: 'Pending approval',
-  },
-  approved: {
-    status: INTERACTIVE_LABEL.externalId,
-    variant: 'success',
-    label: 'Approved',
-  },
-  unknown: {
-    status: 'No tags detected',
-    variant: 'unknown',
-    label: 'No tags detected',
-  },
-};
 export default function DiagramReviewStatus({ file }: Props) {
   const [fileStatus, setFileStatus] = useState<ReviewStatus>(
     approvalDetails.unknown

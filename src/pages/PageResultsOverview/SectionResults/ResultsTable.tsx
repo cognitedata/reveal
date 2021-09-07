@@ -4,13 +4,17 @@ import { useHistory } from 'react-router-dom';
 import { FileInfo } from '@cognite/sdk';
 import queryString from 'query-string';
 import { Table } from 'components/Common';
-import { StatusType } from 'components/Filters';
+import {
+  ProgressType,
+  ReviewStatus,
+  approvalDetails,
+} from 'components/Filters';
 import {
   useParsingJob,
   selectDiagrams,
 } from 'modules/contextualization/pnidParsing';
 import { useWorkflowDiagramsIds } from 'modules/workflows';
-import { useActiveWorkflow } from 'hooks';
+import { useActiveWorkflow, isFileApproved, isFilePending } from 'hooks';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 import { getContextualizationJobs, getSelectedDiagramsIds } from '../selectors';
 import { getColumns, AdjustedFileInfo } from './columns';
@@ -42,11 +46,21 @@ export default function ResultsTable(props: ResultsTableProps): JSX.Element {
   const { search } = history.location;
   const { page = 1 } = queryString.parse(search, { parseNumbers: true });
 
-  const didFileFail = (fileId: number): StatusType => {
+  const didFileFail = (fileId: number): ProgressType => {
     const didFail = failedFiles?.find(
       (failedFile) => failedFile.fileId === fileId
     );
     return didFail ? 'failed' : 'completed';
+  };
+
+  const getDiagramStatus = (file: FileInfo): ReviewStatus => {
+    if (isFileApproved(file)) {
+      return approvalDetails.approved;
+    }
+    if (isFilePending(file)) {
+      return approvalDetails.pending;
+    }
+    return approvalDetails.unknown;
   };
 
   const filterDiagrams = (diagram: AdjustedFileInfo): boolean => {
@@ -87,7 +101,8 @@ export default function ResultsTable(props: ResultsTableProps): JSX.Element {
     .map((d: FileInfo) => ({
       ...d,
       uploadJob: uploadJobs[d.id],
-      status: didFileFail(d.id),
+      progress: didFileFail(d.id),
+      status: getDiagramStatus(d).type,
       svg: false,
       links: 0,
     }))
@@ -150,7 +165,7 @@ export default function ResultsTable(props: ResultsTableProps): JSX.Element {
         onChange: onRowChange,
         selectedRowKeys: selectedDiagramsIds,
         getCheckboxProps: (record: any) => ({
-          disabled: record.status === 'failed',
+          disabled: record.progress === 'failed',
         }),
       }}
       pagination={{

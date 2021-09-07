@@ -1,5 +1,6 @@
 import { Colors } from '@cognite/cogs.js';
-import { MimeType, StatusData } from './types';
+import { PENDING_LABEL, INTERACTIVE_LABEL } from 'hooks/useReviewFiles';
+import { MimeType, ReviewStatus, ProgressData } from './types';
 
 export const mimeTypes: MimeType[] = [
   {
@@ -16,7 +17,7 @@ export const mimeTypes: MimeType[] = [
   },
 ];
 
-export const statusData: StatusData[] = [
+export const progressData: ProgressData[] = [
   {
     type: 'completed',
     label: 'Done',
@@ -43,3 +44,24 @@ export const statusData: StatusData[] = [
     color: Colors['greyscale-grey4'].hex(),
   },
 ];
+
+export const approvalDetails: { [key: string]: ReviewStatus } = {
+  pending: {
+    status: PENDING_LABEL.externalId,
+    type: 'pending',
+    variant: 'warning',
+    label: 'Pending approval',
+  },
+  approved: {
+    status: INTERACTIVE_LABEL.externalId,
+    type: 'approved',
+    variant: 'success',
+    label: 'Approved',
+  },
+  unknown: {
+    status: 'No tags detected',
+    type: 'empty',
+    variant: 'unknown',
+    label: 'No tags detected',
+  },
+};

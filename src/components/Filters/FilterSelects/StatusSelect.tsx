@@ -2,7 +2,7 @@ import React from 'react';
 import { OptionType } from '@cognite/cogs.js';
 import { useSelectFilter } from 'hooks';
 import { Select } from 'components/Common';
-import { statusData, StatusData, StatusType } from 'components/Filters';
+import { approvalDetails, ReviewStatus, StatusType } from 'components/Filters';
 
 type Props = {
   statusType?: StatusType[];
@@ -12,14 +12,12 @@ type Props = {
 export const StatusSelect = (props: Props) => {
   const { statusType, setStatusType } = props;
 
-  const options = statusData
-    .filter((status: StatusData) => status.type !== 'idle')
-    .map(
-      (status: StatusData): OptionType<React.ReactText> => ({
-        label: status.label,
-        value: status.type,
-      })
-    );
+  const options = Object.values(approvalDetails).map(
+    (status: ReviewStatus): OptionType<React.ReactText> => ({
+      label: status.label,
+      value: status.type,
+    })
+  );
 
   const { currentSelection, setMultiSelection } = useSelectFilter<StatusType>(
     true,
@@ -31,7 +29,7 @@ export const StatusSelect = (props: Props) => {
   return (
     <Select
       selectProps={{
-        title: 'Progress:',
+        title: 'Status:',
         isMulti: true,
         options,
         onChange: setMultiSelection,
