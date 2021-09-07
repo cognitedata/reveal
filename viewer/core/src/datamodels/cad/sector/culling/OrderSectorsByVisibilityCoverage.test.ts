@@ -4,12 +4,7 @@
 
 import * as THREE from 'three';
 
-import {
-  SectorScene,
-  SectorMetadata,
-  CadModelMetadata,
-  SectorSceneImpl
-} from '@reveal/cad-parsers';
+import { SectorScene, SectorMetadata, CadModelMetadata, SectorSceneImpl } from '@reveal/cad-parsers';
 import { GpuOrderSectorsByVisibilityCoverage } from '../../../../internals';
 import { OccludingGeometryProvider } from './OccludingGeometryProvider';
 import { createSectorMetadata, SectorTree, createGlContext } from '../../../../../../test-utilities';
