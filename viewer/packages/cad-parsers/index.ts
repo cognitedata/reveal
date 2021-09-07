@@ -12,12 +12,7 @@ export {
   BinaryFileProvider,
   File3dFormat,
   ModelDataClient,
-  BlobOutputMetadata,
+  BlobOutputMetadata
 } from './src/utilities/types';
 
-export {
-  SectorMetadataIndexFileSection,
-  SectorMetadataFacesFileSection,
-  SectorMetadata,
-} from './src/metadata/types';
-
+export { SectorMetadataIndexFileSection, SectorMetadataFacesFileSection, SectorMetadata } from './src/metadata/types';
