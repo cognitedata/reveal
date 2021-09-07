@@ -900,7 +900,6 @@ __metadata:
   resolution: "@reveal/cad-parsers@workspace:packages/cad-parsers"
   dependencies:
     "@reveal/utilities": "workspace:*"
-    skmeans: ^0.11.3
   languageName: unknown
   linkType: soft
 
