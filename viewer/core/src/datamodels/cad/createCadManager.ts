@@ -2,11 +2,9 @@
  * Copyright 2021 Cognite AS
  */
 
-import { ModelDataClient } from '@reveal/cad-parsers';
+import { ModelDataClient, CadMetadataParser, CadModelMetadataRepository } from '@reveal/cad-parsers';
 
 import { CadManager } from './CadManager';
-import { CadMetadataParser } from '@reveal/cad-parsers';
-import { CadModelMetadataRepository } from '@reveal/cad-parsers';
 import { CadModelFactory } from './CadModelFactory';
 import { CadModelUpdateHandler } from './CadModelUpdateHandler';
 import { CadMaterialManager } from './CadMaterialManager';
