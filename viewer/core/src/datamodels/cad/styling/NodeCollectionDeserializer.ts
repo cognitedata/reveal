@@ -5,8 +5,7 @@
 import assert from 'assert';
 import { CogniteClient } from '@cognite/sdk';
 import { Cognite3DModel } from '../../../migration';
-import { IndexSet } from '../../../utilities/IndexSet';
-import { NumericRange } from '../../../utilities/NumericRange';
+import { NumericRange, IndexSet } from '@reveal/utilities';
 import { NodeCollectionBase } from './NodeCollectionBase';
 import { AssetNodeCollection } from './AssetNodeCollection';
 import { PropertyFilterNodeCollection } from './PropertyFilterNodeCollection';

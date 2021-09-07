@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 
-import { CadNode } from './CadNode';
+import { CadNode } from '@reveal/cad-geometry-loaders'
 import { RenderMode } from './rendering/RenderMode';
 import { IntersectInput } from '../base/types';
 import { WebGLRendererStateHelper } from '../../utilities/WebGLRendererStateHelper';
