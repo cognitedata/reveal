@@ -1,0 +1,9 @@
+{
+  "name": "@reveal/nodes-api",
+  "private": true,
+  "main": "index.ts",
+  "scripts": {
+    "test": "yarn ws:test --config ./../../jest.config.js",
+    "lint": "yarn ws:lint"
+  }
+}
