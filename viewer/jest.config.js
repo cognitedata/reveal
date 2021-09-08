@@ -30,7 +30,6 @@ module.exports = () => {
     },
     coverageDirectory: './coverage',
     collectCoverageFrom: [
-      '!packages/test-utilities/src/*.ts',
       '!**/.*.test.ts',
       '!**/*.d.ts',
       '!**/*.json',
