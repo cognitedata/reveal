@@ -4,10 +4,9 @@
 
 import * as THREE from 'three';
 
-import { determinePowerOfTwoDimensions, NumericRange } from '@reveal/utilities';
+import { IndexSet, determinePowerOfTwoDimensions, NumericRange } from '@reveal/utilities';
 
 import { DefaultNodeAppearance, NodeAppearance } from '../NodeAppearance';
-import { IndexSet } from '../../utilities/IndexSet';
 import { NodeAppearanceProvider } from './NodeAppearanceProvider';
 
 export class NodeAppearanceTextureBuilder {

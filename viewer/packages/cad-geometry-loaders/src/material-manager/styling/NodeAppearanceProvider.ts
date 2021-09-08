@@ -3,8 +3,7 @@
  */
 
 import { NodeAppearance } from '../NodeAppearance';
-import { assertNever, EventTrigger } from '@reveal/utilities';
-import { IndexSet } from '../../utilities/IndexSet';
+import { IndexSet, assertNever, EventTrigger } from '@reveal/utilities';
 import { NodeCollectionBase } from './NodeCollectionBase';
 
 /**

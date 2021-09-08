@@ -3,7 +3,7 @@
  */
 
 import { TreeIndexNodeCollection } from './TreeIndexNodeCollection';
-import { IndexSet } from '../../../utilities/IndexSet';
+import { IndexSet } from '@reveal/utilities';
 
 import { IntersectionNodeCollection } from './IntersectionNodeCollection';
 import { StubNodeCollection } from './stubs/StubNodeCollection';

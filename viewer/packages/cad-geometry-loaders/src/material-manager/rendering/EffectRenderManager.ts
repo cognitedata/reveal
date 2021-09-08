@@ -4,20 +4,18 @@
 
 import * as THREE from 'three';
 
-import { CadMaterialManager } from '../CadMaterialManager';
+import { CadMaterialManager } from '../CadMaterialManager'
 import { RenderMode } from './RenderMode';
-import { CogniteColors, isMobileOrTablet } from '../../../utilities';
-import { CadNode } from '..';
-import { Cognite3DModel } from '../../../migration';
-import { RootSectorNode } from '../sector/RootSectorNode';
-import { AntiAliasingMode, defaultRenderOptions, RenderOptions, SsaoParameters } from '../../..';
+import { CogniteColors, RevealColors } from '../../utilities/types';
+import { isMobileOrTablet } from '@reveal/utilities';
+import { CadNode } from '../../CadNode';
+import { RootSectorNode } from '../../sector/RootSectorNode';
+import { AntiAliasingMode, defaultRenderOptions, RenderOptions, SsaoParameters, SsaoSampleQuality } from './types';
 import { outlineDetectionShaders, fxaaShaders, ssaoShaders, ssaoBlurCombineShaders } from './shaders';
-import { SsaoSampleQuality } from '../../../public/types';
-import { WebGLRendererStateHelper } from '../../../utilities/WebGLRendererStateHelper';
-import { SectorNode } from '../sector/SectorNode';
-import { LevelOfDetail } from '../sector/LevelOfDetail';
+import { WebGLRendererStateHelper } from '../../utilities/WebGLRendererStateHelper';
+import { SectorNode } from '../../sector/SectorNode';
+import { LevelOfDetail } from '../../sector/LevelOfDetail';
 import { NodeOutlineColor } from '../NodeAppearance';
-import { RevealColors } from '../../../utilities/types';
 
 export class EffectRenderManager {
   private readonly _materialManager: CadMaterialManager;
@@ -460,7 +458,7 @@ export class EffectRenderManager {
 
   private extractCadNodes(scene: THREE.Scene) {
     this._rootSectorNodeBuffer.forEach(p => {
-      if (p[1].parent !== scene && !(p[1].parent instanceof Cognite3DModel)) {
+      if (p[1].parent !== scene && p[1].parent.parent !== scene) {
         throw new Error('CadNode must be put at scene root');
       }
       this._cadScene.add(p[0]);

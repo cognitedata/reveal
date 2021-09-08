@@ -3,7 +3,7 @@
  */
 
 import * as THREE from 'three';
-import { IndexSet } from '../../utilities/IndexSet';
+import { IndexSet } from '@reveal/utilities';
 
 import { NodeAppearance, NodeOutlineColor } from '../NodeAppearance';
 import { TreeIndexNodeCollection } from './TreeIndexNodeCollection';

@@ -2,10 +2,10 @@
  * Copyright 2021 Cognite AS
  */
 import * as THREE from 'three';
-import * as THREEext from '../utilities/three';
+import { AutoDisposeGroup }from '@reveal/utilities';
 
 import { LevelOfDetail } from './LevelOfDetail';
-import { InstancedMeshFile, TriangleMesh, SectorQuads } from '../rendering/types';
+import { InstancedMeshFile, TriangleMesh, SectorQuads } from '../material-manager/rendering/types';
 import { ParsedPrimitives, ParseSectorResult, ParseCtmResult } from '@cognite/reveal-parser-worker';
 import { SectorMetadata } from '@reveal/cad-parsers';
 
@@ -13,7 +13,7 @@ export interface ConsumedSector {
   modelIdentifier: string;
   metadata: SectorMetadata;
   levelOfDetail: LevelOfDetail;
-  group: THREEext.AutoDisposeGroup | undefined;
+  group: AutoDisposeGroup | undefined;
   instancedMeshes: InstancedMeshFile[] | undefined;
 }
 

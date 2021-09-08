@@ -12,7 +12,6 @@ export {
   BinaryFileProvider,
   File3dFormat,
   ModelDataClient,
-  BlobOutputMetadata,
 } from './src/utilities/types';
 
 export {

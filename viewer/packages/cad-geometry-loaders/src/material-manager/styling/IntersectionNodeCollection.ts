@@ -1,7 +1,7 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import { IndexSet } from '../../../utilities/IndexSet';
+import { IndexSet } from '@reveal/utilities';
 import { NodeCollectionBase, SerializedNodeCollection } from './NodeCollectionBase';
 import { UnionNodeCollection } from './UnionNodeCollection';
 import { CombineNodeCollectionBase } from './CombineNodeCollectionBase';

@@ -19,9 +19,9 @@ export { CognitePointCloudModel } from './public/migration/CognitePointCloudMode
 
 export * from './public/types';
 
-export { NodeAppearance, NodeOutlineColor, DefaultNodeAppearance } from './datamodels/cad/NodeAppearance';
+// export { NodeAppearance, NodeOutlineColor, DefaultNodeAppearance } from './datamodels/cad/NodeAppearance';
 
-export {
+/* export {
   NodeCollectionBase,
   PropertyFilterNodeCollection,
   SinglePropertyFilterNodeCollection,
@@ -31,18 +31,17 @@ export {
   UnionNodeCollection,
   InvertedNodeCollection,
   NodeAppearanceProvider
-} from './datamodels/cad/styling';
-export { IndexSet } from './utilities/IndexSet';
-export { NumericRange } from './utilities/NumericRange';
+} from './datamodels/cad/styling'; */
+export { IndexSet, NumericRange } from '@reveal/utilities';
 
 // Custom NodeCollection deserialization free-function
-export {
+/* export {
   registerCustomNodeCollectionType,
   TypeName,
   NodeCollectionDescriptor,
   NodeCollectionSerializationContext,
   SerializedNodeCollection
-} from './datamodels/cad/styling';
+} from './datamodels/cad/styling'; */
 
 // Export ThreeJS to enable easy import for our users
 import * as THREE from 'three';

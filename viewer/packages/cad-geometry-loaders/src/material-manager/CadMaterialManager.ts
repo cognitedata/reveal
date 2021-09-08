@@ -6,12 +6,11 @@ import * as THREE from 'three';
 
 import { createMaterials, Materials } from './rendering/materials';
 import { RenderMode } from './rendering/RenderMode';
-import { IndexSet } from '../utilities/IndexSet';
 
 import { NodeAppearanceProvider } from './styling/NodeAppearanceProvider';
 import { NodeAppearanceTextureBuilder } from './styling/NodeAppearanceTextureBuilder';
 import { NodeAppearance } from './NodeAppearance';
-import { EventTrigger, assertNever } from '@reveal/utilities';
+import { IndexSet, EventTrigger, assertNever } from '@reveal/utilities';
 import { NodeTransformTextureBuilder } from './styling/NodeTransformTextureBuilder';
 import { NodeTransformProvider } from './styling/NodeTransformProvider';
 

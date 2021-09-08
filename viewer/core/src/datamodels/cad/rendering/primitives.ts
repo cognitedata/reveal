@@ -3,7 +3,6 @@
  */
 
 import * as THREE from 'three';
-import { SectorGeometry } from '../sector/types';
 import {
   boxGeometry,
   quadGeometry,
@@ -16,7 +15,7 @@ import {
   torusGeometryBoundingBox,
   nutGeometryBoundingBox
 } from './primitiveGeometries';
-import { Materials } from './materials';
+import { Materials, SectorGeometry } from '@reveal/cad-geometry-loaders';
 import { ParsePrimitiveAttribute } from '@cognite/reveal-parser-worker';
 import { disposeAttributeArrayOnUpload } from '../../../utilities/disposeAttributeArrayOnUpload';
 import assert from 'assert';
@@ -26,7 +25,7 @@ import {
   filterPrimitivesOutsideClipBoxByEllipse,
   filterPrimitivesOutsideClipBoxByVertices
 } from './filterPrimitives';
-import { BoundingBoxLOD } from '../../../utilities/three';
+import { BoundingBoxLOD } from '@reveal/utilities';
 
 export function* createPrimitives(
   sector: SectorGeometry,
