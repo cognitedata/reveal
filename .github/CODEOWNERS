@@ -9,7 +9,7 @@ apps/simconfig @cognitedata/simulator-integration
 
 packages/auth-utils                  @cognitedata/frontend-auth-team
 packages/griff-loader                @cognitedata/griff-team
-packages/intercom-helper             @cognitedata/application-services
+packages/intercom-helper             @cognitedata/frontend-app-server
 packages/metrics                     @cognitedata/frontend-react-container
 packages/react-azure-telemetry       @cognitedata/frontend-react-container
 packages/react-comments              @cognitedata/frontend-comment-service
