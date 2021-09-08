@@ -7,15 +7,18 @@ import * as THREE from 'three';
 import { CadMetadataParser } from './CadMetadataParser';
 import { SectorScene,
 	 WellKnownDistanceToMeterConversionFactors,
+	 File3dFormat,
 	 ModelDataClient } from '../utilities/types';
 import { CadModelMetadata } from './CadModelMetadata';
 import { MetadataRepository } from './MetadataRepository';
 import { transformCameraConfiguration } from '@reveal/utilities';
 
+type ModelIdentifierWithFormat<T> = T & { format: File3dFormat };
+
 export class CadModelMetadataRepository<TModelIdentifier>
   implements MetadataRepository<TModelIdentifier, Promise<CadModelMetadata>>
 {
-  private readonly _modelMetadataProvider: ModelDataClient<TModelIdentifier>;
+  private readonly _modelMetadataProvider: ModelDataClient<ModelIdentifierWithFormat<TModelIdentifier>>;
   private readonly _cadSceneParser: CadMetadataParser;
   private readonly _blobFileName: string;
   private _currentModelIdentifier = 0;
@@ -31,9 +34,10 @@ export class CadModelMetadataRepository<TModelIdentifier>
   }
 
   async loadData(model: TModelIdentifier): Promise<CadModelMetadata> {
-    const blobBaseUrlPromise = this._modelMetadataProvider.getModelUrl(model);
-    const modelMatrixPromise = this._modelMetadataProvider.getModelMatrix(model);
-    const modelCameraPromise = this._modelMetadataProvider.getModelCamera(model);
+    const identifierWithFormat = { format: File3dFormat.RevealCadModel, ...model };
+    const blobBaseUrlPromise = this._modelMetadataProvider.getModelUrl(identifierWithFormat);
+    const modelMatrixPromise = this._modelMetadataProvider.getModelMatrix(identifierWithFormat);
+    const modelCameraPromise = this._modelMetadataProvider.getModelCamera(identifierWithFormat);
 
     const blobBaseUrl = await blobBaseUrlPromise;
     const json = await this._modelMetadataProvider.getJsonFile(blobBaseUrl, this._blobFileName);

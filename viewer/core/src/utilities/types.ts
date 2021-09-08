@@ -3,6 +3,8 @@
  */
 import * as THREE from 'three';
 
+export { File3dFormat } from '@reveal/cad-parsers';
+
 /**
  * Colors from the Cognite theme.
  */
@@ -67,8 +69,3 @@ export type TypedArray =
   | Float32Array
   | Float64Array;
 
-export enum File3dFormat {
-  EptPointCloud = 'ept-pointcloud',
-  RevealCadModel = 'reveal-directory',
-  AnyFormat = 'all-outputs'
-}

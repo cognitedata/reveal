@@ -14,3 +14,5 @@ export {
 } from './src/utilities/types';
 
 export { SectorMetadata } from './src/metadata/types';
+
+export { File3dFormat } from './src/utilities/types';

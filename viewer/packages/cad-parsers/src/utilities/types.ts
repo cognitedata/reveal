@@ -104,3 +104,9 @@ export interface ModelDataClient<TModelIdentifier>
    */
   getApplicationIdentifier(): string;
 }
+
+export enum File3dFormat {
+  EptPointCloud = 'ept-pointcloud',
+  RevealCadModel = 'reveal-directory',
+  AnyFormat = 'all-outputs'
+}
