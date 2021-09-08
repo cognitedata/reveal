@@ -1,14 +1,13 @@
 import React from 'react';
-import { Button } from '@cognite/cogs.js';
 import {
   useReviewFiles,
   useConvertToSVG,
   useActiveWorkflow,
   isFileApproved,
 } from 'hooks';
+import { MenuButton, DropdownMenu } from 'components/Common';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
-import { DropdownMenu } from 'components/Common';
 import { useFileStatus } from '../hooks';
 
 // Context menu for a single diagram
@@ -32,7 +31,7 @@ export const MenuSingle = ({ file }: { file: FileInfo }) => {
 
   return (
     <DropdownMenu column justify grow style={{ width: '200px' }}>
-      <Button
+      <MenuButton
         type="ghost"
         aria-label="Button-Approve-Single"
         icon={isLoading ? 'LoadingSpinner' : 'Checkmark'}
@@ -42,8 +41,8 @@ export const MenuSingle = ({ file }: { file: FileInfo }) => {
         style={{ width: '100%' }}
       >
         Approve tags
-      </Button>
-      <Button
+      </MenuButton>
+      <MenuButton
         type="ghost"
         aria-label="Button-Save-SVG-Single"
         icon={isConverting ? 'LoadingSpinner' : 'Save'}
@@ -53,8 +52,8 @@ export const MenuSingle = ({ file }: { file: FileInfo }) => {
         style={{ width: '100%' }}
       >
         Save as SVG
-      </Button>
-      <Button
+      </MenuButton>
+      <MenuButton
         type="ghost-danger"
         aria-label="Button-Reject-Single"
         icon={isLoading ? 'LoadingSpinner' : 'Trash'}
@@ -64,7 +63,7 @@ export const MenuSingle = ({ file }: { file: FileInfo }) => {
         style={{ width: '100%' }}
       >
         Reject pending tags
-      </Button>
+      </MenuButton>
     </DropdownMenu>
   );
 };

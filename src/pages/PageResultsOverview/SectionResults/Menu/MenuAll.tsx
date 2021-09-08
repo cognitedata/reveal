@@ -1,8 +1,8 @@
 import React from 'react';
-import { Button, Tooltip } from '@cognite/cogs.js';
+import { Tooltip } from '@cognite/cogs.js';
 import { useReviewFiles, useActiveWorkflow } from 'hooks';
 import { useWorkflowDiagramsIds } from 'modules/workflows';
-import { DropdownMenu } from 'components/Common';
+import { MenuButton, DropdownMenu } from 'components/Common';
 
 // Context menu for all contextualized diagrams
 export const MenuAll = ({ canRejectAll }: { canRejectAll: boolean }) => {
@@ -18,7 +18,7 @@ export const MenuAll = ({ canRejectAll }: { canRejectAll: boolean }) => {
   return (
     <DropdownMenu column justify grow>
       <Tooltip content="This option is temporarily disabled. You can still convert diagrams to SVG one by one.">
-        <Button
+        <MenuButton
           type="ghost"
           icon="Save"
           aria-label="Button-Save-SVG-All"
@@ -28,9 +28,9 @@ export const MenuAll = ({ canRejectAll }: { canRejectAll: boolean }) => {
           style={{ width: '100%', justifyContent: 'flex-start' }}
         >
           Save all as SVG
-        </Button>
+        </MenuButton>
       </Tooltip>
-      <Button
+      <MenuButton
         type="ghost-danger"
         aria-label="Button-Reject-All"
         icon={isLoading ? 'LoadingSpinner' : 'Trash'}
@@ -40,7 +40,7 @@ export const MenuAll = ({ canRejectAll }: { canRejectAll: boolean }) => {
         style={{ width: '100%', justifyContent: 'flex-start' }}
       >
         Reject all pending tags
-      </Button>
+      </MenuButton>
     </DropdownMenu>
   );
 };

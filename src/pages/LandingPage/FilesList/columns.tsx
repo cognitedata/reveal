@@ -1,10 +1,16 @@
 import React, { SyntheticEvent } from 'react';
 import styled from 'styled-components';
-import { Button, Dropdown } from '@cognite/cogs.js';
+import { Dropdown } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
 import { trackUsage, PNID_METRICS } from 'utils/Metrics';
 import { dateSorter, stringCompare } from 'modules/contextualization/utils';
-import { Flex, IconButton, Popover, DropdownMenu } from 'components/Common';
+import {
+  Flex,
+  IconButton,
+  Popover,
+  DropdownMenu,
+  MenuButton,
+} from 'components/Common';
 import { FileSmallPreview } from 'components/FileSmallPreview';
 import { FileWithAnnotations } from 'hooks/useFileWithAnnotations';
 import ReviewStatus from 'components/ReviewStatus';
@@ -36,7 +42,7 @@ const FileContextMenu = ({
 }: ContextMenuProps) => {
   return (
     <DropdownMenu column justify grow style={{ width: '250px' }}>
-      <Button
+      <MenuButton
         icon="Refresh"
         iconPlacement="left"
         style={buttonStyle}
@@ -44,8 +50,8 @@ const FileContextMenu = ({
         type="ghost"
       >
         Recontextualize diagram
-      </Button>
-      <Button
+      </MenuButton>
+      <MenuButton
         icon="Checkmark"
         iconPlacement="left"
         style={buttonStyle}
@@ -53,8 +59,8 @@ const FileContextMenu = ({
         type="ghost"
       >
         Approve pending tags
-      </Button>
-      <Button
+      </MenuButton>
+      <MenuButton
         icon="XLarge"
         iconPlacement="left"
         style={buttonStyle}
@@ -62,8 +68,8 @@ const FileContextMenu = ({
         type="ghost-danger"
       >
         Reject pending tags
-      </Button>
-      <Button
+      </MenuButton>
+      <MenuButton
         icon="Trash"
         iconPlacement="left"
         style={buttonStyle}
@@ -71,7 +77,7 @@ const FileContextMenu = ({
         type="ghost-danger"
       >
         Clear all tags
-      </Button>
+      </MenuButton>
     </DropdownMenu>
   );
 };
