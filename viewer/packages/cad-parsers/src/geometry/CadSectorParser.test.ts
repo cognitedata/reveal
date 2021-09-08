@@ -6,8 +6,8 @@ import { of } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
 
 import { CadSectorParser } from './CadSectorParser';
-import { WorkerPool } from '../../../utilities/workers/WorkerPool';
-import { SectorQuads } from '../rendering/types';
+import { WorkerPool } from '@reveal/utilities';
+import { SectorQuads } from '@cognite/reveal-parser-worker';
 
 jest.mock('../../../utilities/workers/WorkerPool');
 

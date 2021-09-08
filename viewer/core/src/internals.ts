@@ -35,4 +35,4 @@ export { PointCloudNode } from './datamodels/pointcloud/PointCloudNode';
 import * as utilities from './utilities';
 export { utilities };
 
-export * from './revealEnv';
+export { revealEnv } from '@reveal/utilities';

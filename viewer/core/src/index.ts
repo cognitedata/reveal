@@ -11,7 +11,7 @@
  */
 
 export * from './public/migration/Cognite3DViewer';
-export * from './revealEnv';
+export { revealEnv } from '@reveal/utilities';
 export { BoundingBoxClipper } from './utilities';
 export { Cognite3DModel } from './public/migration/Cognite3DModel';
 export { Cognite3DViewer } from './public/migration/Cognite3DViewer';

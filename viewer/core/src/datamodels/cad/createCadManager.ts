@@ -2,13 +2,12 @@
  * Copyright 2021 Cognite AS
  */
 
-import { ModelDataClient, CadMetadataParser, CadModelMetadataRepository } from '@reveal/cad-parsers';
+import { ModelDataClient, CadMetadataParser, CadModelMetadataRepository, CadSectorParser } from '@reveal/cad-parsers';
 
 import { CadManager } from './CadManager';
 import { CadModelFactory } from './CadModelFactory';
 import { CadModelUpdateHandler } from './CadModelUpdateHandler';
 import { CadMaterialManager } from './CadMaterialManager';
-import { CadSectorParser } from './sector/CadSectorParser';
 import { CachedRepository } from './sector/CachedRepository';
 import { SimpleAndDetailedToSector3D } from './sector/SimpleAndDetailedToSector3D';
 import { createDefaultSectorCuller } from './sector/culling/ByVisibilityGpuSectorCuller';
