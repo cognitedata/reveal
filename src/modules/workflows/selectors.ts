@@ -74,6 +74,13 @@ export const getActiveWorkflowResourcesByResourceType = createSelector(
     }
 );
 
+export const getActiveWorkflowJobId = createSelector(
+  (state: RootState) => state.workflows.active,
+  (state: RootState) => state.workflows.items,
+  (workflowId: number, items: { [id: number]: Workflow }) =>
+    items[workflowId]?.jobId
+);
+
 export const getCountsSelector = createSelector(
   countAssetSelector,
   countFileSelector,
