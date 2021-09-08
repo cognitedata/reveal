@@ -10,9 +10,10 @@ import dat from 'dat.gui';
 import {
   AddModelOptions,
   Cognite3DViewer,
+  Cognite3DViewerOptions,
   Cognite3DModel,
   CognitePointCloudModel,
-  PotreePointColorType, 
+  PotreePointColorType,
   PotreePointShape,
   TreeIndexNodeCollection,
   IndexSet
@@ -28,10 +29,10 @@ window.THREE = THREE;
 export function Migration() {
   const canvasWrapperRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    const gui = new dat.GUI({ width: Math.min(500, 0.8*window.innerWidth) });
+    const gui = new dat.GUI({ width: Math.min(500, 0.8 * window.innerWidth) });
     let viewer: Cognite3DViewer;
 
-    function createGeometryFilter(input: string | null): { center: THREE.Vector3, size: THREE.Vector3 } | undefined  {
+    function createGeometryFilter(input: string | null): { center: THREE.Vector3, size: THREE.Vector3 } | undefined {
       if (input === null) return undefined;
       const parsed = JSON.parse(input) as { center: THREE.Vector3, size: THREE.Vector3 };
       return { center: new THREE.Vector3().copy(parsed.center), size: new THREE.Vector3().copy(parsed.size) };
@@ -44,9 +45,40 @@ export function Migration() {
       const geometryFilterInput = urlParams.get('geometryFilter');
       const geometryFilter = createGeometryFilter(geometryFilterInput);
       const baseUrl = urlParams.get('baseUrl') || undefined;
-      if (!project) {
-        throw new Error('Must provide "project"as URL parameter');
+      const modelUrl = urlParams.get('modelUrl');
+
+      const progress = (itemsLoaded: number, itemsRequested: number, itemsCulled: number) => {
+        guiState.debug.loadedSectors.statistics.culledCount = itemsCulled;
+        console.log(`loaded ${itemsLoaded}/${itemsRequested} (culled: ${itemsCulled})`);
+      };
+
+      // Login
+      const client = new CogniteClient({ appId: 'cognite.reveal.example', baseUrl });
+      let viewerOptions: Cognite3DViewerOptions = {
+        sdk: client,
+        domElement: canvasWrapperRef.current!,
+        onLoading: progress,
+        logMetrics: false,
+        antiAliasingHint: (urlParams.get('antialias') || undefined) as any,
+        ssaoQualityHint: (urlParams.get('ssao') || undefined) as any
+      };
+      if (project !== null) {
+        await client.loginWithOAuth({ type: 'CDF_OAUTH', options: { project } });
+        await client.authenticate();
+      } else if (baseUrl !== null) {
+        viewerOptions = {
+          ...viewerOptions,
+          // @ts-expect-error
+          _localModels: true
+        };
+      } else {
+        throw new Error('Must either provide URL parameter "project", ' +
+          '"modelId" and "revisionId" to load model from CDF ' +
+          '"or "modelUrl" to load model from URL.');
       }
+      // Prepare viewer
+      viewer = new Cognite3DViewer(viewerOptions);
+      (window as any).viewer = viewer;
 
       const totalBounds = new THREE.Box3();
 
@@ -65,30 +97,9 @@ export function Migration() {
         }
       };
 
-      // Login
-      const client = new CogniteClient({ appId: 'cognite.reveal.example', baseUrl });
-      await client.loginWithOAuth({ type: 'CDF_OAUTH', options: { project } });
-      await client.authenticate();
-
-      const progress = (itemsLoaded: number, itemsRequested: number, itemsCulled: number) => {
-        guiState.debug.loadedSectors.statistics.culledCount = itemsCulled;
-        console.log(`loaded ${itemsLoaded}/${itemsRequested} (culled: ${itemsCulled})`);
-
-      };
-      // Prepare viewer
-      viewer = new Cognite3DViewer({
-        sdk: client,
-        domElement: canvasWrapperRef.current!,
-        onLoading: progress,
-        logMetrics: false,
-        antiAliasingHint: (urlParams.get('antialias') || undefined) as any,
-        ssaoQualityHint: (urlParams.get('ssao') || undefined) as any
-      });
-      (window as any).viewer = viewer;
-
       async function addModel(options: AddModelOptions) {
         try {
-          const model = await viewer.addModel(options);
+          const model = options.localPath !== undefined ? await viewer.addCadModel(options) : await viewer.addModel(options);
 
           const bounds = model.getModelBoundingBox();
           totalBounds.expandByPoint(bounds.min);
@@ -120,8 +131,8 @@ export function Migration() {
         revisionId: 0,
         geometryFilter:
           geometryFilter !== undefined
-          ? { ...geometryFilter, enabled: true }
-          : { center: new THREE.Vector3(), size: new THREE.Vector3(), enabled: false },
+            ? { ...geometryFilter, enabled: true }
+            : { center: new THREE.Vector3(), size: new THREE.Vector3(), enabled: false },
         antiAliasing: urlParams.get('antialias'),
         ssaoQuality: urlParams.get('ssao'),
         debug: {
@@ -240,7 +251,7 @@ export function Migration() {
           urlParams.set('antialias', v);
           window.location.href = url.toString();
         });
-        renderGui.add(guiState, 'ssaoQuality',
+      renderGui.add(guiState, 'ssaoQuality',
         [
           'disabled', 'medium', 'high', 'veryhigh'
         ]).name('SSAO').onFinishChange(v => {
@@ -303,7 +314,7 @@ export function Migration() {
         guiState.debug.loadedSectors.statistics.maxSectorDepth = maxDepth;
         guiState.debug.loadedSectors.statistics.maxSectorDepthOfInsideSectors = maxInsideDepth;
         // @ts-expect-error
-        const loadedStats = viewer._revealManager.cadLoadedStatistics;
+        const loadedStats = viewer.revealManager.cadLoadedStatistics;
         guiState.debug.loadedSectors.statistics.simpleSectorCount = loadedStats.simpleSectorCount;
         guiState.debug.loadedSectors.statistics.detailedSectorCount = loadedStats.detailedSectorCount;
         guiState.debug.loadedSectors.statistics.forceDetailedSectorCount = loadedStats.forcedDetailedSectorCount;
@@ -318,7 +329,7 @@ export function Migration() {
       debugGui.add(guiState.debug, 'suspendLoading').name('Suspend loading').onFinishChange(suspend => {
         try {
           // @ts-expect-error
-          viewer._revealManager._cadManager._cadModelUpdateHandler.updateLoadingHints({suspendLoading: suspend})
+          viewer._revealManager._cadManager._cadModelUpdateHandler.updateLoadingHints({ suspendLoading: suspend })
         }
         catch (error) {
           alert('Could not toggle suspend loading, check console for error');
@@ -364,6 +375,8 @@ export function Migration() {
         const modelId = Number.parseInt(modelIdStr, 10);
         const revisionId = Number.parseInt(revisionIdStr, 10);
         await addModel({ modelId, revisionId, geometryFilter: createGeometryFilterFromState(guiState.geometryFilter) });
+      } else if (modelUrl) {
+        await addModel({ modelId: -1, revisionId: -1, localPath: modelUrl, geometryFilter: createGeometryFilterFromState(guiState.geometryFilter) })
       }
 
       const selectedSet = new TreeIndexNodeCollection([]);
@@ -428,20 +441,20 @@ export function Migration() {
           console.log(intersection);
           switch (intersection.type) {
             case 'cad':
-            {
-              const { treeIndex, point, model } = intersection;
-              console.log(`Clicked node with treeIndex ${treeIndex} at`, point);
-              const overlayHtml = document.createElement('div');
-              overlayHtml.innerText = `Node ${treeIndex}`;
-              overlayHtml.style.cssText = 'background: white; position: absolute;';
-              overlayTool.add(overlayHtml, point);
-
-              // highlight the object
-              selectedSet.updateSet(new IndexSet([treeIndex]));
-              const boundingBox = await model.getBoundingBoxByTreeIndex(treeIndex);
-              viewer.fitCameraToBoundingBox(boundingBox, 1000);
-            }
-            break;
+              {
+                const { treeIndex, point, model } = intersection;
+                console.log(`Clicked node with treeIndex ${treeIndex} at`, point);
+                const overlayHtml = document.createElement('div');
+                overlayHtml.innerText = `Node ${treeIndex}`;
+                overlayHtml.style.cssText = 'background: white; position: absolute;';
+                overlayTool.add(overlayHtml, point);
+  
+                // highlight the object
+                selectedSet.updateSet(new IndexSet([treeIndex]));
+                const boundingBox = await model.getBoundingBoxByTreeIndex(treeIndex);
+                viewer.fitCameraToBoundingBox(boundingBox, 1000);
+              }
+              break;
 
             case 'pointcloud':
               {
@@ -496,9 +509,8 @@ function createGeometryFilterStateFromBounds(bounds: THREE.Box3, out: { center: 
   return out;
 }
 
-function createGeometryFilterFromState(state: { center: THREE.Vector3, size: THREE.Vector3 }):
- { boundingBox: THREE.Box3, isBoundingBoxInModelCoordinates: true } | undefined {
-  state.size.clamp(new THREE.Vector3(0,0,0), new THREE.Vector3(Infinity, Infinity, Infinity));
+function createGeometryFilterFromState(state: { center: THREE.Vector3, size: THREE.Vector3 }): { boundingBox: THREE.Box3, isBoundingBoxInModelCoordinates: true } | undefined {
+  state.size.clamp(new THREE.Vector3(), new THREE.Vector3(Infinity, Infinity, Infinity));
   if (state.size.equals(new THREE.Vector3())) {
     return undefined;
   }
