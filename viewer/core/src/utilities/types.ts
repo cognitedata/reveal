@@ -72,4 +72,3 @@ export enum File3dFormat {
   RevealCadModel = 'reveal-directory',
   AnyFormat = 'all-outputs'
 }
-
