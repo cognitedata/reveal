@@ -10,9 +10,7 @@ export { SectorSceneFactory } from './src/utilities/SectorSceneFactory';
 export {
   SectorScene,
   BinaryFileProvider,
-  File3dFormat,
   ModelDataClient,
-  BlobOutputMetadata
 } from './src/utilities/types';
 
 export { SectorMetadata } from './src/metadata/types';

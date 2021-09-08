@@ -6,7 +6,7 @@ import nock from 'nock';
 import { CdfModelDataClient } from './CdfModelDataClient';
 import { CogniteClient } from '@cognite/sdk';
 import { Model3DOutputList } from './Model3DOutputList';
-import { File3dFormat } from '@reveal/cad-parsers';
+import { File3dFormat } from '../types';
 
 describe('CdfModelDataClient', () => {
   const appId = 'reveal-CdfModelDataClient-test';

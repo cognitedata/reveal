@@ -3,12 +3,14 @@
  */
 import * as THREE from 'three';
 import { CogniteClient, ItemsResponse } from '@cognite/sdk';
-import { BlobOutputMetadata, ModelDataClient, File3dFormat } from '@reveal/cad-parsers';
+import { ModelDataClient } from '@reveal/cad-parsers';
 import { CameraConfiguration } from '@reveal/utilities';
 
 import { Model3DOutputList } from './Model3DOutputList';
 import { applyDefaultModelTransformation } from './applyDefaultModelTransformation';
 import { getSdkApplicationId } from './utilities';
+import { File3dFormat } from '../types';
+import { BlobOutputMetadata } from './types';
 
 // TODO 2020-06-25 larsmoa: Extend CogniteClient.files3d.retrieve() to support subpath instead of
 // using URLs directly. Also add support for listing outputs in the SDK.

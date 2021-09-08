@@ -37,7 +37,7 @@ import {
 
 import { CdfModelDataClient } from '../../utilities/networking/CdfModelDataClient';
 import { assertNever, LoadingState } from '../../utilities';
-import { File3dFormat } from '@reveal/cad-parsers';
+import { File3dFormat } from '../../utilities/types';
 import { Spinner } from '../../utilities/Spinner';
 import { trackError, trackEvent } from '../../utilities/metrics';
 import { CdfModelIdentifier } from '../../utilities/networking/types';

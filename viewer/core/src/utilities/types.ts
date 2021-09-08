@@ -66,3 +66,10 @@ export type TypedArray =
   | Uint8ClampedArray
   | Float32Array
   | Float64Array;
+
+export enum File3dFormat {
+  EptPointCloud = 'ept-pointcloud',
+  RevealCadModel = 'reveal-directory',
+  AnyFormat = 'all-outputs'
+}
+
