@@ -6,3 +6,19 @@ apps/cognuit @cognitedata/subsurface-data
 
 # The Simulator Configuration app is owned by the Simulator Integration team
 apps/simconfig @cognitedata/simulator-integration
+
+packages/auth-utils                  @cognitedata/frontend-auth-team
+packages/griff-loader                @cognitedata/griff-team
+packages/intercom-helper             @cognitedata/application-services
+packages/metrics                     @cognitedata/frontend-react-container
+packages/react-azure-telemetry       @cognitedata/frontend-react-container
+packages/react-comments              @cognitedata/frontend-comment-service
+packages/react-container             @cognitedata/frontend-react-container
+packages/react-errors                @cognitedata/frontend-react-container
+packages/react-feature-flags         @cognitedata/frontend-react-container
+packages/react-griff-provider        @cognitedata/griff-team
+packages/react-i18n                  @cognitedata/frontend-react-container
+packages/react-loop-detector         @cognitedata/frontend-react-container
+packages/react-sentry                @cognitedata/frontend-react-container
+packages/react-tenant-selector       @cognitedata/frontend-tenant-selector-team
+packages/storage                     @cognitedata/frontend-react-container
