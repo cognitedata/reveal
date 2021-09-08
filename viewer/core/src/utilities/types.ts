@@ -68,4 +68,3 @@ export type TypedArray =
   | Uint8ClampedArray
   | Float32Array
   | Float64Array;
-
