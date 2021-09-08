@@ -108,44 +108,39 @@ export enum HereMapImageFormat {
 	JPG = 'jpg'
 }
 
+export type BingMapConfig = {
+  type?: BingMapType;
+};
+
+export type HereMapConfig = {
+  appCode?: string;
+  style?: HereMapType;
+  scheme?: string;
+  imageFormat?: HereMapImageFormat;
+  size?: number;
+};
+
+export type MapBoxConfig = {
+  id?: MapBoxStyle;
+  mode?: MapBoxMode;
+  tileFormat?: MapBoxImageFormat;
+  useHDPI?: boolean;
+};
+
 /**
  * Maps Configuration of {@link GeomapTool}.
  */
-export type MapConfig = {
+export type MapConfig = BingMapConfig & HereMapConfig & MapBoxConfig & {
   /**
    * Map Provider
    */
   provider: string;
   /**
-   * Map Id or Style
-   */
-  id?: string;
-  /**
-   * Map View Mode
-   */
-  mode?: number;
-  /**
    * Map provider API Key
    */
   APIKey: string;
   /**
-   * Map provider API Key
-   */
-  APICode?: string;
-  /**
-   * Image format
-   */
-  format?: string;
-  /**
-   * Map Scheme
-   */
-  scheme?: string;
-  /**
-   * Map Tile Resolution Size
-   */
-  tileResolutionSize?: number;
-    /**
-   * Map provider API Key
+   * Latitude, Longitude position
    */
   latlong?: LatLongPosition;
   /**

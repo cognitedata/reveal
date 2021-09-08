@@ -214,7 +214,7 @@ export function Geomap() {
         APIKey: "pk.eyJ1IjoicHJhbW9kLXMiLCJhIjoiY2tzb2JkbXdyMGd5cjJubnBrM3IwMTd0OCJ9.jA9US2D2FRXUlldhE8bZgA",
         mode: MapBoxMode.STYLE,
         id: MapBoxStyle.SATELLITE_STREETS,
-        format: MapBoxImageFormat.JPG70,
+        tileFormat: MapBoxImageFormat.JPG70,
         latlong: {
           latitude: 59.9016426931744,
           longitude: 10.607235872426175

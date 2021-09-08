@@ -22,14 +22,14 @@ export class Geomap {
   private getMapProvider(mapConfig: MapConfig) {
     switch(mapConfig.provider) {
       case 'BingMap':
-        this._mapProvider = new GEOTHREE.BingMapsProvider( mapConfig.APIKey || APIKeys.DEV_BING_API_KEY, mapConfig.mode);
+        this._mapProvider = new GEOTHREE.BingMapsProvider( mapConfig.APIKey || APIKeys.DEV_BING_API_KEY, mapConfig.type);
         break;
       case 'HereMap':
-        this._mapProvider = new GEOTHREE.HereMapsProvider(mapConfig.APIKey || APIKeys.DEV_HEREMAPS_APP_ID, mapConfig.APICode || APIKeys.DEV_HEREMAPS_APP_CODE, mapConfig.mode, mapConfig.scheme, mapConfig.format, mapConfig.tileResolutionSize);
+        this._mapProvider = new GEOTHREE.HereMapsProvider(mapConfig.APIKey || APIKeys.DEV_HEREMAPS_APP_ID, mapConfig.appCode || APIKeys.DEV_HEREMAPS_APP_CODE, mapConfig.style, mapConfig.scheme, mapConfig.imageFormat, mapConfig.size);
         break;
       case 'MapBoxMap':
       default:
-        this._mapProvider = new GEOTHREE.MapBoxProvider(mapConfig.APIKey || APIKeys.DEV_MAPBOX_API_KEY, mapConfig.id || "mapbox/satellite-streets-v10", mapConfig.mode, mapConfig.format);
+        this._mapProvider = new GEOTHREE.MapBoxProvider(mapConfig.APIKey || APIKeys.DEV_MAPBOX_API_KEY, mapConfig.style || "mapbox/satellite-streets-v10", mapConfig.mode, mapConfig.tileFormat);
         break;
     }
   }

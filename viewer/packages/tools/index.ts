@@ -15,7 +15,7 @@ export {
   RelativePosition
 } from './src/AxisView/types';
 export { GeomapTool } from './src/Geomap/GeomapTool';
-export { MapConfig, MapProviders,
+export { MapConfig, MapProviders, BingMapConfig, HereMapConfig, MapBoxConfig,
   MapBoxMode, MapBoxStyle, MapBoxImageFormat,
   BingMapType, BingMapImageFormat,
   HereMapType, HereMapScheme, HereMapImageFormat
