@@ -9,7 +9,7 @@ import { CadSectorParser } from './CadSectorParser';
 import { WorkerPool } from '@reveal/utilities';
 import { SectorQuads } from '@cognite/reveal-parser-worker';
 
-jest.mock('../../../utilities/src/workers/WorkerPool.ts');
+jest.mock('../../../utilities/src/workers/WorkerPool');
 
 describe('CadSectorParser', () => {
   const workerPool: WorkerPool = new WorkerPool();
