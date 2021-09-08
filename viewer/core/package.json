@@ -9,6 +9,7 @@
     "lint": "yarn ws:lint"
   },
   "dependencies": {
+    "@reveal/cad-geometry-loaders": "workspace:*",
     "@reveal/cad-parsers": "workspace:*",
     "@reveal/camera-manager": "workspace:*",
     "@reveal/utilities": "workspace:*"
