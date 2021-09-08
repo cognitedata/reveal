@@ -515,6 +515,7 @@ __metadata:
     lint-staged: ^10.5.0
     lodash: ^4.17.20
     mixpanel-browser: ^2.39.0
+    moq.ts: ^7.3.4
     nock: ^13.0.4
     prettier: ^2.1.2
     raw-loader: ^4.0.2
@@ -907,6 +908,13 @@ __metadata:
   resolution: "@reveal/core@workspace:core"
   dependencies:
     "@reveal/camera-manager": "workspace:*"
+    "@reveal/nodes-api": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@reveal/nodes-api@workspace:*, @reveal/nodes-api@workspace:packages/nodes-api":
+  version: 0.0.0-use.local
+  resolution: "@reveal/nodes-api@workspace:packages/nodes-api"
   languageName: unknown
   linkType: soft
 
@@ -8858,6 +8866,15 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"moq.ts@npm:^7.3.4":
+  version: 7.4.1
+  resolution: "moq.ts@npm:7.4.1"
+  dependencies:
+    tslib: 2.1.0
+  checksum: 7331fbb2769b9df21b2d4023e69ef8a12259e3d088ebfaaedc7a967935db9bbf841783b461047bbe8001d1f32bfa9dba853e90be4952aa8ad49a4f22f67f9d5a
+  languageName: node
+  linkType: hard
+
 "move-concurrently@npm:^1.0.1":
   version: 1.0.1
   resolution: "move-concurrently@npm:1.0.1"
@@ -12100,6 +12117,13 @@ resolve@^0.6.1:
   languageName: node
   linkType: hard
 
+"tslib@npm:2.1.0, tslib@npm:~2.1.0":
+  version: 2.1.0
+  resolution: "tslib@npm:2.1.0"
+  checksum: d8f5bdd067611651c6b846c2388f4dc8ba1f5af124e66105f5263d1ad56da17f4b8c6566887ca2f205c5a9758451871ceca87d5d06087af2dca1699c5e33db69
+  languageName: node
+  linkType: hard
+
 "tslib@npm:^1.8.1, tslib@npm:^1.9.0":
   version: 1.14.1
   resolution: "tslib@npm:1.14.1"
@@ -12111,13 +12135,6 @@ resolve@^0.6.1:
   version: 2.3.0
   resolution: "tslib@npm:2.3.0"
   checksum: 7b4fc9feff0f704743c3760f5d8d708f6417fac6458159e63df3a6b1100f0736e3b99edb9fe370f274ad15160a1f49ff05cb49402534c818ff552c48e38c3e6e
-  languageName: node
-  linkType: hard
-
-"tslib@npm:~2.1.0":
-  version: 2.1.0
-  resolution: "tslib@npm:2.1.0"
-  checksum: d8f5bdd067611651c6b846c2388f4dc8ba1f5af124e66105f5263d1ad56da17f4b8c6566887ca2f205c5a9758451871ceca87d5d06087af2dca1699c5e33db69
   languageName: node
   linkType: hard
 
