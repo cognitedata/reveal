@@ -1,11 +1,12 @@
 import React from 'react';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useHistory, useRouteMatch } from 'react-router';
 
 import { Button as CogsButton, Icon } from '@cognite/cogs.js';
 import { useSDK } from '@cognite/sdk-provider';
-import { Alert as AntdAlert, Tooltip } from 'antd';
-import styled from 'styled-components';
-import { useQuery } from 'react-query';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
+import { Alert as AntdAlert, Tooltip, notification } from 'antd';
+import styled from 'styled-components';
 
 const StyledAlert = styled(AntdAlert)`
   margin-bottom: 16px;
@@ -28,6 +29,7 @@ const StyledIcon = styled(Icon).attrs(({ $success }: { $success: boolean }) => {
 
 const LegacyLoginFlowWarning = () => {
   const sdk = useSDK();
+  const client = useQueryClient();
   const flow = sdk.getOAuthFlowType();
   const { data: writeOk } = usePermissions('projectsAcl', 'UPDATE');
   const isLoggedInUsingLegacyLoginFlow = flow === 'CDF_OAUTH';
@@ -40,7 +42,53 @@ const LegacyLoginFlowWarning = () => {
   });
   const isOIDCConfigured = authSettings?.isOidcEnabled;
   const canLegacyLoginFlowBeDisabled =
-    isFetched && isOIDCConfigured && isLoggedInUsingLegacyLoginFlow;
+    isFetched && isOIDCConfigured && !isLoggedInUsingLegacyLoginFlow;
+
+  const history = useHistory();
+  const match =
+    useRouteMatch<{ tenant: string; path: string }>('/:tenant/:path');
+
+  const { mutate: disableLegacyLoginFlow } = useMutation(
+    () =>
+      sdk.post(`/api/v1/projects/${sdk.project}/update`, {
+        data: {
+          update: {
+            isLegacyLoginFlowAndApiKeysEnabled: {
+              set: false,
+            },
+          },
+        },
+      }),
+    {
+      onMutate() {
+        notification.info({
+          key: 'disable-legacy-login-flow',
+          message: 'Disabling legacy login flow',
+        });
+      },
+      onSuccess() {
+        notification.success({
+          key: 'disable-legacy-login-flow',
+          message: 'Legacy login flow is disabled',
+        });
+        client.invalidateQueries('auth-settings');
+        if (match?.params) {
+          history.push(`/${match.params.tenant}/${match.params.path}/oidc`);
+        }
+      },
+      onError() {
+        notification.error({
+          key: 'disable-legacy-login-flow',
+          message: 'Legacy login flow is not disabled!',
+          description: 'An error occured while disabling legacy login flow',
+        });
+      },
+    }
+  );
+
+  const handleSubmit = () => {
+    disableLegacyLoginFlow();
+  };
 
   return (
     <StyledAlert
@@ -77,7 +125,7 @@ const LegacyLoginFlowWarning = () => {
                   <StyledIcon $success={isOIDCConfigured} />
                   Configure OIDC for your project
                   <br />
-                  <StyledIcon $success={isLoggedInUsingLegacyLoginFlow} />
+                  <StyledIcon $success={!isLoggedInUsingLegacyLoginFlow} />
                   Log in using OIDC
                 </div>
               )
@@ -86,6 +134,7 @@ const LegacyLoginFlowWarning = () => {
           >
             <StyledButton
               disabled={!writeOk || !canLegacyLoginFlowBeDisabled}
+              onClick={handleSubmit}
               type="danger"
             >
               Disable Legacy Login Flow
