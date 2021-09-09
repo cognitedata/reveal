@@ -411,7 +411,7 @@ function updateWantedSectorOverride(
     const acceptedSimple = filterSectorNodes(quadsFilter, root);
     const acceptedDetailed = filterSectorNodes(detailedFilter, root);
     const wanted: reveal.WantedSector[] = [
-      ...cadNode.sectorScene
+      ...(cadNode.sectorScene as reveal.cadParsers.SectorScene)
         .getAllSectors()
         .map((x) =>
           createWantedSector(x, reveal.LevelOfDetail.Discarded)
