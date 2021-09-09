@@ -52,7 +52,7 @@ export function SelectAllHeaderRenderer({
     <Checkbox
       className="cogs-body-2"
       name="select-all-files"
-      value={column.allSelected}
+      checked={column.allSelected}
       onChange={handleSelectAllFiles}
       style={{ margin: 0 }}
     >

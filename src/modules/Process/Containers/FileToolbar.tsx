@@ -1,6 +1,6 @@
 /* eslint-disable @cognite/no-number-z-index */
 import React from 'react';
-import { Button, SegmentedControl, Popconfirm } from '@cognite/cogs.js';
+import { SegmentedControl } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
@@ -10,6 +10,11 @@ import {
 } from 'src/modules/Common/filesSlice';
 import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
 import { selectIsPollingComplete } from 'src/modules/Process/processSlice';
+import { BulkActionMenu } from 'src/modules/Common/Components/BulkActionMenu/BulkActionMenu';
+import {
+  setBulkEditModalVisibility,
+  setFileDownloadModalVisibility,
+} from 'src/modules/Common/commonSlice';
 
 export const FileToolbar = ({
   onViewChange,
@@ -42,20 +47,32 @@ export const FileToolbar = ({
     );
   };
 
+  const onDownload = () => {
+    dispatch(setFileDownloadModalVisibility(true));
+  };
+
+  const onBulkEdit = () => {
+    dispatch(setBulkEditModalVisibility(true));
+  };
+
   return (
     <>
       <Container>
         {!!processFilesLength && ( // Only show buttons if there are files available
           <ButtonContainer>
-            <ConfirmDeleteButton
-              onConfirm={onDelete}
-              selectedNumber={selectedFiles.length}
-              disabled={!selectedFiles.length || !isPollingFinished}
+            <BulkActionMenu
+              selectedCount={selectedFiles.length}
+              maxSelectCount={processFilesLength}
+              onBulkEdit={onBulkEdit}
+              onDownload={onDownload}
+              onDelete={onDelete}
+              processingFiles={!isPollingFinished}
+              style={{ zIndex: 1 }}
             />
             <SegmentedControl
               onButtonClicked={onViewChange}
               currentKey={currentView}
-              style={{ zIndex: 1 }}
+              style={{ zIndex: 1, marginLeft: '8px' }}
             >
               <SegmentedControl.Button
                 key="list"
@@ -90,40 +107,6 @@ export const FileToolbar = ({
   );
 };
 
-const ConfirmDeleteButton = (props: {
-  selectedNumber: number;
-  onConfirm: () => void;
-  disabled: boolean;
-}) => (
-  <DeleteButton>
-    <Popconfirm
-      icon="WarningFilled"
-      placement="bottom-end"
-      onConfirm={props.onConfirm}
-      content="Are you sure you want to permanently delete this file?"
-    >
-      <Button
-        type="ghost-danger"
-        icon="Trash"
-        iconPlacement="left"
-        disabled={props.disabled}
-        style={
-          // not available in cogs yet
-          props.disabled
-            ? {
-                color: '#b30539',
-                background: 'rgba(255, 255, 255, 0.0001)',
-                opacity: 0.4,
-              }
-            : undefined
-        }
-      >
-        Delete [{props.selectedNumber || 0}]
-      </Button>
-    </Popconfirm>
-  </DeleteButton>
-);
-
 const Container = styled.div`
   display: flex;
   justify-content: flex-end;
@@ -135,10 +118,6 @@ const Container = styled.div`
     box-sizing: border-box;
     border-radius: 6px;
   }
-`;
-
-const DeleteButton = styled.div`
-  margin-right: 10px;
 `;
 
 const ButtonContainer = styled.div`

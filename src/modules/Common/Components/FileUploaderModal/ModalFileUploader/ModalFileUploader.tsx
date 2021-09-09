@@ -474,7 +474,7 @@ export const ModalFileUploader = ({
         {enableProcessAfter && (
           <Checkbox
             name="example2"
-            value={processAfter}
+            checked={processAfter}
             onChange={(nextState: boolean) => {
               setProcessAfter(nextState);
             }}

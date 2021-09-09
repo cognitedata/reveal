@@ -41,7 +41,7 @@ export function FileUploadOption({ isDisabled }: FileUploadOptionProps) {
       <Checkbox
         name="exif-option"
         disabled={isDisabled}
-        value={extractExif}
+        checked={extractExif}
         onChange={(value) => {
           dispatch(setExtractExif(value));
         }}

@@ -48,7 +48,7 @@ export function FilePicker({
                 <FilePickerButtonsContainer>
                   <Button
                     style={{ marginRight: 16 }}
-                    icon="FolderStroke"
+                    icon="FolderLine"
                     type="tertiary"
                     onClick={openSelectDirectoryDialogue}
                   >

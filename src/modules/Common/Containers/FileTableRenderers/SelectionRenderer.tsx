@@ -19,7 +19,7 @@ export function SelectionRenderer(props: SelectableTableCellRenderer) {
     <Checkbox
       onClick={handleClick}
       name={`check-${props.rowIndex}`}
-      value={selectedIds?.includes(props.rowData.id)}
+      checked={selectedIds?.includes(props.rowData.id)}
       onChange={handleChange}
     />
   );

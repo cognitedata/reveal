@@ -28,6 +28,12 @@ import { BulkEditModal } from 'src/modules/Common/Components/BulkEdit/BulkEditMo
 import { updateBulk } from 'src/store/thunks/updateBulk';
 import { pushMetric } from 'src/utils/pushMetric';
 import {
+  BulkEditTempState,
+  setBulkEditModalVisibility,
+  setBulkEditTemp,
+  setFileDownloadModalVisibility,
+} from 'src/modules/Common/commonSlice';
+import {
   setExplorerCurrentView,
   setExplorerFileSelectState,
   setExplorerQueryString,
@@ -37,12 +43,9 @@ import {
   toggleExplorerFilterView,
   selectExplorerSelectedFileIds,
   setExplorerFileUploadModalVisibility,
-  setExplorerFileDownloadModalVisibility,
-  setBulkEditModalVisibility,
-  BulkEditTempState,
   selectExplorerAllSelectedFiles,
-  setBulkEditTemp,
 } from '../store/explorerSlice';
+
 import { FilterSidePanel } from './FilterSidePanel';
 
 pushMetric('Vision.Explorer');
@@ -71,9 +74,6 @@ const Explorer = () => {
   const showFileUploadModal = useSelector(
     ({ explorerReducer }: RootState) => explorerReducer.showFileUploadModal
   );
-  const showFileDownloadModal = useSelector(
-    ({ explorerReducer }: RootState) => explorerReducer.showFileDownloadModal
-  );
   const selectedFileIds = useSelector((state: RootState) =>
     selectExplorerSelectedFileIds(state.explorerReducer)
   );
@@ -82,11 +82,14 @@ const Explorer = () => {
       return selectExplorerAllSelectedFiles(explorerReducer);
     }
   );
+  const showFileDownloadModal = useSelector(
+    ({ commonReducer }: RootState) => commonReducer.showFileDownloadModal
+  );
   const showBulkEditModal = useSelector(
-    ({ explorerReducer }: RootState) => explorerReducer.showBulkEditModal
+    ({ commonReducer }: RootState) => commonReducer.showBulkEditModal
   );
   const bulkEditTemp = useSelector(
-    ({ explorerReducer }: RootState) => explorerReducer.bulkEditTemp
+    ({ commonReducer }: RootState) => commonReducer.bulkEditTemp
   );
 
   const queryClient = new QueryClient();
@@ -133,7 +136,7 @@ const Explorer = () => {
   };
 
   const onDownload = () => {
-    dispatch(setExplorerFileDownloadModalVisibility(true));
+    dispatch(setFileDownloadModalVisibility(true));
   };
 
   const onContextualise = () => {
@@ -197,7 +200,7 @@ const Explorer = () => {
       <FileDownloaderModal
         fileIds={selectedFileIds}
         showModal={showFileDownloadModal}
-        onCancel={() => dispatch(setExplorerFileDownloadModalVisibility(false))}
+        onCancel={() => dispatch(setFileDownloadModalVisibility(false))}
       />
       <StatusToolBar current="Vision Explore" />
       <Wrapper>

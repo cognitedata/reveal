@@ -26,7 +26,7 @@ export default function NoAccessPage({ capabilities }: Props) {
           size="default"
           variant="default"
           type="ghost"
-          icon="ArrowLeft"
+          icon="ArrowBack"
           iconPlacement="left"
           href={NavLinks.HomeLink}
         >

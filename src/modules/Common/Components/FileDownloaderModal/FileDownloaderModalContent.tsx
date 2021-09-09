@@ -323,7 +323,7 @@ export const FileDownloaderModalContent = ({
             type="tertiary"
             // type="ghost"
             aria-label="dropdown file selection"
-            icon="Down"
+            icon="ChevronDownCompact"
             iconPlacement="right"
             onClick={() => {
               setHideDropDown(false);
@@ -343,7 +343,7 @@ export const FileDownloaderModalContent = ({
           <Button
             type="tertiary"
             aria-label="dropdown file selection"
-            icon="Down"
+            icon="ChevronDownCompact"
             iconPlacement="right"
             disabled={currentFileChoice === DownloadChoice.Files}
           >

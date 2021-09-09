@@ -57,8 +57,6 @@ export type State = {
   filter: FileFilterProps;
   showFilter: boolean;
   showFileUploadModal: boolean;
-  showFileDownloadModal: boolean;
-  showBulkEditModal: boolean;
   files: {
     byId: Record<number, ExplorerFileState>;
     allIds: number[];
@@ -66,7 +64,6 @@ export type State = {
   };
   sortPaginate: Record<ExploreSortPaginateType, SortPaginate>;
   loadingAnnotations?: boolean;
-  bulkEditTemp: BulkEditTempState;
 };
 
 const initialState: State = {
@@ -78,8 +75,6 @@ const initialState: State = {
   filter: {},
   showFilter: true,
   showFileUploadModal: false,
-  showFileDownloadModal: false,
-  showBulkEditModal: false,
   files: {
     byId: {},
     allIds: [],
@@ -109,7 +104,6 @@ const initialState: State = {
     },
   },
   loadingAnnotations: false,
-  bulkEditTemp: {},
 };
 
 const explorerSlice = createSlice({
@@ -191,15 +185,6 @@ const explorerSlice = createSlice({
     ) {
       state.showFileUploadModal = action.payload;
     },
-    setExplorerFileDownloadModalVisibility(
-      state,
-      action: PayloadAction<boolean>
-    ) {
-      state.showFileDownloadModal = action.payload;
-    },
-    setBulkEditModalVisibility(state, action: PayloadAction<boolean>) {
-      state.showBulkEditModal = action.payload;
-    },
     setSortKey(
       state,
       action: PayloadAction<{ type: ExploreSortPaginateType; sortKey: string }>
@@ -248,9 +233,6 @@ const explorerSlice = createSlice({
     ) {
       state.mapTableTabKey = action.payload.mapTableTabKey;
     },
-    setBulkEditTemp(state, action: PayloadAction<BulkEditTempState>) {
-      state.bulkEditTemp = action.payload;
-    },
   },
   extraReducers: (builder) => {
     builder.addCase(deleteFilesById.fulfilled, (state, { payload }) => {
@@ -290,8 +272,6 @@ export const {
   setExplorerFilter,
   toggleExplorerFilterView,
   setExplorerFileUploadModalVisibility,
-  setExplorerFileDownloadModalVisibility,
-  setBulkEditModalVisibility,
   setSortKey,
   setReverse,
   setCurrentPage,
@@ -299,7 +279,6 @@ export const {
   setExplorerCurrentView,
   setMapTableTabKey,
   setLoadingAnnotations,
-  setBulkEditTemp,
 } = explorerSlice.actions;
 
 export default explorerSlice.reducer;

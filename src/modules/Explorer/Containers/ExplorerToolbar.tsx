@@ -1,16 +1,8 @@
 /* eslint-disable @cognite/no-number-z-index */
 import React from 'react';
-import {
-  Button,
-  Detail,
-  Dropdown,
-  Icon,
-  Menu,
-  SegmentedControl,
-  Title,
-  Tooltip,
-} from '@cognite/cogs.js';
+import { Button, SegmentedControl, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
+import { BulkActionMenu } from 'src/modules/Common/Components/BulkActionMenu/BulkActionMenu';
 import { ExplorationSearchBar } from './ExplorationSearchBar';
 
 export const ExplorerToolbar = ({
@@ -38,57 +30,6 @@ export const ExplorerToolbar = ({
   onReview: () => void;
   onBulkEdit: () => void;
 }) => {
-  const count = selectedCount ? `[${selectedCount}]` : null;
-  const inLimit =
-    selectedCount && maxSelectCount ? selectedCount <= maxSelectCount : true;
-  const exceededLimitMessage = `Total number of files that can be processed simultaneously is ${maxSelectCount}`;
-  const MenuContent = (
-    <Menu
-      style={{
-        color: 'black' /* typpy styles make color to be white here ... */,
-      }}
-    >
-      <Menu.Item onClick={onBulkEdit} style={{ color: '#595959' }}>
-        <>
-          <Icon type="Document" style={{ marginRight: 17 }} />
-          <Detail strong>Bulk Edit Data {count}</Detail>
-        </>
-      </Menu.Item>
-      <Menu.Item
-        onClick={onContextualise}
-        disabled={!count || !inLimit}
-        style={{ color: '#595959' }}
-      >
-        <Tooltip
-          content={
-            <span data-testid="text-content">{exceededLimitMessage}</span>
-          }
-          disabled={!!inLimit}
-        >
-          <>
-            <Icon type="Scan" style={{ marginRight: 17 }} />
-            <Detail strong>Contextualise {count}</Detail>
-          </>
-        </Tooltip>
-      </Menu.Item>
-      <Menu.Item
-        onClick={onReview}
-        disabled={!count}
-        style={{ color: '#595959' }}
-      >
-        <Icon type="Edit" style={{ marginRight: 17 }} />
-        <Detail strong>Review {count}</Detail>
-      </Menu.Item>
-      <Menu.Item
-        onClick={onDownload}
-        disabled={!count}
-        style={{ color: '#595959' }}
-      >
-        <Icon type="Download" style={{ marginRight: 17 }} />
-        <Detail strong>Download {count}</Detail>
-      </Menu.Item>
-    </Menu>
-  );
   return (
     <>
       <TitleBar>
@@ -104,19 +45,14 @@ export const ExplorerToolbar = ({
           >
             Upload
           </Button>
-
-          <Dropdown content={MenuContent}>
-            <Button
-              type="primary"
-              icon="ChevronDownCompact"
-              aria-label="dropdown button"
-              disabled={!count}
-              iconPlacement="right"
-              style={{ marginLeft: 14 }}
-            >
-              Bulk actions {count}
-            </Button>
-          </Dropdown>
+          <BulkActionMenu
+            selectedCount={selectedCount}
+            maxSelectCount={maxSelectCount}
+            onDownload={onDownload}
+            onContextualise={onContextualise}
+            onReview={onReview}
+            onBulkEdit={onBulkEdit}
+          />
         </Right>
       </TitleBar>
 

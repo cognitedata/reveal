@@ -7,9 +7,11 @@ import fileDetailsSlice from 'src/modules/FileDetails/fileDetailsSlice';
 import annotationReducer from 'src/modules/Common/annotationSlice';
 import explorerReducer from 'src/modules/Explorer/store/explorerSlice';
 import imagePreviewReducer from 'src/modules/Review/imagePreviewSlice';
+import commonReducer from 'src/modules/Common/commonSlice';
 
 const rootReducer = combineReducers({
   filesSlice,
+  commonReducer,
   processSlice,
   previewSlice,
   fileDetailsSlice,

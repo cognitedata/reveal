@@ -49,7 +49,7 @@ const getPageOptionButtons = (
   pageOptionButtons.unshift(
     <SegmentedControl.Button
       key="Start"
-      icon="ArrowLeft"
+      icon="ArrowBack"
       title="Start"
       size="small"
       style={{ height: '22px' }}
@@ -62,7 +62,7 @@ const getPageOptionButtons = (
   pageOptionButtons.push(
     <SegmentedControl.Button
       key="End"
-      icon="ArrowRight"
+      icon="ArrowForward"
       title="End"
       size="small"
       style={{ height: '22px' }}
