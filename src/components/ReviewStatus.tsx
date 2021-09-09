@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from 'react';
+import styled from 'styled-components';
+import { Label, LabelSize } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
-import { Label } from '@cognite/cogs.js';
 import { ReviewStatus, approvalDetails } from 'components/Filters';
 import { isFileApproved, isFilePending } from 'hooks';
 
-type Props = { file: FileInfo };
+const StyledLabel = styled(Label)`
+  white-space: nowrap;
+`;
 
-export default function DiagramReviewStatus({ file }: Props) {
+type Props = { file: FileInfo; size?: LabelSize };
+
+export default function DiagramReviewStatus({ file, size }: Props) {
   const [fileStatus, setFileStatus] = useState<ReviewStatus>(
     approvalDetails.unknown
   );
@@ -21,8 +26,8 @@ export default function DiagramReviewStatus({ file }: Props) {
   }, [file]);
 
   return (
-    <Label size="small" variant={fileStatus.variant}>
+    <StyledLabel size={size} variant={fileStatus.variant}>
       {fileStatus.label}
-    </Label>
+    </StyledLabel>
   );
 }

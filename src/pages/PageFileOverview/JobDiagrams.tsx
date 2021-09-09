@@ -44,7 +44,7 @@ const FileItem = ({ file, isSelected, onClick }: FileItemProps) => {
         <Body level={2}>{file.name}</Body>
       </div>
       <div className="tag">
-        <ReviewStatus file={file} />
+        <ReviewStatus file={file} size="small" />
       </div>
     </FileItemWrapper>
   );

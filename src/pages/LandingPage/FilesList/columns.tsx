@@ -113,7 +113,9 @@ export const getColumns = (
     title: 'Status',
     key: 'status',
     width: 150,
-    render: (_: any, file: FileInfo) => <ReviewStatus file={file} />,
+    render: (_: any, file: FileInfo) => (
+      <ReviewStatus file={file} size="medium" />
+    ),
   },
   {
     title: 'Linked to',

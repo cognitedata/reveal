@@ -57,7 +57,7 @@ export const getColumns: any = (
       width: 150,
       render: (_: any, file: FileInfo) => (
         <LoadingSkeleton loading={showLoadingSkeleton}>
-          <ReviewStatus file={file} />
+          <ReviewStatus file={file} size="medium" />
         </LoadingSkeleton>
       ),
     },
