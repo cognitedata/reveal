@@ -20,7 +20,12 @@ import OIDC from 'pages/OIDC';
 import SecurityCategories from 'pages/SecurityCategories';
 import ServiceAccounts from 'pages/ServiceAccounts';
 import { useSDK } from '@cognite/sdk-provider';
-import { useQueryClient, useIsFetching, useIsMutating } from 'react-query';
+import {
+  useQueryClient,
+  useIsFetching,
+  useIsMutating,
+  useQuery,
+} from 'react-query';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 
 export default function () {
@@ -35,8 +40,6 @@ export default function () {
 
   const history = useHistory();
   const sdk = useSDK();
-  const flow = sdk.getOAuthFlowType();
-  const nativeTokens = flow !== 'CDF_OAUTH';
 
   const { params } =
     useRouteMatch<{
@@ -45,6 +48,18 @@ export default function () {
       page?: string;
     }>();
   const { pathname, search, hash } = history.location;
+
+  const { data: authSettings, isFetched } = useQuery('auth-settings', () => {
+    return sdk
+      .get<{ isLegacyLoginFlowAndApiKeysEnabled: boolean }>(
+        `/api/playground/projects/${sdk.project}/configuration`
+      )
+      .then(r => r.data);
+  });
+
+  if (!isFetched) {
+    return <Icon type="Loading" />;
+  }
 
   return (
     <>
@@ -71,12 +86,12 @@ export default function () {
         <Menu.Item disabled={!groupsRead} key="groups">
           Groups
         </Menu.Item>
-        {!nativeTokens && (
+        {authSettings?.isLegacyLoginFlowAndApiKeysEnabled && (
           <Menu.Item key="service-accounts" disabled={!usersRead}>
             Service accounts
           </Menu.Item>
         )}
-        {!nativeTokens && (
+        {authSettings?.isLegacyLoginFlowAndApiKeysEnabled && (
           <Menu.Item key="api-keys" disabled={!keysRead}>
             API keys
           </Menu.Item>
@@ -87,7 +102,7 @@ export default function () {
         <Menu.Item key="oidc" disabled={!projectsRead}>
           OpenID connect
         </Menu.Item>
-        {!nativeTokens && (
+        {authSettings?.isLegacyLoginFlowAndApiKeysEnabled && (
           <Menu.Item key="idp" disabled={!projectsRead}>
             Identity provider configuration
           </Menu.Item>
