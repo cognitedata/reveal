@@ -137,30 +137,6 @@ export function createRendererDebugWidget(
     sectorsGui.add(sceneInfo.quads, 'meshCount').name('Loaded quads')
   );
 
-  // Sectors to load
-  const loadOverrideGui = sectorsGui.addFolder('Override loading');
-  const loadOverride = {
-    maxQuadSize: 0.0025,
-    quadsFilter: '',
-    detailedFilter: '',
-  };
-  const updateWantedNodesFilter = () =>
-    updateWantedSectorOverride(
-      cadNode,
-      renderOptions,
-      sectorMetadataRoot,
-      loadOverride.quadsFilter,
-      loadOverride.detailedFilter
-    );
-  loadOverrideGui
-    .add(loadOverride, 'quadsFilter')
-    .name('Quads (low detail)')
-    .onFinishChange(updateWantedNodesFilter);
-  loadOverrideGui
-    .add(loadOverride, 'detailedFilter')
-    .name('Detailed')
-    .onFinishChange(updateWantedNodesFilter);
-
   // Details about different geometries
   const primitivesGui = gui.addFolder('Primitives');
   controls.push(
@@ -383,48 +359,6 @@ function filterSectorNodes(
     });
   }
   return acceptedNodes;
-}
-
-function updateWantedSectorOverride(
-  cadNode: reveal.CadNode,
-  renderOptions: RenderOptions,
-  root: reveal.SectorMetadata,
-  quadsFilter: string,
-  detailedFilter: string
-) {
-  function createWantedSector(
-    node: reveal.SectorMetadata,
-    levelOfDetail: reveal.LevelOfDetail
-  ): reveal.WantedSector {
-    return {
-      modelIdentifier: cadNode.cadModelMetadata.modelIdentifier,
-      modelBaseUrl: cadNode.cadModelMetadata.modelBaseUrl,
-      levelOfDetail,
-      metadata: node,
-      geometryClipBox: null
-    };
-  }
-
-  if (quadsFilter === '' && detailedFilter === '') {
-    renderOptions.overrideWantedSectors = undefined;
-  } else {
-    const acceptedSimple = filterSectorNodes(quadsFilter, root);
-    const acceptedDetailed = filterSectorNodes(detailedFilter, root);
-    const wanted: reveal.WantedSector[] = [
-      ...(cadNode.sectorScene as reveal.cadParsers.SectorScene)
-        .getAllSectors()
-        .map((x) =>
-          createWantedSector(x, reveal.LevelOfDetail.Discarded)
-        ),
-      ...acceptedSimple.map((x) =>
-        createWantedSector(x, reveal.LevelOfDetail.Simple)
-      ),
-      ...acceptedDetailed.map((x) =>
-        createWantedSector(x, reveal.LevelOfDetail.Detailed)
-      ),
-    ];
-    renderOptions.overrideWantedSectors = wanted;
-  }
 }
 
 function logVisibleSectorsInScene(scene: THREE.Object3D) {
