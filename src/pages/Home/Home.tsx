@@ -19,14 +19,9 @@ import IDP from 'pages/IDP';
 import OIDC from 'pages/OIDC';
 import SecurityCategories from 'pages/SecurityCategories';
 import ServiceAccounts from 'pages/ServiceAccounts';
-import { useSDK } from '@cognite/sdk-provider';
-import {
-  useQueryClient,
-  useIsFetching,
-  useIsMutating,
-  useQuery,
-} from 'react-query';
+import { useQueryClient, useIsFetching, useIsMutating } from 'react-query';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
+import { useAuthSettings } from 'hooks';
 
 export default function () {
   const client = useQueryClient();
@@ -39,7 +34,6 @@ export default function () {
   const { data: keysRead } = usePermissions('apikeysAcl', 'LIST');
 
   const history = useHistory();
-  const sdk = useSDK();
 
   const { params } =
     useRouteMatch<{
@@ -49,13 +43,7 @@ export default function () {
     }>();
   const { pathname, search, hash } = history.location;
 
-  const { data: authSettings, isFetched } = useQuery('auth-settings', () => {
-    return sdk
-      .get<{ isLegacyLoginFlowAndApiKeysEnabled: boolean }>(
-        `/api/playground/projects/${sdk.project}/configuration`
-      )
-      .then(r => r.data);
-  });
+  const { data: authSettings, isFetched } = useAuthSettings();
 
   if (!isFetched) {
     return <Icon type="Loading" />;

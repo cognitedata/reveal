@@ -1,5 +1,5 @@
 import React from 'react';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import { useHistory, useRouteMatch } from 'react-router';
 
 import { Button as CogsButton, Icon } from '@cognite/cogs.js';
@@ -7,6 +7,7 @@ import { useSDK } from '@cognite/sdk-provider';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { Alert as AntdAlert, Tooltip, notification } from 'antd';
 import styled from 'styled-components';
+import { useAuthSettings } from 'hooks';
 
 const StyledAlert = styled(AntdAlert)`
   margin-bottom: 16px;
@@ -33,13 +34,7 @@ const LegacyLoginFlowWarning = () => {
   const flow = sdk.getOAuthFlowType();
   const { data: writeOk } = usePermissions('projectsAcl', 'UPDATE');
   const isLoggedInUsingLegacyLoginFlow = flow === 'CDF_OAUTH';
-  const { data: authSettings, isFetched } = useQuery('auth-settings', () => {
-    return sdk
-      .get<{ isOidcEnabled: boolean }>(
-        `/api/playground/projects/${sdk.project}/configuration`
-      )
-      .then(r => r.data);
-  });
+  const { data: authSettings, isFetched } = useAuthSettings();
   const isOIDCConfigured = authSettings?.isOidcEnabled;
   const canLegacyLoginFlowBeDisabled =
     isFetched && isOIDCConfigured && !isLoggedInUsingLegacyLoginFlow;
