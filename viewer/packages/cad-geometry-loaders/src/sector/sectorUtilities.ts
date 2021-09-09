@@ -4,21 +4,20 @@
 
 import * as THREE from 'three';
 import { SectorMetadata } from '@reveal/cad-parsers';
-import { traverseDepthFirst } from '@reveal/utilities';
+import { traverseDepthFirst, AutoDisposeGroup } from '@reveal/utilities';
 
 import { pipe, GroupedObservable, Observable, OperatorFunction } from 'rxjs';
 import { groupBy, distinctUntilKeyChanged, withLatestFrom, mergeMap, filter, map } from 'rxjs/operators';
 
 import { SectorGeometry, WantedSector, ConsumedSector } from './types';
-import { Materials } from '../rendering/materials';
 
-import { InstancedMeshFile, SectorQuads } from '../rendering/types';
+import { InstancedMeshFile, SectorQuads } from '../material-manager/rendering/types';
+import { Materials } from '../material-manager/rendering/materials';
 
-import { createTriangleMeshes } from '../rendering/triangleMeshes';
-import { createPrimitives } from '../rendering/primitives';
-import { createSimpleGeometryMesh } from '../rendering/createSimpleGeometryMesh';
-import { filterInstanceMesh } from '../rendering/filterInstanceMesh';
-import { AutoDisposeGroup } from '../../../utilities/three';
+import { createTriangleMeshes } from '../material-manager/rendering/triangleMeshes';
+import { createPrimitives } from '../material-manager/rendering/primitives';
+import { createSimpleGeometryMesh } from '../material-manager/rendering/createSimpleGeometryMesh';
+import { filterInstanceMesh } from '../material-manager/rendering/filterInstanceMesh';
 
 export function consumeSectorSimple(
   sector: SectorQuads,

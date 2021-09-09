@@ -2,13 +2,13 @@
  * Copyright 2021 Cognite AS
  */
 import * as THREE from 'three';
-import { SectorGeometry } from '../sector/types';
+import { SectorGeometry } from '../../sector/types';
 import { createPrimitives } from './primitives';
 import { createEmptySector } from '../../../../../test-utilities';
 import { createMaterials, Materials } from './materials';
 import { ParsePrimitiveAttribute } from '@cognite/reveal-parser-worker';
 import { RenderMode } from './RenderMode';
-import { BoundingBoxLOD } from '../../../utilities/three';
+import { BoundingBoxLOD } from '@reveal/utilities';
 
 function createMockAttributes(): Map<string, ParsePrimitiveAttribute> {
   const map = new Map<string, ParsePrimitiveAttribute>();

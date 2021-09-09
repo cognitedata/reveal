@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 import * as THREE from 'three';
-import { float32BufferToMatrix } from './float32BufferToMatrix';
+import { float32BufferToMatrix } from '../../utilities/float32BufferToMatrix';
 import { InstancedMesh } from './types';
 
 const filterInstanceMeshVars = {

@@ -5,7 +5,7 @@ import * as THREE from 'three';
 
 import { ParsePrimitiveAttribute } from '@cognite/reveal-parser-worker';
 
-import { disposeAttributeArrayOnUpload } from '../../../utilities/disposeAttributeArrayOnUpload';
+import { disposeAttributeArrayOnUpload } from '../../utilities/disposeAttributeArrayOnUpload';
 import { filterPrimitivesOutsideClipBoxByBaseBoundsAndInstanceMatrix } from './filterPrimitives';
 import { Materials } from './materials';
 

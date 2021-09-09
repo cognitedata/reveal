@@ -15,9 +15,10 @@ import {
   torusGeometryBoundingBox,
   nutGeometryBoundingBox
 } from './primitiveGeometries';
-import { Materials, SectorGeometry } from '@reveal/cad-geometry-loaders';
+import { Materials } from './materials';
+import { SectorGeometry } from '../../sector/types';
 import { ParsePrimitiveAttribute } from '@cognite/reveal-parser-worker';
-import { disposeAttributeArrayOnUpload } from '../../../utilities/disposeAttributeArrayOnUpload';
+import { disposeAttributeArrayOnUpload } from '../../utilities/disposeAttributeArrayOnUpload';
 import assert from 'assert';
 import {
   filterPrimitivesOutsideClipBoxByBaseBoundsAndInstanceMatrix,
