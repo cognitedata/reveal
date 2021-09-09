@@ -136,7 +136,7 @@ export function createRendererDebugWidget(
   controls.push(
     sectorsGui.add(sceneInfo.quads, 'meshCount').name('Loaded quads')
   );
-
+  
   // Details about different geometries
   const primitivesGui = gui.addFolder('Primitives');
   controls.push(
@@ -331,34 +331,6 @@ function getMaterials(mesh: THREE.Mesh): THREE.Material[] {
   } else {
     return [mesh.material as THREE.Material];
   }
-}
-
-/**
- * From the provided filter, returns a set of nodeIds accepted by the filter.
- * @param filter Comma-separated list of regular expressions, matched with the sector-tree paths (on
- *               format x/y/z/ where x,y,z is a number).
- * @param root   The root of the sector tree.
- */
-function filterSectorNodes(
-  filter: string,
-  root: reveal.SectorMetadata
-): reveal.SectorMetadata[] {
-  const acceptedNodes: reveal.SectorMetadata[] = [];
-  for (let pathRegex of filter.split('|').map((x) => x.trim())) {
-    if (!pathRegex.startsWith('^')) {
-      pathRegex = '^' + pathRegex;
-    }
-    if (!pathRegex.endsWith('$')) {
-      pathRegex = pathRegex + '$';
-    }
-    reveal.traverseDepthFirst(root, node => {
-      if (node.path.match(pathRegex)) {
-        acceptedNodes.push(node);
-      }
-      return true;
-    });
-  }
-  return acceptedNodes;
 }
 
 function logVisibleSectorsInScene(scene: THREE.Object3D) {
