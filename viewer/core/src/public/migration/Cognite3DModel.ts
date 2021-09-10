@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 import * as THREE from 'three';
-import { CogniteClient, CogniteInternalId } from '@cognite/sdk';
+import { CogniteInternalId } from '@cognite/sdk';
 
 import { CadModelMetadata } from '@reveal/cad-parsers';
 
@@ -16,11 +16,10 @@ import { trackError } from '../../utilities/metrics';
 
 import { SupportedModelTypes } from '../types';
 import { callActionWithIndicesAsync } from '../../utilities/callActionWithIndicesAsync';
-import { CogniteClientNodeIdAndTreeIndexMapper } from '../../utilities/networking/CogniteClientNodeIdAndTreeIndexMapper';
 import { NodeCollectionBase } from '../../datamodels/cad/styling';
 import { NodeAppearance } from '../../datamodels/cad';
 import { NodeTransformProvider } from '../../datamodels/cad/styling/NodeTransformProvider';
-import assert from 'assert';
+import { NodesApiClient } from '@reveal/nodes-api';
 
 /**
  * Represents a single 3D CAD model loaded from CDF.
@@ -54,7 +53,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   readonly cadNode: CadNode;
 
   private readonly cadModel: CadModelMetadata;
-  private readonly client: CogniteClient;
+  private readonly nodesApiClient: NodesApiClient;
   private readonly nodeIdAndTreeIndexMaps: NodeIdAndTreeIndexMaps;
   private readonly _styledNodeCollections: { nodes: NodeCollectionBase; appearance: NodeAppearance }[] = [];
 
@@ -65,14 +64,13 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * @param client
    * @internal
    */
-  constructor(modelId: number, revisionId: number, cadNode: CadNode, client: CogniteClient) {
+  constructor(modelId: number, revisionId: number, cadNode: CadNode, client: NodesApiClient) {
     super();
     this.modelId = modelId;
     this.revisionId = revisionId;
     this.cadModel = cadNode.cadModelMetadata;
-    this.client = client;
-    const indexMapper = new CogniteClientNodeIdAndTreeIndexMapper(client);
-    this.nodeIdAndTreeIndexMaps = new NodeIdAndTreeIndexMaps(modelId, revisionId, client, indexMapper);
+    this.nodesApiClient = client;
+    this.nodeIdAndTreeIndexMaps = new NodeIdAndTreeIndexMaps(modelId, revisionId, this.nodesApiClient);
 
     this.cadNode = cadNode;
 
@@ -260,25 +258,15 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * "generation" specified, or the root.
    */
   async getAncestorTreeIndices(treeIndex: number, generation: number): Promise<NumericRange> {
-    // This might fail if treeIndex is invalid, error checking below is just to be safe
-    // and should not really happen.
     const nodeId = await this.mapTreeIndexToNodeId(treeIndex);
-
-    const ancestors = await this.client.revisions3D.list3DNodeAncestors(this.modelId, this.revisionId, nodeId, {
-      limit: 1000
-    });
-    const node = ancestors.items.find(x => x.treeIndex === treeIndex)!;
-    assert(node !== undefined, `Could not find ancestor for node with treeIndex ${treeIndex}`);
-
-    // Clamp to root if necessary
-    generation = Math.min(node.depth, generation);
-    const ancestor = ancestors.items.find(x => x.depth === node.depth - generation)!;
-    assert(
-      node !== undefined,
-      `Could not find ancestor for node with treeIndex ${treeIndex} at 'generation' ${generation}`
+    const subtree = await this.nodesApiClient.determineNodeAncestorsByNodeId(
+      this.modelId,
+      this.revisionId,
+      nodeId,
+      generation
     );
 
-    return new NumericRange(ancestor.treeIndex, ancestor.subtreeSize);
+    return new NumericRange(subtree.treeIndex, subtree.subtreeSize);
   }
 
   /**
@@ -353,25 +341,17 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * ```
    */
   async getBoundingBoxByNodeId(nodeId: number, box?: THREE.Box3): Promise<THREE.Box3> {
-    const response = await this.client.revisions3D.retrieve3DNodes(this.modelId, this.revisionId, [{ id: nodeId }]);
-    if (response.length < 1) {
-      throw new Error('NodeId not found');
-    }
-    const boundingBox3D = response[0].boundingBox;
-    if (boundingBox3D === undefined) {
-      trackError(new Error(`Node ${nodeId} doesn't have a defined bounding box, returning model bounding box`), {
+    try {
+      box = await this.nodesApiClient.getBoundingBoxByNodeId(this.modelId, this.revisionId, nodeId, box);
+      box.applyMatrix4(this.cadModel.modelMatrix);
+      return box;
+    } catch (error) {
+      trackError(error, {
         moduleName: 'Cognite3DModel',
         methodName: 'getBoundingBoxByNodeId'
       });
-      return this.getModelBoundingBox();
+      throw error;
     }
-
-    const min = boundingBox3D.min;
-    const max = boundingBox3D.max;
-    const result = box || new THREE.Box3();
-    result.min.set(min[0], min[1], min[2]);
-    result.max.set(max[0], max[1], max[2]);
-    return result.applyMatrix4(this.cadModel.modelMatrix);
   }
 
   /**

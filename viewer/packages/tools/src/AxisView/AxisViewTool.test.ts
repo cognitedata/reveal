@@ -4,8 +4,10 @@
 
 import { CogniteClient } from '@cognite/sdk';
 import * as THREE from 'three';
-import { Cognite3DViewer } from '../../public/migration/Cognite3DViewer';
+
+import { Cognite3DViewer } from '@reveal/core';
 import { createGlContext } from '../../../../test-utilities';
+
 import { AxisViewTool } from './AxisViewTool';
 import { defaultAxisBoxConfig } from './types';
 

@@ -9,7 +9,7 @@ module.exports = {
   },
   parser: '@typescript-eslint/parser', // Specifies the ESLint parser
   parserOptions: {
-    project: './tsconfig.common.json',
+    project: './tsconfig.json',
     tsconfigRootDir: __dirname,
     ecmaVersion: 2020, // Allows for the parsing of modern ECMAScript features
     sourceType: 'module' // Allows for the use of imports
@@ -25,7 +25,7 @@ module.exports = {
     // This will display prettier errors as ESLint errors. Make sure this is always the last configuration in the extends array.
     'plugin:prettier/recommended'
   ],
-  ignorePatterns: ['.eslintrc.js'],
+  ignorePatterns: ['.eslintrc.js', '**/dist/**/*'],
   rules: {
     // notice that we use TSdoc syntax, not jsdoc, but tsdoc eslint plugin is mostly useless
     // so we use some of the jsdoc rules here

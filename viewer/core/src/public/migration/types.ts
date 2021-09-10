@@ -121,6 +121,15 @@ export interface Cognite3DViewerOptions {
    * @internal
    */
   _sectorCuller?: SectorCuller;
+
+  /**
+   * When true, the viewer will load models stored locally and ignore
+   * the provided CogniteClient. This is only meant for development.
+   * Note! Marked as internal so when using this in debugging you must
+   * use e.g. @ts-expect-error to ignore type checks.
+   * @internal
+   */
+  _localModels?: boolean;
 }
 
 import { GeometryFilter } from '../../public/types';
@@ -132,11 +141,9 @@ export { GeometryFilter };
 export interface AddModelOptions {
   modelId: number;
   revisionId: number;
-  // if you need to access local files, this is where you would specify it
+  // if you need to access local files, this is where you would specify it.
   localPath?: string;
   geometryFilter?: GeometryFilter;
-  orthographicCamera?: boolean;
-  onComplete?: () => void;
 }
 
 export type CadIntersection = {
