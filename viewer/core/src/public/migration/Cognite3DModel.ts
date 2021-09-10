@@ -75,6 +75,17 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     this.cadNode = cadNode;
 
     this.add(this.cadNode);
+
+    // Note! As this is defined in ThreeJS we cannot override this using
+    // regular TypeScript getters and setters.
+    // It's necessary to forward this setting to CadNode as Cognite3DModel is
+    // just a wrapper around this and not part of the actual rendered scene.
+    Object.defineProperty(this, 'visible', {
+      get: () => this.cadNode.visible,
+      set: (x: boolean) => {
+        this.cadNode.visible = x;
+      }
+    });
   }
 
   /**

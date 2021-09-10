@@ -12,7 +12,6 @@ import { ConsumedSector } from './sector/types';
 import { Repository } from './sector/Repository';
 
 import { assertNever, emissionLastMillis, LoadingState } from '../../utilities';
-import { CadModelMetadata } from '.';
 import { loadingEnabled } from './sector/rxSectorUtilities';
 import { SectorLoader } from './sector/SectorLoader';
 import { CadModelSectorBudget, defaultCadModelSectorBudget } from './CadModelSectorBudget';
@@ -171,14 +170,14 @@ export class CadModelUpdateHandler {
         const { model, operation } = next;
         switch (operation) {
           case 'add':
-            array.push(model.cadModelMetadata);
+            array.push(model);
             return array;
           case 'remove':
-            return array.filter(x => x.modelIdentifier !== model.cadModelMetadata.modelIdentifier);
+            return array.filter(x => x.cadModelMetadata.modelIdentifier !== model.cadModelMetadata.modelIdentifier);
           default:
             assertNever(operation);
         }
-      }, [] as CadModelMetadata[])
+      }, [] as CadNode[])
     );
   }
 }
@@ -205,16 +204,16 @@ function makeClippingInput([clippingPlanes]: [THREE.Plane[]]): ClippingInput {
   return { clippingPlanes };
 }
 
-function createDetermineSectorsInput([settings, camera, clipping, cadModelsMetadata]: [
+function createDetermineSectorsInput([settings, camera, clipping, models]: [
   SettingsInput,
   CameraInput,
   ClippingInput,
-  CadModelMetadata[]
+  CadNode[]
 ]): DetermineSectorsInput {
   return {
     ...camera,
     ...settings,
     ...clipping,
-    cadModelsMetadata
+    cadModelsMetadata: models.filter(x => x.visible).map(x => x.cadModelMetadata)
   };
 }

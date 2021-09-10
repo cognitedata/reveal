@@ -42,14 +42,33 @@ async function main() {
 main();
 ```
 
-Models can be unloaded using `Cognite3DViewer.removeModel()`:
+Models can be temporarily hidden using `Cognite3DModel.visible`. Note that 
+the viewer must be explicitly re-rendered after setting the visibility flag:
+
+```js runnable
+model.visible = false;
+viewer.forceRerender();
+
+setTimeout(() => {
+  model.visible = true;
+  viewer.forceRerender();
+}, 5000);
+```
+
+Hiding models doesn't free any memory occupied by the model and should only be used
+to temporarily hide a model when it's expected that it will shortly be shown again.
+
+To also reclaim memory and permanently unloading the model, use 
+`Cognite3DViewer.removeModel()`:
 
 ```js runnable
 viewer.removeModel(model)
 ```
 
+## Only loading a part of the model
+
 In some cases, it might be useful to restrict the area for which geometry is loaded to only show a partial
-view. This can be done using a `geometryFilter`:
+view. This can be done using a `geometryFilter` which allows only loading geometry within a provided box:
 
 ```js runnable
 viewer.models.forEach(x => viewer.removeModel(x));

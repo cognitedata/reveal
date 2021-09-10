@@ -24,6 +24,7 @@ import { Subscription, Observable } from 'rxjs';
 import { GeometryFilter } from '../..';
 
 import { CadModelClipper } from './sector/CadModelClipper';
+import { ConsumedSector } from './sector/types';
 
 export class CadManager<TModelIdentifier> {
   private readonly _materialManager: CadMaterialManager;
@@ -70,42 +71,41 @@ export class CadManager<TModelIdentifier> {
     this._cadModelUpdateHandler = cadModelUpdateHandler;
     this._materialManager.on('materialsChanged', this._materialsChangedListener);
 
+    const consumeNextSector = (sector: ConsumedSector) => {
+      const cadModel = this._cadModelMap.get(sector.modelIdentifier);
+      if (!cadModel) {
+        // Model has been removed - results can come in for a period just after removal
+        return;
+      }
+
+      if (sector.instancedMeshes && sector.levelOfDetail === LevelOfDetail.Detailed) {
+        cadModel.updateInstancedMeshes(sector.instancedMeshes, sector.modelIdentifier, sector.metadata.id);
+      } else if (sector.levelOfDetail === LevelOfDetail.Simple || sector.levelOfDetail === LevelOfDetail.Discarded) {
+        cadModel.discardInstancedMeshes(sector.metadata.id);
+      }
+
+      const sectorNodeParent = cadModel.rootSector;
+      const sectorNode = sectorNodeParent!.sectorNodeMap.get(sector.metadata.id);
+      if (!sectorNode) {
+        throw new Error(`Could not find 3D node for sector ${sector.metadata.id} - invalid id?`);
+      }
+      if (sector.group) {
+        sectorNode.add(sector.group);
+      }
+      sectorNode.updateGeometry(sector.group, sector.levelOfDetail);
+      this.markNeedsRedraw();
+    };
+
     this._subscription.add(
-      this._cadModelUpdateHandler.consumedSectorObservable().subscribe(
-        sector => {
-          const cadModel = this._cadModelMap.get(sector.modelIdentifier);
-          if (!cadModel) {
-            // Model has been removed - results can come in for a period just after removal
-            return;
-          }
-
-          if (sector.instancedMeshes && sector.levelOfDetail === LevelOfDetail.Detailed) {
-            cadModel.updateInstancedMeshes(sector.instancedMeshes, sector.modelIdentifier, sector.metadata.id);
-          } else if (
-            sector.levelOfDetail === LevelOfDetail.Simple ||
-            sector.levelOfDetail === LevelOfDetail.Discarded
-          ) {
-            cadModel.discardInstancedMeshes(sector.metadata.id);
-          }
-
-          const sectorNodeParent = cadModel.rootSector;
-          const sectorNode = sectorNodeParent!.sectorNodeMap.get(sector.metadata.id);
-          if (!sectorNode) {
-            throw new Error(`Could not find 3D node for sector ${sector.metadata.id} - invalid id?`);
-          }
-          if (sector.group) {
-            sectorNode.add(sector.group);
-          }
-          sectorNode.updateGeometry(sector.group, sector.levelOfDetail);
-          this.markNeedsRedraw();
-        },
-        error => {
+      this._cadModelUpdateHandler.consumedSectorObservable().subscribe({
+        next: consumeNextSector,
+        error: error => {
           trackError(error, {
             moduleName: 'CadManager',
             methodName: 'constructor'
           });
         }
-      )
+      })
     );
   }
 
