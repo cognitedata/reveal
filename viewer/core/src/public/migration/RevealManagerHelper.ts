@@ -59,12 +59,6 @@ export class RevealManagerHelper {
    * @param renderer
    * @param scene
    * @param revealOptions
-   * @param renderer
-   * @param scene
-   * @param revealOptions
-   * @param renderer
-   * @param scene
-   * @param revealOptions
    */
   static createLocalHelper(renderer: THREE.WebGLRenderer, scene: THREE.Scene, revealOptions: RevealOptions) {
     const revealManager = createLocalRevealManager(renderer, scene, revealOptions);
@@ -93,6 +87,7 @@ export class RevealManagerHelper {
   }
 
   /**
+   * Adds a local CAD model.
    * @param model
    * @param revealManager
    */
@@ -107,6 +102,7 @@ export class RevealManagerHelper {
   }
 
   /**
+   * Adds a CDF hosted CAD model.
    * @param model
    * @param revealManager
    */
@@ -125,6 +121,7 @@ export class RevealManagerHelper {
   }
 
   /**
+   * Add a CDF hosted point cloud model.
    * @param model
    * @param revealManager
    */
