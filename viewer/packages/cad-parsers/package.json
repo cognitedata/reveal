@@ -1,0 +1,13 @@
+{
+  "name": "@reveal/cad-parsers",
+  "private": true,
+  "main": "index.ts",
+  "scripts": {
+    "start": "yarn ws:start",
+    "test": "yarn ws:test --config ./../../jest.config.js",
+    "lint": "yarn ws:lint"
+  },
+  "dependencies": {
+    "@reveal/utilities": "workspace:*"
+  }
+}

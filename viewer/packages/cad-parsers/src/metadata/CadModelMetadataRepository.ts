@@ -4,13 +4,14 @@
 
 import * as THREE from 'three';
 
-import { CadMetadataParser } from './parsers/CadMetadataParser';
-import { SectorScene, WellKnownDistanceToMeterConversionFactors } from './sector/types';
-import { File3dFormat } from '../../utilities';
+import { CadMetadataParser } from './CadMetadataParser';
+import { SectorScene,
+	 WellKnownDistanceToMeterConversionFactors,
+	 File3dFormat,
+	 ModelDataClient } from '../utilities/types';
 import { CadModelMetadata } from './CadModelMetadata';
-import { MetadataRepository } from '../base';
-import { transformCameraConfiguration } from '../../utilities/transformCameraConfiguration';
-import { ModelDataClient } from '../../utilities/networking/types';
+import { MetadataRepository } from './MetadataRepository';
+import { transformCameraConfiguration } from '@reveal/utilities';
 
 type ModelIdentifierWithFormat<T> = T & { format: File3dFormat };
 

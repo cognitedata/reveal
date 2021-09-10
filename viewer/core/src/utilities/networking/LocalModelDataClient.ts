@@ -2,10 +2,11 @@
  * Copyright 2021 Cognite AS
  */
 import * as THREE from 'three';
+import { ModelDataClient } from '@reveal/cad-parsers';
+import { File3dFormat } from '../types';
+import { CameraConfiguration } from '@reveal/utilities';
 
-import { ModelDataClient } from './types';
 import { fetchWithStatusCheck } from './utilities';
-import { File3dFormat, CameraConfiguration } from '../types';
 import { applyDefaultModelTransformation } from './applyDefaultModelTransformation';
 
 export class LocalModelDataClient implements ModelDataClient<{ fileName: string }> {

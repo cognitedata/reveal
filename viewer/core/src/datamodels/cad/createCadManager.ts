@@ -2,19 +2,18 @@
  * Copyright 2021 Cognite AS
  */
 
+import { ModelDataClient, CadMetadataParser, CadModelMetadataRepository, CadSectorParser } from '@reveal/cad-parsers';
+
 import { CadManager } from './CadManager';
-import { CadMetadataParser } from './parsers/CadMetadataParser';
-import { CadModelMetadataRepository } from './CadModelMetadataRepository';
 import { CadModelFactory } from './CadModelFactory';
 import { CadModelUpdateHandler } from './CadModelUpdateHandler';
 import { CadMaterialManager } from './CadMaterialManager';
-import { CadSectorParser } from './sector/CadSectorParser';
 import { CachedRepository } from './sector/CachedRepository';
 import { SimpleAndDetailedToSector3D } from './sector/SimpleAndDetailedToSector3D';
 import { createDefaultSectorCuller } from './sector/culling/ByVisibilityGpuSectorCuller';
 import { LocalModelDataClient } from '../../utilities/networking/LocalModelDataClient';
 import { CdfModelDataClient } from '../../utilities/networking/CdfModelDataClient';
-import { LocalModelIdentifier, CdfModelIdentifier, ModelDataClient } from '../../utilities/networking/types';
+import { LocalModelIdentifier, CdfModelIdentifier } from '../../utilities/networking/types';
 import { RevealOptions } from '../../public/types';
 import { OccludingGeometryProvider } from './sector/culling/OccludingGeometryProvider';
 

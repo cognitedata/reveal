@@ -3,3 +3,5 @@
  */
 
 export * from './core/src/internals';
+
+export * from './packages/utilities';

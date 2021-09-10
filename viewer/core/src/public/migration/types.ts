@@ -194,7 +194,7 @@ export type Intersection = CadIntersection | PointCloudIntersection;
 /**
  * @module @cognite/reveal
  */
-export { CameraConfiguration } from '../../utilities';
+export { CameraConfiguration } from '@reveal/utilities';
 
 /**
  * Delegate for pointer events.

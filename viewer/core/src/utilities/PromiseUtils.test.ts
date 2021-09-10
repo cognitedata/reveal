@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { asyncIteratorToArray } from '../__testutilities__/asyncIteratorToArray';
+import { asyncIteratorToArray } from '../../../test-utilities';
 import { PromiseUtils } from './PromiseUtils';
 
 describe('PromiseUtils', () => {

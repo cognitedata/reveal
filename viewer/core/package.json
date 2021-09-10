@@ -9,7 +9,9 @@
     "lint": "yarn ws:lint"
   },
   "dependencies": {
-    "@reveal/camera-manager": "workspace:*"
+    "@reveal/cad-parsers": "workspace:*",
+    "@reveal/camera-manager": "workspace:*",
+    "@reveal/utilities": "workspace:*"
   },
   "sideEffects": false,
   "glslify": {

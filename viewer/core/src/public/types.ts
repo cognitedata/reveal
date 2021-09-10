@@ -134,4 +134,3 @@ export * from './migration/types';
 export { CadLoadingHints } from '../datamodels/cad/CadLoadingHints';
 
 export { SupportedModelTypes } from '../datamodels/base';
-export { CadModelMetadata } from '../datamodels/cad/CadModelMetadata';

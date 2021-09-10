@@ -895,6 +895,14 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@reveal/cad-parsers@workspace:*, @reveal/cad-parsers@workspace:packages/cad-parsers":
+  version: 0.0.0-use.local
+  resolution: "@reveal/cad-parsers@workspace:packages/cad-parsers"
+  dependencies:
+    "@reveal/utilities": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
 "@reveal/camera-manager@workspace:*, @reveal/camera-manager@workspace:packages/camera-manager":
   version: 0.0.0-use.local
   resolution: "@reveal/camera-manager@workspace:packages/camera-manager"
@@ -905,7 +913,15 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@reveal/core@workspace:core"
   dependencies:
+    "@reveal/cad-parsers": "workspace:*"
     "@reveal/camera-manager": "workspace:*"
+    "@reveal/utilities": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@reveal/utilities@workspace:*, @reveal/utilities@workspace:packages/utilities":
+  version: 0.0.0-use.local
+  resolution: "@reveal/utilities@workspace:packages/utilities"
   languageName: unknown
   linkType: soft
 

@@ -2,7 +2,9 @@
  * Copyright 2021 Cognite AS
  */
 import * as THREE from 'three';
-import { LocalModelIdentifier, CdfModelIdentifier, ModelDataClient } from '../utilities/networking/types';
+import { ModelDataClient } from '@reveal/cad-parsers';
+
+import { LocalModelIdentifier, CdfModelIdentifier } from '../utilities/networking/types';
 import { CdfModelDataClient } from '../utilities/networking/CdfModelDataClient';
 import { CogniteClient } from '@cognite/sdk';
 import { createCadManager } from '../datamodels/cad/createCadManager';

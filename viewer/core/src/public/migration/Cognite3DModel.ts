@@ -4,6 +4,8 @@
 import * as THREE from 'three';
 import { CogniteClient, CogniteInternalId } from '@cognite/sdk';
 
+import { CadModelMetadata } from '@reveal/cad-parsers';
+
 import { NodeIdAndTreeIndexMaps } from './NodeIdAndTreeIndexMaps';
 import { CameraConfiguration } from './types';
 import { CogniteModelBase } from './CogniteModelBase';
@@ -12,7 +14,7 @@ import { NumericRange } from '../../utilities';
 import { CadNode } from '../../internals';
 import { trackError } from '../../utilities/metrics';
 
-import { SupportedModelTypes, CadModelMetadata } from '../types';
+import { SupportedModelTypes } from '../types';
 import { callActionWithIndicesAsync } from '../../utilities/callActionWithIndicesAsync';
 import { CogniteClientNodeIdAndTreeIndexMapper } from '../../utilities/networking/CogniteClientNodeIdAndTreeIndexMapper';
 import { NodeCollectionBase } from '../../datamodels/cad/styling';

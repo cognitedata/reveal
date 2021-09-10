@@ -3,11 +3,7 @@
  */
 import * as THREE from 'three';
 
-export enum File3dFormat {
-  EptPointCloud = 'ept-pointcloud',
-  RevealCadModel = 'reveal-directory',
-  AnyFormat = 'all-outputs'
-}
+export { File3dFormat } from '@reveal/cad-parsers';
 
 /**
  * Colors from the Cognite theme.
@@ -54,14 +50,6 @@ export type LoadingState = {
    * to load) so far in this batch.
    */
   itemsCulled: number;
-};
-
-/**
- * Represents a camera configuration, consisting of a camera position and target.
- */
-export type CameraConfiguration = {
-  readonly position: THREE.Vector3;
-  readonly target: THREE.Vector3;
 };
 
 /**

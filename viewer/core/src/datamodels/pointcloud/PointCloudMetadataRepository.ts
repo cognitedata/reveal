@@ -7,8 +7,8 @@ import * as THREE from 'three';
 import { PointCloudMetadata } from './PointCloudMetadata';
 import { MetadataRepository } from '../base';
 import { File3dFormat } from '../../utilities/types';
-import { transformCameraConfiguration } from '../../utilities/transformCameraConfiguration';
-import { ModelDataClient } from '../../utilities/networking/types';
+import { ModelDataClient } from '@reveal/cad-parsers';
+import { transformCameraConfiguration } from '@reveal/utilities';
 
 type ModelIdentifierWithFormat<T> = T & { format: File3dFormat };
 

@@ -4,11 +4,10 @@
 import * as THREE from 'three';
 
 import { Mutable } from '../../utilities/reflection';
-import { createCadModelMetadata } from '../../__testutilities__/createCadModelMetadata';
-import { generateSectorTree } from '../../__testutilities__/createSectorMetadata';
+import { generateSectorTree, createCadModelMetadata } from '../../../../test-utilities';
 import { CadMaterialManager } from './CadMaterialManager';
 import { CadModelFactory } from './CadModelFactory';
-import { CadModelMetadata } from './CadModelMetadata';
+import { CadModelMetadata } from '@reveal/cad-parsers';
 
 describe('CadModelFactory', () => {
   let materialManager: CadMaterialManager;

@@ -3,15 +3,17 @@
  */
 
 import * as THREE from 'three';
+import { SectorMetadata } from '@reveal/cad-parsers';
+import { traverseDepthFirst } from '@reveal/utilities';
+
 import { pipe, GroupedObservable, Observable, OperatorFunction } from 'rxjs';
 import { groupBy, distinctUntilKeyChanged, withLatestFrom, mergeMap, filter, map } from 'rxjs/operators';
 
-import { SectorGeometry, SectorMetadata, WantedSector, ConsumedSector } from './types';
+import { SectorGeometry, WantedSector, ConsumedSector } from './types';
 import { Materials } from '../rendering/materials';
 
 import { InstancedMeshFile, SectorQuads } from '../rendering/types';
 
-import { traverseDepthFirst } from '../../../utilities/objectTraversal';
 import { createTriangleMeshes } from '../rendering/triangleMeshes';
 import { createPrimitives } from '../rendering/primitives';
 import { createSimpleGeometryMesh } from '../rendering/createSimpleGeometryMesh';

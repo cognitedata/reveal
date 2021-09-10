@@ -3,20 +3,15 @@
  */
 
 import * as THREE from 'three';
-import { traverseDepthFirst } from '../../../utilities/objectTraversal';
-import { SectorMetadata, SectorScene } from './types';
+import { traverseDepthFirst } from '@reveal/utilities';
+import { SectorScene } from './types';
+import { SectorMetadata } from '../metadata/types';
 import skmeans from 'skmeans';
 
+/**
+ * @internal
+ */
 export class SectorSceneImpl implements SectorScene {
-  static createFromRootSector(version: number, maxTreeIndex: number, unit: string, root: SectorMetadata): SectorScene {
-    const sectorsById: Map<number, SectorMetadata> = new Map();
-    traverseDepthFirst(root, x => {
-      sectorsById.set(x.id, x);
-      return true;
-    });
-    return new SectorSceneImpl(version, maxTreeIndex, unit, root, sectorsById);
-  }
-
   readonly version: number;
   readonly maxTreeIndex: number;
   readonly root: SectorMetadata;

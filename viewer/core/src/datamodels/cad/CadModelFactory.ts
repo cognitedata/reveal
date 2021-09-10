@@ -5,7 +5,7 @@ import * as THREE from 'three';
 import { CadNode } from './CadNode';
 
 import { CadMaterialManager } from './CadMaterialManager';
-import { CadModelMetadata } from './CadModelMetadata';
+import { CadModelMetadata } from '@reveal/cad-parsers';
 import { BoundingBoxClipper } from '../../utilities/BoundingBoxClipper';
 
 export class CadModelFactory {

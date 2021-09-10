@@ -3,7 +3,7 @@
  */
 
 import * as THREE from 'three';
-import { SectorMetadata } from '../datamodels/cad';
+import { SectorMetadata } from '../../packages/cad-parsers/src/metadata/types';
 
 export type SectorTree = [number, SectorTree[], THREE.Box3?];
 

@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 import * as THREE from 'three';
-import { createGlContext } from '../__testutilities__/createGlContext';
+import { createGlContext } from '../../../test-utilities';
 import { WebGLRendererStateHelper } from './WebGLRendererStateHelper';
 
 describe('WebGLRendererStateHelper', () => {

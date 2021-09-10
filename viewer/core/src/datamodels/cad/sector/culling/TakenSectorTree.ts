@@ -3,7 +3,7 @@
  */
 
 import { LevelOfDetail } from '../LevelOfDetail';
-import { SectorMetadata } from '../types';
+import { SectorMetadata } from '@reveal/cad-parsers';
 import {
   PrioritizedWantedSector,
   DetermineSectorCostDelegate,
@@ -12,7 +12,7 @@ import {
   addSectorCost
 } from './types';
 
-import { traverseDepthFirst } from '../../../../utilities/objectTraversal';
+import { traverseDepthFirst } from '@reveal/utilities';
 
 export class TakenSectorTree {
   get totalCost(): SectorCost {

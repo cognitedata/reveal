@@ -9,11 +9,9 @@ import { OrderSectorsByVisibilityCoverage } from './OrderSectorsByVisibilityCove
 import { ByVisibilityGpuSectorCuller, LevelOfDetail } from '../../../../internals';
 import { SectorMetadata, CadNode, CadModelMetadata } from '../../../../internals';
 
-import { generateSectorTree } from '../../../../__testutilities__/createSectorMetadata';
-import { createCadModelMetadata } from '../../../../__testutilities__/createCadModelMetadata';
 import { CadModelSectorBudget } from '../../CadModelSectorBudget';
 import { PropType } from '../../../../utilities/reflection';
-import { createGlContext } from '../../../../__testutilities__/createGlContext';
+import { createGlContext, generateSectorTree, createCadModelMetadata } from '../../../../../../test-utilities';
 
 describe('ByVisibilityGpuSectorCuller', () => {
   const materialManager = new CadMaterialManager();

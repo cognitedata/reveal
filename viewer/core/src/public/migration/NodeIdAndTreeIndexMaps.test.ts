@@ -5,7 +5,7 @@
 import { CogniteClient, CogniteInternalId } from '@cognite/sdk';
 import { NodeIdAndTreeIndexMaps } from './NodeIdAndTreeIndexMaps';
 
-import { sleep } from '../../__testutilities__/wait';
+import { sleep } from '../../../../test-utilities';
 import { CogniteClientNodeIdAndTreeIndexMapper } from '../../utilities/networking/CogniteClientNodeIdAndTreeIndexMapper';
 
 jest.mock('../../utilities/networking/CogniteClientNodeIdAndTreeIndexMapper');

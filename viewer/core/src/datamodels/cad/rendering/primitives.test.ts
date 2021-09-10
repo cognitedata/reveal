@@ -4,7 +4,7 @@
 import * as THREE from 'three';
 import { SectorGeometry } from '../sector/types';
 import { createPrimitives } from './primitives';
-import { createEmptySector } from '../../../__testutilities__/emptySector';
+import { createEmptySector } from '../../../../../test-utilities';
 import { createMaterials, Materials } from './materials';
 import { ParsePrimitiveAttribute } from '@cognite/reveal-parser-worker';
 import { RenderMode } from './RenderMode';

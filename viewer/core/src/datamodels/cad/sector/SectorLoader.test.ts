@@ -5,10 +5,8 @@
 import * as THREE from 'three';
 
 import { AutoDisposeGroup } from '../../../utilities/three';
-import { asyncIteratorToArray } from '../../../__testutilities__/asyncIteratorToArray';
-import { createCadModelMetadata } from '../../../__testutilities__/createCadModelMetadata';
-import { generateSectorTree } from '../../../__testutilities__/createSectorMetadata';
-import { CadModelMetadata } from '../CadModelMetadata';
+import { generateSectorTree, asyncIteratorToArray, createCadModelMetadata } from '../../../../../test-utilities';
+import { CadModelMetadata, SectorMetadata } from '@reveal/cad-parsers';
 
 import { SectorCuller } from './culling/SectorCuller';
 import { DetermineSectorsInput, SectorLoadingSpent } from './culling/types';
@@ -17,7 +15,7 @@ import { LevelOfDetail } from './LevelOfDetail';
 import { ModelStateHandler } from './ModelStateHandler';
 import { Repository } from './Repository';
 import { SectorLoader } from './SectorLoader';
-import { ConsumedSector, SectorMetadata, WantedSector } from './types';
+import { ConsumedSector, WantedSector } from './types';
 
 describe('SectorLoader', () => {
   let culler: SectorCuller;

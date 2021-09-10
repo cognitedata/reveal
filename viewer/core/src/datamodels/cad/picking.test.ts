@@ -7,7 +7,7 @@ import * as THREE from 'three';
 import { intersectCadNodes } from './picking';
 import { CadNode } from './CadNode';
 import { IntersectInput } from '../base/types';
-import { createGlContext } from '../../__testutilities__/createGlContext';
+import { createGlContext } from '../../../../test-utilities';
 
 describe('intersectCadNodes', () => {
   const camera = new THREE.PerspectiveCamera();

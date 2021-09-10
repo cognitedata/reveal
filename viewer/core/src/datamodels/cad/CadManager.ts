@@ -3,13 +3,11 @@
  */
 
 import * as THREE from 'three';
+import { CadModelMetadataRepository, CadModelMetadata } from '@reveal/cad-parsers';
 
 import { CadNode } from './CadNode';
 import { CadModelFactory } from './CadModelFactory';
-import { CadModelMetadataRepository } from './CadModelMetadataRepository';
 import { CadModelUpdateHandler } from './CadModelUpdateHandler';
-
-import { CadModelMetadata } from './CadModelMetadata';
 
 import { trackError } from '../../utilities/metrics';
 

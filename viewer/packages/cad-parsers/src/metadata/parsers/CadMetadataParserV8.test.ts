@@ -4,10 +4,10 @@
 import * as THREE from 'three';
 
 import { CadMetadataV8, parseCadMetadataV8, CadSectorMetadataV8 } from './CadMetadataParserV8';
-import { SectorMetadata } from '..';
-import { traverseDepthFirst } from '../../../utilities/objectTraversal';
+import { SectorMetadata } from '../types';
+import { traverseDepthFirst } from '@reveal/utilities';
 
-import { Mutable } from '../../../utilities/reflection';
+import { Mutable } from '../../../../../test-utilities/src/reflection';
 
 describe('parseCadMetadataV8', () => {
   test('Metadata without sectors, throws', () => {

@@ -3,7 +3,7 @@
  */
 import { wrap } from 'comlink';
 import { RevealParserWorker } from '@cognite/reveal-parser-worker';
-import { revealEnv } from '../../revealEnv';
+import { revealEnv } from '../revealEnv';
 import { isTheSameDomain } from '../networking/isTheSameDomain';
 
 type WorkDelegate<T> = (worker: RevealParserWorker) => Promise<T>;

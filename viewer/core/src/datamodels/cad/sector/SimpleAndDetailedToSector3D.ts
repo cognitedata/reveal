@@ -4,10 +4,12 @@
 
 import * as THREE from 'three';
 
+import { SectorMetadata } from '@reveal/cad-parsers';
+
 import { CadMaterialManager } from '../CadMaterialManager';
 import { InstancedMeshFile, SectorQuads } from '../rendering/types';
 
-import { SectorGeometry, SectorMetadata } from './types';
+import { SectorGeometry } from './types';
 
 import { consumeSectorDetailed, consumeSectorSimple } from './sectorUtilities';
 import { AutoDisposeGroup } from '../../../utilities/three';

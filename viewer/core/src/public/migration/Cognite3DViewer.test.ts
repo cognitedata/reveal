@@ -11,7 +11,7 @@ import { Cognite3DViewer } from './Cognite3DViewer';
 import nock from 'nock';
 import { SectorCuller } from '../../datamodels/cad/sector/culling/SectorCuller';
 import { DisposedDelegate, SceneRenderedDelegate } from '../types';
-import { createGlContext } from '../../__testutilities__/createGlContext';
+import { createGlContext } from '../../../../test-utilities';
 
 const sceneJson = require('./Cognite3DViewer.test-scene.json');
 

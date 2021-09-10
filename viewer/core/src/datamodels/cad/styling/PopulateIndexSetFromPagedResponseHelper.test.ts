@@ -6,7 +6,7 @@ import { NumericRange } from '../../../utilities';
 import { IndexSet } from '../../../utilities/IndexSet';
 import { PopulateIndexSetFromPagedResponseHelper } from './PopulateIndexSetFromPagedResponseHelper';
 import { ListResponse } from '@cognite/sdk-core';
-import { sleep } from '../../../__testutilities__/wait';
+import { sleep } from '../../../../../test-utilities';
 
 describe('PopulateIndexSetFromPagedResponseHelper', () => {
   let helper: PopulateIndexSetFromPagedResponseHelper<number>;

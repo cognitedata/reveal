@@ -3,8 +3,10 @@
  */
 import * as THREE from 'three';
 
-import { SectorMetadata, SectorGeometry } from './types';
-import { createEmptySector } from '../../../__testutilities__/emptySector';
+import { SectorMetadata } from '@reveal/cad-parsers';
+
+import { SectorGeometry } from './types';
+import { createEmptySector } from '../../../../../test-utilities/src/emptySector';
 import { createMaterials } from '../rendering/materials';
 import { RenderMode } from '../rendering/RenderMode';
 import { consumeSectorDetailed, consumeSectorSimple } from './sectorUtilities';
