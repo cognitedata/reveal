@@ -187,7 +187,7 @@ export class Cognite3DViewer {
    * point cloud models.
    */
   public get pointCloudBudget(): PointCloudBudget {
-    return this._revealManager.pointCloudBudget;
+    return this.revealManager.pointCloudBudget;
   }
 
   /**
@@ -195,7 +195,7 @@ export class Cognite3DViewer {
    * point cloud models.
    */
   public set pointCloudBudget(budget: PointCloudBudget) {
-    this._revealManager.pointCloudBudget = budget;
+    this.revealManager.pointCloudBudget = budget;
   }
 
   /**
@@ -757,7 +757,7 @@ export class Cognite3DViewer {
    * Returns the current active slicing (clipping) planes;.
    */
   getSlicingPlanes(): THREE.Plane[] {
-    return this._revealManager.clippingPlanes;
+    return this.revealManager.clippingPlanes;
   }
 
   /**
