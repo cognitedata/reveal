@@ -1,6 +1,6 @@
 {
   "name": "@cognite/node-visualizer",
-  "version": "1.2.14",
+  "version": "1.2.15",
   "description": "Spatial visualizer for Cognite",
   "main": "dist/index.js",
   "module": "dist/index.js",
@@ -112,8 +112,8 @@
   "peerDependencies": {
     "@cognite/cogs.js": "^2.5.0",
     "@reduxjs/toolkit": "^1.5.1",
-    "react": "17.0.1",
-    "react-dom": "17.0.1",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
     "react-redux": "^7.2.4",
     "redux": "4.0.5",
     "styled-components": "^5.1.1"
@@ -127,9 +127,9 @@
     "color": "^3.1.2",
     "immer": "^7.0.5",
     "lodash": "^4.17.21",
-    "react": "17.0.1",
+    "react": "17.0.2",
     "react-color": "^2.19.3",
-    "react-dom": "17.0.1",
+    "react-dom": "17.0.2",
     "react-draggable": "^4.4.3",
     "react-is": "^17.0.1",
     "react-redux": "^7.2.4",
