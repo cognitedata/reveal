@@ -38,7 +38,6 @@ export const badge = (hideText: boolean = false) => {
     <Button
       icon="ResourceAssets"
       size="small"
-      disabled
       style={{
         backgroundColor: ColorsTagDetection.backgroundColor,
         color: ColorsTagDetection.color,

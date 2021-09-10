@@ -38,7 +38,6 @@ export const badge = (hideText: boolean = false) => {
         backgroundColor: ColorsOCR.backgroundColor,
         color: ColorsOCR.color,
       }}
-      disabled
     >
       {!hideText && modelName}
     </Button>
