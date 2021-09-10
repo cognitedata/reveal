@@ -228,6 +228,22 @@ export default function TimeSeriesRow({
     });
   };
 
+  const resetUnit = async () => {
+    const range = await calculateDefaultYAxis({
+      chart,
+      sdk,
+      timeSeriesExternalId: timeseries.tsExternalId || '',
+      inputUnit: originalUnit,
+      outputUnit: originalUnit,
+    });
+
+    update(id, {
+      unit: originalUnit,
+      preferredUnit: originalUnit,
+      range,
+    });
+  };
+
   const statisticsCall = (timeseries?.statisticsCalls || [])[0];
 
   const { data } = useQuery({
@@ -435,6 +451,7 @@ export default function TimeSeriesRow({
               preferredUnit={preferredUnit}
               onOverrideUnitClick={updateUnit}
               onConversionUnitClick={updatePrefferedUnit}
+              onResetUnitClick={resetUnit}
             />
           </td>
         </>

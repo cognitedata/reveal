@@ -208,6 +208,13 @@ export default function WorkflowRow({
     });
   };
 
+  const resetUnit = async () => {
+    update(id, {
+      unit: '',
+      preferredUnit: '',
+    });
+  };
+
   const updateAppearance = (diff: Partial<ChartTimeSeries>) =>
     mutate((oldChart) => updateWorkflow(oldChart!, id, diff));
 
@@ -281,6 +288,7 @@ export default function WorkflowRow({
               preferredUnit={preferredUnit}
               onOverrideUnitClick={updateUnit}
               onConversionUnitClick={updatePrefferedUnit}
+              onResetUnitClick={resetUnit}
             />
           </td>
           <td className="downloadChartHide" />

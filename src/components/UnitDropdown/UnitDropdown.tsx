@@ -9,6 +9,7 @@ type UnitDropdownProps = {
   preferredUnit?: string;
   onOverrideUnitClick: (_: any) => void;
   onConversionUnitClick: (_: any) => void;
+  onResetUnitClick: () => void;
 };
 
 export const UnitDropdown = ({
@@ -17,6 +18,7 @@ export const UnitDropdown = ({
   preferredUnit,
   onOverrideUnitClick,
   onConversionUnitClick,
+  onResetUnitClick,
 }: UnitDropdownProps) => {
   const inputUnitOption = units.find(
     (unitOption) => unitOption.value === unit?.toLowerCase()
@@ -34,23 +36,34 @@ export const UnitDropdown = ({
     (conversion) => units.find((unitOption) => unitOption.value === conversion)
   );
 
-  const unitTypeMenuItems = Object.values(UnitTypes).map((unitType) => (
+  const unitTypeMenuItems = [
     <Menu.Item
-      key={unitType}
-      onClick={() => setSelectedUnitType(unitType)}
-      style={
-        selectedUnitType === unitType
-          ? {
-              color: 'var(--cogs-midblue-3)',
-              backgroundColor: 'var(--cogs-midblue-6)',
-              borderRadius: 3,
-            }
-          : {}
-      }
+      key="reset-unit"
+      onClick={() => onResetUnitClick()}
+      style={{
+        color: 'var(--cogs-danger)',
+      }}
     >
-      {unitType}
-    </Menu.Item>
-  ));
+      Reset
+    </Menu.Item>,
+    ...Object.values(UnitTypes).map((unitType) => (
+      <Menu.Item
+        key={unitType}
+        onClick={() => setSelectedUnitType(unitType)}
+        style={
+          selectedUnitType === unitType
+            ? {
+                color: 'var(--cogs-midblue-3)',
+                backgroundColor: 'var(--cogs-midblue-6)',
+                borderRadius: 3,
+              }
+            : {}
+        }
+      >
+        {unitType}
+      </Menu.Item>
+    )),
+  ];
 
   const unitOverrideMenuItems = units
     .filter((unitOption) => unitOption.type === selectedUnitType)
