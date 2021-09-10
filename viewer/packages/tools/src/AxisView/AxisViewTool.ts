@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import TWEEN from '@tweenjs/tween.js';
 
-import { Cognite3DViewer } from '../../migration';
+import { Cognite3DViewer } from '@reveal/core';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 import {
   AxisBoxConfig,

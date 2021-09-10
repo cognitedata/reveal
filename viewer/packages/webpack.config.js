@@ -17,7 +17,7 @@ module.exports = env => {
 
     resolve: {
       extensions: ['.ts', '.js'],
-      symlinks: false
+      symlinks: true
     },
 
     devServer: {
@@ -36,7 +36,7 @@ module.exports = env => {
           use: {
             loader: 'ts-loader',
             options: {
-              configFile: path.resolve(__dirname, '../tsconfig.common.json'),
+              configFile: path.resolve(__dirname, '../tsconfig.json'),
               compilerOptions: {
                 noUnusedLocals: false,
                 noUnusedParameters: false

@@ -4,7 +4,7 @@
 
 import nock from 'nock';
 import { CogniteInternalId, CogniteClient } from '@cognite/sdk';
-import { CogniteClientNodeIdAndTreeIndexMapper } from './CogniteClientNodeIdAndTreeIndexMapper';
+import { NodesCdfClient } from './NodesCdfClient';
 
 function stubTreeIndexToNodeId(treeIndex: number): CogniteInternalId {
   return treeIndex + 1337;
@@ -22,10 +22,10 @@ type ByNodeIdsRequestBody = {
   items: number[];
 };
 
-describe('CogniteCLientNodeIdAndTreeIndexMapper', () => {
+describe('NodesCdfClient', () => {
   let bytreeindicesRequestCount: number;
   let byinternalidsRequestCount: number;
-  let mapper: CogniteClientNodeIdAndTreeIndexMapper;
+  let nodesClient: NodesCdfClient;
 
   beforeEach(() => {
     bytreeindicesRequestCount = 0;
@@ -49,7 +49,7 @@ describe('CogniteCLientNodeIdAndTreeIndexMapper', () => {
     const client = new CogniteClient({ appId: 'reveal.test' });
     client.loginWithApiKey({ project: 'test', apiKey: 'test' });
 
-    mapper = new CogniteClientNodeIdAndTreeIndexMapper(client);
+    nodesClient = new NodesCdfClient(client);
   });
 
   afterEach(() => {
@@ -59,25 +59,25 @@ describe('CogniteCLientNodeIdAndTreeIndexMapper', () => {
   });
 
   test('mapTreeIndicesToNodeIds with a single item', async () => {
-    const nodeIds = await mapper.mapTreeIndicesToNodeIds(0, 0, [10]);
+    const nodeIds = await nodesClient.mapTreeIndicesToNodeIds(0, 0, [10]);
     expect(nodeIds).toEqual([10].map(stubTreeIndexToNodeId));
     expect(bytreeindicesRequestCount).toEqual(1); // One request
   });
 
   test('mapTreeIndicesToNodeIds with a a lot of items, splits into batches', async () => {
-    await mapper.mapTreeIndicesToNodeIds(0, 0, Array.from(new Array(1111).keys()));
+    await nodesClient.mapTreeIndicesToNodeIds(0, 0, Array.from(new Array(1111).keys()));
     expect(bytreeindicesRequestCount).toEqual(2); // Two requests
   });
 
   test('mapNodeIdsToTreeIndices with a single item', async () => {
-    const nodeIds = await mapper.mapNodeIdsToTreeIndices(0, 0, [10]);
+    const nodeIds = await nodesClient.mapNodeIdsToTreeIndices(0, 0, [10]);
 
     expect(nodeIds).toEqual([10].map(stubNodeIdToTreeIndex));
     expect(byinternalidsRequestCount).toEqual(1); // One request
   });
 
   test('mapNodeIdsToTreeIndices with a a lot of items, splits into batches', async () => {
-    await mapper.mapNodeIdsToTreeIndices(0, 0, Array.from(new Array(1111).keys()));
+    await nodesClient.mapNodeIdsToTreeIndices(0, 0, Array.from(new Array(1111).keys()));
     expect(byinternalidsRequestCount).toEqual(2); // Two requests
   });
 });

@@ -1401,7 +1401,7 @@ the style imposed by other styled collections).
 - [enableKeyboardNavigation](#enablekeyboardnavigation)
 - [fitCameraToBoundingBox](#fitcameratoboundingbox)
 - [fitCameraToModel](#fitcameratomodel)
-- [forceRerender](#forcererender)
+- [requestRedraw](#requestRedraw)
 - [getCamera](#getcamera)
 - [getCameraPosition](#getcameraposition)
 - [getCameraTarget](#getcameratarget)
@@ -1913,12 +1913,12 @@ viewer.fitCameraToModel(model, 0);
 
 ___
 
-#### forceRerender
+#### requestRedraw
 
-▸ **forceRerender**(): `void`
+▸ **requestRedraw**(): `void`
 
 Typically used when you perform some changes and can't see them unless you move camera.
-To fix this forceRerender might be used.
+To fix this requestRedraw might be used.
 
 ##### Returns
 
