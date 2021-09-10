@@ -13458,10 +13458,10 @@ pkg-up@^2.0.0:
   dependencies:
     find-up "^2.1.0"
 
-plotly.js-basic-dist@^2.4.1:
-  version "2.4.1"
-  resolved "https://registry.yarnpkg.com/plotly.js-basic-dist/-/plotly.js-basic-dist-2.4.1.tgz#e85d0376d117ffbd2a038392529de306df86dd69"
-  integrity sha512-d9Ck7lePNGl3ESjG2ViTDxN0h5ppR2SPB0IsNCYGW9BmBQSHI0YbsGWHMYNJMw5K45c13f1YvPXuTojBEz81VA==
+plotly.js-basic-dist@^2.5.0:
+  version "2.5.0"
+  resolved "https://registry.yarnpkg.com/plotly.js-basic-dist/-/plotly.js-basic-dist-2.5.0.tgz#9782f19897e970ae87cd5136a006795abebb85cb"
+  integrity sha512-ndFEcw5HZnKRvUZqCNCBIkRnY0upGHluecJrrDGZppgUVaH24EqgHLHta96+DnT9Jp14tWO5/5KV2MD8bSb7YA==
 
 pngjs@^3.3.1:
   version "3.4.0"
