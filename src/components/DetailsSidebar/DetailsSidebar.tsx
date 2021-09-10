@@ -14,7 +14,7 @@ import { useQuery } from 'react-query';
 import { ChartTimeSeries, ChartWorkflow } from 'reducers/charts/types';
 import { getCallResponse } from 'utils/backendApi';
 import { functionResponseKey } from 'utils/backendService';
-import { convertValue } from 'utils/units';
+import { convertValue, units } from 'utils/units';
 import {
   Sidebar,
   TopContainer,
@@ -150,6 +150,12 @@ const Statistics = ({
   const statisticsForSource = statistics[0];
   const unit = sourceItem?.unit;
   const preferredUnit = sourceItem?.preferredUnit;
+  const displayUnit =
+    (
+      units.find(
+        (unitOption) => unitOption.value === preferredUnit?.toLowerCase()
+      ) || {}
+    ).label || preferredUnit;
 
   return (
     <Container>
@@ -176,7 +182,13 @@ const Statistics = ({
                 <Row className="ant-list-item">
                   <Col span={14}>{label}</Col>
                   <Col span={10} style={{ textAlign: 'right' }}>
-                    {value ? convertValue(value, unit, preferredUnit) : '-'}
+                    {value
+                      ? `${convertValue(
+                          value,
+                          unit,
+                          preferredUnit
+                        )} ${displayUnit}`
+                      : '-'}
                   </Col>
                 </Row>
               )}
@@ -194,7 +206,13 @@ const Statistics = ({
                 <Row className="ant-list-item">
                   <Col span={14}>{label}</Col>
                   <Col span={10} style={{ textAlign: 'right' }}>
-                    {value ? convertValue(value, unit, preferredUnit) : '-'}
+                    {value
+                      ? `${convertValue(
+                          value,
+                          unit,
+                          preferredUnit
+                        )} ${displayUnit}`
+                      : '-'}
                   </Col>
                 </Row>
               )}
