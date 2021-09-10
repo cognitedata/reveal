@@ -10,13 +10,13 @@ import { CadModelUpdateHandler } from './CadModelUpdateHandler';
 import { CadMaterialManager } from './CadMaterialManager';
 import { CadSectorParser } from './sector/CadSectorParser';
 import { CachedRepository } from './sector/CachedRepository';
-import { SimpleAndDetailedToSector3D } from './sector/SimpleAndDetailedToSector3D';
-import { createDefaultSectorCuller } from './sector/culling/ByVisibilityGpuSectorCuller';
+import { createDefaultSectorCuller } from './sector/culling/createDefaultSectorCuller';
 import { LocalModelDataClient } from '../../utilities/networking/LocalModelDataClient';
 import { CdfModelDataClient } from '../../utilities/networking/CdfModelDataClient';
 import { LocalModelIdentifier, CdfModelIdentifier, ModelDataClient } from '../../utilities/networking/types';
 import { RevealOptions } from '../../public/types';
 import { OccludingGeometryProvider } from './sector/culling/OccludingGeometryProvider';
+import { SimpleAndDetailedToSector3D } from './sector/SimpleAndDetailedToSector3D';
 
 export function createLocalCadManager(
   client: LocalModelDataClient,
