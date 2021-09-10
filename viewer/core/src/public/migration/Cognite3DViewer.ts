@@ -9,7 +9,7 @@ import omit from 'lodash/omit';
 import { CogniteClient } from '@cognite/sdk';
 import { Subscription, fromEventPattern } from 'rxjs';
 
-import { from3DPositionToRelativeViewportCoordinates } from '../../utilities/worldToViewport';
+import { worldToNormalizedViewportCoordinates, worldToViewportCoordinates } from '../../utilities/worldToViewport';
 import { intersectCadNodes } from '../../datamodels/cad/picking';
 
 import {
@@ -26,7 +26,6 @@ import { CogniteModelBase } from './CogniteModelBase';
 import { Cognite3DModel } from './Cognite3DModel';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
 import { RevealManager } from '../RevealManager';
-import { createCdfRevealManager } from '../createRevealManager';
 import {
   defaultRenderOptions,
   DisposedDelegate,
@@ -40,7 +39,7 @@ import { assertNever, LoadingState } from '../../utilities';
 import { File3dFormat } from '../../utilities/types';
 import { Spinner } from '../../utilities/Spinner';
 import { trackError, trackEvent } from '../../utilities/metrics';
-import { CdfModelIdentifier } from '../../utilities/networking/types';
+import { CdfModelIdentifier, LocalModelIdentifier } from '../../utilities/networking/types';
 import { clickOrTouchEventOffset, EventTrigger } from '../../utilities/events';
 
 import { IntersectInput, SupportedModelTypes } from '../../datamodels/base';
@@ -57,6 +56,8 @@ import { PropType } from '../../utilities/reflection';
 import { CadModelSectorLoadStatistics } from '../../datamodels/cad/CadModelSectorLoadStatistics';
 import ComboControls from '@reveal/camera-manager';
 import { ViewerState, ViewStateHelper } from '../../utilities/ViewStateHelper';
+import { NodesApiClient, NodesCdfClient, NodesLocalClient } from '@reveal/nodes-api';
+import { RevealManagerHelper } from './RevealManagerHelper';
 
 type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered' | 'disposed';
 
@@ -106,7 +107,7 @@ export class Cognite3DViewer {
   private readonly controls: ComboControls;
   private readonly sdkClient: CogniteClient;
   private readonly _subscription = new Subscription();
-  private readonly _revealManager: RevealManager<CdfModelIdentifier>;
+  private readonly _revealManagerHelper: RevealManagerHelper;
   private readonly _domElement: HTMLElement;
   private readonly _renderer: THREE.WebGLRenderer;
 
@@ -134,6 +135,10 @@ export class Cognite3DViewer {
   private _slicingNeedsUpdate: boolean = false;
 
   private readonly spinner: Spinner;
+
+  private get revealManager(): RevealManager<CdfModelIdentifier> | RevealManager<LocalModelIdentifier> {
+    return this._revealManagerHelper.revealManager;
+  }
 
   /**
    * Reusable buffers used by functions in Cognite3dViewer to avoid allocations.
@@ -164,7 +169,7 @@ export class Cognite3DViewer {
   public get cadBudget(): CadModelBudget {
     // Note! Type here differes from the one in RevealManager to expose a documentated
     // type. This should map 1:1 with type in RevealManager
-    return this._revealManager.cadBudget;
+    return this.revealManager.cadBudget;
   }
 
   /**
@@ -174,7 +179,7 @@ export class Cognite3DViewer {
   public set cadBudget(budget: CadModelBudget) {
     // Note! Type here differes from the one in RevealManager to expose a documentated
     // type. This should map 1:1 with type in RevealManager
-    this._revealManager.cadBudget = budget;
+    this.revealManager.cadBudget = budget;
   }
 
   /**
@@ -188,7 +193,7 @@ export class Cognite3DViewer {
    * @internal
    */
   public get cadLoadedStatistics(): CadModelSectorLoadStatistics {
-    return this._revealManager.cadLoadedStatistics;
+    return this.revealManager.cadLoadedStatistics;
   }
 
   constructor(options: Cognite3DViewerOptions) {
@@ -233,18 +238,27 @@ export class Cognite3DViewer {
 
     const revealOptions = createRevealManagerOptions(options);
 
-    this._revealManager = createCdfRevealManager(this.sdkClient, this._renderer, this.scene, revealOptions);
+    if (options._localModels === true) {
+      this._revealManagerHelper = RevealManagerHelper.createLocalHelper(this._renderer, this.scene, revealOptions);
+    } else {
+      this._revealManagerHelper = RevealManagerHelper.createCdfHelper(
+        this._renderer,
+        this.scene,
+        revealOptions,
+        this.sdkClient
+      );
+    }
     this.startPointerEventListeners();
 
-    this._revealManager.setRenderTarget(
+    this.revealManager.setRenderTarget(
       options.renderTargetOptions?.target || null,
       options.renderTargetOptions?.autoSetSize
     );
 
     this._subscription.add(
       fromEventPattern<LoadingState>(
-        h => this._revealManager.on('loadingStateChanged', h),
-        h => this._revealManager.off('loadingStateChanged', h)
+        h => this.revealManager.on('loadingStateChanged', h),
+        h => this.revealManager.off('loadingStateChanged', h)
       ).subscribe(
         loadingState => {
           this.spinner.loading = loadingState.itemsLoaded != loadingState.itemsRequested;
@@ -296,7 +310,7 @@ export class Cognite3DViewer {
     }
 
     this._subscription.unsubscribe();
-    this._revealManager.dispose();
+    this.revealManager.dispose();
     this.domElement.removeChild(this.canvas);
     this.renderer.dispose();
     for (const model of this._models.values()) {
@@ -458,6 +472,12 @@ export class Cognite3DViewer {
    * ```
    */
   async addModel(options: AddModelOptions): Promise<Cognite3DModel | CognitePointCloudModel> {
+    if (options.localPath !== undefined) {
+      throw new Error(
+        'addModel() only supports CDF hosted models. Use addCadModel() and addPointCloudModel() to use self-hosted models'
+      );
+    }
+
     const type = await this.determineModelType(options.modelId, options.revisionId);
     switch (type) {
       case 'cad':
@@ -485,28 +505,17 @@ export class Cognite3DViewer {
    * ```
    */
   async addCadModel(options: AddModelOptions): Promise<Cognite3DModel> {
+    let nodesApiClient: NodesApiClient;
     if (options.localPath) {
-      throw new NotSupportedInMigrationWrapperError('localPath is not supported');
+      nodesApiClient = new NodesLocalClient(options.localPath);
+    } else {
+      nodesApiClient = new NodesCdfClient(this.sdkClient);
     }
-    if (options.orthographicCamera) {
-      throw new NotSupportedInMigrationWrapperError('orthographicCamera is not supported');
-    }
-    if (options.onComplete) {
-      throw new NotSupportedInMigrationWrapperError('onComplete is not supported');
-    }
-    const { modelId, revisionId, geometryFilter } = options;
-    const cadNode = await this._revealManager.addModel(
-      'cad',
-      {
-        modelId,
-        revisionId
-      },
-      {
-        geometryFilter
-      }
-    );
 
-    const model3d = new Cognite3DModel(modelId, revisionId, cadNode, this.sdkClient);
+    const { modelId, revisionId } = options;
+    const cadNode = await this._revealManagerHelper.addCadModel(options);
+
+    const model3d = new Cognite3DModel(modelId, revisionId, cadNode, nodesApiClient);
     this._models.push(model3d);
     this.scene.add(model3d);
 
@@ -535,18 +544,9 @@ export class Cognite3DViewer {
     if (options.geometryFilter) {
       throw new NotSupportedInMigrationWrapperError('geometryFilter is not supported for point clouds');
     }
-    if (options.orthographicCamera) {
-      throw new NotSupportedInMigrationWrapperError('ortographicsCamera is not supported for point clouds');
-    }
-    if (options.onComplete) {
-      throw new NotSupportedInMigrationWrapperError('onComplete is not supported for point clouds');
-    }
 
     const { modelId, revisionId } = options;
-    const pointCloudNode = await this._revealManager.addModel('pointcloud', {
-      modelId,
-      revisionId
-    });
+    const pointCloudNode = await this._revealManagerHelper.addPointCloudModel(options);
     const model = new CognitePointCloudModel(modelId, revisionId, pointCloudNode);
     this._models.push(model);
     this.scene.add(model);
@@ -571,12 +571,12 @@ export class Cognite3DViewer {
     switch (model.type) {
       case 'cad':
         const cadModel = model as Cognite3DModel;
-        this._revealManager.removeModel(model.type, cadModel.cadNode);
+        this.revealManager.removeModel(model.type, cadModel.cadNode);
         return;
 
       case 'pointcloud':
         const pcModel = model as CognitePointCloudModel;
-        this._revealManager.removeModel(model.type, pcModel.pointCloudNode);
+        this.revealManager.removeModel(model.type, pcModel.pointCloudNode);
         return;
 
       default:
@@ -675,7 +675,7 @@ export class Cognite3DViewer {
   addUiObject(object: THREE.Object3D, screenPos: THREE.Vector2, size: THREE.Vector2): void {
     if (this.isDisposed) return;
 
-    this._revealManager.addUiObject(object, screenPos, size);
+    this.revealManager.addUiObject(object, screenPos, size);
   }
 
   /** Removes the UI object from the viewer.
@@ -684,7 +684,7 @@ export class Cognite3DViewer {
   removeUiObject(object: THREE.Object3D) {
     if (this.isDisposed) return;
 
-    this._revealManager.removeUiObject(object);
+    this.revealManager.removeUiObject(object);
   }
 
   /**
@@ -698,7 +698,7 @@ export class Cognite3DViewer {
 
     this.renderer.setClearColor(color);
     this.spinner.updateBackgroundColor(color);
-    this.forceRerender();
+    this.requestRedraw();
   }
 
   /**
@@ -732,7 +732,7 @@ export class Cognite3DViewer {
    * ```
    */
   setSlicingPlanes(slicingPlanes: THREE.Plane[]): void {
-    this._revealManager.clippingPlanes = slicingPlanes;
+    this.revealManager.clippingPlanes = slicingPlanes;
     this._slicingNeedsUpdate = true;
   }
 
@@ -923,10 +923,9 @@ export class Cognite3DViewer {
 
   /**
    * Typically used when you perform some changes and can't see them unless you move camera.
-   * To fix this forceRerender might be used.
    */
-  forceRerender(): void {
-    this._revealManager.requestRedraw();
+  requestRedraw(): void {
+    this.revealManager.requestRedraw();
   }
 
   /**
@@ -979,17 +978,26 @@ export class Cognite3DViewer {
    */
   worldToScreen(point: THREE.Vector3, normalize?: boolean): THREE.Vector2 | null {
     this.camera.updateMatrixWorld();
-    const p = from3DPositionToRelativeViewportCoordinates(this.camera, point);
-    if (p.x < 0 || p.x > 1 || p.y < 0 || p.y > 1 || p.z < 0 || p.z > 1) {
+    const screenPosition = new THREE.Vector3();
+    if (normalize) {
+      worldToNormalizedViewportCoordinates(this.renderer, this.camera, point, screenPosition);
+    } else {
+      worldToViewportCoordinates(this.renderer, this.camera, point, screenPosition);
+    }
+
+    if (
+      screenPosition.x < 0 ||
+      screenPosition.x > 1 ||
+      screenPosition.y < 0 ||
+      screenPosition.y > 1 ||
+      screenPosition.z < 0 ||
+      screenPosition.z > 1
+    ) {
       // Return null if point is outside camera frustum.
       return null;
     }
-    if (!normalize) {
-      const canvas = this.renderer.domElement;
-      p.x = Math.round(p.x * canvas.clientWidth);
-      p.y = Math.round(p.y * canvas.clientHeight);
-    }
-    return new THREE.Vector2(p.x, p.y);
+
+    return new THREE.Vector2(screenPosition.x, screenPosition.y);
   }
 
   /**
@@ -1022,13 +1030,13 @@ export class Cognite3DViewer {
 
     this.renderer.setSize(width, height);
     this.renderer.render(this.scene, screenshotCamera);
-    this._revealManager.render(screenshotCamera);
+    this.revealManager.render(screenshotCamera);
     const url = this.renderer.domElement.toDataURL();
 
     this.renderer.setSize(originalWidth, originalHeight);
     this.renderer.render(this.scene, this.camera);
 
-    this.forceRerender();
+    this.requestRedraw();
 
     return url;
   }
@@ -1239,15 +1247,15 @@ export class Cognite3DViewer {
       }
       this.controls.update(this.clock.getDelta());
       renderController.update();
-      this._revealManager.update(this.camera);
+      this.revealManager.update(this.camera);
 
-      if (renderController.needsRedraw || this._revealManager.needsRedraw || this._slicingNeedsUpdate) {
+      if (renderController.needsRedraw || this.revealManager.needsRedraw || this._slicingNeedsUpdate) {
         const frameNumber = this.renderer.info.render.frame;
         const start = Date.now();
         this.updateCameraNearAndFar(this.camera);
-        this._revealManager.render(this.camera);
+        this.revealManager.render(this.camera);
         renderController.clearNeedsRedraw();
-        this._revealManager.resetRedraw();
+        this.revealManager.resetRedraw();
         this._slicingNeedsUpdate = false;
         const renderTime = Date.now() - start;
 

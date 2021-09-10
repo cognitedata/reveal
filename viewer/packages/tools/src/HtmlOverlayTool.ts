@@ -3,10 +3,9 @@
  */
 
 import * as THREE from 'three';
-import { Cognite3DViewer } from '../public/migration/Cognite3DViewer';
-import { DisposedDelegate, SceneRenderedDelegate } from '../public/types';
+import { Cognite3DViewer, DisposedDelegate, SceneRenderedDelegate } from '@reveal/core';
+import { worldToViewportCoordinates } from '@reveal/core/utilities';
 
-import { worldToViewport } from '../utilities/worldToViewport';
 import { Cognite3DViewerToolBase } from './Cognite3DViewerToolBase';
 
 export type HtmlOverlayPositionUpdatedDelegate = (
@@ -196,7 +195,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
 
       const insideCameraPlanes =
         nearPlane.distanceToPoint(position3D) >= 0.0 && farPlane.distanceToPoint(position3D) <= 0.0;
-      const { x, y } = worldToViewport(renderer, camera, position3D);
+      const { x, y } = worldToViewportCoordinates(renderer, camera, position3D);
 
       if (insideCameraPlanes) {
         htmlElement.style.visibility = 'visible';

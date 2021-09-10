@@ -5,26 +5,30 @@
 import * as THREE from 'three';
 
 import { HtmlOverlayOptions, HtmlOverlayTool } from './HtmlOverlayTool';
-import { Cognite3DViewer } from '../public/migration/Cognite3DViewer';
+
+import { Cognite3DViewer } from '@reveal/core';
 import { CogniteClient } from '@cognite/sdk';
-import { SectorCuller } from '../internals';
 import { createGlContext } from '../../../test-utilities';
 
 describe('HtmlOverlayTool', () => {
   let canvasContainer: HTMLElement;
   let viewer: Cognite3DViewer;
   let camera: THREE.PerspectiveCamera;
-
-  const sdk = new CogniteClient({ appId: 'cognite.reveal.unittest' });
-  const context = createGlContext(64, 64, { preserveDrawingBuffer: true });
-  const renderer = new THREE.WebGLRenderer({ context });
-  const _sectorCuller: SectorCuller = {
-    determineSectors: jest.fn(),
-    filterSectorsToLoad: jest.fn(),
-    dispose: jest.fn()
-  };
+  let renderer: THREE.WebGLRenderer;
 
   beforeEach(() => {
+    const sdk = new CogniteClient({ appId: 'cognite.reveal.unittest' });
+    const context = createGlContext(64, 64, { preserveDrawingBuffer: true });
+    const canvas = document.createElement('canvas');
+    const getBoundingClientRectSpy = jest.spyOn(canvas, 'getBoundingClientRect');
+    const rect: DOMRect = {
+      width: 128,
+      height: 128
+    } as DOMRect;
+    getBoundingClientRectSpy.mockReturnValue(rect);
+
+    renderer = new THREE.WebGLRenderer({ context, canvas });
+
     canvasContainer = document.createElement('div');
     canvasContainer.style.width = '640px';
     canvasContainer.style.height = '480px';
@@ -37,8 +41,10 @@ describe('HtmlOverlayTool', () => {
     camera.updateProjectionMatrix();
     camera.updateMatrix();
 
-    viewer = new Cognite3DViewer({ domElement: canvasContainer, sdk, renderer, _sectorCuller });
+    viewer = new Cognite3DViewer({ domElement: canvasContainer, sdk, renderer });
     jest.spyOn(viewer, 'getCamera').mockReturnValue(camera);
+
+    renderer.setSize(128, 128);
   });
 
   test('add() only accepts absolute position', () => {
@@ -64,7 +70,7 @@ describe('HtmlOverlayTool', () => {
     expect(() => helper.add(htmlElement, position)).not.toThrow();
   });
 
-  test('forceUpdate() places overlays correctly', () => {
+  test('add() places overlays correctly', () => {
     // Arrange
     const helper = new HtmlOverlayTool(viewer);
     const htmlElement = document.createElement('div');

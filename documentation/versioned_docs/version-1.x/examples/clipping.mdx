@@ -47,7 +47,7 @@ viewer.setSlicingPlanes([plane]);
 
 Planes can be manipulated runtime and effects will have an effect in the viewer. Note however that rendering must be
 triggered after updating the plane before the change will have a visual effect. This can be done using
-`Cognite3DViewer.forceRerender()`.
+`Cognite3DViewer.requestRedraw()`.
 
 Below is an example animates a slicing plane by ping-ponging the plane in the vertical direction.
 
@@ -68,7 +68,7 @@ setInterval(() => {
   point.y = bbox.max.y - (bbox.max.y - bbox.min.y) / 2.0 * s;
   plane.setFromNormalAndCoplanarPoint(orientation, point);
 
-  viewer.forceRerender();
+  viewer.requestRedraw();
 }, 1000 / 60);
 ```
 
@@ -113,7 +113,7 @@ controls.addEventListener('drag', () => {
   draggerMesh.position.set(initialDragPosition.x, draggerMesh.position.y, initialDragPosition.z);
   // Update slicing plane
   plane.setFromNormalAndCoplanarPoint(new THREE.Vector3(0, -1, 0), draggerMesh.position);
-  viewer.forceRerender();
+  viewer.requestRedraw();
 });
 controls.addEventListener('dragstart', () => {
   draggerMaterial.color = new THREE.Color('gray');
