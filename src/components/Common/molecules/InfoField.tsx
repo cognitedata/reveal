@@ -1,22 +1,40 @@
 import React from 'react';
-import { Card } from 'antd';
-import { Icon } from '@cognite/cogs.js';
+import styled from 'styled-components';
+import { Colors, Icon } from '@cognite/cogs.js';
 
-const bodyStyle = {
-  padding: '12px',
-  display: 'flex',
-  alignItems: 'center',
-};
+const Wrapper = styled.div.attrs(
+  ({ style }: { style: React.CSSProperties }) => ({ style })
+)`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 12px 16px;
+  background-color: ${Colors['midblue-7'].hex()};
+  color: ${Colors['midblue-2'].hex()};
+  border-radius: 4px;
+`;
 
 type InfoFieldProps = {
-  content: React.ReactNode;
+  children: React.ReactNode;
+  style?: React.CSSProperties;
 };
+
 export function InfoField(props: InfoFieldProps) {
-  const { content } = props;
+  const { children, style = {} } = props;
   return (
-    <Card bodyStyle={bodyStyle}>
-      <Icon type="Info" style={{ marginRight: '12px' }} />
-      {content}
-    </Card>
+    <Wrapper style={style}>
+      <Icon
+        type="Info"
+        size={16}
+        style={{
+          marginRight: '16px',
+          minWidth: '16px',
+          minHeight: '16px',
+          width: '16px',
+          height: '16px',
+        }}
+      />
+      {children}
+    </Wrapper>
   );
 }

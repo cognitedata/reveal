@@ -10,14 +10,13 @@ import {
   InfoGrid,
   InfoCell,
   ResourceIcons,
-  useAnnotations,
 } from '@cognite/data-exploration';
-import { convertEventsToAnnotations } from '@cognite/annotations';
 import { createLink } from '@cognite/cdf-utilities';
 import {
   isFilePreviewable,
   readablePreviewableFileTypes,
 } from 'utils/mimeTypeUtils';
+import { useAnnotationsForFiles } from 'hooks';
 
 export const FileSmallPreview = ({ fileId }: { fileId: number }) => {
   const sdk = useSDK();
@@ -30,15 +29,12 @@ export const FileSmallPreview = ({ fileId }: { fileId: number }) => {
     id: fileId,
   });
 
-  const { data: eventAnnotations } = useAnnotations(fileId);
-  const annotations = convertEventsToAnnotations(eventAnnotations);
-
+  const { annotations } = useAnnotationsForFiles([fileId]);
   const canPreview = isFilePreviewable(file);
 
   if (!isFetched) {
     return <Loader />;
   }
-
   if (error) {
     return <ErrorFeedback error={error} />;
   }
@@ -89,7 +85,7 @@ export const FileSmallPreview = ({ fileId }: { fileId: number }) => {
             hideControls
             hideDownload
             hideSearch
-            annotations={annotations}
+            annotations={annotations[file.id]}
             pagination="small"
           />
         </Preview>

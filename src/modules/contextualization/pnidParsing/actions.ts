@@ -16,6 +16,7 @@ import {
   PnidsParsingJobSchema,
 } from 'modules/types';
 import { setJobId, workflowDiagramsSelector } from 'modules/workflows';
+import { getUniqueValuesArray } from 'utils/utils';
 import handleError from 'utils/handleError';
 import { PNID_METRICS, trackUsage } from 'utils/Metrics';
 import {
@@ -54,7 +55,7 @@ const createPendingAnnotations = async (
       text: annotation.text,
       boundingBox: verticesToBoundingBox(annotation.region.vertices),
       page: annotation.region.page,
-      items: annotation.entities.map((item) => ({
+      items: getUniqueValuesArray(annotation.entities).map((item) => ({
         id: item.id,
         resourceType: item.resourceType,
         externalId: item?.externalId,

@@ -1,9 +1,7 @@
 import { Asset, FileInfo } from '@cognite/sdk';
-import { Vertices } from 'modules/types';
+import { Vertices, BoundingBox } from 'modules/types';
 
-export const verticesToBoundingBox = (
-  vertices: Vertices
-): { xMin: number; yMin: number; xMax: number; yMax: number } => {
+export const verticesToBoundingBox = (vertices: Vertices): BoundingBox => {
   let xMin = 0;
   let yMin = 0;
   let yMax = 0;
@@ -16,6 +14,17 @@ export const verticesToBoundingBox = (
     yMax = vertices[2].y;
   }
   return { xMin, yMin, xMax, yMax };
+};
+
+export const boundingBoxToVertices = (boundingBox: BoundingBox): Vertices => {
+  const { xMin, xMax, yMin, yMax } = boundingBox;
+  const vertices: Vertices = [
+    { x: xMin, y: yMin },
+    { x: xMax, y: yMin },
+    { x: xMax, y: yMax },
+    { x: xMin, y: yMax },
+  ];
+  return vertices;
 };
 
 export const mapAssetsToEntities = (

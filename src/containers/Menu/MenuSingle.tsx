@@ -1,19 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   useReviewFiles,
   useConvertToSVG,
   useActiveWorkflow,
   isFileApproved,
+  useFileStatus,
 } from 'hooks';
+import { ModalSaveSVG } from 'containers';
 import { MenuButton, DropdownMenu } from 'components/Common';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
-import { useFileStatus } from '../hooks';
 
 // Context menu for a single diagram
 export const MenuSingle = ({ file }: { file: FileInfo }) => {
+  const [showModal, setShowModal] = useState<boolean>(false);
   const { workflowId } = useActiveWorkflow();
-  const { convertDiagramToSVG, isConverting } = useConvertToSVG(file.id);
+  const { isConverting } = useConvertToSVG([file.id]);
   const {
     onApproveDiagrams,
     onRejectDiagrams,
@@ -28,6 +30,8 @@ export const MenuSingle = ({ file }: { file: FileInfo }) => {
   const isLoading = isOnApprovedLoading || isOnRejectedLoading;
   const isApproved = isFileApproved(diagram);
   const isFailed = Boolean(didFileFail);
+
+  const onSaveSVGClick = () => setShowModal(true);
 
   return (
     <DropdownMenu column justify grow style={{ width: '200px' }}>
@@ -47,7 +51,7 @@ export const MenuSingle = ({ file }: { file: FileInfo }) => {
         aria-label="Button-Save-SVG-Single"
         icon={isConverting ? 'LoadingSpinner' : 'Save'}
         iconPlacement="left"
-        onClick={() => convertDiagramToSVG()}
+        onClick={onSaveSVGClick}
         disabled={isConverting || isFailed}
         style={{ width: '100%' }}
       >
@@ -64,6 +68,11 @@ export const MenuSingle = ({ file }: { file: FileInfo }) => {
       >
         Reject pending tags
       </MenuButton>
+      <ModalSaveSVG
+        diagramIds={[file.id]}
+        showModal={showModal}
+        setShowModal={setShowModal}
+      />
     </DropdownMenu>
   );
 };

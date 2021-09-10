@@ -1,35 +1,35 @@
-import React from 'react';
-import { Tooltip } from '@cognite/cogs.js';
-import { useReviewFiles, useActiveWorkflow } from 'hooks';
+import React, { useState } from 'react';
+import { useReviewFiles, useActiveWorkflow, useConvertToSVG } from 'hooks';
 import { useWorkflowDiagramsIds } from 'modules/workflows';
+import { ModalSaveSVG } from 'containers';
 import { MenuButton, DropdownMenu } from 'components/Common';
 
 // Context menu for all contextualized diagrams
 export const MenuAll = ({ canRejectAll }: { canRejectAll: boolean }) => {
   const { workflowId } = useActiveWorkflow();
   const diagramIds = useWorkflowDiagramsIds(workflowId, true, true);
+  const { isConverting } = useConvertToSVG(diagramIds);
+  const [showModal, setShowModal] = useState<boolean>(false);
   const { onRejectDiagrams, isOnRejectedLoading: isLoading } =
     useReviewFiles(diagramIds);
 
-  const onSaveAllClick = () => {};
+  const isDisabled = isConverting;
 
-  const isDisabled = true;
+  const onSaveSVGClick = () => setShowModal(true);
 
   return (
     <DropdownMenu column justify grow>
-      <Tooltip content="This option is temporarily disabled. You can still convert diagrams to SVG one by one.">
-        <MenuButton
-          type="ghost"
-          icon="Save"
-          aria-label="Button-Save-SVG-All"
-          iconPlacement="left"
-          onClick={onSaveAllClick}
-          disabled={isDisabled}
-          style={{ width: '100%', justifyContent: 'flex-start' }}
-        >
-          Save all as SVG
-        </MenuButton>
-      </Tooltip>
+      <MenuButton
+        type="ghost"
+        aria-label="Button-Save-SVG-All"
+        iconPlacement="left"
+        icon={isConverting ? 'LoadingSpinner' : 'Save'}
+        onClick={onSaveSVGClick}
+        disabled={isDisabled}
+        style={{ width: '100%', justifyContent: 'flex-start' }}
+      >
+        Save all as SVG
+      </MenuButton>
       <MenuButton
         type="ghost-danger"
         aria-label="Button-Reject-All"
@@ -41,6 +41,11 @@ export const MenuAll = ({ canRejectAll }: { canRejectAll: boolean }) => {
       >
         Reject all pending tags
       </MenuButton>
+      <ModalSaveSVG
+        diagramIds={diagramIds}
+        showModal={showModal}
+        setShowModal={setShowModal}
+      />
     </DropdownMenu>
   );
 };

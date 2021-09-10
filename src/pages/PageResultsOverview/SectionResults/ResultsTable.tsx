@@ -42,7 +42,7 @@ export default function ResultsTable(props: ResultsTableProps): JSX.Element {
   );
 
   const selectedDiagramsIds = useSelector(getSelectedDiagramsIds);
-  const { uploadJobs } = useSelector(getContextualizationJobs);
+  const { svgConvert } = useSelector(getContextualizationJobs);
   const { search } = history.location;
   const { page = 1 } = queryString.parse(search, { parseNumbers: true });
 
@@ -100,7 +100,7 @@ export default function ResultsTable(props: ResultsTableProps): JSX.Element {
     .filter((d: FileInfo) => Boolean(d))
     .map((d: FileInfo) => ({
       ...d,
-      uploadJob: uploadJobs[d.id],
+      uploadJob: svgConvert[d.id],
       progress: didFileFail(d.id),
       status: getDiagramStatus(d).type,
       svg: false,

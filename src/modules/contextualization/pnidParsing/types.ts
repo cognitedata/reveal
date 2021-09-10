@@ -49,6 +49,12 @@ export type Vertix = {
 };
 
 export type Vertices = [Vertix, Vertix, Vertix, Vertix]; // {"x":xMin, "y":"yMin"},{"x":xMax, "y": yMin}, {"x": xMax: "y":yMax}, {"x": xMin, "y": yMax}
+export type BoundingBox = {
+  xMin: number;
+  yMin: number;
+  xMax: number;
+  yMax: number;
+};
 
 export type RetrieveResultsResponseItem = {
   fileId: number;

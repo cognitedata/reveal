@@ -1,20 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { Divider } from 'antd';
-import { Button, Title, Badge, Colors } from '@cognite/cogs.js';
-import { RootState } from 'store';
-import { useCdfItem, usePermissions } from '@cognite/sdk-react-query-hooks';
+import { Button, Title, Badge, Colors, Dropdown } from '@cognite/cogs.js';
+import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { FileInfo } from '@cognite/sdk';
 import { useSteps, useActiveWorkflow } from 'hooks';
 import { WorkflowStep } from 'modules/workflows';
-import { startConvertFileToSvgJob } from 'modules/contextualization/uploadJobs';
 import { retrieveItemsById as retrieve } from 'modules/files';
+import { MenuSingle } from 'containers';
 import { Flex } from 'components/Common';
 import { ResourceSidebar } from 'containers/ResourceSidebar';
 import { ContextFileViewer as CogniteFileViewer } from 'components/CogniteFileViewer';
-import MissingPermissionFeedback from 'components/MissingPermissionFeedback';
-import { convertEventsToAnnotations } from '@cognite/annotations';
 import {
   ErrorFeedback,
   Loader,
@@ -23,7 +20,6 @@ import {
   Metadata,
   useRelatedResourceCounts,
   ResourceItem,
-  useAnnotations,
 } from '@cognite/data-exploration';
 import { PNID_METRICS, trackUsage } from 'utils/Metrics';
 import {
@@ -47,19 +43,15 @@ export default function PageFileOverview(props: Props) {
   const dispatch = useDispatch();
   const { step } = props;
   const { fileId } = useParams<{ fileId: string }>();
-  const { data: canEditFiles } = usePermissions('filesAcl', 'WRITE');
   const { goToPrevStep } = useSteps(step);
   const [activeTab, setActiveTab] = useState<FilePreviewTabType>('preview');
-  const [renderFeedback, setRenderFeedback] = useState(false);
   const [editMode, setEditMode] = useState<boolean>(false);
 
   useActiveWorkflow(step);
 
   const fileIdNumber = Number(fileId);
-
   if (!fileIdNumber) goToPrevStep();
 
-  const { data: annotations } = useAnnotations(fileIdNumber);
   const {
     data: fileInfo,
     isFetched,
@@ -68,9 +60,6 @@ export default function PageFileOverview(props: Props) {
   } = useCdfItem<FileInfo>('files', {
     id: fileIdNumber,
   });
-  const { jobStarted } = useSelector(
-    (state: RootState) => state.contextualization.uploadJobs[fileIdNumber] || {}
-  );
   const resourceDetails: ResourceItem = {
     type: 'file',
     id: fileIdNumber,
@@ -88,9 +77,6 @@ export default function PageFileOverview(props: Props) {
 
   return (
     <Wrapper>
-      {renderFeedback && (
-        <MissingPermissionFeedback key="filesAcl" acl="filesAcl" type="WRITE" />
-      )}
       <TitleRowWrapper>
         <Flex align justify>
           <Button
@@ -122,30 +108,13 @@ export default function PageFileOverview(props: Props) {
                   }}
                 />
                 <ClearTagsButton id={fileIdNumber} setEditMode={setEditMode} />
-                <Button
-                  style={{ marginRight: '0px', borderRadius: '8px' }}
-                  loading={jobStarted}
-                  onClick={() => {
-                    if (canEditFiles) {
-                      trackUsage(PNID_METRICS.fileViewer.convertToSvg, {
-                        fileId: fileIdNumber,
-                        annotationsCount: annotations.length,
-                      });
-                      if (annotations) {
-                        dispatch(
-                          startConvertFileToSvgJob(
-                            fileIdNumber,
-                            convertEventsToAnnotations(annotations)
-                          )
-                        );
-                      }
-                    } else {
-                      setRenderFeedback(true);
-                    }
-                  }}
-                >
-                  Create SVG
-                </Button>
+                <Dropdown content={<MenuSingle file={fileInfo} />}>
+                  <Button
+                    icon="MoreOverflowEllipsisHorizontal"
+                    aria-label="Button-More-All"
+                    type="secondary"
+                  />
+                </Dropdown>
               </>
             }
           />

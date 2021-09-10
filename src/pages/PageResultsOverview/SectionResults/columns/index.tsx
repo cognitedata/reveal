@@ -2,7 +2,6 @@ import React from 'react';
 import { Body } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
 import { ApiStatusCount } from 'modules/contextualization/pnidParsing';
-import { UploadJobState } from 'modules/contextualization/uploadJobs';
 import { stringCompare } from 'modules/contextualization/utils';
 import { Flex, LoadingSkeleton } from 'components/Common';
 import { StatusType } from 'components/Filters';
@@ -11,9 +10,9 @@ import InteractiveIcon from 'components/InteractiveIcon';
 import ColumnProgress from './ColumnProgress';
 import ColumnFileActions from './ColumnFileActions';
 import ColumnLinkedTo from './ColumnLinkedTo';
+import ColumnSVGStatus from './ColumnSVGStatus';
 
 export interface AdjustedFileInfo extends FileInfo {
-  uploadJob?: UploadJobState;
   progress?: keyof ApiStatusCount | 'idle';
   status?: StatusType;
   links?: number;
@@ -46,7 +45,7 @@ export const getColumns: any = (
       width: 150,
       sorter: (a: AdjustedFileInfo, b: AdjustedFileInfo) =>
         stringCompare(a?.status, b?.status),
-      render: (_: any, file: any) => (
+      render: (_: any, file: FileInfo) => (
         <LoadingSkeleton loading={showLoadingSkeleton}>
           <ColumnProgress file={file} workflowId={workflowId} />
         </LoadingSkeleton>
@@ -67,7 +66,7 @@ export const getColumns: any = (
       width: 150,
       sorter: (a: AdjustedFileInfo, b: AdjustedFileInfo) =>
         (a?.links ?? 0) - (b?.links ?? 0),
-      render: (_: any, file: any) => (
+      render: (_: any, file: FileInfo) => (
         <LoadingSkeleton loading={showLoadingSkeleton}>
           <ColumnLinkedTo fileId={file.id} workflowId={workflowId} />
         </LoadingSkeleton>
@@ -79,9 +78,9 @@ export const getColumns: any = (
       width: 120,
       sorter: (a: AdjustedFileInfo, b: AdjustedFileInfo) =>
         stringCompare(String(a?.svg), String(b?.svg)),
-      render: () => (
+      render: (_: any, file: FileInfo) => (
         <LoadingSkeleton loading={showLoadingSkeleton}>
-          <span>N/A</span>
+          <ColumnSVGStatus fileId={file.id} />
         </LoadingSkeleton>
       ),
     },

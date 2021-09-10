@@ -68,7 +68,7 @@ export const useReviewFiles = (fileIds: Array<number>) => {
     'files',
     fileIds.map((id) => ({ id }))
   );
-  const annotationsMap = useAnnotationsForFiles(fileIds);
+  const { annotations: annotationsMap } = useAnnotationsForFiles(fileIds);
 
   const onError = (error: any) => {
     handleError({ ...error });

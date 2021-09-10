@@ -21,7 +21,7 @@
     "babel-loader": "8.1.0"
   },
   "dependencies": {
-    "@cognite/annotations": "^1.0.5",
+    "@cognite/annotations": "^1.1.0",
     "@cognite/cdf-utilities": "^0.7.3",
     "@cognite/cogs.js": "^3.32.1",
     "@cognite/data-exploration": "0.8.5",

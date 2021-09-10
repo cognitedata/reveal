@@ -8,7 +8,6 @@ import {
 } from '@cognite/annotations';
 import uniqBy from 'lodash/uniqBy';
 import { useEffect, useState } from 'react';
-
 import sdk from 'sdk-singleton';
 
 export const useAnnotationsForFiles = (fileIds: number[]) => {
@@ -18,6 +17,7 @@ export const useAnnotationsForFiles = (fileIds: number[]) => {
     'files',
     mappedFileIds
   );
+
   const [annotations, setAnnotations] = useState<{
     [id: number]: CogniteAnnotation[];
   }>({});
@@ -55,5 +55,5 @@ export const useAnnotationsForFiles = (fileIds: number[]) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [files, filesFetched]);
 
-  return annotations;
+  return { annotations, isFetched: filesFetched };
 };

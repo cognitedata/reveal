@@ -87,11 +87,15 @@ export const PNID_METRICS = {
     configuration: 'configPage.configuration',
   },
   parsingJob: {
-    start: 'pasringJob.start',
-    end: 'pasringJob.end',
-    results: 'pasringJob.results',
+    start: 'parsingJob.start',
+    end: 'parsingJob.end',
+    results: 'parsingJob.results',
   },
-  convertingJob: 'convertingJob.time',
+  convertingJob: {
+    start: 'convertingJob.start',
+    end: 'convertingJob.end',
+    time: 'convertingJob.time',
+  },
   results: {
     convertToSvg: 'results.convertToSvg',
     linkToAssets: 'results.linkToAssets',

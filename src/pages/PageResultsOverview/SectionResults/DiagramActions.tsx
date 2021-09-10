@@ -1,14 +1,12 @@
 import React from 'react';
-
 import { useParams, useHistory } from 'react-router-dom';
 import { Button, Dropdown } from '@cognite/cogs.js';
+import { Tooltip } from 'antd';
 import { useWorkflowDiagramsIds, useWorkflowItems } from 'modules/workflows';
 import { diagramPreview } from 'routes/paths';
+import { MenuAll } from 'containers';
 import { useReviewFiles, useActiveWorkflow, isFilePending } from 'hooks';
-
-import { Tooltip } from 'antd';
 import { InfoWrapper } from './components';
-import { MenuAll } from './Menu';
 
 export default function DiagramActions() {
   const history = useHistory();

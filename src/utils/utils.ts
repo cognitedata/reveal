@@ -1,4 +1,5 @@
 import { ids } from 'cogs-variables';
+import isEqual from 'lodash/isEqual';
 
 // Use this getContainer for all antd components such as: dropdown, tooltip, popover, modals etc
 export const getContainer = () => {
@@ -25,3 +26,9 @@ export const mapArrayToObj = <T>(key: keyof T, items: T[]) => {
     {}
   );
 };
+
+export const getUniqueValuesArray = <T>(arr: T[]): T[] =>
+  arr.reduce((accl: T[], item: T) => {
+    if (!accl.find((newItem) => isEqual(item, newItem))) accl.push(item);
+    return accl;
+  }, [] as T[]);

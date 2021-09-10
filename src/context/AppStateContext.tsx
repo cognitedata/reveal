@@ -3,6 +3,7 @@ import { useLocalStorage } from '@cognite/cogs.js';
 import { LS_SAVED_SETTINGS } from 'stringConstants';
 import { ModelSelected, ResourceCount, JobStatus } from 'modules/types';
 
+export type PrefixType = 'custom' | 'original';
 export type AppStateContextType = {
   tenant: string;
   setTenant: (tenant: string) => void;
@@ -19,6 +20,10 @@ export type AppStateContextType = {
   setJobStarted: (jobStarted: boolean) => void;
   jobStatus: JobStatus;
   setJobStatus: (jobStatus: JobStatus) => void;
+  svgPrefix: string;
+  setSvgPrefix: (svgPrefix: string) => void;
+  prefixType: PrefixType;
+  setPrefixType: (prefixType: PrefixType) => void;
 };
 type AppStateType = { children: React.ReactNode };
 
@@ -39,6 +44,8 @@ export const AppStateProvider = ({ children }: AppStateType) => {
     () => savedSettings?.modelSelected ?? 'standard'
   );
   const [resourceCount, setResourceCount] = useState<ResourceCount>({});
+  const [prefixType, setPrefixType] = useState<PrefixType>('original');
+  const [svgPrefix, setSvgPrefix] = useState('Processed');
 
   return (
     <AppStateContext.Provider
@@ -58,6 +65,10 @@ export const AppStateProvider = ({ children }: AppStateType) => {
         setJobStarted,
         jobStatus,
         setJobStatus,
+        svgPrefix,
+        setSvgPrefix,
+        prefixType,
+        setPrefixType,
       }}
     >
       {children}

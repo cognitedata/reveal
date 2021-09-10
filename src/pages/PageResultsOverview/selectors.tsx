@@ -19,10 +19,10 @@ export const getPnidOptions = createSelector(
 export const getContextualizationJobs = createSelector(
   (state: RootState) => state.contextualization,
   (contextualization: any) => {
-    const { parsingJobs, uploadJobs } = contextualization;
+    const { parsingJobs, svgConvert } = contextualization;
     return {
       parsingJobs,
-      uploadJobs,
+      svgConvert,
     };
   }
 );

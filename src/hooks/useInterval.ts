@@ -1,5 +1,10 @@
 import { useRef, useEffect } from 'react';
 
+type Test = {
+  width?: number;
+  height: number;
+};
+
 export const useInterval = (callback: () => void, delay: number | null) => {
   const savedCallback = useRef(callback);
 
