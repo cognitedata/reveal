@@ -30,7 +30,7 @@
     "@microsoft/applicationinsights-web": "2.6.3",
     "@sentry/browser": "^6.6.0",
     "antd": "^4.16.5",
-    "axios": "^0.21.1",
+    "axios": "^0.21.2",
     "bluebird": "^3.7.2",
     "chart.js": "^2.9.4",
     "d3": "^6.2.0",
