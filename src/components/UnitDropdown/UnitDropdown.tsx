@@ -44,7 +44,7 @@ export const UnitDropdown = ({
         color: 'var(--cogs-danger)',
       }}
     >
-      Reset
+      Reset unit
     </Menu.Item>,
     ...Object.values(UnitTypes).map((unitType) => (
       <Menu.Item
