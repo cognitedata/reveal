@@ -9,3 +9,4 @@ export * from './CountTag';
 export * from './CollapsibleRadio';
 export * from './DoughnutChart';
 export * from './Select';
+export * from './Dropdown';

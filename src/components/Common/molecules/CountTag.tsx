@@ -23,7 +23,7 @@ export const CountTag = ({
   const Tag = () => (
     <StyledTag pending={pending}>
       <Icon type={iconForType[type] as AllIconTypes} />{' '}
-      {abbreviateNumber(value)}
+      <span style={{ marginLeft: '6px' }}>{abbreviateNumber(value)}</span>
     </StyledTag>
   );
 
@@ -40,9 +40,8 @@ const StyledTag = styled.span<{ pending: boolean }>`
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: center;
   padding: 4px 8px;
-  width: 63px;
-  height: 28px;
   background: ${({ pending }) =>
     pending ? Colors['midblue-8'].hex() : 'white'};
   border: 1px solid

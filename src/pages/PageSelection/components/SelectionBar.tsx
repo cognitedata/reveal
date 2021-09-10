@@ -3,11 +3,11 @@ import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import omit from 'lodash/omit';
 import { Spin } from 'antd';
-import { Button, Colors, Input } from '@cognite/cogs.js';
+import { Colors, Input } from '@cognite/cogs.js';
 import { PNID_METRICS, trackUsage } from 'utils/Metrics';
 import { ResourceType } from 'modules/sdk-builder/types';
 import { searchCountSelector } from 'pages/PageSelection/selectors';
-import { Flex } from 'components/Common';
+import { Flex, MenuButton } from 'components/Common';
 import {
   DataSetSelect,
   RootAssetSelect,
@@ -151,6 +151,12 @@ export default function SelectionBar(props: Props): JSX.Element {
 
   const selected = resourceCounts[type] ?? 0;
   const results = count ?? <Spin size="small" />;
+  const getSelectionButtonLabel = () => {
+    if (showSelected) return `Show all ${type}`;
+    if (selected) return `Show ${selected} ${type} selected`;
+    return `0 ${type} selected`;
+  };
+  const selectionButtonLabel = getSelectionButtonLabel();
 
   return (
     <Flex column>
@@ -188,15 +194,13 @@ export default function SelectionBar(props: Props): JSX.Element {
           />
         </InputRow>
         <Selected>
-          <Button
+          <MenuButton
             type="link"
-            disabled={!selected}
+            disabled={!selected && !showSelected}
             onClick={() => setShowSelected(!showSelected)}
           >
-            {showSelected
-              ? `Show all ${type}`
-              : `Show ${selected} ${type} selected`}
-          </Button>
+            {selectionButtonLabel}
+          </MenuButton>
         </Selected>
       </StyledFlex>
       <FilterBar row>
@@ -211,8 +215,11 @@ export default function SelectionBar(props: Props): JSX.Element {
           onQueryClear={onNameClear}
           onClearAll={() => updateFilter({ filter: {}, search: undefined })}
         />
+        <Results>
+          <span>{results}</span>
+          <span>results</span>
+        </Results>
       </FilterBar>
-      <Results>{results} results</Results>
     </Flex>
   );
 }
@@ -234,7 +241,14 @@ const Selected = styled.span`
 const Results = styled(Flex)`
   color: ${Colors['greyscale-grey6'].hex()};
   justify-content: flex-end;
+  align-items: center;
   margin-bottom: 20px;
+  white-space: nowrap;
+  height: 28px;
+
+  span {
+    margin: 0 2px;
+  }
 `;
 const FilterBar = styled(Flex)`
   justify-content: space-between;

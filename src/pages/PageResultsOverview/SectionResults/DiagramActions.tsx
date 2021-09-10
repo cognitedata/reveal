@@ -1,7 +1,8 @@
 import React from 'react';
 import { useParams, useHistory } from 'react-router-dom';
-import { Button, Dropdown } from '@cognite/cogs.js';
 import { Tooltip } from 'antd';
+import { Dropdown } from 'components/Common';
+import { Button } from '@cognite/cogs.js';
 import { useWorkflowDiagramsIds, useWorkflowItems } from 'modules/workflows';
 import { diagramPreview } from 'routes/paths';
 import { MenuAll } from 'containers';
@@ -51,13 +52,7 @@ export default function DiagramActions() {
       >
         Preview all
       </Button>
-      <Dropdown content={<MenuAll canRejectAll={!isApproveAllDisabled} />}>
-        <Button
-          icon="MoreOverflowEllipsisHorizontal"
-          aria-label="Button-More-All"
-          type="ghost"
-        />
-      </Dropdown>
+      <Dropdown content={<MenuAll canRejectAll={!isApproveAllDisabled} />} />
     </InfoWrapper>
   );
 }

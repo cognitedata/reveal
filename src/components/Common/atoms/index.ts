@@ -16,4 +16,3 @@ export * from './Disclosure';
 export * from './HugeButton';
 export * from './LoadingSkeleton';
 export * from './MenuButton';
-export * from './DropdownMenu';

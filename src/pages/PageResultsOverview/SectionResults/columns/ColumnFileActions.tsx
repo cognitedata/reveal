@@ -1,9 +1,9 @@
 import React from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import { message } from 'antd';
-import { Button, Dropdown, Tooltip } from '@cognite/cogs.js';
+import { Tooltip } from '@cognite/cogs.js';
+import { Flex, IconButton, Dropdown } from 'components/Common';
 import { MenuSingle } from 'containers';
-import { Flex, IconButton } from 'components/Common';
 import { diagramPreview } from 'routes/paths';
 import { useParsingJob } from 'modules/contextualization/pnidParsing/hooks';
 
@@ -11,6 +11,7 @@ type Props = { file: any };
 
 export default function ColumnFileActions({ file }: Props): JSX.Element {
   const history = useHistory();
+
   const { tenant, workflowId } = useParams<{
     tenant: string;
     workflowId: string;
@@ -68,15 +69,9 @@ export default function ColumnFileActions({ file }: Props): JSX.Element {
       </Tooltip>
       <Dropdown
         content={<MenuSingle file={file} />}
-        disabled={isButtonDisabled}
-      >
-        <Button
-          aria-label="Button-More"
-          icon="MoreOverflowEllipsisHorizontal"
-          type="ghost"
-          disabled={isButtonDisabled || isFileDisabled}
-        />
-      </Dropdown>
+        dropdownDisabled={isButtonDisabled}
+        buttonDisabled={isButtonDisabled || isFileDisabled}
+      />
     </Flex>
   );
 }

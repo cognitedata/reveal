@@ -1,6 +1,5 @@
 import React, { SyntheticEvent } from 'react';
 import styled from 'styled-components';
-import { Dropdown } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
 import { trackUsage, PNID_METRICS } from 'utils/Metrics';
 import { dateSorter, stringCompare } from 'modules/contextualization/utils';
@@ -8,6 +7,7 @@ import {
   Flex,
   IconButton,
   Popover,
+  Dropdown,
   DropdownMenu,
   MenuButton,
 } from 'components/Common';
@@ -167,14 +167,7 @@ export const getColumns = (
                 onRejectTags={() => onRejectTags(file)}
               />
             }
-          >
-            <IconButton
-              aria-label="Icon-Button"
-              icon="MoreOverflowEllipsisHorizontal"
-              type="ghost"
-              $square
-            />
-          </Dropdown>
+          />
         </SettingButtons>
       );
     },
