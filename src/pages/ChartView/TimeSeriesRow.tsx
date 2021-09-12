@@ -231,6 +231,7 @@ export default function TimeSeriesRow({
   };
 
   const updatePrefferedUnit = async (unitOption: any) => {
+    const currentInputUnit = timeseries.unit;
     const currentOutputUnit = timeseries.preferredUnit;
     const nextOutputUnit = unitOption?.value;
 
@@ -239,16 +240,20 @@ export default function TimeSeriesRow({
 
     const hasValidRange = typeof min === 'number' && typeof max === 'number';
 
+    const convertFromTo =
+      (inputUnit?: string, outputUnit?: string) => (value: number) =>
+        convertValue(value, inputUnit, outputUnit);
+
+    const convert = flow(
+      convertFromTo(currentOutputUnit, currentInputUnit),
+      convertFromTo(currentInputUnit, nextOutputUnit)
+    );
+
     /**
      * Convert current range to new unit
      * (since the input units are the same we can just convert between the output units)
      */
-    const range = hasValidRange
-      ? [
-          convertValue(min!, currentOutputUnit, nextOutputUnit),
-          convertValue(max!, currentOutputUnit, nextOutputUnit),
-        ]
-      : [];
+    const range = hasValidRange ? [convert(min!), convert(max!)] : [];
 
     /**
      * Update unit and corresponding range
