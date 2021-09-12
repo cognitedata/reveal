@@ -36,6 +36,10 @@ export const UnitDropdown = ({
     (conversion) => units.find((unitOption) => unitOption.value === conversion)
   );
 
+  const originalUnitLabel =
+    units.find((unitOption) => unitOption.value === originalUnit?.toLowerCase())
+      ?.label || originalUnit;
+
   const unitTypeMenuItems = [
     <Menu.Item
       key="reset-unit"
@@ -44,7 +48,7 @@ export const UnitDropdown = ({
         color: 'var(--cogs-danger)',
       }}
     >
-      Set to default ({originalUnit})
+      Set to default ({originalUnitLabel || 'none'})
     </Menu.Item>,
     ...Object.values(UnitTypes).map((unitType) => (
       <Menu.Item
