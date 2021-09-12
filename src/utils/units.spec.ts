@@ -74,6 +74,48 @@ describe('convertUnits', () => {
     ]);
   });
 
+  it('should convert units successfully (min, max)', () => {
+    const datapoints: DatapointAggregate[] = [
+      {
+        timestamp: new Date('2021-02-02T12:19:28.330Z'),
+        min: 1,
+        max: 1,
+      },
+      {
+        timestamp: new Date('2021-02-02T12:20:28.330Z'),
+        min: 2,
+        max: 2,
+      },
+      {
+        timestamp: new Date('2021-02-02T12:21:28.330Z'),
+        min: 3,
+        max: 3,
+      },
+    ];
+    const inputUnit = 'pa';
+    const outputUnit = 'bar';
+
+    const output = convertUnits(datapoints, inputUnit, outputUnit);
+
+    expect(output).toEqual([
+      {
+        timestamp: new Date('2021-02-02T12:19:28.330Z'),
+        min: 0.00001,
+        max: 0.00001,
+      },
+      {
+        timestamp: new Date('2021-02-02T12:20:28.330Z'),
+        min: 0.00002,
+        max: 0.00002,
+      },
+      {
+        timestamp: new Date('2021-02-02T12:21:28.330Z'),
+        min: 0.00003,
+        max: 0.00003,
+      },
+    ]);
+  });
+
   it('check all conversions', () => {
     // Helper wrapper to limit decimals
     const convertValueWith2Decimals = (
