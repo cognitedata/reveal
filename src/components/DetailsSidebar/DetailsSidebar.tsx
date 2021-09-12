@@ -14,6 +14,7 @@ import { useQuery } from 'react-query';
 import { ChartTimeSeries, ChartWorkflow } from 'reducers/charts/types';
 import { getCallResponse } from 'utils/backendApi';
 import { functionResponseKey } from 'utils/backendService';
+import { formatNumberForDisplay } from 'utils/numbers';
 import { convertValue, units } from 'utils/units';
 import {
   Sidebar,
@@ -183,10 +184,9 @@ const Statistics = ({
                   <Col span={14}>{label}</Col>
                   <Col span={10} style={{ textAlign: 'right' }}>
                     {value
-                      ? `${convertValue(
-                          value,
-                          unit,
-                          preferredUnit
+                      ? `${formatNumberForDisplay(
+                          convertValue(value, unit, preferredUnit),
+                          2
                         )} ${displayUnit}`
                       : '-'}
                   </Col>
@@ -207,10 +207,9 @@ const Statistics = ({
                   <Col span={14}>{label}</Col>
                   <Col span={10} style={{ textAlign: 'right' }}>
                     {value
-                      ? `${convertValue(
-                          value,
-                          unit,
-                          preferredUnit
+                      ? `${formatNumberForDisplay(
+                          convertValue(value, unit, preferredUnit),
+                          2
                         )} ${displayUnit}`
                       : '-'}
                   </Col>
