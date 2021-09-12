@@ -159,14 +159,14 @@ const UnitMenuHeader = styled.span`
 `;
 
 const UnitTypeContainer = styled.div`
-  width: 130px;
+  max-width: 170px;
   padding-right: 10px;
   overflow-y: scroll;
 `;
 
 const UnitContainer = styled.div`
   position: relative;
-  width: 90px;
+  max-width: 120px;
   padding: 0 10px;
   border-left: 1px solid var(--cogs-greyscale-grey3);
   overflow-y: scroll;
