@@ -217,13 +217,10 @@ export default function TimeSeriesRow({
       convertFromTo(nextInputUnit, currentOutputUnit)
     );
 
-    /**
-     * Convert range to new unit
-     */
     const range = hasValidRange ? [convert(min!), convert(max!)] : [];
 
     /**
-     * Update unit and corresponding range
+     * Update unit and corresponding converted range
      */
     update(id, {
       unit: unitOption.value,
@@ -250,14 +247,10 @@ export default function TimeSeriesRow({
       convertFromTo(currentInputUnit, nextOutputUnit)
     );
 
-    /**
-     * Convert current range to new unit
-     * (since the input units are the same we can just convert between the output units)
-     */
     const range = hasValidRange ? [convert(min!), convert(max!)] : [];
 
     /**
-     * Update unit and corresponding range
+     * Update unit and corresponding converted range
      */
     update(id, {
       preferredUnit: unitOption?.value,
@@ -273,9 +266,6 @@ export default function TimeSeriesRow({
     const max = timeseries.range?.[1];
     const hasValidRange = typeof min === 'number' && typeof max === 'number';
 
-    /**
-     * Convert range to new unit
-     */
     const range = hasValidRange
       ? [
           convertValue(min!, currentOutputUnit, currentInputUnit),
@@ -284,7 +274,7 @@ export default function TimeSeriesRow({
       : [];
 
     /**
-     * Update units and corresponding range
+     * Update units and corresponding converted range
      */
     update(id, {
       unit: originalUnit,
