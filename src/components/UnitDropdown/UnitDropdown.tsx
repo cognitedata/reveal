@@ -141,7 +141,7 @@ export const UnitDropdown = ({
         iconPlacement="right"
         style={{ height: 28 }}
       >
-        {preferredUnitOption?.label || preferredUnit}
+        {preferredUnitOption?.label || preferredUnit || '-'}
         {preferredUnit !== originalUnit && ' *'}
       </Button>
     </Dropdown>
