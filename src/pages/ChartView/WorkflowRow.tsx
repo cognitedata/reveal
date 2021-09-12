@@ -26,7 +26,8 @@ import { AppearanceDropdown } from 'components/AppearanceDropdown';
 import { UnitDropdown } from 'components/UnitDropdown';
 import { getHash } from 'utils/hash';
 import { DraggableProvided } from 'react-beautiful-dnd';
-import { isEqual } from 'lodash';
+import { flow, isEqual } from 'lodash';
+import { convertValue } from 'utils/units';
 import {
   SourceItem,
   SourceSquare,
@@ -197,21 +198,86 @@ export default function WorkflowRow({
   const remove = () => mutate((oldChart) => removeWorkflow(oldChart!, id));
 
   const updateUnit = (unitOption: any) => {
+    const currentInputUnit = workflow.unit;
+    const currentOutputUnit = workflow.preferredUnit;
+    const nextInputUnit = unitOption?.value;
+
+    const min = workflow.range?.[0];
+    const max = workflow.range?.[1];
+    const hasValidRange = typeof min === 'number' && typeof max === 'number';
+
+    const convertFromTo =
+      (inputUnit?: string, outputUnit?: string) => (value: number) =>
+        convertValue(value, inputUnit, outputUnit);
+
+    const convert = flow(
+      convertFromTo(currentOutputUnit, currentInputUnit),
+      convertFromTo(nextInputUnit, currentOutputUnit)
+    );
+
+    const range = hasValidRange ? [convert(min!), convert(max!)] : [];
+
+    /**
+     * Update unit and corresponding converted range
+     */
     update(id, {
       unit: unitOption.value,
+      range,
     });
   };
 
   const updatePrefferedUnit = (unitOption: any) => {
+    const currentInputUnit = workflow.unit;
+    const currentOutputUnit = workflow.preferredUnit;
+    const nextOutputUnit = unitOption?.value;
+
+    const min = workflow.range?.[0];
+    const max = workflow.range?.[1];
+
+    const hasValidRange = typeof min === 'number' && typeof max === 'number';
+
+    const convertFromTo =
+      (inputUnit?: string, outputUnit?: string) => (value: number) =>
+        convertValue(value, inputUnit, outputUnit);
+
+    const convert = flow(
+      convertFromTo(currentOutputUnit, currentInputUnit),
+      convertFromTo(currentInputUnit, nextOutputUnit)
+    );
+
+    const range = hasValidRange ? [convert(min!), convert(max!)] : [];
+
+    /**
+     * Update unit and corresponding converted range
+     */
     update(id, {
       preferredUnit: unitOption?.value,
+      range,
     });
   };
 
   const resetUnit = async () => {
+    const currentInputUnit = workflow.unit;
+    const currentOutputUnit = workflow.preferredUnit;
+
+    const min = workflow.range?.[0];
+    const max = workflow.range?.[1];
+    const hasValidRange = typeof min === 'number' && typeof max === 'number';
+
+    const range = hasValidRange
+      ? [
+          convertValue(min!, currentOutputUnit, currentInputUnit),
+          convertValue(max!, currentOutputUnit, currentInputUnit),
+        ]
+      : [];
+
+    /**
+     * Update units and corresponding converted range
+     */
     update(id, {
       unit: '',
       preferredUnit: '',
+      range,
     });
   };
 
