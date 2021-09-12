@@ -44,7 +44,7 @@ export const UnitDropdown = ({
         color: 'var(--cogs-danger)',
       }}
     >
-      Set to default
+      Set to default ({originalUnit})
     </Menu.Item>,
     ...Object.values(UnitTypes).map((unitType) => (
       <Menu.Item
