@@ -50,9 +50,10 @@ export function calculateSeriesData(
       .map((t, i) => ({
         enabled: t.enabled,
         range: t.range,
-        unit: units.find(
-          (unitOption) => unitOption.value === t.preferredUnit?.toLowerCase()
-        )?.label,
+        unit:
+          units.find(
+            (unitOption) => unitOption.value === t.preferredUnit?.toLowerCase()
+          )?.label || t.preferredUnit,
         series: [
           {
             ...t,
