@@ -111,7 +111,7 @@ export const transformSimpleCalcResult = (
     value?: number[];
     timestamp?: number[];
   } = {}
-) => {
+): DoubleDatapoint[] => {
   const { value = [], timestamp = [] } = result || {};
 
   const output =
@@ -120,9 +120,9 @@ export const transformSimpleCalcResult = (
           value: v,
           timestamp: new Date(t),
         }))
-      : ([] as DoubleDatapoint[]);
+      : [];
 
-  return output as DoubleDatapoint[];
+  return output;
 };
 
 export async function getFunctionResponseWhenDone(
