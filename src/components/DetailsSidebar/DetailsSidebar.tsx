@@ -17,16 +17,17 @@ import { useQuery } from 'react-query';
 import { useDebounce } from 'use-debounce';
 import { useRecoilState } from 'recoil';
 import {
+  FunctionCallStatus,
   ChartTimeSeries,
   ChartWorkflow,
-  FunctionCallStatus,
 } from 'reducers/charts/types';
 import { getCallResponse } from 'utils/backendApi';
-import { functionResponseKey, useCallFunction } from 'utils/backendService';
-import { convertValue } from 'utils/units';
+import { useCallFunction, functionResponseKey } from 'utils/backendService';
+import { convertValue, units } from 'utils/units';
 import { usePrevious } from 'hooks/usePrevious';
 import { CogniteClient } from '@cognite/sdk';
 import * as backendApi from 'utils/backendApi';
+import { roundToSignificantDigits } from 'utils/axis';
 import {
   Sidebar,
   TopContainer,
@@ -217,6 +218,12 @@ const Statistics = ({
   const statisticsForSource = statistics[0];
   const unit = sourceItem?.unit;
   const preferredUnit = sourceItem?.preferredUnit;
+  const displayUnit =
+    (
+      units.find(
+        (unitOption) => unitOption.value === preferredUnit?.toLowerCase()
+      ) || {}
+    ).label || preferredUnit;
 
   const { mutate: callFunction } = useCallFunction('individual_calc-master');
   const memoizedCallFunction = useCallback(callFunction, [callFunction]);
@@ -311,8 +318,8 @@ const Statistics = ({
           <div>
             <div>
               <FunctionCall
-                id={statisticsCall.functionId}
-                callId={statisticsCall.callId}
+                id={statisticsCall?.functionId}
+                callId={statisticsCall?.callId}
                 renderLoading={() => renderStatusIcon('Running')}
                 renderCall={({ status }) => renderStatusIcon(status)}
               />
@@ -338,7 +345,12 @@ const Statistics = ({
                 <Row className="ant-list-item">
                   <Col span={14}>{label}</Col>
                   <Col span={10} style={{ textAlign: 'right' }}>
-                    {value ? convertValue(value, unit, preferredUnit) : '-'}
+                    {value
+                      ? `${roundToSignificantDigits(
+                          convertValue(value, unit, preferredUnit),
+                          3
+                        )} ${displayUnit}`
+                      : '-'}
                   </Col>
                 </Row>
               )}
@@ -356,7 +368,12 @@ const Statistics = ({
                 <Row className="ant-list-item">
                   <Col span={14}>{label}</Col>
                   <Col span={10} style={{ textAlign: 'right' }}>
-                    {value ? convertValue(value, unit, preferredUnit) : '-'}
+                    {value
+                      ? `${roundToSignificantDigits(
+                          convertValue(value, unit, preferredUnit),
+                          3
+                        )} ${displayUnit}`
+                      : '-'}
                   </Col>
                 </Row>
               )}

@@ -9,6 +9,7 @@ type UnitDropdownProps = {
   preferredUnit?: string;
   onOverrideUnitClick: (_: any) => void;
   onConversionUnitClick: (_: any) => void;
+  onResetUnitClick: () => void;
 };
 
 export const UnitDropdown = ({
@@ -17,6 +18,7 @@ export const UnitDropdown = ({
   preferredUnit,
   onOverrideUnitClick,
   onConversionUnitClick,
+  onResetUnitClick,
 }: UnitDropdownProps) => {
   const inputUnitOption = units.find(
     (unitOption) => unitOption.value === unit?.toLowerCase()
@@ -34,23 +36,38 @@ export const UnitDropdown = ({
     (conversion) => units.find((unitOption) => unitOption.value === conversion)
   );
 
-  const unitTypeMenuItems = Object.values(UnitTypes).map((unitType) => (
+  const originalUnitLabel =
+    units.find((unitOption) => unitOption.value === originalUnit?.toLowerCase())
+      ?.label || originalUnit;
+
+  const unitTypeMenuItems = [
     <Menu.Item
-      key={unitType}
-      onClick={() => setSelectedUnitType(unitType)}
-      style={
-        selectedUnitType === unitType
-          ? {
-              color: 'var(--cogs-midblue-3)',
-              backgroundColor: 'var(--cogs-midblue-6)',
-              borderRadius: 3,
-            }
-          : {}
-      }
+      key="reset-unit"
+      onClick={() => onResetUnitClick()}
+      style={{
+        color: 'var(--cogs-danger)',
+      }}
     >
-      {unitType}
-    </Menu.Item>
-  ));
+      Set to default ({originalUnitLabel || 'none'})
+    </Menu.Item>,
+    ...Object.values(UnitTypes).map((unitType) => (
+      <Menu.Item
+        key={unitType}
+        onClick={() => setSelectedUnitType(unitType)}
+        style={
+          selectedUnitType === unitType
+            ? {
+                color: 'var(--cogs-midblue-3)',
+                backgroundColor: 'var(--cogs-midblue-6)',
+                borderRadius: 3,
+              }
+            : {}
+        }
+      >
+        {unitType}
+      </Menu.Item>
+    )),
+  ];
 
   const unitOverrideMenuItems = units
     .filter((unitOption) => unitOption.type === selectedUnitType)
@@ -124,8 +141,8 @@ export const UnitDropdown = ({
         iconPlacement="right"
         style={{ height: 28 }}
       >
-        {preferredUnitOption?.label}
-        {inputUnitOption?.value !== originalUnit?.toLowerCase() && ' *'}
+        {preferredUnitOption?.label || preferredUnit || '-'}
+        {preferredUnit !== originalUnit && ' *'}
       </Button>
     </Dropdown>
   );
@@ -146,14 +163,14 @@ const UnitMenuHeader = styled.span`
 `;
 
 const UnitTypeContainer = styled.div`
-  width: 130px;
+  max-width: 170px;
   padding-right: 10px;
   overflow-y: scroll;
 `;
 
 const UnitContainer = styled.div`
   position: relative;
-  width: 90px;
+  max-width: 120px;
   padding: 0 10px;
   border-left: 1px solid var(--cogs-greyscale-grey3);
   overflow-y: scroll;

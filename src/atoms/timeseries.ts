@@ -24,24 +24,35 @@ export const timeseriesSummaryById = selectorFamily({
         return undefined;
       }
 
-      const min = Math.min(
-        ...ts.datapoints.map((datapoint) => datapoint.min || Infinity)
-      );
+      const min = ts.datapoints.length
+        ? Math.min(
+            ...ts.datapoints.map((datapoint) =>
+              typeof datapoint.min === 'number' ? datapoint.min : NaN
+            )
+          )
+        : NaN;
 
-      const max = Math.max(
-        ...ts.datapoints.map((datapoint) => datapoint.max || -Infinity)
-      );
+      const max = ts.datapoints.length
+        ? Math.max(
+            ...ts.datapoints.map((datapoint) =>
+              typeof datapoint.max === 'number' ? datapoint.max : NaN
+            )
+          )
+        : NaN;
 
-      const mean =
-        ts.datapoints
-          .map((datapoint) => datapoint.average || 0)
-          .reduce((total, average) => total + average, 0) /
-        ts.datapoints.length;
+      const mean = ts.datapoints.length
+        ? ts.datapoints
+            .map((datapoint) => datapoint.average || 0)
+            .reduce((total, average) => total + average, 0) /
+          ts.datapoints.length
+        : NaN;
 
-      return {
-        min,
-        max,
-        mean,
+      const result = {
+        min: Number.isNaN(min) ? undefined : min,
+        max: Number.isNaN(max) ? undefined : max,
+        mean: Number.isNaN(mean) ? undefined : mean,
       };
+
+      return result;
     },
 });

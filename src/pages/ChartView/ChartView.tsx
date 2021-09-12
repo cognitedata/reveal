@@ -198,6 +198,8 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
       nodes: [],
       connections: [],
       createdAt: Date.now(),
+      unit: '',
+      preferredUnit: '',
     } as ChartWorkflow;
 
     setChart((oldChart) => addWorkflow(oldChart!, newWorkflow));

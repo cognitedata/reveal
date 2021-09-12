@@ -3,7 +3,6 @@
 import { omit } from 'lodash';
 import { nanoid } from 'nanoid';
 import { Chart, StorableNode } from 'reducers/charts/types';
-import { FLOAT_NUMBER_PATTERN } from './constants';
 
 export type DSPFunction = {
   category: string;
@@ -108,10 +107,11 @@ export function transformParamInput(
       return value === '' ? '' : Number(value);
     case DSPFunctionParameterType.float:
       // eslint-disable-next-line
-      const match = value.match(FLOAT_NUMBER_PATTERN);
-      // eslint-disable-next-line
-      const parsedValue = match && match[0] ? match[0] : parseFloat(value);
-      return value === '' ? value : parsedValue;
+      let parsedValue = null;
+      if (value) {
+        parsedValue = parseFloat(value);
+      }
+      return parsedValue && !Number.isNaN(parsedValue) ? parsedValue : value;
     case DSPFunctionParameterType.string:
       return value;
     default:

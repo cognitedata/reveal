@@ -11,7 +11,10 @@ import {
   getFunctionResponseWhenDone,
   transformSimpleCalcResult,
 } from 'utils/backendService';
-import { updateSourceAxisForChart } from 'utils/charts';
+import {
+  CHART_POINTS_PER_SERIES,
+  updateSourceAxisForChart,
+} from 'utils/charts';
 import { trackUsage } from 'utils/metrics';
 import { useDebouncedCallback, useDebounce } from 'use-debounce';
 import { useRecoilState } from 'recoil';
@@ -67,7 +70,7 @@ const PlotlyChartComponent = ({
   const [isAllowedToUpdate, setIsAllowedToUpdate] = useState(true);
   const sdk = useSDK();
   const containerRef = useRef<HTMLDivElement>(null);
-  const pointsPerSeries = isPreview ? 100 : 1000;
+  const pointsPerSeries = isPreview ? 100 : CHART_POINTS_PER_SERIES;
   const [dragmode, setDragmode] = useState<'zoom' | 'pan'>('pan');
   const [yAxisLocked, setYAxisLocked] = useState<boolean>(true);
 

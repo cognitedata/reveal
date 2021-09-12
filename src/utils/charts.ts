@@ -11,6 +11,8 @@ import {
 import { getEntryColor } from './colors';
 import { convertTsToWorkFlow } from './timeseries';
 
+export const CHART_POINTS_PER_SERIES = 1000;
+
 export function duplicate(chart: Chart, login: UserInfo): Chart {
   const id = nanoid();
   return {
@@ -159,10 +161,10 @@ export function covertTSToChartTS(
     name: ts.name || ts.externalId || ts.id.toString(),
     tsId: ts.id,
     tsExternalId: ts.externalId,
-    unit: ts.unit || '*',
+    unit: ts.unit || '',
     type: 'timeseries',
-    originalUnit: ts.unit || '*',
-    preferredUnit: ts.unit || '*',
+    originalUnit: ts.unit || '',
+    preferredUnit: ts.unit || '',
     color: getEntryColor(chartId, ts.id.toString()),
     lineWeight: 1,
     lineStyle: 'solid',

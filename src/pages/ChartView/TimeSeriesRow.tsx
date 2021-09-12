@@ -1,16 +1,6 @@
 import { useState } from 'react';
-import dayjs from 'dayjs';
-import { useIsFetching, useQueryClient } from 'react-query';
 import { Chart, ChartTimeSeries } from 'reducers/charts/types';
-import {
-  AllIconTypes,
-  Button,
-  Dropdown,
-  Icon,
-  Tooltip,
-  Popconfirm,
-} from '@cognite/cogs.js';
-import { calculateGranularity } from 'utils/timeseries';
+import { Button, Dropdown, Tooltip, Popconfirm } from '@cognite/cogs.js';
 import { removeTimeseries, updateTimeseries } from 'utils/charts';
 import { useLinkedAsset } from 'hooks/api';
 import EditableText from 'components/EditableText';
@@ -18,12 +8,12 @@ import { AppearanceDropdown } from 'components/AppearanceDropdown';
 import { PnidButton } from 'components/SearchResultTable/PnidButton';
 import { UnitDropdown } from 'components/UnitDropdown';
 import { trackUsage } from 'utils/metrics';
-import { useSDK } from '@cognite/sdk-provider';
-import { calculateDefaultYAxis, roundToSignificantDigits } from 'utils/axis';
+import { roundToSignificantDigits } from 'utils/axis';
 import { convertValue } from 'utils/units';
 import { DraggableProvided } from 'react-beautiful-dnd';
 import { useRecoilValue } from 'recoil';
 import { timeseriesSummaryById } from 'atoms/timeseries';
+import flow from 'lodash/flow';
 import {
   SourceItem,
   SourceCircle,
@@ -32,64 +22,6 @@ import {
   SourceDescription,
   SourceTag,
 } from './elements';
-
-type LoadingProps = {
-  tsExternalId?: string;
-  dateFrom: string;
-  dateTo: string;
-};
-
-const LoadingFeedback = ({ tsExternalId, dateFrom, dateTo }: LoadingProps) => {
-  const queryCache = useQueryClient();
-  const cacheKey = [
-    'timeseries',
-    {
-      items: [{ externalId: tsExternalId }],
-      start: new Date(dateFrom),
-      end: new Date(dateTo),
-      limit: 1000,
-      aggregates: ['average'],
-      granularity: calculateGranularity(
-        [new Date(dateFrom).getTime(), new Date(dateTo).getTime()],
-        1000
-      ),
-    },
-  ];
-  const queryState = queryCache.getQueryState(cacheKey);
-  const isFetching = useIsFetching(cacheKey);
-
-  const getStatus = (): AllIconTypes | undefined => {
-    if (isFetching) {
-      return 'Loading';
-    }
-    switch (queryState?.status) {
-      case 'error':
-        return 'Close';
-      case 'success':
-        return 'Check';
-      default:
-        return undefined;
-    }
-  };
-  const status = getStatus();
-  const updated = queryState?.errorUpdatedAt || queryState?.dataUpdatedAt;
-
-  if (!status) {
-    return null;
-  }
-
-  if (updated) {
-    return (
-      <Tooltip
-        placement="right"
-        content={`Updated ${dayjs(updated).format('YYYY-MM-DD hh:mm Z')}`}
-      >
-        <Icon style={{ marginRight: 10 }} type={status} />
-      </Tooltip>
-    );
-  }
-  return <Icon style={{ marginRight: 10 }} type={status} />;
-};
 
 type Props = {
   mutate: (update: (c: Chart | undefined) => Chart) => void;
@@ -108,7 +40,6 @@ type Props = {
 };
 export default function TimeSeriesRow({
   mutate,
-  chart,
   timeseries,
   onRowClick = () => {},
   onInfoClick = () => {},
@@ -119,8 +50,6 @@ export default function TimeSeriesRow({
   draggable = false,
   provided = undefined,
 }: Props) {
-  const sdk = useSDK();
-
   const {
     id,
     description,
@@ -134,7 +63,6 @@ export default function TimeSeriesRow({
   } = timeseries;
   const [isEditingName, setIsEditingName] = useState<boolean>(false);
 
-  // Increasing this will cause a fresh render where the dropdown is closed
   const update = (_tsId: string, diff: Partial<ChartTimeSeries>) =>
     mutate((oldChart) => ({
       ...oldChart!,
@@ -154,13 +82,28 @@ export default function TimeSeriesRow({
     mutate((oldChart) => updateTimeseries(oldChart!, id, diff));
 
   const updateUnit = async (unitOption: any) => {
-    const range = await calculateDefaultYAxis({
-      chart,
-      sdk,
-      timeSeriesExternalId: timeseries.tsExternalId || '',
-      inputUnit: unitOption?.value,
-      outputUnit: preferredUnit,
-    });
+    const currentInputUnit = timeseries.unit;
+    const currentOutputUnit = timeseries.preferredUnit;
+    const nextInputUnit = unitOption?.value;
+
+    const min = timeseries.range?.[0];
+    const max = timeseries.range?.[1];
+    const hasValidRange = typeof min === 'number' && typeof max === 'number';
+
+    const convertFromTo =
+      (inputUnit?: string, outputUnit?: string) => (value: number) =>
+        convertValue(value, inputUnit, outputUnit);
+
+    const convert = flow(
+      convertFromTo(currentOutputUnit, currentInputUnit),
+      convertFromTo(nextInputUnit, currentOutputUnit)
+    );
+
+    const range = hasValidRange ? [convert(min!), convert(max!)] : [];
+
+    /**
+     * Update unit and corresponding converted range
+     */
     update(id, {
       unit: unitOption.value,
       range,
@@ -168,15 +111,56 @@ export default function TimeSeriesRow({
   };
 
   const updatePrefferedUnit = async (unitOption: any) => {
-    const range = await calculateDefaultYAxis({
-      chart,
-      sdk,
-      timeSeriesExternalId: timeseries.tsExternalId || '',
-      inputUnit: unit,
-      outputUnit: unitOption?.value,
-    });
+    const currentInputUnit = timeseries.unit;
+    const currentOutputUnit = timeseries.preferredUnit;
+    const nextOutputUnit = unitOption?.value;
+
+    const min = timeseries.range?.[0];
+    const max = timeseries.range?.[1];
+
+    const hasValidRange = typeof min === 'number' && typeof max === 'number';
+
+    const convertFromTo =
+      (inputUnit?: string, outputUnit?: string) => (value: number) =>
+        convertValue(value, inputUnit, outputUnit);
+
+    const convert = flow(
+      convertFromTo(currentOutputUnit, currentInputUnit),
+      convertFromTo(currentInputUnit, nextOutputUnit)
+    );
+
+    const range = hasValidRange ? [convert(min!), convert(max!)] : [];
+
+    /**
+     * Update unit and corresponding converted range
+     */
     update(id, {
       preferredUnit: unitOption?.value,
+      range,
+    });
+  };
+
+  const resetUnit = async () => {
+    const currentInputUnit = timeseries.unit;
+    const currentOutputUnit = timeseries.preferredUnit;
+
+    const min = timeseries.range?.[0];
+    const max = timeseries.range?.[1];
+    const hasValidRange = typeof min === 'number' && typeof max === 'number';
+
+    const range = hasValidRange
+      ? [
+          convertValue(min!, currentOutputUnit, currentInputUnit),
+          convertValue(max!, currentOutputUnit, currentInputUnit),
+        ]
+      : [];
+
+    /**
+     * Update units and corresponding converted range
+     */
+    update(id, {
+      unit: originalUnit,
+      preferredUnit: originalUnit,
       range,
     });
   };
@@ -204,11 +188,6 @@ export default function TimeSeriesRow({
             }}
             color={color}
             fade={!enabled}
-          />
-          <LoadingFeedback
-            tsExternalId={tsExternalId}
-            dateFrom={chart.dateFrom}
-            dateTo={chart.dateTo}
           />
           <SourceName title={name}>
             {!isFileViewerMode && (
@@ -249,28 +228,28 @@ export default function TimeSeriesRow({
       {isWorkspaceMode && (
         <>
           <td>
-            {summary
+            {typeof summary?.min === 'number'
               ? roundToSignificantDigits(
                   convertValue(summary?.min, unit, preferredUnit),
                   1
                 )
-              : ''}
+              : '-'}
           </td>
           <td>
-            {summary
+            {typeof summary?.max === 'number'
               ? roundToSignificantDigits(
                   convertValue(summary?.max, unit, preferredUnit),
                   1
                 )
-              : ''}
+              : '-'}
           </td>
           <td>
-            {summary
+            {typeof summary?.mean === 'number'
               ? roundToSignificantDigits(
                   convertValue(summary?.mean, unit, preferredUnit),
                   1
                 )
-              : ''}
+              : '-'}
           </td>
           <td style={{ textAlign: 'right', paddingRight: 8 }}>
             <UnitDropdown
@@ -279,6 +258,7 @@ export default function TimeSeriesRow({
               preferredUnit={preferredUnit}
               onOverrideUnitClick={updateUnit}
               onConversionUnitClick={updatePrefferedUnit}
+              onResetUnitClick={resetUnit}
             />
           </td>
         </>
