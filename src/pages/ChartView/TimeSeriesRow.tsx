@@ -475,7 +475,7 @@ export default function TimeSeriesRow({
             {statisticsForSource
               ? formatNumberForDisplay(
                   convertValue(statisticsForSource?.min, unit, preferredUnit),
-                  2
+                  1
                 )
               : ''}
           </td>
@@ -483,7 +483,7 @@ export default function TimeSeriesRow({
             {statisticsForSource
               ? formatNumberForDisplay(
                   convertValue(statisticsForSource?.max, unit, preferredUnit),
-                  2
+                  1
                 )
               : statisticsCall && (
                   <FunctionCall
@@ -502,7 +502,7 @@ export default function TimeSeriesRow({
                     unit,
                     preferredUnit
                   ),
-                  2
+                  1
                 )
               : ''}
           </td>
