@@ -75,12 +75,14 @@ describe('convertUnits', () => {
   });
 
   it('check all conversions', () => {
-    // Pressures
+    // Helper wrapper to limit decimals
     const convertValueWith2Decimals = (
       value: number,
       inputUnit: string = '',
       outputUnit: string = ''
     ) => Number(convertValue(value, inputUnit, outputUnit).toFixed(2));
+
+    // Pressures
 
     // PSI to ...
     expect(convertValueWith2Decimals(10, 'psi', 'psi')).toEqual(10.0);
