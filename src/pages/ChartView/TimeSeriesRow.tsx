@@ -30,9 +30,10 @@ import * as backendApi from 'utils/backendApi';
 import { trackUsage } from 'utils/metrics';
 import { CogniteClient } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
-import { calculateDefaultYAxis } from 'utils/axis';
 import { convertValue } from 'utils/units';
 import { DraggableProvided } from 'react-beautiful-dnd';
+import flow from 'lodash/flow';
+import { roundToSignificantDigits } from 'utils/axis';
 import {
   SourceItem,
   SourceCircle,
@@ -41,7 +42,6 @@ import {
   SourceDescription,
   SourceTag,
 } from './elements';
-// import TimeSeriesMenu from './TimeSeriesMenu';
 
 const key = ['functions', 'individual_calc'];
 
@@ -181,7 +181,6 @@ export default function TimeSeriesRow({
     debouncedDatesAsString
   );
 
-  // Increasing this will cause a fresh render where the dropdown is closed
   const update = (_tsId: string, diff: Partial<ChartTimeSeries>) =>
     mutate((oldChart) => ({
       ...oldChart!,
@@ -201,13 +200,28 @@ export default function TimeSeriesRow({
     mutate((oldChart) => updateTimeseries(oldChart!, id, diff));
 
   const updateUnit = async (unitOption: any) => {
-    const range = await calculateDefaultYAxis({
-      chart,
-      sdk,
-      timeSeriesExternalId: timeseries.tsExternalId || '',
-      inputUnit: unitOption?.value,
-      outputUnit: preferredUnit,
-    });
+    const currentInputUnit = timeseries.unit;
+    const currentOutputUnit = timeseries.preferredUnit;
+    const nextInputUnit = unitOption?.value;
+
+    const min = timeseries.range?.[0];
+    const max = timeseries.range?.[1];
+    const hasValidRange = typeof min === 'number' && typeof max === 'number';
+
+    const convertFromTo =
+      (inputUnit?: string, outputUnit?: string) => (value: number) =>
+        convertValue(value, inputUnit, outputUnit);
+
+    const convert = flow(
+      convertFromTo(currentOutputUnit, currentInputUnit),
+      convertFromTo(nextInputUnit, currentOutputUnit)
+    );
+
+    const range = hasValidRange ? [convert(min!), convert(max!)] : [];
+
+    /**
+     * Update unit and corresponding converted range
+     */
     update(id, {
       unit: unitOption.value,
       range,
@@ -215,15 +229,56 @@ export default function TimeSeriesRow({
   };
 
   const updatePrefferedUnit = async (unitOption: any) => {
-    const range = await calculateDefaultYAxis({
-      chart,
-      sdk,
-      timeSeriesExternalId: timeseries.tsExternalId || '',
-      inputUnit: unit,
-      outputUnit: unitOption?.value,
-    });
+    const currentInputUnit = timeseries.unit;
+    const currentOutputUnit = timeseries.preferredUnit;
+    const nextOutputUnit = unitOption?.value;
+
+    const min = timeseries.range?.[0];
+    const max = timeseries.range?.[1];
+
+    const hasValidRange = typeof min === 'number' && typeof max === 'number';
+
+    const convertFromTo =
+      (inputUnit?: string, outputUnit?: string) => (value: number) =>
+        convertValue(value, inputUnit, outputUnit);
+
+    const convert = flow(
+      convertFromTo(currentOutputUnit, currentInputUnit),
+      convertFromTo(currentInputUnit, nextOutputUnit)
+    );
+
+    const range = hasValidRange ? [convert(min!), convert(max!)] : [];
+
+    /**
+     * Update unit and corresponding converted range
+     */
     update(id, {
       preferredUnit: unitOption?.value,
+      range,
+    });
+  };
+
+  const resetUnit = async () => {
+    const currentInputUnit = timeseries.unit;
+    const currentOutputUnit = timeseries.preferredUnit;
+
+    const min = timeseries.range?.[0];
+    const max = timeseries.range?.[1];
+    const hasValidRange = typeof min === 'number' && typeof max === 'number';
+
+    const range = hasValidRange
+      ? [
+          convertValue(min!, currentOutputUnit, currentInputUnit),
+          convertValue(max!, currentOutputUnit, currentInputUnit),
+        ]
+      : [];
+
+    /**
+     * Update units and corresponding converted range
+     */
+    update(id, {
+      unit: originalUnit,
+      preferredUnit: originalUnit,
       range,
     });
   };
@@ -408,12 +463,18 @@ export default function TimeSeriesRow({
         <>
           <td>
             {statisticsForSource
-              ? convertValue(statisticsForSource?.min, unit, preferredUnit)
+              ? roundToSignificantDigits(
+                  convertValue(statisticsForSource?.min, unit, preferredUnit),
+                  1
+                )
               : ''}
           </td>
           <td>
             {statisticsForSource
-              ? convertValue(statisticsForSource?.max, unit, preferredUnit)
+              ? roundToSignificantDigits(
+                  convertValue(statisticsForSource?.max, unit, preferredUnit),
+                  1
+                )
               : statisticsCall && (
                   <FunctionCall
                     id={statisticsCall.functionId}
@@ -425,7 +486,14 @@ export default function TimeSeriesRow({
           </td>
           <td>
             {statisticsForSource
-              ? convertValue(statisticsForSource?.median, unit, preferredUnit)
+              ? roundToSignificantDigits(
+                  convertValue(
+                    statisticsForSource?.median,
+                    unit,
+                    preferredUnit
+                  ),
+                  1
+                )
               : ''}
           </td>
           <td style={{ textAlign: 'right', paddingRight: 8 }}>
@@ -435,6 +503,7 @@ export default function TimeSeriesRow({
               preferredUnit={preferredUnit}
               onOverrideUnitClick={updateUnit}
               onConversionUnitClick={updatePrefferedUnit}
+              onResetUnitClick={resetUnit}
             />
           </td>
         </>

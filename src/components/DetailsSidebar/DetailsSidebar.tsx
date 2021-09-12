@@ -12,6 +12,7 @@ import { MetadataList } from 'components/DetailsSidebar';
 import { useState } from 'react';
 import { useQuery } from 'react-query';
 import { ChartTimeSeries, ChartWorkflow } from 'reducers/charts/types';
+import { roundToSignificantDigits } from 'utils/axis';
 import { getCallResponse } from 'utils/backendApi';
 import { functionResponseKey } from 'utils/backendService';
 import { convertValue, units } from 'utils/units';
@@ -183,10 +184,9 @@ const Statistics = ({
                   <Col span={14}>{label}</Col>
                   <Col span={10} style={{ textAlign: 'right' }}>
                     {value
-                      ? `${convertValue(
-                          value,
-                          unit,
-                          preferredUnit
+                      ? `${roundToSignificantDigits(
+                          convertValue(value, unit, preferredUnit),
+                          3
                         )} ${displayUnit}`
                       : '-'}
                   </Col>
@@ -207,10 +207,9 @@ const Statistics = ({
                   <Col span={14}>{label}</Col>
                   <Col span={10} style={{ textAlign: 'right' }}>
                     {value
-                      ? `${convertValue(
-                          value,
-                          unit,
-                          preferredUnit
+                      ? `${roundToSignificantDigits(
+                          convertValue(value, unit, preferredUnit),
+                          3
                         )} ${displayUnit}`
                       : '-'}
                   </Col>

@@ -399,8 +399,5 @@ export const convertValue = (
   outputUnit: string = ''
 ) => {
   const conversionFormula = (conversions[inputUnit] || {})[outputUnit];
-
-  return conversionFormula
-    ? Number(conversionFormula(value)?.toFixed(2))
-    : value;
+  return conversionFormula ? conversionFormula(value) : value;
 };
