@@ -33,7 +33,7 @@ import { useSDK } from '@cognite/sdk-provider';
 import { convertValue } from 'utils/units';
 import { DraggableProvided } from 'react-beautiful-dnd';
 import flow from 'lodash/flow';
-import { formatNumberForDisplay } from 'utils/numbers';
+import { roundToSignificantDigits } from 'utils/axis';
 import {
   SourceItem,
   SourceCircle,
@@ -473,7 +473,7 @@ export default function TimeSeriesRow({
         <>
           <td>
             {statisticsForSource
-              ? formatNumberForDisplay(
+              ? roundToSignificantDigits(
                   convertValue(statisticsForSource?.min, unit, preferredUnit),
                   1
                 )
@@ -481,7 +481,7 @@ export default function TimeSeriesRow({
           </td>
           <td>
             {statisticsForSource
-              ? formatNumberForDisplay(
+              ? roundToSignificantDigits(
                   convertValue(statisticsForSource?.max, unit, preferredUnit),
                   1
                 )
@@ -496,7 +496,7 @@ export default function TimeSeriesRow({
           </td>
           <td>
             {statisticsForSource
-              ? formatNumberForDisplay(
+              ? roundToSignificantDigits(
                   convertValue(
                     statisticsForSource?.median,
                     unit,
