@@ -30,9 +30,9 @@ import * as backendApi from 'utils/backendApi';
 import { trackUsage } from 'utils/metrics';
 import { CogniteClient } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
-import { calculateDefaultYAxis } from 'utils/axis';
 import { convertValue } from 'utils/units';
 import { DraggableProvided } from 'react-beautiful-dnd';
+import flow from 'lodash/flow';
 import {
   SourceItem,
   SourceCircle,
@@ -41,7 +41,6 @@ import {
   SourceDescription,
   SourceTag,
 } from './elements';
-// import TimeSeriesMenu from './TimeSeriesMenu';
 
 const key = ['functions', 'individual_calc'];
 
@@ -181,7 +180,6 @@ export default function TimeSeriesRow({
     debouncedDatesAsString
   );
 
-  // Increasing this will cause a fresh render where the dropdown is closed
   const update = (_tsId: string, diff: Partial<ChartTimeSeries>) =>
     mutate((oldChart) => ({
       ...oldChart!,
@@ -201,13 +199,31 @@ export default function TimeSeriesRow({
     mutate((oldChart) => updateTimeseries(oldChart!, id, diff));
 
   const updateUnit = async (unitOption: any) => {
-    const range = await calculateDefaultYAxis({
-      chart,
-      sdk,
-      timeSeriesExternalId: timeseries.tsExternalId || '',
-      inputUnit: unitOption?.value,
-      outputUnit: preferredUnit,
-    });
+    const currentInputUnit = timeseries.unit;
+    const currentOutputUnit = timeseries.preferredUnit;
+    const nextInputUnit = unitOption?.value;
+
+    const min = timeseries.range?.[0];
+    const max = timeseries.range?.[1];
+    const hasValidRange = typeof min === 'number' && typeof max === 'number';
+
+    const convertFromTo =
+      (inputUnit?: string, outputUnit?: string) => (value: number) =>
+        convertValue(value, inputUnit, outputUnit);
+
+    const convert = flow(
+      convertFromTo(currentOutputUnit, currentInputUnit),
+      convertFromTo(nextInputUnit, currentOutputUnit)
+    );
+
+    /**
+     * Convert range to new unit
+     */
+    const range = hasValidRange ? [convert(min!), convert(max!)] : [];
+
+    /**
+     * Update unit and corresponding range
+     */
     update(id, {
       unit: unitOption.value,
       range,
@@ -215,13 +231,28 @@ export default function TimeSeriesRow({
   };
 
   const updatePrefferedUnit = async (unitOption: any) => {
-    const range = await calculateDefaultYAxis({
-      chart,
-      sdk,
-      timeSeriesExternalId: timeseries.tsExternalId || '',
-      inputUnit: unit,
-      outputUnit: unitOption?.value,
-    });
+    const currentOutputUnit = timeseries.preferredUnit;
+    const nextOutputUnit = unitOption?.value;
+
+    const min = timeseries.range?.[0];
+    const max = timeseries.range?.[1];
+
+    const hasValidRange = typeof min === 'number' && typeof max === 'number';
+
+    /**
+     * Convert current range to new unit
+     * (since the input units are the same we can just convert between the output units)
+     */
+    const range = hasValidRange
+      ? [
+          convertValue(min!, currentOutputUnit, nextOutputUnit),
+          convertValue(max!, currentOutputUnit, nextOutputUnit),
+        ]
+      : [];
+
+    /**
+     * Update unit and corresponding range
+     */
     update(id, {
       preferredUnit: unitOption?.value,
       range,
@@ -229,14 +260,26 @@ export default function TimeSeriesRow({
   };
 
   const resetUnit = async () => {
-    const range = await calculateDefaultYAxis({
-      chart,
-      sdk,
-      timeSeriesExternalId: timeseries.tsExternalId || '',
-      inputUnit: originalUnit,
-      outputUnit: originalUnit,
-    });
+    const currentInputUnit = timeseries.unit;
+    const currentOutputUnit = timeseries.preferredUnit;
 
+    const min = timeseries.range?.[0];
+    const max = timeseries.range?.[1];
+    const hasValidRange = typeof min === 'number' && typeof max === 'number';
+
+    /**
+     * Convert range to new unit
+     */
+    const range = hasValidRange
+      ? [
+          convertValue(min!, currentOutputUnit, currentInputUnit),
+          convertValue(max!, currentOutputUnit, currentInputUnit),
+        ]
+      : [];
+
+    /**
+     * Update units and corresponding range
+     */
     update(id, {
       unit: originalUnit,
       preferredUnit: originalUnit,
