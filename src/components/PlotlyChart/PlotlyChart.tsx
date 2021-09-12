@@ -21,6 +21,7 @@ import { useRecoilState } from 'recoil';
 import { chartState } from 'atoms/chart';
 import { Chart, ChartTimeSeries, ChartWorkflow } from 'reducers/charts/types';
 import { timeseriesState } from 'atoms/timeseries';
+import { WorkflowResult, workflowState } from 'atoms/workflows';
 import {
   calculateSeriesData,
   formatPlotlyData,
@@ -116,7 +117,7 @@ const PlotlyChartComponent = ({
     )
   );
 
-  const calls = isPreview
+  const callKeys = isPreview
     ? []
     : chart?.workflowCollection?.map((wf) =>
         omit(wf.calls?.[0], ['callDate'])
@@ -127,29 +128,36 @@ const PlotlyChartComponent = ({
     isSuccess: wfSuccess,
     isFetching: workflowsRunning,
   } = useQuery(
-    ['chart-data', 'workflows', calls],
+    ['chart-data', 'workflows', callKeys],
     () =>
       Promise.all(
-        calls.map(async (call) => {
-          if (call?.functionId && call.callId) {
-            const functionResult = await getFunctionResponseWhenDone(
-              sdk,
-              call?.functionId,
-              call?.callId
-            );
-            return transformSimpleCalcResult(functionResult);
+        (chart?.workflowCollection || []).map(async (wf) => {
+          const call = wf.calls?.[0];
+
+          if (!call || !call?.functionId || !call?.callId) {
+            return {
+              id: wf.id,
+              datapoints: [],
+            } as WorkflowResult;
           }
-          return Promise.resolve([]);
+
+          const functionResult = await getFunctionResponseWhenDone(
+            sdk,
+            call?.functionId,
+            call?.callId
+          );
+
+          return {
+            id: wf.id,
+            datapoints: transformSimpleCalcResult(functionResult),
+          } as WorkflowResult;
         })
       ),
     { enabled: !isPreview }
   );
 
   const [timeseries, setLocalTimeseries] = useRecoilState(timeseriesState);
-
-  const [workflows, setLocalWorkflows] = useState<
-    { value: number; timestamp: Date }[][]
-  >([]);
+  const [workflows, setLocalWorkflows] = useRecoilState(workflowState);
 
   useEffect(() => {
     if (tsSuccess && tsRaw) {
@@ -161,7 +169,7 @@ const PlotlyChartComponent = ({
     if (wfSuccess && workflowsRaw) {
       setLocalWorkflows(workflowsRaw);
     }
-  }, [wfSuccess, workflowsRaw]);
+  }, [wfSuccess, workflowsRaw, setLocalWorkflows]);
 
   const onAdjustButtonClick = useCallback(() => {
     trackUsage('ChartView.ToggleYAxisLock', {

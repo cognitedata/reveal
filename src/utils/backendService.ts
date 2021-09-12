@@ -114,12 +114,15 @@ export const transformSimpleCalcResult = (
 ) => {
   const { value = [], timestamp = [] } = result || {};
 
-  return value?.length && timestamp?.length
-    ? zipWith(value, timestamp, (v, t) => ({
-        value: v,
-        timestamp: new Date(t),
-      }))
-    : ([] as DoubleDatapoint[]);
+  const output =
+    value?.length && timestamp?.length
+      ? zipWith(value, timestamp, (v, t) => ({
+          value: v,
+          timestamp: new Date(t),
+        }))
+      : ([] as DoubleDatapoint[]);
+
+  return output as DoubleDatapoint[];
 };
 
 export async function getFunctionResponseWhenDone(

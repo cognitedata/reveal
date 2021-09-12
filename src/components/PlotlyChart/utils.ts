@@ -48,7 +48,10 @@ export function calculateSeriesData(
   workflowCollection: ChartWorkflow[] = [],
   timeseries: (DatapointAggregates | StringDatapoints | DoubleDatapoints)[],
   timeseriesFetching: boolean,
-  workflows: { value: number; timestamp: Date }[][],
+  workflows: {
+    id: string;
+    datapoints: DoubleDatapoint[];
+  }[],
   workflowsRunning: boolean,
   mergeUnits: boolean
 ): SeriesData[] {
@@ -99,7 +102,7 @@ export function calculateSeriesData(
             width: workflow.lineWeight,
             dash: convertLineStyle(workflow.lineStyle),
             datapoints: convertUnits(
-              workflows?.[i] || [],
+              workflows?.[i]?.datapoints || [],
               workflow.unit,
               workflow.preferredUnit
             ),
