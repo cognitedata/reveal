@@ -400,7 +400,5 @@ export const convertValue = (
 ) => {
   const conversionFormula = (conversions[inputUnit] || {})[outputUnit];
 
-  return conversionFormula
-    ? Number(conversionFormula(value)?.toFixed(2))
-    : value;
+  return conversionFormula ? Number(conversionFormula(value)) : value;
 };
