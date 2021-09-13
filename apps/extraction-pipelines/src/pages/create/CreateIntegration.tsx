@@ -151,7 +151,7 @@ const findDataSetId = (search: string) => {
   return new URLSearchParams(search).get('dataSetId');
 };
 
-export const CreateIntegration = () => {
+export const CreateIntegration = (props: { showAdditionalFields: boolean }) => {
   const [dataSetLoadError, setDataSetLoadError] = useState<string | null>(null);
   const [showCron, setShowCron] = useState(false);
   const history = useHistory();
@@ -333,92 +333,110 @@ export const CreateIntegration = () => {
             {CANCEL}
           </a>
         </PriSecBtnWrapper>
-        <InfoBox iconType="Info">
-          <GridH2Wrapper>{ADD_MORE_INFO_HEADING}</GridH2Wrapper>
-          <p className="box-content">{ADD_MORE_INFO_TEXT_1}</p>
-          <p className="box-content">{ADD_MORE_INFO_TEXT_2}</p>
-        </InfoBox>
-        <StyledCollapse accordion ghost data-testid="add-more-info-collapse">
-          <Panel
-            header={
-              <DivFlex direction="column" align="flex-start">
-                <GridH2Wrapper>{ADD_MORE_INFO_HEADING}</GridH2Wrapper>
-              </DivFlex>
-            }
-            key={1}
-          >
-            <FormProvider {...methods}>
-              <CreateContacts
-                renderLabel={(labelText, inputId) => (
-                  <HeadingLabel labelFor={inputId}>{labelText}</HeadingLabel>
-                )}
-              />
-              <HeadingLabel labelFor="schedule-selector">
-                {TableHeadings.SCHEDULE}
-              </HeadingLabel>
-              <ScheduleSelector
-                inputId="schedule-selector"
-                schedule={scheduleValue}
-                onSelectChange={selectChanged}
-              />
-              {showCron && (
-                <CronWrapper
-                  id="cron-expression"
-                  role="region"
-                  direction="column"
-                  align="flex-start"
-                >
-                  <CronInput />
-                </CronWrapper>
-              )}
-              {!dataSetId && (
-                <DataSetIdInput
-                  data={dataSets}
-                  status={dataSetsStatus}
-                  renderLabel={(labelText, inputId) => (
-                    <HeadingLabel labelFor={inputId}>{labelText}</HeadingLabel>
+        {props.showAdditionalFields && (
+          <>
+            <InfoBox iconType="Info">
+              <GridH2Wrapper>{ADD_MORE_INFO_HEADING}</GridH2Wrapper>
+              <p className="box-content">{ADD_MORE_INFO_TEXT_1}</p>
+              <p className="box-content">{ADD_MORE_INFO_TEXT_2}</p>
+            </InfoBox>
+            <StyledCollapse
+              accordion
+              ghost
+              data-testid="add-more-info-collapse"
+            >
+              <Panel
+                header={
+                  <DivFlex direction="column" align="flex-start">
+                    <GridH2Wrapper>{ADD_MORE_INFO_HEADING}</GridH2Wrapper>
+                  </DivFlex>
+                }
+                key={1}
+              >
+                <FormProvider {...methods}>
+                  <CreateContacts
+                    renderLabel={(labelText, inputId) => (
+                      <HeadingLabel labelFor={inputId}>
+                        {labelText}
+                      </HeadingLabel>
+                    )}
+                  />
+                  <HeadingLabel labelFor="schedule-selector">
+                    {TableHeadings.SCHEDULE}
+                  </HeadingLabel>
+                  <ScheduleSelector
+                    inputId="schedule-selector"
+                    schedule={scheduleValue}
+                    onSelectChange={selectChanged}
+                  />
+                  {showCron && (
+                    <CronWrapper
+                      id="cron-expression"
+                      role="region"
+                      direction="column"
+                      align="flex-start"
+                    >
+                      <CronInput />
+                    </CronWrapper>
                   )}
-                />
-              )}
-              <HeadingLabel labelFor="raw-table">
-                {DetailFieldNames.RAW_TABLE}
-              </HeadingLabel>
-              <ConnectRawTablesInput />
-              <FullInput
-                name="source"
-                inputId="source-input"
-                defaultValue=""
-                control={control as any}
-                errors={errors}
-                labelText={DetailFieldNames.SOURCE}
-                hintText={SOURCE_HINT}
-                renderLabel={(labelText, inputId) => (
-                  <HeadingLabel labelFor={inputId}>{labelText}</HeadingLabel>
-                )}
-              />
+                  {!dataSetId && (
+                    <DataSetIdInput
+                      data={dataSets}
+                      status={dataSetsStatus}
+                      renderLabel={(labelText, inputId) => (
+                        <HeadingLabel labelFor={inputId}>
+                          {labelText}
+                        </HeadingLabel>
+                      )}
+                    />
+                  )}
+                  <HeadingLabel labelFor="raw-table">
+                    {DetailFieldNames.RAW_TABLE}
+                  </HeadingLabel>
+                  <ConnectRawTablesInput />
+                  <FullInput
+                    name="source"
+                    inputId="source-input"
+                    defaultValue=""
+                    control={control as any}
+                    errors={errors}
+                    labelText={DetailFieldNames.SOURCE}
+                    hintText={SOURCE_HINT}
+                    renderLabel={(labelText, inputId) => (
+                      <HeadingLabel labelFor={inputId}>
+                        {labelText}
+                      </HeadingLabel>
+                    )}
+                  />
 
-              <FullTextArea
-                name="documentation"
-                inputId="documentation-input"
-                labelText={DetailFieldNames.DOCUMENTATION}
-                hintText={DOCUMENTATION_HINT}
-                control={control as any}
-                errors={errors}
-                defaultValue=""
-              />
-              {MAX_DOCUMENTATION_LENGTH && (
-                <CountSpan className="count bottom-spacing">
-                  {count}/{MAX_DOCUMENTATION_LENGTH}
-                </CountSpan>
-              )}
+                  <FullTextArea
+                    name="documentation"
+                    inputId="documentation-input"
+                    labelText={DetailFieldNames.DOCUMENTATION}
+                    hintText={DOCUMENTATION_HINT}
+                    control={control as any}
+                    errors={errors}
+                    defaultValue=""
+                  />
+                  {MAX_DOCUMENTATION_LENGTH && (
+                    <CountSpan className="count bottom-spacing">
+                      {count}/{MAX_DOCUMENTATION_LENGTH}
+                    </CountSpan>
+                  )}
 
-              <RegisterMetaData />
-              <ButtonPlaced type="primary" htmlType="submit" marginbottom={5}>
-                {SAVE}
-              </ButtonPlaced>
-            </FormProvider>
-          </Panel>
-        </StyledCollapse>
+                  <RegisterMetaData />
+                  <ButtonPlaced
+                    type="primary"
+                    htmlType="submit"
+                    marginbottom={5}
+                  >
+                    {SAVE}
+                  </ButtonPlaced>
+                </FormProvider>
+              </Panel>
+            </StyledCollapse>
+          </>
+        )}
       </CreateFormWrapper>
       <SideInfo>
         <ExtractorDownloadsLink
@@ -433,7 +451,7 @@ export default function CombinedComponent() {
   return (
     <RegisterIntegrationLayout>
       <CapabilityCheck requiredPermissions={EXTPIPES_WRITES}>
-        <CreateIntegration />
+        <CreateIntegration showAdditionalFields={true} />
       </CapabilityCheck>
     </RegisterIntegrationLayout>
   );

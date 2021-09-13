@@ -84,6 +84,7 @@ const CreateExtpipeModal = (props: { visible: boolean }) => {
       getContainer={() =>
         document.getElementsByClassName(ids.styleScope).item(0) as any
       }
+      footer={<span />}
     >
       <ModalContent
         title={
@@ -92,7 +93,7 @@ const CreateExtpipeModal = (props: { visible: boolean }) => {
           </StyledHeader>
         }
       >
-        <CreateIntegration />
+        <CreateIntegration showAdditionalFields={false} />
       </ModalContent>
     </Modal>
   );
