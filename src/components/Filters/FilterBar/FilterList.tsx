@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { Button } from '@cognite/cogs.js';
 import { selectAllDataSets } from 'modules/datasets';
 import { Flex } from 'components/Common';
+import { StatusType, approvalDetails } from 'components/Filters';
 import { FilterTag } from './FilterTag';
 import { mimeTypes } from '../FilterSelects/utils';
 
@@ -10,10 +11,12 @@ type FilterListProps = {
   dataSetIds: Array<number>;
   labels: Array<{ externalId: string }>;
   searchQuery: string;
-  mimeType?: string;
+  mimeType?: Array<string>;
+  status?: Array<StatusType>;
   onDataSetsChange: (val: Array<number>) => void;
   onLabelsChange: (externalIds: Array<string>) => void;
   onMimeTypeChange: (mimeType: Array<string>) => void;
+  onStatusChange?: (status: Array<StatusType>) => void;
   onQueryClear: () => void;
   onClearAll: () => void;
 };
@@ -23,15 +26,20 @@ export const FilterList = ({
   labels = [],
   searchQuery,
   mimeType,
+  status,
   onDataSetsChange,
   onLabelsChange,
   onMimeTypeChange,
+  onStatusChange,
   onQueryClear,
   onClearAll,
 }: FilterListProps) => {
   const allDatasets = useSelector(selectAllDataSets);
   const areFiltersSelected = Boolean(
-    dataSetIds?.length || labels?.length || searchQuery?.length
+    dataSetIds?.length ||
+      labels?.length ||
+      searchQuery?.length ||
+      status?.length
   );
 
   const displayDataSets = () => {
@@ -88,16 +96,42 @@ export const FilterList = ({
   };
 
   const displayFileTypeTag = () => {
-    if (mimeType) {
-      const fileType =
-        mimeTypes.find((mt) => mt.value === mimeType)?.label ?? '';
-      return (
-        <FilterTag
-          id="filter-tag-mimetype"
-          content={`File type: ${fileType}`}
-          onClose={() => onMimeTypeChange([])}
-        />
-      );
+    if (mimeType?.length) {
+      return mimeType?.map((mT) => {
+        const fileType = mimeTypes.find((mt) => mt.value === mT)?.label ?? '';
+        return (
+          <FilterTag
+            id="filter-tag-mimetype"
+            content={`File type: ${fileType}`}
+            onClose={() => onMimeTypeChange([])}
+          />
+        );
+      });
+    }
+    return <span />;
+  };
+
+  const displayStatusTag = () => {
+    if (status?.length) {
+      return status?.map((statusType: StatusType) => {
+        const statusLabel =
+          approvalDetails[statusType]?.label ?? approvalDetails.unknown.label;
+        return (
+          <FilterTag
+            key={`filter-tag-${statusType}-status`}
+            onClose={() => {
+              if (onStatusChange)
+                onStatusChange(
+                  status?.filter(
+                    (statusItem: StatusType) => statusType !== statusItem
+                  )
+                );
+            }}
+            id={statusType}
+            content={`Status: ${statusLabel}`}
+          />
+        );
+      });
     }
     return <span />;
   };
@@ -105,7 +139,7 @@ export const FilterList = ({
   return (
     <Flex row style={{ flexWrap: 'wrap' }}>
       {displayDataSets()} {displayLabels()} {displayQueryTag()}{' '}
-      {displayFileTypeTag()}
+      {displayFileTypeTag()} {displayStatusTag()}
       {areFiltersSelected && (
         <Button
           icon="Close"

@@ -24,7 +24,7 @@ export default function FilterBar(props: Props) {
   const [dataSetIds, setDataSetIds] = useState<number[]>([]);
   const [labels, setLabels] = useState<string[]>([]);
   const [status, setStatus] = useState<StatusType[]>([]);
-  const [fileType, setFileType] = useState<string>('application/pdf');
+  const [fileTypes, setFileTypes] = useState<string[]>(['application/pdf']);
 
   const onNameChange = useCallback(
     (e: any) => setNameQuery(e.target.value),
@@ -34,12 +34,16 @@ export default function FilterBar(props: Props) {
     (ids: number[]) => setDataSetIds(ids),
     []
   );
-  const onMimeTypeSelected = useCallback(
-    (mimeType: string[]) => setFileType(mimeType[0]),
+  const onMimeTypesSelected = useCallback(
+    (mimeTypes: string[]) => setFileTypes(mimeTypes),
     []
   );
   const onLabelsSelected = useCallback(
     (selectedLabels: string[]) => setLabels(selectedLabels),
+    []
+  );
+  const onStatusSelected = useCallback(
+    (selectedStatus: StatusType[]) => setStatus(selectedStatus),
     []
   );
 
@@ -47,7 +51,7 @@ export default function FilterBar(props: Props) {
   const onClearAll = () => {
     setNameQuery('');
     setDataSetIds([]);
-    setFileType('');
+    setFileTypes([]);
     setStatus([]);
     setLabels([]);
   };
@@ -59,11 +63,11 @@ export default function FilterBar(props: Props) {
       dataSetIds,
       labels,
       status,
-      fileType,
+      fileTypes,
     };
     setSelectionFilter(newFilter);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [nameQuery, dataSetIds, labels, status, fileType]);
+  }, [nameQuery, dataSetIds, labels, status, fileTypes]);
 
   return (
     <FilterBarWrapper column>
@@ -87,6 +91,7 @@ export default function FilterBar(props: Props) {
         >
           <DataSetSelect
             resourceType="files"
+            selectedDataSetIds={dataSetIds}
             onDataSetSelected={onDataSetSelected}
           />
         </LoadingSkeleton>
@@ -106,8 +111,8 @@ export default function FilterBar(props: Props) {
           height="20px"
         >
           <MimeTypeSelect
-            selectedMimeType={[fileType]}
-            onMimeTypeSelected={onMimeTypeSelected}
+            selectedMimeType={fileTypes}
+            onMimeTypeSelected={onMimeTypesSelected}
             loaded
             isMulti
           />
@@ -124,11 +129,13 @@ export default function FilterBar(props: Props) {
         <FilterList
           labels={labels.map((label: string) => ({ externalId: label }))}
           dataSetIds={dataSetIds}
+          searchQuery={nameQuery}
+          mimeType={fileTypes}
+          status={status}
+          onStatusChange={onStatusSelected}
           onDataSetsChange={onDataSetSelected}
           onLabelsChange={onLabelsSelected}
-          searchQuery={nameQuery}
-          mimeType={fileType}
-          onMimeTypeChange={onMimeTypeSelected}
+          onMimeTypeChange={onMimeTypesSelected}
           onQueryClear={onQueryClear}
           onClearAll={onClearAll}
         />

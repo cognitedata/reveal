@@ -210,7 +210,7 @@ export default function SelectionBar(props: Props): JSX.Element {
           onDataSetsChange={onDataSetSelected}
           onLabelsChange={onLabelsSelected}
           searchQuery={filter?.search?.name}
-          mimeType={filter.filter?.mimeType}
+          mimeType={[filter.filter?.mimeType]}
           onMimeTypeChange={onMimeTypeSelected}
           onQueryClear={onNameClear}
           onClearAll={() => updateFilter({ filter: {}, search: undefined })}

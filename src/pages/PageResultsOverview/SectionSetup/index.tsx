@@ -26,6 +26,11 @@ export default function SectionSetup(): JSX.Element {
   const allCounts = useResourceCount();
 
   const optionalResources = ['files', 'assets'];
+  const isAnyOptionalResourceSelected = Boolean(
+    optionalResources.filter(
+      (resourceType) => allCounts[resourceType as ResourceType]
+    )?.length
+  );
 
   const onModelClick = () => goToStep('config');
   const getLinkedResources = () =>
@@ -44,9 +49,7 @@ export default function SectionSetup(): JSX.Element {
     <SetUpWrapper jobStatus={jobStatus}>
       <Flex column>
         <Flex row align style={{ justifyContent: 'space-between' }}>
-          <Title level={5} style={{}}>
-            Set up for creating interactive diagrams
-          </Title>
+          <Title level={5}>Set up for creating interactive diagrams</Title>
           <Label size="small" variant={labelVariant}>
             {jobLabel}
           </Label>
@@ -56,7 +59,9 @@ export default function SectionSetup(): JSX.Element {
             <>
               {!allCounts.diagrams && (
                 <Flex row align>
-                  <Body level={2}>No engineering diagrams selected. </Body>
+                  <Body level={2} style={{ whiteSpace: 'nowrap' }}>
+                    No engineering diagrams selected.{' '}
+                  </Body>
                   <SelectionInfo
                     text="Select diagrams"
                     editable={!jobStarted}
@@ -65,9 +70,9 @@ export default function SectionSetup(): JSX.Element {
                   />
                 </Flex>
               )}
-              {!getLinkedResources()?.length && (
+              {!isAnyOptionalResourceSelected && (
                 <Flex row align>
-                  <Body level={2}>
+                  <Body level={2} style={{ whiteSpace: 'nowrap' }}>
                     At least one resource type must be selected.
                   </Body>
                   <SelectionInfo
@@ -93,7 +98,9 @@ export default function SectionSetup(): JSX.Element {
                 type="diagrams"
                 count={allCounts.diagrams}
               />
-              <Body level={2}>will be linked to</Body>
+              <Body level={2} style={{ whiteSpace: 'nowrap' }}>
+                will be linked to
+              </Body>
               {getLinkedResources()}
               <Body level={2}>on</Body>
               <ModelInfo editable={!jobStarted} onClick={onModelClick}>
