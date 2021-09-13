@@ -91,17 +91,7 @@ const LegacyLoginFlowWarning = () => {
         <>
           <p>
             We are deprecating authentication via CDF service accounts and API
-            keys in favor of registering applications and services with your IdP
-            (identity provider) and{' '}
-            <a
-              href="https://docs.cognite.com/cdf/access/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              using OpenID Connect
-            </a>{' '}
-            and the IdP framework to manage CDF access securely. We strongly
-            encourage customers to adopt{' '}
+            keys in favor of OIDC. We strongly encourage customers to adopt{' '}
             <a
               href="https://docs.cognite.com/cdf/access/"
               target="_blank"
