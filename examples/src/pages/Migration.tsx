@@ -341,7 +341,7 @@ export function Migration() {
       debugGui.add(guiState.debug, 'suspendLoading').name('Suspend loading').onFinishChange(suspend => {
         try {
           // @ts-expect-error
-          viewer._revealManager._cadManager._cadModelUpdateHandler.updateLoadingHints({ suspendLoading: suspend })
+          viewer.revealManager._cadManager._cadModelUpdateHandler.updateLoadingHints({ suspendLoading: suspend })
         }
         catch (error) {
           alert('Could not toggle suspend loading, check console for error');
