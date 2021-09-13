@@ -66,10 +66,19 @@ export const ConfigPanel = ({
       const toolFunction = n?.functionData?.toolFunction;
 
       if (toolFunction) {
-        const operation = availableOperations.find(
-          (op) => op.op.toLowerCase() === toolFunction.op.toLowerCase()
+        const isFunctionInRecent = categories.Recent.some(
+          ({ op }) => op.toLowerCase() === toolFunction.op.toLowerCase()
         );
-        categories.Recent.push(operation!);
+
+        if (!isFunctionInRecent) {
+          const operation = availableOperations.find(
+            (op) => op.op.toLowerCase() === toolFunction.op.toLowerCase()
+          );
+
+          if (operation) {
+            categories.Recent.push(operation);
+          }
+        }
       }
     });
 
