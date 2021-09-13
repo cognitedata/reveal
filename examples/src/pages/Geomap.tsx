@@ -19,7 +19,6 @@ import {
 } from '@cognite/reveal';
 import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, AxisViewTool, GeomapTool, MapConfig, MapBoxMode, MapBoxStyle, MapProviders, MapBoxImageFormat } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
-import { copyFileSync } from 'fs';
 
 window.THREE = THREE;
 (window as any).reveal = reveal;
