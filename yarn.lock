@@ -16229,10 +16229,10 @@ rrweb-snapshot@^1.1.8:
   resolved "https://registry.yarnpkg.com/rrweb-snapshot/-/rrweb-snapshot-1.1.8.tgz#57c3a8003a6ebbe4a2e2f5be29e30a47a8b1eb03"
   integrity sha512-wi8T9IVobEwlns7U2m8cbPfoihsNAMpTI+UBe4KUjclU2N+vtowD2U1Rq8PleiFTDvcseHvkQDmEIZoZLXFzwg==
 
-rrweb@^1.0.4:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/rrweb/-/rrweb-1.0.4.tgz#a63931c4ed5c0dc50c1ee6d1b03abaf18cf529e2"
-  integrity sha512-JMnLF9QWMBwwmtxCUHJ38kjtDALvDfx2JsfiI6nOtj2qWWsSkwPJWfgWk3tSQzy1FD1ZXlFJPERIFjMrSBzn5w==
+rrweb@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/rrweb/-/rrweb-1.0.5.tgz#b8ff8f711ccdbfdb0b59a364e41446112b09d22d"
+  integrity sha512-p0X0Drs4z4ctWUWnA2/f8BZgx+G8+XNSEdvng2RvRcfJHge2qB6I+HcAqVl5mu1VuEOlXfrJ82W/xLTZmDA6bQ==
   dependencies:
     "@types/css-font-loading-module" "0.0.4"
     "@xstate/fsm" "^1.4.0"
