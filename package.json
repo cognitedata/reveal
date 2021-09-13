@@ -131,7 +131,7 @@
     "eslint-config-prettier": "^7.2.0",
     "eslint-plugin-eslint-plugin": "^2.3.0",
     "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-jest": "^24.3.6",
+    "eslint-plugin-jest": "^24.4.0",
     "eslint-plugin-jest-dom": "^3.9.0",
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-lodash": "^7.3.0",
