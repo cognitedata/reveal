@@ -487,7 +487,7 @@ const AnnotationPreviewSidebar = ({
           header={
             <TitleWrapper>
               <InteractiveIcon />
-              <Title level={5}>{file?.name} </Title>
+              <Title level={4}>{file?.name} </Title>
               <DiagramReviewStatus file={file} />
               <FileReview
                 annotations={annotations}
