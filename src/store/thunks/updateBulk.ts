@@ -16,7 +16,24 @@ export const updateBulk = createAsyncThunk<
   }[] = selectedFiles.map((file) => {
     const { id } = file;
     const addedLabels: Label[] = bulkEditTemp.labels || [];
-    return { id, update: { labels: { add: addedLabels } } };
+
+    const updatedMetadata = bulkEditTemp.metadata;
+    const newMetadata = updatedMetadata
+      ? Object.keys(updatedMetadata)
+          .filter((key) => !!updatedMetadata[key])
+          .reduce(
+            (res, key) => Object.assign(res, { [key]: updatedMetadata[key] }),
+            {}
+          )
+      : {};
+
+    return {
+      id,
+      update: {
+        labels: { add: addedLabels },
+        metadata: { add: newMetadata },
+      },
+    };
   });
   await dispatch(UpdateFiles(payload));
 });

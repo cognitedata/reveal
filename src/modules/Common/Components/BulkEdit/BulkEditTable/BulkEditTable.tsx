@@ -29,7 +29,7 @@ export const BulkEditTable = ({
 );
 
 const TableContainer = styled.div`
-  max-height: 380px;
+  max-height: 360px;
   overflow: auto;
   .BaseTable__row-cell-text {
     white-space: normal !important;

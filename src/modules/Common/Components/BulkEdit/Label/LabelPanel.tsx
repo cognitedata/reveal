@@ -2,15 +2,12 @@ import React from 'react';
 import { Body } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { LabelFilter } from '@cognite/data-exploration';
-import { BulkEditTempState } from 'src/modules/Explorer/store/explorerSlice';
+import { EditPanelProps } from '../bulkEditOptions';
 
 export const LabelPanel = ({
   bulkEditTemp,
   setBulkEditTemp,
-}: {
-  bulkEditTemp: BulkEditTempState;
-  setBulkEditTemp: (value: BulkEditTempState) => void;
-}) => (
+}: EditPanelProps) => (
   <PanelContainer>
     <SelectContainer>
       <Body level={2}>Add from existing labels</Body>

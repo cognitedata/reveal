@@ -1,10 +1,14 @@
-import React, { useState } from 'react';
-import { Body, Button, Select, Title } from '@cognite/cogs.js';
+import React, { useEffect, useState } from 'react';
+import { Body, Button, Select, Title, Tooltip } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { BulkEditTempState } from 'src/modules/Explorer/store/explorerSlice';
 import { BulkEditTable } from './BulkEditTable/BulkEditTable';
 import { FileState } from '../../filesSlice';
-import { bulkEditOptions, BulkEditOptionType } from './bulkEditOptions';
+import {
+  bulkEditOptions,
+  BulkEditOptionType,
+  EditPanelState,
+} from './bulkEditOptions';
 
 export type BulkEditModalContentProps = {
   selectedFiles: FileState[];
@@ -23,6 +27,13 @@ export const BulkEditModalContent = ({
 }: BulkEditModalContentProps) => {
   const [selectedBulkEditOption, setSelectedBulkEditOption] =
     useState<BulkEditOptionType>(bulkEditOptions[0]);
+  const [editing, setEditing] = useState<boolean>();
+  const [editPanelState, setEditPanelState] = useState<EditPanelState>({});
+
+  const { EditPanel } = selectedBulkEditOption;
+  useEffect(() => {
+    setEditing(false);
+  }, [selectedBulkEditOption]);
 
   return (
     <>
@@ -40,9 +51,19 @@ export const BulkEditModalContent = ({
             />
           </div>
         </EditType>
-        {selectedBulkEditOption.editPanel({ bulkEditTemp, setBulkEditTemp })}
+        <EditPanel
+          selectedFiles={selectedFiles}
+          bulkEditTemp={bulkEditTemp}
+          setBulkEditTemp={setBulkEditTemp}
+          setEditing={setEditing}
+          editPanelStateOptions={{ editPanelState, setEditPanelState }}
+        />
         <BulkEditTable
-          data={selectedBulkEditOption.data(selectedFiles, bulkEditTemp)}
+          data={selectedBulkEditOption.data(
+            selectedFiles,
+            bulkEditTemp,
+            editPanelState
+          )}
           columns={selectedBulkEditOption.columns}
         />
       </BodyContainer>
@@ -51,9 +72,23 @@ export const BulkEditModalContent = ({
           <Button type="ghost-danger" icon="XLarge" onClick={onCancel}>
             Cancel
           </Button>
-          <Button type="primary" icon="Upload" onClick={onFinishBulkEdit}>
-            Finish
-          </Button>
+          <Tooltip
+            content={
+              <span data-testid="text-content">
+                Please finish your unfinished edits
+              </span>
+            }
+            disabled={!editing}
+          >
+            <Button
+              type="primary"
+              icon="Upload"
+              onClick={onFinishBulkEdit}
+              disabled={editing}
+            >
+              Finish
+            </Button>
+          </Tooltip>
         </RightFooter>
       </Footer>
     </>

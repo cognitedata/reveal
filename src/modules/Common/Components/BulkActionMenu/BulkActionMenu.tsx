@@ -8,6 +8,7 @@ import {
   Popconfirm,
   Tooltip,
 } from '@cognite/cogs.js';
+import { pushMetric } from 'src/utils/pushMetric';
 
 export const BulkActionMenu = ({
   selectedCount,
@@ -39,6 +40,9 @@ export const BulkActionMenu = ({
     <Menu
       style={{
         color: 'black' /* typpy styles make color to be white here ... */,
+      }}
+      onClick={() => {
+        pushMetric('Vision.BulkAction');
       }}
     >
       {onBulkEdit && (
