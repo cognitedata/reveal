@@ -12,23 +12,8 @@ import { SSAO } from './pages/SSAO';
 import { TwoModels } from './pages/TwoModels';
 import { WalkablePath } from './pages/WalkablePath';
 
-import {
-  cadTestBasePath,
-  pointcloudTestBasePath,
-  TestCaseCad,
-  TestCasePointCloud,
-} from './visual_tests/testUtils';
-import { DefaultCadTestPage } from './pages/e2e/cad/DefaultCadTestPage';
-import { ClippingTestPage } from './pages/e2e/cad/ClippingTestPage';
-import { DefaultCameraTestPage } from './pages/e2e/cad/DefaultCameraTestPage';
-import { HighlightTestPage } from './pages/e2e/cad/HighlightTestPage';
-import { RotationTestPage } from './pages/e2e/cad/RotationTestPage';
-import { ScaledModelTestPage } from './pages/e2e/cad/ScaledModelTestPage';
-import { UserRenderTargetTestPage } from './pages/e2e/cad/UserRenderTargetTestPage';
-import { DefaultPointCloudTestPage } from './pages/e2e/pointcloud/DefaultPointCloud';
-import { SsaoTestPage } from './pages/e2e/cad/SsaoTestPage';
-import { CustomObjectWithHighlightAndGhosted } from './pages/e2e/cad/CustomObjectWithHighlightAndGhosted';
-import { DefaultCognite3DViewerTestPage } from './pages/e2e/cad/DefaultCognite3DViewerTestPage';
+const cadTestBasePath = '/test/cad/';
+const pointcloudTestBasePath = '/test/pointcloud/';
 
 // if you want to test your latest changes in workers or rust files
 // copy your worker files to some folder in /public and specify the path below
@@ -118,35 +103,44 @@ export const exampleRoutes: Array<ExampleRoute> = [
   },
 ].sort(menuTitleAz);
 
-const cadTestPages: Record<TestCaseCad, JSX.Element> = {
-  [TestCaseCad.default]: <DefaultCadTestPage />,
-  [TestCaseCad.clipping]: <ClippingTestPage />,
-  [TestCaseCad.defaultCamera]: <DefaultCameraTestPage />,
-  [TestCaseCad.highlight]: <HighlightTestPage />,
-  [TestCaseCad.rotateCadModel]: <RotationTestPage />,
-  [TestCaseCad.scaledModel]: <ScaledModelTestPage />,
-  [TestCaseCad.userRenderTarget]: <UserRenderTargetTestPage />,
-  [TestCaseCad.ssao]: <SsaoTestPage />,
-  [TestCaseCad.customObjectWithHighlightAndGhosted]: <CustomObjectWithHighlightAndGhosted />,
-  [TestCaseCad.defaultCognite3DViewer]: <DefaultCognite3DViewerTestPage />,
-};
+const cadTestPages: Record<string, { testDescription: string, testPage: JSX.Element }> = {};
+const pointcloudTestPages: Record<string, { testDescription: string, testPage: JSX.Element }> = {};
 
-const pointcloudTestPages: Record<TestCasePointCloud, JSX.Element> = {
-  [TestCasePointCloud.default]: <DefaultPointCloudTestPage />,
-};
+export function registerVisualTest(category: 'cad' | 'pointcloud', testKey: string, testDescription: string, testPage: JSX.Element) {
+  switch (category) {
+    case 'cad':
+      cadTestPages[testKey] = { testDescription, testPage };
+      break;
 
-export const testRoutesCad: Array<ExampleRoute> = Object.values(
-  TestCaseCad
-).map((test: TestCaseCad) => ({
-  path: cadTestBasePath + test,
-  menuTitle: test,
-  component: cadTestPages[test],
-}));
+    case 'pointcloud':
+      pointcloudTestPages[testKey] = { testDescription, testPage };
+      break;
 
-export const testRoutesPointCloud: Array<ExampleRoute> = Object.values(
-  TestCasePointCloud
-).map((test: TestCasePointCloud) => ({
-  path: pointcloudTestBasePath + test,
-  menuTitle: test,
-  component: pointcloudTestPages[test],
-}));
+    default:
+      throw new Error(`Unknown test category: '${category}'`);
+  }
+}
+
+// Register all visual tests
+const context = require.context('./pages/e2e', true, /\.tsx$/);
+context.keys().forEach((key) => {
+  context(key);
+});
+
+export const cadTestRoutes: Array<ExampleRoute> = 
+  Object.entries(cadTestPages).map(([testName, test]) => {
+    return {
+      path: cadTestBasePath + testName,
+      menuTitle: test.testDescription,
+      component: test.testPage
+    };
+  }).sort((x, y) => x.menuTitle.localeCompare(y.menuTitle));
+
+export const testRoutesPointCloud: Array<ExampleRoute> = 
+  Object.entries(pointcloudTestPages).map(([testName, test]) => {
+    return {
+      path: pointcloudTestBasePath + testName,
+      menuTitle: test.testDescription,
+      component: test.testPage
+    };
+  }).sort((x, y) => x.menuTitle.localeCompare(y.menuTitle));

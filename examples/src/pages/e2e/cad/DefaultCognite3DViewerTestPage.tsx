@@ -3,11 +3,14 @@
  */
 
 import React from 'react';
+import { registerVisualTest } from '../../../visual_tests';
 
 import { Cognite3DTestViewer } from '../Cognite3DTestViewer';
 
-export function DefaultCognite3DViewerTestPage() {
+function DefaultCognite3DViewerTestPage() {
   const modelUrl = 'primitives';
   
   return <Cognite3DTestViewer modelUrl={modelUrl} />;
 }
+
+registerVisualTest('cad', 'default-cognite3dviewer', 'Default Cognite3DViewer', <DefaultCognite3DViewerTestPage />)

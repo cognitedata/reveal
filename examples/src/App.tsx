@@ -7,7 +7,7 @@ import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import {
   ExampleRoute,
   exampleRoutes,
-  testRoutesCad,
+  cadTestRoutes,
   testRoutesPointCloud,
 } from './routes';
 import { Container } from './components/styled';
@@ -55,7 +55,7 @@ export default function App() {
 
         <h2>Snapshot CAD tests pages</h2>
 
-        <PagesList routes={testRoutesCad} />
+        <PagesList routes={cadTestRoutes} />
 
         <h2>Snapshot Pointcloud tests pages</h2>
 
@@ -70,7 +70,7 @@ export default function App() {
         <PageContainer>
           <Switch>
             {exampleRoutes
-              .concat(testRoutesCad, testRoutesPointCloud)
+              .concat(cadTestRoutes, testRoutesPointCloud)
               .map((page) => (
                 <Route
                   key={page.path}

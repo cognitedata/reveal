@@ -5,8 +5,9 @@
 import * as THREE from 'three';
 import React from 'react';
 import { TestEnvCad, TestViewer } from '../TestViewer';
+import { registerVisualTest } from '../../../visual_tests';
 
-export function RotationTestPage() {
+function RotationTestPage() {
   return (
     <TestViewer
       modifyTestEnv={({ model }: TestEnvCad) => {
@@ -24,3 +25,5 @@ export function RotationTestPage() {
     />
   );
 }
+
+registerVisualTest('cad', 'rotateCadModel', 'Rotate model', <RotationTestPage />)
