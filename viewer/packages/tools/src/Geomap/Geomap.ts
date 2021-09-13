@@ -4,10 +4,9 @@
 
 import * as GEOTHREE from 'geo-three';
 import { Cognite3DViewer } from '@reveal/core';
-import { MapConfig } from './MapConfig';
+import { MapConfig, MapProviders } from './MapConfig';
 
 export class Geomap {
-
   private readonly _viewer: Cognite3DViewer;
   private _map: any;
   private _mapProvider: any;
@@ -20,28 +19,42 @@ export class Geomap {
   }
 
   private getMapProvider(mapConfig: MapConfig) {
-    switch(mapConfig.provider) {
-      case 'BingMap':
-        this._mapProvider = new GEOTHREE.BingMapsProvider( mapConfig.APIKey, mapConfig.type);
+    switch (mapConfig.provider) {
+      case MapProviders.BINGMAP:
+        this._mapProvider = new GEOTHREE.BingMapsProvider(mapConfig.APIKey, mapConfig.type);
         break;
-      case 'HereMap':
-        this._mapProvider = new GEOTHREE.HereMapsProvider(mapConfig.APIKey, mapConfig.appCode, mapConfig.style, mapConfig.scheme, mapConfig.imageFormat, mapConfig.size);
+      case MapProviders.HEREMAP:
+        this._mapProvider = new GEOTHREE.HereMapsProvider(
+          mapConfig.APIKey,
+          mapConfig.appCode,
+          mapConfig.style,
+          mapConfig.scheme,
+          mapConfig.imageFormat,
+          mapConfig.size
+        );
         break;
-      case 'MapBoxMap':
+      case MapProviders.MAPBOXMAP:
+        this._mapProvider = new GEOTHREE.MapBoxProvider(
+          mapConfig.APIKey,
+          mapConfig.id || 'mapbox/satellite-streets-v10',
+          mapConfig.mode,
+          mapConfig.tileFormat
+        );
+        break;
+
       default:
-        this._mapProvider = new GEOTHREE.MapBoxProvider(mapConfig.APIKey, mapConfig.id || "mapbox/satellite-streets-v10", mapConfig.mode, mapConfig.tileFormat);
-        break;
+        throw new Error('Unsupported map provider');
     }
   }
 
   public setLatLong(lat: number, long: number) {
-    var coords = GEOTHREE.UnitsUtils.datumsToSpherical(lat, long);
-    var bound = this._viewer.models[0].getModelBoundingBox();
+    const coords = GEOTHREE.UnitsUtils.datumsToSpherical(lat, long);
+    const bound = this._viewer.models[0].getModelBoundingBox();
     this._map.position.set(-coords.x, bound.min.y, coords.y);
     this._map.updateMatrixWorld(true);
   }
 
-  public setMapProvider(provider: string, apiKey: string, appCode?: string) {
+  public setMapProvider(provider: MapProviders, apiKey: string, appCode?: string) {
     const mapConfig = {
       provider: provider,
       APIKey: apiKey,
@@ -49,8 +62,8 @@ export class Geomap {
       latlong: {
         latitude: 0,
         longitude: 0
-    }
-    }
+      }
+    };
     this.getMapProvider(mapConfig);
     this._map.setProvider(this._mapProvider);
   }

@@ -13,7 +13,7 @@ export enum MapProviders {
 
 /**
  * Map data for Mapbox
-*/
+ */
 export enum MapBoxMode {
   /**
    * Access the map data using a map style.
@@ -23,12 +23,12 @@ export enum MapBoxMode {
    * Access the map data using a map id.
    */
   MAP_ID = 101
-};
+}
 
 /**
  * Mapbox Map Style
-*/
- export enum MapBoxStyle {
+ */
+export enum MapBoxStyle {
   STREETS = 'mapbox/streets-v10',
   OUTDOOR = 'mapbox/outdoors-v10',
   LIGHT = 'mapbox/light-v9',
@@ -39,9 +39,9 @@ export enum MapBoxMode {
   NAVIGATION_NIGHT = 'mapbox/navigation-preview-night-v4',
   NAVIGATION_GUIDE_DAY = 'mapbox/navigation-guidance-day-v4',
   NAVIGATION_GUIDE_NIGHT = 'mapbox/navigation-guidance-night-v4'
- }
+}
 
- /**
+/**
  * Mapbox Map image tile format
  */
 export enum MapBoxImageFormat {
@@ -60,7 +60,7 @@ export enum MapBoxImageFormat {
  * Bing Map View (aerial, road, bird's eye view of the map)
  */
 export enum BingMapType {
-  AERIAL= 'a',
+  AERIAL = 'a',
   ROAD = 'r',
   AERIAL_LABELS = 'h',
   OBLIQUE = 'o',
@@ -106,6 +106,8 @@ export enum HereMapImageFormat {
 }
 
 export type BingMapConfig = {
+  provider: MapProviders.BINGMAP;
+
   /**
    * The type of the map used.
    */
@@ -113,6 +115,8 @@ export type BingMapConfig = {
 };
 
 export type HereMapConfig = {
+  provider: MapProviders.HEREMAP;
+
   /**
    * Service application code token.
    */
@@ -140,6 +144,8 @@ export type HereMapConfig = {
 };
 
 export type MapBoxConfig = {
+  provider: MapProviders.MAPBOXMAP;
+
   /**
    * Map style or map ID if the mode is set to MAP_ID
    */
@@ -163,11 +169,7 @@ export type MapBoxConfig = {
 /**
  * Maps Configuration of {@link GeomapTool}.
  */
-export type MapConfig = BingMapConfig & HereMapConfig & MapBoxConfig & {
-  /**
-   * Map Provider
-   */
-  provider: string;
+export type MapConfig = {
   /**
    * Map provider API Key
    */
@@ -179,12 +181,12 @@ export type MapConfig = BingMapConfig & HereMapConfig & MapBoxConfig & {
   /**
    * Is Vector Map?
    */
-   isVectorMap?: boolean;
-};
+  isVectorMap?: boolean;
+} & (BingMapConfig | HereMapConfig | MapBoxConfig);
 
 /**
  * Latitude, Longitude position.
-*/
+ */
 export type LatLongPosition = {
   latitude: number;
   longitude: number;
