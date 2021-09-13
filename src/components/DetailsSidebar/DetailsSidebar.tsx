@@ -345,7 +345,7 @@ const Statistics = ({
                 <Row className="ant-list-item">
                   <Col span={14}>{label}</Col>
                   <Col span={10} style={{ textAlign: 'right' }}>
-                    {value
+                    {typeof value === 'number'
                       ? `${roundToSignificantDigits(
                           convertValue(value, unit, preferredUnit),
                           3
@@ -368,7 +368,7 @@ const Statistics = ({
                 <Row className="ant-list-item">
                   <Col span={14}>{label}</Col>
                   <Col span={10} style={{ textAlign: 'right' }}>
-                    {value
+                    {typeof value === 'number'
                       ? `${roundToSignificantDigits(
                           convertValue(value, unit, preferredUnit),
                           3
@@ -390,7 +390,7 @@ const Statistics = ({
                 <Row className="ant-list-item">
                   <Col span={14}>{label}</Col>
                   <Col span={10} style={{ textAlign: 'right' }}>
-                    {value || '-'}
+                    {typeof value === 'number' ? value : '-'}
                   </Col>
                 </Row>
               )}
