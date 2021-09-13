@@ -21,6 +21,9 @@ const FileReview = ({
 
   const labelsAccess = labelsReadAcl && labelsWriteAcl;
 
+  const linkedAnnotations = annotations.filter(
+    an => !!an.resourceId || !!an.resourceExternalId
+  );
   const pendingAnnotations = annotations.filter(a => a.status === 'unhandled');
 
   const assetAnnotations = annotations.filter(a => a.resourceType === 'asset');
@@ -46,10 +49,15 @@ const FileReview = ({
           All tags
         </Body>
 
-        <Body level={2}>{annotations.length}</Body>
+        <Body level={2}>{linkedAnnotations.length}</Body>
       </div>
       {pendingAnnotations.length ? (
-        <Tooltip title="Missing permissions to approve tags, labels:read & labels:write">
+        <Tooltip
+          title={
+            !labelsAccess &&
+            'Missing permissions to approve tags, labels:read & labels:write'
+          }
+        >
           <ButtonWrapper>
             <Button
               onClick={() => onApprove(annotations)}
