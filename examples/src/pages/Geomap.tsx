@@ -17,7 +17,7 @@ import {
   TreeIndexNodeCollection,
   IndexSet
 } from '@cognite/reveal';
-import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, AxisViewTool, GeomapTool, MapConfig, MapBoxMode, MapBoxStyle, MapProviders, MapBoxImageFormat } from '@cognite/reveal/tools';
+import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, AxisViewTool, GeomapTool, MapConfig, MapboxMode, MapboxStyle, MapProviders, MapboxImageFormat } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
 
 window.THREE = THREE;
@@ -155,16 +155,10 @@ export function Geomap() {
           hideAllNodes: false
         },
         showCameraTool: new DebugCameraTool(viewer),
-        providers: 'MapBoxMap',
+        providers: 'MapboxMap',
         latitude: 0.000001,
         longitude: 0.000001
       };
-
-      const guiActions = {
-        setLatLongPosition: () => {
-        geomapTool.setLatLong(guiState.latitude, guiState.longitude);
-        viewer.requestRedraw();}
-        };
 
       // Load model if provided by URL
       const modelIdStr = urlParams.get('modelId');
@@ -210,11 +204,11 @@ export function Geomap() {
       });
 
       const mapConfig: MapConfig = {
-        provider: MapProviders.MAPBOXMAP,
+        provider: MapProviders.MapboxMap,
         APIKey: "pk.eyJ1IjoicHJhbW9kLXMiLCJhIjoiY2tzb2JkbXdyMGd5cjJubnBrM3IwMTd0OCJ9.jA9US2D2FRXUlldhE8bZgA",
-        mode: MapBoxMode.STYLE,
-        id: MapBoxStyle.SATELLITE_STREETS,
-        tileFormat: MapBoxImageFormat.JPG70,
+        mode: MapboxMode.Style,
+        id: MapboxStyle.Satellite_Streets,
+        tileFormat: MapboxImageFormat.JPG70,
         latlong: {
           latitude: 59.9016426931744,
           longitude: 10.607235872426175
@@ -223,7 +217,7 @@ export function Geomap() {
       let geomapTool = new GeomapTool(viewer, mapConfig);
 
       const renderGui = gui.addFolder('Options');
-      const mapProviders = ['MapBoxMap', 'HereMap', 'BingMap'];
+      const mapProviders = ['MapboxMap', 'HereMap', 'BingMap'];
       renderGui.add(guiState, 'providers', mapProviders).name('MapProviders').onFinishChange(value => {
         let apiKey = "";
         let appCode = "";
@@ -232,20 +226,16 @@ export function Geomap() {
             apiKey = "HqSchC7XT2PA9qCfxzFq";
             appCode = "5rob9QcZ70J-m18Er8-rIA";
             break;
-          case 'BingMap':
+          case 'MapboxMap':
             apiKey = "pk.eyJ1IjoicHJhbW9kLXMiLCJhIjoiY2tzb2JkbXdyMGd5cjJubnBrM3IwMTd0OCJ9.jA9US2D2FRXUlldhE8bZgA";
             break;
-          case 'MapBoxMap':
+          case 'BingMap':
             apiKey = "AuViYD_FXGfc3dxc0pNa8ZEJxyZyPq1lwOLPCOydV3f0tlEVH-HKMgxZ9ilcRj-T";
             break;
         }
-        geomapTool.setMapProvider(value, apiKey, appCode);
+        geomapTool.setMapProvider(value, apiKey, appCode, MapboxStyle.Satellite_Streets);
         viewer.requestRedraw();
       });
-
-      renderGui.add(guiState, 'latitude', -90.000000, 90.000000, 0.000001).name('Latitude');
-      renderGui.add(guiState, 'longitude', -180.000000, 180.000000, 0.000001).name('Longitude');
-      renderGui.add(guiActions, 'setLatLongPosition').name('Set Position');
     }
 
     main();

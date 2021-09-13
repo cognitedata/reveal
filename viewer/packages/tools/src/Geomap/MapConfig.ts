@@ -6,45 +6,45 @@
  * Supported map Providers Bing, Here & Mapbox
  */
 export enum MapProviders {
-  BINGMAP = 'BingMap',
-  HEREMAP = 'HereMap',
-  MAPBOXMAP = 'MapBoxMap'
+  BingMap = 'BingMap',
+  HereMap = 'HereMap',
+  MapboxMap = 'MapboxMap'
 }
 
 /**
  * Map data for Mapbox
  */
-export enum MapBoxMode {
+export enum MapboxMode {
   /**
    * Access the map data using a map style.
    */
-  STYLE = 100,
+  Style = 100,
   /**
    * Access the map data using a map id.
    */
-  MAP_ID = 101
+  Map_Id = 101
 }
 
 /**
  * Mapbox Map Style
  */
-export enum MapBoxStyle {
-  STREETS = 'mapbox/streets-v10',
-  OUTDOOR = 'mapbox/outdoors-v10',
-  LIGHT = 'mapbox/light-v9',
-  DARK = 'mapbox/dark-v9',
-  SATELLITE = 'mapbox/satellite-v9',
-  SATELLITE_STREETS = 'mapbox/satellite-streets-v10',
-  NAVIGATION_DAY = 'mapbox/navigation-preview-day-v4',
-  NAVIGATION_NIGHT = 'mapbox/navigation-preview-night-v4',
-  NAVIGATION_GUIDE_DAY = 'mapbox/navigation-guidance-day-v4',
-  NAVIGATION_GUIDE_NIGHT = 'mapbox/navigation-guidance-night-v4'
+export enum MapboxStyle {
+  Streets = 'mapbox/streets-v10',
+  Outdoor = 'mapbox/outdoors-v10',
+  Light = 'mapbox/light-v9',
+  Dark = 'mapbox/dark-v9',
+  Satellite = 'mapbox/satellite-v9',
+  Satellite_Streets = 'mapbox/satellite-streets-v10',
+  Navigation_Day = 'mapbox/navigation-preview-day-v4',
+  Navigation_Night = 'mapbox/navigation-preview-night-v4',
+  Navigation_Guide_Day = 'mapbox/navigation-guidance-day-v4',
+  Navigation_Guide_Night = 'mapbox/navigation-guidance-night-v4'
 }
 
 /**
  * Mapbox Map image tile format
  */
-export enum MapBoxImageFormat {
+export enum MapboxImageFormat {
   PNG = 'png',
   PNG32 = 'png32',
   PNG64 = 'png64',
@@ -60,11 +60,11 @@ export enum MapBoxImageFormat {
  * Bing Map View (aerial, road, bird's eye view of the map)
  */
 export enum BingMapType {
-  AERIAL = 'a',
-  ROAD = 'r',
-  AERIAL_LABELS = 'h',
-  OBLIQUE = 'o',
-  OBLIQUE_LABELS = 'b'
+  Aerial = 'a',
+  Road = 'r',
+  Aerial_Labels = 'h',
+  Oblique = 'o',
+  Oblique_Labels = 'b'
 }
 
 /**
@@ -80,20 +80,20 @@ export enum BingMapImageFormat {
  * Here Map types
  */
 export enum HereMapType {
-  AERIAL = 'aerial',
-  BASE = 'base',
-  PANO = 'pano',
-  TRAFFIC = 'traffic'
+  Aerial = 'aerial',
+  Base = 'base',
+  Pano = 'pano',
+  Traffic = 'traffic'
 }
 
 /**
  * Here Map View Scheme like day, night, satellite, terrain
  */
 export enum HereMapScheme {
-  DAY = 'normal.day',
-  NIGHT = 'normal.night',
-  TERRAIN = 'terrain.day',
-  SATELLITE = 'satellite.day'
+  Day = 'normal.day',
+  Night = 'normal.night',
+  Terrain = 'terrain.day',
+  Satellite = 'satellite.day'
 }
 
 /**
@@ -106,7 +106,7 @@ export enum HereMapImageFormat {
 }
 
 export type BingMapConfig = {
-  provider: MapProviders.BINGMAP;
+  provider: MapProviders.BingMap;
 
   /**
    * The type of the map used.
@@ -115,7 +115,7 @@ export type BingMapConfig = {
 };
 
 export type HereMapConfig = {
-  provider: MapProviders.HEREMAP;
+  provider: MapProviders.HereMap;
 
   /**
    * Service application code token.
@@ -143,23 +143,23 @@ export type HereMapConfig = {
   size?: number;
 };
 
-export type MapBoxConfig = {
-  provider: MapProviders.MAPBOXMAP;
+export type MapboxConfig = {
+  provider: MapProviders.MapboxMap;
 
   /**
    * Map style or map ID if the mode is set to MAP_ID
    */
-  id?: MapBoxStyle;
+  id?: MapboxStyle;
   /**
    * Map tile access mode
-   *  - MapBoxMode.STYLE
-   *  - MapBoxMode.MAP_ID
+   *  - MapboxMode.STYLE
+   *  - MapboxMode.MAP_ID
    */
-  mode?: MapBoxMode;
+  mode?: MapboxMode;
   /**
    * Map image tile format
    */
-  tileFormat?: MapBoxImageFormat;
+  tileFormat?: MapboxImageFormat;
   /**
    * Flag to indicate if should use high resolution tiles
    */
@@ -182,7 +182,7 @@ export type MapConfig = {
    * Is Vector Map?
    */
   isVectorMap?: boolean;
-} & (BingMapConfig | HereMapConfig | MapBoxConfig);
+} & (BingMapConfig | HereMapConfig | MapboxConfig);
 
 /**
  * Latitude, Longitude position.
