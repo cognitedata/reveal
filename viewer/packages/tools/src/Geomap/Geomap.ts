@@ -16,6 +16,7 @@ export class Geomap {
     this.getMapProvider(mapConfig);
     this._map = new GEOTHREE.MapView(GEOTHREE.MapView.PLANAR, this._mapProvider, this._mapProvider);
     this._viewer.addObject3D(this._map);
+    this._viewer.requestRedraw();
   }
 
   private getMapProvider(mapConfig: MapConfig) {
