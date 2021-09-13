@@ -43,6 +43,7 @@ import { useCdfItem, useUserInfo } from '@cognite/sdk-react-query-hooks';
 
 import { useFlag } from '@cognite/react-feature-flags';
 import { SIDEBAR_RESIZE_EVENT } from 'utils/WindowEvents';
+import InteractiveIcon from 'components/InteractiveIcon';
 import { useReviewFile } from '../hooks';
 import { ContextualizationData } from './ContextualizationModule';
 import { CreateAnnotationForm } from './CreateAnnotationForm/CreateAnnotationForm';
@@ -451,7 +452,6 @@ const AnnotationPreviewSidebar = ({
 
   const type = selectedAnnotation?.resourceType as ResourceType;
   const apiType = type ? convertResourceType(type) : 'assets';
-
   const { resourceExternalId, resourceId } = selectedAnnotation || {};
   const { data: item } = useCdfItem<{ id: number }>(
     apiType,
@@ -486,7 +486,7 @@ const AnnotationPreviewSidebar = ({
           }
           header={
             <TitleWrapper>
-              <Icon type="PDF" />
+              <InteractiveIcon />
               <Title level={5}>{file?.name} </Title>
               <DiagramReviewStatus file={file} />
               <FileReview
