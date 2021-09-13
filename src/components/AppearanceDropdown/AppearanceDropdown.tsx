@@ -11,33 +11,35 @@ export const AppearanceDropdown = ({
   update: (diff: any) => void;
 }) => {
   return (
-    <DropdownWrapper>
-      <ColorDropdown
-        onColorSelected={(newColor) => {
-          update({
-            color: newColor,
-          });
-          trackUsage('ChartView.ChangeAppearance', { type: 'color' });
-        }}
-      />
-      <WeightDropdown
-        onWeightSelected={(newWeight) => {
-          update({
-            lineWeight: newWeight,
-          });
-          trackUsage('ChartView.ChangeAppearance', { type: 'line-weight' });
-        }}
-      />
-      <TypeDropdown
-        onStyleSelected={(newStyle) => {
-          update({
-            displayMode: newStyle === 'none' ? 'markers' : 'lines',
-            lineStyle: newStyle,
-          });
-          trackUsage('ChartView.ChangeAppearance', { type: 'line-style' });
-        }}
-      />
-    </DropdownWrapper>
+    <Menu>
+      <DropdownWrapper>
+        <ColorDropdown
+          onColorSelected={(newColor) => {
+            update({
+              color: newColor,
+            });
+            trackUsage('ChartView.ChangeAppearance', { type: 'color' });
+          }}
+        />
+        <WeightDropdown
+          onWeightSelected={(newWeight) => {
+            update({
+              lineWeight: newWeight,
+            });
+            trackUsage('ChartView.ChangeAppearance', { type: 'line-weight' });
+          }}
+        />
+        <TypeDropdown
+          onStyleSelected={(newStyle) => {
+            update({
+              displayMode: newStyle === 'none' ? 'markers' : 'lines',
+              lineStyle: newStyle,
+            });
+            trackUsage('ChartView.ChangeAppearance', { type: 'line-style' });
+          }}
+        />
+      </DropdownWrapper>
+    </Menu>
   );
 };
 
@@ -47,7 +49,7 @@ export const ColorDropdown = ({
   onColorSelected: (color: string) => void;
 }) => {
   return (
-    <DropdownMenu>
+    <MenuWrapper>
       <Menu.Header>Color</Menu.Header>
       {availableColors.map((color) => (
         <Menu.Item key={color} onClick={() => onColorSelected(color)}>
@@ -55,7 +57,7 @@ export const ColorDropdown = ({
           {color}
         </Menu.Item>
       ))}
-    </DropdownMenu>
+    </MenuWrapper>
   );
 };
 
@@ -67,7 +69,7 @@ export const WeightDropdown = ({
   const weightOptions = [1, 2, 3, 4, 5];
 
   return (
-    <Menu>
+    <MenuWrapper>
       <Menu.Header>Weight</Menu.Header>
       {weightOptions.map((weight) => (
         <Menu.Item
@@ -78,7 +80,7 @@ export const WeightDropdown = ({
           {weight}px
         </Menu.Item>
       ))}
-    </Menu>
+    </MenuWrapper>
   );
 };
 
@@ -90,7 +92,7 @@ export const TypeDropdown = ({
   const styleOptions: LineStyle[] = ['solid', 'dashed', 'dotted', 'none'];
 
   return (
-    <Menu>
+    <MenuWrapper>
       <Menu.Header>Type</Menu.Header>
       {styleOptions.map((style) => (
         <Menu.Item key={style} onClick={() => onStyleSelected(style)}>
@@ -98,7 +100,7 @@ export const TypeDropdown = ({
           {style}
         </Menu.Item>
       ))}
-    </Menu>
+    </MenuWrapper>
   );
 };
 
@@ -117,12 +119,20 @@ const TypePreview = ({ type }: { type: string }) => (
 const DropdownWrapper = styled.div`
   display: flex;
   flex-direction: row;
-  margin-left: -100px;
+  height: 250px;
+  overflow: hidden;
 `;
 
-const DropdownMenu = styled(Menu)`
+const MenuWrapper = styled.div`
   max-height: 250px;
   overflow-y: auto;
+  padding: 0 10px;
+  border-left: 1px solid var(--cogs-border-default);
+
+  &:first-child {
+    padding: 0;
+    border-left: none;
+  }
 `;
 
 const PreviewContainer = styled.div`
