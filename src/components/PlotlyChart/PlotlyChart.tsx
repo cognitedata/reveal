@@ -99,7 +99,7 @@ const PlotlyChartComponent = ({
         ],
         pointsPerSeries
       ),
-      aggregates: ['average', 'min', 'max'],
+      aggregates: ['average', 'min', 'max', 'count', 'sum'],
       limit: pointsPerSeries,
     })) || [];
 

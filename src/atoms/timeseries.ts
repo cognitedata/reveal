@@ -40,12 +40,15 @@ export const timeseriesSummaryById = selectorFamily({
           )
         : NaN;
 
-      const mean = ts.datapoints.length
-        ? ts.datapoints
-            .map((datapoint) => datapoint.average || 0)
-            .reduce((total, average) => total + average, 0) /
-          ts.datapoints.length
-        : NaN;
+      const totalSum = ts.datapoints.length
+        ? ts.datapoints.reduce((total, { sum }) => total + (sum || 0), 0)
+        : 0;
+
+      const totalCount = ts.datapoints.length
+        ? ts.datapoints.reduce((total, { count }) => total + (count || 0), 0)
+        : undefined;
+
+      const mean = totalCount ? totalSum / totalCount : undefined;
 
       const result = {
         min: Number.isNaN(min) ? undefined : min,
