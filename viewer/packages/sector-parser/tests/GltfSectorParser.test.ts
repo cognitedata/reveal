@@ -12,9 +12,6 @@ describe('Gltf Sector Parser', () => {
     //Arrange
     const parser = new GltfSectorParser();
     const buffer = fs.readFileSync(__dirname + '/test.glb');
-    console.log(__dirname);
-    const dir = fs.readdirSync(__dirname);
-    console.log(dir);
 
     //Act
     const geometries = parser.parseSector(buffer.buffer);
