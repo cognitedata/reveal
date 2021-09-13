@@ -15,7 +15,6 @@ const clusters = [
     label: 'Single customer environments',
     options: [
       { value: 'bp-northeurope', label: 'BP North Europe' },
-      { value: 'bp', label: 'BP', legacyAuth: true },
       { value: 'omv', label: 'OMV', legacyAuth: true },
       { value: 'pgs', label: 'PGS', legacyAuth: true },
       { value: 'power-no', label: 'Power NO', legacyAuth: true },

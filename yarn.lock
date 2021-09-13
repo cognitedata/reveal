@@ -5291,10 +5291,10 @@ axe-core@^4.0.2:
   resolved "https://registry.yarnpkg.com/axe-core/-/axe-core-4.3.2.tgz#fcf8777b82c62cfc69c7e9f32c0d2226287680e7"
   integrity sha512-5LMaDRWm8ZFPAEdzTYmgjjEdj1YnQcpfrVajO/sn/LhbpGp0Y0H64c2hLZI1gRMxfA+w1S71Uc/nHaOXgcCvGg==
 
-axios@^0.21.1, axios@^0.21.2:
-  version "0.21.2"
-  resolved "https://registry.yarnpkg.com/axios/-/axios-0.21.2.tgz#21297d5084b2aeeb422f5d38e7be4fbb82239017"
-  integrity sha512-87otirqUw3e8CzHTMO+/9kh/FSgXt/eVDvipijwDtEuwbkySWZ9SBm6VEubmJ/kLKEoLQV/POhxXFb66bfekfg==
+axios@^0.21.1, axios@^0.21.4:
+  version "0.21.4"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.21.4.tgz#c67b90dc0568e5c1cf2b0b858c43ba28e2eda575"
+  integrity sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==
   dependencies:
     follow-redirects "^1.14.0"
 
@@ -7374,10 +7374,10 @@ date-fns@2.x, date-fns@^2.0.1, date-fns@^2.16.1, date-fns@^2.23.0:
   resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.23.0.tgz#4e886c941659af0cf7b30fafdd1eaa37e88788a9"
   integrity sha512-5ycpauovVyAk0kXNZz6ZoB9AYMZB4DObse7P3BPWmyEjXNORTI8EJ6X0uaSAq4sCHzM1uajzrkr6HnsLQpxGXA==
 
-dayjs@1.x, dayjs@^1.10.6, dayjs@^1.9.7:
-  version "1.10.6"
-  resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.10.6.tgz#288b2aa82f2d8418a6c9d4df5898c0737ad02a63"
-  integrity sha512-AztC/IOW4L1Q41A86phW5Thhcrco3xuAA+YX/BLpLWWjRcTj5TOt/QImBLmCKlrF7u7k47arTnOyL6GnbG8Hvw==
+dayjs@1.x, dayjs@^1.10.7, dayjs@^1.9.7:
+  version "1.10.7"
+  resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.10.7.tgz#2cf5f91add28116748440866a0a1d26f3a6ce468"
+  integrity sha512-P6twpd70BcPK34K26uJ1KT3wlhpuOAPoMwJzpsIWUxHZ7wpmbdZL/hQqBDfz7hGurYSa5PhzdhDHtt319hL3ig==
 
 debounce@^1.2.0:
   version "1.2.1"
@@ -15362,10 +15362,10 @@ react-popper@^2.2.4:
     react-fast-compare "^3.0.1"
     warning "^4.0.2"
 
-react-query@^3.12.2, react-query@^3.13.10, react-query@^3.21.1, react-query@^3.6.0:
-  version "3.21.1"
-  resolved "https://registry.yarnpkg.com/react-query/-/react-query-3.21.1.tgz#8fe4df90bf6c6a93e0552ea9baff211d1b28f6e0"
-  integrity sha512-aKFLfNJc/m21JBXJk7sR9tDUYPjotWA4EHAKvbZ++GgxaY+eI0tqBxXmGBuJo0Pisis1W4pZWlZgoRv9yE8yjA==
+react-query@^3.12.2, react-query@^3.13.10, react-query@^3.23.2, react-query@^3.6.0:
+  version "3.23.2"
+  resolved "https://registry.yarnpkg.com/react-query/-/react-query-3.23.2.tgz#1f95a5af7d0797370bbeb916d54fbb516bf9f1c5"
+  integrity sha512-RFnJh1ZKj4DImWR8SijHnUunYk9WC7aoHuSqxdg7kV9IBq4IIUVbFwix5sYFk0CfUZTh2F4m2KZMlguweLzj+w==
   dependencies:
     "@babel/runtime" "^7.5.5"
     broadcast-channel "^3.4.1"
@@ -15388,10 +15388,10 @@ react-refresh@^0.8.3:
   resolved "https://registry.yarnpkg.com/react-refresh/-/react-refresh-0.8.3.tgz#721d4657672d400c5e3c75d063c4a85fb2d5d68f"
   integrity sha512-X8jZHc7nCMjaCqoU+V2I0cOhNW+QMBwSUkeXnTi8IPe6zaRWfn60ZzvFDZqWPfmSJfjub7dDW1SP0jaHWLu/hg==
 
-react-router-dom@^5.2.0, react-router-dom@^5.2.1:
-  version "5.2.1"
-  resolved "https://registry.yarnpkg.com/react-router-dom/-/react-router-dom-5.2.1.tgz#34af8b551a4ce17487d3f80e651b91651978dff6"
-  integrity sha512-xhFFkBGVcIVPbWM2KEYzED+nuHQPmulVa7sqIs3ESxzYd1pYg8N8rxPnQ4T2o1zu/2QeDUWcaqST131SO1LR3w==
+react-router-dom@^5.2.0, react-router-dom@^5.3.0:
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/react-router-dom/-/react-router-dom-5.3.0.tgz#da1bfb535a0e89a712a93b97dd76f47ad1f32363"
+  integrity sha512-ObVBLjUZsphUUMVycibxgMdh5jJ1e3o+KpAZBVeHcNQZ4W+uUGGWsokurzlF4YOldQYRQL4y6yFRWM4m3svmuQ==
   dependencies:
     "@babel/runtime" "^7.12.13"
     history "^4.9.0"
@@ -16229,10 +16229,10 @@ rrweb-snapshot@^1.1.8:
   resolved "https://registry.yarnpkg.com/rrweb-snapshot/-/rrweb-snapshot-1.1.8.tgz#57c3a8003a6ebbe4a2e2f5be29e30a47a8b1eb03"
   integrity sha512-wi8T9IVobEwlns7U2m8cbPfoihsNAMpTI+UBe4KUjclU2N+vtowD2U1Rq8PleiFTDvcseHvkQDmEIZoZLXFzwg==
 
-rrweb@^1.0.4:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/rrweb/-/rrweb-1.0.4.tgz#a63931c4ed5c0dc50c1ee6d1b03abaf18cf529e2"
-  integrity sha512-JMnLF9QWMBwwmtxCUHJ38kjtDALvDfx2JsfiI6nOtj2qWWsSkwPJWfgWk3tSQzy1FD1ZXlFJPERIFjMrSBzn5w==
+rrweb@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/rrweb/-/rrweb-1.0.5.tgz#b8ff8f711ccdbfdb0b59a364e41446112b09d22d"
+  integrity sha512-p0X0Drs4z4ctWUWnA2/f8BZgx+G8+XNSEdvng2RvRcfJHge2qB6I+HcAqVl5mu1VuEOlXfrJ82W/xLTZmDA6bQ==
   dependencies:
     "@types/css-font-loading-module" "0.0.4"
     "@xstate/fsm" "^1.4.0"
