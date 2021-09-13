@@ -1,5 +1,5 @@
 import React, { FunctionComponent, PropsWithoutRef } from 'react';
-import { Badge } from '@cognite/cogs.js';
+import { Badge, Label } from '@cognite/cogs.js';
 import { StyledTooltip } from 'styles/StyledToolTip';
 import { RunStatusUI } from 'model/Status';
 
@@ -19,53 +19,27 @@ const StatusMarker: FunctionComponent<Props> = ({
   switch (status) {
     case RunStatusUI.SUCCESS:
       return (
-        <StyledTooltip content={`Status for latest run: ${status}`}>
-          <Badge
-            className="cogs-badge badge-success"
-            text={status}
-            background="transparent"
-            aria-label={`Status ${status}`}
-            data-testid={`status-marker-${dataTestId}`}
-            {...rest}
-          />
-        </StyledTooltip>
+        <Label size={'medium'} variant={'success'}>
+          Success
+        </Label>
       );
     case RunStatusUI.FAILURE:
       return (
-        <StyledTooltip content={`Status for latest run: ${status}`}>
-          <Badge
-            className="cogs-badge badge-fail"
-            text={status}
-            background="danger"
-            aria-label={`Status ${status}`}
-            data-testid={`status-marker-${dataTestId}`}
-            {...rest}
-          />
-        </StyledTooltip>
+        <Label size={'medium'} variant={'danger'}>
+          Failure
+        </Label>
       );
     case RunStatusUI.SEEN:
       return (
-        <StyledTooltip content={`Status for latest run: ${status}`}>
-          <Badge
-            text={status}
-            background="greyscale-grey2"
-            aria-label={`Status ${status}`}
-            data-testid={`status-marker-${dataTestId}`}
-            {...rest}
-          />
-        </StyledTooltip>
+        <Label size={'medium'} variant={'default'}>
+          Seen
+        </Label>
       );
     case RunStatusUI.NOT_ACTIVATED:
       return (
-        <StyledTooltip content="No runs yet">
-          <i
-            aria-label={`Status ${status}`}
-            data-testid={`status-marker-${dataTestId}`}
-            {...rest}
-          >
-            {status}
-          </i>
-        </StyledTooltip>
+        <Label size={'medium'} variant={'unknown'}>
+          Not activated
+        </Label>
       );
     default:
       return <></>;
