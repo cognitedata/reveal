@@ -16,7 +16,7 @@ static final Map<String, String> CONTEXTS = [
 ]
 
 void bazelPod(Map params = new HashMap(), body) {
-  def bazelVersion = params.bazelVersion ?: '3.1.0'
+  def bazelVersion = params.bazelVersion ?: '4.2.1'
 
   podTemplate(
       containers: [
@@ -60,7 +60,7 @@ def pods = { body ->
       ),
     ]
   ) {
-    bazelPod(bazelVersion: '3.5.0') {
+    bazelPod(bazelVersion: '4.2.1') {
       yarn.pod(nodeVersion: NODE_VERSION) {
         previewServer.pod(nodeVersion: NODE_VERSION) {
           fas.pod(

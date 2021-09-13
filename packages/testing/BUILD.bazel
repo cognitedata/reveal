@@ -103,6 +103,7 @@ ts_project(
     srcs = SOURCES,
     declaration = True,
     out_dir = "dist",
+    resolve_json_module = True,
     root_dir = "src",
     tsconfig = ":ts_config_build",
     deps = DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + [
