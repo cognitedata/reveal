@@ -19,6 +19,7 @@ import {
 } from '@cognite/reveal';
 import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, AxisViewTool, GeomapTool, MapConfig, MapBoxMode, MapBoxStyle, MapProviders, MapBoxImageFormat } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
+import { copyFileSync } from 'fs';
 
 window.THREE = THREE;
 (window as any).reveal = reveal;
@@ -225,7 +226,21 @@ export function Geomap() {
       const renderGui = gui.addFolder('Options');
       const mapProviders = ['MapBoxMap', 'HereMap', 'BingMap'];
       renderGui.add(guiState, 'providers', mapProviders).name('MapProviders').onFinishChange(value => {
-        geomapTool.setMapProvider(value);
+        let apiKey = "";
+        let appCode = "";
+        switch(value) {
+          case 'HereMap':
+            apiKey = "HqSchC7XT2PA9qCfxzFq";
+            appCode = "5rob9QcZ70J-m18Er8-rIA";
+            break;
+          case 'BingMap':
+            apiKey = "pk.eyJ1IjoicHJhbW9kLXMiLCJhIjoiY2tzb2JkbXdyMGd5cjJubnBrM3IwMTd0OCJ9.jA9US2D2FRXUlldhE8bZgA";
+            break;
+          case 'MapBoxMap':
+            apiKey = "AuViYD_FXGfc3dxc0pNa8ZEJxyZyPq1lwOLPCOydV3f0tlEVH-HKMgxZ9ilcRj-T";
+            break;
+        }
+        geomapTool.setMapProvider(value, apiKey, appCode);
         viewer.requestRedraw();
       });
 

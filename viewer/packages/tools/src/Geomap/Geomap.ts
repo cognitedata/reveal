@@ -4,7 +4,7 @@
 
 import * as GEOTHREE from 'geo-three';
 import { Cognite3DViewer } from '@reveal/core';
-import { MapConfig, APIKeys } from './MapConfig';
+import { MapConfig } from './MapConfig';
 
 export class Geomap {
 
@@ -22,14 +22,14 @@ export class Geomap {
   private getMapProvider(mapConfig: MapConfig) {
     switch(mapConfig.provider) {
       case 'BingMap':
-        this._mapProvider = new GEOTHREE.BingMapsProvider( mapConfig.APIKey || APIKeys.DEV_BING_API_KEY, mapConfig.type);
+        this._mapProvider = new GEOTHREE.BingMapsProvider( mapConfig.APIKey, mapConfig.type);
         break;
       case 'HereMap':
-        this._mapProvider = new GEOTHREE.HereMapsProvider(mapConfig.APIKey || APIKeys.DEV_HEREMAPS_APP_ID, mapConfig.appCode || APIKeys.DEV_HEREMAPS_APP_CODE, mapConfig.style, mapConfig.scheme, mapConfig.imageFormat, mapConfig.size);
+        this._mapProvider = new GEOTHREE.HereMapsProvider(mapConfig.APIKey, mapConfig.appCode, mapConfig.style, mapConfig.scheme, mapConfig.imageFormat, mapConfig.size);
         break;
       case 'MapBoxMap':
       default:
-        this._mapProvider = new GEOTHREE.MapBoxProvider(mapConfig.APIKey || APIKeys.DEV_MAPBOX_API_KEY, mapConfig.style || "mapbox/satellite-streets-v10", mapConfig.mode, mapConfig.tileFormat);
+        this._mapProvider = new GEOTHREE.MapBoxProvider(mapConfig.APIKey, mapConfig.id || "mapbox/satellite-streets-v10", mapConfig.mode, mapConfig.tileFormat);
         break;
     }
   }
@@ -41,10 +41,15 @@ export class Geomap {
     this._map.updateMatrixWorld(true);
   }
 
-  public setMapProvider(provider: string, apiKey?: string) {
+  public setMapProvider(provider: string, apiKey: string, appCode?: string) {
     const mapConfig = {
       provider: provider,
-      APIKey: apiKey
+      APIKey: apiKey,
+      appCode: appCode,
+      latlong: {
+        latitude: 0,
+        longitude: 0
+    }
     }
     this.getMapProvider(mapConfig);
     this._map.setProvider(this._mapProvider);
