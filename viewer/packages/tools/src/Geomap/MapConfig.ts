@@ -175,7 +175,7 @@ export type MapConfig = BingMapConfig & HereMapConfig & MapBoxConfig & {
   /**
    * Latitude, Longitude position
    */
-  latlong?: LatLongPosition;
+  latlong: LatLongPosition;
   /**
    * Is Vector Map?
    */
