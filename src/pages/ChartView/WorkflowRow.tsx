@@ -357,7 +357,7 @@ export default function WorkflowRow({
             {typeof summary?.min === 'number'
               ? roundToSignificantDigits(
                   convertValue(summary?.min, unit, preferredUnit),
-                  1
+                  3
                 )
               : '-'}
           </td>
@@ -365,7 +365,7 @@ export default function WorkflowRow({
             {typeof summary?.max === 'number'
               ? roundToSignificantDigits(
                   convertValue(summary?.max, unit, preferredUnit),
-                  1
+                  3
                 )
               : '-'}
           </td>
@@ -373,7 +373,7 @@ export default function WorkflowRow({
             {typeof summary?.mean === 'number'
               ? roundToSignificantDigits(
                   convertValue(summary?.mean, unit, preferredUnit),
-                  1
+                  3
                 )
               : '-'}
           </td>

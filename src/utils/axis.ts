@@ -32,21 +32,7 @@ const filterOutliers = (someArray: number[], threshold = 1.5) => {
 };
 
 export const roundToSignificantDigits = (value: number, digits: number) => {
-  if (value === undefined) return undefined;
-  const [_, fraction] = value.toString().split('.');
-  if (fraction === undefined) return value;
-  let zeros = 10;
-  for (let i = 0; i < digits - 1; i += 1) {
-    zeros *= 10;
-  }
-  for (let i = 0; i < fraction.length; i += 1) {
-    if (fraction[i] === '0') {
-      zeros *= 10;
-    } else {
-      break;
-    }
-  }
-  return Math.round(value * zeros) / zeros;
+  return Number(value.toPrecision(digits));
 };
 
 export async function calculateDefaultYAxis({
