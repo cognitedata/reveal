@@ -16,7 +16,7 @@ export const contactNameRule = {
 };
 export const CONTACT_EMAIL_REQUIRED: Readonly<string> = 'Email is required';
 export const emailRule = {
-  email: yup.string().required(CONTACT_EMAIL_REQUIRED),
+  email: yup.string().email().required(CONTACT_EMAIL_REQUIRED),
 };
 export const roleNotOwnerRule = {
   role: yup.string().lowercase().not(['owner']),

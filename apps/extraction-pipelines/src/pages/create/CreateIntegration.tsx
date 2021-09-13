@@ -158,7 +158,7 @@ const CreateIntegration = () => {
   const location = useLocation();
   const { search } = location;
   const dataSetId = findDataSetId(search) ?? '';
-  const { data, isLoading, error } = useDataSet(
+  const { data: dataSet, isLoading, error: dataSetError } = useDataSet(
     parseInt(dataSetId, 10),
     dataSetLoadError ? 0 : 3
   );
@@ -190,10 +190,10 @@ const CreateIntegration = () => {
   } = methods;
 
   useEffect(() => {
-    if (error) {
-      setDataSetLoadError(error.errors[0].missing && NO_DATA_SET_MSG);
+    if (dataSetError) {
+      setDataSetLoadError(dataSetError.errors[0].missing && NO_DATA_SET_MSG);
     }
-  }, [error, setDataSetLoadError]);
+  }, [dataSetError, setDataSetLoadError]);
   useEffect(() => {
     if (isLoading) {
       setDataSetLoadError(null);
@@ -218,7 +218,7 @@ const CreateIntegration = () => {
   const count = watch('documentation')?.length ?? 0;
 
   const handleNext = (fields: AddIntegrationFormInput) => {
-    const integrationInfo = createAddIntegrationInfo(fields, data);
+    const integrationInfo = createAddIntegrationInfo(fields, dataSet);
     mutate(
       { integrationInfo },
       {
@@ -273,6 +273,17 @@ const CreateIntegration = () => {
         </InfoMessage>
       )}
       <CreateFormWrapper onSubmit={handleSubmit(handleNext)}>
+        {errors.server ? (
+          <InfoMessage
+            id="dataset-data"
+            className="data-set-info"
+            role="region"
+            aria-live="polite"
+          >
+            <InfoIcon />
+            <p>{errors.server.message}</p>
+          </InfoMessage>
+        ) : null}
         <FullInput
           name="name"
           inputId="integration-name"
