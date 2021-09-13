@@ -1,9 +1,4 @@
-import {
-  cadTestBasePath,
-  pointcloudTestBasePath,
-  TestCaseCad,
-  TestCasePointCloud,
-} from './testUtils';
+import { cadTestRoutes, pointCloudTestRoutes } from "../routes";
 
 const retry = require('jest-retries');
 
@@ -42,20 +37,20 @@ console.log(`Run tests with ${RETRIES} retries`);
  * and create a new record in src/routes to map a component to its route
  */
 describe('Reveal visual tests', () => {
-  Object.values(TestCaseCad).forEach(function (test) {
+  cadTestRoutes.forEach(test => {
     const snapshotName = 'cad_' + test;
-    const url = `http://localhost:3000` + cadTestBasePath + test;
+    const url = `http://localhost:3000${test.path}`;
     
-    const blur = (test === 'ssao') ? 2 : 0;
+    const blur = (test.name === 'ssao') ? 2 : 0; // TODO 2021-09-13 larsmoa: Remove special handling of SSAO visual test
 
     retry(`matches the screenshot for ${snapshotName}`, RETRIES, async () => {
       await screenShotTest(url, snapshotName, blur);
     });
   });
 
-  Object.values(TestCasePointCloud).forEach(function (test) {
-    const snapshotName = 'pc_' + test;
-    const url = `http://localhost:3000` + pointcloudTestBasePath + test;
+  pointCloudTestRoutes.forEach(test => {
+    const snapshotName = 'pc_' + test.name;
+    const url = `http://localhost:3000${test.path}`;
 
     retry(`matches the screenshot for ${snapshotName}`, RETRIES, async () => {
       await screenShotTest(url, snapshotName);

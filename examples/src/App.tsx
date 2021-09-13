@@ -8,7 +8,7 @@ import {
   ExampleRoute,
   exampleRoutes,
   cadTestRoutes,
-  testRoutesPointCloud,
+  pointCloudTestRoutes,
 } from './routes';
 import { Container } from './components/styled';
 import styled from 'styled-components';
@@ -59,7 +59,7 @@ export default function App() {
 
         <h2>Snapshot Pointcloud tests pages</h2>
 
-        <PagesList routes={testRoutesPointCloud} />
+        <PagesList routes={pointCloudTestRoutes} />
       </nav>
     </Route>
   );
@@ -70,7 +70,7 @@ export default function App() {
         <PageContainer>
           <Switch>
             {exampleRoutes
-              .concat(cadTestRoutes, testRoutesPointCloud)
+              .concat(cadTestRoutes, pointCloudTestRoutes)
               .map((page) => (
                 <Route
                   key={page.path}

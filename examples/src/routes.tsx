@@ -27,6 +27,7 @@ const pointcloudTestBasePath = '/test/pointcloud/';
 // revealEnv2.publicPath = `${process.env.PUBLIC_URL}/local-cdn/`;
 
 export type ExampleRoute = {
+  name: string;
   path: string;
   menuTitle: string;
   component: ReactNode;
@@ -50,24 +51,28 @@ function menuTitleAz(a: ExampleRoute, b: ExampleRoute): number {
 
 export const exampleRoutes: Array<ExampleRoute> = [
   {
+    name: 'simple',
     path: '/simple',
     menuTitle: 'Simple',
     component: <Simple />,
   },
   {
+    name: 'clipping',
     path: '/clipping',
     menuTitle: 'Clipping planes',
     component: <Clipping />,
   },
   {
+    name: 'default',
     path:
       `/migration?project=${project}` +
       `&modelId=${cadId}` +
       `&revisionId=${cadRevisionId}`,
-    menuTitle: 'Migration',
+    menuTitle: 'Default',
     component: <Migration />,
   },
   {
+    name: 'cad-pointcloud',
     path:
       `/sector-with-pointcloud?project=${project}` +
       `&modelId=${cadId}` +
@@ -78,16 +83,19 @@ export const exampleRoutes: Array<ExampleRoute> = [
     component: <SectorWithPointcloud />,
   },
   {
+    name: 'pointcloud',
     path: `/simple-point-cloud?project=${project}&modelId=${pointCloudId}&revisionId=${pointCloudRevisionId}`,
     menuTitle: 'Simple Point Cloud',
     component: <SimplePointcloud />,
   },
   {
+    name: 'ssao',
     path: '/ssao',
     menuTitle: 'Screen space ambient occlusion shading',
     component: <SSAO />,
   },
   {
+    name: 'two-models',
     // not really good defaults, provide something more meaningful
     path:
       `/two-models?project=${project}` +
@@ -97,6 +105,7 @@ export const exampleRoutes: Array<ExampleRoute> = [
     component: <TwoModels />,
   },
   {
+    name: 'walkable-path',
     path: '/walkable-path',
     menuTitle: 'Walkable Path',
     component: <WalkablePath />,
@@ -106,7 +115,12 @@ export const exampleRoutes: Array<ExampleRoute> = [
 const cadTestPages: Record<string, { testDescription: string, testPage: JSX.Element }> = {};
 const pointcloudTestPages: Record<string, { testDescription: string, testPage: JSX.Element }> = {};
 
-export function registerVisualTest(category: 'cad' | 'pointcloud', testKey: string, testDescription: string, testPage: JSX.Element) {
+export function registerVisualTest(
+  category: 'cad' | 'pointcloud', 
+  testKey: string, 
+  testDescription: string, 
+  testPage: JSX.Element) {
+
   switch (category) {
     case 'cad':
       cadTestPages[testKey] = { testDescription, testPage };
@@ -121,26 +135,29 @@ export function registerVisualTest(category: 'cad' | 'pointcloud', testKey: stri
   }
 }
 
-// Register all visual tests
-const context = require.context('./pages/e2e', true, /\.tsx$/);
-context.keys().forEach((key) => {
-  context(key);
-});
-
 export const cadTestRoutes: Array<ExampleRoute> = 
   Object.entries(cadTestPages).map(([testName, test]) => {
     return {
+      name: testName,
       path: cadTestBasePath + testName,
       menuTitle: test.testDescription,
       component: test.testPage
     };
   }).sort((x, y) => x.menuTitle.localeCompare(y.menuTitle));
 
-export const testRoutesPointCloud: Array<ExampleRoute> = 
+export const pointCloudTestRoutes: Array<ExampleRoute> = 
   Object.entries(pointcloudTestPages).map(([testName, test]) => {
     return {
+      name: testName,
       path: pointcloudTestBasePath + testName,
       menuTitle: test.testDescription,
       component: test.testPage
     };
   }).sort((x, y) => x.menuTitle.localeCompare(y.menuTitle));
+
+
+// Register all visual tests
+const context = require.context('./pages/e2e', true, /\.tsx$/);
+context.keys().forEach((key) => {
+  context(key);
+});
