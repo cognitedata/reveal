@@ -28,6 +28,7 @@ import { UserRenderTargetTestPage } from './pages/e2e/cad/UserRenderTargetTestPa
 import { DefaultPointCloudTestPage } from './pages/e2e/pointcloud/DefaultPointCloud';
 import { SsaoTestPage } from './pages/e2e/cad/SsaoTestPage';
 import { CustomObjectWithHighlightAndGhosted } from './pages/e2e/cad/CustomObjectWithHighlightAndGhosted';
+import { DefaultCognite3DViewerTestPage } from './pages/e2e/cad/DefaultCognite3DViewerTestPage';
 
 // if you want to test your latest changes in workers or rust files
 // copy your worker files to some folder in /public and specify the path below
@@ -127,6 +128,7 @@ const cadTestPages: Record<TestCaseCad, JSX.Element> = {
   [TestCaseCad.userRenderTarget]: <UserRenderTargetTestPage />,
   [TestCaseCad.ssao]: <SsaoTestPage />,
   [TestCaseCad.customObjectWithHighlightAndGhosted]: <CustomObjectWithHighlightAndGhosted />,
+  [TestCaseCad.defaultCognite3DViewer]: <DefaultCognite3DViewerTestPage />,
 };
 
 const pointcloudTestPages: Record<TestCasePointCloud, JSX.Element> = {

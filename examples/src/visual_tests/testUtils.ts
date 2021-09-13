@@ -10,7 +10,8 @@ export enum TestCaseCad {
   scaledModel = 'scaledModel',
   userRenderTarget = 'userRenderTarget',
   ssao = 'ssao',
-  customObjectWithHighlightAndGhosted = 'customObjectWithHighlightAndGhosted'
+  customObjectWithHighlightAndGhosted = 'customObjectWithHighlightAndGhosted',
+  defaultCognite3DViewer = 'default-cognite3dviewer'
 }
 
 export enum TestCasePointCloud {
