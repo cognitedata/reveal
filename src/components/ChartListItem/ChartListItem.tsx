@@ -66,7 +66,7 @@ const ChartListItem = ({ chart, view }: ChartListItemProps) => {
       visible={isMenuOpen}
       onClickOutside={closeMenu}
       content={
-        <Menu onClick={closeMenu}>
+        <Menu onClick={closeMenu} style={{ width: 150 }}>
           <Menu.Header>
             <span style={{ wordBreak: 'break-word' }}>{chart.name}</span>
           </Menu.Header>
