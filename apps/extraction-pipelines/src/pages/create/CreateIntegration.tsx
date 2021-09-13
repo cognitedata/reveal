@@ -272,88 +272,97 @@ export const CreateIntegration = (props: { showAdditionalFields: boolean }) => {
           {NOT_LINKED}
         </InfoMessage>
       )}
-      <CreateFormWrapper onSubmit={handleSubmit(handleNext)}>
-        {errors.server ? (
-          <InfoMessage
-            id="dataset-data"
-            className="data-set-info"
-            role="region"
-            aria-live="polite"
-          >
-            <InfoIcon />
-            <p>{errors.server.message}</p>
-          </InfoMessage>
-        ) : null}
-        <FullInput
-          name="name"
-          inputId="integration-name"
-          defaultValue=""
-          control={control as any}
-          errors={errors}
-          labelText={EXT_PIPE_NAME_HEADING}
-          hintText={NAME_HINT}
-          renderLabel={(labelText, inputId) => (
-            <HeadingLabel labelFor={inputId}>{labelText}</HeadingLabel>
-          )}
-        />
-        <FullInput
-          name="externalId"
-          inputId="integration-external-id"
-          defaultValue=""
-          control={control as any}
-          errors={errors}
-          labelText={INTEGRATION_EXTERNAL_ID_HEADING}
-          hintText={EXTERNAL_ID_HINT}
-          renderLabel={(labelText, inputId) => (
-            <HeadingLabel labelFor={inputId}>{labelText}</HeadingLabel>
-          )}
-        />
-        <FullInput
-          name="description"
-          control={control as any}
-          defaultValue=""
-          labelText={DESCRIPTION_LABEL}
-          hintText={DESCRIPTION_HINT}
-          inputId="integration-description"
-          errors={errors}
-          renderLabel={(labelText, inputId) => (
-            <HeadingLabel labelFor={inputId}>{labelText}</HeadingLabel>
-          )}
-        />
-        <PriSecBtnWrapper>
-          <ButtonPlaced type="primary" htmlType="submit" marginbottom={0}>
-            {SAVE}
-          </ButtonPlaced>
-          <a
-            href={createLink(
-              `/data-sets${dataSetId && `/data-set/${dataSetId}`}`
-            )}
-            className="cogs-btn cogs-btn-secondary cogs-btn--padding"
-          >
-            {CANCEL}
-          </a>
-        </PriSecBtnWrapper>
-        {props.showAdditionalFields && (
-          <>
-            <InfoBox iconType="Info">
-              <GridH2Wrapper>{ADD_MORE_INFO_HEADING}</GridH2Wrapper>
-              <p className="box-content">{ADD_MORE_INFO_TEXT_1}</p>
-              <p className="box-content">{ADD_MORE_INFO_TEXT_2}</p>
-            </InfoBox>
-            <StyledCollapse
-              accordion
-              ghost
-              data-testid="add-more-info-collapse"
+      <FormProvider {...methods}>
+        <CreateFormWrapper onSubmit={handleSubmit(handleNext)}>
+          {errors.server ? (
+            <InfoMessage
+              id="dataset-data"
+              className="data-set-info"
+              role="region"
+              aria-live="polite"
             >
-              <Panel
-                header={
-                  <DivFlex direction="column" align="flex-start">
-                    <GridH2Wrapper>{ADD_MORE_INFO_HEADING}</GridH2Wrapper>
-                  </DivFlex>
-                }
-                key={1}
+              <InfoIcon />
+              <p>{errors.server.message}</p>
+            </InfoMessage>
+          ) : null}
+          {!dataSetId && (
+            <DataSetIdInput
+              data={dataSets}
+              status={dataSetsStatus}
+              renderLabel={(labelText, inputId) => (
+                <HeadingLabel labelFor={inputId}>{labelText}</HeadingLabel>
+              )}
+            />
+          )}
+          <FullInput
+            name="name"
+            inputId="integration-name"
+            defaultValue=""
+            control={control as any}
+            errors={errors}
+            labelText={EXT_PIPE_NAME_HEADING}
+            hintText={NAME_HINT}
+            renderLabel={(labelText, inputId) => (
+              <HeadingLabel labelFor={inputId}>{labelText}</HeadingLabel>
+            )}
+          />
+          <FullInput
+            name="externalId"
+            inputId="integration-external-id"
+            defaultValue=""
+            control={control as any}
+            errors={errors}
+            labelText={INTEGRATION_EXTERNAL_ID_HEADING}
+            hintText={EXTERNAL_ID_HINT}
+            renderLabel={(labelText, inputId) => (
+              <HeadingLabel labelFor={inputId}>{labelText}</HeadingLabel>
+            )}
+          />
+          <FullInput
+            name="description"
+            control={control as any}
+            defaultValue=""
+            labelText={DESCRIPTION_LABEL}
+            hintText={DESCRIPTION_HINT}
+            inputId="integration-description"
+            errors={errors}
+            renderLabel={(labelText, inputId) => (
+              <HeadingLabel labelFor={inputId}>{labelText}</HeadingLabel>
+            )}
+          />
+          <PriSecBtnWrapper>
+            <ButtonPlaced type="primary" htmlType="submit" marginbottom={0}>
+              {SAVE}
+            </ButtonPlaced>
+            <a
+              href={createLink(
+                `/data-sets${dataSetId && `/data-set/${dataSetId}`}`
+              )}
+              className="cogs-btn cogs-btn-secondary cogs-btn--padding"
+            >
+              {CANCEL}
+            </a>
+          </PriSecBtnWrapper>
+          {props.showAdditionalFields && (
+            <>
+              <InfoBox iconType="Info">
+                <GridH2Wrapper>{ADD_MORE_INFO_HEADING}</GridH2Wrapper>
+                <p className="box-content">{ADD_MORE_INFO_TEXT_1}</p>
+                <p className="box-content">{ADD_MORE_INFO_TEXT_2}</p>
+              </InfoBox>
+              <StyledCollapse
+                accordion
+                ghost
+                data-testid="add-more-info-collapse"
               >
-                <FormProvider {...methods}>
+                <Panel
+                  header={
+                    <DivFlex direction="column" align="flex-start">
+                      <GridH2Wrapper>{ADD_MORE_INFO_HEADING}</GridH2Wrapper>
+                    </DivFlex>
+                  }
+                  key={1}
+                >
                   <CreateContacts
                     renderLabel={(labelText, inputId) => (
                       <HeadingLabel labelFor={inputId}>
@@ -378,17 +387,6 @@ export const CreateIntegration = (props: { showAdditionalFields: boolean }) => {
                     >
                       <CronInput />
                     </CronWrapper>
-                  )}
-                  {!dataSetId && (
-                    <DataSetIdInput
-                      data={dataSets}
-                      status={dataSetsStatus}
-                      renderLabel={(labelText, inputId) => (
-                        <HeadingLabel labelFor={inputId}>
-                          {labelText}
-                        </HeadingLabel>
-                      )}
-                    />
                   )}
                   <HeadingLabel labelFor="raw-table">
                     {DetailFieldNames.RAW_TABLE}
@@ -432,18 +430,12 @@ export const CreateIntegration = (props: { showAdditionalFields: boolean }) => {
                   >
                     {SAVE}
                   </ButtonPlaced>
-                </FormProvider>
-              </Panel>
-            </StyledCollapse>
-          </>
-        )}
-      </CreateFormWrapper>
-      <SideInfo>
-        <ExtractorDownloadsLink
-          link={{ path: 'to' }}
-          linkText={ADD_MORE_INFO_LINK}
-        />
-      </SideInfo>
+                </Panel>
+              </StyledCollapse>
+            </>
+          )}
+        </CreateFormWrapper>
+      </FormProvider>
     </>
   );
 };

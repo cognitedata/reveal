@@ -75,11 +75,13 @@ const Integrations: FunctionComponent<Props> = () => {
   return <IntegrationsTable tableData={data as Integration[]} />;
 };
 
-const CreateExtpipeModal = (props: { visible: boolean }) => {
+const CreateExtpipeModal = (props: { visible: boolean; close: () => void }) => {
   return (
     <Modal
       visible={props.visible}
       width={872}
+      closable={true}
+      onCancel={props.close}
       appElement={document.getElementsByClassName(ids.styleScope).item(0)!}
       getContainer={() =>
         document.getElementsByClassName(ids.styleScope).item(0) as any
@@ -103,7 +105,10 @@ export default function CombinedComponent() {
   const [createModalOpen, setCreateModalOpen] = useState(false);
   return (
     <>
-      <CreateExtpipeModal visible={createModalOpen} />
+      <CreateExtpipeModal
+        visible={createModalOpen}
+        close={() => setCreateModalOpen(false)}
+      />
       <FullPageLayout
         pageHeadingText={EXTRACTION_PIPELINES}
         headingSide={
