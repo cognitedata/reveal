@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useEffect } from 'react';
+import React, { FunctionComponent, useEffect, useState } from 'react';
 import { FullPageLayout } from 'components/layout/FullPageLayout';
 import { trackUsage } from 'utils/Metrics';
 import {
@@ -8,7 +8,7 @@ import {
 } from 'utils/constants';
 import { useIntegrations } from 'hooks/useIntegrations';
 import NoIntegrations from 'components/error/NoIntegrations';
-import { Loader } from '@cognite/cogs.js';
+import { Button, Loader, Modal } from '@cognite/cogs.js';
 import { ErrorFeedback } from 'components/error/ErrorFeedback';
 import IntegrationsTable from 'components/integrations/IntegrationsTable';
 import ExtractorDownloadsLink from 'components/links/ExtractorDownloadsLink';
@@ -19,6 +19,12 @@ import { LinkWrapper } from 'styles/StyledLinks';
 import { ExtPipesBreadcrumbs } from 'components/navigation/breadcrumbs/ExtPipesBreadcrumbs';
 import { CapabilityCheck } from 'components/accessCheck/CapabilityCheck';
 import { EXTPIPES_READS } from 'model/AclAction';
+import { CreateIntegration } from 'pages/create/CreateIntegration';
+import { ids } from 'cogs-variables';
+import { StyledH2, StyledHeader } from 'styles/StyledModal';
+import { ModalContent } from 'components/modals/ModalContent';
+import RelativeTimeWithTooltip from 'components/integrations/cols/RelativeTimeWithTooltip';
+import { NO_ERROR_MESSAGE } from 'components/form/viewEditIntegration/FailMessageModal';
 
 export const LEARNING_AND_RESOURCES_URL: Readonly<string> =
   'https://docs.cognite.com/cdf/integration/';
@@ -69,27 +75,63 @@ const Integrations: FunctionComponent<Props> = () => {
   return <IntegrationsTable tableData={data as Integration[]} />;
 };
 
-export default function CombinedComponent() {
+const CreateExtpipeModal = (props: { visible: boolean }) => {
   return (
-    <FullPageLayout
-      pageHeadingText={EXTRACTION_PIPELINES}
-      headingSide={
-        <LinkWrapper>
-          <ExtractorDownloadsLink
-            linkText="Download Extractors"
-            link={{ path: '/extractors' }}
-          />
-          <ExtractorDownloadsLink
-            linkText="Learning and resources"
-            link={{ url: LEARNING_AND_RESOURCES_URL }}
-          />
-        </LinkWrapper>
+    <Modal
+      visible={props.visible}
+      width={872}
+      appElement={document.getElementsByClassName(ids.styleScope).item(0)!}
+      getContainer={() =>
+        document.getElementsByClassName(ids.styleScope).item(0) as any
       }
-      breadcrumbs={<ExtPipesBreadcrumbs />}
     >
-      <CapabilityCheck requiredPermissions={EXTPIPES_READS}>
-        <Integrations />
-      </CapabilityCheck>
-    </FullPageLayout>
+      <ModalContent
+        title={
+          <StyledHeader>
+            <StyledH2>Create new extraction pipeline</StyledH2>
+          </StyledHeader>
+        }
+      >
+        <CreateIntegration />
+      </ModalContent>
+    </Modal>
+  );
+};
+
+export default function CombinedComponent() {
+  const [createModalOpen, setCreateModalOpen] = useState(false);
+  return (
+    <>
+      <CreateExtpipeModal visible={createModalOpen} />
+      <FullPageLayout
+        pageHeadingText={EXTRACTION_PIPELINES}
+        headingSide={
+          <LinkWrapper>
+            <ExtractorDownloadsLink
+              linkText="Download Extractors"
+              link={{ path: '/extractors' }}
+            />
+            <ExtractorDownloadsLink
+              linkText="Learning and resources"
+              link={{ url: LEARNING_AND_RESOURCES_URL }}
+            />
+            <Button
+              variant={'default'}
+              type={'primary'}
+              onClick={() => {
+                setCreateModalOpen(true);
+              }}
+            >
+              Create extraction pipeline
+            </Button>
+          </LinkWrapper>
+        }
+        breadcrumbs={<ExtPipesBreadcrumbs />}
+      >
+        <CapabilityCheck requiredPermissions={EXTPIPES_READS}>
+          <Integrations />
+        </CapabilityCheck>
+      </FullPageLayout>
+    </>
   );
 }

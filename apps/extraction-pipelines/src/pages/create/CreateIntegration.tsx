@@ -151,7 +151,7 @@ const findDataSetId = (search: string) => {
   return new URLSearchParams(search).get('dataSetId');
 };
 
-const CreateIntegration = () => {
+export const CreateIntegration = () => {
   const [dataSetLoadError, setDataSetLoadError] = useState<string | null>(null);
   const [showCron, setShowCron] = useState(false);
   const history = useHistory();
@@ -308,7 +308,7 @@ const CreateIntegration = () => {
             <HeadingLabel labelFor={inputId}>{labelText}</HeadingLabel>
           )}
         />
-        <FullTextArea
+        <FullInput
           name="description"
           control={control as any}
           defaultValue=""
@@ -316,6 +316,9 @@ const CreateIntegration = () => {
           hintText={DESCRIPTION_HINT}
           inputId="integration-description"
           errors={errors}
+          renderLabel={(labelText, inputId) => (
+            <HeadingLabel labelFor={inputId}>{labelText}</HeadingLabel>
+          )}
         />
         <PriSecBtnWrapper>
           <ButtonPlaced type="primary" htmlType="submit" marginbottom={0}>
