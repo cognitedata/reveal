@@ -10,7 +10,16 @@ export type DSPFunction = {
   description: string;
   op: string;
   n_inputs: number;
+  inputs: {
+    description?: string;
+    param: string;
+    name?: string;
+    type: string[];
+  }[];
   n_outputs: number;
+  outputs: {
+    name?: string;
+  }[];
   parameters: DSPFunctionParameter[];
   type_info: string[][];
 };
@@ -45,18 +54,14 @@ export type DSPFunctionConfig = {
 export function getConfigFromDspFunction(
   dspFunction: DSPFunction
 ): DSPFunctionConfig {
-  const pins = Array(dspFunction.n_inputs)
-    .fill(0)
-    .map((_, i) => {
-      return {
-        name: `Input ${i + 1}`,
-        field: `input${i}`,
-        types: (dspFunction.type_info[i] || []).map(
-          getBlockTypeFromFunctionType
-        ),
-        pin: true,
-      };
-    });
+  const pins = dspFunction.inputs.map((input, i) => {
+    return {
+      name: input.name || `Input ${i + 1}`,
+      field: input.param,
+      types: input.type.map(getBlockTypeFromFunctionType),
+      pin: true,
+    };
+  });
 
   const parameters = dspFunction.parameters.map(({ param, type }) => {
     return {
@@ -69,7 +74,7 @@ export function getConfigFromDspFunction(
 
   const output = [
     {
-      name: 'Output',
+      name: dspFunction.outputs[0]?.name || 'Output',
       field: 'result',
       type: getBlockTypeFromFunctionType('ts'),
     },
