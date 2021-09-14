@@ -46,6 +46,19 @@ try forcing GCC to build for C++14:
 
 `env CXXFLAGS=-std=c++14 yarn`
 
+For solving issue with puppeteer in `examples/` you should follow additional steps:
+
+1. Install chromium from Homebrew: 
+```
+brew install chromium
+`which chromium`
+```
+
+2. Inside `examples/` add two environment variables from .env file by: 
+```
+source .env
+```
+3. Run `yarn` again and be happy!
 ## Hosting models locally
 
 If you have locally converted 3D models, these can be viewed locally using the "Simple" example by
