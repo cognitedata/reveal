@@ -83,7 +83,7 @@ export default function OIDCConfigContainer() {
     useQuery('project-settings', () => {
       return sdk.projects.retrieve(match?.params.tenant!);
     });
-  const { data: authConfiguration, isFetched: areAuthConfigurationFetched } =
+  const { data: authConfiguration, isFetched: isAuthConfigurationFetched } =
     useAuthConfiguration();
 
   const handleSubmit = (values: any) => {
@@ -115,7 +115,7 @@ export default function OIDCConfigContainer() {
     });
   };
 
-  if (!(areProjectSettingsFetched && areAuthConfigurationFetched)) {
+  if (!(areProjectSettingsFetched && isAuthConfigurationFetched)) {
     return <Icon type="Loading" />;
   }
 
