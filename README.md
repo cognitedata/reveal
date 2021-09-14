@@ -34,6 +34,18 @@ yarn && yarn run start
 If you now navigate to [localhost:8080](https://localhost:8080), you will see a list of examples
 that can be explored in the browser.
 
+### Building on Macbook M1
+
+Building Reveal on Macbook M1 migth require some special care.
+
+If you experience issues during the `yarn`-stage in `viewer/`, e.g.
+```
+   no template named 'remove_cv_t' in namespace 'std'
+```
+try forcing GCC to build for C++14:
+
+`env CXXFLAGS=-std=c++14 yarn`
+
 ## Hosting models locally
 
 If you have locally converted 3D models, these can be viewed locally using the "Simple" example by
