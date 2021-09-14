@@ -3,7 +3,7 @@
  */
 import * as THREE from 'three';
 import { MeshGPUInstancing, InstancedMesh } from '@gltf-transform/extensions';
-import { Node, NodeIO, Document, Primitive } from '@gltf-transform/extensions/node_modules/@gltf-transform/core';
+import { Node, NodeIO, Document, Primitive } from '@gltf-transform/core';
 import {
   setBoxGeometry,
   setConeGeometry,

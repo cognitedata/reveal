@@ -1,3 +1,4 @@
+// Not using the w-component to support using vec3 and vec4 as input
 mat4 constructMatrix(vec4 column_0, vec4 column_1, vec4 column_2, vec4 column_3) {
   return mat4(
     vec4(column_0.xyz, 0.0),
