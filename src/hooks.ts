@@ -14,3 +14,15 @@ export const useGroups = (all = false) => {
     });
   });
 };
+
+export const useAuthConfiguration = () => {
+  const sdk = useSDK();
+  return useQuery('auth-configuration', () => {
+    return sdk
+      .get<{
+        isLegacyLoginFlowAndApiKeysEnabled: boolean;
+        isOidcEnabled: boolean;
+      }>(`/api/playground/projects/${sdk.project}/configuration`)
+      .then(r => r.data);
+  });
+};
