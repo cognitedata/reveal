@@ -67,7 +67,7 @@ export function calculateSeriesData(
               t.preferredUnit
             ),
             dash: convertLineStyle(t.lineStyle),
-            mode: t.displayMode,
+            mode: getMode(t.displayMode, t.isRaw),
           },
         ],
       }))
@@ -256,8 +256,8 @@ export function formatPlotlyData(
         const max = {
           ...average,
           y: maxYValues,
-          fillcolor: hexToRGBA(color, 0.2) ?? 'none',
           mode: 'lines',
+          fillcolor: hexToRGBA(color, 0.2) ?? 'none',
           line: { width: 0 },
           fill: 'tonexty',
           hovertemplate: '',
@@ -352,6 +352,14 @@ export function convertLineStyle(lineStyle?: 'solid' | 'dashed' | 'dotted') {
     default:
       return 'solid';
   }
+}
+
+export function getMode(displayMode?: 'markers' | 'lines', isRaw?: boolean) {
+  if (displayMode === 'markers') {
+    return 'markers';
+  }
+
+  return isRaw ? 'lines+markers' : displayMode;
 }
 
 export function generateLayout({
