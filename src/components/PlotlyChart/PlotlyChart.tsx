@@ -20,7 +20,6 @@ import {
 import {
   CHART_POINTS_PER_SERIES,
   updateSourceAxisForChart,
-  updateTimeseries,
 } from 'utils/charts';
 import { trackUsage } from 'utils/metrics';
 import { useDebouncedCallback, useDebounce } from 'use-debounce';
@@ -127,22 +126,14 @@ const PlotlyChartComponent = ({
               }
 
               const RAW_DATA_POINTS_THRESHOLD = pointsPerSeries / 2;
+
               const aggregatedCount = (
                 r[0]?.datapoints as DatapointAggregate[]
               ).reduce((point: number, c: DatapointAggregate) => {
                 return point + (c.count || 0);
               }, 0);
-              const isRaw = aggregatedCount < RAW_DATA_POINTS_THRESHOLD;
 
-              setChart((oldChart) =>
-                updateTimeseries(
-                  oldChart!,
-                  oldChart!.timeSeriesCollection!.find(
-                    (ts) => ts.tsExternalId === q.items[0]!.externalId!
-                  )!.id,
-                  { isRaw }
-                )
-              );
+              const isRaw = aggregatedCount < RAW_DATA_POINTS_THRESHOLD;
 
               return isRaw
                 ? sdk.datapoints.retrieve({

@@ -43,6 +43,12 @@ export type AxisUpdate = {
   range: any[];
 };
 
+export function hasRawPoints(
+  ts?: DatapointAggregates | StringDatapoints | DoubleDatapoints
+) {
+  return ts?.datapoints.some((point) => 'value' in point) || false;
+}
+
 export function calculateSeriesData(
   timeSeriesCollection: ChartTimeSeries[] = [],
   workflowCollection: ChartWorkflow[] = [],
@@ -76,12 +82,12 @@ export function calculateSeriesData(
             name: t.name,
             outdatedData: timeseriesFetching,
             datapoints: convertUnits(
-              (timeseries?.[i]?.datapoints || []) as DatapointAggregate[],
+              timeseries?.[i]?.datapoints || [],
               t.unit,
               t.preferredUnit
             ),
             dash: convertLineStyle(t.lineStyle),
-            mode: getMode(t.displayMode, t.isRaw),
+            mode: getMode(t.displayMode, hasRawPoints(timeseries?.[i])),
           },
         ],
       }))
