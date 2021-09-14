@@ -108,7 +108,7 @@ export const ConfigPanel = ({
     return (
       <>
         <Menu.Header>{category}</Menu.Header>
-        {toolFunctions.map((func) => (
+        {toolFunctions.filter(Boolean).map((func) => (
           <Menu.Item
             key={func.name}
             onClick={() => {
@@ -158,7 +158,7 @@ export const ConfigPanel = ({
     <Menu>
       {Object.keys(categories).map((category: string) => {
         const filtered = categories[category].filter(({ name }) =>
-          name?.toLowerCase().includes(phrase.toLowerCase())
+          name?.toLowerCase().includes(phrase?.toLowerCase())
         );
 
         return !!filtered.length && renderFunctionsList(category, filtered);
@@ -207,7 +207,7 @@ export const ConfigPanel = ({
               value={phrase}
               icon="Search"
               onChange={(newValue: React.ChangeEvent<HTMLInputElement>) =>
-                setPhrase(newValue.target.value)
+                setPhrase(newValue.target.value || '')
               }
               placeholder="Search"
               fullWidth
