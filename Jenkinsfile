@@ -32,40 +32,13 @@ def pods = { body ->
         //
         // If you don't want codecoverage, then you can just remove this.
         testcafe.pod() {
-          podTemplate(
-            containers: [
-              containerTemplate(
-                name: 'cloudsdk',
-                image: 'google/cloud-sdk:277.0.0',
-                resourceRequestCpu: '500m',
-                resourceRequestMemory: '500Mi',
-                resourceLimitCpu: '500m',
-                resourceLimitMemory: '500Mi',
-                ttyEnabled: true,
-                envVars: [
-                  envVar(key: 'GOOGLE_APPLICATION_CREDENTIALS', value: '/jenkins-cdf-hub-deployer/credentials.json'),
-                ]
-             )],
-             envVars: [
-              envVar(key: 'CHANGE_ID', value: env.CHANGE_ID),
-            ],
-            volumes: [
-              secretVolume(secretName: 'npm-credentials',
-                           mountPath: '/npm-credentials',
-                           defaultMode: '400'),
-              secretVolume(secretName: 'jenkins-cdf-hub-deployer',
-                           mountPath: '/jenkins-cdf-hub-deployer',
-                           readOnly: true),
-              hostPathVolume(hostPath: '/var/run/docker.sock', mountPath: '/var/run/docker.sock')
-            ]) {
-            properties([
-              buildDiscarder(logRotator(daysToKeepStr: '30', numToKeepStr: '20'))
-            ])
+          properties([
+            buildDiscarder(logRotator(daysToKeepStr: '30', numToKeepStr: '20'))
+          ])
 
-            node(POD_LABEL) {
+          node(POD_LABEL) {
 
-              body()
-            }
+            body()
           }
         }
       }
@@ -79,20 +52,18 @@ pods {
   def getTitle
   def isPullRequest = !!env.CHANGE_ID
   def isRelease = env.BRANCH_NAME == 'master'
-  def bucketBundles = "cdf-hub-bundles"
-  def projectProduction = "cognitedata-production"
 
   def context_checkout = "continuous-integration/jenkins/checkout"
-    def context_install = "continuous-integration/jenkins/install"
-    def context_setup = "continuous-integration/jenkins/setup"
-    def context_lint = "continuous-integration/jenkins/lint"
-    def context_test = "continuous-integration/jenkins/test"
-    def context_unitTests = "continuous-integration/jenkins/unit-tests"
-    def context_buildPrPreview = "continuous-integration/jenkins/build-pr-preview"
-    def context_build_fas = "continuous-integration/jenkins/build-fas"
-    def context_build = "continuous-integration/jenkins/build"
-    def context_deploy_app = "continuous-integration/jenkins/deploy-app"
-    def context_publishRelease = "continuous-integration/jenkins/publish-release"
+  def context_install = "continuous-integration/jenkins/install"
+  def context_setup = "continuous-integration/jenkins/setup"
+  def context_lint = "continuous-integration/jenkins/lint"
+  def context_test = "continuous-integration/jenkins/test"
+  def context_unitTests = "continuous-integration/jenkins/unit-tests"
+  def context_buildPrPreview = "continuous-integration/jenkins/build-pr-preview"
+  def context_build_fas = "continuous-integration/jenkins/build-fas"
+  def context_build = "continuous-integration/jenkins/build"
+  def context_deploy_app = "continuous-integration/jenkins/deploy-app"
+  def context_publishRelease = "continuous-integration/jenkins/publish-release"
   static final Map<String, Boolean> version = versioning.getEnv(
     versioningStrategy: VERSIONING_STRATEGY
   )
@@ -111,84 +82,76 @@ pods {
         }
     }
 
-    parallel(
-      'Lint': {
-        container('fas') {
-          stageWithNotify('Lint') {
-            sh("yarn lint")
+    threadPool(
+      tasks: [
+        'Lint': {
+          container('fas') {
+            stageWithNotify('Lint') {
+              sh("yarn lint")
+            }
           }
-        }
-      },
-      'Test': {
-        container('fas') {
-          stageWithNotify('CI Checks') {
-            sh("yarn ci")
+        },
+        'Test': {
+          container('fas') {
+            stageWithNotify('CI Checks') {
+              sh("yarn ci")
+            }
+            stageWithNotify('Unit tests') {
+              sh("./bin/ci-run-unittest.sh test:once")
+            }
           }
-          stageWithNotify('Unit tests') {
-            sh("./bin/ci-run-unittest.sh test:once")
+        },
+        'Preview': {
+          if(!isPullRequest) {
+            print "No PR previews for release builds"
+            return;
           }
+          stageWithNotify('Build and deploy PR') {
+            previewServer(
+              buildCommand: 'yarn build:preview',
+              prefix: 'pr',
+              buildFolder: 'build',
+              commentPrefix: PR_COMMENT_MARKER
+            )
+          }
+        },
+        'Storybook': {
+          if(!isPullRequest) {
+            print "No PR previews for release builds"
+            return;
+          }
+          stageWithNotify('Build and deploy Storybook') {
+            previewServer(
+              buildCommand: 'yarn build-storybook',
+              prefix: 'storybook',
+              buildFolder: 'storybook-static',
+              commentPrefix: STORYBOOK_COMMENT_MARKER
+            )
+          }
+        },
+        'Build': {
+          if (isPullRequest) {
+              println "Skipping build for pull requests"
+              return
+          }
+          stageWithNotify('Build for FAS') {
+            fas.build(
+              appId: APP_ID,
+              repo: APPLICATION_REPO_ID,
+              buildCommand: 'yarn build',
+              shouldPublishSourceMap: false
+            )
+          }   
         }
-      },
-      'Preview': {
-        if(!isPullRequest) {
-          print "No PR previews for release builds"
-          return;
-        }
-        stageWithNotify('Build and deploy PR') {
-          previewServer(
-            buildCommand: 'yarn build:preview',
-            prefix: 'pr',
-            buildFolder: 'build',
-            commentPrefix: PR_COMMENT_MARKER
-          )
-        }
-      },
-      'Storybook': {
-        if(!isPullRequest) {
-          print "No PR previews for release builds"
-          return;
-        }
-        stageWithNotify('Build and deploy Storybook') {
-          previewServer(
-            buildCommand: 'yarn build-storybook',
-            prefix: 'storybook',
-            buildFolder: 'storybook-static',
-            commentPrefix: STORYBOOK_COMMENT_MARKER
-          )
-        }
-      },
-      'Build': {
-        if (isPullRequest) {
-            println "Skipping build for pull requests"
-            return
-        }
-        stageWithNotify('Build for FAS') {
-          fas.build(
-            appId: APP_ID,
-            repo: APPLICATION_REPO_ID,
-            buildCommand: 'yarn build',
-            shouldPublishSourceMap: false
-          )
-        }   
-      }
+      ],
+      workers: 2,
     )
 
     if (isRelease) {
-
       stageWithNotify('Deploy to FAS') {
         fas.publish(
           shouldPublishSourceMap: false
         )
-      }
-
-      container('cloudsdk') {
-        stage('Deploy to cdf-hub') {
-            sh("gcloud auth activate-service-account jenkins-cdf-hub-deployment@cognitedata.iam.gserviceaccount.com --key-file=/jenkins-cdf-hub-deployer/credentials.json --project=${projectProduction}")
-            // Upload the root config js to the bundles bucket
-            sh("gsutil cp -z html,css,js,map,svg,json -r build/. gs://${bucketBundles}/cognite-cdf-functions-ui/${timestamp}-${gitCommit}/")
-            sh("gsutil cp -z html,css,js,map,svg,json -r build/. gs://${bucketBundles}/cognite-cdf-functions-ui/latest/")
-            slackSend(channel: "#functions-logs", message: "PR '${gitTitle}' by ${gitAuthor} merged and deployed to bundles bucket. It is available at https://cdf-hub-bundles.cogniteapp.com/cognite-cdf-functions-ui/${timestamp}-${gitCommit}/index.js and https://cdf-hub-bundles.cogniteapp.com/cognite-cdf-functions-ui/latest/index.js. Update https://github.com/cognitedata/cdf-hub/blob/staging/packages/root/static/import-map.json or https://github.com/cognitedata/cdf-hub/blob/release-production/packages/root/static/import-map.json to update staging or production. https://dev.fusion.cogniteapp.com should already be updated.")
-        }
       }
     }
 
