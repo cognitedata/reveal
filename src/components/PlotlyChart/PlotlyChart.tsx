@@ -22,7 +22,7 @@ import {
   updateSourceAxisForChart,
 } from 'utils/charts';
 import { trackUsage } from 'utils/metrics';
-import { useDebouncedCallback, useDebounce } from 'use-debounce';
+import { useDebounce } from 'use-debounce';
 import { useRecoilState } from 'recoil';
 import { chartState } from 'atoms/chart';
 import { Chart, ChartTimeSeries, ChartWorkflow } from 'reducers/charts/types';
@@ -40,6 +40,7 @@ import {
   cleanWorkflowCollection,
   generateLayout,
   PlotlyEventData,
+  useAllowedToUpdateChart,
 } from '.';
 import {
   AdjustButton,
@@ -74,12 +75,16 @@ const PlotlyChartComponent = ({
   stackedMode = false,
   mergeUnits = false,
 }: ChartProps) => {
-  const [isAllowedToUpdate, setIsAllowedToUpdate] = useState(true);
   const sdk = useSDK();
   const containerRef = useRef<HTMLDivElement>(null);
   const pointsPerSeries = isPreview ? 100 : CHART_POINTS_PER_SERIES;
   const [dragmode, setDragmode] = useState<'zoom' | 'pan'>('pan');
   const [yAxisLocked, setYAxisLocked] = useState<boolean>(true);
+
+  /**
+   * Optimization hook to avoid rendering chart when user is navigating
+   */
+  const isAllowedToUpdate = useAllowedToUpdateChart();
 
   /**
    * Get local chart context
@@ -355,65 +360,6 @@ const PlotlyChartComponent = ({
       handleRelayout,
     });
   }, [data, layout, isAllowedToUpdate, handleRelayout]);
-
-  /**
-   * Debounced callback that turns on updates again (scrolling)
-   */
-  const allowUpdatesScroll = useDebouncedCallback(() => {
-    setIsAllowedToUpdate(true);
-  }, 100);
-
-  /**
-   * Debounced callback that turns on updates again (click and drag)
-   */
-  const allowUpdatesClick = useDebouncedCallback(() => {
-    setIsAllowedToUpdate(true);
-  }, 100);
-
-  /**
-   * Disallow updates when scrolling
-   */
-  const handleMouseWheel = useCallback(() => {
-    setIsAllowedToUpdate(false);
-    allowUpdatesScroll();
-    allowUpdatesClick.cancel();
-  }, [allowUpdatesScroll, allowUpdatesClick]);
-
-  useEffect(() => {
-    window.addEventListener('mousewheel', handleMouseWheel);
-    return () => {
-      window.removeEventListener('mousewheel', handleMouseWheel);
-    };
-  }, [handleMouseWheel]);
-
-  /**
-   * Disallow updates when clicking and holding mouse (navigating chart)
-   */
-  const handleMouseDown = useCallback(() => {
-    setIsAllowedToUpdate(false);
-    allowUpdatesScroll.cancel();
-  }, [allowUpdatesScroll]);
-
-  useEffect(() => {
-    window.addEventListener('mousedown', handleMouseDown);
-    return () => {
-      window.removeEventListener('mousedown', handleMouseDown);
-    };
-  });
-
-  /**
-   * Allow updates when releasing mouse button (no longer navigating chart)
-   */
-  const handleMouseUp = useCallback(() => {
-    allowUpdatesClick();
-  }, [allowUpdatesClick]);
-
-  useEffect(() => {
-    window.addEventListener('mouseup', handleMouseUp);
-    return () => {
-      window.removeEventListener('mouseup', handleMouseUp);
-    };
-  });
 
   const chartStyles = useMemo(() => {
     return { width: '100%', height: '100%' };

@@ -12,6 +12,8 @@ import { ChartTimeSeries, ChartWorkflow } from 'reducers/charts/types';
 import { roundToSignificantDigits } from 'utils/axis';
 import { hexToRGBA } from 'utils/colors';
 import { convertUnits, units } from 'utils/units';
+import { useDebouncedCallback } from 'use-debounce';
+import { useState, useEffect, useCallback } from 'react';
 
 export type PlotlyEventData = {
   [key: string]: any;
@@ -569,4 +571,69 @@ export const cleanWorkflowCollection = (wfCollection?: ChartWorkflow[]) => {
       calls: undefined,
     };
   }) as ChartWorkflow[];
+};
+
+export const useAllowedToUpdateChart = () => {
+  const [isAllowedToUpdate, setIsAllowedToUpdate] = useState(true);
+
+  /**
+   * Debounced callback that turns on updates again (scrolling)
+   */
+  const allowUpdatesScroll = useDebouncedCallback(() => {
+    setIsAllowedToUpdate(true);
+  }, 100);
+
+  /**
+   * Debounced callback that turns on updates again (click and drag)
+   */
+  const allowUpdatesClick = useDebouncedCallback(() => {
+    setIsAllowedToUpdate(true);
+  }, 100);
+
+  /**
+   * Disallow updates when scrolling
+   */
+  const handleMouseWheel = useCallback(() => {
+    setIsAllowedToUpdate(false);
+    allowUpdatesScroll();
+    allowUpdatesClick.cancel();
+  }, [allowUpdatesScroll, allowUpdatesClick]);
+
+  useEffect(() => {
+    window.addEventListener('mousewheel', handleMouseWheel);
+    return () => {
+      window.removeEventListener('mousewheel', handleMouseWheel);
+    };
+  }, [handleMouseWheel]);
+
+  /**
+   * Disallow updates when clicking and holding mouse (navigating chart)
+   */
+  const handleMouseDown = useCallback(() => {
+    setIsAllowedToUpdate(false);
+    allowUpdatesScroll.cancel();
+  }, [allowUpdatesScroll]);
+
+  useEffect(() => {
+    window.addEventListener('mousedown', handleMouseDown);
+    return () => {
+      window.removeEventListener('mousedown', handleMouseDown);
+    };
+  });
+
+  /**
+   * Allow updates when releasing mouse button (no longer navigating chart)
+   */
+  const handleMouseUp = useCallback(() => {
+    allowUpdatesClick();
+  }, [allowUpdatesClick]);
+
+  useEffect(() => {
+    window.addEventListener('mouseup', handleMouseUp);
+    return () => {
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  });
+
+  return isAllowedToUpdate;
 };
