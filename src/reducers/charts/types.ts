@@ -46,7 +46,6 @@ export type ChartTimeSeries = {
   range?: number[];
   statisticsCalls?: Call[];
   createdAt: number;
-  isRaw?: boolean;
 };
 
 // We can't store function definitions, so we need to work around this.
