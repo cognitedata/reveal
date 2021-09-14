@@ -2,13 +2,13 @@
  * Copyright 2021 Cognite AS
  */
 
-import { CogniteClient, CogniteInternalId } from '@cognite/sdk';
+import { CogniteInternalId } from '@cognite/sdk';
 import { NodeIdAndTreeIndexMaps } from './NodeIdAndTreeIndexMaps';
 
 import { sleep } from '../../../../test-utilities';
-import { CogniteClientNodeIdAndTreeIndexMapper } from '../../utilities/networking/CogniteClientNodeIdAndTreeIndexMapper';
+import { NodesApiClient } from '@reveal/nodes-api';
 
-jest.mock('../../utilities/networking/CogniteClientNodeIdAndTreeIndexMapper');
+import { Mock, It } from 'moq.ts';
 
 function stubTreeIndexToNodeId(treeIndex: number): CogniteInternalId {
   return treeIndex + 1337;
@@ -19,22 +19,25 @@ function stubNodeIdToTreeIndex(nodeId: CogniteInternalId): number {
 }
 
 describe('NodeIdAndTreeIndexMaps', () => {
-  let client: CogniteClient;
-  let indexMapper: CogniteClientNodeIdAndTreeIndexMapper;
+  let mockClient: Mock<NodesApiClient>;
   let maps: NodeIdAndTreeIndexMaps;
 
   beforeEach(() => {
-    client = new CogniteClient({ appId: 'test' });
-    client.loginWithApiKey({ project: 'test', apiKey: 'mykey' });
-    indexMapper = new CogniteClientNodeIdAndTreeIndexMapper(client);
-    jest.spyOn(indexMapper, 'mapTreeIndicesToNodeIds').mockImplementation((_modelId, _revisionId, treeIndices) => {
-      return Promise.resolve(treeIndices.map(stubTreeIndexToNodeId));
-    });
-    jest.spyOn(indexMapper, 'mapNodeIdsToTreeIndices').mockImplementation((_modelId, _revisionId, nodeIds) => {
-      return Promise.resolve(nodeIds.map(stubNodeIdToTreeIndex));
-    });
+    mockClient = new Mock<NodesApiClient>();
+    mockClient
+      .setup(x => x.mapTreeIndicesToNodeIds(It.IsAny(), It.IsAny(), It.IsAny()))
+      .callback(({ args }) => {
+        const treeIndices = args[2] as number[];
+        return Promise.resolve(treeIndices.map(stubTreeIndexToNodeId));
+      });
+    mockClient
+      .setup(x => x.mapNodeIdsToTreeIndices(It.IsAny(), It.IsAny(), It.IsAny()))
+      .callback(({ args }) => {
+        const nodeIds = args[2] as CogniteInternalId[];
+        return Promise.resolve(nodeIds.map(stubNodeIdToTreeIndex));
+      });
 
-    maps = new NodeIdAndTreeIndexMaps(0, 0, client, indexMapper);
+    maps = new NodeIdAndTreeIndexMaps(0, 0, mockClient.object());
   });
 
   test('tree index is returned correctly', async () => {

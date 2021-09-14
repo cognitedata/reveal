@@ -1410,7 +1410,7 @@ const viewer = new Cognite3DViewer({
 * [enableKeyboardNavigation](#enablekeyboardnavigation)
 * [fitCameraToBoundingBox](#fitcameratoboundingbox)
 * [fitCameraToModel](#fitcameratomodel)
-* [forceRerender](#forcererender)
+* [requestRedraw](#requestRedraw)
 * [getCamera](#getcamera)
 * [getCameraPosition](#getcameraposition)
 * [getCameraTarget](#getcameratarget)
@@ -1835,14 +1835,14 @@ Name | Type | Description |
 
 ___
 
-####  forceRerender
+####  requestRedraw
 
-▸ **forceRerender**(): *void*
+▸ **requestRedraw**(): *void*
 
 *Defined in [viewer/src/public/migration/Cognite3DViewer.ts:897](https://github.com/cognitedata/reveal/blob/35c41286/viewer/src/public/migration/Cognite3DViewer.ts#L897)*
 
 Typically used when you perform some changes and can't see them unless you move camera.
-To fix this forceRerender might be used.
+To fix this requestRedraw might be used.
 
 **Returns:** *void*
 

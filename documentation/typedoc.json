@@ -7,7 +7,7 @@
   "excludeInternal": true,
 
   "readme": "docs/API_Reference_header.md",
-  "tsconfig": "../viewer/tsconfig.json",
+  "tsconfig": "../viewer/tsconfig.typedoc.json",
 
   "out" : "./generated"
 }

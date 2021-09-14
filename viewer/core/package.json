@@ -12,6 +12,7 @@
     "@reveal/cad-geometry-loaders": "workspace:*",
     "@reveal/cad-parsers": "workspace:*",
     "@reveal/camera-manager": "workspace:*",
+    "@reveal/nodes-api": "workspace:*",
     "@reveal/utilities": "workspace:*"
   },
   "sideEffects": false,
