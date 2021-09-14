@@ -23,8 +23,6 @@ import { CreateIntegration } from 'pages/create/CreateIntegration';
 import { ids } from 'cogs-variables';
 import { StyledH2, StyledHeader } from 'styles/StyledModal';
 import { ModalContent } from 'components/modals/ModalContent';
-import RelativeTimeWithTooltip from 'components/integrations/cols/RelativeTimeWithTooltip';
-import { NO_ERROR_MESSAGE } from 'components/form/viewEditIntegration/FailMessageModal';
 
 export const LEARNING_AND_RESOURCES_URL: Readonly<string> =
   'https://docs.cognite.com/cdf/integration/';
@@ -80,7 +78,7 @@ const CreateExtpipeModal = (props: { visible: boolean; close: () => void }) => {
     <Modal
       visible={props.visible}
       width={872}
-      closable={true}
+      closable
       onCancel={props.close}
       appElement={document.getElementsByClassName(ids.styleScope).item(0)!}
       getContainer={() =>
@@ -122,8 +120,8 @@ export default function CombinedComponent() {
               link={{ url: LEARNING_AND_RESOURCES_URL }}
             />
             <Button
-              variant={'default'}
-              type={'primary'}
+              variant="default"
+              type="primary"
               onClick={() => {
                 setCreateModalOpen(true);
               }}

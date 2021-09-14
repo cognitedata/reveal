@@ -25,8 +25,7 @@ import { useDataSet } from 'hooks/useDataSets';
 import { FullInput } from 'components/inputs/FullInput';
 import { FullTextArea } from 'components/inputs/FullTextArea';
 import { usePostIntegration } from 'hooks/usePostIntegration';
-import { GridH2Wrapper, SideInfo } from 'styles/StyledPage';
-import ExtractorDownloadsLink from 'components/links/ExtractorDownloadsLink';
+import { GridH2Wrapper } from 'styles/StyledPage';
 import styled from 'styled-components';
 import { Collapse, Colors } from '@cognite/cogs.js';
 import { CountSpan, PriSecBtnWrapper } from 'styles/StyledWrapper';
@@ -120,6 +119,7 @@ const NO_DATA_SET_MSG: Readonly<string> = `No data set found. You can link your 
 export const ADD_MORE_INFO_HEADING: Readonly<string> = `Additional information`;
 const ADD_MORE_INFO_TEXT_1: Readonly<string> = `Add more information about the ${EXTRACTION_PIPELINE_LOWER}, such as pipeline schedule configuration details and configure notifications.`;
 const ADD_MORE_INFO_TEXT_2: Readonly<string> = `You may add this information later on the ${EXTRACTION_PIPELINE} overview page.`;
+// eslint-disable-next-line
 const ADD_MORE_INFO_LINK: Readonly<string> = `Read about registering an ${EXTRACTION_PIPELINE_LOWER}`;
 
 export interface AddIntegrationFormInput
@@ -431,7 +431,7 @@ export default function CombinedComponent() {
   return (
     <RegisterIntegrationLayout>
       <CapabilityCheck requiredPermissions={EXTPIPES_WRITES}>
-        <CreateIntegration showAdditionalFields={true} />
+        <CreateIntegration showAdditionalFields />
       </CapabilityCheck>
     </RegisterIntegrationLayout>
   );

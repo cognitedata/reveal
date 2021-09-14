@@ -13,7 +13,6 @@ import {
 import styled from 'styled-components';
 import { OptionType, Pagination, Select } from '@cognite/cogs.js';
 import { RunUI } from 'model/Runs';
-import { OptionTypeBase } from 'react-select';
 
 const Wrapper = styled.div`
   margin-bottom: 5rem;
