@@ -3,6 +3,7 @@
  */
 import * as THREE from 'three';
 
+// TODO: Fix dependencies such that test app doesn't depend on core internals
 import matCapTextureImage from '../../../core/src/datamodels/cad/rendering/matCapTextureData';
 import { sectorShaders } from '../../../core/src/datamodels/cad/rendering/shaders';
 
