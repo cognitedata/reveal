@@ -18,6 +18,7 @@ import { computeNdcAreaOfBox } from './computeNdcAreaOfBox';
 import assert from 'assert';
 import { LevelOfDetail } from '../LevelOfDetail';
 import { CadModelSectorBudget } from '../../CadModelSectorBudget';
+import { traverseDepthFirst } from '../../../../utilities';
 
 export type ByScreenSizeSectorCullerOptions = {
   /**
@@ -128,6 +129,7 @@ class ScheduledSectorTree {
   }
 
   markSectorDetailed(model: CadModelMetadata, sectorId: number, priority: number) {
+    console.log('markSectorDetailed', sectorId);
     const entry = this._models.get(model.modelIdentifier);
     assert(!!entry, `Could not find sector tree for ${model.modelIdentifier}`);
 
@@ -139,11 +141,14 @@ class ScheduledSectorTree {
       if (existingPriority === undefined) {
         const sectorMetadata = model.scene.getSectorById(sectorId);
         assert(sectorMetadata !== undefined);
+
         const sectorCost = this.determineSectorCost(sectorMetadata!, LevelOfDetail.Detailed);
         this._totalCost.downloadSize += sectorCost.downloadSize;
         this._totalCost.drawCalls += sectorCost.drawCalls;
 
         sectorIds.set(nextSectorIdToAdd, priority);
+
+        console.log('New sector', nextSectorIdToAdd, 'cost:', sectorCost, 'total cost:', this.totalCost);
       } else {
         sectorIds.set(nextSectorIdToAdd, Math.max(priority, existingPriority));
       }
@@ -165,6 +170,19 @@ class ScheduledSectorTree {
     // Collect sectors
     for (const [modelIdentifier, sectorsContainer] of this._models) {
       const { model, sectorIds } = sectorsContainer;
+
+      const allSectorsInModel = new Map<number, PrioritizedWantedSector>();
+      traverseDepthFirst(model.scene.root, sector => {
+        allSectorsInModel.set(sector.id, {
+          modelIdentifier,
+          modelBaseUrl: model.modelBaseUrl,
+          geometryClipBox: null,
+          levelOfDetail: LevelOfDetail.Discarded,
+          metadata: sector,
+          priority: -1
+        });
+        return true;
+      });
       for (const [sectorId, priority] of sectorIds) {
         const sector = model.scene.getSectorById(sectorId)!;
         const wantedSector: PrioritizedWantedSector = {
@@ -175,8 +193,10 @@ class ScheduledSectorTree {
           metadata: sector,
           priority
         };
-        allWanted.push(wantedSector);
+        allSectorsInModel.set(sectorId, wantedSector);
       }
+
+      allSectorsInModel.forEach(x => allWanted.push(x));
     }
 
     // Sort by priority
