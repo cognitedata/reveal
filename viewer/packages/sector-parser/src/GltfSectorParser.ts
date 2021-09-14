@@ -3,7 +3,7 @@
  */
 import * as THREE from 'three';
 import { MeshGPUInstancing, InstancedMesh } from '@gltf-transform/extensions';
-import { Node, NodeIO, Document, Primitive } from '@gltf-transform/core';
+import { Node, NodeIO, Document, Primitive, Mesh } from '@gltf-transform/core';
 import {
   setBoxGeometry,
   setConeGeometry,
@@ -12,6 +12,9 @@ import {
   setTorusGeometry,
   setTrapeziumGeometry
 } from './primitiveGeometries';
+
+//TODO: Move this utility our of core
+import { assertNever } from '../../../core/src/utilities';
 
 export enum RevealGeometryCollectionType {
   BoxCollection,
@@ -30,14 +33,14 @@ export enum RevealGeometryCollectionType {
 }
 
 export default class GltfSectorParser {
-  private readonly _io: NodeIO;
+  private readonly _gltfReader: NodeIO;
   constructor() {
-    this._io = new NodeIO();
-    this._io.registerExtensions([MeshGPUInstancing]);
+    this._gltfReader = new NodeIO();
+    this._gltfReader.registerExtensions([MeshGPUInstancing]);
   }
 
   public parseSector(data: ArrayBuffer) {
-    const document: Document = this._io.readBinary(data);
+    const document: Document = this._gltfReader.readBinary(data);
 
     const defaultScene = document.getRoot().getDefaultScene();
     const buffs: [RevealGeometryCollectionType, THREE.BufferGeometry][] = [];
@@ -53,7 +56,7 @@ export default class GltfSectorParser {
     const instanced = node.getExtension<InstancedMesh>(MeshGPUInstancing.EXTENSION_NAME)!;
     const mesh = node.getMesh()!;
 
-    if (!instanced && !mesh) return null;
+    if (this.isEmptyNode(instanced, mesh)) return null;
 
     const bufferGeometry = instanced ? new THREE.InstancedBufferGeometry() : new THREE.BufferGeometry();
 
@@ -74,6 +77,10 @@ export default class GltfSectorParser {
     this.setInstancedAttributes(instanced, bufferGeometry);
 
     return [geometryType, bufferGeometry];
+  }
+
+  private isEmptyNode(instanced: InstancedMesh, mesh: Mesh) {
+    return !instanced && !mesh;
   }
 
   private setInstancedAttributes(
@@ -158,8 +165,12 @@ export default class GltfSectorParser {
       case RevealGeometryCollectionType.TorusSegmentCollection:
         setTorusGeometry(geometry);
         break;
+      case RevealGeometryCollectionType.InstanceMesh:
+        break;
+      case RevealGeometryCollectionType.TriangleMesh:
+        break;
       default:
-        throw new Error(`${RevealGeometryCollectionType[primitiveCollectionName]} is not supported`);
+        assertNever(primitiveCollectionName);
     }
   }
 }
