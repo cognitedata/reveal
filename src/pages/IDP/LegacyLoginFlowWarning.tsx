@@ -7,7 +7,7 @@ import { useSDK } from '@cognite/sdk-provider';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { Alert as AntdAlert, Tooltip, notification } from 'antd';
 import styled from 'styled-components';
-import { useAuthSettings } from 'hooks';
+import { useAuthConfiguration } from 'hooks';
 
 const StyledAlert = styled(AntdAlert)`
   margin-bottom: 16px;
@@ -34,8 +34,8 @@ const LegacyLoginFlowWarning = () => {
   const flow = sdk.getOAuthFlowType();
   const { data: writeOk } = usePermissions('projectsAcl', 'UPDATE');
   const isLoggedInUsingLegacyLoginFlow = flow === 'CDF_OAUTH';
-  const { data: authSettings, isFetched } = useAuthSettings();
-  const isOIDCConfigured = authSettings?.isOidcEnabled;
+  const { data: authConfiguration, isFetched } = useAuthConfiguration();
+  const isOIDCConfigured = authConfiguration?.isOidcEnabled;
   const canLegacyLoginFlowBeDisabled =
     isFetched && isOIDCConfigured && !isLoggedInUsingLegacyLoginFlow;
 
@@ -66,7 +66,7 @@ const LegacyLoginFlowWarning = () => {
           key: 'disable-legacy-login-flow',
           message: 'Legacy login flow is disabled',
         });
-        client.invalidateQueries('auth-settings');
+        client.invalidateQueries('auth-configuration');
         if (match?.params) {
           history.push(`/${match.params.tenant}/${match.params.path}/oidc`);
         }

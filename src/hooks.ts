@@ -15,9 +15,9 @@ export const useGroups = (all = false) => {
   });
 };
 
-export const useAuthSettings = () => {
+export const useAuthConfiguration = () => {
   const sdk = useSDK();
-  return useQuery('auth-settings', () => {
+  return useQuery('auth-configuration', () => {
     return sdk
       .get<{
         isLegacyLoginFlowAndApiKeysEnabled: boolean;

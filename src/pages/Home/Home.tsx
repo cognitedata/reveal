@@ -21,7 +21,7 @@ import SecurityCategories from 'pages/SecurityCategories';
 import ServiceAccounts from 'pages/ServiceAccounts';
 import { useQueryClient, useIsFetching, useIsMutating } from 'react-query';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
-import { useAuthSettings } from 'hooks';
+import { useAuthConfiguration } from 'hooks';
 
 export default function () {
   const client = useQueryClient();
@@ -43,7 +43,7 @@ export default function () {
     }>();
   const { pathname, search, hash } = history.location;
 
-  const { data: authSettings, isFetched } = useAuthSettings();
+  const { data: authConfiguration, isFetched } = useAuthConfiguration();
 
   if (!isFetched) {
     return <Icon type="Loading" />;
@@ -74,12 +74,12 @@ export default function () {
         <Menu.Item disabled={!groupsRead} key="groups">
           Groups
         </Menu.Item>
-        {authSettings?.isLegacyLoginFlowAndApiKeysEnabled && (
+        {authConfiguration?.isLegacyLoginFlowAndApiKeysEnabled && (
           <Menu.Item key="service-accounts" disabled={!usersRead}>
             Service accounts
           </Menu.Item>
         )}
-        {authSettings?.isLegacyLoginFlowAndApiKeysEnabled && (
+        {authConfiguration?.isLegacyLoginFlowAndApiKeysEnabled && (
           <Menu.Item key="api-keys" disabled={!keysRead}>
             API keys
           </Menu.Item>
@@ -90,7 +90,7 @@ export default function () {
         <Menu.Item key="oidc" disabled={!projectsRead}>
           OpenID connect
         </Menu.Item>
-        {authSettings?.isLegacyLoginFlowAndApiKeysEnabled && (
+        {authConfiguration?.isLegacyLoginFlowAndApiKeysEnabled && (
           <Menu.Item key="idp" disabled={!projectsRead}>
             Identity provider configuration
           </Menu.Item>

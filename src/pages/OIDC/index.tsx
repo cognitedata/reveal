@@ -6,7 +6,7 @@ import { Icon, Button } from '@cognite/cogs.js';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { getContainer } from 'utils/utils';
 import { useRouteMatch } from 'react-router';
-import { useAuthSettings } from 'hooks';
+import { useAuthConfiguration } from 'hooks';
 
 const formItemLayout = {
   labelCol: {
@@ -74,7 +74,7 @@ export default function OIDCConfigContainer() {
       },
       onSettled() {
         cache.invalidateQueries('project-settings');
-        cache.invalidateQueries('auth-settings');
+        cache.invalidateQueries('auth-configuration');
       },
     }
   );
@@ -83,8 +83,8 @@ export default function OIDCConfigContainer() {
     useQuery('project-settings', () => {
       return sdk.projects.retrieve(match?.params.tenant!);
     });
-  const { data: authSettings, isFetched: areAuthSettingsFetched } =
-    useAuthSettings();
+  const { data: authConfiguration, isFetched: areAuthConfigurationFetched } =
+    useAuthConfiguration();
 
   const handleSubmit = (values: any) => {
     mutate({
@@ -115,7 +115,7 @@ export default function OIDCConfigContainer() {
     });
   };
 
-  if (!(areProjectSettingsFetched && areAuthSettingsFetched)) {
+  if (!(areProjectSettingsFetched && areAuthConfigurationFetched)) {
     return <Icon type="Loading" />;
   }
 
@@ -134,7 +134,7 @@ export default function OIDCConfigContainer() {
         logClaims: projectSettings?.oidcConfiguration?.logClaims?.map(
           o => o.claimName
         ),
-        isOidcEnabled: authSettings?.isOidcEnabled,
+        isOidcEnabled: authConfiguration?.isOidcEnabled,
       }}
     >
       <Form.Item name="isOidcEnabled" label="Enabled" valuePropName="checked">
