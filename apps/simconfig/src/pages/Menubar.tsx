@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { TopBar } from '@cognite/cogs.js';
+import { SimulatorStatus } from 'components/simulator/SimulatorStatus';
 
 import { SidebarIcon } from './Sidebar';
 
@@ -39,6 +40,9 @@ export const MenuBar = () => {
         ]}
       />
       <TopBar.Right>
+        <TopBar.Item style={{ padding: '0 24px' }}>
+          <SimulatorStatus />
+        </TopBar.Item>
         <SidebarIcon />
       </TopBar.Right>
     </TopBar>
