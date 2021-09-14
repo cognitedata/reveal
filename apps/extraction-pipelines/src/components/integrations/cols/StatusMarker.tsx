@@ -1,5 +1,5 @@
 import React, { FunctionComponent, PropsWithoutRef } from 'react';
-import { Badge, Label } from '@cognite/cogs.js';
+import { Badge, Label, LabelVariants } from '@cognite/cogs.js';
 import { StyledTooltip } from 'styles/StyledToolTip';
 import { RunStatusUI } from 'model/Status';
 
@@ -11,39 +11,38 @@ interface OwnProps {
 
 type Props = OwnProps;
 
+const getVariantAndText = (status: RunStatusUI): [LabelVariants, string] => {
+  switch (status) {
+    case RunStatusUI.SUCCESS:
+      return ['success', 'Success'];
+    case RunStatusUI.FAILURE:
+      return ['danger', 'Failure'];
+    case RunStatusUI.SEEN:
+      return ['default', 'Seen'];
+    case RunStatusUI.NOT_ACTIVATED:
+      return ['unknown', 'Not activated'];
+    default:
+      return ['unknown', status];
+  }
+};
+
 const StatusMarker: FunctionComponent<Props> = ({
   status,
   dataTestId = '',
   ...rest
 }: PropsWithoutRef<Props>) => {
-  switch (status) {
-    case RunStatusUI.SUCCESS:
-      return (
-        <Label size={'medium'} variant={'success'}>
-          Success
-        </Label>
-      );
-    case RunStatusUI.FAILURE:
-      return (
-        <Label size={'medium'} variant={'danger'}>
-          Failure
-        </Label>
-      );
-    case RunStatusUI.SEEN:
-      return (
-        <Label size={'medium'} variant={'default'}>
-          Seen
-        </Label>
-      );
-    case RunStatusUI.NOT_ACTIVATED:
-      return (
-        <Label size={'medium'} variant={'unknown'}>
-          Not activated
-        </Label>
-      );
-    default:
-      return <></>;
-  }
+  if (status == null) return <></>;
+  const [variant, text] = getVariantAndText(status);
+  return (
+    <Label
+      size={'medium'}
+      variant={variant}
+      data-testid={`status-marker-${dataTestId}`}
+      {...rest}
+    >
+      {text}
+    </Label>
+  );
 };
 
 export default StatusMarker;

@@ -115,6 +115,9 @@ export const renderWithReQueryCacheSelectedIntegrationContext = (
       </AppEnvProvider>
     </QueryClientProvider>
   );
+  const modalRoot = document.createElement('div');
+  modalRoot.setAttribute('class', 'integrations-ui-style-scope');
+  document.body.appendChild(modalRoot);
   return { wrapper, history };
 };
 export const renderRegisterContext = (
