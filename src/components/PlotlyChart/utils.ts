@@ -46,12 +46,16 @@ export type AxisUpdate = {
 export function calculateSeriesData(
   timeSeriesCollection: ChartTimeSeries[] = [],
   workflowCollection: ChartWorkflow[] = [],
-  timeseries: (DatapointAggregates | StringDatapoints | DoubleDatapoints)[],
+  timeseries: (
+    | DatapointAggregates
+    | StringDatapoints
+    | DoubleDatapoints
+  )[] = [],
   timeseriesFetching: boolean,
   workflows: {
     id: string;
     datapoints: DoubleDatapoint[];
-  }[],
+  }[] = [],
   workflowsRunning: boolean,
   mergeUnits: boolean
 ): SeriesData[] {
