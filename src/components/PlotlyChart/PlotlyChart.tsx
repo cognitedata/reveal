@@ -198,8 +198,10 @@ const PlotlyChartComponent = ({
     { enabled: !isPreview }
   );
 
-  const [timeseries, setLocalTimeseries] = useRecoilState(timeseriesState);
-  const [workflows, setLocalWorkflows] = useRecoilState(workflowState);
+  const [localTimeseries, setLocalTimeseries] = useRecoilState(timeseriesState);
+  const [localWorkflows, setLocalWorkflows] = useRecoilState(workflowState);
+  const timeseries = isPreview ? tsRaw : localTimeseries;
+  const workflows = isPreview ? workflowsRaw : localWorkflows;
 
   useEffect(() => {
     if (tsSuccess && tsRaw) {
