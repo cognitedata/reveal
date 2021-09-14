@@ -18,7 +18,6 @@ import {
 import 'utils/test/windowLocation';
 import CreateIntegration, {
   ADD_MORE_INFO_HEADING,
-  NOT_LINKED,
 } from 'pages/create/CreateIntegration';
 import {
   EXTERNAL_ID_REQUIRED,
@@ -144,7 +143,6 @@ describe('CreateIntegration', () => {
       ...props,
     });
     sdkv3.datasets.list.mockResolvedValue(mockDataSetResponse());
-    expect(screen.getByText(NOT_LINKED)).toBeInTheDocument();
 
     const nameInput = screen.getByLabelText(EXT_PIPE_NAME_HEADING);
 
