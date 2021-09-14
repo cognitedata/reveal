@@ -11,7 +11,18 @@ describe('getConfigFromDspFunction', () => {
     const dspFunctionDescription: DSPFunction = {
       description: 'Data smoother - Saviztky-Golay Filter',
       n_inputs: 1,
+      inputs: [
+        {
+          param: 'a',
+          type: ['ts'],
+        },
+      ],
       n_outputs: 1,
+      outputs: [
+        {
+          name: 'Result',
+        },
+      ],
       op: 'SG_SMOOTHER',
       parameters: [
         {
@@ -34,7 +45,68 @@ describe('getConfigFromDspFunction', () => {
       input: [
         {
           name: 'Input 1',
-          field: 'input0',
+          field: 'a',
+          types: ['TIMESERIES'],
+          pin: true,
+        },
+        {
+          name: 'window_length',
+          field: 'window_length',
+          types: ['CONSTANT'],
+          pin: false,
+        },
+        {
+          name: 'polyorder',
+          field: 'polyorder',
+          types: ['CONSTANT'],
+          pin: false,
+        },
+      ],
+      output: [
+        {
+          name: 'Result',
+          field: 'result',
+          type: 'TIMESERIES',
+        },
+      ],
+    });
+  });
+
+  it('generates correct config from dsp function description (case 1,5)', () => {
+    const dspFunctionDescription: DSPFunction = {
+      description: 'Data smoother - Saviztky-Golay Filter',
+      n_inputs: 1,
+      inputs: [
+        {
+          param: 'a',
+          type: ['ts'],
+        },
+      ],
+      n_outputs: 1,
+      outputs: [],
+      op: 'SG_SMOOTHER',
+      parameters: [
+        {
+          default: null,
+          param: 'window_length',
+          type: 'int',
+        },
+        {
+          default: 1,
+          param: 'polyorder',
+          type: 'int',
+        },
+      ],
+      type_info: [['ts']],
+    };
+
+    const config = getConfigFromDspFunction(dspFunctionDescription);
+
+    expect(config).toEqual({
+      input: [
+        {
+          name: 'Input 1',
+          field: 'a',
           types: ['TIMESERIES'],
           pin: true,
         },
@@ -65,7 +137,22 @@ describe('getConfigFromDspFunction', () => {
     const dspFunctionDescription: DSPFunction = {
       description: 'Maximum function (element-wise)',
       n_inputs: 2,
+      inputs: [
+        {
+          param: 'a',
+          type: ['ts', 'const'],
+        },
+        {
+          param: 'b',
+          type: ['ts', 'const'],
+        },
+      ],
       n_outputs: 1,
+      outputs: [
+        {
+          name: 'Result',
+        },
+      ],
       op: 'MAX',
       parameters: [],
       type_info: [
@@ -80,20 +167,20 @@ describe('getConfigFromDspFunction', () => {
       input: [
         {
           name: 'Input 1',
-          field: 'input0',
+          field: 'a',
           types: ['TIMESERIES', 'CONSTANT'],
           pin: true,
         },
         {
           name: 'Input 2',
-          field: 'input1',
+          field: 'b',
           types: ['TIMESERIES', 'CONSTANT'],
           pin: true,
         },
       ],
       output: [
         {
-          name: 'Output',
+          name: 'Result',
           field: 'result',
           type: 'TIMESERIES',
         },
