@@ -1,8 +1,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState, memo } from 'react';
 import { useQuery } from 'react-query';
+import dayjs from 'dayjs';
 import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
-import { DatapointAggregate, DatapointsMultiQuery } from '@cognite/sdk';
+import {
+  DatapointAggregate,
+  DatapointAggregates,
+  Datapoints,
+  DatapointsMultiQuery,
+} from '@cognite/sdk';
 import { calculateGranularity } from 'utils/timeseries';
 import createPlotlyComponent from 'react-plotly.js/factory';
 import Plotly from 'plotly.js-basic-dist';
@@ -11,7 +17,7 @@ import {
   getFunctionResponseWhenDone,
   transformSimpleCalcResult,
 } from 'utils/backendService';
-import { updateSourceAxisForChart } from 'utils/charts';
+import { updateSourceAxisForChart, updateTimeseries } from 'utils/charts';
 import { trackUsage } from 'utils/metrics';
 import { useDebouncedCallback, useDebounce } from 'use-debounce';
 import { useRecoilState } from 'recoil';
@@ -85,16 +91,16 @@ const PlotlyChartComponent = ({
   const queries =
     chart?.timeSeriesCollection?.map(({ tsExternalId }) => ({
       items: [{ externalId: tsExternalId }],
-      start: new Date(debouncedRange.dateFrom!),
-      end: new Date(debouncedRange.dateTo!),
+      start: dayjs(debouncedRange.dateFrom!).toDate(),
+      end: dayjs(debouncedRange.dateTo!).toDate(),
       granularity: calculateGranularity(
         [
-          new Date(debouncedRange.dateFrom!).getTime(),
-          new Date(debouncedRange.dateTo!).getTime(),
+          dayjs(debouncedRange.dateFrom!).valueOf(),
+          dayjs(debouncedRange.dateTo!).valueOf(),
         ],
         pointsPerSeries
       ),
-      aggregates: ['average', 'min', 'max'],
+      aggregates: ['average', 'count', 'min', 'max'],
       limit: pointsPerSeries,
     })) || [];
 
@@ -102,14 +108,49 @@ const PlotlyChartComponent = ({
     data: tsRaw,
     isFetching: timeseriesFetching,
     isSuccess: tsSuccess,
-  } = useQuery(['chart-data', 'timeseries', queries], () =>
-    Promise.all(
-      queries.map((q) =>
-        sdk.datapoints
-          .retrieve(q as DatapointsMultiQuery)
-          .then((r) => r[0]?.datapoints)
-      )
-    )
+  } = useQuery(
+    ['chart-data', 'timeseries', queries],
+    () =>
+      Promise.all(
+        queries.map((q) =>
+          sdk.datapoints
+            .retrieve(q as DatapointsMultiQuery)
+            .then((r: DatapointAggregates[] | Datapoints[]) => {
+              if (isPreview) {
+                return r;
+              }
+
+              const RAW_DATA_POINTS_THRESHOLD = pointsPerSeries / 2;
+              const aggregatedCount = (
+                r[0]?.datapoints as DatapointAggregate[]
+              ).reduce((point: number, c: DatapointAggregate) => {
+                return point + (c.count || 0);
+              }, 0);
+              const isRaw = aggregatedCount < RAW_DATA_POINTS_THRESHOLD;
+
+              setChart((oldChart) =>
+                updateTimeseries(
+                  oldChart!,
+                  oldChart!.timeSeriesCollection!.find(
+                    (ts) => ts.tsExternalId === q.items[0]!.externalId!
+                  )!.id,
+                  { isRaw }
+                )
+              );
+
+              return isRaw
+                ? sdk.datapoints.retrieve({
+                    ...q,
+                    granularity: undefined,
+                    aggregates: undefined,
+                    includeOutsidePoints: true,
+                  } as DatapointsMultiQuery)
+                : r;
+            })
+            .then((r) => r[0]?.datapoints)
+        )
+      ),
+    { enabled: !!chart }
   );
 
   const calls = isPreview
