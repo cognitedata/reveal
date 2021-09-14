@@ -121,7 +121,6 @@ export const ADD_MORE_INFO_HEADING: Readonly<string> = `Additional information`;
 const ADD_MORE_INFO_TEXT_1: Readonly<string> = `Add more information about the ${EXTRACTION_PIPELINE_LOWER}, such as pipeline schedule configuration details and configure notifications.`;
 const ADD_MORE_INFO_TEXT_2: Readonly<string> = `You may add this information later on the ${EXTRACTION_PIPELINE} overview page.`;
 const ADD_MORE_INFO_LINK: Readonly<string> = `Read about registering an ${EXTRACTION_PIPELINE_LOWER}`;
-export const NOT_LINKED: Readonly<string> = `${EXTRACTION_PIPELINE} will not be linked to data set. You can link your ${EXTRACTION_PIPELINE_LOWER} to a data set using edit later.`;
 
 export interface AddIntegrationFormInput
   extends ScheduleFormInput,
@@ -259,17 +258,6 @@ export const CreateIntegration = (props: { showAdditionalFields: boolean }) => {
         >
           <InfoIcon />
           {dataSetLoadError}
-        </InfoMessage>
-      )}
-      {!dataSetId && (
-        <InfoMessage
-          id="dataset-data"
-          className="data-set-info"
-          role="region"
-          aria-live="polite"
-        >
-          <InfoIcon />
-          {NOT_LINKED}
         </InfoMessage>
       )}
       <FormProvider {...methods}>
