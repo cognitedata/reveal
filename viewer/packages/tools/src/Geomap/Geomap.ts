@@ -4,7 +4,7 @@
 
 import * as GEOTHREE from 'geo-three';
 import { Cognite3DViewer } from '@reveal/core';
-import { MapboxStyle, MapConfig, MapProviders } from './MapConfig';
+import { MapConfig, MapProviders } from './MapConfig';
 import { MapProvider, MapView } from 'geo-three';
 
 export class Geomap {
