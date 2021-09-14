@@ -221,6 +221,7 @@ export function Geomap() {
       renderGui.add(guiState, 'providers', mapProviders).name('MapProviders').onFinishChange(value => {
         let apiKey = "";
         let appCode = "";
+        let id = "";
         switch(value) {
           case 'HereMap':
             apiKey = "HqSchC7XT2PA9qCfxzFq";
@@ -228,12 +229,13 @@ export function Geomap() {
             break;
           case 'MapboxMap':
             apiKey = "pk.eyJ1IjoicHJhbW9kLXMiLCJhIjoiY2tzb2JkbXdyMGd5cjJubnBrM3IwMTd0OCJ9.jA9US2D2FRXUlldhE8bZgA";
+            id = MapboxStyle.Satellite_Streets;
             break;
           case 'BingMap':
             apiKey = "AuViYD_FXGfc3dxc0pNa8ZEJxyZyPq1lwOLPCOydV3f0tlEVH-HKMgxZ9ilcRj-T";
             break;
         }
-        geomapTool.setMapProvider(value, apiKey, appCode, MapboxStyle.Satellite_Streets);
+        geomapTool.setMapProvider(value, apiKey, appCode, id);
         viewer.requestRedraw();
       });
     }

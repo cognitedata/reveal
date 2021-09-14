@@ -56,7 +56,7 @@ export class Geomap {
     return mapProvider;
   }
 
-  public setMapProvider(provider: MapProviders, apiKey: string, appCode?: string, id?: MapboxStyle) {
+  public setMapProvider(provider: MapProviders, apiKey: string, appCode?: string, id?: string) {
     const mapConfig: MapConfig = {
       provider: provider,
       APIKey: apiKey,

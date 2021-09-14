@@ -149,7 +149,7 @@ export type MapboxConfig = {
   /**
    * Map style or map ID if the mode is set to MAP_ID
    */
-  id?: MapboxStyle;
+  id: string;
   /**
    * Map tile access mode
    *  - MapboxMode.STYLE
