@@ -1,5 +1,5 @@
 import React from 'react';
-import { screen, fireEvent, waitFor } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import { QueryClient } from 'react-query';
 import { mapDataSetToIntegration } from 'utils/dataSetUtils';
@@ -10,7 +10,6 @@ import {
 } from 'components/table/IntegrationTableCol';
 import { renderWithSelectedIntegrationContext } from 'utils/test/render';
 import ITable from 'components/table/ITable';
-import { RunStatusUI } from 'model/Status';
 
 describe('<ITable/>', () => {
   const cols = getIntegrationTableCol();
