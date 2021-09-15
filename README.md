@@ -54,7 +54,12 @@ brew install chromium
 `which chromium`
 ```
 
-2. Inside `examples/` add two environment variables from .env file by: 
+2. Inside `examples/` add two environment variables to your `~/.zshrc` config file:
+```
+export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+export PUPPETEER_EXECUTABLE_PATH=`which chromium`
+```
+or create `.env` file within the same folder and paste them there, then use source:
 ```
 source .env
 ```
