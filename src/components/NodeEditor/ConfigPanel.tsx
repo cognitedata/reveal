@@ -4,6 +4,8 @@ import { StorableNode } from 'reducers/charts/types';
 import defaultNodeOptions from 'reducers/charts/Nodes';
 import styled from 'styled-components/macro';
 
+import { effectId as OutputSeriesEffectId } from 'reducers/charts/Nodes/OutputSeries';
+
 const ConfigPanelWrapper = styled.div`
   position: absolute;
   top: 16px;
@@ -78,6 +80,8 @@ const ConfigPanel = ({
     (opt) => opt.effectId === node?.functionEffectReference
   )?.ConfigPanel;
 
+  const isOutputNode = node?.functionEffectReference === OutputSeriesEffectId;
+
   return (
     <ConfigPanelWrapper>
       <Button
@@ -90,14 +94,16 @@ const ConfigPanel = ({
         }}
         aria-label="close"
       />
-      <Input
-        value={workingNode.title}
-        onChange={(e) => {
-          setDirty(true);
-          setWorkingNode({ ...node, title: e.target.value });
-        }}
-        className="name-input"
-      />
+      {!isOutputNode && (
+        <Input
+          value={workingNode.title}
+          onChange={(e) => {
+            setDirty(true);
+            setWorkingNode({ ...node, title: e.target.value });
+          }}
+          className="name-input"
+        />
+      )}
       {NodeSpecificConfigPanel && (
         <div className="config-panel">
           {createElement(NodeSpecificConfigPanel, {
