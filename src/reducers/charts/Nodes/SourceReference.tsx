@@ -53,7 +53,7 @@ export const ConfigPanel = ({
   ];
 
   const selectedWorkspaceTimeSeriesLabel =
-    sourceList.find(({ id }) => id === functionData.sourceId)?.name || '';
+    sourceList.find(({ id }) => id === functionData?.sourceId)?.name || '';
 
   const loadOptions = (
     _: string,
@@ -99,7 +99,7 @@ export const ConfigPanel = ({
           });
         }}
         value={{
-          value: functionData.sourceId,
+          value: functionData?.sourceId,
           label: selectedWorkspaceTimeSeriesLabel,
         }}
       />
