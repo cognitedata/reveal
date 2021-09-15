@@ -13,7 +13,7 @@ export type DebugLoadedSectorsToolOptions = {
   showSimpleSectors?: boolean;
   showDetailedSectors?: boolean;
   showDiscardedSectors?: boolean;
-  colorBy?: 'depth' | 'lod' | 'loadedTimestamp';
+  colorBy?: 'depth' | 'lod' | 'loadedTimestamp' | 'random';
   leafsOnly?: boolean;
 };
 
@@ -110,6 +110,9 @@ export class DebugLoadedSectorsTool extends Cognite3DViewerToolBase {
           const s = (nodesByTimestamp.length - 1 - indexOfNode) / Math.max(nodesByTimestamp.length - 1, 1);
           return new THREE.Color(Colors.green).lerpHSL(Colors.red, s);
         }
+
+        case 'random':
+          return new THREE.Color().setHSL(Math.random(), 1.0, 0.5);
 
         default:
           assertNever(options.colorBy);
