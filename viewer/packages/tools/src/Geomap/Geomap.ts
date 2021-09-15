@@ -1,6 +1,7 @@
 /*!
  * Copyright 2021 Cognite AS
  */
+// To overcome "implicitly has an 'any' type" and "unused variable reference" error in the geo-three library
 // @ts-ignore
 import * as GEOTHREE from 'geo-three';
 import { Cognite3DViewer } from '@reveal/core';
