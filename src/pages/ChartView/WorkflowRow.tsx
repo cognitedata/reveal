@@ -28,9 +28,6 @@ import { getHash } from 'utils/hash';
 import { DraggableProvided } from 'react-beautiful-dnd';
 import { flow, isEqual } from 'lodash';
 import { convertValue } from 'utils/units';
-import { useRecoilValue } from 'recoil';
-import { workflowSummaryById } from 'atoms/workflows';
-import { roundToSignificantDigits } from 'utils/axis';
 import {
   SourceItem,
   SourceSquare,
@@ -287,8 +284,6 @@ export default function WorkflowRow({
   const updateAppearance = (diff: Partial<ChartTimeSeries>) =>
     mutate((oldChart) => updateWorkflow(oldChart!, id, diff));
 
-  const summary = useRecoilValue(workflowSummaryById(id));
-
   return (
     <SourceRow
       onClick={() => onRowClick(id)}
@@ -352,31 +347,7 @@ export default function WorkflowRow({
               </SourceDescription>
             </SourceName>
           </td>
-          <td colSpan={1} />
-          <td>
-            {typeof summary?.min === 'number'
-              ? roundToSignificantDigits(
-                  convertValue(summary?.min, unit, preferredUnit),
-                  3
-                )
-              : '-'}
-          </td>
-          <td>
-            {typeof summary?.max === 'number'
-              ? roundToSignificantDigits(
-                  convertValue(summary?.max, unit, preferredUnit),
-                  3
-                )
-              : '-'}
-          </td>
-          <td>
-            {typeof summary?.mean === 'number'
-              ? roundToSignificantDigits(
-                  convertValue(summary?.mean, unit, preferredUnit),
-                  3
-                )
-              : '-'}
-          </td>
+          <td colSpan={4} />
           <td style={{ textAlign: 'right', paddingRight: 8 }}>
             <UnitDropdown
               unit={unit}
