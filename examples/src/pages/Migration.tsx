@@ -21,6 +21,7 @@ import {
 import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, AxisViewTool, HtmlOverlayTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
 import { CadNode } from '@cognite/reveal/internals';
+import { initialCadBudgetUi } from '../utils/CadBudgetUi';
 
 window.THREE = THREE;
 (window as any).reveal = reveal;
@@ -222,6 +223,7 @@ export function Migration() {
       modelGui.add(guiState, 'revisionId').name('Revision ID');
       modelGui.add(guiActions, 'addModel').name('Load model');
       modelGui.add(guiActions, 'fitToModel').name('Fit camera');
+      initialCadBudgetUi(viewer, gui.addFolder('CAD budget'));
 
       const geometryFilterGui = modelGui.addFolder('Geometry Filter');
       let geometryFilterPreview: THREE.Object3D | undefined = undefined;
@@ -292,7 +294,7 @@ export function Migration() {
 
       const debugSectorsGui = debugGui.addFolder('Loaded sectors');
 
-      debugSectorsGui.add(guiState.debug.loadedSectors.options, 'colorBy', ['lod', 'depth', 'loadedTimestamp']).name('Color by');
+      debugSectorsGui.add(guiState.debug.loadedSectors.options, 'colorBy', ['lod', 'depth', 'loadedTimestamp', 'random']).name('Color by');
       debugSectorsGui.add(guiState.debug.loadedSectors.options, 'leafsOnly').name('Leaf nodes only');
       debugSectorsGui.add(guiState.debug.loadedSectors.options, 'showSimpleSectors').name('Show simple sectors');
       debugSectorsGui.add(guiState.debug.loadedSectors.options, 'showDetailedSectors').name('Show detailed sectors');
