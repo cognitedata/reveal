@@ -10,18 +10,20 @@ interface OwnProps {
 
 type Props = OwnProps;
 
-const getVariantAndText = (status: RunStatusUI): [LabelVariants, string] => {
+const getVariantAndText = (
+  status: RunStatusUI
+): { variant: LabelVariants; text: string } => {
   switch (status) {
     case RunStatusUI.SUCCESS:
-      return ['success', 'Success'];
+      return { variant: 'success', text: 'Success' };
     case RunStatusUI.FAILURE:
-      return ['danger', 'Failure'];
+      return { variant: 'danger', text: 'Failure' };
     case RunStatusUI.SEEN:
-      return ['default', 'Seen'];
+      return { variant: 'default', text: 'Seen' };
     case RunStatusUI.NOT_ACTIVATED:
-      return ['unknown', 'Not activated'];
+      return { variant: 'unknown', text: 'Not activated' };
     default:
-      return ['unknown', status];
+      return { variant: 'unknown', text: status };
   }
 };
 
@@ -31,15 +33,15 @@ const StatusMarker: FunctionComponent<Props> = ({
   ...rest
 }: PropsWithoutRef<Props>) => {
   if (status == null) return <></>;
-  const [variant, text] = getVariantAndText(status);
+  const variantAndText = getVariantAndText(status);
   return (
     <Label
-      size={'medium'}
-      variant={variant}
+      size="medium"
+      variant={variantAndText.variant}
       data-testid={`status-marker-${dataTestId}`}
       {...rest}
     >
-      {text}
+      {variantAndText.text}
     </Label>
   );
 };
