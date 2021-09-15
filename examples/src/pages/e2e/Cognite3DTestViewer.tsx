@@ -34,14 +34,20 @@ export function Cognite3DTestViewer(props: Props) {
 
     // Prepare viewer
     const options: Cognite3DViewerOptions = {
-      ...viewerOptions,
       domElement: containerRef.current,
       onLoading: (itemsLoaded, itemsRequested, itemsCulled) => setLoadingState({itemsLoaded, itemsRequested, itemsCulled}),
       // Note! Pure fake - we will not contact CDF during our tests
       sdk: new CogniteClient({appId: 'reveal-visual-tests'}),
       // Instruct viewer to load models from local storage
       // @ts-expect-error
-      _localModels: true
+      _localModels: true,
+      // Dont use any post-processing effects
+      antiAliasingHint: 'disabled',
+      ssaoQualityHint: 'disabled',
+      enableEdges: false
+
+      // Let provided options override options above
+      ...viewerOptions,
     }
     const viewer = new Cognite3DViewer(options);
     if (initializeCallback) {
