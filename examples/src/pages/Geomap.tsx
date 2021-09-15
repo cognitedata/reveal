@@ -17,7 +17,8 @@ import {
   TreeIndexNodeCollection,
   IndexSet
 } from '@cognite/reveal';
-import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, AxisViewTool, GeomapTool, MapConfig, MapboxMode, MapboxStyle, MapProviders, MapboxImageFormat } from '@cognite/reveal/tools';
+import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, AxisViewTool, GeomapTool, MapConfig,
+  MapboxMode, MapboxStyle, MapProviders, MapboxImageFormat, BingMapType, HereMapType, HereMapScheme, HereMapImageFormat } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
 
 window.THREE = THREE;
@@ -203,7 +204,7 @@ export function Geomap() {
         }
       });
 
-      const mapConfig: MapConfig = {
+      let mapConfig: MapConfig = {
         provider: MapProviders.MapboxMap,
         APIKey: "pk.eyJ1IjoicHJhbW9kLXMiLCJhIjoiY2tzb2JkbXdyMGd5cjJubnBrM3IwMTd0OCJ9.jA9US2D2FRXUlldhE8bZgA",
         mode: MapboxMode.Style,
@@ -213,29 +214,54 @@ export function Geomap() {
           latitude: 59.9016426931744,
           longitude: 10.607235872426175
         }
-      }
-      let geomapTool = new GeomapTool(viewer, mapConfig);
+      };
+      let map = new GeomapTool(viewer, mapConfig);
 
       const renderGui = gui.addFolder('Options');
       const mapProviders = ['MapboxMap', 'HereMap', 'BingMap'];
       renderGui.add(guiState, 'providers', mapProviders).name('MapProviders').onFinishChange(value => {
-        let apiKey = "";
-        let appCode = "";
-        let id = "";
         switch(value) {
           case 'HereMap':
-            apiKey = "HqSchC7XT2PA9qCfxzFq";
-            appCode = "5rob9QcZ70J-m18Er8-rIA";
+            mapConfig = {
+              provider: MapProviders.HereMap,
+              APIKey: "HqSchC7XT2PA9qCfxzFq",
+              appCode: "5rob9QcZ70J-m18Er8-rIA",
+              style: HereMapType.Aerial,
+              scheme: HereMapScheme.Terrain,
+              imageFormat: HereMapImageFormat.PNG,
+              latlong: {
+                  latitude: 59.9016426931744,
+                  longitude: 10.607235872426175
+              }
+            };
             break;
           case 'MapboxMap':
-            apiKey = "pk.eyJ1IjoicHJhbW9kLXMiLCJhIjoiY2tzb2JkbXdyMGd5cjJubnBrM3IwMTd0OCJ9.jA9US2D2FRXUlldhE8bZgA";
-            id = MapboxStyle.Satellite_Streets;
+            mapConfig = {
+              provider: MapProviders.MapboxMap,
+              APIKey: "pk.eyJ1IjoicHJhbW9kLXMiLCJhIjoiY2tzb2JkbXdyMGd5cjJubnBrM3IwMTd0OCJ9.jA9US2D2FRXUlldhE8bZgA",
+              mode: MapboxMode.Style,
+              id: MapboxStyle.Satellite_Streets,
+              tileFormat: MapboxImageFormat.JPG70,
+              latlong: {
+                latitude: 59.9016426931744,
+                longitude: 10.607235872426175
+              }
+            };
             break;
           case 'BingMap':
-            apiKey = "AuViYD_FXGfc3dxc0pNa8ZEJxyZyPq1lwOLPCOydV3f0tlEVH-HKMgxZ9ilcRj-T";
+            mapConfig = {
+              provider: MapProviders.BingMap,
+              APIKey: "AuViYD_FXGfc3dxc0pNa8ZEJxyZyPq1lwOLPCOydV3f0tlEVH-HKMgxZ9ilcRj-T",
+              type: BingMapType.Aerial,
+              latlong: {
+                  latitude: 59.9016426931744,
+                  longitude: 10.607235872426175
+              }
+            };
             break;
         }
-        geomapTool.setMapProvider(value, apiKey, appCode, id);
+        map.dispose();
+        map = new GeomapTool(viewer, mapConfig);
         viewer.requestRedraw();
       });
     }

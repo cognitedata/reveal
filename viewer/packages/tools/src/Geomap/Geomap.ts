@@ -1,15 +1,14 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-
+// @ts-ignore
 import * as GEOTHREE from 'geo-three';
 import { Cognite3DViewer } from '@reveal/core';
 import { LatLongPosition, MapConfig, MapProviders } from './MapConfig';
-import { MapProvider, MapView } from 'geo-three';
 
 export class Geomap {
   private readonly _viewer: Cognite3DViewer;
-  private _map: MapView;
+  private _map: GEOTHREE.MapView;
 
   constructor(viewer: Cognite3DViewer, mapConfig: MapConfig) {
     this._viewer = viewer;
@@ -25,7 +24,7 @@ export class Geomap {
   }
 
   private getMapProvider(mapConfig: MapConfig) {
-    let mapProvider: MapProvider;
+    let mapProvider: GEOTHREE.MapProvider;
     switch (mapConfig.provider) {
       case MapProviders.BingMap:
         mapProvider = new GEOTHREE.BingMapsProvider(mapConfig.APIKey, mapConfig.type);
@@ -33,11 +32,11 @@ export class Geomap {
       case MapProviders.HereMap:
         mapProvider = new GEOTHREE.HereMapsProvider(
           mapConfig.APIKey,
-          mapConfig.appCode,
-          mapConfig.style,
-          mapConfig.scheme,
-          mapConfig.imageFormat,
-          mapConfig.size
+          mapConfig.appCode as string,
+          mapConfig.style as string,
+          mapConfig.scheme as string,
+          mapConfig.imageFormat as string,
+          mapConfig.size as number
         );
         break;
       case MapProviders.MapboxMap:
@@ -54,21 +53,6 @@ export class Geomap {
     }
 
     return mapProvider;
-  }
-
-  public setMapProvider(provider: MapProviders, apiKey: string, appCode?: string, id?: string) {
-    const mapConfig: MapConfig = {
-      provider: provider,
-      APIKey: apiKey,
-      appCode: appCode,
-      id: id,
-      latlong: {
-        latitude: 0,
-        longitude: 0
-      }
-    };
-    const mapProvider = this.getMapProvider(mapConfig);
-    this._map.setProvider(mapProvider);
   }
 
   public latLongToWorldCoordinates(latLong: LatLongPosition) {
