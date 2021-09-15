@@ -33,7 +33,7 @@ export const MenuBar = () => {
       <TopBar.Navigation
         links={[
           {
-            name: 'Homepage',
+            name: 'Files management ',
             isActive: active === PAGES.HOMEPAGE,
             onClick: handleNavigate(PAGES.HOMEPAGE),
           },

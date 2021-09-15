@@ -1,7 +1,7 @@
 /* eslint no-param-reassign: ["error", { "props": false }] */
 import React from 'react';
 import { Upload, message } from 'antd';
-import { Button, Modal } from '@cognite/cogs.js';
+import { Button, Modal, Input } from '@cognite/cogs.js';
 import { AuthConsumer, AuthContext } from '@cognite/react-container';
 import { CogniteClient } from '@cognite/sdk';
 import UploadGCS from '@cognite/gcs-browser-upload';
@@ -106,7 +106,6 @@ class FileUploader extends React.Component<PropsFileUploader, State> {
 
   constructor(props: PropsFileUploader) {
     super(props);
-
     this.state = {
       uploadStatus: STATUS.WAITING,
       fileList: [],
@@ -211,11 +210,18 @@ class FileUploader extends React.Component<PropsFileUploader, State> {
         );
         return;
       }
-
       const fileMetadata = (await this.props.client.files.upload({
         name: file.name,
         mimeType,
-        source: 'Simulator Configuration',
+        source: 'PROSPER',
+        metadata: {
+          'previous-version': '',
+          'next-version': '',
+          category: (
+            document.getElementById('categoryInput') as HTMLInputElement
+          ).value,
+          pending: 'true',
+        },
         ...(assetIds && { assetIds }),
       })) as UploadFileMetadataResponse;
       const { uploadUrl, id } = fileMetadata;
@@ -335,6 +341,12 @@ class FileUploader extends React.Component<PropsFileUploader, State> {
   render() {
     return (
       <div>
+        <Input
+          title="Category"
+          placeholder="Enter category..."
+          fullWidth
+          id="categoryInput"
+        />
         <Dragger
           name="file"
           onRemove={this.removeFile}

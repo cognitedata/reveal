@@ -1,4 +1,5 @@
 import mime from 'mime-types';
+import { CogniteClient, FileInfo } from '@cognite/sdk';
 
 export const downloadFile = async (url: string) => {
   const response = await fetch(url);
@@ -23,6 +24,64 @@ export const saveData = (blob: Blob, fileName: string) => {
   window.URL.revokeObjectURL(url);
 };
 
+export type PrevNextVersion = 'previous-version' | 'next-version';
+
+export const updateFileMetadata = async (
+  client: CogniteClient,
+  file: FileInfoWithMetadata,
+  data: FileInfo[],
+  version1: PrevNextVersion,
+  version2: PrevNextVersion
+) => {
+  if (file.metadata[version1]) {
+    const fileInfo = data.find(
+      ({ id }) => id === +file.metadata[version1]
+    ) as FileInfoWithMetadata;
+    if (fileInfo) {
+      await client.files.update([
+        {
+          id: fileInfo.id,
+          update: {
+            metadata: {
+              set: {
+                [version1 === 'previous-version'
+                  ? 'previous-version'
+                  : 'next-version']: fileInfo.metadata[version1],
+                [version1 === 'previous-version'
+                  ? 'next-version'
+                  : 'previous-version']: file.metadata[version2],
+                category: fileInfo.metadata.category,
+                pending: 'false',
+              },
+            },
+          },
+        },
+      ]);
+    }
+  }
+};
+
+export const makeFileFilter = (file: UploadFileMetadataResponse) => ({
+  filter: {
+    name: file.name,
+    metadata: {
+      'next-version': '',
+      pending: 'false',
+    },
+  },
+});
+
+export const makeMetadataUpdate = (id: number, set: FileInfoMetadata) => [
+  { id, update: { metadata: { set: { ...set, pending: 'false' } } } },
+];
+
+export type FileInfoMetadata = {
+  'previous-version': string;
+  'next-version': string;
+  category: string;
+  pending?: 'true' | 'false';
+};
+
 export type UploadFileMetadataResponse = {
   id: number;
   uploaded: boolean;
@@ -32,13 +91,15 @@ export type UploadFileMetadataResponse = {
   name: string;
   source?: string;
   mimeType?: string;
-  metadata?: {
-    [key: string]: string;
-  };
+  metadata: FileInfoMetadata;
   assetIds?: number[];
   dataSetId?: number;
   sourceCreatedTime?: Date;
   sourceModifiedTime?: Date;
   lastUpdatedTime: Date;
   createdTime: Date;
+};
+
+export type FileInfoWithMetadata = FileInfo & {
+  metadata: FileInfoMetadata;
 };
