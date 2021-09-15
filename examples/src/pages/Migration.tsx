@@ -21,6 +21,7 @@ import {
 import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, AxisViewTool, HtmlOverlayTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
 import { CadNode } from '@cognite/reveal/internals';
+import { initialCadBudgetUi } from '../utils/CadBudgetUi';
 
 window.THREE = THREE;
 (window as any).reveal = reveal;
@@ -141,7 +142,6 @@ export function Migration() {
       const guiState = {
         modelId: 0,
         revisionId: 0,
-        cadBudgetFactor: 100.0,
         geometryFilter:
           geometryFilter !== undefined
             ? { ...geometryFilter, enabled: true }
@@ -223,15 +223,7 @@ export function Migration() {
       modelGui.add(guiState, 'revisionId').name('Revision ID');
       modelGui.add(guiActions, 'addModel').name('Load model');
       modelGui.add(guiActions, 'fitToModel').name('Fit camera');
-      const defaultCadBudget = { ...viewer.cadBudget };
-      modelGui.add(guiState, 'cadBudgetFactor', 1, 500, 5).name('CAD budget').onChange(budgetFactor => {
-        const s = budgetFactor / 100.0;
-        viewer.cadBudget = {
-          highDetailProximityThreshold: defaultCadBudget.highDetailProximityThreshold * s,
-          geometryDownloadSizeBytes: defaultCadBudget.geometryDownloadSizeBytes * s,
-          maximumNumberOfDrawCalls: defaultCadBudget.maximumNumberOfDrawCalls * s
-        };
-    });
+      initialCadBudgetUi(viewer, gui.addFolder('CAD budget'));
 
       const geometryFilterGui = modelGui.addFolder('Geometry Filter');
       let geometryFilterPreview: THREE.Object3D | undefined = undefined;
