@@ -1,6 +1,7 @@
 import { SelectableTableCellRenderer } from 'src/modules/Common/types';
 import React from 'react';
 import { Button, Checkbox, Dropdown, Menu } from '@cognite/cogs.js';
+import { v4 as uuidv4 } from 'uuid';
 
 export function SelectAllHeaderRenderer({
   column,
@@ -51,7 +52,7 @@ export function SelectAllHeaderRenderer({
   return (
     <Checkbox
       className="cogs-body-2"
-      name="select-all-files"
+      name={uuidv4()}
       checked={column.allSelected}
       onChange={handleSelectAllFiles}
       style={{ margin: 0 }}

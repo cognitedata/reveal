@@ -1,14 +1,9 @@
 import React, { useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
-
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-
 import { Title } from '@cognite/cogs.js';
-
-import { selectAllFiles } from 'src/modules/Common/filesSlice';
 import styled from 'styled-components';
-
 import { annotationsById } from 'src/modules/Review/previewSlice';
 import FileUploadedIcon from 'src/assets/FileUploadedIcon.svg';
 import FileBland from 'src/assets/FileBland.svg';
@@ -16,12 +11,13 @@ import FileWithExifIcon from 'src/assets/FileWithExifIcon.svg';
 import FileWithAnnotations from 'src/assets/FileWithAnnotations.svg';
 import FileUnresolvedPerson from 'src/assets/FileUnresolvedPerson.svg';
 import FileWasReviewed from 'src/assets/FileWasReviewed.svg';
+import { selectAllProcessFiles } from 'src/modules/Process/processSlice';
 
 const queryClient = new QueryClient();
 
 export default function SummaryStep() {
-  const uploadedFiles = useSelector((state: RootState) =>
-    selectAllFiles(state.filesSlice)
+  const processFiles = useSelector((state: RootState) =>
+    selectAllProcessFiles(state)
   );
 
   const [statView, setStatView] = useState('totalFilesUploaded');
@@ -67,7 +63,7 @@ export default function SummaryStep() {
   );
   let filesWithExif = 0;
   // eslint-disable-next-line array-callback-return
-  Object.entries(uploadedFiles).map((file) => {
+  Object.entries(processFiles).map((file) => {
     if (file[1]?.metadata || file[1]?.geoLocation) {
       filesWithExif += 1;
     }
@@ -81,7 +77,7 @@ export default function SummaryStep() {
   const stats = {
     totalFilesUploaded: {
       text: 'total files processed',
-      value: uploadedFiles?.length,
+      value: processFiles?.length,
     },
     filesWithExif: { text: 'files with exif', value: filesWithExif },
     userReviewedFiles: {
@@ -485,8 +481,7 @@ const StatsCarouselLeft = styled.div`
   flex-direction: column;
   justify-content: center;
   overflow: auto;
-  padding: 1em;
-  padding-right: 105px;
+  padding: 1em 105px 1em 1em;
   align-items: flex-start;
 `;
 

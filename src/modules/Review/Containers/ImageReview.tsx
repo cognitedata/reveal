@@ -6,6 +6,7 @@ import { FileDetailsReview } from 'src/modules/FileDetails/Containers/FileDetail
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import {
+  selectAllReviewFiles,
   selectOtherAnnotationsByFileIdModelType,
   selectTagAnnotationsByFileIdModelType,
 } from 'src/modules/Review/previewSlice';
@@ -13,7 +14,6 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { FileInfo, v3Client as sdk } from '@cognite/cdf-sdk-singleton';
 import { ImagePreview } from 'src/modules/Review/Containers/ImagePreview';
 import { Title } from '@cognite/cogs.js';
-import { selectAllFiles } from 'src/modules/Common/filesSlice';
 import { ThumbnailCarousel } from '../Components/ThumbnailCarousel/ThumbnailCarousel';
 
 const queryClient = new QueryClient();
@@ -25,8 +25,8 @@ const ImageReview = (props: { file: FileInfo; prev: string | undefined }) => {
     selectTagAnnotationsByFileIdModelType(previewSlice, file.id.toString())
   );
 
-  const allFiles = useSelector((state: RootState) =>
-    selectAllFiles(state.filesSlice)
+  const reviewFiles = useSelector((state: RootState) =>
+    selectAllReviewFiles(state)
   );
 
   const gdprAndTextAndObjectAnnotations = useSelector(
@@ -44,13 +44,13 @@ const ImageReview = (props: { file: FileInfo; prev: string | undefined }) => {
         <AnnotationContainer id="annotationContainer">
           <FilePreviewContainer>
             <PreviewContainer
-              fullHeight={allFiles.length === 1}
+              fullHeight={reviewFiles.length === 1}
               inFocus={inFocus}
             >
               {file && <ImagePreview file={file} onEditMode={onEditMode} />}
             </PreviewContainer>
-            {allFiles.length > 1 && (
-              <ThumbnailCarousel prev={prev} files={allFiles} />
+            {reviewFiles.length > 1 && (
+              <ThumbnailCarousel prev={prev} files={reviewFiles} />
             )}
           </FilePreviewContainer>
           <RightPanelContainer>

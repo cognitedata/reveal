@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, isAnyOf } from '@reduxjs/toolkit';
 import { Annotation, VisionAPIType } from 'src/api/types';
 import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
 import {
@@ -12,6 +12,9 @@ import {
 } from 'reselect';
 import isEqual from 'lodash-es/isEqual';
 import difference from 'lodash-es/difference';
+import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
+import { clearFileState } from 'src/store/commonActions';
+import { clearExplorerFileState } from 'src/modules/Explorer/store/explorerSlice';
 import {
   AnnotationCounts,
   AnnotationPreview,
@@ -80,6 +83,26 @@ const annotationSlice = createSlice({
               });
             }
             state.files.byId[+id] = fileAnnotations[+id];
+          }
+        });
+      }
+    );
+
+    builder.addMatcher(
+      isAnyOf(
+        deleteFilesById.fulfilled,
+        clearFileState,
+        clearExplorerFileState
+      ),
+      (state, action) => {
+        action.payload.forEach((fileId) => {
+          const fileAnnotations = state.files.byId[fileId];
+
+          if (fileAnnotations && fileAnnotations.length) {
+            fileAnnotations.forEach((annotationId) => {
+              delete state.annotations.byId[annotationId];
+            });
+            delete state.files.byId[fileId];
           }
         });
       }

@@ -9,7 +9,7 @@ import { FileInfo, v3Client as sdk } from '@cognite/cdf-sdk-singleton';
 import { Title } from '@cognite/cogs.js';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { selectAllFiles } from 'src/modules/Common/filesSlice';
+import { selectAllReviewFiles } from 'src/modules/Review/previewSlice';
 import { ThumbnailCarousel } from '../Components/ThumbnailCarousel/ThumbnailCarousel';
 
 const queryClient = new QueryClient();
@@ -17,8 +17,8 @@ const queryClient = new QueryClient();
 const VideoReview = (props: { file: FileInfo; prev: string | undefined }) => {
   const { file, prev } = props;
 
-  const allFiles = useSelector((state: RootState) =>
-    selectAllFiles(state.filesSlice)
+  const reviewFiles = useSelector((state: RootState) =>
+    selectAllReviewFiles(state)
   );
 
   return (
@@ -27,13 +27,13 @@ const VideoReview = (props: { file: FileInfo; prev: string | undefined }) => {
         <AnnotationContainer>
           <FilePreviewContainer>
             <PreviewContainer
-              fullHeight={allFiles.length === 1}
+              fullHeight={reviewFiles.length === 1}
               inFocus={false}
             >
               {file && <VideoPreview fileObj={file} />}
             </PreviewContainer>
-            {allFiles.length > 1 && (
-              <ThumbnailCarousel prev={prev} files={allFiles} />
+            {reviewFiles.length > 1 && (
+              <ThumbnailCarousel prev={prev} files={reviewFiles} />
             )}
           </FilePreviewContainer>
           <RightPanelContainer>

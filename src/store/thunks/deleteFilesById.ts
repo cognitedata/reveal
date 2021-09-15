@@ -3,7 +3,7 @@ import { InternalId, v3Client as sdk } from '@cognite/cdf-sdk-singleton';
 import { ThunkConfig } from 'src/store/rootReducer';
 
 export const deleteFilesById = createAsyncThunk<
-  InternalId[],
+  number[],
   InternalId[],
   ThunkConfig
 >('deleteFileById', async (fileIds) => {
@@ -11,5 +11,5 @@ export const deleteFilesById = createAsyncThunk<
     throw new Error('Ids not provided!');
   }
   await sdk.files.delete(fileIds);
-  return fileIds;
+  return fileIds.map((fileInternalId) => fileInternalId.id);
 });

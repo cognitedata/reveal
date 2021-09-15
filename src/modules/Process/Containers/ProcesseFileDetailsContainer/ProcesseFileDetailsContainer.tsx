@@ -17,7 +17,7 @@ export const ProcessFileDetailsContainer = () => {
   const dispatch = useDispatch();
   const history = useHistory();
   const fileId = useSelector(
-    ({ processSlice }: RootState) => processSlice.selectedFileId
+    ({ processSlice }: RootState) => processSlice.focusedFileId
   );
   const showFileDetails = useSelector(
     ({ processSlice }: RootState) => processSlice.showFileMetadataDrawer

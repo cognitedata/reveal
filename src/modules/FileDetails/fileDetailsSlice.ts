@@ -7,7 +7,7 @@ import {
 } from 'src/modules/FileDetails/Components/FileMetadata/Types';
 import { updateFileInfoField } from 'src/store/thunks/updateFileInfoField';
 import { generateKeyValueArray } from 'src/utils/FormatUtils';
-import { selectFileById } from 'src/modules/Common/filesSlice';
+import { selectFileById } from '../Common/filesSlice';
 
 export type FileInfoValueState = string | Label[] | number[] | null;
 

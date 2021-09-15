@@ -4,21 +4,24 @@ import { Modal } from 'antd';
 import { Button } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import {
+  selectAllProcessFiles,
   selectIsPollingComplete,
   selectIsProcessingStarted,
+  setProcessViewFileUploadModalVisibility,
 } from 'src/modules/Process/processSlice';
 import { pushMetric } from 'src/utils/pushMetric';
 import { createLink } from '@cognite/cdf-utilities';
-import { getLink, workflowRoutes } from 'src/modules/Workflow/workflowRoutes';
 import { getContainer } from 'src/utils';
 import SummaryStep from 'src/modules/Process/Containers/SummaryStep';
-import { selectAllFiles } from 'src/modules/Common/filesSlice';
+import { AppDispatch } from 'src/store';
+import { PopulateProcessFiles } from 'src/store/thunks/PopulateProcessFiles';
 
 export const ProcessFooter = () => {
   const history = useHistory();
+  const dispatch: AppDispatch = useDispatch();
   const [isModalOpen, setModalOpen] = useState(false);
   const isPollingFinished = useSelector((state: RootState) => {
     return selectIsPollingComplete(state.processSlice);
@@ -28,26 +31,28 @@ export const ProcessFooter = () => {
     return selectIsProcessingStarted(state.processSlice);
   });
 
-  const allFilesStatus = useSelector(
-    (state: RootState) => state.filesSlice.allFilesStatus
-  );
-
   const processFiles = useSelector((state: RootState) =>
-    selectAllFiles(state.filesSlice)
+    selectAllProcessFiles(state)
   );
 
   const onCancel = () => {
     setModalOpen(false);
   };
 
+  const clearOnFinishProcessing = () => {
+    dispatch(PopulateProcessFiles([]));
+  };
+
   const onNextClicked = () => {
+    clearOnFinishProcessing();
     pushMetric('Vision.Session.Finished');
     history.push(createLink('/vision/explore'));
   };
 
   const onUploadMoreClicked = () => {
-    pushMetric('Vision.Session.Finished');
-    history.push(getLink(workflowRoutes.upload));
+    pushMetric('Vision.Session.UploadMore');
+    setModalOpen(false);
+    dispatch(setProcessViewFileUploadModalVisibility(true));
   };
 
   const handleSkipClick = () => {
@@ -56,6 +61,7 @@ export const ProcessFooter = () => {
       content:
         'By skipping processing you will be taken back to the home page. Your files are uploaded to Cognite Data Fusion and can be processed later.',
       onOk: () => {
+        clearOnFinishProcessing();
         history.push(createLink('/vision/explore'));
       },
     });
@@ -104,7 +110,7 @@ export const ProcessFooter = () => {
         {showSkip ? (
           <Button
             onClick={handleSkipClick}
-            disabled={!isPollingFinished || !allFilesStatus}
+            disabled={!isPollingFinished}
             style={{ zIndex: 1 }}
           >
             Finish session without processing

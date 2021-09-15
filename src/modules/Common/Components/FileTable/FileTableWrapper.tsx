@@ -5,6 +5,7 @@ import styled, { css } from 'styled-components';
 import { Colors } from '@cognite/cogs.js';
 import { lightGrey } from 'src/utils/Colors';
 
+// todo: remove hardcoded BaseTable class prefixes since they can change on classPrefix of BaseTable
 const TableWrapperInner = styled.div`
   .BaseTable {
     box-shadow: 0 2px 4px 0 #eeeeee;

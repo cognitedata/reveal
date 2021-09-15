@@ -6,8 +6,10 @@ import { margin } from 'src/cogs-variables';
 import { Body, Detail, Tabs } from '@cognite/cogs.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { addFileInfo, selectAllFiles } from 'src/modules/Common/filesSlice';
+import { addFiles, selectAllFiles } from 'src/modules/Common/filesSlice';
 import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
+import { FileInfo } from '@cognite/cdf-sdk-singleton';
+import { createFileState } from 'src/store/util/StateUtils';
 
 const FileUploaderWrapper = styled.div`
   margin: ${margin.default} 0;
@@ -20,8 +22,8 @@ export default function UploadStep() {
   );
 
   const onUploadSuccess = React.useCallback(
-    (file) => {
-      dispatch(addFileInfo(file));
+    (file: FileInfo) => {
+      dispatch(addFiles([createFileState(file)]));
       dispatch(RetrieveAnnotations([file.id]));
     },
     [dispatch]

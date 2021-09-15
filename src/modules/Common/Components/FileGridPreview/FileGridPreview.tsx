@@ -40,7 +40,8 @@ export const FileGridPreview = ({
   onSelect?: (item: TableDataItem, selected: boolean) => void;
 }) => {
   const dispatch = useDispatch();
-  const { menuActions, ...fileInfo } = item;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { menuActions, rowKey, ...fileInfo } = item;
 
   const handleReview = () => {
     if (menuActions.onReviewClick)
@@ -148,7 +149,7 @@ const PreviewCell = styled.div`
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
     border-radius: 5px;
 
     .footer {
@@ -173,7 +174,6 @@ const PreviewCell = styled.div`
         white-space: nowrap;
         overflow: hidden;
         grid-area: name;
-        white-space: nowrap;
         max-width: 100px;
       }
       .exif > img {
@@ -188,7 +188,7 @@ const PreviewCell = styled.div`
       }
     }
     :hover {
-      box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
     }
   }
 

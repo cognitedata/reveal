@@ -76,7 +76,7 @@ export const MapFileTable = (props: MapTableProps) => {
     rowData: TableDataItem;
     rowIndex: number;
   }) => {
-    return `clickable ${props.selectedFileId === rowData.id && 'active'}`;
+    return `clickable ${props.focusedFileId === rowData.id && 'active'}`;
   };
 
   const rowEventHandlers = {

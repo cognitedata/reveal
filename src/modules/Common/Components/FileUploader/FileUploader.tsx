@@ -1,3 +1,4 @@
+// todo: unused component
 import React, { useEffect, useState } from 'react';
 import { Modal, message } from 'antd';
 import UploadGCS from '@cognite/gcs-browser-upload';
@@ -11,9 +12,8 @@ import {
 } from 'src/modules/Common/Components/FileUploader/FilePicker/types';
 import FilePicker from 'src/modules/Common/Components/FileUploader/FilePicker';
 import exifr from 'exifr';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { setAllFilesStatus } from 'src/modules/Common/filesSlice';
 import { SpacedRow } from './SpacedRow';
 import { getMIMEType } from './utils/FileUtils';
 import { sleep } from './utils';
@@ -452,7 +452,6 @@ function UploadControlButtons({
   onUploadStop,
   onRemoveFiles,
 }: UploadControlButtonsProps) {
-  const dispatch = useDispatch();
   let uploaderButton;
   let uploadStatus = STATUS.NO_FILES;
   if (fileList.find(({ status }) => status === 'uploading')) {
@@ -524,13 +523,13 @@ function UploadControlButtons({
       uploaderButton = null;
   }
 
-  useEffect(() => {
-    if (uploadStatus === STATUS.DONE) {
-      dispatch(setAllFilesStatus(true));
-    } else {
-      dispatch(setAllFilesStatus(false));
-    }
-  }, [uploadStatus]);
+  // useEffect(() => {
+  //   if (uploadStatus === STATUS.DONE) {
+  //     dispatch(setAllFilesStatus(true));
+  //   } else {
+  //     dispatch(setAllFilesStatus(false));
+  //   }
+  // }, [uploadStatus]);
 
   return <SpacedRow style={{ marginTop: '12px' }}>{uploaderButton}</SpacedRow>;
 }

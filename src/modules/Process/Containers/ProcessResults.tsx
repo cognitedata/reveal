@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import {
   FileActions,
   ResultData,
@@ -8,20 +8,21 @@ import {
 } from 'src/modules/Common/types';
 import {
   FileSortPaginateType,
+  selectAllProcessFiles,
   selectIsPollingComplete,
   setCurrentPage,
   setMapTableTabKey,
   setPageSize,
   setReverse,
-  setSelectedFileId,
+  setFocusedFileId,
   setSortKey,
   showFileMetadataPreview,
 } from 'src/modules/Process/processSlice';
 import {
-  selectAllFiles,
   selectAllFilesSelected,
   selectAllSelectedIds,
   setFileSelectState,
+  setSelectedAllFiles,
   setSelectedFiles,
 } from 'src/modules/Common/filesSlice';
 import { useDispatch, useSelector } from 'react-redux';
@@ -39,22 +40,27 @@ import styled from 'styled-components';
 import { Detail } from '@cognite/cogs.js';
 import { PageBasedGridView } from 'src/modules/Common/Components/GridView/PageBasedGridView';
 import { VisionMode } from 'src/constants/enums/VisionEnums';
-import { setSelectedAllFiles } from 'src/store/commonActions';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
+import { FetchFilesById } from 'src/store/thunks/FetchFilesById';
+import { PopulateReviewFiles } from 'src/store/thunks/PopulateReviewFiles';
 
 export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const selectedId = useSelector(
-    ({ processSlice }: RootState) => processSlice.selectedFileId
+  const focusedFileId = useSelector(
+    ({ processSlice }: RootState) => processSlice.focusedFileId
   );
 
   const isPollingFinished = useSelector((state: RootState) => {
     return selectIsPollingComplete(state.processSlice);
   });
 
+  const processFileIds = useSelector(
+    (state: RootState) => state.processSlice.fileIds
+  );
+
   const processFiles = useSelector((state: RootState) =>
-    selectAllFiles(state.filesSlice)
+    selectAllProcessFiles(state)
   );
 
   const allFilesSelected = useSelector((state: RootState) =>
@@ -69,14 +75,20 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
     ({ processSlice }: RootState) => processSlice.sortPaginate
   );
 
+  // todo: remove this hack to force a rerender when explorer model closes
+  const showSelectFromExploreModal = useSelector(
+    ({ processSlice }: RootState) => processSlice.showExploreModal
+  );
+
   const menuActions: FileActions = {
     // TODO: should onDelete be added here as well?
     onFileDetailsClicked: (fileInfo: FileInfo) => {
-      dispatch(setSelectedFileId(fileInfo.id));
+      dispatch(setFocusedFileId(fileInfo.id));
       dispatch(resetEditHistory());
       dispatch(showFileMetadataPreview());
     },
     onReviewClick: (fileInfo: FileInfo) => {
+      dispatch(PopulateReviewFiles(processFileIds));
       history.push(
         getParamLink(workflowRoutes.review, ':fileId', String(fileInfo.id)),
         { from: 'process' }
@@ -90,15 +102,20 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
         ...file,
         menuActions,
         mimeType: file.mimeType || '',
+        rowKey: `process-${file.id}`,
       })),
-    [processFiles, menuActions]
+    [processFiles, menuActions, showSelectFromExploreModal]
   );
+
+  useEffect(() => {
+    dispatch(FetchFilesById(processFileIds));
+  }, [processFileIds]);
 
   const handleItemClick = (
     item: TableDataItem,
     showFileDetailsOnClick: boolean = true
   ) => {
-    dispatch(setSelectedFileId(item.id));
+    dispatch(setFocusedFileId(item.id));
     if (showFileDetailsOnClick) {
       dispatch(showFileMetadataPreview());
     }
@@ -236,7 +253,7 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
           data={data}
           onRowSelect={handleRowSelect}
           onRowClick={handleItemClick}
-          selectedFileId={selectedId}
+          focusedFileId={focusedFileId}
           totalCount={data.length}
           allRowsSelected={allFilesSelected}
           onSelectAllRows={handleSelectAllFiles}
@@ -254,13 +271,14 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
         data={data}
         onRowSelect={handleRowSelect}
         onRowClick={handleItemClick}
-        selectedFileId={selectedId}
+        focusedFileId={focusedFileId}
         totalCount={data.length}
         allRowsSelected={allFilesSelected}
         onSelectAllRows={handleSelectAllFiles}
         onSelectPage={handleSetSelectedFiles}
         selectedRowIds={selectedFileIds}
         sortPaginateControls={listSortPaginateControls}
+        rowKey="rowKey"
       />
     );
   };

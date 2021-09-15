@@ -13,8 +13,6 @@ import exifr from 'exifr';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import styled from 'styled-components';
-import { useHistory } from 'react-router-dom';
-import { getLink, workflowRoutes } from 'src/modules/Workflow/workflowRoutes';
 import * as UPLODER_CONST from 'src/constants/UploderConstants';
 import { MAX_CID_FILE_COUNT } from 'src/constants/CIDConstants';
 import { pushMetric } from 'src/utils/pushMetric';
@@ -69,11 +67,12 @@ export type ModalFileUploaderProps = {
   assetIds?: number[];
   enableProcessAfter?: boolean;
   processFileCount?: number;
-  onUploadSuccess?: (file: FileInfo) => void;
+  onUploadSuccess?: (fileId: number) => void;
   onFileListChange?: (fileList: CogsFileInfo[]) => void;
   onUploadFailure?: (error: string) => void;
   onCancel?: () => void;
   beforeUploadStart?: (fileList: CogsFileInfo[]) => void;
+  onFinishUpload: () => void;
 };
 
 // vaguely described from console output
@@ -163,6 +162,7 @@ export const ModalFileUploader = ({
   onCancel = () => {},
   beforeUploadStart = () => {},
   onFileListChange = () => {},
+  onFinishUpload,
   ...props
 }: ModalFileUploaderProps) => {
   const sdk = useSDK();
@@ -174,8 +174,6 @@ export const ModalFileUploader = ({
   const [processAfter, setProcessAfter] = useState<boolean>(false);
   const [cursor, setCursor] = useState<number>(-1);
   const [cursorSize, setCursorSize] = useState<number>(0);
-
-  const history = useHistory();
 
   useEffect(() => {
     onFileListChange(fileList);
@@ -369,7 +367,8 @@ export const ModalFileUploader = ({
         fileInfo = await sdk.files.retrieve([{ id }]).then((r) => r[0]);
         /* eslint-enable no-await-in-loop */
       }
-      onUploadSuccess(fileInfo || fileMetadata);
+
+      onUploadSuccess(fileInfo.id);
       // eslint-disable-next-line no-param-reassign
       file.status = 'done';
     } catch (e) {
@@ -443,7 +442,9 @@ export const ModalFileUploader = ({
 
   const onFinish = () => {
     onCloseModal();
-    if (processAfter) history.push(getLink(workflowRoutes.process));
+    if (processAfter || !enableProcessAfter) {
+      onFinishUpload();
+    }
   };
 
   const [UploadButton, CancelButton, RemoveAllButton] = getUploadControls(

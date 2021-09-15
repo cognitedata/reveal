@@ -8,9 +8,9 @@ import { pushMetric } from 'src/utils/pushMetric';
 import { ProcessResults } from 'src/modules/Process/Containers/ProcessResults';
 import { ViewMode } from 'src/modules/Common/types';
 import {
-  hideFileMetadataPreview,
   setProcessCurrentView,
-  setSelectedFileId,
+  setFocusedFileId,
+  hideFileMetadataPreview,
 } from 'src/modules/Process/processSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { ProcessToolBar } from 'src/modules/Process/Containers/ProcessToolBar/ProcessToolBar';
@@ -26,6 +26,15 @@ import {
 } from 'src/modules/Common/commonSlice';
 import { FileDownloaderModal } from 'src/modules/Common/Components/FileDownloaderModal/FileDownloaderModal';
 import { BulkEditModal } from 'src/modules/Common/Components/BulkEdit/BulkEditModal';
+
+const ResultsContainer = styled.div`
+  flex: 1;
+  height: calc(100% - 50px);
+`;
+
+const TitleContainer = styled.div`
+  padding: 5px 0;
+`;
 
 pushMetric('Vision.Process');
 const queryClient = new QueryClient();
@@ -65,10 +74,6 @@ export default function ProcessStep() {
     onCloseBulkEdit();
   };
 
-  const handleDeselect = () => {
-    dispatch(setSelectedFileId(null));
-  };
-
   useEffect(() => {
     return () => {
       dispatch(hideFileMetadataPreview());
@@ -76,11 +81,7 @@ export default function ProcessStep() {
   }, []);
   return (
     <>
-      <Deselect
-        onClick={() => {
-          handleDeselect();
-        }}
-      />
+      <Deselect />
       <QueryClientProvider client={queryClient}>
         <TitleContainer>
           <Title level={2}>Contextualize Imagery Data</Title>
@@ -114,20 +115,27 @@ export default function ProcessStep() {
   );
 }
 
-const ResultsContainer = styled.div`
-  flex: 1;
-  height: calc(100% - 50px);
-`;
+const Deselect = () => {
+  const dispatch = useDispatch();
+  const focusedFileId = useSelector(
+    ({ processSlice }: RootState) => processSlice.focusedFileId
+  );
+  return (
+    <DeselectContainer
+      onClick={() => {
+        if (focusedFileId) {
+          dispatch(setFocusedFileId(null));
+        }
+      }}
+    />
+  );
+};
 
-const TitleContainer = styled.div`
-  padding: 5px 0;
-`;
-
-const Deselect = styled.div`
+const DeselectContainer = styled.div`
   position: fixed;
   z-index: 0;
-  top: 0px;
-  right: 0px;
-  bottom: 0px;
-  left: 0px;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
 `;

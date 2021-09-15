@@ -36,7 +36,8 @@ export const MapPopup = ({
     return <div />;
   }
   const dispatch = useDispatch();
-  const { menuActions, ...fileInfo } = item;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { menuActions, rowKey, ...fileInfo } = item;
 
   const handleReview = () => {
     if (menuActions.onReviewClick)
@@ -184,7 +185,6 @@ const MapPopupContainer = styled.div`
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;
-        white-space: nowrap;
         max-width: 150px;
       }
       .exif > img {

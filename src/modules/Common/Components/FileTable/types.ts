@@ -16,7 +16,7 @@ type TableViewProps<T> = {
   totalCount: number;
   onRowSelect: (item: T, selected: boolean) => void;
   onRowClick: (item: T, showFileDetailsOnClick?: boolean) => void;
-  selectedFileId?: number | null;
+  focusedFileId?: number | null;
   selectedRowIds: number[];
   allRowsSelected: boolean;
   onSelectAllRows: (value: boolean, filter?: SelectFilter) => void;

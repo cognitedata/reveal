@@ -23,15 +23,16 @@ import { EXPLORER_FILE_FETCH_LIMIT } from 'src/constants/ExplorerConstants';
 import { totalFileCount } from 'src/api/file/aggregate';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { fetchFilesById } from 'src/store/thunks/fetchFilesById';
-import { addFileInfo } from 'src/modules/Common/filesSlice';
+import { searchFilesWithValidMimeTypes } from 'src/api/file/searchFilesWithValidMimeTypes';
+import { FetchFilesById } from 'src/store/thunks/FetchFilesById';
+import { PopulateReviewFiles } from 'src/store/thunks/PopulateReviewFiles';
 import {
+  clearExplorerFileState,
   selectExplorerAllFiles,
   setExplorerFiles,
-  setExplorerSelectedFileId,
+  setExplorerFocusedFileId,
   showExplorerFileMetadata,
 } from '../store/explorerSlice';
-import { searchFilesWithValidMimeTypes } from '../../../api/file/searchFilesWithValidMimeTypes';
 
 type Resource = FileInfo | Asset | CogniteEvent | Sequence | Timeseries;
 
@@ -55,12 +56,12 @@ export const ResultTableLoader = <T extends Resource>({
   const menuActions: FileActions = {
     // TODO: should onDelete be added here as well?
     onFileDetailsClicked: (fileInfo: FileInfo) => {
-      dispatch(addFileInfo(fileInfo as FileInfo));
-      dispatch(setExplorerSelectedFileId(fileInfo.id));
+      dispatch(FetchFilesById([fileInfo.id]));
+      dispatch(setExplorerFocusedFileId(fileInfo.id));
       dispatch(showExplorerFileMetadata());
     },
     onReviewClick: (fileInfo: FileInfo) => {
-      dispatch(fetchFilesById([{ id: fileInfo.id }]));
+      dispatch(PopulateReviewFiles([fileInfo.id]));
       history.push(
         getParamLink(workflowRoutes.review, ':fileId', String(fileInfo.id)),
         { from: 'explorer' }
@@ -74,6 +75,7 @@ export const ResultTableLoader = <T extends Resource>({
         ...file,
         menuActions,
         mimeType: file.mimeType || '',
+        rowKey: `explore-${file.id}`,
       })),
     [explorerFiles, menuActions]
   );
@@ -85,6 +87,7 @@ export const ResultTableLoader = <T extends Resource>({
         { name: props.query },
         EXPLORER_FILE_FETCH_LIMIT
       );
+      dispatch(clearExplorerFileState(explorerFiles.map((file) => file.id)));
       dispatch(setExplorerFiles(fileSearchResult));
     })();
 

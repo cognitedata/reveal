@@ -1,10 +1,8 @@
 /* eslint-disable @cognite/no-number-z-index */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import {
-  detectAnnotations,
   setDetectionModelParameters,
   selectIsPollingComplete,
   setProcessViewFileUploadModalVisibility,
@@ -12,6 +10,10 @@ import {
   setSelectFromExploreModalVisibility,
   revertDetectionModelParameters,
   resetDetectionModelParameters,
+  selectAllProcessFiles,
+  addProcessUploadedFileId,
+  clearUploadedFiles,
+  setProcessFileIds,
 } from 'src/modules/Process/processSlice';
 import { message, notification } from 'antd';
 import { toastProps } from 'src/utils/ToastUtils';
@@ -19,13 +21,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, Title, Modal } from '@cognite/cogs.js';
 import { DetectionModelSelect } from 'src/modules/Process/Components/DetectionModelSelect';
 import { isVideo } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
-import {
-  addFileInfo,
-  addFiles,
-  FileState,
-  selectAllFiles,
-  selectFileCount,
-} from 'src/modules/Common/filesSlice';
+import { FileState, selectFileCount } from 'src/modules/Common/filesSlice';
 import { VisionAPIType } from 'src/api/types';
 import { getContainer } from 'src/utils';
 import { FileUploadModal } from 'src/modules/Common/Components/FileUploaderModal/FileUploaderModal';
@@ -33,20 +29,23 @@ import { ExploreModal } from 'src/modules/Common/Components/ExploreModal/Explore
 import { TableDataItem } from 'src/modules/Common/types';
 import { FileFilterProps } from '@cognite/cdf-sdk-singleton';
 import {
+  clearExplorerStateOnTransition,
   selectExplorerAllSelectedFiles,
   selectExplorerSelectedFileIds,
   setExplorerFileSelectState,
   setExplorerFilter,
+  setExplorerFocusedFileId,
   setExplorerQueryString,
-  setExplorerSelectedFileId,
 } from 'src/modules/Explorer/store/explorerSlice';
+import { DetectAnnotations } from 'src/store/thunks/DetectAnnotations';
+import { AppDispatch } from 'src/store';
 import { ModelConfiguration } from '../ModelConfiguration';
 
 export const ProcessToolBar = () => {
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
 
-  const files = useSelector((state: RootState) =>
-    selectAllFiles(state.filesSlice)
+  const processFiles = useSelector((state: RootState) =>
+    selectAllProcessFiles(state)
   );
 
   const isPollingFinished = useSelector((state: RootState) => {
@@ -69,13 +68,17 @@ export const ProcessToolBar = () => {
     ({ processSlice }: RootState) => processSlice.showFileUploadModal
   );
 
+  const uploadedFileIds = useSelector(
+    ({ processSlice }: RootState) => processSlice.uploadedFileIds
+  );
+
   const onDetectClick = () => {
     if (!selectedDetectionModels.length) {
       message.error('Please select ML models to use for detection');
       return;
     }
 
-    if (files.filter((file) => isVideo(file)).length) {
+    if (processFiles.filter((file) => isVideo(file)).length) {
       notification.warning({
         message: 'Skipping video files',
         description:
@@ -83,8 +86,10 @@ export const ProcessToolBar = () => {
       });
     }
     dispatch(
-      detectAnnotations({
-        fileIds: files.filter((file) => !isVideo(file)).map(({ id }) => id),
+      DetectAnnotations({
+        fileIds: processFiles
+          .filter((file) => !isVideo(file))
+          .map(({ id }) => id),
         detectionModels: selectedDetectionModels,
       })
     );
@@ -95,25 +100,34 @@ export const ProcessToolBar = () => {
   };
 
   const [isModalOpen, setModalOpen] = useState(false);
-  const onUploadSuccess = React.useCallback(
-    (file) => {
-      dispatch(addFileInfo(file));
-    },
-    [dispatch]
-  );
+
+  const onUploadSuccess = (fileId: number) => {
+    dispatch(addProcessUploadedFileId(fileId));
+  };
+  const onFinishUpload = async () => {
+    dispatch(
+      setProcessFileIds([
+        ...processFiles.map((file) => file.id),
+        ...uploadedFileIds,
+      ])
+    );
+    dispatch(clearUploadedFiles());
+  };
 
   const disableAddFiles = !isPollingFinished;
-  const disableModelSelection = !files.length || !isPollingFinished;
-  const fileUploadActive = !files.length;
+  const disableModelSelection = !processFiles.length || !isPollingFinished;
+  const fileUploadActive = !processFiles.length;
   const modelSelectorActive =
-    !!files.length && !selectedDetectionModels.length && isPollingFinished;
+    !!processFiles.length &&
+    !selectedDetectionModels.length &&
+    isPollingFinished;
 
   // ExploreModal
   const showSelectFromExploreModal = useSelector(
     ({ processSlice }: RootState) => processSlice.showExploreModal
   );
   const exploreModalClickedFileId = useSelector(
-    (state: RootState) => state.explorerReducer.selectedFileId
+    (state: RootState) => state.explorerReducer.focusedFileId
   );
   const exploreModalSearchQuery = useSelector(
     (state: RootState) => state.explorerReducer.query
@@ -132,11 +146,15 @@ export const ProcessToolBar = () => {
   const handleExploreSearchChange = (text: string) => {
     dispatch(setExplorerQueryString(text));
   };
+
   const handleExplorerModalItemClick = ({
+    /* eslint-disable @typescript-eslint/no-unused-vars */
     menuActions,
+    rowKey,
+    /* eslint-enable @typescript-eslint/no-unused-vars */
     ...file
   }: TableDataItem) => {
-    dispatch(setExplorerSelectedFileId(file.id));
+    dispatch(setExplorerFocusedFileId(file.id));
   };
   const handleExploreModalRowSelect = (
     item: TableDataItem,
@@ -148,7 +166,17 @@ export const ProcessToolBar = () => {
     dispatch(setExplorerFilter(newFilter));
   };
   const handleUseFiles = () => {
-    dispatch(addFiles(selectedExploreModalFiles));
+    const availableFileIds = processFiles.map((file) => file.id);
+    const allProcessFileIds = [...availableFileIds];
+    selectedExploreModalFiles.forEach((selectedExploreFile) => {
+      if (
+        !availableFileIds.find((fileId) => fileId === selectedExploreFile.id)
+      ) {
+        allProcessFileIds.push(selectedExploreFile.id);
+      }
+    });
+
+    dispatch(setProcessFileIds(allProcessFileIds));
     dispatch(setSelectFromExploreModalVisibility(false));
   };
 
@@ -191,6 +219,7 @@ export const ProcessToolBar = () => {
     <>
       <FileUploadModal
         onUploadSuccess={onUploadSuccess}
+        onFinishUpload={onFinishUpload}
         showModal={showFileUploadModal}
         processFileCount={processFileCount}
         onCancel={() =>
@@ -207,9 +236,10 @@ export const ProcessToolBar = () => {
         onSearch={handleExploreSearchChange}
         onItemClick={handleExplorerModalItemClick}
         onRowSelect={handleExploreModalRowSelect}
-        onCloseModal={() =>
-          dispatch(setSelectFromExploreModalVisibility(false))
-        }
+        onCloseModal={() => {
+          dispatch(setSelectFromExploreModalVisibility(false));
+          dispatch(clearExplorerStateOnTransition());
+        }}
         onUseFiles={handleUseFiles}
         processFileCount={processFileCount}
       />
@@ -325,10 +355,10 @@ const Container = styled.div`
 
 const StyledModal = styled(Modal)`
   .cogs-modal-footer {
-    border-top: 0px;
+    border-top: 0;
   }
   .cogs-modal-header {
-    border-bottom: 0px;
+    border-bottom: 0;
   }
 `;
 

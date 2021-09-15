@@ -4,25 +4,28 @@ import {
   PayloadAction,
   isFulfilled,
   isRejected,
+  isAnyOf,
+  createAction,
 } from '@reduxjs/toolkit';
 import {
   Asset,
   FileGeoLocation,
-  FileInfo,
   Label,
   Metadata,
 } from '@cognite/cdf-sdk-singleton';
 import { ToastUtils } from 'src/utils/ToastUtils';
-import { createFileInfo, createFileState } from 'src/store/util/StateUtils';
+import { createFileInfo } from 'src/store/util/StateUtils';
 import { UpdateFiles } from 'src/store/thunks/UpdateFiles';
 import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
 import { SaveAnnotations } from 'src/store/thunks/SaveAnnotations';
 import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
 import { DeleteAnnotations } from 'src/store/thunks/DeleteAnnotations';
 import { UpdateAnnotations } from 'src/store/thunks/UpdateAnnotations';
-import { setSelectedAllFiles } from 'src/store/commonActions';
+import { clearFileState } from 'src/store/commonActions';
 import { makeReducerSelectAllFilesWithFilter } from 'src/store/commonReducers';
 import { SaveAnnotationTemplates } from 'src/store/thunks/SaveAnnotationTemplates';
+import { FetchFilesById } from 'src/store/thunks/FetchFilesById';
+import { SelectFilter } from 'src/modules/Common/types';
 import { CDFStatusModes } from '../Common/Components/CDFStatus/CDFStatus';
 
 export type VisionAsset = Omit<
@@ -50,7 +53,6 @@ export type FileState = {
 export type State = {
   dataSetIds?: number[];
   extractExif?: boolean;
-  allFilesStatus?: boolean;
   files: {
     byId: Record<number, FileState>;
     allIds: number[];
@@ -65,7 +67,6 @@ export type State = {
 const initialState: State = {
   dataSetIds: undefined,
   extractExif: true,
-  allFilesStatus: false,
   // eslint-disable-next-line global-require
   // files: require('src/store/fakeFiles.json'),
 
@@ -90,24 +91,16 @@ export const selectCDFState = (
   return cdfSaveStatus;
 };
 
+export const setSelectedAllFiles = createAction<{
+  selectStatus: boolean;
+  filter?: SelectFilter;
+}>('setSelectedAllFiles');
+
 const filesSlice = createSlice({
   name: 'filesSlice',
   initialState,
   /* eslint-disable no-param-reassign */
   reducers: {
-    setFiles: {
-      prepare: (files: FileInfo[]) => {
-        return { payload: files.map((file) => createFileState(file)) };
-      },
-      reducer: (state, action: PayloadAction<FileState[]>) => {
-        const files = action.payload;
-        clearFileState(state);
-
-        files.forEach((file) => {
-          updateFileState(state, file);
-        });
-      },
-    },
     addFiles: {
       prepare: (files: FileState[]) => {
         return { payload: files };
@@ -119,30 +112,6 @@ const filesSlice = createSlice({
           updateFileState(state, file);
         });
       },
-    },
-    setUploadedFiles: {
-      prepare: (files: FileInfo[]) => {
-        return { payload: files.map((file) => createFileState(file)) };
-      },
-      reducer: (state, action: PayloadAction<FileState[]>) => {
-        const files = action.payload;
-        clearFileState(state);
-
-        files.forEach((file) => {
-          updateFileState(state, file);
-        });
-      },
-    },
-    addFileInfo: {
-      prepare: (file: FileInfo) => {
-        return { payload: createFileState(file) };
-      },
-      reducer: (state, action: PayloadAction<FileState>) => {
-        updateFileState(state, action.payload);
-      },
-    },
-    setAllFilesStatus(state, action: PayloadAction<boolean>) {
-      state.allFilesStatus = action.payload;
     },
     setDataSetIds(state, action: PayloadAction<number[] | undefined>) {
       state.dataSetIds = action.payload;
@@ -181,24 +150,39 @@ const filesSlice = createSlice({
         state.files.selectedIds = fileIds;
       },
     },
+    clearState(state, action: PayloadAction<number[]>) {
+      if (action.payload && action.payload.length) {
+        action.payload.forEach((fileId) => {
+          deleteFileById(state, fileId);
+        });
+      } else {
+        clearFilesState(state);
+      }
+    },
   },
   extraReducers: (builder) => {
-    builder.addCase(deleteFilesById.fulfilled, (state, { payload }) => {
-      payload.forEach((fileId) => {
-        deleteFileById(state, fileId.id);
-        state.files.selectedIds = state.files.selectedIds.filter(
-          (id) => id !== fileId.id
-        );
-      });
-    });
-
-    builder.addCase(UpdateFiles.fulfilled, (state, { payload }) => {
-      payload.forEach((fileState) => {
-        updateFileState(state, fileState);
-      });
-    });
-
     builder.addCase(setSelectedAllFiles, makeReducerSelectAllFilesWithFilter());
+
+    builder.addMatcher(
+      isAnyOf(deleteFilesById.fulfilled, clearFileState),
+      (state, action) => {
+        action.payload.forEach((fileId) => {
+          deleteFileById(state, fileId);
+          state.files.selectedIds = state.files.selectedIds.filter(
+            (id) => id !== fileId
+          );
+        });
+      }
+    );
+
+    builder.addMatcher(
+      isFulfilled(FetchFilesById, UpdateFiles),
+      (state, { payload }) => {
+        payload.forEach((fileState) => {
+          updateFileState(state, fileState);
+        });
+      }
+    );
 
     builder.addMatcher(
       isFulfilled(
@@ -236,15 +220,12 @@ const filesSlice = createSlice({
 });
 
 export const {
-  setFiles,
   addFiles,
-  setUploadedFiles,
-  addFileInfo,
   setDataSetIds,
   setExtractExif,
-  setAllFilesStatus,
   setFileSelectState,
   setSelectedFiles,
+  clearState,
 } = filesSlice.actions;
 
 export default filesSlice.reducer;
@@ -304,7 +285,7 @@ const updateFileState = (state: State, file: FileState) => {
   }
 };
 
-const clearFileState = (state: State) => {
+const clearFilesState = (state: State) => {
   state.files.byId = {};
   state.files.allIds = [];
   state.files.selectedIds = [];

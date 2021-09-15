@@ -12,6 +12,7 @@ import {
 import { VisionAPIType } from 'src/api/types';
 import {
   addAnnotations,
+  clearFileState,
   deleteAnnotationsFromState,
 } from 'src/store/commonActions';
 import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
@@ -19,6 +20,9 @@ import { AnnotationDetectionJobUpdate } from 'src/store/thunks/AnnotationDetecti
 import { CreateAnnotations } from 'src/store/thunks/CreateAnnotations';
 import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
 import { UpdateAnnotations } from 'src/store/thunks/UpdateAnnotations';
+import { RootState } from 'src/store/rootReducer';
+import { createFileInfo } from 'src/store/util/StateUtils';
+import { FileInfo } from '@cognite/cdf-sdk-singleton';
 
 export interface VisionAnnotationState extends Omit<VisionAnnotation, 'id'> {
   id: number;
@@ -39,6 +43,7 @@ export interface VisionModelState {
 }
 
 type State = {
+  fileIds: number[];
   selectedAnnotationIds: number[];
   annotations: {
     counter: number;
@@ -54,6 +59,7 @@ type State = {
 };
 
 const initialState: State = {
+  fileIds: [],
   selectedAnnotationIds: [],
   annotations: {
     counter: 0,
@@ -73,6 +79,9 @@ const previewSlice = createSlice({
   initialState,
   /* eslint-disable no-param-reassign */
   reducers: {
+    setReviewFileIds(state, action: PayloadAction<number[]>) {
+      state.fileIds = action.payload;
+    },
     toggleAnnotationVisibility(
       state,
       action: PayloadAction<{
@@ -141,37 +150,42 @@ const previewSlice = createSlice({
     resetPreview(state) {
       resetPreviewState(state);
     },
+    resetReviewPage(state) {
+      Object.assign(state, initialState);
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(deleteAnnotationsFromState, (state, { payload }) => {
       deleteAnnotationsByIds(state, payload);
     });
-    // On Delete File //
-
-    builder.addCase(deleteFilesById.fulfilled, (state, { payload }) => {
-      payload.forEach((fileId) => {
-        const models = state.modelsByFileId[fileId.id];
-        if (models !== undefined) {
-          // In case deleting files before running models
-          models.forEach((modelId) => {
-            const modelState = state.models.byId[modelId];
-            const { annotations } = modelState;
-
-            annotations.forEach((annotationId) => {
-              delete state.annotations.byId[annotationId];
-            });
-            state.annotations.allIds = Object.keys(state.annotations.byId);
-
-            delete state.models.byId[modelId];
-          });
-        }
-        state.models.allIds = Object.keys(state.models.byId);
-
-        delete state.modelsByFileId[fileId.id];
-      });
-    });
 
     // Matchers
+
+    builder.addMatcher(
+      isAnyOf(deleteFilesById.fulfilled, clearFileState),
+      (state, action) => {
+        action.payload.forEach((fileId) => {
+          const models = state.modelsByFileId[fileId];
+          if (models !== undefined) {
+            // In case deleting files before running models
+            models.forEach((modelId) => {
+              const modelState = state.models.byId[modelId];
+              const { annotations } = modelState;
+
+              annotations.forEach((annotationId) => {
+                delete state.annotations.byId[annotationId];
+              });
+              state.annotations.allIds = Object.keys(state.annotations.byId);
+
+              delete state.models.byId[modelId];
+            });
+          }
+          state.models.allIds = Object.keys(state.models.byId);
+
+          delete state.modelsByFileId[fileId];
+        });
+      }
+    );
 
     builder.addMatcher(
       isAnyOf(
@@ -190,6 +204,7 @@ const previewSlice = createSlice({
 
 export default previewSlice.reducer;
 export const {
+  setReviewFileIds,
   toggleAnnotationVisibility,
   selectAnnotation,
   deselectAllAnnotations,
@@ -283,6 +298,18 @@ const deleteAnnotationsByIds = (state: State, annotationIds: number[]) => {
 };
 
 // selectors
+
+export const selectAllReviewFiles = createSelector(
+  (state: RootState) => state.filesSlice.files.byId,
+  (state: RootState) => state.previewSlice.fileIds,
+  (allFiles, allIds) => {
+    const files: FileInfo[] = [];
+    allIds.forEach(
+      (id) => !!allFiles[id] && files.push(createFileInfo(allFiles[id]))
+    );
+    return files;
+  }
+);
 
 export const selectModelIdsByFileId = createSelector(
   (state: State) => state,

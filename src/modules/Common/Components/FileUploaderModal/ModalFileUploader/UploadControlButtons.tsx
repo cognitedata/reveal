@@ -1,7 +1,6 @@
-import React, { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+// todo: unused component
+import React from 'react';
 import { Button, Icon, Title } from '@cognite/cogs.js';
-import { setAllFilesStatus } from 'src/modules/Common/filesSlice';
 import { STATUS } from '../enums';
 
 export const getUploadControls = (
@@ -12,7 +11,6 @@ export const getUploadControls = (
   onCloseModal: () => unknown,
   onFinish: () => unknown
 ) => {
-  const dispatch = useDispatch();
   let UploadButton;
   let CancelButton;
   let RemoveAllButton;
@@ -92,14 +90,6 @@ export const getUploadControls = (
       );
       break;
   }
-
-  useEffect(() => {
-    if (uploadStatus === STATUS.DONE) {
-      dispatch(setAllFilesStatus(true)); // todo: remove this file state dependency
-    } else {
-      dispatch(setAllFilesStatus(false));
-    }
-  }, [uploadStatus]);
 
   return [UploadButton, CancelButton, RemoveAllButton];
 };

@@ -73,7 +73,7 @@ export function FileTable(props: FileListTableProps) {
     rowData: TableDataItem;
     rowIndex: number;
   }) => {
-    return `clickable ${props.selectedFileId === rowData.id && 'active'}`;
+    return `clickable ${props.focusedFileId === rowData.id && 'active'}`;
   };
 
   const rowEventHandlers = {

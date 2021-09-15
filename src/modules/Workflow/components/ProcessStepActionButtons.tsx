@@ -1,3 +1,4 @@
+// unused component
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -20,9 +21,7 @@ export const ProcessStepActionButtons = () => {
     return selectIsPollingComplete(state.processSlice);
   });
 
-  const { allFilesStatus } = useSelector(
-    (state: RootState) => state.filesSlice
-  );
+  const allFilesStatus = true;
 
   const annotations = useSelector((state: RootState) => {
     return annotationsById(state.previewSlice);

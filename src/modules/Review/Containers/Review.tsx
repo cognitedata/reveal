@@ -3,7 +3,7 @@ import { PageTitle } from '@cognite/cdf-utilities';
 import styled from 'styled-components';
 import { Button, Icon, Popconfirm, ToastContainer } from '@cognite/cogs.js';
 import { Prompt, RouteComponentProps, useHistory } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { batch, useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import {
   resetPreview,
@@ -17,11 +17,12 @@ import { isVideo } from 'src/modules/Common/Components/FileUploader/utils/FileUt
 import { resetEditHistory } from 'src/modules/FileDetails/fileDetailsSlice';
 import { DeleteAnnotationsByFileIds } from 'src/store/thunks/DeleteAnnotationsByFileIds';
 import { StatusToolBar } from 'src/modules/Process/Containers/StatusToolBar';
-import { fetchFilesById } from 'src/store/thunks/fetchFilesById';
 import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
 import { CollectionSettingsModal } from 'src/modules/Common/Components/CollectionSettingsModal/CollectionSettingsModal';
 import { PopulateAnnotationTemplates } from 'src/store/thunks/PopulateAnnotationTemplates';
+import { FetchFilesById } from 'src/store/thunks/FetchFilesById';
 import { pushMetric } from 'src/utils/pushMetric';
+import { PopulateReviewFiles } from 'src/store/thunks/PopulateReviewFiles';
 
 pushMetric('Vision.Review');
 
@@ -53,6 +54,10 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
     selectFileById(filesSlice, +fileId)
   );
 
+  const reviewFileIds = useSelector(
+    ({ previewSlice }: RootState) => previewSlice.fileIds
+  );
+
   const previousPage = (props.location.state as { from?: string })?.from;
   const showBackButton = !!previousPage || false;
 
@@ -61,21 +66,34 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
   };
 
   const handleFileDelete = () => {
-    dispatch(DeleteAnnotationsByFileIds([file!.id]));
-    dispatch(deleteFilesById([{ id: file!.id }]));
+    batch(() => {
+      dispatch(DeleteAnnotationsByFileIds([file!.id]));
+      dispatch(deleteFilesById([{ id: file!.id }]));
+    });
     onBackButtonClick();
   };
 
   useEffect(() => {
     dispatch(resetEditHistory());
     dispatch(resetPreview());
-    if (fileId && !file && !(props.location.state as { from?: string })?.from) {
-      dispatch(fetchFilesById([{ id: +fileId }]));
+    if (
+      fileId &&
+      !file &&
+      (!reviewFileIds || (reviewFileIds && !reviewFileIds.length))
+    ) {
+      batch(() => {
+        dispatch(PopulateReviewFiles([+fileId]));
+        dispatch(FetchFilesById([+fileId]));
+      });
     }
     if (file) {
       dispatch(RetrieveAnnotations([+fileId]));
     }
-  }, [file]);
+  }, [file, reviewFileIds]);
+
+  useEffect(() => {
+    dispatch(FetchFilesById(reviewFileIds));
+  }, [reviewFileIds]);
 
   useEffect(() => {
     dispatch(PopulateAnnotationTemplates());

@@ -1,6 +1,5 @@
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import { ColumnShape } from 'react-base-table';
-
 import { Annotation, JobStatus, VisionAPIType } from 'src/api/types';
 
 export interface AnnotationPreview
@@ -45,8 +44,8 @@ export type TableDataItem = Pick<
   FileInfo,
   'id' | 'mimeType' | 'name' | 'sourceCreatedTime' | 'geoLocation' | 'uploaded'
 > & {
-  // menu: FileActions;
-  menuActions: FileActions;
+  menuActions: FileActions; // menu: FileActions;
+  rowKey: string; // unique key;
 };
 
 export type ResultData = TableDataItem;

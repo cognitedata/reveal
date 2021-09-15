@@ -23,7 +23,8 @@ export function ActionRenderer(
   actionDisabled: boolean
 ) {
   const dispatch = useDispatch();
-  const { menuActions, ...fileInfo } = rowData;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { menuActions, rowKey, ...fileInfo } = rowData;
 
   const handleFileDetails = () => {
     if (menuActions?.onFileDetailsClicked) {

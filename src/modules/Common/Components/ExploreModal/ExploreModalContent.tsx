@@ -31,9 +31,7 @@ export const ExploreModalContent = ({
   onUseFiles,
   selectedCount,
   filter,
-  // TODO(VIS-276): Add filters
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  setFilter,
+  //  setFilter, TODO(VIS-276): Add filters
   processFileCount,
 }: ExploreModalContentProps) => {
   const maxSelectCount = MAX_CID_FILE_COUNT;
@@ -69,7 +67,7 @@ export const ExploreModalContent = ({
           content={
             <span data-testid="text-content">{exceededLimitMessage}</span>
           }
-          disabled={!!inLimit}
+          disabled={inLimit}
         >
           <Button
             type="primary"

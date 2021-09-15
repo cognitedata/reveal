@@ -1,3 +1,4 @@
+// todo: remove unused function
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { selectAllFiles } from 'src/modules/Common/filesSlice';

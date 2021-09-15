@@ -1,27 +1,25 @@
 import {
-  createAsyncThunk,
   createSelector,
   createSlice,
+  isAnyOf,
   PayloadAction,
 } from '@reduxjs/toolkit';
-import { fetchJobById, createAnnotationJob } from 'src/api/annotationJob';
-import { fetchUntilComplete } from 'src/utils';
 import {
   AnnotationJob,
-  DetectionModelParams,
   ParamsObjectDetection,
   ParamsOCR,
   ParamsTagDetection,
   VisionAPIType,
 } from 'src/api/types';
 import { getFakeQueuedJob } from 'src/api/utils';
-import { fileProcessUpdate } from 'src/store/commonActions';
+import { clearFileState, fileProcessUpdate } from 'src/store/commonActions';
 import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
-import { ThunkConfig } from 'src/store/rootReducer';
 import isEqual from 'lodash-es/isEqual';
-import { AnnotationDetectionJobUpdate } from 'src/store/thunks/AnnotationDetectionJobUpdate';
-import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
 import { DEFAULT_PAGE_SIZE } from 'src/constants/PaginationConsts';
+import { postAnnotationJob } from 'src/store/thunks/PostAnnotationJob';
+import { RootState } from 'src/store/rootReducer';
+import { FileInfo } from '@cognite/cdf-sdk-singleton';
+import { createFileInfo } from 'src/store/util/StateUtils';
 import { AnnotationsBadgeStatuses, ViewMode } from '../Common/types';
 import { SortPaginate } from '../Common/Components/FileTable/types';
 
@@ -35,8 +33,9 @@ export enum FileSortPaginateType {
 export type JobState = AnnotationJob & {
   fileIds: number[];
 };
-type State = {
-  selectedFileId: number | null;
+export type State = {
+  fileIds: number[];
+  focusedFileId: number | null;
   showFileMetadataDrawer: boolean;
   showFileUploadModal: boolean;
   selectedDetectionModels: Array<VisionAPIType>;
@@ -45,6 +44,7 @@ type State = {
     byId: Record<number, { jobIds: number[] }>;
     allIds: number[];
   };
+  uploadedFileIds: number[];
   jobs: {
     byId: Record<number, JobState>;
     allIds: number[];
@@ -65,7 +65,7 @@ type State = {
   mapTableTabKey: string;
 };
 
-const initalDetectionModelParameters = {
+const initialDetectionModelParameters = {
   ocr: {
     useCache: true,
   },
@@ -80,7 +80,8 @@ const initalDetectionModelParameters = {
 };
 
 const initialState: State = {
-  selectedFileId: null,
+  fileIds: [],
+  focusedFileId: null,
   showFileMetadataDrawer: false,
   showFileUploadModal: false,
   selectedDetectionModels: [VisionAPIType.OCR],
@@ -88,6 +89,7 @@ const initialState: State = {
     byId: {},
     allIds: [],
   },
+  uploadedFileIds: [],
   jobs: {
     byId: {},
     allIds: [],
@@ -95,8 +97,8 @@ const initialState: State = {
   // eslint-disable-next-line global-require
   // jobsByFileId: require('./fakeJobs.json'),
   error: undefined,
-  detectionModelParameters: initalDetectionModelParameters,
-  temporaryDetectionModelParameters: initalDetectionModelParameters,
+  detectionModelParameters: initialDetectionModelParameters,
+  temporaryDetectionModelParameters: initialDetectionModelParameters,
   showExploreModal: false,
   sortPaginate: {
     LIST: { currentPage: 1, pageSize: DEFAULT_PAGE_SIZE },
@@ -108,115 +110,26 @@ const initialState: State = {
   mapTableTabKey: 'fileInMap',
 };
 
-// for requested files, create annotation jobs with requested detectionModels and setup polling on these jobs
-export const detectAnnotations = createAsyncThunk<
-  void,
-  { fileIds: Array<number>; detectionModels: Array<VisionAPIType> },
-  ThunkConfig
->(
-  'process/detectAnnotations',
-  async ({ fileIds, detectionModels }, { dispatch, getState }) => {
-    if (!detectionModels.length) {
-      throw new Error(
-        'To detect annotations at least one detection model must be selected'
-      );
-    }
-
-    const batchSize = 10;
-    const { files, jobs } = getState().processSlice;
-    const batchFileIdsList: number[][] = fileIds.reduce((acc, _, i) => {
-      if (i % batchSize === 0) {
-        acc.push(fileIds.slice(i, i + batchSize));
-      }
-      return acc;
-    }, [] as number[][]);
-
-    batchFileIdsList.forEach((batchFileIds) => {
-      detectionModels.forEach((modelType) => {
-        const filteredBatchFileIds = batchFileIds.filter((fileId: number) => {
-          const fileJobIds = files.byId[fileId]?.jobIds;
-          return (
-            !fileJobIds ||
-            !fileJobIds
-              .map((jobId) => jobs.byId[jobId])
-              .some((job) => job.type === modelType)
-          );
-        });
-
-        dispatch(
-          postAnnotationJob({
-            modelType,
-            fileIds: filteredBatchFileIds,
-          })
-        );
-      });
-    });
-  }
-);
-
-export const postAnnotationJob = createAsyncThunk<
-  AnnotationJob,
-  { modelType: VisionAPIType; fileIds: number[] },
-  ThunkConfig
->(
-  'process/postAnnotationJobs',
-  async ({ modelType, fileIds }, { dispatch, getState }) => {
-    const params = getDetectionModelParameters(
-      getState().processSlice,
-      modelType
-    );
-    const createdJob = await createAnnotationJob(modelType, fileIds, params);
-
-    const doesFileExist = (fileId: number) =>
-      getState().filesSlice.files.byId[fileId];
-
-    await fetchUntilComplete<AnnotationJob>(
-      () => fetchJobById(createdJob.type, createdJob.jobId),
-      {
-        isCompleted: (latestJobVersion) =>
-          latestJobVersion.status === 'Completed' ||
-          latestJobVersion.status === 'Failed' ||
-          !fileIds.some(doesFileExist), // we don't want to poll jobs for removed files
-
-        onTick: async (latestJobVersion) => {
-          await dispatch(AnnotationDetectionJobUpdate(latestJobVersion));
-          if (latestJobVersion.status === 'Completed') {
-            await dispatch(RetrieveAnnotations(fileIds));
-          }
-          dispatch(
-            fileProcessUpdate({
-              modelType,
-              fileIds,
-              job: latestJobVersion,
-            })
-          );
-        },
-
-        onError: (error) => {
-          dispatch(removeJobById(createdJob.jobId));
-          // eslint-disable-next-line no-console
-          console.error(error); // todo better error handling of polling errors
-        },
-      }
-    );
-
-    return createdJob;
-  }
-);
-
 const processSlice = createSlice({
   name: 'processSlice',
   initialState,
   /* eslint-disable no-param-reassign */
   reducers: {
+    setProcessFileIds(state, action: PayloadAction<number[]>) {
+      state.fileIds = action.payload;
+    },
     hideFileMetadataPreview(state) {
-      state.showFileMetadataDrawer = false;
+      if (state.showFileMetadataDrawer) {
+        state.showFileMetadataDrawer = false;
+      }
     },
     showFileMetadataPreview(state) {
-      state.showFileMetadataDrawer = true;
+      if (!state.showFileMetadataDrawer) {
+        state.showFileMetadataDrawer = true;
+      }
     },
-    setSelectedFileId(state, action: PayloadAction<number | null>) {
-      state.selectedFileId = action.payload;
+    setFocusedFileId(state, action: PayloadAction<number | null>) {
+      state.focusedFileId = action.payload;
     },
     setSelectedDetectionModels(
       state,
@@ -244,7 +157,7 @@ const processSlice = createSlice({
       state.temporaryDetectionModelParameters = state.detectionModelParameters;
     },
     resetDetectionModelParameters(state) {
-      state.temporaryDetectionModelParameters = initalDetectionModelParameters;
+      state.temporaryDetectionModelParameters = initialDetectionModelParameters;
     },
     removeJobById(state, action: PayloadAction<number>) {
       const existingJob = state.jobs.byId[action.payload];
@@ -318,25 +231,17 @@ const processSlice = createSlice({
     ) {
       state.mapTableTabKey = action.payload.mapTableTabKey;
     },
+    addProcessUploadedFileId(state, action: PayloadAction<number>) {
+      state.uploadedFileIds.push(action.payload);
+    },
+    clearUploadedFiles(state) {
+      state.uploadedFileIds = [];
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fileProcessUpdate, (state, { payload }) => {
       const { fileIds, job, modelType } = payload;
       addJobToState(state, fileIds, job, modelType);
-    });
-
-    builder.addCase(deleteFilesById.fulfilled, (state, { payload }) => {
-      payload.forEach((intId) => {
-        delete state.files.byId[intId.id];
-        if (state.selectedFileId === intId.id) {
-          // hide drawer and reset selected file if it's deleted
-          state.selectedFileId = null;
-          state.showFileMetadataDrawer = false;
-        }
-      });
-      state.files.allIds = Object.keys(state.files.byId).map((id) =>
-        parseInt(id, 10)
-      );
     });
 
     /* postAnnotationJobs */
@@ -385,16 +290,51 @@ const processSlice = createSlice({
 
       state.error = error.message;
     });
+
+    builder.addMatcher(
+      isAnyOf(deleteFilesById.fulfilled, clearFileState),
+      (state, action) => {
+        action.payload.forEach((fileId) => {
+          // clear jobs state
+          if (state.files.byId[fileId]) {
+            const { jobIds } = state.files.byId[fileId];
+            jobIds.forEach((jobId) => {
+              delete state.jobs.byId[jobId];
+              state.jobs.allIds = Object.keys(state.jobs.byId).map((id) =>
+                parseInt(id, 10)
+              );
+            });
+          }
+
+          // clear upload state
+
+          state.uploadedFileIds = state.uploadedFileIds.filter(
+            (id) => id !== fileId
+          );
+
+          delete state.files.byId[fileId];
+          if (state.focusedFileId === fileId) {
+            // hide drawer and reset selected file if it's deleted
+            state.focusedFileId = null;
+            state.showFileMetadataDrawer = false;
+          }
+        });
+        state.files.allIds = Object.keys(state.files.byId).map((id) =>
+          parseInt(id, 10)
+        );
+      }
+    );
   },
   /* eslint-enable no-param-reassign */
 });
 
 export const {
+  setProcessFileIds,
   removeJobById,
   setSelectedDetectionModels,
   hideFileMetadataPreview,
   showFileMetadataPreview,
-  setSelectedFileId,
+  setFocusedFileId,
   setParamsOCR,
   setParamsTagDetection,
   setParamsObjectDetection,
@@ -409,6 +349,8 @@ export const {
   setPageSize,
   setProcessCurrentView,
   setMapTableTabKey,
+  addProcessUploadedFileId,
+  clearUploadedFiles,
 } = processSlice.actions;
 
 export default processSlice.reducer;
@@ -481,6 +423,18 @@ export const selectJobsByFileId = createSelector(
   }
 );
 
+export const selectAllProcessFiles = createSelector(
+  (state: RootState) => state.filesSlice.files.byId,
+  (state: RootState) => state.processSlice.fileIds,
+  (allFiles, allIds) => {
+    const files: FileInfo[] = [];
+    allIds.forEach(
+      (id) => !!allFiles[id] && files.push(createFileInfo(allFiles[id]))
+    );
+    return files;
+  }
+);
+
 export const selectIsPollingComplete = createSelector(
   selectAllFilesDict,
   selectAllJobs,
@@ -545,24 +499,4 @@ export const isProcessingFile = (
   return statuses.some((key) =>
     ['Queued', 'Running'].includes(annotationStatuses[key]?.status || '')
   );
-};
-
-const getDetectionModelParameters = (
-  state: State,
-  modelType: VisionAPIType
-): DetectionModelParams | undefined => {
-  switch (modelType) {
-    case VisionAPIType.OCR: {
-      return state.detectionModelParameters.ocr;
-    }
-    case VisionAPIType.TagDetection: {
-      return state.detectionModelParameters.tagDetection;
-    }
-    case VisionAPIType.ObjectDetection: {
-      return state.detectionModelParameters.objectDetection;
-    }
-    default: {
-      return undefined;
-    }
-  }
 };

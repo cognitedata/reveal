@@ -21,9 +21,9 @@ import {
   setPageSize,
   setMapTableTabKey,
   setExplorerSelectedFiles,
+  setSelectedAllExplorerFiles,
 } from 'src/modules/Explorer/store/explorerSlice';
 import { VisionMode } from 'src/constants/enums/VisionEnums';
-import { setSelectedAllFiles } from 'src/store/commonActions';
 import { ResultTableLoader } from './ResultTableLoader';
 import { FileGridPreview } from '../../Common/Components/FileGridPreview/FileGridPreview';
 import { MapView } from '../../Common/Components/MapView/MapView';
@@ -57,7 +57,7 @@ export const ExplorerSearchResults = ({
     selectFilter?: SelectFilter
   ) => {
     dispatch(
-      setSelectedAllFiles({ selectStatus: value, filter: selectFilter })
+      setSelectedAllExplorerFiles({ selectStatus: value, filter: selectFilter })
     );
   };
   const handleSetSelectedFiles = (fileIds: number[]) => {
@@ -175,7 +175,7 @@ export const ExplorerSearchResults = ({
                   <MapView
                     onRowSelect={onRowSelect}
                     onRowClick={onClick}
-                    selectedFileId={selectedId}
+                    focusedFileId={selectedId}
                     allRowsSelected={allFilesSelected}
                     onSelectAllRows={handleSelectAllFiles}
                     selectedRowIds={selectedFileIds}
@@ -195,13 +195,14 @@ export const ExplorerSearchResults = ({
                     modalView
                     onRowSelect={onRowSelect}
                     onRowClick={onClick}
-                    selectedFileId={selectedId}
+                    focusedFileId={selectedId}
                     allRowsSelected={allFilesSelected}
                     onSelectAllRows={handleSelectAllFiles}
                     selectedRowIds={selectedFileIds}
                     {...props}
                     sortPaginateControls={modalSortPaginateControls}
                     onSelectPage={handleSetSelectedFiles}
+                    rowKey="rowKey"
                   />
                 );
               }
@@ -210,7 +211,7 @@ export const ExplorerSearchResults = ({
                 <FileTableExplorer
                   onRowSelect={onRowSelect}
                   onRowClick={onClick}
-                  selectedFileId={selectedId}
+                  focusedFileId={selectedId}
                   allRowsSelected={allFilesSelected}
                   onSelectAllRows={handleSelectAllFiles}
                   selectedRowIds={selectedFileIds}

@@ -1,3 +1,4 @@
+// todo: unused component
 import React from 'react';
 import { Route, Switch, useHistory } from 'react-router-dom';
 import { PrevNextNav } from 'src/modules/Workflow/components/PrevNextNav';
@@ -10,9 +11,10 @@ import { annotationsById } from 'src/modules/Review/previewSlice';
 
 export default function BottomNavContainer() {
   const history = useHistory();
-  const { allFilesStatus } = useSelector(
-    (state: RootState) => state.filesSlice
-  );
+  const allFilesStatus = true;
+  // const { allFilesStatus } = useSelector(
+  //   (state: RootState) => state.filesSlice
+  // );
 
   const annotations = useSelector((state: RootState) => {
     return annotationsById(state.previewSlice);

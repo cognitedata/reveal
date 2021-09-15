@@ -13,6 +13,7 @@ export type ExploreModalProps = ExploreModalContentProps & {
 export const ExploreModal = (props: ExploreModalProps) => {
   return (
     <Modal
+      destroyOnClose
       getContainer={getContainer}
       visible={props.showModal}
       onCancel={props.onCloseModal}

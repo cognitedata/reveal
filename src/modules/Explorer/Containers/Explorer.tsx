@@ -1,5 +1,5 @@
 /* eslint-disable @cognite/no-number-z-index */
-import React from 'react';
+import React, { useEffect } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import FilterToggleButton from 'src/modules/Explorer/Components/FilterToggleButton';
 import styled from 'styled-components';
@@ -11,11 +11,9 @@ import { ExplorerSearchResults } from 'src/modules/Explorer/Containers/ExplorerS
 import { FileDetails } from 'src/modules/FileDetails/Containers/FileDetails';
 import { TableDataItem, ViewMode } from 'src/modules/Common/types';
 import { ExplorerToolbar } from 'src/modules/Explorer/Containers/ExplorerToolbar';
-import { addFileInfo, FileState } from 'src/modules/Common/filesSlice';
+import { FileState } from 'src/modules/Common/filesSlice';
 import { FileUploadModal } from 'src/modules/Common/Components/FileUploaderModal/FileUploaderModal';
-import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import { StatusToolBar } from 'src/modules/Process/Containers/StatusToolBar';
-import { fetchFilesById } from 'src/store/thunks/fetchFilesById';
 import { useHistory } from 'react-router-dom';
 import {
   getLink,
@@ -26,7 +24,10 @@ import { MAX_SELECT_COUNT } from 'src/constants/ExplorerConstants';
 import { FileDownloaderModal } from 'src/modules/Common/Components/FileDownloaderModal/FileDownloaderModal';
 import { BulkEditModal } from 'src/modules/Common/Components/BulkEdit/BulkEditModal';
 import { updateBulk } from 'src/store/thunks/updateBulk';
+import { FetchFilesById } from 'src/store/thunks/FetchFilesById';
 import { pushMetric } from 'src/utils/pushMetric';
+import { PopulateProcessFiles } from 'src/store/thunks/PopulateProcessFiles';
+import { PopulateReviewFiles } from 'src/store/thunks/PopulateReviewFiles';
 import {
   BulkEditTempState,
   setBulkEditModalVisibility,
@@ -37,13 +38,15 @@ import {
   setExplorerCurrentView,
   setExplorerFileSelectState,
   setExplorerQueryString,
-  setExplorerSelectedFileId,
+  setExplorerFocusedFileId,
   hideExplorerFileMetadata,
   showExplorerFileMetadata,
   toggleExplorerFilterView,
   selectExplorerSelectedFileIds,
   setExplorerFileUploadModalVisibility,
   selectExplorerAllSelectedFiles,
+  addExplorerUploadedFileId,
+  clearExplorerStateOnTransition,
 } from '../store/explorerSlice';
 
 import { FilterSidePanel } from './FilterSidePanel';
@@ -62,8 +65,8 @@ const Explorer = () => {
   const showMetadata = useSelector(
     ({ explorerReducer }: RootState) => explorerReducer.showFileMetadata
   );
-  const clickedRowFileId = useSelector(
-    ({ explorerReducer }: RootState) => explorerReducer.selectedFileId
+  const focusedFileId = useSelector(
+    ({ explorerReducer }: RootState) => explorerReducer.focusedFileId
   );
   const currentView = useSelector(
     ({ explorerReducer }: RootState) => explorerReducer.currentView
@@ -91,10 +94,19 @@ const Explorer = () => {
   const bulkEditTemp = useSelector(
     ({ commonReducer }: RootState) => commonReducer.bulkEditTemp
   );
+  const uploadedFileIds = useSelector(
+    ({ explorerReducer }: RootState) => explorerReducer.uploadedFileIds
+  );
 
   const queryClient = new QueryClient();
 
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    return () => {
+      dispatch(clearExplorerStateOnTransition());
+    };
+  }, []);
 
   const handleSearch = (text: string) => {
     dispatch(setExplorerQueryString(text));
@@ -102,30 +114,28 @@ const Explorer = () => {
 
   const handleItemClick = (
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    { menuActions, ...file }: TableDataItem,
+    { menuActions, rowKey, ...file }: TableDataItem,
     showFileDetailsOnClick: boolean = true
   ) => {
-    dispatch(addFileInfo(file as FileInfo));
-    dispatch(setExplorerSelectedFileId(file.id));
+    dispatch(FetchFilesById([file.id]));
+    dispatch(setExplorerFocusedFileId(file.id));
     if (showFileDetailsOnClick) {
       dispatch(showExplorerFileMetadata());
     }
-  };
-
-  const handleDeselect = () => {
-    dispatch(setExplorerSelectedFileId(null));
   };
 
   const handleRowSelect = (item: TableDataItem, selected: boolean) => {
     dispatch(setExplorerFileSelectState(item.id, selected));
   };
 
-  const onUploadSuccess = React.useCallback(
-    (file) => {
-      dispatch(addFileInfo(file));
-    },
-    [dispatch]
-  );
+  const onUploadSuccess = (fileId: number) => {
+    dispatch(addExplorerUploadedFileId(fileId));
+  };
+
+  const onFinishUpload = () => {
+    dispatch(PopulateProcessFiles(uploadedFileIds));
+    history.push(getLink(workflowRoutes.process));
+  };
 
   const handleMetadataClose = () => {
     dispatch(hideExplorerFileMetadata());
@@ -140,13 +150,11 @@ const Explorer = () => {
   };
 
   const onContextualise = () => {
-    // fetch latest
-    dispatch(fetchFilesById(selectedFileIds.map((i) => ({ id: i }))));
+    dispatch(PopulateProcessFiles(selectedFileIds));
     history.push(getLink(workflowRoutes.process));
   };
   const onReview = async () => {
-    // fetch latest
-    await dispatch(fetchFilesById(selectedFileIds.map((i) => ({ id: i }))));
+    dispatch(PopulateReviewFiles(selectedFileIds));
     history.push(
       // selecting first item in review
       getParamLink(
@@ -159,14 +167,10 @@ const Explorer = () => {
   };
 
   const onFileDetailReview = () => {
-    if (clickedRowFileId) {
-      dispatch(fetchFilesById([{ id: clickedRowFileId }]));
+    if (focusedFileId) {
+      dispatch(PopulateReviewFiles([focusedFileId]));
       history.push(
-        getParamLink(
-          workflowRoutes.review,
-          ':fileId',
-          String(clickedRowFileId)
-        ),
+        getParamLink(workflowRoutes.review, ':fileId', String(focusedFileId)),
         { from: 'explorer' }
       );
     }
@@ -186,14 +190,11 @@ const Explorer = () => {
 
   return (
     <>
-      <Deselect
-        onClick={() => {
-          handleDeselect();
-        }}
-      />
+      <Deselect />
       <FileUploadModal
         enableProcessAfter
         onUploadSuccess={onUploadSuccess}
+        onFinishUpload={onFinishUpload}
         showModal={showFileUploadModal}
         onCancel={() => dispatch(setExplorerFileUploadModalVisibility(false))}
       />
@@ -247,17 +248,17 @@ const Explorer = () => {
                 onClick={handleItemClick}
                 onRowSelect={handleRowSelect}
                 query={query}
-                selectedId={clickedRowFileId || undefined}
+                selectedId={focusedFileId || undefined}
                 currentView={currentView}
               />
             </ViewContainer>
           </TablePanel>
-          {showMetadata && clickedRowFileId && (
+          {showMetadata && focusedFileId && (
             // eslint-disable-next-line  @cognite/no-number-z-index
             <DrawerContainer style={{ zIndex: 1 }}>
               <QueryClientProvider client={queryClient}>
                 <FileDetails
-                  fileId={clickedRowFileId}
+                  fileId={focusedFileId}
                   onClose={handleMetadataClose}
                   onReview={onFileDetailReview}
                 />
@@ -331,13 +332,29 @@ const DrawerContainer = styled.div`
   background: white;
 `;
 
-const Deselect = styled.div`
+const DeselectContainer = styled.div`
   position: fixed;
   z-index: 0;
-  top: 0px;
-  right: 0px;
-  bottom: 0px;
-  left: 0px;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
 `;
+
+const Deselect = () => {
+  const dispatch = useDispatch();
+  const focusedFileId = useSelector(
+    ({ explorerReducer }: RootState) => explorerReducer.focusedFileId
+  );
+  return (
+    <DeselectContainer
+      onClick={() => {
+        if (focusedFileId) {
+          dispatch(setExplorerFocusedFileId(null));
+        }
+      }}
+    />
+  );
+};
 
 export default Explorer;

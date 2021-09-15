@@ -4,17 +4,17 @@ import { SegmentedControl } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import {
-  selectAllFiles,
-  selectAllSelectedFiles,
-} from 'src/modules/Common/filesSlice';
+import { selectAllSelectedFiles } from 'src/modules/Common/filesSlice';
 import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
-import { selectIsPollingComplete } from 'src/modules/Process/processSlice';
 import { BulkActionMenu } from 'src/modules/Common/Components/BulkActionMenu/BulkActionMenu';
 import {
   setBulkEditModalVisibility,
   setFileDownloadModalVisibility,
 } from 'src/modules/Common/commonSlice';
+import {
+  selectAllProcessFiles,
+  selectIsPollingComplete,
+} from 'src/modules/Process/processSlice';
 
 export const FileToolbar = ({
   onViewChange,
@@ -30,7 +30,7 @@ export const FileToolbar = ({
   );
 
   const processFilesLength = useSelector(
-    (state: RootState) => selectAllFiles(state.filesSlice).length
+    (state: RootState) => selectAllProcessFiles(state).length
   );
 
   const isPollingFinished = useSelector((state: RootState) => {

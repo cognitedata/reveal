@@ -1,5 +1,11 @@
-import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { ViewMode } from 'src/modules/Common/types';
+import {
+  createAction,
+  createSelector,
+  createSlice,
+  isAnyOf,
+  PayloadAction,
+} from '@reduxjs/toolkit';
+import { SelectFilter, ViewMode } from 'src/modules/Common/types';
 import {
   FileFilterProps,
   FileGeoLocation,
@@ -11,7 +17,6 @@ import { createFileInfo, createFileState } from 'src/store/util/StateUtils';
 import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
 import { UpdateFiles } from 'src/store/thunks/UpdateFiles';
 import { FileState } from 'src/modules/Common/filesSlice';
-import { setSelectedAllFiles } from 'src/store/commonActions';
 import { makeReducerSelectAllFilesWithFilter } from 'src/store/commonReducers';
 import { DEFAULT_PAGE_SIZE } from 'src/constants/PaginationConsts';
 import { SortPaginate } from 'src/modules/Common/Components/FileTable/types';
@@ -49,7 +54,7 @@ export type BulkEditTempState = {
 };
 
 export type State = {
-  selectedFileId: number | null;
+  focusedFileId: number | null;
   showFileMetadata: boolean;
   query: string;
   currentView: ViewMode;
@@ -62,12 +67,13 @@ export type State = {
     allIds: number[];
     selectedIds: number[];
   };
+  uploadedFileIds: number[];
   sortPaginate: Record<ExploreSortPaginateType, SortPaginate>;
   loadingAnnotations?: boolean;
 };
 
 const initialState: State = {
-  selectedFileId: null,
+  focusedFileId: null,
   showFileMetadata: false,
   query: '',
   currentView: 'list',
@@ -80,6 +86,7 @@ const initialState: State = {
     allIds: [],
     selectedIds: [],
   },
+  uploadedFileIds: [],
   sortPaginate: {
     LIST: {
       currentPage: 1,
@@ -106,6 +113,15 @@ const initialState: State = {
   loadingAnnotations: false,
 };
 
+export const setSelectedAllExplorerFiles = createAction<{
+  selectStatus: boolean;
+  filter?: SelectFilter;
+}>('setSelectedAllExplorerFiles');
+
+export const clearExplorerFileState = createAction<number[]>(
+  'clearExplorerFileState'
+);
+
 const explorerSlice = createSlice({
   name: 'explorerSlice',
   initialState,
@@ -121,7 +137,7 @@ const explorerSlice = createSlice({
       },
       reducer: (state, action: PayloadAction<ExplorerFileState[]>) => {
         const files = action.payload;
-        clearFileState(state);
+        resetFileState(state);
 
         files.forEach((file) => {
           updateFileState(state, file);
@@ -159,8 +175,8 @@ const explorerSlice = createSlice({
         state.files.selectedIds = fileIds;
       },
     },
-    setExplorerSelectedFileId(state, action: PayloadAction<number | null>) {
-      state.selectedFileId = action.payload;
+    setExplorerFocusedFileId(state, action: PayloadAction<number | null>) {
+      state.focusedFileId = action.payload;
     },
     hideExplorerFileMetadata(state) {
       state.showFileMetadata = false;
@@ -233,29 +249,48 @@ const explorerSlice = createSlice({
     ) {
       state.mapTableTabKey = action.payload.mapTableTabKey;
     },
+    addExplorerUploadedFileId(state, action: PayloadAction<number>) {
+      state.uploadedFileIds.push(action.payload);
+    },
+    clearExplorerStateOnTransition(state) {
+      state.focusedFileId = null;
+      state.uploadedFileIds = [];
+      state.showFileUploadModal = false;
+      state.loadingAnnotations = false;
+      resetFileState(state);
+    },
   },
   extraReducers: (builder) => {
-    builder.addCase(deleteFilesById.fulfilled, (state, { payload }) => {
-      payload.forEach((fileId) => {
-        deleteFileById(state, fileId.id);
-        state.files.selectedIds = state.files.selectedIds.filter(
-          (id) => id !== fileId.id
-        );
-      });
-    });
-
     builder.addCase(UpdateFiles.fulfilled, (state, { payload }) => {
       payload.forEach((fileState) => {
         updateFileState(state, fileState);
       });
     });
 
-    builder.addCase(setSelectedAllFiles, makeReducerSelectAllFilesWithFilter());
+    builder.addCase(
+      setSelectedAllExplorerFiles,
+      makeReducerSelectAllFilesWithFilter()
+    );
 
     builder.addCase(
       RetrieveAnnotations.fulfilled,
       (state: State, { payload: _ }) => {
         state.loadingAnnotations = false;
+      }
+    );
+
+    builder.addMatcher(
+      isAnyOf(deleteFilesById.fulfilled, clearExplorerFileState),
+      (state, action) => {
+        action.payload.forEach((fileId) => {
+          deleteFileById(state, fileId);
+          state.files.selectedIds = state.files.selectedIds.filter(
+            (id) => id !== fileId
+          );
+          state.uploadedFileIds = state.uploadedFileIds.filter(
+            (id) => id !== fileId
+          );
+        });
       }
     );
   },
@@ -265,7 +300,7 @@ export const {
   setExplorerFiles,
   setExplorerFileSelectState,
   setExplorerSelectedFiles,
-  setExplorerSelectedFileId,
+  setExplorerFocusedFileId,
   hideExplorerFileMetadata,
   showExplorerFileMetadata,
   setExplorerQueryString,
@@ -279,6 +314,8 @@ export const {
   setExplorerCurrentView,
   setMapTableTabKey,
   setLoadingAnnotations,
+  addExplorerUploadedFileId,
+  clearExplorerStateOnTransition,
 } = explorerSlice.actions;
 
 export default explorerSlice.reducer;
@@ -336,7 +373,7 @@ const updateFileState = (state: State, file: FileState) => {
   }
 };
 
-const clearFileState = (state: State) => {
+const resetFileState = (state: State) => {
   state.files.byId = {};
   state.files.allIds = [];
   state.files.selectedIds = [];
