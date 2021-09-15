@@ -2,7 +2,6 @@ import React, { FunctionComponent, PropsWithChildren, useState } from 'react';
 import { RunStatusUI } from 'model/Status';
 import { FailedRunMessageIcon } from 'components/icons/FailedRunMessageIcon';
 import { Button, Colors } from '@cognite/cogs.js';
-import { NO_ERROR_MESSAGE } from 'components/form/viewEditIntegration/FailMessageModal';
 import MessageDialog from 'components/buttons/MessageDialog';
 import StatusMarker from 'components/integrations/cols/StatusMarker';
 import styled from 'styled-components';
@@ -47,7 +46,7 @@ export const LatestRunMessage: FunctionComponent<LatestRunMessageProps> = ({
       <MessageDialog
         visible={showError}
         title="Latest run error message"
-        contentText={message ?? NO_ERROR_MESSAGE}
+        contentText={message ?? 'No error message set'}
         handleClose={onClick}
         icon={<FailedRunMessageIcon />}
       >

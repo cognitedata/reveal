@@ -7,7 +7,6 @@ import { Integration } from 'model/Integration';
 import ITable from 'components/table/ITable';
 import { getIntegrationTableCol } from 'components/table/IntegrationTableCol';
 import StyledTable from 'styles/StyledTable';
-import FailMessageModal from 'components/form/viewEditIntegration/FailMessageModal';
 import { Span3 } from 'styles/grid/StyledGrid';
 
 const StyledIntegrationsTable = styled(StyledTable)`
@@ -48,24 +47,9 @@ type Props = OwnProps;
 const IntegrationsTable: FunctionComponent<Props> = ({
   tableData,
 }: OwnProps) => {
-  const [failMessageVisible, setFailMessageVisible] = useState(false);
-
-  const openFailMessage = () => {
-    setFailMessageVisible(true);
-  };
-  const closeFailMessage = () => {
-    setFailMessageVisible(false);
-  };
   return (
     <StyledIntegrationsTable>
-      <ITable
-        data={tableData}
-        columns={getIntegrationTableCol(openFailMessage)}
-      />
-      <FailMessageModal
-        onCancel={closeFailMessage}
-        visible={failMessageVisible}
-      />
+      <ITable data={tableData} columns={getIntegrationTableCol()} />
     </StyledIntegrationsTable>
   );
 };

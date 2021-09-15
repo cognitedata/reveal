@@ -16,8 +16,6 @@ import StatusFilterTableDropdown from 'components/table/StatusFilterTableDropdow
 import { User } from 'model/User';
 import RelativeTimeWithTooltip from 'components/integrations/cols/RelativeTimeWithTooltip';
 import SorterIndicator from 'components/table/SorterIndicator';
-import MessageIcon from 'components/message/MessageIcon';
-import { RunStatusUI } from 'model/Status';
 import { DataSetModel } from 'model/DataSetModel';
 
 export enum TableHeadings {
@@ -53,10 +51,6 @@ const StyledStatusButton = styled((props) => (
   }
 `;
 
-interface OpenFailMessageFunc {
-  (row: Integration): void;
-}
-
 export const createSearchStringForContacts = (contacts?: User[]) => {
   return `${contacts?.length ? contacts.map((aut) => aut.name).join() : ''}`;
 };
@@ -67,9 +61,7 @@ export const createSearchStringForDataSet = (
   return `${dataSetId} ${dataSet ? dataSet.name : ''}`;
 };
 
-export const getIntegrationTableCol = (
-  openFailMessage: OpenFailMessageFunc
-): Column<Integration>[] => {
+export const getIntegrationTableCol = (): Column<Integration>[] => {
   return [
     {
       id: 'name',
@@ -104,19 +96,7 @@ export const getIntegrationTableCol = (
         return status.status;
       },
       Cell: ({ row }: CellProps<Integration>) => {
-        return row.values.status === RunStatusUI.FAILURE ? (
-          <StyledStatusButton
-            className="status-btn"
-            onClick={() => {
-              openFailMessage(row.original);
-            }}
-          >
-            <StatusMarker id="status-marker" status={row.values.status} />
-            <MessageIcon status={row.values.status} />
-          </StyledStatusButton>
-        ) : (
-          <StatusMarker id="status-marker" status={row.values.status} />
-        );
+        return <StatusMarker status={row.values.status} />;
       },
       disableSortBy: true,
       Filter: StatusFilterTableDropdown,
