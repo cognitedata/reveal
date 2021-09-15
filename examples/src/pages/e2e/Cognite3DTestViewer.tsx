@@ -44,7 +44,7 @@ export function Cognite3DTestViewer(props: Props) {
       // Dont use any post-processing effects
       antiAliasingHint: 'disabled',
       ssaoQualityHint: 'disabled',
-      enableEdges: false
+      enableEdges: false,
 
       // Let provided options override options above
       ...viewerOptions,
