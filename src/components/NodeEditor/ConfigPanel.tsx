@@ -94,16 +94,16 @@ const ConfigPanel = ({
         }}
         aria-label="close"
       />
-      {!isOutputNode && (
-        <Input
-          value={workingNode.title}
-          onChange={(e) => {
-            setDirty(true);
-            setWorkingNode({ ...node, title: e.target.value });
-          }}
-          className="name-input"
-        />
-      )}
+      <Input
+        disabled={isOutputNode}
+        style={inputStyleOverrides}
+        value={workingNode.title}
+        onChange={(e) => {
+          setDirty(true);
+          setWorkingNode({ ...node, title: e.target.value });
+        }}
+        className="name-input"
+      />
       {NodeSpecificConfigPanel && (
         <div className="config-panel">
           {createElement(NodeSpecificConfigPanel, {
@@ -146,6 +146,12 @@ const ConfigPanel = ({
       </footer>
     </ConfigPanelWrapper>
   );
+};
+
+const inputStyleOverrides = {
+  background: 'var(--cogs-greyscale-grey10)',
+  color: 'white',
+  border: 'black',
 };
 
 export default ConfigPanel;
