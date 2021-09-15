@@ -29,6 +29,7 @@ export enum TableHeadings {
   SCHEDULE = 'Schedule',
   LAST_SEEN = 'Last connected',
   CONTACTS = 'Contacts',
+  OWNER = 'Owner',
 }
 
 const StyledStatusButton = styled((props) => (
@@ -192,14 +193,23 @@ export const getIntegrationTableCol = (
       disableFilters: true,
     },
     {
-      id: 'contacts',
-      Header: TableHeadings.CONTACTS,
+      id: 'owner',
+      Header: TableHeadings.OWNER,
       accessor: (row: Integration) => {
         return createSearchStringForContacts(row.contacts);
       },
       Cell: ({ row }: Cell<Integration>) => {
         const { contacts, id } = row.original;
-        return <UserGroup users={contacts} integrationId={id} />;
+        if (contacts == null) return <span> </span>;
+        const owner = contacts.find(
+          (user) => user.role?.toLowerCase() === 'owner'
+        );
+        return (
+          <>
+            {owner != null && <UserGroup users={[owner]} integrationId={id} />}
+            <span>{owner?.name || ''}</span>
+          </>
+        );
       },
       disableSortBy: true,
       disableFilters: true,

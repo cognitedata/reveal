@@ -34,7 +34,7 @@ describe('<ITable/>', () => {
     jest.resetAllMocks();
   });
   test('Render without errors', () => {
-    const colsWithHeaders = Object.entries(TableHeadings).map(([_, v]) => v);
+    const colsWithHeaders = [TableHeadings.NAME, TableHeadings.LAST_RUN_STATUS];
     colsWithHeaders.forEach((heading) => {
       const header = screen.getByText(new RegExp(heading));
       expect(header).toBeInTheDocument();
@@ -103,6 +103,7 @@ describe('<ITable/>', () => {
     });
 
     // should filter from created by col
+    /*
     const searchJacek = {
       string: 'jacek',
       regexp: /jacek/i,
@@ -112,6 +113,7 @@ describe('<ITable/>', () => {
       const resultRows = screen.getAllByLabelText(searchJacek.regexp);
       expect(resultRows.length).toEqual(3);
     });
+    */
 
     // should filter from data sets by col
     const searchDataSet = {
