@@ -8,7 +8,6 @@ import {
 import styled from 'styled-components';
 import { Button } from '@cognite/cogs.js';
 import { Integration } from 'model/Integration';
-import UserGroup from 'components/integrations/cols/UserGroup';
 import Name from 'components/integrations/cols/Name';
 import Schedule from 'components/integrations/cols/Schedule';
 import { DataSet } from 'components/integrations/cols/DataSet';
@@ -132,11 +131,10 @@ export const getIntegrationTableCol = (
         return status.time;
       },
       Cell: ({ row }: Cell<Integration>) => {
+        const latestRun = row.values.latestRun;
+        if (latestRun == null || latestRun === 0) return '–';
         return (
-          <RelativeTimeWithTooltip
-            id="latest-run"
-            time={row.values.latestRun as number}
-          />
+          <RelativeTimeWithTooltip id="latest-run" time={latestRun as number} />
         );
       },
       disableSortBy: true,
@@ -153,10 +151,12 @@ export const getIntegrationTableCol = (
         ]);
       },
       Cell: ({ row }: Cell<Integration>) => {
+        const lastConnected = row.values.lastConnected;
+        if (lastConnected == null || lastConnected === 0) return '–';
         return (
           <RelativeTimeWithTooltip
             id="last-seen"
-            time={row.values.lastConnected as number}
+            time={lastConnected as number}
           />
         );
       },
@@ -175,7 +175,11 @@ export const getIntegrationTableCol = (
     },
     {
       id: 'dataSetId',
-      Header: TableHeadings.DATA_SET,
+      Header: ({ column }: HeaderProps<Integration>) => {
+        return (
+          <SorterIndicator name={TableHeadings.DATA_SET} column={column} />
+        );
+      },
       accessor: (row: Integration) => {
         return createSearchStringForDataSet(row.dataSetId, row.dataSet);
       },
@@ -189,29 +193,30 @@ export const getIntegrationTableCol = (
           />
         );
       },
-      disableSortBy: true,
+      sortType: 'basic',
+      disableSortBy: false,
       disableFilters: true,
     },
     {
       id: 'owner',
-      Header: TableHeadings.OWNER,
+      Header: ({ column }: HeaderProps<Integration>) => {
+        return <SorterIndicator name={TableHeadings.OWNER} column={column} />;
+      },
       accessor: (row: Integration) => {
         return createSearchStringForContacts(row.contacts);
       },
       Cell: ({ row }: Cell<Integration>) => {
         const { contacts, id } = row.original;
-        if (contacts == null) return <span> </span>;
+        const noOwner = '–';
+        if (contacts == null) return noOwner;
         const owner = contacts.find(
           (user) => user.role?.toLowerCase() === 'owner'
         );
-        return (
-          <>
-            {owner != null && <UserGroup users={[owner]} integrationId={id} />}
-            <span>{owner?.name || ''}</span>
-          </>
-        );
+        if (owner == null) return noOwner;
+        return owner.name;
       },
-      disableSortBy: true,
+      sortType: 'basic',
+      disableSortBy: false,
       disableFilters: true,
     },
   ];

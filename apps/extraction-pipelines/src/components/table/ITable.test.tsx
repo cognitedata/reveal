@@ -98,7 +98,7 @@ describe('<ITable/>', () => {
     };
     fireEvent.change(searchInput, { target: { value: search.string } });
     await waitFor(() => {
-      const b = screen.getAllByLabelText(search.regexp);
+      const b = screen.getAllByText(search.regexp);
       expect(b.length).toEqual(1);
     });
 
