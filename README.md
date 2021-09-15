@@ -46,7 +46,7 @@ try forcing GCC to build for C++14:
 
 `env CXXFLAGS=-std=c++14 yarn`
 
-For solving issue with puppeteer in `examples/` you should follow additional steps:
+There also could be an issue with puppeteer in `examples/` that is caused by it not finding a correct version of chromium for arm64. To solve it you should follow additional steps:
 
 1. Install chromium from Homebrew: 
 ```
