@@ -90,7 +90,14 @@ export const getIntegrationTableCol = (): Column<Integration>[] => {
     },
     {
       id: 'status',
-      Header: TableHeadings.LAST_RUN_STATUS,
+      Header: ({ column }: HeaderProps<Integration>) => {
+        return (
+          <SorterIndicator
+            name={TableHeadings.LAST_RUN_STATUS}
+            column={column}
+          />
+        );
+      },
       accessor: ({ lastSuccess, lastFailure }: Integration) => {
         const status = calculateStatus({ lastSuccess, lastFailure });
         return status.status;
@@ -98,10 +105,10 @@ export const getIntegrationTableCol = (): Column<Integration>[] => {
       Cell: ({ row }: CellProps<Integration>) => {
         return <StatusMarker status={row.values.status} />;
       },
-      disableSortBy: true,
-      Filter: StatusFilterTableDropdown,
-      filter: 'includes',
-      disableFilters: false,
+      disableSortBy: false,
+      // Filter: StatusFilterTableDropdown,
+      // filter: 'includes',
+      disableFilters: true,
     },
     {
       id: 'latestRun',
