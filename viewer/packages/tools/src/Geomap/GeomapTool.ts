@@ -4,7 +4,7 @@
 
 import { Cognite3DViewer } from '@reveal/core';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
-import { MapConfig, MapProviders } from './MapConfig';
+import { LatLongPosition, MapConfig, MapProviders } from './MapConfig';
 import { Geomap } from './Geomap';
 /**
  * The `GeomapTool` is a geolocation for the models and allow the user to place them on the maps.
@@ -22,6 +22,14 @@ export class GeomapTool extends Cognite3DViewerToolBase {
 
   public setMapProvider(provider: MapProviders, apiKey: string, appCode?: string, id?: string) {
     this._maps.setMapProvider(provider, apiKey, appCode, id);
+  }
+
+  /**
+   * Converts Latitude & Longitude into Vector2 World coordinates on the Map
+   * @param latLong Latitude & Longitude
+   */
+  public latLongToWorldCoordinates( latLong: LatLongPosition) {
+    this._maps.latLongToWorldCoordinates(latLong);
   }
 
   public dispose(): void {

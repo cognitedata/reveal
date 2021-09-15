@@ -4,7 +4,7 @@
 
 import * as GEOTHREE from 'geo-three';
 import { Cognite3DViewer } from '@reveal/core';
-import { MapConfig, MapProviders } from './MapConfig';
+import { LatLongPosition, MapConfig, MapProviders } from './MapConfig';
 import { MapProvider, MapView } from 'geo-three';
 
 export class Geomap {
@@ -69,6 +69,10 @@ export class Geomap {
     };
     const mapProvider = this.getMapProvider(mapConfig);
     this._map.setProvider(mapProvider);
+  }
+
+  public latLongToWorldCoordinates(latLong: LatLongPosition) {
+    return GEOTHREE.UnitsUtils.datumsToSpherical(latLong.latitude, latLong.longitude);
   }
 
   public dispose(): void {
