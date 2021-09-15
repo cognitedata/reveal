@@ -139,43 +139,4 @@ describe('<ITable/>', () => {
       expect(resultRows.length).toEqual(1);
     });
   });
-
-  test('render and interact with filter on status', () => {
-    const nameHeader = screen.getByText(/status/i);
-    fireEvent.click(nameHeader); // open status menu
-
-    const statusFailMenuItem = screen.getByTestId(
-      'status-marker-status-menu-fail'
-    );
-    const statusOKMenuItem = screen.getByTestId('status-marker-status-menu-ok');
-    const statusAllMenuItem = screen.getByTestId('status-menu-item-all');
-    expect(statusAllMenuItem).toBeInTheDocument();
-    expect(statusOKMenuItem).toBeInTheDocument();
-    expect(statusFailMenuItem).toBeInTheDocument();
-
-    // click ok
-    fireEvent.click(statusOKMenuItem);
-    const bodyOK = screen.getAllByRole('row');
-    expect(bodyOK.length).toEqual(2);
-    const firsRowContent = bodyOK[1].textContent;
-    expect(
-      firsRowContent
-        .toLowerCase()
-        .includes(`${RunStatusUI.SUCCESS.toLowerCase()}`)
-    ).toEqual(true);
-
-    // click fail
-    fireEvent.click(statusFailMenuItem);
-    const bodyFail = screen.getAllByRole('row');
-    expect(bodyFail.length).toEqual(4); // 3 fail + header
-    const firsRowFail = bodyFail[1].textContent;
-    expect(
-      firsRowFail.toLowerCase().includes(RunStatusUI.FAILURE.toLowerCase())
-    ).toEqual(true);
-
-    // click all
-    fireEvent.click(statusAllMenuItem);
-    const bodyAll = screen.getAllByRole('row');
-    expect(bodyAll.length).toEqual(6); // 5 rows + header
-  });
 });

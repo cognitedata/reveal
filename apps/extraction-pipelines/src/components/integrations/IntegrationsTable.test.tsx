@@ -1,8 +1,7 @@
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import { QueryClient } from 'react-query';
-import { screen, waitFor, fireEvent } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import React from 'react';
-import { RunStatusUI } from 'model/Status';
 import { getMockResponse } from 'utils/mockResponse';
 import { renderWithSelectedIntegrationContext } from 'utils/test/render';
 import IntegrationsTable from 'components/integrations/IntegrationsTable';

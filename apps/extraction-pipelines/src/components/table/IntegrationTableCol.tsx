@@ -5,14 +5,11 @@ import {
   calculateLatest,
   calculateStatus,
 } from 'utils/integrationUtils';
-import styled from 'styled-components';
-import { Button } from '@cognite/cogs.js';
 import { Integration } from 'model/Integration';
 import Name from 'components/integrations/cols/Name';
 import Schedule from 'components/integrations/cols/Schedule';
 import { DataSet } from 'components/integrations/cols/DataSet';
 import StatusMarker from 'components/integrations/cols/StatusMarker';
-import StatusFilterTableDropdown from 'components/table/StatusFilterTableDropdown';
 import { User } from 'model/User';
 import RelativeTimeWithTooltip from 'components/integrations/cols/RelativeTimeWithTooltip';
 import SorterIndicator from 'components/table/SorterIndicator';
@@ -28,28 +25,6 @@ export enum TableHeadings {
   CONTACTS = 'Contacts',
   OWNER = 'Owner',
 }
-
-const StyledStatusButton = styled((props) => (
-  <Button {...props}>{props.children}</Button>
-))`
-  &.status-btn {
-    background-color: transparent;
-    border: none !important;
-    font: inherit;
-    padding: 0;
-    white-space: nowrap;
-    :focus {
-      background-color: transparent;
-    }
-    :hover {
-      background-color: transparent;
-      box-shadow: none;
-    }
-    span {
-      cursor: pointer !important;
-    }
-  }
-`;
 
 export const createSearchStringForContacts = (contacts?: User[]) => {
   return `${contacts?.length ? contacts.map((aut) => aut.name).join() : ''}`;
@@ -118,7 +93,7 @@ export const getIntegrationTableCol = (): Column<Integration>[] => {
         return status.time;
       },
       Cell: ({ row }: Cell<Integration>) => {
-        const latestRun = row.values.latestRun;
+        const { latestRun } = row.values;
         if (latestRun == null || latestRun === 0) return '–';
         return (
           <RelativeTimeWithTooltip id="latest-run" time={latestRun as number} />
@@ -138,7 +113,7 @@ export const getIntegrationTableCol = (): Column<Integration>[] => {
         ]);
       },
       Cell: ({ row }: Cell<Integration>) => {
-        const lastConnected = row.values.lastConnected;
+        const { lastConnected } = row.values;
         if (lastConnected == null || lastConnected === 0) return '–';
         return (
           <RelativeTimeWithTooltip
@@ -193,7 +168,7 @@ export const getIntegrationTableCol = (): Column<Integration>[] => {
         return createSearchStringForContacts(row.contacts);
       },
       Cell: ({ row }: Cell<Integration>) => {
-        const { contacts, id } = row.original;
+        const { contacts } = row.original;
         const noOwner = '–';
         if (contacts == null) return noOwner;
         const owner = contacts.find(
