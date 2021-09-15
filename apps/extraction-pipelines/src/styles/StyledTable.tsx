@@ -13,12 +13,6 @@ export const StyledTable = styled.div`
           background-color: white;
           padding: 1rem 0.75rem;
           white-space: nowrap;
-          &:last-child {
-            width: 3rem;
-          }
-          &:first-child {
-            width: 3rem;
-          }
         }
       }
     }
