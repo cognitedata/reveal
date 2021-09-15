@@ -11,8 +11,6 @@ import { ExplorerSearchResults } from 'src/modules/Explorer/Containers/ExplorerS
 import { FileDetails } from 'src/modules/FileDetails/Containers/FileDetails';
 import { TableDataItem, ViewMode } from 'src/modules/Common/types';
 import { ExplorerToolbar } from 'src/modules/Explorer/Containers/ExplorerToolbar';
-import { FileState } from 'src/modules/Common/filesSlice';
-import { FileUploadModal } from 'src/modules/Common/Components/FileUploaderModal/FileUploaderModal';
 import { StatusToolBar } from 'src/modules/Process/Containers/StatusToolBar';
 import { useHistory } from 'react-router-dom';
 import {
@@ -21,19 +19,20 @@ import {
   workflowRoutes,
 } from 'src/modules/Workflow/workflowRoutes';
 import { MAX_SELECT_COUNT } from 'src/constants/ExplorerConstants';
-import { FileDownloaderModal } from 'src/modules/Common/Components/FileDownloaderModal/FileDownloaderModal';
-import { BulkEditModal } from 'src/modules/Common/Components/BulkEdit/BulkEditModal';
-import { updateBulk } from 'src/store/thunks/updateBulk';
 import { FetchFilesById } from 'src/store/thunks/FetchFilesById';
 import { pushMetric } from 'src/utils/pushMetric';
 import { PopulateProcessFiles } from 'src/store/thunks/PopulateProcessFiles';
 import { PopulateReviewFiles } from 'src/store/thunks/PopulateReviewFiles';
+import isEqual from 'lodash-es/isEqual';
 import {
-  BulkEditTempState,
   setBulkEditModalVisibility,
-  setBulkEditTemp,
   setFileDownloadModalVisibility,
 } from 'src/modules/Common/commonSlice';
+import { ExplorerFileUploadModalContainer } from 'src/modules/Explorer/Containers/ExplorerFileUploadModalContainer';
+import { ExplorerFileDownloadModalContainer } from 'src/modules/Explorer/Containers/ExplorerFileDownloadModalContainer';
+import { ExplorerBulkEditModalContainer } from 'src/modules/Explorer/Containers/ExplorerBulkEditModalContainer';
+import { DeleteFilesById } from 'src/store/thunks/DeleteFilesById';
+import { FilterSidePanel } from './FilterSidePanel';
 import {
   setExplorerCurrentView,
   setExplorerFileSelectState,
@@ -44,17 +43,16 @@ import {
   toggleExplorerFilterView,
   selectExplorerSelectedFileIds,
   setExplorerFileUploadModalVisibility,
-  selectExplorerAllSelectedFiles,
-  addExplorerUploadedFileId,
   clearExplorerStateOnTransition,
 } from '../store/explorerSlice';
-
-import { FilterSidePanel } from './FilterSidePanel';
 
 pushMetric('Vision.Explorer');
 
 const Explorer = () => {
   const history = useHistory();
+  const dispatch = useDispatch();
+
+  const queryClient = new QueryClient();
 
   const showFilter = useSelector(
     ({ explorerReducer }: RootState) => explorerReducer.showFilter
@@ -74,33 +72,11 @@ const Explorer = () => {
   const query = useSelector(
     ({ explorerReducer }: RootState) => explorerReducer.query
   );
-  const showFileUploadModal = useSelector(
-    ({ explorerReducer }: RootState) => explorerReducer.showFileUploadModal
-  );
-  const selectedFileIds = useSelector((state: RootState) =>
-    selectExplorerSelectedFileIds(state.explorerReducer)
-  );
-  const selectedFiles: FileState[] = useSelector(
-    ({ explorerReducer }: RootState) => {
-      return selectExplorerAllSelectedFiles(explorerReducer);
-    }
-  );
-  const showFileDownloadModal = useSelector(
-    ({ commonReducer }: RootState) => commonReducer.showFileDownloadModal
-  );
-  const showBulkEditModal = useSelector(
-    ({ commonReducer }: RootState) => commonReducer.showBulkEditModal
-  );
-  const bulkEditTemp = useSelector(
-    ({ commonReducer }: RootState) => commonReducer.bulkEditTemp
-  );
-  const uploadedFileIds = useSelector(
-    ({ explorerReducer }: RootState) => explorerReducer.uploadedFileIds
-  );
 
-  const queryClient = new QueryClient();
-
-  const dispatch = useDispatch();
+  const selectedFileIds = useSelector(
+    (state: RootState) => selectExplorerSelectedFileIds(state.explorerReducer),
+    isEqual
+  );
 
   useEffect(() => {
     return () => {
@@ -126,15 +102,6 @@ const Explorer = () => {
 
   const handleRowSelect = (item: TableDataItem, selected: boolean) => {
     dispatch(setExplorerFileSelectState(item.id, selected));
-  };
-
-  const onUploadSuccess = (fileId: number) => {
-    dispatch(addExplorerUploadedFileId(fileId));
-  };
-
-  const onFinishUpload = () => {
-    dispatch(PopulateProcessFiles(uploadedFileIds));
-    history.push(getLink(workflowRoutes.process));
   };
 
   const handleMetadataClose = () => {
@@ -176,34 +143,16 @@ const Explorer = () => {
     }
   };
 
-  const setBulkEdit = (value: BulkEditTempState) => {
-    dispatch(setBulkEditTemp(value));
-  };
-  const onFinishBulkEdit = () => {
-    dispatch(updateBulk({ selectedFiles, bulkEditTemp }));
-    onCloseBulkEdit();
-  };
-  const onCloseBulkEdit = () => {
-    dispatch(setBulkEditModalVisibility(false));
-    setBulkEdit({});
+  const onDelete = () => {
+    dispatch(DeleteFilesById(selectedFileIds));
   };
 
   return (
     <>
-      <Deselect />
-      <FileUploadModal
-        enableProcessAfter
-        onUploadSuccess={onUploadSuccess}
-        onFinishUpload={onFinishUpload}
-        showModal={showFileUploadModal}
-        onCancel={() => dispatch(setExplorerFileUploadModalVisibility(false))}
-      />
-      <FileDownloaderModal
-        fileIds={selectedFileIds}
-        showModal={showFileDownloadModal}
-        onCancel={() => dispatch(setFileDownloadModalVisibility(false))}
-      />
       <StatusToolBar current="Vision Explore" />
+      <Deselect />
+      <ExplorerFileUploadModalContainer />
+      <ExplorerFileDownloadModalContainer />
       <Wrapper>
         <QueryClientProvider client={queryClient}>
           {showFilter && (
@@ -242,14 +191,16 @@ const Explorer = () => {
                 onContextualise={onContextualise}
                 onReview={onReview}
                 onBulkEdit={() => dispatch(setBulkEditModalVisibility(true))}
+                onDelete={onDelete}
               />
               <ExplorerSearchResults
+                currentView={currentView}
                 filter={filter}
+                query={query}
+                focusedId={focusedFileId || undefined}
+                selectedFileIds={selectedFileIds}
                 onClick={handleItemClick}
                 onRowSelect={handleRowSelect}
-                query={query}
-                selectedId={focusedFileId || undefined}
-                currentView={currentView}
               />
             </ViewContainer>
           </TablePanel>
@@ -265,14 +216,7 @@ const Explorer = () => {
               </QueryClientProvider>
             </DrawerContainer>
           )}
-          <BulkEditModal
-            showModal={showBulkEditModal}
-            selectedFiles={selectedFiles}
-            bulkEditTemp={bulkEditTemp}
-            onCancel={onCloseBulkEdit}
-            setBulkEditTemp={setBulkEdit}
-            onFinishBulkEdit={onFinishBulkEdit}
-          />
+          <ExplorerBulkEditModalContainer />
         </QueryClientProvider>
       </Wrapper>
     </>

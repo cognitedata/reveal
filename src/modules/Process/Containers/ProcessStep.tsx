@@ -16,16 +16,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ProcessToolBar } from 'src/modules/Process/Containers/ProcessToolBar/ProcessToolBar';
 import { ProcessFooter } from 'src/modules/Process/Containers/ProcessFooter';
 import { RootState } from 'src/store/rootReducer';
-import { updateBulk } from 'src/store/thunks/updateBulk';
-import { selectAllSelectedFiles } from 'src/modules/Common/filesSlice';
-import {
-  BulkEditTempState,
-  setBulkEditModalVisibility,
-  setBulkEditTemp,
-  setFileDownloadModalVisibility,
-} from 'src/modules/Common/commonSlice';
-import { FileDownloaderModal } from 'src/modules/Common/Components/FileDownloaderModal/FileDownloaderModal';
-import { BulkEditModal } from 'src/modules/Common/Components/BulkEdit/BulkEditModal';
+import { ProcessFileUploadModalContainer } from 'src/modules/Process/Containers/ProcessFileUploadModalContainer';
+import { ProcessFileDownloadModalContainer } from 'src/modules/Process/Containers/ProcessFileDownloadModalContainer';
+import { ProcessBulkEditModalContainer } from 'src/modules/Process/Containers/ProcessBulkEditModalContainer';
+import { ExploreModalContainer } from 'src/modules/Process/Containers/ExploreModalContainer';
 
 const ResultsContainer = styled.div`
   flex: 1;
@@ -46,34 +40,6 @@ export default function ProcessStep() {
     ({ processSlice }: RootState) => processSlice.currentView
   );
 
-  const showFileDownloadModal = useSelector(
-    ({ commonReducer }: RootState) => commonReducer.showFileDownloadModal
-  );
-
-  const showBulkEditModal = useSelector(
-    ({ commonReducer }: RootState) => commonReducer.showBulkEditModal
-  );
-  const bulkEditTemp = useSelector(
-    ({ commonReducer }: RootState) => commonReducer.bulkEditTemp
-  );
-
-  const selectedFiles = useSelector((state: RootState) =>
-    selectAllSelectedFiles(state.filesSlice)
-  );
-
-  const setBulkEdit = (value: BulkEditTempState) => {
-    dispatch(setBulkEditTemp(value));
-  };
-
-  const onCloseBulkEdit = () => {
-    dispatch(setBulkEditModalVisibility(false));
-    setBulkEdit({});
-  };
-  const onFinishBulkEdit = () => {
-    dispatch(updateBulk({ selectedFiles, bulkEditTemp }));
-    onCloseBulkEdit();
-  };
-
   useEffect(() => {
     return () => {
       dispatch(hideFileMetadataPreview());
@@ -82,6 +48,8 @@ export default function ProcessStep() {
   return (
     <>
       <Deselect />
+      <ProcessFileUploadModalContainer />
+      <ProcessFileDownloadModalContainer />
       <QueryClientProvider client={queryClient}>
         <TitleContainer>
           <Title level={2}>Contextualize Imagery Data</Title>
@@ -93,23 +61,12 @@ export default function ProcessStep() {
             dispatch(setProcessCurrentView(view as ViewMode))
           }
         />
-        <FileDownloaderModal
-          fileIds={selectedFiles.map((file) => file.id)}
-          showModal={showFileDownloadModal}
-          onCancel={() => dispatch(setFileDownloadModalVisibility(false))}
-        />
-        <BulkEditModal
-          showModal={showBulkEditModal}
-          selectedFiles={selectedFiles}
-          bulkEditTemp={bulkEditTemp}
-          onCancel={onCloseBulkEdit}
-          setBulkEditTemp={setBulkEdit}
-          onFinishBulkEdit={onFinishBulkEdit}
-        />
         <ResultsContainer>
           <ProcessResults currentView={currentView as ViewMode} />
         </ResultsContainer>
         <ProcessFooter />
+        <ExploreModalContainer />
+        <ProcessBulkEditModalContainer />
       </QueryClientProvider>
     </>
   );

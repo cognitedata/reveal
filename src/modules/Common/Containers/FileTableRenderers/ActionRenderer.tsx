@@ -3,12 +3,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { CellRenderer, TableDataItem } from 'src/modules/Common/types';
 import styled from 'styled-components';
-import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
+import { DeleteFilesById } from 'src/store/thunks/DeleteFilesById';
 import {
   isProcessingFile,
   makeSelectAnnotationStatuses,
 } from 'src/modules/Process/processSlice';
-import { DeleteAnnotationsByFileIds } from 'src/store/thunks/DeleteAnnotationsByFileIds';
 import { selectUpdatedFileDetails } from 'src/modules/FileDetails/fileDetailsSlice';
 import { VisionMode } from 'src/constants/enums/VisionEnums';
 import { selectExplorerSelectedFileIds } from 'src/modules/Explorer/store/explorerSlice';
@@ -34,8 +33,7 @@ export function ActionRenderer(
 
   const handleFileDelete = () => {
     const { id } = rowData;
-    dispatch(DeleteAnnotationsByFileIds([id]));
-    dispatch(deleteFilesById([{ id }]));
+    dispatch(DeleteFilesById([id]));
   };
 
   const handleReview = () => {

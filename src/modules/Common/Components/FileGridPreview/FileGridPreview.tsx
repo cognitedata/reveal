@@ -13,8 +13,7 @@ import {
 import { selectUpdatedFileDetails } from 'src/modules/FileDetails/fileDetailsSlice';
 import { TableDataItem } from 'src/modules/Common/types';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
-import { DeleteAnnotationsByFileIds } from 'src/store/thunks/DeleteAnnotationsByFileIds';
-import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
+import { DeleteFilesById } from 'src/store/thunks/DeleteFilesById';
 import { VisionMode } from 'src/constants/enums/VisionEnums';
 import { AnnotationsBadge } from '../AnnotationsBadge/AnnotationsBadge';
 import { AnnotationsBadgePopoverContent } from '../AnnotationsBadge/AnnotationsBadgePopoverContent';
@@ -54,8 +53,7 @@ export const FileGridPreview = ({
   };
 
   const handleFileDelete = () => {
-    dispatch(DeleteAnnotationsByFileIds([item.id]));
-    dispatch(deleteFilesById([{ id: item.id }]));
+    dispatch(DeleteFilesById([item.id]));
   };
 
   const getAnnotationCounts = useMemo(makeSelectAnnotationCounts, []);

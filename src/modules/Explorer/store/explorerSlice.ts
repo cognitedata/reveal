@@ -14,7 +14,7 @@ import {
   Metadata,
 } from '@cognite/cdf-sdk-singleton';
 import { createFileInfo, createFileState } from 'src/store/util/StateUtils';
-import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
+import { DeleteFilesById } from 'src/store/thunks/DeleteFilesById';
 import { UpdateFiles } from 'src/store/thunks/UpdateFiles';
 import { FileState } from 'src/modules/Common/filesSlice';
 import { makeReducerSelectAllFilesWithFilter } from 'src/store/commonReducers';
@@ -280,7 +280,7 @@ const explorerSlice = createSlice({
     );
 
     builder.addMatcher(
-      isAnyOf(deleteFilesById.fulfilled, clearExplorerFileState),
+      isAnyOf(DeleteFilesById.fulfilled, clearExplorerFileState),
       (state, action) => {
         action.payload.forEach((fileId) => {
           deleteFileById(state, fileId);
@@ -321,7 +321,7 @@ export const {
 export default explorerSlice.reducer;
 
 // selectors
-export const selectExplorerSelectedIds = (state: State): number[] =>
+const selectExplorerSelectedIds = (state: State): number[] =>
   state.files.selectedIds;
 
 export const selectExploreFileCount = (state: State): number =>

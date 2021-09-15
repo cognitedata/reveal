@@ -102,7 +102,7 @@ const Frame = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: 0px;
+  padding: 0;
 
   position: absolute;
   width: 899px;
@@ -115,7 +115,7 @@ const TitleContainer = styled.div`
   flex: none;
   order: 0;
   flex-grow: 0;
-  margin: 24px 0px;
+  margin: 24px 0;
   width: 665px;
 `;
 
@@ -123,7 +123,7 @@ const BodyContainer = styled.div`
   flex: none;
   order: 1;
   flex-grow: 0;
-  margin: 16px 0px;
+  margin: 16px 0;
   width: 665px;
 `;
 
@@ -134,12 +134,12 @@ const Infobox = styled.div`
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  padding: 0px;
+  padding: 0;
 
   position: static;
   width: 665px;
   height: 110px;
-  left: 0px;
+  left: 0;
   top: 40px;
 
   /* midBlue/100 */
@@ -150,7 +150,7 @@ const Infobox = styled.div`
   flex: none;
   order: 1;
   flex-grow: 0;
-  margin: 16px 0px;
+  margin: 16px 0;
 `;
 
 const ListContainer = styled.div`
@@ -178,5 +178,5 @@ const GraphicContainer = styled.div`
   flex: none;
   order: 1;
   flex-grow: 0;
-  margin: 0px 54px;
+  margin: 0 54px;
 `;

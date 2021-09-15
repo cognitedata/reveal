@@ -15,7 +15,7 @@ import {
   clearFileState,
   deleteAnnotationsFromState,
 } from 'src/store/commonActions';
-import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
+import { DeleteFilesById } from 'src/store/thunks/DeleteFilesById';
 import { AnnotationDetectionJobUpdate } from 'src/store/thunks/AnnotationDetectionJobUpdate';
 import { CreateAnnotations } from 'src/store/thunks/CreateAnnotations';
 import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
@@ -23,6 +23,10 @@ import { UpdateAnnotations } from 'src/store/thunks/UpdateAnnotations';
 import { RootState } from 'src/store/rootReducer';
 import { createFileInfo } from 'src/store/util/StateUtils';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
+import {
+  clearExplorerFileState,
+  clearExplorerStateOnTransition,
+} from 'src/modules/Explorer/store/explorerSlice';
 
 export interface VisionAnnotationState extends Omit<VisionAnnotation, 'id'> {
   id: number;
@@ -159,12 +163,32 @@ const previewSlice = createSlice({
       deleteAnnotationsByIds(state, payload);
     });
 
+    // todo: remove this once annotations are removed from this slice
+    builder.addCase(clearExplorerStateOnTransition, (state) => {
+      state.selectedAnnotationIds = [];
+      state.annotations = {
+        counter: 0,
+        byId: {},
+        allIds: [],
+      };
+      state.models = {
+        byId: {},
+        allIds: [],
+      };
+      state.modelsByFileId = {};
+    });
+
     // Matchers
 
     builder.addMatcher(
-      isAnyOf(deleteFilesById.fulfilled, clearFileState),
+      isAnyOf(
+        DeleteFilesById.fulfilled,
+        clearFileState,
+        clearExplorerFileState
+      ),
       (state, action) => {
-        action.payload.forEach((fileId) => {
+        const deletedFileIds = action.payload;
+        deletedFileIds.forEach((fileId) => {
           const models = state.modelsByFileId[fileId];
           if (models !== undefined) {
             // In case deleting files before running models
@@ -184,6 +208,11 @@ const previewSlice = createSlice({
 
           delete state.modelsByFileId[fileId];
         });
+
+        // clear loaded Ids
+        state.fileIds = state.fileIds.filter(
+          (id) => !deletedFileIds.includes(id)
+        );
       }
     );
 
@@ -202,7 +231,9 @@ const previewSlice = createSlice({
   },
 });
 
-export default previewSlice.reducer;
+export type { State as ReviewReducerState };
+export { initialState as reviewReducerInitialState };
+
 export const {
   setReviewFileIds,
   toggleAnnotationVisibility,
@@ -212,6 +243,8 @@ export const {
   showCollectionSettingsModel,
   resetPreview,
 } = previewSlice.actions;
+
+export default previewSlice.reducer;
 
 // state helper functions
 

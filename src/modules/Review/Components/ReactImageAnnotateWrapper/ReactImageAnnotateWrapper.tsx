@@ -287,8 +287,9 @@ export const ReactImageAnnotateWrapper: React.FC<ReactImageAnnotateWrapperProps>
             }
           >
             <ExtraToolItem
-              variant="ghost"
+              type="ghost"
               icon="Settings"
+              aria-label="open collection settings"
               onClick={onOpenCollectionSettings}
             />
           </Tooltip>

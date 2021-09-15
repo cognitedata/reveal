@@ -12,8 +12,7 @@ import {
 } from 'src/modules/Process/processSlice';
 import { TableDataItem } from 'src/modules/Common/types';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
-import { DeleteAnnotationsByFileIds } from 'src/store/thunks/DeleteAnnotationsByFileIds';
-import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
+import { DeleteFilesById } from 'src/store/thunks/DeleteFilesById';
 import { AnnotationsBadge } from '../AnnotationsBadge/AnnotationsBadge';
 import { AnnotationsBadgePopoverContent } from '../AnnotationsBadge/AnnotationsBadgePopoverContent';
 import { Popover } from '../Popover';
@@ -50,8 +49,7 @@ export const MapPopup = ({
   };
 
   const handleFileDelete = () => {
-    dispatch(DeleteAnnotationsByFileIds([item.id]));
-    dispatch(deleteFilesById([{ id: item.id }]));
+    dispatch(DeleteFilesById([item.id]));
   };
 
   const getAnnotationCounts = useMemo(makeSelectAnnotationCounts, []);

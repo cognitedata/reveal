@@ -72,7 +72,7 @@ export type ModalFileUploaderProps = {
   onUploadFailure?: (error: string) => void;
   onCancel?: () => void;
   beforeUploadStart?: (fileList: CogsFileInfo[]) => void;
-  onFinishUpload: () => void;
+  onFinishUploadAndProcess: () => void;
 };
 
 // vaguely described from console output
@@ -162,7 +162,7 @@ export const ModalFileUploader = ({
   onCancel = () => {},
   beforeUploadStart = () => {},
   onFileListChange = () => {},
-  onFinishUpload,
+  onFinishUploadAndProcess,
   ...props
 }: ModalFileUploaderProps) => {
   const sdk = useSDK();
@@ -443,7 +443,7 @@ export const ModalFileUploader = ({
   const onFinish = () => {
     onCloseModal();
     if (processAfter || !enableProcessAfter) {
-      onFinishUpload();
+      onFinishUploadAndProcess();
     }
   };
 
@@ -495,5 +495,5 @@ const Footer = styled.div`
   align-items: center;
   gap: 20px;
   justify-content: flex-end;
-  margin: 39px 0px 0px 0px;
+  margin: 39px 0 0 0;
 `;

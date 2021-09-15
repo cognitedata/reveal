@@ -9,13 +9,12 @@ import {
   resetPreview,
   showCollectionSettingsModel,
 } from 'src/modules/Review/previewSlice';
-import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
+import { DeleteFilesById } from 'src/store/thunks/DeleteFilesById';
 import { selectFileById } from 'src/modules/Common/filesSlice';
 import ImageReview from 'src/modules/Review/Containers/ImageReview';
 import VideoReview from 'src/modules/Review/Containers/VideoReview';
 import { isVideo } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
 import { resetEditHistory } from 'src/modules/FileDetails/fileDetailsSlice';
-import { DeleteAnnotationsByFileIds } from 'src/store/thunks/DeleteAnnotationsByFileIds';
 import { StatusToolBar } from 'src/modules/Process/Containers/StatusToolBar';
 import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
 import { CollectionSettingsModal } from 'src/modules/Common/Components/CollectionSettingsModal/CollectionSettingsModal';
@@ -67,8 +66,7 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
 
   const handleFileDelete = () => {
     batch(() => {
-      dispatch(DeleteAnnotationsByFileIds([file!.id]));
-      dispatch(deleteFilesById([{ id: file!.id }]));
+      dispatch(DeleteFilesById([file!.id]));
     });
     onBackButtonClick();
   };

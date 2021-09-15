@@ -16,7 +16,7 @@ import {
 import { ToastUtils } from 'src/utils/ToastUtils';
 import { createFileInfo } from 'src/store/util/StateUtils';
 import { UpdateFiles } from 'src/store/thunks/UpdateFiles';
-import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
+import { DeleteFilesById } from 'src/store/thunks/DeleteFilesById';
 import { SaveAnnotations } from 'src/store/thunks/SaveAnnotations';
 import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
 import { DeleteAnnotations } from 'src/store/thunks/DeleteAnnotations';
@@ -164,7 +164,7 @@ const filesSlice = createSlice({
     builder.addCase(setSelectedAllFiles, makeReducerSelectAllFilesWithFilter());
 
     builder.addMatcher(
-      isAnyOf(deleteFilesById.fulfilled, clearFileState),
+      isAnyOf(DeleteFilesById.fulfilled, clearFileState),
       (state, action) => {
         action.payload.forEach((fileId) => {
           deleteFileById(state, fileId);
@@ -267,8 +267,6 @@ export const selectFileById = createSelector(
     return file ? createFileInfo(file) : null;
   }
 );
-export const selectFileCount = (state: State): number =>
-  state.files.allIds.length;
 
 // state utility functions
 

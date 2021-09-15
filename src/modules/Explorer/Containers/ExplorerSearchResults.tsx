@@ -13,7 +13,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import {
   selectExplorerAllFilesSelected,
-  selectExplorerSelectedIds,
   setReverse,
   setSortKey,
   ExploreSortPaginateType,
@@ -30,28 +29,36 @@ import { MapView } from '../../Common/Components/MapView/MapView';
 import { FileTableExplorer } from '../../Common/Components/FileTable/FileTableExplorer';
 
 export const ExplorerSearchResults = ({
-  selectedId,
+  currentView,
   query = '',
   filter = {},
+  focusedId,
+  selectedFileIds,
   onClick,
-  currentView,
   onRowSelect,
 }: {
+  currentView: ViewMode;
   query?: string;
-  selectedId?: number;
   filter?: FileFilterProps;
+  focusedId?: number;
+  selectedFileIds: number[];
   onClick: (item: TableDataItem) => void;
   onRowSelect: (item: TableDataItem, selected: boolean) => void;
-  currentView: ViewMode;
 }) => {
   const dispatch = useDispatch();
+
   const allFilesSelected = useSelector((state: RootState) =>
     selectExplorerAllFilesSelected(state.explorerReducer)
   );
 
-  const selectedFileIds = useSelector((state: RootState) =>
-    selectExplorerSelectedIds(state.explorerReducer)
+  const activeKey = useSelector(
+    ({ explorerReducer }: RootState) => explorerReducer.mapTableTabKey
   );
+
+  const sortPaginateState = useSelector(
+    ({ explorerReducer }: RootState) => explorerReducer.sortPaginate
+  );
+
   const handleSelectAllFiles = (
     value: boolean,
     selectFilter?: SelectFilter
@@ -64,50 +71,28 @@ export const ExplorerSearchResults = ({
     dispatch(setExplorerSelectedFiles(fileIds));
   };
 
-  const sortPaginateState = useSelector(
-    ({ explorerReducer }: RootState) => explorerReducer.sortPaginate
-  );
-
-  const handleSetSortKey = (type: ExploreSortPaginateType, sortKey: string) => {
-    dispatch(setSortKey({ type, sortKey }));
-  };
-  const handleSetReverse = (
-    type: ExploreSortPaginateType,
-    reverse: boolean
-  ) => {
-    dispatch(setReverse({ type, reverse }));
-  };
-  const handleSetCurrentPage = (
-    type: ExploreSortPaginateType,
-    currentPage: number
-  ) => {
-    dispatch(setCurrentPage({ type, currentPage }));
-  };
-  const handleSetPageSize = (
-    type: ExploreSortPaginateType,
-    pageSize: number
-  ) => {
-    dispatch(setPageSize({ type, pageSize }));
+  const setActiveKey = (key: string) => {
+    dispatch(setMapTableTabKey({ mapTableTabKey: key }));
   };
 
   const getSortControls = (type: ExploreSortPaginateType) => ({
     sortKey: sortPaginateState[type].sortKey,
     reverse: sortPaginateState[type].reverse,
     setSortKey: (sortKey: string) => {
-      handleSetSortKey(type, sortKey);
+      dispatch(setSortKey({ type, sortKey }));
     },
     setReverse: (reverse: boolean) => {
-      handleSetReverse(type, reverse);
+      dispatch(setReverse({ type, reverse }));
     },
   });
   const getPaginationControls = (type: ExploreSortPaginateType) => ({
     currentPage: sortPaginateState[type].currentPage,
     pageSize: sortPaginateState[type].pageSize,
     setCurrentPage: (currentPage: number) => {
-      handleSetCurrentPage(type, currentPage);
+      dispatch(setCurrentPage({ type, currentPage }));
     },
     setPageSize: (pageSize: number) => {
-      handleSetPageSize(type, pageSize);
+      dispatch(setPageSize({ type, pageSize }));
     },
   });
 
@@ -129,13 +114,6 @@ export const ExplorerSearchResults = ({
   const modalSortPaginateControls = {
     ...getSortControls(ExploreSortPaginateType.modal),
     ...getPaginationControls(ExploreSortPaginateType.modal),
-  };
-
-  const activeKey = useSelector(
-    ({ explorerReducer }: RootState) => explorerReducer.mapTableTabKey
-  );
-  const setActiveKey = (key: string) => {
-    dispatch(setMapTableTabKey({ mapTableTabKey: key }));
   };
 
   return (
@@ -175,7 +153,7 @@ export const ExplorerSearchResults = ({
                   <MapView
                     onRowSelect={onRowSelect}
                     onRowClick={onClick}
-                    focusedFileId={selectedId}
+                    focusedFileId={focusedId}
                     allRowsSelected={allFilesSelected}
                     onSelectAllRows={handleSelectAllFiles}
                     selectedRowIds={selectedFileIds}
@@ -189,35 +167,24 @@ export const ExplorerSearchResults = ({
                   />
                 );
               }
-              if (currentView === 'modal') {
-                return (
-                  <FileTableExplorer
-                    modalView
-                    onRowSelect={onRowSelect}
-                    onRowClick={onClick}
-                    focusedFileId={selectedId}
-                    allRowsSelected={allFilesSelected}
-                    onSelectAllRows={handleSelectAllFiles}
-                    selectedRowIds={selectedFileIds}
-                    {...props}
-                    sortPaginateControls={modalSortPaginateControls}
-                    onSelectPage={handleSetSelectedFiles}
-                    rowKey="rowKey"
-                  />
-                );
-              }
 
               return (
                 <FileTableExplorer
+                  modalView={currentView === 'modal'}
                   onRowSelect={onRowSelect}
                   onRowClick={onClick}
-                  focusedFileId={selectedId}
+                  focusedFileId={focusedId}
                   allRowsSelected={allFilesSelected}
                   onSelectAllRows={handleSelectAllFiles}
                   selectedRowIds={selectedFileIds}
                   {...props}
-                  sortPaginateControls={listSortPaginateControls}
+                  sortPaginateControls={
+                    currentView === 'modal'
+                      ? modalSortPaginateControls
+                      : listSortPaginateControls
+                  }
                   onSelectPage={handleSetSelectedFiles}
+                  rowKey="rowKey"
                 />
               );
             };

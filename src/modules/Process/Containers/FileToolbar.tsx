@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { selectAllSelectedFiles } from 'src/modules/Common/filesSlice';
-import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
+import { DeleteFilesById } from 'src/store/thunks/DeleteFilesById';
 import { BulkActionMenu } from 'src/modules/Common/Components/BulkActionMenu/BulkActionMenu';
 import {
   setBulkEditModalVisibility,
@@ -39,9 +39,9 @@ export const FileToolbar = ({
 
   const onDelete = () => {
     dispatch(
-      deleteFilesById(
+      DeleteFilesById(
         selectedFiles.map((file) => {
-          return { id: file.id };
+          return file.id;
         })
       )
     );

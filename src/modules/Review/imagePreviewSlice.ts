@@ -53,7 +53,7 @@ type State = {
   };
 };
 
-export const initialState: State = {
+const initialState: State = {
   predefinedCollections: {
     predefinedKeypoints: [],
     predefinedShapes: [],
@@ -253,6 +253,10 @@ const imagePreviewSlice = createSlice({
     );
   },
 });
+
+export type { State as ImagePreviewReducerState };
+export { initialState as imagePreviewReducerInitialState };
+
 export const {
   selectCollection,
   deSelectAllCollections,

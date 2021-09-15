@@ -17,6 +17,7 @@ export const ExplorerToolbar = ({
   onContextualise,
   onReview,
   onBulkEdit,
+  onDelete,
 }: {
   query?: string;
   selectedCount?: number;
@@ -29,6 +30,7 @@ export const ExplorerToolbar = ({
   onContextualise: () => void;
   onReview: () => void;
   onBulkEdit: () => void;
+  onDelete: () => void;
 }) => {
   return (
     <>
@@ -52,6 +54,7 @@ export const ExplorerToolbar = ({
             onContextualise={onContextualise}
             onReview={onReview}
             onBulkEdit={onBulkEdit}
+            onDelete={onDelete}
           />
         </Right>
       </TitleBar>
@@ -113,6 +116,5 @@ const Right = styled.div`
 const Container = styled.div`
   display: flex;
   justify-content: space-between;
-  align-items: bottom;
   align-items: flex-end;
 `;

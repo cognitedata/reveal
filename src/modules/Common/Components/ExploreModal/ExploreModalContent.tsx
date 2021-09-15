@@ -14,7 +14,8 @@ export type ExploreModalContentProps = {
   onUseFiles: () => void;
   query?: string;
   onSearch: (text: string) => void;
-  selectedId?: number | null;
+  focusedId?: number | null;
+  selectedIds: number[];
   selectedCount: number;
   filter: FileFilterProps;
   setFilter: (newFilter: FileFilterProps) => void;
@@ -26,7 +27,8 @@ export const ExploreModalContent = ({
   onRowSelect,
   query,
   onSearch,
-  selectedId,
+  focusedId,
+  selectedIds,
   onCloseModal,
   onUseFiles,
   selectedCount,
@@ -51,12 +53,13 @@ export const ExploreModalContent = ({
       </FilterBar>
       <ExploreTableContainer>
         <ExplorerSearchResults
+          currentView="modal"
           filter={filter}
+          query={query}
+          focusedId={focusedId || undefined}
+          selectedFileIds={selectedIds}
           onClick={onItemClick}
           onRowSelect={onRowSelect}
-          query={query}
-          selectedId={selectedId || undefined}
-          currentView="modal"
         />
       </ExploreTableContainer>
       <Footer>

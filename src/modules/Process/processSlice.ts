@@ -13,7 +13,7 @@ import {
 } from 'src/api/types';
 import { getFakeQueuedJob } from 'src/api/utils';
 import { clearFileState, fileProcessUpdate } from 'src/store/commonActions';
-import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
+import { DeleteFilesById } from 'src/store/thunks/DeleteFilesById';
 import isEqual from 'lodash-es/isEqual';
 import { DEFAULT_PAGE_SIZE } from 'src/constants/PaginationConsts';
 import { postAnnotationJob } from 'src/store/thunks/PostAnnotationJob';
@@ -292,9 +292,10 @@ const processSlice = createSlice({
     });
 
     builder.addMatcher(
-      isAnyOf(deleteFilesById.fulfilled, clearFileState),
+      isAnyOf(DeleteFilesById.fulfilled, clearFileState),
       (state, action) => {
-        action.payload.forEach((fileId) => {
+        const deletedFileIds = action.payload;
+        deletedFileIds.forEach((fileId) => {
           // clear jobs state
           if (state.files.byId[fileId]) {
             const { jobIds } = state.files.byId[fileId];
@@ -306,12 +307,6 @@ const processSlice = createSlice({
             });
           }
 
-          // clear upload state
-
-          state.uploadedFileIds = state.uploadedFileIds.filter(
-            (id) => id !== fileId
-          );
-
           delete state.files.byId[fileId];
           if (state.focusedFileId === fileId) {
             // hide drawer and reset selected file if it's deleted
@@ -319,6 +314,18 @@ const processSlice = createSlice({
             state.showFileMetadataDrawer = false;
           }
         });
+        // clear upload state
+
+        state.uploadedFileIds = state.uploadedFileIds.filter(
+          (id) => !deletedFileIds.includes(id)
+        );
+
+        // clear loaded Ids
+
+        state.fileIds = state.fileIds.filter(
+          (id) => !deletedFileIds.includes(id)
+        );
+
         state.files.allIds = Object.keys(state.files.byId).map((id) =>
           parseInt(id, 10)
         );

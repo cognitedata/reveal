@@ -21,7 +21,7 @@ import {
 import { FileActions } from 'src/modules/Common/types';
 import { EXPLORER_FILE_FETCH_LIMIT } from 'src/constants/ExplorerConstants';
 import { totalFileCount } from 'src/api/file/aggregate';
-import { useDispatch, useSelector } from 'react-redux';
+import { batch, useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { searchFilesWithValidMimeTypes } from 'src/api/file/searchFilesWithValidMimeTypes';
 import { FetchFilesById } from 'src/store/thunks/FetchFilesById';
@@ -87,8 +87,10 @@ export const ResultTableLoader = <T extends Resource>({
         { name: props.query },
         EXPLORER_FILE_FETCH_LIMIT
       );
-      dispatch(clearExplorerFileState(explorerFiles.map((file) => file.id)));
-      dispatch(setExplorerFiles(fileSearchResult));
+      batch(() => {
+        dispatch(clearExplorerFileState(explorerFiles.map((file) => file.id)));
+        dispatch(setExplorerFiles(fileSearchResult));
+      });
     })();
 
     (async () => {

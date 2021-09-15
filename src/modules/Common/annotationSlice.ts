@@ -12,7 +12,7 @@ import {
 } from 'reselect';
 import isEqual from 'lodash-es/isEqual';
 import difference from 'lodash-es/difference';
-import { deleteFilesById } from 'src/store/thunks/deleteFilesById';
+import { DeleteFilesById } from 'src/store/thunks/DeleteFilesById';
 import { clearFileState } from 'src/store/commonActions';
 import { clearExplorerFileState } from 'src/modules/Explorer/store/explorerSlice';
 import {
@@ -90,7 +90,7 @@ const annotationSlice = createSlice({
 
     builder.addMatcher(
       isAnyOf(
-        deleteFilesById.fulfilled,
+        DeleteFilesById.fulfilled,
         clearFileState,
         clearExplorerFileState
       ),
@@ -138,16 +138,20 @@ export const selectAnnotationsForAllFiles = createSelector(
   }
 );
 
-export const filesAnnotationCounts = (state: State, fileIds: number[]) => {
-  const data: Record<number, number> = {};
-  fileIds.forEach((id) => {
-    data[id] = state.files.byId[id]?.length || 0;
-  });
-
-  return data;
-};
-
 const createDeepEqualSelector = createSelectorCreator(defaultMemoize, isEqual);
+
+export const filesAnnotationCounts = createDeepEqualSelector(
+  (state: State) => state.files.byId,
+  (_: State, fileIds: number[]) => fileIds,
+  (allFiles, fileIds) => {
+    const data: Record<number, number> = {};
+    fileIds.forEach((id) => {
+      data[id] = allFiles[id]?.length || 0;
+    });
+
+    return data;
+  }
+);
 
 export const makeSelectAnnotationCounts = () =>
   createDeepEqualSelector(selectFileAnnotations, (annotations) => {
