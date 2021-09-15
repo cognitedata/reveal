@@ -91,7 +91,7 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
       'Scheduled sectors',
       candidateSectors.slice(0, takenSectorCount).map(x => ({ id: x.sectorId, screenArea: x.priority }))
     );
-    console.log({ ...spentBudget });
+    console.log('Budget:', { ...input.budget }, 'Spent:', { ...spentBudget });
 
     return { spentBudget, wantedSectors: wanted };
   }
