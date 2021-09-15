@@ -1,4 +1,4 @@
-import { cadTestRoutes, pointCloudTestRoutes } from "../routes";
+import { visualTests } from '../pages/e2e/visualTests';
 
 const retry = require('jest-retries');
 
@@ -37,23 +37,16 @@ console.log(`Run tests with ${RETRIES} retries`);
  * and create a new record in src/routes to map a component to its route
  */
 describe('Reveal visual tests', () => {
-  cadTestRoutes.forEach(test => {
-    const snapshotName = 'cad_' + test;
-    const url = `http://localhost:3000${test.path}`;
-    
-    const blur = (test.name === 'ssao') ? 2 : 0; // TODO 2021-09-13 larsmoa: Remove special handling of SSAO visual test
+  visualTests.forEach(test => {
+    const { testKey, category, snapshotBlur } = test;
+
+    const snapshotName = `${category}_${testKey}`;
+    const url = `http://localhost:3000/test/${category}/${testKey}`;
+    const blur = snapshotBlur ?? 0;
 
     retry(`matches the screenshot for ${snapshotName}`, RETRIES, async () => {
       await screenShotTest(url, snapshotName, blur);
     });
-  });
 
-  pointCloudTestRoutes.forEach(test => {
-    const snapshotName = 'pc_' + test.name;
-    const url = `http://localhost:3000${test.path}`;
-
-    retry(`matches the screenshot for ${snapshotName}`, RETRIES, async () => {
-      await screenShotTest(url, snapshotName);
-    });
   });
 });

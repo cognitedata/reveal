@@ -55,22 +55,23 @@ export default function App() {
 
         <h2>Snapshot CAD tests pages</h2>
 
-        <PagesList routes={cadTestRoutes} />
+        <PagesList routes={cadTestRoutes()} />
 
         <h2>Snapshot Pointcloud tests pages</h2>
 
-        <PagesList routes={pointCloudTestRoutes} />
+        <PagesList routes={pointCloudTestRoutes()} />
       </nav>
     </Route>
   );
 
   return (
+    <>
     <Router basename={process.env.PUBLIC_URL}>
       <div style={{ padding: '5px' }}>
         <PageContainer>
           <Switch>
             {exampleRoutes
-              .concat(cadTestRoutes, pointCloudTestRoutes)
+              .concat(cadTestRoutes(), pointCloudTestRoutes())
               .map((page) => (
                 <Route
                   key={page.path}
@@ -93,5 +94,9 @@ export default function App() {
         </PageContainer>
       </div>
     </Router>
+    <Router basename={`${process.env.PUBLIC_URL}/test.json`}>
+      <div>Hello</div>
+    </Router>
+    </>
   );
 }

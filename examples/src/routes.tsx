@@ -11,6 +11,7 @@ import { SimplePointcloud } from './pages/SimplePointcloud';
 import { SSAO } from './pages/SSAO';
 import { TwoModels } from './pages/TwoModels';
 import { WalkablePath } from './pages/WalkablePath';
+import { visualTests } from './pages/e2e/visualTests';
 
 const cadTestBasePath = '/test/cad/';
 const pointcloudTestBasePath = '/test/pointcloud/';
@@ -121,6 +122,13 @@ export function registerVisualTest(
   testDescription: string, 
   testPage: JSX.Element) {
 
+  // Ensure test is registered in visualTests so it is actually part of the 
+  // test stage
+  const found = visualTests.find(x => x.category === category && x.testKey === testKey) !== undefined;
+  if (!found) { 
+    throw new Error(`registerVisualTest() was invoked for test '${testKey}' (${category}), but has not been registered. Add the test to pages/e2e/visualTests.ts`);
+  }
+
   switch (category) {
     case 'cad':
       cadTestPages[testKey] = { testDescription, testPage };
@@ -135,8 +143,8 @@ export function registerVisualTest(
   }
 }
 
-export const cadTestRoutes: Array<ExampleRoute> = 
-  Object.entries(cadTestPages).map(([testName, test]) => {
+export function cadTestRoutes(): Array<ExampleRoute> {
+  return Object.entries(cadTestPages).map(([testName, test]) => {
     return {
       name: testName,
       path: cadTestBasePath + testName,
@@ -144,9 +152,10 @@ export const cadTestRoutes: Array<ExampleRoute> =
       component: test.testPage
     };
   }).sort((x, y) => x.menuTitle.localeCompare(y.menuTitle));
+}
 
-export const pointCloudTestRoutes: Array<ExampleRoute> = 
-  Object.entries(pointcloudTestPages).map(([testName, test]) => {
+export function pointCloudTestRoutes(): Array<ExampleRoute> { 
+  return Object.entries(pointcloudTestPages).map(([testName, test]) => {
     return {
       name: testName,
       path: pointcloudTestBasePath + testName,
@@ -154,7 +163,7 @@ export const pointCloudTestRoutes: Array<ExampleRoute> =
       component: test.testPage
     };
   }).sort((x, y) => x.menuTitle.localeCompare(y.menuTitle));
-
+}
 
 // Register all visual tests
 const context = require.context('./pages/e2e', true, /\.tsx$/);

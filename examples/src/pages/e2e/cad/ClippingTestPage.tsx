@@ -3,7 +3,6 @@
  */
 
 import * as THREE from 'three';
-import React from 'react';
 import { BoundingBoxClipper } from '@cognite/reveal';
 import { TestEnvCad, TestViewer } from '../TestViewer';
 import { registerVisualTest } from '../../../visual_tests';
