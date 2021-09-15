@@ -1,3 +1,14 @@
+## 1.0.15 Sep 15 2021
+
+### Changes
+
+- Rename some variable and parameter names, use `project` instead of `tenant`
+- Add `project` and `env` parameters to `saveFlow` util
+
+### Features
+
+- Add `removeFlow` util to remove flow keys from local storage
+
 ## 1.0.13,14 Aug 27 2021
 
 - Add `id` to authState

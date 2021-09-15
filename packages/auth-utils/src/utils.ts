@@ -1,18 +1,28 @@
-import { getFromLocalStorage, saveToLocalStorage } from '@cognite/storage';
+import {
+  getFromLocalStorage,
+  saveToLocalStorage,
+  removeItem,
+} from '@cognite/storage';
 import jwtDecode from 'jwt-decode';
 
 import { AuthFlow, FlowStorage } from './types';
 
-export const getFlowKey = (tenant?: string, env?: string): string => {
+export const getFlowKey = (project?: string, env?: string): string => {
   const environment = env ? `_env_${env}` : '';
-  return tenant ? `flow_${tenant}${environment}` : `flow`;
+  return project ? `flow_${project}${environment}` : `flow`;
 };
 
 export function saveFlow(
   flow: AuthFlow,
-  options?: FlowStorage['options']
+  options?: FlowStorage['options'],
+  project?: string,
+  env?: string
 ): void {
-  saveToLocalStorage(getFlowKey(), { flow, options });
+  saveToLocalStorage(getFlowKey(project, env), { flow, options });
+}
+
+export function removeFlow(project?: string, env?: string): void {
+  removeItem(getFlowKey(project, env));
 }
 
 type Flow = {
@@ -20,10 +30,12 @@ type Flow = {
   options: FlowStorage['options'];
 };
 
-export function getFlow(tenant?: string, env?: string): Flow {
-  const tenantFlow = getFromLocalStorage<FlowStorage>(getFlowKey(tenant, env));
+export function getFlow(project?: string, env?: string): Flow {
+  const projectFlow = getFromLocalStorage<FlowStorage>(
+    getFlowKey(project, env)
+  );
   const generalFlow = getFromLocalStorage<FlowStorage>(getFlowKey());
-  const f = tenantFlow || generalFlow;
+  const f = projectFlow || generalFlow;
   return {
     flow: f?.flow,
     options: f?.options,
