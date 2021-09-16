@@ -17,12 +17,17 @@ import {
   getFunctionResponseWhenDone,
   transformSimpleCalcResult,
 } from 'utils/backendService';
-import { updateSourceAxisForChart, updateTimeseries } from 'utils/charts';
+import {
+  CHART_POINTS_PER_SERIES,
+  updateSourceAxisForChart,
+} from 'utils/charts';
 import { trackUsage } from 'utils/metrics';
-import { useDebouncedCallback, useDebounce } from 'use-debounce';
+import { useDebounce } from 'use-debounce';
 import { useRecoilState } from 'recoil';
 import { chartState } from 'atoms/chart';
 import { Chart, ChartTimeSeries, ChartWorkflow } from 'reducers/charts/types';
+import { timeseriesState } from 'atoms/timeseries';
+import { WorkflowResult, workflowState } from 'atoms/workflows';
 import {
   calculateSeriesData,
   formatPlotlyData,
@@ -35,6 +40,7 @@ import {
   cleanWorkflowCollection,
   generateLayout,
   PlotlyEventData,
+  useAllowedToUpdateChart,
 } from '.';
 import {
   AdjustButton,
@@ -69,12 +75,16 @@ const PlotlyChartComponent = ({
   stackedMode = false,
   mergeUnits = false,
 }: ChartProps) => {
-  const [isAllowedToUpdate, setIsAllowedToUpdate] = useState(true);
   const sdk = useSDK();
   const containerRef = useRef<HTMLDivElement>(null);
-  const pointsPerSeries = isPreview ? 100 : 1000;
+  const pointsPerSeries = isPreview ? 100 : CHART_POINTS_PER_SERIES;
   const [dragmode, setDragmode] = useState<'zoom' | 'pan'>('pan');
   const [yAxisLocked, setYAxisLocked] = useState<boolean>(true);
+
+  /**
+   * Optimization hook to avoid rendering chart when user is navigating
+   */
+  const isAllowedToUpdate = useAllowedToUpdateChart();
 
   /**
    * Get local chart context
@@ -100,7 +110,7 @@ const PlotlyChartComponent = ({
         ],
         pointsPerSeries
       ),
-      aggregates: ['average', 'count', 'min', 'max'],
+      aggregates: ['average', 'min', 'max', 'count', 'sum'],
       limit: pointsPerSeries,
     })) || [];
 
@@ -121,22 +131,14 @@ const PlotlyChartComponent = ({
               }
 
               const RAW_DATA_POINTS_THRESHOLD = pointsPerSeries / 2;
+
               const aggregatedCount = (
                 r[0]?.datapoints as DatapointAggregate[]
               ).reduce((point: number, c: DatapointAggregate) => {
                 return point + (c.count || 0);
               }, 0);
-              const isRaw = aggregatedCount < RAW_DATA_POINTS_THRESHOLD;
 
-              setChart((oldChart) =>
-                updateTimeseries(
-                  oldChart!,
-                  oldChart!.timeSeriesCollection!.find(
-                    (ts) => ts.tsExternalId === q.items[0]!.externalId!
-                  )!.id,
-                  { isRaw }
-                )
-              );
+              const isRaw = aggregatedCount < RAW_DATA_POINTS_THRESHOLD;
 
               return isRaw
                 ? sdk.datapoints.retrieve({
@@ -147,13 +149,13 @@ const PlotlyChartComponent = ({
                   } as DatapointsMultiQuery)
                 : r;
             })
-            .then((r) => r[0]?.datapoints)
+            .then((r) => r[0])
         )
       ),
     { enabled: !!chart }
   );
 
-  const calls = isPreview
+  const callKeys = isPreview
     ? []
     : chart?.workflowCollection?.map((wf) =>
         omit(wf.calls?.[0], ['callDate'])
@@ -164,40 +166,50 @@ const PlotlyChartComponent = ({
     isSuccess: wfSuccess,
     isFetching: workflowsRunning,
   } = useQuery(
-    ['chart-data', 'workflows', calls],
+    ['chart-data', 'workflows', callKeys],
     () =>
       Promise.all(
-        calls.map(async (call) => {
-          if (call?.functionId && call.callId) {
-            const functionResult = await getFunctionResponseWhenDone(
-              sdk,
-              call?.functionId,
-              call?.callId
-            );
-            return transformSimpleCalcResult(functionResult);
+        (chart?.workflowCollection || []).map(async (wf) => {
+          const call = wf.calls?.[0];
+
+          if (!call || !call?.functionId || !call?.callId) {
+            return {
+              id: wf.id,
+              datapoints: [],
+            } as WorkflowResult;
           }
-          return Promise.resolve([]);
+
+          const functionResult = await getFunctionResponseWhenDone(
+            sdk,
+            call?.functionId,
+            call?.callId
+          );
+
+          return {
+            id: wf.id,
+            datapoints: transformSimpleCalcResult(functionResult),
+          } as WorkflowResult;
         })
       ),
     { enabled: !isPreview }
   );
 
-  const [timeseries, setLocalTimeseries] = useState<DatapointAggregate[][]>([]);
-  const [workflows, setLocalWorkflows] = useState<
-    { value: number; timestamp: Date }[][]
-  >([]);
+  const [localTimeseries, setLocalTimeseries] = useRecoilState(timeseriesState);
+  const [localWorkflows, setLocalWorkflows] = useRecoilState(workflowState);
+  const timeseries = isPreview ? tsRaw : localTimeseries;
+  const workflows = isPreview ? workflowsRaw : localWorkflows;
 
   useEffect(() => {
     if (tsSuccess && tsRaw) {
       setLocalTimeseries(tsRaw);
     }
-  }, [tsSuccess, tsRaw]);
+  }, [tsSuccess, tsRaw, setLocalTimeseries]);
 
   useEffect(() => {
     if (wfSuccess && workflowsRaw) {
       setLocalWorkflows(workflowsRaw);
     }
-  }, [wfSuccess, workflowsRaw]);
+  }, [wfSuccess, workflowsRaw, setLocalWorkflows]);
 
   const onAdjustButtonClick = useCallback(() => {
     trackUsage('ChartView.ToggleYAxisLock', {
@@ -348,65 +360,6 @@ const PlotlyChartComponent = ({
       handleRelayout,
     });
   }, [data, layout, isAllowedToUpdate, handleRelayout]);
-
-  /**
-   * Debounced callback that turns on updates again (scrolling)
-   */
-  const allowUpdatesScroll = useDebouncedCallback(() => {
-    setIsAllowedToUpdate(true);
-  }, 100);
-
-  /**
-   * Debounced callback that turns on updates again (click and drag)
-   */
-  const allowUpdatesClick = useDebouncedCallback(() => {
-    setIsAllowedToUpdate(true);
-  }, 100);
-
-  /**
-   * Disallow updates when scrolling
-   */
-  const handleMouseWheel = useCallback(() => {
-    setIsAllowedToUpdate(false);
-    allowUpdatesScroll();
-    allowUpdatesClick.cancel();
-  }, [allowUpdatesScroll, allowUpdatesClick]);
-
-  useEffect(() => {
-    window.addEventListener('mousewheel', handleMouseWheel);
-    return () => {
-      window.removeEventListener('mousewheel', handleMouseWheel);
-    };
-  }, [handleMouseWheel]);
-
-  /**
-   * Disallow updates when clicking and holding mouse (navigating chart)
-   */
-  const handleMouseDown = useCallback(() => {
-    setIsAllowedToUpdate(false);
-    allowUpdatesScroll.cancel();
-  }, [allowUpdatesScroll]);
-
-  useEffect(() => {
-    window.addEventListener('mousedown', handleMouseDown);
-    return () => {
-      window.removeEventListener('mousedown', handleMouseDown);
-    };
-  });
-
-  /**
-   * Allow updates when releasing mouse button (no longer navigating chart)
-   */
-  const handleMouseUp = useCallback(() => {
-    allowUpdatesClick();
-  }, [allowUpdatesClick]);
-
-  useEffect(() => {
-    window.addEventListener('mouseup', handleMouseUp);
-    return () => {
-      window.removeEventListener('mouseup', handleMouseUp);
-    };
-  });
 
   const chartStyles = useMemo(() => {
     return { width: '100%', height: '100%' };
