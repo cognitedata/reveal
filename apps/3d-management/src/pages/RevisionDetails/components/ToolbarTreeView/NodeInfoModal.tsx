@@ -1,4 +1,4 @@
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store';
 import { getNodeByTreeIndex } from 'src/pages/RevisionDetails/components/TreeView/utils/treeFunctions';
 import { TreeDataNode } from 'src/pages/RevisionDetails/components/TreeView/types';
@@ -6,11 +6,12 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { ModalProps } from 'antd/lib/modal';
 import { Modal, Table, Tabs } from 'antd';
 import { ColumnProps } from 'antd/lib/table';
-import { Button } from '@cognite/cogs.js';
+import { Button, Tooltip } from '@cognite/cogs.js';
 
 import { getContainer } from 'src/utils';
 import styled from 'styled-components';
 import omit from 'lodash/omit';
+import { setNodePropertyFilter } from 'src/store/modules/toolbar';
 
 type DataSource = {
   key: string;
@@ -48,6 +49,7 @@ export const NodeInfoModal = ({ treeIndex, onClose, ...restProps }: Props) => {
   const defaultCdfMetaTabKey = 'cdfMetaTabKey';
   const [activeTabKey, setActiveTabKey] = useState<null | string>(null);
   const [nodeKeys, setNodeKeys] = useState<Array<string>>([]);
+  const dispatch = useDispatch();
 
   const node = useSelector(
     useCallback(
@@ -125,16 +127,39 @@ export const NodeInfoModal = ({ treeIndex, onClose, ...restProps }: Props) => {
     }
 
     return Object.entries(data).map(([key, value]) => {
+      let valueElement;
+      const stringifiedValue = `${value || '""'}`;
+
+      if (typeof value === 'object') {
+        valueElement = (
+          <pre style={{ font: 'inherit' }}>
+            {JSON.stringify(value, null, 2)}
+          </pre>
+        );
+      } else if (tabKey !== defaultCdfMetaTabKey) {
+        valueElement = (
+          <Tooltip content="Click to see 3D-nodes with the same value">
+            <Button
+              style={{ textAlign: 'left' }}
+              type="link"
+              onClick={() => {
+                dispatch(
+                  setNodePropertyFilter({ [tabKey]: { [key]: `${value}` } })
+                );
+                onClose();
+              }}
+            >
+              {stringifiedValue}
+            </Button>
+          </Tooltip>
+        );
+      } else {
+        valueElement = stringifiedValue;
+      }
+
       return {
         key,
-        value:
-          typeof value === 'object' ? (
-            <pre style={{ font: 'inherit' }}>
-              {JSON.stringify(value, null, 2)}
-            </pre>
-          ) : (
-            value
-          ),
+        value: valueElement,
       };
     });
   };
@@ -143,15 +168,15 @@ export const NodeInfoModal = ({ treeIndex, onClose, ...restProps }: Props) => {
     columns: Array<
       {
         title: ColumnProps<DataSource>['title'];
-        key: string;
+        key: keyof DataSource;
       } & Partial<ColumnProps<DataSource>>
     >
   ): Array<ColumnProps<DataSource>> => {
     return columns.map((col) => ({
-      ...col,
       dataIndex: col.key,
       sortDirections: ['ascend', 'descend', 'ascend'],
       sorter: azSortByKey(col.key),
+      ...col,
     }));
   };
 

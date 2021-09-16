@@ -1,111 +1,79 @@
 import {
+  TreeIndexNodeCollection,
   Cognite3DModel,
-  Cognite3DViewer,
-  PointerEventDelegate,
+  DefaultNodeAppearance,
+  IndexSet,
+  NumericRange,
 } from '@cognite/reveal';
-import React, { useCallback, useEffect } from 'react';
-import {
-  expandArbitraryNode,
-  SelectedNode,
-  selectNodes,
-} from 'src/store/modules/TreeView';
-import { fireErrorNotification } from 'src/utils';
-import { useDispatch, useSelector } from 'react-redux';
-import { NodesTreeViewRefType } from 'src/pages/RevisionDetails/components/TreeView/NodesTreeView';
+import React, { useEffect } from 'react';
+import { SelectedNode } from 'src/store/modules/TreeView';
+import { useSelector } from 'react-redux';
 import { RootState } from 'src/store';
-
-type Args = {
-  viewer: Cognite3DViewer;
-  model: Cognite3DModel;
-  treeViewRef: React.RefObject<NodesTreeViewRefType>;
-};
+import debounce from 'lodash/debounce';
 
 export function useSelectedNodesHighlights({
-  viewer,
   model,
-  treeViewRef,
-}: Args) {
+}: {
+  model: Cognite3DModel;
+}) {
   const selectedNodes: Array<SelectedNode> = useSelector(
     ({ treeView }: RootState) => treeView.selectedNodes
   );
   const ghostModeEnabled = useSelector(
     ({ toolbar }: RootState) => toolbar.ghostModeEnabled
   );
-
-  const dispatch = useDispatch();
-  const viewerNodeClickListener: PointerEventDelegate = useCallback(
-    (event) => {
-      const intersection = viewer.getIntersectionFromPixel(
-        event.offsetX,
-        event.offsetY
-      );
-      if (intersection && 'treeIndex' in intersection) {
-        const { treeIndex } = intersection;
-
-        model
-          .mapTreeIndexToNodeId(treeIndex)
-          .then((nodeId: number) => {
-            dispatch(selectNodes([{ treeIndex, nodeId, subtreeSize: 1 }]));
-            dispatch(
-              expandArbitraryNode({
-                treeIndex,
-                nodeId,
-                onSuccess: () => {
-                  // if node is not rendered in the DOM yet, scrollTo won't work
-                  setTimeout(() => {
-                    if (treeViewRef.current) {
-                      treeViewRef.current.scrollTo({
-                        key: treeIndex,
-                      });
-                    }
-                  }, 200);
-                },
-              })
-            );
-          })
-          .catch((error) =>
-            fireErrorNotification({
-              error,
-              message: `Couldn't map treeIndex=${treeIndex} to nodeId`,
-            })
-          );
-      }
-    },
-    [viewer, model, dispatch, treeViewRef]
+  const selectedTreeIndicesNodeSetRef = React.useRef<TreeIndexNodeCollection>(
+    new TreeIndexNodeCollection()
   );
 
   useEffect(() => {
-    let stylingFn: typeof model.selectNodeByTreeIndex;
+    const selectedTreeIndicesNodeSet = selectedTreeIndicesNodeSetRef.current;
+    model.assignStyledNodeCollection(selectedTreeIndicesNodeSet, {});
+    return () => {
+      if (selectedTreeIndicesNodeSet) {
+        model.unassignStyledNodeCollection(selectedTreeIndicesNodeSet);
+        selectedTreeIndicesNodeSet.clear();
+      }
+    };
+  }, [model]);
 
-    if (ghostModeEnabled) {
-      stylingFn = model.unghostNodeByTreeIndex.bind(model);
-      model.deselectAllNodes();
-      model.ghostAllNodes();
-    } else {
-      stylingFn = model.selectNodeByTreeIndex.bind(model);
-      model.unghostAllNodes();
-      model.deselectAllNodes();
-    }
+  // ghost mode switcher + cleanup
+  useEffect(() => {
+    model.setDefaultNodeAppearance({ renderGhosted: ghostModeEnabled });
+
+    model.assignStyledNodeCollection(
+      selectedTreeIndicesNodeSetRef.current,
+      ghostModeEnabled
+        ? { renderGhosted: false }
+        : DefaultNodeAppearance.Highlighted
+    );
+  }, [model, ghostModeEnabled]);
+
+  const updateHighlightedSet = React.useCallback((highlightedSet: IndexSet) => {
+    selectedTreeIndicesNodeSetRef.current.updateSet(highlightedSet);
+  }, []);
+
+  const updateHighlightedSetDebounced = React.useMemo(
+    () => debounce(updateHighlightedSet, 200),
+    [updateHighlightedSet]
+  );
+
+  // selected nodes highlighter
+  useEffect(() => {
+    const highlightedSet = new IndexSet();
 
     selectedNodes.forEach(({ treeIndex, subtreeSize }) => {
-      // for big subtrees there is performance hit instead of performance gain
-      // likely because stylingFn always creates promise
-      if (typeof subtreeSize === 'undefined' || subtreeSize > 100000) {
-        stylingFn(treeIndex, true);
-      } else if (subtreeSize <= 1) {
-        stylingFn(treeIndex, false);
-      } else {
-        for (let i = treeIndex; i < treeIndex + subtreeSize; i++) {
-          stylingFn(i, false);
-        }
-      }
+      highlightedSet.addRange(new NumericRange(treeIndex, subtreeSize));
     });
-  }, [model, ghostModeEnabled, selectedNodes]);
 
-  useEffect(() => {
-    viewer.on('click', viewerNodeClickListener);
-    return () => {
-      viewer.off('click', viewerNodeClickListener);
-    };
-  }, [viewer, viewerNodeClickListener]);
+    // for small subtree it's faster to highlight it instantly,
+    // but bigger one takes some time to update and it blocks UI a bit, so in that case it's better to have it debounced
+    // to give the chance for UI updates to pause and update only after that
+    if (highlightedSet.count < 100000) {
+      updateHighlightedSetDebounced.cancel();
+      updateHighlightedSet(highlightedSet);
+    } else {
+      updateHighlightedSetDebounced(highlightedSet);
+    }
+  }, [selectedNodes, updateHighlightedSet, updateHighlightedSetDebounced]);
 }

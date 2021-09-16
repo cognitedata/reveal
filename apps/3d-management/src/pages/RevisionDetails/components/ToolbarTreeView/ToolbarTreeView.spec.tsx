@@ -23,6 +23,8 @@ jest.mock('antd/lib/notification');
 // to mock less 3d-viewer stuff disable some hooks
 jest.mock('./hooks/useSelectedNodesHighlights');
 jest.mock('./hooks/useCheckedNodesVisibility');
+jest.mock('./hooks/useFilteredNodesHighlights');
+jest.mock('./hooks/useViewerNodeClickListener');
 
 const viewerMock = {} as Cognite3DViewer;
 const modelMock = {

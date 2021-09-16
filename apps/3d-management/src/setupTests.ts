@@ -18,3 +18,9 @@ export interface Global {
 }
 
 configure({ adapter: new Adapter() });
+
+// Create document.currentScript required by potree-core
+Object.defineProperty(document, 'currentScript', {
+  value: document.createElement('script'),
+});
+(document.currentScript as any).src = 'http://localhost/iamdummy.html';

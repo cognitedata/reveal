@@ -7,7 +7,7 @@ import {
   TreeLoadMoreNode,
 } from 'src/pages/RevisionDetails/components/TreeView/types';
 import { Cognite3DModel, Cognite3DViewer } from '@cognite/reveal';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store';
 import {
   checkNodes,
@@ -26,6 +26,8 @@ import styled from 'styled-components';
 import { treeViewFocusContainerId } from 'src/pages/RevisionDetails/components/ToolbarTreeView/treeViewFocusContainerId';
 import ErrorBoundary from 'src/components/ErrorBoundary';
 import { Button, Title } from '@cognite/cogs.js';
+import { useViewerNodeClickListener } from 'src/pages/RevisionDetails/components/ToolbarTreeView/hooks/useViewerNodeClickListener';
+import { useFilteredNodesHighlights } from 'src/pages/RevisionDetails/components/ToolbarTreeView/hooks/useFilteredNodesHighlights';
 import { NodeInfoModal } from './NodeInfoModal';
 
 import { useResizeHandler } from './hooks/useResizeHander';
@@ -64,7 +66,7 @@ function ToolbarTreeViewComponent(props: TreeViewWrapperProps) {
     };
   }, [modelId, revisionId, dispatch]);
 
-  useSelectedNodesHighlights({
+  useViewerNodeClickListener({
     viewer: props.viewer,
     model: props.model,
     treeViewRef,
@@ -74,6 +76,14 @@ function ToolbarTreeViewComponent(props: TreeViewWrapperProps) {
     model: props.model,
     treeData: state.treeData,
     checkedKeys: state.checkedNodes,
+  });
+
+  useFilteredNodesHighlights({
+    model: props.model,
+  });
+
+  useSelectedNodesHighlights({
+    model: props.model,
   });
 
   const loadChildren = async (treeNode: TreeDataNode): Promise<void> => {

@@ -3,9 +3,9 @@ import {
   Cognite3DViewer,
   CognitePointCloudModel,
   PotreePointColorType,
+  THREE,
 } from '@cognite/reveal';
 import React from 'react';
-import * as THREE from 'three';
 import { v3 } from '@cognite/cdf-sdk-singleton';
 import styled from 'styled-components';
 import {
@@ -23,6 +23,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store';
 import { Resizable } from 're-resizable';
 import { Divider } from 'antd';
+import { NodePropertyFilterIndicator } from 'src/pages/RevisionDetails/components/ThreeDViewerSidebar/NodePropertyFilterIndicator';
 import { EditRotation } from './EditRotation';
 import { ThumbnailUploader } from './ThumbnailUploader';
 import { ColorTypePicker } from './ColorTypePicker';
@@ -42,6 +43,7 @@ type Props = {
   model: Cognite3DModel | CognitePointCloudModel | Legacy3DModel;
 };
 
+// base size is thumbnail and edit rotation btns minimum width
 const SIDEBAR_SECTION_MAX_WIDTH = 313;
 
 export default function ThreeDViewerSidebar(props: Props) {
@@ -70,13 +72,19 @@ export default function ThreeDViewerSidebar(props: Props) {
     // Convert camera position and target to model space
     const inverseModelMatrix = new THREE.Matrix4();
     if (props.model instanceof Cognite3DModel) {
-      props.model.mapPositionFromModelToCdfCoordinates(position, position);
-      props.model.mapPositionFromModelToCdfCoordinates(target, target);
+      props.model.mapPositionFromModelToCdfCoordinates(
+        position as THREE.Vector3,
+        position as THREE.Vector3
+      );
+      props.model.mapPositionFromModelToCdfCoordinates(
+        target as THREE.Vector3,
+        target as THREE.Vector3
+      );
     } else {
       // Get inverse transformation matrix to compute camera position and target in model space
-      inverseModelMatrix.copy(props.model.matrix).invert();
-      position.applyMatrix4(inverseModelMatrix);
-      target.applyMatrix4(inverseModelMatrix);
+      inverseModelMatrix.copy(props.model.matrix as any).invert();
+      position.applyMatrix4(inverseModelMatrix as any);
+      target.applyMatrix4(inverseModelMatrix as any);
     }
 
     await updateRevisionMutation({
@@ -139,8 +147,9 @@ export default function ThreeDViewerSidebar(props: Props) {
 
       {showTreeView && (
         <>
-          <MenuSection>
+          <MenuSection style={{ display: 'flex', flexWrap: 'nowrap' }}>
             <Switch
+              style={{ flexShrink: 0 }}
               name="ghostMode"
               size="small"
               onChange={(nextState) => dispatch(toggleGhostMode(nextState))}
@@ -148,8 +157,14 @@ export default function ThreeDViewerSidebar(props: Props) {
             >
               Ghost mode
             </Switch>
+
+            <NodePropertyFilterIndicatorContainer>
+              <NodePropertyFilterIndicator style={{ width: '100%' }} />
+            </NodePropertyFilterIndicatorContainer>
           </MenuSection>
+
           <Divider style={{ margin: `${DEFAULT_MARGIN_V}px 0` }} />
+
           <ToolbarTreeView
             model={props.model as Cognite3DModel}
             viewer={props.viewer as Cognite3DViewer}
@@ -165,8 +180,7 @@ function SidebarContainer({
   defaultWidth = 400,
   ...props
 }: any) {
-  // base size is thumbnail and edit rotation btns minimum width
-  // but minWidth have to include paddings and borders
+  // minWidth have to include paddings and borders
   const minWidth = SIDEBAR_SECTION_MAX_WIDTH + 16 + 2 + 1;
 
   const minHeight = '100%';
@@ -203,8 +217,7 @@ const MenuSection = styled.div`
   & ~ & {
     margin-top: ${DEFAULT_MARGIN_V}px;
   }
-  width: 100%;
-  max-width: ${SIDEBAR_SECTION_MAX_WIDTH}px;
+  width: ${SIDEBAR_SECTION_MAX_WIDTH}px;
   text-align: left;
 `;
 
@@ -217,4 +230,12 @@ const ResizableStyled = styled(Resizable)`
   overflow: hidden;
   border: 1px solid var(--cogs-border-default);
   border-left-width: 2px;
+`;
+
+const NodePropertyFilterIndicatorContainer = styled.div`
+  margin-left: ${DEFAULT_MARGIN_H}px;
+  flex-shrink: 1;
+  flex-grow: 1;
+  width: 0;
+  height: 0;
 `;

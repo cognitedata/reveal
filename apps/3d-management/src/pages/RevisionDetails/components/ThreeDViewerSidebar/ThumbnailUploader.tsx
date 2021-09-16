@@ -41,8 +41,7 @@ export function ThumbnailUploader({ style, viewer, model, ...props }: Props) {
         setThumbnailUri(base64);
         blob = base64ToBlob(base64);
 
-        // there should be no forceRerender REV-147
-        viewer.forceRerender();
+        viewer.requestRedraw();
       } else {
         const blobURL = await viewer.getScreenshot(
           screenshotWidth,

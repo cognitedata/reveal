@@ -65,7 +65,7 @@ function EditRotationOpened(props: Props & { onClose: () => void }) {
   const getModelTransformation = React.useCallback(() => {
     return 'getModelTransformation' in props.model
       ? props.model.getModelTransformation()
-      : props.model.matrix.clone();
+      : ((props.model.matrix.clone() as unknown) as THREE.Matrix4);
   }, [props.model]);
 
   const setModelTransformation = (matrix: THREE.Matrix4) => {
@@ -136,13 +136,15 @@ function EditRotationOpened(props: Props & { onClose: () => void }) {
       props.model.applyMatrix(tmpMatrix);
       props.model.updateMatrixWorld(false);
     }
-    forceRerender();
+    requestRedraw();
   };
 
-  const forceRerender = () => {
+  const requestRedraw = () => {
     props.viewer.fitCameraToModel(props.model as any, 0);
 
     if (!(props.viewer instanceof Cognite3DViewer)) {
+      // This is for the _old_ 3D viewer (@cognite/3d-viewer)
+
       // force render hacks are required to render model correctly, otherwise some parts might not be rendered after rotation
       // @ts-ignore
       // eslint-disable-next-line
@@ -163,7 +165,7 @@ function EditRotationOpened(props: Props & { onClose: () => void }) {
   const onCancelClicked = () => {
     setModelTransformation(initialRotation!);
 
-    forceRerender();
+    requestRedraw();
 
     setRotationAnglePiMultiplier([0, 0, 0]);
     props.onClose();
