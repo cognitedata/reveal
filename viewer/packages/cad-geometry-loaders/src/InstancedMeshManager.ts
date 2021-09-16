@@ -6,7 +6,7 @@ import * as THREE from 'three';
 
 import { DynamicDefragmentedBuffer } from '@reveal/utilities';
 import { CadMaterialManager } from './material-manager/CadMaterialManager';
-import { InstancedMesh, InstancedMeshFile } from './material-manager/rendering/types';
+import { InstancedMesh, InstancedMeshFile } from './sector/types';
 
 export class InstancedMeshManager {
   private readonly _instancedGeometryMap: Map<

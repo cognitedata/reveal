@@ -3,7 +3,7 @@
  */
 import * as THREE from 'three';
 
-import { Mutable } from '../../utilities/reflection';
+import { Mutable } from '../../../../test-utilities/src/reflection';
 import { generateSectorTree, createCadModelMetadata } from '../../../../test-utilities';
 import { CadMaterialManager } from './CadMaterialManager';
 import { CadModelFactory } from './CadModelFactory';

@@ -2,12 +2,39 @@
  * Copyright 2021 Cognite AS
  */
 import * as THREE from 'three';
+
 import { AutoDisposeGroup }from '@reveal/utilities';
+import { SectorMetadata } from '@reveal/cad-parsers';
+
+import { SectorQuads } from '@cognite/reveal-parser-worker';
 
 import { LevelOfDetail } from './LevelOfDetail';
-import { InstancedMeshFile, TriangleMesh, SectorQuads } from '../material-manager/rendering/types';
 import { ParsedPrimitives, ParseSectorResult, ParseCtmResult } from '@cognite/reveal-parser-worker';
-import { SectorMetadata } from '@reveal/cad-parsers';
+
+export type TriangleMesh = {
+  readonly fileId: number;
+  readonly indices: Uint32Array;
+  readonly treeIndices: Float32Array;
+  readonly vertices: Float32Array;
+  readonly normals: Float32Array | undefined;
+  readonly colors: Uint8Array;
+};
+
+export type InstancedMeshFile = {
+  readonly fileId: number;
+  readonly indices: Uint32Array;
+  readonly vertices: Float32Array;
+  readonly instances: InstancedMesh[];
+};
+
+export type InstancedMesh = {
+  readonly triangleCount: number;
+  readonly triangleOffset: number;
+  readonly colors: Uint8Array;
+  readonly instanceMatrices: Float32Array;
+  readonly treeIndices: Float32Array;
+};
+
 
 export interface ConsumedSector {
   modelIdentifier: string;

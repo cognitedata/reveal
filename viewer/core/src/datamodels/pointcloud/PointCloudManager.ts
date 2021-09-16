@@ -3,12 +3,13 @@
  */
 
 import * as THREE from 'three';
+import { LoadingState } from '@reveal/cad-geometry-loaders';
+
 import { PointCloudFactory } from './PointCloudFactory';
 import { PointCloudMetadataRepository } from './PointCloudMetadataRepository';
 import { PotreeGroupWrapper } from './PotreeGroupWrapper';
 
 import { Observable } from 'rxjs';
-import { LoadingState } from '../../utilities';
 import { PointCloudNode } from './PointCloudNode';
 
 export class PointCloudManager<TModelIdentifier> {

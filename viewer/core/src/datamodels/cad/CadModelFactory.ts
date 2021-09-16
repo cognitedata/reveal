@@ -2,9 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 import * as THREE from 'three';
-import { CadNode } from './CadNode';
 
-import { CadMaterialManager } from './CadMaterialManager';
+import { CadMaterialManager, CadNode } from '@reveal/cad-geometry-loaders';
 import { CadModelMetadata } from '@reveal/cad-parsers';
 import { BoundingBoxClipper } from '../../utilities/BoundingBoxClipper';
 

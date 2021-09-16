@@ -4,10 +4,9 @@
 
 import { CogniteClient } from '@cognite/sdk';
 import { Cognite3DModel } from '../../../public/migration/Cognite3DModel';
-import { IndexSet } from '../../../utilities/IndexSet';
+import { IndexSet, NumericRange } from '@reveal/utilities';
 
 import nock from 'nock';
-import { NumericRange } from '../../../utilities';
 import { SinglePropertyFilterNodeCollection } from './SinglePropertyFilterNodeCollection';
 
 describe('SinglePropertyFilterNodeCollection', () => {

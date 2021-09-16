@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { NumericRange } from '.';
+import { NumericRange } from './NumericRange';
 
 describe('NumericRange', () => {
   test('constructor does not accept negative count', () => {

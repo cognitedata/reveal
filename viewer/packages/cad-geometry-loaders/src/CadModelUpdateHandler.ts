@@ -3,6 +3,9 @@
  */
 
 import * as THREE from 'three';
+
+import { assertNever } from '@reveal/utilities';
+
 import { Subject, Observable, combineLatest, asyncScheduler, BehaviorSubject } from 'rxjs';
 import { CadNode } from './CadNode';
 import { scan, share, startWith, auditTime, filter, map, finalize, observeOn, mergeMap } from 'rxjs/operators';
@@ -11,7 +14,8 @@ import { CadLoadingHints } from './CadLoadingHints';
 import { ConsumedSector } from './sector/types';
 import { Repository } from './sector/Repository';
 
-import { assertNever, emissionLastMillis, LoadingState } from '../../utilities';
+import { LoadingState } from './utilities/types';
+import { emissionLastMillis } from './utilities/rxOperations';
 import { loadingEnabled } from './sector/rxSectorUtilities';
 import { SectorLoader } from './sector/SectorLoader';
 import { CadModelSectorBudget, defaultCadModelSectorBudget } from './CadModelSectorBudget';

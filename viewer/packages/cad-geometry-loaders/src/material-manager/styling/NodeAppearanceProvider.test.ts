@@ -2,9 +2,10 @@
  * Copyright 2021 Cognite AS
  */
 
+import { IndexSet } from '@reveal/utilities';
+
 import { NodeAppearance } from '../NodeAppearance';
 import { TreeIndexNodeCollection } from './TreeIndexNodeCollection';
-import { IndexSet } from '../../utilities/IndexSet';
 import { NodeAppearanceProvider } from './NodeAppearanceProvider';
 import { NodeCollectionBase, SerializedNodeCollection } from './NodeCollectionBase';
 import { NodeOutlineColor } from '../NodeAppearance';

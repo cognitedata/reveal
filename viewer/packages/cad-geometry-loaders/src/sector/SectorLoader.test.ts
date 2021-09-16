@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 
-import { AutoDisposeGroup } from '../utilities/three/AutoDisposeGroup';
+import { AutoDisposeGroup } from '@reveal/utilities';
 import { generateSectorTree, asyncIteratorToArray, createCadModelMetadata } from '../../../../test-utilities';
 import { CadModelMetadata, SectorMetadata } from '@reveal/cad-parsers';
 

@@ -2,10 +2,9 @@
  * Copyright 2021 Cognite AS
  */
 
-import { SectorGeometry } from '../datamodels/cad/sector/types';
-import { SectorQuads } from '../datamodels/cad/rendering/types';
+import { SectorGeometry, SectorQuads, RenderOptions, LoadingState } from '@reveal/cad-geometry-loaders';
+
 import { SectorCuller } from '../internals';
-import { LoadingState } from '../utilities';
 
 /**
  * @property logMetrics Might be used to disable usage statistics.
@@ -48,6 +47,6 @@ export type LoadingStateChangeListener = (loadingState: LoadingState) => any;
 export * from '../datamodels/pointcloud/types';
 export * from './migration/types';
 
-export { CadLoadingHints } from '../datamodels/cad/CadLoadingHints';
+export { CadLoadingHints } from '@reveal/cad-geometry-loaders';
 
 export { SupportedModelTypes } from '../datamodels/base';

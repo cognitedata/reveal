@@ -6,7 +6,7 @@ export { traverseDepthFirst } from './src/objectTraversal';
 export { transformCameraConfiguration } from './src/transformCameraConfiguration';
 
 export { CameraConfiguration } from './src/CameraConfiguration';
-export { EventTrigger } from './src/events';
+export { EventTrigger, clickOrTouchEventOffset } from './src/events';
 export { assertNever } from './src/assertNever';
 export { NumericRange } from './src/NumericRange';
 export { determinePowerOfTwoDimensions } from './src/determinePowerOfTwoDimensions';
@@ -15,4 +15,14 @@ export { packFloatInto } from './src/packFloat';
 export { DynamicDefragmentedBuffer } from './src/datastructures/DynamicDefragmentedBuffer';
 export { AutoDisposeGroup } from './src/three/AutoDisposeGroup';
 export { BoundingBoxLOD } from './src/three/BoundingBoxLOD';
+export { getBox3CornerPoints } from './src/three/getBox3CornerPoints';
 export { isMobileOrTablet } from './src/isMobileOrTablet';
+export { WebGLRendererStateHelper } from './src/WebGLRendererStateHelper';
+export { WorkerPool } from './src/workers/WorkerPool';
+
+export { MemoryRequestCache } from './src/cache/MemoryRequestCache';
+export { MostFrequentlyUsedCache } from './src/cache/MostFrequentlyUsedCache';
+
+export { trackError, trackLoadModel, trackCameraNavigation, trackEvent, initMetrics } from './src/metrics';
+
+export { revealEnv } from './src/revealEnv';

@@ -3,7 +3,7 @@
  */
 
 import * as THREE from 'three';
-import { createGlContext } from '../__testutilities__/createGlContext';
+import { createGlContext } from '../../../test-utilities/src/createGlContext';
 import { worldToNormalizedViewportCoordinates, worldToViewportCoordinates } from './worldToViewport';
 
 declare global {

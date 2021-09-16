@@ -2,21 +2,18 @@
  * Copyright 2021 Cognite AS
  */
 
-import { Repository } from './Repository';
-import { WantedSector, SectorGeometry, ConsumedSector } from './types';
+import { assertNever, trackError, MostFrequentlyUsedCache, MemoryRequestCache } from '@reveal/utilities';
+import { BinaryFileProvider, CadSectorParser } from '@reveal/cad-parsers';
+
 import { LevelOfDetail } from './LevelOfDetail';
-
-import { CadSectorParser } from './CadSectorParser';
 import { SimpleAndDetailedToSector3D } from './SimpleAndDetailedToSector3D';
-import { MemoryRequestCache } from '../../../utilities/cache/MemoryRequestCache';
-import { ParseCtmResult, ParseSectorResult } from '@cognite/reveal-parser-worker';
-import { TriangleMesh, InstancedMeshFile, InstancedMesh } from '../rendering/types';
-import { assertNever, createOffsetsArray } from '../../../utilities';
+import { WantedSector, SectorGeometry, ConsumedSector, TriangleMesh, InstancedMeshFile, InstancedMesh } from './types';
+import { Repository } from './Repository';
 
-import { BinaryFileProvider } from '@reveal/cad-parsers';
-import { groupMeshesByNumber } from './groupMeshesByNumber';
-import { MostFrequentlyUsedCache } from '../../../utilities/MostFrequentlyUsedCache';
-import { trackError } from '../../../utilities/metrics';
+import { ParseCtmResult, ParseSectorResult } from '@cognite/reveal-parser-worker';
+
+import { groupMeshesByNumber } from '../utilities/groupMeshesByNumber';
+import { createOffsetsArray } from '../utilities/arrays';
 
 // TODO: j-bjorne 16-04-2020: REFACTOR FINALIZE INTO SOME OTHER FILE PLEZ!
 export class CachedRepository implements Repository {

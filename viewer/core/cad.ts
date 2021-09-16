@@ -1,5 +1,5 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-export { LevelOfDetail } from './src/datamodels/cad/sector/LevelOfDetail';
-export { SectorNode } from './src/datamodels/cad/sector/SectorNode';
+
+export { LevelOfDetail, SectorNode } from '@reveal/cad-geometry-loaders';

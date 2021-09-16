@@ -9,6 +9,18 @@ import omit from 'lodash/omit';
 import { CogniteClient } from '@cognite/sdk';
 import { Subscription, fromEventPattern } from 'rxjs';
 
+import {
+  defaultRenderOptions,
+  SsaoParameters,
+  SsaoSampleQuality,
+  AntiAliasingMode,
+  LoadingState
+} from '@reveal/cad-geometry-loaders';
+
+import { File3dFormat } from '@reveal/cad-parsers';
+
+import { assertNever, clickOrTouchEventOffset, EventTrigger, trackError, trackEvent } from '@reveal/utilities';
+
 import { worldToNormalizedViewportCoordinates, worldToViewportCoordinates } from '../../utilities/worldToViewport';
 import { intersectCadNodes } from '../../datamodels/cad/picking';
 
@@ -26,32 +38,16 @@ import { CogniteModelBase } from './CogniteModelBase';
 import { Cognite3DModel } from './Cognite3DModel';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
 import { RevealManager } from '../RevealManager';
-import {
-  defaultRenderOptions,
-  DisposedDelegate,
-  SceneRenderedDelegate,
-  SsaoParameters,
-  SsaoSampleQuality
-} from '../types';
+import { DisposedDelegate, SceneRenderedDelegate } from '../types';
 
 import { CdfModelDataClient } from '../../utilities/networking/CdfModelDataClient';
-import { assertNever, LoadingState } from '../../utilities';
-import { File3dFormat } from '@reveal/cad-parsers';
 import { Spinner } from '../../utilities/Spinner';
-import { trackError, trackEvent } from '../../utilities/metrics';
 import { CdfModelIdentifier, LocalModelIdentifier } from '../../utilities/networking/types';
-import { clickOrTouchEventOffset, EventTrigger } from '../../utilities/events';
 
 import { IntersectInput, SupportedModelTypes } from '../../datamodels/base';
 import { intersectPointClouds } from '../../datamodels/pointcloud/picking';
 
-import {
-  AntiAliasingMode,
-  CadIntersection,
-  IntersectionFromPixelOptions,
-  PointCloudIntersection,
-  RevealOptions
-} from '../..';
+import { CadIntersection, IntersectionFromPixelOptions, PointCloudIntersection, RevealOptions } from '../..';
 import { PropType } from '../../utilities/reflection';
 import { CadModelSectorLoadStatistics } from '../../datamodels/cad/CadModelSectorLoadStatistics';
 import ComboControls from '@reveal/camera-manager';

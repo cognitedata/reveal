@@ -9,7 +9,7 @@ import { HtmlOverlayOptions, HtmlOverlayTool } from './HtmlOverlayTool';
 import { Cognite3DViewer } from '@reveal/core';
 import { CogniteClient } from '@cognite/sdk';
 import { SectorCuller } from '@reveal/core/internals';
-import { createGlContext } from '@reveal/core/__testutilities__';
+import { createGlContext } from '../../../test-utilities/src/createGlContext';
 
 describe('HtmlOverlayTool', () => {
   let canvasContainer: HTMLElement;

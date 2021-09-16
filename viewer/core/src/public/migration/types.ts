@@ -4,7 +4,7 @@
 
 import { CogniteClient } from '@cognite/sdk';
 
-import { SectorCuller } from '../../datamodels/cad/sector/culling/SectorCuller';
+import { SectorCuller } from '@reveal/cad-geometry-loaders';
 import { Cognite3DModel } from './Cognite3DModel';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
 

@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { IndexSet } from '../../../..';
+import { IndexSet } from '@reveal/utilities';
 import { NodeCollectionBase, SerializedNodeCollection } from '../NodeCollectionBase';
 
 export class StubNodeCollection extends NodeCollectionBase {

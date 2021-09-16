@@ -6,8 +6,8 @@ import * as THREE from 'three';
 
 import { SectorScene, CadModelMetadata } from '@reveal/cad-parsers';
 
-import { SectorGeometry } from './sector/types';
-import { InstancedMeshFile, SectorQuads } from './material-manager/rendering/types';
+import { SectorGeometry, InstancedMeshFile } from './sector/types';
+import { SectorQuads } from './material-manager/rendering/types';
 import { RootSectorNode } from './sector/RootSectorNode';
 import { RenderMode } from './material-manager/rendering/RenderMode';
 import { CadMaterialManager } from './material-manager/CadMaterialManager';

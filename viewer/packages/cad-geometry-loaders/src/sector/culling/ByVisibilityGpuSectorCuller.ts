@@ -8,6 +8,7 @@
 import * as THREE from 'three';
 
 import { SectorMetadata, CadModelMetadata } from '@reveal/cad-parsers';
+import { getBox3CornerPoints } from '@reveal/utilities';
 
 import {
   GpuOrderSectorsByVisibilityCoverage,
@@ -27,7 +28,6 @@ import { LevelOfDetail } from '../LevelOfDetail';
 import { WantedSector } from '../types';
 import { CadModelSectorBudget } from '../../CadModelSectorBudget';
 import { OccludingGeometryProvider } from './OccludingGeometryProvider';
-import { getBox3CornerPoints } from '../../utilities/three/getBox3CornerPoints';
 
 /**
  * Options for creating GpuBasedSectorCuller.

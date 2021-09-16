@@ -3,6 +3,8 @@
  */
 import * as THREE from 'three';
 import { ModelDataClient } from '@reveal/cad-parsers';
+import { initMetrics } from '@reveal/utilities';
+import { RenderOptions, EffectRenderManager, CadMaterialManager } from '@reveal/cad-geometry-loaders';
 
 import { LocalModelIdentifier, CdfModelIdentifier } from '../utilities/networking/types';
 import { CdfModelDataClient } from '../utilities/networking/CdfModelDataClient';
@@ -12,10 +14,6 @@ import { createPointCloudManager } from '../datamodels/pointcloud/createPointClo
 import { RevealManager } from './RevealManager';
 import { LocalModelDataClient } from '../utilities/networking/LocalModelDataClient';
 import { RevealOptions } from './types';
-import { initMetrics } from '../utilities/metrics';
-import { RenderOptions } from '..';
-import { EffectRenderManager } from '../datamodels/cad/rendering/EffectRenderManager';
-import { CadMaterialManager } from '../datamodels/cad/CadMaterialManager';
 import { RenderAlreadyLoadedGeometryProvider } from '../datamodels/cad/rendering/RenderAlreadyLoadedGeometryProvider';
 
 /**

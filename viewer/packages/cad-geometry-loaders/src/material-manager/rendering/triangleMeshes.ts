@@ -3,8 +3,8 @@
  */
 
 import * as THREE from 'three';
-import { disposeAttributeArrayOnUpload } from '../../../utilities/disposeAttributeArrayOnUpload';
-import { TriangleMesh } from './types';
+import { disposeAttributeArrayOnUpload } from '../../utilities/disposeAttributeArrayOnUpload';
+import { TriangleMesh } from '../../sector/types';
 
 export function createTriangleMeshes(
   triangleMeshes: TriangleMesh[],

@@ -2,13 +2,12 @@
  * Copyright 2021 Cognite AS
  */
 
-import { SectorCuller } from '../../internals';
-import { BinaryFileProvider } from '@reveal/cad-parsers';
-import { CadModelUpdateHandler } from './CadModelUpdateHandler';
-import { CadMaterialManager } from './CadMaterialManager';
-import { CachedRepository } from './sector/CachedRepository';
-import { CadSectorParser } from './sector/CadSectorParser';
+import { BinaryFileProvider, CadSectorParser} from '@reveal/cad-parsers';
 import { SimpleAndDetailedToSector3D } from './sector/SimpleAndDetailedToSector3D';
+import { CachedRepository } from './sector/CachedRepository';
+import { SectorCuller } from './sector/culling/SectorCuller';
+import { CadModelUpdateHandler } from './CadModelUpdateHandler';
+import { CadMaterialManager } from './material-manager/CadMaterialManager';
 
 describe('CadModelUpdateHandler', () => {
   let repository: CachedRepository;

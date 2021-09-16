@@ -3,7 +3,7 @@
  */
 import * as THREE from 'three';
 import { float32BufferToMatrix } from '../../utilities/float32BufferToMatrix';
-import { InstancedMesh } from './types';
+import { InstancedMesh } from '../../sector/types';
 
 const filterInstanceMeshVars = {
   p: new THREE.Vector3(),

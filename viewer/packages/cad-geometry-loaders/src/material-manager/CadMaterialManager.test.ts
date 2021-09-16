@@ -4,10 +4,10 @@
 
 import * as THREE from 'three';
 import range from 'lodash/range';
-import { IndexSet } from '../../utilities/IndexSet';
+import { IndexSet, NumericRange } from '@reveal/utilities';
+
 import { RenderMode } from './rendering/RenderMode';
 import { TreeIndexNodeCollection } from './styling';
-import { NumericRange } from '../../utilities';
 import { CadMaterialManager } from './CadMaterialManager';
 import { Materials } from './rendering/materials';
 

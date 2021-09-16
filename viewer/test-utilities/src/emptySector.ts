@@ -3,7 +3,8 @@
  */
 
 import { ParsedPrimitives } from '@cognite/reveal-parser-worker';
-import { SectorGeometry } from '../../core/src/datamodels/cad/sector/types';
+
+import { SectorGeometry } from '../../packages/cad-geometry-loaders/src/sector/types';
 
 export function createEmptyPrimitive(): ParsedPrimitives {
   return {

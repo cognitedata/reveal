@@ -4,17 +4,17 @@
 
 import * as THREE from 'three';
 
+import { isMobileOrTablet, WebGLRendererStateHelper } from '@reveal/utilities';
+import { RootSectorNode } from '../../sector/RootSectorNode';
+import { SectorNode } from '../../sector/SectorNode';
+import { LevelOfDetail } from '../../sector/LevelOfDetail';
+
 import { CadMaterialManager } from '../CadMaterialManager'
 import { RenderMode } from './RenderMode';
 import { CogniteColors, RevealColors } from '../../utilities/types';
-import { isMobileOrTablet } from '@reveal/utilities';
 import { CadNode } from '../../CadNode';
-import { RootSectorNode } from '../../sector/RootSectorNode';
 import { AntiAliasingMode, defaultRenderOptions, RenderOptions, SsaoParameters, SsaoSampleQuality } from './types';
 import { outlineDetectionShaders, fxaaShaders, ssaoShaders, ssaoBlurCombineShaders } from './shaders';
-import { WebGLRendererStateHelper } from '../../utilities/WebGLRendererStateHelper';
-import { SectorNode } from '../../sector/SectorNode';
-import { LevelOfDetail } from '../../sector/LevelOfDetail';
 import { NodeOutlineColor } from '../NodeAppearance';
 
 export class EffectRenderManager {
@@ -458,7 +458,7 @@ export class EffectRenderManager {
 
   private extractCadNodes(scene: THREE.Scene) {
     this._rootSectorNodeBuffer.forEach(p => {
-      if (p[1].parent !== scene && p[1].parent.parent !== scene) {
+      if (p[1].parent !== scene && (p[1].parent !==  null && p[1].parent.parent !== scene)) {
         throw new Error('CadNode must be put at scene root');
       }
       this._cadScene.add(p[0]);

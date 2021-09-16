@@ -3,11 +3,11 @@
  */
 
 import * as Potree from '@cognite/potree-core';
+import { LoadingState } from '@reveal/cad-geometry-loaders';
 
 import { combineLatest, interval, Observable, of, pipe, Subject } from 'rxjs';
 import { delay, distinctUntilChanged, map, share, startWith, switchMap } from 'rxjs/operators';
 import * as THREE from 'three';
-import { LoadingState } from '../../utilities';
 
 import { PotreeNodeWrapper } from './PotreeNodeWrapper';
 

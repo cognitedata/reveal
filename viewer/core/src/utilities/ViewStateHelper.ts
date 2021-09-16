@@ -3,7 +3,7 @@
  */
 
 import ComboControls from '@reveal/camera-manager';
-import { NodeAppearance } from '../datamodels/cad/NodeAppearance';
+import { NodeAppearance } from '@reveal/cad-geometry-loaders';
 
 import { Cognite3DModel } from '../public/migration/Cognite3DModel';
 import { Cognite3DViewer } from '../public/migration/Cognite3DViewer';

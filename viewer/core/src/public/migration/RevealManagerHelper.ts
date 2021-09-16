@@ -3,10 +3,12 @@
  */
 import * as THREE from 'three';
 import { CogniteClient } from '@cognite/sdk';
+
+import { assertNever } from '@reveal/utilities';
+
 import { AddModelOptions } from './types';
 import { RevealManager } from '../RevealManager';
 import { createCdfRevealManager, createLocalRevealManager } from '../createRevealManager';
-import { assertNever } from '../../utilities';
 import { CdfModelIdentifier, LocalModelIdentifier } from '../../utilities/networking/types';
 import { RevealOptions } from '../..';
 import { CadNode } from '../../datamodels/cad';

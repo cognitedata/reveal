@@ -4,10 +4,11 @@
 
 import * as THREE from 'three';
 
+import { WebGLRendererStateHelper } from '@reveal/utilities';
+
 import { WantedSector } from '../types';
 import { SectorMetadata, CadModelMetadata } from '@reveal/cad-parsers';
 import { coverageShaders } from '../../material-manager/rendering/shaders';
-import { WebGLRendererStateHelper } from '../../utilities/WebGLRendererStateHelper';
 import { OccludingGeometryProvider } from './OccludingGeometryProvider';
 
 type SectorContainer = {

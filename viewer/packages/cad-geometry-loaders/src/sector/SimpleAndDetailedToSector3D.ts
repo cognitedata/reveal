@@ -4,15 +4,17 @@
 
 import * as THREE from 'three';
 
-import { SectorMetadata } from '@reveal/cad-parsers';
+import { SectorQuads } from '@cognite/reveal-parser-worker';
 
-import { CadMaterialManager } from '../CadMaterialManager';
-import { InstancedMeshFile, SectorQuads } from '../rendering/types';
+import { SectorMetadata } from '@reveal/cad-parsers';
+import { AutoDisposeGroup } from '@reveal/utilities';
+
+import { CadMaterialManager } from '../material-manager/CadMaterialManager';
+import { InstancedMeshFile } from '../sector/types';
 
 import { SectorGeometry } from './types';
 
 import { consumeSectorDetailed, consumeSectorSimple } from './sectorUtilities';
-import { AutoDisposeGroup } from '../../../utilities/three';
 import assert from 'assert';
 
 export class SimpleAndDetailedToSector3D {
