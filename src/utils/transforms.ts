@@ -327,7 +327,7 @@ export function getStepsFromWorkflow(
             return undefined;
           }
 
-          const inputNode = totalNodes?.find(
+          const inputNode = validNodes?.find(
             (nd) => nd.id === inputNodeConnection.outputPin.nodeId
           );
 

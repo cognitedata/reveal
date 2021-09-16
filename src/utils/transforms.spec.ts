@@ -1421,6 +1421,7 @@ describe('getStepsFromWorkflow', () => {
     const chart: Chart = {
       timeSeriesCollection: [
         {
+          createdAt: 123,
           statisticsCalls: [
             {
               callDate: 1621454563567,
@@ -1444,6 +1445,7 @@ describe('getStepsFromWorkflow', () => {
           displayMode: 'lines',
         },
         {
+          createdAt: 123,
           originalUnit: 'M3',
           lineWeight: 1,
           enabled: false,
@@ -1661,6 +1663,392 @@ describe('getStepsFromWorkflow', () => {
           {
             type: 'result',
             value: 0,
+          },
+        ],
+      },
+    ]);
+  });
+
+  it('generates the correct steps when using referencing an existing calculation as input (nested)', () => {
+    const chart: Chart = {
+      id: 'I_SiImvdXOKPr4SCGeXQw',
+      user: 'eirik.vullum@cognite.com',
+      userInfo: {
+        id: 'eirik.vullum@cognite.com',
+        email: 'eirik.vullum@cognite.com',
+        displayName: 'eirik.vullum@cognite.com',
+      },
+      name: 'New chart',
+      updatedAt: 1631797138912,
+      createdAt: 1631797138912,
+      timeSeriesCollection: [
+        {
+          id: 'kfanBbQHV_UdLvtgLgF5L',
+          name: 'LOR_ARENDAL_WELL_19_Well_HYDROCARBON_BEST_DAY_PREDICTION',
+          tsId: 679127532803421,
+          tsExternalId:
+            'LOR_ARENDAL_WELL_19_Well_HYDROCARBON_BEST_DAY_PREDICTION',
+          unit: 'BOE',
+          type: 'timeseries',
+          originalUnit: 'BOE',
+          preferredUnit: 'BOE',
+          color: '#6929c4',
+          lineWeight: 1,
+          lineStyle: 'solid',
+          displayMode: 'lines',
+          enabled: false,
+          description: '-',
+          range: [24.8, 35.92661870503597],
+          createdAt: 1631797145879,
+        },
+      ],
+      workflowCollection: [
+        {
+          id: '0YWZdy2MeFv0ccqtO6c7q',
+          name: 'Passthrough level 1',
+          color: '#1192e8',
+          lineWeight: 1,
+          lineStyle: 'solid',
+          enabled: false,
+          nodes: [
+            {
+              id: 'nh2yBa91pMCXfHoW-6amy',
+              title: 'LOR_ARENDAL_WELL_19_Well_HYDROCARBON_BEST_DAY_PREDICTION',
+              subtitle: 'Time Series',
+              color: '#FC2574',
+              icon: 'Function',
+              inputPins: [],
+              outputPins: [
+                {
+                  id: 'result',
+                  title: 'Time Series',
+                  type: 'TIMESERIES',
+                  x: 648.8125,
+                  y: 103,
+                },
+              ],
+              functionEffectReference: 'SOURCE_REFERENCE',
+              functionData: {
+                type: 'timeseries',
+                sourceId:
+                  'LOR_ARENDAL_WELL_19_Well_HYDROCARBON_BEST_DAY_PREDICTION',
+              },
+              x: -54.75,
+              y: 83,
+              calls: [],
+              selected: false,
+              width: 703.5625,
+            },
+            {
+              id: '084Pu2fMWvCZDf3wyLHl0',
+              title: 'Output',
+              subtitle: 'CHART OUTPUT',
+              color: '#4A67FB',
+              icon: 'Icon',
+              outputPins: [],
+              inputPins: [
+                {
+                  id: 'datapoints',
+                  title: 'Time Series',
+                  types: ['TIMESERIES'],
+                },
+              ],
+              functionEffectReference: 'OUTPUT',
+              x: 781.25,
+              y: 35,
+              calls: [],
+            },
+          ],
+          connections: {
+            agLzZGSBvsfIf0q3nDnZD: {
+              id: 'agLzZGSBvsfIf0q3nDnZD',
+              outputPin: {
+                nodeId: 'nh2yBa91pMCXfHoW-6amy',
+                pinId: 'result',
+              },
+              inputPin: {
+                nodeId: '084Pu2fMWvCZDf3wyLHl0',
+                pinId: 'datapoints',
+              },
+            },
+          },
+          createdAt: 1631797165774,
+          unit: '',
+          preferredUnit: '',
+          type: 'workflow',
+          calls: [
+            {
+              functionId: 222,
+              callId: 14326244388381856236,
+              callDate: 1631797963030,
+              hash: -2059100973,
+            },
+          ],
+          range: [22.989529137718534, 34.19063239524058],
+        },
+        {
+          id: 'HSkEktNr8Mvj_qfNFJFko',
+          name: 'Passthrough level 2',
+          color: '#005d5d',
+          lineWeight: 1,
+          lineStyle: 'solid',
+          enabled: false,
+          nodes: [
+            {
+              id: 'i6RkowH4-l5w0gMz9Y5Dz',
+              title: 'Passthrough level 1',
+              subtitle: 'Calculation',
+              color: '#FC2574',
+              icon: 'Function',
+              inputPins: [],
+              outputPins: [
+                {
+                  id: 'result',
+                  title: 'Time Series',
+                  type: 'TIMESERIES',
+                  x: 285.3125,
+                  y: 55,
+                },
+              ],
+              functionEffectReference: 'SOURCE_REFERENCE',
+              functionData: {
+                type: 'workflow',
+                sourceId: '0YWZdy2MeFv0ccqtO6c7q',
+              },
+              x: 176.25,
+              y: 35,
+              calls: [],
+              selected: false,
+              width: 109.0625,
+            },
+            {
+              id: 'zeT_JB_v8Z0lTD0kZCc6H',
+              title: 'Output',
+              subtitle: 'CHART OUTPUT',
+              color: '#4A67FB',
+              icon: 'Icon',
+              outputPins: [],
+              inputPins: [
+                {
+                  id: 'datapoints',
+                  title: 'Time Series',
+                  types: ['TIMESERIES'],
+                },
+              ],
+              functionEffectReference: 'OUTPUT',
+              x: 733.25,
+              y: 47,
+              calls: [],
+            },
+          ],
+          connections: {
+            bNlgWTVY0Na_A8B52G8oH: {
+              id: 'bNlgWTVY0Na_A8B52G8oH',
+              outputPin: {
+                nodeId: 'i6RkowH4-l5w0gMz9Y5Dz',
+                pinId: 'result',
+              },
+              inputPin: {
+                nodeId: 'zeT_JB_v8Z0lTD0kZCc6H',
+                pinId: 'datapoints',
+              },
+            },
+          },
+          createdAt: 1631797203555,
+          unit: '',
+          preferredUnit: '',
+          type: 'workflow',
+          calls: [
+            {
+              functionId: 222,
+              callId: 14323333345447973356,
+              callDate: 1631797963014,
+              hash: 1736938706,
+            },
+          ],
+          range: [21.214651360265208, 31.295644292035046],
+        },
+        {
+          id: 'VC7Q4qlNe92CTivk2Ww1N',
+          name: 'Passthrough level 3',
+          color: '#9f1853',
+          lineWeight: 1,
+          lineStyle: 'solid',
+          enabled: true,
+          nodes: [
+            {
+              id: 'uo9F0ECpJkrfBkqBwsS2I',
+              title: 'Passthrough level 2',
+              subtitle: 'Calculation',
+              color: '#FC2574',
+              icon: 'Function',
+              inputPins: [],
+              outputPins: [
+                {
+                  id: 'result',
+                  title: 'Time Series',
+                  type: 'TIMESERIES',
+                  x: 286.3125,
+                  y: 126,
+                },
+              ],
+              functionEffectReference: 'SOURCE_REFERENCE',
+              functionData: {
+                type: 'workflow',
+                sourceId: 'HSkEktNr8Mvj_qfNFJFko',
+              },
+              x: 177.25,
+              y: 106,
+              calls: [],
+              selected: false,
+              width: 109.0625,
+            },
+            {
+              id: 'aNwdGmQqtYj_FHxmZWp1I',
+              title: 'Output',
+              subtitle: 'CHART OUTPUT',
+              color: '#4A67FB',
+              icon: 'Icon',
+              outputPins: [],
+              inputPins: [
+                {
+                  id: 'datapoints',
+                  title: 'Time Series',
+                  types: ['TIMESERIES'],
+                  x: 757.25,
+                  y: 156,
+                },
+              ],
+              functionEffectReference: 'OUTPUT',
+              x: 757.25,
+              y: 94,
+              calls: [],
+              selected: false,
+              width: 162,
+            },
+          ],
+          connections: {
+            hwHuAg2UxJRBtEuX56ZR7: {
+              id: 'hwHuAg2UxJRBtEuX56ZR7',
+              outputPin: {
+                nodeId: 'uo9F0ECpJkrfBkqBwsS2I',
+                pinId: 'result',
+              },
+              inputPin: {
+                nodeId: 'aNwdGmQqtYj_FHxmZWp1I',
+                pinId: 'datapoints',
+              },
+            },
+          },
+          createdAt: 1631797233541,
+          unit: '',
+          preferredUnit: '',
+          type: 'workflow',
+          calls: [
+            {
+              functionId: 222,
+              callId: 14322283655440830956,
+              callDate: 1631797962909,
+              hash: -360731468,
+            },
+          ],
+          range: [-1, 4.9714285714285715],
+        },
+      ],
+      dateFrom: '2020-09-02T16:56:37.588Z',
+      dateTo: '2021-09-02T16:57:37.587Z',
+      public: false,
+      version: 1,
+      settings: {
+        showYAxis: true,
+        showMinMax: false,
+        showGridlines: true,
+        mergeUnits: false,
+      },
+      dirty: true,
+      sourceCollection: [
+        {
+          id: 'VC7Q4qlNe92CTivk2Ww1N',
+          type: 'workflow',
+        },
+        {
+          id: 'HSkEktNr8Mvj_qfNFJFko',
+          type: 'workflow',
+        },
+        {
+          id: '0YWZdy2MeFv0ccqtO6c7q',
+          type: 'workflow',
+        },
+        {
+          id: 'kfanBbQHV_UdLvtgLgF5L',
+          type: 'timeseries',
+        },
+      ],
+    };
+
+    const firstLevelSteps = getStepsFromWorkflow(
+      chart,
+      chart.workflowCollection?.[1].nodes,
+      chart.workflowCollection?.[1].connections
+    );
+
+    expect(firstLevelSteps).toEqual([
+      {
+        step: 0,
+        op: 'PASSTHROUGH',
+        inputs: [
+          {
+            type: 'ts',
+            value: 'LOR_ARENDAL_WELL_19_Well_HYDROCARBON_BEST_DAY_PREDICTION',
+          },
+        ],
+      },
+      {
+        step: 1,
+        op: 'PASSTHROUGH',
+        inputs: [
+          {
+            type: 'result',
+            value: 0,
+          },
+        ],
+      },
+    ]);
+
+    const secondLevelSteps = getStepsFromWorkflow(
+      chart,
+      chart.workflowCollection?.[2].nodes,
+      chart.workflowCollection?.[2].connections
+    );
+
+    expect(secondLevelSteps).toEqual([
+      {
+        step: 0,
+        op: 'PASSTHROUGH',
+        inputs: [
+          {
+            type: 'ts',
+            value: 'LOR_ARENDAL_WELL_19_Well_HYDROCARBON_BEST_DAY_PREDICTION',
+          },
+        ],
+      },
+      {
+        step: 1,
+        op: 'PASSTHROUGH',
+        inputs: [
+          {
+            type: 'result',
+            value: 0,
+          },
+        ],
+      },
+      {
+        step: 2,
+        op: 'PASSTHROUGH',
+        inputs: [
+          {
+            type: 'result',
+            value: 1,
           },
         ],
       },
