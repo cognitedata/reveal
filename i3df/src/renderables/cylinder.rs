@@ -212,6 +212,9 @@ fn create_general_cylinder(cylinder: &crate::SolidOpenGeneralCylinder) -> Genera
         .unwrap_or_else(|| Rotation3::from_axis_angle(&Vector3::x_axis(), PI));
     let local_x_axis: Vector3 = rotation.transform_vector(&Vector3::x_axis());
 
+    let extended_center_a = center_a + center_axis * (f32::tan(cylinder.slope_a) * cylinder.radius);
+    let extended_center_b = center_b - center_axis * (f32::tan(cylinder.slope_b) * cylinder.radius);
+
     let cap_a = create_cap(
         &cylinder,
         &rotation,
@@ -239,8 +242,8 @@ fn create_general_cylinder(cylinder: &crate::SolidOpenGeneralCylinder) -> Genera
         cylinder: GeneralCylinder {
             tree_index: cylinder.tree_index as f32,
             color: cylinder.color,
-            center_a: ext_a,
-            center_b: ext_b,
+            center_a: extended_center_a,
+            center_b: extended_center_b,
             radius: cylinder.radius,
             angle: normalize_radians(cylinder.rotation_angle), // TODO normalize
             plane_a: cap_a.plane,
