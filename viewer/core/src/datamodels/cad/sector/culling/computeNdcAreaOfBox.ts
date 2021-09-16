@@ -9,7 +9,7 @@ const ndcBox = new THREE.Box3();
 
 /**
  * Computes area of the box after converting it to NDC space. The returned value will be a number
- * in range [0, 4].
+ * in range [0, 1].
  * @param camera
  * @param box
  * @returns
@@ -25,5 +25,5 @@ export function computeNdcAreaOfBox(camera: THREE.Camera, box: THREE.Box3): numb
   if (ndcBox.isEmpty()) {
     return 0.0;
   }
-  return (ndcBox.max.x - ndcBox.min.x) * (ndcBox.max.y - ndcBox.min.y);
+  return 0.25 * (ndcBox.max.x - ndcBox.min.x) * (ndcBox.max.y - ndcBox.min.y);
 }

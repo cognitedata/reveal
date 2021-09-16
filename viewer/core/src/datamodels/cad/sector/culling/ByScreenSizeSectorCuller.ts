@@ -50,7 +50,12 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
 
     const transformedCameraMatrixWorldInverse = new THREE.Matrix4();
     const transformedBounds = new THREE.Box3();
-    const candidateSectors = new Array<{ model: CadModelMetadata; sectorId: number; priority: number }>();
+    const candidateSectors = new Array<{
+      model: CadModelMetadata;
+      sectorId: number;
+      priority: number;
+      debugStuff: any;
+    }>();
     cadModelsMetadata.map(model => {
       takenSectors.initializeScene(model);
       transformedCameraMatrixWorldInverse.multiplyMatrices(cameraMatrixWorldInverse, model.modelMatrix);
@@ -60,15 +65,44 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
         transformedCameraMatrixWorldInverse
       );
 
+      const { minDistance: minSectorDistance, maxDistance: maxSectorDistance } = sectors.reduce(
+        (minMax, sector) => {
+          transformedBounds.copy(sector.bounds);
+          transformedBounds.applyMatrix4(model.modelMatrix);
+          const distanceToCamera = transformedBounds.distanceToPoint(camera.position);
+          minMax.maxDistance = Math.max(minMax.maxDistance, distanceToCamera);
+          minMax.minDistance = Math.min(minMax.minDistance, distanceToCamera);
+          return minMax;
+        },
+        { minDistance: Infinity, maxDistance: -Infinity }
+      );
+
       sectors.forEach(sector => {
         transformedBounds.copy(sector.bounds);
         transformedBounds.applyMatrix4(model.modelMatrix);
 
         const screenArea = computeNdcAreaOfBox(camera, transformedBounds);
         // Weight sectors that are close to the camera higher
-        const priority = screenArea / Math.log2(2.0 + transformedBounds.distanceToPoint(camera.position));
+        const distanceToCamera = transformedBounds.distanceToPoint(camera.position);
+        const normalizedDistanceToCamera =
+          (distanceToCamera - minSectorDistance) / (maxSectorDistance - minSectorDistance);
+        // const priority = screenArea / Math.log2(2.0 + transformedBounds.distanceToPoint(camera.position));
+        const screenAreaWeight = 0.6;
+        const distanceToCameraWeight = 1.0 - screenAreaWeight;
+        const priority = screenAreaWeight * screenArea + distanceToCameraWeight * (1.0 - normalizedDistanceToCamera);
 
-        candidateSectors.push({ model, sectorId: sector.id, priority });
+        candidateSectors.push({
+          model,
+          sectorId: sector.id,
+          priority,
+          debugStuff: {
+            screenArea,
+            distanceToCamera,
+            normalizedDistanceToCamera,
+            camera: camera.clone(),
+            transformedBounds: transformedBounds.clone()
+          }
+        });
       });
     });
     candidateSectors.sort((left, right) => {
@@ -89,7 +123,9 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
 
     console.log(
       'Scheduled sectors',
-      candidateSectors.slice(0, takenSectorCount).map(x => ({ id: x.sectorId, screenArea: x.priority }))
+      candidateSectors.slice(0, takenSectorCount).map(x => ({ id: x.sectorId, screenArea: x.priority })),
+      'Candidates:',
+      candidateSectors.slice().sort((left, right) => left.sectorId - right.sectorId)
     );
     console.log('Budget:', { ...input.budget }, 'Spent:', { ...spentBudget });
 
@@ -129,7 +165,6 @@ class ScheduledSectorTree {
   }
 
   markSectorDetailed(model: CadModelMetadata, sectorId: number, priority: number) {
-    console.log('markSectorDetailed', sectorId);
     const entry = this._models.get(model.modelIdentifier);
     assert(!!entry, `Could not find sector tree for ${model.modelIdentifier}`);
 
@@ -147,8 +182,6 @@ class ScheduledSectorTree {
         this._totalCost.drawCalls += sectorCost.drawCalls;
 
         sectorIds.set(nextSectorIdToAdd, priority);
-
-        console.log('New sector', nextSectorIdToAdd, 'cost:', sectorCost, 'total cost:', this.totalCost);
       } else {
         sectorIds.set(nextSectorIdToAdd, Math.max(priority, existingPriority));
       }

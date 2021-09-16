@@ -24,7 +24,7 @@ describe('computeNdcAreaOfBox', () => {
     camera.far = 1.0;
     const box = new THREE.Box3(new THREE.Vector3(-10, -10, 0), new THREE.Vector3(10, 10, 1));
     const area = computeNdcAreaOfBox(camera, box);
-    expect(area).toBe(4.0);
+    expect(area).toBe(1.0);
   });
 
   test('box is fully inside frustum', () => {
@@ -33,13 +33,13 @@ describe('computeNdcAreaOfBox', () => {
     const box = new THREE.Box3(new THREE.Vector3(-0.25, -0.25, -2), new THREE.Vector3(0.25, 0.25, -1));
     const area = computeNdcAreaOfBox(camera, box);
     expect(area).toBeGreaterThan(0.0);
-    expect(area).toBeLessThan(4.0);
+    expect(area).toBeLessThan(1.0);
   });
 
   test('box intersecting frustum', () => {
     const camera = new THREE.OrthographicCamera(-1, 1, -1, 1, 0, 1);
     const box = new THREE.Box3(new THREE.Vector3(0.0, 0.0, 0.0), new THREE.Vector3(1.5, 1.5, 1.5));
     const area = computeNdcAreaOfBox(camera, box);
-    expect(area).toBe(1.0);
+    expect(area).toBe(1.0 / 4.0);
   });
 });
