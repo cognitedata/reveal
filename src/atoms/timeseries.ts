@@ -25,7 +25,10 @@ export const timeseriesSummaryById = selectorFamily({
         return undefined;
       }
 
-      const hasPoints = ts.datapoints.length > 0;
+      if (!ts.datapoints.length) {
+        return undefined;
+      }
+
       const isRaw = hasRawPoints(ts);
 
       let min: number | undefined;
@@ -35,20 +38,13 @@ export const timeseriesSummaryById = selectorFamily({
       if (isRaw) {
         const tsRaw = ts as DoubleDatapoints;
 
-        min = hasPoints
-          ? Math.min(...tsRaw.datapoints.map((datapoint) => datapoint.value))
-          : NaN;
+        min = Math.min(...tsRaw.datapoints.map((datapoint) => datapoint.value));
+        max = Math.max(...tsRaw.datapoints.map((datapoint) => datapoint.value));
 
-        max = hasPoints
-          ? Math.max(...tsRaw.datapoints.map((datapoint) => datapoint.value))
-          : NaN;
-
-        const totalSum = hasPoints
-          ? tsRaw.datapoints.reduce(
-              (total, { value }) => total + (value || 0),
-              0
-            )
-          : 0;
+        const totalSum = tsRaw.datapoints.reduce(
+          (total, { value }) => total + (value || 0),
+          0
+        );
 
         const totalCount = tsRaw.datapoints.length;
 
@@ -56,35 +52,27 @@ export const timeseriesSummaryById = selectorFamily({
       } else {
         const tsAggregate = ts as DatapointAggregates;
 
-        min = hasPoints
-          ? Math.min(
-              ...tsAggregate.datapoints.map((datapoint) =>
-                typeof datapoint.min === 'number' ? datapoint.min : NaN
-              )
-            )
-          : NaN;
+        min = Math.min(
+          ...tsAggregate.datapoints.map((datapoint) =>
+            typeof datapoint.min === 'number' ? datapoint.min : NaN
+          )
+        );
 
-        max = hasPoints
-          ? Math.max(
-              ...tsAggregate.datapoints.map((datapoint) =>
-                typeof datapoint.max === 'number' ? datapoint.max : NaN
-              )
-            )
-          : NaN;
+        max = Math.max(
+          ...tsAggregate.datapoints.map((datapoint) =>
+            typeof datapoint.max === 'number' ? datapoint.max : NaN
+          )
+        );
 
-        const totalSum = hasPoints
-          ? tsAggregate.datapoints.reduce(
-              (total, { sum }) => total + (sum || 0),
-              0
-            )
-          : 0;
+        const totalSum = tsAggregate.datapoints.reduce(
+          (total, { sum }) => total + (sum || 0),
+          0
+        );
 
-        const totalCount = hasPoints
-          ? tsAggregate.datapoints.reduce(
-              (total, { count }) => total + (count || 0),
-              0
-            )
-          : undefined;
+        const totalCount = tsAggregate.datapoints.reduce(
+          (total, { count }) => total + (count || 0),
+          0
+        );
 
         mean = totalCount ? totalSum / totalCount : undefined;
       }

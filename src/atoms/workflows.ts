@@ -17,34 +17,33 @@ export const workflowSummaryById = selectorFamily({
     (id: string | undefined) =>
     ({ get }) => {
       const state = get(workflowState);
-      const ts = state.find((item) => item.id === id) as WorkflowResult;
+      const wf = state.find((item) => item.id === id) as WorkflowResult;
 
-      if (!ts) {
+      if (!wf) {
         return undefined;
       }
 
-      const min = ts.datapoints.length
-        ? Math.min(
-            ...ts.datapoints.map((datapoint) =>
-              typeof datapoint.value === 'number' ? datapoint.value : NaN
-            )
-          )
-        : NaN;
+      if (wf.datapoints.length) {
+        return undefined;
+      }
 
-      const max = ts.datapoints.length
-        ? Math.max(
-            ...ts.datapoints.map((datapoint) =>
-              typeof datapoint.value === 'number' ? datapoint.value : NaN
-            )
-          )
-        : NaN;
+      const min = Math.min(
+        ...wf.datapoints.map((datapoint) =>
+          typeof datapoint.value === 'number' ? datapoint.value : NaN
+        )
+      );
 
-      const mean = ts.datapoints.length
-        ? ts.datapoints
-            .map((datapoint) => datapoint.value || 0)
-            .reduce((total, average) => total + average, 0) /
-          ts.datapoints.length
-        : NaN;
+      const max = Math.max(
+        ...wf.datapoints.map((datapoint) =>
+          typeof datapoint.value === 'number' ? datapoint.value : NaN
+        )
+      );
+
+      const mean =
+        wf.datapoints
+          .map((datapoint) => datapoint.value || 0)
+          .reduce((total, average) => total + average, 0) /
+        wf.datapoints.length;
 
       const result = {
         min: Number.isNaN(min) ? undefined : min,
