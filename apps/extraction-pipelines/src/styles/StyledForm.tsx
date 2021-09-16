@@ -22,8 +22,7 @@ export const CreateFormWrapper = styled.form`
       border-color: ${Colors.danger.hex()};
     }
     &:focus {
-      outline: -webkit-focus-ring-color auto 0.0625rem;
-      outline-offset: 0.0625rem;
+      box-shadow: none;
     }
   }
 
