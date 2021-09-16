@@ -8,3 +8,5 @@ export { worldToViewportCoordinates, worldToNormalizedViewportCoordinates } from
 export { BoundingBoxClipper } from './BoundingBoxClipper';
 
 export { assertNever, EventTrigger } from '@reveal/utilities';
+
+export { LoadingState } from '@reveal/cad-geometry-loaders';

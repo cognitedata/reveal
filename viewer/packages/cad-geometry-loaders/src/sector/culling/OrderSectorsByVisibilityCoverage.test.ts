@@ -7,6 +7,7 @@ import * as THREE from 'three';
 import {
   SectorScene,
   CadModelMetadata,
+  SectorSceneFactory
 } from '@reveal/cad-parsers';
 
 

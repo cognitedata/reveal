@@ -7,7 +7,7 @@ import { InstancedMeshManager } from './InstancedMeshManager';
 import { CadMaterialManager } from './material-manager/CadMaterialManager';
 import { InstancedMesh, InstancedMeshFile } from './sector/types';
 
-jest.mock('./CadMaterialManager', () => {
+jest.mock('./material-manager/CadMaterialManager', () => {
   return {
     CadMaterialManager: jest.fn().mockImplementation(() => {
       return {

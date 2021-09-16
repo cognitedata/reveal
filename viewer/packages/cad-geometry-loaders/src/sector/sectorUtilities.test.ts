@@ -5,12 +5,12 @@ import * as THREE from 'three';
 
 import { SectorMetadata } from '@reveal/cad-parsers';
 
-import { SectorGeometry } from './types';
+import { SectorGeometry, TriangleMesh } from './types';
 import { createEmptySector } from '../../../../test-utilities/src/emptySector';
 import { createMaterials } from '../material-manager/rendering/materials';
 import { RenderMode } from '../material-manager/rendering/RenderMode';
 import { consumeSectorDetailed, consumeSectorSimple } from './sectorUtilities';
-import { TriangleMesh, SectorQuads } from '../material-manager/rendering/types';
+import { SectorQuads } from '../material-manager/rendering/types';
 
 import 'jest-extended';
 

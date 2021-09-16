@@ -3,11 +3,12 @@
  */
 import * as THREE from 'three';
 
+import { CadModelMetadata } from '@reveal/cad-parsers';
+import { CadMaterialManager } from '@reveal/cad-geometry-loaders';
+
 import { Mutable } from '../../../../test-utilities/src/reflection';
 import { generateSectorTree, createCadModelMetadata } from '../../../../test-utilities';
-import { CadMaterialManager } from './CadMaterialManager';
 import { CadModelFactory } from './CadModelFactory';
-import { CadModelMetadata } from '@reveal/cad-parsers';
 
 describe('CadModelFactory', () => {
   let materialManager: CadMaterialManager;
