@@ -516,7 +516,6 @@ export function Migration() {
                 viewer.fitCameraToBoundingBox(boundingBox, 1000);
               }
               break;
-
             case 'pointcloud':
               {
                 const { pointIndex, point } = intersection;
