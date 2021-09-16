@@ -52,7 +52,7 @@ export function ClassPicker(props: Props) {
         classValue,
         classesToDisplayInModel.includes(classValue)
       );
-      props.viewer.forceRerender();
+      props.viewer.requestRedraw();
     });
   }, [selectedValues, props.model, keyValueMapping, ALL_CLASSES, props.viewer]);
 
