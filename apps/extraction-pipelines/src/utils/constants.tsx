@@ -30,6 +30,7 @@ export const CANCEL: Readonly<string> = 'Cancel';
 export const CLOSE: Readonly<string> = 'Close';
 export const EDIT: Readonly<string> = 'Edit';
 export const SAVE: Readonly<string> = 'Save';
+export const CREATE: Readonly<string> = 'Create';
 export const OK: Readonly<string> = 'OK';
 export const BACK: Readonly<string> = 'Back';
 export const NEXT: Readonly<string> = 'Next';

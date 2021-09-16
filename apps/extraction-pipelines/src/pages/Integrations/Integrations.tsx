@@ -77,7 +77,7 @@ const CreateExtpipeModal = (props: { visible: boolean; close: () => void }) => {
   return (
     <Modal
       visible={props.visible}
-      width={872}
+      width={600}
       closable
       onCancel={props.close}
       appElement={document.getElementsByClassName(ids.styleScope).item(0)!}
@@ -93,7 +93,10 @@ const CreateExtpipeModal = (props: { visible: boolean; close: () => void }) => {
           </StyledHeader>
         }
       >
-        <CreateIntegration showAdditionalFields={false} />
+        <CreateIntegration
+          showAdditionalFields={false}
+          customCancelCallback={props.close}
+        />
       </ModalContent>
     </Modal>
   );

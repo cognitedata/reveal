@@ -22,13 +22,13 @@ export const CenterFullVH = styled.div`
 `;
 
 export const PriSecBtnWrapper = styled((props) => (
-  <DivFlex content="center" {...props}>
+  <DivFlex justify="end" {...props}>
     {props.children}
   </DivFlex>
 ))`
   margin-bottom: ${bottomSpacing};
   .cogs-btn-primary {
-    margin-right: 2rem;
+    margin-left: 1rem;
   }
 `;
 

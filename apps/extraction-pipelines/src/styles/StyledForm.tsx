@@ -40,7 +40,7 @@ export const CreateFormWrapper = styled.form`
   .cogs-select,
   .rc-collapse-content-box > .cogs-input,
   #cron-input {
-    width: 50%;
+    width: 100%;
   }
   #documentation-input {
     width: 100%;

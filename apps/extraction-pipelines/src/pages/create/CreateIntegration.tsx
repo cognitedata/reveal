@@ -3,6 +3,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
 import {
   CANCEL,
+  CREATE,
   DESCRIPTION_HINT,
   DESCRIPTION_LABEL,
   DOCUMENTATION_HINT,
@@ -27,7 +28,7 @@ import { FullTextArea } from 'components/inputs/FullTextArea';
 import { usePostIntegration } from 'hooks/usePostIntegration';
 import { GridH2Wrapper } from 'styles/StyledPage';
 import styled from 'styled-components';
-import { Collapse, Colors } from '@cognite/cogs.js';
+import { Button, Collapse, Colors } from '@cognite/cogs.js';
 import { CountSpan, PriSecBtnWrapper } from 'styles/StyledWrapper';
 import {
   descriptionRule,
@@ -150,7 +151,10 @@ const findDataSetId = (search: string) => {
   return new URLSearchParams(search).get('dataSetId');
 };
 
-export const CreateIntegration = (props: { showAdditionalFields: boolean }) => {
+export const CreateIntegration = (props: {
+  showAdditionalFields: boolean;
+  customCancelCallback?: () => void;
+}) => {
   const [dataSetLoadError, setDataSetLoadError] = useState<string | null>(null);
   const [showCron, setShowCron] = useState(false);
   const history = useHistory();
@@ -319,17 +323,23 @@ export const CreateIntegration = (props: { showAdditionalFields: boolean }) => {
             )}
           />
           <PriSecBtnWrapper>
+            {props.customCancelCallback == null ? (
+              <a
+                href={createLink(
+                  `/data-sets${dataSetId && `/data-set/${dataSetId}`}`
+                )}
+                className="cogs-btn cogs-btn-secondary cogs-btn--padding"
+              >
+                {CANCEL}
+              </a>
+            ) : (
+              <Button variant="ghost" onClick={props.customCancelCallback}>
+                {CANCEL}
+              </Button>
+            )}
             <ButtonPlaced type="primary" htmlType="submit" marginbottom={0}>
-              {SAVE}
+              {CREATE}
             </ButtonPlaced>
-            <a
-              href={createLink(
-                `/data-sets${dataSetId && `/data-set/${dataSetId}`}`
-              )}
-              className="cogs-btn cogs-btn-secondary cogs-btn--padding"
-            >
-              {CANCEL}
-            </a>
           </PriSecBtnWrapper>
           {props.showAdditionalFields && (
             <>
