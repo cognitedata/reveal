@@ -1,7 +1,7 @@
 import { getProject } from 'hooks';
 import { useCluster } from 'config';
 import { useCallFunction, functionResponseKey } from 'utils/backendService';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import {
   ChartTimeSeries,
   ChartWorkflow,
@@ -16,7 +16,6 @@ import { useQuery } from 'react-query';
 import { getCallResponse } from 'utils/backendApi';
 import { CogniteClient } from '@cognite/sdk';
 import * as backendApi from 'utils/backendApi';
-import { useEffect } from '@storybook/addons';
 import { StatisticsResult } from '.';
 
 export const useFusionLink = (path: string) => {
