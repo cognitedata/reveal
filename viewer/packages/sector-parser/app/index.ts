@@ -83,8 +83,7 @@ async function init() {
 
   const controls = new OrbitControls(camera, renderer.domElement);
   const target = new THREE.Vector3(10, 0, 0);
-  // camera.position.add(new THREE.Vector3(10, 20, 20));
-  camera.position.add(new THREE.Vector3(400, 800, -800));
+  camera.position.add(new THREE.Vector3(10, 20, 20));
   controls.target.copy(target);
   controls.update();
 
