@@ -1,14 +1,9 @@
-import {
-  Button,
-  Tooltip,
-  SegmentedControl,
-  Body,
-  Title,
-} from '@cognite/cogs.js';
+import { Button, Tooltip, SegmentedControl, Title } from '@cognite/cogs.js';
 import { useSDK } from '@cognite/sdk-provider';
 import { Row, Col, List } from 'antd';
 import DetailsBlock from 'components/common/DetailsBlock';
 import { MetadataList } from 'components/DetailsSidebar';
+import { SourceCircle, SourceSquare } from 'pages/ChartView/elements';
 import { useState } from 'react';
 import { useQuery } from 'react-query';
 import { ChartTimeSeries, ChartWorkflow } from 'reducers/charts/types';
@@ -23,7 +18,8 @@ import {
   TopContainerTitle,
   ContentOverflowWrapper,
   Container,
-  ColorCircle,
+  SourceItemName,
+  SourceItemWrapper,
 } from './elements';
 
 type Props = {
@@ -236,7 +232,7 @@ const Statistics = ({
           </DetailsBlock>
         </>
       ) : (
-        <Body>Statistics are currently unavailable for calculations</Body>
+        <p>(currently unavailable for calculations)</p>
       )}
     </Container>
   );
@@ -247,15 +243,18 @@ const SourceHeader = ({
 }: {
   sourceItem: ChartWorkflow | ChartTimeSeries | undefined;
 }) => {
+  const isTimeSeries = sourceItem?.type === 'timeseries';
   return (
     <div style={{ wordBreak: 'break-word' }}>
-      <Title level={6}>Time Series</Title>
-      <p style={{ display: 'flex' }}>
-        <span style={{ paddingRight: 10 }}>
-          <ColorCircle color={sourceItem?.color} />
-        </span>
-        {sourceItem?.name}
-      </p>
+      <Title level={6}>{isTimeSeries ? 'Time Series' : 'Calculation'}</Title>
+      <SourceItemWrapper>
+        {isTimeSeries ? (
+          <SourceCircle color={sourceItem?.color} fade={false} />
+        ) : (
+          <SourceSquare color={sourceItem?.color} fade={false} />
+        )}
+        <SourceItemName>{sourceItem?.name}</SourceItemName>
+      </SourceItemWrapper>
     </div>
   );
 };

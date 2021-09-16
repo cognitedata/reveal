@@ -24,13 +24,6 @@ export const ContentOverflowWrapper = styled.div`
   overflow: auto;
 `;
 
-export const ColorCircle = styled.span`
-  display: inline-block;
-  background-color: ${(props) => props.color};
-  width: 20px;
-  height: 20px;
-`;
-
 export const Sidebar = styled.div<{ visible?: boolean }>`
   border-left: 1px solid var(--cogs-greyscale-grey4);
   visibility: ${(props) => (props.visible ? 'visible' : 'hidden')};
@@ -40,4 +33,18 @@ export const Sidebar = styled.div<{ visible?: boolean }>`
 
 export const Container = styled.div`
   padding: 20px;
+`;
+
+export const SourceItemWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  height: 40px;
+  margin: 5px 0;
+  max-width: 260px;
+`;
+
+export const SourceItemName = styled.span`
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 `;
