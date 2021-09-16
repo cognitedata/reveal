@@ -4,11 +4,11 @@ import '@testing-library/jest-dom/extend-expect';
 import { QueryClient } from 'react-query';
 import { renderRegisterContext } from 'utils/test/render';
 import {
+  CREATE,
   DATA_SET_ID_HINT,
   DESCRIPTION_LABEL,
   EXT_PIPE_NAME_HEADING,
   INTEGRATION_EXTERNAL_ID_HEADING,
-  SAVE,
 } from 'utils/constants';
 import {
   CDF_ENV_GREENFIELD,
@@ -88,7 +88,7 @@ describe('CreateIntegration', () => {
     renderRegisterContext(<CreateIntegration />, { ...props });
     const nameInput = screen.getByLabelText(EXT_PIPE_NAME_HEADING);
     expect(nameInput).toBeInTheDocument();
-    const saveBtn = screen.getByText(SAVE);
+    const saveBtn = screen.getByText(CREATE);
     fireEvent.click(saveBtn);
     await waitFor(() => {
       expect(screen.getByText(NAME_REQUIRED)).toBeInTheDocument();
