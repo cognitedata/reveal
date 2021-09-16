@@ -4,6 +4,8 @@ import { StorableNode } from 'reducers/charts/types';
 import defaultNodeOptions from 'reducers/charts/Nodes';
 import styled from 'styled-components/macro';
 
+import { effectId as OutputSeriesEffectId } from 'reducers/charts/Nodes/OutputSeries';
+
 const ConfigPanelWrapper = styled.div`
   position: absolute;
   top: 16px;
@@ -78,6 +80,8 @@ const ConfigPanel = ({
     (opt) => opt.effectId === node?.functionEffectReference
   )?.ConfigPanel;
 
+  const isOutputNode = node?.functionEffectReference === OutputSeriesEffectId;
+
   return (
     <ConfigPanelWrapper>
       <Button
@@ -91,6 +95,8 @@ const ConfigPanel = ({
         aria-label="close"
       />
       <Input
+        disabled={isOutputNode}
+        style={inputStyleOverrides}
         value={workingNode.title}
         onChange={(e) => {
           setDirty(true);
@@ -140,6 +146,12 @@ const ConfigPanel = ({
       </footer>
     </ConfigPanelWrapper>
   );
+};
+
+const inputStyleOverrides = {
+  background: 'var(--cogs-greyscale-grey10)',
+  color: 'white',
+  border: 'black',
 };
 
 export default ConfigPanel;

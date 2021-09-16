@@ -10,12 +10,7 @@ import { chartState } from 'atoms/chart';
 
 export const effectId = 'OUTPUT';
 
-export const ConfigPanel = ({
-  node,
-  onUpdateNode,
-  context,
-}: ConfigPanelComponentProps) => {
-  const { functionData } = node;
+export const ConfigPanel = ({ context }: ConfigPanelComponentProps) => {
   const { chart, workflow } = context;
 
   const [, setChart] = useRecoilState(chartState);
@@ -40,7 +35,7 @@ export const ConfigPanel = ({
   ];
 
   const selectedWorkspaceTimeSeriesLabel =
-    sourceList.find(({ value }) => value === functionData?.attachTo)?.label ||
+    sourceList.find(({ value }) => value === workflow?.attachTo)?.label ||
     'None';
 
   const loadOptions = (
@@ -71,15 +66,9 @@ export const ConfigPanel = ({
                   : wf
             ),
           }));
-
-          onUpdateNode({
-            functionData: {
-              attachTo: nextValue.value || '',
-            },
-          });
         }}
         value={{
-          value: functionData?.attachTo,
+          value: workflow.attachTo,
           label: selectedWorkspaceTimeSeriesLabel,
         }}
       />
@@ -89,7 +78,7 @@ export const ConfigPanel = ({
 
 export const node = {
   title: 'Output',
-  subtitle: 'TIMESERIES',
+  subtitle: 'CHART OUTPUT',
   color: '#4A67FB',
   icon: 'Icon',
   outputPins: [],
@@ -101,7 +90,4 @@ export const node = {
     },
   ],
   functionEffectReference: effectId,
-  functionData: {
-    attachTo: '',
-  },
 } as StorableNode;
