@@ -5,11 +5,10 @@
 import * as THREE from 'three';
 import range from 'lodash/range';
 import { IndexSet, NumericRange } from '@reveal/utilities';
+import { RenderMode, Materials } from '@reveal/cad-parsers';
 
-import { RenderMode } from './rendering/RenderMode';
 import { TreeIndexNodeCollection } from './styling';
 import { CadMaterialManager } from './CadMaterialManager';
-import { Materials } from './rendering/materials';
 
 describe('CadMaterialManager', () => {
   let manager: CadMaterialManager;

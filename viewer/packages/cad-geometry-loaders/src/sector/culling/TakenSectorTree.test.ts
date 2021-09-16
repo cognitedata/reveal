@@ -5,11 +5,10 @@
 import * as THREE from 'three';
 import { generateSectorTree, expectContainsSectorsWithLevelOfDetail, Mutable } from '../../../../../test-utilities';
 import { PropType } from '../../utilities/reflection';
-import { SectorMetadata, CadModelMetadata } from '@reveal/cad-parsers';
+import { SectorMetadata, CadModelMetadata, LevelOfDetail } from '@reveal/cad-parsers';
 import { traverseDepthFirst } from '@reveal/utilities';
 import { DetermineSectorCostDelegate, PrioritizedWantedSector } from './types';
 import { TakenSectorTree } from './TakenSectorTree';
-import { LevelOfDetail } from '../LevelOfDetail';
 
 type FacesFile = PropType<SectorMetadata, 'facesFile'>;
 

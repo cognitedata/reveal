@@ -3,12 +3,9 @@
  */
 import * as THREE from 'three';
 
-import { SectorMetadata } from '@reveal/cad-parsers';
+import { SectorMetadata, SectorGeometry, TriangleMesh, createMaterials, RenderMode } from '@reveal/cad-parsers';
 
-import { SectorGeometry, TriangleMesh } from './types';
 import { createEmptySector } from '../../../../test-utilities/src/emptySector';
-import { createMaterials } from '../material-manager/rendering/materials';
-import { RenderMode } from '../material-manager/rendering/RenderMode';
 import { consumeSectorDetailed, consumeSectorSimple } from './sectorUtilities';
 import { SectorQuads } from '../material-manager/rendering/types';
 

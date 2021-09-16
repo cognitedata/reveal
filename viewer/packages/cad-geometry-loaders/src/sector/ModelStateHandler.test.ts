@@ -4,9 +4,9 @@
 
 import * as THREE from 'three';
 
+import { WantedSector, ConsumedSector, LevelOfDetail } from '@reveal/cad-parsers';
+
 import { ModelStateHandler } from './ModelStateHandler';
-import { WantedSector, ConsumedSector } from './types';
-import { LevelOfDetail } from './LevelOfDetail';
 
 describe('ModelStateHandler', () => {
   // TODO: 10-08-2020 j-bjorne: Consider changing WantedSector and ConsumedSector metadata field. Annoying to mock.

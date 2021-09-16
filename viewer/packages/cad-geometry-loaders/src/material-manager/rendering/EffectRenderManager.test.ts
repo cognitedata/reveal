@@ -3,12 +3,14 @@
  */
 
 import * as THREE from 'three';
+
+import { RenderMode } from '@reveal/cad-parsers';
+
 import { RenderOptions } from '../../..';
 import { createGlContext } from '../../../../../test-utilities';
 
 import { CadMaterialManager } from '../CadMaterialManager';
 import { EffectRenderManager } from './EffectRenderManager';
-import { RenderMode } from './RenderMode';
 
 type Mutable<T> = { -readonly [P in keyof T]: T[P] };
 
