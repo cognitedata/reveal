@@ -49,7 +49,9 @@ export function Migration() {
 
       const progress = (itemsLoaded: number, itemsRequested: number, itemsCulled: number) => {
         guiState.debug.loadedSectors.statistics.culledCount = itemsCulled;
-        console.log(`loaded ${itemsLoaded}/${itemsRequested} (culled: ${itemsCulled})`);
+        if (itemsLoaded === 0 || itemsLoaded === itemsRequested) {
+          console.log(`loaded ${itemsLoaded}/${itemsRequested} (culled: ${itemsCulled})`);
+        }
       };
 
       // Login
@@ -163,7 +165,8 @@ export function Migration() {
               showDetailedSectors: true,
               showDiscardedSectors: false,
               colorBy: 'lod',
-              leafsOnly: false
+              leafsOnly: false,
+              sectorPathFilterRegex: '^.*/$'
             } as DebugLoadedSectorsToolOptions,
             tool: new DebugLoadedSectorsTool(viewer),
             statistics: {
@@ -297,8 +300,10 @@ export function Migration() {
       debugSectorsGui.add(guiState.debug.loadedSectors.options, 'colorBy', ['lod', 'depth', 'loadedTimestamp', 'random']).name('Color by');
       debugSectorsGui.add(guiState.debug.loadedSectors.options, 'leafsOnly').name('Leaf nodes only');
       debugSectorsGui.add(guiState.debug.loadedSectors.options, 'showSimpleSectors').name('Show simple sectors');
-      debugSectorsGui.add(guiState.debug.loadedSectors.options, 'showDetailedSectors').name('Show detailed sectors');
+      debugSectorsGui.add(guiState.debug.loadedSectors.options, 'showDetailedSectors').name('Show detailed sectors');      
       debugSectorsGui.add(guiState.debug.loadedSectors.options, 'showDiscardedSectors').name('Show discarded sectors');
+      debugSectorsGui.add(guiState.debug.loadedSectors.options, 'sectorPathFilterRegex').name('Sectors path filter');
+      debugSectorsGui.add(guiActions, 'showSectorBoundingBoxes').name('Show sectors');
       debugSectorsGui.add(guiState.debug.loadedSectors.statistics, 'insideSectors').name('# sectors@camera');
       debugSectorsGui.add(guiState.debug.loadedSectors.statistics, 'maxSectorDepthOfInsideSectors').name('Max sector depth@camera');
       debugSectorsGui.add(guiState.debug.loadedSectors.statistics, 'maxSectorDepth').name('Max sector tree depth');
@@ -337,7 +342,6 @@ export function Migration() {
         debugSectorsGui.updateDisplay();
       }, 500);
 
-      debugSectorsGui.add(guiActions, 'showSectorBoundingBoxes').name('Show sectors');
       debugGui.add(guiActions, 'showCameraHelper').name('Show camera');
       debugGui.add(guiActions, 'showBoundsForAllGeometries').name('Show geometry bounds');
       debugGui.add(guiState.debug, 'suspendLoading').name('Suspend loading').onFinishChange(suspend => {
