@@ -42,10 +42,6 @@ const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`
     margin-top: 0;
   }
 
-  .integrations-ui-style-scope > div {
-    overflow: visible;
-  }
-
   .cogs-badge {
     &.badge-success {
       border: 0.125rem solid ${Colors.success.hex()} !important;

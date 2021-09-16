@@ -117,77 +117,75 @@ const ITable = <T extends { id: ReactText }>({
         preGlobalFilteredRows={preGlobalFilteredRows}
         setGlobalFilter={setGlobalFilter}
       />
-      <div className="tableFixHead">
-        <table
-          {...getTableProps()}
-          className="cogs-table integrations-table"
-          role="grid"
-          aria-label={`List of ${EXTRACTION_PIPELINE_LOWER} for the ${project} project`}
-        >
-          <thead>
-            {headerGroups.map((headerGroup: HeaderGroup<any>) => (
-              <tr {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map((col: HeaderGroup<T>) => {
+      <table
+        {...getTableProps()}
+        className="cogs-table integrations-table"
+        role="grid"
+        aria-label={`List of ${EXTRACTION_PIPELINE_LOWER} for the ${project} project`}
+      >
+        <thead>
+          {headerGroups.map((headerGroup: HeaderGroup<any>) => (
+            <tr {...headerGroup.getHeaderGroupProps()}>
+              {headerGroup.headers.map((col: HeaderGroup<T>) => {
+                return (
+                  <th
+                    scope="col"
+                    {...col.getHeaderProps(col.getSortByToggleProps())}
+                    className={`${col.id}-col`}
+                  >
+                    {col.disableFilters && col.render('Header')}
+                    {!col.disableFilters && col.render('Filter')}
+                  </th>
+                );
+              })}
+            </tr>
+          ))}
+        </thead>
+        <tbody {...getTableBodyProps()}>
+          {rows.map((row: Row<T>) => {
+            prepareRow(row);
+            const handleClickOnRow = () => {
+              row.toggleRowSelected(true);
+              // @ts-ignore
+              setIntegration(row.original);
+            };
+            return (
+              <tr
+                {...row.getRowProps()}
+                className={`cogs-table-row integrations-table-row ${
+                  row.isSelected ? 'row-active' : ''
+                }`}
+                onClick={handleClickOnRow}
+              >
+                {row.cells.map((cell: Cell<T>) => {
+                  const handleCellClick = (
+                    e: React.MouseEvent<HTMLTableDataCellElement>
+                  ) => {
+                    if (e.currentTarget === e.target) {
+                      history.push(
+                        createExtPipePath(
+                          `/${EXT_PIPE_PATH}/${row.original.id}`
+                        )
+                      );
+                    }
+                  };
                   return (
-                    <th
-                      scope="col"
-                      {...col.getHeaderProps(col.getSortByToggleProps())}
-                      className={`${col.id}-col`}
+                    // Name column has focusable link for accessibility. Cell click handler is for easy access for mouse users
+                    // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions
+                    <td
+                      {...cell.getCellProps()}
+                      className={`${cell.column.id}-cell`}
+                      onClick={handleCellClick}
                     >
-                      {col.disableFilters && col.render('Header')}
-                      {!col.disableFilters && col.render('Filter')}
-                    </th>
+                      {cell.render('Cell')}
+                    </td>
                   );
                 })}
               </tr>
-            ))}
-          </thead>
-          <tbody {...getTableBodyProps()}>
-            {rows.map((row: Row<T>) => {
-              prepareRow(row);
-              const handleClickOnRow = () => {
-                row.toggleRowSelected(true);
-                // @ts-ignore
-                setIntegration(row.original);
-              };
-              return (
-                <tr
-                  {...row.getRowProps()}
-                  className={`cogs-table-row integrations-table-row ${
-                    row.isSelected ? 'row-active' : ''
-                  }`}
-                  onClick={handleClickOnRow}
-                >
-                  {row.cells.map((cell: Cell<T>) => {
-                    const handleCellClick = (
-                      e: React.MouseEvent<HTMLTableDataCellElement>
-                    ) => {
-                      if (e.currentTarget === e.target) {
-                        history.push(
-                          createExtPipePath(
-                            `/${EXT_PIPE_PATH}/${row.original.id}`
-                          )
-                        );
-                      }
-                    };
-                    return (
-                      // Name column has focusable link for accessibility. Cell click handler is for easy access for mouse users
-                      // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions
-                      <td
-                        {...cell.getCellProps()}
-                        className={`${cell.column.id}-cell`}
-                        onClick={handleCellClick}
-                      >
-                        {cell.render('Cell')}
-                      </td>
-                    );
-                  })}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+            );
+          })}
+        </tbody>
+      </table>
     </>
   );
 };

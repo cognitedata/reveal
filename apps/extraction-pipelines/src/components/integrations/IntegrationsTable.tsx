@@ -15,16 +15,7 @@ const StyledIntegrationsTable = styled(StyledTable)`
   .cogs-input-container {
     margin-bottom: ${bottomSpacing};
   }
-  .tableFixHead {
-    overflow-y: auto;
-    height: calc(100vh - 16.375rem);
-    thead {
-      th {
-        position: sticky;
-        top: 0;
-      }
-    }
-  }
+
   table {
     border-collapse: collapse;
     width: 100%;
