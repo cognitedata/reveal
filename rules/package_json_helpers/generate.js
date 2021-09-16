@@ -173,7 +173,10 @@ depcheck(`${process.cwd()}/${path.dirname(srcPath)}`, {
     // do not parse files starting with dot (.), e.g. .eslintrc.js
     '.*',
   ],
-}).then(({ missing }) => {
+}).then(({ missing, invalidFiles }) => {
+  if (Object.keys(invalidFiles).length) {
+    process.stderr.write(JSON.stringify(invalidFiles, null, 2));
+  }
   const internalPackagesNames = findFilesInDir(
     './packages',
     'package.json'
@@ -188,7 +191,7 @@ depcheck(`${process.cwd()}/${path.dirname(srcPath)}`, {
   }, {});
 
   // depcheck does not recognize peerDependencies as missing
-  // but we still want then to appear as Bazel dependencies
+  // but we still want them to appear as Bazel dependencies
   const missingWithPeerDeps = {
     ...localPackage.peerDependencies,
     ...missing,

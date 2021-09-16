@@ -5,7 +5,7 @@ Test rules
 load("@npm//testcafe:index.bzl", _testcafe = "testcafe")
 load("@bazel_skylib//rules:write_file.bzl", "write_file")
 
-def testcafe_test(name, app_name, data, args = [], **kwargs):
+def testcafe_test(name, app_name, data, args = [], timeout = "long", **kwargs):
     """Creates a react-scripts test wrapper
 
     Args:
@@ -13,6 +13,7 @@ def testcafe_test(name, app_name, data, args = [], **kwargs):
         app_name: folder name to store artifacts during CI run
         data: source files (tests and non-test files)
         args: extra arguments to pass
+        timeout: How long the test is expected to run before returning.
         **kwargs: rest of arguments passed to jest
     """
     chdir_name = "_chdir_%s" % name
@@ -44,4 +45,5 @@ def testcafe_test(name, app_name, data, args = [], **kwargs):
             file_name,
             ":%s_base" % name,
         ],
+        timeout = timeout,
     )

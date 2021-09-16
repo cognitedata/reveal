@@ -1,6 +1,6 @@
 /* eslint-disable max-classes-per-file */
 import mixpanel, {
-  People,
+  Dict,
   OutTrackingOptions,
   InTrackingOptions,
   HasOptedInOutOptions,
@@ -140,7 +140,7 @@ class Metrics {
     mixpanel.identify(uid);
   }
 
-  public static people(info: People): void {
+  public static people(info: Dict): void {
     mixpanel.people.set(info);
   }
 

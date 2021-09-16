@@ -1,3 +1,7 @@
+## 1.2.0 Sept 10 2021
+
+- Change arg type signature for people function from `People` to `Dict`
+
 ## 1.1.1 Jun 5 2021
 
 - Migrate to Bazel setup

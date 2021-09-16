@@ -1,3 +1,7 @@
+## 1.7.1 Sept 10 2021
+
+- add `getHeaders`
+
 ## 1.7.0 August 31 2021
 
 - Handle legacy logout in `Logout` component.

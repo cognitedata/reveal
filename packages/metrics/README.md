@@ -140,7 +140,7 @@ See [the documentation] for possible options.
 
 Unit tests should stub out this library.
 The library provides some boilerplate stubbed-out implementations for [jest].
-In order to use this, import `@cognite/metrics/jest-mocks` somewhere in your tests -- probably in `src/setupTests.ts`.
+In order to use this, import `@cognite/metrics/dist/mocks` somewhere in your tests -- probably in `src/setupTests.ts`.
 
 ```ts
 import * as mocks from '@cognite/metrics/dist/mocks';

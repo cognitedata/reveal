@@ -27,8 +27,8 @@ void bazelPod(Map params = new HashMap(), body) {
               command: '/bin/cat -',
               resourceRequestCpu: '3000m',
               resourceLimitCpu: '16000m',
-              resourceRequestMemory: '6000Mi',
-              resourceLimitMemory: '16000Mi',
+              resourceRequestMemory: '24000Mi',
+              resourceLimitMemory: '24000Mi',
               ttyEnabled: true
           )
       ],
@@ -81,6 +81,7 @@ def pods = { body ->
                 node(POD_LABEL) {
                     stageWithNotify('Checkout code', CONTEXTS.checkout) {
                       checkout(scm)
+                      sh('./scripts/gen-version-info.sh > ./rules/test/version_info.bzl')
                     }
                   body()
                 }
@@ -232,9 +233,10 @@ pods {
                     def value = fasBuildEnv.get(key)
                     sh("find build -type f | xargs sed -i 's,${key}_VALUE,${value},g'")
                   }
-                  // We are setting REACT_APP_ENV based on the build target, similarly to scripts/build.sh
+                  // We are setting REACT_APP_ENV/NODE_ENV based on the build target, similarly to scripts/build.sh
                   def variant = args.variant ?: 'development'
                   sh("find build -type f | xargs sed -i 's,REACT_APP_ENV_VALUE,${variant},g'")
+                  sh("find build -type f | xargs sed -i 's,NODE_ENV_VALUE,${variant},g'")                  
                 }
               }
               fas.build(

@@ -1,4 +1,4 @@
-load("@build_bazel_rules_nodejs//:index.bzl", "js_library", "pkg_npm")
+load("@build_bazel_rules_nodejs//:index.bzl", "copy_to_bin", "js_library", "pkg_npm")
 load("@bazel_skylib//rules:write_file.bzl", "write_file")
 load("//rules/test:jest.bzl", "jest_test")
 load("//rules/lint:index.bzl", "eslint_config", "eslint_test")
@@ -108,7 +108,7 @@ _mappings = module_mappings(
     mappings = mappings_dict,
 )
 
-filegroup(
+copy_to_bin(
     name = "lib",
     srcs = LIB,
 )

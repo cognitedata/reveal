@@ -13,30 +13,44 @@ load("//rules/npm:append_deps.bzl", "append_deps")
 generate_package_json_helpers(
     name = "generate_package_json_helpers",
     local_package_json = ":package.json",
-    out_dir = "dist",
+    out_dir = ".",
     package_json = "//:package.json",
-    src_dir = "src",
+    src_dir = ".",
     workspace = "@npm",
 )
 
 ### start of auto-generated helpers ###
 
 # Dependencies from package.json
-DEPENDENCIES = []
+DEPENDENCIES = ["//packages/eslint-plugin"]
 
 # Type dependencies from package.json
 TYPE_DEPENDENCIES = []
 
 # Dev dependencies from package.json
 DEV_DEPENDENCIES = [
-    "@npm//rollup-plugin-json",
-    "@npm//rollup-plugin-typescript2",
+    "@npm//babel-eslint",
+    "@npm//eslint-config-airbnb",
+    "@npm//eslint-config-prettier",
+    "@npm//eslint-plugin-import",
+    "@npm//eslint-plugin-jest",
+    "@npm//eslint-plugin-jsx-a11y",
+    "@npm//eslint-plugin-prettier",
+    "@npm//eslint-plugin-react-hooks",
+    "@npm//eslint-plugin-react",
+    "@npm//prettier",
 ]
 
 # Mappings for absolute imports from baseUrl @unused
 mappings_dict = {
-    "index.spec": "dist/index.spec",
-    "index": "dist/index",
+    ".eslintrc": "./.eslintrc",
+    ".gitignore": "./.gitignore",
+    "BUILD": "./BUILD",
+    "README": "./README",
+    "index": "./index",
+    "package": "./package",
+    "tsconfig": "./tsconfig",
+    "yarn": "./yarn",
 }
 
 ### end of auto-generated helpers ###

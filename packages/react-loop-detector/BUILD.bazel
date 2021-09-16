@@ -74,6 +74,7 @@ DEV_DEPENDENCIES = [
     "@npm//@testing-library/react",
     "@npm//rollup-plugin-json",
     "@npm//rollup-plugin-typescript2",
+    "@npm//typescript",
 ]
 
 # Mappings for absolute imports from baseUrl @unused
@@ -122,6 +123,9 @@ jest_test(
         ":tsconfig.json",
         "//packages:tsconfig.json",
         "//:tsconfig.json",
+        # Address the following issue
+        # Cannot find module '@storybook/client-api' from '../../../../../../../../../node_modules/@storybook/addon-knobs/dist/registerKnobs.js'
+        "@npm//@storybook/client-api",
     ],
     jest_args = [],
     jest_config = "jest.config.js",
