@@ -3,6 +3,7 @@
  */
 
 export { LocalModelIdentifier, CdfModelIdentifier } from './networking/types';
+
 export { worldToViewportCoordinates, worldToNormalizedViewportCoordinates } from './worldToViewport';
 export { BoundingBoxClipper } from './BoundingBoxClipper';
 

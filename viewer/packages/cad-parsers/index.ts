@@ -7,11 +7,11 @@ export { MetadataRepository } from './src/metadata/MetadataRepository';
 export { CadModelMetadataRepository } from './src/metadata/CadModelMetadataRepository';
 export { CadModelMetadata } from './src/metadata/CadModelMetadata';
 export { SectorSceneImpl } from './src/utilities/SectorScene';
+export { SectorSceneFactory } from './src/utilities/SectorSceneFactory';
 
 export {
   SectorScene,
   BinaryFileProvider,
-  File3dFormat,
   ModelDataClient,
   BlobOutputMetadata
 } from './src/utilities/types';
@@ -19,7 +19,9 @@ export {
 export {
   SectorMetadataIndexFileSection,
   SectorMetadataFacesFileSection,
-  SectorMetadata
+  SectorMetadata,
 } from './src/metadata/types';
 
 export { CadSectorParser } from './src/cad/CadSectorParser';
+
+export { File3dFormat } from './src/utilities/types';

@@ -4,6 +4,7 @@
 
 import { CogniteClient } from '@cognite/sdk';
 import * as THREE from 'three';
+
 import { Cognite3DViewer } from '@reveal/core';
 import { createGlContext } from '../../../../test-utilities/src/createGlContext';
 

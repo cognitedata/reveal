@@ -6,7 +6,7 @@ import { CogniteInternalId } from '@cognite/sdk';
 
 import { CadModelMetadata } from '@reveal/cad-parsers';
 import { NumericRange, trackError } from '@reveal/utilities';
-import { NodeCollectionBase, CadNode, NodeTransformProvider } from '@reveal/cad-geometry-loaders';
+import { NodeCollectionBase, CadNode, NodeTransformProvider, NodeAppearance } from '@reveal/cad-geometry-loaders';
 
 import { NodeIdAndTreeIndexMaps } from './NodeIdAndTreeIndexMaps';
 import { CameraConfiguration } from './types';
@@ -14,7 +14,7 @@ import { CogniteModelBase } from './CogniteModelBase';
 
 import { SupportedModelTypes } from '../types';
 import { callActionWithIndicesAsync } from '../../utilities/callActionWithIndicesAsync';
-import { NodeAppearance } from '../../datamodels/cad';
+
 import { NodesApiClient } from '@reveal/nodes-api';
 
 /**

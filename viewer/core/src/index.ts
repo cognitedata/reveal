@@ -11,6 +11,7 @@
  */
 
 export * from './public/migration/Cognite3DViewer';
+export { revealEnv } from '@reveal/utilities';
 export { BoundingBoxClipper } from './utilities';
 export { Cognite3DModel } from './public/migration/Cognite3DModel';
 export { Cognite3DViewer } from './public/migration/Cognite3DViewer';
@@ -32,7 +33,6 @@ export * from './public/types';
   NodeAppearanceProvider
 } from './datamodels/cad/styling'; */
 export { IndexSet, NumericRange } from '@reveal/utilities';
-export { revealEnv } from '@reveal/utilities';
 
 // Custom NodeCollection deserialization free-function
 /* export {

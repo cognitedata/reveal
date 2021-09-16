@@ -15,6 +15,7 @@ import {
   createDefaultSectorCuller,
   OccludingGeometryProvider
 } from '@reveal/cad-geometry-loaders';
+
 import { LocalModelDataClient } from '../../utilities/networking/LocalModelDataClient';
 import { CdfModelDataClient } from '../../utilities/networking/CdfModelDataClient';
 import { LocalModelIdentifier, CdfModelIdentifier } from '../../utilities/networking/types';

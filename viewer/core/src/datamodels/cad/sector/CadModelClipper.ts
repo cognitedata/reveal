@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 
-import { SectorSceneImpl, CadModelMetadata, SectorMetadata } from '@reveal/cad-parsers';
+import { CadModelMetadata, SectorMetadata, SectorSceneFactory } from '@reveal/cad-parsers';
 import { traverseDepthFirst } from '@reveal/utilities';
 
 export class CadModelClipper {
@@ -28,12 +28,12 @@ export class CadModelClipper {
       sectorMap.set(sector.id, sector);
       return true;
     });
-    const clippedScene = new SectorSceneImpl(
+    const sectorSceneFactory = new SectorSceneFactory();
+    const clippedScene = sectorSceneFactory.createSectorScene(
       model.scene.version,
       model.scene.maxTreeIndex,
       model.scene.unit,
-      newRoot,
-      sectorMap
+      newRoot
     );
 
     const clippedCadModel: CadModelMetadata = {

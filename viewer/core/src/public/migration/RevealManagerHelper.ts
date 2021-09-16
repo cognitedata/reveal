@@ -9,6 +9,7 @@ import { assertNever } from '@reveal/utilities';
 import { AddModelOptions } from './types';
 import { RevealManager } from '../RevealManager';
 import { createCdfRevealManager, createLocalRevealManager } from '../createRevealManager';
+
 import { CdfModelIdentifier, LocalModelIdentifier } from '../../utilities/networking/types';
 import { RevealOptions } from '../..';
 import { CadNode } from '../../datamodels/cad';

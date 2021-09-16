@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import { generateSectorTree, expectContainsSectorsWithLevelOfDetail } from '../../../../../test-utilities';
-import { SectorMetadataFacesFileSection, SectorMetadata, CadModelMetadata } from '@reveal/cad-parsers';
+import { SectorMetadata, CadModelMetadata } from '@reveal/cad-parsers';
 import { traverseDepthFirst } from '@reveal/utilities';
 import { DetermineSectorCostDelegate, PrioritizedWantedSector } from './types';
 import { TakenSectorTree } from './TakenSectorTree';
@@ -59,7 +59,8 @@ describe('TakenSectorTree', () => {
   test('Simple data is not added when sector has no f3d file', () => {
     // Arrange
     const root = generateSectorTree(3, 2);
-    const mutableFacesFile: Mutable<SectorMetadataFacesFileSection> = root.children[0].facesFile;
+
+    const mutableFacesFile: Mutable<FacesFile> = root.children[0].facesFile;
     mutableFacesFile.fileName = null;
     const tree = new TakenSectorTree(root, determineSectorCost);
 
@@ -75,7 +76,7 @@ describe('TakenSectorTree', () => {
   test('construct with model without F3D for root', () => {
     // Arrange
     const root = generateSectorTree(3, 2);
-    const mutableFacesFile: Mutable<SectorMetadataFacesFileSection> = root.facesFile;
+    const mutableFacesFile: Mutable<FacesFile> = root.facesFile;
     mutableFacesFile.fileName = null;
 
     // Act

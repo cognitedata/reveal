@@ -6,11 +6,9 @@ import * as THREE from 'three';
 
 import {
   SectorScene,
-  SectorMetadata,
   CadModelMetadata,
-  SectorSceneImpl
 } from '@reveal/cad-parsers';
-import { traverseDepthFirst } from '@reveal/utilities';
+
 
 import { GpuOrderSectorsByVisibilityCoverage } from './OrderSectorsByVisibilityCoverage';
 import { OccludingGeometryProvider } from './OccludingGeometryProvider';
@@ -132,13 +130,9 @@ describe('OrderSectorsByVisibilityCoverage', () => {
 });
 
 function createStubScene(tree: SectorTree): SectorScene {
-  const sectorsMap = new Map<number, SectorMetadata>();
   const root = createSectorMetadata(tree);
-  traverseDepthFirst(root, x => {
-    sectorsMap.set(x.id, x);
-    return true;
-  });
-  return new SectorSceneImpl(8, 1, 'Meters', root, sectorsMap);
+  const sceneFactory = new SectorSceneFactory();
+  return sceneFactory.createSectorScene(8, 1, 'Meters', root);
 }
 
 function createStubModel(modelIdentifier: string, scene: SectorScene, modelMatrix: THREE.Matrix4) {
