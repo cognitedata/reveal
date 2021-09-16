@@ -7,6 +7,7 @@ import { AutoDisposeGroup } from '../../../utilities/three';
 import { LevelOfDetail } from './LevelOfDetail';
 
 export class SectorNode extends THREE.Group {
+  public readonly sectorPath: string;
   public readonly sectorId: number;
   public readonly bounds: THREE.Box3;
   public readonly depth: number;
@@ -19,6 +20,7 @@ export class SectorNode extends THREE.Group {
     super();
     this.name = `Sector ${sectorPath} [id=${sectorId}]`;
     this.sectorId = sectorId;
+    this.sectorPath = sectorPath;
     this.bounds = bounds;
     this.depth = determineSectorDepth(sectorPath);
   }
