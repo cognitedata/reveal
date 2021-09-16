@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import styled from 'styled-components/macro';
 import { useScreenshot } from 'use-screenshot-hook';
-import { Button, toast, Tooltip, TopBar } from '@cognite/cogs.js';
+import { Button, Popconfirm, toast, Tooltip, TopBar } from '@cognite/cogs.js';
 import { useNavigate } from 'hooks';
 import { useDeleteChart, useUpdateChart } from 'hooks/firebase';
 import {
@@ -118,13 +118,18 @@ export const ChartActions = () => {
       </Tooltip>
       <Divider />
       <Tooltip content="Delete">
-        <Button
-          icon="Trash"
-          type="ghost"
-          onClick={handleDeleteChart}
+        <Popconfirm
+          content={<div>Are you sure you want to delete this chart?</div>}
+          onConfirm={handleDeleteChart}
           disabled={!isOwner}
-          aria-label="delete"
-        />
+        >
+          <Button
+            icon="Trash"
+            type="ghost"
+            disabled={!isOwner}
+            aria-label="delete"
+          />
+        </Popconfirm>
       </Tooltip>
       <Divider />
       <Tooltip content="Settings">
