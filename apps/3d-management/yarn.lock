@@ -1630,10 +1630,10 @@
   dependencies:
     comlink "4.3.1"
 
-"@cognite/reveal@2.0.0-beta.3":
-  version "2.0.0-beta.3"
-  resolved "https://registry.yarnpkg.com/@cognite/reveal/-/reveal-2.0.0-beta.3.tgz#5719d098bdc50e97ab786ed660e80f12247623f0"
-  integrity sha512-UVYHQWjD05PpUdYe9M2mOMuMMV76jHG3zUe/4eTwQuV3l2cTOeiDr/rFf/Ksw1u8KImq4kN/d/9IcuJOUYstAQ==
+"@cognite/reveal@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@cognite/reveal/-/reveal-2.0.0.tgz#5263f960201248905464d03a2db56a1980247da1"
+  integrity sha512-BxPyg2Xb8+WzVIK2hWJdXDHyXHSoduyGVFgGLwnlc45W4tPi+l/t3vXu4AHSnrrlMWef9B0Jd5ygsTjxw1BMVA==
   dependencies:
     "@cognite/potree-core" "1.2.1"
     "@cognite/reveal-parser-worker" "1.1.1"
