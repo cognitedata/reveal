@@ -2,7 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
-import { SectorGeometry, SectorQuads, RenderOptions, LoadingState } from '@reveal/cad-geometry-loaders';
+import { SectorQuads, RenderOptions, LoadingState } from '@reveal/cad-geometry-loaders';
+import { SectorGeometry } from '@reveal/cad-parsers';
 
 import { SectorCuller } from '../internals';
 

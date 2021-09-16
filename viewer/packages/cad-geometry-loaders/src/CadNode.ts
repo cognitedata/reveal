@@ -4,12 +4,10 @@
 
 import * as THREE from 'three';
 
-import { SectorScene, CadModelMetadata } from '@reveal/cad-parsers';
+import { SectorScene, CadModelMetadata, RenderMode, SectorGeometry, InstancedMeshFile } from '@reveal/cad-parsers';
 
-import { SectorGeometry, InstancedMeshFile } from './sector/types';
 import { SectorQuads } from './material-manager/rendering/types';
 import { RootSectorNode } from './sector/RootSectorNode';
-import { RenderMode } from './material-manager/rendering/RenderMode';
 import { CadMaterialManager } from './material-manager/CadMaterialManager';
 import { suggestCameraConfig } from './cameraconfig';
 

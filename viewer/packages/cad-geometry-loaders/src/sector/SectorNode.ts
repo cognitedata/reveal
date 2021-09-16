@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import { AutoDisposeGroup } from '@reveal/utilities';
-import { LevelOfDetail } from './LevelOfDetail';
+import { LevelOfDetail } from '@reveal/cad-parsers';
 
 export class SectorNode extends THREE.Group {
   public readonly sectorId: number;

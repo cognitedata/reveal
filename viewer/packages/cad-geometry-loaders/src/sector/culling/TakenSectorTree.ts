@@ -2,8 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { LevelOfDetail } from '../LevelOfDetail';
-import { SectorMetadata } from '@reveal/cad-parsers';
+import { SectorMetadata, LevelOfDetail } from '@reveal/cad-parsers';
 import {
   PrioritizedWantedSector,
   DetermineSectorCostDelegate,

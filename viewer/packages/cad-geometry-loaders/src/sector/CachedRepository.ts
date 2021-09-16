@@ -3,11 +3,9 @@
  */
 
 import { assertNever, trackError, MostFrequentlyUsedCache, MemoryRequestCache } from '@reveal/utilities';
-import { BinaryFileProvider, CadSectorParser } from '@reveal/cad-parsers';
+import { BinaryFileProvider, CadSectorParser, LevelOfDetail, WantedSector, SectorGeometry, ConsumedSector, TriangleMesh, InstancedMeshFile, InstancedMesh } from '@reveal/cad-parsers';
 
-import { LevelOfDetail } from './LevelOfDetail';
 import { SimpleAndDetailedToSector3D } from './SimpleAndDetailedToSector3D';
-import { WantedSector, SectorGeometry, ConsumedSector, TriangleMesh, InstancedMeshFile, InstancedMesh } from './types';
 import { Repository } from './Repository';
 
 import { ParseCtmResult, ParseSectorResult } from '@cognite/reveal-parser-worker';

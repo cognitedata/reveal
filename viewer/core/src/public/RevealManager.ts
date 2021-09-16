@@ -4,9 +4,9 @@
 
 import * as THREE from 'three';
 
+import { RenderMode } from '@reveal/cad-parsers';
 import {
   defaultRenderOptions,
-  RenderMode,
   RenderOptions,
   NodeAppearanceProvider,
   CadModelSectorBudget,

@@ -2,9 +2,9 @@
  * Copyright 2021 Cognite AS
  */
 import * as THREE from 'three';
-import { SectorGeometry } from '../../sector/types';
+import { SectorGeometry } from './types';
 import { createPrimitives } from './primitives';
-import { createEmptySector } from '../../../../../test-utilities';
+import { createEmptySector } from '../../../../test-utilities';
 import { createMaterials, Materials } from './materials';
 import { ParsePrimitiveAttribute } from '@cognite/reveal-parser-worker';
 import { RenderMode } from './RenderMode';

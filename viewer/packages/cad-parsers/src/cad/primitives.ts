@@ -3,6 +3,7 @@
  */
 
 import * as THREE from 'three';
+import { ParsePrimitiveAttribute } from '@cognite/reveal-parser-worker';
 import {
   boxGeometry,
   quadGeometry,
@@ -15,10 +16,10 @@ import {
   torusGeometryBoundingBox,
   nutGeometryBoundingBox
 } from './primitiveGeometries';
+
 import { Materials } from './materials';
-import { SectorGeometry } from '../../sector/types';
-import { ParsePrimitiveAttribute } from '@cognite/reveal-parser-worker';
-import { disposeAttributeArrayOnUpload } from '../../utilities/disposeAttributeArrayOnUpload';
+import { SectorGeometry } from './types';
+import { disposeAttributeArrayOnUpload } from '@reveal/utilities';
 import assert from 'assert';
 import {
   filterPrimitivesOutsideClipBoxByBaseBoundsAndInstanceMatrix,

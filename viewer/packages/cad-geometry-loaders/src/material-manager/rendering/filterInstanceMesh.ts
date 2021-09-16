@@ -2,8 +2,9 @@
  * Copyright 2021 Cognite AS
  */
 import * as THREE from 'three';
+import { InstancedMesh } from '@reveal/cad-parsers';
+
 import { float32BufferToMatrix } from '../../utilities/float32BufferToMatrix';
-import { InstancedMesh } from '../../sector/types';
 
 const filterInstanceMeshVars = {
   p: new THREE.Vector3(),

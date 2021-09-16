@@ -4,8 +4,8 @@
 
 import 'jest-extended';
 
-import { LevelOfDetail } from '../../packages/cad-geometry-loaders/src/sector/LevelOfDetail';
-import { WantedSector } from '../../packages/cad-geometry-loaders/src/sector/types';
+import { LevelOfDetail } from '../../packages/cad-parsers/src/cad//LevelOfDetail';
+import { WantedSector } from '../../packages/cad-parsers/src/cad/types';
 
 interface Matrix4 {
   elements: Float32Array;

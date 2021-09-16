@@ -5,13 +5,11 @@
 export { RevealManager } from './public/RevealManager';
 export { createLocalRevealManager, createCdfRevealManager } from './public/createRevealManager';
 
-export { CadModelMetadata, SectorMetadata } from '@reveal/cad-parsers';
+export { CadModelMetadata, SectorMetadata, LevelOfDetail, WantedSector } from '@reveal/cad-parsers';
 export {
   CadLoadingHints,
   CadNode,
   SuggestedCameraConfig,
-  LevelOfDetail,
-  WantedSector,
   SectorCuller,
   DetermineSectorsInput,
   ByVisibilityGpuSectorCuller,

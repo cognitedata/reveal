@@ -1,10 +1,11 @@
 /*!
  * Copyright 2021 Cognite AS
  */
+
+import { ConsumedSector, WantedSector, LevelOfDetail } from '@reveal/cad-parsers';
+
 import { DetermineSectorsInput, SectorLoadingSpent } from './culling/types';
-import { LevelOfDetail } from './LevelOfDetail';
 import { SectorCuller } from './culling/SectorCuller';
-import { ConsumedSector, WantedSector } from './types';
 import { ModelStateHandler } from './ModelStateHandler';
 import { Repository } from './Repository';
 import chunk from 'lodash/chunk';

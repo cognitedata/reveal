@@ -16,9 +16,6 @@ export { NodeAppearance, NodeOutlineColor, DefaultNodeAppearance } from './src/m
 export { CadModelSectorBudget } from './src/CadModelSectorBudget';
 
 export { SectorNode } from './src/sector/SectorNode';
-export { SectorGeometry, ConsumedSector, WantedSector } from './src/sector/types';
-
-export { Materials } from './src/material-manager/rendering/materials';
 
 export { CachedRepository } from './src/sector/CachedRepository';
 
@@ -35,10 +32,7 @@ export { EffectRenderManager } from './src/material-manager/rendering/EffectRend
 export { CadMaterialManager } from './src/material-manager/CadMaterialManager';
 export { CadModelUpdateHandler } from './src/CadModelUpdateHandler';
 
-export { RenderMode } from './src/material-manager/rendering/RenderMode';
-
 export { LoadingState } from './src/utilities/types';
-export { LevelOfDetail } from './src/sector/LevelOfDetail';
 
 export { SectorCuller } from './src/sector/culling/SectorCuller';
 export { createDefaultSectorCuller, ByVisibilityGpuSectorCuller } from './src/sector/culling/ByVisibilityGpuSectorCuller';

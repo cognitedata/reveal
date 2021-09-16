@@ -3,8 +3,8 @@
  */
 
 import { SceneModelState } from './rxSectorUtilities';
-import { WantedSector, ConsumedSector } from './types';
-import { LevelOfDetail } from './LevelOfDetail';
+import { WantedSector, ConsumedSector, LevelOfDetail } from '@reveal/cad-parsers';
+
 import assert from 'assert';
 
 export class ModelStateHandler {

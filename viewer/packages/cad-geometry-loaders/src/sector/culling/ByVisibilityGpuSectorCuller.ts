@@ -7,7 +7,7 @@
 // WebGL.
 import * as THREE from 'three';
 
-import { SectorMetadata, CadModelMetadata } from '@reveal/cad-parsers';
+import { SectorMetadata, CadModelMetadata, WantedSector, LevelOfDetail } from '@reveal/cad-parsers';
 import { getBox3CornerPoints } from '@reveal/utilities';
 
 import {
@@ -24,8 +24,7 @@ import {
   addSectorCost,
   SectorLoadingSpent
 } from './types';
-import { LevelOfDetail } from '../LevelOfDetail';
-import { WantedSector } from '../types';
+
 import { CadModelSectorBudget } from '../../CadModelSectorBudget';
 import { OccludingGeometryProvider } from './OccludingGeometryProvider';
 

@@ -25,4 +25,6 @@ export { MostFrequentlyUsedCache } from './src/cache/MostFrequentlyUsedCache';
 
 export { trackError, trackLoadModel, trackCameraNavigation, trackEvent, initMetrics } from './src/metrics';
 
+export { disposeAttributeArrayOnUpload } from './src/disposeAttributeArrayOnUpload';
+
 export { revealEnv } from './src/revealEnv';

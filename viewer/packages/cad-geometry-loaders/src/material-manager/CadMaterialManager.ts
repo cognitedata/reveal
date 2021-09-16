@@ -4,8 +4,7 @@
 
 import * as THREE from 'three';
 
-import { createMaterials, Materials } from './rendering/materials';
-import { RenderMode } from './rendering/RenderMode';
+import { createMaterials, Materials, RenderMode } from '@reveal/cad-parsers';
 
 import { NodeAppearanceProvider } from './styling/NodeAppearanceProvider';
 import { NodeAppearanceTextureBuilder } from './styling/NodeAppearanceTextureBuilder';

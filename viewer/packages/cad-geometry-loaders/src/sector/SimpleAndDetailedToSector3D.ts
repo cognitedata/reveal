@@ -6,13 +6,10 @@ import * as THREE from 'three';
 
 import { SectorQuads } from '@cognite/reveal-parser-worker';
 
-import { SectorMetadata } from '@reveal/cad-parsers';
+import { SectorMetadata, InstancedMeshFile, SectorGeometry } from '@reveal/cad-parsers';
 import { AutoDisposeGroup } from '@reveal/utilities';
 
 import { CadMaterialManager } from '../material-manager/CadMaterialManager';
-import { InstancedMeshFile } from '../sector/types';
-
-import { SectorGeometry } from './types';
 
 import { consumeSectorDetailed, consumeSectorSimple } from './sectorUtilities';
 import assert from 'assert';
