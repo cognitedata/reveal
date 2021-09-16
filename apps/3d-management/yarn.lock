@@ -3265,7 +3265,7 @@
     "@types/react" "*"
     date-fns "^2.16.1"
 
-"@types/react-dom@*", "@types/react-dom@^16.9.9":
+"@types/react-dom@^16.9.9":
   version "16.9.9"
   resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-16.9.9.tgz#d2d0a6f720a0206369ccbefff752ba37b9583136"
   integrity sha512-jE16FNWO3Logq/Lf+yvEAjKzhpST/Eac8EMd1i4dgZdMczfgqC8EjpxwNgEe3SExHYLliabXDh9DEhhqnlXJhg==
@@ -3340,13 +3340,12 @@
   dependencies:
     "@types/node" "*"
 
-"@types/single-spa-react@^3.0.1":
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/@types/single-spa-react/-/single-spa-react-3.0.1.tgz#c5da7d1db373213d57c3497c7f6994145a929f86"
-  integrity sha512-fneozhJ0k0v3a4eGtQww0ks7ytUQLaUh43iV6x6oudA3YdKIIIgMPoVm9oC7ZInoe7H5/fozom0iFXy98XC+tg==
+"@types/single-spa-react@^4.0.0":
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/@types/single-spa-react/-/single-spa-react-4.0.0.tgz#017f47a864dc954af7f5561a95c98dd33f856784"
+  integrity sha512-+htuHjgux1Q2J71OGd8/GVvOPVEFFxC8ML4qjr0hppKySUzGLld/O7KbiMOOVVG4gOVBnghsjjHZYlUFLFhKTQ==
   dependencies:
-    "@types/react" "*"
-    "@types/react-dom" "*"
+    single-spa-react "*"
 
 "@types/sinon@^9.0.11":
   version "9.0.11"
@@ -15701,10 +15700,10 @@ simple-swizzle@^0.2.2:
   dependencies:
     is-arrayish "^0.3.1"
 
-single-spa-react@^4.1.1:
-  version "4.1.1"
-  resolved "https://registry.yarnpkg.com/single-spa-react/-/single-spa-react-4.1.1.tgz#c8aa84aec8b4bc5d1c1768dc0d4161713a7d6459"
-  integrity sha512-3g/mnPnbxrcVUdupqxhYRnuV25+YC2acrlGTcA/rK6RjNBoMdMvenbN0K2aoypZYtB5dzIFkCUJMx7GUZChPYg==
+single-spa-react@*, single-spa-react@^4.1.1:
+  version "4.1.2"
+  resolved "https://registry.yarnpkg.com/single-spa-react/-/single-spa-react-4.1.2.tgz#eee8f2b59913b09921bdc053d8d54bb1e66d6c27"
+  integrity sha512-vZASXKByp+Qc2pZEtxA8lRnI5k3S7pbNXYKaM9xWHMvFvpf9Igsyw69i/DZLRomjGJMi6QQKoENcsEtn9UWIGQ==
 
 sinon@^9.2.4:
   version "9.2.4"
