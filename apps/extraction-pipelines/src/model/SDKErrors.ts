@@ -12,6 +12,7 @@ export interface ErrorVariations {
   message?: string;
   status?: number;
   data?: ErrorObj;
+  duplicated?: Record<string, string>[];
 }
 
 export interface IntegrationError {

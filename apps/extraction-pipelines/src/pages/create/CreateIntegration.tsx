@@ -236,11 +236,24 @@ export const CreateIntegration = (props: {
             errorRes?.data,
             variables.integrationInfo
           );
-          setError('server', {
-            type: 'server',
-            message: serverErrorMessage.message,
-            shouldFocus: true,
-          });
+          if (errorRes.duplicated != null) {
+            errorRes.duplicated.forEach((errorObject) => {
+              const [fieldName, fieldValue] = Object.entries(errorObject)[0];
+              setError(
+                fieldName,
+                {
+                  message: `'${fieldValue}' is already in use`,
+                },
+                { shouldFocus: true }
+              );
+            });
+          } else {
+            setError('server', {
+              type: 'server',
+              message: serverErrorMessage.message,
+              shouldFocus: true,
+            });
+          }
         },
       }
     );
