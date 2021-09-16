@@ -104,7 +104,7 @@ void main() {
     mat4 modelToTransformOffset = modelMatrix * modelTransformOffset;
     float radius = length((modelToTransformOffset * vec4(a_localXAxis * a_radius, 0.0)).xyz);
 
-    centerB = centerB - dir * 1.0;
+    centerB = centerB - dir;
     v_centerB.xyz = mul3(modelViewMatrix, centerB);
     v_centerB.w = radius;
 
