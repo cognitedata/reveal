@@ -286,6 +286,7 @@ export const CreateIntegration = (props: {
               )}
             />
           )}
+          <div style={{ height: '1rem' }} />
           <FullInput
             name="name"
             inputId="integration-name"

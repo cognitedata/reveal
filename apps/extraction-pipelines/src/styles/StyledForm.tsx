@@ -27,15 +27,6 @@ export const CreateFormWrapper = styled.form`
     }
   }
 
-  button,
-  a.cogs-btn.cogs-btn-secondary,
-  textarea,
-  .cogs-input,
-  .cogs-select,
-  .cogs-checkbox,
-  .bottom-spacing {
-    margin-bottom: 2rem;
-  }
   > input.cogs-input,
   .cogs-select,
   .rc-collapse-content-box > .cogs-input,
@@ -53,9 +44,9 @@ export const StyledLabel = styled.label`
 `;
 
 export const Hint = styled.span`
-  font-style: italic;
   color: ${Colors['greyscale-grey6'].hex()};
   margin-bottom: ${hintBottomSpacing};
+  display: block;
 `;
 
 export const StyledInput = styled(Input)`

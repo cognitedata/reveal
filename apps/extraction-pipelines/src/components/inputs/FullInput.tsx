@@ -27,7 +27,7 @@ export const FullInput: FunctionComponent<FullInputProps> = ({
   inputId,
 }: PropsWithChildren<FullInputProps>) => {
   return (
-    <>
+    <div style={{ marginBottom: '2rem' }}>
       {renderLabel(labelText, inputId)}
       <Hint id={`${name}-hint`}>{hintText}</Hint>
       <ErrorMessage
@@ -43,6 +43,6 @@ export const FullInput: FunctionComponent<FullInputProps> = ({
         aria-invalid={!!errors[name]}
         aria-describedby={`${name}-hint ${name}-error`}
       />
-    </>
+    </div>
   );
 };

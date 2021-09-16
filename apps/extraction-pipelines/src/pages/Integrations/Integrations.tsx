@@ -21,8 +21,6 @@ import { CapabilityCheck } from 'components/accessCheck/CapabilityCheck';
 import { EXTPIPES_READS } from 'model/AclAction';
 import { CreateIntegration } from 'pages/create/CreateIntegration';
 import { ids } from 'cogs-variables';
-import { StyledH2, StyledHeader } from 'styles/StyledModal';
-import { ModalContent } from 'components/modals/ModalContent';
 
 export const LEARNING_AND_RESOURCES_URL: Readonly<string> =
   'https://docs.cognite.com/cdf/integration/';
@@ -84,20 +82,13 @@ const CreateExtpipeModal = (props: { visible: boolean; close: () => void }) => {
       getContainer={() =>
         document.getElementsByClassName(ids.styleScope).item(0) as any
       }
-      footer={<span />}
+      footer={null}
+      title="Create extraction pipeline"
     >
-      <ModalContent
-        title={
-          <StyledHeader>
-            <StyledH2>Create new extraction pipeline</StyledH2>
-          </StyledHeader>
-        }
-      >
-        <CreateIntegration
-          showAdditionalFields={false}
-          customCancelCallback={props.close}
-        />
-      </ModalContent>
+      <CreateIntegration
+        showAdditionalFields={false}
+        customCancelCallback={props.close}
+      />
     </Modal>
   );
 };
