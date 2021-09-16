@@ -11,6 +11,8 @@ import {
 import { getEntryColor } from './colors';
 import { convertTsToWorkFlow } from './timeseries';
 
+export const CHART_POINTS_PER_SERIES = 1000;
+
 export function duplicate(chart: Chart, login: UserInfo): Chart {
   const id = nanoid();
   return {

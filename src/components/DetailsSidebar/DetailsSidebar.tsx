@@ -1,16 +1,23 @@
-import { Button, Tooltip, SegmentedControl, Title } from '@cognite/cogs.js';
-import { useSDK } from '@cognite/sdk-provider';
+import {
+  Icon,
+  Button,
+  Tooltip,
+  SegmentedControl,
+  Title,
+} from '@cognite/cogs.js';
 import { Row, Col, List } from 'antd';
 import DetailsBlock from 'components/common/DetailsBlock';
-import { MetadataList } from 'components/DetailsSidebar';
-import { SourceCircle, SourceSquare } from 'pages/ChartView/elements';
+import { MetadataList, useStatistics } from 'components/DetailsSidebar';
+import FunctionCall from 'components/FunctionCall';
 import { useState } from 'react';
-import { useQuery } from 'react-query';
-import { ChartTimeSeries, ChartWorkflow } from 'reducers/charts/types';
-import { roundToSignificantDigits } from 'utils/axis';
-import { getCallResponse } from 'utils/backendApi';
-import { functionResponseKey } from 'utils/backendService';
+import { SourceCircle, SourceSquare } from 'pages/ChartView/elements';
+import {
+  FunctionCallStatus,
+  ChartTimeSeries,
+  ChartWorkflow,
+} from 'reducers/charts/types';
 import { convertValue, units } from 'utils/units';
+import { roundToSignificantDigits } from 'utils/axis';
 import {
   Sidebar,
   TopContainer,
@@ -21,6 +28,20 @@ import {
   SourceItemName,
   SourceItemWrapper,
 } from './elements';
+
+const renderStatusIcon = (status?: FunctionCallStatus) => {
+  switch (status) {
+    case 'Running':
+      return <Icon type="Loading" />;
+    case 'Completed':
+      return <Icon type="Checkmark" />;
+    case 'Failed':
+    case 'Timeout':
+      return <Icon type="Close" />;
+    default:
+      return null;
+  }
+};
 
 type Props = {
   sourceItem: ChartWorkflow | ChartTimeSeries | undefined;
@@ -77,7 +98,7 @@ export default function DetailsSidebar({
         <TopContainerAside>
           <SegmentedControl
             currentKey={selectedMenu}
-            onButtonClicked={(key) => handleMenuClick(key)}
+            onButtonClicked={(keyCode) => handleMenuClick(keyCode)}
           >
             {menuOptions.map(({ value, label }) => (
               <SegmentedControl.Button key={value}>
@@ -127,24 +148,8 @@ const Statistics = ({
 }: {
   sourceItem: ChartWorkflow | ChartTimeSeries | undefined;
 }) => {
-  const sdk = useSDK();
   const statisticsCall = (sourceItem?.statisticsCalls || [])[0];
-
-  const { data } = useQuery({
-    queryKey: functionResponseKey(
-      statisticsCall?.functionId,
-      statisticsCall?.callId
-    ),
-    queryFn: (): Promise<string | undefined> =>
-      getCallResponse(sdk, statisticsCall?.functionId, statisticsCall.callId),
-    retry: 1,
-    retryDelay: 1000,
-    enabled: !!statisticsCall,
-  });
-
-  const { results } = (data as any) || {};
-  const { statistics = [] } = (results as StatisticsResult) || {};
-  const statisticsForSource = statistics[0];
+  const statisticsForSource = useStatistics(sourceItem);
   const unit = sourceItem?.unit;
   const preferredUnit = sourceItem?.preferredUnit;
   const displayUnit =
@@ -159,6 +164,16 @@ const Statistics = ({
       <SourceHeader sourceItem={sourceItem} />
       {sourceItem?.type === 'timeseries' ? (
         <>
+          <div>
+            <div>
+              <FunctionCall
+                id={statisticsCall?.functionId}
+                callId={statisticsCall?.callId}
+                renderLoading={() => renderStatusIcon('Running')}
+                renderCall={({ status }) => renderStatusIcon(status)}
+              />
+            </div>
+          </div>
           <DetailsBlock title="Statistics">
             <List
               dataSource={[
@@ -179,7 +194,7 @@ const Statistics = ({
                 <Row className="ant-list-item">
                   <Col span={14}>{label}</Col>
                   <Col span={10} style={{ textAlign: 'right' }}>
-                    {value
+                    {typeof value === 'number'
                       ? `${roundToSignificantDigits(
                           convertValue(value, unit, preferredUnit),
                           3
@@ -202,7 +217,7 @@ const Statistics = ({
                 <Row className="ant-list-item">
                   <Col span={14}>{label}</Col>
                   <Col span={10} style={{ textAlign: 'right' }}>
-                    {value
+                    {typeof value === 'number'
                       ? `${roundToSignificantDigits(
                           convertValue(value, unit, preferredUnit),
                           3
@@ -224,7 +239,7 @@ const Statistics = ({
                 <Row className="ant-list-item">
                   <Col span={14}>{label}</Col>
                   <Col span={10} style={{ textAlign: 'right' }}>
-                    {value || '-'}
+                    {typeof value === 'number' ? value : '-'}
                   </Col>
                 </Row>
               )}

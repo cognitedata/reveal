@@ -79,7 +79,7 @@ export const ConfigPanel = ({
           });
         }}
         value={{
-          value: functionData.attachTo,
+          value: functionData?.attachTo,
           label: selectedWorkspaceTimeSeriesLabel,
         }}
       />

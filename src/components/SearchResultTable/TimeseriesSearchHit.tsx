@@ -46,7 +46,7 @@ export default function TimeseriesSearchHit({
                       backgroundColor: Colors['yellow-4'].alpha(0.4),
                     }}
                     searchWords={[query]}
-                    textToHighlight={t.description}
+                    textToHighlight={t.description ?? ''}
                   />
                 </Description>
               </InfoContainer>
