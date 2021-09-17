@@ -56,6 +56,9 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
       priority: number;
       debugStuff: any;
     }>();
+    let insideSectors = 0;
+    let insideLeafSectors = 0;
+
     cadModelsMetadata.map(model => {
       takenSectors.initializeScene(model);
       transformedCameraMatrixWorldInverse.multiplyMatrices(cameraMatrixWorldInverse, model.modelMatrix);
@@ -81,11 +84,17 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
         transformedBounds.copy(sector.bounds);
         transformedBounds.applyMatrix4(model.modelMatrix);
 
-        const screenArea = computeNdcAreaOfBox(camera, transformedBounds);
         // Weight sectors that are close to the camera higher
         const distanceToCamera = transformedBounds.distanceToPoint(camera.position);
         const normalizedDistanceToCamera =
           (distanceToCamera - minSectorDistance) / (maxSectorDistance - minSectorDistance);
+
+        if (distanceToCamera === 0) {
+          insideSectors++;
+          insideLeafSectors += sector.children.length === 0 ? 1 : 0;
+        }
+
+        const screenArea = distanceToCamera > 0.0 ? computeNdcAreaOfBox(camera, transformedBounds) : 1.0;
         // const priority = screenArea / Math.log2(2.0 + transformedBounds.distanceToPoint(camera.position));
         const screenAreaWeight = 0.6;
         const distanceToCameraWeight = 1.0 - screenAreaWeight;
@@ -123,9 +132,12 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
 
     console.log(
       'Scheduled sectors',
-      candidateSectors.slice(0, takenSectorCount).map(x => ({ id: x.sectorId, screenArea: x.priority })),
+      candidateSectors
+        .slice(0, takenSectorCount)
+        .map(x => ({ id: x.sectorId, screenArea: x.priority, sector: x.model.scene.getSectorById(x.sectorId) })),
       'Candidates:',
-      candidateSectors.slice().sort((left, right) => left.sectorId - right.sectorId)
+      candidateSectors.slice().sort((left, right) => left.sectorId - right.sectorId),
+      `Inside sectors: ${insideSectors} (${insideLeafSectors} leafs)`
     );
     console.log('Budget:', { ...input.budget }, 'Spent:', { ...spentBudget });
 
