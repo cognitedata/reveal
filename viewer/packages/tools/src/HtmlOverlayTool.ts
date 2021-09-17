@@ -5,7 +5,6 @@
 import * as THREE from 'three';
 import { Cognite3DViewer, DisposedDelegate, SceneRenderedDelegate } from '@reveal/core';
 import { worldToViewportCoordinates } from '@reveal/core/utilities';
-
 import { Cognite3DViewerToolBase } from './Cognite3DViewerToolBase';
 
 export type HtmlOverlayPositionUpdatedDelegate = (
