@@ -81,7 +81,7 @@ def pods = { body ->
                 node(POD_LABEL) {
                     stageWithNotify('Checkout code', CONTEXTS.checkout) {
                       checkout(scm)
-                      sh('./scripts/gen-version-info.sh > ./rules/test/version_info.bzl')
+                      // sh('./scripts/gen-version-info.sh > ./rules/test/version_info.bzl')
                     }
                   body()
                 }

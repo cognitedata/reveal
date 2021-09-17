@@ -10,7 +10,7 @@ fixture('Comments')
   .page(process.env.BASE_URL)
   .beforeEach((t) => t.useRole(regularUser))
   .afterEach((t) =>
-    logErrors(t, { error: true, warn: true, log: true, info: true })
+    logErrors(t, { error: true, warn: false, log: false, info: false })
   );
 
 test('Checking comments page', async () => {

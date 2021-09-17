@@ -10,10 +10,10 @@ fixture('App')
   .page(process.env.BASE_URL)
   .beforeEach((t) => t.useRole(regularUser))
   .afterEach((t) =>
-    logErrors(t, { error: true, warn: true, log: true, info: true })
+    logErrors(t, { error: true, warn: false, log: false, info: false })
   );
 
-test('Check sidecars page content', async () => {
+test('Check sidecar page content', async () => {
   log('Goto the sidecar page');
   const sidecarInfo = Selector('button').withText('Sidecar Info');
   await t.expect(sidecarInfo.exists).ok('');
