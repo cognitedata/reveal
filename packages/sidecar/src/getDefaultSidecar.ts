@@ -5,12 +5,14 @@ interface Props {
   cluster: CDFCluster;
   localComments?: boolean;
   localUserManagement?: boolean;
+  localDigitalCockpit?: boolean;
 }
 export const getDefaultSidecar = ({
   prod,
   cluster,
   localComments,
   localUserManagement,
+  localDigitalCockpit,
 }: Props): Partial<SidecarConfig> => {
   const generateBaseUrls = (cluster: string, prod = false) => {
     const generateUrl = (
@@ -45,6 +47,12 @@ export const getDefaultSidecar = ({
       cluster,
       localUserManagement && '8600'
     );
+    const digitalCockpitApiBaseUrl = generateUrl(
+      'https://digital-cockpit-api.',
+      prod,
+      cluster,
+      localDigitalCockpit && '8001'
+    );
     const appsApiBaseUrl = generateUrl('https://apps-api.', prod, cluster);
 
     return {
@@ -54,6 +62,7 @@ export const getDefaultSidecar = ({
       }.cognitedata.com`,
       commentServiceBaseUrl,
       userManagementServiceBaseUrl,
+      digitalCockpitApiBaseUrl,
       cdfCluster: cluster === 'ew1' ? '' : cluster,
     };
   };

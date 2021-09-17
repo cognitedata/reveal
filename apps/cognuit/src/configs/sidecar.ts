@@ -1,51 +1,9 @@
 /* eslint-disable no-underscore-dangle */
+import { SidecarConfig, getDefaultSidecar } from '@cognite/sidecar';
 
-export type Sidecar = {
-  __sidecarFormatVersion: number;
-  applicationId: string;
-  applicationName: string;
-  appsApiBaseUrl: string;
-  cdfApiBaseUrl: string;
-  cdfCluster: string;
-  docsSiteBaseUrl: string;
-  intercom: string;
-  nomaApiBaseUrl: string;
-};
-
-// # -------------------------------------
-// #
-// #
-// #
-// # ONLY CHANGE THESE THINGS: (affects localhost only)
-// #
-// #
-const PROD = false;
-const CLUSTER = 'ew1';
-// #
-// #
-// #
-// # -------------------------------------
-
-const generateBaseUrls = (cluster: string, prod = false) => {
-  switch (cluster) {
-    case 'ew1': {
-      return {
-        appsApiBaseUrl: 'https://apps-api.staging.cognite.ai',
-        cdfApiBaseUrl: 'https://api.cognitedata.com',
-        cdfCluster: '',
-      };
-    }
-    default: {
-      return {
-        aadApplicationId: '245a8a64-4142-4226-86fa-63d590de14c9', // bluefield staging
-        appsApiBaseUrl: prod
-          ? `https://apps-api.${cluster}.cognite.ai`
-          : `https://apps-api.staging.${cluster}.cognite.ai`,
-        cdfApiBaseUrl: `https://${cluster}.cognitedata.com`,
-        cdfCluster: cluster,
-      };
-    }
-  }
+type CognuitSidecarConfig = SidecarConfig & {
+  cognuitApiBaseUrl: string;
+  cognuitCdfProject: string;
 };
 
 // we are overwriting the window.__cogniteSidecar object because the tenant-selector
@@ -53,8 +11,12 @@ const generateBaseUrls = (cluster: string, prod = false) => {
 // but via the window.__cogniteSidecar global
 // now that this var is updated, all should work as expected.
 (window as any).__cogniteSidecar = {
-  ...generateBaseUrls(CLUSTER, PROD),
+  ...getDefaultSidecar({
+    prod: false,
+    cluster: 'ew1',
+  }),
   __sidecarFormatVersion: 1,
+  aadApplicationId: '',
   // to be used only locally as a sidecar placeholder
   // when deployed with FAS the values below are partly overriden
   applicationId: 'cognuit-dev',
@@ -64,6 +26,6 @@ const generateBaseUrls = (cluster: string, prod = false) => {
   disableTranslations: true,
   enableUserManagement: true,
   ...((window as any).__cogniteSidecar || {}),
-} as Sidecar;
+};
 
-export default (window as any).__cogniteSidecar;
+export default (window as any).__cogniteSidecar as CognuitSidecarConfig;

@@ -7,6 +7,7 @@ describe('getDefaultSidecar', () => {
       cdfApiBaseUrl: 'https://api.cognitedata.com',
       cdfCluster: '',
       commentServiceBaseUrl: 'https://comment-service.cognite.ai',
+      digitalCockpitApiBaseUrl: 'https://digital-cockpit-api.cognite.ai',
       userManagementServiceBaseUrl:
         'https://user-management-service.cognite.ai',
     });
@@ -18,6 +19,8 @@ describe('getDefaultSidecar', () => {
       cdfApiBaseUrl: 'https://api.cognitedata.com',
       cdfCluster: '',
       commentServiceBaseUrl: 'https://comment-service.staging.cognite.ai',
+      digitalCockpitApiBaseUrl:
+        'https://digital-cockpit-api.staging.cognite.ai',
       userManagementServiceBaseUrl:
         'https://user-management-service.staging.cognite.ai',
     });
@@ -29,6 +32,8 @@ describe('getDefaultSidecar', () => {
       cdfApiBaseUrl: 'https://bluefield.cognitedata.com',
       cdfCluster: 'bluefield',
       commentServiceBaseUrl: 'https://comment-service.bluefield.cognite.ai',
+      digitalCockpitApiBaseUrl:
+        'https://digital-cockpit-api.bluefield.cognite.ai',
       userManagementServiceBaseUrl:
         'https://user-management-service.bluefield.cognite.ai',
     });
@@ -41,6 +46,8 @@ describe('getDefaultSidecar', () => {
       cdfCluster: 'bluefield',
       commentServiceBaseUrl:
         'https://comment-service.staging.bluefield.cognite.ai',
+      digitalCockpitApiBaseUrl:
+        'https://digital-cockpit-api.staging.bluefield.cognite.ai',
       userManagementServiceBaseUrl:
         'https://user-management-service.staging.bluefield.cognite.ai',
     });
@@ -58,6 +65,8 @@ describe('getDefaultSidecar', () => {
       cdfApiBaseUrl: 'https://bluefield.cognitedata.com',
       cdfCluster: 'bluefield',
       commentServiceBaseUrl: 'http://localhost:8300',
+      digitalCockpitApiBaseUrl:
+        'https://digital-cockpit-api.staging.bluefield.cognite.ai',
       userManagementServiceBaseUrl:
         'https://user-management-service.staging.bluefield.cognite.ai',
     });

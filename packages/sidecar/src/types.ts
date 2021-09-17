@@ -40,11 +40,16 @@ export type SidecarConfig = {
   backgroundImage?: string;
   cdfApiBaseUrl: string;
   cdfCluster: string;
-  docsSiteBaseUrl: string;
+  commentServiceBaseUrl: string;
+  digitalCockpitApiBaseUrl: string;
   directoryTenantId?: string;
-  disableTranslations?: boolean;
-  disableLegacyLogin?: boolean;
   disableAzureLogin?: boolean;
+  disableLegacyLogin?: boolean;
+  disableTranslations?: boolean;
+  discoverApiBaseUrl: string;
+  docsSiteBaseUrl: string;
+  enableUserManagement?: boolean;
+  fakeIdp?: FakeIdp[];
   helpLink?: string;
   intercom?: string;
   intercomSettings?: IntercomBootSettings;
@@ -54,8 +59,5 @@ export type SidecarConfig = {
     version?: string;
     keySeparator?: false | string;
   };
-  fakeIdp?: FakeIdp[];
-  commentServiceBaseUrl: string;
-  enableUserManagement?: boolean;
   userManagementServiceBaseUrl: string;
 };
