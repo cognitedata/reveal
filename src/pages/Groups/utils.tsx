@@ -329,9 +329,9 @@ export const getCapabilityScopes = (
     case 'datasets':
       return ['idScope', 'all']; // idScope (uppercase S) and ...
     case 'extractionpipelines':
-      return ['datasetScope', 'all']; // Add back: 'idScope',
+      return ['datasetScope', 'idScope', 'all'];
     case 'extractionruns':
-      return ['datasetScope', 'all']; // Add back: 'extractionPipelineScope'
+      return ['datasetScope', 'extractionPipelineScope', 'all'];
     case 'securitycategories':
       return ['idscope', 'all']; // ... idscope (lowercase s) are different
     case 'seismic':
