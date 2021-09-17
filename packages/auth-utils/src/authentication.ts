@@ -280,6 +280,7 @@ export class CogniteAuth {
         const response = await this.getClient().authenticate();
         this.state.authenticated = response;
         const accessToken = await this.getClient().getCDFToken();
+
         if (accessToken) {
           this.state.authResult = {
             accessToken,

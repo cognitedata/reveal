@@ -1,3 +1,7 @@
+## 1.8.0 Sept 16 2021
+
+- Add `syncUser` for syncing user information with **user management service**
+
 ## 1.7.1 Sept 10 2021
 
 - add `getHeaders`

@@ -4,6 +4,7 @@ import { Loader } from '@cognite/cogs.js';
 import { SidecarConfig } from '@cognite/react-tenant-selector';
 import type { CogniteClient } from '@cognite/sdk';
 
+import { syncUser } from '../utils/userManagementSync';
 import { log } from '../utils';
 
 export interface AuthContext {
@@ -70,6 +71,7 @@ export const AuthContainer: React.FC<AuthContainerProps> = ({
             [authClient.state],
             1
           );
+
           setAuthState({
             client: authClient.getClient(),
             authState: authenticatedUser,
@@ -120,6 +122,7 @@ export const AuthContainer: React.FC<AuthContainerProps> = ({
     }
 
     if (authResponse?.authState?.authenticated) {
+      syncUser(authResponse.authState, sidecar);
       setLoading(false);
     }
 

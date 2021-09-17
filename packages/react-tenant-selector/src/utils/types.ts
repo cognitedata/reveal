@@ -39,4 +39,6 @@ export type SidecarConfig = {
     keySeparator?: false | string;
   };
   fakeIdp?: FakeIdp[];
+  enableUserManagement?: boolean;
+  userManagementServiceBaseUrl?: string;
 };

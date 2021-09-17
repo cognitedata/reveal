@@ -57,6 +57,7 @@ generate_package_json_helpers(
 DEPENDENCIES = [
     "@npm//@cognite/cogs.js",
     "@npm//@cognite/sdk",
+    "@npm//axios",
     "@npm//jwt-decode",
     "@npm//lodash",
     "@npm//react",

@@ -62,6 +62,7 @@ const generateBaseUrls = (cluster: string, prod = false) => {
   cognuitCdfProject: 'subsurface-test',
 
   disableTranslations: true,
+  enableUserManagement: true,
   ...((window as any).__cogniteSidecar || {}),
 } as Sidecar;
 
