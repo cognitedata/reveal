@@ -17,6 +17,7 @@ function MetadataDownload({ ids, resourceType }: Props) {
   const { data: metadata = [], isFetched } = useCdfItems(
     convertResourceType(resourceType),
     ids,
+    false,
     { enabled: downloading }
   );
   useEffect(() => {
@@ -70,7 +71,7 @@ function TimeseriesDownloadButton({ ids }: Pick<Props, 'ids'>) {
   const limit = 100000;
   const { data: metadata = [], isFetched: metadataFetched } = useCdfItems<
     Timeseries
-  >('timeseries', ids, {
+  >('timeseries', ids, false, {
     enabled: downloading,
   });
   const { data: datapoints = [], isFetched: dataPointsFetched } = useQuery(

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Space } from 'antd';
-import { Icon } from '@cognite/cogs.js';
+import { AllIconTypes, Icon } from '@cognite/cogs.js';
 import { InternalId } from '@cognite/sdk';
 import { ResourceType, getIcon, getTitle } from '@cognite/data-exploration';
 import { TitleRowWrapper } from '../ResourceTitleRow';
@@ -24,7 +24,7 @@ export default function SelectedResourcesTitleRow({
         }}
       >
         <Space size="large" align="center">
-          <Icon type={getIcon(resourceType)} />
+          <Icon type={getIcon(resourceType) as AllIconTypes} />
           <h1>
             {ids.length}{' '}
             {getTitle(resourceType, ids.length !== 1).toLowerCase()} selected
