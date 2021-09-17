@@ -25,7 +25,7 @@ export function ResultCount({
   const { data: search, isFetched: searchDone } = useSearch(
     sdkType,
     query!,
-    { limit: 1000 },
+    { limit: 1000, filter },
     {
       enabled: api === 'search' && query ? query.length > 0 : false,
     }
