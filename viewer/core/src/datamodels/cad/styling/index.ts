@@ -5,3 +5,9 @@ export { InvertedNodeCollection } from './InvertedNodeCollection';
 export { SinglePropertyFilterNodeCollection } from './SinglePropertyFilterNodeCollection';
 export { PropertyFilterNodeCollection } from './PropertyFilterNodeCollection';
 export { AssetNodeCollection } from './AssetNodeCollection';
+
+export { registerCustomNodeCollectionType,
+	 TypeName,
+	 NodeCollectionDescriptor,
+	 NodeCollectionSerializationContext,
+	 SerializedNodeCollection } from './NodeCollectionDeserializer';
