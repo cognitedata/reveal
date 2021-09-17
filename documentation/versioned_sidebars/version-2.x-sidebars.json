@@ -78,7 +78,11 @@
         },
         {
           "type": "doc",
-          "id": "version-2.x/examples/pointcloud-intersections"
+          "id": "version-2.x/examples/click-reactions-cad"
+        },
+        {
+          "type": "doc",
+          "id": "version-2.x/examples/click-reactions-pointcloud"
         },
         {
           "type": "doc",
