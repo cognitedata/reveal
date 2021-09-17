@@ -6,8 +6,9 @@ export { SinglePropertyFilterNodeCollection } from './SinglePropertyFilterNodeCo
 export { PropertyFilterNodeCollection } from './PropertyFilterNodeCollection';
 export { AssetNodeCollection } from './AssetNodeCollection';
 
-export { registerCustomNodeCollectionType,
-	 TypeName,
-	 NodeCollectionDescriptor,
-	 NodeCollectionSerializationContext,
-	 SerializedNodeCollection } from './NodeCollectionDeserializer';
+export {
+  registerCustomNodeCollectionType,
+  TypeName,
+  NodeCollectionDescriptor,
+  NodeCollectionSerializationContext
+} from './NodeCollectionDeserializer';
