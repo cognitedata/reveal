@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 import * as THREE from 'three';
-import { getBox3CornerPoints } from '../../../../utilities/three';
+import { transformBoxToNDC } from './transformBoxToNDC';
 
 const ndcSpace = new THREE.Box3(new THREE.Vector3(-1, -1, -1), new THREE.Vector3(1, 1, 1));
 const ndcBox = new THREE.Box3();
@@ -15,13 +15,8 @@ const ndcBox = new THREE.Box3();
  * @returns
  */
 export function computeNdcAreaOfBox(camera: THREE.Camera, box: THREE.Box3): number {
-  const corners = getBox3CornerPoints(box);
-  corners.forEach(corner => {
-    corner.project(camera);
-  });
-  ndcBox.setFromPoints(corners);
+  transformBoxToNDC(box, camera, ndcBox);
   ndcBox.intersect(ndcSpace);
-
   if (ndcBox.isEmpty()) {
     return 0.0;
   }

@@ -19,6 +19,7 @@ import assert from 'assert';
 import { LevelOfDetail } from '../LevelOfDetail';
 import { CadModelSectorBudget } from '../../CadModelSectorBudget';
 import { traverseDepthFirst } from '../../../../utilities';
+import { transformBoxToNDC } from './transformBoxToNDC';
 
 export type ByScreenSizeSectorCullerOptions = {
   /**
@@ -47,6 +48,24 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
     const { cadModelsMetadata, camera } = input;
     const cameraMatrixWorldInverse = camera.matrixWorldInverse;
     const cameraProjectionMatrix = camera.projectionMatrix;
+    // Create modified projection matrices to add heurestic of how "deep" in the frustum sectors are located
+    // This is done to avoid loading too much geometry from sectors we are barely inside and prioritize
+    // loading of geometry
+    const { near, far } = camera;
+    const viewRange = far - near;
+    const modifiedCameraProjectionMatrices = [
+      { near: near, far: near + 1.5, minBboxDiagonal: 0, maxBboxDiagonal: Infinity, weight: 0.1 }, // 0-10% of frustum
+      { near: near + 1.5, far: 20, minBboxDiagonal: 0, maxBboxDiagonal: Infinity, weight: 0.8 }, // 10-40% of frustum
+      { near: 20, far: far, minBboxDiagonal: 30, maxBboxDiagonal: Infinity, weight: 0.2 } // 40-100% of frustum
+      // { near, far: near + 0.1 * viewRange, weight: 0.1 }, // 0-10% of frustum
+      // { near: near + 0.1 * viewRange, far: near + 0.4 * viewRange, weight: 0.8 }, // 10-40% of frustum
+      // { near: near + 0.4 * viewRange, far: near + 1.0 * viewRange, weight: 0.2 } // 40-100% of frustum
+    ].map(x => {
+      return {
+        projectionMatrix: createModifiedProjectionMatrix(camera, x.near, x.far),
+        ...x
+      };
+    });
 
     const transformedCameraMatrixWorldInverse = new THREE.Matrix4();
     const transformedBounds = new THREE.Box3();
@@ -62,6 +81,15 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
     cadModelsMetadata.map(model => {
       takenSectors.initializeScene(model);
       transformedCameraMatrixWorldInverse.multiplyMatrices(cameraMatrixWorldInverse, model.modelMatrix);
+
+      const modifiedFrustums = modifiedCameraProjectionMatrices.map(x => {
+        const frustumMatrix = new THREE.Matrix4().multiplyMatrices(
+          x.projectionMatrix,
+          transformedCameraMatrixWorldInverse
+        );
+        const frustum = new THREE.Frustum().setFromProjectionMatrix(frustumMatrix);
+        return { frustum, ...x };
+      });
 
       const sectors = model.scene.getSectorsIntersectingFrustum(
         cameraProjectionMatrix,
@@ -88,7 +116,6 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
         const distanceToCamera = transformedBounds.distanceToPoint(camera.position);
         const normalizedDistanceToCamera =
           (distanceToCamera - minSectorDistance) / (maxSectorDistance - minSectorDistance);
-
         if (distanceToCamera === 0) {
           insideSectors++;
           insideLeafSectors += sector.children.length === 0 ? 1 : 0;
@@ -100,16 +127,62 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
         const distanceToCameraWeight = 1.0 - screenAreaWeight;
         const priority = screenAreaWeight * screenArea + distanceToCameraWeight * (1.0 - normalizedDistanceToCamera);
 
+        // Determine a weight based on what part of the view frustum the sector is inside.
+        const debugModifiedFrustums: any[] = [];
+        const frustumWeight = modifiedFrustums.reduce((accumulatedWeight, x) => {
+          const { frustum, minBboxDiagonal, maxBboxDiagonal, weight } = x;
+          const diagonal = sector.bounds.min.distanceTo(sector.bounds.max);
+          const accepted =
+            diagonal >= minBboxDiagonal && diagonal <= maxBboxDiagonal && frustum.intersectsBox(sector.bounds);
+          debugModifiedFrustums.push({ accepted, diagonal, ...x });
+          return accumulatedWeight + (accepted ? weight : 0);
+        }, 0.0);
+
+        // Determine weight based on distance to center line (prioritze nodes near the center of the screen)
+        const ndcBounds = transformBoxToNDC(transformedBounds, camera);
+        const ndcRect = new THREE.Box2(
+          new THREE.Vector2(ndcBounds.min.x, ndcBounds.min.y),
+          new THREE.Vector2(ndcBounds.max.x, ndcBounds.max.y)
+        );
+        const screenWeights = [
+          ndcRect.distanceToPoint(new THREE.Vector2(0, 0)),
+          ndcRect.distanceToPoint(new THREE.Vector2(-0.5, -0.5)),
+          ndcRect.distanceToPoint(new THREE.Vector2(-0.5, 0.5)),
+          ndcRect.distanceToPoint(new THREE.Vector2(0.5, -0.5)),
+          ndcRect.distanceToPoint(new THREE.Vector2(0.5, 0.5))
+        ].map(x => (2.0 - Math.max(x, 0.0)) / 2.0);
+        const screenWeight = screenWeights.reduce((weight, x) => weight + x);
+        // const centerOfScreenWeight = (2.0 - Math.max(ndcRect.distanceToPoint(new THREE.Vector2(0, 0)), 0.0)) / 2.0;
+
+        // TODO! Do this in NDC to get SCREEN center
+        // const cameraStart = camera.getWorldPosition(new THREE.Vector3());
+        // const cameraEnd = cameraStart
+        //   .clone()
+        //   .addScaledVector(camera.getWorldDirection(new THREE.Vector3()), camera.far);
+        // const cameraCenterLine = new THREE.Line3(cameraStart, cameraEnd);
+        // const bboxCorners = getBox3CornerPoints(transformedBounds);
+        // const tmp = new THREE.Vector3();
+        // const minDistanceToCenterLine = bboxCorners.reduce((min, x) => {
+        //   cameraCenterLine.closestPointToPoint(x, false, tmp);
+        //   return Math.min(min, tmp.distanceTo(x));
+        // }, Infinity);
+        // const centerLineWeight =
+
         candidateSectors.push({
           model,
           sectorId: sector.id,
-          priority,
+          priority: priority * frustumWeight * screenWeight,
           debugStuff: {
             screenArea,
             distanceToCamera,
             normalizedDistanceToCamera,
+            priority,
+            frustumWeight,
+            screenWeight,
+            screenWeights,
             camera: camera.clone(),
-            transformedBounds: transformedBounds.clone()
+            transformedBounds: transformedBounds.clone(),
+            debugModifiedFrustums
           }
         });
       });
@@ -177,6 +250,8 @@ class ScheduledSectorTree {
   }
 
   markSectorDetailed(model: CadModelMetadata, sectorId: number, priority: number) {
+    const addParents = false;
+
     const entry = this._models.get(model.modelIdentifier);
     assert(!!entry, `Could not find sector tree for ${model.modelIdentifier}`);
 
@@ -198,7 +273,7 @@ class ScheduledSectorTree {
         sectorIds.set(nextSectorIdToAdd, Math.max(priority, existingPriority));
       }
       const parent = allSectors.find(x => x.children.findIndex(x => x.id === nextSectorIdToAdd));
-      nextSectorIdToAdd = parent !== undefined ? parent.id : -1;
+      nextSectorIdToAdd = addParents && parent !== undefined ? parent.id : -1;
     }
   }
 
@@ -279,4 +354,12 @@ class ScheduledSectorTree {
   clear() {
     this._models.clear();
   }
+}
+
+function createModifiedProjectionMatrix(camera: THREE.PerspectiveCamera, near: number, far: number): THREE.Matrix4 {
+  const modifiedCamera = camera.clone();
+  modifiedCamera.near = near;
+  modifiedCamera.far = far;
+  modifiedCamera.updateProjectionMatrix();
+  return modifiedCamera.projectionMatrix;
 }
