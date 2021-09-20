@@ -48,6 +48,9 @@ export class Geomap {
           mapConfig.tileFormat
         );
         break;
+      case MapProviders.OpenStreetMap:
+        mapProvider = new GEOTHREE.OpenStreetMapsProvider();
+        break;
 
       default:
         throw new Error('Unsupported map provider');

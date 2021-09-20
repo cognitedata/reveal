@@ -11,7 +11,7 @@ The `GeomapTool` is a geolocation for the models and allow the user to place the
 on top of map at specific geo location.
 
 The tool provides list of options to set and choose:
-- Several map providers namely, Bing maps, Mapbox and Here maps.
+- Several map providers namely, Bing maps, Mapbox, Here maps and OpenStreet map.
 - We support planar mode and support terrain can be considered if needed.
 - Models can be placed on specific geolocation using latitude and longitude values.
 
@@ -23,6 +23,7 @@ In Geomap tool, you can select different map providers.
 - Bing Maps
 - Mapbox
 - Here Maps
+- OpenStreet Maps
 
 ## APIKeys
 Each map providers needs respective API keys (Access Token) to be assigned. To get access token follow the below procedure.
@@ -36,6 +37,9 @@ Each map providers needs respective API keys (Access Token) to be assigned. To g
 - Mapbox
   - Free up to 50000 web map loads. Create Mapbox account from https://account.mapbox.com/auth/signup/ and generate Access token to use them in your application.
   - Licensing details can be found at https://www.mapbox.com/pricing/.
+- OpenStreet map
+  - It does not require any keys to access its tile map images.
+  - Please check lincensing details at https://wiki.osmfoundation.org/wiki/Licence.
 
 ## Mapbox Maps
 Configuration of the Mapbox are listed below which can be used to set different option for the maps.
@@ -111,6 +115,23 @@ const mapConfig = {
   style: HereMapType.Aerial,
   scheme: HereMapScheme.Terrain,
   imageFormat: HereMapImageFormat.PNG,
+  latlong: {
+      latitude: 59.9016426931744,
+      longitude: 10.607235872426175
+  }
+}
+new GeomapTool(viewer, mapConfig);
+```
+## OpenStreet Maps
+- No configuration is needed for OpenStreet Maps.
+- 'APIKey' - blank string as no API key is needed for OpenStreet Map.
+
+```jsx runnable
+// import { GeomapTool, MapProviders } from '@cognite/reveal/tools';
+
+const mapConfig = {
+  provider: MapProviders.OpenStreetMap,
+  APIKey: '',
   latlong: {
       latitude: 59.9016426931744,
       longitude: 10.607235872426175

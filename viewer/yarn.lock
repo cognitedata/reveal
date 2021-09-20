@@ -501,7 +501,7 @@ __metadata:
     eslint-plugin-prettier: ^3.1.4
     eslint-plugin-unused-imports: ^1.1.3
     file-loader: ^6.2.0
-    geo-three: ^0.0.14
+    geo-three: ^0.0.15
     gl: ^4.8.0
     glslify: ^7.1.1
     glslify-import: ^3.1.0
@@ -5789,14 +5789,14 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"geo-three@npm:^0.0.14":
-  version: 0.0.14
-  resolution: "geo-three@npm:0.0.14"
+"geo-three@npm:^0.0.15":
+  version: 0.0.15
+  resolution: "geo-three@npm:0.0.15"
   dependencies:
     "@types/offscreencanvas": ^2019.6.3
   peerDependencies:
     three: ">0.80.0"
-  checksum: a1c3a5204e23a5210066ad181ff3b659f7bf9a5af22268a786011fb23d191e4bb61045c3e5a1de52c2edf2703fbbddf537a41d5209501b60a57e30730e7b32a0
+  checksum: 0e17280ba2d42d4637d48cb87e30ae0e1dfd78c45e25508668582580c84474265b57b28a065c9336f1c5c260f8801ffd811173c7a3edecdbef19ae94f972c3f4
   languageName: node
   linkType: hard
 

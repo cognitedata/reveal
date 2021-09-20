@@ -218,7 +218,7 @@ export function Geomap() {
       let map = new GeomapTool(viewer, mapConfig);
 
       const renderGui = gui.addFolder('Options');
-      const mapProviders = ['MapboxMap', 'HereMap', 'BingMap'];
+      const mapProviders = ['MapboxMap', 'HereMap', 'BingMap', 'OpenStreetMap'];
       renderGui.add(guiState, 'providers', mapProviders).name('MapProviders').onFinishChange(value => {
         switch(value) {
           case 'HereMap':
@@ -253,6 +253,16 @@ export function Geomap() {
               provider: MapProviders.BingMap,
               APIKey: "AuViYD_FXGfc3dxc0pNa8ZEJxyZyPq1lwOLPCOydV3f0tlEVH-HKMgxZ9ilcRj-T",
               type: BingMapType.Aerial,
+              latlong: {
+                  latitude: 59.9016426931744,
+                  longitude: 10.607235872426175
+              }
+            };
+            break;
+          case 'OpenStreetMap':
+            mapConfig = {
+              provider: MapProviders.OpenStreetMap,
+              APIKey: "",
               latlong: {
                   latitude: 59.9016426931744,
                   longitude: 10.607235872426175

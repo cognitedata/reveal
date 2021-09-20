@@ -8,7 +8,8 @@
 export enum MapProviders {
   BingMap = 'BingMap',
   HereMap = 'HereMap',
-  MapboxMap = 'MapboxMap'
+  MapboxMap = 'MapboxMap',
+  OpenStreetMap = 'OpenStreetMap'
 }
 
 /**
@@ -143,6 +144,10 @@ export type HereMapConfig = {
   size?: number;
 };
 
+export type OpenStreetMapConfig = {
+  provider: MapProviders.OpenStreetMap;
+};
+
 export type MapboxConfig = {
   provider: MapProviders.MapboxMap;
 
@@ -182,7 +187,7 @@ export type MapConfig = {
    * Is Vector Map?
    */
   isVectorMap?: boolean;
-} & (BingMapConfig | HereMapConfig | MapboxConfig);
+} & (BingMapConfig | HereMapConfig | MapboxConfig | OpenStreetMapConfig);
 
 /**
  * Latitude, Longitude position.
