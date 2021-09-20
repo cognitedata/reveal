@@ -33,11 +33,11 @@ export class Geomap {
       case MapProviders.HereMap:
         mapProvider = new GEOTHREE.HereMapsProvider(
           mapConfig.APIKey,
-          mapConfig.appCode as string,
-          mapConfig.style as string,
-          mapConfig.scheme as string,
-          mapConfig.imageFormat as string,
-          mapConfig.size as number
+          mapConfig.appCode,
+          mapConfig.style,
+          mapConfig.scheme,
+          mapConfig.imageFormat,
+          mapConfig.size
         );
         break;
       case MapProviders.MapboxMap:

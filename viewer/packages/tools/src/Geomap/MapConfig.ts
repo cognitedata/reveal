@@ -17,17 +17,18 @@ export enum MapProviders {
  */
 export enum MapboxMode {
   /**
-   * Access the map data using a map style.
+   * Access the map data using a map style. For details see https://docs.mapbox.com/api/maps/styles/
    */
   Style = 100,
   /**
-   * Access the map data using a map id.
+   * Access the map data using a map id or Tileset id. For details see https://docs.mapbox.com/help/glossary/tileset-id/
    */
   Map_Id = 101
 }
 
 /**
- * Mapbox Map Style
+ * Mapbox Map Style, these are pre-defined styles using map/tileset id, created in Mapbox Studio style editor.
+ * This is used when MapboxMode.Style is used for mode.
  */
 export enum MapboxStyle {
   Streets = 'mapbox/streets-v10',
@@ -40,6 +41,17 @@ export enum MapboxStyle {
   Navigation_Night = 'mapbox/navigation-preview-night-v4',
   Navigation_Guide_Day = 'mapbox/navigation-guidance-day-v4',
   Navigation_Guide_Night = 'mapbox/navigation-guidance-night-v4'
+}
+
+/**
+ * A map/tileset ID is a unique identifier given to every tileset, used when MapboxMode.Map_Id is choosen for mode.
+ */
+export enum MapboxId {
+  Streets = 'mapbox.mapbox-streets-v7',
+  Satellite = 'mapbox.satellite',
+  Terrain = 'mapbox.mapbox-terrain-v2',
+  Traffic = 'mapbox.mapbox-traffic-v1',
+  TerrainRGB = 'mapbox.terrain-rgb'
 }
 
 /**
@@ -108,7 +120,10 @@ export enum HereMapImageFormat {
 
 export type BingMapConfig = {
   provider: MapProviders.BingMap;
-
+  /**
+   * Bing Map API Key
+   */
+   APIKey: string;
   /**
    * The type of the map used.
    */
@@ -117,7 +132,10 @@ export type BingMapConfig = {
 
 export type HereMapConfig = {
   provider: MapProviders.HereMap;
-
+  /**
+   * Here map API Key
+   */
+   APIKey: string;
   /**
    * Service application code token.
    */
@@ -150,7 +168,10 @@ export type OpenStreetMapConfig = {
 
 export type MapboxConfig = {
   provider: MapProviders.MapboxMap;
-
+  /**
+   * Mapbox API Key
+   */
+   APIKey: string;
   /**
    * Map style or map ID if the mode is set to MAP_ID
    */
@@ -176,17 +197,9 @@ export type MapboxConfig = {
  */
 export type MapConfig = {
   /**
-   * Map provider API Key
-   */
-  APIKey: string;
-  /**
    * Latitude, Longitude position
    */
   latlong: LatLongPosition;
-  /**
-   * Is Vector Map?
-   */
-  isVectorMap?: boolean;
 } & (BingMapConfig | HereMapConfig | MapboxConfig | OpenStreetMapConfig);
 
 /**

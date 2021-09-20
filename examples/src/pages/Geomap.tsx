@@ -262,7 +262,6 @@ export function Geomap() {
           case 'OpenStreetMap':
             mapConfig = {
               provider: MapProviders.OpenStreetMap,
-              APIKey: "",
               latlong: {
                   latitude: 59.9016426931744,
                   longitude: 10.607235872426175
