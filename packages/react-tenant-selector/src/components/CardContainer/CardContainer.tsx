@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { CogniteAuth, AuthenticatedUser } from '@cognite/auth-utils';
+import { SidecarConfig } from '@cognite/sidecar';
 
 import {
   ErrorExpandable,
@@ -15,7 +16,6 @@ import {
   LoginWithCognite,
   LoginWithFakeIDP,
 } from '../LoginOptions';
-import { SidecarConfig } from '../../utils';
 
 import {
   StyledCardContainer,

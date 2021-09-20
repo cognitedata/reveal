@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { CogniteClient } from '@cognite/sdk';
 import { render, screen } from '@testing-library/react';
-import { generateSidecar } from '__mocks/sidecar';
+import { mockSidecar } from '@cognite/sidecar';
 
 import { AuthContainer } from '../AuthContainer';
 
@@ -39,7 +39,7 @@ jest.mock('@cognite/auth-utils', () => {
 describe('AuthContainer', () => {
   it('should get token from provider', () => {
     const sdkClient = new CogniteClient({ appId: 'test' });
-    const sidecar = generateSidecar();
+    const sidecar = mockSidecar();
 
     const Test = () => (
       <AuthContainer

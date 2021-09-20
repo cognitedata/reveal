@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { SidecarConfig } from '@cognite/react-tenant-selector';
+import { SidecarConfig } from '@cognite/sidecar';
 import { AuthenticatedUser } from '@cognite/auth-utils';
 import { reportException } from '@cognite/react-errors';
 
@@ -18,22 +18,18 @@ export const syncUser = async (
     return;
   }
 
-  if (!authState.token && !authState.idToken) {
-    log('[User Sync]: Missing access token and id token');
+  if (!authState.token || !authState.idToken) {
+    // Legacy token not currently support, thus just add warning.
+    log('[User Sync]: Missing access token or id token', [], 2);
     return;
   }
 
-  let umsUrl;
-  if (sidecar.userManagementServiceBaseUrl) {
-    umsUrl = `${sidecar.userManagementServiceBaseUrl}/user/sync`;
-  } else {
-    umsUrl = `http://localhost:8600/user/sync`;
-  }
+  const umsUserSyncEndpoint = `${sidecar.userManagementServiceBaseUrl}/user/sync`;
 
   // Silent sync
   await axios
     .post(
-      umsUrl,
+      umsUserSyncEndpoint,
       { accessToken: authState.token },
       {
         headers: { Authorization: `Bearer ${authState.idToken}` },

@@ -1,4 +1,5 @@
 import { screen } from '@testing-library/react';
+import { mockSidecar } from '@cognite/sidecar';
 
 import { render } from '../utils/test';
 import { TenantSelector } from '../TenantSelector';
@@ -7,16 +8,7 @@ import { TenantSelector } from '../TenantSelector';
 jest.mock('../components/CardContainer', () => () => <div>test-container</div>);
 
 const props = {
-  sidecar: {
-    __sidecarFormatVersion: 1,
-    aadApplicationId: '123',
-    applicationId: '',
-    applicationName: '',
-    appsApiBaseUrl: '',
-    cdfCluster: '',
-    cdfApiBaseUrl: '',
-    directoryTenantId: '',
-  },
+  sidecar: mockSidecar(),
 };
 
 describe('<TenantSelector />', () => {

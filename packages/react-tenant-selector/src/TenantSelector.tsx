@@ -3,11 +3,11 @@ import { CogniteClient } from '@cognite/sdk';
 import { CogniteAuth, AuthenticatedUser, getFlow } from '@cognite/auth-utils';
 import { Loader } from '@cognite/cogs.js';
 import { QueryClientProvider, QueryClient } from 'react-query';
+import { SidecarConfig } from '@cognite/sidecar';
 
 // note: only using relative paths until we can setup storybook baseUrl properly:
 import CardContainer, { EnabledModes } from './components/CardContainer';
 import { TenantSelectorBackground } from './components';
-import { SidecarConfig } from './utils';
 import useTenantSelector from './hooks/useTenantSelector';
 import useClusterSelector from './hooks/useClusterSelector';
 import GlobalStyles from './global-styles';

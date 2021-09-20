@@ -1,3 +1,7 @@
+## 1.8.2 Sept 20 2021
+
+- Use the `SidecarConfig` type from '@cognite/sidecar' package.
+
 ## 1.8.1 Sept 20 2021
 
 - Avoid calling azure on logout, when using FakeIdp

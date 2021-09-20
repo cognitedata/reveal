@@ -1,6 +1,6 @@
 import React from 'react';
 import { configureI18n, ConfigureI18nOptions } from '@cognite/react-i18n';
-import { SidecarConfig } from '@cognite/react-tenant-selector';
+import { SidecarConfig } from '@cognite/sidecar';
 
 export const TranslationWrapper: React.FC<
   SidecarConfig & { i18nOptions?: ConfigureI18nOptions }

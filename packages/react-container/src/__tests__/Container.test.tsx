@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import { render, screen } from '@testing-library/react';
-import { generateSidecar } from '__mocks/sidecar';
+import { mockSidecar } from '@cognite/sidecar';
 
 import { AuthConsumer } from '../components/AuthContainer';
 import { ContainerWithoutI18N } from '../Container';
@@ -52,7 +52,7 @@ describe('ContainerWithoutI18N', () => {
 
   it('should get correctly setup cognite client', () => {
     const Test = () => {
-      const sidecar = generateSidecar();
+      const sidecar = mockSidecar();
 
       return (
         <ContainerWithoutI18N sidecar={sidecar}>

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { CogniteAuth, AuthenticatedUser, getFlow } from '@cognite/auth-utils';
 import { Loader } from '@cognite/cogs.js';
-import { SidecarConfig } from '@cognite/react-tenant-selector';
+import { SidecarConfig } from '@cognite/sidecar';
 import type { CogniteClient } from '@cognite/sdk';
 
 import { syncUser } from '../utils/userManagementSync';

@@ -7,13 +7,15 @@ interface Props {
   localUserManagement?: boolean;
   localDigitalCockpit?: boolean;
 }
-export const getDefaultSidecar = ({
-  prod,
-  cluster,
-  localComments,
-  localUserManagement,
-  localDigitalCockpit,
-}: Props): Partial<SidecarConfig> => {
+export const getDefaultSidecar = (
+  {
+    prod,
+    cluster,
+    localComments,
+    localUserManagement,
+    localDigitalCockpit,
+  }: Props = { prod: false, cluster: 'azure-dev' }
+): Partial<SidecarConfig> => {
   const generateBaseUrls = (cluster: string, prod = false) => {
     const generateUrl = (
       base: string,

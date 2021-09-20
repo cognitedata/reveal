@@ -5,7 +5,7 @@ import {
   intercomInitialization,
   IntercomBootSettings,
 } from '@cognite/intercom-helper';
-import { SidecarConfig } from '@cognite/react-tenant-selector';
+import { SidecarConfig } from '@cognite/sidecar';
 
 import { getAuthHeaders } from '../auth';
 

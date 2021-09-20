@@ -75,6 +75,7 @@ DEPENDENCIES = [
     "//packages/auth-utils",
     "//packages/react-loop-detector",
     "//packages/react-sentry",
+    "//packages/sidecar",
 ]
 
 # Type dependencies from package.json

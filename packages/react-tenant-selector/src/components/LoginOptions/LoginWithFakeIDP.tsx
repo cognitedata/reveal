@@ -4,8 +4,7 @@ import omit from 'lodash/omit';
 import { Button } from '@cognite/cogs.js';
 import { saveToLocalStorage } from '@cognite/storage';
 import { CogniteAuth } from '@cognite/auth-utils';
-
-import { FakeIdp } from '../../utils';
+import { FakeIdp } from '@cognite/sidecar';
 
 type Props = {
   authClient?: CogniteAuth;

@@ -1,3 +1,7 @@
+## 1.4.1 Sept 20 2021
+
+- Use the `SidecarConfig` type from '@cognite/sidecar' package.
+
 ## 1.4.0 August 25 2021
 
 - Bump deps
