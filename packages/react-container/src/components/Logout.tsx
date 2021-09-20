@@ -1,6 +1,6 @@
 import React from 'react';
 import { EndSessionRequest } from '@azure/msal-browser';
-import { saveFlow } from '@cognite/auth-utils';
+import { getFlow, saveFlow } from '@cognite/auth-utils';
 import { CogniteClient } from '@cognite/sdk';
 
 import {
@@ -19,21 +19,27 @@ export const Logout: React.FC = () => {
   React.useEffect(() => {
     storage.removeItem(AUTH_RESULT_STORAGE_KEY);
     storage.removeItem(KEY_LAST_TENANT);
+    const flow = getFlow();
     saveFlow('UNKNOWN');
-
-    if (!client) {
+    // Avoid calling azure when using Fake Idp
+    if (!client || flow.flow === 'FAKE_IDP') {
       window.location.pathname = redirectUrl;
       return;
     }
-
     // @ts-expect-error azureAdClient is private?
     const { azureAdClient } = client;
     if (azureAdClient) {
-      const logOutRequest: EndSessionRequest = {
-        account: azureAdClient.getAccount(),
-        postLogoutRedirectUri: azureAdClient.msalApplication.getRedirectUri(),
-      };
-      azureAdClient.msalApplication.logout(logOutRequest);
+      try {
+        const logOutRequest: EndSessionRequest = {
+          account: azureAdClient.getAccount(),
+          postLogoutRedirectUri: azureAdClient.msalApplication.getRedirectUri(),
+        };
+        azureAdClient.msalApplication.logout(logOutRequest);
+      } catch (err) {
+        log(err, undefined, 3);
+      } finally {
+        window.location.pathname = redirectUrl;
+      }
     } else {
       legacyLogout(client);
     }

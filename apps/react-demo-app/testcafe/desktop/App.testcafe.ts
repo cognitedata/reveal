@@ -40,7 +40,7 @@ test('Logout redirects to the main page', async () => {
   await t.click(sidebarOpenerButton);
 
   log('Click logout button');
-  const logoutButton = screen.getByText('Logout');
+  const logoutButton = screen.getByRole('button', { name: 'Logout' });
   await t.click(logoutButton);
 
   const getWindowLocation = ClientFunction(() => window.location);

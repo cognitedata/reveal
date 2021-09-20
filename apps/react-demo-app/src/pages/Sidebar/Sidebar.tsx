@@ -19,9 +19,9 @@ export const Sidebar: React.FC<Props> = ({ isOverlayOpened, onCancel }) => {
   const history = useHistory();
   const { authState } = useAuthContext();
 
-  const handleClick = () => {
+  function handleClick() {
     history.push('/logout');
-  };
+  }
   return (
     <Drawer
       visible={isOverlayOpened}

@@ -1,3 +1,7 @@
+## 1.8.1 Sept 20 2021
+
+- Avoid calling azure on logout, when using FakeIdp
+
 ## 1.8.0 Sept 16 2021
 
 - Add `syncUser` for syncing user information with **user management service**
