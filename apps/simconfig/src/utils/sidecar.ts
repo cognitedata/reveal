@@ -9,9 +9,9 @@ import { SidecarConfig, getDefaultSidecar } from '@cognite/sidecar';
 // #
 // #
 const PROD = false;
-// examples: bluefield, greenfield, ew1, bp-northeurope, azure-dev, bp
+// examples: bluefield, greenfield, ew1, bp-northeurope, azure-dev, bp, westeurope-1
 // NOTE: leave on 'azure-dev' for testing in the PR's since that is the only place we have the FAKEIdp currently for this project:
-const CLUSTER = 'ew1';
+const CLUSTER = 'westeurope-1';
 // #
 // #
 // #
@@ -22,6 +22,7 @@ const getAadApplicationId = (cluster: string) => {
     bluefield: '245a8a64-4142-4226-86fa-63d590de14c9',
     'azure-dev': '5a262178-942b-4c8f-ac15-f96642b73b56',
     ew1: 'd584f014-5fa9-4b0b-953d-cc4837d093f3',
+    'westeurope-1': '83e4fd8b-321f-4e35-89f9-80dde739a713',
   };
 
   const aadApplicationId = ids[cluster] || '';

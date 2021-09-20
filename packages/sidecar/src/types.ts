@@ -14,7 +14,7 @@ export type CDFCluster =
   | 'pgs'
   | 'power-no'
   | 'statnett'
-  | 'west-europe-1';
+  | 'westeurope-1';
 
 export type FakeIdp = {
   cluster: string;
