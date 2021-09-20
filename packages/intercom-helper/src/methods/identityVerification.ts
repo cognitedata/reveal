@@ -10,6 +10,7 @@ export default (settings: IdentityVerificationSettings): Promise<Response> =>
   getHmac(settings.appsApiUrl, settings.headers, settings.project)
     .then((obj): Response => {
       window.Intercom('update', {
+        name: obj.userName,
         user_id: obj.userUid,
         user_hash: obj.hmac,
       });

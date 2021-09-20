@@ -12,4 +12,8 @@ export default (
       params: {},
       headers,
     })
-    .then(({ data: { hmac, userUid } }) => ({ hmac, userUid }));
+    .then(({ data: { hmac, userUid, userName } }) => ({
+      hmac,
+      userUid,
+      userName,
+    }));

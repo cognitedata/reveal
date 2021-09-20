@@ -1,3 +1,5 @@
+import { GetHmacSettings } from 'types';
+
 import getHmac from '../utils/getHmac';
 
 import identityVerification from './identityVerification';
@@ -20,8 +22,13 @@ describe('get Hmac key from server', () => {
 
   it('identityVerification resolves with no project', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (getHmac as any).mockImplementation(() =>
-      Promise.resolve({ hmac: 'hmacHash1234', userUid: 'Unique ID' })
+    (getHmac as any).mockImplementation(
+      (): Promise<GetHmacSettings> =>
+        Promise.resolve({
+          hmac: 'hmacHash1234',
+          userUid: 'Unique ID',
+          userName: 'user name',
+        })
     );
     return identityVerification({
       appsApiUrl: 'fakeUrl',
@@ -36,6 +43,7 @@ describe('get Hmac key from server', () => {
       );
       expect(response).toEqual({ success: true });
       expect(global.window.Intercom).toHaveBeenCalledWith('update', {
+        name: 'user name',
         user_id: 'Unique ID',
         user_hash: 'hmacHash1234',
       });
@@ -64,8 +72,13 @@ describe('get Hmac key from server', () => {
 
   it('identityVerification resolves with project', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (getHmac as any).mockImplementation(() =>
-      Promise.resolve({ hmac: 'hmacHash1234', userUid: 'Unique ID' })
+    (getHmac as any).mockImplementation(
+      (): Promise<GetHmacSettings> =>
+        Promise.resolve({
+          hmac: 'hmacHash1234',
+          userUid: 'Unique ID',
+          userName: 'user name',
+        })
     );
     return identityVerification({
       appsApiUrl: 'fakeUrl',
@@ -81,6 +94,7 @@ describe('get Hmac key from server', () => {
       );
       expect(response).toEqual({ success: true });
       expect(global.window.Intercom).toHaveBeenCalledWith('update', {
+        name: 'user name',
         user_id: 'Unique ID',
         user_hash: 'hmacHash1234',
       });

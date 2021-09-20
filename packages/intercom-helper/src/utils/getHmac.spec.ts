@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { GetHmacSettings } from 'types';
 
 import getHmac from './getHmac';
 
@@ -9,17 +10,26 @@ jest.mock('axios', () => ({
 describe('get Hmac key from server', () => {
   it('getHmac resolves no project', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (axios as any).get.mockImplementation(() =>
-      Promise.resolve({
-        data: { hmac: 'hmacHash1234', userUid: 'Unique ID' },
-      })
+    (axios as any).get.mockImplementation(
+      (): Promise<{ data: GetHmacSettings }> =>
+        Promise.resolve({
+          data: {
+            hmac: 'hmacHash1234',
+            userUid: 'Unique ID',
+            userName: 'user name',
+          },
+        })
     );
     return getHmac('fakeUrl', { Authorization: 'test' }).then((data) => {
       expect(axios.get).toHaveBeenCalledWith('fakeUrl/intercom', {
         params: {},
         headers: { Authorization: 'test' },
       });
-      expect(data).toEqual({ hmac: 'hmacHash1234', userUid: 'Unique ID' });
+      expect(data).toEqual({
+        hmac: 'hmacHash1234',
+        userUid: 'Unique ID',
+        userName: 'user name',
+      });
     });
   });
 
@@ -45,10 +55,15 @@ describe('get Hmac key from server', () => {
 
   it('getHmac resolves with project', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (axios as any).get.mockImplementation(() =>
-      Promise.resolve({
-        data: { hmac: 'hmacHash1234', userUid: 'Unique ID' },
-      })
+    (axios as any).get.mockImplementation(
+      (): Promise<{ data: GetHmacSettings }> =>
+        Promise.resolve({
+          data: {
+            hmac: 'hmacHash1234',
+            userUid: 'Unique ID',
+            userName: 'user name',
+          },
+        })
     );
     return getHmac('fakeUrl', { Authorization: 'test' }, 'fakeProject').then(
       (data) => {
@@ -56,7 +71,11 @@ describe('get Hmac key from server', () => {
           params: {},
           headers: { Authorization: 'test' },
         });
-        expect(data).toEqual({ hmac: 'hmacHash1234', userUid: 'Unique ID' });
+        expect(data).toEqual({
+          hmac: 'hmacHash1234',
+          userUid: 'Unique ID',
+          userName: 'user name',
+        });
       }
     );
   });

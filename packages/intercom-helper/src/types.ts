@@ -39,4 +39,5 @@ export type AuthHeaders =
 export type GetHmacSettings = {
   hmac: string;
   userUid: string;
+  userName: string;
 };
