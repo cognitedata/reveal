@@ -27,10 +27,10 @@ const Center = styled('div')`
 
 export default function FunctionPanelHeader({ id, externalId, name }: Props) {
   return (
-    <Row type="flex" justify="space-between">
+    <Row type="flex" justify="space-between" align="middle">
       <Col span={14}>
         {name}
-        <FunctionScheduleIndicator externalId={externalId} />
+        <FunctionScheduleIndicator externalId={externalId} id={id} />
       </Col>
       <Col span={2}>
         <Center>

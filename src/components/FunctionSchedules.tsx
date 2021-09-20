@@ -10,6 +10,7 @@ import DeleteScheduleButton from 'components/buttons/DeleteScheduleButton';
 import CreateScheduleButton from 'components/buttons/CreateScheduleButton';
 import LoadingIcon from 'components/LoadingIcon';
 import { useSchedules } from 'utils/hooks';
+import { isOIDCFlow } from 'utils/api';
 import FunctionCalls from './FunctionCalls';
 
 const scheduleTableColumns = [
@@ -18,7 +19,7 @@ const scheduleTableColumns = [
     key: 'scheduleInfo',
     render: (s: Schedule) => {
       return (
-        <List.Item>
+        <List.Item style={{ verticalAlign: 'middle' }}>
           <List.Item.Meta title={s.name} description={s.description} />
         </List.Item>
       );
@@ -108,7 +109,9 @@ export default function FunctionSchedules({ externalId, id }: Props) {
 
   return (
     <>
-      {externalId ? <CreateScheduleButton externalId={externalId} /> : null}
+      {isOIDCFlow() || externalId ? (
+        <CreateScheduleButton externalId={externalId} id={id} />
+      ) : null}
       <Table
         rowKey={s => s.id.toString()}
         pagination={{ pageSize: 25 }}

@@ -68,6 +68,11 @@ export interface Log {
   message: string;
 }
 
+export interface ClientCredentials {
+  clientId: string;
+  clientSecret: string;
+}
+
 export interface CreateSchedule {
   name: string;
   description?: string;
@@ -75,6 +80,11 @@ export interface CreateSchedule {
   functionId?: number;
   cronExpression: string;
   data?: {};
+}
+
+export interface CreateScheduleApiParams {
+  schedule: CreateSchedule;
+  clientCredentials?: ClientCredentials;
 }
 export interface Schedule extends CreateSchedule {
   id: number;
