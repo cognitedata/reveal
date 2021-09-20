@@ -93,7 +93,7 @@
     "@storybook/preset-typescript": "^3.0.0",
     "@storybook/react": "^6.2.9",
     "@testing-library/jest-dom": "^5.14.1",
-    "@testing-library/react": "^11.2.7",
+    "@testing-library/react": "^12.1.0",
     "@testing-library/react-hooks": "^7.0.0",
     "@testing-library/testcafe": "^4.4.0",
     "@types/axios": "^0.14.0",
