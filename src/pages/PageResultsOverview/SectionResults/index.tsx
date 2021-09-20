@@ -39,7 +39,11 @@ export default function SectionResults() {
   }, [parsingJob, shouldShowTable]);
 
   return (
-    <TitledSection useCustomPadding title={<TitleBar jobStatus={jobStatus} />}>
+    <TitledSection
+      useCustomPadding
+      title={<TitleBar jobStatus={jobStatus} />}
+      style={{ width: '100%' }}
+    >
       <Flex column style={{ width: '100%' }}>
         {shouldShowTable && (
           <FilterBar

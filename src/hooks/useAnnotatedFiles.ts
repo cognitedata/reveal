@@ -1,6 +1,6 @@
 import { FileInfo, FileRequestFilter } from '@cognite/cdf-sdk-singleton';
 import { useList } from '@cognite/sdk-react-query-hooks';
-import { useFileWithAnnotations } from 'hooks';
+import { useAnnotationsForFiles } from 'hooks';
 import { PENDING_LABEL } from './useReviewFiles';
 
 export const useAnnotatedFiles = ({ filter }: FileRequestFilter) => {
@@ -14,9 +14,9 @@ export const useAnnotatedFiles = ({ filter }: FileRequestFilter) => {
       labels: { containsAny: [{ externalId: PENDING_LABEL.externalId }] },
     },
   });
-
-  const { files: annotatedFiles, isFetching: isFetchingAnnotations } =
-    useFileWithAnnotations(files ?? []);
+  const fileIds = (files ?? []).map((file: FileInfo) => file.id);
+  const { files: annotatedFiles, isFetchingAnnotations } =
+    useAnnotationsForFiles(fileIds);
 
   const isLoading = isFetchingFiles || isFetchingAnnotations;
 

@@ -4,17 +4,16 @@ import { useSelector } from 'react-redux';
 import { message } from 'antd';
 import { WorkflowStep } from 'modules/workflows';
 import { useActiveWorkflow } from 'hooks';
-import { Flex, PageTitle } from 'components/Common';
 import { landingPage, diagramSelection } from 'routes/paths';
 import { AppStateContext } from 'context';
+import { DiagramsSettingsBar } from 'containers';
+import { Flex, PageTitle } from 'components/Common';
 import NavigationStickyBottomRow from 'components/NavigationStickyBottomRow';
-import { getSelectedDiagramsIds } from 'pages/PageResultsOverview/selectors';
 import { useParsingJob } from 'modules/contextualization/pnidParsing';
-import { getWorkflowItems } from './selectors';
+import { getWorkflowItems, getSelectedDiagramsIds } from './selectors';
 import SectionProgress from './SectionProgress';
 import SectionSetup from './SectionSetup';
 import SectionResults from './SectionResults';
-import SettingsBar from './SettingsBar';
 
 type Props = {
   step: WorkflowStep;
@@ -59,8 +58,16 @@ export default function PageResultsOverview(props: Props) {
         <SectionSetup />
         <SectionProgress />
       </Flex>
-      <SectionResults />
-      {areDiagramsSelected && <SettingsBar />}
+      <Flex row style={{ width: '100%', marginBottom: '32px' }}>
+        <SectionResults />
+      </Flex>
+      {areDiagramsSelected && (
+        <DiagramsSettingsBar
+          selectedDiagramsIds={selectedDiagramsIds}
+          buttons={['reject', 'approve', 'preview', 'svgSave']}
+          primarySetting="svgSave"
+        />
+      )}
       <NavigationStickyBottomRow
         step={step}
         next={{ disabled: !isJobDone, text: 'Done', onClick: onGoBackHomePage }}

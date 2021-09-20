@@ -54,12 +54,8 @@ export default function ResultsTable(props: ResultsTableProps): JSX.Element {
   };
 
   const getDiagramStatus = (file: FileInfo): ReviewStatus => {
-    if (isFileApproved(file)) {
-      return approvalDetails.approved;
-    }
-    if (isFilePending(file)) {
-      return approvalDetails.pending;
-    }
+    if (isFileApproved(file)) return approvalDetails.approved;
+    if (isFilePending(file)) return approvalDetails.pending;
     return approvalDetails.unknown;
   };
 

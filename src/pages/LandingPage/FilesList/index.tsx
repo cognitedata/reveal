@@ -2,7 +2,7 @@ import React from 'react';
 import { useQueryClient } from 'react-query';
 import { createLink } from '@cognite/cdf-utilities';
 import { FileInfo } from '@cognite/sdk';
-import { message, Modal, notification } from 'antd';
+import { Modal, Checkbox, notification, message } from 'antd';
 import { WARNINGS_STRINGS } from 'stringConstants';
 import { FileWithAnnotations } from 'hooks';
 import { useWorkflowCreateNew } from 'modules/workflows';
@@ -19,16 +19,18 @@ const PAGE_SIZE = 10;
 type Props = {
   query: string;
   files?: FileWithAnnotations[];
+  selectedDiagramsIds: number[];
+  setSelectedDiagramsIds: React.Dispatch<React.SetStateAction<number[]>>;
 };
 
 export default function FilesList(props: Props) {
-  const { query, files } = props;
+  const { query, files, selectedDiagramsIds, setSelectedDiagramsIds } = props;
 
+  const client = useQueryClient();
+  const { createWorkflow } = useWorkflowCreateNew();
   const { onApproved, onRejected, onClearFileTags } = useReviewFiles(
     files?.map((file) => file.id) ?? []
   );
-  const client = useQueryClient();
-  const { createWorkflow } = useWorkflowCreateNew();
 
   const onClearAnnotations = async (file: FileInfo): Promise<void> => {
     trackUsage(PNID_METRICS.landingPage.deleteAnnotations, {
@@ -73,6 +75,8 @@ export default function FilesList(props: Props) {
     });
   };
 
+  const onApproveFile = (file: FileInfo) => onApproved([file.id]);
+  const onRejectFile = (file: FileInfo) => onRejected([file.id]);
   const onFileEdit = (file: FileInfo): void => {
     const diagramToContextualize = {
       type: 'files',
@@ -90,14 +94,6 @@ export default function FilesList(props: Props) {
       fileId,
     });
     window.open(createLink(`/explore/file/${fileId}`), '_blank');
-  };
-
-  const onApproveFile = (file: FileInfo): void => {
-    onApproved([file.id]);
-  };
-
-  const onRejectFile = (file: FileInfo): void => {
-    onRejected([file.id]);
   };
 
   const interactiveColumns = getColumns(
@@ -118,17 +114,49 @@ export default function FilesList(props: Props) {
     return files as FileInfo[];
   };
 
+  const diagrams = handleSearchFiles();
+
+  const onSelectAll = () => {
+    setSelectedDiagramsIds((ids: number[]) =>
+      ids.length === diagrams.length ? [] : diagrams.map((d) => d.id)
+    );
+  };
+  const onDiagramsSelect = (keys: any) => {
+    const diagramIds = [...keys];
+    setSelectedDiagramsIds(diagramIds);
+  };
+
+  const headerCheckbox = (
+    <Checkbox
+      checked={Boolean(selectedDiagramsIds.length)}
+      indeterminate={
+        selectedDiagramsIds.length > 0 &&
+        selectedDiagramsIds.length < diagrams.length
+      }
+      onChange={onSelectAll}
+    />
+  );
+
   return (
     <Table
+      rowKey="id"
+      // @ts-ignore
+      columns={interactiveColumns}
+      dataSource={diagrams}
+      size="middle"
       pagination={{
         pageSize: PAGE_SIZE,
         hideOnSinglePage: true,
       }}
-      dataSource={handleSearchFiles()}
-      // @ts-ignore
-      columns={interactiveColumns}
-      size="middle"
-      rowKey="id"
+      rowSelection={{
+        onSelectAll,
+        onChange: onDiagramsSelect,
+        selectedRowKeys: selectedDiagramsIds,
+        columnTitle: headerCheckbox,
+        getCheckboxProps: (record: any) => ({
+          disabled: record.progress === 'failed',
+        }),
+      }}
       locale={{
         emptyText: 'No pending engineering diagrams were found.',
       }}

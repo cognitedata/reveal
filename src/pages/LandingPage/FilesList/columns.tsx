@@ -12,7 +12,7 @@ import {
   MenuButton,
 } from 'components/Common';
 import { FileSmallPreview } from 'components/FileSmallPreview';
-import { FileWithAnnotations } from 'hooks/useFileWithAnnotations';
+import { FileWithAnnotations } from 'hooks';
 import ReviewStatus from 'components/ReviewStatus';
 import InteractiveIcon from 'components/InteractiveIcon';
 import DetectedTags from 'components/DetectedTags';

@@ -32,7 +32,7 @@ export const useConvertToSVG = (fileIds: number[]) => {
   const dispatch = useDispatch();
   const { svgPrefix, prefixType } = useContext(AppStateContext);
   const [isConverting, setIsConverting] = useState(false);
-  const { diagramsToConvert, nrOfpendingDiagramsToConvert } =
+  const { diagramsToConvert, nrOfPendingDiagramsToConvert } =
     useDiagramsToConvert(fileIds);
   const { status: convertStatus, svgId } = useSelector(
     (state: RootState) => state.contextualization.svgConvert[fileIds[0]] ?? {}
@@ -54,7 +54,7 @@ export const useConvertToSVG = (fileIds: number[]) => {
   };
   return {
     convertDiagramsToSVG,
-    nrOfpendingDiagramsToConvert,
+    nrOfPendingDiagramsToConvert,
     convertStatus,
     svgId,
     isConverting,
@@ -69,7 +69,7 @@ export const useDiagramsToConvert = (fileIds: number[]) => {
   const [diagramsToConvert, setDiagramsToConvert] = useState<
     DiagramToConvert[]
   >([]);
-  const [nrOfpendingDiagramsToConvert, setNrOfpendingDiagramsToConvert] =
+  const [nrOfPendingDiagramsToConvert, setNrOfpendingDiagramsToConvert] =
     useState<number>(0);
 
   useEffect(() => {
@@ -86,7 +86,7 @@ export const useDiagramsToConvert = (fileIds: number[]) => {
         );
         const file: FileInfo = getFile(fileId);
         const [item] = summarizeAssetIdsFromAnnotations(annotations);
-        const assetIds = Array.from(item?.assetIds ?? []) as any[];
+        const assetIds = Array.from(item?.assetIds ?? []) as number[];
         const annotationsWithLabels = labelsForAnnotations(annotations);
         const mappedAnnotations = annotationsWithLabels.map(
           (annotation: CogniteAnnotation) => ({
@@ -105,12 +105,12 @@ export const useDiagramsToConvert = (fileIds: number[]) => {
         };
       });
     if (!isEqual(diagrams, diagramsToConvert)) setDiagramsToConvert(diagrams);
-    if (!isEqual(pendingDiagrams, nrOfpendingDiagramsToConvert))
+    if (!isEqual(pendingDiagrams, nrOfPendingDiagramsToConvert))
       setNrOfpendingDiagramsToConvert(pendingDiagrams);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fileIds, annotationsMap]);
 
-  return { diagramsToConvert, nrOfpendingDiagramsToConvert };
+  return { diagramsToConvert, nrOfPendingDiagramsToConvert };
 };
 
 export const selectLabelsForAnnotations = createSelector(

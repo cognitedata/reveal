@@ -76,5 +76,3 @@ export { startConvertFileToSvgJob };
 export const { reducer } = svgConvertSlice;
 export const { createJob, updateJob, rejectJob, finishJob } =
   svgConvertSlice.actions;
-// export * from './hooks';
-// export * from './types';

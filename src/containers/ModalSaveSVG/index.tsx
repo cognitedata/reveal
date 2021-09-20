@@ -16,7 +16,7 @@ type Props = {
 export const ModalSaveSVG = (props: Props) => {
   const { diagramIds, showModal, setShowModal } = props;
   const { prefixType, setPrefixType } = useContext(AppStateContext);
-  const { convertDiagramsToSVG, nrOfpendingDiagramsToConvert } =
+  const { convertDiagramsToSVG, nrOfPendingDiagramsToConvert } =
     useConvertToSVG(diagramIds);
 
   const onPrefixTypeSet = (newPrefixType: string) => {
@@ -65,7 +65,7 @@ export const ModalSaveSVG = (props: Props) => {
       style={{ minWidth: '720px' }}
     >
       <Flex column>
-        {nrOfpendingDiagramsToConvert && (
+        {Boolean(nrOfPendingDiagramsToConvert) && (
           <InfoField style={{ marginBottom: '24px' }}>
             <Flex column>
               <Body level={2} style={{ color: Colors['midblue-2'].hex() }}>
@@ -74,7 +74,7 @@ export const ModalSaveSVG = (props: Props) => {
               <Body level={2} style={{ color: Colors['midblue-2'].hex() }}>
                 You’ve selected{' '}
                 <span style={{ fontWeight: 500 }}>
-                  {nrOfpendingDiagramsToConvert}
+                  {nrOfPendingDiagramsToConvert}
                 </span>{' '}
                 diagrams with pending tags, these tags will not be saved.
               </Body>

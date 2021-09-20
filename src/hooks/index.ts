@@ -2,7 +2,6 @@ export * from './CustomHooks';
 export * from './useActiveWorkflow';
 export * from './useAnnotatedFiles';
 export * from './useAnnotationsForFiles';
-export * from './useFileWithAnnotations';
 export * from './useInterval';
 export * from './useItems';
 export * from './usePermissions';

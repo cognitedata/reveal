@@ -1,6 +1,6 @@
 import React from 'react';
+import styled from 'styled-components';
 import { Input } from '@cognite/cogs.js';
-import { Flex } from 'components/Common';
 import { FileRequestFilter, InternalId } from '@cognite/cdf-sdk-singleton';
 import { DataSetSelect, MimeTypeSelect } from 'components/Filters';
 
@@ -41,7 +41,7 @@ export default function FilterBar({
   };
 
   return (
-    <Flex row style={{ gap: '10px' }}>
+    <Wrapper>
       <Input
         placeholder="Filter by name..."
         onChange={(e) => setQuery(e.currentTarget.value)}
@@ -60,6 +60,17 @@ export default function FilterBar({
         isMulti={false}
         loaded
       />
-    </Flex>
+    </Wrapper>
   );
 }
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  margin: 20px 0;
+  justify-content: flex-start;
+
+  & > * {
+    margin-right: 8px;
+  }
+`;

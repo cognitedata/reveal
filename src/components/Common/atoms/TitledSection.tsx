@@ -19,14 +19,14 @@ type Props = {
   title: React.ReactNode;
   children: React.ReactNode;
   useCustomPadding?: boolean;
+  style?: React.CSSProperties;
 };
 export const TitledSection = (props: Props): JSX.Element => {
-  const { title, children, useCustomPadding = false } = props;
-  const style: React.CSSProperties = {};
+  const { title, children, useCustomPadding = false, style = {} } = props;
   if (!useCustomPadding) style.padding = '16px';
 
   return (
-    <Wrapper>
+    <Wrapper style={style}>
       <StyledTitle level={5} style={style}>
         {title}
       </StyledTitle>

@@ -5,6 +5,7 @@ import { Flex, HugeButton, PageTitle } from 'components/Common';
 import { useWorkflowCreateNew } from 'modules/workflows';
 import { FileRequestFilter } from '@cognite/cdf-sdk-singleton';
 import { useAnnotatedFiles } from 'hooks';
+import { DiagramsSettingsBar } from 'containers';
 import { Loading } from './components';
 import FilesListEmpty from './FilesList/FilesListEmpty';
 import FilesList from './FilesList';
@@ -13,11 +14,12 @@ import FilterBar from './FilterBar';
 export default function LandingPage() {
   const [query, setQuery] = useState<string>('');
   const [filters, setFilter] = useState<FileRequestFilter>({});
+  const [selectedDiagramsIds, setSelectedDiagramsIds] = useState<number[]>([]);
+  const { createWorkflow } = useWorkflowCreateNew();
+  const { annotatedFiles: files = [], isLoading } = useAnnotatedFiles(filters);
 
   const isFilterEmpty = !Object.keys(filters?.filter ?? {}).length;
-
-  const { annotatedFiles: files = [], isLoading } = useAnnotatedFiles(filters);
-  const { createWorkflow } = useWorkflowCreateNew();
+  const areDiagramsSelected = Boolean(selectedDiagramsIds?.length);
 
   const onContextualizeNew = () => {
     trackUsage(PNID_METRICS.landingPage.startNew);
@@ -50,15 +52,25 @@ export default function LandingPage() {
   return (
     <>
       <Header />
-      <Flex row style={{ margin: '20px 0', justifyContent: 'space-between' }}>
-        <FilterBar
-          query={query}
-          setQuery={setQuery}
-          filters={filters}
-          setFilters={setFilter}
+      <FilterBar
+        query={query}
+        setQuery={setQuery}
+        filters={filters}
+        setFilters={setFilter}
+      />
+      <FilesList
+        query={query}
+        files={files}
+        selectedDiagramsIds={selectedDiagramsIds}
+        setSelectedDiagramsIds={setSelectedDiagramsIds}
+      />
+      {areDiagramsSelected && (
+        <DiagramsSettingsBar
+          selectedDiagramsIds={selectedDiagramsIds}
+          buttons={['reject', 'approve', 'svgSave', 'recontextualize']}
+          primarySetting="recontextualize"
         />
-      </Flex>
-      <FilesList query={query} files={files} />
+      )}
     </>
   );
 }
