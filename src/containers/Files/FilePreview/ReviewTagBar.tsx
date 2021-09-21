@@ -21,30 +21,38 @@ const ReviewTagBar = ({
 }) => (
   <ReviewTagWrapper>
     <div style={{ display: 'flex', flexDirection: 'row' }}>
-      <ResourceIcons
-        type={(annotation?.resourceType as ResourceType) || 'asset'}
-        style={{
-          background: 'white',
-          color: 'black',
-          marginTop: '-5px',
-        }}
-      />
+      {annotation?.resourceType && (
+        <ResourceIcons
+          type={annotation?.resourceType as ResourceType}
+          style={{
+            background: 'white',
+            color: 'black',
+            marginTop: '-5px',
+          }}
+        />
+      )}
       <Body level={2} strong>
-        {capitalizeFirstLetter(annotation?.resourceType) || 'Asset'}
+        {annotation?.resourceType
+          ? capitalizeFirstLetter(annotation?.resourceType)
+          : 'Unlinked tag'}
       </Body>
     </div>
     <StyledTag>
       {annotation?.label || 'N/A'}{' '}
-      <A
-        href={createLink(`/explore/asset/${annotation.resourceId}`)}
-        target="_blank"
-        rel="noopener"
-      >
-        <Icon
-          type="ArrowUpRight"
-          style={{ marginBottom: '-4px', marginLeft: '4px' }}
-        />
-      </A>
+      {annotation.resourceId ? (
+        <A
+          href={createLink(
+            `/explore/${annotation.resourceType}/${annotation.resourceId}`
+          )}
+          target="_blank"
+          rel="noopener"
+        >
+          <Icon
+            type="ArrowUpRight"
+            style={{ marginBottom: '-4px', marginLeft: '4px' }}
+          />
+        </A>
+      ) : undefined}
     </StyledTag>
 
     {annotation.status === 'unhandled' && (

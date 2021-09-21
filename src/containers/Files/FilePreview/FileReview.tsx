@@ -1,6 +1,8 @@
 import { CogniteAnnotation } from '@cognite/annotations';
-import { Body, Button } from '@cognite/cogs.js';
+import { Body, Button, Detail } from '@cognite/cogs.js';
 import { ProposedCogniteAnnotation } from '@cognite/react-picture-annotation';
+import { usePermissions } from '@cognite/sdk-react-query-hooks';
+import { Tooltip } from 'antd';
 import { ResourceIcons } from 'components';
 import React from 'react';
 import styled from 'styled-components';
@@ -14,6 +16,14 @@ const FileReview = ({
     annotations: Array<CogniteAnnotation | ProposedCogniteAnnotation>
   ) => void;
 }) => {
+  const { data: labelsReadAcl } = usePermissions('labelsAcl', 'READ');
+  const { data: labelsWriteAcl } = usePermissions('labelsAcl', 'WRITE');
+
+  const labelsAccess = labelsReadAcl && labelsWriteAcl;
+
+  const linkedAnnotations = annotations.filter(
+    an => !!an.resourceId || !!an.resourceExternalId
+  );
   const pendingAnnotations = annotations.filter(a => a.status === 'unhandled');
 
   const assetAnnotations = annotations.filter(a => a.resourceType === 'asset');
@@ -39,19 +49,27 @@ const FileReview = ({
           All tags
         </Body>
 
-        <Body level={2}>{annotations.length}</Body>
+        <Body level={2}>{linkedAnnotations.length}</Body>
       </div>
       {pendingAnnotations.length ? (
-        <ButtonWrapper>
-          <Button
-            onClick={() => onApprove(annotations)}
-            icon="Checkmark"
-            style={{ width: '100%' }}
-            type="tertiary"
-          >
-            Approve {pendingAnnotations.length} new tags
-          </Button>
-        </ButtonWrapper>
+        <Tooltip
+          title={
+            !labelsAccess &&
+            'Missing permissions to approve tags, labels:read & labels:write'
+          }
+        >
+          <ButtonWrapper>
+            <Button
+              onClick={() => onApprove(annotations)}
+              icon="Checkmark"
+              style={{ width: '100%' }}
+              type="tertiary"
+              disabled={!labelsAccess}
+            >
+              Approve {pendingAnnotations.length} new tags
+            </Button>
+          </ButtonWrapper>
+        </Tooltip>
       ) : null}
 
       <StyledTag>
@@ -63,8 +81,16 @@ const FileReview = ({
             }}
             type="asset"
           />
+          <Body style={{ color: '#4255BB' }} level={2} strong>
+            Assets
+          </Body>
           {pendingAssetAnnotations.length ? (
-            <strong> {pendingAssetAnnotations.length} new</strong>
+            <Body
+              level={2}
+              style={{ color: '#4255BB', opacity: '0.7', marginLeft: '5px' }}
+            >
+              {pendingAssetAnnotations.length} new
+            </Body>
           ) : null}
         </IconWrapper>
         <Body level={5}>{assetAnnotations.length}</Body>
@@ -78,8 +104,16 @@ const FileReview = ({
             }}
             type="file"
           />{' '}
+          <Body style={{ color: '#4255BB' }} level={2} strong>
+            Diagrams
+          </Body>
           {pendingFileAnnotations.length ? (
-            <strong> {pendingFileAnnotations.length} new</strong>
+            <Body
+              level={2}
+              style={{ color: '#4255BB', opacity: '0.7', marginLeft: '5px' }}
+            >
+              {pendingFileAnnotations.length} new{' '}
+            </Body>
           ) : null}
         </IconWrapper>
         <Body level={5}>{fileAnnotations.length}</Body>
@@ -108,7 +142,6 @@ const StyledTag = styled.div`
   background: var(--cogs-bg-hover);
   color: var(--cogs-text-info);
   margin: 6px 0px 6px;
-  border: 1px solid var(--cogs-link-inverted-default);
   border-radius: 8px;
   box-sizing: border-box;
 `;
@@ -120,4 +153,5 @@ const ButtonWrapper = styled.div`
 
 const IconWrapper = styled.div`
   display: flex;
+  justify-content: space-between;
 `;
