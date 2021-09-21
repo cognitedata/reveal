@@ -6,8 +6,9 @@ import * as THREE from 'three';
 import React from 'react';
 import { TestEnvCad, TestViewer } from '../TestViewer';
 import { defaultRenderOptions } from '@cognite/reveal';
+import { registerVisualTest } from '../../../visual_tests';
 
-export function SsaoTestPage() {
+function SsaoTestPage() {
   return (
     <TestViewer
       modifyTestEnv={({revealManager }: TestEnvCad) => {
@@ -23,3 +24,5 @@ export function SsaoTestPage() {
     />
   );
 }
+
+registerVisualTest('cad', 'ssao', 'SSAO', <SsaoTestPage />)

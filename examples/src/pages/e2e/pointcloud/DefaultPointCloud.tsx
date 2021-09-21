@@ -3,9 +3,10 @@
  */
 
 import React from 'react';
+import { registerVisualTest } from '../../../routes';
 import { TestViewer } from '../TestViewer';
 
-export function DefaultPointCloudTestPage() {
+function DefaultPointCloudTestPage() {
   return (
     <TestViewer
       modelName="pointcloud-bunny"
@@ -13,3 +14,5 @@ export function DefaultPointCloudTestPage() {
     />
   );
 }
+
+registerVisualTest('pointcloud', 'default', 'Default', <DefaultPointCloudTestPage />);
