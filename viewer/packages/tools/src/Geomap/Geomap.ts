@@ -21,14 +21,20 @@ export class Geomap {
     const bound = this._viewer.models[0].getModelBoundingBox();
     this._map.position.set(-coords.x, bound.min.y, coords.y);
     this._map.updateMatrixWorld(true);
+    this.requestRedraw(10000);
+    this._viewer.on('cameraChange', () => {
+      this.requestRedraw(5000);
+    });
+  }
 
-    var intervalId = setInterval(function() {
-      viewer.requestRedraw();
+  private requestRedraw(timeOut: number) {
+    var intervalId = setInterval(() => {
+      this._viewer.requestRedraw();
     }, 100);
 
-      setTimeout(() => {
-        clearInterval(intervalId);
-      }, 20000);
+    setTimeout(() => {
+      clearInterval(intervalId);
+    }, timeOut);
   }
 
   private getMapProvider(mapConfig: MapConfig) {
@@ -72,5 +78,6 @@ export class Geomap {
 
   public dispose(): void {
     this._viewer.removeObject3D(this._map);
+    this._viewer.off('cameraChange', () => {});
   }
 }
