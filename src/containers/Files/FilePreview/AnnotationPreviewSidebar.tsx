@@ -535,6 +535,7 @@ const AnnotationPreviewSidebar = ({
     <div style={{ width: 360, borderLeft: `1px solid ${lightGrey}` }}>
       <ResourcePreviewSidebar
         hideTitle
+        hideContent
         closable={false}
         actions={
           onItemClicked &&
@@ -558,7 +559,10 @@ const AnnotationPreviewSidebar = ({
           <TitleWrapper>
             <InteractiveIcon />
             <Title level={4}>{file?.name} </Title>
-            <DiagramReviewStatus file={file} />
+            <div>
+              <DiagramReviewStatus file={file} />{' '}
+              <Detail>- Interactive Diagram</Detail>
+            </div>
             <FileReview
               annotations={annotations}
               onApprove={onApproveAllAnnotations}
@@ -584,5 +588,8 @@ const PreviewImage = styled.img`
 
 const TitleWrapper = styled.div`
   padding: 20px 10px;
+  gap: 15px;
+  display: flex;
+  flex-direction: column;
 `;
 export { AnnotationPreviewSidebar };

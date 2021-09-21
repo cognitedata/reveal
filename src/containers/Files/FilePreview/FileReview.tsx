@@ -1,5 +1,5 @@
 import { CogniteAnnotation } from '@cognite/annotations';
-import { Body, Button } from '@cognite/cogs.js';
+import { Body, Button, Detail } from '@cognite/cogs.js';
 import { ProposedCogniteAnnotation } from '@cognite/react-picture-annotation';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { Tooltip } from 'antd';
@@ -73,7 +73,7 @@ const FileReview = ({
       ) : null}
 
       <StyledTag>
-        <IconWrapper style={{ gap: '5px' }}>
+        <IconWrapper>
           <ResourceIcons
             style={{
               marginTop: '-5px',
@@ -81,15 +81,22 @@ const FileReview = ({
             }}
             type="asset"
           />
-          Assets{' '}
+          <Body style={{ color: '#4255BB' }} level={2} strong>
+            Assets
+          </Body>
           {pendingAssetAnnotations.length ? (
-            <p>{pendingAssetAnnotations.length} new</p>
+            <Body
+              level={2}
+              style={{ color: '#4255BB', opacity: '0.7', marginLeft: '5px' }}
+            >
+              {pendingAssetAnnotations.length} new
+            </Body>
           ) : null}
         </IconWrapper>
         <Body level={5}>{assetAnnotations.length}</Body>
       </StyledTag>
       <StyledTag>
-        <IconWrapper style={{ gap: '5px' }}>
+        <IconWrapper>
           <ResourceIcons
             style={{
               marginTop: '-5px',
@@ -97,9 +104,16 @@ const FileReview = ({
             }}
             type="file"
           />{' '}
-          Files
+          <Body style={{ color: '#4255BB' }} level={2} strong>
+            Diagrams
+          </Body>
           {pendingFileAnnotations.length ? (
-            <p>{pendingFileAnnotations.length} new </p>
+            <Body
+              level={2}
+              style={{ color: '#4255BB', opacity: '0.7', marginLeft: '5px' }}
+            >
+              {pendingFileAnnotations.length} new{' '}
+            </Body>
           ) : null}
         </IconWrapper>
         <Body level={5}>{fileAnnotations.length}</Body>
@@ -128,7 +142,6 @@ const StyledTag = styled.div`
   background: var(--cogs-bg-hover);
   color: var(--cogs-text-info);
   margin: 6px 0px 6px;
-  border: 1px solid var(--cogs-link-inverted-default);
   border-radius: 8px;
   box-sizing: border-box;
 `;

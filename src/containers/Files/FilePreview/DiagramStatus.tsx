@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FileInfo } from '@cognite/sdk';
-import { Label, LabelVariants, Tooltip } from '@cognite/cogs.js';
+import { Label, LabelVariants } from '@cognite/cogs.js';
+import { Tooltip } from 'antd';
 import {
   PENDING_LABEL,
   INTERACTIVE_LABEL,
@@ -52,7 +53,7 @@ export default function DiagramReviewStatus({ file }: Props) {
   }, [file]);
 
   return (
-    <Tooltip content={fileStatus.tooltip}>
+    <Tooltip title={fileStatus.tooltip}>
       <Label size="small" variant={fileStatus.variant}>
         {fileStatus.label}
       </Label>
