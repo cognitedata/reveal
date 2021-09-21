@@ -1258,7 +1258,6 @@
 
 "@cognite/reveal@link:../viewer/dist":
   version "0.0.0"
-  uid ""
 
 "@cognite/sdk-1.x@npm:@cognite/sdk@^3.4.0":
   version "3.5.2"
@@ -1303,7 +1302,6 @@
 
 "@cognite/sdk@link:../viewer/node_modules/@cognite/sdk":
   version "0.0.0"
-  uid ""
 
 "@cognite/three-combo-controls@^1.4.3":
   version "1.4.3"
@@ -2163,11 +2161,6 @@
   version "0.128.0"
   resolved "https://registry.yarnpkg.com/@types/three/-/three-0.128.0.tgz#e5ce4c42d138a64dd90e83dbdb9919cf0d424d8e"
   integrity sha512-Jwq5XYUkzAcPTo34hlGAQGUyAI0b2F3aCCFWG/v7ZhJBEG5HGcusMSr70GhDlT8Gs0f02QnSPZ2RCA1MrCOa/w==
-
-"@types/three@0.131.0":
-  version "0.131.0"
-  resolved "https://registry.yarnpkg.com/@types/three/-/three-0.131.0.tgz#98f59887b05f71e665cf2fbdf04e0e4ceb9f89b6"
-  integrity sha512-4VCtsDi6mIId96GcGKG91e2Y6VwU2T0u/YB7vCFJh1kXik93arxn7l9tVZHo1LXOtgCJJDdC+e1fwf2Vu/4ySw==
 
 "@types/uglify-js@*":
   version "3.13.0"
@@ -10403,9 +10396,9 @@ prism-react-renderer@^1.2.1:
   integrity sha512-w23ch4f75V1Tnz8DajsYKvY5lF7H1+WvzvLUcF0paFxkTHSp42RS0H5CttdN2Q8RR3DRGZ9v5xD/h3n8C8kGmg==
 
 prismjs@^1.20.0:
-  version "1.24.0"
-  resolved "https://registry.yarnpkg.com/prismjs/-/prismjs-1.24.0.tgz#0409c30068a6c52c89ef7f1089b3ca4de56be2ac"
-  integrity sha512-SqV5GRsNqnzCL8k5dfAjCNhUrF3pR0A9lTDSCUZeh/LIshheXJEaP0hwLz2t4XHivd2J/v2HR+gRnigzeKe3cQ==
+  version "1.25.0"
+  resolved "https://registry.yarnpkg.com/prismjs/-/prismjs-1.25.0.tgz#6f822df1bdad965734b310b315a23315cf999756"
+  integrity sha512-WCjJHl1KEWbnkQom1+SzftbtXMKQoezOCYs5rECqMN+jP+apI7ftoflyqigqzopSO3hMhTEb0mFClA8lkolgEg==
 
 process-nextick-args@~2.0.0:
   version "2.0.1"
@@ -12508,11 +12501,6 @@ three@0.128.0:
   version "0.128.0"
   resolved "https://registry.yarnpkg.com/three/-/three-0.128.0.tgz#884dacca6a330e45600a09ec5439283f50b76aa6"
   integrity sha512-i0ap/E+OaSfzw7bD1TtYnPo3VEplkl70WX5fZqZnfZsE3k3aSFudqrrC9ldFZfYFkn1zwDmBcdGfiIm/hnbyZA==
-
-three@0.131.0:
-  version "0.131.0"
-  resolved "https://registry.yarnpkg.com/three/-/three-0.131.0.tgz#4e6e66042a0c0b6d2c078dc6be31811eade66c04"
-  integrity sha512-s05qedtr8qDG7L7MiUpFNboGWSd2xzKeSRd5iQEOjun5DD5ptRQlNsA6wKTbVCdOGbQuUH4kVXerTeznDlBjkw==
 
 through2@^0.6.3:
   version "0.6.5"
