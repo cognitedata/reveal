@@ -5,6 +5,7 @@ import {
   isAnyOf,
   PayloadAction,
 } from '@reduxjs/toolkit';
+import { FileState } from 'src/modules/Common/store/filesSlice';
 import { SelectFilter, ViewMode } from 'src/modules/Common/types';
 import {
   FileFilterProps,
@@ -13,14 +14,13 @@ import {
   Label,
   Metadata,
 } from '@cognite/cdf-sdk-singleton';
+import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
+import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
+import { UpdateFiles } from 'src/store/thunks/Files/UpdateFiles';
 import { createFileInfo, createFileState } from 'src/store/util/StateUtils';
-import { DeleteFilesById } from 'src/store/thunks/DeleteFilesById';
-import { UpdateFiles } from 'src/store/thunks/UpdateFiles';
-import { FileState } from 'src/modules/Common/filesSlice';
 import { makeReducerSelectAllFilesWithFilter } from 'src/store/commonReducers';
 import { DEFAULT_PAGE_SIZE } from 'src/constants/PaginationConsts';
 import { SortPaginate } from 'src/modules/Common/Components/FileTable/types';
-import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
 
 export enum ExploreSortPaginateType {
   list = 'LIST',
@@ -45,12 +45,6 @@ export type ExplorerFileState = {
   linkedAnnotations: string[];
   assetIds?: number[];
   geoLocation?: FileGeoLocation;
-};
-
-export type BulkEditTempState = {
-  metadata?: Metadata;
-  keepOriginalMetadata?: Boolean;
-  labels?: Label[];
 };
 
 export type State = {

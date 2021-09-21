@@ -6,8 +6,8 @@ import {
 } from '@cognite/react-picture-annotation';
 import { v3Client as sdk } from '@cognite/cdf-sdk-singleton';
 import { Icon } from '@cognite/cogs.js';
+import { VisionAnnotationState } from 'src/modules/Review/store/previewSlice';
 import styled from 'styled-components';
-import { VisionAnnotationState } from 'src/modules/Review/previewSlice';
 import { AnnotationStatus, AnnotationUtils } from 'src/utils/AnnotationUtils';
 import * as pdfjs from 'pdfjs-dist';
 import { FilePreviewProps } from 'src/modules/Review/types';

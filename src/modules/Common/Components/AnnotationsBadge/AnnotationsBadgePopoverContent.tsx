@@ -1,11 +1,13 @@
 import React from 'react';
-
+import {
+  AnnotationsBadgeCounts,
+  AnnotationsBadgeStatuses,
+} from 'src/modules/Common/types';
 import styled from 'styled-components';
 import { Button, Title, Body, Icon } from '@cognite/cogs.js';
 import { Divider } from '@cognite/data-exploration';
 import { JobStatus } from 'src/api/types';
 import { showBadge, showGDPRBadge } from './common';
-import { AnnotationsBadgeCounts, AnnotationsBadgeStatuses } from '../../types';
 
 export function AnnotationsBadgePopoverContent(
   badgeCounts: AnnotationsBadgeCounts,

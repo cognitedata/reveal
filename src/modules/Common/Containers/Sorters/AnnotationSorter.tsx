@@ -1,4 +1,4 @@
-import { TableDataItem } from '../../types';
+import { TableDataItem } from 'src/modules/Common/types';
 
 export const AnnotationSorter = (
   data: TableDataItem[],

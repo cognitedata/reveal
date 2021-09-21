@@ -5,7 +5,7 @@ import {
   AnnotationsBadgeCounts,
   AnnotationsBadgeStatuses,
   AnnotationStatuses,
-} from '../../types';
+} from 'src/modules/Common/types';
 import { showBadge, showGDPRBadge } from './common';
 
 const setBadge = (counts: AnnotationCounts, statuses?: AnnotationStatuses) => {

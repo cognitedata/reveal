@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { useSelector } from 'react-redux';
+import { annotationsById } from 'src/modules/Review/store/previewSlice';
 import { RootState } from 'src/store/rootReducer';
 import { Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { annotationsById } from 'src/modules/Review/previewSlice';
 import FileUploadedIcon from 'src/assets/FileUploadedIcon.svg';
 import FileBland from 'src/assets/FileBland.svg';
 import FileWithExifIcon from 'src/assets/FileWithExifIcon.svg';

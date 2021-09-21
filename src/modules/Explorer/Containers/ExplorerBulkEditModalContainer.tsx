@@ -3,14 +3,14 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { selectExplorerAllSelectedFiles } from 'src/modules/Explorer/store/explorerSlice';
-import { updateBulk } from 'src/store/thunks/updateBulk';
-import { FileState } from 'src/modules/Common/filesSlice';
+import { FileState } from 'src/modules/Common/store/filesSlice';
 import isEqual from 'lodash-es/isEqual';
 import {
   BulkEditTempState,
   setBulkEditModalVisibility,
   setBulkEditTemp,
-} from 'src/modules/Common/commonSlice';
+} from 'src/modules/Common/store/commonSlice';
+import { updateBulk } from 'src/store/thunks/Files/updateBulk';
 
 export const ExplorerBulkEditModalContainer = () => {
   const dispatch = useDispatch();

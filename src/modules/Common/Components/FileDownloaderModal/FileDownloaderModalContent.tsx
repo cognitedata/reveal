@@ -7,15 +7,15 @@ import {
 } from '@cognite/cdf-sdk-singleton';
 import { Dropdown, Menu, Title, Button, Body, Radio } from '@cognite/cogs.js';
 import { saveAs } from 'file-saver';
+import { STATUS } from 'src/modules/Common/Components/FileUploaderModal/enums';
 import styled from 'styled-components';
 import JSZip from 'jszip';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { AnnotationStatus } from 'src/utils/AnnotationUtils';
 import { ToastUtils } from 'src/utils/ToastUtils';
+import { selectAnnotationsForAllFiles } from 'src/modules/Common/store/annotationSlice';
 import { getDownloadControls } from './DownloadControlButtons';
-import { STATUS } from '../FileUploaderModal/enums';
-import { selectAnnotationsForAllFiles } from '../../annotationSlice';
 import {
   AnnotationChoice,
   AnnotationFileFormat,
@@ -378,5 +378,5 @@ const Footer = styled.div`
   align-items: center;
   gap: 20px;
   justify-content: flex-end;
-  margin: 39px 0px 0px 0px;
+  margin: 39px 0 0 0;
 `;

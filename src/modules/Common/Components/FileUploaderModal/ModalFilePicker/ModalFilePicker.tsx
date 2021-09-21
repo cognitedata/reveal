@@ -1,13 +1,16 @@
 import React from 'react';
+import { FileDropzone } from 'src/modules/Common/Components/FileUploader/FilePicker/FileDropzone';
+import { FilePickerHeadless } from 'src/modules/Common/Components/FileUploader/FilePicker/FilePickerHeadless';
+import {
+  CogsFile,
+  CogsFileInfo,
+} from 'src/modules/Common/Components/FileUploader/FilePicker/types';
 import styled from 'styled-components';
 import { Button, Detail, Title } from '@cognite/cogs.js';
 import { margin } from 'src/cogs-variables';
 import * as UPLODER_CONST from 'src/constants/UploderConstants';
 import { VALID_MIME_TYPES } from 'src/constants/validMimeTypes';
-import DocumentsImg from '../../FileUploader/FilePicker/img/Documents.svg';
-import { FileDropzone } from '../../FileUploader/FilePicker/FileDropzone';
-import { FilePickerHeadless } from '../../FileUploader/FilePicker/FilePickerHeadless';
-import { CogsFile, CogsFileInfo } from '../../FileUploader/FilePicker/types';
+import DocumentsImg from 'src/modules/Common/Components/FileUploader/FilePicker/img/Documents.svg';
 import { ModalFileList } from './ModalFileList';
 import { ModalFileUploadOption } from './ModalFileUploadOption';
 

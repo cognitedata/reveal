@@ -12,16 +12,16 @@ import {
   VisionAPIType,
 } from 'src/api/types';
 import { getFakeQueuedJob } from 'src/api/utils';
+import { SortPaginate } from 'src/modules/Common/Components/FileTable/types';
+import { AnnotationsBadgeStatuses, ViewMode } from 'src/modules/Common/types';
 import { clearFileState, fileProcessUpdate } from 'src/store/commonActions';
-import { DeleteFilesById } from 'src/store/thunks/DeleteFilesById';
 import isEqual from 'lodash-es/isEqual';
 import { DEFAULT_PAGE_SIZE } from 'src/constants/PaginationConsts';
-import { postAnnotationJob } from 'src/store/thunks/PostAnnotationJob';
 import { RootState } from 'src/store/rootReducer';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
+import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
+import { postAnnotationJob } from 'src/store/thunks/Process/PostAnnotationJob';
 import { createFileInfo } from 'src/store/util/StateUtils';
-import { AnnotationsBadgeStatuses, ViewMode } from '../Common/types';
-import { SortPaginate } from '../Common/Components/FileTable/types';
 
 export enum FileSortPaginateType {
   list = 'LIST',

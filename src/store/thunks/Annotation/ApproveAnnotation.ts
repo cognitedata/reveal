@@ -1,15 +1,15 @@
 import { createAsyncThunk, unwrapResult } from '@reduxjs/toolkit';
-import { ThunkConfig } from 'src/store/rootReducer';
-import { fetchAssets } from 'src/store/thunks/fetchAssets';
-import { AnnotationStatus, VisionAnnotation } from 'src/utils/AnnotationUtils';
-import { VisionAPIType } from 'src/api/types';
-import { UpdateFiles } from 'src/store/thunks/UpdateFiles';
+import { FileState } from 'src/modules/Common/store/filesSlice';
 import {
   VisionAnnotationState,
   VisionModelState,
-} from 'src/modules/Review/previewSlice';
-import { FileState } from 'src/modules/Common/filesSlice';
-import { UpdateAnnotations } from 'src/store/thunks/UpdateAnnotations';
+} from 'src/modules/Review/store/previewSlice';
+import { ThunkConfig } from 'src/store/rootReducer';
+import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
+import { fetchAssets } from 'src/store/thunks/fetchAssets';
+import { UpdateFiles } from 'src/store/thunks/Files/UpdateFiles';
+import { AnnotationStatus, VisionAnnotation } from 'src/utils/AnnotationUtils';
+import { VisionAPIType } from 'src/api/types';
 import { ToastUtils } from 'src/utils/ToastUtils';
 
 export const ApproveAnnotation = createAsyncThunk<

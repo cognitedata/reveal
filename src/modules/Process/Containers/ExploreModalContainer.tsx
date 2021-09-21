@@ -1,4 +1,5 @@
 import { ExploreModal } from 'src/modules/Common/Components/ExploreModal/ExploreModal';
+import { FileState } from 'src/modules/Common/store/filesSlice';
 import {
   selectAllProcessFiles,
   setProcessFileIds,
@@ -16,7 +17,6 @@ import {
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { FileState } from 'src/modules/Common/filesSlice';
 import { TableDataItem } from 'src/modules/Common/types';
 import { FileFilterProps } from '@cognite/cdf-sdk-singleton';
 import { AppDispatch } from 'src/store';

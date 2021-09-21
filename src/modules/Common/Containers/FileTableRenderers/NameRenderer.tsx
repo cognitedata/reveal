@@ -1,3 +1,5 @@
+import { isVideo } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
+import { selectFileAnnotations } from 'src/modules/Common/store/annotationSlice';
 import { CellRenderer } from 'src/modules/Common/types';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
@@ -11,11 +13,8 @@ import VideoWithExifIcon from 'src/assets/VideoWithExifIcon.svg';
 import ImageWithAnnotationsIcon from 'src/assets/ImageWithAnnotationsIcon.svg';
 import ImageWithAnnotationsAndExifIcon from 'src/assets/ImageWithAnnotationsAndExifIcon.svg';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
-import { isVideo } from '../../Components/FileUploader/utils/FileUtils';
-import { selectFileAnnotations } from '../../annotationSlice';
 
 export const FileNameText = styled.div`
-  display: flex;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
@@ -35,8 +34,8 @@ export const FileRow = styled.div`
 export const ExifIcon = styled.div`
   display: flex;
   padding-bottom: 15px;
-  padding-right: 0px;
-  padding-left: 0px;
+  padding-right: 0;
+  padding-left: 0;
   flex: 0 0 auto;
 `;
 
@@ -50,7 +49,7 @@ export function NameRenderer({
 
   const renderIcon = () => {
     const isVideoFile = isVideo({ mimeType } as FileInfo);
-    let icon = null;
+    let icon;
 
     if (hasAnnotations) {
       icon = geoLocation ? (

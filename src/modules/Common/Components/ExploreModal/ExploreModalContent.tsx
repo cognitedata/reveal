@@ -1,11 +1,11 @@
 import React from 'react';
 import { FileFilterProps } from '@cognite/cdf-sdk-singleton';
 import { Body, Button, Title, Tooltip } from '@cognite/cogs.js';
+import { TableDataItem } from 'src/modules/Common/types';
 import { ExplorationSearchBar } from 'src/modules/Explorer/Containers/ExplorationSearchBar';
 import { ExplorerSearchResults } from 'src/modules/Explorer/Containers/ExplorerSearchResults';
 import styled from 'styled-components';
 import { MAX_CID_FILE_COUNT } from 'src/constants/CIDConstants';
-import { TableDataItem } from '../../types';
 
 export type ExploreModalContentProps = {
   onItemClick: (item: TableDataItem) => void;

@@ -1,5 +1,7 @@
 import React from 'react';
 import { Column, ColumnShape } from 'react-base-table';
+import { SorterPaginationWrapper } from 'src/modules/Common/Components/SorterPaginationWrapper/SorterPaginationWrapper';
+import { MimeTypeSorter } from 'src/modules/Common/Containers/Sorters/MimeTypeSorter';
 import { ResultData, TableDataItem } from 'src/modules/Common/types';
 import { StringRenderer } from 'src/modules/Common/Containers/FileTableRenderers/StringRenderer';
 import { SelectableTable } from 'src/modules/Common/Components/SelectableTable/SelectableTable';
@@ -10,8 +12,6 @@ import { ActionRendererProcess } from 'src/modules/Common/Containers/FileTableRe
 import { NameSorter } from 'src/modules/Common/Containers/Sorters/NameSorter';
 import { AnnotationLoader } from 'src/modules/Common/Components/AnnotationLoader/AnnotationLoader';
 import { FileListTableProps } from './types';
-import { SorterPaginationWrapper } from '../SorterPaginationWrapper/SorterPaginationWrapper';
-import { MimeTypeSorter } from '../../Containers/Sorters/MimeTypeSorter';
 
 const rendererMap = {
   name: NameRenderer,

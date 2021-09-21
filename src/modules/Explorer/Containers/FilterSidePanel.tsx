@@ -2,23 +2,23 @@
 import React, { useEffect, useState } from 'react';
 import { Collapse } from 'antd';
 import { CaretRightOutlined } from '@ant-design/icons';
+import { ClearButton } from 'src/modules/Explorer/Components/ClearButton';
+import { FilterItemHeader } from 'src/modules/Explorer/Components/FilterItemHeader';
+import {
+  FilterPanelConfigItem,
+  getFilterPanelItems,
+} from 'src/modules/Explorer/Components/getFilterPanelItems';
+import {
+  selectExploreFileCount,
+  setExplorerFilter,
+  toggleExplorerFilterView,
+} from 'src/modules/Explorer/store/explorerSlice';
 import styled from 'styled-components';
 import { Body, Button, Title, Tooltip } from '@cognite/cogs.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { FileFilterProps } from '@cognite/cdf-sdk-singleton';
 import { totalFileCount } from 'src/api/file/aggregate';
-import { FilterItemHeader } from '../Components/FilterItemHeader';
-import {
-  selectExploreFileCount,
-  setExplorerFilter,
-  toggleExplorerFilterView,
-} from '../store/explorerSlice';
-import {
-  getFilterPanelItems,
-  FilterPanelConfigItem,
-} from '../Components/getFilterPanelItems';
-import { ClearButton } from '../Components/ClearButton';
 
 const { Panel } = Collapse;
 
@@ -117,7 +117,7 @@ export const FilterSidePanel = () => {
 };
 
 const FilterResult = styled.div`
-  padding: 11px 17px 0px 20px;
+  padding: 11px 17px 0 20px;
   z-index: 1;
 `;
 const FilterTitle = styled.div`
@@ -132,7 +132,7 @@ const FilterBody = styled.div`
   height: 58px;
 `;
 const HideFiltersTooltip = styled(Tooltip)`
-  margin-bottom: 8;
+  margin-bottom: 8px;
 `;
 
 const CollapsePanel = styled.div`
@@ -145,6 +145,6 @@ const CollapsePanel = styled.div`
     padding: 8px 20px 26px 20px;
   }
   .ant-collapse-content-box {
-    padding: 0px;
+    padding: 0;
   }
 `;

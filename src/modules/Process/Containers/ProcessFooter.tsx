@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Modal } from 'antd';
 import { Button } from '@cognite/cogs.js';
+import { PopulateProcessFiles } from 'src/store/thunks/Process/PopulateProcessFiles';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -17,7 +18,6 @@ import { createLink } from '@cognite/cdf-utilities';
 import { getContainer } from 'src/utils';
 import SummaryStep from 'src/modules/Process/Containers/SummaryStep';
 import { AppDispatch } from 'src/store';
-import { PopulateProcessFiles } from 'src/store/thunks/PopulateProcessFiles';
 
 export const ProcessFooter = () => {
   const history = useHistory();

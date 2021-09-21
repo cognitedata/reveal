@@ -7,8 +7,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import isEqual from 'lodash-es/isEqual';
 import { VisionFileDetails } from 'src/modules/FileDetails/Components/FileMetadata/Types';
+import { updateFileInfoField } from 'src/store/thunks/Files/updateFileInfoField';
+import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from 'src/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
 import styled from 'styled-components';
-import { updateFileInfoField } from 'src/store/thunks/updateFileInfoField';
 import {
   fileInfoEdit,
   metadataEditMode,
@@ -16,7 +17,6 @@ import {
   selectUpdatedFileMeta,
 } from 'src/modules/FileDetails/fileDetailsSlice';
 import { Tabs } from '@cognite/data-exploration';
-import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from 'src/store/thunks/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
 import { FileDetailsAnnotationsPreview } from './FileDetailsAnnotationsPreview/FileDetailsAnnotationsPreview';
 
 export const FileDetails = ({

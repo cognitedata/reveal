@@ -8,13 +8,13 @@ import {
   Title,
 } from '@cognite/cogs.js';
 import React from 'react';
+import { setParamsTagDetection } from 'src/modules/Process/processSlice';
 import { AssetSelector } from 'src/modules/Review/Components/AssetSelector/AssetSelector';
 import { useDispatch, useSelector } from 'react-redux';
 import { ParamsTagDetection } from 'src/api/types';
 import { RootState } from 'src/store/rootReducer';
 import { ColorsTagDetection } from 'src/constants/Colors';
 import TagdetectionIllustration from 'src/assets/visualDescriptions/TagdetectionIllustration.svg';
-import { setParamsTagDetection } from '../../processSlice';
 
 import {
   ColorBox,

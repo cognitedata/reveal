@@ -1,6 +1,6 @@
 import { ColumnShape, Column } from 'react-base-table';
-import { BulkEditTempState } from 'src/modules/Explorer/store/explorerSlice';
-import { FileState } from '../../filesSlice';
+import { BulkEditTempState } from 'src/modules/Common/store/commonSlice';
+import { FileState } from 'src/modules/Common/store/filesSlice';
 import { BulkEditTableDataType } from './BulkEditTable/BulkEditTable';
 import { getDataForLabel } from './Label/getDataForLabel';
 import { LabelPanel } from './Label/LabelPanel';

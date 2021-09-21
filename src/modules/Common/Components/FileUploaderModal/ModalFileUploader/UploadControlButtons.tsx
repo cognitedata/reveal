@@ -1,7 +1,7 @@
 // todo: unused component
 import React from 'react';
 import { Button, Icon, Title } from '@cognite/cogs.js';
-import { STATUS } from '../enums';
+import { STATUS } from 'src/modules/Common/Components/FileUploaderModal/enums';
 
 export const getUploadControls = (
   uploadStatus: STATUS,

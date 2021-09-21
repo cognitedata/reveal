@@ -1,14 +1,14 @@
 import { BulkEditModal } from 'src/modules/Common/Components/BulkEdit/BulkEditModal';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from 'src/store/rootReducer';
-import { updateBulk } from 'src/store/thunks/updateBulk';
-import { selectAllSelectedFiles } from 'src/modules/Common/filesSlice';
 import {
   BulkEditTempState,
   setBulkEditModalVisibility,
   setBulkEditTemp,
-} from 'src/modules/Common/commonSlice';
+} from 'src/modules/Common/store/commonSlice';
+import { selectAllSelectedFiles } from 'src/modules/Common/store/filesSlice';
+import { RootState } from 'src/store/rootReducer';
+import { updateBulk } from 'src/store/thunks/Files/updateBulk';
 
 export const ProcessBulkEditModalContainer = () => {
   const dispatch = useDispatch();

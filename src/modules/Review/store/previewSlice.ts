@@ -4,6 +4,11 @@ import {
   isAnyOf,
   PayloadAction,
 } from '@reduxjs/toolkit';
+import { CreateAnnotations } from 'src/store/thunks/Annotation/CreateAnnotations';
+import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
+import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
+import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
+import { AnnotationDetectionJobUpdate } from 'src/store/thunks/Process/AnnotationDetectionJobUpdate';
 import {
   AnnotationStatus,
   AnnotationUtils,
@@ -15,11 +20,6 @@ import {
   clearFileState,
   deleteAnnotationsFromState,
 } from 'src/store/commonActions';
-import { DeleteFilesById } from 'src/store/thunks/DeleteFilesById';
-import { AnnotationDetectionJobUpdate } from 'src/store/thunks/AnnotationDetectionJobUpdate';
-import { CreateAnnotations } from 'src/store/thunks/CreateAnnotations';
-import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
-import { UpdateAnnotations } from 'src/store/thunks/UpdateAnnotations';
 import { RootState } from 'src/store/rootReducer';
 import { createFileInfo } from 'src/store/util/StateUtils';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';

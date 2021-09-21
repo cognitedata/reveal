@@ -1,7 +1,7 @@
 import React from 'react';
-import { AnnotationLoader } from '../AnnotationLoader/AnnotationLoader';
-import { FileGridTableProps } from '../FileTable/types';
-import { SorterPaginationWrapper } from '../SorterPaginationWrapper/SorterPaginationWrapper';
+import { AnnotationLoader } from 'src/modules/Common/Components/AnnotationLoader/AnnotationLoader';
+import { FileGridTableProps } from 'src/modules/Common/Components/FileTable/types';
+import { SorterPaginationWrapper } from 'src/modules/Common/Components/SorterPaginationWrapper/SorterPaginationWrapper';
 import { GridView } from './GridView';
 
 export const PageBasedGridView = (props: FileGridTableProps) => {

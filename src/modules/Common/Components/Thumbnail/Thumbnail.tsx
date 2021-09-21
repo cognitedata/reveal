@@ -2,8 +2,8 @@ import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import { Body, DocumentIcon } from '@cognite/cogs.js';
 import { Loader, useFileIcon } from '@cognite/data-exploration';
 import React, { useEffect, useMemo, useState } from 'react';
+import { isFilePreviewable } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
 import styled from 'styled-components';
-import { isFilePreviewable } from '../FileUploader/utils/FileUtils';
 
 interface ThumbnailProps {
   fileInfo: FileInfo;

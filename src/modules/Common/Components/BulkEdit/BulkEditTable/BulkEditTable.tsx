@@ -1,7 +1,7 @@
 import React from 'react';
+import { TableWrapper } from 'src/modules/Common/Components/FileTable/FileTableWrapper';
 import styled from 'styled-components';
 import ReactBaseTable from 'react-base-table';
-import { TableWrapper } from '../../FileTable/FileTableWrapper';
 
 export type BulkEditTableDataType = {
   name: string;

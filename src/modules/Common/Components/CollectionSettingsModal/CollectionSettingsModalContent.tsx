@@ -1,9 +1,9 @@
 import React from 'react';
 import { Button, Title } from '@cognite/cogs.js';
+import { SaveAnnotationTemplates } from 'src/store/thunks/Review/SaveAnnotationTemplates';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { SaveAnnotationTemplates } from 'src/store/thunks/SaveAnnotationTemplates';
 import { Shapes } from './Body/Shapes';
 import { AnnotationCollection } from './CollectionSettingsTypes';
 import { Keypoints } from './Body/Keypoints';

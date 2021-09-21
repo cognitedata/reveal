@@ -1,15 +1,14 @@
 /* eslint-disable @cognite/no-number-z-index */
 import React, { useMemo, useState } from 'react';
+import { FileMapTableProps } from 'src/modules/Common/Components/FileTable/types';
+import { MapFileTable } from 'src/modules/Common/Components/MapFileTable/MapFileTable';
 import styled from 'styled-components';
 import ReactMapboxGl, { Layer, Feature, Popup } from 'react-mapbox-gl';
 import * as MapboxGL from 'mapbox-gl';
-import { ResultData } from 'src/modules/Common/types';
+import { ResultData, TableDataItem } from 'src/modules/Common/types';
 import { MAPBOX_TOKEN, MAPBOX_MAP_ID } from './constants';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { MapPopup } from './MapPopup';
-import { MapFileTable } from '../MapFileTable/MapFileTable';
-import { TableDataItem } from '../../types';
-import { FileMapTableProps } from '../FileTable/types';
 
 // should be defined outside MapView to avoid re-rendering
 const Mapbox = ReactMapboxGl({

@@ -8,15 +8,15 @@ import {
   Title,
   OptionType,
 } from '@cognite/cogs.js';
+import { deselectAllAnnotations } from 'src/modules/Review/store/previewSlice';
 import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
 import {
   deleteCurrentCollection,
   deselectAllKeypoints,
-} from 'src/modules/Review/imagePreviewSlice';
+} from 'src/modules/Review/store/imagePreviewSlice';
 import { BodyContainer } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/BodyContainer';
 import { VisionOptionType } from 'src/modules/Review/types';
-import { deselectAllAnnotations } from '../../previewSlice';
 
 const getKeypointOptions = (
   optionsMap?: { key: string; value: VisionOptionType<string>[] }[],

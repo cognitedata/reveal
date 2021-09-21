@@ -1,4 +1,6 @@
 import React from 'react';
+import { ThumbnailCarousel } from 'src/modules/Review/Components/ThumbnailCarousel/ThumbnailCarousel';
+import { selectAllReviewFiles } from 'src/modules/Review/store/previewSlice';
 import styled from 'styled-components';
 import { VideoPreview } from 'src/modules/Review/Components/VideoPreview/VideoPreview';
 import { DataExplorationProvider, Tabs } from '@cognite/data-exploration';
@@ -9,8 +11,6 @@ import { FileInfo, v3Client as sdk } from '@cognite/cdf-sdk-singleton';
 import { Title } from '@cognite/cogs.js';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { selectAllReviewFiles } from 'src/modules/Review/previewSlice';
-import { ThumbnailCarousel } from '../Components/ThumbnailCarousel/ThumbnailCarousel';
 
 const queryClient = new QueryClient();
 

@@ -1,8 +1,8 @@
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import { Vertex } from 'src/api/types';
+import { Keypoint } from 'src/modules/Common/Components/CollectionSettingsModal/CollectionSettingsTypes';
+import { AnnotationPreview } from 'src/modules/Common/types';
 import { AnnotationStatus } from 'src/utils/AnnotationUtils';
-import { AnnotationPreview } from '../../types';
-import { Keypoint } from '../CollectionSettingsModal/CollectionSettingsTypes';
 
 export const convertAnnotationsToAutoML = async (
   files: FileInfo[],

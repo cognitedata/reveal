@@ -1,4 +1,4 @@
-import { TableDataItem } from '../../types';
+import { TableDataItem } from 'src/modules/Common/types';
 
 export const MimeTypeSorter = (data: TableDataItem[], reverse: boolean) => {
   const sortedData = data.sort((a: TableDataItem, b: TableDataItem) =>

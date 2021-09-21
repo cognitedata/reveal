@@ -1,20 +1,20 @@
 import React, { useState } from 'react';
+import { ThumbnailCarousel } from 'src/modules/Review/Components/ThumbnailCarousel/ThumbnailCarousel';
+import {
+  selectAllReviewFiles,
+  selectOtherAnnotationsByFileIdModelType,
+  selectTagAnnotationsByFileIdModelType,
+} from 'src/modules/Review/store/previewSlice';
 import styled from 'styled-components';
 import { DataExplorationProvider, Tabs } from '@cognite/data-exploration';
 import { Contextualization } from 'src/modules/Review/Containers/Contextualization';
 import { FileDetailsReview } from 'src/modules/FileDetails/Containers/FileDetailsReview/FileDetailsReview';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import {
-  selectAllReviewFiles,
-  selectOtherAnnotationsByFileIdModelType,
-  selectTagAnnotationsByFileIdModelType,
-} from 'src/modules/Review/previewSlice';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { FileInfo, v3Client as sdk } from '@cognite/cdf-sdk-singleton';
 import { ImagePreview } from 'src/modules/Review/Containers/ImagePreview';
 import { Title } from '@cognite/cogs.js';
-import { ThumbnailCarousel } from '../Components/ThumbnailCarousel/ThumbnailCarousel';
 
 const queryClient = new QueryClient();
 

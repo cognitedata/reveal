@@ -1,7 +1,7 @@
 import { useSelectionCheckbox } from '@cognite/data-exploration';
 import React from 'react';
+import { TableDataItem } from 'src/modules/Common/types';
 import styled from 'styled-components';
-import { TableDataItem } from '../../types';
 
 export const SelectionCheckbox = ({
   dataItem,

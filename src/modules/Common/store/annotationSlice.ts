@@ -1,6 +1,12 @@
 import { createSlice, isAnyOf } from '@reduxjs/toolkit';
 import { Annotation, VisionAPIType } from 'src/api/types';
-import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
+import {
+  AnnotationCounts,
+  AnnotationPreview,
+  AnnotationsBadgeCounts,
+} from 'src/modules/Common/types';
+import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
+import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import {
   AnnotationStatus,
   AnnotationTypeModelTypeMap,
@@ -12,14 +18,8 @@ import {
 } from 'reselect';
 import isEqual from 'lodash-es/isEqual';
 import difference from 'lodash-es/difference';
-import { DeleteFilesById } from 'src/store/thunks/DeleteFilesById';
 import { clearFileState } from 'src/store/commonActions';
 import { clearExplorerFileState } from 'src/modules/Explorer/store/explorerSlice';
-import {
-  AnnotationCounts,
-  AnnotationPreview,
-  AnnotationsBadgeCounts,
-} from './types';
 
 type State = {
   files: {

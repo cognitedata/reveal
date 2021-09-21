@@ -1,10 +1,10 @@
 import React, { ReactElement } from 'react';
+import { getLink, workflowRoutes } from 'src/utils/workflowRoutes';
 import styled from 'styled-components';
 import { CDFStatus } from 'src/modules/Common/Components/CDFStatus/CDFStatus';
 import { Body } from '@cognite/cogs.js';
 import { Breadcrumb } from 'antd';
 import { useHistory } from 'react-router-dom';
-import { getLink, workflowRoutes } from 'src/modules/Workflow/workflowRoutes';
 
 export const StatusToolBar = (props: {
   current: string;

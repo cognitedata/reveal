@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ThunkConfig } from 'src/store/rootReducer';
-import { deleteCollectionById } from 'src/modules/Review/imagePreviewSlice';
+import { deleteCollectionById } from 'src/modules/Review/store/imagePreviewSlice';
 import { KeypointItemCollection } from 'src/modules/Review/types';
 
 export const CreateKeypointAnnotation = createAsyncThunk<

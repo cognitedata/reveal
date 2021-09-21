@@ -14,25 +14,22 @@ import {
   Sequence,
 } from '@cognite/sdk';
 import { useHistory } from 'react-router-dom';
-import {
-  getParamLink,
-  workflowRoutes,
-} from 'src/modules/Workflow/workflowRoutes';
 import { FileActions } from 'src/modules/Common/types';
 import { EXPLORER_FILE_FETCH_LIMIT } from 'src/constants/ExplorerConstants';
 import { totalFileCount } from 'src/api/file/aggregate';
 import { batch, useDispatch, useSelector } from 'react-redux';
-import { RootState } from 'src/store/rootReducer';
-import { searchFilesWithValidMimeTypes } from 'src/api/file/searchFilesWithValidMimeTypes';
-import { FetchFilesById } from 'src/store/thunks/FetchFilesById';
-import { PopulateReviewFiles } from 'src/store/thunks/PopulateReviewFiles';
 import {
   clearExplorerFileState,
   selectExplorerAllFiles,
   setExplorerFiles,
   setExplorerFocusedFileId,
   showExplorerFileMetadata,
-} from '../store/explorerSlice';
+} from 'src/modules/Explorer/store/explorerSlice';
+import { RootState } from 'src/store/rootReducer';
+import { searchFilesWithValidMimeTypes } from 'src/api/file/searchFilesWithValidMimeTypes';
+import { FetchFilesById } from 'src/store/thunks/Files/FetchFilesById';
+import { PopulateReviewFiles } from 'src/store/thunks/Review/PopulateReviewFiles';
+import { getParamLink, workflowRoutes } from 'src/utils/workflowRoutes';
 
 type Resource = FileInfo | Asset | CogniteEvent | Sequence | Timeseries;
 

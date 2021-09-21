@@ -1,12 +1,12 @@
 import {
   imagePreviewReducerInitialState,
   ImagePreviewReducerState,
-} from 'src/modules/Review/imagePreviewSlice';
-import { RootState } from 'src/store/rootReducer';
+} from 'src/modules/Review/store/imagePreviewSlice';
 import {
   reviewReducerInitialState,
   ReviewReducerState,
-} from 'src/modules/Review/previewSlice';
+} from 'src/modules/Review/store/previewSlice';
+import { RootState } from 'src/store/rootReducer';
 
 export const loadState = (): Partial<RootState> | undefined => {
   try {

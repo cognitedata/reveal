@@ -1,4 +1,3 @@
-import { VisibleAnnotation } from 'src/modules/Review/previewSlice';
 import { AnnotationRegion, VisionAPIType } from 'src/api/types';
 import {
   Box,
@@ -9,6 +8,7 @@ import {
   Region,
 } from '@cognite/react-image-annotate';
 import { RegionStatus } from '@cognite/react-image-annotate/Types/ImageCanvas/region-tools';
+import { VisibleAnnotation } from 'src/modules/Review/store/previewSlice';
 import {
   AnnotationStatus,
   KeypointVertex,

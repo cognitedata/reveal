@@ -1,12 +1,12 @@
 import React from 'react';
+import {
+  fileMetaDataAddRow,
+  toggleMetaDataTableEditMode,
+} from 'src/modules/FileDetails/fileDetailsSlice';
 import styled from 'styled-components';
 import { Button } from '@cognite/cogs.js';
 import { MetadataItem } from 'src/modules/FileDetails/Components/FileMetadata/Types';
 import { useDispatch } from 'react-redux';
-import {
-  fileMetaDataAddRow,
-  toggleMetaDataTableEditMode,
-} from '../../fileDetailsSlice';
 
 const TableToolBar = styled.div`
   width: 100%;

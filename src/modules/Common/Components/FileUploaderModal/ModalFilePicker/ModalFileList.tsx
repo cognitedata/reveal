@@ -1,10 +1,9 @@
 import React from 'react';
 import { Title } from '@cognite/cogs.js';
+import { CogsFileInfo } from 'src/modules/Common/Components/FileUploader/FilePicker/types';
 import styled from 'styled-components';
 import { FileListItem } from 'src/modules/Common/Components/FileUploader/FilePicker/FileListItem';
-import SpiderImg from '../../FileUploader/FilePicker/img/Spider.svg';
-
-import { CogsFileInfo } from '../../FileUploader/FilePicker/types';
+import SpiderImg from 'src/modules/Common/Components/FileUploader/FilePicker/img/Spider.svg';
 
 type ModalFileListProps = {
   files: CogsFileInfo[];
@@ -60,7 +59,7 @@ const Header = styled.div`
   grid-template-columns: auto auto;
   height: 36px;
   grid-gap: 10px;
-  margin: 30px 0px 6px 0px;
+  margin: 30px 0 6px 0;
 `;
 const Left = styled.div`
   align-self: center;

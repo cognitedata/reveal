@@ -1,9 +1,12 @@
 import React, { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { ActionMenu } from 'src/modules/Common/Components/ActionMenu/ActionMenu';
+import { ReviewButton } from 'src/modules/Common/Components/ReviewButton/ReviewButton';
+import { selectAllSelectedFiles } from 'src/modules/Common/store/filesSlice';
 import { RootState } from 'src/store/rootReducer';
 import { CellRenderer, TableDataItem } from 'src/modules/Common/types';
+import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import styled from 'styled-components';
-import { DeleteFilesById } from 'src/store/thunks/DeleteFilesById';
 import {
   isProcessingFile,
   makeSelectAnnotationStatuses,
@@ -12,9 +15,6 @@ import { selectUpdatedFileDetails } from 'src/modules/FileDetails/fileDetailsSli
 import { VisionMode } from 'src/constants/enums/VisionEnums';
 import { selectExplorerSelectedFileIds } from 'src/modules/Explorer/store/explorerSlice';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
-import { ReviewButton } from '../../Components/ReviewButton/ReviewButton';
-import { ActionMenu } from '../../Components/ActionMenu/ActionMenu';
-import { selectAllSelectedFiles } from '../../filesSlice';
 
 export function ActionRenderer(
   rowData: TableDataItem,

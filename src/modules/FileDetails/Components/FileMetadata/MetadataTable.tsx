@@ -1,3 +1,4 @@
+import { fileMetaDataEdit } from 'src/modules/FileDetails/fileDetailsSlice';
 import styled from 'styled-components';
 import { Input, Title } from '@cognite/cogs.js';
 import React, { ReactText, useEffect } from 'react';
@@ -15,7 +16,6 @@ import {
 import exifIcon from 'src/assets/exifIcon.svg';
 import { TableDataItem } from 'src/modules/Common/types';
 import { ExifIcon } from 'src/modules/Common/Containers/FileTableRenderers/NameRenderer';
-import { fileMetaDataEdit } from '../../fileDetailsSlice';
 
 const Container = styled.div`
   width: 100%;

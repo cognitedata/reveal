@@ -2,7 +2,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { VisionAPIType } from 'src/api/types';
 import { ThunkConfig } from 'src/store/rootReducer';
-import { postAnnotationJob } from 'src/store/thunks/PostAnnotationJob';
+import { postAnnotationJob } from 'src/store/thunks/Process/PostAnnotationJob';
 
 export const DetectAnnotations = createAsyncThunk<
   void,

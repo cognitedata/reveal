@@ -1,26 +1,21 @@
 import { VerticalContainer } from 'src/modules/Common/Components/VerticalContainer';
 import { LazyWrapper } from 'src/modules/Common/Components/LazyWrapper';
 import { ProcessFileDetailsContainer } from 'src/modules/Process/Containers/ProcesseFileDetailsContainer/ProcesseFileDetailsContainer';
-import {
-  workflowRoutes,
-  WorkflowStepKey,
-} from 'src/modules/Workflow/workflowRoutes';
 import React from 'react';
 import { Redirect, Route, RouteComponentProps, Switch } from 'react-router-dom';
+import { workflowRoutes, WorkflowStepKey } from 'src/utils/workflowRoutes';
 import styled from 'styled-components';
 import { StatusToolBar } from 'src/modules/Process/Containers/StatusToolBar';
 
-type NewWorkflowContainerProps = RouteComponentProps<{ step: WorkflowStepKey }>;
+type ProcessPageProps = RouteComponentProps<{ step: WorkflowStepKey }>;
 
-const ProcessStep = (props: NewWorkflowContainerProps) =>
+const ProcessStep = (props: ProcessPageProps) =>
   LazyWrapper(
     props,
     () => import('src/modules/Process/Containers/ProcessStep')
   );
 
-export default function NewWorkflowContainer({
-  location,
-}: NewWorkflowContainerProps) {
+export default function Process({ location }: ProcessPageProps) {
   return (
     <VerticalContainer>
       <StatusToolBar current="Contextualize Imagery Data" previous="explorer" />
@@ -64,7 +59,6 @@ const MainContainer = styled.div`
   @media (min-width: 992px) {
     padding: 20px 40px;
   }
-  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   height: auto;

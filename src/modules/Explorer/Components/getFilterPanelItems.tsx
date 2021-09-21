@@ -1,12 +1,12 @@
 import React from 'react';
 import { FileFilterProps } from '@cognite/cdf-sdk-singleton';
+import { DirectoryPrefixesProvider } from 'src/modules/Explorer/Containers/DirectoryPrefixesProvider';
 import { AssetSelectFilter } from './Filters/AssetSelectFilter';
 import { DateFilter } from './Filters/DateFilter';
 import { DataSetSelectFilter } from './Filters/DataSetSelectFilter';
 import { SelectLabelsFilter } from './Filters/SelectLabelsFilter';
 import { MetadataSelectFilter } from './Filters/MetadataSelectFilter';
 import { ExternalIdFilter } from './Filters/ExternalIDFilter';
-import { DirectoryPrefixesProvider } from '../Containers/DirectoryPrefixesProvider';
 import { DirectoryPrefixFilter } from './Filters/DirectoryPrefixFilter';
 
 export type FilterPanelConfigItem = {

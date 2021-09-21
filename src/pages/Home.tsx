@@ -1,21 +1,27 @@
 import React from 'react';
 import { Loader } from '@cognite/cogs.js';
-import { createLink, PageTitle, useUserContext } from '@cognite/cdf-utilities';
+import { PageTitle } from '@cognite/cdf-utilities';
+import { workflowRoutes } from 'src/utils/workflowRoutes';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import { Redirect, RouteComponentProps, Switch } from 'react-router-dom';
 
-const Home = () => {
-  const user = useUserContext();
+const Home = ({ location }: RouteComponentProps) => {
+  // const user = useUserContext();
 
   return (
     <>
       <PageTitle title="Vision" />
       <Loader />
       <Container>
-        <p>Your Unified UI Subapp is now running! Congrats {user.username}!</p>
-        <Link to={createLink('/vision/workflow/upload')}>
-          Go to upload page
-        </Link>
+        <Switch>
+          <Redirect
+            to={{
+              key: workflowRoutes.explore,
+              pathname: workflowRoutes.explore,
+              search: location.search,
+            }}
+          />
+        </Switch>
       </Container>
     </>
   );

@@ -1,5 +1,8 @@
 import React, { useEffect } from 'react';
 import { Column, ColumnShape } from 'react-base-table';
+import { SorterPaginationWrapper } from 'src/modules/Common/Components/SorterPaginationWrapper/SorterPaginationWrapper';
+import { AnnotationSorter } from 'src/modules/Common/Containers/Sorters/AnnotationSorter';
+import { MimeTypeSorter } from 'src/modules/Common/Containers/Sorters/MimeTypeSorter';
 import { ResultData, TableDataItem } from 'src/modules/Common/types';
 import { StringRenderer } from 'src/modules/Common/Containers/FileTableRenderers/StringRenderer';
 import { SelectableTable } from 'src/modules/Common/Components/SelectableTable/SelectableTable';
@@ -11,13 +14,10 @@ import { DateRenderer } from 'src/modules/Common/Containers/FileTableRenderers/D
 import { NameSorter } from 'src/modules/Common/Containers/Sorters/NameSorter';
 import { AnnotationLoader } from 'src/modules/Common/Components/AnnotationLoader/AnnotationLoader';
 import { useDispatch, useSelector } from 'react-redux';
-import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
 import { setLoadingAnnotations } from 'src/modules/Explorer/store/explorerSlice';
 import { RootState } from 'src/store/rootReducer';
+import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
 import { FileListTableProps, PaginatedTableProps } from './types';
-import { SorterPaginationWrapper } from '../SorterPaginationWrapper/SorterPaginationWrapper';
-import { MimeTypeSorter } from '../../Containers/Sorters/MimeTypeSorter';
-import { AnnotationSorter } from '../../Containers/Sorters/AnnotationSorter';
 
 const rendererMap = {
   name: NameRenderer,

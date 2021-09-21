@@ -1,9 +1,9 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import { FileState } from 'src/modules/Common/store/filesSlice';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { Label, Metadata } from '@cognite/cdf-sdk-singleton';
 import isEqual from 'lodash-es/isEqual';
-import { UpdateFiles } from 'src/store/thunks/UpdateFiles';
-import { FileState } from 'src/modules/Common/filesSlice';
+import { UpdateFiles } from 'src/store/thunks/Files/UpdateFiles';
 
 export const updateFileInfoField = createAsyncThunk<
   void,

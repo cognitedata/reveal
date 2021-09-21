@@ -1,6 +1,10 @@
 import React from 'react';
 import { EnsureNonEmptyResource } from '@cognite/data-exploration';
 import { FileFilterProps, FileInfo } from '@cognite/cdf-sdk-singleton';
+import { FileGridPreview } from 'src/modules/Common/Components/FileGridPreview/FileGridPreview';
+import { FileTableExplorer } from 'src/modules/Common/Components/FileTable/FileTableExplorer';
+import { MapView } from 'src/modules/Common/Components/MapView/MapView';
+import { ResultTableLoader } from 'src/modules/Explorer/Containers/ResultTableLoader';
 import styled from 'styled-components';
 import {
   ResultData,
@@ -23,10 +27,6 @@ import {
   setSelectedAllExplorerFiles,
 } from 'src/modules/Explorer/store/explorerSlice';
 import { VisionMode } from 'src/constants/enums/VisionEnums';
-import { ResultTableLoader } from './ResultTableLoader';
-import { FileGridPreview } from '../../Common/Components/FileGridPreview/FileGridPreview';
-import { MapView } from '../../Common/Components/MapView/MapView';
-import { FileTableExplorer } from '../../Common/Components/FileTable/FileTableExplorer';
 
 export const ExplorerSearchResults = ({
   currentView,

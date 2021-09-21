@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { getParamLink, workflowRoutes } from 'src/utils/workflowRoutes';
 // Import Swiper React components
 import { Swiper, SwiperSlide } from 'swiper/react';
 // import Swiper core and required modules
@@ -11,10 +12,6 @@ import SwiperCore, {
 } from 'swiper/core';
 import styled from 'styled-components';
 import { getIdfromUrl } from 'src/utils/tenancy';
-import {
-  getParamLink,
-  workflowRoutes,
-} from 'src/modules/Workflow/workflowRoutes';
 import { useHistory } from 'react-router-dom';
 import { Thumbnail } from 'src/modules/Common/Components/Thumbnail/Thumbnail';
 import { Button } from '@cognite/cogs.js';

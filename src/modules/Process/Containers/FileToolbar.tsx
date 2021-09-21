@@ -1,16 +1,16 @@
 /* eslint-disable @cognite/no-number-z-index */
 import React from 'react';
 import { SegmentedControl } from '@cognite/cogs.js';
-import styled from 'styled-components';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from 'src/store/rootReducer';
-import { selectAllSelectedFiles } from 'src/modules/Common/filesSlice';
-import { DeleteFilesById } from 'src/store/thunks/DeleteFilesById';
-import { BulkActionMenu } from 'src/modules/Common/Components/BulkActionMenu/BulkActionMenu';
 import {
   setBulkEditModalVisibility,
   setFileDownloadModalVisibility,
-} from 'src/modules/Common/commonSlice';
+} from 'src/modules/Common/store/commonSlice';
+import { selectAllSelectedFiles } from 'src/modules/Common/store/filesSlice';
+import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
+import styled from 'styled-components';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from 'src/store/rootReducer';
+import { BulkActionMenu } from 'src/modules/Common/Components/BulkActionMenu/BulkActionMenu';
 import {
   selectAllProcessFiles,
   selectIsPollingComplete,

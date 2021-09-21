@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { AnnotationApi } from 'src/api/annotation/AnnotationApi';
-import { DeleteAnnotations } from 'src/store/thunks/DeleteAnnotations';
+import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
 
 const BATCH_SIZE = 10;
 

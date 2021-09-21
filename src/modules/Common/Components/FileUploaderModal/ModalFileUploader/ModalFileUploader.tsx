@@ -4,6 +4,8 @@ import UploadGCS from '@cognite/gcs-browser-upload';
 import { FileUploadResponse, FileInfo, FileGeoLocation } from '@cognite/sdk';
 import { Checkbox, Title } from '@cognite/cogs.js';
 import { useSDK } from '@cognite/sdk-provider';
+import { sleep } from 'src/modules/Common/Components/FileUploader/utils';
+import { getMIMEType } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
 import { getHumanReadableFileSize } from 'src/modules/Common/Components/FileUploader/utils/getHumanReadableFileSize';
 import {
   CogsFile,
@@ -11,16 +13,14 @@ import {
 } from 'src/modules/Common/Components/FileUploader/FilePicker/types';
 import exifr from 'exifr';
 import { useSelector } from 'react-redux';
+import { STATUS } from 'src/modules/Common/Components/FileUploaderModal/enums';
+import { ModalFilePicker } from 'src/modules/Common/Components/FileUploaderModal/ModalFilePicker/ModalFilePicker';
+import { getUploadControls } from 'src/modules/Common/Components/FileUploaderModal/ModalFileUploader/UploadControlButtons';
 import { RootState } from 'src/store/rootReducer';
 import styled from 'styled-components';
 import * as UPLODER_CONST from 'src/constants/UploderConstants';
 import { MAX_CID_FILE_COUNT } from 'src/constants/CIDConstants';
 import { pushMetric } from 'src/utils/pushMetric';
-import { sleep } from '../../FileUploader/utils';
-import { getMIMEType } from '../../FileUploader/utils/FileUtils';
-import { ModalFilePicker } from '../ModalFilePicker/ModalFilePicker';
-import { STATUS } from '../enums';
-import { getUploadControls } from './UploadControlButtons';
 
 type GCSUploaderOptions = {
   file: Blob;

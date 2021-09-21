@@ -11,10 +11,10 @@ import React from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { ParamsOCR } from 'src/api/types';
+import { setParamsOCR } from 'src/modules/Process/processSlice';
 import { RootState } from 'src/store/rootReducer';
 import { ColorsOCR } from 'src/constants/Colors';
 import OcrIllustration from 'src/assets/visualDescriptions/OcrIllustration.svg';
-import { setParamsOCR } from '../../processSlice';
 import {
   ColorBox,
   NameContainer,

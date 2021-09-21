@@ -1,10 +1,10 @@
 import { useDispatch } from 'react-redux';
 import React, { useState } from 'react';
+import { Button, Col, Input, Row, Title } from '@cognite/cogs.js';
 import {
   resetPreview,
   VisionAnnotationState,
-} from 'src/modules/Review/previewSlice';
-import { Button, Col, Input, Row, Title } from '@cognite/cogs.js';
+} from 'src/modules/Review/store/previewSlice';
 import styled from 'styled-components';
 
 const EditContainer = styled.div`

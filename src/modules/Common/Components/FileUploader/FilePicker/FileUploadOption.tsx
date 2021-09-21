@@ -1,10 +1,13 @@
 import React from 'react';
+import {
+  setDataSetIds,
+  setExtractExif,
+} from 'src/modules/Common/store/filesSlice';
 import styled from 'styled-components';
 import { Checkbox, Detail, Icon, PrimaryTooltip } from '@cognite/cogs.js';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { setDataSetIds, setExtractExif } from 'src/modules/Common/filesSlice';
 import { DataSetSelect } from '@cognite/data-exploration';
 import 'antd/dist/antd.css';
 

@@ -1,3 +1,7 @@
+import { AnnotationsBadge } from 'src/modules/Common/Components/AnnotationsBadge/AnnotationsBadge';
+import { AnnotationsBadgePopoverContent } from 'src/modules/Common/Components/AnnotationsBadge/AnnotationsBadgePopoverContent';
+import { Popover } from 'src/modules/Common/Components/Popover';
+import { makeSelectAnnotationCounts } from 'src/modules/Common/store/annotationSlice';
 import { CellRenderer } from 'src/modules/Common/types';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
@@ -6,10 +10,6 @@ import exifIcon from 'src/assets/exifIcon.svg';
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { makeSelectAnnotationStatuses } from 'src/modules/Process/processSlice';
-import { makeSelectAnnotationCounts } from '../../annotationSlice';
-import { AnnotationsBadge } from '../../Components/AnnotationsBadge/AnnotationsBadge';
-import { AnnotationsBadgePopoverContent } from '../../Components/AnnotationsBadge/AnnotationsBadgePopoverContent';
-import { Popover } from '../../Components/Popover';
 
 export function NameAndAnnotationRenderer({
   rowData: { name, id, geoLocation },
@@ -65,7 +65,6 @@ export const FileRow = styled.div`
 `;
 
 const Filename = styled.div`
-  display: flex;
   width: 150px;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -76,7 +75,7 @@ const Filename = styled.div`
 export const ExifIcon = styled.div`
   display: flex;
   padding-bottom: 15px;
-  padding-right: 0px;
-  padding-left: 0px;
+  padding-right: 0;
+  padding-left: 0;
   flex: 0 0 auto;
 `;

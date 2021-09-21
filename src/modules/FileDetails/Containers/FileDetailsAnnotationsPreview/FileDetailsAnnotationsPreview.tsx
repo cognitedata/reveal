@@ -1,17 +1,17 @@
 import React, { useMemo } from 'react';
 import { Button, Title } from '@cognite/cogs.js';
+import { selectFileAnnotationsByType } from 'src/modules/Common/store/annotationSlice';
+import { VisionFileDetails } from 'src/modules/FileDetails/Components/FileMetadata/Types';
+import { AnnotationsListPreview } from 'src/modules/FileDetails/Containers/FileDetailsAnnotationsPreview/AnnotationsListPreview';
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { VisionAPIType } from 'src/api/types';
-import { selectFileAnnotationsByType } from 'src/modules/Common/annotationSlice';
 import {
   isProcessingFile,
   makeSelectAnnotationStatuses,
 } from 'src/modules/Process/processSlice';
 import { Thumbnail } from 'src/modules/Common/Components/Thumbnail/Thumbnail';
-import { AnnotationsListPreview } from './AnnotationsListPreview';
-import { VisionFileDetails } from '../../Components/FileMetadata/Types';
 
 export const FileDetailsAnnotationsPreview = ({
   fileInfo,

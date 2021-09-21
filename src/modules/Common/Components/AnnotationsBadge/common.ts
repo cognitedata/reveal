@@ -1,4 +1,4 @@
-import { AnnotationCounts, AnnotationStatuses } from '../../types';
+import { AnnotationCounts, AnnotationStatuses } from 'src/modules/Common/types';
 
 export const showBadge = (
   counts?: AnnotationCounts,

@@ -1,14 +1,17 @@
 import React, { useMemo } from 'react';
+import {
+  FileMapTableProps,
+  MapTableTabKey,
+} from 'src/modules/Common/Components/FileTable/types';
+import { SelectableTable } from 'src/modules/Common/Components/SelectableTable/SelectableTable';
+import { SorterPaginationWrapper } from 'src/modules/Common/Components/SorterPaginationWrapper/SorterPaginationWrapper';
+import { NameSorter } from 'src/modules/Common/Containers/Sorters/NameSorter';
+import { ResultData, TableDataItem } from 'src/modules/Common/types';
 import styled from 'styled-components';
 import { ColumnShape } from 'react-base-table';
 import { NameAndAnnotationRenderer } from 'src/modules/Common/Containers/FileTableRenderers/NameAndAnnotation';
 import { AnnotationLoader } from 'src/modules/Common/Components/AnnotationLoader/AnnotationLoader';
 import { Tabs } from 'antd';
-import { SelectableTable } from '../SelectableTable/SelectableTable';
-import { ResultData, TableDataItem } from '../../types';
-import { NameSorter } from '../../Containers/Sorters/NameSorter';
-import { SorterPaginationWrapper } from '../SorterPaginationWrapper/SorterPaginationWrapper';
-import { FileMapTableProps, MapTableTabKey } from '../FileTable/types';
 
 const { TabPane } = Tabs;
 

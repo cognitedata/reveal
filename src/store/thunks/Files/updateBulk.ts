@@ -1,8 +1,8 @@
 import { Label } from '@cognite/cdf-sdk-singleton';
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { FileState } from 'src/modules/Common/filesSlice';
-import { BulkEditTempState } from 'src/modules/Explorer/store/explorerSlice';
-import { ThunkConfig } from '../rootReducer';
+import { BulkEditTempState } from 'src/modules/Common/store/commonSlice';
+import { FileState } from 'src/modules/Common/store/filesSlice';
+import { ThunkConfig } from 'src/store/rootReducer';
 import { UpdateFiles } from './UpdateFiles';
 
 export const updateBulk = createAsyncThunk<

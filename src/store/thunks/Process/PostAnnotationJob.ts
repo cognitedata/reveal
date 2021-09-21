@@ -6,9 +6,9 @@ import {
 } from 'src/api/types';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { createAnnotationJob, fetchJobById } from 'src/api/annotationJob';
+import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
+import { AnnotationDetectionJobUpdate } from 'src/store/thunks/Process/AnnotationDetectionJobUpdate';
 import { fetchUntilComplete } from 'src/utils';
-import { AnnotationDetectionJobUpdate } from 'src/store/thunks/AnnotationDetectionJobUpdate';
-import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
 import { fileProcessUpdate } from 'src/store/commonActions';
 import { removeJobById, State } from 'src/modules/Process/processSlice';
 

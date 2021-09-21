@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { v3Client as sdk } from '@cognite/cdf-sdk-singleton';
 import { ThunkConfig } from 'src/store/rootReducer';
-import { DeleteAnnotationsForDeletedFiles } from 'src/store/thunks/DeleteAnnotationsForDeletedFiles';
+import { DeleteAnnotationsForDeletedFiles } from 'src/store/thunks/Annotation/DeleteAnnotationsForDeletedFiles';
 
 export const DeleteFilesById = createAsyncThunk<
   number[],

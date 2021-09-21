@@ -5,6 +5,12 @@ import {
   PayloadAction,
 } from '@reduxjs/toolkit';
 import { AnnotationCollection } from 'src/modules/Common/Components/CollectionSettingsModal/CollectionSettingsTypes';
+import { CreateAnnotations } from 'src/store/thunks/Annotation/CreateAnnotations';
+import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
+import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
+import { AnnotationDetectionJobUpdate } from 'src/store/thunks/Process/AnnotationDetectionJobUpdate';
+import { PopulateAnnotationTemplates } from 'src/store/thunks/Review/PopulateAnnotationTemplates';
+import { SaveAnnotationTemplates } from 'src/store/thunks/Review/SaveAnnotationTemplates';
 import { v4 as uuidv4 } from 'uuid';
 import { Region } from '@cognite/react-image-annotate';
 import { Point } from '@cognite/react-image-annotate/Types/ImageCanvas/region-tools';
@@ -14,12 +20,6 @@ import {
   KeypointVertex,
 } from 'src/utils/AnnotationUtils';
 import { addAnnotations } from 'src/store/commonActions';
-import { CreateAnnotations } from 'src/store/thunks/CreateAnnotations';
-import { AnnotationDetectionJobUpdate } from 'src/store/thunks/AnnotationDetectionJobUpdate';
-import { UpdateAnnotations } from 'src/store/thunks/UpdateAnnotations';
-import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
-import { PopulateAnnotationTemplates } from 'src/store/thunks/PopulateAnnotationTemplates';
-import { SaveAnnotationTemplates } from 'src/store/thunks/SaveAnnotationTemplates';
 
 type KeyPointState = {
   id: string;

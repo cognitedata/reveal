@@ -1,12 +1,12 @@
 import { createAsyncThunk, unwrapResult } from '@reduxjs/toolkit';
 import { ThunkConfig } from 'src/store/rootReducer';
+import { SaveAnnotations } from 'src/store/thunks/Annotation/SaveAnnotations';
 import {
   AnnotationStatus,
   AnnotationUtils,
   VisionAnnotation,
 } from 'src/utils/AnnotationUtils';
 import { VisionAPIType } from 'src/api/types';
-import { SaveAnnotations } from 'src/store/thunks/SaveAnnotations';
 import { UnsavedAnnotation } from 'src/api/annotation/types';
 import { getUnsavedAnnotation } from 'src/api/utils';
 

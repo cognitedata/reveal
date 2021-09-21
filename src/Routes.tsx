@@ -46,10 +46,7 @@ const routes = [
     exact: false,
     path: '/:tenant/vision/workflow/:step',
     component: (props: RouteComponentProps) =>
-      LazyWrapper(
-        props,
-        () => import('src/modules/Workflow/NewWorkflowContainer')
-      ),
+      LazyWrapper(props, () => import('src/pages/Process')),
   },
   {
     exact: true,

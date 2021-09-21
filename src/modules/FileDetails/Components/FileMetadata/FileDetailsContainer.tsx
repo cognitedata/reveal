@@ -1,3 +1,4 @@
+import { InlineMapView } from 'src/modules/Common/Components/MapView/InlineMapView';
 import { dateformat } from 'src/utils/DateUtils';
 import React from 'react';
 import styled from 'styled-components';
@@ -12,7 +13,6 @@ import {
   VisionFileDetails,
 } from 'src/modules/FileDetails/Components/FileMetadata/Types';
 import { Title } from '@cognite/cogs.js';
-import { InlineMapView } from '../../../Common/Components/MapView/InlineMapView';
 
 export const FileDetailsContainer = (props: {
   info: VisionFileDetails;

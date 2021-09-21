@@ -1,5 +1,19 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import {
+  deleteCurrentCollection,
+  deSelectAllCollections,
+  deselectAllKeypoints,
+  keypointSelectStatusChange,
+  onCreateKeyPoint,
+  onCreateOrUpdateShape,
+  onUpdateKeyPoint,
+} from 'src/modules/Review/store/imagePreviewSlice';
+import {
+  deselectAllAnnotations,
+  selectAnnotation,
+  showCollectionSettingsModel,
+} from 'src/modules/Review/store/previewSlice';
+import {
   ReactImageAnnotateWrapperProps,
   VisionOptionType,
 } from 'src/modules/Review/types';
@@ -16,27 +30,13 @@ import {
   convertKeyPointCollectionToAnnotationStub,
   convertToAnnotation,
 } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/ConversionUtils';
+import { CreateKeypointAnnotation } from 'src/store/thunks/Annotation/CreateKeypointAnnotation';
+import { RetrieveKeypointCollection } from 'src/store/thunks/Review/RetrieveKeypointCollection';
 import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { AppDispatch } from 'src/store';
-import { CreateKeypointAnnotation } from 'src/store/thunks/CreateKeypointAnnotation';
-import { RetrieveKeypointCollection } from 'src/store/thunks/RetrieveKeypointCollection';
 import { Button, Tooltip } from '@cognite/cogs.js';
-import {
-  deselectAllAnnotations,
-  selectAnnotation,
-  showCollectionSettingsModel,
-} from '../../previewSlice';
-import {
-  deleteCurrentCollection,
-  deSelectAllCollections,
-  deselectAllKeypoints,
-  keypointSelectStatusChange,
-  onCreateKeyPoint,
-  onCreateOrUpdateShape,
-  onUpdateKeyPoint,
-} from '../../imagePreviewSlice';
 
 export const ReactImageAnnotateWrapper: React.FC<ReactImageAnnotateWrapperProps> =
   ({

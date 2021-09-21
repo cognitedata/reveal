@@ -1,5 +1,12 @@
 import React, { useEffect, useMemo } from 'react';
 import {
+  selectAllFilesSelected,
+  selectAllSelectedIds,
+  setFileSelectState,
+  setSelectedAllFiles,
+  setSelectedFiles,
+} from 'src/modules/Common/store/filesSlice';
+import {
   FileActions,
   ResultData,
   SelectFilter,
@@ -18,31 +25,21 @@ import {
   setSortKey,
   showFileMetadataPreview,
 } from 'src/modules/Process/processSlice';
-import {
-  selectAllFilesSelected,
-  selectAllSelectedIds,
-  setFileSelectState,
-  setSelectedAllFiles,
-  setSelectedFiles,
-} from 'src/modules/Common/filesSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { MapView } from 'src/modules/Common/Components/MapView/MapView';
 import { resetEditHistory } from 'src/modules/FileDetails/fileDetailsSlice';
-import {
-  getParamLink,
-  workflowRoutes,
-} from 'src/modules/Workflow/workflowRoutes';
 import { FileTable } from 'src/modules/Common/Components/FileTable/FileTable';
 import { FileGridPreview } from 'src/modules/Common/Components/FileGridPreview/FileGridPreview';
 import { Prompt, useHistory } from 'react-router-dom';
+import { FetchFilesById } from 'src/store/thunks/Files/FetchFilesById';
+import { PopulateReviewFiles } from 'src/store/thunks/Review/PopulateReviewFiles';
+import { getParamLink, workflowRoutes } from 'src/utils/workflowRoutes';
 import styled from 'styled-components';
 import { Detail } from '@cognite/cogs.js';
 import { PageBasedGridView } from 'src/modules/Common/Components/GridView/PageBasedGridView';
 import { VisionMode } from 'src/constants/enums/VisionEnums';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
-import { FetchFilesById } from 'src/store/thunks/FetchFilesById';
-import { PopulateReviewFiles } from 'src/store/thunks/PopulateReviewFiles';
 
 export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
   const dispatch = useDispatch();

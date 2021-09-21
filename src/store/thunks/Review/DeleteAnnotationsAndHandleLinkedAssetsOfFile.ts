@@ -1,10 +1,10 @@
 import { createAsyncThunk, unwrapResult } from '@reduxjs/toolkit';
+import { VisionAnnotationState } from 'src/modules/Review/store/previewSlice';
 import { ThunkConfig } from 'src/store/rootReducer';
+import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
+import { UpdateFiles } from 'src/store/thunks/Files/UpdateFiles';
 import { AnnotationStatus } from 'src/utils/AnnotationUtils';
-import { UpdateFiles } from 'src/store/thunks/UpdateFiles';
-import { DeleteAnnotations } from 'src/store/thunks/DeleteAnnotations';
 import { deleteAnnotationsFromState } from 'src/store/commonActions';
-import { VisionAnnotationState } from 'src/modules/Review/previewSlice';
 import { ToastUtils } from 'src/utils/ToastUtils';
 import { fetchAssets } from 'src/store/thunks/fetchAssets';
 

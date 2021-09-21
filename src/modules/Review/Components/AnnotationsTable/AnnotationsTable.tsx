@@ -1,7 +1,7 @@
 import { Title } from '@cognite/cogs.js';
 import React, { ReactText, useMemo } from 'react';
+import { VisibleAnnotation } from 'src/modules/Review/store/previewSlice';
 import styled from 'styled-components';
-import { VisibleAnnotation } from 'src/modules/Review/previewSlice';
 import { AnnotationStatus, KeypointVertex } from 'src/utils/AnnotationUtils';
 import { VisionAPIType } from 'src/api/types';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';

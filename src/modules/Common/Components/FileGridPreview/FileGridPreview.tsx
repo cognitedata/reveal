@@ -1,7 +1,12 @@
 import React, { useMemo } from 'react';
-
 import { Tooltip } from '@cognite/cogs.js';
+import { ActionMenu } from 'src/modules/Common/Components/ActionMenu/ActionMenu';
+import { AnnotationsBadge } from 'src/modules/Common/Components/AnnotationsBadge/AnnotationsBadge';
+import { AnnotationsBadgePopoverContent } from 'src/modules/Common/Components/AnnotationsBadge/AnnotationsBadgePopoverContent';
 import { Popover } from 'src/modules/Common/Components/Popover';
+import { ReviewButton } from 'src/modules/Common/Components/ReviewButton/ReviewButton';
+import { SelectionCheckbox } from 'src/modules/Common/Components/SelectionCheckbox/SelectionCheckbox';
+import { Thumbnail } from 'src/modules/Common/Components/Thumbnail/Thumbnail';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import exifIcon from 'src/assets/exifIcon.svg';
@@ -13,15 +18,9 @@ import {
 import { selectUpdatedFileDetails } from 'src/modules/FileDetails/fileDetailsSlice';
 import { TableDataItem } from 'src/modules/Common/types';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
-import { DeleteFilesById } from 'src/store/thunks/DeleteFilesById';
 import { VisionMode } from 'src/constants/enums/VisionEnums';
-import { AnnotationsBadge } from '../AnnotationsBadge/AnnotationsBadge';
-import { AnnotationsBadgePopoverContent } from '../AnnotationsBadge/AnnotationsBadgePopoverContent';
-import { makeSelectAnnotationCounts } from '../../annotationSlice';
-import { ReviewButton } from '../ReviewButton/ReviewButton';
-import { ActionMenu } from '../ActionMenu/ActionMenu';
-import { Thumbnail } from '../Thumbnail/Thumbnail';
-import { SelectionCheckbox } from '../SelectionCheckbox/SelectionCheckbox';
+import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
+import { makeSelectAnnotationCounts } from 'src/modules/Common/store/annotationSlice';
 
 export const FileGridPreview = ({
   item,

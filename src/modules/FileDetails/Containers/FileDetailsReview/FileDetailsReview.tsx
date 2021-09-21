@@ -1,4 +1,5 @@
 import React, { useRef } from 'react';
+import { updateFileInfoField } from 'src/store/thunks/Files/updateFileInfoField';
 import styled from 'styled-components';
 import { MetaDataTable } from 'src/modules/FileDetails/Components/FileMetadata/MetadataTable';
 import { useDispatch, useSelector } from 'react-redux';
@@ -8,7 +9,6 @@ import { FileDetailsContainer } from 'src/modules/FileDetails/Components/FileMet
 import { MetadataTableToolBar } from 'src/modules/FileDetails/Components/FileMetadata/MetadataTableToolBar';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import { VisionFileDetailKey } from 'src/modules/FileDetails/Components/FileMetadata/Types';
-import { updateFileInfoField } from 'src/store/thunks/updateFileInfoField';
 import {
   fileInfoEdit,
   metadataEditMode,

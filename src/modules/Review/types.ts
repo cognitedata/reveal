@@ -1,6 +1,6 @@
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
-import { VisibleAnnotation } from 'src/modules/Review/previewSlice';
 import { AnnotationCollection } from 'src/modules/Common/Components/CollectionSettingsModal/CollectionSettingsTypes';
+import { VisibleAnnotation } from 'src/modules/Review/store/previewSlice';
 import { AnnotationStatus, KeypointItem } from 'src/utils/AnnotationUtils';
 import { ReactElement, ReactText } from 'react';
 import { OptionType } from '@cognite/cogs.js';

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Body, Button, Input, Select, Tooltip } from '@cognite/cogs.js';
+import { EditPanelProps } from 'src/modules/Common/Components/BulkEdit/bulkEditOptions';
+import { BulkEditTempState } from 'src/modules/Common/store/commonSlice';
+import { FileState } from 'src/modules/Common/store/filesSlice';
 import styled from 'styled-components';
 import { Metadata } from '@cognite/cdf-sdk-singleton';
-import { BulkEditTempState } from 'src/modules/Explorer/store/explorerSlice';
-import { FileState } from 'src/modules/Common/filesSlice';
-import { EditPanelProps } from '../bulkEditOptions';
 
 const getMetadataKeys = (
   selectedFiles: FileState[],

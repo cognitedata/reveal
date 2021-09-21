@@ -4,11 +4,11 @@ import {
   setExplorerFileUploadModalVisibility,
 } from 'src/modules/Explorer/store/explorerSlice';
 import React from 'react';
-import { PopulateProcessFiles } from 'src/store/thunks/PopulateProcessFiles';
-import { getLink, workflowRoutes } from 'src/modules/Workflow/workflowRoutes';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { useHistory } from 'react-router-dom';
+import { PopulateProcessFiles } from 'src/store/thunks/Process/PopulateProcessFiles';
+import { getLink, workflowRoutes } from 'src/utils/workflowRoutes';
 
 export const ExplorerFileUploadModalContainer = () => {
   const dispatch = useDispatch();

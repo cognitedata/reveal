@@ -1,27 +1,27 @@
 import React, { useEffect } from 'react';
 import { PageTitle } from '@cognite/cdf-utilities';
+import { selectFileById } from 'src/modules/Common/store/filesSlice';
+import { RootState } from 'src/store/rootReducer';
+import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
+import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
+import { FetchFilesById } from 'src/store/thunks/Files/FetchFilesById';
+import { PopulateAnnotationTemplates } from 'src/store/thunks/Review/PopulateAnnotationTemplates';
+import { PopulateReviewFiles } from 'src/store/thunks/Review/PopulateReviewFiles';
 import styled from 'styled-components';
 import { Button, Icon, Popconfirm, ToastContainer } from '@cognite/cogs.js';
 import { Prompt, RouteComponentProps, useHistory } from 'react-router-dom';
 import { batch, useDispatch, useSelector } from 'react-redux';
-import { RootState } from 'src/store/rootReducer';
 import {
   resetPreview,
   showCollectionSettingsModel,
-} from 'src/modules/Review/previewSlice';
-import { DeleteFilesById } from 'src/store/thunks/DeleteFilesById';
-import { selectFileById } from 'src/modules/Common/filesSlice';
+} from 'src/modules/Review/store/previewSlice';
 import ImageReview from 'src/modules/Review/Containers/ImageReview';
 import VideoReview from 'src/modules/Review/Containers/VideoReview';
 import { isVideo } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
 import { resetEditHistory } from 'src/modules/FileDetails/fileDetailsSlice';
 import { StatusToolBar } from 'src/modules/Process/Containers/StatusToolBar';
-import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
 import { CollectionSettingsModal } from 'src/modules/Common/Components/CollectionSettingsModal/CollectionSettingsModal';
-import { PopulateAnnotationTemplates } from 'src/store/thunks/PopulateAnnotationTemplates';
-import { FetchFilesById } from 'src/store/thunks/FetchFilesById';
 import { pushMetric } from 'src/utils/pushMetric';
-import { PopulateReviewFiles } from 'src/store/thunks/PopulateReviewFiles';
 
 pushMetric('Vision.Review');
 

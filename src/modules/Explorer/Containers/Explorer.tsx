@@ -2,6 +2,27 @@
 import React, { useEffect } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import FilterToggleButton from 'src/modules/Explorer/Components/FilterToggleButton';
+import {
+  clearExplorerStateOnTransition,
+  hideExplorerFileMetadata,
+  selectExplorerSelectedFileIds,
+  setExplorerCurrentView,
+  setExplorerFileSelectState,
+  setExplorerFileUploadModalVisibility,
+  setExplorerFocusedFileId,
+  setExplorerQueryString,
+  showExplorerFileMetadata,
+  toggleExplorerFilterView,
+} from 'src/modules/Explorer/store/explorerSlice';
+import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
+import { FetchFilesById } from 'src/store/thunks/Files/FetchFilesById';
+import { PopulateProcessFiles } from 'src/store/thunks/Process/PopulateProcessFiles';
+import { PopulateReviewFiles } from 'src/store/thunks/Review/PopulateReviewFiles';
+import {
+  getLink,
+  getParamLink,
+  workflowRoutes,
+} from 'src/utils/workflowRoutes';
 import styled from 'styled-components';
 import { Colors } from '@cognite/cogs.js';
 import { lightGrey } from 'src/utils/Colors';
@@ -13,38 +34,17 @@ import { TableDataItem, ViewMode } from 'src/modules/Common/types';
 import { ExplorerToolbar } from 'src/modules/Explorer/Containers/ExplorerToolbar';
 import { StatusToolBar } from 'src/modules/Process/Containers/StatusToolBar';
 import { useHistory } from 'react-router-dom';
-import {
-  getLink,
-  getParamLink,
-  workflowRoutes,
-} from 'src/modules/Workflow/workflowRoutes';
 import { MAX_SELECT_COUNT } from 'src/constants/ExplorerConstants';
-import { FetchFilesById } from 'src/store/thunks/FetchFilesById';
 import { pushMetric } from 'src/utils/pushMetric';
-import { PopulateProcessFiles } from 'src/store/thunks/PopulateProcessFiles';
-import { PopulateReviewFiles } from 'src/store/thunks/PopulateReviewFiles';
 import isEqual from 'lodash-es/isEqual';
 import {
   setBulkEditModalVisibility,
   setFileDownloadModalVisibility,
-} from 'src/modules/Common/commonSlice';
+} from 'src/modules/Common/store/commonSlice';
 import { ExplorerFileUploadModalContainer } from 'src/modules/Explorer/Containers/ExplorerFileUploadModalContainer';
 import { ExplorerFileDownloadModalContainer } from 'src/modules/Explorer/Containers/ExplorerFileDownloadModalContainer';
 import { ExplorerBulkEditModalContainer } from 'src/modules/Explorer/Containers/ExplorerBulkEditModalContainer';
-import { DeleteFilesById } from 'src/store/thunks/DeleteFilesById';
 import { FilterSidePanel } from './FilterSidePanel';
-import {
-  setExplorerCurrentView,
-  setExplorerFileSelectState,
-  setExplorerQueryString,
-  setExplorerFocusedFileId,
-  hideExplorerFileMetadata,
-  showExplorerFileMetadata,
-  toggleExplorerFilterView,
-  selectExplorerSelectedFileIds,
-  setExplorerFileUploadModalVisibility,
-  clearExplorerStateOnTransition,
-} from '../store/explorerSlice';
 
 pushMetric('Vision.Explorer');
 

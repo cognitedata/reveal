@@ -1,3 +1,5 @@
+import { ModelConfiguration } from 'src/modules/Process/Containers/ModelConfiguration';
+import { DetectAnnotations } from 'src/store/thunks/Process/DetectAnnotations';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
@@ -19,9 +21,7 @@ import { DetectionModelSelect } from 'src/modules/Process/Components/DetectionMo
 import { isVideo } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
 import { VisionAPIType } from 'src/api/types';
 import { getContainer } from 'src/utils';
-import { DetectAnnotations } from 'src/store/thunks/DetectAnnotations';
 import { AppDispatch } from 'src/store';
-import { ModelConfiguration } from '../ModelConfiguration';
 
 export const ProcessToolBar = () => {
   const dispatch: AppDispatch = useDispatch();

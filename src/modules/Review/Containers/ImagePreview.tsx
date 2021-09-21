@@ -1,25 +1,25 @@
 import React, { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from 'src/store/rootReducer';
-import {
-  deselectAllAnnotations,
-  selectVisibleNonRejectedAnnotationsByFileId,
-  VisibleAnnotation,
-} from 'src/modules/Review/previewSlice';
-import { Annotation } from 'src/api/types';
-import { FileInfo } from '@cognite/cdf-sdk-singleton';
-import { ReactImageAnnotateWrapper } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/ReactImageAnnotateWrapper';
-import { UnsavedAnnotation } from 'src/api/annotation/types';
-import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from 'src/store/thunks/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
-import { CreateAnnotations } from 'src/store/thunks/CreateAnnotations';
-import { UpdateAnnotations } from 'src/store/thunks/UpdateAnnotations';
 import {
   currentCollection,
   deSelectAllCollections,
   deselectAllKeypoints,
   nextKeyPoint,
   nextShape,
-} from 'src/modules/Review/imagePreviewSlice';
+} from 'src/modules/Review/store/imagePreviewSlice';
+import { RootState } from 'src/store/rootReducer';
+import {
+  deselectAllAnnotations,
+  selectVisibleNonRejectedAnnotationsByFileId,
+  VisibleAnnotation,
+} from 'src/modules/Review/store/previewSlice';
+import { Annotation } from 'src/api/types';
+import { FileInfo } from '@cognite/cdf-sdk-singleton';
+import { ReactImageAnnotateWrapper } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/ReactImageAnnotateWrapper';
+import { UnsavedAnnotation } from 'src/api/annotation/types';
+import { CreateAnnotations } from 'src/store/thunks/Annotation/CreateAnnotations';
+import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
+import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from 'src/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
 import { KeypointVertex } from 'src/utils/AnnotationUtils';
 import { pushMetric } from 'src/utils/pushMetric';
 

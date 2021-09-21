@@ -10,10 +10,10 @@ import {
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ParamsObjectDetection } from 'src/api/types';
+import { setParamsObjectDetection } from 'src/modules/Process/processSlice';
 import { RootState } from 'src/store/rootReducer';
 import { ColorsObjectDetection } from 'src/constants/Colors';
 import ObjectDetectionIllustration from 'src/assets/visualDescriptions/ObjectDetectionIllustration.svg';
-import { setParamsObjectDetection } from '../../processSlice';
 import {
   ColorBox,
   NameContainer,

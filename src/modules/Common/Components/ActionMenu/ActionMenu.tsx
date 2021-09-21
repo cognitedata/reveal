@@ -9,7 +9,7 @@ import {
 } from '@cognite/cogs.js';
 import React from 'react';
 import exifIcon from 'src/assets/exifIcon.svg';
-import { ExifIcon } from '../../Containers/FileTableRenderers/NameRenderer';
+import { ExifIcon } from 'src/modules/Common/Containers/FileTableRenderers/NameRenderer';
 
 interface ActionMenuProps {
   buttonType?: string;

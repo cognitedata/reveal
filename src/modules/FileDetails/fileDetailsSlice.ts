@@ -1,13 +1,13 @@
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Label } from '@cognite/cdf-sdk-singleton';
+import { selectFileById } from 'src/modules/Common/store/filesSlice';
 import { RootState } from 'src/store/rootReducer';
 import {
   MetadataItem,
   VisionFileDetails,
 } from 'src/modules/FileDetails/Components/FileMetadata/Types';
-import { updateFileInfoField } from 'src/store/thunks/updateFileInfoField';
+import { updateFileInfoField } from 'src/store/thunks/Files/updateFileInfoField';
 import { generateKeyValueArray } from 'src/utils/FormatUtils';
-import { selectFileById } from '../Common/filesSlice';
 
 export type FileInfoValueState = string | Label[] | number[] | null;
 

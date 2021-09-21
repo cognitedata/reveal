@@ -3,7 +3,7 @@ import { selectExplorerSelectedFileIds } from 'src/modules/Explorer/store/explor
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { setFileDownloadModalVisibility } from 'src/modules/Common/commonSlice';
+import { setFileDownloadModalVisibility } from 'src/modules/Common/store/commonSlice';
 
 export const ExplorerFileDownloadModalContainer = () => {
   const dispatch = useDispatch();

@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import * as CONST from 'src/constants/PaginationConsts';
+import { TableDataItem } from 'src/modules/Common/types';
 import styled from 'styled-components';
 import {
   SortPaginateControls,
@@ -7,11 +8,10 @@ import {
 } from 'src/modules/Common/Components/FileTable/types';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { TableDataItem } from '../../types';
+import { filesAnnotationCounts } from 'src/modules/Common/store/annotationSlice';
 import { Footer } from './Footer';
 import { Header } from './Header';
 import { Paginator } from './Paginator';
-import { filesAnnotationCounts } from '../../annotationSlice';
 
 const getData = (
   data: TableDataItem[],

@@ -13,20 +13,20 @@ import {
   Label,
   Metadata,
 } from '@cognite/cdf-sdk-singleton';
+import { CDFStatusModes } from 'src/modules/Common/Components/CDFStatus/CDFStatus';
+import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
+import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
+import { SaveAnnotations } from 'src/store/thunks/Annotation/SaveAnnotations';
+import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
+import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
+import { FetchFilesById } from 'src/store/thunks/Files/FetchFilesById';
+import { UpdateFiles } from 'src/store/thunks/Files/UpdateFiles';
+import { SaveAnnotationTemplates } from 'src/store/thunks/Review/SaveAnnotationTemplates';
 import { ToastUtils } from 'src/utils/ToastUtils';
 import { createFileInfo } from 'src/store/util/StateUtils';
-import { UpdateFiles } from 'src/store/thunks/UpdateFiles';
-import { DeleteFilesById } from 'src/store/thunks/DeleteFilesById';
-import { SaveAnnotations } from 'src/store/thunks/SaveAnnotations';
-import { RetrieveAnnotations } from 'src/store/thunks/RetrieveAnnotations';
-import { DeleteAnnotations } from 'src/store/thunks/DeleteAnnotations';
-import { UpdateAnnotations } from 'src/store/thunks/UpdateAnnotations';
 import { clearFileState } from 'src/store/commonActions';
 import { makeReducerSelectAllFilesWithFilter } from 'src/store/commonReducers';
-import { SaveAnnotationTemplates } from 'src/store/thunks/SaveAnnotationTemplates';
-import { FetchFilesById } from 'src/store/thunks/FetchFilesById';
 import { SelectFilter } from 'src/modules/Common/types';
-import { CDFStatusModes } from '../Common/Components/CDFStatus/CDFStatus';
 
 export type VisionAsset = Omit<
   Asset,

@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
-
 import { Button, Tooltip } from '@cognite/cogs.js';
+import { AnnotationsBadge } from 'src/modules/Common/Components/AnnotationsBadge/AnnotationsBadge';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import exifIcon from 'src/assets/exifIcon.svg';
@@ -12,13 +12,12 @@ import {
 } from 'src/modules/Process/processSlice';
 import { TableDataItem } from 'src/modules/Common/types';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
-import { DeleteFilesById } from 'src/store/thunks/DeleteFilesById';
-import { AnnotationsBadge } from '../AnnotationsBadge/AnnotationsBadge';
-import { AnnotationsBadgePopoverContent } from '../AnnotationsBadge/AnnotationsBadgePopoverContent';
-import { Popover } from '../Popover';
-import { makeSelectAnnotationCounts } from '../../annotationSlice';
-import { ActionMenu } from '../ActionMenu/ActionMenu';
-import { Thumbnail } from '../Thumbnail/Thumbnail';
+import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
+import { makeSelectAnnotationCounts } from 'src/modules/Common/store/annotationSlice';
+import { Popover } from 'src/modules/Common/Components/Popover';
+import { ActionMenu } from 'src/modules/Common/Components/ActionMenu/ActionMenu';
+import { Thumbnail } from 'src/modules/Common/Components/Thumbnail/Thumbnail';
+import { AnnotationsBadgePopoverContent } from 'src/modules/Common/Components/AnnotationsBadge/AnnotationsBadgePopoverContent';
 
 export const MapPopup = ({
   item,

@@ -1,18 +1,5 @@
 import React, { ReactText, useMemo } from 'react';
 import { Detail, Icon, PrimaryTooltip } from '@cognite/cogs.js';
-import styled from 'styled-components';
-import { AnnotationsTable } from 'src/modules/Review/Components/AnnotationsTable/AnnotationsTable';
-import {
-  deselectAllAnnotations,
-  selectAnnotation,
-  toggleAnnotationVisibility,
-  VisionAnnotationState,
-} from 'src/modules/Review/previewSlice';
-import { RootState } from 'src/store/rootReducer';
-import { VisionAPIType } from 'src/api/types';
-import { useDispatch, useSelector } from 'react-redux';
-import { FileInfo } from '@cognite/cdf-sdk-singleton';
-import { convertKeyPointCollectionToAnnotationStub } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/ConversionUtils';
 import {
   currentCollection,
   deleteCollectionById,
@@ -22,10 +9,23 @@ import {
   selectCollection,
   setCollectionStatus,
   toggleCollectionVisibility,
-} from 'src/modules/Review/imagePreviewSlice';
+} from 'src/modules/Review/store/imagePreviewSlice';
+import {
+  deselectAllAnnotations,
+  selectAnnotation,
+  toggleAnnotationVisibility,
+  VisionAnnotationState,
+} from 'src/modules/Review/store/previewSlice';
+import { ApproveAnnotation } from 'src/store/thunks/Annotation/ApproveAnnotation';
+import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from 'src/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
+import styled from 'styled-components';
+import { AnnotationsTable } from 'src/modules/Review/Components/AnnotationsTable/AnnotationsTable';
+import { RootState } from 'src/store/rootReducer';
+import { VisionAPIType } from 'src/api/types';
+import { useDispatch, useSelector } from 'react-redux';
+import { FileInfo } from '@cognite/cdf-sdk-singleton';
+import { convertKeyPointCollectionToAnnotationStub } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/ConversionUtils';
 import { AnnotationStatus } from 'src/utils/AnnotationUtils';
-import { ApproveAnnotation } from 'src/store/thunks/ApproveAnnotation';
-import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from 'src/store/thunks/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
 import { AnnotationTableItem } from 'src/modules/Review/types';
 
 export const Contextualization = (props: {
