@@ -43,23 +43,26 @@ export default class GltfSectorParser {
     const document: Document = this._gltfReader.readBinary(data);
 
     const defaultScene = document.getRoot().getDefaultScene();
-    const buffs: [RevealGeometryCollectionType, THREE.BufferGeometry][] = [];
+    const typedGeometryBuffers: { type: RevealGeometryCollectionType; buffer: THREE.BufferGeometry }[] = [];
+
     defaultScene!.traverse((node: Node) => {
-      const res = this.processNode(node);
-      if (res) buffs.push(res);
+      const processedNode = this.processNode(node);
+
+      if (processedNode) typedGeometryBuffers.push(processedNode);
     });
 
-    return buffs;
+    return typedGeometryBuffers;
   }
 
-  private processNode(node: Node): [RevealGeometryCollectionType, THREE.BufferGeometry] | null {
-    const instanced = node.getExtension<InstancedMesh>(MeshGPUInstancing.EXTENSION_NAME)!;
-    const mesh = node.getMesh()!;
+  private processNode(node: Node): { type: RevealGeometryCollectionType; buffer: THREE.BufferGeometry } | null {
+    const instanced = node.getExtension<InstancedMesh>(MeshGPUInstancing.EXTENSION_NAME);
+    const mesh = node.getMesh();
 
     if (this.isEmptyNode(instanced, mesh)) return null;
 
     const bufferGeometry = instanced ? new THREE.InstancedBufferGeometry() : new THREE.BufferGeometry();
 
+    // Casts the string (node.getName()) to a RevealGeometryCollectionType enum (e.g. BoxCollection)
     const geometryType = RevealGeometryCollectionType[node.getName() as keyof typeof RevealGeometryCollectionType];
 
     if (mesh) {
@@ -68,18 +71,18 @@ export default class GltfSectorParser {
 
       if (!instanced) {
         this.setUniqueMeshAttributes(primitive, bufferGeometry);
-        return [geometryType, bufferGeometry];
+        return { type: geometryType, buffer: bufferGeometry };
       }
     } else {
       this.setPrimitiveTopology(geometryType, bufferGeometry);
     }
 
-    this.setInstancedAttributes(instanced, bufferGeometry);
+    if (instanced) this.setInstancedAttributes(instanced, bufferGeometry);
 
-    return [geometryType, bufferGeometry];
+    return { type: geometryType, buffer: bufferGeometry };
   }
 
-  private isEmptyNode(instanced: InstancedMesh, mesh: Mesh) {
+  private isEmptyNode(instanced: InstancedMesh | null, mesh: Mesh | null) {
     return !instanced && !mesh;
   }
 

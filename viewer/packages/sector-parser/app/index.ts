@@ -69,8 +69,8 @@ async function init() {
     buffers.forEach(element => {
       const geometries = loader.parseSector(element);
       geometries.forEach(result => {
-        const material = materialMap.get(result[0])!;
-        const mesh = new THREE.Mesh(result[1], material);
+        const material = materialMap.get(result.type)!;
+        const mesh = new THREE.Mesh(result.buffer, material);
         mesh.frustumCulled = false;
         mesh.onBeforeRender = () => {
           const inverseModelMatrix: THREE.Matrix4 = material.uniforms.inverseModelMatrix.value;
