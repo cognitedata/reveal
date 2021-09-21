@@ -7,8 +7,9 @@ import React from 'react';
 import { TestEnvCad, TestViewer } from '../TestViewer';
 import * as THREE from 'three';
 import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@cognite/reveal';
+import { registerVisualTest } from '../../../visual_tests';
 
-export function HighlightTestPage() {
+function HighlightTestPage() {
   return (
     <TestViewer
     modifyTestEnv={({ model }: TestEnvCad) => {
@@ -25,3 +26,5 @@ export function HighlightTestPage() {
     />
   );
 }
+
+registerVisualTest('cad', 'default-highlight', 'Highlight objects', <HighlightTestPage />)

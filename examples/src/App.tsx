@@ -7,8 +7,8 @@ import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import {
   ExampleRoute,
   exampleRoutes,
-  testRoutesCad,
-  testRoutesPointCloud,
+  cadTestRoutes,
+  pointCloudTestRoutes,
 } from './routes';
 import { Container } from './components/styled';
 import styled from 'styled-components';
@@ -55,22 +55,23 @@ export default function App() {
 
         <h2>Snapshot CAD tests pages</h2>
 
-        <PagesList routes={testRoutesCad} />
+        <PagesList routes={cadTestRoutes()} />
 
         <h2>Snapshot Pointcloud tests pages</h2>
 
-        <PagesList routes={testRoutesPointCloud} />
+        <PagesList routes={pointCloudTestRoutes()} />
       </nav>
     </Route>
   );
 
   return (
+    <>
     <Router basename={process.env.PUBLIC_URL}>
       <div style={{ padding: '5px' }}>
         <PageContainer>
           <Switch>
             {exampleRoutes
-              .concat(testRoutesCad, testRoutesPointCloud)
+              .concat(cadTestRoutes(), pointCloudTestRoutes())
               .map((page) => (
                 <Route
                   key={page.path}
@@ -93,5 +94,9 @@ export default function App() {
         </PageContainer>
       </div>
     </Router>
+    <Router basename={`${process.env.PUBLIC_URL}/test.json`}>
+      <div>Hello</div>
+    </Router>
+    </>
   );
 }
