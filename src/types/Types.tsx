@@ -11,7 +11,7 @@ export type ResourceType =
 // Temporary mapping of the two almost identical types. Should be
 // removed as soon as possible, but that requires a full refactor
 // replacing ResourceType with SdkResourcetype
-export function convertResourceType(t: ResourceType): SdkResourceType {
+export function convertResourceType(t?: ResourceType): SdkResourceType {
   switch (t) {
     case 'asset': {
       return 'assets';

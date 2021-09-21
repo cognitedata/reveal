@@ -3,11 +3,10 @@ import {
   Button,
   Title,
   Body,
-  Overline,
   Collapse,
-  Pagination,
   Menu,
   Icon,
+  Detail,
 } from '@cognite/cogs.js';
 import {
   useSelectedAnnotations,
@@ -15,7 +14,7 @@ import {
   useExtractFromCanvas,
 } from '@cognite/react-picture-annotation';
 import { Divider, InfoGrid, InfoCell } from 'components';
-import { Modal, notification, Dropdown } from 'antd';
+import { Modal, notification, Dropdown, Pagination, Spin } from 'antd';
 import {
   AnnotationStatus,
   CogniteAnnotation,
@@ -39,11 +38,14 @@ import { useSDK } from '@cognite/sdk-provider';
 import { CogniteEvent, EventChange, FileInfo } from '@cognite/sdk';
 import { lightGrey } from 'utils/Colors';
 import { ResourcePreviewSidebar } from 'containers';
-import { useCdfItem, useUserInfo } from '@cognite/sdk-react-query-hooks';
+import {
+  SdkResourceType,
+  useCdfItem,
+  useUserInfo,
+} from '@cognite/sdk-react-query-hooks';
 
-import { useFlag } from '@cognite/react-feature-flags';
-import { SIDEBAR_RESIZE_EVENT } from 'utils/WindowEvents';
 import InteractiveIcon from 'components/InteractiveIcon';
+import { SIDEBAR_RESIZE_EVENT } from 'utils/WindowEvents';
 import { useReviewFile } from '../hooks';
 import { ContextualizationData } from './ContextualizationModule';
 import { CreateAnnotationForm } from './CreateAnnotationForm/CreateAnnotationForm';
@@ -72,7 +74,7 @@ const AnnotationPreviewSidebar = ({
   const { data: userData } = useUserInfo();
   const { email = 'UNKNOWN' } = userData || {};
   const [editing, setEditing] = useState<boolean>(false);
-  const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const [currentIndex, setCurrentIndex] = useState<number>(3);
 
   const { isLoading: isApprovingFile, onApproveFile } = useReviewFile(file?.id);
   const {
@@ -81,7 +83,7 @@ const AnnotationPreviewSidebar = ({
   } = useSelectedAnnotations();
 
   const selectedAnnotation = selectedAnnotations?.length
-    ? selectedAnnotations[currentIndex]
+    ? selectedAnnotations[currentIndex || 0]
     : undefined;
 
   const extractFromCanvas = useExtractFromCanvas();
@@ -341,37 +343,19 @@ const AnnotationPreviewSidebar = ({
     annotation: CogniteAnnotation | ProposedCogniteAnnotation;
     onClose: () => void;
   }) => {
-    const { metadata } = annotation;
+    const resourceType = annotation?.resourceType
+      ? (convertResourceType(
+          annotation?.resourceType as ResourceType
+        ) as SdkResourceType)
+      : undefined;
 
-    const isBPEnabled = useFlag('BP_FILE_EXPERIMENT', {
-      fallback: false,
-      forceRerender: true,
-    });
-    // TODO(CDFUX-000): BP Specific!
-    const extraDetails: React.ReactNode[] = [];
-    if (isBPEnabled) {
-      if (metadata && metadata.BP_PROJECT) {
-        extraDetails.push(
-          <>
-            <Overline level={2} style={{ marginTop: 8 }}>
-              PROJECT
-            </Overline>
-            <Body level={2}>{metadata.BP_PROJECT}</Body>
-          </>
-        );
+    const { data: item, isLoading } = useCdfItem(
+      resourceType ?? 'assets', // to-do: should be handled in sdk-react-query-hooks
+      { id: Number(annotation.resourceId) },
+      {
+        enabled: !!annotation.resourceType && !!annotation.resourceId,
       }
-      if (metadata && metadata.BP_SHOULD_NOTIFY) {
-        extraDetails.push(
-          <>
-            <Overline level={2} style={{ marginTop: 8 }}>
-              INFO
-            </Overline>
-            <Body level={2}>{metadata.BP_SHOULD_NOTIFY}</Body>
-          </>
-        );
-      }
-    }
-
+    );
     const menuOptions = () => (
       <Menu>
         <Menu.Item onClick={() => setEditing(true)}> Edit</Menu.Item>
@@ -380,17 +364,19 @@ const AnnotationPreviewSidebar = ({
         </Menu.Item>
       </Menu>
     );
-
+    if (isLoading) {
+      return <Spin />;
+    }
     if (!isEditingMode) {
       return (
         <InfoGrid>
           {selectedAnnotations?.length > 1 && (
             <Pagination
+              size="small"
               total={selectedAnnotations.length}
               pageSize={1}
-              showPrevNextJumpers={false}
               showQuickJumper={false}
-              defaultCurrent={currentIndex}
+              current={currentIndex + 1 || 1}
               onChange={i => {
                 setCurrentIndex(i - 1);
               }}
@@ -399,11 +385,9 @@ const AnnotationPreviewSidebar = ({
 
           <InfoCell>
             {selectedAnnotations?.length > 1 ? (
-              <InfoCell>
-                <Body level={3}>
-                  {currentIndex + 1} of {selectedAnnotations.length}
-                </Body>
-              </InfoCell>
+              <Detail>
+                {currentIndex + 1} of {selectedAnnotations.length}
+              </Detail>
             ) : (
               ''
             )}
@@ -421,8 +405,11 @@ const AnnotationPreviewSidebar = ({
                 <Button icon="Close" variant="ghost" onClick={onClose} />
               </div>
             </div>
-            <Body level={2}>{annotation.description || 'N/A'}</Body>
-            {extraDetails}
+            <Body level={2}>
+              {annotation.description ||
+                (item as { description?: string })?.description ||
+                'N/A'}
+            </Body>
           </InfoCell>
           {contextualization && (
             <InfoCell noBorders>
@@ -447,10 +434,16 @@ const AnnotationPreviewSidebar = ({
         </InfoGrid>
       );
     }
+
     return <></>;
   };
 
-  const type = selectedAnnotation?.resourceType as ResourceType;
+  const isLinked =
+    !!selectedAnnotation?.resourceId ||
+    !!selectedAnnotation?.resourceExternalId;
+  const type = isLinked
+    ? (selectedAnnotation?.resourceType as ResourceType)
+    : undefined;
   const apiType = type ? convertResourceType(type) : 'assets';
   const { resourceExternalId, resourceId } = selectedAnnotation || {};
   const { data: item } = useCdfItem<{ id: number }>(
@@ -461,12 +454,19 @@ const AnnotationPreviewSidebar = ({
     { enabled: !!type }
   );
 
-  if (!selectedAnnotation || !selectedAnnotations?.length) {
+  if (selectedAnnotation) {
     return (
       <div style={{ width: 360, borderLeft: `1px solid ${lightGrey}` }}>
         <ResourcePreviewSidebar
           hideTitle
           closable={false}
+          item={
+            item &&
+            type && {
+              id: item.id,
+              type,
+            }
+          }
           actions={
             onItemClicked &&
             item && [
@@ -474,6 +474,7 @@ const AnnotationPreviewSidebar = ({
                 icon="ArrowRight"
                 iconPlacement="right"
                 onClick={() =>
+                  type &&
                   onItemClicked({
                     id: item.id,
                     type,
@@ -485,15 +486,45 @@ const AnnotationPreviewSidebar = ({
             ]
           }
           header={
-            <TitleWrapper>
-              <InteractiveIcon />
-              <Title level={4}>{file?.name} </Title>
-              <DiagramReviewStatus file={file} />
-              <FileReview
-                annotations={annotations}
-                onApprove={onApproveAllAnnotations}
+            <Header
+              annotation={selectedAnnotation}
+              onClose={() => setSelectedAnnotations([])}
+            />
+          }
+          footer={
+            <>
+              <ContextualizationData
+                selectedAnnotation={selectedAnnotation}
+                extractFromCanvas={extractFromCanvas}
               />
-            </TitleWrapper>
+            </>
+          }
+          content={
+            isEditingMode ? (
+              <CreateAnnotationForm
+                annotation={selectedAnnotation}
+                updateAnnotation={annotation =>
+                  setSelectedAnnotations([annotation])
+                }
+                onLinkResource={onLinkResource}
+                onDelete={() => {
+                  onDeleteAnnotation(selectedAnnotation);
+                }}
+                onSave={() => {
+                  if (selectedAnnotation) {
+                    onSaveAnnotation(selectedAnnotation);
+                  }
+                  setEditing(false);
+                  if (isPendingAnnotation) {
+                    setSelectedAnnotations([]);
+                  }
+                }}
+                previewImageSrc={annotationPreview}
+                onCancel={
+                  isPendingAnnotation ? undefined : () => setEditing(false)
+                }
+              />
+            ) : undefined
           }
           onClose={() => setSelectedAnnotations([])}
         />
@@ -505,15 +536,10 @@ const AnnotationPreviewSidebar = ({
       <ResourcePreviewSidebar
         hideTitle
         closable={false}
-        item={
-          item && {
-            id: item.id,
-            type,
-          }
-        }
         actions={
           onItemClicked &&
-          item && [
+          item &&
+          type && [
             <Button
               icon="ArrowRight"
               iconPlacement="right"
@@ -529,45 +555,15 @@ const AnnotationPreviewSidebar = ({
           ]
         }
         header={
-          <Header
-            annotation={selectedAnnotation}
-            onClose={() => setSelectedAnnotations([])}
-          />
-        }
-        footer={
-          <>
-            <ContextualizationData
-              selectedAnnotation={selectedAnnotation}
-              extractFromCanvas={extractFromCanvas}
+          <TitleWrapper>
+            <InteractiveIcon />
+            <Title level={4}>{file?.name} </Title>
+            <DiagramReviewStatus file={file} />
+            <FileReview
+              annotations={annotations}
+              onApprove={onApproveAllAnnotations}
             />
-          </>
-        }
-        content={
-          isEditingMode ? (
-            <CreateAnnotationForm
-              annotation={selectedAnnotation}
-              updateAnnotation={annotation =>
-                setSelectedAnnotations([annotation])
-              }
-              onLinkResource={onLinkResource}
-              onDelete={() => {
-                onDeleteAnnotation(selectedAnnotation);
-              }}
-              onSave={() => {
-                if (selectedAnnotation) {
-                  onSaveAnnotation(selectedAnnotation);
-                }
-                setEditing(false);
-                if (isPendingAnnotation) {
-                  setSelectedAnnotations([]);
-                }
-              }}
-              previewImageSrc={annotationPreview}
-              onCancel={
-                isPendingAnnotation ? undefined : () => setEditing(false)
-              }
-            />
-          ) : undefined
+          </TitleWrapper>
         }
         onClose={() => setSelectedAnnotations([])}
       />
