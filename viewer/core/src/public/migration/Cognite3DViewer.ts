@@ -754,9 +754,10 @@ export class Cognite3DViewer {
   }
 
   /**
-   * Returns the current active slicing (clipping) planes;.
+   * Returns the current active clipping planes.
+   * @version New in 2.1
    */
-  getSlicingPlanes(): THREE.Plane[] {
+  getClippingPlanes(): THREE.Plane[] {
     return this.revealManager.clippingPlanes;
   }
 
@@ -1119,7 +1120,7 @@ export class Cognite3DViewer {
       normalizedCoords,
       camera: this.camera,
       renderer: this.renderer,
-      clippingPlanes: this.getSlicingPlanes(),
+      clippingPlanes: this.getClippingPlanes(),
       domElement: this.renderer.domElement
     };
     const cadResults = intersectCadNodes(cadNodes, input);
