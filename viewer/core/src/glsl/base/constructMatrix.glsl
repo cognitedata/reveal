@@ -1,12 +1,10 @@
-// TODO consider fixing Three.js so it is possible to pass a mat4:
-// see https://stackoverflow.com/questions/38853096/webgl-how-to-bind-values-to-a-mat4-attribute
-
+// Not using the w-component to support using vec3 and vec4 as input
 mat4 constructMatrix(vec4 column_0, vec4 column_1, vec4 column_2, vec4 column_3) {
   return mat4(
-    column_0,
-    column_1,
-    column_2,
-    column_3
+    vec4(column_0.xyz, 0.0),
+    vec4(column_1.xyz, 0.0),
+    vec4(column_2.xyz, 0.0),
+    vec4(column_3.xyz, 1.0)
   );
 }
 

@@ -5,8 +5,9 @@
 import * as THREE from 'three';
 import React from 'react';
 import { TestEnvCad, TestViewer } from '../TestViewer';
+import { registerVisualTest } from '../../../visual_tests';
 
-export function UserRenderTargetTestPage() {
+function UserRenderTargetTestPage() {
   return (
     <TestViewer
       modifyTestEnv={({ renderer, revealManager }: TestEnvCad) => {
@@ -66,3 +67,5 @@ export function UserRenderTargetTestPage() {
     />
   );
 }
+
+registerVisualTest('cad', 'userRenderTarget', 'Custom render target', <UserRenderTargetTestPage />)

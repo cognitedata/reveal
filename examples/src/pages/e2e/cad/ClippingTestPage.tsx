@@ -3,11 +3,11 @@
  */
 
 import * as THREE from 'three';
-import React from 'react';
 import { BoundingBoxClipper } from '@cognite/reveal';
 import { TestEnvCad, TestViewer } from '../TestViewer';
+import { registerVisualTest } from '../../../visual_tests';
 
-export function ClippingTestPage() {
+function ClippingTestPage() {
   return (
     <TestViewer
       modifyTestEnv={({ revealManager }: TestEnvCad) => {
@@ -45,3 +45,5 @@ export function ClippingTestPage() {
     />
   );
 }
+
+registerVisualTest('cad', 'clipping', 'Clipping planes', <ClippingTestPage />)
