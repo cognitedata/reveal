@@ -43,12 +43,14 @@ export class ClippingUI {
   }
 
   private orderOfMagnitude(v: number): number {
-    const order = Math.floor(Math.log(v) / Math.LN10 + 0.00001);
+    const epsilon = 0.00001;
+    const order = Math.floor(Math.log(v) / Math.LN10 + epsilon);
     return Math.pow(10, order);
   }
 
   private createGui(ui: dat.GUI) {
     const updateSlicingPlanes = this.updateSlicingPlanes.bind(this);
+    // X
     ui
       .add(this._params, 'enabledX')
       .name('X')
