@@ -74,7 +74,7 @@ export const exampleRoutes: Array<ExampleRoute> = [
     component: <Migration />,
   },
   {
-    name: 'cad-pointcloud',
+    name: 'geomap',
     path:
       `/geomap?project=${project}` +
       `&modelId=${cadId}` +
@@ -83,6 +83,7 @@ export const exampleRoutes: Array<ExampleRoute> = [
     component: <Geomap />,
   },
   {
+    name: 'cad-pointcloud',
     path:
       `/sector-with-pointcloud?project=${project}` +
       `&modelId=${cadId}` +

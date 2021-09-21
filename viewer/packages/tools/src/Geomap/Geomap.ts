@@ -10,6 +10,7 @@ import { LatLongPosition, MapConfig, MapProviders } from './MapConfig';
 export class Geomap {
   private readonly _viewer: Cognite3DViewer;
   private _map: GEOTHREE.MapView;
+  private _intervalId: any = 0;
 
   constructor(viewer: Cognite3DViewer, mapConfig: MapConfig) {
     this._viewer = viewer;
@@ -28,12 +29,15 @@ export class Geomap {
   }
 
   private requestRedraw(timeOut: number) {
-    var intervalId = setInterval(() => {
-      this._viewer.requestRedraw();
-    }, 100);
+    if(this._intervalId == 0) {
+      this._intervalId = setInterval(() => {
+        this._viewer.requestRedraw();
+      }, 100);
+    }
 
     setTimeout(() => {
-      clearInterval(intervalId);
+      clearInterval(this._intervalId);
+      this._intervalId = 0;
     }, timeOut);
   }
 
