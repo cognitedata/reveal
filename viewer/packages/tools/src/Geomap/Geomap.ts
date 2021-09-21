@@ -16,12 +16,19 @@ export class Geomap {
     const mapProvider = this.getMapProvider(mapConfig);
     this._map = new GEOTHREE.MapView(GEOTHREE.MapView.PLANAR, mapProvider, mapProvider);
     this._viewer.addObject3D(this._map);
-    this._viewer.requestRedraw();
 
     const coords = GEOTHREE.UnitsUtils.datumsToSpherical(mapConfig.latlong.latitude, mapConfig.latlong.longitude);
     const bound = this._viewer.models[0].getModelBoundingBox();
     this._map.position.set(-coords.x, bound.min.y, coords.y);
     this._map.updateMatrixWorld(true);
+
+    var intervalId = setInterval(function() {
+      viewer.requestRedraw();
+    }, 100);
+
+      setTimeout(() => {
+        clearInterval(intervalId);
+      }, 20000);
   }
 
   private getMapProvider(mapConfig: MapConfig) {

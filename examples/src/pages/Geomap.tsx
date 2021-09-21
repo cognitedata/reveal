@@ -271,7 +271,6 @@ export function Geomap() {
         }
         map.dispose();
         map = new GeomapTool(viewer, mapConfig);
-        viewer.requestRedraw();
       });
     }
 
