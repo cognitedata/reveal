@@ -1,0 +1,4 @@
+exports_files([
+    "sed_linux.sh",
+    "sed_darwin.sh",
+])
