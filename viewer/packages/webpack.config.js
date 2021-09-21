@@ -17,11 +17,16 @@ module.exports = env => {
 
     resolve: {
       extensions: ['.ts', '.js'],
-      symlinks: false
+      symlinks: true
     },
 
     devServer: {
-      contentBase: path.resolve(env.dir, './dist')
+      contentBase: path.resolve(env.dir, './app'),
+      disableHostCheck: true,
+      watchContentBase: true,
+      watchOptions: {
+        poll: true
+      }
     },
 
     module: {
@@ -31,9 +36,19 @@ module.exports = env => {
           use: {
             loader: 'ts-loader',
             options: {
-              configFile: path.resolve(__dirname, '../tsconfig.json')
+              configFile: path.resolve(__dirname, '../tsconfig.json'),
+              compilerOptions: {
+                // set less lint requirement for test apps
+                noUnusedLocals: false,
+                noUnusedParameters: false
+              }
             }
           }
+        },
+        {
+          test: /\.(glsl|vert|frag)$/,
+          exclude: '/node_modules/',
+          use: ['raw-loader', 'glslify-loader']
         }
       ]
     },
