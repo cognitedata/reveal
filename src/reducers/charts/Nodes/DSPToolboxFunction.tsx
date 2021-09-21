@@ -10,6 +10,7 @@ import {
   Dropdown,
   Button,
   Menu,
+  Select,
   Checkbox,
 } from '@cognite/cogs.js';
 import {
@@ -238,12 +239,57 @@ export const ConfigPanel = ({
     );
   };
 
-  const renderParameter = (parameters: any) => {
+  const renderParameter = (parameters: DSPFunctionParameter[]) => {
     return parameters.map(
-      ({ param, type, default: _default }: DSPFunctionParameter) => {
+      ({ name, param, description, type, default: _default, options = [] }) => {
+        const hasAvailableOptions = !!options?.length;
+
+        const inputElement = hasAvailableOptions ? (
+          <Select
+            theme="dark"
+            value={
+              (functionData[param] && {
+                label: options.find(
+                  ({ value }) => functionData[param] === value
+                )?.name,
+                value: options.find(
+                  ({ value }) => functionData[param] === value
+                )?.value,
+              }) || { label: _default.name, value: _default.value }
+            }
+            options={options.map((option) => ({
+              label: option.name,
+              value: option.value,
+            }))}
+            onChange={(option: { label: string; value: string }) => {
+              onUpdateNode({
+                functionData: {
+                  ...node.functionData,
+                  [param]: transformParamInput(type, option.value),
+                },
+              });
+            }}
+            closeMenuOnSelect
+          />
+        ) : (
+          <DSPToolboxFunctionInput
+            key={param}
+            id={param}
+            defaultValue={functionData[param] || _default || ''}
+            onChange={(value) => {
+              onUpdateNode({
+                functionData: {
+                  ...node.functionData,
+                  [param]: transformParamInput(type, value),
+                },
+              });
+            }}
+          />
+        );
+
         return (
           <div style={{ marginTop: 8 }}>
-            <h4>{param}</h4>
+            <h4 title={description}>{name}</h4>
             {type === DSPFunctionParameterType.boolean ? (
               <Checkbox
                 onChange={(nextState: boolean) => {
@@ -258,19 +304,7 @@ export const ConfigPanel = ({
                 value={functionData[param]}
               />
             ) : (
-              <DSPToolboxFunctionInput
-                key={param}
-                id={param}
-                defaultValue={functionData[param] || _default || ''}
-                onChange={(value) => {
-                  onUpdateNode({
-                    functionData: {
-                      ...node.functionData,
-                      [param]: transformParamInput(type, value),
-                    },
-                  });
-                }}
-              />
+              inputElement
             )}
           </div>
         );
