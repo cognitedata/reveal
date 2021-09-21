@@ -7,7 +7,7 @@ import {
   AddModelOptions,
   Cognite3DViewer,
   SupportedModelTypes
-} from '@cognite/reveal';
+} from '@cognite/reveal-2.x';
 
 import { CanvasWrapper } from '@site/docs/components/styled';
 import { DemoProps } from '@site/docs/components/DemoProps';

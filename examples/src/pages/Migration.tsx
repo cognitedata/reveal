@@ -21,6 +21,7 @@ import {
 import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, AxisViewTool, HtmlOverlayTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
 import { CadNode } from '@cognite/reveal/internals';
+import { initialCadBudgetUi } from '../utils/CadBudgetUi';
 
 window.THREE = THREE;
 (window as any).reveal = reveal;
@@ -48,7 +49,9 @@ export function Migration() {
 
       const progress = (itemsLoaded: number, itemsRequested: number, itemsCulled: number) => {
         guiState.debug.loadedSectors.statistics.culledCount = itemsCulled;
-        console.log(`loaded ${itemsLoaded}/${itemsRequested} (culled: ${itemsCulled})`);
+        if (itemsLoaded === 0 || itemsLoaded === itemsRequested) {
+          console.log(`loaded ${itemsLoaded}/${itemsRequested} (culled: ${itemsCulled})`);
+        }
       };
 
       // Login
@@ -141,7 +144,6 @@ export function Migration() {
       const guiState = {
         modelId: 0,
         revisionId: 0,
-        cadBudgetFactor: 100.0,
         geometryFilter:
           geometryFilter !== undefined
             ? { ...geometryFilter, enabled: true }
@@ -163,7 +165,8 @@ export function Migration() {
               showDetailedSectors: true,
               showDiscardedSectors: false,
               colorBy: 'lod',
-              leafsOnly: false
+              leafsOnly: false,
+              sectorPathFilterRegex: '^.*/$'
             } as DebugLoadedSectorsToolOptions,
             tool: new DebugLoadedSectorsTool(viewer),
             statistics: {
@@ -223,15 +226,7 @@ export function Migration() {
       modelGui.add(guiState, 'revisionId').name('Revision ID');
       modelGui.add(guiActions, 'addModel').name('Load model');
       modelGui.add(guiActions, 'fitToModel').name('Fit camera');
-      const defaultCadBudget = { ...viewer.cadBudget };
-      modelGui.add(guiState, 'cadBudgetFactor', 1, 500, 5).name('CAD budget').onChange(budgetFactor => {
-        const s = budgetFactor / 100.0;
-        viewer.cadBudget = {
-          highDetailProximityThreshold: defaultCadBudget.highDetailProximityThreshold * s,
-          geometryDownloadSizeBytes: defaultCadBudget.geometryDownloadSizeBytes * s,
-          maximumNumberOfDrawCalls: defaultCadBudget.maximumNumberOfDrawCalls * s
-        };
-    });
+      initialCadBudgetUi(viewer, gui.addFolder('CAD budget'));
 
       const geometryFilterGui = modelGui.addFolder('Geometry Filter');
       let geometryFilterPreview: THREE.Object3D | undefined = undefined;
@@ -302,11 +297,13 @@ export function Migration() {
 
       const debugSectorsGui = debugGui.addFolder('Loaded sectors');
 
-      debugSectorsGui.add(guiState.debug.loadedSectors.options, 'colorBy', ['lod', 'depth', 'loadedTimestamp']).name('Color by');
+      debugSectorsGui.add(guiState.debug.loadedSectors.options, 'colorBy', ['lod', 'depth', 'loadedTimestamp', 'random']).name('Color by');
       debugSectorsGui.add(guiState.debug.loadedSectors.options, 'leafsOnly').name('Leaf nodes only');
       debugSectorsGui.add(guiState.debug.loadedSectors.options, 'showSimpleSectors').name('Show simple sectors');
-      debugSectorsGui.add(guiState.debug.loadedSectors.options, 'showDetailedSectors').name('Show detailed sectors');
+      debugSectorsGui.add(guiState.debug.loadedSectors.options, 'showDetailedSectors').name('Show detailed sectors');      
       debugSectorsGui.add(guiState.debug.loadedSectors.options, 'showDiscardedSectors').name('Show discarded sectors');
+      debugSectorsGui.add(guiState.debug.loadedSectors.options, 'sectorPathFilterRegex').name('Sectors path filter');
+      debugSectorsGui.add(guiActions, 'showSectorBoundingBoxes').name('Show sectors');
       debugSectorsGui.add(guiState.debug.loadedSectors.statistics, 'insideSectors').name('# sectors@camera');
       debugSectorsGui.add(guiState.debug.loadedSectors.statistics, 'maxSectorDepthOfInsideSectors').name('Max sector depth@camera');
       debugSectorsGui.add(guiState.debug.loadedSectors.statistics, 'maxSectorDepth').name('Max sector tree depth');
@@ -345,7 +342,6 @@ export function Migration() {
         debugSectorsGui.updateDisplay();
       }, 500);
 
-      debugSectorsGui.add(guiActions, 'showSectorBoundingBoxes').name('Show sectors');
       debugGui.add(guiActions, 'showCameraHelper').name('Show camera');
       debugGui.add(guiActions, 'showBoundsForAllGeometries').name('Show geometry bounds');
       debugGui.add(guiState.debug, 'suspendLoading').name('Suspend loading').onFinishChange(suspend => {
@@ -520,7 +516,6 @@ export function Migration() {
                 viewer.fitCameraToBoundingBox(boundingBox, 1000);
               }
               break;
-
             case 'pointcloud':
               {
                 const { pointIndex, point } = intersection;
