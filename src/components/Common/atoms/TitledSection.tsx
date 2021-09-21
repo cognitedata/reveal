@@ -13,6 +13,7 @@ const Wrapper = styled.div`
   border-radius: 8px;
   padding: 0;
   margin: 0;
+  margin-bottom: 90px;
 `;
 
 type Props = {

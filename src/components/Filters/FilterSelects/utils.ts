@@ -51,17 +51,20 @@ export const approvalDetails: { [key: string]: ReviewStatus } = {
     type: 'pending',
     variant: 'warning',
     label: 'Pending approval',
+    tooltip: 'New detected tags that need to be reviewed',
   },
   approved: {
     status: INTERACTIVE_LABEL.externalId,
     type: 'approved',
     variant: 'success',
     label: 'Approved',
+    tooltip: 'All tags have been reviewed',
   },
   unknown: {
     status: 'No tags detected',
     type: 'empty',
     variant: 'unknown',
     label: 'No tags detected',
+    tooltip: 'No tags were found in the diagram',
   },
 };

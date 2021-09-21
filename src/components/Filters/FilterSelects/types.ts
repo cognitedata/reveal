@@ -19,4 +19,5 @@ export type ReviewStatus = {
   type: StatusType;
   variant: LabelVariants;
   label: string;
+  tooltip: string;
 };
