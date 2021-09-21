@@ -1252,10 +1252,10 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@cognite/potree-core@1.2.1":
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/@cognite/potree-core/-/potree-core-1.2.1.tgz#f979e3de0c8fba7fb6dfcec07e016e75a859fcf8"
-  integrity sha512-OzVE9R/cZ9YWOQXtej9rE9fEIRO/P3rKH02tz+qhDt7avIjNCWBvrAnOg9nLyXvkIBDQhy4r1SatJ8oT8Gfxpg==
+"@cognite/potree-core@1.5.0":
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/@cognite/potree-core/-/potree-core-1.5.0.tgz#7b288a12358b2ef2b2ae51195a4ecace396822be"
+  integrity sha512-/XhfPYlPIK7LxT0czUIGMWLcUjGfVmf3Nzcf+6FaG+sExr6S8Yqayeid9FdYgi7y+LFmvYSJrZyXgF5LL8ZMrg==
 
 "@cognite/reveal-parser-worker@1.2.0":
   version "1.2.0"
@@ -1331,6 +1331,21 @@
     js-yaml "^3.13.1"
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
+
+"@gltf-transform/core@^0.12.11", "@gltf-transform/core@^0.12.12":
+  version "0.12.12"
+  resolved "https://registry.yarnpkg.com/@gltf-transform/core/-/core-0.12.12.tgz#ad864681efdbb5acf7945cf41578afdff4797676"
+  integrity sha512-+YBJ4j5x08rj+z0qQfdu0H+tcKhiUD5xcj5ZABHQT9oA90pRKSJ0bneIFP/atvyGiDvM1ZXsizVIKyBCsbL8qA==
+  dependencies:
+    gl-matrix "^3.3.0"
+
+"@gltf-transform/extensions@^0.12.11":
+  version "0.12.12"
+  resolved "https://registry.yarnpkg.com/@gltf-transform/extensions/-/extensions-0.12.12.tgz#d1fa73abe2201e66026d61f008c2768df2b38baa"
+  integrity sha512-BB8GIyYRsmFdRh1Vag7l4IUK8YbZrtdkU2oOueRUhAk2OKasZSwRgorfgb8ueWuoTxAx7XF8blL0nQt3yE/ORg==
+  dependencies:
+    "@gltf-transform/core" "^0.12.12"
+    ktx-parse "^0.2.1"
 
 "@hapi/address@2.x.x":
   version "2.1.4"
@@ -6095,6 +6110,11 @@ getpass@^0.1.1:
   dependencies:
     assert-plus "^1.0.0"
 
+gl-matrix@^3.3.0:
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/gl-matrix/-/gl-matrix-3.3.0.tgz#232eef60b1c8b30a28cbbe75b2caf6c48fd6358b"
+  integrity sha512-COb7LDz+SXaHtl/h4LeaFcNdJdAQSDeVqjiIihSXNrkWObZLhDI4hIkZC11Aeqp7bcE72clzB0BnDXr2SmslRA==
+
 glob-parent@^3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/glob-parent/-/glob-parent-3.1.0.tgz#9e6af6299d8d3bd2bd40430832bd113df906c5ae"
@@ -8062,6 +8082,11 @@ klona@^2.0.4:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/klona/-/klona-2.0.4.tgz#7bb1e3affb0cb8624547ef7e8f6708ea2e39dfc0"
   integrity sha512-ZRbnvdg/NxqzC7L9Uyqzf4psi1OM4Cuc+sJAkQPjO6XkQIJTNbfK2Rsmbw8fx1p2mkZdp2FZYo2+LwXYY/uwIA==
+
+ktx-parse@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/ktx-parse/-/ktx-parse-0.2.1.tgz#6805c0929eae0a1f571ab3ce789e860e9135b432"
+  integrity sha512-I+2mYJ6nQdWGmOlE3m9d9idKfhn2MCw04zaVpgtzyuc19uQ8OwRmmYLf/TP5ueVFfYmHbdpM8mPmId2X5PBLEw==
 
 language-subtag-registry@~0.3.2:
   version "0.3.21"
