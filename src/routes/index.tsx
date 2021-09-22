@@ -10,7 +10,6 @@ import GroupsRequired from 'components/GroupsRequired';
 import Breadcrumbs from 'components/Breadcrumbs';
 import { Flex, PageWrapper, StepsList } from 'components/Common';
 import BetaBanner from 'components/BetaBanner';
-import JobDiagrams from 'pages/PageFileOverview/JobDiagrams';
 import {
   landingPage,
   diagramSelection,
@@ -49,116 +48,111 @@ export default function Routes() {
   return (
     <>
       <Breadcrumbs breadcrumbs={getBreadcrumbs()} />
-      <PageWrapper>
-        <BetaBanner />
-        <GroupsRequired>
-          <Switch>
-            <Route
-              exact
-              path={landingPage.staticPath}
-              render={() => (
-                <>
-                  <PageTitle title="Interactive Engineering Diagrams" />
-                  <LandingPage />
-                </>
-              )}
-            />
-            <Route
-              exact
-              path={diagramSelection.staticPath}
-              render={() => (
-                <>
-                  <PageTitle title="Interactive Engineering Diagrams" />
-                  <Flex row style={{ width: '100%' }}>
-                    <StepsList />
-                    <PageSelection
-                      defaultFilters={PDF_FILTER}
-                      required
-                      type="files"
-                      step="diagramSelection"
-                      key="diagramSelection"
-                    />
-                  </Flex>
-                </>
-              )}
-            />
-            <Route
-              exact
-              path={resourceSelectionAssets.staticPath}
-              render={() => (
-                <>
-                  <PageTitle title="Interactive Engineering Diagrams" />
-                  <Flex row style={{ width: '100%' }}>
-                    <StepsList />
-                    <PageSelection
-                      type="assets"
-                      step="resourceSelectionAssets"
-                      key="assetSelection"
-                    />
-                  </Flex>
-                </>
-              )}
-            />
-            <Route
-              exact
-              path={resourceSelectionFiles.staticPath}
-              render={() => (
-                <>
-                  <PageTitle title="Interactive Engineering Diagrams" />
-                  <Flex row style={{ width: '100%' }}>
-                    <StepsList />
-                    <PageSelection
-                      defaultFilters={PDF_FILTER}
-                      type="files"
-                      step="resourceSelectionFiles"
-                      key="fileSelection"
-                    />
-                  </Flex>
-                </>
-              )}
-            />
-            <Route
-              exact
-              path={configPage.staticPath}
-              render={() => (
-                <>
-                  <PageTitle title="Interactive Engineering Diagrams" />
-                  <Flex row style={{ width: '100%' }}>
-                    <StepsList />
-                    <PageOptions step="config" />
-                  </Flex>
-                </>
-              )}
-            />
-            <Route
-              exact
-              path={reviewPage.staticPath}
-              render={() => (
-                <>
-                  <PageTitle title="Interactive Engineering Diagrams" />
-                  <Flex row style={{ width: '100%' }}>
-                    <StepsList />
-                    <PageResultsOverview step="review" />
-                  </Flex>
-                </>
-              )}
-            />
-            <Route
-              exact
-              path={diagramPreview.staticPath}
-              render={() => (
-                <>
-                  <PageTitle title="Interactive Engineering Diagrams" />
-                  <Flex row style={{ width: '100%' }}>
-                    <JobDiagrams />
-                    <PageFileOverview step="diagramPreview" />
-                  </Flex>
-                </>
-              )}
-            />
-          </Switch>
-        </GroupsRequired>
-      </PageWrapper>
+      <BetaBanner />
+      <GroupsRequired>
+        <Switch>
+          <Route
+            exact
+            path={landingPage.staticPath}
+            render={() => (
+              <PageWrapper>
+                <PageTitle title="Interactive Engineering Diagrams" />
+                <LandingPage />
+              </PageWrapper>
+            )}
+          />
+          <Route
+            exact
+            path={diagramSelection.staticPath}
+            render={() => (
+              <PageWrapper>
+                <PageTitle title="Interactive Engineering Diagrams" />
+                <Flex row style={{ width: '100%' }}>
+                  <StepsList />
+                  <PageSelection
+                    defaultFilters={PDF_FILTER}
+                    required
+                    type="files"
+                    step="diagramSelection"
+                    key="diagramSelection"
+                  />
+                </Flex>
+              </PageWrapper>
+            )}
+          />
+          <Route
+            exact
+            path={resourceSelectionAssets.staticPath}
+            render={() => (
+              <PageWrapper>
+                <PageTitle title="Interactive Engineering Diagrams" />
+                <Flex row style={{ width: '100%' }}>
+                  <StepsList />
+                  <PageSelection
+                    type="assets"
+                    step="resourceSelectionAssets"
+                    key="assetSelection"
+                  />
+                </Flex>
+              </PageWrapper>
+            )}
+          />
+          <Route
+            exact
+            path={resourceSelectionFiles.staticPath}
+            render={() => (
+              <PageWrapper>
+                <PageTitle title="Interactive Engineering Diagrams" />
+                <Flex row style={{ width: '100%' }}>
+                  <StepsList />
+                  <PageSelection
+                    defaultFilters={PDF_FILTER}
+                    type="files"
+                    step="resourceSelectionFiles"
+                    key="fileSelection"
+                  />
+                </Flex>
+              </PageWrapper>
+            )}
+          />
+          <Route
+            exact
+            path={configPage.staticPath}
+            render={() => (
+              <PageWrapper>
+                <PageTitle title="Interactive Engineering Diagrams" />
+                <Flex row style={{ width: '100%' }}>
+                  <StepsList />
+                  <PageOptions step="config" />
+                </Flex>
+              </PageWrapper>
+            )}
+          />
+          <Route
+            exact
+            path={reviewPage.staticPath}
+            render={() => (
+              <PageWrapper>
+                <PageTitle title="Interactive Engineering Diagrams" />
+                <Flex row style={{ width: '100%' }}>
+                  <StepsList />
+                  <PageResultsOverview step="review" />
+                </Flex>
+              </PageWrapper>
+            )}
+          />
+          <Route
+            exact
+            path={diagramPreview.staticPath}
+            render={() => (
+              <>
+                <PageTitle title="Interactive Engineering Diagrams" />
+                <PageFileOverview step="diagramPreview" />
+              </>
+            )}
+          />
+        </Switch>
+      </GroupsRequired>
     </>
   );
 }

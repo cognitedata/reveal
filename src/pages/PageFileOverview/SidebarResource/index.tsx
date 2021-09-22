@@ -22,13 +22,13 @@ const DetailsWrapper = styled.div`
   background: #fff;
 `;
 
-export const ResourceSidebar = ({
+export default function SidebarResource({
   extraButtons,
 }: {
   extraButtons?:
     | React.ReactNode[]
     | ((props: { assetId?: number; fileId?: number }) => React.ReactNode[]);
-}) => {
+}) {
   const history = useHistory();
   const dispatch = useDispatch();
   const { search } = history.location;
@@ -105,4 +105,4 @@ export const ResourceSidebar = ({
       </DetailsWrapper>
     </Drawer>
   );
-};
+}

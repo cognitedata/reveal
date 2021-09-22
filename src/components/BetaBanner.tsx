@@ -10,7 +10,7 @@ const BetaBanner = () => {
   if (!hideBanner) {
     return (
       <Alert
-        style={{ marginBottom: '10px' }}
+        style={{ margin: '12px' }}
         message={
           <p>
             We’re excited to give you a sneak peek of the latest redesign and
