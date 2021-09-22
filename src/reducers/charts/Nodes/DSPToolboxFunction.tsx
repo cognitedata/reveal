@@ -289,7 +289,9 @@ export const ConfigPanel = ({
 
         return (
           <div style={{ marginTop: 8 }}>
-            <h4 title={description}>{name}</h4>
+            <ParameterTitle title={description}>
+              {name} <ParameterIcon type="Info" size={12} />
+            </ParameterTitle>
             {type === DSPFunctionParameterType.boolean ? (
               <Checkbox
                 onChange={(nextState: boolean) => {
@@ -328,6 +330,15 @@ export const ConfigPanel = ({
     </ToolFunctionWrapper>
   );
 };
+
+const ParameterTitle = styled.h4`
+  display: flex;
+  align-items: center;
+`;
+
+const ParameterIcon = styled(Icon)`
+  margin-left: 5px;
+`;
 
 const ToolFunctionWrapper = styled.div`
   .cogs-checkbox .checkbox-ui {
