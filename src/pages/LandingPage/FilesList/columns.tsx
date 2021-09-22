@@ -85,9 +85,9 @@ const FileContextMenu = ({
 export const getColumns = (
   onFileEdit: (file: FileInfo) => void,
   onFileView: (file: FileInfo) => void,
-  onClearAnnotations: (file: FileInfo) => void,
   onApproveTags: (file: FileInfo) => void,
-  onRejectTags: (file: FileInfo) => void
+  onRejectTags: (file: FileInfo) => void,
+  onClearFileTags: (file: FileInfo) => void
 ) => [
   {
     title: 'Name',
@@ -163,7 +163,7 @@ export const getColumns = (
                   onFileEdit(file);
                 }}
                 onApproveFile={() => onApproveTags(file)}
-                onClearTags={() => onClearAnnotations(file)}
+                onClearTags={() => onClearFileTags(file)}
                 onRejectTags={() => onRejectTags(file)}
               />
             }

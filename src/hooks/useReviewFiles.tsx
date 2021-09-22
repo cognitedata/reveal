@@ -10,6 +10,7 @@ import {
 import sdk from 'sdk-singleton';
 import { useMutation, useQueryClient } from 'react-query';
 import { updateAnnotations } from '@cognite/annotations';
+import { deleteAnnotationsForFile } from 'utils/AnnotationUtils';
 import { sleep } from 'utils/utils';
 import handleError from 'utils/handleError';
 import { useAnnotationsForFiles } from './useAnnotationsForFiles';
@@ -44,15 +45,14 @@ export const doesLabelExist = async (label: ExternalLabelDefinition) => {
 };
 
 export const isFileApproved = (file?: FileInfo) => {
-  if (!file) {
-    return false;
-  }
+  if (!file) return false;
   return !!file.labels?.find(
     (label) => label.externalId === INTERACTIVE_LABEL.externalId
   );
 };
 
-export const isFilePending = (file: FileInfo) => {
+export const isFilePending = (file?: FileInfo) => {
+  if (!file) return false;
   return !!file.labels?.find(
     (label) => label.externalId === PENDING_LABEL.externalId
   );
@@ -73,7 +73,6 @@ export const useReviewFiles = (fileIds: Array<number>) => {
   const onError = (error: any) => {
     handleError({ ...error });
   };
-
   const onSuccess = () => {
     const invalidate = () => {
       client.invalidateQueries([
@@ -108,6 +107,24 @@ export const useReviewFiles = (fileIds: Array<number>) => {
     sleep(500).then(invalidate);
     sleep(1500).then(invalidate);
     sleep(5000).then(invalidate);
+  };
+  const onApproveSuccess = () => {
+    notification.success({
+      message: 'Diagram tags successfully approved!',
+    });
+    onSuccess();
+  };
+  const onRejectSuccess = () => {
+    notification.success({
+      message: 'Diagram tags successfully rejected!',
+    });
+    onSuccess();
+  };
+  const onClearSuccess = () => {
+    notification.success({
+      message: 'Diagram tags successfully deleted!',
+    });
+    onSuccess();
   };
 
   const reviewAnnotations = async (fileId: number, approve?: boolean) => {
@@ -155,9 +172,6 @@ export const useReviewFiles = (fileIds: Array<number>) => {
       };
     });
     await sdk.files.update(updatePatch);
-    notification.success({
-      message: 'Diagram approved successfully!',
-    });
   };
 
   const isFileInteractive = (fileId: number) => {
@@ -188,9 +202,6 @@ export const useReviewFiles = (fileIds: Array<number>) => {
       };
     });
     await sdk.files.update(updatePatch);
-    notification.success({
-      message: 'Diagram tags rejected successfully!',
-    });
   };
 
   const setFilesPending = async (selectedFileIds: Array<number>) => {
@@ -214,9 +225,9 @@ export const useReviewFiles = (fileIds: Array<number>) => {
     await sdk.files.update(updatePatch);
   };
 
-  const clearFileLabels = async (fileId: number) => {
-    const file = files?.find((curFile) => curFile.id === fileId);
-    if (file) {
+  const clearFileLabels = async (selectedFileIds: Array<number>) => {
+    const updatePatch: FileChangeUpdate[] = selectedFileIds.map((fileId) => {
+      const file = files?.find((curFile) => curFile.id === fileId);
       const labelsToRemove = [];
       if (isFileApproved(file)) {
         labelsToRemove.push({ externalId: INTERACTIVE_LABEL.externalId });
@@ -224,27 +235,23 @@ export const useReviewFiles = (fileIds: Array<number>) => {
       if (isFilePending(file)) {
         labelsToRemove.push({ externalId: PENDING_LABEL.externalId });
       }
-
-      if (labelsToRemove.length) {
-        await sdk.files.update([
-          {
-            id: fileId,
-            update: {
-              labels: {
-                remove: labelsToRemove,
-              },
-            },
+      return {
+        id: fileId,
+        update: {
+          labels: {
+            remove: labelsToRemove,
           },
-        ]);
-      }
-    }
+        },
+      };
+    });
+    await sdk.files.update(updatePatch);
   };
 
   const { isLoading: isOnApprovedLoading, mutate: onApproved } = useMutation(
     (selectedFileIds: Array<number>) => setFilesApproved(selectedFileIds),
     {
       onError,
-      onSuccess,
+      onSuccess: onApproveSuccess,
     }
   );
   const { isLoading: isOnPendingLoading, mutate: onPending } = useMutation(
@@ -258,14 +265,14 @@ export const useReviewFiles = (fileIds: Array<number>) => {
     (selectedFileIds: Array<number>) => setFilesRejected(selectedFileIds),
     {
       onError,
-      onSuccess,
+      onSuccess: onRejectSuccess,
     }
   );
   const { isLoading: isOnClearFileTags, mutate: onClearFileTags } = useMutation(
-    (fileId: number) => clearFileLabels(fileId),
+    (selectedFileIds: Array<number>) => clearFileLabels(selectedFileIds),
     {
       onError,
-      onSuccess,
+      onSuccess: onClearSuccess,
     }
   );
 
@@ -309,17 +316,41 @@ export const useReviewFiles = (fileIds: Array<number>) => {
     });
   };
 
+  const onClearTags = async (selectedFileIds: number[]) => {
+    const okText = REVIEW_DIAGRAMS_LABELS.clear.some.button;
+    const content = REVIEW_DIAGRAMS_LABELS.clear.some.desc;
+
+    Modal.confirm({
+      icon: <></>,
+      width: 320,
+      maskClosable: true,
+      okText,
+      cancelText: 'Cancel',
+      cancelButtonProps: { type: 'text' },
+      content: <Body level={2}>{content}</Body>,
+      onOk: async () => {
+        await Promise.all(
+          selectedFileIds.map((fileId: number) => {
+            const file = files?.find((curFile) => curFile.id === fileId);
+            return deleteAnnotationsForFile(file);
+          })
+        );
+        await onClearFileTags(selectedFileIds);
+      },
+    });
+  };
+
   return {
     onApproved,
     onPending,
     onRejected,
-    onClearFileTags,
     isOnApprovedLoading,
     isOnPendingLoading,
     isOnRejectedLoading,
     isOnClearFileTags,
     onApproveDiagrams,
     onRejectDiagrams,
+    onClearTags,
   };
 };
 
@@ -342,6 +373,16 @@ export const REVIEW_DIAGRAMS_LABELS = {
     some: {
       button: 'Reject tags',
       desc: 'Are you sure you want to reject selected links? You will be able to recontextualize later.',
+    },
+  },
+  clear: {
+    all: {
+      button: 'Clear all tags',
+      desc: 'All annotations will be deleted. However, the cleared diagrams can be made interactive again later.',
+    },
+    some: {
+      button: 'Clear tags',
+      desc: 'All annotations from selected diagrams will be deleted. However, the cleared diagrams can be made interactive again later.',
     },
   },
 };

@@ -134,17 +134,15 @@ export const isSimilarBoundingBox = (
   return false;
 };
 
-export const deleteAnnotationsForFile = async (
-  fileId: number,
-  fileExtId?: string
-) => {
+export const deleteAnnotationsForFile = async (file?: FileInfo) => {
   try {
+    if (!file) return;
     const metadataFilter: { [key: string]: string } = {};
-    if (fileExtId) {
+    if (file.externalId) {
       metadataFilter[`${ANNOTATION_METADATA_PREFIX}file_external_id`] =
-        fileExtId;
+        file.externalId;
     } else {
-      metadataFilter[`${ANNOTATION_METADATA_PREFIX}file_id`] = String(fileId);
+      metadataFilter[`${ANNOTATION_METADATA_PREFIX}file_id`] = String(file.id);
     }
     const allAnnotations = await sdk.events
       .list({

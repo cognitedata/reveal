@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import { Checkbox } from 'antd';
 import { FileInfo } from '@cognite/sdk';
 import queryString from 'query-string';
 import { Table } from 'components/Common';
@@ -113,11 +114,11 @@ export default function ResultsTable(props: ResultsTableProps): JSX.Element {
       })
     );
   };
-  const onSelectAll = (selectAll?: boolean) => {
+  const onSelectAll = () => {
     const selectedIds =
-      selectAll && adjustedDiagrams
-        ? adjustedDiagrams.map((el: any) => el.id)
-        : ([] as number[]);
+      adjustedDiagrams.length === selectedDiagramsIds.length
+        ? []
+        : adjustedDiagrams.map((d) => d.id);
     dispatch(
       selectDiagrams({
         workflowId,
@@ -151,6 +152,17 @@ export default function ResultsTable(props: ResultsTableProps): JSX.Element {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectionFilter]);
 
+  const headerCheckbox = (
+    <Checkbox
+      onChange={onSelectAll}
+      checked={Boolean(selectedDiagramsIds.length)}
+      indeterminate={
+        selectedDiagramsIds.length > 0 &&
+        selectedDiagramsIds.length < diagrams.length
+      }
+    />
+  );
+
   return (
     <Table
       rowKey="id"
@@ -159,6 +171,7 @@ export default function ResultsTable(props: ResultsTableProps): JSX.Element {
       rowSelection={{
         onSelectAll,
         onChange: onRowChange,
+        columnTitle: headerCheckbox,
         selectedRowKeys: selectedDiagramsIds,
         getCheckboxProps: (record: any) => ({
           disabled: record.progress === 'failed',

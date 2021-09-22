@@ -101,13 +101,15 @@ export default function SelectionBar(props: Props): JSX.Element {
   };
   const onMimeTypeSelected = (mimeType: string[]) => {
     const newMimeType = mimeType[0];
-    const newFilter = {
-      ...filter,
-      filter: {
-        ...filter.filter,
-        mimeType: newMimeType,
-      },
-    };
+    const newFilter = newMimeType
+      ? {
+          ...filter,
+          filter: {
+            ...filter.filter,
+            mimeType: newMimeType,
+          },
+        }
+      : filter;
     if (newMimeType) {
       trackUsage(PNID_METRICS.filters.byMimeType, {
         mimeType: newMimeType,
