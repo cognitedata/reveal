@@ -29,6 +29,7 @@ import { RevealManager } from '../RevealManager';
 import {
   defaultRenderOptions,
   DisposedDelegate,
+  PointCloudBudget,
   SceneRenderedDelegate,
   SsaoParameters,
   SsaoSampleQuality
@@ -179,6 +180,22 @@ export class Cognite3DViewer {
     // Note! Type here differes from the one in RevealManager to expose a documentated
     // type. This should map 1:1 with type in RevealManager
     this.revealManager.cadBudget = budget;
+  }
+
+  /**
+   * Returns the point cloud budget. The budget is shared between all loaded
+   * point cloud models.
+   */
+  public get pointCloudBudget(): PointCloudBudget {
+    return this.revealManager.pointCloudBudget;
+  }
+
+  /**
+   * Sets the point cloud budget. The budget is shared between all loaded
+   * point cloud models.
+   */
+  public set pointCloudBudget(budget: PointCloudBudget) {
+    this.revealManager.pointCloudBudget = budget;
   }
 
   /**
@@ -744,6 +761,14 @@ export class Cognite3DViewer {
   }
 
   /**
+   * Returns the current active clipping planes.
+   * @version New in 2.1
+   */
+  getClippingPlanes(): THREE.Plane[] {
+    return this.revealManager.clippingPlanes;
+  }
+
+  /**
    * @obvious
    * @returns The THREE.Camera used for rendering.
    */
@@ -1097,10 +1122,12 @@ export class Cognite3DViewer {
       x: (offsetX / this.renderer.domElement.clientWidth) * 2 - 1,
       y: (offsetY / this.renderer.domElement.clientHeight) * -2 + 1
     };
+
     const input: IntersectInput = {
       normalizedCoords,
       camera: this.camera,
       renderer: this.renderer,
+      clippingPlanes: this.getClippingPlanes(),
       domElement: this.renderer.domElement
     };
     const cadResults = intersectCadNodes(cadNodes, input);
