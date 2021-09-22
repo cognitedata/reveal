@@ -30,8 +30,27 @@ export class PointCloudManager<TModelIdentifier> {
     this._pointCloudGroupWrapper.resetRedraw();
   }
 
+  get pointBudget(): number {
+    return this._pointCloudGroupWrapper.pointBudget;
+  }
+
+  set pointBudget(points: number) {
+    this._pointCloudGroupWrapper.pointBudget = points;
+  }
+
   get needsRedraw(): boolean {
     return this._pointCloudGroupWrapper.needsRedraw;
+  }
+
+  set clippingPlanes(planes: THREE.Plane[]) {
+    this._pointCloudGroupWrapper.traverse(x => {
+      if ((x as any).material) {
+        const material = (x as THREE.Mesh).material as THREE.RawShaderMaterial;
+        material.clipping = true;
+        material.clipIntersection = false;
+        material.clippingPlanes = planes;
+      }
+    });
   }
 
   getLoadingStateObserver(): Observable<LoadingState> {

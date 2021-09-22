@@ -10,6 +10,7 @@ export interface IntersectInput {
     y: number;
   };
   camera: THREE.PerspectiveCamera;
+  clippingPlanes: THREE.Plane[];
   renderer: THREE.WebGLRenderer;
   domElement: HTMLElement;
 }

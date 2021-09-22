@@ -27,7 +27,7 @@ export class PotreeNodeWrapper {
     this.pointColorType = PotreePointColorType.Rgb;
     this.pointShape = PotreePointShape.Circle;
 
-    this.pointBudget = 2_000_000;
+    this.pointBudget = Infinity;
   }
 
   get pointSize(): number {
