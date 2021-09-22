@@ -26,11 +26,13 @@ describe('getConfigFromDspFunction', () => {
       op: 'SG_SMOOTHER',
       parameters: [
         {
+          name: 'Window Length',
           default: null,
           param: 'window_length',
           type: 'int',
         },
         {
+          name: 'Polynomial Order',
           default: 1,
           param: 'polyorder',
           type: 'int',
@@ -50,13 +52,13 @@ describe('getConfigFromDspFunction', () => {
           pin: true,
         },
         {
-          name: 'window_length',
+          name: 'Window Length',
           field: 'window_length',
           types: ['CONSTANT'],
           pin: false,
         },
         {
-          name: 'polyorder',
+          name: 'Polynomial Order',
           field: 'polyorder',
           types: ['CONSTANT'],
           pin: false,
@@ -87,11 +89,13 @@ describe('getConfigFromDspFunction', () => {
       op: 'SG_SMOOTHER',
       parameters: [
         {
+          name: 'Window Length',
           default: null,
           param: 'window_length',
           type: 'int',
         },
         {
+          name: 'Polynomial Order',
           default: 1,
           param: 'polyorder',
           type: 'int',
@@ -111,13 +115,13 @@ describe('getConfigFromDspFunction', () => {
           pin: true,
         },
         {
-          name: 'window_length',
+          name: 'Window Length',
           field: 'window_length',
           types: ['CONSTANT'],
           pin: false,
         },
         {
-          name: 'polyorder',
+          name: 'Polynomial Order',
           field: 'polyorder',
           types: ['CONSTANT'],
           pin: false,
