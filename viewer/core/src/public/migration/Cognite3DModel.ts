@@ -18,6 +18,7 @@ import { NodeCollectionBase } from '../../datamodels/cad/styling';
 import { NodeAppearance } from '../../datamodels/cad';
 import { NodeTransformProvider } from '../../datamodels/cad/styling/NodeTransformProvider';
 import { NodesApiClient } from '@reveal/nodes-api';
+import { WellKnownDistanceToMeterConversionFactors } from '../../datamodels/cad/sector/types';
 
 /**
  * Represents a single 3D CAD model loaded from CDF.
@@ -37,6 +38,33 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   /** @internal */
   get styledNodeCollections(): { nodes: NodeCollectionBase; appearance: NodeAppearance }[] {
     return this._styledNodeCollections;
+  }
+
+  /**
+   * Returns the unit the coordinates for the model is stored in. Possible return values are:
+   * - Meters
+   * - Centimeters
+   * - Millimeters
+   * - Micrometers
+   * - Kilometers
+   * - Feet
+   * - Inches
+   * - Yards
+   * - Miles
+   * - Mils
+   * - Microinches
+   * Note that coordinates in Reveal always are converted to meters using {@see modelUnitToMetersFactor}.
+   */
+  get modelUnit(): string {
+    return this.cadNode.cadModelMetadata.scene.unit;
+  }
+
+  /**
+   * Returns the conversion factor that converts from model coordinates to meters. Note that this can
+   * return undefined if the model has been stored in an unsupported unit.
+   */
+  get modelUnitToMetersFactor(): number | undefined {
+    return WellKnownDistanceToMeterConversionFactors.get(this.modelUnit);
   }
 
   /**
