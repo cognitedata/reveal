@@ -12,6 +12,7 @@ import {
   Menu,
   Select,
   Checkbox,
+  Tooltip,
 } from '@cognite/cogs.js';
 import {
   DSPFunction,
@@ -289,9 +290,11 @@ export const ConfigPanel = ({
 
         return (
           <div style={{ marginTop: 8 }}>
-            <ParameterTitle title={description}>
-              {name} <ParameterIcon type="Info" size={12} />
-            </ParameterTitle>
+            <Tooltip type="primary" content={description}>
+              <ParameterTitle>
+                {name} <ParameterIcon type="Info" size={12} />
+              </ParameterTitle>
+            </Tooltip>
             {type === DSPFunctionParameterType.boolean ? (
               <Checkbox
                 onChange={(nextState: boolean) => {
@@ -332,7 +335,7 @@ export const ConfigPanel = ({
 };
 
 const ParameterTitle = styled.h4`
-  display: flex;
+  display: inline-flex;
   align-items: center;
 `;
 
