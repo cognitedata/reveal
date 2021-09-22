@@ -13,6 +13,7 @@ export class Geomap {
   private _intervalId: any = 0;
 
   constructor(viewer: Cognite3DViewer, mapConfig: MapConfig) {
+
     this._viewer = viewer;
     const mapProvider = this.getMapProvider(mapConfig);
     this._map = new GEOTHREE.MapView(GEOTHREE.MapView.PLANAR, mapProvider, mapProvider);
@@ -33,12 +34,12 @@ export class Geomap {
       this._intervalId = setInterval(() => {
         this._viewer.requestRedraw();
       }, 100);
-    }
 
-    setTimeout(() => {
-      clearInterval(this._intervalId);
-      this._intervalId = 0;
-    }, timeOut);
+      setTimeout(() => {
+        clearInterval(this._intervalId);
+        this._intervalId = 0;
+      }, timeOut);
+    }
   }
 
   private getMapProvider(mapConfig: MapConfig) {
@@ -82,6 +83,5 @@ export class Geomap {
 
   public dispose(): void {
     this._viewer.removeObject3D(this._map);
-    this._viewer.off('cameraChange', () => {});
   }
 }
