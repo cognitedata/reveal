@@ -129,9 +129,13 @@ export class PotreeGroupWrapper extends THREE.Object3D {
     );
   }
 
+  /**
+   * Generates a hash for the current loaded points to allow determining if we have
+   * loaded data since last redraw.
+   */
   private get pointBuffersHash() {
     const pointClouds = this.potreeGroup.pointclouds;
-    let pointHash = 0xbaadf00d;
+    let pointHash = 0xbaadf00d; // Kind of random bit pattern
     for (const pointCloud of pointClouds) {
       pointCloud.traverseVisible((x: THREE.Points) => {
         // Note! We pretend everything in the scene graph is THREE.Points,
