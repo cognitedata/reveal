@@ -11,6 +11,7 @@ export class Geomap {
   private readonly _viewer: Cognite3DViewer;
   private _map: GEOTHREE.MapView;
   private _intervalId: any = 0;
+  private readonly _onCameraChange = this.handleCameraChange.bind(this);
 
   constructor(viewer: Cognite3DViewer, mapConfig: MapConfig) {
 
@@ -24,9 +25,7 @@ export class Geomap {
     this._map.position.set(-coords.x, bound.min.y, coords.y);
     this._map.updateMatrixWorld(true);
     this.requestRedraw(10000);
-    this._viewer.on('cameraChange', () => {
-      this.requestRedraw(5000);
-    });
+    this._viewer.on('cameraChange', this._onCameraChange);
   }
 
   private requestRedraw(timeOut: number) {
@@ -81,7 +80,12 @@ export class Geomap {
     return GEOTHREE.UnitsUtils.datumsToSpherical(latLong.latitude, latLong.longitude);
   }
 
+  private handleCameraChange() {
+    this.requestRedraw(1000);
+  }
+
   public dispose(): void {
     this._viewer.removeObject3D(this._map);
+    this._viewer.off("cameraChange", this._onCameraChange);
   }
 }
