@@ -54,6 +54,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * - Mils
    * - Microinches
    * Note that coordinates in Reveal always are converted to meters using {@see modelUnitToMetersFactor}.
+   * @version New since 2.1
    */
   get modelUnit(): string {
     return this.cadNode.cadModelMetadata.scene.unit;
@@ -62,6 +63,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   /**
    * Returns the conversion factor that converts from model coordinates to meters. Note that this can
    * return undefined if the model has been stored in an unsupported unit.
+   * @version New since 2.1
    */
   get modelUnitToMetersFactor(): number | undefined {
     return WellKnownDistanceToMeterConversionFactors.get(this.modelUnit);
