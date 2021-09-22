@@ -511,13 +511,15 @@ export function Migration() {
                 console.log(`Clicked node with treeIndex ${treeIndex} at`, point);
                 const overlayHtml = document.createElement('div');
                 overlayHtml.innerText = `Node ${treeIndex}`;
-                overlayHtml.style.cssText = 'background: white; position: absolute;';
+                overlayHtml.style.cssText = 'background: white; position: absolute; pointer-events: none; user-select: none;'; // possibly need to add other browsers prefixes
                 overlayTool.add(overlayHtml, point);
   
                 // highlight the object
                 selectedSet.updateSet(new IndexSet([treeIndex]));
-                const boundingBox = await model.getBoundingBoxByTreeIndex(treeIndex);
-                viewer.fitCameraToBoundingBox(boundingBox, 1000);
+                //const boundingBox = await model.getBoundingBoxByTreeIndex(treeIndex);
+                //viewer.fitCameraToBoundingBox(boundingBox, 1000);
+                
+                viewer.setCameraTarget(intersection.point);
               }
               break;
 

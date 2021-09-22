@@ -11,7 +11,7 @@ import { CadNode } from '..';
 import { Cognite3DModel } from '../../../migration';
 import { RootSectorNode } from '../sector/RootSectorNode';
 import { AntiAliasingMode, defaultRenderOptions, RenderOptions, SsaoParameters } from '../../..';
-import { outlineDetectionShaders, fxaaShaders, ssaoShaders, ssaoBlurCombineShaders } from './shaders';
+import { outlineDetectionShaders, fxaaShaders, ssaoShaders, ssaoBlurCombineShaders, depthBufferShaders } from './shaders';
 import { SsaoSampleQuality } from '../../../public/types';
 import { WebGLRendererStateHelper } from '../../../utilities/WebGLRendererStateHelper';
 import { SectorNode } from '../sector/SectorNode';
@@ -42,6 +42,10 @@ export class EffectRenderManager {
   // used for bluring and applying the ambient occlusion map (screen space)
   private readonly _ssaoBlurScene: THREE.Scene;
 
+  // Simple scene with a single triangle with UVs [0,1] in both directions
+  // used for bluring and applying the ambient occlusion map (screen space)
+  private readonly _depthBufferScene: THREE.Scene;
+
   // Holds all CAD models
   private readonly _cadScene: THREE.Scene;
 
@@ -67,6 +71,7 @@ export class EffectRenderManager {
   private _fxaaMaterial: THREE.ShaderMaterial;
   private _ssaoMaterial: THREE.ShaderMaterial;
   private _ssaoBlurMaterial: THREE.ShaderMaterial;
+  private _depthBufferMaterial: THREE.ShaderMaterial;
 
   private _customObjectRenderTarget: THREE.WebGLRenderTarget;
   private _ghostObjectRenderTarget: THREE.WebGLRenderTarget;
@@ -156,6 +161,8 @@ export class EffectRenderManager {
     this._ssaoScene.autoUpdate = false;
     this._ssaoBlurScene = new THREE.Scene();
     this._ssaoBlurScene.autoUpdate = false;
+    this._depthBufferScene = new THREE.Scene();
+    this._depthBufferScene.autoUpdate = false;
     this._emptyScene = new THREE.Scene();
     this._emptyScene.autoUpdate = false;
 
@@ -186,7 +193,7 @@ export class EffectRenderManager {
     this._customObjectRenderTarget.depthTexture.format = THREE.DepthFormat;
     this._customObjectRenderTarget.depthTexture.type = THREE.UnsignedIntType;
 
-    this._compositionTarget = new THREE.WebGLRenderTarget(0, 0, { stencilBuffer: false });
+    this._compositionTarget = new THREE.WebGLRenderTarget(0, 0, { stencilBuffer: false }); // Final depth buffer
     this._compositionTarget.depthTexture = new THREE.DepthTexture(0, 0);
     this._compositionTarget.depthTexture.format = THREE.DepthFormat;
     this._compositionTarget.depthTexture.type = THREE.UnsignedIntType;
@@ -282,10 +289,22 @@ export class EffectRenderManager {
       extensions: { fragDepth: true }
     });
 
+    this._depthBufferMaterial = new THREE.ShaderMaterial({
+      uniforms: {
+        tDepth: { value: this._compositionTarget.depthTexture },
+        resolution: { value: new THREE.Vector2() },
+        inverseResolution: { value: new THREE.Vector2() }
+      },
+      vertexShader: depthBufferShaders.vertex,
+      fragmentShader: depthBufferShaders.fragment,
+      extensions: { fragDepth: true }
+    });
+
     this.setupCompositionScene();
     this.setupSsaoScene();
     this.setupSsaoBlurCombineScene();
     this.setupFxaaScene();
+    this.setupDepthBufferReader();
 
     this._normalSceneBuilder = new TemporarySceneBuilder(this._normalScene);
     this._inFrontSceneBuilder = new TemporarySceneBuilder(this._inFrontScene);
@@ -716,6 +735,12 @@ export class EffectRenderManager {
     setOutlineColor(outlineColorTexture.image.data, NodeOutlineColor.Red, RevealColors.Red);
     setOutlineColor(outlineColorTexture.image.data, NodeOutlineColor.Orange, CogniteColors.Orange);
     return outlineColorTexture;
+  }
+
+  private setupDepthBufferReader() {
+    const geometry = this.createRenderTriangle();
+    const mesh = new THREE.Mesh(geometry, this._depthBufferMaterial);
+    this._depthBufferScene.add(mesh);
   }
 
   private setupCompositionScene() {

@@ -13,7 +13,7 @@ let sphere: THREE.Mesh;
 init();
 
 function init() {
-  camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 10);
+  camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 1000);
 
   scene = new THREE.Scene();
 
@@ -37,6 +37,8 @@ function init() {
   renderer.setAnimationLoop(render);
 
   controls = new ComboControls(camera, renderer.domElement);
+  controls.dynamicTarget = false;
+  controls.minDistance = 0.1;
   controls.enabled = true;
 
   controls.setState(new THREE.Vector3(0, 2, 2), new THREE.Vector3());

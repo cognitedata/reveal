@@ -57,6 +57,7 @@ import ComboControls from '@reveal/camera-manager';
 import { ViewerState, ViewStateHelper } from '../../utilities/ViewStateHelper';
 import { NodesApiClient, NodesCdfClient, NodesLocalClient } from '@reveal/nodes-api';
 import { RevealManagerHelper } from './RevealManagerHelper';
+import { Vector3 } from 'three';
 
 type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered' | 'disposed';
 
@@ -223,8 +224,13 @@ export class Cognite3DViewer {
     this.scene.autoUpdate = false;
     this.controls = new ComboControls(this.camera, this.canvas);
     this.controls.dollyFactor = 0.992;
-    this.controls.minDistance = 1.0;
+    this.controls.minDistance = 0.1;
     this.controls.maxDistance = 100.0;
+
+    // for tests
+    this.controls.dynamicTarget = false; 
+    this.controls.panDollyMinDistanceFactor = 5;
+
     this.controls.addEventListener('cameraChange', event => {
       const { position, target } = event.camera;
       this._events.cameraChange.fire(position.clone(), target.clone());
@@ -1125,7 +1131,7 @@ export class Cognite3DViewer {
             model,
             treeIndex: result.treeIndex,
             point: result.point,
-            distanceToCamera: result.distance
+            distanceToCamera: result.distance,
           };
           intersections.push(intersection);
         }
@@ -1280,15 +1286,13 @@ export class Cognite3DViewer {
     this._models.forEach(model => {
       model.getModelBoundingBox(bbox);
       if (!bbox.isEmpty()) {
-        combinedBbox.expandByPoint(bbox.min);
-        combinedBbox.expandByPoint(bbox.max);
+        combinedBbox.union(bbox);
       }
     });
     this._extraObjects.forEach(obj => {
       bbox.setFromObject(obj);
       if (!bbox.isEmpty()) {
-        combinedBbox.expandByPoint(bbox.min);
-        combinedBbox.expandByPoint(bbox.max);
+        combinedBbox.union(bbox);
       }
     });
     getBoundingBoxCorners(combinedBbox, corners);
@@ -1296,7 +1300,7 @@ export class Cognite3DViewer {
     camera.getWorldDirection(cameraDirection);
 
     // 1. Compute nearest to fit the whole bbox (the case
-    // where the camera is inside the box for now is ignored for now)
+    // where the camera is inside the box is ignored for now)
     let near = combinedBbox.distanceToPoint(cameraPosition);
     near /= Math.sqrt(1 + Math.tan(((camera.fov / 180) * Math.PI) / 2) ** 2 * (camera.aspect ** 2 + 1));
     near = Math.max(0.1, near);
@@ -1317,7 +1321,7 @@ export class Cognite3DViewer {
     // 3. Handle when camera is inside the model by adjusting the near value
     const diagonal = combinedBbox.min.distanceTo(combinedBbox.max);
     if (combinedBbox.containsPoint(cameraPosition)) {
-      near = Math.min(0.1, far / 1000.0);
+      near = Math.min(0.01, far / 1000.0);
     }
 
     // Apply
@@ -1332,7 +1336,7 @@ export class Cognite3DViewer {
       // This is also used to determine the speed of the camera when flying with ASDW.
       // We want to either let it be controlled by the near plane if we are far away,
       // but no more than a fraction of the bounding box of the system if inside
-      this.controls.minDistance = Math.min(Math.max(diagonal * 0.02, 0.1 * near), 10.0);
+      this.controls.minDistance = 0.1; //Math.min(Math.max(diagonal * 0.02, 0.1 * near), 10.0);
     }
   }
 

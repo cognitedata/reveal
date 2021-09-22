@@ -31,7 +31,12 @@ module.exports = env => {
           use: {
             loader: 'ts-loader',
             options: {
-              configFile: path.resolve(__dirname, '../tsconfig.json')
+              configFile: path.resolve(__dirname, '../tsconfig.json'),
+              compilerOptions: {
+                // set less lint requirement for test apps
+                  noUnusedLocals: false,
+                  noUnusedParameters: false
+                }
             }
           }
         }
