@@ -1,15 +1,15 @@
 ---
 id: clipping
 title: Clipping/slicing planes
-describe: Reveal support adding a number of slicing planes to "cut through" the models.
+describe: Reveal support adding a number of clipping planes to "cut through" the models.
 ---
 
 import { DemoWrapper } from '@site/docs/components/DemoWrapper';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
-Slicing planes, also called clipping planes, can be used to "cut through" the model to reveal the interior. This is
-useful to isolate interesting parts of the model and hide obscuring geometry. Reveal supports having multiple slicing planes
-in arbitrary position and orientation. When slicing planes are active,
+Clipping planes, also called slicing planes, can be used to "cut through" the model to reveal the interior. This is
+useful to isolate interesting parts of the model and hide obscuring geometry. Reveal supports having multiple clipping planes
+in arbitrary position and orientation. When clipping planes are active,
 the amount of geometry loaded might be reduced since culled geometry doesn't need
 to be loaded (or rather loaded in a lower detail level).
 
@@ -21,31 +21,31 @@ to be loaded (or rather loaded in a lower detail level).
 
 <DemoWrapper name="Cognite3DViewerDemo" />
 
-### Single, fixed slicing plane
+### Single, fixed clipping plane
 
-Slicing planes are defined by providing zero or more [`THREE.Plane`](https://threejs.org/docs/#api/en/math/Plane)
-to `Cognite3DViewer.setSlicingPlanes`. The slicing planes are activated for all models and
-replaces any active slicing planes.
+Clipping planes are defined by providing zero or more [`THREE.Plane`](https://threejs.org/docs/#api/en/math/Plane)
+to `Cognite3DViewer.setClippingPlanes`. The clipping planes are activated for all models and
+replaces any active clipping planes.
 
 Typically, [setFromNormalAndCoplanarPoint](https://threejs.org/docs/#api/en/math/Plane.setFromNormalAndCoplanarPoint)
-is used to create slicing planes. This function accepts a direction that defines the orientation of
+is used to create clipping planes. This function accepts a direction that defines the orientation of
 the plane and a point on the plane. For example, the following
-code will create a slicing plane that only accepts geometry below `Y = 55`:
+code will create a clipping plane that only accepts geometry below `Y = 55`:
 
 ```jsx runnable
 const orientation = new THREE.Vector3(0, -1, 0);
 const point = new THREE.Vector3(0, 55, 0);
 const plane = new THREE.Plane().setFromNormalAndCoplanarPoint(orientation, point);
-viewer.setSlicingPlanes([plane]);
+viewer.setClippingPlanes([plane]);
 ```
 
-### Animated slicing plane
+### Animated clipping plane
 
 Planes can be manipulated runtime and effects will have an effect in the viewer. Note however that rendering must be
 triggered after updating the plane before the change will have a visual effect. This can be done using
-`Cognite3DViewer.requestRedraw()`.
+`Cognite3DViewer.requestRedraw()` or simply set new planes using `Cognite3DViewer.setClippingPlanes`.
 
-Below is an example animates a slicing plane by ping-ponging the plane in the vertical direction.
+Below is an example animates a clipping plane by ping-ponging the plane in the vertical direction.
 
 ```js runnable
 const bbox = model.getModelBoundingBox();
@@ -54,7 +54,7 @@ const orientation = new THREE.Vector3(0, -1, 0);
 const point = new THREE.Vector3(0, bbox.max.y, 0);
 const plane = new THREE.Plane();
 plane.setFromNormalAndCoplanarPoint(orientation, point);
-viewer.setSlicingPlanes([plane]);
+viewer.setClippingPlanes([plane]);
 
 const start = performance.now();
 setInterval(() => {
@@ -70,18 +70,18 @@ setInterval(() => {
 
 :::note
 Updating `THREE.Plane`-instances will not trigger data loading. To manually trigger data loading after doing
-substantial changes to the slicing planes, use `Cognite3DViewer.setSlicingPlanes`. Note that the example
+substantial changes to the clipping planes, use `Cognite3DViewer.setClippingPlanes`. Note that the example
 above performs substantial changes to the planes without loading data. In a real application it's recommended
 to not load data during animation, but initiate data after an animation is completed.
 :::
 
-### Interactable slicing planes
+### Interactable clipping planes
 
-Often it's required to have interactive slicing planes that the user can modify. The following example
+Often it's required to have interactive clipping planes that the user can modify. The following example
 show how [ThreeJS DragControls](https://threejs.org/docs/#examples/en/controls/DragControls) can be used
-to manipulate the slicing planes.
+to manipulate the clipping planes.
 
-After running this snippet the slicing plane can be manipulated by dragging the white manipulator.
+After running this snippet the clipping plane can be manipulated by dragging the white manipulator.
 
 ```js runnable
 // import { DragControls } from 'three/examples/jsm/controls/DragControls';
@@ -96,11 +96,11 @@ const draggerMesh = new THREE.Mesh(draggerGeometry, draggerMaterial);
 draggerMesh.position.copy(initialDragPosition);
 viewer.addObject3D(draggerMesh);
 
-// Prepare a slicing plane
+// Prepare a clipping plane
 const orientation = new THREE.Vector3(0, -1, 0);
 const plane = new THREE.Plane();
 plane.setFromNormalAndCoplanarPoint(orientation, initialDragPosition);
-viewer.setSlicingPlanes([plane]);
+viewer.setClippingPlanes([plane]);
 
 
 // Handle drag events
@@ -109,7 +109,7 @@ controls.addEventListener('drag', () => {
   // Fix XZ-poistion
   draggerMesh.position.set(initialDragPosition.x, draggerMesh.position.y, initialDragPosition.z);
   draggerMesh.updateWorldMatrix();
-  // Update slicing plane
+  // Update clipping plane
   plane.setFromNormalAndCoplanarPoint(new THREE.Vector3(0, -1, 0), draggerMesh.position);
   viewer.requestRedraw();
 });
@@ -140,8 +140,9 @@ controls.deactivate();
 
 ### CAD geometry filter
 
-A special type of slicing is to provide a "geometry filter" when loading the model. A geometry filter restricts the
-area to load geometry for and is specified when the model is created.
+A special type of clipping is to provide a "geometry filter" when loading the model. A geometry filter restricts the
+area to load geometry for and is specified when the model is created. Geometry filters not only hides clipped geometry,
+it unloads unnecessary geometry to save memory and improve rendering performance.
 
 ```js
 const min = new THREE.Vector3(10, 20, 30);
@@ -156,5 +157,6 @@ viewer.addModel({
 ```
 
 :::note
-Geometry filters are static and cannot be changed after creating the model.
+Geometry filters are static and cannot be changed after creating the model. Instead, remove and re-add the model,
+or use regular clipping planes if they change frequently.
 :::

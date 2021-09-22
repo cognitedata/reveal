@@ -132,7 +132,7 @@ export class Cognite3DViewer {
   private readonly renderController: RenderController;
   private latestRequestId: number = -1;
   private readonly clock = new THREE.Clock();
-  private _slicingNeedsUpdate: boolean = false;
+  private _clippingNeedsUpdate: boolean = false;
 
   private readonly spinner: Spinner;
 
@@ -718,39 +718,46 @@ export class Cognite3DViewer {
   }
 
   /**
-   * Sets per-pixel slicing (clipping) planes. Pixels behind any of the planes will be sliced/clipped
-   * away.
-   * @param slicingPlanes The planes to use for slicing/clipping.
+   * Sets per-pixel clipping planes. Pixels behind any of the planes will be sliced away.
+   * @param clippingPlanes The planes to use for clipping.
    * @example
    * ```js
    * // Hide pixels with values less than 0 in the x direction
    * const plane = new THREE.Plane(new THREE.Vector3(1, 0, 0), 0);
-   * viewer.setSlicingPlanes([plane]);
+   * viewer.setClippingPlanes([plane]);
    * ```
    * ```js
    * // Hide pixels with values greater than 20 in the x direction
    *  const plane = new THREE.Plane(new THREE.Vector3(-1, 0, 0), 20);
-   * viewer.setSlicingPlanes([plane]);
+   * viewer.setClippingPlanes([plane]);
    * ```
    * ```js
    * // Hide pixels with values less than 0 in the x direction or greater than 0 in the y direction
    * const xPlane = new THREE.Plane(new THREE.Vector3(1, 0, 0), 0);
    * const yPlane = new THREE.Plane(new THREE.Vector3(0, -1, 0), 0);
-   * viewer.setSlicingPlanes([xPlane, yPlane]);
+   * viewer.setClippingPlanes([xPlane, yPlane]);
    * ```
    * ```js
    * // Hide pixels behind an arbitrary, non axis-aligned plane
    *  const plane = new THREE.Plane(new THREE.Vector3(1.5, 20, -19), 20);
-   * viewer.setSlicingPlanes([plane]);
+   * viewer.setClippingPlanes([plane]);
    * ```
    * ```js
-   * // Disable slicing planes
-   *  viewer.setSlicingPlanes([]);
+   * // Disable clipping planes
+   *  viewer.setClippingPlanes([]);
    * ```
    */
+  setClippingPlanes(clippingPlanes: THREE.Plane[]): void {
+    this.revealManager.clippingPlanes = clippingPlanes;
+    this._clippingNeedsUpdate = true;
+  }
+
+  /**
+   * @param slicingPlanes
+   * @deprecated Since version 2.1, will be removed in version 3.0. Use {@link setClippingPlanes}.
+   */
   setSlicingPlanes(slicingPlanes: THREE.Plane[]): void {
-    this.revealManager.clippingPlanes = slicingPlanes;
-    this._slicingNeedsUpdate = true;
+    this.setClippingPlanes(slicingPlanes);
   }
 
   /**
@@ -1276,14 +1283,14 @@ export class Cognite3DViewer {
       renderController.update();
       this.revealManager.update(this.camera);
 
-      if (renderController.needsRedraw || this.revealManager.needsRedraw || this._slicingNeedsUpdate) {
+      if (renderController.needsRedraw || this.revealManager.needsRedraw || this._clippingNeedsUpdate) {
         const frameNumber = this.renderer.info.render.frame;
         const start = Date.now();
         this.updateCameraNearAndFar(this.camera);
         this.revealManager.render(this.camera);
         renderController.clearNeedsRedraw();
         this.revealManager.resetRedraw();
-        this._slicingNeedsUpdate = false;
+        this._clippingNeedsUpdate = false;
         const renderTime = Date.now() - start;
 
         this._events.sceneRendered.fire({ frameNumber, renderTime, renderer: this.renderer, camera: this.camera });

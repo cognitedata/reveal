@@ -1264,6 +1264,13 @@
   dependencies:
     comlink "4.3.1"
 
+"@cognite/reveal-parser-worker@1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@cognite/reveal-parser-worker/-/reveal-parser-worker-1.2.0.tgz#0606ddccddd40e7809ef52e78c36d96e7af9b11c"
+  integrity sha512-l3B+PCZjOFTdbc9aC8YqF76DktJaNeqvOhF7Xpno2Y4rST69SpWQjl/g1RE4fgOAoAltoQ8k5UIAv7E/iGNQkQ==
+  dependencies:
+    comlink "4.3.1"
+
 "@cognite/reveal@link:../viewer/dist":
   version "0.0.0"
   uid ""
