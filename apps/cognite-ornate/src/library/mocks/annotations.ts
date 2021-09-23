@@ -1,0 +1,28 @@
+import { OrnateAnnotation } from '../types';
+
+export const mockAnnotations: OrnateAnnotation[] = [
+  {
+    type: 'pct',
+    width: 0.1,
+    height: 0.1,
+    x: 0.1,
+    y: 0.1,
+    onClick: () => console.log('haa'),
+    stroke: 'orange',
+    metadata: {
+      type: 'document',
+    },
+  },
+  {
+    type: 'pct',
+    width: 0.2,
+    height: 0.2,
+    x: 0.5,
+    y: 0.5,
+    onClick: () => console.log('hoo'),
+    stroke: 'blue',
+    metadata: {
+      type: 'asset',
+    },
+  },
+];
