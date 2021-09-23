@@ -151,6 +151,19 @@ const findDataSetId = (search: string) => {
   return new URLSearchParams(search).get('dataSetId');
 };
 
+const CustomLabel = styled.label<{ required: boolean }>`
+  font-size: 1.1em;
+  font-weight: 500;
+  display: block;
+  padding: 3px 0;
+
+  &::after {
+    content: ' *';
+    color: red;
+    visibility: ${(props) => (props.required ? 'visible' : 'hidden')};
+  }
+`;
+
 export const CreateIntegration = (props: {
   showAdditionalFields: boolean;
   customCancelCallback?: () => void;
@@ -295,7 +308,9 @@ export const CreateIntegration = (props: {
               data={dataSets}
               status={dataSetsStatus}
               renderLabel={(labelText, inputId) => (
-                <HeadingLabel labelFor={inputId}>{labelText}</HeadingLabel>
+                <CustomLabel required htmlFor={inputId}>
+                  {labelText}
+                </CustomLabel>
               )}
             />
           )}
@@ -309,7 +324,9 @@ export const CreateIntegration = (props: {
             labelText={EXT_PIPE_NAME_HEADING}
             hintText={NAME_HINT}
             renderLabel={(labelText, inputId) => (
-              <HeadingLabel labelFor={inputId}>{labelText}</HeadingLabel>
+              <CustomLabel required htmlFor={inputId}>
+                {labelText}
+              </CustomLabel>
             )}
           />
           <FullInput
@@ -321,7 +338,9 @@ export const CreateIntegration = (props: {
             labelText={INTEGRATION_EXTERNAL_ID_HEADING}
             hintText={EXTERNAL_ID_HINT}
             renderLabel={(labelText, inputId) => (
-              <HeadingLabel labelFor={inputId}>{labelText}</HeadingLabel>
+              <CustomLabel required htmlFor={inputId}>
+                {labelText}
+              </CustomLabel>
             )}
           />
           <FullInput
@@ -333,7 +352,9 @@ export const CreateIntegration = (props: {
             inputId="integration-description"
             errors={errors}
             renderLabel={(labelText, inputId) => (
-              <HeadingLabel labelFor={inputId}>{labelText}</HeadingLabel>
+              <CustomLabel required={false} htmlFor={inputId}>
+                {labelText}
+              </CustomLabel>
             )}
           />
           <PriSecBtnWrapper>
