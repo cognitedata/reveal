@@ -56,7 +56,6 @@ export function Geomap() {
         pointShape: PotreePointShape.Circle,
         apply: () => {
           pointCloudModels.forEach(model => {
-            model.pointBudget = pointCloudParams.budget;
             model.pointSize = pointCloudParams.pointSize;
             model.pointColorType = pointCloudParams.pointColorType;
             model.pointShape = pointCloudParams.pointShape;
