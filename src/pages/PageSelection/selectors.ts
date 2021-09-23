@@ -15,7 +15,8 @@ export const searchCountSelector = (type: ResourceType, filter: Filter) =>
         const search = getItemsSearch(type)(filter) || {};
         return search.items?.length || 0;
       }
-      return getCount(type)({ filter: filter.filter })?.count;
+      const adjustedFilter = filter.filter ? filter : { filter };
+      return getCount(type)(adjustedFilter)?.count;
     }
   );
 

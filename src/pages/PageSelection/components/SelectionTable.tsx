@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import { Checkbox, message } from 'antd';
 import { Asset, FileInfo } from '@cognite/sdk';
 import { Tooltip, Colors } from '@cognite/cogs.js';
@@ -11,7 +10,6 @@ import {
   Item,
   useSelectedItems,
 } from 'hooks';
-import { searchCountSelector } from 'pages/PageSelection/selectors';
 import { Flex, Table } from 'components/Common';
 import { getColumns } from './columns';
 
@@ -42,10 +40,8 @@ export default function SelectionTable<T extends RecordType>(
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [canSelectAll, setCanSelectAll] = useState(true);
-  const count = useSelector(searchCountSelector(type, filter));
   const prevIsSelectAll = usePrevious(isSelectAll);
   const prevFilter = usePrevious(filter);
-  const isDataEmpty = !count;
 
   const shouldFilterUpdate = !!prevFilter && !isEqual(prevFilter, filter);
 
@@ -54,6 +50,8 @@ export default function SelectionTable<T extends RecordType>(
     filter,
     diagramsToContextualizeIds
   );
+
+  const isDataEmpty = !items?.length && !fetching;
 
   const selectedItems = useSelectedItems(
     items,

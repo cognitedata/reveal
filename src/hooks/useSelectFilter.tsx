@@ -3,6 +3,8 @@ import { useSelector } from 'react-redux';
 import { OptionType } from '@cognite/cogs.js';
 import isEqual from 'lodash/isEqual';
 import { RootState } from 'store';
+import { useActiveWorkflow } from 'hooks';
+import { workflowFiltersSelector } from 'modules/workflows';
 import { ResourceType, Filter } from 'modules/types';
 
 /**
@@ -97,4 +99,13 @@ export const useSelectionFetchStatus = (
     status,
     isLoaded: status === 'success',
   };
+};
+
+/**
+ * Gets the filters from the previous selection (if it exists).
+ */
+export const usePreviousFilter = () => {
+  const { workflowId } = useActiveWorkflow();
+  const filters = useSelector(workflowFiltersSelector(workflowId));
+  return filters;
 };

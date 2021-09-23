@@ -101,28 +101,22 @@ export default function SelectionBar(props: Props): JSX.Element {
   };
   const onMimeTypeSelected = (mimeType: string[]) => {
     const newMimeType = mimeType[0];
-    const newFilter = newMimeType
-      ? {
-          ...filter,
-          filter: {
-            ...filter.filter,
-            mimeType: newMimeType,
-          },
-        }
-      : filter;
-    if (newMimeType) {
-      trackUsage(PNID_METRICS.filters.byMimeType, {
-        mimeType: newMimeType,
-      });
-    }
+    const { mimeType: _oldMimeType, ...oldFilter } = filter.filter;
+    const newFilter = {
+      ...filter,
+      filter: {
+        ...oldFilter,
+        ...(newMimeType ? { mimeType: newMimeType } : null),
+      },
+    };
+    trackUsage(PNID_METRICS.filters.byMimeType, {
+      mimeType: newMimeType,
+    });
     updateFilter(newFilter);
   };
 
   const onNameClear = () => {
-    const newFilter = {
-      ...filter,
-      search: undefined,
-    };
+    const { search: _, ...newFilter } = filter;
     updateFilter(newFilter);
   };
   const onNameSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -212,10 +206,10 @@ export default function SelectionBar(props: Props): JSX.Element {
           onDataSetsChange={onDataSetSelected}
           onLabelsChange={onLabelsSelected}
           searchQuery={filter?.search?.name}
-          mimeType={[filter.filter?.mimeType]}
+          mimeType={filter.filter?.mimeType ? [filter.filter?.mimeType] : []}
           onMimeTypeChange={onMimeTypeSelected}
           onQueryClear={onNameClear}
-          onClearAll={() => updateFilter({ filter: {}, search: undefined })}
+          onClearAll={() => updateFilter({ filter: {} })}
         />
         <Results>
           <span>{results}</span>

@@ -12,7 +12,12 @@ import {
   getActiveWorkflowItems,
 } from 'modules/workflows';
 import { ResourceType, Filter } from 'modules/types';
-import { useActiveWorkflow, usePreviousSelection, useSteps } from 'hooks';
+import {
+  usePreviousSelection,
+  usePreviousFilter,
+  useActiveWorkflow,
+  useSteps,
+} from 'hooks';
 import { LS_SAVED_SETTINGS } from 'stringConstants';
 import NavigationStickyBottomRow from 'components/NavigationStickyBottomRow';
 import { Flex } from 'components/Common';
@@ -22,10 +27,7 @@ import DiagramsSelection from './DiagramsSelection';
 import ResourcesSelection from './ResourcesSelection';
 
 const DEFAULT_FILTERS = {} as { [key in ResourceType]?: Filter };
-const EMPTY_FILTER: Filter = {
-  filter: {},
-  search: undefined,
-};
+const EMPTY_FILTER: Filter = { filter: {} };
 
 type Props = {
   type: ResourceType;
@@ -41,10 +43,14 @@ export default function PageSelection(props: Props): JSX.Element {
   useActiveWorkflow(step);
   const { goToNextStep } = useSteps(step);
 
+  const prevFilters = usePreviousFilter();
+
   const [isSelectAll, setSelectAll] = useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<Array<number>>([]);
   const [filter, setFilter] = useState<Filter>(
-    defaultFilters[type] ?? EMPTY_FILTER
+    prevFilters[step === 'diagramSelection' ? 'diagrams' : type] ??
+      defaultFilters[type] ??
+      EMPTY_FILTER
   );
 
   const [delayedFilter, setDelayedFilter] = useState<Filter>(filter);

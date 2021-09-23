@@ -22,11 +22,10 @@ export const usePreviousSelection = (
   const [loadItemsStatus, setLoadItemsStatus] =
     useState<AwaitingResourcesToLoad>('idle');
   const [previousSelectionLoaded, setPreviousSelectionLoaded] = useState(false);
-  const [itemFilter, setItemFilter] = useState<Filter>({});
+  const [itemFilter, setItemFilter] = useState<Filter>(defaultFilter);
   const { items } = useItemsAndFetching(resourceType, itemFilter);
   const { diagrams, resources } = useSelector(getActiveWorkflowItems);
 
-  const itemsDownloaded = Boolean(items?.length);
   const isStepDiagramSelection = step === 'diagramSelection';
   const isStepResourceSelection = step.startsWith('resourceSelection');
   const resource = resources?.find(
@@ -50,16 +49,9 @@ export const usePreviousSelection = (
     return false;
   };
 
-  const isNewWorkflow = (): boolean => {
-    if (isStepDiagramSelection && !diagrams) return true;
-    if (isStepResourceSelection && !resource) return true;
-    return false;
-  };
-
   useEffect(() => {
     if (previousSelectionLoaded) return;
-    if (isNewWorkflow()) setPreviousSelectionLoaded(true);
-    else startLoadingPreviousSelection();
+    startLoadingPreviousSelection();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -78,16 +70,23 @@ export const usePreviousSelection = (
       setItemFilter(defaultFilter);
       setFilter(defaultFilter);
     }
-
-    if (!itemsDownloaded) setLoadItemsStatus('awaiting');
-    if (itemsDownloaded) setLoadItemsStatus('done');
   };
 
   useEffect(() => {
+    const itemsDownloaded = Boolean(items?.length);
+    if (!itemsDownloaded && loadItemsStatus !== 'awaiting')
+      setLoadItemsStatus('awaiting');
+    if (itemsDownloaded && loadItemsStatus !== 'done')
+      setLoadItemsStatus('done');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [items]);
+
+  useEffect(() => {
+    const itemsDownloaded = Boolean(items?.length);
     if (loadItemsStatus === 'awaiting' && itemsDownloaded) loadSelection();
     if (loadItemsStatus === 'done') setPreviousSelectionLoaded(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loadItemsStatus, itemsDownloaded]);
+  }, [loadItemsStatus, items]);
 
   const loadSelection = () => {
     if (isEndpointRetrieve()) {

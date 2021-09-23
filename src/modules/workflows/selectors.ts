@@ -2,7 +2,12 @@ import { createSelector } from '@reduxjs/toolkit';
 import { InternalId, Asset, FileInfo } from '@cognite/sdk';
 import { RootState } from 'store';
 import { ResourceType } from 'modules/sdk-builder/types';
-import { ResourceSelection, ResourceObjectType, Workflow } from 'modules/types';
+import {
+  ResourceSelection,
+  ResourceObjectType,
+  Workflow,
+  Filter,
+} from 'modules/types';
 
 import {
   countSelector as countFileSelector,
@@ -462,6 +467,21 @@ export const workflowAllResourcesStatusSelector = (
               status.error
           ).length > 0,
       };
+    }
+  );
+
+export const workflowFiltersSelector = (workflowId: number) =>
+  createSelector(
+    (state: RootState) => state.workflows.items[workflowId],
+    (workflow: any) => {
+      const filters: { [key: string]: Filter } = {};
+      if (workflow?.diagrams && workflow.diagrams.endpoint === 'list')
+        filters.diagrams = workflow.diagrams.filter;
+      (workflow?.resources ?? []).forEach((resource: ResourceSelection) => {
+        if (resource?.endpoint === 'list')
+          filters[resource.type] = resource?.filter ?? {};
+      });
+      return filters;
     }
   );
 

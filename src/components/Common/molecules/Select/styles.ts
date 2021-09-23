@@ -9,6 +9,7 @@ export const selectStyles = {
   }),
   option: () => ({
     cursor: 'pointer !important',
+    wordBreak: 'break-word',
   }),
   valueContainer: (original: React.CSSProperties) => ({
     ...original,
