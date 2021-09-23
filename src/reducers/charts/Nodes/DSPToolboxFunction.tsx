@@ -401,15 +401,8 @@ const ParameterIcon = styled(Icon)`
   margin-left: 5px;
 `;
 
-const ToolFunctionWrapper = styled.div`
-  .cogs-checkbox .checkbox-ui {
-    margin: 0;
-  }
-`;
-
 const ToolboxFunctionsDropdown = styled(Dropdown)`
   width: 275px;
-
 
   .cogs-input-container {
     padding: 8px;
