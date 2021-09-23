@@ -7,6 +7,7 @@ import * as THREE from 'three';
 import { CadModelMetadata, SectorCuller } from '../../../../internals';
 import { WantedSector } from '../types';
 import {
+  addSectorCost,
   DetermineSectorCostDelegate,
   DetermineSectorsInput,
   PrioritizedWantedSector,
@@ -208,8 +209,7 @@ class ScheduledSectorTree {
         assert(sectorMetadata !== undefined);
 
         const sectorCost = this.determineSectorCost(sectorMetadata!, LevelOfDetail.Detailed);
-        this._totalCost.downloadSize += sectorCost.downloadSize;
-        this._totalCost.drawCalls += sectorCost.drawCalls;
+        addSectorCost(this._totalCost, sectorCost);
 
         sectorIds.set(nextSectorIdToAdd, priority);
       } else {
