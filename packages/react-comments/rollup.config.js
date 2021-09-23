@@ -22,6 +22,7 @@ export default {
     // with react 17 we are getting Unresolved dependencies for react/jsx-runtime
     'react/jsx-runtime',
     'react-query',
+    'lodash/isEqual',
     'axios',
     '@cognite/cogs.js',
   ],

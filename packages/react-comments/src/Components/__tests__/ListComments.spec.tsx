@@ -1,21 +1,25 @@
+import { setupServer } from 'msw/node';
 import { screen, waitFor } from '@testing-library/react';
 import { testRenderer } from '__test_utils__/testRenderer';
 import { useAuthContext, getAuthHeaders } from '@cognite/react-container';
+import { getMockNetworkUserGet } from '__test_utils__/getMockNetworkUserGet';
 
 import { ListComments } from '../ListComments';
 import {
-  mockListComments,
+  getMockNetworkListComments,
   serviceUrl,
   testProject,
-} from '../../__test_utils__/listComments';
+} from '../../__test_utils__/getMockNetworkListComments';
 
 // need to figure out how to export this with BAZEL from react-container
 const mocks = {
-  useAuthContext: () => {
-    return {
-      authState: { id: 'test-id', project: testProject, email: 'test-email' },
-    };
-  },
+  useAuthContext:
+    (id = 'test-id') =>
+    () => {
+      return {
+        authState: { id, project: testProject, email: 'test-email' },
+      };
+    },
   getAuthHeaders: () => ({}),
 };
 
@@ -26,27 +30,32 @@ jest.mock('@cognite/react-container', () => {
   };
 });
 
-describe('ListComments', () => {
-  beforeAll(() => mockListComments.listen());
-  afterAll(() => mockListComments.close());
+const networkMocks = setupServer(
+  getMockNetworkUserGet('test-id'),
+  getMockNetworkListComments()
+);
 
-  it('should load without user id', async () => {
-    (useAuthContext as jest.Mock).mockImplementation(mocks.useAuthContext);
+describe('ListComments', () => {
+  beforeAll(() => networkMocks.listen());
+  afterAll(() => networkMocks.close());
+
+  it('should load without id', async () => {
+    (useAuthContext as jest.Mock).mockImplementation(mocks.useAuthContext(''));
 
     testRenderer(ListComments, {
       target: {
-        id: 'test',
-        targetType: 'test-target',
+        id: '',
+        targetType: '',
       },
-      project: testProject,
-      serviceUrl,
+      userManagementServiceBaseUrl: serviceUrl,
+      commentServiceBaseUrl: serviceUrl,
     });
 
     expect(screen.getByText('Loading...')).toBeInTheDocument();
   });
 
   it('should be ok in good case', async () => {
-    (useAuthContext as jest.Mock).mockImplementation(mocks.useAuthContext);
+    (useAuthContext as jest.Mock).mockImplementation(mocks.useAuthContext());
     (getAuthHeaders as jest.Mock).mockImplementation(mocks.getAuthHeaders);
 
     testRenderer(ListComments, {
@@ -54,9 +63,8 @@ describe('ListComments', () => {
         id: 'test',
         targetType: 'test-target',
       },
-      project: testProject,
-      userId: 'test-user',
-      serviceUrl,
+      userManagementServiceBaseUrl: serviceUrl,
+      commentServiceBaseUrl: serviceUrl,
     });
 
     await waitFor(() => screen.findByText('first comment'));

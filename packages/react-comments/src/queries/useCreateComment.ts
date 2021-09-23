@@ -1,11 +1,11 @@
 import axios from 'axios';
+import { useMutation, useQueryClient } from 'react-query';
 import {
   Comment,
   CommentResponse,
   CommentTarget,
 } from '@cognite/comment-service-types';
-import { AuthHeaders } from '@cognite/react-container';
-import { useMutation, useQueryClient } from 'react-query';
+import { AuthHeaders, getAuthHeaders } from '@cognite/react-container';
 
 import { commentKeys } from './queryKeys';
 
@@ -16,7 +16,7 @@ interface Props {
   headers: AuthHeaders;
   target: CommentTarget;
 }
-export const useCreateComment: (props: Props) => Promise<any> = ({
+export const doCreateComment: (props: Props) => Promise<any> = ({
   target,
   scope,
   comment,
@@ -40,20 +40,19 @@ export const useCreateComment: (props: Props) => Promise<any> = ({
 
 export function useCommentCreateMutate({
   target,
-  headers,
   scope,
   serviceUrl,
 }: {
   serviceUrl: string;
   scope?: string;
-  headers: AuthHeaders;
   target: CommentTarget;
 }) {
+  const headers = getAuthHeaders({ useIdToken: true });
   const queryClient = useQueryClient();
 
   return useMutation(
     (comment: Comment['comment']) =>
-      useCreateComment({
+      doCreateComment({
         target,
         scope,
         comment,

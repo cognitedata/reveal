@@ -1,3 +1,7 @@
+## 0.1.0 Sep 23 2021
+
+- Lookup users from UMS
+
 ## 0.0.8 Sep 3 2021
 
 - Use displayName

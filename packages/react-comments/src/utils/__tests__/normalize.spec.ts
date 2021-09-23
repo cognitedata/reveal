@@ -9,6 +9,7 @@ describe('normalize', () => {
       text: 'test-comment',
       timestamp: 1629963552092,
       user: 'test-_owner',
+      userId: 'test-_owner',
     });
   });
 });

@@ -7,8 +7,9 @@ import {
 } from '@cognite/comment-service-types';
 import { AuthHeaders, getAuthHeaders } from '@cognite/react-container';
 
+import { normalizeComments } from '../utils/normalize';
+
 import { commentKeys } from './queryKeys';
-import { normalizeComments } from './normalize';
 
 export type FetchCommentProps = {
   serviceUrl: string;
@@ -45,7 +46,12 @@ export const useFetchComments = ({
 }: FetchCommentProps) => {
   const headers = getAuthHeaders({ useIdToken: true });
 
-  return useQuery(commentKeys.thread(target), () =>
-    doFetchComments({ target, serviceUrl, headers, scope })
+  return useQuery(
+    commentKeys.thread(target),
+    () => doFetchComments({ target, serviceUrl, headers, scope }),
+    {
+      enabled: !!target,
+      staleTime: 1000 * 60 * 5, // 5 mins
+    }
   );
 };

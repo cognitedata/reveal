@@ -1,52 +1,88 @@
 import React from 'react';
+import styled from 'styled-components';
+import { ErrorBoundary } from '@cognite/react-errors';
 import { Comment, Conversation } from '@cognite/cogs.js';
-import { getAuthHeaders, useAuthContext } from '@cognite/react-container';
+import { useAuthContext } from '@cognite/react-container';
+import { CommentResponse } from '@cognite/comment-service-types';
 
+import { convertCommentToRichtextEditable } from '../utils/convertCommentToRichtext';
 import {
+  useFetchUser,
   useFetchComments,
   useCommentCreateMutate,
+  useCommentEditMutate,
   useCommentDeleteMutate,
   FetchCommentProps,
 } from '../queries';
+import { BaseUrls } from '../types';
 
-export type ListCommentsProps = FetchCommentProps;
+import { Richtext, CommentData } from './Richtext';
 
-export const ListComments: React.FC<FetchCommentProps> = ({
-  serviceUrl,
+const ConversationContainer = styled.div`
+  text-align: left;
+
+  p {
+    margin-block-end: 0em;
+  }
+`;
+
+export type ListCommentsProps = Pick<FetchCommentProps, 'scope' | 'target'> &
+  BaseUrls;
+
+export const ListComments: React.FC<ListCommentsProps> = ({
   scope,
   target,
+  commentServiceBaseUrl,
+  userManagementServiceBaseUrl,
 }) => {
-  const [message, setMessage] = React.useState('');
-  const headers = getAuthHeaders({ useIdToken: true });
   const { authState } = useAuthContext();
-  const fullServiceUrl = `${serviceUrl}/${authState?.project}`;
-  const { mutate } = useCommentCreateMutate({
+  const [editing, setEditing] = React.useState<
+    CommentResponse['id'] | undefined
+  >();
+  const fullServiceUrl = `${commentServiceBaseUrl}/${authState?.project}`;
+  const { mutate: createComment } = useCommentCreateMutate({
     target,
     scope: scope ? scope[0] : undefined, // always assume first scope is 'home' app (for legacy)
     serviceUrl: fullServiceUrl,
-    headers,
   });
   const { mutate: deleteComment } = useCommentDeleteMutate({
-    headers,
     serviceUrl: fullServiceUrl,
     target,
   });
 
-  const { data: comments, isError } = useFetchComments({
+  const { mutate: editComment } = useCommentEditMutate({
+    serviceUrl: fullServiceUrl,
+    target,
+  });
+
+  const { data: richComments, isError } = useFetchComments({
     target,
     scope,
     serviceUrl: fullServiceUrl,
   });
 
-  const handleCreateMessage = (comment: string) => {
-    mutate(comment);
-    setMessage('');
+  const { data: user } = useFetchUser({
+    userManagementServiceBaseUrl,
+  });
+
+  const handleCreateMessage = (comment: CommentData) => {
+    createComment(JSON.stringify(comment));
   };
+
+  const handleEditCommentStart = (id: string) => {
+    setEditing(id);
+  };
+
+  const handleEditCommentComplete = (comment: CommentData) => {
+    editComment({ id: editing, comment: JSON.stringify(comment) });
+    setEditing(undefined);
+  };
+
   const handleRemoveComment = (id: string) => {
     deleteComment(id);
   };
 
-  const isLoading = !authState?.id || !headers;
+  const isLoading = !authState?.id || !target;
 
   if (isLoading) {
     return <span>Loading...</span>;
@@ -56,22 +92,58 @@ export const ListComments: React.FC<FetchCommentProps> = ({
     return <div>Error loading comments.</div>;
   }
 
-  // console.log('Comment info:', { userId, comments });
+  if (!richComments) {
+    return null;
+  }
+
+  let conversation = richComments;
+
+  if (editing) {
+    conversation = richComments.map((comment) => {
+      if (comment.id === editing) {
+        return convertCommentToRichtextEditable({
+          comment,
+          handleSaveMessage: handleEditCommentComplete,
+          handleCancel: () => setEditing(undefined),
+          userManagementServiceBaseUrl,
+        });
+      }
+
+      return comment;
+    });
+  }
+
+  // console.log('Comment info:', { authState, conversation });
+
+  const actionButtonsTarget = 'comment-action-buttons';
 
   return (
-    <Conversation
-      reverseOrder
-      conversation={comments || []}
-      user={authState?.id || ''}
-      onRemoveComment={handleRemoveComment}
-      input={
-        <Comment
-          message={message}
-          setMessage={setMessage}
-          avatar={authState?.email || authState?.id}
-          onPostMessage={handleCreateMessage}
+    <ConversationContainer>
+      <ErrorBoundary instanceId="comment-root">
+        <Conversation
+          key={`${target.id}+${target.targetType}`}
+          reverseOrder
+          conversation={conversation}
+          userId={authState?.id || ''}
+          onRemoveComment={handleRemoveComment}
+          onEditComment={handleEditCommentStart}
+          input={
+            <>
+              <Comment
+                avatar={user?.displayName}
+                Textarea={
+                  <Richtext
+                    actionTarget={actionButtonsTarget}
+                    onPostMessage={handleCreateMessage}
+                    userManagementServiceBaseUrl={userManagementServiceBaseUrl}
+                  />
+                }
+              />
+              <div id={actionButtonsTarget} />
+            </>
+          }
         />
-      }
-    />
+      </ErrorBoundary>
+    </ConversationContainer>
   );
 };

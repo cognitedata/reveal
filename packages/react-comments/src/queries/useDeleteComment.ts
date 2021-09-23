@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { CommentResponse, CommentTarget } from '@cognite/comment-service-types';
-import { AuthHeaders } from '@cognite/react-container';
+import { AuthHeaders, getAuthHeaders } from '@cognite/react-container';
 import { useMutation, useQueryClient } from 'react-query';
 
 import { commentKeys } from './queryKeys';
@@ -11,7 +11,7 @@ interface Props {
   headers: AuthHeaders;
   target: CommentTarget;
 }
-export const useDeleteComment: (props: Props) => Promise<any> = ({
+export const doDeleteComment: (props: Props) => Promise<any> = ({
   id,
   target,
   headers,
@@ -37,18 +37,17 @@ export const useDeleteComment: (props: Props) => Promise<any> = ({
 
 export function useCommentDeleteMutate({
   target,
-  headers,
   serviceUrl,
 }: {
   serviceUrl: string;
-  headers: AuthHeaders;
   target: CommentTarget;
 }) {
+  const headers = getAuthHeaders({ useIdToken: true });
   const queryClient = useQueryClient();
 
   return useMutation(
     (id: string) =>
-      useDeleteComment({
+      doDeleteComment({
         id,
         target,
         headers,

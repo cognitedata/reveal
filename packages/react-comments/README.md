@@ -10,6 +10,10 @@ yarn add @cognite/react-comments
 
 Happy hacking!
 
+## Usage
+
+For usage examples, please see the demo app.
+
 ## Troubleshooting
 
 If you use this outside of the monorepo, you need to make sure you have the exact same versions of things like `@cognite/react-container` installed in your calling app.

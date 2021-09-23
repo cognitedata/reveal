@@ -12,7 +12,7 @@ const PROD = false;
 // examples: bluefield, greenfield, ew1, bp-northeurope, azure-dev, bp
 // NOTE: leave on 'azure-dev' for testing in the PR's since that is the only place we have the FAKEIdp currently for this project:
 const CLUSTER = 'azure-dev';
-const LOCAL_COMMENTS_API = true;
+const LOCAL_COMMENTS_API = false;
 // #
 // #
 // #

@@ -14,14 +14,14 @@ To run testcafe tests locally:
 yarn start
 ```
 
-2. Start Fake IdP
-
-```sh
-yarn testcafe:start-idp
-```
-
-3. Run Testcafe tests
+2. Run Testcafe tests
 
 ```sh
 yarn testcafe:run-live
+```
+
+Note: if you want to run just one testcafe file, you can do that like this:
+
+```sh
+yarn testcafe:run-live comments
 ```

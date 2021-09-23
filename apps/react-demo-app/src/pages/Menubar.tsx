@@ -1,23 +1,26 @@
 import React, { useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, Link } from 'react-router-dom';
 import { TopBar } from '@cognite/cogs.js';
 
 import { SidebarIcon } from './Sidebar';
+import { MenubarComments } from './MenubarComments';
 
-export const PAGES = {
-  HOME: '/home',
-  INFO: '/info',
-  SDK: '/sdk',
-  INTERCOM: '/intercom',
-  COMMENTS: '/comments',
-  LOGOUT: '/logout',
-};
+export enum PAGES {
+  HOME = '/home',
+  INFO = '/info',
+  SDK = '/sdk',
+  INTERCOM = '/intercom',
+  COMMENTS = '/comments',
+  COMMENTS_DRAWER = '/comments/drawer',
+  COMMENTS_SLIDER = '/comments/slider',
+  LOGOUT = '/logout',
+}
 
 export const MenuBar = () => {
   const history = useHistory();
   const [active, setActive] = React.useState<string>(PAGES.HOME);
 
-  const handleNavigate = (page: string) => () => {
+  const handleNavigate = (page: PAGES) => () => {
     setActive(page);
     history.push(page);
   };
@@ -31,7 +34,9 @@ export const MenuBar = () => {
   return (
     <TopBar>
       <TopBar.Left>
-        <TopBar.Logo title="React Demo App" />
+        <Link to={PAGES.HOME}>
+          <TopBar.Logo title="React Demo App" />
+        </Link>
       </TopBar.Left>
       <TopBar.Navigation
         links={[
@@ -62,6 +67,7 @@ export const MenuBar = () => {
           },
         ]}
       />
+      <MenubarComments PAGES={PAGES} handleNavigate={handleNavigate} />
       <TopBar.Right>
         <SidebarIcon />
       </TopBar.Right>

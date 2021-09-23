@@ -15,9 +15,9 @@ const WrappedWithProviders: React.FC<Props> = ({ component, props = {} }) => {
   );
 };
 
-export const testRenderer = (
-  component: React.FC<any>,
-  props?: any,
+export const testRenderer = <Type extends unknown>(
+  component: React.FC<Type>,
+  props?: Type,
   options?: RenderOptions
 ): RenderResult => {
   return render(

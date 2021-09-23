@@ -1,5 +1,5 @@
-import { getDefaultSidecar } from 'getDefaultSidecar';
-import { SidecarConfig } from 'types';
+import { getDefaultSidecar } from './getDefaultSidecar';
+import { SidecarConfig } from './types';
 
 export const mockSidecar = (
   override: Partial<SidecarConfig> = {}

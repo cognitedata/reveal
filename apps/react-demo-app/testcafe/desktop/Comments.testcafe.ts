@@ -15,11 +15,13 @@ fixture('Comments')
 
 test('Checking comments page', async () => {
   log('Goto the comments page');
-  const menuButton = screen.getByText('Comments');
+  const menuButton = screen.getByRole('link', { name: 'Comments' });
   await t.click(menuButton);
 
+  await t.click(screen.getByText('Slider'));
+
   log('Checking for an asset to comment on');
-  const asset = screen.getByText('Asset name: test-item-2');
+  const asset = screen.getByText('Asset name: test-item-3');
   await t.click(asset);
 
   screen.getByPlaceholderText('Add a comment...');
