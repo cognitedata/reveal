@@ -14,12 +14,11 @@ import {
   SectorLoadingSpent
 } from './types';
 import { computeSectorCost } from './computeSectorCost';
-import { computeNdcAreaOfBox } from './computeNdcAreaOfBox';
 import assert from 'assert';
 import { LevelOfDetail } from '../LevelOfDetail';
 import { CadModelSectorBudget } from '../../CadModelSectorBudget';
 import { traverseDepthFirst } from '../../../../utilities';
-import { transformBoxToNDC } from './transformBoxToNDC';
+import { WeightFunctionsHelper } from './WeightFunctionsHelper';
 
 export type ByScreenSizeSectorCullerOptions = {
   /**
@@ -48,24 +47,8 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
     const { cadModelsMetadata, camera } = input;
     const cameraMatrixWorldInverse = camera.matrixWorldInverse;
     const cameraProjectionMatrix = camera.projectionMatrix;
-    // Create modified projection matrices to add heurestic of how "deep" in the frustum sectors are located
-    // This is done to avoid loading too much geometry from sectors we are barely inside and prioritize
-    // loading of geometry
-    const { near, far } = camera;
-    const viewRange = far - near;
-    const modifiedCameraProjectionMatrices = [
-      { near: near, far: near + 1.5, minBboxDiagonal: 0, maxBboxDiagonal: Infinity, weight: 0.1 }, // 0-10% of frustum
-      { near: near + 1.5, far: 20, minBboxDiagonal: 0, maxBboxDiagonal: Infinity, weight: 0.8 }, // 10-40% of frustum
-      { near: 20, far: far, minBboxDiagonal: 30, maxBboxDiagonal: Infinity, weight: 0.2 } // 40-100% of frustum
-      // { near, far: near + 0.1 * viewRange, weight: 0.1 }, // 0-10% of frustum
-      // { near: near + 0.1 * viewRange, far: near + 0.4 * viewRange, weight: 0.8 }, // 10-40% of frustum
-      // { near: near + 0.4 * viewRange, far: near + 1.0 * viewRange, weight: 0.2 } // 40-100% of frustum
-    ].map(x => {
-      return {
-        projectionMatrix: createModifiedProjectionMatrix(camera, x.near, x.far),
-        ...x
-      };
-    });
+
+    const weightFunctions = new WeightFunctionsHelper(camera);
 
     const transformedCameraMatrixWorldInverse = new THREE.Matrix4();
     const transformedBounds = new THREE.Box3();
@@ -75,114 +58,58 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
       priority: number;
       debugStuff: any;
     }>();
-    let insideSectors = 0;
-    let insideLeafSectors = 0;
+    const insideSectors = 0;
+    const insideLeafSectors = 0;
 
     cadModelsMetadata.map(model => {
       takenSectors.initializeScene(model);
       transformedCameraMatrixWorldInverse.multiplyMatrices(cameraMatrixWorldInverse, model.modelMatrix);
 
-      const modifiedFrustums = modifiedCameraProjectionMatrices.map(x => {
-        const frustumMatrix = new THREE.Matrix4().multiplyMatrices(
-          x.projectionMatrix,
-          transformedCameraMatrixWorldInverse
-        );
-        const frustum = new THREE.Frustum().setFromProjectionMatrix(frustumMatrix);
-        return { frustum, ...x };
-      });
+      const sectors = model.scene.getSectorsIntersectingFrustum(
+        cameraProjectionMatrix,
+        transformedCameraMatrixWorldInverse
+      );
+      weightFunctions.addCandidateSectors(sectors, model.modelMatrix);
+    });
 
+    cadModelsMetadata.map(model => {
       const sectors = model.scene.getSectorsIntersectingFrustum(
         cameraProjectionMatrix,
         transformedCameraMatrixWorldInverse
       );
 
-      const { minDistance: minSectorDistance, maxDistance: maxSectorDistance } = sectors.reduce(
-        (minMax, sector) => {
-          transformedBounds.copy(sector.bounds);
-          transformedBounds.applyMatrix4(model.modelMatrix);
-          const distanceToCamera = transformedBounds.distanceToPoint(camera.position);
-          minMax.maxDistance = Math.max(minMax.maxDistance, distanceToCamera);
-          minMax.minDistance = Math.min(minMax.minDistance, distanceToCamera);
-          return minMax;
-        },
-        { minDistance: Infinity, maxDistance: -Infinity }
-      );
-
       sectors.forEach(sector => {
-        transformedBounds.copy(sector.bounds);
-        transformedBounds.applyMatrix4(model.modelMatrix);
+        weightFunctions.computeTransformedSectorBounds(sector, model.modelMatrix, transformedBounds);
 
-        // Weight sectors that are close to the camera higher
-        const distanceToCamera = transformedBounds.distanceToPoint(camera.position);
-        const normalizedDistanceToCamera =
-          (distanceToCamera - minSectorDistance) / (maxSectorDistance - minSectorDistance);
-        if (distanceToCamera === 0) {
-          insideSectors++;
-          insideLeafSectors += sector.children.length === 0 ? 1 : 0;
-        }
+        const levelWeightImportance = 3.0;
+        const distanceToImportance = 0.3;
+        const screenAreaImportance = 0.7;
+        const frustumDepthImportance = 0.5;
 
-        const screenArea = distanceToCamera > 0.0 ? computeNdcAreaOfBox(camera, transformedBounds) : 1.0;
-        // const priority = screenArea / Math.log2(2.0 + transformedBounds.distanceToPoint(camera.position));
-        const screenAreaWeight = 0.6;
-        const distanceToCameraWeight = 1.0 - screenAreaWeight;
-        const priority = screenAreaWeight * screenArea + distanceToCameraWeight * (1.0 - normalizedDistanceToCamera);
+        // Weight "level 2" sectors really high
+        const levelWeight = weightFunctions.computeSectorTreePlacementWeight(sector);
+        const distanceToCameraWeight = weightFunctions.computeDistanceToCameraWeight(transformedBounds);
+        const screenAreaWeight = weightFunctions.computeScreenAreaWeight(transformedBounds);
+        const frustumDepthWeight = weightFunctions.computeFrustumDepthWeight(transformedBounds);
 
-        // Determine a weight based on what part of the view frustum the sector is inside.
-        const debugModifiedFrustums: any[] = [];
-        const frustumWeight = modifiedFrustums.reduce((accumulatedWeight, x) => {
-          const { frustum, minBboxDiagonal, maxBboxDiagonal, weight } = x;
-          const diagonal = sector.bounds.min.distanceTo(sector.bounds.max);
-          const accepted =
-            diagonal >= minBboxDiagonal && diagonal <= maxBboxDiagonal && frustum.intersectsBox(sector.bounds);
-          debugModifiedFrustums.push({ accepted, diagonal, ...x });
-          return accumulatedWeight + (accepted ? weight : 0);
-        }, 0.0);
-
-        // Determine weight based on distance to center line (prioritze nodes near the center of the screen)
-        const ndcBounds = transformBoxToNDC(transformedBounds, camera);
-        const ndcRect = new THREE.Box2(
-          new THREE.Vector2(ndcBounds.min.x, ndcBounds.min.y),
-          new THREE.Vector2(ndcBounds.max.x, ndcBounds.max.y)
-        );
-        const screenWeights = [
-          ndcRect.distanceToPoint(new THREE.Vector2(0, 0)),
-          ndcRect.distanceToPoint(new THREE.Vector2(-0.5, -0.5)),
-          ndcRect.distanceToPoint(new THREE.Vector2(-0.5, 0.5)),
-          ndcRect.distanceToPoint(new THREE.Vector2(0.5, -0.5)),
-          ndcRect.distanceToPoint(new THREE.Vector2(0.5, 0.5))
-        ].map(x => (2.0 - Math.max(x, 0.0)) / 2.0);
-        const screenWeight = screenWeights.reduce((weight, x) => weight + x);
-        // const centerOfScreenWeight = (2.0 - Math.max(ndcRect.distanceToPoint(new THREE.Vector2(0, 0)), 0.0)) / 2.0;
-
-        // TODO! Do this in NDC to get SCREEN center
-        // const cameraStart = camera.getWorldPosition(new THREE.Vector3());
-        // const cameraEnd = cameraStart
-        //   .clone()
-        //   .addScaledVector(camera.getWorldDirection(new THREE.Vector3()), camera.far);
-        // const cameraCenterLine = new THREE.Line3(cameraStart, cameraEnd);
-        // const bboxCorners = getBox3CornerPoints(transformedBounds);
-        // const tmp = new THREE.Vector3();
-        // const minDistanceToCenterLine = bboxCorners.reduce((min, x) => {
-        //   cameraCenterLine.closestPointToPoint(x, false, tmp);
-        //   return Math.min(min, tmp.distanceTo(x));
-        // }, Infinity);
-        // const centerLineWeight =
+        const priority =
+          levelWeightImportance * levelWeight +
+          distanceToImportance * distanceToCameraWeight +
+          screenAreaImportance * screenAreaWeight +
+          frustumDepthImportance * frustumDepthWeight;
 
         candidateSectors.push({
           model,
           sectorId: sector.id,
-          priority: priority * frustumWeight * screenWeight,
+          priority,
           debugStuff: {
-            screenArea,
-            distanceToCamera,
-            normalizedDistanceToCamera,
+            levelWeight,
+            distanceToCameraWeight,
+            screenAreaWeight,
+            frustumDepthWeight,
             priority,
-            frustumWeight,
-            screenWeight,
-            screenWeights,
             camera: camera.clone(),
-            transformedBounds: transformedBounds.clone(),
-            debugModifiedFrustums
+            transformedBounds: transformedBounds.clone()
           }
         });
       });
@@ -207,7 +134,8 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
       'Scheduled sectors',
       candidateSectors
         .slice(0, takenSectorCount)
-        .map(x => ({ id: x.sectorId, screenArea: x.priority, sector: x.model.scene.getSectorById(x.sectorId) })),
+        .map(x => ({ id: x.sectorId, priority: x.priority, sector: x.model.scene.getSectorById(x.sectorId) }))
+        .sort(x => x.priority),
       'Candidates:',
       candidateSectors.slice().sort((left, right) => left.sectorId - right.sectorId),
       `Inside sectors: ${insideSectors} (${insideLeafSectors} leafs)`
