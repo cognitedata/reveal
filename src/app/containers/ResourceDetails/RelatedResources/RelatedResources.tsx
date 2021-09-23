@@ -117,7 +117,7 @@ export const RelatedResources = ({
         <h4 style={{ marginBottom: 0 }}>Filter by:</h4>
         <SelectWrapper>
           <Select
-            value={selectedType}
+            value={selectedType as any}
             onChange={setSelectedType}
             options={relatedResourceTypes}
             styles={selectStyles}
