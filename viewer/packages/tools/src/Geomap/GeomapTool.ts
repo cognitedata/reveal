@@ -6,8 +6,10 @@ import { Cognite3DViewer } from '@reveal/core';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 import { LatLongPosition, MapConfig } from './MapConfig';
 import { Geomap } from './Geomap';
+
 /**
  * The `GeomapTool` is a geolocation for the models and allow the user to place them on the maps.
+ * @version New since 2.1.
  */
 export class GeomapTool extends Cognite3DViewerToolBase {
   private readonly _viewer: Cognite3DViewer;
