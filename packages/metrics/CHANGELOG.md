@@ -1,3 +1,7 @@
+## 1.2.1 Sept 23 2021
+
+- Fix failed publish
+
 ## 1.2.0 Sept 10 2021
 
 - Change arg type signature for people function from `People` to `Dict`

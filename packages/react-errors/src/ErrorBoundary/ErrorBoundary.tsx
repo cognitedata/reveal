@@ -67,7 +67,8 @@ class ErrorBoundary extends React.Component<Props, State> {
       'reloadPage',
       { errorId: reportedError?.errorId },
       () => {
-        window.location.reload();
+        // eslint-disable-next-line no-self-assign
+        window.location.href = window.location.href;
       }
     );
   };

@@ -1,6 +1,6 @@
 {
   "name": "@cognite/react-tenant-selector",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "source": "src/index.ts",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
@@ -28,7 +28,6 @@
   },
   "peerDependencies": {
     "@cognite/cogs.js": "^3.10.0",
-    "@cognite/metrics": "^1.0.0",
     "@cognite/sdk": "^4.0.3",
     "react": "^16.8.0 || ^17.0.0",
     "react-dom": "^16.8.0 || ^17.0.0",

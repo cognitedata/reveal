@@ -1,3 +1,7 @@
+## 0.4.1 Sept 16 2021
+
+- Change reload method
+
 ## 0.4.0 August 25 2021
 
 - Bump deps
