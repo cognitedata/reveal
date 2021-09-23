@@ -1,30 +1,32 @@
 import { useContext } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Icon, Colors } from '@cognite/cogs.js';
 import { CdfClientContext } from 'providers/CdfClientProvider';
-import { readSimulators } from 'store/simulator/thunks';
+import { usePolling } from 'hooks/usePolling';
+
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
-  selectSimulators,
   selectAvailableSimulators,
   selectSimulatorInitialized,
-} from 'store/simulator/selectors';
-import { usePolling } from 'hooks/usePolling';
+  selectSimulators,
+  fetchSimulators,
+} from '../../store/simulator/simulatorSlice';
 
 import { SimulatorTag } from './elements';
 
 const POLLING_INTERVAL = 100000;
 
 export function SimulatorStatus() {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const cdfClient = useContext(CdfClientContext);
 
-  const simulators = useSelector(selectSimulators);
+  const simulators = useAppSelector(selectSimulators);
   const simulatorInitialized = useSelector(selectSimulatorInitialized);
   const availableSimulators = useSelector(selectAvailableSimulators);
 
   usePolling(
     () => {
-      dispatch(readSimulators(cdfClient));
+      dispatch(fetchSimulators(cdfClient));
     },
     POLLING_INTERVAL,
     true

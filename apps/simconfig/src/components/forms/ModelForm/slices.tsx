@@ -42,3 +42,5 @@ export const fileInfoSlice = createSlice({
     ) => ({ ...state, [name]: value }),
   },
 });
+
+export default fileInfoSlice.reducer;

@@ -10,18 +10,12 @@ import sidecar from 'utils/sidecar';
 import ModelLibrary from 'pages/ModelLibrary';
 import { MenuBar, PAGES } from 'pages/Menubar';
 import NotFoundPage from 'pages/Error404';
-import { configureStore } from 'store';
-import { PartialRootState } from 'store/types';
+import { store } from 'store';
 import { Provider as ReduxProvider } from 'react-redux';
 import { CdfClientProvider } from 'providers/CdfClientProvider';
 import NewModel from 'pages/ModelLibrary/NewModel';
 
-interface AppProps {
-  initialState?: PartialRootState;
-}
-
-export default function App({ initialState = {} }: AppProps) {
-  const store = configureStore(initialState);
+export default function App() {
   return (
     <Container sidecar={sidecar}>
       <AuthConsumer>

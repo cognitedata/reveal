@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import moment from 'moment';
 import { Tag, Tooltip, Colors } from '@cognite/cogs.js';
 import { Simulator } from 'store/simulator/types';
-import { selectIsSimulatorAvailable } from 'store/simulator/selectors';
+import { selectIsSimulatorAvailable } from 'store/simulator/simulatorSlice';
 
 const SimulatorItemContainer = styled.div`
   display: flex;
