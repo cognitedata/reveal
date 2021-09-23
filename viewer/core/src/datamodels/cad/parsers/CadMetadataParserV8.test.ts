@@ -292,6 +292,7 @@ function createSectorMetadata(id: number, parentId: number = -1): CadSectorMetad
     path: '0/',
     depth: 0,
     estimatedDrawCallCount: 10,
+    maxDiagonalLength: 1.0,
     boundingBox: {
       min: {
         x: 0.0,

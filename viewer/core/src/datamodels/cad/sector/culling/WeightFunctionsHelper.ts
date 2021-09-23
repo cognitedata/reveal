@@ -158,6 +158,37 @@ export class WeightFunctionsHelper {
     return levelWeight;
   }
 
+  /**
+   * Computes a weight based on how large the biggest node within the sector
+   * will be on screen (a number in range [0-1]).
+   */
+  computeMaximumNodeScreensizeWeight(transformedSectorBounds: THREE.Box3, maxNodeDiagonalLength: number): number {
+    const distanceToCamera = transformedSectorBounds.distanceToPoint(this._camera.position);
+    if (distanceToCamera === 0.0) {
+      return 1.0; // Can cover the whole screen regardless of how big the node is
+    }
+
+    // Create a line in the camera plane with the maximum diagonal length and compute
+    // the size of this line on screen. Note that using camera distance is slightly wrong,
+    // a better measurement is distance to screen but in practice this works well
+    const p0 = this._camera
+      .getWorldDirection(new THREE.Vector3())
+      .multiplyScalar(distanceToCamera)
+      .add(this._camera.position);
+    const p1 = p0.clone().addScaledVector(this._camera.up, maxNodeDiagonalLength);
+
+    // Project to NDC
+    p0.project(this._camera);
+    p1.project(this._camera);
+
+    // Factor saying how much the biggest node covers on screen (1 means full view)
+    const screenCoverage = p1.distanceToSquared(p0) / 4.0;
+
+    // Scale coverage such that 5% screen estate is 1.0 weight
+    const weight = Math.min(1.0, screenCoverage / 0.05);
+    return weight;
+  }
+
   private distanceToCamera(sector: SectorMetadata, modelMatrix: THREE.Matrix4) {
     const { transformedBounds } = preallocated;
     transformedBounds.copy(sector.bounds);

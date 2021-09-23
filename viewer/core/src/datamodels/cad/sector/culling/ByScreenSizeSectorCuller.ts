@@ -58,7 +58,7 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
       priority: number;
       debugStuff: any;
     }>();
-    const insideSectors = 0;
+    let insideSectors = 0;
     const insideLeafSectors = 0;
 
     cadModelsMetadata.map(model => {
@@ -81,22 +81,36 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
       sectors.forEach(sector => {
         weightFunctions.computeTransformedSectorBounds(sector, model.modelMatrix, transformedBounds);
 
-        const levelWeightImportance = 3.0;
-        const distanceToImportance = 0.3;
-        const screenAreaImportance = 0.7;
-        const frustumDepthImportance = 0.5;
+        // const levelWeightImportance = 3.0;
+        // const distanceToImportance = 0.3;
+        // const screenAreaImportance = 0.7;
+        // const frustumDepthImportance = 0.5;
+        const levelWeightImportance = 0.0;
+        const distanceToImportance = 1.0;
+        const screenAreaImportance = 0.0;
+        const frustumDepthImportance = 0.0;
+        const nodeScreenSizeImportance = 1.0;
 
         // Weight "level 2" sectors really high
         const levelWeight = weightFunctions.computeSectorTreePlacementWeight(sector);
         const distanceToCameraWeight = weightFunctions.computeDistanceToCameraWeight(transformedBounds);
         const screenAreaWeight = weightFunctions.computeScreenAreaWeight(transformedBounds);
         const frustumDepthWeight = weightFunctions.computeFrustumDepthWeight(transformedBounds);
+        const nodeScreenSizeWeight =
+          sector.maxDiagonalLength !== undefined
+            ? weightFunctions.computeMaximumNodeScreensizeWeight(transformedBounds, sector.maxDiagonalLength)
+            : 1.0;
 
         const priority =
           levelWeightImportance * levelWeight +
           distanceToImportance * distanceToCameraWeight +
           screenAreaImportance * screenAreaWeight +
-          frustumDepthImportance * frustumDepthWeight;
+          frustumDepthImportance * frustumDepthWeight +
+          nodeScreenSizeImportance * nodeScreenSizeWeight;
+
+        if (distanceToCameraWeight === 1.0) {
+          insideSectors++;
+        }
 
         candidateSectors.push({
           model,
@@ -107,6 +121,7 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
             distanceToCameraWeight,
             screenAreaWeight,
             frustumDepthWeight,
+            nodeScreenSizeWeight,
             priority,
             camera: camera.clone(),
             transformedBounds: transformedBounds.clone()
@@ -134,7 +149,7 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
       'Scheduled sectors',
       candidateSectors
         .slice(0, takenSectorCount)
-        .map(x => ({ id: x.sectorId, priority: x.priority, sector: x.model.scene.getSectorById(x.sectorId) }))
+        .map(x => ({ ...x, sector: x.model.scene.getSectorById(x.sectorId) }))
         .sort(x => x.priority),
       'Candidates:',
       candidateSectors.slice().sort((left, right) => left.sectorId - right.sectorId),
@@ -282,12 +297,4 @@ class ScheduledSectorTree {
   clear() {
     this._models.clear();
   }
-}
-
-function createModifiedProjectionMatrix(camera: THREE.PerspectiveCamera, near: number, far: number): THREE.Matrix4 {
-  const modifiedCamera = camera.clone();
-  modifiedCamera.near = near;
-  modifiedCamera.far = far;
-  modifiedCamera.updateProjectionMatrix();
-  return modifiedCamera.projectionMatrix;
 }

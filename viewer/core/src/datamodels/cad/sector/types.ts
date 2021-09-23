@@ -138,6 +138,10 @@ export interface SectorMetadata {
   readonly facesFile: SectorMetadataFacesFileSection;
   readonly children: SectorMetadata[];
   readonly estimatedDrawCallCount: number;
+  /**
+   * @version New in version 9 formats
+   */
+  readonly maxDiagonalLength?: number;
 }
 
 export interface SectorGeometry {
