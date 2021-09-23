@@ -43,6 +43,8 @@ const nameToAclTypeMap = {
   analytics: 'analyticsAcl',
   functions: 'functionsAcl',
   geospatial: 'geospatialAcl',
+  templategroups: 'templateGroupsAcl',
+  templateinstances: 'templateInstancesAcl',
 };
 
 const nameToFormattedName = {
@@ -60,6 +62,8 @@ const nameToFormattedName = {
   filepipelines: 'File pipelines',
   documentfeedback: 'Document feedback',
   annotations: 'Annotations',
+  templategroups: 'Template groups',
+  templateinstances: 'Template instances',
 };
 
 const capabilityTypeGroups = [
@@ -76,6 +80,8 @@ const capabilityTypeGroups = [
       'sequences',
       'timeseries',
       'types',
+      'templategroups',
+      'templateinstances',
     ],
   },
   {
@@ -142,6 +148,8 @@ export const capabilityDescriptions = {
   modelhosting: 'Model hosting lets you deploy and schedule models',
   entitymatching: 'Match resources to their corresponding entity',
   annotations: 'Edit annotations in documents',
+  templategroups: 'Organize and structure your data',
+  templateinstances: 'Access data organized in templategroups',
 };
 
 export const getActionsFromCapability = (
@@ -200,6 +208,12 @@ const getCapabilityKey = (
   let capabilityName = getCapabilityName(capability);
   if (capabilityName === '3d') {
     capabilityName = 'threed';
+  }
+  if (capabilityName === 'templategroups') {
+    capabilityName = 'template_groups';
+  }
+  if (capabilityName === 'templateinstances') {
+    capabilityName = 'template_instances';
   }
   if (capabilityName) {
     capabilityKey = `${capabilityName}_acl`;
@@ -325,6 +339,8 @@ export const getCapabilityScopes = (
     case 'events':
     case 'sequences':
     case 'relationships':
+    case 'templategroups':
+    case 'templateinstances':
       return ['datasetScope', 'all'];
     case 'datasets':
       return ['idScope', 'all']; // idScope (uppercase S) and ...
