@@ -55,6 +55,7 @@ SCRIPTS = glob([
 
 PUBLIC = glob([
     "public/*",
+    "public/**/*.png",
 ])
 
 # Generates the below helpers.
@@ -76,11 +77,9 @@ DEPENDENCIES = [
     "@npm//@cognite/cogs.js",
     "@npm//@cognite/gcs-browser-upload",
     "@npm//@cognite/sdk",
+    "@npm//@reduxjs/toolkit",
     "@npm//@sentry/browser",
-    "@npm//antd",
     "@npm//eslint-config-react-app",
-    "@npm//lodash",
-    "@npm//mime-types",
     "@npm//moment",
     "@npm//react",
     "@npm//react-dom",
@@ -94,14 +93,12 @@ DEPENDENCIES = [
     "@npm//typesafe-actions",
     "//packages/react-container",
     "//packages/metrics",
-    "//packages/react-i18n",
     "//packages/sidecar",
-    "//packages/intercom-helper",
+    "//packages/react-i18n",
 ]
 
 # Type dependencies from package.json
 TYPE_DEPENDENCIES = [
-    "@npm//@types/lodash",
     "@npm//@types/react",
     "@npm//@types/react-dom",
     "@npm//@types/react-i18next",

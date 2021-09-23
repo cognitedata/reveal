@@ -28,6 +28,7 @@
     "@dnd-kit/sortable": "^4.0.0",
     "@microsoft/applicationinsights-react-js": "3.1.0",
     "@microsoft/applicationinsights-web": "2.6.3",
+    "@reduxjs/toolkit": "^1.6.1",
     "@sentry/browser": "^6.13.0",
     "antd": "^4.16.5",
     "axios": "^0.21.4",

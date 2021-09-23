@@ -1,10 +1,12 @@
 import styled from 'styled-components/macro';
 
 export const Container = styled.div`
-  text-align: center;
-  padding: 50px;
+  padding: 24px;
 `;
 
-export const Code = styled.code`
-  background: var(--cogs-greyscale-grey3);
+export const Header = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 0 24px 0;
 `;

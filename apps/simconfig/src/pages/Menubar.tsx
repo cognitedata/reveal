@@ -6,13 +6,14 @@ import { SimulatorStatus } from 'components/simulator/SimulatorStatus';
 import { SidebarIcon } from './Sidebar';
 
 export const PAGES = {
-  HOMEPAGE: '/homepage',
+  MODEL_LIBRARY: '/model-library',
+  MODEL_LIBRARY_NEW: '/model-library/new',
   LOGOUT: '/logout',
 };
 
 export const MenuBar = () => {
   const history = useHistory();
-  const [active, setActive] = React.useState<string>(PAGES.HOMEPAGE);
+  const [active, setActive] = React.useState<string>(PAGES.MODEL_LIBRARY);
 
   const handleNavigate = (page: string) => () => {
     setActive(page);
@@ -33,9 +34,9 @@ export const MenuBar = () => {
       <TopBar.Navigation
         links={[
           {
-            name: 'Files management ',
-            isActive: active === PAGES.HOMEPAGE,
-            onClick: handleNavigate(PAGES.HOMEPAGE),
+            name: 'Model library',
+            isActive: active === PAGES.MODEL_LIBRARY,
+            onClick: handleNavigate(PAGES.MODEL_LIBRARY),
           },
         ]}
       />
