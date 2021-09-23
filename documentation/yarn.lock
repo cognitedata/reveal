@@ -1249,8 +1249,16 @@
   dependencies:
     comlink "4.3.1"
 
+"@cognite/reveal-parser-worker@1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@cognite/reveal-parser-worker/-/reveal-parser-worker-1.2.0.tgz#0606ddccddd40e7809ef52e78c36d96e7af9b11c"
+  integrity sha512-l3B+PCZjOFTdbc9aC8YqF76DktJaNeqvOhF7Xpno2Y4rST69SpWQjl/g1RE4fgOAoAltoQ8k5UIAv7E/iGNQkQ==
+  dependencies:
+    comlink "4.3.1"
+
 "@cognite/reveal@link:../viewer/dist":
   version "0.0.0"
+  uid ""
 
 "@cognite/sdk-1.x@npm:@cognite/sdk@^3.4.0":
   version "3.5.2"
@@ -1295,6 +1303,7 @@
 
 "@cognite/sdk@link:../viewer/node_modules/@cognite/sdk":
   version "0.0.0"
+  uid ""
 
 "@cognite/three-combo-controls@^1.4.3":
   version "1.4.3"
@@ -1675,6 +1684,21 @@
   version "1.0.0-alpha.28"
   resolved "https://registry.yarnpkg.com/@francoischalifour/autocomplete-preset-algolia/-/autocomplete-preset-algolia-1.0.0-alpha.28.tgz#a5ad7996f42e43e4acbb4e0010d663746d0e9997"
   integrity sha512-bprfNmYt1opFUFEtD2XfY/kEsm13bzHQgU80uMjhuK0DJ914IjolT1GytpkdM6tJ4MBvyiJPP+bTtWO+BZ7c7w==
+
+"@gltf-transform/core@^0.12.11", "@gltf-transform/core@^0.12.12":
+  version "0.12.12"
+  resolved "https://registry.yarnpkg.com/@gltf-transform/core/-/core-0.12.12.tgz#ad864681efdbb5acf7945cf41578afdff4797676"
+  integrity sha512-+YBJ4j5x08rj+z0qQfdu0H+tcKhiUD5xcj5ZABHQT9oA90pRKSJ0bneIFP/atvyGiDvM1ZXsizVIKyBCsbL8qA==
+  dependencies:
+    gl-matrix "^3.3.0"
+
+"@gltf-transform/extensions@^0.12.11":
+  version "0.12.12"
+  resolved "https://registry.yarnpkg.com/@gltf-transform/extensions/-/extensions-0.12.12.tgz#d1fa73abe2201e66026d61f008c2768df2b38baa"
+  integrity sha512-BB8GIyYRsmFdRh1Vag7l4IUK8YbZrtdkU2oOueRUhAk2OKasZSwRgorfgb8ueWuoTxAx7XF8blL0nQt3yE/ORg==
+  dependencies:
+    "@gltf-transform/core" "^0.12.12"
+    ktx-parse "^0.2.1"
 
 "@google/model-viewer@^1.1.0":
   version "1.7.2"
@@ -2069,6 +2093,13 @@
   resolved "https://registry.yarnpkg.com/@types/normalize-package-data/-/normalize-package-data-2.4.0.tgz#e486d0d97396d79beedd0a6e33f4534ff6b4973e"
   integrity sha512-f5j5b/Gf71L+dbqxIpQ4Z2WlmI/mPJ0fOkGGmFgtb6sAu97EPczzbS3/tJKxmcYDj55OX6ssqwDAWOHIYDRDGA==
 
+"@types/offscreencanvas@^2019.6.3":
+  version "2019.6.3"
+  resolved "https://registry.yarnpkg.com/@types/offscreencanvas/-/offscreencanvas-2019.6.3.tgz#0508eec9641f3228bf8a27009670166887dc966c"
+  integrity sha512-957DsU187Y90EmlXneuqrqnwmwCkC9oPyQ/IEGwmDRpMfuhcGtjIz72Me7HvdK04ZC16A0VWmv0TSNLwC9ZvXw==
+  dependencies:
+    "@types/webgl2" "*"
+
 "@types/parse-json@^4.0.0":
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/@types/parse-json/-/parse-json-4.0.0.tgz#2f8bb441434d163b35fb8ffdccd7138927ffb8c0"
@@ -2143,15 +2174,15 @@
   resolved "https://registry.yarnpkg.com/@types/tapable/-/tapable-1.0.7.tgz#545158342f949e8fd3bfd813224971ecddc3fac4"
   integrity sha512-0VBprVqfgFD7Ehb2vd8Lh9TG3jP98gvr8rgehQqzztZNI7o8zS8Ad4jyZneKELphpuE212D8J70LnSNQSyO6bQ==
 
-"@types/three@0.125.0":
-  version "0.125.0"
-  resolved "https://registry.yarnpkg.com/@types/three/-/three-0.125.0.tgz#c0f5b40938b6beab35ea0012454bcb31646923d5"
-  integrity sha512-ZgNfl9jg+/ZkCggh57DJo2/HXKbeDMsNFTiRjb/6wVurVN/l7leqe8vB6au55qDwduXWVS0VVd1hkKVjyBml5A==
-
 "@types/three@0.128.0":
   version "0.128.0"
   resolved "https://registry.yarnpkg.com/@types/three/-/three-0.128.0.tgz#e5ce4c42d138a64dd90e83dbdb9919cf0d424d8e"
   integrity sha512-Jwq5XYUkzAcPTo34hlGAQGUyAI0b2F3aCCFWG/v7ZhJBEG5HGcusMSr70GhDlT8Gs0f02QnSPZ2RCA1MrCOa/w==
+
+"@types/three@0.131.0":
+  version "0.131.0"
+  resolved "https://registry.yarnpkg.com/@types/three/-/three-0.131.0.tgz#98f59887b05f71e665cf2fbdf04e0e4ceb9f89b6"
+  integrity sha512-4VCtsDi6mIId96GcGKG91e2Y6VwU2T0u/YB7vCFJh1kXik93arxn7l9tVZHo1LXOtgCJJDdC+e1fwf2Vu/4ySw==
 
 "@types/uglify-js@*":
   version "3.13.0"
@@ -2164,6 +2195,11 @@
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/@types/unist/-/unist-2.0.3.tgz#9c088679876f374eb5983f150d4787aa6fb32d7e"
   integrity sha512-FvUupuM3rlRsRtCN+fDudtmytGO6iHJuuRKS1Ss0pG5z8oX0diNEw94UEL7hgDbpN94rgaK5R7sWm6RrSkZuAQ==
+
+"@types/webgl2@*":
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/@types/webgl2/-/webgl2-0.0.6.tgz#1ea2db791362bd8521548d664dbd3c5311cdf4b6"
+  integrity sha512-50GQhDVTq/herLMiqSQkdtRu+d5q/cWHn4VvKJtrj4DJAjo1MNkWYa2MA41BaBO1q1HgsUjuQvEOk0QHvlnAaQ==
 
 "@types/webpack-sources@*":
   version "2.1.0"
@@ -5782,6 +5818,13 @@ gentle-fs@^2.3.0, gentle-fs@^2.3.1:
     read-cmd-shim "^1.0.1"
     slide "^1.1.6"
 
+geo-three@^0.0.15:
+  version "0.0.15"
+  resolved "https://registry.yarnpkg.com/geo-three/-/geo-three-0.0.15.tgz#ea52193c104a6b4a3c1dc797218936894ea41c7c"
+  integrity sha512-jCzOgKvkK59ilPz3Ndn9QGhBui4X0eppn3tPw4+n8QmmyaKGDgbATr3uu5xUHR8dguoV37P0yr2Yr20UxEHogg==
+  dependencies:
+    "@types/offscreencanvas" "^2019.6.3"
+
 get-caller-file@^1.0.1:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/get-caller-file/-/get-caller-file-1.0.3.tgz#f978fa4c90d1dfe7ff2d6beda2a515e713bdcf4a"
@@ -7580,6 +7623,11 @@ kind-of@^6.0.0, kind-of@^6.0.2, kind-of@^6.0.3:
   version "6.0.3"
   resolved "https://registry.yarnpkg.com/kind-of/-/kind-of-6.0.3.tgz#07c05034a6c349fa06e24fa35aa76db4580ce4dd"
   integrity sha512-dcS1ul+9tmeD95T+x28/ehLgd9mENa3LsvDTtzm3vyBEO7RPptvAD+t44WVXaUjTBRcrpFeFlC8WCruUR456hw==
+
+ktx-parse@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/ktx-parse/-/ktx-parse-0.2.1.tgz#6805c0929eae0a1f571ab3ce789e860e9135b432"
+  integrity sha512-I+2mYJ6nQdWGmOlE3m9d9idKfhn2MCw04zaVpgtzyuc19uQ8OwRmmYLf/TP5ueVFfYmHbdpM8mPmId2X5PBLEw==
 
 last-call-webpack-plugin@^3.0.0:
   version "3.0.0"
@@ -12476,15 +12524,15 @@ text-table@0.2.0, text-table@^0.2.0, text-table@~0.2.0:
   resolved "https://registry.yarnpkg.com/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
   integrity sha1-f17oI66AUgfACvLfSoTsP8+lcLQ=
 
-three@0.125.2:
-  version "0.125.2"
-  resolved "https://registry.yarnpkg.com/three/-/three-0.125.2.tgz#dcba12749a2eb41522e15212b919cd3fbf729b12"
-  integrity sha512-7rIRO23jVKWcAPFdW/HREU2NZMGWPBZ4XwEMt0Ak0jwLUKVJhcKM55eCBWyGZq/KiQbeo1IeuAoo/9l2dzhTXA==
-
 three@0.128.0:
   version "0.128.0"
   resolved "https://registry.yarnpkg.com/three/-/three-0.128.0.tgz#884dacca6a330e45600a09ec5439283f50b76aa6"
   integrity sha512-i0ap/E+OaSfzw7bD1TtYnPo3VEplkl70WX5fZqZnfZsE3k3aSFudqrrC9ldFZfYFkn1zwDmBcdGfiIm/hnbyZA==
+
+three@0.131.0:
+  version "0.131.0"
+  resolved "https://registry.yarnpkg.com/three/-/three-0.131.0.tgz#4e6e66042a0c0b6d2c078dc6be31811eade66c04"
+  integrity sha512-s05qedtr8qDG7L7MiUpFNboGWSd2xzKeSRd5iQEOjun5DD5ptRQlNsA6wKTbVCdOGbQuUH4kVXerTeznDlBjkw==
 
 through2@^0.6.3:
   version "0.6.5"
