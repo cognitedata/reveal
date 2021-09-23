@@ -26,8 +26,8 @@ expected output = 1010_|11|01 = 3
   
   inNumber - 1 = 172
 
-2)  bitshift such that remove the least significant bit-subset
-    this is guaranteed to be devisible since we subtraced the remainder
+2)  bitshift such that we remove the least significant bit-subset
+    this is guaranteed to be devisible since we subtracted the remainder
 
   (inNumber=172) / pow(2.0, from=2) = 172 / 4 = 43 = 0010_1011
 
@@ -37,6 +37,6 @@ expected output = 1010_|11|01 = 3
 
   mod(43, 4) = 3
 
-  or in biary notation: 0000_0011 which is the expected result.
+  or in binary notation: 0000_0011 which is the expected result.
 
 */ 
