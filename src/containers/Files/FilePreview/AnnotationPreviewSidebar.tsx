@@ -44,7 +44,6 @@ import {
   useUserInfo,
 } from '@cognite/sdk-react-query-hooks';
 
-import InteractiveIcon from 'components/InteractiveIcon';
 import { SIDEBAR_RESIZE_EVENT } from 'utils/WindowEvents';
 import { useReviewFile } from '../hooks';
 import { ContextualizationData } from './ContextualizationModule';
@@ -61,6 +60,7 @@ type Props = {
     React.SetStateAction<ProposedCogniteAnnotation[]>
   >;
   annotations: Array<CogniteAnnotation | ProposedCogniteAnnotation>;
+  fileIcon?: React.ReactNode;
 };
 
 const AnnotationPreviewSidebar = ({
@@ -69,6 +69,7 @@ const AnnotationPreviewSidebar = ({
   contextualization,
   onItemClicked,
   annotations,
+  fileIcon,
 }: Props) => {
   const client = useQueryClient();
   const { data: userData } = useUserInfo();
@@ -557,7 +558,7 @@ const AnnotationPreviewSidebar = ({
         }
         header={
           <TitleWrapper>
-            <InteractiveIcon />
+            {fileIcon || <Icon type="PDF" />}
             <Title level={4}>{file?.name} </Title>
             <div>
               <DiagramReviewStatus file={file} />{' '}
