@@ -169,7 +169,7 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
 
 class ScheduledSectorTree {
   private readonly determineSectorCost: DetermineSectorCostDelegate;
-  private readonly _totalCost: SectorCost = { downloadSize: 0, drawCalls: 0 };
+  private readonly _totalCost: SectorCost = { downloadSize: 0, drawCalls: 0, renderCost: 0 };
   private readonly _models = new Map<string, { model: CadModelMetadata; sectorIds: Map<number, number> }>();
 
   get totalCost(): SectorCost {
@@ -283,6 +283,7 @@ class ScheduledSectorTree {
     const spentBudget: SectorLoadingSpent = {
       drawCalls: this.totalCost.drawCalls,
       downloadSize: this.totalCost.downloadSize,
+      renderCost: this.totalCost.renderCost,
       totalSectorCount,
       forcedDetailedSectorCount,
       loadedSectorCount: takenSectorCount,

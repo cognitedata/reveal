@@ -13,6 +13,7 @@ export interface CadSectorMetadataV8 {
   readonly path: string;
   readonly depth: number;
   readonly estimatedDrawCallCount: number;
+  readonly estimatedTriangleCount: number;
   // TODO 2021-09-23 larsmoa: For testing - added in v9 format
   readonly maxDiagonalLength: number;
 
@@ -113,6 +114,7 @@ function createSectorMetadata(metadata: CadSectorMetadataV8): SectorMetadata {
     depth: metadata.depth,
     bounds: new THREE.Box3(new THREE.Vector3(min_x, min_y, min_z), new THREE.Vector3(max_x, max_y, max_z)),
     estimatedDrawCallCount: metadata.estimatedDrawCallCount,
+    estimatedRenderCost: metadata.estimatedTriangleCount || 0,
     maxDiagonalLength: metadata.maxDiagonalLength,
 
     // I3D

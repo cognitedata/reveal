@@ -20,7 +20,7 @@ export class TakenSectorMap {
   private readonly determineSectorCost: DetermineSectorCostDelegate;
 
   get totalCost(): SectorCost {
-    const totalCost: SectorCost = { downloadSize: 0, drawCalls: 0 };
+    const totalCost: SectorCost = { downloadSize: 0, drawCalls: 0, renderCost: 0 };
     this._takenSectorTrees.forEach(({ sectorTree }) => {
       addSectorCost(totalCost, sectorTree.totalCost);
     });
@@ -62,7 +62,8 @@ export class TakenSectorMap {
   isWithinBudget(budget: CadModelSectorBudget): boolean {
     return (
       this.totalCost.downloadSize < budget.geometryDownloadSizeBytes &&
-      this.totalCost.drawCalls < budget.maximumNumberOfDrawCalls
+      this.totalCost.drawCalls < budget.maximumNumberOfDrawCalls &&
+      this.totalCost.renderCost < budget.maximumRenderCost
     );
   }
 
@@ -97,6 +98,7 @@ export class TakenSectorMap {
     const spentBudget: SectorLoadingSpent = {
       drawCalls: this.totalCost.drawCalls,
       downloadSize: this.totalCost.downloadSize,
+      renderCost: this.totalCost.renderCost,
       totalSectorCount,
       forcedDetailedSectorCount,
       loadedSectorCount: takenSectorCount,
