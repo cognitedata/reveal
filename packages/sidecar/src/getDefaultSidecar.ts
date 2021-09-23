@@ -4,16 +4,18 @@ interface Props {
   prod: boolean;
   cluster: CDFCluster;
   localComments?: boolean;
-  localUserManagement?: boolean;
+  localDiscover?: boolean;
   localDigitalCockpit?: boolean;
+  localUserManagement?: boolean;
 }
 export const getDefaultSidecar = (
   {
     prod,
     cluster,
     localComments,
-    localUserManagement,
+    localDiscover,
     localDigitalCockpit,
+    localUserManagement,
   }: Props = { prod: false, cluster: 'azure-dev' }
 ): Partial<SidecarConfig> => {
   const generateBaseUrls = (cluster: string, prod = false) => {
@@ -37,6 +39,12 @@ export const getDefaultSidecar = (
         .join('');
     };
 
+    const discoverApiBaseUrl = generateUrl(
+      'https://discover-api.',
+      prod,
+      cluster,
+      localDiscover && '8700'
+    );
     const commentServiceBaseUrl = generateUrl(
       'https://comment-service.',
       prod,
@@ -63,6 +71,7 @@ export const getDefaultSidecar = (
         cluster === 'ew1' ? 'api' : cluster
       }.cognitedata.com`,
       commentServiceBaseUrl,
+      discoverApiBaseUrl,
       userManagementServiceBaseUrl,
       digitalCockpitApiBaseUrl,
       cdfCluster: cluster === 'ew1' ? '' : cluster,
