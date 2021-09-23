@@ -1,4 +1,4 @@
-import React, { ReactText, useMemo } from 'react';
+import React, { ReactText, useMemo, useState } from 'react';
 import {
   ActionType,
   Cell,
@@ -20,6 +20,10 @@ import { useSelectedIntegration } from 'hooks/useSelectedIntegration';
 import { useAppEnv } from 'hooks/useAppEnv';
 import IntegrationTableSearch from 'components/table/IntegrationTableSearch';
 import { EXTRACTION_PIPELINE_LOWER } from 'utils/constants';
+import { Button, Modal } from '@cognite/cogs.js';
+import { ids } from 'cogs-variables';
+import { CreateIntegration } from 'pages/create/CreateIntegration';
+import styled from 'styled-components';
 
 const selectReducer = (
   newState: TableState,
@@ -52,6 +56,34 @@ const fuzzyTextFilterFn = <T extends { values: any }>(
 };
 fuzzyTextFilterFn.autoRemove = (val: boolean) => !val;
 
+const TableTop = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const CreateExtpipeModal = (props: { visible: boolean; close: () => void }) => {
+  return (
+    <Modal
+      visible={props.visible}
+      width={600}
+      closable
+      onCancel={props.close}
+      appElement={document.getElementsByClassName(ids.styleScope).item(0)!}
+      getContainer={() =>
+        document.getElementsByClassName(ids.styleScope).item(0) as any
+      }
+      footer={null}
+      title="Create extraction pipeline"
+    >
+      <CreateIntegration
+        showAdditionalFields={false}
+        customCancelCallback={props.close}
+      />
+    </Modal>
+  );
+};
+
 const ITable = <T extends { id: ReactText }>({
   data,
   columns,
@@ -59,6 +91,7 @@ const ITable = <T extends { id: ReactText }>({
   const { setIntegration } = useSelectedIntegration();
   const { project } = useAppEnv();
   const history = useHistory();
+  const [createModalOpen, setCreateModalOpen] = useState(false);
 
   const filterTypes = React.useMemo(
     () => ({
@@ -112,11 +145,26 @@ const ITable = <T extends { id: ReactText }>({
 
   return (
     <>
-      <IntegrationTableSearch
-        globalFilter={state.globalFilter}
-        preGlobalFilteredRows={preGlobalFilteredRows}
-        setGlobalFilter={setGlobalFilter}
+      <CreateExtpipeModal
+        visible={createModalOpen}
+        close={() => setCreateModalOpen(false)}
       />
+      <TableTop>
+        <IntegrationTableSearch
+          globalFilter={state.globalFilter}
+          preGlobalFilteredRows={preGlobalFilteredRows}
+          setGlobalFilter={setGlobalFilter}
+        />
+        <Button
+          variant="default"
+          type="primary"
+          onClick={() => {
+            setCreateModalOpen(true);
+          }}
+        >
+          Create extraction pipeline
+        </Button>
+      </TableTop>
       <table
         {...getTableProps()}
         className="cogs-table integrations-table"
