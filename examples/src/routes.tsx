@@ -6,6 +6,7 @@ import React, { ReactNode } from 'react';
 import { Simple } from './pages/Simple';
 import { Clipping } from './pages/Clipping';
 import { Migration } from './pages/Migration';
+import { Geomap } from './pages/Geomap';
 import { SectorWithPointcloud } from './pages/SectorWithPointcloud';
 import { SimplePointcloud } from './pages/SimplePointcloud';
 import { SSAO } from './pages/SSAO';
@@ -71,6 +72,15 @@ export const exampleRoutes: Array<ExampleRoute> = [
       `&revisionId=${cadRevisionId}`,
     menuTitle: 'Default',
     component: <Migration />,
+  },
+  {
+    name: 'geomap',
+    path:
+      `/geomap?project=${project}` +
+      `&modelId=${cadId}` +
+      `&revisionId=${cadRevisionId}`,
+    menuTitle: 'Geomap',
+    component: <Geomap />,
   },
   {
     name: 'cad-pointcloud',

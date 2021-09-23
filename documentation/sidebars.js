@@ -39,6 +39,7 @@ module.exports = {
         'examples/antialiasing',
         'examples/cad-explode',
         'examples/axisviewtool',
+        'examples/geomaptool',
         'examples/combine-models'
       ],
     },

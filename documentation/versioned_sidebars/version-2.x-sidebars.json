@@ -98,6 +98,10 @@
         },
         {
           "type": "doc",
+          "id": "version-2.x/examples/geomaptool"
+        },
+        {
+          "type": "doc",
           "id": "version-2.x/examples/combine-models"
         }
       ]
