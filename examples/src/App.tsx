@@ -94,9 +94,6 @@ export default function App() {
         </PageContainer>
       </div>
     </Router>
-    <Router basename={`${process.env.PUBLIC_URL}/test.json`}>
-      <div>Hello</div>
-    </Router>
     </>
   );
 }
