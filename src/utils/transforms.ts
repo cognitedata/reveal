@@ -32,9 +32,15 @@ export enum DSPFunctionParameterType {
 }
 
 export type DSPFunctionParameter = {
+  name: string;
+  description: string;
   param: string;
   type: DSPFunctionParameterType;
   default?: any;
+  options?: {
+    value: string;
+    name: string;
+  }[];
 };
 
 export type DSPFunctionConfig = {
@@ -63,9 +69,9 @@ export function getConfigFromDspFunction(
     };
   });
 
-  const parameters = dspFunction.parameters.map(({ param, type }) => {
+  const parameters = dspFunction.parameters.map(({ name, param, type }) => {
     return {
-      name: param,
+      name,
       field: param,
       types: [getBlockTypeFromParameterType(type)],
       pin: false,

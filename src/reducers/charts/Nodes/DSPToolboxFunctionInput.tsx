@@ -21,5 +21,12 @@ export const DSPToolboxFunctionInput = ({
     },
     [onChange]
   );
-  return <Input value={value} id={id} onChange={handleChange} />;
+  return (
+    <Input
+      style={{ width: '100%' }}
+      value={value}
+      id={id}
+      onChange={handleChange}
+    />
+  );
 };
