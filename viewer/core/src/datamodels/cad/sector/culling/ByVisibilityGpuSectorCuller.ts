@@ -64,7 +64,7 @@ class TakenSectorMap {
   private readonly determineSectorCost: DetermineSectorCostDelegate;
 
   get totalCost(): SectorCost {
-    const totalCost: SectorCost = { downloadSize: 0, drawCalls: 0 };
+    const totalCost: SectorCost = { downloadSize: 0, drawCalls: 0, renderCost: 0 };
     this._takenSectorTrees.forEach(({ sectorTree }) => {
       addSectorCost(totalCost, sectorTree.totalCost);
     });
@@ -104,9 +104,11 @@ class TakenSectorMap {
   }
 
   isWithinBudget(budget: CadModelSectorBudget): boolean {
+    console.log(this.totalCost.renderCost, '<', budget.maximumRenderCost);
     return (
       this.totalCost.downloadSize < budget.geometryDownloadSizeBytes &&
-      this.totalCost.drawCalls < budget.maximumNumberOfDrawCalls
+      this.totalCost.drawCalls < budget.maximumNumberOfDrawCalls &&
+      this.totalCost.renderCost < budget.maximumRenderCost
     );
   }
 
@@ -178,6 +180,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     const spentBudget: SectorLoadingSpent = {
       drawCalls: takenSectors.totalCost.drawCalls,
       downloadSize: takenSectors.totalCost.downloadSize,
+      renderCost: takenSectors.totalCost.renderCost,
       totalSectorCount,
       forcedDetailedSectorCount,
       loadedSectorCount: takenSectorCount,
@@ -317,10 +320,16 @@ function computeSectorCost(metadata: SectorMetadata, lod: LevelOfDetail): Sector
     case LevelOfDetail.Detailed:
       return {
         downloadSize: metadata.indexFile.downloadSize,
-        drawCalls: metadata.estimatedDrawCallCount
+        drawCalls: metadata.estimatedDrawCallCount,
+        renderCost: metadata.estimatedRenderCost
       };
     case LevelOfDetail.Simple:
-      return { downloadSize: metadata.facesFile.downloadSize, drawCalls: 1 };
+      return {
+        downloadSize: metadata.facesFile.downloadSize,
+        drawCalls: 1,
+        // TODO 2021-09-23 larsmoa: Estimate for simple sector render cost is very arbitrary
+        renderCost: Math.ceil(metadata.facesFile.downloadSize / 100)
+      };
     default:
       throw new Error(`Can't compute cost for lod ${lod}`);
   }

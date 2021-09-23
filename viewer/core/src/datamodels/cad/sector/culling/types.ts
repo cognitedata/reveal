@@ -29,6 +29,11 @@ export type SectorLoadingSpent = {
    * Estimated number of draw calls required to draw the sectors.
    */
   readonly drawCalls: number;
+  /**
+   * Estimated "render cost" which can be compared to triangle count (but
+   * due to how Reveal renders primitives doesn't map directly to triangles).
+   */
+  readonly renderCost: number;
 
   /**
    * Total number of sectors to load.
@@ -59,16 +64,19 @@ export type SectorLoadingSpent = {
 export type SectorCost = {
   downloadSize: number;
   drawCalls: number;
+  renderCost: number;
 };
 
 export function addSectorCost(sum: SectorCost, cost: SectorCost) {
   sum.downloadSize += cost.downloadSize;
   sum.drawCalls += cost.drawCalls;
+  sum.renderCost += cost.renderCost;
 }
 
 export function reduceSectorCost(sum: SectorCost, cost: SectorCost) {
   sum.downloadSize -= cost.downloadSize;
   sum.drawCalls -= cost.drawCalls;
+  sum.renderCost -= cost.renderCost;
 }
 
 export type PrioritizedWantedSector = WantedSector & { priority: number };

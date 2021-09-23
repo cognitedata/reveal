@@ -170,6 +170,7 @@ const noBudget: SectorLoadingSpent = {
   accumulatedPriority: 0,
   detailedSectorCount: 0,
   drawCalls: 0,
+  renderCost: 0,
   forcedDetailedSectorCount: 0,
   loadedSectorCount: 0,
   simpleSectorCount: 0,
