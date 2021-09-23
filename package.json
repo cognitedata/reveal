@@ -1,6 +1,6 @@
 {
   "name": "@cognite/data-exploration",
-  "version": "0.9.3",
+  "version": "0.9.4",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "typings": "dist/index.d.ts",
@@ -11,7 +11,7 @@
     "@cognite/cogs.js": "^3.32.1",
     "@cognite/gcs-browser-upload": "^1.1.0",
     "@cognite/react-feature-flags": "^0.1.0",
-    "@cognite/react-picture-annotation": "^1.13.4-beta.1",
+    "@cognite/react-picture-annotation": "^1.16.3",
     "@cognite/sdk": "^3.3.6",
     "@cognite/sdk-provider": "^1.0.0",
     "@cognite/sdk-react-query-hooks": "^5.0.1",
