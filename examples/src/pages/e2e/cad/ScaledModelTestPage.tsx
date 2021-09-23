@@ -5,8 +5,9 @@
 import * as THREE from 'three';
 import React from 'react';
 import { TestEnvCad, TestViewer } from '../TestViewer';
+import { registerVisualTest } from '../../../visual_tests';
 
-export function ScaledModelTestPage() {
+function ScaledModelTestPage() {
   return (
     <TestViewer
       modifyTestEnv={({ model }: TestEnvCad) => {
@@ -17,3 +18,5 @@ export function ScaledModelTestPage() {
     />
   );
 }
+
+registerVisualTest('cad', 'scaledModel', 'Scale model', <ScaledModelTestPage />)

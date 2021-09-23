@@ -1,0 +1,1 @@
+export { registerVisualTest} from '../routes';

@@ -5,13 +5,14 @@
 import * as THREE from 'three';
 import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@cognite/reveal';
 import { TestEnvCad, TestViewer } from '../TestViewer';
+import { registerVisualTest } from '../../../visual_tests';
 
 /**
  * Test verifies that edges from regular, highlighted and ghosted objects doesn't "bleed through"
  * custom objects in undesired ways (i.e. highlighted are overlaid, while ghosted and regular objects
  * are depth blended).
  */
-export function CustomObjectWithHighlightAndGhosted() {
+function CustomObjectWithHighlightAndGhosted() {
   return (
     <TestViewer
       modifyTestEnv={({scene, model }: TestEnvCad) => {
@@ -36,3 +37,4 @@ export function CustomObjectWithHighlightAndGhosted() {
     />
   );
 }
+registerVisualTest('cad', 'customObjectWithHighlightAndGhosted', 'Custom objects with highlighted and ghosted objects', <CustomObjectWithHighlightAndGhosted />)
