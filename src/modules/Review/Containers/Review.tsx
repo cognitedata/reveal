@@ -2,10 +2,10 @@ import React, { useEffect } from 'react';
 import { PageTitle } from '@cognite/cdf-utilities';
 import { selectFileById } from 'src/modules/Common/store/filesSlice';
 import { RootState } from 'src/store/rootReducer';
+import { PopulateAnnotationTemplates } from 'src/store/thunks/Annotation/PopulateAnnotationTemplates';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import { FetchFilesById } from 'src/store/thunks/Files/FetchFilesById';
-import { PopulateAnnotationTemplates } from 'src/store/thunks/Review/PopulateAnnotationTemplates';
 import { PopulateReviewFiles } from 'src/store/thunks/Review/PopulateReviewFiles';
 import styled from 'styled-components';
 import { Button, Icon, Popconfirm, ToastContainer } from '@cognite/cogs.js';
@@ -14,7 +14,7 @@ import { batch, useDispatch, useSelector } from 'react-redux';
 import {
   resetPreview,
   showCollectionSettingsModel,
-} from 'src/modules/Review/store/previewSlice';
+} from 'src/modules/Review/store/reviewSlice';
 import ImageReview from 'src/modules/Review/Containers/ImageReview';
 import VideoReview from 'src/modules/Review/Containers/VideoReview';
 import { isVideo } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
@@ -46,7 +46,7 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
   const { fileId } = props.match.params;
 
   const showCollectionSettingsModal = useSelector(
-    ({ previewSlice }: RootState) => previewSlice.showCollectionSettings
+    ({ reviewSlice }: RootState) => reviewSlice.showCollectionSettings
   );
 
   const file = useSelector(({ filesSlice }: RootState) =>
@@ -54,7 +54,7 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
   );
 
   const reviewFileIds = useSelector(
-    ({ previewSlice }: RootState) => previewSlice.fileIds
+    ({ reviewSlice }: RootState) => reviewSlice.fileIds
   );
 
   const previousPage = (props.location.state as { from?: string })?.from;

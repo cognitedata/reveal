@@ -7,12 +7,12 @@ import {
   onCreateKeyPoint,
   onCreateOrUpdateShape,
   onUpdateKeyPoint,
-} from 'src/modules/Review/store/imagePreviewSlice';
+} from 'src/modules/Review/store/annotationLabelSlice';
 import {
   deselectAllAnnotations,
   selectAnnotation,
   showCollectionSettingsModel,
-} from 'src/modules/Review/store/previewSlice';
+} from 'src/modules/Review/store/reviewSlice';
 import {
   ReactImageAnnotateWrapperProps,
   VisionOptionType,

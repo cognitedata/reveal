@@ -1,18 +1,18 @@
 import { Title } from '@cognite/cogs.js';
-import React, { ReactText, useMemo } from 'react';
-import { VisibleAnnotation } from 'src/modules/Review/store/previewSlice';
+import React, { ReactText } from 'react';
+import { VisibleAnnotation } from 'src/modules/Review/store/reviewSlice';
 import styled from 'styled-components';
-import { AnnotationStatus, KeypointVertex } from 'src/utils/AnnotationUtils';
+import { AnnotationStatus } from 'src/utils/AnnotationUtils';
 import { VisionAPIType } from 'src/api/types';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import { AssetLinkWarning } from 'src/modules/Review/Components/AnnotationsTable/AssetLinkWarning';
 import { CollapsibleAnnotationTableRow } from 'src/modules/Review/Components/CollapsibleAnnotationTableRow/CollapsibleAnnotationTableRow';
 
 type AnnotationTableItem = Omit<VisibleAnnotation, 'id'> & { id: ReactText };
+
 export interface AnnotationTableProps {
   title: string;
   file: FileInfo;
-  selectedAnnotationIds: ReactText[];
   annotations: AnnotationTableItem[];
   mode?: number;
   onDelete: (id: ReactText) => void;
@@ -21,8 +21,7 @@ export interface AnnotationTableProps {
     annotation: AnnotationTableItem,
     status: AnnotationStatus
   ) => void;
-  onSelect: (id: ReactText) => void;
-  selectedKeypointIds: ReactText[];
+  onSelect: (id: ReactText, nextState: boolean) => void;
   onKeypointSelect?: (id: string) => void;
 }
 
@@ -30,41 +29,13 @@ export const AnnotationsTable = ({
   title,
   file,
   annotations,
-  selectedAnnotationIds,
   mode,
   onDelete,
   onVisibilityChange,
   onApproveStateChange,
   onSelect,
   onKeypointSelect,
-  selectedKeypointIds,
 }: AnnotationTableProps) => {
-  const allAnnotations: AnnotationTableItem[] = useMemo(() => {
-    return annotations.map((ann) => {
-      let value: AnnotationTableItem = { ...ann, selected: false };
-      if (selectedAnnotationIds.includes(ann.id)) {
-        value = { ...ann, selected: true };
-      }
-
-      if (value.data?.keypoint) {
-        const keypoints = value.region?.vertices.map((keypointVertex) => ({
-          ...(keypointVertex as KeypointVertex),
-          selected: selectedKeypointIds.includes(
-            (keypointVertex as KeypointVertex).id
-          ),
-        }));
-        value = {
-          ...value,
-          region: {
-            vertices: keypoints as KeypointVertex[],
-            shape: value.region!.shape,
-          },
-        };
-      }
-      return value;
-    });
-  }, [annotations, selectedAnnotationIds, selectedKeypointIds]);
-
   const annotationsAvailable = annotations.length > 0;
 
   return (
@@ -74,14 +45,14 @@ export const AnnotationsTable = ({
       </TitleRow>
       <Body>
         {annotationsAvailable &&
-          allAnnotations.map((annotation) => {
+          annotations.map((annotation) => {
             if (mode === VisionAPIType.TagDetection) {
               return (
                 <AssetLinkWarning
                   file={file}
                   annotation={annotation}
                   key={annotation.id}
-                  allAnnotations={allAnnotations}
+                  allAnnotations={annotations}
                 >
                   <CollapsibleAnnotationTableRow
                     annotation={annotation}

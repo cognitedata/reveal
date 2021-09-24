@@ -1,6 +1,6 @@
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import { AnnotationCollection } from 'src/modules/Common/Components/CollectionSettingsModal/CollectionSettingsTypes';
-import { VisibleAnnotation } from 'src/modules/Review/store/previewSlice';
+import { VisibleAnnotation } from 'src/modules/Review/store/reviewSlice';
 import { AnnotationStatus, KeypointItem } from 'src/utils/AnnotationUtils';
 import { ReactElement, ReactText } from 'react';
 import { OptionType } from '@cognite/cogs.js';
@@ -47,7 +47,7 @@ export type ReactImageAnnotateWrapperProps = FilePreviewProps & {
 
 export type AnnotationTableRowProps = {
   annotation: AnnotationTableItem;
-  onSelect: (id: ReactText) => void;
+  onSelect: (id: ReactText, state: boolean) => void;
   onDelete: (id: ReactText) => void;
   onVisibilityChange: (id: ReactText) => void;
   onApprove: (

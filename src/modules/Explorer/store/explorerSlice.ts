@@ -14,6 +14,7 @@ import {
   Label,
   Metadata,
 } from '@cognite/cdf-sdk-singleton';
+import { clearExplorerFileState } from 'src/store/commonActions';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import { UpdateFiles } from 'src/store/thunks/Files/UpdateFiles';
@@ -111,10 +112,6 @@ export const setSelectedAllExplorerFiles = createAction<{
   selectStatus: boolean;
   filter?: SelectFilter;
 }>('setSelectedAllExplorerFiles');
-
-export const clearExplorerFileState = createAction<number[]>(
-  'clearExplorerFileState'
-);
 
 const explorerSlice = createSlice({
   name: 'explorerSlice',
@@ -246,7 +243,7 @@ const explorerSlice = createSlice({
     addExplorerUploadedFileId(state, action: PayloadAction<number>) {
       state.uploadedFileIds.push(action.payload);
     },
-    clearExplorerStateOnTransition(state) {
+    resetExplorerTemporaryState(state) {
       state.focusedFileId = null;
       state.uploadedFileIds = [];
       state.showFileUploadModal = false;
@@ -309,7 +306,7 @@ export const {
   setMapTableTabKey,
   setLoadingAnnotations,
   addExplorerUploadedFileId,
-  clearExplorerStateOnTransition,
+  resetExplorerTemporaryState,
 } = explorerSlice.actions;
 
 export default explorerSlice.reducer;

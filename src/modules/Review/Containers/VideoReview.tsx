@@ -1,10 +1,10 @@
 import React from 'react';
 import { ThumbnailCarousel } from 'src/modules/Review/Components/ThumbnailCarousel/ThumbnailCarousel';
-import { selectAllReviewFiles } from 'src/modules/Review/store/previewSlice';
+import { VideoContextualization } from 'src/modules/Review/Containers/VideoContextualization';
+import { selectAllReviewFiles } from 'src/modules/Review/store/reviewSlice';
 import styled from 'styled-components';
 import { VideoPreview } from 'src/modules/Review/Components/VideoPreview/VideoPreview';
 import { DataExplorationProvider, Tabs } from '@cognite/data-exploration';
-import { Contextualization } from 'src/modules/Review/Containers/Contextualization';
 import { FileDetailsReview } from 'src/modules/FileDetails/Containers/FileDetailsReview/FileDetailsReview';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { FileInfo, v3Client as sdk } from '@cognite/cdf-sdk-singleton';
@@ -52,7 +52,7 @@ const VideoReview = (props: { file: FileInfo; prev: string | undefined }) => {
                   style={{ overflow: 'hidden', height: `calc(100% - 45px)` }}
                   disabled
                 >
-                  <Contextualization file={file} />
+                  <VideoContextualization file={file} />
                 </Tabs.Pane>
                 <Tabs.Pane
                   title="File details"

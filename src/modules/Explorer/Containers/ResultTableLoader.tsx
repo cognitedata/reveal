@@ -19,12 +19,12 @@ import { EXPLORER_FILE_FETCH_LIMIT } from 'src/constants/ExplorerConstants';
 import { totalFileCount } from 'src/api/file/aggregate';
 import { batch, useDispatch, useSelector } from 'react-redux';
 import {
-  clearExplorerFileState,
   selectExplorerAllFiles,
   setExplorerFiles,
   setExplorerFocusedFileId,
   showExplorerFileMetadata,
 } from 'src/modules/Explorer/store/explorerSlice';
+import { clearExplorerFileState } from 'src/store/commonActions';
 import { RootState } from 'src/store/rootReducer';
 import { searchFilesWithValidMimeTypes } from 'src/api/file/searchFilesWithValidMimeTypes';
 import { FetchFilesById } from 'src/store/thunks/Files/FetchFilesById';

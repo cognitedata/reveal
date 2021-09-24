@@ -1,9 +1,5 @@
 import { createAsyncThunk, unwrapResult } from '@reduxjs/toolkit';
 import { FileState } from 'src/modules/Common/store/filesSlice';
-import {
-  VisionAnnotationState,
-  VisionModelState,
-} from 'src/modules/Review/store/previewSlice';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
 import { fetchAssets } from 'src/store/thunks/fetchAssets';
@@ -19,12 +15,11 @@ export const ApproveAnnotation = createAsyncThunk<
 >('ApproveAnnotation', async (annotation, { getState, dispatch }) => {
   const updateFileAndAnnotation = async (
     file: FileState,
-    model: VisionModelState,
-    updatedAnnotation: VisionAnnotationState
+    updatedAnnotation: VisionAnnotation
   ) => {
     const unSavedAnnotation = { ...updatedAnnotation };
 
-    if (!(model.modelType === VisionAPIType.TagDetection)) {
+    if (!(updatedAnnotation.modelType === VisionAPIType.TagDetection)) {
       dispatch(UpdateAnnotations([unSavedAnnotation])); // update annotation
       return;
     }
@@ -87,11 +82,11 @@ export const ApproveAnnotation = createAsyncThunk<
   };
 
   const annotationState =
-    getState().previewSlice.annotations.byId[annotation.id];
-  const model = getState().previewSlice.models.byId[annotationState.modelId];
-  const file = getState().filesSlice.files.byId[model.fileId];
+    getState().annotationReducer.annotations.byId[annotation.id];
+  const file =
+    getState().filesSlice.files.byId[annotationState.annotatedResourceId];
 
-  await updateFileAndAnnotation(file, model, {
+  await updateFileAndAnnotation(file, {
     ...annotationState,
     ...annotation,
   });

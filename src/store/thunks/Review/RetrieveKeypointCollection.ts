@@ -8,7 +8,7 @@ export const RetrieveKeypointCollection = createAsyncThunk<
   string,
   ThunkConfig
 >('RetrieveKeypointCollection', async (collectionId, { getState }) => {
-  const state = getState().imagePreviewReducer;
+  const state = getState().annotationLabelReducer;
   const allCollections = state.collections.byId;
   const allKeypoints = state.keypointMap.byId;
   const selectedCollectionIds = state.collections.selectedIds;

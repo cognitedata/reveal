@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { setReviewFileIds } from 'src/modules/Review/store/previewSlice';
+import { setReviewFileIds } from 'src/modules/Review/store/reviewSlice';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { clearFileState } from 'src/store/commonActions';
 
@@ -8,7 +8,7 @@ export const PopulateReviewFiles = createAsyncThunk<
   number[],
   ThunkConfig
 >('PopulateReviewFiles', async (fileIds, { getState, dispatch }) => {
-  const reviewState = getState().previewSlice;
+  const reviewState = getState().reviewSlice;
   const previousFileList = reviewState.fileIds;
   const removeFileList = previousFileList.filter((id) => !fileIds.includes(id));
   dispatch(setReviewFileIds(fileIds));

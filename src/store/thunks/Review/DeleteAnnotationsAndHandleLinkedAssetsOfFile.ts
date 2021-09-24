@@ -1,10 +1,8 @@
 import { createAsyncThunk, unwrapResult } from '@reduxjs/toolkit';
-import { VisionAnnotationState } from 'src/modules/Review/store/previewSlice';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
 import { UpdateFiles } from 'src/store/thunks/Files/UpdateFiles';
-import { AnnotationStatus } from 'src/utils/AnnotationUtils';
-import { deleteAnnotationsFromState } from 'src/store/commonActions';
+import { AnnotationStatus, VisionAnnotation } from 'src/utils/AnnotationUtils';
 import { ToastUtils } from 'src/utils/ToastUtils';
 import { fetchAssets } from 'src/store/thunks/fetchAssets';
 
@@ -19,9 +17,9 @@ export const DeleteAnnotationsAndHandleLinkedAssetsOfFile = createAsyncThunk<
   'DeleteAnnotationsAndRemoveLinkedAssets',
   async ({ annotationIds, showWarnings }, { getState, dispatch }) => {
     const annotations = annotationIds.map(
-      (id) => getState().previewSlice.annotations.byId[id]
+      (id) => getState().annotationReducer.annotations.byId[id]
     );
-    const linkedAnnotations: VisionAnnotationState[] = [];
+    const linkedAnnotations: VisionAnnotation[] = [];
 
     annotations.forEach((annotation) => {
       if (
@@ -40,8 +38,6 @@ export const DeleteAnnotationsAndHandleLinkedAssetsOfFile = createAsyncThunk<
     if (savedAnnotationIds && savedAnnotationIds.length) {
       dispatch(DeleteAnnotations(savedAnnotationIds));
     }
-
-    dispatch(deleteAnnotationsFromState(annotations.map((ann) => ann.id!)));
 
     const removeAssetIdsFromFile = async (
       fileId: number,
@@ -67,9 +63,7 @@ export const DeleteAnnotationsAndHandleLinkedAssetsOfFile = createAsyncThunk<
     };
 
     if (linkedAnnotations.length && showWarnings) {
-      const model =
-        getState().previewSlice.models.byId[linkedAnnotations[0].modelId];
-      const { fileId } = model;
+      const fileId = linkedAnnotations[0].annotatedResourceId;
       const assetExternalIds = linkedAnnotations.map(
         (ann) => ann.linkedResourceExternalId!
       );

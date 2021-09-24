@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ThunkConfig } from 'src/store/rootReducer';
-import { deleteCollectionById } from 'src/modules/Review/store/imagePreviewSlice';
+import { deleteCollectionById } from 'src/modules/Review/store/annotationLabelSlice';
 import { KeypointItemCollection } from 'src/modules/Review/types';
 
 export const CreateKeypointAnnotation = createAsyncThunk<
@@ -8,7 +8,7 @@ export const CreateKeypointAnnotation = createAsyncThunk<
   void,
   ThunkConfig
 >('CreateKeypointAnnotation', async (payload, { dispatch, getState }) => {
-  const state = getState().imagePreviewReducer;
+  const state = getState().annotationLabelReducer;
   const currentCollectionId = state.lastCollection;
 
   if (currentCollectionId) {

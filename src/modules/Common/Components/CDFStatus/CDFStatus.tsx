@@ -14,7 +14,7 @@ interface CDFStatusType {
 
 export const CDFStatus = () => {
   const cdfStatus: CDFStatusType = useSelector(
-    ({ filesSlice }: RootState) => filesSlice.saveState
+    ({ commonReducer }: RootState) => commonReducer.saveState
   );
   const { time, mode } = cdfStatus;
   const dateTime = time ? new Date(time) : new Date();

@@ -6,11 +6,11 @@ import {
 } from '@reduxjs/toolkit';
 import { AnnotationCollection } from 'src/modules/Common/Components/CollectionSettingsModal/CollectionSettingsTypes';
 import { CreateAnnotations } from 'src/store/thunks/Annotation/CreateAnnotations';
+import { PopulateAnnotationTemplates } from 'src/store/thunks/Annotation/PopulateAnnotationTemplates';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
+import { SaveAnnotationTemplates } from 'src/store/thunks/Annotation/SaveAnnotationTemplates';
 import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
 import { AnnotationDetectionJobUpdate } from 'src/store/thunks/Process/AnnotationDetectionJobUpdate';
-import { PopulateAnnotationTemplates } from 'src/store/thunks/Review/PopulateAnnotationTemplates';
-import { SaveAnnotationTemplates } from 'src/store/thunks/Review/SaveAnnotationTemplates';
 import { v4 as uuidv4 } from 'uuid';
 import { Region } from '@cognite/react-image-annotate';
 import { Point } from '@cognite/react-image-annotate/Types/ImageCanvas/region-tools';
@@ -19,7 +19,6 @@ import {
   KeypointItem,
   KeypointVertex,
 } from 'src/utils/AnnotationUtils';
-import { addAnnotations } from 'src/store/commonActions';
 
 type KeyPointState = {
   id: string;
@@ -73,8 +72,8 @@ const initialState: State = {
   lastKeyPoint: undefined,
 };
 
-const imagePreviewSlice = createSlice({
-  name: 'previewSlice',
+const annotationLabelSlice = createSlice({
+  name: 'annotationLabelSlice',
   initialState,
   /* eslint-disable no-param-reassign */
   reducers: {
@@ -205,7 +204,6 @@ const imagePreviewSlice = createSlice({
     // Matchers
     builder.addMatcher(
       isAnyOf(
-        addAnnotations,
         CreateAnnotations.fulfilled,
         AnnotationDetectionJobUpdate.fulfilled,
         UpdateAnnotations.fulfilled,
@@ -254,8 +252,8 @@ const imagePreviewSlice = createSlice({
   },
 });
 
-export type { State as ImagePreviewReducerState };
-export { initialState as imagePreviewReducerInitialState };
+export type { State as AnnotationLabelReducerState };
+export { initialState as annotationLabelReducerInitialState };
 
 export const {
   selectCollection,
@@ -269,9 +267,9 @@ export const {
   onUpdateKeyPoint,
   deleteCollectionById,
   deleteCurrentCollection,
-} = imagePreviewSlice.actions;
+} = annotationLabelSlice.actions;
 
-export default imagePreviewSlice.reducer;
+export default annotationLabelSlice.reducer;
 
 // selectors
 

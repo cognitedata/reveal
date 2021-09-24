@@ -3,7 +3,6 @@ import {
   createSlice,
   PayloadAction,
   isFulfilled,
-  isRejected,
   isAnyOf,
   createAction,
 } from '@reduxjs/toolkit';
@@ -13,16 +12,11 @@ import {
   Label,
   Metadata,
 } from '@cognite/cdf-sdk-singleton';
-import { CDFStatusModes } from 'src/modules/Common/Components/CDFStatus/CDFStatus';
-import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
-import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
-import { SaveAnnotations } from 'src/store/thunks/Annotation/SaveAnnotations';
-import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
+import isEqual from 'lodash-es/isEqual';
+import { createSelectorCreator, defaultMemoize } from 'reselect';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import { FetchFilesById } from 'src/store/thunks/Files/FetchFilesById';
 import { UpdateFiles } from 'src/store/thunks/Files/UpdateFiles';
-import { SaveAnnotationTemplates } from 'src/store/thunks/Review/SaveAnnotationTemplates';
-import { ToastUtils } from 'src/utils/ToastUtils';
 import { createFileInfo } from 'src/store/util/StateUtils';
 import { clearFileState } from 'src/store/commonActions';
 import { makeReducerSelectAllFilesWithFilter } from 'src/store/commonReducers';
@@ -58,10 +52,6 @@ export type State = {
     allIds: number[];
     selectedIds: number[];
   };
-  saveState: {
-    mode: CDFStatusModes;
-    time?: number;
-  };
 };
 
 const initialState: State = {
@@ -75,20 +65,6 @@ const initialState: State = {
     allIds: [],
     selectedIds: [],
   },
-  saveState: {
-    mode: 'saved' as CDFStatusModes,
-    time: new Date().getTime(),
-  },
-};
-
-export const selectCDFState = (
-  state: State
-): {
-  mode: CDFStatusModes;
-  time?: number | undefined;
-} => {
-  const cdfSaveStatus = state.saveState;
-  return cdfSaveStatus;
 };
 
 export const setSelectedAllFiles = createAction<{
@@ -183,39 +159,6 @@ const filesSlice = createSlice({
         });
       }
     );
-
-    builder.addMatcher(
-      isFulfilled(
-        SaveAnnotations,
-        DeleteAnnotations,
-        UpdateAnnotations,
-        UpdateFiles
-      ),
-      (state) => {
-        state.saveState.mode = 'timestamp';
-        state.saveState.time = new Date().getTime();
-      }
-    );
-
-    builder.addMatcher(
-      isRejected(
-        SaveAnnotations,
-        RetrieveAnnotations,
-        DeleteAnnotations,
-        UpdateAnnotations,
-        UpdateFiles,
-        SaveAnnotationTemplates
-      ),
-      (state, { error }) => {
-        if (error && error.message) {
-          state.saveState.mode = 'error';
-          state.saveState.time = new Date().getTime();
-          ToastUtils.onFailure(
-            `Failed to update Annotations! ${error?.message}`
-          );
-        }
-      }
-    );
   },
 });
 
@@ -251,7 +194,9 @@ export const selectAllFilesSelected = createSelector(
   }
 );
 
-export const selectAllSelectedFiles = createSelector(
+const createDeepEqualSelector = createSelectorCreator(defaultMemoize, isEqual);
+
+export const selectAllSelectedFiles = createDeepEqualSelector(
   selectAllSelectedIds,
   (state) => state.files.byId,
   (selectedIds, allFiles) => {
@@ -259,7 +204,7 @@ export const selectAllSelectedFiles = createSelector(
   }
 );
 
-export const selectFileById = createSelector(
+export const selectFileById = createDeepEqualSelector(
   (_: State, fileId: number) => fileId,
   (state) => state.files.byId,
   (fileId, files) => {

@@ -56,7 +56,7 @@ export const AnnotationTableRow = ({
   return (
     <StyledRow
       key={annotation.id}
-      onClick={() => onSelect(annotation.id)}
+      onClick={() => onSelect(annotation.id, !annotation.selected)}
       borderColor={borderColor}
       icon={!!iconComponent}
     >

@@ -1,16 +1,17 @@
 import { createSlice, isAnyOf } from '@reduxjs/toolkit';
-import { Annotation, VisionAPIType } from 'src/api/types';
+import { VisionAPIType } from 'src/api/types';
 import {
   AnnotationCounts,
   AnnotationPreview,
   AnnotationsBadgeCounts,
 } from 'src/modules/Common/types';
+import { CreateAnnotations } from 'src/store/thunks/Annotation/CreateAnnotations';
+import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
+import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
-import {
-  AnnotationStatus,
-  AnnotationTypeModelTypeMap,
-} from 'src/utils/AnnotationUtils';
+import { AnnotationDetectionJobUpdate } from 'src/store/thunks/Process/AnnotationDetectionJobUpdate';
+import { AnnotationStatus, VisionAnnotation } from 'src/utils/AnnotationUtils';
 import {
   createSelector,
   createSelectorCreator,
@@ -18,15 +19,17 @@ import {
 } from 'reselect';
 import isEqual from 'lodash-es/isEqual';
 import difference from 'lodash-es/difference';
-import { clearFileState } from 'src/store/commonActions';
-import { clearExplorerFileState } from 'src/modules/Explorer/store/explorerSlice';
+import {
+  clearExplorerFileState,
+  clearFileState,
+} from 'src/store/commonActions';
 
 type State = {
   files: {
     byId: Record<number, number[]>;
   };
   annotations: {
-    byId: Record<number, AnnotationPreview>;
+    byId: Record<number, VisionAnnotation>;
   };
 };
 
@@ -46,26 +49,17 @@ const annotationSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(
       RetrieveAnnotations.fulfilled,
-      (state: State, { payload: annotations }) => {
+      (state: State, { payload }) => {
         const fileAnnotations: { [id: number]: number[] } = {};
 
         // update annotations
-        annotations.forEach((item: Annotation) => {
-          const recordValue = {
-            id: item.id,
-            annotatedResourceId: item.annotatedResourceId,
-            annotationType: AnnotationTypeModelTypeMap[item.annotationType],
-            source: item.source,
-            status: item.status,
-            text: item.text,
-            region: item.region,
-          };
-          if (fileAnnotations[item.annotatedResourceId]) {
-            fileAnnotations[item.annotatedResourceId].push(item.id);
+        payload.forEach((annotation) => {
+          if (fileAnnotations[annotation.annotatedResourceId]) {
+            fileAnnotations[annotation.annotatedResourceId].push(annotation.id);
           } else {
-            fileAnnotations[item.annotatedResourceId] = [item.id];
+            fileAnnotations[annotation.annotatedResourceId] = [annotation.id];
           }
-          state.annotations.byId[item.id] = recordValue;
+          state.annotations.byId[annotation.id] = annotation;
         });
 
         Object.keys(fileAnnotations).forEach((id) => {
@@ -84,6 +78,55 @@ const annotationSlice = createSlice({
             }
             state.files.byId[+id] = fileAnnotations[+id];
           }
+        });
+      }
+    );
+
+    builder.addCase(DeleteAnnotations.fulfilled, (state, { payload }) => {
+      payload.forEach((annotationId) => {
+        const annotation = state.annotations.byId[annotationId];
+
+        if (annotation) {
+          const annotatedFileState =
+            state.files.byId[annotation.annotatedResourceId];
+          if (annotatedFileState) {
+            const filteredState = annotatedFileState.filter(
+              (id) => id !== annotationId
+            );
+            if (filteredState.length) {
+              state.files.byId[annotation.annotatedResourceId] = filteredState;
+            } else {
+              delete state.files.byId[annotation.annotatedResourceId];
+            }
+          }
+          delete state.annotations.byId[annotationId];
+        }
+      });
+    });
+
+    builder.addMatcher(
+      isAnyOf(
+        CreateAnnotations.fulfilled,
+        AnnotationDetectionJobUpdate.fulfilled,
+        UpdateAnnotations.fulfilled
+      ),
+      (state, { payload }) => {
+        // update annotations
+        payload.forEach((annotation) => {
+          if (state.files.byId[annotation.annotatedResourceId]) {
+            if (
+              !state.files.byId[annotation.annotatedResourceId].includes(
+                annotation.id
+              )
+            ) {
+              state.files.byId[annotation.annotatedResourceId].push(
+                annotation.id
+              );
+            }
+          } else {
+            state.files.byId[annotation.annotatedResourceId] = [annotation.id];
+          }
+          state.annotations.byId[annotation.id] = annotation;
         });
       }
     );
@@ -113,6 +156,14 @@ const annotationSlice = createSlice({
 export default annotationSlice.reducer;
 
 // selectors
+
+export const annotationsById = createSelector(
+  (state: State) => state,
+  (state: State) => {
+    return state.annotations.byId;
+  }
+);
+
 export const selectFileAnnotations = createSelector(
   (state: State, id: number) => state.files.byId[id],
   (state: State) => state.annotations.byId,
@@ -129,7 +180,7 @@ export const selectAnnotationsForAllFiles = createSelector(
     fileIds.map((id) => selectFileAnnotations(state, id)),
   (_: State, fileIds: number[]) => fileIds,
   (annotations, fileIds) => {
-    const data: Record<number, AnnotationPreview[]> = {};
+    const data: Record<number, VisionAnnotation[]> = {};
     fileIds.forEach((id, index) => {
       data[id] = annotations[index];
     });
@@ -164,18 +215,18 @@ export const makeSelectAnnotationCounts = () =>
 
     if (annotations) {
       annotationsBadgeProps.text = getSingleAnnotationCounts(
-        annotations.filter((item) => item.annotationType === VisionAPIType.OCR)
+        annotations.filter((item) => item.modelType === VisionAPIType.OCR)
       );
       annotationsBadgeProps.tag = getSingleAnnotationCounts(
         annotations.filter(
-          (item) => item.annotationType === VisionAPIType.TagDetection
+          (item) => item.modelType === VisionAPIType.TagDetection
         )
       );
 
       annotationsBadgeProps.gdpr = getSingleAnnotationCounts(
         annotations.filter(
           (item) =>
-            item.annotationType === VisionAPIType.ObjectDetection &&
+            item.modelType === VisionAPIType.ObjectDetection &&
             item.text === 'person'
         )
       );
@@ -183,7 +234,7 @@ export const makeSelectAnnotationCounts = () =>
       annotationsBadgeProps.objects = getSingleAnnotationCounts(
         annotations.filter(
           (item) =>
-            item.annotationType === VisionAPIType.ObjectDetection &&
+            item.modelType === VisionAPIType.ObjectDetection &&
             item.text !== 'person'
         )
       );
@@ -196,7 +247,7 @@ export const selectFileAnnotationsByType = createSelector(
   (state: State, fileId: number, types: VisionAPIType[]) => types,
   (annotations, types) => {
     if (annotations) {
-      return annotations.filter((item) => types.includes(item.annotationType));
+      return annotations.filter((item) => types.includes(item.modelType));
     }
     return [];
   }

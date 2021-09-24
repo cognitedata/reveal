@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { useSelector } from 'react-redux';
-import { annotationsById } from 'src/modules/Review/store/previewSlice';
+import { annotationsById } from 'src/modules/Common/store/annotationSlice';
 import { RootState } from 'src/store/rootReducer';
 import { Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
@@ -22,8 +22,8 @@ export default function SummaryStep() {
 
   const [statView, setStatView] = useState('totalFilesUploaded');
 
-  const annotations = useSelector((state: RootState) => {
-    return annotationsById(state.previewSlice);
+  const annotations = useSelector(({ annotationReducer }: RootState) => {
+    return annotationsById(annotationReducer);
   });
 
   const personFiles: number[] = [];

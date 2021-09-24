@@ -29,15 +29,13 @@ export const AnnotationsListPreview = ({
                   type={
                     annotation.text === 'person'
                       ? 'Personrounded'
-                      : (ModelTypeIconMap[
-                          annotation.annotationType
-                        ] as AllIconTypes)
+                      : (ModelTypeIconMap[annotation.modelType] as AllIconTypes)
                   }
                   style={{
                     color:
                       annotation.text === 'person'
                         ? '#1AA3C1'
-                        : ModelTypeStyleMap[annotation.annotationType].color,
+                        : ModelTypeStyleMap[annotation.modelType].color,
                   }}
                 />
               </StyledCol>

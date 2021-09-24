@@ -6,7 +6,6 @@ import {
   setSelectFromExploreModalVisibility,
 } from 'src/modules/Process/processSlice';
 import {
-  clearExplorerStateOnTransition,
   selectExplorerAllSelectedFiles,
   selectExplorerSelectedFileIds,
   setExplorerFileSelectState,
@@ -20,6 +19,7 @@ import { RootState } from 'src/store/rootReducer';
 import { TableDataItem } from 'src/modules/Common/types';
 import { FileFilterProps } from '@cognite/cdf-sdk-singleton';
 import { AppDispatch } from 'src/store';
+import { ClearExplorerStateOnTransition } from 'src/store/thunks/Explorer/ClearExplorerStateOnTransition';
 
 export const ExploreModalContainer = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -99,7 +99,7 @@ export const ExploreModalContainer = () => {
       onRowSelect={handleExploreModalRowSelect}
       onCloseModal={() => {
         dispatch(setSelectFromExploreModalVisibility(false));
-        dispatch(clearExplorerStateOnTransition());
+        dispatch(ClearExplorerStateOnTransition());
       }}
       onUseFiles={handleUseFiles}
       processFileCount={processFiles.length}

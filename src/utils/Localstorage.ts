@@ -1,11 +1,11 @@
 import {
-  imagePreviewReducerInitialState,
-  ImagePreviewReducerState,
-} from 'src/modules/Review/store/imagePreviewSlice';
+  annotationLabelReducerInitialState,
+  AnnotationLabelReducerState,
+} from 'src/modules/Review/store/annotationLabelSlice';
 import {
   reviewReducerInitialState,
   ReviewReducerState,
-} from 'src/modules/Review/store/previewSlice';
+} from 'src/modules/Review/store/reviewSlice';
 import { RootState } from 'src/store/rootReducer';
 
 export const loadState = (): Partial<RootState> | undefined => {
@@ -14,21 +14,21 @@ export const loadState = (): Partial<RootState> | undefined => {
     if (serializedState) {
       const persistedState = JSON.parse(serializedState) as OfflineState;
       return {
-        imagePreviewReducer: {
-          ...imagePreviewReducerInitialState,
-          ...persistedState.imagePreviewReducer,
+        annotationLabelReducer: {
+          ...annotationLabelReducerInitialState,
+          ...persistedState.annotationLabelReducer,
         },
-        previewSlice: {
+        reviewSlice: {
           ...reviewReducerInitialState,
-          ...persistedState.previewSlice,
+          ...persistedState.reviewSlice,
         },
       };
     }
     return {
-      imagePreviewReducer: {
-        ...imagePreviewReducerInitialState,
+      annotationLabelReducer: {
+        ...annotationLabelReducerInitialState,
       },
-      previewSlice: {
+      reviewSlice: {
         ...reviewReducerInitialState,
       },
     };
@@ -47,17 +47,20 @@ export const saveState = (state: any): void => {
 };
 
 export type OfflineState = {
-  imagePreviewReducer: Pick<ImagePreviewReducerState, 'predefinedCollections'>;
-  previewSlice: Pick<ReviewReducerState, 'fileIds'>;
+  annotationLabelReducer: Pick<
+    AnnotationLabelReducerState,
+    'predefinedCollections'
+  >;
+  reviewSlice: Pick<ReviewReducerState, 'fileIds'>;
 };
 
 const getOfflineState = (state: RootState): OfflineState => {
   const offState: OfflineState = {
-    imagePreviewReducer: {
-      predefinedCollections: state.imagePreviewReducer.predefinedCollections,
+    annotationLabelReducer: {
+      predefinedCollections: state.annotationLabelReducer.predefinedCollections,
     },
-    previewSlice: {
-      fileIds: state.previewSlice.fileIds,
+    reviewSlice: {
+      fileIds: state.reviewSlice.fileIds,
     },
   };
   return offState;

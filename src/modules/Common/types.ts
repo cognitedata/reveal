@@ -7,8 +7,9 @@ export interface AnnotationPreview
     Annotation,
     'id' | 'annotatedResourceId' | 'status' | 'source' | 'text' | 'region'
   > {
-  annotationType: VisionAPIType;
+  modelType: VisionAPIType;
 }
+
 export type AnnotationCounts = {
   modelGenerated?: number;
   manuallyGenerated?: number;

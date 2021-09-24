@@ -8,7 +8,7 @@ import {
   Region,
 } from '@cognite/react-image-annotate';
 import { RegionStatus } from '@cognite/react-image-annotate/Types/ImageCanvas/region-tools';
-import { VisibleAnnotation } from 'src/modules/Review/store/previewSlice';
+import { VisibleAnnotation } from 'src/modules/Review/store/reviewSlice';
 import {
   AnnotationStatus,
   KeypointVertex,
@@ -97,7 +97,6 @@ export const convertKeyPointCollectionToAnnotationStub = (
     createdTime: 0,
     label: '',
     lastUpdatedTime: 0,
-    modelId: '',
     modelType: VisionAPIType.ObjectDetection,
     show: true,
     source: 'user',

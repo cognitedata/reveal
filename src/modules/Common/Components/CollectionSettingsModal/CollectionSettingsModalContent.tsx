@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Title } from '@cognite/cogs.js';
-import { SaveAnnotationTemplates } from 'src/store/thunks/Review/SaveAnnotationTemplates';
+import { SaveAnnotationTemplates } from 'src/store/thunks/Annotation/SaveAnnotationTemplates';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
@@ -15,8 +15,8 @@ export const CollectionSettingsModalContent = ({
 }) => {
   const dispatch = useDispatch();
   const collections = useSelector(
-    ({ imagePreviewReducer }: RootState) =>
-      imagePreviewReducer.predefinedCollections
+    ({ annotationLabelReducer }: RootState) =>
+      annotationLabelReducer.predefinedCollections
   );
 
   const setCollections = (collection: AnnotationCollection) => {

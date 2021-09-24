@@ -1,6 +1,5 @@
 import { createAction } from '@reduxjs/toolkit';
 import { AnnotationJob, VisionAPIType } from 'src/api/types';
-import { VisionAnnotation } from 'src/utils/AnnotationUtils';
 
 export const fileProcessUpdate =
   createAction<{
@@ -9,10 +8,8 @@ export const fileProcessUpdate =
     modelType: VisionAPIType;
   }>('fileProcessUpdate');
 
-export const addAnnotations =
-  createAction<VisionAnnotation[]>('addAnnotations');
-
-export const deleteAnnotationsFromState =
-  createAction<number[]>('deleteAnnotations');
-
 export const clearFileState = createAction<number[]>('clearFileState');
+
+export const clearExplorerFileState = createAction<number[]>(
+  'clearExplorerFileState'
+);

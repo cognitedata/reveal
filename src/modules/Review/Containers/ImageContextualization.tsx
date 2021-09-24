@@ -1,4 +1,4 @@
-import React, { ReactText, useMemo } from 'react';
+import React, { ReactText } from 'react';
 import { Detail, Icon, PrimaryTooltip } from '@cognite/cogs.js';
 import {
   currentCollection,
@@ -9,13 +9,13 @@ import {
   selectCollection,
   setCollectionStatus,
   toggleCollectionVisibility,
-} from 'src/modules/Review/store/imagePreviewSlice';
+} from 'src/modules/Review/store/annotationLabelSlice';
 import {
   deselectAllAnnotations,
   selectAnnotation,
   toggleAnnotationVisibility,
-  VisionAnnotationState,
-} from 'src/modules/Review/store/previewSlice';
+  VisibleAnnotation,
+} from 'src/modules/Review/store/reviewSlice';
 import { ApproveAnnotation } from 'src/store/thunks/Annotation/ApproveAnnotation';
 import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from 'src/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
 import styled from 'styled-components';
@@ -25,37 +25,22 @@ import { VisionAPIType } from 'src/api/types';
 import { useDispatch, useSelector } from 'react-redux';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import { convertKeyPointCollectionToAnnotationStub } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/ConversionUtils';
-import { AnnotationStatus } from 'src/utils/AnnotationUtils';
+import { AnnotationStatus, VisionAnnotation } from 'src/utils/AnnotationUtils';
 import { AnnotationTableItem } from 'src/modules/Review/types';
 
-export const Contextualization = (props: {
+export const ImageContextualization = (props: {
   file: FileInfo;
-  tagAnnotations?: VisionAnnotationState[];
-  gdprAndTextAndObjectAnnotations?: VisionAnnotationState[];
+  tagAnnotations: VisibleAnnotation[];
+  otherAnnotations: VisibleAnnotation[];
 }) => {
-  const { file, tagAnnotations, gdprAndTextAndObjectAnnotations } = props;
+  const { file, tagAnnotations, otherAnnotations } = props;
 
   const dispatch = useDispatch();
-  const selectedAnnotationIds = useSelector(
-    (state: RootState) => state.previewSlice.selectedAnnotationIds
-  );
 
   const currentKeypointCollection = useSelector(
-    ({ imagePreviewReducer }: RootState) =>
-      currentCollection(imagePreviewReducer)
+    ({ annotationLabelReducer }: RootState) =>
+      currentCollection(annotationLabelReducer)
   );
-
-  const selectedKeypointCollectionIds = useSelector(
-    (state: RootState) => state.imagePreviewReducer.collections.selectedIds
-  );
-
-  const selectedKeypointIds = useSelector(
-    (state: RootState) => state.imagePreviewReducer.keypointMap.selectedIds
-  );
-
-  const selectedKeypointCollectionAnnotationIds = useMemo(() => {
-    return [...selectedAnnotationIds, ...selectedKeypointCollectionIds];
-  }, [selectedKeypointCollectionIds, selectedAnnotationIds]);
 
   const handleVisibility = (id: ReactText) => {
     dispatch(
@@ -80,18 +65,17 @@ export const Contextualization = (props: {
   ) => {
     await dispatch(
       ApproveAnnotation({
-        ...(annotation as VisionAnnotationState),
+        ...(annotation as VisionAnnotation),
         status,
       })
     );
   };
 
-  const handleOnAnnotationSelect = (id: ReactText) => {
-    const alreadySelected = selectedAnnotationIds.includes(+id);
-    if (alreadySelected) {
-      dispatch(deselectAllAnnotations());
-    } else {
+  const handleOnAnnotationSelect = (id: ReactText, nextState: boolean) => {
+    if (nextState) {
       dispatch(selectAnnotation(+id));
+    } else {
+      dispatch(deselectAllAnnotations());
     }
     dispatch(deSelectAllCollections());
     dispatch(deselectAllKeypoints());
@@ -99,16 +83,13 @@ export const Contextualization = (props: {
 
   // keypoint annotation changes
 
-  const onKeypointCollectionSelect = (id: ReactText) => {
-    const alreadySelected = selectedKeypointCollectionIds.includes(
-      id.toString()
-    );
-    if (alreadySelected) {
-      dispatch(deSelectAllCollections());
-    } else {
+  const onKeypointCollectionSelect = (id: ReactText, nextState: boolean) => {
+    if (nextState) {
       dispatch(deselectAllAnnotations());
       dispatch(deselectAllKeypoints());
       dispatch(selectCollection(id.toString()));
+    } else {
+      dispatch(deSelectAllCollections());
     }
   };
 
@@ -152,28 +133,24 @@ export const Contextualization = (props: {
             title="Asset tags in image"
             file={file}
             annotations={tagAnnotations}
-            selectedAnnotationIds={selectedKeypointCollectionAnnotationIds}
             mode={VisionAPIType.TagDetection}
             onDelete={handleDeleteAnnotations}
             onVisibilityChange={handleVisibility}
             onApproveStateChange={handleApprovalState}
             onSelect={handleOnAnnotationSelect}
             onKeypointSelect={onKeypointSelect}
-            selectedKeypointIds={selectedKeypointIds}
           />
         )}
-        {gdprAndTextAndObjectAnnotations && (
+        {otherAnnotations && (
           <AnnotationsTable
             file={file}
             title="Text and objects in image"
-            annotations={gdprAndTextAndObjectAnnotations}
-            selectedAnnotationIds={selectedKeypointCollectionAnnotationIds}
+            annotations={otherAnnotations}
             onDelete={handleDeleteAnnotations}
             onVisibilityChange={handleVisibility}
             onApproveStateChange={handleApprovalState}
             onSelect={handleOnAnnotationSelect}
             onKeypointSelect={onKeypointSelect}
-            selectedKeypointIds={selectedKeypointIds}
           />
         )}
         {currentKeypointCollection && (
@@ -187,13 +164,11 @@ export const Contextualization = (props: {
                 ),
               },
             ]}
-            selectedAnnotationIds={selectedKeypointCollectionIds}
             onDelete={onKeypointCollectionDelete}
             onVisibilityChange={onKeypointCollectionVisibilityChange}
             onApproveStateChange={onKeypointCollectionApprovalStateChange}
             onSelect={onKeypointCollectionSelect}
             onKeypointSelect={onKeypointSelect}
-            selectedKeypointIds={selectedKeypointIds}
           />
         )}
       </TableContainer>

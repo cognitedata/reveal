@@ -7,7 +7,7 @@ import {
 } from 'src/modules/Common/Components/CollectionSettingsModal/CollectionSettingsTypes';
 import { UnsavedAnnotation } from 'src/api/annotation/types';
 import { AnnotationApi } from 'src/api/annotation/AnnotationApi';
-import { PopulateAnnotationTemplates } from 'src/store/thunks/Review/PopulateAnnotationTemplates';
+import { PopulateAnnotationTemplates } from 'src/store/thunks/Annotation/PopulateAnnotationTemplates';
 import { AnnotationUtils } from 'src/utils/AnnotationUtils';
 import { VisionAPIType } from 'src/api/types';
 

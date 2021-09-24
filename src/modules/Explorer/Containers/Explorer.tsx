@@ -3,7 +3,6 @@ import React, { useEffect } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import FilterToggleButton from 'src/modules/Explorer/Components/FilterToggleButton';
 import {
-  clearExplorerStateOnTransition,
   hideExplorerFileMetadata,
   selectExplorerSelectedFileIds,
   setExplorerCurrentView,
@@ -14,6 +13,7 @@ import {
   showExplorerFileMetadata,
   toggleExplorerFilterView,
 } from 'src/modules/Explorer/store/explorerSlice';
+import { ClearExplorerStateOnTransition } from 'src/store/thunks/Explorer/ClearExplorerStateOnTransition';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import { FetchFilesById } from 'src/store/thunks/Files/FetchFilesById';
 import { PopulateProcessFiles } from 'src/store/thunks/Process/PopulateProcessFiles';
@@ -80,7 +80,7 @@ const Explorer = () => {
 
   useEffect(() => {
     return () => {
-      dispatch(clearExplorerStateOnTransition());
+      dispatch(ClearExplorerStateOnTransition());
     };
   }, []);
 

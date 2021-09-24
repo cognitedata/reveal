@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { ThumbnailCarousel } from 'src/modules/Review/Components/ThumbnailCarousel/ThumbnailCarousel';
 import {
   selectAllReviewFiles,
-  selectOtherAnnotationsByFileIdModelType,
-  selectTagAnnotationsByFileIdModelType,
-} from 'src/modules/Review/store/previewSlice';
+  selectOtherAnnotationsForFile,
+  selectTagAnnotationsForFile,
+  selectVisibleNonRejectedAnnotationsForFile,
+} from 'src/modules/Review/store/reviewSlice';
 import styled from 'styled-components';
 import { DataExplorationProvider, Tabs } from '@cognite/data-exploration';
-import { Contextualization } from 'src/modules/Review/Containers/Contextualization';
 import { FileDetailsReview } from 'src/modules/FileDetails/Containers/FileDetailsReview/FileDetailsReview';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
@@ -15,23 +15,28 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { FileInfo, v3Client as sdk } from '@cognite/cdf-sdk-singleton';
 import { ImagePreview } from 'src/modules/Review/Containers/ImagePreview';
 import { Title } from '@cognite/cogs.js';
+import { ImageContextualization } from './ImageContextualization';
 
 const queryClient = new QueryClient();
 
 const ImageReview = (props: { file: FileInfo; prev: string | undefined }) => {
   const { file, prev } = props;
   const [inFocus, setInFocus] = useState<boolean>(false);
-  const tagAnnotations = useSelector(({ previewSlice }: RootState) =>
-    selectTagAnnotationsByFileIdModelType(previewSlice, file.id.toString())
-  );
 
   const reviewFiles = useSelector((state: RootState) =>
     selectAllReviewFiles(state)
   );
 
-  const gdprAndTextAndObjectAnnotations = useSelector(
-    ({ previewSlice }: RootState) =>
-      selectOtherAnnotationsByFileIdModelType(previewSlice, file.id.toString())
+  const visibleNonRejectedAnnotations = useSelector((rootState: RootState) =>
+    selectVisibleNonRejectedAnnotationsForFile(rootState, file.id)
+  );
+
+  const tagAnnotations = useSelector((rootState: RootState) =>
+    selectTagAnnotationsForFile(rootState, file.id)
+  );
+
+  const otherAnnotations = useSelector((rootState: RootState) =>
+    selectOtherAnnotationsForFile(rootState, file.id)
   );
 
   const onEditMode = (mode: boolean) => {
@@ -47,7 +52,13 @@ const ImageReview = (props: { file: FileInfo; prev: string | undefined }) => {
               fullHeight={reviewFiles.length === 1}
               inFocus={inFocus}
             >
-              {file && <ImagePreview file={file} onEditMode={onEditMode} />}
+              {file && (
+                <ImagePreview
+                  file={file}
+                  onEditMode={onEditMode}
+                  annotations={visibleNonRejectedAnnotations}
+                />
+              )}
             </PreviewContainer>
             {reviewFiles.length > 1 && (
               <ThumbnailCarousel prev={prev} files={reviewFiles} />
@@ -68,12 +79,10 @@ const ImageReview = (props: { file: FileInfo; prev: string | undefined }) => {
                   key="context"
                   style={{ overflow: 'hidden', height: `calc(100% - 45px)` }}
                 >
-                  <Contextualization
+                  <ImageContextualization
                     file={file}
                     tagAnnotations={tagAnnotations}
-                    gdprAndTextAndObjectAnnotations={
-                      gdprAndTextAndObjectAnnotations
-                    }
+                    otherAnnotations={otherAnnotations}
                   />
                 </Tabs.Pane>
                 <Tabs.Pane
