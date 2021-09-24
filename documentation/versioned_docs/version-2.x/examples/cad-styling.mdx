@@ -11,7 +11,7 @@ be compromised of several attributes to customize the visualization through the 
 
 | Field           | Field type                  | Description                                           |
 | --------------- | --------------------------- | ----------------------------------------------------- |
-| `color`         | `[number, number, number]?` | Override color by setting RGB values in range [0,255] |
+| `color`         | `[number, number, number]?` | Override color by setting RGB values in range [0,255], e.g `[255, 0, 0]` (red). `[0, 0, 0]` means no override. |
 | `visible`       | `boolean?`                  | When false, the node(s) will be invisible             |
 | `renderInFront` | `boolean?`                  | When true, the node(s) are rendered in front of other geometry |
 | `renderGhosted` | `boolean?`                  | When true, the node(s) are rendered in transparent gray |
@@ -100,13 +100,13 @@ A few example styles are shown below.
 
 ### Ghosted style
 
-```js runnable
+```js runnable-2x
 model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
 ```
 
 ### Highlighted
 
-```js runnable
+```js runnable-2x
 model.setDefaultNodeAppearance(DefaultNodeAppearance.Highlighted);
 ```
 
@@ -114,7 +114,7 @@ model.setDefaultNodeAppearance(DefaultNodeAppearance.Highlighted);
 
 By creating custom styles you have a powerful tool to customize how the model looks.
 
-```js runnable
+```js runnable-2x
 model.setDefaultNodeAppearance({ color: [0, 200, 0], outlineColor: NodeOutlineColor.Orange });
 ```
 

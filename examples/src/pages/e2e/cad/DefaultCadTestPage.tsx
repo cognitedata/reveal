@@ -3,9 +3,11 @@
  */
 
 import React from 'react';
+import { registerVisualTest } from '../../../visual_tests';
 
 import { TestViewer } from '../TestViewer';
 
-export function DefaultCadTestPage() {
+function DefaultCadTestPage() {
   return <TestViewer />;
 }
+registerVisualTest('cad', 'default', 'Default', <DefaultCadTestPage />)

@@ -34,6 +34,36 @@ yarn && yarn run start
 If you now navigate to [localhost:8080](https://localhost:8080), you will see a list of examples
 that can be explored in the browser.
 
+### Building on Macbook M1
+
+Building Reveal on Macbook M1 migth require some special care.
+
+If you experience issues during the `yarn`-stage in `viewer/`, e.g.
+```
+   no template named 'remove_cv_t' in namespace 'std'
+```
+try forcing GCC to build for C++14:
+
+`env CXXFLAGS=-std=c++14 yarn`
+
+There also could be an issue with puppeteer in `examples/` that is caused by it not finding a correct version of chromium for arm64. To solve it you should follow additional steps:
+
+1. Install chromium from Homebrew: 
+```
+brew install chromium
+`which chromium`
+```
+
+2. Inside `examples/` add two environment variables to your `~/.zshrc` config file:
+```
+export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+export PUPPETEER_EXECUTABLE_PATH=`which chromium`
+```
+or create `.env` file within the same folder and paste them there, then use source:
+```
+source .env
+```
+3. Run `yarn` again and be happy!
 ## Hosting models locally
 
 If you have locally converted 3D models, these can be viewed locally using the "Simple" example by

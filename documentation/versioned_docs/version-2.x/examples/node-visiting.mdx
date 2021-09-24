@@ -17,13 +17,13 @@ interactive page while the action is being applied.
 
 This example only demonstrates how iteration over model nodes performed gradually.
 
-```jsx runnable
-let sum = 0;
-model
-  .iterateNodesByTreeIndex(
-    treeIndex => sum = sum + treeIndex
-  )
-  .then(() => alert('Iteration is done! Sum of all tree indexes is ' + sum));
+```jsx runnable-2x
+async function visitAllNodes() {
+  let sum = 0;
+  await model.iterateNodesByTreeIndex(treeIndex => sum = sum + treeIndex)
+  alert('Iteration is done! Sum of all tree indexes is ' + sum);
+}
+visitAllNodes();
 ```
 
 ## Iterate over subtree nodes
@@ -33,12 +33,11 @@ tree index is included in the set of visited nodes. The following example sets t
 a node. This mimics the functionality of `Cognite3DModel.setNodesColorsByTreeIndex` with `applyToChildren`
 set to `true`.
 
-```jsx runnable
-let sum = 0;
-model
-  .iterateSubtreeByTreeIndex(917985, treeIndex => {
-    sum = sum + treeIndex;
-  })
-  .then(() => alert('Iteration is done! Sum of all tree indexes in subtree is ' + sum));
-;
+```jsx runnable-2x
+async function visitSubtree() {
+  let sum = 0;
+  await model.iterateSubtreeByTreeIndex(917985, treeIndex => sum = sum + treeIndex);
+  alert('Iteration is done! Sum of all tree indexes in subtree is ' + sum);
+}
+visitSubtree();
 ```
