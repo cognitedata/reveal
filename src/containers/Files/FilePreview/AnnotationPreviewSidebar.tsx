@@ -585,7 +585,7 @@ const AnnotationPreviewSidebar = ({
             {file?.id && (
               <div>
                 <DiagramReviewStatus fileId={file.id} />
-                <Detail>Interactive Diagram</Detail>
+                <Detail>- Interactive Diagram</Detail>
               </div>
             )}
             <FileReview
