@@ -123,6 +123,28 @@ const AnnotationPreviewSidebar = ({
         'events',
         'list',
       ]);
+
+      client.invalidateQueries([
+        'sdk-react-query-hooks',
+        'cdf',
+        'labels',
+        'list',
+      ]);
+
+      client.invalidateQueries([
+        'sdk-react-query-hooks',
+        'cdf',
+        'files',
+        'list',
+      ]);
+
+      client.invalidateQueries([
+        'sdk-react-query-hooks',
+        'cdf',
+        'files',
+        'get',
+        'byId',
+      ]);
     };
     invalidate();
     // The sleep shouldn't be necessary, but await (POST /resource
