@@ -1243,7 +1243,7 @@ export class Cognite3DViewer {
       TWEEN.update(time);
       const didResize = this.resizeIfNecessary();
       if (didResize) {
-        renderController.redraw();
+        this.requestRedraw();
       }
       this.controls.update(this.clock.getDelta());
       renderController.update();
