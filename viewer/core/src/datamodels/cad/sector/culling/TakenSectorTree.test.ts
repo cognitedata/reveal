@@ -14,7 +14,7 @@ import { traverseDepthFirst } from '../../../../utilities/objectTraversal';
 
 describe('TakenSectorTree', () => {
   const model: CadModelMetadata = {} as any;
-  const determineSectorCost: DetermineSectorCostDelegate = () => ({ downloadSize: 1, drawCalls: 1 }); // Flat cost
+  const determineSectorCost: DetermineSectorCostDelegate = () => ({ downloadSize: 1, drawCalls: 1, renderCost: 1 }); // Flat cost
 
   test('default tree contains root as simple', () => {
     const root = generateSectorTree(2);

@@ -104,7 +104,6 @@ class TakenSectorMap {
   }
 
   isWithinBudget(budget: CadModelSectorBudget): boolean {
-    console.log(this.totalCost.renderCost, '<', budget.maximumRenderCost);
     return (
       this.totalCost.downloadSize < budget.geometryDownloadSizeBytes &&
       this.totalCost.drawCalls < budget.maximumNumberOfDrawCalls &&
