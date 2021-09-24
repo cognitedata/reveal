@@ -86,10 +86,10 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
         // const distanceToImportance = 0.3;
         // const screenAreaImportance = 0.7;
         // const frustumDepthImportance = 0.5;
-        const levelWeightImportance = 0.0;
+        const levelWeightImportance = 2.0;
         const distanceToImportance = 1.0;
-        const screenAreaImportance = 0.0;
-        const frustumDepthImportance = 0.0;
+        const screenAreaImportance = 0.3;
+        const frustumDepthImportance = 0.2;
         const nodeScreenSizeImportance = 1.0;
 
         // Weight "level 2" sectors really high
@@ -147,14 +147,29 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
     const spentBudget = takenSectors.computeSpentBudget();
 
     console.log(
-      'Scheduled sectors',
+      'Scheduled sectors\n',
       candidateSectors
         .slice(0, takenSectorCount)
         .map(x => ({ ...x, sector: x.model.scene.getSectorById(x.sectorId) }))
-        .sort(x => x.priority),
-      'Candidates:',
-      candidateSectors.slice().sort((left, right) => left.sectorId - right.sectorId),
-      `Inside sectors: ${insideSectors} (${insideLeafSectors} leafs)`
+        .sort(x => x.priority)
+    );
+    console.log(
+      'Candidates:\n',
+      candidateSectors.slice().sort((left, right) => left.sectorId - right.sectorId)
+    );
+    console.log(`Inside sectors: ${insideSectors} (${insideLeafSectors} leafs)`);
+
+    const takenPriorities = candidateSectors
+      .slice(0, takenSectorCount)
+      .map(x => x.priority)
+      .sort((a, b) => a - b);
+    const meanPriority = takenPriorities[Math.floor(takenPriorities.length / 2)];
+    const notAcceptedPriority =
+      candidateSectors.length > takenSectorCount ? candidateSectors[takenSectorCount].priority : -1;
+    console.log(
+      `Sector priority. Min: ${Math.min(...takenPriorities)}, max: ${Math.max(
+        ...takenPriorities
+      )}, mean: ${meanPriority}, first not accepted: ${notAcceptedPriority}`
     );
     console.log('Budget:', { ...input.budget }, 'Spent:', { ...spentBudget });
 
@@ -223,7 +238,8 @@ class ScheduledSectorTree {
   isWithinBudget(budget: CadModelSectorBudget): boolean {
     return (
       this._totalCost.downloadSize < budget.geometryDownloadSizeBytes &&
-      this._totalCost.drawCalls < budget.maximumNumberOfDrawCalls
+      this._totalCost.drawCalls < budget.maximumNumberOfDrawCalls &&
+      this._totalCost.renderCost < budget.maximumRenderCost
     );
   }
 
