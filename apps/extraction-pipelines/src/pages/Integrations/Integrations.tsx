@@ -71,27 +71,25 @@ const Integrations: FunctionComponent<Props> = () => {
 
 export default function CombinedComponent() {
   return (
-    <>
-      <FullPageLayout
-        pageHeadingText={EXTRACTION_PIPELINES}
-        headingSide={
-          <LinkWrapper>
-            <ExtractorDownloadsLink
-              linkText="Download Extractors"
-              link={{ path: '/extractors' }}
-            />
-            <ExtractorDownloadsLink
-              linkText="Learning and resources"
-              link={{ url: LEARNING_AND_RESOURCES_URL }}
-            />
-          </LinkWrapper>
-        }
-        breadcrumbs={<ExtPipesBreadcrumbs />}
-      >
-        <CapabilityCheck requiredPermissions={EXTPIPES_READS}>
-          <Integrations />
-        </CapabilityCheck>
-      </FullPageLayout>
-    </>
+    <FullPageLayout
+      pageHeadingText={EXTRACTION_PIPELINES}
+      headingSide={
+        <LinkWrapper>
+          <ExtractorDownloadsLink
+            linkText="Download Extractors"
+            link={{ path: '/extractors' }}
+          />
+          <ExtractorDownloadsLink
+            linkText="Learning and resources"
+            link={{ url: LEARNING_AND_RESOURCES_URL }}
+          />
+        </LinkWrapper>
+      }
+      breadcrumbs={<ExtPipesBreadcrumbs />}
+    >
+      <CapabilityCheck requiredPermissions={EXTPIPES_READS}>
+        <Integrations />
+      </CapabilityCheck>
+    </FullPageLayout>
   );
 }

@@ -5,14 +5,13 @@ import { QueryClient } from 'react-query';
 import { mapDataSetToIntegration } from 'utils/dataSetUtils';
 import { getMockResponse, mockDataSetResponse } from 'utils/mockResponse';
 import {
-  getIntegrationTableCol,
+  integrationTableColumns,
   TableHeadings,
 } from 'components/table/IntegrationTableCol';
 import { renderWithSelectedIntegrationContext } from 'utils/test/render';
 import ITable from 'components/table/ITable';
 
 describe('<ITable/>', () => {
-  const cols = getIntegrationTableCol();
   const mockIntegration = {
     ...getMockResponse()[0],
     dataSet: mockDataSetResponse()[0],
@@ -25,7 +24,7 @@ describe('<ITable/>', () => {
       mockDataSetResponse()
     );
     renderWithSelectedIntegrationContext(
-      <ITable data={data} columns={cols} />,
+      <ITable data={data} columns={integrationTableColumns} />,
       { initIntegration: mockIntegration, client: new QueryClient() }
     );
   });
@@ -70,7 +69,7 @@ describe('<ITable/>', () => {
   });
 
   test('render and interact with global filter', async () => {
-    const searchInput = screen.getByPlaceholderText(/records/i);
+    const searchInput = screen.getByTestId('search-integrations');
 
     const searchName = {
       string: 'sap',

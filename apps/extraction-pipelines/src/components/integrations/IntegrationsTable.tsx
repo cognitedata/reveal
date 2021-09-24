@@ -5,7 +5,7 @@ import Layers from 'utils/zindex';
 import { bottomSpacing, mainContentSpaceAround } from 'styles/StyledVariables';
 import { Integration } from 'model/Integration';
 import ITable from 'components/table/ITable';
-import { getIntegrationTableCol } from 'components/table/IntegrationTableCol';
+import { integrationTableColumns } from 'components/table/IntegrationTableCol';
 import StyledTable from 'styles/StyledTable';
 import { Span3 } from 'styles/grid/StyledGrid';
 
@@ -40,7 +40,7 @@ const IntegrationsTable: FunctionComponent<Props> = ({
 }: OwnProps) => {
   return (
     <StyledIntegrationsTable>
-      <ITable data={tableData} columns={getIntegrationTableCol()} />
+      <ITable data={tableData} columns={integrationTableColumns} />
     </StyledIntegrationsTable>
   );
 };

@@ -158,6 +158,7 @@ const ITable = <T extends { id: ReactText }>({
         <Button
           variant="default"
           type="primary"
+          icon="PlusCompact"
           onClick={() => {
             setCreateModalOpen(true);
           }}

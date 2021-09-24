@@ -46,6 +46,9 @@ export const renderWithSelectedIntegrationContext = (
 ) => {
   const history = createMemoryHistory();
   history.push(route);
+  const modalRoot = document.createElement('div');
+  modalRoot.setAttribute('class', 'integrations-ui-style-scope');
+  document.body.appendChild(modalRoot);
   return render(
     <QueryClientProvider client={client}>
       <Router history={history}>
