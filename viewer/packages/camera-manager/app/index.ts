@@ -2,13 +2,19 @@
  * Copyright 2021 Cognite AS
  */
 import * as THREE from 'three';
+import { Vector3 } from 'three';
 import ComboControls from '../';
+import Keyboard from '../src/Keyboard';
 
 let renderer: THREE.WebGLRenderer;
 let camera: THREE.PerspectiveCamera;
 let scene: THREE.Scene;
 let controls: ComboControls;
 let sphere: THREE.Mesh;
+let keyboard: Keyboard;
+let cuState: {
+    position: THREE.Vector3; 
+    target: THREE.Vector3};
 
 init();
 
@@ -16,6 +22,8 @@ function init() {
   camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 1000);
 
   scene = new THREE.Scene();
+
+  keyboard = new Keyboard();
 
   const grid = new THREE.GridHelper(5, 20);
   scene.add(grid);
@@ -49,6 +57,18 @@ function init() {
 }
 
 function render(time: number) {
+  cuState = controls.getState();
+
+  if (keyboard.isPressed('c')) {
+    controls.setState(cuState.position, cuState.target.add(new Vector3(-0.05,0,0)));
+  } 
+  if (keyboard.isPressed('b')) {
+    controls.setState(cuState.position, cuState.target.add(new Vector3(0.05,0,0)));
+  }
+  if (keyboard.isPressed('f')) {
+    controls.setState(cuState.position, cuState.target.copy(new Vector3(3,2,0)));
+  }
+
   controls.update(time);
   sphere.position.copy(controls.getState().target);
   renderer.render(scene, camera);

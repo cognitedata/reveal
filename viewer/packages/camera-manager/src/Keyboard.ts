@@ -12,8 +12,11 @@ const keyMap: { [s: string]: string } = {
   39: 'right',
   40: 'down',
   65: 'a',
+  66: 'b',
+  67: 'c',
   68: 'd',
   69: 'e',
+  70: 'f',
   81: 'q',
   83: 's',
   87: 'w'

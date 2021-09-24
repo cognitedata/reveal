@@ -44,7 +44,7 @@ export default class ComboControls extends EventDispatcher {
   public enableDamping: boolean = true;
   public dampingFactor: number = 0.2;
   public dynamicTarget: boolean = true;
-  public minDistance: number = 1;
+  public minDistance: number = 0.1;
   public maxDistance: number = Infinity;
   public dollyFactor: number = 0.98;
   public minPolarAngle: number = 0; // radians
@@ -70,6 +70,7 @@ export default class ComboControls extends EventDispatcher {
   public maxZoom: number = Infinity;
   public orthographicCameraDollyFactor: number = 0.3;
   public targetChanged: boolean = false;
+  public newClickTarget = false; // flag for enabling different camera rotation when target is changed by click
   
   private temporarilyDisableDamping: boolean = false;
   private camera: PerspectiveCamera | OrthographicCamera;
@@ -91,7 +92,6 @@ export default class ComboControls extends EventDispatcher {
   private targetFPS: number = 30;
   private targetFPSOverActualFPS: number = 1;
   private isFocused = false;
-  //private depthDataUpdate: boolean = false; // Flag for updating depth data after camera stop
 
   constructor(camera: PerspectiveCamera | OrthographicCamera, domElement: HTMLElement) {
     super();
@@ -109,9 +109,6 @@ export default class ComboControls extends EventDispatcher {
     domElement.addEventListener('wheel', this.onMouseWheel);
     domElement.addEventListener('contextmenu', this.onContextMenu);
 
-    // Event for handling depth buffer data read for good control target placement 
-    domElement.addEventListener('depthdataready', this.onDepthDataUpdate);
-    //this.depthDataUpdate = false;
     // canvas has no blur/focus by default, but it's possible to set tabindex on it,
     // in that case events will be fired (we don't set tabindex here, but still support that case)
     domElement.addEventListener('focus', this.onFocusChanged);
@@ -201,12 +198,11 @@ export default class ComboControls extends EventDispatcher {
     } else {
       spherical.copy(sphericalEnd);
       target.copy(targetEnd);
-      //this.depthDataUpdate = true;
     }
 
     spherical.makeSafe();
     camera.position.setFromSpherical(spherical).add(target);
-    camera.lookAt(target);
+    if (!this.newClickTarget) camera.lookAt(target);
 
     if (changed) {
       this.triggerCameraChangeEvent();
@@ -270,14 +266,6 @@ export default class ComboControls extends EventDispatcher {
   private onMouseUp = (_event: MouseEvent) => {
     this._accumulatedMouseMove.set(0, 0);
   };
-
-  private onDepthDataUpdate = (event: any) => {
-    const cursorDepthData = event.cursorDepthData;
-    
-    const cursorTargetWorldPosition = this.camera.localToWorld(new Vector3(0,0,-cursorDepthData));
-
-    this.targetEnd.copy(cursorTargetWorldPosition);
-  }
 
   private onMouseWheel = (event: WheelEvent) => {
     if (!this.enabled) {
@@ -603,7 +591,7 @@ export default class ComboControls extends EventDispatcher {
     if (moveTarget) { // move target together with the camera (for 'w' and 's' keys movement)
       reusableCamera.getWorldDirection(cameraDirection);
       targetEnd.add(cameraDirection.normalize().multiplyScalar(-deltaDistance));
-    } else { // mo
+    } else { // behaviour for scrolling with mouse wheel
       if (radius < minDistance) {
         radius = minDistance;
         if (dynamicTarget) {
@@ -659,13 +647,6 @@ export default class ComboControls extends EventDispatcher {
     const { camera, targetEnd, panVector } = this;
     panVector.setFromMatrixColumn(camera.matrix, 1); // get Y column of objectMatrix
     panVector.multiplyScalar(distance);
-    targetEnd.add(panVector);
-  };
-  
-  private moveForward = (distance: number) => {
-    const { camera, targetEnd, panVector } = this;
-    panVector.setFromMatrixColumn(camera.matrix, 2); // get Z column of objectMatrix
-    panVector.multiplyScalar(-distance);
     targetEnd.add(panVector);
   };
 

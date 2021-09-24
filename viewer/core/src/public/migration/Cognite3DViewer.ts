@@ -813,11 +813,15 @@ export class Cognite3DViewer {
    * viewer.setCameraTarget(target);
    * ```
    */
-  setCameraTarget(target: THREE.Vector3): void {
+  setCameraTarget(target: THREE.Vector3, animated: boolean): void {
     if (this.isDisposed) {
       return;
     }
-    this.controls.setState(this.getCameraPosition(), target);
+
+    if (!animated) this.controls.setState(this.getCameraPosition(), target);
+    else this.moveCameraTo(this.getCameraPosition(), target, 1000);
+
+    //this.controls.newClickTarget = true;
   }
 
   /**
@@ -1149,7 +1153,7 @@ export class Cognite3DViewer {
     return this._models.filter(x => x.type === type);
   }
 
-  /** @private */
+  /** @private */ 
   private moveCameraTo(position: THREE.Vector3, target: THREE.Vector3, duration?: number) {
     if (this.isDisposed) {
       return;
@@ -1221,7 +1225,7 @@ export class Cognite3DViewer {
         }
 
         this.setCameraPosition(tmpPosition);
-        this.setCameraTarget(tmpTarget);
+        this.setCameraTarget(tmpTarget, false);
       })
       .onComplete(() => {
         if (this.isDisposed) {
@@ -1321,7 +1325,7 @@ export class Cognite3DViewer {
     // 3. Handle when camera is inside the model by adjusting the near value
     const diagonal = combinedBbox.min.distanceTo(combinedBbox.max);
     if (combinedBbox.containsPoint(cameraPosition)) {
-      near = Math.min(0.01, far / 1000.0);
+      near = Math.min(0.05, far / 1000.0);
     }
 
     // Apply
@@ -1336,7 +1340,7 @@ export class Cognite3DViewer {
       // This is also used to determine the speed of the camera when flying with ASDW.
       // We want to either let it be controlled by the near plane if we are far away,
       // but no more than a fraction of the bounding box of the system if inside
-      this.controls.minDistance = 0.1; //Math.min(Math.max(diagonal * 0.02, 0.1 * near), 10.0);
+      this.controls.minDistance = Math.min(Math.max(diagonal * 0.02, 0.1 * near), 0.1);
     }
   }
 
