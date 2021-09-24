@@ -1,10 +1,13 @@
+import React, { useState } from 'react';
+
 import { Button } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
+import { usePermissions } from '@cognite/sdk-react-query-hooks';
+import styled from 'styled-components';
+
 import { ButtonGroup } from 'components';
 import { SearchResultToolbar, FileUploaderModal } from 'containers';
-import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { CLOSE_DROPDOWN_EVENT } from 'utils/WindowEvents';
-import React, { useState } from 'react';
 
 export const FileToolbar = ({
   onFileClicked,
@@ -37,13 +40,13 @@ export const FileToolbar = ({
         count={count}
       >
         {allowEdit && (
-          <Button
+          <UploadButton
             onClick={() => setModalVisible(true)}
             icon="Upload"
             disabled={!hasEditPermissions}
           >
             Upload
-          </Button>
+          </UploadButton>
         )}
         <ButtonGroup onButtonClicked={onViewChange} currentKey={currentView}>
           <ButtonGroup.Button key="list" icon="List" title="List" />
@@ -66,3 +69,9 @@ export const FileToolbar = ({
     </>
   );
 };
+
+const UploadButton = styled(Button)`
+  && {
+    margin-right: 8px;
+  }
+`;
