@@ -1,3 +1,7 @@
+## 1.8.4 Sept 24 2021
+
+- Add `getHeaders` helpers
+
 ## 1.8.2 Sept 20 2021
 
 - Use the `SidecarConfig` type from '@cognite/sidecar' package.

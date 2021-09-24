@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { CommentTarget } from '@cognite/comment-service-types';
-import { ListComments } from '@cognite/react-comments';
 
-import { ListCommentsProps } from './ListComments';
+import { ListComments, ListCommentsProps } from './ListComments';
 import CollapsablePanel from './collapsable-panel';
 import { Header } from './Header';
 

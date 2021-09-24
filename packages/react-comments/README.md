@@ -14,6 +14,8 @@ Happy hacking!
 
 For usage examples, please see the demo app.
 
+Note: user detection is opt-in, so you need to add `enableUserManagement` to your sidecar config.
+
 ## Troubleshooting
 
 If you use this outside of the monorepo, you need to make sure you have the exact same versions of things like `@cognite/react-container` installed in your calling app.

@@ -5,10 +5,7 @@ import { AuthProvider } from '../components/AuthContainer';
 import { log } from '../utils/log';
 
 import type { AuthHeaders } from './types';
-
-const getAuthorizationHeader = (token: string) => ({
-  Authorization: `Bearer ${token}`,
-});
+import { getAuthorizationHeader } from './headers';
 
 interface Options {
   apiKeyHeader?: string;

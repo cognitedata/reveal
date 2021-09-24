@@ -3,6 +3,8 @@ import { SidecarConfig } from '@cognite/sidecar';
 import { AuthenticatedUser } from '@cognite/auth-utils';
 import { reportException } from '@cognite/react-errors';
 
+import { getHeaders } from '../auth';
+
 import { log } from './log';
 
 /**
@@ -31,9 +33,7 @@ export const syncUser = async (
     .post(
       umsUserSyncEndpoint,
       { accessToken: authState.token },
-      {
-        headers: { Authorization: `Bearer ${authState.idToken}` },
-      }
+      getHeaders(authState.idToken)
     )
     .catch((error) => {
       reportException(error);
