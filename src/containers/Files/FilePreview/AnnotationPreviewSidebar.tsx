@@ -123,6 +123,28 @@ const AnnotationPreviewSidebar = ({
         'events',
         'list',
       ]);
+
+      client.invalidateQueries([
+        'sdk-react-query-hooks',
+        'cdf',
+        'labels',
+        'list',
+      ]);
+
+      client.invalidateQueries([
+        'sdk-react-query-hooks',
+        'cdf',
+        'files',
+        'list',
+      ]);
+
+      client.invalidateQueries([
+        'sdk-react-query-hooks',
+        'cdf',
+        'files',
+        'get',
+        'byId',
+      ]);
     };
     invalidate();
     // The sleep shouldn't be necessary, but await (POST /resource
@@ -560,10 +582,12 @@ const AnnotationPreviewSidebar = ({
           <TitleWrapper>
             {fileIcon || <Icon type="PDF" />}
             <Title level={4}>{file?.name} </Title>
-            <div>
-              <DiagramReviewStatus file={file} />{' '}
-              <Detail>- Interactive Diagram</Detail>
-            </div>
+            {file?.id && (
+              <div>
+                <DiagramReviewStatus fileId={file.id} />
+                <Detail>- Interactive Diagram</Detail>
+              </div>
+            )}
             <FileReview
               annotations={annotations}
               onApprove={onApproveAllAnnotations}
